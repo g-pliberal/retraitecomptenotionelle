@@ -100,18 +100,25 @@ l'Institut des politiques publiques (PENSIPP). Écarts connus :
   salaire forfaitaire par jour s'il est occasionnel ou acteur de complément ;
   le journaliste, à des taux réduits depuis 1991.
 - **indépendants des DOM** — le modèle les traite comme ceux de la métropole,
-  aux taux et sur les assiettes, minimale comprise, que reprennent les barèmes
-  des DOM de la caisse. Il ne leur applique ni l'abattement que L. 756-4 fait
-  depuis 2017 sur l'assiette de leurs cotisations, le RCI et
-  l'invalidité-décès exceptés (la moitié de la part du revenu sous le plafond,
-  les trois quarts la troisième année d'activité, dégressif d'une fois et
-  demie à deux fois et demie le plafond), ni l'exonération de toute cotisation
+  aux taux et sur l'assiette minimale de la série, que reprennent les barèmes
+  des DOM de la caisse : depuis 2007 pour les taux de la retraite de base,
+  depuis 2013 pour le RCI, depuis 2018 pour l'assiette minimale. Il ne leur
+  applique pas l'abattement que L. 756-4 fait sur l'assiette de leur retraite
+  de base : la moitié de la part du revenu sous le plafond (rédactions en
+  vigueur de 2000 à 2016), d'où, dans les tables de la caisse, une assiette
+  minimale moitié moindre de 2009 à 2016, comptée en heures du Smic jusqu'en
+  2012 quand la métropole passe cette année-là à une part du plafond ; puis,
+  depuis 2017, le RCI et l'invalidité-décès exceptés, la moitié encore, les
+  trois quarts la troisième année d'activité, dégressif d'une fois et demie à
+  deux fois et demie le plafond. Ni l'exonération de toute cotisation
   d'assurance vieillesse sous un revenu que fixe un décret (L. 756-5, II), ni
   celle, dégressive, des créateurs depuis 2018, dont les cotisations des deux
   premières années, le RCI excepté, restent définitives sur la base
-  forfaitaire de début d'activité. Si la caisse porte au compte de la retraite
-  de base le revenu abattu, ou cette base forfaitaire, le modèle s'en écarte :
-  non mesuré.
+  forfaitaire de début d'activité, ni le RCO et le NRCO moindres que les
+  tables portent de 2010 à 2012 sur leur première tranche (sept, huit puis
+  neuf dixièmes des taux de la métropole). Si la caisse porte au compte de la
+  retraite de base le revenu abattu, ou cette base forfaitaire, le modèle s'en
+  écarte : non mesuré.
 
 Un écart de quelques pour cent avec la pension réelle est attendu.
 

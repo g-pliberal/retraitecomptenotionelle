@@ -1338,8 +1338,29 @@ TAUX_DOM = {
 #: « Assiettes et cotisations minimales des travailleurs indépendants - DOM »
 #: (version du 1er juillet 2026), « dans le cas où les seuils d'exonération
 #: sont dépassés » : l'assiette minimale de la retraite de base, en euros.
-ASSIETTE_MINIMALE_DOM = {2020: 4731, 2021: 4731, 2022: 4731, 2023: 5072, 2024: 5243,
-                         2025: 5346}
+ASSIETTE_MINIMALE_DOM = {2018: 4569, 2019: 4660, 2020: 4731, 2021: 4731, 2022: 4731,
+                         2023: 5072, 2024: 5243, 2025: 5346}
+#: Leurs tables de 2007 à 2019, jointes (« Info-doc RSI » mis à jour le
+#: 27 février 2019) : `ti_cotisation_taux_cotisation_dom_2007_2019.pdf`, la
+#: retraite de base sous le plafond et au-delà, en pour cent, et, depuis 2013,
+#: le RCI comme `TAUX_DOM` ; `ti_cotisation_assiette_minimale_cotisation_dom.pdf`,
+#: l'assiette minimale de la retraite de base (`ASSIETTE_MINIMALE_DOM`, et,
+#: de 2009 à 2016, la moitié de celle de la métropole).
+TAUX_DOM_AVANT_2020 = {
+    2007: (16.65, 0), 2008: (16.65, 0), 2009: (16.65, 0), 2010: (16.65, 0),
+    2011: (16.65, 0), 2012: (16.65, 0), 2013: (16.85, 0, 7, 8, 37032),
+    2014: (17.15, 0.20, 7, 8, 37513), 2015: (17.40, 0.35, 7, 8, 37513),
+    2016: (17.65, 0.50, 7, 8, 37546), 2017: (17.75, 0.60, 7, 8, 37546),
+    2018: (17.75, 0.60, 7, 8, 37846), 2019: (17.75, 0.60, 7, 8, 37960),
+}
+#: L'écart, que la limite des indépendants des DOM déclare : de 2009 à 2016,
+#: la table porte la moitié de l'assiette minimale (« (200 SMIC horaire)/2 »,
+#: « 5,25 % PASS/2 »…), l'assiette de leur retraite de base étant la moitié
+#: du revenu sous le plafond (L. 756-4, rédactions de 2000 à 2016), et garde
+#: en 2012 les 200 heures du Smic, quand la métropole passe à 5,25 % du
+#: plafond.
+ASSIETTE_MINIMALE_DOM_DE_MOITIE = {2009: 871, 2010: 886, 2011: 900, 2012: 922, 2013: 972,
+                                   2014: 986, 2015: 1465, 2016: 2221}
 
 
 def test_l_independant_des_dom_cotise_aux_taux_et_aux_assiettes_de_la_metropole():
@@ -1350,15 +1371,27 @@ def test_l_independant_des_dom_cotise_aux_taux_et_aux_assiettes_de_la_metropole(
     RCI jusqu'à quatre plafonds — l'assiette maximale de l'édition des DOM, de
     2020 à 2022 —, et l'assiette minimale de la série. L'édition des DOM garde
     pour 2022 11,5 % du plafond, comme la série, quand le décret n° 2022-1438
-    fixe 4 758 €, ce que `ECARTS_ASSIETTE_MINIMALE` déclare."""
-    general = _taux_annuels("regime_general")
+    fixe 4 758 €, ce que `ECARTS_ASSIETTE_MINIMALE` déclare. Les tables
+    d'avant 2020 disent de même la retraite de base depuis 2007 et le RCI depuis
+    2013, mais, de 2009 à 2016, une assiette minimale moitié moindre
+    (`ASSIETTE_MINIMALE_DOM_DE_MOITIE`) : un écart de plus, que la limite
+    déclare."""
+    rsi, general = _taux_annuels("rsi"), _taux_annuels("regime_general")
     (premiere,) = [p for p in _fiche("rci")["periodes"]
                    if p["debut"] == 2013 and p["assiette"] == "plafonnee"]
-    for annee, (sous_plafond, au_dela, rci, rci_au_dela, plafond_rci) in TAUX_DOM.items():
-        plafonne = general[(annee, "taux_plafonne_non_salarie")]
-        totalite = general[(annee, "taux_deplafonne_non_salarie")]
+    for annee, (sous_plafond, au_dela, *complementaire) in {**TAUX_DOM_AVANT_2020,
+                                                           **TAUX_DOM}.items():
+        if annee <= 2017:
+            plafonne = rsi[(annee, "taux_plafonne")]
+            totalite = rsi.get((annee, "taux_deplafonne"), 0.0)
+        else:
+            plafonne = general[(annee, "taux_plafonne_non_salarie")]
+            totalite = general[(annee, "taux_deplafonne_non_salarie")]
         assert plafonne + totalite == pytest.approx(sous_plafond / 100), annee
         assert totalite == pytest.approx(au_dela / 100), annee
+        if not complementaire:
+            continue
+        rci, rci_au_dela, plafond_rci = complementaire
         fiche = _taux_de_la_fiche("rci", annee)
         assert (fiche["plafonnee"], fiche["tranche_1_4_pass"]) == pytest.approx(
             (rci / 100, rci_au_dela / 100)), annee
@@ -1367,3 +1400,7 @@ def test_l_independant_des_dom_cotise_aux_taux_et_aux_assiettes_de_la_metropole(
     plafond = _serie_annuelle(MACRO / "plafond_securite_sociale.csv", "pass_eur")
     for annee, publiee in ASSIETTE_MINIMALE_DOM.items():
         assert _arrondi(_assiette_minimale_de_la_serie(annee, smic, plafond)) == publiee, annee
+    for annee, publiee in ASSIETTE_MINIMALE_DOM_DE_MOITIE.items():
+        serie = _arrondi(_assiette_minimale_de_la_serie(annee, smic, plafond))
+        regle = _arrondi(200 * smic[annee]) if annee <= 2012 else serie
+        assert _arrondi(regle / 2) == publiee != serie, annee
