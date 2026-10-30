@@ -89,6 +89,16 @@ l'Institut des politiques publiques (PENSIPP). Écarts connus :
   servies depuis le 22 septembre 2026 ; seule en reste dehors sa troisième
   condition, la retraite de même nature déjà obtenue avant le 1er juillet
   2017 (voir « Ce qui reste hors du modèle »).
+- **assiettes forfaitaires des salariés** — le modèle porte au compte le
+  salaire que la saisie déclare, aux taux de droit commun, faute d'un statut
+  qui distingue ceux que la caisse traite autrement, et dont la base de
+  législation de la Cnav publie les barèmes : l'apprenti avant 2014, cotisant
+  sur une assiette forfaitaire que la fiche `apprentissage` attend ; le
+  vendeur à domicile, sur un salaire forfaitaire trimestriel ; l'employé de
+  maison, sur le Smic horaire de chaque heure de 1987 à 2012 et sur des
+  forfaits avant ; l'artiste du spectacle, à des taux réduits, et sur un
+  salaire forfaitaire par jour s'il est occasionnel ou acteur de complément ;
+  le journaliste, à des taux réduits depuis 1991.
 
 Un écart de quelques pour cent avec la pension réelle est attendu.
 
