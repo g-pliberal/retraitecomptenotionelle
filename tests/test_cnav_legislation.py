@@ -36,11 +36,12 @@ SANS_TITRE_POSSIBLE = ("references", "fenetres", "documents")
 #: Les récupérateurs qui lisent la base : les dix que l'action 175 a relevés
 #: le 29 octobre 2026 — neuf `cnav_*.py` qui nomment l'API, et `ines.py` —,
 #: `cnav_revalorisation_salaires.py`, qui en lit les circulaires sous `/Pdf/`,
-#: et celui de la base entière.
+#: celui de la base entière, et celui de Mayotte (étape 2).
 LECTEURS_DE_LA_BASE = (
     "cnav_assiette_avpf.py",
     "cnav_avts.py",
     "cnav_baremes_rci.py",
+    "cnav_mayotte.py",
     "cnav_minimum_contributif.py",
     "cnav_minimum_vieillesse.py",
     "cnav_points_avant_1973.py",

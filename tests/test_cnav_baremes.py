@@ -1193,3 +1193,69 @@ def test_le_plafond_de_la_reversion_du_rci_est_celui_de_la_caisse():
     plafond = _serie_annuelle(MACRO / "plafond_securite_sociale.csv", "pass_eur")
     for annee, montant in PLAFOND_REVERSION_RCI.items():
         assert 2 * plafond[annee] == pytest.approx(montant), annee
+
+
+# -- Mayotte ----------------------------------------------------------------------
+
+
+def test_un_bareme_de_mayotte_se_lit_par_date():
+    """Les barèmes de Mayotte rangent une valeur par ligne, datée d'un jour,
+    d'une période dont seul compte le début, ou d'une année ; un montant écrit
+    ses milliers d'une espace, sa virgule décimale, son euro."""
+    module = _recuperateur("cnav_mayotte")
+    contenu = "".join((
+        "<table><tr><th>Date</th><th>Montant horaire Mayotte</th></tr>",
+        "<tr><td>01/01/2026</td><td>9,33 €</td><td>Circulaire</td></tr>",
+        "<tr><td>​01/07/2004 au 31/12/2010</td><td>​912 €</td>",
+        "<td>​10 944 €</td></tr>",
+        "<tr><td>2026</td><td>1 399,50 €</td></tr></table>"))
+    assert module.lignes(contenu) == [("2026-01-01", 9.33), ("2004-07-01", 912.0),
+                                      ("2026-01-01", 1399.50)]
+    assert module.lignes(contenu, colonne=2) == [("2004-07-01", 10944.0)]
+    assert module.au_1er_janvier([("2004-07-01", 3.48), ("2005-07-01", 3.83),
+                                  ("2006-01-01", 4.0)], 2005, 2006) == {2005: 3.48, 2006: 4.0}
+
+
+def test_le_salaire_qui_valide_un_trimestre_a_mayotte_est_le_smig_fois_les_heures():
+    """Un trimestre se valide à Mayotte par 200 heures du Smig mahorais du
+    1er janvier jusqu'en 2016, 150 depuis 2017 (décret n° 87-175, art. 3 ;
+    décret n° 2003-589, art. 8) : la caisse publie ce produit, et le
+    récupérateur n'écrit rien s'il ne le retrouve pas."""
+    module = _recuperateur("cnav_mayotte")
+    smig = {2016: 7.30, 2017: 7.37}
+    assert module.controler(smig, {2016: 1460.0, 2017: 1105.50}) == []
+    griefs = module.controler(smig, {2016: 1460.0, 2017: 1474.0})
+    assert len(griefs) == 1 and "2017" in griefs[0]
+
+
+#: « Smic mensuel - Mayotte » : la colonne de la caisse de sécurité sociale de
+#: Mayotte (`smic_smig_smic_mensuel_mayotte_bar.aspx`, version du 25 juillet
+#: 2024) de 2002 à 2021, puis l'édition suivante
+#: (`mayotte_smic_minimum_garanti_smic_mensuel_bar.aspx`, version du
+#: 23 décembre 2025) : le salaire brut mensuel de 169 heures, de 151,67 depuis
+#: 2018, à chaque date d'effet.
+SMIC_MENSUEL_MAYOTTE = (
+    ("2002-01-01", 457.99), ("2002-07-01", 481.65), ("2003-01-01", 510.38),
+    ("2003-07-01", 534.04), ("2004-01-01", 549.25), ("2004-07-01", 588.12),
+    ("2005-07-01", 647.27), ("2006-07-01", 706.42), ("2007-07-01", 826.41),
+    ("2008-07-01", 927.81), ("2009-07-01", 1002.17), ("2010-07-01", 1069.77),
+    ("2011-01-01", 1086.67), ("2012-01-01", 1130.61), ("2012-07-01", 1154.27),
+    ("2013-01-01", 1176.24), ("2014-01-01", 1201.59), ("2015-01-01", 1226.94),
+    ("2016-01-01", 1233.70), ("2017-01-01", 1245.53), ("2018-01-01", 1131.43),
+    ("2019-01-01", 1148.12), ("2020-01-01", 1161.79), ("2021-01-01", 1173.93),
+    ("2021-10-01", 1199.68), ("2022-01-01", 1210.30), ("2022-05-01", 1242.15),
+    ("2022-08-01", 1266.42), ("2023-01-01", 1290.68), ("2023-05-01", 1319.50),
+    ("2024-01-01", 1334.67), ("2025-01-01", 1361.97), ("2026-01-01", 1415.05),
+)
+
+
+def test_le_smic_mensuel_de_mayotte_est_le_smig_de_la_serie_fois_les_heures():
+    """Le Smig horaire de `mayotte_smig_et_plafond.csv`, celui du 1er janvier,
+    fait chaque année le Smic mensuel que publient la caisse de Mayotte puis
+    la Cnav : fois 169 heures jusqu'en 2017, fois 35 × 52 / 12 depuis 2018 —
+    la caisse de Mayotte compte 151,67 heures en 2020 et en 2021."""
+    smig = _serie_annuelle(LEGISLATION / "mayotte_smig_et_plafond.csv", "smig_horaire")
+    for annee in range(2002, 2027):
+        heures = (169,) if annee < 2018 else (35 * 52 / 12, 151.67)
+        assert _au_1er_janvier(SMIC_MENSUEL_MAYOTTE, annee)[1] in {
+            round(smig[annee] * h, 2) for h in heures}, annee

@@ -1,0 +1,45 @@
+# Smig horaire et plafond de la sécurité sociale de Mayotte, en euros
+# -------------------------------------------------------------------
+# source_id: cnav_mayotte
+#
+# Fichier écrit par scripts/fetch/cnav_mayotte.py : ne pas modifier à la main.
+#
+# LE SMIG MAHORAIS valide les trimestres de Mayotte : 200 heures du Smig du
+# 1er janvier jusqu'en 2016, 150 depuis 2017 (décret n° 87-175, art. 3 ; décret
+# n° 2003-589, art. 8). LE PLAFOND est celui de la caisse de sécurité sociale
+# de Mayotte, en convergence vers le plafond national jusqu'en 2036. La fiche
+# cssm_mayotte valide encore au Smic national et plafonne au plafond national :
+# c'est elle qui les lira (action 175, étape 2, à la session du modèle).
+#
+# D'OÙ VIENNENT CES MONTANTS. Des barèmes de la base de législation de la Cnav
+# « Smic horaire - Mayotte » (le Smig du 1er janvier de chaque année, depuis
+# 2002) et « Salaire plafond - Mayotte » (le plafond annuel en vigueur au
+# 1er janvier, depuis 2005, le plafond du 1er juillet 2004 n'en couvrant que la
+# moitié) ; le salaire validant qu'elle publie depuis 2011, le Smig fois les
+# heures, les recoupe. Fiabilité `haute` : la caisse transcrit les textes.
+annee,smig_horaire,plafond_annuel,fiabilite
+2002,2.71,,haute
+2003,3.02,,haute
+2004,3.25,,haute
+2005,3.48,10944,haute
+2006,3.83,10944,haute
+2007,4.18,10944,haute
+2008,4.89,10944,haute
+2009,5.49,10944,haute
+2010,5.93,10944,haute
+2011,6.43,12840,haute
+2012,6.69,13860,haute
+2013,6.96,14820,haute
+2014,7.11,15792,haute
+2015,7.26,16800,haute
+2016,7.30,17904,haute
+2017,7.37,19104,haute
+2018,7.46,20328,haute
+2019,7.57,21768,haute
+2020,7.66,23208,haute
+2021,7.74,24396,haute
+2022,7.98,25644,haute
+2023,8.51,28728,haute
+2024,8.80,31728,haute
+2025,8.98,33852,haute
+2026,9.33,36264,haute
