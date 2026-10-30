@@ -141,7 +141,7 @@ cotisation_salaire_vente_domicile_2024_bar.aspx,Salaire forfaitaire - Vente de p
 cotisation_salaire_vente_domicile_2025_bar.aspx,Salaire forfaitaire - Vente de produits et de services à domicile - 2025,Carrière > Cotisations-salaires > Types d'activité,2025-02-06T06:33:00Z,limite,docs/limites/3-systeme-actuel.md,
 cotisation_salaire_vente_domicile_2026_bar.aspx,Salaire forfaitaire - Vente de produits et de services à domicile - 2026,Carrière > Cotisations-salaires > Types d'activité,2026-03-19T06:33:00Z,limite,docs/limites/3-systeme-actuel.md,
 cotisation_salaire_vente_domicile_bar.aspx,Vente de produits et de services à domicile,Carrière > Cotisations-salaires > Types d'activité,2026-03-19T06:33:00Z,limite,docs/limites/3-systeme-actuel.md,
-derniere_valeur_derniere_valeur_bar.aspx,Dernières valeurs,Dernières valeurs > Dernières valeurs,2026-04-02T09:54:00Z,a_lire,,
+derniere_valeur_derniere_valeur_bar.aspx,Dernières valeurs,Dernières valeurs > Dernières valeurs,2026-04-02T09:54:00Z,recoupe,tests/test_cnav_baremes.py::test_les_dernieres_valeurs_de_la_caisse_sont_celles_des_series,
 entreprise_restauration_montant_avantage_nature_bar.aspx,Entreprises de restauration - Montant des avantages en nature,Ressources > Avantages en nature,2026-06-11T12:14:00Z,a_lire,,
 mayotte_abandon_creance_dette_cotisant_bar.aspx,Abandon de créances ou de dettes pour les cotisants - Mayotte,Mayotte,2026-01-05T06:34:00Z,a_lire,,
 mayotte_abandon_creance_dette_prestataire_bar.aspx,Abandon de créances ou de dettes pour les prestataires - Mayotte,Mayotte,2026-08-07T04:46:00Z,a_lire,,

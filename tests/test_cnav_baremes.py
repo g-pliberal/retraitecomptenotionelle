@@ -1259,3 +1259,65 @@ def test_le_smic_mensuel_de_mayotte_est_le_smig_de_la_serie_fois_les_heures():
         heures = (169,) if annee < 2018 else (35 * 52 / 12, 151.67)
         assert _au_1er_janvier(SMIC_MENSUEL_MAYOTTE, annee)[1] in {
             round(smig[annee] * h, 2) for h in heures}, annee
+
+
+# -- les dernières valeurs --------------------------------------------------------
+
+#: « Dernières valeurs » (`derniere_valeur_derniere_valeur_bar.aspx`, version du
+#: 2 avril 2026) : le récapitulatif que la caisse tient des valeurs de 2026,
+#: en euros par an sauf mention.
+DERNIERES_VALEURS = {
+    "coefficient de revalorisation des retraites": 1.009,
+    "salaire qui valide un trimestre": 1803,
+    "allocation aux vieux travailleurs salariés": 4059.72,
+    "minimum contributif": 9075.50, "minimum contributif majoré": 10847.22,
+    "minimum de la réversion": 4019.13,
+    "maximum de la retraite personnelle": 24030.00,
+    "salaire plafond": 48060.00,
+    "ASPA, un allocataire": 12523.14, "ASPA, un allocataire, par mois": 1043.59,
+    "ASPA, deux allocataires": 19442.21,
+    "majoration pour charge d'enfant, par mois": 113.59,
+    "majoration pour conjoint à charge": 609.80,
+    "plafond de ressources de la réversion, personne seule": 25001.60,
+    "plafond de ressources de la réversion, couple": 40002.56,
+    "plafond de la majoration de la réversion, par trimestre": 3020.07,
+    "Smic horaire": 12.02,
+}
+
+
+def test_les_dernieres_valeurs_de_la_caisse_sont_celles_des_series():
+    """Ce que la caisse récapitule pour 2026 est ce que portent les séries du
+    dépôt, chacune lue par son récupérateur ou confrontée par son test. L'ASPA
+    d'un allocataire fait, à la série, douze fois le mensuel, six centimes de
+    moins que l'annuel publié : la fiche `minimum_vieillesse` le déclare."""
+    v = DERNIERES_VALEURS
+    revalorisation = {ligne["date_effet"]: float(ligne["coefficient"])
+                      for ligne in _csv(LEGISLATION / "revalorisation_pensions.csv")}
+    assert revalorisation["2026-01-01"] == v["coefficient de revalorisation des retraites"]
+    smic = _serie_annuelle(MACRO / "smic_horaire.csv", "smic_horaire")[2026]
+    assert smic == pytest.approx(v["Smic horaire"])
+    assert 150 * smic == pytest.approx(v["salaire qui valide un trimestre"])
+    avts = {ligne["date"]: float(ligne["valeur"])
+            for ligne in _csv(LEGISLATION / "pension_minimum_avant_1983.csv")}
+    assert avts["2026-01-01"] == v["allocation aux vieux travailleurs salariés"]
+    contributif = {(ligne["mesure"], ligne["date"]): float(ligne["valeur"])
+                   for ligne in _csv(LEGISLATION / "minimum_contributif.csv")}
+    assert contributif[("montant_base", "2026-01-01")] == v["minimum contributif"]
+    assert contributif[("montant_majore", "2026-01-01")] == v["minimum contributif majoré"]
+    annuel = {nom: _serie_annuelle(LEGISLATION / f"{nom}.csv", "valeur")[2026] for nom in (
+        "minimum_reversion", "minimum_vieillesse", "minimum_vieillesse_couple",
+        "majoration_forfaitaire_enfant_reversion", "plafond_majoration_reversion")}
+    assert annuel["minimum_reversion"] == pytest.approx(v["minimum de la réversion"])
+    assert annuel["minimum_vieillesse"] == pytest.approx(12 * v["ASPA, un allocataire, par mois"])
+    assert annuel["minimum_vieillesse"] != pytest.approx(v["ASPA, un allocataire"], abs=0.01)
+    assert annuel["minimum_vieillesse_couple"] == pytest.approx(v["ASPA, deux allocataires"])
+    assert annuel["majoration_forfaitaire_enfant_reversion"] == pytest.approx(
+        12 * v["majoration pour charge d'enfant, par mois"])
+    assert annuel["plafond_majoration_reversion"] == pytest.approx(
+        v["plafond de la majoration de la réversion, par trimestre"])
+    plafond = _serie_annuelle(MACRO / "plafond_securite_sociale.csv", "pass_eur")[2026]
+    assert plafond == v["salaire plafond"]
+    assert 0.5 * plafond == v["maximum de la retraite personnelle"]
+    assert 2080 * smic == pytest.approx(v["plafond de ressources de la réversion, personne seule"])
+    assert 1.6 * 2080 * smic == pytest.approx(v["plafond de ressources de la réversion, couple"])
+    assert MAJORATION_CONJOINT[-1][1] == v["majoration pour conjoint à charge"]
