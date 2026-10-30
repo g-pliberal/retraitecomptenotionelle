@@ -919,3 +919,51 @@ def test_une_edition_du_bareme_qui_contredit_sa_circulaire_arrete_l_ecriture():
         colonnes, {"2024-01-01": {2023: 1.053}}, coquilles={})
     assert griefs and "1955" in griefs[0]
     assert module.COQUILLES_DES_BAREMES == {("2024-01-01", 1955): 40.887}
+
+
+# -- la majoration pour conjoint à charge ----------------------------------------
+
+#: « Majoration pour conjoint à charge - Montant » (`ancienne_prestation_mc_montant_bar.aspx`,
+#: version du 7 janvier 2026) : chaque montant annuel à sa date d'effet, en
+#: anciens francs jusqu'en 1959, en francs jusqu'en 2001, en euros depuis.
+MAJORATION_CONJOINT = (
+    ("1948-07-01", 14500, "AF"), ("1948-10-01", 19200, "AF"), ("1949-04-01", 19500, "AF"),
+    ("1950-01-01", 22500, "AF"), ("1951-01-01", 26000, "AF"), ("1951-10-01", 29900, "AF"),
+    ("1954-01-01", 32900, "AF"), ("1956-01-01", 36190, "AF"), ("1960-01-01", 361.90, "F"),
+    ("1962-04-01", 600, "F"), ("1963-07-01", 700, "F"), ("1964-01-01", 900, "F"),
+    ("1964-11-01", 1000, "F"), ("1965-07-01", 1100, "F"), ("1966-01-01", 1150, "F"),
+    ("1966-07-01", 1250, "F"), ("1967-01-01", 1300, "F"), ("1967-10-01", 1400, "F"),
+    ("1968-01-01", 1450, "F"), ("1968-07-01", 1550, "F"), ("1969-10-01", 1650, "F"),
+    ("1970-10-01", 1750, "F"), ("1971-10-01", 1850, "F"), ("1972-10-01", 2100, "F"),
+    ("1973-07-01", 2250, "F"), ("1974-01-01", 2450, "F"), ("1974-07-01", 3000, "F"),
+    ("1975-01-01", 3250, "F"), ("1975-04-01", 3500, "F"), ("1976-01-01", 3750, "F"),
+    ("1976-07-01", 4000, "F"), ("2002-01-01", 609.80, "€"),
+)
+
+
+def test_la_majoration_pour_conjoint_a_charge_a_les_montants_de_la_caisse():
+    """Chaque version de la fiche `majoration_conjoint_a_charge` qui porte des
+    montants porte ceux de la caisse, en euros, à leurs dates — sauf le
+    1er janvier 1960, qui ne fait que passer au nouveau franc, et 2002, où
+    4 000 F deviennent 609,80 €."""
+    import yaml
+
+    fiche = yaml.safe_load((RACINE / "data" / "reference" / "regles"
+                            / "majoration_conjoint_a_charge.yaml").read_text(encoding="utf-8"))
+    attendus, precedent = [], None
+    for debut, montant, unite in MAJORATION_CONJOINT:
+        if unite == "€":
+            en_euros = montant
+        else:
+            en_euros = montant / FRANCS_PAR_EURO / (100 if unite == "AF" else 1)
+        if precedent is None or abs(en_euros - precedent) > 1e-6:
+            attendus.append((debut, en_euros))
+        precedent = en_euros
+    versions = [version for version in fiche["versions"]
+                if "montants" in ((version.get("contenu") or {}).get("parametres") or {})]
+    assert len(versions) == 3
+    for version in versions:
+        montants = version["contenu"]["parametres"]["montants"]
+        assert [debut for debut, _ in montants] == [debut for debut, _ in attendus]
+        for (debut, lu), (_, attendu) in zip(montants, attendus):
+            assert lu == pytest.approx(attendu, abs=1e-6), (version["id"], debut)
