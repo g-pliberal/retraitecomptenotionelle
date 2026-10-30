@@ -130,6 +130,22 @@ sources:
     Le micro-entrepreneur cotise en pourcentage de son chiffre d'affaires
     (L. 613-7) : le statut lui prête le barème de l'artisan sur un revenu
     reconstitué, ce que la fiche de son statut dit déjà.
+  - >-
+    L'assiette de la cotisation d'avant 2007. D. 633-5 la calcule « à titre
+    provisionnel » sur les revenus déclarés l'année précédente (rédaction de 1985),
+    sur ceux de l'année précédente (1995), puis de l'avant-dernière année (2004) ;
+    D. 633-6, celle de l'année de début d'exercice sur un revenu forfaitaire, le
+    tiers du plafond, et celle de l'année suivante, provisionnelle, sur la moitié
+    (1985), puis l'une et l'autre provisionnelles (2000) ; la caisse publie, de 1999
+    à 2006, 18 puis 27 fois la base mensuelle des allocations familiales pour la
+    retraite de base des artisans (barème « Début d'activité - Assiettes et
+    cotisations forfaitaires - Avant 2007 »). L. 131-6 prévoit depuis 1995 une
+    régularisation « lorsque le revenu professionnel est définitivement connu ». Le
+    modèle assied chaque année sur son revenu : juste si la régularisation se
+    faisait sur le revenu de l'année même ; sinon, le revenu porté au compte est
+    celui d'une année antérieure, ou le forfait. À trancher par la circulaire de la
+    caisse sur la réforme de 2007 et par le texte qui a mis la régularisation en
+    œuvre, avant toute retouche, à la session du modèle (action 175, étape 2).
   lectures:
   - type: legifrance
     reference: >-
@@ -137,6 +153,23 @@ sources:
       LEGIARTI000031799496 (2016), LEGIARTI000041967101 (2020), LEGIARTI000049904636
       (2024), lus dans l'index LEGI du dépôt
     date: 2026-10-13
+  - type: legifrance
+    reference: >-
+      L. 131-6 CSS, ses rédactions de 1995 à 2011 (LEGIARTI000006740111 à
+      LEGIARTI000020675442) ; D. 633-5, de 1985 à 2008 (LEGIARTI000006737888 à
+      LEGIARTI000006737892) ; D. 633-6, de 1985 à 2004 (LEGIARTI000006737893 à
+      LEGIARTI000006737896), lus dans l'index LEGI du dépôt
+    date: 2026-10-30
+  - type: autre
+    reference: >-
+      Cnav, base de législation : les barèmes « Début d'activité des travailleurs
+      indépendants - Assiettes et cotisations forfaitaires », de 2007 à 2025 et avant
+      2007 (artisans de 1999 à 2006, commerçants de 2003 à 2006) ; l'exposé
+      « Travailleurs indépendants » : la cotisation provisionnelle, ajustée, puis
+      définitive l'année suivante sur le revenu réel, sur une assiette forfaitaire
+      les deux premières années
+    url: https://legislation.lassuranceretraite.fr/#/bareme?file_leaf_ref=ti_cotisation_debut_activite_assiette_forfaitaire_bar.aspx
+    date: 2026-10-30
 code:
   python: >-
     donnees/regimes.py : PeriodeRegime.taux_du_cotisant, charger_taux_annuels ;
