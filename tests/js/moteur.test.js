@@ -1,11 +1,13 @@
 /**
  * Le moteur JavaScript contre les cas-témoins du modèle Python.
  *
- * Le Python de ``src/`` reste la référence : il a été écrit contre les sources,
- * testé et documenté. Ce fichier vérifie que le JavaScript qui fait tourner le
- * site en retrouve les chiffres — et le HTML — sur un jeu de cas figé par
- * ``scripts/construire_temoins.py``. Toute divergence, sur n'importe quelle
- * valeur de l'un des cas, fait échouer le test.
+ * Le JavaScript de ``moteur/js/`` fait foi depuis le 31 octobre 2026 (note de
+ * décision 0005) : une règle s'y écrit d'abord, contre ses sources, et son
+ * jumeau Python la suit tant qu'il en a un. Les témoins, que
+ * ``scripts/construire_temoins.py`` fait encore simuler au moteur Python, le
+ * prouvent : ce fichier vérifie que le JavaScript qui fait tourner le site en
+ * retrouve les chiffres — et le HTML —, au bit près. Toute divergence, sur
+ * n'importe quelle valeur de l'un des cas, fait échouer le test.
  *
  *     node --test tests/js/*.test.js
  */
@@ -61,8 +63,10 @@ const temoinsSimulations = lire("tests/temoins/simulations.json");
  * action 161, étape 5) : sous Linux x86_64, il rend chaque nombre tel que le
  * moteur Python l'a écrit, et un écart d'un seul ulp dit que les deux moteurs
  * ont cessé de calculer de même — une addition dans un autre ordre, une règle
- * portée d'un côté seulement. Les témoins garderont ainsi chaque nombre, au
- * bit près, le jour où le portage les écrira.
+ * portée d'un côté seulement. Le JavaScript fait foi et le Python le suit
+ * (note de décision 0005) : cette égalité prouve qu'il le suit, et que les
+ * témoins garderont chaque nombre, au bit près, le jour où le portage les
+ * écrira.
  * Ailleurs, des témoins refaits sur place par une autre libm peuvent différer
  * d'un ulp (`_fichier_a_jour`, `tests/test_web.py`) : la tolérance d'avant y
  * reste, 1e-9, six ordres de grandeur au-dessus de ce bruit.

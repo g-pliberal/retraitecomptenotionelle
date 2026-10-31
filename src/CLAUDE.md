@@ -1,22 +1,33 @@
 # Consignes de `src/` : le modèle
 
 Claude Code les charge à la première lecture d'un fichier de `src/`, en plus
-de `CLAUDE.md`. Le modèle a son portage dans `moteur/js/`, sauf le coût, et
-ses données dans `data/`, qui ont leurs consignes. Ne s'écrivent pas ici : le
+de `CLAUDE.md`. Le moteur d'une carrière fait foi dans `moteur/js/`, dont
+`src/` garde des jumeaux jusqu'à leur retrait ; le coût n'est qu'ici, et les
+données sont dans `data/`, qui ont leurs consignes. Ne s'écrivent pas ici : le
 texte du site, qui s'écrit en JavaScript (`moteur/CLAUDE.md`), ni une variante
 de la proposition, qui s'écrit en couche (`data/CLAUDE.md`).
 
-- **Le Python de `src/` fait foi pour chaque étape qui a encore son jumeau
-  JavaScript** (principe 4, note de décision 0003) : toute modification s'y
-  fait d'abord, puis se porte dans `moteur/js/`, et
+- **Le JavaScript de `moteur/js/` fait foi pour chaque étape du moteur qui a
+  encore son jumeau ici** (principe 4, notes de décision 0003 et 0005) : une
+  règle nouvelle ou modifiée s'y écrit d'abord, avec son test tiré de la
+  source ; son jumeau Python la suit dans le même commit, ligne pour ligne,
+  jusqu'à rendre chaque nombre des témoins au bit près — la concordance
+  (`tests/js/moteur.test.js`) en est le test, et un témoin de plus
+  (`scripts/construire_temoins.py`) couvre la règle quand la concordance ne
+  rougit pas sans lui. Le Python ne cesse de suivre qu'au retrait de sa paire
+  (action 161) : tant que les témoins se simulent au moteur Python et que le
+  coût bâtit et date ses carrières par lui, une règle portée d'un seul côté
+  rougirait la suite ou ferait mentir le coût.
   `python scripts/jumeaux.py <nom>` dit si une étape a son jumeau et tout ce
-  qui en dépend. Un code neuf s'écrit une fois, dans le langage de l'endroit
-  où il tourne : ici, ce que seule la fabrique calcule, comme le coût, qui ne
-  se calcule qu'ici : le coût agrégé, celui des avantages, les carrières types
-  et leurs départs, que
-  `scripts/construire_donnees.py` fige sous les réglages de référence dans la
-  table du paquet (`data/derive/agregats.json`), lue des deux côtés par les
-  mêmes accesseurs (`donnees/agregats.py`, `moteur/js/agregats.js`). Après
+  qui en dépend. Un code neuf
+  s'écrit une fois, dans le langage de l'endroit où il tourne : ici, ce que
+  seule la fabrique calcule, comme le coût, qui ne se calcule qu'ici : le
+  coût agrégé, celui des avantages, les carrières types et leurs départs,
+  que `scripts/construire_donnees.py` fige sous les réglages de référence
+  dans la table du paquet (`data/derive/agregats.json`), par les écrivains
+  de `donnees/agregats.py`, et que lisent les accesseurs de
+  `moteur/js/agregats.js` : ceux du Python ne servent plus qu'aux tests, et
+  s'en vont (note de décision 0005), sans qu'aucun s'y ajoute. Après
   elle, ou après toute modification des données, `python scripts/regenerer.py`
   refait tout ce qu'un script fabrique — le paquet, les témoins, le
   chiffrage, les tableaux, le tableau de bord, les chiffres ancrés —, dans
@@ -51,14 +62,19 @@ de la proposition, qui s'écrit en couche (`data/CLAUDE.md`).
 
 ## Liste de contrôle
 
-- **Un changement du modèle** : le test d'abord, vu rouge — l'exemple publié
-  de la règle, s'il existe, dans `tests/temoins/exemples_officiels.yaml`,
-  sinon un cas posé à la main depuis le texte — ; le Python, jusqu'au vert ;
-  puis son jumeau s'il en a un (`python scripts/jumeaux.py <nom>`), de même :
-  le cas qui confronte les deux moteurs, rouge, puis le JavaScript, le coût
-  n'ayant pas de jumeau ; `python scripts/regenerer.py`, puis
-  `python scripts/resumer_temoins.py`, pour
-  voir ce qu'il déplace ; `-m rapide` et les tests de sa zone, puis le commit.
+- **Un changement du moteur d'une carrière** : le test d'abord, vu rouge —
+  l'exemple publié de la règle, s'il existe
+  (`tests/temoins/exemples_officiels.yaml`), sinon un cas posé à la main
+  depuis le texte —, sur le portage : un essai de `tests/js/`, ou un test qui
+  le fait tourner par le pont ; le JavaScript, jusqu'au vert ; puis son
+  jumeau Python, s'il en a un (`python scripts/jumeaux.py <nom>`) : la
+  concordance des témoins vue rouge, au besoin par un témoin de plus, le
+  Python porté ligne pour ligne, `python scripts/construire_temoins.py`, la
+  concordance verte, au bit près. Ce qui n'a pas de jumeau — le coût, les
+  carrières types — s'écrit en Python seul, son test d'abord. Puis
+  `python scripts/regenerer.py`, et `python scripts/resumer_temoins.py`,
+  pour voir ce qu'il déplace ; `-m rapide` et les tests de sa zone, puis le
+  commit.
   Les tests de sa zone comptent les confrontations légères, sept secondes
   sans mémoire : `python -m pytest tests/test_oracle.py tests/test_destinie.py
   tests/test_estimation_officielle.py tests/test_verification.py` ; elles ont

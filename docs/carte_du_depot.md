@@ -19,8 +19,8 @@ page ou une couche de plus, et ce test demande à la carte de suivre.
 | Zone | Où | Ce qu'on y trouve |
 |---|---|---|
 | Données | `data/` | Ce que le modèle sait du droit et de l'économie : les fiches de règles, les régimes, les séries, les scénarios. En YAML et en CSV, chaque valeur rattachée à sa source. Consignes : `data/CLAUDE.md`. |
-| Modèle | `src/` | Le calcul de référence, en Python. Il fait foi, et toute règle s'y écrit d'abord. Consignes : `src/CLAUDE.md`. |
-| Site | `index.html` et un dossier par page (`cout/`…), `moteur/` | Les neuf pages toutes faites, la copie du modèle en JavaScript, le texte des pages, la feuille de style : des fichiers servis tels quels, sans rien à construire. Consignes : `moteur/CLAUDE.md`. |
+| Modèle | `src/` | Le coût, que seule la fabrique calcule, en Python, et les jumeaux Python du moteur d'une carrière, qui suivent le JavaScript au bit près jusqu'à leur retrait. Consignes : `src/CLAUDE.md`. |
+| Site | `index.html` et un dossier par page (`cout/`…), `moteur/` | Les neuf pages toutes faites, le moteur d'une carrière en JavaScript, qui fait foi, le texte des pages, la feuille de style : des fichiers servis tels quels, sans rien à construire. Consignes : `moteur/CLAUDE.md`. |
 | Atelier | `scripts/`, `tests/`, `.github/` | Ce qui fabrique et vérifie : le paquet de données, les témoins, les tests, la publication. |
 | Hors du dépôt | | Les sources officielles, les visiteurs du site, et les sessions Claude qui font le travail. |
 
@@ -34,10 +34,10 @@ dépôt.
 flowchart LR
   sources["Sources officielles<br/>Légifrance, INSEE, DREES,<br/>COR, CNAV, OpenFisca…"]
   donnees["Données de référence<br/>data/<br/>règles, régimes, séries,<br/>univers et couches"]
-  python["Modèle Python<br/>src/<br/>il fait foi"]
+  python["Modèle Python<br/>src/<br/>le coût, les jumeaux"]
   paquet["Paquet de données<br/>moteur/donnees.json<br/>coût calculé d'avance compris"]
   temoins["Témoins et tests<br/>tests/temoins/"]
-  jumeau["Jumeau JavaScript<br/>moteur/js/"]
+  jumeau["Moteur JavaScript<br/>moteur/js/<br/>il fait foi"]
   pages["Texte des pages<br/>pages.js, gabarit.js, style.css"]
   toutes["Pages toutes faites<br/>index.html et un dossier par page,<br/>construire_pages.py"]
   site["Site en ligne<br/>servi par GitHub Pages,<br/>calcule dans le navigateur"]
@@ -49,7 +49,7 @@ flowchart LR
   python -->|"fige les simulations"| temoins
   pages -->|"figées elles aussi"| temoins
   temoins -->|"vérifient"| jumeau
-  python -.->|"recopié à la main"| jumeau
+  jumeau -.->|"suivi à la main, au bit près"| python
   jumeau -->|"calcule"| pages
   pages -->|"écrites d'avance"| toutes
   toutes -->|"servies"| site
@@ -70,12 +70,14 @@ flowchart LR
 Le modèle Python lit les données et fabrique deux choses : le paquet que
 charge le site, `moteur/donnees.json`
 (<!--chiffre:poids(moteur/donnees.json)-->5 748<!--/--> Ko, par
-`scripts/construire_donnees.py`), et les témoins qui vérifient la copie
-JavaScript, dans `tests/temoins/` (par `scripts/construire_temoins.py`).
+`scripts/construire_donnees.py`), et les témoins, que son moteur simule
+encore et que le moteur JavaScript doit retrouver, dans `tests/temoins/`
+(par `scripts/construire_temoins.py`).
 
-La copie elle-même, seul trait en pointillé, se fait à la main, règle par
-règle et Python d'abord, sous les mêmes noms d'étapes des deux côtés. Les
-témoins la tiennent :
+Le suivi, seul trait en pointillé, se fait à la main, règle par règle et
+JavaScript d'abord (note de décision 0005), sous les mêmes noms d'étapes des
+deux côtés, jusqu'au retrait de chaque jumeau Python. Les témoins le
+tiennent :
 <!--chiffre:entrees(tests/temoins/simulations.json:)-->913<!--/--> simulations
 complètes et <!--chiffre:entrees(tests/temoins/pages.json:)-->85<!--/--> pages
 figées, que `node --test` rejoue ;
@@ -336,12 +338,13 @@ officiels, sont dans la partie 1 du tableau de bord.
   liquider chaque régime, compléter.
 - **Échéancier** : il parcourt les événements d'une vie dans l'ordre des
   dates, et relance le calcul à chacun.
-- **Jumeau** : la copie JavaScript du modèle, étape par étape et sous les
-  mêmes noms.
+- **Jumeaux** : les deux exemplaires, JavaScript et Python, d'une même étape
+  du moteur, sous les mêmes noms ; le JavaScript fait foi, et le Python le
+  suit jusqu'au retrait de la paire (action 161).
 - **Paquet** : `moteur/donnees.json`, toutes les données que le site charge,
   coût précalculé compris.
-- **Témoin** : un résultat figé, simulation ou page, que la copie doit
-  retrouver à l'identique.
+- **Témoin** : un résultat figé, simulation ou page, que le moteur
+  JavaScript doit retrouver à l'identique, au bit près.
 - **Fichier fabriqué** : un fichier qu'un script écrit, jamais une personne :
   le paquet, les témoins, `docs/etat.md`, les tableaux du README. GitHub les
   refait après chaque envoi.

@@ -4,13 +4,14 @@ Claude Code les charge à la première lecture d'un fichier de `moteur/`, en
 plus de `CLAUDE.md`. Le dossier porte deux zones : le portage JavaScript du
 modèle et le site. Chaque étape s'écrit une fois, dans le langage de
 l'endroit où elle tourne (principe 4, note de décision 0003) : ce que le site
-calcule chez son lecteur, ici seulement. Une étape qui a encore son jumeau
-Python le suit : le Python fait foi et se modifie le premier
-(`src/CLAUDE.md`), jusqu'au retrait de la paire (action 161,
-`python scripts/jumeaux.py <nom>`). Le portage ne copie que ce que le
-simulateur calcule, une carrière : le coût n'y est pas, et Coût, Carrières
-types et Droits non cotisés lisent ce que le Python en a fabriqué
-(`agregats.js`, `docs/architecture.md`, § 7.1).
+calcule chez son lecteur, ici seulement. Le moteur d'une carrière fait foi
+ici (note de décision 0005) : une règle s'écrit d'abord dans `moteur/js/`,
+avec son test tiré de la source, et son jumeau Python, tant qu'il en a un, la
+suit dans le même commit, au bit près des témoins (`src/CLAUDE.md`), jusqu'au
+retrait de la paire (action 161, `python scripts/jumeaux.py <nom>`). Le
+portage ne calcule que ce que le simulateur calcule, une carrière : le coût
+n'y est pas, et Coût, Carrières types et Droits non cotisés lisent ce que le
+Python en a fabriqué (`agregats.js`, `docs/architecture.md`, § 7.1).
 
 - **Une adresse par page** (action 174, note de décision 0004) : l'accueil est
   la racine du site, `index.html` ; chaque autre page est un dossier de son
@@ -111,10 +112,12 @@ types et Droits non cotisés lisent ce que le Python en a fabriqué
   (`contexte.js`), seul à bâtir la carrière depuis l'action 161 ; la
   chronologie s'il porte un fait ; un témoin de simulation, et de page si la
   page change ; `python -m pytest -m site`.
-- **Un chiffre de plus sur une page qui agrège** : d'abord son test, vu
-  rouge, dans `tests/test_agregats.py` ; il se fabrique en Python, dans
-  `_agregats` (`scripts/construire_donnees.py`) et `donnees/agregats.py`, se
-  lit par l'accesseur jumeau de `agregats.js`, sans rien calculer qu'une
-  règle décide, et la version du paquet monte des deux côtés (`VERSION`,
-  `VERSION_PAQUET`) ; son test au vert, puis la liste d'une retouche de
-  `pages.js`.
+- **Un chiffre de plus sur une page qui agrège** : d'abord ses tests, vus
+  rouges — ce que la table en porte, dans `tests/test_agregats.py`, et ce
+  que l'accesseur en lit, par un essai de `tests/js/` ; il se fabrique en
+  Python, dans `_agregats` (`scripts/construire_donnees.py`) et les écrivains
+  de `donnees/agregats.py`, et se lit par `agregats.js` seul, sans rien
+  calculer qu'une règle décide : les lecteurs Python de la table s'en vont,
+  et aucun ne s'y ajoute (note de décision 0005). La version du paquet monte
+  des deux côtés (`VERSION`, `VERSION_PAQUET`) ; ses tests au vert, puis la
+  liste d'une retouche de `pages.js`.

@@ -1,7 +1,7 @@
 /**
  * L'histoire des prélèvements sur les pensions et sur les salaires —
- * portage de `donnees/prelevements_historiques.py`, qui fait foi et dit le
- * détail (action 138, étape 9).
+ * portage de `donnees/prelevements_historiques.py`, qui le suit et dit le
+ * détail (action 138, étape 9 ; note de décision 0005).
  *
  * La CSG depuis 1991, la CRDS, la CASA, la maladie des pensions de chaque
  * régime ; sur les salaires, la maladie, le veuvage, l'assurance chômage, la

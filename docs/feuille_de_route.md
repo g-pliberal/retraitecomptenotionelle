@@ -6918,16 +6918,15 @@ de `contribution_etat`.
 
 ### 161. Un seul exemplaire du code : les doublons entre le Python et le JavaScript retirés une paire à la fois, chaque retrait relu — `en cours`
 
-**Reprise, au 29 octobre 2026.** Étape 6 : trois paires faites — la saisie
-de `contexte.py`, `saisie.py`, puis le pilote, dont le Python ne date plus que
-les cas types —, les trois défauts que la relecture de `saisie.py` laissait
-au portage, corrigés chacun par son test, et la paire de la carrière relue :
-le profil s'interpole au bit près des deux côtés, le portage ne lit plus que
-les clés propres de ses tables (`2026-10-28-etape-6-la-paire-de-la-carriere.md`).
-Le calendrier et la chronologie, relus aussi : le demi-mois compte le mois qui
-suit, les deux côtés lisent les mêmes dates déclarées (`2026-10-28-etape-6-le-calendrier-et-la-chronologie.md`).
-Les paires suivantes attendent que le coût passe le pont ; deux de données, le
-propriétaire. Détail : `2026-10-24-etape-6-huitieme-partie-les-defauts-du-portage.md`.
+**Reprise, au 31 octobre 2026.** Le JavaScript fait foi (note de décision
+0005) : une règle s'écrit d'abord dans `moteur/js/`, son jumeau Python la
+suit dans le même commit, et la concordance des témoins l'exige au bit près.
+Aucune paire du moteur n'est libre : les témoins se simulent au Python, le
+coût y bâtit et date ses carrières, les exemples officiels l'éprouvent. Les
+deux paires de données sont tranchées. Ce qui suit, dans l'ordre : les
+témoins simulés par le portage, d'abord une table des types pour l'octet ;
+les confrontations par le pont ; le coût daté par le portage ; les retraits,
+par sous-ensemble cohérent. Détail : `2026-10-31-etape-6-le-javascript-fait-foi.md`.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur

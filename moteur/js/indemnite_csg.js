@@ -5,7 +5,8 @@
  * réévalue. Ce module ne connaît que des rémunérations ; ce qu'en fait la
  * fiche de paie est dans `remuneration.js`.
  *
- * Jumeau de `src/retraite_notionnelle/donnees/indemnite_csg.py`, qui fait foi.
+ * Jumeau de `src/retraite_notionnelle/donnees/indemnite_csg.py`, qui le suit
+ * (note de décision 0005).
  */
 
 /** Une réévaluation de l'article 5 : voir le Python. */

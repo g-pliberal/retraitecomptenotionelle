@@ -3,7 +3,8 @@
  * le traitement majoré (le policier, le sapeur-pompier professionnel), ou un
  * supplément de pension (l'aide-soignant). Voir le module Python.
  *
- * Jumeau de `src/retraite_notionnelle/droit/primes.py`, qui fait foi.
+ * Jumeau de `src/retraite_notionnelle/droit/primes.py`, qui le suit (note de
+ * décision 0005).
  */
 
 import { formatFixe, formatPourcentage } from "../format.js";

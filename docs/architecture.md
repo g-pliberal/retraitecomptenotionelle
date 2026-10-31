@@ -49,8 +49,8 @@ carrières commencées en 1930 aux départs de 2070.
    moteur d'une carrière, n'a qu'un exemplaire, en JavaScript, que le Python
    fait tourner par node. Les étapes s'échangent des données décrites par un
    schéma, et les témoins gardent leurs chiffres. Tant qu'une étape a encore
-   ses deux jumeaux, le Python fait foi pour elle, et le JavaScript la copie
-   (§ 7.1).
+   ses deux jumeaux, le JavaScript fait foi pour elle, et le Python le suit,
+   au bit près (§ 7.1).
 5. **Le temps est explicite.** Chaque version d'une règle dit à quelles
    situations elle s'applique, par des bornes sur des dates nommées. Les
    versions d'une règle forment un partage, sans trou ni chevauchement qui ne
@@ -109,7 +109,7 @@ vivent à côté du noyau : on les allonge, elles aussi, sans décision.
 | savoir où l'on en est, ce qui ne va pas encore, ce qui reste à faire | le tableau de bord, fabriqué (§ 9.1) ; la feuille de route n'y ajoute que ce que la carte ne sait pas dire |
 | une source nouvelle : un texte, un exemple, une série, une remarque | le registre des sources, où elle entre toujours ; ce qu'elle révèle, déclaré là où il va (§ 9.2) |
 | changer le texte du site | le site, en JavaScript seulement |
-| retirer un doublon entre le Python et le JavaScript | une paire par étape, par la méthode de la note de décision 0003, en partant de `python scripts/jumeaux.py <nom>` ; les témoins restent identiques |
+| retirer un doublon entre le Python et le JavaScript | une paire, ou un sous-ensemble cohérent de paires, par étape, par la méthode de la note de décision 0003 (note 0005), en partant de `python scripts/jumeaux.py <nom>` ; les témoins restent identiques |
 
 ---
 
@@ -1103,13 +1103,19 @@ Chaque étape a un seul exemplaire, dans le langage de l'endroit où elle tourne
 (principe 4, note de décision 0003) : le JavaScript pour ce que le site
 calcule chez son lecteur, le Python pour ce que seule la fabrique calcule, et
 le JavaScript pour le moteur d'une carrière, qui tourne aux deux endroits et
-que le Python fera tourner par node. Le dépôt y va une paire de jumeaux à la
-fois, relue avant d'être retirée, les témoins identiques (action 161) :
+que le Python fera tourner par node. Le dépôt y va par paire de jumeaux, ou
+par sous-ensemble cohérent de paires, chacune relue avant d'être retirée, les
+témoins identiques (action 161, note de décision 0005) :
 `python scripts/jumeaux.py` dresse la carte des paires, de tout ce qui dépend
 de chaque jumeau et de ce que les tests de concordance en exécutent. Tant
-qu'une étape a ses deux jumeaux, le Python fait foi pour elle, et les deux
-gardent la même structure, étape par étape et fonction par fonction, avec les
-mêmes noms : recopier une règle reste un geste local. Les versions, les
+qu'une étape a ses deux jumeaux, le JavaScript fait foi pour elle : une règle
+s'y écrit d'abord, et le Python la suit dans le même commit, jusqu'à rendre
+chaque nombre des témoins au bit près, que `tests/js/moteur.test.js` exige
+sous Linux x86_64, où GitHub les fabrique. Le Python ne cesse de suivre
+qu'au retrait de sa paire : les témoins se simulent encore à son moteur, et
+le coût bâtit et date ses carrières par lui. Les deux gardent la même
+structure, étape par étape et fonction par fonction, avec les mêmes noms :
+recopier une règle reste un geste local. Les versions, les
 relations et les paramètres sont des données, écrites une fois et lues par
 les deux moteurs.
 
@@ -1123,9 +1129,11 @@ classent les écarts — ne se calcule pas chez le lecteur (action 150) :
 carrières types et les départs par le portage, que node fait tourner sur le
 paquet du jour (`retraite_notionnelle/pont.py`, action 161, étape 5), dans la
 table figée,
-`data/derive/agregats.json`, que le paquet porte à côté du bilan figé, et les
-deux langages la lisent par les mêmes accesseurs, `donnees/agregats.py` et
-`moteur/js/agregats.js`, qui ne calculent rien qu'une règle décide. Une page
+`data/derive/agregats.json`, que le paquet porte à côté du bilan figé ; les
+écrivains de `donnees/agregats.py` la fabriquent, et les accesseurs de
+`moteur/js/agregats.js` la lisent, sans rien calculer qu'une règle décide —
+ceux du Python ne servent plus qu'aux tests, et s'en vont (note de décision
+0005). Une page
 qui veut un chiffre de plus le fait fabriquer ; la version du paquet monte
 alors des deux côtés, et le site qui reçoit un paquet d'une autre version
 le redemande une fois, puis dit au lecteur de recharger la page. Le bilan

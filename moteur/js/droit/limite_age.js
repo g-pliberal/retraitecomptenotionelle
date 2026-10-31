@@ -24,8 +24,8 @@
  * où l'agent atteint sa limite, le premier de la version qui la crée quand il
  * l'avait déjà passée.
  *
- * Jumeau de `src/retraite_notionnelle/droit/limite_age.py`, qui fait foi et
- * dit le droit.
+ * Jumeau de `src/retraite_notionnelle/droit/limite_age.py`, qui le suit et
+ * dit le droit (note de décision 0005).
  */
 
 import { DateMois } from "../calendrier.js";

@@ -8,7 +8,8 @@
  * rémunération est le traitement et la part soumise de la prime, qui se
  * partagent au taux de la prime et à la part que l'année en compte.
  *
- * Jumeau de `src/retraite_notionnelle/donnees/primes.py`, qui fait foi.
+ * Jumeau de `src/retraite_notionnelle/donnees/primes.py`, qui le suit (note
+ * de décision 0005).
  */
 
 /** Les assiettes d'une retenue ou d'une contribution supplémentaire. */
