@@ -433,6 +433,46 @@ def test_le_controle_du_droit_voit_un_ulp_deplace_dans_le_jumeau_python(monkeypa
         droit_et_refait(appels)
 
 
+def test_le_pont_prete_une_table_au_moteur_du_portage(monkeypatch):
+    """Un test prête au moteur Python une de ses tables par une autre
+    (``monkeypatch.setattr``) — celle des indépendants par celle du régime
+    général, pour lire ce que la règle des artisans ajoute à leur pension : le
+    pont prête la même au moteur du portage (``pont.MOTEUR.pretant``), sur
+    une copie, au bit près du moteur Python sous le même prêt ; le moteur sans
+    prêt n'en garde rien, et une table que le moteur ne porte pas arrête
+    l'appel. L'artisan né en 1949 en est la mesure : vingt et une années
+    retenues (R. 634-1-1), vingt-cinq au régime général."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    from outils_pont import actuel_en_donnees
+
+    carriere = Carriere(
+        annee_naissance=1949, sexe="H", age_liquidation=62.0, identifiant="artisan_1949",
+        lignes=[AnneeCarriere(annee=annee, revenu=12_000.0 + 900.0 * (annee - 1973),
+                              affiliation="artisan", trimestres_valides=4)
+                for annee in range(1973, 2011)])
+    pretant = pont.MOTEUR.pretant("annees_revenu_independants", "annees_salaire_reference")
+    lus, echecs = pont.droit({
+        "sans": ("scenario_actuel.calculer", pont.MOTEUR, carriere),
+        "prete": ("scenario_actuel.calculer", pretant, carriere),
+        "apres": ("scenario_actuel.calculer", pont.MOTEUR, carriere),
+    })
+    assert echecs == {}
+    actuel = Simulateur(Parametres()).scenario_actuel
+    sans = pont.relu_du_droit("scenario_actuel.calculer", actuel_en_donnees(actuel.calculer(carriere)))
+    monkeypatch.setattr(actuel, "annees_revenu_independants", actuel.annees_salaire_reference)
+    prete = pont.relu_du_droit("scenario_actuel.calculer",
+                               actuel_en_donnees(actuel.calculer(carriere)))
+    assert ecarts_d_ecriture(lus["prete"], prete, tolerance=TOLERANCE_DU_MOTEUR_PYTHON) == []
+    assert ecarts_d_ecriture(lus["sans"], sans, tolerance=TOLERANCE_DU_MOTEUR_PYTHON) == []
+    assert lus["apres"] == lus["sans"]
+    assert lus["prete"]["pension_annuelle"] < lus["sans"]["pension_annuelle"]
+    _, echecs = pont.droit({"inconnue": (
+        "scenario_actuel.calculer",
+        pont.MOTEUR.pretant("table_inconnue", "annees_salaire_reference"), carriere)})
+    assert "tableInconnue" in echecs["inconnue"]
+
+
 def test_le_pont_ouvert_se_relance_quand_le_paquet_du_depot_change(monkeypatch):
     """Le paquet du dépôt se récrit à chaque fabrique : le pont ouvert sur
     l'ancien se referme, et le suivant lit le nouveau."""

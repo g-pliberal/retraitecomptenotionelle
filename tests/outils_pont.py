@@ -21,6 +21,7 @@ Ce module n'est pas un fichier de tests, et pytest ne le collecte pas.
 
 from __future__ import annotations
 
+import contextlib
 import functools
 import json
 import math
@@ -229,8 +230,8 @@ JUMEAUX_DU_DROIT = {
     "regimes.BORNES_ASSIETTE": lambda: BORNES_ASSIETTE,
     "scenario_actuel.ages_annulation_decote.age":
         lambda moteur, generation: moteur.ages_annulation_decote.age(generation),
-    "scenario_actuel.calculer":
-        lambda moteur, carriere: actuel_en_donnees(moteur.calculer(carriere)),
+    "scenario_actuel.calculer": lambda moteur, carriere, *drapeaux: actuel_en_donnees(
+        moteur.calculer(carriere, *drapeaux)),
     "scenario_actuel.catalogue.periodes": lambda moteur, code: [
         {"debut": periode.debut, "fin": periode.fin, "assiette": periode.assiette,
          "taux_cotisation_retraite": periode.taux_cotisation_retraite,
@@ -263,11 +264,31 @@ def _argument_du_jumeau(simulateur: Simulateur, argument):
     moteur du scénario 1 et la période d'un régime, ceux du simulateur
     Python ; une carrière, que le Python a bâtie, ou une valeur, telle
     quelle."""
-    if argument is pont.MOTEUR:
+    if isinstance(argument, pont.Moteur):
         return simulateur.scenario_actuel
     if isinstance(argument, pont.Periode):
         return simulateur.catalogue[argument.code].periode(argument.annee)
     return argument
+
+
+@contextlib.contextmanager
+def _prets_au_jumeau(simulateur: Simulateur, arguments):
+    """Les tables que les arguments d'un appel prêtent au moteur
+    (``pont.Moteur.pretant``), prêtées au moteur Python le temps de l'appel,
+    comme un test les lui prête (``monkeypatch.setattr``), puis rendues."""
+    moteur = simulateur.scenario_actuel
+    gardees = []
+    try:
+        for argument in arguments:
+            for table, preteuse in (argument.prets if isinstance(argument, pont.Moteur) else ()):
+                if not hasattr(moteur, table):
+                    raise AttributeError(f"le moteur Python ne porte pas la table {table}")
+                gardees.append((table, getattr(moteur, table)))
+                setattr(moteur, table, getattr(moteur, preteuse))
+        yield
+    finally:
+        for table, gardee in reversed(gardees):
+            setattr(moteur, table, gardee)
 
 
 def droit_et_refait(appels: dict[str, tuple], parametres=None, paquet: bytes | None = None,
@@ -297,13 +318,15 @@ def droit_et_refait(appels: dict[str, tuple], parametres=None, paquet: bytes | N
             _argument_du_jumeau(simulateur, argument) for argument in arguments))
         if cle in refus:
             try:
-                jumeau()
+                with _prets_au_jumeau(simulateur, arguments):
+                    jumeau()
             except Exception:
                 continue
             ecarts.append(f"{cle} : le portage le refuse ({refus[cle]}), le jumeau Python le rend")
             continue
-        ecarts += ecarts_d_ecriture(pont.relu_du_droit(fonction, jumeau()), lus[cle], (cle,),
-                                    tolerance=TOLERANCE_DU_MOTEUR_PYTHON)
+        with _prets_au_jumeau(simulateur, arguments):
+            refait = pont.relu_du_droit(fonction, jumeau())
+        ecarts += ecarts_d_ecriture(refait, lus[cle], (cle,), tolerance=TOLERANCE_DU_MOTEUR_PYTHON)
     if ecarts:
         raise AssertionError("le jumeau Python ne refait pas ce que le portage rend "
                              f"({len(ecarts)} écart(s)) : " + " ; ".join(ecarts[:5]))

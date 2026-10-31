@@ -416,7 +416,11 @@ const FONCTIONS_DU_DROIT = {
   "regimes.BORNES_ASSIETTE": () => BORNES_ASSIETTE,
   "scenario_actuel.ages_annulation_decote.age":
     (moteur, generation) => moteur.agesAnnulationDecote.age(generation),
-  "scenario_actuel.calculer": (moteur, carriere) => actuelEnDonnees(moteur.calculer(carriere)),
+  // Les drapeaux de `calculer` suivent la carrière dans l'ordre du jumeau :
+  // `ignorer_penalite_age`, `avantages_non_contributifs`, `avpf`,
+  // `liquider_successions`…
+  "scenario_actuel.calculer": (moteur, carriere, ...drapeaux) => actuelEnDonnees(
+    moteur.calculer(carriere, ...drapeaux)),
   // Ce que les confrontations lisent des périodes d'un régime pour rejouer
   // ses cotisations (`periodes_des_donnees` de `pont.py`).
   "scenario_actuel.catalogue.periodes": (moteur, code) => moteur.catalogue.obtenir(code).periodes
@@ -433,14 +437,40 @@ const FONCTIONS_DU_DROIT = {
     (moteur, ...valeurs) => moteur.valeursPoint.service(...valeurs),
 };
 
+/** Un nom du Python en casse de chameau : celui de son jumeau. */
+function enChameau(nom) {
+  return nom.replace(/_([a-z0-9])/g, (_, lettre) => lettre.toUpperCase());
+}
+
+/**
+ * Le moteur du scénario 1, chaque table prêtée par une autre (`Moteur.pretant`
+ * de `pont.py`, sous les noms du Python), sur une copie : le moteur du
+ * simulateur, que les autres appels lisent, n'en garde rien. Une table que le
+ * moteur ne porte pas arrête l'appel, au lieu qu'un prêt se perde.
+ */
+function moteurPretant(moteur, prets) {
+  if (prets.length === 0) {
+    return moteur;
+  }
+  const copie = Object.create(moteur);
+  for (const [table, preteuse] of prets.map((pret) => pret.map(enChameau))) {
+    if (!(table in moteur) || !(preteuse in moteur)) {
+      throw new Error(`tables que le moteur ne porte pas : ${table}, ${preteuse}`);
+    }
+    copie[table] = moteur[preteuse];
+  }
+  return copie;
+}
+
 /**
  * Un argument d'un appel du droit, tel que `pont.py` l'écrit : le moteur du
- * scénario 1 (`simulateur.scenarioActuel`), la période d'un régime à une année,
- * une carrière de la demande, par son rang, ou une valeur.
+ * scénario 1 (`simulateur.scenarioActuel`) et les tables qu'on lui prête, la
+ * période d'un régime à une année, une carrière de la demande, par son rang,
+ * ou une valeur.
  */
 function argumentDuDroit(simulateur, carrieres, argument) {
   if (Object.hasOwn(argument, "moteur")) {
-    return simulateur.scenarioActuel;
+    return moteurPretant(simulateur.scenarioActuel, argument.prets ?? []);
   }
   if (Object.hasOwn(argument, "periode")) {
     const [code, annee] = argument.periode;

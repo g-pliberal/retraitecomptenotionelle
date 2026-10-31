@@ -735,17 +735,30 @@ def scenario_actuel(cas: list[dict], paquet: bytes | None = None,
             reponse["echecs"])
 
 
-class _Moteur:
+@dataclasses.dataclass(frozen=True)
+class Moteur:
     """Le moteur du scénario 1, ``simulateur.scenario_actuel``, en argument
-    d'un appel du droit (:func:`droit`)."""
+    d'un appel du droit (:func:`droit`) : :data:`MOTEUR`, ou une copie dont
+    des tables lisent ce que d'autres lisent (:meth:`pretant`)."""
+
+    #: Chaque table prêtée, ``(table, preteuse)``, sous les noms du Python.
+    prets: tuple[tuple[str, str], ...] = ()
+
+    def pretant(self, table: str, preteuse: str) -> Moteur:
+        """Ce moteur, sa table ``table`` lisant ce que lit ``preteuse`` — celle
+        des indépendants, celle du régime général —, comme un test la prête au
+        moteur Python (``monkeypatch.setattr``) : le portage la prête à une
+        copie du sien, que les autres appels ne voient pas."""
+        return Moteur((*self.prets, (table, preteuse)))
 
     def __repr__(self) -> str:
-        return "pont.MOTEUR"
+        return "pont.MOTEUR" + "".join(f".pretant({table!r}, {preteuse!r})"
+                                       for table, preteuse in self.prets)
 
 
 #: Le moteur du scénario 1 en argument d'un appel du droit : le portage y met
 #: le sien (``simulateur.scenarioActuel``).
-MOTEUR = _Moteur()
+MOTEUR = Moteur()
 
 
 @dataclasses.dataclass(frozen=True)
@@ -798,12 +811,13 @@ LECTURES_DU_DROIT = {
 
 def _argument_du_droit(argument, carrieres: list) -> dict:
     """Un argument d'un appel du droit tel que ``pont.mjs`` le relit : le
-    moteur du scénario 1, la période d'un régime, une carrière — passée une
-    fois en données, puis par son rang —, ou une valeur."""
+    moteur du scénario 1 et les tables qu'on lui prête, la période d'un
+    régime, une carrière — passée une fois en données, puis par son rang —, ou
+    une valeur."""
     from .carriere import Carriere
 
-    if argument is MOTEUR:
-        return {"moteur": "scenario_actuel"}
+    if isinstance(argument, Moteur):
+        return {"moteur": "scenario_actuel", "prets": [list(pret) for pret in argument.prets]}
     if isinstance(argument, Periode):
         return {"periode": [argument.code, argument.annee]}
     if isinstance(argument, Carriere):
@@ -820,8 +834,9 @@ def droit(appels: dict[str, tuple], parametres=None, paquet: bytes | None = None
     """Chaque appel d'une fonction du droit que le portage porte, sous sa clé,
     ``(fonction, *arguments)`` — ``fonction`` au nom de son jumeau Python,
     ``"ouvrir.duree_requise"`` ; ses arguments dans l'ordre du jumeau,
-    :data:`MOTEUR` pour le moteur du scénario 1, :class:`Periode` pour la
-    période d'un régime, une carrière que le Python a bâtie, passée en données
+    :data:`MOTEUR` pour le moteur du scénario 1 — ou ``MOTEUR.pretant(…)``,
+    une table prêtée par une autre (:meth:`Moteur.pretant`) —, :class:`Periode`
+    pour la période d'un régime, une carrière que le Python a bâtie, passée en données
     (:func:`carriere_en_donnees`), une valeur telle quelle — sous
     ``parametres``, ceux du simulateur, les réglages de référence sans eux :
     sous sa clé, ce que la fonction rend, relu sous le type de son jumeau

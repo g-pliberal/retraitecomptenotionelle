@@ -21,6 +21,14 @@ côté : la durée de proratisation, que nous confondions avec la durée requise
 ce qui le rend exécutable sur un dépôt fraîchement cloné, sans les quatre cents
 mégaoctets de numpy, pandas et numba.
 
+**Le moteur confronté est le portage**, celui qui fait foi (note de décision
+0005) : chaque mesure des cinq familles et des régimes alignés le fait
+calculer, une fonction du droit après l'autre (``pont.droit``), sur la
+carrière que le test bâtit. Tant que le moteur Python garde ses jumeaux
+(action 161), il refait chaque appel au bit près
+(``outils_pont.droit_et_refait``), et chaque famille se mesure aussi sans lui.
+Les exemples officiels, plus bas, appellent encore le moteur Python.
+
 Cinq familles de régimes sont confrontées, et c'est tout ce qu'OpenFisca
 expose : le régime général, la pension civile (État et CNRACL), l'Arrco d'avant
 2019, l'Agirc des cadres et l'Ircantec des agents non titulaires. S'y ajoutent
@@ -1673,10 +1681,9 @@ AFFILIATIONS_ALIGNEES = {
 }
 
 
-def _notre_pension_alignee(simulateur: Simulateur, profil: dict,
-                           affiliation: str,
-                           liquider_successions: bool = True) -> dict[str, float]:
-    """La pension de base d'un statut aligné, tous régimes de base confondus."""
+def _carriere_alignee(profil: dict, affiliation: str) -> Carriere:
+    """La carrière exacte d'un profil du témoin, dans un statut aligné, quatre
+    trimestres chaque année, du début au départ."""
     lignes = [
         AnneeCarriere(
             annee=annee, revenu=profil["salaire"], affiliation=affiliation,
@@ -1684,27 +1691,96 @@ def _notre_pension_alignee(simulateur: Simulateur, profil: dict,
         )
         for annee in range(profil["debut"], profil["liquidation"])
     ]
-    carriere = Carriere(
+    return Carriere(
         annee_naissance=profil["naissance"], sexe="H", lignes=lignes,
         age_liquidation=float(profil["liquidation"] - profil["naissance"]),
         identifiant=profil["code"],
     )
-    resultat = simulateur.scenario_actuel.calculer(
-        carriere, liquider_successions=liquider_successions
-    )
+
+
+def _pension_alignee(resultat: dict, affiliation: str) -> dict[str, float]:
+    """La pension de base d'un statut aligné, tous régimes de base confondus,
+    dans le résultat du scénario 1 que le portage rend."""
     codes = set(AFFILIATIONS_ALIGNEES[affiliation])
-    parts = [p for p in resultat.pensions_par_regime
-             if p.regime in codes and p.montant > 0]
+    parts = [p for p in resultat["pensions_par_regime"]
+             if p["regime"] in codes and p["montant"] > 0]
     return {
-        "montant": sum(p.montant for p in parts),
+        "montant": sum(p["montant"] for p in parts),
         "morceaux": len(parts),
-        "trimestres": float(resultat.trimestres_valides),
-        "taux_de_liquidation": resultat.taux_liquidation,
+        "trimestres": float(resultat["trimestres_valides"]),
+        "taux_de_liquidation": resultat["taux_liquidation"],
     }
 
 
+#: Les statuts indépendants des régimes alignés : l'artisan et le commerçant.
+INDEPENDANTS = ("artisan", "commercant")
+
+#: Les drapeaux de ``ScenarioActuel.calculer`` d'avant ``liquider_successions``,
+#: à leur valeur par défaut, dans l'ordre du jumeau, que le pont suit
+#: (:func:`pont.droit`) : ``ignorer_penalite_age``,
+#: ``avantages_non_contributifs``, ``avpf``.
+DRAPEAUX_AVANT_LES_SUCCESSIONS = (False, True, True)
+
+#: Les variantes du scénario 1 que mesurent les tests des indépendants : le
+#: moteur, et les drapeaux de ``calculer`` après la carrière. ``"droit"``
+#: liquide comme la caisse ; ``"table_du_regime_general"`` prête aux
+#: indépendants la table du régime général, ce que R. 634-1-1 écarte ;
+#: ``"cesure"`` liquide chaque nom de caisse sur ses seules années
+#: (``liquider_successions=False``).
+VARIANTES_DES_INDEPENDANTS = {
+    "droit": (pont.MOTEUR, ()),
+    "table_du_regime_general": (
+        pont.MOTEUR.pretant("annees_revenu_independants", "annees_salaire_reference"), ()),
+    "cesure": (pont.MOTEUR, (*DRAPEAUX_AVANT_LES_SUCCESSIONS, False)),
+}
+
+
+def _nos_pensions_alignees(profils: dict[str, dict], droit=droit_et_refait) -> dict:
+    """Ce que les tests des régimes alignés mesurent du scénario 1 sur la
+    carrière exacte de chaque profil, sous ``(statut, variante)``, puis son
+    code : la pension de base de chaque statut aligné (:func:`_pension_alignee`)
+    telle que la caisse la liquide (``"droit"``), et, pour l'artisan et le
+    commerçant, sous chacune des :data:`VARIANTES_DES_INDEPENDANTS` ; sous
+    ``"regimes"``, ce que sert chaque régime à leur carrière sans identifiant.
+    Le portage la calcule (:func:`pont.droit`) ; par défaut, le jumeau Python
+    la refait au bit près (``droit_et_refait``)."""
+    appels = {}
+    for affiliation in AFFILIATIONS_ALIGNEES:
+        variantes = (VARIANTES_DES_INDEPENDANTS if affiliation in INDEPENDANTS
+                     else {"droit": VARIANTES_DES_INDEPENDANTS["droit"]})
+        for code, profil in profils.items():
+            carriere = _carriere_alignee(profil, affiliation)
+            for variante, (moteur, drapeaux) in variantes.items():
+                appels[f"{affiliation}|{variante}|{code}"] = (
+                    "scenario_actuel.calculer", moteur, carriere, *drapeaux)
+            if affiliation in INDEPENDANTS:
+                appels[f"{affiliation}|regimes|{code}"] = ("scenario_actuel.calculer", pont.MOTEUR, Carriere(
+                    annee_naissance=profil["naissance"], sexe="H",
+                    age_liquidation=float(profil["liquidation"] - profil["naissance"]),
+                    lignes=[AnneeCarriere(annee=annee, revenu=profil["salaire"],
+                                          affiliation=affiliation, trimestres_valides=4)
+                            for annee in range(profil["debut"], profil["liquidation"])]))
+    lus, refus = droit(appels)
+    assert refus == {}, refus
+    mesures: dict = {}
+    for cle, resultat in lus.items():
+        affiliation, variante, code = cle.split("|")
+        mesures.setdefault((affiliation, variante), {})[code] = (
+            {p["regime"]: p["montant"] for p in resultat["pensions_par_regime"]}
+            if variante == "regimes" else _pension_alignee(resultat, affiliation))
+    return mesures
+
+
+@pytest.fixture(scope="module")
+def nos_pensions_alignees(oracle) -> dict:
+    """Ce que les tests des régimes alignés mesurent du scénario 1 sur chaque
+    profil du témoin du régime général, sous ``(statut, variante)``, puis son
+    code."""
+    return _nos_pensions_alignees(_profils(oracle))
+
+
 def test_la_msa_des_salaries_agricoles_reproduit_le_regime_general(
-        oracle, simulateur, nos_calculs):
+        oracle, nos_calculs, nos_pensions_alignees):
     """Le régime des salariés agricoles, opposé à l'oracle du régime général.
 
     « Les prestations sont calculées comme au régime général » : l'alignement
@@ -1722,7 +1798,7 @@ def test_la_msa_des_salaries_agricoles_reproduit_le_regime_general(
     """
     for code, entree in oracle["profils"].items():
         profil = entree["profil"]
-        nous = _notre_pension_alignee(simulateur, profil, "salarie_agricole")
+        nous = nos_pensions_alignees[("salarie_agricole", "droit")][code]
         reference = nos_calculs[code]
         assert nous["morceaux"] == 1, code
         assert nous["montant"] == pytest.approx(
@@ -1736,7 +1812,7 @@ def test_la_msa_des_salaries_agricoles_reproduit_le_regime_general(
 
 
 def test_les_regimes_alignes_des_independants_liquident_avec_leur_successeur(
-        oracle, simulateur, nos_calculs, monkeypatch):
+        oracle, nos_calculs, nos_pensions_alignees):
     """L'artisan et le commerçant rendent la pension du régime général.
 
     Ils relèvent d'un régime aligné, eux aussi : leur pension doit donc, à
@@ -1775,7 +1851,7 @@ def test_les_regimes_alignes_des_independants_liquident_avec_leur_successeur(
             continue
         reference = nos_calculs[code]
         for affiliation in ("artisan", "commercant"):
-            nous = _notre_pension_alignee(simulateur, profil, affiliation)
+            nous = nos_pensions_alignees[(affiliation, "droit")][code]
             assert nous["morceaux"] == 1, (code, affiliation)
             assert nous["montant"] >= reference["pension_brute"] * (1 - 1e-9), (
                 code, affiliation)
@@ -1787,16 +1863,14 @@ def test_les_regimes_alignes_des_independants_liquident_avec_leur_successeur(
                 abs=TOLERANCE_EXACTE), (code, affiliation)
     assert plus_hauts == set()
 
-    actuel = simulateur.scenario_actuel
-    monkeypatch.setattr(actuel, "annees_revenu_independants",
-                        actuel.annees_salaire_reference)
+    # La table des indépendants prêtée par celle du régime général.
     for code, entree in oracle["profils"].items():
         profil = entree["profil"]
         if profil["debut"] < 1973:
             continue
         reference = nos_calculs[code]
         for affiliation in ("artisan", "commercant"):
-            nous = _notre_pension_alignee(simulateur, profil, affiliation)
+            nous = nos_pensions_alignees[(affiliation, "table_du_regime_general")][code]
             assert nous["montant"] == pytest.approx(
                 reference["pension_brute"], rel=1e-9), (code, affiliation)
             assert nous["montant"] == pytest.approx(
@@ -1804,7 +1878,8 @@ def test_les_regimes_alignes_des_independants_liquident_avec_leur_successeur(
             ), (code, affiliation)
 
 
-def test_avant_1973_des_points_hors_de_la_pension_alignee(oracle, simulateur, nos_calculs):
+def test_avant_1973_des_points_hors_de_la_pension_alignee(
+        oracle, nos_calculs, nos_pensions_alignees):
     """Les cinq profils de l'oracle entrés avant 1973 (L. 634-3).
 
     Leurs années d'avant 1973 comptent dans la durée tous régimes — le taux de
@@ -1820,24 +1895,17 @@ def test_avant_1973_des_points_hors_de_la_pension_alignee(oracle, simulateur, no
         entres_avant += 1
         reference = nos_calculs[code]
         for affiliation, regime in avant.items():
-            nous = _notre_pension_alignee(simulateur, profil, affiliation)
+            nous = nos_pensions_alignees[(affiliation, "droit")][code]
             assert nous["trimestres"] == reference["duree_assurance"], (code, affiliation)
             assert nous["taux_de_liquidation"] == pytest.approx(
                 entree["openfisca"]["taux_de_liquidation"],
                 abs=TOLERANCE_EXACTE), (code, affiliation)
-            carriere = Carriere(
-                annee_naissance=profil["naissance"], sexe="H",
-                age_liquidation=float(profil["liquidation"] - profil["naissance"]),
-                lignes=[AnneeCarriere(annee=annee, revenu=profil["salaire"],
-                                      affiliation=affiliation, trimestres_valides=4)
-                        for annee in range(profil["debut"], profil["liquidation"])])
-            points = {p.regime: p for p in simulateur.scenario_actuel.calculer(
-                carriere).pensions_par_regime}[regime]
-            assert points.montant > 0, (code, affiliation)
+            points = nos_pensions_alignees[(affiliation, "regimes")][code][regime]
+            assert points > 0, (code, affiliation)
     assert entres_avant == 5
 
 
-def test_la_cesure_a_la_succession_reste_mesurable(oracle, simulateur):
+def test_la_cesure_a_la_succession_reste_mesurable(oracle, nos_pensions_alignees):
     """Ce que la correction a déplacé, gardé comme variante pour le mesurer.
 
     À ``liquider_successions=False``, chaque nom de caisse est liquidé sur ses
@@ -1860,15 +1928,24 @@ def test_la_cesure_a_la_succession_reste_mesurable(oracle, simulateur):
         if profil["debut"] < 1973:
             continue
         for affiliation in ("artisan", "commercant"):
-            nous = _notre_pension_alignee(
-                simulateur, profil, affiliation, liquider_successions=False
-            )
+            nous = nos_pensions_alignees[(affiliation, "cesure")][code]
             assert nous["morceaux"] == 2, (code, affiliation)
             coupes += 1
             ecarts.append(nous["montant"] / entree["openfisca"]["pension_brute"])
     assert coupes == 10
     assert 0.925 < min(ecarts) < 0.930, min(ecarts)
     assert 0.995 < max(ecarts) < 1.000, max(ecarts)
+
+
+def test_les_regimes_alignes_se_mesurent_au_portage_sans_les_jumeaux_python(
+        oracle, nos_pensions_alignees, monkeypatch):
+    """La pension de base de chaque statut aligné, sur chaque profil du
+    témoin — telle que la caisse la liquide, la table des indépendants prêtée
+    par celle du régime général, chaque caisse sur ses seules années —, se
+    mesure au portage (``pont.droit``) : le jumeau Python, qu'on empêche ici de
+    calculer, n'y entre pas."""
+    _sans_les_jumeaux(monkeypatch, (ScenarioActuel, "calculer"))
+    assert _nos_pensions_alignees(_profils(oracle), pont.droit) == nos_pensions_alignees
 
 
 # ---------------------------------------------------------------------------
