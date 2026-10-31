@@ -6920,13 +6920,14 @@ de `contribution_etat`.
 
 **Reprise, au 31 octobre 2026.** Le JavaScript fait foi (note de décision
 0005) : une règle s'écrit d'abord dans `moteur/js/`, son jumeau Python la suit
-au bit près. Faites, les deux étapes menées en parallèle : les témoins se
-calculent au portage, et le moteur Python les refait au bit près
-(`tests/test_pont.py`) ; les deux paires de données ne se lisent plus que par
-le portage. Ce qui suit, dans l'ordre : les confrontations par le pont,
-`test_estimation_officielle.py`, `test_destinie.py`, puis `test_oracle.py` ;
-le coût daté par le portage ; les retraits, par sous-ensemble cohérent.
-Détail : `2026-10-31-etape-6-les-temoins-par-le-portage.md`.
+au bit près. Faits : les témoins calculés au portage, que le moteur Python
+refait au bit près ; les deux paires de données lues par le seul portage ;
+l'estimation officielle et Destinie 2 confrontées par le portage
+(`pont.scenario_actuel`), le Python refaisant chaque cas. Ce qui suit, dans
+l'ordre : `test_oracle.py`, bloc par bloc, par le point d'entrée `pont.droit`,
+que la note inventorie ; le coût daté par le portage ; les retraits, par
+sous-ensemble cohérent.
+Détail : `2026-10-31-etape-6-les-confrontations-par-le-pont.md`.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur

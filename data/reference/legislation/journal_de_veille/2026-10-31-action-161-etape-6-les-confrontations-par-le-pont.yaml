@@ -1,0 +1,20 @@
+date: "2026-10-31"
+session: "action 161, étape 6 : les confrontations par le pont, selon la note de décision 0005"
+consulte: >-
+  Aucune source de droit : la session ne touche à aucune règle du scénario 1.
+  La note de décision 0005 et les notes des étapes précédentes ; les trois
+  confrontations aux références extérieures (tests/test_estimation_officielle.py
+  et son script, tests/test_destinie.py, tests/test_oracle.py) et ce qu'elles
+  appellent du moteur Python ; les jumeaux JavaScript des fonctions du droit
+  qu'appelle test_oracle.py (moteur/js/droit/), leurs noms et leurs arguments.
+trouve: >-
+  Aucune règle n'a changé. L'estimation officielle et Destinie 2 se confrontent
+  au portage (pont.scenario_actuel), et le moteur Python refait chacun de leurs
+  cas au bit près ; test_oracle.py a son point d'entrée au pont (pont.droit),
+  éprouvé sur les profils d'OpenFisca au régime général. Un écart de type
+  seulement : le jumeau Python de liquider.trimestres_de_decote rend un entier
+  quand son annotation dit un flottant, pour la même valeur que le portage.
+reste: >-
+  Rien pour la veille. L'action reprend où son bloc « Reprise » la laisse
+  (action 161, note du 31 octobre 2026, étape 6, les confrontations par le
+  pont).

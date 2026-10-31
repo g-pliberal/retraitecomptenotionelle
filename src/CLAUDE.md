@@ -82,7 +82,12 @@ de la proposition, qui s'écrit en couche (`data/CLAUDE.md`).
   Les tests de sa zone comptent les confrontations légères, sept secondes
   sans mémoire : `python -m pytest tests/test_oracle.py tests/test_destinie.py
   tests/test_estimation_officielle.py tests/test_verification.py` ; elles ont
-  rougi `main` quatre fois du 6 au 17 octobre 2026 (action 163, garde 4). Le
+  rougi `main` quatre fois du 6 au 17 octobre 2026 (action 163, garde 4).
+  L'estimation officielle et Destinie 2 y éprouvent le portage
+  (`pont.scenario_actuel`), et y font refaire au moteur Python, au bit près,
+  chaque cas qu'il sert (`servi_et_refait`, `tests/outils_pont.py`) ; les
+  exemples d'OpenFisca et des caisses passent au pont, fonction par fonction,
+  par `pont.droit` (action 161). Le
   coût et ses confrontations (`test_cout.py`, `test_facteurs_depense.py`,
   `test_affirmations.py` : huit minutes sans mémoire) restent à GitHub.
 - **Un défaut corrigé dans une règle** : la classe, pas le cas. Avant le
