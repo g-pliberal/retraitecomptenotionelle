@@ -681,44 +681,63 @@ def oracle_arrco() -> dict:
 _POINTS = re.compile(r"^([\d,]+\.\d+) points ×")
 
 
-def _nos_points_arrco(simulateur: Simulateur, profil: dict) -> dict[str, float]:
-    """L'Arrco du scénario 1 : points acquis, valeur servie, abattement.
+def _points_servis(resultat: dict, du_regime) -> tuple[float, float]:
+    """Les points acquis, et le coefficient d'anticipation ou de majoration,
+    que la formule servie écrit sous chaque pension des régimes que
+    ``du_regime`` retient — « 1,543.91 points × valeur de service 1.2513 € »
+    —, celle qu'on doit pouvoir refaire à la main, dans le résultat du
+    scénario 1 que le portage rend."""
+    points, coefficient = 0.0, 1.0
+    for pension in resultat["pensions_par_regime"]:
+        if not du_regime(pension["regime"]) or pension["montant"] <= 0:
+            continue
+        lecture = _POINTS.match(pension["detail"])
+        assert lecture, pension["detail"]
+        points += float(lecture.group(1).replace(",", ""))
+        if ("coefficient d'anticipation" in pension["detail"]
+                or "coefficient de majoration" in pension["detail"]):
+            coefficient = float(pension["detail"].rsplit(" ", 1)[1])
+    return points, coefficient
+
+
+def _nos_points_arrco(profils: dict[str, dict], droit=droit_et_refait,
+                      ) -> dict[str, dict[str, float]]:
+    """L'Arrco du scénario 1, sur la carrière exacte de chaque profil, sous
+    son code : points acquis, valeur servie, abattement.
 
     Les points se lisent dans la formule que le modèle écrit pour chaque
-    pension — « 1,543.91 points × valeur de service 1.2513 € » —, celle qu'on
-    doit pouvoir refaire à la main. La tranche 2 des non-cadres a sa propre
-    ligne, et OpenFisca additionne les deux.
+    pension (:func:`_points_servis`). La tranche 2 des non-cadres a sa propre
+    ligne, et OpenFisca additionne les deux. Le portage calcule la pension et
+    la valeur du point au jour du départ (:func:`pont.droit`) ; par défaut, le
+    jumeau Python refait chaque appel au bit près (``droit_et_refait``).
     """
-    lignes = [
-        AnneeCarriere(
-            annee=annee, revenu=profil["salaire"],
-            affiliation="salarie_prive_non_cadre", trimestres_valides=4,
-        )
-        for annee in range(profil["debut"], profil["liquidation"])
-    ]
-    carriere = Carriere(
-        annee_naissance=profil["naissance"], sexe="H", lignes=lignes,
-        age_liquidation=float(profil["liquidation"] - profil["naissance"]),
-        identifiant=profil["code"],
-    )
-    scenario = simulateur.scenario_actuel
-    resultat = scenario.calculer(carriere)
-    points, coefficient = 0.0, 1.0
-    for pension in resultat.pensions_par_regime:
-        if not pension.regime.startswith("arrco") or pension.montant <= 0:
-            continue
-        lecture = _POINTS.match(pension.detail)
-        assert lecture, pension.detail
-        points += float(lecture.group(1).replace(",", ""))
-        if ("coefficient d'anticipation" in pension.detail
-                or "coefficient de majoration" in pension.detail):
-            coefficient = float(pension.detail.rsplit(" ", 1)[1])
-    service = liquider.valeur_du_point(scenario, "arrco", DateMois(profil["liquidation"], 1))
-    return {
-        "points": points,
-        "coefficient_de_minoration": coefficient,
-        "valeur_du_point_au_1er_janvier": service[0] if service else 0.0,
-    }
+    appels = {}
+    for code, profil in profils.items():
+        appels |= {
+            f"{code}|resultat": ("scenario_actuel.calculer", pont.MOTEUR,
+                                 _carriere_du_regime_general(profil)),
+            f"{code}|service": ("liquider.valeur_du_point", pont.MOTEUR, "arrco",
+                                DateMois(profil["liquidation"], 1)),
+        }
+    lus, refus = droit(appels)
+    assert refus == {}, refus
+    mesures = {}
+    for code in profils:
+        points, coefficient = _points_servis(lus[f"{code}|resultat"],
+                                             lambda regime: regime.startswith("arrco"))
+        service = lus[f"{code}|service"]
+        mesures[code] = {
+            "points": points,
+            "coefficient_de_minoration": coefficient,
+            "valeur_du_point_au_1er_janvier": service[0] if service else 0.0,
+        }
+    return mesures
+
+
+@pytest.fixture(scope="module")
+def nos_points_arrco(oracle_arrco) -> dict[str, dict[str, float]]:
+    """L'Arrco du scénario 1 sur chaque profil du témoin, sous son code."""
+    return _nos_points_arrco(_profils(oracle_arrco))
 
 
 def test_le_temoin_de_l_arrco_couvre_le_perimetre_annonce(oracle_arrco):
@@ -735,7 +754,7 @@ def test_le_temoin_de_l_arrco_couvre_le_perimetre_annonce(oracle_arrco):
             entree["profil"]["liquidation"] - entree["profil"]["debut"]), code
 
 
-def test_les_points_arrco_concordent(oracle_arrco, simulateur):
+def test_les_points_arrco_concordent(oracle_arrco, nos_points_arrco):
     """Cotisation → points, vingt ans de barèmes rejoués par un autre moteur.
 
     Taux effectif par tranche, prix d'achat du point, taux d'appel : trois
@@ -743,14 +762,14 @@ def test_les_points_arrco_concordent(oracle_arrco, simulateur):
     calcul complet d'OpenFisca-France-Pension. Au millième, tranche 2 comprise.
     """
     for code, entree in oracle_arrco["profils"].items():
-        nous = _nos_points_arrco(simulateur, entree["profil"])
+        nous = nos_points_arrco[code]
         assert nous["points"] == pytest.approx(entree["openfisca"]["points"], rel=1e-4), code
     assert any(e["profil"]["salaire"] > 30000 for e in oracle_arrco["profils"].values()), (
         "aucun profil au-dessus du plafond : la tranche 2 n'est pas mise à l'épreuve"
     )
 
 
-def test_la_valeur_de_service_arrco_concorde_au_jour(oracle_arrco, simulateur):
+def test_la_valeur_de_service_arrco_concorde_au_jour(oracle_arrco, nos_points_arrco):
     """La même valeur du point, au même jour.
 
     OpenFisca lit la valeur du 1er janvier de la liquidation : une liquidation
@@ -760,7 +779,7 @@ def test_la_valeur_de_service_arrco_concorde_au_jour(oracle_arrco, simulateur):
     au 1er janvier, la même.
     """
     for code, entree in oracle_arrco["profils"].items():
-        nous = _nos_points_arrco(simulateur, entree["profil"])
+        nous = nos_points_arrco[code]
         assert nous["valeur_du_point_au_1er_janvier"] == pytest.approx(
             entree["openfisca"]["valeur_du_point"], abs=1e-4), code
 
@@ -776,7 +795,7 @@ def test_la_decote_du_regime_general_qui_commande_l_arrco_concorde(
 
 
 def test_le_coefficient_d_anticipation_arrco_concorde_sur_les_annees_pleines(
-        oracle_arrco, simulateur):
+        oracle_arrco, nos_points_arrco):
     """Le barème d'anticipation, là où les deux lectures se recouvrent.
 
     OpenFisca ne lit son barème que par année ENTIÈRE d'anticipation, en
@@ -787,7 +806,7 @@ def test_le_coefficient_d_anticipation_arrco_concorde_sur_les_annees_pleines(
     pleines = 0
     for code, entree in oracle_arrco["profils"].items():
         eux = entree["openfisca"]
-        nous = _nos_points_arrco(simulateur, entree["profil"])
+        nous = nos_points_arrco[code]
         if eux["decote_trimestres_regime_general"] % 4 == 0:
             pleines += 1
             assert nous["coefficient_de_minoration"] == pytest.approx(
@@ -797,6 +816,16 @@ def test_le_coefficient_d_anticipation_arrco_concorde_sur_les_annees_pleines(
                 eux["coefficient_de_minoration"] + TOLERANCE_EXACTE), code
     assert pleines >= 3
 
+
+
+def test_l_arrco_se_mesure_au_portage_sans_les_jumeaux_python(
+        oracle_arrco, nos_points_arrco, monkeypatch):
+    """Les points, l'abattement et la valeur de service de chaque profil du
+    témoin de l'Arrco se mesurent au portage (``pont.droit``) : les jumeaux
+    Python, qu'on empêche ici de calculer, n'y entrent pas."""
+    _sans_les_jumeaux(monkeypatch, (ScenarioActuel, "calculer"), (liquider, "valeur_du_point"))
+    nos = _nos_points_arrco(_profils(oracle_arrco), pont.droit)
+    assert set(nos) == set(oracle_arrco["profils"]) and nos == nos_points_arrco
 
 # -- l'Agirc des cadres, 1947-2018 ---------------------------------------------
 

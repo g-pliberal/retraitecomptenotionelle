@@ -764,6 +764,7 @@ LECTURES_DU_DROIT = {
     "liquider.decote_opposable": tuple[float | None, float, Fiabilite | None],
     "liquider.salaire_de_reference": float,
     "liquider.trimestres_de_decote": float,
+    "liquider.valeur_du_point": tuple[float, Fiabilite] | None,
     "scenario_actuel.calculer": actuel_des_donnees,
     "scenario_actuel.minimum_garanti.montant": tuple[float, Fiabilite] | None,
 }

@@ -224,6 +224,7 @@ JUMEAUX_DU_DROIT = {
     "liquider.decote_opposable": liquider.decote_opposable,
     "liquider.salaire_de_reference": liquider.salaire_de_reference,
     "liquider.trimestres_de_decote": liquider.trimestres_de_decote,
+    "liquider.valeur_du_point": liquider.valeur_du_point,
     "scenario_actuel.calculer":
         lambda moteur, carriere: actuel_en_donnees(moteur.calculer(carriere)),
     "scenario_actuel.minimum_garanti.montant":

@@ -411,6 +411,7 @@ const FONCTIONS_DU_DROIT = {
   "liquider.decote_opposable": liquider.decoteOpposable,
   "liquider.salaire_de_reference": liquider.salaireDeReference,
   "liquider.trimestres_de_decote": liquider.trimestresDeDecote,
+  "liquider.valeur_du_point": liquider.valeurDuPoint,
   "scenario_actuel.calculer": (moteur, carriere) => actuelEnDonnees(moteur.calculer(carriere)),
   "scenario_actuel.minimum_garanti.montant":
     (moteur, ...valeurs) => moteur.minimumGaranti.montant(...valeurs),
