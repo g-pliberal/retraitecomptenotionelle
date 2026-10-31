@@ -16,7 +16,10 @@
  *
  * Le lecteur ne calcule rien qu'une règle décide : il rend ce que la table
  * porte, et lève une erreur sur ce qu'elle ne porte pas — une page qui lirait
- * un zéro à la place se tromperait sans bruit.
+ * un zéro ou `undefined` à la place se tromperait sans bruit. Le seul zéro
+ * qu'il rende sans le lire sur une ligne est le stock de la dette jusqu'à son
+ * année de départ, que la table porte. Une année ou une génération se demande
+ * en nombre, comme la table la porte (`tests/js/agregats.test.js`).
  */
 
 /**
@@ -32,6 +35,48 @@ function lire(table, cle, quoi) {
     throw new Error(`${quoi} absent de la table figée : ${cle}`);
   }
   return table[cle];
+}
+
+/**
+ * `table[annee]`, sous la clé de texte où la table écrit une année ou une
+ * génération. Elle se demande en nombre, comme la table la porte : une
+ * chaîne, même « 1960 », trahirait une adresse lue sans être convertie.
+ */
+function lireAnnee(table, annee, quoi) {
+  if (!Number.isInteger(annee)) {
+    throw new Error(`${quoi} absent de la table figée : ${JSON.stringify(annee)}`);
+  }
+  return lire(table, String(annee), quoi);
+}
+
+/** La première (`rang` 0) ou la dernière (`rang` -1) année d'une partie de la table. */
+function borne(annees, rang) {
+  if (!annees.length) {
+    throw new Error("année absent de la table figée : la partie est vide");
+  }
+  return annees.at(rang).annee;
+}
+
+/**
+ * `repr(float(x))` du Python : la clé sous laquelle `figer_cout` écrit un
+ * écart de taux. Les chiffres sont ceux de JavaScript, les plus courts qui
+ * redonnent le nombre ; la forme est celle du Python, en notation
+ * scientifique sous 10⁻⁴ et dès 10¹⁶, et un « .0 » à un nombre entier.
+ */
+function reprFlottant(x) {
+  if (x === 0) return Object.is(x, -0) ? "-0.0" : "0.0";
+  const [mantisse, puissance] = Math.abs(x).toExponential().split("e");
+  const exposant = Number(puissance);
+  const chiffres = mantisse.replace(".", "");
+  const signe = x < 0 ? "-" : "";
+  if (exposant < -4 || exposant >= 16) {
+    const tete = chiffres.length > 1 ? `${chiffres[0]}.${chiffres.slice(1)}` : chiffres;
+    const puissanceEcrite = String(Math.abs(exposant)).padStart(2, "0");
+    return `${signe}${tete}e${exposant < 0 ? "-" : "+"}${puissanceEcrite}`;
+  }
+  if (exposant < 0) return `${signe}0.${"0".repeat(-exposant - 1)}${chiffres}`;
+  const entiers = chiffres.slice(0, exposant + 1).padEnd(exposant + 1, "0");
+  return `${signe}${entiers}.${chiffres.slice(exposant + 1) || "0"}`;
 }
 
 // -- les carrières types ------------------------------------------------------
@@ -76,7 +121,7 @@ class CasFige {
   }
 
   ageLiquidation(generation) {
-    return lire(this._ages, generation, "âge de départ de la génération");
+    return lireAnnee(this._ages, generation, "âge de départ de la génération");
   }
 }
 
@@ -178,7 +223,7 @@ export class ClassementFige {
 
   /** L'agent actif, puis l'agent déclassé. */
   departs(generation) {
-    return lire(this._departs, generation, "départ de la génération");
+    return lireAnnee(this._departs, generation, "départ de la génération");
   }
 }
 
@@ -262,7 +307,7 @@ class SoldeAnnuelFige extends LigneFigee {
 
   depenseMeur(scenario) { return this._parSysteme("depenses_meur", scenario); }
 
-  ressourcesMeur() { return this._brut.ressources_meur; }
+  ressourcesMeur() { return lire(this._brut, "ressources_meur", "champ de l'année"); }
 
   tvaDe(scenario) { return this._parSysteme("tva", scenario); }
 
@@ -279,10 +324,12 @@ export class SoldeFige {
     this.annees = brut.annees.map((ligne) => new SoldeAnnuelFige(ligne));
     this.premiereAnneeProjetee = brut.premiere_annee_projetee;
     this._equilibrees = brut.premieres_annees_equilibrees;
-    this.premiereAnnee = this.annees.length ? this.annees[0].annee : 0;
-    this.derniereAnnee = this.annees.length ? this.annees[this.annees.length - 1].annee : 0;
     this.derniereAnneeObservee = this.premiereAnneeProjetee - 1;
   }
+
+  get premiereAnnee() { return borne(this.annees, 0); }
+
+  get derniereAnnee() { return borne(this.annees, -1); }
 
   observees() {
     return this.annees.filter((ligne) => !ligne.projete);
@@ -296,10 +343,15 @@ export class SoldeFige {
     return this.annees.find((ligne) => ligne.annee === millesime) ?? null;
   }
 
-  /** La moyenne des soldes de la fenêtre, additionnés de gauche à droite. */
+  /**
+   * La moyenne des soldes de la fenêtre, additionnés de gauche à droite ; une
+   * fenêtre où la table n'a aucune année n'a pas de moyenne.
+   */
   soldeMoyen(scenario, debut, fin) {
     const lignes = this.annees.filter((l) => l.annee >= debut && l.annee <= fin);
-    if (!lignes.length) return 0.0;
+    if (!lignes.length) {
+      throw new Error(`solde moyen absent de la table figée : de ${debut} à ${fin}`);
+    }
     let somme = 0;
     for (const ligne of lignes) somme += ligne.solde(scenario);
     return somme / lignes.length;
@@ -376,13 +428,15 @@ class AvenirAnnuelFige extends LigneFigee {
 
   partPib(scenario) { return this._parSysteme("parts_pib", scenario); }
 
-  reprisesConstants() { return this._brut.reprises_constants; }
+  reprisesConstants() { return lire(this._brut, "reprises_constants", "champ de l'année"); }
 
-  reprises() { return this._brut.reprises; }
+  reprises() { return lire(this._brut, "reprises", "champ de l'année"); }
 
-  partPibReprises() { return this._brut.part_pib_reprises; }
+  partPibReprises() { return lire(this._brut, "part_pib_reprises", "champ de l'année"); }
 
-  garantieNetteConstants() { return this._brut.garantie_nette_constants; }
+  garantieNetteConstants() {
+    return lire(this._brut, "garantie_nette_constants", "champ de l'année");
+  }
 }
 
 /** L'avenir de chaque système, sous les accesseurs de `Avenir`. */
@@ -392,10 +446,12 @@ class AvenirFige {
     this.premiereAnneeProjetee = brut.premiere_annee_projetee;
     this.anneeBascule = brut.annee_bascule;
     this.anneeEuros = brut.annee_euros;
-    this.premiereAnnee = this.annees.length ? this.annees[0].annee : 0;
-    this.derniereAnnee = this.annees.length ? this.annees[this.annees.length - 1].annee : 0;
     this._brut = brut;
   }
+
+  get premiereAnnee() { return borne(this.annees, 0); }
+
+  get derniereAnnee() { return borne(this.annees, -1); }
 
   projetees() {
     return this.annees.filter((ligne) => ligne.projete);
@@ -411,11 +467,11 @@ class AvenirFige {
     return lire(this._brut.ecarts_cumules, scenario, "écart cumulé du système");
   }
 
-  cumulReprises() { return this._brut.cumul_reprises; }
+  cumulReprises() { return lire(this._brut, "cumul_reprises", "champ de l'avenir"); }
 
   /** Par année, les têtes et la pension relatives à `depuis`, en `Map`. */
   decomposition(depuis) {
-    const table = lire(this._brut.decompositions, depuis, "décomposition depuis");
+    const table = lireAnnee(this._brut.decompositions, depuis, "décomposition depuis");
     return new Map(Object.entries(table).map(([annee, valeurs]) => [Number(annee), valeurs]));
   }
 }
@@ -431,11 +487,11 @@ class DetteAnnuelleFigee {
     this.soldes = brut.soldes;
   }
 
-  stock(scenario) { return this.stocks[scenario]; }
+  stock(scenario) { return lire(this.stocks, scenario, "stock du système"); }
 
-  interet(scenario) { return this.interets[scenario]; }
+  interet(scenario) { return lire(this.interets, scenario, "intérêt du système"); }
 
-  solde(scenario) { return this.soldes[scenario]; }
+  solde(scenario) { return lire(this.soldes, scenario, "solde du système"); }
 }
 
 /** Le stock que les soldes accumulent, sous les accesseurs de `Dette`. */
@@ -448,15 +504,21 @@ class DetteFigee {
     this.derniereAnneeCotee = brut.derniere_annee_cotee;
     this.dettePubliqueObservee = brut.dette_publique_observee;
     this.anneeDettePublique = brut.annee_dette_publique;
-    this.premiereAnnee = this.annees.length ? this.annees[0].annee : 0;
-    this.derniereAnnee = this.annees.length ? this.annees[this.annees.length - 1].annee : 0;
     this._brut = brut;
   }
 
-  /** Ce que le pays doit au départ, en part de PIB ; zéro sans série. */
+  get premiereAnnee() { return borne(this.annees, 0); }
+
+  get derniereAnnee() { return borne(this.annees, -1); }
+
+  /**
+   * Ce que le pays doit au départ, en part de PIB, que la série publiée porte
+   * pour l'année de départ : sans elle, la dette publique ne serait que le
+   * stock du système, et la page le dirait sans bruit.
+   */
   get dettePubliqueDepart() {
-    const valeur = this.dettePubliqueObservee[this.anneeDettePublique];
-    return valeur === undefined ? 0.0 : valeur;
+    return lireAnnee(this.dettePubliqueObservee, this.anneeDettePublique,
+      "dette publique de l'année");
   }
 
   dettePublique(scenario, millesime) {
@@ -467,10 +529,17 @@ class DetteFigee {
     return this.annees.find((ligne) => ligne.annee === millesime) ?? null;
   }
 
-  /** Le stock en fin d'année, et zéro à l'année de départ ou avant. */
+  /**
+   * Le stock en fin d'année. Il est nul jusqu'à l'année de départ, que la
+   * table porte : le seul zéro qu'elle rende sans le lire sur une ligne.
+   */
   stock(scenario, millesime) {
+    if (millesime <= this.anneeDepart) return 0.0;
     const ligne = this.annee(millesime);
-    return ligne ? ligne.stock(scenario) : 0.0;
+    if (ligne === null) {
+      throw new Error(`stock de l'année absent de la table figée : ${millesime}`);
+    }
+    return ligne.stock(scenario);
   }
 
   horizon(scenario) { return lire(this._brut.horizons, scenario, "horizon du système"); }
@@ -510,14 +579,16 @@ export class CoutFige {
     this.generations = brut.generations;
     this.poids = brut.poids;
     this.poidsCotisants = brut.poids_cotisants;
-    this.premiereAnnee = this.annees.length ? this.annees[0].annee : 0;
-    this.derniereAnnee = this.annees.length ? this.annees[this.annees.length - 1].annee : 0;
     this._brut = brut;
   }
 
+  get premiereAnnee() { return borne(this.annees, 0); }
+
+  get derniereAnnee() { return borne(this.annees, -1); }
+
   cumul(scenario) { return lire(this._brut.cumuls, scenario, "cumul du système"); }
 
-  cumulObserve() { return this._brut.cumul_observe; }
+  cumulObserve() { return lire(this._brut, "cumul_observe", "champ du coût"); }
 
   confondusAvecActuel() { return [...this._brut.confondus_avec_actuel]; }
 
@@ -533,7 +604,7 @@ export class CoutFige {
 
   /** La dette au taux de la courbe décalé de `ecart`, citée à l'horizon. */
   detteDecalee(ecart) {
-    return new HorizonsFiges(lire(this._brut.dettes_decalees, String(ecart),
+    return new HorizonsFiges(lire(this._brut.dettes_decalees, reprFlottant(ecart),
       "dette au taux décalé de"));
   }
 }
@@ -559,7 +630,7 @@ export class VariantesFigees {
   partPib(hypothese, scenario, annee) {
     const parts = lire(lire(this._brut.parts_pib, hypothese, "hypothèse"),
       scenario, "système");
-    return Number(lire(parts, String(annee), "année"));
+    return Number(lireAnnee(parts, annee, "année"));
   }
 
   /** Le solde d'un système à l'horizon, en part de PIB. */
@@ -645,7 +716,7 @@ export class LeviersFiges {
   /** Les leviers d'un système une année : `pension`, `prelevement`, `age`. */
   annee(scenario, annee) {
     const annuels = lire(this._systemes, scenario, "système").annuels;
-    return champs(lire(annuels, String(annee), "année"), CHAMPS_LEVIERS);
+    return champs(lireAnnee(annuels, annee, "année"), CHAMPS_LEVIERS);
   }
 
   /** Les leviers qui portent un système au solde visé `solde` une année. */
@@ -653,13 +724,13 @@ export class LeviersFiges {
     const rang = this.soldesVises.indexOf(solde);
     if (rang < 0) { throw new Error(`solde visé absent de la table figée : ${solde}`); }
     const vises = lire(this._systemes, scenario, "système").vises;
-    return champs(lire(vises[rang], String(annee), "année"), CHAMPS_LEVIERS);
+    return champs(lireAnnee(vises[rang], annee, "année"), CHAMPS_LEVIERS);
   }
 
   /** Les écarts d'un système sur un horizon : `pensionGap`, `taxGap`. */
   horizon(scenario, fin) {
     const horizons = lire(this._systemes, scenario, "système").horizons;
-    return champs(lire(horizons, String(fin), "horizon"), CHAMPS_ECARTS_HORIZON);
+    return champs(lireAnnee(horizons, fin, "horizon"), CHAMPS_ECARTS_HORIZON);
   }
 }
 
