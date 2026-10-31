@@ -986,3 +986,22 @@ def test_l_assiette_minimale_de_2022_est_celle_du_decret_n_2022_1438(deux_moteur
         assert metier[2021].assiette_minimale_base == pytest.approx(4730.64)
         assert metier[2022].assiette_minimale_base == 4758.0
         assert [metier[a].trimestres_valides for a in (2021, 2022, 2023)] == [3, 3, 3]
+
+
+# --- Le revenu cotisé -----------------------------------------------------------
+
+
+def test_les_trimestres_cotises_de_l_exemple_de_la_caisse(simulateur):
+    """L'exemple de la caisse, « Détermination des trimestres cotisés au régime
+    des indépendants par année civile » (version du 2 juin 2023) : 1 000 € de
+    cotisations de retraite de base versées en 2016, au taux de 17,65 %, font un
+    « revenu cotisé » de 5 665,72 € et valident 3,90 trimestres, « arrondis à 3
+    trimestres cotisés », sur un revenu minimum de 1 450,50 € par trimestre. Le
+    modèle, qui porte au compte le revenu de la cotisation définitive (D. 633-10,
+    R. 634-1 ; action 177, étape 5), en valide autant."""
+    revenu_cotise = 1000.0 / 0.1765
+    assert revenu_cotise == pytest.approx(5665.72, abs=0.005)
+    carriere = simulateur.carriere_releve(
+        1962, "F", [LigneRelevee(2016, "artisan", revenu_cotise)], 64.0)
+    (annee,) = [ligne for ligne in carriere.lignes if ligne.annee == 2016]
+    assert annee.trimestres_valides == 3

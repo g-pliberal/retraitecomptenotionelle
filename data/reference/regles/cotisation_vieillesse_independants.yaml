@@ -10,7 +10,7 @@ domaine: cotisations
 regimes: [rsi, regime_general]
 etape: foyer_et_net
 face: cotisation
-etat: transcrite
+etat: approchee
 lit:
 - le revenu de l'année et le statut, qui dit si l'assuré a un employeur
   (legislation/affiliations.yaml, sans_employeur)
@@ -121,31 +121,65 @@ versions:
       17,15 % sous le plafond et 0,72 % sur la totalité de l'assiette de cotisations,
       celle que la réforme de 2025 abat de 26 % (L. 136-3)
   exemples: aucun trouvé
-approximations: []
+approximations:
+- version: avant_le_bareme_propre
+  textes: >-
+    article 6 du décret n° 73-76 (rédaction du 1er janvier 1978), D. 633-6 et D. 633-10
+    jusqu'au décret n° 2000-834 ; L. 131-6 depuis le 30 décembre 1999
+  ecart: >-
+    Le modèle porte au compte de chaque année le revenu de cette année, celui de la
+    cotisation régularisée : depuis 1973, la cotisation provisionnelle est ajustée « sur
+    la base des revenus de l'année à laquelle se rapportent ces cotisations » (article 9
+    du décret n° 73-76, D. 633-10 jusqu'en 2008), et R. 634-1 calcule la pension sur
+    « l'ensemble des cotisations versées ». Sauf la première année civile d'activité,
+    jusqu'en 1999 : sa cotisation, que ni l'article 6 ni D. 633-6 ne disent
+    provisionnelle, est assise sur « un revenu forfaitaire égal au tiers du plafond »,
+    que l'ajustement ne relève jamais et n'abaisse que sur demande de l'assuré, quand son
+    revenu est moindre. L. 131-6 la rend provisionnelle le 30 décembre 1999, le décret
+    n° 2000-834 aligne D. 633-6 et D. 633-10 le 1er septembre 2000. La rédaction de
+    l'article 6 d'avant 1978 n'est pas dans l'index LEGI.
+  effet: >-
+    nul sur la retraite de base d'un artisan de 1980 à 2004 à 0,8 plafond, salarié avant,
+    dont la première année n'est pas parmi les meilleures (1980 ramenée au tiers du
+    plafond, moteur Python, 31 octobre 2026) ; la complémentaire, que le modèle tire du
+    même revenu, perd 2 % : elle suit sa propre assiette, l'avant-dernière année
+    (D. 635-4, de 1985 à 2004)
+- version: avant_le_bareme_propre
+  textes: >-
+    article 10 du décret n° 73-76, D. 633-11 et D. 633-5, jusqu'au 1er janvier 2008
+  ecart: >-
+    Les cotisations des deux dernières années d'une activité qui cesse ne sont jamais
+    régularisées : ne font pas l'objet de l'ajustement « les cotisations des assurés qui
+    ont cessé leur activité professionnelle à la date à laquelle l'ajustement aurait dû
+    être opéré », ni celles « basées sur un revenu annuel pris en compte pour la
+    liquidation d'un avantage de vieillesse » (article 10 du décret n° 73-76, D. 633-11).
+    Leur revenu porté au compte reste la base provisionnelle de D. 633-5, celui de
+    l'avant-dernière année (les revenus « déclarés l'année précédente » avant 1995 ;
+    ceux de l'année précédente de 1995 à 2003, la première fraction semestrielle sur
+    l'avant-dernière), ou le forfait des deux premières années ; le modèle y porte le
+    revenu de chacune.
+  effet: >-
+    pour l'artisan de 1980 à 2004 parti en 2005, 2003 et 2004 au revenu de 2002 : sa
+    retraite de base perd 0,79 %, sa pension totale 0,44 % ; rien pour un artisan au-delà
+    du plafond, que le plafond borne déjà (de 1973 à 1999 à 1,2 plafond)
+- version: [avant_le_bareme_propre, deplafonnee_progressive, bareme_de_2017, bareme_de_2025]
+  ecart: >-
+    L'année du départ, la caisse retient, pour le revenu cotisé et les trimestres, la plus
+    petite de la cotisation encaissée à la date d'arrêt du compte et de la cotisation
+    provisionnelle appelée, au prorata des jours écoulés, et écarte une dette ancienne
+    réglée après la date limite de versement, trois mois avant le départ (exemples
+    « Prise en compte de la date d'arrêt du compte », pour 2014, 2015 et 2018) ; le
+    modèle porte au compte le revenu de l'année, au prorata de ses mois, les cotisations
+    étant tenues pour versées.
+  effet: non mesuré
 sources:
-  lu_le: 2026-10-13
+  lu_le: 2026-10-31
   prochaine_relecture: 2027-06-30
   a_relire:
   - >-
     Le micro-entrepreneur cotise en pourcentage de son chiffre d'affaires
     (L. 613-7) : le statut lui prête le barème de l'artisan sur un revenu
     reconstitué, ce que la fiche de son statut dit déjà.
-  - >-
-    L'assiette de la cotisation d'avant 2007. D. 633-5 la calcule « à titre
-    provisionnel » sur les revenus déclarés l'année précédente (rédaction de 1985),
-    sur ceux de l'année précédente (1995), puis de l'avant-dernière année (2004) ;
-    D. 633-6, celle de l'année de début d'exercice sur un revenu forfaitaire, le
-    tiers du plafond, et celle de l'année suivante, provisionnelle, sur la moitié
-    (1985), puis l'une et l'autre provisionnelles (2000) ; la caisse publie, de 1999
-    à 2006, 18 puis 27 fois la base mensuelle des allocations familiales pour la
-    retraite de base des artisans (barème « Début d'activité - Assiettes et
-    cotisations forfaitaires - Avant 2007 »). L. 131-6 prévoit depuis 1995 une
-    régularisation « lorsque le revenu professionnel est définitivement connu ». Le
-    modèle assied chaque année sur son revenu : juste si la régularisation se
-    faisait sur le revenu de l'année même ; sinon, le revenu porté au compte est
-    celui d'une année antérieure, ou le forfait. À trancher par la circulaire de la
-    caisse sur la réforme de 2007 et par le texte qui a mis la régularisation en
-    œuvre, avant toute retouche, à la session du modèle (action 175, étape 2).
   lectures:
   - type: legifrance
     reference: >-
@@ -170,6 +204,44 @@ sources:
       les deux premières années
     url: https://legislation.lassuranceretraite.fr/#/bareme?file_leaf_ref=ti_cotisation_debut_activite_assiette_forfaitaire_bar.aspx
     date: 2026-10-30
+  - type: legifrance
+    reference: >-
+      L'assiette d'avant 2008 (action 177, étape 5), dans l'index LEGI du dépôt à jour
+      du 30 octobre 2026. D. 633-10 CSS, l'ajustement « sur la base des revenus de
+      l'année à laquelle se rapportent ces cotisations » : LEGIARTI000006737911 (1985),
+      LEGIARTI000006737912 (1995), LEGIARTI000006737913 (2000), LEGIARTI000006737914
+      (2004), LEGIARTI000006737915 (2006). D. 633-11, les cotisations que l'ajustement
+      exclut : LEGIARTI000006737937 (1985), LEGIARTI000006737938 (2004),
+      LEGIARTI000006737939 (2006). D. 633-5, la base provisionnelle :
+      LEGIARTI000006737888 (1985), LEGIARTI000006737889 (1995), LEGIARTI000006737890
+      (2003), LEGIARTI000006737891 (2004), LEGIARTI000006737892 (2006). D. 633-6, le
+      début d'activité : LEGIARTI000006737893 (1985), LEGIARTI000006737894 (1995),
+      LEGIARTI000006737895 (2000), LEGIARTI000006737896 (2002), LEGIARTI000006737897
+      (2004), LEGIARTI000006737898 (2006), LEGIARTI000006737899 (2008). R. 634-1, le
+      revenu annuel moyen sur les cotisations versées : LEGIARTI000006751722 (1985),
+      LEGIARTI000006751723 (1993), LEGIARTI000006751724 (2004). L. 131-6, la première
+      année provisionnelle : LEGIARTI000006740115 (1999). Le décret n° 73-76 du
+      22 janvier 1973, ses articles 1er, 5, 6, 9 et 10 : LEGIARTI000006765784,
+      LEGIARTI000006765788, LEGIARTI000006765789, LEGIARTI000006765793,
+      LEGIARTI000006765795
+    date: 2026-10-31
+  - type: jorf
+    reference: >-
+      Décret n° 2000-834 du 25 août 2000, article 2 (JORFARTI000002027180) : la
+      cotisation de l'année de début d'exercice devient « la cotisation provisionnelle »,
+      et les quatrième et cinquième alinéas de D. 633-10 sont supprimés ; sa notice :
+      « un calcul rectificatif intervenant une fois le revenu connu »
+    date: 2000-09-01
+  - type: autre
+    reference: >-
+      Cnav, base de législation, les exemples « Prise en compte de la date d'arrêt du
+      compte » pour un travailleur indépendant, avant 2015, à partir de 2015 et à partir
+      du 1er avril 2018 : l'année du départ, le plus petit de l'encaissé à la date
+      d'arrêt du compte et de la cotisation provisionnelle appelée au prorata ; et
+      « Détermination des trimestres cotisés au régime des indépendants par année
+      civile » : le revenu cotisé, les cotisations versées divisées par le taux
+    url: https://legislation.lassuranceretraite.fr/#/infosupp?file_leaf_ref=ex_independant_regime_base_duree_assurance_trimestre_cotise_dac_ti_2015.aspx
+    date: 2026-10-31
 code:
   python: >-
     donnees/regimes.py : PeriodeRegime.taux_du_cotisant, charger_taux_annuels ;
@@ -196,6 +268,13 @@ historique:
   prêtaient à l'artisan et au commerçant les taux du salarié et de son employeur
   au régime général (15,45 % et 2,30 à 2,51 %), convention que les limites
   déclaraient ; ils prennent leur barème.
+- >-
+  2026-10-31 — action 177, étape 5 : l'assiette d'avant 2007, que l'action 175 mettait
+  à relire, est tranchée par les textes. La cotisation définitive est celle du revenu
+  de l'année, que le modèle porte au compte, sauf la première année d'activité jusqu'en
+  1999, les deux dernières d'une activité qui cesse avant 2008 et l'année du départ :
+  trois approximations, que le propriétaire a choisi de déclarer sans les modéliser.
+  La fiche passe de `transcrite` à `approchee`.
 effet: >-
   Artisans, commerçants et libéraux non réglementés, depuis 2018 : sous le
   plafond, presque rien (17,75 % des deux côtés jusqu'en 2023, 0,12 point de moins

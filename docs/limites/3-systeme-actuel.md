@@ -162,6 +162,29 @@ l'Institut des politiques publiques (PENSIPP). Écarts connus :
   du micro-entrepreneur sur la cotisation qu'il aurait due sans réduction
   (circulaire Cnav 2026/12) : le modèle fait de même. Ce qu'elle fait des
   autres exonérations, les pages lues ne le disent pas : non mesuré.
+- **assiette provisionnelle des artisans et des commerçants** — le modèle
+  porte au compte de chaque année le revenu de cette année, celui de la
+  cotisation définitive : depuis 1973, la cotisation provisionnelle est ajustée
+  « sur la base des revenus de l'année à laquelle se rapportent ces
+  cotisations » (article 9 du décret n° 73-76, D. 633-10 jusqu'en 2008), et le
+  revenu annuel moyen se calcule sur les cotisations versées (R. 634-1). Il ne
+  sert pas trois exceptions, que la fiche `cotisation_vieillesse_independants`
+  déclare. Jusqu'en 1999, la cotisation de la première année civile d'activité
+  est définitive sur un revenu forfaitaire égal au tiers du plafond, que
+  l'ajustement ne relève jamais et n'abaisse que sur demande de l'assuré dont
+  le revenu est moindre (D. 633-6 et D. 633-10, jusqu'au décret n° 2000-834 ;
+  L. 131-6 la rend provisionnelle le 30 décembre 1999). Jusqu'en 2007, les
+  cotisations des deux dernières années d'une activité qui cesse ne sont pas
+  régularisées (D. 633-11) : leur revenu porté au compte reste la base
+  provisionnelle, le revenu de l'avant-dernière année, ou celui de l'année
+  précédente de 1995 à 2003. L'année du départ, la caisse retient la plus
+  petite de la cotisation encaissée à la date d'arrêt du compte et de la
+  cotisation provisionnelle appelée, au prorata, et écarte une dette ancienne
+  réglée après la date limite (ses exemples « Prise en compte de la date
+  d'arrêt du compte ») ; le modèle tient les cotisations pour versées. Mesuré
+  sur trois carrières types (feuille de route, action 177, étape 5) : moins
+  d'un centième de la retraite de base quand ces années comptent parmi les
+  meilleures, rien sinon ; l'année du départ n'est pas mesurée.
 
 Un écart de quelques pour cent avec la pension réelle est attendu.
 

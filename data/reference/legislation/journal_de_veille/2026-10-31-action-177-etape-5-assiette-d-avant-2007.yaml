@@ -1,0 +1,45 @@
+date: "2026-10-31"
+session: "action 177, étape 5 : l'assiette des indépendants d'avant 2007"
+consulte: >-
+  `python scripts/veille_droit.py` : trois fiches à relire, aucune de l'étape. Les index
+  LEGI et JORF récupérés et mis à jour (incréments jusqu'au 30 octobre 2026). Dans
+  l'index LEGI, toutes les rédactions de D. 633-5 (LEGIARTI000006737888 à
+  LEGIARTI000006737892), D. 633-6 (LEGIARTI000006737893 à LEGIARTI000006737899),
+  D. 633-10 (LEGIARTI000006737911 à LEGIARTI000006737915), D. 633-11
+  (LEGIARTI000006737937 à LEGIARTI000006737939), D. 633-1, D. 633-3, D. 633-4,
+  D. 633-7, D. 633-12, D. 635-4, L. 131-6 de 1995 à 2007, R. 634-1, et les articles
+  L. 634, R. 634, D. 634 et D. 635 d'avant 2009 qui nomment le revenu ; le décret n° 73-76 du 22 janvier 1973, articles 1er, 5 à 10, dont
+  l'index n'a l'article 6 que depuis le 1er janvier 1978. Dans l'index JORF, le décret
+  n° 2000-834 du 25 août 2000 (JORFTEXT000000767867) et sa notice. L. 161-17-2 et
+  L. 161-17-3, sans rédaction postérieure à celles du 31 décembre 2025
+  (LEGIARTI000053280889, LEGIARTI000053280903 ; fiche `fin_de_la_suspension_2028`). La
+  base de législation de la Cnav : l'exposé « Travailleurs indépendants » (version du
+  7 avril 2026), le barème « Début d'activité - Assiettes et cotisations forfaitaires -
+  Avant 2007 », les exemples « Détermination des trimestres cotisés au régime des
+  indépendants par année civile » et « Prise en compte de la date d'arrêt du compte »
+  (avant 2015, à partir de 2015, à partir du 1er avril 2018) ; le registre des
+  références, sans circulaire de la réforme de 2007 ni citation de D. 633-5, D. 633-6,
+  D. 633-10 ou D. 633-11. `python scripts/textes.py --inscrire` après la fiche.
+trouve: >-
+  Depuis 1973, la cotisation provisionnelle de l'artisan et du commerçant est ajustée
+  « sur la base des revenus de l'année à laquelle se rapportent ces cotisations »
+  (décret n° 73-76, article 9 ; D. 633-10 jusqu'au 1er janvier 2008), et R. 634-1 calcule
+  le revenu annuel moyen sur les cotisations versées : le modèle, qui porte au compte le
+  revenu de l'année, suit le droit. Trois exceptions, que le propriétaire a choisi de
+  déclarer sans les modéliser (fiche `cotisation_vieillesse_independants`, passée à
+  `approchee` ; limite « assiette provisionnelle des artisans et des commerçants ») :
+  jusqu'en 1999, la cotisation de la première année d'activité, définitive sur un revenu
+  forfaitaire égal au tiers du plafond, abaissée seulement sur demande (D. 633-6,
+  D. 633-10 ; L. 131-6 la rend provisionnelle le 30 décembre 1999, le décret n° 2000-834
+  aligne le décret le 1er septembre 2000) ; jusqu'en 2007, les deux dernières années
+  d'une activité qui cesse, jamais régularisées (D. 633-11), sur la base provisionnelle
+  de D. 633-5 ; l'année du départ, le plus petit de l'encaissé à la date d'arrêt du
+  compte et de la cotisation appelée au prorata (exemples de la caisse). Mesuré : rien
+  sur la retraite de base d'un artisan de 1980 à 2004 pour la première exception ;
+  −0,79 % pour la deuxième.
+reste: >-
+  La rédaction de l'article 6 du décret n° 73-76 d'avant 1978. L'assiette du RCO des
+  artisans, sur le revenu de l'avant-dernière année de 1985 à 2004 (D. 635-4), quand le
+  modèle tire ses points du revenu de l'année, à lire avec le règlement du RCO. Ce que
+  la caisse porte au compte de l'avant-dernière année d'un départ depuis 2008, que ses
+  exemples ne disent pas. Les rédactions des textes cités, « à examiner ».
