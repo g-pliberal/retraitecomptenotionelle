@@ -887,32 +887,41 @@ def _proches(obtenu, attendu, chemin="") -> list[str]:
     return []
 
 
-def _deux_moteurs(simulateur, cas) -> list[dict]:
-    """Les lignes de chaque relevé, par année, en Python, une fois vérifié que
-    le JavaScript rend les mêmes lignes et le même résultat entier."""
+@pytest.fixture
+def deux_moteurs(simulateur):
+    """Ce qui rend les lignes de chaque relevé, par année, en Python, une fois
+    vérifié que le JavaScript rend les mêmes lignes et le même résultat entier.
+    Une fixture, et non une fonction : la garde des présomptions saute les
+    tests qui la demandent, `"node"` lu dans sa source (`tests/conftest.py`),
+    le portage ne décalant pas les siennes."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
     sys.path.insert(0, str(RACINE / "scripts"))
     from construire_temoins import _fini
-    attendus, lignes = [], []
-    for c in cas:
-        carriere = simulateur.carriere_releve(
-            c["naissance"], "F", [LigneRelevee(**ligne) for ligne in c["releve"]], c["age"])
-        lignes.append({ligne.annee: ligne for ligne in carriere.lignes})
-        attendus.append({
-            "lignes": [[l.annee, l.trimestres_valides, l.assiette_minimale_base,
-                        l.dispense_assiette_minimale] for l in carriere.lignes],
-            "resultat": _fini(simulateur.simuler(carriere).dictionnaire())})
-    execution = subprocess.run(
-        ["node", "--input-type=module", "-e", _JUMEAU_DISPENSES, json.dumps(cas)],
-        cwd=RACINE, capture_output=True, text=True, encoding="utf-8", check=False)
-    assert execution.returncode == 0, execution.stderr[-2000:]
-    ecarts = _proches(json.loads(execution.stdout), attendus)
-    assert not ecarts, ecarts[:10]
-    return lignes
+
+    def confronter(cas) -> list[dict]:
+        attendus, lignes = [], []
+        for c in cas:
+            carriere = simulateur.carriere_releve(
+                c["naissance"], "F", [LigneRelevee(**ligne) for ligne in c["releve"]],
+                c["age"])
+            lignes.append({ligne.annee: ligne for ligne in carriere.lignes})
+            attendus.append({
+                "lignes": [[l.annee, l.trimestres_valides, l.assiette_minimale_base,
+                            l.dispense_assiette_minimale] for l in carriere.lignes],
+                "resultat": _fini(simulateur.simuler(carriere).dictionnaire())})
+        execution = subprocess.run(
+            ["node", "--input-type=module", "-e", _JUMEAU_DISPENSES, json.dumps(cas)],
+            cwd=RACINE, capture_output=True, text=True, encoding="utf-8", check=False)
+        assert execution.returncode == 0, execution.stderr[-2000:]
+        ecarts = _proches(json.loads(execution.stdout), attendus)
+        assert not ecarts, ecarts[:10]
+        return lignes
+
+    return confronter
 
 
-def test_les_deux_moteurs_servent_les_memes_droits_aux_dispenses(simulateur):
+def test_les_deux_moteurs_servent_les_memes_droits_aux_dispenses(deux_moteurs):
     """Les lignes et le résultat entier, en Python et en JavaScript, pour un
     artisan au RSA puis saisonnier et une infirmière libérale au RSA."""
     cas = [
@@ -926,7 +935,7 @@ def test_les_deux_moteurs_servent_les_memes_droits_aux_dispenses(simulateur):
              "dispense_assiette_minimale": "rsa" if a % 2 else "activite_non_principale"}
             for a in range(2005, 2028)]},
     ]
-    _, infirmiere = _deux_moteurs(simulateur, cas)
+    _, infirmiere = deux_moteurs(cas)
     assert any(not l.dispense_assiette_minimale and l.assiette_minimale_base > 0
                for l in infirmiere.values())
 
@@ -936,7 +945,7 @@ def test_les_deux_moteurs_servent_les_memes_droits_aux_dispenses(simulateur):
 FRANCS_PAR_EURO = 6.55957
 
 
-def test_l_assiette_minimale_des_artisans_et_commercants_court_depuis_1973(simulateur):
+def test_l_assiette_minimale_des_artisans_et_commercants_court_depuis_1973(deux_moteurs):
     """« Toutefois, le montant de la cotisation annuelle ne peut être inférieur
     à celui de la cotisation qui serait due au titre d'un revenu égal à 200 fois
     le montant horaire du salaire minimum de croissance en vigueur le 1er janvier
@@ -947,7 +956,7 @@ def test_l_assiette_minimale_des_artisans_et_commercants_court_depuis_1973(simul
     les tables de la caisse publient, et valident un trimestre chaque année ;
     en 1972, aux caisses d'avant l'alignement, aucun minimum. Dans les deux
     moteurs."""
-    lignes = _deux_moteurs(simulateur, [
+    lignes = deux_moteurs([
         {"naissance": 1945, "age": 65.0, "releve": [
             {"annee": a, "affiliation": metier, "revenu": 100.0} for a in range(1970, 1990)]}
         for metier in ("artisan", "commercant")])
@@ -959,7 +968,7 @@ def test_l_assiette_minimale_des_artisans_et_commercants_court_depuis_1973(simul
             assert metier[annee].trimestres_valides == 1, annee
 
 
-def test_l_assiette_minimale_de_2022_est_celle_du_decret_n_2022_1438(simulateur):
+def test_l_assiette_minimale_de_2022_est_celle_du_decret_n_2022_1438(deux_moteurs):
     """« Par dérogation aux articles D. 633-2 et D. 642-4 du code de la sécurité
     sociale, la cotisation annuelle due au titre de l'année 2022 en application
     des articles L. 633-1 et L. 642-1 du même code ne peut être calculée sur une
@@ -969,7 +978,7 @@ def test_l_assiette_minimale_de_2022_est_celle_du_decret_n_2022_1438(simulateur)
     plafond gelé, 4 730,64 €, n'en valident que deux. L'artisane et la libérale
     qui déclarent 3 000 € par an valident trois trimestres en 2021, en 2022 et
     en 2023. Dans les deux moteurs."""
-    lignes = _deux_moteurs(simulateur, [
+    lignes = deux_moteurs([
         {"naissance": 1962, "age": 64.0, "releve": [
             {"annee": a, "affiliation": metier, "revenu": 3000.0} for a in range(2020, 2025)]}
         for metier in ("artisan", "profession_liberale")])
