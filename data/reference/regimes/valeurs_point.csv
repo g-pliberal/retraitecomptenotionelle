@@ -9,7 +9,9 @@
 #            non les 127 % du jaune pensions du PLF 2027, écart que ce
 #            script déclare),
 #            ipp_points_independants (complémentaires artisans 1979-2012 et
-#            commerçants 2004-2012), openfisca_gmp (forfait de la
+#            commerçants 2004-2012 ; huit valeurs, où l'IPP s'en écarte,
+#            des tables de l'ex-RSI que publie la Cnav, action 177),
+#            openfisca_gmp (forfait de la
 #            garantie minimale de points de l'Agirc, 1989-2018 ;
 #            source_valeurs_point_gmp de verifier_donnees.py),
 #            cnav_points_avant_1973 (valeur de service des points d'avant
@@ -1047,11 +1049,11 @@ nric,2006,valeur_service,1.036000,haute
 nric,2007,salaire_reference,14.648000,haute
 nric,2007,valeur_service,1.055000,haute
 nric,2008,salaire_reference,14.809000,haute
-nric,2008,valeur_service,1.067000,haute
+nric,2008,valeur_service,1.073000,haute
 nric,2009,salaire_reference,15.300000,haute
 nric,2009,valeur_service,1.102000,haute
 nric,2010,salaire_reference,15.483000,haute
-nric,2010,valeur_service,1.110000,haute
+nric,2010,valeur_service,1.115000,haute
 nric,2011,salaire_reference,15.808000,haute
 nric,2011,valeur_service,1.138000,haute
 nric,2012,salaire_reference,16.140000,haute
@@ -1229,10 +1231,10 @@ rco_artisans,1994,valeur_service,0.260688,haute
 rco_artisans,1995,salaire_reference,2.292833,haute
 rco_artisans,1995,valeur_service,0.263737,haute
 rco_artisans,1996,salaire_reference,2.344666,haute
-rco_artisans,1996,valeur_service,0.268463,haute
-rco_artisans,1997,salaire_reference,2.344666,haute
+rco_artisans,1996,valeur_service,0.270749,haute
+rco_artisans,1997,salaire_reference,2.661760,haute
 rco_artisans,1997,valeur_service,0.274866,haute
-rco_artisans,1998,salaire_reference,2.661760,haute
+rco_artisans,1998,salaire_reference,2.878237,haute
 rco_artisans,1998,valeur_service,0.274866,haute
 rco_artisans,1999,salaire_reference,3.103862,haute
 rco_artisans,1999,valeur_service,0.275689,haute
@@ -1240,7 +1242,7 @@ rco_artisans,2000,salaire_reference,3.282227,haute
 rco_artisans,2000,valeur_service,0.278982,haute
 rco_artisans,2001,salaire_reference,3.388942,haute
 rco_artisans,2001,valeur_service,0.284700,haute
-rco_artisans,2002,salaire_reference,3.382000,haute
+rco_artisans,2002,salaire_reference,3.461000,haute
 rco_artisans,2002,valeur_service,0.287300,haute
 rco_artisans,2003,salaire_reference,3.731000,haute
 rco_artisans,2003,valeur_service,0.287280,haute
@@ -1251,10 +1253,10 @@ rco_artisans,2005,valeur_service,0.287280,haute
 rco_artisans,2006,salaire_reference,4.145000,haute
 rco_artisans,2006,valeur_service,0.290120,haute
 rco_artisans,2007,salaire_reference,4.145000,haute
-rco_artisans,2007,valeur_service,0.292590,haute
+rco_artisans,2007,valeur_service,0.293310,haute
 rco_artisans,2008,salaire_reference,4.207000,haute
 rco_artisans,2008,valeur_service,0.297700,haute
-rco_artisans,2009,salaire_reference,4.324000,haute
+rco_artisans,2009,salaire_reference,4.500000,haute
 rco_artisans,2009,valeur_service,0.306030,haute
 rco_artisans,2010,salaire_reference,4.692000,haute
 rco_artisans,2010,valeur_service,0.309700,haute

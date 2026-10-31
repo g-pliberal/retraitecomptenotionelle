@@ -3481,7 +3481,8 @@ def source_valeurs_point_independants() -> dict[tuple, float]:
     Les barèmes IPP les portent, et sont une TRANSCRIPTION : le niveau est donc
     `haute`, jamais `certifiee`, comme pour OpenFisca. Le RCI qui leur succède
     en 2013 est déjà couvert ; ce contrôle s'arrête en 2012 pour ne pas
-    revendiquer deux fois les mêmes lignes.
+    revendiquer deux fois les mêmes lignes. Huit valeurs, où l'IPP s'écarte des
+    tables de l'ex-RSI que publie la Cnav, sont celles de la caisse (action 177).
     """
     return {
         tuple(cle.split("|")): valeur
@@ -8864,7 +8865,8 @@ CERTIFICATIONS = (
         cles=("regime", "annee", "mesure"),
         colonne="valeur",
         source=source_valeurs_point_independants,
-        origine="IPP, barèmes des régimes de retraite des indépendants",
+        origine="IPP, barèmes des régimes de retraite des indépendants ; huit "
+                "valeurs des tables de l'ex-RSI que publie la Cnav",
         decimales=6,
         tolerance=5e-7,
         niveau="haute",

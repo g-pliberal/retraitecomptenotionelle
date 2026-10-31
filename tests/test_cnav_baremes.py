@@ -1015,19 +1015,10 @@ POINT_RCI = (
 )
 
 #: Ce que la série, tirée des barèmes de l'IPP (`ipp_points_independants.py`),
-#: porte autrement que la caisse, au 31 décembre : sa valeur, en euros. Des
-#: écarts qui changent le calcul — les points d'une année, ou leur valeur à la
-#: liquidation —, à la session du modèle.
-ECARTS_POINTS = {
-    ("rco_artisans", "salaire_reference", 1997): 2.344666,  # 15,38 F, celui de 1996
-    ("rco_artisans", "salaire_reference", 1998): 2.66176,   # 17,46 F, celui de 1997
-    ("rco_artisans", "salaire_reference", 2002): 3.382,     # sous celui de 2001
-    ("rco_artisans", "salaire_reference", 2009): 4.324,
-    ("rco_artisans", "valeur_service", 1996): 0.268463,     # le 1er semestre
-    ("rco_artisans", "valeur_service", 2007): 0.29259,
-    ("nric", "valeur_service", 2008): 1.067,                # sans le 1er décembre
-    ("nric", "valeur_service", 2010): 1.110,
-}
+#: porte autrement que la caisse, au 31 décembre : sa valeur, en euros. Aucun
+#: écart depuis que le récupérateur prend aux tables de la caisse les huit
+#: valeurs où l'IPP s'en écartait (`VALEURS_DE_LA_CAISSE`, action 177).
+ECARTS_POINTS: dict[tuple[str, str, int], float] = {}
 
 
 def test_les_points_des_complementaires_des_independants_sont_ceux_de_la_caisse():

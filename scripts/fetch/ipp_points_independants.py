@@ -27,7 +27,7 @@ Le RCI, qui leur succède en 2013, est déjà couvert par OpenFisca : ce
 récupérateur s'arrête donc en 2012, pour ne pas revendiquer deux fois les mêmes
 lignes.
 
-TROIS PIÈGES, ET CE QUE LE SCRIPT EN FAIT.
+QUATRE PIÈGES, ET CE QUE LE SCRIPT EN FAIT.
 
 * **LES FRANCS.** Jusqu'en 2001 les barèmes sont libellés en francs, et le
   fichier de référence tient ses valeurs « en euros courants de l'année ». La
@@ -46,6 +46,16 @@ TROIS PIÈGES, ET CE QUE LE SCRIPT EN FAIT.
   valeurs peuvent se succéder dans la même année. Le fichier de référence
   retient « la valeur en vigueur au 31 décembre » ; c'est donc la DERNIÈRE date
   d'effet de l'année, ou la dernière antérieure si l'année n'en porte aucune.
+
+* **HUIT VALEURS QUE LA CAISSE PORTE AUTREMENT.** Confrontée aux tables de
+  l'ex-RSI que la Cnav joint à ses barèmes du point du RCI (action 175, étape
+  2), la série de l'IPP s'en écarte huit fois : un revenu de référence des
+  artisans d'un an en retard en 1997 et en 1998, trop bas en 2002 et en 2009 ;
+  une valeur de service qui oublie le second semestre de 1996, ou la
+  revalorisation du 1er décembre — celle des artisans en 2007, celle des
+  commerçants en 2008 — ; celle des commerçants en 2010. Ce sont les tables de
+  la caisse qui liquident : le script met leurs valeurs à la place
+  (``VALEURS_DE_LA_CAISSE``, action 177).
 
 CE QUE LE SCRIPT NE REND PAS. Les trois valeurs de point que le RCI sert selon
 l'ANCIENNETÉ des points repris — un point d'artisan acquis avant 1979, entre
@@ -104,6 +114,23 @@ DERNIERE_ANNEE = 2012
 #: Le libellé fautif, et ce qu'il vaut réellement. Voir l'en-tête.
 LIBELLE_FAUTIF = {("rco_artisans", "valeur_service", 2001): 0.2847}
 
+#: Les valeurs en vigueur au 31 décembre que la caisse publie autrement que
+#: l'IPP, en euros, dans les tables de l'ex-RSI de sa base de législation :
+#: le revenu de référence des artisans (`rci_valeur_achat_artisan_avant_2013.pdf`),
+#: la valeur de leur point (`rci_valeur_point_retraite_artisan_avant_2009.pdf`),
+#: celle du NRCO (`rci_valeur_point_regime_complementaire_repris_commercant_2004_2012.pdf`).
+#: En commentaire, ce que porte l'IPP.
+VALEURS_DE_LA_CAISSE = {
+    ("rco_artisans", "salaire_reference", 1997): 17.46 / FRANC_PAR_EURO,  # 15,38 F
+    ("rco_artisans", "salaire_reference", 1998): 18.88 / FRANC_PAR_EURO,  # 17,46 F
+    ("rco_artisans", "salaire_reference", 2002): 3.461,                   # 3,382 €
+    ("rco_artisans", "salaire_reference", 2009): 4.500,                   # 4,324 €
+    ("rco_artisans", "valeur_service", 1996): 1.776 / FRANC_PAR_EURO,     # 1,761 F
+    ("rco_artisans", "valeur_service", 2007): 0.29331,                    # 0,29259 €
+    ("nric", "valeur_service", 2008): 1.073,                              # 1,067 €
+    ("nric", "valeur_service", 2010): 1.115,                              # 1,110 €
+}
+
 
 def _nombre(brut: str) -> tuple[float, bool] | None:
     """(valeur, est_en_francs) — None si la cellule est vide."""
@@ -153,6 +180,9 @@ def _serie_annuelle(lignes: list[dict[str, str]], colonnes: tuple[str, ...],
             index += 1
         if courant is not None:
             serie[annee] = courant
+    for (de, quoi, annee), valeur in VALEURS_DE_LA_CAISSE.items():
+        if (de, quoi) == (regime, mesure):
+            serie[annee] = valeur
     return serie
 
 

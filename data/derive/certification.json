@@ -1,5 +1,5 @@
 {
- "dernier_passage_le": "2026-10-28",
+ "dernier_passage_le": "2026-10-31",
  "series": {
   "age_annulation_decote_openfisca": {
    "ajoutees": 0,
@@ -758,7 +758,7 @@
    "niveau": "haute",
    "source": "dérivée des quotients INED de Vallin et Meslé",
    "valeurs": 28,
-   "verifiee_le": "2026-10-28"
+   "verifiee_le": "2026-10-31"
   },
   "esperances_projetees": {
    "ajoutees": 0,
@@ -1671,7 +1671,7 @@
    "niveau": "haute",
    "source": "la série du régime général du dépôt, que les cultes, Mayotte et Saint-Pierre-et-Miquelon portent faute d'un barème propre",
    "valeurs": 512,
-   "verifiee_le": "2026-10-28"
+   "verifiee_le": "2026-10-31"
   },
   "taux_cotisation_annuels": {
    "ajoutees": 0,
@@ -1847,18 +1847,18 @@
    "niveau": "haute",
    "source": "OpenFisca-France, barème IPP de la cotisation forfaitaire annuelle de la garantie minimale de points (gmp_cot_f_a), transcrit le 2 octobre 2026",
    "valeurs": 29,
-   "verifiee_le": "2026-10-28"
+   "verifiee_le": "2026-10-31"
   },
   "valeurs_point_independants": {
    "ajoutees": 0,
    "colonne": "valeur",
    "corrigees": 0,
-   "empreinte": "3b912b67d18682a1",
+   "empreinte": "9ad21fa99cbf95a9",
    "identiques": 85,
    "niveau": "haute",
-   "source": "IPP, barèmes des régimes de retraite des indépendants",
+   "source": "IPP, barèmes des régimes de retraite des indépendants ; huit valeurs des tables de l'ex-RSI que publie la Cnav",
    "valeurs": 85,
-   "verifiee_le": "2026-09-13"
+   "verifiee_le": "2026-10-31"
   },
   "valeurs_point_ircantec": {
    "ajoutees": 0,
@@ -1880,7 +1880,7 @@
    "niveau": "haute",
    "source": "Ircantec, page « Valeur du point » et paramètres annuels, 2022-2026, lus le 23 septembre 2026",
    "valeurs": 23,
-   "verifiee_le": "2026-10-28"
+   "verifiee_le": "2026-10-31"
   },
   "valeurs_point_msa": {
    "ajoutees": 1,
