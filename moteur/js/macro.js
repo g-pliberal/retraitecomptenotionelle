@@ -182,6 +182,12 @@ export class DonneesMacro {
       ? this._prolongeParSalaire(serie("smig_mayotte"), "smig_mayotte") : null;
     this.heures_par_trimestre_mayotte = "heures_par_trimestre_mayotte" in paquet.series
       ? serie("heures_par_trimestre_mayotte") : null;
+    /**
+     * Le plafond annuel des cotisations de la caisse de Mayotte, depuis 2005,
+     * prolongé comme celui de la Sécurité sociale (`plafondDeCotisations`).
+     */
+    this.plafond_mayotte = "plafond_mayotte" in paquet.series
+      ? this._plafond(serie("plafond_mayotte"), hypotheses, "plafond_mayotte") : null;
     this.statutsDeMayotte = new Set(Object.entries(paquet.affiliations ?? {})
       .filter(([, profil]) => (profil.periodes ?? [])
         .some((periode) => (periode.regimes ?? []).includes(REGIME_DE_MAYOTTE)))
@@ -472,7 +478,7 @@ export class DonneesMacro {
    * salaire moyen, conformément à l'article L. 241-3 du code de la sécurité
    * sociale.
    */
-  _plafond(serie, hypotheses) {
+  _plafond(serie, hypotheses, nom = "pass") {
     if (hypotheses.plafond_suit_salaire_moyen === false) {
       return serie;
     }
@@ -487,7 +493,19 @@ export class DonneesMacro {
       valeurs.push(courant);
       fiabilites.push(Fiabilite.ESTIMEE);
     }
-    return new SerieAnnuelle(annees, valeurs, fiabilites, "pass", "escalier");
+    return new SerieAnnuelle(annees, valeurs, fiabilites, nom, "escalier");
+  }
+
+  /**
+   * Le plafond annuel des cotisations de l'année : celui de la Sécurité
+   * sociale, ou, au régime des salariés de Mayotte (`mayotte`), celui de sa
+   * caisse depuis 2005. Voir `plafond_de_cotisations` du Python.
+   */
+  plafondDeCotisations(annee, mayotte = false) {
+    if (mayotte && this.plafond_mayotte !== null && annee >= this.plafond_mayotte.premiereAnnee) {
+      return this.plafond_mayotte.valeur(annee);
+    }
+    return this.plafond_securite_sociale.valeur(annee);
   }
 
   // -- grandeurs dérivées ----------------------------------------------------

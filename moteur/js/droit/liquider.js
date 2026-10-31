@@ -17,6 +17,7 @@ import { DateMois, MOIS_PAR_AN } from "../calendrier.js";
 import { revenuCotise, salaireMoyenAnnuel } from "../carriere.js";
 import * as chrono from "../chronologie.js";
 import { arrondi, formatFixe, formatPourcentage } from "../format.js";
+import { REGIME_DE_MAYOTTE } from "../macro.js";
 import { FIN_PEREQUATION, coefficientTraitementDiffere, dateIso } from "../revalorisation.js";
 import { Fiabilite, fiabiliteDepuisTexte, nomFiabilite } from "../serie.js";
 import * as acquerir from "./acquerir.js";
@@ -2057,13 +2058,16 @@ export function salaireDeReference(moteur, code, carriere, periode, anneeLiquida
         plein + revenu / ligne.quotite]);
   }
 
+  // Le plafond de Mayotte : celui de sa caisse (décret n° 2003-589, art. 7).
+  // Voir le Python.
+  const mahorais = code === REGIME_DE_MAYOTTE;
   const borner = (revenuBrut, annee, fraction) => {
     let revenu = revenuBrut;
     if (plafonner) {
       // Le plafond se proratise sur les mois travaillés : l'année d'entrée
       // dans la vie active n'est pas pleine.
       revenu = Math.min(
-        revenu, moteur.macro.plafond_securite_sociale.valeur(annee) * fraction,
+        revenu, moteur.macro.plafondDeCotisations(annee, mahorais) * fraction,
       );
     }
     const ecretement = periode.ecretement_salaire_reference ?? null;

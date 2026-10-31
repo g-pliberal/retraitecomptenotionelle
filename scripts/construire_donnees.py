@@ -135,7 +135,7 @@ CALIBRATIONS = DONNEES / "derive" / "calibrations_mortalite.json"
 #: qu'un site en cache ne lise pas un paquet qu'il ne comprend pas : le site
 #: attend la sienne (``VERSION_PAQUET``, ``moteur/js/contexte.js``), et redemande
 #: au serveur un paquet qui n'a pas celle-là, depuis le 11 octobre 2026.
-VERSION = 36
+VERSION = 37
 
 
 def _serie(serie: SerieAnnuelle) -> dict:
@@ -218,6 +218,12 @@ def _series() -> dict:
         "heures_par_trimestre_mayotte": charger_serie_annuelle(
             DONNEES / "reference" / "legislation" / "validation_trimestres_mayotte.csv",
             "heures", nom="heures_par_trimestre_mayotte"),
+        # Le plafond de la caisse de sécurité sociale de Mayotte, depuis 2005,
+        # qui borne le salaire annuel moyen de son régime (décret n° 2003-589,
+        # art. 7).
+        "plafond_mayotte": charger_serie_annuelle(
+            DONNEES / "reference" / "legislation" / "mayotte_smig_et_plafond.csv",
+            "plafond_annuel", nom="plafond_mayotte", sauter_les_vides=True),
     }
     for sexe in ("H", "F"):
         for mesure in ("e60", "e65"):

@@ -703,13 +703,19 @@ class DonneesMacro:
         salaire moyen, conformément à l'article L. 241-3 du code de la sécurité
         sociale.
         """
-        from .chargement import ValeurAnnuelle
-
         serie = charger_serie_annuelle(
             self.racine / "reference" / "macro" / "plafond_securite_sociale.csv",
             colonne_valeur="pass_eur",
             nom="pass",
         )
+        return self._prolonger_comme_le_plafond(serie, "pass")
+
+    def _prolonger_comme_le_plafond(self, serie: SerieAnnuelle, nom: str) -> SerieAnnuelle:
+        """``serie`` prolongée au-delà de sa dernière valeur publiée par la
+        croissance du salaire moyen, en ``estimee``, sauf si les hypothèses
+        l'interdisent (``plafond_suit_salaire_moyen``)."""
+        from .chargement import ValeurAnnuelle
+
         if not self._hypotheses.get("plafond_suit_salaire_moyen", True):
             return serie
 
@@ -719,7 +725,32 @@ class DonneesMacro:
         for annee in range(serie.derniere_annee + 1, self.projection["fin"] + 1):
             courant *= 1 + croissance
             valeurs[annee] = ValeurAnnuelle(annee, courant, Fiabilite.ESTIMEE)
-        return SerieAnnuelle(valeurs, "pass", "escalier")
+        return SerieAnnuelle(valeurs, nom, "escalier")
+
+    @cached_property
+    def plafond_mayotte(self) -> SerieAnnuelle:
+        """Le plafond annuel des cotisations de la caisse de sécurité sociale de
+        Mayotte, en vigueur au 1er janvier, en euros : depuis 2005, première
+        année entière du barème de la Cnav (``legislation/mayotte_smig_et_plafond.csv``).
+        Au-delà de la dernière valeur publiée, il suit la croissance du salaire
+        moyen, comme le plafond de la Sécurité sociale."""
+        serie = charger_serie_annuelle(
+            self.racine / "reference" / "legislation" / "mayotte_smig_et_plafond.csv",
+            colonne_valeur="plafond_annuel",
+            nom="plafond_mayotte",
+            sauter_les_vides=True,
+        )
+        return self._prolonger_comme_le_plafond(serie, "plafond_mayotte")
+
+    def plafond_de_cotisations(self, annee: int, mayotte: bool = False) -> float:
+        """Le plafond annuel des cotisations de l'année, en euros : celui de la
+        Sécurité sociale, ou, au régime des salariés de Mayotte (``mayotte``),
+        celui de sa caisse depuis 2005 (:attr:`plafond_mayotte`). Avant 2005,
+        celui de la Sécurité sociale tient lieu : le barème de la Cnav ne
+        remonte pas plus haut."""
+        if mayotte and annee >= self.plafond_mayotte.premiere_annee:
+            return self.plafond_mayotte(annee)
+        return self.plafond_securite_sociale(annee)
 
     # -- grandeurs dérivées --------------------------------------------------
 

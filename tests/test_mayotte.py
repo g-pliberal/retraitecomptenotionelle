@@ -16,6 +16,18 @@ en vigueur à Mayotte » (rédaction du 22 octobre 2023, LEGIARTI000048241292).
 Le Smig du 1er janvier est celui des barèmes de la Cnav, depuis 2002
 (``legislation/mayotte_smig_et_plafond.csv``) : le modèle validait au Smic
 national.
+
+LE PLAFOND. « Le salaire servant au calcul de la pension est le salaire annuel
+moyen déterminé à partir des vingt-cinq meilleurs salaires annuels reportés au
+compte de l'assuré dans la limite du plafond annuel de cotisations mentionné
+au II de l'article 19 de l'ordonnance du 27 mars 2002 » (décret n° 2003-589,
+article 7, LEGIARTI000006781026, LEGIARTI000026514457, LEGIARTI000033155445) :
+celui de la caisse de sécurité sociale de Mayotte, que l'article 21 fixe à
+825 € par mois en 2003, puis à 1 070 € en 2011, revalorisé chaque année
+comme le plafond de la métropole « majoré de cinq points et un dixième »
+(LEGIARTI000006781041, LEGIARTI000026514398), et que la même série porte
+depuis 2005, première année entière du barème de la Cnav. Le modèle
+plafonnait au plafond de la Sécurité sociale.
 """
 
 from __future__ import annotations
@@ -28,7 +40,8 @@ from pathlib import Path
 
 import pytest
 
-from retraite_notionnelle.carriere import LigneRelevee
+from retraite_notionnelle.carriere import AnneeCarriere, Carriere, LigneRelevee
+from retraite_notionnelle.droit import liquider
 from retraite_notionnelle.simulateur import Simulateur
 
 RACINE = Path(__file__).resolve().parents[1]
@@ -129,3 +142,50 @@ def test_un_trimestre_se_valide_a_mayotte_au_smig_mahorais(deux_moteurs):
     assert {annee: mahoraise[annee].trimestres_valides
             for annee in (2002, 2010, 2016, 2017, 2025)} == {
         2002: 2, 2010: 4, 2016: 1, 2017: 2, 2025: 4}
+
+
+#: Le plafond annuel de la caisse de sécurité sociale de Mayotte, au barème de
+#: la Cnav « Salaire plafond - Mayotte » : 912 € par mois du 1er juillet 2004 au
+#: 31 décembre 2010, 1 070 € en 2011 — le montant de l'article 21 —, 1 492 € en
+#: 2016, 1 934 € en 2020 et 2 644 € en 2024.
+PLAFONDS_DE_LA_CAISSE = {2005: 10_944.0, 2011: 12_840.0, 2016: 17_904.0,
+                         2020: 23_208.0, 2024: 31_728.0}
+
+
+def _salariee_a_25_000_euros() -> Carriere:
+    """Une salariée de Mayotte née en 1961, partie à soixante-quatre ans en
+    2025, à 25 000 € chacune des années de ``PLAFONDS_DE_LA_CAISSE``."""
+    return Carriere.depuis_lignes(
+        1961, "F", [AnneeCarriere(annee=annee, revenu=25_000.0, affiliation=STATUT,
+                                  trimestres_valides=4) for annee in PLAFONDS_DE_LA_CAISSE],
+        age_liquidation=64)
+
+
+def test_le_salaire_annuel_moyen_de_mayotte_s_ecrete_au_plafond_de_la_caisse(simulateur):
+    """Cinq années à 25 000 € : chacune s'écrête au plafond de la caisse de son
+    année, 10 944 € en 2005, 23 208 € en 2020, que le plafond de la Sécurité
+    sociale, de 30 192 € à 46 368 €, laissait entière ; celle de 2024 le reste,
+    sous 31 728 €. Moins de vingt-cinq années : le salaire annuel moyen les
+    prend toutes, revalorisées à la date d'effet."""
+    macro = simulateur.macro
+    carriere = _salariee_a_25_000_euros()
+    liquidation = carriere.annee_liquidation
+    assert liquidation == 2025
+    assert all(macro.plafond_securite_sociale(annee) > 25_000.0
+               for annee in PLAFONDS_DE_LA_CAISSE)
+    attendu = sum(
+        min(25_000.0, plafond) * macro.coefficient_revalorisation_portee_au_compte(
+            annee, liquidation, carriere.mois_liquidation)
+        for annee, plafond in PLAFONDS_DE_LA_CAISSE.items()) / len(PLAFONDS_DE_LA_CAISSE)
+    periode = simulateur.catalogue["cssm_mayotte"].periode(liquidation)
+    assert liquider.salaire_de_reference(
+        simulateur.scenario_actuel, "cssm_mayotte", carriere, periode, liquidation,
+        True, 1961) == pytest.approx(attendu, rel=1e-12)
+
+
+def test_les_deux_moteurs_plafonnent_au_plafond_de_la_caisse(deux_moteurs):
+    """La même salariée, sur son relevé : le portage rend les mêmes lignes et le
+    même résultat entier, sa pension de Mayotte comprise."""
+    deux_moteurs([{"naissance": 1961, "age": 64.0, "releve": [
+        {"annee": annee, "affiliation": STATUT, "revenu": 25_000.0}
+        for annee in PLAFONDS_DE_LA_CAISSE]}])

@@ -35,6 +35,7 @@ from typing import TYPE_CHECKING
 from ..calendrier import MOIS_PAR_AN, DateMois
 from ..carriere import revenu_cotise, salaire_moyen_annuel
 from ..donnees.chargement import Fiabilite
+from ..donnees.macro import REGIME_DE_MAYOTTE
 from .. import revalorisation
 from ..donnees.primes import charger_primes_soumises
 from . import acquerir, categories, coordonner, cultes, invalidite, ouvrir, primes
@@ -2828,6 +2829,12 @@ def salaire_de_reference(moteur, code: str, carriere: Carriere,
         cumul[1] = max(cumul[1], 1.0 if entiere else fraction_ligne)
         cumul[2] += revenu / ligne.quotite
 
+    # LE PLAFOND DE MAYOTTE : les salaires « reportés au compte de l'assuré
+    # dans la limite du plafond annuel de cotisations » de sa caisse (décret
+    # n° 2003-589, art. 7), et non de celui de la Sécurité sociale (action 177,
+    # étape 3).
+    mahorais = code == REGIME_DE_MAYOTTE
+
     def borner(revenu: float, annee: int, fraction: float) -> float:
         if plafonner:
             # Le plafond se proratise sur les mois travaillés : l'année
@@ -2836,7 +2843,7 @@ def salaire_de_reference(moteur, code: str, carriere: Carriere,
             # écrêté.
             revenu = min(
                 revenu,
-                moteur.macro.plafond_securite_sociale(annee) * fraction,
+                moteur.macro.plafond_de_cotisations(annee, mayotte=mahorais) * fraction,
             )
         if periode.ecretement_salaire_reference is not None:
             # L'ÉCRÊTEMENT de la CRPCEN : « n'est compté que pour moitié pour

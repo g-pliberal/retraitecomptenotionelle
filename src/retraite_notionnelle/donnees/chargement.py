@@ -299,6 +299,7 @@ def charger_serie_annuelle(
     nom: str | None = None,
     interpolation: str = "escalier",
     filtre: dict[str, str] | None = None,
+    sauter_les_vides: bool = False,
 ) -> SerieAnnuelle:
     """Charge un CSV ``annee,<colonne_valeur>,fiabilite`` en série annuelle.
 
@@ -320,11 +321,15 @@ def charger_serie_annuelle(
     des barèmes. Une série d'ENQUÊTE laissée au défaut prête au producteur des
     chiffres qu'il n'a pas publiés, et c'était le cas de la coordination RATP
     en 2022 jusqu'au 20 septembre 2026.
+
+    ``sauter_les_vides`` lit une cellule vide comme une année que la colonne ne
+    couvre pas : le plafond de Mayotte, qui commence en 2005 dans un fichier
+    dont le Smig commence en 2002. Sans lui, une cellule vide est une faute.
     """
     try:
         etat = chemin.stat()
         cle = (str(chemin), etat.st_mtime_ns, etat.st_size, colonne_valeur, nom,
-               interpolation, tuple(sorted((filtre or {}).items())))
+               interpolation, tuple(sorted((filtre or {}).items())), sauter_les_vides)
     except OSError:  # pragma: no cover - le fichier manquant lèvera plus bas
         cle = None
     if cle is not None and cle in _SERIES_EN_CACHE:
@@ -335,6 +340,8 @@ def charger_serie_annuelle(
         lignes = (ligne for ligne in flux if not ligne.lstrip().startswith("#"))
         for enregistrement in csv.DictReader(lignes):
             if filtre and any(enregistrement.get(k) != v for k, v in filtre.items()):
+                continue
+            if sauter_les_vides and not (enregistrement[colonne_valeur] or "").strip():
                 continue
             annee = int(enregistrement["annee"])
             valeurs[annee] = ValeurAnnuelle(
