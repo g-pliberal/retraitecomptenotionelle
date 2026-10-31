@@ -1,16 +1,5 @@
 # Étape 2 : les barèmes du modèle, confrontés à leurs séries
 
-**Reprise, au 30 octobre 2026.** Faits : le droit commun ; des indépendants,
-les taux, les assiettes, le revenu validant, les points, le cumul, les DOM et
-leurs tables d'avant 2020, le début d'activité, les micro-entrepreneurs
-depuis 2017 ; la minoration, le plafond, le Smic, Mayotte, les coefficients,
-le conjoint, les dernières valeurs. Reste : l'Acre (plafond d'exonération),
-l'activité de faible importance, les tables des micro-entrepreneurs d'avant
-2017 et leur Accre de 2019. À la session du modèle : le RCO de 2008-2009 et
-sur quatre plafonds dès 1997, huit valeurs de point, l'assiette minimale
-avant 1985 et en 2022, Mayotte, les DOM, l'assiette d'avant 2007, que
-`cotisation_vieillesse_independants` met à relire.
-
 **Le 30 octobre 2026, ce qui est fait.**
 
 - *Un trou du registre, comblé d'abord.* Treize pages jointes chargent un
@@ -201,3 +190,54 @@ avant 2013.
   `hors_modele`, comme ceux des DOM et de l'Acre.
 - *Un lien mort* : la table du prix du point du NRCO avant 2013, que le site
   ne sert sous aucune graphie de son nom (404), `hors_modele`.
+
+**Le 31 octobre 2026, la fin de l'étape.**
+
+- *Les micro-entrepreneurs d'avant 2017* : la grille de la caisse, le
+  chiffre d'affaires qui valide un à quatre trimestres de 2009 à 2015
+  (« Info-doc RSI » du 16 avril 2019), est celle du modèle à deux euros près,
+  la grille arrondissant à l'euro et plaçant 2012 et 2013 un euro et demi
+  sous le seuil exact
+  (`test_le_modele_valide_les_trimestres_de_la_grille_de_la_compensation`).
+  Deux écarts déclarés (`ECARTS_A_LA_GRILLE`) : le plancher de 2009, un
+  trimestre à tout chiffre d'affaires (circulaire RSI n° 2009/024) ; en 2015,
+  le trimestre que la grille valide à l'assuré « prestataire santé » sous les
+  300 heures de la compensation, quand la circulaire RSI n° 2015/007, que le
+  modèle suit, n'en valide « rien en deçà ». Les taux globaux de 2009 à 2017,
+  que le modèle n'emploie pas : `hors_modele`.
+- *L'Accre et l'Acre* : une limite (`docs/limites/3-systeme-actuel.md`), où
+  renvoient le plafond d'exonération du début d'activité et la table de
+  l'Accre des micro-entrepreneurs.
+- *L'activité de faible importance*, que la caisse laisse poursuivre avec la
+  pension sous le tiers du Smic de 1 820 heures, et, pour le commerçant et
+  l'artisan retraités avant 2004, sous un plafond qu'elle publie : la fiche
+  du cumul la déclare dans ses approximations, et son barème y renvoie.
+- *Les sorts*, depuis la note : 2 barèmes et 5 documents. Sur toute
+  l'étape : 132 barèmes (35 `recoupe`, 13 `branche`, 69 `limite`, 15
+  `hors_modele`) et 107 documents (56 `recoupe`, 45 `limite`, 6
+  `hors_modele`). Le seul barème des indépendants encore `a_lire`, le revenu
+  validant de Mayotte, va à l'étape 4, avec son thème.
+
+**L'étape est faite** : chaque barème de sa liste est rangé.
+
+**À la session du modèle**, les écarts qui changent le calcul, les deux
+moteurs ensemble :
+
+1. le RCO des artisans de 2008 et de 2009, que le décret n° 2007-1900 fixe
+   « par dérogation » (`ECARTS_COMPLEMENTAIRES`) ;
+2. le même RCO, assis sur quatre plafonds dès 1997 par D. 635-4
+   (`ECARTS_ASSIETTE_MAXIMALE`) ;
+3. huit valeurs de point du RCO et du NRCO, tirées de l'IPP
+   (`ECARTS_POINTS`) ;
+4. l'assiette minimale des indépendants avant 1985 et en 2022 (fiche
+   `assiette_minimale_independants`, `ECARTS_ASSIETTE_MINIMALE`) ;
+5. Mayotte : la fiche `cssm_mayotte`, à faire lire
+   `mayotte_smig_et_plafond.csv` ;
+6. les indépendants des DOM : l'abattement de L. 756-4 et ce qui en suit
+   (limite « indépendants des DOM », `ASSIETTE_MINIMALE_DOM_DE_MOITIE`) ;
+7. l'assiette d'avant 2007, que la fiche `cotisation_vieillesse_independants`
+   met à relire ;
+8. le premier trimestre du micro-entrepreneur en 2014 et en 2015, où la
+   grille de la caisse et ses circulaires divergent, et l'assuré qui ne
+   relève pas de la maladie du RSI, que le modèle ne distingue pas
+   (`ECARTS_A_LA_GRILLE`).
