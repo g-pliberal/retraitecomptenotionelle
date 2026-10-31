@@ -1,15 +1,16 @@
 #!/usr/bin/env python3
-"""Fabrique les cas-témoins qui contrôlent le portage JavaScript.
+"""Fabrique les cas-témoins du moteur d'une carrière et des pages du site.
 
-Le modèle Python reste la **référence** : c'est lui qui a été écrit contre les
-sources, testé et documenté. Le moteur JavaScript qui fait tourner le site doit
-en reproduire les chiffres, pas les réinventer. Ce script fige donc ce que le
-JavaScript doit retrouver :
+Le moteur JavaScript de ``moteur/js/`` fait foi (note de décision 0005) : une
+règle s'y écrit d'abord, contre ses sources, et son jumeau Python la suit, au
+bit près, jusqu'au retrait de sa paire (action 161). Ce script fige ce que le
+site calcule et ce qu'il écrit :
 
 * ``tests/temoins/simulations.json`` — un jeu de carrières et de réglages, avec
-  la sortie complète de ``Comparaison.dictionnaire()`` pour chacun : la
-  carrière de chaque requête, la saisie du portage la bâtit, la seule
-  (``pont.carrieres_des_saisies``), et le moteur Python la simule ;
+  la sortie complète de ``Comparaison.dictionnaire()`` pour chacun, que le
+  portage simule comme le site la simule (``pont.simulations``) et que le
+  Python écrit sous la table des types du pont. Le moteur Python, tant qu'il
+  garde ses jumeaux, refait chacun (``tests/test_pont.py``) ;
 * ``tests/temoins/pages.json`` — le HTML rendu de chaque page du site, par le
   site lui-même : son texte n'est écrit qu'en JavaScript (docs/architecture.md,
   § 8), et ``web/site.py`` le fait rendre par node, sur le paquet
@@ -18,10 +19,10 @@ JavaScript doit retrouver :
   (``retraite_notionnelle.lignes``), dont la concaténation rend la page.
 
 Les deux fichiers sont versionnés : une différence de chiffre entre les deux
-implémentations apparaît alors dans ``node --test``, et une modification voulue
-du modèle, ou du texte du site, apparaît en diff dans le dépôt, chiffre par
-chiffre et mot par mot. C'est ce qui rend le portage vérifiable plutôt que
-crédible.
+implémentations fait échouer la confrontation du moteur Python, et une
+modification voulue du modèle, ou du texte du site, apparaît en diff dans le
+dépôt, chiffre par chiffre et mot par mot. C'est ce qui rend le portage
+vérifiable plutôt que crédible.
 
     python scripts/construire_temoins.py            # régénère les témoins
     python scripts/construire_temoins.py --verifier # échoue s'ils sont périmés
@@ -40,10 +41,8 @@ sys.path.insert(0, str(RACINE / "src"))
 
 from retraite_notionnelle import pont  # noqa: E402
 from retraite_notionnelle.carriere import Affiliations  # noqa: E402
-from retraite_notionnelle.config import RACINE_DONNEES, Parametres  # noqa: E402
-from retraite_notionnelle.droit import liquidation as _liquidation  # noqa: E402
+from retraite_notionnelle.config import RACINE_DONNEES  # noqa: E402
 from retraite_notionnelle.lignes import html_en_morceaux  # noqa: E402
-from retraite_notionnelle.simulateur import Simulateur  # noqa: E402
 from retraite_notionnelle.web.site import module, rendre  # noqa: E402
 
 DOSSIER = RACINE / "tests" / "temoins"
@@ -2103,9 +2102,12 @@ def _fini(valeur):
     """Remplace NaN et les infinis par ``null``.
 
     ``json.dumps`` les écrit ``NaN`` et ``Infinity``, que la norme JSON ignore
-    et que ``JSON.parse`` refuse. Le modèle en produit — l'écart au système
-    actuel n'est pas défini quand ce système ne verse rien — et le témoin doit
-    rester lisible des deux côtés.
+    et que ``JSON.parse`` refuse. Le moteur Python en produit — l'écart au
+    système actuel n'est pas défini quand ce système ne verse rien — là où les
+    témoins, que le portage calcule, portent ``null``, que node écrit de même :
+    la confrontation du moteur Python aux témoins (``tests/test_pont.py``) et
+    les tests qui confrontent les deux moteurs sur un résultat entier
+    (``tests/test_pcv_sante.py``, ``tests/test_reversion.py``) s'en servent.
     """
     if isinstance(valeur, float) and (valeur != valeur or valeur in (float("inf"), float("-inf"))):
         return None
@@ -2119,35 +2121,19 @@ def _fini(valeur):
 def _simulations() -> dict:
     """Chaque témoin : sa requête, son résultat, et les appels de ``liquider``
     qu'il a faits, liquidations d'essai comprises (docs/architecture.md,
-    § 7.8). La carrière de chaque requête, le portage la bâtit, de sa saisie,
-    la seule (``pont.carrieres_des_saisies``, action 161) ; le
-    moteur Python la simule, un simulateur par jeu de paramètres, comme le
-    contexte du site. Le résultat s'écrit sous la table des types par laquelle
-    le pont relit ce que le portage rend (``pont.resultat_des_donnees``) : le
-    zéro d'un champ flottant « 0.0 », même quand le moteur Python le rend
-    entier, d'une somme vide. Le portage simule la même carrière
-    (``tests/js/moteur.test.js``), aux mêmes appels, et un test refuse qu'un
-    témoin dépasse le nombre déclaré (``tests/test_liquidation.py``)."""
+    § 7.8). Le portage, qui fait foi (note de décision 0005), simule chaque
+    requête comme le site la simule (``pont.simulations``, action 161), et le
+    Python relit son résultat sous la table des types du pont
+    (``pont.resultat_des_donnees``), le zéro d'un champ flottant « 0.0 ». Le
+    moteur Python, tant qu'il garde ses jumeaux, est confronté à chaque témoin,
+    au bit près (``tests/test_pont.py``), et un test refuse qu'un témoin
+    dépasse le nombre d'appels déclaré (``tests/test_liquidation.py``)."""
     cas = _cas()
-    carrieres, refusees = pont.carrieres_des_saisies(
+    resultats, refusees = pont.simulations(
         [{"cle": un["nom"], "requete": un["requete"]} for un in cas])
     if refusees:
         raise ValueError(f"le portage refuse des témoins : {refusees}")
-    simulateurs: dict[Parametres, Simulateur] = {}
-    resultats = {}
-    for un in cas:
-        parametres, carriere = carrieres[un["nom"]]
-        if parametres not in simulateurs:
-            simulateurs[parametres] = Simulateur(parametres)
-        avant = _liquidation.appels()
-        resultat = pont.resultat_des_donnees(
-            _fini(simulateurs[parametres].simuler(carriere).dictionnaire()))
-        resultats[un["nom"]] = {
-            "requete": un["requete"],
-            "resultat": resultat,
-            "appels_liquider": _liquidation.appels() - avant,
-        }
-    return resultats
+    return {un["nom"]: {"requete": un["requete"], **resultats[un["nom"]]} for un in cas}
 
 
 #: Le bloc JSON de la page reprend les mêmes chiffres que les témoins

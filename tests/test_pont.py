@@ -19,6 +19,8 @@ sans node, il s'arrête, sans repli sur le moteur Python.
 from __future__ import annotations
 
 import json
+import math
+import platform
 import shutil
 import subprocess
 import sys
@@ -27,6 +29,7 @@ from dataclasses import fields, replace
 import pytest
 
 from retraite_notionnelle import Parametres, pont
+from retraite_notionnelle.droit import liquidation
 from retraite_notionnelle.carriere import AnneeCarriere, Carriere
 from retraite_notionnelle.castypes import (
     CAS_TYPES, GRILLE_DU_COUT, carriere_de_la_grille, cases_de_la_grille)
@@ -320,33 +323,99 @@ def test_une_carriere_passe_en_donnees_champ_par_champ():
                 if ligne["affiliation"] == "fonctionnaire_etat"}) > 1
 
 
-def test_les_temoins_simulent_au_moteur_python_la_carriere_que_le_portage_batit(monkeypatch):
-    """Les témoins de simulations confrontent les deux moteurs, et la saisie
-    n'en a plus qu'un : le portage bâtit la carrière de chaque requête
-    (:func:`pont.carrieres_des_saisies`), le moteur Python la simule, et le
-    portage la simule à son tour (``tests/js/moteur.test.js``). Sur des témoins
-    de chaque forme — un relevé, un conjoint, un décès, l'étranger, un emploi
-    après le départ —, ce que porte le fichier, à l'octet."""
-    if shutil.which("node") is None:
-        pytest.skip("node absent : le pont ne se vérifie pas ici")
+def _construire_temoins():
+    """Le module de ``scripts/construire_temoins.py``."""
     import importlib.util
 
     chemin = RACINE_PROJET / "scripts" / "construire_temoins.py"
     specification = importlib.util.spec_from_file_location("construire_temoins", chemin)
     module = importlib.util.module_from_spec(specification)
     specification.loader.exec_module(module)
-    temoins = json.loads((RACINE_PROJET / "tests" / "temoins" / "simulations.json")
-                         .read_text(encoding="utf-8"))
+    return module
+
+
+def _echantillon(temoins: dict) -> list[str]:
+    """Des témoins de chaque forme : la base, un relevé, un conjoint, un décès,
+    l'étranger, un emploi après le départ."""
     formes = ("releve", "conjoint", "deces", "etranger1_pays", "emploi_retraite")
-    noms = ["base"] + [next(nom for nom, temoin in temoins.items() if forme in temoin["requete"])
+    return ["base"] + [next(nom for nom, temoin in temoins.items() if forme in temoin["requete"])
                        for forme in formes]
+
+
+#: La confrontation du moteur Python aux témoins, que le portage calcule
+#: partout comme la libm de Linux (``moteur/js/libm.js``) : au bit près sous
+#: Linux x86_64, où GitHub la joue ; ailleurs, la libm du système déplace la
+#: dernière décimale de quelques flottants, et elle tolère 10⁻¹² en écart
+#: relatif, les types et les textes restant exacts, comme ``_fichier_a_jour``
+#: (``tests/test_web.py``).
+TOLERANCE_DU_MOTEUR_PYTHON = (
+    0.0 if sys.platform == "linux" and platform.machine() == "x86_64" else 1e-12)
+
+
+def _au_moteur_python(requetes: dict[str, dict]) -> dict[str, dict]:
+    """Chaque requête, sous le nom de son témoin, simulée au moteur Python comme
+    ``scripts/construire_temoins.py`` la simulait jusqu'au 31 octobre 2026 : la
+    carrière que le portage bâtit de sa saisie, la seule
+    (:func:`pont.carrieres_des_saisies`), simulée par le jumeau Python, un
+    simulateur par jeu de paramètres ; son résultat écrit sous la table des
+    types (:func:`pont.resultat_des_donnees`), et ses appels de ``liquider``,
+    liquidations d'essai comprises."""
+    fini = _construire_temoins()._fini
+    carrieres, refusees = pont.carrieres_des_saisies(
+        [{"cle": nom, "requete": requete} for nom, requete in requetes.items()])
+    assert refusees == {}
+    simulateurs = {}
+    refaits = {}
+    for nom, requete in requetes.items():
+        parametres, carriere = carrieres[nom]
+        if parametres not in simulateurs:
+            simulateurs[parametres] = Simulateur(parametres)
+        avant = liquidation.appels()
+        resultat = simulateurs[parametres].simuler(carriere).dictionnaire()
+        refaits[nom] = {"requete": requete,
+                        "resultat": pont.resultat_des_donnees(fini(resultat)),
+                        "appels_liquider": liquidation.appels() - avant}
+    return refaits
+
+
+def test_les_temoins_se_simulent_par_le_portage_sans_le_moteur_python(monkeypatch):
+    """``scripts/construire_temoins.py`` fait simuler ses témoins au portage
+    (:func:`pont.simulations`), le moteur qui fait foi (note de décision
+    0005) : le moteur Python, qu'on empêche ici de simuler, n'y entre pas, et
+    des témoins de chaque forme reviennent tels que le fichier les porte, à
+    l'octet."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    module = _construire_temoins()
+    _, temoins = _temoins_de_simulations()
+    noms = _echantillon(temoins)
     monkeypatch.setattr(module, "_cas", lambda: [{"nom": nom, "requete": temoins[nom]["requete"]}
                                                   for nom in noms])
+
+    def interdit(*_, **__):
+        raise AssertionError("le moteur Python simule un témoin")
+
+    monkeypatch.setattr(Simulateur, "simuler", interdit)
     simulations = module._simulations()
     assert list(simulations) == noms
     for nom in noms:
-        assert (json.dumps(simulations[nom], ensure_ascii=False, sort_keys=True, indent=1)
-                == json.dumps(temoins[nom], ensure_ascii=False, sort_keys=True, indent=1)), nom
+        assert _ecarts_d_ecriture(simulations[nom], temoins[nom]) == [], nom
+
+
+def test_le_moteur_python_refait_des_temoins_de_chaque_forme():
+    """Le moteur Python garde ses jumeaux jusqu'à leur retrait (action 161), et
+    les témoins, que le portage calcule, le confrontent : sur des témoins de
+    chaque forme, la carrière que le portage bâtit, simulée au moteur Python
+    et écrite sous la table des types, redonne ce que porte le fichier, appels
+    de ``liquider`` compris (:data:`TOLERANCE_DU_MOTEUR_PYTHON`)."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    _, temoins = _temoins_de_simulations()
+    noms = _echantillon(temoins)
+    refaits = _au_moteur_python({nom: temoins[nom]["requete"] for nom in noms})
+    for nom in noms:
+        assert _ecarts_d_ecriture(refaits[nom], temoins[nom],
+                                  tolerance=TOLERANCE_DU_MOTEUR_PYTHON) == [], nom
 
 
 def _comme_node(valeur):
@@ -361,16 +430,22 @@ def _comme_node(valeur):
     return valeur
 
 
-def _ecarts_d_ecriture(relu, attendu, chemin: tuple = ()) -> list[str]:
+def _ecarts_d_ecriture(relu, attendu, chemin: tuple = (), tolerance: float = 0.0) -> list[str]:
     """Les endroits où ``relu`` ne s'écrit pas comme ``attendu`` : une clé, une
-    longueur, un nombre, un texte, un type — « 0 » pour « 0.0 » en est un."""
+    longueur, un nombre, un texte, un type — « 0 » pour « 0.0 » en est un. Avec
+    une ``tolerance``, deux flottants égaux à elle près, en écart relatif,
+    s'écrivent de même."""
     if isinstance(attendu, dict) and isinstance(relu, dict) and sorted(relu) == sorted(attendu):
         return [ecart for cle in attendu
-                for ecart in _ecarts_d_ecriture(relu[cle], attendu[cle], (*chemin, cle))]
+                for ecart in _ecarts_d_ecriture(relu[cle], attendu[cle], (*chemin, cle),
+                                                tolerance)]
     if isinstance(attendu, list) and isinstance(relu, list) and len(relu) == len(attendu):
         return [ecart for rang, (lu, element) in enumerate(zip(relu, attendu))
-                for ecart in _ecarts_d_ecriture(lu, element, (*chemin, f"[{rang}]"))]
+                for ecart in _ecarts_d_ecriture(lu, element, (*chemin, f"[{rang}]"), tolerance)]
     if json.dumps(relu) == json.dumps(attendu):
+        return []
+    if (tolerance and type(relu) is float and type(attendu) is float
+            and math.isclose(relu, attendu, rel_tol=tolerance)):
         return []
     return [f"{'.'.join(chemin)} : le fichier écrit {json.dumps(attendu)[:60]}, "
             f"la relecture {json.dumps(relu)[:60]}"]
@@ -453,9 +528,7 @@ def test_le_pont_simule_des_temoins_comme_le_portage_les_simule():
     if shutil.which("node") is None:
         pytest.skip("node absent : le pont ne se vérifie pas ici")
     _, temoins = _temoins_de_simulations()
-    formes = ("releve", "conjoint", "deces", "etranger1_pays", "emploi_retraite")
-    noms = ["base"] + [next(nom for nom, temoin in temoins.items() if forme in temoin["requete"])
-                       for forme in formes]
+    noms = _echantillon(temoins)
     resultats, echecs = pont.simulations([{"cle": nom, "requete": temoins[nom]["requete"]}
                                           for nom in noms])
     assert (list(resultats), echecs) == (noms, {})
@@ -483,6 +556,26 @@ def test_le_portage_relu_par_la_table_redonne_les_temoins_a_l_octet():
               for ecart in _ecarts_d_ecriture(relus[nom], temoin)]
     assert not ecarts, f"{len(ecarts)} écart(s), dont : {ecarts[:5]}"
     assert json.dumps(relus, ensure_ascii=False, sort_keys=True, indent=1) + "\n" == texte
+
+
+def test_le_moteur_python_refait_chaque_temoin():
+    """Tous les témoins, simulés au moteur Python sur la carrière que le portage
+    bâtit, écrits sous la table des types : le fichier, que le portage calcule,
+    revient à l'octet sous Linux x86_64, appels de ``liquider`` compris
+    (:data:`TOLERANCE_DU_MOTEUR_PYTHON`). C'est la concordance des deux
+    moteurs, que ``tests/js/moteur.test.js`` tenait quand les témoins se
+    simulaient au Python : une règle portée d'un seul côté, ou dans un autre
+    ordre d'addition, la rougit (note de décision 0005)."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    texte, temoins = _temoins_de_simulations()
+    refaits = _au_moteur_python({nom: temoin["requete"] for nom, temoin in temoins.items()})
+    ecarts = [f"{nom}, {ecart}" for nom, temoin in temoins.items()
+              for ecart in _ecarts_d_ecriture(refaits[nom], temoin,
+                                              tolerance=TOLERANCE_DU_MOTEUR_PYTHON)]
+    assert not ecarts, f"{len(ecarts)} écart(s), dont : {ecarts[:5]}"
+    if not TOLERANCE_DU_MOTEUR_PYTHON:
+        assert json.dumps(refaits, ensure_ascii=False, sort_keys=True, indent=1) + "\n" == texte
 
 
 def test_le_python_relit_une_carriere_ecrite_par_node_sous_ses_types():

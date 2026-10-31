@@ -46,9 +46,9 @@ flowchart LR
   donnees -->|"lues"| python
   python -->|"construire_donnees.py"| paquet
   paquet -->|"chargé une fois"| site
-  python -->|"fige les simulations"| temoins
+  jumeau -->|"simule les témoins, par le pont"| temoins
   pages -->|"figées elles aussi"| temoins
-  temoins -->|"vérifient"| jumeau
+  temoins -->|"vérifient les jumeaux"| python
   jumeau -.->|"suivi à la main, au bit près"| python
   jumeau -->|"calcule"| pages
   pages -->|"écrites d'avance"| toutes
@@ -67,20 +67,21 @@ flowchart LR
   class jumeau,pages,toutes,site z_site
 ```
 
-Le modèle Python lit les données et fabrique deux choses : le paquet que
-charge le site, `moteur/donnees.json`
+Le modèle Python lit les données et fabrique le paquet que charge le site,
+`moteur/donnees.json`
 (<!--chiffre:poids(moteur/donnees.json)-->5 748<!--/--> Ko, par
-`scripts/construire_donnees.py`), et les témoins, que son moteur simule
-encore et que le moteur JavaScript doit retrouver, dans `tests/temoins/`
-(par `scripts/construire_temoins.py`).
+`scripts/construire_donnees.py`). Les témoins, dans `tests/temoins/`, le
+moteur JavaScript les simule, par le pont (`scripts/construire_temoins.py`),
+et le moteur Python doit les refaire tant qu'il garde ses jumeaux.
 
 Le suivi, seul trait en pointillé, se fait à la main, règle par règle et
 JavaScript d'abord (note de décision 0005), sous les mêmes noms d'étapes des
 deux côtés, jusqu'au retrait de chaque jumeau Python. Les témoins le
 tiennent :
 <!--chiffre:entrees(tests/temoins/simulations.json:)-->913<!--/--> simulations
-complètes et <!--chiffre:entrees(tests/temoins/pages.json:)-->85<!--/--> pages
-figées, que `node --test` rejoue ;
+complètes, que le moteur Python refait au bit près (`tests/test_pont.py`), et
+<!--chiffre:entrees(tests/temoins/pages.json:)-->85<!--/--> pages figées, que
+`node --test` rejoue ;
 <!--chiffre:portage(valeurs)-->171 732<!--/--> nombres comparés, dont
 <!--chiffre:portage(identiques)-->100,0<!--/--> % identiques au bit près.
 

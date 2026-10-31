@@ -11,13 +11,13 @@ de la proposition, qui s'écrit en couche (`data/CLAUDE.md`).
   encore son jumeau ici** (principe 4, notes de décision 0003 et 0005) : une
   règle nouvelle ou modifiée s'y écrit d'abord, avec son test tiré de la
   source ; son jumeau Python la suit dans le même commit, ligne pour ligne,
-  jusqu'à rendre chaque nombre des témoins au bit près — la concordance
-  (`tests/js/moteur.test.js`) en est le test, et un témoin de plus
-  (`scripts/construire_temoins.py`) couvre la règle quand la concordance ne
-  rougit pas sans lui. Le Python ne cesse de suivre qu'au retrait de sa paire
-  (action 161) : tant que les témoins se simulent au moteur Python et que le
-  coût bâtit et date ses carrières par lui, une règle portée d'un seul côté
-  rougirait la suite ou ferait mentir le coût.
+  jusqu'à refaire chaque nombre des témoins au bit près — les témoins, que le
+  portage calcule (`scripts/construire_temoins.py`), le confrontent
+  (`tests/test_pont.py`, les tests du moteur Python qui les « refait »), et
+  un témoin de plus couvre la règle quand la confrontation ne rougit pas sans
+  lui. Le Python ne cesse de suivre qu'au retrait de sa paire (action 161) :
+  tant que le coût bâtit et date ses carrières par lui, une règle portée d'un
+  seul côté rougirait la suite ou ferait mentir le coût.
   `python scripts/jumeaux.py <nom>` dit si une étape a son jumeau et tout ce
   qui en dépend. Un code neuf
   s'écrit une fois, dans le langage de l'endroit où il tourne : ici, ce que
@@ -66,14 +66,15 @@ de la proposition, qui s'écrit en couche (`data/CLAUDE.md`).
   l'exemple publié de la règle, s'il existe
   (`tests/temoins/exemples_officiels.yaml`), sinon un cas posé à la main
   depuis le texte —, sur le portage : un essai de `tests/js/`, ou un test qui
-  le fait tourner par le pont ; le JavaScript, jusqu'au vert ; puis son
-  jumeau Python, s'il en a un (`python scripts/jumeaux.py <nom>`) : la
-  concordance des témoins vue rouge, au besoin par un témoin de plus, le
-  Python porté ligne pour ligne, `python scripts/construire_temoins.py`, la
-  concordance verte, au bit près ; un nombre nouveau du résultat
-  (`dictionnaire()`) déclare son type dans la table de `pont.py`
-  (`ENTIERS_DU_RESULTAT`, `FLOTTANTS_DU_RESULTAT`), que `tests/test_pont.py`
-  confronte aux témoins. Ce qui n'a pas de jumeau — le coût, les carrières
+  le fait tourner par le pont ; le JavaScript, jusqu'au vert ;
+  `python scripts/construire_temoins.py`, qui fait calculer les témoins au
+  portage ; puis son jumeau Python, s'il en a un
+  (`python scripts/jumeaux.py <nom>`) : sa confrontation aux témoins vue
+  rouge (`python -m pytest tests/test_pont.py -k refait`), au besoin par un
+  témoin de plus, le Python porté ligne pour ligne, la confrontation verte,
+  au bit près ; un nombre nouveau du résultat (`dictionnaire()`) déclare son
+  type dans la table de `pont.py` (`ENTIERS_DU_RESULTAT`,
+  `FLOTTANTS_DU_RESULTAT`). Ce qui n'a pas de jumeau — le coût, les carrières
   types — s'écrit en Python seul, son test d'abord. Puis
   `python scripts/regenerer.py`, et `python scripts/resumer_temoins.py`,
   pour voir ce qu'il déplace ; `-m rapide` et les tests de sa zone, puis le

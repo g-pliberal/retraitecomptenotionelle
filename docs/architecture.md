@@ -1109,11 +1109,12 @@ témoins identiques (action 161, note de décision 0005) :
 `python scripts/jumeaux.py` dresse la carte des paires, de tout ce qui dépend
 de chaque jumeau et de ce que les tests de concordance en exécutent. Tant
 qu'une étape a ses deux jumeaux, le JavaScript fait foi pour elle : une règle
-s'y écrit d'abord, et le Python la suit dans le même commit, jusqu'à rendre
-chaque nombre des témoins au bit près, que `tests/js/moteur.test.js` exige
-sous Linux x86_64, où GitHub les fabrique. Le Python ne cesse de suivre
-qu'au retrait de sa paire : les témoins se simulent encore à son moteur, et
-le coût bâtit et date ses carrières par lui. Les deux gardent la même
+s'y écrit d'abord, et le Python la suit dans le même commit, jusqu'à refaire
+au bit près chaque nombre des témoins, que le portage calcule
+(`scripts/construire_temoins.py`) et que `tests/test_pont.py` fait refaire au
+moteur Python sous Linux x86_64, où GitHub les vérifie. Le Python ne cesse de
+suivre qu'au retrait de sa paire : le coût bâtit et date encore ses carrières
+par lui. Les deux gardent la même
 structure, étape par étape et fonction par fonction, avec les mêmes noms :
 recopier une règle reste un geste local. Les versions, les
 relations et les paramètres sont des données, écrites une fois et lues par

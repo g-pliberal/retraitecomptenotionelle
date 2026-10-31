@@ -1,13 +1,14 @@
 /**
- * Le moteur JavaScript contre les cas-témoins du modèle Python.
+ * Le moteur JavaScript contre ses cas-témoins.
  *
  * Le JavaScript de ``moteur/js/`` fait foi depuis le 31 octobre 2026 (note de
  * décision 0005) : une règle s'y écrit d'abord, contre ses sources, et son
- * jumeau Python la suit tant qu'il en a un. Les témoins, que
- * ``scripts/construire_temoins.py`` fait encore simuler au moteur Python, le
- * prouvent : ce fichier vérifie que le JavaScript qui fait tourner le site en
- * retrouve les chiffres — et le HTML —, au bit près. Toute divergence, sur
- * n'importe quelle valeur de l'un des cas, fait échouer le test.
+ * jumeau Python la suit tant qu'il en a un. Les témoins de simulations, que
+ * ``scripts/construire_temoins.py`` fait calculer au portage, figent ce qu'il
+ * calcule, et le moteur Python doit les refaire (``tests/test_pont.py``) : ce
+ * fichier vérifie que le JavaScript qui fait tourner le site en retrouve les
+ * chiffres — et le HTML —, au bit près. Toute divergence, sur n'importe quelle
+ * valeur de l'un des cas, fait échouer le test.
  *
  *     node --test tests/js/*.test.js
  */
@@ -59,24 +60,21 @@ const temoinsSimulations = lire("tests/temoins/simulations.json");
 
 /**
  * Au bit près, sur la plateforme où GitHub fabrique les témoins. Le portage
- * calcule ses exponentielles comme la libm de Linux (`moteur/js/libm.js`,
- * action 161, étape 5) : sous Linux x86_64, il rend chaque nombre tel que le
- * moteur Python l'a écrit, et un écart d'un seul ulp dit que les deux moteurs
- * ont cessé de calculer de même — une addition dans un autre ordre, une règle
- * portée d'un côté seulement. Le JavaScript fait foi et le Python le suit
- * (note de décision 0005) : cette égalité prouve qu'il le suit, et que les
- * témoins garderont chaque nombre, au bit près, le jour où le portage les
- * écrira.
- * Ailleurs, des témoins refaits sur place par une autre libm peuvent différer
- * d'un ulp (`_fichier_a_jour`, `tests/test_web.py`) : la tolérance d'avant y
- * reste, 1e-9, six ordres de grandeur au-dessus de ce bruit.
+ * les calcule lui-même (`pont.simulations`, action 161, étape 6), et ses
+ * exponentielles comme la libm de Linux (`moteur/js/libm.js`) : un écart d'un
+ * seul ulp dit que le moteur a changé sans que ses témoins soient refaits
+ * (`python scripts/construire_temoins.py`). Que le moteur Python, qui le suit
+ * (note de décision 0005), les refasse au bit près, `tests/test_pont.py` le
+ * vérifie.
+ * Ailleurs, la tolérance d'avant reste, 1e-9, six ordres de grandeur au-dessus
+ * de ce que déplace une autre libm (`_fichier_a_jour`, `tests/test_web.py`).
  */
 const AU_BIT_PRES = process.platform === "linux" && process.arch === "x64";
 const TOLERANCE = AU_BIT_PRES ? 0 : 1e-9;
 
 function comparer(obtenu, attendu, chemin, ecarts) {
   if (attendu === null) {
-    // Le témoin écrit ``null`` là où Python produit NaN — écart non défini.
+    // Le témoin écrit ``null`` là où le moteur rend NaN — écart non défini.
     if (!(obtenu === null || Number.isNaN(obtenu))) {
       ecarts.push(`${chemin} : attendu null, obtenu ${obtenu}`);
     }
@@ -92,7 +90,7 @@ function comparer(obtenu, attendu, chemin, ecarts) {
     // Écrit à l'envers pour qu'un NaN, que toute comparaison dit faux, ne
     // passe pas pour un nombre retrouvé.
     if (!(relatif <= TOLERANCE)) {
-      ecarts.push(`${chemin} : python=${attendu} js=${obtenu} (écart ${relatif.toExponential(2)})`);
+      ecarts.push(`${chemin} : témoin=${attendu} js=${obtenu} (écart ${relatif.toExponential(2)})`);
     }
     return;
   }
@@ -115,11 +113,11 @@ function comparer(obtenu, attendu, chemin, ecarts) {
     return;
   }
   if (obtenu !== attendu) {
-    ecarts.push(`${chemin} : python=${JSON.stringify(attendu)} js=${JSON.stringify(obtenu)}`);
+    ecarts.push(`${chemin} : témoin=${JSON.stringify(attendu)} js=${JSON.stringify(obtenu)}`);
   }
 }
 
-test("les simulations retrouvent les chiffres du modèle Python", () => {
+test("les simulations retrouvent les chiffres de leurs témoins", () => {
   const contexte = new Contexte(paquet);
   const ecarts = [];
   let cas = 0;

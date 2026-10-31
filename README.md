@@ -254,10 +254,12 @@ C'était le choix le plus sûr — un seul code — mais il faisait télécharge
 poids de ce qu'on voulait exécuter.
 
 Le risque d'un portage, c'est qu'il déplace un chiffre sans que rien n'échoue.
-Il est traité de front : **le Python de `src/` reste la référence**, et
+Il est traité de front : **le JavaScript de `moteur/js/` fait foi**, et
 `scripts/construire_temoins.py` fige depuis lui
 <!--chiffre:entrees(tests/temoins/simulations.json:)-->913<!--/--> simulations complètes, et depuis le site
 <!--chiffre:entrees(tests/temoins/pages.json:)-->85<!--/--> rendus de page, dans `tests/temoins/`.
+Le moteur Python, qui garde ses jumeaux jusqu'à leur retrait, refait chaque
+simulation et doit la retrouver au bit près (`tests/test_pont.py`) ;
 `node --test` rejoue les simulations côté JavaScript et les compare valeur par valeur —
 <!--chiffre:portage(valeurs)-->171 732<!--/--> nombres,
 dont <!--chiffre:portage(identiques)-->100,0<!--/--> % identiques
@@ -428,7 +430,7 @@ print(simulateur.simuler(carriere).tableau())
 | Salaires revalorisés par la circulaire, pas par une règle | Les coefficients qui revalorisent les salaires portés au compte sont LUS dans les circulaires de la Cnav — dix colonnes publiées, perceptions depuis 1930 : la règle « les salaires jusqu'en 1986, les prix depuis » les sur-revaluait, et le salaire de référence retient les N *meilleures* années — changer les coefficients change lesquelles |
 | Deux durées là où le droit en a deux | La durée requise pour le taux plein (L. 161-17-3) et la durée maximale prise en compte par la proratisation (R. 351-6), que le modèle confondait |
 | Points convertis à leur vraie unité | Les coefficients des fusions sont LUS dans les accords — un point Arrco vaut un point Agirc-Arrco, un point Agirc en vaut <!--chiffre:cellule(data/reference/regimes/conversions_points.csv:coefficient?regime=agirc)-->0,347791548<!--/-->, le rapport de leurs valeurs de service au 31 décembre 2018 —, et l'unification Arrco de 1999 est traitée comme le changement d'unité qu'elle est |
-| Portage vérifié, pas cru sur parole | Le site rejoue <!--chiffre:entrees(tests/temoins/simulations.json:)-->913<!--/--> simulations témoins figées depuis le modèle Python — chaque statut d’affiliation à six générations, née en 1925, 1935, 1945, 1955, 1965 et 1975, pour que les règles anciennes de chaque régime soient visitées autant que les récentes, et une fois né un 20 septembre, pour que chacun lise la naissance au jour ; un test oblige ce balayage à couvrir tous les statuts et toutes ces générations |
+| Portage vérifié, pas cru sur parole | Le site rejoue <!--chiffre:entrees(tests/temoins/simulations.json:)-->913<!--/--> simulations témoins figées depuis son moteur, que le modèle Python refait au bit près — chaque statut d’affiliation à six générations, née en 1925, 1935, 1945, 1955, 1965 et 1975, pour que les règles anciennes de chaque régime soient visitées autant que les récentes, et une fois né un 20 septembre, pour que chacun lise la naissance au jour ; un test oblige ce balayage à couvrir tous les statuts et toutes ces générations |
 
 ---
 

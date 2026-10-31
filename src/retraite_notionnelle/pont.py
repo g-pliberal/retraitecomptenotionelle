@@ -36,10 +36,11 @@ jumeau.
 Les témoins de simulations, enfin : le portage simule chaque requête comme le
 site la simule (:func:`simulations`), et le Python relit son résultat sous une
 table des types déclarée champ par champ (:func:`resultat_des_donnees`), node
-n'écrivant qu'un type de nombre. Les témoins s'écrivent sous la même table,
-le zéro d'un champ flottant « 0.0 » (décision du propriétaire, 31 octobre
-2026), et le fichier en revient à l'octet ; ``scripts/construire_temoins.py``
-les simule encore au moteur Python (action 161, étape 6).
+n'écrivant qu'un type de nombre. ``scripts/construire_temoins.py`` écrit
+ainsi les témoins, le zéro d'un champ flottant « 0.0 » (décision du
+propriétaire, 31 octobre 2026), et le moteur Python, tant qu'il garde ses
+jumeaux, les refait au bit près (``tests/test_pont.py`` ; action 161,
+étape 6).
 
 Une demande sur le paquet du dépôt, sans paquet, ne lance pas node à chaque
 fois : les tests en font une par carrière, et chacune coûtait trois dixièmes
@@ -618,8 +619,9 @@ def resultat_des_donnees(donnees: dict) -> dict:
     n'écrit qu'un type de nombre, « 2 » pour 2.0. Un nombre sous un champ que
     la table ne déclare pas arrête la relecture, au lieu d'en deviner le type ;
     un nombre non fini reste ``None``, un texte et un booléen ce qu'ils sont.
-    Les témoins de simulations s'écrivent sous la même table, que le résultat
-    vienne du portage ou du moteur Python (``scripts/construire_temoins.py``)."""
+    Les témoins de simulations s'écrivent sous elle
+    (``scripts/construire_temoins.py``), et ce que le moteur Python simule pour
+    leur être confronté aussi (``tests/test_pont.py``)."""
 
     def relire(valeur, nom: str | None, chemin: str):
         if isinstance(valeur, dict):

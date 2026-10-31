@@ -1,15 +1,5 @@
 # Étape 6 : les témoins par le portage — la demande au pont, la table des types, et les zéros ambigus soumis au propriétaire
 
-**Reprise, au 31 octobre 2026.** Prêt et publié, sans qu'un octet des
-témoins ait changé : la demande `pont.simulations`, la table des types de
-`pont.py`, et les tests qui prouvent que le portage relu par la table redonne
-le fichier à l'octet, sauf 2 103 zéros ambigus. Reste, à l'accord du
-propriétaire, demandé le 31 octobre : (A) `construire_temoins.py` écrit le
-résultat du moteur Python sous la table, ces zéros devenus « 0.0 » ; (B) les
-témoins simulés par le portage, sans changer un octet, le moteur Python
-confronté au fichier par la même table. La variante des 3 champs au zéro
-entier lui est soumise avec. Par quoi commencer : sa réponse.
-
 **La demande.** Le 31 octobre 2026, le propriétaire ouvre l'étape suivante
 de l'action 161, les témoins de simulations calculés par le JavaScript, sous
 une condition : préparer tout ce qui ne change aucun octet de
@@ -109,3 +99,57 @@ aucune dépendance. Sans node, la demande s'arrête (`pont.PontIndisponible`).
 `tests/test_web.py::test_le_portage_javascript_retrouve_les_chiffres_du_modele`,
 `tests/test_niveaux.py`, `tests/test_jumeaux.py` ;
 `node --test tests/js/moteur.test.js`, 46 essais.
+
+**La décision du propriétaire**, le 31 octobre 2026 : « D'accord pour A puis
+B, avec la variante des 3 champs : normalise les 14 champs (les 11 ambigus +
+les 3 champs flottants au zéro entier) en « 0.0 » dans le commit A, puis
+bascule `construire_temoins.py` sur le portage dans le commit B sans
+qu'aucun octet ne bouge entre A et B. »
+
+**Le commit A, la normalisation.** La table perd sa troisième sorte de
+nombre : un champ est entier ou flottant, et le zéro d'un flottant s'écrit
+« 0.0 ». `construire_temoins.py` écrit sous elle le résultat du moteur
+Python : 3 029 lignes de `simulations.json` passent de « 0 » à « 0.0 », dans
+825 témoins sur 913 — les 2 103 zéros ambigus, et les 926 des trois champs
+(470 intérêts du pilier capitalisé, 439 majorations pour enfants
+d'aujourd'hui, 17 montants des droits acquis après le départ). Aucune valeur
+ne change : les 172 645 nombres du fichier, appels de `liquider` compris,
+sont égaux un à un ; la concordance node passe au bit près sur le fichier
+normalisé ; `python scripts/regenerer.py --verifier`, joué sur le commit
+dans un arbre de travail à part, dit toutes ses étapes à jour, en 657
+secondes, du paquet à la conservation : rien d'autre ne bouge. Les tests du
+pont, vus rouges d'abord, exigent désormais l'octet, sans exception.
+
+**Le commit B, la bascule.** `construire_temoins.py` fait simuler ses
+témoins par le portage (`pont.simulations`) : `--verifier` les dit à jour, en
+42 secondes au lieu de 83, sans qu'un octet bouge. Un test vu rouge d'abord
+tient la bascule : le moteur Python empêché de simuler, le script rend
+encore les témoins. Le moteur Python leur est confronté par deux tests du
+pont, la carrière bâtie par le portage et son résultat écrit sous la table :
+un échantillon de chaque forme, en suite rapide, et les 913 témoins, en
+suite complète, 44 secondes ; au bit près sous Linux x86_64, à 10⁻¹² près
+ailleurs, où la libm du système déplace la dernière décimale — les témoins,
+eux, sont désormais les mêmes partout, le portage calculant comme la libm de
+Linux. `_fini` reste dans le script : trois tests s'en servent. La prose qui
+disait les témoins simulés au Python est récrite : la règle et la liste de
+contrôle des consignes de `src/` (la confrontation se lance par
+`python -m pytest tests/test_pont.py -k refait`), le § 7.1 de
+l'architecture, la carte du dépôt et son schéma, deux phrases du README, les
+en-têtes du script, du pont et de la concordance node, dont le test
+s'appelle « les simulations retrouvent les chiffres de leurs témoins ».
+Restent à une session du site, qu'on a demandé de laisser : le docstring de
+`test_le_portage_javascript_retrouve_les_chiffres_du_modele`
+(`tests/test_web.py`), qui dit « la référence Python », et la page
+« Méthode ».
+
+**Ce qui suit**, pour l'action : les confrontations par le pont
+(`test_estimation_officielle.py`, `test_destinie.py`, puis `test_oracle.py`),
+le coût daté par le portage, puis les retraits, par sous-ensemble cohérent.
+
+**Tests de A et B.** `python -m pytest -m rapide` ; `tests/test_pont.py` en
+entier, ses deux tests complets compris ; `tests/test_pcv_sante.py`,
+`tests/test_reversion.py`, `tests/test_liquidation.py`, `tests/test_niveaux.py`,
+`tests/test_carte_du_depot.py`, `tests/test_prose.py` ;
+`tests/test_web.py::test_le_portage_javascript_retrouve_les_chiffres_du_modele` ;
+`node --test tests/js/moteur.test.js`, 46 essais ;
+`python scripts/verifier_prose.py --corriger`.
