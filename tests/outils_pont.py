@@ -29,6 +29,7 @@ import sys
 
 from retraite_notionnelle import pont
 from retraite_notionnelle.config import Parametres
+from retraite_notionnelle.droit import liquider, ouvrir
 from retraite_notionnelle.simulateur import Comparaison, Simulateur
 from retraite_notionnelle.web.site import module, site
 
@@ -211,6 +212,84 @@ def servi_et_refait(cas: list[dict], paquet: bytes | None = None,
         raise AssertionError("le moteur Python ne refait pas ce que le portage sert "
                              f"({len(ecarts)} écart(s)) : " + " ; ".join(ecarts[:5]))
     return servis, refus
+
+
+#: Le jumeau Python de chaque fonction du droit que le pont fait appeler
+#: (``FONCTIONS_DU_DROIT`` de ``pont.mjs``, :data:`pont.LECTURES_DU_DROIT`),
+#: sous les mêmes arguments, que :func:`droit_et_refait` lui fait refaire tant
+#: qu'il reste (action 161) : une fonction de plus au pont y déclare le sien.
+JUMEAUX_DU_DROIT = {
+    "ouvrir.duree_requise": ouvrir.duree_requise,
+    "liquider.duree_proratisation": liquider.duree_proratisation,
+    "liquider.decote_opposable": liquider.decote_opposable,
+    "liquider.salaire_de_reference": liquider.salaire_de_reference,
+    "liquider.trimestres_de_decote": liquider.trimestres_de_decote,
+    "scenario_actuel.calculer":
+        lambda moteur, carriere: actuel_en_donnees(moteur.calculer(carriere)),
+}
+
+#: Le pont du droit tel quel, que :func:`droit_et_refait` appelle quand une
+#: confrontation la met à sa place.
+DROIT_DU_PORTAGE = pont.droit
+
+
+@functools.cache
+def _simulateur_du_droit(parametres: Parametres) -> Simulateur:
+    """Le simulateur Python d'un jeu de paramètres que :func:`droit_et_refait`
+    confronte, gardé d'un appel à l'autre."""
+    return Simulateur(parametres)
+
+
+def _argument_du_jumeau(simulateur: Simulateur, argument):
+    """Un argument d'un appel du droit tel que le jumeau Python le reçoit : le
+    moteur du scénario 1 et la période d'un régime, ceux du simulateur
+    Python ; une carrière, que le Python a bâtie, ou une valeur, telle
+    quelle."""
+    if argument is pont.MOTEUR:
+        return simulateur.scenario_actuel
+    if isinstance(argument, pont.Periode):
+        return simulateur.catalogue[argument.code].periode(argument.annee)
+    return argument
+
+
+def droit_et_refait(appels: dict[str, tuple], parametres=None, paquet: bytes | None = None,
+                    ) -> tuple[dict[str, object], dict[str, str]]:
+    """Ce que le portage rend de chaque appel du droit (:func:`pont.droit`),
+    son jumeau Python confronté tant qu'il reste (action 161) : ce qu'il rend,
+    relu sous le type que le pont déclare (:func:`pont.relu_du_droit`), doit
+    s'écrire au bit près sous Linux x86_64 comme ce que le portage a rendu
+    (:data:`TOLERANCE_DU_MOTEUR_PYTHON`), et un appel que le portage refuse,
+    le jumeau doit le refuser, ou la confrontation s'arrête sur ce qui
+    diffère. Les exemples d'OpenFisca et des caisses (``tests/test_oracle.py``)
+    le passent à leurs mesures au lieu du pont : aucun appel ne perd la
+    vérification du Python. Sur un autre paquet que celui du dépôt, il n'y a
+    rien à refaire."""
+    sans_jumeau = sorted({fonction for fonction, *_ in appels.values()}
+                         - set(JUMEAUX_DU_DROIT))
+    if sans_jumeau:
+        raise ValueError(f"fonctions du droit sans jumeau Python : {', '.join(sans_jumeau)} "
+                         "(outils_pont.JUMEAUX_DU_DROIT)")
+    lus, refus = DROIT_DU_PORTAGE(appels, parametres, paquet)
+    if paquet is not None:
+        return lus, refus
+    simulateur = _simulateur_du_droit(Parametres() if parametres is None else parametres)
+    ecarts = []
+    for cle, (fonction, *arguments) in appels.items():
+        jumeau = functools.partial(JUMEAUX_DU_DROIT[fonction], *(
+            _argument_du_jumeau(simulateur, argument) for argument in arguments))
+        if cle in refus:
+            try:
+                jumeau()
+            except Exception:
+                continue
+            ecarts.append(f"{cle} : le portage le refuse ({refus[cle]}), le jumeau Python le rend")
+            continue
+        ecarts += ecarts_d_ecriture(pont.relu_du_droit(fonction, jumeau()), lus[cle], (cle,),
+                                    tolerance=TOLERANCE_DU_MOTEUR_PYTHON)
+    if ecarts:
+        raise AssertionError("le jumeau Python ne refait pas ce que le portage rend "
+                             f"({len(ecarts)} écart(s)) : " + " ; ".join(ecarts[:5]))
+    return lus, refus
 
 
 @functools.cache

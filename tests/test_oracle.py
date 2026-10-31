@@ -67,6 +67,8 @@ from pathlib import Path
 
 import pytest
 
+from outils_pont import droit_et_refait
+from retraite_notionnelle import pont
 from retraite_notionnelle.calendrier import DateMois
 from retraite_notionnelle.carriere import AnneeCarriere, Carriere
 from retraite_notionnelle.config import Parametres
@@ -76,6 +78,7 @@ from retraite_notionnelle.donnees.chargement import Fiabilite
 from retraite_notionnelle.droit import departs, invalidite, liquider, ouvrir
 from retraite_notionnelle.droit.reversion import reversion
 from retraite_notionnelle.echeancier import Echeancier
+from retraite_notionnelle.scenarios.actuel import ScenarioActuel
 
 TEMOINS = Path(__file__).resolve().parent / "temoins"
 TEMOIN = TEMOINS / "openfisca_regime_general.json"
@@ -118,8 +121,9 @@ def simulateur() -> Simulateur:
     return Simulateur(Parametres())
 
 
-def _notre_calcul(simulateur: Simulateur, profil: dict) -> dict[str, float]:
-    """Le régime général du scénario 1, sur la carrière exacte du témoin."""
+def _carriere_du_regime_general(profil: dict) -> Carriere:
+    """La carrière exacte d'un profil du témoin : salarié du privé, quatre
+    trimestres chaque année, du début au départ."""
     lignes = [
         AnneeCarriere(
             annee=annee, revenu=profil["salaire"],
@@ -127,38 +131,83 @@ def _notre_calcul(simulateur: Simulateur, profil: dict) -> dict[str, float]:
         )
         for annee in range(profil["debut"], profil["liquidation"])
     ]
-    carriere = Carriere(
+    return Carriere(
         annee_naissance=profil["naissance"], sexe="H", lignes=lignes,
         age_liquidation=float(profil["liquidation"] - profil["naissance"]),
         identifiant=profil["code"],
     )
-    scenario = simulateur.scenario_actuel
-    resultat = scenario.calculer(carriere)
-    periode = simulateur.catalogue["regime_general"].periode(profil["liquidation"])
-    requis, _ = ouvrir.duree_requise(scenario, periode, carriere)
-    proratisation, _ = liquider.duree_proratisation(scenario, periode, carriere, requis)
-    _, age_annulation, _ = liquider.decote_opposable(scenario,
-        periode, carriere, profil["liquidation"]
-    )
-    base = next(
-        p for p in resultat.pensions_par_regime if p.regime == "regime_general"
-    )
-    return {
-        "duree_assurance": float(resultat.trimestres_valides),
-        "salaire_de_reference": liquider.salaire_de_reference(scenario,
-            "regime_general", carriere, periode, profil["liquidation"],
-            True, profil["naissance"], True,
-        ),
-        "coefficient_de_proratisation": (
-            min(resultat.trimestres_valides, proratisation) / proratisation
-        ),
-        "decote_trimestres": float(liquider.trimestres_de_decote(scenario,
-            periode, carriere, resultat.trimestres_valides, requis,
-            profil["liquidation"] - profil["naissance"], age_annulation,
-        )),
-        "taux_de_liquidation": resultat.taux_liquidation,
-        "pension_brute": base.montant,
-    }
+
+
+def _profils(temoin: dict) -> dict[str, dict]:
+    """Chaque profil d'un témoin d'OpenFisca, sous son code."""
+    return {code: entree["profil"] for code, entree in temoin["profils"].items()}
+
+
+def _nos_calculs(profils: dict[str, dict], droit=droit_et_refait) -> dict[str, dict[str, float]]:
+    """Le régime général du scénario 1, sur la carrière exacte de chaque
+    profil, sous son code.
+
+    Le portage le calcule, le moteur qui fait foi (note de décision 0005), une
+    fonction du droit après l'autre (:func:`pont.droit`), en deux demandes : la
+    seconde lit dans la première la durée requise, la durée validée et l'âge
+    d'annulation de la décote. Par défaut, ``droit_et_refait`` y fait refaire
+    chaque appel au jumeau Python, au bit près, tant qu'il reste (action 161).
+    Les trimestres de décote se relisent sous le type que le pont déclare, un
+    flottant, que le jumeau rend entier (``pont.relu_du_droit``, décision du
+    propriétaire du 31 octobre 2026).
+    """
+    carrieres = {code: _carriere_du_regime_general(profil) for code, profil in profils.items()}
+    periodes = {code: pont.Periode("regime_general", profil["liquidation"])
+                for code, profil in profils.items()}
+    premiers = {}
+    for code, profil in profils.items():
+        carriere, periode, depart = carrieres[code], periodes[code], profil["liquidation"]
+        premiers |= {
+            f"{code}|resultat": ("scenario_actuel.calculer", pont.MOTEUR, carriere),
+            f"{code}|requis": ("ouvrir.duree_requise", pont.MOTEUR, periode, carriere),
+            f"{code}|decote": ("liquider.decote_opposable", pont.MOTEUR, periode, carriere,
+                               depart),
+            f"{code}|salaire": ("liquider.salaire_de_reference", pont.MOTEUR,
+                                "regime_general", carriere, periode, depart, True,
+                                profil["naissance"], True),
+        }
+    lus, refus = droit(premiers)
+    assert refus == {}, refus
+    seconds = {}
+    for code, profil in profils.items():
+        requis, _ = lus[f"{code}|requis"]
+        _, age_annulation, _ = lus[f"{code}|decote"]
+        seconds |= {
+            f"{code}|proratisation": ("liquider.duree_proratisation", pont.MOTEUR,
+                                      periodes[code], carrieres[code], requis),
+            f"{code}|manquants": ("liquider.trimestres_de_decote", pont.MOTEUR, periodes[code],
+                                  carrieres[code], lus[f"{code}|resultat"]["trimestres_valides"],
+                                  requis, profil["liquidation"] - profil["naissance"],
+                                  age_annulation),
+        }
+    suivants, refus = droit(seconds)
+    assert refus == {}, refus
+    calculs = {}
+    for code in profils:
+        resultat = lus[f"{code}|resultat"]
+        trimestres = resultat["trimestres_valides"]
+        proratisation, _ = suivants[f"{code}|proratisation"]
+        base = next(p for p in resultat["pensions_par_regime"] if p["regime"] == "regime_general")
+        calculs[code] = {
+            "duree_assurance": float(trimestres),
+            "salaire_de_reference": lus[f"{code}|salaire"],
+            "coefficient_de_proratisation": min(trimestres, proratisation) / proratisation,
+            "decote_trimestres": suivants[f"{code}|manquants"],
+            "taux_de_liquidation": resultat["taux_liquidation"],
+            "pension_brute": base["montant"],
+        }
+    return calculs
+
+
+@pytest.fixture(scope="module")
+def nos_calculs(oracle) -> dict[str, dict[str, float]]:
+    """Le régime général du scénario 1 sur chaque profil du témoin, sous son code."""
+    return _nos_calculs(_profils(oracle))
 
 
 def test_le_temoin_couvre_le_perimetre_annonce(oracle):
@@ -180,14 +229,14 @@ def test_le_temoin_couvre_le_perimetre_annonce(oracle):
         assert entree["openfisca"]["pension_brute"] > 0, code
 
 
-def test_la_duree_dassurance_concorde(oracle, simulateur):
+def test_la_duree_dassurance_concorde(oracle, nos_calculs):
     """Trimestres validés : les deux modèles doivent compter pareil."""
     for code, entree in oracle["profils"].items():
-        nous = _notre_calcul(simulateur, entree["profil"])
+        nous = nos_calculs[code]
         assert nous["duree_assurance"] == entree["openfisca"]["duree_assurance"], code
 
 
-def test_la_decote_concorde_trimestre_par_trimestre(oracle, simulateur):
+def test_la_decote_concorde_trimestre_par_trimestre(oracle, nos_calculs):
     """Le décompte des trimestres de décote, et le taux qui en découle.
 
     C'est le contrôle le plus exigeant du lot : il met en jeu la durée requise
@@ -197,14 +246,14 @@ def test_la_decote_concorde_trimestre_par_trimestre(oracle, simulateur):
     juste ensemble.
     """
     for code, entree in oracle["profils"].items():
-        nous, eux = _notre_calcul(simulateur, entree["profil"]), entree["openfisca"]
+        nous, eux = nos_calculs[code], entree["openfisca"]
         assert nous["decote_trimestres"] == eux["decote_trimestres"], code
         assert nous["taux_de_liquidation"] == pytest.approx(
             eux["taux_de_liquidation"], abs=TOLERANCE_EXACTE
         ), code
 
 
-def test_la_proratisation_concorde(oracle, simulateur):
+def test_la_proratisation_concorde(oracle, nos_calculs):
     """Le coefficient de proratisation, et son dénominateur.
 
     C'est ce contrôle qui a révélé que le modèle confondait la durée requise
@@ -214,13 +263,13 @@ def test_la_proratisation_concorde(oracle, simulateur):
     pension de base que le droit ne lui retire pas.
     """
     for code, entree in oracle["profils"].items():
-        nous, eux = _notre_calcul(simulateur, entree["profil"]), entree["openfisca"]
+        nous, eux = nos_calculs[code], entree["openfisca"]
         assert nous["coefficient_de_proratisation"] == pytest.approx(
             eux["coefficient_de_proratisation"], abs=TOLERANCE_EXACTE
         ), code
 
 
-def test_le_salaire_de_reference_reste_proche(oracle, simulateur):
+def test_le_salaire_de_reference_reste_proche(oracle, nos_calculs):
     """Le salaire annuel moyen : le seul poste où les deux modèles diffèrent.
 
     Il divergeait de 0,30 % à 7,55 % quand le modèle APPROCHAIT les coefficients
@@ -237,7 +286,7 @@ def test_le_salaire_de_reference_reste_proche(oracle, simulateur):
     d'OpenFisca sous les coefficients du dépôt.
     """
     for code, entree in oracle["profils"].items():
-        nous, eux = _notre_calcul(simulateur, entree["profil"]), entree["openfisca"]
+        nous, eux = nos_calculs[code], entree["openfisca"]
         assert nous["salaire_de_reference"] == pytest.approx(
             eux["salaire_de_reference"], rel=TOLERANCE_SALAIRE
         ), code
@@ -245,7 +294,7 @@ def test_le_salaire_de_reference_reste_proche(oracle, simulateur):
         assert nous["salaire_de_reference"] <= eux["salaire_de_reference"], code
 
 
-def test_la_pension_de_base_concorde(oracle, simulateur):
+def test_la_pension_de_base_concorde(oracle, nos_calculs):
     """Le bout de la chaîne : deux implémentations, une pension.
 
     C'est le contrôle qui donne son prix à la confrontation. Salaire de
@@ -254,10 +303,33 @@ def test_la_pension_de_base_concorde(oracle, simulateur):
     qu'ici signalerait une règle appliquée dans le mauvais ordre.
     """
     for code, entree in oracle["profils"].items():
-        nous, eux = _notre_calcul(simulateur, entree["profil"]), entree["openfisca"]
+        nous, eux = nos_calculs[code], entree["openfisca"]
         assert nous["pension_brute"] == pytest.approx(
             eux["pension_brute"], rel=TOLERANCE_SALAIRE
         ), code
+
+
+def _sans_les_jumeaux(monkeypatch, *jumeaux) -> None:
+    """Les jumeaux Python nommés, ``(objet, nom)``, qu'on empêche de
+    calculer : une mesure qui y entrerait s'arrête."""
+    def interdit(*_, **__):
+        raise AssertionError("un jumeau Python calcule ce que le portage doit rendre")
+
+    for objet, nom in jumeaux:
+        monkeypatch.setattr(objet, nom, interdit)
+
+
+def test_le_regime_general_se_mesure_au_portage_sans_les_jumeaux_python(
+        oracle, nos_calculs, monkeypatch):
+    """Le moteur qui fait foi est le JavaScript (note de décision 0005) :
+    chaque profil du témoin se mesure au portage, une fonction du droit après
+    l'autre (``pont.droit``), et les jumeaux Python, qu'on empêche ici de
+    calculer, n'y entrent pas."""
+    _sans_les_jumeaux(monkeypatch, (ScenarioActuel, "calculer"), (ouvrir, "duree_requise"),
+                      (liquider, "duree_proratisation"), (liquider, "decote_opposable"),
+                      (liquider, "salaire_de_reference"), (liquider, "trimestres_de_decote"))
+    nos = _nos_calculs(_profils(oracle), pont.droit)
+    assert set(nos) == set(oracle["profils"]) and nos == nos_calculs
 
 
 # -- la pension civile : État et CNRACL ---------------------------------------
@@ -640,10 +712,11 @@ def test_la_valeur_de_service_arrco_concorde_au_jour(oracle_arrco, simulateur):
 
 
 def test_la_decote_du_regime_general_qui_commande_l_arrco_concorde(
-        oracle_arrco, simulateur):
+        oracle_arrco):
     """L'abattement Arrco se lit sur les trimestres de décote du régime général."""
+    nos = _nos_calculs(_profils(oracle_arrco))
     for code, entree in oracle_arrco["profils"].items():
-        nous = _notre_calcul(simulateur, entree["profil"])
+        nous = nos[code]
         assert nous["decote_trimestres"] == (
             entree["openfisca"]["decote_trimestres_regime_general"]), code
 
@@ -959,10 +1032,11 @@ def test_la_valeur_de_service_agirc_suit_la_date_de_revalorisation(
 
 
 def test_la_decote_du_regime_general_qui_commande_l_agirc_concorde(
-        oracle_agirc, simulateur):
+        oracle_agirc):
     """L'abattement Agirc se lit sur les trimestres de décote du régime général."""
+    nos = _nos_calculs(_profils(oracle_agirc))
     for code, entree in oracle_agirc["profils"].items():
-        nous = _notre_calcul(simulateur, entree["profil"])
+        nous = nos[code]
         assert nous["decote_trimestres"] == (
             entree["openfisca"]["decote_trimestres_regime_general"]), code
 
@@ -1330,11 +1404,11 @@ def test_la_valeur_de_service_ircantec_suit_la_date_de_revalorisation(
 
 
 def test_la_decote_du_regime_general_qui_commande_l_ircantec_concorde(
-        oracle_ircantec, simulateur):
+        oracle_ircantec):
     """L'abattement Ircantec se lit sur les trimestres de décote du régime général."""
+    nos = _nos_calculs(_profils(oracle_ircantec))
     for code, entree in oracle_ircantec["profils"].items():
-        profil = dict(entree["profil"])
-        nous = _notre_calcul(simulateur, profil)
+        nous = nos[code]
         assert nous["decote_trimestres"] == (
             entree["openfisca"]["decote_trimestres_regime_general"]), code
 
@@ -1389,7 +1463,7 @@ def _notre_pension_alignee(simulateur: Simulateur, profil: dict,
 
 
 def test_la_msa_des_salaries_agricoles_reproduit_le_regime_general(
-        oracle, simulateur):
+        oracle, simulateur, nos_calculs):
     """Le régime des salariés agricoles, opposé à l'oracle du régime général.
 
     « Les prestations sont calculées comme au régime général » : l'alignement
@@ -1408,7 +1482,7 @@ def test_la_msa_des_salaries_agricoles_reproduit_le_regime_general(
     for code, entree in oracle["profils"].items():
         profil = entree["profil"]
         nous = _notre_pension_alignee(simulateur, profil, "salarie_agricole")
-        reference = _notre_calcul(simulateur, profil)
+        reference = nos_calculs[code]
         assert nous["morceaux"] == 1, code
         assert nous["montant"] == pytest.approx(
             reference["pension_brute"], rel=1e-9), code
@@ -1421,7 +1495,7 @@ def test_la_msa_des_salaries_agricoles_reproduit_le_regime_general(
 
 
 def test_les_regimes_alignes_des_independants_liquident_avec_leur_successeur(
-        oracle, simulateur, monkeypatch):
+        oracle, simulateur, nos_calculs, monkeypatch):
     """L'artisan et le commerçant rendent la pension du régime général.
 
     Ils relèvent d'un régime aligné, eux aussi : leur pension doit donc, à
@@ -1458,7 +1532,7 @@ def test_les_regimes_alignes_des_independants_liquident_avec_leur_successeur(
         profil = entree["profil"]
         if profil["debut"] < 1973:
             continue
-        reference = _notre_calcul(simulateur, profil)
+        reference = nos_calculs[code]
         for affiliation in ("artisan", "commercant"):
             nous = _notre_pension_alignee(simulateur, profil, affiliation)
             assert nous["morceaux"] == 1, (code, affiliation)
@@ -1479,7 +1553,7 @@ def test_les_regimes_alignes_des_independants_liquident_avec_leur_successeur(
         profil = entree["profil"]
         if profil["debut"] < 1973:
             continue
-        reference = _notre_calcul(simulateur, profil)
+        reference = nos_calculs[code]
         for affiliation in ("artisan", "commercant"):
             nous = _notre_pension_alignee(simulateur, profil, affiliation)
             assert nous["montant"] == pytest.approx(
@@ -1489,7 +1563,7 @@ def test_les_regimes_alignes_des_independants_liquident_avec_leur_successeur(
             ), (code, affiliation)
 
 
-def test_avant_1973_des_points_hors_de_la_pension_alignee(oracle, simulateur):
+def test_avant_1973_des_points_hors_de_la_pension_alignee(oracle, simulateur, nos_calculs):
     """Les cinq profils de l'oracle entrés avant 1973 (L. 634-3).
 
     Leurs années d'avant 1973 comptent dans la durée tous régimes — le taux de
@@ -1503,7 +1577,7 @@ def test_avant_1973_des_points_hors_de_la_pension_alignee(oracle, simulateur):
         if profil["debut"] >= 1973:
             continue
         entres_avant += 1
-        reference = _notre_calcul(simulateur, profil)
+        reference = nos_calculs[code]
         for affiliation, regime in avant.items():
             nous = _notre_pension_alignee(simulateur, profil, affiliation)
             assert nous["trimestres"] == reference["duree_assurance"], (code, affiliation)

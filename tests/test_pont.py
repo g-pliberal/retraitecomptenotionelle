@@ -397,6 +397,42 @@ def test_le_pont_fait_appeler_les_fonctions_du_droit_au_bit_pres_de_leur_jumeau(
         pont.droit({"a": ("liquider.inconnue", pont.MOTEUR)})
 
 
+def test_le_controle_du_droit_voit_un_ulp_deplace_dans_le_jumeau_python(monkeypatch):
+    """Les exemples d'OpenFisca et des caisses font appeler le droit au
+    portage, et son jumeau Python le refait tant qu'il reste (action 161) :
+    :func:`outils_pont.droit_et_refait` rend ce que le portage rend, chaque
+    fonction refaite par son jumeau (``JUMEAUX_DU_DROIT``, un par fonction que
+    le pont relit), et arrête la confrontation sur un ulp qu'on y déplace —
+    au-delà de la tolérance hors de Linux x86_64."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    import math
+
+    from outils_pont import JUMEAUX_DU_DROIT, droit_et_refait
+
+    assert set(JUMEAUX_DU_DROIT) == set(pont.LECTURES_DU_DROIT)
+    profil = {"code": "a", "debut": 1980, "liquidation": 2016, "naissance": 1954,
+              "salaire": 31_000.0}
+    carriere, rg = _carriere_d_openfisca(profil), pont.Periode("regime_general", 2016)
+    appels = {
+        "salaire": ("liquider.salaire_de_reference", pont.MOTEUR, "regime_general", carriere,
+                    rg, 2016, True, 1954, True),
+        "resultat": ("scenario_actuel.calculer", pont.MOTEUR, carriere),
+    }
+    lus, refus = droit_et_refait(appels)
+    assert refus == {} and lus == pont.droit(appels)[0]
+    jumeau = JUMEAUX_DU_DROIT["liquider.salaire_de_reference"]
+
+    def deplace(*arguments):
+        rendu = jumeau(*arguments)
+        return (math.nextafter(rendu, math.inf) if TOLERANCE_DU_MOTEUR_PYTHON == 0.0
+                else rendu * (1 + 1e-9))
+
+    monkeypatch.setitem(JUMEAUX_DU_DROIT, "liquider.salaire_de_reference", deplace)
+    with pytest.raises(AssertionError, match="salaire"):
+        droit_et_refait(appels)
+
+
 def test_le_pont_ouvert_se_relance_quand_le_paquet_du_depot_change(monkeypatch):
     """Le paquet du dépôt se récrit à chaque fabrique : le pont ouvert sur
     l'ancien se referme, et le suivant lit le nouveau."""
