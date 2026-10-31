@@ -14759,7 +14759,7 @@
 ["2026-01-01",2031.38]
 ],
 "assiette_minimale_independants":[
-[["artisan","commercant","gerant_debit_tabac"],["cancava","organic","regime_general","rsi"],1985,2011,200.0,null,false,0],
+[["artisan","commercant","gerant_debit_tabac"],["cancava","organic","regime_general","rsi"],1973,2011,200.0,null,false,0],
 [["artisan","commercant","gerant_debit_tabac"],["cancava","organic","regime_general","rsi"],2012,2014,null,0.0525,false,90],
 [["artisan","commercant","gerant_debit_tabac"],["cancava","organic","regime_general","rsi"],2015,2015,null,0.077,false,90],
 [["artisan","commercant","gerant_debit_tabac"],["cancava","organic","regime_general","rsi"],2016,2022,null,0.115,false,90],
