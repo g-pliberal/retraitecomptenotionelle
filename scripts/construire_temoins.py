@@ -2122,9 +2122,12 @@ def _simulations() -> dict:
     § 7.8). La carrière de chaque requête, le portage la bâtit, de sa saisie,
     la seule (``pont.carrieres_des_saisies``, action 161) ; le
     moteur Python la simule, un simulateur par jeu de paramètres, comme le
-    contexte du site. Le portage simule la même (``tests/js/moteur.test.js``),
-    aux mêmes appels, et un test refuse qu'un témoin dépasse le nombre déclaré
-    (``tests/test_liquidation.py``)."""
+    contexte du site. Le résultat s'écrit sous la table des types par laquelle
+    le pont relit ce que le portage rend (``pont.resultat_des_donnees``) : le
+    zéro d'un champ flottant « 0.0 », même quand le moteur Python le rend
+    entier, d'une somme vide. Le portage simule la même carrière
+    (``tests/js/moteur.test.js``), aux mêmes appels, et un test refuse qu'un
+    témoin dépasse le nombre déclaré (``tests/test_liquidation.py``)."""
     cas = _cas()
     carrieres, refusees = pont.carrieres_des_saisies(
         [{"cle": un["nom"], "requete": un["requete"]} for un in cas])
@@ -2137,7 +2140,8 @@ def _simulations() -> dict:
         if parametres not in simulateurs:
             simulateurs[parametres] = Simulateur(parametres)
         avant = _liquidation.appels()
-        resultat = _fini(simulateurs[parametres].simuler(carriere).dictionnaire())
+        resultat = pont.resultat_des_donnees(
+            _fini(simulateurs[parametres].simuler(carriere).dictionnaire()))
         resultats[un["nom"]] = {
             "requete": un["requete"],
             "resultat": resultat,

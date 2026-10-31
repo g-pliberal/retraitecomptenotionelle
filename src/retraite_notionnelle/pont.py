@@ -36,10 +36,10 @@ jumeau.
 Les témoins de simulations, enfin : le portage simule chaque requête comme le
 site la simule (:func:`simulations`), et le Python relit son résultat sous une
 table des types déclarée champ par champ (:func:`resultat_des_donnees`), node
-n'écrivant qu'un type de nombre. Le fichier en revient à l'octet, sauf aux
-zéros que le moteur Python écrit tantôt « 0 », tantôt « 0.0 » : tant que le
-propriétaire n'a pas tranché leur écriture, ``scripts/construire_temoins.py``
-simule ses témoins au moteur Python (action 161, étape 6).
+n'écrivant qu'un type de nombre. Les témoins s'écrivent sous la même table,
+le zéro d'un champ flottant « 0.0 » (décision du propriétaire, 31 octobre
+2026), et le fichier en revient à l'octet ; ``scripts/construire_temoins.py``
+les simule encore au moteur Python (action 161, étape 6).
 
 Une demande sur le paquet du dépôt, sans paquet, ne lance pas node à chaque
 fois : les tests en font une par carrière, et chacune coûtait trois dixièmes
@@ -555,6 +555,10 @@ ENTIERS_DU_RESULTAT = frozenset({
 #: Les champs flottants du résultat : les montants en euros, les âges, les
 #: taux, les parts, les coefficients, les diviseurs et les points, que le
 #: moteur Python calcule en flottants et écrit « 2.0 » là où node écrit « 2 ».
+#: Leur zéro s'écrit « 0.0 », même là où le moteur Python le rend entier : le
+#: zéro d'une somme vide, ``somme_ordonnee`` partant de l'entier 0, que le
+#: portage ne distingue pas du zéro d'un flottant (décision du propriétaire,
+#: 31 octobre 2026 ; action 161, étape 6).
 FLOTTANTS_DU_RESULTAT = frozenset({
     "age", "age_conversion", "age_legal", "age_liquidation", "age_minimum", "age_ouverture",
     "age_ouverture_opposable", "age_taux_plein", "agent", "au_depart", "aujourd_hui", "base",
@@ -593,21 +597,6 @@ DICTIONNAIRES_DU_RESULTAT = {
     "annees_par_origine": int, "annees_part_employeur": int,
 }
 
-#: Les champs flottants dont le moteur Python n'écrit le zéro qu'entier, sous
-#: le dictionnaire qui les porte : c'est celui d'une somme vide,
-#: ``somme_ordonnee`` partant de l'entier 0 — les intérêts d'un pilier
-#: capitalisé sans année, la majoration pour enfants d'aujourd'hui sans enfant,
-#: les droits acquis après le départ sans pension nouvelle —, et aucun témoin
-#: n'y écrit 0.0. Leur zéro revient entier. Dans les autres champs où le
-#: moteur Python écrit tantôt « 0 », tantôt « 0.0 », selon le chemin du
-#: calcul, le portage ne peut pas dire lequel : ils sont flottants, et leur
-#: zéro revient « 0.0 » (action 161, étape 6).
-ZEROS_ENTIERS_DU_RESULTAT = frozenset({
-    ("capitalisation", "interets"), ("actuel", "majoration_enfants"),
-    ("droits_apres_depart", "montant"),
-})
-
-
 def _nombre_du_resultat(valeur, type_: type, chemin: str):
     """Un nombre du résultat sous ``type_`` ; ``None`` pour un nombre non fini,
     que node écrit « null » comme ``_fini`` l'écrit dans les témoins. Un entier
@@ -625,27 +614,26 @@ def resultat_des_donnees(donnees: dict) -> dict:
     """Le résultat d'une simulation que le portage a écrit
     (``Comparaison.dictionnaire()``), sous les types que le moteur Python lui
     donne, déclarés champ par champ (:data:`ENTIERS_DU_RESULTAT`,
-    :data:`FLOTTANTS_DU_RESULTAT`, :data:`DICTIONNAIRES_DU_RESULTAT`,
-    :data:`ZEROS_ENTIERS_DU_RESULTAT`) : node n'écrit qu'un type de nombre,
-    « 2 » pour 2.0. Un nombre sous un champ que la table ne déclare pas arrête
-    la relecture, au lieu d'en deviner le type ; un nombre non fini reste
-    ``None``, un texte et un booléen ce qu'ils sont."""
+    :data:`FLOTTANTS_DU_RESULTAT`, :data:`DICTIONNAIRES_DU_RESULTAT`) : node
+    n'écrit qu'un type de nombre, « 2 » pour 2.0. Un nombre sous un champ que
+    la table ne déclare pas arrête la relecture, au lieu d'en deviner le type ;
+    un nombre non fini reste ``None``, un texte et un booléen ce qu'ils sont.
+    Les témoins de simulations s'écrivent sous la même table, que le résultat
+    vienne du portage ou du moteur Python (``scripts/construire_temoins.py``)."""
 
-    def relire(valeur, nom: str | None, parent: str | None, chemin: str):
+    def relire(valeur, nom: str | None, chemin: str):
         if isinstance(valeur, dict):
             if nom in DICTIONNAIRES_DU_RESULTAT:
                 return {cle: _nombre_du_resultat(element, DICTIONNAIRES_DU_RESULTAT[nom],
                                                  f"{chemin}.{cle}")
                         for cle, element in valeur.items()}
-            return {cle: relire(element, cle, nom, f"{chemin}.{cle}" if chemin else cle)
+            return {cle: relire(element, cle, f"{chemin}.{cle}" if chemin else cle)
                     for cle, element in valeur.items()}
         if isinstance(valeur, list):
-            return [relire(element, nom, parent, f"{chemin}[{rang}]")
+            return [relire(element, nom, f"{chemin}[{rang}]")
                     for rang, element in enumerate(valeur)]
         if valeur is None or isinstance(valeur, (bool, str)):
             return valeur
-        if (parent, nom) in ZEROS_ENTIERS_DU_RESULTAT and valeur == 0:
-            return 0
         if nom in ENTIERS_DU_RESULTAT:
             return _nombre_du_resultat(valeur, int, chemin)
         if nom in FLOTTANTS_DU_RESULTAT:
@@ -653,7 +641,7 @@ def resultat_des_donnees(donnees: dict) -> dict:
         raise ValueError(f"{chemin} : un nombre que la table des types du résultat ne "
                          "déclare pas (pont.ENTIERS_DU_RESULTAT, pont.FLOTTANTS_DU_RESULTAT)")
 
-    return relire(donnees, None, None, "")
+    return relire(donnees, None, "")
 
 
 def simulations(cas: list[dict], paquet: bytes | None = None,
