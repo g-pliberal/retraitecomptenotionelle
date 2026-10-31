@@ -1,0 +1,20 @@
+date: "2026-10-31"
+session: "action 161, étape 4 : les deux paires de données, selon la note de décision 0005"
+consulte: >-
+  Aucune source de droit : la session ne touche à aucune règle du scénario 1.
+  La note de décision 0005 (« Les deux paires de données ») et la méthode de
+  la note 0003 ; les deux jumeaux des crédits des ministères et de la table
+  des agrégats (donnees/credits_ministeres.py, donnees/agregats.py,
+  credits-ministeres.js, agregats.js), relus contre la note du 23 octobre
+  2026 qui relevait leurs écarts ; chaque appel des accesseurs dans
+  moteur/js/pages.js ; les accesseurs du coût (cout.py) que les lecteurs
+  reproduisaient.
+trouve: >-
+  Aucune règle n'a changé. Les crédits des ministères et les accesseurs de la
+  table ne se calculent plus qu'au portage ; le Python garde le chargeur des
+  crédits et les écrivains de la table, identiques à l'octet. Les six écarts
+  de refus et de forme se tranchent dans agregats.js, sans qu'une page ni un
+  témoin change.
+reste: >-
+  Rien pour la veille. L'action reprend où son bloc « Reprise » la laisse
+  (action 161, note du 31 octobre 2026, étape 4).
