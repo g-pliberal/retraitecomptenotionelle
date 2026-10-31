@@ -70,8 +70,11 @@ de la proposition, qui s'écrit en couche (`data/CLAUDE.md`).
   jumeau Python, s'il en a un (`python scripts/jumeaux.py <nom>`) : la
   concordance des témoins vue rouge, au besoin par un témoin de plus, le
   Python porté ligne pour ligne, `python scripts/construire_temoins.py`, la
-  concordance verte, au bit près. Ce qui n'a pas de jumeau — le coût, les
-  carrières types — s'écrit en Python seul, son test d'abord. Puis
+  concordance verte, au bit près ; un nombre nouveau du résultat
+  (`dictionnaire()`) déclare son type dans la table de `pont.py`
+  (`ENTIERS_DU_RESULTAT`, `FLOTTANTS_DU_RESULTAT`), que `tests/test_pont.py`
+  confronte aux témoins. Ce qui n'a pas de jumeau — le coût, les carrières
+  types — s'écrit en Python seul, son test d'abord. Puis
   `python scripts/regenerer.py`, et `python scripts/resumer_temoins.py`,
   pour voir ce qu'il déplace ; `-m rapide` et les tests de sa zone, puis le
   commit.

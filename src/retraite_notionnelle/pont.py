@@ -33,6 +33,14 @@ simulateur et ses paramètres, et le Python les relit sous ses propres types
 (:func:`carrieres_des_saisies`) pour les simuler de son moteur, qui garde son
 jumeau.
 
+Les témoins de simulations, enfin : le portage simule chaque requête comme le
+site la simule (:func:`simulations`), et le Python relit son résultat sous une
+table des types déclarée champ par champ (:func:`resultat_des_donnees`), node
+n'écrivant qu'un type de nombre. Le fichier en revient à l'octet, sauf aux
+zéros que le moteur Python écrit tantôt « 0 », tantôt « 0.0 » : tant que le
+propriétaire n'a pas tranché leur écriture, ``scripts/construire_temoins.py``
+simule ses témoins au moteur Python (action 161, étape 6).
+
 Une demande sur le paquet du dépôt, sans paquet, ne lance pas node à chaque
 fois : les tests en font une par carrière, et chacune coûtait trois dixièmes
 de seconde, à lancer node et à relire le paquet. Le pont reste ouvert
@@ -534,7 +542,7 @@ def saisies(cas: list[dict], scenarios, paquet: bytes | None = None,
 
 #: Les champs entiers du résultat d'une simulation (``Comparaison.dictionnaire()``,
 #: que les témoins de simulations portent) : une année, un mois, des trimestres,
-#: un compte d'années, une version — ceux que le moteur Python annote ``int``.
+#: un compte d'années, une version — que le moteur Python calcule en ``int``.
 #: Node n'écrit qu'un type de nombre : ces champs reviennent entiers, et un
 #: nombre qui ne l'est pas y arrête la relecture.
 ENTIERS_DU_RESULTAT = frozenset({
