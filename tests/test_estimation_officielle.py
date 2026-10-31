@@ -6,10 +6,12 @@ télécharge à l'estimation que la caisse lui affiche (docs/architecture.md,
 estimation FICTIFS, écrits à la forme des gabarits de `tests/test_releve_lu.py` :
 aucune donnée personnelle n'entre au dépôt, pas même dans ses tests. Le script
 refuse un fichier personnel rangé dans le dépôt ; il lit le PDF du relevé comme
-son texte ; il poursuit la carrière comme la page le dit, et la liquide à la date
-de chaque départ, en euros de la page, majoration pour enfants comprise ; et
+son texte ; il poursuit la carrière comme la page le dit, et la fait liquider
+par le portage, le moteur qui fait foi (note de décision 0005), à la date de
+chaque départ, en euros de la page, majoration pour enfants comprise ; et
 l'écart qu'il imprime est celui du modèle à la caisse, ligne par ligne, puis
-étage par étage.
+étage par étage. Tant que le moteur Python garde ses jumeaux (action 161), il
+refait au bit près chaque départ que ces tests font servir au portage.
 """
 
 from __future__ import annotations
@@ -24,6 +26,9 @@ from pathlib import Path
 
 import pytest
 import yaml
+
+from outils_pont import SCENARIO_ACTUEL_DU_PORTAGE, servi_et_refait
+from retraite_notionnelle import pont
 
 RACINE = Path(__file__).resolve().parents[1]
 
@@ -84,6 +89,16 @@ def _estimation(**remplacements) -> dict:
     for cle, valeur in remplacements.items():
         donnees[cle] = valeur
     return donnees
+
+
+@pytest.fixture(autouse=True)
+def _le_moteur_python_refait_chaque_depart(monkeypatch):
+    """Le portage sert chaque départ que ces tests confrontent, et le moteur
+    Python, tant qu'il garde ses jumeaux (action 161), le refait au bit près
+    sous Linux x86_64 : un écart arrête le test qui l'a demandé, sur ce qui
+    diffère (:func:`outils_pont.servi_et_refait`). Aucun cas de la
+    confrontation ne perd ainsi la vérification du moteur Python."""
+    monkeypatch.setattr(pont, "scenario_actuel", servi_et_refait)
 
 
 @pytest.fixture(scope="module")
@@ -321,25 +336,43 @@ def test_un_assure_jeune_se_confronte_comme_un_autre(catalogue):
 def test_chaque_regime_porte_sa_part_et_le_tout_fait_la_pension(catalogue):
     """Brut mensuel par régime : sa pension, minima compris, et sa part de la
     majoration pour enfants, que le moteur compte à côté. Leur somme est la
-    pension du scénario 1, dans les euros de la page."""
+    pension du scénario 1 que le portage sert, dans les euros de la page."""
     confrontation = _confrontation(catalogue)
     depart = confrontation.estimation.departs[1]
-    comparaison = confrontation.simulateur.simuler(confrontation.carriere(depart.date))
-    servi = estimation_officielle.servi(comparaison)
-    actuel = comparaison.actuel
-    assert any(a.code == "majoration_enfants" for a in actuel.avantages_appliques)
-    attendu = ((actuel.pension_annuelle + actuel.pension_hors_repartition)
-               * comparaison.coefficient_euros_constants / 12)
+    scenario = confrontation.scenario_actuel(depart.date)
+    servi = estimation_officielle.servi(scenario)
+    actuel = scenario["actuel"]
+    assert any(a["code"] == "majoration_enfants" for a in actuel["avantages_appliques"])
+    attendu = ((actuel["pension_annuelle"] + actuel["pension_hors_repartition"])
+               * scenario["coefficient_euros_constants"] / 12)
     assert _total(servi) + servi.minimum_vieillesse == pytest.approx(attendu, rel=1e-12)
-    assert comparaison.carriere.date_liquidation.annee == 2033
-    assert comparaison.carriere.date_liquidation.mois == 6
+    assert scenario["annee_liquidation"] == 2033
+    assert scenario["mois_liquidation"] == 6
+
+
+def test_chaque_depart_se_sert_au_portage_sans_le_moteur_python(catalogue, monkeypatch):
+    """Le moteur qui fait foi est le JavaScript (note de décision 0005) : la
+    confrontation fait servir chaque départ par le portage
+    (``pont.scenario_actuel``), et le moteur Python, qu'on empêche ici de
+    simuler, n'y entre pas — le rapport chiffre chaque départ."""
+    from retraite_notionnelle.simulateur import Simulateur
+
+    def interdit(*_, **__):
+        raise AssertionError("le moteur Python simule un départ")
+
+    monkeypatch.setattr(pont, "scenario_actuel", SCENARIO_ACTUEL_DU_PORTAGE)
+    monkeypatch.setattr(Simulateur, "simuler", interdit)
+    texte = estimation_officielle.rapport(_confrontation(catalogue))
+    assert texte.count("Départ le ") == 2
+    assert re.search(r"= total\s+1 400\s+[\d ]+\s+[+-]", texte)
 
 
 def test_la_confrontation_liquide_la_carriere_que_le_portage_batit(catalogue):
-    """La saisie n'a qu'un exemplaire, celui du portage (action 161,
-    étape 6) : il bâtit la carrière du relevé que le script a prolongé, sans
-    le prolonger une seconde fois, et le moteur Python la liquide. Chaque
-    année du relevé prolongé y est, à son revenu, et aucune autre."""
+    """La saisie et le moteur n'ont qu'un exemplaire qui fasse foi, celui du
+    portage (action 161 ; note de décision 0005) : il bâtit la carrière du
+    relevé que le script a prolongé, sans le prolonger une seconde fois, et la
+    liquide. Chaque année du relevé prolongé y est, à son revenu, et aucune
+    autre."""
     confrontation = _confrontation(catalogue)
     depart = confrontation.estimation.departs[0].date
     attendues = {(int(annee), float(revenu))

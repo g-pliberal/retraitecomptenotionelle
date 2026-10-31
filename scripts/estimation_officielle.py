@@ -13,8 +13,8 @@ peut en lire la page, et n'y change une hypothèse qu'avec son accord.
 `--releve` lit le relevé de carrière que l'assuré a téléchargé : le PDF par
 `scripts/fetch/lecture_pdf.py`, ou ses lignes de texte, puis le lecteur du
 site, `moteur/js/releve-lu.js`, que node fait tourner, qui en rend la saisie
-du simulateur ; le portage en bâtit la carrière (`pont.carrieres_des_saisies`),
-que le moteur Python liquide.
+du simulateur ; le portage, le moteur qui fait foi (note de décision 0005), en
+bâtit la carrière et la liquide (`pont.scenario_actuel`).
 `--estimation` lit ce que la caisse affiche, recopié âge par âge dans le
 gabarit que `--modele` imprime, avec la convention de la page mot pour mot.
 Pour chaque âge, le scénario 1 est liquidé à la même date, ramené à la même
@@ -476,28 +476,29 @@ class Servi:
     motif_ouverture: str
 
 
-def servi(comparaison) -> Servi:
-    """Le brut mensuel de chaque régime, en euros de la page : sa pension, minima
-    compris, et la part qu'il sert de la majoration pour enfants, que le moteur
-    compte à côté (`etagesActuels` de `moteur/js/pages.js`)."""
-    actuel = comparaison.actuel
-    passage = comparaison.coefficient_euros_constants / MOIS_PAR_AN
+def servi(scenario: dict) -> Servi:
+    """Le brut mensuel de chaque régime, en euros de la page, du scénario 1 que
+    le portage sert (`pont.scenario_actuel`) : sa pension, minima compris, et
+    la part qu'il sert de la majoration pour enfants, que le moteur compte à
+    côté (`etagesActuels` de `moteur/js/pages.js`)."""
+    actuel = scenario["actuel"]
+    passage = scenario["coefficient_euros_constants"] / MOIS_PAR_AN
     par_regime: dict[str, float] = {}
-    for pension in actuel.pensions_par_regime:
-        par_regime[pension.regime] = par_regime.get(pension.regime, 0.0) + pension.montant
+    for pension in actuel["pensions_par_regime"]:
+        par_regime[pension["regime"]] = par_regime.get(pension["regime"], 0.0) + pension["montant"]
     minimum = 0.0
-    for avantage in actuel.avantages_appliques:
-        if avantage.code == "majoration_enfants":
-            for code, part in avantage.par_regime:
+    for avantage in actuel["avantages_appliques"]:
+        if avantage["code"] == "majoration_enfants":
+            for code, part in avantage["par_regime"]:
                 par_regime[code] = par_regime.get(code, 0.0) + part
-        elif avantage.code == "minimum_vieillesse":
-            minimum += avantage.montant
+        elif avantage["code"] == "minimum_vieillesse":
+            minimum += avantage["montant"]
     return Servi(
         par_regime={code: montant * passage for code, montant in par_regime.items()},
         minimum_vieillesse=minimum * passage,
-        trimestres=actuel.trimestres_valides,
-        ouverte=actuel.liquidation_ouverte,
-        motif_ouverture=actuel.motif_ouverture,
+        trimestres=actuel["trimestres_valides"],
+        ouverte=actuel["liquidation_ouverte"],
+        motif_ouverture=actuel["motif_ouverture"],
     )
 
 
@@ -514,11 +515,15 @@ class Confrontation:
         self.revenus_futurs, self.croissance = revenus_futurs, croissance
         self.naissance = self._naissance()
         self.derniere_annee = max(ligne.annee for ligne in lecture.lignes)
-        # Les réglages ne dépendent pas du départ : ceux du premier suffisent.
+        # Les données que la confrontation lit pour elle-même — les régimes et
+        # leurs étages, les prix, le salaire moyen, le plafond — sous les
+        # réglages de la saisie, qui ne dépendent pas du départ : ceux du
+        # premier suffisent. Le scénario 1 ne se simule qu'au portage
+        # (`scenario_actuel`).
         parametres, _ = self._lue(estimation.departs[0].date)
-        self.simulateur = Simulateur(parametres)
-        self.catalogue = self.simulateur.catalogue
-        self.macro = self.simulateur.macro
+        donnees = Simulateur(parametres)
+        self.catalogue = donnees.catalogue
+        self.macro = donnees.macro
         self.releve = self._releve_corrige()
 
     def _naissance(self) -> str:
@@ -554,11 +559,10 @@ class Confrontation:
             lignes[rangs[0]] = ":".join(champs)
         return "\n".join(lignes)
 
-    def _lue(self, depart: dt.date, releve: str | None = None) -> tuple:
-        """Les paramètres et la carrière que le portage bâtit du relevé, au
-        départ ``depart`` : la saisie n'a qu'un exemplaire, le sien
-        (``pont.carrieres_des_saisies``, action 161), et le relevé s'en tient
-        à ses années, que ce script a déjà prolongées à sa convention."""
+    def _cas(self, depart: dt.date, releve: str | None = None) -> dict:
+        """La requête du simulateur au départ ``depart``, telle que le pont la
+        passe au portage : le relevé s'en tient à ses années, que ce script a
+        déjà prolongées à sa convention (``"prolonger": False``)."""
         parametres = self.lecture.parametres()
         requete = {
             "naissance": self.naissance, "sexe": self.estimation.sexe,
@@ -570,8 +574,13 @@ class Confrontation:
         }
         if self.estimation.naissances:
             requete["naissances"] = ",".join(self.estimation.naissances)
-        lues, refusees = pont.carrieres_des_saisies(
-            [{"cle": "depart", "requete": requete, "prolonger": False}])
+        return {"cle": "depart", "requete": requete, "prolonger": False}
+
+    def _lue(self, depart: dt.date, releve: str | None = None) -> tuple:
+        """Les paramètres et la carrière que le portage bâtit du relevé, au
+        départ ``depart`` : la saisie n'a qu'un exemplaire, le sien
+        (``pont.carrieres_des_saisies``, action 161)."""
+        lues, refusees = pont.carrieres_des_saisies([self._cas(depart, releve)])
         if refusees:
             raise Refus(f"départ du {depart.isoformat()} : {refusees['depart']}")
         return lues["depart"]
@@ -614,18 +623,34 @@ class Confrontation:
                        for statut, revenu in emplois]
         return "\n".join(lignes)
 
-    def carriere(self, depart: dt.date):
+    def _au_depart(self, depart: dt.date) -> dict:
+        """La requête du départ ``depart``, sur le relevé prolongé jusqu'à lui."""
         if depart.year <= self.derniere_annee:
             raise Refus(f"départ du {depart.isoformat()} : le relevé porte encore "
                         f"{self.derniere_annee}, qui le suivrait.")
         # Le relevé est déjà prolongé, à la convention que --revenus-futurs
         # choisit ; « aucun » l'arrête à sa dernière année, et le site, qui
         # prolonge le sien, ne doit pas y revenir.
-        _, carriere = self._lue(depart, self.releve_prolonge(depart))
-        return carriere
+        return self._cas(depart, self.releve_prolonge(depart))
+
+    def carriere(self, depart: dt.date):
+        """La carrière que le portage bâtit au départ ``depart``, et liquide."""
+        lues, refusees = pont.carrieres_des_saisies([self._au_depart(depart)])
+        if refusees:
+            raise Refus(f"départ du {depart.isoformat()} : {refusees['depart']}")
+        return lues["depart"][1]
+
+    def scenario_actuel(self, depart: dt.date) -> dict:
+        """Le scénario 1 que le portage sert au départ ``depart`` : le moteur
+        qui fait foi est le JavaScript (note de décision 0005 ;
+        ``pont.scenario_actuel``)."""
+        servis, refusees = pont.scenario_actuel([self._au_depart(depart)])
+        if refusees:
+            raise Refus(f"départ du {depart.isoformat()} : {refusees['depart']}")
+        return servis["depart"]
 
     def servi(self, depart: Depart) -> Servi:
-        return servi(self.simulateur.simuler(self.carriere(depart.date)))
+        return servi(self.scenario_actuel(depart.date))
 
 
 # ---------------------------------------------------------------------------

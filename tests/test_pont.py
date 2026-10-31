@@ -19,8 +19,6 @@ sans node, il s'arrête, sans repli sur le moteur Python.
 from __future__ import annotations
 
 import json
-import math
-import platform
 import shutil
 import subprocess
 import sys
@@ -35,6 +33,8 @@ from retraite_notionnelle.castypes import (
     CAS_TYPES, GRILLE_DU_COUT, carriere_de_la_grille, cases_de_la_grille)
 from retraite_notionnelle.config import RACINE_PROJET
 from retraite_notionnelle.simulateur import Simulateur
+
+from outils_pont import TOLERANCE_DU_MOTEUR_PYTHON, Saisies, ecarts_d_ecriture
 
 SCENARIOS = ("notionnel_retroactif", "notionnel_retroactif_employeur", "notionnel_liberal")
 
@@ -178,6 +178,8 @@ def test_sans_node_le_pont_s_arrete_sans_repli(monkeypatch):
         pont.saisies([{"cle": "0", "saisie": SAISIES[0]}], SCENARIOS)
     with pytest.raises(pont.PontIndisponible, match="node"):
         pont.grille_du_cout([], SCENARIOS, Parametres())
+    with pytest.raises(pont.PontIndisponible, match="node"):
+        pont.scenario_actuel([{"cle": "a", "requete": REQUETE}])
 
 
 # -- sans paquet, le pont reste ouvert --------------------------------------------
@@ -250,6 +252,64 @@ def test_une_saisie_par_la_pension_passe_le_pont_par_la_carriere_que_l_inversion
             == site().contexte.simuler(saisie).actuel.pension_annuelle)
     assert ([ligne.revenu for ligne in carriere.lignes]
             != [ligne.revenu for ligne in au_revenu.lignes])
+
+
+# -- le scénario 1 des confrontations ----------------------------------------------
+
+#: Un relevé que l'appelant prolonge à sa façon (``scripts/estimation_officielle.py``) :
+#: une mère de trois enfants, salariée du privé de 2002 à 2025, qui part en juin 2033.
+RELEVE_A_PROLONGER = {
+    "naissance": "1966-05-12", "sexe": "F", "liquidation": "2033-06", "enfants": "3",
+    "euros": "2026",
+    "releve": ",".join(f"{annee}:salarie_prive_non_cadre:{18_300 + 600 * (annee - 2002)}"
+                       for annee in range(2002, 2026)),
+}
+
+
+def test_le_pont_sert_le_scenario_actuel_au_bit_pres_du_moteur_python():
+    """Les confrontations aux références extérieures — l'estimation officielle,
+    Destinie 2 — lisent du scénario 1 ce qu'aucun témoin n'écrit : la part de
+    chaque régime dans la majoration pour enfants, la durée validée, le taux.
+    Le portage le sert (:func:`pont.scenario_actuel`), chaque nombre sous le
+    type que le Python lui donne, et le moteur Python, qui garde ses jumeaux,
+    le refait au bit près sous Linux x86_64 (:data:`TOLERANCE_DU_MOTEUR_PYTHON`).
+    Un relevé que l'appelant a prolongé à sa façon s'en tient à ses années."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    destinie = json.loads((RACINE_PROJET / "tests" / "temoins" / "destinie_2.json")
+                          .read_text(encoding="utf-8"))["cas"]
+    cas = [{"cle": "veuf", "requete": destinie["reversion_trois_enfants"]["requete"]},
+           {"cle": "metiers", "requete": REQUETE},
+           {"cle": "prolonge", "requete": RELEVE_A_PROLONGER},
+           {"cle": "tel_quel", "requete": RELEVE_A_PROLONGER, "prolonger": False}]
+    servis, refus = pont.scenario_actuel(cas)
+    assert refus == {}
+    refaits, refus = Saisies().scenario_actuel(cas)
+    assert refus == {}
+    for cle, servi in servis.items():
+        assert ecarts_d_ecriture(refaits[cle], servi,
+                                 tolerance=TOLERANCE_DU_MOTEUR_PYTHON) == [], cle
+    veuf = servis["veuf"]
+    (majoration,) = (avantage for avantage in veuf["actuel"]["avantages_appliques"]
+                     if avantage["code"] == "majoration_enfants")
+    assert "regime_general" in {regime for regime, _ in majoration["par_regime"]}
+    assert veuf["reversion"]["regimes"] and servis["metiers"]["reversion"] is None
+    # Tel quel, le relevé s'arrête en 2025 ; prolongé, il court jusqu'au départ.
+    assert (servis["tel_quel"]["actuel"]["trimestres_valides"]
+            < servis["prolonge"]["actuel"]["trimestres_valides"])
+    assert (servis["tel_quel"]["annee_liquidation"],
+            servis["tel_quel"]["mois_liquidation"]) == (2033, 6)
+    for servi in servis.values():
+        actuel = servi["actuel"]
+        assert type(servi["annee_liquidation"]) is int and type(servi["mois_liquidation"]) is int
+        assert type(actuel["trimestres_valides"]) is int
+        assert all(type(nombre) is float for nombre in (
+            servi["coefficient_euros_constants"], actuel["pension_annuelle"],
+            actuel["pension_hors_repartition"], actuel["taux_liquidation"]))
+        assert all(type(pension["montant"]) is float for pension in actuel["pensions_par_regime"])
+        assert all(type(avantage["montant"]) is float and type(part) is float
+                   for avantage in actuel["avantages_appliques"]
+                   for _, part in avantage["par_regime"])
 
 
 def test_le_pont_ouvert_se_relance_quand_le_paquet_du_depot_change(monkeypatch):
@@ -342,16 +402,6 @@ def _echantillon(temoins: dict) -> list[str]:
                        for forme in formes]
 
 
-#: La confrontation du moteur Python aux témoins, que le portage calcule
-#: partout comme la libm de Linux (``moteur/js/libm.js``) : au bit près sous
-#: Linux x86_64, où GitHub la joue ; ailleurs, la libm du système déplace la
-#: dernière décimale de quelques flottants, et elle tolère 10⁻¹² en écart
-#: relatif, les types et les textes restant exacts, comme ``_fichier_a_jour``
-#: (``tests/test_web.py``).
-TOLERANCE_DU_MOTEUR_PYTHON = (
-    0.0 if sys.platform == "linux" and platform.machine() == "x86_64" else 1e-12)
-
-
 def _au_moteur_python(requetes: dict[str, dict]) -> dict[str, dict]:
     """Chaque requête, sous le nom de son témoin, simulée au moteur Python comme
     ``scripts/construire_temoins.py`` la simulait jusqu'au 31 octobre 2026 : la
@@ -399,7 +449,7 @@ def test_les_temoins_se_simulent_par_le_portage_sans_le_moteur_python(monkeypatc
     simulations = module._simulations()
     assert list(simulations) == noms
     for nom in noms:
-        assert _ecarts_d_ecriture(simulations[nom], temoins[nom]) == [], nom
+        assert ecarts_d_ecriture(simulations[nom], temoins[nom]) == [], nom
 
 
 def test_le_moteur_python_refait_des_temoins_de_chaque_forme():
@@ -414,8 +464,8 @@ def test_le_moteur_python_refait_des_temoins_de_chaque_forme():
     noms = _echantillon(temoins)
     refaits = _au_moteur_python({nom: temoins[nom]["requete"] for nom in noms})
     for nom in noms:
-        assert _ecarts_d_ecriture(refaits[nom], temoins[nom],
-                                  tolerance=TOLERANCE_DU_MOTEUR_PYTHON) == [], nom
+        assert ecarts_d_ecriture(refaits[nom], temoins[nom],
+                                 tolerance=TOLERANCE_DU_MOTEUR_PYTHON) == [], nom
 
 
 def _comme_node(valeur):
@@ -428,27 +478,6 @@ def _comme_node(valeur):
     if isinstance(valeur, (list, tuple)):
         return [_comme_node(element) for element in valeur]
     return valeur
-
-
-def _ecarts_d_ecriture(relu, attendu, chemin: tuple = (), tolerance: float = 0.0) -> list[str]:
-    """Les endroits où ``relu`` ne s'écrit pas comme ``attendu`` : une clé, une
-    longueur, un nombre, un texte, un type — « 0 » pour « 0.0 » en est un. Avec
-    une ``tolerance``, deux flottants égaux à elle près, en écart relatif,
-    s'écrivent de même."""
-    if isinstance(attendu, dict) and isinstance(relu, dict) and sorted(relu) == sorted(attendu):
-        return [ecart for cle in attendu
-                for ecart in _ecarts_d_ecriture(relu[cle], attendu[cle], (*chemin, cle),
-                                                tolerance)]
-    if isinstance(attendu, list) and isinstance(relu, list) and len(relu) == len(attendu):
-        return [ecart for rang, (lu, element) in enumerate(zip(relu, attendu))
-                for ecart in _ecarts_d_ecriture(lu, element, (*chemin, f"[{rang}]"), tolerance)]
-    if json.dumps(relu) == json.dumps(attendu):
-        return []
-    if (tolerance and type(relu) is float and type(attendu) is float
-            and math.isclose(relu, attendu, rel_tol=tolerance)):
-        return []
-    return [f"{'.'.join(chemin)} : le fichier écrit {json.dumps(attendu)[:60]}, "
-            f"la relecture {json.dumps(relu)[:60]}"]
 
 
 def _temoins_de_simulations() -> tuple[str, dict]:
@@ -469,7 +498,7 @@ def test_la_table_des_types_relit_chaque_temoin_ecrit_comme_node_l_ecrirait():
     relecture avec lui."""
     _, temoins = _temoins_de_simulations()
     ecarts = [f"{nom}, {ecart}" for nom, temoin in temoins.items()
-              for ecart in _ecarts_d_ecriture(
+              for ecart in ecarts_d_ecriture(
                   pont.resultat_des_donnees(_comme_node(temoin["resultat"])),
                   temoin["resultat"])]
     assert not ecarts, f"{len(ecarts)} écart(s), dont : {ecarts[:5]}"
@@ -535,7 +564,7 @@ def test_le_pont_simule_des_temoins_comme_le_portage_les_simule():
     for nom in noms:
         assert set(resultats[nom]) == {"resultat", "appels_liquider"}, nom
         assert resultats[nom]["appels_liquider"] == temoins[nom]["appels_liquider"], nom
-        assert _ecarts_d_ecriture(resultats[nom]["resultat"], temoins[nom]["resultat"]) == [], nom
+        assert ecarts_d_ecriture(resultats[nom]["resultat"], temoins[nom]["resultat"]) == [], nom
 
 
 def test_le_portage_relu_par_la_table_redonne_les_temoins_a_l_octet():
@@ -553,7 +582,7 @@ def test_le_portage_relu_par_la_table_redonne_les_temoins_a_l_octet():
     relus = {nom: {"requete": temoin["requete"], **resultats[nom]}
              for nom, temoin in temoins.items()}
     ecarts = [f"{nom}, {ecart}" for nom, temoin in temoins.items()
-              for ecart in _ecarts_d_ecriture(relus[nom], temoin)]
+              for ecart in ecarts_d_ecriture(relus[nom], temoin)]
     assert not ecarts, f"{len(ecarts)} écart(s), dont : {ecarts[:5]}"
     assert json.dumps(relus, ensure_ascii=False, sort_keys=True, indent=1) + "\n" == texte
 
@@ -571,8 +600,8 @@ def test_le_moteur_python_refait_chaque_temoin():
     texte, temoins = _temoins_de_simulations()
     refaits = _au_moteur_python({nom: temoin["requete"] for nom, temoin in temoins.items()})
     ecarts = [f"{nom}, {ecart}" for nom, temoin in temoins.items()
-              for ecart in _ecarts_d_ecriture(refaits[nom], temoin,
-                                              tolerance=TOLERANCE_DU_MOTEUR_PYTHON)]
+              for ecart in ecarts_d_ecriture(refaits[nom], temoin,
+                                             tolerance=TOLERANCE_DU_MOTEUR_PYTHON)]
     assert not ecarts, f"{len(ecarts)} écart(s), dont : {ecarts[:5]}"
     if not TOLERANCE_DU_MOTEUR_PYTHON:
         assert json.dumps(refaits, ensure_ascii=False, sort_keys=True, indent=1) + "\n" == texte

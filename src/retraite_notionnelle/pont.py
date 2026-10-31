@@ -42,6 +42,12 @@ propriétaire, 31 octobre 2026), et le moteur Python, tant qu'il garde ses
 jumeaux, les refait au bit près (``tests/test_pont.py`` ; action 161,
 étape 6).
 
+Les confrontations aux références extérieures, de même : l'estimation
+officielle (``scripts/estimation_officielle.py``) et Destinie 2
+(``tests/test_destinie.py``) lisent du scénario 1 que le portage sert ce
+que les témoins n'écrivent pas tout entier (:func:`scenario_actuel`), et le
+moteur Python le refait au bit près, cas par cas (``tests/outils_pont.py``).
+
 Une demande sur le paquet du dépôt, sans paquet, ne lance pas node à chaque
 fois : les tests en font une par carrière, et chacune coûtait trois dixièmes
 de seconde, à lancer node et à relire le paquet. Le pont reste ouvert
@@ -644,6 +650,71 @@ def resultat_des_donnees(donnees: dict) -> dict:
                          "déclare pas (pont.ENTIERS_DU_RESULTAT, pont.FLOTTANTS_DU_RESULTAT)")
 
     return relire(donnees, None, "")
+
+
+def _entier(valeur, nom: str) -> int:
+    """Un entier que le portage a écrit : il doit en être un."""
+    if type(valeur) is not int:
+        raise TypeError(f"{nom} : entier attendu, le portage a écrit {valeur!r}")
+    return valeur
+
+
+def scenario_actuel_des_donnees(donnees: dict) -> dict:
+    """Le scénario 1 que le portage a servi (:func:`scenario_actuel`), sous
+    les types que le Python lui donne : la date du départ, ses trimestres et
+    l'année de la réversion en entiers, qui doivent en être ; les montants, les
+    parts, le taux et le coefficient en flottants, que node écrit « 2 » pour
+    2.0 ; un texte, un booléen et ``None`` tels qu'ils sont."""
+    actuel, reversion = donnees["actuel"], donnees["reversion"]
+    return {
+        "annee_liquidation": _entier(donnees["annee_liquidation"], "annee_liquidation"),
+        "mois_liquidation": _entier(donnees["mois_liquidation"], "mois_liquidation"),
+        "coefficient_euros_constants": _flottant(donnees["coefficient_euros_constants"]),
+        "actuel": {
+            "pension_annuelle": _flottant(actuel["pension_annuelle"]),
+            "pension_hors_repartition": _flottant(actuel["pension_hors_repartition"]),
+            "pensions_par_regime": [
+                {"regime": pension["regime"], "montant": _flottant(pension["montant"]),
+                 "detail": pension["detail"]}
+                for pension in actuel["pensions_par_regime"]],
+            "avantages_appliques": [
+                {"code": avantage["code"], "montant": _flottant(avantage["montant"]),
+                 "par_regime": [(regime, _flottant(part))
+                                for regime, part in avantage["par_regime"]]}
+                for avantage in actuel["avantages_appliques"]],
+            "trimestres_valides": _entier(actuel["trimestres_valides"], "trimestres_valides"),
+            "taux_liquidation": _flottant(actuel["taux_liquidation"]),
+            "liquidation_ouverte": actuel["liquidation_ouverte"],
+            "motif_ouverture": actuel["motif_ouverture"],
+        },
+        "reversion": None if reversion is None else {
+            "annee": _entier(reversion["annee"], "reversion.annee"),
+            "regimes": [{"regime": ligne["regime"], "montant": _flottant(ligne["montant"]),
+                         "date_effet": ligne["date_effet"]}
+                        for ligne in reversion["regimes"]],
+        },
+    }
+
+
+def scenario_actuel(cas: list[dict], paquet: bytes | None = None,
+                    ) -> tuple[dict[str, dict], dict[str, str]]:
+    """Chaque requête du simulateur, ``{"cle", "requete"}``, lue par la saisie
+    du portage et simulée comme le site la simule (``Contexte.simuler``) — tel
+    quel un relevé que l'appelant a déjà prolongé à sa façon, avec
+    ``"prolonger": False`` : sous sa clé, ce que les confrontations aux
+    références extérieures lisent de son scénario 1, relu sous les types du
+    Python (:func:`scenario_actuel_des_donnees`). ``"actuel"`` en porte la
+    pension et, à part, ce qui est hors de la répartition ; chaque pension de
+    régime (``regime``, ``montant``, ``detail``) ; chaque avantage appliqué
+    (``code``, ``montant``, et la part de chaque régime, ``par_regime``) ; la
+    durée validée, le taux, l'ouverture et son motif. À côté : la date du
+    départ, le passage aux euros constants, et la réversion, ``None`` sans
+    elle (son ``annee``, et chacun de ses ``regimes`` : ``regime``,
+    ``montant``, ``date_effet``). Puis, sous leur clé, les motifs des
+    requêtes que le portage refuse."""
+    reponse = _demander({"scenario_actuel": {"cas": cas}}, paquet)
+    return ({cle: scenario_actuel_des_donnees(lu) for cle, lu in reponse["resultats"].items()},
+            reponse["echecs"])
 
 
 def simulations(cas: list[dict], paquet: bytes | None = None,

@@ -37,6 +37,11 @@
  *   (`Contexte.simuler`) : son résultat, `Comparaison.dictionnaire()`, et les
  *   appels de `liquider` qu'il a faits, liquidations d'essai comprises, que
  *   `pont.py` relit sous la table des types du résultat.
+ * - `scenario_actuel` : `{cas: [{cle, requete, prolonger}]}` — chaque requête
+ *   du simulateur, simulée comme le site la simule, un relevé avec
+ *   `prolonger: false` s'en tenant à ses années : ce que les confrontations
+ *   aux références extérieures lisent de son scénario 1
+ *   (`scenarioActuelEnDonnees`), dont une part qu'aucun témoin n'écrit.
  *
  * Il écrit `{resultats, echecs}` : une carrière que le portage refuse en est
  * absente, et son motif est dans `echecs`. Un nombre non fini s'écrit `null`,
@@ -144,6 +149,17 @@ function carriereEnDonnees(carriere) {
 }
 
 /**
+ * Le simulateur d'une saisie par le relevé, et la carrière du relevé tel
+ * quel : un relevé que l'appelant a déjà prolongé à sa façon ne se prolonge
+ * pas une seconde fois jusqu'au départ (`scripts/estimation_officielle.py`).
+ */
+function releveTelQuel(saisie) {
+  const simulateur = contexte.simulateur(saisie.parametres(contexte.base));
+  return [simulateur, contexte.carriereRelevee(simulateur, saisie,
+    Object.keys(contexte.paquet.periodes_non_travaillees ?? {}), false)];
+}
+
+/**
  * Chaque requête du simulateur, lue par la saisie du portage, la seule, comme
  * `tests/js/moteur.test.js` lit celle d'un témoin — ou chaque saisie aux champs
  * de `Saisie`, comme `saisies` les lit : les paramètres de la saisie, et la
@@ -158,10 +174,7 @@ function carrieresDesSaisies({ cas }) {
     const parametres = saisie.parametres(contexte.base);
     let carriere;
     if (saisie.releveActif && !prolonger) {
-      // Un relevé que l'appelant a déjà prolongé à sa façon ne se prolonge
-      // pas une seconde fois (`scripts/estimation_officielle.py`).
-      carriere = contexte.carriereRelevee(contexte.simulateur(parametres), saisie,
-        Object.keys(contexte.paquet.periodes_non_travaillees ?? {}), false);
+      [, carriere] = releveTelQuel(saisie);
     } else if (saisie.parPension && !saisie.releveActif) {
       // La carrière d'une saisie par la pension est celle que le contexte
       // trouve en inversant la pension, en la simulant.
@@ -312,9 +325,64 @@ function simulations({ cas }) {
   });
 }
 
+/**
+ * Ce que les confrontations aux références extérieures lisent du scénario 1
+ * d'une comparaison — l'estimation officielle (`scripts/estimation_officielle.py`),
+ * Destinie 2 (`tests/test_destinie.py`) —, et que `dictionnaire()` n'écrit pas
+ * entier : la date du départ et le passage aux euros constants ; la pension,
+ * et à part ce qui est hors de la répartition ; chaque pension de régime, son
+ * montant et son détail ; chaque avantage appliqué, son montant et la part de
+ * chaque régime ; la durée validée et le taux ; l'ouverture et son motif ; la
+ * réversion, son année, et ce que chaque régime en sert, de quelle date.
+ */
+function scenarioActuelEnDonnees(comparaison) {
+  const { actuel, reversion } = comparaison;
+  const date = comparaison.carriere.dateLiquidation;
+  return {
+    annee_liquidation: date.annee,
+    mois_liquidation: date.mois,
+    coefficient_euros_constants: comparaison.coefficient_euros_constants,
+    actuel: {
+      pension_annuelle: actuel.pension_annuelle,
+      pension_hors_repartition: actuel.pension_hors_repartition,
+      pensions_par_regime: actuel.pensions_par_regime
+        .map(({ regime, montant, detail }) => ({ regime, montant, detail })),
+      avantages_appliques: actuel.avantages_appliques.map(({ code, montant, par_regime }) => ({
+        code, montant, par_regime: (par_regime ?? []).map(([regime, part]) => [regime, part]),
+      })),
+      trimestres_valides: actuel.trimestres_valides,
+      taux_liquidation: actuel.taux_liquidation,
+      liquidation_ouverte: actuel.liquidation_ouverte,
+      motif_ouverture: actuel.motif_ouverture,
+    },
+    reversion: reversion === null ? null : {
+      annee: reversion.annee,
+      regimes: reversion.regimes
+        .map(({ regime, montant, date_effet }) => ({ regime, montant, date_effet })),
+    },
+  };
+}
+
+/**
+ * Chaque requête du simulateur, lue par la saisie du portage et simulée comme
+ * le site la simule (`Contexte.simuler`) — tel quel un relevé que l'appelant a
+ * prolongé, avec `prolonger: false` : ce que les confrontations lisent de son
+ * scénario 1 (`scenarioActuelEnDonnees`).
+ */
+function scenarioActuel({ cas }) {
+  return parCas(cas, ({ requete, prolonger = true }) => {
+    const saisie = Saisie.depuisRequete(requete, false, contexte.paquet.presomptions);
+    if (saisie.releveActif && !prolonger) {
+      const [simulateur, carriere] = releveTelQuel(saisie);
+      return scenarioActuelEnDonnees(simulateur.simuler(carriere));
+    }
+    return scenarioActuelEnDonnees(contexte.simuler(saisie));
+  });
+}
+
 const LECTURES = {
   carrieres, saisies, grille_du_cout: grilleDuCout, carrieres_des_saisies: carrieresDesSaisies,
-  simulations,
+  simulations, scenario_actuel: scenarioActuel,
 };
 
 /** La réponse à une demande, qui porte une seule des `LECTURES`. */
