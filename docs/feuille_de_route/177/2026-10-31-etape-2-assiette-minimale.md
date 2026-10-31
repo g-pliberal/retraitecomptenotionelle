@@ -38,7 +38,11 @@ redonne désormais la table de la caisse de 1973 à 2026, sans écart. Deux cas
 posés à la main depuis les textes, dans `tests/test_independants.py`, se
 jouent dans les deux moteurs : l'artisane et la commerçante à 100 € par an de
 1970 à 1989, l'artisane et la libérale à 3 000 € par an de 2020 à 2024 ; ils
-passent par `_deux_moteurs`, que le test des dispenses reprend.
+passent par la fixture `deux_moteurs`, que le test des dispenses reprend.
+D'abord écrite en simple fonction, elle cachait l'appel à node à la garde des
+présomptions, qui ne lit que la source d'un test et de ses fixtures : la
+garde a rougi sur le premier envoi, trois tests y confrontant un Python
+décalé à un portage qui ne l'est pas ; en fixture, ils y sont sautés.
 
 **Ce que le calcul en reçoit.** Mesuré au moteur Python avant et après
 l'étape : l'artisane née en 1945, à 100 € par an de 1970 à 1989 et partie à
