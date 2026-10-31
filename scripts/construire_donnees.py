@@ -135,7 +135,7 @@ CALIBRATIONS = DONNEES / "derive" / "calibrations_mortalite.json"
 #: qu'un site en cache ne lise pas un paquet qu'il ne comprend pas : le site
 #: attend la sienne (``VERSION_PAQUET``, ``moteur/js/contexte.js``), et redemande
 #: au serveur un paquet qui n'a pas celle-là, depuis le 11 octobre 2026.
-VERSION = 37
+VERSION = 38
 
 
 def _serie(serie: SerieAnnuelle) -> dict:
@@ -1336,6 +1336,15 @@ def _dispenses_assiette_minimale() -> dict:
 
     return {motif: [sorted(r.statuts), r.debut, r.fin, r.complementaires]
             for motif, r in sorted(charger_dispenses_assiette_minimale(DONNEES).items())}
+
+
+def _exoneration_independants_outre_mer() -> list:
+    """L'exonération de toute cotisation des indépendants d'outre-mer sous un
+    revenu (L. 756-3, L. 756-5, D. 756-7) : les statuts, les années, le montant."""
+    from retraite_notionnelle.donnees.chargement import charger_exonerations_outre_mer
+
+    return [[sorted(r.statuts), r.debut, r.fin, r.euros]
+            for r in charger_exonerations_outre_mer(DONNEES)]
 
 
 def _validation_micro() -> dict:
@@ -2613,6 +2622,7 @@ def construire(bilan: bytes, agregats: bytes) -> bytes:
         "impot_revenu": _impot_revenu(),
         "assiette_minimale_independants": _assiette_minimale_independants(),
         "dispenses_assiette_minimale": _dispenses_assiette_minimale(),
+        "exoneration_independants_outre_mer": _exoneration_independants_outre_mer(),
         "validation_micro": _validation_micro(),
         "cotisation_micro": _cotisation_micro(),
         "compensation_micro": _compensation_micro(),

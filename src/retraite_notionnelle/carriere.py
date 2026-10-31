@@ -36,6 +36,7 @@ from .donnees.chargement import (
     charger_chomage_complementaires,
     charger_compensation_micro,
     charger_dispenses_assiette_minimale,
+    charger_exonerations_outre_mer,
     charger_periodes_non_travaillees,
     charger_seuils_micro,
     charger_table_csv,
@@ -43,6 +44,7 @@ from .donnees.chargement import (
     charger_yaml,
     dans_un_instantane,
     dispense_assiette_minimale,
+    exoneration_outre_mer,
     rapport_validation_micro,
     trimestres_aux_seuils_micro,
     une_fois_par_instantane,
@@ -687,7 +689,9 @@ def _ligne_annuelle(
     paie d'une année cotisée.
 
     ``outre_mer``, le département d'outre-mer où l'assuré a travaillé, donne
-    leur seuil aux trimestres d'une année cotisée (R. 753-21, R. 351-9).
+    leur seuil aux trimestres d'une année cotisée (R. 753-21, R. 351-9), et
+    exonère de toute cotisation l'artisan ou le commerçant dont le revenu ne
+    dépasse pas le montant de D. 756-7 (``exoneration_outre_mer``).
     """
     if outre_mer and outre_mer not in DEPARTEMENTS_D_OUTRE_MER:
         raise ValueError(f"département d'outre-mer inconnu : {outre_mer!r} — "
@@ -715,6 +719,17 @@ def _ligne_annuelle(
         charger_dispenses_assiette_minimale(macro.racine), dispense,
         affiliation, annee) if cotise and dispense else "")
     if dispense:
+        minimale = 0.0
+    # L'EXONÉRATION DES INDÉPENDANTS D'OUTRE-MER (L. 756-3, L. 756-5, D. 756-7) :
+    # l'artisan de La Réunion qui déclare 300 € en 2010 ne verse aucune
+    # cotisation, pas même sur l'assiette minimale, et l'année ne lui ouvre aucun
+    # droit. Le modèle lui donnait un trimestre (action 177, étape 4).
+    exoneree = False
+    if cotise and outre_mer and not micro:
+        regle_outre_mer = exoneration_outre_mer(
+            charger_exonerations_outre_mer(macro.racine), affiliation, annee)
+        exoneree = regle_outre_mer is not None and regle_outre_mer.exonere(revenu)
+    if exoneree:
         minimale = 0.0
     if trimestres_declares is None:
         validant = (revenu_cotise(macro, revenu, micro, annee, part)
@@ -759,7 +774,7 @@ def _ligne_annuelle(
         dispense_assiette_minimale=dispense,
         lodeom=lodeom if cotise else "",
         outre_mer=outre_mer if cotise else "",
-        cotisations_versees=cotise,
+        cotisations_versees=cotise and not exoneree,
         micro=micro,
         # Pendant une période indemnisée, les régimes complémentaires
         # attribuent des points sur le salaire d'avant. L'Unédic les paie pour

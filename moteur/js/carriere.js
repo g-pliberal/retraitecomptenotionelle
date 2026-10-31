@@ -423,6 +423,22 @@ export function assietteMinimale(paquet, statut, annee) {
 }
 
 /**
+ * L'indépendant d'outre-mer est-il exonéré de toute cotisation cette année-là ?
+ * Oui quand son revenu, positif, ne dépasse pas le montant que
+ * `legislation/exoneration_independants_outre_mer.csv` fixe pour son statut
+ * (L. 756-3, L. 756-5, D. 756-7). Portage de `exoneration_outre_mer` et de
+ * `ExonerationOutreMer.exonere`.
+ */
+export function exonereOutreMer(paquet, statut, annee, revenu) {
+  for (const [statuts, debut, fin, euros] of paquet.exoneration_independants_outre_mer ?? []) {
+    if (statuts.includes(statut) && debut <= annee && (fin === null || annee <= fin)) {
+      return revenu > 0 && revenu <= euros;
+    }
+  }
+  return false;
+}
+
+/**
  * Le motif de dispense de l'assiette minimale que la ligne retient : `motif`
  * si le texte en dispense ce statut cette année-là
  * (`legislation/dispenses_assiette_minimale.yaml`), vide sinon ; un motif
@@ -689,6 +705,15 @@ function ligneAnnuelle({
   if (dispenseRetenue) {
     minimale = 0.0;
   }
+  // L'EXONÉRATION DES INDÉPENDANTS D'OUTRE-MER (L. 756-3, L. 756-5, D. 756-7) :
+  // l'artisan de La Réunion qui déclare 300 € en 2010 ne verse aucune
+  // cotisation, pas même sur l'assiette minimale, et l'année ne lui ouvre aucun
+  // droit. Voir le Python.
+  const exoneree = Boolean(cotise && outreMer && !micro
+    && exonereOutreMer(macro.paquet, affiliation, annee, revenu));
+  if (exoneree) {
+    minimale = 0.0;
+  }
   // Une fraction ne se déclare que des services de la fonction publique, qui
   // se comptent au jour (`jours_de_services`) ; la durée en trimestres
   // entiers que les autres régimes lisent l'arrondit au mois et demi.
@@ -729,7 +754,7 @@ function ligneAnnuelle({
       macro, part),
     familles_cotisantes: ouvreComplementaires ? ["complementaire_prive"] : [],
     familles_financees: complementairesVersees ? ["complementaire_prive"] : [],
-    cotisations_versees: cotise,
+    cotisations_versees: cotise && !exoneree,
     fraction_annee: part,
     part_primes: partPrimes,
     quotite: cotise ? quotite : 1.0,

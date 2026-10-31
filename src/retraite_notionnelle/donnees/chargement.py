@@ -683,6 +683,64 @@ def assiette_minimale(table: tuple[AssietteMinimale, ...], statut: str,
 
 
 @dataclass(frozen=True)
+class ExonerationOutreMer:
+    """Une ligne de ``legislation/exoneration_independants_outre_mer.csv`` :
+    l'artisan ou le commerçant d'outre-mer dont le revenu de l'année ne dépasse
+    pas ``euros`` ne verse aucune cotisation (L. 756-3, L. 756-5, D. 756-7)."""
+
+    statuts: frozenset[str]
+    debut: int
+    fin: int | None
+    euros: float
+
+    def exonere(self, revenu: float) -> bool:
+        """Ce revenu est-il exonéré ? Positif, et « égal ou inférieur » au
+        montant du décret."""
+        return 0 < revenu <= self.euros
+
+
+_EXONERATIONS_OUTRE_MER: dict[tuple[str, int, int], tuple[ExonerationOutreMer, ...]] = {}
+
+
+@une_fois_par_instantane
+def charger_exonerations_outre_mer(racine: Path) -> tuple[ExonerationOutreMer, ...]:
+    """L'exonération de toute cotisation des indépendants d'outre-mer, par
+    statut et par années (action 177, étape 4). Lue à chaque construction d'une
+    carrière, et gardée, comme l'assiette minimale, sur la signature du fichier."""
+    chemin = (racine / "reference" / "legislation"
+              / "exoneration_independants_outre_mer.csv")
+    if not chemin.exists():
+        return ()
+    etat = chemin.stat()
+    cle = (str(chemin), etat.st_mtime_ns, etat.st_size)
+    if cle in _EXONERATIONS_OUTRE_MER:
+        return _EXONERATIONS_OUTRE_MER[cle]
+    with chemin.open(encoding="utf-8") as flux:
+        lignes = (l for l in flux if not l.lstrip().startswith("#"))
+        table = tuple(
+            ExonerationOutreMer(
+                statuts=frozenset(ligne["statuts"].split()),
+                debut=int(ligne["debut"]),
+                fin=int(ligne["fin"]) if ligne["fin"].strip() else None,
+                euros=float(ligne["euros"]),
+            )
+            for ligne in csv.DictReader(lignes)
+        )
+    _EXONERATIONS_OUTRE_MER[cle] = table
+    return table
+
+
+def exoneration_outre_mer(table: tuple[ExonerationOutreMer, ...], statut: str,
+                          annee: int) -> ExonerationOutreMer | None:
+    """La règle d'exonération que ce statut a cette année-là, s'il en a une."""
+    for regle in table:
+        if (statut in regle.statuts and regle.debut <= annee
+                and (regle.fin is None or annee <= regle.fin)):
+            return regle
+    return None
+
+
+@dataclass(frozen=True)
 class DispenseAssietteMinimale:
     """Un motif de ``legislation/dispenses_assiette_minimale.yaml``."""
 

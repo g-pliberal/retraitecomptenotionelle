@@ -167,6 +167,172 @@ def test_l_annee_validante_du_salaire_annuel_moyen_suit_le_seuil(simulateur):
         (sum(bonnes) + revalorise(1985, 640.0, martinique.mois_liquidation)) / 17)
 
 
+# -- Les indépendants des DOM : l'exonération de toute cotisation sous un revenu ---
+
+#: L. 756-3 (LEGIARTI000006744202, du 21 décembre 1985 au 1er janvier 2013, puis
+#: LEGIARTI000026798306 et LEGIARTI000031323786 jusqu'au 1er janvier 2017) : les
+#: personnes exerçant dans les départements de L. 751-1 « une activité
+#: professionnelle non-salariée artisanale, industrielle ou commerciale, sont
+#: exonérées du versement de toute cotisation lorsque leur revenu professionnel ne
+#: dépasse pas un certain montant fixé par décret » ; depuis 2017, L. 756-5, II, de
+#: « toute cotisation d'assurance vieillesse » (LEGIARTI000033712473,
+#: LEGIARTI000036392025). Le montant : un revenu « égal ou inférieur à 2.500 F »
+#: (D. 756-7, LEGIARTI000006738637, jusqu'au 1er janvier 2002), puis à 390 €
+#: (LEGIARTI000006738638, LEGIARTI000030034747 ; D. 756-6 depuis le 12 mai 2017,
+#: LEGIARTI000034726712, LEGIARTI000041968318). La caisse : « Il ne bénéficie
+#: d'aucun droit à retraite » (exposé « Validation des périodes de cotisations »,
+#: version du 13 novembre 2025).
+ARTISAN = "artisan"
+
+
+def _annee_d_independant(simulateur, statut: str, annee: int, revenu: float,
+                         departement: str) -> AnneeCarriere:
+    """L'année ``annee`` d'une indépendante née en 1960, lue sur son relevé."""
+    carriere = simulateur.carriere_releve(
+        1960, "F", [LigneRelevee(annee, statut, revenu, outre_mer=departement)], 62.0)
+    return {ligne.annee: ligne for ligne in carriere.lignes}[annee]
+
+
+def test_sous_390_euros_l_artisan_des_dom_ne_cotise_pas_et_ne_valide_rien(simulateur):
+    """300 € en 2010 : en métropole, l'artisan cotise sur l'assiette minimale,
+    200 SMIC horaires (1 772 €), qui valident un trimestre ; à La Réunion, il est
+    exonéré de toute cotisation, et rien ne va à son compte. À 390 € tout juste,
+    de même (« égal ou inférieur ») ; à 391 €, l'assiette minimale revient. En
+    2020, sur 11,5 % du plafond (4 730,64 €), trois trimestres en métropole,
+    aucun en Guadeloupe."""
+    def annee(an: int, revenu: float, departement: str) -> AnneeCarriere:
+        return _annee_d_independant(simulateur, ARTISAN, an, revenu, departement)
+
+    metropole = annee(2010, 300.0, "")
+    assert metropole.assiette_minimale_base == pytest.approx(1_772.0)
+    assert (metropole.trimestres_valides, metropole.cotise) == (1, True)
+    for revenu in (300.0, 390.0):
+        exoneree = annee(2010, revenu, "reunion")
+        assert exoneree.assiette_minimale_base == 0.0
+        assert (exoneree.trimestres_valides, exoneree.cotise) == (0, False)
+    au_dela = annee(2010, 391.0, "reunion")
+    assert au_dela.assiette_minimale_base == pytest.approx(1_772.0)
+    assert (au_dela.trimestres_valides, au_dela.cotise) == (1, True)
+    assert annee(2020, 300.0, "").trimestres_valides == 3
+    exoneree = annee(2020, 300.0, "guadeloupe")
+    assert (exoneree.trimestres_valides, exoneree.cotise) == (0, False)
+
+
+def test_le_seuil_est_de_2_500_francs_avant_2002_et_le_liberal_n_en_est_pas(simulateur):
+    """2 400 F en 1990 (365,88 €) exonèrent le commerçant de la Martinique, et
+    le gérant d'un débit de tabac, commerçant lui aussi ; 2 600 F (396,37 €), non.
+    Le libéral, que L. 756-3 ne nomme pas et que L. 631-1 excepte depuis 2018,
+    cotise sur l'assiette minimale à La Réunion comme en métropole. Avant 1986,
+    sous le décret n° 75-1098, dont l'index n'a pas le texte, la ligne garde la
+    règle de la métropole."""
+    for statut in ("commercant", "gerant_debit_tabac"):
+        exoneree = _annee_d_independant(simulateur, statut, 1990, _euros(2_400.0),
+                                        "martinique")
+        assert (exoneree.assiette_minimale_base, exoneree.cotise) == (0.0, False)
+        assert exoneree.trimestres_valides == 0
+        cotisante = _annee_d_independant(simulateur, statut, 1990, _euros(2_600.0),
+                                         "martinique")
+        assert cotisante.cotise and cotisante.assiette_minimale_base > 0
+        assert cotisante.trimestres_valides >= 1
+    for departement in ("reunion", ""):
+        liberal = _annee_d_independant(simulateur, "profession_liberale", 2010, 300.0,
+                                       departement)
+        assert liberal.assiette_minimale_base == pytest.approx(1_772.0)
+        assert (liberal.trimestres_valides, liberal.cotise) == (1, True)
+    avant = _annee_d_independant(simulateur, ARTISAN, 1985, _euros(2_400.0), "martinique")
+    assert avant.cotise and avant.assiette_minimale_base > 0
+
+
+def test_l_annee_exoneree_n_ouvre_aucun_droit(simulateur):
+    """Une artisane de La Réunion, à 15 000 € par an de 1985 à 2014, puis à 300 €
+    en 2015 : sa pension est celle de la même carrière dont l'année 2015 n'a aucun
+    revenu ; en métropole, les 300 € lui valent l'assiette minimale, 7,70 % du
+    plafond, et deux trimestres de plus."""
+    actuel = simulateur.scenario_actuel
+
+    def pension(departement: str, revenu_2015: float) -> float:
+        lignes = [LigneRelevee(an, ARTISAN, 15_000.0, outre_mer=departement)
+                  for an in range(1985, 2015)]
+        lignes.append(LigneRelevee(2015, ARTISAN, revenu_2015, outre_mer=departement))
+        carriere = simulateur.carriere_releve(1955, "F", lignes, 62.0)
+        return actuel.calculer(carriere).pension_annuelle
+
+    assert pension("reunion", 300.0) == pytest.approx(pension("reunion", 0.0))
+    assert pension("", 300.0) > pension("", 0.0)
+
+
+def test_l_abattement_de_moitie_ouvre_des_droits_sur_le_revenu_entier(simulateur):
+    """L'exemple de la caisse, « Activité outre-mer débutée jusqu'au 31/12/2016 -
+    Abattement DOM 50 % Exonération génératrice de droits » (version du 2 juin
+    2023) : 10 000 € de revenu en 2014, une cotisation théorique de 1 715 €
+    (17,15 %), appelée pour moitié, 857,50 € ; « L'assuré règle 857,50 €, ses
+    droits sont validés sur la base de : 857,5 x 2 = 1715 € », soit le revenu
+    entier. L. 756-4 assied la cotisation sur la moitié du revenu sous le
+    plafond (rédactions de 2000 à 2016), mais la part exonérée ouvre des droits
+    « à hauteur de ce qu'il a versé » : le compte de l'artisan de La Réunion
+    porte ses 10 000 € et quatre trimestres, comme en métropole, et sa pension
+    est celle de l'artisan de métropole."""
+    for departement in ("reunion", ""):
+        ligne = _annee_d_independant(simulateur, ARTISAN, 2014, 10_000.0, departement)
+        assert (ligne.revenu, ligne.trimestres_valides, ligne.cotise) == (10_000.0, 4, True)
+    actuel = simulateur.scenario_actuel
+
+    def pension(departement: str) -> float:
+        lignes = [LigneRelevee(an, ARTISAN, 10_000.0, outre_mer=departement)
+                  for an in range(2001, 2017)]
+        return actuel.calculer(
+            simulateur.carriere_releve(1955, "F", lignes, 62.0)).pension_annuelle
+
+    assert pension("reunion") == pytest.approx(pension(""))
+
+
+#: Le jumeau JavaScript de l'exonération : les mêmes années, lues du relevé.
+_JUMEAU_EXONERATION = """
+import { readFileSync } from "node:fs";
+import { Simulateur } from "./moteur/js/simulateur.js";
+const cas = JSON.parse(process.argv[1]);
+const paquet = JSON.parse(readFileSync("./moteur/donnees.json", "utf8"));
+const simulateur = new Simulateur(paquet);
+const rendu = cas.map(({ annee, statut, revenu, departement }) => {
+  const carriere = simulateur.carriereReleve({
+    annee_naissance: 1960, sexe: "F", age_liquidation: 62,
+    releve: [{ annee, affiliation: statut, revenu, outre_mer: departement }],
+  });
+  const ligne = carriere.lignes.find((l) => l.annee === annee);
+  return [ligne.trimestres_valides, ligne.assiette_minimale_base, ligne.cotisations_versees];
+});
+process.stdout.write(JSON.stringify(rendu));
+"""
+
+
+def test_le_portage_javascript_exonere_les_memes_annees(simulateur):
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    cas = [(2010, ARTISAN, 300.0, "reunion"), (2010, ARTISAN, 390.0, "reunion"),
+           (2010, ARTISAN, 391.0, "reunion"), (2010, ARTISAN, 300.0, ""),
+           (2020, ARTISAN, 300.0, "guadeloupe"),
+           (1990, "commercant", _euros(2_400.0), "martinique"),
+           (1990, "gerant_debit_tabac", _euros(2_600.0), "martinique"),
+           (2010, "profession_liberale", 300.0, "reunion"),
+           (1985, ARTISAN, _euros(2_400.0), "martinique")]
+    attendu = []
+    for annee, statut, revenu, departement in cas:
+        ligne = _annee_d_independant(simulateur, statut, annee, revenu, departement)
+        attendu.append([ligne.trimestres_valides, ligne.assiette_minimale_base,
+                        ligne.cotisations_versees])
+    assert [cotisees for *_, cotisees in attendu] == [False, False, True, True, False,
+                                                      False, True, True, True]
+    entree = [{"annee": annee, "statut": statut, "revenu": revenu, "departement": departement}
+              for annee, statut, revenu, departement in cas]
+    execution = subprocess.run(
+        ["node", "--input-type=module", "-e", _JUMEAU_EXONERATION, json.dumps(entree)],
+        cwd=RACINE, capture_output=True, text=True, encoding="utf-8", check=False)
+    assert execution.returncode == 0, execution.stderr
+    obtenu = json.loads(execution.stdout)
+    assert [[l[0], l[2]] for l in obtenu] == [[l[0], l[2]] for l in attendu]
+    assert [l[1] for l in obtenu] == pytest.approx([l[1] for l in attendu], abs=1e-6)
+
+
 #: Le jumeau JavaScript : les mêmes carrières, du relevé et du parcours.
 _JUMEAU = """
 import { readFileSync } from "node:fs";

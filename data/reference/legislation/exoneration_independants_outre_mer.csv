@@ -1,0 +1,47 @@
+# Exonération de toute cotisation des indépendants d'outre-mer, sous un revenu
+# ---------------------------------------------------------------------------
+# L'artisan ou le commerçant qui exerce en Guadeloupe, en Guyane, en Martinique
+# ou à La Réunion, et dont le revenu de l'année ne dépasse pas le montant qu'un
+# décret fixe, ne verse aucune cotisation : ni sur son revenu, ni sur
+# l'assiette minimale (D. 633-2). L'année ne lui ouvre aucun droit, ni trimestre,
+# ni salaire porté au compte, ni point (action 177, étape 4).
+#
+# LES TEXTES. L. 756-3 (LEGIARTI000006744202, du 21 décembre 1985 au 1er janvier
+# 2013 ; LEGIARTI000026798306 et LEGIARTI000031323786 jusqu'au 1er janvier
+# 2017) : « Les personnes exerçant dans les départements mentionnés à l'article
+# L. 751-1 une activité professionnelle non-salariée artisanale, industrielle ou
+# commerciale, sont exonérées du versement de toute cotisation lorsque leur
+# revenu professionnel ne dépasse pas un certain montant fixé par décret. »
+# Depuis 2017, L. 756-5, II, les exonère de « toute cotisation d'assurance
+# vieillesse » (LEGIARTI000033712473), et depuis 2018 vise « les personnes
+# mentionnées à l'article L. 631-1 » (LEGIARTI000036392025). Le montant :
+# D. 756-7, un revenu « égal ou inférieur à 2.500 F » (LEGIARTI000006738637, du
+# 21 décembre 1985 au 1er janvier 2002), puis à 390 euros (LEGIARTI000006738638,
+# LEGIARTI000030034747, jusqu'au 12 mai 2017) ; D. 756-6 ensuite, 390 euros pour
+# les cotisations d'assurance vieillesse de base et complémentaire (L. 633-10 et
+# L. 635-1, LEGIARTI000034726712 ; L. 633-1 et L. 635-1, LEGIARTI000041968318).
+#
+# LA CAISSE (exposé « Validation des périodes de cotisations », version du
+# 13 novembre 2025) : « avant 2001 : si le revenu est inférieur à 2500 francs,
+# l'assuré est totalement exonéré des cotisations retraite. Il ne bénéficie
+# d'aucun droit à retraite ; à compter de 2001 : si le revenu est inférieur à
+# 390 euros », de même. La table suit le décret : 2 500 F jusqu'en 2001, et le
+# revenu égal au montant exonéré.
+#
+# CE QUE LA TABLE NE PORTE PAS. Avant 1986, le décret n° 75-1098 du 25 novembre
+# 1975, que D. 756-7 codifie en 1985 et dont l'index du JORF n'a que le
+# sommaire : la règle de la métropole tient lieu. Depuis 2018, le libéral non
+# réglementé que L. 631-1 range avec l'artisan et le commerçant, quand le statut
+# `liberal_non_reglemente` ne le distingue pas de celui de la CNAVPL, que la
+# règle ne vise pas. Saint-Barthélemy et Saint-Martin, que L. 751-1 nomme depuis
+# 2015 et que le modèle ne distingue pas de la Guadeloupe. De 2001 à 2016, la
+# cotisation se calculait sur le revenu de l'avant-dernière année (L. 756-5) :
+# la table compare au montant le revenu de l'année même, comme le modèle le
+# porte (limite « indépendants des DOM », docs/limites/3-systeme-actuel.md).
+#
+# Colonnes : `statuts`, séparés par des espaces ; `debut` et `fin`, les années
+# de la règle ; `euros`, le revenu qu'elle exonère au plus (2 500 F, soit
+# 381,12 €, puis 390 €).
+statuts,debut,fin,euros,fiabilite
+artisan commercant gerant_debit_tabac,1986,2001,381.12,haute
+artisan commercant gerant_debit_tabac,2002,,390,haute
