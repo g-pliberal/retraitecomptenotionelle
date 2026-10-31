@@ -114,3 +114,21 @@ affirmations:
       ans, et le libellé de la dernière ligne du tableau. Ce que l'entrée
       portait reste sous `methode.lissage_reglage_a_part` et
       `methode.loterie_de_cohorte`, que le même contrôle tient.
+
+  - id: methode.portage_javascript
+    page: /methode
+    extrait: "portage en JavaScript"
+    porte: >-
+      le portage est comparé au modèle nombre par nombre sur les carrières
+      témoins, et ses pages, écrites une fois, sont figées en témoins
+    etat: verifiee
+    controle: portage_compare_aux_temoins
+    retiree_le: 2026-10-31
+    motif: >-
+      la phrase qui la portait a quitté la page Méthode le 31 octobre 2026
+      (action 161, « La page Méthode ») : le dépliant de construction ne dit
+      plus le JavaScript un portage comparé au modèle Python, mais le moteur
+      du site, qui fait foi (note de décision 0005), et son jumeau Python
+      tenu au bit près. Ce que l'entrée portait reste sous
+      `methode.le_moteur_du_site_fait_foi`, que le contrôle du même nom
+      tient ; `portage_compare_aux_temoins` s'en est allé avec elle.
