@@ -2,9 +2,9 @@ schema_version: 1
 id: assiette_minimale_independants
 intitule: >-
   Assiette minimale de la cotisation de base des artisans, commerçants et libéraux
-  : 200 SMIC horaires jusqu'en 2011, 5,25 %, 7,70 % puis 11,5 % du plafond, 450
-  SMIC horaires depuis 2023, sous condition de 90 jours d'affiliation depuis 2012
-  ; le micro-entrepreneur n'y est pas soumis. Sauf demande contraire, en sont
+  : 200 SMIC horaires de 1973 (2004 pour le libéral) à 2011, 5,25 %, 7,70 % puis
+  11,5 % du plafond, 4 758 € en 2022, 450 SMIC horaires depuis 2023, sous condition
+  de 90 jours d'affiliation depuis 2012 ; le micro-entrepreneur n'y est pas soumis. Sauf demande contraire, en sont
   dispensés depuis 2016 le bénéficiaire du RSA ou de la prime d'activité, depuis
   2020 l'activité accessoire saisonnière (L. 613-11), et, de 2004 à 2015, le
   libéral dont l'activité n'est pas principale ou déjà pensionné (D. 642-4).
@@ -18,17 +18,19 @@ effet: >-
   son seul revenu : une artisane née en 1962, à 3 000 € par an de 1990 à 2025,
   valide 59 trimestres au lieu de 75, et son régime général sert 684 € au lieu de
   999 € ; une infirmière libérale, 2 444 € de CNAVPL au lieu de 2 582 €, et sa
-  CARPIMKO perd le demi-plafond de 2026. Avant 1985 le dépôt ne connaît aucun
-  texte.
+  CARPIMKO perd le demi-plafond de 2026. De 1973 à 1984, l'artisane qui déclare 100
+  € par an valide un trimestre par an : née en 1945 et partie à soixante-cinq ans,
+  19 trimestres et 782 € de CANCAVA, au lieu de 7 et de 230 € sans le minimum.
+  L'artisane à 3 000 € valide trois trimestres en 2022, et non deux.
 sources:
-  lu_le: 2026-10-16
+  lu_le: 2026-10-31
   prochaine_relecture: 2027-01-31
   a_relire:
   - >-
-    Lire les versions de D. 633-2 antérieures à 1985 dans le JORF : la caisse
-    applique depuis 1973 une assiette de 200 heures du Smic (barème « Assiette
-    annuelle minimale des cotisations des travailleurs indépendants », lu le 30
-    octobre 2026), que la série ne porte pas.
+    Si la condition de quatre-vingt-dix jours d'affiliation de D. 633-2 et D. 642-4
+    vaut pour les 4 758 € de 2022, que le décret n° 2022-1438 fixe « par dérogation
+    » à ces articles sans la redire : une circulaire de l'Urssaf ou de la caisse
+    sur 2022 le dirait ; le 31 octobre 2026, seul le décret a été lu.
   - >-
     Un exemple chiffré de l'Urssaf d'un indépendant au RSA ou saisonnier (urssaf.fr,
     refusé au réseau de la session le 16 octobre 2026) ; si la dispense des
@@ -90,7 +92,30 @@ sources:
       due au titre de l'année 2022 [...] ne peut être calculée sur une assiette
       inférieure à 4 758 euros ». Index JORF du dépôt, lu le 30 octobre 2026
     date: 2026-10-30
+  - type: jorf
+    reference: >-
+      décret n° 2022-1438 du 16 novembre 2022, en entier (JORFTEXT000046566167) : sa
+      notice, « la modulation de l'assiette minimale vieillesse de base permettant aux
+      travailleurs indépendants mentionnés aux articles L. 631-1 et L. 640-1 [...] de
+      valider trois trimestres » ; l'article 2 abroge le V de l'article 4 du décret
+      n° 2012-443 ; rien sur la durée d'affiliation ni sur les DOM. Index JORF à jour
+      du 31 octobre 2026, lu le 31
+    date: 2026-10-31
+  - type: legifrance
+    reference: >-
+      décret n° 73-76 du 22 janvier 1973, article 2 (LEGIARTI000006765785, du 24
+      janvier 1973 au 21 décembre 1985) : « Toutefois, le montant de la cotisation
+      annuelle ne peut être inférieur à celui de la cotisation qui serait due au titre
+      d'un revenu égal à 200 fois le montant horaire du salaire minimum de croissance
+      en vigueur le 1er janvier de l'année considérée », pour les assurés en activité
+      « autres que les aides familiaux des entreprises artisanales », mot pour mot ce
+      que D. 633-2 reprend en 1985 (LEGIARTI000006737877) ; ses articles 1er, 5, 6, 9,
+      10, 16 et 21, sans autre condition au minimum. Index LEGI à jour du 30 octobre
+      2026, lu le 31
+    date: 2026-10-31
 textes_a_rattacher:
+- reference: >-
+    décret n° 73-76 du 22 janvier 1973, article 2 (LEGIARTI000006765785)
 - reference: >-
     code de la sécurité sociale, D. 633-2 (LEGIARTI000006737877 à LEGIARTI000048838330)
 - reference: >-
@@ -116,25 +141,29 @@ approximations:
     non mesuré sur la population ; pour une carrière de 3 000 € par an, 16 trimestres
     sur 36 ans et un tiers du régime de base, voir `effet`
 - ecart: >-
-    En 2022, le décret n° 2022-1438 fixe l'assiette minimale de l'artisan, du
-    commerçant et du libéral à 4 758 €, de quoi valider trois trimestres ; la série
-    garde 11,5 % du plafond, 4 731 €, qui n'en valident que deux. Avant 1985, la
-    caisse applique 200 heures du Smic depuis 1973, que la série ne porte pas : le
-    modèle n'y connaît aucun minimum. Deux écarts que tests/test_cnav_baremes.py
-    déclare, à corriger par la session du modèle, les deux moteurs ensemble.
+    En 2022, le décret n° 2022-1438 fixe les 4 758 € « par dérogation aux articles
+    D. 633-2 et D. 642-4 », sans redire leur condition de quatre-vingt-dix jours
+    d'affiliation ni leur refus du prorata : la série garde l'une et l'autre, une
+    lecture qu'aucun texte lu ne tranche. L'édition des DOM du barème de la caisse
+    garde pour 2022 11,5 % du plafond, 4 731 € ; le modèle applique aux DOM, comme la
+    table de la métropole, les 4 758 € du décret, qui n'excepte aucun indépendant de
+    L. 631-1 ou de L. 640-1 (tests/test_cnav_baremes.py,
+    `ECARTS_ASSIETTE_MINIMALE_DOM`).
   effet: >-
-    un trimestre de moins en 2022 pour l'indépendant au minimum ; avant 1985, pour
-    celui qui déclarait moins de 200 heures du Smic, les trimestres et le revenu du
-    minimum ; non mesuré sur la population
+    en 2022 seulement : pour l'indépendant affilié moins de quatre-vingt-dix jours,
+    aucun minimum au lieu de 4 758 €, si le décret ne la retient pas ; pour celui des
+    DOM au minimum, un trimestre de plus que l'édition des DOM ne lui en donne ; non
+    mesuré sur la population
 code:
   moteur: >-
     `_ligne_annuelle` relève, pour l'artisan, le commerçant ou le libéral qui cotise sur
     un revenu positif, hors du micro-entrepreneur, l'assiette de l'année au minimum que
     `assiette_minimale` lit pour son statut et l'année dans
-    `legislation/assiette_minimale_independants.csv` : 200 SMIC horaires de 1985 à 2011
+    `legislation/assiette_minimale_independants.csv` : 200 SMIC horaires de 1973 à 2011
     — pour le libéral, depuis 2004 et proratisés —, puis 5,25 %, 7,70 % et 11,5 % du
-    plafond, 450 SMIC horaires depuis 2023, rien sous quatre-vingt-dix jours
-    d'affiliation depuis 2012 (`AssietteMinimale.montant`). Ses trimestres se valident
+    plafond, 4 758 € en 2022 (la colonne `euros`), 450 SMIC horaires depuis 2023, rien
+    sous quatre-vingt-dix jours d'affiliation depuis 2012 (`AssietteMinimale.montant`,
+    `montantAssietteMinimale`). Ses trimestres se valident
     sur le plus grand des deux, et la ligne porte le minimum (`assiette_minimale_base`),
     que `acquerir.assiette_minimale` n'oppose qu'aux régimes de base que la table
     nomme : les points de la CNAVPL (`acquerir`), le salaire annuel moyen des régimes
@@ -163,12 +192,15 @@ code:
     ConstructeurCompte._cotisationLigne
   parametres: >-
     legislation/assiette_minimale_independants.csv : statuts, regimes, debut, fin,
-    heures_smic, part_pass, proratise, jours_minimum ;
+    heures_smic, part_pass, euros, proratise, jours_minimum ;
     legislation/dispenses_assiette_minimale.yaml : familles, dispenses ;
     regimes/carpimko_complementaire.yaml, regimes/cavom_complementaire.yaml :
     assiette_minimale_pass
   tests:
   - tests/test_independants.py
+  - >-
+    tests/test_cnav_baremes.py, où la série redonne les tables de la caisse de 1973 à
+    2026, et celles des DOM hors de 2022
   - tests/test_saisie_des_dispenses.py
   - tests/test_simulateur.py
   - tests/test_emploi_retraite.py

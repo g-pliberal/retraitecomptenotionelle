@@ -7360,14 +7360,15 @@ avec son test. Le modèle et le site gardent PyYAML seul.
 
 ### 177. Les écarts que les barèmes de la Cnav ont trouvés au modèle : chacun corrigé dans les deux moteurs, ou sa limite dite — `en cours`
 
-**Reprise, au 31 octobre 2026.** L'étape 1 est faite : le RCO des artisans aux
-taux de la dérogation de 2008 et 2009, assis sur quatre plafonds dès 1997, et
-huit valeurs de point du RCO et du NRCO prises aux tables de la caisse
-(`177/2026-10-31-etape-1-rco-et-nrco.md`). Par quoi commencer : l'étape 2,
-`ECARTS_ASSIETTE_MINIMALE` — les 200 heures de Smic de 1973 à 1984, les 4 758 €
-du décret n° 2022-1438 pour 2022 —, dans `assiette_minimale_independants.csv`.
-Un écart par commit, son entrée retirée et le test vu rouge d'abord ; des
-règles du scénario 1, sur Opus, après `python scripts/veille_droit.py`.
+**Reprise, au 31 octobre 2026.** Les étapes 1 et 2 sont faites : le RCO et le
+NRCO aux barèmes de la caisse (`177/2026-10-31-etape-1-rco-et-nrco.md`), puis
+l'assiette minimale des indépendants dès 1973, par l'article 2 du décret
+n° 73-76, et à 4 758 € en 2022, par le décret n° 2022-1438
+(`177/2026-10-31-etape-2-assiette-minimale.md`). Par quoi commencer :
+l'étape 3, Mayotte — la fiche `cssm_mayotte`, à faire lire
+`mayotte_smig_et_plafond.csv`. Un écart par commit, son entrée retirée et le
+test vu rouge d'abord ; des règles du scénario 1, sur Opus, après
+`python scripts/veille_droit.py`.
 
 **D'où elle vient.** Le 31 octobre 2026, l'étape 2 de l'action 175 — les
 barèmes de la base de législation de la Cnav confrontés, un à un, aux séries

@@ -1,0 +1,31 @@
+date: "2026-10-31"
+session: "action 177, étape 2 : l'assiette minimale des indépendants, avant 1985 et en 2022"
+consulte: >-
+  `python scripts/veille_droit.py` : trois fiches à relire, aucune de l'étape.
+  L'index JORF à jour du 31 octobre 2026 : le décret n° 2022-1438 du 16 novembre 2022,
+  en entier (JORFTEXT000046566167 : la notice, les articles 1er à 3) ; la loi n° 72-554
+  du 3 juillet 1972, dont l'index ne garde que des articles vides. L'index LEGI à jour
+  du 30 octobre 2026 : les rédactions qui portent « 200 fois » le Smic, d'où le décret
+  n° 73-76 du 22 janvier 1973, ses articles 1er, 2, 5, 6, 9, 10, 16 et 21, en vigueur
+  du 24 janvier 1973 au 21 décembre 1985 ; D. 633-2 dans sa rédaction de 1985 ; L.
+  161-17-2 et L. 161-17-3, sans rédaction postérieure à celles du 31 décembre 2025
+  (LEGIARTI000053280889, LEGIARTI000053280903 ; fiche `fin_de_la_suspension_2028`). `python
+  scripts/textes.py --inscrire`, avant et après la fiche : aucune rédaction nouvelle de
+  l'index, puis les vingt-trois du décret n° 73-76, que la fiche cite désormais,
+  inscrites « à examiner ».
+trouve: >-
+  Le texte qui fixe l'assiette minimale des artisans et commerçants avant la codification
+  de 1985 : l'article 2 du décret n° 73-76 (LEGIARTI000006765785), « 200 fois le montant
+  horaire du salaire minimum de croissance en vigueur le 1er janvier de l'année
+  considérée », que D. 633-2 reprend mot pour mot ; la série commence en 1973. Le décret
+  n° 2022-1438 fixe pour 2022 4 758 € « par dérogation aux articles D. 633-2 et
+  D. 642-4 », pour « valider trois trimestres », sans condition propre ni exception des
+  DOM : la série porte le montant en euros, dans les deux moteurs. Les deux écarts que
+  l'étape 2 de l'action 175 avait déclarés sont corrigés.
+reste: >-
+  Si la condition de quatre-vingt-dix jours d'affiliation vaut pour les 4 758 € de 2022 :
+  la série la garde, à confirmer par une circulaire de l'Urssaf ou de la caisse.
+  L'édition des DOM du barème de la caisse, qui garde 4 731 € pour 2022. Le revenu
+  forfaitaire de début d'activité de l'article 6 du décret n° 73-76, pour l'étape 5. Les
+  vingt-deux autres rédactions du décret n° 73-76, « à examiner ». Les étapes 3 à 6 de
+  l'action 177.

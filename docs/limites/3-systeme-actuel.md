@@ -102,7 +102,10 @@ l'Institut des politiques publiques (PENSIPP). Écarts connus :
 - **indépendants des DOM** — le modèle les traite comme ceux de la métropole,
   aux taux et sur l'assiette minimale de la série, que reprennent les barèmes
   des DOM de la caisse : depuis 2007 pour les taux de la retraite de base,
-  depuis 2013 pour le RCI, depuis 2018 pour l'assiette minimale. Il ne leur
+  depuis 2013 pour le RCI, depuis 2018 pour l'assiette minimale, sauf en
+  2022, où l'édition des DOM garde la part du plafond quand le modèle
+  applique, comme la table de la métropole, le montant que le décret
+  n° 2022-1438 fixe à tous les indépendants. Il ne leur
   applique pas l'abattement que L. 756-4 fait sur l'assiette de leur retraite
   de base : la moitié de la part du revenu sous le plafond (rédactions en
   vigueur de 2000 à 2016), d'où, dans les tables de la caisse, une assiette
