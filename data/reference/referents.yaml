@@ -8686,9 +8686,16 @@ referents:
           décret n° 2024-951, art. 1 (JORFARTI000050392696) : « A
           Mayotte, son montant est fixé à 8,98 euros » ; le SMIG
           mahorais valide les trimestres (décrets n° 87-175 art. 3
-          et n° 2003-589 art. 8, cités par cssm_mayotte.yaml)
-        etat: a_reprendre
-        chantier: "138.18"
+          et n° 2003-589 art. 8, cités par cssm_mayotte.yaml).
+          Repris le 31 octobre 2026 (action 177, étape 3) : le Smig
+          puis le Smic de Mayotte du 1er janvier depuis 2002, aux
+          barèmes de la Cnav (`mayotte_smig_et_plafond.csv`, 8,98 €
+          en 2025), valide les trimestres de la caisse, 200 heures
+          jusqu'en 2016 et 150 depuis, dans les deux moteurs ; de
+          1987 à 2001, le SMIC national reste, faute de série.
+        etat: repris
+        chantier: "177.3"
+        fiche: mayotte_pension_de_base
       - quoi: >-
           Il calcule les aides au logement de tout ménage, retraité
           compris, avec ses tests.

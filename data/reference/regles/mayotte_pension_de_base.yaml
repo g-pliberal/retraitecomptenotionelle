@@ -43,6 +43,7 @@ versions:
   - {id: LEGIARTI000006770160, article: "décret n° 87-175 du 16 mars 1987, article 11", en_vigueur: 1987-01-01}
   - {id: LEGIARTI000006770161, article: "décret n° 87-175 du 16 mars 1987, article 12", en_vigueur: 1987-01-01}
   - {id: LEGIARTI000006770162, article: "décret n° 87-175 du 16 mars 1987, article 13", en_vigueur: 1987-01-01}
+  - {id: LEGIARTI000006770172, article: "décret n° 87-175 du 16 mars 1987, article 21", en_vigueur: 1987-01-01}
   nee_de: LEGIARTI000006770149
   bornes:
     liquidation.date_effet: [null, 2003-01-01]
@@ -66,7 +67,8 @@ versions:
     calcul: >-
       « La pension d'ancienneté et la pension proportionnelle sont calculées sur la base
       du salaire annuel moyen des cinq meilleures années civiles d'assurance », plafonné
-      au plafond fixé par arrêté préfectoral (article 9), au taux de « 1,5 p. 100 du
+      au plafond fixé par arrêté préfectoral (article 9), celui « déterminé chaque année
+      par arrêté préfectoral » pour les cotisations (article 21), au taux de « 1,5 p. 100 du
       salaire annuel moyen [...] par année civile liquidable » (article 11), « La durée
       maximum d'assurance susceptible d'être prise en compte [...] est de 150
       trimestres » (article 8) : 56,25 % au plus ; aucune minoration n'est écrite
@@ -90,6 +92,14 @@ versions:
   - {id: LEGIARTI000026514429, article: "décret n° 2003-589 du 1er juillet 2003, article 2", en_vigueur: 2012-10-21}
   - {id: LEGIARTI000006781026, article: "décret n° 2003-589 du 1er juillet 2003, article 7", en_vigueur: 2003-07-02}
   - {id: LEGIARTI000026514457, article: "décret n° 2003-589 du 1er juillet 2003, article 7", en_vigueur: 2012-10-21}
+  - {id: LEGIARTI000006781027, article: "décret n° 2003-589 du 1er juillet 2003, article 8", en_vigueur: 2003-07-02}
+  - {id: LEGIARTI000026514455, article: "décret n° 2003-589 du 1er juillet 2003, article 8", en_vigueur: 2012-10-21}
+  - {id: LEGIARTI000033155442, article: "décret n° 2003-589 du 1er juillet 2003, article 8", en_vigueur: 2016-09-26}
+  - {id: LEGIARTI000006781041, article: "décret n° 2003-589 du 1er juillet 2003, article 21", en_vigueur: 2003-07-02}
+  - {id: LEGIARTI000023019089, article: "décret n° 2003-589 du 1er juillet 2003, article 21", en_vigueur: 2010-11-08}
+  - {id: LEGIARTI000026514398, article: "décret n° 2003-589 du 1er juillet 2003, article 21", en_vigueur: 2012-10-21}
+  - {id: LEGIARTI000006698330, article: "ordonnance n° 2002-411 du 27 mars 2002, article 19", en_vigueur: 2003-01-01}
+  - {id: LEGIARTI000025018554, article: "ordonnance n° 96-1122 du 20 décembre 1996, article 28-1", en_vigueur: 2012-01-01}
   - {id: LEGIARTI000006781028, article: "décret n° 2003-589 du 1er juillet 2003, article 9", en_vigueur: 2003-07-02}
   - {id: LEGIARTI000026514449, article: "décret n° 2003-589 du 1er juillet 2003, article 9", en_vigueur: 2012-10-21}
   - {id: LEGIARTI000006781030, article: "décret n° 2003-589 du 1er juillet 2003, article 11", en_vigueur: 2003-07-02}
@@ -112,6 +122,22 @@ versions:
       trimestres » (article 9) ; sinon, « un coefficient de minoration » de 2,5 % par
       trimestre manquant ou séparant l'âge du taux plein, « Le plus petit de ces nombres
       est pris en considération » (article 11)
+    trimestres: >-
+      autant de trimestres que le salaire soumis à retenue représente de fois « le
+      montant du salaire minimum garanti en vigueur à Mayotte au 1er janvier de l'année
+      considérée, calculé sur la base de 200 heures », quatre par an au plus (décret,
+      article 8) ; 150 heures « pour les périodes postérieures au 31 décembre 2016 »
+      (rédaction du 26 septembre 2016)
+    plafond: >-
+      les salaires « reportés au compte de l'assuré dans la limite du plafond annuel de
+      cotisations » (décret, article 7), celui sur lequel l'ordonnance assied les
+      cotisations (article 19), puis le « plafond de cotisations de sécurité sociale à
+      Mayotte » (ordonnance n° 96-1122, article 28-1, depuis 2012) : « 825 Euros par
+      mois », revalorisé comme le salaire minimum garanti de Mayotte « majoré de trois
+      points », pour les rémunérations de 2003 (décret, article 21), puis « 1 070 euros
+      par mois pour les rémunérations ou gains versés à compter du 1er janvier 2011 »,
+      revalorisé comme le plafond de la métropole « majoré de cinq points et un
+      dixième »
   exemples: aucun trouvé
 - id: duree_a_la_generation
   statut: lue
@@ -123,7 +149,9 @@ versions:
   - {id: LEGIARTI000049915788, article: "décret n° 2003-589 du 1er juillet 2003, article 2", en_vigueur: 2024-07-10}
   - {id: LEGIARTI000054059636, article: "décret n° 2003-589 du 1er juillet 2003, article 2", en_vigueur: 2026-09-01}
   - {id: LEGIARTI000033155445, article: "décret n° 2003-589 du 1er juillet 2003, article 7", en_vigueur: 2018-01-01}
+  - {id: LEGIARTI000033155442, article: "décret n° 2003-589 du 1er juillet 2003, article 8", en_vigueur: 2016-09-26}
   - {id: LEGIARTI000048241292, article: "décret n° 2003-589 du 1er juillet 2003, article 8", en_vigueur: 2023-10-22}
+  - {id: LEGIARTI000026514398, article: "décret n° 2003-589 du 1er juillet 2003, article 21", en_vigueur: 2012-10-21}
   - {id: LEGIARTI000033155436, article: "décret n° 2003-589 du 1er juillet 2003, article 9", en_vigueur: 2018-01-01}
   - {id: LEGIARTI000053354929, article: "décret n° 2003-589 du 1er juillet 2003, article 10", en_vigueur: 2026-01-01}
   - {id: LEGIARTI000033155432, article: "décret n° 2003-589 du 1er juillet 2003, article 11", en_vigueur: 2016-09-26}
@@ -154,6 +182,11 @@ versions:
     trimestres: >-
       200 heures du SMIG de Mayotte par trimestre avant 2017, 150 heures en 2017, 150
       heures du SMIC de Mayotte depuis 2018, quatre par an au plus (article 8)
+    plafond: >-
+      les salaires dans la limite du plafond annuel de cotisations de la caisse
+      (article 7), revalorisé chaque année comme le plafond de la métropole « majoré de
+      cinq points et un dixième » (article 21) : 3 022 € par mois en 2026 au barème de
+      la Cnav
     minimum: >-
       au taux plein, un minimum de 54,9212 % de 151,67 heures du SMIC de Mayotte au 1er
       janvier 2024, majoré jusqu'à 10 170,86 € par an au 1er novembre 2023 pour cent
@@ -203,12 +236,24 @@ approximations:
   effet: >-
     non mesuré ; les assurés nés avant 1965 liquidant de 2018 à 2027, dont le salaire
     moyen simulé compte jusqu'à neuf années faibles de trop
+- version: [decret_de_1987, ordonnance_de_2002, duree_a_la_generation]
+  ecart: >-
+    Le SMIG de Mayotte n'est une série du dépôt que depuis 2002, et le plafond de la
+    caisse que depuis 2005, aux barèmes de la Cnav (`mayotte_smig_et_plafond.csv`) : la
+    fiche de régime valide les années de 1987 à 2001 au SMIC national, et plafonne
+    celles de 1987 à 2004 au plafond de la Sécurité sociale, quand des arrêtés
+    préfectoraux fixaient celui de la caisse jusqu'en 2002 (décret n° 87-175, articles
+    9 et 21) et que le décret n° 2003-589 le fixe à 825 € par mois en 2003 (article 21).
+  effet: >-
+    la fiche valide moins vite que le droit les années d'avant 2002, et porte au
+    salaire annuel moyen la part des salaires d'avant 2005 qui dépasse le plafond de la
+    caisse
 - version: [ordonnance_de_2002, duree_a_la_generation]
   ecart: >-
-    Les trimestres se valident au SMIG puis au SMIC de Mayotte, que le dépôt n'a pas en
-    série : la fiche de régime valide au SMIC national ; et le taux et le plafond de la
-    caisse sont ceux du régime général.
-  effet: la fiche valide moins vite que le droit ; la cotisation est celle du régime général
+    Les cotisations restent assises sur le plafond et aux taux du régime général : la
+    caisse a les siens, que l'ordonnance n° 96-1122 (article 28-2, II) fait converger
+    jusqu'en 2036, et qu'aucune série du dépôt ne porte.
+  effet: la cotisation est celle du régime général ; la pension de base n'en dépend pas
 - version: code_de_la_securite_sociale_2028
   ecart: >-
     La fiche de régime prolonge le régime de Mayotte après 2027 ; le droit le fond dans
@@ -219,8 +264,8 @@ approximations:
     non mesuré ; les pensions prenant effet depuis 2028, dont les paramètres de
     convergence ne sont pas encore fixés
 sources:
-  lu_le: 2026-10-14
-  prochaine_relecture: 2027-04-14
+  lu_le: 2026-10-31
+  prochaine_relecture: 2027-04-30
   a_relire:
   - >-
     Lire les décrets d'application de l'ordonnance n° 2026-647 dès leur parution : l'âge
@@ -228,8 +273,10 @@ sources:
     de l'ordonnance (reprise des périodes d'avant 2028), que l'index ne porte que par le
     rapport au Président de la République.
   - >-
-    Relever le SMIG puis le SMIC de Mayotte au 1er janvier de chaque année depuis 1987,
-    et le plafond de la caisse, pour valider les trimestres au droit.
+    Relever le SMIG de Mayotte au 1er janvier de 1987 à 2001, et le plafond de la
+    caisse de 1987 à 2004 — les arrêtés préfectoraux du décret n° 87-175, puis le
+    plafond de l'article 21 du décret n° 2003-589 —, que les barèmes de la Cnav ne
+    portent pas.
   - >-
     Lire le chapitre III du décret n° 2003-589 (articles 31 et suivants), qui adapte le
     revenu annuel moyen des non-salariés, et dire s'ils méritent un statut.
@@ -247,31 +294,65 @@ sources:
       ordonnance n° 2026-647 du 22 juillet 2026 et son rapport au Président de la
       République : index JORF du dépôt
     date: 2026-10-14
+  - type: legifrance
+    reference: >-
+      décret n° 87-175, articles 3, 9 et 21 ; décret n° 2003-589, articles 7, 8 et 21,
+      toutes leurs rédactions ; ordonnance n° 2002-411, article 19 ; ordonnance
+      n° 96-1122, articles 28-1 et 28-2 : index LEGI du dépôt, à jour au 30 octobre 2026
+      (action 177, étape 3)
+    date: 2026-10-31
+  - type: autre
+    reference: >-
+      barèmes de la Cnav « Smic horaire - Mayotte » et « Salaire plafond - Mayotte »,
+      que scripts/fetch/cnav_mayotte.py transcrit dans mayotte_smig_et_plafond.csv
+      (action 175, étape 2) : le plafond de 1 070 € par mois en 2011 est celui de
+      l'article 21, dont la règle redonne chaque année depuis à moins d'un euro par
+      mois, sauf 2024 (2 644 € pour 2 645,39 €)
+    url: https://legislation.lassuranceretraite.fr/
+    date: 2026-10-31
 reformes: []
 code:
   moteur: >-
     une fiche de régime en annuités, une période par réforme, l'âge, la durée et la
     minoration lus à la génération par les tables `mayotte_2018`, `mayotte_2026_01` et
-    `mayotte_2026_09`
+    `mayotte_2026_09` ; les trimestres au SMIG de Mayotte depuis 2002 et le salaire
+    annuel moyen au plafond de la caisse depuis 2005, lus dans
+    `mayotte_smig_et_plafond.csv`
   python: >-
-    donnees/regimes.py : CatalogueRegimes ; droit/liquider.py : liquider_chaque_regime
+    donnees/regimes.py : CatalogueRegimes ; droit/liquider.py : liquider_chaque_regime,
+    salaire_de_reference ; donnees/macro.py : REGIME_DE_MAYOTTE,
+    DonneesMacro.trimestres_valides, DonneesMacro.seuil_d_un_trimestre,
+    DonneesMacro.plafond_de_cotisations, DonneesMacro.smig_mayotte,
+    DonneesMacro.plafond_mayotte, DonneesMacro.statuts_de_mayotte
   javascript: >-
     moteur/js/regimes.js : CatalogueRegimes ; moteur/js/droit/liquider.js :
-    liquiderChaqueRegime
+    liquiderChaqueRegime, salaireDeReference ; moteur/js/macro.js : REGIME_DE_MAYOTTE,
+    DonneesMacro.trimestresValides, DonneesMacro.seuilDUnTrimestre,
+    DonneesMacro.plafondDeCotisations
   parametres: >-
     regimes/cssm_mayotte.yaml : taux_plein, duree_requise_trimestres, salaire_reference,
     decote_par_trimestre ; legislation/ages_regimes.csv,
-    legislation/duree_requise_regimes_speciaux.csv
+    legislation/duree_requise_regimes_speciaux.csv ;
+    legislation/mayotte_smig_et_plafond.csv : smig_horaire, plafond_annuel ;
+    legislation/validation_trimestres_mayotte.csv : heures
   tests: >-
-    tests/temoins/simulations.json, les carrières du statut salarie_mayotte, que le
-    portage rejoue
+    tests/test_mayotte.py, les trimestres au SMIG de Mayotte et le salaire annuel moyen
+    au plafond de la caisse, dans les deux moteurs ; tests/temoins/simulations.json, les
+    carrières du statut salarie_mayotte, que le portage rejoue
 historique:
 - >-
   2026-10-14 — écrite à l'étape 2 de l'action 145 : le régime de Mayotte n'avait que la
   fiche générique de liquidation. Le décret n° 87-175, que la fiche de régime disait
   sans formule, l'écrit ; l'ordonnance n° 2026-647 fond le régime dans le code de la
   sécurité sociale en 2028. Aucun chiffre ne change.
+- >-
+  2026-10-31 — action 177, étape 3 : les trimestres se valident au SMIG de Mayotte
+  depuis 2002 (décret n° 2003-589, article 8), et le salaire annuel moyen s'écrête au
+  plafond de la caisse depuis 2005 (article 7), lus dans `mayotte_smig_et_plafond.csv`,
+  dans les deux moteurs. Des 913 témoins de simulation, les cinq de Mayotte baissent,
+  de 13 à 28 % au scénario 1, au plafond.
 effet: >-
   Les salariés de Mayotte : leur pension est simulée au droit depuis 2003, à leur
-  salaire moyen près pour les nés avant 1965 ; celles de 1987 à 2002 le sont à la
-  formule du régime général et non à celle du décret.
+  salaire moyen près pour les nés avant 1965, et à leurs trimestres d'avant 2002 et à
+  leur plafond d'avant 2005 près ; celles de 1987 à 2002 le sont à la formule du
+  régime général et non à celle du décret.

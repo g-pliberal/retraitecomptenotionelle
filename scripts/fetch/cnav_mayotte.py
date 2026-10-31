@@ -10,7 +10,7 @@ dit ce qui lui manque : « Le SMIG mahorais, qui valide les trimestres (200 puis
 au SMIC national. Taux et plafond de la caisse de sécurité sociale de Mayotte,
 en convergence jusqu'en 2036, remplacés par ceux du régime général. » La base
 de législation de la Cnav publie l'un et l'autre ; ce récupérateur en fait une
-série, que la fiche lira (la session du modèle, les deux moteurs ensemble).
+série, que la fiche lit depuis l'action 177, étape 3, les deux moteurs ensemble.
 
 CE QU'IL LIT. Trois barèmes de la base : « Smic horaire - Mayotte », chaque
 relèvement du Smig mahorais depuis le 1er janvier 2002 ; « Salaire plafond -
@@ -70,9 +70,10 @@ ENTETE_CSV = """\
 # LE SMIG MAHORAIS valide les trimestres de Mayotte : 200 heures du Smig du
 # 1er janvier jusqu'en 2016, 150 depuis 2017 (décret n° 87-175, art. 3 ; décret
 # n° 2003-589, art. 8). LE PLAFOND est celui de la caisse de sécurité sociale
-# de Mayotte, en convergence vers le plafond national jusqu'en 2036. La fiche
-# cssm_mayotte valide encore au Smic national et plafonne au plafond national :
-# c'est elle qui les lira (action 175, étape 2, à la session du modèle).
+# de Mayotte, en convergence vers le plafond national jusqu'en 2036, qui borne
+# le salaire annuel moyen de son régime (décret n° 2003-589, art. 7). La fiche
+# cssm_mayotte les lit depuis l'action 177, étape 3, dans les deux moteurs
+# (DonneesMacro.smig_mayotte, DonneesMacro.plafond_mayotte).
 #
 # D'OÙ VIENNENT CES MONTANTS. Des barèmes de la base de législation de la Cnav
 # « Smic horaire - Mayotte » (le Smig du 1er janvier de chaque année, depuis

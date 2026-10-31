@@ -1,0 +1,39 @@
+date: "2026-10-31"
+session: "action 177, étape 3 : Mayotte, les trimestres au Smig mahorais et le salaire annuel moyen au plafond de la caisse"
+consulte: >-
+  `python scripts/veille_droit.py` : trois fiches à relire, aucune de l'étape. Les index
+  LEGI et JORF récupérés et mis à jour (incréments du 30 et du 31 octobre 2026) ;
+  `python scripts/textes.py --inscrire` avant la fiche : aucune rédaction nouvelle ;
+  après : l'ordonnance n° 96-1122, que la fiche `mayotte_pension_de_base` cite
+  désormais, entre entière, 298 rédactions « à examiner ». Dans
+  l'index LEGI : le décret n° 87-175, ses articles 3 (LEGIARTI000006770151), 9 et 21 ;
+  le décret n° 2003-589, son article 8 dans ses quatre rédactions (LEGIARTI000006781027,
+  LEGIARTI000026514455, LEGIARTI000033155442, LEGIARTI000048241292), son article 7
+  dans ses trois (LEGIARTI000006781026, LEGIARTI000026514457, LEGIARTI000033155445) et
+  son article 21 dans ses trois (LEGIARTI000006781041, LEGIARTI000023019089,
+  LEGIARTI000026514398) ; l'article 19 de l'ordonnance n° 2002-411
+  (LEGIARTI000006698330, puis LEGIARTI000025022442 depuis 2012) ; les articles 28-1 et
+  28-2 de l'ordonnance n° 96-1122 depuis 2012. L. 161-17-2 et L. 161-17-3, sans
+  rédaction postérieure à celles du 31 décembre 2025 (LEGIARTI000053280889,
+  LEGIARTI000053280903 ; fiche `fin_de_la_suspension_2028`). Les barèmes de la Cnav
+  « Smic horaire - Mayotte » et « Salaire plafond - Mayotte », par
+  `mayotte_smig_et_plafond.csv`.
+trouve: >-
+  Un trimestre se valide à Mayotte par 200 heures du salaire minimum en vigueur à
+  Mayotte au 1er janvier jusqu'en 2016, 150 depuis 2017, du Smic de Mayotte depuis 2018
+  (rédaction du 22 octobre 2023) : une règle de l'année de la période, qu'aucune
+  rédaction ne reprend pour le passé. Le salaire annuel moyen ne retient les salaires
+  que « dans la limite du plafond annuel de cotisations » de la caisse (article 7) :
+  825 € par mois pour 2003, revalorisé comme le Smig majoré de trois points, puis
+  1 070 € en 2011, revalorisé comme le plafond de la métropole majoré de 5,1 points
+  (article 21), règle que la série de la Cnav suit chaque année à moins d'un euro par
+  mois, sauf en 2024. La fiche `cssm_mayotte` les lit, dans les deux moteurs, depuis
+  2002 pour le Smig et depuis 2005 pour le plafond.
+reste: >-
+  Le Smig de Mayotte de 1987 à 2001 et le plafond de la caisse de 1987 à 2004 (des
+  arrêtés préfectoraux jusqu'en 2002, puis 825 € par mois en 2003 et le premier
+  semestre de 2004), que les barèmes de la Cnav ne portent pas. Les taux de la caisse et
+  l'assiette des cotisations, toujours ceux du régime général. Le plafond au-delà de
+  2026, que l'article 21 ferait converger vers celui de la métropole et que le modèle
+  prolonge au rythme du salaire moyen. Les rédactions des textes cités, « à examiner ».
+  Les étapes 4 à 6 de l'action 177.

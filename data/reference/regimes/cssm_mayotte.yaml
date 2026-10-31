@@ -33,15 +33,22 @@ inventaire:
     - {reference: "décret n° 87-175 du 16 mars 1987 portant création d'un régime de retraite au profit des salariés de Mayotte, articles 2 et 3", id: LEGIARTI000006770150}
     - {reference: "ordonnance n° 2002-411 du 27 mars 2002 et décret n° 2003-589 du 1er juillet 2003, articles 2, 9, 10 et 11 (âge, durée, taux plein, coefficient de minoration)", id: LEGIARTI000033155436}
     - {reference: "décret n° 2024-766 du 8 juillet 2024 et décret n° 2026-345 du 7 mai 2026 (relèvement de l'âge, générations 1962 à 1969)", id: LEGIARTI000054059636}
+    - {reference: "décret n° 2003-589 du 1er juillet 2003, articles 7, 8 et 21 (salaire annuel moyen au plafond de la caisse, trimestres au Smig mahorais, montant du plafond)", id: LEGIARTI000048241292}
     - {reference: "ordonnance n° 2011-1923 du 22 décembre 2011, article 20 (chapitre II « Assurance de base des travailleurs non salariés des professions artisanales, industrielles et commerciales, et agricoles », articles 23-1 à 23-4 de l'ordonnance de 2002)", id: LEGIARTI000025017034}
     - {reference: "ordonnance n° 2002-411, article 23-4 (la pension des non-salariés suit les règles du chapitre Ier, revenu annuel moyen adapté par décret)", id: LEGIARTI000025021012}
     - {reference: "décret n° 2012-1168 du 17 octobre 2012 relatif au développement de la sécurité sociale à Mayotte, article 9 (chapitre III : dispositions relatives aux travailleurs non salariés, articles 31 et suivants du décret n° 2003-589)", id: JORFARTI000026511524}
   manque: >-
-    Le SMIG mahorais, qui valide les trimestres (200 puis 150 heures par
-    trimestre), n'est pas une série du dépôt : la validation se fait au
-    SMIC national. Taux et plafond de la caisse de sécurité sociale de
-    Mayotte, en convergence jusqu'en 2036, remplacés par ceux du régime
-    général. Salaire de référence sur vingt-cinq ans dès 2003, quand le
+    Le Smig mahorais, qui valide les trimestres (200 puis 150 heures par
+    trimestre), n'est une série du dépôt que depuis 2002 : de 1987 à 2001,
+    la validation se fait au SMIC national. Le plafond de la caisse de
+    sécurité sociale de Mayotte, qui borne le salaire annuel moyen, ne l'est
+    que depuis 2005 : celui de la Sécurité sociale tient lieu avant, quand
+    le décret n° 2003-589 (article 21) le fixe à 825 € par mois dès 2003 et
+    que des arrêtés préfectoraux le fixaient de 1987 à 2002 (décret
+    n° 87-175, articles 9 et 21). Les cotisations restent assises sur le
+    plafond et aux taux du régime général, quand la caisse a les siens, en
+    convergence jusqu'en 2036.
+    Salaire de référence sur vingt-cinq ans dès 2003, quand le
     décret n° 2003-589 (article 7) en compte seize à vingt-quatre pour les
     générations 1956 à 1964 liquidant de 2018 à 2027. De 1987 à 2002, la
     formule du régime général tient lieu de celle du décret n° 87-175, qui
@@ -73,15 +80,24 @@ periodes:
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
     notes: >-
-      TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
-      sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en
-      2024, en convergence jusqu'en 2036) et son plafond (3 022 € par mois
-      en 2026), qui ne sont pas des séries du dépôt ; niveau `estimee`.
-      VALIDATION DES TRIMESTRES : autant de trimestres que le salaire
-      représente de fois 200 heures — 150 depuis 2017 — du SMIG mahorais
-      (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret n°
-      2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC national,
-      qui est plus élevé : la fiche valide moins vite que le droit. DÉCRET
+      TAUX PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité sociale de
+      Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en 2024, en
+      convergence jusqu'en 2036), qui ne sont pas une série du dépôt ;
+      niveau `estimee`. PLAFOND DE LA CAISSE : le salaire annuel moyen ne
+      retient les salaires que « dans la limite du plafond annuel de
+      cotisations » de la caisse (décret n° 2003-589, art. 7,
+      LEGIARTI000033155445 ; art. 21 pour son montant,
+      LEGIARTI000026514398), lu depuis 2005 dans
+      `legislation/mayotte_smig_et_plafond.csv`, 3 022 € par mois en 2026 ;
+      avant 2005, celui de la Sécurité sociale tient lieu, et les
+      cotisations restent assises sur ce dernier. VALIDATION DES
+      TRIMESTRES : autant de trimestres que le salaire représente de fois
+      200 heures — 150 depuis 2017 — du Smig mahorais du 1er janvier (décret
+      n° 87-175, art. 3, LEGIARTI000006770151 ; décret n° 2003-589, art. 8,
+      LEGIARTI000048241292), lu depuis 2002 dans la même série ; de 1987 à
+      2001, faute de série, au SMIC national, plus élevé : la fiche y valide
+      moins vite que le droit.
+      DÉCRET
       N° 87-175 : « une pension d'ancienneté aux assurés réunissant 150
       trimestres d'assurance à compter de l'âge de soixante ans », pension
       proportionnelle à 65 ans avec 40 trimestres (art. 2,
@@ -106,16 +122,24 @@ periodes:
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
     notes: >-
-      TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
-      sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié
-      en 2024, en convergence jusqu'en 2036) et son plafond (3 022 € par
-      mois en 2026), qui ne sont pas des séries du dépôt ; niveau
-      `estimee`. VALIDATION DES TRIMESTRES : autant de trimestres que le
-      salaire représente de fois 200 heures — 150 depuis 2017 — du SMIG
-      mahorais (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret
-      n° 2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC
-      national, qui est plus élevé : la fiche valide moins vite que le
-      droit. ÂGE, DURÉE ET TAUX PLEIN À L'ANNÉE D'EFFET DE LA PENSION
+      TAUX PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité sociale de
+      Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en 2024, en
+      convergence jusqu'en 2036), qui ne sont pas une série du dépôt ;
+      niveau `estimee`. PLAFOND DE LA CAISSE : le salaire annuel moyen ne
+      retient les salaires que « dans la limite du plafond annuel de
+      cotisations » de la caisse (décret n° 2003-589, art. 7,
+      LEGIARTI000033155445 ; art. 21 pour son montant,
+      LEGIARTI000026514398), lu depuis 2005 dans
+      `legislation/mayotte_smig_et_plafond.csv`, 3 022 € par mois en 2026 ;
+      avant 2005, celui de la Sécurité sociale tient lieu, et les
+      cotisations restent assises sur ce dernier. VALIDATION DES
+      TRIMESTRES : autant de trimestres que le salaire représente de fois
+      200 heures — 150 depuis 2017 — du Smig mahorais du 1er janvier (décret
+      n° 87-175, art. 3, LEGIARTI000006770151 ; décret n° 2003-589, art. 8,
+      LEGIARTI000048241292), lu depuis 2002 dans la même série ; de 1987 à
+      2001, faute de série, au SMIC national, plus élevé : la fiche y valide
+      moins vite que le droit.
+      ÂGE, DURÉE ET TAUX PLEIN À L'ANNÉE D'EFFET DE LA PENSION
       (ordonnance n° 2002-411 et décret n° 2003-589) : âge d'ouverture
       de cinquante-cinq ans « pour les pensions prenant effet en 2003,
       2004 et 2005 », puis un an de plus chaque année jusqu'à soixante
@@ -412,16 +436,24 @@ periodes:
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
     notes: >-
-      TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
-      sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié
-      en 2024, en convergence jusqu'en 2036) et son plafond (3 022 € par
-      mois en 2026), qui ne sont pas des séries du dépôt ; niveau
-      `estimee`. VALIDATION DES TRIMESTRES : autant de trimestres que le
-      salaire représente de fois 200 heures — 150 depuis 2017 — du SMIG
-      mahorais (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret
-      n° 2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC
-      national, qui est plus élevé : la fiche valide moins vite que le
-      droit. ÂGE À LA GÉNÉRATION depuis le décret n° 2012-1168, en
+      TAUX PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité sociale de
+      Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en 2024, en
+      convergence jusqu'en 2036), qui ne sont pas une série du dépôt ;
+      niveau `estimee`. PLAFOND DE LA CAISSE : le salaire annuel moyen ne
+      retient les salaires que « dans la limite du plafond annuel de
+      cotisations » de la caisse (décret n° 2003-589, art. 7,
+      LEGIARTI000033155445 ; art. 21 pour son montant,
+      LEGIARTI000026514398), lu depuis 2005 dans
+      `legislation/mayotte_smig_et_plafond.csv`, 3 022 € par mois en 2026 ;
+      avant 2005, celui de la Sécurité sociale tient lieu, et les
+      cotisations restent assises sur ce dernier. VALIDATION DES
+      TRIMESTRES : autant de trimestres que le salaire représente de fois
+      200 heures — 150 depuis 2017 — du Smig mahorais du 1er janvier (décret
+      n° 87-175, art. 3, LEGIARTI000006770151 ; décret n° 2003-589, art. 8,
+      LEGIARTI000048241292), lu depuis 2002 dans la même série ; de 1987 à
+      2001, faute de série, au SMIC national, plus élevé : la fiche y valide
+      moins vite que le droit.
+      ÂGE À LA GÉNÉRATION depuis le décret n° 2012-1168, en
       vigueur le 21 octobre 2012 (art. 2, LEGIARTI000026514429 ; table
       `mayotte_2012` de `legislation/ages_regimes.csv`) : soixante ans
       avant 1956, soixante ans et quatre mois pour 1956, quatre mois de
@@ -602,16 +634,24 @@ periodes:
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
     notes: >-
-      TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
-      sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié
-      en 2024, en convergence jusqu'en 2036) et son plafond (3 022 € par
-      mois en 2026), qui ne sont pas des séries du dépôt ; niveau
-      `estimee`. VALIDATION DES TRIMESTRES : autant de trimestres que le
-      salaire représente de fois 200 heures — 150 depuis 2017 — du SMIG
-      mahorais (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret
-      n° 2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC
-      national, qui est plus élevé : la fiche valide moins vite que le
-      droit. ÂGE À LA GÉNÉRATION depuis le décret n° 2012-1168, en
+      TAUX PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité sociale de
+      Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en 2024, en
+      convergence jusqu'en 2036), qui ne sont pas une série du dépôt ;
+      niveau `estimee`. PLAFOND DE LA CAISSE : le salaire annuel moyen ne
+      retient les salaires que « dans la limite du plafond annuel de
+      cotisations » de la caisse (décret n° 2003-589, art. 7,
+      LEGIARTI000033155445 ; art. 21 pour son montant,
+      LEGIARTI000026514398), lu depuis 2005 dans
+      `legislation/mayotte_smig_et_plafond.csv`, 3 022 € par mois en 2026 ;
+      avant 2005, celui de la Sécurité sociale tient lieu, et les
+      cotisations restent assises sur ce dernier. VALIDATION DES
+      TRIMESTRES : autant de trimestres que le salaire représente de fois
+      200 heures — 150 depuis 2017 — du Smig mahorais du 1er janvier (décret
+      n° 87-175, art. 3, LEGIARTI000006770151 ; décret n° 2003-589, art. 8,
+      LEGIARTI000048241292), lu depuis 2002 dans la même série ; de 1987 à
+      2001, faute de série, au SMIC national, plus élevé : la fiche y valide
+      moins vite que le droit.
+      ÂGE À LA GÉNÉRATION depuis le décret n° 2012-1168, en
       vigueur le 21 octobre 2012 (art. 2, LEGIARTI000026514429 ; table
       `mayotte_2012` de `legislation/ages_regimes.csv`) : soixante ans
       avant 1956, soixante ans et quatre mois pour 1956, quatre mois de
@@ -649,16 +689,24 @@ periodes:
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
     notes: >-
-      TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
-      sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié
-      en 2024, en convergence jusqu'en 2036) et son plafond (3 022 € par
-      mois en 2026), qui ne sont pas des séries du dépôt ; niveau
-      `estimee`. VALIDATION DES TRIMESTRES : autant de trimestres que le
-      salaire représente de fois 200 heures — 150 depuis 2017 — du SMIG
-      mahorais (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret
-      n° 2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC
-      national, qui est plus élevé : la fiche valide moins vite que le
-      droit. ÂGE DE LA RÉFORME DE 2023, pour les pensions prenant effet
+      TAUX PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité sociale de
+      Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en 2024, en
+      convergence jusqu'en 2036), qui ne sont pas une série du dépôt ;
+      niveau `estimee`. PLAFOND DE LA CAISSE : le salaire annuel moyen ne
+      retient les salaires que « dans la limite du plafond annuel de
+      cotisations » de la caisse (décret n° 2003-589, art. 7,
+      LEGIARTI000033155445 ; art. 21 pour son montant,
+      LEGIARTI000026514398), lu depuis 2005 dans
+      `legislation/mayotte_smig_et_plafond.csv`, 3 022 € par mois en 2026 ;
+      avant 2005, celui de la Sécurité sociale tient lieu, et les
+      cotisations restent assises sur ce dernier. VALIDATION DES
+      TRIMESTRES : autant de trimestres que le salaire représente de fois
+      200 heures — 150 depuis 2017 — du Smig mahorais du 1er janvier (décret
+      n° 87-175, art. 3, LEGIARTI000006770151 ; décret n° 2003-589, art. 8,
+      LEGIARTI000048241292), lu depuis 2002 dans la même série ; de 1987 à
+      2001, faute de série, au SMIC national, plus élevé : la fiche y valide
+      moins vite que le droit.
+      ÂGE DE LA RÉFORME DE 2023, pour les pensions prenant effet
       à compter du 1er septembre 2023 (art. 2 dans la rédaction du
       décret n° 2024-766, LEGIARTI000049915788 ; table `mayotte_2023`) :
       62 ans et 3 mois pour 1962, trois mois de plus par génération
@@ -694,16 +742,24 @@ periodes:
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
     notes: >-
-      TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
-      sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié
-      en 2024, en convergence jusqu'en 2036) et son plafond (3 022 € par
-      mois en 2026), qui ne sont pas des séries du dépôt ; niveau
-      `estimee`. VALIDATION DES TRIMESTRES : autant de trimestres que le
-      salaire représente de fois 200 heures — 150 depuis 2017 — du SMIG
-      mahorais (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret
-      n° 2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC
-      national, qui est plus élevé : la fiche valide moins vite que le
-      droit. 2026, DEUX TEXTES. Pour les pensions prenant effet à
+      TAUX PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité sociale de
+      Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en 2024, en
+      convergence jusqu'en 2036), qui ne sont pas une série du dépôt ;
+      niveau `estimee`. PLAFOND DE LA CAISSE : le salaire annuel moyen ne
+      retient les salaires que « dans la limite du plafond annuel de
+      cotisations » de la caisse (décret n° 2003-589, art. 7,
+      LEGIARTI000033155445 ; art. 21 pour son montant,
+      LEGIARTI000026514398), lu depuis 2005 dans
+      `legislation/mayotte_smig_et_plafond.csv`, 3 022 € par mois en 2026 ;
+      avant 2005, celui de la Sécurité sociale tient lieu, et les
+      cotisations restent assises sur ce dernier. VALIDATION DES
+      TRIMESTRES : autant de trimestres que le salaire représente de fois
+      200 heures — 150 depuis 2017 — du Smig mahorais du 1er janvier (décret
+      n° 87-175, art. 3, LEGIARTI000006770151 ; décret n° 2003-589, art. 8,
+      LEGIARTI000048241292), lu depuis 2002 dans la même série ; de 1987 à
+      2001, faute de série, au SMIC national, plus élevé : la fiche y valide
+      moins vite que le droit.
+      2026, DEUX TEXTES. Pour les pensions prenant effet à
       compter du 1er janvier 2026, le décret n° 2025-1410 donne le taux
       plein à « l'âge prévu au 1° de l'article L. 351-8 », soixante-sept
       ans (art. 10, LEGIARTI000053354929), et le coefficient de
@@ -747,16 +803,24 @@ periodes:
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, majoration_enfants, reversion]
     notes: >-
-      TAUX ET PLAFOND PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité
-      sociale de Mayotte a ses taux (9,90 % employeur et 5,32 % salarié
-      en 2024, en convergence jusqu'en 2036) et son plafond (3 022 € par
-      mois en 2026), qui ne sont pas des séries du dépôt ; niveau
-      `estimee`. VALIDATION DES TRIMESTRES : autant de trimestres que le
-      salaire représente de fois 200 heures — 150 depuis 2017 — du SMIG
-      mahorais (décret n° 87-175, art. 3, LEGIARTI000006770151 ; décret
-      n° 2003-589, art. 8, LEGIARTI000033155442), lue ici au SMIC
-      national, qui est plus élevé : la fiche valide moins vite que le
-      droit. 2026, DEUX TEXTES. Pour les pensions prenant effet à
+      TAUX PRÊTÉS DU RÉGIME GÉNÉRAL : la caisse de sécurité sociale de
+      Mayotte a ses taux (9,90 % employeur et 5,32 % salarié en 2024, en
+      convergence jusqu'en 2036), qui ne sont pas une série du dépôt ;
+      niveau `estimee`. PLAFOND DE LA CAISSE : le salaire annuel moyen ne
+      retient les salaires que « dans la limite du plafond annuel de
+      cotisations » de la caisse (décret n° 2003-589, art. 7,
+      LEGIARTI000033155445 ; art. 21 pour son montant,
+      LEGIARTI000026514398), lu depuis 2005 dans
+      `legislation/mayotte_smig_et_plafond.csv`, 3 022 € par mois en 2026 ;
+      avant 2005, celui de la Sécurité sociale tient lieu, et les
+      cotisations restent assises sur ce dernier. VALIDATION DES
+      TRIMESTRES : autant de trimestres que le salaire représente de fois
+      200 heures — 150 depuis 2017 — du Smig mahorais du 1er janvier (décret
+      n° 87-175, art. 3, LEGIARTI000006770151 ; décret n° 2003-589, art. 8,
+      LEGIARTI000048241292), lu depuis 2002 dans la même série ; de 1987 à
+      2001, faute de série, au SMIC national, plus élevé : la fiche y valide
+      moins vite que le droit.
+      2026, DEUX TEXTES. Pour les pensions prenant effet à
       compter du 1er janvier 2026, le décret n° 2025-1410 donne le taux
       plein à « l'âge prévu au 1° de l'article L. 351-8 », soixante-sept
       ans (art. 10, LEGIARTI000053354929), et le coefficient de
