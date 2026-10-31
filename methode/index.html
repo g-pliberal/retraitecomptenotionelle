@@ -1323,21 +1323,27 @@ isolés dans un compartiment séparé, jamais converti.</p>
 complète</a> · <a href="https://github.com/g-pliberal/retraitecomptenotionelle/blob/main/docs/limites.md">Limites
 connues</a></p></div></details>
 <details class="section"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>Comment ce site est construit, et comment on le vérifie</span></summary><div class="dedans">
-<p>Le modèle de référence est écrit en Python, dans
-<a href="https://github.com/g-pliberal/retraitecomptenotionelle/tree/main/src">le dossier <code>src/</code> du dépôt</a> : c'est
-lui qui fait foi, et c'est lui qui est testé contre les sources — les textes,
-les barèmes, et des calculateurs extérieurs comme OpenFisca, qui servent
-d'oracle au système 1, jusqu'au temps partiel, aux enfants et à la catégorie
-active des fonctionnaires.</p>
-<p>Ce que vous lisez ici est un <strong>portage en JavaScript</strong> de ce
-modèle, sans aucune bibliothèque, qui tourne entièrement dans votre navigateur
-: rien de ce que vous saisissez n'est envoyé nulle part. Le portage ne s'écarte
-pas du modèle, et ce n'est pas une promesse : des centaines de carrières
-témoins (chaque statut d'affiliation, à six générations) sont calculées par
-les deux et comparées nombre par nombre ; toute divergence fait échouer les
-tests. Le texte des pages, lui, n'est écrit qu'une fois, dans ce portage :
-chaque page est figée en témoin, et le moindre mot qui change se lit dans
-l'historique du dépôt.</p>
+<p>Le moteur qui calcule une carrière — la vôtre, quand vous la saisissez — est
+écrit en JavaScript, sans aucune bibliothèque, dans
+<a href="https://github.com/g-pliberal/retraitecomptenotionelle/tree/main/moteur/js">le dossier <code>moteur/js/</code> du
+dépôt</a>, et il tourne entièrement dans votre navigateur : rien de ce que vous
+saisissez n'est envoyé nulle part. <strong>C'est lui qui fait foi.</strong></p>
+<p>Le modèle est confronté aux sources — les textes, les barèmes, et des
+calculateurs extérieurs comme OpenFisca, qui servent d'oracle au système 1,
+jusqu'au temps partiel, aux enfants et à la catégorie active des fonctionnaires.
+Il a d'abord été écrit en Python, et tant que la migration n'est pas finie, le
+moteur du site y garde un jumeau, dans <a href="https://github.com/g-pliberal/retraitecomptenotionelle/tree/main/src">le
+dossier <code>src/</code></a>. Les deux exemplaires sont tenus identiques au bit
+près, jusqu'au dernier chiffre que l'ordinateur retient : des centaines de
+carrières témoins (chaque statut d'affiliation, à six générations) sont
+calculées par le moteur du site, le jumeau doit refaire chaque calcul, et un
+seul nombre qui diffère fait échouer les tests.</p>
+<p>Le coût pour toute la population ne se calcule pas dans votre navigateur :
+il se calcule en Python, une fois, quand le site est fabriqué, et il arrive tout
+fait avec les données ; les carrières qu'il additionne, c'est le moteur du site
+qui les simule. Le texte des pages, lui, n'est écrit qu'une fois, en
+JavaScript : chaque page est figée en témoin, et le moindre mot qui change se lit
+dans l'historique du dépôt.</p>
 <p>Les données que le site charge sont produites par un script à partir des
 mêmes fichiers que le modèle, et un test refuse un paquet périmé. Les séries
 sont recontrôlées contre le fichier de l'institution qui les produit — la

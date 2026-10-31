@@ -2154,14 +2154,15 @@ affirmations:
     porte: le nom d'un réglage, cité pour que le lecteur le retrouve dans le menu
     etat: sans_portee
 
-  - id: methode.portage_javascript
+  - id: methode.le_moteur_du_site_fait_foi
     page: /methode
-    extrait: "portage en JavaScript"
+    extrait: "C'est lui qui fait foi."
     porte: >-
-      le portage est comparé au modèle nombre par nombre sur les carrières
-      témoins, et ses pages, écrites une fois, sont figées en témoins
+      le moteur du site calcule les carrières témoins, que son jumeau Python
+      doit refaire au bit près ; ses pages, écrites une fois, sont figées en
+      témoins
     etat: verifiee
-    controle: portage_compare_aux_temoins
+    controle: le_moteur_du_site_fait_foi
 
   # ------------------------------------------------------------------------
   # Données

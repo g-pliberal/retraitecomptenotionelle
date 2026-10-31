@@ -1,0 +1,18 @@
+date: "2026-10-31"
+session: "action 161 : la page « Méthode » dit le moteur du site qui fait foi, selon la note de décision 0005"
+consulte: >-
+  Aucune source de droit : la session ne touche à aucune règle du scénario 1,
+  seulement au texte du site (moteur/js/pages.js), à ce qui le tient (le
+  catalogue des affirmations, ses tests) et au README. La note de décision
+  0005, et ce que le dépôt fait de chaque exemplaire : les témoins, que le
+  portage simule, le pont qui y confronte le moteur Python, le coût qui fait
+  simuler sa grille au portage.
+trouve: >-
+  Aucune règle n'a changé. Le dépliant « Comment ce site est construit »
+  disait le Python « modèle de référence » ; il dit le moteur du site qui fait
+  foi, son jumeau Python tenu au bit près, le coût calculé en Python, sans
+  dire lequel des deux exemplaires les références extérieures éprouvent. Les
+  témoins de simulations ne bougent pas.
+reste: >-
+  Rien pour la veille. L'action reprend où son bloc « Reprise » la laisse
+  (action 161).

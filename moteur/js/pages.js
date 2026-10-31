@@ -15405,30 +15405,42 @@ date opposée est celle de l'entrée dans le métier, au mois près : qui est en
 /**
  * Comment ce site est construit, et comment on le vérifie.
  *
- * C'est l'argument de confiance d'un public technique — un modèle de
- * référence, un portage sans bibliothèque, des témoins comparés au bit près —,
- * et il n'était accessible que par le lien GitHub en bas de l'accueil. Il est
- * ici, là où le lecteur est déjà dans le détail. Aucun nombre de tests ni de
- * témoins n'y est écrit : ils bougent à chaque session, et le README les
- * porte, recalculés par un test.
+ * C'est l'argument de confiance d'un public technique — un moteur sans
+ * bibliothèque qui fait foi, son jumeau Python tenu au bit près sur des
+ * témoins, le coût calculé une fois —, et il n'était accessible que par le
+ * lien GitHub en bas de l'accueil. Il est ici, là où le lecteur est déjà dans
+ * le détail. Aucun nombre de tests ni de témoins n'y est écrit : ils bougent à
+ * chaque session, et le README les porte, recalculés par un test.
+ *
+ * Le JavaScript fait foi depuis le 31 octobre 2026 (note de décision 0005).
+ * Le dépliant ne dit pas lequel des deux exemplaires les références
+ * extérieures éprouvent : elles passent du Python au JavaScript (action 161),
+ * et chaque phrase doit rester vraie pendant et après. Le modèle est
+ * confronté aux sources, et ses deux exemplaires sont identiques au bit près.
  */
 function methodeConstruction() {
   return g.depliant("Comment ce site est construit, et comment on le vérifie", `
-<p>Le modèle de référence est écrit en Python, dans
-<a href="${g.DEPOT}/tree/main/src">le dossier <code>src/</code> du dépôt</a> : c'est
-lui qui fait foi, et c'est lui qui est testé contre les sources — les textes,
-les barèmes, et des calculateurs extérieurs comme OpenFisca, qui servent
-d'oracle au système 1, jusqu'au temps partiel, aux enfants et à la catégorie
-active des fonctionnaires.</p>
-<p>Ce que vous lisez ici est un <strong>portage en JavaScript</strong> de ce
-modèle, sans aucune bibliothèque, qui tourne entièrement dans votre navigateur
-: rien de ce que vous saisissez n'est envoyé nulle part. Le portage ne s'écarte
-pas du modèle, et ce n'est pas une promesse : des centaines de carrières
-témoins (chaque statut d'affiliation, à six générations) sont calculées par
-les deux et comparées nombre par nombre ; toute divergence fait échouer les
-tests. Le texte des pages, lui, n'est écrit qu'une fois, dans ce portage :
-chaque page est figée en témoin, et le moindre mot qui change se lit dans
-l'historique du dépôt.</p>
+<p>Le moteur qui calcule une carrière — la vôtre, quand vous la saisissez — est
+écrit en JavaScript, sans aucune bibliothèque, dans
+<a href="${g.DEPOT}/tree/main/moteur/js">le dossier <code>moteur/js/</code> du
+dépôt</a>, et il tourne entièrement dans votre navigateur : rien de ce que vous
+saisissez n'est envoyé nulle part. <strong>C'est lui qui fait foi.</strong></p>
+<p>Le modèle est confronté aux sources — les textes, les barèmes, et des
+calculateurs extérieurs comme OpenFisca, qui servent d'oracle au système 1,
+jusqu'au temps partiel, aux enfants et à la catégorie active des fonctionnaires.
+Il a d'abord été écrit en Python, et tant que la migration n'est pas finie, le
+moteur du site y garde un jumeau, dans <a href="${g.DEPOT}/tree/main/src">le
+dossier <code>src/</code></a>. Les deux exemplaires sont tenus identiques au bit
+près, jusqu'au dernier chiffre que l'ordinateur retient : des centaines de
+carrières témoins (chaque statut d'affiliation, à six générations) sont
+calculées par le moteur du site, le jumeau doit refaire chaque calcul, et un
+seul nombre qui diffère fait échouer les tests.</p>
+<p>Le coût pour toute la population ne se calcule pas dans votre navigateur :
+il se calcule en Python, une fois, quand le site est fabriqué, et il arrive tout
+fait avec les données ; les carrières qu'il additionne, c'est le moteur du site
+qui les simule. Le texte des pages, lui, n'est écrit qu'une fois, en
+JavaScript : chaque page est figée en témoin, et le moindre mot qui change se lit
+dans l'historique du dépôt.</p>
 <p>Les données que le site charge sont produites par un script à partir des
 mêmes fichiers que le modèle, et un test refuse un paquet périmé. Les séries
 sont recontrôlées contre le fichier de l'institution qui les produit — la

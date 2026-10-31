@@ -190,7 +190,7 @@ de référence s'exécutent **dans votre navigateur**. Aucune donnée saisie ne
 quitte votre machine, puisqu'il n'y a pas de serveur de calcul. Lire une page transfère son
 texte et de quoi l'animer : <!--chiffre:poids_comprime(moteur/style.css + moteur/js/routeur.js + moteur/js/adresses.js + moteur/js/cles.js + moteur/js/gabarit.js + moteur/js/format.js + moteur/js/calendrier.js + index.html)-->155<!--/--> Ko compressés
 (<!--chiffre:poids(moteur/style.css + moteur/js/routeur.js + moteur/js/adresses.js + moteur/js/cles.js + moteur/js/gabarit.js + moteur/js/format.js + moteur/js/calendrier.js + index.html)-->497<!--/--> Ko bruts) pour l'accueil. Le premier calcul y ajoute
-le moteur, <!--chiffre:poids_comprime(moteur/js/*.js + moteur/js/droit/*.js - moteur/js/routeur.js - moteur/js/adresses.js - moteur/js/cles.js - moteur/js/gabarit.js - moteur/js/format.js - moteur/js/calendrier.js - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->902<!--/--> Ko compressés, et le paquet
+le moteur, <!--chiffre:poids_comprime(moteur/js/*.js + moteur/js/droit/*.js - moteur/js/routeur.js - moteur/js/adresses.js - moteur/js/cles.js - moteur/js/gabarit.js - moteur/js/format.js - moteur/js/calendrier.js - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->903<!--/--> Ko compressés, et le paquet
 de données, <!--chiffre:poids_comprime(moteur/donnees.json)-->790<!--/--> Ko compressés (<!--chiffre:poids(moteur/donnees.json)-->5 748<!--/--> Ko bruts) ; le tout prend quelques dixièmes
 de seconde, et les chargements suivants sont immédiats.
 
@@ -233,9 +233,9 @@ consultable en JSON au bas de la page.
 <summary>Comment la page fonctionne, et comment on sait qu'elle dit vrai</summary>
 
 Chaque page est écrite toute faite, et ne charge qu'au premier calcul
-`moteur/js/`, un portage en JavaScript, sans aucune bibliothèque, de ce qui
-dépend de ce que le lecteur saisit — sa carrière, ses droits et sa pension —,
-et `moteur/donnees.json`
+`moteur/js/`, le moteur qui calcule, en JavaScript et sans aucune bibliothèque,
+ce qui dépend de ce que le lecteur saisit — sa carrière, ses droits et sa
+pension —, et `moteur/donnees.json`
 (<!--chiffre:poids(moteur/donnees.json)-->5 748<!--/--> Ko — les séries, les
 tables de mortalité observées de 1899 à 2024, la pyramide des âges de 1962 à
 2070, les <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=modelise|partiel)-->80<!--/--> fiches de régime, et ce que le Python a calculé une fois pour toutes
@@ -278,12 +278,11 @@ Des cas figés ne prouvent que ce qu'on a pensé à figer. Un second contrôle t
 donc des carrières au hasard — graine fixe, donc reproductible —, les calcule en
 Python et les fait recalculer par le site : mêmes chiffres exigés, à 10⁻⁹ près.
 
-`pytest` lance cette comparaison, il n'y a donc qu'une commande à retenir. Les
-deux fichiers que charge le site sont produits par
-`python scripts/construire_donnees.py` — le paquet de données depuis `data/`, et
-`moteur/style.css` depuis la feuille de style du module Python, qui reste écrite
-en un seul endroit. Le test `test_le_paquet_est_a_jour` échoue si l'un des deux a
-été oublié.
+`pytest` lance cette comparaison, il n'y a donc qu'une commande à retenir. Le
+paquet de données que charge le site est produit depuis `data/` par
+`python scripts/construire_donnees.py`, et le test `test_le_paquet_est_a_jour`
+échoue s'il a été oublié ; la feuille de style, `moteur/style.css`, est sa
+propre source, écrite une fois, comme le texte des pages.
 
 </details>
 
@@ -301,7 +300,9 @@ python -m http.server 8000        # puis http://127.0.0.1:8000
 
 Le site expose le modèle en neuf pages. Pour l'interroger autrement — un
 calcul par lots, une variante de paramètres, un chiffre à vérifier à la main —
-le modèle de référence s'appelle directement. La seule dépendance est PyYAML.
+le modèle s'appelle aussi en Python : le coût s'y calcule, et le moteur d'une
+carrière y garde un jumeau, tenu au bit près sur celui du site, qui fait foi.
+La seule dépendance est PyYAML.
 
 ```bash
 pip install -e .
@@ -1385,8 +1386,8 @@ sitemap.xml                     le plan du site, que lisent les moteurs de reche
 moteur/                         ce que le navigateur charge, et rien d'autre
   donnees.json                  séries, tables, régimes et inventaire (produit par script)
   style.css                     la feuille de style, écrite une fois
-  js/                           portage du modèle, et texte du site, écrit une fois :
-                                sans bibliothèque ni étape de build
+  js/                           moteur d'une carrière, qui fait foi, et texte du site,
+                                écrit une fois : sans bibliothèque ni étape de build
 
 docs/
   carte_du_depot.md             la vue d'ensemble, en schémas, et où suivre l'avancement
@@ -1397,7 +1398,7 @@ docs/
                                 et les hypothèses fragiles (tableaux produits par script)
 
 tests/                          les tests : python -m pytest, et -m rapide en travaillant
-  temoins/                      chiffres et pages figés depuis le modèle Python,
+  temoins/                      chiffres et pages figés depuis le JavaScript du site,
                                 et les relevés d'OpenFisca-France-Pension qui
                                 servent de contre-expertise au scénario 1
   js/                           le portage rejoué contre ces témoins (node --test)

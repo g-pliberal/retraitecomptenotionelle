@@ -3,9 +3,11 @@
 Le site tourne entièrement dans le navigateur, et son texte n'est écrit qu'une
 fois, en JavaScript (``moteur/js/pages.js`` et ``gabarit.js``). Ces tests le
 lisent là où il est, par :mod:`retraite_notionnelle.web.site` ; ce qu'ils
-confrontent aux pages — les simulations, les agrégats — vient du modèle
-Python, qui fait foi, sur la carrière que le portage bâtit de la saisie, par
-le pont : la saisie n'a plus qu'un exemplaire, le sien (action 161, étape 6).
+confrontent aux pages vient du Python : les agrégats, qui ne se calculent
+que là, et les simulations du jumeau du moteur, que les témoins tiennent au
+bit près sur le JavaScript, qui fait foi (note de décision 0005) — sur la
+carrière que le portage bâtit de la saisie, par le pont : la saisie n'a plus
+qu'un exemplaire, le sien (action 161, étape 6).
 
 Trois fichiers le testent : celui-ci, les pages, leur rendu et ce que le
 site charge ; ``test_web_saisie.py``, la saisie ; ``test_web_revues.py``,
@@ -651,7 +653,7 @@ def test_le_balayage_des_temoins_couvre_tous_les_statuts():
 
 
 def test_le_portage_javascript_retrouve_les_chiffres_du_modele():
-    """Lance ``node --test`` : le site doit calculer comme la référence Python.
+    """Lance ``node --test`` : le moteur du site, qui fait foi, passe ses essais et ses témoins.
 
     TOUS les fichiers d'essai du dossier y passent, et la liste se lit sur le
     disque : elle était écrite en dur, et le jour où le lecteur de PDF a reçu

@@ -1458,9 +1458,18 @@ def test_les_pages_complementaires_se_renvoient_l_une_a_l_autre():
 def test_la_methode_dit_comment_le_site_est_construit():
     """L'argument de confiance d'un public technique, sur la page Méthode.
 
-    Un dépliant dit le modèle de référence, le portage sans bibliothèque, les
-    témoins comparés, le paquet de données — sans un nombre de tests ni de
-    témoins, qui dériveraient : le README les porte, et un test les recalcule.
+    Un dépliant dit le moteur d'une carrière, écrit en JavaScript sans
+    bibliothèque, qui tourne dans le navigateur et fait foi (note de décision
+    0005) ; son jumeau Python, tenu au bit près sur les témoins le temps de la
+    migration ; le coût, calculé en Python et livré tout fait ; les pages
+    figées ; le paquet de données — sans un nombre de tests ni de témoins, qui
+    dériveraient : le README les porte, et un test les recalcule.
+
+    Il ne dit pas lequel des deux exemplaires les références extérieures
+    éprouvent : elles passent de l'un à l'autre (action 161), et la phrase
+    resterait vraie. Le modèle l'est, et ses deux exemplaires sont identiques.
+    Le Python « de référence », dont le JavaScript était le « portage », n'y
+    revient pas : c'était vrai jusqu'au 31 octobre 2026.
     """
     corps = rendre("/methode", {})[1]
     section = re.search(r'<details class="section"><summary>.*?<span>Comment ce site est '
@@ -1468,11 +1477,21 @@ def test_la_methode_dit_comment_le_site_est_construit():
                         corps, re.S)
     assert section, "le dépliant de construction manque"
     dedans = section.group(1)
-    for attendu in (f'href="{g.DEPOT}/tree/main/src"', "portage en JavaScript",
-                    "comparées nombre par nombre", "chaque page est figée en témoin",
+    for attendu in (f'href="{g.DEPOT}/tree/main/moteur/js"',
+                    f'href="{g.DEPOT}/tree/main/src"',
                     f'href="{g.DEPOT}/tree/main/tests"',
                     'href="./#sources" data-vers="sources"'):
         assert attendu in dedans, attendu
+    texte = " ".join(re.sub(r"<[^>]+>", " ", dedans).split())
+    for attendu in ("écrit en JavaScript, sans aucune bibliothèque",
+                    "tourne entièrement dans votre navigateur", "C'est lui qui fait foi.",
+                    "garde un jumeau", "identiques au bit près", "confronté aux sources",
+                    "Le coût pour toute la population", "se calcule en Python, une fois",
+                    "chaque page est figée en témoin"):
+        assert attendu in texte, attendu
+    for perime in ("modèle de référence", "portage"):
+        assert perime not in texte, (
+            f"« {perime} » : le JavaScript fait foi depuis le 31 octobre 2026")
     assert not re.search(r"\b\d{3,} (?:tests|témoins|carrières)", dedans), (
         "un nombre de tests ou de témoins écrit à la main dériverait"
     )

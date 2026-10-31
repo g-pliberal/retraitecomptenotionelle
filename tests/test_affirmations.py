@@ -1704,17 +1704,26 @@ def _(m: Modele):
     assert g.Cellule("x", intensite=0.0).style() == ""
 
 
-@controle("portage_compare_aux_temoins")
+@controle("le_moteur_du_site_fait_foi")
 def _(m: Modele):
-    """Les carrières témoins sont calculées par les deux moteurs et comparées
-    nombre par nombre ; les pages, dont le texte n'est écrit qu'en JavaScript
-    depuis la phase 8, sont figées en témoins, que la suite fait rendre de
-    nouveau par le portage et compare (``test_les_temoins_du_portage_sont_a_jour``)."""
+    """Le moteur du site fait foi (note de décision 0005) : les carrières
+    témoins se simulent par lui, sans le moteur Python, et ``tests/js/`` le
+    fait les retrouver nombre par nombre ; son jumeau Python doit les refaire
+    au bit près, tant qu'il en garde un (``tests/test_pont.py``). La phrase
+    porte sur la vérification même : c'est elle que ce contrôle tient, et le
+    jour où le dernier jumeau se retire, il tombe, et la page avec lui. « Des
+    centaines » de témoins : deux cents au moins. Les pages, dont le texte
+    n'est écrit qu'en JavaScript depuis la phase 8, sont figées en témoins,
+    que la suite fait rendre de nouveau et compare
+    (``test_les_temoins_du_portage_sont_a_jour``)."""
     simulations = json.loads((RACINE / "tests" / "temoins" / "simulations.json")
                              .read_text(encoding="utf-8"))
-    assert len(simulations) > 100
+    assert len(simulations) >= 200
     moteur = (RACINE / "tests" / "js" / "moteur.test.js").read_text(encoding="utf-8")
     assert "temoinsSimulations" in moteur
+    pont = (RACINE / "tests" / "test_pont.py").read_text(encoding="utf-8")
+    assert "def test_les_temoins_se_simulent_par_le_portage_sans_le_moteur_python" in pont
+    assert "def test_le_moteur_python_refait_chaque_temoin" in pont
     assert "def test_les_temoins_du_portage_sont_a_jour" in (
         RACINE / "tests" / "test_web.py").read_text(encoding="utf-8")
     assert (RACINE / "moteur" / "js" / "pages.js").exists()
