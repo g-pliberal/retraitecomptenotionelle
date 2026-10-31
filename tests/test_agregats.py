@@ -3,12 +3,15 @@
 ``data/derive/agregats.json`` est fabriqué par ``scripts/construire_donnees.py``
 depuis le 11 octobre 2026 (action 150) : Coût, Carrières types et Droits non
 cotisés ne montrent plus que la référence, et ne calculent plus chez le
-lecteur. Ces tests disent que la table porte ce que le modèle calcule, que les
-deux lecteurs — ``donnees/agregats.py`` et ``moteur/js/agregats.js`` — en
-lisent la même chose, et qu'elle refuse ce qu'elle ne porte pas.
+lecteur. Ces tests disent que la table porte ce que le modèle calcule, lue par
+son seul lecteur, ``moteur/js/agregats.js`` (note de décision 0005), et
+qu'elle refuse ce qu'elle ne porte pas. Le portage rend ses tableaux en
+listes, que les tests comparent aux n-uplets du modèle.
 """
 
 from __future__ import annotations
+
+import json
 
 import pytest
 
@@ -17,15 +20,19 @@ from retraite_notionnelle.castypes import CAS_TYPES, GENERATIONS, calculer_cas_t
 from retraite_notionnelle.config import RACINE_DONNEES
 from retraite_notionnelle.contexte import Contexte
 from retraite_notionnelle.donnees import agregats
-from retraite_notionnelle.donnees.agregats import charger_agregats
-from retraite_notionnelle.web.site import disponible, module, site
-
-AGREGATS = charger_agregats(RACINE_DONNEES)
+from retraite_notionnelle.web.site import ErreurSite, disponible, module
 
 #: Les systèmes que le site compare au système actuel, ceux que la table porte.
 COMPARES = ("notionnel_retroactif", "notionnel_retroactif_employeur", "notionnel_liberal")
 
-sans_node = pytest.mark.skipif(not disponible(), reason="node absent : le site ne se lit pas")
+pytestmark = pytest.mark.skipif(not disponible(), reason="node absent : le site ne se lit pas")
+
+
+@pytest.fixture(scope="module")
+def table():
+    """La table figée, ``data/derive/agregats.json``, lue par le portage."""
+    brut = json.loads((RACINE_DONNEES / "derive" / "agregats.json").read_text(encoding="utf-8"))
+    return module("agregats").charger_agregats(brut)
 
 
 @pytest.fixture(scope="module")
@@ -41,13 +48,19 @@ def grille(contexte):
 # -- les carrières types -------------------------------------------------------
 
 
-def test_la_grille_figee_est_celle_que_le_modele_calcule(grille):
-    figee = AGREGATS.cas_types
-    assert figee.generations == GENERATIONS
-    assert set(figee.resultats) == set(grille.resultats)
-    assert figee.echecs == grille.echecs
+def _cle(code: str, generation: int) -> str:
+    """La clé d'une case de la grille dans la table, « code|génération »."""
+    return f"{code}|{generation}"
+
+
+def test_la_grille_figee_est_celle_que_le_modele_calcule(table, grille):
+    figee = table.cas_types
+    assert tuple(figee.generations) == GENERATIONS
+    resultats = figee.resultats
+    assert set(resultats) == {_cle(*cle) for cle in grille.resultats}
+    assert dict(figee.echecs) == {_cle(*cle): echec for cle, echec in grille.echecs.items()}
     for cle, comparaison in grille.resultats.items():
-        case = figee.resultats[cle]
+        case = resultats[_cle(*cle)]
         assert case.carriere.annee_liquidation == comparaison.carriere.annee_liquidation
         for scenario in COMPARES:
             assert case.variation_totale(scenario) == comparaison.variation_totale(scenario)
@@ -55,57 +68,45 @@ def test_la_grille_figee_est_celle_que_le_modele_calcule(grille):
                     == comparaison.carriere_de(scenario).annee_liquidation), (cle, scenario)
 
 
-def test_les_cas_figes_sont_ceux_du_modele(contexte):
-    figee = AGREGATS.cas_types
+def test_les_cas_figes_sont_ceux_du_modele(table, contexte):
+    figee = table.cas_types
     assert [cas.code for cas in figee.cas] == [cas.code for cas in CAS_TYPES]
     simulateur = contexte.simulateur()
     for cas in CAS_TYPES:
         fige = figee.cas_type(cas.code)
-        assert (fige.libelle, fige.commentaire, fige.caisses) == (
-            cas.libelle, cas.commentaire, cas.caisses)
+        assert (fige.libelle, fige.commentaire, tuple(fige.caisses)) == (
+            cas.libelle, cas.commentaire, tuple(cas.caisses))
         for generation in GENERATIONS:
             assert fige.age_liquidation(generation) == cas.age_liquidation_pour(
                 simulateur, generation), (cas.code, generation)
 
 
-def test_la_table_ne_rend_pas_ce_qu_elle_ne_porte_pas():
+def test_la_table_ne_rend_pas_ce_qu_elle_ne_porte_pas(table):
     """Un zéro à la place d'une lecture absente tromperait la page sans bruit."""
-    case = next(iter(AGREGATS.cas_types.resultats.values()))
-    with pytest.raises(KeyError, match="absent de la table figée"):
+    case = next(iter(table.cas_types.resultats.values()))
+    with pytest.raises(ErreurSite, match="absent de la table figée"):
         case.variation_totale("notionnel_prospectif")
-    with pytest.raises(KeyError, match="absent de la table figée"):
-        AGREGATS.cas_types.cas_type("inconnu")
+    with pytest.raises(ErreurSite, match="absent de la table figée"):
+        table.cas_types.cas_type("inconnu")
 
 
-@sans_node
-def test_les_deux_lecteurs_lisent_la_meme_grille():
-    js = site().contexte.cas_types()
-    figee = AGREGATS.cas_types
-    assert tuple(js.generations) == figee.generations
-    # Les tables du portage se lisent, d'ici, en dictionnaires.
-    assert len(js.echecs) == len(figee.echecs)
-    assert len(js.resultats) == len(figee.resultats)
-    for (code, generation), case in figee.resultats.items():
-        lue = js.resultats[f"{code}|{generation}"]
-        assert lue.carriere.annee_liquidation == case.carriere.annee_liquidation
-        for scenario in COMPARES:
-            assert lue.variation_totale(scenario) == case.variation_totale(scenario)
-            assert (lue.carriere_de(scenario).annee_liquidation
-                    == case.carriere_de(scenario).annee_liquidation)
-    for cas in figee.cas:
-        lu = js.cas_type(cas.code)
-        assert (lu.libelle, lu.commentaire) == (cas.libelle, cas.commentaire)
-        assert [lu.age_liquidation(generation) for generation in figee.generations] == [
-            cas.age_liquidation(generation) for generation in figee.generations]
+def test_le_site_lit_la_table_figee():
+    """Le paquet que le site charge porte la table telle que la fabrique l'a
+    écrite : les pages lisent ce que ces tests confrontent au modèle."""
+    paquet = json.loads((RACINE_DONNEES.parent / "moteur" / "donnees.json").read_text(
+        encoding="utf-8"))
+    assert paquet["agregats"] == json.loads(
+        (RACINE_DONNEES / "derive" / "agregats.json").read_text(encoding="utf-8"))
 
 
 # -- les avantages non contributifs --------------------------------------------
 
 
-def test_les_avantages_figes_sont_ceux_que_le_modele_calcule(contexte):
+def test_les_avantages_figes_sont_ceux_que_le_modele_calcule(table, contexte):
     modele = contexte.avantages()
-    fige = AGREGATS.avantages
-    assert (fige.lignes, fige.lignes_modele) == (modele.lignes, modele.lignes_modele)
+    fige = table.avantages
+    assert (tuple(fige.lignes), tuple(fige.lignes_modele)) == (
+        tuple(modele.lignes), tuple(modele.lignes_modele))
     assert (fige.refus, fige.ponderation) == (modele.refus, modele.ponderation)
     assert [annee.annee for annee in fige.annees] == [annee.annee for annee in modele.annees]
     for figee, calculee in zip(fige.annees, modele.annees):
@@ -117,7 +118,7 @@ def test_les_avantages_figes_sont_ceux_que_le_modele_calcule(contexte):
     assert fige.derniere.annee == modele.derniere.annee
 
 
-def test_la_nomenclature_figee_est_celle_du_modele():
+def test_la_nomenclature_figee_est_celle_du_modele(table):
     """Ce que la page Droits non cotisés lit de la nomenclature du modèle, et
     qu'elle tenait du portage du coût : les lignes publiées, les avantages
     mesurés par retrait, les motifs d'un départ anticipé, dans leur ordre."""
@@ -125,33 +126,20 @@ def test_la_nomenclature_figee_est_celle_du_modele():
         LIBELLES_MOTIFS, LIGNES_LUES, MOTIFS, NEUTRALISATIONS,
     )
 
-    fige = AGREGATS.avantages
-    assert fige.lignes_lues == LIGNES_LUES
-    assert fige.neutralisations == tuple(n.code for n in NEUTRALISATIONS)
-    assert fige.motifs == MOTIFS
+    fige = table.avantages
+    assert tuple(fige.lignes_lues) == LIGNES_LUES
+    assert tuple(fige.neutralisations) == tuple(n.code for n in NEUTRALISATIONS)
+    assert tuple(fige.motifs) == MOTIFS
     assert fige.libelles_motifs == LIBELLES_MOTIFS
-
-
-@sans_node
-def test_les_deux_lecteurs_lisent_les_memes_avantages():
-    js = site().contexte.avantages()
-    fige = AGREGATS.avantages
-    assert (tuple(js.lignes), tuple(js.lignes_modele)) == (fige.lignes, fige.lignes_modele)
-    assert dict(js.refus) == fige.refus
-    assert [annee.annee for annee in js.annees] == [annee.annee for annee in fige.annees]
-    derniere = js.derniere
-    assert dict(derniere.lignes) == fige.derniere.lignes
-    assert (derniere.gratuit, derniere.gratuit_modele, derniere.anticipee) == (
-        fige.derniere.gratuit, fige.derniere.gratuit_modele, fige.derniere.anticipee)
 
 
 # -- le classement de l'emploi --------------------------------------------------
 
 
-def test_les_departs_compares_sont_ceux_que_le_modele_simule(contexte):
+def test_les_departs_compares_sont_ceux_que_le_modele_simule(table, contexte):
     """Les deux départs que Droits non cotisés compare, tels que la page les
     choisit (``CLASSEMENT_COMPARE``)."""
-    choisis = AGREGATS.classement
+    choisis = table.classement
     assert dict(module("pages").CLASSEMENT_COMPARE) == {
         "cas": choisis.cas, "age": choisis.age, "declassement": choisis.declassement,
         "generations": list(choisis.generations)}
@@ -164,16 +152,6 @@ def test_les_departs_compares_sont_ceux_que_le_modele_simule(contexte):
                 simulateur, cas, generation, choisis.age, affiliation)).actuel
             assert (depart.pension_annuelle, depart.trimestres_requis) == (
                 actuel.pension_annuelle, actuel.trimestres_requis), (generation, affiliation)
-
-
-@sans_node
-def test_les_deux_lecteurs_lisent_les_memes_departs():
-    js = site().contexte.agregats().classement
-    fige = AGREGATS.classement
-    assert list(js.generations) == list(fige.generations)
-    for generation in fige.generations:
-        assert [(d.pension_annuelle, d.trimestres_requis) for d in js.departs(generation)] == [
-            (d.pension_annuelle, d.trimestres_requis) for d in fige.departs(generation)]
 
 
 # -- le coût agrégé ------------------------------------------------------------
@@ -200,8 +178,8 @@ def _memes_champs(fige, calcule, champs, ou):
             assert getattr(fige, champ) == getattr(calcule, champ), (ou, champ)
 
 
-def test_le_solde_fige_est_celui_que_le_modele_calcule(cout, montres, bilan):
-    fige = AGREGATS.cout.solde
+def test_le_solde_fige_est_celui_que_le_modele_calcule(table, cout, montres, bilan):
+    fige = table.cout.solde
     solde = cout.solde
     assert [ligne.annee for ligne in fige.annees] == [ligne.annee for ligne in solde.annees]
     assert (fige.premiere_annee_projetee, fige.derniere_annee_observee) == (
@@ -220,7 +198,7 @@ def test_le_solde_fige_est_celui_que_le_modele_calcule(cout, montres, bilan):
         for debut in (solde.premiere_annee, solde.premiere_annee_projetee, 2040):
             assert fige.solde_moyen(scenario, debut, solde.derniere_annee) == (
                 solde.solde_moyen(scenario, debut, solde.derniere_annee))
-    derive = AGREGATS.cout.solde_derive
+    derive = table.cout.solde_derive
     for figee, calculee in zip(derive.annees, cout.solde_derive.annees, strict=True):
         assert figee.coefficient("notionnel_liberal") == calculee.coefficient(
             "notionnel_liberal")
@@ -228,27 +206,27 @@ def test_le_solde_fige_est_celui_que_le_modele_calcule(cout, montres, bilan):
         cout.solde_derive.solde_moyen("notionnel_liberal", 2026, 2070))
 
 
-def test_la_table_porte_le_taux_effectif_et_la_depense_nette(cout, montres):
+def test_la_table_porte_le_taux_effectif_et_la_depense_nette(table, cout, montres):
     """Chaque année du bilan figé porte le taux que les prélèvements sociaux
     prennent à la masse des pensions, l'année publiée qui le donne, et la
     dépense nette de chaque système montré : ce que la page Coût mettra à côté
     de la brute (action 138, étape 3)."""
-    for figee, calculee in zip(AGREGATS.cout.solde.annees, cout.solde.annees, strict=True):
+    for figee, calculee in zip(table.cout.solde.annees, cout.solde.annees, strict=True):
         assert (figee.taux_effectif, figee.annee_taux_effectif) == (
             calculee.taux_effectif, calculee.annee_taux_effectif), figee.annee
         for scenario in montres:
             assert figee.depense_nette(scenario) == calculee.depense_nette(scenario), (
                 figee.annee, scenario)
-    assert AGREGATS.cout.solde.annee(2070).annee_taux_effectif == 2022
+    assert table.cout.solde.annee(2070).annee_taux_effectif == 2022
 
 
-def test_le_passe_et_l_avenir_figes_sont_ceux_que_le_modele_calcule(cout, montres):
+def test_le_passe_et_l_avenir_figes_sont_ceux_que_le_modele_calcule(table, cout, montres):
     from retraite_notionnelle.cout import COMPOSANTE_GARANTIE, masse_du_scenario
 
-    fige = AGREGATS.cout
+    fige = table.cout
     avec_garantie = (*montres, COMPOSANTE_GARANTIE)
-    assert (fige.premiere_annee, fige.annee_euros, fige.generations) == (
-        cout.premiere_annee, cout.annee_euros, cout.generations)
+    assert (fige.premiere_annee, fige.annee_euros, tuple(fige.generations)) == (
+        cout.premiere_annee, cout.annee_euros, tuple(cout.generations))
     # Par cas type de la page : l'agent sédentaire de la CNRACL compte avec
     # l'actif dont il porte le code.
     from retraite_notionnelle.donnees.agregats import _par_cas_type_affiche
@@ -256,7 +234,7 @@ def test_le_passe_et_l_avenir_figes_sont_ceux_que_le_modele_calcule(cout, montre
     assert (fige.poids, fige.poids_cotisants) == (
         _par_cas_type_affiche(cout.poids), _par_cas_type_affiche(cout.poids_cotisants))
     assert set(fige.poids) == {cas.code for cas in CAS_TYPES}
-    assert fige.confondus_avec_actuel() == cout.confondus_avec_actuel()
+    assert tuple(fige.confondus_avec_actuel()) == tuple(cout.confondus_avec_actuel())
     assert fige.cumul_observe() == cout.cumul_observe()
     for figee, calculee in zip(fige.annees, cout.annees, strict=True):
         _memes_champs(figee, calculee, agregats.CHAMPS_COUT_ANNUEL, figee.annee)
@@ -278,7 +256,9 @@ def test_le_passe_et_l_avenir_figes_sont_ceux_que_le_modele_calcule(cout, montre
     for scenario in montres[1:]:
         assert fige.avenir.ecart_cumule(scenario) == avenir.ecart_cumule(scenario)
     depuis = avenir.premiere_annee_projetee
-    assert fige.avenir.decomposition(depuis) == avenir.decomposition(depuis)
+    assert {annee: tuple(valeurs) for annee, valeurs in fige.avenir.decomposition(
+        depuis).items()} == {annee: tuple(valeurs) for annee, valeurs in avenir.decomposition(
+            depuis).items()}
     for figee, calculee in zip(fige.avenir.annees, avenir.annees, strict=True):
         _memes_champs(figee, calculee, agregats.CHAMPS_AVENIR_ANNUEL, figee.annee)
         for scenario in avec_garantie:
@@ -298,20 +278,22 @@ def test_le_passe_et_l_avenir_figes_sont_ceux_que_le_modele_calcule(cout, montre
             assert figee.pilier.niveaux(1234.5) == calculee.pilier.niveaux(1234.5)
 
 
-def test_la_dette_figee_est_celle_que_le_modele_calcule(contexte, cout, montres):
+def test_la_dette_figee_est_celle_que_le_modele_calcule(table, contexte, cout, montres):
     from retraite_notionnelle.cout import calculer_dette
 
-    fige = AGREGATS.cout.dette
+    fige = table.cout.dette
     dette = cout.dette
     assert [ligne.annee for ligne in fige.annees] == [ligne.annee for ligne in dette.annees]
+    # La table écrit ses années en clés de texte, que le modèle tient en entiers.
+    observee = {int(annee): valeur for annee, valeur in fige.dette_publique_observee.items()}
     assert (fige.annee_depart, fige.date_courbe, fige.derniere_annee_cotee,
-            fige.dette_publique_observee, fige.dette_publique_depart) == (
+            observee, fige.dette_publique_depart) == (
         dette.annee_depart, dette.date_courbe, dette.derniere_annee_cotee,
         dette.dette_publique_observee, dette.dette_publique_depart)
     for scenario in montres:
         assert fige.horizon(scenario) == dette.horizon(scenario)
         assert fige.cumul_soldes(scenario) == dette.cumul_soldes(scenario)
-        assert AGREGATS.cout.dette_derive.horizon(scenario) == cout.dette_derive.horizon(
+        assert table.cout.dette_derive.horizon(scenario) == cout.dette_derive.horizon(
             scenario)
         for ligne in dette.annees:
             assert fige.stock(scenario, ligne.annee) == dette.stock(scenario, ligne.annee)
@@ -323,70 +305,34 @@ def test_la_dette_figee_est_celle_que_le_modele_calcule(contexte, cout, montres)
         decalee = calculer_dette(cout.solde, cout.avenir,
                                  contexte.simulateur().courbe_taux, decalage)
         for scenario in montres:
-            assert AGREGATS.cout.dette_decalee(decalage).horizon(scenario) == (
+            assert table.cout.dette_decalee(decalage).horizon(scenario) == (
                 decalee.horizon(scenario))
 
 
-def test_le_taux_de_tva_requis_est_celui_du_modele(contexte, cout):
+def test_le_taux_de_tva_requis_est_celui_du_modele(table, contexte, cout):
     """Il ne s'écrit que si la TVA est réformée, ce que la référence ne fait
     pas : la table porte alors (0, 0), comme le modèle."""
     from retraite_notionnelle.cout import taux_tva_requis
     from retraite_notionnelle.donnees.tva import AssietteTva
 
-    assert AGREGATS.cout.taux_tva_requis() == taux_tva_requis(
-        cout.solde, contexte.base, AssietteTva(RACINE_DONNEES))
+    assert tuple(table.cout.taux_tva_requis()) == tuple(taux_tva_requis(
+        cout.solde, contexte.base, AssietteTva(RACINE_DONNEES)))
 
 
-@sans_node
 def test_la_cle_de_la_garantie_est_celle_du_modele():
     from retraite_notionnelle.cout import COMPOSANTE_GARANTIE
 
     assert module("agregats").COMPOSANTE_GARANTIE == COMPOSANTE_GARANTIE
 
 
-def test_le_cout_fige_refuse_ce_qu_il_ne_porte_pas():
-    ligne = AGREGATS.cout.solde.annee(2030)
-    with pytest.raises(KeyError, match="absent de la table figée"):
+def test_le_cout_fige_refuse_ce_qu_il_ne_porte_pas(table):
+    ligne = table.cout.solde.annee(2030)
+    with pytest.raises(ErreurSite, match="absent de la table figée"):
         ligne.postes_ressources("notionnel_retroactif")
-    with pytest.raises(KeyError, match="absent de la table figée"):
-        AGREGATS.cout.dette_decalee(0.02)
-    with pytest.raises(KeyError, match="absent de la table figée"):
-        AGREGATS.cout.avenir.decomposition(1990)
-
-
-@sans_node
-def test_les_deux_lecteurs_lisent_le_meme_cout(montres, bilan):
-    """Le lecteur du site rend, sous les noms du portage, ce que rend celui du
-    Python : chaque accesseur d'une année sur dix, chaque système."""
-    js = site().contexte.cout()
-    fige = AGREGATS.cout
-    assert list(js.generations) == list(fige.generations)
-    assert js.anneeEuros == fige.annee_euros
-    for scenario in montres:
-        assert js.cumul(scenario) == fige.cumul(scenario)
-        assert js.dette.horizon(scenario) == fige.dette.horizon(scenario)
-        assert js.solde.soldeMoyen(scenario, 2026, 2070) == fige.solde.solde_moyen(
-            scenario, 2026, 2070)
-    for annee in range(fige.solde.premiere_annee, fige.solde.derniere_annee + 1, 10):
-        lue, figee = js.solde.annee(annee), fige.solde.annee(annee)
-        for scenario in montres:
-            assert (lue.coefficient(scenario), lue.depense(scenario), lue.solde(scenario),
-                    lue.ressources_de(scenario), lue.depense_nette(scenario)) == (
-                figee.coefficient(scenario), figee.depense(scenario),
-                figee.solde(scenario), figee.ressources_de(scenario),
-                figee.depense_nette(scenario))
-        for scenario in bilan:
-            assert dict(lue.postes_ressources(scenario)) == figee.postes_ressources(scenario)
-        assert lue.facteur_assiette == figee.facteur_assiette
-        assert (lue.taux_effectif, lue.annee_taux_effectif) == (
-            figee.taux_effectif, figee.annee_taux_effectif)
-    for annee in range(fige.avenir.premiere_annee, fige.avenir.derniere_annee + 1, 10):
-        lue, figee = js.avenir.annee(annee), fige.avenir.annee(annee)
-        for scenario in montres:
-            assert lue.part_pib(scenario) == figee.part_pib(scenario)
-        assert lue.reprises_constants() == figee.reprises_constants()
-        if figee.pilier is not None:
-            assert dict(lue.pilier.niveaux(1000.0)) == figee.pilier.niveaux(1000.0)
+    with pytest.raises(ErreurSite, match="absent de la table figée"):
+        table.cout.dette_decalee(0.02)
+    with pytest.raises(ErreurSite, match="absent de la table figée"):
+        table.cout.avenir.decomposition(1990)
 
 
 # -- le coût sous les variantes de population de l'INSEE ------------------------
@@ -407,7 +353,7 @@ COMPOSANTES = ("esperance_vie", "fecondite", "migrations")
 
 
 @pytest.mark.parametrize("composante", COMPOSANTES)
-def test_le_cout_sous_chaque_variante_est_celui_du_modele(contexte, montres, composante):
+def test_le_cout_sous_chaque_variante_est_celui_du_modele(table, contexte, montres, composante):
     """La table porte, sous chacune des trois hypothèses de l'INSEE d'une
     composante (action 138, étape 7), ce que le modèle calcule sous elle : la
     dépense du bilan aux années que la page cite, le solde à l'horizon, le
@@ -418,9 +364,9 @@ def test_le_cout_sous_chaque_variante_est_celui_du_modele(contexte, montres, com
     PIB sous la fécondité et les migrations. Ce qui en reste, moins d'un
     dixième de point, est le stock liquidé avant la bascule, qui garde les
     prix."""
-    figee = getattr(AGREGATS, composante)
-    assert figee.hypotheses == ("basse", "centrale", "haute")
-    assert figee.annees == tuple(module("pages").ANNEES_ESPERANCE_VIE)
+    figee = getattr(table, composante)
+    assert tuple(figee.hypotheses) == ("basse", "centrale", "haute")
+    assert tuple(figee.annees) == tuple(module("pages").ANNEES_ESPERANCE_VIE)
     for hypothese in figee.hypotheses:
         solde = _sous_la_variante(contexte, composante, hypothese).solde
         assert (figee.premiere_annee, figee.derniere_annee) == (
@@ -442,43 +388,23 @@ def test_le_cout_sous_chaque_variante_est_celui_du_modele(contexte, montres, com
         assert actuel == sorted(actuel, reverse=True)
         assert liberal == sorted(liberal, reverse=True)
     assert max(liberal) - min(liberal) < 0.001
-    with pytest.raises(KeyError, match="absent de la table figée"):
+    with pytest.raises(ErreurSite, match="absent de la table figée"):
         figee.solde("tres_haute", "actuel")
-    with pytest.raises(KeyError, match="absent de la table figée"):
+    with pytest.raises(ErreurSite, match="absent de la table figée"):
         figee.part_pib("haute", "actuel", 2051)
-
-
-@sans_node
-@pytest.mark.parametrize("composante", COMPOSANTES)
-def test_les_deux_lecteurs_lisent_les_memes_variantes(montres, composante):
-    js = getattr(site().contexte.agregats(),
-                 {"esperance_vie": "esperanceVie"}.get(composante, composante))
-    figee = getattr(AGREGATS, composante)
-    assert tuple(js.hypotheses) == figee.hypotheses
-    assert tuple(js.annees) == figee.annees
-    assert (js.premiereAnnee, js.derniereAnnee) == (figee.premiere_annee,
-                                                    figee.derniere_annee)
-    for hypothese in figee.hypotheses:
-        for scenario in montres:
-            assert js.solde(hypothese, scenario) == figee.solde(hypothese, scenario)
-            assert js.soldeMoyen(hypothese, scenario) == figee.solde_moyen(
-                hypothese, scenario)
-            for annee in figee.annees:
-                assert js.partPib(hypothese, scenario, annee) == figee.part_pib(
-                    hypothese, scenario, annee)
 
 
 # -- le bilan du compte, à la manière suédoise -----------------------------------
 
 
 @pytest.fixture(scope="module")
-def bilans(contexte, montres):
+def bilans(table, contexte, montres):
     from retraite_notionnelle.bilan_compte import bilans_gardes
 
-    return bilans_gardes(contexte, AGREGATS.bilan_compte.annee, montres)
+    return bilans_gardes(contexte, table.bilan_compte.annee, montres)
 
 
-def test_le_bilan_du_compte_fige_est_celui_que_le_modele_calcule(bilans, montres):
+def test_le_bilan_du_compte_fige_est_celui_que_le_modele_calcule(table, bilans, montres):
     """La table porte le bilan du compte de chaque système (action 138, étape
     19) à la dernière année dont le COR publie les réserves, et leur rendement
     comptable cette année-là : chaque champ de ``BilanCompte`` et chaque
@@ -491,7 +417,7 @@ def test_le_bilan_du_compte_fige_est_celui_que_le_modele_calcule(bilans, montres
 
     assert {champ.name for champ in fields(BilanCompte)} - {"annee", "scenario"} <= set(
         agregats.CHAMPS_BILAN_COMPTE)
-    fige = AGREGATS.bilan_compte
+    fige = table.bilan_compte
     reserves = Reserves.charger(RACINE_DONNEES)
     assert fige.annee == reserves.derniere_annee()
     assert fige.rendement == reserves.rendement(fige.annee)
@@ -501,19 +427,8 @@ def test_le_bilan_du_compte_fige_est_celui_que_le_modele_calcule(bilans, montres
         for champ in agregats.CHAMPS_BILAN_COMPTE:
             assert getattr(systeme, champ) == getattr(bilans[scenario], champ), (
                 scenario, champ)
-    with pytest.raises(KeyError, match="absent de la table figée"):
+    with pytest.raises(ErreurSite, match="absent de la table figée"):
         fige.systeme("notionnel_bascule")
-
-
-@sans_node
-def test_les_deux_lecteurs_lisent_le_meme_bilan_du_compte(montres):
-    js = site().contexte.agregats().bilanCompte
-    fige = AGREGATS.bilan_compte
-    assert (js.annee, js.rendement) == (fige.annee, fige.rendement)
-    for scenario in montres:
-        lu, systeme = js.systeme(scenario), fige.systeme(scenario)
-        for champ in agregats.CHAMPS_BILAN_COMPTE:
-            assert getattr(lu, champ) == getattr(systeme, champ), (scenario, champ)
 
 
 # -- les leviers de l'équilibre, à la manière du COR ------------------------------
@@ -530,7 +445,7 @@ def leviers(contexte, montres):
             for scenario in montres}
 
 
-def test_les_leviers_figes_sont_ceux_que_le_modele_calcule(leviers, montres):
+def test_les_leviers_figes_sont_ceux_que_le_modele_calcule(table, leviers, montres):
     """La table porte les trois leviers qui équilibreraient chaque système
     (action 138, étape 3) — la pension, le taux de prélèvement, l'âge —,
     chaque année de 2025 à 2070, et ses écarts sur les horizons du COR, le
@@ -552,13 +467,15 @@ def test_les_leviers_figes_sont_ceux_que_le_modele_calcule(leviers, montres):
         agregats.CHAMPS_LEVIERS)
     assert {champ.name for champ in fields(EcartsSurHorizon)} - {"debut", "fin"} == set(
         agregats.CHAMPS_ECARTS_HORIZON)
-    fige = AGREGATS.leviers
+    fige = table.leviers
+    annees, annees_visees = tuple(fige.annees), tuple(fige.annees_visees)
+    soldes_vises = tuple(fige.soldes_vises)
     assert fige.debut == DEBUT_AJUSTEMENT
-    assert fige.horizons == HORIZONS_COR
-    assert fige.recul == (RECUL_MINIMAL, RECUL_MAXIMAL)
+    assert tuple(fige.horizons) == HORIZONS_COR
+    assert tuple(fige.recul) == (RECUL_MINIMAL, RECUL_MAXIMAL)
     assert set(leviers) == set(montres)
     for scenario in montres:
-        assert fige.annees == tuple(sorted(leviers[scenario].annuels)), scenario
+        assert annees == tuple(sorted(leviers[scenario].annuels)), scenario
         for annee, ligne in leviers[scenario].annuels.items():
             lu = fige.annee(scenario, annee)
             for champ in agregats.CHAMPS_LEVIERS:
@@ -567,54 +484,29 @@ def test_les_leviers_figes_sont_ceux_que_le_modele_calcule(leviers, montres):
             lu = fige.horizon(scenario, fin)
             for champ in agregats.CHAMPS_ECARTS_HORIZON:
                 assert getattr(lu, champ) == getattr(ecart, champ), (scenario, fin, champ)
-        assert tuple(leviers[scenario].vises) == fige.soldes_vises, scenario
+        assert tuple(leviers[scenario].vises) == soldes_vises, scenario
         for solde, annuels in leviers[scenario].vises.items():
-            assert tuple(sorted(annuels)) == fige.annees_visees, (scenario, solde)
+            assert tuple(sorted(annuels)) == annees_visees, (scenario, solde)
             for annee, ligne in annuels.items():
                 lu = fige.vise(scenario, solde, annee)
                 for champ in agregats.CHAMPS_LEVIERS:
                     assert getattr(lu, champ) == getattr(ligne, champ), (
                         scenario, solde, annee, champ)
-        for annee in fige.annees_visees:
+        for annee in annees_visees:
             equilibre, vise = fige.annee(scenario, annee), fige.vise(scenario, 0.0, annee)
             for champ in agregats.CHAMPS_LEVIERS:
                 assert getattr(vise, champ) == getattr(equilibre, champ), (scenario, annee, champ)
     pages = module("pages")
-    assert fige.soldes_vises == tuple(pages.SOLDES_VISES)
-    assert fige.annees_visees == tuple(pages.ANNEES_LEVIERS)
-    assert fige.annee("notionnel_retroactif", fige.annees[-1]).age is None
-    with pytest.raises(KeyError, match="absent de la table figée"):
-        fige.annee("notionnel_bascule", fige.annees[-1])
-    with pytest.raises(KeyError, match="absent de la table figée"):
-        fige.annee("actuel", fige.annees[-1] + 1)
-    with pytest.raises(KeyError, match="absent de la table figée"):
+    assert soldes_vises == tuple(pages.SOLDES_VISES)
+    assert annees_visees == tuple(pages.ANNEES_LEVIERS)
+    assert fige.annee("notionnel_retroactif", annees[-1]).age is None
+    with pytest.raises(ErreurSite, match="absent de la table figée"):
+        fige.annee("notionnel_bascule", annees[-1])
+    with pytest.raises(ErreurSite, match="absent de la table figée"):
+        fige.annee("actuel", annees[-1] + 1)
+    with pytest.raises(ErreurSite, match="absent de la table figée"):
         fige.horizon("actuel", 2040)
-    with pytest.raises(KeyError, match="absent de la table figée"):
-        fige.vise("actuel", 0.0025, fige.annees_visees[-1])
-    with pytest.raises(KeyError, match="absent de la table figée"):
-        fige.vise("actuel", 0.0, fige.annees_visees[-1] + 1)
-
-
-@sans_node
-def test_les_deux_lecteurs_lisent_les_memes_leviers(montres):
-    js = site().contexte.agregats().leviers
-    fige = AGREGATS.leviers
-    assert (js.debut, tuple(js.annees), tuple(js.horizons), tuple(js.recul)) == (
-        fige.debut, fige.annees, fige.horizons, fige.recul)
-    assert (tuple(js.soldesVises), tuple(js.anneesVisees)) == (
-        fige.soldes_vises, fige.annees_visees)
-    for scenario in montres:
-        for annee in fige.annees:
-            lu, ligne = js.annee(scenario, annee), fige.annee(scenario, annee)
-            for champ in agregats.CHAMPS_LEVIERS:
-                assert getattr(lu, champ) == getattr(ligne, champ), (scenario, annee, champ)
-        for fin in fige.horizons:
-            lu, ecart = js.horizon(scenario, fin), fige.horizon(scenario, fin)
-            for champ in agregats.CHAMPS_ECARTS_HORIZON:
-                assert getattr(lu, champ) == getattr(ecart, champ), (scenario, fin, champ)
-        for solde in fige.soldes_vises:
-            for annee in fige.annees_visees:
-                lu, ligne = js.vise(scenario, solde, annee), fige.vise(scenario, solde, annee)
-                for champ in agregats.CHAMPS_LEVIERS:
-                    assert getattr(lu, champ) == getattr(ligne, champ), (
-                        scenario, solde, annee, champ)
+    with pytest.raises(ErreurSite, match="absent de la table figée"):
+        fige.vise("actuel", 0.0025, annees_visees[-1])
+    with pytest.raises(ErreurSite, match="absent de la table figée"):
+        fige.vise("actuel", 0.0, annees_visees[-1] + 1)

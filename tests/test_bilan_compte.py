@@ -15,6 +15,7 @@ from retraite_notionnelle.bilan_compte import (
 from retraite_notionnelle.castypes import CAS_TYPES
 from retraite_notionnelle.config import RACINE_DONNEES
 from retraite_notionnelle.donnees.population import Population
+from retraite_notionnelle.web.site import disponible, site
 
 
 def test_la_duree_de_rotation_d_un_systeme_stationnaire():
@@ -120,6 +121,7 @@ def test_la_grille_donne_une_duree_de_rotation_a_la_suedoise():
         (actuel.actif_cotisation + actuel.reserves) / 4.0)
 
 
+@pytest.mark.skipif(not disponible(), reason="node absent : le portage ne se lit pas")
 def test_le_bilan_se_pese_sur_la_grille_du_cout(monkeypatch):
     """Le bilan lit le coût de la page Coût : ses cotisations, sa dépense, et
     l'engagement acquis qui fait sa dette, tous pesés sur la grille du coût
@@ -127,11 +129,11 @@ def test_le_bilan_se_pese_sur_la_grille_du_cout(monkeypatch):
     pèsent leurs départs depuis le 16 octobre 2026 (étape 3). Ses profils par
     âge se pèsent donc sur elle aussi, et non sur les treize carrières de la
     page Carrières types. La grille simulée est remplacée par une grille vide,
-    le coût par sa table figée : le test ne regarde que la grille demandée."""
+    le coût par sa table figée, que lit le portage (note de décision 0005) :
+    le test ne regarde que la grille demandée."""
     from retraite_notionnelle import cout
     from retraite_notionnelle.castypes import GRILLE_DU_COUT
     from retraite_notionnelle.contexte import Contexte
-    from retraite_notionnelle.donnees.agregats import charger_agregats
 
     demandees = []
 
@@ -141,7 +143,7 @@ def test_le_bilan_se_pese_sur_la_grille_du_cout(monkeypatch):
 
     class SurLaTable(Contexte):
         def cout(self):
-            return charger_agregats(RACINE_DONNEES).cout
+            return site().contexte.cout()
 
     monkeypatch.setattr(cout, "_pensionnes", pensionnes)
     bilans = calculer_bilans(SurLaTable(), 2025, ["actuel"], engagement=lambda cle: 4.0)

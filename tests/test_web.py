@@ -37,7 +37,7 @@ from retraite_notionnelle.donnees.chargement import (
 )
 from retraite_notionnelle.config import Parametres
 from retraite_notionnelle.remuneration import charger_prelevements
-from retraite_notionnelle.web.site import disponible, module, rendre, site
+from retraite_notionnelle.web.site import Donnee, disponible, module, rendre, site
 from outils_pont import RefusDuPortage, Saisies, saisie_du_portage
 from outils_web import (
     FEUILLE_DE_STYLE, SIMULATION_TEMOIN, TITRES, _hors_depliants, _sans_blocs, contexte,
@@ -4486,10 +4486,7 @@ def test_la_page_cout_montre_le_bilan_du_compte_de_chaque_systeme():
     taux de cotisation d'équilibre, tels que la table figée les porte, à la
     dernière année dont le COR publie les réserves ; et ces réserves, et ce
     qu'elles ont rapporté."""
-    from retraite_notionnelle.config import RACINE_DONNEES
-    from retraite_notionnelle.donnees.agregats import charger_agregats
-
-    bilan = charger_agregats(RACINE_DONNEES).bilan_compte
+    bilan = _table_figee().bilan_compte
     corps = rendre("/cout", {})[1]
     section = re.search(r'<details class="section" id="cout-bilan-compte">.*?</details>',
                         corps, re.S)
@@ -4502,7 +4499,7 @@ def test_la_page_cout_montre_le_bilan_du_compte_de_chaque_systeme():
                         tableau.group(0), re.S)
     assert [numero for numero, _ in lignes] == ["1", "2", "3", "4"]
     for (scenario, _), (_, cellules) in zip(pages.SCENARIOS_COMPARES, lignes):
-        systeme = bilan.systeme(scenario)
+        systeme = bilan.systemes[scenario]
         valeurs = re.findall(r'<td class="nombre">(.*?)</td>', cellules)
         assert len(valeurs) == 5, scenario
         assert valeurs[0] == f"{g.nombre(systeme.duree_rotation, 1)} ans", scenario
@@ -4515,9 +4512,20 @@ def test_la_page_cout_montre_le_bilan_du_compte_de_chaque_systeme():
     # Les retours à la ligne de la source, et eux seuls : l'espace fine du
     # pourcentage est un blanc pour ``\s``.
     texte = re.sub(r"[ \n]+", " ", section.group(0))
-    actuel = bilan.systeme("actuel")
+    actuel = bilan.systemes["actuel"]
     assert f"{g.pourcentage(actuel.reserves, decimales=1)} du PIB" in texte
     assert f"rapporté {g.pourcentage(bilan.rendement, decimales=1)} en {bilan.annee}" in texte
+
+
+def _table_figee() -> Donnee:
+    """La table des agrégats telle que la fabrique l'écrit
+    (``data/derive/agregats.json``), ses objets lus aussi en attributs :
+    l'attendu des pages qui agrègent, que le lecteur du portage dont elles se
+    servent ne fournit pas (note de décision 0005)."""
+    from retraite_notionnelle.config import RACINE_DONNEES
+
+    return json.loads((RACINE_DONNEES / "derive" / "agregats.json").read_text(encoding="utf-8"),
+                      object_hook=Donnee)
 
 
 def _ecart_signe(valeur: float, decimales: int) -> str:
@@ -4537,10 +4545,7 @@ def test_la_page_cout_donne_les_trois_leviers_de_l_equilibre():
     l'année, et la page dit ces bornes ; et l'ajustement immédiat qui
     équilibrerait en moyenne jusqu'à l'horizon, le « tax gap » du COR, pour
     le système actuel et pour la proposition."""
-    from retraite_notionnelle.config import RACINE_DONNEES
-    from retraite_notionnelle.donnees.agregats import charger_agregats
-
-    leviers = charger_agregats(RACINE_DONNEES).leviers
+    leviers = _table_figee().leviers
     fin = leviers.annees[-1]
     assert pages.ANNEES_LEVIERS[-1] == fin
     corps = rendre("/cout", {})[1]
@@ -4561,14 +4566,14 @@ def test_la_page_cout_donne_les_trois_leviers_de_l_equilibre():
     for (scenario, _), (_, cellules) in zip(pages.SCENARIOS_COMPARES, lignes):
         attendues = []
         for annee in pages.ANNEES_LEVIERS:
-            ligne = leviers.annee(scenario, annee)
+            ligne = leviers.systemes[scenario].annuels[str(annee)]
             attendues += _cellules_des_leviers(ligne)
             vides += ligne.age is None
         assert re.findall(r'<td class="nombre">(.*?)</td>', cellules) == attendues, scenario
     # Les retours à la ligne de la source, et eux seuls : l'espace fine est un
     # blanc pour ``\s``.
     texte = re.sub(r"[ \n]+", " ", section.group(0))
-    actuel, proposition = (leviers.horizon(scenario, fin).tax_gap
+    actuel, proposition = (leviers.systemes[scenario].horizons[str(fin)].tax_gap
                            for scenario in ("actuel", "notionnel_liberal"))
     points = "point" + ("s" if abs(100 * actuel) >= 2 else "")
     assert (f"de {leviers.debut} à {fin}, le « tax gap » du COR, vaut "
@@ -4590,11 +4595,9 @@ def test_la_page_cout_resout_les_leviers_a_l_envers_pour_un_solde_vise():
     la table le fige — un déficit de 1 % du PIB, ici. Sans regard, ou pour un
     solde que la liste n'a pas, c'est l'équilibre. Les liens du sélecteur
     gardent l'année de la cascade, et ceux de la cascade le solde visé."""
-    from retraite_notionnelle.config import RACINE_DONNEES
-    from retraite_notionnelle.donnees.agregats import charger_agregats
-
-    leviers = charger_agregats(RACINE_DONNEES).leviers
-    assert leviers.soldes_vises == tuple(pages.SOLDES_VISES)
+    leviers = _table_figee().leviers
+    assert leviers.soldes_vises == list(pages.SOLDES_VISES)
+    rang_vise = leviers.soldes_vises.index(-0.01)
 
     def section(regards: dict) -> tuple[str, str]:
         corps = rendre("/cout", regards)[1]
@@ -4629,7 +4632,8 @@ def test_la_page_cout_resout_les_leviers_a_l_envers_pour_un_solde_vise():
     assert [numero for numero, _ in lignes] == ["1", "2", "3", "4"]
     for (scenario, _), (_, cellules) in zip(pages.SCENARIOS_COMPARES, lignes):
         attendues = [cellule for annee in pages.ANNEES_LEVIERS
-                     for cellule in _cellules_des_leviers(leviers.vise(scenario, -0.01, annee))]
+                     for cellule in _cellules_des_leviers(
+                         leviers.systemes[scenario].vises[rang_vise][str(annee)])]
         assert re.findall(r'<td class="nombre">(.*?)</td>', cellules) == attendues, scenario
     for regards in ({}, {"solde": "-0.7"}, {"solde": "un"}):
         equilibre, _ = section(regards)
