@@ -14,15 +14,15 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 | régime partiel | 4 354 564 | 11 % |
 | sections libérales, couverture mêlée | 424 386 | 1 % |
 
-*Modélisé ne veut pas dire exact* : les 154 règles approchées de la carte touchent aussi des régimes modélisés (section 2).
+*Modélisé ne veut pas dire exact* : les 155 règles approchées de la carte touchent aussi des régimes modélisés (section 2).
 
 **La carte des règles** (`data/reference/regles/`) : 257 fiches, dont 2 relations. La veille en est une vue (`python scripts/veille_droit.py`).
 
 | État | Fiches |
 |---|---|
 | conformes | 43 |
-| transcrites | 31 |
-| approchées | 154 |
+| transcrites | 30 |
+| approchées | 155 |
 | pas encore modélisées | 26 |
 | manquantes | 1 |
 | à vérifier | 2 |
@@ -34,15 +34,15 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 - Découpées en versions : **159 sur 257**, soit 617 versions, dont 103 supposées ; le partage des versions se contrôle sur chacune.
 - Réformes du calendrier : 126, dont 10 déclarées non appliquées.
 
-**La loi, rédaction par rédaction** (`data/reference/textes/`, § 6.6) : 16 310 rédactions d'articles, de 224 textes, lues le 2026-10-31 (index LEGI du dépôt : Freemium_legi_global_20250713-140000.tar.gz, incréments appliqués jusqu'au 20261030-214909). C'est le dénominateur de l'avancement : ce que les fiches ont lu, contre ce que la loi a écrit.
+**La loi, rédaction par rédaction** (`data/reference/textes/`, § 6.6) : 16 318 rédactions d'articles, de 224 textes, lues le 2026-10-31 (index LEGI du dépôt : Freemium_legi_global_20250713-140000.tar.gz, incréments appliqués jusqu'au 20261030-214909). C'est le dénominateur de l'avancement : ce que les fiches ont lu, contre ce que la loi a écrit.
 
 | Statut | Rédactions |
 |---|---|
 | rattachées à une version | 1 545 |
 | sans effet | 74 |
-| à rattacher | 580 |
-| à examiner | 4 665 |
-| sans statut | 9 446 |
+| à rattacher | 603 |
+| à examiner | 4 651 |
+| sans statut | 9 445 |
 
 **La personne** (§ 5) : une chronologie de faits datés, dans un réseau de personnes — aujourd'hui l'assuré, ses enfants et son conjoint —, que le relevé et le parcours déclarent (`src/retraite_notionnelle/chronologie.py`, et son jumeau). La carrière que le moteur liquide en est la vue. Ce que la saisie ne dit pas est présumé : 32 présomptions au vocabulaire, dont 3 posent leur fait dans la chronologie ; les autres s'appliquent dans le code, jusqu'à l'étape qui posera le leur.
 
@@ -205,6 +205,7 @@ Et 36 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
 | `cotisation_maladie_des_non_residents` | approchee | Tout retraité qui déclare résider hors de France : plus de CSG ni de CRDS ni de CASA |
 | `cotisation_maladie_pensions_complementaires` | approchee | Tout salarié ou contractuel dont la pension du système actuel comprend une complémentaire : sa pension nette baisse de 1 % de cette part, s… |
 | `cotisation_par_classes_liberales` | approchee | Les vétérinaires, les experts-comptables et commissaires aux comptes, et les affiliés de la Cipav jusqu'en 2022. |
+| `cotisation_vieillesse_independants` | approchee | Artisans, commerçants et libéraux non réglementés, depuis 2018 : sous le plafond, presque rien (17,75 % des deux côtés jusqu'en 2023, 0,12… |
 | `cps_polynesie_pension_des_salaries` | approchee | Les salariés de Polynésie française : leur pension de tranche A est simulée au bon âge et à la bonne durée, mais sur un salaire de référenc… |
 | `crpn_pension_des_navigants` | approchee | Les navigants de l'aéronautique civile : leur pension de la caisse est simulée sans la majoration temporaire de cinquante-cinq ans à l'âge… |
 | `csg_des_pensions_selon_le_revenu` | approchee | Tout retraité en mode net : un foyer d'une part sous 13 048 € de revenu fiscal n'est plus prélevé |
@@ -322,9 +323,9 @@ Et 36 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
 | `versement_unique_rci` | approchee | L'artisane de 2020 qui a déclaré 4 000 € : 15,83 points, servis 19,33 € par an |
 | `wallis_et_futuna_pension_des_salaries` | approchee | Les salariés de Wallis-et-Futuna : leur pension est simulée à 60 ans au barème jusqu'à trente ans, mais leur cotisation au taux total de la… |
 
-**Un état peut-être périmé.** Pour 25 des 154 règles approchées, l'effet raconte à l'imparfait l'erreur qui a été corrigée, sans dire ce qui reste. Le tableau ne peut pas savoir si elles sont encore approchées : leur fiche le dira quand elle mûrira, l'écart actuel dans ses approximations, le récit dans son historique.
+**Un état peut-être périmé.** Pour 25 des 155 règles approchées, l'effet raconte à l'imparfait l'erreur qui a été corrigée, sans dire ce qui reste. Le tableau ne peut pas savoir si elles sont encore approchées : leur fiche le dira quand elle mûrira, l'écart actuel dans ses approximations, le récit dans son historique.
 
-**Des approximations non déclarées.** 27 des 154 fiches approchées ne déclarent encore ses approximations, chacune avec son effet ou « non mesuré » : l'effet n'en est dit qu'en mots.
+**Des approximations non déclarées.** 27 des 155 fiches approchées ne déclarent encore ses approximations, chacune avec son effet ou « non mesuré » : l'effet n'en est dit qu'en mots.
 
 **Les exemples officiels que le modèle ne reproduit pas**, entrés en écart connu, avec la règle qui le déclare :
 
@@ -388,7 +389,7 @@ Et 36 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
   | `approximations` | 27 |
   | `regimes` | 1 |
 
-- **Les textes** : 580 rédactions à rattacher à une version de la fiche qui les cite, 4 665 à examiner, et 9 446 sans statut, que le cliquet tient à 9 446 au plus. Les textes qui en ont le plus : `css` 4 877, `decret_46_2769` 938, `rural` 852, `cpcmr` 568, `decret_90_1215` 321 (`python scripts/textes.py`).
+- **Les textes** : 603 rédactions à rattacher à une version de la fiche qui les cite, 4 651 à examiner, et 9 445 sans statut, que le cliquet tient à 9 445 au plus. Les textes qui en ont le plus : `css` 4 876, `decret_46_2769` 938, `rural` 852, `cpcmr` 568, `decret_90_1215` 321 (`python scripts/textes.py`).
 - **Les relectures prévues les plus proches** : 2026-11-30 (`majoration_dix_pour_cent`) ; 2026-12-31 (`age_legal_par_generation`) ; 2026-12-31 (`agirc_arrco_valeur_achat`) ; 2026-12-31 (`carriere_longue`) ; 2026-12-31 (`certification_legi_perimee`).
 - **Les régimes hors champ** : 23, chacun avec sa raison dans l'inventaire.
 
