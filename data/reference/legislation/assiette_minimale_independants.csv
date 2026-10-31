@@ -6,7 +6,11 @@
 # ouvre des points comme un revenu. Le micro-entrepreneur n'y est pas soumis :
 # il cotise un pourcentage de son chiffre d'affaires (L. 613-7).
 #
-# Artisans et commerçants, article D. 633-2 du code de la sécurité sociale :
+# Artisans et commerçants, article 2 du décret n° 73-76 du 22 janvier 1973
+# (LEGIARTI000006765785, du 24 janvier 1973 au 21 décembre 1985), pris pour
+# la loi n° 72-554 du 3 juillet 1972, qui réforme leur assurance vieillesse au
+# 1er janvier 1973, puis article D. 633-2 du code de la sécurité sociale, qui
+# le reprend mot pour mot à la codification de 1985 :
 #   « 200 fois le montant horaire du salaire minimum de croissance en vigueur
 #   le 1er janvier de l'année considérée » (LEGIARTI000006737877 au 21 décembre
 #   1985, LEGIARTI000006737878, LEGIARTI000006737879 jusqu'au 5 avril 2012) ;
@@ -19,8 +23,9 @@
 #   alinéa s'applique aux travailleurs indépendants dont la durée d'affiliation
 #   est au moins égale à quatre-vingt-dix jours au cours de cette même année ».
 #   Avant 2012 le texte ne proratise pas et ne pose aucune durée : la table
-#   non plus. La version de 1985 est la première que l'index LEGI porte ; les
-#   années antérieures n'ont pas de ligne, donc pas de minimum.
+#   non plus. Avant 1973, les caisses des artisans et des commerçants
+#   servaient des points, achetés par classe de cotisation : pas de ligne,
+#   donc pas de minimum.
 #
 # Professions libérales, article D. 642-4 :
 #   « 200 fois le montant horaire du salaire minimum de croissance », « réduit
@@ -44,7 +49,7 @@
 # `proratise` : le minimum suit-il la part de l'année couverte ? `jours_minimum`
 # : durée d'affiliation en deçà de laquelle il ne s'applique pas.
 statuts,regimes,debut,fin,heures_smic,part_pass,proratise,jours_minimum,fiabilite
-artisan commercant gerant_debit_tabac,cancava organic rsi regime_general,1985,2011,200,,non,0,haute
+artisan commercant gerant_debit_tabac,cancava organic rsi regime_general,1973,2011,200,,non,0,haute
 artisan commercant gerant_debit_tabac,cancava organic rsi regime_general,2012,2014,,0.0525,non,90,haute
 artisan commercant gerant_debit_tabac,cancava organic rsi regime_general,2015,2015,,0.077,non,90,haute
 artisan commercant gerant_debit_tabac,cancava organic rsi regime_general,2016,2022,,0.115,non,90,haute

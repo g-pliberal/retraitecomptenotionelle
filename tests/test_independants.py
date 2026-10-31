@@ -887,13 +887,34 @@ def _proches(obtenu, attendu, chemin="") -> list[str]:
     return []
 
 
-def test_les_deux_moteurs_servent_les_memes_droits_aux_dispenses(simulateur):
-    """Les lignes et le résultat entier, en Python et en JavaScript, pour un
-    artisan au RSA puis saisonnier et une infirmière libérale au RSA."""
+def _deux_moteurs(simulateur, cas) -> list[dict]:
+    """Les lignes de chaque relevé, par année, en Python, une fois vérifié que
+    le JavaScript rend les mêmes lignes et le même résultat entier."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
     sys.path.insert(0, str(RACINE / "scripts"))
     from construire_temoins import _fini
+    attendus, lignes = [], []
+    for c in cas:
+        carriere = simulateur.carriere_releve(
+            c["naissance"], "F", [LigneRelevee(**ligne) for ligne in c["releve"]], c["age"])
+        lignes.append({ligne.annee: ligne for ligne in carriere.lignes})
+        attendus.append({
+            "lignes": [[l.annee, l.trimestres_valides, l.assiette_minimale_base,
+                        l.dispense_assiette_minimale] for l in carriere.lignes],
+            "resultat": _fini(simulateur.simuler(carriere).dictionnaire())})
+    execution = subprocess.run(
+        ["node", "--input-type=module", "-e", _JUMEAU_DISPENSES, json.dumps(cas)],
+        cwd=RACINE, capture_output=True, text=True, encoding="utf-8", check=False)
+    assert execution.returncode == 0, execution.stderr[-2000:]
+    ecarts = _proches(json.loads(execution.stdout), attendus)
+    assert not ecarts, ecarts[:10]
+    return lignes
+
+
+def test_les_deux_moteurs_servent_les_memes_droits_aux_dispenses(simulateur):
+    """Les lignes et le résultat entier, en Python et en JavaScript, pour un
+    artisan au RSA puis saisonnier et une infirmière libérale au RSA."""
     cas = [
         {"naissance": 1962, "age": 65.0, "releve": [
             {"annee": a, "affiliation": "artisan", "revenu": 3000.0 + 100 * (a % 7),
@@ -905,18 +926,34 @@ def test_les_deux_moteurs_servent_les_memes_droits_aux_dispenses(simulateur):
              "dispense_assiette_minimale": "rsa" if a % 2 else "activite_non_principale"}
             for a in range(2005, 2028)]},
     ]
-    attendus = []
-    for c in cas:
-        carriere = simulateur.carriere_releve(
-            c["naissance"], "F", [LigneRelevee(**ligne) for ligne in c["releve"]], c["age"])
-        attendus.append({
-            "lignes": [[l.annee, l.trimestres_valides, l.assiette_minimale_base,
-                        l.dispense_assiette_minimale] for l in carriere.lignes],
-            "resultat": _fini(simulateur.simuler(carriere).dictionnaire())})
-    assert any(l[3] == "" and l[2] > 0 for l in attendus[1]["lignes"])
-    execution = subprocess.run(
-        ["node", "--input-type=module", "-e", _JUMEAU_DISPENSES, json.dumps(cas)],
-        cwd=RACINE, capture_output=True, text=True, encoding="utf-8", check=False)
-    assert execution.returncode == 0, execution.stderr[-2000:]
-    ecarts = _proches(json.loads(execution.stdout), attendus)
-    assert not ecarts, ecarts[:10]
+    _, infirmiere = _deux_moteurs(simulateur, cas)
+    assert any(not l.dispense_assiette_minimale and l.assiette_minimale_base > 0
+               for l in infirmiere.values())
+
+
+# --- L'assiette minimale, de 1973 à nos jours ------------------------------------
+
+FRANCS_PAR_EURO = 6.55957
+
+
+def test_l_assiette_minimale_des_artisans_et_commercants_court_depuis_1973(simulateur):
+    """« Toutefois, le montant de la cotisation annuelle ne peut être inférieur
+    à celui de la cotisation qui serait due au titre d'un revenu égal à 200 fois
+    le montant horaire du salaire minimum de croissance en vigueur le 1er janvier
+    de l'année considérée » (décret n° 73-76 du 22 janvier 1973, article 2,
+    LEGIARTI000006765785, du 24 janvier 1973 au 21 décembre 1985, que D. 633-2
+    reprend mot pour mot) : l'artisane et la commerçante qui déclarent 100 € par
+    an cotisent sur 910 F en 1973, 2 586 F en 1980 et 4 556 F en 1984, ce que
+    les tables de la caisse publient, et valident un trimestre chaque année ;
+    en 1972, aux caisses d'avant l'alignement, aucun minimum. Dans les deux
+    moteurs."""
+    lignes = _deux_moteurs(simulateur, [
+        {"naissance": 1945, "age": 65.0, "releve": [
+            {"annee": a, "affiliation": metier, "revenu": 100.0} for a in range(1970, 1990)]}
+        for metier in ("artisan", "commercant")])
+    for metier in lignes:
+        assert metier[1972].assiette_minimale_base == 0.0
+        for annee, francs in ((1973, 910), (1980, 2586), (1984, 4556)):
+            assert metier[annee].assiette_minimale_base == pytest.approx(
+                francs / FRANCS_PAR_EURO, rel=1e-6), annee
+            assert metier[annee].trimestres_valides == 1, annee

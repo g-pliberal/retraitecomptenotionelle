@@ -405,13 +405,11 @@ ASSIETTE_MINIMALE_EN_EUROS = {
 }
 
 #: Ce que la série de l'assiette minimale (`assiette_minimale_independants.csv`)
-#: ne porte pas comme la caisse : deux écarts qui changent le calcul — le
-#: revenu porté au compte, et les trimestres validés —, à la session du modèle.
+#: ne porte pas comme la caisse : un écart qui change le calcul — le revenu
+#: porté au compte, et les trimestres validés —, à la session du modèle. Les
+#: 200 heures de Smic de 1973 à 1984 sont celles de l'article 2 du décret
+#: n° 73-76 du 22 janvier 1973, que D. 633-2 reprend en 1985 (action 177).
 ECARTS_ASSIETTE_MINIMALE = {
-    range(1973, 1985): (
-        "la caisse applique 200 heures de Smic depuis 1973 ; la série commence en "
-        "1985, à la première rédaction de D. 633-2 que porte l'index LEGI, et ne "
-        "connaît pas de minimum avant"),
     range(2022, 2023): (
         "le décret n° 2022-1438 du 16 novembre 2022 (art. 1er) fixe pour 2022, « par "
         "dérogation aux articles D. 633-2 et D. 642-4 », une assiette d'au moins "
@@ -436,7 +434,7 @@ def test_l_assiette_minimale_des_independants_est_celle_que_la_caisse_publie():
     5,25 %, 7,7 % puis 11,5 % du plafond de 2012 à 2022, 450 heures depuis
     2023 —, appliquée au Smic (`smic_horaire.csv`) et au plafond
     (`plafond_securite_sociale.csv`) du dépôt, redonne à l'unité près ce que
-    la caisse publie pour l'artisan et le commerçant, de 1985 à 2026. Les
+    la caisse publie pour l'artisan et le commerçant, de 1973 à 2026. Les
     écarts qui restent se déclarent dans `ECARTS_ASSIETTE_MINIMALE`."""
     smic = _serie_annuelle(MACRO / "smic_horaire.csv", "smic_horaire")
     plafond = _serie_annuelle(MACRO / "plafond_securite_sociale.csv", "pass_eur")
