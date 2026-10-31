@@ -191,7 +191,7 @@ quitte votre machine, puisqu'il n'y a pas de serveur de calcul. Lire une page tr
 texte et de quoi l'animer : <!--chiffre:poids_comprime(moteur/style.css + moteur/js/routeur.js + moteur/js/adresses.js + moteur/js/cles.js + moteur/js/gabarit.js + moteur/js/format.js + moteur/js/calendrier.js + index.html)-->155<!--/--> Ko compressés
 (<!--chiffre:poids(moteur/style.css + moteur/js/routeur.js + moteur/js/adresses.js + moteur/js/cles.js + moteur/js/gabarit.js + moteur/js/format.js + moteur/js/calendrier.js + index.html)-->497<!--/--> Ko bruts) pour l'accueil. Le premier calcul y ajoute
 le moteur, <!--chiffre:poids_comprime(moteur/js/*.js + moteur/js/droit/*.js - moteur/js/routeur.js - moteur/js/adresses.js - moteur/js/cles.js - moteur/js/gabarit.js - moteur/js/format.js - moteur/js/calendrier.js - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->900<!--/--> Ko compressés, et le paquet
-de données, <!--chiffre:poids_comprime(moteur/donnees.json)-->789<!--/--> Ko compressés (<!--chiffre:poids(moteur/donnees.json)-->5 741<!--/--> Ko bruts) ; le tout prend quelques dixièmes
+de données, <!--chiffre:poids_comprime(moteur/donnees.json)-->789<!--/--> Ko compressés (<!--chiffre:poids(moteur/donnees.json)-->5 742<!--/--> Ko bruts) ; le tout prend quelques dixièmes
 de seconde, et les chargements suivants sont immédiats.
 
 Neuf pages, en deux voix. Celles de l'électeur d'abord : **Programme**,
@@ -236,7 +236,7 @@ Chaque page est écrite toute faite, et ne charge qu'au premier calcul
 `moteur/js/`, un portage en JavaScript, sans aucune bibliothèque, de ce qui
 dépend de ce que le lecteur saisit — sa carrière, ses droits et sa pension —,
 et `moteur/donnees.json`
-(<!--chiffre:poids(moteur/donnees.json)-->5 741<!--/--> Ko — les séries, les
+(<!--chiffre:poids(moteur/donnees.json)-->5 742<!--/--> Ko — les séries, les
 tables de mortalité observées de 1899 à 2024, la pyramide des âges de 1962 à
 2070, les <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=modelise|partiel)-->80<!--/--> fiches de régime, et ce que le Python a calculé une fois pour toutes
 sous les réglages de référence : le coût et les carrières types, que les pages
