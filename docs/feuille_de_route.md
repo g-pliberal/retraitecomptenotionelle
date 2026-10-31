@@ -7357,3 +7357,51 @@ dit : une dépendance optionnelle, que le hook d'ouverture et `tests.yml`
 installent par `pip install -e '.[dev]'`, sans que ni l'un ni l'autre, qui sont
 des gardes, ait changé. Le premier récupérateur qui lit un `.xls` s'en sert,
 avec son test. Le modèle et le site gardent PyYAML seul.
+
+### 177. Les écarts que les barèmes de la Cnav ont trouvés au modèle : chacun corrigé dans les deux moteurs, ou sa limite dite — `en cours`
+
+**Reprise, au 31 octobre 2026.** Ouverte ce jour, sur les huit écarts que
+l'étape 2 de l'action 175 remet au modèle (la fin de sa note,
+`175/2026-10-30-etape-2-baremes-du-modele.md`). Par quoi commencer : l'étape 1,
+le RCO des artisans et le NRCO des commerçants, les écarts 1 à 3. Chaque écart
+est tenu par un test qui échoue s'il disparaît : retirer son entrée, voir le
+test rougir, corriger la donnée ou la règle, les deux moteurs ensemble. Des
+règles du scénario 1 : sur Opus, après `python scripts/veille_droit.py`. Pas
+encore de note.
+
+**D'où elle vient.** Le 31 octobre 2026, l'étape 2 de l'action 175 — les
+barèmes de la base de législation de la Cnav confrontés, un à un, aux séries
+du modèle — s'est close sur huit écarts qui changent le calcul, qu'elle
+n'avait pas à corriger : elle les tient chacun par un test, dans
+`tests/test_cnav_baremes.py` ou `tests/test_micro_social.py`, qui échoue le
+jour où l'écart disparaît. Aucune action ouverte ne les recueillait ; celle-ci
+les porte, pour que la session du modèle les trouve par
+`python scripts/reprise.py`.
+
+**Ce qui est à faire**, une étape par session, dans l'ordre, des plus sûres
+aux plus ouvertes. Un écart par commit, le test d'abord (`CLAUDE.md`) :
+l'entrée de l'écart retirée de son test, le test vu rouge pour la bonne
+raison, puis la donnée ou la règle corrigée jusqu'au vert, dans les deux
+moteurs ensemble.
+
+1. **Le RCO des artisans et le NRCO des commerçants** (modèle) : le taux de
+   2008 et de 2009, que le décret n° 2007-1900 fixe « par dérogation »
+   (`ECARTS_COMPLEMENTAIRES`) ; l'assiette de quatre plafonds dès 1997, par
+   D. 635-4 dans sa rédaction du 26 février 1997 (`ECARTS_ASSIETTE_MAXIMALE`) ;
+   les huit valeurs de point du RCO et du NRCO que la série tire de l'IPP
+   autrement que la caisse (`ECARTS_POINTS`).
+2. **L'assiette minimale des indépendants** (modèle) : avant 1985 et en 2022
+   (fiche `assiette_minimale_independants`, `ECARTS_ASSIETTE_MINIMALE`).
+3. **Mayotte** (modèle) : la fiche `cssm_mayotte`, à faire lire
+   `mayotte_smig_et_plafond.csv`.
+4. **Les indépendants des DOM** (modèle, puis site) : l'abattement de
+   L. 756-4 et ce qui en suit, que le modèle ne distingue pas (la limite
+   « indépendants des DOM », `ASSIETTE_MINIMALE_DOM_DE_MOITIE`). À trancher
+   d'abord, avec le propriétaire : une saisie de plus, avec la session du site,
+   ou la limite qui reste.
+5. **L'assiette d'avant 2007** (modèle) : ce que la fiche
+   `cotisation_vieillesse_independants` met à relire, puis à trancher.
+6. **Le premier trimestre du micro-entrepreneur, en 2014 et en 2015**
+   (modèle) : la grille de la caisse et ses circulaires divergent, et l'assuré
+   qui ne relève pas de la maladie du RSI, que le modèle ne distingue pas
+   (`ECARTS_A_LA_GRILLE`). À trancher d'abord.
