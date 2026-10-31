@@ -12,12 +12,14 @@ s'y retrouve, sauf aux deux points déclarés.
 from __future__ import annotations
 
 import csv
+import json
 import sys
 from pathlib import Path
 
 import pytest
 
 from retraite_notionnelle.donnees.credits_ministeres import CreditsMinisteres
+from retraite_notionnelle.web.site import ErreurSite, disponible, module
 
 RACINE = Path(__file__).resolve().parents[1]
 CSV = RACINE / "data" / "reference" / "macro" / "credits_ministeres.csv"
@@ -135,18 +137,43 @@ def test_le_fichier_certifie_ne_s_ecarte_du_texte_qu_aux_points_declares():
     assert len(messages) == len(INCOHERENCES_3B) == 2
 
 
-def test_le_lecteur_du_modele_range_les_ministeres_par_ce_qu_ils_versent():
-    """Ce que la page montre : du plus au moins versé au compte « Pensions »,
-    la contribution de l'Enseignement supérieur comptant celle de ses
-    opérateurs, et une part que la barre ne trace pas valant zéro."""
-    credits = CreditsMinisteres(RACINE / "data")
-    assert credits.annee == 2027
-    assert credits.ministeres[:2] == ("education_nationale", "interieur")
-    versements = [credits.au_compte_pensions(m) for m in credits.ministeres]
-    assert versements == sorted(versements, reverse=True)
+@pytest.mark.skipif(not disponible(), reason="node absent : le portage ne se lit pas")
+def test_le_portage_range_les_ministeres_par_ce_qu_ils_versent():
+    """Ce que la page montre, que le portage seul calcule sur le paquet
+    (``moteur/js/credits-ministeres.js``, note de décision 0005) : du plus au
+    moins versé au compte « Pensions » — la contribution employeur, T2 et
+    T3 CAS, puis la retenue des fonctionnaires —, la contribution de
+    l'Enseignement supérieur comptant celle de ses opérateurs, une part que la
+    barre ne trace pas valant zéro, et un ministère absent de la figure
+    refusé. L'attendu se calcule ici, sur le fichier certifié, dans l'ordre
+    d'addition du portage : de gauche à droite, depuis zéro."""
+    ministeres = _certifiee()["ministeres"]
+
+    def contribution(code: str) -> float:
+        return 0.0 + ministeres[code]["t2_cas"] + ministeres[code].get("t3_cas", 0.0)
+
+    def au_compte_pensions(code: str) -> float:
+        return contribution(code) + ministeres[code]["cotisations_salariales"]
+
+    # Le paquet porte ce que le chargeur du Python lit du fichier certifié.
+    chargeur = CreditsMinisteres(RACINE / "data")
+    paquet = json.loads((RACINE / "moteur" / "donnees.json").read_text(encoding="utf-8"))
+    assert paquet["credits_ministeres"] == {
+        "annee": chargeur.annee, "fiabilite": int(chargeur.fiabilite),
+        "parts": {f"{code}|{part}": valeur
+                  for code, parts in sorted(ministeres.items())
+                  for part, valeur in sorted(parts.items())}}
+    credits = module("credits-ministeres").CreditsMinisteres(paquet)
+    assert credits.annee == chargeur.annee == 2027
+    assert list(credits.ministeres) == sorted(
+        ministeres, key=lambda code: (-au_compte_pensions(code), code))
+    assert list(credits.ministeres[:2]) == ["education_nationale", "interieur"]
+    for code in ministeres:
+        assert credits.contribution(code) == contribution(code), code
+        assert credits.au_compte_pensions(code) == au_compte_pensions(code), code
     assert credits.part("justice", "t3_cas") == 0.0
-    assert credits.contribution("enseignement_superieur") == pytest.approx(
-        credits.part("enseignement_superieur", "t2_cas")
-        + credits.part("enseignement_superieur", "t3_cas"))
-    with pytest.raises(KeyError):
+    assert credits.contribution("enseignement_superieur") == (
+        ministeres["enseignement_superieur"]["t2_cas"]
+        + ministeres["enseignement_superieur"]["t3_cas"])
+    with pytest.raises(ErreurSite, match="ministère absent de la figure 3B : sante"):
         credits.part("sante", "t2_cas")

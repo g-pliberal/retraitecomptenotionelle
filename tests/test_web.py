@@ -4659,18 +4659,30 @@ def test_la_page_cout_dit_ce_que_chaque_ministere_verse_au_compte_pensions():
     sans en imprimer une valeur, se lit dans le dépliant des ressources :
     dix-sept ministères, du plus au moins versé, chacun tel que le fichier
     certifié le porte, et sous le dixième de point, ce que le tracé permet
-    d'en dire (action 159, étape 8). Le portage lit le paquet comme le Python
-    lit le fichier."""
-    from retraite_notionnelle.donnees.credits_ministeres import CreditsMinisteres
-
+    d'en dire (action 159, étape 8). Seul le portage calcule sur le paquet
+    (note de décision 0005) : l'attendu se calcule ici, sur les parts que la
+    fabrique y écrit, dans l'ordre d'addition du portage."""
     racine = Path(__file__).resolve().parents[1]
-    credits = CreditsMinisteres(racine / "data")
     paquet = json.loads((racine / "moteur" / "donnees.json").read_text(encoding="utf-8"))
+    parts: dict[str, dict[str, float]] = {}
+    for cle, valeur in paquet["credits_ministeres"]["parts"].items():
+        code, nom = cle.split("|")
+        parts.setdefault(code, {})[nom] = valeur
+
+    def contribution(code: str) -> float:
+        """La contribution employeur : T2 et T3 CAS, depuis zéro."""
+        return 0.0 + parts[code]["t2_cas"] + parts[code].get("t3_cas", 0.0)
+
+    def au_compte_pensions(code: str) -> float:
+        """La contribution, et la retenue des fonctionnaires."""
+        return contribution(code) + parts[code]["cotisations_salariales"]
+
+    ordre = sorted(parts, key=lambda code: (-au_compte_pensions(code), code))
     jumeau = module("credits-ministeres").CreditsMinisteres(
         {"credits_ministeres": paquet["credits_ministeres"]})
-    assert list(jumeau.ministeres) == list(credits.ministeres)
-    for code in credits.ministeres:
-        assert jumeau.au_compte_pensions(code) == credits.au_compte_pensions(code), code
+    assert list(jumeau.ministeres) == ordre
+    for code in ordre:
+        assert jumeau.au_compte_pensions(code) == au_compte_pensions(code), code
 
     corps = rendre("/cout", {})[1]
     tableau = re.search(r"<table><caption><span>Part des crédits de chaque ministère, "
@@ -4685,12 +4697,12 @@ def test_la_page_cout_dit_ce_que_chaque_ministere_verse_au_compte_pensions():
         return (f"&lt; {g.pourcentage(0.001, decimales=1)}" if valeur < 0.001
                 else g.pourcentage(valeur, decimales=1))
 
-    for code, (_, cellules) in zip(credits.ministeres, lignes):
+    for code, (_, cellules) in zip(ordre, lignes):
         assert re.findall(r'<td class="nombre">(.*?)</td>', cellules) == [
-            part(credits.contribution(code)),
-            part(credits.part(code, "cotisations_salariales")),
-            part(credits.au_compte_pensions(code)),
-            part(credits.part(code, "reste_personnel")),
+            part(contribution(code)),
+            part(parts[code]["cotisations_salariales"]),
+            part(au_compte_pensions(code)),
+            part(parts[code]["reste_personnel"]),
         ], code
     # Les deux derniers ministères ne versent pas un dixième de point : la note
     # de la figure dit « moins de 1 % ».
@@ -4698,7 +4710,7 @@ def test_la_page_cout_dit_ce_que_chaque_ministere_verse_au_compte_pensions():
     texte = html.unescape(re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", corps)))
     # L'espace fine du pourcentage est une espace pour ``\s`` : la phrase se
     # compare espaces confondues.
-    t3 = " ".join(g.pourcentage(credits.part("enseignement_superieur", "t3_cas"),
+    t3 = " ".join(g.pourcentage(parts["enseignement_superieur"]["t3_cas"],
                                 decimales=1).split())
     assert (f"La contribution de l'Enseignement supérieur compte les {t3} de ses crédits "
             "que ses opérateurs versent") in texte
