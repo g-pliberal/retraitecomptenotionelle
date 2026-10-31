@@ -67,6 +67,27 @@ def ecarts_d_ecriture(relu, attendu, chemin: tuple = (), tolerance: float = 0.0)
             f"lu {json.dumps(relu)[:60]}"]
 
 
+def actuel_en_donnees(actuel) -> dict:
+    """Le résultat du scénario 1 du moteur Python (``ResultatActuel``) tel que
+    le portage écrit le sien (``actuelEnDonnees`` de ``pont.mjs``), avant sa
+    relecture sous les types du pont (:func:`pont.actuel_des_donnees`)."""
+    return {
+        "pension_annuelle": actuel.pension_annuelle,
+        "pension_hors_repartition": actuel.pension_hors_repartition,
+        "pensions_par_regime": [
+            {"regime": pension.regime, "montant": pension.montant, "detail": pension.detail}
+            for pension in actuel.pensions_par_regime],
+        "avantages_appliques": [
+            {"code": avantage.code, "montant": avantage.montant,
+             "par_regime": [[regime, part] for regime, part in avantage.par_regime]}
+            for avantage in actuel.avantages_appliques],
+        "trimestres_valides": actuel.trimestres_valides,
+        "taux_liquidation": actuel.taux_liquidation,
+        "liquidation_ouverte": actuel.liquidation_ouverte,
+        "motif_ouverture": actuel.motif_ouverture,
+    }
+
+
 def scenario_actuel_en_donnees(comparaison: Comparaison) -> dict:
     """Ce que :func:`pont.scenario_actuel` rend du portage, tiré d'une
     comparaison du moteur Python, son jumeau : les mêmes champs, relus sous
@@ -79,22 +100,7 @@ def scenario_actuel_en_donnees(comparaison: Comparaison) -> dict:
         "annee_liquidation": date.annee,
         "mois_liquidation": date.mois,
         "coefficient_euros_constants": comparaison.coefficient_euros_constants,
-        "actuel": {
-            "pension_annuelle": actuel.pension_annuelle,
-            "pension_hors_repartition": actuel.pension_hors_repartition,
-            "pensions_par_regime": [
-                {"regime": pension.regime, "montant": pension.montant,
-                 "detail": pension.detail}
-                for pension in actuel.pensions_par_regime],
-            "avantages_appliques": [
-                {"code": avantage.code, "montant": avantage.montant,
-                 "par_regime": [[regime, part] for regime, part in avantage.par_regime]}
-                for avantage in actuel.avantages_appliques],
-            "trimestres_valides": actuel.trimestres_valides,
-            "taux_liquidation": actuel.taux_liquidation,
-            "liquidation_ouverte": actuel.liquidation_ouverte,
-            "motif_ouverture": actuel.motif_ouverture,
-        },
+        "actuel": actuel_en_donnees(actuel),
         "reversion": None if reversion is None else {
             "annee": reversion.annee,
             "regimes": [{"regime": ligne.regime, "montant": ligne.montant,

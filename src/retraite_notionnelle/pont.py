@@ -47,6 +47,10 @@ officielle (``scripts/estimation_officielle.py``) et Destinie 2
 (``tests/test_destinie.py``) lisent du scénario 1 que le portage sert ce
 que les témoins n'écrivent pas tout entier (:func:`scenario_actuel`), et le
 moteur Python le refait au bit près, cas par cas (``tests/outils_pont.py``).
+Les exemples d'OpenFisca et des caisses (``tests/test_oracle.py``) éprouvent
+le droit fonction par fonction, sur des carrières bâties à la main : le pont
+fait appeler chacune au portage (:func:`droit`), et relit ce qu'elle rend
+sous le type de son jumeau (:data:`LECTURES_DU_DROIT`).
 
 Une demande sur le paquet du dépôt, sans paquet, ne lance pas node à chaque
 fois : les tests en font une par carrière, et chacune coûtait trois dixièmes
@@ -73,6 +77,7 @@ import typing
 from pathlib import Path
 
 from .config import RACINE_PROJET
+from .donnees.chargement import Fiabilite
 
 #: Le programme que node fait tourner.
 PROGRAMME = Path(__file__).with_name("pont.mjs")
@@ -659,34 +664,42 @@ def _entier(valeur, nom: str) -> int:
     return valeur
 
 
+def actuel_des_donnees(actuel: dict) -> dict:
+    """Le résultat du scénario 1 que le portage a écrit (``actuelEnDonnees`` de
+    ``pont.mjs``), sous les types que le Python lui donne : les trimestres en
+    entier, qui doit en être un ; les montants, les parts et le taux en
+    flottants, que node écrit « 2 » pour 2.0 ; un texte et un booléen tels
+    qu'ils sont."""
+    return {
+        "pension_annuelle": _flottant(actuel["pension_annuelle"]),
+        "pension_hors_repartition": _flottant(actuel["pension_hors_repartition"]),
+        "pensions_par_regime": [
+            {"regime": pension["regime"], "montant": _flottant(pension["montant"]),
+             "detail": pension["detail"]}
+            for pension in actuel["pensions_par_regime"]],
+        "avantages_appliques": [
+            {"code": avantage["code"], "montant": _flottant(avantage["montant"]),
+             "par_regime": [(regime, _flottant(part))
+                            for regime, part in avantage["par_regime"]]}
+            for avantage in actuel["avantages_appliques"]],
+        "trimestres_valides": _entier(actuel["trimestres_valides"], "trimestres_valides"),
+        "taux_liquidation": _flottant(actuel["taux_liquidation"]),
+        "liquidation_ouverte": actuel["liquidation_ouverte"],
+        "motif_ouverture": actuel["motif_ouverture"],
+    }
+
+
 def scenario_actuel_des_donnees(donnees: dict) -> dict:
     """Le scénario 1 que le portage a servi (:func:`scenario_actuel`), sous
-    les types que le Python lui donne : la date du départ, ses trimestres et
-    l'année de la réversion en entiers, qui doivent en être ; les montants, les
-    parts, le taux et le coefficient en flottants, que node écrit « 2 » pour
-    2.0 ; un texte, un booléen et ``None`` tels qu'ils sont."""
-    actuel, reversion = donnees["actuel"], donnees["reversion"]
+    les types que le Python lui donne : la date du départ et l'année de la
+    réversion en entiers, qui doivent en être ; le coefficient et les montants
+    en flottants ; le résultat du scénario par :func:`actuel_des_donnees`."""
+    reversion = donnees["reversion"]
     return {
         "annee_liquidation": _entier(donnees["annee_liquidation"], "annee_liquidation"),
         "mois_liquidation": _entier(donnees["mois_liquidation"], "mois_liquidation"),
         "coefficient_euros_constants": _flottant(donnees["coefficient_euros_constants"]),
-        "actuel": {
-            "pension_annuelle": _flottant(actuel["pension_annuelle"]),
-            "pension_hors_repartition": _flottant(actuel["pension_hors_repartition"]),
-            "pensions_par_regime": [
-                {"regime": pension["regime"], "montant": _flottant(pension["montant"]),
-                 "detail": pension["detail"]}
-                for pension in actuel["pensions_par_regime"]],
-            "avantages_appliques": [
-                {"code": avantage["code"], "montant": _flottant(avantage["montant"]),
-                 "par_regime": [(regime, _flottant(part))
-                                for regime, part in avantage["par_regime"]]}
-                for avantage in actuel["avantages_appliques"]],
-            "trimestres_valides": _entier(actuel["trimestres_valides"], "trimestres_valides"),
-            "taux_liquidation": _flottant(actuel["taux_liquidation"]),
-            "liquidation_ouverte": actuel["liquidation_ouverte"],
-            "motif_ouverture": actuel["motif_ouverture"],
-        },
+        "actuel": actuel_des_donnees(donnees["actuel"]),
         "reversion": None if reversion is None else {
             "annee": _entier(reversion["annee"], "reversion.annee"),
             "regimes": [{"regime": ligne["regime"], "montant": _flottant(ligne["montant"]),
@@ -715,6 +728,107 @@ def scenario_actuel(cas: list[dict], paquet: bytes | None = None,
     reponse = _demander({"scenario_actuel": {"cas": cas}}, paquet)
     return ({cle: scenario_actuel_des_donnees(lu) for cle, lu in reponse["resultats"].items()},
             reponse["echecs"])
+
+
+class _Moteur:
+    """Le moteur du scénario 1, ``simulateur.scenario_actuel``, en argument
+    d'un appel du droit (:func:`droit`)."""
+
+    def __repr__(self) -> str:
+        return "pont.MOTEUR"
+
+
+#: Le moteur du scénario 1 en argument d'un appel du droit : le portage y met
+#: le sien (``simulateur.scenarioActuel``).
+MOTEUR = _Moteur()
+
+
+@dataclasses.dataclass(frozen=True)
+class Periode:
+    """La période d'un régime à une année, ``catalogue[code].periode(annee)``,
+    en argument d'un appel du droit (:func:`droit`) : le portage y met la
+    sienne."""
+
+    code: str
+    annee: int
+
+
+#: Ce que rend chaque fonction du droit que le pont fait appeler
+#: (``FONCTIONS_DU_DROIT`` de ``pont.mjs``), sous le type que son jumeau
+#: Python lui donne, ou relu par une fonction : JSON n'écrit ni n-uplet, ni
+#: énumération, ni « 2.0 ». Une fonction qui n'y est pas est refusée avant
+#: node, au lieu que le type de ce qu'elle rend se devine.
+LECTURES_DU_DROIT = {
+    "ouvrir.duree_requise": tuple[int, Fiabilite | None],
+    "liquider.duree_proratisation": tuple[int, Fiabilite | None],
+    "liquider.decote_opposable": tuple[float | None, float, Fiabilite | None],
+    "liquider.salaire_de_reference": float,
+    "liquider.trimestres_de_decote": float,
+    "scenario_actuel.calculer": actuel_des_donnees,
+}
+
+
+def _argument_du_droit(argument, carrieres: list) -> dict:
+    """Un argument d'un appel du droit tel que ``pont.mjs`` le relit : le
+    moteur du scénario 1, la période d'un régime, une carrière — passée une
+    fois en données, puis par son rang —, ou une valeur."""
+    from .carriere import Carriere
+
+    if argument is MOTEUR:
+        return {"moteur": "scenario_actuel"}
+    if isinstance(argument, Periode):
+        return {"periode": [argument.code, argument.annee]}
+    if isinstance(argument, Carriere):
+        rang = next((rang for rang, connue in enumerate(carrieres) if connue is argument), None)
+        if rang is None:
+            carrieres.append(argument)
+            rang = len(carrieres) - 1
+        return {"carriere": rang}
+    return {"valeur": _en_donnees(argument)}
+
+
+def droit(appels: dict[str, tuple], parametres=None, paquet: bytes | None = None,
+          ) -> tuple[dict[str, object], dict[str, str]]:
+    """Chaque appel d'une fonction du droit que le portage porte, sous sa clé,
+    ``(fonction, *arguments)`` — ``fonction`` au nom de son jumeau Python,
+    ``"ouvrir.duree_requise"`` ; ses arguments dans l'ordre du jumeau,
+    :data:`MOTEUR` pour le moteur du scénario 1, :class:`Periode` pour la
+    période d'un régime, une carrière que le Python a bâtie, passée en données
+    (:func:`carriere_en_donnees`), une valeur telle quelle — sous
+    ``parametres``, ceux du simulateur, les réglages de référence sans eux :
+    sous sa clé, ce que la fonction rend, relu sous le type de son jumeau
+    (:data:`LECTURES_DU_DROIT`). Puis, sous leur clé, les motifs des appels
+    que le portage refuse. Les exemples d'OpenFisca et des caisses
+    (``tests/test_oracle.py``) éprouvent ainsi le droit fonction par
+    fonction."""
+    from .config import Parametres
+
+    inconnues = sorted({fonction for fonction, *_ in appels.values()} - set(LECTURES_DU_DROIT))
+    if inconnues:
+        raise ValueError(f"fonctions du droit que le pont ne relit pas : {', '.join(inconnues)} "
+                         "(pont.LECTURES_DU_DROIT)")
+    carrieres: list = []
+    demandes = [{"cle": cle, "fonction": fonction,
+                 "arguments": [_argument_du_droit(argument, carrieres) for argument in arguments]}
+                for cle, (fonction, *arguments) in appels.items()]
+    reponse = _demander({"droit": {
+        "parametres": parametres_en_donnees(Parametres() if parametres is None else parametres),
+        "carrieres": [carriere_en_donnees(carriere) for carriere in carrieres],
+        "appels": demandes,
+    }}, paquet)
+    return ({cle: relu_du_droit(appels[cle][0], lu) for cle, lu in reponse["resultats"].items()},
+            reponse["echecs"])
+
+
+def relu_du_droit(fonction: str, valeur):
+    """Ce que rend une fonction du droit, écrit en données, relu sous le type
+    que son jumeau Python lui donne (:data:`LECTURES_DU_DROIT`) : ce que le
+    portage a rendu, ou ce que le jumeau rend lui-même, pour les confronter —
+    un flottant entier que le jumeau rend « 2 » s'y relit « 2.0 », comme le zéro
+    d'une somme vide dans les témoins."""
+    lecture = LECTURES_DU_DROIT[fonction]
+    return (lecture(valeur) if isinstance(lecture, types.FunctionType)
+            else _depuis_donnees(lecture, valeur))
 
 
 def simulations(cas: list[dict], paquet: bytes | None = None,

@@ -180,6 +180,10 @@ def test_sans_node_le_pont_s_arrete_sans_repli(monkeypatch):
         pont.grille_du_cout([], SCENARIOS, Parametres())
     with pytest.raises(pont.PontIndisponible, match="node"):
         pont.scenario_actuel([{"cle": "a", "requete": REQUETE}])
+    with pytest.raises(pont.PontIndisponible, match="node"):
+        pont.droit({"a": ("ouvrir.duree_requise", pont.MOTEUR, pont.Periode("regime_general", 2020),
+                          _carriere_d_openfisca({"code": "a", "debut": 1980, "liquidation": 2020,
+                                                 "naissance": 1958, "salaire": 20_000.0}))})
 
 
 # -- sans paquet, le pont reste ouvert --------------------------------------------
@@ -310,6 +314,87 @@ def test_le_pont_sert_le_scenario_actuel_au_bit_pres_du_moteur_python():
         assert all(type(avantage["montant"]) is float and type(part) is float
                    for avantage in actuel["avantages_appliques"]
                    for _, part in avantage["par_regime"])
+
+
+# -- le droit, fonction par fonction -------------------------------------------------
+
+def _carriere_d_openfisca(profil: dict) -> Carriere:
+    """La carrière exacte d'un profil d'OpenFisca au régime général, bâtie à
+    la main comme ``tests/test_oracle.py`` la bâtit (``_notre_calcul``)."""
+    lignes = [AnneeCarriere(annee=annee, revenu=profil["salaire"],
+                            affiliation="salarie_prive_non_cadre", trimestres_valides=4)
+              for annee in range(profil["debut"], profil["liquidation"])]
+    return Carriere(annee_naissance=profil["naissance"], sexe="H", lignes=lignes,
+                    age_liquidation=float(profil["liquidation"] - profil["naissance"]),
+                    identifiant=profil["code"])
+
+
+def test_le_pont_fait_appeler_les_fonctions_du_droit_au_bit_pres_de_leur_jumeau():
+    """Les exemples d'OpenFisca et des caisses (``tests/test_oracle.py``)
+    éprouvent le droit fonction par fonction, sur des carrières bâties à la
+    main : le pont les fait appeler au portage (:func:`pont.droit`), la carrière
+    passée en données, le moteur du scénario 1 et la période d'un régime
+    désignés, et rend ce que chacune rend sous le type de son jumeau Python
+    (:data:`pont.LECTURES_DU_DROIT`) — au bit près de lui sous Linux x86_64,
+    sur chaque profil d'OpenFisca au régime général. Une fonction que le pont
+    ne sait pas relire est refusée avant node."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    from outils_pont import actuel_en_donnees
+    from retraite_notionnelle.donnees.chargement import Fiabilite
+    from retraite_notionnelle.droit import liquider, ouvrir
+
+    profils = json.loads((RACINE_PROJET / "tests" / "temoins" / "openfisca_regime_general.json")
+                         .read_text(encoding="utf-8"))["profils"]
+    simulateur = Simulateur(Parametres())
+    scenario = simulateur.scenario_actuel
+    for code, temoin in profils.items():
+        profil = temoin["profil"]
+        carriere, depart = _carriere_d_openfisca(profil), profil["liquidation"]
+        age = float(depart - profil["naissance"])
+        periode = simulateur.catalogue["regime_general"].periode(depart)
+        requis, _ = ouvrir.duree_requise(scenario, periode, carriere)
+        _, annulation, _ = liquider.decote_opposable(scenario, periode, carriere, depart)
+        resultat = scenario.calculer(carriere)
+        # Ce que rend chaque jumeau Python, relu sous le type que le pont
+        # déclare : « 2 » que le jumeau rend pour des trimestres de décote,
+        # flottants, s'y relit « 2.0 », comme le zéro d'une somme vide des témoins.
+        attendus = {cle: pont.relu_du_droit(fonction, rendu) for cle, (fonction, rendu) in {
+            "requis": ("ouvrir.duree_requise", ouvrir.duree_requise(scenario, periode, carriere)),
+            "proratisation": ("liquider.duree_proratisation", liquider.duree_proratisation(
+                scenario, periode, carriere, requis)),
+            "decote": ("liquider.decote_opposable", liquider.decote_opposable(
+                scenario, periode, carriere, depart)),
+            "salaire": ("liquider.salaire_de_reference", liquider.salaire_de_reference(
+                scenario, "regime_general", carriere, periode, depart, True,
+                profil["naissance"], True)),
+            "manquants": ("liquider.trimestres_de_decote", liquider.trimestres_de_decote(
+                scenario, periode, carriere, resultat.trimestres_valides, requis, age,
+                annulation)),
+            "resultat": ("scenario_actuel.calculer", actuel_en_donnees(resultat)),
+        }.items()}
+        rg = pont.Periode("regime_general", depart)
+        lus, echecs = pont.droit({
+            "requis": ("ouvrir.duree_requise", pont.MOTEUR, rg, carriere),
+            "proratisation": ("liquider.duree_proratisation", pont.MOTEUR, rg, carriere, requis),
+            "decote": ("liquider.decote_opposable", pont.MOTEUR, rg, carriere, depart),
+            "salaire": ("liquider.salaire_de_reference", pont.MOTEUR, "regime_general", carriere,
+                        rg, depart, True, profil["naissance"], True),
+            "manquants": ("liquider.trimestres_de_decote", pont.MOTEUR, rg, carriere,
+                          resultat.trimestres_valides, requis, age, annulation),
+            "resultat": ("scenario_actuel.calculer", pont.MOTEUR, carriere),
+        })
+        assert echecs == {}, code
+        for cle, attendu in attendus.items():
+            assert ecarts_d_ecriture(lus[cle], attendu,
+                                     tolerance=TOLERANCE_DU_MOTEUR_PYTHON) == [], (code, cle)
+        assert type(lus["requis"]) is tuple and type(lus["requis"][0]) is int
+        assert lus["requis"][1] is None or type(lus["requis"][1]) is Fiabilite
+        assert type(lus["decote"][1]) is float and type(lus["salaire"]) is float
+        assert type(lus["manquants"]) is float
+        assert lus["resultat"]["trimestres_valides"] == attendus["resultat"]["trimestres_valides"]
+    with pytest.raises(ValueError, match="liquider.inconnue"):
+        pont.droit({"a": ("liquider.inconnue", pont.MOTEUR)})
 
 
 def test_le_pont_ouvert_se_relance_quand_le_paquet_du_depot_change(monkeypatch):

@@ -42,6 +42,10 @@
  *   `prolonger: false` s'en tenant à ses années : ce que les confrontations
  *   aux références extérieures lisent de son scénario 1
  *   (`scenarioActuelEnDonnees`), dont une part qu'aucun témoin n'écrit.
+ * - `droit` : `{appels: [{cle, fonction, arguments}], carrieres, parametres}` —
+ *   chaque appel d'une fonction du droit que le pont porte
+ *   (`FONCTIONS_DU_DROIT`), sur des carrières que le Python a bâties, passées
+ *   en données, sous les paramètres du simulateur : ce qu'elle rend.
  *
  * Il écrit `{resultats, echecs}` : une carrière que le portage refuse en est
  * absente, et son motif est dans `echecs`. Un nombre non fini s'écrit `null`,
@@ -65,6 +69,8 @@ import { AnneeCarriere, Carriere } from "../../moteur/js/carriere.js";
 import { PARAMETRES_DEFAUT, avec } from "../../moteur/js/config.js";
 import { Contexte } from "../../moteur/js/contexte.js";
 import { appels } from "../../moteur/js/droit/liquidation.js";
+import * as liquider from "../../moteur/js/droit/liquider.js";
+import * as ouvrir from "../../moteur/js/droit/ouvrir.js";
 import { Saisie } from "../../moteur/js/saisie.js";
 
 const RACINE = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
@@ -326,6 +332,30 @@ function simulations({ cas }) {
 }
 
 /**
+ * Le résultat du scénario 1 — celui d'une comparaison, ou celui que rend
+ * `ScenarioActuel.calculer` — tel que les confrontations le lisent : la
+ * pension, et à part ce qui est hors de la répartition ; chaque pension de
+ * régime, son montant et son détail ; chaque avantage appliqué, son montant et
+ * la part de chaque régime ; la durée validée et le taux ; l'ouverture et son
+ * motif.
+ */
+function actuelEnDonnees(actuel) {
+  return {
+    pension_annuelle: actuel.pension_annuelle,
+    pension_hors_repartition: actuel.pension_hors_repartition,
+    pensions_par_regime: actuel.pensions_par_regime
+      .map(({ regime, montant, detail }) => ({ regime, montant, detail })),
+    avantages_appliques: actuel.avantages_appliques.map(({ code, montant, par_regime }) => ({
+      code, montant, par_regime: (par_regime ?? []).map(([regime, part]) => [regime, part]),
+    })),
+    trimestres_valides: actuel.trimestres_valides,
+    taux_liquidation: actuel.taux_liquidation,
+    liquidation_ouverte: actuel.liquidation_ouverte,
+    motif_ouverture: actuel.motif_ouverture,
+  };
+}
+
+/**
  * Ce que les confrontations aux références extérieures lisent du scénario 1
  * d'une comparaison — l'estimation officielle (`scripts/estimation_officielle.py`),
  * Destinie 2 (`tests/test_destinie.py`) —, et que `dictionnaire()` n'écrit pas
@@ -342,19 +372,7 @@ function scenarioActuelEnDonnees(comparaison) {
     annee_liquidation: date.annee,
     mois_liquidation: date.mois,
     coefficient_euros_constants: comparaison.coefficient_euros_constants,
-    actuel: {
-      pension_annuelle: actuel.pension_annuelle,
-      pension_hors_repartition: actuel.pension_hors_repartition,
-      pensions_par_regime: actuel.pensions_par_regime
-        .map(({ regime, montant, detail }) => ({ regime, montant, detail })),
-      avantages_appliques: actuel.avantages_appliques.map(({ code, montant, par_regime }) => ({
-        code, montant, par_regime: (par_regime ?? []).map(([regime, part]) => [regime, part]),
-      })),
-      trimestres_valides: actuel.trimestres_valides,
-      taux_liquidation: actuel.taux_liquidation,
-      liquidation_ouverte: actuel.liquidation_ouverte,
-      motif_ouverture: actuel.motif_ouverture,
-    },
+    actuel: actuelEnDonnees(actuel),
     reversion: reversion === null ? null : {
       annee: reversion.annee,
       regimes: reversion.regimes
@@ -380,9 +398,62 @@ function scenarioActuel({ cas }) {
   });
 }
 
+/**
+ * Les fonctions du droit que le pont fait appeler (`droit`), sous le nom de
+ * leur jumeau Python (`module.fonction`) : les exemples d'OpenFisca et des
+ * caisses (`tests/test_oracle.py`) éprouvent le droit fonction par fonction.
+ * Une fonction de plus s'y déclare, et ce qu'elle rend dans
+ * `LECTURES_DU_DROIT` de `pont.py`, sous le type de son jumeau.
+ */
+const FONCTIONS_DU_DROIT = {
+  "ouvrir.duree_requise": ouvrir.dureeRequise,
+  "liquider.duree_proratisation": liquider.dureeProratisation,
+  "liquider.decote_opposable": liquider.decoteOpposable,
+  "liquider.salaire_de_reference": liquider.salaireDeReference,
+  "liquider.trimestres_de_decote": liquider.trimestresDeDecote,
+  "scenario_actuel.calculer": (moteur, carriere) => actuelEnDonnees(moteur.calculer(carriere)),
+};
+
+/**
+ * Un argument d'un appel du droit, tel que `pont.py` l'écrit : le moteur du
+ * scénario 1 (`simulateur.scenarioActuel`), la période d'un régime à une année,
+ * une carrière de la demande, par son rang, ou une valeur.
+ */
+function argumentDuDroit(simulateur, carrieres, argument) {
+  if (Object.hasOwn(argument, "moteur")) {
+    return simulateur.scenarioActuel;
+  }
+  if (Object.hasOwn(argument, "periode")) {
+    const [code, annee] = argument.periode;
+    return simulateur.catalogue.obtenir(code).periode(annee);
+  }
+  if (Object.hasOwn(argument, "carriere")) {
+    return carrieres[argument.carriere];
+  }
+  return argument.valeur;
+}
+
+/**
+ * Chaque appel d'une fonction du droit, `{cle, fonction, arguments}`, sous les
+ * paramètres que `pont.py` a passés en données, sur les carrières de la
+ * demande, que le Python a bâties : ce que la fonction rend. Une fonction que
+ * le pont ne porte pas arrête la demande, au lieu de se perdre.
+ */
+function droit({ parametres, carrieres, appels }) {
+  const inconnues = [...new Set(appels.map(({ fonction }) => fonction))]
+    .filter((nom) => !Object.hasOwn(FONCTIONS_DU_DROIT, nom));
+  if (inconnues.length > 0) {
+    throw new Error(`fonctions du droit que le pont ne fait pas appeler : ${inconnues.join(", ")}`);
+  }
+  const simulateur = simulateurSous(parametres);
+  const lues = carrieres.map(carriereDesDonnees);
+  return parCas(appels, ({ fonction, arguments: valeurs }) => FONCTIONS_DU_DROIT[fonction](
+    ...valeurs.map((argument) => argumentDuDroit(simulateur, lues, argument))));
+}
+
 const LECTURES = {
   carrieres, saisies, grille_du_cout: grilleDuCout, carrieres_des_saisies: carrieresDesSaisies,
-  simulations, scenario_actuel: scenarioActuel,
+  simulations, scenario_actuel: scenarioActuel, droit,
 };
 
 /** La réponse à une demande, qui porte une seule des `LECTURES`. */
