@@ -1,0 +1,145 @@
+schema_version: 1
+id: exoneration_independants_outre_mer
+intitule: >-
+  Exonération de toute cotisation de l'artisan et du commerçant des départements
+  d'outre-mer dont le revenu de l'année ne dépasse pas le montant qu'un décret fixe :
+  2 500 F jusqu'en 2001, 390 € depuis 2002 (L. 756-3, L. 756-5, II, D. 756-7,
+  D. 756-6). L'année ne lui ouvre aucun droit : ni trimestre, ni salaire porté au
+  compte, ni point. L'abattement de moitié que L. 756-4 fait sur sa retraite de base
+  de 2000 à 2016, que la caisse tient pour une exonération génératrice de droits, ne
+  change pas les siens.
+regimes: [cancava, organic, regime_general, rsi]
+etat: approchee
+etape: acquerir_les_droits
+effet: >-
+  Un artisan de La Réunion qui déclare 300 € en 2010 validait un trimestre sur
+  l'assiette minimale, 200 SMIC horaires (1 772 €), portée à son compte ; il n'en
+  valide aucun, et rien ne va à son compte. Une artisane de La Réunion née en 1955, à
+  15 000 € par an de 1985 à 2014 puis à 300 € en 2015, partie à soixante-deux ans :
+  7 508,18 € par an au lieu de 7 597,79 €. La règle ne joue que pour les carrières qui
+  portent le département, du relevé ou de la chronologie : la saisie du site ne le
+  porte pas (feuille de route, action 177, étape 7).
+sources:
+  lu_le: 2026-10-31
+  prochaine_relecture: 2027-01-31
+  a_relire:
+  - >-
+    Le décret n° 75-1098 du 25 novembre 1975, que D. 756-7 codifie en 1985 : le
+    montant de l'exonération avant 1986, et l'abattement de ses articles 3 et 11, que
+    D. 756-3 et D. 756-9 nomment. L'index du JORF n'en a que le sommaire, et LEGI
+    aucun article ; le texte est au Journal officiel du 27 novembre 1975.
+  - >-
+    Ce que la caisse porte au compte de l'indépendant des DOM depuis 2017 :
+    l'abattement dégressif de L. 756-4 et les deux premières années du créateur, sur
+    un revenu forfaitaire et exonérées sous 110 % du plafond (L. 756-2, L. 756-3,
+    D. 756-4), ouvrent-ils des droits sur le revenu entier, comme l'abattement
+    d'avant 2017 ? L'exposé de la caisse ne le dit pas, ni les circulaires lues ;
+    une circulaire de la Cnav ou de l'Urssaf le dirait.
+  lectures:
+  - type: legifrance
+    reference: >-
+      L. 756-3 (LEGIARTI000006744202, LEGIARTI000026798306, LEGIARTI000031323786,
+      LEGIARTI000033712466), L. 756-4 (LEGIARTI000006744204 à LEGIARTI000037063454),
+      L. 756-5 (LEGIARTI000006744205 à LEGIARTI000036392025), D. 756-1 à D. 756-9,
+      L. 751-1 et L. 631-1, toutes leurs versions de l'index LEGI à jour du 30
+      octobre 2026 : « sont exonérées du versement de toute cotisation lorsque leur
+      revenu professionnel ne dépasse pas un certain montant fixé par décret »
+      (L. 756-3), puis « de toute cotisation d'assurance vieillesse » (L. 756-5, II) ;
+      un revenu « égal ou inférieur à 2.500 F », puis à « 390 euros » (D. 756-7,
+      D. 756-6) ; « Les prestations prévues à l'article L. 634-2 sont calculées
+      compte tenu du revenu professionnel effectivement pris en considération pour
+      le calcul de la cotisation » (D. 756-8). Lues le 31
+    date: 2026-10-31
+  - type: jorf
+    reference: >-
+      décret n° 75-1098 du 25 novembre 1975 relatif à l'assurance vieillesse des
+      travailleurs non salariés des professions artisanales, industrielles et
+      commerciales des départements de la Guadeloupe, de la Guyane, de la Martinique
+      et de la Réunion (JORFTEXT000000500873) : l'index n'en a que le sommaire,
+      « ART. 1: APPLICATION DU DECRET 7376 DU 23-01-1973 [...] ART. 3 A 10:
+      COTISATIONS ». Index JORF à jour du 31 octobre 2026, lu le 31
+    date: 2026-10-31
+  - type: autre
+    reference: >-
+      Cnav, exposé « Validation des périodes de cotisations » (version du 13 novembre
+      2025), § « Spécificités départements d'outre-mer » : « Seules les cotisations
+      versées ouvrent des droits à retraite », « avant 2001 : si le revenu est
+      inférieur à 2500 francs, l'assuré est totalement exonéré des cotisations
+      retraite. Il ne bénéficie d'aucun droit à retraite » ; l'abattement « DOM 50
+      % », dont « La part exonérée lui ouvre des droits à hauteur de ce qu'il a versé
+      » ; et ses deux exemples (version du 2 juin 2023), dont « L'assuré règle 857,50
+      €, ses droits sont validés sur la base de : 857,5 x 2 = 1715 € »
+    url: https://legislation.lassuranceretraite.fr/
+    date: 2026-10-31
+  - type: circulaire_cnav
+    reference: >-
+      circulaires Cnav 2024/23 du 16 juillet 2024, 2025/23 du 10 novembre 2025 et
+      2026/12 du 7 avril 2026 : « les exonérations Acre et DOM n'ont aucune
+      incidence sur la détermination des droits à la retraite de base et
+      complémentaire des micro-entrepreneurs » ; 2022/32 du 5 décembre 2022 :
+      l'assiette minimale de 2022, 4 758 €, sans exception pour les DOM
+    date: 2026-10-31
+textes_a_rattacher:
+- reference: >-
+    code de la sécurité sociale, L. 756-3 (LEGIARTI000006744202 à LEGIARTI000033712466)
+- reference: >-
+    code de la sécurité sociale, L. 756-4 (LEGIARTI000006744204 à LEGIARTI000037063454)
+- reference: >-
+    code de la sécurité sociale, L. 756-5 (LEGIARTI000006744205 à LEGIARTI000036392025)
+- reference: >-
+    code de la sécurité sociale, D. 756-6 (LEGIARTI000034726712, LEGIARTI000041968318)
+- reference: >-
+    code de la sécurité sociale, D. 756-7 (LEGIARTI000006738637, LEGIARTI000006738638,
+    LEGIARTI000030034747)
+- reference: >-
+    code de la sécurité sociale, D. 756-8 (LEGIARTI000006739014, LEGIARTI000030034737)
+- reference: décret n° 75-1098 du 25 novembre 1975 (JORFTEXT000000500873)
+approximations:
+- ecart: >-
+    Avant 1986, sous le décret n° 75-1098, dont l'index n'a pas le texte, la règle de
+    la métropole tient lieu : l'artisan des DOM sous le montant de l'époque cotise sur
+    l'assiette minimale.
+  effet: non mesuré ; un trimestre par an au plus, les années que le décret régissait
+- ecart: >-
+    De 2001 à 2016, la cotisation se calculait sur le revenu de l'avant-dernière
+    année (L. 756-5) : la table compare au montant le revenu de l'année même, que le
+    modèle porte au compte (limite « indépendants des DOM »).
+  effet: non mesuré
+- ecart: >-
+    Depuis 2018, L. 756-5, II, vise toutes les personnes de L. 631-1, le libéral non
+    réglementé de la sécurité sociale des indépendants compris, que le statut
+    `liberal_non_reglemente` ne distingue pas de celui de la CNAVPL, que le texte ne
+    vise pas : la table ne nomme que l'artisan, le commerçant et le gérant d'un débit
+    de tabac. Ni Saint-Pierre-et-Miquelon (D. 756-6), ni Saint-Barthélemy et
+    Saint-Martin, que le modèle ne distingue pas de la Guadeloupe.
+  effet: non mesuré
+- ecart: >-
+    Le reste de la règle des DOM : les droits de l'assuré qui ne paie pas toute la
+    cotisation appelée, validés sur le double de ce qu'il a versé ; l'exonération du
+    créateur, ses deux premières années sur un revenu forfaitaire depuis 2017 ;
+    l'abattement dégressif depuis 2017 ; le RCO et le NRCO réduits de 2010 à 2012
+    (limite « indépendants des DOM », docs/limites/3-systeme-actuel.md).
+  effet: non mesuré
+code:
+  moteur: >-
+    `_ligne_annuelle` exonère l'année de l'artisan, du commerçant ou du gérant d'un
+    débit de tabac qui cotise, hors du micro-entrepreneur, quand elle porte un
+    département d'outre-mer (`outre_mer`) et que son revenu, positif, ne dépasse pas
+    le montant que `exoneration_outre_mer` lit pour son statut et l'année dans
+    `legislation/exoneration_independants_outre_mer.csv` (`ExonerationOutreMer.exonere`,
+    `exonereOutreMer`) : l'assiette minimale tombe, ses trimestres se valident sur son
+    seul revenu, aucun, et l'année ne verse pas de cotisation
+    (`cotisations_versees`), si bien que rien n'en va au salaire annuel moyen, aux
+    points ni au compte notionnel.
+  python: >-
+    carriere.py : _ligne_annuelle ; donnees/chargement.py : ExonerationOutreMer.exonere,
+    charger_exonerations_outre_mer, exoneration_outre_mer
+  javascript: >-
+    moteur/js/carriere.js : ligneAnnuelle, exonereOutreMer
+  parametres: >-
+    legislation/exoneration_independants_outre_mer.csv : statuts, debut, fin, euros
+  tests:
+  - tests/test_outre_mer.py
+  - >-
+    tests/test_cnav_baremes.py, où l'assiette minimale moitié moindre des tables des
+    DOM, de 2009 à 2016, est celle de la cotisation appelée

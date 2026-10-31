@@ -61,7 +61,12 @@ inventaire:
     avec une pension calculée selon les mêmes règles (article 23-4),
     n'ont aucun statut qui les y route : seul `salarie_mayotte` atteint
     la fiche, et le chapitre III du décret n° 2003-589, écrit en 2012 pour
-    adapter leur revenu annuel moyen, n'est pas lu.
+    adapter leur revenu annuel moyen, n'est pas lu. Leur trimestre se
+    valide par un montant de cotisations, que la caisse publie (135 € en
+    2025, 250 € en 2026, barème « Revenu validant un trimestre -
+    Travailleurs indépendants »), à des taux de cotisation que le dépôt
+    n'a pas, et leur cumul emploi-retraite a ses plafonds : une étape de
+    la feuille de route (action 177, étape 8).
 periodes:
   - debut: 1987
     fin: 2002

@@ -99,29 +99,57 @@ l'Institut des politiques publiques (PENSIPP). Écarts connus :
   forfaits avant ; l'artiste du spectacle, à des taux réduits, et sur un
   salaire forfaitaire par jour s'il est occasionnel ou acteur de complément ;
   le journaliste, à des taux réduits depuis 1991.
-- **indépendants des DOM** — le modèle les traite comme ceux de la métropole,
-  aux taux et sur l'assiette minimale de la série, que reprennent les barèmes
-  des DOM de la caisse : depuis 2007 pour les taux de la retraite de base,
-  depuis 2013 pour le RCI, depuis 2018 pour l'assiette minimale, sauf en
-  2022, où l'édition des DOM garde la part du plafond quand le modèle
-  applique, comme la table de la métropole, le montant que le décret
-  n° 2022-1438 fixe à tous les indépendants. Il ne leur
-  applique pas l'abattement que L. 756-4 fait sur l'assiette de leur retraite
-  de base : la moitié de la part du revenu sous le plafond (rédactions en
-  vigueur de 2000 à 2016), d'où, dans les tables de la caisse, une assiette
-  minimale moitié moindre de 2009 à 2016, comptée en heures du Smic jusqu'en
-  2012 quand la métropole passe cette année-là à une part du plafond ; puis,
-  depuis 2017, le RCI et l'invalidité-décès exceptés, la moitié encore, les
-  trois quarts la troisième année d'activité, dégressif d'une fois et demie à
-  deux fois et demie le plafond. Ni l'exonération de toute cotisation
-  d'assurance vieillesse sous un revenu que fixe un décret (L. 756-5, II), ni
-  celle, dégressive, des créateurs depuis 2018, dont les cotisations des deux
-  premières années, le RCI excepté, restent définitives sur la base
-  forfaitaire de début d'activité, ni le RCO et le NRCO moindres que les
-  tables portent de 2010 à 2012 sur leur première tranche (sept, huit puis
-  neuf dixièmes des taux de la métropole). Si la caisse porte au compte de la
-  retraite de base le revenu abattu, ou cette base forfaitaire, le modèle s'en
-  écarte : non mesuré.
+- **indépendants des DOM** — le modèle exonère de toute cotisation l'artisan,
+  le commerçant et le gérant d'un débit de tabac dont la ligne porte un
+  département d'outre-mer et dont le revenu de l'année ne dépasse pas le
+  montant qu'un décret fixe, deux mille cinq cents francs puis, depuis 2002,
+  trois cent quatre-vingt-dix euros (L. 756-3, L. 756-5, D. 756-7, D. 756-6) :
+  ni assiette minimale, ni trimestre, ni salaire porté au compte, ni point,
+  l'année ne lui ouvrant « aucun droit à retraite », dit la caisse
+  (`legislation/exoneration_independants_outre_mer.csv`). Le site ne sert pas
+  cette règle : sa saisie ne porte pas le département (action 177, étape 7).
+  Pour le reste, il les traite comme ceux de la métropole, aux taux et sur
+  l'assiette minimale de la série, que reprennent les barèmes des DOM de la
+  caisse : depuis 2007 pour les taux de la retraite de base, depuis 2013 pour
+  le RCI, depuis 2018 pour l'assiette minimale, sauf en 2022, où l'édition
+  des DOM garde la part du plafond quand le modèle applique, comme la table de
+  la métropole et la circulaire Cnav 2022/32, le montant que le décret
+  n° 2022-1438 fixe à tous les indépendants. L'abattement que L. 756-4 fait
+  sur leur retraite de base, la moitié de la part du revenu sous le plafond
+  dans ses rédactions de 2000 à 2016, ne change pas leurs droits : la caisse
+  le tient pour une exonération « génératrice de droits », la part exonérée
+  ouvrant des droits « à hauteur de ce qu'il a versé », si bien que l'assuré
+  qui paie la cotisation appelée voit ses droits validés sur son revenu
+  entier (exposé « Validation des périodes de cotisations » et son exemple,
+  que `tests/test_outre_mer.py` rejoue). L'assiette minimale moitié moindre
+  des tables de 2009 à 2016 est celle de la cotisation appelée : doublée,
+  elle redonne celle de la métropole, sauf en 2012, où l'édition des DOM
+  la compte encore en heures du Smic quand la métropole passe à une part du
+  plafond. Le modèle ne sert pas : les droits de l'assuré qui ne paie pas
+  toute la cotisation appelée, validés sur le double de ce qu'il a versé, ni
+  l'exonération comptée sur l'encaissé (le second exemple de la caisse), les
+  cotisations étant tenues pour versées ; de 2001 à 2016, la cotisation
+  calculée « à titre définitif » sur le revenu de l'avant-dernière année ou
+  sur des revenus forfaitaires (L. 756-5), sur lequel D. 756-8 calcule la
+  pension, quand il porte au compte le revenu de l'année ; avant 2017,
+  l'exonération des vingt-quatre premiers mois d'activité du créateur, à qui
+  « des droits sont attribués », sauf la part que la caisse fixe la troisième
+  année pour l'assuré taxé d'office ; depuis 2017, ses cotisations des deux
+  premières années, calculées à titre définitif sur un revenu forfaitaire
+  (L. 756-3) et exonérées sous un revenu de cent dix pour cent du plafond
+  (L. 756-2, D. 756-4), puis l'abattement de moitié, des trois quarts la
+  troisième année, dégressif d'une fois et demie à deux fois et demie le
+  plafond, le RCI et l'invalidité-décès exceptés (L. 756-4), dont la caisse ne
+  dit pas les droits qu'ils ouvrent, « seules les cotisations versées » en
+  ouvrant ; le RCO et le NRCO moindres que les tables portent de 2010 à 2012
+  sur leur première tranche (sept, huit puis neuf dixièmes des taux de la
+  métropole) ; avant 1986, le décret n° 75-1098, dont l'index du JORF n'a que
+  le sommaire, et l'abattement de ses articles 3 et 11 ; depuis 2018,
+  l'exonération du libéral non réglementé que L. 631-1 range avec l'artisan,
+  et celle de Saint-Pierre-et-Miquelon (D. 756-6). Non mesuré. Le
+  micro-entrepreneur, dont la caisse neutralise les taux réduits des DOM pour
+  calculer ses droits (circulaires Cnav 2024/23 à 2026/12), est servi comme
+  elle le sert.
 - **Accre et Acre** — le modèle n'applique aux indépendants aucune exonération
   de début d'activité : il porte au compte leurs cotisations entières.
   L'Accre, puis l'Acre depuis 2019, exonère pourtant leur retraite de base,

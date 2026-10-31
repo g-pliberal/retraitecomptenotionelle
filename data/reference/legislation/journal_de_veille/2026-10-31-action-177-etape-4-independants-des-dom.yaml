@@ -1,0 +1,42 @@
+date: "2026-10-31"
+session: "action 177, étape 4 : les indépendants des DOM"
+consulte: >-
+  `python scripts/veille_droit.py` : trois fiches à relire, aucune de l'étape. Les index
+  LEGI et JORF récupérés et mis à jour (incréments jusqu'au 31 octobre 2026). Dans
+  l'index LEGI, toutes les versions de L. 756-1 à L. 756-5, de D. 756-1 à D. 756-9, de
+  L. 751-1 et de L. 631-1 : L. 756-4 dans ses sept rédactions (LEGIARTI000006744204 à
+  LEGIARTI000037063454), L. 756-3 dans ses quatre (LEGIARTI000006744202 à
+  LEGIARTI000033712466), L. 756-5 dans ses huit (LEGIARTI000006744205 à
+  LEGIARTI000036392025), D. 756-7 et D. 756-8 dans leurs trois et deux. Dans l'index
+  JORF, le décret n° 75-1098 du 25 novembre 1975 (JORFTEXT000000500873), dont il n'a que
+  le sommaire. L. 161-17-2 et L. 161-17-3, sans rédaction postérieure à celles du 31
+  décembre 2025 (LEGIARTI000053280889, LEGIARTI000053280903 ; fiche
+  `fin_de_la_suspension_2028`). La base de législation de la Cnav : l'exposé
+  « Validation des périodes de cotisations » (version du 13 novembre 2025) et ses deux
+  exemples des DOM (version du 2 juin 2023) ; les circulaires 2022/32, 2024/23, 2025/23
+  et 2026/12, et les autres circulaires des indépendants de 2020 à 2025, sans rien sur
+  les DOM ; le barème « Revenu validant un trimestre - Travailleurs indépendants » de
+  Mayotte. `python scripts/textes.py --inscrire` après la fiche neuve.
+trouve: >-
+  De 2000 à 2016, L. 756-4 assied la cotisation de l'indépendant des DOM sur la moitié
+  de son revenu sous le plafond, mais la caisse tient l'abattement pour une exonération
+  « génératrice de droits » : la part exonérée ouvre des droits « à hauteur de ce qu'il
+  a versé », 857,50 € payés sur 10 000 € en 2014 valident des droits sur 1 715 € de
+  cotisations, le revenu entier. Le modèle, qui porte ce revenu au compte, a donc les
+  droits de la caisse, et l'assiette minimale moitié moindre des tables de 2009 à 2016
+  est celle de la cotisation appelée. L'artisan et le commerçant dont le revenu ne
+  dépasse pas 2 500 F, puis 390 € depuis 2002, sont exonérés de toute cotisation et
+  n'ont « aucun droit à retraite » (L. 756-3, L. 756-5, II, D. 756-7, D. 756-6) : la
+  fiche neuve `exoneration_independants_outre_mer` le lit, dans les deux moteurs, pour
+  la ligne qui porte un département d'outre-mer, depuis 1986. Pour le micro-entrepreneur,
+  la caisse neutralise les taux réduits des DOM : ses droits sont ceux de la métropole.
+  De 2001 à 2016, la cotisation se calculait « à titre définitif » sur le revenu de
+  l'avant-dernière année (L. 756-5), et D. 756-8 calcule la pension sur ce revenu.
+reste: >-
+  Le décret n° 75-1098, avant 1986 : son montant et l'abattement de ses articles 3 et
+  11. Ce que la caisse porte au compte depuis 2017 : l'abattement dégressif et les deux
+  premières années du créateur, sur un revenu forfaitaire. La base de l'avant-dernière
+  année, de 2001 à 2016. Le RCO et le NRCO réduits de 2010 à 2012. Le libéral non
+  réglementé de L. 631-1 depuis 2018, Saint-Pierre-et-Miquelon. La saisie du
+  département sur le site (action 177, étape 7) ; les non-salariés de Mayotte (étape 8).
+  Les rédactions des textes cités, « à examiner ».

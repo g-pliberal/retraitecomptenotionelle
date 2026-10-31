@@ -7360,15 +7360,15 @@ avec son test. Le modèle et le site gardent PyYAML seul.
 
 ### 177. Les écarts que les barèmes de la Cnav ont trouvés au modèle : chacun corrigé dans les deux moteurs, ou sa limite dite — `en cours`
 
-**Reprise, au 31 octobre 2026.** Les étapes 1 à 3 sont faites : le RCO et le
-NRCO (`177/2026-10-31-etape-1-rco-et-nrco.md`), l'assiette minimale des
-indépendants (`177/2026-10-31-etape-2-assiette-minimale.md`), puis Mayotte,
-ses trimestres au Smig mahorais et son salaire annuel moyen au plafond de la
-caisse (`177/2026-10-31-etape-3-mayotte.md`). Par quoi commencer : l'étape 4,
-les indépendants des DOM, à trancher d'abord avec le propriétaire — une
-saisie de plus, avec la session du site, ou la limite qui reste. Un écart par
-commit, le test vu rouge d'abord ; des règles du scénario 1, sur Opus, après
-`python scripts/veille_droit.py`.
+**Reprise, au 31 octobre 2026.** Les étapes 1 à 4 sont faites : le RCO et le
+NRCO, l'assiette minimale, Mayotte, puis les indépendants des DOM, exonérés
+sous 390 € dans les deux moteurs, leur abattement d'avant 2017 ouvrant des
+droits sur le revenu entier (`177/2026-10-31-etape-4-independants-des-dom.md`).
+Par quoi commencer : l'étape 5, l'assiette d'avant 2007, à relire puis à
+trancher (fiche `cotisation_vieillesse_independants`). L'étape 7, la saisie du
+département, revient à la session du site ; l'étape 8, les non-salariés de
+Mayotte, au modèle. Un écart par commit, le test vu rouge d'abord ; des règles
+du scénario 1, sur Opus, après `python scripts/veille_droit.py`.
 
 **D'où elle vient.** Le 31 octobre 2026, l'étape 2 de l'action 175 — les
 barèmes de la base de législation de la Cnav confrontés, un à un, aux séries
@@ -7406,3 +7406,19 @@ moteurs ensemble.
    (modèle) : la grille de la caisse et ses circulaires divergent, et l'assuré
    qui ne relève pas de la maladie du RSI, que le modèle ne distingue pas
    (`ECARTS_A_LA_GRILLE`). À trancher d'abord.
+7. **Le département d'outre-mer dans la saisie** (site, pour la session du
+   site, seule sur les pages) : porter le département de chaque période
+   d'activité, que la ligne de carrière connaît déjà (`outre_mer`), pour que
+   le site serve les règles qui le lisent — le seuil des trimestres des
+   années travaillées outre-mer de 1948 à 1995 (action 138, étape 6),
+   l'exonération des indépendants des DOM (étape 4). Liste « Un champ de
+   saisie de plus » de `moteur/CLAUDE.md`. Décidé avec le propriétaire le
+   31 octobre 2026.
+8. **Les non-salariés de Mayotte** (modèle) : un statut qui les route à la
+   caisse de Mayotte, où ils sont affiliés depuis 2012 (ordonnance
+   n° 2002-411, articles 23-1 à 23-4 ; décret n° 2003-589, chapitre III), leur
+   trimestre validé par un montant de cotisations que la caisse publie
+   (barème « Revenu validant un trimestre - Travailleurs indépendants »), et
+   leurs taux de cotisation, que le dépôt n'a pas, à trouver d'abord (fiche
+   `cssm_mayotte`, son `manque`). Décidé avec le propriétaire le 31 octobre
+   2026.

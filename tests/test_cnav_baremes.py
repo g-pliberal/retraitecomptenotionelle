@@ -1337,12 +1337,15 @@ TAUX_DOM_AVANT_2020 = {
     2016: (17.65, 0.50, 7, 8, 37546), 2017: (17.75, 0.60, 7, 8, 37546),
     2018: (17.75, 0.60, 7, 8, 37846), 2019: (17.75, 0.60, 7, 8, 37960),
 }
-#: L'écart, que la limite des indépendants des DOM déclare : de 2009 à 2016,
-#: la table porte la moitié de l'assiette minimale (« (200 SMIC horaire)/2 »,
-#: « 5,25 % PASS/2 »…), l'assiette de leur retraite de base étant la moitié
-#: du revenu sous le plafond (L. 756-4, rédactions de 2000 à 2016), et garde
-#: en 2012 les 200 heures du Smic, quand la métropole passe à 5,25 % du
-#: plafond.
+#: La cotisation appelée, non les droits : de 2009 à 2016, la table porte la
+#: moitié de l'assiette minimale (« (200 SMIC horaire)/2 », « 5,25 % PASS/2 »…),
+#: L. 756-4 asseyant leur retraite de base sur la moitié du revenu sous le
+#: plafond (rédactions de 2000 à 2016) ; mais la caisse valide les droits sur
+#: le double de ce que l'assuré verse (exposé « Validation des périodes de
+#: cotisations », `tests/test_outre_mer.py`), et l'assiette doublée est celle de
+#: la série, que le modèle porte au compte. Reste 2012 : la table garde les 200
+#: heures du Smic, quand la métropole passe à 5,25 % du plafond, un écart que la
+#: limite des indépendants des DOM déclare.
 ASSIETTE_MINIMALE_DOM_DE_MOITIE = {2009: 871, 2010: 886, 2011: 900, 2012: 922, 2013: 972,
                                    2014: 986, 2015: 1465, 2016: 2221}
 
@@ -1357,9 +1360,10 @@ def test_l_independant_des_dom_cotise_aux_taux_et_aux_assiettes_de_la_metropole(
     pour 2022 11,5 % du plafond, quand la série suit le décret n° 2022-1438,
     qui fixe 4 758 € (`ECARTS_ASSIETTE_MINIMALE_DOM`). Les tables
     d'avant 2020 disent de même la retraite de base depuis 2007 et le RCI depuis
-    2013, mais, de 2009 à 2016, une assiette minimale moitié moindre
-    (`ASSIETTE_MINIMALE_DOM_DE_MOITIE`) : un écart de plus, que la limite
-    déclare."""
+    2013, et, de 2009 à 2016, une assiette minimale moitié moindre
+    (`ASSIETTE_MINIMALE_DOM_DE_MOITIE`) : celle de la cotisation appelée, dont
+    le double ouvre les droits, soit l'assiette de la série, sauf en 2012, où
+    elle garde les heures du Smic, un écart que la limite déclare."""
     rsi, general = _taux_annuels("rsi"), _taux_annuels("regime_general")
     (premiere,) = [p for p in _fiche("rci")["periodes"]
                    if p["debut"] == 2013 and p["assiette"] == "plafonnee"]
