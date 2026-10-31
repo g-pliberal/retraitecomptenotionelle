@@ -25044,6 +25044,7 @@ null
 "valeurs":[12960770.0,13262962.0,13636368.0,14022480.0,14417742.0,14743245.0,15081956.0,15290615.0,15349151.0,15629468.0,15828400.0,15980438.0,16135181.0,16252194.0,16495664.0,16712078.0,16674470.0,16801214.0,16974753.0,17184263.0,17298245.0]
 }
 },
+"exoneration_independants_outre_mer":[[["artisan","commercant","gerant_debit_tabac"],1986,2001,381.12],[["artisan","commercant","gerant_debit_tabac"],2002,null,390.0]],
 "fiches_datees":{
 "apprentissage":{
 "dates_qui_decident":["periode.debut"],
@@ -27941,7 +27942,7 @@ null
 "famille":"base_prive",
 "fermeture":null,
 "integre_dans":null,
-"manque":"Le Smig mahorais, qui valide les trimestres (200 puis 150 heures par trimestre), n'est une série du dépôt que depuis 2002 : de 1987 à 2001, la validation se fait au SMIC national. Le plafond de la caisse de sécurité sociale de Mayotte, qui borne le salaire annuel moyen, ne l'est que depuis 2005 : celui de la Sécurité sociale tient lieu avant, quand le décret n° 2003-589 (article 21) le fixe à 825 € par mois dès 2003 et que des arrêtés préfectoraux le fixaient de 1987 à 2002 (décret n° 87-175, articles 9 et 21). Les cotisations restent assises sur le plafond et aux taux du régime général, quand la caisse a les siens, en convergence jusqu'en 2036. Salaire de référence sur vingt-cinq ans dès 2003, quand le décret n° 2003-589 (article 7) en compte seize à vingt-quatre pour les générations 1956 à 1964 liquidant de 2018 à 2027. De 1987 à 2002, la formule du régime général tient lieu de celle du décret n° 87-175, qui est pourtant dans l'index : 1,5 % par année des cinq meilleures années, 150 trimestres au plus, sans minoration (articles 8, 9 et 11). Au 1er janvier 2028, l'ordonnance n° 2026-647 fond le régime dans le code de la sécurité sociale (L. 759-22), ce que la fiche ne porte pas (fiche mayotte_pension_de_base). Les non-salariés de Mayotte, affiliés à la même caisse depuis 2012 avec une pension calculée selon les mêmes règles (article 23-4), n'ont aucun statut qui les y route : seul `salarie_mayotte` atteint la fiche, et le chapitre III du décret n° 2003-589, écrit en 2012 pour adapter leur revenu annuel moyen, n'est pas lu.",
+"manque":"Le Smig mahorais, qui valide les trimestres (200 puis 150 heures par trimestre), n'est une série du dépôt que depuis 2002 : de 1987 à 2001, la validation se fait au SMIC national. Le plafond de la caisse de sécurité sociale de Mayotte, qui borne le salaire annuel moyen, ne l'est que depuis 2005 : celui de la Sécurité sociale tient lieu avant, quand le décret n° 2003-589 (article 21) le fixe à 825 € par mois dès 2003 et que des arrêtés préfectoraux le fixaient de 1987 à 2002 (décret n° 87-175, articles 9 et 21). Les cotisations restent assises sur le plafond et aux taux du régime général, quand la caisse a les siens, en convergence jusqu'en 2036. Salaire de référence sur vingt-cinq ans dès 2003, quand le décret n° 2003-589 (article 7) en compte seize à vingt-quatre pour les générations 1956 à 1964 liquidant de 2018 à 2027. De 1987 à 2002, la formule du régime général tient lieu de celle du décret n° 87-175, qui est pourtant dans l'index : 1,5 % par année des cinq meilleures années, 150 trimestres au plus, sans minoration (articles 8, 9 et 11). Au 1er janvier 2028, l'ordonnance n° 2026-647 fond le régime dans le code de la sécurité sociale (L. 759-22), ce que la fiche ne porte pas (fiche mayotte_pension_de_base). Les non-salariés de Mayotte, affiliés à la même caisse depuis 2012 avec une pension calculée selon les mêmes règles (article 23-4), n'ont aucun statut qui les y route : seul `salarie_mayotte` atteint la fiche, et le chapitre III du décret n° 2003-589, écrit en 2012 pour adapter leur revenu annuel moyen, n'est pas lu. Leur trimestre se valide par un montant de cotisations, que la caisse publie (135 € en 2025, 250 € en 2026, barème « Revenu validant un trimestre - Travailleurs indépendants »), à des taux de cotisation que le dépôt n'a pas, et leur cumul emploi-retraite a ses plafonds : une étape de la feuille de route (action 177, étape 8).",
 "nom":"Régime de retraite des salariés de Mayotte (Caisse de sécurité sociale de Mayotte)",
 "population":"Salariés du secteur privé et agents de droit privé à Mayotte ; depuis 2012, travailleurs non salariés artisans, commerçants, libéraux et agricoles de Mayotte (assurance de base des non-salariés, même caisse)",
 "raison_hors_champ":"",
@@ -224479,7 +224480,7 @@ null
 "services":{"2018":1.0004732394366196,"2019":1.0004732394366196,"2020":1.0004732394366196,"2021":1.0004732394366196,"2022":0.9999774647887324,"2023":0.9984901408450706,"2024":0.9984901408450706,"2025":0.9917851147174036,"2026":1.030934527140459},
 "vente":{"2018":1.0023661971830988,"2019":1.0023661971830988,"2020":1.0023661971830988,"2021":1.0023661971830988,"2022":1.0014783875667799,"2023":0.998814958717824,"2024":0.998814958717824,"2025":0.9921077513845199,"2026":1.0312698994654879}
 },
-"version":37,
+"version":38,
 "versions_des_fiches":{
 "carriere_longue_reputes_cotises_autres":{
 "dates_qui_decident":["liquidation.date_effet"],
