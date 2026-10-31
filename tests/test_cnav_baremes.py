@@ -405,17 +405,13 @@ ASSIETTE_MINIMALE_EN_EUROS = {
 }
 
 #: Ce que la série de l'assiette minimale (`assiette_minimale_independants.csv`)
-#: ne porte pas comme la caisse : un écart qui change le calcul — le revenu
-#: porté au compte, et les trimestres validés —, à la session du modèle. Les
-#: 200 heures de Smic de 1973 à 1984 sont celles de l'article 2 du décret
-#: n° 73-76 du 22 janvier 1973, que D. 633-2 reprend en 1985 (action 177).
-ECARTS_ASSIETTE_MINIMALE = {
-    range(2022, 2023): (
-        "le décret n° 2022-1438 du 16 novembre 2022 (art. 1er) fixe pour 2022, « par "
-        "dérogation aux articles D. 633-2 et D. 642-4 », une assiette d'au moins "
-        "4 758 €, de quoi valider trois trimestres ; la série garde 11,5 % du "
-        "plafond, 4 731 €, qui n'en valident que deux"),
-}
+#: ne porte pas comme la caisse : rien. Les deux écarts que l'action 175 y avait
+#: trouvés sont corrigés (action 177) : les 200 heures de Smic de 1973 à 1984,
+#: celles de l'article 2 du décret n° 73-76 du 22 janvier 1973, que D. 633-2
+#: reprend en 1985 ; les 4 758 € de 2022, que fixe l'article 1er du décret
+#: n° 2022-1438 du 16 novembre 2022, « par dérogation aux articles D. 633-2 et
+#: D. 642-4 », au lieu de 11,5 % du plafond.
+ECARTS_ASSIETTE_MINIMALE: dict[range, str] = {}
 
 
 def _assiette_minimale_de_la_serie(annee: int, smic: dict, plafond: dict) -> float | None:
@@ -423,6 +419,8 @@ def _assiette_minimale_de_la_serie(annee: int, smic: dict, plafond: dict) -> flo
         if "artisan" not in ligne["statuts"].split():
             continue
         if int(ligne["debut"]) <= annee <= int(ligne["fin"] or 9999):
+            if ligne["euros"]:
+                return float(ligne["euros"])
             if ligne["heures_smic"]:
                 return float(ligne["heures_smic"]) * smic[annee]
             return float(ligne["part_pass"]) * plafond[annee]
@@ -431,8 +429,8 @@ def _assiette_minimale_de_la_serie(annee: int, smic: dict, plafond: dict) -> flo
 
 def test_l_assiette_minimale_des_independants_est_celle_que_la_caisse_publie():
     """La règle de la série — 200 heures du Smic du 1er janvier jusqu'en 2011,
-    5,25 %, 7,7 % puis 11,5 % du plafond de 2012 à 2022, 450 heures depuis
-    2023 —, appliquée au Smic (`smic_horaire.csv`) et au plafond
+    5,25 %, 7,7 % puis 11,5 % du plafond de 2012 à 2021, 4 758 € en 2022,
+    450 heures depuis 2023 —, appliquée au Smic (`smic_horaire.csv`) et au plafond
     (`plafond_securite_sociale.csv`) du dépôt, redonne à l'unité près ce que
     la caisse publie pour l'artisan et le commerçant, de 1973 à 2026. Les
     écarts qui restent se déclarent dans `ECARTS_ASSIETTE_MINIMALE`."""
@@ -1320,6 +1318,12 @@ TAUX_DOM = {
 #: sont dépassés » : l'assiette minimale de la retraite de base, en euros.
 ASSIETTE_MINIMALE_DOM = {2018: 4569, 2019: 4660, 2020: 4731, 2021: 4731, 2022: 4731,
                          2023: 5072, 2024: 5243, 2025: 5346}
+#: Ce que l'édition des DOM garde pour 2022 : 11,5 % du plafond, quand l'article
+#: 1er du décret n° 2022-1438 fixe 4 758 €, « par dérogation aux articles
+#: D. 633-2 et D. 642-4 », pour tous les travailleurs indépendants de L. 631-1
+#: et L. 640-1, sans excepter les DOM ; le modèle suit le décret, comme la
+#: table de la métropole.
+ECARTS_ASSIETTE_MINIMALE_DOM = {2022: 4758}
 #: Leurs tables de 2007 à 2019, jointes (« Info-doc RSI » mis à jour le
 #: 27 février 2019) : `ti_cotisation_taux_cotisation_dom_2007_2019.pdf`, la
 #: retraite de base sous le plafond et au-delà, en pour cent, et, depuis 2013,
@@ -1350,8 +1354,8 @@ def test_l_independant_des_dom_cotise_aux_taux_et_aux_assiettes_de_la_metropole(
     assiettes : la retraite de base sans plafond, 0,60 % au-delà du plafond, le
     RCI jusqu'à quatre plafonds — l'assiette maximale de l'édition des DOM, de
     2020 à 2022 —, et l'assiette minimale de la série. L'édition des DOM garde
-    pour 2022 11,5 % du plafond, comme la série, quand le décret n° 2022-1438
-    fixe 4 758 €, ce que `ECARTS_ASSIETTE_MINIMALE` déclare. Les tables
+    pour 2022 11,5 % du plafond, quand la série suit le décret n° 2022-1438,
+    qui fixe 4 758 € (`ECARTS_ASSIETTE_MINIMALE_DOM`). Les tables
     d'avant 2020 disent de même la retraite de base depuis 2007 et le RCI depuis
     2013, mais, de 2009 à 2016, une assiette minimale moitié moindre
     (`ASSIETTE_MINIMALE_DOM_DE_MOITIE`) : un écart de plus, que la limite
@@ -1379,7 +1383,9 @@ def test_l_independant_des_dom_cotise_aux_taux_et_aux_assiettes_de_la_metropole(
     smic = _serie_annuelle(MACRO / "smic_horaire.csv", "smic_horaire")
     plafond = _serie_annuelle(MACRO / "plafond_securite_sociale.csv", "pass_eur")
     for annee, publiee in ASSIETTE_MINIMALE_DOM.items():
-        assert _arrondi(_assiette_minimale_de_la_serie(annee, smic, plafond)) == publiee, annee
+        serie = _arrondi(_assiette_minimale_de_la_serie(annee, smic, plafond))
+        assert serie == ECARTS_ASSIETTE_MINIMALE_DOM.get(annee, publiee), annee
+        assert (serie == publiee) == (annee not in ECARTS_ASSIETTE_MINIMALE_DOM), annee
     for annee, publiee in ASSIETTE_MINIMALE_DOM_DE_MOITIE.items():
         serie = _arrondi(_assiette_minimale_de_la_serie(annee, smic, plafond))
         regle = _arrondi(200 * smic[annee]) if annee <= 2012 else serie

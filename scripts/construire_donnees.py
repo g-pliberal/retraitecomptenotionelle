@@ -135,7 +135,7 @@ CALIBRATIONS = DONNEES / "derive" / "calibrations_mortalite.json"
 #: qu'un site en cache ne lise pas un paquet qu'il ne comprend pas : le site
 #: attend la sienne (``VERSION_PAQUET``, ``moteur/js/contexte.js``), et redemande
 #: au serveur un paquet qui n'a pas celle-là, depuis le 11 octobre 2026.
-VERSION = 34
+VERSION = 35
 
 
 def _serie(serie: SerieAnnuelle) -> dict:
@@ -1308,7 +1308,7 @@ def _assiette_minimale_independants() -> list:
 
     return [
         [sorted(r.statuts), sorted(r.regimes), r.debut, r.fin,
-         r.heures_smic, r.part_pass, r.proratise, r.jours_minimum]
+         r.heures_smic, r.part_pass, r.proratise, r.jours_minimum, r.euros]
         for r in charger_assiettes_minimales(DONNEES)
     ]
 

@@ -603,6 +603,10 @@ class AssietteMinimale:
     part_pass: float | None
     proratise: bool
     jours_minimum: int
+    #: Le montant que le texte fixe en euros, quand il ne le compte ni en
+    #: heures du Smic ni en part du plafond : 4 758 € en 2022 (décret
+    #: n° 2022-1438, article 1er).
+    euros: float | None = None
 
     def montant(self, pass_annuel: float, smic_horaire: float,
                 part: float) -> float:
@@ -613,7 +617,9 @@ class AssietteMinimale:
         """
         if part * 365 + 1e-6 < self.jours_minimum:
             return 0.0
-        if self.heures_smic is not None:
+        if self.euros is not None:
+            montant = self.euros
+        elif self.heures_smic is not None:
             montant = self.heures_smic * smic_horaire
         else:
             montant = (self.part_pass or 0.0) * pass_annuel
@@ -651,6 +657,7 @@ def charger_assiettes_minimales(racine: Path) -> tuple[AssietteMinimale, ...]:
                            if ligne["part_pass"].strip() else None),
                 proratise=ligne["proratise"].strip().lower() == "oui",
                 jours_minimum=int(ligne["jours_minimum"] or 0),
+                euros=float(ligne["euros"]) if ligne["euros"].strip() else None,
             )
             for ligne in csv.DictReader(lignes)
         )

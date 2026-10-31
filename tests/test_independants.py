@@ -957,3 +957,23 @@ def test_l_assiette_minimale_des_artisans_et_commercants_court_depuis_1973(simul
             assert metier[annee].assiette_minimale_base == pytest.approx(
                 francs / FRANCS_PAR_EURO, rel=1e-6), annee
             assert metier[annee].trimestres_valides == 1, annee
+
+
+def test_l_assiette_minimale_de_2022_est_celle_du_decret_n_2022_1438(simulateur):
+    """« Par dérogation aux articles D. 633-2 et D. 642-4 du code de la sécurité
+    sociale, la cotisation annuelle due au titre de l'année 2022 en application
+    des articles L. 633-1 et L. 642-1 du même code ne peut être calculée sur une
+    assiette inférieure à 4 758 euros » (décret n° 2022-1438 du 16 novembre
+    2022, article 1er, JORFARTI000046566175) : de quoi « valider trois
+    trimestres », dit sa notice, à 1 585,50 € le trimestre, quand 11,5 % du
+    plafond gelé, 4 730,64 €, n'en valident que deux. L'artisane et la libérale
+    qui déclarent 3 000 € par an valident trois trimestres en 2021, en 2022 et
+    en 2023. Dans les deux moteurs."""
+    lignes = _deux_moteurs(simulateur, [
+        {"naissance": 1962, "age": 64.0, "releve": [
+            {"annee": a, "affiliation": metier, "revenu": 3000.0} for a in range(2020, 2025)]}
+        for metier in ("artisan", "profession_liberale")])
+    for metier in lignes:
+        assert metier[2021].assiette_minimale_base == pytest.approx(4730.64)
+        assert metier[2022].assiette_minimale_base == 4758.0
+        assert [metier[a].trimestres_valides for a in (2021, 2022, 2023)] == [3, 3, 3]

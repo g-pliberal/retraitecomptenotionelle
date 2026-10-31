@@ -453,13 +453,18 @@ export function dispenseLesComplementaires(paquet, motif) {
   return regle !== undefined && regle[3] === true;
 }
 
-/** Le montant de cette règle pour une année couverte à `part`. */
+/**
+ * Le montant de cette règle pour une année couverte à `part` : en euros quand
+ * le texte le fixe ainsi (4 758 € en 2022, décret n° 2022-1438), sinon en
+ * heures du Smic ou en part du plafond. Portage de `AssietteMinimale.montant`.
+ */
 function montantAssietteMinimale(regle, pass, smicHoraire, part) {
-  const [, , , , heuresSmic, partPass, proratise, joursMinimum] = regle;
+  const [, , , , heuresSmic, partPass, proratise, joursMinimum, euros = null] = regle;
   if (part * 365 + 1e-6 < joursMinimum) {
     return 0.0;
   }
-  const montant = heuresSmic !== null ? heuresSmic * smicHoraire : (partPass ?? 0.0) * pass;
+  const montant = euros !== null ? euros
+    : heuresSmic !== null ? heuresSmic * smicHoraire : (partPass ?? 0.0) * pass;
   return proratise ? montant * part : montant;
 }
 

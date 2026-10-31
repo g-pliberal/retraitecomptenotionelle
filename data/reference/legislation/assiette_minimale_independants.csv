@@ -39,23 +39,37 @@
 #   trimestre, sans assiette (voir la fiche `cnavpl`).
 #   La cotisation minimale ne s'applique « ni aux personnes dont l'activité
 #   libérale n'est pas l'activité professionnelle principale, ni aux personnes
-#   bénéficiaires d'un avantage de retraite » : le modèle ne connaît ni l'un ni
-#   l'autre cas et applique le minimum à tout libéral en activité.
+#   bénéficiaires d'un avantage de retraite » : de 2004 à 2015, deux motifs de
+#   `dispenses_assiette_minimale.yaml`, que le relevé ou la saisie déclarent.
+#
+# En 2022, l'un et l'autre cèdent à l'article 1er du décret n° 2022-1438 du
+# 16 novembre 2022 (JORFARTI000046566175) : « Par dérogation aux articles
+# D. 633-2 et D. 642-4 du code de la sécurité sociale, la cotisation annuelle
+# due au titre de l'année 2022 en application des articles L. 633-1 et L. 642-1
+# du même code ne peut être calculée sur une assiette inférieure à 4 758
+# euros », de quoi « valider trois trimestres », dit sa notice, quand 11,5 % du
+# plafond de 2022 (41 136 €) n'en validaient que deux. Le décret ne redit ni la
+# condition de quatre-vingt-dix jours ni le refus du prorata : la table garde
+# ceux de D. 633-2 et D. 642-4, une lecture qu'aucun texte lu ne tranche.
 #
 # Colonnes : `statuts` et `regimes` séparés par des espaces — les statuts du
 # simulateur qui le subissent, et les régimes de base auxquels il s'applique
 # (un artisan cotise au régime général depuis 2018, mais sa complémentaire, le
-# RCI, n'a pas de minimum). `heures_smic` OU `part_pass` donne le montant.
+# RCI, n'a pas de minimum). Le montant : `heures_smic` fois le Smic horaire du
+# 1er janvier, OU `part_pass` du plafond de l'année, OU `euros`, quand le texte
+# le fixe en euros.
 # `proratise` : le minimum suit-il la part de l'année couverte ? `jours_minimum`
 # : durée d'affiliation en deçà de laquelle il ne s'applique pas.
-statuts,regimes,debut,fin,heures_smic,part_pass,proratise,jours_minimum,fiabilite
-artisan commercant gerant_debit_tabac,cancava organic rsi regime_general,1973,2011,200,,non,0,haute
-artisan commercant gerant_debit_tabac,cancava organic rsi regime_general,2012,2014,,0.0525,non,90,haute
-artisan commercant gerant_debit_tabac,cancava organic rsi regime_general,2015,2015,,0.077,non,90,haute
-artisan commercant gerant_debit_tabac,cancava organic rsi regime_general,2016,2022,,0.115,non,90,haute
-artisan commercant gerant_debit_tabac,cancava organic rsi regime_general,2023,,450,,non,90,haute
-profession_liberale liberal_non_reglemente auxiliaire_medical pharmacien expert_comptable agent_general_assurance notaire veterinaire officier_ministeriel chirurgien_dentiste_ou_sage_femme medecin_liberal medecin_liberal_secteur_2 sage_femme biologiste_liberal,cnavpl regime_general,2004,2011,200,,oui,0,haute
-profession_liberale liberal_non_reglemente auxiliaire_medical pharmacien expert_comptable agent_general_assurance notaire veterinaire officier_ministeriel chirurgien_dentiste_ou_sage_femme medecin_liberal medecin_liberal_secteur_2 sage_femme biologiste_liberal,cnavpl regime_general,2012,2014,,0.0525,non,90,haute
-profession_liberale liberal_non_reglemente auxiliaire_medical pharmacien expert_comptable agent_general_assurance notaire veterinaire officier_ministeriel chirurgien_dentiste_ou_sage_femme medecin_liberal medecin_liberal_secteur_2 sage_femme biologiste_liberal,cnavpl regime_general,2015,2015,,0.077,non,90,haute
-profession_liberale liberal_non_reglemente auxiliaire_medical pharmacien expert_comptable agent_general_assurance notaire veterinaire officier_ministeriel chirurgien_dentiste_ou_sage_femme medecin_liberal medecin_liberal_secteur_2 sage_femme biologiste_liberal,cnavpl regime_general,2016,2022,,0.115,non,90,haute
-profession_liberale liberal_non_reglemente auxiliaire_medical pharmacien expert_comptable agent_general_assurance notaire veterinaire officier_ministeriel chirurgien_dentiste_ou_sage_femme medecin_liberal medecin_liberal_secteur_2 sage_femme biologiste_liberal,cnavpl regime_general,2023,,450,,non,90,haute
+statuts,regimes,debut,fin,heures_smic,part_pass,euros,proratise,jours_minimum,fiabilite
+artisan commercant gerant_debit_tabac,cancava organic rsi regime_general,1973,2011,200,,,non,0,haute
+artisan commercant gerant_debit_tabac,cancava organic rsi regime_general,2012,2014,,0.0525,,non,90,haute
+artisan commercant gerant_debit_tabac,cancava organic rsi regime_general,2015,2015,,0.077,,non,90,haute
+artisan commercant gerant_debit_tabac,cancava organic rsi regime_general,2016,2021,,0.115,,non,90,haute
+artisan commercant gerant_debit_tabac,cancava organic rsi regime_general,2022,2022,,,4758,non,90,haute
+artisan commercant gerant_debit_tabac,cancava organic rsi regime_general,2023,,450,,,non,90,haute
+profession_liberale liberal_non_reglemente auxiliaire_medical pharmacien expert_comptable agent_general_assurance notaire veterinaire officier_ministeriel chirurgien_dentiste_ou_sage_femme medecin_liberal medecin_liberal_secteur_2 sage_femme biologiste_liberal,cnavpl regime_general,2004,2011,200,,,oui,0,haute
+profession_liberale liberal_non_reglemente auxiliaire_medical pharmacien expert_comptable agent_general_assurance notaire veterinaire officier_ministeriel chirurgien_dentiste_ou_sage_femme medecin_liberal medecin_liberal_secteur_2 sage_femme biologiste_liberal,cnavpl regime_general,2012,2014,,0.0525,,non,90,haute
+profession_liberale liberal_non_reglemente auxiliaire_medical pharmacien expert_comptable agent_general_assurance notaire veterinaire officier_ministeriel chirurgien_dentiste_ou_sage_femme medecin_liberal medecin_liberal_secteur_2 sage_femme biologiste_liberal,cnavpl regime_general,2015,2015,,0.077,,non,90,haute
+profession_liberale liberal_non_reglemente auxiliaire_medical pharmacien expert_comptable agent_general_assurance notaire veterinaire officier_ministeriel chirurgien_dentiste_ou_sage_femme medecin_liberal medecin_liberal_secteur_2 sage_femme biologiste_liberal,cnavpl regime_general,2016,2021,,0.115,,non,90,haute
+profession_liberale liberal_non_reglemente auxiliaire_medical pharmacien expert_comptable agent_general_assurance notaire veterinaire officier_ministeriel chirurgien_dentiste_ou_sage_femme medecin_liberal medecin_liberal_secteur_2 sage_femme biologiste_liberal,cnavpl regime_general,2022,2022,,,4758,non,90,haute
+profession_liberale liberal_non_reglemente auxiliaire_medical pharmacien expert_comptable agent_general_assurance notaire veterinaire officier_ministeriel chirurgien_dentiste_ou_sage_femme medecin_liberal medecin_liberal_secteur_2 sage_femme biologiste_liberal,cnavpl regime_general,2023,,450,,,non,90,haute
