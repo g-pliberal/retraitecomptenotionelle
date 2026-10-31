@@ -43,6 +43,13 @@ export const DEPARTEMENTS_D_OUTRE_MER = Object.freeze({
 });
 
 /**
+ * Le régime de retraite des salariés de Mayotte, dont la caisse valide les
+ * trimestres au salaire minimum en vigueur à Mayotte (décret n° 2003-589,
+ * art. 8). Voir le Python.
+ */
+export const REGIME_DE_MAYOTTE = "cssm_mayotte";
+
+/**
  * Avant 1946, la retenue (R. 351-9, rédactions de 1985 à 2025) : les périodes
  * d'assurance comptent du 1er juillet 1930, six mois cette année-là ; de 1936 à
  * 1945, un trimestre par retenue de 15 anciens francs, 0,15 F, en euros. Voir
@@ -163,6 +170,21 @@ export class DonneesMacro {
     this.statutsAssuresSociaux = new Set(Object.entries(paquet.affiliations ?? {})
       .filter(([, profil]) => (profil.periodes ?? [])
         .some((periode) => (periode.regimes ?? []).includes("assurances_sociales")))
+      .map(([code]) => code));
+    /**
+     * Mayotte : le salaire minimum en vigueur à Mayotte au 1er janvier, depuis
+     * 2002, prolongé comme le SMIC ; ses heures qui valident un trimestre, 200
+     * puis 150 depuis 2017 ; les statuts que le routage porte au régime des
+     * salariés de Mayotte. Un paquet qui ne les porte pas encore laisse
+     * Mayotte au seuil de la métropole. Voir le Python.
+     */
+    this.smig_mayotte = "smig_mayotte" in paquet.series
+      ? this._prolongeParSalaire(serie("smig_mayotte"), "smig_mayotte") : null;
+    this.heures_par_trimestre_mayotte = "heures_par_trimestre_mayotte" in paquet.series
+      ? serie("heures_par_trimestre_mayotte") : null;
+    this.statutsDeMayotte = new Set(Object.entries(paquet.affiliations ?? {})
+      .filter(([, profil]) => (profil.periodes ?? [])
+        .some((periode) => (periode.regimes ?? []).includes(REGIME_DE_MAYOTTE)))
       .map(([code]) => code));
     /**
      * L'assiette forfaitaire MENSUELLE de l'AVPF à chaque date du barème de la
@@ -359,10 +381,21 @@ export class DonneesMacro {
    * assurés de 1930 ; `assureSocial`, que le statut de l'année relevait des
    * assurances sociales : les autres gardent avant 1946 quatre trimestres par
    * année travaillée.
+   *
+   * `mayotte`, que le statut de l'année relevait du régime des salariés de
+   * Mayotte (`statutsDeMayotte`), lui donne le seuil de sa caisse depuis 2002,
+   * la première année du Smig mahorais.
    */
-  trimestresValides(revenu, annee, outreMer = "", fraction = 1, assureSocial = true) {
+  trimestresValides(revenu, annee, outreMer = "", fraction = 1, assureSocial = true,
+                    mayotte = false) {
     if (revenu <= 0) {
       return 0;
+    }
+    if (this._auSmigMahorais(annee, mayotte)) {
+      // Mayotte : le salaire minimum en vigueur à Mayotte, fois 200 heures
+      // jusqu'en 2016 et 150 depuis (décret n° 2003-589, art. 8 ; action 177,
+      // étape 3).
+      return trimestresAuSeuil(revenu, this.seuilDUnTrimestre(annee, "", true));
     }
     const serie = outreMer ? this._salaireValidantDuDepartement(outreMer) : undefined;
     if (serie !== undefined && annee <= serie.derniereAnnee) {
@@ -393,9 +426,14 @@ export class DonneesMacro {
    * 1971, le salaire que R. 351-9 fixe. `outreMer` lui donne celui du
    * département, infini avant 1948 ; `null` avant 1946, où la retenue des
    * assurances sociales les fait. C'est le seuil qu'un relevé de carrière se
-   * lit contre (action 138, étape 10). Voir `seuil_d_un_trimestre` du Python.
+   * lit contre (action 138, étape 10). `mayotte` lui donne celui de la caisse
+   * de Mayotte depuis 2002 : 200 heures du Smig mahorais du 1er janvier
+   * jusqu'en 2016, 150 depuis. Voir `seuil_d_un_trimestre` du Python.
    */
-  seuilDUnTrimestre(annee, outreMer = "") {
+  seuilDUnTrimestre(annee, outreMer = "", mayotte = false) {
+    if (this._auSmigMahorais(annee, mayotte)) {
+      return this.heures_par_trimestre_mayotte.valeur(annee) * this.smig_mayotte.valeur(annee);
+    }
     const serie = outreMer ? this._salaireValidantDuDepartement(outreMer) : undefined;
     if (serie !== undefined && annee < serie.premiereAnnee) {
       return Infinity;
@@ -408,6 +446,15 @@ export class DonneesMacro {
     }
     const anciens = this.salaire_validant_avant_1972;
     return annee >= anciens.premiereAnnee ? anciens.valeur(annee) : null;
+  }
+
+  /**
+   * L'année d'un salarié de Mayotte se valide au Smig mahorais : depuis la
+   * première année de sa série, quand le paquet la porte.
+   */
+  _auSmigMahorais(annee, mayotte) {
+    return mayotte && this.smig_mayotte !== null && this.heures_par_trimestre_mayotte !== null
+      && annee >= this.smig_mayotte.premiereAnnee;
   }
 
   /** La série de `salaire_validant_outre_mer` du département `outreMer`. */

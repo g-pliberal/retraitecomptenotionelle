@@ -135,7 +135,7 @@ CALIBRATIONS = DONNEES / "derive" / "calibrations_mortalite.json"
 #: qu'un site en cache ne lise pas un paquet qu'il ne comprend pas : le site
 #: attend la sienne (``VERSION_PAQUET``, ``moteur/js/contexte.js``), et redemande
 #: au serveur un paquet qui n'a pas celle-là, depuis le 11 octobre 2026.
-VERSION = 35
+VERSION = 36
 
 
 def _serie(serie: SerieAnnuelle) -> dict:
@@ -209,6 +209,15 @@ def _series() -> dict:
                / "salaire_validant_trimestre_outre_mer.csv",
                colonne, nom=f"salaire_validant_outre_mer_{colonne}")
            for colonne in sorted(set(DEPARTEMENTS_D_OUTRE_MER.values()))},
+        # Mayotte : le salaire minimum en vigueur à Mayotte au 1er janvier,
+        # depuis 2002, et ses heures qui valident un trimestre, 200 puis 150
+        # depuis 2017 (décret n° 2003-589, art. 8 ; action 177, étape 3).
+        "smig_mayotte": charger_serie_annuelle(
+            DONNEES / "reference" / "legislation" / "mayotte_smig_et_plafond.csv",
+            "smig_horaire", nom="smig_mayotte"),
+        "heures_par_trimestre_mayotte": charger_serie_annuelle(
+            DONNEES / "reference" / "legislation" / "validation_trimestres_mayotte.csv",
+            "heures", nom="heures_par_trimestre_mayotte"),
     }
     for sexe in ("H", "F"):
         for mesure in ("e60", "e65"):

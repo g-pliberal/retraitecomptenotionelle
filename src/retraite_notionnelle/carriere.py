@@ -721,7 +721,8 @@ def _ligne_annuelle(
                     if micro else revenu)
         trimestres = (macro.trimestres_valides(
                           max(validant, minimale), annee, outre_mer, fraction=part,
-                          assure_social=affiliation in macro.statuts_assures_sociaux)
+                          assure_social=affiliation in macro.statuts_assures_sociaux,
+                          mayotte=affiliation in macro.statuts_de_mayotte)
                       if cotise
                       else (regle.trimestres_assimiles if regle else 4))
         if cotise and micro:

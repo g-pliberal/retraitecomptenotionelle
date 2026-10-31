@@ -83,7 +83,7 @@ function refusDePension(trouve, constants) {
  * 11 octobre 2026, `index.html` redemande au serveur tout paquet qui n'a pas
  * cette version, et aucune page n'a plus à savoir qu'il en existe d'autres.
  */
-export const VERSION_PAQUET = 35;
+export const VERSION_PAQUET = 36;
 
 /**
  * Combien d'agrégats le contexte garde en mémoire, tous jeux de règles

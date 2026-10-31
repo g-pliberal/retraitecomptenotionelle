@@ -41,6 +41,13 @@ HEURES_ANNUELLES_SMIC = 35 * 52
 DEPARTEMENTS_D_OUTRE_MER = {"guadeloupe": "antilles_guyane", "guyane": "antilles_guyane",
                             "martinique": "antilles_guyane", "reunion": "reunion"}
 
+#: Le régime de retraite des salariés de Mayotte, qui n'est pas un département
+#: de L. 751-1 : sa caisse valide les trimestres au salaire minimum en vigueur
+#: à Mayotte (décret n° 87-175, art. 3 ; décret n° 2003-589, art. 8). Les
+#: statuts que le routage y porte (:attr:`DonneesMacro.statuts_de_mayotte`)
+#: valident au Smig mahorais.
+REGIME_DE_MAYOTTE = "cssm_mayotte"
+
 #: AVANT 1946, LA RETENUE (R. 351-9, rédactions de 1985 à 2025 ; décret
 #: n° 45-0179, article 71) : les périodes d'assurance comptent « du 1er juillet
 #: 1930 », six mois cette année-là ; de 1936 à 1945, un trimestre par « retenue
@@ -332,17 +339,25 @@ class DonneesMacro:
         indexation légale, à laquelle s'ajoutent des coups de pouce que le
         modèle ne prétend pas anticiper.
         """
-        from .chargement import ValeurAnnuelle
-
         serie = charger_serie_annuelle(
             self.racine / "reference" / "macro" / "smic_horaire.csv",
             colonne_valeur="smic_horaire",
             nom="smic_horaire",
         )
+        return self._prolonger_par_salaire(
+            serie, "smic_horaire", self.smic_horaire_releve(serie.derniere_annee))
+
+    def _prolonger_par_salaire(self, serie: SerieAnnuelle, nom: str,
+                               releve: tuple[int, float] | None = None) -> SerieAnnuelle:
+        """``serie`` prolongée au-delà de sa dernière valeur publiée par la
+        croissance du salaire moyen du scénario, en ``estimee`` : un salaire
+        minimum, que son indexation légale porte au rythme des salaires.
+        ``releve``, le dernier relèvement de l'année publiée, (mois, valeur)."""
+        from .chargement import ValeurAnnuelle
+
         valeurs = {a: serie.brut(a) for a in serie.annees()}
         courant = serie(serie.derniere_annee)
         croissance = float(self.projection["salaire_moyen_nominal"])
-        releve = self.smic_horaire_releve(serie.derniere_annee)
         for annee in range(serie.derniere_annee + 1, self.projection["fin"] + 1):
             if releve is not None and annee == serie.derniere_annee + 1:
                 # UN SMIC NE BAISSE PAS : janvier suivant part du dernier
@@ -353,7 +368,46 @@ class DonneesMacro:
             else:
                 courant *= 1 + croissance
             valeurs[annee] = ValeurAnnuelle(annee, courant, Fiabilite.ESTIMEE)
-        return SerieAnnuelle(valeurs, "smic_horaire", "escalier")
+        return SerieAnnuelle(valeurs, nom, "escalier")
+
+    @cached_property
+    def smig_mayotte(self) -> SerieAnnuelle:
+        """Le salaire minimum horaire en vigueur à Mayotte au 1er janvier, en
+        euros : le Smig, puis, depuis 2018, le Smic de Mayotte, aux barèmes de
+        la Cnav depuis 2002 (``legislation/mayotte_smig_et_plafond.csv``).
+        Au-delà de la dernière valeur publiée, il suit la croissance du salaire
+        moyen, comme le SMIC (:attr:`smic_horaire`)."""
+        serie = charger_serie_annuelle(
+            self.racine / "reference" / "legislation" / "mayotte_smig_et_plafond.csv",
+            colonne_valeur="smig_horaire",
+            nom="smig_mayotte",
+        )
+        return self._prolonger_par_salaire(serie, "smig_mayotte")
+
+    @cached_property
+    def heures_par_trimestre_mayotte(self) -> SerieAnnuelle:
+        """Heures du Smig mahorais qui valident un trimestre à Mayotte : 200
+        depuis 1987, 150 depuis 2017 (décret n° 87-175, art. 3 ; décret
+        n° 2003-589, art. 8 ; ``legislation/validation_trimestres_mayotte.csv``)."""
+        return charger_serie_annuelle(
+            self.racine / "reference" / "legislation" / "validation_trimestres_mayotte.csv",
+            colonne_valeur="heures",
+            nom="heures_par_trimestre_mayotte",
+        )
+
+    @cached_property
+    def statuts_de_mayotte(self) -> frozenset[str]:
+        """Les statuts que le routage porte au régime des salariés de Mayotte
+        (``legislation/affiliations.yaml``) : leurs trimestres se valident au
+        Smig mahorais (:meth:`trimestres_valides`)."""
+        profils = charger_yaml(
+            self.racine / "reference" / "legislation" / "affiliations.yaml"
+        ).get("affiliations", {})
+        return frozenset(
+            code for code, profil in profils.items()
+            if any(REGIME_DE_MAYOTTE in (periode.get("regimes") or ())
+                   for periode in profil.get("periodes", ()))
+        )
 
     def smic_horaire_releve(self, annee: int) -> tuple[int, float] | None:
         """Le dernier relèvement du SMIC en cours d'``annee`` : (mois, valeur).
@@ -550,7 +604,8 @@ class DonneesMacro:
         return _trimestres_au_seuil(taux(annee) * revenu, RETENUE_D_UN_TRIMESTRE)
 
     def trimestres_valides(self, revenu: float, annee: int, outre_mer: str = "",
-                           fraction: float = 1.0, assure_social: bool = True) -> int:
+                           fraction: float = 1.0, assure_social: bool = True,
+                           mayotte: bool = False) -> int:
         """Trimestres qu'un revenu d'activité valide dans l'année.
 
         Quatre au plus, et zéro si le revenu n'atteint pas le seuil du premier :
@@ -571,9 +626,19 @@ class DonneesMacro:
         ``assure_social``, que le statut de l'année relevait des assurances
         sociales (:attr:`statuts_assures_sociaux`) : les autres gardent avant
         1946 quatre trimestres par année travaillée.
+
+        ``mayotte``, que le statut de l'année relevait du régime des salariés
+        de Mayotte (:attr:`statuts_de_mayotte`), lui donne le seuil de sa
+        caisse depuis 2002, la première année du Smig mahorais.
         """
         if revenu <= 0:
             return 0
+        if mayotte and annee >= self.smig_mayotte.premiere_annee:
+            # MAYOTTE. Le modèle validait les années des salariés de Mayotte
+            # au SMIC national : le décret n° 2003-589 (art. 8) les valide au
+            # salaire minimum en vigueur à Mayotte, plus bas, fois 200 heures
+            # jusqu'en 2016 et 150 depuis (action 177, étape 3).
+            return _trimestres_au_seuil(revenu, self.seuil_d_un_trimestre(annee, mayotte=True))
         if outre_mer and annee <= self._salaire_validant_du_departement(outre_mer).derniere_annee:
             # L'OUTRE-MER. Le modèle validait les années travaillées outre-mer
             # au seuil de la métropole : R. 753-21 et R. 351-9 leur donnent le
@@ -594,7 +659,8 @@ class DonneesMacro:
                         if assure_social else 4)
         return _trimestres_au_seuil(revenu, self.seuil_d_un_trimestre(annee))
 
-    def seuil_d_un_trimestre(self, annee: int, outre_mer: str = "") -> float | None:
+    def seuil_d_un_trimestre(self, annee: int, outre_mer: str = "",
+                             mayotte: bool = False) -> float | None:
         """Le revenu d'activité qui valide un trimestre dans l'année, en euros
         courants : 200 heures de SMIC depuis 1972, 150 depuis 2014 ; de 1946 à
         1971, le salaire que R. 351-9 fixe, 18 F puis le trimestre de
@@ -605,7 +671,11 @@ class DonneesMacro:
         montant ne les fait, mais la retenue des assurances sociales
         (:meth:`_trimestres_de_la_retenue`). C'est le seuil qu'un relevé de
         carrière se lit contre, année par année (action 138, étape 10).
+        ``mayotte`` lui donne celui de la caisse de Mayotte depuis 2002 : 200
+        heures du Smig mahorais du 1er janvier jusqu'en 2016, 150 depuis.
         """
+        if mayotte and annee >= self.smig_mayotte.premiere_annee:
+            return self.heures_par_trimestre_mayotte(annee) * self.smig_mayotte(annee)
         if outre_mer:
             serie = self._salaire_validant_du_departement(outre_mer)
             if annee < serie.premiere_annee:

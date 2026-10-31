@@ -1,0 +1,33 @@
+# Nombre d'heures du Smig mahorais à cotiser pour valider UN trimestre à Mayotte
+# ------------------------------------------------------------------------------
+# source_id: legifrance_textes
+#
+# Le régime de retraite des salariés de Mayotte (fiche cssm_mayotte) valide ses
+# trimestres au salaire minimum EN VIGUEUR À MAYOTTE au 1er janvier de l'année,
+# et non au SMIC national (R. 351-9 n'y est pas applicable) :
+#
+#   trimestres validés = min(4, salaire annuel / (heures × Smig du 1er janvier))
+#
+#   - 1987 : décret n° 87-175 du 16 mars 1987, article 3 (LEGIARTI000006770151),
+#     « calculé sur la base de 200 heures, avec un maximum de quatre trimestres
+#     par année civile » ; repris par le décret n° 2003-589 du 1er juillet 2003,
+#     article 8 (LEGIARTI000006781027, du 2 juillet 2003 au 21 octobre 2012, et
+#     LEGIARTI000026514455, jusqu'au 26 septembre 2016).
+#   - 2017 : le même article 8, rédaction du décret n° 2016-1246 du
+#     22 septembre 2016 (LEGIARTI000033155442) : 200 heures « pour les périodes
+#     antérieures au 1er janvier 2017 », 150 « pour les périodes postérieures
+#     au 31 décembre 2016 ». La rédaction du 22 octobre 2023
+#     (LEGIARTI000048241292) garde les 150 heures et nomme, depuis 2018, le
+#     « salaire minimum de croissance en vigueur à Mayotte », que la série du
+#     Smig continue (mayotte_smig_et_plafond.csv).
+#
+# D'OÙ VIENNENT CES VALEURS. Des quatre rédactions de l'article 8 et de
+# l'article 3 du décret de 1987, lues dans l'index LEGI de la DILA le
+# 31 octobre 2026 (action 177, étape 3) ; scripts/fetch/cnav_mayotte.py les
+# retrouve dans le salaire validant que la caisse publie depuis 2011. Le Smig
+# du 1er janvier, lui, n'est une série qu'à partir de 2002 : de 1987 à 2001, le
+# modèle valide encore au SMIC national (validation_trimestres.csv). Niveau
+# `haute` : lues, non recontrôlées par un script.
+annee,heures,fiabilite
+1987,200,haute
+2017,150,haute
