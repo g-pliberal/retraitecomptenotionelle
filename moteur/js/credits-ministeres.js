@@ -1,10 +1,13 @@
 /**
  * Ce que chaque ministère verse au compte « Pensions », en part de ses crédits.
  *
- * Portage de ``src/retraite_notionnelle/donnees/credits_ministeres.py``. Le
- * jaune pensions annexé au PLF 2027 décompose, à sa figure 3B, les crédits de
- * dix-sept ministères, sans en imprimer une valeur : le dépôt les lit sur les
- * tracés de ses barres, et les certifie (``credits_ministeres.csv``).
+ * Le jaune pensions annexé au PLF 2027 décompose, à sa figure 3B, les crédits
+ * de dix-sept ministères, sans en imprimer une valeur : le dépôt les lit sur
+ * les tracés de ses barres, et les certifie (``credits_ministeres.csv``). Sans
+ * jumeau depuis l'action 161 (note de décision 0005) : le chargeur
+ * ``src/retraite_notionnelle/donnees/credits_ministeres.py`` n'en écrit que
+ * les parts au paquet, et la contribution employeur, ce qui va au compte
+ * « Pensions » et l'ordre des ministères ne se calculent qu'ici.
  */
 
 /** Les parts que la contribution employeur réunit : sur les dépenses de
