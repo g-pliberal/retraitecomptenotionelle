@@ -102,8 +102,22 @@ garde ses identifiants. L'entrée est allée, telle qu'elle était, dans
 `docs/archives/affirmations.yaml`, avec sa date et son motif ;
 `conservation.py` dit « rien de perdu ».
 
-**Ce qui ne change pas.** Aucun octet des témoins, des agrégats, du paquet ni
-des pages : aucun fichier fabriqué n'est touché. Aucune règle du moteur, ni
+**La seconde suite rouge, réparée.** La conservation réparée, la course sur
+23d0783 a joué la suite complète, que les deux précédentes n'atteignaient
+pas, et un seul test y a échoué :
+`test_une_page_depliee_tient_son_budget[/methode]`, 5 695 mots pour 5 650 au
+plus. Le dépliant de construction, récrit par b4373d9, était passé de 164 à
+241 mots. Il en a désormais 193, sans perdre une idée ni une des tournures que
+`test_la_methode_dit_comment_le_site_est_construit` exige : l'incise « la
+vôtre, quand vous la saisissez », que « rien de ce que vous saisissez »
+redisait ; « Il a d'abord été écrit en Python, et tant que la migration n'est
+pas finie, le moteur du site y garde un jumeau », devenu « Écrit d'abord en
+Python, il y garde un jumeau pendant la migration » ; la phrase des carrières
+témoins et celle du coût, resserrées. La page fait 5 647 mots ; seul son rendu
+change parmi les témoins, aucun des 913 témoins de simulation ne bouge.
+
+**Ce qui ne change pas.** Hors la page Méthode et son rendu témoin, aucun
+octet des témoins, des agrégats, du paquet ni des pages. Aucune règle du moteur, ni
 en JavaScript ni en Python ; aucune garde, aucune dépendance, aucune règle du
 scénario 1. Sans node, chaque mesure s'arrête (`pont.PontIndisponible`).
 
