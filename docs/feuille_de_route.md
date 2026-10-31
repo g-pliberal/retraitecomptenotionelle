@@ -7360,14 +7360,14 @@ avec son test. Le modèle et le site gardent PyYAML seul.
 
 ### 177. Les écarts que les barèmes de la Cnav ont trouvés au modèle : chacun corrigé dans les deux moteurs, ou sa limite dite — `en cours`
 
-**Reprise, au 31 octobre 2026.** Ouverte ce jour, sur les huit écarts que
-l'étape 2 de l'action 175 remet au modèle (la fin de sa note,
-`175/2026-10-30-etape-2-baremes-du-modele.md`). Par quoi commencer : l'étape 1,
-le RCO des artisans et le NRCO des commerçants, les écarts 1 à 3. Chaque écart
-est tenu par un test qui échoue s'il disparaît : retirer son entrée, voir le
-test rougir, corriger la donnée ou la règle, les deux moteurs ensemble. Des
-règles du scénario 1 : sur Opus, après `python scripts/veille_droit.py`. Pas
-encore de note.
+**Reprise, au 31 octobre 2026.** L'étape 1 est faite : le RCO des artisans aux
+taux de la dérogation de 2008 et 2009, assis sur quatre plafonds dès 1997, et
+huit valeurs de point du RCO et du NRCO prises aux tables de la caisse
+(`177/2026-10-31-etape-1-rco-et-nrco.md`). Par quoi commencer : l'étape 2,
+`ECARTS_ASSIETTE_MINIMALE` — les 200 heures de Smic de 1973 à 1984, les 4 758 €
+du décret n° 2022-1438 pour 2022 —, dans `assiette_minimale_independants.csv`.
+Un écart par commit, son entrée retirée et le test vu rouge d'abord ; des
+règles du scénario 1, sur Opus, après `python scripts/veille_droit.py`.
 
 **D'où elle vient.** Le 31 octobre 2026, l'étape 2 de l'action 175 — les
 barèmes de la base de législation de la Cnav confrontés, un à un, aux séries

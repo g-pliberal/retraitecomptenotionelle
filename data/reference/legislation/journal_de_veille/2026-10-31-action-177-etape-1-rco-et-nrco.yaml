@@ -1,0 +1,25 @@
+date: "2026-10-31"
+session: "action 177, étape 1 : le RCO des artisans et le NRCO des commerçants, aux barèmes de la caisse"
+consulte: >-
+  L'index JORF à jour du 31 octobre 2026 : le décret n° 2007-1900 du 26 décembre 2007,
+  ses articles 1er à 3 (D. 635-7, la dérogation de 2008 et de 2009 ; D. 635-8 et
+  D. 635-8-1) ; le décret n° 97-166 du 24 février 1997, ses articles 1er à 3 (D. 635-4,
+  D. 635-6, D. 635-8). L'index LEGI à jour du 30 octobre 2026 : D. 635-4, ses rédactions
+  de 1986, 1997, 2002 et 2004 ; D. 635-7, celles de 1985 et de 2004. La base de
+  législation de la Cnav : les quatre tables de l'ex-RSI que joignent les barèmes du
+  point du RCI — le revenu de référence des artisans de 1979 à 2012, la valeur de leur
+  point de 1979 à 2008 et de 2009 à 2012, celle du point du NRCO de 2004 à 2012 —,
+  téléchargées et relues. `python scripts/textes.py --inscrire` : douze rédactions de
+  D. 633-5 et D. 633-6, de 1985 à 2012, inscrites « à examiner ». Les barèmes de l'IPP,
+  par `python scripts/fetch/ipp_points_independants.py`, relancé avec les valeurs de la
+  caisse, puis `python scripts/verifier_donnees.py --appliquer` : 85 valeurs identiques.
+trouve: >-
+  Les trois écarts du RCO et du NRCO que l'étape 2 de l'action 175 avait déclarés,
+  confirmés à la source et corrigés : le RCO des artisans de 2008 et 2009 aux taux de
+  la dérogation (7 % et 7 %, puis 7,1 % et 7,5 %) ; son assiette de quatre plafonds dès
+  1997 ; huit valeurs de point aux tables de la caisse. Aucun texte ne fixe ces valeurs :
+  D. 635-8 et D. 635-8-1 les laissent au conseil d'administration de la caisse.
+reste: >-
+  Le plafond de la première tranche du RCO de 2009 à 2012, que D. 635-7 indexe sur le
+  revenu de référence dans la limite des prix, quand la fiche garde celui de la sécurité
+  sociale : aucune table de la caisse lue ne le donne. Les étapes 2 à 6 de l'action 177.

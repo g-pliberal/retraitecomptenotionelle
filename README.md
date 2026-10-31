@@ -781,9 +781,9 @@ de chaque cas type :
 | 1. Système actuel | <!--chiffre:mesure(cumul_passe?scenario=1)-->13 767<!--/--> Md € | réf. |
 | 2. Notionnel rétroactif, part salariale | <!--chiffre:mesure(cumul_passe?scenario=2)-->2 761<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=2)-->−79,9<!--/--> % |
 | 3. Notionnel dès 2026, part salariale | <!--chiffre:mesure(cumul_passe?scenario=3)-->13 767<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=3)-->+0,0<!--/--> % |
-| 4. Notionnel rétroactif, salariale + patronale | <!--chiffre:mesure(cumul_passe?scenario=4)-->6 379<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=4)-->−53,7<!--/--> % |
+| 4. Notionnel rétroactif, salariale + patronale | <!--chiffre:mesure(cumul_passe?scenario=4)-->6 380<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=4)-->−53,7<!--/--> % |
 | 5. Notionnel dès 2026, salariale + patronale | <!--chiffre:mesure(cumul_passe?scenario=5)-->13 767<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=5)-->+0,0<!--/--> % |
-| 6. Notionnel rétroactif, <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % dès 2026, garantie vieillesse | <!--chiffre:mesure(cumul_passe?scenario=6)-->6 379<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=6)-->−53,7<!--/--> % |
+| 6. Notionnel rétroactif, <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % dès 2026, garantie vieillesse | <!--chiffre:mesure(cumul_passe?scenario=6)-->6 380<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=6)-->−53,7<!--/--> % |
 | *s'ajoute au 6 : sa garantie vieillesse, payée par l'impôt, lue sur la distribution des pensions* | *<!--chiffre:mesure(cumul_passe?scenario=garantie)-->1 378<!--/--> Md €* | |
 
 **Les scénarios 3 et 5 coûtent exactement ce que coûte le système actuel**, et
@@ -861,9 +861,9 @@ génération acquiert sous chaque règle.
 | 1. Système actuel | <!--chiffre:mesure(cout_annee?scenario=1&annee=2070)-->596<!--/--> Md € | **<!--chiffre:mesure(part_pib?scenario=1&annee=2070)-->15,3<!--/-->** % | <!--chiffre:mesure(cumul_avenir?scenario=1)-->23 872<!--/--> Md € | réf. |
 | 2. Notionnel rétroactif, part salariale | <!--chiffre:mesure(cout_annee?scenario=2&annee=2070)-->184<!--/--> Md € | <!--chiffre:mesure(part_pib?scenario=2&annee=2070)-->4,7<!--/--> % | <!--chiffre:mesure(cumul_avenir?scenario=2)-->7 292<!--/--> Md € | <!--chiffre:mesure(ecart_avenir?scenario=2)-->−69,5<!--/--> % |
 | 3. Notionnel dès 2026, part salariale | <!--chiffre:mesure(cout_annee?scenario=3&annee=2070)-->282<!--/--> Md € | **<!--chiffre:mesure(part_pib?scenario=3&annee=2070)-->7,2<!--/-->** % | <!--chiffre:mesure(cumul_avenir?scenario=3)-->17 856<!--/--> Md € | <!--chiffre:mesure(ecart_avenir?scenario=3)-->−25,2<!--/--> % |
-| 4. Notionnel rétroactif, salariale + patronale | <!--chiffre:mesure(cout_annee?scenario=4&annee=2070)-->401<!--/--> Md € | <!--chiffre:mesure(part_pib?scenario=4&annee=2070)-->10,3<!--/--> % | <!--chiffre:mesure(cumul_avenir?scenario=4)-->16 968<!--/--> Md € | <!--chiffre:mesure(ecart_avenir?scenario=4)-->−28,9<!--/--> % |
+| 4. Notionnel rétroactif, salariale + patronale | <!--chiffre:mesure(cout_annee?scenario=4&annee=2070)-->401<!--/--> Md € | <!--chiffre:mesure(part_pib?scenario=4&annee=2070)-->10,3<!--/--> % | <!--chiffre:mesure(cumul_avenir?scenario=4)-->16 969<!--/--> Md € | <!--chiffre:mesure(ecart_avenir?scenario=4)-->−28,9<!--/--> % |
 | 5. Notionnel dès 2026, salariale + patronale | <!--chiffre:mesure(cout_annee?scenario=5&annee=2070)-->436<!--/--> Md € | <!--chiffre:mesure(part_pib?scenario=5&annee=2070)-->11,2<!--/--> % | <!--chiffre:mesure(cumul_avenir?scenario=5)-->20 557<!--/--> Md € | <!--chiffre:mesure(ecart_avenir?scenario=5)-->−13,9<!--/--> % |
-| 6. Notionnel rétroactif, <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % dès 2026, garantie vieillesse | <!--chiffre:mesure(cout_annee?scenario=6&annee=2070)-->314<!--/--> Md € | <!--chiffre:mesure(part_pib?scenario=6&annee=2070)-->8,1<!--/--> % | <!--chiffre:mesure(cumul_avenir?scenario=6)-->15 209<!--/--> Md € | <!--chiffre:mesure(ecart_avenir?scenario=6)-->−36,3<!--/--> % |
+| 6. Notionnel rétroactif, <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % dès 2026, garantie vieillesse | <!--chiffre:mesure(cout_annee?scenario=6&annee=2070)-->314<!--/--> Md € | <!--chiffre:mesure(part_pib?scenario=6&annee=2070)-->8,1<!--/--> % | <!--chiffre:mesure(cumul_avenir?scenario=6)-->15 210<!--/--> Md € | <!--chiffre:mesure(ecart_avenir?scenario=6)-->−36,3<!--/--> % |
 
 Ces chiffres sont recalculés par le modèle : l'emploi projeté suit le scénario
 de référence du COR pour les systèmes 2 à 6, et les pensions déjà servies à la
@@ -980,7 +980,7 @@ recette suit aussi le TAUX »). L'âge légal de <!--chiffre:mesure(parametre?no
 en faisant cotiser la moitié de ceux qu'il fait attendre, la part que le recul
 de 60 à <!--chiffre:illustration()-->62<!--/--> ans a mise en emploi en 2010 : `docs/limites.md` dit ce qu'il en
 serait si tous travaillaient, ou aucun. Le scénario accumule en
-2070 une dette de <!--chiffre:mesure(dette?scenario=6)-->73<!--/--> % du PIB, <!--chiffre:mesure(dette?scenario=6&en=milliards)-->2189<!--/--> Md€, contre <!--chiffre:mesure(dette?scenario=1)-->66<!--/--> % pour le
+2070 une dette de <!--chiffre:mesure(dette?scenario=6)-->73<!--/--> % du PIB, <!--chiffre:mesure(dette?scenario=6&en=milliards)-->2190<!--/--> Md€, contre <!--chiffre:mesure(dette?scenario=1)-->66<!--/--> % pour le
 système actuel, <!--chiffre:mesure(dette?scenario=1&en=milliards)-->1 976<!--/--> Md€.
 
 **Ces chiffres de la proposition sont la plus favorable de deux lectures.**

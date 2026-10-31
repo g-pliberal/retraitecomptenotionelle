@@ -279,7 +279,7 @@ periodes:
     points_invalidite: {par: trimestre, proportionnels: true, forfait: 16}
     taux_cotisation_retraite: 0.0710
     notes: >-
-      Même dérogation (article 1er, III, du décret n° 2007-1900) : première tranche, 7,1 % au titre de 2009.
+      Même dérogation (article 1er, III, du décret n° 2007-1900) : première tranche, 7,1 % au titre de 2009. Le plafond de cette tranche, D. 635-7 l'indexe après 2008 « sur la dernière valeur du revenu de référence », dans la limite des prix hors tabac de l'année précédente : la fiche le prend pour celui de la sécurité sociale, qu'aucune table de la caisse lue ne donne avant 2013.
   - debut: 2009
     fin: 2009
     type_calcul: points
@@ -319,7 +319,7 @@ periodes:
     points_invalidite: {par: trimestre, proportionnels: true, forfait: 16}
     taux_cotisation_retraite: 0.0720
     notes: >-
-      D. 635-7, état du 1er janvier 2008, la dérogation éteinte : première tranche, 7,2 %.
+      D. 635-7, état du 1er janvier 2008, la dérogation éteinte : première tranche, 7,2 %. Le plafond de cette tranche, D. 635-7 l'indexe après 2008 « sur la dernière valeur du revenu de référence », dans la limite des prix hors tabac de l'année précédente : la fiche le prend pour celui de la sécurité sociale, qu'aucune table de la caisse lue ne donne avant 2013.
   - debut: 2010
     fin: 2012
     type_calcul: points
