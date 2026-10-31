@@ -181,6 +181,75 @@ def test_la_compensation_de_l_etat_de_2009_a_2015(macro, activite, annee,
     assert ligne.trimestres_valides == trimestres
 
 
+#: « Micro-entrepreneurs - Validation de trimestres retraite », l'« Info-doc
+#: RSI » mis à jour le 16 avril 2019 que joint le barème de la Cnav « Chiffre
+#: d'affaire des micro-entrepreneurs validant un trimestre »
+#: (`micro_entrepreneur_chiffre_affaire_validant_un_trimestre_montant.pdf`) :
+#: le chiffre d'affaires qui valide un, deux, trois et quatre trimestres, de
+#: 2009 à 2015. En 2014 et en 2015, le premier est celui de l'assuré
+#: « prestataire santé », qui relève de la maladie du RSI, le cas que le
+#: modèle prend (circulaire RSI n° 2016/010) ; le libéral de 2015 ne valide
+#: rien sans la compensation.
+GRILLE_DE_LA_COMPENSATION = {
+    2009: {"vente": (6007, 12014, 18021, 24028), "services": (3484, 6968, 10452, 13936),
+           "liberal": (2640, 5279, 7919, 10558)},
+    2010: {"vente": (6111, 12221, 18332, 24442), "services": (3544, 7088, 10632, 14176),
+           "liberal": (2685, 5370, 8055, 10740)},
+    2011: {"vente": (6207, 12414, 18621, 24828), "services": (3600, 7200, 10800, 14400),
+           "liberal": (2728, 5455, 8182, 10909)},
+    2012: {"vente": (6357, 12716, 19075, 25433), "services": (3687, 7375, 11063, 14751),
+           "liberal": (2794, 5588, 8382, 11175)},
+    2013: {"vente": (6502, 13006, 19509, 26013), "services": (3771, 7543, 11315, 15087),
+           "liberal": (2857, 5715, 8572, 11430)},
+    2014: {"vente": (6573, 9859, 14788, 19718), "services": (3812, 5718, 8577, 11436),
+           "liberal": (2888, 4332, 6498, 8664)},
+    2015: {"vente": (9621, 9942, 14913, 19883), "services": (5592, 5766, 8649, 11532),
+           "liberal": (None, 4369, 6553, 8737)},
+}
+#: Ce que le modèle valide autrement que la grille, et pourquoi. En 2009, un
+#: trimestre au moins, quel que soit le chiffre d'affaires (le plancher de la
+#: circulaire RSI n° 2009/024). En 2015, la grille valide un trimestre à
+#: l'assuré prestataire santé sous les 300 heures de Smic que la compensation
+#: demande, quand la circulaire RSI n° 2015/007 n'en valide « rien en deçà »,
+#: ce que le modèle suit : un écart entre les deux sources de la caisse.
+ECARTS_A_LA_GRILLE = {
+    (2009, "vente", 1): "plancher", (2009, "services", 1): "plancher",
+    (2009, "liberal", 1): "plancher",
+    (2015, "vente", 1): "rien en deçà", (2015, "services", 1): "rien en deçà",
+}
+
+
+def test_le_modele_valide_les_trimestres_de_la_grille_de_la_compensation(macro):
+    """Deux euros au-dessus du chiffre d'affaires que la grille donne pour n
+    trimestres, le modèle en valide n, et n - 1 deux euros au-dessous, sauf
+    `ECARTS_A_LA_GRILLE`. La grille arrondit le seuil à l'euro, au plus proche
+    (10 909 € de recettes libérales en 2011, quand quatre trimestres en
+    demandent 10 909,09), et le place, en 2012 et en 2013, un euro et demi
+    sous le seuil exact (6 357 € de ventes en 2012, quand 200 heures du Smic
+    de 9,22 € en demandent 6 358,62)."""
+    def valides(activite, annee, chiffre_d_affaires):
+        return _ligne(macro, "micro_entrepreneur", activite, activite,
+                      chiffre_d_affaires, annee).trimestres_valides
+
+    for annee, grille in GRILLE_DE_LA_COMPENSATION.items():
+        for activite, seuils in grille.items():
+            for n, seuil in enumerate(seuils, start=1):
+                if seuil is None:
+                    continue
+                ecart = ECARTS_A_LA_GRILLE.get((annee, activite, n))
+                au_seuil, dessous = valides(activite, annee, seuil + 2), valides(
+                    activite, annee, seuil - 2)
+                if ecart == "plancher":
+                    assert (au_seuil, dessous) == (1, 1), (annee, activite)
+                elif ecart == "rien en deçà":
+                    assert (au_seuil, dessous) == (0, 0), (annee, activite)
+                elif annee == 2015 and n == 2:
+                    # La compensation, à 300 heures, en valide deux d'un coup.
+                    assert (au_seuil, dessous) == (2, 0), (annee, activite)
+                else:
+                    assert (au_seuil, dessous) == (n, n - 1), (annee, activite, n)
+
+
 #: Le chiffre d'affaires qui valide un, deux, trois et quatre trimestres, de
 #: 2017 à 2019 : le barème de la Cnav « Chiffre d'affaire des
 #: micro-entrepreneurs validant un trimestre », source Urssaf Caisse nationale,

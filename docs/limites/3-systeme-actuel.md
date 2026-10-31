@@ -119,6 +119,18 @@ l'Institut des politiques publiques (PENSIPP). Écarts connus :
   neuf dixièmes des taux de la métropole). Si la caisse porte au compte de la
   retraite de base le revenu abattu, ou cette base forfaitaire, le modèle s'en
   écarte : non mesuré.
+- **Accre et Acre** — le modèle n'applique aux indépendants aucune exonération
+  de début d'activité : il porte au compte leurs cotisations entières.
+  L'Accre, puis l'Acre depuis 2019, exonère pourtant leur retraite de base,
+  entière sous les trois quarts du plafond et dégressive jusqu'au plafond
+  (barème « Plafonds d'exonération des cotisations des travailleurs
+  indépendants » et sa table de l'ex-RSI), et réduit le taux global du
+  micro-entrepreneur (barème « Cumul micro-entrepreneur / exonération ACRE »).
+  La caisse compte, pour valider les trimestres, les cotisations exonérées par
+  la prolongation de l'Accre de 2004 à 2012, et calcule depuis 2020 les droits
+  du micro-entrepreneur sur la cotisation qu'il aurait due sans réduction
+  (circulaire Cnav 2026/12) : le modèle fait de même. Ce qu'elle fait des
+  autres exonérations, les pages lues ne le disent pas : non mesuré.
 
 Un écart de quelques pour cent avec la pension réelle est attendu.
 

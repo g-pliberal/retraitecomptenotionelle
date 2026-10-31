@@ -293,6 +293,20 @@ versions:
   exemples: aucun trouvé
 approximations:
 - ecart: >-
+    les activités de faible importance, que la caisse laisse poursuivre avec la
+    pension : celle dont le revenu brut de l'année qui précède le départ ne dépasse pas
+    le tiers du Smic de 1 820 heures (exposés « Activités non soumises à cessation » et
+    « Limites du cumul », lus le 31 octobre 2026), et, pour le commerçant et l'artisan
+    retraités avant 2004, celle qui reste sous un plafond de ressources que la caisse
+    publie (5 705 € en 2007, 8 126 € en 2026 : barème « Plafond de ressources -
+    Activité de faible importance - Commerçant et artisan - Retraite avant 2004 » et
+    sa table de l'ex-RSI). Le modèle n'en connaît pas l'exception : il suspend la
+    pension tant que dure l'activité chez le dernier employeur, ou dans l'entreprise
+    exploitée à la cessation (L. 634-6), quel qu'en soit le revenu
+  effet: >-
+    non mesuré : seule la pension de qui garde une petite activité chez son dernier
+    employeur, ou dans son entreprise, est suspendue à tort
+- ecart: >-
     le seuil du 2° de L. 161-22 pour les premières pensions de 2027, qu'un décret fixe,
     n'a pas paru au 30 septembre 2026 : de l'âge légal à l'âge du taux plein
     automatique, la pension de 2027 est servie entière, et la page le dit ; avant
