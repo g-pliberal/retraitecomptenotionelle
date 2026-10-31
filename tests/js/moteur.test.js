@@ -56,12 +56,19 @@ const paquet = lire("moteur/donnees.json");
 const temoinsSimulations = lire("tests/temoins/simulations.json");
 
 /**
- * Tolérance relative. Python et JavaScript s'appuient sur la libm de leur
- * plateforme pour ``exp`` : deux implémentations correctes peuvent différer
- * d'un ulp, soit 1e-16 en relatif. On accepte 1e-9, six ordres de grandeur
- * au-dessus du bruit et six en dessous de ce qui se verrait à l'affichage.
+ * Au bit près, sur la plateforme où GitHub fabrique les témoins. Le portage
+ * calcule ses exponentielles comme la libm de Linux (`moteur/js/libm.js`,
+ * action 161, étape 5) : sous Linux x86_64, il rend chaque nombre tel que le
+ * moteur Python l'a écrit, et un écart d'un seul ulp dit que les deux moteurs
+ * ont cessé de calculer de même — une addition dans un autre ordre, une règle
+ * portée d'un côté seulement. Les témoins garderont ainsi chaque nombre, au
+ * bit près, le jour où le portage les écrira.
+ * Ailleurs, des témoins refaits sur place par une autre libm peuvent différer
+ * d'un ulp (`_fichier_a_jour`, `tests/test_web.py`) : la tolérance d'avant y
+ * reste, 1e-9, six ordres de grandeur au-dessus de ce bruit.
  */
-const TOLERANCE = 1e-9;
+const AU_BIT_PRES = process.platform === "linux" && process.arch === "x64";
+const TOLERANCE = AU_BIT_PRES ? 0 : 1e-9;
 
 function comparer(obtenu, attendu, chemin, ecarts) {
   if (attendu === null) {
@@ -78,7 +85,9 @@ function comparer(obtenu, attendu, chemin, ecarts) {
     }
     const ecart = Math.abs(obtenu - attendu);
     const relatif = attendu === 0 ? ecart : ecart / Math.abs(attendu);
-    if (relatif > TOLERANCE) {
+    // Écrit à l'envers pour qu'un NaN, que toute comparaison dit faux, ne
+    // passe pas pour un nombre retrouvé.
+    if (!(relatif <= TOLERANCE)) {
       ecarts.push(`${chemin} : python=${attendu} js=${obtenu} (écart ${relatif.toExponential(2)})`);
     }
     return;
