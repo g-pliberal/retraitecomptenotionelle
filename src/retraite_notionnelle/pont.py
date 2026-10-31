@@ -286,7 +286,8 @@ def _depuis_donnees(type_, valeur):
     """Une valeur que le portage a écrite, rendue sous le type que le Python
     lui donne : JSON n'écrit pas « 2.0 », et un flottant entier reviendrait
     entier ; un membre d'énumération revient de sa valeur, un dataclass de ses
-    champs, tous et rien d'autre, une suite en tuple ou en liste."""
+    champs, tous et rien d'autre, une suite en tuple ou en liste, un
+    dictionnaire clé par clé."""
     if typing.get_origin(type_) in (typing.Union, types.UnionType):
         if valeur is None:
             return None
@@ -307,6 +308,10 @@ def _depuis_donnees(type_, valeur):
         indices = _indices(type_)
         return type_(**{champ.name: _depuis_donnees(indices[champ.name], valeur[champ.name])
                         for champ in champs})
+    if typing.get_origin(type_) is dict:
+        type_des_cles, type_des_valeurs = typing.get_args(type_)
+        return {_depuis_donnees(type_des_cles, cle): _depuis_donnees(type_des_valeurs, element)
+                for cle, element in valeur.items()}
     if typing.get_origin(type_) in (tuple, list):
         arguments = typing.get_args(type_)
         if len(arguments) == 2 and arguments[1] is Ellipsis:
@@ -753,6 +758,21 @@ class Periode:
     annee: int
 
 
+def periodes_des_donnees(periodes: list[dict]) -> list[dict]:
+    """Les périodes d'un régime que le portage a écrites
+    (``scenario_actuel.catalogue.periodes`` de ``FONCTIONS_DU_DROIT``), ce que
+    les confrontations en lisent pour rejouer ses cotisations, sous les types
+    que le Python leur donne : la première et la dernière année en entiers, la
+    dernière nulle pour une période ouverte ; l'assiette telle quelle ; le taux
+    de cotisation et la part du salarié en flottants."""
+    return [{"debut": _entier(periode["debut"], "debut"),
+             "fin": None if periode["fin"] is None else _entier(periode["fin"], "fin"),
+             "assiette": periode["assiette"],
+             "taux_cotisation_retraite": _flottant(periode["taux_cotisation_retraite"]),
+             "part_salariale": _flottant(periode["part_salariale"])}
+            for periode in periodes]
+
+
 #: Ce que rend chaque fonction du droit que le pont fait appeler
 #: (``FONCTIONS_DU_DROIT`` de ``pont.mjs``), sous le type que son jumeau
 #: Python lui donne, ou relu par une fonction : JSON n'écrit ni n-uplet, ni
@@ -765,8 +785,12 @@ LECTURES_DU_DROIT = {
     "liquider.salaire_de_reference": float,
     "liquider.trimestres_de_decote": float,
     "liquider.valeur_du_point": tuple[float, Fiabilite] | None,
+    "regimes.BORNES_ASSIETTE": dict[str, tuple[float, float | None]],
     "scenario_actuel.calculer": actuel_des_donnees,
+    "scenario_actuel.catalogue.periodes": periodes_des_donnees,
+    "scenario_actuel.macro.plafond_securite_sociale": float,
     "scenario_actuel.minimum_garanti.montant": tuple[float, Fiabilite] | None,
+    "scenario_actuel.valeurs_point.achat": tuple[float, float, Fiabilite] | None,
 }
 
 

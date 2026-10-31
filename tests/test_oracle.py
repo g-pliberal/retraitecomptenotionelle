@@ -72,13 +72,13 @@ from retraite_notionnelle import pont
 from retraite_notionnelle.calendrier import DateMois
 from retraite_notionnelle.carriere import AnneeCarriere, Carriere
 from retraite_notionnelle.config import Parametres
-from retraite_notionnelle.donnees.regimes import BORNES_ASSIETTE
+from retraite_notionnelle.donnees.regimes import BORNES_ASSIETTE, CatalogueRegimes
 from retraite_notionnelle.simulateur import Simulateur
-from retraite_notionnelle.donnees.chargement import Fiabilite
+from retraite_notionnelle.donnees.chargement import Fiabilite, SerieAnnuelle
 from retraite_notionnelle.droit import departs, invalidite, liquider, ouvrir
 from retraite_notionnelle.droit.reversion import reversion
 from retraite_notionnelle.echeancier import Echeancier
-from retraite_notionnelle.scenarios.actuel import MinimumGaranti, ScenarioActuel
+from retraite_notionnelle.scenarios.actuel import MinimumGaranti, ScenarioActuel, ValeursPoint
 
 TEMOINS = Path(__file__).resolve().parent / "temoins"
 TEMOIN = TEMOINS / "openfisca_regime_general.json"
@@ -863,52 +863,84 @@ def oracle_agirc() -> dict:
     return json.loads(TEMOIN_AGIRC.read_text(encoding="utf-8"))
 
 
-def _assiette_et_cotisation(simulateur: Simulateur, code: str, annee: int,
-                            salaire: float) -> dict[str, float]:
+def _annees_du_temoin(temoin: dict) -> range:
+    """Les années que les profils d'un témoin traversent, l'année d'avant le
+    premier début comprise : celle du millésime qu'OpenFisca lit au 1er
+    janvier."""
+    profils = temoin["profils"].values()
+    return range(min(e["profil"]["debut"] for e in profils) - 1,
+                 max(e["profil"]["liquidation"] for e in profils) + 1)
+
+
+def _bareme(code: str, annees, droit=droit_et_refait) -> dict:
+    """Le barème d'un régime, que le portage lit, sur les ``annees`` que
+    traversent les profils : ses périodes — leurs années, leur assiette, leur
+    taux de cotisation et la part du salarié —, les bornes de chaque assiette
+    en plafonds, le plafond de la Sécurité sociale de chaque année, le prix
+    d'achat du point et le taux d'appel de chaque année (:func:`pont.droit`).
+    Par défaut, le jumeau Python refait chaque lecture au bit près
+    (``droit_et_refait``)."""
+    annees = list(annees)
+    lus, refus = droit({
+        "periodes": ("scenario_actuel.catalogue.periodes", pont.MOTEUR, code),
+        "bornes": ("regimes.BORNES_ASSIETTE",),
+        **{f"plafond|{annee}": ("scenario_actuel.macro.plafond_securite_sociale", pont.MOTEUR,
+                                annee) for annee in annees},
+        **{f"achat|{annee}": ("scenario_actuel.valeurs_point.achat", pont.MOTEUR, code, annee)
+           for annee in annees},
+    })
+    assert refus == {}, refus
+    return {
+        "periodes": lus["periodes"],
+        "bornes": lus["bornes"],
+        "plafonds": {annee: lus[f"plafond|{annee}"] for annee in annees},
+        "achats": {annee: lus[f"achat|{annee}"] for annee in annees},
+    }
+
+
+def _assiette_et_cotisation(bareme: dict, annee: int, salaire: float) -> dict[str, float]:
     """L'assiette de chaque tranche du régime, et la cotisation qui en sort.
 
     Le moteur ne les publie pas séparément — il n'en publie que des points.
     Le test les recompose depuis la fiche du régime, parce que c'est là que
     porte la confrontation : ce sont les barèmes de cotisation des deux
     modèles qu'il s'agit d'opposer, avant qu'un prix d'achat ne les traduise.
+    La fiche, le plafond et les bornes des tranches sont ceux du portage
+    (:func:`_bareme`).
     """
-    plafond = simulateur.macro.plafond_securite_sociale(annee)
+    plafond = bareme["plafonds"][annee]
     tranches: dict[str, float] = {}
     parts: dict[str, float] = {}
     cotisation = 0.0
-    for periode in simulateur.catalogue[code].periodes:
-        if not (periode.debut <= annee <= (periode.fin or 9999)):
+    for periode in bareme["periodes"]:
+        if not (periode["debut"] <= annee <= (periode["fin"] or 9999)):
             continue
-        bas, haut = BORNES_ASSIETTE[periode.assiette]
+        bas, haut = bareme["bornes"][periode["assiette"]]
         assiette = max(
             0.0, min(salaire, (haut * plafond) if haut else salaire) - bas * plafond
         )
-        tranches[periode.assiette] = assiette
-        parts[periode.assiette] = periode.part_salariale
-        cotisation += assiette * periode.taux_cotisation_retraite
+        tranches[periode["assiette"]] = assiette
+        parts[periode["assiette"]] = periode["part_salariale"]
+        cotisation += assiette * periode["taux_cotisation_retraite"]
     return {"tranches": tranches, "cotisation": cotisation,
             "parts_salariales": parts}
 
 
-def _taux_de_la_tranche(simulateur: Simulateur, code: str, annee: int,
-                        assiette: str) -> float:
-    for periode in simulateur.catalogue[code].periodes:
-        if (periode.debut <= annee <= (periode.fin or 9999)
-                and periode.assiette == assiette):
-            return periode.taux_cotisation_retraite
+def _taux_de_la_tranche(bareme: dict, annee: int, assiette: str) -> float:
+    for periode in bareme["periodes"]:
+        if (periode["debut"] <= annee <= (periode["fin"] or 9999)
+                and periode["assiette"] == assiette):
+            return periode["taux_cotisation_retraite"]
     return 0.0
 
 
-def _nos_points(simulateur: Simulateur, profil: dict, regime: str,
-                affiliation: str) -> dict[str, float]:
-    """Points acquis et coefficient d'anticipation, lus dans la formule servie.
+def _carriere_a_points(profil: dict, affiliation: str) -> Carriere:
+    """La carrière exacte d'un profil du témoin, dans l'affiliation du régime
+    à points, quatre trimestres chaque année, du début au départ.
 
-    Comme pour l'Arrco : la formule que le modèle écrit sous chaque pension est
-    celle qu'on doit pouvoir refaire à la main, et c'est donc elle qu'on
-    oppose à l'oracle.
+    ``prive_des`` : l'année où le profil quitte le service public pour le privé
+    (l'Ircantec `surcote_1945`, que sa limite d'âge arrête à soixante-cinq ans).
     """
-    # `prive_des` : l'année où le profil quitte le service public pour le privé
-    # (l'Ircantec `surcote_1945`, que sa limite d'âge arrête à soixante-cinq ans).
     prive_des = profil.get("prive_des", profil["liquidation"])
     lignes = [
         AnneeCarriere(
@@ -917,23 +949,63 @@ def _nos_points(simulateur: Simulateur, profil: dict, regime: str,
         )
         for annee in range(profil["debut"], profil["liquidation"])
     ]
-    carriere = Carriere(
+    return Carriere(
         annee_naissance=profil["naissance"], sexe="H", lignes=lignes,
         age_liquidation=float(profil["liquidation"] - profil["naissance"]),
         identifiant=profil["code"],
     )
-    resultat = simulateur.scenario_actuel.calculer(carriere)
-    points, coefficient = 0.0, 1.0
-    for pension in resultat.pensions_par_regime:
-        if pension.regime != regime or pension.montant <= 0:
-            continue
-        lecture = _POINTS.match(pension.detail)
-        assert lecture, pension.detail
-        points += float(lecture.group(1).replace(",", ""))
-        if ("coefficient d'anticipation" in pension.detail
-                or "coefficient de majoration" in pension.detail):
-            coefficient = float(pension.detail.rsplit(" ", 1)[1])
-    return {"points": points, "coefficient_de_minoration": coefficient}
+
+
+def _nos_points(profils: dict[str, dict], regime: str, affiliation: str,
+                droit=droit_et_refait) -> dict[str, dict[str, float]]:
+    """Points acquis et coefficient d'anticipation de chaque profil, sous son
+    code, lus dans la formule servie (:func:`_points_servis`).
+
+    Comme pour l'Arrco : la formule que le modèle écrit sous chaque pension est
+    celle qu'on doit pouvoir refaire à la main, et c'est donc elle qu'on
+    oppose à l'oracle. Le portage calcule la pension (:func:`pont.droit`) ;
+    par défaut, le jumeau Python la refait au bit près (``droit_et_refait``).
+    """
+    lus, refus = droit({code: ("scenario_actuel.calculer", pont.MOTEUR,
+                               _carriere_a_points(profil, affiliation))
+                        for code, profil in profils.items()})
+    assert refus == {}, refus
+    mesures = {}
+    for code in profils:
+        points, coefficient = _points_servis(lus[code], lambda nom: nom == regime)
+        mesures[code] = {"points": points, "coefficient_de_minoration": coefficient}
+    return mesures
+
+
+def _services_au_depart(profils: dict[str, dict], regime: str, droit=droit_et_refait,
+                        ) -> dict[str, tuple | None]:
+    """La valeur de service du point de ``regime`` au jour du départ de chaque
+    profil, le 1er janvier de sa liquidation, sous son code, que le portage
+    lit (:func:`pont.droit`) ; par défaut, le jumeau Python la refait au bit
+    près (``droit_et_refait``)."""
+    lus, refus = droit({code: ("liquider.valeur_du_point", pont.MOTEUR, regime,
+                               DateMois(profil["liquidation"], 1))
+                        for code, profil in profils.items()})
+    assert refus == {}, refus
+    return lus
+
+
+@pytest.fixture(scope="module")
+def bareme_agirc(oracle_agirc) -> dict:
+    """Le barème de l'Agirc sur les années que traversent les profils."""
+    return _bareme("agirc", _annees_du_temoin(oracle_agirc))
+
+
+@pytest.fixture(scope="module")
+def nos_points_agirc(oracle_agirc) -> dict[str, dict[str, float]]:
+    """Les points Agirc du scénario 1 sur chaque profil du témoin, sous son code."""
+    return _nos_points(_profils(oracle_agirc), "agirc", "salarie_prive_cadre")
+
+
+@pytest.fixture(scope="module")
+def services_agirc(oracle_agirc) -> dict[str, tuple]:
+    """La valeur de service de l'Agirc au jour du départ de chaque profil."""
+    return _services_au_depart(_profils(oracle_agirc), "agirc")
 
 
 def test_le_temoin_de_l_agirc_couvre_le_perimetre_annonce(oracle_agirc):
@@ -952,7 +1024,7 @@ def test_le_temoin_de_l_agirc_couvre_le_perimetre_annonce(oracle_agirc):
             profil["liquidation"] - profil["debut"]), code
 
 
-def test_le_prix_d_achat_agirc_concorde_a_une_date_pres(oracle_agirc, simulateur):
+def test_le_prix_d_achat_agirc_concorde_a_une_date_pres(oracle_agirc, bareme_agirc):
     """Prix d'achat et taux d'appel, année par année, sur les dix profils.
 
     OpenFisca achète ses points comme nous — cotisation ÷ (taux d'appel × prix
@@ -974,16 +1046,15 @@ def test_le_prix_d_achat_agirc_concorde_a_une_date_pres(oracle_agirc, simulateur
                          else annee)
             # Le prix d'achat est lu au millésime qu'OpenFisca sert, le taux
             # d'appel à l'année courante : c'est lui qui ne bouge pas.
-            prix = simulateur.scenario_actuel.valeurs_point.achat(
-                "agirc", millesime)[0]
-            appel = simulateur.scenario_actuel.valeurs_point.achat("agirc", annee)[1]
+            prix = bareme_agirc["achats"][millesime][0]
+            appel = bareme_agirc["achats"][annee][1]
             assert cotisation / (appel * prix) == pytest.approx(
                 leurs, rel=TOLERANCE_FLOTTANT_32), (code, annee)
             decales += millesime != annee
     assert decales, "aucun profil ne franchit 2004 : le décalage n'est pas mis à l'épreuve"
 
 
-def test_la_cotisation_agirc_concorde_sauf_deux_taux(oracle_agirc, simulateur):
+def test_la_cotisation_agirc_concorde_sauf_deux_taux(oracle_agirc, bareme_agirc):
     """Le barème de cotisation, opposé au sien année par année.
 
     Il tombe juste partout, sauf deux fois, et les deux sont chez lui : son
@@ -997,8 +1068,7 @@ def test_la_cotisation_agirc_concorde_sauf_deux_taux(oracle_agirc, simulateur):
         if code.startswith("tranche_c"):
             continue
         for annee in range(profil["debut"], profil["liquidation"]):
-            nous = _assiette_et_cotisation(simulateur, "agirc", annee,
-                                           profil["salaire"])
+            nous = _assiette_et_cotisation(bareme_agirc, annee, profil["salaire"])
             assert not nous["tranches"].get("tranche_c"), (code, annee)
             attendu = nous["cotisation"]
             if annee in TAUX_AGIRC_OPENFISCA:
@@ -1013,7 +1083,7 @@ def test_la_cotisation_agirc_concorde_sauf_deux_taux(oracle_agirc, simulateur):
 
 
 def test_la_tranche_c_de_l_agirc_est_cotisee_chez_lui_des_1948(
-        oracle_agirc, simulateur):
+        oracle_agirc, bareme_agirc):
     """Ce qu'un cadre payé plus de quatre plafonds paie, chez lui et chez nous.
 
     L'Agirc n'appelle de cotisation sur la tranche C qu'à compter de 1991.
@@ -1031,22 +1101,21 @@ def test_la_tranche_c_de_l_agirc_est_cotisee_chez_lui_des_1948(
         profil, mesures = entree["profil"], entree["openfisca"]
         avant_1991 = 0
         for annee in range(profil["debut"], profil["liquidation"]):
-            nous = _assiette_et_cotisation(simulateur, "agirc", annee,
-                                           profil["salaire"])
+            nous = _assiette_et_cotisation(bareme_agirc, annee, profil["salaire"])
             tranche_b = nous["tranches"]["tranche_b"]
             tranche_c = nous["tranches"].get("tranche_c", 0.0)
             taux_b = TAUX_AGIRC_OPENFISCA.get(
-                annee, _taux_de_la_tranche(simulateur, "agirc", annee, "tranche_b")
+                annee, _taux_de_la_tranche(bareme_agirc, annee, "tranche_b")
             )
             if annee >= PREMIERE_ANNEE_TRANCHE_C:
                 attendu = tranche_b * taux_b + tranche_c * _taux_de_la_tranche(
-                    simulateur, "agirc", annee, "tranche_c"
+                    bareme_agirc, annee, "tranche_c"
                 )
             else:
                 # Sa tranche B s'étend à huit plafonds : au-delà de quatre, il
                 # ne prélève que la part salariale, l'employeur ayant un taux
                 # nul écrit.
-                plafond = simulateur.macro.plafond_securite_sociale(annee)
+                plafond = bareme_agirc["plafonds"][annee]
                 fantome = max(0.0, min(profil["salaire"], 8 * plafond) - 4 * plafond)
                 taux_salarie = TAUX_SALARIE_AGIRC_OPENFISCA.get(
                     annee, taux_b * nous["parts_salariales"]["tranche_b"]
@@ -1058,7 +1127,7 @@ def test_la_tranche_c_de_l_agirc_est_cotisee_chez_lui_des_1948(
         assert avant_1991 >= 5, code
 
 
-def test_les_points_agirc_concordent(oracle_agirc, simulateur):
+def test_les_points_agirc_concordent(oracle_agirc, nos_points_agirc):
     """Le bout de la chaîne, sur les profils que rien ne sépare.
 
     Trois profils ne traversent ni 1989, ni 1994, ni la tranche C, ni le
@@ -1072,7 +1141,7 @@ def test_les_points_agirc_concordent(oracle_agirc, simulateur):
     exacts = 0
     for code, entree in oracle_agirc["profils"].items():
         profil, mesures = entree["profil"], entree["openfisca"]
-        nous = _nos_points(simulateur, profil, "agirc", "salarie_prive_cadre")
+        nous = nos_points_agirc[code]
         annees = set(range(profil["debut"], profil["liquidation"]))
         sert_plus = (code.startswith("tranche_c")
                      or profil["liquidation"] > ANNEE_DU_1ER_AVRIL_ACHAT_AGIRC)
@@ -1089,7 +1158,7 @@ def test_les_points_agirc_concordent(oracle_agirc, simulateur):
 
 
 def test_la_valeur_de_service_agirc_suit_la_date_de_revalorisation(
-        oracle_agirc, simulateur):
+        oracle_agirc, services_agirc):
     """La même valeur, au même jour.
 
     OpenFisca lit la valeur du 1er janvier de la liquidation. Tant que l'Agirc
@@ -1103,8 +1172,7 @@ def test_la_valeur_de_service_agirc_suit_la_date_de_revalorisation(
     for code, entree in oracle_agirc["profils"].items():
         profil, mesures = entree["profil"], entree["openfisca"]
         liquidation = profil["liquidation"]
-        service = liquider.valeur_du_point(simulateur.scenario_actuel, "agirc",
-                                           DateMois(liquidation, 1))
+        service = services_agirc[code]
         assert service is not None, code
         assert service[0] == pytest.approx(
             mesures["valeur_du_point"], abs=1e-4), code
@@ -1124,7 +1192,7 @@ def test_la_decote_du_regime_general_qui_commande_l_agirc_concorde(
             entree["openfisca"]["decote_trimestres_regime_general"]), code
 
 
-def test_le_coefficient_d_anticipation_agirc_concorde(oracle_agirc, simulateur):
+def test_le_coefficient_d_anticipation_agirc_concorde(oracle_agirc, nos_points_agirc):
     """Le barème d'anticipation de l'Agirc, celui de l'Arrco à l'identique.
 
     Il se lit par année entière chez lui, par trimestre chez nous : les dix
@@ -1134,11 +1202,26 @@ def test_le_coefficient_d_anticipation_agirc_concorde(oracle_agirc, simulateur):
     for code, entree in oracle_agirc["profils"].items():
         eux = entree["openfisca"]
         assert eux["decote_trimestres_regime_general"] % 4 == 0, code
-        nous = _nos_points(simulateur, entree["profil"], "agirc",
-                           "salarie_prive_cadre")
+        nous = nos_points_agirc[code]
         assert nous["coefficient_de_minoration"] == pytest.approx(
             eux["coefficient_de_minoration"], abs=TOLERANCE_EXACTE), code
 
+
+
+def test_l_agirc_se_mesure_au_portage_sans_les_jumeaux_python(
+        oracle_agirc, bareme_agirc, nos_points_agirc, services_agirc, monkeypatch):
+    """Le barème de l'Agirc — sa fiche, le plafond de chaque année, les bornes
+    des tranches, le prix d'achat et le taux d'appel —, les points et la valeur
+    de service de chaque profil du témoin se lisent au portage
+    (``pont.droit``) : les jumeaux Python, qu'on empêche ici de calculer ou de
+    lire, n'y entrent pas."""
+    _sans_les_jumeaux(monkeypatch, (ScenarioActuel, "calculer"), (liquider, "valeur_du_point"),
+                      (ValeursPoint, "achat"), (CatalogueRegimes, "__getitem__"),
+                      (SerieAnnuelle, "__call__"))
+    profils = _profils(oracle_agirc)
+    assert _bareme("agirc", _annees_du_temoin(oracle_agirc), pont.droit) == bareme_agirc
+    assert _nos_points(profils, "agirc", "salarie_prive_cadre", pont.droit) == nos_points_agirc
+    assert _services_au_depart(profils, "agirc", pont.droit) == services_agirc
 
 # -- l'Ircantec des agents non titulaires --------------------------------------
 
@@ -1211,6 +1294,18 @@ def _cotisation_ircantec(simulateur: Simulateur, salaire: float, annee: int,
 @pytest.fixture(scope="module")
 def oracle_ircantec() -> dict:
     return json.loads(TEMOIN_IRCANTEC.read_text(encoding="utf-8"))
+
+
+@pytest.fixture(scope="module")
+def bareme_ircantec(oracle_ircantec) -> dict:
+    """Le barème de l'Ircantec sur les années que traversent les profils."""
+    return _bareme("ircantec", _annees_du_temoin(oracle_ircantec))
+
+
+@pytest.fixture(scope="module")
+def nos_points_ircantec(oracle_ircantec) -> dict[str, dict[str, float]]:
+    """Les points Ircantec du scénario 1 sur chaque profil du témoin, sous son code."""
+    return _nos_points(_profils(oracle_ircantec), "ircantec", "contractuel_public")
 
 
 def test_le_temoin_de_l_ircantec_couvre_le_perimetre_annonce(oracle_ircantec):
@@ -1293,7 +1388,7 @@ def test_la_cotisation_ircantec_concorde_sauf_un_arrondi(
 
 
 def test_le_taux_appele_ircantec_est_celui_du_producteur_arrondi(
-        oracle_ircantec, simulateur):
+        oracle_ircantec, bareme_ircantec):
     """Là où l'assiette tient dans la tranche A, le taux se lit directement.
 
     Un salaire sous le plafond ne cotise que sur la tranche A : la cotisation
@@ -1309,11 +1404,11 @@ def test_le_taux_appele_ircantec_est_celui_du_producteur_arrondi(
         for annee in range(profil["debut"], profil.get("prive_des", profil["liquidation"])):
             if annee == ANNEE_DU_BAREME_EN_RETARD:
                 continue
-            plafond = simulateur.macro.plafond_securite_sociale(annee)
+            plafond = bareme_ircantec["plafonds"][annee]
             if profil["salaire"] > plafond:
                 continue
             implique = mesures["cotisations_annuelles"][str(annee)] / profil["salaire"]
-            publie = _taux_de_la_tranche(simulateur, "ircantec", annee, "tranche_1")
+            publie = _taux_de_la_tranche(bareme_ircantec, annee, "tranche_1")
             # « Arrondi au dix-millième » : la moitié d'un dix-millième sépare
             # au plus les deux lectures. On l'écrit ainsi plutôt qu'avec
             # `round`, qui tranche les demis à sa façon.
@@ -1366,7 +1461,7 @@ def test_l_assiette_ircantec_s_arrete_a_4_75_plafonds_jusqu_en_2008(
         assert ecarts >= 10, code
 
 
-def test_les_points_ircantec_concordent(oracle_ircantec, simulateur):
+def test_les_points_ircantec_concordent(oracle_ircantec, nos_points_ircantec):
     """Le bout de la chaîne : dix profils, deux tranches, quarante ans de barèmes.
 
     Une seule chose sépare les deux totaux sur les profils qui restent sous
@@ -1378,7 +1473,7 @@ def test_les_points_ircantec_concordent(oracle_ircantec, simulateur):
     compares = 0
     for code, entree in oracle_ircantec["profils"].items():
         profil, mesures = entree["profil"], entree["openfisca"]
-        nous = _nos_points(simulateur, profil, "ircantec", "contractuel_public")
+        nous = nos_points_ircantec[code]
         if code.startswith("tranche_b_1992"):
             assert mesures["points"] > nous["points"] * 1.3, code
             continue
@@ -1388,7 +1483,7 @@ def test_les_points_ircantec_concordent(oracle_ircantec, simulateur):
 
 
 def test_le_coefficient_d_anticipation_ircantec_suit_l_arrete_de_1970(
-        oracle_ircantec, simulateur):
+        oracle_ircantec, nos_points_ircantec):
     """Le barème de l'article 16, et c'est ce test qui a corrigé le modèle.
 
     Le modèle abattait 1,1 % par trimestre d'anticipation. L'arrêté du
@@ -1404,8 +1499,7 @@ def test_le_coefficient_d_anticipation_ircantec_suit_l_arrete_de_1970(
         eux = entree["openfisca"]
         if eux["surcote_trimestres_regime_general"] > 0:
             continue
-        nous = _nos_points(simulateur, entree["profil"], "ircantec",
-                           "contractuel_public")
+        nous = nos_points_ircantec[code]
         assert nous["coefficient_de_minoration"] == pytest.approx(
             eux["coefficient_de_minoration"], abs=TOLERANCE_EXACTE), code
         if 0 < eux["decote_trimestres_regime_general"] % 4:
@@ -1417,7 +1511,7 @@ def test_le_coefficient_d_anticipation_ircantec_suit_l_arrete_de_1970(
 
 
 def test_la_surcote_ircantec_est_dix_fois_trop_forte_chez_lui(
-        oracle_ircantec, simulateur):
+        oracle_ircantec, simulateur, nos_points_ircantec):
     """Le seul poste où OpenFisca sert plus que le droit, et de loin.
 
     Le paragraphe 4 de l'article 16 majore le total des points « de 0,75 %
@@ -1444,7 +1538,7 @@ def test_la_surcote_ircantec_est_dix_fois_trop_forte_chez_lui(
         assert eux["decote_trimestres_regime_general"] == 0, code
         assert eux["coefficient_de_minoration"] == pytest.approx(
             1 + SURCOTE_IRCANTEC_OPENFISCA * trimestres, abs=TOLERANCE_EXACTE), code
-        nous = _nos_points(simulateur, profil, "ircantec", "contractuel_public")
+        nous = nos_points_ircantec[code]
         # Le 1° de l'arrêté, trimestre par trimestre : l'âge du taux plein de
         # la génération, et l'âge de la liquidation. Le 2° ne joue pas ici —
         # les trimestres au-delà de la durée requise sont postérieurs à

@@ -71,6 +71,7 @@ import { Contexte } from "../../moteur/js/contexte.js";
 import { appels } from "../../moteur/js/droit/liquidation.js";
 import * as liquider from "../../moteur/js/droit/liquider.js";
 import * as ouvrir from "../../moteur/js/droit/ouvrir.js";
+import { BORNES_ASSIETTE } from "../../moteur/js/regimes.js";
 import { Saisie } from "../../moteur/js/saisie.js";
 
 const RACINE = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
@@ -412,9 +413,20 @@ const FONCTIONS_DU_DROIT = {
   "liquider.salaire_de_reference": liquider.salaireDeReference,
   "liquider.trimestres_de_decote": liquider.trimestresDeDecote,
   "liquider.valeur_du_point": liquider.valeurDuPoint,
+  "regimes.BORNES_ASSIETTE": () => BORNES_ASSIETTE,
   "scenario_actuel.calculer": (moteur, carriere) => actuelEnDonnees(moteur.calculer(carriere)),
+  // Ce que les confrontations lisent des périodes d'un régime pour rejouer
+  // ses cotisations (`periodes_des_donnees` de `pont.py`).
+  "scenario_actuel.catalogue.periodes": (moteur, code) => moteur.catalogue.obtenir(code).periodes
+    .map(({ debut, fin, assiette, taux_cotisation_retraite, part_salariale }) => ({
+      debut, fin, assiette, taux_cotisation_retraite, part_salariale,
+    })),
+  "scenario_actuel.macro.plafond_securite_sociale":
+    (moteur, annee) => moteur.macro.plafond_securite_sociale.valeur(annee),
   "scenario_actuel.minimum_garanti.montant":
     (moteur, ...valeurs) => moteur.minimumGaranti.montant(...valeurs),
+  "scenario_actuel.valeurs_point.achat":
+    (moteur, ...valeurs) => moteur.valeursPoint.achat(...valeurs),
 };
 
 /**

@@ -29,6 +29,7 @@ import sys
 
 from retraite_notionnelle import pont
 from retraite_notionnelle.config import Parametres
+from retraite_notionnelle.donnees.regimes import BORNES_ASSIETTE
 from retraite_notionnelle.droit import liquider, ouvrir
 from retraite_notionnelle.simulateur import Comparaison, Simulateur
 from retraite_notionnelle.web.site import module, site
@@ -225,10 +226,20 @@ JUMEAUX_DU_DROIT = {
     "liquider.salaire_de_reference": liquider.salaire_de_reference,
     "liquider.trimestres_de_decote": liquider.trimestres_de_decote,
     "liquider.valeur_du_point": liquider.valeur_du_point,
+    "regimes.BORNES_ASSIETTE": lambda: BORNES_ASSIETTE,
     "scenario_actuel.calculer":
         lambda moteur, carriere: actuel_en_donnees(moteur.calculer(carriere)),
+    "scenario_actuel.catalogue.periodes": lambda moteur, code: [
+        {"debut": periode.debut, "fin": periode.fin, "assiette": periode.assiette,
+         "taux_cotisation_retraite": periode.taux_cotisation_retraite,
+         "part_salariale": periode.part_salariale}
+        for periode in moteur.catalogue[code].periodes],
+    "scenario_actuel.macro.plafond_securite_sociale":
+        lambda moteur, annee: moteur.macro.plafond_securite_sociale(annee),
     "scenario_actuel.minimum_garanti.montant":
         lambda moteur, *valeurs: moteur.minimum_garanti.montant(*valeurs),
+    "scenario_actuel.valeurs_point.achat":
+        lambda moteur, *valeurs: moteur.valeurs_point.achat(*valeurs),
 }
 
 #: Le pont du droit tel quel, que :func:`droit_et_refait` appelle quand une
