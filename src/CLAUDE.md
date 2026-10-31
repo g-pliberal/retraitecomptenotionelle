@@ -26,8 +26,8 @@ de la proposition, qui s'écrit en couche (`data/CLAUDE.md`).
   que `scripts/construire_donnees.py` fige sous les réglages de référence
   dans la table du paquet (`data/derive/agregats.json`), par les écrivains
   de `donnees/agregats.py`, et que lisent les accesseurs de
-  `moteur/js/agregats.js` : ceux du Python ne servent plus qu'aux tests, et
-  s'en vont (note de décision 0005), sans qu'aucun s'y ajoute. Après
+  `moteur/js/agregats.js`, ses seuls lecteurs : ceux du Python sont partis
+  (note de décision 0005), et aucun ne s'y ajoute. Après
   elle, ou après toute modification des données, `python scripts/regenerer.py`
   refait tout ce qu'un script fabrique — le paquet, les témoins, le
   chiffrage, les tableaux, le tableau de bord, les chiffres ancrés —, dans

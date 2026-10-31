@@ -1,7 +1,8 @@
 /**
  * Ce que les trois pages qui agrègent lisent du modèle, fabriqué sous la
- * référence. Lecteur de `src/retraite_notionnelle/donnees/agregats.py`, dont il
- * garde les accesseurs.
+ * référence. Sans jumeau depuis l'action 161 (note de décision 0005) : les
+ * écrivains de `src/retraite_notionnelle/donnees/agregats.py` fabriquent la
+ * table, et ses accesseurs n'ont que cet exemplaire.
  *
  * POURQUOI CE FICHIER EXISTE. Coût, Carrières types et Droits non cotisés
  * croisent treize carrières types avec sept générations, et chiffrent ce que

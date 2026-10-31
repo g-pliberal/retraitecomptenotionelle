@@ -117,7 +117,7 @@ Python en a fabriqué (`agregats.js`, `docs/architecture.md`, § 7.1).
   que l'accesseur en lit, par un essai de `tests/js/` ; il se fabrique en
   Python, dans `_agregats` (`scripts/construire_donnees.py`) et les écrivains
   de `donnees/agregats.py`, et se lit par `agregats.js` seul, sans rien
-  calculer qu'une règle décide : les lecteurs Python de la table s'en vont,
+  calculer qu'une règle décide : les lecteurs Python de la table sont partis,
   et aucun ne s'y ajoute (note de décision 0005). La version du paquet monte
   des deux côtés (`VERSION`, `VERSION_PAQUET`) ; ses tests au vert, puis la
   liste d'une retouche de `pages.js`.

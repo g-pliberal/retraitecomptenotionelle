@@ -123,8 +123,8 @@ PAQUET = RACINE / "moteur" / "donnees.json"
 EQUILIBRE = DONNEES / "derive" / "equilibre.json"
 #: Ce que les trois pages qui agrègent lisent du modèle, fabriqué sous les
 #: réglages de référence : elles ne calculent plus chez le lecteur depuis le
-#: 11 octobre 2026 (action 150). ``donnees/agregats.py`` la relit, et le paquet
-#: l'embarque telle quelle.
+#: 11 octobre 2026 (action 150). ``moteur/js/agregats.js`` la relit, et le
+#: paquet l'embarque telle quelle.
 AGREGATS = DONNEES / "derive" / "agregats.json"
 #: Les lois de mortalité calibrées, avec l'empreinte de leurs entrées. Écrites
 #: ici et nulle part ailleurs : le test de fraîcheur du paquet les vérifie, et

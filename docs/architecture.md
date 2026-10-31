@@ -1132,8 +1132,7 @@ table figée,
 `data/derive/agregats.json`, que le paquet porte à côté du bilan figé ; les
 écrivains de `donnees/agregats.py` la fabriquent, et les accesseurs de
 `moteur/js/agregats.js` la lisent, sans rien calculer qu'une règle décide —
-ceux du Python ne servent plus qu'aux tests, et s'en vont (note de décision
-0005). Une page
+seuls : ceux du Python sont partis (note de décision 0005). Une page
 qui veut un chiffre de plus le fait fabriquer ; la version du paquet monte
 alors des deux côtés, et le site qui reçoit un paquet d'une autre version
 le redemande une fois, puis dit au lecteur de recharger la page. Le bilan
