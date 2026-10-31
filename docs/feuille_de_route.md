@@ -6919,14 +6919,14 @@ de `contribution_etat`.
 ### 161. Un seul exemplaire du code : les doublons entre le Python et le JavaScript retirés une paire à la fois, chaque retrait relu — `en cours`
 
 **Reprise, au 31 octobre 2026.** Le JavaScript fait foi (note de décision
-0005). Les témoins de simulations sont prêts à passer au portage : le pont les
-simule (`pont.simulations`), une table des types déclarée champ par champ les
-relit, et le fichier revient à l'octet, sauf 2 103 zéros ambigus, que le
-moteur Python écrit « 0 » et la table « 0.0 ». Leur normalisation attend
-l'accord du propriétaire ; `construire_temoins.py` passera ensuite au portage
-sans changer un octet. Puis, dans l'ordre : les confrontations par le pont ;
-le coût daté par le portage ; les retraits, par sous-ensemble cohérent.
-Détail : `2026-10-31-etape-6-les-temoins-par-le-portage.md`.
+0005) : une règle s'écrit d'abord dans `moteur/js/`, son jumeau Python la suit
+au bit près. Deux étapes se mènent en parallèle, une session chacune : les
+témoins calculés par le portage (`2026-10-31-etape-6-les-temoins-par-le-portage.md`)
+et les deux paires de données selon la note 0005 (`…-etape-4-….md`). Chacune
+tient son bloc « Reprise » sous le titre de sa note, et celui-ci ne se récrit
+plus, sauf par la session qui finit la dernière des deux. Restent ensuite,
+dans l'ordre : les confrontations par le pont ; le coût daté par le portage ;
+les retraits, par sous-ensemble cohérent.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur

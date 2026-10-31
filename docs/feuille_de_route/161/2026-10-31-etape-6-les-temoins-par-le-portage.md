@@ -1,5 +1,15 @@
 # Étape 6 : les témoins par le portage — la demande au pont, la table des types, et les zéros ambigus soumis au propriétaire
 
+**Reprise, au 31 octobre 2026.** Prêt et publié, sans qu'un octet des
+témoins ait changé : la demande `pont.simulations`, la table des types de
+`pont.py`, et les tests qui prouvent que le portage relu par la table redonne
+le fichier à l'octet, sauf 2 103 zéros ambigus. Reste, à l'accord du
+propriétaire, demandé le 31 octobre : (A) `construire_temoins.py` écrit le
+résultat du moteur Python sous la table, ces zéros devenus « 0.0 » ; (B) les
+témoins simulés par le portage, sans changer un octet, le moteur Python
+confronté au fichier par la même table. La variante des 3 champs au zéro
+entier lui est soumise avec. Par quoi commencer : sa réponse.
+
 **La demande.** Le 31 octobre 2026, le propriétaire ouvre l'étape suivante
 de l'action 161, les témoins de simulations calculés par le JavaScript, sous
 une condition : préparer tout ce qui ne change aucun octet de
