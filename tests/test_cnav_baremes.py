@@ -308,14 +308,6 @@ RCI = (("2013-01-01", 7.00, 8.00), ("2025-01-01", 8.10, 9.10))
 #: Ce que les fiches portent autrement que la caisse : la valeur de la fiche,
 #: et la raison.
 ECARTS_COMPLEMENTAIRES = {
-    ("rco_artisans", 2008): (
-        (0.072, 0.076), "le décret n° 2007-1900 du 26 décembre 2007 réécrit D. 635-7 "
-        "à 7,2 % et 7,6 % au 1er janvier 2008, mais son article 1er fixe, « par "
-        "dérogation », 7 % et 7 % au titre de 2008 (III et IV), et 7,1 % et 7,5 % "
-        "au titre de 2009 : la fiche, qui ne lit que l'article codifié, applique "
-        "7,2 % et 7,6 % dès 2008. Un écart qui change les points de 2008 et de "
-        "2009 : à la session du modèle"),
-    ("rco_artisans", 2009): ((0.072, 0.076), "id."),
     ("nric", 2004): (
         (0.040,), "la fiche porte la moyenne de l'année, 3,5 % jusqu'en juin et "
         "4,5 % ensuite, et non le taux du 1er janvier"),

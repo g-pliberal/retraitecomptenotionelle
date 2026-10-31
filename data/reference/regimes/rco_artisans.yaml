@@ -220,6 +220,86 @@ periodes:
     notes: >-
       D. 635-7, état du 24 août 2004 : 7 %, et l'assiette passe de trois à quatre fois le plafond.
   - debut: 2008
+    fin: 2008
+    type_calcul: points
+    age_ouverture: 60
+    age_taux_plein: 65
+    duree_requise_trimestres: 160
+    taux_plein: 1.0
+    age_ouverture_par_generation: age_legal_par_generation
+    age_taux_plein_par_generation: age_annulation_decote
+    decote_par_generation: decote_regime_general
+    abattement_points: abattement_rci
+    salaire_reference: carriere_entiere
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    assiette: plafonnee
+    # Les points de la pension d'invalidité : fiche `points_invalidite_independants`.
+    points_invalidite: {par: trimestre, proportionnels: true, forfait: 16}
+    taux_cotisation_retraite: 0.0700
+    notes: >-
+      D. 635-7, état du 1er janvier 2008 : le taux se découpe en deux tranches, 7,2 % sous un plafond que l'article fixe à 33 276 € pour 2008 — c'est exactement le plafond de la Sécurité sociale de cette année-là, d'où la borne d'un plafond —, et 7,6 % au-delà. Mais le décret n° 2007-1900 du 26 décembre 2007, qui écrit cet état, fixe dans le même article 1er, « par dérogation aux dispositions du I », le taux de la première tranche « à 7 % au titre de l'année 2008 et à 7,1 % au titre de l'année 2009 » (III), et celui de la seconde « à 7 % au titre de l'année 2008 et à 7,5 % au titre de l'année 2009 » (IV) ; lu au JORF du 30 décembre 2007 (JORFARTI000017765872). Première tranche en 2008 : 7 %, ce que porte la table des taux de la caisse (`ti_cotisation_taux_cotisation_bar.aspx`).
+  - debut: 2008
+    fin: 2008
+    type_calcul: points
+    age_ouverture: 60
+    age_taux_plein: 65
+    duree_requise_trimestres: 160
+    taux_plein: 1.0
+    age_ouverture_par_generation: age_legal_par_generation
+    age_taux_plein_par_generation: age_annulation_decote
+    decote_par_generation: decote_regime_general
+    abattement_points: abattement_rci
+    salaire_reference: carriere_entiere
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    assiette: tranche_1_4_pass
+    taux_cotisation_retraite: 0.0700
+    notes: >-
+      Même dérogation (article 1er, IV, du décret n° 2007-1900) : seconde tranche, 7 % au titre de 2008, au-delà du plafond et jusqu'à quatre fois celui-ci.
+  - debut: 2009
+    fin: 2009
+    type_calcul: points
+    age_ouverture: 60
+    age_taux_plein: 65
+    duree_requise_trimestres: 160
+    taux_plein: 1.0
+    age_ouverture_par_generation: age_legal_par_generation
+    age_taux_plein_par_generation: age_annulation_decote
+    decote_par_generation: decote_regime_general
+    abattement_points: abattement_rci
+    salaire_reference: carriere_entiere
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    assiette: plafonnee
+    # Les points de la pension d'invalidité : fiche `points_invalidite_independants`.
+    points_invalidite: {par: trimestre, proportionnels: true, forfait: 16}
+    taux_cotisation_retraite: 0.0710
+    notes: >-
+      Même dérogation (article 1er, III, du décret n° 2007-1900) : première tranche, 7,1 % au titre de 2009.
+  - debut: 2009
+    fin: 2009
+    type_calcul: points
+    age_ouverture: 60
+    age_taux_plein: 65
+    duree_requise_trimestres: 160
+    taux_plein: 1.0
+    age_ouverture_par_generation: age_legal_par_generation
+    age_taux_plein_par_generation: age_annulation_decote
+    decote_par_generation: decote_regime_general
+    abattement_points: abattement_rci
+    salaire_reference: carriere_entiere
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    assiette: tranche_1_4_pass
+    taux_cotisation_retraite: 0.0750
+    notes: >-
+      Même dérogation (article 1er, IV) : seconde tranche, 7,5 % au titre de 2009.
+  - debut: 2010
     fin: 2012
     type_calcul: points
     age_ouverture: 60
@@ -239,8 +319,8 @@ periodes:
     points_invalidite: {par: trimestre, proportionnels: true, forfait: 16}
     taux_cotisation_retraite: 0.0720
     notes: >-
-      D. 635-7, état du 1er janvier 2008 : le taux se découpe en deux tranches. Première tranche, 7,2 %, sous un plafond que l'article fixe à 33 276 € pour 2008 — c'est exactement le plafond de la Sécurité sociale de cette année-là, d'où la borne d'un plafond.
-  - debut: 2008
+      D. 635-7, état du 1er janvier 2008, la dérogation éteinte : première tranche, 7,2 %.
+  - debut: 2010
     fin: 2012
     type_calcul: points
     age_ouverture: 60
