@@ -63,6 +63,24 @@ def test_un_en_tete_declare_son_jumeau(tmp_path):
     assert jumeaux.declaration(tmp_path, "/** Le site. */\n// Portage de `pilote.py`\n") is None
 
 
+def test_un_en_tete_qui_se_dit_sans_jumeau_ne_s_apparie_pas_par_le_nom(tmp_path):
+    """Une paire tranchée — le Python ne garde que ce que la fabrique écrit au
+    paquet, et le calcul n'est plus que dans le JavaScript (note de décision
+    0005) — le dit à l'en-tête de son JavaScript : la carte cesse de
+    l'apparier au Python du même nom, et chacun passe parmi les « seuls »."""
+    fichiers = _ecrire(tmp_path, {
+        "src/retraite_notionnelle/donnees/parts.py": "",
+        "moteur/js/parts.js": "/**\n * Les parts. Sans jumeau Python : le chargeur\n"
+                              " * ``src/retraite_notionnelle/donnees/parts.py`` écrit le paquet.\n */\n",
+        "src/retraite_notionnelle/donnees/taux.py": "",
+        "moteur/js/taux.js": "/**\n * Les taux.\n */\n",
+    })
+    paires, mortes = jumeaux.paires(tmp_path, fichiers)
+    assert [(p.python, p.javascript) for p in paires] == [
+        ("src/retraite_notionnelle/donnees/taux.py", "moteur/js/taux.js")]
+    assert mortes == []
+
+
 def test_un_import_se_cherche_comme_sys_path(tmp_path):
     """Un script se lance depuis son dossier : ``from lecture import lire`` y
     trouve son voisin, et un script de ``scripts/`` le trouve dans

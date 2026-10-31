@@ -34,7 +34,8 @@ sortes de dépendants :
 
 Une paire est déclarée par l'en-tête du fichier JavaScript (« Portage de
 ``src/…/x.py`` », « Jumeau de », « Copie de », « Lecteur de ») ; à défaut,
-elle se forme par le nom. Le classement suppose qu'on retire le jumeau Python,
+elle se forme par le nom, sauf si l'en-tête se dit « sans jumeau » : une paire
+tranchée, dont le Python ne garde que ce que la fabrique écrit au paquet. Le classement suppose qu'on retire le jumeau Python,
 le cas ordinaire, puisque le navigateur n'exécute que le JavaScript : d'abord
 ce que ni le coût ni la fabrique n'atteignent, puis par nombre de scripts, de
 fiches et d'ancres, de tests, et par taille. Une paire dont le site ne charge
@@ -107,6 +108,10 @@ CHARGEUR = getattr(yaml, "CSafeLoader", yaml.SafeLoader)
 DECLARATION = re.compile(
     r"\b(?:Portage|portage|PORT|Jumeau|jumeau|Copie|copie|Lecteur|lecteur)\s+"
     r"(d'une\s+partie\s+)?(?:de|DE)\s+`{1,2}([\w./-]+\.py)`{1,2}")
+#: La phrase d'un en-tête JavaScript dont la paire est tranchée : le Python
+#: du même nom ne garde que ce que la fabrique écrit au paquet (note de
+#: décision 0005), et la carte ne les apparie plus.
+SANS_JUMEAU = re.compile(r"\b[Ss]ans\s+jumeau\b")
 IMPORT_JS = re.compile(r"""(?:\bimport\s*\(\s*|\bfrom\s*|\bimport\s+)(["'`])([^"'`\n$]+?\.m?js)\1""")
 BALISE = re.compile(r"<(link|script)\b([^>]*)>", re.I)
 ATTRIBUT = re.compile(r"""\b(rel|href|src|type)\s*=\s*["']([^"']*)["']""", re.I)
@@ -455,7 +460,10 @@ def paires(racine: Path, fichiers: list[str]) -> tuple[list[Paire], list[tuple[s
     for chemin in fichiers:
         if not (chemin.startswith(PORTAGE) and chemin.endswith(".js")):
             continue
-        declaree = declaration(racine, _lire(racine, chemin))
+        texte = _lire(racine, chemin)
+        declaree = declaration(racine, texte)
+        if not declaree and SANS_JUMEAU.search(en_tete(texte)):
+            continue
         if declaree:
             python, phrase, partielle = declaree
             if (racine / python).is_file():
