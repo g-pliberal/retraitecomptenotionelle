@@ -93,12 +93,12 @@ periodes:
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
-    assiette: plafonnee_3_pass
+    assiette: plafonnee_4_pass
     # Les points de la pension d'invalidité : fiche `points_invalidite_independants`.
     points_invalidite: {par: trimestre, proportionnels: true, forfait: 16}
     taux_cotisation_retraite: 0.0490
     notes: >-
-      D. 635-6, état du 26 février 1997, qui échelonne quatre hausses.
+      D. 635-6, état du 26 février 1997, qui échelonne quatre hausses. Assiette : quatre fois le plafond, et non plus trois — D. 635-4 dans sa rédaction du 26 février 1997 (LEGIARTI000006738337), qu'écrit l'article 1er du décret n° 97-166 du 24 février 1997 : « les mots "trois fois" sont remplacés par les mots "quatre fois" », pour la cotisation annuelle, au plafond « en vigueur dans l'année où la cotisation est due » ; lu au JORF du 26 février 1997 (JORFARTI000001797721). La table de l'assiette maximale de la caisse (`ti_cotisation_assiette_maximale_cotisation.pdf`) porte 658 560 F pour 1997, quatre plafonds de 164 640 F.
   - debut: 1998
     fin: 1998
     type_calcul: points
@@ -113,12 +113,12 @@ periodes:
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
-    assiette: plafonnee_3_pass
+    assiette: plafonnee_4_pass
     # Les points de la pension d'invalidité : fiche `points_invalidite_independants`.
     points_invalidite: {par: trimestre, proportionnels: true, forfait: 16}
     taux_cotisation_retraite: 0.0530
     notes: >-
-      D. 635-6, même état.
+      D. 635-6, même état ; assiette de quatre plafonds de la sécurité sociale (D. 635-4, rédaction du 26 février 1997).
   - debut: 1999
     fin: 1999
     type_calcul: points
@@ -133,12 +133,12 @@ periodes:
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
-    assiette: plafonnee_3_pass
+    assiette: plafonnee_4_pass
     # Les points de la pension d'invalidité : fiche `points_invalidite_independants`.
     points_invalidite: {par: trimestre, proportionnels: true, forfait: 16}
     taux_cotisation_retraite: 0.0570
     notes: >-
-      D. 635-6, même état.
+      D. 635-6, même état ; assiette de quatre plafonds de la sécurité sociale (D. 635-4, rédaction du 26 février 1997).
   - debut: 2000
     fin: 2002
     type_calcul: points
@@ -153,12 +153,12 @@ periodes:
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
-    assiette: plafonnee_3_pass
+    assiette: plafonnee_4_pass
     # Les points de la pension d'invalidité : fiche `points_invalidite_independants`.
     points_invalidite: {par: trimestre, proportionnels: true, forfait: 16}
     taux_cotisation_retraite: 0.0600
     notes: >-
-      D. 635-6, même état.
+      D. 635-6, même état ; assiette de quatre plafonds de la sécurité sociale (D. 635-4, rédaction du 26 février 1997).
   - debut: 2003
     fin: 2003
     type_calcul: points
@@ -173,12 +173,12 @@ periodes:
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
-    assiette: plafonnee_3_pass
+    assiette: plafonnee_4_pass
     # Les points de la pension d'invalidité : fiche `points_invalidite_independants`.
     points_invalidite: {par: trimestre, proportionnels: true, forfait: 16}
     taux_cotisation_retraite: 0.0620
     notes: >-
-      D. 635-6, état du 29 octobre 2003, qui échelonne 2003, 2004 et 2005.
+      D. 635-6, état du 29 octobre 2003, qui échelonne 2003, 2004 et 2005 ; assiette de quatre plafonds de la sécurité sociale (D. 635-4, rédaction du 1er mai 2002, qui garde les quatre fois).
   - debut: 2004
     fin: 2004
     type_calcul: points
@@ -193,12 +193,12 @@ periodes:
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
-    assiette: plafonnee_3_pass
+    assiette: plafonnee_4_pass
     # Les points de la pension d'invalidité : fiche `points_invalidite_independants`.
     points_invalidite: {par: trimestre, proportionnels: true, forfait: 16}
     taux_cotisation_retraite: 0.0670
     notes: >-
-      D. 635-6, même état.
+      D. 635-6, même état ; assiette de quatre plafonds (D. 635-4).
   - debut: 2005
     fin: 2007
     type_calcul: points
@@ -218,7 +218,7 @@ periodes:
     points_invalidite: {par: trimestre, proportionnels: true, forfait: 16}
     taux_cotisation_retraite: 0.0700
     notes: >-
-      D. 635-7, état du 24 août 2004 : 7 %, et l'assiette passe de trois à quatre fois le plafond.
+      D. 635-7, état du 24 août 2004 : 7 %, « dans une limite égale à quatre fois le plafond » — l'assiette que D. 635-4 portait depuis 1997, et que l'article reprend.
   - debut: 2008
     fin: 2008
     type_calcul: points

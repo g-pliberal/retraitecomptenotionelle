@@ -1096,11 +1096,10 @@ PLAFONDS_D_UNE_ASSIETTE = {
     "plafonnee": 1, "plafonnee_3_pass": 3, "plafonnee_4_pass": 4, "tranche_1_4_pass": 4,
     "plafonnee_033_pass": 1 / 3, "tranche_033_1_pass": 1,
 }
-#: L'écart, à la session du modèle : D. 635-4, dans sa rédaction du 26 février
-#: 1997 (LEGIARTI000006738337), assied le RCO des artisans « dans la limite d'un
-#: plafond égal à quatre fois » celui de la sécurité sociale ; la fiche garde
-#: trois plafonds jusqu'en 2004, et ne passe à quatre qu'avec D. 635-7 de 2004.
-ECARTS_ASSIETTE_MAXIMALE = {("rco_artisans", annee): 3 for annee in range(1997, 2005)}
+#: Les écarts, à la session du modèle : aucun depuis que la fiche du RCO des
+#: artisans l'assied sur quatre plafonds dès 1997, comme D. 635-4 dans sa
+#: rédaction du 26 février 1997 (LEGIARTI000006738337, action 177).
+ECARTS_ASSIETTE_MAXIMALE: dict[tuple[str, int], float] = {}
 
 
 def test_l_assiette_maximale_des_independants_est_celle_de_la_caisse():
