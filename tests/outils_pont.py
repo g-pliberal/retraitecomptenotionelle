@@ -227,6 +227,8 @@ JUMEAUX_DU_DROIT = {
     "liquider.trimestres_de_decote": liquider.trimestres_de_decote,
     "liquider.valeur_du_point": liquider.valeur_du_point,
     "regimes.BORNES_ASSIETTE": lambda: BORNES_ASSIETTE,
+    "scenario_actuel.ages_annulation_decote.age":
+        lambda moteur, generation: moteur.ages_annulation_decote.age(generation),
     "scenario_actuel.calculer":
         lambda moteur, carriere: actuel_en_donnees(moteur.calculer(carriere)),
     "scenario_actuel.catalogue.periodes": lambda moteur, code: [
@@ -240,6 +242,8 @@ JUMEAUX_DU_DROIT = {
         lambda moteur, *valeurs: moteur.minimum_garanti.montant(*valeurs),
     "scenario_actuel.valeurs_point.achat":
         lambda moteur, *valeurs: moteur.valeurs_point.achat(*valeurs),
+    "scenario_actuel.valeurs_point.service":
+        lambda moteur, *valeurs: moteur.valeurs_point.service(*valeurs),
 }
 
 #: Le pont du droit tel quel, que :func:`droit_et_refait` appelle quand une

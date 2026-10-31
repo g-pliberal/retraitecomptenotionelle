@@ -72,13 +72,14 @@ from retraite_notionnelle import pont
 from retraite_notionnelle.calendrier import DateMois
 from retraite_notionnelle.carriere import AnneeCarriere, Carriere
 from retraite_notionnelle.config import Parametres
-from retraite_notionnelle.donnees.regimes import BORNES_ASSIETTE, CatalogueRegimes
+from retraite_notionnelle.donnees.regimes import CatalogueRegimes
 from retraite_notionnelle.simulateur import Simulateur
 from retraite_notionnelle.donnees.chargement import Fiabilite, SerieAnnuelle
 from retraite_notionnelle.droit import departs, invalidite, liquider, ouvrir
 from retraite_notionnelle.droit.reversion import reversion
 from retraite_notionnelle.echeancier import Echeancier
-from retraite_notionnelle.scenarios.actuel import MinimumGaranti, ScenarioActuel, ValeursPoint
+from retraite_notionnelle.scenarios.actuel import (
+    AgesAnnulationDecote, MinimumGaranti, ScenarioActuel, ValeursPoint)
 
 TEMOINS = Path(__file__).resolve().parent / "temoins"
 TEMOIN = TEMOINS / "openfisca_regime_general.json"
@@ -1266,25 +1267,26 @@ SURCOTE_IRCANTEC_OPENFISCA = 0.075
 SURCOTE_IRCANTEC_ARRETE = 0.0075
 
 
-def _cotisation_ircantec(simulateur: Simulateur, salaire: float, annee: int,
+def _cotisation_ircantec(bareme: dict, salaire: float, annee: int,
                          plafonds: float) -> float:
     """La cotisation Ircantec d'une année, l'assiette bornée à ``plafonds``.
 
     La borne est le paramètre du test : le décret en écrit 4,75 jusqu'en 2008,
     OpenFisca huit à partir de 1992. Tout le reste — les deux taux, le
-    découpage des tranches — est lu dans la fiche du régime, si bien que le
-    seul écart que la comparaison peut faire apparaître est celui-là.
+    découpage des tranches — est lu dans la fiche du régime, celle du portage
+    (:func:`_bareme`), si bien que le seul écart que la comparaison peut faire
+    apparaître est celui-là.
     """
-    plafond = simulateur.macro.plafond_securite_sociale(annee)
+    plafond = bareme["plafonds"][annee]
     cotisation = 0.0
-    for periode in simulateur.catalogue["ircantec"].periodes:
-        if not (periode.debut <= annee <= (periode.fin or 9999)):
+    for periode in bareme["periodes"]:
+        if not (periode["debut"] <= annee <= (periode["fin"] or 9999)):
             continue
-        bas, _ = BORNES_ASSIETTE[periode.assiette]
-        haut = 1.0 if periode.assiette == "tranche_1" else plafonds
-        taux = periode.taux_cotisation_retraite
+        bas, _ = bareme["bornes"][periode["assiette"]]
+        haut = 1.0 if periode["assiette"] == "tranche_1" else plafonds
+        taux = periode["taux_cotisation_retraite"]
         if annee == ANNEE_DU_BAREME_EN_RETARD:
-            taux = TAUX_IRCANTEC_1989[0 if periode.assiette == "tranche_1" else 1]
+            taux = TAUX_IRCANTEC_1989[0 if periode["assiette"] == "tranche_1" else 1]
         cotisation += max(
             0.0, min(salaire, haut * plafond) - bas * plafond
         ) * taux
@@ -1306,6 +1308,53 @@ def bareme_ircantec(oracle_ircantec) -> dict:
 def nos_points_ircantec(oracle_ircantec) -> dict[str, dict[str, float]]:
     """Les points Ircantec du scénario 1 sur chaque profil du témoin, sous son code."""
     return _nos_points(_profils(oracle_ircantec), "ircantec", "contractuel_public")
+
+
+def _millesimes_ircantec(temoin: dict) -> dict[str, int]:
+    """Le millésime de la valeur de service qu'OpenFisca lit pour chaque
+    profil, au 1er janvier de la liquidation : celui de l'année tant que
+    l'Ircantec revalorise au 1er janvier, celui d'avant depuis qu'elle
+    revalorise au 1er avril."""
+    return {code: (entree["profil"]["liquidation"] - 1
+                   if entree["profil"]["liquidation"] >= ANNEE_DU_1ER_AVRIL_IRCANTEC
+                   else entree["profil"]["liquidation"])
+            for code, entree in temoin["profils"].items()}
+
+
+def _services_du_millesime(regime: str, millesimes: dict[str, int], droit=droit_et_refait,
+                           ) -> dict[str, tuple | None]:
+    """La valeur de service du point de ``regime`` à chaque millésime, sous le
+    code du profil, que le portage lit (:func:`pont.droit`) ; par défaut, le
+    jumeau Python la refait au bit près (``droit_et_refait``)."""
+    lus, refus = droit({code: ("scenario_actuel.valeurs_point.service", pont.MOTEUR, regime,
+                               millesime) for code, millesime in millesimes.items()})
+    assert refus == {}, refus
+    return lus
+
+
+def _ages_du_taux_plein(generations: dict[str, int], droit=droit_et_refait,
+                        ) -> dict[str, tuple | None]:
+    """L'âge d'annulation de la décote de chaque génération, sous le code du
+    profil, que le portage lit (:func:`pont.droit`) ; par défaut, le jumeau
+    Python le refait au bit près (``droit_et_refait``)."""
+    lus, refus = droit({code: ("scenario_actuel.ages_annulation_decote.age", pont.MOTEUR,
+                               generation) for code, generation in generations.items()})
+    assert refus == {}, refus
+    return lus
+
+
+@pytest.fixture(scope="module")
+def services_ircantec(oracle_ircantec) -> dict[str, tuple | None]:
+    """La valeur de service de l'Ircantec, au millésime qu'OpenFisca lit pour
+    chaque profil du témoin."""
+    return _services_du_millesime("ircantec", _millesimes_ircantec(oracle_ircantec))
+
+
+@pytest.fixture(scope="module")
+def ages_du_taux_plein_ircantec(oracle_ircantec) -> dict[str, tuple | None]:
+    """L'âge du taux plein de la génération de chaque profil du témoin."""
+    return _ages_du_taux_plein({code: entree["profil"]["naissance"]
+                                for code, entree in oracle_ircantec["profils"].items()})
 
 
 def test_le_temoin_de_l_ircantec_couvre_le_perimetre_annonce(oracle_ircantec):
@@ -1330,7 +1379,7 @@ def test_le_temoin_de_l_ircantec_couvre_le_perimetre_annonce(oracle_ircantec):
 
 
 def test_le_prix_du_point_ircantec_concorde_sauf_le_taux_d_appel_de_1991(
-        oracle_ircantec, simulateur):
+        oracle_ircantec, bareme_ircantec):
     """Salaire de référence et taux d'appel, année par année, sur onze profils.
 
     L'Ircantec achète ses points comme nous — cotisation ÷ (taux d'appel ×
@@ -1344,9 +1393,7 @@ def test_le_prix_du_point_ircantec_concorde_sauf_le_taux_d_appel_de_1991(
     for code, entree in oracle_ircantec["profils"].items():
         profil, mesures = entree["profil"], entree["openfisca"]
         for annee in range(profil["debut"], profil.get("prive_des", profil["liquidation"])):
-            reference, appel, _ = simulateur.scenario_actuel.valeurs_point.achat(
-                "ircantec", annee
-            )
+            reference, appel, _ = bareme_ircantec["achats"][annee]
             cotisation = mesures["cotisations_annuelles"][str(annee)]
             leurs = mesures["points_annuels"][str(annee)]
             if annee == ANNEE_DU_TAUX_D_APPEL_CONTESTE:
@@ -1359,7 +1406,7 @@ def test_le_prix_du_point_ircantec_concorde_sauf_le_taux_d_appel_de_1991(
 
 
 def test_la_cotisation_ircantec_concorde_sauf_un_arrondi(
-        oracle_ircantec, simulateur):
+        oracle_ircantec, bareme_ircantec):
     """Le barème des deux tranches, opposé au sien année par année.
 
     Les deux barèmes tombent d'accord à l'arrondi du producteur près — un
@@ -1374,10 +1421,10 @@ def test_la_cotisation_ircantec_concorde_sauf_un_arrondi(
         if code.startswith("tranche_b_1992"):
             continue
         for annee in range(profil["debut"], profil.get("prive_des", profil["liquidation"])):
-            plafonds = BORNES_ASSIETTE[
+            plafonds = bareme_ircantec["bornes"][
                 "tranche_2_ircantec" if annee < ANNEE_DES_HUIT_PLAFONDS_DECRET
                 else "tranche_2"][1]
-            attendu = _cotisation_ircantec(simulateur, profil["salaire"], annee,
+            attendu = _cotisation_ircantec(bareme_ircantec, profil["salaire"], annee,
                                            plafonds)
             tolerance = (TOLERANCE_FLOTTANT_32 if annee == ANNEE_DU_BAREME_EN_RETARD
                          else ECART_D_ARRONDI_IRCANTEC)
@@ -1419,7 +1466,7 @@ def test_le_taux_appele_ircantec_est_celui_du_producteur_arrondi(
 
 
 def test_l_assiette_ircantec_s_arrete_a_4_75_plafonds_jusqu_en_2008(
-        oracle_ircantec, simulateur):
+        oracle_ircantec, bareme_ircantec):
     """Ce qu'un contractuel payé plus de 4,75 plafonds cotise, chez lui et chez nous.
 
     L'article 7 du décret n° 70-1277 limite l'assiette à « 4,75 fois le
@@ -1438,14 +1485,14 @@ def test_l_assiette_ircantec_s_arrete_a_4_75_plafonds_jusqu_en_2008(
         accords, ecarts = 0, 0
         for annee in range(profil["debut"], profil["liquidation"]):
             leur_borne = (8.0 if annee >= ANNEE_DES_HUIT_PLAFONDS_OPENFISCA
-                          else BORNES_ASSIETTE["tranche_2_ircantec"][1])
-            notre_borne = BORNES_ASSIETTE[
+                          else bareme_ircantec["bornes"]["tranche_2_ircantec"][1])
+            notre_borne = bareme_ircantec["bornes"][
                 "tranche_2_ircantec" if annee < ANNEE_DES_HUIT_PLAFONDS_DECRET
                 else "tranche_2"][1]
             tolerance = (TOLERANCE_FLOTTANT_32 if annee == ANNEE_DU_BAREME_EN_RETARD
                          else ECART_D_ARRONDI_IRCANTEC)
             assert mesures["cotisations_annuelles"][str(annee)] == pytest.approx(
-                _cotisation_ircantec(simulateur, profil["salaire"], annee,
+                _cotisation_ircantec(bareme_ircantec, profil["salaire"], annee,
                                      leur_borne),
                 rel=tolerance), (code, annee)
             if leur_borne == notre_borne:
@@ -1454,7 +1501,7 @@ def test_l_assiette_ircantec_s_arrete_a_4_75_plafonds_jusqu_en_2008(
                 # Le salaire dépasse les deux bornes : l'écart est tout entier
                 # la tranche que le décret n'ouvre pas encore.
                 assert mesures["cotisations_annuelles"][str(annee)] > (
-                    _cotisation_ircantec(simulateur, profil["salaire"], annee,
+                    _cotisation_ircantec(bareme_ircantec, profil["salaire"], annee,
                                          notre_borne) * 1.3), (code, annee)
                 ecarts += 1
         assert accords >= 10, code
@@ -1511,7 +1558,7 @@ def test_le_coefficient_d_anticipation_ircantec_suit_l_arrete_de_1970(
 
 
 def test_la_surcote_ircantec_est_dix_fois_trop_forte_chez_lui(
-        oracle_ircantec, simulateur, nos_points_ircantec):
+        oracle_ircantec, nos_points_ircantec, ages_du_taux_plein_ircantec):
     """Le seul poste où OpenFisca sert plus que le droit, et de loin.
 
     Le paragraphe 4 de l'article 16 majore le total des points « de 0,75 %
@@ -1543,8 +1590,7 @@ def test_la_surcote_ircantec_est_dix_fois_trop_forte_chez_lui(
         # la génération, et l'âge de la liquidation. Le 2° ne joue pas ici —
         # les trimestres au-delà de la durée requise sont postérieurs à
         # soixante-cinq ans, et le texte interdit de les payer deux fois.
-        age_taux_plein = simulateur.scenario_actuel.ages_annulation_decote.age(
-            profil["naissance"])[0]
+        age_taux_plein = ages_du_taux_plein_ircantec[code][0]
         ecoules = round(
             (profil["liquidation"] - profil["naissance"] - age_taux_plein) * 4)
         assert ecoules > 0, code
@@ -1555,7 +1601,7 @@ def test_la_surcote_ircantec_est_dix_fois_trop_forte_chez_lui(
 
 
 def test_la_valeur_de_service_ircantec_suit_la_date_de_revalorisation(
-        oracle_ircantec, simulateur):
+        oracle_ircantec, services_ircantec):
     """La même chaîne de valeurs, lue à deux dates.
 
     Le dépôt retient la valeur en vigueur au 31 décembre, OpenFisca celle du
@@ -1565,14 +1611,11 @@ def test_la_valeur_de_service_ircantec_suit_la_date_de_revalorisation(
     précédente.
     """
     des_deux_cotes = set()
+    millesimes = _millesimes_ircantec(oracle_ircantec)
     for code, entree in oracle_ircantec["profils"].items():
         profil, mesures = entree["profil"], entree["openfisca"]
-        liquidation = profil["liquidation"]
-        millesime = (liquidation - 1 if liquidation >= ANNEE_DU_1ER_AVRIL_IRCANTEC
-                     else liquidation)
-        service = simulateur.scenario_actuel.valeurs_point.service(
-            "ircantec", millesime
-        )
+        liquidation, millesime = profil["liquidation"], millesimes[code]
+        service = services_ircantec[code]
         assert service is not None, code
         assert service[0] == pytest.approx(
             mesures["valeur_du_point"], abs=1e-5), code
@@ -1589,6 +1632,27 @@ def test_la_decote_du_regime_general_qui_commande_l_ircantec_concorde(
         assert nous["decote_trimestres"] == (
             entree["openfisca"]["decote_trimestres_regime_general"]), code
 
+
+
+def test_l_ircantec_se_mesure_au_portage_sans_les_jumeaux_python(
+        oracle_ircantec, bareme_ircantec, nos_points_ircantec, services_ircantec,
+        ages_du_taux_plein_ircantec, monkeypatch):
+    """Le barème de l'Ircantec, les points de chaque profil du témoin, l'âge du
+    taux plein de sa génération et la valeur de service qu'OpenFisca lit se
+    lisent au portage (``pont.droit``) : les jumeaux Python, qu'on empêche ici
+    de calculer ou de lire, n'y entrent pas."""
+    _sans_les_jumeaux(monkeypatch, (ScenarioActuel, "calculer"), (ValeursPoint, "achat"),
+                      (ValeursPoint, "service"), (AgesAnnulationDecote, "age"),
+                      (CatalogueRegimes, "__getitem__"), (SerieAnnuelle, "__call__"))
+    profils = _profils(oracle_ircantec)
+    assert (_bareme("ircantec", _annees_du_temoin(oracle_ircantec), pont.droit)
+            == bareme_ircantec)
+    assert (_nos_points(profils, "ircantec", "contractuel_public", pont.droit)
+            == nos_points_ircantec)
+    assert (_services_du_millesime("ircantec", _millesimes_ircantec(oracle_ircantec),
+                                   pont.droit) == services_ircantec)
+    assert (_ages_du_taux_plein({code: profil["naissance"] for code, profil in profils.items()},
+                                pont.droit) == ages_du_taux_plein_ircantec)
 
 # -- les régimes alignés : MSA des salariés, artisans, commerçants --------------
 

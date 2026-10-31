@@ -414,6 +414,8 @@ const FONCTIONS_DU_DROIT = {
   "liquider.trimestres_de_decote": liquider.trimestresDeDecote,
   "liquider.valeur_du_point": liquider.valeurDuPoint,
   "regimes.BORNES_ASSIETTE": () => BORNES_ASSIETTE,
+  "scenario_actuel.ages_annulation_decote.age":
+    (moteur, generation) => moteur.agesAnnulationDecote.age(generation),
   "scenario_actuel.calculer": (moteur, carriere) => actuelEnDonnees(moteur.calculer(carriere)),
   // Ce que les confrontations lisent des périodes d'un régime pour rejouer
   // ses cotisations (`periodes_des_donnees` de `pont.py`).
@@ -427,6 +429,8 @@ const FONCTIONS_DU_DROIT = {
     (moteur, ...valeurs) => moteur.minimumGaranti.montant(...valeurs),
   "scenario_actuel.valeurs_point.achat":
     (moteur, ...valeurs) => moteur.valeursPoint.achat(...valeurs),
+  "scenario_actuel.valeurs_point.service":
+    (moteur, ...valeurs) => moteur.valeursPoint.service(...valeurs),
 };
 
 /**
