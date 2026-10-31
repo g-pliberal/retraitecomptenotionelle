@@ -226,6 +226,8 @@ JUMEAUX_DU_DROIT = {
     "liquider.trimestres_de_decote": liquider.trimestres_de_decote,
     "scenario_actuel.calculer":
         lambda moteur, carriere: actuel_en_donnees(moteur.calculer(carriere)),
+    "scenario_actuel.minimum_garanti.montant":
+        lambda moteur, *valeurs: moteur.minimum_garanti.montant(*valeurs),
 }
 
 #: Le pont du droit tel quel, que :func:`droit_et_refait` appelle quand une
@@ -264,14 +266,14 @@ def droit_et_refait(appels: dict[str, tuple], parametres=None, paquet: bytes | N
     le passent à leurs mesures au lieu du pont : aucun appel ne perd la
     vérification du Python. Sur un autre paquet que celui du dépôt, il n'y a
     rien à refaire."""
+    lus, refus = DROIT_DU_PORTAGE(appels, parametres, paquet)
+    if paquet is not None:
+        return lus, refus
     sans_jumeau = sorted({fonction for fonction, *_ in appels.values()}
                          - set(JUMEAUX_DU_DROIT))
     if sans_jumeau:
         raise ValueError(f"fonctions du droit sans jumeau Python : {', '.join(sans_jumeau)} "
                          "(outils_pont.JUMEAUX_DU_DROIT)")
-    lus, refus = DROIT_DU_PORTAGE(appels, parametres, paquet)
-    if paquet is not None:
-        return lus, refus
     simulateur = _simulateur_du_droit(Parametres() if parametres is None else parametres)
     ecarts = []
     for cle, (fonction, *arguments) in appels.items():

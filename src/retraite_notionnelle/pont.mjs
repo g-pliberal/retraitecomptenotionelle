@@ -412,6 +412,8 @@ const FONCTIONS_DU_DROIT = {
   "liquider.salaire_de_reference": liquider.salaireDeReference,
   "liquider.trimestres_de_decote": liquider.trimestresDeDecote,
   "scenario_actuel.calculer": (moteur, carriere) => actuelEnDonnees(moteur.calculer(carriere)),
+  "scenario_actuel.minimum_garanti.montant":
+    (moteur, ...valeurs) => moteur.minimumGaranti.montant(...valeurs),
 };
 
 /**

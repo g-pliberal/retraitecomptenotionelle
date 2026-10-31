@@ -78,7 +78,7 @@ from retraite_notionnelle.donnees.chargement import Fiabilite
 from retraite_notionnelle.droit import departs, invalidite, liquider, ouvrir
 from retraite_notionnelle.droit.reversion import reversion
 from retraite_notionnelle.echeancier import Echeancier
-from retraite_notionnelle.scenarios.actuel import ScenarioActuel
+from retraite_notionnelle.scenarios.actuel import MinimumGaranti, ScenarioActuel
 
 TEMOINS = Path(__file__).resolve().parent / "temoins"
 TEMOIN = TEMOINS / "openfisca_regime_general.json"
@@ -367,59 +367,99 @@ def _annee_ouverture_du_droit(profil: dict) -> int:
     return profil["naissance"] + (60 if profil["naissance"] < 1951 else 62)
 
 
-def _notre_calcul_fonction_publique(simulateur: Simulateur, profil: dict
-                                    ) -> dict[str, float]:
-    """La pension civile du scénario 1, sur la carrière exacte du témoin."""
-    code = profil["regime"]
+def _carriere_de_la_fonction_publique(profil: dict) -> Carriere:
+    """La carrière exacte d'un profil du témoin : fonctionnaire de son régime,
+    quatre trimestres chaque année, du début au départ.
+
+    OpenFisca date la naissance et le départ au 1er janvier : le témoin naît
+    un 1er, et part le jour même où il a l'âge, comme lui.
+    """
     lignes = [
         AnneeCarriere(
             annee=annee, revenu=profil["traitement"],
-            affiliation=AFFILIATIONS_PUBLIQUES[code], trimestres_valides=4,
+            affiliation=AFFILIATIONS_PUBLIQUES[profil["regime"]], trimestres_valides=4,
         )
         for annee in range(profil["debut"], profil["liquidation"])
     ]
-    # OpenFisca date la naissance et le départ au 1er janvier : le témoin naît
-    # un 1er, et part le jour même où il a l'âge, comme lui.
-    carriere = Carriere(
+    return Carriere(
         annee_naissance=profil["naissance"], sexe="H", lignes=lignes,
         age_liquidation=float(profil["liquidation"] - profil["naissance"]),
         identifiant=profil["code"], jour_naissance=1,
     )
-    scenario = simulateur.scenario_actuel
-    resultat = scenario.calculer(carriere)
-    periode = simulateur.catalogue[code].periode(profil["liquidation"])
-    requis, _ = ouvrir.duree_requise(scenario, periode, carriere)
-    proratisation, _ = liquider.duree_proratisation(scenario, periode, carriere, requis)
-    _, age_annulation, _ = liquider.decote_opposable(scenario, periode, carriere, profil["liquidation"])
-    pension = next(p for p in resultat.pensions_par_regime if p.regime == code)
-    # Le minimum garanti se SUBSTITUE à la pension quand il lui est supérieur,
-    # et le complément est dit : la pension d'avant le plancher se retrouve en
-    # le retirant.
-    complement = sum(
-        a.montant for a in resultat.avantages_appliques
-        if a.code == "minimum_garanti"
-    )
-    plancher = scenario.minimum_garanti.montant(
-        profil["liquidation"], resultat.trimestres_valides
-    )
-    return {
-        "duree_assurance": float(resultat.trimestres_valides),
-        "coefficient_de_proratisation": (
-            min(resultat.trimestres_valides, proratisation) / proratisation
-        ),
-        "decote_trimestres": float(liquider.trimestres_de_decote(scenario,
-            periode, carriere, resultat.trimestres_valides, requis,
-            profil["liquidation"] - profil["naissance"], age_annulation,
-        )),
-        "taux_de_liquidation": resultat.taux_liquidation,
-        "traitement_de_reference": liquider.salaire_de_reference(scenario,
-            code, carriere, periode, profil["liquidation"], False,
-            profil["naissance"], True,
-        ),
-        "pension_avant_minimum": pension.montant - complement,
-        "minimum_garanti": plancher[0] if plancher else 0.0,
-        "pension_brute": pension.montant,
-    }
+
+
+def _nos_calculs_fonction_publique(profils: dict[str, dict], droit=droit_et_refait,
+                                   ) -> dict[str, dict[str, float]]:
+    """La pension civile du scénario 1, sur la carrière exacte de chaque
+    profil, sous son code : le portage la calcule, une fonction du droit après
+    l'autre, en deux demandes comme le régime général (:func:`_nos_calculs`),
+    la seconde lisant aussi le minimum garanti de la durée validée. Par
+    défaut, le jumeau Python refait chaque appel au bit près
+    (``droit_et_refait``)."""
+    carrieres = {code: _carriere_de_la_fonction_publique(profil)
+                 for code, profil in profils.items()}
+    periodes = {code: pont.Periode(profil["regime"], profil["liquidation"])
+                for code, profil in profils.items()}
+    premiers = {}
+    for code, profil in profils.items():
+        carriere, periode, depart = carrieres[code], periodes[code], profil["liquidation"]
+        premiers |= {
+            f"{code}|resultat": ("scenario_actuel.calculer", pont.MOTEUR, carriere),
+            f"{code}|requis": ("ouvrir.duree_requise", pont.MOTEUR, periode, carriere),
+            f"{code}|decote": ("liquider.decote_opposable", pont.MOTEUR, periode, carriere,
+                               depart),
+            f"{code}|traitement": ("liquider.salaire_de_reference", pont.MOTEUR,
+                                   profil["regime"], carriere, periode, depart, False,
+                                   profil["naissance"], True),
+        }
+    lus, refus = droit(premiers)
+    assert refus == {}, refus
+    seconds = {}
+    for code, profil in profils.items():
+        requis, _ = lus[f"{code}|requis"]
+        _, age_annulation, _ = lus[f"{code}|decote"]
+        trimestres = lus[f"{code}|resultat"]["trimestres_valides"]
+        seconds |= {
+            f"{code}|proratisation": ("liquider.duree_proratisation", pont.MOTEUR,
+                                      periodes[code], carrieres[code], requis),
+            f"{code}|manquants": ("liquider.trimestres_de_decote", pont.MOTEUR, periodes[code],
+                                  carrieres[code], trimestres, requis,
+                                  profil["liquidation"] - profil["naissance"], age_annulation),
+            f"{code}|plancher": ("scenario_actuel.minimum_garanti.montant", pont.MOTEUR,
+                                 profil["liquidation"], trimestres),
+        }
+    suivants, refus = droit(seconds)
+    assert refus == {}, refus
+    calculs = {}
+    for code, profil in profils.items():
+        resultat = lus[f"{code}|resultat"]
+        trimestres = resultat["trimestres_valides"]
+        proratisation, _ = suivants[f"{code}|proratisation"]
+        pension = next(p for p in resultat["pensions_par_regime"]
+                       if p["regime"] == profil["regime"])
+        # Le minimum garanti se SUBSTITUE à la pension quand il lui est
+        # supérieur, et le complément est dit : la pension d'avant le plancher
+        # se retrouve en le retirant.
+        complement = sum(a["montant"] for a in resultat["avantages_appliques"]
+                         if a["code"] == "minimum_garanti")
+        plancher = suivants[f"{code}|plancher"]
+        calculs[code] = {
+            "duree_assurance": float(trimestres),
+            "coefficient_de_proratisation": min(trimestres, proratisation) / proratisation,
+            "decote_trimestres": suivants[f"{code}|manquants"],
+            "taux_de_liquidation": resultat["taux_liquidation"],
+            "traitement_de_reference": lus[f"{code}|traitement"],
+            "pension_avant_minimum": pension["montant"] - complement,
+            "minimum_garanti": plancher[0] if plancher else 0.0,
+            "pension_brute": pension["montant"],
+        }
+    return calculs
+
+
+@pytest.fixture(scope="module")
+def nos_calculs_fonction_publique(oracle_fonction_publique) -> dict[str, dict[str, float]]:
+    """La pension civile du scénario 1 sur chaque profil du témoin, sous son code."""
+    return _nos_calculs_fonction_publique(_profils(oracle_fonction_publique))
 
 
 def test_le_temoin_de_la_fonction_publique_couvre_le_perimetre_annonce(
@@ -441,14 +481,14 @@ def test_le_temoin_de_la_fonction_publique_couvre_le_perimetre_annonce(
 
 
 def test_la_duree_de_service_de_la_pension_civile_concorde(
-        oracle_fonction_publique, simulateur):
+        oracle_fonction_publique, nos_calculs_fonction_publique):
     for code, entree in oracle_fonction_publique["profils"].items():
-        nous = _notre_calcul_fonction_publique(simulateur, entree["profil"])
+        nous = nos_calculs_fonction_publique[code]
         assert nous["duree_assurance"] == entree["openfisca"]["duree_assurance"], code
 
 
 def test_la_decote_de_la_pension_civile_se_lit_a_l_annee_d_ouverture_du_droit(
-        oracle_fonction_publique, simulateur):
+        oracle_fonction_publique, nos_calculs_fonction_publique):
     """Le décompte des trimestres de décote, barème de l'article L. 14.
 
     C'est ce contrôle qui a révélé que le modèle lisait le barème à l'année de
@@ -461,7 +501,7 @@ def test_la_decote_de_la_pension_civile_se_lit_a_l_annee_d_ouverture_du_droit(
     opposait deux, avec le barème de 2010.
     """
     for code, entree in oracle_fonction_publique["profils"].items():
-        nous, eux = (_notre_calcul_fonction_publique(simulateur, entree["profil"]),
+        nous, eux = (nos_calculs_fonction_publique[code],
                      entree["openfisca"])
         assert nous["decote_trimestres"] == eux["decote_trimestres"], code
 
@@ -489,7 +529,7 @@ def _coefficient_surcote_civile(code: str, eux: dict) -> tuple[float, float]:
 
 
 def test_le_taux_de_la_pension_civile_concorde_sauf_la_transcription_de_2010(
-        oracle_fonction_publique, simulateur):
+        oracle_fonction_publique, nos_calculs_fonction_publique):
     """Décote et surcote ensemble : le taux de liquidation.
 
     Un seul écart, et il est chez OpenFisca : pour un droit ouvert en 2010, sa
@@ -500,7 +540,7 @@ def test_le_taux_de_la_pension_civile_concorde_sauf_la_transcription_de_2010(
     """
     for code, entree in oracle_fonction_publique["profils"].items():
         profil, eux = entree["profil"], entree["openfisca"]
-        nous = _notre_calcul_fonction_publique(simulateur, profil)
+        nous = nos_calculs_fonction_publique[code]
         if _annee_ouverture_du_droit(profil) == 2010 and eux["decote_trimestres"]:
             manquants = eux["decote_trimestres"]
             assert nous["taux_de_liquidation"] == pytest.approx(
@@ -521,7 +561,7 @@ def test_le_taux_de_la_pension_civile_concorde_sauf_la_transcription_de_2010(
             eux["taux_de_liquidation"], abs=TOLERANCE_EXACTE), code
 
 
-def test_la_surcote_de_la_pension_civile_concorde(oracle_fonction_publique, simulateur):
+def test_la_surcote_de_la_pension_civile_concorde(oracle_fonction_publique, nos_calculs_fonction_publique):
     """Le témoin porte au moins un profil surcoté, et les deux la servent —
     OpenFisca au taux du départ pour tous les trimestres, nous au taux de
     chacun (voir ``SURCOTE_CIVILE_DATEE``)."""
@@ -532,7 +572,7 @@ def test_la_surcote_de_la_pension_civile_concorde(oracle_fonction_publique, simu
     assert surcotes
     for code, entree in surcotes:
         eux = entree["openfisca"]
-        nous = _notre_calcul_fonction_publique(simulateur, entree["profil"])
+        nous = nos_calculs_fonction_publique[code]
         notre, leur = _coefficient_surcote_civile(code, eux)
         assert eux["decote_trimestres"] == 0, code
         assert nous["taux_de_liquidation"] == pytest.approx(
@@ -542,16 +582,16 @@ def test_la_surcote_de_la_pension_civile_concorde(oracle_fonction_publique, simu
 
 
 def test_la_proratisation_de_la_pension_civile_concorde(
-        oracle_fonction_publique, simulateur):
+        oracle_fonction_publique, nos_calculs_fonction_publique):
     for code, entree in oracle_fonction_publique["profils"].items():
-        nous, eux = (_notre_calcul_fonction_publique(simulateur, entree["profil"]),
+        nous, eux = (nos_calculs_fonction_publique[code],
                      entree["openfisca"])
         assert nous["coefficient_de_proratisation"] == pytest.approx(
             eux["coefficient_de_proratisation"], abs=TOLERANCE_EXACTE), code
 
 
 def test_le_traitement_de_reference_suit_le_point_d_indice(
-        oracle_fonction_publique, simulateur):
+        oracle_fonction_publique, nos_calculs_fonction_publique):
     """Le traitement de l'année d'avant, ramené à l'année du départ.
 
     Un fonctionnaire garde son indice : son traitement suit le point. Le
@@ -561,13 +601,13 @@ def test_le_traitement_de_reference_suit_le_point_d_indice(
     traitements tombent au centime.
     """
     for code, entree in oracle_fonction_publique["profils"].items():
-        nous, eux = (_notre_calcul_fonction_publique(simulateur, entree["profil"]),
+        nous, eux = (nos_calculs_fonction_publique[code],
                      entree["openfisca"])
         assert nous["traitement_de_reference"] == pytest.approx(
             eux["traitement_de_reference"], rel=1e-6), code
 
 
-def test_la_pension_civile_concorde_au_centime(oracle_fonction_publique, simulateur):
+def test_la_pension_civile_concorde_au_centime(oracle_fonction_publique, nos_calculs_fonction_publique):
     """Traitement × taux × proratisation : le bout de la chaîne.
 
     Au centime près, sauf pour le droit ouvert en 2010, où l'écart est celui
@@ -576,7 +616,7 @@ def test_la_pension_civile_concorde_au_centime(oracle_fonction_publique, simulat
     """
     for code, entree in oracle_fonction_publique["profils"].items():
         profil, eux = entree["profil"], entree["openfisca"]
-        nous = _notre_calcul_fonction_publique(simulateur, profil)
+        nous = nos_calculs_fonction_publique[code]
         notre_pension = nous["pension_avant_minimum"]
         if _annee_ouverture_du_droit(profil) == 2010 and eux["decote_trimestres"]:
             manquants = eux["decote_trimestres"]
@@ -588,7 +628,7 @@ def test_la_pension_civile_concorde_au_centime(oracle_fonction_publique, simulat
         assert notre_pension == pytest.approx(eux["pension_avant_minimum"], rel=1e-6), code
 
 
-def test_le_minimum_garanti_reste_proche(oracle_fonction_publique, simulateur):
+def test_le_minimum_garanti_reste_proche(oracle_fonction_publique, nos_calculs_fonction_publique):
     """Le plancher de l'article L. 17, sur un profil où il joue.
 
     OpenFisca le calcule au point d'indice de l'année de liquidation ; le
@@ -606,16 +646,30 @@ def test_le_minimum_garanti_reste_proche(oracle_fonction_publique, simulateur):
         eux = entree["openfisca"]
         if eux["minimum_garanti"] <= 0:
             continue
-        nous = _notre_calcul_fonction_publique(simulateur, entree["profil"])
+        nous = nos_calculs_fonction_publique[code]
         assert nous["minimum_garanti"] == pytest.approx(
             eux["minimum_garanti"], rel=TOLERANCE_MINIMUM_GARANTI), code
         assert nous["minimum_garanti"] >= eux["minimum_garanti"], code
     for code, entree in joues:
-        nous = _notre_calcul_fonction_publique(simulateur, entree["profil"])
+        nous = nos_calculs_fonction_publique[code]
         assert nous["pension_brute"] == pytest.approx(nous["minimum_garanti"], rel=1e-6), code
         assert entree["openfisca"]["pension_brute"] == pytest.approx(
             entree["openfisca"]["minimum_garanti"], rel=1e-6), code
 
+
+
+def test_la_pension_civile_se_mesure_au_portage_sans_les_jumeaux_python(
+        oracle_fonction_publique, nos_calculs_fonction_publique, monkeypatch):
+    """Chaque profil du témoin de la pension civile se mesure au portage, le
+    moteur qui fait foi, minimum garanti compris (``pont.droit``) : les
+    jumeaux Python, qu'on empêche ici de calculer, n'y entrent pas."""
+    _sans_les_jumeaux(monkeypatch, (ScenarioActuel, "calculer"), (ouvrir, "duree_requise"),
+                      (liquider, "duree_proratisation"), (liquider, "decote_opposable"),
+                      (liquider, "salaire_de_reference"), (liquider, "trimestres_de_decote"),
+                      (MinimumGaranti, "montant"))
+    nos = _nos_calculs_fonction_publique(_profils(oracle_fonction_publique), pont.droit)
+    assert set(nos) == set(oracle_fonction_publique["profils"])
+    assert nos == nos_calculs_fonction_publique
 
 # -- l'Arrco d'avant 2019 ------------------------------------------------------
 
