@@ -9,13 +9,15 @@ entrent au dépôt, figées dans `tests/temoins/destinie_2.json` avec leur
 origine, leur licence, le commit et la législation retenue — la plus récente
 qu'il porte, la loi du 14 avril 2023, sans celle du 30 décembre 2025.
 
-**Ce test n'exécute pas Destinie.** Il rejoue chaque cas du témoin dans le
-scénario 1 — la requête du simulateur est dans le témoin, carrière en euros de
-chaque année, enfants, conjoint, décès —, et confronte, régime par régime : la
+**Ce test n'exécute pas Destinie.** Il fait rejouer chaque cas du témoin au
+portage, le moteur qui fait foi (note de décision 0005), dans le scénario 1 —
+la requête du simulateur est dans le témoin, carrière en euros de chaque
+année, enfants, conjoint, décès —, et confronte, régime par régime : la
 durée d'assurance, majoration pour enfants comprise ; le taux ; la pension de
 droit direct ; les majorations de 10 % pour trois enfants ; la réversion servie
 l'année du décès. Le seul test qui exige R, `test_destinie_rejoue_le_temoin`,
-se saute sans lui.
+se saute sans lui. Tant que le moteur Python garde ses jumeaux (action 161),
+il refait au bit près chaque cas que le portage sert.
 
 Chaque quantité concorde à sa tolérance, ou son écart est DÉCLARÉ, cas par
 cas, avec sa cause et sa borne (`ECARTS`) : un écart inexpliqué fait échouer
@@ -69,7 +71,8 @@ from pathlib import Path
 
 import pytest
 
-from outils_pont import Saisies
+from outils_pont import servi_et_refait
+from retraite_notionnelle import pont
 
 RACINE = Path(__file__).resolve().parents[1]
 TEMOIN = RACINE / "tests" / "temoins" / "destinie_2.json"
@@ -234,21 +237,22 @@ def _points(detail: str) -> float:
     return float(trouve.group(1).replace(",", "")) if trouve else 0.0
 
 
-def mesures_du_depot(saisies: Saisies, requete: dict) -> dict[str, float]:
-    """Ce que le scénario 1 sert à la requête du témoin : brut annuel, en euros de
-    la liquidation ; la réversion, en euros de l'année du décès, quand sa date
-    d'effet tombe cette année-là."""
-    comparaison = saisies.simuler(requete)
-    actuel = comparaison.actuel
+def mesures_du_depot(servi: dict) -> dict[str, float]:
+    """Ce que le scénario 1 sert à la requête du témoin, tel que le portage le
+    sert (``pont.scenario_actuel``) : brut annuel, en euros de la liquidation ;
+    la réversion, en euros de l'année du décès, quand sa date d'effet tombe
+    cette année-là."""
+    actuel = servi["actuel"]
     par_regime: dict[str, float] = {}
     points: dict[str, float] = {}
-    for pension in actuel.pensions_par_regime:
-        par_regime[pension.regime] = par_regime.get(pension.regime, 0.0) + pension.montant
-        points[pension.regime] = points.get(pension.regime, 0.0) + _points(pension.detail)
+    for pension in actuel["pensions_par_regime"]:
+        regime = pension["regime"]
+        par_regime[regime] = par_regime.get(regime, 0.0) + pension["montant"]
+        points[regime] = points.get(regime, 0.0) + _points(pension["detail"])
     majorations: dict[str, float] = {}
-    for avantage in actuel.avantages_appliques:
-        if avantage.code == "majoration_enfants":
-            for regime, part in avantage.par_regime:
+    for avantage in actuel["avantages_appliques"]:
+        if avantage["code"] == "majoration_enfants":
+            for regime, part in avantage["par_regime"]:
                 majorations[regime] = majorations.get(regime, 0.0) + part
 
     def somme(table, regimes):
@@ -256,8 +260,8 @@ def mesures_du_depot(saisies: Saisies, requete: dict) -> dict[str, float]:
 
     fonction_publique = {k for k in par_regime if k.startswith("fonction_publique")}
     mesures = {
-        "trimestres": float(actuel.trimestres_valides),
-        "taux": actuel.taux_liquidation,
+        "trimestres": float(actuel["trimestres_valides"]),
+        "taux": actuel["taux_liquidation"],
         "regime_general": par_regime.get("regime_general", 0.0),
         "majoration_regime_general": majorations.get("regime_general", 0.0),
         "fonction_publique": somme(par_regime, fonction_publique),
@@ -269,16 +273,16 @@ def mesures_du_depot(saisies: Saisies, requete: dict) -> dict[str, float]:
     for famille, (regimes, _, _) in COMPLEMENTAIRES.items():
         mesures[f"retraite_{famille}"] = somme(par_regime, regimes)
         mesures[f"points_{famille}"] = somme(points, regimes)
-    reversion = comparaison.reversion
+    reversion = servi["reversion"]
     if reversion is not None:
-        servies = [ligne for ligne in reversion.regimes
-                   if ligne.date_effet and int(ligne.date_effet[:4]) <= reversion.annee]
+        servies = [ligne for ligne in reversion["regimes"]
+                   if ligne["date_effet"] and int(ligne["date_effet"][:4]) <= reversion["annee"]]
         mesures["reversion_regime_general"] = sum(
-            l.montant for l in servies if l.regime == "regime_general")
+            l["montant"] for l in servies if l["regime"] == "regime_general")
         mesures["reversion_complementaires"] = sum(
-            l.montant for l in servies if l.regime in REGIMES_COMPLEMENTAIRES)
+            l["montant"] for l in servies if l["regime"] in REGIMES_COMPLEMENTAIRES)
         mesures["reversion_fonction_publique"] = sum(
-            l.montant for l in servies if l.regime.startswith("fonction_publique"))
+            l["montant"] for l in servies if l["regime"].startswith("fonction_publique"))
     return mesures
 
 
@@ -359,12 +363,24 @@ def temoin() -> dict:
     return json.loads(TEMOIN.read_text(encoding="utf-8"))
 
 
+def _cas_du_temoin(temoin: dict) -> list[dict]:
+    """Chaque cas du témoin, sous son code, par la requête du simulateur qu'il
+    porte."""
+    return [{"cle": code, "requete": cas["requete"]} for code, cas in temoin["cas"].items()]
+
+
+def ecarts_du_temoin(temoin: dict) -> dict[str, dict[str, float]]:
+    """Chaque cas du témoin, que le portage sert (``pont.scenario_actuel``), le
+    moteur qui fait foi, et l'écart de chacune de ses quantités."""
+    servis, refus = pont.scenario_actuel(_cas_du_temoin(temoin))
+    assert refus == {}, refus
+    return {code: ecarts_du_cas(mesures_du_depot(servis[code]), mesures_de_destinie(cas))
+            for code, cas in temoin["cas"].items()}
+
+
 @pytest.fixture(scope="module")
 def ecarts(temoin) -> dict[str, dict[str, float]]:
-    saisies = Saisies()
-    return {code: ecarts_du_cas(mesures_du_depot(saisies, cas["requete"]),
-                                mesures_de_destinie(cas))
-            for code, cas in temoin["cas"].items()}
+    return ecarts_du_temoin(temoin)
 
 
 # ---------------------------------------------------------------------------
@@ -435,6 +451,34 @@ def test_le_scenario_1_concorde_avec_destinie_ou_son_ecart_est_explique(ecarts):
             elif _hors_de(quantite, ecart):
                 ecarts_hors.append(f"{code}, {quantite} : {ecart:+.4f}, écart non déclaré")
     assert not ecarts_hors, "\n".join(ecarts_hors)
+
+
+def test_le_moteur_python_refait_chaque_cas_au_bit_pres(temoin):
+    """Tant que le moteur Python garde ses jumeaux (action 161), il refait au
+    bit près, sous Linux x86_64, ce que le portage sert à chaque cas du témoin,
+    réversion et majoration de chaque régime comprises
+    (:func:`outils_pont.servi_et_refait`) : aucun cas de la confrontation ne
+    perd la vérification du Python."""
+    servis, refus = servi_et_refait(_cas_du_temoin(temoin))
+    assert refus == {} and set(servis) == set(temoin["cas"])
+
+
+def test_le_scenario_1_se_mesure_au_portage_sans_le_moteur_python(temoin, monkeypatch):
+    """Le moteur qui fait foi est le JavaScript (note de décision 0005) : ce
+    que le scénario 1 sert à chaque cas, le portage le sert
+    (``pont.scenario_actuel``), et le moteur Python, qu'on empêche ici de
+    simuler, n'y entre pas."""
+    from retraite_notionnelle.simulateur import Simulateur
+
+    def interdit(*_, **__):
+        raise AssertionError("le moteur Python simule un cas de Destinie")
+
+    monkeypatch.setattr(Simulateur, "simuler", interdit)
+    ecarts = ecarts_du_temoin(temoin)
+    assert set(ecarts) == set(temoin["cas"])
+    assert all(mesures["trimestres"] == 0 for code, mesures in ecarts.items()
+               if code in ("rg_mere_trois_enfants", "rg_pere_trois_enfants",
+                           "fp_mere_deux_enfants"))
 
 
 def test_un_ecart_declare_en_est_un(ecarts):
