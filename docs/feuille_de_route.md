@@ -7362,14 +7362,14 @@ avec son test. Le modèle et le site gardent PyYAML seul.
 
 **Reprise, au 31 octobre 2026.** Les étapes 1 à 5 sont faites : le RCO et le
 NRCO, l'assiette minimale, Mayotte, les indépendants des DOM, puis l'assiette
-d'avant 2007, régularisée sur le revenu de l'année comme le modèle la porte,
-ses trois exceptions déclarées en limite au choix du propriétaire
+d'avant 2007, dont les trois exceptions restent en limite
 (`177/2026-10-31-etape-5-assiette-d-avant-2007.md`). Par quoi commencer :
 l'étape 6, le premier trimestre du micro-entrepreneur en 2014 et en 2015, à
 trancher d'abord (`ECARTS_A_LA_GRILLE`). L'étape 7, la saisie du département,
-revient à la session du site ; l'étape 8, les non-salariés de Mayotte, au
-modèle. Un écart par commit, le test vu rouge d'abord ; des règles du
-scénario 1, sur Opus, après `python scripts/veille_droit.py`.
+revient à la session du site ; les étapes 8, les non-salariés de Mayotte, et
+9, l'assiette du RCO des artisans, au modèle. Un écart par commit, le test vu
+rouge d'abord ; des règles du scénario 1, sur Opus, après
+`python scripts/veille_droit.py`.
 
 **D'où elle vient.** Le 31 octobre 2026, l'étape 2 de l'action 175 — les
 barèmes de la base de législation de la Cnav confrontés, un à un, aux séries
@@ -7423,3 +7423,17 @@ moteurs ensemble.
    leurs taux de cotisation, que le dépôt n'a pas, à trouver d'abord (fiche
    `cssm_mayotte`, son `manque`). Décidé avec le propriétaire le 31 octobre
    2026.
+9. **L'assiette du RCO des artisans** (modèle) : de 1979 à 2004, sa
+   cotisation est assise « sur les revenus professionnels non-salariés de
+   l'avant-dernière année civile », sans ajustement, et celles de l'année de
+   début d'exercice et de la suivante sur un revenu forfaitaire (décret
+   n° 78-351, article 3 ; D. 635-4 jusqu'au 24 août 2004), quand le modèle
+   tire les points du revenu de l'année (`regimes/rco_artisans.yaml`, de 1979
+   à 2012). À lire d'abord : le forfait, « le tiers du plafond mentionné au
+   premier alinéa », celui de la sécurité sociale ou l'assiette maximale de
+   trois puis quatre plafonds ; le règlement du RCO de 2004 à 2012 ; ce que la
+   caisse en dit. Puis à trancher avec le propriétaire : la règle dans les
+   deux moteurs, ou la limite. Vu à l'étape 5 : pour un artisan de 1980 à
+   2004, l'année 1980 portée au tiers du plafond ôte 2 % au RCO que le modèle
+   calcule (`177/2026-10-31-etape-5-assiette-d-avant-2007.md`). Décidé avec le
+   propriétaire le 31 octobre 2026.
