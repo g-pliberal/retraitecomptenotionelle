@@ -530,3 +530,136 @@ def saisies(cas: list[dict], scenarios, paquet: bytes | None = None,
             "pensions": _par_scenario(lu["pensions"]),
         }
     return resultats, reponse["echecs"]
+
+
+#: Les champs entiers du résultat d'une simulation (``Comparaison.dictionnaire()``,
+#: que les témoins de simulations portent) : une année, un mois, des trimestres,
+#: un compte d'années, une version — ceux que le moteur Python annote ``int``.
+#: Node n'écrit qu'un type de nombre : ces champs reviennent entiers, et un
+#: nombre qui ne l'est pas y arrête la relecture.
+ENTIERS_DU_RESULTAT = frozenset({
+    "annee", "annee_bascule", "annee_liquidation", "annee_naissance", "annee_ouverture",
+    "annees_cotisees", "duree_requise", "duree_requise_trimestres", "euros_constants_de",
+    "mois", "mois_liquidation", "mois_naissance", "periode_de_reference", "schema_version",
+    "trimestres", "trimestres_actuels",
+})
+
+#: Les champs flottants du résultat : les montants en euros, les âges, les
+#: taux, les parts, les coefficients, les diviseurs et les points, que le
+#: moteur Python calcule en flottants et écrit « 2.0 » là où node écrit « 2 ».
+FLOTTANTS_DU_RESULTAT = frozenset({
+    "age", "age_conversion", "age_legal", "age_liquidation", "age_minimum", "age_ouverture",
+    "age_ouverture_opposable", "age_taux_plein", "agent", "au_depart", "aujourd_hui", "base",
+    "base_annuelle", "brute", "capital", "capital_a_la_bascule", "capital_droits_acquis",
+    "capital_hors_frais", "capital_notionnel", "capital_volontaire", "coefficient",
+    "coefficient_euros_constants", "coefficient_majoration", "coefficient_prix",
+    "coefficient_revalorisation", "complement", "cotisations_employeur", "cotisations_versees",
+    "cout_des_frais", "diviseur", "ecart_annees", "ecretement_du_maximum", "employeur",
+    "esperance_capital_transmis", "esperance_residuelle", "facteur_encours_rente", "fraction",
+    "frais_arrerages", "frais_encours_rente", "frais_preleves", "garantie_vieillesse",
+    "interets", "isolement_annuel", "limite_cumul", "majoration", "majoration_enfants",
+    "majoration_exceptionnelle", "majoration_forfaitaire_enfants",
+    "majoration_petites_retraites", "majoration_trois_enfants", "maximum",
+    "mensuel_decembre_2019", "minimum", "minimum_contributif", "minimum_vieillesse", "montant",
+    "montant_a_l_effet", "montant_provisoire", "montant_servi", "non_servi", "part",
+    "pension_annuelle", "pension_annuelle_euros_constants", "pension_contributive",
+    "pension_figee", "pension_hors_repartition", "pension_mensuelle", "pension_totale",
+    "pension_totale_euros_constants", "pension_totale_mensuelle", "pensions", "plafond",
+    "plancher_annuel", "plancher_garantie", "points", "probabilite_deces_avant_liquidation",
+    "quotite", "reduction", "reduction_de_la_revision", "reduction_du_cumul",
+    "relevement_des_exploitants", "rendement_cumule", "rente_annuelle", "rente_capitalisation",
+    "rente_capitalisation_obligatoire", "rente_capitalisation_volontaire", "rente_capitalisee",
+    "rente_capitalisee_volontaire", "rente_mensuelle", "rente_volontaire", "ressources",
+    "ressources_garantie", "ressources_retenues", "revenu", "revenu_annuel_moyen",
+    "salaire_mensuel", "taux", "taux_cotisation", "taux_cotisation_volontaire",
+    "taux_remplacement", "taux_rendement_annuel", "total", "total_contributif",
+    "variation_vs_actuel", "versements",
+})
+
+#: Les dictionnaires du résultat dont les clés sont libres — un régime, un
+#: scénario, l'origine des années d'une part employeur — et le type de leurs
+#: valeurs : le capital par régime, la pension et le coefficient d'aujourd'hui
+#: de chaque scénario, et des comptes d'années.
+DICTIONNAIRES_DU_RESULTAT = {
+    "capital_par_regime": float, "notionnels": float, "coefficients_notionnels": float,
+    "annees_par_origine": int, "annees_part_employeur": int,
+}
+
+#: Les champs flottants dont le moteur Python n'écrit le zéro qu'entier, sous
+#: le dictionnaire qui les porte : c'est celui d'une somme vide,
+#: ``somme_ordonnee`` partant de l'entier 0 — les intérêts d'un pilier
+#: capitalisé sans année, la majoration pour enfants d'aujourd'hui sans enfant,
+#: les droits acquis après le départ sans pension nouvelle —, et aucun témoin
+#: n'y écrit 0.0. Leur zéro revient entier. Dans les autres champs où le
+#: moteur Python écrit tantôt « 0 », tantôt « 0.0 », selon le chemin du
+#: calcul, le portage ne peut pas dire lequel : ils sont flottants, et leur
+#: zéro revient « 0.0 » (action 161, étape 6).
+ZEROS_ENTIERS_DU_RESULTAT = frozenset({
+    ("capitalisation", "interets"), ("actuel", "majoration_enfants"),
+    ("droits_apres_depart", "montant"),
+})
+
+
+def _nombre_du_resultat(valeur, type_: type, chemin: str):
+    """Un nombre du résultat sous ``type_`` ; ``None`` pour un nombre non fini,
+    que node écrit « null » comme ``_fini`` l'écrit dans les témoins. Un entier
+    doit en être un."""
+    if valeur is None:
+        return None
+    if type_ is int:
+        if type(valeur) is not int:
+            raise TypeError(f"{chemin} : entier attendu, le portage a écrit {valeur!r}")
+        return valeur
+    return float(valeur)
+
+
+def resultat_des_donnees(donnees: dict) -> dict:
+    """Le résultat d'une simulation que le portage a écrit
+    (``Comparaison.dictionnaire()``), sous les types que le moteur Python lui
+    donne, déclarés champ par champ (:data:`ENTIERS_DU_RESULTAT`,
+    :data:`FLOTTANTS_DU_RESULTAT`, :data:`DICTIONNAIRES_DU_RESULTAT`,
+    :data:`ZEROS_ENTIERS_DU_RESULTAT`) : node n'écrit qu'un type de nombre,
+    « 2 » pour 2.0. Un nombre sous un champ que la table ne déclare pas arrête
+    la relecture, au lieu d'en deviner le type ; un nombre non fini reste
+    ``None``, un texte et un booléen ce qu'ils sont."""
+
+    def relire(valeur, nom: str | None, parent: str | None, chemin: str):
+        if isinstance(valeur, dict):
+            if nom in DICTIONNAIRES_DU_RESULTAT:
+                return {cle: _nombre_du_resultat(element, DICTIONNAIRES_DU_RESULTAT[nom],
+                                                 f"{chemin}.{cle}")
+                        for cle, element in valeur.items()}
+            return {cle: relire(element, cle, nom, f"{chemin}.{cle}" if chemin else cle)
+                    for cle, element in valeur.items()}
+        if isinstance(valeur, list):
+            return [relire(element, nom, parent, f"{chemin}[{rang}]")
+                    for rang, element in enumerate(valeur)]
+        if valeur is None or isinstance(valeur, (bool, str)):
+            return valeur
+        if (parent, nom) in ZEROS_ENTIERS_DU_RESULTAT and valeur == 0:
+            return 0
+        if nom in ENTIERS_DU_RESULTAT:
+            return _nombre_du_resultat(valeur, int, chemin)
+        if nom in FLOTTANTS_DU_RESULTAT:
+            return _nombre_du_resultat(valeur, float, chemin)
+        raise ValueError(f"{chemin} : un nombre que la table des types du résultat ne "
+                         "déclare pas (pont.ENTIERS_DU_RESULTAT, pont.FLOTTANTS_DU_RESULTAT)")
+
+    return relire(donnees, None, None, "")
+
+
+def simulations(cas: list[dict], paquet: bytes | None = None,
+                ) -> tuple[dict[str, dict], dict[str, str]]:
+    """Chaque requête d'un témoin de simulations, ``{"cle", "requete"}``, lue
+    par la saisie du portage et simulée comme le site la simule
+    (``Contexte.simuler``), comme ``tests/js/moteur.test.js`` la simule : sous
+    sa clé, son résultat (``Comparaison.dictionnaire()``), relu sous les types
+    du Python (:func:`resultat_des_donnees`), et les appels de ``liquider`` que
+    sa simulation a faits, liquidations d'essai comprises
+    (``appels_liquider``). Puis, sous leur clé, les motifs des requêtes que le
+    portage refuse."""
+    reponse = _demander({"simulations": {"cas": cas}}, paquet)
+    resultats = {cle: {"resultat": resultat_des_donnees(lu["resultat"]),
+                       "appels_liquider": lu["appels_liquider"]}
+                 for cle, lu in reponse["resultats"].items()}
+    return resultats, reponse["echecs"]

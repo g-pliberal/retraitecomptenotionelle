@@ -163,6 +163,11 @@ EXCEPTIONS = {
     # Le portage lit les planchers des majorations forfaitaires dans le paquet.
     ("test_invalidite.py",
      "test_les_deux_moteurs_comparent_les_majorations_au_plancher"): "complet",
+    # Tous les témoins de simulations, simulés par le portage : un quart de
+    # minute de node (action 161, étape 6).
+    ("test_pont.py",
+     "test_le_portage_relu_par_la_table_redonne_les_temoins_a_l_octet_sauf_leurs_zeros_ambigus"):
+        "complet",
     # Les exemples officiels sont des règles, et la suite rapide les joue.
     ("test_oracle.py", "test_les_exemples_publies_par_les_caisses_sont_reproduits"): "rapide",
     ("test_oracle.py", "test_le_temoin_des_exemples_officiels_est_source"): "rapide",

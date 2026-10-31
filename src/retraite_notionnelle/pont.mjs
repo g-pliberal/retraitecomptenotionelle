@@ -32,10 +32,16 @@
  *   simule de son moteur (`carriere_des_donnees` de `pont.py`) — celle d'une
  *   saisie par la pension, que l'inversion trouve ; un relevé avec
  *   `prolonger: false` s'en tient à ses années.
+ * - `simulations` : `{cas: [{cle, requete}]}` — chaque requête d'un témoin de
+ *   simulations, simulée comme `tests/js/moteur.test.js` la simule
+ *   (`Contexte.simuler`) : son résultat, `Comparaison.dictionnaire()`, et les
+ *   appels de `liquider` qu'il a faits, liquidations d'essai comprises, que
+ *   `pont.py` relit sous la table des types du résultat.
  *
  * Il écrit `{resultats, echecs}` : une carrière que le portage refuse en est
  * absente, et son motif est dans `echecs`. Un nombre non fini s'écrit `null`,
- * que `pont.py` relit en NaN.
+ * comme `_fini` de `scripts/construire_temoins.py` l'écrit, et `pont.py` le
+ * relit en NaN, sauf dans le résultat d'un témoin, où il reste `null`.
  *
  * Lancé avec `--servir`, il reste ouvert, sur `moteur/donnees.json`, lu une
  * fois : une demande par ligne, `{demande}`, et une réponse par ligne,
@@ -53,6 +59,7 @@ import { DateMois } from "../../moteur/js/calendrier.js";
 import { AnneeCarriere, Carriere } from "../../moteur/js/carriere.js";
 import { PARAMETRES_DEFAUT, avec } from "../../moteur/js/config.js";
 import { Contexte } from "../../moteur/js/contexte.js";
+import { appels } from "../../moteur/js/droit/liquidation.js";
 import { Saisie } from "../../moteur/js/saisie.js";
 
 const RACINE = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
@@ -290,8 +297,24 @@ function grilleDuCout({ cas, scenarios, parametres }) {
   return { resultats, echecs };
 }
 
+/**
+ * Chaque requête d'un témoin de simulations, lue et simulée comme
+ * `tests/js/moteur.test.js` la lit et la simule : le résultat entier, et les
+ * appels de `liquider` que sa simulation a faits, liquidations d'essai
+ * comprises (docs/architecture.md, § 7.8).
+ */
+function simulations({ cas }) {
+  return parCas(cas, ({ requete }) => {
+    const saisie = Saisie.depuisRequete(requete, false, contexte.paquet.presomptions);
+    const avant = appels();
+    const resultat = contexte.simuler(saisie).dictionnaire();
+    return { resultat, appels_liquider: appels() - avant };
+  });
+}
+
 const LECTURES = {
   carrieres, saisies, grille_du_cout: grilleDuCout, carrieres_des_saisies: carrieresDesSaisies,
+  simulations,
 };
 
 /** La réponse à une demande, qui porte une seule des `LECTURES`. */

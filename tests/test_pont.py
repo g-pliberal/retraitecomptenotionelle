@@ -19,6 +19,7 @@ sans node, il s'arrête, sans repli sur le moteur Python.
 from __future__ import annotations
 
 import json
+import re
 import shutil
 import subprocess
 import sys
@@ -359,6 +360,166 @@ def _comme_node(valeur):
     if isinstance(valeur, (list, tuple)):
         return [_comme_node(element) for element in valeur]
     return valeur
+
+
+#: Les champs du résultat d'une simulation où le moteur Python écrit le zéro
+#: tantôt « 0 », tantôt « 0.0 », selon le chemin de son calcul : le zéro d'une
+#: somme vide — ``somme_ordonnee`` part de l'entier 0 — ou celui d'un flottant,
+#: écrit 0.0 ou sommé de termes nuls. Le portage n'a qu'un type de nombre, et
+#: la table des types du pont les déclare flottants : leurs zéros entiers sont
+#: les seuls octets des témoins qu'il ne redonne pas, tant que le propriétaire
+#: n'a pas tranché leur écriture (action 161, étape 6).
+ZEROS_AMBIGUS = frozenset({
+    "scenarios.actuel.pension_hors_repartition",
+    "aujourd_hui.actuel.pension_hors_repartition",
+    *(f"scenarios.notionnel_liberal.capitalisation.{champ}"
+      for champ in ("capital", "capital_hors_frais", "cout_des_frais", "frais_preleves",
+                    "versements")),
+    *(f"scenarios.{scenario}.{champ}"
+      for scenario in ("notionnel_prospectif", "notionnel_prospectif_employeur")
+      for champ in ("cotisations_employeur", "cotisations_versees")),
+})
+
+
+def _zeros_ambigus(relu, attendu, temoin: str, chemin: tuple = ()) -> list[str]:
+    """Les chemins des zéros ambigus où le résultat ``relu`` ne s'écrit pas
+    comme ``attendu`` : un zéro que le fichier écrit « 0 » et la relecture
+    « 0.0 », sous un champ de :data:`ZEROS_AMBIGUS`. Tout autre écart — une
+    clé, une longueur, un nombre, un texte, un type — fait échouer."""
+    lieu = f"{temoin}, {'.'.join(chemin)}"
+    if isinstance(attendu, dict):
+        assert isinstance(relu, dict) and sorted(relu) == sorted(attendu), (
+            f"{lieu} : les clés {sorted(attendu)} attendues, {relu!r} relu")
+        return [zero for cle in attendu
+                for zero in _zeros_ambigus(relu[cle], attendu[cle], temoin, (*chemin, cle))]
+    if isinstance(attendu, list):
+        assert isinstance(relu, list) and len(relu) == len(attendu), (
+            f"{lieu} : {len(attendu)} éléments attendus, {relu!r} relu")
+        return [zero for rang, (lu, element) in enumerate(zip(relu, attendu))
+                for zero in _zeros_ambigus(lu, element, temoin, (*chemin, f"[{rang}]"))]
+    if json.dumps(relu) == json.dumps(attendu):
+        return []
+    nom = ".".join(chemin)
+    assert (type(attendu) is int and type(relu) is float and attendu == relu == 0
+            and nom in ZEROS_AMBIGUS), f"{lieu} : le fichier écrit {attendu!r}, la relecture {relu!r}"
+    return [nom]
+
+
+def _temoins_de_simulations() -> tuple[str, dict]:
+    """Le texte de ``tests/temoins/simulations.json``, et ce qu'il porte."""
+    texte = (RACINE_PROJET / "tests" / "temoins" / "simulations.json").read_text(encoding="utf-8")
+    return texte, json.loads(texte)
+
+
+def test_la_table_des_types_relit_chaque_temoin_ecrit_comme_node_l_ecrirait():
+    """Node n'écrit qu'un type de nombre, « 2 » pour 2.0 : le pont relit le
+    résultat d'une simulation que le portage a écrit sous la table des types
+    qu'il déclare champ par champ (:func:`pont.resultat_des_donnees`). Chaque
+    témoin, écrit comme node l'écrirait, en revient tel que le moteur Python
+    l'a écrit, à l'octet, sauf à ses zéros ambigus. Un champ numérique qui naît
+    dans le résultat sans son type déclaré fait échouer ce test, et la
+    relecture avec lui."""
+    _, temoins = _temoins_de_simulations()
+    for nom, temoin in temoins.items():
+        _zeros_ambigus(pont.resultat_des_donnees(_comme_node(temoin["resultat"])),
+                       temoin["resultat"], nom)
+
+
+def test_la_table_des_types_refuse_le_nombre_qu_elle_ne_declare_pas():
+    """Un nombre sous un champ que la table ne déclare pas arrête la relecture,
+    au lieu d'en deviner le type, et un entier qui n'en est pas un aussi. Un
+    nombre non fini, que node écrit « null » comme ``_fini`` l'écrit, reste
+    ``None`` ; un texte et un booléen restent ce qu'ils sont. Les clés d'un
+    dictionnaire déclaré — les régimes du capital, les origines des années
+    d'une part employeur — sont libres. Le zéro des trois champs où le moteur
+    Python ne l'écrit qu'entier le reste, et celui d'un champ ambigu devient
+    flottant."""
+    with pytest.raises(ValueError, match="assure.nouveau"):
+        pont.resultat_des_donnees({"assure": {"nouveau": 1}})
+    with pytest.raises(TypeError, match="entier"):
+        pont.resultat_des_donnees({"assure": {"annee_naissance": 1970.5}})
+    relu = pont.resultat_des_donnees({
+        "assure": {"annee_naissance": 1970, "age_liquidation": 64, "sexe": "F",
+                   "affiliations": ["salarie_prive_non_cadre"]},
+        "scenarios": {
+            "actuel": {"pension_annuelle": 12000, "pension_hors_repartition": 0,
+                       "taux_remplacement": None, "liquidation_ouverte": True,
+                       "droits_apres_depart": {"montant": 0, "pensions": [
+                           {"montant": 0, "trimestres": 4}]}},
+            "notionnel_liberal": {
+                "capital_par_regime": {"un_regime_de_plus": 3},
+                "annees_part_employeur": {"appelee": 2},
+                "capitalisation": {"interets": 0, "versements": 0, "annees_cotisees": 0}},
+            "notionnel_retroactif": {"capitalisation": {"interets": 12}}},
+        "aujourd_hui": {"actuel": {"majoration_enfants": 0, "pension_hors_repartition": 0}},
+    })
+    assert json.dumps(relu, sort_keys=True) == json.dumps({
+        "assure": {"annee_naissance": 1970, "age_liquidation": 64.0, "sexe": "F",
+                   "affiliations": ["salarie_prive_non_cadre"]},
+        "scenarios": {
+            "actuel": {"pension_annuelle": 12000.0, "pension_hors_repartition": 0.0,
+                       "taux_remplacement": None, "liquidation_ouverte": True,
+                       "droits_apres_depart": {"montant": 0, "pensions": [
+                           {"montant": 0.0, "trimestres": 4}]}},
+            "notionnel_liberal": {
+                "capital_par_regime": {"un_regime_de_plus": 3.0},
+                "annees_part_employeur": {"appelee": 2},
+                "capitalisation": {"interets": 0, "versements": 0.0, "annees_cotisees": 0}},
+            "notionnel_retroactif": {"capitalisation": {"interets": 12.0}}},
+        "aujourd_hui": {"actuel": {"majoration_enfants": 0, "pension_hors_repartition": 0.0}},
+    }, sort_keys=True)
+
+
+def test_le_pont_simule_des_temoins_comme_le_portage_les_simule():
+    """Les témoins simulés par le portage (:func:`pont.simulations`), comme
+    ``tests/js/moteur.test.js`` les simule : sur des témoins de chaque forme —
+    un relevé, un conjoint, un décès, l'étranger, un emploi après le départ —,
+    les appels de ``liquider`` que porte le fichier, et son résultat, relu par
+    la table des types, à l'octet sauf à ses zéros ambigus."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    _, temoins = _temoins_de_simulations()
+    formes = ("releve", "conjoint", "deces", "etranger1_pays", "emploi_retraite")
+    noms = ["base"] + [next(nom for nom, temoin in temoins.items() if forme in temoin["requete"])
+                       for forme in formes]
+    resultats, echecs = pont.simulations([{"cle": nom, "requete": temoins[nom]["requete"]}
+                                          for nom in noms])
+    assert (list(resultats), echecs) == (noms, {})
+    for nom in noms:
+        assert set(resultats[nom]) == {"resultat", "appels_liquider"}, nom
+        assert resultats[nom]["appels_liquider"] == temoins[nom]["appels_liquider"], nom
+        _zeros_ambigus(resultats[nom]["resultat"], temoins[nom]["resultat"], nom)
+
+
+def test_le_portage_relu_par_la_table_redonne_les_temoins_a_l_octet_sauf_leurs_zeros_ambigus():
+    """Tous les témoins de simulations, simulés par le portage
+    (:func:`pont.simulations`) et relus par la table des types, écrits comme
+    ``scripts/construire_temoins.py`` les écrit : le fichier revient à l'octet,
+    ligne pour ligne, sauf aux zéros ambigus, que le fichier écrit « 0 » et la
+    relecture « 0.0 » — égaux en valeur, comme chaque autre nombre, que le
+    fichier écrit à l'identique. C'est ce que déplacerait la bascule des
+    témoins sur le portage, que le propriétaire n'a pas encore tranchée
+    (action 161)."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    texte, temoins = _temoins_de_simulations()
+    resultats, echecs = pont.simulations([{"cle": nom, "requete": temoin["requete"]}
+                                          for nom, temoin in temoins.items()])
+    assert echecs == {}
+    relus = {nom: {"requete": temoin["requete"], **resultats[nom]}
+             for nom, temoin in temoins.items()}
+    zeros = []
+    for nom, temoin in temoins.items():
+        assert relus[nom]["appels_liquider"] == temoin["appels_liquider"], nom
+        zeros += _zeros_ambigus(relus[nom]["resultat"], temoin["resultat"], nom)
+    lignes = (json.dumps(relus, ensure_ascii=False, sort_keys=True, indent=1) + "\n").split("\n")
+    attendues = texte.split("\n")
+    assert len(lignes) == len(attendues)
+    ecarts = [(attendue, ligne) for attendue, ligne in zip(attendues, lignes) if attendue != ligne]
+    assert len(ecarts) == len(zeros)
+    for attendue, ligne in ecarts:
+        assert re.fullmatch(r' *"\w+": 0,?', attendue), attendue
+        assert ligne == attendue.replace(": 0", ": 0.0"), (attendue, ligne)
 
 
 def test_le_python_relit_une_carriere_ecrite_par_node_sous_ses_types():
