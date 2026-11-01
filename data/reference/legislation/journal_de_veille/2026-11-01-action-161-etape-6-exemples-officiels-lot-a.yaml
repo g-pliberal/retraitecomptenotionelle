@@ -1,0 +1,18 @@
+date: "2026-11-01"
+session: "action 161, étape 6 : les exemples officiels de test_oracle.py par le pont, le lot A"
+consulte: >-
+  Aucune source de droit : la session ne touche à aucune règle du scénario 1.
+  La note de l'étape précédente ; ce que _carriere_exemple et _mesurer
+  appellent du moteur Python, et leurs jumeaux JavaScript
+  (moteur/js/simulateur.js, carriere.js, calendrier.js, chronologie.js,
+  droit/ouvrir.js, droit/departs.js, droit/liquider.js).
+trouve: >-
+  Aucune règle n'a changé, et aucun écart : les carrières des 218 exemples
+  officiels se bâtissent et se liquident au portage, et 391 de leurs 488
+  mesures s'y prennent, chaque exemple gardant sa valeur publiée, ses
+  tolérances et ses écarts connus ; le moteur Python refait chaque appel au bit
+  près.
+reste: >-
+  Rien pour la veille. L'action reprend où son bloc « Reprise » la laisse
+  (action 161, note du 1er novembre 2026, étape 6, les exemples officiels,
+  lot A).

@@ -6918,16 +6918,16 @@ de `contribution_etat`.
 
 ### 161. Un seul exemplaire du code : les doublons entre le Python et le JavaScript retirés une paire à la fois, chaque retrait relu — `en cours`
 
-**Reprise, au 31 octobre 2026.** Le JavaScript fait foi (note de décision
+**Reprise, au 1er novembre 2026.** Le JavaScript fait foi (note de décision
 0005) : une règle s'écrit d'abord dans `moteur/js/`, son jumeau Python la suit
-au bit près. Faits : les témoins calculés au portage ; les deux paires de
-données lues par le seul portage ; l'estimation officielle, Destinie 2 et les
-six premiers blocs de `test_oracle.py` (OpenFisca, régimes alignés) confrontés
-par le portage, le Python refaisant chaque appel au bit près
-(`droit_et_refait`). Ce qui suit, dans l'ordre : les exemples officiels de
-`test_oracle.py` par `pont.droit`, ce que la note dit qu'il leur faut ; le coût
-daté par le portage ; les retraits, par sous-ensemble cohérent.
-Détail : `2026-10-31-etape-6-test-oracle-par-le-pont.md`.
+au bit près. Faits : les témoins calculés au portage ; l'estimation
+officielle, Destinie 2, les six premiers blocs de `test_oracle.py` et, de ses
+exemples officiels, les carrières et 391 des 488 mesures (lot A) confrontés
+par le portage, le Python refaisant chaque appel au bit près. Ce qui suit,
+dans l'ordre : le relevé, puis le lot B — invalidité, réversion et
+échéancier, cumul, foyer, revalorisation, rémunération, compte —, une famille
+par commit, comme la note le détaille ; le coût daté ; les retraits.
+Détail : `2026-11-01-etape-6-les-exemples-officiels-lot-a.md`.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur
