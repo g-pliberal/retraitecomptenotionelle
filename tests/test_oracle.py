@@ -27,9 +27,9 @@ calculer, une fonction du droit après l'autre (``pont.droit``), sur la
 carrière que le test bâtit. Tant que le moteur Python garde ses jumeaux
 (action 161), il refait chaque appel au bit près
 (``outils_pont.droit_et_refait``), et chaque famille se mesure aussi sans lui.
-Les exemples officiels, plus bas, y passent à leur tour : leurs carrières, leur
-liquidation et leurs grandeurs de base ; le relevé, l'invalidité, la
-réversion, le cumul et le reste appellent encore le moteur Python.
+Les exemples officiels, plus bas, y passent de même, chacune de leurs
+grandeurs : aucun simulateur Python n'y calcule, sinon celui qui refait chaque
+appel.
 
 Cinq familles de régimes sont confrontées, et c'est tout ce qu'OpenFisca
 expose : le régime général, la pension civile (État et CNRACL), l'Arrco d'avant

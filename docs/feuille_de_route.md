@@ -6921,13 +6921,12 @@ de `contribution_etat`.
 **Reprise, au 1er novembre 2026.** Le JavaScript fait foi (note de décision
 0005) : une règle s'écrit d'abord dans `moteur/js/`, son jumeau Python la suit
 au bit près. Faits : les témoins calculés au portage ; l'estimation
-officielle, Destinie 2, les six premiers blocs de `test_oracle.py` et, de ses
-exemples officiels, les carrières et 391 des 488 mesures (lot A) confrontés
-par le portage, le Python refaisant chaque appel au bit près. Ce qui suit,
-dans l'ordre : le relevé, puis le lot B — invalidité, réversion et
-échéancier, cumul, foyer, revalorisation, rémunération, compte —, une famille
-par commit, comme la note le détaille ; le coût daté ; les retraits.
-Détail : `2026-11-01-etape-6-les-exemples-officiels-lot-a.md`.
+officielle, Destinie 2 et tout `test_oracle.py` — ses six blocs et les 488
+mesures de ses 218 exemples officiels — confrontés par le portage, sans
+simulateur Python, le Python refaisant chaque appel au bit près ; la garde des
+présomptions décale aussi le portage. Ce qui suit, dans l'ordre : le coût
+daté par le portage ; puis les retraits, par sous-ensemble cohérent.
+Détail : `2026-11-01-etape-6-les-exemples-officiels-lot-b.md`.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur

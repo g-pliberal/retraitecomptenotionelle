@@ -1,0 +1,19 @@
+date: "2026-11-01"
+session: "action 161, étape 6 : la garde des présomptions au portage, et les exemples officiels de test_oracle.py par le pont, le relevé et le lot B"
+consulte: >-
+  Aucune source de droit : la session ne touche à aucune règle du scénario 1.
+  La note du lot A ; la garde des présomptions de tests/conftest.py ; ce que
+  _mesurer et _cumul_exemple appelaient du moteur Python, et leurs jumeaux
+  JavaScript (moteur/js/simulateur.js, echeancier.js, compte.js,
+  remuneration.js, revalorisation.js, droit/releve.js, droit/invalidite.js,
+  droit/reversion.js, droit/cumul.js, droit/foyer.js).
+trouve: >-
+  Aucune règle n'a changé, et aucun écart : sous la garde des présomptions, le
+  portage lit désormais les valeurs décalées que lit le Python ; les 488
+  mesures des 218 exemples officiels se prennent au portage, chaque exemple
+  gardant sa valeur publiée, ses tolérances et ses écarts connus, et le moteur
+  Python refait chaque appel au bit près.
+reste: >-
+  Rien pour la veille. L'action reprend où son bloc « Reprise » la laisse
+  (action 161, note du 1er novembre 2026, étape 6, les exemples officiels,
+  lot B).
