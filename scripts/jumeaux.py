@@ -42,7 +42,8 @@ fiches et d'ancres, de tests, et par taille. Une paire dont le site ne charge
 pas le JavaScript le dit, et se tranche à sa relecture.
 
 ``--couverture`` rejoue les tests de concordance, sans mémoire de calcul :
-``node --test tests/js/``, les tests pytest qui confrontent les deux moteurs
+``node --test tests/js/*.test.js`` — node 22 ne prend pas le dossier seul —,
+les tests pytest qui confrontent les deux moteurs
 (``-k``, par défaut ceux qui disent « javascript », « portage » ou
 « jumeau »), et la fabrication des témoins, que le JavaScript retrouve. Il
 relève les lignes exécutées : celles du JavaScript par la couverture de V8
