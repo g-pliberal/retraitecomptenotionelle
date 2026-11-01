@@ -69,6 +69,7 @@ import { AnneeCarriere, Carriere } from "../../moteur/js/carriere.js";
 import { valeur as valeurPresumee } from "../../moteur/js/chronologie.js";
 import { PARAMETRES_DEFAUT, avec } from "../../moteur/js/config.js";
 import { Contexte } from "../../moteur/js/contexte.js";
+import * as departs from "../../moteur/js/droit/departs.js";
 import { appels } from "../../moteur/js/droit/liquidation.js";
 import * as liquider from "../../moteur/js/droit/liquider.js";
 import * as ouvrir from "../../moteur/js/droit/ouvrir.js";
@@ -433,11 +434,19 @@ const FONCTIONS_DU_DROIT = {
   "calendrier.origine_des_ages":
     ({ annee, mois }, jour) => origineDesAges(new DateMois(annee, mois), jour),
   "carriere.date_de_l_age": (carriere, age) => carriere.dateDeLAge(age),
+  "departs.age_legal": departs.ageLegal,
   "chronologie.valeur": (presomption) => valeurPresumee(presomption, contexte.paquet.presomptions),
   "ouvrir.age_ouverture_droit": ouvrir.ageOuvertureDroit,
   "ouvrir.duree_requise": ouvrir.dureeRequise,
+  "periode.capital_seuil_points": (periode) => periode.capital_seuil_points ?? null,
   "liquider.duree_proratisation": liquider.dureeProratisation,
+  // Le RAFP lit le rang de sa date d'effet : une vraie `DateMois`.
+  "liquider.majoration_rafp":
+    (age, { annee, mois }) => liquider.majorationRafp(age, new DateMois(annee, mois)),
+  "liquider.mois_apres_le_depart": liquider.moisApresLeDepart,
   "liquider.nombre_d_annees_retenues": liquider.nombreDAnneesRetenues,
+  "liquider.prestation_rafp": (rente, points, seuil, age, { annee, mois }, ecart) => liquider
+    .prestationRafp(rente, points, seuil, age, new DateMois(annee, mois), ecart),
   "liquider.decote_opposable": liquider.decoteOpposable,
   "liquider.salaire_de_reference": liquider.salaireDeReference,
   "liquider.trimestres_de_decote": liquider.trimestresDeDecote,

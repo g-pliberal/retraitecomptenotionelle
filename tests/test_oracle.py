@@ -2512,23 +2512,25 @@ def _mesurer(simulateur: Simulateur, exemple: dict, carriere, resultat, cle: str
         # (`retraite_de_base`) : le fractionnement en compte les mois.
         c = exemple["carriere"]
         points, valeur = float(c["points_rafp"]), float(c["valeur_de_service_rafp"])
-        legal = departs.age_legal(actuel, carriere)
+        legal = _rendu(droit, "departs.age_legal", pont.MOTEUR, carriere)
         effet = carriere.date_liquidation
-        if effet < carriere.date_de_l_age(legal):
+        if effet < _rendu(droit, "carriere.date_de_l_age", carriere, legal):
             return {"forme": "non_ouverte", "age_legal": legal}
         age = carriere.age_liquidation
-        coefficient = liquider.majoration_rafp(age, effet)
+        coefficient = _rendu(droit, "liquider.majoration_rafp", age, effet)
         rente = points * coefficient * valeur
-        seuil = simulateur.catalogue["rafp"].periode(effet.annee).capital_seuil_points
+        seuil = _rendu(droit, "periode.capital_seuil_points", pont.Periode("rafp", effet.annee))
         ecart = (effet.rang - _mois(str(c["retraite_de_base"])).rang
-                 if c.get("retraite_de_base") else liquider.mois_apres_le_depart(carriere, age))
-        versee = liquider.prestation_rafp(rente, points, seuil, age, effet, ecart)
-        mesure = {"forme": versee.forme, "age_legal": legal, "coefficient": coefficient,
+                 if c.get("retraite_de_base")
+                 else _rendu(droit, "liquider.mois_apres_le_depart", carriere, age))
+        versee = _rendu(droit, "liquider.prestation_rafp", rente, points, seuil, age, effet,
+                        ecart)
+        mesure = {"forme": versee["forme"], "age_legal": legal, "coefficient": coefficient,
                   "rente_annuelle": rente, "rente_mensuelle": rente / 12}
-        if versee.forme != "rente":
-            mesure.update(conversion=versee.conversion, capital=versee.capital)
-        if versee.forme == "capital_fractionne":
-            mesure["premiere_fraction"] = versee.premiere_fraction
+        if versee["forme"] != "rente":
+            mesure.update(conversion=versee["conversion"], capital=versee["capital"])
+        if versee["forme"] == "capital_fractionne":
+            mesure["premiere_fraction"] = versee["premiere_fraction"]
         return mesure
     if cle in ("deductions_annuelles_du_cumul", "mois_sans_pension_du_cumul",
                "plafond_mensuel_du_cumul", "cumul_integral_depuis"):
@@ -2632,14 +2634,19 @@ def test_les_carrieres_des_exemples_se_batissent_au_portage_sans_les_jumeaux_pyt
         assert resultat == attendu, exemple["id"]
 
 
-def _mesures_sans_les_jumeaux(simulateur, monkeypatch, cles: tuple[str, ...], *jumeaux):
-    """Sur le premier exemple qui publie chacune des grandeurs ``cles``, ce que
-    ``_mesurer`` en rend par le pont seul (``pont.droit``), les jumeaux Python
-    nommés empêchés de calculer, et ce qu'il en rend sous leur contrôle
-    (``droit_et_refait``) : les deux doivent être les mêmes."""
+def _mesures_sans_les_jumeaux(simulateur, monkeypatch, cles: tuple[str, ...], *jumeaux,
+                              choisis: tuple[str, ...] = ()):
+    """Sur le premier exemple qui publie chacune des grandeurs ``cles`` — ou sur
+    chacun des exemples ``choisis``, qui les publient —, ce que ``_mesurer`` en
+    rend par le pont seul (``pont.droit``), les jumeaux Python nommés empêchés
+    de calculer, et ce qu'il en rend sous leur contrôle (``droit_et_refait``) :
+    les deux doivent être les mêmes."""
+    exemples = _charger_exemples()
+    paires = ([(e, cle) for e in exemples if e["id"] in choisis for cle in cles
+               if cle in e["attendu"]] if choisis
+              else [(next(e for e in exemples if cle in e["attendu"]), cle) for cle in cles])
     mesures = []
-    for cle in cles:
-        exemple = next(e for e in _charger_exemples() if cle in e["attendu"])
+    for exemple, cle in paires:
         carriere, resultat = _carriere_exemple(exemple)
         mesures.append((exemple, carriere, resultat, cle,
                         _mesurer(simulateur, exemple, carriere, resultat, cle)))
@@ -2677,6 +2684,27 @@ def test_la_liquidation_des_exemples_se_mesure_au_portage_sans_les_jumeaux_pytho
             (liquider, "nombre_d_annees_retenues"), (liquider, "salaire_de_reference"),
             (liquider, "valeur_du_point"), (CatalogueRegimes, "__getitem__"),
             (SerieAnnuelle, "__call__")):
+        assert lue == attendue, cas
+
+
+def test_la_prestation_du_rafp_se_mesure_au_portage_sans_les_jumeaux_python(
+        simulateur, monkeypatch):
+    """L'âge légal qui ouvre le RAFP, son coefficient de majoration, son seuil
+    en points, les mois qui séparent la prestation de la retraite de base et sa
+    forme — rente, capital en une fois ou en deux — se mesurent au portage :
+    les jumeaux Python, qu'on empêche ici de calculer ou de lire, n'y entrent
+    pas."""
+    choisis = ("erafp_1964_effet_2027_04_6000_points", "erafp_1966_effet_2029_04_3000_points",
+               "erafp_1966_effet_2031_01_3000_points", "erafp_1963_effet_2026_11_5000_points",
+               "erafp_ra2022_alain_capital_apres_la_base")
+    mesures = _mesures_sans_les_jumeaux(
+        simulateur, monkeypatch, ("prestation_rafp",),
+        (departs, "age_legal"), (liquider, "majoration_rafp"),
+        (liquider, "mois_apres_le_depart"), (liquider, "prestation_rafp"),
+        (Carriere, "date_de_l_age"), (CatalogueRegimes, "__getitem__"), choisis=choisis)
+    assert {lue["forme"] for _, lue, _ in mesures} == {
+        "rente", "non_ouverte", "capital", "capital_fractionne"}
+    for cas, lue, attendue in mesures:
         assert lue == attendue, cas
 
 #: Les grandeurs qui se comparent à une tolérance près ; les autres, à

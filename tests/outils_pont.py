@@ -32,7 +32,7 @@ import sys
 from retraite_notionnelle import calendrier, chronologie, pont
 from retraite_notionnelle.config import Parametres
 from retraite_notionnelle.donnees.regimes import BORNES_ASSIETTE
-from retraite_notionnelle.droit import liquider, ouvrir
+from retraite_notionnelle.droit import departs, liquider, ouvrir
 from retraite_notionnelle.simulateur import Comparaison, Simulateur
 from retraite_notionnelle.web.site import module, site
 
@@ -239,11 +239,17 @@ JUMEAUX_DU_DROIT = {
         calendrier.origine_des_ages(naissance, jour)),
     "carriere.date_de_l_age": lambda carriere, age: dataclasses.asdict(
         carriere.date_de_l_age(age)),
+    "departs.age_legal": departs.age_legal,
     "chronologie.valeur": chronologie.valeur,
     "ouvrir.age_ouverture_droit": ouvrir.age_ouverture_droit,
     "ouvrir.duree_requise": ouvrir.duree_requise,
+    "periode.capital_seuil_points": lambda periode: periode.capital_seuil_points,
     "liquider.duree_proratisation": liquider.duree_proratisation,
+    "liquider.majoration_rafp": liquider.majoration_rafp,
+    "liquider.mois_apres_le_depart": liquider.mois_apres_le_depart,
     "liquider.nombre_d_annees_retenues": liquider.nombre_d_annees_retenues,
+    "liquider.prestation_rafp": lambda *valeurs: dataclasses.asdict(
+        liquider.prestation_rafp(*valeurs)),
     "liquider.decote_opposable": liquider.decote_opposable,
     "liquider.salaire_de_reference": liquider.salaire_de_reference,
     "liquider.trimestres_de_decote": liquider.trimestres_de_decote,

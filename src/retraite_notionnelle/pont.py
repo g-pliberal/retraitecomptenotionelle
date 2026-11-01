@@ -809,6 +809,27 @@ def carriere_relue(donnees: dict) -> dict:
     return carriere_en_donnees(carriere_des_donnees(donnees))
 
 
+#: Les champs de la prestation du RAFP (``PrestationRafp`` de
+#: ``droit/liquider.py``), et ceux qui sont des entiers.
+CHAMPS_DE_LA_PRESTATION_RAFP = ("forme", "capital", "conversion", "premiere_fraction",
+                                "mois_du_solde", "seuil_du_fractionnement")
+ENTIERS_DE_LA_PRESTATION_RAFP = frozenset({"mois_du_solde", "seuil_du_fractionnement"})
+
+
+def prestation_rafp_des_donnees(prestation: dict) -> dict:
+    """La prestation du RAFP que le portage a écrite (``prestationRafp``), sous
+    les champs et les types du Python (``PrestationRafp``) : sa forme ; le
+    capital, la conversion et la première fraction en flottants, les mois du
+    solde et le seuil du fractionnement en entiers, chacun nul quand la forme
+    ne le porte pas."""
+    if set(prestation) != set(CHAMPS_DE_LA_PRESTATION_RAFP):
+        raise ValueError(f"PrestationRafp : le portage écrit les champs {sorted(prestation)}")
+    return {nom: (prestation[nom] if nom == "forme" or prestation[nom] is None
+                  else _entier(prestation[nom], nom) if nom in ENTIERS_DE_LA_PRESTATION_RAFP
+                  else _flottant(prestation[nom]))
+            for nom in CHAMPS_DE_LA_PRESTATION_RAFP}
+
+
 def periodes_des_donnees(periodes: list[dict]) -> list[dict]:
     """Les périodes d'un régime que le portage a écrites
     (``scenario_actuel.catalogue.periodes`` de ``FONCTIONS_DU_DROIT``), ce que
@@ -832,8 +853,12 @@ def periodes_des_donnees(periodes: list[dict]) -> list[dict]:
 LECTURES_DU_DROIT = {
     "ouvrir.age_ouverture_droit": float,
     "ouvrir.duree_requise": tuple[int, Fiabilite | None],
+    "periode.capital_seuil_points": float | None,
     "liquider.duree_proratisation": tuple[int, Fiabilite | None],
+    "liquider.majoration_rafp": float,
+    "liquider.mois_apres_le_depart": int,
     "liquider.nombre_d_annees_retenues": int,
+    "liquider.prestation_rafp": prestation_rafp_des_donnees,
     "liquider.decote_opposable": tuple[float | None, float, Fiabilite | None],
     "liquider.salaire_de_reference": float,
     "liquider.trimestres_de_decote": float,
@@ -841,6 +866,7 @@ LECTURES_DU_DROIT = {
     "calendrier.en_mois": int,
     "calendrier.origine_des_ages": DateMois,
     "carriere.date_de_l_age": DateMois,
+    "departs.age_legal": float,
     "chronologie.valeur": int,
     "regimes.BORNES_ASSIETTE": dict[str, tuple[float, float | None]],
     "scenario_actuel.ages_annulation_decote.age": tuple[float, Fiabilite] | None,
