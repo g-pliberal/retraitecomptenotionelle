@@ -830,13 +830,16 @@ def periodes_des_donnees(periodes: list[dict]) -> list[dict]:
 #: énumération, ni « 2.0 ». Une fonction qui n'y est pas est refusée avant
 #: node, au lieu que le type de ce qu'elle rend se devine.
 LECTURES_DU_DROIT = {
+    "ouvrir.age_ouverture_droit": float,
     "ouvrir.duree_requise": tuple[int, Fiabilite | None],
     "liquider.duree_proratisation": tuple[int, Fiabilite | None],
     "liquider.decote_opposable": tuple[float | None, float, Fiabilite | None],
     "liquider.salaire_de_reference": float,
     "liquider.trimestres_de_decote": float,
     "liquider.valeur_du_point": tuple[float, Fiabilite] | None,
+    "calendrier.en_mois": int,
     "calendrier.origine_des_ages": DateMois,
+    "carriere.date_de_l_age": DateMois,
     "chronologie.valeur": int,
     "regimes.BORNES_ASSIETTE": dict[str, tuple[float, float | None]],
     "scenario_actuel.ages_annulation_decote.age": tuple[float, Fiabilite] | None,

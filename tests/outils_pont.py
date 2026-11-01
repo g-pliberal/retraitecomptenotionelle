@@ -234,9 +234,13 @@ def servi_et_refait(cas: list[dict], paquet: bytes | None = None,
 #: sous les mêmes arguments, que :func:`droit_et_refait` lui fait refaire tant
 #: qu'il reste (action 161) : une fonction de plus au pont y déclare le sien.
 JUMEAUX_DU_DROIT = {
+    "calendrier.en_mois": calendrier.en_mois,
     "calendrier.origine_des_ages": lambda naissance, jour: dataclasses.asdict(
         calendrier.origine_des_ages(naissance, jour)),
+    "carriere.date_de_l_age": lambda carriere, age: dataclasses.asdict(
+        carriere.date_de_l_age(age)),
     "chronologie.valeur": chronologie.valeur,
+    "ouvrir.age_ouverture_droit": ouvrir.age_ouverture_droit,
     "ouvrir.duree_requise": ouvrir.duree_requise,
     "liquider.duree_proratisation": liquider.duree_proratisation,
     "liquider.decote_opposable": liquider.decote_opposable,

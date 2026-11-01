@@ -2149,26 +2149,29 @@ def _carriere_exemple(exemple: dict, decalage_mois: int = 0, sans_enfants: bool 
     raise AssertionError(f"{exemple['id']} : aucune carrière ne donne {cible} trimestres")
 
 
-def _mesurer(simulateur: Simulateur, exemple: dict, carriere, resultat, cle: str):
+def _mesurer(simulateur: Simulateur, exemple: dict, carriere, resultat, cle: str,
+             droit=droit_et_refait):
     """Ce que le scénario 1 rend pour une grandeur du témoin, écrit comme le
     témoin l'écrit : c'est ce qui se compare à la valeur publiée, et, pour un
-    écart connu, à la valeur que le modèle rendait quand on l'a déclaré."""
-    from retraite_notionnelle.calendrier import en_mois
-
+    écart connu, à la valeur que le modèle rendait quand on l'a déclaré. Les
+    grandeurs passées au pont s'y mesurent (``droit``) ; par défaut, le jumeau
+    Python refait chaque appel au bit près (``droit_et_refait``)."""
     actuel = simulateur.scenario_actuel
     if cle in ("trimestres_requis", "trimestres_valides", "taux_liquidation",
                "motif_ouverture", "liquidation_ouverte"):
         return resultat[cle]
     if cle == "age_ouverture":
-        return ouvrir.age_ouverture_droit(actuel, carriere)
+        return _rendu(droit, "ouvrir.age_ouverture_droit", pont.MOTEUR, carriere)
     if cle == "date_age_legal":
-        atteint = carriere.date_naissance.plus_mois(
-            en_mois(ouvrir.age_ouverture_droit(actuel, carriere)))
+        atteint = carriere.date_naissance.plus_mois(_rendu(
+            droit, "calendrier.en_mois",
+            _rendu(droit, "ouvrir.age_ouverture_droit", pont.MOTEUR, carriere)))
         return f"{atteint.annee}-{atteint.mois:02d}"
     if cle == "date_effet_au_plus_tot":
         # Le premier jour d'un mois où l'âge légal est atteint : celui qui
         # suit l'anniversaire, ou celui-ci pour qui est né un 1er (R. 351-37).
-        effet = carriere.date_de_l_age(ouvrir.age_ouverture_droit(actuel, carriere))
+        effet = _rendu(droit, "carriere.date_de_l_age", carriere,
+                       _rendu(droit, "ouvrir.age_ouverture_droit", pont.MOTEUR, carriere))
         return f"{effet.annee}-{effet.mois:02d}"
     if cle == "bonifications_des_emplois":
         # Les trimestres que chaque fiche des bonifications de service ajoute
@@ -2627,6 +2630,38 @@ def test_les_carrieres_des_exemples_se_batissent_au_portage_sans_les_jumeaux_pyt
         attendue, attendu = attendus[exemple["id"]]
         assert pont.carriere_en_donnees(carriere) == pont.carriere_en_donnees(attendue)
         assert resultat == attendu, exemple["id"]
+
+
+def _mesures_sans_les_jumeaux(simulateur, monkeypatch, cles: tuple[str, ...], *jumeaux):
+    """Sur le premier exemple qui publie chacune des grandeurs ``cles``, ce que
+    ``_mesurer`` en rend par le pont seul (``pont.droit``), les jumeaux Python
+    nommés empêchés de calculer, et ce qu'il en rend sous leur contrôle
+    (``droit_et_refait``) : les deux doivent être les mêmes."""
+    mesures = []
+    for cle in cles:
+        exemple = next(e for e in _charger_exemples() if cle in e["attendu"])
+        carriere, resultat = _carriere_exemple(exemple)
+        mesures.append((exemple, carriere, resultat, cle,
+                        _mesurer(simulateur, exemple, carriere, resultat, cle)))
+    _sans_les_jumeaux(monkeypatch, *jumeaux)
+    return [((exemple["id"], cle), _mesurer(simulateur, exemple, carriere, resultat, cle,
+                                             droit=pont.droit), attendue)
+            for exemple, carriere, resultat, cle, attendue in mesures]
+
+
+def test_l_ouverture_des_exemples_se_mesure_au_portage_sans_les_jumeaux_python(
+        simulateur, monkeypatch):
+    """L'âge d'ouverture du droit, le mois où il est atteint et la date d'effet
+    au plus tôt se mesurent au portage (``ouvrir.age_ouverture_droit``,
+    ``calendrier.en_mois``, ``carriere.date_de_l_age``) : les jumeaux Python,
+    qu'on empêche ici de calculer, n'y entrent pas."""
+    from retraite_notionnelle import calendrier
+
+    for cas, lue, attendue in _mesures_sans_les_jumeaux(
+            simulateur, monkeypatch, ("age_ouverture", "date_age_legal", "date_effet_au_plus_tot"),
+            (ouvrir, "age_ouverture_droit"), (calendrier, "en_mois"),
+            (Carriere, "date_de_l_age")):
+        assert lue == attendue, cas
 
 #: Les grandeurs qui se comparent à une tolérance près ; les autres, à
 #: l'égalité. ``age_ouverture`` prend la tolérance relative de pytest.

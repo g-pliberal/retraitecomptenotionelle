@@ -64,7 +64,7 @@ import { dirname, join } from "node:path";
 import { createInterface } from "node:readline";
 import { fileURLToPath } from "node:url";
 
-import { DateMois, origineDesAges } from "../../moteur/js/calendrier.js";
+import { DateMois, enMois, origineDesAges } from "../../moteur/js/calendrier.js";
 import { AnneeCarriere, Carriere } from "../../moteur/js/carriere.js";
 import { valeur as valeurPresumee } from "../../moteur/js/chronologie.js";
 import { PARAMETRES_DEFAUT, avec } from "../../moteur/js/config.js";
@@ -429,9 +429,12 @@ function optionsDeCarriere(options) {
  * `LECTURES_DU_DROIT` de `pont.py`, sous le type de son jumeau.
  */
 const FONCTIONS_DU_DROIT = {
+  "calendrier.en_mois": enMois,
   "calendrier.origine_des_ages":
     ({ annee, mois }, jour) => origineDesAges(new DateMois(annee, mois), jour),
+  "carriere.date_de_l_age": (carriere, age) => carriere.dateDeLAge(age),
   "chronologie.valeur": (presomption) => valeurPresumee(presomption, contexte.paquet.presomptions),
+  "ouvrir.age_ouverture_droit": ouvrir.ageOuvertureDroit,
   "ouvrir.duree_requise": ouvrir.dureeRequise,
   "liquider.duree_proratisation": liquider.dureeProratisation,
   "liquider.decote_opposable": liquider.decoteOpposable,
