@@ -873,6 +873,17 @@ def cumul_des_donnees(cumul: dict | None):
     return None if cumul is None else _depuis_donnees(Cumul, cumul)
 
 
+def majorations_des_donnees(majorations: list[dict]) -> tuple:
+    """Les majorations exceptionnelles que « faire vivre » sert, que le portage
+    a écrites, sous le dataclass du Python (``MajorationExceptionnelle``) : leur
+    montant à l'échéance, que le Python en dérive, ne passe pas. Le module de
+    la revalorisation ne se charge qu'à la lecture."""
+    from .revalorisation import MajorationExceptionnelle
+
+    return tuple(_depuis_donnees(MajorationExceptionnelle, majoration)
+                 for majoration in majorations)
+
+
 #: Ce que rend chaque fonction du droit que le pont fait appeler
 #: (``FONCTIONS_DU_DROIT`` de ``pont.mjs``), sous le type que son jumeau
 #: Python lui donne, ou relu par une fonction : JSON n'écrit ni n-uplet, ni
@@ -904,6 +915,16 @@ LECTURES_DU_DROIT = {
     # l'année courante) ; ou tel que l'échéancier le calcule.
     "cumul.cumuler.pensions_pretees": cumul_des_donnees,
     "echeancier.parcourir.au_depart.cumul": cumul_des_donnees,
+    # Ce que lisent les exemples de quatre étapes, sur le simulateur ou le
+    # moteur de la demande : le minimum vieillesse du foyer ; les majorations
+    # exceptionnelles que « faire vivre » sert, sur le scénario 1 que le
+    # portage refait ; les lignes de retraite de la fiche de paie d'un revenu,
+    # ``(code, part du salarié)``, aucune sans fiche ; la cotisation de
+    # l'année de chaque régime, sous les paramètres de la demande.
+    "foyer.foyer_et_net.minimum_vieillesse": float,
+    "revalorisation.faire_vivre.majorations": majorations_des_donnees,
+    "remuneration.fiche_depuis_brut.lignes_de_retraite": tuple[tuple[str, float], ...] | None,
+    "compte.cotisation_annuelle.par_regime": tuple[tuple[str, float], ...],
     "calendrier.en_mois": int,
     "calendrier.origine_des_ages": DateMois,
     "carriere.date_de_l_age": DateMois,

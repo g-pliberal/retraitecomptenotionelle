@@ -1993,10 +1993,11 @@ def _quotites(texte: str) -> dict[int, float]:
 PAQUET_DE_DEBUTS = 8
 
 
-def _rendu(droit, *appel):
-    """Ce que rend un appel du droit (``pont.droit``), que le portage ne doit
-    pas refuser."""
-    lus, refus = droit({"rendu": appel})
+def _rendu(droit, *appel, parametres=None):
+    """Ce que rend un appel du droit (``pont.droit``), sous ``parametres``,
+    ceux du simulateur — les réglages de référence sans eux —, que le portage
+    ne doit pas refuser."""
+    lus, refus = droit({"rendu": appel}, parametres)
     assert refus == {}, refus
     return lus["rendu"]
 
@@ -2338,32 +2339,25 @@ def _mesurer(simulateur: Simulateur, exemple: dict, carriere, resultat, cle: str
         # notionnel le reçoit sous ses deux conventions. Le scénario 1 n'a pas
         # de cotisation en euros ; il n'en tire que des points.
         from retraite_notionnelle.config import PartCotisation
-        from retraite_notionnelle.moteur.compte import ConstructeurCompte
 
         annee = int(exemple["attendu"][cle]["annee"])
         mesure = {"annee": annee}
         for nom, part in (("salariale", PartCotisation.SALARIALE),
                           ("totale", PartCotisation.TOTALE)):
-            constructeur = ConstructeurCompte(
-                simulateur.macro, simulateur.catalogue, simulateur.affiliations,
-                simulateur.indexation, simulateur.parametres.avec(part_cotisation=part))
-            versees = dict(constructeur.cotisation_annuelle(carriere, annee).par_regime)
+            versees = dict(_rendu(droit, "compte.cotisation_annuelle.par_regime",
+                                  pont.SIMULATEUR, carriere, annee,
+                                  parametres=Parametres().avec(part_cotisation=part)))
             mesure[nom] = versees.get("agirc", 0.0)
         return mesure
     if cle == "cotisations_de_la_fiche_de_paie":
         # Les lignes de retraite de la fiche de paie du site, sur le revenu et
         # l'année de l'exemple, part de l'assuré : ce que la caisse appelle.
-        from retraite_notionnelle.remuneration import fiche_depuis_brut
-
         valeur = exemple["attendu"][cle]
         annee, revenu = int(valeur["annee"]), float(valeur["revenu"])
-        fiche = fiche_depuis_brut(
-            simulateur.parametres.racine_donnees, simulateur.macro, simulateur.catalogue,
-            simulateur.affiliations, exemple["carriere"]["affiliation"], annee, revenu)
+        lignes = _rendu(droit, "remuneration.fiche_depuis_brut.lignes_de_retraite",
+                        pont.SIMULATEUR, exemple["carriere"]["affiliation"], annee, revenu)
         mesure = {"annee": annee, "revenu": revenu}
-        for ligne in () if fiche is None else fiche.lignes:
-            if ligne.retraite:
-                mesure[ligne.code] = ligne.salarie
+        mesure.update(() if lignes is None else lignes)
         return mesure
     if cle == "departs":
         # Les départs que l'échéancier inscrit quand les régimes ne liquident
@@ -2459,27 +2453,23 @@ def _mesurer(simulateur: Simulateur, exemple: dict, carriere, resultat, cle: str
     if cle == "majoration_exceptionnelle_mensuelle":
         # La majoration exceptionnelle des petites pensions, servie le mois où
         # elle est due : « faire vivre » la calcule à l'échéance de 2023, où
-        # rien ne l'a encore revalorisée.
-        from retraite_notionnelle.revalorisation import faire_vivre
-
-        # Le résultat Python de la même carrière, que « faire vivre » lit,
-        # tant qu'il ne passe pas le pont (lot B).
-        majorations = faire_vivre(simulateur, carriere, actuel.calculer(carriere),
-                                  2023).majorations
+        # rien ne l'a encore revalorisée. Le portage refait le scénario 1 de la
+        # carrière, que « faire vivre » lit.
+        majorations = _rendu(droit, "revalorisation.faire_vivre.majorations", pont.SIMULATEUR,
+                             carriere, 2023)
         if not majorations:
             return "aucune majoration exceptionnelle"
         return sum(m.servie for m in majorations)
     if cle == "minimum_vieillesse_mensuel":
         # L'exemple donne les revenus du couple, pas les carrières : le test
         # prête à l'assuré la pension de l'exemple — le conjoint a déjà ses
-        # ressources —, et lit l'allocation du foyer à la date de l'exemple.
-        from retraite_notionnelle.droit.foyer import foyer_et_net
-
+        # ressources —, et lit l'allocation du foyer à la date de l'exemple. Les
+        # arguments dans l'ordre du jumeau : l'âge atteint, sans contexte.
         jour = str(exemple["carriere"]["date_du_foyer"])
         pension = 12 * float(exemple["carriere"]["pensions_au_foyer_mensuelles"])
-        foyer = foyer_et_net(actuel, carriere.personne, jour, int(jour[:4]), pension, True,
-                             carriere=carriere)
-        return foyer.minimum_vieillesse / 12
+        return _rendu(droit, "foyer.foyer_et_net.minimum_vieillesse", pont.MOTEUR,
+                      carriere.personne, jour, int(jour[:4]), pension, True, None,
+                      carriere) / 12
     if cle == "plafonds_des_nouvelles_pensions":
         # Le plafond de chaque nouvelle pension que l'activité après le départ
         # constitue, tel que l'échéancier la liquide.
@@ -2800,6 +2790,34 @@ def test_le_cumul_des_exemples_se_mesure_au_portage_sans_les_jumeaux_python(
          "plafond_mensuel_du_cumul", "cumul_integral_depuis"),
         (cumul, "cumuler"), (Echeancier, "parcourir"), (ScenarioActuel, "calculer"),
         choisis=choisis)
+    assert len(mesures) == len(choisis)
+    for cas, lue, attendue in mesures:
+        assert lue == attendue, cas
+
+
+def test_le_foyer_la_revalorisation_la_paie_et_le_compte_se_mesurent_au_portage(
+        simulateur, monkeypatch):
+    """Le minimum vieillesse du foyer, d'un allocataire ou de deux, la
+    majoration exceptionnelle que « faire vivre » sert, sur le scénario 1 que
+    le portage refait, les lignes de retraite de la fiche de paie et la
+    cotisation Agirc de l'année, sous ses deux parts, avant et après la fusion,
+    se mesurent au portage : les jumeaux Python, qu'on empêche ici de calculer,
+    n'y entrent pas."""
+    from retraite_notionnelle import remuneration, revalorisation
+    from retraite_notionnelle.droit import foyer
+    from retraite_notionnelle.moteur.compte import ConstructeurCompte
+
+    choisis = ("sp_f16871_aspa_deux_allocataires", "sp_f16871_aspa_un_seul_allocataire",
+               "sp_f16871_aspa_un_seul_allocataire_au_maximum",
+               "cnav_2023_21_majoration_liquidation_unique", "cipav_cotisations_2022",
+               "agirc_gmp_2004", "agirc_arrco_gmp_2017")
+    mesures = _mesures_sans_les_jumeaux(
+        simulateur, monkeypatch,
+        ("minimum_vieillesse_mensuel", "majoration_exceptionnelle_mensuelle",
+         "cotisations_de_la_fiche_de_paie", "cotisation_agirc_de_l_annee"),
+        (foyer, "foyer_et_net"), (revalorisation, "faire_vivre"),
+        (remuneration, "fiche_depuis_brut"), (ConstructeurCompte, "cotisation_annuelle"),
+        (ScenarioActuel, "calculer"), choisis=choisis)
     assert len(mesures) == len(choisis)
     for cas, lue, attendue in mesures:
         assert lue == attendue, cas

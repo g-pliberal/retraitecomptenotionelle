@@ -32,9 +32,12 @@ import sys
 from retraite_notionnelle import calendrier, chronologie, pont
 from retraite_notionnelle.config import Parametres
 from retraite_notionnelle.donnees.regimes import BORNES_ASSIETTE
-from retraite_notionnelle.droit import (cumul, departs, invalidite, liquider, ouvrir,
-                                        releve, reversion)
+from retraite_notionnelle.droit import (cumul, departs, foyer, invalidite, liquider,
+                                        ouvrir, releve, reversion)
 from retraite_notionnelle.echeancier import Echeancier
+from retraite_notionnelle.moteur.compte import ConstructeurCompte
+from retraite_notionnelle.remuneration import fiche_depuis_brut
+from retraite_notionnelle.revalorisation import faire_vivre
 from retraite_notionnelle.simulateur import Comparaison, Simulateur
 from retraite_notionnelle.web.site import module, site
 
@@ -270,6 +273,15 @@ def _cumul_des_pensions_pretees(moteur, carriere, liquidee, pretees: dict,
                                           lambda annee: (dict(pretees), 0.0), annee_courante))
 
 
+def _lignes_de_retraite(simulateur: Simulateur, statut: str, annee: int, brut: float):
+    """Les lignes de retraite de la fiche de paie d'un revenu brut annuel,
+    ``(code, part du salarié)`` ; aucune sans fiche."""
+    fiche = fiche_depuis_brut(simulateur.parametres.racine_donnees, simulateur.macro,
+                              simulateur.catalogue, simulateur.affiliations, statut, annee, brut)
+    return None if fiche is None else tuple((ligne.code, ligne.salarie)
+                                            for ligne in fiche.lignes if ligne.retraite)
+
+
 def _plafonds_apres_le_depart(simulateur: Simulateur, carriere):
     """Le plafond de chaque nouvelle pension que l'activité après le départ
     constitue, ``(regime, plafond)`` ; aucune sans activité."""
@@ -289,12 +301,18 @@ JUMEAUX_DU_DROIT = {
         carriere.date_de_l_age(age)),
     "departs.age_legal": departs.age_legal,
     "chronologie.valeur": chronologie.valeur,
+    "compte.cotisation_annuelle.par_regime": lambda simulateur, carriere, annee: (
+        ConstructeurCompte(simulateur.macro, simulateur.catalogue, simulateur.affiliations,
+                           simulateur.indexation, simulateur.parametres)
+        .cotisation_annuelle(carriere, annee).par_regime),
     "cumul.cumuler.pensions_pretees": _cumul_des_pensions_pretees,
     "echeancier.parcourir.au_depart.cumul": lambda simulateur, carriere: _en_dictionnaire(
         _parcourue(simulateur, carriere).au_depart.cumul),
     "echeancier.parcourir.reversion": lambda simulateur, carriere: _en_dictionnaire(
         _parcourue(simulateur, carriere).reversion),
     "echeancier.parcourir.au_depart.droits_apres_depart.pensions": _plafonds_apres_le_depart,
+    "foyer.foyer_et_net.minimum_vieillesse":
+        lambda *valeurs: foyer.foyer_et_net(*valeurs).minimum_vieillesse,
     "invalidite.exigences_du_handicap": invalidite.exigences_du_handicap,
     "invalidite.retraite_pour_invalidite.pension_du_fonctionnaire_invalide":
         _pension_pour_invalidite,
@@ -319,7 +337,12 @@ JUMEAUX_DU_DROIT = {
         for emploi in releve.construire(moteur, carriere).durees.emplois),
     "releve.construire.durees.services_liquidables": lambda moteur, carriere, membres: (
         releve.construire(moteur, carriere).durees.services_liquidables(tuple(membres))),
+    "remuneration.fiche_depuis_brut.lignes_de_retraite": _lignes_de_retraite,
     "reversion.reversion": _reversion,
+    "revalorisation.faire_vivre.majorations": lambda simulateur, carriere, annee: [
+        dataclasses.asdict(majoration) for majoration in faire_vivre(
+            simulateur, carriere, simulateur.scenario_actuel.calculer(carriere),
+            annee).majorations],
     "scenario_actuel.ages_annulation_decote.age":
         lambda moteur, generation: moteur.ages_annulation_decote.age(generation),
     "scenario_actuel.calculer": lambda moteur, carriere, *drapeaux: actuel_en_donnees(

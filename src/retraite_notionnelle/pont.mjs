@@ -67,11 +67,13 @@ import { fileURLToPath } from "node:url";
 import { DateMois, enMois, origineDesAges } from "../../moteur/js/calendrier.js";
 import { AnneeCarriere, Carriere } from "../../moteur/js/carriere.js";
 import { valeur as valeurPresumee } from "../../moteur/js/chronologie.js";
+import { ConstructeurCompte } from "../../moteur/js/compte.js";
 import { PARAMETRES_DEFAUT, avec } from "../../moteur/js/config.js";
 import { Contexte } from "../../moteur/js/contexte.js";
 import { Echeancier } from "../../moteur/js/echeancier.js";
 import * as cumul from "../../moteur/js/droit/cumul.js";
 import * as departs from "../../moteur/js/droit/departs.js";
+import { foyerEtNet } from "../../moteur/js/droit/foyer.js";
 import * as invalidite from "../../moteur/js/droit/invalidite.js";
 import { appels } from "../../moteur/js/droit/liquidation.js";
 import * as liquider from "../../moteur/js/droit/liquider.js";
@@ -79,6 +81,8 @@ import * as ouvrir from "../../moteur/js/droit/ouvrir.js";
 import * as releve from "../../moteur/js/droit/releve.js";
 import * as reversion from "../../moteur/js/droit/reversion.js";
 import { BORNES_ASSIETTE } from "../../moteur/js/regimes.js";
+import { ficheDepuisBrut } from "../../moteur/js/remuneration.js";
+import { faireVivre } from "../../moteur/js/revalorisation.js";
 import { Saisie } from "../../moteur/js/saisie.js";
 
 const RACINE = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
@@ -475,6 +479,26 @@ const FONCTIONS_DU_DROIT = {
       anneeCourante),
   "echeancier.parcourir.au_depart.cumul":
     (simulateur, carriere) => parcourue(simulateur, carriere).auDepart.cumul,
+  // Ce que lisent les exemples de quatre étapes : le minimum vieillesse du
+  // foyer ; les majorations exceptionnelles que « faire vivre » sert, sur le
+  // scénario 1 que le portage refait, sans leur montant à l'échéance, que le
+  // Python dérive ; les lignes de retraite de la fiche de paie d'un revenu,
+  // `[code, part du salarié]` ; la cotisation de l'année de chaque régime,
+  // sous les paramètres de la demande.
+  "foyer.foyer_et_net.minimum_vieillesse": (...valeurs) => foyerEtNet(...valeurs)
+    .minimumVieillesse,
+  "revalorisation.faire_vivre.majorations": (simulateur, carriere, annee) => faireVivre(
+    simulateur, carriere, simulateur.scenarioActuel.calculer(carriere), annee).majorations
+    .map(({ a_l_echeance: _derive, ...majoration }) => majoration),
+  "remuneration.fiche_depuis_brut.lignes_de_retraite": (simulateur, statut, annee, brut) => {
+    const fiche = ficheDepuisBrut(simulateur.baremePrelevements, simulateur.macro,
+      simulateur.catalogue, simulateur.affiliations, statut, annee, brut);
+    return fiche === null ? null
+      : fiche.lignes.filter((ligne) => ligne.retraite).map(({ code, salarie }) => [code, salarie]);
+  },
+  "compte.cotisation_annuelle.par_regime": (simulateur, carriere, annee) => new ConstructeurCompte(
+    simulateur.macro, simulateur.catalogue, simulateur.affiliations, simulateur.indexation,
+    simulateur.parametres).cotisationAnnuelle(carriere, annee).par_regime,
   "calendrier.en_mois": enMois,
   "calendrier.origine_des_ages":
     ({ annee, mois }, jour) => origineDesAges(new DateMois(annee, mois), jour),
