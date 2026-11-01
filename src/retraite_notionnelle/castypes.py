@@ -233,6 +233,23 @@ class CasType:
             return carriere
         return primes_projetees(carriere, simulateur.macro)
 
+    def pour_le_portage(self, generation: int) -> dict:
+        """Ce que le portage lit de ce cas type, né en ``generation``, pour
+        dater son départ (``ageDeDepart`` de ``moteur/js/pilote.js``,
+        ``pont.ages_de_depart``) : ce que sa règle lit, et les options de sa
+        carrière d'un seul statut (:meth:`options`), sans l'âge, que la
+        recherche fait varier. Le Python garde la définition du cas type ; le
+        portage, le moteur qui le date."""
+        options = self.options(generation, 0.0)
+        del options["age_liquidation"]
+        return {
+            "regle": {"age_liquidation": self.age_liquidation,
+                      "regle_liquidation": self.regle_liquidation,
+                      "age_debut": self.age_debut,
+                      "ecart_liquidation": self.ecart_liquidation},
+            "options": options,
+        }
+
 
 def primes_projetees(carriere: Carriere, macro) -> Carriere:
     """La carrière d'un cas type de fonctionnaire, sa part des primes portée
@@ -265,6 +282,29 @@ def primes_projetees(carriere: Carriere, macro) -> Carriere:
     if all(nouvelle is ancienne for nouvelle, ancienne in zip(lignes, carriere.lignes)):
         return carriere
     return carriere.avec_lignes(lignes)
+
+
+#: Les années dont le portage reçoit le traitement relatif
+#: (:func:`primes_projetees_en_donnees`) : toutes celles qu'une carrière de la
+#: grille du coût peut porter, de la génération 1878 entrée à seize ans aux
+#: départs de la génération 2022, avec de la marge. Une ligne d'une autre année
+#: arrête le portage, au lieu de garder sa part des primes.
+ANNEES_DU_TRAITEMENT_RELATIF = range(1850, 2151)
+
+
+def primes_projetees_en_donnees(simulateur: Simulateur) -> dict[int, float] | None:
+    """Ce que le portage lit pour projeter la part des primes d'un cas type
+    de fonctionnaire comme :func:`primes_projetees` (``primesProjetees`` de
+    ``pont.mjs``) : le traitement indiciaire rapporté au salaire moyen, année
+    par année (:data:`ANNEES_DU_TRAITEMENT_RELATIF`), sous les conventions du
+    COR ; ``None`` hors d'elles, où la carrière garde sa part. La convention
+    reste au Python, qui lit l'hypothèse ; le portage n'en reçoit que les
+    nombres."""
+    if not simulateur.parametres.conventions_cor:
+        return None
+    macro = simulateur.macro
+    return {annee: macro.traitement_indiciaire_relatif(annee)
+            for annee in ANNEES_DU_TRAITEMENT_RELATIF}
 
 
 #: Les départs pour ancienneté de la CNRACL en 2025, au jaune pensions annexé

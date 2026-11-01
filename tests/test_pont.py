@@ -170,6 +170,88 @@ def test_chaque_case_passe_au_portage_partant_a_l_age_que_le_pilote_fixe():
         cases_de_la_grille(simulateur.pour_la_projection(), types, (2000,))
 
 
+#: Des cohortes de la grille du coût où passe chaque chemin du pilote : le point
+#: fixe qui monte ; la règle de l'ouverture, celle des services ; l'inaptitude ;
+#: les primes des fonctionnaires, que les conventions du COR projettent ; et la
+#: descente d'un an en un an (``pilote.descendre``), que prennent l'agent de
+#: conduite né en 1879, l'actif né en 1884, l'artisan né en 1911, l'exploitant
+#: né en 1925 et le contractuel né en 1884.
+DEPARTS_D_ESSAI = (("salaire_moyen", 1960), ("smic_carriere_complete~inapte", 1965),
+                   ("agent_sncf_conduite", 1879), ("agent_ieg", 2000), ("militaire", 1980),
+                   ("fonctionnaire_sedentaire", 1990), ("fonctionnaire_actif", 1884),
+                   ("fonctionnaire_sedentaire~super_actif", 1970), ("artisan", 1911),
+                   ("exploitant_agricole", 1925), ("contractuel_public", 1884))
+
+
+def _ages_au_portage(simulateur, cohortes, variante: str = "droit"):
+    """Les âges que le portage fixe aux ``cohortes``, ``(cas type, génération)``,
+    sous les paramètres de ``simulateur`` (:func:`pont.ages_de_depart`)."""
+    from retraite_notionnelle.castypes import primes_projetees_en_donnees
+
+    return pont.ages_de_depart(
+        [{"cle": f"{cas.code}|{generation}", **cas.pour_le_portage(generation)}
+         for cas, generation in cohortes],
+        simulateur.parametres, primes_projetees_en_donnees(simulateur), variante)
+
+
+def test_le_portage_date_les_cas_types_au_bit_pres_du_pilote_python():
+    """Le coût fait dater ses cas types au portage (``ageDeDepart`` de
+    ``moteur/js/pilote.js`` ; action 161, étape 6), sur la carrière d'un seul
+    statut que leurs options décrivent, ses primes projetées sous les
+    conventions du COR (``castypes.primes_projetees``) : chaque cohorte part à
+    l'âge que le pilote Python lui fixe (``pilote.age_de_depart``), au bit
+    près, sous les paramètres de référence comme sous ceux de la projection ;
+    l'âge écrit sous la variante ``absolu``."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    from retraite_notionnelle import pilote
+
+    cohortes = [(next(cas for cas in GRILLE_DU_COUT if cas.code == code), generation)
+                for code, generation in DEPARTS_D_ESSAI]
+    for simulateur in (Simulateur(Parametres()), Simulateur(Parametres()).pour_la_projection()):
+        ages, refus = _ages_au_portage(simulateur, cohortes)
+        assert not refus
+        attendus = {f"{cas.code}|{generation}": float(pilote.age_de_depart(simulateur, cas,
+                                                                            generation))
+                    for cas, generation in cohortes}
+        assert ages == attendus
+        assert all(type(age) is float for age in ages.values())
+        # La descente : un an plus tôt que l'âge écrit, et plus.
+        assert ages["artisan|1911"] == 62.0 and ages["contractuel_public|1884"] == 61.0
+    absolus, _ = _ages_au_portage(simulateur, cohortes, "absolu")
+    assert absolus == {f"{cas.code}|{generation}": float(cas.age_liquidation)
+                       for cas, generation in cohortes}
+
+
+def test_le_portage_fait_attendre_l_annulation_et_descendre_a_la_carriere_longue():
+    """Les deux chemins du pilote que la grille ne prend pas, que
+    ``tests/test_liquidation.py`` tire du texte, refaits au portage. Né en 1955,
+    entré à vingt ans et sans activité après quarante et une années, un salarié
+    a 164 trimestres des 166 de sa génération et les garde : sa règle le fait
+    attendre le taux plein de l'âge d'annulation de la décote, 67 ans
+    (L. 351-8, 1°). Né en 1966, entré à seize ans et sans activité depuis ses
+    59 ans, il a ses 172 trimestres cotisés à la fin de 2024 : la carrière
+    longue lui ouvre le départ à 60 ans (L. 351-1-1, D. 351-1-1), sous la règle
+    du taux plein comme sous celle de l'ouverture."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    salarie = next(cas for cas in CAS_TYPES if cas.code == "salaire_moyen")
+    inactif = replace(salarie, code="salaire_moyen~inactif", age_debut=20,
+                      interruptions_relatives=tuple((decalage, "inactivite")
+                                                    for decalage in range(41, 51)))
+    longues = [replace(salarie, code=f"salaire_moyen~inactif_a_59_ans~{regle}", age_debut=16,
+                       regle_liquidation=regle,
+                       interruptions_relatives=tuple((decalage, "inactivite")
+                                                     for decalage in range(43, 64)))
+               for regle in ("taux_plein", "ouverture")]
+    ages, refus = _ages_au_portage(Simulateur(Parametres()),
+                                   [(inactif, 1955), *((longue, 1966) for longue in longues)])
+    assert not refus
+    assert ages == {"salaire_moyen~inactif|1955": 67.0,
+                    "salaire_moyen~inactif_a_59_ans~taux_plein|1966": 60.0,
+                    "salaire_moyen~inactif_a_59_ans~ouverture|1966": 60.0}
+
+
 def test_sans_node_le_pont_s_arrete_sans_repli(monkeypatch):
     monkeypatch.setattr(pont.shutil, "which", lambda nom: None)
     with pytest.raises(pont.PontIndisponible, match="node"):

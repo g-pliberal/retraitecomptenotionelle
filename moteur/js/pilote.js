@@ -10,13 +10,16 @@
  * fixes datent les trois départs que « Mon estimation retraite » chiffre, pour
  * la carrière d'une saisie (`agesDeLEstimation`).
  *
- * Le départ des cas types (`age_de_depart` du Python) n'est plus porté depuis
- * le 11 octobre 2026 : il ne servait qu'au portage du coût, parti avec lui
- * (action 150), et la table figée porte l'âge de chaque case de la grille.
- * Seul `pointFixe` garde donc son jumeau, `point_fixe`, dont le Python date les
- * cas types. Les départs de l'estimation, eux, n'ont que cet exemplaire depuis
- * l'action 161, étape 6 : seul le site les chiffre, et leur moitié Python, qui
- * ne servait plus qu'à confronter les deux moteurs, est retirée.
+ * Le départ des cas types (`ageDeDepart`) date la grille du coût, que la
+ * fabrique fait dater ici par le pont (`pont.mjs` ; action 161, étape 6) : il
+ * avait quitté le portage le 11 octobre 2026 avec le portage du coût (action
+ * 150), et y revient pour que le coût ne date plus ses cas types par le moteur
+ * Python. Ses jumeaux, `age_de_depart`, `descendre` et `point_fixe`
+ * (pilote.py), le suivent au bit près jusqu'à leur retrait : le Python en date
+ * encore les cas types sous un modèle modifié et dans ses études. Les départs
+ * de l'estimation, eux, n'ont que cet exemplaire depuis l'action 161, étape 6 :
+ * seul le site les chiffre, et leur moitié Python, qui ne servait plus qu'à
+ * confronter les deux moteurs, est retirée.
  */
 
 import * as ouvrir from "./droit/ouvrir.js";
@@ -30,10 +33,98 @@ import * as ouvrir from "./droit/ouvrir.js";
 export const PASSES_LIQUIDATION = 4;
 
 /**
+ * Les deux façons de dater le départ d'un cas type : `droit`, l'âge que le
+ * droit de sa génération lui ouvre, celle des résultats affichés ; `absolu`,
+ * l'âge écrit dans la grille, le même pour toutes les générations, gardé comme
+ * variante. Voir `VARIANTES_LIQUIDATION` (pilote.py).
+ */
+export const VARIANTES_LIQUIDATION = Object.freeze(["droit", "absolu"]);
+
+/**
+ * L'âge auquel le cas type `cas` liquide, `batir(age)` rendant sa carrière
+ * liquidée à `age` : le départ des cas types de la grille du coût, que la
+ * fabrique fait dater au portage (`pont.mjs`). `cas` porte ce que sa règle lit
+ * — l'âge écrit (`age_liquidation`), d'où la recherche part ; la règle
+ * (`regle_liquidation`) : le taux plein, l'ouverture du droit, ou une durée de
+ * services, `ecart_liquidation` années après l'âge d'entrée (`age_debut`) ; et
+ * le décalage que la règle applique à son âge de référence
+ * (`ecart_liquidation`).
+ *
+ * Un cas type décrit une carrière, pas une date : il part quand la loi le lui
+ * permet. L'âge que le droit oppose dépend de la carrière, laquelle dépend de
+ * l'âge : un point fixe (`pointFixe`), parti de l'âge écrit. Quand la montée du
+ * taux plein s'arrête sur un âge où la carrière ne l'a pas — une carrière qui
+ * ne valide plus —, la recherche reprend de l'âge d'annulation de la décote ;
+ * puis elle descend d'un an en un an tant que le départ s'y ouvre
+ * (`descendre`). Voir `age_de_depart` (pilote.py), qui dit pourquoi.
+ */
+export function ageDeDepart(actuel, batir, cas, variante = "droit") {
+  if (!VARIANTES_LIQUIDATION.includes(variante)) {
+    throw new Error(`variante de liquidation inconnue : ${variante} `
+      + `(attendu : ${VARIANTES_LIQUIDATION.join(", ")})`);
+  }
+  if (variante === "absolu") {
+    return cas.age_liquidation;
+  }
+  if (cas.regle_liquidation === "services") {
+    return cas.age_debut + cas.ecart_liquidation;
+  }
+  if (cas.regle_liquidation !== "ouverture" && cas.regle_liquidation !== "taux_plein") {
+    throw new Error(`règle de liquidation inconnue : ${cas.regle_liquidation}`);
+  }
+  const tauxPlein = cas.regle_liquidation === "taux_plein";
+  // Ce que la règle oppose à la carrière liquidée à `age`, décalé : la seule
+  // question posée au moteur, à l'étape « ouvrir le droit », sans rien liquider.
+  const decale = (reference) => (reference === null ? null : reference + cas.ecart_liquidation);
+  const proposes = new Map();
+  const proposer = (age) => {
+    if (!proposes.has(age)) {
+      const carriere = batir(age);
+      proposes.set(age, decale(tauxPlein ? ouvrir.ageTauxPleinDroit(actuel, carriere)
+        : ouvrir.ageOuvertureDroit(actuel, carriere)));
+    }
+    return proposes.get(age);
+  };
+  let age = pointFixe(cas.age_liquidation, proposer);
+  if (tauxPlein) {
+    const propose = proposer(age);
+    if (propose !== null && propose > age + 1e-9) {
+      const annulation = decale(ouvrir.ageAnnulationDroit(actuel, batir(age)));
+      if (annulation !== null) {
+        age = pointFixe(annulation, proposer);
+      }
+    }
+  }
+  return descendre(age, proposer);
+}
+
+/**
+ * Le départ le plus précoce que `proposer` ouvre sous `depart` : tant qu'un
+ * départ un an plus tôt s'ouvre — le droit lui oppose un âge qui ne le dépasse
+ * pas —, la recherche en reprend (`pointFixe`). La descente du départ des cas
+ * types (`ageDeDepart`) et du premier âge de l'estimation
+ * (`agesDeLEstimation`). Voir `descendre` (pilote.py).
+ */
+export function descendre(depart, proposer) {
+  let age = depart;
+  for (;;) {
+    const essai = pointFixe(age - 1, proposer);
+    if (essai >= age - 1e-9) {
+      return age;
+    }
+    const confirme = proposer(essai);
+    if (confirme === null || confirme > essai + 1e-9) {
+      return age;
+    }
+    age = essai;
+  }
+}
+
+/**
  * L'âge que `proposer` confirme, en partant de `age` : la boucle de
- * `age_de_depart` (pilote.py), que `agesDeLEstimation` emprunte. Une montée se
- * suit ; une descente ne se retient que si l'âge plus précoce se confirme
- * lui-même. Voir `point_fixe` (pilote.py).
+ * `ageDeDepart`, que `agesDeLEstimation` emprunte. Une montée se suit ; une
+ * descente ne se retient que si l'âge plus précoce se confirme lui-même. Voir
+ * `point_fixe` (pilote.py).
  */
 export function pointFixe(depart, proposer) {
   let age = depart;
@@ -92,7 +183,8 @@ export const DEPARTS_DE_L_ESTIMATION = Object.freeze(["legal", "taux_plein", "au
  * la réunissait à chaque passe à l'âge même du départ, et la descente
  * s'arrêtait au-dessus de l'âge où la carrière longue ouvre le départ. Tant
  * qu'un départ un an plus tôt s'ouvre encore, la recherche du premier âge en
- * reprend donc ; un départ que la saisie refuse n'ouvre rien (`sansRefus`).
+ * reprend donc (`descendre`) ; un départ que la saisie refuse n'ouvre rien
+ * (`sansRefus`).
  * Deux âges peuvent se confondre : la page les réunit (`departsDeLEstimation`,
  * contexte.js). `null` quand le droit n'oppose aucun âge à cette carrière.
  */
@@ -117,15 +209,7 @@ export function agesDeLEstimation(actuel, batir, depart) {
       }
     }
     if (quoi === "legal") {
-      const sonder = sansRefus(proposer);
-      for (;;) {
-        const essai = pointFixe(trouve - 1, sonder);
-        const confirme = essai < trouve - 1e-9 ? sonder(essai) : null;
-        if (confirme === null || confirme > essai + 1e-9) {
-          break;
-        }
-        trouve = essai;
-      }
+      trouve = descendre(trouve, sansRefus(proposer));
     }
     age = rang > 0 ? Math.max(age, trouve) : trouve;
     ages[quoi] = age;

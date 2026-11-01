@@ -25,7 +25,9 @@ tardive d'un fonctionnaire, la part des primes que le décrochage du
 traitement porte (``castypes.primes_projetees``) —, et le portage, qui n'en
 garde pas de copie, la reçoit en données (:func:`carriere_en_donnees`), sous
 les paramètres du simulateur (:func:`parametres_en_donnees`), sur le paquet
-des données du jour (:func:`paquet_des_donnees`).
+des données du jour (:func:`paquet_des_donnees`). Ses cas types, le portage
+les date (:func:`ages_de_depart`) : le Python, qui en garde les définitions,
+lui passe ce que leur règle de départ lit et les options de leur carrière.
 
 Dans l'autre sens, la saisie, dont le portage garde le seul exemplaire
 (étape 6, la paire du contexte) : il bâtit la carrière d'une requête du
@@ -537,6 +539,25 @@ def grille_du_cout(cas: list[dict], scenarios, parametres, paquet: bytes | None 
         for cle, lu in reponse["resultats"].items()
     }
     return resultats, reponse["echecs"]
+
+
+def ages_de_depart(cas: list[dict], parametres, primes: dict[int, float] | None = None,
+                   variante: str = "droit", paquet: bytes | None = None,
+                   ) -> tuple[dict[str, float], dict[str, str]]:
+    """L'âge de départ de chaque cas type, ``{"cle", "regle", "options"}`` —
+    ce que sa règle lit, et les options de sa carrière d'un seul statut, sans
+    l'âge (``CasType.pour_le_portage``) —, que le pilote du portage fixe
+    (``ageDeDepart`` de ``moteur/js/pilote.js``) sous ``parametres``, la part
+    des primes projetée comme le COR la projette quand ``primes`` porte le
+    traitement relatif de chaque année (``castypes.primes_projetees_en_donnees``) :
+    sous sa clé, l'âge, en flottant. Puis, sous leur clé, les motifs des cas que
+    le portage refuse. Son jumeau est ``pilote.age_de_depart`` (action 161,
+    étape 6)."""
+    reponse = _demander({"ages_de_depart": {
+        "parametres": parametres_en_donnees(parametres), "variante": variante,
+        "primes": primes, "cas": cas}}, paquet)
+    return ({cle: _flottant(age) for cle, age in reponse["resultats"].items()},
+            reponse["echecs"])
 
 
 def saisies(cas: list[dict], scenarios, paquet: bytes | None = None,

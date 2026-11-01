@@ -46,6 +46,13 @@
  *   chaque appel d'une fonction du droit que le pont porte
  *   (`FONCTIONS_DU_DROIT`), sur des carrières que le Python a bâties, passées
  *   en données, sous les paramètres du simulateur : ce qu'elle rend.
+ * - `ages_de_depart` : `{cas: [{cle, regle, options}], parametres, variante,
+ *   primes}` — chaque cas type de la grille, ce que sa règle de départ lit et
+ *   les options de sa carrière d'un seul statut sans l'âge
+ *   (`CasType.pour_le_portage` de `castypes.py`), daté par le pilote du
+ *   portage (`ageDeDepart`) sous les paramètres de la demande, sa part des
+ *   primes projetée comme le COR la projette quand `primes` porte le
+ *   traitement relatif de chaque année : l'âge de son départ.
  *
  * Il écrit `{resultats, echecs}` : une carrière que le portage refuse en est
  * absente, et son motif est dans `echecs`. Un nombre non fini s'écrit `null`,
@@ -80,6 +87,7 @@ import * as liquider from "../../moteur/js/droit/liquider.js";
 import * as ouvrir from "../../moteur/js/droit/ouvrir.js";
 import * as releve from "../../moteur/js/droit/releve.js";
 import * as reversion from "../../moteur/js/droit/reversion.js";
+import { ageDeDepart } from "../../moteur/js/pilote.js";
 import { BORNES_ASSIETTE } from "../../moteur/js/regimes.js";
 import { ficheDepuisBrut } from "../../moteur/js/remuneration.js";
 import { faireVivre } from "../../moteur/js/revalorisation.js";
@@ -347,6 +355,56 @@ function grilleDuCout({ cas, scenarios, parametres }) {
     };
   }
   return { resultats, echecs };
+}
+
+/**
+ * La carrière d'un cas type de fonctionnaire, sa part des primes portée comme
+ * le COR la projette (`primes_projetees` de `castypes.py`) : à rémunération
+ * égale, le traitement d'une année vaut ce qu'il valait, fois le traitement
+ * relatif — `relatif`, année par année, que le Python lit
+ * (`primes_projetees_en_donnees`). Une ligne sans primes, ou d'une année où le
+ * traitement suit le salaire moyen, reste la même, et la carrière aussi quand
+ * aucune ne change.
+ */
+function primesProjetees(carriere, relatif) {
+  const lignes = carriere.lignes.map((ligne) => {
+    if (!(ligne.part_primes > 0)) {
+      return ligne;
+    }
+    const rapport = relatif[ligne.annee];
+    if (rapport === undefined) {
+      throw new RangeError(`traitement relatif absent de la demande : ${ligne.annee}`);
+    }
+    return rapport === 1 ? ligne
+      : new AnneeCarriere({ ...ligne, part_primes: 1 - (1 - ligne.part_primes) * rapport });
+  });
+  return lignes.every((ligne, rang) => ligne === carriere.lignes[rang])
+    ? carriere : carriere.avecLignes(lignes);
+}
+
+/**
+ * La carrière d'un seul statut d'un cas type, liquidée à l'âge qu'on lui
+ * demande (`CasType._carriere` de `castypes.py`) : ses options, sans l'âge,
+ * et, quand `primes` porte le traitement relatif de chaque année — sous les
+ * conventions du COR —, ses primes projetées.
+ */
+function carriereDuCasType(simulateur, options, primes) {
+  const lues = optionsDeCarriere(options);
+  return (age) => {
+    const carriere = simulateur.carriereSimple({ ...lues, age_liquidation: age });
+    return primes === null ? carriere : primesProjetees(carriere, primes);
+  };
+}
+
+/**
+ * L'âge de départ de chaque cas type, `{cle, regle, options}`, que le pilote du
+ * portage fixe (`ageDeDepart`) : le coût fait dater ici les cas types de sa
+ * grille (action 161, étape 6), dont le Python garde les définitions.
+ */
+function agesDeDepart({ parametres, variante, primes, cas }) {
+  const simulateur = simulateurSous(parametres);
+  return parCas(cas, ({ regle, options }) => ageDeDepart(simulateur.scenarioActuel,
+    carriereDuCasType(simulateur, options, primes), regle, variante));
 }
 
 /**
@@ -654,7 +712,7 @@ function droit({ parametres, carrieres, appels }) {
 
 const LECTURES = {
   carrieres, saisies, grille_du_cout: grilleDuCout, carrieres_des_saisies: carrieresDesSaisies,
-  simulations, scenario_actuel: scenarioActuel, droit,
+  simulations, scenario_actuel: scenarioActuel, droit, ages_de_depart: agesDeDepart,
 };
 
 /** La réponse à une demande, qui porte une seule des `LECTURES`. */

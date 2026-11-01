@@ -22,10 +22,13 @@ un pilote fixe le reste.
   l'appliquer — restent dans leurs modules
   (:mod:`~retraite_notionnelle.avantages`, :mod:`~retraite_notionnelle.cout`).
 
-Son jumeau, ``moteur/js/pilote.js``, ne porte que :func:`point_fixe` : le
-départ des cas types, que seul le coût demande, ne tourne qu'ici. Les départs
-de l'estimation n'ont que l'exemplaire du portage depuis l'action 161,
-étape 6 : leur moitié Python ne servait plus qu'à confronter les deux moteurs.
+Son jumeau, ``moteur/js/pilote.js``, porte :func:`age_de_depart`,
+:func:`descendre` et :func:`point_fixe` (``ageDeDepart``, ``descendre``,
+``pointFixe``) : le pont fait dater les cas types au portage
+(``pont.ages_de_depart`` ; action 161, étape 6), au bit près de ce Python, qui
+le suit jusqu'à son retrait. Les départs de l'estimation n'ont que
+l'exemplaire du portage depuis l'action 161, étape 6 : leur moitié Python ne
+servait plus qu'à confronter les deux moteurs.
 """
 
 from __future__ import annotations
