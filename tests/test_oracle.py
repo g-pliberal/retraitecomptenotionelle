@@ -2178,17 +2178,12 @@ def _mesurer(simulateur: Simulateur, exemple: dict, carriere, resultat, cle: str
     if cle == "bonifications_des_emplois":
         # Les trimestres que chaque fiche des bonifications de service ajoute
         # aux services liquidés, telles que l'étape des durées les écrit.
-        from retraite_notionnelle.droit import releve
-
-        durees = releve.construire(actuel, carriere).durees
-        return {emploi.fiche: emploi.services for emploi in durees.emplois}
+        return dict(_rendu(droit, "releve.construire.durees.emplois", pont.MOTEUR, carriere))
     if cle == "services_liquidables":
         # Les trimestres de services que chaque régime nommé liquide, au
         # décompte final (R. 26), tels que l'étape des durées les écrit.
-        from retraite_notionnelle.droit import releve
-
-        durees = releve.construire(actuel, carriere).durees
-        return {regime: durees.services_liquidables((regime,))
+        return {regime: _rendu(droit, "releve.construire.durees.services_liquidables",
+                               pont.MOTEUR, carriere, (regime,))
                 for regime in exemple["attendu"][cle]}
     if cle == "trimestres_de_majoration_enfants":
         # La caisse publie le nombre de trimestres qu'elle ajoute par
@@ -2316,9 +2311,9 @@ def _mesurer(simulateur: Simulateur, exemple: dict, carriere, resultat, cle: str
         # Les points qu'un salaire de l'année acquiert, tels que la fédération
         # les calcule dans ses guides : l'exemple donne le salaire de l'année
         # (`releve`, année : salaire), la grandeur les points de chaque régime,
-        # une valeur par période qui en crédite — la tranche 1, puis la 2.
-        from retraite_notionnelle.carriere import Carriere, LigneRelevee
-        from retraite_notionnelle.droit import releve as _releve
+        # une valeur par période qui en crédite — la tranche 1, puis la 2. Le
+        # portage bâtit la carrière du relevé, qui revient en Python.
+        from retraite_notionnelle.carriere import LigneRelevee
 
         c = exemple["carriere"]
         annee = int(exemple["attendu"][cle]["annee"])
@@ -2326,13 +2321,15 @@ def _mesurer(simulateur: Simulateur, exemple: dict, carriere, resultat, cle: str
         depart = _mois(c["liquidation"])
         lignes = [LigneRelevee(int(a), c["affiliation"], float(revenu))
                   for a, revenu in c["releve"].items()]
-        construite = Carriere.depuis_releve(
-            naissance.annee, c.get("sexe", "H"), lignes,
-            depart.annee - naissance.annee + (depart.mois - naissance.mois) / 12,
-            simulateur.macro, mois_naissance=naissance.mois)
+        construite = pont.carriere_des_donnees(_rendu(
+            droit, "simulateur.carriere_releve", pont.SIMULATEUR, dict(
+                annee_naissance=naissance.annee, sexe=c.get("sexe", "H"), releve=lignes,
+                age_liquidation=(depart.annee - naissance.annee
+                                 + (depart.mois - naissance.mois) / 12),
+                mois_naissance=naissance.mois)))
         mesure: dict = {"annee": annee}
-        for code, a, points, _ in _releve.construire(
-                simulateur.scenario_actuel, construite).droits.points:
+        for code, a, points, _ in _rendu(droit, "releve.construire.droits.points", pont.MOTEUR,
+                                         construite):
             if a == annee and points > 0:
                 mesure.setdefault(code, []).append(points)
         return mesure
@@ -2706,6 +2703,29 @@ def test_la_prestation_du_rafp_se_mesure_au_portage_sans_les_jumeaux_python(
         (Carriere, "date_de_l_age"), (CatalogueRegimes, "__getitem__"), choisis=choisis)
     assert {lue["forme"] for _, lue, _ in mesures} == {
         "rente", "non_ouverte", "capital", "capital_fractionne"}
+    for cas, lue, attendue in mesures:
+        assert lue == attendue, cas
+
+
+def test_le_releve_des_exemples_se_mesure_au_portage_sans_les_jumeaux_python(
+        simulateur, monkeypatch):
+    """La carrière lue sur un relevé (``simulateur.carriere_releve``), les points
+    que chaque régime y acquiert, de l'Ircantec et de l'Agirc-Arrco, sur une
+    tranche ou deux, les services que chaque fiche des bonifications ajoute et
+    les services liquidables d'un régime se mesurent au portage
+    (``releve.construire``) : les jumeaux Python, qu'on empêche ici de
+    calculer, n'y entrent pas."""
+    from retraite_notionnelle.droit import releve
+
+    choisis = ("ircantec_points_2024_deux_tranches", "ircantec_points_2019_base_documentaire",
+               "aa_livret3_points_2023", "aa_livret3_points_2024_deux_tranches",
+               "sre_militaire_radie_le_lendemain_de_ses_62_ans", "sre_temps_partiel_pierre")
+    mesures = _mesures_sans_les_jumeaux(
+        simulateur, monkeypatch,
+        ("points_de_l_annee", "bonifications_des_emplois", "services_liquidables"),
+        (releve, "construire"), (Carriere, "depuis_releve"), (Simulateur, "carriere_releve"),
+        choisis=choisis)
+    assert len(mesures) == len(choisis)
     for cas, lue, attendue in mesures:
         assert lue == attendue, cas
 

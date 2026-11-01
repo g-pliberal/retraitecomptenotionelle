@@ -73,6 +73,7 @@ import * as departs from "../../moteur/js/droit/departs.js";
 import { appels } from "../../moteur/js/droit/liquidation.js";
 import * as liquider from "../../moteur/js/droit/liquider.js";
 import * as ouvrir from "../../moteur/js/droit/ouvrir.js";
+import * as releve from "../../moteur/js/droit/releve.js";
 import { BORNES_ASSIETTE } from "../../moteur/js/regimes.js";
 import { Saisie } from "../../moteur/js/saisie.js";
 
@@ -473,6 +474,15 @@ const FONCTIONS_DU_DROIT = {
   "liquider.trimestres_de_decote": liquider.trimestresDeDecote,
   "liquider.valeur_du_point": liquider.valeurDuPoint,
   "regimes.BORNES_ASSIETTE": () => BORNES_ASSIETTE,
+  // Le relevé des droits, par ce que les exemples en lisent : les points de
+  // chaque régime, `[code, annee, points, taux]` ; la fiche et les services de
+  // chaque emploi classé ; les services liquidables de régimes nommés.
+  "releve.construire.droits.points":
+    (moteur, carriere) => releve.construire(moteur, carriere).droits.points,
+  "releve.construire.durees.emplois": (moteur, carriere) => releve.construire(moteur, carriere)
+    .durees.emplois.map(({ fiche, services }) => [fiche, services]),
+  "releve.construire.durees.services_liquidables": (moteur, carriere, membres) => releve
+    .construire(moteur, carriere).durees.servicesLiquidables(membres),
   "scenario_actuel.ages_annulation_decote.age":
     (moteur, generation) => moteur.agesAnnulationDecote.age(generation),
   // Les drapeaux de `calculer` suivent la carrière dans l'ordre du jumeau :
@@ -494,6 +504,9 @@ const FONCTIONS_DU_DROIT = {
     (moteur, ...valeurs) => moteur.valeursPoint.achat(...valeurs),
   "scenario_actuel.valeurs_point.service":
     (moteur, ...valeurs) => moteur.valeursPoint.service(...valeurs),
+  // Ses lignes de relevé, `LigneRelevee` du Python, passent par leurs champs.
+  "simulateur.carriere_releve":
+    (simulateur, options) => carriereEnDonnees(simulateur.carriereReleve(options)),
   "simulateur.carriere_simple":
     (simulateur, options) => carriereEnDonnees(simulateur.carriereSimple(optionsDeCarriere(options))),
 };

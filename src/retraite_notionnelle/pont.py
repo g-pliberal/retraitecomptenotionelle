@@ -877,6 +877,13 @@ LECTURES_DU_DROIT = {
     "departs.age_legal": float,
     "chronologie.valeur": int,
     "regimes.BORNES_ASSIETTE": dict[str, tuple[float, float | None]],
+    # Le relevé des droits (``releve.construire``), par ce que les exemples en
+    # lisent : les points de chaque régime, chaque année, et leur taux ; la
+    # fiche et les services de chaque emploi classé ; les services
+    # liquidables de régimes nommés.
+    "releve.construire.droits.points": tuple[tuple[str, int, float, float | None], ...],
+    "releve.construire.durees.emplois": tuple[tuple[str, int], ...],
+    "releve.construire.durees.services_liquidables": int,
     "scenario_actuel.ages_annulation_decote.age": tuple[float, Fiabilite] | None,
     "scenario_actuel.calculer": actuel_des_donnees,
     "scenario_actuel.catalogue.periodes": periodes_des_donnees,
@@ -884,6 +891,7 @@ LECTURES_DU_DROIT = {
     "scenario_actuel.minimum_garanti.montant": tuple[float, Fiabilite] | None,
     "scenario_actuel.valeurs_point.achat": tuple[float, float, Fiabilite] | None,
     "scenario_actuel.valeurs_point.service": tuple[float, Fiabilite] | None,
+    "simulateur.carriere_releve": carriere_relue,
     "simulateur.carriere_simple": carriere_relue,
 }
 

@@ -32,7 +32,7 @@ import sys
 from retraite_notionnelle import calendrier, chronologie, pont
 from retraite_notionnelle.config import Parametres
 from retraite_notionnelle.donnees.regimes import BORNES_ASSIETTE
-from retraite_notionnelle.droit import departs, liquider, ouvrir
+from retraite_notionnelle.droit import departs, liquider, ouvrir, releve
 from retraite_notionnelle.simulateur import Comparaison, Simulateur
 from retraite_notionnelle.web.site import module, site
 
@@ -255,6 +255,13 @@ JUMEAUX_DU_DROIT = {
     "liquider.trimestres_de_decote": liquider.trimestres_de_decote,
     "liquider.valeur_du_point": liquider.valeur_du_point,
     "regimes.BORNES_ASSIETTE": lambda: BORNES_ASSIETTE,
+    "releve.construire.droits.points":
+        lambda moteur, carriere: releve.construire(moteur, carriere).droits.points,
+    "releve.construire.durees.emplois": lambda moteur, carriere: tuple(
+        (emploi.fiche, emploi.services)
+        for emploi in releve.construire(moteur, carriere).durees.emplois),
+    "releve.construire.durees.services_liquidables": lambda moteur, carriere, membres: (
+        releve.construire(moteur, carriere).durees.services_liquidables(tuple(membres))),
     "scenario_actuel.ages_annulation_decote.age":
         lambda moteur, generation: moteur.ages_annulation_decote.age(generation),
     "scenario_actuel.calculer": lambda moteur, carriere, *drapeaux: actuel_en_donnees(
@@ -272,6 +279,8 @@ JUMEAUX_DU_DROIT = {
         lambda moteur, *valeurs: moteur.valeurs_point.achat(*valeurs),
     "scenario_actuel.valeurs_point.service":
         lambda moteur, *valeurs: moteur.valeurs_point.service(*valeurs),
+    "simulateur.carriere_releve": lambda simulateur, options: pont.carriere_en_donnees(
+        simulateur.carriere_releve(**options)),
     "simulateur.carriere_simple": lambda simulateur, options: pont.carriere_en_donnees(
         simulateur.carriere_simple(**options)),
 }
