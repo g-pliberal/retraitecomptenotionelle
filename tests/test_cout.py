@@ -5034,6 +5034,32 @@ def test_chaque_cohorte_part_l_annee_que_lui_donne_le_droit_de_sa_generation(pop
     assert replace(vivante, departs=()).survie(2, 2032) == 0.8
 
 
+def test_le_portage_bat_toute_la_grille_du_cout_comme_le_python():
+    """Le coût date et bâtit sa grille au portage (``cout._grille_batie`` ;
+    action 161, étape 6), dont le pilote et les carrières ont leurs jumeaux
+    Python jusqu'à leur retrait : sous un modèle modifié, le Python la bâtit
+    encore. Sur toute la grille — ses dix-huit cas types, nés de 1880 à 2020,
+    et les cinq cohortes de chacun —, les carrières, leurs âges, les deux
+    carrières que l'âge légal en dérive, les départs des cohortes voisines et
+    les motifs des cases écartées sont les mêmes des deux côtés, au bit près."""
+    import shutil
+
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage ne bâtit pas la grille ici")
+    from retraite_notionnelle.cout import _grille_batie
+
+    simulateur = Simulateur(Parametres()).pour_la_projection()
+    au_portage = _grille_batie(simulateur, GRILLE_DU_COUT, "droit")
+    with memoire.modele_modifie():
+        en_python = _grille_batie(simulateur, GRILLE_DU_COUT, "droit")
+    assert au_portage == en_python
+    carrieres, ecartees, voisines, prolongations = au_portage
+    assert len(carrieres) + len(ecartees) == len(GRILLE_DU_COUT) * len(generations())
+    assert {motif for motif in ecartees.values()} == {
+        "liquidation antérieure à la répartition", "aucun régime actif sur la période"}
+    assert all(type(carriere.age_liquidation) is float for carriere in carrieres.values())
+
+
 def test_la_grille_date_chaque_cohorte_au_droit_de_sa_generation():
     """Le salarié au salaire moyen entré à 21 ans : né en janvier 1963, 1964
     ou 1965, la suspension de la loi de financement pour 2026 lui demande 170

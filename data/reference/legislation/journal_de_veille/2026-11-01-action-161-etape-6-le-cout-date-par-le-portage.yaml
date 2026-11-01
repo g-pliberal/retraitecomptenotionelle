@@ -1,0 +1,21 @@
+date: "2026-11-01"
+session: "action 161, étape 6 : le coût daté par le portage, ses cas types datés et sa grille bâtie au portage"
+consulte: >-
+  Aucune source de droit : la session ne touche à aucune règle du scénario 1.
+  La note du lot B ; le pilote Python (pilote.py), ce que la grille du coût
+  lit de castypes.py (la carrière d'un seul statut, l'entrée tardive, les
+  primes projetées, les deux motifs d'écart) et de cout.py (_carrieres_du_cout,
+  _departs, _propositions, _autre_volet, _nees_toute_l_annee) ; leurs jumeaux
+  JavaScript (moteur/js/pilote.js, simulateur.js, carriere.js, regimes.js).
+trouve: >-
+  Aucune règle n'a changé, et aucun écart : les 2 610 cohortes de la grille du
+  coût ont, au portage, l'âge que le pilote Python leur fixe, au bit près,
+  sous la projection comme sous la référence ; ses 498 carrières, leurs
+  prolongations, ses départs voisins et ses motifs sont ceux du Python. Les
+  deux chemins du pilote qu'aucune case ne prend, refaits au portage sur les
+  carrières que tests/test_liquidation.py tire du texte, donnent 67 ans
+  (L. 351-8) et 60 ans (L. 351-1-1).
+reste: >-
+  Rien pour la veille. L'action reprend où son bloc « Reprise » la laisse
+  (action 161, note du 1er novembre 2026, étape 6, le coût daté par le
+  portage).
