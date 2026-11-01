@@ -1,7 +1,38 @@
 # Le verdict de la dernière course de tests.yml : écrit par GitHub
 # (scripts/publier_fabrique.sh), jamais à la main. Action 148.
 etat: vert
-sources: 9c38349be97b8354280454f566edc376ce3f3bb3
-date: 2026-10-31T23:17:04Z
-course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/41249029479
-presomptions: vert
+sources: 0e55869cf1788fd9dc9a272323e5d3924c539f48
+date: 2026-11-01T14:11:11Z
+course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/41311151557
+presomptions: rouge
+presomptions_echecs:
+  - "FAILED tests/test_oracle.py::test_les_exemples_publies_par_les_caisses_sont_reproduits[sp_f21552_taux_plein_170] - AssertionError: le jumeau Python ne refait pas ce que le portage rend (1 écart(s)) : rendu : attendu 15, lu 1"
+  - "FAILED tests/test_oracle.py::test_les_exemples_publies_par_les_caisses_sont_reproduits[sp_a15703_minimum_contributif_2026] - AssertionError: le jumeau Python ne refait pas ce que le portage rend (1 écart(s)) : rendu : attendu 15, lu 1"
+  - "FAILED tests/test_oracle.py::test_les_exemples_publies_par_les_caisses_sont_reproduits[cnav_2005_30_minimum_majore_monopensionne] - AssertionError: le jumeau Python ne refait pas ce que le portage rend (1 écart(s)) : rendu : attendu 15, lu 1"
+  - "FAILED tests/test_oracle.py::test_les_exemples_publies_par_les_caisses_sont_reproduits[sp_f16871_aspa_deux_allocataires] - AssertionError: le jumeau Python ne refait pas ce que le portage rend (1 écart(s)) : rendu : attendu 15, lu 1"
+  - "FAILED tests/test_oracle.py::test_les_exemples_publies_par_les_caisses_sont_reproduits[sp_f16871_aspa_un_seul_allocataire] - AssertionError: le jumeau Python ne refait pas ce que le portage rend (1 écart(s)) : rendu : attendu 15, lu 1"
+  - "FAILED tests/test_oracle.py::test_les_exemples_publies_par_les_caisses_sont_reproduits[sp_f16871_aspa_un_seul_allocataire_au_maximum] - AssertionError: le jumeau Python ne refait pas ce que le portage rend (1 écart(s)) : rendu : attendu 15, lu 1"
+  - "FAILED tests/test_oracle.py::test_les_exemples_publies_par_les_caisses_sont_reproduits[rsi_2010_013_suspension_d_un_mois] - AssertionError: le jumeau Python ne refait pas ce que le portage rend (1 écart(s)) : rendu : attendu 15, lu 1"
+  - "FAILED tests/test_oracle.py::test_les_exemples_publies_par_les_caisses_sont_reproduits[rsi_2010_013_suspension_bornee_aux_mois_d_activite] - AssertionError: le jumeau Python ne refait pas ce que le portage rend (1 écart(s)) : rendu : attendu 15, lu 1"
+  - "FAILED tests/test_oracle.py::test_les_exemples_publies_par_les_caisses_sont_reproduits[cnav_2026_29_racl_1964] - AssertionError: le jumeau Python ne refait pas ce que le portage rend (1 écart(s)) : rendu : attendu 15, lu 1"
+  - "FAILED tests/test_oracle.py::test_les_exemples_publies_par_les_caisses_sont_reproduits[cnav_2026_29_racl_1965_premier_trimestre] - AssertionError: le jumeau Python ne refait pas ce que le portage rend (1 écart(s)) : rendu : attendu 15, lu 1"
+  - "FAILED tests/test_oracle.py::test_les_exemples_publies_par_les_caisses_sont_reproduits[cnav_2026_29_racl_1965_apres_avril] - AssertionError: le jumeau Python ne refait pas ce que le portage rend (1 écart(s)) : rendu : attendu 15, lu 1"
+  - "FAILED tests/test_oracle.py::test_les_exemples_publies_par_les_caisses_sont_reproduits[cnav_2026_07_duree_1964_avant_septembre] - AssertionError: le jumeau Python ne refait pas ce que le portage rend (1 écart(s)) : rendu : attendu 15, lu 1"
+  - "FAILED tests/test_oracle.py::test_les_exemples_publies_par_les_caisses_sont_reproduits[cnav_2026_07_duree_1965_avant_septembre] - AssertionError: le jumeau Python ne refait pas ce que le portage rend (1 écart(s)) : rendu : attendu 15, lu 1"
+  - "FAILED tests/test_oracle.py::test_les_exemples_publies_par_les_caisses_sont_reproduits[cnav_2018_04_surcote_un_taux] - AssertionError: le jumeau Python ne refait pas ce que le portage rend (1 écart(s)) : rendu : attendu 15, lu 1"
+  - "FAILED tests/test_oracle.py::test_les_exemples_publies_par_les_caisses_sont_reproduits[cnav_2018_04_surcote_deux_taux] - AssertionError: le jumeau Python ne refait pas ce que le portage rend (1 écart(s)) : rendu : attendu 15, lu 1"
+  - "FAILED tests/test_oracle.py::test_les_exemples_publies_par_les_caisses_sont_reproduits[cnav_2018_04_surcote_trois_taux] - AssertionError: le jumeau Python ne refait pas ce que le portage rend (1 écart(s)) : rendu : attendu 15, lu 1"
+  - "FAILED tests/test_oracle.py::test_les_exemples_publies_par_les_caisses_sont_reproduits[cnav_8_89_duree_corrigee_80_trimestres] - AssertionError: le jumeau Python ne refait pas ce que le portage rend (1 écart(s)) : rendu : attendu 15, lu 1"
+  - "FAILED tests/test_oracle.py::test_les_exemples_publies_par_les_caisses_sont_reproduits[sp_f16336_mda_deux_enfants] - AssertionError: le jumeau Python ne refait pas ce que le portage rend (1 écart(s)) : rendu : attendu 15, lu 1"
+  - "FAILED tests/test_oracle.py::test_les_exemples_publies_par_les_caisses_sont_reproduits[cnav_2017_01_mda_trois_enfants] - AssertionError: le jumeau Python ne refait pas ce que le portage rend (1 écart(s)) : rendu : attendu 15, lu 1"
+  - "FAILED tests/test_oracle.py::test_les_exemples_publies_par_les_caisses_sont_reproduits[sp_f37311_bonification_avant_2004] - AssertionError: le jumeau Python ne refait pas ce que le portage rend (1 écart(s)) : rendu : attendu 15, lu 1"
+  - "FAILED tests/test_oracle.py::test_les_exemples_publies_par_les_caisses_sont_reproduits[sp_f37311_bonification_depuis_2004] - AssertionError: le jumeau Python ne refait pas ce que le portage rend (1 écart(s)) : rendu : attendu 15, lu 1"
+  - "FAILED tests/test_oracle.py::test_les_exemples_publies_par_les_caisses_sont_reproduits[sp_f37311_bonification_de_part_et_d_autre_de_2004] - AssertionError: le jumeau Python ne refait pas ce que le portage rend (1 écart(s)) : rendu : attendu 15, lu 1"
+  - "FAILED tests/test_oracle.py::test_les_exemples_publies_par_les_caisses_sont_reproduits[sp_f37311_accouchement_avant_le_recrutement] - AssertionError: le jumeau Python ne refait pas ce que le portage rend (1 écart(s)) : rendu : attendu 15, lu 1"
+  - "FAILED tests/test_oracle.py::test_les_exemples_publies_par_les_caisses_sont_reproduits[cnav_2022_26_majoration_enfants_sur_surcote] - AssertionError: le jumeau Python ne refait pas ce que le portage rend (1 écart(s)) : rendu : attendu 15, lu 1"
+  - "FAILED tests/test_oracle.py::test_les_exemples_publies_par_les_caisses_sont_reproduits[cnav_2022_26_majoration_enfants_au_taux_plein] - AssertionError: le jumeau Python ne refait pas ce que le portage rend (1 écart(s)) : rendu : attendu 15, lu 1"
+  - "FAILED tests/test_oracle.py::test_les_exemples_publies_par_les_caisses_sont_reproduits[cnav_2022_26_majoration_enfants_sur_decote] - AssertionError: le jumeau Python ne refait pas ce que le portage rend (1 écart(s)) : rendu : attendu 15, lu 1"
+  - "FAILED tests/test_oracle.py::test_les_exemples_publies_par_les_caisses_sont_reproduits[cnracl_surcote_enfants_duree_atteinte_dans_l_annee] - AssertionError: le jumeau Python ne refait pas ce que le portage rend (2 écart(s)) : rendu.chronologie.faits.[3].debut : attendu \"1999-01-01\", lu \"1996-01-01\" ; rendu.chronologie.liens.[0].debut : attendu \"1999-01-01\", lu \"1996-01-01\""
+  - "FAILED tests/test_oracle.py::test_les_exemples_publies_par_les_caisses_sont_reproduits[cor_mines_cent_vingt_trimestres_2024] - AssertionError: le jumeau Python ne refait pas ce que le portage rend (1 écart(s)) : rendu : attendu 15, lu 1"
+  - "FAILED tests/test_oracle.py::test_les_exemples_publies_par_les_caisses_sont_reproduits[ircantec_majoration_sept_enfants] - AssertionError: le jumeau Python ne refait pas ce que le portage rend (1 écart(s)) : rendu : attendu 15, lu 1"
+  - "FAILED tests/test_oracle.py::test_les_exemples_publies_par_les_caisses_sont_reproduits[ircantec_points_2024_deux_tranches] - AssertionError: le jumeau Python ne refait pas ce que le portage rend (1 écart(s)) : rendu : attendu 15, lu 1"
