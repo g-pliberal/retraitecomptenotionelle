@@ -437,6 +437,7 @@ const FONCTIONS_DU_DROIT = {
   "ouvrir.age_ouverture_droit": ouvrir.ageOuvertureDroit,
   "ouvrir.duree_requise": ouvrir.dureeRequise,
   "liquider.duree_proratisation": liquider.dureeProratisation,
+  "liquider.nombre_d_annees_retenues": liquider.nombreDAnneesRetenues,
   "liquider.decote_opposable": liquider.decoteOpposable,
   "liquider.salaire_de_reference": liquider.salaireDeReference,
   "liquider.trimestres_de_decote": liquider.trimestresDeDecote,

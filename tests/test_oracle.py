@@ -2267,15 +2267,13 @@ def _mesurer(simulateur: Simulateur, exemple: dict, carriere, resultat, cle: str
         reduit = re.search(r"(\d+) années au plus au salaire annuel moyen", detail)
         if reduit:
             return int(reduit.group(1))
-        periode = simulateur.catalogue["regime_general"].periode(carriere.annee_liquidation)
-        return liquider.nombre_d_annees_retenues(actuel, periode, carriere,
-                                                 carriere.annee_naissance)
+        return _rendu(droit, "liquider.nombre_d_annees_retenues", pont.MOTEUR,
+                      pont.Periode("regime_general", carriere.annee_liquidation), carriere,
+                      carriere.annee_naissance)
     if cle == "pension_base_sur_sam":
-        periode = simulateur.catalogue["regime_general"].periode(
-            carriere.annee_liquidation)
-        sam = liquider.salaire_de_reference(actuel,
-            "regime_general", carriere, periode, carriere.annee_liquidation,
-            True, carriere.annee_naissance)
+        sam = _rendu(droit, "liquider.salaire_de_reference", pont.MOTEUR, "regime_general",
+                     carriere, pont.Periode("regime_general", carriere.annee_liquidation),
+                     carriere.annee_liquidation, True, carriere.annee_naissance)
         base = next(p["montant"] for p in resultat["pensions_par_regime"]
                     if p["regime"] == "regime_general")
         return base / sam
@@ -2285,7 +2283,8 @@ def _mesurer(simulateur: Simulateur, exemple: dict, carriere, resultat, cle: str
         # ``pension_maximale_regime_general``).
         base = next(p["montant"] for p in resultat["pensions_par_regime"]
                     if p["regime"] == "regime_general")
-        return base / simulateur.macro.plafond_securite_sociale(carriere.annee_liquidation)
+        return base / _rendu(droit, "scenario_actuel.macro.plafond_securite_sociale",
+                             pont.MOTEUR, carriere.annee_liquidation)
     if cle == "coefficients_des_regimes":
         # Le coefficient d'anticipation ou de majoration qu'une section
         # applique à sa complémentaire, tel que la formule affichée
@@ -2308,7 +2307,8 @@ def _mesurer(simulateur: Simulateur, exemple: dict, carriere, resultat, cle: str
         # La valeur de service qu'une pension prenant effet au départ de
         # l'exemple reçoit, régime par régime, fusions comprises : celle du
         # jour, non celle du 31 décembre (circulaire Agirc-Arrco 2020-02-DRJ).
-        return {regime: liquider.valeur_du_point(actuel, regime, carriere.date_liquidation)[0]
+        return {regime: _rendu(droit, "liquider.valeur_du_point", pont.MOTEUR, regime,
+                               carriere.date_liquidation)[0]
                 for regime in exemple["attendu"][cle]}
     if cle == "points_de_l_annee":
         # Les points qu'un salaire de l'année acquiert, tels que la fédération
@@ -2661,6 +2661,22 @@ def test_l_ouverture_des_exemples_se_mesure_au_portage_sans_les_jumeaux_python(
             simulateur, monkeypatch, ("age_ouverture", "date_age_legal", "date_effet_au_plus_tot"),
             (ouvrir, "age_ouverture_droit"), (calendrier, "en_mois"),
             (Carriere, "date_de_l_age")):
+        assert lue == attendue, cas
+
+
+def test_la_liquidation_des_exemples_se_mesure_au_portage_sans_les_jumeaux_python(
+        simulateur, monkeypatch):
+    """Les années que retient le salaire annuel moyen, la pension rapportée à
+    lui et au plafond, la valeur de service au jour du départ se mesurent au
+    portage (``liquider``, la période du régime, le plafond) : les jumeaux
+    Python, qu'on empêche ici de calculer ou de lire, n'y entrent pas."""
+    for cas, lue, attendue in _mesures_sans_les_jumeaux(
+            simulateur, monkeypatch,
+            ("annees_du_salaire_annuel_moyen", "pension_base_sur_sam",
+             "pension_base_sur_plafond", "valeurs_de_service_au_jour"),
+            (liquider, "nombre_d_annees_retenues"), (liquider, "salaire_de_reference"),
+            (liquider, "valeur_du_point"), (CatalogueRegimes, "__getitem__"),
+            (SerieAnnuelle, "__call__")):
         assert lue == attendue, cas
 
 #: Les grandeurs qui se comparent à une tolérance près ; les autres, à

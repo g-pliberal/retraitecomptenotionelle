@@ -833,6 +833,7 @@ LECTURES_DU_DROIT = {
     "ouvrir.age_ouverture_droit": float,
     "ouvrir.duree_requise": tuple[int, Fiabilite | None],
     "liquider.duree_proratisation": tuple[int, Fiabilite | None],
+    "liquider.nombre_d_annees_retenues": int,
     "liquider.decote_opposable": tuple[float | None, float, Fiabilite | None],
     "liquider.salaire_de_reference": float,
     "liquider.trimestres_de_decote": float,

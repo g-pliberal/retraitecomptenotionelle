@@ -243,6 +243,7 @@ JUMEAUX_DU_DROIT = {
     "ouvrir.age_ouverture_droit": ouvrir.age_ouverture_droit,
     "ouvrir.duree_requise": ouvrir.duree_requise,
     "liquider.duree_proratisation": liquider.duree_proratisation,
+    "liquider.nombre_d_annees_retenues": liquider.nombre_d_annees_retenues,
     "liquider.decote_opposable": liquider.decote_opposable,
     "liquider.salaire_de_reference": liquider.salaire_de_reference,
     "liquider.trimestres_de_decote": liquider.trimestres_de_decote,
