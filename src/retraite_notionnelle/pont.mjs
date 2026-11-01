@@ -53,6 +53,13 @@
  *   portage (`ageDeDepart`) sous les paramètres de la demande, sa part des
  *   primes projetée comme le COR la projette quand `primes` porte le
  *   traitement relatif de chaque année : l'âge de son départ.
+ * - `carrieres_de_la_grille` : `{cas: [{cle, regle, options, entree, rendre}],
+ *   parametres, variante, primes}` — chaque case de la grille du coût, datée
+ *   comme `ages_de_depart` la date, et bâtie : d'un seul statut, ou de deux
+ *   métiers quand `entree` décrit l'entrée tardive d'un fonctionnaire ; écartée
+ *   sous le motif du Python quand le droit l'écarte. Selon `rendre`, l'année
+ *   et le mois de son départ (`depart`), ou la carrière, en données, et les
+ *   deux que l'âge légal de la proposition en dérive (`carriere`).
  *
  * Il écrit `{resultats, echecs}` : une carrière que le portage refuse en est
  * absente, et son motif est dans `echecs`. Un nombre non fini s'écrit `null`,
@@ -408,6 +415,73 @@ function agesDeDepart({ parametres, variante, primes, cas }) {
 }
 
 /**
+ * La carrière d'un fonctionnaire entré tard dans son régime, sous les
+ * conventions du COR (`CasType._carriere_entree_tardive` de `castypes.py`) :
+ * ses deux métiers, l'un après l'autre, que le Python décrit (`entree`), et ses
+ * primes projetées. Le départ est celui que le pilote a fixé sur la carrière
+ * d'un seul statut : l'entrée tardive ne fait partir personne plus tard.
+ */
+function carriereEntreeTardive(simulateur, entree, age, primes) {
+  const carriere = simulateur.carriereParcours({
+    ...optionsDeCarriere(entree), age_liquidation: age,
+  });
+  return primes === null ? carriere : primesProjetees(carriere, primes);
+}
+
+/**
+ * Ce qui écarte une case de la grille (`carriere_de_la_grille` de
+ * `castypes.py`), sous le motif du Python : une liquidation avant l'origine de
+ * la répartition, un régime de son affiliation qui n'existait pas encore.
+ */
+function verifierLaCase(simulateur, carriere, affiliation) {
+  if (carriere.anneeLiquidation <= simulateur.parametres.annee_debut_repartition) {
+    throw new Error("liquidation antérieure à la répartition");
+  }
+  if (!carriere.lignes.some((ligne) => simulateur.affiliations.regimes(affiliation,
+    ligne.annee).length > 0)) {
+    throw new Error("aucun régime actif sur la période");
+  }
+}
+
+/**
+ * Chaque case de la grille du coût, `{cle, regle, options, entree, rendre}`,
+ * datée par le pilote du portage (`ageDeDepart`) et bâtie comme le Python la
+ * bâtissait (`carriere_de_la_grille` de `castypes.py`) : l'âge de son départ
+ * et, selon `rendre`, l'année et le mois de ce départ (`depart`) — ce que le
+ * coût lit d'une cohorte voisine — ou la carrière, en données, et les deux que
+ * l'âge légal de la proposition en dérive (`Carriere.prolongee`), poursuivie
+ * jusqu'à lui ou attendue sans activité, `null` quand il ne la reporte pas
+ * (`carriere`). Le coût choisit lesquelles simuler (`_propositions` de
+ * `cout.py`).
+ */
+function carrieresDeLaGrille({ parametres, variante, primes, cas }) {
+  const simulateur = simulateurSous(parametres);
+  const ageLegal = simulateur.parametres.age_legal_liberal ?? null;
+  return parCas(cas, ({ regle, options, entree, rendre }) => {
+    const batir = carriereDuCasType(simulateur, options, primes);
+    const age = ageDeDepart(simulateur.scenarioActuel, batir, regle, variante);
+    const carriere = entree === null ? batir(age)
+      : carriereEntreeTardive(simulateur, entree, age, primes);
+    verifierLaCase(simulateur, carriere, options.affiliation);
+    if (rendre === "depart") {
+      return { age, annee: carriere.anneeLiquidation, mois: carriere.moisLiquidation };
+    }
+    if (rendre !== "carriere") {
+      throw new RangeError(`lecture d'une case inconnue : ${rendre}`);
+    }
+    const reportee = ageLegal === null ? carriere : carriere.prolongee(ageLegal, simulateur.macro);
+    const reporte = reportee !== carriere;
+    return {
+      age,
+      carriere: carriereEnDonnees(carriere),
+      reportee: reporte ? carriereEnDonnees(reportee) : null,
+      attente: reporte
+        ? carriereEnDonnees(carriere.prolongee(ageLegal, simulateur.macro, false)) : null,
+    };
+  });
+}
+
+/**
  * Chaque requête d'un témoin de simulations, lue et simulée comme
  * `tests/js/moteur.test.js` la lit et la simule : le résultat entier, et les
  * appels de `liquider` que sa simulation a faits, liquidations d'essai
@@ -713,6 +787,7 @@ function droit({ parametres, carrieres, appels }) {
 const LECTURES = {
   carrieres, saisies, grille_du_cout: grilleDuCout, carrieres_des_saisies: carrieresDesSaisies,
   simulations, scenario_actuel: scenarioActuel, droit, ages_de_depart: agesDeDepart,
+  carrieres_de_la_grille: carrieresDeLaGrille,
 };
 
 /** La réponse à une demande, qui porte une seule des `LECTURES`. */

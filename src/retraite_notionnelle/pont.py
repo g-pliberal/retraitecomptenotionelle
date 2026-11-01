@@ -560,6 +560,34 @@ def ages_de_depart(cas: list[dict], parametres, primes: dict[int, float] | None 
             reponse["echecs"])
 
 
+def carrieres_de_la_grille(cas: list[dict], parametres, primes: dict[int, float] | None = None,
+                           variante: str = "droit", paquet: bytes | None = None,
+                           ) -> tuple[dict[str, dict], dict[str, str]]:
+    """Chaque case de la grille du coût, ``{"cle", "regle", "options",
+    "entree", "rendre"}`` (``CasType.pour_le_portage``), datée et bâtie par le
+    portage sous ``parametres`` (``carrieresDeLaGrille`` de ``pont.mjs``) :
+    sous sa clé, l'âge de son départ (:func:`ages_de_depart`) et, selon
+    ``rendre`` — ``"depart"``, l'année et le mois du départ (``annee``,
+    ``mois``) ; ``"carriere"``, la carrière, relue sous les types du Python
+    (:func:`carriere_des_donnees`), et les deux que l'âge légal de la
+    proposition en dérive, poursuivie jusqu'à lui (``reportee``) ou attendue
+    sans activité (``attente``), ``None`` quand il ne la reporte pas. Puis,
+    sous leur clé, les motifs des cases que le droit écarte
+    (``castypes.carriere_de_la_grille``) ou que le portage refuse."""
+    reponse = _demander({"carrieres_de_la_grille": {
+        "parametres": parametres_en_donnees(parametres), "variante": variante,
+        "primes": primes, "cas": cas}}, paquet)
+    resultats = {}
+    for cle, lu in reponse["resultats"].items():
+        if "carriere" in lu:
+            resultats[cle] = {"age": _flottant(lu["age"]),
+                              **{nom: None if lu[nom] is None else carriere_des_donnees(lu[nom])
+                                 for nom in ("carriere", "reportee", "attente")}}
+        else:
+            resultats[cle] = {"age": _flottant(lu["age"]), "annee": lu["annee"], "mois": lu["mois"]}
+    return resultats, reponse["echecs"]
+
+
 def saisies(cas: list[dict], scenarios, paquet: bytes | None = None,
             ) -> tuple[dict[str, dict], dict[str, str]]:
     """Chaque saisie, ``{"cle", "saisie"}`` aux champs de ``Saisie``, simulée

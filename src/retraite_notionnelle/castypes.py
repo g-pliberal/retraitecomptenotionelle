@@ -14,7 +14,7 @@ interrompue — parce que ce sont eux que la réforme simulée déplace le plus.
 from __future__ import annotations
 
 from collections.abc import Iterable, Mapping
-from dataclasses import dataclass, field, replace
+from dataclasses import asdict, dataclass, field, replace
 
 from typing import TYPE_CHECKING
 
@@ -157,11 +157,19 @@ class CasType:
         """La carrière de ce cas type liquidée à ``age``, et non à l'âge que
         le pilote fixe : celle que les indicateurs à chaque âge de départ
         balaient (``scripts/cycle_de_vie.py --ages``)."""
-        if self.affiliation_avant_entree and simulateur.parametres.conventions_cor:
-            delai = simulateur.macro.delai_entree(self.serie_entree, generation)
-            if delai > 0.0:
-                return self._carriere_entree_tardive(simulateur, generation, age, delai)
+        delai = self._delai_d_entree(simulateur, generation)
+        if delai > 0.0:
+            return self._carriere_entree_tardive(simulateur, generation, age, delai)
         return self._carriere(simulateur, generation, age)
+
+    def _delai_d_entree(self, simulateur: Simulateur, generation: int) -> float:
+        """Les années que ce cas type, né en ``generation``, passe sous
+        :attr:`affiliation_avant_entree` avant d'entrer dans son régime, sous
+        les conventions du COR (:meth:`_carriere_entree_tardive`) ; zéro hors
+        d'elles, ou sans autre statut avant l'entrée."""
+        if not (self.affiliation_avant_entree and simulateur.parametres.conventions_cor):
+            return 0.0
+        return simulateur.macro.delai_entree(self.serie_entree, generation)
 
     def _carriere_entree_tardive(self, simulateur: Simulateur, generation: int,
                                  age_liquidation: float, delai: float) -> Carriere:
@@ -178,26 +186,33 @@ class CasType:
         Le COR fait partir de même ses cas types au taux plein de leur régime
         principal.
         """
-        interruptions = {
-            int(generation + self.age_debut + decalage): motif
-            for decalage, motif in self.interruptions_relatives
-        }
         carriere = simulateur.carriere_parcours(
-            annee_naissance=generation,
-            sexe=self.sexe,
-            metiers=[Metier(self.affiliation_avant_entree, self.age_debut,
-                            self.niveau_salaire),
-                     Metier(self.affiliation, self.age_debut + delai,
-                            self.niveau_salaire)],
-            age_liquidation=age_liquidation,
-            profil_carriere=self.profil_carriere,
-            interruptions=interruptions,
-            nombre_enfants=self.nombre_enfants,
-            part_primes=self.part_primes,
-            identifiant=f"{self.libelle} (génération {generation})",
-            **self._invalidite(),
-        )
+            **self._options_d_entree_tardive(generation, age_liquidation, delai))
         return primes_projetees(carriere, simulateur.macro)
+
+    def _options_d_entree_tardive(self, generation: int, age_liquidation: float,
+                                  delai: float) -> dict:
+        """Les options de la carrière d'un fonctionnaire entré tard dans son
+        régime (:meth:`_carriere_entree_tardive`), celles de
+        ``carriere_parcours`` : ses deux métiers, l'un après l'autre."""
+        return {
+            "annee_naissance": generation,
+            "sexe": self.sexe,
+            "metiers": [Metier(self.affiliation_avant_entree, self.age_debut,
+                               self.niveau_salaire),
+                        Metier(self.affiliation, self.age_debut + delai,
+                               self.niveau_salaire)],
+            "age_liquidation": age_liquidation,
+            "profil_carriere": self.profil_carriere,
+            "interruptions": {
+                int(generation + self.age_debut + decalage): motif
+                for decalage, motif in self.interruptions_relatives
+            },
+            "nombre_enfants": self.nombre_enfants,
+            "part_primes": self.part_primes,
+            "identifiant": f"{self.libelle} (génération {generation})",
+            **self._invalidite(),
+        }
 
     def _invalidite(self) -> dict:
         """Ce que la carrière déclare de l'inaptitude (:attr:`inaptitude`)."""
@@ -233,21 +248,33 @@ class CasType:
             return carriere
         return primes_projetees(carriere, simulateur.macro)
 
-    def pour_le_portage(self, generation: int) -> dict:
+    def pour_le_portage(self, simulateur: Simulateur, generation: int) -> dict:
         """Ce que le portage lit de ce cas type, né en ``generation``, pour
         dater son départ (``ageDeDepart`` de ``moteur/js/pilote.js``,
-        ``pont.ages_de_depart``) : ce que sa règle lit, et les options de sa
-        carrière d'un seul statut (:meth:`options`), sans l'âge, que la
-        recherche fait varier. Le Python garde la définition du cas type ; le
-        portage, le moteur qui le date."""
+        ``pont.ages_de_depart``) et bâtir sa carrière
+        (``pont.carrieres_de_la_grille``) sous les paramètres de
+        ``simulateur`` : ce que sa règle lit ; les options de sa carrière d'un
+        seul statut (:meth:`options`), sans l'âge, que la recherche fait
+        varier ; et, s'il entre tard dans son régime sous les conventions du
+        COR, les options de sa carrière de deux métiers
+        (:meth:`_options_d_entree_tardive`), ``None`` sinon. Le Python garde
+        la définition du cas type et ses conventions ; le portage, le moteur
+        qui le date et le bâtit."""
         options = self.options(generation, 0.0)
         del options["age_liquidation"]
+        entree = None
+        delai = self._delai_d_entree(simulateur, generation)
+        if delai > 0.0:
+            entree = self._options_d_entree_tardive(generation, 0.0, delai)
+            del entree["age_liquidation"]
+            entree["metiers"] = [asdict(metier) for metier in entree["metiers"]]
         return {
             "regle": {"age_liquidation": self.age_liquidation,
                       "regle_liquidation": self.regle_liquidation,
                       "age_debut": self.age_debut,
                       "ecart_liquidation": self.ecart_liquidation},
             "options": options,
+            "entree": entree,
         }
 
 

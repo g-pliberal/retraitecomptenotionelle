@@ -189,7 +189,7 @@ def _ages_au_portage(simulateur, cohortes, variante: str = "droit"):
     from retraite_notionnelle.castypes import primes_projetees_en_donnees
 
     return pont.ages_de_depart(
-        [{"cle": f"{cas.code}|{generation}", **cas.pour_le_portage(generation)}
+        [{"cle": f"{cas.code}|{generation}", **cas.pour_le_portage(simulateur, generation)}
          for cas, generation in cohortes],
         simulateur.parametres, primes_projetees_en_donnees(simulateur), variante)
 
@@ -250,6 +250,73 @@ def test_le_portage_fait_attendre_l_annulation_et_descendre_a_la_carriere_longue
     assert ages == {"salaire_moyen~inactif|1955": 67.0,
                     "salaire_moyen~inactif_a_59_ans~taux_plein|1966": 60.0,
                     "salaire_moyen~inactif_a_59_ans~ouverture|1966": 60.0}
+
+
+#: Des cohortes de la grille du coût où passe ce que le portage bâtit : deux
+#: cases que le droit écarte, chacune sous son motif ; l'entrée tardive et les
+#: primes projetées d'un fonctionnaire, sous les conventions du COR ; le
+#: super-actif, entré dans son corps après des années de privé ; l'inaptitude ;
+#: la règle des services ; la descente ; un départ que l'âge légal de la
+#: proposition reporte, et un autre, à 67 ans, qu'il ne reporte pas.
+CARRIERES_D_ESSAI = (("salaire_moyen", 1879), ("agent_ieg", 1886),
+                     ("fonctionnaire_sedentaire", 1990),
+                     ("fonctionnaire_sedentaire~super_actif", 1970),
+                     ("smic_carriere_complete~inapte", 1965), ("militaire", 1980),
+                     ("artisan", 1911), ("salaire_moyen", 1975), ("profession_liberale", 1980))
+
+
+def test_le_portage_bat_les_carrieres_de_la_grille_comme_le_python():
+    """Le coût fait bâtir au portage la carrière de chaque case de sa grille,
+    partie à l'âge que le portage lui fixe (action 161, étape 6) : sous les
+    conventions du COR, l'entrée tardive d'un fonctionnaire, que le Python
+    décrit en métiers, et ses primes projetées ; les cases que le droit écarte,
+    sous le motif du Python ; et les deux carrières que l'âge légal de la
+    proposition en dérive, poursuivie jusqu'à lui ou attendue sans activité.
+    Chacune revient sous les types du Python, égale à celle qu'il bâtit
+    (``castypes.carriere_de_la_grille``, ``Carriere.prolongee``) ; d'une cohorte
+    voisine, l'année et le mois de son départ seulement."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    from retraite_notionnelle.castypes import primes_projetees_en_donnees
+
+    simulateur = Simulateur(Parametres()).pour_la_projection()
+    macro, age_legal = simulateur.macro, simulateur.parametres.age_legal_liberal
+    cohortes = {f"{code}|{generation}": (next(cas for cas in GRILLE_DU_COUT if cas.code == code),
+                                         generation)
+                for code, generation in CARRIERES_D_ESSAI}
+    lus, refus = pont.carrieres_de_la_grille(
+        [{"cle": f"{cle}|{rendre}", **cas.pour_le_portage(simulateur, generation),
+          "rendre": rendre}
+         for cle, (cas, generation) in cohortes.items() for rendre in ("carriere", "depart")],
+        simulateur.parametres, primes_projetees_en_donnees(simulateur), "droit")
+    assert refus == {f"salaire_moyen|1879|{rendre}": "liquidation antérieure à la répartition"
+                     for rendre in ("carriere", "depart")} | {
+        f"agent_ieg|1886|{rendre}": "aucun régime actif sur la période"
+        for rendre in ("carriere", "depart")}
+    for cle, (cas, generation) in cohortes.items():
+        if f"{cle}|carriere" in refus:
+            with pytest.raises(ValueError, match=refus[f"{cle}|carriere"]):
+                carriere_de_la_grille(simulateur, cas, generation)
+            continue
+        carriere = carriere_de_la_grille(simulateur, cas, generation)
+        bati = lus[f"{cle}|carriere"]
+        assert type(bati["carriere"]) is Carriere
+        assert bati["carriere"] == carriere, cle
+        assert bati["age"] == float(carriere.age_liquidation), cle
+        reportee = carriere.prolongee(age_legal, macro)
+        if reportee is carriere:
+            assert (bati["reportee"], bati["attente"]) == (None, None), cle
+        else:
+            assert bati["reportee"] == reportee, cle
+            assert bati["attente"] == carriere.prolongee(age_legal, macro,
+                                                         attente_travaillee=False), cle
+        assert lus[f"{cle}|depart"] == {"age": bati["age"], "annee": carriere.annee_liquidation,
+                                        "mois": carriere.mois_liquidation}, cle
+    # Ce que les cohortes font traverser : l'entrée tardive, un report et un
+    # départ que l'âge légal ne reporte pas.
+    batis = [lu for cle, lu in lus.items() if cle.endswith("|carriere")]
+    assert any(len({ligne.affiliation for ligne in lu["carriere"].lignes}) > 1 for lu in batis)
+    assert {lu["reportee"] is None for lu in batis} == {True, False}
 
 
 def test_sans_node_le_pont_s_arrete_sans_repli(monkeypatch):
