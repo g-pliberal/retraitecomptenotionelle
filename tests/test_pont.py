@@ -10,10 +10,11 @@ Puis le bilan figé : la même grille, dont il tire les écarts médians, et les
 carrières d'exemple de « Pourquoi changer », simulées comme le site simule une
 saisie ; ``test_cout.py`` et le contrôle de ``test_affirmations.py`` exigent
 de même la table du moteur Python. Puis la grille du coût, sous les
-conventions de projection du COR, dont les carrières se déforment en Python :
-elles passent au portage en données. Ici : le pont rend au bit près ce que le
-moteur Python simule, chaque nombre sous le type que le Python lui donne ; et,
-sans node, il s'arrête, sans repli sur le moteur Python.
+conventions de projection du COR, que le portage date, bâtit et simule : le
+Python ne lui passe que ce que chaque cas type décrit (action 161, étape 6).
+Ici : le pont rend au bit près ce que le moteur Python date, bâtit et simule,
+chaque nombre sous le type que le Python lui donne ; et, sans node, il
+s'arrête, sans repli sur le moteur Python.
 """
 
 from __future__ import annotations
@@ -722,11 +723,11 @@ def _types(valeur):
 
 
 def test_une_carriere_passe_en_donnees_champ_par_champ():
-    """Sous les conventions du COR, la carrière d'un cas type se déforme en
-    Python (``primes_projetees``, l'entrée tardive) ; le portage n'en garde pas
-    de copie : il la lit en données. Tous les champs de la carrière, chaque
-    ligne entière et la chronologie dont elle est la vue, en JSON strict — un
-    champ qui naîtrait sans passer le pont ferait échouer ce test."""
+    """La carrière d'un cas type, déformée sous les conventions du COR
+    (``primes_projetees``, l'entrée tardive), passe au portage en données pour
+    qu'il la simule (``pont.grille_du_cout``) : tous les champs de la carrière,
+    chaque ligne entière et la chronologie dont elle est la vue, en JSON strict
+    — un champ qui naîtrait sans passer le pont ferait échouer ce test."""
     simulateur = Simulateur(Parametres()).pour_la_projection()
     carriere = _carriere_du_cout(simulateur, "fonctionnaire_sedentaire", 1990)
     donnees = pont.carriere_en_donnees(carriere)
@@ -1108,6 +1109,48 @@ def test_le_cout_simule_sa_grille_par_le_portage_sans_repli(memoire_isolee, monk
     monkeypatch.setattr(pont.shutil, "which", lambda nom: None)
     with pytest.raises(pont.PontIndisponible, match="node"):
         cout._pensionnes(Simulateur(Parametres()), GRILLE_D_ESSAI, "droit")
+
+
+def test_le_cout_date_et_bat_sa_grille_par_le_portage_sans_les_jumeaux(memoire_isolee,
+                                                                        monkeypatch):
+    """Le modèle intact, sur les données du dépôt, le coût fait dater et bâtir
+    sa grille au portage, comme il la fait simuler (action 161, étape 6) : le
+    pilote Python, l'ouverture du droit qu'il interroge, les constructeurs de
+    carrières, la projection des primes et le moteur Python, qu'on empêche ici
+    de calculer, n'y entrent pas — ni dans ses cohortes nées toute l'année.
+    Couple pour couple, la grille est celle que le Python date, bâtit et simule
+    sous un modèle modifié."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    from retraite_notionnelle import castypes, cout, memoire, pilote
+    from retraite_notionnelle.droit import ouvrir
+
+    monkeypatch.setattr(cout, "generations", lambda: (1965, 2000))
+    simulateur = Simulateur(Parametres())
+    with memoire.modele_modifie():
+        en_python = cout._pensionnes(simulateur, GRILLE_D_ESSAI, "droit")
+        nees_en_python = cout._nees_toute_l_annee(simulateur, GRILLE_D_ESSAI, en_python[0],
+                                                  "droit")
+
+    def interdit(*_, **__):
+        raise AssertionError("un jumeau Python date, bâtit ou simule la grille du coût")
+
+    for objet, nom in ((pilote, "age_de_depart"), (pilote, "point_fixe"), (pilote, "descendre"),
+                       (ouvrir, "age_ouverture_droit"), (ouvrir, "age_taux_plein_droit"),
+                       (ouvrir, "age_annulation_droit"), (Simulateur, "carriere_simple"),
+                       (Simulateur, "carriere_parcours"), (Simulateur, "simuler"),
+                       (Simulateur, "proposition"), (Carriere, "prolongee"),
+                       (castypes, "primes_projetees")):
+        monkeypatch.setattr(objet, nom, interdit)
+    par_le_portage = cout._pensionnes(simulateur, GRILLE_D_ESSAI, "droit")
+    assert par_le_portage == en_python
+    assert _types([vars(p) for p in par_le_portage[0]]) == _types([vars(p) for p in en_python[0]])
+    assert cout._nees_toute_l_annee(simulateur, GRILLE_D_ESSAI, par_le_portage[0],
+                                    "droit") == nees_en_python
+    # Ce que la grille d'essai fait traverser : un report de l'âge légal, la
+    # bascule entre les cohortes d'une génération.
+    assert any(p.propre.annee_liquidation > p.annee_liquidation for p in par_le_portage[0])
+    assert any(p.autre is not None for p in par_le_portage[0])
 
 
 def test_sous_un_modele_modifie_le_cout_simule_sa_grille_en_python(memoire_isolee, monkeypatch):

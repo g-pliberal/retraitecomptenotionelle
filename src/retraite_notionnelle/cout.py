@@ -147,6 +147,7 @@ from .castypes import (
     carrieres_de_la_grille,
     poids_effectifs,
     poids_egaux,
+    primes_projetees_en_donnees,
 )
 from .donnees.assiette import AssietteActivite
 from .donnees.chargement import Fiabilite, SerieAnnuelle, dans_un_instantane
@@ -2364,7 +2365,7 @@ def _simulations(simulateur: Simulateur, cas: list[dict],
 ATTENTE, SANS_REPORT, REPORTEE = "attente", "sans_report", "reportee"
 
 
-def _propositions(simulateur: Simulateur, carriere, departs: tuple[int, ...]) -> dict:
+def _propositions(parametres, carriere, prolongations: tuple, departs: tuple[int, ...]) -> dict:
     """Les carrières, nommées, sur lesquelles le coût calcule la proposition
     seule pour ce couple, sa grille partie avec ``carriere`` et ses cohortes
     les années de ``departs`` : celle qui attend l'âge légal sans activité,
@@ -2372,22 +2373,20 @@ def _propositions(simulateur: Simulateur, carriere, departs: tuple[int, ...]) ->
     quand la bascule passe entre ses cohortes, celle de l'autre côté
     (:func:`_autre_volet`) — la carrière elle-même, sans report, quand la
     grille part après la bascule, sinon la carrière reportée à l'âge légal.
-    Rien quand l'âge légal ne reporte pas ce départ-là. Le Python les
-    construit, le portage les simule avec la grille."""
-    parametres = simulateur.parametres
-    age_legal = parametres.age_legal_liberal
-    if age_legal is None:
-        return {}
-    macro = simulateur.macro
-    reportee = carriere.prolongee(age_legal, macro)
-    if reportee is carriere:
+    Rien quand l'âge légal ne reporte pas ce départ-là. ``prolongations``
+    sont les deux carrières que l'âge légal dérive de ``carriere``,
+    poursuivie jusqu'à lui ou attendue sans activité, ``(None, None)`` quand
+    il ne la reporte pas (:func:`_grille_batie`) ; le portage les simule avec
+    la grille."""
+    reportee, attente = prolongations
+    if reportee is None:
         return {}
     bascule = parametres.annee_bascule
     franchie = min(departs) < bascule <= max(departs)
     propositions = {}
     if parametres.part_reportes_en_emploi < 1.0 and (
             carriere.annee_liquidation >= bascule or franchie):
-        propositions[ATTENTE] = carriere.prolongee(age_legal, macro, attente_travaillee=False)
+        propositions[ATTENTE] = attente
     if franchie:
         if carriere.annee_liquidation >= bascule:
             propositions[SANS_REPORT] = carriere
@@ -2396,25 +2395,118 @@ def _propositions(simulateur: Simulateur, carriere, departs: tuple[int, ...]) ->
     return propositions
 
 
+def _batie_au_portage(parametres, cas_types: tuple[CasType, ...]) -> bool:
+    """La grille se date-t-elle et se bâtit-elle au portage (action 161,
+    étape 6) ? Quand elle s'y simule (:func:`_par_le_portage`), et que chacun
+    de ses cas types est un :class:`~.castypes.CasType` tel quel : le portage
+    ne refait que ce que ``CasType.pour_le_portage`` décrit. Une sous-classe
+    qui date ou bâtit autrement ses carrières — ``CasTypeLarge``, de
+    ``scripts/grille_large.py`` — se date et se bâtit en Python, qui seul voit
+    ses méthodes ; le portage la simule ensuite comme toute autre."""
+    return _par_le_portage(parametres) and all(type(cas) is CasType for cas in cas_types)
+
+
+def _prolongations(simulateur: Simulateur, carriere) -> tuple:
+    """Les deux carrières que l'âge légal de la proposition dérive de
+    ``carriere``, par le moteur Python : poursuivie jusqu'à lui, et attendue
+    sans activité ; ``(None, None)`` quand il ne la reporte pas. Ce que le
+    portage rend de chaque case (``pont.carrieres_de_la_grille``)."""
+    age_legal = simulateur.parametres.age_legal_liberal
+    if age_legal is None:
+        return None, None
+    reportee = carriere.prolongee(age_legal, simulateur.macro)
+    if reportee is carriere:
+        return None, None
+    return reportee, carriere.prolongee(age_legal, simulateur.macro, attente_travaillee=False)
+
+
+@dans_un_instantane
+def _grille_batie(simulateur: Simulateur, cas_types: tuple[CasType, ...],
+                  liquidation: str) -> tuple[dict, dict, dict, dict]:
+    """La grille du coût bâtie, avant que rien ne se simule : la carrière de
+    chaque case, sous ``(code, génération)``, partie à l'âge que le pilote lui
+    fixe et déformée, sous les conventions du COR, comme le COR projette ses
+    cas types (``castypes.carrieres_de_la_grille``) ; les motifs des cases que
+    le droit écarte ; de chaque case, le départ de chacune de ses cinq
+    cohortes sous le droit de sa génération, ``(année, mois)``, ou ``None``
+    pour celle de la grille et pour une cohorte que la grille ne sait pas
+    simuler (:func:`_carrieres_voisines`) ; et les deux carrières que l'âge
+    légal de la proposition en dérive (:func:`_prolongations`).
+
+    Le portage la date et la bâtit, d'une seule demande
+    (``pont.carrieres_de_la_grille``, action 161, étape 6) : le Python ne lui
+    passe que ce que chaque cas type décrit (``CasType.pour_le_portage``) et
+    la part des primes que les conventions du COR projettent. Le moteur Python
+    ne la bâtit plus que là où le portage ne la refait pas
+    (:func:`_batie_au_portage`)."""
+    if liquidation not in VARIANTES_LIQUIDATION:
+        raise ValueError(
+            f"variante de liquidation inconnue : {liquidation!r} "
+            f"(attendu : {VARIANTES_LIQUIDATION})"
+        )
+    decalages = range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1)
+    if not _batie_au_portage(simulateur.parametres, cas_types):
+        carrieres, ecartees = carrieres_de_la_grille(simulateur, cas_types, generations(),
+                                                     liquidation)
+        cas_de = {cas.code: cas for cas in cas_types}
+        voisines = {
+            (code, generation): tuple(
+                None if voisine is None else (voisine.annee_liquidation, voisine.mois_liquidation)
+                for _decalage, voisine in _carrieres_voisines(simulateur, cas_de[code],
+                                                              generation, liquidation))
+            for code, generation in carrieres
+        }
+        prolongations = {cle: _prolongations(simulateur, carriere)
+                         for cle, carriere in carrieres.items()}
+        return carrieres, ecartees, voisines, prolongations
+
+    def cle(cas: CasType, generation: int, decalage: int) -> str:
+        return f"{cas.code}|{generation}|{decalage}"
+
+    lus, refus = pont.carrieres_de_la_grille(
+        [{"cle": cle(cas, generation, decalage),
+          **cas.pour_le_portage(simulateur, generation + decalage),
+          "rendre": "depart" if decalage else "carriere"}
+         for cas in cas_types for generation in generations() for decalage in decalages],
+        simulateur.parametres, primes_projetees_en_donnees(simulateur), liquidation,
+        pont.paquet_des_donnees())
+    carrieres, ecartees, voisines, prolongations = {}, {}, {}, {}
+    for cas in cas_types:
+        for generation in generations():
+            case = cle(cas, generation, 0)
+            if case in refus:
+                ecartees[(cas.code, generation)] = refus[case]
+                continue
+            lu = lus[case]
+            carrieres[(cas.code, generation)] = lu["carriere"]
+            prolongations[(cas.code, generation)] = (lu["reportee"], lu["attente"])
+            voisines[(cas.code, generation)] = tuple(
+                None if not decalage or cle(cas, generation, decalage) in refus
+                else (lus[cle(cas, generation, decalage)]["annee"],
+                      lus[cle(cas, generation, decalage)]["mois"])
+                for decalage in decalages)
+    return carrieres, ecartees, voisines, prolongations
+
+
 @dans_un_instantane
 def _carrieres_du_cout(simulateur: Simulateur, cas_types: tuple[CasType, ...],
                        liquidation: str) -> tuple[list[dict], dict, dict]:
-    """Ce que le Python construit de la grille, avant que rien ne se simule :
-    chaque case, sa carrière et celles de ses propositions
-    (:func:`_propositions`), sous sa clé et ses ``code`` et ``generation`` ;
-    les années où partent ses cinq cohortes (:func:`_departs`) ; puis les
-    motifs des cases que le droit écarte."""
-    carrieres, ecartees = carrieres_de_la_grille(simulateur, cas_types, generations(),
-                                                 liquidation)
-    cas_de = {cas.code: cas for cas in cas_types}
-    departs = {
-        (code, generation): _departs(simulateur, cas_de[code], generation,
-                                     carriere.annee_liquidation, liquidation)
-        for (code, generation), carriere in carrieres.items()
-    }
+    """Ce que le coût tire de sa grille bâtie (:func:`_grille_batie`), avant
+    que rien ne se simule : chaque case, sa carrière et celles de ses
+    propositions (:func:`_propositions`), sous sa clé et ses ``code`` et
+    ``generation``, et si l'âge légal de la proposition reporte son départ
+    (``reporte``) ; les années où partent ses cinq cohortes (:func:`_departs`) ;
+    puis les motifs des cases que le droit écarte."""
+    carrieres, ecartees, voisines, prolongations = _grille_batie(simulateur, cas_types,
+                                                                 liquidation)
+    departs = {cle: _departs(carriere.annee_liquidation, voisines[cle])
+               for cle, carriere in carrieres.items()}
     cas = [{"cle": f"{code}|{generation}", "code": code, "generation": generation,
             "carriere": carriere,
-            "propositions": _propositions(simulateur, carriere, departs[(code, generation)])}
+            "propositions": _propositions(simulateur.parametres, carriere,
+                                          prolongations[(code, generation)],
+                                          departs[(code, generation)]),
+            "reporte": prolongations[(code, generation)][0] is not None}
            for (code, generation), carriere in carrieres.items()]
     return cas, departs, ecartees
 
@@ -2424,11 +2516,12 @@ def _pensionnes(simulateur: Simulateur, cas_types: tuple[CasType, ...],
                 ) -> tuple[list[Pensionne], dict[str, int]]:
     """Simule la grille et en tire, pour chaque couple, sa pension par système.
 
-    Le Python construit chaque carrière — l'âge où le pilote la fait partir,
-    ce que le droit écarte, ce que les conventions du COR déforment — et celles
-    que la proposition fait partir ailleurs ; le portage les simule, en
-    données (:func:`_simulations`, action 161, étape 5) ; le Python en tire ce
-    que le coût lit."""
+    Le portage date et bâtit chaque carrière — l'âge où le pilote la fait
+    partir, ce que le droit écarte, ce que les conventions du COR déforment —
+    et celles que la proposition fait partir ailleurs (:func:`_grille_batie`,
+    action 161, étape 6), puis les simule (:func:`_simulations`, étape 5) ; le
+    Python décrit les cas types et leurs conventions, et tire des simulations
+    ce que le coût lit."""
     # La page Coût se lit contre le COR : elle suit ses conventions de
     # projection (``Parametres.conventions_cor``), que le simulateur
     # individuel ne suit pas. Et son scénario 1 ne sert pas l'ASPA, que la
@@ -2467,7 +2560,7 @@ def _pensionnes(simulateur: Simulateur, cas_types: tuple[CasType, ...],
                         else "notionnel_retroactif_employeur")
         autre = _autre_volet(simulateur, carriere, propre, macro, annee_euros, bascule,
                              simulee["pensions"][depart_avant],
-                             departs[(code, generation)], propositions)
+                             departs[(code, generation)], propositions, un["reporte"])
         pensionnes.append(Pensionne(
             code=code,
             generation=generation,
@@ -2527,14 +2620,14 @@ def _pensionnes(simulateur: Simulateur, cas_types: tuple[CasType, ...],
     return pensionnes, motifs
 
 
-def _departs(simulateur: Simulateur, cas: CasType, generation: int,
-             annee_liquidation: int, liquidation: str = "droit") -> tuple[int, ...]:
+def _departs(annee_liquidation: int, voisines: tuple) -> tuple[int, ...]:
     """L'année où part, sous le droit en vigueur, chacune des cinq cohortes
-    que la génération ``generation`` de la grille représente, partie elle en
+    que la génération de la grille représente, partie elle en
     ``annee_liquidation`` (:attr:`Pensionne.departs`) : celle que le droit de
     SA génération donne au cas type, comme la grille la donne à la génération
-    qu'elle simule (:func:`~.castypes.carriere_de_la_grille`) ; ``simulateur``
-    est celui de la projection.
+    qu'elle simule (:func:`~.castypes.carriere_de_la_grille`), sous le
+    simulateur de la projection — le départ de chaque cohorte voisine,
+    ``(année, mois)``, que la grille bâtie porte (:func:`_grille_batie`).
 
     LA GRILLE FAISAIT PARTIR LES CINQ À SON ÂGE. Jusqu'au 18 octobre 2026,
     chaque cohorte partait l'année de la génération qui la représente, décalée
@@ -2545,9 +2638,9 @@ def _departs(simulateur: Simulateur, cas: CasType, generation: int,
     tôt, l'étaient trop tard (action 138, étape 3, note « la grille »). La
     pension reste celle de la génération de la grille. Une cohorte que la
     grille ne sait pas simuler garde la date de la grille."""
-    return tuple(annee_liquidation + decalage if carriere is None else carriere.annee_liquidation
-                 for decalage, carriere in _carrieres_voisines(simulateur, cas, generation,
-                                                               liquidation))
+    return tuple(annee_liquidation + decalage if voisine is None else voisine[0]
+                 for decalage, voisine in zip(range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1),
+                                              voisines, strict=True))
 
 
 def _carrieres_voisines(simulateur: Simulateur, cas: CasType, generation: int,
@@ -2578,19 +2671,20 @@ def _nees_toute_l_annee(simulateur: Simulateur, cas_types: tuple[CasType, ...],
     génération de la grille pour une cohorte qu'elle ne sait pas simuler ; et
     ceux où elle atteint l'âge légal de la proposition et 65 ans. Les
     carrières se refont sans rien simuler, sous les conventions de la grille
-    (:func:`_pensionnes`) : un couple ne garde que l'année de chaque départ."""
+    (:func:`_pensionnes`) : un couple ne garde que l'année de chaque départ.
+    La grille se rebâtit comme le coût la bâtit (:func:`_grille_batie`), au
+    portage, sauf là où le Python la bâtit."""
     simulateur = simulateur.pour_la_projection()
-    cas_de = {cas.code: cas for cas in cas_types}
+    carrieres, _ecartees, voisines, _ = _grille_batie(simulateur, cas_types, liquidation)
     age_legal = simulateur.parametres.age_legal_liberal
     nees = []
     for pensionne in pensionnes:
-        cas = cas_de[pensionne.code]
-        carriere = carriere_de_la_grille(simulateur, cas, pensionne.generation, liquidation)
+        cle = (pensionne.code, pensionne.generation)
+        carriere = carrieres[cle]
         nees.append(replace(
             pensionne,
-            mois=tuple((carriere if voisine is None else voisine).mois_liquidation
-                       for _decalage, voisine in _carrieres_voisines(
-                           simulateur, cas, pensionne.generation, liquidation)),
+            mois=tuple(carriere.mois_liquidation if voisine is None else voisine[1]
+                       for voisine in voisines[cle]),
             mois_age_legal=0 if age_legal is None else carriere.date_de_l_age(age_legal).mois,
             mois_65_ans=carriere.date_de_l_age(MinimumVieillesse.AGE_OUVERTURE).mois))
     return nees
@@ -2755,7 +2849,8 @@ def _volet(brut: dict, coefficient: float) -> VoletLiberal:
 
 def _autre_volet(simulateur: Simulateur, carriere, propre: VoletLiberal, macro,
                  annee_euros: int, bascule: int, pension_d_avant: float,
-                 departs: tuple[int, ...], propositions: dict) -> VoletLiberal | None:
+                 departs: tuple[int, ...], propositions: dict,
+                 reporte: bool) -> VoletLiberal | None:
     """La proposition de l'autre côté de la bascule, si une cohorte y tombe.
 
     Une génération de la grille en représente cinq, qui partent chacune
@@ -2776,26 +2871,24 @@ def _autre_volet(simulateur: Simulateur, carriere, propre: VoletLiberal, macro,
     l'année observée qu'à l'arrondi près.
 
     La proposition de l'autre côté est simulée avec la grille, sur la carrière
-    que :func:`_propositions` a nommée pour ce couple.
+    que :func:`_propositions` a nommée pour ce couple. ``reporte`` dit si l'âge
+    légal reporte le départ de la grille (:func:`_grille_batie`).
     """
     if carriere.age_liquidation is None:
         return None
     annee = carriere.annee_liquidation
     if not min(departs) < bascule <= max(departs):
         return None
-    age_legal = simulateur.parametres.age_legal_liberal
-    reportee = (carriere if age_legal is None
-                else carriere.prolongee(age_legal, macro))
     if annee >= bascule:
         # La grille part après : l'autre côté est celui d'avant, sans report.
-        if reportee is carriere:
+        if not reporte:
             sans_report = propre
         else:
             simulee = propositions[SANS_REPORT]
             sans_report = _volet(
                 simulee, macro.coefficient_prix(simulee["annee_liquidation"], annee_euros))
         return _avant_la_bascule(sans_report, pension_d_avant)
-    if reportee is carriere:
+    if not reporte:
         return None
     # La grille part avant : l'autre côté est celui d'après, à l'âge légal.
     simulee = propositions[REPORTEE]

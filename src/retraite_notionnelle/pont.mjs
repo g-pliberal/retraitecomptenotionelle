@@ -261,10 +261,10 @@ function saisies({ cas, scenarios }) {
 
 /**
  * La carrière que `pont.py` a passée en données : ses champs, ses lignes
- * entières, la chronologie dont elle est la vue, telle que le Python l'a
- * complétée. Ce que le Python a fait de la carrière — l'entrée tardive d'un
- * fonctionnaire, la part des primes que les conventions du COR portent — se lit
- * ici tel quel : le portage n'en garde pas de copie.
+ * entières, la chronologie dont elle est la vue, telle que le Python la tient
+ * — celle que le portage a bâtie (`carrieresDeLaGrille`) et que le Python a
+ * relue, ou celle qu'il bâtit encore, pour la grille large, dont les cas types
+ * datent et bâtissent autrement leurs carrières. Elle se lit ici telle quelle.
  */
 function carriereDesDonnees({ lignes, lignes_apres_depart, dates_entree, ...champs }) {
   const ligne = (donnees) => new AnneeCarriere(donnees);

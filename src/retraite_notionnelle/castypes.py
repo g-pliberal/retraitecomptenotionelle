@@ -1007,8 +1007,8 @@ def carrieres_de_la_grille(
     fixe, et déformée, sous les conventions de projection du COR, comme le COR
     projette ses cas types (:func:`primes_projetees`, l'entrée tardive) ; puis
     les motifs des cases que le droit écarte (:func:`carriere_de_la_grille`).
-    La grille du coût les fait simuler au portage, en données
-    (``pont.grille_du_cout``, action 161, étape 5)."""
+    Le coût ne bâtit plus ainsi sa grille que là où le portage ne la bâtit
+    pas (``cout._grille_batie``, action 161, étape 6)."""
     if liquidation not in VARIANTES_LIQUIDATION:
         raise ValueError(
             f"variante de liquidation inconnue : {liquidation!r} "

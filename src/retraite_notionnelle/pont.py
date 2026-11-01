@@ -19,15 +19,19 @@ ce qu'il rend est, au bit près, ce que le moteur Python calcule, et
 ``tests/test_agregats.py``, ``tests/test_cout.py`` et
 ``tests/test_affirmations.py`` l'exigent des deux tables.
 
-La grille du coût passe le pont autrement : sous les conventions de
-projection du COR, la carrière d'un cas type se déforme en Python — l'entrée
-tardive d'un fonctionnaire, la part des primes que le décrochage du
-traitement porte (``castypes.primes_projetees``) —, et le portage, qui n'en
-garde pas de copie, la reçoit en données (:func:`carriere_en_donnees`), sous
-les paramètres du simulateur (:func:`parametres_en_donnees`), sur le paquet
-des données du jour (:func:`paquet_des_donnees`). Ses cas types, le portage
-les date (:func:`ages_de_depart`) : le Python, qui en garde les définitions,
-lui passe ce que leur règle de départ lit et les options de leur carrière.
+La grille du coût passe le pont en deux demandes, sous les paramètres du
+simulateur (:func:`parametres_en_donnees`), sur le paquet des données du jour
+(:func:`paquet_des_donnees`). Le portage la date et la bâtit
+(:func:`carrieres_de_la_grille`, :func:`ages_de_depart`) : le Python, qui
+garde la définition des cas types et les conventions de projection du COR,
+ne lui passe que ce que chacun décrit — sa règle de départ, les options de sa
+carrière, les deux métiers de l'entrée tardive d'un fonctionnaire — et la part
+des primes que le décrochage du traitement porte
+(``castypes.primes_projetees_en_donnees``). Puis le portage la simule
+(:func:`grille_du_cout`), chaque carrière passée en données
+(:func:`carriere_en_donnees`) : celle qu'il a bâtie, ou, pour la grille
+large, dont les cas types datent et bâtissent autrement leurs carrières,
+celle que le Python bâtit.
 
 Dans l'autre sens, la saisie, dont le portage garde le seul exemplaire
 (étape 6, la paire du contexte) : il bâtit la carrière d'une requête du

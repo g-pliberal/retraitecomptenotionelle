@@ -24,11 +24,14 @@ un pilote fixe le reste.
 
 Son jumeau, ``moteur/js/pilote.js``, porte :func:`age_de_depart`,
 :func:`descendre` et :func:`point_fixe` (``ageDeDepart``, ``descendre``,
-``pointFixe``) : le pont fait dater les cas types au portage
-(``pont.ages_de_depart`` ; action 161, étape 6), au bit près de ce Python, qui
-le suit jusqu'à son retrait. Les départs de l'estimation n'ont que
-l'exemplaire du portage depuis l'action 161, étape 6 : leur moitié Python ne
-servait plus qu'à confronter les deux moteurs.
+``pointFixe``) : le coût fait dater et bâtir sa grille au portage
+(``pont.carrieres_de_la_grille``, ``cout._grille_batie`` ; action 161,
+étape 6). Ce Python le suit au bit près jusqu'à son retrait : il date encore
+les cas types de la grille des carrières types, du coût des avantages, de la
+grille large et des études, et ceux du coût sous un modèle modifié ou sur des
+données d'ailleurs. Les départs de l'estimation n'ont que l'exemplaire du
+portage depuis l'action 161, étape 6 : leur moitié Python ne servait plus
+qu'à confronter les deux moteurs.
 """
 
 from __future__ import annotations

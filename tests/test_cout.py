@@ -5040,12 +5040,14 @@ def test_la_grille_date_chaque_cohorte_au_droit_de_sa_generation():
     trimestres (L. 161-17-3) — il part à 63 ans et demi, en 2026, 2027 et
     2028 ; né en 1966 ou en 1967, il lui en faut 172, 43 ans — il part à 64
     ans, en 2030 et en 2031. La grille, qui ne simule que la génération 1965,
-    faisait partir ces deux-là en 2029 et en 2030."""
-    from retraite_notionnelle.cout import _departs
+    faisait partir ces deux-là en 2029 et en 2030. Le portage date chaque
+    cohorte (action 161, étape 6)."""
+    from retraite_notionnelle.cout import _carrieres_du_cout
 
     simulateur = Simulateur(Parametres()).pour_la_projection()
     salarie = next(cas for cas in GRILLE_DU_COUT if cas.code == "salaire_moyen")
-    assert _departs(simulateur, salarie, 1965, 2028) == (2026, 2027, 2028, 2030, 2031)
+    _, departs, _ = _carrieres_du_cout(simulateur, (salarie,), "droit")
+    assert departs[("salaire_moyen", 1965)] == (2026, 2027, 2028, 2030, 2031)
 
 
 def test_nee_toute_l_annee_une_cohorte_ne_compte_que_ce_qui_en_est_parti(population):
