@@ -32,8 +32,8 @@ import sys
 from retraite_notionnelle import calendrier, chronologie, pont
 from retraite_notionnelle.config import Parametres
 from retraite_notionnelle.donnees.regimes import BORNES_ASSIETTE
-from retraite_notionnelle.droit import (departs, invalidite, liquider, ouvrir, releve,
-                                        reversion)
+from retraite_notionnelle.droit import (cumul, departs, invalidite, liquider, ouvrir,
+                                        releve, reversion)
 from retraite_notionnelle.echeancier import Echeancier
 from retraite_notionnelle.simulateur import Comparaison, Simulateur
 from retraite_notionnelle.web.site import module, site
@@ -261,6 +261,15 @@ def _parcourue(simulateur: Simulateur, carriere) -> Echeancier:
     return echeancier
 
 
+def _cumul_des_pensions_pretees(moteur, carriere, liquidee, pretees: dict,
+                                annee_courante: int):
+    """Le cumul de l'activité après le départ, chaque régime servant chaque
+    année la pension prêtée, sans majoration pour enfants, sur le scénario 1
+    de la carrière liquidée : ce que le portage refait."""
+    return _en_dictionnaire(cumul.cumuler(moteur, carriere, moteur.calculer(liquidee),
+                                          lambda annee: (dict(pretees), 0.0), annee_courante))
+
+
 def _plafonds_apres_le_depart(simulateur: Simulateur, carriere):
     """Le plafond de chaque nouvelle pension que l'activité après le départ
     constitue, ``(regime, plafond)`` ; aucune sans activité."""
@@ -280,6 +289,9 @@ JUMEAUX_DU_DROIT = {
         carriere.date_de_l_age(age)),
     "departs.age_legal": departs.age_legal,
     "chronologie.valeur": chronologie.valeur,
+    "cumul.cumuler.pensions_pretees": _cumul_des_pensions_pretees,
+    "echeancier.parcourir.au_depart.cumul": lambda simulateur, carriere: _en_dictionnaire(
+        _parcourue(simulateur, carriere).au_depart.cumul),
     "echeancier.parcourir.reversion": lambda simulateur, carriere: _en_dictionnaire(
         _parcourue(simulateur, carriere).reversion),
     "echeancier.parcourir.au_depart.droits_apres_depart.pensions": _plafonds_apres_le_depart,

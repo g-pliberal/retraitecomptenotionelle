@@ -2542,7 +2542,7 @@ def _mesurer(simulateur: Simulateur, exemple: dict, carriere, resultat, cle: str
         return mesure
     if cle in ("deductions_annuelles_du_cumul", "mois_sans_pension_du_cumul",
                "plafond_mensuel_du_cumul", "cumul_integral_depuis"):
-        resultat_cumul = _cumul_exemple(simulateur, exemple, carriere)
+        resultat_cumul = _cumul_exemple(exemple, carriere, droit)
         if resultat_cumul is None:
             return "aucune activité après le départ"
         if cle == "cumul_integral_depuis":
@@ -2569,13 +2569,12 @@ def _mesurer(simulateur: Simulateur, exemple: dict, carriere, resultat, cle: str
     raise AssertionError(f"grandeur inconnue dans le témoin : {cle}")
 
 
-def _cumul_exemple(simulateur: Simulateur, exemple: dict, carriere):
-    """Le cumul emploi-retraite de l'exemple. Quand il donne la pension et le
-    revenu, non la carrière, le test prête à chaque régime nommé sa pension, et à
-    chaque année son revenu brut ; sinon, l'échéancier le calcule."""
+def _cumul_exemple(exemple: dict, carriere, droit=droit_et_refait):
+    """Le cumul emploi-retraite de l'exemple, au portage, par le pont. Quand il
+    donne la pension et le revenu, non la carrière, le test prête à chaque
+    régime nommé sa pension, et à chaque année son revenu brut ; sinon,
+    l'échéancier le calcule."""
     from dataclasses import replace
-
-    from retraite_notionnelle.droit import cumul
 
     c = exemple["carriere"]
     liquidee = carriere
@@ -2586,16 +2585,12 @@ def _cumul_exemple(simulateur: Simulateur, exemple: dict, carriere):
             for ligne in carriere.lignes_apres_depart))
     pensions = c.get("pensions_annuelles_en_cumul")
     if pensions is None:
-        echeancier = Echeancier(simulateur)
-        echeancier.parcourir(carriere)
-        return echeancier.au_depart.cumul
+        return _rendu(droit, "echeancier.parcourir.au_depart.cumul", pont.SIMULATEUR, carriere)
     pretees = {regime: float(montant) for regime, montant in pensions.items()}
-    # Le résultat Python de la carrière liquidée, que le cumul lit, tant qu'il
-    # ne passe pas le pont (lot B).
-    return cumul.cumuler(simulateur.scenario_actuel, carriere,
-                         simulateur.scenario_actuel.calculer(liquidee),
-                         lambda annee: (dict(pretees), 0.0),
-                         simulateur.parametres.annee_courante)
+    # Le portage refait le scénario 1 de la carrière liquidée, que le cumul
+    # lit, et chaque régime y sert chaque année la pension prêtée.
+    return _rendu(droit, "cumul.cumuler.pensions_pretees", pont.MOTEUR, carriere, liquidee,
+                  pretees, Parametres().annee_courante)
 
 
 
@@ -2780,6 +2775,32 @@ def test_la_reversion_et_l_echeancier_des_exemples_se_mesurent_au_portage_sans_l
         simulateur, monkeypatch, cles, (module_de_la_reversion, "reversion"),
         (Echeancier, "parcourir"))
     assert len(mesures) == len(cles)
+    for cas, lue, attendue in mesures:
+        assert lue == attendue, cas
+
+
+def test_le_cumul_des_exemples_se_mesure_au_portage_sans_les_jumeaux_python(
+        simulateur, monkeypatch):
+    """Le cumul de l'activité après le départ — sous des pensions prêtées, sur
+    le scénario 1 que le portage refait, ou tel que l'échéancier le calcule —,
+    ses déductions de l'année, ses mois sans pension, son plafond et le mois
+    d'où il est intégral se mesurent au portage (``cumul.cumuler``,
+    ``Echeancier.parcourir``) : les jumeaux Python, qu'on empêche ici de
+    calculer, n'y entrent pas."""
+    from retraite_notionnelle.droit import cumul
+
+    choisis = ("sp_f12402_cumul_sous_le_plafond", "sp_f12402_cumul_plafond_depasse",
+               "sp_f13243_cumul_dernier_employeur", "sp_f13243_cumul_plafond_du_smic",
+               "rsi_2010_013_suspension_d_un_mois",
+               "rsi_2010_013_suspension_bornee_aux_mois_d_activite",
+               "cnav_2024_25_cumul_de_l_ex_invalide", "cnav_2012_27_inapte")
+    mesures = _mesures_sans_les_jumeaux(
+        simulateur, monkeypatch,
+        ("deductions_annuelles_du_cumul", "mois_sans_pension_du_cumul",
+         "plafond_mensuel_du_cumul", "cumul_integral_depuis"),
+        (cumul, "cumuler"), (Echeancier, "parcourir"), (ScenarioActuel, "calculer"),
+        choisis=choisis)
+    assert len(mesures) == len(choisis)
     for cas, lue, attendue in mesures:
         assert lue == attendue, cas
 

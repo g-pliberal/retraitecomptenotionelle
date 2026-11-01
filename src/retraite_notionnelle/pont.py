@@ -863,6 +863,16 @@ def reversion_des_donnees(reversion: dict | None):
     return None if reversion is None else _depuis_donnees(Reversion, reversion)
 
 
+def cumul_des_donnees(cumul: dict | None):
+    """Le cumul que le portage a écrit (``Cumul`` de ``droit/cumul.js``, dont
+    les champs portent les noms du Python), sous le dataclass du Python,
+    chacune de ses tranches et ses mois compris ; ``None`` sans activité
+    après le départ. Le module du cumul ne se charge qu'à la lecture."""
+    from .droit.cumul import Cumul
+
+    return None if cumul is None else _depuis_donnees(Cumul, cumul)
+
+
 #: Ce que rend chaque fonction du droit que le pont fait appeler
 #: (``FONCTIONS_DU_DROIT`` de ``pont.mjs``), sous le type que son jumeau
 #: Python lui donne, ou relu par une fonction : JSON n'écrit ni n-uplet, ni
@@ -887,6 +897,13 @@ LECTURES_DU_DROIT = {
     # pas le pont ; aucune pension sans elle.
     "invalidite.retraite_pour_invalidite.pension_du_fonctionnaire_invalide":
         tuple[float, str] | None,
+    # Le cumul de l'activité après le départ : sous les pensions prêtées,
+    # ``{regime: montant}``, chaque année, sans majoration pour enfants, sur le
+    # scénario 1 de la carrière liquidée, que le portage refait (ses
+    # arguments : le moteur, la carrière, la carrière liquidée, les pensions,
+    # l'année courante) ; ou tel que l'échéancier le calcule.
+    "cumul.cumuler.pensions_pretees": cumul_des_donnees,
+    "echeancier.parcourir.au_depart.cumul": cumul_des_donnees,
     "calendrier.en_mois": int,
     "calendrier.origine_des_ages": DateMois,
     "carriere.date_de_l_age": DateMois,

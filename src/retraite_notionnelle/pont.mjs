@@ -70,6 +70,7 @@ import { valeur as valeurPresumee } from "../../moteur/js/chronologie.js";
 import { PARAMETRES_DEFAUT, avec } from "../../moteur/js/config.js";
 import { Contexte } from "../../moteur/js/contexte.js";
 import { Echeancier } from "../../moteur/js/echeancier.js";
+import * as cumul from "../../moteur/js/droit/cumul.js";
 import * as departs from "../../moteur/js/droit/departs.js";
 import * as invalidite from "../../moteur/js/droit/invalidite.js";
 import { appels } from "../../moteur/js/droit/liquidation.js";
@@ -464,6 +465,16 @@ const FONCTIONS_DU_DROIT = {
       return version === null ? null : invalidite.pensionDuFonctionnaireInvalide(
         moteur, carriere, version, pension, traitement, annee);
     },
+  // Le cumul de l'activité après le départ, ses champs sous les noms du
+  // Python (`cumul_des_donnees` de `pont.py`) : sous les pensions prêtées,
+  // `{regime: montant}`, chaque année, sans majoration pour enfants, sur le
+  // scénario 1 de la carrière liquidée, que le portage refait ; ou tel que
+  // l'échéancier le calcule.
+  "cumul.cumuler.pensions_pretees": (moteur, carriere, liquidee, pretees, anneeCourante) => cumul
+    .cumuler(moteur, carriere, moteur.calculer(liquidee), () => [{ ...pretees }, 0.0],
+      anneeCourante),
+  "echeancier.parcourir.au_depart.cumul":
+    (simulateur, carriere) => parcourue(simulateur, carriere).auDepart.cumul,
   "calendrier.en_mois": enMois,
   "calendrier.origine_des_ages":
     ({ annee, mois }, jour) => origineDesAges(new DateMois(annee, mois), jour),
