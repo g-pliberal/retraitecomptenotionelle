@@ -69,6 +69,7 @@ profils à la fois, chacune avec sa convention de traduction écrite :
 
 from __future__ import annotations
 
+import functools
 import json
 import re
 from pathlib import Path
@@ -1984,8 +1985,23 @@ def _quotites(texte: str) -> dict[int, float]:
     return quotites
 
 
-def _carriere_exemple(simulateur: Simulateur, exemple: dict, decalage_mois: int = 0,
-                      sans_enfants: bool = False):
+#: Les âges de début qu'un exemple essaie à la fois, quand il cherche celui
+#: qui rend son nombre de trimestres : une demande au pont par paquet, où
+#: chaque essai se liquide sur la carrière que le portage bâtit de ses options
+#: (``pont.CarriereSimple``), sans qu'elle passe le pont.
+PAQUET_DE_DEBUTS = 8
+
+
+def _rendu(droit, *appel):
+    """Ce que rend un appel du droit (``pont.droit``), que le portage ne doit
+    pas refuser."""
+    lus, refus = droit({"rendu": appel})
+    assert refus == {}, refus
+    return lus["rendu"]
+
+
+def _carriere_exemple(exemple: dict, decalage_mois: int = 0, sans_enfants: bool = False,
+                      droit=droit_et_refait):
     """La carrière que l'exemple décrit, liquidée au mois voulu.
 
     Une seule affiliation, un salaire constant ou un profil, et — quand
@@ -1998,18 +2014,23 @@ def _carriere_exemple(simulateur: Simulateur, exemple: dict, decalage_mois: int 
     l'écart entre les deux parcours doit valoir ce nombre. Un témoin qui
     l'emploie fixe son ``age_debut`` — sans quoi les deux parcours ne
     partiraient pas du même point.
-    """
-    from retraite_notionnelle import chronologie
-    from retraite_notionnelle.calendrier import origine_des_ages
 
+    Le portage, qui fait foi, dit le mois d'où les âges se comptent, bâtit la
+    carrière (``simulateur.carriere_simple``) et la liquide
+    (``scenario_actuel.calculer``), par le pont : par défaut, le jumeau Python
+    refait chaque appel au bit près (``droit_et_refait``). La carrière revient
+    en Python (``pont.carriere_des_donnees``), où des grandeurs la lisent
+    encore ; le résultat est celui du pont (``pont.actuel_des_donnees``).
+    """
     c = exemple["carriere"]
     naissance, jour = _naissance(c["naissance"])
     liquidation = _mois(c["liquidation"]).plus_mois(decalage_mois)
     # L'âge au départ se compte depuis le mois d'où les âges se comptent, que
     # le jour déclaré ou présumé désigne : c'est la date d'effet qui est
     # publiée, et la carrière doit y retomber.
-    origine = origine_des_ages(naissance, jour if jour is not None
-                               else chronologie.valeur("jour_de_naissance"))
+    origine = _rendu(droit, "calendrier.origine_des_ages", naissance,
+                     jour if jour is not None
+                     else _rendu(droit, "chronologie.valeur", "jour_de_naissance"))
     age = (liquidation.rang - origine.rang) / 12.0
     communs = dict(
         annee_naissance=naissance.annee, sexe=c.get("sexe", "H"),
@@ -2097,23 +2118,34 @@ def _carriere_exemple(simulateur: Simulateur, exemple: dict, decalage_mois: int 
                 "taux": c.get("taux_invalidite")},
             "handicap": age_du_mois(c["handicap"]) if "handicap" in c else None,
         }
-    actuel = simulateur.scenario_actuel
     if "age_debut" in c or "debut" in c:
         # Le début de la carrière en France, à un âge ou à un mois : celui
         # d'une carrière qui commence hors de France se date.
         debut = (float(c["age_debut"]) if "age_debut" in c else age_du_mois(c["debut"]))
-        carriere = simulateur.carriere_simple(age_debut=debut, **communs)
-        return carriere, actuel.calculer(carriere)
+        options = dict(communs, age_debut=debut)
+        lus, refus = droit({
+            "carriere": ("simulateur.carriere_simple", pont.SIMULATEUR, options),
+            "resultat": ("scenario_actuel.calculer", pont.MOTEUR, pont.CarriereSimple(options)),
+        })
+        assert refus == {}, refus
+        return pont.carriere_des_donnees(lus["carriere"]), lus["resultat"]
     cible = int(c["trimestres_valides"])
     base = age - cible / 4.0
-    for k in range(-16, 17):
-        debut = round(base + k / 12.0, 6)
-        if debut < 14:
-            continue
-        carriere = simulateur.carriere_simple(age_debut=debut, **communs)
-        resultat = actuel.calculer(carriere)
-        if resultat.trimestres_valides == cible:
-            return carriere, resultat
+    debuts = [debut for debut in (round(base + k / 12.0, 6) for k in range(-16, 17))
+              if debut >= 14]
+    # Les essais dans l'ordre, par paquets : le premier qui rend les trimestres
+    # de l'exemple est la carrière, comme un essai après l'autre.
+    for rang in range(0, len(debuts), PAQUET_DE_DEBUTS):
+        essais = debuts[rang:rang + PAQUET_DE_DEBUTS]
+        liquidees, refus = droit({str(debut): (
+            "scenario_actuel.calculer", pont.MOTEUR,
+            pont.CarriereSimple(dict(communs, age_debut=debut))) for debut in essais})
+        assert refus == {}, refus
+        for debut in essais:
+            if liquidees[str(debut)]["trimestres_valides"] == cible:
+                return pont.carriere_des_donnees(_rendu(
+                    droit, "simulateur.carriere_simple", pont.SIMULATEUR,
+                    dict(communs, age_debut=debut))), liquidees[str(debut)]
     raise AssertionError(f"{exemple['id']} : aucune carrière ne donne {cible} trimestres")
 
 
@@ -2126,7 +2158,7 @@ def _mesurer(simulateur: Simulateur, exemple: dict, carriere, resultat, cle: str
     actuel = simulateur.scenario_actuel
     if cle in ("trimestres_requis", "trimestres_valides", "taux_liquidation",
                "motif_ouverture", "liquidation_ouverte"):
-        return getattr(resultat, cle)
+        return resultat[cle]
     if cle == "age_ouverture":
         return ouvrir.age_ouverture_droit(actuel, carriere)
     if cle == "date_age_legal":
@@ -2158,15 +2190,15 @@ def _mesurer(simulateur: Simulateur, exemple: dict, carriere, resultat, cle: str
         # enfant ; le test le mesure en rejouant la MÊME carrière sans
         # enfant. C'est un écart, pas un total : il ne dépend ni de l'âge
         # d'entrée ni de la durée requise de la génération.
-        _, sans = _carriere_exemple(simulateur, exemple, sans_enfants=True)
-        return resultat.trimestres_valides - sans.trimestres_valides
+        _, sans = _carriere_exemple(exemple, sans_enfants=True)
+        return resultat["trimestres_valides"] - sans["trimestres_valides"]
     if cle == "trimestres_de_surcote_parentale":
         # Ceux que la surcote parentale compte dans l'année qui précède l'âge
         # légal, comme son avantage les dit ; zéro sans elle.
-        parentale = next((a for a in resultat.avantages_appliques
-                          if a.code == "surcote_parentale"), None)
+        parentale = next((a for a in resultat["avantages_appliques"]
+                          if a["code"] == "surcote_parentale"), None)
         return 0 if parentale is None else int(
-            re.search(r"pour (\d+) trimestre", parentale.detail).group(1))
+            re.search(r"pour (\d+) trimestre", parentale["detail"]).group(1))
     if cle == "majoration_enfants_sur_pensions":
         # L'assiette de la majoration pour enfants, mesurée sur ce que le
         # modèle sert : la circulaire dit qu'elle porte sur la retraite
@@ -2180,13 +2212,13 @@ def _mesurer(simulateur: Simulateur, exemple: dict, carriere, resultat, cle: str
         # l'Agirc-Arrco — ce que l'accord ne fait pas (5 % aux points Arrco
         # de 1999 à 2011).
         majoration = next(
-            (a for a in resultat.avantages_appliques
-             if a.code == "majoration_enfants"), None)
+            (a for a in resultat["avantages_appliques"]
+             if a["code"] == "majoration_enfants"), None)
         if majoration is None:
             return "aucune majoration pour enfants servie"
-        base = {p.regime: p.montant for p in resultat.pensions_par_regime
-                if p.type_calcul == "annuites"}
-        part = sum(montant for regime, montant in majoration.par_regime
+        base = {p["regime"]: p["montant"] for p in resultat["pensions_par_regime"]
+                if p["type_calcul"] == "annuites"}
+        part = sum(montant for regime, montant in majoration["par_regime"]
                    if regime in base)
         return part / sum(base.values())
     if cle == "majorations_enfants_des_regimes":
@@ -2194,22 +2226,22 @@ def _mesurer(simulateur: Simulateur, exemple: dict, carriere, resultat, cle: str
         # barème propre d'une complémentaire, que la caisse publie en
         # pourcentage de ses points (l'Ircantec, article 15 de son arrêté).
         majoration = next(
-            (a for a in resultat.avantages_appliques
-             if a.code == "majoration_enfants"), None)
+            (a for a in resultat["avantages_appliques"]
+             if a["code"] == "majoration_enfants"), None)
         if majoration is None:
             return "aucune majoration pour enfants servie"
-        pensions = {p.regime: p.montant for p in resultat.pensions_par_regime}
+        pensions = {p["regime"]: p["montant"] for p in resultat["pensions_par_regime"]}
         return {regime: montant / pensions[regime]
-                for regime, montant in majoration.par_regime if pensions.get(regime)}
+                for regime, montant in majoration["par_regime"] if pensions.get(regime)}
     if cle == "non_ouverte_un_trimestre_plus_tot":
-        _, plus_tot = _carriere_exemple(simulateur, exemple, decalage_mois=-3)
-        return plus_tot.motif_ouverture == "non_ouverte"
+        _, plus_tot = _carriere_exemple(exemple, decalage_mois=-3)
+        return plus_tot["motif_ouverture"] == "non_ouverte"
     if cle in ("trimestres_handicap_requis", "trimestres_valides_handicap_requis"):
         # La durée cotisée — et validée, quand la version l'exige — que le
         # départ anticipé des assurés handicapés demande à cette génération,
         # pour cet âge, à cette date d'effet : ce que le simulateur annonce.
         exigences = invalidite.exigences_du_handicap(actuel, carriere,
-                                                     resultat.trimestres_requis)
+                                                     resultat["trimestres_requis"])
         if exigences is None:
             return "aucune exigence à cette date ni à cet âge"
         return exigences[1] if cle == "trimestres_handicap_requis" else exigences[2]
@@ -2217,8 +2249,8 @@ def _mesurer(simulateur: Simulateur, exemple: dict, carriere, resultat, cle: str
         # La majoration du départ des assurés handicapés au régime général,
         # telle que la formule affichée l'écrit : son coefficient, et si la
         # pension entière l'écrête.
-        detail = next(p.detail for p in resultat.pensions_par_regime
-                      if p.regime == "regime_general")
+        detail = next(p["detail"] for p in resultat["pensions_par_regime"]
+                      if p["regime"] == "regime_general")
         lu = re.search(r"majoration des assurés handicapés ([0-9.]+)( écrêtée)?", detail)
         if cle == "coefficient_majoration_handicap":
             return float(lu.group(1)) if lu else "aucune majoration servie"
@@ -2227,8 +2259,8 @@ def _mesurer(simulateur: Simulateur, exemple: dict, carriere, resultat, cle: str
         # Le nombre des meilleures années que le salaire annuel moyen du
         # régime général retient, celui de la pension proratisée compris :
         # celui que son détail écrit quand une répartition l'a réduit.
-        detail = next(p.detail for p in resultat.pensions_par_regime
-                      if p.regime == "regime_general")
+        detail = next(p["detail"] for p in resultat["pensions_par_regime"]
+                      if p["regime"] == "regime_general")
         reduit = re.search(r"(\d+) années au plus au salaire annuel moyen", detail)
         if reduit:
             return int(reduit.group(1))
@@ -2241,34 +2273,34 @@ def _mesurer(simulateur: Simulateur, exemple: dict, carriere, resultat, cle: str
         sam = liquider.salaire_de_reference(actuel,
             "regime_general", carriere, periode, carriere.annee_liquidation,
             True, carriere.annee_naissance)
-        base = next(p.montant for p in resultat.pensions_par_regime
-                    if p.regime == "regime_general")
+        base = next(p["montant"] for p in resultat["pensions_par_regime"]
+                    if p["regime"] == "regime_general")
         return base / sam
     if cle == "pension_base_sur_plafond":
         # La pension du régime général rapportée au plafond de l'année : celle
         # que le maximum ramène, à sa part du plafond (fiche
         # ``pension_maximale_regime_general``).
-        base = next(p.montant for p in resultat.pensions_par_regime
-                    if p.regime == "regime_general")
+        base = next(p["montant"] for p in resultat["pensions_par_regime"]
+                    if p["regime"] == "regime_general")
         return base / simulateur.macro.plafond_securite_sociale(carriere.annee_liquidation)
     if cle == "coefficients_des_regimes":
         # Le coefficient d'anticipation ou de majoration qu'une section
         # applique à sa complémentaire, tel que la formule affichée
         # l'écrit ; aucun coefficient écrit vaut 1.
         coefficients = {}
-        for p in resultat.pensions_par_regime:
+        for p in resultat["pensions_par_regime"]:
             lu = re.search(r"coefficient (?:d'anticipation|de majoration) ([0-9.]+)",
-                           p.detail)
-            coefficients[p.regime] = float(lu.group(1)) if lu else 1.0
+                           p["detail"])
+            coefficients[p["regime"]] = float(lu.group(1)) if lu else 1.0
         return coefficients
     if cle == "pension_regime_general_mensuelle":
-        base = next(p.montant for p in resultat.pensions_par_regime
-                    if p.regime == "regime_general")
+        base = next(p["montant"] for p in resultat["pensions_par_regime"]
+                    if p["regime"] == "regime_general")
         return base / 12
     if cle == "pensions_annuelles_des_regimes":
         # La pension annuelle brute d'un régime nommé : ce que publie un
         # régime dont la pension ne tient ni à un taux ni à un salaire.
-        return {p.regime: p.montant for p in resultat.pensions_par_regime}
+        return {p["regime"]: p["montant"] for p in resultat["pensions_par_regime"]}
     if cle == "valeurs_de_service_au_jour":
         # La valeur de service qu'une pension prenant effet au départ de
         # l'exemple reçoit, régime par régime, fusions comprises : celle du
@@ -2336,7 +2368,7 @@ def _mesurer(simulateur: Simulateur, exemple: dict, carriere, resultat, cle: str
         # Les départs que l'échéancier inscrit quand les régimes ne liquident
         # pas tous au départ déclaré, chacun « AAAA-MM-JJ motif » ; aucun
         # pour un départ unique.
-        return [f"{d.date_effet} {d.motif}" for d in resultat.departs]
+        return [f"{d['date_effet']} {d['motif']}" for d in resultat["departs"]]
     if cle == "dates_d_effet_de_la_reversion":
         # La réversion telle que l'échéancier la liquide au décès de l'assuré :
         # la date d'effet de chaque régime du défunt.
@@ -2424,7 +2456,10 @@ def _mesurer(simulateur: Simulateur, exemple: dict, carriere, resultat, cle: str
         # rien ne l'a encore revalorisée.
         from retraite_notionnelle.revalorisation import faire_vivre
 
-        majorations = faire_vivre(simulateur, carriere, resultat, 2023).majorations
+        # Le résultat Python de la même carrière, que « faire vivre » lit,
+        # tant qu'il ne passe pas le pont (lot B).
+        majorations = faire_vivre(simulateur, carriere, actuel.calculer(carriere),
+                                  2023).majorations
         if not majorations:
             return "aucune majoration exceptionnelle"
         return sum(m.servie for m in majorations)
@@ -2494,7 +2529,7 @@ def _mesurer(simulateur: Simulateur, exemple: dict, carriere, resultat, cle: str
         return mesure
     if cle in ("deductions_annuelles_du_cumul", "mois_sans_pension_du_cumul",
                "plafond_mensuel_du_cumul", "cumul_integral_depuis"):
-        resultat_cumul = _cumul_exemple(simulateur, exemple, carriere, resultat)
+        resultat_cumul = _cumul_exemple(simulateur, exemple, carriere)
         if resultat_cumul is None:
             return "aucune activité après le départ"
         if cle == "cumul_integral_depuis":
@@ -2521,7 +2556,7 @@ def _mesurer(simulateur: Simulateur, exemple: dict, carriere, resultat, cle: str
     raise AssertionError(f"grandeur inconnue dans le témoin : {cle}")
 
 
-def _cumul_exemple(simulateur: Simulateur, exemple: dict, carriere, resultat):
+def _cumul_exemple(simulateur: Simulateur, exemple: dict, carriere):
     """Le cumul emploi-retraite de l'exemple. Quand il donne la pension et le
     revenu, non la carrière, le test prête à chaque régime nommé sa pension, et à
     chaque année son revenu brut ; sinon, l'échéancier le calcule."""
@@ -2530,6 +2565,7 @@ def _cumul_exemple(simulateur: Simulateur, exemple: dict, carriere, resultat):
     from retraite_notionnelle.droit import cumul
 
     c = exemple["carriere"]
+    liquidee = carriere
     revenus = {int(a): float(m) for a, m in (c.get("revenus_apres_depart") or {}).items()}
     if revenus:
         carriere = replace(carriere, lignes_apres_depart=tuple(
@@ -2541,10 +2577,56 @@ def _cumul_exemple(simulateur: Simulateur, exemple: dict, carriere, resultat):
         echeancier.parcourir(carriere)
         return echeancier.au_depart.cumul
     pretees = {regime: float(montant) for regime, montant in pensions.items()}
-    return cumul.cumuler(simulateur.scenario_actuel, carriere, resultat,
+    # Le résultat Python de la carrière liquidée, que le cumul lit, tant qu'il
+    # ne passe pas le pont (lot B).
+    return cumul.cumuler(simulateur.scenario_actuel, carriere,
+                         simulateur.scenario_actuel.calculer(liquidee),
                          lambda annee: (dict(pretees), 0.0),
                          simulateur.parametres.annee_courante)
 
+
+
+def _exemples_de_chaque_forme() -> list[dict]:
+    """Un exemple de chaque forme de carrière que :func:`_carriere_exemple`
+    bâtit : un âge de début, un début daté, un nombre de trimestres à
+    retrouver, un conjoint et un décès, un emploi après le départ, une
+    carrière hors de France, une invalidité, du temps partiel, des
+    interruptions, des enfants."""
+    formes = (
+        lambda c: "age_debut" in c,
+        lambda c: "debut" in c,
+        lambda c: "age_debut" not in c and "debut" not in c,
+        lambda c: "conjoint" in c,
+        lambda c: "emploi_retraite" in c,
+        lambda c: "etranger" in c,
+        lambda c: any(cle in c for cle in ("inaptitude", "pension_d_invalidite",
+                                           "radiation_invalidite", "handicap")),
+        lambda c: bool(c.get("temps_partiel")),
+        lambda c: bool(c.get("interruptions")),
+        lambda c: bool(c.get("nombre_enfants")),
+    )
+    exemples = _charger_exemples()
+    return [next(e for e in exemples if forme(e["carriere"])) for forme in formes]
+
+
+def test_les_carrieres_des_exemples_se_batissent_au_portage_sans_les_jumeaux_python(
+        monkeypatch):
+    """La carrière de chaque exemple, de chaque forme, se bâtit au portage
+    (``simulateur.carriere_simple``), depuis le mois d'où ses âges se comptent,
+    et s'y liquide (``scenario_actuel.calculer``) : les jumeaux Python, qu'on
+    empêche ici de calculer, n'y entrent pas."""
+    from retraite_notionnelle import calendrier, chronologie
+
+    exemples = _exemples_de_chaque_forme()
+    attendus = {exemple["id"]: _carriere_exemple(exemple) for exemple in exemples}
+    _sans_les_jumeaux(monkeypatch, (Simulateur, "carriere_simple"),
+                      (ScenarioActuel, "calculer"), (calendrier, "origine_des_ages"),
+                      (chronologie, "valeur"))
+    for exemple in exemples:
+        carriere, resultat = _carriere_exemple(exemple, droit=pont.droit)
+        attendue, attendu = attendus[exemple["id"]]
+        assert pont.carriere_en_donnees(carriere) == pont.carriere_en_donnees(attendue)
+        assert resultat == attendu, exemple["id"]
 
 #: Les grandeurs qui se comparent à une tolérance près ; les autres, à
 #: l'égalité. ``age_ouverture`` prend la tolérance relative de pytest.
@@ -2678,7 +2760,7 @@ def _confronter(simulateur: Simulateur, exemple: dict) -> list[tuple]:
     l'écart est corrigé et sa déclaration se retire ; si elle rend autre
     chose, le résultat a changé, et c'est le diff du témoin qui l'accepte.
     """
-    carriere, resultat = _carriere_exemple(simulateur, exemple)
+    carriere, resultat = _carriere_exemple(exemple)
     declares = (exemple.get("ecart_connu") or {}).get("modele") or {}
     problemes = []
     for cle, valeur in exemple["attendu"].items():

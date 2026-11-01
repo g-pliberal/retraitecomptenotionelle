@@ -76,6 +76,7 @@ import types
 import typing
 from pathlib import Path
 
+from .calendrier import DateMois
 from .config import RACINE_PROJET
 from .donnees.chargement import Fiabilite
 
@@ -375,7 +376,6 @@ def carriere_des_donnees(donnees: dict):
     """La carrière que le portage a bâtie, sous les types du Python : le chemin
     inverse de :func:`carriere_en_donnees`. Chacun de ses champs, chacune de
     ses lignes, et la chronologie dont elle est la vue, telle quelle."""
-    from .calendrier import DateMois
     from .carriere import AnneeCarriere, Carriere
 
     champs = {champ.name for champ in dataclasses.fields(Carriere)}
@@ -671,26 +671,32 @@ def _entier(valeur, nom: str) -> int:
 
 def actuel_des_donnees(actuel: dict) -> dict:
     """Le résultat du scénario 1 que le portage a écrit (``actuelEnDonnees`` de
-    ``pont.mjs``), sous les types que le Python lui donne : les trimestres en
-    entier, qui doit en être un ; les montants, les parts et le taux en
-    flottants, que node écrit « 2 » pour 2.0 ; un texte et un booléen tels
-    qu'ils sont."""
+    ``pont.mjs``), sous les types que le Python lui donne : les trimestres,
+    validés et requis, en entiers, qui doivent en être ; les montants, les
+    parts et le taux en flottants, que node écrit « 2 » pour 2.0 ; un texte et
+    un booléen tels qu'ils sont — le type de calcul et le détail de chaque
+    pension, le détail de chaque avantage, la date d'effet et le motif de
+    chaque départ inscrit."""
     return {
         "pension_annuelle": _flottant(actuel["pension_annuelle"]),
         "pension_hors_repartition": _flottant(actuel["pension_hors_repartition"]),
         "pensions_par_regime": [
             {"regime": pension["regime"], "montant": _flottant(pension["montant"]),
-             "detail": pension["detail"]}
+             "type_calcul": pension["type_calcul"], "detail": pension["detail"]}
             for pension in actuel["pensions_par_regime"]],
         "avantages_appliques": [
             {"code": avantage["code"], "montant": _flottant(avantage["montant"]),
+             "detail": avantage["detail"],
              "par_regime": [(regime, _flottant(part))
                             for regime, part in avantage["par_regime"]]}
             for avantage in actuel["avantages_appliques"]],
         "trimestres_valides": _entier(actuel["trimestres_valides"], "trimestres_valides"),
+        "trimestres_requis": _entier(actuel["trimestres_requis"], "trimestres_requis"),
         "taux_liquidation": _flottant(actuel["taux_liquidation"]),
         "liquidation_ouverte": actuel["liquidation_ouverte"],
         "motif_ouverture": actuel["motif_ouverture"],
+        "departs": [{"date_effet": depart["date_effet"], "motif": depart["motif"]}
+                    for depart in actuel["departs"]],
     }
 
 
@@ -761,6 +767,29 @@ class Moteur:
 MOTEUR = Moteur()
 
 
+class _Simulateur:
+    """Le simulateur, en argument d'un appel du droit (:func:`droit`)."""
+
+    def __repr__(self) -> str:
+        return "pont.SIMULATEUR"
+
+
+#: Le simulateur en argument d'un appel du droit — celui qui bâtit une
+#: carrière (``simulateur.carriere_simple``) : le portage y met le sien, sous
+#: les paramètres de la demande.
+SIMULATEUR = _Simulateur()
+
+
+@dataclasses.dataclass(frozen=True)
+class CarriereSimple:
+    """La carrière que ``simulateur.carriere_simple`` bâtit de ces options, en
+    argument d'un appel du droit (:func:`droit`) : le portage la bâtit
+    lui-même, sans qu'elle passe le pont, et le jumeau Python de même. Une
+    recherche qui essaie des carrières n'en fait passer que les résultats."""
+
+    options: dict
+
+
 @dataclasses.dataclass(frozen=True)
 class Periode:
     """La période d'un régime à une année, ``catalogue[code].periode(annee)``,
@@ -769,6 +798,15 @@ class Periode:
 
     code: str
     annee: int
+
+
+def carriere_relue(donnees: dict) -> dict:
+    """La carrière qu'un moteur a bâtie, en données (``carriereEnDonnees`` de
+    ``pont.mjs``, :func:`carriere_en_donnees`), relue sous les types du Python
+    (:func:`carriere_des_donnees`) puis réécrite en données : ce que les deux
+    moteurs en ont fait se compare champ par champ, et
+    :func:`carriere_des_donnees` en refait la carrière."""
+    return carriere_en_donnees(carriere_des_donnees(donnees))
 
 
 def periodes_des_donnees(periodes: list[dict]) -> list[dict]:
@@ -798,6 +836,8 @@ LECTURES_DU_DROIT = {
     "liquider.salaire_de_reference": float,
     "liquider.trimestres_de_decote": float,
     "liquider.valeur_du_point": tuple[float, Fiabilite] | None,
+    "calendrier.origine_des_ages": DateMois,
+    "chronologie.valeur": int,
     "regimes.BORNES_ASSIETTE": dict[str, tuple[float, float | None]],
     "scenario_actuel.ages_annulation_decote.age": tuple[float, Fiabilite] | None,
     "scenario_actuel.calculer": actuel_des_donnees,
@@ -806,6 +846,7 @@ LECTURES_DU_DROIT = {
     "scenario_actuel.minimum_garanti.montant": tuple[float, Fiabilite] | None,
     "scenario_actuel.valeurs_point.achat": tuple[float, float, Fiabilite] | None,
     "scenario_actuel.valeurs_point.service": tuple[float, Fiabilite] | None,
+    "simulateur.carriere_simple": carriere_relue,
 }
 
 
@@ -818,6 +859,10 @@ def _argument_du_droit(argument, carrieres: list) -> dict:
 
     if isinstance(argument, Moteur):
         return {"moteur": "scenario_actuel", "prets": [list(pret) for pret in argument.prets]}
+    if argument is SIMULATEUR:
+        return {"simulateur": "simulateur"}
+    if isinstance(argument, CarriereSimple):
+        return {"carriere_simple": _en_donnees(argument.options)}
     if isinstance(argument, Periode):
         return {"periode": [argument.code, argument.annee]}
     if isinstance(argument, Carriere):

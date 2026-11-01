@@ -22,13 +22,14 @@ Ce module n'est pas un fichier de tests, et pytest ne le collecte pas.
 from __future__ import annotations
 
 import contextlib
+import dataclasses
 import functools
 import json
 import math
 import platform
 import sys
 
-from retraite_notionnelle import pont
+from retraite_notionnelle import calendrier, chronologie, pont
 from retraite_notionnelle.config import Parametres
 from retraite_notionnelle.donnees.regimes import BORNES_ASSIETTE
 from retraite_notionnelle.droit import liquider, ouvrir
@@ -52,7 +53,15 @@ def ecarts_d_ecriture(relu, attendu, chemin: tuple = (), tolerance: float = 0.0)
     longueur, un nombre, un texte, un type — « 0 » pour « 0.0 » en est un. Avec
     une ``tolerance``, deux flottants égaux à elle près, en écart relatif,
     s'écrivent de même. Une suite se compare élément par élément, liste ou
-    n-uplet, comme JSON les écrit."""
+    n-uplet, comme JSON les écrit ; un dataclass, de même type, champ par
+    champ."""
+    if any(dataclasses.is_dataclass(valeur) and not isinstance(valeur, type)
+           for valeur in (relu, attendu)):
+        if type(relu) is not type(attendu):
+            return [f"{'.'.join(chemin)} : attendu un {type(attendu).__name__}, "
+                    f"lu un {type(relu).__name__}"]
+        relu, attendu = ({champ.name: getattr(valeur, champ.name)
+                          for champ in dataclasses.fields(valeur)} for valeur in (relu, attendu))
     if isinstance(attendu, dict) and isinstance(relu, dict) and sorted(relu) == sorted(attendu):
         return [ecart for cle in attendu
                 for ecart in ecarts_d_ecriture(relu[cle], attendu[cle], (*chemin, cle),
@@ -78,16 +87,20 @@ def actuel_en_donnees(actuel) -> dict:
         "pension_annuelle": actuel.pension_annuelle,
         "pension_hors_repartition": actuel.pension_hors_repartition,
         "pensions_par_regime": [
-            {"regime": pension.regime, "montant": pension.montant, "detail": pension.detail}
+            {"regime": pension.regime, "montant": pension.montant,
+             "type_calcul": pension.type_calcul, "detail": pension.detail}
             for pension in actuel.pensions_par_regime],
         "avantages_appliques": [
-            {"code": avantage.code, "montant": avantage.montant,
+            {"code": avantage.code, "montant": avantage.montant, "detail": avantage.detail,
              "par_regime": [[regime, part] for regime, part in avantage.par_regime]}
             for avantage in actuel.avantages_appliques],
         "trimestres_valides": actuel.trimestres_valides,
+        "trimestres_requis": actuel.trimestres_requis,
         "taux_liquidation": actuel.taux_liquidation,
         "liquidation_ouverte": actuel.liquidation_ouverte,
         "motif_ouverture": actuel.motif_ouverture,
+        "departs": [{"date_effet": depart.date_effet, "motif": depart.motif}
+                    for depart in actuel.departs],
     }
 
 
@@ -221,6 +234,9 @@ def servi_et_refait(cas: list[dict], paquet: bytes | None = None,
 #: sous les mêmes arguments, que :func:`droit_et_refait` lui fait refaire tant
 #: qu'il reste (action 161) : une fonction de plus au pont y déclare le sien.
 JUMEAUX_DU_DROIT = {
+    "calendrier.origine_des_ages": lambda naissance, jour: dataclasses.asdict(
+        calendrier.origine_des_ages(naissance, jour)),
+    "chronologie.valeur": chronologie.valeur,
     "ouvrir.duree_requise": ouvrir.duree_requise,
     "liquider.duree_proratisation": liquider.duree_proratisation,
     "liquider.decote_opposable": liquider.decote_opposable,
@@ -245,6 +261,8 @@ JUMEAUX_DU_DROIT = {
         lambda moteur, *valeurs: moteur.valeurs_point.achat(*valeurs),
     "scenario_actuel.valeurs_point.service":
         lambda moteur, *valeurs: moteur.valeurs_point.service(*valeurs),
+    "simulateur.carriere_simple": lambda simulateur, options: pont.carriere_en_donnees(
+        simulateur.carriere_simple(**options)),
 }
 
 #: Le pont du droit tel quel, que :func:`droit_et_refait` appelle quand une
@@ -266,6 +284,10 @@ def _argument_du_jumeau(simulateur: Simulateur, argument):
     quelle."""
     if isinstance(argument, pont.Moteur):
         return simulateur.scenario_actuel
+    if argument is pont.SIMULATEUR:
+        return simulateur
+    if isinstance(argument, pont.CarriereSimple):
+        return simulateur.carriere_simple(**argument.options)
     if isinstance(argument, pont.Periode):
         return simulateur.catalogue[argument.code].periode(argument.annee)
     return argument

@@ -64,8 +64,9 @@ import { dirname, join } from "node:path";
 import { createInterface } from "node:readline";
 import { fileURLToPath } from "node:url";
 
-import { DateMois } from "../../moteur/js/calendrier.js";
+import { DateMois, origineDesAges } from "../../moteur/js/calendrier.js";
 import { AnneeCarriere, Carriere } from "../../moteur/js/carriere.js";
+import { valeur as valeurPresumee } from "../../moteur/js/chronologie.js";
 import { PARAMETRES_DEFAUT, avec } from "../../moteur/js/config.js";
 import { Contexte } from "../../moteur/js/contexte.js";
 import { appels } from "../../moteur/js/droit/liquidation.js";
@@ -336,23 +337,27 @@ function simulations({ cas }) {
  * Le résultat du scénario 1 — celui d'une comparaison, ou celui que rend
  * `ScenarioActuel.calculer` — tel que les confrontations le lisent : la
  * pension, et à part ce qui est hors de la répartition ; chaque pension de
- * régime, son montant et son détail ; chaque avantage appliqué, son montant et
- * la part de chaque régime ; la durée validée et le taux ; l'ouverture et son
- * motif.
+ * régime, son montant, son type de calcul et son détail ; chaque avantage
+ * appliqué, son montant, son détail et la part de chaque régime ; la durée
+ * validée et la durée requise, le taux ; l'ouverture et son motif ; chaque
+ * départ que l'échéancier inscrit, sa date d'effet et son motif.
  */
 function actuelEnDonnees(actuel) {
   return {
     pension_annuelle: actuel.pension_annuelle,
     pension_hors_repartition: actuel.pension_hors_repartition,
     pensions_par_regime: actuel.pensions_par_regime
-      .map(({ regime, montant, detail }) => ({ regime, montant, detail })),
-    avantages_appliques: actuel.avantages_appliques.map(({ code, montant, par_regime }) => ({
-      code, montant, par_regime: (par_regime ?? []).map(([regime, part]) => [regime, part]),
+      .map(({ regime, montant, type_calcul, detail }) => ({ regime, montant, type_calcul, detail })),
+    avantages_appliques: actuel.avantages_appliques.map(({ code, montant, detail, par_regime }) => ({
+      code, montant, detail,
+      par_regime: (par_regime ?? []).map(([regime, part]) => [regime, part]),
     })),
     trimestres_valides: actuel.trimestres_valides,
+    trimestres_requis: actuel.trimestres_requis,
     taux_liquidation: actuel.taux_liquidation,
     liquidation_ouverte: actuel.liquidation_ouverte,
     motif_ouverture: actuel.motif_ouverture,
+    departs: actuel.departs.map(({ date_effet, motif }) => ({ date_effet, motif })),
   };
 }
 
@@ -400,6 +405,23 @@ function scenarioActuel({ cas }) {
 }
 
 /**
+ * Les options d'une carrière que le Python a écrites (`carriere_simple`), sous
+ * les types du portage : une table par année — les interruptions, le temps
+ * partiel, les dispenses — en `Map`, ses années en nombres, comme
+ * `carrieres` les lit.
+ */
+function optionsDeCarriere(options) {
+  const parAnnee = (table) => (table === null || table === undefined ? table
+    : new Map(Object.entries(table).map(([annee, valeur]) => [Number(annee), valeur])));
+  return {
+    ...options,
+    interruptions: parAnnee(options.interruptions),
+    temps_partiel: parAnnee(options.temps_partiel),
+    dispenses: parAnnee(options.dispenses),
+  };
+}
+
+/**
  * Les fonctions du droit que le pont fait appeler (`droit`), sous le nom de
  * leur jumeau Python (`module.fonction`) : les exemples d'OpenFisca et des
  * caisses (`tests/test_oracle.py`) éprouvent le droit fonction par fonction.
@@ -407,6 +429,9 @@ function scenarioActuel({ cas }) {
  * `LECTURES_DU_DROIT` de `pont.py`, sous le type de son jumeau.
  */
 const FONCTIONS_DU_DROIT = {
+  "calendrier.origine_des_ages":
+    ({ annee, mois }, jour) => origineDesAges(new DateMois(annee, mois), jour),
+  "chronologie.valeur": (presomption) => valeurPresumee(presomption, contexte.paquet.presomptions),
   "ouvrir.duree_requise": ouvrir.dureeRequise,
   "liquider.duree_proratisation": liquider.dureeProratisation,
   "liquider.decote_opposable": liquider.decoteOpposable,
@@ -435,6 +460,8 @@ const FONCTIONS_DU_DROIT = {
     (moteur, ...valeurs) => moteur.valeursPoint.achat(...valeurs),
   "scenario_actuel.valeurs_point.service":
     (moteur, ...valeurs) => moteur.valeursPoint.service(...valeurs),
+  "simulateur.carriere_simple":
+    (simulateur, options) => carriereEnDonnees(simulateur.carriereSimple(optionsDeCarriere(options))),
 };
 
 /** Un nom du Python en casse de chameau : celui de son jumeau. */
@@ -463,12 +490,19 @@ function moteurPretant(moteur, prets) {
 }
 
 /**
- * Un argument d'un appel du droit, tel que `pont.py` l'écrit : le moteur du
- * scénario 1 (`simulateur.scenarioActuel`) et les tables qu'on lui prête, la
+ * Un argument d'un appel du droit, tel que `pont.py` l'écrit : le simulateur,
+ * la carrière qu'il bâtit d'options (`CarriereSimple`), sans qu'elle passe,
+ * le moteur du scénario 1 (`simulateur.scenarioActuel`) et les tables qu'on lui prête, la
  * période d'un régime à une année, une carrière de la demande, par son rang,
  * ou une valeur.
  */
 function argumentDuDroit(simulateur, carrieres, argument) {
+  if (Object.hasOwn(argument, "simulateur")) {
+    return simulateur;
+  }
+  if (Object.hasOwn(argument, "carriere_simple")) {
+    return simulateur.carriereSimple(optionsDeCarriere(argument.carriere_simple));
+  }
   if (Object.hasOwn(argument, "moteur")) {
     return moteurPretant(simulateur.scenarioActuel, argument.prets ?? []);
   }

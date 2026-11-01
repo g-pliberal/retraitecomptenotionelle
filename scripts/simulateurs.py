@@ -594,7 +594,7 @@ class Contexte:
 
     def mesurer(self, carriere: dict, cles: tuple[str, ...]) -> tuple:
         exemple = {"id": "prediction", "carriere": carriere, "attendu": {}}
-        construite, resultat = self.oracle._carriere_exemple(self.simulateur, exemple)
+        construite, resultat = self.oracle._carriere_exemple(exemple)
         return tuple(self.oracle._mesurer(self.simulateur, exemple, construite, resultat, cle)
                      for cle in cles)
 

@@ -433,6 +433,31 @@ def test_le_controle_du_droit_voit_un_ulp_deplace_dans_le_jumeau_python(monkeypa
         droit_et_refait(appels)
 
 
+def test_le_pont_bat_une_carriere_de_ses_options_sans_la_faire_passer():
+    """Les exemples officiels cherchent la carrière qui rend leurs trimestres,
+    un âge de début après l'autre : chaque essai se liquide sur la carrière
+    que ``simulateur.carriere_simple`` bâtit de ses options
+    (``pont.CarriereSimple``), que le portage bâtit lui-même, sans qu'elle
+    passe le pont. Liquidée, elle rend ce que rend la même carrière bâtie,
+    écrite en données et relue ; le jumeau Python la bâtit et la refait au bit
+    près (``droit_et_refait``)."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    from outils_pont import droit_et_refait
+
+    options = {"annee_naissance": 1962, "sexe": "F", "affiliation": "salarie_prive_non_cadre",
+               "age_debut": 21.5, "age_liquidation": 64.25, "nombre_enfants": 2,
+               "interruptions": {1990: "chomage_indemnise"}, "temps_partiel": {2000: 0.8}}
+    lus, echecs = droit_et_refait({
+        "carriere": ("simulateur.carriere_simple", pont.SIMULATEUR, options),
+        "par_options": ("scenario_actuel.calculer", pont.MOTEUR, pont.CarriereSimple(options)),
+    })
+    assert echecs == {}
+    relue = pont.carriere_des_donnees(lus["carriere"])
+    par_donnees, _ = pont.droit({"resultat": ("scenario_actuel.calculer", pont.MOTEUR, relue)})
+    assert lus["par_options"] == par_donnees["resultat"]
+
+
 def test_le_pont_prete_une_table_au_moteur_du_portage(monkeypatch):
     """Un test prête au moteur Python une de ses tables par une autre
     (``monkeypatch.setattr``) — celle des indépendants par celle du régime
