@@ -127,11 +127,6 @@ def oracle() -> dict:
     return json.loads(TEMOIN.read_text(encoding="utf-8"))
 
 
-@pytest.fixture(scope="module")
-def simulateur() -> Simulateur:
-    return Simulateur(Parametres())
-
-
 def _carriere_du_regime_general(profil: dict) -> Carriere:
     """La carrière exacte d'un profil du témoin : salarié du privé, quatre
     trimestres chaque année, du début au départ."""
@@ -2151,14 +2146,12 @@ def _carriere_exemple(exemple: dict, decalage_mois: int = 0, sans_enfants: bool 
     raise AssertionError(f"{exemple['id']} : aucune carrière ne donne {cible} trimestres")
 
 
-def _mesurer(simulateur: Simulateur, exemple: dict, carriere, resultat, cle: str,
-             droit=droit_et_refait):
+def _mesurer(exemple: dict, carriere, resultat, cle: str, droit=droit_et_refait):
     """Ce que le scénario 1 rend pour une grandeur du témoin, écrit comme le
     témoin l'écrit : c'est ce qui se compare à la valeur publiée, et, pour un
     écart connu, à la valeur que le modèle rendait quand on l'a déclaré. Les
     grandeurs passées au pont s'y mesurent (``droit``) ; par défaut, le jumeau
     Python refait chaque appel au bit près (``droit_et_refait``)."""
-    actuel = simulateur.scenario_actuel
     if cle in ("trimestres_requis", "trimestres_valides", "taux_liquidation",
                "motif_ouverture", "liquidation_ouverte"):
         return resultat[cle]
@@ -2546,11 +2539,16 @@ def _mesurer(simulateur: Simulateur, exemple: dict, carriere, resultat, cle: str
                                 for p in t.par_regime if p.regime == regime)
                     for regime in exemple["attendu"][cle]}
         if cle == "mois_sans_pension_du_cumul":
+            # Les mois où aucune pension de base n'est due, l'étage de chaque
+            # régime lu au catalogue du portage.
             bases = {"base", "integre"}
+            etages = {regime: _rendu(droit, "scenario_actuel.catalogue.etage", pont.MOTEUR, regime)
+                      for regime in {p.regime for t in resultat_cumul.tranches
+                                     for p in t.par_regime}}
             return [f"{mois.annee}-{mois.mois:02d}"
                     for t in resultat_cumul.tranches
                     if all(p.statut == "non_due" for p in t.par_regime
-                           if simulateur.catalogue[p.regime].etage in bases)
+                           if etages[p.regime] in bases)
                     for mois in (t.debut.plus_mois(k) for k in range(t.mois))]
         premiere = resultat_cumul.tranches[0]
         base = next((p for p in premiere.par_regime if p.regime == "regime_general"), None)
@@ -2627,7 +2625,7 @@ def test_les_carrieres_des_exemples_se_batissent_au_portage_sans_les_jumeaux_pyt
         assert resultat == attendu, exemple["id"]
 
 
-def _mesures_sans_les_jumeaux(simulateur, monkeypatch, cles: tuple[str, ...], *jumeaux,
+def _mesures_sans_les_jumeaux(monkeypatch, cles: tuple[str, ...], *jumeaux,
                               choisis: tuple[str, ...] = ()):
     """Sur le premier exemple qui publie chacune des grandeurs ``cles`` — ou sur
     chacun des exemples ``choisis``, qui les publient —, ce que ``_mesurer`` en
@@ -2642,15 +2640,15 @@ def _mesures_sans_les_jumeaux(simulateur, monkeypatch, cles: tuple[str, ...], *j
     for exemple, cle in paires:
         carriere, resultat = _carriere_exemple(exemple)
         mesures.append((exemple, carriere, resultat, cle,
-                        _mesurer(simulateur, exemple, carriere, resultat, cle)))
+                        _mesurer(exemple, carriere, resultat, cle)))
     _sans_les_jumeaux(monkeypatch, *jumeaux)
-    return [((exemple["id"], cle), _mesurer(simulateur, exemple, carriere, resultat, cle,
-                                             droit=pont.droit), attendue)
+    return [((exemple["id"], cle), _mesurer(exemple, carriere, resultat, cle, droit=pont.droit),
+             attendue)
             for exemple, carriere, resultat, cle, attendue in mesures]
 
 
 def test_l_ouverture_des_exemples_se_mesure_au_portage_sans_les_jumeaux_python(
-        simulateur, monkeypatch):
+        monkeypatch):
     """L'âge d'ouverture du droit, le mois où il est atteint et la date d'effet
     au plus tôt se mesurent au portage (``ouvrir.age_ouverture_droit``,
     ``calendrier.en_mois``, ``carriere.date_de_l_age``) : les jumeaux Python,
@@ -2658,20 +2656,20 @@ def test_l_ouverture_des_exemples_se_mesure_au_portage_sans_les_jumeaux_python(
     from retraite_notionnelle import calendrier
 
     for cas, lue, attendue in _mesures_sans_les_jumeaux(
-            simulateur, monkeypatch, ("age_ouverture", "date_age_legal", "date_effet_au_plus_tot"),
+            monkeypatch, ("age_ouverture", "date_age_legal", "date_effet_au_plus_tot"),
             (ouvrir, "age_ouverture_droit"), (calendrier, "en_mois"),
             (Carriere, "date_de_l_age")):
         assert lue == attendue, cas
 
 
 def test_la_liquidation_des_exemples_se_mesure_au_portage_sans_les_jumeaux_python(
-        simulateur, monkeypatch):
+        monkeypatch):
     """Les années que retient le salaire annuel moyen, la pension rapportée à
     lui et au plafond, la valeur de service au jour du départ se mesurent au
     portage (``liquider``, la période du régime, le plafond) : les jumeaux
     Python, qu'on empêche ici de calculer ou de lire, n'y entrent pas."""
     for cas, lue, attendue in _mesures_sans_les_jumeaux(
-            simulateur, monkeypatch,
+            monkeypatch,
             ("annees_du_salaire_annuel_moyen", "pension_base_sur_sam",
              "pension_base_sur_plafond", "valeurs_de_service_au_jour"),
             (liquider, "nombre_d_annees_retenues"), (liquider, "salaire_de_reference"),
@@ -2681,7 +2679,7 @@ def test_la_liquidation_des_exemples_se_mesure_au_portage_sans_les_jumeaux_pytho
 
 
 def test_la_prestation_du_rafp_se_mesure_au_portage_sans_les_jumeaux_python(
-        simulateur, monkeypatch):
+        monkeypatch):
     """L'âge légal qui ouvre le RAFP, son coefficient de majoration, son seuil
     en points, les mois qui séparent la prestation de la retraite de base et sa
     forme — rente, capital en une fois ou en deux — se mesurent au portage :
@@ -2691,7 +2689,7 @@ def test_la_prestation_du_rafp_se_mesure_au_portage_sans_les_jumeaux_python(
                "erafp_1966_effet_2031_01_3000_points", "erafp_1963_effet_2026_11_5000_points",
                "erafp_ra2022_alain_capital_apres_la_base")
     mesures = _mesures_sans_les_jumeaux(
-        simulateur, monkeypatch, ("prestation_rafp",),
+        monkeypatch, ("prestation_rafp",),
         (departs, "age_legal"), (liquider, "majoration_rafp"),
         (liquider, "mois_apres_le_depart"), (liquider, "prestation_rafp"),
         (Carriere, "date_de_l_age"), (CatalogueRegimes, "__getitem__"), choisis=choisis)
@@ -2702,7 +2700,7 @@ def test_la_prestation_du_rafp_se_mesure_au_portage_sans_les_jumeaux_python(
 
 
 def test_le_releve_des_exemples_se_mesure_au_portage_sans_les_jumeaux_python(
-        simulateur, monkeypatch):
+        monkeypatch):
     """La carrière lue sur un relevé (``simulateur.carriere_releve``), les points
     que chaque régime y acquiert, de l'Ircantec et de l'Agirc-Arrco, sur une
     tranche ou deux, les services que chaque fiche des bonifications ajoute et
@@ -2715,7 +2713,7 @@ def test_le_releve_des_exemples_se_mesure_au_portage_sans_les_jumeaux_python(
                "aa_livret3_points_2023", "aa_livret3_points_2024_deux_tranches",
                "sre_militaire_radie_le_lendemain_de_ses_62_ans", "sre_temps_partiel_pierre")
     mesures = _mesures_sans_les_jumeaux(
-        simulateur, monkeypatch,
+        monkeypatch,
         ("points_de_l_annee", "bonifications_des_emplois", "services_liquidables"),
         (releve, "construire"), (Carriere, "depuis_releve"), (Simulateur, "carriere_releve"),
         choisis=choisis)
@@ -2725,7 +2723,7 @@ def test_le_releve_des_exemples_se_mesure_au_portage_sans_les_jumeaux_python(
 
 
 def test_l_invalidite_des_exemples_se_mesure_au_portage_sans_les_jumeaux_python(
-        simulateur, monkeypatch):
+        monkeypatch):
     """Les durées que le départ des assurés handicapés exige, cotisée et
     validée, au régime général et dans la fonction publique, et la pension du
     fonctionnaire radié pour invalidité, portée au plancher ou servie avec sa
@@ -2735,7 +2733,7 @@ def test_l_invalidite_des_exemples_se_mesure_au_portage_sans_les_jumeaux_python(
                "sre_plancher_monsieur_g_65", "sre_plancher_monsieur_g_55",
                "sre_rente_viagere_monsieur_h")
     mesures = _mesures_sans_les_jumeaux(
-        simulateur, monkeypatch,
+        monkeypatch,
         ("trimestres_handicap_requis", "trimestres_valides_handicap_requis",
          "pension_et_rente_d_invalidite_sur_traitement"),
         (invalidite, "exigences_du_handicap"), (invalidite, "retraite_pour_invalidite"),
@@ -2746,7 +2744,7 @@ def test_l_invalidite_des_exemples_se_mesure_au_portage_sans_les_jumeaux_python(
 
 
 def test_la_reversion_et_l_echeancier_des_exemples_se_mesurent_au_portage_sans_les_jumeaux(
-        simulateur, monkeypatch):
+        monkeypatch):
     """La réversion que des pensions prêtées ouvrent — sa version, ses taux, son
     plafond, les ressources qu'elle retient, ses révisions, son maximum —, celle
     que l'échéancier liquide au décès, ses dates d'effet et de révision, et le
@@ -2762,7 +2760,7 @@ def test_la_reversion_et_l_echeancier_des_exemples_se_mesurent_au_portage_sans_l
             "reversions_mensuelles", "reversions_au_maximum_mensuelles",
             "plafonds_des_nouvelles_pensions")
     mesures = _mesures_sans_les_jumeaux(
-        simulateur, monkeypatch, cles, (module_de_la_reversion, "reversion"),
+        monkeypatch, cles, (module_de_la_reversion, "reversion"),
         (Echeancier, "parcourir"))
     assert len(mesures) == len(cles)
     for cas, lue, attendue in mesures:
@@ -2770,7 +2768,7 @@ def test_la_reversion_et_l_echeancier_des_exemples_se_mesurent_au_portage_sans_l
 
 
 def test_le_cumul_des_exemples_se_mesure_au_portage_sans_les_jumeaux_python(
-        simulateur, monkeypatch):
+        monkeypatch):
     """Le cumul de l'activité après le départ — sous des pensions prêtées, sur
     le scénario 1 que le portage refait, ou tel que l'échéancier le calcule —,
     ses déductions de l'année, ses mois sans pension, son plafond et le mois
@@ -2785,18 +2783,18 @@ def test_le_cumul_des_exemples_se_mesure_au_portage_sans_les_jumeaux_python(
                "rsi_2010_013_suspension_bornee_aux_mois_d_activite",
                "cnav_2024_25_cumul_de_l_ex_invalide", "cnav_2012_27_inapte")
     mesures = _mesures_sans_les_jumeaux(
-        simulateur, monkeypatch,
+        monkeypatch,
         ("deductions_annuelles_du_cumul", "mois_sans_pension_du_cumul",
          "plafond_mensuel_du_cumul", "cumul_integral_depuis"),
         (cumul, "cumuler"), (Echeancier, "parcourir"), (ScenarioActuel, "calculer"),
-        choisis=choisis)
+        (CatalogueRegimes, "__getitem__"), choisis=choisis)
     assert len(mesures) == len(choisis)
     for cas, lue, attendue in mesures:
         assert lue == attendue, cas
 
 
 def test_le_foyer_la_revalorisation_la_paie_et_le_compte_se_mesurent_au_portage(
-        simulateur, monkeypatch):
+        monkeypatch):
     """Le minimum vieillesse du foyer, d'un allocataire ou de deux, la
     majoration exceptionnelle que « faire vivre » sert, sur le scénario 1 que
     le portage refait, les lignes de retraite de la fiche de paie et la
@@ -2812,7 +2810,7 @@ def test_le_foyer_la_revalorisation_la_paie_et_le_compte_se_mesurent_au_portage(
                "cnav_2023_21_majoration_liquidation_unique", "cipav_cotisations_2022",
                "agirc_gmp_2004", "agirc_arrco_gmp_2017")
     mesures = _mesures_sans_les_jumeaux(
-        simulateur, monkeypatch,
+        monkeypatch,
         ("minimum_vieillesse_mensuel", "majoration_exceptionnelle_mensuelle",
          "cotisations_de_la_fiche_de_paie", "cotisation_agirc_de_l_annee"),
         (foyer, "foyer_et_net"), (revalorisation, "faire_vivre"),
@@ -2946,7 +2944,7 @@ def _concorde(cle: str, mesure, valeur) -> bool:
     return mesure == valeur
 
 
-def _confronter(simulateur: Simulateur, exemple: dict) -> list[tuple]:
+def _confronter(exemple: dict) -> list[tuple]:
     """Ce qui sépare le modèle du témoin : rien, s'il concorde.
 
     Une grandeur que l'exemple déclare en écart connu (``ecart_connu``) doit
@@ -2958,7 +2956,7 @@ def _confronter(simulateur: Simulateur, exemple: dict) -> list[tuple]:
     declares = (exemple.get("ecart_connu") or {}).get("modele") or {}
     problemes = []
     for cle, valeur in exemple["attendu"].items():
-        mesure = _mesurer(simulateur, exemple, carriere, resultat, cle)
+        mesure = _mesurer(exemple, carriere, resultat, cle)
         if cle not in declares:
             if not _concorde(cle, mesure, valeur):
                 problemes.append((cle, mesure, "au lieu de la valeur publiée", valeur))
@@ -2972,7 +2970,7 @@ def _confronter(simulateur: Simulateur, exemple: dict) -> list[tuple]:
 
 
 @pytest.mark.parametrize("exemple", _charger_exemples(), ids=lambda e: e["id"])
-def test_les_exemples_publies_par_les_caisses_sont_reproduits(simulateur, exemple):
+def test_les_exemples_publies_par_les_caisses_sont_reproduits(exemple):
     """Chaque exemple est une carrière minuscule dont la réponse est écrite
     par l'organisme qui applique la règle : service-public.gouv.fr, la Cnav
     dans ses circulaires. C'est la seule confrontation qui ne soit ni une
@@ -2985,11 +2983,11 @@ def test_les_exemples_publies_par_les_caisses_sont_reproduits(simulateur, exempl
     bloqué. Le test tient alors la valeur que le modèle rend, pour qu'aucun
     résultat ne change sans le diff du témoin.
     """
-    problemes = _confronter(simulateur, exemple)
+    problemes = _confronter(exemple)
     assert not problemes, problemes
 
 
-def test_un_ecart_connu_entre_et_ne_change_pas_en_silence(simulateur):
+def test_un_ecart_connu_entre_et_ne_change_pas_en_silence():
     """Le mécanisme de l'écart connu, sur un exemple réel qu'on fausse.
 
     Le modèle reproduit la décote de la fiche F19666. On prête à l'exemple une
@@ -3006,15 +3004,15 @@ def test_un_ecart_connu_entre_et_ne_change_pas_en_silence(simulateur):
 
     faux = copy.deepcopy(vrai)
     faux["attendu"]["taux_liquidation"] = modele + 0.01
-    assert _confronter(simulateur, faux)
+    assert _confronter(faux)
     faux["ecart_connu"] = {"modele": {"taux_liquidation": modele}}
-    assert not _confronter(simulateur, faux)
+    assert not _confronter(faux)
     faux["ecart_connu"]["modele"]["taux_liquidation"] = modele + 0.005
-    assert _confronter(simulateur, faux)
+    assert _confronter(faux)
 
     corrige = copy.deepcopy(vrai)
     corrige["ecart_connu"] = {"modele": {"taux_liquidation": modele}}
-    ((cle, _, pourquoi),) = _confronter(simulateur, corrige)
+    ((cle, _, pourquoi),) = _confronter(corrige)
     assert cle == "taux_liquidation" and "corrigé" in pourquoi
 
 

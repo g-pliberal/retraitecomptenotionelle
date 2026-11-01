@@ -948,6 +948,7 @@ LECTURES_DU_DROIT = {
         tuple[tuple[str, float | None], ...] | None,
     "scenario_actuel.ages_annulation_decote.age": tuple[float, Fiabilite] | None,
     "scenario_actuel.calculer": actuel_des_donnees,
+    "scenario_actuel.catalogue.etage": str,
     "scenario_actuel.catalogue.periodes": periodes_des_donnees,
     "scenario_actuel.macro.plafond_securite_sociale": float,
     "scenario_actuel.minimum_garanti.montant": tuple[float, Fiabilite] | None,

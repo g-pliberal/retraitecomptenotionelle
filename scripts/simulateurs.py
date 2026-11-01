@@ -580,26 +580,22 @@ ADAPTATEURS = {adaptateur.simulateur: adaptateur
 # ---------------------------------------------------------------------------
 
 class Contexte:
-    """Le scénario 1, interrogé comme `tests/test_oracle.py` l'interroge."""
+    """Le scénario 1, interrogé comme `tests/test_oracle.py` l'interroge : au
+    portage, par le pont, le Python refaisant chaque appel au bit près."""
 
     def __init__(self):
         spec = importlib.util.spec_from_file_location("oracle_des_simulateurs", ORACLE)
         self.oracle = importlib.util.module_from_spec(spec)
         sys.modules.setdefault(spec.name, self.oracle)
         spec.loader.exec_module(self.oracle)
-        from retraite_notionnelle.config import Parametres
-        from retraite_notionnelle.simulateur import Simulateur
-
-        self.simulateur = Simulateur(Parametres())
 
     def mesurer(self, carriere: dict, cles: tuple[str, ...]) -> tuple:
         exemple = {"id": "prediction", "carriere": carriere, "attendu": {}}
         construite, resultat = self.oracle._carriere_exemple(exemple)
-        return tuple(self.oracle._mesurer(self.simulateur, exemple, construite, resultat, cle)
-                     for cle in cles)
+        return tuple(self.oracle._mesurer(exemple, construite, resultat, cle) for cle in cles)
 
     def confronter(self, exemple: dict) -> list[tuple]:
-        return self.oracle._confronter(self.simulateur, exemple)
+        return self.oracle._confronter(exemple)
 
 
 # ---------------------------------------------------------------------------

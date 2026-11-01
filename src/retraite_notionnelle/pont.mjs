@@ -552,6 +552,8 @@ const FONCTIONS_DU_DROIT = {
   // `liquider_successions`…
   "scenario_actuel.calculer": (moteur, carriere, ...drapeaux) => actuelEnDonnees(
     moteur.calculer(carriere, ...drapeaux)),
+  // L'étage d'un régime : la base, le régime intégré, la complémentaire…
+  "scenario_actuel.catalogue.etage": (moteur, code) => moteur.catalogue.obtenir(code).etage,
   // Ce que les confrontations lisent des périodes d'un régime pour rejouer
   // ses cotisations (`periodes_des_donnees` de `pont.py`).
   "scenario_actuel.catalogue.periodes": (moteur, code) => moteur.catalogue.obtenir(code).periodes
