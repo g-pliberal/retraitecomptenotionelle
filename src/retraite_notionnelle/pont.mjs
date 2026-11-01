@@ -85,6 +85,27 @@ function paquetDuDepot() {
   return JSON.parse(readFileSync(join(RACINE, "moteur/donnees.json"), "utf8"));
 }
 
+/**
+ * Les valeurs que la garde des présomptions fait dire au vocabulaire du
+ * Python (`DECALAGES` de `tests/conftest.py` ; action 135, levier 2) : le 1er
+ * du mois, les enfants trois ans plus tôt, le mariage trois ans plus tard.
+ */
+const DECALAGES = { jour_de_naissance: 1, naissance_des_enfants: 27, mariage_des_conjoints: 30 };
+
+/**
+ * Le paquet, ses présomptions décalées quand `PRESOMPTIONS_DECALEES` est
+ * posée : le portage lit alors ce que lit le Python, et un test qui écrit une
+ * valeur présumée en dur échoue d'un côté comme de l'autre.
+ */
+function sousLaGarde(paquet) {
+  if (!process.env.PRESOMPTIONS_DECALEES) return paquet;
+  const presomptions = { ...paquet.presomptions };
+  for (const [nom, valeur] of Object.entries(DECALAGES)) {
+    presomptions[nom] = { ...presomptions[nom], valeur };
+  }
+  return { ...paquet, presomptions };
+}
+
 /** Une erreur du programme, que le pont ne range pas parmi les refus. */
 function erreurDuProgramme(erreur) {
   return erreur instanceof TypeError || erreur instanceof ReferenceError
@@ -562,7 +583,7 @@ function repondre(demande) {
 }
 
 if (process.argv.includes("--servir")) {
-  contexte = new Contexte(paquetDuDepot());
+  contexte = new Contexte(sousLaGarde(paquetDuDepot()));
   for await (const ligne of createInterface({ input: process.stdin, crlfDelay: Infinity })) {
     let sortie;
     try {
@@ -574,6 +595,6 @@ if (process.argv.includes("--servir")) {
   }
 } else {
   const { paquet, demande } = JSON.parse(readFileSync(0, "utf8"));
-  contexte = new Contexte(paquet ?? paquetDuDepot());
+  contexte = new Contexte(sousLaGarde(paquet ?? paquetDuDepot()));
   process.stdout.write(JSON.stringify(repondre(demande)));
 }

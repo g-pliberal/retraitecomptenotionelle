@@ -120,10 +120,18 @@ def _demander(demande: dict, paquet: bytes | None) -> dict:
     return json.loads(execution.stdout)
 
 
-def _signature_du_paquet() -> tuple[int, int]:
-    """La date et la taille du paquet du dépôt : la fabrique le récrit."""
+#: La garde des présomptions (``tests/conftest.py`` ; action 135, levier 2) :
+#: posée, elle fait dire au vocabulaire du Python d'autres valeurs présumées,
+#: et le portage lit les mêmes dans son paquet (``sousLaGarde`` de
+#: ``pont.mjs``).
+PRESOMPTIONS_DECALEES = "PRESOMPTIONS_DECALEES"
+
+
+def _signature_du_paquet() -> tuple[int, int, bool]:
+    """La date et la taille du paquet du dépôt, que la fabrique récrit, et la
+    garde des présomptions, sous laquelle le portage le lit décalé."""
     etat = (RACINE_PROJET / "moteur" / "donnees.json").stat()
-    return etat.st_mtime_ns, etat.st_size
+    return etat.st_mtime_ns, etat.st_size, bool(os.environ.get(PRESOMPTIONS_DECALEES))
 
 
 class _PontOuvert:

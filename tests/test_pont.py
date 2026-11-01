@@ -514,6 +514,34 @@ def test_le_pont_ouvert_se_relance_quand_le_paquet_du_depot_change(monkeypatch):
         pont.fermer()
 
 
+def test_sous_la_garde_des_presomptions_le_portage_les_lit_decalees(monkeypatch):
+    """La garde des présomptions (``PRESOMPTIONS_DECALEES``, ``tests/conftest.py`` ;
+    action 135, levier 2) fait dire au vocabulaire du Python d'autres valeurs :
+    le portage lit les mêmes dans son paquet, celui du dépôt comme celui d'une
+    demande, pour qu'un test qui en écrit une en dur échoue d'un côté comme de
+    l'autre. Le pont ouvert sans la garde se relance sous elle, et
+    inversement."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    from conftest import DECALAGES, PRESOMPTIONS_DECALEES
+
+    paquet = (RACINE_PROJET / "moteur" / "donnees.json").read_bytes()
+    du_paquet = {nom: json.loads(paquet)["presomptions"][nom]["valeur"] for nom in DECALAGES}
+    assert du_paquet != DECALAGES
+    appels = {nom: ("chronologie.valeur", nom) for nom in DECALAGES}
+    pont.fermer()
+    monkeypatch.delenv(PRESOMPTIONS_DECALEES, raising=False)
+    try:
+        assert pont.droit(appels) == (du_paquet, {})
+        monkeypatch.setenv(PRESOMPTIONS_DECALEES, "1")
+        assert pont.droit(appels) == (DECALAGES, {})
+        assert pont.droit(appels, paquet=paquet) == (DECALAGES, {})
+        monkeypatch.delenv(PRESOMPTIONS_DECALEES)
+        assert pont.droit(appels) == (du_paquet, {})
+    finally:
+        pont.fermer()
+
+
 # -- la grille du coût : ses carrières passent en données ------------------------
 
 #: Des cases de la grille du coût où passe ce que les conventions de projection
