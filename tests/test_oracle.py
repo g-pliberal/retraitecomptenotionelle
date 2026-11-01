@@ -87,7 +87,6 @@ from retraite_notionnelle.donnees.regimes import CatalogueRegimes
 from retraite_notionnelle.simulateur import Simulateur
 from retraite_notionnelle.donnees.chargement import Fiabilite, SerieAnnuelle
 from retraite_notionnelle.droit import departs, invalidite, liquider, ouvrir
-from retraite_notionnelle.droit.reversion import reversion
 from retraite_notionnelle.echeancier import Echeancier
 from retraite_notionnelle.scenarios.actuel import (
     AgesAnnulationDecote, MinimumGaranti, ScenarioActuel, ValeursPoint)
@@ -2374,11 +2373,10 @@ def _mesurer(simulateur: Simulateur, exemple: dict, carriere, resultat, cle: str
     if cle == "dates_d_effet_de_la_reversion":
         # La réversion telle que l'échéancier la liquide au décès de l'assuré :
         # la date d'effet de chaque régime du défunt.
-        echeancier = Echeancier(simulateur)
-        echeancier.parcourir(carriere)
-        if echeancier.reversion is None:
+        servie = _rendu(droit, "echeancier.parcourir.reversion", pont.SIMULATEUR, carriere)
+        if servie is None:
             return "aucune réversion liquidée"
-        return {r.regime: r.date_effet for r in echeancier.reversion.regimes}
+        return {r.regime: r.date_effet for r in servie.regimes}
     if cle in ("dates_de_revision_de_la_reversion",
                "dates_de_premiere_revision_de_la_reversion",
                "dates_de_derniere_revision_de_la_reversion"):
@@ -2386,27 +2384,27 @@ def _mesurer(simulateur: Simulateur, exemple: dict, carriere, resultat, cle: str
         # d'effet, ou que ses ressources varient : le jour de sa dernière
         # révision, ou de la première, et celui d'où rien ne la revoit plus
         # (R. 353-1-1).
-        echeancier = Echeancier(simulateur)
-        echeancier.parcourir(carriere)
-        if echeancier.reversion is None:
+        servie = _rendu(droit, "echeancier.parcourir.reversion", pont.SIMULATEUR, carriere)
+        if servie is None:
             return "aucune réversion liquidée"
         if cle == "dates_de_premiere_revision_de_la_reversion":
             return {r.regime: r.revisions[0][0] if r.revisions else None
-                    for r in echeancier.reversion.regimes}
+                    for r in servie.regimes}
         champ = ("revision_effet" if cle == "dates_de_revision_de_la_reversion"
                  else "derniere_revision")
-        return {r.regime: getattr(r, champ) for r in echeancier.reversion.regimes}
+        return {r.regime: getattr(r, champ) for r in servie.regimes}
     if cle == "reversions_ecretees_mensuelles":
         # L'exemple donne la réversion d'avant le plafond, pas la carrière du
         # défunt : le test prête à chaque régime nommé la pension qui la rend,
         # au taux de la version que le modèle choisit, et le modèle l'écrête.
         avant = exemple["carriere"]["reversions_avant_plafond_mensuelles"]
         annee = int(str(exemple["carriere"]["deces"])[:4])
-        sonde = reversion(actuel, [(regime, 1.0, Fiabilite.HAUTE) for regime in avant],
-                          carriere, annee)
+        sonde = _rendu(droit, "reversion.reversion", pont.MOTEUR,
+                       [(regime, 1.0, Fiabilite.HAUTE) for regime in avant], carriere, annee)
         taux = {r.regime: r.taux for r in sonde.regimes}
-        servie = reversion(actuel, [(regime, 12 * montant / taux[regime], Fiabilite.HAUTE)
-                                    for regime, montant in avant.items()], carriere, annee)
+        servie = _rendu(droit, "reversion.reversion", pont.MOTEUR,
+                        [(regime, 12 * montant / taux[regime], Fiabilite.HAUTE)
+                         for regime, montant in avant.items()], carriere, annee)
         return {r.regime: r.montant / 12 for r in servie.regimes}
     if cle == "ressources_retenues_mensuelles":
         # L'exemple donne les ressources que la caisse retient à côté de la
@@ -2414,16 +2412,18 @@ def _mesurer(simulateur: Simulateur, exemple: dict, carriere, resultat, cle: str
         # chaque régime, à la date d'effet qu'ouvre le décès de l'exemple.
         pensions = exemple["carriere"]["pensions_du_defunt_mensuelles"]
         annee = int(str(exemple["carriere"]["deces"])[:4])
-        servie = reversion(actuel, [(regime, 12 * montant, Fiabilite.HAUTE)
-                                    for regime, montant in pensions.items()], carriere, annee)
+        servie = _rendu(droit, "reversion.reversion", pont.MOTEUR,
+                        [(regime, 12 * montant, Fiabilite.HAUTE)
+                         for regime, montant in pensions.items()], carriere, annee)
         return {r.regime: r.ressources_retenues / 12 for r in servie.regimes}
     if cle == "ressources_retenues_mensuelles_aux_revisions":
         # Les mêmes, à chacune des révisions de la réversion de chaque régime,
         # par mois.
         pensions = exemple["carriere"]["pensions_du_defunt_mensuelles"]
         annee = int(str(exemple["carriere"]["deces"])[:4])
-        servie = reversion(actuel, [(regime, 12 * montant, Fiabilite.HAUTE)
-                                    for regime, montant in pensions.items()], carriere, annee)
+        servie = _rendu(droit, "reversion.reversion", pont.MOTEUR,
+                        [(regime, 12 * montant, Fiabilite.HAUTE)
+                         for regime, montant in pensions.items()], carriere, annee)
         return {r.regime: {jour: ressources / 12 for jour, ressources in r.ressources_des_revisions}
                 for r in servie.regimes}
     if cle == "reversions_mensuelles":
@@ -2432,8 +2432,9 @@ def _mesurer(simulateur: Simulateur, exemple: dict, carriere, resultat, cle: str
         # et le modèle y applique ses taux, ses conditions et son plafond.
         pensions = exemple["carriere"]["pensions_du_defunt_mensuelles"]
         annee = int(str(exemple["carriere"]["deces"])[:4])
-        servie = reversion(actuel, [(regime, 12 * montant, Fiabilite.HAUTE)
-                                    for regime, montant in pensions.items()], carriere, annee)
+        servie = _rendu(droit, "reversion.reversion", pont.MOTEUR,
+                        [(regime, 12 * montant, Fiabilite.HAUTE)
+                         for regime, montant in pensions.items()], carriere, annee)
         return {r.regime: r.montant / 12 for r in servie.regimes}
     if cle == "reversions_au_maximum_mensuelles":
         # L'exemple donne la pension du défunt, ramenée au maximum des
@@ -2448,9 +2449,12 @@ def _mesurer(simulateur: Simulateur, exemple: dict, carriere, resultat, cle: str
                                  + surcotes.get(regime, 0.0)),
                            12 * surcotes.get(regime, 0.0), 1.0)
                   for regime in avant}
-        servie = reversion(actuel, [(regime, 12 * montant, Fiabilite.HAUTE)
-                                    for regime, montant in pensions.items()], carriere, annee,
-                           maxima=maxima)
+        # Les arguments dans l'ordre du jumeau, jusqu'aux maxima : ni décès
+        # supposé, ni capital, ni majoration, ni durée, ni minimum.
+        servie = _rendu(droit, "reversion.reversion", pont.MOTEUR,
+                        [(regime, 12 * montant, Fiabilite.HAUTE)
+                         for regime, montant in pensions.items()], carriere, annee,
+                        None, (), None, None, None, maxima)
         return {r.regime: r.montant / 12 for r in servie.regimes}
     if cle == "majoration_exceptionnelle_mensuelle":
         # La majoration exceptionnelle des petites pensions, servie le mois où
@@ -2477,12 +2481,13 @@ def _mesurer(simulateur: Simulateur, exemple: dict, carriere, resultat, cle: str
                              carriere=carriere)
         return foyer.minimum_vieillesse / 12
     if cle == "plafonds_des_nouvelles_pensions":
-        echeancier = Echeancier(simulateur)
-        echeancier.parcourir(carriere)
-        droits = echeancier.au_depart.droits_apres_depart
-        if droits is None:
+        # Le plafond de chaque nouvelle pension que l'activité après le départ
+        # constitue, tel que l'échéancier la liquide.
+        pensions = _rendu(droit, "echeancier.parcourir.au_depart.droits_apres_depart.pensions",
+                          pont.SIMULATEUR, carriere)
+        if pensions is None:
             return "aucune activité après le départ"
-        return {p.regime: p.plafond for p in droits.pensions if p.plafond is not None}
+        return {regime: plafond for regime, plafond in pensions if plafond is not None}
     if cle == "pension_et_rente_d_invalidite_sur_traitement":
         # L'exemple donne le traitement et le taux de la pension, non la
         # carrière : le test les prête au calcul de la retraite pour
@@ -2751,6 +2756,30 @@ def test_l_invalidite_des_exemples_se_mesure_au_portage_sans_les_jumeaux_python(
         (invalidite, "exigences_du_handicap"), (invalidite, "retraite_pour_invalidite"),
         (invalidite, "pension_du_fonctionnaire_invalide"), choisis=choisis)
     assert len(mesures) == 6
+    for cas, lue, attendue in mesures:
+        assert lue == attendue, cas
+
+
+def test_la_reversion_et_l_echeancier_des_exemples_se_mesurent_au_portage_sans_les_jumeaux(
+        simulateur, monkeypatch):
+    """La réversion que des pensions prêtées ouvrent — sa version, ses taux, son
+    plafond, les ressources qu'elle retient, ses révisions, son maximum —, celle
+    que l'échéancier liquide au décès, ses dates d'effet et de révision, et le
+    plafond des nouvelles pensions de l'activité après le départ se mesurent
+    au portage (``reversion.reversion``, ``Echeancier.parcourir``) : les
+    jumeaux Python, qu'on empêche ici de calculer, n'y entrent pas."""
+    from retraite_notionnelle.droit import reversion as module_de_la_reversion
+
+    cles = ("dates_d_effet_de_la_reversion", "dates_de_revision_de_la_reversion",
+            "dates_de_premiere_revision_de_la_reversion",
+            "dates_de_derniere_revision_de_la_reversion", "reversions_ecretees_mensuelles",
+            "ressources_retenues_mensuelles", "ressources_retenues_mensuelles_aux_revisions",
+            "reversions_mensuelles", "reversions_au_maximum_mensuelles",
+            "plafonds_des_nouvelles_pensions")
+    mesures = _mesures_sans_les_jumeaux(
+        simulateur, monkeypatch, cles, (module_de_la_reversion, "reversion"),
+        (Echeancier, "parcourir"))
+    assert len(mesures) == len(cles)
     for cas, lue, attendue in mesures:
         assert lue == attendue, cas
 

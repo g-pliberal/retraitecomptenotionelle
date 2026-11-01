@@ -69,12 +69,14 @@ import { AnneeCarriere, Carriere } from "../../moteur/js/carriere.js";
 import { valeur as valeurPresumee } from "../../moteur/js/chronologie.js";
 import { PARAMETRES_DEFAUT, avec } from "../../moteur/js/config.js";
 import { Contexte } from "../../moteur/js/contexte.js";
+import { Echeancier } from "../../moteur/js/echeancier.js";
 import * as departs from "../../moteur/js/droit/departs.js";
 import * as invalidite from "../../moteur/js/droit/invalidite.js";
 import { appels } from "../../moteur/js/droit/liquidation.js";
 import * as liquider from "../../moteur/js/droit/liquider.js";
 import * as ouvrir from "../../moteur/js/droit/ouvrir.js";
 import * as releve from "../../moteur/js/droit/releve.js";
+import * as reversion from "../../moteur/js/droit/reversion.js";
 import { BORNES_ASSIETTE } from "../../moteur/js/regimes.js";
 import { Saisie } from "../../moteur/js/saisie.js";
 
@@ -493,6 +495,21 @@ const FONCTIONS_DU_DROIT = {
     .durees.emplois.map(({ fiche, services }) => [fiche, services]),
   "releve.construire.durees.services_liquidables": (moteur, carriere, membres) => releve
     .construire(moteur, carriere).durees.servicesLiquidables(membres),
+  // La réversion, ses champs sous les noms du Python (`reversion_des_donnees`
+  // de `pont.py`) ; les régimes servis en capital, un ensemble.
+  "reversion.reversion": (moteur, pensions, carriere, annee, decesSuppose = null,
+    enCapital = [], ...autres) => reversion.reversion(
+    moteur, pensions, carriere, annee, decesSuppose, new Set(enCapital), ...autres),
+  // Ce que l'échéancier liquide de la carrière : la réversion au décès de
+  // l'assuré, et le plafond de chaque nouvelle pension de l'activité après le
+  // départ, `[regime, plafond]`.
+  "echeancier.parcourir.reversion": (simulateur, carriere) => parcourue(simulateur, carriere)
+    .reversion,
+  "echeancier.parcourir.au_depart.droits_apres_depart.pensions": (simulateur, carriere) => {
+    const droits = parcourue(simulateur, carriere).auDepart.droits_apres_depart;
+    return droits === null ? null
+      : droits.pensions.map(({ regime, plafond }) => [regime, plafond ?? null]);
+  },
   "scenario_actuel.ages_annulation_decote.age":
     (moteur, generation) => moteur.agesAnnulationDecote.age(generation),
   // Les drapeaux de `calculer` suivent la carrière dans l'ordre du jumeau :
@@ -520,6 +537,13 @@ const FONCTIONS_DU_DROIT = {
   "simulateur.carriere_simple":
     (simulateur, options) => carriereEnDonnees(simulateur.carriereSimple(optionsDeCarriere(options))),
 };
+
+/** L'échéancier du simulateur, la carrière parcourue. */
+function parcourue(simulateur, carriere) {
+  const echeancier = new Echeancier(simulateur);
+  echeancier.parcourir(carriere);
+  return echeancier;
+}
 
 /** Un nom du Python en casse de chameau : celui de son jumeau. */
 function enChameau(nom) {

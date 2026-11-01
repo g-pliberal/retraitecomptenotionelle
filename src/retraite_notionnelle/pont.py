@@ -853,6 +853,16 @@ def periodes_des_donnees(periodes: list[dict]) -> list[dict]:
             for periode in periodes]
 
 
+def reversion_des_donnees(reversion: dict | None):
+    """La réversion que le portage a écrite (``Reversion`` de
+    ``droit/reversion.js``, dont les champs portent les noms du Python), sous
+    le dataclass du Python, chacun de ses régimes compris ; ``None`` sans
+    réversion. Le module de la réversion ne se charge qu'à la lecture."""
+    from .droit.reversion import Reversion
+
+    return None if reversion is None else _depuis_donnees(Reversion, reversion)
+
+
 #: Ce que rend chaque fonction du droit que le pont fait appeler
 #: (``FONCTIONS_DU_DROIT`` de ``pont.mjs``), sous le type que son jumeau
 #: Python lui donne, ou relu par une fonction : JSON n'écrit ni n-uplet, ni
@@ -890,6 +900,14 @@ LECTURES_DU_DROIT = {
     "releve.construire.droits.points": tuple[tuple[str, int, float, float | None], ...],
     "releve.construire.durees.emplois": tuple[tuple[str, int], ...],
     "releve.construire.durees.services_liquidables": int,
+    # La réversion que des pensions ouvrent, et celle que l'échéancier liquide
+    # au décès de l'assuré ; le plafond de chaque nouvelle pension que
+    # l'activité après le départ constitue, ``(regime, plafond)``, aucune
+    # sans activité.
+    "reversion.reversion": reversion_des_donnees,
+    "echeancier.parcourir.reversion": reversion_des_donnees,
+    "echeancier.parcourir.au_depart.droits_apres_depart.pensions":
+        tuple[tuple[str, float | None], ...] | None,
     "scenario_actuel.ages_annulation_decote.age": tuple[float, Fiabilite] | None,
     "scenario_actuel.calculer": actuel_des_donnees,
     "scenario_actuel.catalogue.periodes": periodes_des_donnees,

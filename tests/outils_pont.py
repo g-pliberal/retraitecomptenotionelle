@@ -32,7 +32,9 @@ import sys
 from retraite_notionnelle import calendrier, chronologie, pont
 from retraite_notionnelle.config import Parametres
 from retraite_notionnelle.donnees.regimes import BORNES_ASSIETTE
-from retraite_notionnelle.droit import departs, invalidite, liquider, ouvrir, releve
+from retraite_notionnelle.droit import (departs, invalidite, liquider, ouvrir, releve,
+                                        reversion)
+from retraite_notionnelle.echeancier import Echeancier
 from retraite_notionnelle.simulateur import Comparaison, Simulateur
 from retraite_notionnelle.web.site import module, site
 
@@ -239,6 +241,33 @@ def _pension_pour_invalidite(moteur, regime: str, carriere, *valeurs):
         moteur, carriere, version, *valeurs)
 
 
+def _en_dictionnaire(objet):
+    """Un dataclass rendu, par ses champs, comme le portage l'écrit ; ``None``
+    tel quel."""
+    return None if objet is None else dataclasses.asdict(objet)
+
+
+def _reversion(moteur, pensions, carriere, annee, deces_suppose=None, en_capital=(), *autres):
+    """La réversion que des pensions ouvrent, ses régimes servis en capital en
+    ensemble, comme le portage les lit."""
+    return _en_dictionnaire(reversion.reversion(moteur, pensions, carriere, annee, deces_suppose,
+                                                frozenset(en_capital), *autres))
+
+
+def _parcourue(simulateur: Simulateur, carriere) -> Echeancier:
+    """L'échéancier du simulateur, la carrière parcourue."""
+    echeancier = Echeancier(simulateur)
+    echeancier.parcourir(carriere)
+    return echeancier
+
+
+def _plafonds_apres_le_depart(simulateur: Simulateur, carriere):
+    """Le plafond de chaque nouvelle pension que l'activité après le départ
+    constitue, ``(regime, plafond)`` ; aucune sans activité."""
+    droits = _parcourue(simulateur, carriere).au_depart.droits_apres_depart
+    return None if droits is None else tuple((p.regime, p.plafond) for p in droits.pensions)
+
+
 #: Le jumeau Python de chaque fonction du droit que le pont fait appeler
 #: (``FONCTIONS_DU_DROIT`` de ``pont.mjs``, :data:`pont.LECTURES_DU_DROIT`),
 #: sous les mêmes arguments, que :func:`droit_et_refait` lui fait refaire tant
@@ -251,6 +280,9 @@ JUMEAUX_DU_DROIT = {
         carriere.date_de_l_age(age)),
     "departs.age_legal": departs.age_legal,
     "chronologie.valeur": chronologie.valeur,
+    "echeancier.parcourir.reversion": lambda simulateur, carriere: _en_dictionnaire(
+        _parcourue(simulateur, carriere).reversion),
+    "echeancier.parcourir.au_depart.droits_apres_depart.pensions": _plafonds_apres_le_depart,
     "invalidite.exigences_du_handicap": invalidite.exigences_du_handicap,
     "invalidite.retraite_pour_invalidite.pension_du_fonctionnaire_invalide":
         _pension_pour_invalidite,
@@ -275,6 +307,7 @@ JUMEAUX_DU_DROIT = {
         for emploi in releve.construire(moteur, carriere).durees.emplois),
     "releve.construire.durees.services_liquidables": lambda moteur, carriere, membres: (
         releve.construire(moteur, carriere).durees.services_liquidables(tuple(membres))),
+    "reversion.reversion": _reversion,
     "scenario_actuel.ages_annulation_decote.age":
         lambda moteur, generation: moteur.ages_annulation_decote.age(generation),
     "scenario_actuel.calculer": lambda moteur, carriere, *drapeaux: actuel_en_donnees(
