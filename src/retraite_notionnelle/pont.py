@@ -871,6 +871,12 @@ LECTURES_DU_DROIT = {
     "liquider.salaire_de_reference": float,
     "liquider.trimestres_de_decote": float,
     "liquider.valeur_du_point": tuple[float, Fiabilite] | None,
+    "invalidite.exigences_du_handicap": tuple[float, int, int | None] | None,
+    # La version de la retraite pour invalidité, puis la pension qu'elle sert,
+    # enchaînées dans le portage : la version, une fiche du paquet, ne passe
+    # pas le pont ; aucune pension sans elle.
+    "invalidite.retraite_pour_invalidite.pension_du_fonctionnaire_invalide":
+        tuple[float, str] | None,
     "calendrier.en_mois": int,
     "calendrier.origine_des_ages": DateMois,
     "carriere.date_de_l_age": DateMois,

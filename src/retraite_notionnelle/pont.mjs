@@ -70,6 +70,7 @@ import { valeur as valeurPresumee } from "../../moteur/js/chronologie.js";
 import { PARAMETRES_DEFAUT, avec } from "../../moteur/js/config.js";
 import { Contexte } from "../../moteur/js/contexte.js";
 import * as departs from "../../moteur/js/droit/departs.js";
+import * as invalidite from "../../moteur/js/droit/invalidite.js";
 import { appels } from "../../moteur/js/droit/liquidation.js";
 import * as liquider from "../../moteur/js/droit/liquider.js";
 import * as ouvrir from "../../moteur/js/droit/ouvrir.js";
@@ -452,6 +453,15 @@ function optionsDeCarriere(options) {
  * `LECTURES_DU_DROIT` de `pont.py`, sous le type de son jumeau.
  */
 const FONCTIONS_DU_DROIT = {
+  "invalidite.exigences_du_handicap": invalidite.exigencesDuHandicap,
+  // La version, une fiche du paquet, reste dans le portage : aucune pension
+  // sans elle.
+  "invalidite.retraite_pour_invalidite.pension_du_fonctionnaire_invalide":
+    (moteur, regime, carriere, pension, traitement, annee) => {
+      const version = invalidite.retraitePourInvalidite(moteur, regime, carriere);
+      return version === null ? null : invalidite.pensionDuFonctionnaireInvalide(
+        moteur, carriere, version, pension, traitement, annee);
+    },
   "calendrier.en_mois": enMois,
   "calendrier.origine_des_ages":
     ({ annee, mois }, jour) => origineDesAges(new DateMois(annee, mois), jour),

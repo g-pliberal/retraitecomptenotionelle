@@ -2240,8 +2240,8 @@ def _mesurer(simulateur: Simulateur, exemple: dict, carriere, resultat, cle: str
         # La durée cotisée — et validée, quand la version l'exige — que le
         # départ anticipé des assurés handicapés demande à cette génération,
         # pour cet âge, à cette date d'effet : ce que le simulateur annonce.
-        exigences = invalidite.exigences_du_handicap(actuel, carriere,
-                                                     resultat["trimestres_requis"])
+        exigences = _rendu(droit, "invalidite.exigences_du_handicap", pont.MOTEUR, carriere,
+                           resultat["trimestres_requis"])
         if exigences is None:
             return "aucune exigence à cette date ni à cet âge"
         return exigences[1] if cle == "trimestres_handicap_requis" else exigences[2]
@@ -2488,15 +2488,19 @@ def _mesurer(simulateur: Simulateur, exemple: dict, carriere, resultat, cle: str
         # carrière : le test les prête au calcul de la retraite pour
         # invalidité de la fonction publique de l'État, sous la version que
         # la radiation choisit, et lit la rente dans ce que le détail en dit.
+        # Le portage enchaîne la version et la pension : la version, une fiche
+        # du paquet, ne passe pas le pont.
         c = exemple["carriere"]
         traitement = 12.0 * float(c["traitement_mensuel"])
-        version = invalidite.retraite_pour_invalidite(actuel, "fonction_publique_etat",
-                                                      carriere)
-        if version is None:
+        radiation = carriere.radiation_pour_invalidite
+        servie = _rendu(
+            droit, "invalidite.retraite_pour_invalidite.pension_du_fonctionnaire_invalide",
+            pont.MOTEUR, "fonction_publique_etat", carriere,
+            float(c["taux_de_la_pension"]) * traitement, traitement,
+            None if radiation is None else radiation.date.annee)
+        if servie is None:
             return "aucune retraite pour invalidité"
-        total, detail = invalidite.pension_du_fonctionnaire_invalide(
-            actuel, carriere, version, float(c["taux_de_la_pension"]) * traitement,
-            traitement, carriere.radiation_pour_invalidite.date.annee)
+        total, detail = servie
         lu = re.search(r"rente viagère d'invalidité de ([0-9,.]+) €", detail)
         rente = float(lu.group(1).replace(",", "")) if lu else 0.0
         return {"pension": (total - rente) / traitement, "rente": rente / traitement,
@@ -2726,6 +2730,27 @@ def test_le_releve_des_exemples_se_mesure_au_portage_sans_les_jumeaux_python(
         (releve, "construire"), (Carriere, "depuis_releve"), (Simulateur, "carriere_releve"),
         choisis=choisis)
     assert len(mesures) == len(choisis)
+    for cas, lue, attendue in mesures:
+        assert lue == attendue, cas
+
+
+def test_l_invalidite_des_exemples_se_mesure_au_portage_sans_les_jumeaux_python(
+        simulateur, monkeypatch):
+    """Les durées que le départ des assurés handicapés exige, cotisée et
+    validée, au régime général et dans la fonction publique, et la pension du
+    fonctionnaire radié pour invalidité, portée au plancher ou servie avec sa
+    rente, sous la version que la radiation choisit, se mesurent au portage :
+    les jumeaux Python, qu'on empêche ici de calculer, n'y entrent pas."""
+    choisis = ("ur_handicap_1961_59", "ur_handicap_1961_59_fonctionnaire",
+               "sre_plancher_monsieur_g_65", "sre_plancher_monsieur_g_55",
+               "sre_rente_viagere_monsieur_h")
+    mesures = _mesures_sans_les_jumeaux(
+        simulateur, monkeypatch,
+        ("trimestres_handicap_requis", "trimestres_valides_handicap_requis",
+         "pension_et_rente_d_invalidite_sur_traitement"),
+        (invalidite, "exigences_du_handicap"), (invalidite, "retraite_pour_invalidite"),
+        (invalidite, "pension_du_fonctionnaire_invalide"), choisis=choisis)
+    assert len(mesures) == 6
     for cas, lue, attendue in mesures:
         assert lue == attendue, cas
 

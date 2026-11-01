@@ -32,7 +32,7 @@ import sys
 from retraite_notionnelle import calendrier, chronologie, pont
 from retraite_notionnelle.config import Parametres
 from retraite_notionnelle.donnees.regimes import BORNES_ASSIETTE
-from retraite_notionnelle.droit import departs, liquider, ouvrir, releve
+from retraite_notionnelle.droit import departs, invalidite, liquider, ouvrir, releve
 from retraite_notionnelle.simulateur import Comparaison, Simulateur
 from retraite_notionnelle.web.site import module, site
 
@@ -229,6 +229,16 @@ def servi_et_refait(cas: list[dict], paquet: bytes | None = None,
     return servis, refus
 
 
+def _pension_pour_invalidite(moteur, regime: str, carriere, *valeurs):
+    """La version de la retraite pour invalidité d'un régime, puis la pension
+    du fonctionnaire qu'elle sert, sous ses autres arguments — la pension, le
+    traitement, l'année : ce que le portage enchaîne ; aucune pension sans
+    version."""
+    version = invalidite.retraite_pour_invalidite(moteur, regime, carriere)
+    return None if version is None else invalidite.pension_du_fonctionnaire_invalide(
+        moteur, carriere, version, *valeurs)
+
+
 #: Le jumeau Python de chaque fonction du droit que le pont fait appeler
 #: (``FONCTIONS_DU_DROIT`` de ``pont.mjs``, :data:`pont.LECTURES_DU_DROIT`),
 #: sous les mêmes arguments, que :func:`droit_et_refait` lui fait refaire tant
@@ -241,6 +251,9 @@ JUMEAUX_DU_DROIT = {
         carriere.date_de_l_age(age)),
     "departs.age_legal": departs.age_legal,
     "chronologie.valeur": chronologie.valeur,
+    "invalidite.exigences_du_handicap": invalidite.exigences_du_handicap,
+    "invalidite.retraite_pour_invalidite.pension_du_fonctionnaire_invalide":
+        _pension_pour_invalidite,
     "ouvrir.age_ouverture_droit": ouvrir.age_ouverture_droit,
     "ouvrir.duree_requise": ouvrir.duree_requise,
     "periode.capital_seuil_points": lambda periode: periode.capital_seuil_points,
