@@ -1,5 +1,5 @@
 {
- "dernier_passage_le": "2026-10-31",
+ "dernier_passage_le": "2026-11-02",
  "series": {
   "age_annulation_decote_openfisca": {
    "ajoutees": 0,
@@ -792,6 +792,72 @@
    "source": "INSEE BDM (e0, e60) et OCDE DSD_HEALTH_STAT@DF_LE (e65)",
    "valeurs": 450,
    "verifiee_le": "2026-09-13"
+  },
+  "grilles_etat_duree_max": {
+   "ajoutees": 0,
+   "colonne": "duree_max",
+   "corrigees": 0,
+   "empreinte": "ec5e91ac95f73969",
+   "identiques": 32198,
+   "niveau": "certifiee",
+   "source": "CISIRH, Noyau RH de l'État, juillet 2026 (version 26.00.00)",
+   "valeurs": 32198,
+   "verifiee_le": "2026-11-02"
+  },
+  "grilles_etat_duree_min": {
+   "ajoutees": 0,
+   "colonne": "duree_min",
+   "corrigees": 0,
+   "empreinte": "1ec2329eb17eb4bf",
+   "identiques": 32198,
+   "niveau": "certifiee",
+   "source": "CISIRH, Noyau RH de l'État, juillet 2026 (version 26.00.00)",
+   "valeurs": 32198,
+   "verifiee_le": "2026-11-02"
+  },
+  "grilles_etat_duree_moy": {
+   "ajoutees": 0,
+   "colonne": "duree_moy",
+   "corrigees": 0,
+   "empreinte": "1266df51f77c9bb9",
+   "identiques": 32198,
+   "niveau": "certifiee",
+   "source": "CISIRH, Noyau RH de l'État, juillet 2026 (version 26.00.00)",
+   "valeurs": 32198,
+   "verifiee_le": "2026-11-02"
+  },
+  "grilles_etat_indice": {
+   "ajoutees": 0,
+   "colonne": "indice",
+   "corrigees": 0,
+   "empreinte": "606b1c992ed7af4d",
+   "identiques": 31459,
+   "niveau": "certifiee",
+   "source": "CISIRH, Noyau RH de l'État, juillet 2026 (version 26.00.00)",
+   "valeurs": 31459,
+   "verifiee_le": "2026-11-02"
+  },
+  "grilles_etat_indice_majore": {
+   "ajoutees": 0,
+   "colonne": "indice_majore",
+   "corrigees": 0,
+   "empreinte": "bed3b2fa87779b68",
+   "identiques": 5426,
+   "niveau": "certifiee",
+   "source": "CISIRH, Noyau RH de l'État, juillet 2026 (version 26.00.00)",
+   "valeurs": 5426,
+   "verifiee_le": "2026-11-02"
+  },
+  "grilles_etat_rang": {
+   "ajoutees": 0,
+   "colonne": "rang",
+   "corrigees": 0,
+   "empreinte": "185e21a335ba28a1",
+   "identiques": 33169,
+   "niveau": "certifiee",
+   "source": "CISIRH, Noyau RH de l'État, juillet 2026 (version 26.00.00)",
+   "valeurs": 33169,
+   "verifiee_le": "2026-11-02"
   },
   "heures_salariees": {
    "ajoutees": 200,

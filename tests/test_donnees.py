@@ -634,6 +634,11 @@ def test_journal_de_certification_decrit_les_series_certifiees():
             "legislation/point_indice_fonction_publique.csv",
         "point_indice_journal_officiel":
             "legislation/point_indice_fonction_publique.csv",
+        # Les grilles indiciaires de l'État, au Noyau RH du CISIRH : cinq
+        # colonnes des mêmes échelons, et le barème (action 158, étape 2).
+        **{f"grilles_etat_{colonne}": "grilles/etat/echelons.csv"
+           for colonne in ("rang", "indice", "duree_min", "duree_moy", "duree_max")},
+        "grilles_etat_indice_majore": "grilles/etat/indices.csv",
         "quotients_mortalite": "mortalite/quotients_periode.csv",
         "quotients_mortalite_anciens": "mortalite/quotients_periode.csv",
         # Les quotients que l'INSEE projette, que le modèle lit au lieu de sa

@@ -3396,6 +3396,33 @@ institutions:
         url: https://www.fonction-publique.gouv.fr/
         acces: fichier
         statut_integration: a_faire
+      - id: cisirh_noyau_rh
+        titre: >-
+          Noyau RH de l'État du CISIRH, nomenclatures (corps, grades, grilles
+          indiciaires, échelons, barème des indices, textes), juillet 2026
+        url: https://data.economie.gouv.fr/explore/dataset/offre-de-referentiels-pour-la-gestion-de-la-chaine-ressources-humaines-rh-de-letat-gestion-administrative-paye-et-post-paye-juillet-2026/
+        acces: fichier
+        statut_integration: certifie
+        recuperation: scripts/fetch/cisirh_grilles.py
+        cible: data/reference/grilles/etat/echelons.csv
+        millesime: "juillet 2026 (version 26.00.00 du noyau, mise en ligne le 7 juillet 2026)"
+        note: >-
+          Le CISIRH, service de la DGAFP et de la DGFiP, publie sous licence
+          ouverte 2.0 les nomenclatures que les logiciels de paye de l'État
+          appliquent : la pièce 6_nomenclatures_noyau_xmlzip (12 Mo, 364
+          tableaux XML). Le récupérateur en tire, sous data/reference/grilles/etat/,
+          1 089 versions de corps, 5 897 de grades, 2 105 grilles, 33 169
+          versions d'échelons — indice, durées minimale, moyenne et maximale —,
+          le barème payé de l'indice brut à l'indice majoré et les 1 539 textes
+          cités ; scripts/verifier_donnees.py certifie le rang, l'indice et les
+          durées des échelons et l'indice majoré du barème. Les grilles
+          commencent avec leur corps (1989-1990 pour les enseignants, 2005 à
+          2011 pour les autres grands corps) ; la territoriale et l'hospitalière
+          n'y sont pas. tests/test_grilles_etat.py y recompose au centime le
+          traitement mensuel des 36 échelons des techniciens supérieurs du
+          ministère de l'agriculture que ce ministère publie au 1er juillet 2024
+          (action 158, étape 2). L'édition de février 2026, sur data.gouv.fr
+          (jeu 5995685388ee383c90cb6091), est archivée depuis le 8 juillet 2026.
 
   direction_budget:
     nom: Direction du Budget

@@ -3627,6 +3627,17 @@ def source_point_indice_jo() -> dict[tuple, float]:
     return {(annee,): valeur for annee, valeur in sorted(serie.items())}
 
 
+def source_grilles_etat(colonne: str) -> Callable[[], dict[tuple, float]]:
+    """Une colonne des grilles indiciaires de l'État, lue au Noyau RH du CISIRH
+    (action 158) : l'indice, le rang ou une durée de chaque version d'échelon,
+    l'indice majoré de chaque version du barème, sous leur clé
+    « identifiant|début »."""
+    def source() -> dict[tuple, float]:
+        valeurs = _lire_json("cisirh_grilles.json", "scripts/fetch/cisirh_grilles.py")[colonne]
+        return {tuple(cle.split("|")): float(valeur) for cle, valeur in sorted(valeurs.items())}
+    return source
+
+
 def source_smic() -> dict[tuple, float]:
     """SMIC horaire en vigueur au 1er janvier — décrets de relèvement, base LEGI.
 
@@ -4998,7 +5009,7 @@ def source_jaune_ministeres() -> dict[tuple, float]:
 #: Colonnes-clés qui se trient en NOMBRE et non en texte. Sans elles, la borne
 #: « 1000 » d'une tranche de pension tomberait entre « 100 » et « 200 ».
 CLES_NUMERIQUES = frozenset({"annee", "date_effet", "generation", "borne_mensuelle",
-                             "maturite"})
+                             "maturite", "indice_brut"})
 
 
 @dataclass(frozen=True)
@@ -9295,6 +9306,26 @@ CERTIFICATIONS = (
         decimales=4,
         tolerance=5e-5,
     ),
+    # Les grilles indiciaires de l'État (action 158) : par version d'échelon,
+    # son rang, son indice et ses trois durées, en mois ; par version du
+    # barème, l'indice majoré payé de chaque indice brut.
+    *(Certification(
+        nom=f"grilles_etat_{colonne}",
+        chemin=REFERENCE / "grilles" / "etat" / f"{fichier}.csv",
+        cles=cles,
+        colonne=colonne,
+        source=source_grilles_etat(colonne),
+        origine="CISIRH, Noyau RH de l'État, juillet 2026 (version 26.00.00)",
+        decimales=0,
+        tolerance=0.5,
+    ) for fichier, cles, colonne in (
+        ("echelons", ("echelon", "debut"), "rang"),
+        ("echelons", ("echelon", "debut"), "indice"),
+        ("echelons", ("echelon", "debut"), "duree_min"),
+        ("echelons", ("echelon", "debut"), "duree_moy"),
+        ("echelons", ("echelon", "debut"), "duree_max"),
+        ("indices", ("indice_brut", "debut"), "indice_majore"),
+    )),
     Certification(
         nom="esperances_projetees",
         chemin=REFERENCE / "mortalite" / "esperances_vie.csv",

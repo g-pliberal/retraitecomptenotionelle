@@ -1,0 +1,1092 @@
+# Les corps de la fonction publique de l'État et leurs versions datées. categorie : A, B, C, D ou le libellé du noyau (officier, hors catégorie…) ; anterieurs, suivants : les corps d'avant et d'après une fusion (chaînage).
+# source_id: cisirh_noyau_rh — Noyau RH de l'État, juillet 2026 (version 26.00.00), licence ouverte 2.0 ; scripts/fetch/cisirh_grilles.py
+corps,debut,fin,libelle,categorie,filiere,nature,ministere,anterieurs,suivants,textes
+00001,1988-04-23,2012-09-30,Contrôleurs des travaux publics de l'Etat,B,,2,MI190,,01136,999:origine 1000:modificatif 1288:abrogateur
+00003,1989-09-01,,Professeurs de lycée professionnel agricole,A,,3,MI130,,,71:origine 5348:modificatif 7686:modificatif
+00004,1989-10-01,,Directeurs d'études de l'Ecole des hautes études en sciences sociales,A,,3,MI280,,,1262:origine 5354:modificatif
+00005,1989-10-01,,Maitres de conférences de l'Ecole des hautes études en sciences sociales,A,,3,MI280,,,1262:origine
+00006,1989-10-01,,"Directeurs d'études de l'Ecole pratique des hautes études, de l'Ecole nationale des chartes et de l'Ecole française d'Extrême-Orient",A,,3,MI280,,,1265:origine
+00007,1989-09-28,1989-09-30,"Maîtres de conférences de l'Ecole pratique des hautes études, de l'Ecole nationale des chartes et de l'Ecole française d'Extrême-Orient",A,,3,MI280,,,1265:origine
+00007,1989-10-01,,"Maîtres de conférences de l'Ecole pratique des hautes études, de l'Ecole nationale des chartes et de l'Ecole française d'Extrême-Orient",A,,3,MI280,,,1265:origine
+00008,1990-01-01,2013-08-31,Conservateurs du patrimoine,A,,3,MI140,,01163,186:origine 1413:abrogateur
+00009,1990-01-01,2013-08-31,Conservateurs généraux du patrimoine,A,,2,MI140,,01163,184:origine 1413:abrogateur
+00010,1988-12-01,2021-12-31,Personnels infirmiers de l'Institution nationale des invalides,A,,3,MI150,,01192,480:origine 848:modificatif 1512:modificatif 7278:abrogateur
+00011,1988-12-01,2012-12-01,Infirmiers des services déconcentrés de la protection judiciaire de la jeunesse,B,,3,MI220,,00271 01102,560:origine 1142:abrogateur
+00015,1969-06-18,,Contractuels de catégorie A de la direction générale du Trésor,A,,3,MI290,,,825:origine
+00016,1999-06-27,2016-12-31,Adjoints administratifs des administrations de l'Etat,C,,2,MI290,,,103:origine 5053:modificatif 7275:modificatif
+00016,2017-01-01,,Adjoints administratifs des administrations de l'Etat,C,,2,MI290,,,103:origine 5053:modificatif 7275:modificatif
+00019,1980-08-08,1989-08-31,Professeurs d'éducation physique et sportive de l'éducation nationale,A,,3,MI180,,,157:origine 1055:modificatif 1056:modificatif 5329:modificatif 7667:modificatif 8082:modificatif
+00019,1989-09-01,,Professeurs d'éducation physique et sportive de l'éducation nationale,A,,3,MI180,,,157:origine 1055:modificatif 1056:modificatif 5329:modificatif 7667:modificatif 8082:modificatif
+00020,1990-01-01,2011-08-01,Inspection générale des affaires sociales,A,,3,MI300,,01108,285:origine 352:modificatif 1145:abrogateur
+00021,1990-09-01,,Professeurs des écoles de l'éducation nationale,A,,3,MI180,,,160:origine 7667:modificatif 8082:modificatif
+00022,1990-03-01,,Inspecteurs de l'éducation nationale,A,,3,MI180,,,75:origine 7001:modificatif 7254:modificatif
+00023,1990-03-01,1997-12-31,Inspecteurs d'académie - inspecteurs pédagogiques régionaux,A,,3,MI180,,,75:origine 1284:modificatif 5105:modificatif 7001:modificatif 7254:modificatif
+00023,1998-01-01,,Inspecteurs d'académie - inspecteurs pédagogiques régionaux,A,,3,MI180,,,75:origine 1284:modificatif 5105:modificatif 7001:modificatif 7254:modificatif
+00024,1989-01-01,2017-08-31,Professeurs des écoles de rééducation professionnelle de l'Office national des anciens combattants et victimes de guerre,A,,2,MI150,,00250,309:origine 1172:modificatif 1174:modificatif 5392:abrogateur
+00025,2007-04-01,2013-10-01,Attachés d'administration du ministère de la justice,A,,2,MI220,,01040,678:origine 1409:abrogateur
+00027,1998-11-01,2012-09-10,Assistants régionaux contractuels du commerce extérieur,A,,3,MI290,,,
+00028,1990-01-01,1995-07-31,Techniciens de l'éducation nationale,B,,3,MI180,,,1266:origine
+00028,1995-08-01,,Techniciens de l'éducation nationale,B,,3,MI180,,,1266:origine
+00029,1990-08-01,2016-12-31,Personnels d'exploitation des travaux publics de l'Etat,C,,2,MI190,,01306 01307,368:modificatif 1007:origine 5052:modificatif 5053:modificatif 7275:modificatif 7766:abrogateur
+00029,2017-01-01,2024-01-01,Personnels d'exploitation des travaux publics de l'Etat,C,,2,MI190,,01306 01307,368:modificatif 1007:origine 5052:modificatif 5053:modificatif 7275:modificatif 7766:abrogateur
+00031,1990-12-31,2025-07-30,Ingénieurs électroniciens des systèmes de la sécurité aérienne,A,,3,MI192,,,644:origine 6056:modificatif 8006:modificatif
+00031,2025-07-31,,Ingénieurs électroniciens des systèmes de la sécurité aérienne,A,,3,MI192,,,644:origine 6056:modificatif 8006:modificatif
+00032,1990-11-02,,Ingénieurs du génie sanitaire,A,,3,MI300,,,251:origine 307:modificatif
+00033,1990-11-02,,Ingénieurs d'études sanitaires,A,,3,MI300,,,252:origine 5463:modificatif
+00035,1990-09-01,2017-08-31,Directeurs de centre d'information et d'orientation et conseillers d'orientation psychologues de l'éducation nationale,A,,3,MI180,,01196,164:origine 5161:abrogateur
+00040,1991-01-01,,Médecins inspecteurs de santé publique,A,,3,MI300,,,250:origine 302:modificatif 6836:modificatif
+00041,1990-01-01,,Ingénieurs de recherche du ministère chargé de la culture,A,,3,MI140,,,197:origine 5332:modificatif
+00042,1990-01-01,,Ingénieurs d'études du ministère chargé de la culture,A,,3,MI140,,,197:origine 5332:modificatif
+00043,1990-01-01,,Techniciens de recherche du ministère chargé de la culture,B,,2,MI140,,,197:origine
+00046,1991-11-29,,Médecins de l'éducation nationale,A,,3,MI180,,,434:origine 5516:modificatif 5521:modificatif
+00047,1991-01-01,,Conservateurs généraux des bibliothèques,A,,3,MI280,,,242:origine 927:modificatif
+00048,1991-01-01,1991-11-28,Conservateurs des bibliothèques,A,,3,MI280,,,242:origine 927:modificatif 5354:modificatif
+00048,1991-11-29,,Conservateurs des bibliothèques,A,,3,MI280,,,242:origine 927:modificatif 5354:modificatif
+00049,1992-01-13,,Bibliothécaires,A,,3,MI280,,,243:origine 5354:modificatif
+00050,1992-01-13,2011-09-30,Bibliothécaires adjoints spécialisés,B,,3,MI280,,01067,244:origine 926:abrogateur
+00051,1985-12-01,2014-11-30,Directeurs de recherche de l'IFSTTAR,A,,2,MI190,,01174,1221:origine 1483:abrogateur
+00052,1988-01-01,1991-11-28,Secrétaires d'administration de la recherche de l'INED,B,,2,MI280,,,1214:origine 7877:modificatif
+00052,1991-11-29,,Secrétaires d'administration de la recherche de l'INED,B,,2,MI280,,,1214:origine 7877:modificatif
+00053,1992-01-01,2012-02-29,Techniciens d'art,B,,3,MI140,,01089,209:origine 1042:abrogateur
+00054,1992-01-01,,Chefs de travaux d'art,A,,3,MI140,,,5319:origine
+00055,1992-05-03,2015-10-31,Greffiers en chef des services judiciaires,A,,3,MI220,,01175,855:origine 1490:abrogateur
+00056,2003-06-01,2015-10-31,Greffiers des services judiciaires,B,,3,MI220,,01176,854:origine 1492:abrogateur
+00057,1985-12-01,2014-11-30,Chargés de recherche de l'IFSTTAR,A,,2,MI190,,01173,1221:origine 1483:abrogateur
+00060,1985-12-01,,Ingénieurs de recherche de l'IFSTTAR,A,,2,MI280,,,1221:origine 5397:modificatif 7462:modificatif 7877:modificatif
+00061,1992-03-27,,Chefs de service éducatif PJJ,A,,3,MI220,,,564:origine 1587:modificatif 5023:modificatif 6765:modificatif
+00062,1991-08-01,2019-01-31,Educateurs de la Protection Judiciaire de la Jeunesse,B,,3,MI220,,,565:origine 6108:abrogateur
+00064,1992-09-01,2018-03-01,Professeurs des écoles d'architecture,A,,3,MI140,,01208,191:origine 5742:abrogateur
+00065,1985-12-01,,Ingénieurs d'études de l'IFSTTAR,A,,2,MI280,,,1221:origine 5354:modificatif 5397:modificatif 7857:modificatif 7877:modificatif
+00066,1992-09-01,2018-03-01,Maîtres-assistants des écoles d'architecture,A,,3,MI140,,01207,191:origine 5742:abrogateur
+00067,1992-09-26,,Assistants ingénieurs du ministère chargé de la culture,A,,3,MI140,,,197:origine 199:modificatif 5332:modificatif
+00068,1984-01-01,2016-12-31,Adjoints techniques de la recherche de l'Institut de recherche pour le développement,C,,2,MI280,,,5053:modificatif 5397:modificatif 7275:modificatif 7877:modificatif
+00068,2017-01-01,,Adjoints techniques de la recherche de l'Institut de recherche pour le développement,C,,2,MI280,,,5053:modificatif 5397:modificatif 7275:modificatif 7877:modificatif
+00069,1988-01-01,,Adjoints techniques de la recherche de l'INED,C,,2,MI280,,,5053:modificatif 5397:modificatif 7275:modificatif 7877:modificatif
+00070,1985-12-01,,Assistants ingénieurs de l'IFSTTAR,A,,2,MI280,,,1221:origine 5397:modificatif 7877:modificatif
+00073,1985-12-01,,Attachés d'administration de la recherche de l'IFSTTAR,A,,2,MI280,,,1221:origine 7877:modificatif
+00075,1992-01-01,2020-01-01,Directeurs de recherche de l'IRSTEA,A,,2,MI280,,00533,1222:origine 6772:abrogateur 6773:modificatif
+00076,1992-01-01,2020-01-01,Chargés de recherche de l'IRSTEA,A,,2,MI280,,00534,1222:origine 5354:modificatif 6772:abrogateur 6773:modificatif
+00077,1992-01-01,2020-01-01,Ingénieurs de recherche de l'IRSTEA,A,,2,MI280,,00535,1222:origine 6772:abrogateur 6773:modificatif
+00078,1992-01-01,2020-01-01,Ingénieurs d'études de l'IRSTEA,A,,2,MI280,,00536,1222:origine 5354:modificatif 6772:abrogateur 6773:modificatif
+00079,1992-01-01,2020-01-01,Assistants ingénieurs de l'IRSTEA,A,,2,MI280,,00537,1222:origine 6772:abrogateur 6773:modificatif
+00080,1992-01-01,2012-10-31,Techniciens de la recherche de l'IRSTEA,B,,3,MI280,,01119,1213:abrogateur 1222:origine
+00081,1992-01-01,2016-12-31,Adjoints techniques de la recherche de l'IRSTEA,C,,2,MI280,,00552,1222:origine 5053:modificatif 6772:abrogateur 6773:modificatif
+00081,2017-01-01,2020-01-01,Adjoints techniques de la recherche de l'IRSTEA,C,,2,MI280,,00552,1222:origine 5053:modificatif 6772:abrogateur 6773:modificatif
+00082,1984-01-01,,Directeurs de recherche du CNRS,A,,3,MI280,,,1215:origine 5397:modificatif 7877:modificatif
+00083,1992-01-01,2020-01-01,Chargés d'administration de la recherche de l'IRSTEA,A,,2,MI280,,,1222:origine 6772:abrogateur 6773:modificatif
+00084,1992-01-01,2020-01-01,Attachés d'administration de la recherche de l'IRSTEA,A,,2,MI280,,,1222:origine 6772:abrogateur 6773:modificatif
+00085,1992-01-01,2020-01-01,Secrétaires d'administration de la recherche de l'INRAE,B,,2,MI280,,,1222:origine 6772:abrogateur 6773:modificatif
+00086,1988-01-01,,Chargés d'administration de la recherche de l'INED,A,,2,MI280,,,1214:origine
+00088,1992-11-04,,Maitres de conférences du Muséum national d'histoire naturelle,A,,3,MI280,,,1267:origine
+00089,1991-08-01,,Contremaîtres des services techniques du ministère de l'intérieur,C,,2,MI200,,,382:origine
+00090,1984-01-01,,Chargés de recherche du CNRS,A,,2,MI280,,,1215:origine 5354:modificatif 5397:modificatif 7340:modificatif 7877:modificatif
+00091,1992-01-01,,Pharmaciens inspecteurs de santé publique,A,,3,MI300,,,249:origine 6832:modificatif
+00092,1992-09-01,,Maîtres de conférences de l'enseignement supérieur agricole,A,,3,MI130,,,70:origine 5640:modificatif 5641:modificatif
+00093,1992-09-01,,Professeurs de l'enseignement supérieur agricole,A,,3,MI130,,,70:origine 5640:modificatif 5641:modificatif
+00095,1984-01-01,,Attachés d'administration de la recherche du CNRS,A,,2,MI280,,,1215:origine 7877:modificatif
+00097,1993-03-28,2016-12-31,Adjoints d'administration de l'aviation civile,C,,3,MI192,,,646:origine 5053:modificatif 7275:modificatif
+00097,2017-01-01,,Adjoints d'administration de l'aviation civile,C,,3,MI192,,,646:origine 5053:modificatif 7275:modificatif
+00098,1995-08-01,2016-12-31,Inspecteurs des affaires maritimes,A,,3,MI190,,00291 01040,340:origine 341:modificatif 5827:abrogateur
+00099,1992-01-01,,Professeurs d'enseignement général de l'Institut national des jeunes aveugles,A,,3,MI300,,,361:origine
+00100,1988-12-01,2014-09-14,Surveillants-chefs des services médicaux de la protection judiciaire de la jeunesse,A,,3,MI220,,,560:origine 4345:abrogateur
+00101,1992-01-01,,Professeurs d'enseignement général INJS,A,,2,MI300,,,320:origine
+00102,1992-01-01,,Professeurs enseignement technique des INJA et INJS,A,,2,MI300,,,360:origine
+00103,1984-01-01,,Ingénieurs de recherche du CNRS,A,,2,MI280,,,1215:origine 5397:modificatif 7462:modificatif 7877:modificatif
+00104,1993-01-01,,Techniciens supérieurs des études et de l'exploitation de l'aviation civile,B,,3,MI190,,,643:origine 5512:modificatif
+00106,1984-01-01,2017-08-31,Ingénieurs d'études du CNRS,A,,2,MI280,,,1215:origine 5354:modificatif 5397:modificatif 7857:modificatif 7877:modificatif
+00106,2017-09-01,,Ingénieurs d'études du CNRS,A,,2,MI280,,,1215:origine 5354:modificatif 5397:modificatif 7857:modificatif 7877:modificatif
+00107,1993-01-01,2016-12-31,Adjoints sanitaires,C,,3,MI300,,,254:origine 5052:modificatif 5053:modificatif 7275:modificatif
+00107,2017-01-01,,Adjoints sanitaires,C,,3,MI300,,,254:origine 5052:modificatif 5053:modificatif 7275:modificatif
+00108,1992-01-01,,Professeurs techniques de l'enseignement maritime,A,,3,MI190,,,333:origine 334:modificatif 6850:modificatif 7896:modificatif
+00109,1993-01-01,2012-02-18,Techniciens des services culturels et des Bâtiments de France,B,,3,MI140,,01088,203:origine 1041:abrogateur
+00110,1984-01-01,,Assistants ingénieurs du CNRS,A,,2,MI280,,,1215:origine 5397:modificatif 7877:modificatif
+00111,1984-01-01,,Directeurs de recherche de l'IFREMER,A,,2,MI280,,,1219:origine 5397:modificatif 7877:modificatif
+00112,1984-01-01,,Chargés de recherche de l'IFREMER,A,,2,MI280,,,1219:origine 5354:modificatif 5397:modificatif 7340:modificatif 7877:modificatif
+00113,1984-01-01,,Ingénieurs de recherche de l'IFREMER,A,,2,MI280,,,1219:origine 5397:modificatif 7462:modificatif 7877:modificatif
+00114,1984-01-01,,Ingénieurs d'études de l'IFREMER,A,,2,MI280,,,1219:origine 5354:modificatif 5397:modificatif 7857:modificatif 7877:modificatif
+00115,1993-09-24,2010-12-31,Conseillers d'insertion et de probation de l'administration pénitentiaire,B,,3,MI220,,01140,862:origine 1310:abrogateur
+00116,1993-09-24,,Chefs des services d'insertion et de probation de l'administration pénitentiaire,Hors catégorie,,3,MI220,,,862:origine 1182:modificatif 5335:modificatif
+00117,1984-01-01,2006-01-07,Attachés d'administration de la recherche de l'IFREMER,A,,2,MI280,,,1219:origine 5025:abrogateur
+00118,1984-01-01,,Assistants ingénieurs de l'IFREMER,A,,2,MI280,,,1219:origine 5397:modificatif 7877:modificatif
+00119,1994-06-03,2015-07-31,Educateurs spécialisés des instituts nationaux de jeunes sourds et de l'Institut national de jeunes aveugles,B,,3,MI300,,01177,419:origine 1545:abrogateur
+00120,1984-01-01,2006-01-07,Chargés d'administration de la recherche de l'IFREMER,A,,2,MI280,,,1219:origine 5025:abrogateur
+00122,1984-01-01,,Directeurs de recherche de l'INSERM,A,,2,MI280,,,1218:origine 5397:modificatif 7877:modificatif
+00123,1994-11-18,2012-04-15,Secrétaires administratifs relevant des ministres chargés des affaires sociales,B,,2,MI300,,01104,422:origine 1143:abrogateur
+00125,1994-08-01,2012-04-26,Secrétaires administratifs de l'Office national des forêts,B,,3,MI130,,01107,102:origine 1154:abrogateur
+00127,2003-04-12,2011-12-31,Secrétaires administratifs du Ministère de la Culture et de la Communication,B,,2,MI140,,01097,212:origine 1040:abrogateur
+00129,1984-01-01,,Chargés de recherche de l'INSERM,A,,2,MI280,,,1218:origine 5354:modificatif 5397:modificatif 7340:modificatif 7877:modificatif
+00130,1994-11-27,2012-09-30,Secrétaires administratifs de l'équipement,B,,2,MI190,,01137,102:origine 947:modificatif 1291:abrogateur
+00132,2007-01-01,2010-11-30,Secrétaires administratifs de l'intérieur et de l'outre-mer,B,,2,MI200,,01020,390:origine 769:abrogateur
+00134,1994-08-01,2010-08-31,"Secrétaires administratifs du ministère de l'économie, des finances et de l'industrie",B,,2,MI290,,00958,102:origine 667:abrogateur
+00135,1998-09-24,2012-12-29,Assistants d'administration de l'aviation civile,B,,3,MI192,,01146,647:origine 1327:abrogateur
+00136,1969-03-06,,Secrétaires de chancellerie,B,,2,MI110,,,101:modificatif 102:modificatif 668:origine
+00138,1994-11-02,2014-11-30,Chargés de recherche relevant du ministre chargé de l'équipement,A,,3,MI190,,01173,346:origine 347:modificatif 1483:abrogateur
+00139,1994-11-02,2014-11-30,Directeurs de recherche relevant du ministre chargé de l'équipement,A,,3,MI190,,01174,346:origine 347:modificatif 1483:abrogateur
+00140,2011-09-24,,Techniciens supérieurs de la météorologie,B,,2,EP031,,,1362:origine 7365:modificatif
+00141,2011-09-24,,Techniciens supérieurs de la météorologie en Polynésie française,B,,2,EP031,,,625:origine 668:modificatif 1362:modificatif 7365:modificatif
+00142,1995-04-13,2011-08-31,Contrôleurs du Trésor public,B,,3,MI290,,,708:origine 719:abrogateur
+00144,1994-08-01,2010-12-31,"Contrôleur de la concurrence, de la consommation et de la répression des fraudes",B,,2,MI290,,01091,101:origine 1059:abrogateur
+00145,1994-08-01,1995-07-31,Contrôleurs des douanes et droits indirects,B,,3,MI290,,,610:origine 1062:modificatif
+00145,1995-08-01,,Contrôleurs des douanes et droits indirects,B,,3,MI290,,,610:origine 1062:modificatif
+00146,1984-01-01,,Ingénieurs de recherche de l'INSERM,A,,2,MI280,,,1218:origine 5397:modificatif 7462:modificatif 7877:modificatif
+00148,1995-04-12,2010-12-31,Contrôleurs de l'INSEE,B,,2,MI290,,01090,525:origine 1058:abrogateur
+00149,1995-04-13,2011-08-31,Contrôleurs des impôts,B,,3,MI290,,,709:origine 719:abrogateur
+00150,1968-01-11,2011-08-31,Contrôleurs du Trésor public de l'administration de la Polynésie Française,B,,2,MI290,,,708:origine 719:abrogateur
+00155,1984-01-01,,Chargés d'administration de la recherche du CNRS,A,,2,MI280,,,1215:origine 7877:modificatif
+00157,1995-08-01,,"Fonctionnaires de direction et d'encadrement de la concurrence, de la consommation et de la répression des fraudes",A,,3,MI290,,,527:origine 536:modificatif 5753:modificatif
+00158,2007-02-01,,"Agents de catégorie A des services déconcentrés de la direction générale de la concurrence, de la consommation et de la répression des fraudes",A,,3,MI290,,,536:origine 5752:modificatif
+00159,1995-08-01,2012-12-31,Personnels de catégorie A du Trésor public,A,,3,MI290,,01011 01012,732:modificatif 734:origine 737:abrogateur
+00160,2007-03-25,,Personnels de catégorie A des services déconcentrés de la Direction Générale des Douanes et Droits Indirects,A,,3,MI290,,,603:origine 5500:modificatif
+00161,2007-05-07,,Attachés statisticiens de l'Institut national de la statistique et des études économiques,A,,3,MI290,,,5072:origine 5498:modificatif
+00162,1995-08-01,,Personnels de catégorie A des services déconcentrés de la Direction générale des impôts,A,,3,MI290,,01011 01012,732:modificatif 735:origine 737:modificatif
+00164,1988-01-01,,Attachés d'administration de la recherche de l'INED,A,,2,MI280,,,1214:origine 7877:modificatif
+00166,1995-03-06,2016-12-31,"Adjoints techniques accueil, surveillance et magasinage du ministère de la culture",C,,3,MI140,,,204:origine 205:modificatif 5053:modificatif 7275:modificatif
+00166,2017-01-01,,"Adjoints techniques accueil, surveillance et magasinage du ministère de la culture",C,,3,MI140,,,204:origine 205:modificatif 5053:modificatif 7275:modificatif
+00167,1990-08-01,2009-12-31,Surveillants des établissements d'enseignement technique agricole,C,,2,MI130,,,1203:origine 1204:abrogateur
+00169,2006-01-01,2023-06-30,Corps de conception et de direction de la police nationale,Hors catégorie,,3,MI200,,,295:origine 6095:modificatif 7626:modificatif
+00169,2023-07-01,,Corps de conception et de direction de la police nationale,Hors catégorie,,3,MI200,,,295:origine 6095:modificatif 7626:modificatif
+00170,2005-07-01,,Corps de commandement de la police nationale,Hors catégorie,,3,MI200,,,286:origine 5278:modificatif 7625:modificatif
+00171,1984-01-01,,Assistants ingénieurs de l'INSERM,A,,2,MI280,,,1218:origine 5397:modificatif 7877:modificatif
+00172,2005-01-01,,Corps d'encadrement et d'application de la police nationale,Hors catégorie,,3,MI200,,,296:origine 787:modificatif 5022:modificatif 5269:modificatif 7662:modificatif
+00174,1995-11-02,2013-09-30,Secrétaires de documentation de la culture et de l'architecture,B,,3,MI140,,01162,195:origine 1412:abrogateur
+00175,1994-01-01,,Ingénieurs de recherche du ministère chargé de l'agriculture,A,,3,MI130,,,69:origine 5332:modificatif 7933:modificatif
+00176,1994-01-01,,Ingénieurs d'études du ministère chargé de l'agriculture,A,,3,MI130,,,69:origine 5332:modificatif
+00177,1994-01-01,,Assistants ingénieurs du ministère chargé de l'agriculture,A,,3,MI130,,,69:origine 5332:modificatif
+00178,1994-08-01,2009-11-15,Techniciens de formation et de recherche du ministère chargé de l'agriculture,B,,3,MI130,00183 00264,,69:origine 1187:modificatif
+00178,2009-11-16,,Techniciens de formation et de recherche du ministère chargé de l'agriculture,B,,3,MI130,00183 00264,,69:origine 1187:modificatif
+00179,1994-01-01,2016-12-31,Adjoints techniques de formation et de recherche du ministère chargé de l'agriculture,C,,3,MI130,00660,,69:origine 5053:modificatif 7275:modificatif
+00179,2017-01-01,,Adjoints techniques de formation et de recherche du ministère chargé de l'agriculture,C,,3,MI130,00660,,69:origine 5053:modificatif 7275:modificatif
+00180,1984-01-01,1993-12-30,Chargés d'administration de la recherche de l'INSERM,A,,2,MI280,,,1218:origine 7877:modificatif
+00180,1993-12-31,,Chargés d'administration de la recherche de l'INSERM,A,,2,MI280,,,1218:origine 7877:modificatif
+00181,1993-08-01,2013-02-28,Techniciens sanitaires,B,,3,MI300,,01135,253:origine 1233:abrogateur
+00182,1994-01-01,2021-12-31,Psychologues PJJ,A,,3,MI220,,01282,566:origine 5865:modificatif 5975:modificatif 7260:abrogateur
+00183,1994-08-01,2012-10-31,Techniciens de laboratoires des établissements d'enseignement agricole,B,,2,MI130,,00178,421:origine 1187:abrogateur
+00184,1996-04-03,2012-08-31,Techniciens de laboratoire des écoles des Mines,B,,2,MI290,,01111,421:origine 1170:abrogateur
+00185,1984-01-01,,Attachés d'administration de la recherche de l'INSERM,A,,2,MI280,,,1218:origine 7877:modificatif
+00186,1996-03-26,2013-02-28,Techniciens de laboratoire de l'Afssaps,B,,2,MI300,,01135,421:origine 1233:abrogateur
+00187,1996-08-01,2011-08-31,Techniciens de laboratoire des établissements d'enseignement du ministère chargé de l'éducation nationale,B,,2,MI180,,01052,421:origine 901:abrogateur
+00188,1994-08-01,2010-10-22,Secrétaires administratifs de l'Etablissement national des produits de l'agriculture et de la mer et de l'Agence de services et de paiement,B,,2,MI130,,00633 00657,1205:origine 1206:abrogateur
+00189,1973-03-16,,Inspection Générale des Finances,A,,3,MI290,,01275,802:origine 7257:modificatif 7359:modificatif
+00190,1984-01-01,,Ingénieurs d'études de l'INSERM,A,,2,MI280,,,1218:origine 5354:modificatif 5397:modificatif 7857:modificatif 7877:modificatif
+00193,1995-01-01,,Professeurs techniques PJJ,A,,3,MI220,,,567:origine 7051:modificatif
+00195,1997-01-01,,Contrôleurs du travail,B,,3,MI120,,,141:origine 1416:modificatif
+00196,2007-01-01,2013-10-01,Attachés d'administration de l'intérieur et de l'outre-mer,A,,2,MI200,,01040,375:origine 1409:abrogateur
+00197,1994-08-01,2011-12-31,Contrôleurs des services techniques du ministère de l'intérieur,B,,2,MI200,,01077,383:origine 986:abrogateur
+00198,1997-10-11,2013-11-01,Agents techniques d'éducation PJJ,C,,3,MI220,,00967,568:origine 1415:abrogateur
+00200,1969-03-06,,Ministres plénipotentiaires,A,,3,MI110,,01275 01290,90:origine 7257:modificatif 7333:modificatif
+00201,1992-08-11,,Professeurs certifiés de l'enseignement agricole,A,,3,MI130,,,92:origine 5348:modificatif 7686:modificatif
+00202,1997-10-03,2010-10-22,Corps administratif supérieur de l'Etablissement national des produits de l'agriculture et de la mer et de l'Agence de services et de paiement,A,,2,MI130,,,1206:abrogateur 1207:origine
+00203,1997-01-01,,Inspecteurs généraux adjoints de l'Etablissement national des produits de l'agriculture et de la mer et de l'Agence de services et de paiement,A,,3,MI130,,,1206:modificatif 1207:origine
+00206,1997-11-08,,Délégués au permis de conduire et à la sécurité routière,A,,3,MI200,,,337:origine 1456:modificatif 5286:modificatif
+00208,1996-08-01,,Traducteurs du ministère des Affaires étrangères,A,,2,MI110,,,100:origine 7031:modificatif
+00211,1996-08-01,,Chargés d'études documentaires des ministères chargés de la culture et de l'éducation nationale,A,,3,MI140,,,193:origine 5495:modificatif
+00213,1998-01-01,,Membres des tribunaux administratifs et des cours administratives d'appel,A,,3,MI008,,,6132:origine 7332:modificatif 7616:modificatif
+00217,1996-08-01,,Ingénieurs des services culturels et patrimoine,A,,3,MI140,,,623:origine 5957:modificatif
+00218,1996-08-01,,Ingénieurs-Economistes de la construction,A,,3,MI290,,,623:origine 5957:modificatif
+00220,2007-06-01,2017-05-09,Directeurs des services pénitentiaires,Hors catégorie,,3,MI220,,,858:origine 5158:modificatif 7369:modificatif 7795:modificatif
+00220,2017-05-10,,Directeurs des services pénitentiaires,Hors catégorie,,3,MI220,,,858:origine 5158:modificatif 7369:modificatif 7795:modificatif
+00223,1999-04-27,2013-10-31,Techniciens paramédicaux civils du ministère de la défense,B,,3,MI150,,01193,460:origine 1507:abrogateur
+00226,1999-08-12,2013-10-01,Chefs des services administratifs du Conseil d'Etat,A,,3,MI240,,01040,1025:modificatif 1026:origine 1409:abrogateur
+00227,1999-10-17,2019-09-30,Inspection générale de l'administration de l'éducation nationale et de la recherche,A,,2,MI180,,01238,1257:origine 5241:modificatif 6582:abrogateur
+00228,1999-08-04,2025-12-31,Directeurs techniques de l'administration pénitentiaire,Hors catégorie,,3,MI220,,01361,861:origine 5335:modificatif 8068:abrogateur
+00229,1999-08-04,2025-12-31,Techniciens de l'administration pénitentiaire,Hors catégorie,,3,MI220,,01362,861:origine 5335:modificatif 8068:abrogateur
+00230,1999-08-04,,Adjoints techniques de l'administration pénitentiaire,C,,3,MI220,,,861:origine 5335:modificatif 8068:modificatif
+00231,1969-03-06,,Conseillers des affaires étrangères,A,,3,MI110,,01275 01290,90:origine 7257:modificatif 7333:modificatif
+00232,1969-03-06,2019-08-31,Secrétaires des affaires étrangères,A,,2,MI110,,,90:origine 99:modificatif 5325:modificatif 7333:modificatif 7811:modificatif
+00232,2019-09-01,2024-03-19,Secrétaires des affaires étrangères,A,,2,MI110,,,90:origine 99:modificatif 5325:modificatif 7333:modificatif 7811:modificatif
+00232,2024-03-20,,Secrétaires des affaires étrangères,A,,2,MI110,,,90:origine 99:modificatif 5325:modificatif 7333:modificatif 7811:modificatif
+00233,1996-08-01,2011-12-31,Techniciens des systèmes d'information et de communication du ministère de l'intérieur,B,,3,MI200,,01078,391:origine 984:abrogateur
+00234,2000-08-07,,Inspection du travail,A,,3,MI120,,,142:origine 842:modificatif 7377:modificatif
+00235,2007-05-03,2012-09-30,Contrôleurs des affaires maritimes,B,,2,MI190,,01136 01137,315:modificatif 998:origine 1288:abrogateur 1291:abrogateur
+00237,1996-04-03,2012-03-31,"Techniciens de laboratoire du ministère de l'économie, des finances et de l'industrie",B,,2,MI290,,01092,421:origine 1060:abrogateur
+00238,2000-10-20,,"Personnels scientifiques de laboratoire du ministère de l'économie, des finances et de l'industrie",A,,3,MI290,,,742:origine 5503:modificatif
+00239,1996-08-01,2007-05-03,Officiers de port,A,,3,MI190,,,364:origine 7064:modificatif
+00239,2007-05-04,,Officiers de port,A,,3,MI190,,,364:origine 7064:modificatif
+00240,1994-08-01,2010-12-31,Secrétaires administratifs de la défense,B,,2,MI150,,01095,101:modificatif 102:origine 1096:abrogateur
+00243,1991-08-01,2012-09-30,Conseillers techniques de service social de la défense,A,,2,MI150,,01115,111:origine 1176:abrogateur
+00246,2001-07-06,,Techniciens de l'environnement,B,,2,MI190,,,990:origine 6853:modificatif
+00247,2007-05-03,,Agents techniques de l'environnement,C,,2,MI190,,00246,368:modificatif 1005:origine 5052:modificatif 5053:modificatif 6853:modificatif 7275:modificatif
+00248,2007-05-03,,Syndics des gens de mer,C,,2,MI190,,,368:modificatif 1006:origine 5052:modificatif 5053:modificatif 7275:modificatif
+00249,2001-04-16,2011-09-30,Assistants des bibliothèques,B,,3,MI280,,01067,245:origine 926:abrogateur
+00250,1992-11-08,,Professeurs de lycée professionnel de l'éducation nationale,A,,3,MI180,00024,,159:origine 1056:modificatif 1079:modificatif 5329:modificatif 5392:modificatif 7667:modificatif 8082:modificatif
+00251,2001-11-08,,Inspection générale de l'agriculture,A,,3,MI130,,01275,26:origine 7257:modificatif 7359:modificatif
+00252,1996-10-05,,Chargé d'éducation des maisons d'éducation de la Légion d'honneur,B,,3,MI220,,,540:modificatif 932:modificatif 5020:origine
+00253,2001-09-01,2017-08-31,Personnels de direction d'établissement d'enseignement ou de formation,A,,1,MI180,,,74:origine 5339:modificatif
+00253,2017-09-01,,Personnels de direction d'établissement d'enseignement ou de formation,A,,1,MI180,,,74:origine 5339:modificatif
+00254,2009-10-01,2025-11-30,"Ingénieurs des ponts, des eaux et des forêts",A,,2,MI130,,01352,89:origine 7999:abrogateur
+00255,2002-02-26,2017-04-23,Inspecteurs de la santé publique vétérinaire,A,,3,MI130,,01214,27:origine 6002:abrogateur
+00256,1969-03-06,,Secrétaires des systèmes d'information et de communication,B,,2,MI110,,,90:origine 101:modificatif 5094:modificatif 7383:modificatif
+00258,2002-05-06,,Ingénieurs de police technique et scientifique de la police nationale,A,,3,MI200,,,297:origine 5457:modificatif 7328:modificatif
+00259,2002-05-03,,Agents spécialisés de police technique et scientifique de la police nationale,C,,3,MI200,,,293:origine 5053:modificatif 7275:modificatif 7328:modificatif
+00260,2002-01-01,,Corps judiciaire,A,,3,MI220,,,761:origine 6561:modificatif 6604:modificatif 8027:modificatif
+00261,1995-08-01,2011-05-05,Contrôleurs sanitaires des services du ministère de l'agriculture,B,,3,MI130,,01028,88:origine 809:abrogateur
+00262,1931-06-09,2009-09-30,Ingénieurs des travaux maritimes,A,,2,MI150,,,89:modificatif 8017:origine
+00262,2009-10-01,2009-10-01,Ingénieurs des travaux maritimes,A,,2,MI150,,,89:modificatif 8017:origine
+00262,2009-10-02,2009-10-02,Ingénieurs des travaux maritimes,A,,2,MI150,,,89:modificatif 8017:origine
+00262,2009-10-03,,Ingénieurs des travaux maritimes,A,,2,MI150,,,89:modificatif 8017:origine
+00263,2000-01-01,,Magistrats de chambre régionale et territoriale des comptes,A,,3,MI009,,,6434:origine 7613:modificatif 7644:modificatif
+00264,2002-10-03,2012-10-31,Techniciens des établissements publics de l'enseignement technique agricole,B,,3,MI130,,00178,86:origine 1187:abrogateur
+00265,2002-11-04,2015-03-31,"Inspecteurs et conseillers de la création, des enseignements artistiques et de l'action culturelle",A,,3,MI140,,01171,187:origine 1453:abrogateur
+00266,2002-12-28,,Professeurs des écoles nationales supérieures d'art,A,,3,MI140,,,189:origine 6771:modificatif
+00267,2002-12-30,2002-12-30,Inspection de l'action sanitaire et sociale,A,,3,MI300,,,321:origine 5461:modificatif 7499:modificatif
+00267,2002-12-31,2002-12-31,Inspection de l'action sanitaire et sociale,A,,3,MI300,,,321:origine 5461:modificatif 7499:modificatif
+00267,2003-01-01,,Inspection de l'action sanitaire et sociale,A,,3,MI300,,,321:origine 5461:modificatif 7499:modificatif
+00269,2003-05-23,2013-12-19,Techniciens opérationnels forestiers de l'Office national des forêts,B,,3,MI130,,01178,119:origine 1548:abrogateur
+00270,2003-05-23,,Cadres techniques de l'Office national des forêts,A,,3,MI130,,,117:origine 5964:modificatif
+00271,1994-11-30,,Infirmières et infirmiers de l'Etat,B,,1,MI300,00011,01102,385:origine 1584:modificatif 7273:modificatif
+00272,1994-11-30,,Infirmières et infirmiers du ministère chargé de l'éducation nationale,B,,2,MI180,,01144,385:origine 1315:modificatif 7273:modificatif
+00275,2004-03-27,,Conseillers techniques et pédagogiques supérieurs,A,,3,MI180,,,892:origine 5450:modificatif
+00277,2004-06-04,,Architectes et urbanistes de l'Etat,A,,1,INTER,,,10:origine 1440:modificatif 6564:modificatif
+00278,1998-04-09,2012-08-31,Techniciens supérieurs de l'industrie et des mines,B,,3,MI290,,01112,632:origine 1171:abrogateur
+00280,2004-09-01,,Inspecteurs de la jeunesse et des sports,A,,3,MI180,,,781:origine 5678:modificatif 6837:modificatif
+00281,1964-03-14,,Sous-Préfets,A,,3,MI200,,01275,299:origine 975:modificatif 7257:modificatif
+00282,2004-11-04,2021-12-31,Cadres de santé civils du ministère de la défense,A,,3,MI150,,01194,458:origine 1522:modificatif 5100:modificatif 7278:abrogateur
+00283,2004-11-27,2021-12-31,Conseillers économiques,A,,2,MI290,,01275,543:origine 7257:abrogateur
+00284,2005-05-10,,Contrôle général économique et financier,A,,3,MI290,,01275,621:origine 7257:modificatif 7359:modificatif
+00285,2005-05-12,2010-12-31,Directeurs d'insertion et de probation de l'administration pénitentiaire,A,,3,MI220,,01116,867:origine 1188:abrogateur
+00286,2005-04-23,,Inspecteurs généraux et inspecteurs de l'administration du développement durable,A,,3,MI190,,01275,326:origine 327:modificatif 7257:modificatif 7359:modificatif
+00287,2005-05-26,,Directeurs des services PJJ,A,,3,MI220,,,569:origine 5465:modificatif 6765:modificatif 7770:modificatif
+00288,2005-07-19,2012-02-29,Contrôle des assurances,A,,3,MI290,,00451,620:origine 1084:abrogateur
+00289,2005-07-22,2025-11-30,Inspecteurs généraux de l'Institut national de la statistique et des études économiques,A,,2,MI290,,01355,523:origine 6661:modificatif 7999:abrogateur
+00291,2005-06-01,,Ingénieurs des travaux publics de l'Etat,A,,3,MI190,00098,,343:origine 5212:modificatif 5827:modificatif 7733:modificatif
+00292,2007-01-01,2013-10-01,Attachés d'administration de l'éducation nationale et de l'enseignement supérieur,A,,3,MI180,,01040,418:origine 1409:abrogateur
+00293,2005-11-01,,Ingénieurs des services techniques du ministère de l'intérieur,A,,3,MI200,,,386:origine 5459:modificatif
+00294,2006-01-01,,Techniciens de police technique et scientifique de la police nationale,B,,3,MI200,,,5127:origine
+00295,2006-01-05,,Ingénieurs de l'agriculture et de l'environnement,A,,3,MI130,,,28:origine 5212:modificatif
+00296,2006-04-16,2020-12-31,Corps de commandement du personnel de surveillance de l'administration pénitentiaire,Hors catégorie,,3,MI220,,01305,860:origine 5335:modificatif 6590:modificatif 7760:modificatif
+00296,2021-01-01,,Corps de commandement du personnel de surveillance de l'administration pénitentiaire,Hors catégorie,,3,MI220,,01305,860:origine 5335:modificatif 6590:modificatif 7760:modificatif
+00297,2006-04-16,2016-12-31,Corps d'encadrement et d'application du personnel de surveillance de l'administration pénitentiaire,C,,3,MI220,,01304,860:origine 5335:modificatif 6590:modificatif 7310:modificatif 7760:abrogateur
+00297,2017-01-01,2023-12-31,Corps d'encadrement et d'application du personnel de surveillance de l'administration pénitentiaire,C,,3,MI220,,01304,860:origine 5335:modificatif 6590:modificatif 7310:modificatif 7760:abrogateur
+00302,2007-01-01,2016-12-31,Adjoints administratifs des administrations de l'Etat,C,,2,MI290,,,103:origine 5053:modificatif 7275:modificatif
+00302,2017-01-01,,Adjoints administratifs des administrations de l'Etat,C,,2,MI290,,,103:origine 5053:modificatif 7275:modificatif
+00303,2007-01-01,2016-12-31,Adjoints administratifs des administrations de l'Etat,C,,2,MI200,00605,,103:origine 5053:modificatif 7275:modificatif 7324:modificatif
+00303,2017-01-01,,Adjoints administratifs des administrations de l'Etat,C,,2,MI200,00605,,103:origine 5053:modificatif 7275:modificatif 7324:modificatif
+00306,2006-12-31,2019-12-31,Adjoints techniques des administrations de l'Etat,C,,2,MI200,,00323,5052:origine 5053:modificatif 6506:abrogateur
+00307,2006-12-30,2011-08-31,Adjoints techniques des impôts,C,,2,MI290,,01007,105:origine 722:abrogateur
+00308,2006-12-30,2011-08-31,Adjoints techniques du Trésor public,C,,2,MI290,,01007,105:origine 722:abrogateur
+00309,2007-01-01,2011-08-31,Adjoints techniques de laboratoire des établissements d'enseignement relevant du ministère de l'éducation nationale,C,,2,MI180,,00513,424:origine 901:abrogateur
+00311,2007-04-01,,Maitre-assistant de l'Institut Mines-Télécom,A,,3,MI290,,,624:origine 7044:modificatif
+00312,2007-04-01,,Professeur de l'Institut Mines-Télécom,A,,3,MI290,,,624:origine 7044:modificatif
+00314,1976-01-01,2016-12-31,Agents techniques du ministère de la défense,C,,2,MI150,,,368:modificatif 455:origine 5052:modificatif 5053:modificatif 7275:modificatif
+00314,2017-01-01,,Agents techniques du ministère de la défense,C,,2,MI150,,,368:modificatif 455:origine 5052:modificatif 5053:modificatif 7275:modificatif
+00315,1950-02-16,2011-08-31,Agents administratifs des impôts,C,,2,MI290,,01006,711:origine 721:abrogateur
+00316,2007-05-04,2011-08-31,Agents d'administration du Trésor public,C,,2,MI290,,01006,710:origine 721:abrogateur
+00318,1990-01-01,2016-12-31,Adjoints techniques des établissements d'enseignement du ministère de l'éducation nationale,C,,2,MI180,,,368:modificatif 5052:origine 5053:modificatif 7275:modificatif
+00318,2017-01-01,,Adjoints techniques des établissements d'enseignement du ministère de l'éducation nationale,C,,2,MI180,,,368:modificatif 5052:origine 5053:modificatif 7275:modificatif
+00319,2007-05-03,2016-12-31,Adjoints techniques des établissements d'enseignement agricole publics,C,,3,MI130,,,87:origine 5053:modificatif 7275:modificatif
+00319,2017-01-01,,Adjoints techniques des établissements d'enseignement agricole publics,C,,3,MI130,,,87:origine 5053:modificatif 7275:modificatif
+00320,1998-05-20,,Personnels scientifiques de laboratoire de l'Agence nationale de sécurité du médicament,A,,3,MI300,,,357:origine
+00321,1968-01-11,2016-12-31,Agents d'administration du Trésor public de l'administration de la Polynésie française,C,,2,MI290,,,625:origine 5052:modificatif 5053:modificatif 7275:modificatif
+00321,2017-01-01,,Agents d'administration du Trésor public de l'administration de la Polynésie française,C,,2,MI290,,,625:origine 5052:modificatif 5053:modificatif 7275:modificatif
+00322,1968-01-11,2016-12-31,Agents d'administration des impôts de l'administration de la Polynésie française,C,,2,MI290,,,625:origine 5052:modificatif 5053:modificatif 7275:modificatif
+00322,2017-01-01,,Agents d'administration des impôts de l'administration de la Polynésie française,C,,2,MI290,,,625:origine 5052:modificatif 5053:modificatif 7275:modificatif
+00323,2008-01-01,2016-12-31,Adjoints techniques du ministère de l'intérieur et de l'Outre-Mer,C,,2,MI200,00306,,105:origine 5053:modificatif 6506:modificatif 7275:modificatif
+00323,2017-01-01,,Adjoints techniques du ministère de l'intérieur et de l'Outre-Mer,C,,2,MI200,00306,,105:origine 5053:modificatif 6506:modificatif 7275:modificatif
+00324,1974-12-02,2016-12-31,Chefs de district forestier de l'Office national des forêts,C,,3,MI130,,,118:origine 5052:modificatif 5053:modificatif 7275:modificatif
+00324,2017-01-01,,Chefs de district forestier de l'Office national des forêts,C,,3,MI130,,,118:origine 5052:modificatif 5053:modificatif 7275:modificatif
+00325,2006-12-31,2016-12-31,Adjoints administratifs des administrations de l'Etat,C,,2,MI240,,,5052:origine 5053:modificatif 7275:modificatif
+00325,2017-01-01,2023-12-31,Adjoints administratifs des administrations de l'Etat,C,,2,MI240,,,5052:origine 5053:modificatif 7275:modificatif
+00326,2006-12-31,2006-12-31,Adjoints techniques des administrations de l'Etat,C,,2,MI240,,,105:origine 5052:modificatif 5053:modificatif
+00327,2008-03-01,2013-10-01,Attachés d'administration du Conseil d'Etat et de la Cour nationale du droit d'asile,A,,2,MI240,,01040,1025:origine 1409:abrogateur
+00329,2006-12-23,2016-12-31,Adjoints administratifs des administrations de l'Etat,C,,2,MI110,,,103:origine 104:modificatif 5053:modificatif 7275:modificatif
+00329,2017-01-01,,Adjoints administratifs des administrations de l'Etat,C,,2,MI110,,,103:origine 104:modificatif 5053:modificatif 7275:modificatif
+00330,2006-12-23,2016-12-31,Adjoints techniques des administrations de l'Etat,C,,2,MI110,,,104:modificatif 105:origine 5053:modificatif 7275:modificatif
+00330,2017-01-01,,Adjoints techniques des administrations de l'Etat,C,,2,MI110,,,104:modificatif 105:origine 5053:modificatif 7275:modificatif
+00331,2008-01-01,2015-12-29,Attachés d'administration de l'aviation civile,A,,3,MI192,,01040,648:origine 1535:abrogateur
+00333,2009-01-01,2010-09-30,Secrétaires administratifs de l'éducation nationale et de l'enseignement supérieur,B,,3,MI180,,01142,1258:origine 1259:abrogateur
+00334,2009-01-01,2016-12-31,Adjoints administratifs des administrations de l'Etat,C,,2,MI180,,,103:origine 5053:modificatif 7275:modificatif
+00334,2017-01-01,,Adjoints administratifs des administrations de l'Etat,C,,2,MI180,,,103:origine 5053:modificatif 7275:modificatif
+00335,2009-01-01,2011-10-09,Secrétaires administratifs du ministère de la justice,B,,2,MI220,,01113,
+00338,2009-01-01,2013-10-01,Attachés d'administration de l'Office national des forêts,A,,3,MI130,,01040,116:origine 1409:abrogateur
+00346,1964-07-29,,Préfets,Hors catégorie,,3,MI200,,01275,298:origine 7257:modificatif
+00354,1984-01-01,2012-10-31,Techniciens de la recherche de l'INSERM,B,,3,MI280,,01120,1213:abrogateur 1218:origine
+00356,1984-01-01,,Secrétaires d'administration de la recherche de l'INSERM,B,,2,MI280,,,1218:origine 7877:modificatif
+00359,1975-07-02,2012-04-15,Techniciens de physiothérapie,B,,3,MI300,,01103,
+00365,2002-01-13,2019-09-30,Inspection générale de la jeunesse et des sports,A,,3,MI300,,01238,886:origine 887:modificatif 5253:modificatif 6582:abrogateur
+00367,1984-01-01,2016-12-31,Adjoints techniques de la recherche de l'INSERM,C,,2,MI280,,,5053:modificatif 5397:modificatif 7275:modificatif 7877:modificatif
+00367,2017-01-01,,Adjoints techniques de la recherche de l'INSERM,C,,2,MI280,,,5053:modificatif 5397:modificatif 7275:modificatif 7877:modificatif
+00372,1981-03-15,,Inspection générale de l'administration au ministère de l'intérieur,A,,3,MI200,,01275,292:origine 729:modificatif 7257:modificatif 7359:modificatif
+00375,1976-01-01,2012-09-30,Contrôleurs des transports terrestres,B,,2,MI190,,01137,315:modificatif 997:origine 1291:abrogateur
+00376,1984-01-01,,Directeurs de recherche de l'IRD,A,,2,MI280,,,1220:origine 5397:modificatif 7877:modificatif
+00385,1984-01-01,2017-05-10,Chargés de recherche de l'IRD,A,,2,MI280,,,1220:origine 5354:modificatif 5397:modificatif 7340:modificatif 7877:modificatif
+00385,2017-05-11,,Chargés de recherche de l'IRD,A,,2,MI280,,,1220:origine 5354:modificatif 5397:modificatif 7340:modificatif 7877:modificatif
+00386,1985-12-01,2016-12-31,Adjoints techniques de la recherche de l'IFSTTAR,C,,2,MI280,,,1221:origine 5053:modificatif 5397:modificatif 7275:modificatif 7877:modificatif
+00386,2017-01-01,,Adjoints techniques de la recherche de l'IFSTTAR,C,,2,MI280,,,1221:origine 5053:modificatif 5397:modificatif 7275:modificatif 7877:modificatif
+00388,1966-01-01,,Conducteurs des travaux publics de l'Etat,C,,2,MI190,,,316:origine 317:modificatif
+00392,1970-01-01,2026-01-01,Dessinateurs de l'équipement,C,,2,MI190,,00668,368:modificatif 5052:origine 5053:modificatif 7275:modificatif 7728:abrogateur
+00394,1986-09-20,2026-01-01,Experts techniques des services techniques de l'équipement,C,,2,MI190,,00668,368:modificatif 5052:origine 5053:modificatif 7275:modificatif 7728:abrogateur
+00395,1967-02-03,2015-12-31,Géomètres de l'Institut national de l'information géographique et forestière,B,,3,MI190,,01329,668:origine 945:modificatif 7853:abrogateur
+00395,2016-01-01,2024-12-31,Géomètres de l'Institut national de l'information géographique et forestière,B,,3,MI190,,01329,668:origine 945:modificatif 7853:abrogateur
+00396,1985-12-01,2012-10-31,Techniciens de la recherche de l'IFSTTAR,B,,3,MI280,,01121,1213:abrogateur 1221:origine
+00398,1984-01-01,,Ingénieurs de recherche de l'IRD,A,,2,MI280,,,1220:origine 5397:modificatif 7462:modificatif 7877:modificatif
+00399,1985-12-01,,Secrétaires d'administration de la recherche de l'IFSTTAR,B,,2,MI280,,,1221:origine 7877:modificatif
+00400,1970-01-01,2013-12-13,Officiers de port adjoints,B,,3,MI190,,01168,312:origine 313:modificatif 1420:abrogateur
+00401,1987-12-13,2013-05-31,Inspecteurs du permis de conduire et de la sécurité routière,B,,2,MI190,,01148,995:origine 1351:abrogateur
+00403,1984-01-01,2017-05-10,Ingénieurs d'études de l'IRD,A,,2,MI280,,,1220:origine 5354:modificatif 5397:modificatif 7857:modificatif 7877:modificatif
+00403,2017-05-11,,Ingénieurs d'études de l'IRD,A,,2,MI280,,,1220:origine 5354:modificatif 5397:modificatif 7857:modificatif 7877:modificatif
+00404,1971-01-01,2016-12-31,Ingénieurs des travaux géographiques et cartographiques de l'Etat,A,,3,MI190,,01330,949:origine 950:modificatif 5212:modificatif 7853:abrogateur
+00404,2017-01-01,2024-12-31,Ingénieurs des travaux géographiques et cartographiques de l'Etat,A,,3,MI190,,01330,949:origine 950:modificatif 5212:modificatif 7853:abrogateur
+00408,1985-12-01,,Chargés d'administration de la recherche de l'IFSTTAR,A,,2,MI280,,,1221:origine 7877:modificatif
+00409,1983-01-01,2015-05-31,Ingénieurs des systèmes d'information et de communication du ministère de l'intérieur,A,,3,MI200,,01172,387:origine 1458:abrogateur
+00410,1957-01-01,,Inspection du travail et de la main-d'oeuvre des transports,A,,2,MI190,,,329:origine 330:modificatif
+00411,1984-01-01,,Assistants ingénieurs de l'IRD,A,,2,MI280,,,1220:origine 5397:modificatif 7877:modificatif
+00413,1984-01-01,2012-10-31,Techniciens de la recherche de l'IFREMER,B,,3,MI280,,01122,1213:abrogateur 1219:origine
+00414,1984-01-01,2006-01-07,Secrétaires d'administration de la recherche de l'IFREMER,B,,2,MI280,,,1219:origine 5025:abrogateur
+00419,1985-01-01,,Directeurs de recherche de l'INRIA,A,,2,MI280,,,1217:origine 5397:modificatif 7877:modificatif
+00420,1985-01-01,,Chargés de recherche de l'INRIA,A,,2,MI280,,,1217:origine 5354:modificatif 5397:modificatif 7340:modificatif 7877:modificatif
+00421,1985-01-01,,Ingénieurs de recherche de l'INRIA,A,,2,MI280,,,1217:origine 5397:modificatif 7462:modificatif 7877:modificatif
+00422,1984-01-01,,Ingénieurs d'études de l'INRIA,A,,2,MI280,,,1217:origine 5354:modificatif 5397:modificatif 7857:modificatif 7877:modificatif
+00423,1985-01-01,,Assistants ingénieurs de l'INRIA,A,,2,MI280,,,1217:origine 5397:modificatif 7877:modificatif
+00424,1985-01-01,,Attachés d'administration de la recherche de l'INRIA,A,,2,MI280,,,1217:origine 7877:modificatif
+00425,1971-05-01,,"Chargés de mission contractuels du ministère de l'économie, des finances et de l'industrie",A,,3,MI290,,,759:origine
+00428,2003-06-07,,Contractuels ex agents du groupement industriel des armements terrestres Industries au MINEFI,C,,3,MI290,,,764:origine
+00429,1984-01-01,2012-10-31,Techniciens de la recherche de l'IRD,B,,3,MI280,,01123,1213:abrogateur 1220:origine
+00430,1984-01-01,,Secrétaires d'administration de la recherche de l'IRD,B,,2,MI280,,,1220:origine 7877:modificatif
+00431,1985-01-01,2012-10-31,Techniciens de la recherche de l'INRIA,B,,3,MI280,,01124,1213:abrogateur 1217:origine
+00432,1968-01-11,,Correcteurs de l'imprimerie officielle de l'administration de la Polynésie française,B,,3,MI290,,,626:origine
+00433,1985-01-01,,Secrétaires d'administration de la recherche de l'INRIA,B,,2,MI280,,,1217:origine 7877:modificatif
+00434,1985-01-01,2016-12-31,Adjoints techniques de la recherche de l'INRIA,C,,2,MI280,,,5053:modificatif 5397:modificatif 7275:modificatif 7877:modificatif
+00434,2017-01-01,,Adjoints techniques de la recherche de l'INRIA,C,,2,MI280,,,5053:modificatif 5397:modificatif 7275:modificatif 7877:modificatif
+00436,1994-01-01,,Contractuels ex-ouvriers de l'imprimerie nationale,C,,3,MI290,,,754:origine
+00437,1970-07-01,1971-11-17,Ingénieurs des études et de l'exploitation de l'aviation civile,A,,3,MI192,,,645:origine 5947:modificatif
+00437,1971-11-18,,Ingénieurs des études et de l'exploitation de l'aviation civile,A,,3,MI192,,,645:origine 5947:modificatif
+00438,1961-01-01,2021-06-03,Ingénieurs des travaux de la météorologie,A,,2,EP031,,,1373:origine 1374:modificatif 1375:modificatif 1401:modificatif 5212:modificatif 6568:modificatif 6569:modificatif 7154:modificatif
+00438,2021-06-04,,Ingénieurs des travaux de la météorologie,A,,2,EP031,,,1373:origine 1374:modificatif 1375:modificatif 1401:modificatif 5212:modificatif 6568:modificatif 6569:modificatif 7154:modificatif
+00439,1984-01-01,,Chargés d'administration de la recherche de l'IRD,A,,2,MI280,,,1220:origine 7877:modificatif
+00441,1964-01-01,,Aides-techniciens de la météorologie,C,,2,EP031,,,1388:origine 1389:modificatif 6555:modificatif 7275:modificatif
+00442,1984-01-01,,Attachés d'administration de la recherche de l'IRD,A,,2,MI280,,,1220:origine 7877:modificatif
+00443,1964-01-01,,Aides-techniciens de la météorologie de la Polynésie française,C,,2,MI190,,,205:modificatif 1388:origine 6555:modificatif 7275:modificatif
+00444,2003-05-21,,Inspection générale des affaires culturelles,A,,3,MI140,,01275,182:origine 7257:modificatif 7359:modificatif
+00448,1960-04-22,,Chargés d'enseignement de l'éducation physique et sportive de l'éducation nationale,A,,3,MI180,,,166:origine
+00451,2009-02-01,2025-11-30,Ingénieurs des mines,A,,2,MI290,00288,01354,618:origine 1084:modificatif 7999:abrogateur
+00453,1989-09-01,1989-09-01,Techniciens adjoints de laboratoire de langues vivantes de l'Ecole nationale d'administration,C,,2,MI290,,,
+00454,1989-09-01,2013-10-01,Attachés administratifs de l'Ecole nationale d'administration,A,,2,MI290,,,1409:abrogateur 5355:origine
+00455,1985-07-18,,Professeur de sport,A,,3,MI180,,,851:origine 5440:modificatif
+00457,1985-07-18,,Conseiller d'éducation populaire et de jeunesse,A,,3,MI180,01013,,776:origine 777:modificatif 5442:modificatif 7256:modificatif
+00458,1986-01-16,,Ingénieurs d'études du ministère chargé de l'enseignement supérieur,A,,3,MI280,,,240:origine 5354:modificatif
+00459,1986-01-16,,Assistants ingénieurs du ministère chargé de l'enseignement supérieur,A,,3,MI280,,,240:origine 901:modificatif 5354:modificatif
+00461,1986-01-16,,Attachés d'administration de recherche et de formation du ministère chargé de l'enseignement supérieur,A,,3,MI280,,,240:origine 368:modificatif
+00462,1985-01-01,1989-08-31,Professeurs des universités - praticiens hospitaliers,A,,2,MI280,,01277,1276:modificatif 1580:origine 6497:modificatif 7266:abrogateur
+00462,1989-09-01,2021-12-15,Professeurs des universités - praticiens hospitaliers,A,,2,MI280,,01277,1276:modificatif 1580:origine 6497:modificatif 7266:abrogateur
+00463,1984-10-01,,Professeurs des universités,A,,3,MI280,,,1276:origine
+00464,1990-01-01,2021-12-15,"Professeurs des universités - praticiens hospitaliers des centres de soins, d'enseignement et de recherche dentaires",A,,2,MI280,,01277,5357:origine 5358:modificatif 5980:modificatif 5981:modificatif 6496:modificatif 7266:abrogateur
+00466,1984-02-24,2021-12-15,Maître de conférences des universités-praticien hospitalier,A,,3,MI280,,01276,1580:origine 6497:modificatif 7266:abrogateur
+00467,1984-10-01,,Maîtres de conférences des universités,A,,3,MI280,,,1276:origine
+00477,1985-01-01,,Chargés d'administration de la recherche de l'INRIA,A,,2,MI280,,,1217:origine 7877:modificatif
+00482,1984-01-01,,Chargés de mission de la recherche du CNRS,A,,2,MI280,,,1253:origine
+00485,1988-05-09,,Professeurs de l'Ecole nationale supérieure d'arts et métiers,A,,3,MI280,,,1275:origine 5354:modificatif
+00487,1967-01-01,,"Professeurs de chaires supérieures des établissements classiques, modernes et techniques de l'éduc nationale",A,,3,MI180,,,151:origine 5341:modificatif 5544:modificatif 6503:modificatif 7667:modificatif
+00489,1972-07-08,1989-08-31,Professeurs certifiés de l'éducation nationale,A,,3,MI180,,,155:origine 1056:modificatif 1069:modificatif 5329:modificatif 7667:modificatif 8082:modificatif
+00489,1989-09-01,,Professeurs certifiés de l'éducation nationale,A,,3,MI180,,,155:origine 1056:modificatif 1069:modificatif 5329:modificatif 7667:modificatif 8082:modificatif
+00490,1986-09-01,,Professeurs d'enseignement général de collège éduc nat,A,,3,MI180,,,168:origine
+00491,1972-07-04,,Adjoints d'enseignement de l'éducation nationale,A,,3,MI180,,,170:origine
+00493,1970-01-01,1989-08-31,Conseillers principaux d'éducation,A,,3,MI180,,,162:origine 7667:modificatif 8082:modificatif
+00493,1989-09-01,,Conseillers principaux d'éducation,A,,3,MI180,,,162:origine 7667:modificatif 8082:modificatif
+00495,1986-01-16,2011-08-31,Techniciens de recherche et de formation du ministère chargé de l'enseignement supérieur,B,,3,MI280,,01052,240:origine 901:abrogateur
+00496,1986-01-16,2011-08-31,Secrétaires d'administration de recherche et de formation du ministère chargé de l'enseignement supérieur,B,,3,MI280,,01052,240:origine 901:abrogateur
+00498,1984-01-01,2012-10-31,Techniciens de la recherche du CNRS,B,,3,MI280,,01125,1213:abrogateur 1215:origine
+00499,1984-01-01,,Secrétaires d'administration de la recherche du CNRS,B,,2,MI280,,,1215:origine 7877:modificatif
+00500,1984-01-01,,Techniciens principaux de physique nucléaire,B,,2,MI280,,,1302:origine
+00501,1984-01-01,,Ingénieurs principaux de physique nucléaire,A,,3,MI280,,,1302:origine
+00502,1984-01-01,,Techniciens d'atelier de physique nucléaire,B,,3,MI280,,,1302:origine
+00503,1984-01-01,,Techniciens d'études de physique nucléaire,B,,3,MI280,,,1302:origine
+00504,1984-01-01,,Ingénieurs de physique nucléaire,A,,3,MI280,,,1302:origine
+00505,1972-07-08,,Professeurs agrégés du second degré de l'éducation nationale,A,,3,MI180,,,153:origine 5329:modificatif 7667:modificatif
+00507,1961-09-07,,Instituteurs de l'éducation nationale,B,,3,MI180,,,174:origine
+00509,1982-07-19,,Instituteurs du corps de l'Etat pour la Polynésie éducation nationale,B,,3,MI180,,,181:origine
+00513,1986-01-16,2016-12-31,Adjoints techniques de recherche et de formation du ministère chargé de l'enseignement supérieur,C,,3,MI280,00309,,240:origine 5053:modificatif 7275:modificatif
+00513,2017-01-01,,Adjoints techniques de recherche et de formation du ministère chargé de l'enseignement supérieur,C,,3,MI280,00309,,240:origine 5053:modificatif 7275:modificatif
+00514,1999-11-18,2021-12-31,Administrateurs civils,A,,1,INTER,,01275,8:origine 9:modificatif 1232:modificatif 7257:abrogateur
+00516,1988-05-09,2016-12-31,Magasiniers des bibliothèques,C,,3,MI280,,,246:origine 5052:modificatif 5053:modificatif 7275:modificatif
+00516,2017-01-01,,Magasiniers des bibliothèques,C,,3,MI280,,,246:origine 5052:modificatif 5053:modificatif 7275:modificatif
+00517,1984-01-01,2016-12-31,Adjoints techniques de la recherche du CNRS,C,,2,MI280,,,5053:modificatif 5397:modificatif 7275:modificatif 7877:modificatif
+00517,2017-01-01,,Adjoints techniques de la recherche du CNRS,C,,2,MI280,,,5053:modificatif 5397:modificatif 7275:modificatif 7877:modificatif
+00523,1989-09-01,,Directeurs de recherche de l'ANSES,A,,3,MI130,,,115:origine 5354:modificatif 5397:modificatif 7877:modificatif
+00525,1989-09-01,1998-09-30,Chargés de recherche de l'ANSES,A,,3,MI130,,,1135:origine 5354:modificatif 5397:modificatif 7340:modificatif 7877:modificatif
+00525,1998-10-01,,Chargés de recherche de l'ANSES,A,,3,MI130,,,1135:origine 5354:modificatif 5397:modificatif 7340:modificatif 7877:modificatif
+00532,1989-09-01,,Conseillers principaux d'éducation des établissements d'enseignement agricole,A,,3,MI130,,,72:origine 5348:modificatif 7686:modificatif
+00533,1984-01-01,,"Directeurs de recherche de l'Institut national de recherche pour l'agriculture, l'alimentation et l'environnement",A,,2,MI280,,,1216:origine 5397:modificatif 6772:modificatif 6773:modificatif 7877:modificatif
+00534,1984-01-01,,"Chargés de recherche de l'Institut national de recherche pour l'agriculture, l'alimentation et l'environnement",A,,2,MI280,,,1216:origine 5354:modificatif 5397:modificatif 6772:modificatif 6773:modificatif 7340:modificatif 7877:modificatif
+00535,1984-01-01,,"Ingénieurs de recherche de l'Institut national de recherche pour l'agriculture, l'alimentation et l'environnement",A,,2,MI280,,,1216:origine 5397:modificatif 6772:modificatif 6773:modificatif 7462:modificatif 7877:modificatif
+00536,1984-01-01,,"Ingénieurs d'études de l'Institut national de recherche pour l'agriculture, l'alimentation et l'environnement",A,,2,MI280,,,1216:origine 5354:modificatif 5397:modificatif 6772:modificatif 6773:modificatif 7857:modificatif 7877:modificatif
+00537,1984-01-01,,"Assistants ingénieurs de l'Institut national de recherche pour l'agriculture, l'alimentation et l'environnement",A,,2,MI280,,,1216:origine 5397:modificatif 6772:modificatif 6773:modificatif 7877:modificatif
+00539,1984-01-01,2020-01-01,Chargés d'administration de la recherche de l'INRA,A,,2,MI280,,,1216:origine 6772:abrogateur 6773:abrogateur
+00540,1984-01-01,2020-01-01,Attachés d'administration de la recherche de l'INRA,A,,2,MI280,,,1216:origine 6772:abrogateur 6773:abrogateur
+00548,1965-05-23,2025-12-31,Adjoints d'enseignement des lycées agricoles,A,,3,MI130,,,93:origine 5348:modificatif 8092:abrogateur
+00549,1984-01-01,2012-10-31,Techniciens de la recherche de l'INRA,B,,3,MI280,,01126,1213:abrogateur 1216:origine
+00550,1984-01-01,2020-01-01,Secrétaires d'administration de la recherche de l'INRA,B,,2,MI280,,,1216:origine 6772:abrogateur 6773:abrogateur
+00552,1984-01-01,2016-12-31,"Adjoints techniques de la recherche de l'Institut national de recherche pour l'agriculture, l'alimentation et l'environnement",C,,2,MI280,,,5053:modificatif 5397:modificatif 6772:modificatif 6773:modificatif 7275:modificatif 7877:modificatif
+00552,2017-01-01,,"Adjoints techniques de la recherche de l'Institut national de recherche pour l'agriculture, l'alimentation et l'environnement",C,,2,MI280,,,5053:modificatif 5397:modificatif 6772:modificatif 6773:modificatif 7275:modificatif 7877:modificatif
+00554,2000-04-14,,"Contractuels Berkanis au ministère de l'économie, des finances et de l'industrie",C,,3,MI290,,,95:origine
+00555,1984-01-13,1984-01-13,"Agent contractuel entretien, restauration et gardiennage du ministère de l'économie, des finances et de l'industrie en contrat à durée indéterminée",C,,3,MI290,,,553:origine
+00556,1995-08-01,2013-10-01,Directeurs de préfecture,A,,3,MI200,,01040,384:origine 1409:abrogateur
+00560,1961-10-23,2009-11-15,Dessinateurs Projeteurs du Ministère des Finances,B,,3,MI290,,,631:origine
+00560,2009-11-16,,Dessinateurs Projeteurs du Ministère des Finances,B,,3,MI290,,,631:origine
+00561,1969-06-18,,Contractuels de catégorie B de la direction générale du Trésor,B,,3,MI290,,,825:origine
+00562,1967-04-09,2001-09-20,Administrateurs de l'Institut national de la statistique et des études économiques,A,,2,MI290,,01355,524:origine 6662:modificatif 7999:abrogateur
+00562,2001-09-21,2025-11-30,Administrateurs de l'Institut national de la statistique et des études économiques,A,,2,MI290,,01355,524:origine 6662:modificatif 7999:abrogateur
+00563,1989-09-01,,Magistrats de la Cour des comptes,A,,3,MI009,,,6434:origine 7612:modificatif
+00569,1971-05-01,,Chargés de mission contractuels à l'institut national de la statistique et des études économiques- niveau I et II,A,,3,MI290,,,7197:origine
+00570,1965-12-13,1965-12-13,Agents contractuels de 1ère catégorie de la répression des fraudes et du contrôle de qualité,A,,3,MI290,,,
+00572,1971-05-01,,Chargés de mission contractuels à l'institut national de la statistique et des études économiques- niveau III et IV,A,,3,MI290,,,7197:origine
+00573,1965-12-13,1965-12-13,Agents contractuels de 2ème catégorie de la répression des fraudes et du contrôle de qualité,B,,3,MI290,,,
+00575,2006-11-23,2016-10-28,Agents des douanes pour l'administration de Mayotte,C,,3,MI290,,,612:origine 5343:abrogateur
+00576,1989-09-01,1994-07-31,Contrôleurs des Douanes pour l'Administration de la Polynésie Française,B,,2,MI290,,,625:origine
+00576,1994-08-01,,Contrôleurs des Douanes pour l'Administration de la Polynésie Française,B,,2,MI290,,,625:origine
+00579,2006-12-30,2016-12-31,Adjoints techniques de laboratoire des administrations de l'Etat,C,,2,MI290,,,424:origine 5053:modificatif 7275:modificatif
+00579,2017-01-01,,Adjoints techniques de laboratoire des administrations de l'Etat,C,,2,MI290,,,424:origine 5053:modificatif 7275:modificatif
+00581,1986-01-16,,Ingénieurs de recherche du ministère chargé de l'enseignement supérieur et de la recherche,A,,3,MI280,,,240:origine 5354:modificatif 7462:modificatif
+00582,1989-09-01,2016-12-31,"Adjoints de controle de la concurrence, de la consommation et de la répression des fraudes",C,,2,MI290,,,539:origine 5052:modificatif 5053:modificatif 7275:modificatif
+00582,2017-01-01,,"Adjoints de controle de la concurrence, de la consommation et de la répression des fraudes",C,,2,MI290,,,539:origine 5052:modificatif 5053:modificatif 7275:modificatif
+00584,1969-08-15,,Adjoints techniques de l'Imprimerie Nationale,C,,3,MI290,,,626:origine
+00585,1969-08-15,,Personnels de la correction de l'Imprimerie nationale,B,,3,MI290,,,626:origine
+00586,1969-08-15,,Personnels de maîtrise de l'Imprimerie Nationale,A,,3,MI290,,,626:origine
+00600,1963-09-01,,"Professeurs civils de l'école spéciale militaire de Saint-Cyr, de l'école de l'air ou de l'école navale",A,,2,MI150,,,900:origine
+00605,1968-08-01,2023-12-31,Agents des systèmes d'information et de communication du ministère de l'intérieur,Hors catégorie,,3,MI200,,00303,5052:origine 5053:modificatif 7275:modificatif 7324:abrogateur
+00606,1961-05-01,,Assistants de l'institut national agronomique et des autres écoles nationales supérieures agronomiques,A,,2,MI130,,,70:modificatif 1209:origine
+00616,1990-09-01,,Professeurs des écoles enseignement privé de l'éducation nationale,A,,3,MI180,,,160:origine 7667:modificatif 8082:modificatif
+00617,1980-08-08,,Professeurs éducation physique et sportive enseignement privé de l'éducation nationale,A,,3,MI180,,,157:origine 1055:modificatif 1056:modificatif 5329:modificatif 7667:modificatif 8082:modificatif
+00618,1961-09-07,,Instituteurs de l'enseignement privé,B,,3,MI180,,,5414:origine
+00619,1972-07-08,,Professeurs agrégés enseignement privé de l'éducation nationale,A,,3,MI180,,,153:origine 5329:modificatif
+00621,1972-07-08,,Professeurs certifiés enseignement privé de l'éducation nationale,A,,3,MI180,,,155:origine 1056:modificatif 1069:modificatif 5329:modificatif 7667:modificatif 8082:modificatif
+00622,1967-01-01,,Professeurs de chaires supérieures enseignement privé de l'éducation nationale,A,,3,MI180,,,151:origine 5341:modificatif 6503:modificatif 7667:modificatif
+00623,2005-02-19,2016-10-28,Agents techniques des administrations de l'Etat à Mayotte,C,,2,INTER,,,3:origine 5343:abrogateur
+00624,2005-02-19,2016-10-28,Agents administratifs des administrations de l'Etat à Mayotte,C,,2,MI180,,,4:origine 6:modificatif 5343:abrogateur
+00625,2009-01-01,,Contrôle général des armées,Officier,,3,MI150,,,52:origine 8075:modificatif
+00626,1969-06-02,,Chargés de mission contractuels de l'administration centrale du ministère des Affaires étrangères,A,,3,MI110,,,106:origine
+00627,1969-03-06,,Attachés des systèmes d'information et de communication,A,,3,MI110,,,90:origine 5325:modificatif 7333:modificatif
+00630,1938-10-27,,Surveillants d'externat,B,,3,MI180,,,24:origine
+00631,1937-05-11,,Maîtres d'internat,B,,3,MI180,,,25:origine
+00632,1970-01-01,2012-09-30,Techniciens supérieurs de l'équipement,B,,3,MI190,,01136,369:origine 370:modificatif 1288:abrogateur
+00633,1994-08-01,2011-05-05,Techniciens supérieurs des services du ministère de l'agriculture,B,,3,MI130,00188,01028,29:origine 809:abrogateur
+00634,1962-04-03,,Maîtres auxiliaires,A,,3,MI180,,,1067:origine
+00635,1985-07-15,,Instituteurs de Mayotte de l'éducation nationale,B,,3,MI180,,,178:origine
+00638,2005-02-16,,Instituteurs de la fonction publique de l'Etat recrutés à Mayotte éducation nationale,B,,3,MI180,,,176:origine 5126:modificatif
+00639,2003-06-06,2003-06-06,Assistants d'éducation,B,,3,MI180,,,1065:origine
+00640,2007-09-01,,Professeurs des écoles de l'éducation nationale à Mayotte,A,,3,MI180,,,179:origine 7667:modificatif
+00641,2003-12-29,,Professeurs des écoles du corps de l'Etat créé pour la Polynésie française éducation nationale,A,,3,MI180,,,180:origine 1082:modificatif 7667:modificatif
+00643,2004-01-30,,Personnels navigants contractuels de la base d'avions de la sécurité civile,Hors catégorie,,3,MI200,,,6109:origine 6162:modificatif 7459:modificatif
+00644,2004-01-30,2009-10-24,Mécaniciens navigants contractuels de la base d'avions de la sécurité civile,Hors catégorie,,3,MI200,,,770:origine 6162:abrogateur
+00645,2005-06-01,,Pilotes contractuels du groupement d'hélicoptères de la sécurité civile,Hors catégorie,,3,MI200,,,6462:origine 7459:modificatif
+00646,2005-06-01,,Mécaniciens opérateurs de bord contractuels du groupement d'hélicoptères de la sécurité civile,Hors catégorie,,3,MI200,,,6462:origine 7459:modificatif
+00647,2009-07-06,,Techniciens de maintenance contractuels du groupement d'hélicoptères de la sécurité civile,Hors catégorie,,3,MI200,,,7936:origine
+00648,1983-12-05,2013-10-01,Conseillers d'administration scolaire et universitaire,A,,3,MI180,,01040,78:origine 1045:modificatif 1409:abrogateur
+00649,2003-12-29,,Professeurs des écoles du corps de l'Etat créé pour la Polynésie française enseignement privé de l'éducation nationale,A,,3,MI180,,,180:origine 716:modificatif 1082:modificatif 7667:modificatif
+00650,1986-03-14,,Professeurs d'enseignement général de collège enseignement privé,A,,3,MI180,,,5414:origine
+00651,1972-07-04,,Adjoints d'enseignement enseignement privé,A,,3,MI180,,,5414:origine
+00652,1992-11-08,,Professeurs de lycée professionnel enseignement privé de l'éducation nationale,A,,3,MI180,,,159:origine 1056:modificatif 1079:modificatif 5329:modificatif 7667:modificatif 8082:modificatif
+00653,1960-04-22,,Chargés d'enseignement EPS enseignement privé,A,,3,MI180,,,5414:origine
+00654,1962-04-03,,Maîtres auxiliaires enseignement privé,A,,3,MI180,,,5414:origine
+00655,1982-07-19,,Instituteur Polynésie de l'enseignement privé,B,,3,MI180,,,5414:origine
+00656,2006-09-16,2013-10-01,Attachés d'administration du ministère de l'agriculture et de la pêche,A,,2,MI130,,01040,85:origine 1409:abrogateur
+00657,1995-08-01,2010-12-31,Secrétaires administratifs du ministère de l'agriculture et de la pêche,B,,2,MI130,00188,01027,102:origine 808:abrogateur
+00658,2006-12-31,2016-12-31,Adjoints administratifs des administrations de l'Etat,C,,2,MI130,,,5052:origine 5053:modificatif 7275:modificatif
+00658,2017-01-01,,Adjoints administratifs des administrations de l'Etat,C,,2,MI130,,,5052:origine 5053:modificatif 7275:modificatif
+00659,1991-08-01,2012-09-30,Assistants de service social du ministère de l'agriculture et de la pêche,B,,2,MI130,,01114,112:origine 1177:abrogateur
+00660,2006-12-31,2012-10-31,Adjoints techniques de laboratoire du ministère de l'agriculture et de la pêche,C,,2,MI130,,00179,
+00661,2006-12-31,2016-12-31,Adjoints techniques des administrations de l'Etat,C,,2,MI130,,,5052:origine 5053:modificatif 7275:modificatif
+00661,2017-01-01,,Adjoints techniques des administrations de l'Etat,C,,2,MI130,,,5052:origine 5053:modificatif 7275:modificatif
+00662,1991-01-01,,Agents non titulaires du ministère chargé de l'agriculture de catégorie fonctionnelle,A,,3,MI130,,,7930:origine
+00663,1991-01-01,1991-01-01,Agents non titulaires du ministère chargé de l'agriculture de catégorie exceptionnelle,A,,3,MI130,,,
+00664,1991-01-01,1991-01-01,Agents non titulaires du ministère chargé de l'agriculture de 1ère catégorie,A,,3,MI130,,,
+00665,1997-08-01,,Agents non titulaires du ministère chargé de l'agriculture de 2ème catégorie,B,,3,MI130,,,6120:origine
+00666,1997-08-01,,Agents non titulaires du ministère chargé de l'agriculture de 3ème catégorie,C,,3,MI130,,,6120:origine
+00667,1963-08-20,,Instructeurs de l'éducation nationale,B,,3,MI180,,,172:origine
+00668,2006-12-31,2016-12-31,Adjoints techniques des administrations de l'Etat,C,,2,MI190,00392 00394,,5052:origine 5053:modificatif 7275:modificatif 7728:modificatif
+00668,2017-01-01,,Adjoints techniques des administrations de l'Etat,C,,2,MI190,00392 00394,,5052:origine 5053:modificatif 7275:modificatif 7728:modificatif
+00669,2006-12-31,2016-12-31,Adjoints administratifs des administrations de l'Etat,C,,2,MI190,,,103:origine 5053:modificatif 7275:modificatif
+00669,2017-01-01,,Adjoints administratifs des administrations de l'Etat,C,,2,MI190,,,103:origine 5053:modificatif 7275:modificatif
+00670,1991-08-01,2012-09-30,Conseillers techniques de service social du MAE,A,,2,MI110,,01115,111:origine 1176:abrogateur
+00671,1991-08-01,2012-09-30,Assistants de service social du MAE,B,,2,MI110,,01114,112:origine 1177:abrogateur
+00672,2006-12-01,2013-10-01,Attachés d'administration du ministère de l'équipement,A,,2,MI190,,01040,1002:origine 1409:abrogateur
+00673,1996-08-01,2016-12-31,Chargés d'études documentaires,A,,1,MI190,,,193:origine 1001:modificatif 5495:modificatif
+00673,2017-01-01,,Chargés d'études documentaires,A,,1,MI190,,,193:origine 1001:modificatif 5495:modificatif
+00674,1969-06-02,,Secrétaires de mission contractuels de l'administration centrale du ministère des Affaires étrangères,B,,3,MI110,,,106:origine
+00675,1969-06-02,,Adjoints de mission contractuels de l'administration centrale du ministère des Affaires étrangères,C,,3,MI110,,,106:origine
+00677,2006-12-31,2016-12-31,Adjoints administratifs des administrations de l'Etat,C,,2,MI240,,,103:origine 5053:modificatif 7275:modificatif
+00677,2017-01-01,,Adjoints administratifs des administrations de l'Etat,C,,2,MI240,,,103:origine 5053:modificatif 7275:modificatif
+00680,2008-01-01,,Architectes en chef des monuments historiques,A,,3,MI140,,,216:origine
+00681,2006-12-31,2016-12-31,Adjoints techniques des administrations de l'Etat,C,,2,MI240,,,5052:origine 5053:modificatif 7275:modificatif
+00681,2017-01-01,,Adjoints techniques des administrations de l'Etat,C,,2,MI240,,,5052:origine 5053:modificatif 7275:modificatif
+00682,2007-07-29,2013-10-01,Attachés d'administration des SPM,A,,2,MI240,,01040,1001:origine 1409:abrogateur
+00683,1949-01-01,,Agents sur contrat du ministère de la défense nationale de la filière technique et scientifique - Niveau I,A,,3,MI150,,,94:modificatif 113:origine
+00684,1949-01-01,,Agents sur contrat du ministère de la défense nationale de la filière administrative - Niveau I,A,,3,MI150,,,94:modificatif 113:origine
+00685,1949-10-09,1949-10-09,Agents sur contrat du ministère de la défense nationale niveau III,C,,3,MI150,,,94:abrogateur 113:origine
+00686,2001-04-13,,Agents contractuels de droit public du ministère de la défense art 34 loi 2000-321,C,,3,MI150,,,114:origine
+00687,1968-08-09,,Chargés d'études de haut niveau 68,A,,3,MI190,,,425:origine
+00688,2000-04-14,,Agents Berkani article 34,C,,3,MI190,,,95:origine 427:modificatif
+00689,1900-01-01,,Ouvriers de l'Etat,C,,3,MI150,,,925:origine
+00690,2006-12-31,2016-12-31,Adjoints administratifs des administrations de l'Etat,C,,2,MI150,,,103:origine 5053:modificatif 7275:modificatif
+00690,2017-01-01,,Adjoints administratifs des administrations de l'Etat,C,,2,MI150,,,103:origine 5053:modificatif 7275:modificatif
+00691,1991-08-01,2012-09-30,Assistants de service social de la défense,B,,2,MI150,,01114,112:origine 1177:abrogateur
+00692,2007-01-01,2014-12-22,Attachés d'administration de la défense,A,,2,MI150,,01040,65:modificatif 99:origine 1441:abrogateur
+00695,1992-03-18,,Agents règlement intérieur national,A,,3,MI190,,,879:modificatif 5385:modificatif 5413:origine
+00697,2009-01-01,,Vétérinaires des armées,Officier,,3,MI150,,,59:origine 5455:modificatif 6925:modificatif 8035:modificatif
+00699,1998-03-26,2011-08-31,Techniciens du ministère de la défense,B,,2,MI150,,01094,456:origine 1086:abrogateur
+00700,2009-01-01,,Médecins des armées,Officier,,3,MI150,,,59:origine 5455:modificatif 6925:modificatif 8035:modificatif
+00701,1900-01-01,2017-12-31,Ouvriers graphiques,C,,3,MI150,,,126:origine 925:abrogateur
+00702,2005-12-22,,Infirmiers civils de soins généraux du ministère de la défense,B,,3,MI150,,01192,459:origine 1512:modificatif 1513:modificatif 7280:modificatif
+00703,2001-09-01,2001-09-01,Ouvriers chef d'équipe,B,,3,MI150,,,126:origine
+00704,2001-09-01,2001-09-01,Ouvriers chef d'équipe des professions graphiques,B,,3,MI150,,,126:origine
+00705,1900-01-01,,Techniciens à statut ouvrier,C,,3,MI150,,,5839:origine
+00706,2009-01-01,2025-11-30,Ingénieurs de l'armement,Officier,,3,MI150,,01358,42:origine 5963:modificatif 7999:abrogateur
+00707,1989-10-21,2011-08-31,Techniciens supérieurs d'études et de fabrications du ministère de la défense,B,,2,MI150,,01094,454:origine 1086:abrogateur
+00708,1989-11-01,1996-07-31,Ingénieurs d'études et de fabrications du ministère de la défense,A,,3,MI150,,01252,373:origine 5212:modificatif 6843:abrogateur
+00708,1996-08-01,2020-05-08,Ingénieurs d'études et de fabrications du ministère de la défense,A,,3,MI150,,01252,373:origine 5212:modificatif 6843:abrogateur
+00711,2009-12-01,2021-12-31,Aides-soignants et des agents des services hospitaliers qualifiés civils du ministère de la défense,C,,3,MI150,,,461:origine 5052:modificatif 5053:modificatif 7279:abrogateur
+00712,2006-12-31,2016-12-31,Adjoints techniques des administrations de l'Etat de l'Institut français du cheval et de l'équitation,C,,3,MI130,,,105:origine 5053:modificatif 7275:modificatif
+00712,2017-01-01,,Adjoints techniques des administrations de l'Etat de l'Institut français du cheval et de l'équitation,C,,3,MI130,,,105:origine 5053:modificatif 7275:modificatif
+00713,1970-01-01,1970-01-01,Contractuels de la Direction régionale de l'équipement d'Ile-de-France,A,,3,MI190,,,
+00714,1970-01-01,1970-01-01,Contractuels de la Direction régionale de l'équipement d'Ile-de-France,B,,3,MI190,,,
+00715,2006-12-23,2013-10-01,Attachés d'administration du Ministère de la Culture et de la Communication,A,,2,MI140,,01040,99:modificatif 210:origine 1409:abrogateur
+00716,2006-12-31,2016-12-31,Adjoints administratifs des administrations de l'Etat,C,,2,MI140,,,103:origine 5053:modificatif 7275:modificatif
+00716,2017-01-01,,Adjoints administratifs des administrations de l'Etat,C,,2,MI140,,,103:origine 5053:modificatif 7275:modificatif
+00717,1969-05-01,2010-12-31,Contractuels du service d'études techniques des routes et autoroutes de sixième catégorie,B,,3,MI190,,00718,
+00718,1969-05-01,,Contractuels cadre A du service d'études techniques des routes et autoroutes,B,,3,MI190,00717,,432:origine
+00719,1969-05-01,,Contractuels cadres B C et D du service d'études techniques des routes et autoroutes,A,,3,MI190,,,432:origine
+00720,1995-08-01,2013-12-19,Techniciens supérieurs forestiers de l'Office national des forêts,B,,3,MI130,,01178,135:origine 1548:abrogateur
+00722,1995-08-01,2011-04-13,Secrétaires administratifs des SPM,B,,2,MI240,,01118,102:origine 1196:abrogateur
+00723,2006-12-31,2016-12-31,Adjoints techniques des administrations de l'Etat,C,,2,MI140,,,105:origine 5053:modificatif 7275:modificatif
+00723,2017-01-01,,Adjoints techniques des administrations de l'Etat,C,,2,MI140,,,105:origine 5053:modificatif 7275:modificatif
+00724,1991-08-01,2012-09-30,Conseillers techniques de service social du Ministère de la Culture et de la Communication,A,,2,MI140,,01115,111:origine 1176:abrogateur
+00725,1991-08-01,2012-09-30,Assistants de service social du Ministère de la Culture et de la Communication,B,,2,MI140,,01114,112:origine 1177:abrogateur
+00728,2009-01-01,,Internes des hôpitaux des armées,Officier,,3,MI150,,,34:origine 5455:modificatif 6925:modificatif
+00729,1976-01-01,1977-01-03,Professeurs de l'enseignement maritime,Officier,,3,MI150,,,35:modificatif 407:origine 6082:modificatif 8035:modificatif
+00729,1977-01-04,,Professeurs de l'enseignement maritime,Officier,,3,MI150,,,35:modificatif 407:origine 6082:modificatif 8035:modificatif
+00730,1976-01-01,,Officiers du cadre spécial de l'armée de terre,Officier,,3,MI150,,,59:origine 5904:modificatif 6481:modificatif 6946:modificatif
+00733,2009-01-01,,Chirurgiens-dentistes des armées,Officier,,3,MI150,,,59:origine 5455:modificatif 6925:modificatif 8035:modificatif
+00737,2001-01-01,2001-01-01,Catégorie 2 CNIL,A,,3,MI240,,,
+00738,1989-07-01,,Enseignants contractuels des établissements d'enseignement agricole privés sous contrat de 1ère catégorie 1er groupe,A,,3,MI130,,,264:origine
+00739,1989-07-01,,Enseignants contractuels des établissements d'enseignement agricole privés sous contrat de 1ère catégorie 2ème groupe,A,,3,MI130,,,264:origine
+00740,1989-07-01,,Enseignants contractuels des établissements d'enseignement agricole privés sous contrat de 2ème catégorie,A,,3,MI130,,,264:origine 7686:modificatif
+00741,1989-07-01,,Enseignants contractuels des établissements d'enseignement agricole privés sous contrat de 3ème catégorie,A,,3,MI130,,,264:origine 7170:modificatif
+00742,1989-07-01,,Enseignants contractuels des établissements d'enseignement agricole privés sous contrat de 4ème catégorie,A,,3,MI130,,,264:origine 7686:modificatif
+00743,2008-09-01,2013-10-01,Attaché d'administration des juridictions financières,A,,2,MI240,,01040,144:origine 1409:abrogateur
+00744,2007-05-04,2010-03-23,Secrétaire administratif des juridictions financières,B,,2,MI009,,,6543:origine
+00744,2010-03-24,,Secrétaire administratif des juridictions financières,B,,2,MI009,,,6543:origine
+00745,2001-01-01,2001-01-01,Catégorie 3 CNIL,B,,3,MI240,,,
+00746,2006-05-23,2021-12-15,Maître de conférences des universités-praticiens hospitaliers des disciplines pharmaceutiques,A,,3,MI280,,01276,1580:origine 6497:modificatif 7266:abrogateur
+00747,2001-01-01,2001-01-01,Catégorie 4 CNIL,C,,3,MI240,,,
+00748,2008-01-01,,Chargés de mission du Conseil supérieur de l'audiovisuel,A,,3,MI240,,,1024:origine
+00749,2008-01-01,2008-01-01,Chargés de mission hors catégorie du Conseil supérieur de l'audiovisuel,A,,3,MI240,,,1024:origine
+00750,2008-01-01,,Assistants de catégorie B du Conseil supérieur de l'audiovisuel,B,,3,MI240,,,1024:origine
+00751,2008-01-01,,Assistants de catégorie C du Conseil supérieur de l'audiovisuel,C,,3,MI240,,,1024:origine
+00752,2008-01-01,,Ingénieurs et chefs de projets du 1er groupe du Conseil supérieur de l'audiovisuel,A,,3,MI240,,,1024:origine
+00753,2008-01-01,,Ingénieurs et chefs de projets du 2ème groupe du Conseil supérieur de l'audiovisuel,A,,3,MI240,,,1024:origine
+00754,2008-01-01,,Chargés d'études techniques principaux du Conseil supérieur de l'audiovisuel,A,,3,MI240,,,1024:origine
+00755,2008-01-01,,Chargés d'études techniques du Conseil supérieur de l'audiovisuel,B,,3,MI240,,,1024:origine
+00772,2009-01-01,2015-12-31,Officier du corps technique et administratif de l'armement,Officier,,3,MI150,,,45:origine 1474:abrogateur
+00773,1988-01-01,,Chargés de mission du Secrétariat général de la défense et de la sécurité nationale,A,,3,MI240,,,149:origine 238:modificatif
+00774,1909-11-15,,Archevêque,A,,3,MI200,,,2617:modificatif 2619:origine
+00775,1911-05-20,,Secrétaire général des évêchés,A,,3,MI200,,,2617:modificatif 2619:origine
+00776,1909-11-15,,Evêque,A,,3,MI200,,,2617:modificatif 2619:origine
+00777,1909-11-15,,Vicaire général d'évêché,A,,3,MI200,,,2617:modificatif 2619:origine
+00778,1909-11-15,,Chanoine,A,,3,MI200,,,2617:modificatif 2619:origine
+00779,1909-11-15,,Curé,A,,3,MI200,,,2617:modificatif 2619:origine
+00780,1909-11-15,,Desservant prêtre,B,,3,MI200,,,2617:modificatif 2619:origine
+00781,1909-11-15,,Vicaire prêtre,C,,3,MI200,,,2617:modificatif 2619:origine
+00782,2009-01-01,,Ingénieurs militaires des essences,Officier,,3,MI150,,,43:origine 1509:modificatif 5904:modificatif 8035:modificatif
+00788,2009-01-01,,Pharmaciens des armées,Officier,,3,MI150,,,59:origine 5455:modificatif 6925:modificatif 8035:modificatif
+00789,2009-01-01,,Officiers des armes de l'armée de terre,Officier,,3,MI150,,,59:origine 5904:modificatif 6481:modificatif 8035:modificatif
+00790,2009-01-01,,Officiers de l'air,Officier,,3,MI150,,,59:origine 5904:modificatif 6481:modificatif 8035:modificatif
+00791,1988-01-01,,Agent sur contrat de 1ère catégorie du Secrétariat général de la défense et de la sécurité nationale,A,,3,MI240,,,149:origine 238:modificatif
+00792,1991-01-01,,Inspecteurs de l'Agence nationale de la sécurité des systèmes d'information du Secrétariat général de la défense et de la sécurité nationale,A,,3,MI240,,,236:modificatif 7471:origine
+00793,1909-11-15,,Prêtre étranger,C,,3,MI200,,,2617:modificatif 2619:origine
+00794,1911-05-20,,Expéditionnaire d'évêché,C,,3,MI200,,,2617:modificatif 2619:origine 7275:modificatif
+00795,1909-11-15,,Evêque auxiliaire,A,,3,MI200,,,2617:modificatif 2619:origine
+00796,1909-11-15,,Pasteur de l'Eglise protestante de la confession d'Augsbourg d'Alsace et de Lorraine,A,,3,MI200,,,2617:modificatif 2619:origine
+00797,1909-11-15,,Président du directoire de l'Eglise protestante de la confession d'Augsbourg d'Alsace et de Lorraine,A,,3,MI200,,,2617:modificatif 2619:origine
+00798,1909-11-15,,Président du conseil synodal de l'Eglise protestante réformée d'Alsace et de Lorraine,A,,3,MI200,,,2617:modificatif 2619:origine
+00799,1911-05-20,,Secrétaire général du directoire de l'Eglise protestante de la confession d'Augsbourg d'Alsace et de Lorraine,A,,3,MI200,,,2617:modificatif 2619:origine
+00800,1911-05-20,,Secrétaire général de l'Eglise protestante réformée d'Alsace et de Lorraine,A,,3,MI200,,,2617:modificatif 2619:origine
+00802,1909-11-15,,Pasteur en mission de l'Eglise protestante de la confession d'Augsbourg d'Alsace et de Lorraine,A,,3,MI200,,,2617:modificatif 2619:origine
+00803,1911-05-20,,Secrétaire du conseil synodal,B,,3,MI200,,,2617:modificatif 2619:origine
+00804,1911-05-20,,Secrétaire du directoire,B,,3,MI200,,,2617:modificatif 2619:origine
+00805,1909-11-15,,Pasteur auxiliaire de l'Eglise protestante de la confession d'Augsbourg d'Alsace et de Lorraine,C,,3,MI200,,,2617:modificatif 2619:origine
+00806,1909-11-15,,Vicaire de l'Eglise protestante de la confession d'Augsbourg d'Alsace et de Lorraine,C,,3,MI200,,,2617:modificatif 2619:origine
+00807,1909-11-15,,Vicaire de l'Eglise protestante réformée d'Alsace et de Lorraine,C,,3,MI200,,,2617:modificatif 2619:origine
+00808,1909-11-15,,Pasteur de l'Eglise protestante réformée d'Alsace et de Lorraine,A,,3,MI200,,,2617:modificatif 2619:origine
+00809,1909-11-15,,Desservant laïc,B,,3,MI200,,,2617:modificatif 2619:origine
+00810,1909-11-15,,Vicaire laïc,C,,3,MI200,,,2617:modificatif 2619:origine
+00811,1909-11-15,,Pasteur auxiliaire de l'Eglise protestante réformée d'Alsace et de Lorraine,C,,3,MI200,,,2617:modificatif 2619:origine
+00812,1909-11-15,,Pasteur vicaire de l'Eglise protestante réformée d'Alsace et de Lorraine,C,,3,MI200,,,2617:modificatif 2619:origine
+00813,1909-11-15,,Pasteur vicaire de l'Eglise protestante de la confession d'Augsbourg d'Alsace et de Lorraine,C,,3,MI200,,,2617:modificatif 2619:origine
+00816,2001-04-13,,Agent d'entretien de droit public,C,,3,MI200,,,294:origine 1384:modificatif 1386:modificatif
+00817,1911-05-20,,Expéditionnaire du directoire,C,,3,MI200,,,2617:modificatif 2619:origine 7275:modificatif
+00818,1911-05-20,,Expéditionnaire du conseil synodal,C,,3,MI200,,,2617:modificatif 2619:origine 7275:modificatif
+00819,1909-11-15,,Grand rabbin,A,,3,MI200,,,2617:modificatif 2619:origine
+00820,1909-11-15,,Rabbin,A,,3,MI200,,,2617:modificatif 2619:origine
+00821,1911-05-20,,Secrétaire du consistoire israélite,B,,3,MI200,,,2617:modificatif 2619:origine
+00822,1909-11-15,,Aumônier de 1ère classe,A,,3,MI200,,,2617:modificatif 2619:origine
+00823,1909-11-15,,Aumônier de 2ème classe,A,,3,MI200,,,2617:modificatif 2619:origine
+00824,1909-11-15,,Aumônier de 3ème classe,A,,3,MI200,,,2617:modificatif 2619:origine
+00826,1990-01-24,2021-12-15,"Maîtres de conférences des universités-praticiens hospitaliers des centres de soins, d'enseignement et de recherche dentaires",A,,3,MI280,,01276,5357:origine 6496:modificatif 7266:abrogateur
+00827,2008-07-28,,Maîtres de conférences des universités de médecine générale,A,,3,MI280,,,5226:origine
+00828,1909-11-15,,Evêque coadjuteur,A,,3,MI200,,,2617:modificatif 2619:origine
+00829,1911-05-20,,Secrétaire des évêchés,B,,3,MI200,,,2617:modificatif 2619:origine
+00831,1970-08-01,2026-08-31,Maîtres auxiliaires des lycées et collèges agricoles,A,,3,MI130,,,263:origine 8092:abrogateur
+00832,1968-10-30,,Agents contractuels d'enseignement,A,,3,MI130,,,257:origine 258:modificatif 6081:modificatif
+00834,2009-01-01,,Sous-chefs de musique de la gendarmerie nationale,S-off / off marinier,,3,MI150,,,32:origine
+00835,2009-01-01,,Sous-officiers du corps de soutien technique et administratif de la gendarmerie nationale,S-off / off marinier,,3,MI150,,,54:origine 6472:modificatif 6478:modificatif 6482:modificatif
+00836,2009-01-01,,Sous-officiers de gendarmerie,S-off / off marinier,,3,MI150,,,53:origine 6473:modificatif 6475:modificatif 6479:modificatif
+00837,2009-01-01,,Officiers de gendarmerie,Officier,,3,MI150,,,47:origine 6468:modificatif 6474:modificatif 6476:modificatif
+00838,2009-01-01,,Officiers de marine,Officier,,3,MI150,,,59:origine 5904:modificatif 6481:modificatif 8035:modificatif
+00839,2009-01-01,,Officiers spécialisés de la marine,Officier,,3,MI150,,,59:origine 5904:modificatif 6481:modificatif 8035:modificatif
+00841,2009-01-01,,Officiers des bases de l'air,Officier,,3,MI150,,,59:origine 5904:modificatif 6481:modificatif
+00842,2009-01-01,,Officiers mécaniciens de l'air,Officier,,3,MI150,,,59:origine 5904:modificatif 6481:modificatif
+00846,2009-01-01,,Ingénieurs des études et techniques de l'armement,Officier,,3,MI150,,,45:origine 1474:modificatif 5904:modificatif 8035:modificatif
+00850,2009-01-01,,Chefs de musique de la gendarmerie nationale,Officier,,3,MI150,,,32:origine 5904:modificatif 6481:modificatif
+00854,1998-03-08,,Agents contractuels de remplacement,A,,3,MI130,,,1301:origine 6081:modificatif
+00855,1997-09-05,,Inspecteurs pédagogiques et techniques des établissements de jeunes sourds et de jeunes aveugles,A,,3,MI300,,,423:origine
+00856,2005-11-05,2011-04-30,Directeur général de la HALDE,A,,3,MI240,,01081,146:origine 1022:abrogateur
+00857,2005-12-01,2016-12-31,Adjoints administratifs des administrations de l'Etat,C,,2,MI300,,,103:origine 5053:modificatif 7275:modificatif
+00857,2017-01-01,,Adjoints administratifs des administrations de l'Etat,C,,2,MI300,,,103:origine 5053:modificatif 7275:modificatif
+00859,2006-12-23,2016-12-31,Adjoints techniques des administrations de l'Etat,C,,2,MI300,,,5052:origine 5053:modificatif 7275:modificatif
+00859,2017-01-01,,Adjoints techniques des administrations de l'Etat,C,,2,MI300,,,5052:origine 5053:modificatif 7275:modificatif
+00860,1990-11-08,1990-11-08,Ingénieurs du contrôle de la navigation aérienne,A,,3,MI192,,,640:origine 7979:modificatif
+00860,1990-11-09,1990-11-09,Ingénieurs du contrôle de la navigation aérienne,A,,3,MI192,,,640:origine 7979:modificatif
+00860,1990-11-10,1990-11-10,Ingénieurs du contrôle de la navigation aérienne,A,,3,MI192,,,640:origine 7979:modificatif
+00860,1990-11-11,1990-11-11,Ingénieurs du contrôle de la navigation aérienne,A,,3,MI192,,,640:origine 7979:modificatif
+00860,1990-11-12,2025-06-30,Ingénieurs du contrôle de la navigation aérienne,A,,3,MI192,,,640:origine 7979:modificatif
+00860,2025-07-01,,Ingénieurs du contrôle de la navigation aérienne,A,,3,MI192,,,640:origine 7979:modificatif
+00862,1966-07-12,2016-12-31,Adjoints administratifs du corps de l'Etat pour l'administration de la Polynésie française,C,,3,MI200,,,5052:origine 5053:modificatif 7275:modificatif
+00862,2017-01-01,,Adjoints administratifs du corps de l'Etat pour l'administration de la Polynésie française,C,,3,MI200,,,5052:origine 5053:modificatif 7275:modificatif
+00863,1993-08-01,,Aides-soignants des instituts nationaux de jeunes sourds et de l'Institut national des jeunes aveugles,C,,3,MI300,,,655:origine
+00864,2006-12-24,2016-12-31,Secrétaires administratifs du corps de l'Etat pour l'administration de la Polynésie française,B,,3,MI200,,,625:origine 668:modificatif
+00864,2017-01-01,,Secrétaires administratifs du corps de l'Etat pour l'administration de la Polynésie française,B,,3,MI200,,,625:origine 668:modificatif
+00865,2006-12-23,2016-12-31,Adjoints techniques de laboratoire des administrations de l'Etat,C,,2,MI300,,,424:origine 5053:modificatif 7275:modificatif
+00865,2017-01-01,,Adjoints techniques de laboratoire des administrations de l'Etat,C,,2,MI300,,,424:origine 5053:modificatif 7275:modificatif
+00866,2005-07-01,,Corps de commandement de police de la Polynésie française,Hors catégorie,,3,MI200,,,286:modificatif 625:origine 5278:modificatif 7625:modificatif
+00867,2005-01-01,,Corps d'encadrement et d'application de police de la Polynésie française,Hors catégorie,,3,MI200,,,296:origine 787:modificatif 5269:modificatif 7662:modificatif
+00868,1975-08-21,,Moniteurs-éducateurs des instituts nationaux de jeunes sourds et de l'Institut national des jeunes aveugles,B,,3,MI300,,,305:origine
+00869,1991-08-01,2015-12-31,Conseillers techniques d'éducation spécialisée INJS et INJA,A,,3,MI300,,01115,306:origine 1587:abrogateur
+00870,1991-08-01,2012-09-30,Assistants de service social du MEDDE,B,,2,MI190,,01114,112:origine 315:modificatif 1177:abrogateur
+00871,1991-08-01,2012-09-30,Conseillers techniques de service social du MEDDE,A,,2,MI190,,01115,111:origine 1176:abrogateur
+00873,1991-08-01,2012-09-30,Assistants de service social,B,,1,MI200,,01114,112:origine 1177:abrogateur
+00874,1991-08-01,2012-09-30,Conseillers techniques de service social,A,,1,MI200,,01115,111:origine 1176:abrogateur
+00875,1991-08-01,2012-09-30,Conseillers techniques de service social de l'éducation nationale,A,,1,MI180,,01115,111:origine 1176:abrogateur
+00876,1991-08-01,2012-09-30,Assistants de service social de l'éducation nationale,B,,2,MI180,,01114,112:origine 1177:abrogateur
+00877,1973-01-01,,Assistants du centre d'études techniques de l'équipement,A,,3,MI190,,,5388:origine
+00878,1973-01-01,,Techniciens supérieurs du centre d'études techniques de l'équipement,B,,3,MI190,,,5388:origine
+00879,1973-01-01,,Techniciens du centre d'études techniques de l'équipement,C,,3,MI190,,,5388:origine
+00880,1973-01-01,,Techniciens du centre d'études techniques de l'équipement,B,,3,MI190,,,5388:origine
+00881,1973-01-01,,Cadres administratifs du centre d'études techniques de l'équipement,A,,3,MI190,,,5388:origine
+00882,1973-01-01,,Agents administratifs du centre d'études techniques de l'équipement,C,,3,MI190,,,5388:origine
+00883,1973-01-01,,Agents administratifs du centre d'études techniques de l'équipement,B,,3,MI190,,,5388:origine
+00884,1973-01-01,,Employés de bureau du centre d'études techniques de l'équipement,C,,3,MI190,,,5388:origine
+00885,1973-01-01,,Ouvriers du centre d'études techniques de l'équipement,C,,3,MI190,,,5388:origine
+00886,1973-01-01,,Agents de maîtrise du centre d'études techniques de l'équipement,B,,3,MI190,,,5388:origine
+00887,1946-06-21,,Agents contractuels 46 de deuxième catégorie,B,,3,MI190,,,478:origine 1014:modificatif
+00888,1946-06-21,,Agents contractuels 46 de troisième catégorie,C,,3,MI190,,,478:origine 1014:modificatif
+00889,2001-12-06,,Collaborateur à l'administration centrale de l'enseignement maritime et aquacole,A,,3,MI190,,,481:origine 482:modificatif
+00890,2001-12-06,,Directeur de lycée de l'enseignement maritime et aquacole,A,,3,MI190,,,481:origine 482:modificatif
+00891,2001-12-06,,Intendant de l'enseignement maritime et aquacole,A,,3,MI190,,,481:origine 482:modificatif
+00892,2001-12-06,,Instructeur de l'enseignement maritime et aquacole,A,,3,MI190,,,481:origine 482:modificatif
+00893,2001-12-06,,Conseiller d'éducation de l'enseignement maritime et aquacole,A,,3,MI190,,,481:origine 482:modificatif
+00894,2001-12-06,,Maître d'éducation maritime de l'enseignement maritime et aquacole,A,,3,MI190,,,481:origine 482:modificatif
+00895,2001-12-06,,Secrétaire de l'enseignement maritime et aquacole,C,,3,MI190,,,481:origine 482:modificatif
+00896,2001-12-06,,Surveillant d'internat et d'externat de l'enseignement maritime et aquacole,C,,3,MI190,,,481:origine 482:modificatif
+00897,2006-01-01,2006-01-01,Médecins de prévention,A,,3,MI190,,,
+00898,1979-01-08,,Agents du service national des examens du permis de conduire,B,,3,MI190,,,490:origine 491:abrogateur
+00899,1992-01-01,2018-12-31,OPA ouvrier,C,,3,MI190,,01240 01241,503:origine 504:modificatif 6601:abrogateur
+00905,1992-01-01,2018-12-31,OPA maîtrise atelier,C,,3,MI190,,01239 01240,503:origine 504:modificatif 6601:abrogateur
+00906,1992-01-01,2018-12-31,OPA maîtrise magasin,C,,3,MI190,,01240,503:origine 504:modificatif 6601:abrogateur
+00907,1992-01-01,2018-12-31,OPA maîtrise exploitation,C,,3,MI190,,01239 01240,503:origine 504:modificatif 6601:abrogateur
+00916,1992-01-01,2018-12-31,OPA technicien,C,,3,MI190,,01239 01240,503:origine 504:modificatif 6601:abrogateur
+00919,1992-01-01,1992-01-01,OAPA ouvrier,C,,3,MI190,,,503:origine 504:modificatif
+00925,1992-01-01,1992-01-01,OAPA maîtrise atelier,C,,3,MI190,,,503:origine 504:modificatif
+00926,1992-01-01,1992-01-01,OAPA maîtrise magasin,C,,3,MI190,,,503:origine 504:modificatif
+00927,1992-01-01,1992-01-01,OAPA maîtrise exploitation,C,,3,MI190,,,503:origine 504:modificatif
+00936,1992-01-01,1992-01-01,OAPA technicien,C,,3,MI190,,,503:origine 504:modificatif
+00939,2006-12-23,2013-10-01,Attaché d'administration des affaires sociales,A,,2,MI300,,01040,880:origine 1409:abrogateur
+00940,1997-05-21,,Attaché économique,A,,3,MI290,,,544:origine 5493:modificatif
+00941,1991-08-01,2012-09-30,Assistants de service social relevant des ministres chargés des affaires sociales,B,,2,MI300,,01114,112:origine 1177:abrogateur
+00942,1991-08-01,2012-09-30,Conseillers techniques de service social des affaires sociales,A,,2,MI300,,01115,111:origine 1176:abrogateur
+00943,2009-09-01,2016-10-28,Agents administratifs des affaires sociales à Mayotte,C,,2,MI300,,,4:origine 5343:abrogateur
+00944,2009-09-01,2016-10-28,Agents techniques des affaires sociales à Mayotte,C,,2,MI300,,,4:origine 5343:abrogateur
+00946,1968-01-05,2016-12-31,Agents de constatation des Douanes pour l'Administration de la Polynésie Française,C,,3,MI290,,,625:origine 7275:modificatif
+00946,2017-01-01,,Agents de constatation des Douanes pour l'Administration de la Polynésie Française,C,,3,MI290,,,625:origine 7275:modificatif
+00947,1979-02-01,2016-12-31,Agents de constatation de la Direction Générale des Douanes et Droits Indirects,C,,3,MI290,,,611:origine 5052:modificatif 5053:modificatif 7275:modificatif
+00947,2017-01-01,,Agents de constatation de la Direction Générale des Douanes et Droits Indirects,C,,3,MI290,,,611:origine 5052:modificatif 5053:modificatif 7275:modificatif
+00948,1998-03-20,,"Traducteurs du Ministère de l'Economie, des Finances et de l'Industrie",A,,2,MI290,,,100:origine 7031:modificatif
+00949,2009-01-01,2016-12-31,Adjoints administratifs du ministère de la justice,C,,2,MI220,,,675:origine 5053:modificatif 7275:modificatif
+00949,2017-01-01,,Adjoints administratifs du ministère de la justice,C,,2,MI220,,,675:origine 5053:modificatif 7275:modificatif
+00950,1967-03-09,1967-03-09,Administrateurs financiers de la Caisse nationale du crédit agricole,A,,2,MI290,,,635:origine
+00951,2007-04-13,2013-10-01,"Attachés d'administration du ministère de l'économie, des finances et de l'industrie",A,,2,MI290,,01040,638:origine 1409:abrogateur
+00952,1991-08-01,2012-09-30,"Conseillers techniques de service social du ministère de l'Economie, des Finances et de l'Industrie",A,,2,MI290,,01115,683:origine 1176:abrogateur
+00953,1988-05-06,,Ingénieurs de l'industrie et des mines,A,,3,MI290,,,633:origine 5212:modificatif
+00954,1968-03-23,,Administrateurs des postes et télécommunications,A,,3,MI290,,,636:origine 5966:modificatif
+00956,1978-04-01,,Contractuels de 78 des Affaires sociales de 2ème catégorie,A,,3,MI120,,,656:origine 1468:modificatif
+00957,1996-08-01,1996-08-01,"Ingénieurs mécaniciens électriciens du ministère de l'Economie, des Finances et de l'Industrie",A,,3,MI290,,,
+00958,2010-09-01,,Secrétaire administratif des ministères de l'économie et du budget,B,,2,MI290,00134,,667:origine
+00959,1978-04-01,,Contractuels de 78 des Affaires sociales Hors catégorie,A,,3,MI120,,,656:origine 1468:modificatif
+00960,1978-04-01,,Contractuels de 78 des Affaires sociales de 1ère catégorie,A,,3,MI120,,,656:origine 1468:modificatif
+00961,1978-04-01,,Contractuels de 78 des Affaires sociales de 3ème catégorie,B,,3,MI120,,,656:origine 1468:modificatif
+00962,1978-04-01,,Contractuels de 78 des Affaires sociales de 4ème catégorie,C,,3,MI120,,,656:origine 1468:modificatif
+00963,1948-06-16,1948-06-16,"Agents non titulaires du ministère de l'équipement, du logement et des transports gérés par la direction générale de l'aviation civile",A,,3,MI192,,,672:origine
+00964,1961-07-28,2010-12-31,Personnel navigant professionnel du ministère des travaux publics et des transports,A,,3,MI192,,01147,669:origine 1361:abrogateur
+00965,1991-08-01,2012-09-30,Assistants de service social des ministères du Budget et de l'Economie,B,,2,MI290,,01114,683:origine 1177:abrogateur
+00966,2006-12-30,2006-12-30,Adjoints techniques de laboratoire des administrations de l'Etat,C,,2,MI290,,,424:origine 5052:modificatif 5053:modificatif
+00966,2017-01-01,2017-01-01,Adjoints techniques de laboratoire des administrations de l'Etat,C,,2,MI290,,,424:origine 5052:modificatif 5053:modificatif
+00967,2009-01-01,2016-12-31,Adjoints techniques du ministère de la justice et des libertés,C,,2,MI220,00198,01363,675:origine 5053:modificatif 7275:modificatif 8068:abrogateur
+00967,2017-01-01,2025-12-31,Adjoints techniques du ministère de la justice et des libertés,C,,2,MI220,00198,01363,675:origine 5053:modificatif 7275:modificatif 8068:abrogateur
+00968,1991-08-01,2012-09-30,Assistants de service social de la Justice,B,,2,MI220,,01114,112:origine 1177:abrogateur
+00969,2004-07-01,2012-08-31,"Techniciens du ministère de l'Economie, des Finances et de l'Industrie",B,,3,MI290,,01112,676:origine 1171:abrogateur
+00970,1991-08-01,2012-09-30,Conseillers techniques de service social du ministère de la justice et des libertés,A,,2,MI220,,01115,111:origine 1176:abrogateur
+00988,2010-10-22,,Ingénieurs militaires d'infrastructure de la défense,Officier,,3,MI150,,,696:origine 5904:modificatif 6481:modificatif 8035:modificatif
+00989,1996-08-26,1996-08-26,Ingénieurs adjoints du ministère de l'économie et des finances,B,,3,MI290,,,218:origine
+00990,2006-12-31,2016-12-31,Adjoints techniques des administrations de l'Etat,C,,2,MI290,,,105:origine 5053:modificatif 7275:modificatif
+00990,2017-01-01,,Adjoints techniques des administrations de l'Etat,C,,2,MI290,,,105:origine 5053:modificatif 7275:modificatif
+00993,2009-01-01,,Militaires du rang réservistes de la gendarmerie nationale,Militaire du rang,,3,MI150,,,61:origine 6477:modificatif 6480:modificatif
+01003,2011-09-01,,Contrôleurs des finances publiques,B,,2,MI290,,,719:origine
+01005,2010-09-01,,Géomètres-cadastreurs des finances publiques,B,,2,MI290,,,720:origine
+01006,2011-09-01,2016-12-31,Agents administratifs des finances publiques,C,,2,MI290,00315 00316,,721:origine 5052:modificatif 5053:modificatif 7275:modificatif
+01006,2017-01-01,,Agents administratifs des finances publiques,C,,2,MI290,00315 00316,,721:origine 5052:modificatif 5053:modificatif 7275:modificatif
+01007,2011-09-01,2016-12-31,Agents techniques des finances publiques,C,,2,MI290,00307 00308,,722:origine 5052:modificatif 5053:modificatif 7275:modificatif
+01007,2017-01-01,,Agents techniques des finances publiques,C,,2,MI290,00307 00308,,722:origine 5052:modificatif 5053:modificatif 7275:modificatif
+01008,1991-04-16,,Assistants d'enseignement et de recherche contractuels des établissements d'enseignement supérieur publics de l'agriculture,A,,3,MI130,,,725:origine
+01010,2009-01-01,,Volontaires de haut niveau aspirant de la direction générale de l'armement,Hors catégorie,,3,MI150,,,56:origine
+01011,2009-02-21,,Administrateurs des finances publiques,A,,3,MI290,00159 00162,01087 01275,732:origine 7257:modificatif 7361:modificatif
+01012,2011-09-01,2018-08-31,Personnels de la catégorie A de la Direction Générale des Finances Publiques,A,,3,MI290,00159 00162,,737:origine 5490:modificatif 8118:modificatif
+01012,2018-09-01,,Personnels de la catégorie A de la Direction Générale des Finances Publiques,A,,3,MI290,00159 00162,,737:origine 5490:modificatif 8118:modificatif
+01013,1985-07-18,2014-02-28,Chargé d'éducation populaire et de jeunesse,A,,3,MI300,,00457,849:origine 1455:abrogateur
+01015,1975-02-05,,Agents contractuels de 1ère catégorie du ministère de l'industrie et de la recherche,B,,3,MI290,,,759:origine
+01016,1975-02-05,,Chargés de mission contractuels du ministère de l'Industrie et de la recherche,A,,3,MI290,,,759:origine
+01017,1975-02-05,,Agents contractuels de 2ème catégorie du ministère de l'industrie et de la recherche,C,,3,MI290,,,759:origine
+01020,2010-12-01,,Secrétaires administratifs de l'intérieur et de l'outre-mer,B,,3,MI200,00132,,769:origine
+01021,2001-12-15,,Agents contractuels article 34 de la loi n° 2000-321 du SG ministère de l'intérieur,Hors catégorie,,3,MI200,,,772:origine
+01022,2012-01-01,,Aumôniers militaires,Officier,,3,MI150,,,843:origine 1500:modificatif 6945:modificatif
+01023,2011-01-01,,Psychologues contractuels de la police nationale,A,,3,MI200,,,790:origine
+01024,2009-06-23,,Agents non titulaires d'exécution du Ministère de la Culture et de la Communication,C,,3,MI140,,,7412:origine
+01025,2009-06-23,,Agents non titulaires intermédiaires du Ministère de la Culture et de la Communication,B,,3,MI140,,,7412:origine
+01026,2009-06-23,,Agents non titulaires d'encadrement du Ministère de la Culture et de la Communication,A,,3,MI140,,,7412:origine
+01027,2011-01-01,2012-04-26,Secrétaires administratifs relevant du ministre chargé de l'agriculture,B,,2,MI130,00657,01107,808:origine 1154:abrogateur
+01028,2011-05-06,,Techniciens supérieurs du ministère chargé de l'agriculture,B,,2,MI130,00261 00633,,809:origine 1578:modificatif
+01029,1970-07-24,,Maîtres assistants associés contractuels de l'Institut Mines-Télécom,A,,3,MI290,,,976:origine
+01030,2000-04-12,,Agent d'entretien de droit public des juridictions financières,C,,3,MI240,,,95:origine
+01031,1984-01-13,,"Agents contractuels entretien, restauration et gardiennage en contrat en durée déterminée du ministère de l'économie, des finances et de l'industrie",C,,3,MI290,,,553:origine
+01039,2009-01-01,,Polytechnicien aspirant,Hors catégorie,,3,MI150,,,60:origine
+01040,2011-10-20,2019-08-31,Attachés d'administration de l'Etat,A,,1,INTER,00025 00098 00196 00226 00292 00327 00331 00338 00556 00648 00656 00672 00682 00692 00715 00743 00939 00951 01195,,99:modificatif 871:origine 1409:modificatif 1441:modificatif 5029:modificatif 5827:modificatif 7033:modificatif 7811:modificatif 8111:modificatif
+01040,2019-09-01,2024-12-31,Attachés d'administration de l'Etat,A,,1,INTER,00025 00098 00196 00226 00292 00327 00331 00338 00556 00648 00656 00672 00682 00692 00715 00743 00939 00951 01195,,99:modificatif 871:origine 1409:modificatif 1441:modificatif 5029:modificatif 5827:modificatif 7033:modificatif 7811:modificatif 8111:modificatif
+01040,2025-01-01,,Attachés d'administration de l'Etat,A,,1,INTER,00025 00098 00196 00226 00292 00327 00331 00338 00556 00648 00656 00672 00682 00692 00715 00743 00939 00951 01195,,99:modificatif 871:origine 1409:modificatif 1441:modificatif 5029:modificatif 5827:modificatif 7033:modificatif 7811:modificatif 8111:modificatif
+01041,1968-01-11,2009-11-15,Contrôleurs des finances publiques de l'administration de la Polynésie française,B,,2,MI290,,,625:origine
+01041,2009-11-16,,Contrôleurs des finances publiques de l'administration de la Polynésie française,B,,2,MI290,,,625:origine
+01042,2011-09-01,2016-12-31,Agents administratifs des finances publiques de la Polynésie française,C,,2,MI290,,,625:origine 7275:modificatif
+01042,2017-01-01,,Agents administratifs des finances publiques de la Polynésie française,C,,2,MI290,,,625:origine 7275:modificatif
+01043,2010-11-05,2016-10-28,Agents administratifs des finances publiques à Mayotte,C,,2,MI290,,,4:origine 5343:abrogateur
+01044,1968-01-11,,Géomètres cadastreurs des finances publiques de l'administration de Polynésie française,B,,3,MI290,,,625:origine
+01046,1969-06-18,,Contractuels de catégorie C de la direction générale du Trésor,C,,3,MI290,,,825:origine
+01047,2008-01-01,,Contractuels niveau 1bis des affaires sociales - article 4 de la loi 84-16 du 11 janvier 1984,A,,3,MI300,,,883:origine
+01048,2008-01-01,,Contractuels niveau 1 des affaires sociales - article 4 de la loi 84-16 du 11 janvier 1984,A,,3,MI300,,,883:origine
+01049,2008-01-01,,Contractuels niveau 2 des affaires sociales - article 4 de la loi 84-16 du 11 janvier 1984,A,,3,MI300,,,883:origine
+01050,2008-01-01,,Contractuels niveau 3 des affaires sociales - article 4 de la loi 84-16 du 11 janvier 1984,A,,3,MI300,,,883:origine
+01051,2008-01-01,,Contractuels niveau 4 des affaires sociales - personnels de catégorie B - article 4 de la loi 84-16 du 11 janvier 1984,B,,3,MI300,,,883:origine
+01052,2011-09-01,,Techniciens de recherche et de formation du ministère chargé de l'enseignement supérieur,B,,3,MI280,00187 00495 00496,,240:origine 901:modificatif
+01053,1968-01-11,2011-08-31,Contrôleurs des impôts de l'administration de la Polynésie Française,B,,2,MI290,,,709:origine 719:abrogateur
+01054,1970-07-24,,Professeurs associés contractuels de l'Institut Mines-Télécom,A,,3,MI290,,,976:origine
+01055,1953-01-01,1953-01-01,Agents contractuels bibliothécaires,A,,3,MI280,,,912:origine
+01056,1953-01-01,1953-01-01,Agents contractuels sous bibliothécaires,B,,3,MI280,,,912:origine
+01057,1960-01-01,,Contractuels D CNRS cat FP A,A,,3,MI280,,,922:origine
+01058,1960-01-01,,Contractuels D CNRS cat FP B,B,,3,MI280,,,922:origine
+01059,1960-01-01,1960-01-01,Contractuels D CNRS cat FP C,C,,3,MI280,,,922:origine
+01060,1953-01-01,1953-01-01,Agents contractuels assistants des bibliothèques de France et de la lecture publique,C,,3,MI280,,,912:origine
+01061,1960-01-01,,Contractuels A CNRS cat FP A,A,,3,MI280,,,922:origine
+01062,1960-01-01,,Contractuels B CNRS cat FP A,A,,3,MI280,,,922:origine
+01063,1960-01-01,,Contractuels B CNRS cat FP B,B,,3,MI280,,,922:origine
+01064,1960-01-01,1960-01-01,Contractuels B CNRS cat FP C,C,,3,MI280,,,922:origine
+01067,2011-10-01,,Bibliothécaires assistants spécialisés,B,,1,MI280,00050 00249,,926:origine
+01068,2001-01-01,2001-01-01,Catégorie 1 CNIL,A,,3,MI240,,,
+01070,2002-01-01,,Conseiller en service extraordinaire à la Cour de cassation,A,,3,MI220,,,761:origine
+01071,2002-01-01,,Avocat général en service extraordinaire à la Cour de cassation,A,,3,MI220,,,761:origine
+01072,1962-01-01,1962-01-01,Urbanistes et architectes contractuels du ministère de la justice,A,,3,MI220,,,
+01073,1977-10-01,1977-10-01,Agents contractuels du service de la statistique du ministère de la justice de catégorie A,A,,3,MI220,,,
+01074,1977-10-01,1977-10-01,Agents contractuels du service de la statistique du ministère de la justice de catégorie B,B,,3,MI220,,,
+01075,1977-01-01,1977-01-01,Agents contractuels techniques du ministère de la justice,A,,3,MI220,,,982:origine
+01076,1992-01-01,1992-01-01,Agents contractuels de la sous-direction de l'informatique du ministère de la justice,A,,3,MI220,,,
+01077,2012-01-01,,Contrôleurs des services techniques du ministère de l'intérieur,B,,3,MI200,00197,,986:origine
+01078,2012-01-01,,Techniciens des systèmes d'information et de communication du ministère de l'intérieur,B,,3,MI200,00233,,984:origine 1429:modificatif 1578:modificatif
+01079,2004-11-30,,Agents contractuels sur emploi de 3ème niveau de responsabilité,A,,3,MI190,,,5386:origine 5387:modificatif
+01080,2005-02-20,2016-10-28,Surveillants pénitentiaires de l'Etat pour l'administration de Mayotte,Hors catégorie,,3,MI220,,,992:origine 1033:modificatif 5343:abrogateur
+01081,2011-05-01,,Défenseur des droits,A,,3,MI240,00856,,1022:origine
+01082,2011-05-01,,Adjoint du Défenseur des droits,A,,3,MI240,,,1022:origine
+01083,2010-12-16,,Secrétaires administratifs du Conseil d'Etat et de la Cour nationale du droit d'asile,B,,2,MI008,,,1030:origine
+01085,2006-12-31,2016-12-31,Adjoints administratifs des administrations de l'Etat au Conseil d'Etat,C,,2,MI008,,,103:origine 5053:modificatif 7275:modificatif
+01085,2017-01-01,,Adjoints administratifs des administrations de l'Etat au Conseil d'Etat,C,,2,MI008,,,103:origine 5053:modificatif 7275:modificatif
+01086,2006-12-31,2016-12-31,Adjoints techniques des administrations de l'Etat du Conseil d'Etat et de la Cour nationale du droit d'asile,C,,2,MI008,,,105:origine 5053:modificatif 7275:modificatif
+01086,2017-01-01,,Adjoints techniques des administrations de l'Etat du Conseil d'Etat et de la Cour nationale du droit d'asile,C,,2,MI008,,,105:origine 5053:modificatif 7275:modificatif
+01087,2001-01-01,,Membres du Conseil d'Etat,A,,3,MI008,,,6132:origine 7614:modificatif
+01088,2012-02-19,,Techniciens des services culturels et des Bâtiments de France,B,,3,MI140,00109,,1041:origine
+01089,2012-03-01,,Techniciens d'art,B,,3,MI140,00053,,1042:origine
+01090,2011-01-01,,Contrôleurs de l'Institut national de la statistique et des études économiques,B,,2,MI290,00148,,668:origine
+01091,2011-01-01,,"Contrôleurs de la concurrence, de la consommation et de la répression des fraudes",B,,2,MI290,00144,,668:origine
+01092,2012-04-01,,Techniciens de laboratoire des ministères de l'économie et du budget,B,,2,MI290,00237,,1060:origine
+01094,2011-09-01,,Techniciens supérieurs d'études et de fabrications du ministère de la défense,B,,3,MI150,00699 00707,,1086:origine
+01095,2011-01-01,,Secrétaires administratifs du ministère de la défense,B,,2,MI150,00240,,1096:origine
+01097,2012-01-01,,Secrétaires administratifs du Ministère de la Culture et de la Communication,B,,2,MI140,00127,,1040:origine
+01102,2012-06-01,,Infirmiers des administrations de l'Etat,A,,1,MI300,00011 00271,,1142:origine 7273:modificatif
+01103,2012-04-16,,Techniciens de physiothérapie relevant du ministre chargé de la santé,B,,3,MI300,00359,,1141:origine
+01104,2012-04-16,,Secrétaires administratifs relevant des ministres chargés des affaires sociales,B,,2,MI300,00123,,1143:origine
+01105,1965-07-09,,Chefs de travaux des écoles nationales d'ingénieurs des travaux agricoles,A,,3,MI130,,,1147:origine
+01106,1967-03-31,,Préposés sanitaires contractuels des services vétérinaires,B,,3,MI130,,,1151:origine
+01107,2012-04-27,,Secrétaires administratifs relevant du ministère chargé de l'agriculture,B,,2,MI130,00125 01027,,1154:origine
+01108,2011-08-02,,Inspection générale des affaires sociales,A,,3,MI300,00020,01275,1145:origine 7257:modificatif 7359:modificatif
+01109,1975-02-05,,Agents contractuels hors catégorie du ministère de l'industrie et de la recherche,A,,3,MI290,,,759:origine
+01110,2013-01-01,,Commissaires des armées,Officier,,3,MI150,,,1169:origine 5904:modificatif 8035:modificatif
+01111,2012-09-01,,Techniciens de laboratoire des écoles nationales supérieures des mines,B,,2,MI290,00184,,1170:origine
+01112,2012-09-01,,Techniciens supérieurs de l'économie et de l'industrie,B,,2,MI290,00278 00969,,1171:origine
+01113,2011-10-10,,Secrétaires administratifs du ministère de la justice,B,,2,MI220,00335,,1175:origine
+01114,2012-10-01,2019-01-31,Assistants de service social des administrations de l'Etat,B,,1,INTER,00659 00671 00691 00725 00870 00873 00876 00941 00965 00968,01205,1177:origine 1586:modificatif 5579:abrogateur
+01115,2012-10-01,2019-01-31,Conseillers techniques de service social des administrations de l'Etat,A,,1,INTER,00243 00670 00724 00869 00871 00874 00875 00942 00952 00970,01206,1176:origine 5579:abrogateur
+01116,2011-01-01,,Directeurs pénitentiaires d'insertion et de probation,A,,3,MI220,00285,,1188:origine 5335:modificatif 6112:modificatif 7754:modificatif 8026:modificatif
+01118,2011-04-14,,Secrétaires administratifs des services du Premier ministre,B,,2,MI240,00722,,5899:origine
+01119,2012-11-01,2020-01-01,Techniciens de la recherche de l'IRSTEA,B,,2,MI280,00080,01126,1213:origine 6772:abrogateur 6773:modificatif
+01120,2012-11-01,,Techniciens de la recherche de l'INSERM,B,,2,MI280,00354,,5397:modificatif 7877:modificatif
+01121,2012-11-01,,Techniciens de la recherche de l'IFSTTAR,B,,2,MI280,00396,,5397:modificatif 7877:modificatif
+01122,2012-11-01,,Techniciens de la recherche de l'IFREMER,B,,2,MI280,00413,,5397:modificatif 7877:modificatif
+01123,2012-11-01,,Techniciens de la recherche de l'IRD,B,,2,MI280,00429,,5397:modificatif 7877:modificatif
+01124,2012-11-01,,Techniciens de la recherche de l'INRIA,B,,2,MI280,00431,,5397:modificatif 7877:modificatif
+01125,2012-11-01,,Techniciens de la recherche du CNRS,B,,2,MI280,00498,,5397:modificatif 7877:modificatif
+01126,2012-11-01,,"Techniciens de la recherche de l'Institut national de recherche pour l'agriculture, l'alimentation et l'environnement",B,,2,MI280,00549,,5397:modificatif 6772:modificatif 6773:modificatif 7877:modificatif
+01127,1988-01-01,2012-10-31,Techniciens de la recherche de l'INED,B,,3,MI280,,01128,1213:abrogateur 1214:origine
+01128,2012-11-01,,Techniciens de la recherche de l'INED,B,,2,MI280,01127,,5397:modificatif 7877:modificatif
+01129,1988-01-01,,Directeurs de recherche de l'INED,A,,2,MI280,,,1214:origine 5397:modificatif 7877:modificatif
+01130,1988-01-01,,Chargés de recherche de l'INED,A,,2,MI280,,,1214:origine 5354:modificatif 5397:modificatif 7340:modificatif 7877:modificatif
+01131,1988-01-01,,Ingénieurs de recherche de l'INED,A,,2,MI280,,,1214:origine 5397:modificatif 7462:modificatif 7877:modificatif
+01132,1988-01-01,,Ingénieurs d'études de l'INED,A,,2,MI280,,,1214:origine 5354:modificatif 5397:modificatif 7857:modificatif 7877:modificatif
+01133,1988-01-01,,Assistants ingénieurs de l'INED,A,,2,MI280,,,1214:origine 5397:modificatif 7877:modificatif
+01134,2013-01-01,,Enquêteurs et enquêtrices de l'Institut national de la statistique et des études économiques,C,,3,MI290,,,7988:origine
+01135,2013-03-01,,Techniciens sanitaires et de sécurité sanitaire,B,,3,MI300,00181 00186,,1233:origine
+01136,2012-10-01,,Techniciens supérieurs du développement durable,B,,2,MI190,00001 00235 00632,,1288:origine
+01137,2012-10-01,,Secrétaires d'administration et de contrôle du développement durable,B,,2,MI190,00130 00235 00375,,1291:origine
+01140,2011-01-01,2019-01-31,Conseillers pénitentiaires d'insertion et de probation,B,,3,MI220,00115,01230,1310:origine 5335:modificatif 6110:abrogateur
+01141,2013-04-01,,Infirmiers de l'état pour l'administration de la Polynésie française,A,,3,MI300,01143,,1314:origine 7273:modificatif
+01142,2010-10-01,,Secrétaires administratifs de l'éducation nationale et de l'enseignement supérieur,B,,2,MI180,00333,,1259:origine
+01143,1994-11-30,2013-03-31,Personnels infirmiers des services médicaux de l'état pour la Polynésie française,B,,3,MI300,,01141,385:origine 1314:abrogateur
+01144,2012-06-01,2012-11-22,Infirmiers de l'éducation nationale et de l'enseignement supérieur,A,,2,MI180,00272,,1142:origine 7273:modificatif
+01144,2012-11-23,,Infirmiers de l'éducation nationale et de l'enseignement supérieur,A,,2,MI180,00272,,1142:origine 7273:modificatif
+01145,2009-01-01,2012-12-31,Administrateurs des affaires maritimes,Officier,,3,MI150,,,36:origine 1349:modificatif 5904:modificatif 8035:modificatif
+01145,2013-01-01,,Administrateurs des affaires maritimes,Officier,,3,MI150,,,36:origine 1349:modificatif 5904:modificatif 8035:modificatif
+01146,2012-12-30,,Assistants d'administration de l'aviation civile,B,,2,MI192,00135,,1327:origine
+01147,2011-01-01,,Personnels navigants techniques de l'aviation civile,A,,3,MI192,00964,,1361:origine
+01148,2013-06-01,,Inspecteurs du permis de conduire et de la sécurité routière,B,,2,MI200,00401,,1351:origine 1456:modificatif
+01149,1977-01-01,1977-01-01,Agents contractuels informaticiens du ministère de l'intérieur,Hors catégorie,,3,MI200,,,
+01152,1977-01-01,1977-01-01,Agents contractuels chargés d'emplois à caractère administratif du ministère de l'intérieur,Hors catégorie,,3,MI200,,,
+01153,2012-06-01,,Infirmiers de la défense,A,,2,MI150,01154,,1142:origine 7273:modificatif
+01154,1994-11-30,2012-05-31,Infirmières et infirmiers du ministère de la défense,B,,2,MI150,,01153,385:origine 1315:abrogateur
+01155,1955-07-05,,Personnel ouvrier du service du cadastre,C,,3,MI290,,,1394:origine 6934:modificatif
+01156,1977-01-01,1977-01-01,Agents contractuels chargés d'emplois à caractère technique du ministère de l'intérieur,Hors catégorie,,3,MI200,,,
+01157,1977-01-01,1977-01-01,Médecins contractuels du ministère de l'intérieur,Hors catégorie,,3,MI200,,,
+01158,1976-07-20,1976-07-20,Médecins de prévention du ministère de l'intérieur,Hors catégorie,,3,MI200,,,
+01159,2009-01-01,,Officiers du corps technique et administratif de la gendarmerie nationale,Officier,,3,MI150,,,1423:origine 6468:modificatif 6469:modificatif
+01160,1955-01-01,,Ouvrier d'Etat cuisinier du ministère de l'Intérieur,Hors catégorie,,3,MI200,,,1410:origine 5842:modificatif
+01161,1955-01-01,,Ouvrier d'Etat du ministère de l'intérieur,Hors catégorie,,3,MI200,,,1410:origine 5842:modificatif
+01162,2013-10-01,,Secrétaires de documentation du ministère de la culture,B,,2,MI140,00174,,1412:origine
+01163,2013-09-01,,Conservateurs du patrimoine,A,,3,MI140,00008 00009,,1413:origine 7271:modificatif
+01164,1973-01-01,1973-01-01,Assistants du centre d'études techniques de l'équipement,A,,3,MI190,,,
+01165,1973-01-01,1973-01-01,Techniciens supérieurs du centre d'études techniques de l'équipement,B,,3,MI190,,,
+01166,1973-01-01,1973-01-01,Cadres administratifs du centre d'études techniques de l'équipement,A,,3,MI190,,,
+01168,2013-12-14,2024-07-31,Officiers de port adjoints,B,,3,MI190,00400,,1420:origine 5523:modificatif 7860:modificatif
+01168,2024-08-01,,Officiers de port adjoints,B,,3,MI190,00400,,1420:origine 5523:modificatif 7860:modificatif
+01170,1979-01-08,1979-01-08,Personnels administratifs contractuels du service national des examens du permis de conduire,Hors catégorie,,3,MI200,,,490:origine
+01171,2015-04-01,2026-05-28,"Inspecteurs et conseillers de la création, des enseignements artistiques et de l'action culturelle",A,,3,MI140,00265,,1453:origine 8114:modificatif
+01171,2026-05-29,,"Inspecteurs et conseillers de la création, des enseignements artistiques et de l'action culturelle",A,,3,MI140,00265,,1453:origine 8114:modificatif
+01172,2015-06-01,,Ingénieurs des systèmes d'information et de communication,A,,3,MI200,00409,,1458:origine 5237:modificatif
+01173,2014-12-01,,Chargés de recherche du développement durable,A,,2,MI190,00057 00138,,1483:origine 5354:modificatif 5397:modificatif 7340:modificatif 7877:modificatif
+01174,2014-12-01,,Directeurs de recherche du développement durable,A,,2,MI190,00051 00139,,1483:origine 5397:modificatif 7877:modificatif
+01175,2015-11-01,,Directeurs des services de greffe judiciaires,A,,3,MI220,00055,,1490:origine 5860:modificatif 5862:modificatif
+01176,2015-11-01,,Greffiers des services judiciaires,B,,3,MI220,00056,,1492:origine 5489:modificatif
+01177,2015-08-01,2019-01-31,Educateurs spécialisés des instituts nationaux de jeunes sourds et de l'Institut national de jeunes aveugles,B,,3,MI300,00119,01223,1545:origine 1586:modificatif 6466:abrogateur
+01178,2013-12-20,,Techniciens supérieurs forestiers de l'Office national des forêts,B,,2,MI130,00269 00720,,1548:origine
+01179,1989-09-01,2006-05-25,Professeurs des universités-praticiens hospitaliers des disciplines pharmaceutiques,A,,2,MI280,,01277,1580:origine 5979:modificatif 6497:modificatif 7266:abrogateur
+01179,2006-05-26,2021-12-15,Professeurs des universités-praticiens hospitaliers des disciplines pharmaceutiques,A,,2,MI280,,01277,1580:origine 5979:modificatif 6497:modificatif 7266:abrogateur
+01180,1979-06-20,1979-06-20,"Conseillers techniques et pédagogiques de la jeunesse, des sports et des loisirs",A,,3,MI340,,,1550:origine 7256:modificatif
+01181,1986-03-16,,Astronomes,A,,3,MI280,,,1556:origine 5354:modificatif
+01182,1986-03-16,,Physiciens,A,,3,MI280,,,1556:origine 5354:modificatif
+01183,1992-11-04,,Professeurs du Muséum national d'histoire naturelle,A,,3,MI280,,,1267:origine
+01184,1986-03-16,,Astronomes adjoints,A,,3,MI280,,,1556:origine 5354:modificatif
+01185,1986-03-16,,Physiciens adjoints,A,,3,MI280,,,1556:origine 5354:modificatif
+01186,1967-10-30,,Professeurs du Collège de France,A,,3,MI280,,,1255:origine
+01187,1949-01-01,,Professeurs du Conservatoire national des arts et métiers,A,,3,MI280,,,6659:origine
+01188,1950-01-01,,Professeurs de l'Ecole centrale des arts et manufactures de première catégorie,A,,3,MI280,,,1560:origine
+01189,1950-01-01,,Professeurs de l'Ecole centrale des arts et manufactures de 2ème catégorie,A,,3,MI280,,,1560:origine
+01190,1960-12-01,,Maîtres assistants,A,,3,MI280,,,1323:origine
+01191,1999-01-01,,Assistants de l'enseignement supérieur,A,,3,MI280,,,1252:origine
+01192,2014-10-01,,Infirmiers civils en soins généraux et spécialisés du ministère de la défense,A,,3,MI150,00010 00702,,1512:origine 5100:modificatif 7278:modificatif
+01193,2013-11-01,,Techniciens paramédicaux du ministère de la défense,B,,2,MI150,00223,,1507:origine 7280:modificatif 7401:modificatif
+01194,2015-04-01,,Cadres de santé paramédicaux civils du ministère de la défense,A,,3,MI150,00282,,1521:origine 5100:modificatif 7278:modificatif
+01195,1993-01-14,2016-07-31,Officiers de protection des réfugiés et apatrides,A,,3,MI110,,01040,5027:origine 5028:modificatif 5029:abrogateur
+01196,2017-09-01,,Psychologues de l'éducation nationale,A,,3,MI180,,,5161:origine 7667:modificatif
+01197,2017-01-01,2018-12-29,personnels civils de rééducation et médico - techniques du ministère de la défense,A,,3,MI150,,01227 01228,5194:origine 6097:abrogateur
+01198,2008-07-31,,Professeurs des universités de médecine générale,A,,3,MI280,,,5226:origine 5354:modificatif
+01199,1989-11-15,2019-09-30,Inspecteur général de l'éducation nationale,A,,3,MI180,,01238,5234:origine 6582:abrogateur
+01200,1993-02-26,2004-06-03,Architectes urbanistes de l'Etat,A,,1,INTER,,00277,10:abrogateur 5260:origine
+01201,1984-03-01,2009-06-23,Architectes des Bâtiments de France,A,,3,MI140,,,2103:abrogateur 5263:origine
+01202,1965-07-28,,Conservation des bâtiments de France,A,,3,MI140,,,5265:origine
+01203,1956-10-01,,Professeur du conservatoire national supérieur de musique,A,,3,MI140,,,5284:origine 5285:modificatif
+01204,2009-11-15,2009-11-15,Secrétaires administratifs de la caisse des dépôts et consignations,B,,2,EP028,,,668:origine 680:modificatif
+01204,2009-11-16,,Secrétaires administratifs de la caisse des dépôts et consignations,B,,2,EP028,,,668:origine 680:modificatif
+01205,2019-02-01,,Assistants de service social des administrations de l'Etat,A,,1,INTER,01114,,5580:origine
+01206,2019-02-01,,Conseillers techniques de service social des administrations de l'Etat,A,,1,INTER,01115,,5593:origine
+01207,2018-03-01,,Maître de conférences des écoles nationales supérieures d'architecture,A,,3,MI140,00066,,5742:origine 7670:modificatif
+01208,2018-03-01,,Professeur des écoles nationales supérieures d'architecture,A,,3,MI140,00064,,5742:origine 7670:modificatif
+01209,2009-08-01,,"Administrateurs du Conseil économique, social et environnemental",A,,3,MI007,,01275,5798:modificatif 5851:origine 7257:modificatif 7417:modificatif
+01210,2009-08-01,,"Administrateurs adjoints du Conseil économique, social et environnemental",A,,3,MI007,,,5798:modificatif 5851:origine
+01211,2009-08-01,,"Rédacteurs-techniciens du Conseil économique, social et environnemental",B,,3,MI007,,,5798:modificatif 5896:origine
+01212,2009-08-01,2016-12-31,"Adjoints du Conseil économique, social et environnemental",C,,3,MI007,,,5798:modificatif 5852:origine 7275:modificatif
+01212,2017-01-01,,"Adjoints du Conseil économique, social et environnemental",C,,3,MI007,,,5798:modificatif 5852:origine 7275:modificatif
+01213,2009-01-01,,Elève officier polytechnicien,Hors catégorie,,3,MI150,,,60:origine
+01214,2017-04-24,,Inspecteurs de santé publique vétérinaire,A,,3,MI130,00255,,6002:origine
+01215,2010-10-23,,Agent contractuel à contrat à durée indéterminée du groupe I,A,,3,MI130,,,5402:origine
+01216,2010-10-23,,Agent contractuel à contrat à durée indéterminée du groupe II,A,,3,MI130,,,5402:origine
+01217,2010-10-23,,Agent contractuel à contrat à durée indéterminée du groupe III,B,,3,MI130,,,5402:origine
+01218,2010-10-23,,Agent contractuel à contrat à durée indéterminée du groupe IV,B,,3,MI130,,,5402:origine
+01219,2010-10-23,,Agent contractuel à contrat à durée indéterminée du groupe V,C,,3,MI130,,,5402:origine
+01220,2017-04-24,,Inspecteurs élèves de santé publique vétérinaire,A,,3,MI130,,,6002:origine
+01221,1946-06-21,,Agents contractuels 46 de première catégorie,A,,3,MI190,,,478:origine 1014:modificatif
+01222,1946-06-21,,Agents contractuels 46 hors catégorie,A,,3,MI190,,,478:origine 1014:modificatif
+01223,2019-02-01,,Educateurs spécialisés des instituts nationaux de jeunes sourds et de l'Institut national de jeunes aveugles,A,,2,MI300,01177,,6466:origine
+01224,2006-01-05,,Elèves ingénieurs de l'agriculture et de l'environnement,A,,3,MI130,,,28:origine 5212:modificatif
+01225,2009-10-01,2025-11-30,"Ingénieurs élèves des ponts, des eaux et des forêts",A,,2,MI130,,01353,89:origine 7999:abrogateur
+01226,1971-01-01,2024-12-31,Elèves Ingénieurs des travaux géographiques et cartographiques de l'Etat,A,,3,MI190,,01331,949:origine 950:modificatif 5212:modificatif 7853:abrogateur
+01227,2018-12-30,2021-12-31,"Masseurs-kinésithérapeutes, psychomotriciens et orthophonistes du ministère de la défense",A,,3,MI150,,01280 01281,5194:origine 6097:modificatif 7278:abrogateur
+01228,2018-12-30,2021-12-31,"Pédicures-podologues, ergothérapeutes, orthoptistes et manipulateurs d'électroradiologie médicale du ministère de la défense",A,,3,MI150,,01280,5194:origine 6097:modificatif 7278:abrogateur
+01229,2019-02-01,,Educateurs de la protection judiciaire de la jeunesse,A,,2,MI220,,,6108:origine
+01230,2019-02-01,,Conseillers pénitentiaires d'insertion et de probation,A,,3,MI220,01140,,6110:origine
+01232,2009-01-01,,Gendarmes adjoints volontaires,Hors catégorie,,3,MI150,,,56:origine
+01233,2009-01-01,,Elèves du corps de soutien technique et administratif de la gendarmerie nationale,S-off / off marinier,,3,MI150,,,61:origine 6477:modificatif 6480:modificatif
+01234,2009-01-01,,Elèves gendarmes,S-off / off marinier,,3,MI150,,,53:origine 6473:modificatif 6475:modificatif 6479:modificatif
+01236,2012-10-20,,Contractuels de l'ex-Agence nationale pour la cohésion sociale et l'égalité des chances,Hors catégorie,,3,MI190,,,6566:origine
+01238,2019-10-01,,"Inspection générale de l'éducation, du sport et de la recherche",A,,3,MI180,00227 00365 01199,01275,6582:origine 7257:modificatif 7359:modificatif
+01239,2019-01-01,,OPA Ingénieurs haute maîtrise,A,,3,MI190,00905 00907 00916,,6601:origine
+01240,2019-01-01,,OPA Techniciens,B,,3,MI190,00899 00905 00906 00907 00916,,6601:origine
+01241,2019-01-01,,OPA Ouvriers,C,,3,MI190,00899,,7284:origine
+01242,2019-10-12,2019-10-31,Chefs des services pénitentiaires,A,,3,MI220,,01305,860:origine 7760:abrogateur
+01242,2019-11-01,2023-12-31,Chefs des services pénitentiaires,A,,3,MI220,,01305,860:origine 7760:abrogateur
+01243,1961-01-01,1973-06-30,Techniciens de la météorologie,B,,2,EP031,,01244,6557:origine 6560:abrogateur
+01244,1973-07-01,1994-07-31,Techniciens de la météorologie,B,,2,EP031,01243,01245,6558:abrogateur 6560:origine
+01245,1994-08-01,2011-09-23,Techniciens supérieurs de la météorologie,B,,2,EP031,01244,,1362:abrogateur 6558:origine
+01248,2006-12-31,,Adjoints administratifs des juridictions financières,C,,2,MI009,,,103:origine 5053:modificatif 7275:modificatif
+01249,2006-12-31,,Adjoints techniques des juridictions financières,C,,2,MI009,,,105:origine 5053:modificatif 7275:modificatif
+01250,2019-02-01,,Cadres éducatifs de la protection judiciaire de la jeunesse,A,,2,MI220,,,6765:origine
+01252,2020-05-09,,Ingénieurs civils de la défense,A,,3,MI150,00708,,373:origine 6843:modificatif
+01253,2020-01-02,,Administrateurs des finances publiques contractuel,A,,3,MI290,,,732:origine
+01254,2019-03-18,,Officiers du corps technique et administratif de l'armée de terre,Officier,,3,MI150,,,6918:origine
+01255,2009-01-01,,Chefs de musique de l'armée de terre,Officier,,3,MI150,,,59:origine 5904:modificatif 6481:modificatif
+01256,2009-01-01,,Chefs de musique de la marine nationale,Officier,,3,MI150,,,59:origine 5904:modificatif 6481:modificatif
+01257,2013-01-01,,Elèves commissaires des armées,Aspirant,,3,MI150,,,1169:origine 5904:modificatif
+01258,2013-01-01,,Volontaires commissaires des armées,Aspirant,,3,MI150,,,56:origine
+01259,2015-01-01,,Officiers logisticiens des essences,Officier,,3,MI150,,,5904:modificatif 6481:modificatif 6947:origine
+01260,1988-10-01,,Attachés temporaires d'enseignement et de recherche,A,,3,MI280,,,5620:origine
+01261,2019-09-01,2026-12-31,Elèves des instituts régionaux d'administration,A,,1,INTER,,01378,7033:origine 8105:abrogateur
+01262,2016-01-01,2021-12-31,Elèves de l'école nationale d'administration,A,,1,INTER,,01301,5303:origine 7586:abrogateur
+01263,1949-01-01,,Agents sur contrat du ministère de la défense nationale de la filière technique et scientifique - Niveau II,B,,3,MI150,,,94:modificatif 113:origine
+01264,1949-01-01,,Agents sur contrat du ministère de la défense nationale de la filière technique et scientifique - Niveau III,C,,3,MI150,,,94:modificatif 113:origine
+01265,1949-01-01,,Agents sur contrat du ministère de la défense nationale de la filière administrative - Niveau II,B,,3,MI150,,,94:modificatif 113:origine
+01266,1949-01-01,,Agents sur contrat du ministère de la défense nationale de la filière administrative - Niveau III,C,,3,MI150,,,94:modificatif 113:origine
+01267,2021-09-01,2026-08-31,Professeurs certifiés de l'éducation nationale à Mayotte,A,,3,MI180,,,155:origine 7116:abrogateur
+01268,2007-01-01,2016-12-31,Adjoints administratifs des administrations de l'Etat,C,,2,EP028,,,5052:origine 5053:modificatif 7275:modificatif
+01268,2017-01-01,,Adjoints administratifs des administrations de l'Etat,C,,2,EP028,,,5052:origine 5053:modificatif 7275:modificatif
+01269,2012-07-01,,Secrétaires administratifs spécialisés de la direction générale de la sécurité extérieure,B,,2,MI150,,,668:origine
+01270,2012-07-01,,Contrôleurs spécialisés de la direction générale de la sécurité extérieure,B,,2,MI150,,,7162:origine
+01271,2011-10-01,,Adjoints administratifs de la direction générale de la sécurité extérieure,C,,2,MI150,,,5052:origine 7189:modificatif 7275:modificatif
+01272,2011-10-01,,Personnel de surveillance de la direction générale de la sécurité extérieure,C,,2,MI150,,,5052:origine 7189:modificatif 7275:modificatif
+01273,2014-06-30,,Accompagnants des élèves en situation de handicap,B,,3,MI180,,,7213:modificatif 7227:origine 7650:modificatif
+01274,2017-01-01,,Attachés de la direction générale de la sécurité extérieure,A,,3,MI150,,,7226:origine
+01275,2022-01-01,,Administrateurs de l'Etat,A,,1,INTER,00189 00200 00231 00251 00281 00283 00284 00286 00346 00372 00444 00514 01011 01108 01209 01238,,7257:origine 7423:modificatif 7753:modificatif
+01276,2021-12-16,,Maîtres de conférences des universités-praticiens hospitaliers,A,,2,MI280,00466 00746 00826,,7266:origine
+01277,2021-12-16,,Professeurs des universités-praticiens hospitaliers,A,,2,MI280,00462 00464 01179,,7266:origine
+01278,2022-01-01,,Aides-soignants civils du ministère de la défense,B,,3,MI150,,,7277:origine 7402:modificatif
+01279,2022-01-01,,Agents des services hospitaliers qualifiés civils du ministère de la défense,C,,3,MI150,,,7279:origine
+01280,2022-01-01,,"Pédicure-podologue, ergothérapeute, psychomotricien, orthoptiste, diététicien, prep.pharma.hosp, tech.lab.med, manip.elect.med du MINDEF",A,,3,MI150,01227 01228,,5194:origine 7278:modificatif 7401:modificatif
+01281,2022-01-01,,Masseurs-kinésithérapeutes et orthophonistes du ministère de la défense,A,,3,MI150,01227,,5194:origine 7278:modificatif
+01282,2022-01-01,,Psychologues du ministère de la justice,A,,3,MI220,00182,,566:origine 7260:modificatif
+01284,2021-01-01,,Contractuels niveau 2 de l'éducation nationale POHN - article 4 de la loi 84-16 du 11 janvier 1984,A,,3,MI180,,,883:origine
+01285,1999-10-01,,Agents non fonctionnaires de l'administration de l'état en Polynésie française de 1ère catégorie,A,,3,MI200,,,7334:origine
+01286,1999-10-01,,Agents non fonctionnaires de l'administration de l'Etat en Polynésie française de 2ème catégorie,B,,3,MI200,,,7334:origine
+01287,1999-10-01,,Agents non fonctionnaires de l'administration de l'Etat en Polynésie française de 3ème catégorie,C,,3,MI200,,,7334:origine
+01288,1999-10-01,,Agents non fonctionnaires de l'administration de l'Etat en Polynésie française de 4ème catégorie,C,,3,MI200,,,7334:origine
+01289,1999-10-01,,Agents non fonctionnaires de l'administration de l'Etat en Polynésie française de 5ème catégorie,C,,3,MI200,,,7334:origine
+01290,2022-07-01,,Conseillers des affaires étrangères et ministres plénipotentiaires,A,,3,MI110,00200 00231,01275,90:origine 7333:modificatif
+01291,2020-01-01,2022-04-30,Ouvriers professionnels qualifiés de l'Institut géographique national,C,,3,MI190,,,7396:origine
+01291,2022-05-01,,Ouvriers professionnels qualifiés de l'Institut géographique national,C,,3,MI190,,,7396:origine
+01292,2020-01-01,2022-04-30,Agents de maîtrise des ouvriers temporaires professionnels qualifiés de l'Institut géographique national,B,,3,MI190,,,7396:origine
+01292,2022-05-01,,Agents de maîtrise des ouvriers temporaires professionnels qualifiés de l'Institut géographique national,B,,3,MI190,,,7396:origine
+01295,1987-10-01,,Lecteurs de langue étrangère,A,,3,EP051,,,5618:origine
+01296,1987-10-01,,Maîtres de langue étrangère,A,,3,EP051,,,5618:origine
+01297,2017-01-01,,Personnels de conception et d'encadrement et des spécialistes de haut niveau,A,,3,EP052,,,7450:origine
+01298,2017-01-01,,Personnels d'exécution,C,,3,EP052,,,7450:origine
+01299,2017-01-01,,Personnels d'application,B,,3,EP052,,,7450:origine
+01300,2017-01-01,,Personnels de conception et d'encadrement supérieur et des experts de haut niveau,A,,3,EP052,,,7450:origine
+01301,2022-01-01,,Elèves de l'Institut national du service public,A,,1,INTER,01262,,7587:origine
+01302,2021-01-01,,Personnels ouvriers des oeuvres universitaires et scolaires catégorie C,C,,3,MI280,,,7699:modificatif 7700:modificatif 7704:origine
+01303,2021-01-01,,Personnels ouvriers des oeuvres universitaires et scolaires catégorie B,B,,3,MI280,,,7699:modificatif 7700:modificatif 7704:origine
+01304,2024-01-01,,Corps d'encadrement et d'application du personnel de surveillance de l'administration pénitentiaire,B,,3,MI220,00297,,7760:origine
+01305,2024-01-01,,Corps de commandement du personnel de surveillance de l'administration pénitentiaire,Hors catégorie,,3,MI220,00296 01242,,3898:origine 7760:modificatif
+01306,2024-01-01,,Personnels d'exploitation des travaux publics de l'Etat,C,,2,MI190,00029,,5052:modificatif 5053:modificatif 7766:origine
+01307,2024-01-01,,Personnels d'exploitation de Voies navigables de France,C,,2,EP029,00029,,5052:modificatif 5053:modificatif 7767:origine
+01308,2003-10-24,,Assistants contractuels,A,,3,EP097,,,7782:origine 7785:modificatif
+01309,2003-10-24,,Techniciens contractuels,B,,3,EP097,,,7782:origine 7785:modificatif
+01310,2008-01-01,,Contractuels niveau 4 des affaires sociales - personnels de catégorie C - article 4 de la loi 84-16 du 11 janvier 1984,C,,3,MI300,,,883:origine
+01311,2003-10-24,,Ingénieurs chargés d'études contractuels,A,,3,EP097,,,7782:origine 7791:modificatif
+01312,2000-06-08,,Enseignants contractuels,A,,3,EP097,,,7786:origine 7787:modificatif
+01313,2003-10-24,,Ingénieurs chargés de recherches contractuels,A,,3,EP097,,,7782:origine 7791:modificatif
+01314,2009-01-01,,Attachés d'administration générale,A,,3,MI180,,,7824:origine
+01315,2009-01-01,,Rédacteurs d'administration générale,B,,3,MI180,,,7824:origine
+01316,2009-01-01,,Adjoints administratifs,C,,3,MI180,,,7824:origine
+01317,2016-06-01,,Assistants de conservation,B,,3,MI180,,,7826:origine
+01318,2014-03-19,,Infirmiers en soins généraux,A,,3,MI180,,,7827:origine
+01319,2009-01-01,,Cadres socio-éducatifs,A,,3,MI180,,,7835:origine
+01320,2014-03-19,,Infirmiers diplômés d'Etat,B,,3,MI180,,,7827:origine
+01321,2009-01-01,,Médecins du cadre de la santé,A,,3,MI180,,,7828:origine
+01322,2009-01-01,,Assistants socio-éducatifs,B,,3,MI180,,,7835:origine
+01323,2009-01-01,,Médecins spécialistes - Médecins inspecteurs,A,,3,MI180,,,7828:origine
+01324,2013-01-01,,Adjoints techniques normaux des établissements d'enseignement du second degré public,C,,3,MI180,,,7836:origine
+01325,2013-01-01,,Adjoints techniques principaux des établissements d'enseignement du second degré public,C,,3,MI180,,,7836:origine
+01326,2009-03-01,,Techniciens,B,,3,MI180,,,7837:origine
+01327,2009-03-01,,Ingénieurs,A,,3,MI180,,,7837:origine
+01328,2023-01-01,,Personnels de direction d'établissement d'enseignement ou de formation,A,,3,MI180,,,7850:origine
+01329,2024-05-25,,Géomètres de l'Institut national de l'information géographique et forestière,B,,3,EP078,00395,,944:origine 945:modificatif 7853:modificatif
+01330,2024-05-25,,Ingénieurs des sciences géographiques et du numérique de l'Institut national de l'information géographique et forestière,A,,3,EP078,00404,,949:origine 950:modificatif 5212:modificatif 7853:modificatif
+01331,2024-05-25,2024-05-25,Elèves Ingénieurs des sciences géographiques et du numérique de l'Institut national de l'information géographique et forestière,A,,3,EP078,01226,,949:origine 950:modificatif 5212:modificatif 7853:modificatif
+01332,2010-10-23,,Agent contractuel à contrat à durée indéterminée du groupe V de l'agence de services et de paiement,C,,3,EP036,,,5402:origine
+01333,2010-10-23,,Agent contractuel à contrat à durée indéterminée du groupe IV de l'agence de services et de paiement,B,,3,EP036,,,5402:origine
+01334,2010-10-23,,Agent contractuel à contrat à durée indéterminée du groupe III de l'agence de services et de paiement,B,,3,EP036,,,5402:origine
+01335,2010-10-23,,Agent contractuel à contrat à durée indéterminée du groupe II de l'agence de services et de paiement,A,,3,EP036,,,5402:origine
+01336,2010-10-23,,Agent contractuel à contrat à durée indéterminée du groupe I de l'agence de services et de paiement,A,,3,EP036,,,5402:origine
+01337,2025-01-01,,Cadres greffiers des services judiciaires,A,,3,MI220,,,7889:origine
+01346,2018-03-01,,Maîtres de conférences invités des écoles nationales supérieures d'architecture,A,,3,MI140,,,6015:origine
+01347,2018-03-01,,Maîtres de conférences associés des écoles nationales supérieures d'architecture,A,,3,MI140,,,6015:origine
+01348,2018-03-01,,Professeurs invités des écoles nationales supérieures d'architecture,A,,3,MI140,,,6015:origine
+01349,2018-03-01,,Professeurs associés des écoles nationales supérieures d'architecture,A,,3,MI140,,,6015:origine
+01350,2024-01-01,,Chefs d'équipe à statut ouvrier,B,,3,MI150,,,7980:origine
+01351,2020-01-01,2022-04-30,Ouvriers professionnels expérimentés de l'Institut géographique national,B,,3,MI190,,,7396:origine
+01351,2022-05-01,,Ouvriers professionnels expérimentés de l'Institut géographique national,B,,3,MI190,,,7396:origine
+01352,2025-12-01,,"Ingénieurs des ponts, des eaux et des forêts",A,,2,MI130,00254,,7999:origine
+01353,2025-12-01,,"Ingénieurs élèves des ponts, des eaux et des forêts",A,,2,MI130,01225,,7999:origine
+01354,2025-12-01,,Ingénieurs des mines,A,,2,MI290,00451,,7999:origine
+01355,2025-12-01,,"Ingénieurs de la statistique, de l'économie et de la donnée",A,,2,MI290,00289 00562,,7999:origine
+01356,2025-01-01,,Enseignants contractuels des écoles nationales supérieures d'architecture,A,,3,MI140,,,8010:origine
+01357,2025-12-01,,Ingénieurs élèves de l'armement,Officier,,2,MI150,,,7999:origine
+01358,2025-12-01,,Ingénieurs de l'armement,Officier,,2,MI150,00706,,7999:origine
+01359,2025-12-15,,Elèves administrateurs des affaires maritimes,Aspirant,,3,MI150,,,8035:origine
+01360,2025-12-15,,Elèves ingénieurs des études et techniques de l'armement,Aspirant,,3,MI150,,,8035:origine
+01361,2026-01-01,,Ingénieurs du ministère de la justice,A,,3,MI220,00228,,8068:origine
+01362,2026-01-01,,Techniciens du ministère de la justice,B,,3,MI220,00229,,8068:origine
+01363,2026-01-01,,Adjoints techniques du ministère de la justice,C,,3,MI220,00967,,8068:origine
+01364,2000-07-22,,Chercheurs des écoles des mines,A,,3,MI290,,,8078:origine
+01365,2000-07-22,,Ingénieurs des écoles des mines,A,,3,MI290,,,8078:origine
+01366,2000-07-22,,Personnels du cadre technique des écoles des mines catégorie A,A,,3,MI290,,,8078:origine
+01367,2000-07-22,,Personnels du cadre administratif des écoles des mines catégorie C,C,,3,MI290,,,8078:origine
+01369,2000-07-22,,Personnels du cadre technique des écoles des mines catégorie B,B,,3,MI290,,,8078:origine
+01370,2000-07-22,,Personnels du cadre technique des écoles des mines catégorie C,C,,3,MI290,,,8078:origine
+01371,2000-07-22,,Personnels du cadre administratif des écoles des mines catégorie B,B,,3,MI290,,,8078:origine
+01372,2000-07-22,,Personnels du cadre administratif des écoles des mines catégorie A,A,,3,MI290,,,8078:origine
+01373,2026-09-01,,Contractuels de remplacement des établissements d'enseignement agricole privés sous contrat,A,,3,MI130,,,8092:origine
+01374,2009-01-01,,Officiers mariniers de maistrance des équipages de la flotte,S-off / off marinier,,3,MI150,,,54:origine
+01375,2009-01-01,,Officiers mariniers de maistrance des ports,S-off / off marinier,,3,MI150,,,54:origine
+01376,2009-01-01,,Sous-officiers du personnel navigant de l'armée de l'air et de l'espace,S-off / off marinier,,3,MI150,,,54:origine
+01377,2009-01-01,,Sous-officiers du personnel non navigant de l'armée de l'air,S-off / off marinier,,3,MI150,,,54:origine
+01378,2027-01-01,,Elèves du Groupe des instituts du service public,A,,1,INTER,01261,,8105:origine
+01379,2009-01-01,,Chefs de musique de l'armée de l'air et de l'espace,Officier,,3,MI150,,,32:origine
+01380,2009-01-01,,Sous-chefs de musique de l'armée de l'air et de l'espace,S-off / off marinier,,3,MI150,,,32:origine
+01381,2009-01-01,,Militaires du rang de l'armée de l'air et de l'espace,Militaire du rang,,3,MI150,,,8107:origine
