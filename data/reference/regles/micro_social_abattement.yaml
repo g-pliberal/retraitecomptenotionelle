@@ -86,7 +86,12 @@ effet: >-
   trimestre de qui relève de la maladie du RSI, à la vente et aux services,
   au chiffre d'affaires de la grille de la caisse : 9 621 € de ventes et
   5 592 € de services en valident un, au lieu de rien ; le libéral garde la
-  compensation, rien sous 4 369 € de recettes, deux à ce seuil. Ces seuils
+  compensation, rien sous 4 369 € de recettes, deux à ce seuil. Depuis le
+  2 novembre 2026 aussi, la saisie demande au micro-entrepreneur son assurance
+  maladie en 2014 et en 2015 (champ « maladie ») : hors du RSI, ou au RSA
+  socle, son premier trimestre se valide aux seuils que la grille donne pour
+  lui, 4 930 € de ventes en 2014 au lieu de 6 573 €, 6 636 € en 2015 au lieu
+  de 9 621 € (`Metier.maladie_hors_rsi`, décidé avec le propriétaire). Ces seuils
   sont sous les bornes de la saisie (0,1 fois le salaire moyen) : seul le
   modèle les atteint. Approchée sur dix points : en 2016, ni seuil ni clef
   n'est publié, le revenu abattu valide, et le compte porte le barème, comme
@@ -96,15 +101,11 @@ effet: >-
   qui reste après elle et l'invalidité-décès ; la
   Cipav valide sur le revenu abattu avant 2023, la règle de la CNAVPL n'étant
   pas lue ; les clefs de janvier à septembre 2022 sont celles de 2021 ; en
-  2014 et 2015, qui ne relève pas de la maladie du RSI (souvent un salarié),
-  ou en relève mais touche le RSA socle, valide son premier trimestre plus
-  tôt, dès 150 heures en 2014, dès 6 636 € de ventes et 3 854 € de services
-  en 2015 (la grille de la caisse), quand le modèle, qui ne sait pas de
-  quelle caisse il relève pour la maladie, sert le cas du RSI (limite
-  « micro-entrepreneur de 2014 et de 2015 »), et le compte garde le barème
-  sous le seuil ; en 2015, l'année dont le forfait seul valide le premier trimestre
-  ne porte rien au revenu annuel moyen, quand la caisse y porte ce que sa
-  part de base a versé ; l'abattement minimal de 305 € n'est pas opposé ; les points du RCI
+  2014 et 2015, sans réponse, le modèle présume l'assuré au RSI, le cas le
+  plus courant, et le compte garde le barème sous le seuil ; en 2014 et en
+  2015, l'année dont le premier trimestre se valide sous la compensation ne
+  porte rien au revenu annuel moyen, quand la caisse y porte ce que sa part
+  de base a versé ; l'abattement minimal de 305 € n'est pas opposé ; les points du RCI
   gardent leurs décimales, que la caisse arrondit à l'entier, au plus proche
   pour la circulaire Cnav n° 2025-20 (« 11,92 = 12 points »), à l'inférieur
   pour service-public (« 13,53 arrondi à l'entier inférieur 13 ») ; l'exonération de début
@@ -453,7 +454,7 @@ code:
     ConstructeurCompte._cotisation_ligne ; droit/liquider.py : assiette_de_reference ;
     droit/acquerir.py : acquerir
   javascript: >-
-    moteur/js/saisie.js : ACTIVITES_MICRO, ABATTEMENTS_MICRO, Saisie.enChiffreDAffaires,
+    moteur/js/saisie.js : ACTIVITES_MICRO, MALADIE_MICRO, ABATTEMENTS_MICRO, Saisie.enChiffreDAffaires,
     Saisie.abattu, Saisie.parcours, Saisie.emploiRetraiteDeclare ; moteur/js/pages.js :
     microFormulaire, champChiffreDAffaires ; moteur/js/carriere.js : revenuCotise,
     validantCompense, forfaitMicro, trimestresAuxSeuilsMicro ; moteur/js/compte.js :
@@ -464,7 +465,7 @@ code:
     témoins micro_entrepreneur_* et simuler_micro_entrepreneur*
   parametres: >-
     legislation/micro_social.yaml : abattements, versions, regimes_du_forfait,
-    compensation, seuils
+    compensation, seuils, seuils_hors_maladie_rsi
   moteur: >-
     Saisie.en_chiffre_d_affaires dit si le revenu d'une ligne est un chiffre d'affaires,
     et Saisie.abattu l'abat, au seuil du modèle ; Saisie.parcours et
@@ -472,4 +473,5 @@ code:
     portent l'activité (Metier.micro, AnneeCarriere.micro). assiette_de_reference porte
     au revenu annuel moyen le revenu cotisé (revenu_cotise), et acquerir achète les
     points sur les parts du forfait. Le portage lit les tables du paquet :
-    validation_micro, cotisation_micro, compensation_micro et seuils_micro.
+    validation_micro, cotisation_micro, compensation_micro, seuils_micro et
+    seuils_micro_hors_maladie_rsi.

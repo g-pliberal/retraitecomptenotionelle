@@ -1685,6 +1685,38 @@ def test_l_activite_du_micro_entrepreneur_revient_dans_l_adresse():
     assert saisie_du_portage({**_MICRO, "micro": "agricole"}).micro == ""
 
 
+# L'ASSURANCE MALADIE DU MICRO-ENTREPRENEUR EN 2014 ET EN 2015 (action 177,
+# étape 6 ; fiche micro_social_abattement) : qui ne relevait pas de la maladie
+# du RSI, ou touchait le RSA socle, validait son premier trimestre plus tôt
+# (circulaire RSI n° 2016/010, point 1). Le champ le dit au métier du
+# micro-entrepreneur, et à lui seul ; vide, le modèle le présume au RSI.
+def test_l_assurance_maladie_hors_du_rsi_va_au_seul_micro_entrepreneur():
+    champs = {**_MICRO, "micro": "vente", "maladie": "hors_rsi",
+              "metier2_debut": "2020-01", "metier2_statut": "salarie_prive_non_cadre",
+              "metier2_salaire": "3000"}
+    saisie = saisie_du_portage(champs)
+    micro, salarie = saisie.parcours(site().contexte.echelle(saisie))
+    assert (micro.maladie_hors_rsi, salarie.maladie_hors_rsi) == (True, False)
+    saisie = saisie_du_portage({**_MICRO, "micro": "vente"})
+    [metier] = saisie.parcours(site().contexte.echelle(saisie))
+    assert metier.maladie_hors_rsi is False
+
+
+def test_l_assurance_maladie_revient_dans_l_adresse():
+    champs = {**_MICRO, "micro": "vente", "maladie": "hors_rsi"}
+    assert "maladie=hors_rsi" in saisie_du_portage(champs).requete()
+    sans = saisie_du_portage({**_MICRO, "micro": "vente"})
+    assert "maladie" not in dict(parse_qsl(sans.requete()))
+    # Un choix inconnu retombe, comme tout menu, sur le défaut.
+    assert saisie_du_portage({**champs, "maladie": "msa"}).maladie == ""
+
+
+def test_le_formulaire_demande_l_assurance_maladie_du_micro_entrepreneur():
+    """La question ne paraît qu'avec le micro-entrepreneur, comme son activité."""
+    assert 'name="maladie"' in rendre("/simuler", {**_MICRO, "micro": "vente"})[1]
+    assert 'name="maladie"' not in rendre("/simuler", {})[1]
+
+
 def test_le_chiffre_d_affaires_ne_se_convertit_pas_en_net():
     """Ni brut ni net : en mode net, le chiffre d'affaires se lit tel quel, et
     seule la ligne salariée remonte au brut."""

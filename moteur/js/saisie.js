@@ -375,6 +375,19 @@ export const ACTIVITES_MICRO = [
 ];
 
 /**
+ * L'assurance maladie du micro-entrepreneur en 2014 et en 2015 (action 177,
+ * étape 6 ; fiche `micro_social_abattement`) : qui ne relevait pas de la
+ * maladie du RSI, souvent parce qu'il était aussi salarié, ou qui touchait le
+ * RSA socle, validait son premier trimestre plus tôt (circulaire RSI
+ * n° 2016/010, point 1). Le vide le présume au RSI, le cas le plus courant ;
+ * l'autre choix, le métier du micro-entrepreneur le porte (`maladie_hors_rsi`).
+ */
+export const MALADIE_MICRO = [
+  ["", "au RSI"],
+  ["hors_rsi", "à un autre régime, ou au RSA socle"],
+];
+
+/**
  * L'abattement de chaque activité, la part du chiffre d'affaires qui ne compte
  * pas dans les droits.
  */
@@ -793,6 +806,9 @@ export const DEFAUTS = Object.freeze({
   //: comme un chiffre d'affaires (`ACTIVITES_MICRO`) ; vide, comme un revenu
   //: déjà abattu.
   micro: "",
+  //: L'assurance maladie du micro-entrepreneur en 2014 et en 2015
+  //: (`MALADIE_MICRO`) ; vide, le RSI.
+  maladie: "",
   //: « majore » fait lire le revenu des périodes payées à l'indice comme un
   //: indice majoré (`INDICES`) ; vide, comme une rémunération.
   indice: "",
@@ -1046,6 +1062,7 @@ export class Saisie {
         : entier(parametres, "guerre", 0),
       travail_manuel: parmi(parametres, "travail_manuel", TRAVAUX_MANUELS, ""),
       micro: parmi(parametres, "micro", ACTIVITES_MICRO, ""),
+      maladie: parmi(parametres, "maladie", MALADIE_MICRO, ""),
       indice: parmi(parametres, "indice", INDICES, ""),
       lodeom: parmi(parametres, "lodeom", BAREMES_LODEOM, ""),
       collaborateur: parmi(parametres, "collaborateur", ASSIETTES_COLLABORATEUR, ""),
@@ -1616,6 +1633,7 @@ export class Saisie {
         cumul: ligne.cumul,
         age_fin: ligne.fin,
         micro,
+        maladie_hors_rsi: micro !== "" && this.maladie === "hors_rsi",
         apprentissage: index + 1 === this.apprentissage,
         lodeom: this.lodeom,
       });
@@ -3386,6 +3404,7 @@ export class Saisie {
         ["travail_manuel", this.travail_manuel || null],
       ].filter(([, valeur]) => valeur !== null)),
       ...(this.micro ? { micro: this.micro } : {}),
+      ...(this.maladie ? { maladie: this.maladie } : {}),
       ...(this.indice ? { indice: this.indice } : {}),
       ...(this.lodeom ? { lodeom: this.lodeom } : {}),
       ...(this.collaborateur ? { collaborateur: this.collaborateur } : {}),

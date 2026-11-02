@@ -92,7 +92,7 @@ import {
   SALAIRE_DEFAUT, SANS_EMPLOI, SITUATIONS, SITUATIONS_FOYER, Saisie, TABLES,
   MOIS_DE_GUERRE_MAXIMUM, TRAJECTOIRES_EMPLOI, TRAVAUX_MANUELS, UNITES_REVENU, age, entier, estEntier, jourEnClair,
   CATEGORIES_INVALIDITE,
-  ABATTEMENTS_MICRO, ACTIVITES_MICRO, STATUT_MICRO, BAREMES_LODEOM,
+  ABATTEMENTS_MICRO, ACTIVITES_MICRO, MALADIE_MICRO, STATUT_MICRO, BAREMES_LODEOM,
   ASSIETTES_COLLABORATEUR, PARTS_COLLABORATEUR, INDICES, STATUTS_A_L_INDICE,
   nombreBrut, parmi, reel, refus,
 } from "./saisie.js";
@@ -2219,7 +2219,8 @@ function aideDeLaLodeom(lodeom) {
  * abattu, comme avant, ou son chiffre d'affaires, que le modèle abat selon son
  * activité, la Cipav routant ses périodes vers les régimes du libéral. Le menu
  * ne paraît qu'avec une période de micro-entrepreneur, ou une activité déjà
- * dite.
+ * dite ; avec lui, son assurance maladie en 2014 et en 2015 (action 177,
+ * étape 6), qui avance son premier trimestre hors du RSI.
  */
 function microFormulaire(saisie) {
   const micro = saisie.lignesCarriere.some((ligne) => ligne.statut === STATUT_MICRO)
@@ -2234,7 +2235,14 @@ function microFormulaire(saisie) {
     + "les recettes libérales : dites votre activité, et saisissez votre chiffre "
     + "d'affaires mensuel. Les architectes, ingénieurs-conseils, ostéopathes, "
     + "psychologues, moniteurs de ski, et qui y était affilié avant 2019, "
-    + "relèvent de la Cipav.")}</div>`;
+    + "relèvent de la Cipav.")}${g.liste("maladie",
+    "En 2014 et 2015, votre assurance maladie", MALADIE_MICRO, saisie.maladie,
+    "le plus souvent au RSI", {},
+    "Le micro-entrepreneur qui ne relevait pas de la maladie du RSI, souvent "
+    + "parce qu'il était aussi salarié, ou qui touchait le RSA socle, validait "
+    + "son premier trimestre de 2014 et de 2015 sur un plus petit chiffre "
+    + "d'affaires (circulaire RSI n° 2016/010). Sans réponse, le simulateur le "
+    + "présume au RSI.")}</div>`;
 }
 
 /**

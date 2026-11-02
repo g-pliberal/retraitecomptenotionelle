@@ -87,3 +87,42 @@ pas, seul le modèle.
 
 **L'étape est faite.** La suite : l'étape 7 revient à la session du site ;
 l'étape 8, les non-salariés de Mayotte, au modèle.
+
+**Le 2 novembre 2026, la suite : la question au simulateur.** Le propriétaire
+a répondu oui à la question du point 1 : « oui, ajoute pour l'instant ; on
+rendra le site plus propre plus tard ». L'assuré hors de la maladie du RSI
+n'est plus une limite.
+
+1. *Les moteurs* (`ec54001`). `legislation/micro_social.yaml`,
+   `seuils_hors_maladie_rsi` : la grille pour lui, le « Cas général » de 2014
+   (4 930, 2 859 et 2 166 € pour le premier trimestre) et ses lignes « si non
+   prestataires santé » de 2015 (6 636 et 3 854 €), le libéral de 2015
+   gardant la compensation ; `charger_seuils_micro` la lit par sa clef, le
+   paquet la porte (`seuils_micro_hors_maladie_rsi`). Le métier le dit
+   (`maladie_hors_rsi`), la chronologie le passe à ses périodes, et la ligne
+   annuelle prend alors ces seuils : `carriere.js` et `chronologie.js`
+   d'abord, puis leurs jumeaux Python. Vus rouges :
+   `test_hors_de_la_maladie_du_rsi_le_premier_trimestre_est_servi`, qui
+   remplace le test de la limite, et le même cas au portage
+   (`moteur.test.js`).
+2. *La saisie.* Le champ « maladie » (`MALADIE_MICRO`, `saisie.js`), au RSI
+   par défaut, que `parcours` porte au seul métier du micro-entrepreneur et
+   que l'adresse garde ; son menu paraît avec celui de l'activité
+   (`microFormulaire`, `pages.js`), quand la carrière compte un
+   micro-entrepreneur. Vus rouges : trois tests de `test_web_saisie.py`.
+3. *Ce qui bouge.* Aucun des 913 témoins de simulation. Deux rendus de page :
+   celui du micro-entrepreneur, qui montre le menu, et la page Méthode, que
+   les grilles de l'État d'une autre session avaient changée. Aucun témoin de
+   simulation de plus : la saisie ne descend pas sous un dixième du salaire
+   moyen, où ces seuils se tiennent, et les deux moteurs rejouent les mêmes
+   cas, tirés de la grille.
+4. *La limite* « micro-entrepreneur de 2014 et de 2015 » est retirée. La
+   fiche `micro_social_abattement` dit la présomption du RSI sans réponse, et
+   que l'année dont le premier trimestre se valide sous la compensation ne
+   porte rien au revenu annuel moyen, en 2014 comme en 2015.
+
+**Le site à reprendre**, comme le propriétaire le veut « plus tard » : la
+question se pose à tout micro-entrepreneur, même sans activité en 2014 ni en
+2015, et ne change un résultat que sous le plancher de la saisie. À la session
+du site : ne la montrer qu'aux carrières qui couvrent ces années, ou abaisser
+ce plancher.
