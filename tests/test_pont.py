@@ -373,6 +373,39 @@ def test_la_grille_des_carrieres_types_se_date_au_portage_sans_les_jumeaux(memoi
                                           "aucun régime actif sur la période"}
 
 
+def test_les_departs_des_facteurs_de_la_depense_se_datent_au_portage_sans_les_jumeaux(
+        memoire_isolee, monkeypatch):
+    """Les dates des départs que comptent les facteurs de la dépense
+    (``facteurs_depense.dates_des_departs``) se datent au portage (action 161,
+    étape 6), sous chacune de leurs formes : la grille, l'entrée dans l'emploi
+    décalée comme celle de l'EIC, le départ dès l'ouverture du droit. Le pilote
+    Python et les constructeurs de carrières, qu'on empêche ici de calculer,
+    n'y entrent pas ; chaque date est celle du Python, cohorte par cohorte, et
+    une case que le droit écarte n'en a aucune."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    from retraite_notionnelle import memoire
+    from retraite_notionnelle.facteurs_depense import dates_des_departs
+
+    cas = tuple(cas for cas in GRILLE_DU_COUT if cas.code in (
+        "salaire_moyen", "fonctionnaire_sedentaire", "militaire", "agent_ieg"))
+    formes = ({}, {"entree_depuis": 1960}, {"a_l_ouverture": True})
+
+    def dates():
+        return [dates_des_departs(Parametres(), cas_types=cas, generations=(1880, 1965, 2000),
+                                  **forme) for forme in formes]
+
+    with memoire.modele_modifie():
+        en_python = dates()
+    _interdire(monkeypatch, _jumeaux_qui_datent_et_batissent())
+    au_portage = dates()
+    assert au_portage == en_python
+    # L'entrée décalée et le départ dès l'ouverture déplacent des dates ; la
+    # grille écarte des cases de la génération 1880.
+    assert au_portage[1] != au_portage[0] and au_portage[2] != au_portage[0]
+    assert len(au_portage[0]) < len(cas) * 3 * 5
+
+
 def test_sans_node_le_pont_s_arrete_sans_repli(monkeypatch):
     monkeypatch.setattr(pont.shutil, "which", lambda nom: None)
     with pytest.raises(pont.PontIndisponible, match="node"):

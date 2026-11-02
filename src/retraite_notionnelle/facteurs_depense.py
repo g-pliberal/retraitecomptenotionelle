@@ -700,9 +700,15 @@ def dates_des_departs(parametres, entree_depuis: int | None = None,
     (:func:`decalage_par_la_duree`) et non sur le premier trimestre cotisé.
     ``a_l_ouverture`` fait partir chaque cohorte d'un cas type qui part au
     taux plein dès l'ouverture de son droit, avec une décote si le taux plein
-    vient après (``regle_liquidation="ouverture"``)."""
+    vient après (``regle_liquidation="ouverture"``).
+
+    Le portage date et bâtit chaque cohorte (``castypes.departs_au_portage`` ;
+    action 161, étape 6), quand la grille s'y date
+    (``castypes.batie_au_portage``) ; le moteur Python sinon."""
     from . import cout as module
-    from .castypes import GRILLE_DU_COUT, carriere_de_la_grille, carrieres_de_la_grille
+    from . import pont
+    from .castypes import (GRILLE_DU_COUT, batie_au_portage, carriere_de_la_grille,
+                           carrieres_de_la_grille, departs_au_portage)
     from .simulateur import Simulateur
 
     simulateur = Simulateur(parametres).pour_la_projection()
@@ -710,22 +716,54 @@ def dates_des_departs(parametres, entree_depuis: int | None = None,
     generations = module.generations() if generations is None else generations
     medianes = (None if entree_depuis is None
                 else ages_medians_du_premier_trimestre(parametres.racine_donnees))
+    decalages = range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1)
+
+    def propre_de(cas, cohorte: int):
+        """Le cas type de la cohorte née en ``cohorte`` : entré plus tard dans
+        l'emploi, ou parti dès l'ouverture de son droit ; ``cas`` lui-même
+        sinon."""
+        propre = cas
+        if medianes is not None and cas.regle_liquidation == "taux_plein":
+            entree = (decalage_d_entree(medianes, cas.sexe, cohorte, entree_depuis)
+                      if durees is None
+                      else decalage_par_la_duree(durees, cas.sexe, cohorte, entree_depuis))
+            if entree:
+                propre = replace(cas, age_debut=cas.age_debut + entree)
+        if a_l_ouverture and cas.regle_liquidation == "taux_plein":
+            propre = replace(propre, regle_liquidation="ouverture")
+        return propre
+
+    if batie_au_portage(simulateur.parametres, cas_types):
+        cohortes = {}
+        for cas in cas_types:
+            for generation in generations:
+                cohortes[f"{cas.code}|{generation}"] = (cas, generation)
+                for decalage in decalages:
+                    propre = propre_de(cas, generation + decalage)
+                    if decalage or propre is not cas:
+                        cohortes[f"{cas.code}|{generation}|{decalage}"] = (
+                            propre, generation + decalage)
+        departs, _refus = departs_au_portage(simulateur, cohortes, "droit",
+                                             pont.paquet_des_donnees())
+        dates = {}
+        for cas in cas_types:
+            for generation in generations:
+                grille = departs.get(f"{cas.code}|{generation}")
+                if grille is None:
+                    continue
+                for decalage in decalages:
+                    cohorte = departs.get(f"{cas.code}|{generation}|{decalage}")
+                    dates[(cas.code, generation, decalage)] = (
+                        DateMois(grille[1] + decalage, grille[2]) if cohorte is None
+                        else DateMois(cohorte[1], cohorte[2]))
+        return dates
     cas_de = {cas.code: cas for cas in cas_types}
     carrieres, _ecartees = carrieres_de_la_grille(simulateur, cas_types, generations, "droit")
     dates = {}
     for (code, generation), carriere in carrieres.items():
         cas = cas_de[code]
-        for decalage in range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1):
-            propre = cas
-            if medianes is not None and cas.regle_liquidation == "taux_plein":
-                entree = (decalage_d_entree(medianes, cas.sexe, generation + decalage,
-                                            entree_depuis) if durees is None
-                          else decalage_par_la_duree(durees, cas.sexe, generation + decalage,
-                                                     entree_depuis))
-                if entree:
-                    propre = replace(cas, age_debut=cas.age_debut + entree)
-            if a_l_ouverture and cas.regle_liquidation == "taux_plein":
-                propre = replace(propre, regle_liquidation="ouverture")
+        for decalage in decalages:
+            propre = propre_de(cas, generation + decalage)
             date = DateMois(carriere.annee_liquidation + decalage, carriere.mois_liquidation)
             if decalage or propre is not cas:
                 try:
