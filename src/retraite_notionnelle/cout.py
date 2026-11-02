@@ -2336,7 +2336,7 @@ def _simulations(simulateur: Simulateur, cas: list[dict],
     scenarios = [cle for cle, _ in SCENARIOS]
     if pont.par_le_portage(simulateur.parametres):
         return pont.grille_du_cout(cas, scenarios, simulateur.parametres,
-                                   pont.paquet_des_donnees())
+                                   pont.paquet_des_donnees(simulateur.parametres.racine_donnees))
     return _simulations_en_python(simulateur, cas, scenarios)
 
 
@@ -2439,7 +2439,7 @@ def _grille_batie(simulateur: Simulateur, cas_types: tuple[CasType, ...],
           "rendre": "depart" if decalage else "carriere"}
          for cas in cas_types for generation in generations() for decalage in decalages],
         simulateur.parametres, primes_projetees_en_donnees(simulateur), liquidation,
-        pont.paquet_des_donnees())
+        pont.paquet_des_donnees(simulateur.parametres.racine_donnees))
     carrieres, ecartees, voisines, prolongations = {}, {}, {}, {}
     for cas in cas_types:
         for generation in generations():

@@ -1032,7 +1032,9 @@ def _decomposees_au_portage(simulateur: Simulateur, liquidation: str = "droit") 
         de_carriere, de_scenario = _variantes_demandees(cas, generation)
         demandes.append({"cle": cle, "options": _options_de_la_variante(cas, generation, age),
                          "carriere": de_carriere, "scenario": list(de_scenario)})
-    lues, _ecartees = pont.avantages(demandes, simulateur.parametres, pont.paquet_des_donnees())
+    lues, _ecartees = pont.avantages(
+        demandes, simulateur.parametres,
+        pont.paquet_des_donnees(simulateur.parametres.racine_donnees))
     decomposees = []
     for cle, (cas, generation, age) in cases.items():
         if cle not in lues:
@@ -1089,8 +1091,9 @@ def _departs_au_portage(simulateur: Simulateur, cas_types: tuple[CasType, ...],
     decalages = range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1)
     cohortes = {f"{cas.code}|{generation}|{decalage}": (cas, generation + decalage)
                 for cas in cas_types for generation in generations() for decalage in decalages}
-    departs, _refus = departs_au_portage(simulateur, cohortes, liquidation,
-                                         pont.paquet_des_donnees())
+    departs, _refus = departs_au_portage(
+        simulateur, cohortes, liquidation,
+        pont.paquet_des_donnees(simulateur.parametres.racine_donnees))
 
     def depart(cas: CasType, generation: int, decalage: int):
         lu = departs.get(f"{cas.code}|{generation}|{decalage}")
@@ -1149,7 +1152,7 @@ def ages_legaux(simulateur: Simulateur, pensionnes: list[Pensionne]
     lus, refus = pont.droit(
         {str(cohorte): ("scenario_actuel.ages_ouverture.age", pont.MOTEUR, cohorte)
          for cohorte in cohortes},
-        simulateur.parametres, pont.paquet_des_donnees())
+        simulateur.parametres, pont.paquet_des_donnees(simulateur.parametres.racine_donnees))
     if refus:
         raise ValueError(f"le portage ne lit pas l'âge légal de ces générations : {refus}")
     return lambda generation: lus[str(generation)]

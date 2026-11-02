@@ -743,8 +743,9 @@ def dates_des_departs(parametres, entree_depuis: int | None = None,
                     if decalage or propre is not cas:
                         cohortes[f"{cas.code}|{generation}|{decalage}"] = (
                             propre, generation + decalage)
-        departs, _refus = departs_au_portage(simulateur, cohortes, "droit",
-                                             pont.paquet_des_donnees())
+        departs, _refus = departs_au_portage(
+            simulateur, cohortes, "droit",
+            pont.paquet_des_donnees(simulateur.parametres.racine_donnees))
         dates = {}
         for cas in cas_types:
             for generation in generations:

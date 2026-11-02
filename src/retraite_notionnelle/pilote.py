@@ -28,8 +28,7 @@ Son jumeau, ``moteur/js/pilote.js``, porte :func:`age_de_depart`,
 (``pont.carrieres_de_la_grille``, ``cout._grille_batie`` ; action 161,
 étape 6). Ce Python le suit au bit près jusqu'à son retrait : il date encore
 les cas types de la grille des carrières types, du coût des avantages, de la
-grille large et des études, et ceux du coût sous un modèle modifié ou sur des
-données d'ailleurs. Les départs de l'estimation n'ont que l'exemplaire du
+grille large et des études, et ceux du coût sous un modèle modifié. Les départs de l'estimation n'ont que l'exemplaire du
 portage depuis l'action 161, étape 6 : leur moitié Python ne servait plus
 qu'à confronter les deux moteurs.
 """

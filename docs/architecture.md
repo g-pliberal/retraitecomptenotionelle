@@ -1169,9 +1169,10 @@ l'accueil cite, et le portage simule, comme le site une saisie, les carrières
 d'exemple de « Pourquoi changer ». Le coût fait aussi simuler par le portage
 la grille de ses cas types, sous les conventions de projection du COR : le
 Python construit chaque carrière, que ces conventions déforment, et la lui
-passe en données (`pont.grille_du_cout`), sur le paquet du jour ; un contexte
-qui remplace une fonction du moteur Python, ou des données d'ailleurs, la font
-simuler par celui-ci, le seul qui les voie.
+passe en données (`pont.grille_du_cout`), sur le paquet du jour ; des données
+d'ailleurs, une copie que l'on a retouchée, sur le leur, que la fabrique bâtit
+depuis elles (`pont.paquet_des_donnees`) ; un contexte qui remplace une
+fonction du moteur Python la fait simuler par celui-ci, le seul qui la voie.
 
 Les étapes portent un nom, pas un numéro : en insérer une ne renumérote rien.
 Elles s'échangent des **données** au format JSON, les mêmes dans les deux

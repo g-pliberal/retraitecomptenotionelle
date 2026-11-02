@@ -20,9 +20,11 @@ s'arrête, sans repli sur le moteur Python.
 from __future__ import annotations
 
 import json
+import re
 import shutil
 import subprocess
 import sys
+import textwrap
 from dataclasses import fields, replace
 
 import pytest
@@ -32,10 +34,11 @@ from retraite_notionnelle.droit import liquidation
 from retraite_notionnelle.carriere import AnneeCarriere, Carriere
 from retraite_notionnelle.castypes import (
     CAS_TYPES, GENERATIONS, GRILLE_DU_COUT, carriere_de_la_grille, cases_de_la_grille)
-from retraite_notionnelle.config import RACINE_PROJET
+from retraite_notionnelle.config import RACINE_DONNEES, RACINE_PROJET
 from retraite_notionnelle.simulateur import Simulateur
 
-from outils_pont import TOLERANCE_DU_MOTEUR_PYTHON, Saisies, ecarts_d_ecriture
+from outils_pont import (TOLERANCE_DU_MOTEUR_PYTHON, Saisies, ecarts_d_ecriture,
+                         empecher_les_jumeaux_du_cout)
 
 SCENARIOS = ("notionnel_retroactif", "notionnel_retroactif_employeur", "notionnel_liberal")
 
@@ -1351,8 +1354,7 @@ def test_le_cout_date_et_bat_sa_grille_par_le_portage_sans_les_jumeaux(memoire_i
     sous ``pont.par_le_jumeau()``."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le pont ne se vérifie pas ici")
-    from retraite_notionnelle import castypes, cout, pilote
-    from retraite_notionnelle.droit import ouvrir
+    from retraite_notionnelle import cout
 
     monkeypatch.setattr(cout, "generations", lambda: (1965, 2000))
     simulateur = Simulateur(Parametres())
@@ -1360,17 +1362,7 @@ def test_le_cout_date_et_bat_sa_grille_par_le_portage_sans_les_jumeaux(memoire_i
         en_python = cout._pensionnes(simulateur, GRILLE_D_ESSAI, "droit")
         nees_en_python = cout._nees_toute_l_annee(simulateur, GRILLE_D_ESSAI, en_python[0],
                                                   "droit")
-
-    def interdit(*_, **__):
-        raise AssertionError("un jumeau Python date, bâtit ou simule la grille du coût")
-
-    for objet, nom in ((pilote, "age_de_depart"), (pilote, "point_fixe"), (pilote, "descendre"),
-                       (ouvrir, "age_ouverture_droit"), (ouvrir, "age_taux_plein_droit"),
-                       (ouvrir, "age_annulation_droit"), (Simulateur, "carriere_simple"),
-                       (Simulateur, "carriere_parcours"), (Simulateur, "simuler"),
-                       (Simulateur, "proposition"), (Carriere, "prolongee"),
-                       (castypes, "primes_projetees")):
-        monkeypatch.setattr(objet, nom, interdit)
+    empecher_les_jumeaux_du_cout(monkeypatch)
     par_le_portage = cout._pensionnes(simulateur, GRILLE_D_ESSAI, "droit")
     assert par_le_portage == en_python
     assert _types([vars(p) for p in par_le_portage[0]]) == _types([vars(p) for p in en_python[0]])
@@ -1422,23 +1414,134 @@ def test_sous_monkeypatch_le_cout_simule_sa_grille_par_le_portage(monkeypatch):
         cout._pensionnes(Simulateur(Parametres()), GRILLE_D_ESSAI, "droit")
 
 
-def test_sur_des_donnees_d_ailleurs_le_cout_simule_sa_grille_en_python(tmp_path):
-    """Le portage calcule sur le paquet des données du dépôt
-    (``pont.paquet_des_donnees``) : des données d'ailleurs — une copie que
-    l'on a retouchée (``scripts/facteurs_depense.py --sans-suspension``) — se
-    simulent par le moteur Python, comme sous ``pont.par_le_jumeau()``. Un
+def test_sur_des_donnees_d_ailleurs_le_cout_calcule_par_le_portage(tmp_path):
+    """Des données d'ailleurs — une copie que l'on a retouchée
+    (``scripts/facteurs_depense.py --sans-suspension``) — se calculent par le
+    portage, sur leur paquet (``pont.paquet_des_donnees``), comme celles du
+    dépôt : seul ``pont.par_le_jumeau()`` renvoie au moteur Python. Un
     contexte qui ne fait que taire la mémoire des calculs
     (``memoire.modele_modifie``) laisse calculer le portage."""
     from retraite_notionnelle import memoire
 
+    ailleurs = replace(Parametres(), racine_donnees=tmp_path)
     assert pont.par_le_portage(Parametres())
-    assert not pont.par_le_portage(replace(Parametres(), racine_donnees=tmp_path))
+    assert pont.par_le_portage(ailleurs)
     with memoire.modele_modifie():
         assert pont.par_le_portage(Parametres())
     with pont.par_le_jumeau():
         assert not pont.par_le_portage(Parametres())
+        assert not pont.par_le_portage(ailleurs)
         assert not memoire._active()
     assert pont.par_le_portage(Parametres())
+
+
+@pytest.fixture
+def donnees_d_ailleurs(tmp_path):
+    """Des données d'ailleurs : une copie de celles du dépôt que l'on a
+    retouchée, comme ``scripts/facteurs_depense.py --sans-suspension`` récrit
+    la sienne. La génération 1968 y ouvre son droit à soixante-six ans, et non
+    à soixante-trois ans et neuf mois."""
+    copie = tmp_path / "data"
+    shutil.copytree(RACINE_DONNEES, copie)
+    _recrire_l_age_legal(copie, "63.75", "66.00")
+    return copie
+
+
+def _recrire_l_age_legal(copie, avant: str, apres: str) -> None:
+    """L'âge légal de la génération 1968 de la copie, récrit."""
+    table = copie / "reference" / "legislation" / "age_ouverture_requis.csv"
+    texte = table.read_text(encoding="utf-8")
+    assert texte.count(f"\n1968,{avant},") == 1
+    table.write_text(texte.replace(f"\n1968,{avant},", f"\n1968,{apres},"), encoding="utf-8")
+
+
+def test_des_donnees_d_ailleurs_ont_leur_paquet(donnees_d_ailleurs):
+    """Le paquet de données d'ailleurs se bâtit depuis elles, par la fabrique
+    (``pont.paquet_des_donnees``) : l'âge légal que la copie retouche y est, et
+    rien d'autre n'y change ; le paquet du dépôt n'en sait rien. Il se bâtit
+    une fois par état de leurs fichiers : retouchées encore, il se rebâtit."""
+    leur = pont.paquet_des_donnees(donnees_d_ailleurs)
+    du_depot = json.loads(pont.paquet_des_donnees())
+    lu = json.loads(leur)
+    assert lu["ages_ouverture"]["1968"] == [66.0, 3]
+    assert du_depot["ages_ouverture"]["1968"] == [63.75, 3]
+    assert lu.keys() == du_depot.keys()
+    assert {cle for cle in lu if lu[cle] != du_depot[cle]} == {"ages_ouverture"}
+    assert pont.paquet_des_donnees(donnees_d_ailleurs) is leur
+    _recrire_l_age_legal(donnees_d_ailleurs, "66.00", "66.250")
+    assert json.loads(pont.paquet_des_donnees(donnees_d_ailleurs))["ages_ouverture"]["1968"] == [
+        66.25, 3]
+
+
+def test_le_paquet_de_donnees_d_ailleurs_ne_lit_rien_de_celles_du_depot(monkeypatch, tmp_path):
+    """Bâti depuis des données d'ailleurs, le paquet ne lit rien de celles du
+    dépôt : la fabrique y lit ce que sa racine désigne (``DONNEES``), et une
+    lecture qui irait aux données du dépôt par un autre chemin mêlerait les
+    deux sans bruit. Le pont l'arrête."""
+    fabrique = tmp_path / "fabrique.py"
+    fabrique.write_text(textwrap.dedent(f"""\
+        from pathlib import Path
+        DONNEES = Path({str(RACINE_DONNEES)!r})
+        def construire(bilan, agregats):
+            ici = (DONNEES / "sources.yaml").read_bytes()
+            return ici + Path({str(RACINE_DONNEES / "sources.yaml")!r}).read_bytes()[:1]
+        """), encoding="utf-8")
+    copie = tmp_path / "data"
+    copie.mkdir()
+    (copie / "sources.yaml").write_text("{}\n", encoding="utf-8")
+    monkeypatch.setattr(pont, "FABRIQUE", fabrique)
+    with pytest.raises(RuntimeError, match=re.escape(str(RACINE_DONNEES / "sources.yaml"))):
+        pont.paquet_des_donnees(copie)
+
+
+def test_des_donnees_d_ailleurs_se_calculent_sur_leur_paquet(donnees_d_ailleurs):
+    """Une demande au pont sous des paramètres qui lisent des données d'ailleurs
+    se calcule sur leur paquet : sans paquet, le pont le prend ; celui du
+    dépôt, il le refuse, qui la ferait calculer sur d'autres données que les
+    siennes."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    ailleurs = replace(Parametres(), racine_donnees=donnees_d_ailleurs)
+    appel = {"1968": ("scenario_actuel.ages_ouverture.age", pont.MOTEUR, 1968)}
+    assert pont.droit(appel, Parametres())[0]["1968"][0] == 63.75
+    assert pont.droit(appel, ailleurs)[0]["1968"][0] == 66.0
+    assert pont.droit(appel, ailleurs, pont.paquet_des_donnees(donnees_d_ailleurs))[0][
+        "1968"][0] == 66.0
+    with pytest.raises(ValueError, match="leur paquet"):
+        pont.droit(appel, ailleurs, pont.paquet_des_donnees())
+
+
+def test_sur_des_donnees_d_ailleurs_le_cout_date_bat_et_simule_sa_grille_par_le_portage(
+        memoire_isolee, monkeypatch, donnees_d_ailleurs):
+    """Des données d'ailleurs, le coût date, bâtit et simule sa grille au
+    portage, sur leur paquet, comme celle du dépôt : les jumeaux Python, qu'on
+    empêche ici de calculer, n'y entrent pas, et la grille est celle que le
+    Python date, bâtit et simule sur la copie sous ``pont.par_le_jumeau()``,
+    couple pour couple, au bit près. Ce n'est pas celle du dépôt : le salarié
+    au salaire moyen né en 1968, qui a sa durée à 64 ans, y attend l'âge légal
+    de la copie, et part en 2034 et non en 2032 ; l'inapte, qui part à 62 ans,
+    ne bouge pas."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    from retraite_notionnelle import cout
+
+    monkeypatch.setattr(cout, "generations", lambda: (1968,))
+    simulateur = Simulateur(replace(Parametres(), racine_donnees=donnees_d_ailleurs))
+    with pont.par_le_jumeau():
+        en_python = cout._pensionnes(simulateur, GRILLE_D_ESSAI, "droit")
+    du_depot = cout._pensionnes(Simulateur(Parametres()), GRILLE_D_ESSAI, "droit")
+    empecher_les_jumeaux_du_cout(monkeypatch)
+    par_le_portage = cout._pensionnes(simulateur, GRILLE_D_ESSAI, "droit")
+    assert par_le_portage == en_python
+    assert _types([vars(p) for p in par_le_portage[0]]) == _types([vars(p) for p in en_python[0]])
+
+    def departs(pensionnes) -> dict[str, int]:
+        return {p.code: p.annee_liquidation for p in pensionnes[0]}
+
+    assert departs(du_depot) == {"salaire_moyen": 2032, "fonctionnaire_sedentaire": 2033,
+                                 "smic_carriere_complete~inapte": 2030}
+    assert departs(par_le_portage) == {**departs(du_depot), "salaire_moyen": 2034,
+                                       "fonctionnaire_sedentaire": 2034}
 
 
 def test_le_paquet_du_jour_suit_les_sources(monkeypatch, tmp_path):

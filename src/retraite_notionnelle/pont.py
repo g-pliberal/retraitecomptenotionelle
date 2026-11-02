@@ -21,7 +21,8 @@ ce qu'il rend est, au bit près, ce que le moteur Python calcule, et
 
 La grille du coût passe le pont en deux demandes, sous les paramètres du
 simulateur (:func:`parametres_en_donnees`), sur le paquet des données du jour
-(:func:`paquet_des_donnees`). Le portage la date et la bâtit
+(:func:`paquet_des_donnees`), ou sur celui de données d'ailleurs, une copie
+que l'on a retouchée, que la fabrique bâtit depuis elles. Le portage la date et la bâtit
 (:func:`carrieres_de_la_grille`, :func:`ages_de_depart`) : le Python, qui
 garde la définition des cas types et les conventions de projection du COR,
 ne lui passe que ce que chacun décrit — sa règle de départ, les options de sa
@@ -72,6 +73,7 @@ import contextlib
 import dataclasses
 import enum
 import functools
+import hashlib
 import json
 import math
 import os
@@ -213,23 +215,43 @@ def par_le_portage(parametres) -> bool:
     161, étapes 5 et 6) ? Le coût y simule, y date et y bâtit sa grille, la
     table y date ses carrières types.
 
-    Oui sur les données du dépôt : le portage calcule sur leur paquet
-    (:func:`paquet_des_donnees`), même quand la mémoire des calculs se tait —
-    sous ``monkeypatch`` (``tests/conftest.py``) ou un contexte qui remplace
-    une fonction du coût (``memoire.modele_modifie``) : ce qu'ils remplacent,
-    le Python le lit. Non sous :func:`par_le_jumeau`, ni sur des données
-    d'ailleurs, une copie que l'on a retouchée : le portage ne voit ni l'un ni
-    l'autre, et le moteur Python, le seul qui les voie, calcule. Ce n'est pas
-    un repli : sans node, le calcul sur les données du dépôt s'arrête
-    (:class:`PontIndisponible`). Le retrait du moteur Python devra leur trouver
-    un autre chemin."""
+    Oui, sur les données du dépôt comme sur des données d'ailleurs — une copie
+    que l'on a retouchée (``scripts/facteurs_depense.py --sans-suspension``) :
+    le portage calcule sur leur paquet (:func:`paquet_des_donnees`), même quand
+    la mémoire des calculs se tait — sous ``monkeypatch``
+    (``tests/conftest.py``) ou un contexte qui remplace une fonction du coût
+    (``memoire.modele_modifie``) : ce qu'ils remplacent, le Python le lit. Non
+    sous :func:`par_le_jumeau` seul : le portage ne voit pas ce qu'il
+    remplace, et le moteur Python, le seul qui le voie, calcule. Ce n'est pas
+    un repli : sans node, le calcul s'arrête (:class:`PontIndisponible`)."""
+    return not _JUMEAU
+
+
+def _du_depot(racine) -> bool:
+    """``racine`` est-elle celle des données du dépôt ?"""
     from .config import RACINE_DONNEES
 
     try:
-        du_depot = Path(parametres.racine_donnees).resolve() == RACINE_DONNEES.resolve()
+        return Path(racine).resolve() == RACINE_DONNEES.resolve()
     except OSError:
-        du_depot = False
-    return du_depot and not _JUMEAU
+        return False
+
+
+def _paquet_de(parametres, paquet: bytes | None) -> bytes | None:
+    """Le paquet sur lequel se calcule une demande sous ``parametres`` :
+    ``paquet``, ou, sans lui, ``moteur/donnees.json``, sur les données du
+    dépôt. Des données d'ailleurs se calculent sur le leur
+    (:func:`paquet_des_donnees`) : sans paquet, le pont le prend ; un autre, il
+    le refuse, qui ferait calculer la demande sur d'autres données que les
+    siennes."""
+    if parametres is None or _du_depot(parametres.racine_donnees):
+        return paquet
+    leur = paquet_des_donnees(parametres.racine_donnees)
+    if paquet is not None and paquet is not leur and paquet != leur:
+        raise ValueError(
+            f"des données d'ailleurs ({parametres.racine_donnees}) se calculent sur leur "
+            "paquet : pont.paquet_des_donnees(parametres.racine_donnees)")
+    return leur
 
 
 #: Le pont gardé ouvert de ce processus, s'il y en a un.
@@ -481,23 +503,50 @@ def carrieres_des_saisies(cas: list[dict], paquet: bytes | None = None,
     return resultats, reponse["echecs"]
 
 
-#: Le programme qui bâtit le paquet des données du jour, dans un processus à lui.
+#: La fabrique du paquet, que :func:`_batir_le_paquet` fait tourner.
+FABRIQUE = RACINE_PROJET / "scripts" / "construire_donnees.py"
+
+#: Le programme qui bâtit le paquet des données du jour, dans un processus à
+#: lui. Sur des données d'ailleurs, sa racine, le second argument, prend la
+#: place de ``DONNEES``, et ce qu'il lit des données du dépôt, qu'un autre
+#: chemin que sa racine y mènerait, l'arrête.
 _BATIR_LE_PAQUET = """\
-import importlib.util, sys
+import importlib.util, os, sys
+from pathlib import Path
 spec = importlib.util.spec_from_file_location("construire_donnees", sys.argv[1])
 module = importlib.util.module_from_spec(spec)
 sys.modules[spec.name] = module
 spec.loader.exec_module(module)
-sys.stdout.buffer.write(module.construire(b"{}", b"{}"))
+lues = set()
+if len(sys.argv) > 2:
+    depot = os.path.normcase(os.path.join(os.path.abspath(module.DONNEES), ""))
+    module.DONNEES = Path(sys.argv[2])
+
+    def garde(evenement, arguments):
+        if (evenement in ("open", "os.listdir", "os.scandir") and arguments
+                and isinstance(arguments[0], (str, bytes, os.PathLike))):
+            chemin = os.path.abspath(os.fsdecode(arguments[0]))
+            if os.path.normcase(chemin).startswith(depot):
+                lues.add(chemin)
+
+    sys.addaudithook(garde)
+paquet = module.construire(b"{}", b"{}")
+if lues:
+    sys.exit(f"bâti sur {sys.argv[2]}, le paquet lit {len(lues)} chemins des données du "
+             "dépôt : " + ", ".join(sorted(lues)[:5]))
+sys.stdout.buffer.write(paquet)
 """
 
 
 #: Le dernier paquet du jour que ce processus a bâti, sous la signature des
 #: sources d'où il l'a bâti (``memoire.signature``).
 _PAQUET: tuple[str | None, bytes] | None = None
+#: Le dernier paquet de données d'ailleurs, sous leur racine, la signature des
+#: sources et celle de leurs fichiers.
+_PAQUET_D_AILLEURS: tuple[tuple, bytes] | None = None
 
 
-def paquet_des_donnees() -> bytes:
+def paquet_des_donnees(racine: Path | None = None) -> bytes:
     """Le paquet des données du jour, tel que la fabrique l'écrira, sans le
     bilan ni les agrégats, que la simulation d'une carrière ne lit pas : celui
     sur lequel le coût fait simuler sa grille.
@@ -510,33 +559,62 @@ def paquet_des_donnees() -> bytes:
     processus : une donnée retouchée pendant qu'un processus calcule entre
     dans le paquet de son calcul suivant, et la mémoire ne garde pas, sous
     l'empreinte des données nouvelles, une grille simulée sur le paquet des
-    anciennes."""
-    global _PAQUET
+    anciennes.
+
+    Des données d'ailleurs, ``racine`` — une copie que l'on a retouchée
+    (``scripts/facteurs_depense.py --sans-suspension``) —, ont le leur, que la
+    fabrique bâtit de même depuis elles, sans rien lire des données du dépôt,
+    une fois par état de leurs fichiers et des sources (action 161, « le coût
+    sous un modèle modifié »)."""
+    global _PAQUET, _PAQUET_D_AILLEURS
     from .memoire import signature
 
+    if racine is not None and not _du_depot(racine):
+        racine = Path(racine).resolve()
+        etat = (racine, signature(), _signature_des_fichiers(racine))
+        if _PAQUET_D_AILLEURS is None or _PAQUET_D_AILLEURS[0] != etat:
+            _PAQUET_D_AILLEURS = (etat, _batir_le_paquet(racine))
+        return _PAQUET_D_AILLEURS[1]
     etat = signature()
     if _PAQUET is None or _PAQUET[0] != etat:
         _PAQUET = (etat, _batir_le_paquet())
     return _PAQUET[1]
 
 
-def _batir_le_paquet() -> bytes:
+def _signature_des_fichiers(racine: Path) -> str:
+    """Les fichiers de ``racine`` tels que le disque les décrit — le chemin, la
+    taille et la date de chacun —, sans les lire, comme ``memoire.signature``
+    décrit les sources."""
+    somme = hashlib.sha256()
+    for dossier, sous_dossiers, fichiers in os.walk(racine):
+        sous_dossiers.sort()
+        for nom in sorted(fichiers):
+            chemin = os.path.join(dossier, nom)
+            etat = os.stat(chemin)
+            somme.update(f"{os.path.relpath(chemin, racine)}\0{etat.st_size}:"
+                         f"{etat.st_mtime_ns}\0".encode("utf-8", "surrogateescape"))
+    return somme.hexdigest()
+
+
+def _batir_le_paquet(racine: Path | None = None) -> bytes:
     """Le paquet du jour, bâti par la fabrique elle-même
     (``scripts/construire_donnees.py``), dans un processus à elle, comme node
     fait tourner le moteur JavaScript dans le sien : ce qu'elle lit pour le
     site seul — les crédits des ministères, le manifeste des sources, qu'aucun
     calcul ne lit — n'entre ni dans les mémoires des chargeurs de ce
     processus-ci, ni dans le relevé de ce que lisent les calculs gardés
-    (``memoire.HORS_DU_MODELE``)."""
+    (``memoire.HORS_DU_MODELE``). Celui de données d'ailleurs, sur ``racine``."""
     environnement = {**os.environ, "PYTHONPATH": os.pathsep.join(filter(None, (
         str(RACINE_PROJET / "src"), os.environ.get("PYTHONPATH"))))}
     execution = subprocess.run(
-        [sys.executable, "-c", _BATIR_LE_PAQUET,
-         str(RACINE_PROJET / "scripts" / "construire_donnees.py")],
+        [sys.executable, "-c", _BATIR_LE_PAQUET, str(FABRIQUE),
+         *(() if racine is None else (str(racine),))],
         cwd=RACINE_PROJET, env=environnement, capture_output=True, check=False)
     if execution.returncode != 0:
-        raise RuntimeError("le paquet des données du jour ne se bâtit pas : "
-                           + execution.stderr.decode("utf-8", "replace").strip()[-2000:])
+        raise RuntimeError(
+            "le paquet des données " + ("du jour" if racine is None else f"de {racine}")
+            + " ne se bâtit pas : "
+            + execution.stderr.decode("utf-8", "replace").strip()[-2000:])
     return execution.stdout
 
 
@@ -579,7 +657,7 @@ def grille_du_cout(cas: list[dict], scenarios, parametres, paquet: bytes | None 
                  "propositions": {nom: carriere_en_donnees(carriere)
                                   for nom, carriere in un["propositions"].items()}}
                 for un in cas],
-    }}, paquet)
+    }}, _paquet_de(parametres, paquet))
     resultats = {
         cle: {
             "pensions": _par_scenario(lu["pensions"]),
@@ -615,7 +693,7 @@ def ages_de_depart(cas: list[dict], parametres, primes: dict[int, float] | None 
     ``pilote.age_de_depart`` (action 161, étape 6)."""
     reponse = _demander({"ages_de_depart": {
         "parametres": parametres_en_donnees(parametres), "variante": variante,
-        "primes": primes, "cas": cas}}, paquet)
+        "primes": primes, "cas": cas}}, _paquet_de(parametres, paquet))
     return ({cle: _flottant(age) for cle, age in reponse["resultats"].items()},
             frozenset(reponse["attendus"]), reponse["echecs"])
 
@@ -636,7 +714,7 @@ def carrieres_de_la_grille(cas: list[dict], parametres, primes: dict[int, float]
     (``castypes.carriere_de_la_grille``) ou que le portage refuse."""
     reponse = _demander({"carrieres_de_la_grille": {
         "parametres": parametres_en_donnees(parametres), "variante": variante,
-        "primes": primes, "cas": cas}}, paquet)
+        "primes": primes, "cas": cas}}, _paquet_de(parametres, paquet))
     resultats = {}
     for cle, lu in reponse["resultats"].items():
         if "carriere" in lu:
@@ -667,7 +745,8 @@ def departs_des_cas(cas: list[dict], parametres, primes: dict[int, float] | None
     motif qui le refuse (``"refus"``). Puis, sous leur clé, les motifs des cas
     dont le portage refuse l'âge."""
     reponse = _demander({"departs_des_cas": {
-        "parametres": parametres_en_donnees(parametres), "primes": primes, "cas": cas}}, paquet)
+        "parametres": parametres_en_donnees(parametres), "primes": primes, "cas": cas}},
+        _paquet_de(parametres, paquet))
     resultats = {}
     for cle, lu in reponse["resultats"].items():
         depart = None
@@ -699,7 +778,8 @@ def debuts_de_la_surcote(cas: list[dict], parametres, primes: dict[int, float] |
     Son jumeau est ``debut_de_la_surcote`` de ``scripts/grille_large.py``
     (action 161, étape 7)."""
     reponse = _demander({"debuts_de_la_surcote": {
-        "parametres": parametres_en_donnees(parametres), "primes": primes, "cas": cas}}, paquet)
+        "parametres": parametres_en_donnees(parametres), "primes": primes, "cas": cas}},
+        _paquet_de(parametres, paquet))
     return ({cle: None if debut is None else _flottant(debut)
              for cle, debut in reponse["resultats"].items()}, reponse["echecs"])
 
@@ -720,7 +800,8 @@ def avantages(cas: list[dict], parametres, paquet: bytes | None = None,
     Puis, sous leur clé, les motifs des cases que le droit écarte
     (``castypes.carriere_de_la_grille``) ou que le portage refuse."""
     reponse = _demander({"avantages": {
-        "parametres": parametres_en_donnees(parametres), "cas": cas}}, paquet)
+        "parametres": parametres_en_donnees(parametres), "cas": cas}},
+        _paquet_de(parametres, paquet))
     resultats = {}
     for cle, lu in reponse["resultats"].items():
         resultats[cle] = {
@@ -1230,7 +1311,7 @@ def droit(appels: dict[str, tuple], parametres=None, paquet: bytes | None = None
         "parametres": parametres_en_donnees(Parametres() if parametres is None else parametres),
         "carrieres": [carriere_en_donnees(carriere) for carriere in carrieres],
         "appels": demandes,
-    }}, paquet)
+    }}, _paquet_de(parametres, paquet))
     return ({cle: relu_du_droit(appels[cle][0], lu) for cle, lu in reponse["resultats"].items()},
             reponse["echecs"])
 

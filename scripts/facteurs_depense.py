@@ -35,7 +35,9 @@ la grille y part l'année que le droit de sa génération lui donne
 (``cout.Pensionne.departs``). ``--sans-suspension`` refait le modèle sur une
 copie des données où la réforme de 2023 s'applique entière, sans la
 suspension de la loi de financement pour 2026 (``REFORME_2023_ENTIERE``) :
-l'univers de l'AWG, qui l'a précédée. ``--naissances`` y fait en outre naître
+l'univers de l'AWG, qui l'a précédée. Le portage y date, bâtit et simule la
+grille du coût, sur le paquet que la fabrique bâtit depuis la copie
+(``pont.paquet_des_donnees``). ``--naissances`` y fait en outre naître
 chaque cohorte toute l'année, au même âge, et non en janvier comme la grille
 (``dates_des_departs``) : au 31 décembre de l'année de son départ, elle n'a que
 ses natifs des premiers mois de partis. ``--entree`` y fait de plus entrer

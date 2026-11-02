@@ -63,7 +63,7 @@ def ecarts_d_ecriture(relu, attendu, chemin: tuple = (), tolerance: float = 0.0)
     if any(dataclasses.is_dataclass(valeur) and not isinstance(valeur, type)
            for valeur in (relu, attendu)):
         if type(relu) is not type(attendu):
-            return [f"{'.'.join(chemin)} : attendu un {type(attendu).__name__}, "
+            return [f"{'.'.join(map(str, chemin))} : attendu un {type(attendu).__name__}, "
                     f"lu un {type(relu).__name__}"]
         relu, attendu = ({champ.name: getattr(valeur, champ.name)
                           for champ in dataclasses.fields(valeur)} for valeur in (relu, attendu))
@@ -80,8 +80,36 @@ def ecarts_d_ecriture(relu, attendu, chemin: tuple = (), tolerance: float = 0.0)
     if (tolerance and type(relu) is float and type(attendu) is float
             and math.isclose(relu, attendu, rel_tol=tolerance)):
         return []
-    return [f"{'.'.join(chemin)} : attendu {json.dumps(attendu)[:60]}, "
+    return [f"{'.'.join(map(str, chemin))} : attendu {json.dumps(attendu)[:60]}, "
             f"lu {json.dumps(relu)[:60]}"]
+
+
+#: Les jumeaux Python qui datent, bâtissent et simulent la grille du coût : le
+#: pilote, l'ouverture du droit qu'il interroge, les constructeurs de
+#: carrières, la projection des primes et le moteur Python.
+JUMEAUX_DU_COUT = (("pilote", "age_de_depart"), ("pilote", "point_fixe"),
+                   ("pilote", "descendre"), ("ouvrir", "age_ouverture_droit"),
+                   ("ouvrir", "age_taux_plein_droit"), ("ouvrir", "age_annulation_droit"),
+                   ("Simulateur", "carriere_simple"), ("Simulateur", "carriere_parcours"),
+                   ("Simulateur", "simuler"), ("Simulateur", "proposition"),
+                   ("Carriere", "prolongee"), ("castypes", "primes_projetees"))
+
+
+def empecher_les_jumeaux_du_cout(monkeypatch) -> None:
+    """Les jumeaux de :data:`JUMEAUX_DU_COUT` empêchés de calculer : ce que le
+    coût demande de sa grille, seul le portage peut le rendre."""
+    from retraite_notionnelle import castypes, pilote
+    from retraite_notionnelle.carriere import Carriere
+    from retraite_notionnelle.droit import ouvrir
+
+    objets = {"pilote": pilote, "ouvrir": ouvrir, "Simulateur": Simulateur,
+              "Carriere": Carriere, "castypes": castypes}
+
+    def interdit(*_, **__):
+        raise AssertionError("un jumeau Python date, bâtit ou simule la grille du coût")
+
+    for objet, nom in JUMEAUX_DU_COUT:
+        monkeypatch.setattr(objets[objet], nom, interdit)
 
 
 def actuel_en_donnees(actuel) -> dict:
