@@ -2172,7 +2172,7 @@ d'attendre une réforme.
 
 ### Sources
 
-`data/sources.yaml` recense les <!--chiffre:entrees(data/sources.yaml:institutions.*.jeux)-->248<!--/--> jeux de données des
+`data/sources.yaml` recense les <!--chiffre:entrees(data/sources.yaml:institutions.*.jeux)-->249<!--/--> jeux de données des
 <!--chiffre:entrees(data/sources.yaml:institutions)-->42<!--/--> institutions, avec pour chacun l'URL, le mode
 d'accès et l'état d'intégration.
 
