@@ -52,8 +52,9 @@ import copy
 from dataclasses import dataclass, field, replace
 from pathlib import Path
 
+from . import pont
 from .calendrier import DateMois
-from .castypes import CAS_TYPES, CasType
+from .castypes import CAS_TYPES, CasType, batie_au_portage, departs_au_portage
 from .cout import (_DEMI_TRANCHE, _carrieres_voisines, _ponderation, _tetes_par_poids,
                    generations)
 from .donnees.chargement import charger_yaml
@@ -875,12 +876,22 @@ def decomposer(simulateur: Simulateur, liquidation: str = "droit"
     # Les variantes sont construites UNE FOIS pour les trois cent quarante-deux
     # couples : par couple, elles rechargeraient les tables autant de fois.
     variantes = scenarios_neutralises(simulateur)
+    # Le portage date chaque case et ses cinq cohortes, d'une demande, quand la
+    # grille s'y date (action 161, étape 6) ; le pilote Python sinon.
+    au_portage = batie_au_portage(simulateur.parametres, CAS_TYPES)
+    if au_portage:
+        ages_portes, voisines_portees = _departs_au_portage(simulateur, CAS_TYPES, liquidation)
     pensionnes: list[Pensionne] = []
     refus: dict[str, str] = {}
     for cas in CAS_TYPES:
         for generation in generations():
             try:
-                age = cas.age_liquidation_pour(simulateur, generation, liquidation)
+                if au_portage:
+                    if (cas.code, generation) not in ages_portes:
+                        continue
+                    age = ages_portes[(cas.code, generation)]
+                else:
+                    age = cas.age_liquidation_pour(simulateur, generation, liquidation)
                 carriere = carriere_variante(simulateur, cas, generation, age)
                 if carriere.annee_liquidation <= debut:
                     continue
@@ -900,8 +911,9 @@ def decomposer(simulateur: Simulateur, liquidation: str = "droit"
                 parts[ligne] = parts.get(ligne, 0.0) + montant
                 parts[CONTRIBUTIF] -= montant
             coefficient = macro.coefficient_prix(carriere.annee_liquidation, annee_euros)
-            departs, ages_depart = _departs_des_cohortes(simulateur, cas, generation, carriere,
-                                                         liquidation)
+            departs, ages_depart = _departs_des_cohortes(
+                carriere, voisines_portees[(cas.code, generation)] if au_portage
+                else _voisines_en_python(simulateur, cas, generation, liquidation))
             pensionnes.append(Pensionne(
                 code=cas.code,
                 generation=generation,
@@ -919,23 +931,63 @@ def decomposer(simulateur: Simulateur, liquidation: str = "droit"
     return pensionnes, refus
 
 
-def _departs_des_cohortes(simulateur: Simulateur, cas: CasType, generation: int,
-                          carriere, liquidation: str = "droit"
+def _departs_des_cohortes(carriere, voisines: tuple
                           ) -> tuple[tuple[int, ...], tuple[float, ...]]:
     """L'année et l'âge où part chacune des cinq cohortes que la génération
-    ``generation`` de la grille représente, partie elle sur ``carriere`` : ceux
-    que le droit de SA génération donne au cas type, comme dans la grille du
-    coût (:func:`~.cout._departs`). Une cohorte que la grille ne sait pas
-    simuler part à l'âge de la grille, l'année décalée d'autant."""
+    de la grille représente, partie elle sur ``carriere`` : ceux que le droit
+    de SA génération donne au cas type, comme dans la grille du coût
+    (:func:`~.cout._departs`) — ``voisines``, l'âge et l'année du départ de
+    chacune, ``(âge, année)``, ou ``None`` pour la génération de la grille. Une
+    cohorte que la grille ne sait pas simuler part à l'âge de la grille, l'année
+    décalée d'autant."""
     departs, ages = [], []
-    for decalage, voisine in _carrieres_voisines(simulateur, cas, generation, liquidation):
+    for decalage, voisine in zip(range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1), voisines,
+                                 strict=True):
         if voisine is None:
             departs.append(carriere.annee_liquidation + decalage)
             ages.append(float(carriere.age_liquidation))
         else:
-            departs.append(voisine.annee_liquidation)
-            ages.append(float(voisine.age_liquidation))
+            age, annee = voisine
+            departs.append(annee)
+            ages.append(float(age))
     return tuple(departs), tuple(ages)
+
+
+def _voisines_en_python(simulateur: Simulateur, cas: CasType, generation: int,
+                        liquidation: str = "droit") -> tuple:
+    """Le départ de chacune des cinq cohortes d'une case, ``(âge, année)``, que
+    le moteur Python date et bâtit (``cout._carrieres_voisines``), ou ``None``
+    pour la génération de la grille et pour une cohorte que la grille ne sait
+    pas simuler : là où la grille ne se date pas au portage."""
+    return tuple(None if voisine is None else (voisine.age_liquidation, voisine.annee_liquidation)
+                 for _decalage, voisine in _carrieres_voisines(simulateur, cas, generation,
+                                                               liquidation))
+
+
+def _departs_au_portage(simulateur: Simulateur, cas_types: tuple[CasType, ...],
+                        liquidation: str = "droit") -> tuple[dict, dict]:
+    """L'âge de chaque case de la grille que le droit n'écarte pas, sous
+    ``(code, génération)``, et le départ de ses cinq cohortes
+    (:func:`_voisines_en_python`), que le portage date et bâtit d'une seule
+    demande (``castypes.departs_au_portage``, action 161, étape 6), sur le
+    paquet des données du jour, comme la grille du coût."""
+    decalages = range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1)
+    cohortes = {f"{cas.code}|{generation}|{decalage}": (cas, generation + decalage)
+                for cas in cas_types for generation in generations() for decalage in decalages}
+    departs, _refus = departs_au_portage(simulateur, cohortes, liquidation,
+                                         pont.paquet_des_donnees())
+
+    def depart(cas: CasType, generation: int, decalage: int):
+        lu = departs.get(f"{cas.code}|{generation}|{decalage}")
+        return None if lu is None else (lu[0], lu[1])
+
+    ages = {(cas.code, generation): departs[f"{cas.code}|{generation}|0"][0]
+            for cas in cas_types for generation in generations()
+            if f"{cas.code}|{generation}|0" in departs}
+    voisines = {(cas.code, generation): tuple(
+        None if not decalage else depart(cas, generation, decalage) for decalage in decalages)
+        for cas in cas_types for generation in generations()}
+    return ages, voisines
 
 
 def masses(pensionnes: list[Pensionne], population: Population, annee: int,

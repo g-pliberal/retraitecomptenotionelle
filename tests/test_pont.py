@@ -406,6 +406,37 @@ def test_les_departs_des_facteurs_de_la_depense_se_datent_au_portage_sans_les_ju
     assert len(au_portage[0]) < len(cas) * 3 * 5
 
 
+def test_le_cout_des_avantages_date_ses_cohortes_au_portage(memoire_isolee, monkeypatch):
+    """Le coût des avantages (``avantages.decomposer``) date chaque case de sa
+    grille et ses cinq cohortes au portage (action 161, étape 6), au lieu du
+    pilote Python et de ``cout._carrieres_voisines``, qu'on empêche ici de
+    calculer ; la pension et ses parts se liquident encore en Python, sous les
+    scénarios neutralisés. Couple pour couple, la décomposition est celle du
+    Python, l'âge de chaque départ sous son type."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    from retraite_notionnelle import avantages, cout, memoire, pilote
+    from retraite_notionnelle.droit import ouvrir
+
+    monkeypatch.setattr(avantages, "CAS_TYPES", tuple(
+        cas for cas in CAS_TYPES if cas.code in ("salaire_moyen", "artisan", "agent_ieg")))
+    monkeypatch.setattr(avantages, "generations", lambda: (1885, 1910, 1965))
+    simulateur = Simulateur(Parametres())
+    with memoire.modele_modifie():
+        en_python = avantages.decomposer(simulateur)
+    _interdire(monkeypatch, ((pilote, "age_de_depart"), (pilote, "point_fixe"),
+                             (pilote, "descendre"), (ouvrir, "age_ouverture_droit"),
+                             (ouvrir, "age_taux_plein_droit"), (ouvrir, "age_annulation_droit"),
+                             (cout, "_carrieres_voisines"), (avantages, "_carrieres_voisines")))
+    au_portage = avantages.decomposer(simulateur)
+    assert au_portage == en_python
+    assert _types([vars(p) for p in au_portage[0]]) == _types([vars(p) for p in en_python[0]])
+    # L'artisan né en 1910 descend sous l'âge écrit ; l'agent des IEG né en 1885
+    # est écarté.
+    assert {(p.code, p.generation) for p in au_portage[0]} >= {("artisan", 1910)}
+    assert ("agent_ieg", 1885) not in {(p.code, p.generation) for p in au_portage[0]}
+
+
 def test_sans_node_le_pont_s_arrete_sans_repli(monkeypatch):
     monkeypatch.setattr(pont.shutil, "which", lambda nom: None)
     with pytest.raises(pont.PontIndisponible, match="node"):
