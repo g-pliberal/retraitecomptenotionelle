@@ -630,8 +630,9 @@ def revenu_cotise(macro: DonneesMacro, revenu: float, micro: str,
     trimestre, et 3 619 € de revenu cotisé, deux (service-public, F23369).
     De 2018 à septembre 2022, la part de base est la clef que la Cnav
     applique (circulaire n° 2025-20) ; avant, aucune n'est lue, et le revenu
-    abattu vaut, comme pour la Cipav jusqu'en 2022. De 2017 à 2019, les
-    trimestres se comptent aux seuils que la caisse publie
+    abattu vaut, comme pour la Cipav jusqu'en 2022. En 2015, aux ventes et
+    aux services, et de 2017 à 2019, les trimestres se comptent aux seuils
+    que la caisse publie
     (:func:`~retraite_notionnelle.donnees.chargement.trimestres_aux_seuils_micro`),
     et ce revenu ne sert plus qu'au revenu annuel moyen.
 
@@ -741,8 +742,10 @@ def _ligne_annuelle(
                       if cotise
                       else (regle.trimestres_assimiles if regle else 4))
         if cotise and micro:
-            # LES SEUILS DE 2017 À 2019. Le forfait va d'abord à la CSG et à
-            # la CRDS, puis à la maladie, puis à la vieillesse de base
+            # LES SEUILS PUBLIÉS, EN 2015 (ventes et services, le premier
+            # trimestre sous la compensation, circulaire RSI n° 2016/010) ET
+            # DE 2017 À 2019. Le forfait va d'abord à la CSG et à la CRDS,
+            # puis à la maladie, puis à la vieillesse de base
             # (L. 133-6-8-3, L. 613-9, D. 133-4) : aucune clef ne les fait, et
             # la caisse les publie (barème « Chiffre d'affaire des
             # micro-entrepreneurs validant un trimestre », source Urssaf).

@@ -627,7 +627,9 @@ test("le chômage non indemnisé ne valide que dans les limites de R. 351-12", (
 /**
  * La compensation de l'État à l'auto-entrepreneur, de 2009 à 2015
  * (L. 133-6-8-2, D. 131-6-4) : un trimestre au moins en 2009, rien sous
- * 200 heures de SMIC en 2014, sous 300 en 2015. Sous les bornes de la
+ * 200 heures de SMIC en 2014 ; en 2015, deux d'un coup à 300 heures, et en
+ * deçà le premier aux seuils de la grille de la caisse, sauf aux recettes
+ * libérales (circulaire RSI n° 2016/010, point 1). Sous les bornes de la
  * saisie, qu'aucun témoin ne franchit : rejoue
  * `test_la_compensation_de_l_etat_de_2009_a_2015` (test_micro_social.py).
  */
@@ -654,6 +656,12 @@ test("la compensation de l'État compte les trimestres de l'auto-entrepreneur", 
   assert.equal(trimestres("services", 2014, 3700), 0);
   assert.equal(trimestres("liberal", 2014, 2800), 0);
   assert.equal(trimestres("vente", 2015, 7000), 0);
+  assert.equal(trimestres("vente", 2015, 9620), 0);
+  assert.equal(trimestres("vente", 2015, 9621), 1);
+  assert.equal(trimestres("services", 2015, 5591), 0);
+  assert.equal(trimestres("services", 2015, 5592), 1);
+  assert.equal(trimestres("liberal", 2015, 4368), 0);
+  assert.equal(trimestres("liberal", 2015, 4369), 2);
   assert.equal(trimestres("vente", 2015, 9942), 2);
 });
 

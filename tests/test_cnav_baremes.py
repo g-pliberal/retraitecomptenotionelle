@@ -500,7 +500,8 @@ def test_les_taux_des_micro_entrepreneurs_sont_ceux_de_la_caisse():
     les libéraux de l'Assurance retraite, les taux globaux et les parts de
     retraite que la caisse publie, à leurs dates d'effet ; ses lignes de 2025,
     qui ne changent que le taux de base, gardent les parts de 2022. Les seuils
-    de chiffre d'affaires de 2017 à 2019 sont ceux que la caisse publie."""
+    de chiffre d'affaires de 2017 à 2019 sont ceux que la caisse publie, et
+    ceux de 2015, ceux de la grille qu'elle joint."""
     import yaml
 
     micro = yaml.safe_load((LEGISLATION / "micro_social.yaml").read_text(encoding="utf-8"))
@@ -520,7 +521,22 @@ def test_les_taux_des_micro_entrepreneurs_sont_ceux_de_la_caisse():
                 assert ligne["debut"] == "2025-01" and (
                     ligne["taux_global"], ligne["part_base"]) == (
                     precedente["taux_global"], precedente["part_base"]), (activite, ligne)
-    assert micro["seuils"] == SEUILS_MICRO_ENTREPRENEURS
+    assert micro["seuils"] == {
+        activite: {**SEUILS_MICRO_ENTREPRENEURS_DE_2015.get(activite, {}), **seuils}
+        for activite, seuils in SEUILS_MICRO_ENTREPRENEURS.items()}
+
+
+#: L'« Info-doc RSI » que joint le barème ci-dessous, mis à jour le 16 avril
+#: 2019 (`micro_entrepreneur_chiffre_affaire_validant_un_trimestre_montant.pdf`) :
+#: en 2015, le chiffre d'affaires qui valide un, deux, trois et quatre
+#: trimestres à qui relève de la maladie du RSI (« si prestataires santé »),
+#: aux ventes et aux services. Aux recettes libérales, « Pas de validation de
+#: trimestres sans déclenchement de la compensation » : le modèle les compte
+#: par la compensation (action 177, étape 6).
+SEUILS_MICRO_ENTREPRENEURS_DE_2015 = {
+    "vente": {2015: [9621, 9942, 14913, 19883]},
+    "services": {2015: [5592, 5766, 8649, 11532]},
+}
 
 
 #: « Chiffre d'affaire des micro-entrepreneurs validant un trimestre »

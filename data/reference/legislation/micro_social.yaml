@@ -83,6 +83,16 @@
 # demande encore 200 ; en 2015, la compensation en valide deux d'un coup
 # (circulaire RSI n° 2015/007, point 2). Les circulaires lues sont celles du
 # RSI : la Cipav n'y est pas. La compensation cesse en 2016.
+#   2015, SOUS LA COMPENSATION (action 177, étape 6, le 2 novembre 2026). Le
+# forfait dépasse la maladie avant les 300 heures : il valide seul un
+# trimestre dès 9 621 € de ventes et 5 592 € de services, et aucun aux
+# recettes libérales, « sans déclenchement de la compensation » (la grille de
+# la caisse, « Info-doc RSI » mis à jour le 16 avril 2019, que joint son
+# barème « Chiffre d'affaire des micro-entrepreneurs validant un
+# trimestre »). Ses deux seuils du premier trimestre sont ceux de la
+# circulaire RSI n° 2016/010, point 1, « applicable en 2014 et 2015 » ; la
+# circulaire n° 2015/007 ne dit rien sous les 300 heures. Ses lignes de 2015,
+# ventes et services, entrent aux `seuils` ; le libéral garde la compensation.
 #
 # LES SEUILS DE 2017 À 2019 (même étape, le 18 octobre 2026). De 2016 à 2021,
 # la loi affecte le forfait par ordre, et non par clef : L. 133-6-8-3
@@ -126,13 +136,17 @@ compensation:
   plancher: {2009: 200}
   seuil: {2010: 200, 2011: 200, 2012: 200, 2013: 200, 2014: 200, 2015: 300}
 
-# Le chiffre d'affaires qui valide un, deux, trois et quatre trimestres.
+# Le chiffre d'affaires qui valide un, deux, trois et quatre trimestres :
+# en 2015, la grille de la caisse pour qui relève de la maladie du RSI ; de
+# 2017 à 2019, le barème de la caisse.
 seuils:
   vente:
+    2015: [9621, 9942, 14913, 19883]
     2017: [3510, 6305, 9120, 20195]
     2018: [4085, 7185, 10250, 20430]
     2019: [4137, 7286, 10426, 20740]
   services:
+    2015: [5592, 5766, 8649, 11532]
     2017: [2020, 3635, 5245, 11715]
     2018: [2375, 4185, 5975, 11850]
     2019: [2412, 4239, 6071, 12030]

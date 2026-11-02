@@ -166,9 +166,19 @@ COMPENSATION = [
     ("liberal", 2014, 2800.0, 0),
     ("vente", 2014, 9859.0, 2),
     # 2015 : la compensation à 300 heures, qui « permettra ainsi la
-    # validation de deux trimestres » (circulaire RSI n° 2015/007) ; rien en
-    # deçà.
+    # validation de deux trimestres » (circulaire RSI n° 2015/007, point 2).
+    # En deçà, le forfait seul en valide un à qui relève de la maladie du
+    # RSI, dès 9 621 € de ventes ou 5 592 € de services, et aucun aux
+    # recettes libérales, « sans déclenchement de la compensation » (la
+    # grille de la caisse ; deux seuils du premier trimestre, « applicable en
+    # 2014 et 2015 », circulaire RSI n° 2016/010, point 1).
     ("vente", 2015, 7000.0, 0),
+    ("vente", 2015, 9600.0, 0),
+    ("vente", 2015, 9621.0, 1),
+    ("services", 2015, 5500.0, 0),
+    ("services", 2015, 5592.0, 1),
+    ("liberal", 2015, 4300.0, 0),
+    ("liberal", 2015, 4369.0, 2),
     ("vente", 2015, 9942.0, 2),
 ]
 
@@ -208,14 +218,10 @@ GRILLE_DE_LA_COMPENSATION = {
 }
 #: Ce que le modèle valide autrement que la grille, et pourquoi. En 2009, un
 #: trimestre au moins, quel que soit le chiffre d'affaires (le plancher de la
-#: circulaire RSI n° 2009/024). En 2015, la grille valide un trimestre à
-#: l'assuré prestataire santé sous les 300 heures de Smic que la compensation
-#: demande, quand la circulaire RSI n° 2015/007 n'en valide « rien en deçà »,
-#: ce que le modèle suit : un écart entre les deux sources de la caisse.
+#: circulaire RSI n° 2009/024).
 ECARTS_A_LA_GRILLE = {
     (2009, "vente", 1): "plancher", (2009, "services", 1): "plancher",
     (2009, "liberal", 1): "plancher",
-    (2015, "vente", 1): "rien en deçà", (2015, "services", 1): "rien en deçà",
 }
 
 
@@ -241,10 +247,9 @@ def test_le_modele_valide_les_trimestres_de_la_grille_de_la_compensation(macro):
                     activite, annee, seuil - 2)
                 if ecart == "plancher":
                     assert (au_seuil, dessous) == (1, 1), (annee, activite)
-                elif ecart == "rien en deçà":
-                    assert (au_seuil, dessous) == (0, 0), (annee, activite)
-                elif annee == 2015 and n == 2:
-                    # La compensation, à 300 heures, en valide deux d'un coup.
+                elif seuils[0] is None and n == 2:
+                    # Sans premier trimestre, la compensation, à 300 heures,
+                    # en valide deux d'un coup.
                     assert (au_seuil, dessous) == (2, 0), (annee, activite)
                 else:
                     assert (au_seuil, dessous) == (n, n - 1), (annee, activite, n)
