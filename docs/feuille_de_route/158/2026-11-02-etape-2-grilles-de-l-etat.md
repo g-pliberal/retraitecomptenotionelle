@@ -38,7 +38,8 @@ militaires, que la décision ne nomme pas, sont de l'État.
   modification le 2 novembre 2026 à 20 h 54 UTC sur 557d4c8 (run
   41523537229), pour le JORF et le LEGI. Le LEGI, reconstruit en 1 h 10, est
   publié à 22 h 06 UTC : 325 879 documents au lieu de 246 302, 1,6 Go, sous le
-  filtre du code ; le JORF tournait encore à 22 h 10.
+  filtre du code ; le JORF, à 22 h 47 UTC, 758 Mo compressés. Le run est vert
+  de bout en bout.
 - *Le Noyau RH, téléchargé.* La pièce `6_nomenclatures_noyau_xmlzip` du jeu de
   juillet 2026 (12 088 867 octets, empreinte SHA-256 `d5cf571b…a8f11f`,
   364 tableaux XML en ISO-8859-15). data.economie.gouv.fr coupe la plupart des
