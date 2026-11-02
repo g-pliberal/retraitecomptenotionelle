@@ -6457,15 +6457,15 @@ la décision du 1er novembre, une ligne de plus à la table datée.
 
 ### 145. Les régimes que l'inventaire ne nommait pas : documentés, non calculés — `en cours`
 
-**Reprise, au 16 octobre 2026.** Faites, les trois étapes : dix-sept régimes
-entrés à l'inventaire ; vingt-deux fiches à l'étape 2, close le 16 par la CRFM
-de Mayotte, les élus calédoniens et les régies ferroviaires, et ses limites
-écrites ; huit pistes relues. Reste, hors étape : LexPol et le Journal officiel
-de Wallis-et-Futuna, toujours injoignables du conteneur, et le règlement de la
-CRFM. Au propriétaire, puis clore l'action : les écarts des notes du 13, du 14
-et du 16 octobre, dont le rendement de la CAFAT (9 %, non 10 %) et le taux de
-Wallis-et-Futuna (21 %, non 27 %), d'une donnée chacun, et la part de pension
-CRFM des agents mahorais intégrés (note « trois hors champ »).
+**Reprise, au 2 novembre 2026.** Faites, les trois étapes, et les recherches
+que le propriétaire a demandées avant de trancher (note du 2 novembre) : le
+rendement de la CAFAT est une série publiée, de 10,35 % en 2015 à 9,00 % en
+2026 ; Wallis-et-Futuna cotise 21 % pour la retraite, ses 27 % comptant 6
+points de prestations familiales ; le règlement de la CRFM est un arrêté
+préfectoral de 1977, dont le barème reste introuvable. Au propriétaire, puis
+clore l'action : corriger la CAFAT et Wallis-et-Futuna (oui, recommandé),
+donner un statut à la part CRFM (non, pas sans l'arrêté), et les autres
+écarts des notes du 13, du 14 et du 16 octobre.
 
 **Demande**, le 4 octobre 2026 : « Je veux que tu documentes les régimes de
 retraite que nous n'avons pas encore documenter pour l'instant. Il faut
