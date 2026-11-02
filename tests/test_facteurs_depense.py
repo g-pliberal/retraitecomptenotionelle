@@ -1293,76 +1293,45 @@ def test_la_grille_fait_partir_moins_que_la_france_avant_l_age_legal_et_tous_a_6
     assert all(parties[(2024 - age, age)] - en_2024[str(age)] > 0.05 for age in (66, 67))
 
 
-def _sans_la_suspension(tmp_path) -> Path:
-    """La copie des données où ``--sans-suspension`` refait le modèle : la
-    réforme de 2023 entière, sans la suspension de 2026
-    (``reforme_entiere``)."""
-    from retraite_notionnelle.config import RACINE_DONNEES
-
-    return _script().reforme_entiere(RACINE_DONNEES, tmp_path)
-
-
-def test_sans_la_suspension_les_cohortes_se_datent_au_portage_sur_la_copie(monkeypatch,
-                                                                         tmp_path):
-    """Sur la copie de ``--sans-suspension``, le portage date chaque cohorte
-    (``dates_des_departs``), sur le paquet de la copie, les jumeaux Python
-    empêchés de calculer, comme le moteur Python la date sur elle sous
-    ``pont.par_le_jumeau()``. Le salarié au salaire moyen, entré à 21 ans,
-    né en janvier, part le premier jour du mois qui suit l'âge où il a sa
-    durée (R. 351-37) : sous la suspension, 170 trimestres aux générations
-    1963 à 1965 (L. 161-17-3), à 63 ans et demi, en août ; sous la réforme
-    entière, il en faut 171 à la génération 1964 et 172 à la génération 1965,
-    qui partent à 63 ans et 9 mois, en novembre 2027, et à 64 ans, en février
-    2029 ; nées en 1966 et en 1967, elles en demandaient déjà 172."""
+def test_sans_la_suspension_la_grille_part_sous_la_loi_de_2023_entiere(monkeypatch):
+    """``--sans-suspension`` refait le modèle sous le droit contrefactuel du
+    moteur, la loi de 2023 sans la suspension de 2026, sur les données du
+    dépôt (``parametres``) : le portage y date la grille, les jumeaux Python
+    empêchés de calculer, comme la réforme de 2023 entière la ferait partir.
+    Chaque cas type, né en janvier, part le premier jour du mois qui suit
+    l'âge où il le peut (R. 351-37). Le salarié au salaire moyen, entré à 21
+    ans, a sa durée à 171 trimestres pour la génération 1964 et à 172 pour
+    1965 (L. 161-17-3, version du 1er septembre 2023), et non à 170 comme sous
+    la suspension : il part en novembre 2027 et en février 2029. Le salarié au
+    SMIC entré à 18 ans, la carrière longue de la grille, part à l'âge de la
+    borne des vingt ans de 2023 (D. 351-1-1, II, version du 1er septembre
+    2023) quand sa durée vient avant — 61 ans et 3 mois pour la génération
+    1967, 61 ans et demi pour 1968 —, et non un trimestre plus tôt, à l'âge
+    que le décret n° 2026-345 du 7 mai 2026 lui donne avec la suspension,
+    que la copie retouchée des données gardait ; sa durée, 171 puis 172
+    trimestres, fixe son départ de 1964 à 1966."""
     import shutil
 
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage ne date pas la grille ici")
     from outils_pont import empecher_les_jumeaux_du_cout
-    from retraite_notionnelle import Parametres, pont
     from retraite_notionnelle.calendrier import DateMois
     from retraite_notionnelle.castypes import GRILLE_DU_COUT
     from retraite_notionnelle.facteurs_depense import dates_des_departs
 
-    salarie = tuple(cas for cas in GRILLE_DU_COUT if cas.code == "salaire_moyen")
-    sur_la_copie = Parametres(racine_donnees=_sans_la_suspension(tmp_path))
-    with pont.par_le_jumeau():
-        en_python = dates_des_departs(sur_la_copie, cas_types=salarie, generations=(1965,))
-    du_depot = dates_des_departs(Parametres(), cas_types=salarie, generations=(1965,))
-    empecher_les_jumeaux_du_cout(monkeypatch)
-    au_portage = dates_des_departs(sur_la_copie, cas_types=salarie, generations=(1965,))
-    assert au_portage == en_python
-    assert [du_depot[("salaire_moyen", 1965, decalage)] for decalage in range(-2, 3)] == [
-        DateMois(2026, 8), DateMois(2027, 8), DateMois(2028, 8), DateMois(2030, 2),
-        DateMois(2031, 2)]
-    assert [au_portage[("salaire_moyen", 1965, decalage)] for decalage in range(-2, 3)] == [
-        DateMois(2026, 8), DateMois(2027, 11), DateMois(2029, 2), DateMois(2030, 2),
-        DateMois(2031, 2)]
-
-
-def test_sans_la_suspension_le_modele_se_refait_au_portage_comme_au_jumeau(monkeypatch,
-                                                                         tmp_path):
-    """``--sans-suspension`` refait le modèle sur sa copie des données : le
-    portage y date, bâtit et simule la grille du coût, sur le paquet de la
-    copie, les jumeaux Python empêchés de calculer, et chacune de ses
-    colonnes — la dépense de 2022 et de 2070, ses facteurs par sous-période,
-    leurs niveaux, les retraités par âge que la couverture partage — est celle
-    que le moteur Python calcule sur la copie, sous ``pont.par_le_jumeau()``,
-    au bit près (action 161, « le coût sous un modèle modifié »)."""
-    import shutil
-
-    if shutil.which("node") is None:
-        pytest.skip("node absent : le portage ne simule pas la grille ici")
-    from outils_pont import (TOLERANCE_DU_MOTEUR_PYTHON, ecarts_d_ecriture,
-                             empecher_les_jumeaux_du_cout)
-    from retraite_notionnelle import pont
-
     script = _script()
-    racine = _sans_la_suspension(tmp_path)
-    projection = script.PROJECTIONS[0][0]
-    with pont.par_le_jumeau():
-        en_python = script.modele(projection, racine=racine)
+    sans = script.parametres(script.PROJECTIONS[0][0], script.DROIT_SANS_SUSPENSION)
+    assert sans.droit_contrefactuel == "loi_2023_sans_suspension"
+    cas_types = tuple(cas for cas in GRILLE_DU_COUT
+                      if cas.code in ("salaire_moyen", "smic_carriere_complete"))
     empecher_les_jumeaux_du_cout(monkeypatch)
-    au_portage = script.modele(projection, racine=racine)
-    assert not ecarts_d_ecriture(au_portage, en_python, tolerance=TOLERANCE_DU_MOTEUR_PYTHON)
-    assert au_portage.keys() == {"couverture", "part_pib", "periodes", "variations", "niveaux"}
+    departs = dates_des_departs(sans, cas_types=cas_types, generations=(1966,))
+
+    def de(code: str) -> list[DateMois]:
+        return [departs[(code, 1966, decalage)] for decalage in range(-2, 3)]
+
+    assert de("salaire_moyen") == [DateMois(2027, 11), DateMois(2029, 2), DateMois(2030, 2),
+                                   DateMois(2031, 2), DateMois(2032, 2)]
+    assert de("smic_carriere_complete") == [DateMois(2024, 11), DateMois(2026, 2),
+                                            DateMois(2027, 2), DateMois(2028, 5),
+                                            DateMois(2029, 8)]

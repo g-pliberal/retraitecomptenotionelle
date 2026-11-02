@@ -224,9 +224,9 @@ EXCEPTIONS = {
      "test_le_departage_compte_la_decote_selon_la_generation_apres_celle_de_1953"): "rapide",
     ("test_facteurs_depense.py",
      "test_le_departage_compte_l_entree_selon_la_duree_validee_apres_la_decote"): "rapide",
-    # La copie de --sans-suspension datée au portage, un cas type, une génération.
+    # La grille de --sans-suspension datée au portage, deux cas types, une génération.
     ("test_facteurs_depense.py",
-     "test_sans_la_suspension_les_cohortes_se_datent_au_portage_sur_la_copie"): "rapide",
+     "test_sans_la_suspension_la_grille_part_sous_la_loi_de_2023_entiere"): "rapide",
     # Le témoin des leviers du COR, et le geste de l'âge refait sur ses séries.
     ("test_leviers.py", "test_le_temoin_du_cor_dit_sa_source_et_redonne_le_rapport"): "rapide",
     ("test_leviers.py",

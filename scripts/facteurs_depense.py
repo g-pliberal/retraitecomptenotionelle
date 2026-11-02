@@ -32,12 +32,11 @@ l'AWG que l'âge légal ne fait pas reculer — l'invalidité, l'AAH, la révers
 seule — y garde sa prévalence parmi les 20-64 ans, à la mesure qu'en donnent
 leurs sources (``tests/temoins/pensionnes_de_2022.json``). Chaque cohorte de
 la grille y part l'année que le droit de sa génération lui donne
-(``cout.Pensionne.departs``). ``--sans-suspension`` refait le modèle sur une
-copie des données où la réforme de 2023 s'applique entière, sans la
-suspension de la loi de financement pour 2026 (``REFORME_2023_ENTIERE``) :
-l'univers de l'AWG, qui l'a précédée. Le portage y date, bâtit et simule la
-grille du coût, sur le paquet que la fabrique bâtit depuis la copie
-(``pont.paquet_des_donnees``). ``--naissances`` y fait en outre naître
+(``cout.Pensionne.departs``). ``--sans-suspension`` refait le modèle sous le
+droit contrefactuel du moteur où la réforme de 2023 s'applique entière, sans
+la suspension de la loi de financement pour 2026 (``DROIT_SANS_SUSPENSION``) :
+l'âge légal, la durée requise et la carrière longue de ses textes, l'univers
+de l'AWG, qui l'a précédée. ``--naissances`` y fait en outre naître
 chaque cohorte toute l'année, au même âge, et non en janvier comme la grille
 (``dates_des_departs``) : au 31 décembre de l'année de son départ, elle n'a que
 ses natifs des premiers mois de partis. ``--entree`` y fait de plus entrer
@@ -78,10 +77,7 @@ from __future__ import annotations
 
 import argparse
 import json
-import re
-import shutil
 import sys
-import tempfile
 from pathlib import Path
 
 RACINE = Path(__file__).resolve().parents[1]
@@ -168,16 +164,14 @@ GROUPES_D_AGE = ((1950, 1954), (1955, 1964), (1965, 1974), (1975, 2000))
 GRILLE_DE_COUT = "grille de cout.py"
 
 #: La réforme de 2023 entière, telle que l'AWG l'a projetée avant la
-#: suspension : l'âge d'ouverture et la durée requise des générations que la
-#: loi n° 2025-1403 (article 105) a retardées, de L. 161-17-2 et L. 161-17-3
-#: dans leur version du 1er septembre 2023 (``duree_requise_avant_suspension.csv``
-#: pour la durée). Les lignes de la génération 1965 au 1er avril, que la
-#: suspension a créées, disparaissent.
-REFORME_2023_ENTIERE = {
-    "age_ouverture_requis.csv": {"1964": "63.00", "1965": "63.25", "1966": "63.50",
-                                 "1967": "63.75", "1968": "64.00"},
-    "duree_assurance_requise.csv": {"1964": "171", "1965": "172"},
-}
+#: suspension : le droit contrefactuel du moteur
+#: (``Parametres.droit_contrefactuel`` ; action 138, étape 10), qui pose sur le
+#: droit en vigueur l'âge légal et la durée requise de L. 161-17-2 et
+#: L. 161-17-3 dans leur version du 1er septembre 2023, et ôte à la carrière
+#: longue le décret n° 2026-345, pris avec la suspension. Il remplace, depuis
+#: le 2 novembre 2026, une copie des données qui ne récrivait que l'âge et la
+#: durée (action 161, « les données d'ailleurs »).
+DROIT_SANS_SUSPENSION = "loi_2023_sans_suspension"
 
 
 def awg() -> dict:
@@ -315,27 +309,15 @@ def departage(parts: dict, stables: str, periode: str = "2022-2030") -> dict[str
             for nom, de, vers in etapes}
 
 
-def reforme_entiere(racine: Path, destination: Path) -> Path:
-    """Une copie des données de ``racine`` sous la réforme de 2023 entière
-    (``REFORME_2023_ENTIERE``)."""
-    copie = destination / "data"
-    shutil.copytree(racine, copie)
-    for nom, valeurs in REFORME_2023_ENTIERE.items():
-        fichier = copie / "reference" / "legislation" / nom
-        texte = fichier.read_text(encoding="utf-8")
-        texte, ote = re.subn(r"^1965\.25,.*\n", "", texte, flags=re.M)
-        if ote != 1:
-            raise ValueError(f"{nom} : la ligne de la génération 1965 au 1er avril manque")
-        for generation, valeur in valeurs.items():
-            texte, remplace = re.subn(rf"^{generation},[^,]+,", f"{generation},{valeur},",
-                                      texte, flags=re.M)
-            if remplace != 1:
-                raise ValueError(f"{nom} : la génération {generation} manque")
-        fichier.write_text(texte, encoding="utf-8")
-    return copie
+def parametres(projection: str, droit: str | None = None):
+    """Les paramètres du modèle sous ce jeu d'hypothèses du COR, et, avec
+    ``droit``, sous ce droit contrefactuel (``DROIT_SANS_SUSPENSION``)."""
+    from retraite_notionnelle import Parametres
+
+    return Parametres(scenario_projection=projection, droit_contrefactuel=droit)
 
 
-def recomptee(couverture: dict, projection: str, racine: Path,
+def recomptee(couverture: dict, projection: str, droit: str | None,
               entree_depuis: int | None = None, avec_decote: bool = False,
               decote_du_flux: float | None = None, durees: dict | None = None) -> dict:
     """Les séries de couverture d'une trajectoire (``modele``), ses retraités
@@ -345,10 +327,8 @@ def recomptee(couverture: dict, projection: str, racine: Path,
     une décote, avant son taux plein, celle de sa génération avec
     ``decote_du_flux``, l'entrée lue sur la durée validée avec ``durees``
     (``retraites_par_age``) : sa dépense et sa population ne changent pas."""
-    from retraite_notionnelle import Parametres
-
-    par_age = retraites_par_age(Parametres(scenario_projection=projection, racine_donnees=racine),
-                                GRILLE_AWG, nes_toute_l_annee=True, entree_depuis=entree_depuis,
+    par_age = retraites_par_age(parametres(projection, droit), GRILLE_AWG,
+                                nes_toute_l_annee=True, entree_depuis=entree_depuis,
                                 avec_decote=avec_decote, decote_du_flux=decote_du_flux,
                                 durees=durees)
     return {**couverture,
@@ -356,23 +336,21 @@ def recomptee(couverture: dict, projection: str, racine: Path,
             "retraites_agees": {annee: par_age[annee][1] for annee in GRILLE_AWG}}
 
 
-def modele(projection: str, scenario: str = "actuel", racine: Path | None = None) -> dict:
+def modele(projection: str, scenario: str = "actuel", droit: str | None = None) -> dict:
     """La décomposition du modèle sous ce jeu d'hypothèses, pour ce système,
-    sur les données de ``racine`` (celles du dépôt par défaut)."""
-    from retraite_notionnelle import Parametres, memoire
+    et, avec ``droit``, sous ce droit contrefactuel (:func:`parametres`)."""
+    from retraite_notionnelle import memoire
     from retraite_notionnelle.donnees.population import Population
     from retraite_notionnelle.simulateur import Simulateur
 
-    parametres = Parametres(scenario_projection=projection)
-    if racine is not None:
-        parametres = Parametres(scenario_projection=projection, racine_donnees=racine)
-    annees = annees_du_modele(memoire.cout(parametres).avenir,
-                              Population(parametres.racine_donnees),
-                              Simulateur(parametres).macro, scenario)
+    sous = parametres(projection, droit)
+    annees = annees_du_modele(memoire.cout(sous).avenir,
+                              Population(sous.racine_donnees),
+                              Simulateur(sous).macro, scenario)
     decomposition = decomposer(annees)
     couverture = None
     if scenario == "actuel":
-        par_age = retraites_par_age(parametres, GRILLE_AWG)
+        par_age = retraites_par_age(sous, GRILLE_AWG)
         couverture = {"part_pib": dict(decomposition.part_pib),
                       "retraites": {annee: par_age[annee][0] for annee in GRILLE_AWG},
                       "retraites_agees": {annee: par_age[annee][1] for annee in GRILLE_AWG},
@@ -579,36 +557,34 @@ def main(argv: list[str] | None = None) -> int:
     if arguments.sans_suspension:
         from retraite_notionnelle.config import RACINE_DONNEES
 
-        with tempfile.TemporaryDirectory() as dossier:
-            racine = reforme_entiere(RACINE_DONNEES, Path(dossier))
-            sans = modele(PROJECTIONS[0][0], racine=racine)
-            if arguments.naissances:
-                nes = recomptee(sans["couverture"], PROJECTIONS[0][0], racine)
-            if arguments.entree is not None:
-                entree = recomptee(sans["couverture"], PROJECTIONS[0][0], racine,
-                                   arguments.entree)
-            if arguments.decote:
-                decote = recomptee(sans["couverture"], PROJECTIONS[0][0], racine,
-                                   arguments.entree, avec_decote=True)
-            if arguments.decote_generation:
-                resultats["part_decotee_du_flux"] = part_decotee_du_flux(
-                    json.loads(TEMOIN_EACR.read_text(encoding="utf-8")))
-                selon = recomptee(sans["couverture"], PROJECTIONS[0][0], racine,
-                                  arguments.entree, avec_decote=True,
-                                  decote_du_flux=resultats["part_decotee_du_flux"])
-            if arguments.duree:
-                durees = durees_validees(json.loads(TEMOIN_EIC.read_text(encoding="utf-8")))
-                medianes = ages_medians_du_premier_trimestre(racine)
-                resultats["retards_d_entree"] = {
-                    generation: {"premier_trimestre": decalage_d_entree(
-                                     medianes, "H", generation, arguments.entree),
-                                 "duree_validee": decalage_par_la_duree(
-                                     durees, "H", generation, arguments.entree)}
-                    for generation in GENERATIONS_D_ENTREE}
-                par_la_duree = recomptee(sans["couverture"], PROJECTIONS[0][0], racine,
-                                         arguments.entree, avec_decote=True,
-                                         decote_du_flux=resultats["part_decotee_du_flux"],
-                                         durees=durees)
+        sans = modele(PROJECTIONS[0][0], droit=DROIT_SANS_SUSPENSION)
+        if arguments.naissances:
+            nes = recomptee(sans["couverture"], PROJECTIONS[0][0], DROIT_SANS_SUSPENSION)
+        if arguments.entree is not None:
+            entree = recomptee(sans["couverture"], PROJECTIONS[0][0], DROIT_SANS_SUSPENSION,
+                               arguments.entree)
+        if arguments.decote:
+            decote = recomptee(sans["couverture"], PROJECTIONS[0][0], DROIT_SANS_SUSPENSION,
+                               arguments.entree, avec_decote=True)
+        if arguments.decote_generation:
+            resultats["part_decotee_du_flux"] = part_decotee_du_flux(
+                json.loads(TEMOIN_EACR.read_text(encoding="utf-8")))
+            selon = recomptee(sans["couverture"], PROJECTIONS[0][0], DROIT_SANS_SUSPENSION,
+                              arguments.entree, avec_decote=True,
+                              decote_du_flux=resultats["part_decotee_du_flux"])
+        if arguments.duree:
+            durees = durees_validees(json.loads(TEMOIN_EIC.read_text(encoding="utf-8")))
+            medianes = ages_medians_du_premier_trimestre(RACINE_DONNEES)
+            resultats["retards_d_entree"] = {
+                generation: {"premier_trimestre": decalage_d_entree(
+                                 medianes, "H", generation, arguments.entree),
+                             "duree_validee": decalage_par_la_duree(
+                                 durees, "H", generation, arguments.entree)}
+                for generation in GENERATIONS_D_ENTREE}
+            par_la_duree = recomptee(sans["couverture"], PROJECTIONS[0][0], DROIT_SANS_SUSPENSION,
+                                     arguments.entree, avec_decote=True,
+                                     decote_du_flux=resultats["part_decotee_du_flux"],
+                                     durees=durees)
         resultats["sans_suspension"] = sans
         colonnes_couverture["modèle sans la suspension"] = sans["couverture"]
         colonnes_couverture[SANS_SUSPENSION] = porte(sans["couverture"])
