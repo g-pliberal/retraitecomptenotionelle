@@ -60,6 +60,18 @@
  *   sous le motif du Python quand le droit l'écarte. Selon `rendre`, l'année
  *   et le mois de son départ (`depart`), ou la carrière, en données, et les
  *   deux que l'âge légal de la proposition en dérive (`carriere`).
+ *   Un cas type de la grille élargie (`CasTypeLarge` de
+ *   `scripts/grille_large.py`, étape 7) y ajoute, dans ces deux lectures,
+ *   son `parcours`, que le portage bâtit au lieu de la carrière d'un seul
+ *   statut, et l'`attente` de son départ, qu'il pose sur l'âge que le pilote
+ *   fixe (`ageDuCas`) ; un âge qu'elle fixe est marqué `attendu`.
+ * - `departs_des_cas` : `{cas: [{cle, regle, options, parcours, entree,
+ *   attente, lire}], parametres, primes}` — chaque cas type daté comme
+ *   `ages_de_depart` le date, puis, sauf sous `lire: "age"`, ce que
+ *   l'échéancier lit à son départ : les mesures de `scripts/grille_large.py`.
+ * - `debuts_de_la_surcote` : `{cas: [{cle, …, plein, recherche}], parametres,
+ *   primes}` — le premier âge d'où le modèle sert une surcote à la pension de
+ *   fonctionnaire de chaque cas type, cherché autour de `plein`.
  * - `avantages` : `{cas: [{cle, options, carriere, scenario}], parametres}` —
  *   chaque case du coût des avantages non contributifs, bâtie de ses options
  *   (`carriere_variante` d'`avantages.py`), écartée comme le droit l'écarte,

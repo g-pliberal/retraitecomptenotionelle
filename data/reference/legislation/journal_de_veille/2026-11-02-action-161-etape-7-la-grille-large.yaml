@@ -1,0 +1,17 @@
+date: "2026-11-02"
+session: "action 161, étape 7 : la grille élargie datée et bâtie au portage, et les mesures de scripts/grille_large.py par le pont"
+consulte: >-
+  Aucune source de droit : la session ne touche à aucune règle du scénario 1.
+  CasTypeLarge (scripts/grille_large.py) — sa carrière, l'attente de son
+  départ, la recherche du premier âge surcoté — et les mesures du script qui
+  interrogeaient le pilote, l'échéancier et le scénario 1 du moteur Python ;
+  ce que le portage en date et en bâtit (pont.mjs, moteur/js/pilote.js).
+trouve: >-
+  Aucune règle n'a changé, et aucun écart : sur neuf cas types de la grille
+  élargie, un par mécanisme, les cases, les âges et leurs types, la grille
+  bâtie du coût et sa simulation sont ceux du Python ; les dix mesures du
+  script, sur ces cas types et deux de plus, aussi ; la table des agrégats,
+  refaite, est identique à l'octet.
+reste: >-
+  Rien pour la veille. L'action reprend où son bloc « Reprise » la laisse
+  (action 161, note du 2 novembre 2026, étape 7, la grille large).

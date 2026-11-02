@@ -18,9 +18,10 @@ de la proposition, qui s'écrit en couche (`data/CLAUDE.md`).
   lui. Le Python ne cesse de suivre qu'au retrait de sa paire (action 161) :
   le coût date, bâtit et simule sa grille au portage, la table y date ses
   carrières types, le coût des avantages y date, bâtit et liquide la sienne,
-  sous ses scénarios neutralisés, mais la fabrique date et bâtit encore par
-  lui la grille large, et le coût sous un modèle modifié ; une règle portée
-  d'un seul côté rougirait la suite ou les ferait mentir.
+  sous ses scénarios neutralisés, la grille large s'y date et s'y bâtit, et
+  ses mesures s'y lisent, mais la fabrique calcule encore par lui le coût sous
+  un modèle modifié ; une règle portée d'un seul côté rougirait la suite ou
+  les ferait mentir.
   `python scripts/jumeaux.py <nom>` dit si une étape a son jumeau et tout ce
   qui en dépend. Un code neuf
   s'écrit une fois, dans le langage de l'endroit où il tourne : ici, ce que

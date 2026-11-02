@@ -6922,11 +6922,12 @@ de `contribution_etat`.
 0005). Faits : les témoins et les confrontations au portage ; le coût date,
 bâtit et simule sa grille au portage ; la grille des carrières types et les
 départs des facteurs de la dépense s'y datent ; le coût des avantages y
-date, bâtit et liquide la sienne, ses neutralisations comprises
-(`scenariosNeutralises`, `pont.avantages`), la table identique à l'octet. Ce
-qui suit, dans l'ordre : la grille large, le coût sous un modèle modifié ;
-puis les retraits, par sous-ensemble cohérent. Détail :
-`2026-11-02-etape-6-les-neutralisations-du-cout-des-avantages.md`.
+date, bâtit et liquide la sienne ; la grille élargie s'y date et s'y bâtit,
+et les mesures de `scripts/grille_large.py` s'y lisent
+(`CasTypeLarge.pour_le_portage`, `pont.departs_des_cas`), la table identique
+à l'octet. Ce qui suit, dans l'ordre : le coût sous un modèle modifié ; puis
+les retraits, par sous-ensemble cohérent. Détail :
+`2026-11-02-etape-7-la-grille-large.md`.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur
