@@ -1,0 +1,23 @@
+date: "2026-11-02"
+session: "action 178 : l'accès depuis un poste au panorama de la DREES, édition 2026 — le PDF, sa licence et ses classeurs"
+consulte: >-
+  Aucune règle du scénario 1 n'est touchée : la session rend lisibles par
+  toutes les sessions les documents du panorama que seul un poste atteint.
+  Depuis le poste du propriétaire, à l'en-tête des récupérateurs du dépôt : la
+  page de la DREES (261014-les-retraites-et-les-retraites-edition-2026), ses
+  deux liens vers l'ouvrage et ses trente-six classeurs (onglet « Données ») ;
+  ses mentions légales (/article/mentions-legales, mises à jour le 2 juin
+  2026) et le pied de ses pages ; le texte de la licence ouverte Etalab 2.0
+  auquel il renvoie.
+trouve: >-
+  Le PDF de la DREES est celui de l'UNSA, octet pour octet. Les contenus du
+  site sont sous licence ouverte Etalab 2.0, « sauf mention contraire », et ni
+  le PDF ni les classeurs n'en portent. Les classeurs nomment des agents de la
+  DREES dans leurs métadonnées et leurs liens externes ; le propriétaire a
+  choisi de les publier tels quels. Ils sont sur la release
+  documents-apportes, en une archive que le manifeste déclare
+  (drees_panorama_retraites_2026_classeurs), chacun à son empreinte.
+reste: >-
+  Les étapes 2 à 7 de l'action 178, une session chacune. La 5, qui confronte
+  au scénario 1 les tableaux de législation des fiches 2, 4, 14, 24 et 26, sur
+  Opus après python scripts/veille_droit.py, peut lire leurs classeurs.

@@ -3,7 +3,9 @@
 L'action 178 l'exploite en entier. Le site de la DREES refuse le cloud
 (réponse vide à curl, 503 à WebFetch) : le manifeste déclare le document, son
 miroir et son empreinte, et ``source_locale.py --recuperer`` l'apporte à toute
-session. ``scripts/fetch/drees_panorama.py`` en relève les fiches, les
+session ; ses classeurs, que le site ne sert qu'à un poste, la release
+``documents-apportes`` les sert en une archive.
+``scripts/fetch/drees_panorama.py`` en relève les fiches, les
 tableaux, les graphiques et leurs sources dans un témoin,
 ``tests/temoins/drees_panorama_2026.json`` ; le suivi,
 ``data/reference/drees_panorama_2026.yaml``, dit fiche par fiche ce que le
@@ -11,12 +13,16 @@ dépôt en a déjà et ce qu'il en tirera. Aucune fiche n'y manque.
 
 Les valeurs attendues sont lues dans le PDF : le sommaire (pages 3 et 4), la
 page 21 (fiche 1, tableau 1) et la page 22 (fiche 1, graphiques 1 et 2).
+Celles de l'accès le sont sur la page de la DREES et dans ce qu'elle sert,
+depuis un poste, le 2 novembre 2026 : l'adresse du PDF, celles des
+classeurs, et leurs empreintes.
 """
 
 from __future__ import annotations
 
 import importlib.util
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -33,6 +39,15 @@ def _module():
     specification = importlib.util.spec_from_file_location("drees_panorama", chemin)
     module = importlib.util.module_from_spec(specification)
     sys.modules["drees_panorama"] = module
+    specification.loader.exec_module(module)
+    return module
+
+
+def _source_locale():
+    chemin = RACINE / "scripts" / "fetch" / "source_locale.py"
+    specification = importlib.util.spec_from_file_location("source_locale", chemin)
+    module = importlib.util.module_from_spec(specification)
+    sys.modules["source_locale"] = module
     specification.loader.exec_module(module)
     return module
 
@@ -223,7 +238,68 @@ def test_le_panorama_2026_se_recupere_par_son_miroir():
     assert jeu["sha256"] == "9eb36a06639af0f4298d281b41acbde4236e47fc73e40c673f153ad86735e9be"
 
 
-STATUTS = {"au_depot", "a_tirer", "a_confronter", "hors_champ"}
+#: Le dossier où la DREES sert l'ouvrage et ses classeurs.
+DREES = "https://drees.solidarites-sante.gouv.fr/sites/default/files/2026-10/"
+
+
+def test_le_pdf_du_miroir_est_celui_de_la_drees():
+    """Depuis un poste, la page de la DREES mène à l'ouvrage par deux adresses,
+    le bouton de son en-tête et l'onglet « Ouvrage » ; l'une et l'autre rendent
+    le fichier de l'UNSA, octet pour octet. Ses mentions légales concèdent la
+    reproduction et la diffusion de ses publications, et chacune de ses pages
+    les place sous la licence ouverte Etalab 2.0, « sauf mention contraire » :
+    le PDF n'en porte aucune. L'UNSA le servant, la release n'a pas à le porter."""
+    source_locale = _source_locale()
+    jeu = _jeux()["drees_panorama_retraites_2026"]
+    assert jeu["document"] == (
+        DREES + "Les%20retrait%C3%A9s%20et%20les%20retraites%20-%20%C3%89dition%202026.pdf")
+    assert jeu["sha256"] == "9eb36a06639af0f4298d281b41acbde4236e47fc73e40c673f153ad86735e9be"
+    assert source_locale.rediffusion(jeu) == "libre"
+    texte = " ".join(jeu["rediffusion"]["texte"].split())
+    assert "Sauf mention contraire, tous les contenus de ce site sont sous licence etalab-2.0" in texte
+    assert "concède des droits de reproduction et de diffusion" in texte
+    assert jeu["rediffusion"]["lu_le"] == "2026-11-02"
+    assert not source_locale.a_publier([jeu])
+
+
+#: Les classeurs que la page sert hors des fiches, et ce qui les nomme chez elle.
+CLASSEURS_HORS_FICHES = {"vue_d_ensemble.xlsx": "Vue%20d%27ensemble%20-%20",
+                         "annexe_02.xlsx": "RR2026%20-%20Annexe%20%2002%20-%20"}
+
+
+def test_les_classeurs_des_fiches_se_recuperent_par_la_release():
+    """Chaque fiche renvoie au « fichier Excel associé à cette fiche » ; la page
+    de la DREES en sert trente-six, un par fiche, un pour la vue d'ensemble et
+    un pour l'annexe 2, et les refuse au cloud comme elle refuse l'ouvrage. Le
+    dépôt les sert tels quels, en une archive sur la release
+    ``documents-apportes`` : le manifeste dit de chacun son adresse à la DREES
+    et l'empreinte du fichier qu'elle sert. L'archive n'ayant pas d'adresse à
+    la DREES, le workflow mensuel n'a rien à retélécharger."""
+    source_locale = _source_locale()
+    jeu = _jeux()["drees_panorama_retraites_2026_classeurs"]
+    assert jeu["blocage"] == "refus"
+    assert jeu["fichier_local"] == "drees_panorama_retraites_2026_classeurs.zip"
+    assert jeu["miroir"] == source_locale.url_publiee(jeu["fichier_local"])
+    assert re.fullmatch(r"[0-9a-f]{64}", jeu["sha256"])
+    assert source_locale.rediffusion(jeu) == "libre"
+    assert not source_locale.a_publier([jeu])
+    fiches = json.loads(TEMOIN.read_text(encoding="utf-8"))["fiches"]
+    contenu = jeu["contenu"]
+    assert sorted(contenu) == sorted([f"fiche_{numero}.xlsx" for numero in fiches]
+                                     + list(CLASSEURS_HORS_FICHES))
+    attendus = {f"fiche_{numero}.xlsx": f"RR2026%20-%20Fiche%20{numero}%20-%20" for numero in fiches}
+    for nom, classeur in contenu.items():
+        prefixe = DREES + {**attendus, **CLASSEURS_HORS_FICHES}[nom]
+        assert classeur["document"].startswith(prefixe) and classeur["document"].endswith(".xlsx"), nom
+        assert re.fullmatch(r"[0-9a-f]{64}", classeur["sha256"]), nom
+    assert contenu["fiche_01.xlsx"] == {
+        "document": DREES + "RR2026%20-%20Fiche%2001%20-%20Les%20effectifs%20de%20retraite%CC%81s"
+                            "%20de%20droit%20direct.xlsx",
+        "sha256": "64513052449b30c4bdad1fd7a00ea94193d2ea16ed8a433f3a959dac1223bfaf",
+    }
+
+
+STATUTS ={"au_depot", "a_tirer", "a_confronter", "hors_champ"}
 
 
 def test_chaque_fiche_a_son_statut_au_suivi():

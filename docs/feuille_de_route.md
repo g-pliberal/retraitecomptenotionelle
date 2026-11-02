@@ -7443,15 +7443,16 @@ moteurs ensemble.
 
 ### 178. Le panorama « Les retraités et les retraites » de la DREES, édition 2026, exploité en entier : chaque fiche à sa place dans le dépôt — `en cours`
 
-**Reprise, au 2 novembre 2026.** L'étape 1 est faite : le PDF se récupère
-(`python scripts/fetch/source_locale.py --recuperer`, miroir de l'UNSA tenu à
-son empreinte) ; `scripts/fetch/drees_panorama.py` en relève les 34 fiches,
-172 figures et 41 encadrés ; le suivi, `data/reference/drees_panorama_2026.yaml`,
-dit de chaque fiche ce que le dépôt en a et ce qu'il en tirera. Par quoi
-commencer : l'étape 2, les chiffres de 2024, ou la 3, l'EIC de 2021 ; les
-étapes 2 à 5 se mènent en parallèle, chacune son bloc sous le titre de sa
-note. Au propriétaire : les fichiers Excel des fiches et les mentions légales
-de la DREES, que seul un poste atteint. Détail : `178/2026-11-02-etape-1-inventaire.md`.
+**Reprise, au 3 novembre 2026.** L'étape 1 est faite, et l'accès depuis un
+poste : `python scripts/fetch/source_locale.py --recuperer` rapporte le PDF
+(miroir de l'UNSA, le fichier de la DREES octet pour octet) et les 36
+classeurs des fiches, en une archive sur la release
+(`drees_panorama_retraites_2026_classeurs`), sous licence ouverte Etalab 2.0 ;
+le suivi, `data/reference/drees_panorama_2026.yaml`, dit de chaque fiche ce
+que le dépôt en tirera. Par quoi commencer : l'étape 2, les chiffres de 2024,
+la 3, l'EIC de 2021, ou la 6, les classeurs ; les étapes 2 à 6 se mènent en
+parallèle, chacune son bloc sous le titre de sa note. Détail :
+`178/2026-11-02-etape-1-inventaire.md`, `178/2026-11-02-acces-depuis-un-poste.md`.
 
 **D'où elle vient.** Le 2 novembre 2026, le propriétaire, avec l'adresse de la
 page de la DREES : « Il y a une nouvelle publication sur les retraites qui

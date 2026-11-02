@@ -4,9 +4,12 @@
 # Le relevé des fiches, de leurs figures et de leurs sources est le témoin
 # tests/temoins/drees_panorama_2026.json, que scripts/fetch/drees_panorama.py
 # refait du PDF ; le document est au manifeste sous
-# drees_panorama_retraites_2026. tests/test_drees_panorama.py refuse une fiche
-# du relevé qui n'a pas ici son statut : rien du panorama n'échappe au
-# chantier.
+# drees_panorama_retraites_2026, et ses classeurs sous
+# drees_panorama_retraites_2026_classeurs, une archive dont le membre
+# fiche_NN.xlsx est le « fichier Excel associé » à la fiche NN, à
+# l'empreinte que son champ contenu lui donne. tests/test_drees_panorama.py
+# refuse une fiche du relevé qui n'a pas ici son statut : rien du panorama
+# n'échappe au chantier.
 #
 # CHAMPS
 #   titre ..... celui du sommaire, tel que le relevé le lit
