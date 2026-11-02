@@ -327,7 +327,7 @@ import sys
 import time
 from array import array
 from concurrent.futures import ProcessPoolExecutor
-from dataclasses import dataclass, field, fields, replace
+from dataclasses import asdict, dataclass, field, fields, replace
 from pathlib import Path
 from typing import Callable
 
@@ -1385,15 +1385,51 @@ class CasTypeLarge(CasType):
         :attr:`attente` années après le premier âge où le modèle lui sert une
         surcote (:func:`debut_de_la_surcote`), s'il lui en sert une."""
         age = super().age_liquidation_pour(simulateur, generation, variante)
-        if not self.attente or variante == "absolu":
-            return age
-        legal = _par_generation(self.legaux, generation, 0.0)
-        if self.regle_liquidation == "taux_plein" and generation + legal < ANNEE_DE_LA_SURCOTE:
+        attente = self._attente_du_depart(generation)
+        if attente is None or variante == "absolu":
             return age
         if self.depuis_la_surcote:
             debut = debut_de_la_surcote(simulateur, self, generation, age)
             return age if debut is None else max(age, debut + self.attente)
-        return max(age, legal + self.attente * _par_generation(self.echelles, generation, 1.0))
+        return max(age, attente["plancher"])
+
+    def _attente_du_depart(self, generation: int) -> dict | None:
+        """L'attente que le départ de ce cas type, né en ``generation``, pose
+        sur l'âge que le pilote fixe (:meth:`age_liquidation_pour`), hors de la
+        variante « absolu » : ``None`` sans attente, ou pour un départ au taux
+        plein dont la génération atteint son âge légal avant que la surcote
+        existe (:data:`ANNEE_DE_LA_SURCOTE`) ; sous :attr:`depuis_la_surcote`,
+        l'attente, comptée du premier âge où le modèle lui sert une surcote,
+        cherché sur :data:`TRIMESTRES_DE_RECHERCHE` trimestres
+        (:func:`debut_de_la_surcote`) ; sinon le plancher que l'âge légal de sa
+        génération et l'attente, à son échelle, lui posent. Le portage la lit
+        telle quelle (:meth:`pour_le_portage`)."""
+        if not self.attente:
+            return None
+        legal = _par_generation(self.legaux, generation, 0.0)
+        if self.regle_liquidation == "taux_plein" and generation + legal < ANNEE_DE_LA_SURCOTE:
+            return None
+        if self.depuis_la_surcote:
+            return {"depuis_la_surcote": self.attente, "recherche": TRIMESTRES_DE_RECHERCHE}
+        return {"plancher": legal + self.attente * _par_generation(self.echelles, generation, 1.0)}
+
+    def pour_le_portage(self, simulateur: Simulateur, generation: int) -> dict:
+        """Ce que le portage lit de ce cas type, né en ``generation``, pour
+        dater son départ et bâtir sa carrière (:meth:`CasType.pour_le_portage`),
+        et deux choses de plus, que la grille élargie ajoute (action 161,
+        étape 7) : le parcours que sa carrière décrit, quand elle en décrit un
+        (:meth:`_options_du_parcours`, sans l'âge, ses métiers en données), que
+        le portage bâtit au lieu de la carrière d'un seul statut, sans primes
+        projetées (``carriereDuCasType`` de ``pont.mjs``), ``None`` sinon ; et
+        l'attente de son départ (:meth:`_attente_du_depart`), que le portage
+        pose sur l'âge que son pilote fixe (``ageDuCas``)."""
+        lu = super().pour_le_portage(simulateur, generation)
+        parcours = None
+        if self._en_parcours():
+            parcours = self._options_du_parcours(simulateur, generation, 0.0)
+            del parcours["age_liquidation"]
+            parcours["metiers"] = [asdict(metier) for metier in parcours["metiers"]]
+        return {**lu, "parcours": parcours, "attente": self._attente_du_depart(generation)}
 
     def niveau_de(self, generation: int) -> float:
         """Le niveau de salaire de cette génération."""
@@ -1474,10 +1510,27 @@ class CasTypeLarge(CasType):
         return parts or None
 
     def _carriere(self, simulateur: Simulateur, generation: int, age_liquidation: float):
-        if not (self.avant or self.niveaux or self.ages_partiel or self.volumes
-                or self.entrees or self.services or self.natures or self.annees_par_nature
-                or self.cibles):
+        if not self._en_parcours():
             return super()._carriere(simulateur, generation, age_liquidation)
+        return simulateur.carriere_parcours(
+            **self._options_du_parcours(simulateur, generation, age_liquidation))
+
+    def _en_parcours(self) -> bool:
+        """La carrière de ce cas type est-elle un parcours que la grille
+        élargie décrit (:meth:`_options_du_parcours`), plutôt que celle du
+        cas type du dépôt ?"""
+        return bool(self.avant or self.niveaux or self.ages_partiel or self.volumes
+                    or self.entrees or self.services or self.natures or self.annees_par_nature
+                    or self.cibles)
+
+    def _options_du_parcours(self, simulateur: Simulateur, generation: int,
+                             age_liquidation: float) -> dict:
+        """Les options du parcours que la carrière de ce cas type, né en
+        ``generation`` et liquidé à ``age_liquidation``, décrit
+        (:meth:`_carriere`), celles de ``carriere_parcours``, du simulateur et
+        de son portage : ses métiers bout à bout, au niveau de sa génération,
+        ou au Smic ; ses périodes non travaillées, celles que sa génération
+        déplace ou change de nature comprises ; son temps partiel."""
         entree = self.debut_de(generation)
         interruptions = {
             int(generation + entree + decalage): motif
@@ -1509,14 +1562,13 @@ class CasTypeLarge(CasType):
         if service:
             # Le service se fait sous le premier métier, les années d'avant l'entrée.
             metiers[0] = replace(metiers[0], age_debut=entree - service)
-        return simulateur.carriere_parcours(
-            annee_naissance=generation, sexe=self.sexe, metiers=metiers,
-            age_liquidation=age_liquidation, profil_carriere=profil,
-            interruptions=interruptions,
-            temps_partiel=self._temps_partiel(generation, interruptions),
-            nombre_enfants=self.nombre_enfants, part_primes=self.part_primes,
-            identifiant=f"{self.libelle} (génération {generation})",
-            **self._invalidite())
+        return {"annee_naissance": generation, "sexe": self.sexe, "metiers": metiers,
+                "age_liquidation": age_liquidation, "profil_carriere": profil,
+                "interruptions": interruptions,
+                "temps_partiel": self._temps_partiel(generation, interruptions),
+                "nombre_enfants": self.nombre_enfants, "part_primes": self.part_primes,
+                "identifiant": f"{self.libelle} (génération {generation})",
+                **self._invalidite()}
 
 
 def elargi(cas: CasType, **changements) -> CasTypeLarge:

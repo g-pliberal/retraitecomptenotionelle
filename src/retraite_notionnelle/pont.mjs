@@ -96,6 +96,7 @@ import { Echeancier } from "../../moteur/js/echeancier.js";
 import {
   FICHE_DE_L_APPRENTISSAGE, FICHE_DES_MILITAIRES, FICHES_DES_EMPLOIS, contrats,
 } from "../../moteur/js/droit/compter.js";
+import { REGIMES_CODE_DES_PENSIONS } from "../../moteur/js/droit/coordonner.js";
 import * as cumul from "../../moteur/js/droit/cumul.js";
 import * as departs from "../../moteur/js/droit/departs.js";
 import { foyerEtNet } from "../../moteur/js/droit/foyer.js";
@@ -405,9 +406,16 @@ function primesProjetees(carriere, relatif) {
  * La carrière d'un seul statut d'un cas type, liquidée à l'âge qu'on lui
  * demande (`CasType._carriere` de `castypes.py`) : ses options, sans l'âge,
  * et, quand `primes` porte le traitement relatif de chaque année — sous les
- * conventions du COR —, ses primes projetées.
+ * conventions du COR —, ses primes projetées. Ou, pour un cas type de la
+ * grille élargie qui en décrit un (`CasTypeLarge._carriere` de
+ * `scripts/grille_large.py`, action 161, étape 7), son parcours : ses
+ * métiers bout à bout, son temps partiel, sans primes projetées.
  */
-function carriereDuCasType(simulateur, options, primes) {
+function carriereDuCasType(simulateur, options, primes, parcours = null) {
+  if (parcours !== null) {
+    const etapes = optionsDeCarriere(parcours);
+    return (age) => simulateur.carriereParcours({ ...etapes, age_liquidation: age });
+  }
   const lues = optionsDeCarriere(options);
   return (age) => {
     const carriere = simulateur.carriereSimple({ ...lues, age_liquidation: age });
@@ -416,14 +424,104 @@ function carriereDuCasType(simulateur, options, primes) {
 }
 
 /**
- * L'âge de départ de chaque cas type, `{cle, regle, options}`, que le pilote du
- * portage fixe (`ageDeDepart`) : le coût fait dater ici les cas types de sa
- * grille (action 161, étape 6), dont le Python garde les définitions.
+ * La carrière d'un cas type liquidée à `age` (`CasType.carriere_a` de
+ * `castypes.py`) : celle que son pilote date (`batir`), ou, quand `entree`
+ * décrit l'entrée tardive d'un fonctionnaire sous les conventions du COR, ses
+ * deux métiers.
+ */
+function carriereFinale(simulateur, entree, batir, primes) {
+  return (age) => (entree === null ? batir(age)
+    : carriereEntreeTardive(simulateur, entree, age, primes));
+}
+
+/**
+ * Le premier âge d'où le modèle sert une surcote à la pension de
+ * fonctionnaire d'un cas type, au trimestre près, sur les trimestres comptés
+ * de l'âge `plein` de son taux plein, sa carrière bâtie à chaque âge par
+ * `construire` : celui qui précède le premier départ qu'il surcote, cherché
+ * en doublant le pas, puis par dichotomie, sur `recherche` trimestres de part
+ * et d'autre ; `null` quand le modèle n'en sert aucune dans ceux qui suivent.
+ * Portage de `debut_de_la_surcote` de `scripts/grille_large.py` (étape 7).
+ */
+function debutDeLaSurcote(simulateur, construire, plein, recherche) {
+  const surcote = (trimestres) => simulateur.echeancier(construire(plein + trimestres / 4.0))
+    .auDepart.pensions_par_regime
+    .some((pension) => REGIMES_CODE_DES_PENSIONS.has(pension.regime) && pension.surcote > 0.0);
+  let bas;
+  let haut;
+  if (surcote(0)) {
+    [bas, haut] = [-1, 0];
+    while (bas > -recherche && surcote(bas)) {
+      [bas, haut] = [Math.max(2 * bas, -recherche), bas];
+    }
+  } else {
+    [bas, haut] = [0, 1];
+    while (!surcote(haut)) {
+      if (haut >= recherche) {
+        return null;
+      }
+      [bas, haut] = [haut, Math.min(2 * haut, recherche)];
+    }
+  }
+  while (haut - bas > 1) {
+    const milieu = Math.floor((bas + haut) / 2);
+    if (surcote(milieu)) {
+      haut = milieu;
+    } else {
+      bas = milieu;
+    }
+  }
+  return plein + (haut - 1) / 4.0;
+}
+
+/**
+ * L'âge du départ d'un cas type, `{regle, options, parcours, entree,
+ * attente}` (`CasType.pour_le_portage` de `castypes.py`) : celui que le
+ * pilote fixe (`ageDeDepart`) sur la carrière que ses options ou son parcours
+ * décrivent, puis, hors de la variante « absolu », l'attente d'un cas type de
+ * la grille élargie (`CasTypeLarge.age_liquidation_pour` de
+ * `scripts/grille_large.py`, étape 7) : le plancher que l'âge légal de sa
+ * génération et l'attente lui posent, ou l'attente qui court du premier âge
+ * où le modèle sert une surcote à sa carrière (`debutDeLaSurcote`). Avec
+ * l'âge, `attendu`, quand l'attente le fixe — le Python le tient alors pour
+ * un flottant (`castypes.age_lu`) —, et la carrière que le pilote date.
+ */
+function ageDuCas(simulateur, cas, primes, variante) {
+  const batir = carriereDuCasType(simulateur, cas.options, primes, cas.parcours ?? null);
+  const age = ageDeDepart(simulateur.scenarioActuel, batir, cas.regle, variante);
+  const attente = cas.attente ?? null;
+  if (attente === null || variante === "absolu") {
+    return { age, attendu: false, batir };
+  }
+  let depart;
+  if (Object.hasOwn(attente, "depuis_la_surcote")) {
+    const debut = debutDeLaSurcote(simulateur,
+      carriereFinale(simulateur, cas.entree ?? null, batir, primes), age, attente.recherche);
+    depart = debut === null ? age : Math.max(age, debut + attente.depuis_la_surcote);
+  } else {
+    depart = Math.max(age, attente.plancher);
+  }
+  return { age: depart, attendu: depart > age, batir };
+}
+
+/**
+ * L'âge de départ de chaque cas type, `{cle, regle, options, parcours,
+ * attente}` (`ageDuCas`) : le coût fait dater ici les cas types de sa grille
+ * (action 161, étape 6), dont le Python garde les définitions, et ceux de la
+ * grille élargie (étape 7). Avec les âges, les clés de ceux que l'attente fixe
+ * (`attendus`).
  */
 function agesDeDepart({ parametres, variante, primes, cas }) {
   const simulateur = simulateurSous(parametres);
-  return parCas(cas, ({ regle, options }) => ageDeDepart(simulateur.scenarioActuel,
-    carriereDuCasType(simulateur, options, primes), regle, variante));
+  const attendus = [];
+  const { resultats, echecs } = parCas(cas, (un) => {
+    const { age, attendu } = ageDuCas(simulateur, un, primes, variante);
+    if (attendu) {
+      attendus.push(un.cle);
+    }
+    return age;
+  });
+  return { resultats, echecs, attendus };
 }
 
 /**
@@ -469,14 +567,15 @@ function verifierLaCase(simulateur, carriere, affiliation) {
 function carrieresDeLaGrille({ parametres, variante, primes, cas }) {
   const simulateur = simulateurSous(parametres);
   const ageLegal = simulateur.parametres.age_legal_liberal ?? null;
-  return parCas(cas, ({ regle, options, entree, rendre }) => {
-    const batir = carriereDuCasType(simulateur, options, primes);
-    const age = ageDeDepart(simulateur.scenarioActuel, batir, regle, variante);
-    const carriere = entree === null ? batir(age)
-      : carriereEntreeTardive(simulateur, entree, age, primes);
+  return parCas(cas, (un) => {
+    const { options, entree, rendre } = un;
+    const { age, attendu, batir } = ageDuCas(simulateur, un, primes, variante);
+    const carriere = carriereFinale(simulateur, entree ?? null, batir, primes)(age);
     verifierLaCase(simulateur, carriere, options.affiliation);
+    // L'âge que l'attente d'un cas type de la grille élargie fixe (étape 7).
+    const marque = attendu ? { attendu } : {};
     if (rendre === "depart") {
-      return { age, annee: carriere.anneeLiquidation, mois: carriere.moisLiquidation };
+      return { age, annee: carriere.anneeLiquidation, mois: carriere.moisLiquidation, ...marque };
     }
     if (rendre !== "carriere") {
       throw new RangeError(`lecture d'une case inconnue : ${rendre}`);
@@ -489,6 +588,7 @@ function carrieresDeLaGrille({ parametres, variante, primes, cas }) {
       reportee: reporte ? carriereEnDonnees(reportee) : null,
       attente: reporte
         ? carriereEnDonnees(carriere.prolongee(ageLegal, simulateur.macro, false)) : null,
+      ...marque,
     };
   });
 }

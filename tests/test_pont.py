@@ -189,10 +189,13 @@ def _ages_au_portage(simulateur, cohortes, variante: str = "droit"):
     sous les paramètres de ``simulateur`` (:func:`pont.ages_de_depart`)."""
     from retraite_notionnelle.castypes import primes_projetees_en_donnees
 
-    return pont.ages_de_depart(
+    ages, attendus, refus = pont.ages_de_depart(
         [{"cle": f"{cas.code}|{generation}", **cas.pour_le_portage(simulateur, generation)}
          for cas, generation in cohortes],
         simulateur.parametres, primes_projetees_en_donnees(simulateur), variante)
+    # Aucun cas type du dépôt n'attend après l'âge que son pilote fixe.
+    assert not attendus
+    return ages, refus
 
 
 def test_le_portage_date_les_cas_types_au_bit_pres_du_pilote_python():

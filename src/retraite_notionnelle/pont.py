@@ -571,21 +571,23 @@ def grille_du_cout(cas: list[dict], scenarios, parametres, paquet: bytes | None 
 
 def ages_de_depart(cas: list[dict], parametres, primes: dict[int, float] | None = None,
                    variante: str = "droit", paquet: bytes | None = None,
-                   ) -> tuple[dict[str, float], dict[str, str]]:
+                   ) -> tuple[dict[str, float], frozenset[str], dict[str, str]]:
     """L'âge de départ de chaque cas type, ``{"cle", "regle", "options"}`` —
     ce que sa règle lit, et les options de sa carrière d'un seul statut, sans
     l'âge (``CasType.pour_le_portage``) —, que le pilote du portage fixe
     (``ageDeDepart`` de ``moteur/js/pilote.js``) sous ``parametres``, la part
     des primes projetée comme le COR la projette quand ``primes`` porte le
     traitement relatif de chaque année (``castypes.primes_projetees_en_donnees``) :
-    sous sa clé, l'âge, en flottant. Puis, sous leur clé, les motifs des cas que
-    le portage refuse. Son jumeau est ``pilote.age_de_depart`` (action 161,
-    étape 6)."""
+    sous sa clé, l'âge, en flottant. Un cas type de la grille élargie y ajoute
+    son parcours et l'attente de son départ (``CasTypeLarge.pour_le_portage``,
+    étape 7) : les clés des âges que l'attente fixe suivent. Puis, sous leur
+    clé, les motifs des cas que le portage refuse. Son jumeau est
+    ``pilote.age_de_depart`` (action 161, étape 6)."""
     reponse = _demander({"ages_de_depart": {
         "parametres": parametres_en_donnees(parametres), "variante": variante,
         "primes": primes, "cas": cas}}, paquet)
     return ({cle: _flottant(age) for cle, age in reponse["resultats"].items()},
-            reponse["echecs"])
+            frozenset(reponse["attendus"]), reponse["echecs"])
 
 
 def carrieres_de_la_grille(cas: list[dict], parametres, primes: dict[int, float] | None = None,
@@ -613,6 +615,10 @@ def carrieres_de_la_grille(cas: list[dict], parametres, primes: dict[int, float]
                                  for nom in ("carriere", "reportee", "attente")}}
         else:
             resultats[cle] = {"age": _flottant(lu["age"]), "annee": lu["annee"], "mois": lu["mois"]}
+        # L'âge que l'attente d'un cas type de la grille élargie fixe
+        # (``castypes.age_lu``, étape 7).
+        if lu.get("attendu"):
+            resultats[cle]["attendu"] = True
     return resultats, reponse["echecs"]
 
 

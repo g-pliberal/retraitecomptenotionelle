@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import csv
 import math
+import shutil
 import sys
 from dataclasses import replace
 from pathlib import Path
@@ -2888,3 +2889,106 @@ def test_un_fonctionnaire_civil_qui_surcote_part_avec_la_surcote_moyenne_de_sa_c
         22 + 167 / 4 + surcotes["fonctionnaire_etat"][1])
     assert G.debut_de_la_surcote(projection, sedentaire, 1960, 65.0) == pytest.approx(
         22 + 167 / 4)
+
+
+# -- la grille élargie au portage (action 161, étape 7) ----------------------------
+
+
+def _echantillon_au_portage() -> tuple:
+    """Des cas types de la grille élargie, un par mécanisme qu'elle ajoute à
+    ceux du dépôt (:class:`G.CasTypeLarge`) : le polypensionné, ses métiers
+    bout à bout (``avant``) ; le temps partiel et le volume de travail
+    (``ages_partiel``, ``volumes``) ; l'actif au niveau de sa génération
+    (``niveaux``), entré tard dans son corps sous les conventions du COR ; le
+    départ qui attend après l'âge légal, à l'échelle de sa génération
+    (``attente``) ; le fonctionnaire qui attend après le premier âge où le
+    modèle lui sert une surcote (``depuis_la_surcote``) ; l'entrée à seize ans
+    et le service national, qui ouvrent la carrière longue (``entrees``,
+    ``services``) ; l'inapte ; le chômage fait service et maladie
+    (``natures``) ; la carrière payée au Smic (``persistante``)."""
+    du_depot = {cas.code: cas for cas in GRILLE_DU_COUT}
+    legaux = ((1940, 60.0), (1951, 60.333), (1955, 62.0), (1970, 63.0))
+    chomage = tuple((annee, "chomage_indemnise") for annee in (10, 11, 12))
+    return (
+        G.elargi(du_depot["fonctionnaire_sedentaire"], code="essai~poly",
+                 avant=(("salarie_prive_non_cadre", 10.0),)),
+        G.elargi(du_depot["salaire_moyen"], code="essai~partiel", ages_partiel=(25.0, 50.0),
+                 quotites=((1900, 0.8), (1970, 0.7)), volumes=((0, 0.85), (25, 1.0), (55, 0.9))),
+        G.elargi(du_depot["fonctionnaire_actif"], code="essai~entree",
+                 niveaux=((1940, 0.85), (1975, 0.95))),
+        G.elargi(du_depot["salaire_moyen"], code="essai~attente", attente=3.0, legaux=legaux,
+                 echelles=((1940, 1.0), (1960, 0.8))),
+        G.elargi(du_depot["fonctionnaire_sedentaire"], code="essai~surcote", attente=2.0,
+                 legaux=legaux, depuis_la_surcote=True),
+        G.elargi(du_depot["smic_carriere_complete"], code="essai~longue",
+                 entrees=((1940, 16.0), (1965, 17.0)), services=((1940, 1.0),)),
+        G.elargi(du_depot["salaire_moyen"], code="essai~inapte", inaptitude=True,
+                 niveaux=((1940, 0.7),)),
+        G.elargi(du_depot["salaire_moyen"], code="essai~natures",
+                 interruptions_relatives=chomage, natures=((1940, (1, 1)),)),
+        G.elargi(du_depot["salaire_moyen"], code="essai~smic", persistante=True),
+    )
+
+
+def test_la_grille_large_se_date_et_se_bat_au_portage_sans_les_jumeaux(memoire_isolee,
+                                                                      monkeypatch):
+    """La grille élargie se date et se bâtit au portage, comme celle du dépôt
+    (action 161, étape 7) : ce que chacun de ses cas types ajoute passe au
+    portage (``CasTypeLarge.pour_le_portage``) — son parcours, que le portage
+    bâtit (``carriereDuCasType`` de ``pont.mjs``), l'attente de son départ,
+    qu'il pose sur l'âge que le pilote fixe, celle qui court du premier âge
+    surcoté comprise (``debutDeLaSurcote``). Sous les paramètres de référence,
+    chaque case et chaque âge, sous la variante du droit comme sous l'âge
+    écrit (``castypes.cases_de_la_grille``, ``castypes.ages_de_la_grille``),
+    sous son type ; sous ceux de la projection, la grille bâtie du coût
+    (``cout._grille_batie``) et sa simulation (``cout._pensionnes``) : ceux du
+    Python, au bit près, alors que le pilote Python, l'ouverture du droit, les
+    constructeurs de carrières, l'échéancier et le scénario 1 du moteur
+    Python, qu'on empêche ici de calculer, n'y entrent pas."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    from retraite_notionnelle import castypes, pilote
+    from retraite_notionnelle.castypes import CasType
+    from retraite_notionnelle.scenarios.actuel import ScenarioActuel
+
+    from test_pont import _interdire, _jumeaux_qui_datent_et_batissent, _types
+
+    echantillon = _echantillon_au_portage()
+    generations = (1950, 1965, 1980)
+    monkeypatch.setattr(C, "generations", lambda: (1950, 1965))
+
+    def tout(reference: Simulateur):
+        return ([castypes.cases_de_la_grille(reference, echantillon, generations, variante)
+                 for variante in ("droit", "absolu")],
+                [castypes.ages_de_la_grille(reference, echantillon, generations, variante)
+                 for variante in ("droit", "absolu")],
+                C._grille_batie(reference.pour_la_projection(), echantillon, "droit"),
+                C._pensionnes(reference, echantillon, "droit"))
+
+    with memoire.modele_modifie():
+        reference = Simulateur(Parametres())
+        en_python = tout(reference)
+        projection = reference.pour_la_projection()
+        # Ce que l'échantillon fait traverser : l'entrée tardive sous les
+        # conventions du COR, les deux attentes, la surcote cherchée.
+        par_code = {cas.code: cas for cas in echantillon}
+        assert par_code["essai~entree"]._delai_d_entree(projection, 1965) > 0.0
+        for code in ("essai~attente", "essai~surcote"):
+            assert (par_code[code].age_liquidation_pour(reference, 1965)
+                    > pilote.age_de_depart(reference, par_code[code], 1965)), code
+
+    def interdit(*_, **__):
+        raise AssertionError("un jumeau Python date ou bâtit la grille élargie")
+
+    _interdire(monkeypatch, (*_jumeaux_qui_datent_et_batissent(), (ScenarioActuel, "calculer"),
+                             (Simulateur, "echeancier"), (Simulateur, "simuler"),
+                             (Simulateur, "proposition"), (G.CasTypeLarge, "_carriere"),
+                             (CasType, "_carriere_entree_tardive"), (G, "debut_de_la_surcote")))
+    au_portage = tout(Simulateur(Parametres()))
+    assert au_portage[0] == en_python[0] and _types(au_portage[0]) == _types(en_python[0])
+    assert au_portage[1] == en_python[1] and _types(au_portage[1]) == _types(en_python[1])
+    assert au_portage[2] == en_python[2]
+    assert au_portage[3] == en_python[3]
+    assert (_types([vars(p) for p in au_portage[3][0]])
+            == _types([vars(p) for p in en_python[3][0]]))
+    assert len(au_portage[3][0]) == len(echantillon) * 2
