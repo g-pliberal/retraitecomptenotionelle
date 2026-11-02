@@ -1863,6 +1863,42 @@ def test_une_page_agregee_ignore_la_carriere_de_l_adresse(page, chemin):
                 salaire="3000", unite_revenu="euros_mois") == page(chemin)
 
 
+def _messages_d_attente() -> dict[str, str]:
+    """Les messages de l'écran d'attente, tels que le routeur les tient
+    (``MESSAGES_ATTENTE``, ``moteur/js/routeur.js``) : l'objet lu par node,
+    commentaires et concaténations compris, comme le navigateur le lira."""
+    import json
+    import subprocess
+
+    routeur = (Path(__file__).resolve().parents[1] / "moteur" / "js" / "routeur.js").read_text(
+        encoding="utf-8")
+    objet = re.search(r"^const MESSAGES_ATTENTE = (\{.*?^\});$", routeur, re.M | re.S)
+    assert objet, "le routeur ne tient plus ses messages d'attente dans MESSAGES_ATTENTE"
+    lu = subprocess.run(["node", "-"],
+                        input=f"process.stdout.write(JSON.stringify({objet.group(1)}));",
+                        capture_output=True, text=True, encoding="utf-8")
+    assert lu.returncode == 0, lu.stderr
+    return json.loads(lu.stdout)
+
+
+@pytest.mark.parametrize("chemin", list(PAGES_AGREGEES))
+def test_l_attente_d_une_page_agregee_n_annonce_aucun_calcul(chemin):
+    """Une page qui agrège ne calcule rien chez le lecteur : son écran
+    d'attente ne l'annonce pas.
+
+    Depuis le 11 octobre 2026 (action 150), Coût, Carrières types et Droits non
+    cotisés lisent la table que la fabrique a figée (``agregats.js``) ; leur
+    attente annonçait encore les calculs d'avant, « Calcul des 12 cas types sur
+    28 générations… » pour Coût. Le « Calcul en cours… » que le routeur affiche
+    à défaut d'un message serait aussi faux.
+    """
+    messages = _messages_d_attente()
+    assert chemin in messages, (
+        f"{chemin} : sans message, le routeur annoncerait « Calcul en cours… »")
+    assert "calcul" not in messages[chemin].lower(), (
+        f"{chemin} annonce un calcul : « {messages[chemin]} »")
+
+
 @pytest.mark.parametrize("chemin", list(PAGES_AGREGEES))
 def test_une_adresse_reglee_rend_la_reference_sous_un_encadre(chemin):
     """Les réglages ne déplacent aucun chiffre : la page est celle du défaut.

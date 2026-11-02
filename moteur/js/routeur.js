@@ -264,15 +264,16 @@ function passerALaNouvelleAdresse(ancienne) {
 // Ce qu'annonce l'écran d'attente des pages qui calculent longtemps : mieux
 // vaut dire ce qui prend du temps que laisser une jauge tourner sans motif.
 const MESSAGES_ATTENTE = {
-  "/cas-types": "Calcul des 12 cas types sur 7 générations…",
   // L'accueil ne calcule rien : annoncer un « calcul en cours » y serait faux.
-  // Partager non plus, depuis qu'elle lit le bilan figé du paquet.
+  // Partager non plus, depuis qu'elle lit le bilan figé du paquet, ni les trois
+  // pages qui agrègent (`PAGES_AGREGEES`), depuis le 11 octobre 2026 : elles
+  // lisent la table que la fabrique a figée (`agregats.js`), et n'attendent
+  // que le chargement du moteur.
   "/": "Ouverture…",
   "/partager": "Ouverture…",
-  "/cout": "Calcul des 12 cas types sur 28 générations, puis de cent onze "
-    + "années de dépense, observées puis projetées…",
-  "/avantages": "Recalcul de chaque carrière type sans ses avantages non "
-    + "contributifs, puis de soixante-six années de dépense…",
+  "/cas-types": "Ouverture…",
+  "/cout": "Ouverture…",
+  "/avantages": "Ouverture…",
   "/risque": "Lecture des comptes du système de retraite, observés puis "
     + "projetés jusqu'en 2070…",
 };
