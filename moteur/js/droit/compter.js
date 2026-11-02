@@ -806,7 +806,7 @@ export function trimestresDuContrat(debut, fin) {
 }
 
 /** Les contrats d'apprentissage de la carrière. Voir `_contrats` du Python. */
-function contrats(carriere) {
+export function contrats(carriere) {
   const liste = [];
   for (const periode of chrono.periodes(carriere.chronologie, carriere.personne)) {
     if (periode.sorte !== chrono.EMPLOI || !periode.attributs.apprentissage) {

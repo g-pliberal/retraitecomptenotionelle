@@ -345,6 +345,8 @@ JUMEAUX_DU_DROIT = {
             annee).majorations],
     "scenario_actuel.ages_annulation_decote.age":
         lambda moteur, generation: moteur.ages_annulation_decote.age(generation),
+    "scenario_actuel.ages_ouverture.age":
+        lambda moteur, generation: moteur.ages_ouverture.age(generation),
     "scenario_actuel.calculer": lambda moteur, carriere, *drapeaux: actuel_en_donnees(
         moteur.calculer(carriere, *drapeaux)),
     "scenario_actuel.catalogue.etage": lambda moteur, code: moteur.catalogue[code].etage,

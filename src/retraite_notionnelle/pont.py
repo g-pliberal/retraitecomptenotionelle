@@ -616,6 +616,42 @@ def carrieres_de_la_grille(cas: list[dict], parametres, primes: dict[int, float]
     return resultats, reponse["echecs"]
 
 
+def avantages(cas: list[dict], parametres, paquet: bytes | None = None,
+              ) -> tuple[dict[str, dict], dict[str, str]]:
+    """Chaque case du coût des avantages non contributifs, ``{"cle",
+    "options", "carriere", "scenario"}`` — les options de sa carrière d'un
+    seul statut (``avantages._options_de_la_variante``) ; les périodes non
+    travaillées de chaque contrefactuelle qui les change, sous son code ; les
+    codes des scénarios neutralisés sous lesquels la liquider
+    (``avantages._variantes_demandees``) —, bâtie et liquidée au scénario 1
+    par le portage sous ``parametres`` (``avantages`` de ``pont.mjs``) : sous
+    sa clé, ce que la décomposition lit de sa liquidation (``"liquidee"``,
+    les champs de ``avantages._Liquidee``) et, sous ``"sans"``, la pension et
+    la durée requise de chaque contrefactuelle que les gardes de
+    ``avantages.recalculer`` laissent, ``(pension, durée)`` sous son code.
+    Puis, sous leur clé, les motifs des cases que le droit écarte
+    (``castypes.carriere_de_la_grille``) ou que le portage refuse."""
+    reponse = _demander({"avantages": {
+        "parametres": parametres_en_donnees(parametres), "cas": cas}}, paquet)
+    resultats = {}
+    for cle, lu in reponse["resultats"].items():
+        resultats[cle] = {
+            "liquidee": {
+                "annee_liquidation": _entier(lu["annee_liquidation"], "annee_liquidation"),
+                "age_liquidation": _flottant(lu["age_liquidation"]),
+                "pension_annuelle": _flottant(lu["pension_annuelle"]),
+                "total_contributif": _flottant(lu["total_contributif"]),
+                "trimestres_requis": _entier(lu["trimestres_requis"], "trimestres_requis"),
+                "motif_ouverture": lu["motif_ouverture"],
+                "avantages": tuple((code, _flottant(montant))
+                                   for code, montant in lu["avantages_appliques"]),
+            },
+            "sans": {code: (_flottant(pension), _entier(requis, f"sans.{code}"))
+                     for code, (pension, requis) in lu["sans"].items()},
+        }
+    return resultats, reponse["echecs"]
+
+
 def saisies(cas: list[dict], scenarios, paquet: bytes | None = None,
             ) -> tuple[dict[str, dict], dict[str, str]]:
     """Chaque saisie, ``{"cle", "saisie"}`` aux champs de ``Saisie``, simulée
@@ -1037,6 +1073,9 @@ LECTURES_DU_DROIT = {
     "echeancier.parcourir.au_depart.droits_apres_depart.pensions":
         tuple[tuple[str, float | None], ...] | None,
     "scenario_actuel.ages_annulation_decote.age": tuple[float, Fiabilite] | None,
+    # L'âge légal de droit commun d'une génération, que le coût des avantages
+    # oppose à ses départs (``avantages.ages_legaux``).
+    "scenario_actuel.ages_ouverture.age": tuple[float, Fiabilite] | None,
     "scenario_actuel.calculer": actuel_des_donnees,
     "scenario_actuel.catalogue.etage": str,
     "scenario_actuel.catalogue.periodes": periodes_des_donnees,

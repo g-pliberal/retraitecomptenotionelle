@@ -60,6 +60,14 @@
  *   sous le motif du Python quand le droit l'écarte. Selon `rendre`, l'année
  *   et le mois de son départ (`depart`), ou la carrière, en données, et les
  *   deux que l'âge légal de la proposition en dérive (`carriere`).
+ * - `avantages` : `{cas: [{cle, options, carriere, scenario}], parametres}` —
+ *   chaque case du coût des avantages non contributifs, bâtie de ses options
+ *   (`carriere_variante` d'`avantages.py`), écartée comme le droit l'écarte,
+ *   liquidée au scénario 1 : ce que la décomposition en lit ; et la pension
+ *   et la durée requise de chaque contrefactuelle demandée — ses périodes non
+ *   travaillées changées (`carriere`), un scénario neutralisé (`scenario`,
+ *   `scenariosNeutralises`) —, sauf celle qui n'a rien à perdre. Un appel du
+ *   `droit` liquide de même sous un scénario neutralisé (`neutralise`).
  *
  * Il écrit `{resultats, echecs}` : une carrière que le portage refuse en est
  * absente, et son motif est dans `echecs`. Un nombre non fini s'écrit `null`,
@@ -86,7 +94,7 @@ import { PARAMETRES_DEFAUT, avec } from "../../moteur/js/config.js";
 import { Contexte } from "../../moteur/js/contexte.js";
 import { Echeancier } from "../../moteur/js/echeancier.js";
 import {
-  FICHE_DE_L_APPRENTISSAGE, FICHE_DES_MILITAIRES, FICHES_DES_EMPLOIS,
+  FICHE_DE_L_APPRENTISSAGE, FICHE_DES_MILITAIRES, FICHES_DES_EMPLOIS, contrats,
 } from "../../moteur/js/droit/compter.js";
 import * as cumul from "../../moteur/js/droit/cumul.js";
 import * as departs from "../../moteur/js/droit/departs.js";
@@ -683,6 +691,7 @@ const FONCTIONS_DU_DROIT = {
   },
   "scenario_actuel.ages_annulation_decote.age":
     (moteur, generation) => moteur.agesAnnulationDecote.age(generation),
+  "scenario_actuel.ages_ouverture.age": (moteur, generation) => moteur.agesOuverture.age(generation),
   // Les drapeaux de `calculer` suivent la carrière dans l'ordre du jumeau :
   // `ignorer_penalite_age`, `avantages_non_contributifs`, `avpf`,
   // `liquider_successions`…
@@ -814,6 +823,101 @@ function moteurNeutralise(simulateur, code) {
 }
 
 /**
+ * Les statuts que bonifie une version des fiches que la neutralisation `code`
+ * retire (`FICHES_RETIREES`) : les seules carrières que le retrait peut
+ * toucher. Voir `statuts_des_emplois` d'`avantages.py`.
+ */
+function statutsDesEmplois(moteur, code) {
+  const fiches = moteur.fichesDatees.fiches();
+  return new Set(FICHES_RETIREES[code].filter((nom) => Object.hasOwn(fiches, nom))
+    .flatMap((nom) => fiches[nom].versions.flatMap((version) => version.parametres.statuts ?? [])));
+}
+
+/**
+ * La carrière que bâtissent ces options n'a-t-elle rien à perdre au retrait de
+ * l'avantage `code` ? Qu'aucune fiche retirée ne bonifie son statut, qu'elle ne
+ * déclare aucune incapacité, aucun contrat d'apprentissage : les gardes de
+ * `recalculer` d'`avantages.py`, que le Python ne peut tenir sans le moteur ni
+ * la carrière bâtie. Rien à perdre, la carrière n'est pas liquidée ; sinon, la
+ * voici, bâtie comme le Python la rebâtit pour chaque retrait.
+ */
+function carriereQuiPerd(simulateur, options, code) {
+  if (Object.hasOwn(FICHES_RETIREES, code)
+    && !statutsDesEmplois(simulateur.scenarioActuel, code).has(options.affiliation)) {
+    return null;
+  }
+  const carriere = simulateur.carriereSimple(optionsDeCarriere(options));
+  if (code === "retraite_anticipee_handicap" && carriere.incapacitePermanente === null) {
+    return null;
+  }
+  if (code === "apprentissage" && !(carriere.chronologie && contrats(carriere).length > 0)) {
+    return null;
+  }
+  return carriere;
+}
+
+/**
+ * Chaque case du coût des avantages non contributifs, `{cle, options,
+ * carriere, scenario}` (`avantages.decomposer`, dont le Python garde le
+ * jumeau) : la carrière d'un seul statut de ses options
+ * (`carriere_variante`), écartée sous le motif du Python quand le droit
+ * l'écarte (`verifierLaCase`), liquidée au scénario 1 — ce que la
+ * décomposition en lit — ; puis la pension et la durée requise de chaque
+ * contrefactuelle que le Python demande, `[pension, durée]` sous son code : la
+ * carrière rebâtie, ses périodes non travaillées changées (`carriere`, sous
+ * chaque code, ses interruptions), ou liquidée sous un scénario neutralisé
+ * (`scenario`, des codes ; `scenariosNeutralises`), sauf celle qui n'a rien à
+ * perdre (`carriereQuiPerd`). Seules la carrière et sa liquidation au scénario
+ * 1 écartent une case : une contrefactuelle qui faillit arrête la demande,
+ * comme elle arrête le Python.
+ */
+function avantages({ parametres, cas }) {
+  const simulateur = simulateurSous(parametres);
+  const moteur = simulateur.scenarioActuel;
+  const resultats = {};
+  const echecs = {};
+  for (const { cle, options, carriere: deCarriere, scenario: deScenario } of cas) {
+    let carriere;
+    let actuel;
+    try {
+      carriere = simulateur.carriereSimple(optionsDeCarriere(options));
+      verifierLaCase(simulateur, carriere, options.affiliation);
+      actuel = moteur.calculer(carriere);
+    } catch (erreur) {
+      if (erreurDuProgramme(erreur)) {
+        throw erreur;
+      }
+      echecs[cle] = String(erreur.message ?? erreur);
+      continue;
+    }
+    const sans = {};
+    for (const [code, interruptions] of Object.entries(deCarriere)) {
+      const variante = moteur.calculer(simulateur.carriereSimple(
+        optionsDeCarriere({ ...options, interruptions })));
+      sans[code] = [variante.pension_annuelle, variante.trimestres_requis];
+    }
+    for (const code of deScenario) {
+      const perd = carriereQuiPerd(simulateur, options, code);
+      if (perd !== null) {
+        const variante = moteurNeutralise(simulateur, code).calculer(perd);
+        sans[code] = [variante.pension_annuelle, variante.trimestres_requis];
+      }
+    }
+    resultats[cle] = {
+      annee_liquidation: carriere.anneeLiquidation,
+      age_liquidation: carriere.age_liquidation,
+      pension_annuelle: actuel.pension_annuelle,
+      total_contributif: actuel.total_contributif,
+      trimestres_requis: actuel.trimestres_requis,
+      motif_ouverture: actuel.motif_ouverture,
+      avantages_appliques: actuel.avantages_appliques.map(({ code, montant }) => [code, montant]),
+      sans,
+    };
+  }
+  return { resultats, echecs };
+}
+
+/**
  * Un argument d'un appel du droit, tel que `pont.py` l'écrit : le simulateur,
  * la carrière qu'il bâtit d'options (`CarriereSimple`), sans qu'elle passe,
  * le moteur du scénario 1 (`simulateur.scenarioActuel`), ou sa variante que la
@@ -863,7 +967,7 @@ function droit({ parametres, carrieres, appels }) {
 const LECTURES = {
   carrieres, saisies, grille_du_cout: grilleDuCout, carrieres_des_saisies: carrieresDesSaisies,
   simulations, scenario_actuel: scenarioActuel, droit, ages_de_depart: agesDeDepart,
-  carrieres_de_la_grille: carrieresDeLaGrille,
+  carrieres_de_la_grille: carrieresDeLaGrille, avantages,
 };
 
 /** La réponse à une demande, qui porte une seule des `LECTURES`. */

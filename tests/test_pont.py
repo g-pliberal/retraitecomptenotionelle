@@ -406,35 +406,76 @@ def test_les_departs_des_facteurs_de_la_depense_se_datent_au_portage_sans_les_ju
     assert len(au_portage[0]) < len(cas) * 3 * 5
 
 
-def test_le_cout_des_avantages_date_ses_cohortes_au_portage(memoire_isolee, monkeypatch):
-    """Le coût des avantages (``avantages.decomposer``) date chaque case de sa
-    grille et ses cinq cohortes au portage (action 161, étape 6), au lieu du
-    pilote Python et de ``cout._carrieres_voisines``, qu'on empêche ici de
-    calculer ; la pension et ses parts se liquident encore en Python, sous les
-    scénarios neutralisés. Couple pour couple, la décomposition est celle du
-    Python, l'âge de chaque départ sous son type."""
+def _grille_des_avantages() -> tuple:
+    """Une grille d'essai du coût des avantages, où passe ce que la
+    décomposition mesure : les périodes non travaillées et le salaire de
+    référence des parents (la carrière interrompue), le classement de l'emploi
+    (l'agent actif), la jouissance militaire, que le garde-fou refuse, et la
+    bonification du militaire, le départ anticipé pour carrière longue (le
+    salarié au SMIC entré à dix-huit ans), un régime spécial ; l'artisan né en
+    1910 descend sous l'âge écrit, l'agent des IEG né en 1885 est écarté. Et
+    un policier, qu'aucun cas type de la grille n'est, pour la bonification
+    des emplois classés."""
+    grille = tuple(cas for cas in CAS_TYPES if cas.code in (
+        "carriere_interrompue", "fonctionnaire_actif", "militaire", "smic_carriere_complete",
+        "artisan", "agent_ieg"))
+    actif = next(cas for cas in grille if cas.code == "fonctionnaire_actif")
+    return (*grille, replace(actif, code="policier", libelle="Policier", affiliation="policier"))
+
+
+def test_le_cout_des_avantages_liquide_sa_grille_au_portage_sans_les_jumeaux(memoire_isolee,
+                                                                             monkeypatch):
+    """Le coût des avantages non contributifs (``avantages.calculer_avantages``)
+    date, bâtit et liquide sa grille au portage (action 161, étape 6) : chaque
+    case et ses cinq cohortes, sa liquidation au scénario 1 et ses
+    contrefactuelles, sous les scénarios neutralisés de ``pont.mjs``, et l'âge
+    légal de chaque génération. Le pilote Python, l'ouverture du droit, les
+    constructeurs de carrières, les scénarios neutralisés et le scénario 1 du
+    moteur Python, qu'on empêche ici de calculer, n'y entrent pas. Couple pour
+    couple, la décomposition est celle du Python, chaque nombre sous son type,
+    chaque refus sous sa raison ; et le coût, année par année, est le même."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le pont ne se vérifie pas ici")
-    from retraite_notionnelle import avantages, cout, memoire, pilote
-    from retraite_notionnelle.droit import ouvrir
+    from retraite_notionnelle import avantages, cout, memoire
+    from retraite_notionnelle.config import RACINE_DONNEES
+    from retraite_notionnelle.donnees.depenses import DepensesRetraite
+    from retraite_notionnelle.donnees.population import Population
+    from retraite_notionnelle.scenarios.actuel import ScenarioActuel
 
-    monkeypatch.setattr(avantages, "CAS_TYPES", tuple(
-        cas for cas in CAS_TYPES if cas.code in ("salaire_moyen", "artisan", "agent_ieg")))
-    monkeypatch.setattr(avantages, "generations", lambda: (1885, 1910, 1965))
-    simulateur = Simulateur(Parametres())
+    monkeypatch.setattr(avantages, "CAS_TYPES", _grille_des_avantages())
+    monkeypatch.setattr(avantages, "generations", lambda: (1885, 1910, 1955, 1965, 1975))
+    depenses = DepensesRetraite(RACINE_DONNEES)
+    population = Population(RACINE_DONNEES, Parametres().hypothese_esperance_vie)
     with memoire.modele_modifie():
-        en_python = avantages.decomposer(simulateur)
-    _interdire(monkeypatch, ((pilote, "age_de_depart"), (pilote, "point_fixe"),
-                             (pilote, "descendre"), (ouvrir, "age_ouverture_droit"),
-                             (ouvrir, "age_taux_plein_droit"), (ouvrir, "age_annulation_droit"),
+        en_python = avantages.decomposer(Simulateur(Parametres()))
+        cout_en_python = avantages.calculer_avantages(Simulateur(Parametres()), depenses,
+                                                      population)
+
+    def interdit(*_, **__):
+        raise AssertionError("un jumeau Python date, bâtit ou liquide le coût des avantages")
+
+    _interdire(monkeypatch, (*_jumeaux_qui_datent_et_batissent(), (ScenarioActuel, "__init__"),
+                             (ScenarioActuel, "calculer"), (avantages, "scenarios_neutralises"),
                              (cout, "_carrieres_voisines"), (avantages, "_carrieres_voisines")))
-    au_portage = avantages.decomposer(simulateur)
+    monkeypatch.setattr(Simulateur, "scenario_actuel", property(interdit))
+    au_portage = avantages.decomposer(Simulateur(Parametres()))
     assert au_portage == en_python
     assert _types([vars(p) for p in au_portage[0]]) == _types([vars(p) for p in en_python[0]])
+    assert avantages.calculer_avantages(Simulateur(Parametres()), depenses,
+                                        population) == cout_en_python
+    pensionnes, refus = au_portage
     # L'artisan né en 1910 descend sous l'âge écrit ; l'agent des IEG né en 1885
     # est écarté.
-    assert {(p.code, p.generation) for p in au_portage[0]} >= {("artisan", 1910)}
-    assert ("agent_ieg", 1885) not in {(p.code, p.generation) for p in au_portage[0]}
+    assert {(p.code, p.generation) for p in pensionnes} >= {("artisan", 1910)}
+    assert ("agent_ieg", 1885) not in {(p.code, p.generation) for p in pensionnes}
+    # Ce que la grille fait traverser : une mesure de chaque sorte, et le refus
+    # de la jouissance militaire, rendu partout à la part contributive.
+    mesurees = {ligne for p in pensionnes for ligne in p.parts}
+    assert mesurees >= {"periodes_assimilees", "categorie_active", "salaire_de_reference_des_parents",
+                        "bonification_cinquieme_militaires",
+                        "bonification_cinquieme_services_actifs"}
+    assert set(refus) == {"age_jouissance_militaire"} and "age_jouissance_militaire" not in mesurees
+    assert {p.motif for p in pensionnes} >= {"carriere_longue", "classement", "regime_special"}
 
 
 #: Une carrière où mord chaque levier de la mesure des avantages non
