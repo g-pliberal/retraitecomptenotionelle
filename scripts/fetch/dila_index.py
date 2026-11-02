@@ -29,7 +29,8 @@ CE QU'ELLE CONTIENT, ET CE QU'ELLE NE CONTIENT PAS. Tout le JORF fait
 4 millions de documents et 6,5 Go en SQLite : trop pour être publié. La
 base ne garde que les documents dont le titre ou le texte touche au champ
 du dépôt — retraite, pension, cotisation, Sécurité sociale, plafond, SMIC,
-point d'indice, minima, régimes… — selon le motif ``THEMATIQUE`` ci-dessous,
+point d'indice, minima, régimes, grilles indiciaires et carrières des
+fonctionnaires… — selon le motif ``THEMATIQUE`` ci-dessous,
 inscrit dans la table ``meta`` de la base. L'option ``--tout`` lève ce
 filtre pour qui a le disque. Un texte hors champ n'y est donc pas, et une
 recherche qui n'y trouve rien ne prouve rien sur le JORF entier : c'est le
@@ -91,15 +92,26 @@ BASES = {
 #: en capitales non accentuées). Large à dessein sur le champ social, fermé
 #: au reste : les nominations, les avis de concours et les marchés publics
 #: sont les trois quarts du Journal officiel, et n'ont rien à dire au modèle.
+#: Depuis l'action 158, il garde aussi les grilles indiciaires des trois
+#: fonctions publiques et des militaires, et les textes qui fixent les
+#: carrières — statuts particuliers, dispositions statutaires communes,
+#: organisation des carrières : les durées d'échelon et les reclassements.
+#: Un article porte le titre de son texte, qui le fait entrer avec les autres.
 THEMATIQUE = re.compile(
     r"retrait|pension|cotis|s[ée]curit[ée] sociale|plafond|vieillesse|smic|"
-    r"salaire minimum|point d.indice|indice (?:brut|major)|pr[ée]voyance|"
+    r"salaire minimum|point d.indice|pr[ée]voyance|"
     r"agirc|arrco|ircantec|cnracl|rafp|invalidit|trimestre|annuit|"
     r"valeur (?:du|de service du|d.achat du) point|minimum (?:contributif|garanti)|"
     r"allocation de solidarit|r[ée]gime (?:g[ée]n[ée]ral|sp[ée]cia|compl[ée]mentaire|"
     r"de base|des (?:marins|mines|clercs))|section professionnelle|"
     r"caisse (?:nationale|autonome|de retraite)|"
-    r"traitement (?:indiciaire|brut)|revalorisation",
+    r"traitement (?:indiciaire|brut)|revalorisation|"
+    r"indices? (?:nouveaux? |r[ée]els? )?(?:brut|major|net)|"
+    r"indices? de (?:solde|la fonction publique)|"
+    r"(?:[ée]chelonnement|classement|bonification) indiciaire|"
+    r"grilles? (?:indiciaires?|de r[ée]mun[ée]ration)|[ée]chelles? de r[ée]mun[ée]ration|"
+    r"statut particulier|dispositions statutaires communes|organisation des carri[èe]res|"
+    r"avancement d.[ée]chelon",
     re.I)
 
 BALISES = re.compile(r"<[^>]+>")

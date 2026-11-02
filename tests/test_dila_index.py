@@ -198,6 +198,49 @@ def test_construire_tout_ne_filtre_pas(tmp_path: Path, dump: Path):
         assert index.meta(db, "filtre") == "tout"
 
 
+#: Les textes des grilles indiciaires et des carrières des fonctionnaires, des
+#: trois versants (action 158, étape 2). Un article porte le titre de son
+#: texte : le titre fait entrer tous ses articles, ceux qui écrivent les indices
+#: comme ceux qui fixent les durées d'échelon ou les reclassements.
+GRILLES = [
+    ("Décret n° 2016-604 du 12 mai 2016 fixant les différentes échelles de rémunération "
+     "pour les fonctionnaires de catégorie C de la fonction publique territoriale", ""),
+    ("Décret n° 2010-330 du 22 mars 2010 fixant l'échelonnement indiciaire applicable aux "
+     "membres des cadres d'emplois régis par le décret n° 2010-329 du 22 mars 2010", ""),
+    ("DECRET N° 87-1108 DU 30 DECEMBRE 1987 FIXANT LES DIFFERENTES ECHELLES DE REMUNERATION "
+     "POUR LA CATEGORIE C DES FONCTIONNAIRES TERRITORIAUX", ""),
+    ("Décret n° 2016-596 du 12 mai 2016 relatif à l'organisation des carrières des "
+     "fonctionnaires de catégorie C de la fonction publique territoriale", ""),
+    ("Décret n° 2006-1691 du 22 décembre 2006 portant statut particulier du cadre "
+     "d'emplois des adjoints techniques territoriaux", ""),
+    ("Décret n° 2009-1388 du 11 novembre 2009 portant dispositions statutaires communes à "
+     "divers corps de fonctionnaires de la catégorie B de la fonction publique de l'Etat", ""),
+    ("Décret n° 2009-21 du 7 janvier 2009 relatif au classement indiciaire applicable aux "
+     "militaires non officiers", ""),
+    ("Décret n° 82-1105 du 23 décembre 1982 relatif aux indices de la fonction publique", ""),
+    ("Décret n° 93-863 du 18 juin 1993 relatif aux conditions de mise en oeuvre de la "
+     "nouvelle bonification indiciaire dans la fonction publique territoriale", ""),
+    # Un article qui écrit les indices au pluriel, sous un titre qui ne dit rien.
+    ("Décret n° 2021-1267 du 29 septembre 2021",
+     "GRADES ET ÉCHELONS INDICES BRUTS Aide-soignant de classe normale 1er échelon 356"),
+]
+
+
+@pytest.mark.parametrize("titre, texte", GRILLES, ids=[t[:22] for t, _ in GRILLES])
+def test_le_filtre_garde_les_grilles_indiciaires_et_les_carrieres(titre: str, texte: str):
+    article = index.Document("LEGIARTI000000000010", "2017-01-01", "2999-01-01",
+                             "Article DECRET", "1", titre, texte)
+    assert index.pertinent(article)
+
+
+def test_le_filtre_laisse_les_concours_de_ces_corps():
+    avis = index.Document("JORFTEXT000000000011", "2016-05-14", "", "ARRETE", "",
+                          "Arrêté du 12 mai 2016 portant ouverture d'un concours externe "
+                          "pour le recrutement d'adjoints techniques territoriaux",
+                          "Un concours est ouvert au titre de l'année 2016.")
+    assert not index.pertinent(avis)
+
+
 def test_l_index_fts_ignore_casse_et_accents(base: Path):
     assert _fts(base, "sécurité sociale") == {"JORFTEXT000000000001", "JORFARTI000000000003", "LEGIARTI000000000004"}
     assert _fts(base, "SECURITE") == _fts(base, "sécurité")
