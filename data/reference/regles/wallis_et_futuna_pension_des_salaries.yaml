@@ -33,16 +33,31 @@ versions:
 - id: avant_2009
   statut: supposee
   hypothese: >-
-    la caisse locale de retraites, absorbée par la CPSWF en 2012, dont rien n'est
-    publié : le dépôt lui prête le barème et l'âge de 2009, et le taux de cotisation de
-    2009
-  fiabilite: faible ; aucun texte ni aucun résumé officiel n'est lu
+    la caisse locale de retraites, absorbée par la CPSWF en 2012, que les rapports
+    annuels de l'IEOM résument sans citer ses textes : le dépôt lui prête le barème et
+    l'âge de 2009, et le taux de cotisation que l'IEOM en donne
+  fiabilite: >-
+    moyenne pour le taux de cotisation et le barème, que résume un rapport officiel ;
+    aucun texte n'est lu
   bornes:
     liquidation.date_effet: [null, 2009-03-01]
   contenu:
     droit: >-
       non lu ; la borne basse ouverte ne sert qu'à couvrir toutes les dates, le régime
-      couvrant les salariés depuis 1975 à l'inventaire
+      couvrant les salariés depuis 1975 à l'inventaire, quand la caisse locale « a été
+      créée le 4 août 1977 » (IEOM, rapport annuel 2004, p. 64)
+    cotisations: >-
+      « les cotisations patronales et salariales, qui s'élèvent respectivement à 6% et
+      3% des salaires bruts » (IEOM, rapport annuel 2004, p. 64 ; redit pour 2008 au
+      rapport 2008, p. 85)
+    calcul: >-
+      « Le taux des pensions de retraite est égal à 3,2% du salaire moyen des quatre
+      dernières années de travail multiplié par le nombre d'années de cotisation, soit
+      48% de ce salaire moyen pour 15 années de cotisation. Le taux de la pension est
+      majoré de 2% par année supplémentaire de cotisation, sans toutefois pouvoir
+      excéder 65%. La pension de retraite minimale est égale à la moitié du SMIG. » ;
+      « Une pension de retraite est ouverte aux salariés ayant au moins 55 ans et 15
+      annuités de cotisations » (IEOM, rapport annuel 2004, p. 64 et 65)
   exemples: aucun trouvé
 - id: deliberation_de_2009
   statut: lue
@@ -65,9 +80,14 @@ versions:
       « le taux des cotisations est augmenté de 0,9 % tous les 1ers janviers jusqu'en
       2020 » ; « Au 1er janvier 2020, date de la dernière augmentation, le taux des
       cotisations a été porté à 21 % (contre 20,1 % en 2019), soit 7 % pour la part
-      salariale et 14 % pour la part patronale » (IEOM) ; soit 11,1 % en mars 2009 ;
-      le site de la caisse, qui affiche 17,10 % en 2009 et 27 % en 2020, donne le taux
-      total de ses cotisations, six points de plus à la charge de l'employeur
+      salariale et 14 % pour la part patronale » (IEOM) ; soit 11,1 % en 2009, «
+      contre 11,1 % au 01/01/2009 » (IEOM, rapport 2010) ; le site de la caisse, qui
+      affiche 17,10 % en 2009 et 27 % en 2020, donne le taux total de ses cotisations,
+      six points de plus à la charge de l'employeur : « la contribution est de 21 % des
+      salaires, supporté aux deux tiers par les employeurs et un tiers pour les
+      salariés », la caisse gérant aussi « un régime de prestation familiale, alimenté
+      par des cotisations employeurs de 6 % » (Cour des comptes, observations
+      définitives S2022-2223, 2022, p. 33)
     reversion: >-
       « 50% de la retraite de l'assuré décédé » au conjoint d'au moins 50 ans, si
       l'assuré a cotisé quinze ans, perdue au remariage ; avant 50 ans, une allocation
@@ -103,16 +123,16 @@ versions:
     calcul: le barème de 2,6 % et 1,3 % par année, inchangé (CPSWF)
   exemples: aucun trouvé
 approximations:
-- version: [avant_2009, deliberation_de_2009, deliberation_de_2015]
+- version: avant_2009
   ecart: >-
-    La fiche de régime prend pour la retraite le taux total des cotisations de la
-    caisse, 17,10 % en 2009 montant à 27 % en 2020, quand celui de la retraite est de
-    six points plus bas, 11,1 % en 2009 et 21 % depuis 2020 ; la part salariale est
-    d'un tiers, non d'un quart.
+    La fiche de régime prête à la caisse locale le barème et l'âge de 2009, quand elle
+    servait 3,2 % par année du salaire moyen des quatre dernières années, 2 % par année
+    au-delà de quinze et 65 % au plus, dès 55 ans avec quinze annuités ; elle la fait
+    naître en 1975, non en 1977, et prolonge jusque-là le taux de 9 % lu en 2004 et en
+    2008.
   effet: >-
-    la cotisation simulée est trop haute, de 54 % en 2009 à 29 % depuis 2020 ; la
-    pension, en annuités, n'en dépend pas, mais l'effort contributif comparé dans les
-    scénarios, oui
+    non mesuré ; les pensions liquidées avant mars 2009, et les années 1975 et 1976,
+    comptées à une caisse qui n'existait pas encore
 - version: [deliberation_de_2009, deliberation_de_2015]
   ecart: >-
     La fiche de régime écrit 58,5 % pour trente années, proratisé, et les dix
@@ -123,14 +143,14 @@ approximations:
     non mesuré ; les carrières de plus de trente ans, dont la pension simulée est trop
     basse, et les départs avant 60 ans
 sources:
-  lu_le: 2026-10-16
-  prochaine_relecture: 2027-04-16
+  lu_le: 2026-11-02
+  prochaine_relecture: 2027-05-02
   a_relire:
   - >-
     Lire au Journal officiel de Wallis-et-Futuna, quand le site de l'administration
     supérieure sera joignable, le statut de la CPSWF, les délibérations n° 20 bis/AT/2009
-    et n° 25/AT/2015 et leurs arrêtés, pour la date d'effet de la réforme de 2015, un
-    éventuel plafond et la part des cotisations qui va à la retraite ; et le projet de
+    et n° 25/AT/2015 et leurs arrêtés, pour la date d'effet de la réforme de 2015 et un
+    éventuel plafond ; les textes de la caisse locale d'avant 2009 ; et le projet de
     réforme à 65 ans que l'inventaire dit en préparation.
   lectures:
   - type: autre
@@ -139,6 +159,14 @@ sources:
       économique Wallis-et-Futuna 2021, pages 111 et 112 ; wallis-et-futuna.gouv.fr
       essayé le même jour, sans résultat
     date: 2026-10-16
+  - type: autre
+    reference: >-
+      Cour des comptes, observations définitives S2022-2223, « Le territoire des îles
+      Wallis et Futuna, exercices 2016-2021 », délibéré le 14 décembre 2022, p. 32 et
+      33 ; IEOM, rapport annuel Wallis-et-Futuna 2004, p. 64 et 65 ; les rapports de
+      2010 à 2022 et le rapport d'information n° 2667 de l'Assemblée nationale, lus
+      pour la note du 2 novembre 2026 de l'action 145
+    date: 2026-11-02
 reformes: []
 code:
   moteur: >-
@@ -153,15 +181,24 @@ code:
     regimes/wallis_et_futuna.yaml : taux_plein, duree_requise_trimestres,
     salaire_reference, taux_cotisation_retraite, part_salariale
   tests: >-
-    tests/temoins/simulations.json, les carrières du statut salarie_wallis_et_futuna, que
-    le portage rejoue
+    tests/test_caisses_du_pacifique.py, le taux de chaque année recoupé à la Cour des
+    comptes, à l'IEOM et au site de la caisse ; tests/temoins/simulations.json, les
+    carrières du statut salarie_wallis_et_futuna, que le portage rejoue
 historique:
 - >-
   2026-10-16 — écrite à l'étape 2 de l'action 145 : le régime de Wallis-et-Futuna
   n'avait que la fiche générique de liquidation. Le rapport de l'IEOM donne le taux de
   la retraite, six points sous le taux total que la fiche de régime prend, et la réforme
   de 2015. Aucun chiffre ne change.
+- >-
+  2026-11-02 — le taux de cotisation, sur décision du propriétaire : celui de la
+  retraite seule, 11,1 % en 2009 montant à 21 % en 2020, un tiers au salarié, et 9 %
+  avant 2009, au lieu du taux total de la caisse, prestations familiales comprises,
+  17,10 % puis 27 % (action 145, note du 2 novembre 2026). La pension, en annuités, ne
+  bouge pas. Le compte notionnel, qui ne reçoit par défaut que la part du salarié,
+  ne change pas depuis 2009 et reçoit 3 % au lieu de 3,70 % avant ; sous la part
+  totale, il reçoit de 22 % (depuis 2020) à 47 % (avant 2009) de moins.
 effet: >-
   Les salariés de Wallis-et-Futuna : leur pension est simulée à 60 ans au barème jusqu'à
-  trente ans, mais leur cotisation au taux total de la caisse, plus haut que celui de la
-  retraite.
+  trente ans, et leur cotisation au taux de la retraite ; avant 2009, au barème de 2009
+  au lieu de celui de la caisse locale.

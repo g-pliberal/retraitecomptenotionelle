@@ -15,7 +15,7 @@ population: >-
   Salariés de Nouvelle-Calédonie, affiliés à la CAFAT : pension en points,
   servie à taux plein à 62 ans avec trente-sept années d'activité (2026),
   après une montée de 60 à 62 ans et de 35 à 37 ans engagée en 2023. Taux
-  et barème de 2026 projetés sur toute la période.
+  de 2026 projeté sur toute la période, rendement de chaque année.
 hors_repartition: false
 inventaire:
   section: prive_base
@@ -26,16 +26,22 @@ inventaire:
   textes:
     - {reference: "fiche du CLEISS « La sécurité sociale des salariés en Nouvelle-Calédonie » et fiche de cotisations 2026 ; page « Le montant de ma retraite » de la CAFAT (délibérations du congrès, compétence locale, hors JORF)", id: null}
     - {reference: "délibération n° 458 du 8 janvier 2009 portant réforme de la branche d'assurance vieillesse et veuvage du régime général de la sécurité sociale en Nouvelle-Calédonie, articles 1er à 4 dans la rédaction de la délibération n° 59/CP du 24 février 2022 (JONC du 25 février 2022 ; version consolidée du 13 décembre 2022 sur Juridoc)", id: null}
+    - {reference: "Chambre territoriale des comptes de Nouvelle-Calédonie, rapport d'observations définitives « CAFAT, exercices 2020 et suivants », délibéré le 30 juin 2022, p. 62 et 63 et annexe 7 (p. 102) : la valeur du point, la valeur de référence et le taux de rendement de 2015 à 2021 ; CAFAT, fiches « Les paramètres », janvier 2017 à octobre 2026 ; conseil économique et social de Nouvelle-Calédonie, avis n° 12/2008 du 17 octobre 2008, p. 4 : le rendement de 2001, 2007 et 2008", id: null}
     - {reference: "fiche du CLEISS, retraite complémentaire : « tous les salariés [...] soumis à titre obligatoire au régime d'assurance vieillesse de base géré par la CAFAT relèvent obligatoirement des régimes Agirc-Arrco » (accord collectif, hors JORF)", id: null}
     - {reference: "accord interprofessionnel territorial du 29 août 1994 pour la généralisation des régimes de retraite complémentaire ARRCO et AGIRC en Nouvelle-Calédonie, étendu par arrêté n° 1745-T du 25 avril 1995 (JONC n° 7063 du 2 mai 1995), avenants des 24 août et 12 décembre 1995 (direction du travail de Nouvelle-Calédonie, hors JORF)", id: null}
   manque: >-
-    La valeur de référence qui convertit les cotisations en points est
-    publiée par la CAFAT (2 845,44 FCFP en 2026, pour un point de 256,09) :
-    le rendement de 10 % est estimé, quand le droit le fait descendre de
-    10,3 % en 2016 à 9,0 % en 2026 ; l'anticipation de dix trimestres, avec
+    Le rendement est celui que la caisse fixe chaque année, de 12,45 % en
+    2001 à 10,35 % de 2008 à 2015, puis 9 % en 2026 (2 845,44 FCFP de
+    valeur de référence pour un point de 256,09) ; avant 2001 rien n'est
+    publié, et la valeur de 2001 est prolongée ; le moteur le sert, à
+    l'année de la liquidation, aux cotisations revalorisées sur les prix,
+    quand la caisse achète les points à la valeur de référence de chaque
+    année. Le taux d'avant avril 2009, non lu, que deux avis du conseil
+    économique et social font de 13 % (calcul du dépôt), n'est pas
+    porté ; l'anticipation de dix trimestres, avec
     1,5 % d'abattement par trimestre ou sans abattement à 37 années, n'est
-    pas portée (délibération n° 458, articles 2 à 4) ; taux et barème de
-    2026 projetés sur toute la période ; plafond de 548 600 FCFP remplacé
+    pas portée (délibération n° 458, articles 2 à 4) ; taux de 2026
+    projeté sur toute la période ; plafond de 548 600 FCFP remplacé
     par le plafond national. Le statut `salarie_nouvelle_caledonie` route
     aussi l'Agirc-Arrco du non-cadre, obligatoire depuis le 1er janvier
     1995 ; les années d'avant, depuis 1958, en sont des services passés,
@@ -71,11 +77,14 @@ periodes:
       les cotisations que vous avez versées ont été divisées chaque année
       par une valeur de référence dont le montant est fixé par le conseil
       d'administration », « la valeur du point retraite est de 256,09
-      F.cfp du 01/04/2026 au 31/03/2027 » ; la valeur de référence n'est
-      publiée nulle part de lisible : le rendement de
-      `rendements_points.csv` (10 centimes par euro) est celui
-      qu'impliquent 14 % de cotisation et une pension de moitié du salaire
-      pour trente-sept ans, niveau `estimee`. AVANT 2023 : 60 ans et 35
+      F.cfp du 01/04/2026 au 31/03/2027 » ; le rendement de
+      `rendements_points.csv` est celui que le conseil d'administration
+      fixe chaque année, « le rapport entre la valeur de service et la
+      valeur de référence » (Chambre territoriale des comptes de
+      Nouvelle-Calédonie, 2022, p. 62), de 10,35 % en 2015 à 9,00 % en
+      2026, et 12,45 % en 2001 (conseil économique et social, avis
+      n° 12/2008) ; le moteur sert celui de l'année de la liquidation
+      aux cotisations revalorisées sur les prix. AVANT 2023 : 60 ans et 35
       années d'activité, « 1,5 % de réduction par trimestre d'anticipation
       manquant », dans la limite de dix trimestres.
   - debut: 2023
@@ -103,11 +112,14 @@ periodes:
       les cotisations que vous avez versées ont été divisées chaque année
       par une valeur de référence dont le montant est fixé par le conseil
       d'administration », « la valeur du point retraite est de 256,09
-      F.cfp du 01/04/2026 au 31/03/2027 » ; la valeur de référence n'est
-      publiée nulle part de lisible : le rendement de
-      `rendements_points.csv` (10 centimes par euro) est celui
-      qu'impliquent 14 % de cotisation et une pension de moitié du salaire
-      pour trente-sept ans, niveau `estimee`. DÉLIBÉRATION N° 458 DU 8
+      F.cfp du 01/04/2026 au 31/03/2027 » ; le rendement de
+      `rendements_points.csv` est celui que le conseil d'administration
+      fixe chaque année, « le rapport entre la valeur de service et la
+      valeur de référence » (Chambre territoriale des comptes de
+      Nouvelle-Calédonie, 2022, p. 62), de 10,35 % en 2015 à 9,00 % en
+      2026, et 12,45 % en 2001 (conseil économique et social, avis
+      n° 12/2008) ; le moteur sert celui de l'année de la liquidation
+      aux cotisations revalorisées sur les prix. DÉLIBÉRATION N° 458 DU 8
       JANVIER 2009, article 1er dans la rédaction de la délibération n°
       59/CP du 24 février 2022 (Juridoc, version du 13 décembre 2022) :
       « L'âge de liquidation est fixé à : 60 ans jusqu'au 31 décembre
@@ -147,11 +159,14 @@ periodes:
       les cotisations que vous avez versées ont été divisées chaque année
       par une valeur de référence dont le montant est fixé par le conseil
       d'administration », « la valeur du point retraite est de 256,09
-      F.cfp du 01/04/2026 au 31/03/2027 » ; la valeur de référence n'est
-      publiée nulle part de lisible : le rendement de
-      `rendements_points.csv` (10 centimes par euro) est celui
-      qu'impliquent 14 % de cotisation et une pension de moitié du salaire
-      pour trente-sept ans, niveau `estimee`. DÉLIBÉRATION N° 458 DU 8
+      F.cfp du 01/04/2026 au 31/03/2027 » ; le rendement de
+      `rendements_points.csv` est celui que le conseil d'administration
+      fixe chaque année, « le rapport entre la valeur de service et la
+      valeur de référence » (Chambre territoriale des comptes de
+      Nouvelle-Calédonie, 2022, p. 62), de 10,35 % en 2015 à 9,00 % en
+      2026, et 12,45 % en 2001 (conseil économique et social, avis
+      n° 12/2008) ; le moteur sert celui de l'année de la liquidation
+      aux cotisations revalorisées sur les prix. DÉLIBÉRATION N° 458 DU 8
       JANVIER 2009, article 1er dans la rédaction de la délibération n°
       59/CP du 24 février 2022 (Juridoc, version du 13 décembre 2022) :
       « L'âge de liquidation est fixé à : 60 ans jusqu'au 31 décembre
@@ -190,11 +205,14 @@ periodes:
       les cotisations que vous avez versées ont été divisées chaque année
       par une valeur de référence dont le montant est fixé par le conseil
       d'administration », « la valeur du point retraite est de 256,09
-      F.cfp du 01/04/2026 au 31/03/2027 » ; la valeur de référence n'est
-      publiée nulle part de lisible : le rendement de
-      `rendements_points.csv` (10 centimes par euro) est celui
-      qu'impliquent 14 % de cotisation et une pension de moitié du salaire
-      pour trente-sept ans, niveau `estimee`. DÉLIBÉRATION N° 458 DU 8
+      F.cfp du 01/04/2026 au 31/03/2027 » ; le rendement de
+      `rendements_points.csv` est celui que le conseil d'administration
+      fixe chaque année, « le rapport entre la valeur de service et la
+      valeur de référence » (Chambre territoriale des comptes de
+      Nouvelle-Calédonie, 2022, p. 62), de 10,35 % en 2015 à 9,00 % en
+      2026, et 12,45 % en 2001 (conseil économique et social, avis
+      n° 12/2008) ; le moteur sert celui de l'année de la liquidation
+      aux cotisations revalorisées sur les prix. DÉLIBÉRATION N° 458 DU 8
       JANVIER 2009, article 1er dans la rédaction de la délibération n°
       59/CP du 24 février 2022 (Juridoc, version du 13 décembre 2022) :
       « L'âge de liquidation est fixé à : 60 ans jusqu'au 31 décembre
@@ -233,11 +251,14 @@ periodes:
       les cotisations que vous avez versées ont été divisées chaque année
       par une valeur de référence dont le montant est fixé par le conseil
       d'administration », « la valeur du point retraite est de 256,09
-      F.cfp du 01/04/2026 au 31/03/2027 » ; la valeur de référence n'est
-      publiée nulle part de lisible : le rendement de
-      `rendements_points.csv` (10 centimes par euro) est celui
-      qu'impliquent 14 % de cotisation et une pension de moitié du salaire
-      pour trente-sept ans, niveau `estimee`. DÉLIBÉRATION N° 458 DU 8
+      F.cfp du 01/04/2026 au 31/03/2027 » ; le rendement de
+      `rendements_points.csv` est celui que le conseil d'administration
+      fixe chaque année, « le rapport entre la valeur de service et la
+      valeur de référence » (Chambre territoriale des comptes de
+      Nouvelle-Calédonie, 2022, p. 62), de 10,35 % en 2015 à 9,00 % en
+      2026, et 12,45 % en 2001 (conseil économique et social, avis
+      n° 12/2008) ; le moteur sert celui de l'année de la liquidation
+      aux cotisations revalorisées sur les prix. DÉLIBÉRATION N° 458 DU 8
       JANVIER 2009, article 1er dans la rédaction de la délibération n°
       59/CP du 24 février 2022 (Juridoc, version du 13 décembre 2022) :
       « L'âge de liquidation est fixé à : 60 ans jusqu'au 31 décembre

@@ -172,11 +172,13 @@ de liquidation a été lu à la source et décrit, sans que rien n'en soit calcu
 * **Des régimes calculés, mais approchés.** Outre-mer, la caisse de
   Saint-Pierre-et-Miquelon, la CAFAT, la CPS de Polynésie, Wallis-et-Futuna et
   les fonctionnaires calédoniens ont des règles que la fiche de régime ne
-  porte pas : salaire de référence, abattements, anticipation, minimum. Deux
-  écarts tiennent à une seule donnée, que le propriétaire n'a pas encore
-  tranchée : le rendement de la CAFAT, que le dépôt estime trop haut depuis que
-  le point est gelé, et le taux de retraite de Wallis-et-Futuna, que la fiche
-  prend égal au taux total de la caisse.
+  porte pas : salaire de référence, abattements, anticipation, minimum. Le
+  rendement de la CAFAT est celui que la caisse fixe chaque année, servi à
+  l'année du départ aux cotisations revalorisées sur les prix, quand la caisse
+  achète les points de chaque année à sa valeur de référence ; avant 2001,
+  rien ne le publie. Le taux de Wallis-et-Futuna est celui de la retraite
+  seule, sans les prestations familiales que la caisse compte dans ses
+  cotisations ; avant 2009, la caisse locale garde le barème de 2009.
 * **Des régimes hors champ dont la loi garde une part.** L'agent mahorais
   intégré dans une fonction publique reçoit une pension unique dont la part
   d'avant l'intégration suit le règlement de la CRFM, sur ses derniers

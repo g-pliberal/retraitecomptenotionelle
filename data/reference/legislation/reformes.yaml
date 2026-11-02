@@ -954,7 +954,7 @@ reformes:
 
   - code: wallis_2009
     date: 2009-03-01
-    texte: {reference: "délibérations de l'assemblée territoriale de Wallis-et-Futuna relevant chaque année la cotisation retraite de 17,1 % (2009) à 27 % (2020), publiées par la CPSWF", id: null}
+    texte: {reference: "délibérations de l'assemblée territoriale de Wallis-et-Futuna relevant chaque année la cotisation retraite de 11,1 % (2009) à 21 % (2020), un tiers au salarié (Cour des comptes, S2022-2223, p. 33 ; rapports annuels de l'IEOM) ; la CPSWF en publie le total, 17,1 % puis 27 %, prestations familiales comprises", id: null}
     parametres: [taux_cotisation_retraite]
     regimes: [wallis_et_futuna]
     absorbee_par: []

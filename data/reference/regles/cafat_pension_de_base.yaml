@@ -47,6 +47,15 @@ versions:
     droit: >-
       non lu ; la borne basse ouverte ne sert qu'à couvrir toutes les dates, le régime
       couvrant les salariés depuis 1958 à l'inventaire
+    valeurs: >-
+      le rendement, « rapport entre le prix d'acquisition (valeur de référence) d'un
+      point de retraite au cours d'une année donnée et sa valeur de service », « qui
+      était de 12,45 % en 2001, n'était plus que de 10,98 % au 31 décembre 2007 » ; « Il
+      devrait atteindre 10,35 % en 2008 », la caisse s'étant engagée « dans une
+      politique de baisse progressive du taux de rendement » (avis n° 12/2008 du
+      conseil économique et social de Nouvelle-Calédonie, 17 octobre 2008, p. 4) ; la
+      chambre territoriale des comptes écrit « 12 % en 2008 et [...] plus de 25 % en
+      2000 » (rapport de 2022, p. 63)
   exemples: aucun trouvé
 - id: reforme_de_2009
   statut: lue
@@ -97,7 +106,14 @@ versions:
       2 407,10 en 2018, 2 452,37 en 2019, 2 481,52 en 2020, 2 517,31 en 2021, 2 564,04
       en 2022 ; la valeur du point de 238,26 F CFP au premier trimestre 2017, 239,62 en
       2018, 242,62 en 2019, 244,46 en 2020 et 2021, 245,44 en 2022, 247,43 en 2023 ;
-      soit un rendement de 10,3 % en 2016, descendant à 9,6 % en 2022
+      soit un rendement de 10,3 % en 2016, descendant à 9,6 % en 2022 ; la chambre
+      territoriale des comptes donne la série de 2015 à 2021, valeur de service de
+      236,02 F CFP en 2015 à 245,44 en 2021, valeur de référence de 2 280,42 à 2 517,31
+      (rapport d'observations définitives « CAFAT, exercices 2020 et suivants », 2022,
+      annexe 7, p. 102), le rendement ayant « baissé d'un dixième de point chaque année
+      » depuis 2015 pour s'établir « à 9,75 % en 2021 » (p. 63) ; ses valeurs de
+      service de 2017 et 2018 sont la moyenne de l'année de celles des fiches, le point
+      changeant au 1er avril
     reversion: >-
       60 % des points du défunt, abattements déduits, au conjoint de cinquante ans marié
       depuis deux ans, si le défunt comptait quinze années ou est mort après cinquante
@@ -150,12 +166,24 @@ versions:
 approximations:
 - version: [regime_de_1961, reforme_de_2009, reforme_de_2022]
   ecart: >-
-    La valeur de référence est publiée chaque année par la CAFAT : la fiche de régime,
-    qui la disait introuvable, prête un rendement estimé de 10 % sur toute la période,
-    quand celui des fiches des paramètres descend de 10,3 % en 2016 à 9,0 % en 2026.
+    Le rendement est celui que la caisse fixe chaque année, de 10,35 % en 2015 à 9 % en
+    2026, d'après l'annexe de la chambre puis les fiches des paramètres, et celui du
+    conseil économique et social en 2001, 2007 et 2008 ; entre ces dates, la ligne
+    droite ou la valeur de 2008, et avant 2001 la valeur de 2001, prolongée, quand la
+    chambre écrit « plus de 25 % en 2000 ». Le moteur le sert, à l'année de la
+    liquidation, aux cotisations de toute la carrière revalorisées sur les prix, quand
+    la caisse achète chaque année les points à sa valeur de référence ; l'annexe porte
+    en 2017 et 2018 la moyenne de l'année des valeurs du point.
   effet: >-
-    non mesuré ; la pension simulée depuis 2020 est trop haute, de 1,5 % en 2020 à
-    11 % en 2026, et celle de 2016 à 2018 un peu trop basse, de 2,5 % au plus
+    pour une liquidation de 2026, la revalorisation sur les prix s'écarte de celle de
+    la valeur de référence de - 2,2 % (cotisations de 2021) à + 1,4 % (2015) ; le
+    rendement de 2017 et de 2018 est plus bas de 0,01 et 0,03 point que celui du point
+    fixé au 1er avril ; avant 2015, où la valeur de référence n'est pas lue, non
+    mesuré : le point a monté de 2,5 % par an de 2008 à 2016, « plus élevé que
+    l'inflation (1 % en moyenne au cours de cette période) » (chambre, p. 62) ; à
+    rendement constant, la valeur de référence a monté autant, et les cotisations
+    de ces années, revalorisées sur les prix, sont sous-estimées, comme les
+    pensions liquidées avant 2001
 - version: [reforme_de_2009, reforme_de_2022]
   ecart: >-
     L'âge d'ouverture de la fiche de régime est l'âge de liquidation : l'anticipation de
@@ -173,11 +201,14 @@ approximations:
   ecart: >-
     La délibération n° 300 du 17 juin 1961 n'est pas lue, ni le taux de cotisation
     d'avant avril 2009 : la fiche de régime projette 14 % et les paramètres de 2009 sur
-    toute la période depuis 1958.
+    toute la période depuis 1958. Deux avis du conseil économique et social le font de
+    13 %, 9,1 % patronal et 3,9 % salarial (avis n° 04/2007, p. 3, et n° 01/2009, p. 2 :
+    « une augmentation de 1% en gardant la répartition actuelle, soit 70% à la charge
+    des employeurs et 30% à celle des salariés ») : calcul du dépôt, non porté.
   effet: non mesuré ; les carrières d'avant 2009
 sources:
-  lu_le: 2026-10-16
-  prochaine_relecture: 2027-04-16
+  lu_le: 2026-11-02
+  prochaine_relecture: 2027-05-02
   a_relire:
   - >-
     Lire la délibération n° 300 du 17 juin 1961 et la loi du pays n° 2009-3 dans sa
@@ -196,11 +227,20 @@ sources:
       1er à 48, version du 13 décembre 2022 ; CAFAT, fiches des paramètres de janvier
       2017 à janvier 2026 et d'octobre 2026
     date: 2026-10-16
+  - type: autre
+    reference: >-
+      chambre territoriale des comptes de Nouvelle-Calédonie, rapport d'observations
+      définitives « CAFAT, exercices 2020 et suivants », délibéré le 30 juin 2022, p. 62
+      et 63 et annexe 7, p. 102 ; conseil économique et social de Nouvelle-Calédonie,
+      avis n° 12/2008 du 17 octobre 2008, p. 4 (relus, hors du dépôt, pour la décision
+      du propriétaire du 2 novembre 2026)
+    date: 2026-11-02
 reformes: []
 code:
   moteur: >-
     une fiche de régime en points, une période par année de la montée de 2023 à 2026,
-    au rendement estimé de rendements_points.csv
+    au rendement de chaque année de rendements_points.csv, servi à l'année de la
+    liquidation
   python: >-
     donnees/regimes.py : CatalogueRegimes ; droit/liquider.py : liquider_chaque_regime
   javascript: >-
@@ -211,6 +251,8 @@ code:
     decote_par_trimestre, taux_cotisation_retraite ; regimes/rendements_points.csv :
     cafat_nouvelle_caledonie
   tests: >-
+    tests/test_caisses_du_pacifique.py, le rendement recoupé à l'annexe de la chambre,
+    aux fiches des paramètres et à l'avis du conseil économique et social ;
     tests/temoins/simulations.json, les carrières du statut salarie_nouvelle_caledonie,
     que le portage rejoue
 historique:
@@ -220,7 +262,13 @@ historique:
   lues sur Juridoc, écrivent les points, l'anticipation et la réversion ; les fiches des
   paramètres de la CAFAT publient la valeur de référence, que la fiche de régime disait
   introuvable. Aucun chiffre ne change.
+- >-
+  2026-11-02 — le rendement, sur décision du propriétaire : celui que la caisse fixe
+  chaque année, de 10,35 % en 2015 à 9 % en 2026, et celui du conseil économique et
+  social avant, 12,45 % en 2001, au lieu de 10 % constants (action 145, note du 2
+  novembre 2026). La pension de 2026 baisse d'un dixième, celle d'avant 2001 monte d'un
+  quart.
 effet: >-
   Les salariés de Nouvelle-Calédonie : leur pension est simulée en points au bon âge de
-  liquidation, mais à un rendement trop haut depuis 2020, sans l'anticipation ni le
+  liquidation et au rendement de l'année de leur départ, mais sans l'anticipation ni le
   minimum de pension, et sur le plafond national au lieu de celui du territoire.

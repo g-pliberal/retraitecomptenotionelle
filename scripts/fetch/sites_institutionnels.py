@@ -59,7 +59,8 @@ DOCUMENTS = [
      "âge, durée minimale, taux de 2,60 % et 1,30 % par an (fiche wallis_et_futuna)"),
     ("cpswf_taux_cotisation.html",
      "https://www.cpswf.wf/portail/index.php/entreprises/les-taux-de-cotisation/",
-     "cotisation retraite de 17,1 % (2009) à 27 % (2020)"),
+     "taux total des cotisations, de 17,1 % (2009) à 27 % (2020), dont six points "
+     "de prestations familiales (fiche wallis_et_futuna)"),
     ("drhfpnc_clr_2023.html",
      "https://drhfpnc.gouv.nc/actualites/03-10-2023/mesures-durgence-en-faveur-de-la-clr",
      "cotisations CLR de 10,8 à 13 % et de 25,1 à 28,8 %, minoration (fiche fonctionnaires_pacifique)"),

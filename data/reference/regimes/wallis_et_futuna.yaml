@@ -26,17 +26,22 @@ inventaire:
   statuts: [salarie_wallis_et_futuna]
   textes:
     - {reference: "Caisse des prestations sociales des îles Wallis et Futuna, pages « Retraites » et « Les taux de cotisation » (délibérations de l'assemblée territoriale, hors JORF)", id: null}
+    - {reference: "Cour des comptes, observations définitives S2022-2223, « Le territoire des îles Wallis et Futuna, exercices 2016-2021 », délibéré le 14 décembre 2022, p. 33 : la retraite à 21 % des salaires, deux tiers à l'employeur, et les prestations familiales à 6 % de l'employeur ; IEOM, rapports annuels économiques de Wallis-et-Futuna, 2004 à 2022 : le taux de chaque année, et la caisse locale de retraites d'avant 2009", id: null}
 
   manque: >-
     Le régime existe bel et bien, contrairement à ce que l'inventaire
     disait : 60 ans, quinze ans de cotisation, 2,6 % puis 1,3 % par an sur
     les quinze meilleures années ; dès 55 ans avec 7 % d'abattement par
     année, sans abattement à 57 ans avec 35 années (délibération
-    n° 25/AT/2015, non portée). Le taux de cotisation retenu est le taux
-    total de la caisse, 17,10 % en 2009 et 27 % en 2020 : celui de la
-    retraite est de six points plus bas, 11,1 % puis 21 % (IEOM, rapport
-    2021). Non lus : le plafond, la date de création, le barème d'avant
-    2009, la réforme en préparation (65 ans).
+    n° 25/AT/2015, non portée). Le taux de cotisation est celui de la
+    retraite seule, 11,1 % en 2009 montant à 21 % en 2020, un tiers au
+    salarié, et 9 % avant 2009 ; la caisse publie le total de ses
+    cotisations, prestations familiales comprises, 17,10 % puis 27 %
+    (Cour des comptes, 2022 ; IEOM). Lus, non portés : le barème de la
+    caisse locale d'avant 2009, à 55 ans sur les quatre dernières
+    années, et sa création en 1977 (IEOM, rapport 2004). Non lus : le
+    plafond, la date d'effet de la réforme de 2015, la réforme en
+    préparation (65 ans).
 periodes:
   - debut: 1975
     fin: 2008
@@ -47,8 +52,8 @@ periodes:
     taux_plein: 0.585
     salaire_reference: 10_meilleures_annees
     assiette: deplafonnee
-    taux_cotisation_retraite: 0.1710
-    part_salariale: 0.2164
+    taux_cotisation_retraite: 0.0900
+    part_salariale: 0.3333
     decote_par_trimestre: null
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
@@ -66,9 +71,16 @@ periodes:
       60 ans », « avoir cotisé à la caisse pendant au moins 15 ans » ;
       aucune décote lue. Les quinze meilleures années sont écrites comme
       les dix du catalogue. Pas de plafond publié : assiette déplafonnée.
-      AVANT 2009 : la caisse locale de retraites, absorbée par la CPSWF en
-      2012, n'a rien de publié ; le taux de 2009 est projeté en arrière,
-      niveau `estimee`, et la création prise à 1975 faute de date.
+      AVANT 2009 : la caisse locale de retraites, « créée le 4 août 1977 »
+      et absorbée par la CPSWF en 2012 : « les cotisations patronales et
+      salariales, qui s'élèvent respectivement à 6% et 3% des salaires
+      bruts » (IEOM, rapport annuel 2004, p. 64 ; rapport 2008, p. 85),
+      soit 9 %, un tiers au salarié, lus en 2004 et en 2008 et prolongés
+      jusqu'en 1975. Son barème, lu au même rapport — 3,2 % par année du
+      salaire moyen des quatre dernières années, 2 % par année au-delà de
+      quinze, 65 % au plus, à 55 ans avec quinze annuités (p. 64 et 65)
+      —, n'est pas porté : celui de 2009 est projeté en arrière, niveau
+      `estimee`, et la création reste à 1975.
   - debut: 2009
     fin: 2009
     type_calcul: annuites
@@ -78,8 +90,8 @@ periodes:
     taux_plein: 0.585
     salaire_reference: 10_meilleures_annees
     assiette: deplafonnee
-    taux_cotisation_retraite: 0.1710
-    part_salariale: 0.2164
+    taux_cotisation_retraite: 0.1110
+    part_salariale: 0.3333
     decote_par_trimestre: null
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
@@ -97,9 +109,12 @@ periodes:
       60 ans », « avoir cotisé à la caisse pendant au moins 15 ans » ;
       aucune décote lue. Les quinze meilleures années sont écrites comme
       les dix du catalogue. Pas de plafond publié : assiette déplafonnée.
-      COTISATION 2009 : 17.10 % dont 3.70 % salarié et 13.40 % employeur
-      (« les taux de cotisations augmentent annuellement », page des taux
-      de la CPSWF).
+      COTISATION 2009 : 11,10 % pour la retraite, dont
+      3,70 % salarié et 7,40 % employeur ; la caisse publie
+      17,10 %, dont 13,40 % à l'employeur, qui comptent six
+      points de prestations familiales (« les taux de cotisations
+      augmentent annuellement », page des taux de la CPSWF ; Cour des
+      comptes, S2022-2223, 2022, p. 33).
   - debut: 2010
     fin: 2010
     type_calcul: annuites
@@ -109,8 +124,8 @@ periodes:
     taux_plein: 0.585
     salaire_reference: 10_meilleures_annees
     assiette: deplafonnee
-    taux_cotisation_retraite: 0.1800
-    part_salariale: 0.2222
+    taux_cotisation_retraite: 0.1200
+    part_salariale: 0.3333
     decote_par_trimestre: null
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
@@ -128,9 +143,12 @@ periodes:
       60 ans », « avoir cotisé à la caisse pendant au moins 15 ans » ;
       aucune décote lue. Les quinze meilleures années sont écrites comme
       les dix du catalogue. Pas de plafond publié : assiette déplafonnée.
-      COTISATION 2010 : 18.00 % dont 4.00 % salarié et 14.00 % employeur
-      (« les taux de cotisations augmentent annuellement », page des taux
-      de la CPSWF).
+      COTISATION 2010 : 12,00 % pour la retraite, dont
+      4,00 % salarié et 8,00 % employeur ; la caisse publie
+      18,00 %, dont 14,00 % à l'employeur, qui comptent six
+      points de prestations familiales (« les taux de cotisations
+      augmentent annuellement », page des taux de la CPSWF ; Cour des
+      comptes, S2022-2223, 2022, p. 33).
   - debut: 2011
     fin: 2011
     type_calcul: annuites
@@ -140,8 +158,8 @@ periodes:
     taux_plein: 0.585
     salaire_reference: 10_meilleures_annees
     assiette: deplafonnee
-    taux_cotisation_retraite: 0.1890
-    part_salariale: 0.2275
+    taux_cotisation_retraite: 0.1290
+    part_salariale: 0.3333
     decote_par_trimestre: null
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
@@ -159,9 +177,12 @@ periodes:
       60 ans », « avoir cotisé à la caisse pendant au moins 15 ans » ;
       aucune décote lue. Les quinze meilleures années sont écrites comme
       les dix du catalogue. Pas de plafond publié : assiette déplafonnée.
-      COTISATION 2011 : 18.90 % dont 4.30 % salarié et 14.60 % employeur
-      (« les taux de cotisations augmentent annuellement », page des taux
-      de la CPSWF).
+      COTISATION 2011 : 12,90 % pour la retraite, dont
+      4,30 % salarié et 8,60 % employeur ; la caisse publie
+      18,90 %, dont 14,60 % à l'employeur, qui comptent six
+      points de prestations familiales (« les taux de cotisations
+      augmentent annuellement », page des taux de la CPSWF ; Cour des
+      comptes, S2022-2223, 2022, p. 33).
   - debut: 2012
     fin: 2012
     type_calcul: annuites
@@ -171,8 +192,8 @@ periodes:
     taux_plein: 0.585
     salaire_reference: 10_meilleures_annees
     assiette: deplafonnee
-    taux_cotisation_retraite: 0.1980
-    part_salariale: 0.2323
+    taux_cotisation_retraite: 0.1380
+    part_salariale: 0.3333
     decote_par_trimestre: null
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
@@ -190,9 +211,12 @@ periodes:
       60 ans », « avoir cotisé à la caisse pendant au moins 15 ans » ;
       aucune décote lue. Les quinze meilleures années sont écrites comme
       les dix du catalogue. Pas de plafond publié : assiette déplafonnée.
-      COTISATION 2012 : 19.80 % dont 4.60 % salarié et 15.20 % employeur
-      (« les taux de cotisations augmentent annuellement », page des taux
-      de la CPSWF).
+      COTISATION 2012 : 13,80 % pour la retraite, dont
+      4,60 % salarié et 9,20 % employeur ; la caisse publie
+      19,80 %, dont 15,20 % à l'employeur, qui comptent six
+      points de prestations familiales (« les taux de cotisations
+      augmentent annuellement », page des taux de la CPSWF ; Cour des
+      comptes, S2022-2223, 2022, p. 33).
   - debut: 2013
     fin: 2013
     type_calcul: annuites
@@ -202,8 +226,8 @@ periodes:
     taux_plein: 0.585
     salaire_reference: 10_meilleures_annees
     assiette: deplafonnee
-    taux_cotisation_retraite: 0.2070
-    part_salariale: 0.2367
+    taux_cotisation_retraite: 0.1470
+    part_salariale: 0.3333
     decote_par_trimestre: null
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
@@ -221,9 +245,12 @@ periodes:
       60 ans », « avoir cotisé à la caisse pendant au moins 15 ans » ;
       aucune décote lue. Les quinze meilleures années sont écrites comme
       les dix du catalogue. Pas de plafond publié : assiette déplafonnée.
-      COTISATION 2013 : 20.70 % dont 4.90 % salarié et 15.80 % employeur
-      (« les taux de cotisations augmentent annuellement », page des taux
-      de la CPSWF).
+      COTISATION 2013 : 14,70 % pour la retraite, dont
+      4,90 % salarié et 9,80 % employeur ; la caisse publie
+      20,70 %, dont 15,80 % à l'employeur, qui comptent six
+      points de prestations familiales (« les taux de cotisations
+      augmentent annuellement », page des taux de la CPSWF ; Cour des
+      comptes, S2022-2223, 2022, p. 33).
   - debut: 2014
     fin: 2014
     type_calcul: annuites
@@ -233,8 +260,8 @@ periodes:
     taux_plein: 0.585
     salaire_reference: 10_meilleures_annees
     assiette: deplafonnee
-    taux_cotisation_retraite: 0.2160
-    part_salariale: 0.2407
+    taux_cotisation_retraite: 0.1560
+    part_salariale: 0.3333
     decote_par_trimestre: null
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
@@ -252,9 +279,12 @@ periodes:
       60 ans », « avoir cotisé à la caisse pendant au moins 15 ans » ;
       aucune décote lue. Les quinze meilleures années sont écrites comme
       les dix du catalogue. Pas de plafond publié : assiette déplafonnée.
-      COTISATION 2014 : 21.60 % dont 5.20 % salarié et 16.40 % employeur
-      (« les taux de cotisations augmentent annuellement », page des taux
-      de la CPSWF).
+      COTISATION 2014 : 15,60 % pour la retraite, dont
+      5,20 % salarié et 10,40 % employeur ; la caisse publie
+      21,60 %, dont 16,40 % à l'employeur, qui comptent six
+      points de prestations familiales (« les taux de cotisations
+      augmentent annuellement », page des taux de la CPSWF ; Cour des
+      comptes, S2022-2223, 2022, p. 33).
   - debut: 2015
     fin: 2015
     type_calcul: annuites
@@ -264,8 +294,8 @@ periodes:
     taux_plein: 0.585
     salaire_reference: 10_meilleures_annees
     assiette: deplafonnee
-    taux_cotisation_retraite: 0.2250
-    part_salariale: 0.2444
+    taux_cotisation_retraite: 0.1650
+    part_salariale: 0.3333
     decote_par_trimestre: null
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
@@ -283,9 +313,12 @@ periodes:
       60 ans », « avoir cotisé à la caisse pendant au moins 15 ans » ;
       aucune décote lue. Les quinze meilleures années sont écrites comme
       les dix du catalogue. Pas de plafond publié : assiette déplafonnée.
-      COTISATION 2015 : 22.50 % dont 5.50 % salarié et 17.00 % employeur
-      (« les taux de cotisations augmentent annuellement », page des taux
-      de la CPSWF).
+      COTISATION 2015 : 16,50 % pour la retraite, dont
+      5,50 % salarié et 11,00 % employeur ; la caisse publie
+      22,50 %, dont 17,00 % à l'employeur, qui comptent six
+      points de prestations familiales (« les taux de cotisations
+      augmentent annuellement », page des taux de la CPSWF ; Cour des
+      comptes, S2022-2223, 2022, p. 33).
   - debut: 2016
     fin: 2016
     type_calcul: annuites
@@ -295,8 +328,8 @@ periodes:
     taux_plein: 0.585
     salaire_reference: 10_meilleures_annees
     assiette: deplafonnee
-    taux_cotisation_retraite: 0.2340
-    part_salariale: 0.2479
+    taux_cotisation_retraite: 0.1740
+    part_salariale: 0.3333
     decote_par_trimestre: null
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
@@ -314,9 +347,12 @@ periodes:
       60 ans », « avoir cotisé à la caisse pendant au moins 15 ans » ;
       aucune décote lue. Les quinze meilleures années sont écrites comme
       les dix du catalogue. Pas de plafond publié : assiette déplafonnée.
-      COTISATION 2016 : 23.40 % dont 5.80 % salarié et 17.60 % employeur
-      (« les taux de cotisations augmentent annuellement », page des taux
-      de la CPSWF).
+      COTISATION 2016 : 17,40 % pour la retraite, dont
+      5,80 % salarié et 11,60 % employeur ; la caisse publie
+      23,40 %, dont 17,60 % à l'employeur, qui comptent six
+      points de prestations familiales (« les taux de cotisations
+      augmentent annuellement », page des taux de la CPSWF ; Cour des
+      comptes, S2022-2223, 2022, p. 33).
   - debut: 2017
     fin: 2017
     type_calcul: annuites
@@ -326,8 +362,8 @@ periodes:
     taux_plein: 0.585
     salaire_reference: 10_meilleures_annees
     assiette: deplafonnee
-    taux_cotisation_retraite: 0.2430
-    part_salariale: 0.2510
+    taux_cotisation_retraite: 0.1830
+    part_salariale: 0.3333
     decote_par_trimestre: null
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
@@ -345,9 +381,12 @@ periodes:
       60 ans », « avoir cotisé à la caisse pendant au moins 15 ans » ;
       aucune décote lue. Les quinze meilleures années sont écrites comme
       les dix du catalogue. Pas de plafond publié : assiette déplafonnée.
-      COTISATION 2017 : 24.30 % dont 6.10 % salarié et 18.20 % employeur
-      (« les taux de cotisations augmentent annuellement », page des taux
-      de la CPSWF).
+      COTISATION 2017 : 18,30 % pour la retraite, dont
+      6,10 % salarié et 12,20 % employeur ; la caisse publie
+      24,30 %, dont 18,20 % à l'employeur, qui comptent six
+      points de prestations familiales (« les taux de cotisations
+      augmentent annuellement », page des taux de la CPSWF ; Cour des
+      comptes, S2022-2223, 2022, p. 33).
   - debut: 2018
     fin: 2018
     type_calcul: annuites
@@ -357,8 +396,8 @@ periodes:
     taux_plein: 0.585
     salaire_reference: 10_meilleures_annees
     assiette: deplafonnee
-    taux_cotisation_retraite: 0.2520
-    part_salariale: 0.2540
+    taux_cotisation_retraite: 0.1920
+    part_salariale: 0.3333
     decote_par_trimestre: null
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
@@ -376,9 +415,12 @@ periodes:
       60 ans », « avoir cotisé à la caisse pendant au moins 15 ans » ;
       aucune décote lue. Les quinze meilleures années sont écrites comme
       les dix du catalogue. Pas de plafond publié : assiette déplafonnée.
-      COTISATION 2018 : 25.20 % dont 6.40 % salarié et 18.80 % employeur
-      (« les taux de cotisations augmentent annuellement », page des taux
-      de la CPSWF).
+      COTISATION 2018 : 19,20 % pour la retraite, dont
+      6,40 % salarié et 12,80 % employeur ; la caisse publie
+      25,20 %, dont 18,80 % à l'employeur, qui comptent six
+      points de prestations familiales (« les taux de cotisations
+      augmentent annuellement », page des taux de la CPSWF ; Cour des
+      comptes, S2022-2223, 2022, p. 33).
   - debut: 2019
     fin: 2019
     type_calcul: annuites
@@ -388,8 +430,8 @@ periodes:
     taux_plein: 0.585
     salaire_reference: 10_meilleures_annees
     assiette: deplafonnee
-    taux_cotisation_retraite: 0.2610
-    part_salariale: 0.2567
+    taux_cotisation_retraite: 0.2010
+    part_salariale: 0.3333
     decote_par_trimestre: null
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
@@ -407,9 +449,12 @@ periodes:
       60 ans », « avoir cotisé à la caisse pendant au moins 15 ans » ;
       aucune décote lue. Les quinze meilleures années sont écrites comme
       les dix du catalogue. Pas de plafond publié : assiette déplafonnée.
-      COTISATION 2019 : 26.10 % dont 6.70 % salarié et 19.40 % employeur
-      (« les taux de cotisations augmentent annuellement », page des taux
-      de la CPSWF).
+      COTISATION 2019 : 20,10 % pour la retraite, dont
+      6,70 % salarié et 13,40 % employeur ; la caisse publie
+      26,10 %, dont 19,40 % à l'employeur, qui comptent six
+      points de prestations familiales (« les taux de cotisations
+      augmentent annuellement », page des taux de la CPSWF ; Cour des
+      comptes, S2022-2223, 2022, p. 33).
   - debut: 2020
     fin: null
     type_calcul: annuites
@@ -419,8 +464,8 @@ periodes:
     taux_plein: 0.585
     salaire_reference: 10_meilleures_annees
     assiette: deplafonnee
-    taux_cotisation_retraite: 0.2700
-    part_salariale: 0.2593
+    taux_cotisation_retraite: 0.2100
+    part_salariale: 0.3333
     decote_par_trimestre: null
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
@@ -438,5 +483,11 @@ periodes:
       60 ans », « avoir cotisé à la caisse pendant au moins 15 ans » ;
       aucune décote lue. Les quinze meilleures années sont écrites comme
       les dix du catalogue. Pas de plafond publié : assiette déplafonnée.
-      COTISATION : « 01/01/2020 le taux sera de 27 % part salariale 7 % et
-      part patronale 20 % », dernier taux publié, reconduit.
+      COTISATION : « la contribution est de 21 % des salaires, supporté
+      aux deux tiers par les employeurs et un tiers pour les salariés »
+      (Cour des comptes, S2022-2223, 2022, p. 33), soit 7 % pour la part
+      salariale et 14 % pour la part patronale (IEOM, rapport 2021) ; la
+      caisse publie 27 %, « part salariale 7 % et part patronale 20 % »,
+      dont six points de prestations familiales, « alimenté par des
+      cotisations employeurs de 6 % » (Cour des comptes, même page).
+      Dernier taux, reconduit.

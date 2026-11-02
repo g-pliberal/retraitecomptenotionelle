@@ -294,5 +294,49 @@ ircec_racd,1964,2100,0.0881,estimee
 ircec_racl,1962,2100,0.0600,estimee
 gerants_debits_tabac,1963,2100,0.4900,estimee
 cps_polynesie_tranche_b,1995,2100,0.1150,estimee
-cafat_nouvelle_caledonie,1958,2100,0.1000,estimee
+# CAFAT (Nouvelle-Calédonie) : le rendement que le conseil d'administration
+# fixe chaque année, en mars, avec la valeur du point et la valeur de
+# référence, « le rapport entre la valeur de service et la valeur de
+# référence » (Chambre territoriale des comptes de Nouvelle-Calédonie,
+# « CAFAT, exercices 2020 et suivants », 2022, p. 62). Toute la cotisation
+# achète des points, sans taux d'appel. 2015 à 2021 : valeur de service et
+# valeur de référence de l'annexe 7 du rapport (p. 102) ; 2022 à 2026 :
+# celles des fiches « Les paramètres » de la CAFAT ; le rendement de 2026,
+# 9,00 %, reconduit au-delà. Les valeurs de service de l'annexe sont, en 2017
+# et 2018, la moyenne de l'année des valeurs du point que la caisse fixe au
+# 1er avril (239,62 et 242,62 F CFP, fiches des paramètres), d'où un
+# rendement plus bas de 0,01 et 0,03 point ; le rapport écrit 9,95 % pour
+# 2019 (p. 63), où l'annexe donne 9,97 %. 2001, 2007 et 2008 : avis
+# n° 12/2008 du conseil économique et social de Nouvelle-Calédonie
+# (p. 4), « politique de baisse progressive du taux de rendement », que
+# la chambre contredit (« 12 % en 2008 », « plus de 25 % en 2000 ») :
+# moyenne.
+# CALCULS DU DÉPÔT, estimés : 2002 à 2006, la ligne droite entre 12,45 % et
+# 10,98 % ; 2009 à 2014, les 10,35 % de 2008, que la chambre donne encore en
+# 2015, sans texte pour les années entre ; avant 2001, rien n'est publié, et
+# la valeur de 2001 est prolongée. La ligne portait 10 % sur toute la
+# période, déduits de la cotisation et du barème de 2026 (action 145, note
+# du 2 novembre 2026, recherches complémentaires).
+cafat_nouvelle_caledonie,1958,2000,0.1245,estimee
+cafat_nouvelle_caledonie,2001,2001,0.1245,moyenne
+cafat_nouvelle_caledonie,2002,2002,0.12205,estimee
+cafat_nouvelle_caledonie,2003,2003,0.1196,estimee
+cafat_nouvelle_caledonie,2004,2004,0.11715,estimee
+cafat_nouvelle_caledonie,2005,2005,0.1147,estimee
+cafat_nouvelle_caledonie,2006,2006,0.11225,estimee
+cafat_nouvelle_caledonie,2007,2007,0.1098,moyenne
+cafat_nouvelle_caledonie,2008,2008,0.1035,moyenne
+cafat_nouvelle_caledonie,2009,2014,0.1035,estimee
+cafat_nouvelle_caledonie,2015,2015,0.1035,haute
+cafat_nouvelle_caledonie,2016,2016,0.1025,haute
+cafat_nouvelle_caledonie,2017,2017,0.1015,haute
+cafat_nouvelle_caledonie,2018,2018,0.1005,haute
+cafat_nouvelle_caledonie,2019,2019,0.0997,haute
+cafat_nouvelle_caledonie,2020,2020,0.0985,haute
+cafat_nouvelle_caledonie,2021,2021,0.0975,haute
+cafat_nouvelle_caledonie,2022,2022,0.0965,haute
+cafat_nouvelle_caledonie,2023,2023,0.0955,haute
+cafat_nouvelle_caledonie,2024,2024,0.0945,haute
+cafat_nouvelle_caledonie,2025,2025,0.0935,haute
+cafat_nouvelle_caledonie,2026,2100,0.0900,haute
 organic_conjoints_batiment,1973,2100,0.0000,moyenne
