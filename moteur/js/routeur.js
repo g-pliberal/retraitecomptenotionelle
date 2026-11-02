@@ -265,15 +265,15 @@ function passerALaNouvelleAdresse(ancienne) {
 // vaut dire ce qui prend du temps que laisser une jauge tourner sans motif.
 const MESSAGES_ATTENTE = {
   // L'accueil ne calcule rien : annoncer un « calcul en cours » y serait faux.
-  // Partager non plus, depuis qu'elle lit le bilan figé du paquet, ni les trois
-  // pages qui agrègent (`PAGES_AGREGEES`), depuis le 11 octobre 2026 : elles
-  // lisent la table que la fabrique a figée (`agregats.js`), et n'attendent
-  // que le chargement du moteur.
+  // Partager non plus, depuis qu'elle lit le bilan figé du paquet.
   "/": "Ouverture…",
   "/partager": "Ouverture…",
-  "/cas-types": "Ouverture…",
-  "/cout": "Ouverture…",
-  "/avantages": "Ouverture…",
+  // Les trois pages qui agrègent (`PAGES_AGREGEES`) non plus, depuis le
+  // 11 octobre 2026 : elles lisent la table que la fabrique a figée
+  // (`agregats.js`), et n'attendent que de la charger.
+  "/cas-types": "Chargement des chiffres…",
+  "/cout": "Chargement des chiffres…",
+  "/avantages": "Chargement des chiffres…",
   "/risque": "Lecture des comptes du système de retraite, observés puis "
     + "projetés jusqu'en 2070…",
 };

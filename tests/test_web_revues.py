@@ -1882,21 +1882,22 @@ def _messages_d_attente() -> dict[str, str]:
 
 
 @pytest.mark.parametrize("chemin", list(PAGES_AGREGEES))
-def test_l_attente_d_une_page_agregee_n_annonce_aucun_calcul(chemin):
+def test_l_attente_d_une_page_agregee_annonce_le_chargement_des_chiffres(chemin):
     """Une page qui agrège ne calcule rien chez le lecteur : son écran
-    d'attente ne l'annonce pas.
+    d'attente dit qu'elle charge ses chiffres, faits à l'avance.
 
     Depuis le 11 octobre 2026 (action 150), Coût, Carrières types et Droits non
     cotisés lisent la table que la fabrique a figée (``agregats.js``) ; leur
     attente annonçait encore les calculs d'avant, « Calcul des 12 cas types sur
     28 générations… » pour Coût. Le « Calcul en cours… » que le routeur affiche
-    à défaut d'un message serait aussi faux.
+    à défaut d'un message serait aussi faux. Le message est celui que le
+    propriétaire a choisi, le 2 novembre 2026.
     """
     messages = _messages_d_attente()
     assert chemin in messages, (
         f"{chemin} : sans message, le routeur annoncerait « Calcul en cours… »")
-    assert "calcul" not in messages[chemin].lower(), (
-        f"{chemin} annonce un calcul : « {messages[chemin]} »")
+    assert messages[chemin] == "Chargement des chiffres…", (
+        f"{chemin} annonce « {messages[chemin]} »")
 
 
 @pytest.mark.parametrize("chemin", list(PAGES_AGREGEES))
