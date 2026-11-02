@@ -41,6 +41,18 @@ de la proposition, qui s'écrit en couche (`data/CLAUDE.md`).
   étape dont rien n'a bougé ne se relance pas, et la suite ne revérifie pas
   ce qu'elle vient de fabriquer (`.cache/fabrique.json`, que
   `FABRIQUE_SANS_MEMOIRE=1` ignore) ; GitHub, sans mémoire, refait tout.
+- **Ce qui reste en Python** (note de décision 0006) : la fabrique des
+  données — acquérir, certifier, lire le YAML, fabriquer le paquet —, ce qui
+  calcule une population, un agrégat ou une étude sous les réglages de
+  référence, ce qui fait tourner node, la carte des règles et ses contrats,
+  les tests et l'outillage ; et, dans chaque jumeau du moteur, ses chargeurs
+  du paquet et les types que le pont échange (`Parametres`, `Carriere`,
+  `AnneeCarriere`, `DateMois`…). Les accesseurs qui lisent le YAML pour la
+  fabrique, le coût ou les études restent ici. Un calcul agrégé que le coût
+  fait et que le site refait ne s'écrit qu'en JavaScript si le lecteur peut
+  en changer le résultat — le coût le demande alors au pont, en une fois
+  pour toutes ses années et ses cohortes —, et qu'ici sinon, son résultat
+  figé au paquet ; le propriétaire tranche chaque paire à sa relecture.
 - **Les temps tiennent à des mémoires** qu'il ne faut pas contourner :
   `charger_yaml` (qui rend une copie), `charger_serie_annuelle` et la table
   des quotients de mortalité, indexées sur la signature du fichier, partagées
@@ -94,6 +106,16 @@ de la proposition, qui s'écrit en couche (`data/CLAUDE.md`).
   par `pont.droit` (action 161). Le
   coût et ses confrontations (`test_cout.py`, `test_facteurs_depense.py`,
   `test_affirmations.py` : huit minutes sans mémoire) restent à GitHub.
+- **Un retrait de jumeau** (action 161) : la méthode des notes de décision
+  0003 et 0005, de `python scripts/jumeaux.py <nom>` aux dépendants branchés
+  sur le portage ; puis, dans un commit à lui, le fichier coupé (note 0006) :
+  les règles partent ; les chargeurs passent sous `donnees/`, sans méthode de
+  règle ; les types du pont restent ; une étude qui appelait une fonction du
+  moteur hors du simulateur la demande au pont, par lot, et celle qui en
+  remplaçait une le temps d'une variante l'a d'abord écrite en données, une
+  couche ou un paramètre de la demande. Le paquet refait
+  (`python scripts/construire_donnees.py`) reste identique à l'octet, comme
+  les témoins et les agrégats.
 - **Un défaut corrigé dans une règle** : la classe, pas le cas. Avant le
   commit, chercher la même erreur dans les autres régimes et les autres
   générations, et la corriger avec lui ou l'inscrire à la feuille de route

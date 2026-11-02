@@ -11,7 +11,13 @@ suit dans le même commit, au bit près des témoins (`src/CLAUDE.md`), jusqu'au
 retrait de la paire (action 161, `python scripts/jumeaux.py <nom>`). Le
 portage ne calcule que ce que le simulateur calcule, une carrière : le coût
 n'y est pas, et Coût, Carrières types et Droits non cotisés lisent ce que le
-Python en a fabriqué (`agregats.js`, `docs/architecture.md`, § 7.1).
+Python en a fabriqué (`agregats.js`, `docs/architecture.md`, § 7.1). Un calcul
+agrégé que le coût fait aussi ne s'écrit ici que si le lecteur peut en
+changer le résultat, et le coût le demande alors au pont, par lot ; sinon il
+se fabrique en Python, et le site le lit figé au paquet (note de décision
+0006). Le portage ne lit pas le YAML : le paquet qu'il lit, le Python le
+fabrique par ses chargeurs, qui restent en Python au retrait de leur jumeau,
+comme les types que le pont échange.
 
 - **Une adresse par page** (action 174, note de décision 0004) : l'accueil est
   la racine du site, `index.html` ; chaque autre page est un dossier de son

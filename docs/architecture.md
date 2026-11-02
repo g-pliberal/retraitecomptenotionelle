@@ -50,7 +50,9 @@ carrières commencées en 1930 aux départs de 2070.
    fait tourner par node. Les étapes s'échangent des données décrites par un
    schéma, et les témoins gardent leurs chiffres. Tant qu'une étape a encore
    ses deux jumeaux, le JavaScript fait foi pour elle, et le Python le suit,
-   au bit près (§ 7.1).
+   au bit près (§ 7.1). Le Python ne disparaît pas : il garde, du moteur, les
+   chargeurs dont la fabrique bâtit le paquet et les types que le pont
+   échange, et retirer un jumeau n'en ôte que les règles (note 0006).
 5. **Le temps est explicite.** Chaque version d'une règle dit à quelles
    situations elle s'applique, par des bornes sur des dates nommées. Les
    versions d'une règle forment un partage, sans trou ni chevauchement qui ne
@@ -109,7 +111,8 @@ vivent à côté du noyau : on les allonge, elles aussi, sans décision.
 | savoir où l'on en est, ce qui ne va pas encore, ce qui reste à faire | le tableau de bord, fabriqué (§ 9.1) ; la feuille de route n'y ajoute que ce que la carte ne sait pas dire |
 | une source nouvelle : un texte, un exemple, une série, une remarque | le registre des sources, où elle entre toujours ; ce qu'elle révèle, déclaré là où il va (§ 9.2) |
 | changer le texte du site | le site, en JavaScript seulement |
-| retirer un doublon entre le Python et le JavaScript | une paire, ou un sous-ensemble cohérent de paires, par étape, par la méthode de la note de décision 0003 (note 0005), en partant de `python scripts/jumeaux.py <nom>` ; les témoins restent identiques |
+| retirer un doublon entre le Python et le JavaScript | une paire, ou un sous-ensemble cohérent de paires, par étape, par la méthode de la note de décision 0003 (notes 0005 et 0006), en partant de `python scripts/jumeaux.py <nom>` : seules les règles partent, les chargeurs passent sous `donnees/`, les types du pont restent ; les témoins et le paquet restent identiques |
+| un calcul agrégé que le coût fait et que le site refait | le JavaScript seul si le lecteur peut en changer le résultat, que le coût demande au pont par lot ; sinon le Python seul, son résultat figé au paquet (§ 7.1, note 0006) |
 
 ---
 
@@ -1119,6 +1122,29 @@ structure, étape par étape et fonction par fonction, avec les mêmes noms :
 recopier une règle reste un geste local. Les versions, les
 relations et les paramètres sont des données, écrites une fois et lues par
 les deux moteurs.
+
+**Ce qui reste en Python** (note de décision 0006). Un jumeau du moteur
+n'est pas fait que de règles : il porte les chargeurs dont la fabrique bâtit
+le paquet — les tables du droit en vigueur de `scenarios/actuel.py`,
+`RevalorisationsPensions`, `_charger_ages`… — et les types que le pont
+échange — `Parametres`, `Carriere`, `AnneeCarriere`, `DateMois`, les
+énumérations des réglages —, dans lesquels le coût et les études décrivent ce
+qu'ils confient au portage. Son retrait coupe le fichier : les règles ne
+restent qu'en JavaScript ; les chargeurs passent sous `donnees/`, sans
+méthode de règle ; les types restent, un exemplaire par langage, puisque
+chacun les lit ; une étude qui appelait une fonction du moteur hors du
+simulateur la demande au pont, par lot, et celle qui en remplace une le temps
+d'une variante l'écrit d'abord en données, une couche ou un paramètre de la
+demande ; `moteur/donnees.json` reste identique à l'octet, comme les
+témoins. Les accesseurs qui lisent le YAML pour la fabrique, le coût ou les
+études restent en Python ; seuls ceux du paquet n'ont qu'un exemplaire, dans
+le portage. Un calcul agrégé que le coût fait et que le site refait — la
+garantie, la revalorisation servie, l'impôt sur le revenu, la restitution,
+les variantes des comptes — ne s'écrit qu'en JavaScript si le lecteur peut en
+changer le résultat, par sa carrière ou un réglage, et le coût le demande
+alors au pont en une fois pour toutes ses années et ses cohortes ; sinon, il
+ne s'écrit qu'en Python, et le site lit son résultat figé au paquet. Le
+propriétaire tranche chaque paire à sa relecture.
 
 **Le coût n'a pas de jumeau.** Le JavaScript ne copie que ce qui dépend de
 la saisie du lecteur : une carrière, ses droits et sa pension, sous les

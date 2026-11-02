@@ -19,7 +19,7 @@ page ou une couche de plus, et ce test demande à la carte de suivre.
 | Zone | Où | Ce qu'on y trouve |
 |---|---|---|
 | Données | `data/` | Ce que le modèle sait du droit et de l'économie : les fiches de règles, les régimes, les séries, les scénarios. En YAML et en CSV, chaque valeur rattachée à sa source. Consignes : `data/CLAUDE.md`. |
-| Modèle | `src/` | Le coût, que seule la fabrique calcule, en Python, et les jumeaux Python du moteur d'une carrière, qui suivent le JavaScript au bit près jusqu'à leur retrait. Consignes : `src/CLAUDE.md`. |
+| Modèle | `src/` | Le coût, que seule la fabrique calcule, en Python ; ce que le Python garde du moteur, les chargeurs du paquet et les types du pont (note de décision 0006) ; et les jumeaux Python des règles du moteur d'une carrière, qui suivent le JavaScript au bit près jusqu'à leur retrait. Consignes : `src/CLAUDE.md`. |
 | Site | `index.html` et un dossier par page (`cout/`…), `moteur/` | Les neuf pages toutes faites, le moteur d'une carrière en JavaScript, qui fait foi, le texte des pages, la feuille de style : des fichiers servis tels quels, sans rien à construire. Consignes : `moteur/CLAUDE.md`. |
 | Atelier | `scripts/`, `tests/`, `.github/` | Ce qui fabrique et vérifie : le paquet de données, les témoins, les tests, la publication. |
 | Hors du dépôt | | Les sources officielles, les visiteurs du site, et les sessions Claude qui font le travail. |
@@ -341,7 +341,9 @@ officiels, sont dans la partie 1 du tableau de bord.
   dates, et relance le calcul à chacun.
 - **Jumeaux** : les deux exemplaires, JavaScript et Python, d'une même étape
   du moteur, sous les mêmes noms ; le JavaScript fait foi, et le Python le
-  suit jusqu'au retrait de la paire (action 161).
+  suit jusqu'au retrait de la paire (action 161), qui n'en ôte que les
+  règles : les chargeurs du paquet et les types du pont restent en Python
+  (note de décision 0006).
 - **Paquet** : `moteur/donnees.json`, toutes les données que le site charge,
   coût précalculé compris.
 - **Témoin** : un résultat figé, simulation ou page, que le moteur
