@@ -7282,14 +7282,16 @@ leur étape, la 6.
 
 ### 176. Le portail statistique de la Cnav, exploité en entier : chaque série, recueil et étude à sa place dans le dépôt — `en cours`
 
-**Reprise, au 29 octobre 2026.** Rien n'est fait. Le jour de l'ouverture, le
-portail ne servait qu'une page de maintenance (« Le site est momentanément
-indisponible ») : par quoi commencer, vérifier qu'il répond de nouveau, avec
-l'en-tête des récupérateurs du dépôt et rien d'autre ; tant qu'il ne répond
-pas, l'action attend, et la session en prend une autre. Puis l'étape 1,
-l'inventaire, dont les autres dépendent. xlrd, la bibliothèque de l'Excel 97
-que le propriétaire a admise, est installée (`.[dev]`) : le premier
-récupérateur qui lit un `.xls` s'en sert. Pas encore de note.
+**Reprise, au 2 novembre 2026.** Rien n'est fait : le portail ne sert
+toujours que sa page de maintenance (503, « Le site est momentanément
+indisponible »), le 29 octobre comme le 2 novembre, à l'en-tête des
+récupérateurs du dépôt, seul essayé, sur sa racine, `robots.txt`,
+`/wp-json/wp/v2/`, ses plans du site et jusqu'au classeur des nouveaux
+retraités, sous `/app/uploads/`. Question au propriétaire, le 2 novembre :
+s'ouvre-t-il dans son navigateur ? Si oui, c'est au dépôt qu'il se ferme, et
+attendre ne sert à rien. Sinon, par quoi commencer : vérifier qu'il répond,
+de même, puis l'étape 1, l'inventaire ; xlrd lit les `.xls`. Pas encore de
+note.
 
 **D'où elle vient.** Le 29 octobre 2026, à l'ouverture de l'action 175, sur la
 base de législation de la Cnav, le propriétaire : « toutes les circulaires, et

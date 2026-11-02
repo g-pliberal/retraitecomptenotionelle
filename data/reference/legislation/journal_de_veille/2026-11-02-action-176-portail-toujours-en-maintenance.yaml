@@ -1,0 +1,19 @@
+date: "2026-11-02"
+session: "action 176 : le portail statistique de la Cnav, toujours en maintenance"
+consulte: >-
+  Aucune source de droit : la session ne touche à aucune règle du scénario 1.
+  Le portail statistique de la Cnav
+  (www.statistiques-recherche.lassuranceretraite.fr), à l'en-tête des
+  récupérateurs du dépôt et à lui seul : sa racine, robots.txt,
+  /wp-json/wp/v2/, sitemap.xml, wp-sitemap.xml, et le classeur des nouveaux
+  retraités des séries labellisées, sous /app/uploads/2026/02/.
+trouve: >-
+  Chacune de ces adresses ne rend que la page de maintenance du portail
+  (503, « Le site est momentanément indisponible. Des opérations de
+  maintenance sont en cours. »), comme le 29 octobre 2026. Rien n'a été
+  relevé ni téléchargé.
+reste: >-
+  L'action 176 attend que le portail réponde, puis s'ouvre sur son étape 1,
+  l'inventaire. Question posée au propriétaire le 2 novembre : le portail
+  s'ouvre-t-il dans son navigateur ? Si oui, c'est au dépôt qu'il se ferme,
+  et attendre ne sert à rien.
