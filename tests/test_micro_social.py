@@ -255,6 +255,30 @@ def test_le_modele_valide_les_trimestres_de_la_grille_de_la_compensation(macro):
                     assert (au_seuil, dessous) == (n, n - 1), (annee, activite, n)
 
 
+#: Le premier trimestre, en 2014 et en 2015, de qui ne relève pas de la
+#: maladie du RSI, ou en relève mais touche le RSA socle : son forfait ne va
+#: pas tout entier à ce risque, et valide plus tôt (circulaire RSI
+#: n° 2016/010, point 1). La même grille : le « Cas général » de 2014, à
+#: 150 heures, et en 2015 « si non prestataires santé » ; aux recettes
+#: libérales de 2015, rien « sans déclenchement de la compensation ».
+PREMIER_TRIMESTRE_HORS_DE_LA_MALADIE_DU_RSI = {
+    2014: {"vente": 4930, "services": 2859, "liberal": 2166},
+    2015: {"vente": 6636, "services": 3854},
+}
+
+
+def test_hors_de_la_maladie_du_rsi_le_premier_trimestre_est_une_limite(macro):
+    """Le modèle, qui ne sait pas de quelle caisse l'assuré relevait pour la
+    maladie, sert celui qui relève du RSI : à ces seuils, il ne valide rien
+    (`docs/limites/3-systeme-actuel.md`, « micro-entrepreneur de 2014 et de
+    2015 »). Ce test rougit le jour où il saura l'autre."""
+    for annee, par_activite in PREMIER_TRIMESTRE_HORS_DE_LA_MALADIE_DU_RSI.items():
+        for activite, seuil in par_activite.items():
+            assert seuil < GRILLE_DE_LA_COMPENSATION[annee][activite][0], (annee, activite)
+            assert _ligne(macro, "micro_entrepreneur", activite, activite,
+                          seuil + 2, annee).trimestres_valides == 0, (annee, activite)
+
+
 #: Le chiffre d'affaires qui valide un, deux, trois et quatre trimestres, de
 #: 2017 à 2019 : le barème de la Cnav « Chiffre d'affaire des
 #: micro-entrepreneurs validant un trimestre », source Urssaf Caisse nationale,

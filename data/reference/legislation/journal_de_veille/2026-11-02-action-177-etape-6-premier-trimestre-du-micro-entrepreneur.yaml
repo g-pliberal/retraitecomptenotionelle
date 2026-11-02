@@ -1,0 +1,36 @@
+date: "2026-11-02"
+session: "action 177, étape 6 : le premier trimestre du micro-entrepreneur en 2014 et en 2015"
+consulte: >-
+  `python scripts/veille_droit.py` : trois fiches à relire, aucune de l'étape. L'index
+  LEGI récupéré et mis à jour (incréments jusqu'au 2 novembre 2026), puis
+  `python scripts/textes.py --inscrire` : aucune rédaction nouvelle. Dans l'index LEGI,
+  D. 131-6-4 (LEGIARTI000022402023, jusqu'au 1er janvier 2015 : 200 heures ;
+  LEGIARTI000030034478, en 2015 : « calculé sur la base de 300 heures ») et D. 131-6-5
+  (LEGIARTI000023565887, du 11 février 2011 au 1er janvier 2016 : le solde du forfait à
+  la maladie, aux indemnités journalières, à l'invalidité-décès, à la complémentaire,
+  aux allocations familiales, puis à la vieillesse de base). La base de législation de
+  la Cnav : l'« Info-doc RSI » « Micro-entrepreneurs - Validation de trimestres
+  retraite », mis à jour le 16 avril 2019, que joint le barème « Chiffre d'affaire des
+  micro-entrepreneurs validant un trimestre » ; les circulaires RSI n° 2015/007 du
+  9 mars 2015 (point 2) et n° 2016/010 du 15 juin 2016 (point 1).
+trouve: >-
+  La grille de la caisse et ses circulaires ne divergent pas. La circulaire n° 2016/010
+  pose deux seuils du premier trimestre, « applicable en 2014 et 2015 » : 200 heures
+  pour l'auto-entrepreneur qui relève de la maladie du RSI, dont le forfait va tout
+  entier à ce risque, 150 pour celui qui n'en relève pas ou touche le RSA socle. La
+  circulaire n° 2015/007 dit seulement que la compensation, à 300 heures en 2015,
+  « permettra ainsi la validation de deux trimestres d'assurance », sans rien dire en
+  deçà. La grille donne, pour 2015, le premier trimestre à « 9 621 € si prestataires
+  santé », « 6 636 € si non prestataires santé » de ventes, 5 592 et 3 854 € de
+  services, et aucun aux recettes libérales « sans déclenchement de la compensation ».
+  Le modèle, qui ne validait rien sous 300 heures en 2015, prend ses lignes de 2015
+  des ventes et des services, pour qui relève de la maladie du RSI, dans les deux
+  moteurs (`micro_social.yaml`, `seuils`) ; l'assuré hors de la maladie du RSI, que la
+  saisie ne dit pas, est une limite (« micro-entrepreneur de 2014 et de 2015 »). Aucun
+  témoin ne bouge : ces seuils sont sous le plancher de la saisie.
+reste: >-
+  Au propriétaire : une saisie de plus pour l'assuré hors de la maladie du RSI en 2014
+  et en 2015 (proposé : non). En 2015, l'année dont le forfait seul valide le premier
+  trimestre ne porte rien au revenu annuel moyen (fiche `micro_social_abattement`). Les
+  deux circulaires restent `a_lire` au registre des références de la Cnav, que l'étape 6
+  de l'action 175 rangera.

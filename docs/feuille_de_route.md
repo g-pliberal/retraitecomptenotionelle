@@ -7362,16 +7362,16 @@ avec son test. Le modèle et le site gardent PyYAML seul.
 
 ### 177. Les écarts que les barèmes de la Cnav ont trouvés au modèle : chacun corrigé dans les deux moteurs, ou sa limite dite — `en cours`
 
-**Reprise, au 31 octobre 2026.** Les étapes 1 à 5 sont faites : le RCO et le
-NRCO, l'assiette minimale, Mayotte, les indépendants des DOM, puis l'assiette
-d'avant 2007, dont les trois exceptions restent en limite
-(`177/2026-10-31-etape-5-assiette-d-avant-2007.md`). Par quoi commencer :
-l'étape 6, le premier trimestre du micro-entrepreneur en 2014 et en 2015, à
-trancher d'abord (`ECARTS_A_LA_GRILLE`). L'étape 7, la saisie du département,
-revient à la session du site ; les étapes 8, les non-salariés de Mayotte, et
-9, l'assiette du RCO des artisans, au modèle. Un écart par commit, le test vu
-rouge d'abord ; des règles du scénario 1, sur Opus, après
-`python scripts/veille_droit.py`.
+**Reprise, au 2 novembre 2026.** Les étapes 1 à 6 sont faites, la 6 : en
+2015, le premier trimestre du micro-entrepreneur aux seuils de la grille de
+la caisse, l'assuré hors de la maladie du RSI en limite, une saisie de plus à
+trancher par le propriétaire, proposée non
+(`177/2026-11-02-etape-6-premier-trimestre-du-micro-entrepreneur.md`). Par
+quoi commencer : l'étape 8, les non-salariés de Mayotte, leurs taux à trouver
+d'abord (fiche `cssm_mayotte`, son `manque`) ; puis la 9, l'assiette du RCO
+des artisans. L'étape 7, la saisie du département, revient à la session du
+site. Un écart par commit, le test vu rouge d'abord ; des règles du scénario
+1, sur Opus, après `python scripts/veille_droit.py`.
 
 **D'où elle vient.** Le 31 octobre 2026, l'étape 2 de l'action 175 — les
 barèmes de la base de législation de la Cnav confrontés, un à un, aux séries

@@ -162,6 +162,20 @@ l'Institut des politiques publiques (PENSIPP). Écarts connus :
   du micro-entrepreneur sur la cotisation qu'il aurait due sans réduction
   (circulaire Cnav 2026/12) : le modèle fait de même. Ce qu'elle fait des
   autres exonérations, les pages lues ne le disent pas : non mesuré.
+- **micro-entrepreneur de 2014 et de 2015** — le modèle sert l'auto-entrepreneur
+  qui relève de la maladie du RSI : son forfait allant d'abord à ce risque, son
+  premier trimestre attend en 2014 la compensation de l'État, qui ne joue
+  qu'au-dessus du seuil du trimestre, et en 2015 le chiffre d'affaires que la
+  grille de la caisse donne « si prestataires santé ». Celui qui n'en relève
+  pas, assuré pour la maladie par un autre régime, souvent parce qu'il est
+  aussi salarié, ou qui en relève mais touche le RSA socle, le valide plus
+  tôt : au seuil du trimestre en 2014, et en 2015 au seuil plus bas que la même
+  grille donne « si non prestataires santé » (circulaire RSI n° 2016/010,
+  point 1 ; l'« Info-doc RSI » que joint le barème « Chiffre d'affaire des
+  micro-entrepreneurs validant un trimestre »). La saisie ne dit pas de quelle
+  caisse il relevait pour la maladie : un trimestre au plus par année, pour un
+  chiffre d'affaires sous les bornes de la saisie, que seul le modèle atteint.
+  Non mesuré.
 - **assiette provisionnelle des artisans et des commerçants** — le modèle
   porte au compte de chaque année le revenu de cette année, celui de la
   cotisation définitive : depuis 1973, la cotisation provisionnelle est ajustée
