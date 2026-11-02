@@ -1,0 +1,31 @@
+date: "2026-11-02"
+session: "action 145, correction sur décision du propriétaire : le rendement de la CAFAT et le taux de Wallis-et-Futuna"
+consulte: >-
+  veille_droit.py (aucune fiche de ces régimes à relire). L'index LEGI n'est pas mis à
+  jour : les textes en cause sont des délibérations du congrès de la Nouvelle-Calédonie
+  et de l'assemblée territoriale de Wallis-et-Futuna, hors de l'index de la DILA. Relus,
+  hors du dépôt, pour vérifier la note du matin avant d'écrire : la Chambre territoriale
+  des comptes de Nouvelle-Calédonie, « CAFAT, exercices 2020 et suivants », p. 62, 63 et
+  102 ; l'avis n° 12/2008 du conseil économique et social de Nouvelle-Calédonie, p. 4 ;
+  la Cour des comptes, observations définitives S2022-2223, p. 32 et 33 ; le rapport
+  annuel 2004 de l'IEOM sur Wallis-et-Futuna, p. 64 et 65.
+trouve: >-
+  Les citations de la note se retrouvent mot pour mot. De plus : les valeurs de service
+  de l'annexe de la chambre sont, en 2017 et 2018, la moyenne de l'année des valeurs du
+  point que la caisse fixe au 1er avril (239,28 = ¼ × 238,26 + ¾ × 239,62), d'où un
+  rendement plus bas de 0,01 et 0,03 point ; le rapport écrit 9,95 % pour un départ de
+  2019, où l'annexe donne 9,97 % ; le point a monté de 2,5 % par an de 2008 à 2016,
+  contre 1 % pour les prix (p. 62). L'âge de 55 ans de la caisse locale est à la page 65
+  du rapport de 2004. Corrigés : regimes/rendements_points.csv, la CAFAT de 12,45 % en
+  2001 à 9,00 % en 2026 au lieu de 10 % constants ; regimes/wallis_et_futuna.yaml, 11,1 %
+  en 2009 montant à 21 % en 2020 et 9 % avant, un tiers au salarié, au lieu de 17,10 % à
+  27 % ; les fiches cafat_pension_de_base et wallis_et_futuna_pension_des_salaries ; la
+  réforme wallis_2009 de reformes.yaml.
+reste: >-
+  CAFAT : le rendement d'avant 2001, que rien ne publie (la valeur de 2001 prolongée) ;
+  la valeur de référence d'avant 2015, qui dirait de combien la revalorisation sur les
+  prix sous-estime les cotisations de 2008 à 2014 ; le taux de 13 % d'avant avril 2009,
+  déduit et non porté ; l'anticipation, le minimum et le plafond du territoire.
+  Wallis-et-Futuna : le barème de la caisse locale d'avant 2009 et sa création en 1977,
+  lus et non portés ; la date d'effet de la délibération n° 25/AT/2015 ; un plafond. La
+  part CRFM des agents mahorais attend son barème.

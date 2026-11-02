@@ -6457,15 +6457,15 @@ la décision du 1er novembre, une ligne de plus à la table datée.
 
 ### 145. Les régimes que l'inventaire ne nommait pas : documentés, non calculés — `en cours`
 
-**Reprise, au 2 novembre 2026.** Faites, les trois étapes, et les recherches
-que le propriétaire a demandées avant de trancher (note du 2 novembre) : le
-rendement de la CAFAT est une série publiée, de 10,35 % en 2015 à 9,00 % en
-2026 ; Wallis-et-Futuna cotise 21 % pour la retraite, ses 27 % comptant 6
-points de prestations familiales ; le règlement de la CRFM est un arrêté
-préfectoral de 1977, dont le barème reste introuvable. Au propriétaire, puis
-clore l'action : corriger la CAFAT et Wallis-et-Futuna (oui, recommandé),
-donner un statut à la part CRFM (non, pas sans l'arrêté), et les autres
-écarts des notes du 13, du 14 et du 16 octobre.
+**Reprise, au 2 novembre 2026.** Faites, les trois étapes, les recherches
+complémentaires et la correction que le propriétaire a décidée (note
+`2026-11-02-correction-cafat-wallis.md`) : la CAFAT sert le rendement que la
+caisse fixe chaque année, de 12,45 % en 2001 à 9 % en 2026 ; Wallis-et-Futuna
+cotise le taux de la retraite seule, de 11,1 % en 2009 à 21 %, 9 % avant. La
+part CRFM attend l'arrêté de 1977. Reste, avant de clore : que le propriétaire
+dise si les écarts des notes du 13, du 14 et du 16 octobre, avec le barème
+d'avant 2009 de Wallis-et-Futuna, ouvrent une action nouvelle ; aucun n'est du
+ressort de celle-ci, qui documente sans calculer.
 
 **Demande**, le 4 octobre 2026 : « Je veux que tu documentes les régimes de
 retraite que nous n'avons pas encore documenter pour l'instant. Il faut
