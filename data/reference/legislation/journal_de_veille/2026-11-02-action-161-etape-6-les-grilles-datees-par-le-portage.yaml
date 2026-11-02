@@ -1,0 +1,20 @@
+date: "2026-11-02"
+session: "action 161, étape 6 : la grille des carrières types, les départs des facteurs de la dépense et les cohortes du coût des avantages datés par le portage"
+consulte: >-
+  Aucune source de droit : la session ne touche à aucune règle du scénario 1.
+  La note du coût daté par le portage ; ce que castypes.cases_de_la_grille,
+  figer_cas_types, facteurs_depense.dates_des_departs et avantages.decomposer
+  demandaient au pilote Python ; les scénarios neutralisés de avantages.py et
+  ce que le scénario actuel du portage en porte (moteur/js/scenario-actuel.js,
+  regimes.js).
+trouve: >-
+  Aucune règle n'a changé, et aucun écart : chaque case et chaque âge de la
+  grille des carrières types, sous le type du Python, les 2 490 dates de chaque
+  forme des départs des facteurs et les 358 couples du coût des avantages sont
+  ceux du Python ; la table des agrégats, refaite, est identique à l'octet.
+  Les neutralisations du coût des avantages demandent des leviers que le
+  portage n'a pas encore.
+reste: >-
+  Rien pour la veille. L'action reprend où son bloc « Reprise » la laisse
+  (action 161, note du 2 novembre 2026, étape 6, les grilles datées par le
+  portage).

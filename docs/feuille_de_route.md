@@ -6918,16 +6918,16 @@ de `contribution_etat`.
 
 ### 161. Un seul exemplaire du code : les doublons entre le Python et le JavaScript retirés une paire à la fois, chaque retrait relu — `en cours`
 
-**Reprise, au 1er novembre 2026.** Le JavaScript fait foi (note de décision
-0005) : une règle s'écrit d'abord dans `moteur/js/`, son jumeau Python la suit
-au bit près. Faits : les témoins calculés au portage ; l'estimation
-officielle, Destinie 2 et tout `test_oracle.py` confrontés par le portage ; le
-coût date, bâtit et simule sa grille au portage (`cout._grille_batie`), la
-table des agrégats identique à l'octet. Ce qui suit, dans l'ordre : un autre
-chemin pour ce que le Python date ou simule encore — la grille des carrières
-types, le coût des avantages, la grille large, le coût sous un modèle
-modifié — ; puis les retraits, par sous-ensemble cohérent. Détail :
-`2026-11-01-etape-6-le-cout-date-par-le-portage.md`.
+**Reprise, au 2 novembre 2026.** Le JavaScript fait foi (note de décision
+0005). Faits : les témoins et les confrontations au portage ; le coût date,
+bâtit et simule sa grille au portage ; la grille des carrières types, les
+départs des facteurs de la dépense et les cohortes du coût des avantages s'y
+datent (`castypes.departs_au_portage`), la table identique à l'octet. Ce qui
+suit, dans l'ordre : les neutralisations du coût des avantages au portage —
+`sans` des fiches et des invalidités, le catalogue privé d'une déclaration,
+le barème de carrière longue vidé, en JavaScript d'abord, puis une demande
+du pont — ; la grille large, le coût sous un modèle modifié ; puis les
+retraits. Détail : `2026-11-02-etape-6-les-grilles-datees-par-le-portage.md`.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur
