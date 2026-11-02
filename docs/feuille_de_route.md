@@ -7288,11 +7288,11 @@ toujours que sa page de maintenance (503, « Le site est momentanément
 indisponible »), le 29 octobre comme le 2 novembre, à l'en-tête des
 récupérateurs du dépôt, seul essayé, sur sa racine, `robots.txt`,
 `/wp-json/wp/v2/`, ses plans du site et jusqu'au classeur des nouveaux
-retraités, sous `/app/uploads/`. Question au propriétaire, le 2 novembre :
-s'ouvre-t-il dans son navigateur ? Si oui, c'est au dépôt qu'il se ferme, et
-attendre ne sert à rien. Sinon, par quoi commencer : vérifier qu'il répond,
-de même, puis l'étape 1, l'inventaire ; xlrd lit les `.xls`. Pas encore de
-note.
+retraités, sous `/app/uploads/`. Le 2 novembre, le propriétaire n'y voit, dans
+son navigateur, que la même page : le portail est fermé à tous, non au seul
+dépôt. Par quoi commencer : vérifier qu'il répond, de même ; tant qu'il ne
+répond pas, l'action attend. Puis l'étape 1, l'inventaire ; xlrd lit les
+`.xls`. Pas encore de note.
 
 **D'où elle vient.** Le 29 octobre 2026, à l'ouverture de l'action 175, sur la
 base de législation de la Cnav, le propriétaire : « toutes les circulaires, et
