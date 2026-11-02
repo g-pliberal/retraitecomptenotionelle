@@ -2810,11 +2810,11 @@ sixième, les périodes assimilées manquantes, a ses étapes 1 à 6 faites
 (`130/2026-10-17-sixieme-domaine-etape-6.md`). Au propriétaire, README muet :
 sa septième étape, la décision de la proposition, et la retraite progressive,
 le cumul et la seconde pension. La carte mûrit : le RAFP, la CNAVPL, les IEG,
-la SNCF et la RATP sont lus au droit ; restent 95 fiches à lire, 569 manques,
-les points ouverts des phases 2 à 8, et, pour une étape du modèle, la durée
-des agents de la SNCF et de la RATP qui partent tôt. Par quoi commencer : un
-lot de fiches, un régime ou un domaine, dans `LUES_AU_DROIT` (`docs/veille_droit.md`).
-Détail : `130/2026-11-02-carte-des-fiches-sncf-et-ratp-lues-au-droit.md`.
+la SNCF et la RATP sont lus au droit, la durée de leurs agents partis tôt
+corrigée ; restent 95 fiches à lire, 569 manques, les points ouverts des phases
+2 à 8, la même lecture à la CRPCEN et à la Comédie-Française. Par quoi
+commencer : un lot de fiches, un régime ou un domaine, dans `LUES_AU_DROIT`
+(`docs/veille_droit.md`). Détail : `130/2026-11-02-duree-des-agents-sncf-et-ratp-qui-partent-tot.md`.
 
 Le dépôt devenait de plus en plus lourd à faire avancer. Une modification du
 moteur du scénario 1 touchait vingt fichiers en médiane, dont sept ou huit de

@@ -23,7 +23,7 @@ from datetime import date
 import pytest
 import yaml
 
-from retraite_notionnelle.calendrier import DateMois
+from retraite_notionnelle.calendrier import DateMois, en_mois
 from retraite_notionnelle.config import RACINE_DONNEES
 from retraite_notionnelle.noyau import carte
 from retraite_notionnelle.scenarios.actuel import (
@@ -186,9 +186,12 @@ def test_la_duree_requise_est_celle_de_chaque_version():
     conditions avant le 1er juillet 2008 ; puis le calendrier de la réforme,
     de 151 trimestres à 166 en juillet 2018, le même dans les deux décrets ;
     à compter du 1er juillet 2019, la table par génération de 2014 de chaque
-    régime ; à compter du 1er janvier 2025, les tables de 2023, celle de
+    régime, lue, pour qui réunit les conditions avant cinquante-cinq ans
+    (SNCF) ou soixante ans (RATP), à la génération qui atteint cet âge ce
+    mois-là ; à compter du 1er janvier 2025, les tables de 2023, celle de
     l'agent de conduite à la SNCF avec ce que le II de l'article 35 retranche
-    pour la décote. Le pourcentage maximum est de 75 %. Le calendrier et les
+    pour la décote, et, à la RATP, avant soixante ans, la durée par année de
+    l'article 23-1. Le pourcentage maximum est de 75 %. Le calendrier et les
     tables du modèle le portent, au mois où les conditions sont réunies ; une
     table ne répond pas avant sa date."""
     calendriers = CalendriersDureeRequise(RACINE_DONNEES)
@@ -214,7 +217,7 @@ def test_la_duree_requise_est_celle_de_chaque_version():
             for regime in REGIMES:
                 assert {_periode(regime, annee).get("duree_requise_calendrier")
                         for annee in annees} == {"regimes_speciaux_2008"}, (version["id"], regime)
-            for nom in ("sncf_2014", "ratp_2014", "sncf_conduite", "ratp"):
+            for nom in ("sncf_2014", "ratp_2014", "sncf_conduite", "ratp", "ratp_avant_60"):
                 assert tables.ligne(nom, 1975, mois[-1].rang) is None, (version["id"], nom)
         for cle, nom in TABLES_DU_MODELE.get(version["id"], {}).items():
             table = lus["tables_par_generation"][cle]
@@ -226,6 +229,19 @@ def test_la_duree_requise_est_celle_de_chaque_version():
             assert tables.ligne(nom, 1980, mois[0].plus_mois(-1).rang) is None, (nom, version["id"])
             assert all(nom in _periode(cle[:4], annee)["duree_requise_table"] for annee in annees), (
                 nom, version["id"])
+        for regime, nom in AVANT_L_AGE_DU_MODELE.get(version["id"], {}).items():
+            age = lus["ages_de_lecture"][regime]
+            for m in mois:
+                # L'agent qui a cinquante-deux ans ce mois-là, et part avant l'âge de lecture.
+                ligne = tables.ligne(nom, m.annee - 52 + (m.mois - 1) / 12, m.rang)
+                attendu = (_escalier(lus["duree_avant_l_age_de_lecture"], m.annee)
+                           if "duree_avant_l_age_de_lecture" in lus else
+                           _escalier(lus["tables_par_generation"][regime],
+                                     round(m.annee - age + (m.mois - 1) / 12, 3)))
+                assert (ligne and ligne[0]) == attendu, (nom, str(m))
+            assert tables.ligne(nom, 1980, mois[0].plus_mois(-1).rang) is None, (nom, version["id"])
+            assert all(_periode(regime, annee)["duree_requise_table"][0] == nom
+                       for annee in annees), (nom, version["id"])
 
 
 #: La table du modèle qui porte chaque table d'une version de
@@ -235,23 +251,106 @@ TABLES_DU_MODELE = {
     "table_de_2014": {"sncf": "sncf_2014", "ratp": "ratp_2014"},
     "tables_de_2023": {"sncf_agents_de_conduite": "sncf_conduite", "ratp": "ratp"},
 }
+#: La table du modèle, nommée la première par les périodes, qui porte ce que
+#: doit l'agent qui part avant l'âge de lecture : la table de 2014, lue à la
+#: génération qui atteint cet âge, puis, à la RATP, la durée par année de
+#: 2025. Celle de l'article 12-1 de la SNCF n'est pas transcrite : le modèle
+#: suit la table de l'agent de conduite, comme la CPRPSNCF, et la fiche
+#: déclare l'écart.
+AVANT_L_AGE_DU_MODELE = {
+    "table_de_2014": {"sncf": "sncf_2014", "ratp": "ratp_2014"},
+    "tables_de_2023": {"ratp": "ratp_avant_60"},
+}
+
+
+#: Pour les pensions de 2017 et après, l'agent qui peut partir avant
+#: cinquante-cinq ans (SNCF, article 12-1) ou soixante ans (RATP, article
+#: 23-1) doit la durée exigée des agents qui atteignent cet âge l'année où son
+#: droit s'ouvre : la table de 2014 lue à la génération qui l'atteint ce
+#: mois-là, comme la CPRPSNCF l'écrit pour l'agent de conduite — 167
+#: trimestres pour le né de novembre 1968 à 1969, 168 pour 1970 et 1971, 169
+#: pour 1972 ; à qui réunit les conditions depuis 2025, à la RATP, cent
+#: soixante-dix trimestres, un de plus tous les trois ans, cent soixante-douze
+#: en 2031. Cas par cas : le régime, le mois de naissance de l'agent, le mois
+#: où son droit s'ouvre, l'année où sa pension prend effet, la durée que le
+#: droit lui demande, et la version de `duree_requise_sncf_ratp` qui la porte.
+AVANT_L_AGE_DE_LECTURE = [
+    ("sncf", DateMois(1968, 11), DateMois(2019, 7), 2019, 167, "table_de_2014"),
+    ("sncf", DateMois(1969, 12), DateMois(2020, 12), 2020, 167, "table_de_2014"),
+    ("sncf", DateMois(1970, 1), DateMois(2021, 5), 2021, 168, "table_de_2014"),
+    ("sncf", DateMois(1971, 12), DateMois(2023, 8), 2023, 168, "table_de_2014"),
+    ("sncf", DateMois(1972, 1), DateMois(2024, 1), 2024, 169, "table_de_2014"),
+    ("sncf", DateMois(1972, 1), DateMois(2024, 1), 2026, 169, "table_de_2014"),
+    ("ratp", DateMois(1968, 11), DateMois(2019, 7), 2019, 167, "table_de_2014"),
+    ("ratp", DateMois(1970, 1), DateMois(2021, 5), 2021, 168, "table_de_2014"),
+    ("ratp", DateMois(1972, 1), DateMois(2024, 1), 2024, 169, "table_de_2014"),
+    ("ratp", DateMois(1972, 1), DateMois(2024, 1), 2026, 169, "table_de_2014"),
+    ("ratp", DateMois(1973, 1), DateMois(2025, 4), 2025, 170, "tables_de_2023"),
+    ("ratp", DateMois(1975, 3), DateMois(2027, 12), 2027, 170, "tables_de_2023"),
+    ("ratp", DateMois(1975, 4), DateMois(2028, 1), 2028, 171, "tables_de_2023"),
+    ("ratp", DateMois(1977, 10), DateMois(2031, 1), 2031, 172, "tables_de_2023"),
+]
+
+
+@pytest.mark.parametrize("regime, naissance, ouverture, effet, droit, version",
+                         AVANT_L_AGE_DE_LECTURE)
+def test_qui_part_avant_l_age_de_lecture_doit_la_duree_de_qui_l_atteint(
+        regime, naissance, ouverture, effet, droit, version):
+    """Le droit de l'agent s'ouvre à l'âge que la table de sa période lui
+    donne, avant l'âge de lecture ; la durée que le droit lui demande se lit
+    dans la version, à la génération qui atteint cet âge le mois où son droit
+    s'ouvre, ou, depuis 2025, à l'année ; le modèle, qui lit ses tables dans
+    l'ordre que la période de sa pension nomme, lui oppose la même ; et la
+    fiche ne déclare plus d'écart sur cette version pour ce régime."""
+    fiche = carte.fiches()["duree_requise_sncf_ratp"]
+    lus = next(v for v in fiche["versions"] if v["id"] == version)["contenu"]["parametres"]
+    periode = _periode(regime, effet)
+    generation = naissance.annee + (naissance.mois - 1) / 12
+    age = AgesRegimes(RACINE_DONNEES).ages(periode["age_table"], generation)[0]
+    assert naissance.plus_mois(en_mois(age)) == ouverture
+    assert age < lus["ages_de_lecture"][regime]
+    if "duree_avant_l_age_de_lecture" in lus:
+        assert _escalier(lus["duree_avant_l_age_de_lecture"], ouverture.annee) == droit
+    else:
+        lue = ouverture.annee - lus["ages_de_lecture"][regime] + (ouverture.mois - 1) / 12
+        assert _escalier(lus["tables_par_generation"][regime], round(lue, 3)) == droit
+    tables = DureesRequisesRegimes(RACINE_DONNEES)
+    lignes = [tables.ligne(nom, generation, ouverture.rang)
+              for nom in periode["duree_requise_table"]]
+    assert next(ligne for ligne in lignes if ligne)[0] == droit
+    assert not any(version in (a.get("version") or []) and a.get("regime") == regime
+                   for a in fiche.get("approximations") or []), (regime, version)
+
+
+def test_la_duree_par_annee_de_la_ratp_ne_sert_que_qui_part_avant_soixante_ans():
+    """La table qui porte, depuis 2025, la durée par année de l'article 23-1
+    (`ratp_avant_60`) se lit à la génération qui a soixante ans le mois où le
+    droit s'ouvre ; à qui ouvrirait le sien à soixante ans ou après, elle se
+    lirait à sa propre génération, et donnerait 170 trimestres aux nés de 1966
+    et 1967 et 171 aux nés de 1968 à 1970, un de moins que l'article 51. Le
+    modèle ne sert que le roulant : chaque table d'âges que nomment les
+    périodes de 2025 et après, et l'âge qu'elles écrivent, ouvrent son droit
+    avant soixante ans."""
+    ages = AgesRegimes(RACINE_DONNEES)
+    for annee in range(2025, HORIZON + 1):
+        periode = _periode("ratp", annee)
+        assert periode["duree_requise_table"][0] == "ratp_avant_60", annee
+        assert periode["age_ouverture"] < 60, annee
+        for generation in range(1940, 2000):
+            lu = ages.ages(periode["age_table"], generation)
+            assert lu is None or lu[0] is None or lu[0] < 60, (annee, generation)
 
 
 #: Ce que le modèle fait autrement que le droit, cas par cas : le régime, le
 #: mois de naissance de l'agent, le mois où son droit s'ouvre, la durée que
 #: le droit lui demande, celle que le modèle lui oppose, et la version de
-#: `duree_requise_sncf_ratp` qui déclare l'écart. Depuis 2017, l'agent qui
-#: peut partir avant cinquante-cinq ans (SNCF, article 12-1) ou soixante ans
-#: (RATP, article 23-1) doit la durée de la génération qui atteint cet âge
-#: l'année où son droit s'ouvre ; le modèle lit la table à sa génération à
-#: lui. Depuis 2025, la RATP lui demande 170 trimestres, un de plus tous les
-#: trois ans ; le modèle lit la table de sa génération.
+#: `duree_requise_sncf_ratp` qui déclare l'écart. Depuis 2025, l'article 12-1
+#: de la SNCF demande à qui peut partir avant cinquante-cinq ans 170
+#: trimestres, un de plus tous les trois ans ; le modèle lit la table de
+#: l'agent de conduite à sa génération, comme la CPRPSNCF.
 ECARTS_DECLARES = [
-    ("sncf", DateMois(1968, 11), DateMois(2019, 7), 167, 168, "table_de_2014"),
-    ("sncf", DateMois(1972, 1), DateMois(2024, 1), 169, 170, "table_de_2014"),
-    ("ratp", DateMois(1970, 1), DateMois(2021, 5), 168, 171, "table_de_2014"),
-    ("ratp", DateMois(1972, 1), DateMois(2024, 1), 169, 171, "table_de_2014"),
-    ("ratp", DateMois(1973, 1), DateMois(2025, 4), 170, 172, "tables_de_2023"),
+    ("sncf", DateMois(1975, 4), DateMois(2028, 1), 171, 170, "tables_de_2023"),
+    ("sncf", DateMois(1977, 10), DateMois(2031, 1), 172, 171, "tables_de_2023"),
 ]
 
 

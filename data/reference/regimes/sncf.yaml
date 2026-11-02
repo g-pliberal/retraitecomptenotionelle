@@ -155,6 +155,17 @@ periodes:
       tôt (`duree_requise_table`, essayées dans l'ordre). La fiche
       opposait à tous la table commune par génération : 167 trimestres à
       un agent né en 1960 parti en 2010, dont le droit en demande 154.
+      ET L'AGENT QUI PEUT PARTIR AVANT CINQUANTE-CINQ ANS DOIT CELLE DE LA
+      GÉNÉRATION QUI LES A : l'article 12-1 (LEGIARTI000029149846, lu le 2
+      novembre 2026), pour les pensions prenant effet à compter du 1er
+      janvier 2017, lui oppose « celle exigée des agents atteignant l'âge
+      de cinquante-cinq ans l'année à compter de laquelle la liquidation
+      peut intervenir » : la table de 2014 se lit pour lui à la génération
+      qui a cinquante-cinq ans le mois où son droit s'ouvre
+      (`age_de_lecture` de `legislation/duree_requise_regimes_speciaux.csv`),
+      comme la CPRPSNCF l'écrit. La fiche la lisait à sa propre génération :
+      168 trimestres, et non 167, à l'agent de conduite né en novembre
+      1968, dont le droit s'ouvre en juillet 2019.
 
   - debut: 2025
     fin: null
@@ -226,3 +237,12 @@ periodes:
       essayées dans l'ordre). La fiche opposait à tous la table commune
       par génération : 167 trimestres à un agent né en 1960 parti en 2010,
       dont le droit en demande 154.
+      La table de 2014, qui répond encore à qui a réuni les conditions
+      avant 2025, se lit avant cinquante-cinq ans à la génération qui les
+      a (`age_de_lecture`). Depuis 2025, l'article 12-1
+      (LEGIARTI000048240219) donne à qui part avant cet âge une durée par
+      année, cent soixante-dix trimestres, « un trimestre tous les trois
+      ans » de plus : la fiche ne la porte pas ; la table de l'agent de
+      conduite, que la CPRPSNCF suit, en demande un de moins à l'agent
+      né d'avril à décembre 1975 ou d'octobre à décembre 1977, et les
+      mêmes aux autres (fiche `duree_requise_sncf_ratp`).

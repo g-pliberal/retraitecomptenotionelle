@@ -30,6 +30,26 @@
 #       27 septembre 2025) : tous les assurés. 167 des nés du 1er juillet 1959
 #       à 1960, 168 pour 1961-1962, 169 pour 1963, 170 pour 1964-1965, 171 pour
 #       1966-1967, 172 à compter de 1968.
+#   `ratp_avant_60` — décret n° 2008-637, article 23-1 (LEGIARTI000047910476,
+#       version du 1er janvier 2025, lue le 2 novembre 2026) : « A compter du
+#       1er janvier 2025, par dérogation au I de l'article 51, la durée [...]
+#       requise pour les agents qui remplissent les conditions de liquidation
+#       d'une pension avant l'âge de soixante ans est fixée à cent soixante-dix
+#       trimestres. Cette durée augmente d'un trimestre tous les trois ans pour
+#       atteindre cent soixante-douze trimestres en 2031. » Une durée par ANNÉE
+#       où le droit s'ouvre, que la table porte par la génération qui a
+#       soixante ans cette année-là (colonne `age_de_lecture`, plus bas) : 170
+#       trimestres de 2025 à 2027, 171 de 2028 à 2030, 172 ensuite. La fiche la
+#       nomme avant `ratp`. Elle ne vaut qu'avant soixante ans : à qui réunit
+#       les conditions plus tard, elle se lirait à sa propre génération, et
+#       donnerait un trimestre de moins que l'article 51 aux nés de 1966 à
+#       1970 ; le roulant, que la fiche sert, ouvre son droit avant
+#       cinquante-cinq ans (`tests/test_sncf_ratp.py`). La SNCF écrit la même
+#       durée à son article 12-1, avant cinquante-cinq ans : elle n'est pas
+#       transcrite, la table de l'agent de conduite, que la CPRPSNCF suit, ne
+#       s'en écartant que d'un trimestre, pour l'agent de conduite né d'avril
+#       à décembre 1975 ou d'octobre à décembre 1977 (fiche
+#       `duree_requise_sncf_ratp`).
 #   `ieg_actif_5` à `ieg_actif_17` — annexe 3 du statut national des IEG,
 #       article 45, I bis (LEGIARTI000052046924, version du 6 août 2025, lue le
 #       23 septembre 2026) : « à compter du 1er janvier 2025 », une table par
@@ -103,8 +123,17 @@
 #       161-17-3 : 169 trimestres, et non 168, à une clerc née en novembre 1961
 #       dont le droit s'ouvre en juillet 2023, comme la caisse l'écrit.
 #
-# LA COLONNE `age_de_lecture` N'EXISTE QUE POUR `ieg_2014`, ET POUR LA
-# COMÉDIE-FRANÇAISE PLUS BAS. L'article 9-1 de
+# LA COLONNE `age_de_lecture` SERT AUX TABLES DE 2014 DES IEG, DE LA SNCF ET DE
+# LA RATP, À LA COMÉDIE-FRANÇAISE ET À L'OPÉRA PLUS BAS, ET À `ratp_avant_60`.
+# Les articles 12-1 du décret n° 2008-639 (SNCF, à cinquante-cinq ans,
+# LEGIARTI000029149846 puis LEGIARTI000048240219) et 23-1 du décret n° 2008-637
+# (RATP, à soixante ans, LEGIARTI000029132058 puis LEGIARTI000050710691), pour
+# les pensions prenant effet à compter du 1er janvier 2017, lus le 2 novembre
+# 2026, écrivent la même règle que celui des IEG : la CPRPSNCF donne 167
+# trimestres à l'agent de conduite né de novembre 1968 à 1969, 168 pour 1970 et
+# 1971, 169 pour 1972, ceux de la génération qui a cinquante-cinq ans le mois
+# où son droit s'ouvre ; la table lue à sa propre génération lui en demandait
+# un de plus, et trois au roulant de la RATP né en 1970. L'article 9-1 de
 # l'annexe 3 des IEG, en vigueur du 1er janvier 2017 au 31 décembre 2024
 # (LEGIARTI000029150204 à LEGIARTI000047908882, abrogé par la rédaction du
 # 1er janvier 2025, LEGIARTI000047909955, lues le 27 septembre 2026), fixe la
@@ -268,6 +297,9 @@ ratp,2025-01,1963,169,0,haute,,
 ratp,2025-01,1964,170,0,haute,,
 ratp,2025-01,1966,171,0,haute,,
 ratp,2025-01,1968,172,0,haute,,
+ratp_avant_60,2025-01,1965,170,0,haute,60,
+ratp_avant_60,2025-01,1968,171,0,haute,60,
+ratp_avant_60,2025-01,1971,172,0,haute,60,
 ieg_actif_5,2025-01,1964,170,0,haute,,
 ieg_actif_5,2025-01,1967,171,0,haute,,
 ieg_actif_5,2025-01,1969,172,0,haute,,
@@ -283,18 +315,18 @@ ieg_actif_14,2025-01,1972,172,0,haute,,
 ieg_actif_17,2025-01,1968,170,0,haute,,
 ieg_actif_17,2025-01,1971,171,0,haute,,
 ieg_actif_17,2025-01,1973,172,0,haute,,
-sncf_2014,2019-07,1964.5,167,0,haute,,
-sncf_2014,2019-07,1966,168,0,haute,,
-sncf_2014,2019-07,1969,169,0,haute,,
-sncf_2014,2019-07,1972,170,0,haute,,
-sncf_2014,2019-07,1975,171,0,haute,,
-sncf_2014,2019-07,1978,172,0,haute,,
-ratp_2014,2019-07,1959.5,167,0,haute,,
-ratp_2014,2019-07,1961,168,0,haute,,
-ratp_2014,2019-07,1964,169,0,haute,,
-ratp_2014,2019-07,1967,170,0,haute,,
-ratp_2014,2019-07,1970,171,0,haute,,
-ratp_2014,2019-07,1973,172,0,haute,,
+sncf_2014,2019-07,1964.5,167,0,haute,55,
+sncf_2014,2019-07,1966,168,0,haute,55,
+sncf_2014,2019-07,1969,169,0,haute,55,
+sncf_2014,2019-07,1972,170,0,haute,55,
+sncf_2014,2019-07,1975,171,0,haute,55,
+sncf_2014,2019-07,1978,172,0,haute,55,
+ratp_2014,2019-07,1959.5,167,0,haute,60,
+ratp_2014,2019-07,1961,168,0,haute,60,
+ratp_2014,2019-07,1964,169,0,haute,60,
+ratp_2014,2019-07,1967,170,0,haute,60,
+ratp_2014,2019-07,1970,171,0,haute,60,
+ratp_2014,2019-07,1973,172,0,haute,60,
 ieg_2014,2019-07,1959.5,167,0,haute,60,
 ieg_2014,2019-07,1961,168,0,haute,60,
 ieg_2014,2019-07,1964,169,0,haute,60,

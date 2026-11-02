@@ -1,0 +1,42 @@
+date: "2026-11-02"
+session: "action 130, file G : la durée des agents de la SNCF et de la RATP qui partent tôt"
+consulte: >-
+  python scripts/veille_droit.py ; l'index LEGI du dépôt, récupéré et mis à jour jusqu'à
+  l'incrément du 2 novembre 2026 (20261102-213929) ; python scripts/textes.py --inscrire,
+  sans rédaction nouvelle. Dans LEGI : les trois rédactions de l'article 23-1 du décret
+  n° 2008-637 (RATP ; LEGIARTI000029132058, LEGIARTI000050710691, LEGIARTI000047910476) et
+  les deux de l'article 12-1 du décret n° 2008-639 (SNCF ; LEGIARTI000029149846,
+  LEGIARTI000048240219) ; puis, pour chercher la même règle ailleurs, les vingt-six
+  rédactions qui écrivent « à compter de laquelle la liquidation peut intervenir » :
+  l'article 5 de la loi n° 2003-775, L. 13 du code des pensions civiles et militaires,
+  l'annexe 3 du statut des IEG, l'article 85 du décret n° 90-1215 (CRPCEN), l'article 12
+  du décret n° 68-960 (Comédie-Française), l'article 14 du décret n° 68-382 (Opéra) et
+  l'article 31-1 du règlement annexé au décret n° 2007-262 (Banque de France). Chez la
+  CPRPSNCF, le tableau « Régime spécial de retraite SNCF — agents de conduite.
+  Paramètres applicables selon votre génération » d'octobre 2023, une image, lue à l'œil.
+trouve: >-
+  Les articles 12-1 et 23-1 sont ceux que la file E a lus : pour les pensions de 2017 et
+  après, qui peut partir avant cinquante-cinq ans (SNCF) ou soixante ans (RATP) doit la
+  durée des agents qui atteignent cet âge l'année où son droit s'ouvre et, depuis 2025,
+  cent soixante-dix trimestres, un de plus tous les trois ans, cent soixante-douze en
+  2031. La CPRPSNCF écrit 167 trimestres pour l'agent de conduite né du 1er novembre 1968
+  à 1969, 168 pour 1970 et 1971, 169 pour 1972, la table de 2014 lue à la génération qui a
+  cinquante-cinq ans le mois où son droit s'ouvre ; puis 170 pour 1973 à 1975, 171 pour
+  1976 et 1977, 172 ensuite, la table de 2023, et non la durée par année de l'article
+  12-1. Le modèle lisait la table de 2014 à la génération de l'agent : désormais à l'âge
+  de lecture (`age_de_lecture`, 55 et 60), et la RATP a, depuis 2025, sa durée par année
+  (`ratp_avant_60`). Ailleurs, la même règle : la CRPCEN (article 85, III, de 2017 à
+  2024), la Comédie-Française (article 12, VI) et la Banque de France (article 31-1) ;
+  qui ouvre son droit après soixante ans y doit la durée « en vigueur lorsque les assurés
+  atteignent l'âge de soixante ans », que le modèle lit au mois de l'ouverture, un
+  trimestre de trop à la CRPCEN et à la Comédie-Française pour les nés de mars à juin
+  1957 et de janvier à juin 1958.
+reste: >-
+  À la SNCF depuis 2025, l'article 12-1 et la table de la CPRPSNCF divergent d'un
+  trimestre pour l'agent de conduite né d'avril à décembre 1975 ou d'octobre à décembre
+  1977 : à demander à la caisse. La CRP RATP ne publie pas ses tableaux : la lecture de
+  l'article 23-1 n'y est pas confrontée. La durée de qui ouvre son droit après soixante
+  ans à la CRPCEN et à la Comédie-Française, et celle de qui part avant soixante ans à la
+  CRPCEN et à la Banque de France (leurs tables de 2014 n'ont pas d'âge de lecture), pour
+  une étape de ces régimes. La surcote de la SNCF de 2009 à 2017, 0,75 % par trimestre
+  dans `regimes/sncf.yaml` quand la RATP a 1,25 % sous la même phrase.

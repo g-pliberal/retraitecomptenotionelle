@@ -201,37 +201,6 @@ approximations:
     les pensions du second semestre de 2008, que le modèle liquide sous sa période d'avant
     la réforme, gardent 150 trimestres au lieu de 151
   effet: au plus 0,7 % de pension
-- version: [table_de_2014]
-  regime: sncf
-  ecart: >-
-    le modèle lit la table de 2014 à la génération de l'agent de conduite, et non à celle
-    qui atteint cinquante-cinq ans l'année où son droit s'ouvre (article 12-1) : l'agent de
-    conduite né de novembre 1968 à 1972, dont le droit s'ouvre de juillet 2019 à 2024, doit
-    un ou deux trimestres de trop — 168 au lieu de 167 pour celui né en novembre 1968, 170
-    au lieu de 169 pour celui né en 1972 ; la colonne `age_de_lecture` de
-    `legislation/duree_requise_regimes_speciaux.csv`, que les IEG emploient, le porterait
-  effet: >-
-    non mesuré ; un trimestre de trop retire un cent-soixante-huitième de pension et, s'il
-    manque, 1,25 % de décote
-- version: [table_de_2014]
-  regime: ratp
-  ecart: >-
-    le modèle lit la table de 2014 à la génération du roulant, et non à celle qui atteint
-    soixante ans l'année où son droit s'ouvre (article 23-1) : le roulant né de novembre
-    1968 à 1972, dont le droit s'ouvre de juillet 2019 à 2024, doit deux ou trois
-    trimestres de trop — 171 au lieu de 168 pour celui né en 1970, 171 au lieu de 169 pour
-    1972
-  effet: >-
-    non mesuré ; trois trimestres de trop retirent près de 2 % de pension par la
-    proratisation et, s'ils manquent, 3,75 % de décote
-- version: [tables_de_2023]
-  regime: ratp
-  ecart: >-
-    le modèle lit la table de 2023 à la génération du roulant, et non la durée par année que
-    l'article 23-1 fixe, depuis 2025, à qui peut partir avant soixante ans : 172 trimestres
-    au lieu de 170 pour le roulant dont le droit s'ouvre de 2025 à 2027, au lieu de 171 de
-    2028 à 2030
-  effet: non mesuré
 - version: [tables_de_2023]
   regime: sncf
   ecart: >-
@@ -244,7 +213,11 @@ approximations:
     l'agent est présumé agent de conduite de la SNCF ou roulant de la RATP : la table des
     autres agents de la SNCF de 2023 et ce que le II de l'article 35 leur retranche ne sont
     pas transcrits, et la durée que doivent les agents qui partent après cinquante-cinq ans
-    (SNCF) ou soixante ans (RATP), lue quand ils atteignent cet âge, n'est pas servie
+    (SNCF) ou soixante ans (RATP), lue quand ils atteignent cet âge, n'est pas servie ; la
+    table qui porte, à la RATP depuis 2025, la durée par année de qui part avant soixante
+    ans (`ratp_avant_60`), lue à sa propre génération par qui ouvrirait son droit à cet âge
+    ou après, lui demanderait un trimestre de moins que l'article 51 s'il est né de 1966 à
+    1970 : le roulant, que le modèle sert, ouvre le sien avant cinquante-cinq ans
   effet: non mesuré
 effet: >-
   Les deux fiches lisaient la table commune, suspension de 2026 comprise. Elles
@@ -253,24 +226,37 @@ effet: >-
   la table commune reste le repli. L'agent de conduite né en 1975 doit 170 trimestres
   et non 172 ; celui né en 1980 compte sa décote par la durée sur 162. La table
   des agents SÉDENTAIRES de la SNCF (1° du I de l'article 35) n'est pas transcrite
-  : aucune fiche ne les modélise. Approchée depuis le 2 novembre 2026 : depuis 2017,
-  l'agent qui part avant cinquante-cinq ans (SNCF) ou soixante ans (RATP) doit la durée de
-  la génération qui atteint cet âge, que le modèle ne lui oppose pas — jusqu'à trois
-  trimestres de trop pour le roulant de la RATP né de 1968 à 1972.
+  : aucune fiche ne les modélise. Depuis le 2 novembre 2026, l'agent qui réunit les
+  conditions avant cinquante-cinq ans (SNCF) ou soixante ans (RATP) de juillet 2019 à 2024
+  lit la table de 2014 à la génération qui atteint cet âge ce mois-là (`age_de_lecture`),
+  et le roulant de la RATP qui les réunit depuis 2025 doit la durée par année de l'article
+  23-1 (`ratp_avant_60`) : le modèle lui opposait la table de sa génération. L'agent de
+  conduite doit un trimestre de moins — 167 au lieu de 168 pour le né en novembre ou
+  décembre 1968, 168 au lieu de 169 pour 1970 et 1971, 169 au lieu de 170 pour 1972 —, et
+  deux pour 1969, 167 au lieu de 169. Le roulant de la RATP en doit trois de moins s'il
+  est né de novembre 1968 à 1971 (167 au lieu de 170 pour 1969, 168 au lieu de 171 pour
+  1970 et 1971), deux pour 1972 (169 au lieu de 171), deux s'il ouvre son droit de 2025 à
+  2027, nés de 1973 à mars 1975 (170 au lieu de 172), un de 2028 à 2030, nés d'avril 1975
+  à septembre 1977 (171 au lieu de 172). Un trimestre de moins à exiger ajoute un
+  cent-soixante-huitième de pension à qui n'a pas la durée, et retire 1,25 % de décote à
+  qui la lui doit. Les témoins le mesurent : le roulant né en 1970, parti à cinquante-six
+  ans avec 140 trimestres, gagne 1,79 % (140/168 au lieu de 140/171) ; le roulant né en
+  1975, parent de trois enfants, 1,18 % (140/170 au lieu de 140/172) ; l'agent de
+  conduite né en 1970, au même départ, 0,6 % (140/168 au lieu de 140/169).
 sources:
   lu_le: 2026-11-02
   prochaine_relecture: 2027-11-02
   a_relire:
   - >-
-    La lecture de la table de 2014 à la génération qui atteint cinquante-cinq ans (SNCF) ou
-    soixante ans (RATP), et la durée par année de 2025 pour qui part avant : des données
-    pour une étape du modèle — la colonne `age_de_lecture` de
-    `legislation/duree_requise_regimes_speciaux.csv`, et une table par année —, avec un
-    témoin qui la tienne ; les tableaux par génération de la CPRPSNCF en donnent les
-    valeurs à la SNCF.
+    La durée par année de l'article 12-1 de la SNCF, depuis 2025 : les tableaux de la
+    CPRPSNCF donnent 170 trimestres à l'agent de conduite né d'avril à décembre 1975, dont
+    le droit s'ouvre en 2028, quand l'article lui en demande 171, et 171 au lieu de 172 au
+    né d'octobre à décembre 1977. Demander à la caisse laquelle elle applique, avant de
+    porter à la SNCF la durée par année, comme à la RATP (`ratp_avant_60`).
   - >-
     La CRP RATP ne publie pas ses tableaux par génération hors de l'espace de ses affiliés :
-    la lecture de l'article 23-1 n'y est pas confrontée à la caisse.
+    la lecture de l'article 23-1, la table de 2014 à la génération qui a soixante ans et la
+    durée par année depuis 2025, n'y est pas confrontée à la caisse.
   lectures:
   - type: legifrance
     reference: >-
@@ -333,6 +319,13 @@ historique:
   qui a cinquante-cinq ans (SNCF) ou soixante ans (RATP) l'année où le droit de l'agent qui
   part plus tôt s'ouvre ; les tables de 2023, et la durée par année de qui part avant ces
   âges. Approchée : le modèle lit les tables à la génération de l'agent.
+- >-
+  2026-11-02 — l'écart levé (action 130) : les tables de 2014 se lisent, avant
+  cinquante-cinq ans (SNCF) ou soixante ans (RATP), à la génération qui atteint cet âge le
+  mois où le droit s'ouvre (`age_de_lecture` à 55 et à 60), et la RATP a, depuis 2025, sa
+  durée par année avant soixante ans (`ratp_avant_60`). Reste approchée : les pensions du
+  second semestre de 2008, la durée par année de l'article 12-1 de la SNCF, et l'agent
+  présumé agent de conduite ou roulant.
 reformes:
 - regimes_speciaux_2008
 - touraine_2014
@@ -341,11 +334,15 @@ reformes:
 code:
   moteur: >-
     La période de 2025 et après nomme ses tables (`duree_requise_table`), essayées dans
-    l'ordre avant la table commune : `sncf_conduite` puis `sncf_2014` à la SNCF, `ratp`
-    puis `ratp_2014` à la RATP, dans `legislation/duree_requise_regimes_speciaux.csv`.
-    Chacune se lit à la génération, pour qui réunit les conditions à compter de sa date
-    (`depuis`), au mois que `mois_ouverture_des_droits` dit (`duree_propre`) ; la
-    suspension, qui n'abaisse que la table commune, n'y entre pas. La table de la SNCF
+    l'ordre avant la table commune : `sncf_conduite` puis `sncf_2014` à la SNCF,
+    `ratp_avant_60`, `ratp` puis `ratp_2014` à la RATP, dans
+    `legislation/duree_requise_regimes_speciaux.csv`. Chacune se lit à la génération, pour
+    qui réunit les conditions à compter de sa date (`depuis`), au mois que
+    `mois_ouverture_des_droits` dit (`duree_propre`) ; les tables de 2014 et
+    `ratp_avant_60`, à qui les réunit avant cinquante-cinq ans (SNCF) ou soixante ans
+    (RATP), à la génération qui atteint cet âge ce mois-là (`age_de_lecture`,
+    `DureesRequisesRegimes.ligne`) ; la suspension, qui n'abaisse que la table commune, n'y
+    entre pas. La table de la SNCF
     porte aussi les trimestres que le II de l'article 35 retranche à la durée pour
     compter la décote par la durée (`retranche_decote`). Avant juillet 2019, le calendrier
     de 2008 (`duree_requise_calendrier`), lu au même mois.
@@ -362,12 +359,16 @@ code:
     tables_par_generation, ages_de_lecture, retranche_decote, duree_avant_l_age_de_lecture ;
     regimes/ratp.yaml, regimes/sncf.yaml : duree_requise_table, duree_requise_calendrier,
     duree_requise_trimestres, taux_plein ; legislation/duree_requise_regimes_speciaux.csv :
-    ratp, ratp_2014, sncf_conduite, sncf_2014, depuis, generation, trimestres,
-    retranche_decote ; legislation/duree_requise_calendriers.csv : regimes_speciaux_2008
+    ratp, ratp_2014, ratp_avant_60, sncf_conduite, sncf_2014, depuis, generation,
+    trimestres, retranche_decote, age_de_lecture ;
+    legislation/duree_requise_calendriers.csv : regimes_speciaux_2008
   tests:
   - tests/test_sncf_ratp.py
   - >-
     tests/temoins/simulations.json, que le portage rejoue (tests/js/moteur.test.js) :
     statut_agent_sncf, enfants_sncf_trois_enfants et
     sncf_surcote_apres_soixante_quatre_ans changent sans la table de l'agent de
-    conduite
+    conduite ; sncf_generation_1970 et ratp_generation_1970 sans l'âge de lecture des
+    tables de 2014 (140 trimestres sur 168, et non sur 169 ou 171) ;
+    enfants_ratp_trois_enfants et statut_agent_ratp sans la durée par année de la RATP
+    (170 trimestres, et non 172)

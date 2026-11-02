@@ -148,6 +148,16 @@ periodes:
       La fiche opposait à tous la table commune par génération : 167
       trimestres à un agent né en 1960 parti en 2010, dont le droit en
       demande 154.
+      ET L'AGENT QUI PEUT PARTIR AVANT SOIXANTE ANS DOIT CELLE DE LA
+      GÉNÉRATION QUI LES A : l'article 23-1 (LEGIARTI000029132058, lu le 2
+      novembre 2026), pour les pensions prenant effet à compter du 1er
+      janvier 2017, lui oppose « celle exigée des agents atteignant l'âge
+      de soixante ans l'année à compter de laquelle la liquidation peut
+      intervenir » : la table de 2014 se lit pour lui à la génération qui a
+      soixante ans le mois où son droit s'ouvre (`age_de_lecture` de
+      `legislation/duree_requise_regimes_speciaux.csv`). La fiche la lisait
+      à sa propre génération : 171 trimestres, et non 168, au roulant né en
+      janvier 1970, dont le droit s'ouvre en mai 2021.
 
   - debut: 2025
     fin: null
@@ -157,7 +167,7 @@ periodes:
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
     age_table: ratp_roulant_2023
-    duree_requise_table: [ratp, ratp_2014]
+    duree_requise_table: [ratp_avant_60, ratp, ratp_2014]
     duree_requise_calendrier: regimes_speciaux_2008
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
@@ -216,3 +226,14 @@ periodes:
       tôt (`duree_requise_table`, essayées dans l'ordre). La fiche
       opposait à tous la table commune par génération : 167 trimestres à
       un agent né en 1960 parti en 2010, dont le droit en demande 154.
+      ET L'AGENT QUI RÉUNIT LES CONDITIONS AVANT SOIXANTE ANS DOIT UNE
+      DURÉE PAR ANNÉE : l'article 23-1 (LEGIARTI000047910476, lu le 2
+      novembre 2026) la fixe, « par dérogation au I de l'article 51 », à
+      cent soixante-dix trimestres à compter du 1er janvier 2025 ; « cette
+      durée augmente d'un trimestre tous les trois ans pour atteindre cent
+      soixante-douze trimestres en 2031 ». La table `ratp_avant_60`, nommée
+      la première, la porte par la génération qui a soixante ans l'année où
+      le droit s'ouvre ; la table de 2014, qui répond encore à qui a réuni
+      les conditions avant 2025, se lit de même. La fiche opposait au
+      roulant la table de sa génération : 172 trimestres, et non 170, à qui
+      ouvre son droit de 2025 à 2027.

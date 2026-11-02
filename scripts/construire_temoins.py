@@ -1849,6 +1849,10 @@ def _cas() -> list[dict]:
         ("sncf_retraite_de_2010", "agent_sncf", 1960, "50"),
         ("ieg_generation_1965_partie_en_2025", "agent_ieg", 1965, "60"),
         ("ratp_generation_1970", "agent_ratp", 1970, "56"),
+        # L'agent de conduite né en 1970 réunit les conditions en 2021, avant
+        # cinquante-cinq ans : il doit la durée de la génération qui les a ce
+        # mois-là, 168 trimestres, et non les 169 de la sienne (article 12-1).
+        ("sncf_generation_1970", "agent_sncf", 1970, "56"),
     ):
         cas_statut(nom, statut, naissance)
         assert cas[-1][0] == nom, f"{nom} : aucun âge d'entrée admissible"
