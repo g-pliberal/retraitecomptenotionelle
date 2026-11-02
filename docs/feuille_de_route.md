@@ -6923,12 +6923,12 @@ de `contribution_etat`.
 0005), et le Python garde ce que dit la note 0006, que le propriétaire a
 confirmée ce jour. En cours : le coût sous un modèle modifié. Faits : le
 relevé, le plan, le jumeau séparé de la mémoire, les données d'ailleurs,
-calculées par le portage sur leur paquet, puis « sans la suspension » au
-droit contrefactuel du moteur, plus juste que la copie, retirée. Suivent, une
-par session : la proposition prospective en univers, le stock à l'âge légal
-et le régime unique en paramètres facultatifs ; puis les retraits, qui
-n'ôtent que des règles. Détail : `2026-11-02-le-cout-sous-un-modele-modifie.md`,
-`2026-11-02-les-donnees-d-ailleurs.md`, `2026-11-02-sans-la-suspension-au-droit-contrefactuel.md`.
+« sans la suspension » au droit contrefactuel, puis la proposition
+prospective en univers, que le portage calcule, la variante dans la demande
+au pont, ses chiffres à l'octet. Suivent, une par session : le stock à l'âge
+légal et le régime unique en paramètres facultatifs ; puis les retraits, qui
+n'ôtent que des règles. Détail : `2026-11-02-le-cout-sous-un-modele-modifie.md`
+(le plan), `2026-11-02-la-proposition-prospective-en-univers.md`.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur
