@@ -622,6 +622,58 @@ def carrieres_de_la_grille(cas: list[dict], parametres, primes: dict[int, float]
     return resultats, reponse["echecs"]
 
 
+def departs_des_cas(cas: list[dict], parametres, primes: dict[int, float] | None = None,
+                    paquet: bytes | None = None) -> tuple[dict[str, dict], dict[str, str]]:
+    """Le départ de chaque cas type, ``{"cle", "regle", "options", "parcours",
+    "entree", "attente", "lire"}`` (``CasType.pour_le_portage``), au scénario 1,
+    sous ``parametres`` (``departsDesCas`` de ``pont.mjs``) : ce que lisent
+    les mesures de ``scripts/grille_large.py`` (``Departs``, action 161,
+    étape 7). Sous sa clé, l'âge que son pilote fixe (``"age"``, en flottant),
+    ``"attendu"`` quand l'attente d'un cas type de la grille élargie le fixe,
+    et, sauf sous ``"lire": "age"``, ce que l'échéancier lit à ce départ
+    (``"depart"``) — le taux, la durée requise et la durée validée, le motif
+    de l'ouverture, chaque avantage appliqué, ``(code, montant)``, chaque
+    pension de régime, ``(regime, montant, surcote)`` —, ou ``None`` et le
+    motif qui le refuse (``"refus"``). Puis, sous leur clé, les motifs des cas
+    dont le portage refuse l'âge."""
+    reponse = _demander({"departs_des_cas": {
+        "parametres": parametres_en_donnees(parametres), "primes": primes, "cas": cas}}, paquet)
+    resultats = {}
+    for cle, lu in reponse["resultats"].items():
+        depart = None
+        if "taux_liquidation" in lu:
+            depart = {
+                "taux_liquidation": _flottant(lu["taux_liquidation"]),
+                "trimestres_requis": _entier(lu["trimestres_requis"], "trimestres_requis"),
+                "trimestres_valides": _entier(lu["trimestres_valides"], "trimestres_valides"),
+                "motif_ouverture": lu["motif_ouverture"],
+                "avantages": tuple((code, _flottant(montant))
+                                   for code, montant in lu["avantages_appliques"]),
+                "pensions": tuple((regime, _flottant(montant), _flottant(surcote))
+                                  for regime, montant, surcote in lu["pensions_par_regime"]),
+            }
+        resultats[cle] = {"age": _flottant(lu["age"]), "attendu": bool(lu.get("attendu")),
+                          "depart": depart, "refus": lu.get("refus")}
+    return resultats, reponse["echecs"]
+
+
+def debuts_de_la_surcote(cas: list[dict], parametres, primes: dict[int, float] | None = None,
+                         paquet: bytes | None = None,
+                         ) -> tuple[dict[str, float | None], dict[str, str]]:
+    """Le premier âge d'où le modèle sert une surcote à la pension de
+    fonctionnaire de chaque cas type, ``{"cle", …, "plein", "recherche"}``
+    (``CasType.pour_le_portage``), sur les ``recherche`` trimestres comptés de
+    part et d'autre de l'âge ``plein`` (``debutsDeLaSurcote`` de
+    ``pont.mjs``) : sous sa clé, cet âge, en flottant, ou ``None`` sans
+    surcote. Puis, sous leur clé, les motifs des cas que le portage refuse.
+    Son jumeau est ``debut_de_la_surcote`` de ``scripts/grille_large.py``
+    (action 161, étape 7)."""
+    reponse = _demander({"debuts_de_la_surcote": {
+        "parametres": parametres_en_donnees(parametres), "primes": primes, "cas": cas}}, paquet)
+    return ({cle: None if debut is None else _flottant(debut)
+             for cle, debut in reponse["resultats"].items()}, reponse["echecs"])
+
+
 def avantages(cas: list[dict], parametres, paquet: bytes | None = None,
               ) -> tuple[dict[str, dict], dict[str, str]]:
     """Chaque case du coût des avantages non contributifs, ``{"cle",

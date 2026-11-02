@@ -505,6 +505,62 @@ function ageDuCas(simulateur, cas, primes, variante) {
 }
 
 /**
+ * Le départ de chaque cas type, `{cle, regle, options, parcours, entree,
+ * attente, lire}`, sous `parametres` — ce que lisent les mesures de
+ * `scripts/grille_large.py` (`Departs`, étape 7) : l'âge que son pilote fixe
+ * sous la variante du droit (`ageDuCas`), `attendu` quand l'attente le fixe ;
+ * et, sauf sous `lire: "age"`, ce que l'échéancier lit à ce départ
+ * (`Simulateur.echeancier`) — le taux, la durée requise et la durée validée,
+ * le motif de l'ouverture, chaque avantage appliqué, `[code, montant]`,
+ * chaque pension de régime, `[regime, montant, surcote]` —, ou le motif qui
+ * le refuse (`refus`), l'âge gardé, comme le Python lit l'âge sans le départ.
+ */
+function departsDesCas({ parametres, primes, cas }) {
+  const simulateur = simulateurSous(parametres);
+  return parCas(cas, (un) => {
+    const { age, attendu, batir } = ageDuCas(simulateur, un, primes, "droit");
+    const lu = attendu ? { age, attendu } : { age };
+    if (un.lire === "age") {
+      return lu;
+    }
+    let depart;
+    try {
+      depart = simulateur.echeancier(
+        carriereFinale(simulateur, un.entree ?? null, batir, primes)(age)).auDepart;
+    } catch (erreur) {
+      if (erreurDuProgramme(erreur)) {
+        throw erreur;
+      }
+      return { ...lu, refus: String(erreur.message ?? erreur) };
+    }
+    return {
+      ...lu,
+      taux_liquidation: depart.taux_liquidation,
+      trimestres_requis: depart.trimestres_requis,
+      trimestres_valides: depart.trimestres_valides,
+      motif_ouverture: depart.motif_ouverture,
+      avantages_appliques: depart.avantages_appliques.map(({ code, montant }) => [code, montant]),
+      pensions_par_regime: depart.pensions_par_regime
+        .map(({ regime, montant, surcote }) => [regime, montant, surcote]),
+    };
+  });
+}
+
+/**
+ * Le premier âge d'où le modèle sert une surcote à la pension de
+ * fonctionnaire de chaque cas type, `{cle, regle, options, parcours, entree,
+ * plein, recherche}`, sur les trimestres comptés de l'âge `plein`
+ * (`debutDeLaSurcote`), ou `null` : `debut_de_la_surcote` de
+ * `scripts/grille_large.py` (étape 7).
+ */
+function debutsDeLaSurcote({ parametres, primes, cas }) {
+  const simulateur = simulateurSous(parametres);
+  return parCas(cas, (un) => debutDeLaSurcote(simulateur, carriereFinale(simulateur,
+    un.entree ?? null, carriereDuCasType(simulateur, un.options, primes, un.parcours ?? null),
+    primes), un.plein, un.recherche));
+}
+
+/**
  * L'âge de départ de chaque cas type, `{cle, regle, options, parcours,
  * attente}` (`ageDuCas`) : le coût fait dater ici les cas types de sa grille
  * (action 161, étape 6), dont le Python garde les définitions, et ceux de la
@@ -1067,7 +1123,8 @@ function droit({ parametres, carrieres, appels }) {
 const LECTURES = {
   carrieres, saisies, grille_du_cout: grilleDuCout, carrieres_des_saisies: carrieresDesSaisies,
   simulations, scenario_actuel: scenarioActuel, droit, ages_de_depart: agesDeDepart,
-  carrieres_de_la_grille: carrieresDeLaGrille, avantages,
+  carrieres_de_la_grille: carrieresDeLaGrille, avantages, departs_des_cas: departsDesCas,
+  debuts_de_la_surcote: debutsDeLaSurcote,
 };
 
 /** La réponse à une demande, qui porte une seule des `LECTURES`. */

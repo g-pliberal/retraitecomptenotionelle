@@ -336,12 +336,13 @@ sys.path.insert(0, str(RACINE / "src"))
 
 from retraite_notionnelle.somme import somme_ordonnee
 from retraite_notionnelle import cout as C  # noqa: E402
-from retraite_notionnelle import memoire  # noqa: E402
+from retraite_notionnelle import memoire, pont  # noqa: E402
 from retraite_notionnelle.carriere import (  # noqa: E402
     PROFIL_SMIC, Metier, salaire_moyen_annuel,
 )
 from retraite_notionnelle.castypes import (  # noqa: E402
-    CAS_TYPES, GRILLE_DU_COUT, CasType, cas_type_affiche, parts_des_caisses)
+    CAS_TYPES, GRILLE_DU_COUT, CasType, age_lu, batie_au_portage, cas_type_affiche,
+    parts_des_caisses, primes_projetees_en_donnees)
 from retraite_notionnelle.config import Parametres  # noqa: E402
 from retraite_notionnelle.controle_eacr import conditions_publiees  # noqa: E402
 from retraite_notionnelle.donnees.assiette import AssietteActivite  # noqa: E402
@@ -1389,7 +1390,7 @@ class CasTypeLarge(CasType):
         if attente is None or variante == "absolu":
             return age
         if self.depuis_la_surcote:
-            debut = debut_de_la_surcote(simulateur, self, generation, age)
+            debut = _debut_de_la_surcote_en_python(simulateur, self, generation, age)
             return age if debut is None else max(age, debut + self.attente)
         return max(age, attente["plancher"])
 
@@ -3393,7 +3394,121 @@ def inaptes_des_generations(racine: Path) -> dict[str, tuple[tuple[int, float], 
     return sortie
 
 
-def decote_a_l_ouverture(simulateur: Simulateur, cas: CasType, generation: int) -> bool:
+@dataclass(frozen=True)
+class AuDepart:
+    """Ce que les mesures de la grille lisent de l'échéancier au départ d'une
+    carrière (``Simulateur.echeancier(…).au_depart``) : le taux, la durée
+    requise et la durée validée, le motif de l'ouverture, chaque avantage
+    appliqué, ``(code, montant)``, et chaque pension de régime, ``(regime,
+    montant, surcote)``."""
+
+    taux_liquidation: float
+    trimestres_requis: int
+    trimestres_valides: int
+    motif_ouverture: str | None
+    avantages: tuple[tuple[str, float], ...]
+    pensions: tuple[tuple[str, float, float], ...]
+
+
+class Departs:
+    """Les départs que les mesures de la grille lisent au scénario 1 de la
+    page, chacun ``(cas type, génération)`` : l'âge que son pilote fixe
+    (:meth:`CasTypeLarge.age_liquidation_pour`), et ce que l'échéancier lit à
+    ce départ (:class:`AuDepart`).
+
+    Le portage les calcule tous, d'une demande, quand la grille s'y date
+    (``castypes.batie_au_portage``, action 161, étape 7) : ``ages``, ceux dont
+    on ne lira que l'âge, et ``departs``, ceux dont on lira aussi le départ
+    (``pont.departs_des_cas``) ; un départ qu'on ne lui a pas annoncé, d'une
+    demande de plus. Sous ``du_jour``, sur le paquet des données du jour
+    (``pont.paquet_des_donnees``), celui d'une mesure que la mémoire garde ;
+    sans lui, sur ``moteur/donnees.json``, par le pont gardé ouvert, comme
+    ``castypes.cases_de_la_grille``. Le moteur Python, sinon, à la demande,
+    dans l'ordre où la mesure les lit. Un âge ou un départ que le modèle
+    refuse lève ``ValueError`` à sa lecture, là où son calcul le lève en
+    Python."""
+
+    def __init__(self, simulateur: Simulateur, ages=(), departs=(), du_jour: bool = False
+                 ) -> None:
+        self.simulateur = simulateur
+        self.du_jour = du_jour
+        self._ages: dict[tuple[CasType, int], float] = {}
+        self._departs: dict[tuple[CasType, int], AuDepart] = {}
+        self._refus: dict[tuple[CasType, int, str], str] = {}
+        demandes = {**dict.fromkeys(ages, "age"), **dict.fromkeys(departs, "depart")}
+        self.au_portage = batie_au_portage(simulateur.parametres,
+                                           [cas for cas, _generation in demandes])
+        if self.au_portage and demandes:
+            self._lire_au_portage(demandes)
+
+    def _lire_au_portage(self, demandes: dict[tuple[CasType, int], str]) -> None:
+        simulateur = self.simulateur
+        cles = {str(rang): couple for rang, couple in enumerate(demandes)}
+        lus, refus = pont.departs_des_cas(
+            [{"cle": cle, **cas.pour_le_portage(simulateur, generation),
+              "lire": demandes[(cas, generation)]}
+             for cle, (cas, generation) in cles.items()],
+            simulateur.parametres, primes_projetees_en_donnees(simulateur),
+            pont.paquet_des_donnees() if self.du_jour else None)
+        for cle, (cas, generation) in cles.items():
+            if cle in refus:
+                self._refus[(cas, generation, "age")] = refus[cle]
+                continue
+            lu = lus[cle]
+            self._ages[(cas, generation)] = age_lu(cas, lu["age"], lu["attendu"])
+            if demandes[(cas, generation)] == "age":
+                continue
+            if lu["depart"] is None:
+                self._refus[(cas, generation, "depart")] = lu["refus"]
+            else:
+                self._departs[(cas, generation)] = AuDepart(**lu["depart"])
+
+    def _refuse(self, cas: CasType, generation: int, lecture: str) -> None:
+        motif = self._refus.get((cas, generation, lecture))
+        if motif is not None:
+            raise ValueError(motif)
+
+    def age(self, cas: CasType, generation: int) -> float:
+        """L'âge où ce cas type part, étant né en ``generation``."""
+        self._refuse(cas, generation, "age")
+        if (cas, generation) not in self._ages:
+            if self.au_portage:
+                self._lire_au_portage({(cas, generation): "age"})
+                return self.age(cas, generation)
+            self._ages[(cas, generation)] = cas.age_liquidation_pour(self.simulateur, generation)
+        return self._ages[(cas, generation)]
+
+    def au_depart(self, cas: CasType, generation: int) -> AuDepart:
+        """Ce que l'échéancier lit au départ de ce cas type, étant né en
+        ``generation``, à l'âge où il part (:meth:`age`)."""
+        self._refuse(cas, generation, "age")
+        self._refuse(cas, generation, "depart")
+        if (cas, generation) not in self._departs:
+            if self.au_portage:
+                self._lire_au_portage({(cas, generation): "depart"})
+                return self.au_depart(cas, generation)
+            simulateur = self.simulateur
+            actuel = simulateur.echeancier(
+                cas.carriere_a(simulateur, generation, self.age(cas, generation))).au_depart
+            self._departs[(cas, generation)] = AuDepart(
+                actuel.taux_liquidation, actuel.trimestres_requis, actuel.trimestres_valides,
+                actuel.motif_ouverture,
+                tuple((avantage.code, avantage.montant) for avantage in actuel.avantages_appliques),
+                tuple((pension.regime, pension.montant, pension.surcote)
+                      for pension in actuel.pensions_par_regime))
+        return self._departs[(cas, generation)]
+
+
+def _lectures_de_la_decote(cas: CasType, generation: int) -> tuple[tuple, tuple]:
+    """Les âges et les départs que :func:`decote_a_l_ouverture` lit de ce cas
+    type, né en ``generation`` (:class:`Departs`)."""
+    if cas.regle_liquidation == "ouverture":
+        return (), ((cas, generation), (replace(cas, regle_liquidation="taux_plein"), generation))
+    return ((replace(cas, regle_liquidation="ouverture"), generation), (cas, generation)), ()
+
+
+def decote_a_l_ouverture(simulateur: Simulateur, cas: CasType, generation: int,
+                         departs: Departs | None = None) -> bool:
     """Vrai si ce cas type part, ou partirait, avec une décote à l'ouverture
     de son droit (:data:`DECOTE_DES_CARRIERES_QUI_LE_PEUVENT`). Sous la règle
     ``taux_plein``, quand le droit de sa génération l'ouvre avant l'âge de son
@@ -3403,13 +3518,15 @@ def decote_a_l_ouverture(simulateur: Simulateur, cas: CasType, generation: int) 
     celle des agents qui partent à l'ouverture de leur statut, quand ils y
     prennent un taux plus bas que celui de leur taux plein
     (:func:`avec_decote`) : l'agent de conduite né en 1958 part à cinquante ans
-    au taux de 75 %."""
+    au taux de 75 %. Ses départs se lisent dans ``departs`` (:class:`Departs`),
+    ou d'une demande à eux."""
+    if departs is None:
+        departs = Departs(simulateur, *_lectures_de_la_decote(cas, generation))
     if cas.regle_liquidation == "ouverture":
-        depart = simulateur.echeancier(cas.construire(simulateur, generation)).au_depart
-        return avec_decote(simulateur, cas, generation, depart.taux_liquidation)
+        return avec_decote(simulateur, cas, generation,
+                           departs.au_depart(cas, generation).taux_liquidation, departs)
     ouverte = replace(cas, regle_liquidation="ouverture")
-    return (ouverte.age_liquidation_pour(simulateur, generation)
-            < cas.age_liquidation_pour(simulateur, generation) - 1e-6)
+    return departs.age(ouverte, generation) < departs.age(cas, generation) - 1e-6
 
 
 def ouvertures_decotees(variantes: list[Variante], racine: Path) -> dict[str, frozenset[int]]:
@@ -3427,12 +3544,16 @@ def ouvertures_decotees(variantes: list[Variante], racine: Path) -> dict[str, fr
 
     def calcul() -> dict[str, frozenset[int]]:
         simulateur = Simulateur(parametres).pour_la_projection()
+        lectures = [_lectures_de_la_decote(cas, generation)
+                    for cas in cas_types for generation in generations]
+        departs = Departs(simulateur, [age for ages, _ in lectures for age in ages],
+                          [depart for _, siens in lectures for depart in siens], du_jour=True)
         sortie = {}
         for cas in cas_types:
             siennes = []
             for generation in generations:
                 try:
-                    if decote_a_l_ouverture(simulateur, cas, generation):
+                    if decote_a_l_ouverture(simulateur, cas, generation, departs):
                         siennes.append(generation)
                 except (ValueError, KeyError):
                     continue
@@ -3444,16 +3565,27 @@ def ouvertures_decotees(variantes: list[Variante], racine: Path) -> dict[str, fr
                      generations), calcul)
 
 
-def avance_par_l_inaptitude(simulateur: Simulateur, cas: CasType, generation: int) -> bool:
+def _apte_et_inapte(cas: CasType) -> tuple[CasType, CasType]:
+    """Ce cas type au taux plein, sans l'attente d'un départ avec surcote
+    (:func:`au_taux_plein`), apte, puis reconnu inapte : les deux départs que
+    :func:`avance_par_l_inaptitude` compare."""
+    apte = au_taux_plein(replace(cas, inaptitude=False))
+    return apte, replace(apte, inaptitude=True)
+
+
+def avance_par_l_inaptitude(simulateur: Simulateur, cas: CasType, generation: int,
+                            departs: Departs | None = None) -> bool:
     """Vrai si l'inaptitude avance le départ de ce cas type, étant né en
     ``generation`` (:data:`INVALIDES_ET_INAPTES`) : reconnu inapte, il a le taux
     plein, que le pilote fixe, plus tôt que sans elle — dès l'âge légal, ou dès
     62 ans quand la réforme de 2023 le relève, quand sa durée ne le lui donne
     pas à cet âge. Un régime qui ne sert pas le taux plein à l'inapte (fiche
-    ``inaptitude_au_travail``) n'avance rien."""
-    apte = au_taux_plein(replace(cas, inaptitude=False))
-    return (replace(apte, inaptitude=True).age_liquidation_pour(simulateur, generation)
-            < apte.age_liquidation_pour(simulateur, generation) - 1e-6)
+    ``inaptitude_au_travail``) n'avance rien. Ses âges se lisent dans
+    ``departs`` (:class:`Departs`), ou d'une demande à eux."""
+    apte, inapte = _apte_et_inapte(cas)
+    if departs is None:
+        departs = Departs(simulateur, ages=((inapte, generation), (apte, generation)))
+    return departs.age(inapte, generation) < departs.age(apte, generation) - 1e-6
 
 
 def avances_par_l_inaptitude(variantes: list[Variante], racine: Path
@@ -3470,12 +3602,15 @@ def avances_par_l_inaptitude(variantes: list[Variante], racine: Path
 
     def calcul() -> dict[str, frozenset[int]]:
         simulateur = Simulateur(parametres).pour_la_projection()
+        departs = Departs(simulateur, ages=[
+            (variante, generation) for cas in cas_types for generation in generations
+            for variante in reversed(_apte_et_inapte(cas))], du_jour=True)
         sortie = {}
         for cas in cas_types:
             siennes = []
             for generation in generations:
                 try:
-                    if avance_par_l_inaptitude(simulateur, cas, generation):
+                    if avance_par_l_inaptitude(simulateur, cas, generation, departs):
                         siennes.append(generation)
                 except (ValueError, KeyError):
                     continue
@@ -3866,7 +4001,29 @@ def debut_de_la_surcote(simulateur: Simulateur, cas: CasType, generation: int,
     plein à 62 ans, surcote dès 60 ans et demi. Le premier trimestre surcoté
     se cherche en doublant le pas, puis par dichotomie. ``None`` quand le
     modèle n'en sert aucune dans les :data:`TRIMESTRES_DE_RECHERCHE`
-    trimestres qui suivent le taux plein, la limite d'âge l'interdisant."""
+    trimestres qui suivent le taux plein, la limite d'âge l'interdisant. Le
+    portage la cherche, quand la grille s'y date (``castypes.batie_au_portage``,
+    ``pont.debuts_de_la_surcote``, action 161, étape 7), sur
+    ``moteur/donnees.json``, par le pont gardé ouvert, comme
+    ``castypes.cases_de_la_grille`` ; le moteur Python sinon
+    (:func:`_debut_de_la_surcote_en_python`)."""
+    if batie_au_portage(simulateur.parametres, (cas,)):
+        lus, refus = pont.debuts_de_la_surcote(
+            [{"cle": "debut", **cas.pour_le_portage(simulateur, generation), "plein": plein,
+              "recherche": TRIMESTRES_DE_RECHERCHE}],
+            simulateur.parametres, primes_projetees_en_donnees(simulateur))
+        if refus:
+            raise ValueError(refus["debut"])
+        return lus["debut"]
+    return _debut_de_la_surcote_en_python(simulateur, cas, generation, plein)
+
+
+def _debut_de_la_surcote_en_python(simulateur: Simulateur, cas: CasType, generation: int,
+                                   plein: float) -> float | None:
+    """:func:`debut_de_la_surcote` par le moteur Python : celle que lit l'âge
+    que le pilote Python fixe (:meth:`CasTypeLarge.age_liquidation_pour`), qui
+    date en Python ce que le portage date chez lui (``ageDuCas`` de
+    ``pont.mjs``)."""
 
     def surcote(trimestres: int) -> bool:
         age = plein + trimestres / 4.0
@@ -4698,7 +4855,7 @@ MINIMA_DE_PENSION = ("minimum_contributif", "minimum_garanti", "pension_majoree_
 
 
 def avec_decote(simulateur: Simulateur, cas: CasType, generation: int,
-                taux: float) -> bool:
+                taux: float, departs: Departs | None = None) -> bool:
     """Vrai si ce cas type, liquidé au taux ``taux``, part avec une décote :
     sous la règle ``ouverture``, avant l'âge que le pilote fixe sous
     ``taux_plein``, et à un taux plus bas que celui de ce départ-là — ou,
@@ -4706,16 +4863,27 @@ def avec_decote(simulateur: Simulateur, cas: CasType, generation: int,
     lui seulement. Partir plus tôt n'est pas toujours partir décoté : l'agent
     de conduite né en 1958 part à cinquante ans au taux de 75 %, la décote
     des régimes spéciaux ne mordant qu'aux générations suivantes. Les autres
-    règles partent au taux plein, ou à leurs services."""
+    règles partent au taux plein, ou à leurs services. Ses départs se lisent
+    dans ``departs`` (:class:`Departs`), ou d'une demande à eux."""
     if cas.regle_liquidation != "ouverture":
         return False
     plein = replace(cas, regle_liquidation="taux_plein")
-    age_plein = plein.age_liquidation_pour(simulateur, generation)
-    if cas.age_liquidation_pour(simulateur, generation) >= age_plein - 1e-6:
+    if departs is None:
+        departs = Departs(simulateur, ages=((cas, generation),), departs=((plein, generation),))
+    age_plein = departs.age(plein, generation)
+    if departs.age(cas, generation) >= age_plein - 1e-6:
         return False
-    taux_plein = simulateur.echeancier(
-        plein.carriere_a(simulateur, generation, age_plein)).au_depart.taux_liquidation
+    taux_plein = departs.au_depart(plein, generation).taux_liquidation
     return taux_plein == 0.0 or taux < taux_plein - 1e-9
+
+
+def _departs_qui_decotent(cas: CasType, generation: int) -> tuple:
+    """Le départ de ce cas type, né en ``generation``, et, sous la règle
+    ``ouverture``, celui de son taux plein : ceux que lit :func:`avec_decote`
+    après lui (:class:`Departs`)."""
+    if cas.regle_liquidation != "ouverture":
+        return ((cas, generation),)
+    return (cas, generation), (replace(cas, regle_liquidation="taux_plein"), generation)
 
 
 def _proratisations(parametres: Parametres, morceau: tuple
@@ -4729,17 +4897,20 @@ def _proratisations(parametres: Parametres, morceau: tuple
 
     def calcul():
         simulateur = Simulateur(parametres).pour_la_projection()
+        departs = Departs(simulateur, departs=[
+            depart for cas, generation in morceau
+            for depart in _departs_qui_decotent(cas, generation)], du_jour=True)
         sortie = []
         for cas, generation in morceau:
             try:
-                actuel = simulateur.echeancier(cas.construire(simulateur, generation)).au_depart
+                actuel = departs.au_depart(cas, generation)
                 decote = avec_decote(simulateur, cas, generation,
-                                     actuel.taux_liquidation)
+                                     actuel.taux_liquidation, departs)
             except (ValueError, KeyError):
                 continue
             requis = actuel.trimestres_requis
-            minimum = any(avantage.code in MINIMA_DE_PENSION and avantage.montant > 0.0
-                          for avantage in actuel.avantages_appliques)
+            minimum = any(code in MINIMA_DE_PENSION and montant > 0.0
+                          for code, montant in actuel.avantages)
             sortie.append((cas.code, generation,
                            min(1.0, actuel.trimestres_valides / requis) if requis else 1.0,
                            minimum, actuel.trimestres_valides / 4.0, decote))
@@ -5067,8 +5238,8 @@ def au_taux_plein(cas: CasType) -> CasType:
     return replace(cas, regle_liquidation="taux_plein")
 
 
-def condition_au_depart(simulateur: Simulateur, cas: CasType, generation: int
-                        ) -> tuple[float, str]:
+def condition_au_depart(simulateur: Simulateur, cas: CasType, generation: int,
+                        departs: Departs | None = None) -> tuple[float, str]:
     """L'âge où ce cas type part, étant né en ``generation``, et la classe de
     :data:`CLASSES_DE_CONDITIONS` de son départ : en carrière longue quand le
     droit l'ouvre par elle ; avec une décote (:func:`avec_decote`) ; avec une
@@ -5080,21 +5251,32 @@ def condition_au_depart(simulateur: Simulateur, cas: CasType, generation: int
     from retraite_notionnelle.scenarios.actuel import AgesAnnulationDecote, AgesOuverture
 
     racine = simulateur.parametres.racine_donnees
-    age = cas.age_liquidation_pour(simulateur, generation)
-    actuel = simulateur.echeancier(cas.carriere_a(simulateur, generation, age)).au_depart
+    if departs is None:
+        departs = Departs(simulateur, *_lectures_de_la_condition(cas, generation))
+    age = departs.age(cas, generation)
+    actuel = departs.au_depart(cas, generation)
     if actuel.motif_ouverture == "carriere_longue":
         return age, "carriere_longue"
-    if avec_decote(simulateur, cas, generation, actuel.taux_liquidation):
+    if avec_decote(simulateur, cas, generation, actuel.taux_liquidation, departs):
         return age, "decote"
     legal = AgesOuverture(racine).age(generation)[0]
     annulation = AgesAnnulationDecote(racine).age(generation)[0]
     if cas.regle_liquidation != "services" and age > legal + TOLERANCE_DE_PLACE:
-        if age > au_taux_plein(cas).age_liquidation_pour(simulateur, generation) + 1e-6:
+        if age > departs.age(au_taux_plein(cas), generation) + 1e-6:
             return age, "surcote"
     if (age >= annulation - TOLERANCE_DE_PLACE
             and actuel.trimestres_valides < actuel.trimestres_requis):
         return age, "taux_plein_age"
     return age, "taux_plein_autre"
+
+
+def _lectures_de_la_condition(cas: CasType, generation: int) -> tuple[tuple, tuple]:
+    """Les âges et les départs que :func:`condition_au_depart` lit de ce cas
+    type, né en ``generation`` (:class:`Departs`) : son départ, celui de son
+    taux plein sous la règle ``ouverture`` (:func:`avec_decote`), et l'âge de
+    son taux plein sans attente, hors de la règle ``services``."""
+    ages = () if cas.regle_liquidation == "services" else ((au_taux_plein(cas), generation),)
+    return ages, _departs_qui_decotent(cas, generation)
 
 
 def _conditions(parametres: Parametres, morceau: tuple) -> list[tuple[str, int, float, str]]:
@@ -5104,10 +5286,13 @@ def _conditions(parametres: Parametres, morceau: tuple) -> list[tuple[str, int, 
 
     def calcul():
         simulateur = Simulateur(parametres).pour_la_projection()
+        lectures = [_lectures_de_la_condition(cas, generation) for cas, generation in morceau]
+        departs = Departs(simulateur, [age for ages, _ in lectures for age in ages],
+                          [depart for _, siens in lectures for depart in siens], du_jour=True)
         sortie = []
         for cas, generation in morceau:
             try:
-                age, condition = condition_au_depart(simulateur, cas, generation)
+                age, condition = condition_au_depart(simulateur, cas, generation, departs)
             except (ValueError, KeyError):
                 continue
             sortie.append((cas.code, generation, age, condition))

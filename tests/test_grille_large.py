@@ -2843,12 +2843,12 @@ def test_une_part_de_chaque_categorie_de_fonctionnaires_civils_part_avec_une_sur
 def _depart_et_surcote(simulateur: Simulateur, cas, generation: int) -> tuple[float, float]:
     """L'âge où ce cas type part, étant né en ``generation``, et les trimestres
     de surcote que le modèle sert à sa pension de fonctionnaire : son
-    coefficient de surcote, à 1,25 % le trimestre."""
-    age = cas.age_liquidation_pour(simulateur, generation)
-    depart = simulateur.echeancier(cas.carriere_a(simulateur, generation, age)).au_depart
-    pension = next(p for p in depart.pensions_par_regime
-                   if p.regime in ("fonction_publique_etat", "cnracl"))
-    return age, (pension.montant / (pension.montant - pension.surcote) - 1.0) / 0.0125
+    coefficient de surcote, à 1,25 % le trimestre. Le portage les lit quand la
+    grille s'y date (``G.Departs``, action 161, étape 7)."""
+    departs = G.Departs(simulateur, departs=((cas, generation),))
+    _regime, montant, surcote = next(pension for pension in departs.au_depart(cas, generation).pensions
+                                     if pension[0] in ("fonction_publique_etat", "cnracl"))
+    return departs.age(cas, generation), (montant / (montant - surcote) - 1.0) / 0.0125
 
 
 def test_un_fonctionnaire_civil_qui_surcote_part_avec_la_surcote_moyenne_de_sa_categorie(
@@ -2977,13 +2977,11 @@ def test_la_grille_large_se_date_et_se_bat_au_portage_sans_les_jumeaux(memoire_i
             assert (par_code[code].age_liquidation_pour(reference, 1965)
                     > pilote.age_de_depart(reference, par_code[code], 1965)), code
 
-    def interdit(*_, **__):
-        raise AssertionError("un jumeau Python date ou bâtit la grille élargie")
-
     _interdire(monkeypatch, (*_jumeaux_qui_datent_et_batissent(), (ScenarioActuel, "calculer"),
                              (Simulateur, "echeancier"), (Simulateur, "simuler"),
                              (Simulateur, "proposition"), (G.CasTypeLarge, "_carriere"),
-                             (CasType, "_carriere_entree_tardive"), (G, "debut_de_la_surcote")))
+                             (CasType, "_carriere_entree_tardive"),
+                             (G, "_debut_de_la_surcote_en_python")))
     au_portage = tout(Simulateur(Parametres()))
     assert au_portage[0] == en_python[0] and _types(au_portage[0]) == _types(en_python[0])
     assert au_portage[1] == en_python[1] and _types(au_portage[1]) == _types(en_python[1])
@@ -2992,3 +2990,76 @@ def test_la_grille_large_se_date_et_se_bat_au_portage_sans_les_jumeaux(memoire_i
     assert (_types([vars(p) for p in au_portage[3][0]])
             == _types([vars(p) for p in en_python[3][0]]))
     assert len(au_portage[3][0]) == len(echantillon) * 2
+
+
+def test_les_mesures_de_la_grille_large_passent_par_le_portage_sans_les_jumeaux(memoire_isolee,
+                                                                               monkeypatch):
+    """Ce que la grille élargie mesure au départ de ses carrières se lit au
+    portage (action 161, étape 7), d'une demande par mesure
+    (``pont.departs_des_cas``, ``G.Departs``) : le premier âge surcoté
+    (``debut_de_la_surcote``), la décote à l'ouverture du droit
+    (``decote_a_l_ouverture``, ``ouvertures_decotees``), l'avance que donne
+    l'inaptitude (``avance_par_l_inaptitude``, ``avances_par_l_inaptitude``),
+    la décote d'un départ (``avec_decote``), la proratisation et le minimum
+    (``_proratisations``), la condition du départ (``condition_au_depart``,
+    ``_conditions``), la surcote servie (``_depart_et_surcote``). Chacune rend
+    ce que le moteur Python rend, au bit près, alors que le pilote Python,
+    l'ouverture du droit, les constructeurs de carrières, l'échéancier et le
+    scénario 1 du moteur Python, qu'on empêche ici de calculer, n'y entrent
+    pas."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    from retraite_notionnelle.castypes import CasType
+    from retraite_notionnelle.scenarios.actuel import ScenarioActuel
+
+    from test_pont import _interdire, _jumeaux_qui_datent_et_batissent, _types
+
+    monkeypatch.setattr(C, "generations", lambda: (1950, 1965))
+    du_depot = {cas.code: cas for cas in GRILLE_DU_COUT}
+    echantillon = (*_echantillon_au_portage(), du_depot["agent_sncf_conduite"],
+                   G.elargi(du_depot["salaire_moyen"], code="essai~courte",
+                            interruptions_relatives=tuple(
+                                (annee, "sans_activite") for annee in range(15, 30))))
+    surcote = next(cas for cas in echantillon if cas.code == "essai~surcote")
+    variantes = [G.Variante(cas=cas, groupe="regime_general", retraites=(), cotisants=(),
+                            tranche="20_30") for cas in echantillon]
+    couples = tuple((cas, generation) for cas in echantillon for generation in (1950, 1965))
+    parametres = Parametres()
+
+    def mesures():
+        projection = Simulateur(parametres).pour_la_projection()
+        return {
+            "debut": [G.debut_de_la_surcote(projection, surcote, generation, plein)
+                      for generation in (1950, 1965) for plein in (60.0, 63.0, 65.0)],
+            "decote": [G.decote_a_l_ouverture(projection, cas, generation)
+                       for cas, generation in couples],
+            "ouvertures": G.ouvertures_decotees(variantes, parametres.racine_donnees),
+            "avance": [G.avance_par_l_inaptitude(projection, cas, generation)
+                       for cas, generation in couples],
+            "avances": G.avances_par_l_inaptitude(variantes, parametres.racine_donnees),
+            "avec_decote": [G.avec_decote(projection, cas, generation, taux)
+                            for cas, generation in couples for taux in (0.4, 0.5)],
+            "proratisations": G._proratisations(parametres, couples),
+            "condition": [G.condition_au_depart(projection, cas, generation)
+                          for cas, generation in couples],
+            "conditions": G._conditions(parametres, couples),
+            "surcote": [_depart_et_surcote(projection, surcote, generation)
+                        for generation in (1950, 1965)],
+        }
+
+    with memoire.modele_modifie():
+        en_python = mesures()
+    # Ce que l'échantillon fait traverser : une décote, une avance, chaque
+    # condition de départ, une surcote servie.
+    assert any(en_python["decote"]) and any(en_python["avance"])
+    assert {condition for _age, condition in en_python["condition"]} >= {
+        "carriere_longue", "decote", "surcote", "taux_plein_autre"}
+
+    _interdire(monkeypatch, (*_jumeaux_qui_datent_et_batissent(), (ScenarioActuel, "calculer"),
+                             (Simulateur, "echeancier"), (G.CasTypeLarge, "_carriere"),
+                             (CasType, "_carriere_entree_tardive"),
+                             (G, "_debut_de_la_surcote_en_python")))
+    au_portage = mesures()
+    for mesure, valeur in en_python.items():
+        assert au_portage[mesure] == valeur, mesure
+        assert _types(au_portage[mesure]) == _types(valeur), mesure
