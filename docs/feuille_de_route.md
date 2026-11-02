@@ -2805,16 +2805,16 @@ fabriqués.
 
 ### 130. L'architecture du dépôt : décidée, les phases 0 à 8 faites, les domaines à ouvrir — `en cours`
 
-**Reprise, au 29 octobre 2026.** Fait : phases 0 à 8, cinq domaines clos ; le
+**Reprise, au 2 novembre 2026.** Fait : phases 0 à 8, cinq domaines clos ; le
 sixième, les périodes assimilées manquantes, a ses étapes 1 à 6 faites
 (`130/2026-10-17-sixieme-domaine-etape-6.md`). Au propriétaire, README muet :
 sa septième étape, la décision de la proposition, et la retraite progressive,
-le cumul et la seconde pension. La carte mûrit : toute fiche a ses régimes et
-son code, confronté au dépôt par un test, hors de la seule de `EN_PROSE`, à
-l'action 131 ; le RAFP, la CNAVPL et les IEG sont lus au droit ; restent 98
-fiches à lire, 582 manques, et les points ouverts des phases 2 à 8. Par quoi
-commencer : un lot de ces fiches, un régime ou un domaine, à mettre dans
-`LUES_AU_DROIT` (`docs/veille_droit.md`). Détail : `130/2026-10-29-carte-des-fiches-ieg-lus-au-droit.md`.
+le cumul et la seconde pension. La carte mûrit : le RAFP, la CNAVPL, les IEG,
+la SNCF et la RATP sont lus au droit ; restent 95 fiches à lire, 569 manques,
+les points ouverts des phases 2 à 8, et, pour une étape du modèle, la durée
+des agents de la SNCF et de la RATP qui partent tôt. Par quoi commencer : un
+lot de fiches, un régime ou un domaine, dans `LUES_AU_DROIT` (`docs/veille_droit.md`).
+Détail : `130/2026-11-02-carte-des-fiches-sncf-et-ratp-lues-au-droit.md`.
 
 Le dépôt devenait de plus en plus lourd à faire avancer. Une modification du
 moteur du scénario 1 touchait vingt fichiers en médiane, dont sept ou huit de

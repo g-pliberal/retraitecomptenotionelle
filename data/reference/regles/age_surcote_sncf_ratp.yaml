@@ -1,11 +1,176 @@
 schema_version: 1
 id: age_surcote_sncf_ratp
 intitule: >-
-  La surcote de la SNCF et de la RATP ne compte que les trimestres accomplis au-delà
-  d'un âge propre : soixante ans pour les nés avant 1957, puis l'âge légal décalé
-  de cinq générations, soixante-quatre ans à compter de 1970.
+  La surcote de la SNCF et de la RATP ne compte que les trimestres cotisés et effectués
+  après le 1er juillet 2008 au-delà d'un âge propre : soixante ans jusqu'au 20 mars 2011 ;
+  puis l'âge légal de soixante-deux ans, abaissé à soixante ans pour les nés avant 1957 et
+  relevé de quatre mois par génération ; pour les pensions de 2025 et après, de trois mois
+  par génération à compter de 1963, jusqu'à soixante-quatre ans à compter de 1970.
+domaine: decote_surcote
 regimes: [ratp, sncf]
-etat: conforme
+etape: liquider_chaque_regime
+face: droit
+etat: approchee
+lit:
+- la génération de l'agent
+- la date d'effet de sa pension, qui sépare les règles de 2008, de 2011 et de 2025
+ecrit:
+- >-
+  l'âge au-delà duquel les trimestres cotisés et effectués après le 1er juillet 2008
+  comptent en surcote (II de l'article 13 du décret n° 2008-639, II de l'article 24 du
+  décret n° 2008-637), que `trimestres_de_surcote_regimes_speciaux` compte
+dates_qui_decident:
+- liquidation.date_effet
+versions:
+- id: reglements_d_avant_2008
+  statut: supposee
+  hypothese: >-
+    les pensions qui prennent effet avant le 1er juillet 2008 relèvent des règlements de
+    retraite des deux entreprises, que les index du dépôt ne portent pas : la fiche ne leur
+    prête pas de surcote, que les décrets du 30 juin 2008 créent, et qui ne compte que des
+    trimestres « effectués après le 1er juillet 2008 »
+  fiabilite: haute, la surcote des deux décrets ne pouvant rien compter avant cette date
+  textes:
+  - {id: LEGIARTI000019108313, article: "décret n° 2008-639 (SNCF), article 13, II", en_vigueur: 2008-07-01, publie_le: 2008-07-01}
+  - {id: LEGIARTI000019104847, article: "décret n° 2008-637 (RATP), article 24, II", en_vigueur: 2008-07-01, publie_le: 2008-07-01}
+  bornes:
+    liquidation.date_effet: [null, 2008-07-01]
+  contenu:
+    parametres:
+      ages_de_surcote: null
+    droit: aucun coefficient de majoration
+    conditions: >-
+      le modèle n'a pas de surcote sur sa période d'avant 2009
+  exemples: aucun trouvé
+- id: soixante_ans
+  statut: lue
+  textes:
+  - {id: LEGIARTI000019108313, article: "décret n° 2008-639 (SNCF), article 13, II", en_vigueur: 2008-07-01, publie_le: 2008-07-01}
+  - {id: LEGIARTI000020085562, article: "même article", en_vigueur: 2009-01-01}
+  - {id: LEGIARTI000019104847, article: "décret n° 2008-637 (RATP), article 24, II", en_vigueur: 2008-07-01, publie_le: 2008-07-01}
+  - {id: LEGIARTI000020085589, article: "même article", en_vigueur: 2009-01-01}
+  nee_de: LEGIARTI000019108313
+  bornes:
+    liquidation.date_effet: [2008-07-01, 2011-03-21]
+  contenu:
+    parametres:
+      ages_de_surcote: {1900: 60}
+    droit: >-
+      « Lorsque la durée d'assurance, définie au III ci-après, est supérieure au nombre de
+      trimestres nécessaires pour obtenir le pourcentage maximum de la pension mentionné à
+      l'article 12, sans être inférieure à cent soixante trimestres, et que l'agent a
+      atteint l'âge de soixante ans, un coefficient de majoration s'applique » ; « Le nombre
+      de trimestres pris en compte pour ce calcul est égal, à la date de liquidation de la
+      pension, au nombre de trimestres d'assurance au sens du III ci-après, cotisés et
+      effectués après le 1er juillet 2008, au-delà de l'âge de soixante ans et en sus du
+      nombre de trimestres mentionné à l'alinéa précédent » (SNCF, article 13, II ; RATP,
+      article 24, II, mot pour mot à « l'assuré » près)
+    conditions: >-
+      le taux est « celui prévu pour les fonctionnaires de l'Etat en application du III de
+      l'article L. 14 du code des pensions civiles et militaires de retraite », par
+      trimestre « dans la limite de vingt trimestres » ; depuis la rédaction du 1er janvier
+      2009, seuls comptent les trimestres entiers cotisés
+  exemples: aucun trouvé
+- id: age_legal_decale_de_cinq_generations
+  statut: lue
+  textes:
+  - {id: JORFARTI000023728746, article: "décret n° 2011-291 (SNCF), article 10, 1° : « l'âge mentionné au premier alinéa de l'article L. 161-17-2 du code de la sécurité sociale »", en_vigueur: 2011-03-21, publie_le: 2011-03-20}
+  - {id: JORFARTI000023728762, article: "décret n° 2011-291, article 14, qui insère l'article 37-1 et son IV", en_vigueur: 2011-03-21, publie_le: 2011-03-20}
+  - {id: JORFARTI000023728783, article: "décret n° 2011-291, article 18, qui ne reporte au 1er janvier 2017 que le V de l'article 37-1 et les 2° et 3° de son article 10", en_vigueur: 2011-03-21, publie_le: 2011-03-20}
+  - {id: LEGIARTI000023733121, article: "décret n° 2008-639 (SNCF), article 13, II", en_vigueur: 2011-03-21}
+  - {id: LEGIARTI000032935163, article: "même article", en_vigueur: 2016-07-24}
+  - {id: LEGIARTI000023733189, article: "même article", en_vigueur: 2017-01-01}
+  - {id: LEGIARTI000041417130, article: "même article", en_vigueur: 2020-01-01}
+  - {id: LEGIARTI000042597040, article: "même article", en_vigueur: 2020-12-03}
+  - {id: LEGIARTI000045021319, article: "même article", en_vigueur: 2022-01-02}
+  - {id: LEGIARTI000029165223, article: "décret n° 2008-639, article 37-1, IV, rédaction du décret n° 2014-712", en_vigueur: 2017-01-01}
+  - {id: JORFARTI000023728833, article: "décret n° 2011-292 (RATP), article 8, 2° : « l'âge mentionné au 4° de l'article 6 »", en_vigueur: 2011-03-21, publie_le: 2011-03-20}
+  - {id: LEGIARTI000023732842, article: "décret n° 2008-637 (RATP), article 6, 4° : soixante-deux ans", en_vigueur: 2011-03-21}
+  - {id: LEGIARTI000023732870, article: "décret n° 2008-637, article 24, II", en_vigueur: 2011-03-21}
+  - {id: LEGIARTI000023732931, article: "même article", en_vigueur: 2017-01-01}
+  - {id: LEGIARTI000047910472, article: "même article", en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000050710687, article: "même article", en_vigueur: 2024-12-04}
+  - {id: LEGIARTI000023732424, article: "décret n° 2008-637, article 51-1, II, 3°, et III, 3°", en_vigueur: 2011-03-21}
+  - {id: LEGIARTI000029137528, article: "même article", en_vigueur: 2014-06-26}
+  - {id: LEGIARTI000047910453, article: "même article", en_vigueur: 2023-09-01}
+  nee_de: JORFARTI000023728746
+  bornes:
+    liquidation.date_effet: [2011-03-21, 2025-01-01]
+  contenu:
+    parametres:
+      ages_de_surcote: {1900: 60, 1957: 60.33, 1958: 60.67, 1959: 61, 1960: 61.33, 1961: 61.67, 1962: 62}
+    droit: >-
+      la surcote court au-delà de « l'âge mentionné au premier alinéa de l'article
+      L. 161-17-2 du code de la sécurité sociale » (SNCF, article 13, II), soixante-deux
+      ans ; « L'âge de soixante-deux ans mentionné au II de l'article 13 s'applique aux
+      agents nés à compter du 1er janvier 1962. Pour les agents nés antérieurement à cette
+      date, cet âge est abaissé : ― à soixante ans pour les agents nés avant le 1er janvier
+      1957 ; ― à soixante ans et quatre mois pour les agents nés en 1957 ; [...] ― à
+      soixante et un ans et huit mois pour les agents nés en 1961 » (SNCF, article 37-1,
+      IV) ; à la RATP, au-delà de « l'âge mentionné au 4° de l'article 6 » (article 24, II),
+      soixante-deux ans, abaissé de même (article 51-1, II, 3°), « L'âge de soixante ans
+      mentionné au II de l'article 24 » évoluant ainsi (article 51-1, III, 3°)
+    conditions: >-
+      l'index LEGI date du 1er janvier 2017 l'article 37-1 de la SNCF, dans sa rédaction de
+      2011 que celle du décret n° 2014-712 remplace avant ce jour, mais l'article 18 du
+      décret n° 2011-291 ne reporte que son V : son IV vaut dès le 21 mars 2011, comme le
+      calendrier de la RATP ; aucun agent ne pouvait d'ailleurs atteindre avant 2017 un âge
+      que le IV relève, soixante ans et quatre mois pour les nés en 1957. Depuis le
+      1er janvier 2017, la limite de vingt trimestres tombe, et les bonifications et
+      majorations de durée autres que pour enfants et handicap ne comptent plus. La
+      CPRPSNCF écrit soixante ans pour le cas général né de 1953 à 1956, soixante ans et
+      quatre mois pour 1957, soixante-deux ans pour 1962
+  exemples: aucun trouvé
+- id: soixante_quatre_ans
+  statut: lue
+  textes:
+  - {id: LEGIARTI000048240186, article: "décret n° 2008-639 (SNCF), article 37-1, IV, rédaction du décret n° 2023-967, pensions prenant effet à compter du 1er janvier 2025", en_vigueur: 2023-10-22, publie_le: 2023-10-21}
+  - {id: LEGIARTI000048896987, article: "même article", en_vigueur: 2024-01-07}
+  - {id: LEGIARTI000048240205, article: "décret n° 2008-639, article 13, II et IV", en_vigueur: 2023-10-22, publie_le: 2023-10-21}
+  - {id: LEGIARTI000048897107, article: "même article", en_vigueur: 2024-01-07}
+  - {id: LEGIARTI000054622824, article: "même article", en_vigueur: 2026-08-07}
+  - {id: LEGIARTI000047913991, article: "décret n° 2008-637 (RATP), article 6, II, 4° : soixante-quatre ans, rédaction du décret n° 2023-690", en_vigueur: 2025-01-01, publie_le: 2023-07-30}
+  - {id: LEGIARTI000047914227, article: "décret n° 2008-637, article 24, II et IV", en_vigueur: 2025-01-01, publie_le: 2023-07-30}
+  - {id: LEGIARTI000047914257, article: "décret n° 2008-637, article 51-1, II, 3°", en_vigueur: 2025-01-01, publie_le: 2023-07-30}
+  nee_de: LEGIARTI000048240186
+  bornes:
+    liquidation.date_effet: [2025-01-01, null]
+  contenu:
+    parametres:
+      ages_de_surcote: {1900: 60, 1957: 60.33, 1958: 60.67, 1959: 61, 1960: 61.33, 1961: 61.67, 1962: 62, 1963: 62.25, 1964: 62.5, 1965: 62.75, 1966: 63, 1967: 63.25, 1968: 63.5, 1969: 63.75, 1970: 64}
+    droit: >-
+      « L'âge de soixante-quatre ans déterminé en application du II de l'article 13
+      s'applique aux agents nés à compter du 1er janvier 1970 », abaissé à soixante-deux ans
+      pour les nés en 1962, soixante-deux ans et trois mois pour 1963, et de trois mois de
+      plus par génération jusqu'à soixante-trois ans et neuf mois pour 1969 (SNCF,
+      article 37-1, IV) ; « L'âge d'ouverture du droit à pension de soixante-quatre ans
+      mentionné au 4° du II de l'article 6 s'applique aux agents nés à compter du
+      1er janvier 1970 », le même calendrier (RATP, article 51-1, II, 3°)
+    conditions: >-
+      la suspension de 2026 n'y est pas reprise : aucun des deux décrets n'a été modifié
+      depuis le 30 décembre 2025 sur ce point (index LEGI à jour de l'incrément du
+      2 novembre 2026). Le IV de l'article 13 et celui de l'article 24 ouvrent en outre la
+      surcote, à l'assuré qui a au moins un trimestre de majoration de durée pour enfant ou
+      de bonification, sur la durée cotisée l'année qui précède l'âge légal — à la SNCF,
+      celui de L. 161-17-2, à la RATP, celui du 4° du II de l'article 6 — quand cet âge est
+      d'au moins soixante-trois ans : la CPRPSNCF l'écrit « surcote anticipée à 63 ans »,
+      pour les nés à compter du 1er janvier 1966. La CPRPSNCF écrit soixante-quatre ans à
+      compter de 1970
+  exemples: aucun trouvé
+approximations:
+- version: [soixante_ans]
+  ecart: >-
+    les pensions du second semestre de 2008, que le modèle liquide sous sa période d'avant
+    la réforme, n'ont pas de surcote : au plus deux trimestres, ceux d'après le 1er juillet
+    2008, à 0,75 %
+  effet: non mesuré
+- version: [soixante_quatre_ans]
+  ecart: >-
+    la surcote que le IV de l'article 13 (SNCF) et le IV de l'article 24 (RATP) ouvrent,
+    l'année qui précède l'âge légal quand il est d'au moins soixante-trois ans, à l'assuré
+    qui a au moins un trimestre de majoration de durée pour enfant ou de bonification,
+    n'est pas servie : au plus quatre trimestres, 5 % de pension
+  effet: non mesuré
 effet: >-
   Le modèle comptait la surcote depuis l'âge d'ouverture de la fiche — cinquante-quatre
   ans pour un agent de conduite né en 1980. Le défaut ne se voyait pas tant que
@@ -14,10 +179,21 @@ effet: >-
   ans avec 172 trimestres pour 170 requis, qui recevait deux trimestres de surcote
   qu'il n'a pas accomplis au-delà de soixante-quatre ans. Corrigé par `legislation/age_surcote_regimes_speciaux.csv`
   et le drapeau `age_surcote_regimes_speciaux` des deux fiches, sur toutes leurs
-  périodes à surcote.
+  périodes à surcote. Approchée depuis le 2 novembre 2026 : ni le second semestre de
+  2008, ni la surcote des parents de 2025 ne sont servis.
 sources:
-  lu_le: 2026-09-22
-  prochaine_relecture: 2027-03-31
+  lu_le: 2026-11-02
+  prochaine_relecture: 2027-11-02
+  a_relire:
+  - >-
+    Le taux de la surcote : la période de 2009 à 2017 de `regimes/sncf.yaml` porte 0,75 %
+    par trimestre, celle de 2009 à 2016 de `regimes/ratp.yaml` 1,25 %, sous la même phrase
+    des deux décrets, « celui prévu pour les fonctionnaires de l'Etat en application du
+    III de l'article L. 14 », que la rédaction du 19 décembre 2008 de L. 14
+    (LEGIARTI000019959691) fixe à « 1,25 % par trimestre supplémentaire, dans la limite
+    de vingt trimestres ». Et cette limite, que les deux décrets gardent jusqu'au
+    31 décembre 2016, `trimestres_de_surcote_regimes_speciaux` ne la porte pas. À lire
+    dans la fiche `surcote_regimes_speciaux`, pour une étape du modèle.
   lectures:
   - type: legifrance
     reference: >-
@@ -39,12 +215,43 @@ sources:
       »
     url: https://www.cprpf.fr/2023/10/24/reforme-des-retraites-2023/
     date: 2026-09-22
-textes_a_rattacher:
-- reference: >-
-    décret n° 2008-639, article 13, II, et article 37-1, IV (LEGIARTI000048896987)
-- reference: >-
-    décret n° 2008-637, article 24, II, et article 51-1, II, 3° (LEGIARTI000047914257)
+  - type: legifrance
+    reference: >-
+      décret n° 2008-639, articles 13 et 37-1, leurs onze et quatre rédactions, et décret
+      n° 2008-637, articles 6, 24 et 51-1, leurs huit, sept et quatre rédactions, dans
+      l'index LEGI du dépôt à jour de l'incrément du 2 novembre 2026, confrontées d'une
+      rédaction à la suivante : l'âge de la surcote change au 21 mars 2011 et pour les
+      pensions de 2025 ; la rédaction de 2011 de l'article 37-1 (LEGIARTI000023732614),
+      que l'index date du 1er janvier 2017 au 29 juin 2014, n'est jamais entrée en vigueur
+      sous cette identité
+    date: 2026-11-02
+  - type: jorf
+    reference: >-
+      au Journal officiel par l'index JORF du dépôt : décret n° 2011-291 du 18 mars 2011,
+      articles 10, 14 et 18, et décret n° 2011-292 du 18 mars 2011, articles 1er, 8, 11 et
+      13 — leurs dispositions reportées au 1er janvier 2017 ne touchent pas l'âge de la
+      surcote — ; décret n° 2023-967 du 20 octobre 2023, article 2, et décret n° 2023-690
+      du 28 juillet 2023, article 3, III : pensions prenant effet à compter du 1er janvier
+      2025
+    date: 2026-11-02
+  - type: autre
+    reference: >-
+      CPRPSNCF, « Paramètres applicables selon votre génération », agents de conduite et
+      cas général, version intégrant le décret du 20 octobre 2023 : l'âge de la surcote par
+      génération, soixante ans jusqu'à 1956, soixante ans et quatre mois pour 1957, jusqu'à
+      soixante-trois ans et neuf mois pour 1969 et soixante-quatre ans à compter de 1970
+    url: https://www.cprpf.fr/app/uploads/2023/10/tableau-age-de-la-retraite-CG-20-10-2023.pdf
+    date: 2023-10-20
+historique:
+- >-
+  2026-11-02 — lue au droit (action 130) : quatre versions sur la date d'effet — aucune
+  surcote sous les règlements d'avant juillet 2008 ; soixante ans ; à compter du 21 mars
+  2011, l'âge légal de soixante-deux ans abaissé par génération, soixante ans pour les nés
+  avant 1957 ; pour les pensions de 2025, jusqu'à soixante-quatre ans pour 1970.
+  Approchée : le second semestre de 2008 et la surcote des parents de 2025.
 reformes:
+- regimes_speciaux_2008
+- woerth_2010
 - reforme_2023
 code:
   interrupteurs:
@@ -64,6 +271,8 @@ code:
     liquiderChaqueRegime, trimestresDeSurcoteRegimesSpeciaux ; moteur/js/regimes.js :
     AgesSurcoteRegimesSpeciaux
   parametres: >-
+    contenu.parametres de chaque version : ages_de_surcote ; regimes/ratp.yaml,
+    regimes/sncf.yaml : age_surcote_regimes_speciaux, surcote_par_trimestre ;
     legislation/age_surcote_regimes_speciaux.csv : age
-  tests: [tests/test_simulateur.py, tests/js/moteur.test.js,
+  tests: [tests/test_sncf_ratp.py, tests/test_simulateur.py, tests/js/moteur.test.js,
     tests/temoins/simulations.json]

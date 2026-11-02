@@ -1,11 +1,251 @@
 schema_version: 1
 id: duree_requise_sncf_ratp
 intitule: >-
-  Durée requise de la SNCF (agents de conduite) et de la RATP : chacune a SA table
-  par génération, que la suspension de 2026 ne touche pas ; la SNCF compte en outre
-  la décote par la durée sur une cible abaissée de deux à dix trimestres.
+  La durée des services et bonifications qui donne à l'agent de la SNCF et de la RATP le
+  pourcentage maximum de 75 % : cent cinquante trimestres à qui réunit les conditions avant
+  le 1er juillet 2008 ; puis le calendrier de la réforme, de 151 à 166 trimestres en
+  juillet 2018 ; à compter du 1er juillet 2019, la table par génération de 2014 de chaque
+  régime, lue depuis 2017, pour l'agent qui peut partir avant cinquante-cinq ans (SNCF) ou
+  soixante ans (RATP), à la génération qui atteint cet âge l'année où son droit s'ouvre ; à
+  compter du 1er janvier 2025, les tables de 2023, que la suspension de 2026 ne touche pas,
+  et, pour qui part avant ces âges, cent soixante-dix trimestres, un de plus tous les trois
+  ans ; la SNCF compte en outre la décote par la durée sur une cible abaissée de deux à dix
+  trimestres.
+domaine: duree
 regimes: [ratp, sncf]
-etat: conforme
+etape: ouvrir_le_droit
+face: droit
+etat: approchee
+lit:
+- >-
+  le mois où l'agent réunit les conditions d'ouverture du droit
+  (`mois_ouverture_des_droits`)
+- sa génération
+ecrit:
+- >-
+  la durée des services et bonifications qui donne le pourcentage maximum, d'où se
+  comptent la proratisation, la décote par la durée et la surcote
+- >-
+  à la SNCF, depuis 2025, les trimestres que le II de l'article 35 retranche à cette durée
+  pour compter la décote par la durée
+dates_qui_decident:
+- ouverture_du_droit
+versions:
+- id: trente_sept_annuites_et_demie
+  statut: supposee
+  hypothese: >-
+    les règlements des deux entreprises d'avant le 1er juillet 2008, que les index du dépôt
+    ne portent pas, ne sont pas lus : la fiche leur prête cent cinquante trimestres, que les
+    décrets du 30 juin 2008 portent à cent cinquante et un pour qui réunit les conditions au
+    second semestre de 2008, et que la CPRPSNCF écrit pour l'agent de conduite né au premier
+    semestre de 1958, dont le droit s'ouvre au premier semestre de 2008
+  fiabilite: haute à la SNCF, dont la caisse l'écrit ; moyenne à la RATP
+  textes:
+  - {id: LEGIARTI000019108289, article: "décret n° 2008-639 (SNCF), article 35, I", en_vigueur: 2008-07-01, publie_le: 2008-07-01}
+  - {id: LEGIARTI000019104897, article: "décret n° 2008-637 (RATP), article 51, I", en_vigueur: 2008-07-01, publie_le: 2008-07-01}
+  bornes:
+    ouverture_du_droit: [null, 2008-07-01]
+  contenu:
+    parametres:
+      trimestres: 150
+      pourcentage_maximum: 0.75
+    droit: trente-sept annuités et demie, à 2 % du traitement par annuité
+    conditions: >-
+      les décrets de 2008 ne fixent la durée qu'à qui réunit les conditions à compter du
+      1er juillet 2008
+  exemples: aucun trouvé
+- id: calendrier_de_2008
+  statut: lue
+  textes:
+  - {id: LEGIARTI000019108289, article: "décret n° 2008-639 (SNCF), article 35, I", en_vigueur: 2008-07-01, publie_le: 2008-07-01}
+  - {id: LEGIARTI000020085571, article: "même article", en_vigueur: 2009-01-01}
+  - {id: LEGIARTI000029165209, article: "même article, rédaction du décret n° 2014-712", en_vigueur: 2014-06-29, publie_le: 2014-06-28}
+  - {id: LEGIARTI000029149846, article: "décret n° 2008-639, article 12-1, rédaction du décret n° 2014-712, pensions prenant effet à compter du 1er janvier 2017", en_vigueur: 2017-01-01}
+  - {id: LEGIARTI000019104897, article: "décret n° 2008-637 (RATP), article 51, I", en_vigueur: 2008-07-01, publie_le: 2008-07-01}
+  - {id: LEGIARTI000020085597, article: "même article", en_vigueur: 2009-01-01}
+  - {id: LEGIARTI000029137521, article: "même article, rédaction du décret n° 2014-668", en_vigueur: 2014-06-26, publie_le: 2014-06-25}
+  - {id: LEGIARTI000029132058, article: "décret n° 2008-637, article 23-1, rédaction du décret n° 2014-668, pensions prenant effet à compter du 1er janvier 2017", en_vigueur: 2017-01-01}
+  nee_de: LEGIARTI000019108289
+  bornes:
+    ouverture_du_droit: [2008-07-01, 2019-07-01]
+  contenu:
+    parametres:
+      calendrier: {"2008-07": 151, "2009-01": 152, "2009-07": 153, "2010-01": 154, "2010-07": 155, "2011-01": 156, "2011-07": 157, "2012-01": 158, "2012-07": 159, "2012-12": 160, "2013-07": 161, "2014-07": 162, "2015-07": 163, "2016-07": 164, "2017-07": 165, "2018-07": 166}
+      pourcentage_maximum: 0.75
+    droit: >-
+      la durée « est fixée à 151 trimestres pour les personnes remplissant les conditions
+      définies aux articles 1er à 5 entre le 1er juillet et le 31 décembre 2008 inclus. Pour
+      les personnes remplissant les conditions [...] postérieurement au 31 décembre 2008,
+      elle augmente d'un trimestre au 1er janvier et au 1er juillet de chaque année jusqu'au
+      1er juillet 2012 inclus, d'un trimestre au 1er décembre 2012, puis d'un trimestre au
+      1er juillet de chaque année jusqu'à atteindre la durée maximum définie à l'article 5
+      de la loi n° 2003-775 du 21 août 2003 », puis, depuis les décrets de juin 2014,
+      « jusqu'à atteindre la durée de 166 trimestres au 1er juillet 2018 » (SNCF,
+      article 35, I ; RATP, article 51, I, le même calendrier)
+    conditions: >-
+      la rédaction du 1er juillet 2008 de l'article 35 renvoie aux « articles 46 à 50 », que
+      celle du 1er janvier 2009 lit « 1er à 5 » ; le calendrier n'atteint pas avant 2014 la
+      « durée maximum » de la loi de 2003, que les décrets de 2014 remplacent par 166
+      trimestres. Pour les pensions prenant effet à compter du 1er janvier 2017, l'agent
+      qui peut partir avant cinquante-cinq ans (SNCF, article 12-1) ou soixante ans (RATP,
+      article 23-1) doit la durée « exigée des agents atteignant l'âge de cinquante-cinq
+      ans [soixante ans] l'année à compter de laquelle la liquidation peut intervenir » : un
+      calendrier par date la lui donne au mois où son droit s'ouvre, comme la CPRPSNCF
+      l'écrit — 164 trimestres pour l'agent de conduite né en janvier 1967, 165 pour celui
+      né en mars ; l'agent qui part plus tard doit celle « en vigueur lorsque les agents
+      atteignent l'âge de cinquante-cinq ans [soixante ans] »
+  exemples: aucun trouvé
+- id: table_de_2014
+  statut: lue
+  textes:
+  - {id: LEGIARTI000029165209, article: "décret n° 2008-639 (SNCF), article 35, I, rédaction du décret n° 2014-712", en_vigueur: 2014-06-29, publie_le: 2014-06-28}
+  - {id: LEGIARTI000048240179, article: "même article, I bis, rédaction du décret n° 2023-967", en_vigueur: 2023-10-22, publie_le: 2023-10-21}
+  - {id: LEGIARTI000048897024, article: "même article", en_vigueur: 2024-01-07}
+  - {id: LEGIARTI000029149846, article: "décret n° 2008-639, article 12-1", en_vigueur: 2017-01-01}
+  - {id: LEGIARTI000048240219, article: "même article, « Jusqu'au 31 décembre 2024 »", en_vigueur: 2023-10-22, publie_le: 2023-10-21}
+  - {id: LEGIARTI000029137521, article: "décret n° 2008-637 (RATP), article 51, I, rédaction du décret n° 2014-668", en_vigueur: 2014-06-26, publie_le: 2014-06-25}
+  - {id: LEGIARTI000047910458, article: "même article", en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000029132058, article: "décret n° 2008-637, article 23-1", en_vigueur: 2017-01-01}
+  - {id: LEGIARTI000050710691, article: "même article, « jusqu'au 31 décembre 2024 »", en_vigueur: 2024-12-04}
+  - {id: LEGIARTI000047914257, article: "décret n° 2008-637, article 51-1, IX, rédaction du décret n° 2023-690", en_vigueur: 2025-01-01, publie_le: 2023-07-30}
+  nee_de: LEGIARTI000029165209
+  bornes:
+    ouverture_du_droit: [2019-07-01, 2025-01-01]
+  contenu:
+    parametres:
+      tables_par_generation:
+        sncf: {1964.5: 167, 1966: 168, 1969: 169, 1972: 170, 1975: 171, 1978: 172}
+        ratp: {1959.5: 167, 1961: 168, 1964: 169, 1967: 170, 1970: 171, 1973: 172}
+      ages_de_lecture: {sncf: 55, ratp: 60}
+      pourcentage_maximum: 0.75
+    droit: >-
+      « A compter du 1er juillet 2019, elle est fixée à : 167 trimestres pour les agents nés
+      entre le 1er juillet 1964 et le 31 décembre 1965 ; 168 trimestres pour les agents nés
+      entre le 1er janvier 1966 et le 31 décembre 1968 ; [...] 172 trimestres pour les
+      agents à partir du 1er janvier 1978 » (SNCF, article 35, I) ; à la RATP, 167
+      trimestres pour les nés du 1er juillet 1959 à 1960, jusqu'à 172 à compter de 1973
+      (article 51, I) ; « La durée des services et des bonifications nécessaire à
+      l'obtention du pourcentage maximum de la pension est celle qui est en vigueur lorsque
+      les agents atteignent l'âge de cinquante-cinq ans. Par dérogation à l'alinéa
+      précédent, la durée des services et des bonifications exigée des agents qui
+      remplissent les conditions de liquidation d'une pension avant l'âge de cinquante-cinq
+      ans est celle exigée des agents atteignant l'âge de cinquante-cinq ans l'année à
+      compter de laquelle la liquidation peut intervenir » (SNCF, article 12-1 ; RATP,
+      article 23-1, à soixante ans)
+    conditions: >-
+      le I bis de l'article 35 (SNCF) et le IX de l'article 51-1 (RATP) gardent cette durée
+      à qui a réuni les conditions avant le 1er janvier 2025, quelle que soit la date d'effet
+      de sa pension ; la CPRPSNCF lit la table à la génération qui atteint cinquante-cinq ans
+      le mois où le droit de l'agent de conduite s'ouvre : 167 trimestres pour l'agent de
+      conduite né de novembre 1968 à 1969, 168 pour 1970 et 1971, 169 pour 1972, quand la
+      table en donne 168 à 170 à leur propre génération
+  exemples: aucun trouvé
+- id: tables_de_2023
+  statut: lue
+  textes:
+  - {id: LEGIARTI000048240179, article: "décret n° 2008-639 (SNCF), article 35, I et II, rédaction du décret n° 2023-967, pensions prenant effet à compter du 1er janvier 2025", en_vigueur: 2023-10-22, publie_le: 2023-10-21}
+  - {id: LEGIARTI000048897024, article: "même article", en_vigueur: 2024-01-07}
+  - {id: LEGIARTI000048240219, article: "décret n° 2008-639, article 12-1", en_vigueur: 2023-10-22, publie_le: 2023-10-21}
+  - {id: LEGIARTI000047914242, article: "décret n° 2008-637 (RATP), article 51, I, rédaction du décret n° 2023-690", en_vigueur: 2025-01-01, publie_le: 2023-07-30}
+  - {id: LEGIARTI000052292971, article: "même article, rédaction du décret n° 2025-970", en_vigueur: 2025-09-27, publie_le: 2025-09-26}
+  - {id: LEGIARTI000050710691, article: "décret n° 2008-637, article 23-1", en_vigueur: 2024-12-04}
+  - {id: LEGIARTI000047910476, article: "même article, rédaction du décret n° 2023-690", en_vigueur: 2025-01-01, publie_le: 2023-07-30}
+  nee_de: LEGIARTI000048240179
+  bornes:
+    ouverture_du_droit: [2025-01-01, null]
+  contenu:
+    parametres:
+      tables_par_generation:
+        sncf_agents_de_conduite: {1968.833: 167, 1970: 168, 1972: 169, 1973: 170, 1976: 171, 1978: 172}
+        sncf_autres_agents: {1964.5: 167, 1966: 168, 1968: 169, 1969: 170, 1971: 171, 1973: 172}
+        ratp: {1959.5: 167, 1961: 168, 1963: 169, 1964: 170, 1966: 171, 1968: 172}
+      retranche_decote:
+        sncf_agents_de_conduite: {1973: 2, 1974: 3, 1976: 5, 1977: 6, 1978: 8, 1979: 9, 1980: 10}
+        sncf_autres_agents: {1968: 2, 1969: 3, 1970: 4, 1971: 6, 1973: 8, 1974: 9, 1975: 10}
+      ages_de_lecture: {sncf: 55, ratp: 60}
+      duree_avant_l_age_de_lecture: {2025: 170, 2028: 171, 2031: 172}
+      pourcentage_maximum: 0.75
+    droit: >-
+      « 1° Pour les agents relevant du 2° du I de l'article 1, à compter du 1er janvier
+      2025 », 167 trimestres pour les nés du 1er juillet 1964 à 1965, jusqu'à 172 à compter
+      de 1973 ; « 2° Pour les agents relevant du 1° du I de l'article 1 », les agents de
+      conduite, « 167 trimestres pour les agents nés entre le 1er novembre 1968 et le
+      31 décembre 1969 », jusqu'à 172 à compter de 1978 (SNCF, article 35, I) ; « Pour le
+      calcul du nombre de trimestres supplémentaires prévu au 2° du I de l'article 13 », la
+      durée se lit « en retranchant aux durées d'assurance requises » de deux à dix
+      trimestres, pour l'agent de conduite né de 1973 à 1980 et l'autre agent né de 1968 à
+      1975 (article 35, II) ; « A compter du 1er janvier 2025, par dérogation au I de
+      l'article 35, la durée des services et des bonifications requise pour les agents qui
+      remplissent les conditions de liquidation d'une pension avant l'âge de cinquante-cinq
+      ans est fixée à cent soixante-dix trimestres. Cette durée augmente d'un trimestre tous
+      les trois ans pour atteindre cent soixante-douze trimestres en 2031 » (article 12-1) ;
+      à la RATP, 167 trimestres pour les nés du 1er juillet 1959 à 1960, jusqu'à 172 à
+      compter de 1968 (article 51, I), et la même durée par année avant soixante ans
+      (article 23-1)
+    conditions: >-
+      à qui réunit les conditions à compter du 1er janvier 2025 (I bis de l'article 35,
+      IX de l'article 51-1) ; la suspension de 2026, qui réécrit L. 161-17-3, n'est reprise
+      par aucun des deux décrets, qu'aucun texte n'a modifiés sur ce point depuis le
+      30 décembre 2025 (index LEGI à jour de l'incrément du 2 novembre 2026) ; la rédaction
+      du 27 septembre 2025 de l'article 51 ne change pas la table. À la SNCF, la durée par
+      année de l'article 12-1 et la table de l'agent de conduite donnent les mêmes trimestres,
+      hors de l'agent de conduite né d'avril à décembre 1975, qui atteint son âge d'ouverture
+      en 2028, et de celui né d'octobre à décembre 1977, en 2031 : un de plus par l'article
+      12-1, qui y déroge. La CPRPSNCF écrit 170 trimestres pour l'agent de conduite né de
+      1973 à 1975, 171 pour 1976 et 1977, 172 ensuite ; 172 pour l'agent du cas général né à
+      compter de 1973
+  exemples: aucun trouvé
+approximations:
+- version: [calendrier_de_2008]
+  ecart: >-
+    les pensions du second semestre de 2008, que le modèle liquide sous sa période d'avant
+    la réforme, gardent 150 trimestres au lieu de 151
+  effet: au plus 0,7 % de pension
+- version: [table_de_2014]
+  regime: sncf
+  ecart: >-
+    le modèle lit la table de 2014 à la génération de l'agent de conduite, et non à celle
+    qui atteint cinquante-cinq ans l'année où son droit s'ouvre (article 12-1) : l'agent de
+    conduite né de novembre 1968 à 1972, dont le droit s'ouvre de juillet 2019 à 2024, doit
+    un ou deux trimestres de trop — 168 au lieu de 167 pour celui né en novembre 1968, 170
+    au lieu de 169 pour celui né en 1972 ; la colonne `age_de_lecture` de
+    `legislation/duree_requise_regimes_speciaux.csv`, que les IEG emploient, le porterait
+  effet: >-
+    non mesuré ; un trimestre de trop retire un cent-soixante-huitième de pension et, s'il
+    manque, 1,25 % de décote
+- version: [table_de_2014]
+  regime: ratp
+  ecart: >-
+    le modèle lit la table de 2014 à la génération du roulant, et non à celle qui atteint
+    soixante ans l'année où son droit s'ouvre (article 23-1) : le roulant né de novembre
+    1968 à 1972, dont le droit s'ouvre de juillet 2019 à 2024, doit deux ou trois
+    trimestres de trop — 171 au lieu de 168 pour celui né en 1970, 171 au lieu de 169 pour
+    1972
+  effet: >-
+    non mesuré ; trois trimestres de trop retirent près de 2 % de pension par la
+    proratisation et, s'ils manquent, 3,75 % de décote
+- version: [tables_de_2023]
+  regime: ratp
+  ecart: >-
+    le modèle lit la table de 2023 à la génération du roulant, et non la durée par année que
+    l'article 23-1 fixe, depuis 2025, à qui peut partir avant soixante ans : 172 trimestres
+    au lieu de 170 pour le roulant dont le droit s'ouvre de 2025 à 2027, au lieu de 171 de
+    2028 à 2030
+  effet: non mesuré
+- version: [tables_de_2023]
+  regime: sncf
+  ecart: >-
+    le modèle lit la table de l'agent de conduite, qui donne un trimestre de moins que la
+    durée par année de l'article 12-1 à l'agent de conduite né d'avril à décembre 1975 ou
+    d'octobre à décembre 1977
+  effet: non mesuré
+- version: [calendrier_de_2008, table_de_2014, tables_de_2023]
+  ecart: >-
+    l'agent est présumé agent de conduite de la SNCF ou roulant de la RATP : la table des
+    autres agents de la SNCF de 2023 et ce que le II de l'article 35 leur retranche ne sont
+    pas transcrits, et la durée que doivent les agents qui partent après cinquante-cinq ans
+    (SNCF) ou soixante ans (RATP), lue quand ils atteignent cet âge, n'est pas servie
+  effet: non mesuré
 effet: >-
   Les deux fiches lisaient la table commune, suspension de 2026 comprise. Elles
   lisent désormais la leur (`duree_requise_table`, dans `legislation/duree_requise_regimes_speciaux.csv`),
@@ -13,10 +253,24 @@ effet: >-
   la table commune reste le repli. L'agent de conduite né en 1975 doit 170 trimestres
   et non 172 ; celui né en 1980 compte sa décote par la durée sur 162. La table
   des agents SÉDENTAIRES de la SNCF (1° du I de l'article 35) n'est pas transcrite
-  : aucune fiche ne les modélise.
+  : aucune fiche ne les modélise. Approchée depuis le 2 novembre 2026 : depuis 2017,
+  l'agent qui part avant cinquante-cinq ans (SNCF) ou soixante ans (RATP) doit la durée de
+  la génération qui atteint cet âge, que le modèle ne lui oppose pas — jusqu'à trois
+  trimestres de trop pour le roulant de la RATP né de 1968 à 1972.
 sources:
-  lu_le: 2026-09-22
-  prochaine_relecture: 2027-03-31
+  lu_le: 2026-11-02
+  prochaine_relecture: 2027-11-02
+  a_relire:
+  - >-
+    La lecture de la table de 2014 à la génération qui atteint cinquante-cinq ans (SNCF) ou
+    soixante ans (RATP), et la durée par année de 2025 pour qui part avant : des données
+    pour une étape du modèle — la colonne `age_de_lecture` de
+    `legislation/duree_requise_regimes_speciaux.csv`, et une table par année —, avec un
+    témoin qui la tienne ; les tableaux par génération de la CPRPSNCF en donnent les
+    valeurs à la SNCF.
+  - >-
+    La CRP RATP ne publie pas ses tableaux par génération hors de l'espace de ses affiliés :
+    la lecture de l'article 23-1 n'y est pas confrontée à la caisse.
   lectures:
   - type: legifrance
     reference: >-
@@ -42,10 +296,46 @@ sources:
     url: >-
       https://www.cprpf.fr/actifs/preparer-ma-retraite/preparer-ma-retraite-rs/simuler-ma-retraite-rs/
     date: 2026-09-22
-textes_a_rattacher:
-- reference: décret n° 2008-639, article 35, I, 2° et II (LEGIARTI000048897024)
-- reference: décret n° 2008-637, article 51, I (LEGIARTI000052292971)
+  - type: legifrance
+    reference: >-
+      décret n° 2008-639, articles 12-1 et 35, leurs trois et cinq rédactions, et décret
+      n° 2008-637, articles 23-1, 51 et 51-1, leurs quatre, six et quatre rédactions, dans
+      l'index LEGI du dépôt à jour de l'incrément du 2 novembre 2026, confrontées d'une
+      rédaction à la suivante : la durée change au 1er juillet 2008, au 1er juillet 2019
+      (décrets n° 2014-712 et n° 2014-668), et à qui réunit les conditions depuis le
+      1er janvier 2025 ; les articles 12-1 et 23-1, réécrits en 2014 avant leur entrée en
+      vigueur au 1er janvier 2017, lisent la durée de qui part avant cinquante-cinq ou
+      soixante ans à la génération qui atteint cet âge
+    date: 2026-11-02
+  - type: jorf
+    reference: >-
+      au Journal officiel par l'index JORF du dépôt : décret n° 2011-291, article 18, I, et
+      décret n° 2011-292, article 13, I, qui appliquent les articles 12-1 et 23-1 aux
+      pensions prenant effet à compter du 1er janvier 2017 ; décret n° 2023-967, article 2,
+      et décret n° 2023-690, article 3, III
+    date: 2026-11-02
+  - type: autre
+    reference: >-
+      CPRPSNCF, « Régime spécial de retraite SNCF — agents de conduite » et « — cas
+      général », « Paramètres applicables selon votre génération », version intégrant le
+      décret du 20 octobre 2023 : les trimestres requis par génération — 150 pour l'agent de
+      conduite né au premier semestre de 1958, puis le calendrier au mois où il atteint son
+      âge d'ouverture, 167 pour celui né de novembre 1968 à 1969, 168 pour 1970-1971, 169
+      pour 1972, 170 pour 1973-1975, 171 pour 1976-1977, 172 ensuite ; au cas général, 167
+      pour le second semestre de 1964 et 1965, jusqu'à 172 à compter de 1973
+    url: https://www.cprpf.fr/app/uploads/2023/10/tableau-age-de-la-retraite-AC-20-10-2023.pdf
+    date: 2023-10-20
+historique:
+- >-
+  2026-11-02 — lue au droit (action 130) : quatre versions sur le mois où le droit
+  s'ouvre — cent cinquante trimestres avant juillet 2008 ; le calendrier de 2008, de 151 à
+  166 trimestres ; les tables de 2014 depuis juillet 2019, lues depuis 2017 à la génération
+  qui a cinquante-cinq ans (SNCF) ou soixante ans (RATP) l'année où le droit de l'agent qui
+  part plus tôt s'ouvre ; les tables de 2023, et la durée par année de qui part avant ces
+  âges. Approchée : le modèle lit les tables à la génération de l'agent.
 reformes:
+- regimes_speciaux_2008
+- touraine_2014
 - reforme_2023
 - lfss_2026_suspension
 code:
@@ -57,21 +347,27 @@ code:
     (`depuis`), au mois que `mois_ouverture_des_droits` dit (`duree_propre`) ; la
     suspension, qui n'abaisse que la table commune, n'y entre pas. La table de la SNCF
     porte aussi les trimestres que le II de l'article 35 retranche à la durée pour
-    compter la décote par la durée (`retranche_decote`).
+    compter la décote par la durée (`retranche_decote`). Avant juillet 2019, le calendrier
+    de 2008 (`duree_requise_calendrier`), lu au même mois.
   python: >-
     droit/ouvrir.py : duree_requise, duree_propre, mois_ouverture_des_droits ;
     droit/liquider.py : retranche_decote ; scenarios/actuel.py : DureesRequisesRegimes,
-    DureesRequisesRegimes.ligne
+    DureesRequisesRegimes.ligne, CalendriersDureeRequise
   javascript: >-
     moteur/js/droit/ouvrir.js : dureeRequise, dureePropre, moisOuvertureDesDroits ;
     moteur/js/droit/liquider.js : retrancheDecote ; moteur/js/regimes.js :
     DureesRequisesRegimes, DureesRequisesRegimes.ligne
   parametres: >-
-    regimes/ratp.yaml, regimes/sncf.yaml : duree_requise_table ;
-    legislation/duree_requise_regimes_speciaux.csv : ratp, sncf_conduite, depuis,
-    generation, trimestres, retranche_decote
-  tests: >-
+    contenu.parametres de chaque version : trimestres, pourcentage_maximum, calendrier,
+    tables_par_generation, ages_de_lecture, retranche_decote, duree_avant_l_age_de_lecture ;
+    regimes/ratp.yaml, regimes/sncf.yaml : duree_requise_table, duree_requise_calendrier,
+    duree_requise_trimestres, taux_plein ; legislation/duree_requise_regimes_speciaux.csv :
+    ratp, ratp_2014, sncf_conduite, sncf_2014, depuis, generation, trimestres,
+    retranche_decote ; legislation/duree_requise_calendriers.csv : regimes_speciaux_2008
+  tests:
+  - tests/test_sncf_ratp.py
+  - >-
     tests/temoins/simulations.json, que le portage rejoue (tests/js/moteur.test.js) :
     statut_agent_sncf, enfants_sncf_trois_enfants et
     sncf_surcote_apres_soixante_quatre_ans changent sans la table de l'agent de
-    conduite ; aucun test ne la pose à la main, et aucun témoin de la RATP n'en dépend
+    conduite

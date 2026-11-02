@@ -254,6 +254,7 @@ LUES_AU_DROIT = frozenset("""
     cnavpl_majoration_duree_assurance cnavpl_valeur_service
     points_au_prorata_des_cotisations
     age_ouverture_ieg_actifs age_reference_decote_ieg duree_requise_ieg
+    age_reference_decote_sncf_ratp age_surcote_sncf_ratp duree_requise_sncf_ratp
 """.split())
 
 

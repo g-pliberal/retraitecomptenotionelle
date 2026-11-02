@@ -1,0 +1,39 @@
+date: "2026-11-02"
+session: "action 130 : la carte des fiches, la SNCF et la RATP lues au droit"
+consulte: >-
+  python scripts/veille_droit.py ; les index LEGI et JORF du dépôt, récupérés (dumps du
+  13 juillet 2025) et mis à jour jusqu'à l'incrément du 2 novembre 2026 ; python
+  scripts/textes.py --inscrire, sans rédaction nouvelle. Dans LEGI, chaque rédaction
+  confrontée à la suivante : au décret n° 2008-639 (SNCF), les articles 1er (sept
+  rédactions), 12-1 (trois), 13 (onze, de LEGIARTI000019108313 à LEGIARTI000054622824), 35
+  (cinq) et 37-1 (quatre) ; au décret n° 2008-637 (RATP), les articles 6 (huit), 23-1
+  (quatre), 24 (sept), 51 (six) et 51-1 (quatre). Au Journal officiel : les décrets
+  n° 2011-291 et n° 2011-292 du 18 mars 2011, articles 1er à 19 et 1er à 14 ; n° 2023-967,
+  articles 1er et 2 ; n° 2023-690, article 3 ; les visas et abrogations des décrets du
+  30 juin 2008 ; le décret n° 2005-1639, dont l'index n'a que l'en-tête ; L. 14 du code
+  des pensions civiles et militaires dans sa rédaction du 19 décembre 2008. Chez la
+  CPRPSNCF : « Réforme des retraites 2023 » et ses deux tableaux « Paramètres applicables
+  selon votre génération », agents de conduite et cas général, d'octobre 2023. Légifrance
+  et la CRP RATP répondent 403.
+trouve: >-
+  Les âges, la décote et la durée des deux régimes changent au 1er juillet 2008, au
+  21 mars 2011, au 1er juillet 2019 et pour les pensions de 2025 ; les règlements d'avant
+  2008 ne sont dans aucun index. Depuis 2017, l'agent qui peut partir avant cinquante-cinq
+  ans (SNCF, article 12-1) ou soixante ans (RATP, article 23-1) doit la durée de la
+  génération qui atteint cet âge l'année où son droit s'ouvre, et, depuis 2025, 170
+  trimestres, un de plus tous les trois ans : le modèle lit la table à sa génération à
+  lui, un à trois trimestres de trop, que la fiche `duree_requise_sncf_ratp` déclare. La
+  CPRPSNCF garde l'âge d'annulation d'avant 2025 à qui a ouvert son droit plus tôt, quand
+  l'article 13 écrit cinquante-sept et soixante-deux ans pour toute pension de 2025, et
+  donne cinquante-six ans et neuf mois à l'agent de conduite né en 1973 ou 1974, qu'aucun
+  texte lu ne fonde. Le IV de l'article 37-1 de la SNCF vaut dès le 21 mars 2011, que
+  l'index date du 1er janvier 2017. Fiches `age_reference_decote_sncf_ratp`,
+  `age_surcote_sncf_ratp` et `duree_requise_sncf_ratp`, approchées.
+reste: >-
+  La donnée qui lirait la durée des roulants à la génération qui atteint cinquante-cinq ou
+  soixante ans, et celle des roulants de la RATP depuis 2025, pour une étape du modèle. Le
+  taux de la surcote de la SNCF de 2009 à 2017, 0,75 % dans `regimes/sncf.yaml` contre
+  1,25 % à la RATP sous la même phrase, et la limite de vingt trimestres jusqu'en 2016 :
+  fiche `surcote_regimes_speciaux`. Le texte des âges d'annulation que la CPRPSNCF donne à
+  l'agent de conduite né en 1973 ou 1974, à demander à la caisse. La lecture du 2° du VII
+  de l'article 51-1 de la RATP.

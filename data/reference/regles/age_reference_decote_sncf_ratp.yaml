@@ -1,11 +1,204 @@
 schema_version: 1
 id: age_reference_decote_sncf_ratp
 intitule: >-
-  Âge de référence de la décote à la SNCF et à la RATP depuis le 1er janvier 2025
-  : cinquante-sept ans pour les agents de conduite et le personnel roulant, soixante-deux
-  ans pour les autres agents, et non l'âge d'ouverture majoré de cinq ans.
+  L'âge où s'annule la décote de l'agent de la SNCF et de la RATP : aucune décote sous les
+  règlements d'avant le 1er juillet 2008, ni à qui réunit les conditions d'ouverture du
+  droit avant le 1er juillet 2010 ; puis l'âge minimum d'ouverture majoré de cinq ans,
+  diminué de seize trimestres la première année, de deux de moins chaque 1er juillet
+  jusqu'en 2013, d'un ensuite, de rien depuis le 1er juillet 2024 ; à qui les réunit
+  depuis le 1er janvier 2025, cinquante-sept ans pour l'agent de conduite de la SNCF et le
+  roulant de la RATP, soixante-deux ans pour les autres agents de la SNCF et le tableau A
+  de la RATP, soixante-sept ans pour les autres agents de la RATP.
+domaine: decote_surcote
 regimes: [ratp, sncf]
-etat: conforme
+etape: liquider_chaque_regime
+face: droit
+etat: approchee
+lit:
+- >-
+  l'âge d'ouverture du droit de l'agent, que la table d'âges de la période lit à sa
+  génération (`age_table`)
+- >-
+  le mois où l'agent réunit les conditions d'ouverture du droit, qui donne la diminution
+  de l'année et sépare les règles d'avant et d'après le 1er janvier 2025
+- la date d'effet de sa pension, qui sépare les règlements d'avant le 1er juillet 2008
+ecrit:
+- >-
+  l'âge d'annulation de la décote, d'où se comptent les trimestres de minoration par
+  l'âge (1° du I de l'article 13 du décret n° 2008-639, 1° du I de l'article 24 du décret
+  n° 2008-637), que la fiche `decote_regimes_speciaux` applique
+dates_qui_decident:
+- liquidation.date_effet
+- ouverture_du_droit
+versions:
+- id: reglements_d_avant_2008
+  statut: supposee
+  hypothese: >-
+    les pensions qui prennent effet avant le 1er juillet 2008 relèvent des règlements de
+    retraite des deux entreprises, que les index du dépôt ne portent pas — du décret
+    n° 2005-1639 du 26 décembre 2005, qui publiait celui de la RATP, l'index JORF n'a que
+    l'en-tête — : la fiche ne leur prête pas de décote, que les décrets du 30 juin 2008
+    créent en abrogeant ce décret, et, pour la SNCF, la loi du 21 juillet 1909 et le
+    décret-loi du 19 avril 1934
+  fiabilite: moyenne, les règlements n'étant pas lus
+  textes:
+  - {id: JORFTEXT000019107455, article: "décret n° 2008-639, visas et abrogations", en_vigueur: 2008-07-01, publie_le: 2008-07-01}
+  - {id: JORFTEXT000019103570, article: "décret n° 2008-637, visas et abrogations", en_vigueur: 2008-07-01, publie_le: 2008-07-01}
+  bornes:
+    liquidation.date_effet: [null, 2008-07-01]
+  contenu:
+    parametres:
+      majoration_de_l_age_minimum: null
+    droit: >-
+      une pension de 75 % du traitement des six derniers mois après trente-sept annuités et
+      demie, sans coefficient de minoration
+    conditions: >-
+      le modèle n'a pas de décote sur sa période d'avant 2009, et la CPRPSNCF écrit « Pas de
+      décote » pour toute génération qui atteint son âge d'ouverture avant le 1er juillet
+      2010
+  exemples: aucun trouvé
+- id: sans_decote_avant_juillet_2010
+  statut: lue
+  textes:
+  - {id: LEGIARTI000019108289, article: "décret n° 2008-639 (SNCF), article 35, II", en_vigueur: 2008-07-01, publie_le: 2008-07-01}
+  - {id: LEGIARTI000020085571, article: "même article", en_vigueur: 2009-01-01}
+  - {id: LEGIARTI000019104897, article: "décret n° 2008-637 (RATP), article 51, II", en_vigueur: 2008-07-01, publie_le: 2008-07-01}
+  - {id: LEGIARTI000020085597, article: "même article", en_vigueur: 2009-01-01}
+  nee_de: LEGIARTI000019108289
+  bornes:
+    liquidation.date_effet: [2008-07-01, null]
+    ouverture_du_droit: [null, 2010-07-01]
+  contenu:
+    parametres:
+      majoration_de_l_age_minimum: null
+    droit: >-
+      « Le coefficient de minoration prévu au I de l'article 13 n'est applicable qu'aux
+      personnes remplissant les conditions définies aux articles 1er et 3 à compter du
+      1er juillet 2010 » (SNCF, article 35, II) ; « Le coefficient de minoration prévu au I
+      de l'article 24 n'est applicable qu'aux personnes remplissant les conditions définies
+      aux articles 6 et 8 à 12 à compter du 1er juillet 2010 » (RATP, article 51, II)
+    conditions: >-
+      les rédactions suivantes des deux articles gardent la phrase mot pour mot, jusqu'aux
+      rédactions en vigueur ; la CPRPSNCF écrit « Pas de décote » pour l'agent de conduite
+      né avant le 1er juillet 1960 et l'agent du cas général né avant le 1er juillet 1955,
+      qui atteignent leur âge d'ouverture avant le 1er juillet 2010
+  exemples: aucun trouvé
+- id: age_minimum_majore_de_cinq_ans
+  statut: lue
+  textes:
+  - {id: LEGIARTI000019108313, article: "décret n° 2008-639 (SNCF), article 13, I, 1°", en_vigueur: 2008-07-01, publie_le: 2008-07-01}
+  - {id: LEGIARTI000020085562, article: "même article", en_vigueur: 2009-01-01}
+  - {id: LEGIARTI000023733121, article: "même article, rédaction du décret n° 2011-291", en_vigueur: 2011-03-21, publie_le: 2011-03-20}
+  - {id: LEGIARTI000032935163, article: "même article", en_vigueur: 2016-07-24}
+  - {id: LEGIARTI000023733189, article: "même article", en_vigueur: 2017-01-01}
+  - {id: LEGIARTI000041417130, article: "même article", en_vigueur: 2020-01-01}
+  - {id: LEGIARTI000042597040, article: "même article", en_vigueur: 2020-12-03}
+  - {id: LEGIARTI000045021319, article: "même article", en_vigueur: 2022-01-02}
+  - {id: LEGIARTI000019108289, article: "décret n° 2008-639, article 35, II", en_vigueur: 2008-07-01}
+  - {id: LEGIARTI000020085571, article: "même article", en_vigueur: 2009-01-01}
+  - {id: LEGIARTI000029165209, article: "même article, rédaction du décret n° 2014-712", en_vigueur: 2014-06-29, publie_le: 2014-06-28}
+  - {id: LEGIARTI000048240179, article: "même article, II, rédaction du décret n° 2023-967", en_vigueur: 2023-10-22, publie_le: 2023-10-21}
+  - {id: LEGIARTI000048897024, article: "même article, II", en_vigueur: 2024-01-07}
+  - {id: LEGIARTI000019104847, article: "décret n° 2008-637 (RATP), article 24, I, 1°", en_vigueur: 2008-07-01, publie_le: 2008-07-01}
+  - {id: LEGIARTI000020085589, article: "même article", en_vigueur: 2009-01-01}
+  - {id: LEGIARTI000023732870, article: "même article, rédaction du décret n° 2011-292", en_vigueur: 2011-03-21, publie_le: 2011-03-20}
+  - {id: LEGIARTI000023732931, article: "même article", en_vigueur: 2017-01-01}
+  - {id: LEGIARTI000047910472, article: "même article", en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000050710687, article: "même article", en_vigueur: 2024-12-04}
+  - {id: LEGIARTI000019104897, article: "décret n° 2008-637, article 51, II", en_vigueur: 2008-07-01}
+  - {id: LEGIARTI000020085597, article: "même article", en_vigueur: 2009-01-01}
+  - {id: LEGIARTI000029137521, article: "même article, rédaction du décret n° 2014-668", en_vigueur: 2014-06-26, publie_le: 2014-06-25}
+  - {id: LEGIARTI000047910458, article: "même article", en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000047914257, article: "décret n° 2008-637, article 51-1, VII, 2°, rédaction du décret n° 2023-690", en_vigueur: 2025-01-01, publie_le: 2023-07-30}
+  nee_de: LEGIARTI000019108313
+  bornes:
+    liquidation.date_effet: [2008-07-01, null]
+    ouverture_du_droit: [2010-07-01, 2025-01-01]
+  contenu:
+    parametres:
+      majoration_de_l_age_minimum: 5
+      diminution_en_trimestres: {"2010-07": 16, "2011-07": 14, "2012-07": 12, "2013-07": 11, "2014-07": 10, "2015-07": 9, "2016-07": 8, "2017-07": 7, "2018-07": 6, "2019-07": 5, "2020-07": 4, "2021-07": 3, "2022-07": 2, "2023-07": 1, "2024-07": 0}
+    droit: >-
+      les trimestres de décote se comptent par « la durée qui sépare l'âge auquel la pension
+      est liquidée d'un âge de référence correspondant à l'âge minimum d'ouverture du droit
+      à pension applicable à l'assuré majoré de cinq ans » (SNCF, article 13, I, 1° ; RATP,
+      article 24, I, 1°, mot pour mot) ; « L'âge auquel le coefficient de minoration
+      s'annule correspond, pour la période comprise entre le 1er juillet 2010 et le 30 juin
+      2011 inclus, à l'âge de référence mentionné au 1° du I de l'article 13 diminué de
+      seize trimestres. Pour les périodes postérieures au 30 juin 2011, cette diminution est
+      réduite de deux trimestres au 1er juillet de chaque année jusqu'au 30 juin 2013 inclus
+      puis d'un trimestre au 1er juillet de chaque année jusqu'au 30 juin 2024 inclus »
+      (SNCF, article 35, II ; RATP, article 51, II, qui renvoie au 1° du I de l'article 24)
+    conditions: >-
+      l'âge minimum d'ouverture suit la génération depuis le décret n° 2011-291 (SNCF,
+      article 37-1, I) et le décret n° 2011-292 (RATP, article 51-1, II) ; la diminution
+      se lit au mois où l'agent atteint son âge d'ouverture, comme le taux de la
+      minoration : la CPRPSNCF écrit cinquante et un ans pour l'agent de conduite né au
+      second semestre de 1960, cinquante-quatre ans et deux mois pour celui né en janvier
+      1968, cinquante-six ans et neuf mois pour 1972. Qui a réuni les conditions avant le
+      1er janvier 2025 garde cet âge s'il part plus tard : la CPRPSNCF le lui garde dans ses
+      tableaux par génération, quand le 1° du I de l'article 13 écrit cinquante-sept et
+      soixante-deux ans pour toute pension prenant effet depuis cette date (lecture
+      divergente) ; à la RATP, le 2° du VII de l'article 51-1 l'écrit, de 2025 à 2033
+      inclus, en renvoyant à « l'âge de référence mentionné au 1° du I de l'article 24
+      applicable avant l'entrée en vigueur du décret n° 2023-690 »
+  exemples: aucun trouvé
+- id: age_fixe_depuis_2025
+  statut: lue
+  textes:
+  - {id: LEGIARTI000048240205, article: "décret n° 2008-639 (SNCF), article 13, I, 1°, rédaction du a du 6° de l'article 1er du décret n° 2023-967, pensions prenant effet à compter du 1er janvier 2025", en_vigueur: 2023-10-22, publie_le: 2023-10-21}
+  - {id: LEGIARTI000048897107, article: "même article", en_vigueur: 2024-01-07}
+  - {id: LEGIARTI000054622824, article: "même article, rédaction du décret n° 2026-738", en_vigueur: 2026-08-07, publie_le: 2026-08-06}
+  - {id: LEGIARTI000047914227, article: "décret n° 2008-637 (RATP), article 24, I, 1°, rédaction du décret n° 2023-690", en_vigueur: 2025-01-01, publie_le: 2023-07-30}
+  - {id: LEGIARTI000047914257, article: "décret n° 2008-637, article 51-1, II et VII, 2°", en_vigueur: 2025-01-01, publie_le: 2023-07-30}
+  nee_de: LEGIARTI000048240205
+  bornes:
+    liquidation.date_effet: [2008-07-01, null]
+    ouverture_du_droit: [2025-01-01, null]
+  contenu:
+    parametres:
+      ages_de_reference:
+        sncf: {agents_de_conduite: 57, autres_agents: 62}
+        ratp: {tableau_b: 57, tableau_a: 62, autres_agents: 67}
+    droit: >-
+      « un âge de référence fixé à cinquante-sept ans pour les agents mentionnés au 1° du I
+      de l'article 1 et à soixante-deux ans pour les agents mentionnés au 2° du I du même
+      article » (SNCF, article 13, I, 1°, pour les pensions prenant effet à compter du
+      1er janvier 2025, article 2 du décret n° 2023-967) ; « un âge de référence
+      correspondant à l'âge minimum d'ouverture du droit à pension applicable à l'assuré
+      majoré de trois ans à l'issue des dispositions prévues aux 1°, 2° et 3° du II de
+      l'article 51-1 » (RATP, article 24, I, 1°), soit cinquante-quatre, cinquante-neuf et
+      soixante-quatre ans majorés de trois ; et, « A compter du 1er janvier 2025 et
+      jusqu'au 31 décembre 2033 inclus », l'âge de référence d'avant le décret n° 2023-690
+      (article 51-1, VII, 2°), l'âge d'ouverture de la fin des calendriers de 2011 —
+      cinquante-deux, cinquante-sept et soixante-deux ans — majoré de cinq ans : les mêmes
+      cinquante-sept, soixante-deux et soixante-sept ans
+    conditions: >-
+      la diminution d'avant 2025 n'a plus cours ; la CPRPSNCF écrit « L'âge d'annulation de
+      la décote est inchangé, il est de : 62 ans pour les agents (cas général) nés à compter
+      du 1er janvier 1972. 57 ans pour les agents de conduite nés à compter du 1er janvier
+      1975 », et ses tableaux par génération donnent cinquante-six ans et neuf mois à
+      l'agent de conduite né en 1973 ou 1974, que le texte ne lui donne pas (lecture
+      divergente) ; la CRP RATP ne publie pas sa règle hors de l'espace de ses affiliés ; la
+      rédaction du 7 août 2026 de l'article 13 (décret n° 2026-738) ne touche pas le 1° du I
+  exemples: aucun trouvé
+approximations:
+- version: [age_minimum_majore_de_cinq_ans, age_fixe_depuis_2025]
+  ecart: >-
+    l'âge de référence est celui de l'agent de conduite de la SNCF et du roulant (tableau B)
+    de la RATP, que le modèle présume (`age_table`) : celui des autres agents de la SNCF,
+    leur âge d'ouverture majoré de cinq ans jusqu'en 2024 puis soixante-deux ans, et ceux du
+    tableau A et des autres agents de la RATP, jusqu'à soixante-deux et soixante-sept ans,
+    ne sont pas servis
+  effet: non mesuré
+- version: [age_fixe_depuis_2025]
+  regime: sncf
+  ecart: >-
+    l'agent de conduite né en 1973 ou 1974 a cinquante-sept ans d'âge de référence, celui
+    du texte, quand les tableaux de la CPRPSNCF lui donnent cinquante-six ans et neuf mois :
+    au plus un trimestre de décote de plus que la caisse, s'il part avant cinquante-sept ans
+    sans la durée
+  effet: non mesuré
 effet: >-
   Les deux fiches faisaient monter l'âge de référence avec l'âge d'ouverture, cinq
   ans au-dessus : 57,25 ans pour les liquidations de 2025, jusqu'à 59 ans à compter
@@ -18,10 +211,45 @@ effet: >-
   remonte, l'écart de la proposition se creuse. Les soixante-deux à soixante-quatre
   ans des générations 1963 à 1970 que les deux fiches donnaient pour l'âge d'annulation
   sont ceux de la SURCOTE (IV de l'article 37-1 pour la SNCF, 3° du II de l'article
-  51-1 pour la RATP).
+  51-1 pour la RATP). Approchée depuis le 2 novembre 2026 : l'âge de référence est celui
+  de l'agent de conduite et du roulant, que le modèle présume.
 sources:
-  lu_le: 2026-09-22
-  prochaine_relecture: 2027-03-31
+  lu_le: 2026-11-02
+  prochaine_relecture: 2027-11-02
+  lectures_divergentes:
+  - >-
+    Âge d'annulation de l'agent de la SNCF qui a réuni les conditions avant le 1er janvier
+    2025 et part après : le 1° du I de l'article 13, dans la rédaction du décret n° 2023-967,
+    fixe cinquante-sept et soixante-deux ans pour toute pension prenant effet depuis cette
+    date, et le I bis de l'article 35 ne lui garde que l'âge d'ouverture et la durée
+    d'avant ; la CPRPSNCF, dans ses tableaux par génération, lui garde l'âge d'avant,
+    diminué l'année où il a atteint son âge d'ouverture — cinquante-six ans et deux mois
+    pour l'agent de conduite né en 1971. La fiche suit la caisse, comme
+    `age_reference_decote_ieg` ; à la RATP, le 2° du VII de l'article 51-1 l'écrit.
+  - >-
+    Âge d'annulation de l'agent de conduite né en 1973 ou 1974 et de l'agent du cas général
+    né de 1967 à 1971 : les tableaux de la CPRPSNCF du 20 octobre 2023 donnent cinquante-six
+    ans et neuf mois, et soixante et un ans et six ou neuf mois, quand le 1° du I de
+    l'article 13 écrit cinquante-sept et soixante-deux ans pour les pensions de 2025 et
+    après, et la diminution de l'article 35, pour qui a atteint cinquante-sept ans en 2024,
+    soixante et un ans et neuf mois au plus bas. Aucune rédaction lue ne les abaisse : la
+    fiche suit le texte, et l'écart du modèle à la caisse est déclaré.
+  a_relire:
+  - >-
+    Les âges d'annulation que les tableaux de la CPRPSNCF donnent à l'agent de conduite né
+    en 1973 ou 1974 et à l'agent du cas général né de 1967 à 1971 : demander à la caisse le
+    texte qui les fonde.
+  - >-
+    RATP, 2° du VII de l'article 51-1 : de 2025 à 2033, l'âge de référence « applicable
+    avant » se lit-il avec l'âge d'ouverture d'avant le décret n° 2023-690, cinquante-deux
+    ans au tableau B, d'où cinquante-sept, ou avec celui que le 1° du II lui substitue,
+    jusqu'à cinquante-trois ans et neuf mois pour 1979, d'où cinquante-huit ans et neuf
+    mois, avant de retomber à cinquante-sept ans en 2034 ? La CRP RATP ne publie pas sa
+    lecture ; la fiche, comme le modèle, retient cinquante-sept ans, le seul âge qui ne
+    retombe pas.
+  - >-
+    L'âge de référence des autres agents de la SNCF, et du tableau A et des autres agents
+    de la RATP : à servir quand la saisie distinguera l'agent sédentaire.
   lectures:
   - type: legifrance
     reference: >-
@@ -57,16 +285,43 @@ sources:
     url: >-
       https://www.crpratp.fr/web/actif/preparez-votre-depart-a-la-retraite/ouverture-du-droit
     date: 2026-09-22
-textes_a_rattacher:
-- reference: >-
-    décret n° 2008-639 du 30 juin 2008, article 13, I, 1° (LEGIARTI000054622824)
-- reference: >-
-    décret n° 2008-637 du 30 juin 2008, article 24, I, 1° (LEGIARTI000047914227),
-    et article 51-1, VII, 2° (LEGIARTI000047914257)
-- reference: >-
-    décrets n° 2023-967 du 20 octobre 2023 (SNCF) et n° 2023-690 du 28 juillet 2023
-    (RATP)
+  - type: legifrance
+    reference: >-
+      décret n° 2008-639, articles 13 et 35, leurs onze et cinq rédactions, et décret
+      n° 2008-637, articles 24, 51 et 51-1, leurs sept, six et quatre rédactions, dans
+      l'index LEGI du dépôt à jour de l'incrément du 2 novembre 2026, du 1er juillet 2008
+      au 7 août 2026, confrontées d'une rédaction à la suivante : l'âge de référence et sa
+      diminution ne changent qu'au 1er janvier 2025
+    date: 2026-11-02
+  - type: jorf
+    reference: >-
+      au Journal officiel par l'index JORF du dépôt : décret n° 2023-967 du 20 octobre
+      2023, article 2 — « les dispositions des 1°, 2°, 5°, du a du 6° et des 9° et 10° de
+      l'article 1er [...] s'appliquent aux pensions prenant effet à compter du 1er janvier
+      2025 », le a du 6° étant le nouvel âge de référence — ; décret n° 2023-690 du
+      28 juillet 2023, article 3, III ; décrets n° 2008-639 et n° 2008-637, abrogations
+    date: 2026-11-02
+  - type: autre
+    reference: >-
+      CPRPSNCF, « Régime spécial de retraite SNCF — agents de conduite » et « — cas
+      général », « Paramètres applicables selon votre génération », version intégrant le
+      décret du 20 octobre 2023 : l'âge d'annulation par génération — « Pas de décote »
+      jusqu'à l'agent de conduite né au premier semestre de 1960, puis cinquante et un ans,
+      jusqu'à cinquante-six ans et neuf mois de 1972 à 1974 et cinquante-sept ans à compter
+      de 1975 ; au cas général, cinquante-six ans pour le second semestre de 1955, jusqu'à
+      soixante et un ans et neuf mois pour 1971 et soixante-deux ans à compter de 1972
+    url: https://www.cprpf.fr/app/uploads/2023/10/tableau-age-de-la-retraite-AC-20-10-2023.pdf
+    date: 2023-10-20
+historique:
+- >-
+  2026-11-02 — lue au droit (action 130) : quatre versions, sur la date d'effet et le mois
+  où le droit s'ouvre — aucune décote sous les règlements d'avant juillet 2008, ni à qui
+  réunit les conditions avant juillet 2010 ; l'âge minimum majoré de cinq ans, diminué de
+  seize trimestres à rien de 2010 à 2024 ; cinquante-sept ans pour l'agent de conduite et
+  le roulant depuis 2025. Approchée : l'agent présumé agent de conduite ou roulant.
 reformes:
+- regimes_speciaux_2008
+- woerth_2010
 - reforme_2023
 code:
   moteur: >-
@@ -79,15 +334,22 @@ code:
     modèle n'a de table que pour l'agent de conduite et le personnel roulant : les
     autres agents, à soixante-deux ans, n'y sont pas.
   python: >-
-    droit/ouvrir.py : age_taux_plein ; droit/liquider.py : decote_opposable ;
-    scenarios/actuel.py : AgesRegimes, AgesRegimes.ages
+    droit/ouvrir.py : age_taux_plein ; droit/liquider.py : decote_opposable,
+    millesime_du_bareme ; scenarios/actuel.py : AgesRegimes, AgesRegimes.ages,
+    DecoteRegimesSpeciaux
   javascript: >-
     moteur/js/droit/ouvrir.js : ageTauxPlein ; moteur/js/droit/liquider.js :
-    decoteOpposable ; moteur/js/regimes.js : AgesRegimes, AgesRegimes.ages
+    decoteOpposable, millesimeDuBareme ; moteur/js/regimes.js : AgesRegimes, AgesRegimes.ages
   parametres: >-
-    regimes/ratp.yaml, regimes/sncf.yaml : age_table, age_taux_plein ;
-    legislation/ages_regimes.csv : ratp_roulant_2023, sncf_conduite_2023, age_taux_plein
-  tests: >-
+    contenu.parametres de chaque version : majoration_de_l_age_minimum,
+    diminution_en_trimestres, ages_de_reference ; regimes/ratp.yaml, regimes/sncf.yaml :
+    age_table, age_taux_plein, bareme_decote, decote_par_trimestre ;
+    legislation/ages_regimes.csv : ratp_roulant_2011, ratp_roulant_2023,
+    sncf_conduite_2011, sncf_conduite_2023, age_ouverture, age_taux_plein ;
+    legislation/decote_regimes_speciaux.csv : annee, trimestres_avant_limite
+  tests:
+  - tests/test_sncf_ratp.py
+  - >-
     tests/test_simulateur.py, test_la_decote_des_regimes_speciaux_arrive_quatre_ans_apres,
     cinquante-sept ans en 2025 comme en 2034 ; aucun témoin ne liquide une pension que
     cet âge change, et aucun cas n'y confronte le portage
