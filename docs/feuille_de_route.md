@@ -6715,12 +6715,13 @@ l'inviterait aussi à relire le dépôt.
 **Reprise, au 2 novembre 2026.** Le propriétaire a tranché le périmètre le
 2 novembre 2026 : « tout ce qu'on peut trouver », les grilles de l'État, de la
 territoriale et de l'hospitalière. L'étape 2 est faite à moitié : le filtre de
-l'index garde les grilles, sa reconstruction est lancée ; les grilles de l'État,
-tirées du Noyau RH (`scripts/fetch/cisirh_grilles.py`), sont certifiées sous
-`data/reference/grilles/etat/` et recoupées au centime. Reste, l'index publié
-et mesuré : la territoriale et l'hospitalière, tirées du LEGI ; le
-barème avant 2006 (décret n° 82-1105) ; les grilles d'avant le noyau ; les
-reclassements. Détail : la note de l'étape 2 du 2 novembre 2026.
+l'index garde les grilles, dont le LEGI reconstruit a douze fois plus de
+versions d'articles ; les grilles de l'État, tirées du Noyau RH
+(`scripts/fetch/cisirh_grilles.py`), sont certifiées sous
+`data/reference/grilles/etat/` et recoupées au centime. Reste : la territoriale
+et l'hospitalière, tirées du LEGI ; le barème avant 2006 (décret n° 82-1105) ;
+les grilles d'avant le noyau ; les reclassements. Détail : la note de
+l'étape 2 du 2 novembre 2026.
 
 
 **D'où elle vient.** La demande du propriétaire, le 12 octobre 2026 : aller

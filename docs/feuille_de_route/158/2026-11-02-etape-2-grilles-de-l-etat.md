@@ -1,10 +1,10 @@
-# Étape 2, première moitié : le filtre de l'index élargi et sa reconstruction lancée, les grilles de l'État certifiées depuis le Noyau RH
+# Étape 2, première moitié : le filtre de l'index élargi et l'index reconstruit, les grilles de l'État certifiées depuis le Noyau RH
 
 **Le 2 novembre 2026 : le propriétaire a tranché le périmètre — « tout ce
 qu'on peut trouver », les grilles de l'État, de la territoriale et de
 l'hospitalière, et non l'État seul. Le filtre de l'index de la DILA garde
-désormais les textes des grilles et des carrières, et la reconstruction de
-l'index depuis le dump est lancée. Les grilles de l'État sont entrées dans le dépôt,
+désormais les textes des grilles et des carrières : l'index LEGI, reconstruit
+depuis le dump, en garde douze fois plus de versions d'articles qu'avant. Les grilles de l'État sont entrées dans le dépôt,
 tirées du Noyau RH du CISIRH et certifiées : 2 105 grilles, 33 169 versions
 d'échelons avec leur indice et leurs durées, le barème et les textes. Elles
 recomposent au centime le traitement mensuel des 36 échelons que le ministère
@@ -36,7 +36,9 @@ militaires, que la décision ne nomme pas, sont de l'État.
   garde dehors l'avis de concours d'un de ces corps.
 - *La reconstruction.* `index-dila.yml`, entrée `reconstruire`, lancé sans
   modification le 2 novembre 2026 à 20 h 54 UTC sur 557d4c8 (run
-  41523537229), pour le JORF et le LEGI.
+  41523537229), pour le JORF et le LEGI. Le LEGI, reconstruit en 1 h 10, est
+  publié à 22 h 06 UTC : 325 879 documents au lieu de 246 302, 1,6 Go, sous le
+  filtre du code ; le JORF tournait encore à 22 h 10.
 - *Le Noyau RH, téléchargé.* La pièce `6_nomenclatures_noyau_xmlzip` du jeu de
   juillet 2026 (12 088 867 octets, empreinte SHA-256 `d5cf571b…a8f11f`,
   364 tableaux XML en ISO-8859-15). data.economie.gouv.fr coupe la plupart des
@@ -101,6 +103,29 @@ militaires, que la décision ne nomme pas, sont de l'État.
   B), 2021-1267 (aides-soignants), 82-1105 (le barème) ; 40 versions de cinq
   articles pour le n° 2009-21 (indices de solde des militaires non officiers),
   21 de sept articles pour le n° 2008-836.
+- *L'index, après la reconstruction* (même mesure). 841 textes de grilles
+  de l'État, dont 829 avec des articles, 4 374 versions d'articles ; 142 de la
+  territoriale, tous avec articles, 878 versions ; 312 de l'hospitalière, 311
+  avec articles, 1 750 versions ; 13 des militaires, 51 versions : douze fois
+  plus de versions qu'avant. Des 488 textes de grilles du noyau, 395 ont leurs
+  articles, 93 manquent encore. La première version d'article des textes de la
+  territoriale date des années 1980 pour 14 d'entre eux, 1990 pour 41, 2000
+  pour 15, 2010 pour 55, 2020 pour 17 ; de l'hospitalière, des années 1950 à
+  1980 pour 61, puis 79, 55, 95 et 21. Les textes attendus y sont, chacun
+  depuis son entrée en vigueur : le n° 82-1105, le barème, 43 versions de
+  quatre articles du 27 décembre 1982 au 1er janvier 2024 ; le n° 87-1108,
+  les échelles de la catégorie C de la territoriale d'avant 2017, 13 versions
+  de deux articles du 31 décembre 1987 à 2014 ; le n° 2016-604, ses échelles
+  C1 à C3, quatre articles depuis le 1er janvier 2017, modifiés par le
+  n° 2021-1819 ; le n° 2010-330, sa catégorie B, quatre articles et neuf
+  versions depuis le 27 mars 2010 ; les n° 2016-594, 2016-596 et 2016-636,
+  carrières de la territoriale et de l'hospitalière, 17, 29 et 39 articles ;
+  les n° 2021-1267, 2022-1207 et 2021-1262, aides-soignants, corps
+  paramédicaux et infirmiers, depuis le 1er octobre 2021 ; les n° 2008-836
+  (26 articles, 93 versions) et 2009-21 (8 articles, 43 versions). Le LEGI
+  garde donc chaque version d'article depuis l'entrée en vigueur de son texte,
+  pour ceux qu'il consolide ; ce que les plus anciens écrivaient avant leur
+  première version consolidée reste au JORF.
 
 *Pour les autres files.* Rien pour le site (file C) : le pré-remplissage est
 l'étape 4. Deux fichiers partagés ont reçu des lignes :
