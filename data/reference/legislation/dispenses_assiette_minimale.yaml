@@ -66,6 +66,10 @@ familles:
              veterinaire, officier_ministeriel, chirurgien_dentiste_ou_sage_femme,
              medecin_liberal, medecin_liberal_secteur_2, sage_femme,
              biologiste_liberal]
+  # L'indépendant de Mayotte, que l'article 4-2 du décret n° 2011-2085 soumet
+  # à son minimum depuis 2019 (action 177, étape 8) : aucune dispense ne le
+  # touche, L. 613-11 ne levant que les minima des articles du code qu'il nomme.
+  independants_de_mayotte: [independant_mayotte]
 
 dispenses:
   rsa:

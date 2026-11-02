@@ -659,6 +659,18 @@ class DonneesMacro:
                         if assure_social else 4)
         return _trimestres_au_seuil(revenu, self.seuil_d_un_trimestre(annee))
 
+    def smic_horaire_de(self, annee: int, mayotte: bool = False) -> float:
+        """Le Smic horaire du 1er janvier que lit une règle de l'année : celui
+        de Mayotte pour un statut que le routage porte à sa caisse
+        (``mayotte``, :attr:`statuts_de_mayotte`), depuis la première année de
+        sa série ; celui de la métropole sinon. Il fait l'assiette minimale de
+        l'indépendant de Mayotte, « 450 fois le salaire horaire minimum
+        interprofessionnel de croissance applicable à Mayotte » (décret
+        n° 2011-2085, article 4-2 ; action 177, étape 8)."""
+        if mayotte and annee >= self.smig_mayotte.premiere_annee:
+            return self.smig_mayotte(annee)
+        return self.smic_horaire(annee)
+
     def seuil_d_un_trimestre(self, annee: int, outre_mer: str = "",
                              mayotte: bool = False) -> float | None:
         """Le revenu d'activité qui valide un trimestre dans l'année, en euros

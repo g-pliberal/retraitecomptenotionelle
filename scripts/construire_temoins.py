@@ -777,6 +777,16 @@ def _cas() -> list[dict]:
                                 trimestres=None),
         "dispenses": "2004:2015:pensionne",
     }))
+    # LES INDÉPENDANTS DE MAYOTTE (fiche cssm_mayotte ; action 177, étape 8) :
+    # l'artisane de Mayotte, 1 000 € par an sur son relevé depuis 2013, qui
+    # cotise depuis 2019 sur 450 heures du Smic de Mayotte et valide alors
+    # trois trimestres par an au lieu d'aucun.
+    cas.append(("independante_mayotte_assiette_minimale", {
+        "naissance": "1975-03-15", "sexe": "F", "statut": "independant_mayotte",
+        "debut": "2013-01", "liquidation": "2042-04",
+        "releve": lignes_releve(2013, 2025, "independant_mayotte", 1000, progression=1.0,
+                                trimestres=None),
+    }))
     # LA LODEOM (action 138, étape 18) : le salarié de La Réunion, dont
     # l'employeur applique le barème d'innovation et de croissance, cotise
     # partout le même brut ; seule sa fiche de paie, que la page montre, change.

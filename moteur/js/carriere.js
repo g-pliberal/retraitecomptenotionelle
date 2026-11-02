@@ -692,14 +692,15 @@ function ligneAnnuelle({
   const natureReputes = (cotise || regle === null) ? "" : regle[6];
   // L'ASSIETTE MINIMALE DES INDÉPENDANTS : un artisan qui déclare 3 000 €
   // cotise en 2026 sur 450 SMIC horaires et valide trois trimestres au lieu
-  // d'un. Le revenu de la ligne reste celui qu'il a déclaré.
+  // d'un. Le revenu de la ligne reste celui qu'il a déclaré. À Mayotte, le
+  // Smic de Mayotte (décret n° 2011-2085, article 4-2).
   let minimale = 0.0;
   if (cotise && revenu > 0 && !micro) {
     const regleMinimale = assietteMinimale(macro.paquet, affiliation, annee);
     if (regleMinimale !== null) {
       minimale = montantAssietteMinimale(regleMinimale,
         macro.plafond_securite_sociale.valeur(annee),
-        macro.smic_horaire.valeur(annee), part);
+        macro.smicHoraireDe(annee, macro.statutsDeMayotte.has(affiliation)), part);
     }
   }
   // LES DISPENSES (L. 613-11, D. 642-4) : l'artisan au RSA qui déclare

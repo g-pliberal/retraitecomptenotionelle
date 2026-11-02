@@ -66,7 +66,8 @@ const sortie = cas.map(({ releve, naissance, age }) => {
   const carriere = simulateur.carriereReleve({
     annee_naissance: naissance, sexe: "F", releve, age_liquidation: age });
   return {
-    lignes: carriere.lignes.map((l) => [l.annee, l.trimestres_valides, l.revenu]),
+    lignes: carriere.lignes.map((l) => [l.annee, l.trimestres_valides, l.revenu,
+      l.assiette_minimale_base]),
     resultat: simulateur.simuler(carriere).dictionnaire(),
   };
 });
@@ -114,7 +115,8 @@ def deux_moteurs(simulateur):
                 c["age"])
             lignes.append({ligne.annee: ligne for ligne in carriere.lignes})
             attendus.append({
-                "lignes": [[l.annee, l.trimestres_valides, l.revenu] for l in carriere.lignes],
+                "lignes": [[l.annee, l.trimestres_valides, l.revenu, l.assiette_minimale_base]
+                           for l in carriere.lignes],
                 "resultat": _fini(simulateur.simuler(carriere).dictionnaire())})
         execution = subprocess.run(
             ["node", "--input-type=module", "-e", _JUMEAU, json.dumps(cas)],
@@ -226,3 +228,45 @@ def test_l_independant_de_mayotte_valide_ses_trimestres_au_smic_de_mayotte(
     assert [part["regime"] for part in resultat["scenarios"]["actuel"]["par_regime"]] == [
         "cssm_mayotte"]
     assert resultat["contribution_employeur"]["employeur"] == 0.0
+
+
+def test_l_independant_de_mayotte_cotise_au_moins_sur_450_heures_du_smic_de_mayotte(
+        deux_moteurs):
+    """« Elle ne peut être calculée sur une assiette inférieure à 450 fois le
+    salaire horaire minimum interprofessionnel de croissance applicable à
+    Mayotte prévu à l'article L. 3231-2 du code du travail » (décret
+    n° 2011-2085, article 4-2, I, LEGIARTI000038680068), pour « les cotisations
+    de sécurité sociale dues au titre des périodes courant à compter du
+    1er janvier 2019 » (décret n° 2019-632, article 2, LEGIARTI000038680034).
+    L'artisane qui déclare 1 000 € cotise en 2019 sur 450 heures de 7,57 €,
+    3 406,50 €, et en 2025 de 8,98 €, 4 041 € : trois trimestres, à 150 heures
+    du même Smic, au lieu d'aucun ; au Smic de la métropole, l'assiette serait
+    de 4 513,50 € et de 5 346 €. En 2018, aucun minimum : 1 000 € ne font aucun
+    trimestre, sous 1 119 €. Dans les deux moteurs."""
+    [artisane] = deux_moteurs([{"naissance": 1965, "age": 64.0, "releve": [
+        {"annee": annee, "affiliation": INDEPENDANT, "revenu": 1000.0}
+        for annee in (2018, 2019, 2025)]}])
+    assert artisane[2018].assiette_minimale_base == 0.0
+    assert artisane[2019].assiette_minimale_base == pytest.approx(3406.50)
+    assert artisane[2025].assiette_minimale_base == pytest.approx(4041.0)
+    assert [artisane[annee].trimestres_valides for annee in (2018, 2019, 2025)] == [0, 3, 3]
+
+
+def test_depuis_2026_l_assiette_minimale_de_mayotte_veut_quatre_vingt_dix_jours(simulateur):
+    """« L'assiette minimale s'applique aux travailleurs indépendants dont la
+    durée d'affiliation est au moins égale à quatre-vingt-dix jours au cours de
+    l'année considérée » (article 4-2, I, dans la rédaction du décret
+    n° 2026-82, du 1er janvier 2026, LEGIARTI000053297541) : deux mois
+    d'activité en 2026 n'en portent pas ; trois en portent une entière,
+    450 heures de 9,33 €, 4 198,50 €, que le texte ne réduit pas ; en 2025, deux
+    mois en portaient une."""
+    from retraite_notionnelle.donnees.chargement import (
+        assiette_minimale, charger_assiettes_minimales)
+
+    table = charger_assiettes_minimales(simulateur.macro.racine)
+    regle_2026 = assiette_minimale(table, INDEPENDANT, 2026)
+    regle_2025 = assiette_minimale(table, INDEPENDANT, 2025)
+    assert regle_2026 is not None and regle_2025 is not None
+    assert regle_2026.montant(48_060.0, 9.33, 59 / 365) == 0.0
+    assert regle_2026.montant(48_060.0, 9.33, 92 / 365) == pytest.approx(4198.50)
+    assert regle_2025.montant(47_100.0, 8.98, 59 / 365) == pytest.approx(4041.0)

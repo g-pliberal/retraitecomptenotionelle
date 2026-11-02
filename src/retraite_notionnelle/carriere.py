@@ -714,7 +714,8 @@ def _ligne_annuelle(
     # L'ASSIETTE MINIMALE DES INDÉPENDANTS : un artisan qui déclare 3 000 €
     # cotise en 2026 sur 450 SMIC horaires, soit 5 409 €, et valide trois
     # trimestres au lieu d'un. Le revenu de la ligne reste celui qu'il a
-    # déclaré : sa complémentaire, le RCI, n'a pas de minimum.
+    # déclaré : sa complémentaire, le RCI, n'a pas de minimum. À Mayotte, le
+    # Smic de Mayotte (décret n° 2011-2085, article 4-2 ; action 177, étape 8).
     minimale = 0.0
     if cotise and revenu > 0 and not micro:
         regle_minimale = assiette_minimale(
@@ -722,7 +723,8 @@ def _ligne_annuelle(
         if regle_minimale is not None:
             minimale = regle_minimale.montant(
                 macro.plafond_securite_sociale(annee),
-                macro.smic_horaire(annee), part)
+                macro.smic_horaire_de(annee, affiliation in macro.statuts_de_mayotte),
+                part)
     # LES DISPENSES (L. 613-11, D. 642-4) : l'artisan au RSA qui déclare
     # 3 000 € en 2026 cotise sur 3 000 €, et ne valide qu'un trimestre.
     dispense = (dispense_assiette_minimale(

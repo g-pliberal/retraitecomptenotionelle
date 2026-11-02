@@ -455,6 +455,22 @@ export class DonneesMacro {
   }
 
   /**
+   * Le Smic horaire du 1er janvier que lit une règle de l'année : celui de
+   * Mayotte pour un statut que le routage porte à sa caisse (`mayotte`),
+   * depuis la première année de sa série, quand le paquet la porte ; celui de
+   * la métropole sinon. Il fait l'assiette minimale de l'indépendant de
+   * Mayotte, « 450 fois le salaire horaire minimum interprofessionnel de
+   * croissance applicable à Mayotte » (décret n° 2011-2085, article 4-2).
+   * Voir le Python.
+   */
+  smicHoraireDe(annee, mayotte = false) {
+    if (mayotte && this.smig_mayotte !== null && annee >= this.smig_mayotte.premiereAnnee) {
+      return this.smig_mayotte.valeur(annee);
+    }
+    return this.smic_horaire.valeur(annee);
+  }
+
+  /**
    * L'année d'un salarié de Mayotte se valide au Smig mahorais : depuis la
    * première année de sa série, quand le paquet la porte.
    */
