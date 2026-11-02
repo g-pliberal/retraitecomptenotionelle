@@ -6712,15 +6712,15 @@ l'inviterait aussi à relire le dépôt.
 
 ### 158. Les grilles indiciaires de la fonction publique : la carrière d'un fonctionnaire pré-remplie depuis son corps, plutôt que de mémoire — `en cours`
 
-**Reprise, au 13 octobre 2026.** Faite, l'étape 1, les sources et le
-périmètre : les grilles de l'État sont ouvertes et datées dans le Noyau RH du
-CISIRH (licence ouverte, juillet 2026), depuis 1989 pour les enseignants, de
-2005 à 2011 pour les autres grands corps ; celles de la territoriale et de
-l'hospitalière ne sont qu'au LEGI, dont l'index du dépôt ne garde pas les
-grilles (144 textes de l'État absents sur 489). Reste : que le propriétaire
-tranche le périmètre, puis l'étape 2, qui commence par élargir le filtre de
-l'index (`THEMATIQUE`) et le faire reconstruire (`index-dila.yml`, entrée
-`reconstruire`), sauf périmètre limité à l'État. Détail : la note de l'étape 1.
+**Reprise, au 2 novembre 2026.** Le propriétaire a tranché le périmètre le
+2 novembre 2026 : « tout ce qu'on peut trouver », les grilles de l'État, de la
+territoriale et de l'hospitalière. L'étape 2 est faite à moitié : le filtre de
+l'index garde les grilles, sa reconstruction est lancée ; les grilles de l'État,
+tirées du Noyau RH (`scripts/fetch/cisirh_grilles.py`), sont certifiées sous
+`data/reference/grilles/etat/` et recoupées au centime. Reste, l'index publié
+et mesuré : la territoriale et l'hospitalière, tirées du LEGI ; le
+barème avant 2006 (décret n° 82-1105) ; les grilles d'avant le noyau ; les
+reclassements. Détail : la note de l'étape 2 du 2 novembre 2026.
 
 
 **D'où elle vient.** La demande du propriétaire, le 12 octobre 2026 : aller
