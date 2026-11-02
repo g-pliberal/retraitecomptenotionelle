@@ -92,8 +92,12 @@ effet: >-
   socle, son premier trimestre se valide aux seuils que la grille donne pour
   lui, 4 930 € de ventes en 2014 au lieu de 6 573 €, 6 636 € en 2015 au lieu
   de 9 621 € (`Metier.maladie_hors_rsi`, décidé avec le propriétaire). Ces seuils
-  sont sous les bornes de la saisie (0,1 fois le salaire moyen) : seul le
-  modèle les atteint. Approchée sur dix points : en 2016, ni seuil ni clef
+  sont sous les bornes de la saisie (0,1 fois le salaire moyen), mais le
+  profil de carrière abaisse les premières années : né en 1990, qui débute en
+  2014 au plancher de la saisie a 0,082 fois le salaire moyen en 2015, ses
+  ventes entre les deux seuils de la grille, 80 trimestres hors de la maladie
+  du RSI et 79 au RSI (témoin micro_entrepreneur_hors_maladie_rsi).
+  Approchée sur dix points : en 2016, ni seuil ni clef
   n'est publié, le revenu abattu valide, et le compte porte le barème, comme
   en 2017 ; de 2017 à 2019, le revenu annuel moyen garde la clef (2018, 2019)
   ou le revenu abattu (2017), quand l'ordre de D. 133-4 donne à la base, sous

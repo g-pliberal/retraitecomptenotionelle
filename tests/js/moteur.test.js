@@ -630,7 +630,8 @@ test("le chômage non indemnisé ne valide que dans les limites de R. 351-12", (
  * 200 heures de SMIC en 2014 ; en 2015, deux d'un coup à 300 heures, et en
  * deçà le premier aux seuils de la grille de la caisse, sauf aux recettes
  * libérales (circulaire RSI n° 2016/010, point 1). Sous les bornes de la
- * saisie, qu'aucun témoin ne franchit : rejoue
+ * saisie, que seul le profil de carrière fait franchir (témoin
+ * `micro_entrepreneur_hors_maladie_rsi`) : rejoue
  * `test_la_compensation_de_l_etat_de_2009_a_2015` (test_micro_social.py).
  */
 test("la compensation de l'État compte les trimestres de l'auto-entrepreneur", () => {

@@ -126,3 +126,16 @@ question se pose à tout micro-entrepreneur, même sans activité en 2014 ni en
 2015, et ne change un résultat que sous le plancher de la saisie. À la session
 du site : ne la montrer qu'aux carrières qui couvrent ces années, ou abaisser
 ce plancher.
+
+**Le 2 novembre 2026, une rectification.** La note disait ces seuils hors de
+portée du site, sous le plancher de la saisie : le profil de carrière, qui
+abaisse d'un sixième environ les premières années du micro-entrepreneur, les
+met à sa portée. Né en 1990, qui débute en 2014 au plancher de la saisie a, en
+2015, des ventes entre les deux seuils de la grille : 80 trimestres hors de la
+maladie du RSI, 79 au RSI. C'est le témoin de simulation de la question,
+`micro_entrepreneur_hors_maladie_rsi` (`construire_temoins.py`), que
+`test_le_temoin_hors_de_la_maladie_du_rsi_valide_un_trimestre_de_plus` tient,
+vu rouge avant lui, et que le jumeau Python refait au bit près
+(`test_pont.py -k refait`). La question change donc le résultat de quelques
+jeunes micro-entrepreneurs au plancher de la saisie, et la correction de 2015
+aussi.

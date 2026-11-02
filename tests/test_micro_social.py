@@ -361,6 +361,26 @@ def test_le_paquet_porte_la_table_du_python():
     assert paquet["validation_micro"] == attendu
 
 
+def test_le_temoin_hors_de_la_maladie_du_rsi_valide_un_trimestre_de_plus():
+    """Le témoin de simulation de la question (`construire_temoins.py`)
+    franchit le seuil par la saisie du site : né en 1990, au plancher de la
+    saisie que le profil de carrière abaisse, ses ventes de 2015 tombent entre
+    les deux seuils de la grille, 6 636 € hors de la maladie du RSI et 9 621 €
+    au RSI. Il valide donc un trimestre de plus que la même requête sans la
+    réponse, que le portage simule comme le site."""
+    from retraite_notionnelle import pont
+
+    temoins = json.loads((RACINE / "tests" / "temoins" / "simulations.json")
+                         .read_text(encoding="utf-8"))
+    temoin = temoins["micro_entrepreneur_hors_maladie_rsi"]
+    assert temoin["requete"]["maladie"] == "hors_rsi"
+    au_rsi = {cle: valeur for cle, valeur in temoin["requete"].items() if cle != "maladie"}
+    resultats, refus = pont.simulations([{"cle": "au_rsi", "requete": au_rsi}])
+    assert not refus
+    assert (temoin["resultat"]["assure"]["trimestres_actuels"]
+            == resultats["au_rsi"]["resultat"]["assure"]["trimestres_actuels"] + 1)
+
+
 @pytest.mark.parametrize("cle_du_paquet,cle", [
     ("seuils_micro", "seuils"),
     ("seuils_micro_hors_maladie_rsi", "seuils_hors_maladie_rsi"),

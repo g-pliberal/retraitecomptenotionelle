@@ -1092,6 +1092,16 @@ def _cas() -> list[dict]:
             "debut": "2009-01", "liquidation": "2039-04", "micro": activite,
             "unite_revenu": "euros_mois", "salaire": salaire,
         }))
+    # L'ASSURANCE MALADIE DU MICRO-ENTREPRENEUR EN 2014 ET EN 2015 (action 177,
+    # étape 6) : né en 1990, il commence en 2014 au plancher de la saisie, que
+    # le profil de carrière abaisse d'un sixième ses premières années. Hors de
+    # la maladie du RSI, ses ventes de 2015 valident un trimestre, et non
+    # aucun (circulaire RSI n° 2016/010, point 1).
+    cas.append(("micro_entrepreneur_hors_maladie_rsi", {
+        "statut": "micro_entrepreneur", "naissance": "1990-03-15",
+        "debut": "2014-01", "liquidation": "2054-04", "micro": "vente",
+        "unite_revenu": "euros_mois", "salaire": "1230", "maladie": "hors_rsi",
+    }))
     # L'INDICE MAJORÉ (action 138, étape 10) : le fonctionnaire de l'État saisi
     # par l'indice de son bulletin de paie, que le point de l'année fait
     # traitement, sans primes puis avec le cinquième de sa rémunération en
