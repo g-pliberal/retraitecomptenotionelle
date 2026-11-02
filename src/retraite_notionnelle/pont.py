@@ -178,6 +178,30 @@ class _PontOuvert:
                 self._processus.kill()
 
 
+def par_le_portage(parametres) -> bool:
+    """Ce que ces paramètres font calculer passe-t-il par le portage (action
+    161, étapes 5 et 6) ? Le coût y simule, y date et y bâtit sa grille, la
+    table y date ses carrières types.
+
+    Oui, le modèle intact et sur les données du dépôt : le portage calcule sur
+    leur paquet (:func:`paquet_des_donnees`). Non sous un contexte qui
+    remplace une fonction du moteur Python (``memoire.modele_modifie``, les
+    tests qui prennent ``monkeypatch``, ``scripts/solde_fusion.py``), ni sur des
+    données d'ailleurs, une copie que l'on a retouchée : le portage ne voit ni
+    l'un ni l'autre, et le moteur Python, le seul qui les voie, calcule. Ce
+    n'est pas un repli : sans node, le calcul du modèle intact s'arrête
+    (:class:`PontIndisponible`). Le retrait du moteur Python devra leur trouver
+    un autre chemin."""
+    from .config import RACINE_DONNEES
+    from .memoire import modele_intact
+
+    try:
+        du_depot = Path(parametres.racine_donnees).resolve() == RACINE_DONNEES.resolve()
+    except OSError:
+        du_depot = False
+    return du_depot and modele_intact()
+
+
 #: Le pont gardé ouvert de ce processus, s'il y en a un.
 _OUVERT: _PontOuvert | None = None
 

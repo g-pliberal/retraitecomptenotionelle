@@ -2328,7 +2328,7 @@ def _bilan(contexte=None, paquet: bytes | None = None) -> dict:
     from retraite_notionnelle.castypes import cases_de_la_grille, ecarts_medians
 
     scenario = "notionnel_liberal"
-    options, _ = cases_de_la_grille(contexte.simulateur())
+    options, _ = cases_de_la_grille(contexte.simulateur(), paquet=paquet)
     grille, _ = pont.carrieres([{"cle": f"{code}|{generation}", "options": carriere}
                                 for (code, generation), carriere in options.items()],
                                [scenario], paquet)
@@ -2406,7 +2406,9 @@ def _agregats(contexte=None, paquet: bytes | None = None) -> dict:
     from retraite_notionnelle.avantages import (
         LIBELLES_MOTIFS, LIGNES_LUES, MOTIFS, NEUTRALISATIONS,
     )
-    from retraite_notionnelle.castypes import CAS_TYPES, GENERATIONS, cases_de_la_grille
+    from retraite_notionnelle.castypes import (
+        CAS_TYPES, GENERATIONS, ages_de_la_grille, cases_de_la_grille,
+    )
     from retraite_notionnelle.contexte import Contexte
     from retraite_notionnelle.cout import (
         COMPOSANTE_GARANTIE, calculer_dette, masse_du_scenario, taux_tva_requis,
@@ -2431,7 +2433,7 @@ def _agregats(contexte=None, paquet: bytes | None = None) -> dict:
     # simule (action 161, étape 5) : le Python fixe l'âge de chaque départ et
     # écarte les cases que le droit écarte, node calcule le reste, au bit près
     # du moteur Python, ce que ``test_agregats.py`` exige.
-    options, echecs = cases_de_la_grille(simulateur)
+    options, echecs = cases_de_la_grille(simulateur, paquet=paquet)
     demandes = [{"cle": f"{code}|{generation}", "options": carriere}
                 for (code, generation), carriere in options.items()]
     classement = pages.CLASSEMENT_COMPARE
@@ -2472,8 +2474,9 @@ def _agregats(contexte=None, paquet: bytes | None = None) -> dict:
                            taux_tva_requis(cout.solde, contexte.base, AssietteTva(DONNEES))),
         # LA GRILLE DE CARRIÈRES TYPES : treize cas, sept générations, et
         # l'âge où chacun part. La page la montre telle quelle.
-        "cas_types": figer_cas_types(grille, echecs, simulateur, CAS_TYPES, GENERATIONS,
-                                     compares),
+        "cas_types": figer_cas_types(grille, echecs,
+                                     ages_de_la_grille(simulateur, paquet=paquet),
+                                     CAS_TYPES, GENERATIONS, compares),
         # CE QUE COÛTENT LES AVANTAGES NON CONTRIBUTIFS, année par année, que
         # Droits non cotisés montre et que Coût cite.
         "avantages": figer_avantages(contexte.avantages(), LIGNES_LUES, NEUTRALISATIONS,

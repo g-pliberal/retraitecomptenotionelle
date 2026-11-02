@@ -227,7 +227,7 @@ class RegimeUniqueVariante:
     def _pensionnes(original):
         def pensionnes(simulateur, cas_types, liquidation="droit"):
             # Le contexte remplace une fonction du moteur Python : la grille se
-            # simule donc par lui (``cout._par_le_portage``), une fois, et l'on
+            # simule donc par lui (``pont.par_le_portage``), une fois, et l'on
             # garde au passage le compte du scénario 4 de chaque case — taux
             # réels avant la bascule, régime unique après, part totale.
             comptes: dict = {}

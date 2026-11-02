@@ -134,15 +134,15 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass, field, replace
-from pathlib import Path
 from typing import Callable, Sequence
 
-from . import memoire, pont
-from .config import RACINE_DONNEES, ModeIndexation
+from . import pont
+from .config import ModeIndexation
 from .castypes import (
     GRILLE_DU_COUT,
     VARIANTES_LIQUIDATION,
     CasType,
+    batie_au_portage,
     carriere_de_la_grille,
     carrieres_de_la_grille,
     poids_effectifs,
@@ -2328,32 +2328,13 @@ def _simulations_en_python(simulateur: Simulateur, cas: list[dict], scenarios,
     return resultats, echecs
 
 
-def _par_le_portage(parametres) -> bool:
-    """La grille du coût se simule-t-elle par le portage (action 161, étape 5) ?
-
-    Oui, le modèle intact et sur les données du dépôt : le portage calcule sur
-    leur paquet (``pont.paquet_des_donnees``). Non sous un contexte qui
-    remplace une fonction du moteur Python (``memoire.modele_modifie``, les
-    tests qui prennent ``monkeypatch``, ``scripts/solde_fusion.py``), ni sur des
-    données d'ailleurs, une copie que l'on a retouchée : le portage ne voit ni
-    l'un ni l'autre, et le moteur Python, le seul qui les voie, simule. Ce
-    n'est pas un repli : sans node, la grille du modèle intact s'arrête
-    (``pont.PontIndisponible``). Le retrait du moteur Python (étape 6) devra
-    leur trouver un autre chemin."""
-    try:
-        du_depot = Path(parametres.racine_donnees).resolve() == RACINE_DONNEES.resolve()
-    except OSError:
-        du_depot = False
-    return du_depot and memoire.modele_intact()
-
-
 def _simulations(simulateur: Simulateur, cas: list[dict],
                  ) -> tuple[dict[str, dict], dict[str, str]]:
     """Les cases de la grille simulées, par le portage ou par le moteur Python
-    (:func:`_par_le_portage`) : le même contrat des deux côtés
+    (``pont.par_le_portage``) : le même contrat des deux côtés
     (:func:`_simulations_en_python`, ``pont.grille_du_cout``)."""
     scenarios = [cle for cle, _ in SCENARIOS]
-    if _par_le_portage(simulateur.parametres):
+    if pont.par_le_portage(simulateur.parametres):
         return pont.grille_du_cout(cas, scenarios, simulateur.parametres,
                                    pont.paquet_des_donnees())
     return _simulations_en_python(simulateur, cas, scenarios)
@@ -2395,17 +2376,6 @@ def _propositions(parametres, carriere, prolongations: tuple, departs: tuple[int
     return propositions
 
 
-def _batie_au_portage(parametres, cas_types: tuple[CasType, ...]) -> bool:
-    """La grille se date-t-elle et se bâtit-elle au portage (action 161,
-    étape 6) ? Quand elle s'y simule (:func:`_par_le_portage`), et que chacun
-    de ses cas types est un :class:`~.castypes.CasType` tel quel : le portage
-    ne refait que ce que ``CasType.pour_le_portage`` décrit. Une sous-classe
-    qui date ou bâtit autrement ses carrières — ``CasTypeLarge``, de
-    ``scripts/grille_large.py`` — se date et se bâtit en Python, qui seul voit
-    ses méthodes ; le portage la simule ensuite comme toute autre."""
-    return _par_le_portage(parametres) and all(type(cas) is CasType for cas in cas_types)
-
-
 def _prolongations(simulateur: Simulateur, carriere) -> tuple:
     """Les deux carrières que l'âge légal de la proposition dérive de
     ``carriere``, par le moteur Python : poursuivie jusqu'à lui, et attendue
@@ -2438,14 +2408,14 @@ def _grille_batie(simulateur: Simulateur, cas_types: tuple[CasType, ...],
     passe que ce que chaque cas type décrit (``CasType.pour_le_portage``) et
     la part des primes que les conventions du COR projettent. Le moteur Python
     ne la bâtit plus que là où le portage ne la refait pas
-    (:func:`_batie_au_portage`)."""
+    (``castypes.batie_au_portage``)."""
     if liquidation not in VARIANTES_LIQUIDATION:
         raise ValueError(
             f"variante de liquidation inconnue : {liquidation!r} "
             f"(attendu : {VARIANTES_LIQUIDATION})"
         )
     decalages = range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1)
-    if not _batie_au_portage(simulateur.parametres, cas_types):
+    if not batie_au_portage(simulateur.parametres, cas_types):
         carrieres, ecartees = carrieres_de_la_grille(simulateur, cas_types, generations(),
                                                      liquidation)
         cas_de = {cas.code: cas for cas in cas_types}

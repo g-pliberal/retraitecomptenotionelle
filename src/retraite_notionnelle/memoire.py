@@ -549,7 +549,7 @@ def modele_modifie():
 def modele_intact() -> bool:
     """Aucun remplacement du modèle n'est ouvert (:func:`modele_modifie`) : le
     moteur Python est celui que le portage copie, et la grille du coût peut
-    passer le pont (``cout._par_le_portage``)."""
+    passer le pont (``pont.par_le_portage``)."""
     return not _MODIFICATIONS
 
 

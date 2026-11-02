@@ -47,13 +47,15 @@ def _cle_grille(code: str, generation: int) -> str:
 # -- les carrières types -------------------------------------------------------
 
 
-def figer_cas_types(resultats, echecs, simulateur, cas_types, generations,
+def figer_cas_types(resultats, echecs, ages, cas_types, generations,
                     scenarios) -> dict:
     """La grille de ``castypes.calculer_cas_types``, et l'âge de départ de
     chaque case, pour les ``scenarios`` que les pages comparent. Le portage la
     calcule (``pont.carrieres``, action 161, étape 5) : ``resultats`` est ce
     qu'il rend de chaque case, sous ``(code, génération)``, et ``echecs`` le
-    motif de celles que le droit ou le portage écartent."""
+    motif de celles que le droit ou le portage écartent. ``ages`` est l'âge de
+    chaque case, sous ``(code, génération)``, que le portage fixe
+    (``castypes.ages_de_la_grille``, étape 6)."""
     return {
         "generations": list(generations),
         "cas": [
@@ -62,8 +64,7 @@ def figer_cas_types(resultats, echecs, simulateur, cas_types, generations,
                 "libelle": cas.libelle,
                 "commentaire": cas.commentaire,
                 "caisses": list(cas.caisses),
-                "ages": [cas.age_liquidation_pour(simulateur, generation)
-                         for generation in generations],
+                "ages": [ages[(cas.code, generation)] for generation in generations],
             }
             for cas in cas_types
         ],

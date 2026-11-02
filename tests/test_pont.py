@@ -31,7 +31,7 @@ from retraite_notionnelle import Parametres, pont
 from retraite_notionnelle.droit import liquidation
 from retraite_notionnelle.carriere import AnneeCarriere, Carriere
 from retraite_notionnelle.castypes import (
-    CAS_TYPES, GRILLE_DU_COUT, carriere_de_la_grille, cases_de_la_grille)
+    CAS_TYPES, GENERATIONS, GRILLE_DU_COUT, carriere_de_la_grille, cases_de_la_grille)
 from retraite_notionnelle.config import RACINE_PROJET
 from retraite_notionnelle.simulateur import Simulateur
 
@@ -318,6 +318,59 @@ def test_le_portage_bat_les_carrieres_de_la_grille_comme_le_python():
     batis = [lu for cle, lu in lus.items() if cle.endswith("|carriere")]
     assert any(len({ligne.affiliation for ligne in lu["carriere"].lignes}) > 1 for lu in batis)
     assert {lu["reportee"] is None for lu in batis} == {True, False}
+
+
+#: Les jumeaux Python par lesquels une grille se datait et se bâtissait : le
+#: pilote, l'ouverture du droit qu'il interroge, les constructeurs de
+#: carrières, leurs prolongations, la projection des primes.
+def _jumeaux_qui_datent_et_batissent():
+    from retraite_notionnelle import castypes, pilote
+    from retraite_notionnelle.droit import ouvrir
+
+    return ((pilote, "age_de_depart"), (pilote, "point_fixe"), (pilote, "descendre"),
+            (ouvrir, "age_ouverture_droit"), (ouvrir, "age_taux_plein_droit"),
+            (ouvrir, "age_annulation_droit"), (Simulateur, "carriere_simple"),
+            (Simulateur, "carriere_parcours"), (Carriere, "prolongee"),
+            (castypes, "primes_projetees"))
+
+
+def _interdire(monkeypatch, jumeaux) -> None:
+    """Les jumeaux Python nommés, ``(objet, nom)``, qu'on empêche de calculer."""
+    def interdit(*_, **__):
+        raise AssertionError("un jumeau Python date ou bâtit ce que le portage doit rendre")
+
+    for objet, nom in jumeaux:
+        monkeypatch.setattr(objet, nom, interdit)
+
+
+def test_la_grille_des_carrieres_types_se_date_au_portage_sans_les_jumeaux(memoire_isolee,
+                                                                           monkeypatch):
+    """La grille des carrières types de la table (``castypes.cases_de_la_grille``)
+    et les âges qu'en écrit ``figer_cas_types`` (``castypes.ages_de_la_grille``)
+    se datent au portage (action 161, étape 6) : le pilote Python, l'ouverture
+    du droit et les constructeurs de carrières, qu'on empêche ici de calculer,
+    n'y entrent pas. Chaque case et chaque motif sont ceux du Python, et chaque
+    âge l'est sous son type : l'âge écrit, un entier, quand le droit ne le
+    déplace pas — la table l'écrit sans décimale —, un flottant sinon."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    from retraite_notionnelle import memoire
+    from retraite_notionnelle.castypes import ages_de_la_grille
+
+    simulateur = Simulateur(Parametres())
+    # Les générations de la table, et deux que le droit écarte en partie.
+    generations = (1880, 1885, *GENERATIONS)
+    with memoire.modele_modifie():
+        en_python = cases_de_la_grille(simulateur, CAS_TYPES, generations)
+        ages_en_python = ages_de_la_grille(simulateur)
+    _interdire(monkeypatch, _jumeaux_qui_datent_et_batissent())
+    assert cases_de_la_grille(simulateur, CAS_TYPES, generations) == en_python
+    ages = ages_de_la_grille(simulateur)
+    assert ages == ages_en_python
+    assert _types(ages) == _types(ages_en_python)
+    assert {type(age) for age in ages.values()} == {int, float}
+    assert set(en_python[1].values()) == {"liquidation antérieure à la répartition",
+                                          "aucun régime actif sur la période"}
 
 
 def test_sans_node_le_pont_s_arrete_sans_repli(monkeypatch):
@@ -1184,10 +1237,10 @@ def test_sur_des_donnees_d_ailleurs_le_cout_simule_sa_grille_en_python(tmp_path)
     simulent par le moteur Python, comme un modèle qu'un contexte modifie."""
     from retraite_notionnelle import cout, memoire
 
-    assert cout._par_le_portage(Parametres())
-    assert not cout._par_le_portage(replace(Parametres(), racine_donnees=tmp_path))
+    assert pont.par_le_portage(Parametres())
+    assert not pont.par_le_portage(replace(Parametres(), racine_donnees=tmp_path))
     with memoire.modele_modifie():
-        assert not cout._par_le_portage(Parametres())
+        assert not pont.par_le_portage(Parametres())
 
 
 def test_le_paquet_du_jour_suit_les_sources(monkeypatch, tmp_path):
