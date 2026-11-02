@@ -795,6 +795,7 @@
 "releve_par":null,
 "sans_employeur":true
 },
+"independant_mayotte":{"categorie_active":null,"famille":"outre_mer","libelle":"Travailleur indépendant de Mayotte (artisan, commerçant)","part_salariale_seule":false,"pension_militaire":null,"periodes":[{"debut":2012,"fin":null,"regimes":["cssm_mayotte"]}],"releve_par":null,"sans_employeur":true},
 "liberal_non_reglemente":{
 "categorie_active":null,
 "famille":"independant",

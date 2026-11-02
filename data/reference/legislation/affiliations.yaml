@@ -222,6 +222,25 @@ affiliations:
       Aucune complémentaire obligatoire : l'Agirc-Arrco n'est pas
       applicable à Mayotte.
 
+  independant_mayotte:
+    libelle: Travailleur indépendant de Mayotte (artisan, commerçant)
+    famille: outre_mer
+    sans_employeur: true
+    periodes:
+      - {debut: 2012, fin: null, regimes: [cssm_mayotte]}
+    note: >-
+      Les non-salariés « des professions artisanales, industrielles et
+      commerciales » de Mayotte sont affiliés au régime de base de la caisse
+      de sécurité sociale de Mayotte depuis le 1er juillet 2012 (ordonnance
+      n° 2002-411, articles 23-1 et 23-4, II), « et agricoles » jusqu'en
+      2014, et les libéraux de L. 631-1 depuis le 23 juillet 2026
+      (LEGIARTI000025021004, LEGIARTI000025036406, LEGIARTI000054468933) ;
+      rien avant, et 2012 compte entière. Leur pension suit les règles du
+      salarié (article 23-4, I), leurs trimestres le salaire minimum de
+      Mayotte (décret n° 2003-589, article 8). Ils paient seuls leur
+      cotisation (`sans_employeur`). Aucune complémentaire obligatoire
+      avant 2028 (ordonnance n° 2026-647). Fiche `cssm_mayotte`.
+
   auteur_dramatique:
     libelle: Auteur ou compositeur dramatique, auteur de l'audiovisuel (SACD)
     famille: prive

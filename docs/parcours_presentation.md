@@ -226,7 +226,7 @@ facture en <!--chiffre:mesure(coefficient?scenario=1&quoi=annee)-->2070<!--/--> 
 Si quelqu'un veut sa propre carrière : le plus exact est son relevé de
 carrière, le PDF d'info-retraite.fr, à déposer en tête du formulaire — le
 simulateur l'écrit année par année. Sans relevé : la naissance et le départ,
-le statut dans la liste (<!--chiffre:entrees(moteur/donnees.json:affiliations)-->soixante-treize<!--/-->, du salarié du privé au député), le
+le statut dans la liste (<!--chiffre:entrees(moteur/donnees.json:affiliations)-->soixante-quatorze<!--/-->, du salarié du privé au député), le
 revenu net mensuel. « Ajouter une période » permet un deuxième métier ou une
 interruption, « Retirer cette période » l'enlève, et « Réinitialiser » ramène
 l'exemple. Ne pas ouvrir « Options de modélisation » en salle.

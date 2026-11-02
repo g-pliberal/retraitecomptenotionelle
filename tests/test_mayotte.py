@@ -46,6 +46,9 @@ from retraite_notionnelle.simulateur import Simulateur
 
 RACINE = Path(__file__).resolve().parents[1]
 STATUT = "salarie_mayotte"
+#: Le travailleur non salarié de Mayotte, artisan ou commerçant, affilié à la
+#: même caisse depuis le 1er juillet 2012 (action 177, étape 8).
+INDEPENDANT = "independant_mayotte"
 
 
 @pytest.fixture(scope="module")
@@ -189,3 +192,37 @@ def test_les_deux_moteurs_plafonnent_au_plafond_de_la_caisse(deux_moteurs):
     deux_moteurs([{"naissance": 1961, "age": 64.0, "releve": [
         {"annee": annee, "affiliation": STATUT, "revenu": 25_000.0}
         for annee in PLAFONDS_DE_LA_CAISSE]}])
+
+
+def test_l_independant_de_mayotte_valide_ses_trimestres_au_smic_de_mayotte(
+        deux_moteurs, simulateur):
+    """« Les résidents à Mayotte ayant la qualité de travailleurs non salariés
+    des professions artisanales, industrielles et commerciales, et agricoles
+    sont affiliés obligatoirement au régime de retraite de base obligatoire de
+    sécurité sociale défini à l'article 5 » (ordonnance n° 2002-411, article
+    23-1, LEGIARTI000025021004), depuis le 1er juillet 2012 (article 23-4, II,
+    LEGIARTI000025021012), et « le droit à pension de vieillesse des
+    travailleurs non salariés est déterminé selon les dispositions prévues au
+    chapitre Ier » (article 23-4, I) : ses trimestres se valident comme ceux du
+    salarié, au salaire minimum de Mayotte (décret n° 2003-589, article 8). La
+    Cnav l'écrit pour 2025 : « le salaire ou revenu cotisé à retenir en 2025
+    est de 1 347 euros pour la validation d'un trimestre » et, « concernant les
+    travailleurs indépendants, le montant de cotisations à retenir », 135 €
+    pour un trimestre et 541 € pour quatre (circulaire n° 2025-04 du
+    20 janvier 2025), 10,05 % de ces revenus, le taux de 2025 (décret
+    n° 2011-2085, article 4-2, LEGIARTI000038680068). En 2013, 2 800 € font
+    deux trimestres à 200 heures de 6,96 €, 1 392 €, un seul au seuil de la
+    métropole, 1 886 € ; en 2017, 2 220 € en font deux à 150 heures de 7,37 €,
+    un à 1 464 € ; en 2025, 5 400 €, qui font 542,70 € de cotisations, en
+    font quatre, trois à 1 782 €. Sa pension vient de la caisse de Mayotte,
+    et il paie seul : aucune part d'employeur. Dans les deux moteurs."""
+    releve = [{"annee": annee, "affiliation": INDEPENDANT, "revenu": revenu}
+              for annee, revenu in ((2013, 2800.0), (2017, 2220.0), (2025, 5400.0))]
+    [artisane] = deux_moteurs([{"naissance": 1965, "age": 64.0, "releve": releve}])
+    assert {annee: artisane[annee].trimestres_valides for annee in (2013, 2017, 2025)} == {
+        2013: 2, 2017: 2, 2025: 4}
+    resultat = simulateur.simuler(simulateur.carriere_releve(
+        1965, "F", [LigneRelevee(**ligne) for ligne in releve], 64.0)).dictionnaire()
+    assert [part["regime"] for part in resultat["scenarios"]["actuel"]["par_regime"]] == [
+        "cssm_mayotte"]
+    assert resultat["contribution_employeur"]["employeur"] == 0.0

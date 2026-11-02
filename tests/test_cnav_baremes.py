@@ -1255,6 +1255,55 @@ def test_le_smic_mensuel_de_mayotte_est_le_smig_de_la_serie_fois_les_heures():
             round(smig[annee] * h, 2) for h in heures}, annee
 
 
+#: « Revenu validant un trimestre - Travailleurs indépendants », à Mayotte
+#: (`mayotte_travailleur_independant_revenu_validant_un_ trimestre_montant_cotisation_bar.aspx`,
+#: version du 23 décembre 2025), d'après les circulaires Cnav n° 2025-04 du
+#: 20 janvier 2025 et n° 2025-34 du 23 décembre 2025 : les cotisations qui
+#: valident un, deux, trois et quatre trimestres, en euros.
+COTISATIONS_VALIDANTES_MAYOTTE = {
+    2025: (135.0, 271.0, 406.0, 541.0),
+    2026: (250.0, 500.0, 750.0, 1000.0),
+}
+#: Le taux de la cotisation d'assurance vieillesse de base des travailleurs
+#: indépendants de Mayotte, en pour cent : « Le taux de cette cotisation est
+#: fixé, pour chaque année civile de 2019 à 2036, conformément au tableau
+#: suivant » (décret n° 2011-2085, article 4-2, I, LEGIARTI000038680068, et
+#: dans la rédaction du 1er janvier 2026, LEGIARTI000053297541).
+TAUX_INDEPENDANTS_MAYOTTE = {2025: 10.05, 2026: 10.75}
+#: Les années où le barème ne suit pas le taux de Mayotte, et celui qu'il
+#: suit : en 2026, 17,87 %, le taux des artisans et des commerçants de la
+#: métropole sous le plafond (D. 633-3).
+ECARTS_COTISATIONS_VALIDANTES_MAYOTTE = {2026: 17.87}
+
+
+def test_les_cotisations_qui_valident_un_trimestre_d_independant_a_mayotte():
+    """Le trimestre de l'indépendant de Mayotte se valide au revenu cotisé,
+    comme celui du salarié : « le salaire ou revenu cotisé à retenir en 2025
+    est de 1 347 euros pour la validation d'un trimestre », 150 heures du Smic
+    de Mayotte du 1er janvier (décret n° 2003-589, article 8 ; ordonnance
+    n° 2002-411, article 23-4), que la caisse traduit, « concernant les
+    travailleurs indépendants », en cotisations au taux de l'année, arrondies
+    à l'euro : 10,05 % de 1 347 € font 135 €. En 2026, le barème porte 250 € :
+    17,87 % de 1 399,50 €, le taux de la métropole, quand celui de Mayotte est
+    de 10,75 % (150 €), que le décret n° 2026-82 n'a pas changé. Le modèle
+    suit le décret ; l'écart se déclare ici, et le test échoue le jour où le
+    barème rejoint le taux de Mayotte."""
+    smig = _serie_annuelle(LEGISLATION / "mayotte_smig_et_plafond.csv", "smig_horaire")
+    heures = _serie_annuelle(LEGISLATION / "validation_trimestres_mayotte.csv", "heures")
+    for annee, publiees in COTISATIONS_VALIDANTES_MAYOTTE.items():
+        seuil = heures[max(debut for debut in heures if debut <= annee)] * smig[annee]
+
+        def cotisations(taux: float) -> tuple[float, ...]:
+            return tuple(_arrondi(n * seuil * taux / 100) for n in (1, 2, 3, 4))
+
+        de_mayotte = cotisations(TAUX_INDEPENDANTS_MAYOTTE[annee])
+        if annee in ECARTS_COTISATIONS_VALIDANTES_MAYOTTE:
+            assert de_mayotte != publiees, annee
+            assert cotisations(ECARTS_COTISATIONS_VALIDANTES_MAYOTTE[annee]) == publiees, annee
+        else:
+            assert de_mayotte == publiees, annee
+
+
 # -- les dernières valeurs --------------------------------------------------------
 
 #: « Dernières valeurs » (`derniere_valeur_derniere_valeur_bar.aspx`, version du
