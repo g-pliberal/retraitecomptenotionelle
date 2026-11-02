@@ -1380,14 +1380,15 @@ def _compensation_micro() -> dict:
             "seuil": {str(annee): h for annee, h in compensation["seuil"].items()}}
 
 
-def _seuils_micro() -> dict:
-    """Les seuils de 2017 à 2019 que la caisse publie : par activité et par
-    année, le revenu abattu qui valide un à quatre trimestres
-    (``micro_social.yaml``)."""
+def _seuils_micro(cle: str = "seuils") -> dict:
+    """Les seuils que la caisse publie : par activité et par année, le revenu
+    abattu qui valide un à quatre trimestres (``micro_social.yaml``) ; ``cle``
+    choisit la table, ``seuils_hors_maladie_rsi`` pour qui ne relève pas de la
+    maladie du RSI en 2014 et en 2015."""
     from retraite_notionnelle.donnees.chargement import charger_seuils_micro
 
     return {activite: {str(annee): list(seuils) for annee, seuils in par_annee.items()}
-            for activite, par_annee in sorted(charger_seuils_micro(DONNEES).items())}
+            for activite, par_annee in sorted(charger_seuils_micro(DONNEES, cle).items())}
 
 
 def _periodes_non_travaillees() -> dict:
@@ -2630,6 +2631,7 @@ def construire(bilan: bytes, agregats: bytes) -> bytes:
         "cotisation_micro": _cotisation_micro(),
         "compensation_micro": _compensation_micro(),
         "seuils_micro": _seuils_micro(),
+        "seuils_micro_hors_maladie_rsi": _seuils_micro("seuils_hors_maladie_rsi"),
         "profil_salaire_age": _profil_salaire("profil_salaire_age.csv", "annee"),
         "profil_salaire_categorie": _profil_salaire(
             "profil_salaire_categorie.csv", "categorie"),

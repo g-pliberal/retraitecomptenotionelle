@@ -894,6 +894,9 @@ export function duParcours({
         if (metier.micro) {
           attributs.micro = metier.micro;
         }
+        if (metier.maladie_hors_rsi) {
+          attributs.maladie_hors_rsi = true;
+        }
         if (metier.apprentissage) {
           attributs.apprentissage = true;
         }
@@ -939,6 +942,7 @@ export function duParcours({
             part_primes,
             cumul: true,
             ...(metier.micro ? { micro: metier.micro } : {}),
+            ...(metier.maladie_hors_rsi ? { maladie_hors_rsi: true } : {}),
             ...(metier.apprentissage ? { apprentissage: true } : {}),
             ...(dispense ? { dispense_assiette_minimale: dispense } : {}),
             ...(metier.lodeom ? { lodeom: metier.lodeom } : {}),

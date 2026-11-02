@@ -39,13 +39,15 @@ def macro():
     return DonneesMacro(DONNEES)
 
 
-def _ligne(macro, statut, micro, activite, chiffre_d_affaires, annee):
+def _ligne(macro, statut, micro, activite, chiffre_d_affaires, annee,
+           maladie_hors_rsi=False):
     """La ligne ``annee`` d'un micro-entrepreneur né en 1975 dont le chiffre
     d'affaires annuel vaut ``chiffre_d_affaires`` cette année-là."""
     abattu = chiffre_d_affaires * (1.0 - ABATTEMENTS_MICRO[activite])
     niveau = abattu / salaire_moyen_annuel(macro, annee)
     carriere = Carriere.depuis_parcours(
-        1975, "H", [Metier(statut, 20.0, niveau, micro=micro)], 64.0, macro,
+        1975, "H", [Metier(statut, 20.0, niveau, micro=micro,
+                           maladie_hors_rsi=maladie_hors_rsi)], 64.0, macro,
         profil_carriere="plat")
     [ligne] = [l for l in carriere.lignes if l.annee == annee]
     return ligne
@@ -267,16 +269,26 @@ PREMIER_TRIMESTRE_HORS_DE_LA_MALADIE_DU_RSI = {
 }
 
 
-def test_hors_de_la_maladie_du_rsi_le_premier_trimestre_est_une_limite(macro):
-    """Le modèle, qui ne sait pas de quelle caisse l'assuré relevait pour la
-    maladie, sert celui qui relève du RSI : à ces seuils, il ne valide rien
-    (`docs/limites/3-systeme-actuel.md`, « micro-entrepreneur de 2014 et de
-    2015 »). Ce test rougit le jour où il saura l'autre."""
+def test_hors_de_la_maladie_du_rsi_le_premier_trimestre_est_servi(macro):
+    """L'assuré qui le dit (``Metier.maladie_hors_rsi``) valide son premier
+    trimestre aux seuils de la grille, et aucun un euro en deçà ; qui ne le
+    dit pas, aucun à ces seuils : le modèle le présume au RSI. Aux recettes
+    libérales de 2015, la compensation seule, rien sous 4 369 €, deux à ce
+    seuil ; les trimestres suivants sont ceux de la même grille."""
+    def valides(activite, annee, chiffre_d_affaires, hors_rsi=True):
+        return _ligne(macro, "micro_entrepreneur", activite, activite,
+                      chiffre_d_affaires, annee, maladie_hors_rsi=hors_rsi).trimestres_valides
+
     for annee, par_activite in PREMIER_TRIMESTRE_HORS_DE_LA_MALADIE_DU_RSI.items():
         for activite, seuil in par_activite.items():
             assert seuil < GRILLE_DE_LA_COMPENSATION[annee][activite][0], (annee, activite)
-            assert _ligne(macro, "micro_entrepreneur", activite, activite,
-                          seuil + 2, annee).trimestres_valides == 0, (annee, activite)
+            assert (valides(activite, annee, seuil + 1), valides(activite, annee, seuil - 1),
+                    valides(activite, annee, seuil + 1, False)) == (1, 0, 0), (annee, activite)
+    assert (valides("liberal", 2015, 4368), valides("liberal", 2015, 4370)) == (0, 2)
+    for annee in (2014, 2015):
+        for activite, seuils in GRILLE_DE_LA_COMPENSATION[annee].items():
+            for n, seuil in enumerate(seuils[1:], start=2):
+                assert valides(activite, annee, seuil + 2) == n, (annee, activite, n)
 
 
 #: Le chiffre d'affaires qui valide un, deux, trois et quatre trimestres, de
@@ -349,13 +361,17 @@ def test_le_paquet_porte_la_table_du_python():
     assert paquet["validation_micro"] == attendu
 
 
-def test_le_paquet_porte_les_seuils_du_python():
+@pytest.mark.parametrize("cle_du_paquet,cle", [
+    ("seuils_micro", "seuils"),
+    ("seuils_micro_hors_maladie_rsi", "seuils_hors_maladie_rsi"),
+])
+def test_le_paquet_porte_les_seuils_du_python(cle_du_paquet, cle):
     from retraite_notionnelle.donnees.chargement import charger_seuils_micro
 
     paquet = json.loads((RACINE / "moteur" / "donnees.json").read_text(encoding="utf-8"))
     attendu = {activite: {str(annee): list(seuils) for annee, seuils in par_annee.items()}
-               for activite, par_annee in charger_seuils_micro(DONNEES).items()}
-    assert attendu and paquet["seuils_micro"] == attendu
+               for activite, par_annee in charger_seuils_micro(DONNEES, cle).items()}
+    assert attendu and paquet[cle_du_paquet] == attendu
 
 
 def test_le_paquet_porte_le_forfait_du_python():

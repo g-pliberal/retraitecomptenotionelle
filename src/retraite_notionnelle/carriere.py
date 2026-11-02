@@ -435,6 +435,12 @@ class Metier:
     #: (``saisie.ACTIVITES_MICRO``), qui valide ses trimestres sur le revenu
     #: que sa cotisation achète ; vide sinon.
     micro: str = ""
+    #: Vrai si ce micro-entrepreneur ne relève pas de la maladie du RSI, ou en
+    #: relève mais touche le RSA socle : en 2014 et en 2015, il valide son
+    #: premier trimestre plus tôt (circulaire RSI n° 2016/010, point 1 ;
+    #: ``seuils_hors_maladie_rsi``). Faux par défaut : le modèle le présume au
+    #: RSI, comme la caisse le cas le plus courant.
+    maladie_hors_rsi: bool = False
     #: Vrai si ce métier est un contrat d'apprentissage, de ses dates de début
     #: et de fin : un emploi salarié, que la chronologie porte comme tel
     #: (attribut ``apprentissage``), et non une période assimilée. Faux par
@@ -663,6 +669,7 @@ def _ligne_annuelle(
     trimestres_declares: float | None = None,
     quotite: float = 1.0,
     micro: str = "",
+    maladie_hors_rsi: bool = False,
     dispense: str = "",
     lodeom: str = "",
     outre_mer: str = "",
@@ -681,7 +688,9 @@ def _ligne_annuelle(
     une carrière paramétrique les déduit du montant cotisé.
 
     ``micro``, l'activité d'un micro-entrepreneur, fait valider ses trimestres
-    sur le revenu que sa cotisation achète (:func:`revenu_cotise`).
+    sur le revenu que sa cotisation achète (:func:`revenu_cotise`) ;
+    ``maladie_hors_rsi``, aux seuils de qui ne relève pas de la maladie du RSI,
+    en 2014 et en 2015 (:attr:`Metier.maladie_hors_rsi`).
 
     ``dispense``, le motif qui en dispense l'indépendant (le RSA, la prime
     d'activité…), annule l'assiette minimale les années où le texte le veut.
@@ -752,6 +761,14 @@ def _ligne_annuelle(
             # 4 085 € de ventes valident un trimestre en 2018, et non 5 099 €.
             publies = trimestres_aux_seuils_micro(
                 charger_seuils_micro(macro.racine), micro, annee, revenu)
+            # En 2014 et en 2015, qui ne relève pas de la maladie du RSI
+            # valide le premier plus tôt, s'il le dit : 4 930 € de ventes en
+            # 2014, et non 6 573 € (circulaire RSI n° 2016/010, point 1).
+            hors_rsi = (trimestres_aux_seuils_micro(
+                charger_seuils_micro(macro.racine, "seuils_hors_maladie_rsi"), micro,
+                annee, revenu) if maladie_hors_rsi else None)
+            if hors_rsi is not None:
+                publies = hors_rsi
             if publies is not None:
                 trimestres = publies
     else:
@@ -2751,6 +2768,7 @@ def _lignes_du_parcours(date_naissance: DateMois, periodes: list[dict], fin: Dat
             trimestres_maximum=trimestres_maximum,
             quotite=quotite,
             micro=dominant.get("micro", ""),
+            maladie_hors_rsi=dominant.get("maladie_hors_rsi", False),
             # Coupée au 1er janvier comme la quotité, la dominante la dit.
             dispense=dominant.get("dispense_assiette_minimale", ""),
             lodeom=dominant.get("lodeom", ""),
@@ -2784,6 +2802,7 @@ def _lignes_du_parcours(date_naissance: DateMois, periodes: list[dict], fin: Dat
                 part_primes=metier["part_primes"],
                 trimestres_maximum=trimestres_civils(mois),
                 micro=metier.get("micro", ""),
+                maladie_hors_rsi=metier.get("maladie_hors_rsi", False),
                 dispense=metier.get("dispense_assiette_minimale", ""),
                 lodeom=metier.get("lodeom", ""),
                 outre_mer=metier.get("outre_mer", ""),

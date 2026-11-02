@@ -666,6 +666,48 @@ test("la compensation de l'État compte les trimestres de l'auto-entrepreneur", 
 });
 
 /**
+ * L'auto-entrepreneur qui ne relève pas de la maladie du RSI, ou en relève
+ * mais touche le RSA socle (`maladie_hors_rsi`), valide son premier
+ * trimestre plus tôt en 2014 et en 2015 (circulaire RSI n° 2016/010,
+ * point 1) : aux seuils de la grille de la caisse, le « Cas général » de 2014
+ * et « si non prestataires santé » en 2015 ; aux recettes libérales de 2015,
+ * la compensation seule. Rejoue
+ * `test_hors_de_la_maladie_du_rsi_le_premier_trimestre_est_servi`
+ * (test_micro_social.py).
+ */
+test("hors de la maladie du RSI, le premier trimestre de 2014 et de 2015", () => {
+  const simulateur = new Contexte(paquet).simulateur();
+  const trimestres = (activite, annee, chiffreDAffaires, horsRsi = true) => {
+    const niveau = chiffreDAffaires * (1 - ABATTEMENTS_MICRO[activite])
+      / salaireMoyenAnnuel(simulateur.macro, annee);
+    const carriere = simulateur.carriereParcours({
+      annee_naissance: 1975, sexe: "H", age_liquidation: 64, profil_carriere: "plat",
+      metiers: [{
+        affiliation: "micro_entrepreneur", age_debut: 20, niveau_salaire: niveau,
+        micro: activite, ...(horsRsi ? { maladie_hors_rsi: true } : {}),
+      }],
+    });
+    return carriere.lignes.find((ligne) => ligne.annee === annee).trimestres_valides;
+  };
+  const grille = {
+    2014: { vente: 4930, services: 2859, liberal: 2166 },
+    2015: { vente: 6636, services: 3854 },
+  };
+  for (const [annee, parActivite] of Object.entries(grille)) {
+    for (const [activite, seuil] of Object.entries(parActivite)) {
+      const cas = `${activite} ${annee}`;
+      assert.equal(trimestres(activite, Number(annee), seuil), 1, cas);
+      assert.equal(trimestres(activite, Number(annee), seuil - 1), 0, cas);
+      assert.equal(trimestres(activite, Number(annee), seuil, false), 0, cas);
+    }
+  }
+  assert.equal(trimestres("liberal", 2015, 4368), 0);
+  assert.equal(trimestres("liberal", 2015, 4369), 2);
+  assert.equal(trimestres("vente", 2014, 9859), 2);
+  assert.equal(trimestres("vente", 2015, 9942), 2);
+});
+
+/**
  * Les seuils de 2017 à 2019 que la caisse publie (barème de la Cnav « Chiffre
  * d'affaire des micro-entrepreneurs validant un trimestre », source Urssaf) :
  * le forfait va d'abord à la CSG, à la CRDS et à la maladie (D. 133-4), et

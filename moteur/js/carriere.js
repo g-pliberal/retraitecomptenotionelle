@@ -660,6 +660,7 @@ function ligneAnnuelle({
   trimestresDeclares = null,
   quotite = 1.0,
   micro = "",
+  maladieHorsRsi = false,
   dispense = "",
   lodeom = "",
   outreMer = "",
@@ -721,8 +722,12 @@ function ligneAnnuelle({
   // se comptent au jour (`jours_de_services`) ; la durée en trimestres
   // entiers que les autres régimes lisent l'arrondit au mois et demi.
   // Les seuils que la caisse publie, en 2015 et de 2017 à 2019, valident à
-  // la place du revenu cotisé (`trimestresAuxSeuilsMicro`).
-  const publies = trimestresDeclares === null && cotise && micro
+  // la place du revenu cotisé (`trimestresAuxSeuilsMicro`) ; en 2014 et en
+  // 2015, ceux de qui ne relève pas de la maladie du RSI, s'il le dit.
+  const horsRsi = maladieHorsRsi && trimestresDeclares === null && cotise && micro
+    ? trimestresAuxSeuilsMicro(macro.paquet.seuils_micro_hors_maladie_rsi, micro, annee,
+      revenu) : null;
+  const publies = horsRsi !== null ? horsRsi : trimestresDeclares === null && cotise && micro
     ? trimestresAuxSeuilsMicro(macro.paquet.seuils_micro, micro, annee, revenu) : null;
   const trimestres = trimestresDeclares === null
     ? (publies !== null ? publies : cotise ? macro.trimestresValides(
@@ -2618,6 +2623,7 @@ function lignesDuParcours(dateNaissance, periodesDeclarees, fin, macro, progress
       trimestresMaximum,
       quotite,
       micro: principal.micro ?? "",
+      maladieHorsRsi: principal.maladie_hors_rsi ?? false,
       // Coupée au 1er janvier comme la quotité, la dominante la dit.
       dispense: principal.dispense_assiette_minimale ?? "",
       lodeom: principal.lodeom ?? "",
@@ -2652,6 +2658,7 @@ function lignesDuParcours(dateNaissance, periodesDeclarees, fin, macro, progress
         part_primes: metier.part_primes,
         trimestresMaximum: trimestresCivils(mois),
         micro: metier.micro ?? "",
+        maladieHorsRsi: metier.maladie_hors_rsi ?? false,
         dispense: metier.dispense_assiette_minimale ?? "",
         lodeom: metier.lodeom ?? "",
         outreMer: metier.outre_mer ?? "",

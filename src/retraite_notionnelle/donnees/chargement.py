@@ -956,12 +956,15 @@ def validant_compense(compensation: dict, activite: str, annee: int, revenu: flo
 
 
 @une_fois_par_instantane
-def charger_seuils_micro(racine: Path) -> dict[str, dict[int, tuple[float, ...]]]:
+def charger_seuils_micro(racine: Path, cle: str = "seuils"
+                         ) -> dict[str, dict[int, tuple[float, ...]]]:
     """Les seuils de 2017 à 2019 que la caisse publie, par activité et par
     année : le revenu abattu qui valide un, deux, trois et quatre trimestres
     (``legislation/micro_social.yaml`` ; action 138, étape 12). Et ceux de
     2015, aux ventes et aux services, où le forfait valide seul le premier
     sous la compensation (circulaire RSI n° 2016/010 ; action 177, étape 6).
+    ``cle`` choisit la table : ``seuils_hors_maladie_rsi``, ceux de 2014 et
+    de 2015 de qui ne relève pas de la maladie du RSI (la même circulaire).
 
     De 2016 à 2021, le forfait va d'abord à la CSG et à la CRDS, puis à la
     maladie, puis à la vieillesse de base (L. 133-6-8-3, L. 613-9, D. 133-4) :
@@ -975,7 +978,7 @@ def charger_seuils_micro(racine: Path) -> dict[str, dict[int, tuple[float, ...]]
         activite: {int(annee): tuple(seuil * (1.0 - donnees["abattements"][activite])
                                      for seuil in seuils)
                    for annee, seuils in par_annee.items()}
-        for activite, par_annee in (donnees.get("seuils") or {}).items()
+        for activite, par_annee in (donnees.get(cle) or {}).items()
     }
 
 

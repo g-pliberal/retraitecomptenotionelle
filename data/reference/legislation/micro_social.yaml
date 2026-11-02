@@ -155,6 +155,24 @@ seuils:
     2018: [2835, 4990, 7150, 9550]
     2019: [2880, 5062, 7266, 9675]
 
+# L'assuré qui ne relève pas de la maladie du RSI, ou en relève mais touche le
+# RSA socle, en 2014 et en 2015 : son forfait ne va pas tout entier à ce
+# risque, et valide le premier trimestre plus tôt (circulaire RSI n° 2016/010,
+# point 1). La même grille de la caisse : le « Cas général » de 2014, et en
+# 2015 le premier trimestre « si non prestataires santé » ; aux recettes
+# libérales de 2015, rien « sans déclenchement de la compensation », qui
+# reste. Le métier le dit (`maladie_hors_rsi`), que la saisie demande
+# (action 177, étape 6, décidé avec le propriétaire le 2 novembre 2026).
+seuils_hors_maladie_rsi:
+  vente:
+    2014: [4930, 9859, 14788, 19718]
+    2015: [6636, 9942, 14913, 19883]
+  services:
+    2014: [2859, 5718, 8577, 11436]
+    2015: [3854, 5766, 8649, 11532]
+  liberal:
+    2014: [2166, 4332, 6498, 8664]
+
 versions:
   # a) vente de marchandises, 1° du 1 de l'article 50-0 du CGI.
   vente:

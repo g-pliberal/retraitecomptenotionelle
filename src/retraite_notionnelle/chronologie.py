@@ -931,6 +931,8 @@ def du_parcours(annee_naissance: int, sexe: str, metiers: list["Metier"],
                          "profil": profil_carriere, "part_primes": part_primes}
             if metier.micro:
                 attributs["micro"] = metier.micro
+            if metier.maladie_hors_rsi:
+                attributs["maladie_hors_rsi"] = True
             if metier.apprentissage:
                 attributs["apprentissage"] = True
             if quotite < 1.0:
@@ -967,6 +969,7 @@ def du_parcours(annee_naissance: int, sexe: str, metiers: list["Metier"],
                 "affiliation": metier.affiliation, "niveau_salaire": metier.niveau_salaire,
                 "profil": profil_carriere, "part_primes": part_primes, "cumul": True,
                 **({"micro": metier.micro} if metier.micro else {}),
+                **({"maladie_hors_rsi": True} if metier.maladie_hors_rsi else {}),
                 **({"apprentissage": True} if metier.apprentissage else {}),
                 **({"dispense_assiette_minimale": dispense} if dispense else {}),
                 **({"lodeom": metier.lodeom} if metier.lodeom else {})}))
