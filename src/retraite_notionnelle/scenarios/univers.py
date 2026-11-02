@@ -141,10 +141,6 @@ def calcul_notionnel(univers: Univers, parametres: Parametres | None) -> CalculN
         raise ValueError(f"univers {nom} : le moteur ne connaît que la transition {TRANSITION}")
     capitalisation = univers.ajoute("capitalisation_obligatoire")
     garantie = univers.ajoute("garantie_vieillesse")
-    if prospectif and (capitalisation or garantie):
-        raise ValueError(f"univers {nom} : le moteur ne sert ni le pilier ni la garantie sur "
-                         "un compte ouvert à la bascule (scripts/proposition_prospective.py "
-                         "le fait à part)")
     if capitalisation and not garantie:
         raise ValueError(f"univers {nom} : le pilier se sert avec la garantie, qui le regarde")
     return CalculNotionnel(

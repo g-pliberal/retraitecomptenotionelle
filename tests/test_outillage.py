@@ -569,11 +569,13 @@ def test_sous_un_modele_modifie_la_memoire_se_tait(monkeypatch, memoire_isolee):
 
 
 def test_les_contextes_qui_remplacent_le_modele_font_taire_la_memoire():
-    """Les trois études qui remplacent une fonction du moteur Python le temps
-    d'une variante (note de décision 0006) font taire la mémoire des calculs,
-    et calculer le jumeau, le seul qui voie leur remplacement
-    (``pont.par_le_jumeau``), jusqu'à ce que leur variante s'écrive en
-    données (action 161)."""
+    """Les études qui remplacent une fonction du coût ou du moteur Python le
+    temps d'une variante (note de décision 0006) font taire la mémoire des
+    calculs. Celles qui en remplacent une du moteur font de plus calculer le
+    jumeau, le seul qui voie leur remplacement (``pont.par_le_jumeau``),
+    jusqu'à ce que leur variante s'écrive en données (action 161) : la
+    proposition prospective l'est, un univers que le portage calcule, et elle
+    ne remplace plus qu'une liste du coût."""
     import proposition_prospective
     import solde_fusion
     import stock_age_legal
@@ -582,15 +584,16 @@ def test_les_contextes_qui_remplacent_le_modele_font_taire_la_memoire():
     from retraite_notionnelle.simulateur import Simulateur
 
     contextes = (
-        proposition_prospective.PropositionProspective(),
-        solde_fusion.RegimeUniqueVariante(solde_fusion.Hypothese("A", "le modèle", None)),
-        stock_age_legal.StockALAgeLegal("reference", Simulateur(Parametres())),
+        (proposition_prospective.PropositionProspective(), True),
+        (solde_fusion.RegimeUniqueVariante(solde_fusion.Hypothese("A", "le modèle", None)),
+         False),
+        (stock_age_legal.StockALAgeLegal("reference", Simulateur(Parametres())), False),
     )
-    for contexte in contextes:
+    for contexte, au_portage in contextes:
         assert memoire._active() and pont.par_le_portage(Parametres())
         with contexte:
             assert not memoire._active(), contexte
-            assert not pont.par_le_portage(Parametres()), contexte
+            assert pont.par_le_portage(Parametres()) is au_portage, contexte
         assert memoire._active() and pont.par_le_portage(Parametres())
 
 

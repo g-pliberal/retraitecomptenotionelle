@@ -408,11 +408,22 @@ class ScenarioNotionnel:
         Le compte est celui de :meth:`retroactif` : ce qui l'alimente — les
         taux réels jusqu'à la bascule, 18 % pour tous à compter d'elle — tient
         aux paramètres du constructeur, comme pour les scénarios 4 et 5. Ce
-        que cette méthode ajoute, et elle seule, est la
-        garantie : différentielle, individualisée, servie en dernier, et
-        gardée à part pour que l'on sache ce qui vient de l'impôt.
+        que cette méthode ajoute est le pilier et la garantie
+        (:meth:`avec_le_pilier_et_la_garantie`).
         """
-        resultat = self.retroactif(carriere, regime_fusionne, libelle=libelle)
+        return self.avec_le_pilier_et_la_garantie(
+            carriere, self.retroactif(carriere, regime_fusionne, libelle=libelle))
+
+    def avec_le_pilier_et_la_garantie(self, carriere: Carriere,
+                                      resultat: ResultatNotionnel) -> ResultatNotionnel:
+        """Le pilier capitalisé, puis la garantie vieillesse, sur un compte
+        déjà calculé : rétroactif au scénario 6 (:meth:`liberal`), ouvert à la
+        bascule dans la proposition prospective, dont la garantie vaut aussi
+        pour la pension liquidée avant elle
+        (``scripts/proposition_prospective.py``, action 161). La garantie est
+        différentielle, individualisée, servie en dernier, et gardée à part
+        pour que l'on sache ce qui vient de l'impôt.
+        """
         # Le pilier capitalisé D'ABORD : la garantie regarde toutes les
         # ressources de retraite, les 18 % de répartition ET les dix points
         # capitalisés. L'ordre importe donc, là où il était indifférent tant

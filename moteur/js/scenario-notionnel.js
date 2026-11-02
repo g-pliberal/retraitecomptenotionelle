@@ -97,13 +97,24 @@ export class ScenarioNotionnel {
    *
    * Le compte est celui de `retroactif` : ce qui l'alimente — les taux réels
    * jusqu'à la bascule, 18 % pour tous à compter d'elle — tient aux paramètres
-   * du constructeur. Ce que cette méthode ajoute, et elle
-   * seule, est la garantie : différentielle, individualisée, servie en dernier,
-   * et gardée à part pour que l'on sache ce qui vient de l'impôt.
+   * du constructeur. Ce que cette méthode ajoute est le pilier et la garantie
+   * (`avecLePilierEtLaGarantie`).
    */
   liberal(carriere, regimeFusionne = null,
           libelle = "Comptes notionnels rétroactifs, taux unique dès la bascule et garantie vieillesse") {
-    const resultat_ = this.retroactif(carriere, regimeFusionne, libelle);
+    return this.avecLePilierEtLaGarantie(
+      carriere, this.retroactif(carriere, regimeFusionne, libelle));
+  }
+
+  /**
+   * Le pilier capitalisé, puis la garantie vieillesse, sur un compte déjà
+   * calculé : rétroactif au scénario 6 (`liberal`), ouvert à la bascule dans
+   * la proposition prospective, dont la garantie vaut aussi pour la pension
+   * liquidée avant elle (`scripts/proposition_prospective.py`, action 161).
+   * La garantie est différentielle, individualisée, servie en dernier, et
+   * gardée à part pour que l'on sache ce qui vient de l'impôt. Voir le Python.
+   */
+  avecLePilierEtLaGarantie(carriere, resultat_) {
     // Le pilier capitalisé D'ABORD : la garantie regarde toutes les
     // ressources de retraite, les 18 % de répartition ET les dix points
     // capitalisés, volontaires compris — une allocation différentielle compte

@@ -8,11 +8,12 @@
  * le paquet qu'elle va remplacer ; `null` lit `moteur/donnees.json`. `demande`
  * en porte une seule de ces lectures :
  *
- * - `carrieres` : `{cas: [{cle, options}], scenarios}` — chaque carrière d'un
- *   seul statut, aux options de `carriereSimple`, simulée sous les réglages de
- *   référence : l'année de son départ et celle de chaque scénario, l'écart de
- *   chacun au système actuel, pilier capitalisé compris (`variationTotale`),
- *   la pension du système actuel et la durée qu'il requiert ; la pension de
+ * - `carrieres` : `{cas: [{cle, options}], scenarios, univers}` — chaque
+ *   carrière d'un seul statut, aux options de `carriereSimple`, simulée sous
+ *   les réglages de référence : l'année de son départ et celle de chaque
+ *   scénario, l'écart de chacun au système actuel, pilier capitalisé compris
+ *   (`variationTotale`) ou non (`variation`), la pension du système actuel et
+ *   la durée qu'il requiert ; la pension de
  *   chaque scénario, pilier capitalisé compris, et la rente des points
  *   volontaires ; et, pour qui est déjà parti, ce que le système actuel et
  *   chaque scénario lui servent aujourd'hui (`aujourd_hui`), sinon `null`.
@@ -22,10 +23,16 @@
  *   aux euros constants, la pension du système actuel et celle de chaque
  *   scénario.
  * - `grille_du_cout` : `{cas: [{cle, carriere, propositions}], scenarios,
- *   parametres}` — chaque case de la grille du coût, sa carrière passée en
- *   données (`carriere_en_donnees` de `pont.py`), simulée sous les paramètres
- *   de la projection : ce que le coût lit de la comparaison, et la proposition
- *   seule sur chacune des carrières nommées de `propositions`.
+ *   parametres, univers}` — chaque case de la grille du coût, sa carrière
+ *   passée en données (`carriere_en_donnees` de `pont.py`), simulée sous les
+ *   paramètres de la projection : ce que le coût lit de la comparaison, et la
+ *   proposition seule sur chacune des carrières nommées de `propositions`.
+ *
+ * Dans ces deux lectures, `univers` porte les variantes d'une étude, que le
+ * paquet ne porte pas — la proposition prospective, à la place du scénario 6
+ * (`data/reference/variantes/`, action 161) : chacune, sous sa clé, son
+ * calcul tel que la fabrication le résout (`CalculNotionnel.donnees`), à la
+ * place de celui du paquet (`simulateurSous`).
  * - `carrieres_des_saisies` : `{cas: [{cle, requete, prolonger}]}` — chaque
  *   requête du simulateur, lue par la saisie du portage : ses paramètres, et
  *   la carrière que le site simulerait, en données, pour que le Python la
@@ -124,6 +131,7 @@ import { ficheDepuisBrut } from "../../moteur/js/remuneration.js";
 import { faireVivre } from "../../moteur/js/revalorisation.js";
 import { Saisie } from "../../moteur/js/saisie.js";
 import { ScenarioActuel } from "../../moteur/js/scenario-actuel.js";
+import { Simulateur } from "../../moteur/js/simulateur.js";
 
 const RACINE = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 /** Le contexte sur le paquet de la demande, ou sur celui du dépôt. */
@@ -183,8 +191,8 @@ function parScenario(scenarios, lire) {
   return Object.fromEntries(scenarios.map((scenario) => [scenario, lire(scenario)]));
 }
 
-function carrieres({ cas, scenarios }) {
-  const simulateur = contexte.simulateur();
+function carrieres({ cas, scenarios, univers = {} }) {
+  const simulateur = sousLesUnivers(contexte.base, univers);
   return parCas(cas, ({ options }) => {
     const interruptions = new Map(Object.entries(options.interruptions ?? {})
       .map(([annee, motif]) => [Number(annee), motif]));
@@ -195,6 +203,7 @@ function carrieres({ cas, scenarios }) {
       annees_liquidation: parScenario(scenarios,
         (scenario) => comparaison.carriereDe(scenario).anneeLiquidation),
       variations: parScenario(scenarios, (scenario) => comparaison.variationTotale(scenario)),
+      ecarts: parScenario(scenarios, (scenario) => comparaison.variation(scenario)),
       pension_annuelle: comparaison.actuel.pension_annuelle,
       trimestres_requis: comparaison.actuel.trimestres_requis,
       pensions_totales: parScenario(scenarios, (scenario) => comparaison.pensionTotale(scenario)),
@@ -305,15 +314,39 @@ function carriereDesDonnees({ lignes, lignes_apres_depart, dates_entree, ...cham
 /**
  * Le simulateur sous les paramètres que `pont.py` a passés en données : ceux
  * du Python, que le portage connaît tous. Un paramètre qu'il ne connaîtrait pas
- * arrête le pont, au lieu de se perdre.
+ * arrête le pont, au lieu de se perdre. `univers` porte les variantes d'une
+ * étude, que le paquet ne porte pas (`Simulateur.univers_de_la_demande` de
+ * `simulateur.py`, action 161) : chacune, son calcul tel que la fabrication
+ * le résout, à la place du calcul que le paquet porte sous sa clé ; une clé
+ * qui n'y nomme aucun univers de la proposition arrête le pont.
  */
-function simulateurSous(parametres) {
+function simulateurSous(parametres, univers = {}) {
   const inconnus = Object.keys(parametres)
     .filter((nom) => !Object.hasOwn(PARAMETRES_DEFAUT, nom));
   if (inconnus.length > 0) {
     throw new Error(`paramètres que le portage ne connaît pas : ${inconnus.join(", ")}`);
   }
-  return contexte.simulateur(avec(PARAMETRES_DEFAUT, parametres));
+  return sousLesUnivers(avec(PARAMETRES_DEFAUT, parametres), univers);
+}
+
+/** Le simulateur sous `retenus`, et sous les variantes `univers` d'une étude
+ *  (`simulateurSous`) : sans elles, celui du contexte. */
+function sousLesUnivers(retenus, univers) {
+  if (Object.keys(univers).length === 0) {
+    return contexte.simulateur(retenus);
+  }
+  const { paquet } = contexte;
+  const sansUnivers = Object.keys(univers)
+    .filter((cle) => !paquet.univers.some((u) => u.id === cle && u.calcul !== null));
+  if (sansUnivers.length > 0) {
+    throw new Error(`variantes qui ne remplacent aucun univers de la proposition : `
+      + sansUnivers.join(", "));
+  }
+  return new Simulateur({
+    ...paquet,
+    univers: paquet.univers.map((u) => (Object.hasOwn(univers, u.id)
+      ? { ...u, calcul: univers[u.id] } : u)),
+  }, retenus);
 }
 
 /** Ce que le coût lit de la proposition calculée sur `carriere` (`_volet_brut` de `cout.py`). */
@@ -348,8 +381,8 @@ function voletDuCout(resultat, carriere) {
  * une case, comme `calculer_cas_types` ne range parmi les échecs que ce que
  * la simulation refuse.
  */
-function grilleDuCout({ cas, scenarios, parametres }) {
-  const simulateur = simulateurSous(parametres);
+function grilleDuCout({ cas, scenarios, parametres, univers = {} }) {
+  const simulateur = simulateurSous(parametres, univers);
   const resultats = {};
   const echecs = {};
   for (const { cle, carriere: donnees, propositions } of cas) {

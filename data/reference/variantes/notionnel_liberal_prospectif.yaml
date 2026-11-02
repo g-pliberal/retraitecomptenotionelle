@@ -1,0 +1,13 @@
+# La proposition PROSPECTIVE, l'étude de scripts/proposition_prospective.py :
+# le scénario 5 à 18 %, le pilier capitalisé et la garantie vieillesse
+# par-dessus — la pile du scénario 5, puis les couches que le scénario 6 pose
+# sur la part patronale. Elle n'est pas un scénario du site et n'entre pas au
+# paquet : l'étude la fait calculer à la place du scénario 6, dont elle porte
+# le numéro, et le pont passe son calcul au portage dans la demande (action
+# 161, « le coût sous un modèle modifié »).
+schema_version: 1
+id: notionnel_liberal_prospectif
+nom: Notionnel dès {bascule}, 18 % et garantie vieillesse
+numero: 6
+libelle: Comptes notionnels à compter de la bascule, 18 % et garantie vieillesse
+couches: [droit_reel, contributif_seul, valorisation_des_droits_acquis, comptes_notionnels, part_patronale, taux_unique, capitalisation_obligatoire, garantie_vieillesse, age_legal_de_la_proposition]

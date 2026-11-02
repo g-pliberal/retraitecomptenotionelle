@@ -42,10 +42,11 @@ La mémoire ne connaît que le modèle INTACT. Un contexte qui en remplace une
 fonction s'ouvre sous ``modele_modifie()``, et la mémoire se tait tant qu'il
 est ouvert : rien ne s'y lit, rien ne s'y écrit. Un test qui prend
 ``monkeypatch`` en fait autant (``tests/conftest.py``). Un contexte qui
-remplace une fonction du moteur Python — la proposition prospective, le stock
-à l'âge légal, le régime unique des scripts — s'ouvre sous
-``pont.par_le_jumeau()``, qui fait taire la mémoire et calculer le jumeau,
-seul à voir le remplacement. Et ``cout()`` comme
+remplace une fonction du moteur Python — le stock à l'âge légal, le régime
+unique des scripts — s'ouvre sous ``pont.par_le_jumeau()``, qui fait taire la
+mémoire et calculer le jumeau, seul à voir le remplacement ; la proposition
+prospective, un univers que la demande au pont porte, ne remplace plus qu'une
+liste du coût. Et ``cout()`` comme
 ``avantages()`` construisent elles-mêmes, depuis les paramètres, le simulateur
 et les données de leur calcul : venus d'ailleurs, ils pourraient ne pas être
 ceux que la clé décrit. Un script qui garde un calcul à lui

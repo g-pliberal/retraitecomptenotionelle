@@ -32,10 +32,12 @@ coût est imprimé à part.
 
 CE QU'IL EMPRUNTE
 -----------------
-``ScenarioNotionnel.liberal``, remplacé le temps du calcul par la même
-méthode bâtie sur ``prospectif`` au lieu de ``retroactif``, et la liste
-``cout.CLES_PROSPECTIVES``, étendue au sixième système. Tout est rendu à la
-sortie.
+La variante est un univers, la pile du scénario 5 et les couches de la
+proposition (``data/reference/variantes/``) : le simulateur de l'étude la
+calcule à la place du scénario 6, et le pont la passe au portage dans la
+demande, qui simule la grille du coût et les cas types (action 161). L'étude
+ne remplace que la liste ``cout.CLES_PROSPECTIVES``, une fonction du coût,
+étendue au sixième système le temps du calcul ; tout est rendu à la sortie.
 """
 
 from __future__ import annotations
@@ -51,22 +53,19 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from retraite_notionnelle import cout as C  # noqa: E402
 from retraite_notionnelle import memoire, pont  # noqa: E402
-from retraite_notionnelle.castypes import CAS_TYPES, calculer_cas_types  # noqa: E402
+from retraite_notionnelle.castypes import CAS_TYPES, cases_de_la_grille  # noqa: E402
 from retraite_notionnelle.config import Parametres  # noqa: E402
 from retraite_notionnelle.donnees.assiette import AssietteActivite  # noqa: E402
 from retraite_notionnelle.donnees.depenses import DepensesRetraite  # noqa: E402
 from retraite_notionnelle.donnees.equilibre import ComptesRetraite  # noqa: E402
 from retraite_notionnelle.donnees.population import Population  # noqa: E402
 from retraite_notionnelle.noyau import univers  # noqa: E402
-from retraite_notionnelle.scenarios.notionnel import ScenarioNotionnel  # noqa: E402
-from retraite_notionnelle.scenarios.univers import calcul_notionnel  # noqa: E402
 from retraite_notionnelle.simulateur import Simulateur  # noqa: E402
 
 LIBERAL = "notionnel_liberal"
-#: La variante est le scénario 5 à 18 % : sa liquidation fictive neutralise ce
-#: que celle de l'univers du scénario 5 neutralise, la couche « au contributif
-#: seul ».
-SCENARIO_5 = "notionnel_prospectif_employeur"
+#: La variante, le scénario 5 à 18 % : son univers, sous
+#: ``data/reference/variantes/``, que l'étude calcule à la place du scénario 6.
+PROSPECTIVE = "notionnel_liberal_prospectif"
 ANNEES_AFFICHEES: tuple[int, ...] = (2026, 2030, 2040, 2050, 2060, 2070)
 CAS_AFFICHES: tuple[str, ...] = (
     "smic_carriere_complete", "salaire_moyen", "cadre", "fonctionnaire_sedentaire",
@@ -75,52 +74,35 @@ CAS_AFFICHES: tuple[str, ...] = (
 GENERATIONS_AFFICHEES: tuple[int, ...] = (1965, 1975, 1985, 2000)
 
 
+def simulateur(parametres: Parametres) -> Simulateur:
+    """Le simulateur de l'étude : la proposition prospective à la place du
+    scénario 6, lue sous les données de ``parametres``. Le pont passe son
+    calcul au portage dans la demande (``Simulateur.univers_de_la_demande``)."""
+    reference = parametres.racine_donnees / "reference"
+    variante = univers.charger(reference / "variantes", reference / "couches",
+                               reference / "regles")[PROSPECTIVE]
+    return Simulateur(parametres, variantes={LIBERAL: variante})
+
+
 class PropositionProspective:
-    """Le temps d'un calcul : le scénario 6 bâti sur ``prospectif``."""
+    """Le temps d'un calcul : le sixième système compté parmi les réformes
+    prospectives du coût (``cout.CLES_PROSPECTIVES``)."""
 
     def __init__(self) -> None:
-        self._sauvegarde: dict[str, object] = {}
-
-    @staticmethod
-    def _liberal(original):
-        def liberal(scenario, carriere, regime_fusionne=None,
-                    libelle="Comptes notionnels à compter de la bascule, 18 % "
-                            "et garantie vieillesse"):
-            if regime_fusionne is None:
-                raise ValueError("la proposition prospective demande le régime unique")
-            neutralisations = calcul_notionnel(
-                univers.charger()[SCENARIO_5], scenario.parametres).neutralisations
-            resultat = scenario.prospectif(carriere, regime_fusionne, libelle=libelle,
-                                           neutralisations=neutralisations)
-            # La suite est celle de ``liberal`` : le pilier d'abord, la
-            # garantie ensuite, qui regarde les deux.
-            resultat.capitalisation = scenario._pilier_capitalise(carriere, resultat)
-            rente = (resultat.capitalisation.rente_annuelle
-                     if resultat.capitalisation is not None else 0.0)
-            garantie = scenario._garantie_vieillesse(carriere, resultat.pension_annuelle, rente)
-            if garantie.servie_a_la_liquidation:
-                resultat.pension_annuelle += garantie.complement
-            resultat.garantie_vieillesse = garantie
-            return resultat
-        return liberal
+        self._sauvegarde: frozenset[str] = frozenset()
 
     def __enter__(self) -> "PropositionProspective":
-        # Le contexte remplace une fonction du moteur Python, que le portage ne
-        # voit pas : le jumeau calcule, et la mémoire des calculs, qui ne
-        # connaît que le modèle intact, se tait (``pont.par_le_jumeau``).
-        self._memoire = pont.par_le_jumeau()
+        # Le contexte remplace une fonction du coût, que la mémoire des calculs,
+        # qui ne connaît que le modèle intact, ne doit pas garder : elle se tait
+        # (``memoire.modele_modifie``). Le moteur, il n'y touche pas.
+        self._memoire = memoire.modele_modifie()
         self._memoire.__enter__()
-        self._sauvegarde = {
-            "liberal": ScenarioNotionnel.liberal,
-            "CLES_PROSPECTIVES": C.CLES_PROSPECTIVES,
-        }
-        ScenarioNotionnel.liberal = self._liberal(ScenarioNotionnel.liberal)
+        self._sauvegarde = C.CLES_PROSPECTIVES
         C.CLES_PROSPECTIVES = C.CLES_PROSPECTIVES | {LIBERAL}
         return self
 
     def __exit__(self, *exc) -> None:
-        ScenarioNotionnel.liberal = self._sauvegarde["liberal"]
-        C.CLES_PROSPECTIVES = self._sauvegarde["CLES_PROSPECTIVES"]
+        C.CLES_PROSPECTIVES = self._sauvegarde
         self._memoire.__exit__(None, None, None)
 
 
@@ -158,24 +140,42 @@ def cout(parametres: Parametres) -> C.Cout:
         racine = parametres.racine_donnees
         with PropositionProspective():
             return C.calculer_cout(
-                Simulateur(parametres), DepensesRetraite(racine), Population(racine),
+                simulateur(parametres), DepensesRetraite(racine), Population(racine),
                 ComptesRetraite(racine), assiette=AssietteActivite(racine))
 
     return memoire.memoriser_pour(parametres, ("cout_prospectif", parametres), calcul)
 
 
+def ecarts_des_cas_types(etude: Simulateur) -> dict[str, dict[str, float]]:
+    """L'écart de pension de chaque système au système actuel, par cas type et
+    génération affichés, sous les univers du simulateur ``etude`` : le
+    portage date les cas types et les simule, la variante dans la demande
+    (action 161), sous les réglages de référence, les seuls que le pont leur
+    applique."""
+    racine = etude.parametres.racine_donnees
+    if etude.parametres != Parametres(racine_donnees=racine):
+        raise ValueError("les cas types de l'étude se simulent sous les réglages de référence")
+    paquet = pont.paquet_des_donnees(racine)
+    options, _ = cases_de_la_grille(
+        etude, tuple(c for c in CAS_TYPES if c.code in CAS_AFFICHES), GENERATIONS_AFFICHEES,
+        paquet=paquet)
+    compares = [scenario for scenario, _ in C.SCENARIOS if scenario != "actuel"]
+    lus, _ = pont.carrieres([{"cle": f"{code}|{generation}", "options": options[code, generation]}
+                             for code, generation in sorted(options)], compares, paquet,
+                            univers=etude.univers_de_la_demande)
+    return {f"{code}|{generation}": lus[f"{code}|{generation}"]["ecarts"]
+            for code, generation in sorted(options) if f"{code}|{generation}" in lus}
+
+
 def calculer(prospective: bool, parametres: Parametres) -> Resultat:
     """Les lectures d'une variante, sur les données du dépôt."""
-    simulateur = Simulateur(parametres)
     agrege = cout(parametres) if prospective else memoire.cout(parametres)
+    ecarts = ecarts_des_cas_types(simulateur(parametres) if prospective
+                                  else Simulateur(parametres))
     contexte = PropositionProspective() if prospective else None
     if contexte is not None:
         contexte.__enter__()
     try:
-        grille = calculer_cas_types(
-            simulateur, tuple(c for c in CAS_TYPES if c.code in CAS_AFFICHES),
-            GENERATIONS_AFFICHEES,
-        )
         # Le solde se lit paresseusement, et sa règle de réversion regarde
         # ``CLES_PROSPECTIVES`` au moment de la lecture : on lit donc DANS le
         # contexte, sans quoi les années d'avant la bascule perdraient la
@@ -195,11 +195,6 @@ def calculer(prospective: bool, parametres: Parametres) -> Resultat:
         }
         garantie = {l.annee: l.part_pib(C.COMPOSANTE_GARANTIE)
                     for l in agrege.avenir.projetees() if l.pib > 0}
-        ecarts = {
-            f"{code}|{generation}": {scenario: comparaison.variation(scenario)
-                                     for scenario, _ in C.SCENARIOS if scenario != "actuel"}
-            for (code, generation), comparaison in sorted(grille.resultats.items())
-        }
     finally:
         if contexte is not None:
             contexte.__exit__(None, None, None)

@@ -2332,11 +2332,14 @@ def _simulations(simulateur: Simulateur, cas: list[dict],
                  ) -> tuple[dict[str, dict], dict[str, str]]:
     """Les cases de la grille simulées, par le portage ou par le moteur Python
     (``pont.par_le_portage``) : le même contrat des deux côtés
-    (:func:`_simulations_en_python`, ``pont.grille_du_cout``)."""
+    (:func:`_simulations_en_python`, ``pont.grille_du_cout``). Les variantes
+    d'une étude que le simulateur calcule passent au portage dans la demande
+    (``Simulateur.univers_de_la_demande``, action 161)."""
     scenarios = [cle for cle, _ in SCENARIOS]
     if pont.par_le_portage(simulateur.parametres):
         return pont.grille_du_cout(cas, scenarios, simulateur.parametres,
-                                   pont.paquet_des_donnees(simulateur.parametres.racine_donnees))
+                                   pont.paquet_des_donnees(simulateur.parametres.racine_donnees),
+                                   univers=simulateur.univers_de_la_demande)
     return _simulations_en_python(simulateur, cas, scenarios)
 
 

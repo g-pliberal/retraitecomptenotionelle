@@ -73,10 +73,9 @@ def _aujourd_hui(aujourd_hui) -> dict | None:
     }
 
 
-def test_le_pont_rend_au_bit_pres_ce_que_le_moteur_python_simule():
-    if shutil.which("node") is None:
-        pytest.skip("node absent : le pont ne se vérifie pas ici")
-    simulateur = Simulateur(Parametres())
+def _carrieres_simulees(simulateur: Simulateur) -> tuple[list[dict], dict[str, dict]]:
+    """Les cases de ``CASES``, demandées au pont, et ce que le moteur Python en
+    simule, sous les univers de ``simulateur``."""
     demandes, attendus = [], {}
     for code, generation in CASES:
         cas = next(cas for cas in CAS_TYPES if cas.code == code)
@@ -90,6 +89,8 @@ def test_le_pont_rend_au_bit_pres_ce_que_le_moteur_python_simule():
                                    for scenario in SCENARIOS},
             "variations": {scenario: comparaison.variation_totale(scenario)
                            for scenario in SCENARIOS},
+            # L'écart hors du pilier, que les études lisent des cas types.
+            "ecarts": {scenario: comparaison.variation(scenario) for scenario in SCENARIOS},
             "pension_annuelle": comparaison.actuel.pension_annuelle,
             "trimestres_requis": comparaison.actuel.trimestres_requis,
             # Ce que les écarts médians du bilan lisent d'une case.
@@ -99,6 +100,13 @@ def test_le_pont_rend_au_bit_pres_ce_que_le_moteur_python_simule():
                                    for scenario in SCENARIOS},
             "aujourd_hui": _aujourd_hui(comparaison.aujourd_hui),
         }
+    return demandes, attendus
+
+
+def test_le_pont_rend_au_bit_pres_ce_que_le_moteur_python_simule():
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    demandes, attendus = _carrieres_simulees(Simulateur(Parametres()))
     resultats, echecs = pont.carrieres(demandes, SCENARIOS)
     assert not echecs
     assert resultats == attendus
@@ -108,13 +116,44 @@ def test_le_pont_rend_au_bit_pres_ce_que_le_moteur_python_simule():
         assert type(lu["annee_liquidation"]) is int
         assert type(lu["trimestres_requis"]) is int
         assert type(lu["pension_annuelle"]) is float
-        for lecture in ("variations", "pensions_totales", "rentes_volontaires"):
+        for lecture in ("variations", "ecarts", "pensions_totales", "rentes_volontaires"):
             assert all(type(nombre) is float for nombre in lu[lecture].values()), lecture
         if lu["aujourd_hui"] is not None:
             assert type(lu["aujourd_hui"]["pension_annuelle"]) is float
             assert type(lu["aujourd_hui"]["rente_capitalisee_volontaire"]) is float
             assert all(type(nombre) is float
                        for nombre in lu["aujourd_hui"]["pensions_totales"].values())
+
+
+def _variantes() -> dict:
+    """La proposition prospective, à la place du scénario 6
+    (``scripts/proposition_prospective.py``, action 161)."""
+    from retraite_notionnelle.noyau import univers
+
+    return {"notionnel_liberal":
+            univers.charger(univers.VARIANTES)["notionnel_liberal_prospectif"]}
+
+
+def test_une_variante_passe_au_portage_dans_la_demande_au_bit_pres_du_jumeau():
+    """Un univers que le paquet ne porte pas — la proposition prospective, à
+    la place du scénario 6 (action 161) — passe au portage dans la demande, son
+    calcul tel que la fabrication le résout : le portage rend, de chaque case,
+    ce que le jumeau Python simule de la même variante, au bit près, et autre
+    chose que le scénario 6, sur les cases déjà parties comme sur celles qui
+    partiront."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    simulateur = Simulateur(Parametres(), variantes=_variantes())
+    demandes, attendus = _carrieres_simulees(simulateur)
+    resultats, echecs = pont.carrieres(demandes, SCENARIOS,
+                                       univers=simulateur.univers_de_la_demande)
+    assert not echecs
+    assert resultats == attendus
+    sans, _ = pont.carrieres(demandes, SCENARIOS)
+    for parties in (True, False):
+        assert any(lu["ecarts"]["notionnel_liberal"] != sans[cle]["ecarts"]["notionnel_liberal"]
+                   for cle, lu in resultats.items()
+                   if (lu["aujourd_hui"] is not None) == parties), parties
 
 
 def test_le_pont_simule_une_saisie_comme_le_site_au_bit_pres_du_moteur_python():
@@ -1376,8 +1415,8 @@ def test_le_cout_date_et_bat_sa_grille_par_le_portage_sans_les_jumeaux(memoire_i
 
 def test_sous_le_jumeau_le_cout_simule_sa_grille_en_python(memoire_isolee, monkeypatch):
     """Un contexte qui remplace une fonction du moteur Python le temps d'une
-    variante (``scripts/solde_fusion.py``, ``proposition_prospective.py``,
-    ``stock_age_legal.py``), ou une confrontation qui fait refaire au jumeau ce
+    variante (``scripts/solde_fusion.py``, ``stock_age_legal.py``), ou une
+    confrontation qui fait refaire au jumeau ce
     que le portage calcule, s'ouvre sous ``pont.par_le_jumeau()`` : le portage
     ne voit pas le remplacement, et la grille se simule par le moteur Python,
     le seul qui la voie. Le modèle laissé tel quel, elle rend ce que le portage
@@ -1398,6 +1437,30 @@ def test_sous_le_jumeau_le_cout_simule_sa_grille_en_python(memoire_isolee, monke
     assert len(pensionnes) == len(GRILLE_D_ESSAI) * 4
     assert any(p.autre is not None for p in pensionnes)
     assert any(p.propre.annee_liquidation > p.annee_liquidation for p in pensionnes)
+
+
+def test_le_cout_d_une_variante_simule_sa_grille_par_le_portage(memoire_isolee, monkeypatch):
+    """Le coût sous une variante d'une étude — la proposition prospective,
+    ``scripts/proposition_prospective.py`` — simule sa grille par le portage,
+    la variante dans la demande (action 161) : couple pour couple, chaque
+    nombre sous son type, ce que le jumeau calcule de la même variante sous
+    ``pont.par_le_jumeau()`` ; et autre chose que le coût du scénario 6, sur
+    une génération partie avant la bascule comme sur une autre, après."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    from retraite_notionnelle import cout
+
+    monkeypatch.setattr(cout, "generations", lambda: (1950, 2000))
+    simulateur = Simulateur(Parametres(), variantes=_variantes())
+    with pont.par_le_jumeau():
+        en_python = cout._pensionnes(simulateur, GRILLE_D_ESSAI, "droit")
+    par_le_portage = cout._pensionnes(simulateur, GRILLE_D_ESSAI, "droit")
+    assert par_le_portage == en_python
+    assert _types([vars(p) for p in par_le_portage[0]]) == _types([vars(p) for p in en_python[0]])
+    du_scenario_6 = cout._pensionnes(Simulateur(Parametres()), GRILLE_D_ESSAI, "droit")[0]
+    for generation in (1950, 2000):
+        assert any(p.propre != q.propre for p, q in zip(par_le_portage[0], du_scenario_6)
+                   if p.generation == generation), generation
 
 
 def test_sous_monkeypatch_le_cout_simule_sa_grille_par_le_portage(monkeypatch):

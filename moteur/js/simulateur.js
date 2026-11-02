@@ -731,16 +731,18 @@ export class Simulateur {
    * que l'univers ajoute, c'est à `carriereProposition` de l'appliquer. Une
    * transition ouvre le compte à la bascule, sur les droits acquis que sa
    * liquidation fictive valorise, et sur le régime unique toujours ; la
-   * garantie vieillesse se sert après le compte rétroactif et son pilier ;
-   * sinon, le compte rétroactif. Voir `simulateur.py`.
+   * garantie vieillesse se sert après le compte et son pilier, qu'il soit
+   * rétroactif ou ouvert à la bascule (la proposition prospective, action
+   * 161) ; sinon, le compte rétroactif. Voir `simulateur.py`.
    */
   calculerUnivers(cle, carriere) {
     const calcul = this.calculs[cle];
     const scenario = this.scenarioDe(calcul);
     const fusionne = this.parametres.fusion_au_plus_defavorable ? this.regimeFusionne : null;
     if (calcul.prospectif) {
-      return scenario.prospectif(carriere, this.regimeFusionne, calcul.libelle,
+      const compte = scenario.prospectif(carriere, this.regimeFusionne, calcul.libelle,
         calcul.neutralisations);
+      return calcul.garantie ? scenario.avecLePilierEtLaGarantie(carriere, compte) : compte;
     }
     if (calcul.garantie) {
       return scenario.liberal(carriere, fusionne, calcul.libelle);

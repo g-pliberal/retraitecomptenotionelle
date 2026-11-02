@@ -55,34 +55,48 @@ def test_avant_la_bascule_la_proposition_prospective_est_le_scenario_5(prospecti
 
 
 def test_le_stock_est_intact_et_les_actifs_recoivent_18_pour_cent(reference, prospective):
-    simulateur = Simulateur(PARAMETRES)
-    retraite = simulateur.carriere_simple(1950, "H", "salarie_prive_non_cadre", 20.0, 62.0)
-    actif = simulateur.carriere_simple(1985, "H", "salarie_prive_non_cadre", 22.0, 64.0)
-    with proposition_prospective.PropositionProspective():
-        deja = simulateur.simuler(retraite)
-        futur = simulateur.simuler(actif)
-    liberal = deja.notionnel_liberal
-    assert liberal.pension_annuelle - liberal.garantie_vieillesse.complement * (
-        1 if liberal.garantie_vieillesse.servie_a_la_liquidation else 0
-    ) == pytest.approx(deja.actuel.pension_annuelle)
-    # L'actif : des droits acquis figés, puis un compte alimenté à 18 %.
-    assert futur.notionnel_liberal.capital_droits_acquis > 0
-    assert futur.notionnel_liberal.droits_acquis is not None
-    apres = [c for c in futur.notionnel_liberal.compte.cotisations
-             if c.annee >= PARAMETRES.annee_bascule and c.cotisation > 0]
-    assert apres and all(c.taux_effectif == pytest.approx(PARAMETRES.taux_cotisation_liberal)
-                         for c in apres)
+    """Le portage calcule la variante, que la demande au pont lui passe
+    (action 161) : ``tests/js/univers.test.js`` en tient le compte, le pilier
+    et la garantie ; ici, ce que l'étude en lit, l'écart au système actuel."""
+    from retraite_notionnelle import pont
+
+    simulateur = proposition_prospective.simulateur(PARAMETRES)
+    profil = {"sexe": "H", "affiliation": "salarie_prive_non_cadre"}
+    cas = [{"cle": "retraite", "options": {**profil, "annee_naissance": 1950,
+                                           "age_debut": 20.0, "age_liquidation": 62.0}},
+           {"cle": "actif", "options": {**profil, "annee_naissance": 1985,
+                                        "age_debut": 22.0, "age_liquidation": 65.0}}]
+    scenario_5 = "notionnel_prospectif_employeur"
+    lus, echecs = pont.carrieres(cas, (proposition_prospective.LIBERAL, scenario_5),
+                                 pont.paquet_des_donnees(),
+                                 univers=simulateur.univers_de_la_demande)
+    assert not echecs
+    # Le retraité : sa pension ne bouge pas, comme au scénario 5, et elle est
+    # au-dessus du plancher de la garantie.
+    for scenario in (proposition_prospective.LIBERAL, scenario_5):
+        assert lus["retraite"]["ecarts"][scenario] == pytest.approx(0.0, abs=1e-12), scenario
+    # L'actif, parti à l'âge légal de la proposition : les droits figés à la
+    # bascule du scénario 5, puis un compte alimenté à 18 % au lieu de 25,83 %.
+    assert lus["actif"]["ecarts"][proposition_prospective.LIBERAL] < lus["actif"]["ecarts"][
+        scenario_5]
     # Et la page le voit : le solde de 2026 paie tout le stock, à 18 %.
     assert (prospective.lectures[proposition_prospective.LIBERAL].soldes[2026]
             < reference.lectures[proposition_prospective.LIBERAL].soldes[2026])
 
 
 def test_le_contexte_rend_ses_attributs():
+    """Le contexte ne remplace plus que la liste du coût ; le moteur, il le
+    laisse intact : la variante est un univers, que le simulateur de l'étude
+    calcule à la place du scénario 6 (action 161)."""
     avant = (ScenarioNotionnel.liberal, C.CLES_PROSPECTIVES)
     with proposition_prospective.PropositionProspective():
         assert proposition_prospective.LIBERAL in C.CLES_PROSPECTIVES
-        assert ScenarioNotionnel.liberal is not avant[0]
+        assert ScenarioNotionnel.liberal is avant[0]
     assert (ScenarioNotionnel.liberal, C.CLES_PROSPECTIVES) == avant
+    simulateur = proposition_prospective.simulateur(PARAMETRES)
+    assert simulateur.univers[proposition_prospective.LIBERAL].id == "notionnel_liberal_prospectif"
+    assert Simulateur(PARAMETRES).univers[proposition_prospective.LIBERAL].id == (
+        proposition_prospective.LIBERAL)
 
 
 def test_l_accueil_cite_le_solde_de_la_variante_prospective(prospective):

@@ -194,11 +194,13 @@ def par_le_jumeau():
 
     S'y ouvrent les études qui remplacent une fonction du moteur Python le
     temps d'une variante — ``scripts/solde_fusion.py``,
-    ``proposition_prospective.py``, ``stock_age_legal.py`` —, jusqu'à ce que
-    leur variante s'écrive en données, une couche ou un paramètre de la
-    demande au pont (note de décision 0006 ; action 161, « le coût sous un
-    modèle modifié ») ; et les confrontations qui font refaire au jumeau ce
-    que le portage calcule, jusqu'au retrait de sa paire."""
+    ``stock_age_legal.py`` —, jusqu'à ce que leur variante s'écrive en
+    données, une couche ou un paramètre de la demande au pont (note de
+    décision 0006 ; action 161, « le coût sous un modèle modifié »), comme
+    ``proposition_prospective.py`` l'a écrite, un univers que la demande
+    porte (``Simulateur.univers_de_la_demande``) ; et les confrontations qui
+    font refaire au jumeau ce que le portage calcule, jusqu'au retrait de sa
+    paire."""
     global _JUMEAU
     from .memoire import modele_modifie
 
@@ -298,24 +300,29 @@ def _aujourd_hui(lu: dict | None) -> dict | None:
 
 
 def carrieres(cas: list[dict], scenarios, paquet: bytes | None = None,
+              univers: dict[str, dict] | None = None,
               ) -> tuple[dict[str, dict], dict[str, str]]:
     """Chaque carrière d'un seul statut, ``{"cle", "options"}`` aux options de
     ``carriere_simple``, simulée par le portage sous les réglages de
     référence : sous sa clé, l'année de son départ et celle de chaque
     scénario, l'écart de chacun au système actuel, pilier capitalisé compris
-    (``variation_totale``), la pension du système actuel et la durée qu'il
-    requiert ; la pension de chaque scénario, pilier capitalisé compris
-    (``pension_totale``), et la rente des points volontaires
-    (``rente_capitalisee_volontaire``) ; et, pour qui est déjà parti, ce que
-    le système actuel et chaque scénario lui servent aujourd'hui
-    (``Comparaison.aujourd_hui``), sinon ``None``. Puis, sous leur clé, les
-    motifs des carrières que le portage refuse."""
-    reponse = _demander({"carrieres": {"cas": cas, "scenarios": list(scenarios)}}, paquet)
+    (``variation_totale``) ou non (``variation``), la pension du système
+    actuel et la durée qu'il requiert ; la pension de chaque scénario, pilier
+    capitalisé compris (``pension_totale``), et la rente des points
+    volontaires (``rente_capitalisee_volontaire``) ; et, pour qui est déjà
+    parti, ce que le système actuel et chaque scénario lui servent
+    aujourd'hui (``Comparaison.aujourd_hui``), sinon ``None``. Puis, sous leur
+    clé, les motifs des carrières que le portage refuse. ``univers`` porte les
+    variantes d'une étude, chacune à la place du calcul que le paquet porte
+    sous sa clé (``Simulateur.univers_de_la_demande``, action 161)."""
+    reponse = _demander({"carrieres": {"cas": cas, "scenarios": list(scenarios),
+                                       "univers": dict(univers or {})}}, paquet)
     resultats = {
         cle: {
             "annee_liquidation": lu["annee_liquidation"],
             "annees_liquidation": dict(lu["annees_liquidation"]),
             "variations": _par_scenario(lu["variations"]),
+            "ecarts": _par_scenario(lu["ecarts"]),
             "pension_annuelle": _flottant(lu["pension_annuelle"]),
             "trimestres_requis": lu["trimestres_requis"],
             "pensions_totales": _par_scenario(lu["pensions_totales"]),
@@ -643,15 +650,20 @@ def _volet_du_cout(lu: dict) -> dict:
 
 
 def grille_du_cout(cas: list[dict], scenarios, parametres, paquet: bytes | None = None,
+                   univers: dict[str, dict] | None = None,
                    ) -> tuple[dict[str, dict], dict[str, str]]:
     """Chaque case de la grille du coût, ``{"cle", "carriere",
     "propositions"}`` — sa carrière, et celles, nommées, sur lesquelles le coût
     calcule la proposition seule —, simulée par le portage sous
     ``parametres``, ceux de la projection : sous sa clé, ce que le coût en lit,
     tel que ``cout._simulations_en_python`` le tire du moteur Python, son
-    jumeau. Puis, sous leur clé, les motifs des cases que le portage refuse."""
+    jumeau. Puis, sous leur clé, les motifs des cases que le portage refuse.
+    ``univers`` porte les variantes d'une étude, chacune à la place du calcul
+    que le paquet porte sous sa clé (``Simulateur.univers_de_la_demande``,
+    action 161)."""
     reponse = _demander({"grille_du_cout": {
         "parametres": parametres_en_donnees(parametres),
+        "univers": dict(univers or {}),
         "scenarios": list(scenarios),
         "cas": [{"cle": un["cle"], "carriere": carriere_en_donnees(un["carriere"]),
                  "propositions": {nom: carriere_en_donnees(carriere)

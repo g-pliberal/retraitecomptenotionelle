@@ -376,8 +376,8 @@ def _univers(tous, cle, *couches_ajoutees: univers.Couche, sans: tuple[str, ...]
 
 def test_le_moteur_refuse_ce_qu_il_ne_sait_pas_faire(tous):
     """Une fiche ajoutée depuis une autre date que la sienne, un paramètre du
-    compte qu'il ne sait pas changer, la garantie sur un compte ouvert à la
-    bascule, le pilier sans la garantie, une neutralisation qu'aucune
+    compte qu'il ne sait pas changer, le pilier sans la garantie, sur un
+    compte rétroactif ou ouvert à la bascule, une neutralisation qu'aucune
     liquidation ne connaît : chacun l'arrête (§ 6.7)."""
     parametres = Parametres()
     pilier = univers.Couche.lue(univers.couches()["capitalisation_obligatoire"])
@@ -388,7 +388,7 @@ def test_le_moteur_refuse_ce_qu_il_ne_sait_pas_faire(tous):
         "parametre": _univers(tous, "notionnel_retroactif", univers.Couche(
             "etat", "L'État", (univers.Operation("changer_un_parametre", "compte_notionnel",
                                                  "contribution_etat", "entiere"),))),
-        "prospectif": _univers(tous, "notionnel_prospectif", garantie),
+        "prospectif": _univers(tous, "notionnel_prospectif", pilier),
         "pilier": _univers(tous, "notionnel_retroactif", pilier),
         "neutralisation": _univers(tous, "notionnel_prospectif", univers.Couche(
             "minima", "Sans minima", (univers.Operation("neutraliser", ("domaine", "minima")),),
@@ -398,7 +398,7 @@ def test_le_moteur_refuse_ce_qu_il_ne_sait_pas_faire(tous):
     messages = {
         "depuis": "le moteur applique capitalisation_obligatoire depuis",
         "parametre": "ne sait pas changer compte_notionnel.contribution_etat",
-        "prospectif": "ni le pilier ni la garantie sur un compte ouvert à la bascule",
+        "prospectif": "le pilier se sert avec la garantie",
         "pilier": "le pilier se sert avec la garantie",
         "neutralisation": "aucune liquidation ne sait « neutraliser {domaine: minima} »",
         "sans_compte": "ne calcule la proposition que sur le compte notionnel",
@@ -425,6 +425,72 @@ def test_le_simulateur_partage_ce_que_les_univers_partagent():
     assert compte["notionnel_liberal"] is simulateur.constructeur_liberal
     assert [cle for cle, calcul in simulateur.calculs.items()
             if simulateur.scenario_de(calcul).capitalisation is not None] == ["notionnel_liberal"]
+
+
+# -- la proposition prospective, une variante hors du paquet ----------------------------
+
+#: L'intitulé que porte son résultat, comme ``tests/js/univers.test.js`` le lui
+#: donne.
+LIBELLE_PROSPECTIVE = "Comptes notionnels à compter de la bascule, 18 % et garantie vieillesse"
+
+
+def _prospective() -> univers.Univers:
+    return univers.charger(univers.VARIANTES)["notionnel_liberal_prospectif"]
+
+
+def test_la_proposition_prospective_est_le_scenario_5_a_18_pour_cent(tous):
+    """La variante de ``scripts/proposition_prospective.py`` : « elle est le
+    scénario 5 à 18 % », le pilier capitalisé et la garantie vieillesse
+    s'ajoutant « comme dans le scénario 6 » — la pile du scénario 5, puis les
+    couches que le scénario 6 pose sur la part patronale, des couches qui
+    existent, sous le contrat d'univers d'aujourd'hui (action 161). Le moteur
+    en tire le compte et les paramètres du scénario 6, la transition et la
+    liquidation fictive du scénario 5. Elle se tient hors de
+    ``data/reference/univers/`` : elle n'est pas un scénario du site, et
+    n'entre pas au paquet ; le pont passe son calcul au portage dans la
+    demande, tel que ``tests/js/univers.test.js`` le résout."""
+    assert univers.controler(univers.VARIANTES) == []
+    prospective = _prospective()
+    assert prospective.couches == (*tous["notionnel_prospectif_employeur"].couches,
+                                   *tous["notionnel_liberal"].couches[3:])
+    assert prospective.numero == tous["notionnel_liberal"].numero
+    assert prospective.id not in tous
+    calcul = moteur.calcul_notionnel(prospective, Parametres())
+    liberal = moteur.calcul_notionnel(tous["notionnel_liberal"], Parametres())
+    assert (calcul.prospectif, calcul.capitalisation, calcul.garantie, calcul.age_legal) == (
+        True, True, True, True)
+    assert calcul.modifications == liberal.modifications
+    assert calcul.neutralisations == CONTRIBUTIF_SEUL
+    assert moteur.calcul_notionnel(prospective, None).donnees() == {
+        **moteur.calcul_notionnel(tous["notionnel_liberal"], None).donnees(),
+        "univers": "notionnel_liberal_prospectif",
+        "libelle": LIBELLE_PROSPECTIVE,
+        "prospectif": True,
+        "neutralisations": sorted(CONTRIBUTIF_SEUL),
+    }
+
+
+def test_une_variante_tient_la_place_de_son_univers_le_temps_d_une_etude():
+    """Une étude fait calculer une variante que le paquet ne porte pas : le
+    simulateur la prend à la place de l'univers qu'elle remplace, sous sa clé,
+    et la garde sous les conventions de la projection ; ce qu'il en passe au
+    pont est son calcul tel que la fabrication le résout. Une variante qui ne
+    remplace aucun univers de la proposition l'arrête."""
+    from retraite_notionnelle.simulateur import Simulateur
+
+    prospective = _prospective()
+    simulateur = Simulateur(Parametres(), variantes={"notionnel_liberal": prospective})
+    assert list(simulateur.calculs) == list(Simulateur().calculs)
+    assert simulateur.calculs["notionnel_liberal"] == moteur.calcul_notionnel(prospective,
+                                                                              Parametres())
+    assert (simulateur.pour_la_projection().calculs["notionnel_liberal"]
+            == simulateur.calculs["notionnel_liberal"])
+    assert simulateur.univers_de_la_demande == {
+        "notionnel_liberal": moteur.calcul_notionnel(prospective, None).donnees()}
+    assert Simulateur().univers_de_la_demande == {}
+    for cle in ("notionnel_inconnu", "actuel"):
+        with pytest.raises(ValueError, match="ne remplace aucun univers de la proposition"):
+            Simulateur(Parametres(), variantes={cle: prospective}).calculs
 
 
 # -- le portage -----------------------------------------------------------------------

@@ -783,7 +783,8 @@ def _dernier_revenu_annualise(carriere: Carriere, macro: DonneesMacro) -> float:
 class Simulateur:
     """Façade : charge les données une fois, simule autant de carrières que voulu."""
 
-    def __init__(self, parametres: Parametres | None = None) -> None:
+    def __init__(self, parametres: Parametres | None = None,
+                 variantes: dict[str, univers_de_droit.Univers] | None = None) -> None:
         self.parametres = parametres or Parametres()
         racine = self.parametres.racine_donnees
         if not racine.exists():
@@ -792,6 +793,11 @@ class Simulateur:
                 "Lancer le simulateur depuis la racine du dépôt, ou renseigner "
                 "Parametres(racine_donnees=...)."
             )
+        #: Les univers d'une étude (``data/reference/variantes/``), chacun à la
+        #: place de l'univers de la proposition dont il porte la clé : le
+        #: paquet ne les porte pas, et le pont passe leur calcul au portage
+        #: dans la demande (:attr:`univers_de_la_demande`, action 161).
+        self.variantes: dict[str, univers_de_droit.Univers] = dict(variantes or {})
         #: Les comptes et les scénarios de la proposition, un par jeu de
         #: paramètres que les couches changent : deux univers qui changent les
         #: mêmes partagent les mêmes, comme 2 et 3, ou 4 et 5.
@@ -1006,10 +1012,24 @@ class Simulateur:
     @cached_property
     def univers(self) -> dict[str, univers_de_droit.Univers]:
         """Les six scénarios, chacun un univers de droit (docs/architecture.md,
-        § 4.8), lus sous la racine des données du simulateur."""
+        § 4.8), lus sous la racine des données du simulateur ; une variante
+        d'une étude à la place de celui qu'elle remplace, sous sa clé."""
         reference = self.parametres.racine_donnees / "reference"
-        return univers_de_droit.charger(reference / "univers", reference / "couches",
-                                        reference / "regles")
+        lus = univers_de_droit.charger(reference / "univers", reference / "couches",
+                                       reference / "regles")
+        for cle in self.variantes:
+            if cle not in lus or lus[cle].est_le_droit_reel:
+                raise ValueError(f"la variante {self.variantes[cle].id} ne remplace aucun "
+                                 f"univers de la proposition : {cle}")
+        return {cle: self.variantes.get(cle, u) for cle, u in lus.items()}
+
+    @property
+    def univers_de_la_demande(self) -> dict[str, dict]:
+        """Ce que le pont passe au portage, à la place du calcul que le paquet
+        porte sous la même clé : le calcul de chaque variante, tel que la
+        fabrication le résout (``CalculNotionnel.donnees``, la forme du
+        paquet)."""
+        return {cle: calcul_notionnel(u, None).donnees() for cle, u in self.variantes.items()}
 
     @cached_property
     def calculs(self) -> dict[str, CalculNotionnel]:
@@ -1052,16 +1072,19 @@ class Simulateur:
 
         Une transition ouvre le compte à la bascule, sur les droits acquis que
         sa liquidation fictive valorise, et sur le régime unique toujours ; la
-        garantie vieillesse se sert après le compte rétroactif et son pilier ;
-        sinon, le compte rétroactif, sur le régime unique si le réglage le
-        garde (``fusion_au_plus_defavorable``).
+        garantie vieillesse se sert après le compte et son pilier, qu'il soit
+        rétroactif ou ouvert à la bascule (la proposition prospective, action
+        161) ; sinon, le compte rétroactif, sur le régime unique si le réglage
+        le garde (``fusion_au_plus_defavorable``).
         """
         calcul = self.calculs[univers]
         scenario = self.scenario_de(calcul)
         fusionne = self.regime_fusionne if self.parametres.fusion_au_plus_defavorable else None
         if calcul.prospectif:
-            return scenario.prospectif(carriere, self.regime_fusionne, libelle=calcul.libelle,
-                                       neutralisations=calcul.neutralisations)
+            compte = scenario.prospectif(carriere, self.regime_fusionne, libelle=calcul.libelle,
+                                         neutralisations=calcul.neutralisations)
+            return (scenario.avec_le_pilier_et_la_garantie(carriere, compte)
+                    if calcul.garantie else compte)
         if calcul.garantie:
             return scenario.liberal(carriere, fusionne, libelle=calcul.libelle)
         return scenario.retroactif(carriere, fusionne, libelle=calcul.libelle)
@@ -1182,7 +1205,8 @@ class Simulateur:
         celui de la page Coût, dont la dépense ne compte pas l'ASPA. Construit
         une fois, puis gardé.
 
-        Il garde l'hypothèse d'espérance de vie des paramètres : sous la basse
+        Il garde les variantes d'une étude (:attr:`variantes`), et
+        l'hypothèse d'espérance de vie des paramètres : sous la basse
         ou la haute, la page Coût compte ses retraités dans la pyramide de la
         même hypothèse, ce que ``calculer_cout`` vérifie
         (``Population.verifier_hypothese``, action 138, étape 7)."""
@@ -1194,7 +1218,8 @@ class Simulateur:
             from dataclasses import replace
 
             jumeau = Simulateur(replace(self.parametres, conventions_cor=True,
-                                        minimum_vieillesse_dans_le_scenario_actuel=False))
+                                        minimum_vieillesse_dans_le_scenario_actuel=False),
+                                variantes=self.variantes)
             self.__dict__["_projection"] = jumeau
         return jumeau
 

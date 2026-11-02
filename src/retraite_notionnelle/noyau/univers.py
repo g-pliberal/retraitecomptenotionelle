@@ -52,6 +52,11 @@ from ..somme import somme_ordonnee
 
 UNIVERS = RACINE_DONNEES / "reference" / "univers"
 COUCHES = RACINE_DONNEES / "reference" / "couches"
+#: Les univers d'une étude, sous le même contrat : aucun n'est un scénario du
+#: site ni n'entre au paquet ; l'étude en fait calculer un à la place de celui
+#: qu'il remplace (``Simulateur(variantes=…)``), et le pont passe son calcul au
+#: portage dans la demande (action 161).
+VARIANTES = RACINE_DONNEES / "reference" / "variantes"
 #: La couche du bas de chaque pile : la carte des règles elle-même.
 DROIT_REEL = "droit_reel"
 #: Le ``depuis`` d'une couche qui agit depuis toujours.
