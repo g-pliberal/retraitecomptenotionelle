@@ -22,7 +22,7 @@ from pathlib import Path
 import pytest
 
 from retraite_notionnelle import cout as C
-from retraite_notionnelle import memoire
+from retraite_notionnelle import memoire, pont
 from retraite_notionnelle.castypes import GRILLE_DU_COUT, poids_effectifs
 from retraite_notionnelle.config import Parametres
 from retraite_notionnelle.simulateur import Simulateur
@@ -2965,7 +2965,7 @@ def test_la_grille_large_se_date_et_se_bat_au_portage_sans_les_jumeaux(memoire_i
                 C._grille_batie(reference.pour_la_projection(), echantillon, "droit"),
                 C._pensionnes(reference, echantillon, "droit"))
 
-    with memoire.modele_modifie():
+    with pont.par_le_jumeau():
         reference = Simulateur(Parametres())
         en_python = tout(reference)
         projection = reference.pour_la_projection()
@@ -3047,7 +3047,7 @@ def test_les_mesures_de_la_grille_large_passent_par_le_portage_sans_les_jumeaux(
                         for generation in (1950, 1965)],
         }
 
-    with memoire.modele_modifie():
+    with pont.par_le_jumeau():
         en_python = mesures()
     # Ce que l'échantillon fait traverser : une décote, une avance, chaque
     # condition de départ, une surcote servie.

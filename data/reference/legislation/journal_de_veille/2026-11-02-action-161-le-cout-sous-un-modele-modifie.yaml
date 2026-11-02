@@ -1,0 +1,20 @@
+date: "2026-11-02"
+session: "action 161, le coût sous un modèle modifié : le relevé, le plan, et le jumeau séparé de la mémoire"
+consulte: >-
+  Aucune source de droit : la session ne touche à aucune règle du scénario 1.
+  La note de décision 0006 et la note du 2 novembre 2026 sur ce qui reste en
+  Python ; les trois études qui remplacent une fonction du moteur Python
+  (scripts/solde_fusion.py, proposition_prospective.py, stock_age_legal.py)
+  et leurs lecteurs ; scripts/facteurs_depense.py et sa copie retouchée des
+  données ; les tests qui prennent monkeypatch, mesurés un à un ;
+  pont.par_le_portage et la mémoire des calculs.
+trouve: >-
+  Aucune règle n'a changé. Trois études et un calcul sur une copie des
+  données ont encore besoin du jumeau Python ; dix tests n'y allaient que par
+  la fixture monkeypatch, et passent le portage. Le jumeau ne calcule plus
+  que sous pont.par_le_jumeau(). Le droit contrefactuel
+  loi_2023_sans_suspension, que le moteur connaît, pourrait remplacer la
+  copie des données, s'il rend les mêmes nombres.
+reste: >-
+  Rien pour la veille. L'action reprend où son bloc « Reprise » la laisse
+  (action 161, note du 2 novembre 2026, le coût sous un modèle modifié).

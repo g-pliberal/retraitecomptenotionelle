@@ -567,6 +567,13 @@ def monkeypatch(monkeypatch, request):
     gardé, calculé sans son remplacement, ni en garder un qui l'aurait subi
     (``retraite_notionnelle/memoire.py``). Les tests de la mémoire elle-même
     demandent ``memoire_isolee``, qui la rouvre dans un dossier à eux.
+
+    Il ne renvoie pas au jumeau Python : le portage calcule ce que le coût lui
+    demande (``pont.par_le_portage``), et ce qu'un test remplace du coût ou
+    d'une étude, le Python le lit. Une fonction du moteur que le portage
+    refait, il ne la voit pas : une confrontation qui la fait calculer au
+    jumeau s'ouvre sous ``pont.par_le_jumeau()``, et une variante s'écrit en
+    données (note de décision 0006).
     """
     if "memoire_isolee" in request.fixturenames:
         yield monkeypatch

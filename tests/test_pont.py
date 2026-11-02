@@ -357,13 +357,12 @@ def test_la_grille_des_carrieres_types_se_date_au_portage_sans_les_jumeaux(memoi
     déplace pas — la table l'écrit sans décimale —, un flottant sinon."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le pont ne se vérifie pas ici")
-    from retraite_notionnelle import memoire
     from retraite_notionnelle.castypes import ages_de_la_grille
 
     simulateur = Simulateur(Parametres())
     # Les générations de la table, et deux que le droit écarte en partie.
     generations = (1880, 1885, *GENERATIONS)
-    with memoire.modele_modifie():
+    with pont.par_le_jumeau():
         en_python = cases_de_la_grille(simulateur, CAS_TYPES, generations)
         ages_en_python = ages_de_la_grille(simulateur)
     _interdire(monkeypatch, _jumeaux_qui_datent_et_batissent())
@@ -387,7 +386,6 @@ def test_les_departs_des_facteurs_de_la_depense_se_datent_au_portage_sans_les_ju
     une case que le droit écarte n'en a aucune."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le pont ne se vérifie pas ici")
-    from retraite_notionnelle import memoire
     from retraite_notionnelle.facteurs_depense import dates_des_departs
 
     cas = tuple(cas for cas in GRILLE_DU_COUT if cas.code in (
@@ -398,7 +396,7 @@ def test_les_departs_des_facteurs_de_la_depense_se_datent_au_portage_sans_les_ju
         return [dates_des_departs(Parametres(), cas_types=cas, generations=(1880, 1965, 2000),
                                   **forme) for forme in formes]
 
-    with memoire.modele_modifie():
+    with pont.par_le_jumeau():
         en_python = dates()
     _interdire(monkeypatch, _jumeaux_qui_datent_et_batissent())
     au_portage = dates()
@@ -439,7 +437,7 @@ def test_le_cout_des_avantages_liquide_sa_grille_au_portage_sans_les_jumeaux(mem
     chaque refus sous sa raison ; et le coût, année par année, est le même."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le pont ne se vérifie pas ici")
-    from retraite_notionnelle import avantages, cout, memoire
+    from retraite_notionnelle import avantages, cout
     from retraite_notionnelle.config import RACINE_DONNEES
     from retraite_notionnelle.donnees.depenses import DepensesRetraite
     from retraite_notionnelle.donnees.population import Population
@@ -449,7 +447,7 @@ def test_le_cout_des_avantages_liquide_sa_grille_au_portage_sans_les_jumeaux(mem
     monkeypatch.setattr(avantages, "generations", lambda: (1885, 1910, 1955, 1965, 1975))
     depenses = DepensesRetraite(RACINE_DONNEES)
     population = Population(RACINE_DONNEES, Parametres().hypothese_esperance_vie)
-    with memoire.modele_modifie():
+    with pont.par_le_jumeau():
         en_python = avantages.decomposer(Simulateur(Parametres()))
         cout_en_python = avantages.calculer_avantages(Simulateur(Parametres()), depenses,
                                                       population)
@@ -1350,15 +1348,15 @@ def test_le_cout_date_et_bat_sa_grille_par_le_portage_sans_les_jumeaux(memoire_i
     carrières, la projection des primes et le moteur Python, qu'on empêche ici
     de calculer, n'y entrent pas — ni dans ses cohortes nées toute l'année.
     Couple pour couple, la grille est celle que le Python date, bâtit et simule
-    sous un modèle modifié."""
+    sous ``pont.par_le_jumeau()``."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le pont ne se vérifie pas ici")
-    from retraite_notionnelle import castypes, cout, memoire, pilote
+    from retraite_notionnelle import castypes, cout, pilote
     from retraite_notionnelle.droit import ouvrir
 
     monkeypatch.setattr(cout, "generations", lambda: (1965, 2000))
     simulateur = Simulateur(Parametres())
-    with memoire.modele_modifie():
+    with pont.par_le_jumeau():
         en_python = cout._pensionnes(simulateur, GRILLE_D_ESSAI, "droit")
         nees_en_python = cout._nees_toute_l_annee(simulateur, GRILLE_D_ESSAI, en_python[0],
                                                   "droit")
@@ -1384,21 +1382,23 @@ def test_le_cout_date_et_bat_sa_grille_par_le_portage_sans_les_jumeaux(memoire_i
     assert any(p.autre is not None for p in par_le_portage[0])
 
 
-def test_sous_un_modele_modifie_le_cout_simule_sa_grille_en_python(memoire_isolee, monkeypatch):
-    """Un contexte qui remplace une fonction du moteur Python
-    (``memoire.modele_modifie``, ``scripts/solde_fusion.py``) ne la remplace pas
-    dans le portage : la grille se simule alors par le moteur Python, le seul
-    qui la voie. Le modèle laissé tel quel, elle rend ce que le portage rend,
-    couple pour couple, chaque nombre au bit près."""
+def test_sous_le_jumeau_le_cout_simule_sa_grille_en_python(memoire_isolee, monkeypatch):
+    """Un contexte qui remplace une fonction du moteur Python le temps d'une
+    variante (``scripts/solde_fusion.py``, ``proposition_prospective.py``,
+    ``stock_age_legal.py``), ou une confrontation qui fait refaire au jumeau ce
+    que le portage calcule, s'ouvre sous ``pont.par_le_jumeau()`` : le portage
+    ne voit pas le remplacement, et la grille se simule par le moteur Python,
+    le seul qui la voie. Le modèle laissé tel quel, elle rend ce que le portage
+    rend, couple pour couple, chaque nombre au bit près."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le pont ne se vérifie pas ici")
-    from retraite_notionnelle import cout, memoire
+    from retraite_notionnelle import cout
 
     monkeypatch.setattr(cout, "generations", lambda: (1950, 1965, 1975, 2000))
     simulateur = Simulateur(Parametres())
     par_le_portage = cout._pensionnes(simulateur, GRILLE_D_ESSAI, "droit")
     monkeypatch.setattr(pont.shutil, "which", lambda nom: None)
-    with memoire.modele_modifie():
+    with pont.par_le_jumeau():
         en_python = cout._pensionnes(simulateur, GRILLE_D_ESSAI, "droit")
     assert en_python == par_le_portage
     assert _types([vars(p) for p in en_python[0]]) == _types([vars(p) for p in par_le_portage[0]])
@@ -1408,17 +1408,37 @@ def test_sous_un_modele_modifie_le_cout_simule_sa_grille_en_python(memoire_isole
     assert any(p.propre.annee_liquidation > p.annee_liquidation for p in pensionnes)
 
 
+def test_sous_monkeypatch_le_cout_simule_sa_grille_par_le_portage(monkeypatch):
+    """``monkeypatch`` fait taire la mémoire des calculs (``tests/conftest.py``),
+    sans renvoyer au jumeau Python : ce qu'un test remplace du coût ou d'une
+    étude, le Python le lit, et le portage simule la grille. Sans node, elle
+    s'arrête donc, sans repli sur le moteur Python."""
+    from retraite_notionnelle import cout, memoire
+
+    assert not memoire._active()
+    monkeypatch.setattr(cout, "generations", lambda: (1970,))
+    monkeypatch.setattr(pont.shutil, "which", lambda nom: None)
+    with pytest.raises(pont.PontIndisponible, match="node"):
+        cout._pensionnes(Simulateur(Parametres()), GRILLE_D_ESSAI, "droit")
+
+
 def test_sur_des_donnees_d_ailleurs_le_cout_simule_sa_grille_en_python(tmp_path):
     """Le portage calcule sur le paquet des données du dépôt
     (``pont.paquet_des_donnees``) : des données d'ailleurs — une copie que
     l'on a retouchée (``scripts/facteurs_depense.py --sans-suspension``) — se
-    simulent par le moteur Python, comme un modèle qu'un contexte modifie."""
-    from retraite_notionnelle import cout, memoire
+    simulent par le moteur Python, comme sous ``pont.par_le_jumeau()``. Un
+    contexte qui ne fait que taire la mémoire des calculs
+    (``memoire.modele_modifie``) laisse calculer le portage."""
+    from retraite_notionnelle import memoire
 
     assert pont.par_le_portage(Parametres())
     assert not pont.par_le_portage(replace(Parametres(), racine_donnees=tmp_path))
     with memoire.modele_modifie():
+        assert pont.par_le_portage(Parametres())
+    with pont.par_le_jumeau():
         assert not pont.par_le_portage(Parametres())
+        assert not memoire._active()
+    assert pont.par_le_portage(Parametres())
 
 
 def test_le_paquet_du_jour_suit_les_sources(monkeypatch, tmp_path):

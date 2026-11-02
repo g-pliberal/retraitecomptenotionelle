@@ -68,6 +68,7 @@ change ou que le processus finisse.
 from __future__ import annotations
 
 import atexit
+import contextlib
 import dataclasses
 import enum
 import functools
@@ -178,28 +179,57 @@ class _PontOuvert:
                 self._processus.kill()
 
 
+#: Les contextes ouverts sous lesquels le jumeau Python calcule
+#: (:func:`par_le_jumeau`).
+_JUMEAU = 0
+
+
+@contextlib.contextmanager
+def par_le_jumeau():
+    """Le temps d'un calcul que le portage ne voit pas : le jumeau Python le
+    fait, et la mémoire des calculs, qui ne connaît que le modèle intact, se
+    tait (``memoire.modele_modifie``).
+
+    S'y ouvrent les études qui remplacent une fonction du moteur Python le
+    temps d'une variante — ``scripts/solde_fusion.py``,
+    ``proposition_prospective.py``, ``stock_age_legal.py`` —, jusqu'à ce que
+    leur variante s'écrive en données, une couche ou un paramètre de la
+    demande au pont (note de décision 0006 ; action 161, « le coût sous un
+    modèle modifié ») ; et les confrontations qui font refaire au jumeau ce
+    que le portage calcule, jusqu'au retrait de sa paire."""
+    global _JUMEAU
+    from .memoire import modele_modifie
+
+    with modele_modifie():
+        _JUMEAU += 1
+        try:
+            yield
+        finally:
+            _JUMEAU -= 1
+
+
 def par_le_portage(parametres) -> bool:
     """Ce que ces paramètres font calculer passe-t-il par le portage (action
     161, étapes 5 et 6) ? Le coût y simule, y date et y bâtit sa grille, la
     table y date ses carrières types.
 
-    Oui, le modèle intact et sur les données du dépôt : le portage calcule sur
-    leur paquet (:func:`paquet_des_donnees`). Non sous un contexte qui
-    remplace une fonction du moteur Python (``memoire.modele_modifie``, les
-    tests qui prennent ``monkeypatch``, ``scripts/solde_fusion.py``), ni sur des
-    données d'ailleurs, une copie que l'on a retouchée : le portage ne voit ni
-    l'un ni l'autre, et le moteur Python, le seul qui les voie, calcule. Ce
-    n'est pas un repli : sans node, le calcul du modèle intact s'arrête
+    Oui sur les données du dépôt : le portage calcule sur leur paquet
+    (:func:`paquet_des_donnees`), même quand la mémoire des calculs se tait —
+    sous ``monkeypatch`` (``tests/conftest.py``) ou un contexte qui remplace
+    une fonction du coût (``memoire.modele_modifie``) : ce qu'ils remplacent,
+    le Python le lit. Non sous :func:`par_le_jumeau`, ni sur des données
+    d'ailleurs, une copie que l'on a retouchée : le portage ne voit ni l'un ni
+    l'autre, et le moteur Python, le seul qui les voie, calcule. Ce n'est pas
+    un repli : sans node, le calcul sur les données du dépôt s'arrête
     (:class:`PontIndisponible`). Le retrait du moteur Python devra leur trouver
     un autre chemin."""
     from .config import RACINE_DONNEES
-    from .memoire import modele_intact
 
     try:
         du_depot = Path(parametres.racine_donnees).resolve() == RACINE_DONNEES.resolve()
     except OSError:
         du_depot = False
-    return du_depot and modele_intact()
+    return du_depot and not _JUMEAU
 
 
 #: Le pont gardé ouvert de ce processus, s'il y en a un.

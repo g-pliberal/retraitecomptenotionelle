@@ -569,12 +569,29 @@ def test_sous_un_modele_modifie_la_memoire_se_tait(monkeypatch, memoire_isolee):
 
 
 def test_les_contextes_qui_remplacent_le_modele_font_taire_la_memoire():
+    """Les trois études qui remplacent une fonction du moteur Python le temps
+    d'une variante (note de décision 0006) font taire la mémoire des calculs,
+    et calculer le jumeau, le seul qui voie leur remplacement
+    (``pont.par_le_jumeau``), jusqu'à ce que leur variante s'écrive en
+    données (action 161)."""
     import proposition_prospective
+    import solde_fusion
+    import stock_age_legal
 
-    assert memoire._active()
-    with proposition_prospective.PropositionProspective():
-        assert not memoire._active()
-    assert memoire._active()
+    from retraite_notionnelle import Parametres, pont
+    from retraite_notionnelle.simulateur import Simulateur
+
+    contextes = (
+        proposition_prospective.PropositionProspective(),
+        solde_fusion.RegimeUniqueVariante(solde_fusion.Hypothese("A", "le modèle", None)),
+        stock_age_legal.StockALAgeLegal("reference", Simulateur(Parametres())),
+    )
+    for contexte in contextes:
+        assert memoire._active() and pont.par_le_portage(Parametres())
+        with contexte:
+            assert not memoire._active(), contexte
+            assert not pont.par_le_portage(Parametres()), contexte
+        assert memoire._active() and pont.par_le_portage(Parametres())
 
 
 def test_un_test_qui_remplace_quelque_chose_n_a_pas_de_memoire(monkeypatch):

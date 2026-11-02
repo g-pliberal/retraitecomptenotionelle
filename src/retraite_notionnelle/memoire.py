@@ -39,10 +39,13 @@ autres. ``CALCULS_SANS_MEMOIRE=1`` fait tout recalculer.
 LA RÈGLE
 --------
 La mémoire ne connaît que le modèle INTACT. Un contexte qui en remplace une
-fonction — la proposition prospective, le stock à l'âge légal, le régime
-unique des scripts — s'ouvre sous ``modele_modifie()``, et la mémoire se tait
-tant qu'il est ouvert : rien ne s'y lit, rien ne s'y écrit. Un test qui prend
-``monkeypatch`` en fait autant (``tests/conftest.py``). Et ``cout()`` comme
+fonction s'ouvre sous ``modele_modifie()``, et la mémoire se tait tant qu'il
+est ouvert : rien ne s'y lit, rien ne s'y écrit. Un test qui prend
+``monkeypatch`` en fait autant (``tests/conftest.py``). Un contexte qui
+remplace une fonction du moteur Python — la proposition prospective, le stock
+à l'âge légal, le régime unique des scripts — s'ouvre sous
+``pont.par_le_jumeau()``, qui fait taire la mémoire et calculer le jumeau,
+seul à voir le remplacement. Et ``cout()`` comme
 ``avantages()`` construisent elles-mêmes, depuis les paramètres, le simulateur
 et les données de leur calcul : venus d'ailleurs, ils pourraient ne pas être
 ceux que la clé décrit. Un script qui garde un calcul à lui
@@ -537,20 +540,17 @@ def _seul(empreinte_: str | None, nom_: str):
 
 @contextmanager
 def modele_modifie():
-    """Le temps d'un remplacement d'une fonction du modèle : la mémoire se tait."""
+    """Le temps d'un remplacement d'une fonction du modèle : la mémoire se tait.
+    Le portage, lui, calcule toujours : ce que le contexte remplace du coût ou
+    d'une étude, le Python le lit ; qui remplace une fonction du moteur Python,
+    que le portage ne voit pas, s'ouvre sous ``pont.par_le_jumeau()``, qui
+    fait taire la mémoire aussi."""
     global _MODIFICATIONS
     _MODIFICATIONS += 1
     try:
         yield
     finally:
         _MODIFICATIONS -= 1
-
-
-def modele_intact() -> bool:
-    """Aucun remplacement du modèle n'est ouvert (:func:`modele_modifie`) : le
-    moteur Python est celui que le portage copie, et la grille du coût peut
-    passer le pont (``pont.par_le_portage``)."""
-    return not _MODIFICATIONS
 
 
 @contextmanager

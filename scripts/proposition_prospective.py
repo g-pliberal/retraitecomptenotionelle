@@ -50,7 +50,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from retraite_notionnelle import cout as C  # noqa: E402
-from retraite_notionnelle import memoire  # noqa: E402
+from retraite_notionnelle import memoire, pont  # noqa: E402
 from retraite_notionnelle.castypes import CAS_TYPES, calculer_cas_types  # noqa: E402
 from retraite_notionnelle.config import Parametres  # noqa: E402
 from retraite_notionnelle.donnees.assiette import AssietteActivite  # noqa: E402
@@ -105,9 +105,10 @@ class PropositionProspective:
         return liberal
 
     def __enter__(self) -> "PropositionProspective":
-        # La mémoire des calculs ne connaît que le modèle intact : elle se
-        # tait tant que ce contexte en remplace une fonction.
-        self._memoire = memoire.modele_modifie()
+        # Le contexte remplace une fonction du moteur Python, que le portage ne
+        # voit pas : le jumeau calcule, et la mémoire des calculs, qui ne
+        # connaît que le modèle intact, se tait (``pont.par_le_jumeau``).
+        self._memoire = pont.par_le_jumeau()
         self._memoire.__enter__()
         self._sauvegarde = {
             "liberal": ScenarioNotionnel.liberal,

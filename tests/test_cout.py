@@ -5037,8 +5037,8 @@ def test_chaque_cohorte_part_l_annee_que_lui_donne_le_droit_de_sa_generation(pop
 def test_le_portage_bat_toute_la_grille_du_cout_comme_le_python():
     """Le coût date et bâtit sa grille au portage (``cout._grille_batie`` ;
     action 161, étape 6), dont le pilote et les carrières ont leurs jumeaux
-    Python jusqu'à leur retrait : sous un modèle modifié, le Python la bâtit
-    encore. Sur toute la grille — ses dix-huit cas types, nés de 1880 à 2020,
+    Python jusqu'à leur retrait : sous ``pont.par_le_jumeau()``, le Python la
+    bâtit encore. Sur toute la grille — ses dix-huit cas types, nés de 1880 à 2020,
     et les cinq cohortes de chacun —, les carrières, leurs âges, les deux
     carrières que l'âge légal en dérive, les départs des cohortes voisines et
     les motifs des cases écartées sont les mêmes des deux côtés, au bit près."""
@@ -5046,11 +5046,12 @@ def test_le_portage_bat_toute_la_grille_du_cout_comme_le_python():
 
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage ne bâtit pas la grille ici")
+    from retraite_notionnelle import pont
     from retraite_notionnelle.cout import _grille_batie
 
     simulateur = Simulateur(Parametres()).pour_la_projection()
     au_portage = _grille_batie(simulateur, GRILLE_DU_COUT, "droit")
-    with memoire.modele_modifie():
+    with pont.par_le_jumeau():
         en_python = _grille_batie(simulateur, GRILLE_DU_COUT, "droit")
     assert au_portage == en_python
     carrieres, ecartees, voisines, prolongations = au_portage

@@ -6919,14 +6919,14 @@ de `contribution_etat`.
 ### 161. Un seul exemplaire du code : les doublons entre le Python et le JavaScript retirés une paire à la fois, chaque retrait relu — `en cours`
 
 **Reprise, au 2 novembre 2026.** Le JavaScript fait foi (note de décision
-0005), et le Python garde ce que dit la note 0006. Faits : les témoins et les
-confrontations au portage ; le coût, les carrières types, les départs des
-facteurs de la dépense, le coût des avantages et la grille élargie y datent
-et y bâtissent leurs carrières, la table identique à l'octet (étape 7). Ce
-qui suit : le coût sous un modèle modifié, les variantes des trois études
-écrites en données ; puis les retraits, par sous-ensemble cohérent, qui
-n'ôtent que des règles : chargeurs sous `donnees/`, types du pont gardés, le
-paquet identique à l'octet. Détail : `2026-11-02-ce-qui-reste-en-python.md`.
+0005), et le Python garde ce que dit la note 0006. En cours : le coût sous un
+modèle modifié. Le relevé, le plan et la première sous-étape sont faits : le
+jumeau Python ne calcule plus que sous `pont.par_le_jumeau()`, qu'ouvrent les
+trois études et sept confrontations. Suivent, une par session : les données
+d'ailleurs (`facteurs_depense.py --sans-suspension`), la proposition
+prospective en univers, le stock à l'âge légal et le régime unique en
+paramètres facultatifs ; puis les retraits, qui n'ôtent que des règles.
+Détail : `2026-11-02-le-cout-sous-un-modele-modifie.md`.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur
