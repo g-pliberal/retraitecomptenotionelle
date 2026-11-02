@@ -6919,15 +6919,15 @@ de `contribution_etat`.
 ### 161. Un seul exemplaire du code : les doublons entre le Python et le JavaScript retirés une paire à la fois, chaque retrait relu — `en cours`
 
 **Reprise, au 2 novembre 2026.** Le JavaScript fait foi (note de décision
-0005). Faits : les témoins et les confrontations au portage ; le coût date,
-bâtit et simule sa grille au portage ; la grille des carrières types et les
-départs des facteurs de la dépense s'y datent ; le coût des avantages y
-date, bâtit et liquide la sienne ; la grille élargie s'y date et s'y bâtit,
-et les mesures de `scripts/grille_large.py` s'y lisent
-(`CasTypeLarge.pour_le_portage`, `pont.departs_des_cas`), la table identique
-à l'octet. Ce qui suit, dans l'ordre : le coût sous un modèle modifié ; puis
-les retraits, par sous-ensemble cohérent. Détail :
-`2026-11-02-etape-7-la-grille-large.md`.
+0005). Faits : les témoins et les confrontations au portage ; le coût, les
+carrières types, les départs des facteurs de la dépense, le coût des
+avantages et la grille élargie y datent et y bâtissent leurs carrières, la
+table identique à l'octet (note de l'étape 7). Ce qui suit : le coût sous un
+modèle modifié ; puis les retraits, par sous-ensemble cohérent, qui n'ôtent
+que des règles du moteur : le Python garde la fabrique, le coût, les
+études, l'outillage et, dans chaque jumeau, les chargeurs du paquet et les
+types du pont (à la demande du propriétaire). Détail :
+`2026-11-02-ce-qui-reste-en-python.md`.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur

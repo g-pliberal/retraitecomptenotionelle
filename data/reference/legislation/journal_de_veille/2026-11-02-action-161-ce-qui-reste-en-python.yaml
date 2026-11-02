@@ -1,0 +1,16 @@
+date: "2026-11-02"
+session: "action 161 : ce qui reste en Python — la frontière des deux langages, mesurée dans les jumeaux"
+consulte: >-
+  Aucune source de droit : la session ne touche à aucune règle du scénario 1.
+  Les notes de décision 0003 et 0005, la carte des jumeaux
+  (scripts/jumeaux.py), et ce que le code Python sans jumeau — la fabrique du
+  paquet, la certification, les lecteurs de sources, le coût, les études, le
+  pont — nomme des 65 jumeaux, lu dans l'arbre syntaxique.
+trouve: >-
+  Aucune règle n'a changé. Les jumeaux du moteur portent les chargeurs dont
+  scripts/construire_donnees.py fabrique le paquet — 43 des 53 classes de
+  scenarios/actuel.py — et les types que le pont échange : un retrait n'en
+  ôtera que les règles.
+reste: >-
+  Rien pour la veille. L'action reprend où son bloc « Reprise » la laisse
+  (action 161, note du 2 novembre 2026, ce qui reste en Python).
