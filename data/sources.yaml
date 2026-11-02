@@ -20,6 +20,11 @@
 #                 dépôt est construit ; limite de la machine, pas de la source
 #   convention -> l'accès demande une clé, un compte ou une convention ; rien
 #                 à apporter, la donnée n'entre pas dans le dépôt telle quelle
+#   retire     -> le producteur ne sert plus le document : son adresse répond
+#                 par une autre page, à un navigateur comme à une session, et
+#                 seules des copies le gardent ; le `miroir` désigne celle
+#                 qu'on lit, le `sha256` la contrôle (le simulateur du COR,
+#                 fermé en juillet 2026)
 #   Le fichier est attendu sous le nom que l'adresse porte ; quand elle n'en
 #   porte pas (`file-download/31546`), `fichier_local` le déclare. `document`
 #   est l'adresse directe du fichier quand `url` est la page qui le présente
@@ -1043,6 +1048,92 @@ institutions:
           cotisants. Le tableau 2.11 du classeur garde le titre et les notes
           du rapport de 2025 ; ses valeurs sont celles que celui de 2026
           imprime.
+      - id: cor_simulateur_2019
+        titre: >-
+          Les données du simulateur du COR, millésime de juin 2019 — treize
+          séries, six scénarios, de 2005 à 2070, dont les retraités et les
+          cotisants en niveau et l'effectif d'une génération, que le rapport
+          annuel ne publie pas
+        url: https://www.cor-retraites.fr/simulateur/fileProjection.json
+        acces: fichier
+        blocage: retire
+        fichier_local: fileProjection_2019.json
+        miroir: https://raw.githubusercontent.com/brunoscherrer/retraites/f3c2d923dcce5cbf3f954b92d3a6efd108c47e14/retraites/fileProjection.json
+        sha256: 63aa7fc4767b886d3f691089bf48034529c23675138d77bff1d8b40271bdcced
+        rediffusion:
+          statut: interdite
+          texte: >-
+            « Les notes préparées par le secrétariat général du COR dans le
+            cadre des séances plénières sont rendues publiques mais n'engagent
+            pas le Conseil. Elles peuvent être reproduites en mentionnant la
+            source : "Document de travail préparé par le secrétariat général du
+            COR". La reproduction des autres documents est soumise à l'accord
+            de leur auteur ou éditeur. »
+          lu_dans: >-
+            mentions légales du site du COR, « Conditions de reproduction »,
+            https://www.cor-retraites.fr/informations-editeur
+          lu_le: 2026-11-02
+        statut_integration: controle
+        cible: tests/temoins/cor_simulateur.json
+        recuperation: scripts/fetch/cor_simulateur.py
+        millesime: juin 2019
+        note: >-
+          Le simulateur est fermé « pour révision des scénarios économiques » :
+          sa page n'a pas changé depuis le 29 juillet 2026 (relue le 2
+          novembre), et toute adresse sous /simulateur/ la sert, celle-ci
+          comprise. Le fichier survit, identique à l'octet, dans deux copies :
+          celle de `brunoscherrer/retraites` (le miroir, au commit `f3c2d92` du
+          30 septembre 2020, dont le README le rattache à cette adresse) et
+          celle de `nosretraites/roc-retraites` (commit `d375f10`, janvier
+          2020), qui garde le site entier — sa page, son code de calcul
+          (`js/script.js`), sa documentation technique —, « revu » par le
+          collectif Nos retraites. Ses six scénarios : des salaires qui
+          croissent de 1,8, 1,5, 1,3 et 1 % par an sous un chômage de 7 %,
+          puis 1,8 % sous 4,5 % et 1 % sous 10 % (`js/script.js`, l. 123-128).
+          Il n'alimente aucune valeur : le témoin en garde les huit séries du
+          levier de l'âge, chaque cinquième année de 2030 à 2070, et
+          `tests/test_leviers.py` s'y confronte (action 138, étape 3). Le
+          fichier, que le COR ne laisse reproduire qu'avec son accord, reste
+          dans data/brut/.
+      - id: cor_simulateur_2021
+        titre: >-
+          Les données du simulateur du COR, millésime de 2021 d'après le nom
+          que lui donne sa copie — les mêmes treize séries, aux six
+          scénarios, de 2005 à 2070
+        url: https://www.cor-retraites.fr/simulateur/fileProjection.json
+        acces: fichier
+        blocage: retire
+        fichier_local: fileProjection_2021.json
+        miroir: https://raw.githubusercontent.com/ChallengesRedac/simulateurRetraite/3130716c01702aecca3b31ac948890dda7692a18/src/data/fileProjection.json
+        sha256: 8196a3e42ea34475a0096d7f673fda281fbf4d4f0ee3bf568b0744af7d22c293
+        rediffusion:
+          statut: interdite
+          texte: >-
+            « Les notes préparées par le secrétariat général du COR dans le
+            cadre des séances plénières sont rendues publiques mais n'engagent
+            pas le Conseil. Elles peuvent être reproduites en mentionnant la
+            source : "Document de travail préparé par le secrétariat général du
+            COR". La reproduction des autres documents est soumise à l'accord
+            de leur auteur ou éditeur. »
+          lu_dans: >-
+            mentions légales du site du COR, « Conditions de reproduction »,
+            https://www.cor-retraites.fr/informations-editeur
+          lu_le: 2026-11-02
+        statut_integration: controle
+        cible: tests/temoins/cor_simulateur.json
+        recuperation: scripts/fetch/cor_simulateur.py
+        millesime: 2021, d'après sa copie
+        note: >-
+          Le même fichier, servi à une autre date : la rédaction de Challenges
+          l'a repris dans `ChallengesRedac/simulateurRetraite` (commit
+          `3130716`, 9 janvier 2023), sous ce nom et, identique, sous celui de
+          `donneesCor2021.json`, que rien d'autre ne date. Toutes ses séries
+          y changent : en 2070, au scénario 1, 22,95 millions de retraités au
+          lieu de 24,33 en 2019. L'archive du web, qui dirait quand le COR l'a
+          servi et garde peut-être les millésimes suivants, refuse la session
+          (le 2 novembre 2026, web.archive.org coupe la connexion et
+          archive.org répond 429) : ils sont à rapporter d'un poste. Il
+          n'alimente aucune valeur ; le fichier reste dans data/brut/.
       - id: cor_age_depart_generations
         titre: >-
           L'âge moyen de départ à la retraite par génération, de 1906 à 2000

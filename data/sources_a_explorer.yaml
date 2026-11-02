@@ -6586,10 +6586,16 @@ sources:
       depuis le 29 juillet 2026 (son `Last-Modified`), dit « Le simulateur est
       temporairement fermé pour révision des scénarios économiques », et
       toute adresse sous `/simulateur/`, sa documentation comprise, sert la
-      même ; l'accueil du COR offre pourtant toujours de le « lancer ». Rien à
-      en tirer d'ici là : sa documentation de 2016 est au registre des
+      même ; l'accueil du COR offre pourtant toujours de le « lancer ».
+      Toujours fermé le 2 novembre 2026, mais ses versions de juin 2019 et de
+      2021 survivent dans des copies, au manifeste (`cor_simulateur_2019`,
+      `cor_simulateur_2021`, au blocage `retire`), et son code dans
+      `nosretraites/roc-retraites` : `tests/test_leviers.py` y confronte le
+      geste de l'âge (138.3). Sa documentation de 2016 est au registre des
       modèles (data/reference/referents.yaml, `simulateur_cor`), qui en a
-      repris le facteur de 0,5 (138.3). À rouvrir quand il rouvrira.
+      repris le facteur de 0,5. Restent sa version rouverte, aux scénarios
+      révisés, et les millésimes que garde peut-être l'archive du web, qui
+      refuse la session : à rapporter d'un poste.
 
   - id: cor_modeles_microsimulation_2020
     url: https://www.cor-retraites.fr/node/530

@@ -144,6 +144,12 @@ BLOCAGES = {
         "l'accès demande une clé, un compte ou une convention ; rien à "
         "apporter, la donnée ne peut pas entrer dans le dépôt telle quelle"
     ),
+    "retire": (
+        "le producteur ne sert plus le document : son adresse répond par une "
+        "autre page, à un navigateur comme à une session, et seules des "
+        "copies le gardent — le miroir désigne celle qu'on lit, l'empreinte "
+        "la contrôle"
+    ),
 }
 
 

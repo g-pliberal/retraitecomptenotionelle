@@ -15,6 +15,10 @@ trois choses :
   quand les deux tiers de ceux que le recul retient comptent parmi les
   cotisants ; tous, il en demanderait moins, la moitié — la part que le dépôt
   a lue dans les évaluations de 2010 —, un peu plus.
+* LE SIMULATEUR DU COR, fermé depuis juillet 2026, dont des copies gardent
+  le code et les données de 2019 et de 2021 (``tests/temoins/cor_simulateur.json``,
+  ``scripts/fetch/cor_simulateur.py``) : sur ses propres séries, le geste de
+  l'âge du module est le sien.
 * LA CONFRONTATION du système actuel : sous la référence du COR, ses trois
   leviers et son tax gap sont ceux du COR, à l'arrondi de quelques centièmes.
 """
@@ -47,10 +51,22 @@ ANNEES = tuple(range(2030, 2071, 5))
 #: retenus en emploi qui refait ses âges.
 RETRAITES_2023 = 17.2e6
 
+#: Le témoin du simulateur du COR : deux millésimes de ses données, les six
+#: scénarios de chacun, et les huit séries dont son levier de l'âge se sert.
+TEMOIN_SIMULATEUR = RACINE / "tests" / "temoins" / "cor_simulateur.json"
+MILLESIMES_DU_SIMULATEUR = ("2019", "2021")
+SCENARIOS_DU_SIMULATEUR = ("1", "2", "3", "4", "5", "6")
+SERIES_DU_SIMULATEUR = ("NR", "NC", "G", "T", "P", "dP", "PdP", "A")
+
 
 @pytest.fixture(scope="module")
 def cor() -> dict:
     return json.loads(TEMOIN.read_text(encoding="utf-8"))
+
+
+@pytest.fixture(scope="module")
+def simulateur_cor() -> dict:
+    return json.loads(TEMOIN_SIMULATEUR.read_text(encoding="utf-8"))
 
 
 def test_le_temoin_du_cor_dit_sa_source_et_redonne_le_rapport(cor):
@@ -219,6 +235,75 @@ def test_le_geste_de_l_age_refait_les_ages_d_equilibre_du_cor(
                            age["spontane"][cle], part_en_emploi)
         publie = age["equilibre"][cle] - age["spontane"][cle]
         assert ecart_minimal <= recul - publie <= ecart_maximal, (annee, recul, publie)
+
+
+def test_le_temoin_du_simulateur_dit_ses_copies_et_redonne_ses_series(simulateur_cor):
+    """Les données du simulateur du COR, en deux millésimes que des copies
+    gardent : chacun dit son adresse d'origine, la copie lue et son
+    empreinte ; les huit séries du levier de l'âge, aux six scénarios, chaque
+    cinquième année de 2030 à 2070. Et trois valeurs lues dans les fichiers,
+    en milliers : les retraités de droit direct du scénario 1 en 2030, 18 662
+    en 2019 et 18 572 en 2021, et l'effectif d'une génération, 855."""
+    for millesime in MILLESIMES_DU_SIMULATEUR:
+        source = simulateur_cor["millesimes"][millesime]["source"]
+        for champ in ("url", "copie", "sha256", "lu_le"):
+            assert source.get(champ), (millesime, champ)
+        series = simulateur_cor["millesimes"][millesime]["series"]
+        assert sorted(series) == sorted(SERIES_DU_SIMULATEUR)
+        for nom in SERIES_DU_SIMULATEUR:
+            assert sorted(series[nom]) == list(SCENARIOS_DU_SIMULATEUR), nom
+            for scenario in SCENARIOS_DU_SIMULATEUR:
+                assert sorted(map(int, series[nom][scenario])) == list(ANNEES), (nom, scenario)
+    series_2019 = simulateur_cor["millesimes"]["2019"]["series"]
+    series_2021 = simulateur_cor["millesimes"]["2021"]["series"]
+    assert round(series_2019["NR"]["1"]["2030"]) == 18662
+    assert round(series_2021["NR"]["1"]["2030"]) == 18572
+    assert round(series_2019["G"]["1"]["2030"]) == 855
+
+
+def _solde_du_simulateur(serie: dict, recul: float) -> float:
+    """Le solde que le simulateur du COR calcule quand l'âge recule de
+    ``recul`` ans, la pension et le taux laissés à leur trajectoire, rapporté
+    aux revenus d'activité : son code (``js/script.js``, l. 403 et 411),
+    ``nb = (NR − G·Δ) / (NC + 0,5·G·Δ)`` retraités par cotisant, et
+    ``T − nb·(P + dP)``, au facteur ``B`` près, la part de ces revenus dans
+    le PIB."""
+    retraites_par_cotisant = ((serie["NR"] - serie["G"] * recul)
+                              / (serie["NC"] + 0.5 * serie["G"] * recul))
+    return serie["T"] - retraites_par_cotisant * (serie["P"] + serie["dP"])
+
+
+def test_le_geste_de_l_age_est_celui_du_simulateur_du_cor(simulateur_cor):
+    """Le simulateur du COR ne cherche pas l'âge : on le règle, et il dit le
+    solde. Son code retire G retraités par année de recul, G l'effectif d'une
+    génération qui arrive aux âges de la retraite, et en compte la moitié
+    parmi les cotisants. Le geste du module, sur une pyramide où chaque âge
+    compte G personnes et la moitié des retenus en emploi : à chaque
+    millésime, chaque scénario, chaque cinquième année de 2030 à 2070, le
+    recul qu'il rend est celui qui annule le solde du simulateur — la racine
+    de ``T·(NC + G·Δ/2) = (P + dP)·(NR − G·Δ)`` —, à un cent-millième d'année
+    près ; en avance quand le système a une marge, comme au scénario 1 de
+    2019 en 2070."""
+    for millesime in MILLESIMES_DU_SIMULATEUR:
+        series = simulateur_cor["millesimes"][millesime]["series"]
+        for scenario in SCENARIOS_DU_SIMULATEUR:
+            for annee in ANNEES:
+                serie = {nom: series[nom][scenario][str(annee)] for nom in SERIES_DU_SIMULATEUR}
+                depense = serie["P"] + serie["dP"]
+                assert depense == pytest.approx(serie["PdP"], abs=1e-8)
+                attendu = ((serie["NR"] * depense - serie["NC"] * serie["T"])
+                           / (serie["G"] * (depense + 0.5 * serie["T"])))
+                assert _solde_du_simulateur(serie, attendu) == pytest.approx(0.0, abs=1e-12)
+                rapport = serie["NR"] * depense / (serie["NC"] * serie["T"])
+                recul = releve_age(rapport, serie["NR"], serie["NC"], _Population(serie["G"]),
+                                   annee, serie["A"], 0.5)
+                assert recul == pytest.approx(attendu, abs=1e-5), (millesime, scenario, annee)
+    series_2019 = simulateur_cor["millesimes"]["2019"]["series"]
+    serie = {nom: series_2019[nom]["1"]["2070"] for nom in SERIES_DU_SIMULATEUR}
+    assert _solde_du_simulateur(serie, 0.0) > 0.0
+    rapport = serie["NR"] * serie["PdP"] / (serie["NC"] * serie["T"])
+    assert releve_age(rapport, serie["NR"], serie["NC"], _Population(serie["G"]),
+                      2070, serie["A"], 0.5) < 0.0
 
 
 @lru_cache(maxsize=None)

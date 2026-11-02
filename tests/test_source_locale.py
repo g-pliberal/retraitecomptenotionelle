@@ -30,6 +30,7 @@ LECTEURS_DE_DOCUMENTS = (
     "cnavpl_recueils.py",
     "insee_projections_mortalite.py",
     "eurostat_mortalite.py",
+    "cor_simulateur.py",
 )
 
 
@@ -86,6 +87,28 @@ def test_les_refus_constates_sont_declares():
     assert jeux["opef_rapport_annuel"]["blocage"] == "refus"
     assert jeux["legifrance_textes"]["blocage"] == "refus"
     assert jeux["drees_eic"]["blocage"] == "convention"
+
+
+def test_un_document_retire_par_son_producteur_se_lit_dans_ses_copies():
+    """Le simulateur du COR est fermé depuis juillet 2026 : son adresse sert la
+    page qui le dit, à une session comme à un navigateur, et ses données ne
+    survivent que dans des copies. Ses deux millésimes se déclarent retirés,
+    avec la copie qui les sert, leur empreinte et le nom qui les distingue
+    dans data/brut/ ; le COR soumet leur reproduction à son accord, et la
+    release ne les porte pas."""
+    module = _module()
+    jeux = _jeux()
+    assert "retire" in module.BLOCAGES
+    for ident in ("cor_simulateur_2019", "cor_simulateur_2021"):
+        jeu = jeux[ident]
+        assert jeu["blocage"] == "retire", ident
+        assert jeu["url"] == "https://www.cor-retraites.fr/simulateur/fileProjection.json"
+        assert jeu["miroir"].startswith("https://raw.githubusercontent.com/"), ident
+        assert module.ou_deposer(jeu).name == jeu["fichier_local"], ident
+        assert module.rediffusion(jeu) == "interdite", ident
+        assert "soumise à l'accord" in jeu["rediffusion"]["texte"], ident
+        assert not module.a_publier([jeu]), ident
+    assert jeux["cor_simulateur_2019"]["fichier_local"] != jeux["cor_simulateur_2021"]["fichier_local"]
 
 
 def test_la_liste_des_sources_bloquees_s_imprime(capsys):

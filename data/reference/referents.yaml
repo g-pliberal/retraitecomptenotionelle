@@ -6327,7 +6327,9 @@ referents:
     publication: documente
     documentation:
       - https://www.cor-retraites.fr/simulateur/
-    licence: sans objet
+    licence: >-
+      reproduction soumise à l'accord du COR (mentions légales, « Conditions
+      de reproduction », lues le 2 novembre 2026)
     usage: resultats_publies
     confronte: [cout]
     couvre: >-
@@ -6335,9 +6337,15 @@ referents:
       des pensions — sur les projections agrégées du COR.
     depend_de: [maquette_globale_cor]
     confrontation: >-
-      Aucune tant qu'il est fermé : « Le simulateur est temporairement fermé
-      pour révision des scénarios économiques », et sa documentation
-      technique répond 404.
+      Par ses copies, depuis qu'il est fermé (« Le simulateur est
+      temporairement fermé pour révision des scénarios économiques ») : ses
+      données de juin 2019 et de 2021 (au manifeste, `cor_simulateur_2019` et
+      `cor_simulateur_2021`) et son code (`js/script.js`, dans
+      `nosretraites/roc-retraites`). Sur ses propres séries, à chaque scénario
+      et chaque cinquième année de 2030 à 2070, le recul que rend
+      `releve_age` annule le solde que son code calcule, à un cent-millième
+      d'année près (`tests/test_leviers.py`, 2 novembre 2026). Sa version
+      rouverte, aux scénarios révisés, reste à confronter.
     fait_mieux:
       - quoi: >-
           Il boucle la projection par une équation, « S = B x
@@ -6382,17 +6390,27 @@ referents:
         etat: repris
         chantier: "138.3"
     bilan: >-
-      Fermé, le simulateur ne se confronte que par sa documentation de
-      2016. Celle-ci apporte l'équation de bouclage (déjà au registre)
-      et le facteur de 0,5 avec sa sensibilité : c'est le premier repère
-      pour remplacer le plafond de un du dépôt.
+      Fermé, le simulateur se confronte par ses copies : son code et ses
+      données de 2019 et de 2021 confirment le geste de l'âge du dépôt, qui
+      compte la moitié des retenus parmi les cotisants. Sa documentation de
+      2016 apporte l'équation de bouclage (déjà au registre) et la
+      sensibilité du facteur de 0,5. Ses séries n'expliquent pas l'écart au
+      rapport de 2026, qui demande les deux tiers : son effectif d'une
+      génération est celui de l'INSEE à 2 % près, et ses retraités, plus
+      nombreux que ceux du dépôt, en demanderaient davantage encore.
     sas: [cor_simulateur]
-    lu_le: 2026-10-04
+    lu_le: 2026-11-02
     lu_dans:
       - https://www.cor-retraites.fr/simulateur/
+      - https://github.com/nosretraites/roc-retraites
+      - https://github.com/ChallengesRedac/simulateurRetraite
     note: >-
-      Ses reprises, toutes sur ses projections : `brunoscherrer/retraites`
-      (ci-dessous), et, sans licence, `nosretraites/roc-retraites`,
+      Sa copie : `nosretraites/roc-retraites` (commit `d375f10`, janvier
+      2020) garde le site entier, page, code et documentation, « revu » par
+      le collectif Nos retraites, ses données identiques à l'octet à celles
+      de `brunoscherrer/retraites` ; `ChallengesRedac/simulateurRetraite`
+      garde ses données de 2021. Ses reprises, toutes sur ses projections :
+      `brunoscherrer/retraites` (ci-dessous), et, sans licence,
       `ChallengesRedac/simulateurRetraite`, `Brohuld/Simulateur-Retraites`,
       `V0latix/retraite_simu`, `GuillaumeAB/simulateur-retraites-france`.
       Sa documentation de 2016 se lit encore dans la copie qu'en garde
