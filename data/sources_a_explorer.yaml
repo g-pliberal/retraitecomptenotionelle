@@ -7329,6 +7329,49 @@ sources:
       millions pour 2024, 2 % de plus que les 4 839 du premier étage, de
       l'ASV et de l'Aspa. Aucune page ne demande encore les effectifs.
 
+  # Repérés le 2 novembre 2026 dans le catalogue du portail, à l'inventaire du
+  # panorama « Les retraités et les retraites » de 2026 (action 178).
+  - id: drees_eic_trimestres_a_30_ans
+    url: https://data.drees.solidarites-sante.gouv.fr/explore/dataset/nombre-moyen-de-trimestres-valides-a-30-ans-par-sexe-et-par-generation-entre-194/
+    nature: document
+    acces: session
+    regimes: []
+    a_en_tirer: >-
+      Le nombre moyen de trimestres validés à 30 ans, par sexe et par
+      génération, de 1942 à 1982 : le jeu, titré « EIC 2013 », a été refait le
+      9 octobre 2026, à la veille du panorama dont la fiche 12 tire le même
+      indicateur de l'EIC de 2021 (graphique 1). Dire quelle vague il porte,
+      puis confronter ces durées aux carrières du modèle (action 178,
+      étape 3).
+    statut: a_explorer
+
+  - id: drees_retraite_supplementaire
+    url: https://data.drees.solidarites-sante.gouv.fr/explore/dataset/2034_la-retraite-supplementaire-facultative-et-l-epargne-retraite/
+    nature: document
+    acces: session
+    regimes: []
+    a_en_tirer: >-
+      Les séries de l'enquête Retraite supplémentaire, mises à jour le 20
+      avril 2026 — cotisations, prestations, provisions et contrats, par
+      dispositif —, d'où viennent les fiches 30 à 32 du panorama de 2026 : à
+      confronter au pilier capitalisé et à la capitalisation volontaire de la
+      proposition (action 178, étape 4).
+    statut: a_explorer
+
+  - id: drees_graphique_non_recours_personnes_agees
+    url: https://data.drees.solidarites-sante.gouv.fr/explore/dataset/graphique-er-non-recours-pa/
+    nature: document
+    acces: session
+    regimes: []
+    a_en_tirer: >-
+      Le graphique d'un Études et résultats sur le non-recours des personnes
+      âgées, publié le 6 juillet 2026, à identifier : s'il mesure le
+      non-recours au minimum vieillesse, il met à jour celui que le dépôt tient
+      du dossier n° 97 (`drees_non_recours_minimum_vieillesse`) et que la
+      garantie vieillesse de la proposition suppose (fiche 28 du panorama de
+      2026, encadré 2).
+    statut: a_explorer
+
   - id: legifrance_piste
     url: https://api.piste.gouv.fr/dila/legifrance/lf-engine-app
     nature: index

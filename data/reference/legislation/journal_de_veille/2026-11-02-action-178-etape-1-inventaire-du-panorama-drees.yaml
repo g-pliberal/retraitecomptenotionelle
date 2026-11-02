@@ -1,0 +1,29 @@
+date: "2026-11-02"
+session: "action 178, étape 1 : l'inventaire du panorama « Les retraités et les retraites » de la DREES, édition 2026"
+consulte: >-
+  Aucune règle du scénario 1 n'est touchée : la session ouvre l'action et en
+  fait l'inventaire. La page de la DREES
+  (261014-les-retraites-et-les-retraites-edition-2026), par curl et par
+  WebFetch ; Internet Archive ; le catalogue du portail de données de la DREES
+  (API Opendatasoft), par WebFetch ; le PDF que sert l'UNSA Retraités
+  (retraites.unsa.org, article du 14 octobre 2026), relu en entier par
+  pdftotext ; l'article de Sapiendo du 19 octobre 2026 ; vie-publique.fr, qui
+  ne sert que l'édition 2025.
+trouve: >-
+  Le site de la DREES et Internet Archive refusent le cloud ; le portail de
+  données n'a rien de l'édition 2026. Le PDF de l'UNSA est celui de la DREES
+  par ses métadonnées (créé le 12 octobre 2026, 314 pages, ISBN
+  978-2-11-162795-6) ; le manifeste le déclare avec son empreinte. Pour le
+  scénario 1, quatre morceaux à confronter à l'étape 5, sans être lus contre
+  le droit aujourd'hui : l'encadré 1 de la fiche 2, les mois où chaque
+  génération atteint l'âge d'ouverture des droits sous la loi de financement
+  pour 2026 ; les tableaux 1 à 4 de la fiche 14 (âges, durées, carrière
+  longue) ; le tableau 1 de la fiche 24 (pensions d'invalidité du régime
+  général au 1er janvier 2026) ; la fiche 26 (minimum vieillesse). La fiche 4
+  dit les revalorisations : 0,9 % au 1er janvier 2026 pour les régimes de
+  base, aucune à l'Agirc-Arrco en novembre 2025, faute d'accord.
+reste: >-
+  L'étape 5 de l'action 178 confronte ces tableaux aux tables de
+  data/reference/legislation/, sur Opus, après python scripts/veille_droit.py.
+  Au propriétaire, depuis un poste : les fichiers Excel des fiches, les
+  mentions légales de la DREES, l'empreinte du PDF qu'elle sert.

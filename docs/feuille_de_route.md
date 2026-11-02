@@ -7439,3 +7439,94 @@ moteurs ensemble.
    2004, l'année 1980 portée au tiers du plafond ôte 2 % au RCO que le modèle
    calcule (`177/2026-10-31-etape-5-assiette-d-avant-2007.md`). Décidé avec le
    propriétaire le 31 octobre 2026.
+
+### 178. Le panorama « Les retraités et les retraites » de la DREES, édition 2026, exploité en entier : chaque fiche à sa place dans le dépôt — `en cours`
+
+**Reprise, au 2 novembre 2026.** L'étape 1 est faite : le PDF se récupère
+(`python scripts/fetch/source_locale.py --recuperer`, miroir de l'UNSA tenu à
+son empreinte) ; `scripts/fetch/drees_panorama.py` en relève les 34 fiches,
+172 figures et 41 encadrés ; le suivi, `data/reference/drees_panorama_2026.yaml`,
+dit de chaque fiche ce que le dépôt en a et ce qu'il en tirera. Par quoi
+commencer : l'étape 2, les chiffres de 2024, ou la 3, l'EIC de 2021 ; les
+étapes 2 à 5 se mènent en parallèle, chacune son bloc sous le titre de sa
+note. Au propriétaire : les fichiers Excel des fiches et les mentions légales
+de la DREES, que seul un poste atteint. Détail : `178/2026-11-02-etape-1-inventaire.md`.
+
+**D'où elle vient.** Le 2 novembre 2026, le propriétaire, avec l'adresse de la
+page de la DREES : « Il y a une nouvelle publication sur les retraites qui
+vient de sortir. Je pense qu'on peut l'exploiter à fond. »
+
+**Le document.** *Les retraités et les retraites*, édition 2026, Panoramas de
+la DREES, collection Social, paru le 14 octobre 2026 : 314 pages sur l'année
+2024, une vue d'ensemble, trente-quatre fiches en neuf parties — les
+effectifs, les montants et le niveau de vie, les carrières, la liquidation,
+les opinions, les transitions de l'emploi à la retraite et l'invalidité, le
+minimum vieillesse, la retraite supplémentaire — et quatre annexes. Ses
+sources : l'EACR, le modèle ANCETRE, l'EIR de 2020, l'EIC de 2021, « dont
+c'est la première utilisation dans le cadre de ce panorama », le Baromètre
+d'opinion, l'enquête Motivations de départ, les comptes de la protection
+sociale, l'enquête Emploi, l'ERFS et l'enquête Histoire de vie et Patrimoine
+de l'INSEE, l'annuaire du GIP Union Retraite, l'enquête Retraite
+supplémentaire, Acemo-Pipa de la Dares. Chaque fiche a son « fichier Excel
+associé », sur le site de la DREES seul.
+
+**L'accès.** Le site de la DREES refuse le cloud (réponse vide à curl, 503 à
+WebFetch), ses mentions légales comme ses fichiers ; Internet Archive aussi.
+Son portail de données répond à WebFetch, mais ne porte rien de l'édition
+2026. L'UNSA Retraités sert le PDF depuis le jour de la parution : le
+manifeste le déclare (`drees_panorama_retraites_2026`), avec l'empreinte de
+cette copie, que `--recuperer` vérifie. Qu'elle soit le fichier de la DREES
+octet pour octet reste à vérifier depuis un poste.
+
+**Ce que le dépôt en tirait déjà.** Ses sources d'amont, pour l'essentiel :
+l'EACR du 26 mai 2026, jusqu'aux effectifs de 2024 (`drees_eacr`,
+`drees_eacr_tables`, `drees_pensionnes_2022`), sans en retenir les montants
+moyens ; l'EIR de 2020 (`drees_eir_caracteristiques`, `drees_eir_distribution`,
+`drees_eir_generations`, `drees_pension_nette`, dont les montants s'arrêtent à
+2022) ; l'EIC de 2017 (`drees_eic_droits_valides`,
+`drees_eic_natures_assimilees`, `drees_eic_duree_validee`) ; l'âge
+conjoncturel de départ jusqu'en 2022 (`drees_age_conjoncturel`) ; les comptes
+de la protection sociale jusqu'en 2024 (`drees_comptes_protection_sociale`) ;
+les allocataires du minimum vieillesse de 2024
+(`insee_allocataires_minimum_vieillesse`) ; les revalorisations jusqu'au 1er
+janvier 2026. Du panorama lui-même, trois citations : l'édition 2018, fiche 9,
+dans `scripts/part_minimum_contributif.py` ; l'édition 2025, fiche 18, dans
+`docs/risque_de_defaut.md` ; le taux de remplacement de l'édition 2025, tel
+que le jaune l'imprime, sur la page des cas types. Rien de l'invalidité
+au-delà des effectifs de 2022, ni du cumul et de la retraite progressive, ni
+de la retraite supplémentaire, des opinions et des motivations.
+
+**Ce qui est à faire**, une étape par session ; après la 1, en parallèle.
+
+1. **L'inventaire** (données) : fait le 2 novembre 2026.
+2. **Les chiffres de 2024** (données) : chaque total que le panorama publie
+   d'une source que le dépôt lit déjà — effectifs, flux, réversion, minimum
+   vieillesse, invalidité —, recoupé par un test au fichier que le dépôt
+   lit ; ce que le dépôt n'a pas encore pour 2024, porté à `data/reference/`
+   avec le test qui le recoupe à sa source ; les trois citations des
+   éditions 2018 et 2025, relues à l'édition 2026, celle de la page des cas
+   types par une session du site.
+3. **L'EIC de 2021** (données, puis modèle) : les fiches 12 et 21 — les durées
+   validées par âge et par génération, leur nature, la situation à 59 ans —,
+   d'abord par ce que le portail de données en sert, puis par les fichiers
+   Excel ; confrontées aux carrières du modèle, qui lisent l'EIC de 2017.
+4. **Les confrontations** (modèle) : chaque fiche `a_confronter` du suivi, par
+   un test du niveau `controle` ; un écart se corrige ou se déclare, en
+   commit à part.
+5. **Les règles** (scénario 1, sur Opus, après `python scripts/veille_droit.py`) :
+   les tableaux de législation des fiches 14, 24 et 26, l'encadré 1 de la
+   fiche 2 et la revalorisation de la fiche 4, confrontés aux tables de
+   `data/reference/legislation/`.
+6. **Les fichiers Excel** (données) : quand le propriétaire les apporte, les
+   séries des graphiques, que le PDF ne chiffre pas, à leur place selon le
+   suivi.
+7. **La clôture** (données) : chaque fiche du suivi à son statut final, la
+   ligne du manifeste à son `statut_integration`, le récupérateur prêt pour
+   l'édition 2027.
+
+**Ce qui revient au propriétaire.** Depuis un poste, sur la page de la DREES :
+les fichiers Excel des fiches, à déposer sur une branche du dépôt, comme le
+jaune 2027, ou sur la release `documents-apportes` ; ses mentions légales, dont
+la clause de réutilisation dirait si la release peut les servir
+(`rediffusion` du manifeste) ; et l'empreinte SHA-256 du PDF qu'elle sert, pour
+dire si la copie de l'UNSA est la sienne.

@@ -1194,7 +1194,53 @@ institutions:
           La synthèse annuelle. Elle n'est pas la source des effectifs : le
           critère 1 fait remonter d'un cran, jusqu'aux fichiers de l'EACR et de
           l'EIR que le panorama commente et que les deux entrées suivantes
-          récupèrent.
+          récupèrent. L'édition 2026 a son jeu, le suivant (action 178).
+      - id: drees_panorama_retraites_2026
+        titre: >-
+          Les retraités et les retraites, édition 2026 (Panoramas de la DREES,
+          collection Social, 14 octobre 2026) : trente-quatre fiches et quatre
+          annexes sur l'année 2024
+        url: https://drees.solidarites-sante.gouv.fr/publications-communique-de-presse/panoramas-de-la-drees/261014-les-retraites-et-les-retraites-edition-2026
+        acces: document
+        blocage: refus
+        fichier_local: les_retraites_et_les_retraites_-_edition_2026-1.pdf
+        miroir: https://retraites.unsa.org/IMG/pdf/les_retraites_et_les_retraites_-_edition_2026-1.pdf
+        sha256: 9eb36a06639af0f4298d281b41acbde4236e47fc73e40c673f153ad86735e9be
+        millesime: 14 octobre 2026
+        statut_integration: a_faire
+        cible: tests/temoins/drees_panorama_2026.json
+        recuperation: scripts/fetch/drees_panorama.py
+        note: >-
+          Le panorama de l'année 2024 : 314 pages, une vue d'ensemble,
+          trente-quatre fiches en neuf parties, des effectifs à la retraite
+          supplémentaire, et quatre annexes. Ses sources d'amont sont pour
+          l'essentiel au manifeste déjà — l'EACR de mai 2026 (`drees_eacr`),
+          l'EIR de 2020 (`drees_eir_*`) — ; une est neuve, l'échantillon
+          interrégimes de cotisants de 2021, « dont c'est la première
+          utilisation dans le cadre de ce panorama » (avant-propos), quand le
+          dépôt lit celui de 2017. `scripts/fetch/drees_panorama.py` en relève
+          les fiches, les tableaux, les graphiques et leurs sources dans le
+          témoin `tests/temoins/drees_panorama_2026.json` ; le suivi,
+          `data/reference/drees_panorama_2026.yaml`, dit fiche par fiche ce
+          que le dépôt en a déjà et ce qu'il en tirera.
+
+          LE SITE DE LA DREES REFUSE LE CLOUD. Le 2 novembre 2026, la page
+          répond par une réponse vide à curl et par 503 à WebFetch, comme
+          depuis le 11 octobre ; Internet Archive coupe la connexion, et
+          WebFetch ne l'atteint pas. Le portail de données répond à WebFetch,
+          à curl par intermittence, mais ne porte rien de l'édition 2026 (son
+          seul jeu « panorama-retraite » est le graphique 1 de 2025), ni les
+          « fichier[s] Excel associé[s] à cette fiche », que le PDF dit « sur
+          le site de la Drees ». L'UNSA Retraités sert le PDF depuis le jour
+          de la parution, le 14 octobre (« Panorama DREES Retraités et
+          retraites 2026 ») : titre « Les retraités et les retraites -
+          Édition 2026 », créé sous InDesign le 12 octobre 2026 à 15 h 44
+          (UTC), modifié le 13 à 8 h 18, ISBN 978-2-11-162795-6. Ce miroir
+          n'est pas la DREES : qu'il soit son fichier octet pour octet reste à
+          vérifier depuis un poste ; l'empreinte est celle de la copie de
+          l'UNSA, et `--recuperer` refuse un fichier qui en porte une autre.
+          Les mentions légales de la DREES refusent aussi le cloud : la
+          licence n'est pas lue, et le document ne se republie pas.
       - id: drees_eacr
         titre: Enquête annuelle auprès des caisses de retraite (EACR), fichier diffusé
         url: https://data.drees.solidarites-sante.gouv.fr/explore/dataset/donnes_eacr/

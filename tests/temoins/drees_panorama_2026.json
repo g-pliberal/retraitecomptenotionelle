@@ -1,0 +1,1861 @@
+{
+ "source": "https://drees.solidarites-sante.gouv.fr/publications-communique-de-presse/panoramas-de-la-drees/261014-les-retraites-et-les-retraites-edition-2026",
+ "miroir": "https://retraites.unsa.org/IMG/pdf/les_retraites_et_les_retraites_-_edition_2026-1.pdf",
+ "sha256": "9eb36a06639af0f4298d281b41acbde4236e47fc73e40c673f153ad86735e9be",
+ "pages": 314,
+ "vue_d_ensemble": {
+  "figures": [
+   {
+    "page": 9,
+    "nature": "Tableau",
+    "numero": "1",
+    "titre": "Effectifs de retraités dans les principaux régimes au 31 décembre 2024",
+    "sources": "Drees, EACR, modèle ANCETRE."
+   },
+   {
+    "page": 10,
+    "nature": "Graphique",
+    "numero": "1",
+    "titre": "Âge conjoncturel moyen de départ à la retraite, selon le sexe, entre 2004 et 2024",
+    "sources": "Drees, EIR, modèle ANCETRE ; Insee, bilan démographique."
+   },
+   {
+    "page": 12,
+    "nature": "Graphique",
+    "numero": "2",
+    "titre": "Évolution de l’écart entre les montants de pension des femmes et des hommes",
+    "sources": "Drees, EIR, modèle ANCETRE."
+   },
+   {
+    "page": 13,
+    "nature": "Graphique",
+    "numero": "3",
+    "titre": "Montant mensuel moyen de la pension de droit direct des retraités vivant en France, selon l’année de naissance",
+    "sources": "Drees, EIR 2020, modèle ANCETRE 2021, 2022, 2023 et 2024 pour les données des générations nées entre 1954 et 1957."
+   },
+   {
+    "page": 14,
+    "nature": "Tableau",
+    "numero": "2",
+    "titre": "Cotisations et prestations relatives à la retraite supplémentaire en 2024",
+    "sources": "Drees, enquête Retraite supplémentaire 2024."
+   }
+  ],
+  "encadres": []
+ },
+ "fiches": {
+  "01": {
+   "titre": "Les effectifs de retraités de droit direct",
+   "page": 20,
+   "figures": [
+    {
+     "page": 21,
+     "nature": "Tableau",
+     "numero": "1",
+     "titre": "Effectifs de retraités de droit direct tous régimes",
+     "sources": "Drees, EIR, modèle ANCETRE."
+    },
+    {
+     "page": 22,
+     "nature": "Graphique",
+     "numero": "1",
+     "titre": "Rapport entre les effectifs de personnes en emploi et les effectifs de retraités de droit direct, résidant en France ou à l’étranger",
+     "sources": "Drees, EIR, modèle ANCETRE ; Insee, comptes nationaux."
+    },
+    {
+     "page": 22,
+     "nature": "Graphique",
+     "numero": "2",
+     "titre": "Variation annuelle du nombre de retraités et effectifs annuels de nouveaux retraités",
+     "sources": "Drees, EIR, modèle ANCETRE."
+    },
+    {
+     "page": 23,
+     "nature": "Tableau",
+     "numero": "2",
+     "titre": "Effectifs de retraités de droit direct, par régime de retraite, fin 2024",
+     "sources": "Drees, EACR, modèle ANCETRE."
+    },
+    {
+     "page": 24,
+     "nature": "Carte",
+     "numero": "1",
+     "titre": "Proportion de retraités âgés de plus de 55 ans parmi les personnes âgées de 15 ans ou plus, par département, fin 2020",
+     "sources": "Drees, EIR ; Insee, structure de la population du département par âge au 1er janvier 2021."
+    },
+    {
+     "page": 25,
+     "nature": "Tableau",
+     "numero": "3",
+     "titre": "Effectifs de retraités de droit direct d’un régime de base, selon le régime principal, fin 2024",
+     "sources": "Drees, modèle ANCETRE."
+    },
+    {
+     "page": 26,
+     "nature": "Graphique",
+     "numero": "3",
+     "titre": "Part des polypensionnés, par génération et par sexe",
+     "sources": "Drees, EIR 2020 pour les générations nées entre 1926 et 1953, modèle ANCETRE pour les générations nées de 1954 à 1957."
+    },
+    {
+     "page": 27,
+     "nature": "Graphique",
+     "numero": "4",
+     "titre": "Pyramide des âges des bénéficiaires d’un avantage de droit direct, fin 2024",
+     "sources": "Drees, modèle ANCETRE."
+    }
+   ],
+   "encadres": [
+    {
+     "page": 27,
+     "nature": "Encadré",
+     "numero": "1",
+     "titre": "La liquidation unique des régimes alignés (Lura)",
+     "sources": ""
+    }
+   ]
+  },
+  "02": {
+   "titre": "Les nouveaux retraités de droit direct",
+   "page": 29,
+   "figures": [
+    {
+     "page": 30,
+     "nature": "Tableau",
+     "numero": "1",
+     "titre": "Effectifs de nouveaux retraités de droit direct, tous régimes",
+     "sources": "Drees, EIR, modèle ANCETRE."
+    },
+    {
+     "page": 33,
+     "nature": "Tableau",
+     "numero": "2",
+     "titre": "Nouveaux retraités de droit direct, par régime de retraite",
+     "sources": "Drees, EIR, EACR, modèle ANCETRE."
+    },
+    {
+     "page": 34,
+     "nature": "Graphique",
+     "numero": "1",
+     "titre": "Part des nouvelles pensions versées en 2024 au titre de la Lura",
+     "sources": "Drees, EACR."
+    }
+   ],
+   "encadres": [
+    {
+     "page": 31,
+     "nature": "Encadré",
+     "numero": "1",
+     "titre": "Réforme 2023 et loi de financement de la Sécurité sociale pour 2026 : l’effet du recul de l’AOD sur le nombre de nouveaux retraités",
+     "sources": "Législation."
+    },
+    {
+     "page": 32,
+     "nature": "Encadré",
+     "numero": "2",
+     "titre": "L’effet des variations démographiques sur le nombre de nouveaux retraités",
+     "sources": "Insee, estimations de population et projections de population 2021 (scénario central)."
+    }
+   ]
+  },
+  "03": {
+   "titre": "Les effectifs de retraités de droit dérivé",
+   "page": 35,
+   "figures": [
+    {
+     "page": 36,
+     "nature": "Tableau",
+     "numero": "1",
+     "titre": "Effectifs de retraités bénéficiaires d’une pension de droit dérivé, cumulée ou non avec une pension de droit direct",
+     "sources": "Drees, EIR, modèle ANCETRE."
+    },
+    {
+     "page": 37,
+     "nature": "Tableau",
+     "numero": "2",
+     "titre": "Effectifs de retraités bénéficiaires d’une pension de droit dérivé, cumulée ou non avec une pension de droit direct dans le régime, par régime de retraite, fin 2024",
+     "sources": "Drees, EACR, modèle ANCETRE."
+    },
+    {
+     "page": 38,
+     "nature": "Graphique",
+     "numero": "1",
+     "titre": "Variation annuelle du nombre de retraités de droit dérivé et effectifs de nouveaux retraités",
+     "sources": "Drees, EIR, modèle ANCETRE."
+    },
+    {
+     "page": 38,
+     "nature": "Tableau",
+     "numero": "3",
+     "titre": "Effectifs de retraités d’une pension de droit dérivé tous régimes, fin 2024",
+     "sources": "Drees, modèle ANCETRE."
+    },
+    {
+     "page": 39,
+     "nature": "Graphique",
+     "numero": "2",
+     "titre": "Part des retraitées d’une pension de droit dérivé parmi les femmes âgées de 60 ans ou plus résidant en France",
+     "sources": "Drees, EIR, modèle ANCETRE ; Insee, bilan démographique 2024."
+    },
+    {
+     "page": 39,
+     "nature": "Graphique",
+     "numero": "3",
+     "titre": "Pyramide des âges des bénéficiaires d’une pension de droit dérivé, fin 2024",
+     "sources": "Drees, modèle ANCETRE."
+    },
+    {
+     "page": 40,
+     "nature": "Graphique",
+     "numero": "4",
+     "titre": "Part des personnes bénéficiant d’une pension de droit dérivé, selon l’âge et la génération",
+     "sources": "Drees, EIR 2020 ; Insee, estimation de la population au 1er janvier 2021."
+    }
+   ],
+   "encadres": []
+  },
+  "04": {
+   "titre": "La revalorisation des pensions individuelles",
+   "page": 44,
+   "figures": [
+    {
+     "page": 46,
+     "nature": "Tableau",
+     "numero": "1",
+     "titre": "Revalorisation annuelle des pensions brutes depuis 2014",
+     "sources": "CNAV, MSA, RSI, SRE, CNRACL, Agirc-Arrco, Ircantec, RAFP ; Insee, indice des prix à la consommation ; Drees, EIR 2020, modèle ANCETRE."
+    },
+    {
+     "page": 47,
+     "nature": "Graphique",
+     "numero": "1",
+     "titre": "Revalorisation annuelle cumulée des pensions brutes et évolution des prix",
+     "sources": "CNAV, Agirc-Arrco, RAFP ; Insee, indice des prix à la consommation, comptes nationaux ; calculs Drees."
+    },
+    {
+     "page": 48,
+     "nature": "Graphique",
+     "numero": "2",
+     "titre": "Évolution des pensions de retraite déjà liquidées au 31 décembre 2014, des pensions de retraite moyennes depuis 2014 et du revenu d’activité moyen depuis 2014",
+     "sources": "Régimes de retraite ; Drees, EIR, EACR et modèle ANCETRE ; Insee, indice des prix à la consommation, comptes nationaux."
+    },
+    {
+     "page": 49,
+     "nature": "Graphique",
+     "numero": "3",
+     "titre": "Évolution du pouvoir d’achat de la pension tous régimes des assurés ayant liquidé en 2000",
+     "sources": "CNAV, Agirc-Arrco ; Drees ; Insee, indice des prix à la consommation."
+    },
+    {
+     "page": 52,
+     "nature": "Graphique",
+     "numero": "4",
+     "titre": "Érosion des pensions brutes par rapport au revenu d’activité moyen et à l’indice des prix, selon l’année de naissance des retraités",
+     "sources": "Drees, modèle Trajectoire, calculs Drees."
+    }
+   ],
+   "encadres": [
+    {
+     "page": 45,
+     "nature": "Encadré",
+     "numero": "1",
+     "titre": "Les modalités de revalorisation des pensions de retraite",
+     "sources": ""
+    },
+    {
+     "page": 50,
+     "nature": "Encadré",
+     "numero": "2",
+     "titre": "Les prélèvements sociaux sur les pensions",
+     "sources": "CNAV, Agirc-Arrco ; Drees."
+    }
+   ]
+  },
+  "05": {
+   "titre": "Le niveau des pensions",
+   "page": 54,
+   "figures": [
+    {
+     "page": 55,
+     "nature": "Tableau",
+     "numero": "1",
+     "titre": "Montant mensuel moyen de la pension des retraités résidant en France",
+     "sources": "Drees, EIR, modèle ANCETRE."
+    },
+    {
+     "page": 56,
+     "nature": "Graphique",
+     "numero": "1",
+     "titre": "Montant net mensuel moyen de la pension de droit direct (y compris éventuelle majoration pour trois enfants ou plus) de l’ensemble des retraités résidant en France, rapporté au revenu d’activité net moyen",
+     "sources": "Drees, modèle ANCETRE ; Insee, comptes nationaux."
+    },
+    {
+     "page": 57,
+     "nature": "Graphique",
+     "numero": "2",
+     "titre": "Montant brut mensuel moyen de la pension de droit direct (y compris éventuelle majoration pour trois enfants ou plus) des retraités résidant en France",
+     "sources": "Drees, EIR, modèle ANCETRE."
+    },
+    {
+     "page": 58,
+     "nature": "Tableau",
+     "numero": "2",
+     "titre": "Montant brut mensuel moyen de la pension de droit direct (hors majoration pour trois enfants ou plus) des retraités résidant en France ou à l’étranger, par régime de retraite, en 2024",
+     "sources": "Drees, EACR, modèle ANCETRE."
+    },
+    {
+     "page": 59,
+     "nature": "Tableau",
+     "numero": "3",
+     "titre": "Montants bruts mensuels moyens des éléments composant la pension de retraite totale, fin 2020",
+     "sources": "Drees, EIR."
+    },
+    {
+     "page": 60,
+     "nature": "Tableau",
+     "numero": "4",
+     "titre": "Montant brut mensuel moyen de la pension de droit direct (y compris éventuelle majoration pour trois enfants ou plus), selon le régime principal d’affiliation au cours de la carrière, fin 2024",
+     "sources": "Drees, EACR, modèle ANCETRE."
+    },
+    {
+     "page": 61,
+     "nature": "Graphique",
+     "numero": "3",
+     "titre": "Évolution des écarts de montants de pension entre les femmes et les hommes",
+     "sources": "Drees, EIR, modèle ANCETRE."
+    },
+    {
+     "page": 62,
+     "nature": "Carte",
+     "numero": "1",
+     "titre": "Montant brut mensuel moyen de la pension de droit direct (y compris éventuelle majoration pour trois enfants ou plus), par département, en 2020",
+     "sources": "Drees, EIR."
+    },
+    {
+     "page": 63,
+     "nature": "Graphique",
+     "numero": "4",
+     "titre": "Distribution des montants bruts mensuels de la pension de droit direct (y compris éventuelle majoration pour trois enfants ou plus) des retraités résidant en France",
+     "sources": "Drees, EIR."
+    }
+   ],
+   "encadres": []
+  },
+  "06": {
+   "titre": "Les écarts de pensions de droit direct entre générations",
+   "page": 65,
+   "figures": [
+    {
+     "page": 66,
+     "nature": "Graphique",
+     "numero": "1",
+     "titre": "Montant brut mensuel moyen de la pension de droit direct (y compris éventuelle majoration pour trois enfants ou plus), par génération",
+     "sources": "Drees, EIR 2020, modèle ANCETRE 2021, 2022, 2023 et 2024 pour les données des générations nées entre 1954 et 1957."
+    },
+    {
+     "page": 67,
+     "nature": "Tableau",
+     "numero": "1",
+     "titre": "Caractéristiques de la carrière et montants de pension en 2020 pour les générations nées en 1936, 1942, 1946, 1950 et 1953",
+     "sources": "Drees, EIR 2020."
+    },
+    {
+     "page": 68,
+     "nature": "Graphique",
+     "numero": "2",
+     "titre": "Évolution entre les générations du montant brut moyen de la pension de droit direct à 66 ou 67 ans, par régime",
+     "sources": "Drees, EACR, EIR, modèle ANCETRE."
+    },
+    {
+     "page": 70,
+     "nature": "Tableau",
+     "numero": "2",
+     "titre": "Écarts entre le montant brut moyen de la pension de droit direct de la génération née en 1940 et les montants des générations nées en 1946, 1950 et 1957, dans les régimes de base",
+     "sources": "Drees, EACR 2024."
+    },
+    {
+     "page": 71,
+     "nature": "Graphique",
+     "numero": "3",
+     "titre": "Évolution au fil des générations de l’écart entre les montants de pension des femmes et des hommes",
+     "sources": "Drees, EIR 2020, modèle ANCETRE."
+    },
+    {
+     "page": 72,
+     "nature": "Graphique",
+     "numero": "4",
+     "titre": "Taux de remplacement médian des retraités anciens salariés à carrière complète, par génération",
+     "sources": "Drees, EIR 2020 ; Insee, panel Tous salariés."
+    }
+   ],
+   "encadres": [
+    {
+     "page": 69,
+     "nature": "Encadré",
+     "numero": "1",
+     "titre": "La méthode de calcul du taux de remplacement",
+     "sources": ""
+    }
+   ]
+  },
+  "07": {
+   "titre": "La pension des nouveaux retraités",
+   "page": 74,
+   "figures": [
+    {
+     "page": 75,
+     "nature": "Tableau",
+     "numero": "1",
+     "titre": "Montant brut mensuel moyen de la pension de droit direct des nouveaux retraités, par régime de retraite, fin 2024",
+     "sources": "Drees, EACR, modèle ANCETRE."
+    },
+    {
+     "page": 76,
+     "nature": "Graphique",
+     "numero": "1",
+     "titre": "Montants bruts mensuels moyens de la pension de droit direct",
+     "sources": "Drees, EIR, modèle ANCETRE."
+    }
+   ],
+   "encadres": [
+    {
+     "page": 75,
+     "nature": "Encadré",
+     "numero": "1",
+     "titre": "Les nouveaux retraités",
+     "sources": ""
+    }
+   ]
+  },
+  "08": {
+   "titre": "Les bénéficiaires d’un minimum de pension",
+   "page": 78,
+   "figures": [
+    {
+     "page": 83,
+     "nature": "Graphique",
+     "numero": "1",
+     "titre": "Part des nouveaux retraités dont la pension a été portée à un minimum de pension, par régime de retraite",
+     "sources": "Drees, EACR, EIR."
+    },
+    {
+     "page": 84,
+     "nature": "Tableau",
+     "numero": "1",
+     "titre": "Part des retraités nés en 1953, résidant en France et percevant un minimum de pension",
+     "sources": "Drees, EIR 2020."
+    },
+    {
+     "page": 84,
+     "nature": "Tableau",
+     "numero": "2",
+     "titre": "Part des retraités nés en 1953, résidant en France et percevant un minimum de pension, selon le régime principal d’affiliation",
+     "sources": "Drees, EIR 2020."
+    },
+    {
+     "page": 85,
+     "nature": "Tableau",
+     "numero": "3",
+     "titre": "Carrière des retraités nés en 1953, résidant en France et percevant un minimum de pension",
+     "sources": "Drees, EIR 2020."
+    },
+    {
+     "page": 86,
+     "nature": "Tableau",
+     "numero": "4",
+     "titre": "Montants bruts de pension des retraités nés en 1953, résidant en France et percevant un minimum",
+     "sources": "Drees, EIR 2020."
+    }
+   ],
+   "encadres": [
+    {
+     "page": 79,
+     "nature": "Encadré",
+     "numero": "1",
+     "titre": "Les minima de pension",
+     "sources": ""
+    },
+    {
+     "page": 81,
+     "nature": "Encadré",
+     "numero": "2",
+     "titre": "La majoration exceptionnelle introduite par la réforme de 2023",
+     "sources": "CNAV."
+    }
+   ]
+  },
+  "09": {
+   "titre": "Le niveau de vie des retraités",
+   "page": 88,
+   "figures": [
+    {
+     "page": 91,
+     "nature": "Tableau",
+     "numero": "1",
+     "titre": "Répartition et niveaux de vie moyens et médians mensuels des retraités, selon leur position dans la distribution du niveau de vie, en 2023",
+     "sources": "Insee-DGFiP-CNAF-CNAV-CCMSA, ERFS 2023 ; calculs Drees."
+    },
+    {
+     "page": 91,
+     "nature": "Graphique",
+     "numero": "1",
+     "titre": "Évolution du niveau de vie mensuel médian des retraités et de l’ensemble de la population, de 2012 à 2023",
+     "sources": "Insee-DGFiP-CNAF-CNAV-CCMSA, ERFS 2012 à 2023 ; calculs Drees."
+    },
+    {
+     "page": 92,
+     "nature": "Tableau",
+     "numero": "2",
+     "titre": "Décomposition du revenu disponible moyen des ménages en 2023, selon leur position dans la distribution du niveau de vie",
+     "sources": "Insee-DGFiP-CNAF-CNAV-CCMSA, ERFS 2023 ; calculs Drees."
+    },
+    {
+     "page": 93,
+     "nature": "Graphique",
+     "numero": "2",
+     "titre": "Évolution de la pension de retraite totale nette moyenne et du niveau de vie moyen des retraités, de 2008 à 2023",
+     "sources": "Insee-DGFiP-CNAF-CNAV-CCMSA, ERFS 2008 à 2023 ; Drees, modèle ANCETRE ; calculs Drees."
+    },
+    {
+     "page": 95,
+     "nature": "Tableau",
+     "numero": "3",
+     "titre": "Effet de la redistribution sur le taux de pauvreté et l’intensité de la pauvreté à 60 % du niveau de vie médian en 2023, selon diverses caractéristiques",
+     "sources": "Insee-DGFiP-CNAF-CNAV-CCMSA, ERFS 2023 ; calculs Drees."
+    }
+   ],
+   "encadres": [
+    {
+     "page": 89,
+     "nature": "Encadré",
+     "numero": "1",
+     "titre": "Le champ des retraités",
+     "sources": ""
+    },
+    {
+     "page": 90,
+     "nature": "Encadré",
+     "numero": "2",
+     "titre": "L’enquête Revenus fiscaux et sociaux",
+     "sources": ""
+    },
+    {
+     "page": 94,
+     "nature": "Encadré",
+     "numero": "3",
+     "titre": "Le patrimoine des retraités",
+     "sources": "Insee, enquête Histoire de vie et Patrimoine 2023-2024."
+    }
+   ]
+  },
+  "10": {
+   "titre": "Les masses financières relatives aux pensions de retraite",
+   "page": 98,
+   "figures": [
+    {
+     "page": 100,
+     "nature": "Tableau",
+     "numero": "1",
+     "titre": "Masses financières relatives aux pensions de retraite",
+     "sources": "Drees, CPS, données semi-définitives pour 2023 et provisoires pour 2024."
+    },
+    {
+     "page": 101,
+     "nature": "Graphique",
+     "numero": "1",
+     "titre": "Part des pensions de retraite dans le PIB depuis 1990",
+     "sources": "Drees, CPS, données semi-définitives pour 2023 et provisoires pour 2024."
+    },
+    {
+     "page": 102,
+     "nature": "Tableau",
+     "numero": "2",
+     "titre": "Évolution des masses financières relatives aux pensions de retraite",
+     "sources": "Drees, CPS, données semi-définitives pour 2023 et provisoires pour 2024."
+    },
+    {
+     "page": 103,
+     "nature": "Graphique",
+     "numero": "2",
+     "titre": "Répartition des pensions de retraite par régime verseur",
+     "sources": "Drees, CPS, données semi-définitives pour 2023 et provisoires pour 2024."
+    }
+   ],
+   "encadres": [
+    {
+     "page": 99,
+     "nature": "Encadré",
+     "numero": "1",
+     "titre": "Champ des comptes de la protection sociale et comparaisons européennes",
+     "sources": "Drees, CPS, données provisoires."
+    }
+   ]
+  },
+  "11": {
+   "titre": "Les durées de carrière des retraités et la part des carrières complètes ou incomplètes",
+   "page": 106,
+   "figures": [
+    {
+     "page": 107,
+     "nature": "Graphique",
+     "numero": "1",
+     "titre": "Durée de carrière en proportion de la durée de vie totale, selon la génération",
+     "sources": "Drees, EIR 2020 ; Insee, projections de population 2021-2070."
+    },
+    {
+     "page": 107,
+     "nature": "Graphique",
+     "numero": "2",
+     "titre": "Proportion de carrières considérées comme complètes (tous régimes) au sens du coefficient de proratisation à 100 %, selon le sexe et la génération",
+     "sources": "Drees, EIR 2020."
+    },
+    {
+     "page": 108,
+     "nature": "Tableau",
+     "numero": "1",
+     "titre": "Coefficient de proratisation moyen par régime, pour la génération née en 1953 résidant en France",
+     "sources": "Drees, EIR 2020."
+    },
+    {
+     "page": 109,
+     "nature": "Graphique",
+     "numero": "3",
+     "titre": "Durées moyennes cotisées et validées, selon le sexe et la génération",
+     "sources": "Drees, EIR 2020."
+    },
+    {
+     "page": 110,
+     "nature": "Graphique",
+     "numero": "4",
+     "titre": "Durées moyennes cotisées et validées pour la retraite, selon le lieu de résidence et la génération",
+     "sources": "Drees, EIR 2020."
+    },
+    {
+     "page": 111,
+     "nature": "Tableau",
+     "numero": "2",
+     "titre": "Nombre de retraités de droit direct d’un régime de base, en personnes physiques et en EQCC",
+     "sources": "Drees, EIR 2020."
+    },
+    {
+     "page": 112,
+     "nature": "Tableau",
+     "numero": "3",
+     "titre": "Comparaison des effectifs par tête et en EQCC, selon la génération",
+     "sources": "Drees, EIR 2020."
+    }
+   ],
+   "encadres": []
+  },
+  "12": {
+   "titre": "Les durées d’assurance validées par les actifs pour leur retraite",
+   "page": 113,
+   "figures": [
+    {
+     "page": 114,
+     "nature": "Graphique",
+     "numero": "1",
+     "titre": "Nombre moyen de trimestres validés à 30 ans et âge de début de carrière, par sexe et par génération",
+     "sources": "Drees, EIC 2013 pour la génération 1942, EIC 2021 pour les autres générations."
+    },
+    {
+     "page": 116,
+     "nature": "Graphique",
+     "numero": "2",
+     "titre": "Rythmes moyens de validation des trimestres par tranche de cinq ans, au fil des générations",
+     "sources": "Drees, EIC 2013 pour la génération née en 1942, EIC 2021 pour les autres générations."
+    },
+    {
+     "page": 118,
+     "nature": "Graphique",
+     "numero": "3",
+     "titre": "Composition des trimestres validés à différents âges d’observation, pour la génération née en 1966",
+     "sources": "Drees, EIC 2021."
+    },
+    {
+     "page": 119,
+     "nature": "Graphique",
+     "numero": "4",
+     "titre": "Durée moyenne validée au titre du chômage, de la préretraite, de la reconversion et de la formation",
+     "sources": "Drees, EIC 2013 pour la génération née en 1942, EIC 2021 pour les autres générations."
+    },
+    {
+     "page": 120,
+     "nature": "Graphique",
+     "numero": "5",
+     "titre": "Nombre moyen et nature des trimestres validés selon l’âge, en 2020 et 2021",
+     "sources": "Drees, EIC 2021."
+    }
+   ],
+   "encadres": []
+  },
+  "13": {
+   "titre": "Les régimes d’affiliation des assurés",
+   "page": 122,
+   "figures": [
+    {
+     "page": 124,
+     "nature": "Tableau",
+     "numero": "1",
+     "titre": "Répartition des affiliés de la génération née en 1957, selon le ou les régimes d’affiliation",
+     "sources": "GIP Union Retraite, annuaire au 1er janvier 2026."
+    },
+    {
+     "page": 125,
+     "nature": "Graphique",
+     "numero": "1",
+     "titre": "Part des personnes affiliées à au moins deux régimes de base différents, selon l’âge, début 2026",
+     "sources": "GIP Union Retraite, annuaire au 1er janvier 2026."
+    },
+    {
+     "page": 125,
+     "nature": "Graphique",
+     "numero": "2",
+     "titre": "Part des personnes affiliées à plusieurs régimes de base, selon l’âge et la génération",
+     "sources": "Drees, EIR 2020 pour les générations nées en 1952 ou avant, EIC 2021 pour les générations ultérieures."
+    },
+    {
+     "page": 126,
+     "nature": "Graphique",
+     "numero": "3",
+     "titre": "Répartition des affiliés selon le nombre de régimes de retraite",
+     "sources": "GIP Union Retraite, annuaire au 1er janvier 2026."
+    }
+   ],
+   "encadres": [
+    {
+     "page": 123,
+     "nature": "Encadré",
+     "numero": "1",
+     "titre": "Le droit à l’information individuelle (DAI) sur la retraite",
+     "sources": ""
+    }
+   ]
+  },
+  "14": {
+   "titre": "Les règles de liquidation : âges et durées d’assurance",
+   "page": 128,
+   "figures": [
+    {
+     "page": 129,
+     "nature": "Tableau",
+     "numero": "1",
+     "titre": "Âge légal d’ouverture des droits",
+     "sources": "Législation."
+    },
+    {
+     "page": 130,
+     "nature": "Tableau",
+     "numero": "2",
+     "titre": "Durée d’assurance tous régimes requise pour le taux plein, par génération",
+     "sources": "Législation."
+    },
+    {
+     "page": 133,
+     "nature": "Tableau",
+     "numero": "3",
+     "titre": "Âge d’annulation de la décote",
+     "sources": "Législation."
+    },
+    {
+     "page": 135,
+     "nature": "Tableau",
+     "numero": "4",
+     "titre": "Conditions de départ anticipé pour carrière longue",
+     "sources": "Législation."
+    }
+   ],
+   "encadres": [
+    {
+     "page": 131,
+     "nature": "Encadré",
+     "numero": "1",
+     "titre": "La décote",
+     "sources": ""
+    },
+    {
+     "page": 132,
+     "nature": "Encadré",
+     "numero": "2",
+     "titre": "La surcote",
+     "sources": ""
+    }
+   ]
+  },
+  "15": {
+   "titre": "L’âge moyen de départ à la retraite et son évolution",
+   "page": 138,
+   "figures": [
+    {
+     "page": 139,
+     "nature": "Graphique",
+     "numero": "1",
+     "titre": "Âge conjoncturel moyen de départ à la retraite, selon le sexe, entre 2004 et 2024",
+     "sources": "Drees, EIR, modèle ANCETRE ; Insee, bilan démographique."
+    },
+    {
+     "page": 140,
+     "nature": "Graphique",
+     "numero": "2",
+     "titre": "Âge conjoncturel moyen de départ à la retraite, selon le régime (y compris retraités résidant à l’étranger), entre 2004 et 2024",
+     "sources": "Drees, EACR."
+    },
+    {
+     "page": 140,
+     "nature": "Graphique",
+     "numero": "3",
+     "titre": "Évolution du taux de retraités, par âge, entre 2004 et 2024",
+     "sources": "Drees, EIR, modèle ANCETRE ; Insee, bilan démographique."
+    },
+    {
+     "page": 141,
+     "nature": "Graphique",
+     "numero": "4",
+     "titre": "Évolution du taux de retraités par âge à partir de l’âge d’ouverture des droits, entre 2004 et 2024",
+     "sources": "Drees, EIR, modèle ANCETRE ; Insee, bilan démographique."
+    },
+    {
+     "page": 142,
+     "nature": "Graphique",
+     "numero": "5",
+     "titre": "Âge moyen de départ à la retraite dans le régime principal, par génération",
+     "sources": "Drees, EIR 2020, modèle ANCETRE."
+    },
+    {
+     "page": 143,
+     "nature": "Graphique",
+     "numero": "6",
+     "titre": "Évolution de l’âge moyen de départ à la retraite, selon la génération et le régime de retraite",
+     "sources": "Drees, EIR 2020, EACR, modèle ANCETRE."
+    },
+    {
+     "page": 144,
+     "nature": "Graphique",
+     "numero": "7",
+     "titre": "Espérance de durée de retraite, par génération, en nombre d’années",
+     "sources": "Drees, EIR 2020 et modèle ANCETRE ; Insee, projections démographiques au 1er janvier 2026."
+    }
+   ],
+   "encadres": [
+    {
+     "page": 139,
+     "nature": "Encadré",
+     "numero": "1",
+     "titre": "Quel indicateur pour l’âge moyen de départ à la retraite ?",
+     "sources": ""
+    }
+   ]
+  },
+  "16": {
+   "titre": "La diversité des âges de départ à la retraite",
+   "page": 145,
+   "figures": [
+    {
+     "page": 146,
+     "nature": "Graphique",
+     "numero": "1",
+     "titre": "Taux de retraités et de nouveaux retraités primo-liquidants, par âge et sexe, en 2024",
+     "sources": "Drees, modèle ANCETRE ; Insee, bilan démographique."
+    },
+    {
+     "page": 147,
+     "nature": "Graphique",
+     "numero": "2",
+     "titre": "Évolution du taux de nouveaux retraités primo-liquidants, par âge, en 2004, 2010, 2020 et 2024",
+     "sources": "Drees, modèle ANCETRE ; Insee, bilan démographique."
+    },
+    {
+     "page": 147,
+     "nature": "Graphique",
+     "numero": "3",
+     "titre": "Répartition des nouveaux retraités de 2024, selon leur âge au 31 décembre",
+     "sources": "Drees, EACR, modèle ANCETRE."
+    },
+    {
+     "page": 149,
+     "nature": "Graphique",
+     "numero": "4",
+     "titre": "Taux de nouveaux retraités par âge jusqu’à 62 ans, selon le type de régime, au 31 décembre 2024",
+     "sources": "Drees, EACR, modèle ANCETRE ; Insee, bilan démographique."
+    },
+    {
+     "page": 150,
+     "nature": "Tableau",
+     "numero": "1",
+     "titre": "Répartition des retraités nés en 1953, selon l’âge à la première liquidation",
+     "sources": "Drees, EIR 2020."
+    },
+    {
+     "page": 151,
+     "nature": "Graphique",
+     "numero": "5",
+     "titre": "Répartition des retraités, selon la génération et l’âge à la première liquidation",
+     "sources": "Drees, EIR 2020."
+    },
+    {
+     "page": 153,
+     "nature": "Tableau",
+     "numero": "2",
+     "titre": "Âge de départ à la retraite et répartition des retraités nés en 1953, selon le régime principal",
+     "sources": "Drees, EIR 2020."
+    }
+   ],
+   "encadres": [
+    {
+     "page": 148,
+     "nature": "Encadré",
+     "numero": "1",
+     "titre": "Âge de départ des nouveaux retraités : deux approches statistiques",
+     "sources": ""
+    },
+    {
+     "page": 152,
+     "nature": "Encadré",
+     "numero": "2",
+     "titre": "Les départs à la retraite après 67 ans",
+     "sources": ""
+    }
+   ]
+  },
+  "17": {
+   "titre": "Les taux de liquidation des pensions",
+   "page": 154,
+   "figures": [
+    {
+     "page": 155,
+     "nature": "Graphique",
+     "numero": "1",
+     "titre": "Répartition des retraités de la génération née en 1953, selon le taux de liquidation dans le régime de base principal et le motif d’obtention du taux plein le cas échéant, en 2020",
+     "sources": "Drees, EIR 2020."
+    },
+    {
+     "page": 156,
+     "nature": "Graphique",
+     "numero": "2",
+     "titre": "Répartition des retraités des régimes de base de la génération née en 1957, selon le taux de liquidation et le motif d’obtention du taux plein le cas échéant",
+     "sources": "Drees, EACR 2024."
+    },
+    {
+     "page": 157,
+     "nature": "Graphique",
+     "numero": "3",
+     "titre": "Répartition des retraités, selon la génération et le taux de liquidation dans le régime de base principal et le motif d’obtention du taux plein le cas échéant",
+     "sources": "Drees, EIR 2020."
+    },
+    {
+     "page": 158,
+     "nature": "Graphique",
+     "numero": "4",
+     "titre": "Part des retraités ayant liquidé leurs droits avec une décote, par génération",
+     "sources": "Drees, EACR, EIR 2020."
+    },
+    {
+     "page": 159,
+     "nature": "Graphique",
+     "numero": "5",
+     "titre": "Part des retraités ayant liquidé leurs droits avec une surcote, par génération",
+     "sources": "Drees, EACR, EIR 2020."
+    }
+   ],
+   "encadres": []
+  },
+  "18": {
+   "titre": "Les départs anticipés à la retraite",
+   "page": 160,
+   "figures": [
+    {
+     "page": 161,
+     "nature": "Graphique",
+     "numero": "1",
+     "titre": "Proportion de départs anticipés à la retraite, selon le sexe et la génération",
+     "sources": "Drees, EIR 2020."
+    },
+    {
+     "page": 161,
+     "nature": "Graphique",
+     "numero": "2",
+     "titre": "Proportion de départs anticipés à la retraite, selon la génération et le motif de départ anticipé",
+     "sources": "Drees, EIR 2020, ANCETRE, EACR."
+    },
+    {
+     "page": 162,
+     "nature": "Graphique",
+     "numero": "3",
+     "titre": "Proportion de départs anticipés pour carrière longue parmi les départs à la retraite de l’année, depuis 2005",
+     "sources": "Drees, EACR."
+    },
+    {
+     "page": 163,
+     "nature": "Tableau",
+     "numero": "1",
+     "titre": "Répartition des retraités de la génération née en 1957 relevant de la FPE civils et de la CNRACL, selon le type de départ",
+     "sources": "Drees, EACR 2024."
+    }
+   ],
+   "encadres": []
+  },
+  "19": {
+   "titre": "Les opinions et les souhaits en matière de retraite",
+   "page": 166,
+   "figures": [
+    {
+     "page": 168,
+     "nature": "Graphique",
+     "numero": "1",
+     "titre": "Âge de départ à la retraite souhaité, dans l’idéal, par les non-retraités",
+     "sources": "Baromètre d’opinion de la Drees."
+    },
+    {
+     "page": 168,
+     "nature": "Graphique",
+     "numero": "2",
+     "titre": "Âge moyen souhaité et estimé de départ à la retraite et âge moyen auquel il n’est plus acceptable de faire travailler les gens",
+     "sources": "Baromètre d’opinion de la Drees."
+    },
+    {
+     "page": 169,
+     "nature": "Graphique",
+     "numero": "3",
+     "titre": "Âge auquel les non-retraités pensent qu’ils pourront prendre leur retraite",
+     "sources": "Baromètre d’opinion de la Drees."
+    },
+    {
+     "page": 170,
+     "nature": "Graphique",
+     "numero": "4",
+     "titre": "Anticipation, par les non-retraités, de leur niveau de vie au moment de la retraite par rapport à l’ensemble de la population",
+     "sources": "Baromètre d’opinion de la Drees."
+    },
+    {
+     "page": 171,
+     "nature": "Graphique",
+     "numero": "5",
+     "titre": "Perception de la situation à la retraite par rapport à la situation actuelle ou antérieure",
+     "sources": "Baromètre d’opinion de la Drees."
+    },
+    {
+     "page": 172,
+     "nature": "Graphique",
+     "numero": "6",
+     "titre": "Opinions vis-à-vis des réformes de retraite",
+     "sources": "Baromètre d’opinion de la Drees."
+    }
+   ],
+   "encadres": [
+    {
+     "page": 167,
+     "nature": "Encadré",
+     "numero": "1",
+     "titre": "Le Baromètre d’opinion de la Drees et son évolution",
+     "sources": ""
+    }
+   ]
+  },
+  "20": {
+   "titre": "Les motivations de départ à la retraite",
+   "page": 174,
+   "figures": [
+    {
+     "page": 176,
+     "nature": "Tableau",
+     "numero": "1",
+     "titre": "Âge de départ à la retraite : souhaits et situation réelle des nouveaux retraités",
+     "sources": "Drees, CNAV, SRE, CDC, CPRPF, Agirc-Arrco, COR, DSS, enquêtes Motivations de départ à la retraite 2010, 2014, 2017 et 2021."
+    },
+    {
+     "page": 177,
+     "nature": "Graphique",
+     "numero": "1",
+     "titre": "Motivations du départ à la retraite et de la cessation d’activité",
+     "sources": "Drees, COR, DSS, CNAV, Agirc-Arrco, SRE, CDC, CPRPF, enquête Motivations de départ à la retraite 2021."
+    },
+    {
+     "page": 178,
+     "nature": "Graphique",
+     "numero": "2",
+     "titre": "Motivations de la prolongation d’activité des retraités déclarant être partis plus tard que ce qui était possible",
+     "sources": "Drees, CNAV, SRE, CDC, CPRPF, Agirc-Arrco, COR, DSS, enquête Motivations de départ à la retraite 2021."
+    },
+    {
+     "page": 179,
+     "nature": "Graphique",
+     "numero": "3",
+     "titre": "Répartition des nouveaux retraités selon leur connaissance des dispositifs de retraite",
+     "sources": "Drees, CNAV, SRE, CDC, CPRPF, Agirc-Arrco, COR, DSS, enquêtes Motivations de départ à la retraite 2017 et 2021."
+    }
+   ],
+   "encadres": [
+    {
+     "page": 175,
+     "nature": "Encadré",
+     "numero": "1",
+     "titre": "L’enquête Motivations de départ à la retraite",
+     "sources": ""
+    }
+   ]
+  },
+  "21": {
+   "titre": "La situation des assurés en fin de carrière",
+   "page": 182,
+   "figures": [
+    {
+     "page": 184,
+     "nature": "Graphique",
+     "numero": "1",
+     "titre": "Situation principale d’activité à 59 ans, par sexe et par génération",
+     "sources": "Drees, EIC 2013 pour la génération née en 1942, EIC 2021 pour les autres générations."
+    },
+    {
+     "page": 186,
+     "nature": "Tableau",
+     "numero": "1",
+     "titre": "Situation principale d’activité au cours de l’année précédant la liquidation des droits à la retraite, pour les générations nées en 1942, 1946, 1950 et 1954",
+     "sources": "Drees, EIC 2013 pour la génération née en 1942, EIC 2021 pour les autres générations."
+    },
+    {
+     "page": 186,
+     "nature": "Tableau",
+     "numero": "2",
+     "titre": "Trajectoires les plus fréquentes à partir de 50 ans, pour la génération née en 1954",
+     "sources": "Drees, EIC 2021."
+    },
+    {
+     "page": 188,
+     "nature": "Graphique",
+     "numero": "2",
+     "titre": "Situations principales successives, de 50 à 67 ans, pour les femmes et les hommes de la génération née en 1954",
+     "sources": "Drees, EIC 2021."
+    },
+    {
+     "page": 189,
+     "nature": "Tableau",
+     "numero": "3",
+     "titre": "Nombre de transitions entre situations principales de 50 à 67 ans, pour les personnes nées en 1954 et retraitées à 67 ans ou avant",
+     "sources": "Drees, EIC 2021."
+    }
+   ],
+   "encadres": [
+    {
+     "page": 183,
+     "nature": "Encadré",
+     "numero": "1",
+     "titre": "L’analyse des trajectoires de fin de carrière : champ et définition",
+     "sources": ""
+    },
+    {
+     "page": 190,
+     "nature": "Encadré",
+     "numero": "2",
+     "titre": "Les personnes n’étant ni en emploi ni à la retraite ou en préretraite (NERP) après 50 ans",
+     "sources": "Insee, EEC 2005 à 2024 ; calculs Drees."
+    }
+   ]
+  },
+  "22": {
+   "titre": "Les dispositifs de cumul d’une activité avec la retraite",
+   "page": 193,
+   "figures": [
+    {
+     "page": 194,
+     "nature": "Tableau",
+     "numero": "1",
+     "titre": "Effectifs de retraités en situation de cumul d’une activité avec la retraite, de 2014 à 2024",
+     "sources": "Insee, EEC 2014 à 2024 ; calculs Drees."
+    },
+    {
+     "page": 195,
+     "nature": "Tableau",
+     "numero": "2",
+     "titre": "Effectifs de bénéficiaires de la retraite progressive, en 2024",
+     "sources": "Drees, EACR."
+    },
+    {
+     "page": 196,
+     "nature": "Graphique",
+     "numero": "1",
+     "titre": "Évolution des effectifs d’assurés en retraite progressive au régime général",
+     "sources": "CNAV, Recueil statistique."
+    }
+   ],
+   "encadres": [
+    {
+     "page": 194,
+     "nature": "Encadré",
+     "numero": "1",
+     "titre": "La retraite progressive avant la loi du 20 janvier 2014",
+     "sources": ""
+    },
+    {
+     "page": 196,
+     "nature": "Encadré",
+     "numero": "2",
+     "titre": "Les règles du cumul emploi-retraite entre 2004 et 2014",
+     "sources": ""
+    }
+   ]
+  },
+  "23": {
+   "titre": "Le profil des assurés cumulant emploi et retraite",
+   "page": 198,
+   "figures": [
+    {
+     "page": 201,
+     "nature": "Tableau",
+     "numero": "1",
+     "titre": "Effectifs de personnes cumulant emploi et retraite, par tranche d’âge, et proportion dans l’ensemble de la population âgée de 55 ans ou plus percevant une retraite, en 2014 et en 2024",
+     "sources": "Insee, EEC 2014 et 2024, recensements et estimations de population ; calculs Drees."
+    },
+    {
+     "page": 202,
+     "nature": "Tableau",
+     "numero": "2",
+     "titre": "Répartition par catégorie socioprofessionnelle des personnes ayant cumulé un emploi et une retraite, en 2024",
+     "sources": "Insee, EEC 2024 ; calculs Drees."
+    },
+    {
+     "page": 202,
+     "nature": "Tableau",
+     "numero": "3",
+     "titre": "Répartition des personnes ayant cumulé un emploi et une retraite, selon la durée du temps de travail, en 2024",
+     "sources": "Insee, EEC 2024 ; calculs Drees."
+    },
+    {
+     "page": 203,
+     "nature": "Tableau",
+     "numero": "4",
+     "titre": "Retraités de droit direct cumulant un emploi et une retraite dans un même régime",
+     "sources": "Drees, EACR 2013, 2022 à 2024."
+    },
+    {
+     "page": 204,
+     "nature": "Graphique",
+     "numero": "1",
+     "titre": "Part des retraités de droit direct cumulant un emploi et une retraite au sein du même régime, par sexe et par âge, hors nouveaux retraités de l’année",
+     "sources": "Drees, EACR 2023 et 2024."
+    },
+    {
+     "page": 205,
+     "nature": "Tableau",
+     "numero": "5",
+     "titre": "Part des retraités nés en 1950 ayant cumulé un emploi et une retraite depuis leur départ à la retraite, selon le régime principal de retraite et d’emploi",
+     "sources": "Drees, EIR 2020, EIC 2021."
+    },
+    {
+     "page": 205,
+     "nature": "Tableau",
+     "numero": "6",
+     "titre": "Part des retraités des régimes de la FPE et de la CNRACL nés en 1950 ayant cumulé un emploi et une retraite",
+     "sources": "Drees, EIR 2020, EIC 2021."
+    }
+   ],
+   "encadres": [
+    {
+     "page": 199,
+     "nature": "Encadré",
+     "numero": "1",
+     "titre": "La mesure du cumul emploi-retraite",
+     "sources": ""
+    }
+   ]
+  },
+  "24": {
+   "titre": "Les pensions d’invalidité",
+   "page": 207,
+   "figures": [
+    {
+     "page": 208,
+     "nature": "Tableau",
+     "numero": "1",
+     "titre": "Montants minimum et maximum des pensions d’invalidité du régime général, au 1er janvier 2026",
+     "sources": "Législation."
+    }
+   ],
+   "encadres": [
+    {
+     "page": 208,
+     "nature": "Encadré",
+     "numero": "1",
+     "titre": "Les prestations en cas d’incapacité d’origine professionnelle",
+     "sources": ""
+    },
+    {
+     "page": 210,
+     "nature": "Encadré",
+     "numero": "2",
+     "titre": "Les concepts définis par la Drees pour déterminer un champ de pension d’invalidité et de retraite comparable entre les régimes",
+     "sources": ""
+    }
+   ]
+  },
+  "25": {
+   "titre": "Le profil des bénéficiaires d’une pension d’invalidité",
+   "page": 212,
+   "figures": [
+    {
+     "page": 213,
+     "nature": "Tableau",
+     "numero": "1",
+     "titre": "Bénéficiaires d’une pension d’invalidité, fin 2024",
+     "sources": "Drees, EACR 2024."
+    },
+    {
+     "page": 213,
+     "nature": "Graphique",
+     "numero": "1",
+     "titre": "Évolution du nombre de bénéficiaires d’une pension d’invalidité et de la pension moyenne en fin d’année, depuis 2015",
+     "sources": "Drees, EACR 2015 à 2024."
+    },
+    {
+     "page": 214,
+     "nature": "Tableau",
+     "numero": "2",
+     "titre": "Nouveaux bénéficiaires d’une pension d’invalidité, en 2024",
+     "sources": "Drees, EACR 2024."
+    },
+    {
+     "page": 215,
+     "nature": "Graphique",
+     "numero": "2",
+     "titre": "Nombre et part des bénéficiaires d’une pension d’invalidité de droit direct dans la population, par âge, en 2024",
+     "sources": "Drees, EACR 2024 ; Insee, estimation de la population (résultats provisoires début 2025)."
+    },
+    {
+     "page": 216,
+     "nature": "Tableau",
+     "numero": "3",
+     "titre": "Montant mensuel des pensions d’invalidité, fin 2024",
+     "sources": "Drees, EACR 2024."
+    },
+    {
+     "page": 217,
+     "nature": "Tableau",
+     "numero": "4",
+     "titre": "Dépenses de pensions d’invalidité, fin 2024 (en équivalent annualisé)",
+     "sources": "Drees, EACR 2024."
+    }
+   ],
+   "encadres": []
+  },
+  "26": {
+   "titre": "Le minimum vieillesse et l’allocation supplémentaire d’invalidité",
+   "page": 220,
+   "figures": [
+    {
+     "page": 221,
+     "nature": "Schéma",
+     "numero": "1",
+     "titre": "Présentation du minimum vieillesse avant et après réforme du dispositif, pour une personne seule",
+     "sources": "Législation."
+    },
+    {
+     "page": 222,
+     "nature": "Schéma",
+     "numero": "2",
+     "titre": "Revenu mensuel garanti par l’Aspa hors intéressement pour une personne seule, selon ses ressources, au 31 décembre 2025",
+     "sources": "Législation."
+    },
+    {
+     "page": 223,
+     "nature": "Graphique",
+     "numero": "1",
+     "titre": "Évolution du minimum vieillesse (personne seule et couple), des pensions de retraite au régime général et de l’indice des prix, depuis 2000",
+     "sources": "CNAV ; Insee ; calculs Drees."
+    },
+    {
+     "page": 224,
+     "nature": "Graphique",
+     "numero": "2",
+     "titre": "Montant du minimum vieillesse et de l’allocation supplémentaire d’invalidité (personne seule et couple) au 31 décembre de l’année, depuis 2006",
+     "sources": "Législation."
+    }
+   ],
+   "encadres": [
+    {
+     "page": 221,
+     "nature": "Encadré",
+     "numero": "1",
+     "titre": "Minimum vieillesse : l’ancien dispositif à deux étages",
+     "sources": ""
+    }
+   ]
+  },
+  "27": {
+   "titre": "Les allocataires du minimum vieillesse et les allocations versées",
+   "page": 226,
+   "figures": [
+    {
+     "page": 228,
+     "nature": "Tableau",
+     "numero": "1",
+     "titre": "Nombre d’allocataires du minimum vieillesse et de l’allocation supplémentaire d’invalidité, selon le régime de versement, fin 2024",
+     "sources": "Drees, EACR 2024, enquête sur les allocations du minimum vieillesse ; Caisse des dépôts et consignations ; Fonds de solidarité vieillesse."
+    },
+    {
+     "page": 229,
+     "nature": "Graphique",
+     "numero": "1",
+     "titre": "Évolution du nombre d’allocataires de l’ASV ou de l’Aspa (depuis 1960) et de leur part parmi la population âgée de 60 ans ou plus (depuis 1990)",
+     "sources": "Drees, EACR 2024, enquête sur les allocations du minimum vieillesse ; Fonds de solidarité vieillesse ; Insee, estimations de population."
+    }
+   ],
+   "encadres": [
+    {
+     "page": 227,
+     "nature": "Encadré",
+     "numero": "1",
+     "titre": "Données sur les allocataires du minimum vieillesse",
+     "sources": ""
+    },
+    {
+     "page": 230,
+     "nature": "Encadré",
+     "numero": "2",
+     "titre": "Déclin des allocations de premier étage du minimum vieillesse",
+     "sources": ""
+    }
+   ]
+  },
+  "28": {
+   "titre": "Le profil des allocataires du minimum vieillesse",
+   "page": 231,
+   "figures": [
+    {
+     "page": 232,
+     "nature": "Tableau",
+     "numero": "1",
+     "titre": "Part des titulaires de l’ASV ou de l’Aspa dans la population totale âgée de 62 ans ou plus, par âge fin, en 2024",
+     "sources": "Drees, EACR 2024 ; Insee, estimation de la population (France) au 1er janvier 2025."
+    },
+    {
+     "page": 232,
+     "nature": "Tableau",
+     "numero": "2",
+     "titre": "Répartition par sexe et situation conjugale des titulaires de l’ASV ou de l’Aspa, selon l’âge, fin 2024",
+     "sources": "Drees, EACR 2024."
+    },
+    {
+     "page": 235,
+     "nature": "Tableau",
+     "numero": "3",
+     "titre": "Répartition des allocataires du minimum vieillesse, selon le type de pension, fin 2020",
+     "sources": "Drees, EIR 2020."
+    },
+    {
+     "page": 235,
+     "nature": "Tableau",
+     "numero": "4",
+     "titre": "Carrière des retraités de droit direct allocataires du minimum vieillesse et des retraités de droit direct non allocataires, fin 2020",
+     "sources": "Drees, EIR 2020."
+    },
+    {
+     "page": 236,
+     "nature": "Carte",
+     "numero": "1",
+     "titre": "Proportion d’allocataires du minimum vieillesse, par département, parmi les personnes âgées de 62 ans ou plus, fin 2024",
+     "sources": "Drees, EACR 2024 ; Insee, structure de la population par département en fonction de l’âge au 1er janvier 2025."
+    },
+    {
+     "page": 237,
+     "nature": "Tableau",
+     "numero": "5",
+     "titre": "Répartition par tranche d’âge des nouveaux allocataires de l’Aspa, selon le sexe et la situation conjugale, fin 2024",
+     "sources": "Drees, EACR 2024."
+    }
+   ],
+   "encadres": [
+    {
+     "page": 233,
+     "nature": "Encadré",
+     "numero": "1",
+     "titre": "Les limites de l’analyse du profil des allocataires du minimum vieillesse",
+     "sources": ""
+    },
+    {
+     "page": 233,
+     "nature": "Encadré",
+     "numero": "2",
+     "titre": "Le profil des personnes qui ne recourent pas au minimum vieillesse",
+     "sources": ""
+    }
+   ]
+  },
+  "29": {
+   "titre": "Les dispositifs d’épargne retraite supplémentaire",
+   "page": 240,
+   "figures": [
+    {
+     "page": 242,
+     "nature": "Tableau",
+     "numero": "1",
+     "titre": "Les caractéristiques des produits de la retraite supplémentaire (législation en vigueur fin 2024)",
+     "sources": "Législation."
+    }
+   ],
+   "encadres": [
+    {
+     "page": 244,
+     "nature": "Encadré",
+     "numero": "1",
+     "titre": "L’enquête de la Drees sur la retraite supplémentaire",
+     "sources": ""
+    },
+    {
+     "page": 246,
+     "nature": "Encadré",
+     "numero": "2",
+     "titre": "Les prélèvements obligatoires sur les cotisations et les rentes au titre de la retraite supplémentaire",
+     "sources": ""
+    }
+   ]
+  },
+  "30": {
+   "titre": "Les masses financières relatives à la retraite supplémentaire",
+   "page": 250,
+   "figures": [
+    {
+     "page": 251,
+     "nature": "Graphique",
+     "numero": "1",
+     "titre": "Montants des cotisations relatives à la retraite supplémentaire de 2005 à 2024",
+     "sources": "Drees, enquête Retraite supplémentaire, vagues 2005 à 2024 ; calages sur données AFG et FFA de 2005 à 2017."
+    },
+    {
+     "page": 254,
+     "nature": "Graphique",
+     "numero": "2",
+     "titre": "Répartition des masses financières relevant des cotisations, prestations et provisions relatives à la retraite supplémentaire, par type d’organisme",
+     "sources": "Drees, enquête Retraite supplémentaire, vagues 2018 à 2024."
+    },
+    {
+     "page": 255,
+     "nature": "Graphique",
+     "numero": "3",
+     "titre": "Montants des prestations relatives à la retraite supplémentaire, de 2005 à 2024",
+     "sources": "Drees, enquête Retraite supplémentaire, vagues 2005 à 2024 ; calages sur données AFG et FFA de 2005 à 2017."
+    },
+    {
+     "page": 258,
+     "nature": "Graphique",
+     "numero": "4",
+     "titre": "Montants des provisions relatives à la retraite supplémentaire de 2006 à 2024",
+     "sources": "Drees, enquête Retraite supplémentaire, vagues 2005 à 2024 ; calages sur données AFG et FFA de 2005 à 2017."
+    },
+    {
+     "page": 259,
+     "nature": "Graphique",
+     "numero": "5",
+     "titre": "Part de la retraite supplémentaire dans l’ensemble des régimes de retraite (obligatoires et facultatifs)",
+     "sources": "Drees, enquête Retraite supplémentaire, vagues 2010 à 2024 ; calages sur données AFG et FFA de 2005 à 2017 ; programme de stabilité 2024."
+    }
+   ],
+   "encadres": [
+    {
+     "page": 252,
+     "nature": "Encadré",
+     "numero": "1",
+     "titre": "Les transferts de provisions sur les plans d’épargne retraite",
+     "sources": "Drees, enquête Retraite supplémentaire, vagues 2019 à 2024."
+    },
+    {
+     "page": 256,
+     "nature": "Encadré",
+     "numero": "2",
+     "titre": "Trois compartiments pour trois PER",
+     "sources": "Drees, enquête Retraite supplémentaire, vagues 2019 à 2024."
+    }
+   ]
+  },
+  "31": {
+   "titre": "Les adhérents et le montant des cotisations de retraite supplémentaire",
+   "page": 260,
+   "figures": [
+    {
+     "page": 261,
+     "nature": "Graphique",
+     "numero": "1",
+     "titre": "Nombre de contrats par type de produit, entre 2005 et 2024",
+     "sources": "Drees, enquête Retraite supplémentaire, vagues 2005 à 2024 ; calages sur données AFG et FFA de 2005 à 2017 ; redressements par la Drees pour 2018-2024."
+    },
+    {
+     "page": 262,
+     "nature": "Graphique",
+     "numero": "2",
+     "titre": "Répartition des adhérents à un contrat de retraite supplémentaire, par classe d’âge",
+     "sources": "Drees, enquête Retraite supplémentaire 2024 ; Insee, enquête Emploi en continu 2024."
+    },
+    {
+     "page": 263,
+     "nature": "Graphique",
+     "numero": "3",
+     "titre": "Évolution de la répartition des nouveaux adhérents à un produit de retraite supplémentaire, par classe d’âge",
+     "sources": "Drees, enquête Retraite supplémentaire, vagues 2005 à 2024 ; calages sur données AFG et FFA de 2005 à 2017 ; redressements par la Drees pour 2018-2024."
+    },
+    {
+     "page": 263,
+     "nature": "Graphique",
+     "numero": "4",
+     "titre": "Part des hommes parmi les adhérents à un produit de retraite supplémentaire, selon le type de dispositif, entre 2018 et 2024",
+     "sources": "Drees, enquête Retraite supplémentaire 2024 ; Insee, enquête Emploi en continu 2024."
+    },
+    {
+     "page": 264,
+     "nature": "Graphique",
+     "numero": "5",
+     "titre": "Évolution du nombre de contrats donnant lieu à cotisation rapporté au nombre d’actifs occupés, par type de produit, entre 2009 et 2024",
+     "sources": "Drees, enquête Retraite supplémentaire, vagues 2009 à 2024 ; calages sur données AFG et FFA de 2005 à 2017 ; redressements par la Drees pour 2018-2024 ; Insee, comptes nationaux."
+    },
+    {
+     "page": 265,
+     "nature": "Graphique",
+     "numero": "6",
+     "titre": "Cotisations annuelles moyennes, selon le dispositif de retraite supplémentaire, entre 2018 et 2024",
+     "sources": "Drees, enquête Retraite supplémentaire, vagues 2009 à 2024 ; redressements par la Drees pour 2018-2024."
+    },
+    {
+     "page": 265,
+     "nature": "Graphique",
+     "numero": "7",
+     "titre": "Répartition des versements à un contrat de retraite supplémentaire, par tranche et par type de produit en euros courants, entre 2018 et 2024",
+     "sources": "Drees, enquête Retraite supplémentaire 2024."
+    }
+   ],
+   "encadres": []
+  },
+  "32": {
+   "titre": "Les bénéficiaires et le montant des prestations versées au titre de la retraite supplémentaire",
+   "page": 267,
+   "figures": [
+    {
+     "page": 268,
+     "nature": "Graphique",
+     "numero": "1",
+     "titre": "Évolution du nombre de rentes viagères versées, par dispositif, entre 2009 et 2024",
+     "sources": "Drees, enquête Retraite supplémentaire, vagues 2010 à 2024 ; calages sur données AFG et FFA de 2005 à 2017."
+    },
+    {
+     "page": 269,
+     "nature": "Graphique",
+     "numero": "2",
+     "titre": "Évolution du montant annuel moyen d’une rente viagère, entre 2009 et 2024",
+     "sources": "Drees, enquête Retraite supplémentaire, vagues 2010 à 2024."
+    },
+    {
+     "page": 269,
+     "nature": "Graphique",
+     "numero": "3",
+     "titre": "Tranches de rentes viagères perçues en 2024, selon le type de dispositif",
+     "sources": "Drees, enquête Retraite supplémentaire 2024."
+    },
+    {
+     "page": 270,
+     "nature": "Graphique",
+     "numero": "4",
+     "titre": "Part de rentes viagères de droit direct par type de dispositif, entre 2018 et 2024",
+     "sources": "Drees, enquête Retraite supplémentaire 2024 ; modèle ANCETRE (pour les régimes obligatoires de base et complémentaires)."
+    },
+    {
+     "page": 271,
+     "nature": "Graphique",
+     "numero": "5",
+     "titre": "Nombre de rentes de droit direct, par dispositif, rapporté au nombre de retraités de droit direct, depuis 2010",
+     "sources": "Drees, enquêtes Retraite supplémentaire, vagues 2010 à 2024 ; modèle ANCETRE (pour les régimes obligatoires de base et complémentaires)."
+    },
+    {
+     "page": 272,
+     "nature": "Graphique",
+     "numero": "6",
+     "titre": "Répartition des rentes viagères perçues entre 2018 et 2024, par tranche d’âge, selon le dispositif",
+     "sources": "Drees, enquête Retraite supplémentaire 2024 ; modèle ANCETRE (pour les régimes obligatoires de base et complémentaires)."
+    },
+    {
+     "page": 273,
+     "nature": "Graphique",
+     "numero": "7",
+     "titre": "Part des rentes viagères versées aux hommes entre 2018 et 2024, selon le dispositif",
+     "sources": "Drees, enquête Retraite supplémentaire 2024 ; modèle ANCETRE (pour les régimes obligatoires de base et complémentaires)."
+    }
+   ],
+   "encadres": [
+    {
+     "page": 270,
+     "nature": "Encadré",
+     "numero": "1",
+     "titre": "Ventilation des montants des rentes viagères supérieures à 5 000 euros",
+     "sources": ""
+    }
+   ]
+  },
+  "33": {
+   "titre": "Le PER d’entreprise collectif",
+   "page": 274,
+   "figures": [
+    {
+     "page": 276,
+     "nature": "Graphique",
+     "numero": "1",
+     "titre": "Part des salariés couverts par un PER d’entreprise collectif ou par un Perco et part de ceux épargnant sur ces produits, entre 2006 et 2023",
+     "sources": "Dares, enquêtes Acemo-Pipa et Acemo-TPE 2007 à 2024."
+    },
+    {
+     "page": 276,
+     "nature": "Graphique",
+     "numero": "2",
+     "titre": "Part des salariés couverts par un PER d’entreprise collectif ou par un Perco et part de ceux épargnant sur ces produits, selon la taille de l’entreprise, en 2023",
+     "sources": "Dares, enquêtes Acemo-Pipa et Acemo-TPE 2024."
+    },
+    {
+     "page": 277,
+     "nature": "Graphique",
+     "numero": "3",
+     "titre": "Montant annuel moyen épargné sur un PER d’entreprise collectif ou sur un Perco, selon la taille de l’entreprise, en 2023",
+     "sources": "Dares, enquête Acemo-Pipa 2024."
+    },
+    {
+     "page": 277,
+     "nature": "Tableau",
+     "numero": "1",
+     "titre": "Montant annuel moyen épargné sur un PER d’entreprise collectif, selon le secteur d’activité, en 2023",
+     "sources": "Dares, enquête Acemo-Pipa 2024."
+    },
+    {
+     "page": 278,
+     "nature": "Graphique",
+     "numero": "4",
+     "titre": "Part des versements moyens sur un PER d’entreprise collectif ou sur un Perco, selon leur origine et par taille et secteur d’activité, en 2023",
+     "sources": "Dares, enquête Acemo-Pipa 2024."
+    }
+   ],
+   "encadres": [
+    {
+     "page": 275,
+     "nature": "Encadré",
+     "numero": "1",
+     "titre": "Les enquêtes Acemo-Pipa et Acemo-TPE de la Dares",
+     "sources": ""
+    }
+   ]
+  },
+  "34": {
+   "titre": "La retraite supplémentaire d’entreprise",
+   "page": 280,
+   "figures": [
+    {
+     "page": 283,
+     "nature": "Graphique",
+     "numero": "1",
+     "titre": "Part des entreprises ayant souscrit un dispositif de retraite supplémentaire, selon le type de dispositif et la taille de l’entreprise, en 2022",
+     "sources": "Dares, enquête Acemo-Pipa 2023 ; calculs Drees."
+    },
+    {
+     "page": 284,
+     "nature": "Tableau",
+     "numero": "1",
+     "titre": "Nombre et proportion d’entreprises ayant souscrit un contrat de retraite supplémentaire, selon le type de dispositif et le secteur de l’entreprise, en 2022",
+     "sources": "Dares, enquête Acemo-Pipa 2023 ; calculs Drees."
+    },
+    {
+     "page": 284,
+     "nature": "Graphique",
+     "numero": "2",
+     "titre": "Part des salariés cotisant à un dispositif de retraite supplémentaire, selon le type de dispositif et la taille de l’entreprise, en 2022",
+     "sources": "Dares, enquête Acemo-Pipa 2023 ; calculs Drees."
+    },
+    {
+     "page": 285,
+     "nature": "Tableau",
+     "numero": "2",
+     "titre": "Part moyenne des salariés cotisants au sein des effectifs de l’entreprise, selon le type de contrat et la taille de l’entreprise, en 2022",
+     "sources": "Dares, enquête Acemo-Pipa 2023 ; calculs Drees."
+    },
+    {
+     "page": 286,
+     "nature": "Graphique",
+     "numero": "3",
+     "titre": "Montant annuel médian versé pour chaque salarié couvert par un dispositif de retraite supplémentaire à cotisations définies, selon la taille de l’entreprise, en 2022",
+     "sources": "Dares, enquête Acemo-Pipa 2023 ; calculs Drees."
+    },
+    {
+     "page": 286,
+     "nature": "Tableau",
+     "numero": "3",
+     "titre": "Distribution du montant annuel moyen versé par l’entreprise pour un salarié, selon le type de dispositif, en 2022",
+     "sources": "Dares, enquête Acemo-Pipa 2023 ; calculs Drees."
+    }
+   ],
+   "encadres": [
+    {
+     "page": 281,
+     "nature": "Encadré",
+     "numero": "1",
+     "titre": "Le module sur la retraite supplémentaire de l’enquête Acemo-Pipa de la Dares et les écarts avec l’enquête Retraite supplémentaire de la Drees",
+     "sources": "Dares, enquête Acemo-Pipa 2023 ; Drees, enquête Retraite supplémentaire 2023."
+    },
+    {
+     "page": 283,
+     "nature": "Encadré",
+     "numero": "2",
+     "titre": "La gestion interne ou externe des contrats à prestations définies",
+     "sources": ""
+    }
+   ]
+  }
+ },
+ "annexes": {
+  "annexe_1": {
+   "titre": "Les modes d’acquisition des droits à la retraite",
+   "page": 290,
+   "figures": [],
+   "encadres": [
+    {
+     "page": 291,
+     "nature": "Encadré",
+     "numero": "1",
+     "titre": "Les trimestres validés non cotisés",
+     "sources": ""
+    }
+   ]
+  },
+  "annexe_2": {
+   "titre": "Sources et méthodes",
+   "page": 293,
+   "figures": [
+    {
+     "page": 295,
+     "nature": "Tableau",
+     "numero": "1",
+     "titre": "La diversité des régimes de retraite",
+     "sources": ""
+    }
+   ],
+   "encadres": [
+    {
+     "page": 296,
+     "nature": "Encadré",
+     "numero": "1",
+     "titre": "Le modèle ANCETRE",
+     "sources": ""
+    },
+    {
+     "page": 297,
+     "nature": "Encadré",
+     "numero": "2",
+     "titre": "La mesure de la durée validée pour la retraite dans l’EIC",
+     "sources": ""
+    }
+   ]
+  },
+  "annexe_3": {
+   "titre": "Notes et précisions méthodologiques communes aux différents tableaux et graphiques",
+   "page": 298,
+   "figures": [],
+   "encadres": []
+  },
+  "annexe_4": {
+   "titre": "Glossaire",
+   "page": 301,
+   "figures": [],
+   "encadres": []
+  }
+ },
+ "hors_rubrique": []
+}

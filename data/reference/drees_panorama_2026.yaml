@@ -1,0 +1,480 @@
+# Le panorama « Les retraités et les retraites » de la DREES, édition 2026,
+# fiche par fiche : ce que le dépôt en a déjà, ce qu'il en tirera (action 178)
+# ===========================================================================
+# Le relevé des fiches, de leurs figures et de leurs sources est le témoin
+# tests/temoins/drees_panorama_2026.json, que scripts/fetch/drees_panorama.py
+# refait du PDF ; le document est au manifeste sous
+# drees_panorama_retraites_2026. tests/test_drees_panorama.py refuse une fiche
+# du relevé qui n'a pas ici son statut : rien du panorama n'échappe au
+# chantier.
+#
+# CHAMPS
+#   titre ..... celui du sommaire, tel que le relevé le lit
+#   page ...... sa première page imprimée
+#   sources ... les sources d'amont de ses figures, en abrégé
+#   statut .... voir ci-dessous
+#   au_depot .. les jeux du manifeste qui portent déjà sa donnée, ou la même
+#               à un autre millésime
+#   a_tirer ... ce que le dépôt en tirera, et où ; ou pourquoi rien
+#   etape ..... l'étape de l'action 178 qui s'en charge
+#
+# STATUT
+#   au_depot ...... sa donnée vient d'un fichier que le dépôt lit déjà, au
+#                   même millésime : restent les totaux publiés, à recouper
+#   a_tirer ....... elle apporte une donnée, ou une année, que le dépôt n'a
+#                   pas : à porter à data/reference/ ou aux référents, avec le
+#                   test qui la recoupe à sa source
+#   a_confronter .. elle mesure ce que le modèle calcule ou suppose — un âge,
+#                   un taux, une durée, une règle : à confronter par un test
+#                   du niveau controle, l'écart corrigé ou déclaré
+#   hors_champ .... elle mesure ce que le modèle ne représente pas ; la
+#                   raison le dit, et rien n'est à faire
+#
+# Classé le 2 novembre 2026, à l'étape 1. Une étape qui tire d'une fiche ce
+# qu'elle apporte change son statut, et le dit dans sa note.
+
+fiches:
+  "01":
+    titre: "Les effectifs de retraités de droit direct"
+    page: 20
+    sources: ["EACR", "EIR", "ANCETRE", "Insee"]
+    statut: au_depot
+    au_depot: [drees_eacr]
+    a_tirer: >-
+      Les 17,3 millions de retraités de droit direct de fin 2024 et leurs
+      effectifs par régime (tableaux 1 et 2), recoupés au cadrage de
+      l'EACR que le dépôt lit (`effectifs_retraites.csv`) ; le rapport de
+      1,77 personne en emploi par retraité en 2024 (graphique 1) et la
+      part des polypensionnés par génération (graphique 3), aux
+      référents, que la page Coût et sa grille peuvent confronter.
+    etape: 2
+  "02":
+    titre: "Les nouveaux retraités de droit direct"
+    page: 29
+    sources: ["EACR", "EIR", "ANCETRE"]
+    statut: au_depot
+    au_depot: [drees_eacr, drees_eacr_tables]
+    a_tirer: >-
+      Les 718 000 nouveaux retraités de 2024 (tableau 1) et leur
+      répartition par régime (tableau 2), recoupés au flux `nl_ddir` du
+      cadrage et à la table B de l'EACR ; l'encadré 1, qui compte les
+      mois où chaque génération atteint l'âge d'ouverture des droits sous
+      la loi de financement pour 2026, confronté à
+      `age_ouverture_requis.csv` à l'étape 5.
+    etape: 2
+  "03":
+    titre: "Les effectifs de retraités de droit dérivé"
+    page: 35
+    sources: ["EACR", "EIR", "ANCETRE", "Insee"]
+    statut: au_depot
+    au_depot: [drees_eacr]
+    a_tirer: >-
+      Les 4,4 millions de bénéficiaires d'une pension de réversion fin
+      2024, dont 886 000 de réversion seule (tableaux 1 et 3), recoupés à
+      `droits_derives.csv` ; la part des veuves par âge et par génération
+      (graphiques 2 et 4), aux référents, où la réversion du modèle peut
+      se confronter.
+    etape: 2
+  "04":
+    titre: "La revalorisation des pensions individuelles"
+    page: 44
+    sources: ["CNAV", "MSA", "SRE", "CNRACL", "Agirc-Arrco", "Ircantec", "RAFP", "Insee", "TRAJECTOiRE"]
+    statut: a_confronter
+    au_depot: [cnav_revalorisation_pensions, agirc_arrco_valeurs_point, erafp_parametres]
+    a_tirer: >-
+      La revalorisation annuelle des pensions de chaque régime depuis
+      2014 (tableau 1) — 0,9 % au 1er janvier 2026 pour les régimes de
+      base, que `revalorisation_pensions.csv` porte déjà (1,009), aucune
+      à l'Agirc-Arrco en novembre 2025 faute d'accord —, confrontée aux
+      séries du dépôt (étape 5) ; l'érosion des pensions selon l'année de
+      naissance, cas types non-cadre et cadre de TRAJECTOiRE (graphique
+      4), et le pouvoir d'achat des liquidants de 2000 (graphique 3),
+      confrontés à l'indexation du scénario 1 et des comptes notionnels.
+    etape: 4
+  "05":
+    titre: "Le niveau des pensions"
+    page: 54
+    sources: ["EACR", "EIR", "ANCETRE", "Insee"]
+    statut: a_tirer
+    au_depot: [drees_pension_nette, drees_eir_distribution, drees_eir_caracteristiques]
+    a_tirer: >-
+      La pension moyenne de droit direct de fin 2024, 1 752 euros bruts
+      et 1 626 euros nets (tableau 1), à porter à
+      `pensions_brutes_nettes.csv`, qui s'arrête aux montants de 2022,
+      avec son test ; puis, par régime (tableau 2) et par régime
+      principal (tableau 4, ANCETRE), confrontée à la pension que la
+      grille de la page Coût sert en 2024 (étape 4). La distribution et
+      la composition de la pension (tableau 3, graphique 4) sont celles
+      de l'EIR de 2020, que le dépôt lit déjà.
+    etape: 2
+  "06":
+    titre: "Les écarts de pensions de droit direct entre générations"
+    page: 65
+    sources: ["EIR 2020", "ANCETRE", "EACR", "Insee, panel Tous salariés"]
+    statut: a_confronter
+    a_tirer: >-
+      La pension moyenne par génération, de 1930 à 1957 (graphiques 1 et
+      2, tableaux 1 et 2), l'écart entre femmes et hommes au fil des
+      générations (graphique 3) et le taux de remplacement médian des
+      anciens salariés à carrière complète par génération (graphique 4),
+      confrontés aux indicateurs de cycle de vie du dépôt
+      (`cycle_de_vie.py`) et aux cas types.
+    etape: 4
+  "07":
+    titre: "La pension des nouveaux retraités"
+    page: 74
+    sources: ["EACR", "EIR", "ANCETRE"]
+    statut: a_confronter
+    a_tirer: >-
+      La pension des nouveaux retraités de 2024, 1 637 euros bruts en
+      moyenne, par régime (tableau 1), et l'écart de 29 % entre femmes et
+      hommes, confrontés aux pensions que la grille de la page Coût sert
+      aux liquidants de 2024 ; le cadrage de l'EACR que le dépôt lit
+      porte ces montants, qu'il ne retient pas.
+    etape: 4
+  "08":
+    titre: "Les bénéficiaires d’un minimum de pension"
+    page: 78
+    sources: ["EACR", "EIR 2020"]
+    statut: a_tirer
+    au_depot: [drees_eacr]
+    a_tirer: >-
+      Les parts de la génération 1953 au minimum de pension (EIR 2020,
+      tableaux 1 à 4), qui remplacent celles de l'édition 2018 (EIR 2012)
+      que cite `scripts/part_minimum_contributif.py` ; la part des
+      nouveaux retraités portés au minimum par régime jusqu'en 2024
+      (graphique 1, 17 % au régime général), recoupée à la feuille
+      E-Minima de l'EACR que le dépôt lit ; l'encadré 2, la majoration
+      exceptionnelle de la réforme de 2023, confronté au minimum
+      contributif du scénario 1.
+    etape: 2
+  "09":
+    titre: "Le niveau de vie des retraités"
+    page: 88
+    sources: ["ERFS 2023", "Insee, Histoire de vie et Patrimoine 2023-2024", "ANCETRE"]
+    statut: a_confronter
+    a_tirer: >-
+      Le niveau de vie des ménages de retraités est hors du modèle, qui
+      décrit une carrière et non un ménage ; seul l'encadré 3 sert : le
+      patrimoine net moyen des ménages retraités début 2024, 388 900
+      euros (enquête Histoire de vie et Patrimoine 2023-2024), à
+      rapprocher de ce que l'action 47 tire du patrimoine des ménages
+      pour la reprise de la garantie sur succession.
+    etape: 4
+  "10":
+    titre: "Les masses financières relatives aux pensions de retraite"
+    page: 98
+    sources: ["CPS"]
+    statut: au_depot
+    au_depot: [drees_comptes_protection_sociale]
+    a_tirer: >-
+      Les 395 milliards d'euros de pensions de retraite de 2024, 13,5 %
+      du PIB (tableau 1, graphique 1), sont une part du risque
+      vieillesse-survie que `depenses_retraite.csv` porte entier, 426,7
+      milliards en 2024 : à recouper poste par poste, comme la
+      répartition par régime verseur (graphique 2) à
+      `depenses_retraite_regimes.csv`.
+    etape: 2
+  "11":
+    titre: "Les durées de carrière des retraités et la part des carrières complètes ou incomplètes"
+    page: 106
+    sources: ["EIR 2020", "Insee"]
+    statut: a_confronter
+    au_depot: [drees_eir_caracteristiques]
+    a_tirer: >-
+      Les durées cotisées et validées par sexe et par génération
+      (graphiques 3 et 4), la part des carrières complètes (graphique 2),
+      le coefficient de proratisation par régime de la génération 1953
+      (tableau 1) et les effectifs en équivalent carrière complète
+      (tableaux 2 et 3), confrontés aux carrières des cas types et de la
+      grille.
+    etape: 4
+  "12":
+    titre: "Les durées d’assurance validées par les actifs pour leur retraite"
+    page: 113
+    sources: ["EIC 2021", "EIC 2013"]
+    statut: a_tirer
+    au_depot: [drees_eic_droits_valides, drees_eic_natures_assimilees, drees_eic_duree_validee]
+    a_tirer: >-
+      L'EIC de 2021, neuve : les trimestres validés à 30 ans et l'âge de
+      début de carrière par génération (graphique 1), le rythme de
+      validation par âge (graphique 2), la nature des trimestres
+      (graphiques 3 à 5), à porter à côté des séries de l'EIC de 2017 que
+      le dépôt lit, par le portail de données d'abord (le jeu des
+      trimestres validés à 30 ans, refait le 9 octobre 2026), puis par le
+      fichier Excel de la fiche.
+    etape: 3
+  "13":
+    titre: "Les régimes d’affiliation des assurés"
+    page: 122
+    sources: ["EIR 2020", "GIP Union Retraite, annuaire 2026"]
+    statut: a_confronter
+    a_tirer: >-
+      La polyaffiliation par âge et par génération, début 2026
+      (graphiques 1 à 3), et la répartition des affiliés de la génération
+      1957 selon leurs régimes (tableau 1), de l'annuaire du GIP Union
+      Retraite, confrontées à la répartition par régime de la grille de
+      la page Coût.
+    etape: 4
+  "14":
+    titre: "Les règles de liquidation : âges et durées d’assurance"
+    page: 128
+    sources: ["Législation"]
+    statut: a_confronter
+    a_tirer: >-
+      L'âge d'ouverture des droits, la durée requise, l'âge d'annulation
+      de la décote et les conditions de la carrière longue par génération
+      (tableaux 1 à 4), sous la loi de financement pour 2026, et la
+      décote et la surcote (encadrés 1 et 2), confrontés aux tables de
+      `data/reference/legislation/` (`age_ouverture_requis.csv`,
+      `duree_assurance_requise.csv`, `carriere_longue.csv`) : une règle
+      du scénario 1, sur Opus.
+    etape: 5
+  "15":
+    titre: "L’âge moyen de départ à la retraite et son évolution"
+    page: 138
+    sources: ["EIR 2020", "EACR", "ANCETRE", "Insee"]
+    statut: a_tirer
+    au_depot: [drees_age_conjoncturel, drees_eir_generations]
+    a_tirer: >-
+      L'âge conjoncturel de départ de 2023 et de 2024, 62 ans et 11 mois
+      fin 2024 (graphique 1), à porter à `age_conjoncturel_depart.csv`,
+      qui s'arrête à 2022, avec son test ; l'âge conjoncturel par régime
+      (graphique 2), l'âge moyen par génération (graphiques 5 et 6) et
+      l'espérance de durée de retraite (graphique 7), confrontés aux
+      départs du modèle.
+    etape: 2
+  "16":
+    titre: "La diversité des âges de départ à la retraite"
+    page: 145
+    sources: ["EACR", "EIR 2020", "ANCETRE", "Insee"]
+    statut: au_depot
+    au_depot: [drees_eacr_tables]
+    a_tirer: >-
+      Les taux de retraités et de primo-liquidants par âge en 2024
+      (graphiques 1 à 4), que la table B de l'EACR porte et que
+      `test_controle_eacr.py` confronte déjà à la grille ; la répartition
+      de la génération 1953 par âge de première liquidation (tableaux 1
+      et 2, EIR 2020) et les départs après 67 ans (encadré 2), aux
+      référents.
+    etape: 2
+  "17":
+    titre: "Les taux de liquidation des pensions"
+    page: 154
+    sources: ["EACR 2024", "EIR 2020"]
+    statut: au_depot
+    au_depot: [drees_eacr_tables]
+    a_tirer: >-
+      Le taux plein, la décote et la surcote par génération (graphiques 1
+      à 5), que la table H de l'EACR porte et que `test_controle_eacr.py`
+      confronte déjà ; reste à recouper les parts publiées pour la
+      génération 1953 (un peu moins de neuf sur dix sans décote, 11 %
+      avec, 15 % de surcote) aux mêmes données.
+    etape: 2
+  "18":
+    titre: "Les départs anticipés à la retraite"
+    page: 160
+    sources: ["EACR 2024", "EIR 2020", "ANCETRE"]
+    statut: a_confronter
+    a_tirer: >-
+      La part des départs anticipés par génération et par motif —
+      carrière longue, handicap, catégories actives, invalidité
+      (graphiques 1 et 2) —, la part des carrières longues parmi les
+      départs de chaque année, environ un sur cinq au régime général en
+      2024 (graphique 3), et la génération 1957 des fonctionnaires
+      (tableau 1), confrontées aux départs anticipés que le modèle ouvre.
+    etape: 4
+  "19":
+    titre: "Les opinions et les souhaits en matière de retraite"
+    page: 166
+    sources: ["Baromètre d'opinion de la DREES"]
+    statut: hors_champ
+    a_tirer: >-
+      Les opinions et les souhaits sur l'âge de départ et le niveau de
+      vie, que le modèle ne représente pas. Une seule trace au dépôt :
+      `docs/risque_de_defaut.md` cite la fiche 18 de l'édition 2025 ; la
+      fiche 19 de 2026 en est la suite, s'il se rouvre.
+  "20":
+    titre: "Les motivations de départ à la retraite"
+    page: 174
+    sources: ["Enquête Motivations de départ à la retraite 2021"]
+    statut: hors_champ
+    a_tirer: >-
+      Les motivations du départ et la connaissance des dispositifs,
+      déclarées par les nouveaux retraités de 2019-2020 : le modèle ne
+      choisit pas l'âge de départ par ces motifs. Elles pourraient servir
+      le choix, laissé au propriétaire, de départs qui suivent
+      l'espérance de vie (action 138, étape 7).
+  "21":
+    titre: "La situation des assurés en fin de carrière"
+    page: 182
+    sources: ["EIC 2021", "EIC 2013", "Insee, enquête Emploi"]
+    statut: a_confronter
+    a_tirer: >-
+      La situation à 59 ans par génération — emploi, chômage, invalidité,
+      inactivité (graphique 1) —, l'année qui précède la liquidation
+      (tableau 1) et les trajectoires de 50 à 67 ans de la génération
+      1954 (tableaux 2 et 3, graphique 2), de l'EIC de 2021, confrontées
+      aux fins de carrière de la grille et aux carrières inactives du
+      modèle (action 138, étape 14).
+    etape: 3
+  "22":
+    titre: "Les dispositifs de cumul d’une activité avec la retraite"
+    page: 193
+    sources: ["EACR", "CNAV", "Insee, enquête Emploi"]
+    statut: a_tirer
+    a_tirer: >-
+      Les effectifs du cumul emploi-retraite de 2014 à 2024 (tableau 1,
+      619 000 cumulants en 2024) et de la retraite progressive en 2024
+      (tableau 2, environ 42 400 personnes fin 2024), que le dépôt n'a
+      pas : à `data/reference/macro/`, avec leur test ; ils serviront la
+      décision, laissée au propriétaire, sur la retraite progressive et
+      le cumul, que le code exclut aujourd'hui.
+    etape: 2
+  "23":
+    titre: "Le profil des assurés cumulant emploi et retraite"
+    page: 198
+    sources: ["Insee, enquête Emploi", "EACR", "EIR 2020", "EIC 2021"]
+    statut: a_tirer
+    a_tirer: >-
+      Le profil des cumulants — âge, catégorie, temps de travail
+      (tableaux 1 à 3) — et la part des retraités de la génération 1950
+      qui ont cumulé avant 67 ans, 21,4 % (tableaux 5 et 6), à
+      `data/reference/macro/` avec la fiche 22, pour la même décision du
+      propriétaire.
+    etape: 2
+  "24":
+    titre: "Les pensions d’invalidité"
+    page: 207
+    sources: ["Législation"]
+    statut: a_confronter
+    a_tirer: >-
+      Les montants minimum et maximum des pensions d'invalidité du régime
+      général au 1er janvier 2026 (tableau 1), confrontés aux paramètres
+      de l'invalidité du scénario 1 : une règle du scénario 1, sur Opus.
+    etape: 5
+  "25":
+    titre: "Le profil des bénéficiaires d’une pension d’invalidité"
+    page: 212
+    sources: ["EACR 2015 à 2024", "Insee"]
+    statut: a_tirer
+    au_depot: [drees_pensionnes_2022]
+    a_tirer: >-
+      Les 843 400 bénéficiaires d'une pension d'invalidité fin 2024, dont
+      106 000 nouveaux, par régime, par âge et par montant (tableaux 1 à
+      4, graphiques 1 et 2), de l'EACR de 2024, quand le dépôt ne lit que
+      les effectifs du 31 décembre 2022 (tables I et J) : la mise à jour,
+      montants compris, avec son test.
+    etape: 2
+  "26":
+    titre: "Le minimum vieillesse et l’allocation supplémentaire d’invalidité"
+    page: 220
+    sources: ["Législation", "CNAV", "Insee"]
+    statut: a_confronter
+    a_tirer: >-
+      Les montants du minimum vieillesse et de l'allocation
+      supplémentaire d'invalidité, personne seule et couple (graphique 2,
+      schémas 1 et 2), et leur évolution rapportée aux pensions et aux
+      prix (graphique 1), confrontés à `minimum_vieillesse.csv` et à la
+      garantie vieillesse de la proposition : une règle du scénario 1,
+      sur Opus.
+    etape: 5
+  "27":
+    titre: "Les allocataires du minimum vieillesse et les allocations versées"
+    page: 226
+    sources: ["EACR 2024", "Enquête sur les allocations du minimum vieillesse", "Caisse des dépôts", "FSV"]
+    statut: au_depot
+    au_depot: [insee_allocataires_minimum_vieillesse]
+    a_tirer: >-
+      Les 754 460 allocataires de l'ASV ou de l'Aspa fin 2024, que le
+      classeur de l'INSEE redonne à 552 près
+      (`allocataires_minimum_vieillesse.csv`) ; restent les 70 660
+      nouveaux allocataires et les dépenses (tableau 1, graphique 1), à
+      recouper aux classeurs du jeu `drees_minimum_vieillesse` du vivier,
+      dépouillé le 16 octobre 2026.
+    etape: 2
+  "28":
+    titre: "Le profil des allocataires du minimum vieillesse"
+    page: 231
+    sources: ["EACR 2024", "EIR 2020", "Insee"]
+    statut: a_confronter
+    au_depot: [drees_non_recours_minimum_vieillesse]
+    a_tirer: >-
+      Le profil des allocataires — sexe, situation conjugale, âge,
+      département, type de pension, carrière (tableaux 1 à 5, carte 1) —
+      et celui des personnes qui ne recourent pas au minimum vieillesse
+      (encadré 2), confrontés à ce que la garantie vieillesse de la
+      proposition suppose du recours.
+    etape: 4
+  "29":
+    titre: "Les dispositifs d’épargne retraite supplémentaire"
+    page: 240
+    sources: ["Législation"]
+    statut: a_confronter
+    a_tirer: >-
+      Les règles des produits d'épargne retraite — les trois
+      compartiments du PER, la sortie en rente ou en capital, les
+      prélèvements sur les cotisations et les rentes (tableau 1, encadrés
+      1 et 2) —, confrontées à celles du pilier capitalisé de la
+      proposition, « logé dans l'enveloppe du PER » (README), et de sa
+      capitalisation volontaire.
+    etape: 4
+  "30":
+    titre: "Les masses financières relatives à la retraite supplémentaire"
+    page: 250
+    sources: ["Enquête Retraite supplémentaire 2005 à 2024"]
+    statut: a_confronter
+    a_tirer: >-
+      Les masses de la retraite supplémentaire en 2024 — 21,4 milliards
+      d'euros de cotisations, 8,9 milliards de prestations, les
+      provisions, et sa part dans l'ensemble des retraites (graphiques 1
+      à 5) —, confrontées aux flux que le pilier capitalisé et la
+      capitalisation volontaire de la proposition feraient passer par le
+      PER.
+    etape: 4
+  "31":
+    titre: "Les adhérents et le montant des cotisations de retraite supplémentaire"
+    page: 260
+    sources: ["Enquête Retraite supplémentaire 2024", "Insee, enquête Emploi"]
+    statut: a_confronter
+    a_tirer: >-
+      Les 18,5 millions de contrats fin 2024, la part des personnes en
+      emploi qui cotisent et les cotisations annuelles moyennes par
+      dispositif (graphiques 1 à 7), confrontées à la convention de la
+      proposition, une capitalisation volontaire de 5 % de l'assiette,
+      entièrement à la charge de l'assuré.
+    etape: 4
+  "32":
+    titre: "Les bénéficiaires et le montant des prestations versées au titre de la retraite supplémentaire"
+    page: 267
+    sources: ["Enquête Retraite supplémentaire 2010 à 2024", "ANCETRE"]
+    statut: a_confronter
+    a_tirer: >-
+      Les 2,7 millions de prestations de 2024, le montant moyen d'une
+      rente viagère et ses tranches, la part des sorties en rente
+      (graphiques 1 à 7), confrontés aux rentes que le pilier capitalisé
+      de la proposition sert ; les frais des PER sont déjà au dépôt par
+      l'OPEF (`opef_rapport_annuel`).
+    etape: 4
+  "33":
+    titre: "Le PER d’entreprise collectif"
+    page: 274
+    sources: ["Dares, Acemo-Pipa et Acemo-TPE"]
+    statut: hors_champ
+    a_tirer: >-
+      Le PER d'entreprise collectif, que 27 % des salariés du secteur
+      marchand non agricole ont en 2023, mêle versements des salariés et
+      abondement de l'employeur : la capitalisation volontaire de la
+      proposition exclut tout cofinancement de l'employeur (README), et
+      le modèle ne représente pas l'épargne salariale.
+  "34":
+    titre: "La retraite supplémentaire d’entreprise"
+    page: 280
+    sources: ["Dares, Acemo-Pipa 2023"]
+    statut: hors_champ
+    a_tirer: >-
+      La retraite supplémentaire d'entreprise, contrats à prestations ou
+      à cotisations définies que près de 7 % des entreprises de 10
+      salariés ou plus proposent en 2022 : des régimes d'employeur, hors
+      du modèle et de la proposition, dont la capitalisation volontaire
+      est à la seule charge de l'assuré.
