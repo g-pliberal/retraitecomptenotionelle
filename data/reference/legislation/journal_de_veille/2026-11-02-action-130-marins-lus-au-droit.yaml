@@ -1,0 +1,44 @@
+date: "2026-11-02"
+session: "action 130, file E : la carte des fiches, les marins lus au droit (cinquième lot)"
+consulte: >-
+  python scripts/veille_droit.py ; les index LEGI et JORF du dépôt, récupérés et à jour de
+  l'incrément du 2 novembre 2026 (20261102-213929) ; python scripts/textes.py --inscrire,
+  quatorze rédactions nouvelles « à examiner », de textes que d'autres fiches citent
+  (ordonnance n° 58-1270, loi n° 89-18, loi n° 83-1179, décret n° 80-7, décret
+  n° 50-1348), aucune des marins. Dans LEGI, le code des pensions de retraite des marins :
+  R. 2, R. 3, R. 5 (deux rédactions), R. 11, R. 12, R. 13 (deux rédactions,
+  LEGIARTI000006791989 et LEGIARTI000006791990), R. 14, R. 30, R. 31, L. 4, L. 5, L. 7
+  (deux), L. 8 (deux), L. 14 (deux), L. 15, L. 17 et L. 42 ; le code des transports,
+  L. 5552-4, L. 5552-5 (deux), L. 5552-12, L. 5552-19, L. 5552-22 et L. 5553-5 (deux) ; la
+  loi n° 48-1469 du 22 septembre 1948, articles 10 et 13. Au Journal officiel, par
+  l'index JORF : les analyses des décrets n° 68-292 du 21 mars 1968 (le code, qui abroge
+  la loi du 12 avril 1941), n° 79-791 du 13 septembre 1979 (R. 14 remplacé) et n° 85-1159
+  du 5 novembre 1985 (R. 13 remplacé), le décret n° 99-265 du 1er avril 1999 (R. 30 et
+  R. 31) ; aucun texte depuis 2010 qui relève les âges des marins. Les pages de l'ENIM
+  renvoient le 2 novembre 2026 au portail des assurés : la lecture du 22 septembre 2026
+  reste la dernière.
+trouve: >-
+  Les trois règles n'ont changé que trois fois depuis 1968, dates qui coupent leurs
+  versions : le 15 septembre 1979, R. 14 ne compte plus que l'enfant élevé neuf ans
+  avant ses seize ans, 5 %, 10 % et 15 % ; le 7 novembre 1985, R. 13 lève le plafond de
+  vingt-cinq annuités, avant cinquante-cinq ans, pour le marin de cinquante-deux ans et
+  demi qui réunit trente-sept annuités et demie ; le 9 avril 1999, R. 31 donne une
+  catégorie moyenne aux contrats à temps partiel simultanés. Le code des transports
+  reprend la partie législative le 1er décembre 2010, sans rien changer. Trois écarts du
+  modèle, déclarés : il sert la levée des cinquante-deux ans et demi aux pensions d'avant
+  le 7 novembre 1985 ; il n'oppose pas la condition de neuf ans d'éducation ; et il
+  n'applique pas le 3° de R. 11, que L. 5552-19 reprend en 2010 — la portion du salaire
+  forfaitaire qui excède huit fois le traitement brut de l'indice 100 ne compte que pour
+  moitié. Lu à l'indice 100 majoré, 47 258,72 € en 2026, il toucherait les catégories 15
+  à 20, la vingtième de 19,3 % de son salaire de référence. La loi du 12 avril 1941 et la
+  rédaction de 1968 de R. 14 ne sont dans aucun index : leurs versions sont supposées.
+reste: >-
+  L'abattement de R. 11, 3° : à faire confirmer par l'ENIM — comment elle lit « l'indice
+  100 » —, puis à écrire dans une étape du modèle, les deux moteurs ensemble. Les âges de
+  la pension proportionnelle (R. 3, L. 5) et de la pension spéciale (R. 5, L. 7, L. 8,
+  L. 5552-12), que le modèle sert, n'ont pas de fiche ; avant le 28 janvier 1987, la
+  pension spéciale sans autre pension renvoyait à l'âge de l'ancien L. 345 du code de la
+  sécurité sociale, que l'index ne porte pas. Le maximum de quarante annuités avec les
+  bonifications de R. 6 (R. 13), que le modèle ne sert pas, et la formule des marins, 2 %
+  par annuité, sans fiche. La rédaction de 1968 de R. 14, au Journal officiel du 31 mars
+  1968.

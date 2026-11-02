@@ -2808,13 +2808,13 @@ fabriqués.
 **Reprise, au 2 novembre 2026.** Fait : phases 0 à 8, cinq domaines clos ; le
 sixième, les périodes assimilées manquantes, a ses étapes 1 à 6 faites
 (`130/2026-10-17-sixieme-domaine-etape-6.md`). Au propriétaire, README muet :
-sa septième étape, la décision de la proposition, et la retraite progressive,
-le cumul et la seconde pension. La carte mûrit : le RAFP, la CNAVPL, les IEG,
-la SNCF et la RATP sont lus au droit, la durée de leurs agents partis tôt
-corrigée ; restent 95 fiches à lire, 569 manques, les points ouverts des phases
-2 à 8, la même lecture à la CRPCEN et à la Comédie-Française. Par quoi
-commencer : un lot de fiches, un régime ou un domaine, dans `LUES_AU_DROIT`
-(`docs/veille_droit.md`). Détail : `130/2026-11-02-duree-des-agents-sncf-et-ratp-qui-partent-tot.md`.
+sa septième étape, la décision de la proposition, la retraite progressive, le
+cumul et la seconde pension, et l'abattement des marins (R. 11, 3°). La carte
+mûrit : RAFP, CNAVPL, IEG, SNCF, RATP et marins lus au droit ; restent 92
+fiches à lire, 550 manques, les points ouverts des phases 2 à 8. La file E seule
+récrit ce bloc ; la file G corrige en même temps la durée de la CRPCEN et de la
+Comédie-Française, dans sa note. Par quoi commencer : un lot dans `LUES_AU_DROIT`
+(`docs/veille_droit.md`). Détail : `130/2026-11-02-carte-des-fiches-marins-lus-au-droit.md`.
 
 Le dépôt devenait de plus en plus lourd à faire avancer. Une modification du
 moteur du scénario 1 touchait vingt fichiers en médiane, dont sept ou huit de

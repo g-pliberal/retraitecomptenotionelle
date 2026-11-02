@@ -2,10 +2,149 @@ schema_version: 1
 id: marins_ouverture_cinquante_ans
 intitule: >-
   Pension d'ancienneté des marins ouverte à cinquante ans pour vingt-cinq années
-  de services, plafonnée à vingt-cinq annuités avant cinquante-cinq ans, plafond
-  levé à cinquante-deux ans et demi pour trente-sept annuités et demie.
+  de services ; liquidée avant cinquante-cinq ans, plafonnée à vingt-cinq annuités,
+  plafond levé depuis le 7 novembre 1985 pour le marin de cinquante-deux ans et demi
+  qui réunit trente-sept annuités et demie.
+domaine: age
 regimes: [marins]
-etat: conforme
+etape: ouvrir_le_droit
+face: droit
+etat: approchee
+lit:
+- l'âge du marin à la date d'effet de sa pension
+- >-
+  ses années de services dans le régime des marins, « accomplis dans les conditions
+  indiquées aux articles L. 10 à L. 13 et R. 6 à R. 10 » (R. 2)
+- la date d'effet de sa pension, qui sépare la rédaction de 1968 de R. 13 de celle du 7 novembre 1985
+ecrit:
+- l'âge d'ouverture de la pension d'ancienneté, cinquante ans pour vingt-cinq années de services (R. 2)
+- >-
+  le nombre maximum d'annuités liquidables dans la pension d'ancienneté liquidée avant
+  cinquante-cinq ans : vingt-cinq, ou, depuis le 7 novembre 1985, trente-sept et demie
+  pour le marin de cinquante-deux ans et demi qui les réunit (R. 13), que
+  `liquider_chaque_regime` oppose
+dates_qui_decident:
+- liquidation.date_effet
+versions:
+- id: loi_du_12_avril_1941
+  statut: supposee
+  hypothese: >-
+    les pensions qui prennent effet avant le 31 mars 1968 relèvent de la loi du 12 avril
+    1941, que la loi n° 48-1469 du 22 septembre 1948 modifie et que le décret n° 68-292 du
+    21 mars 1968 abroge en la codifiant ; les index du dépôt ne portent de la loi de 1948
+    que ses articles modificateurs, sans leur texte, et rien de celle de 1941 : la fiche
+    présume que la codification a repris le droit en vigueur — les cinquante ans d'âge et
+    les vingt-cinq ans de services de R. 2, le plafond de vingt-cinq annuités de R. 13,
+    sans exception
+  fiabilite: moyenne, un décret de codification reprenant le droit qu'il abroge, mais la loi de 1941 n'a pas été lue
+  textes:
+  - {id: JORFTEXT000000335854, article: "décret n° 68-292 du 21 mars 1968 portant codification des textes législatifs et réglementaires déterminant le régime des pensions de retraite des marins : « création d'un code des pensions de retraite des marins, abroge la loi du 12-04-1941 » (analyse du Journal officiel)", en_vigueur: 1968-03-31, publie_le: 1968-03-31}
+  - {id: LEGITEXT000006068041, article: "loi n° 48-1469 du 22 septembre 1948 portant réforme du régime des pensions des marins français du commerce et de la pêche : ses articles qui modifient la loi de 1941, sans texte dans l'index LEGI"}
+  bornes:
+    liquidation.date_effet: [null, 1968-03-31]
+  contenu:
+    parametres:
+      age_ouverture_services: 50
+      services_ouverture_annees: 25
+      duree_maximum_avant_age: 55
+      duree_maximum_avant_age_trimestres: 100
+      duree_maximum_levee_age: null
+      duree_maximum_levee_trimestres: null
+    droit: celui de la version code_de_1968, présumé
+  exemples: aucun trouvé
+- id: code_de_1968
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006791972, article: "code des pensions de retraite des marins, R. 2", en_vigueur: 1968-03-31, publie_le: 1968-03-31}
+  - {id: LEGIARTI000006791883, article: "même code, L. 4", en_vigueur: 1968-03-31, publie_le: 1968-03-31}
+  - {id: LEGIARTI000006791989, article: "même code, R. 13", en_vigueur: 1968-03-31, publie_le: 1968-03-31}
+  nee_de: LEGIARTI000006791972
+  bornes:
+    liquidation.date_effet: [1968-03-31, 1985-11-07]
+  contenu:
+    parametres:
+      age_ouverture_services: 50
+      services_ouverture_annees: 25
+      duree_maximum_avant_age: 55
+      duree_maximum_avant_age_trimestres: 100
+      duree_maximum_levee_age: null
+      duree_maximum_levee_trimestres: null
+    droit: >-
+      « Le droit à pension d'ancienneté est acquis lorsque se trouve remplie la double
+      condition de cinquante ans d'âge et de vingt-cinq années de services accomplis dans
+      les conditions indiquées aux articles L. 10 à L. 13 et R. 6 à R. 10 » (R. 2) ; « La
+      pension d'ancienneté dont le marin demande la liquidation avant l'âge de cinquante-cinq
+      ans est égale, par année de service, à 2 % du salaire annuel défini à l'article R. 11,
+      sans que le nombre des annuités liquidables puisse dépasser vingt-cinq » (R. 13,
+      premier alinéa)
+    conditions: >-
+      aucune exception au plafond de vingt-cinq annuités : la pension liquidée « à
+      cinquante-cinq ans ou avant cet âge en cas d'invalidité » va à trente-sept annuités et
+      demie, quarante avec les bonifications de L. 11-1° et R. 6 (R. 13, troisième et
+      quatrième alinéas). « L'âge d'entrée en jouissance de la pension, prévu au deuxième
+      alinéa de l'article L. 4, est fixé à cinquante-cinq ans » (R. 2) : il borne le report
+      de la pension du marin qui continue à naviguer après l'âge d'ouverture (L. 4), non
+      l'âge d'ouverture ; la pension du marin qui reprend la navigation avant cinquante-cinq
+      ans est suspendue jusqu'à la cessation de l'activité ou jusqu'à cet âge (R. 13,
+      dernier alinéa). Le modèle liquide au départ que la carrière saisie arrête : il ne
+      connaît pas le marin qui continue à naviguer
+  exemples: aucun trouvé
+- id: levee_a_cinquante_deux_ans_et_demi
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006791990, article: "code des pensions de retraite des marins, R. 13, rédaction du décret n° 85-1159", en_vigueur: 1985-11-07, publie_le: 1985-11-07}
+  - {id: JORFTEXT000000872716, article: "décret n° 85-1159 du 5 novembre 1985 modifiant l'article R. 13 en ce qui concerne le calcul des pensions liquidées avant l'âge de 55 ans : « ils doivent être âgés d'au moins 52 ans et demi et justifier de 37 annuités et demie de services » (analyse du Journal officiel)", en_vigueur: 1985-11-07, publie_le: 1985-11-07}
+  - {id: LEGIARTI000006791972, article: "même code, R. 2", en_vigueur: 1968-03-31}
+  - {id: LEGIARTI000006791883, article: "même code, L. 4, jusqu'au 30 novembre 2010", en_vigueur: 1968-03-31}
+  - {id: LEGIARTI000023079263, article: "code des transports, L. 5552-4, rédaction de l'ordonnance n° 2010-1307 du 28 octobre 2010, qui reprend le premier alinéa de L. 4", en_vigueur: 2010-12-01}
+  - {id: LEGIARTI000023079261, article: "code des transports, L. 5552-5, qui reprend son deuxième alinéa", en_vigueur: 2010-12-01}
+  - {id: LEGIARTI000023654328, article: "même article, qui y ajoute la suspension de la pension du marin qui reprend la navigation", en_vigueur: 2010-12-01}
+  - {id: LEGIARTI000023079221, article: "code des transports, L. 5552-19 : la pension, « dans la limite d'un maximum d'annuités » fixé par décret en Conseil d'Etat", en_vigueur: 2010-12-01}
+  nee_de: LEGIARTI000006791990
+  bornes:
+    liquidation.date_effet: [1985-11-07, null]
+  contenu:
+    parametres:
+      age_ouverture_services: 50
+      services_ouverture_annees: 25
+      duree_maximum_avant_age: 55
+      duree_maximum_avant_age_trimestres: 100
+      duree_maximum_levee_age: 52.5
+      duree_maximum_levee_trimestres: 150
+    droit: >-
+      R. 2, inchangé depuis 1968 ; « Le maximum des annuités liquidables dans les pensions
+      d'ancienneté est fixé à trente-sept annuités et demie. Il peut être porté à quarante
+      annuités du chef des bonifications prévues aux articles L. 11-1° et R. 6. En outre, le
+      maximum des annuités liquidables dans les pensions d'ancienneté dont la liquidation est
+      demandée avant cinquante-cinq ans est fixé à vingt-cinq annuités. Ce maximum n'est
+      toutefois pas applicable : a) Dans le cas de pension liquidée dans les conditions
+      prévues aux articles L. 6 et R. 4 ; b) Dans le cas de pension liquidée au profit d'un
+      marin âgé d'au moins cinquante-deux ans et demi, réunissant trente-sept annuités et
+      demie de services » (R. 13)
+    conditions: >-
+      depuis le 1er décembre 2010, le code des transports reprend la partie législative du
+      code : « Le droit à pension d'ancienneté est acquis lorsque se trouvent remplies des
+      conditions d'âge et de durée de services fixées par décret en Conseil d'Etat »
+      (L. 5552-4) ; la pension du marin qui continue à naviguer est reportée « jusqu'à la
+      date de cessation de l'activité et au plus tard à un âge fixé par décret en Conseil
+      d'Etat » (L. 5552-5), les cinquante-cinq ans de R. 2. Ni R. 2 ni R. 13 n'ont de
+      rédaction depuis (index LEGI à jour de l'incrément du 2 novembre 2026), le Journal
+      officiel ne porte aucun relèvement des âges des marins depuis 2010, et la loi du
+      14 avril 2023 laisse le régime où il était. La levée des pensions d'invalidité (a) ne
+      sert pas : le modèle ne liquide pas d'invalidité
+  exemples: [enim_anciennete_a_cinquante_ans]
+approximations:
+- version: [loi_du_12_avril_1941, code_de_1968]
+  textes: R. 13, rédaction de 1968
+  ecart: >-
+    le modèle sert dès 1930 l'exception des cinquante-deux ans et demi que le décret
+    n° 85-1159 crée le 7 novembre 1985 : le marin de cinquante-deux ans et demi à
+    cinquante-cinq ans qui réunit trente-sept annuités et demie de services, et dont la
+    pension prend effet avant ce jour, en liquide jusqu'à cent cinquante trimestres, quand
+    R. 13 le plafonnait à vingt-cinq annuités, cent trimestres
+  effet: >-
+    jusqu'à moitié de pension en plus pour ce marin, parti avant le 7 novembre 1985 ; aucun
+    témoin ne le porte ; non mesuré
 effet: >-
   La fiche opposait cinquante-cinq ans à tout marin : c'est l'âge qui borne l'entrée
   en jouissance de celui qui CONTINUE à naviguer (L. 5552-5), non l'âge d'ouverture.
@@ -13,10 +152,12 @@ effet: >-
   est ouvert depuis le 22 septembre 2026 (`age_ouverture_services`), et l'exception
   des cinquante-deux ans et demi est appliquée (`duree_maximum_levee_age`). Aucun
   relèvement d'âge depuis 1968 : ni LEGI ni le JORF n'en portent, et la loi de 2023
-  laisse le régime où il était (reformes.yaml).
+  laisse le régime où il était (reformes.yaml). Approchée depuis le 2 novembre 2026 :
+  l'exception des cinquante-deux ans et demi, née le 7 novembre 1985, est servie aux
+  pensions d'avant.
 sources:
-  lu_le: 2026-09-22
-  prochaine_relecture: 2027-03-31
+  lu_le: 2026-11-02
+  prochaine_relecture: 2027-11-02
   a_relire:
   - >-
     La pension SPÉCIALE (moins de quinze ans de services) entre en jouissance avec
@@ -26,6 +167,26 @@ sources:
     l'âge légal […] du régime général » dans le texte, « à 60 ans » dans l'exemple
     d'Henry — et c'est R. 5 qui dit soixante. Reste la pension d'invalidité de L.
     6 et R. 4, que le modèle ne liquide pas.
+  - >-
+    Les âges de la pension PROPORTIONNELLE (quinze ans de services : R. 3, L. 5) et de la
+    pension SPÉCIALE (R. 5, L. 7, L. 8, puis L. 5552-12), que le modèle sert
+    (`age_ouverture`, `pension_speciale_services_annees`,
+    `pension_speciale_age_sans_autre_pension`), n'ont pas de fiche à eux : lus le
+    2 novembre 2026, ils ne changent pas celle-ci et restent sans statut, pour la fiche
+    qui les portera. Avant le 28 janvier 1987, la pension spéciale du marin sans autre
+    pension entrait en jouissance à « l'âge prévu à l'article L. 345 du Code de la
+    sécurité sociale » (L. 8, 2°, b), que l'index LEGI ne porte pas, et ses conditions
+    étaient celles de L. 7 (1979) ; R. 5 n'écrit soixante ans que depuis le 30 juillet
+    1987.
+  - >-
+    Le maximum de quarante annuités « du chef des bonifications prévues aux articles
+    L. 11-1° et R. 6 » (R. 13) : le modèle liquide au plus cent cinquante trimestres.
+    À lire avec les bonifications de R. 6, pour une fiche de la formule des marins, 2 %
+    du salaire forfaitaire par annuité, qui n'en a pas.
+  - >-
+    L'ENIM : ses pages publiques (« Les conditions d'attribution », « Le mode de calcul »)
+    renvoient le 2 novembre 2026 au portail des assurés ; la lecture du 22 septembre 2026
+    reste la dernière.
   lectures:
   - type: legifrance
     reference: >-
@@ -38,13 +199,31 @@ sources:
       de Gaspard
     url: https://www.enim.eu/retraite/conditions-dattribution
     date: 2026-09-22
-textes_a_rattacher:
-- reference: >-
-    code des pensions de retraite des marins, R. 2 (LEGIARTI000006791972), R. 3,
-    R. 5 et R. 13 (LEGIARTI000006791990)
-- reference: code des transports, L. 5552-4, L. 5552-5 et L. 5552-19
-exemples:
-- enim_anciennete_a_cinquante_ans
+  - type: legifrance
+    reference: >-
+      code des pensions de retraite des marins, articles R. 2, R. 3, R. 5 (deux rédactions),
+      R. 13 (deux rédactions), L. 4, L. 5, L. 7 (deux rédactions), L. 8 (deux rédactions), et
+      code des transports, L. 5552-4, L. 5552-5 (deux rédactions), L. 5552-12 et L. 5552-19,
+      dans l'index LEGI du dépôt à jour de l'incrément du 2 novembre 2026, confrontés d'une
+      rédaction à la suivante : la règle ne change qu'au 7 novembre 1985, quand R. 13 lève le
+      plafond de vingt-cinq annuités à cinquante-deux ans et demi ; aucune rédaction de R. 2
+      depuis le 31 mars 1968
+    date: 2026-11-02
+  - type: jorf
+    reference: >-
+      au Journal officiel par l'index JORF du dépôt : décret n° 68-292 du 21 mars 1968, qui
+      crée le code et abroge la loi du 12 avril 1941 ; décret n° 85-1159 du 5 novembre 1985,
+      qui remplace R. 13 — leurs seules analyses — ; aucun texte qui relève les âges des
+      marins depuis 2010
+    date: 2026-11-02
+historique:
+- >-
+  2026-11-02 — lue au droit (action 130) : trois versions sur la date d'effet — la loi du
+  12 avril 1941, présumée codifiée à droit constant ; le code de 1968, cinquante ans et
+  vingt-cinq ans de services, vingt-cinq annuités au plus avant cinquante-cinq ans ; depuis
+  le 7 novembre 1985, ce plafond levé pour le marin de cinquante-deux ans et demi qui réunit
+  trente-sept annuités et demie. Approchée, de conforme : la levée est servie aux pensions
+  d'avant 1985.
 code:
   moteur: >-
     `ouverture_par_services` ouvre la pension d'ancienneté à `age_ouverture_services`,
@@ -55,7 +234,8 @@ code:
     `liquider_chaque_regime` borne avant `duree_maximum_avant_age`, cinquante-cinq
     ans, les trimestres liquidés à `duree_maximum_avant_age_trimestres`, cent, sauf
     pour le marin de `duree_maximum_levee_age`, cinquante-deux ans et demi, qui en
-    réunit `duree_maximum_levee_trimestres`, cent cinquante.
+    réunit `duree_maximum_levee_trimestres`, cent cinquante. La période unique des
+    marins les porte depuis 1930.
   python: >-
     droit/ouvrir.py : ouverture_par_services, services_dans_le_regime, age_ouverture ;
     droit/liquider.py : liquider_chaque_regime
@@ -63,11 +243,16 @@ code:
     moteur/js/droit/ouvrir.js : ouvertureParServices, servicesDansLeRegime,
     ageOuverture ; moteur/js/droit/liquider.js : liquiderChaqueRegime
   parametres: >-
-    regimes/marins.yaml : age_ouverture, age_ouverture_services,
-    services_ouverture_annees, duree_maximum_avant_age,
-    duree_maximum_avant_age_trimestres, duree_maximum_levee_age,
+    contenu.parametres de chaque version : age_ouverture_services,
+    services_ouverture_annees, duree_maximum_avant_age, duree_maximum_avant_age_trimestres,
+    duree_maximum_levee_age, duree_maximum_levee_trimestres ; regimes/marins.yaml :
+    age_ouverture, age_ouverture_services, services_ouverture_annees,
+    duree_maximum_avant_age, duree_maximum_avant_age_trimestres, duree_maximum_levee_age,
     duree_maximum_levee_trimestres
   tests:
+  - >-
+    tests/test_marins.py, qui confronte chaque version à la période des marins et tient
+    l'écart déclaré
   - tests/test_simulateur.py
   - >-
     tests/temoins/exemples_officiels.yaml, que tests/test_oracle.py rejoue :

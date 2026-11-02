@@ -1,26 +1,222 @@
 schema_version: 1
 id: marins_salaire_de_reference
 intitule: >-
-  Salaire de référence des marins : forfait de la catégorie moyenne des trente-six
-  derniers mois, ou de fonctions supérieures tenues cinq ans ; services décomptés
-  au semestre.
+  Salaire de référence des marins : forfait de la catégorie des trois dernières années,
+  ou catégorie moyenne des trente-six derniers mois, ou de fonctions supérieures tenues
+  cinq ans, compté pour moitié au-delà de huit fois le traitement de l'indice 100 ;
+  services décomptés au semestre.
+domaine: salaire_de_reference
 regimes: [marins]
+etape: liquider_chaque_regime
+face: droit
 etat: approchee
+lit:
+- >-
+  les catégories dans lesquelles le marin a été classé, mois par mois, les trente-six
+  derniers mois avant la liquidation, et celles de fonctions supérieures qu'il a tenues
+  cinq ans au moins (R. 11)
+- les salaires forfaitaires de ces catégories, que fixent les arrêtés annuels
+- le traitement brut de l'indice 100 de la fonction publique (R. 11, 3°)
+- la durée de ses services, que le décompte final arrondit au semestre (R. 12)
+- la date d'effet de sa pension
+ecrit:
+- >-
+  le salaire annuel sur lequel la pension des marins se calcule, à 2 % par annuité de
+  service (R. 13)
+- le nombre d'annuités liquidées, au semestre (R. 12)
+dates_qui_decident:
+- liquidation.date_effet
+versions:
+- id: loi_du_12_avril_1941
+  statut: supposee
+  hypothese: >-
+    les pensions qui prennent effet avant le 31 mars 1968 relèvent de la loi du 12 avril
+    1941, que le décret n° 68-292 du 21 mars 1968 abroge en la codifiant, et que les index
+    du dépôt ne portent pas ; la loi n° 48-1469 du 22 septembre 1948 renvoie déjà au
+    « salaire forfaitaire correspondant, en application des articles 12 et 55 modifiés de
+    la loi du 12 avril 1941, aux fonctions occupées par l'intéressé avant la cessation de
+    ses services » (article 13) : la fiche présume la règle que le code de 1968 reprend
+  fiabilite: moyenne, le forfait des fonctions étant lu dans la loi de 1948, la catégorie moyenne, l'abattement et le semestre non
+  textes:
+  - {id: LEGIARTI000006757996, article: "loi n° 48-1469 du 22 septembre 1948, article 13, qui porte l'allocation minima des agents du service général à 0,75 % du salaire forfaitaire de leurs fonctions par annuité", en_vigueur: 1948-01-01}
+  - {id: JORFTEXT000000335854, article: "décret n° 68-292 du 21 mars 1968 portant codification des textes législatifs et réglementaires déterminant le régime des pensions de retraite des marins : « création d'un code des pensions de retraite des marins, abroge la loi du 12-04-1941 » (analyse du Journal officiel)", en_vigueur: 1968-03-31, publie_le: 1968-03-31}
+  bornes:
+    liquidation.date_effet: [null, 1968-03-31]
+  contenu:
+    parametres:
+      assiette: forfaitaire
+      assiette_grille: marins
+      mois_de_reference: 36
+      annees_de_fonctions_superieures: 5
+      plafond_en_traitements_de_l_indice_100: 8
+      part_au_dela_du_plafond: 0.5
+      mois_du_decompte_des_services: 6
+    droit: celui de la version code_de_1968, présumé
+  exemples: aucun trouvé
+- id: code_de_1968
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006791987, article: "code des pensions de retraite des marins, R. 11", en_vigueur: 1968-03-31, publie_le: 1968-03-31}
+  - {id: LEGIARTI000006791988, article: "même code, R. 12", en_vigueur: 1968-03-31, publie_le: 1968-03-31}
+  - {id: LEGIARTI000006791907, article: "même code, L. 14", en_vigueur: 1968-03-31, publie_le: 1968-03-31}
+  - {id: LEGIARTI000006791949, article: "même code, L. 42", en_vigueur: 1968-03-31, publie_le: 1968-03-31}
+  nee_de: LEGIARTI000006791987
+  bornes:
+    liquidation.date_effet: [1968-03-31, 1999-04-09]
+  contenu:
+    parametres:
+      assiette: forfaitaire
+      assiette_grille: marins
+      mois_de_reference: 36
+      annees_de_fonctions_superieures: 5
+      plafond_en_traitements_de_l_indice_100: 8
+      part_au_dela_du_plafond: 0.5
+      mois_du_decompte_des_services: 6
+    droit: >-
+      « La pension d'ancienneté proportionnelle ou spéciale est calculée d'après le salaire
+      forfaitaire correspondant, en application de l'article L. 42, à la catégorie dans
+      laquelle l'intéressé s'est trouvé classé dans les trois dernières années précédant la
+      liquidation de sa pension. Toutefois : 1° Si l'intéressé n'a pas cotisé d'une manière
+      continue pendant les trente-six derniers mois au taux de cette catégorie, la pension
+      est calculée sur la base du salaire d'une catégorie moyenne déterminée en multipliant
+      les indices des catégories dans lesquelles l'intéressé s'est trouvé successivement
+      placé au cours de cette période, par le nombre de mois de cotisation dans chacune
+      d'elles et en divisant par trente-six le total obtenu […] ; 2° Si au cours de sa
+      carrière l'intéressé a occupé pendant cinq ans au moins des fonctions supérieures à
+      celles de sa dernière activité, et sauf dans le cas où cette situation a été la
+      conséquence d'une mesure disciplinaire, la pension est calculée sur la base du salaire
+      de la catégorie correspondant auxdites fonctions ; 3° Lorsque le salaire ainsi défini
+      excède huit fois le montant du traitement brut correspondant à l'indice 100 dans la
+      fonction publique, la portion dépassant cette limite n'est comptée que pour moitié »
+      (R. 11) ; « Dans le décompte final des services entrant en compte pour la pension, la
+      fraction de semestre égale ou supérieure à trois mois est comptée pour six mois ; la
+      fraction de semestre inférieure à trois mois est négligée » (R. 12)
+    conditions: >-
+      le quotient de la catégorie moyenne s'arrondit à l'entier supérieur à cinq dixièmes, et
+      « toute période inférieure à trente jours est considérée comme ayant été accomplie dans
+      la catégorie la plus avantageuse » du mois (R. 11, 1°) ; le salaire forfaitaire est
+      fixé « en tenant compte des fonctions remplies par les intéressés et du salaire moyen
+      correspondant à ces fonctions », les marins « classés par catégorie », et révisé quand
+      les salaires montent de plus de 5 % (L. 42) ; « Le montant des pensions d'ancienneté,
+      proportionnelles ou spéciales est fixé par voie réglementaire sur la base du salaire
+      forfaitaire défini à l'article L. 42 » (L. 14)
+  exemples: aucun trouvé
+- id: contrats_simultanes
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006792028, article: "code des pensions de retraite des marins, R. 31, rédaction du décret n° 99-265", en_vigueur: 1999-04-09, publie_le: 1999-04-09}
+  - {id: JORFARTI000002485617, article: "décret n° 99-265 du 1er avril 1999 modifiant le code des pensions de retraite des marins, qui y insère un titre V « dispositions relatives aux salariés à temps partiel »", en_vigueur: 1999-04-09, publie_le: 1999-04-09}
+  - {id: LEGIARTI000006791987, article: "même code, R. 11", en_vigueur: 1968-03-31}
+  - {id: LEGIARTI000006791988, article: "même code, R. 12", en_vigueur: 1968-03-31}
+  - {id: LEGIARTI000006791907, article: "même code, L. 14, jusqu'au 8 septembre 2005", en_vigueur: 1968-03-31}
+  - {id: LEGIARTI000006791908, article: "même article, qui y ajoute le versement forfaitaire unique, jusqu'au 30 novembre 2010", en_vigueur: 2005-09-09}
+  - {id: LEGIARTI000006791949, article: "même code, L. 42, jusqu'au 30 novembre 2010", en_vigueur: 1968-03-31}
+  - {id: LEGIARTI000023079221, article: "code des transports, L. 5552-19, rédaction de l'ordonnance n° 2010-1307 du 28 octobre 2010, qui reprend L. 14 : le salaire forfaitaire « correspondant, sous réserve d'un abattement au-delà d'un plafond, à la catégorie dans laquelle se trouvait le marin pendant une période déterminée »", en_vigueur: 2010-12-01}
+  nee_de: LEGIARTI000006792028
+  bornes:
+    liquidation.date_effet: [1999-04-09, null]
+  contenu:
+    parametres:
+      assiette: forfaitaire
+      assiette_grille: marins
+      mois_de_reference: 36
+      annees_de_fonctions_superieures: 5
+      plafond_en_traitements_de_l_indice_100: 8
+      part_au_dela_du_plafond: 0.5
+      mois_du_decompte_des_services: 6
+      contrats_simultanes: moyenne_des_indices_ponderee_par_la_duree_du_travail
+    droit: >-
+      R. 11 et R. 12, inchangés depuis 1968 ; « Pour la détermination de la catégorie
+      moyenne visée au 1° de l'article R. 11 ou de la catégorie visée au 2° du même article,
+      lorsque le marin a été classé, pendant une période d'exécution simultanée de plusieurs
+      contrats de travail à temps partiel, dans des catégories différentes au titre de
+      chacun de ces contrats, il est procédé, avant d'effectuer les calculs prévus à
+      l'article R. 11 (1° et 2°), à la détermination de la catégorie moyenne de cette
+      période » : l'indice de chaque catégorie pondéré par la durée du travail du contrat,
+      rapportée à la durée légale ou conventionnelle (R. 31)
+    conditions: >-
+      depuis le 9 septembre 2005, la pension inférieure au minimum de L. 351-9 du code de la
+      sécurité sociale est remplacée par le versement forfaitaire unique (L. 14), qui ne
+      touche pas le salaire de référence ; depuis le 1er décembre 2010, le code des
+      transports reprend L. 14 et L. 42 : la pension est égale, par annuité, à un
+      pourcentage du salaire forfaitaire de L. 5553-5, « correspondant, sous réserve d'un
+      abattement au-delà d'un plafond, à la catégorie dans laquelle se trouvait le marin
+      pendant une période déterminée », pourcentage, abattement, plafond et période fixés
+      par décret en Conseil d'Etat (L. 5552-19) — ceux de R. 11 et R. 13 ; depuis le
+      1er janvier 2018, les salaires forfaitaires sont révisés au 1er avril de chaque année
+      par le coefficient de L. 161-25 du code de la sécurité sociale (L. 5553-5). Ni R. 11,
+      ni R. 12, ni R. 31 n'ont de rédaction depuis (index LEGI à jour de l'incrément du
+      2 novembre 2026)
+  exemples: [enim_bonification_deux_enfants]
+approximations:
+- version: [loi_du_12_avril_1941, code_de_1968, contrats_simultanes]
+  textes: R. 11, 1° et 2°
+  ecart: >-
+    le modèle liquide le forfait de la catégorie de la DERNIÈRE année, rangée par le revenu
+    annualisé (la catégorie dont le forfait en est le plus proche), proratisé sur ses mois,
+    et non la catégorie des trois dernières années ou leur catégorie moyenne de trente-six
+    mois (1°), ni celle de fonctions supérieures tenues cinq ans au moins (2°) : une
+    carrière saisie porte un revenu, pas une fonction à bord
+  effet: >-
+    nul pour le marin resté dans la même catégorie ses trois dernières années, sans
+    fonctions supérieures tenues cinq ans ; le salaire d'une catégorie entière pour celui
+    qui finit sa carrière plus bas qu'il ne l'a tenue ; non mesuré
+- version: [loi_du_12_avril_1941, code_de_1968, contrats_simultanes]
+  textes: R. 11, 3° ; code des transports, L. 5552-19, depuis le 1er décembre 2010
+  ecart: >-
+    l'abattement n'est pas appliqué : la portion du salaire forfaitaire qui excède huit
+    fois le traitement brut de l'indice 100 ne compte que pour moitié, et le modèle la
+    liquide entière. Lu au traitement annuel de l'indice 100 majoré (cent fois la valeur
+    du point, `legislation/point_indice_fonction_publique.csv`), le plafond vaut
+    47 258,72 € en 2026
+  effet: >-
+    en 2026, les catégories 15 à 20, de 49 285,81 € à 76 867,05 €, dépassent le plafond :
+    le salaire de référence est surestimé de 2,1 % à 19,3 % ; depuis 2008, les catégories
+    17 à 20, puis 16 à 20 dès 2013, et 15 à 20 dès 2024, la vingtième de 13,7 % en 2008 à
+    19,3 % en 2026 ; à confirmer auprès de l'ENIM, qui ne l'écrit pas sur ses pages
+- version: [loi_du_12_avril_1941, code_de_1968, contrats_simultanes]
+  textes: R. 12
+  ecart: >-
+    le modèle compte les services au trimestre ; le décompte final les arrondit au
+    semestre, la fraction de trois mois ou plus comptant pour six mois, l'autre négligée
+  effet: un trimestre de moins que le droit au plus, quand la fraction de semestre fait trois à cinq mois ; non mesuré
+- version: [contrats_simultanes]
+  textes: R. 31
+  ecart: >-
+    la catégorie moyenne des contrats à temps partiel simultanés n'est pas portée : le
+    modèle ne connaît pas de catégorie
+  effet: non mesuré
+- version: [loi_du_12_avril_1941, code_de_1968, contrats_simultanes]
+  textes: les arrêtés annuels de majoration des salaires forfaitaires
+  ecart: >-
+    avant 2008, les montants des arrêtés ne sont pas lus (décrets de 1956 à 1961, arrêtés
+    de 1991 à 2006 : visas et titres seuls dans l'index) : la grille de 2008 est ramenée
+    par le salaire moyen, de fiabilité estimée
+  effet: non mesuré
 effet: >-
   Le modèle prend la catégorie de la DERNIÈRE année, rangée par le revenu, et compte
   les services au trimestre ; la caisse prend la catégorie moyenne de trente-six
   mois et arrondit au semestre (R. 12 : quatorze ans huit mois et vingt-sept jours
-  font quatorze ans et demi). L'écart tient à une catégorie et à un trimestre au
-  plus. La grille elle-même est exacte : les vingt montants de 2026 publiés par
-  l'ENIM sont ceux du dépôt, au centime, comme les trois montants de 2024 que cite
-  son exemple.
+  font quatorze ans et demi). La grille elle-même est exacte : les vingt montants de
+  2026 publiés par l'ENIM sont ceux du dépôt, au centime, comme les trois montants de
+  2024 que cite son exemple. Lue au droit le 2 novembre 2026 : l'abattement de R. 11,
+  3°, au-delà de huit fois le traitement de l'indice 100, n'est pas appliqué, et
+  surestime jusqu'à 19,3 % le salaire de référence des plus hautes catégories.
 sources:
-  lu_le: 2026-09-22
-  prochaine_relecture: 2027-04-30
+  lu_le: 2026-11-02
+  prochaine_relecture: 2027-11-02
   a_relire:
   - >-
     Un parcours ne porte pas de catégorie : la moyenne des trente-six mois et la
     règle des cinq ans demanderaient d'en saisir une.
+  - >-
+    L'abattement de R. 11, 3° : « Lorsque le salaire ainsi défini excède huit fois le
+    montant du traitement brut correspondant à l'indice 100 dans la fonction publique, la
+    portion dépassant cette limite n'est comptée que pour moitié », que L. 5552-19 reprend
+    depuis 2010 (« sous réserve d'un abattement au-delà d'un plafond »). Le modèle ne
+    l'applique pas. Demander à l'ENIM comment elle le lit — l'indice 100 majoré, 5 907,34 €
+    par an depuis le 1er juillet 2023, ou un autre —, et l'écrire dans une étape du modèle,
+    les deux moteurs ensemble : en 2026, les catégories 15 à 20.
   lectures:
   - type: legifrance
     reference: >-
@@ -33,10 +229,27 @@ sources:
       au 1er avril 2026)
     url: https://www.enim.eu/employeur/salaires-forfaitaires
     date: 2026-09-22
-textes_a_rattacher:
-- reference: >-
-    code des pensions de retraite des marins, R. 11 (LEGIARTI000006791987), R. 12
-    (LEGIARTI000006791988) et R. 31
+  - type: legifrance
+    reference: >-
+      code des pensions de retraite des marins, R. 11, R. 12, R. 30, R. 31, L. 14 (deux
+      rédactions), L. 15 et L. 42, code des transports, L. 5552-19 et L. 5553-5 (deux
+      rédactions), et loi n° 48-1469 du 22 septembre 1948, articles 10 et 13, dans l'index
+      LEGI du dépôt à jour de l'incrément du 2 novembre 2026 : R. 11 et R. 12 n'ont qu'une
+      rédaction depuis 1968 ; le 3° de R. 11, l'abattement au-delà de huit fois l'indice 100,
+      n'était pas lu
+    date: 2026-11-02
+  - type: jorf
+    reference: >-
+      au Journal officiel par l'index JORF du dépôt : décret n° 68-292 du 21 mars 1968
+      (analyse) ; décret n° 99-265 du 1er avril 1999, qui insère le titre V, R. 30 et R. 31
+    date: 2026-11-02
+historique:
+- >-
+  2026-11-02 — lue au droit (action 130) : trois versions sur la date d'effet — la loi du
+  12 avril 1941, présumée codifiée à droit constant ; le code de 1968, R. 11 et R. 12 ;
+  depuis le 9 avril 1999, R. 31 pour les contrats à temps partiel simultanés. Le 3° de
+  R. 11, l'abattement au-delà de huit fois l'indice 100, est lu, et déclaré : le modèle ne
+  l'applique pas.
 code:
   moteur: >-
     La période des marins liquide le dernier salaire (`salaire_reference`) :
@@ -47,8 +260,8 @@ code:
     sur ses mois : la catégorie de la dernière année, rangée par le revenu, et non la
     catégorie moyenne des trente-six derniers mois, ni celle de fonctions supérieures
     tenues cinq ans. Hors des années que la grille publie, la plus proche est portée
-    par le salaire moyen, de fiabilité estimée. Les services se comptent au trimestre,
-    non au semestre.
+    par le salaire moyen, de fiabilité estimée. Le forfait est liquidé entier, sans
+    l'abattement de R. 11, 3°. Les services se comptent au trimestre, non au semestre.
   python: >-
     droit/liquider.py : salaire_de_reference, assiette_de_reference ;
     donnees/regimes.py : SalairesForfaitaires, SalairesForfaitaires.forfait
@@ -56,9 +269,15 @@ code:
     moteur/js/droit/liquider.js : salaireDeReference, assietteDeReference ;
     moteur/js/regimes.js : SalairesForfaitaires, SalairesForfaitaires.forfait
   parametres: >-
+    contenu.parametres de chaque version : assiette, assiette_grille, mois_de_reference,
+    annees_de_fonctions_superieures, plafond_en_traitements_de_l_indice_100,
+    part_au_dela_du_plafond, mois_du_decompte_des_services, contrats_simultanes ;
     regimes/marins.yaml : salaire_reference, assiette, assiette_grille ;
     regimes/salaires_forfaitaires.csv : marins, annee, categorie, montant_annuel
   tests:
+  - >-
+    tests/test_marins.py, qui confronte chaque version à la période des marins, tient les
+    écarts déclarés et mesure l'abattement de 2026
   - tests/test_simulateur.py
   - >-
     tests/test_cumul_activites.py, tests/test_liquidation.py et tests/test_web.py,

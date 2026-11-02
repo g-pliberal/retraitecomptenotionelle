@@ -3,21 +3,132 @@ id: marins_bonification_enfants
 intitule: >-
   Bonification de la pension des marins pour enfants élevés neuf ans : 5 % pour
   deux enfants, 10 % pour trois, 15 % au-delà.
+domaine: enfants
 regimes: [marins]
-etat: conforme
+etape: completer_tous_regimes
+face: droit
+etat: approchee
+lit:
+- >-
+  le nombre d'enfants que le marin a élevés, depuis le 15 septembre 1979 « pendant au
+  moins neuf ans, soit avant leur seizième anniversaire, soit avant l'âge où ils ont
+  cessé d'être à charge » (R. 14)
+- la pension de chaque régime des marins, avant la bonification
+- la date d'effet de sa pension
+ecrit:
+- >-
+  la bonification de la pension : 5 % de son montant pour deux enfants, 10 % pour trois,
+  15 % au-delà, que `completer` ajoute à la pension des marins
+dates_qui_decident:
+- liquidation.date_effet
+versions:
+- id: loi_du_12_avril_1941
+  statut: supposee
+  hypothese: >-
+    les pensions qui prennent effet avant le 31 mars 1968 relèvent de la loi du 12 avril
+    1941, que le décret n° 68-292 du 21 mars 1968 abroge en la codifiant, et que les index
+    du dépôt ne portent pas : la fiche présume que le code de 1968 en reprend la
+    bonification, dès deux enfants, et les taux que R. 14 écrit en 1979
+  fiabilite: faible, ni la loi de 1941 ni la rédaction de 1968 de R. 14 n'ont été lues
+  textes:
+  - {id: JORFTEXT000000335854, article: "décret n° 68-292 du 21 mars 1968 portant codification des textes législatifs et réglementaires déterminant le régime des pensions de retraite des marins : « création d'un code des pensions de retraite des marins, abroge la loi du 12-04-1941 » (analyse du Journal officiel)", en_vigueur: 1968-03-31, publie_le: 1968-03-31}
+  bornes:
+    liquidation.date_effet: [null, 1968-03-31]
+  contenu:
+    parametres:
+      taux_majoration_enfants: [0.0, 0.0, 0.05, 0.10, 0.15]
+    droit: celui de la version code_de_1968, présumé
+  exemples: aucun trouvé
+- id: code_de_1968
+  statut: supposee
+  hypothese: >-
+    L. 17, lu, bonifie depuis le 31 mars 1968 la pension « pour les titulaires ayant élevé
+    au moins deux enfants jusqu'à un âge déterminé, d'un pourcentage qui varie suivant le
+    nombre des enfants » ; la rédaction de 1968 de R. 14, qui fixait cet âge et ces taux,
+    et que le décret n° 79-791 du 13 septembre 1979 remplace, n'est pas dans l'index LEGI,
+    qui ne date R. 14 que de 1979 : la fiche présume les taux de 1979
+  fiabilite: moyenne, la bonification dès deux enfants étant lue dans L. 17, ses taux non
+  textes:
+  - {id: LEGIARTI000006791911, article: "code des pensions de retraite des marins, L. 17", en_vigueur: 1968-03-31, publie_le: 1968-03-31}
+  - {id: JORFTEXT000000335558, article: "décret n° 79-791 du 13 septembre 1979 : « bonifications pour enfants : remplace l'art. R14 du code » (analyse du Journal officiel)", en_vigueur: 1979-09-15, publie_le: 1979-09-15}
+  nee_de: LEGIARTI000006791911
+  bornes:
+    liquidation.date_effet: [1968-03-31, 1979-09-15]
+  contenu:
+    parametres:
+      taux_majoration_enfants: [0.0, 0.0, 0.05, 0.10, 0.15]
+    droit: >-
+      « La pension est bonifiée pour les titulaires ayant élevé au moins deux enfants
+      jusqu'à un âge déterminé, d'un pourcentage qui varie suivant le nombre des enfants »
+      (L. 17)
+    conditions: >-
+      l'âge jusqu'auquel l'enfant doit avoir été élevé, que fixait R. 14, n'est pas lu
+  exemples: aucun trouvé
+- id: neuf_ans_d_education
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006791991, article: "code des pensions de retraite des marins, R. 14, rédaction du décret n° 79-791", en_vigueur: 1979-09-15, publie_le: 1979-09-15}
+  - {id: JORFTEXT000000335558, article: "décret n° 79-791 du 13 septembre 1979 modifiant certaines dispositions du code des pensions de retraite des marins", en_vigueur: 1979-09-15, publie_le: 1979-09-15}
+  - {id: LEGIARTI000006791911, article: "même code, L. 17, jusqu'au 30 novembre 2010", en_vigueur: 1968-03-31}
+  - {id: LEGIARTI000023079215, article: "code des transports, L. 5552-22, rédaction de l'ordonnance n° 2010-1307 du 28 octobre 2010, qui reprend L. 17", en_vigueur: 2010-12-01}
+  nee_de: LEGIARTI000006791991
+  bornes:
+    liquidation.date_effet: [1979-09-15, null]
+  contenu:
+    parametres:
+      taux_majoration_enfants: [0.0, 0.0, 0.05, 0.10, 0.15]
+      annees_d_education: 9
+      age_de_fin_d_education: 16
+    droit: >-
+      « Pour l'application de l'article L. 17, à l'exception des enfants décédés par fait
+      de guerre, ne peuvent être pris en compte pour ouvrir droit à bonification que les
+      enfants qui ont été élevés pendant au moins neuf ans, soit avant leur seizième
+      anniversaire, soit avant l'âge où ils ont cessé d'être à charge au sens de l'article
+      L. 527 du Code de la sécurité sociale. […] Le taux de la bonification de pension est
+      fixé à 5 % de son montant pour deux enfants, à 10 % pour trois enfants et à 15 %
+      au-delà » (R. 14)
+    conditions: >-
+      « il est tenu compte, le cas échéant, du temps pendant lequel les enfants ont été
+      élevés par le conjoint après le décès du titulaire » (R. 14) ; depuis le 1er décembre
+      2010, « La pension des titulaires ayant élevé au moins deux enfants jusqu'à un âge
+      fixé par décret en Conseil d'Etat est bonifiée d'un pourcentage fixé par décret qui
+      varie suivant le nombre des enfants » (L. 5552-22). Aucune rédaction de R. 14 depuis
+      1979 (index LEGI à jour de l'incrément du 2 novembre 2026)
+  exemples: [enim_bonification_deux_enfants]
+approximations:
+- version: [neuf_ans_d_education]
+  textes: R. 14
+  ecart: >-
+    la condition de neuf ans d'éducation avant seize ans n'est pas opposée : le modèle
+    compte tout enfant déclaré, même celui qui n'a pas neuf ans à la date d'effet et ne
+    peut pas avoir été élevé neuf ans, et le formulaire ne demande pas qui a élevé les
+    autres, ni combien de temps
+  effet: >-
+    5 % de pension de trop au marin pour chaque enfant de moins de neuf ans à la date
+    d'effet qui fait son deuxième, son troisième ou son quatrième, 15 % au plus ; non
+    mesuré
+- version: [loi_du_12_avril_1941, code_de_1968]
+  textes: L. 17
+  ecart: >-
+    la condition d'avoir élevé l'enfant « jusqu'à un âge déterminé » (L. 17), que fixait la
+    rédaction de 1968 de R. 14, non lue, n'est pas opposée
+  effet: non mesuré
 effet: >-
   La fiche ne déclarait aucune majoration pour enfants : un marin père de deux enfants
   perdait 5 % de pension, de trois enfants 10 %. Le barème propre est porté depuis
   le 22 septembre 2026 (`taux_majoration_enfants`), et c'est le seul du catalogue
-  qui commence à DEUX enfants. La condition de neuf ans d'éducation avant seize
-  ans n'est pas opposée, le modèle ne connaissant que le nombre d'enfants.
+  qui commence à DEUX enfants. Approchée depuis le 2 novembre 2026 : la condition de
+  neuf ans d'éducation avant seize ans n'est pas opposée, le modèle ne connaissant que
+  le nombre d'enfants.
 sources:
-  lu_le: 2026-09-22
-  prochaine_relecture: 2027-03-31
+  lu_le: 2026-11-02
+  prochaine_relecture: 2027-11-02
   a_relire:
   - >-
-    Rien sur la règle ; la condition de durée d'éducation reste celle de tout le
-    modèle.
+    La rédaction de 1968 de R. 14, que le décret n° 79-791 remplace : l'âge jusqu'auquel
+    l'enfant devait avoir été élevé, et les taux. Le Journal officiel du 31 mars 1968, qui
+    publie le code en annexe du décret n° 68-292, la porte ; l'index JORF n'en a que
+    l'analyse.
   lectures:
   - type: legifrance
     reference: >-
@@ -29,11 +140,26 @@ sources:
       2024
     url: https://www.enim.eu/retraite/mode-de-calcul
     date: 2026-09-22
-textes_a_rattacher:
-- reference: code des pensions de retraite des marins, R. 14 (LEGIARTI000006791991)
-- reference: code des transports, L. 5552-22
-exemples:
-- enim_bonification_deux_enfants
+  - type: legifrance
+    reference: >-
+      code des pensions de retraite des marins, L. 17 et R. 14, et code des transports,
+      L. 5552-22, leurs seules rédactions, dans l'index LEGI du dépôt à jour de l'incrément
+      du 2 novembre 2026 : la règle ne change, depuis 1968, que quand R. 14 est remplacé le
+      15 septembre 1979
+    date: 2026-11-02
+  - type: jorf
+    reference: >-
+      au Journal officiel par l'index JORF du dépôt : décret n° 68-292 du 21 mars 1968 et
+      décret n° 79-791 du 13 septembre 1979 (« bonifications pour enfants : remplace l'art.
+      R14 du code »), leurs seules analyses
+    date: 2026-11-02
+historique:
+- >-
+  2026-11-02 — lue au droit (action 130) : trois versions sur la date d'effet — la loi du
+  12 avril 1941 et le code de 1968, dont la rédaction de R. 14 n'est pas lue, présumés aux
+  taux de 1979 ; depuis le 15 septembre 1979, 5 %, 10 % et 15 % pour l'enfant élevé neuf
+  ans avant ses seize ans. Approchée, de conforme : la condition d'éducation n'est pas
+  opposée.
 code:
   moteur: >-
     La période des marins porte son barème (`taux_majoration_enfants`) : rien pour un
@@ -46,8 +172,13 @@ code:
   javascript: >-
     moteur/js/droit/completer.js : completer, tauxMajorationEnfants
   parametres: >-
-    regimes/marins.yaml : taux_majoration_enfants, avantages_non_contributifs
+    contenu.parametres de chaque version : taux_majoration_enfants, annees_d_education,
+    age_de_fin_d_education ; regimes/marins.yaml : taux_majoration_enfants,
+    avantages_non_contributifs
   tests:
+  - >-
+    tests/test_marins.py, qui confronte chaque version à la période des marins et tient
+    l'écart déclaré
   - tests/test_oracle.py
   - tests/test_simulateur.py
   - >-

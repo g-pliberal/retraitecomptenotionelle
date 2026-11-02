@@ -255,6 +255,7 @@ LUES_AU_DROIT = frozenset("""
     points_au_prorata_des_cotisations
     age_ouverture_ieg_actifs age_reference_decote_ieg duree_requise_ieg
     age_reference_decote_sncf_ratp age_surcote_sncf_ratp duree_requise_sncf_ratp
+    marins_ouverture_cinquante_ans marins_bonification_enfants marins_salaire_de_reference
 """.split())
 
 
