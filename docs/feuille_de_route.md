@@ -6920,14 +6920,13 @@ de `contribution_etat`.
 
 **Reprise, au 2 novembre 2026.** Le JavaScript fait foi (note de décision
 0005). Faits : les témoins et les confrontations au portage ; le coût date,
-bâtit et simule sa grille au portage ; la grille des carrières types, les
-départs des facteurs de la dépense et les cohortes du coût des avantages s'y
-datent (`castypes.departs_au_portage`), la table identique à l'octet. Ce qui
-suit, dans l'ordre : les neutralisations du coût des avantages au portage —
-`sans` des fiches et des invalidités, le catalogue privé d'une déclaration,
-le barème de carrière longue vidé, en JavaScript d'abord, puis une demande
-du pont — ; la grille large, le coût sous un modèle modifié ; puis les
-retraits. Détail : `2026-11-02-etape-6-les-grilles-datees-par-le-portage.md`.
+bâtit et simule sa grille au portage ; la grille des carrières types et les
+départs des facteurs de la dépense s'y datent ; le coût des avantages y
+date, bâtit et liquide la sienne, ses neutralisations comprises
+(`scenariosNeutralises`, `pont.avantages`), la table identique à l'octet. Ce
+qui suit, dans l'ordre : la grille large, le coût sous un modèle modifié ;
+puis les retraits, par sous-ensemble cohérent. Détail :
+`2026-11-02-etape-6-les-neutralisations-du-cout-des-avantages.md`.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur

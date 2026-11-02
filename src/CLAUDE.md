@@ -17,10 +17,10 @@ de la proposition, qui s'écrit en couche (`data/CLAUDE.md`).
   un témoin de plus couvre la règle quand la confrontation ne rougit pas sans
   lui. Le Python ne cesse de suivre qu'au retrait de sa paire (action 161) :
   le coût date, bâtit et simule sa grille au portage, la table y date ses
-  carrières types, mais la fabrique bâtit et liquide encore par lui le coût
-  des avantages, date et bâtit la grille large, et le coût sous un modèle
-  modifié ; une règle portée d'un seul côté rougirait la suite ou les ferait
-  mentir.
+  carrières types, le coût des avantages y date, bâtit et liquide la sienne,
+  sous ses scénarios neutralisés, mais la fabrique date et bâtit encore par
+  lui la grille large, et le coût sous un modèle modifié ; une règle portée
+  d'un seul côté rougirait la suite ou les ferait mentir.
   `python scripts/jumeaux.py <nom>` dit si une étape a son jumeau et tout ce
   qui en dépend. Un code neuf
   s'écrit une fois, dans le langage de l'endroit où il tourne : ici, ce que

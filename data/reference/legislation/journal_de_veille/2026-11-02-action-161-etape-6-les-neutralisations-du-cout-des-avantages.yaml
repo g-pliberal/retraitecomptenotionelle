@@ -1,0 +1,19 @@
+date: "2026-11-02"
+session: "action 161, étape 6 : les neutralisations du coût des avantages au portage"
+consulte: >-
+  Aucune source de droit : la session ne touche à aucune règle du scénario 1.
+  Les scénarios neutralisés d'avantages.py (scenarios_neutralises, recalculer,
+  decomposer, masses_anticipees) et leurs leviers Python (FichesDatees.sans,
+  Invalidites.sans, _catalogue_sans, le barème de carrière longue lu d'un
+  fichier absent, PARENTS_MEILLEURES_ANNEES_DEPUIS) ; ce que le portage en
+  porte (moteur/js/regimes.js, scenario-actuel.js, droit/compter.js).
+trouve: >-
+  Aucune règle n'a changé, et aucun écart : chacun des huit scénarios
+  neutralisés du portage liquide au bit près comme son jumeau Python, sur une
+  carrière où il mord ; les 358 couples de la décomposition, leurs parts et
+  leurs refus, et le coût des avantages, année par année, sont ceux du
+  Python ; la table des agrégats, refaite, est identique à l'octet.
+reste: >-
+  Rien pour la veille. L'action reprend où son bloc « Reprise » la laisse
+  (action 161, note du 2 novembre 2026, étape 6, les neutralisations du coût
+  des avantages).
