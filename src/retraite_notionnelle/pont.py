@@ -829,22 +829,35 @@ def scenario_actuel(cas: list[dict], paquet: bytes | None = None,
 @dataclasses.dataclass(frozen=True)
 class Moteur:
     """Le moteur du scénario 1, ``simulateur.scenario_actuel``, en argument
-    d'un appel du droit (:func:`droit`) : :data:`MOTEUR`, ou une copie dont
-    des tables lisent ce que d'autres lisent (:meth:`pretant`)."""
+    d'un appel du droit (:func:`droit`) : :data:`MOTEUR`, une copie dont des
+    tables lisent ce que d'autres lisent (:meth:`pretant`), ou l'une de ses
+    variantes que la mesure des avantages non contributifs liquide
+    (:meth:`neutralisant`)."""
 
     #: Chaque table prêtée, ``(table, preteuse)``, sous les noms du Python.
     prets: tuple[tuple[str, str], ...] = ()
+    #: L'avantage que la mesure retire de ce moteur, ou ``None``.
+    neutralise: str | None = None
 
     def pretant(self, table: str, preteuse: str) -> Moteur:
         """Ce moteur, sa table ``table`` lisant ce que lit ``preteuse`` — celle
         des indépendants, celle du régime général —, comme un test la prête au
         moteur Python (``monkeypatch.setattr``) : le portage la prête à une
         copie du sien, que les autres appels ne voient pas."""
-        return Moteur((*self.prets, (table, preteuse)))
+        return dataclasses.replace(self, prets=(*self.prets, (table, preteuse)))
+
+    def neutralisant(self, code: str) -> Moteur:
+        """Ce moteur, l'avantage ``code`` retiré comme la mesure des avantages
+        non contributifs le retire (``avantages.scenarios_neutralises``) : le
+        portage prend sa variante (``scenariosNeutralises`` de ``pont.mjs``),
+        bâtie des leviers de ``moteur/js/regimes.js`` (action 161, étape 6)."""
+        return dataclasses.replace(self, neutralise=code)
 
     def __repr__(self) -> str:
-        return "pont.MOTEUR" + "".join(f".pretant({table!r}, {preteuse!r})"
-                                       for table, preteuse in self.prets)
+        return ("pont.MOTEUR"
+                + ("" if self.neutralise is None else f".neutralisant({self.neutralise!r})")
+                + "".join(f".pretant({table!r}, {preteuse!r})"
+                          for table, preteuse in self.prets))
 
 
 #: Le moteur du scénario 1 en argument d'un appel du droit : le portage y met
@@ -1044,7 +1057,8 @@ def _argument_du_droit(argument, carrieres: list) -> dict:
     from .carriere import Carriere
 
     if isinstance(argument, Moteur):
-        return {"moteur": "scenario_actuel", "prets": [list(pret) for pret in argument.prets]}
+        return {"moteur": "scenario_actuel", "prets": [list(pret) for pret in argument.prets],
+                **({} if argument.neutralise is None else {"neutralise": argument.neutralise})}
     if argument is SIMULATEUR:
         return {"simulateur": "simulateur"}
     if isinstance(argument, CarriereSimple):

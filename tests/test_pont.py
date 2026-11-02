@@ -437,6 +437,76 @@ def test_le_cout_des_avantages_date_ses_cohortes_au_portage(memoire_isolee, monk
     assert ("agent_ieg", 1885) not in {(p.code, p.generation) for p in au_portage[0]}
 
 
+#: Une carrière où mord chaque levier de la mesure des avantages non
+#: contributifs (``avantages.scenarios_neutralises``), aux options de
+#: ``carriere_simple`` : l'agent classé et le militaire partis avant l'âge
+#: légal, la mère de deux enfants partie après le 1er septembre 2026, le
+#: salarié entré à seize ans parti à soixante, l'assuré handicapé depuis ses
+#: vingt et un ans parti à cinquante-six, le policier.
+CARRIERES_DES_LEVIERS = {
+    code: {"sexe": "H", "niveau_salaire": 1.0, "profil_carriere": "plat",
+           "part_primes": 0.0, **options}
+    for code, options in {
+        "categorie_active": {"annee_naissance": 1965, "age_debut": 22, "age_liquidation": 59,
+                             "affiliation": "fonctionnaire_territorial_hospitalier_actif",
+                             "part_primes": 0.2},
+        "age_jouissance_militaire": {"annee_naissance": 1975, "affiliation": "militaire",
+                                     "age_debut": 21, "age_liquidation": 48.5,
+                                     "part_primes": 0.2},
+        "salaire_de_reference_des_parents": {
+            "annee_naissance": 1966, "sexe": "F", "affiliation": "salarie_prive_non_cadre",
+            "age_debut": 21, "age_liquidation": 64, "nombre_enfants": 2},
+        "carriere_longue": {"annee_naissance": 1964, "affiliation": "salarie_prive_non_cadre",
+                            "age_debut": 16, "age_liquidation": 60, "profil_carriere": "smic"},
+        "retraite_anticipee_handicap": {
+            "annee_naissance": 1973, "affiliation": "salarie_prive_non_cadre", "age_debut": 22,
+            "age_liquidation": 56, "invalidite": {"handicap": 21.0}},
+        "bonification_cinquieme_services_actifs": {
+            "annee_naissance": 1975, "affiliation": "policier", "age_debut": 22,
+            "age_liquidation": 57, "part_primes": 0.25},
+    }.items()
+}
+
+
+def test_les_leviers_de_la_mesure_des_avantages_neutralisent_au_portage_comme_le_python():
+    """Chaque scénario que la mesure des avantages non contributifs neutralise
+    (``avantages.scenarios_neutralises``) a son jumeau au portage
+    (``scenariosNeutralises`` de ``pont.mjs``), bâti des leviers de
+    ``moteur/js/regimes.js`` : les fiches datées et les invalidités privées
+    d'une fiche (``sans``), le catalogue privé d'une déclaration
+    (``sansDeclaration``), le barème de la carrière longue vidé, la règle du
+    salaire de référence des parents repoussée hors de portée (action 161,
+    étape 6). Chacun liquide au bit près ce que liquide son jumeau Python
+    (``droit_et_refait``), et chacun mord : la carrière que son levier vise
+    n'y liquide pas ce qu'elle liquide au scénario 1 — le montant, ou, pour
+    la carrière longue, le motif de l'ouverture."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    from outils_pont import droit_et_refait
+    from test_avantages import _apprenti_puis_salarie
+
+    carrieres = {code: pont.CarriereSimple(options)
+                 for code, options in CARRIERES_DES_LEVIERS.items()}
+    carrieres["bonification_cinquieme_militaires"] = carrieres["age_jouissance_militaire"]
+    # L'apprenti de trente mois dont la carrière reste incomplète : la fiche
+    # retirée lui ôte dix trimestres.
+    carrieres["apprentissage"] = _apprenti_puis_salarie(Simulateur(Parametres()), 2048, 67.0)
+    appels = {}
+    for code, carriere in carrieres.items():
+        appels[f"{code}|reelle"] = ("scenario_actuel.calculer", pont.MOTEUR, carriere)
+        appels[f"{code}|sans"] = ("scenario_actuel.calculer", pont.MOTEUR.neutralisant(code),
+                                  carriere)
+    lus, refus = droit_et_refait(appels)
+    assert not refus
+    for code in carrieres:
+        reelle, sans = lus[f"{code}|reelle"], lus[f"{code}|sans"]
+        if code == "carriere_longue":
+            assert (reelle["motif_ouverture"], sans["motif_ouverture"]) == (
+                "carriere_longue", "non_ouverte")
+        else:
+            assert sans["pension_annuelle"] < reelle["pension_annuelle"], code
+
+
 def test_sans_node_le_pont_s_arrete_sans_repli(monkeypatch):
     monkeypatch.setattr(pont.shutil, "which", lambda nom: None)
     with pytest.raises(pont.PontIndisponible, match="node"):

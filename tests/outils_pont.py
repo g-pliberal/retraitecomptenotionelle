@@ -379,13 +379,31 @@ def _simulateur_du_droit(parametres: Parametres) -> Simulateur:
     return Simulateur(parametres)
 
 
+@functools.cache
+def _scenarios_neutralises(simulateur: Simulateur) -> dict:
+    """Les variantes du scénario 1 que la mesure des avantages non
+    contributifs liquide (``avantages.scenarios_neutralises``), bâties une
+    fois par simulateur."""
+    from retraite_notionnelle.avantages import scenarios_neutralises
+
+    return scenarios_neutralises(simulateur)
+
+
+def _moteur_du_jumeau(simulateur: Simulateur, moteur: pont.Moteur):
+    """Le moteur du scénario 1 du simulateur Python, ou la variante que la
+    mesure des avantages en neutralise (``pont.Moteur.neutralisant``)."""
+    if moteur.neutralise is None:
+        return simulateur.scenario_actuel
+    return _scenarios_neutralises(simulateur)[moteur.neutralise]
+
+
 def _argument_du_jumeau(simulateur: Simulateur, argument):
     """Un argument d'un appel du droit tel que le jumeau Python le reçoit : le
-    moteur du scénario 1 et la période d'un régime, ceux du simulateur
-    Python ; une carrière, que le Python a bâtie, ou une valeur, telle
-    quelle."""
+    moteur du scénario 1, ou sa variante neutralisée, et la période d'un
+    régime, ceux du simulateur Python ; une carrière, que le Python a bâtie,
+    ou une valeur, telle quelle."""
     if isinstance(argument, pont.Moteur):
-        return simulateur.scenario_actuel
+        return _moteur_du_jumeau(simulateur, argument)
     if argument is pont.SIMULATEUR:
         return simulateur
     if isinstance(argument, pont.CarriereSimple):
@@ -400,18 +418,20 @@ def _prets_au_jumeau(simulateur: Simulateur, arguments):
     """Les tables que les arguments d'un appel prêtent au moteur
     (``pont.Moteur.pretant``), prêtées au moteur Python le temps de l'appel,
     comme un test les lui prête (``monkeypatch.setattr``), puis rendues."""
-    moteur = simulateur.scenario_actuel
     gardees = []
     try:
         for argument in arguments:
-            for table, preteuse in (argument.prets if isinstance(argument, pont.Moteur) else ()):
+            if not isinstance(argument, pont.Moteur):
+                continue
+            moteur = _moteur_du_jumeau(simulateur, argument)
+            for table, preteuse in argument.prets:
                 if not hasattr(moteur, table):
                     raise AttributeError(f"le moteur Python ne porte pas la table {table}")
-                gardees.append((table, getattr(moteur, table)))
+                gardees.append((moteur, table, getattr(moteur, table)))
                 setattr(moteur, table, getattr(moteur, preteuse))
         yield
     finally:
-        for table, gardee in reversed(gardees):
+        for moteur, table, gardee in reversed(gardees):
             setattr(moteur, table, gardee)
 
 

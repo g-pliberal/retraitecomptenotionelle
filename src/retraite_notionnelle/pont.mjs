@@ -85,6 +85,9 @@ import { ConstructeurCompte } from "../../moteur/js/compte.js";
 import { PARAMETRES_DEFAUT, avec } from "../../moteur/js/config.js";
 import { Contexte } from "../../moteur/js/contexte.js";
 import { Echeancier } from "../../moteur/js/echeancier.js";
+import {
+  FICHE_DE_L_APPRENTISSAGE, FICHE_DES_MILITAIRES, FICHES_DES_EMPLOIS,
+} from "../../moteur/js/droit/compter.js";
 import * as cumul from "../../moteur/js/droit/cumul.js";
 import * as departs from "../../moteur/js/droit/departs.js";
 import { foyerEtNet } from "../../moteur/js/droit/foyer.js";
@@ -95,10 +98,11 @@ import * as ouvrir from "../../moteur/js/droit/ouvrir.js";
 import * as releve from "../../moteur/js/droit/releve.js";
 import * as reversion from "../../moteur/js/droit/reversion.js";
 import { ageDeDepart } from "../../moteur/js/pilote.js";
-import { BORNES_ASSIETTE } from "../../moteur/js/regimes.js";
+import { BORNES_ASSIETTE, CarriereLongue } from "../../moteur/js/regimes.js";
 import { ficheDepuisBrut } from "../../moteur/js/remuneration.js";
 import { faireVivre } from "../../moteur/js/revalorisation.js";
 import { Saisie } from "../../moteur/js/saisie.js";
+import { ScenarioActuel } from "../../moteur/js/scenario-actuel.js";
 
 const RACINE = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 /** Le contexte sur le paquet de la demande, ou sur celui du dépôt. */
@@ -740,11 +744,82 @@ function moteurPretant(moteur, prets) {
 }
 
 /**
+ * Les fiches que retire chacune des neutralisations des bonifications de
+ * service : celles des emplois classés, puis celle des militaires. Voir
+ * `FICHES_RETIREES` d'`avantages.py`.
+ */
+const FICHES_RETIREES = {
+  bonification_cinquieme_services_actifs: FICHES_DES_EMPLOIS
+    .filter((nom) => nom !== FICHE_DES_MILITAIRES),
+  bonification_cinquieme_militaires: [FICHE_DES_MILITAIRES],
+};
+
+/** Les scénarios neutralisés de chaque simulateur, bâtis une fois. */
+const NEUTRALISES = new WeakMap();
+
+/**
+ * Un scénario 1 par avantage retiré, que la mesure des avantages non
+ * contributifs liquide (`scenarios_neutralises` d'`avantages.py`, son jumeau,
+ * action 161, étape 6) : celui du simulateur, bâti sur un catalogue privé de
+ * la déclaration du classement de l'emploi, que la jouissance militaire
+ * partage ; la règle du salaire de référence des parents repoussée hors de
+ * portée ; un barème de carrière longue lu sur un paquet qui n'en porte pas,
+ * vide comme le Python le lit d'un fichier absent ; la fiche du départ
+ * anticipé des assurés handicapés retirée ; celles des bonifications des
+ * emplois classés, puis celle des militaires ; celle de l'apprentissage.
+ */
+function scenariosNeutralises(simulateur) {
+  if (NEUTRALISES.has(simulateur)) {
+    return NEUTRALISES.get(simulateur);
+  }
+  const { paquet, macro, catalogue, affiliations, parametres } = simulateur;
+  const scenario = (sur = catalogue) => new ScenarioActuel(
+    paquet, macro, sur, affiliations, parametres);
+  const sansClassement = catalogue.sansDeclaration("categorie_active");
+  const variantes = {
+    categorie_active: scenario(sansClassement),
+    age_jouissance_militaire: scenario(sansClassement),
+  };
+  const parents = scenario();
+  parents.parentsMeilleuresAnneesDepuis = new DateMois(2999, 1).rang;
+  variantes.salaire_de_reference_des_parents = parents;
+  const longue = scenario();
+  longue.carriereLongue = new CarriereLongue({});
+  variantes.carriere_longue = longue;
+  const handicap = scenario();
+  handicap.invalidites = handicap.invalidites.sans("handicap");
+  variantes.retraite_anticipee_handicap = handicap;
+  for (const [code, noms] of Object.entries(FICHES_RETIREES)) {
+    const emplois = scenario();
+    emplois.fichesDatees = emplois.fichesDatees.sans(...noms);
+    variantes[code] = emplois;
+  }
+  const apprentissage = scenario();
+  apprentissage.fichesDatees = apprentissage.fichesDatees.sans(FICHE_DE_L_APPRENTISSAGE);
+  variantes.apprentissage = apprentissage;
+  NEUTRALISES.set(simulateur, variantes);
+  return variantes;
+}
+
+/** Le scénario 1 du simulateur, ou celui que la mesure des avantages neutralise. */
+function moteurNeutralise(simulateur, code) {
+  if (code === undefined) {
+    return simulateur.scenarioActuel;
+  }
+  const variantes = scenariosNeutralises(simulateur);
+  if (!Object.hasOwn(variantes, code)) {
+    throw new RangeError(`avantage que la mesure ne neutralise pas : ${code}`);
+  }
+  return variantes[code];
+}
+
+/**
  * Un argument d'un appel du droit, tel que `pont.py` l'écrit : le simulateur,
  * la carrière qu'il bâtit d'options (`CarriereSimple`), sans qu'elle passe,
- * le moteur du scénario 1 (`simulateur.scenarioActuel`) et les tables qu'on lui prête, la
- * période d'un régime à une année, une carrière de la demande, par son rang,
- * ou une valeur.
+ * le moteur du scénario 1 (`simulateur.scenarioActuel`), ou sa variante que la
+ * mesure des avantages neutralise (`neutralise`, `scenariosNeutralises`), et
+ * les tables qu'on lui prête, la période d'un régime à une année, une carrière
+ * de la demande, par son rang, ou une valeur.
  */
 function argumentDuDroit(simulateur, carrieres, argument) {
   if (Object.hasOwn(argument, "simulateur")) {
@@ -754,7 +829,8 @@ function argumentDuDroit(simulateur, carrieres, argument) {
     return simulateur.carriereSimple(optionsDeCarriere(argument.carriere_simple));
   }
   if (Object.hasOwn(argument, "moteur")) {
-    return moteurPretant(simulateur.scenarioActuel, argument.prets ?? []);
+    return moteurPretant(moteurNeutralise(simulateur, argument.neutralise),
+      argument.prets ?? []);
   }
   if (Object.hasOwn(argument, "periode")) {
     const [code, annee] = argument.periode;

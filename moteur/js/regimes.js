@@ -608,6 +608,17 @@ export class FichesDatees {
   }
 
   /**
+   * Les mêmes fiches, celles-ci retirées : la contrefactuelle qui mesure ce
+   * qu'elles servent. Voir `FichesDatees.sans` du Python.
+   */
+  sans(...noms) {
+    const copie = Object.create(FichesDatees.prototype);
+    copie._fiches = Object.fromEntries(Object.entries(this._fiches)
+      .filter(([nom]) => !noms.includes(nom)));
+    return copie;
+  }
+
+  /**
    * Les paramètres de la version de `nom` qui vaut pour une pension prenant
    * effet à `dateEffet` (AAAA-MM-JJ) ; `null` sans fiche ou sans version.
    */
@@ -1613,6 +1624,18 @@ export class Invalidites {
       return null;
     }
     return applicable(preparee, { "liquidation.date_effet": dateEffet });
+  }
+
+  /**
+   * Les mêmes fiches, celle-ci retirée : ses régimes n'appliquent plus rien de
+   * ses règles. Voir `Invalidites.sans` du Python.
+   */
+  sans(fiche) {
+    const copie = Object.create(Invalidites.prototype);
+    copie._fiches = Object.fromEntries(Object.entries(this._fiches)
+      .filter(([nom]) => nom !== Invalidites.FICHES[fiche]));
+    copie._regimes = new Map();
+    return copie;
   }
 }
 
@@ -2639,6 +2662,28 @@ export class CatalogueRegimes {
 
   contient(code) {
     return this._regimes.has(code);
+  }
+
+  /**
+   * Le même catalogue, aucune période ne déclarant plus `code` parmi ses
+   * avantages non contributifs : le moteur les lit période par période, et
+   * le régime cesse de servir l'avantage sans qu'aucun code change. Voir
+   * `_catalogue_sans` d'`avantages.py`.
+   */
+  sansDeclaration(code) {
+    const copie = Object.assign(Object.create(CatalogueRegimes.prototype), this);
+    copie._regimes = new Map([...this._regimes].map(([nom, regime]) => [nom,
+      Object.assign(Object.create(Regime.prototype), regime, {
+        periodes: regime.periodes.map((periode) => (
+          periode.avantages_non_contributifs.includes(code)
+            ? new PeriodeRegime({
+              ...periode,
+              avantages_non_contributifs: periode.avantages_non_contributifs
+                .filter((declare) => declare !== code),
+            })
+            : periode)),
+      })]));
+    return copie;
   }
 
   get taille() {
