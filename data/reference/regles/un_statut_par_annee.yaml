@@ -44,11 +44,39 @@ sources:
       version du 1er août 2026 : pour la durée d'assurance tous régimes, « une année
       civile ne peut compter plus de quatre trimestres »
     date: 2026-09-22
+  - type: legifrance
+    reference: >-
+      D. 171-2 CSS, LEGIARTI000006735483, rédaction du 21 décembre 1985 au 18 juillet
+      2015, lue dans l'index LEGI : D. 171-3 à D. 171-11 s'appliquent aux travailleurs
+      des branches de R. 711-1 et de R. 711-24, « bénéficiaires d'une organisation
+      spéciale », qui « exercent simultanément et à titre accessoire une activité
+      salariée ou assimilée relevant du régime général » ; sa rédaction du 19 juillet
+      2015 (LEGIARTI000030910656) ôte « à titre accessoire » et l'organisation spéciale
+    date: 2026-11-03
+  - type: legifrance
+    reference: >-
+      D. 171-4 CSS, LEGIARTI000006735484, rédaction du 21 décembre 1985 au 18 juillet
+      2015, sans rédaction depuis, lue dans l'index LEGI : ces travailleurs sont
+      « dispensés au titre de cette activité de la cotisation d'assurance vieillesse
+      incombant au salarié », et « n'ont droit qu'aux prestations prévues par le régime
+      auquel ils sont affiliés au titre de leur activité principale » ; l'employeur paie
+      sa part entière (D. 171-3, LEGIARTI000006735612)
+    date: 2026-11-03
+  - type: circulaire_cnav
+    reference: >-
+      base de législation de la Cnav, exposés « Taux des cotisations » et « Annulation au
+      profit d'un régime spécial » (versions du 24 octobre 2025) : le fonctionnaire
+      cotise au régime général sur les rémunérations de son activité accessoire versées
+      à partir du 19 juillet 2015, qui lui ouvrent des droits ; avant, il ne cotisait pas,
+      et « cette activité ne lui ouvre pas de droit au régime général » (circulaire Cnav
+      2016/15 du 18 février 2016)
+    date: 2026-11-03
 textes_a_rattacher:
 - reference: R. 351-9 CSS
 - reference: R. 351-5 CSS
 - reference: R. 173-4-4-1, 2° CSS
 - reference: décret n° 2003-1306, article 20
+- reference: D. 171-2 CSS, LEGIARTI000006735483 ; D. 171-4 CSS, LEGIARTI000006735484
 approximations:
 - ecart: >-
     La saisie n'a pas de statut pour le conjoint collaborateur d'un libéral, qui cotise
@@ -62,6 +90,23 @@ approximations:
   effet: >-
     non mesuré ; léger : la coupe du 14 octobre 2026 le déclare sans le faire
     (action 138, classement du 9 octobre)
+- ecart: >-
+    Une activité salariée cumulée ouvre au modèle les droits du régime général, à toute
+    date. Jusqu'au 18 juillet 2015, l'agent d'un régime spécial — fonctionnaire,
+    militaire, agent de la SNCF, de la RATP, des industries électriques et gazières… —
+    qui l'exerçait à titre accessoire n'y cotisait pas, et n'avait droit qu'aux
+    prestations du régime de son activité principale (D. 171-2 et D. 171-4) : ses
+    années d'avant ne lui ouvrent rien au régime général, ni trimestre ni salaire au
+    compte ; depuis le 19 juillet 2015, elles lui en ouvrent. À corriger dans les deux
+    moteurs, par l'étape qui coordonne les affiliations, quand une ligne saura qu'elle
+    est cumulée ; D. 171-4 ne visant que la cotisation de L. 241-3, la complémentaire
+    de l'activité accessoire reste à lire (action 175, étape 4, « Carrière :
+    cotisations-salaires »).
+  effet: >-
+    non mesuré : l'agent d'un régime spécial qui déclare, avant 2015, une activité
+    salariée cumulée — le professeur qui enseigne aussi dans le privé —, dont le
+    modèle surestime la durée d'assurance et le salaire annuel moyen du régime
+    général
 code:
   moteur: >-
     `_lignes_du_parcours` bâtit une ligne par année et par activité : celle de
