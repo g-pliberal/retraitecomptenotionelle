@@ -1,0 +1,195 @@
+# Les grilles de chaque texte, une par groupe (grade, échelle, classe) : sa clé, son dernier libellé, la période qu'elle couvre, ses échelons.
+# source_id: dila_legi_grilles — DILA, base LEGI, par l'index du dépôt (scripts/fetch/dila_index.py) ; scripts/fetch/dila_legi_grilles.py
+texte,grille,libelle,debut,fin,echelons
+LEGITEXT000018931513,militaires-du-grade-de-gendarme,militaires du grade de gendarme,2008-01-01,2008-12-31,12
+LEGITEXT000019568085,interne,Interne,2004-06-16,2020-06-21,4
+LEGITEXT000019568085,medecin,Médecin,2004-06-16,2020-06-21,4
+LEGITEXT000019568085,medecin-pharmacien-veterinaire-chirurgien-dentiste-chef-de-services-de-classe-normale,"Médecin, Pharmacien, Vétérinaire, Chirurgien-dentiste chef de services de classe normale",2004-06-16,2020-06-21,2
+LEGITEXT000019568085,medecin-pharmacien-veterinaire-chirurgien-dentiste-chef-de-services-hors-classe,"Médecin, Pharmacien, Vétérinaire, Chirurgien-dentiste chef de services hors classe",2004-06-16,2020-06-21,2
+LEGITEXT000019568085,medecin-pharmacien-veterinaire-chirurgien-dentiste-en-chef,"Médecin, Pharmacien, Vétérinaire, Chirurgien-dentiste en chef",2004-06-16,2020-06-21,7
+LEGITEXT000019568085,medecin-pharmacien-veterinaire-chirurgien-dentiste-principal,"Médecin, Pharmacien, Vétérinaire, Chirurgien-dentiste principal",2004-06-16,2020-06-21,3
+LEGITEXT000019568085,pharmacien-veterinaire-chirurgien-dentiste,"Pharmacien, Vétérinaire, Chirurgien-dentiste",2004-06-16,2020-06-21,5
+LEGITEXT000019671694,capitaine-et-assimiles,Capitaine et assimilés,2000-01-01,2020-06-21,6
+LEGITEXT000019671694,colonel-et-assimiles,Colonel et assimilés,2000-01-01,2020-06-21,4
+LEGITEXT000019671694,commandant-et-assimiles,Commandant et assimilés,2000-01-01,2020-06-21,3
+LEGITEXT000019671694,general-de-brigade-et-assimiles,Général de brigade et assimilés,2000-01-01,2020-06-21,2
+LEGITEXT000019671694,general-de-division-et-assimiles,Général de division et assimilés,2000-01-01,2020-06-21,2
+LEGITEXT000019671694,lieutenant-colonel-et-assimiles,Lieutenant-colonel et assimilés,2000-01-01,2020-06-21,6
+LEGITEXT000019671694,lieutenant-et-assimiles,Lieutenant et assimilés,2000-01-01,2020-06-21,5
+LEGITEXT000019671694,sous-lieutenant-et-assimiles,Sous-lieutenant et assimilés,2000-01-01,2020-06-21,3
+LEGITEXT000019756015,controleur,Contrôleur,1993-10-01,2020-06-21,2
+LEGITEXT000019756015,controleur-adjoint,Contrôleur adjoint,1993-10-01,2020-06-21,4
+LEGITEXT000020091010,adjudant-chef-ou-maitre-principal-echelle-de-solde-n-4,Adjudant-chef ou maître principal – Echelle de solde n° 4,2009-01-01,,9
+LEGITEXT000020091010,adjudant-ou-premier-maitre-echelle-de-solde-n-3,Adjudant ou premier maître – Echelle de solde n° 3,2009-01-01,,3
+LEGITEXT000020091010,adjudant-ou-premier-maitre-echelle-de-solde-n-4,Adjudant ou premier maître – Echelle de solde n° 4,2009-01-01,,9
+LEGITEXT000020091010,aspirant-echelle-de-solde-n-2,Aspirant – Echelle de solde n° 2,2009-01-01,,2
+LEGITEXT000020091010,aspirant-echelle-de-solde-n-3,Aspirant – Echelle de solde n° 3,2009-01-01,,5
+LEGITEXT000020091010,aspirant-echelle-de-solde-n-4,Aspirant – Echelle de solde n° 4,2009-01-01,,7
+LEGITEXT000020091010,caporal-chef-ou-quartier-maitre-de-1re-classe-echelle-de-solde-n-2,Caporal-chef ou quartier-maître de 1re classe – Echelle de solde n° 2,2009-01-01,2023-10-31,8
+LEGITEXT000020091010,caporal-chef-ou-quartier-maitre-de-1re-classe-echelle-de-solde-n-3,Caporal-chef ou quartier-maître de 1re classe – Echelle de solde n° 3,2009-01-01,,9
+LEGITEXT000020091010,caporal-chef-ou-quartier-maitre-de-1re-classe-echelle-de-solde-n-4,Caporal-chef ou quartier-maître de 1re classe – Echelle de solde n° 4,2009-01-01,,9
+LEGITEXT000020091010,caporal-ou-quartier-maitre-de-2e-classe-echelle-de-solde-n-2,Caporal ou quartier-maître de 2e classe – Echelle de solde n° 2,2009-01-01,2023-10-31,5
+LEGITEXT000020091010,caporal-ou-quartier-maitre-de-2e-classe-echelle-de-solde-n-3,Caporal ou quartier-maître de 2e classe – Echelle de solde n° 3,2009-01-01,,5
+LEGITEXT000020091010,major-echelle-de-solde-des-majors,Major – Echelle de solde des majors,2009-01-01,2012-12-20,6
+LEGITEXT000020091010,major-echelle-de-solde-n-4,Major – Echelle de solde n° 4,2012-12-21,,7
+LEGITEXT000020091010,sergent-chef-ou-maitre-echelle-de-solde-n-3,Sergent-chef ou maître – Echelle de solde n° 3,2009-01-01,,6
+LEGITEXT000020091010,sergent-chef-ou-maitre-echelle-de-solde-n-4,Sergent-chef ou maître – Echelle de solde n° 4,2009-01-01,,7
+LEGITEXT000020091010,sergent-ou-second-maitre-echelle-de-solde-n-2,Sergent ou second maître – Echelle de solde n° 2,2009-01-01,,8
+LEGITEXT000020091010,sergent-ou-second-maitre-echelle-de-solde-n-3,Sergent ou second maître – Echelle de solde n° 3,2009-01-01,,8
+LEGITEXT000020091010,sergent-ou-second-maitre-echelle-de-solde-n-4,Sergent ou second maître – Echelle de solde n° 4,2009-01-01,,7
+LEGITEXT000020091010,soldat-ou-matelot,Soldat ou matelot,2023-11-01,,1
+LEGITEXT000020091010,soldat-ou-matelot-echelle-de-solde-n-2,Soldat ou matelot – Echelle de solde n° 2,2009-01-01,2023-10-31,3
+LEGITEXT000020129919,controleur,Contrôleur,2009-01-01,2025-12-14,3
+LEGITEXT000020129919,controleur-adjoint,Contrôleur adjoint,2009-01-01,2025-12-14,4
+LEGITEXT000020129919,controleur-adjoint-des-armees,Contrôleur adjoint des armées,2025-12-15,,4
+LEGITEXT000020129919,controleur-des-armees,Contrôleur des armées,2025-12-15,,10
+LEGITEXT000020129919,controleur-general,Contrôleur général,2009-01-01,2025-12-14,3
+LEGITEXT000020129919,controleur-general-des-armees,Contrôleur général des armées,2025-12-15,,7
+LEGITEXT000020129930,ingenieur,Ingénieur,2009-01-01,2010-12-31,9
+LEGITEXT000020129930,ingenieur-en-chef,Ingénieur en chef,2009-01-01,2010-12-31,6
+LEGITEXT000020129930,ingenieur-en-chef-de-1re-classe-ou-officier-en-chef-de-1re-classe,Ingénieur en chef de 1re classe ou officier en chef de 1re classe,2009-01-01,2010-12-31,4
+LEGITEXT000020129930,ingenieur-en-chef-de-2e-classe-ou-officier-en-chef-de-2e-classe,Ingénieur en chef de 2e classe ou officier en chef de 2e classe,2009-01-01,2010-12-31,6
+LEGITEXT000020129930,ingenieur-general-de-1re-classe,Ingénieur général de 1re classe,2009-01-01,2010-12-31,1
+LEGITEXT000020129930,ingenieur-general-de-1re-classe-ou-officier-general-de-1re-classe,Ingénieur général de 1re classe ou officier général de 1re classe,2009-01-01,2010-12-31,1
+LEGITEXT000020129930,ingenieur-general-de-2e-classe,Ingénieur général de 2e classe,2009-01-01,2010-12-31,1
+LEGITEXT000020129930,ingenieur-general-de-2e-classe-ou-officier-general-de-2e-classe,Ingénieur général de 2e classe ou officier général de 2e classe,2009-01-01,2010-12-31,1
+LEGITEXT000020129930,ingenieur-ou-officier,Ingénieur ou officier,2009-01-01,2010-12-31,11
+LEGITEXT000020129930,ingenieur-principal,Ingénieur principal,2009-01-01,2010-12-31,4
+LEGITEXT000020129930,ingenieur-principal-ou-officier-principal,Ingénieur principal ou officier principal,2009-01-01,2010-12-31,6
+LEGITEXT000020129945,classe-fonctionnelle-du-grade-de-medecin-principal,classe fonctionnelle du grade de médecin principal,2017-08-01,2019-12-31,4
+LEGITEXT000020129945,internes-des-hopitaux-des-armees-interne,Internes des hôpitaux des armées Interne,2009-01-01,2025-12-14,4
+LEGITEXT000020129945,internes-des-hopitaux-des-armees-interne-echelle-de-solde-n-1,Internes des hôpitaux des armées Interne – Echelle de solde n° 1,2025-12-15,,5
+LEGITEXT000020129945,medecin,Médecin,2009-01-01,2025-12-14,4
+LEGITEXT000020129945,medecin-chef-des-services-de-classe-normale,Médecin-chef des services de classe normale,2009-01-01,2025-12-14,2
+LEGITEXT000020129945,medecin-chef-des-services-de-classe-normale-echelle-de-solde-n-3,Médecin chef des services de classe normale – Echelle de solde n° 3,2025-12-15,,6
+LEGITEXT000020129945,medecin-echelle-de-solde-n-1,Médecin – Echelle de solde n° 1,2025-12-15,,4
+LEGITEXT000020129945,medecin-en-chef,Médecin en chef,2009-01-01,2025-12-14,9
+LEGITEXT000020129945,medecin-en-chef-de-1re-classe-echelle-de-solde-n-2,Médecin en chef de 1re classe – Echelle de solde n° 2,2025-12-15,,15
+LEGITEXT000020129945,medecin-en-chef-de-1re-classe-echelle-de-solde-n-3,Médecin en chef de 1re classe – Echelle de solde n° 3,2025-12-15,,13
+LEGITEXT000020129945,medecin-en-chef-de-2e-classe-echelle-de-solde-n-2,Médecin en chef de 2e classe – Echelle de solde n° 2,2025-12-15,,11
+LEGITEXT000020129945,medecin-principal,Médecin principal,2009-01-01,2025-12-14,4
+LEGITEXT000020129945,medecin-principal-echelle-de-solde-n-2,Médecin principal – Echelle de solde n° 2,2025-12-15,,5
+LEGITEXT000020129945,medecins-des-armees-medecin-chef-des-services-hors-classe,Médecins des armées. Médecin-chef des services hors classe,2009-01-01,2025-12-14,2
+LEGITEXT000020129945,medecins-des-armees-medecin-chef-des-services-hors-classe-echelle-de-solde-n-3,Médecins des armées Médecin chef des services hors classe – Echelle de solde n° 3,2025-12-15,,6
+LEGITEXT000020129945,pharmacien-veterinaire-chirurgien-dentiste,"Pharmacien, vétérinaire, chirurgien-dentiste",2009-01-01,2025-12-14,6
+LEGITEXT000020129945,pharmacien-veterinaire-chirurgien-dentiste-chef-des-services-de-classe-normale,"Pharmacien, vétérinaire, chirurgien-dentiste chef des services de classe normale",2009-01-01,2025-12-14,2
+LEGITEXT000020129945,pharmacien-veterinaire-chirurgien-dentiste-chef-des-services-de-classe-normale-echelle-de-solde-n-3,"Pharmacien, vétérinaire, chirurgien-dentiste chef des services de classe normale – Echelle de solde n° 3",2025-12-15,,6
+LEGITEXT000020129945,pharmacien-veterinaire-chirurgien-dentiste-echelle-de-solde-n-1,"Pharmacien, vétérinaire, chirurgien-dentiste – Echelle de solde n° 1",2025-12-15,,6
+LEGITEXT000020129945,pharmacien-veterinaire-chirurgien-dentiste-en-chef,"Pharmacien, vétérinaire, chirurgien-dentiste en chef",2009-01-01,2025-12-14,9
+LEGITEXT000020129945,pharmacien-veterinaire-chirurgien-dentiste-en-chef-de-1re-classe-echelle-de-solde-n-2,"Pharmacien, vétérinaire, chirurgien-dentiste en chef de 1re classe – Echelle de solde n° 2",2025-12-15,,15
+LEGITEXT000020129945,pharmacien-veterinaire-chirurgien-dentiste-en-chef-de-1re-classe-echelle-de-solde-n-3,"Pharmacien, vétérinaire, chirurgien-dentiste en chef de 1re classe – Echelle de solde n° 3",2025-12-15,,13
+LEGITEXT000020129945,pharmacien-veterinaire-chirurgien-dentiste-en-chef-de-2e-classe-echelle-de-solde-n-2,"Pharmacien, vétérinaire, chirurgien-dentiste en chef de 2e classe – Echelle de solde n° 2",2025-12-15,,11
+LEGITEXT000020129945,pharmacien-veterinaire-chirurgien-dentiste-principal,"Pharmacien, vétérinaire, chirurgien-dentiste principal",2009-01-01,2025-12-14,4
+LEGITEXT000020129945,pharmacien-veterinaire-chirurgien-dentiste-principal-echelle-de-solde-n-2,"Pharmacien, vétérinaire, chirurgien-dentiste principal – Echelle de solde n° 2",2025-12-15,,5
+LEGITEXT000020129945,pharmaciens-des-armees-veterinaires-des-armees-chirurgiens-dentistes-des-armees-pharmacien-veterinaire-chirurgien-dentiste-chef-des-services-hors-classe,"Pharmaciens des armées. Vétérinaires des armées. Chirurgiens-dentistes des armées. Pharmacien, vétérinaire, chirurgien-dentiste chef des services hors classe",2009-01-01,2025-12-14,2
+LEGITEXT000020129945,pharmaciens-des-armees-veterinaires-des-armees-chirurgiens-dentistes-des-armees-pharmacien-veterinaire-chirurgien-dentiste-chef-des-services-hors-classe-echelle-de-solde-n-3,"Pharmaciens des armées Vétérinaires des armées Chirurgiens-dentistes des armées Pharmacien, vétérinaire, chirurgien-dentiste chef des services hors classe – Echelle de solde n° 3",2025-12-15,,6
+LEGITEXT000020129955,capitaine-ou-lieutenant-de-vaisseau,Capitaine ou lieutenant de vaisseau,2009-01-01,2025-12-14,6
+LEGITEXT000020129955,capitaine-ou-lieutenant-de-vaisseau-echelle-de-solde-n-1,Capitaine ou lieutenant de vaisseau – Echelle de solde n° 1,2025-12-15,,6
+LEGITEXT000020129955,classe-fonctionnelle-du-grade-de-commandant-ou-capitaine-de-corvette-et-equivalents,classe fonctionnelle du grade de commandant ou capitaine de corvette et équivalents,2017-08-01,,4
+LEGITEXT000020129955,colonel-ou-capitaine-de-vaisseau,Colonel ou capitaine de vaisseau,2009-01-01,2025-12-14,6
+LEGITEXT000020129955,colonel-ou-capitaine-de-vaisseau-echelle-de-solde-n-2,Colonel ou capitaine de vaisseau – Echelle de solde n° 2,2025-12-15,,15
+LEGITEXT000020129955,colonel-ou-capitaine-de-vaisseau-echelle-de-solde-n-3,Colonel ou capitaine de vaisseau – Echelle de solde n° 3,2025-12-15,,13
+LEGITEXT000020129955,commandant-ou-capitaine-de-corvette,Commandant ou capitaine de corvette,2009-01-01,2025-12-14,7
+LEGITEXT000020129955,commandant-ou-capitaine-de-corvette-echelle-de-solde-n-1,Commandant ou capitaine de corvette – Echelle de solde n° 1,2025-12-15,,14
+LEGITEXT000020129955,commandant-ou-capitaine-de-corvette-echelle-de-solde-n-2,Commandant ou capitaine de corvette – Echelle de solde n° 2,2025-12-15,,7
+LEGITEXT000020129955,general-de-brigade-aerienne-ou-contre-amiral-echelle-de-solde-n-3,"Général de brigade, général de brigade aérienne ou contre-amiral – Echelle de solde n° 3",2025-12-15,,4
+LEGITEXT000020129955,general-de-brigade-ou-contre-amiral,Général de brigade ou contre-amiral,2009-01-01,2025-12-14,1
+LEGITEXT000020129955,general-de-division-aerienne-ou-vice-amiral-echelle-de-solde-n-3,"Général de division, général de division aérienne ou vice-amiral – Echelle de solde n° 3",2025-12-15,,4
+LEGITEXT000020129955,general-de-division-ou-vice-amiral,Général de division ou vice-amiral,2009-01-01,2025-12-14,1
+LEGITEXT000020129955,lieutenant-colonel-ou-capitaine-de-fregate,Lieutenant-colonel ou capitaine de frégate,2009-01-01,2025-12-14,7
+LEGITEXT000020129955,lieutenant-colonel-ou-capitaine-de-fregate-echelle-de-solde-n-1,Lieutenant-colonel ou capitaine de frégate – Echelle de solde n° 1,2025-12-15,,11
+LEGITEXT000020129955,lieutenant-colonel-ou-capitaine-de-fregate-echelle-de-solde-n-2,Lieutenant-colonel ou capitaine de frégate – Echelle de solde n° 2,2025-12-15,,11
+LEGITEXT000020129955,lieutenant-ou-enseigne-de-vaisseau-de-1re-classe,Lieutenant ou enseigne de vaisseau de 1re classe,2009-01-01,2025-12-14,5
+LEGITEXT000020129955,lieutenant-ou-enseigne-de-vaisseau-de-1re-classe-echelle-de-solde-n-1,Lieutenant ou enseigne de vaisseau de 1re classe – Echelle de solde n° 1,2025-12-15,,8
+LEGITEXT000020129955,sous-lieutenant-ou-enseigne-de-vaisseau-de-2e-classe,Sous-lieutenant ou enseigne de vaisseau de 2e classe,2009-01-01,2025-12-14,1
+LEGITEXT000020129955,sous-lieutenant-ou-enseigne-de-vaisseau-de-2e-classe-echelle-de-solde-n-1,Sous-lieutenant ou enseigne de vaisseau de 2e classe – Echelle de solde n° 1,2025-12-15,,1
+LEGITEXT000020129985,adjudant-chef-echelle-de-solde-n-4,Adjudant-chef – Echelle de solde n° 4,2009-01-01,2011-04-14,8
+LEGITEXT000020129985,adjudant-echelle-de-solde-n-4,Adjudant – Echelle de solde n° 4,2009-01-01,2011-04-14,8
+LEGITEXT000020129985,capitaine,Capitaine,2009-01-01,2011-04-14,6
+LEGITEXT000020129985,chef-d-escadron,Chef d'escadron,2009-01-01,2011-04-14,6
+LEGITEXT000020129985,colonel,Colonel,2009-01-01,2011-04-14,4
+LEGITEXT000020129985,gendarme-echelle-de-solde-des-gendarmes,Gendarme – Echelle de solde des gendarmes,2009-01-01,2011-04-14,12
+LEGITEXT000020129985,general-de-brigade,Général de brigade,2009-01-01,2011-04-14,1
+LEGITEXT000020129985,general-de-division,Général de division,2009-01-01,2011-04-14,1
+LEGITEXT000020129985,lieutenant,Lieutenant,2009-01-01,2011-04-14,4
+LEGITEXT000020129985,lieutenant-colonel,Lieutenant-colonel,2009-01-01,2011-04-14,6
+LEGITEXT000020129985,major-echelle-de-solde-des-majors,Major – Echelle de solde des majors,2009-01-01,2011-04-14,6
+LEGITEXT000020129985,marechal-des-logis-chef-echelle-de-solde-n-4,Maréchal des logis-chef – Echelle de solde n° 4,2009-01-01,2011-04-14,6
+LEGITEXT000020129985,sous-lieutenant,Sous-lieutenant,2009-01-01,2011-04-14,1
+LEGITEXT000020130012,caporal,Caporal,2009-01-01,,6
+LEGITEXT000020130012,caporal-chef,Caporal-chef,2009-01-01,,13
+LEGITEXT000020130012,soldat,Soldat,2009-01-01,,6
+LEGITEXT000023855580,adjudant,Adjudant,2012-01-01,,9
+LEGITEXT000023855580,adjudant-chef,Adjudant-chef,2012-01-01,,9
+LEGITEXT000023855580,adjudant-chef-echelle-de-solde-n-4,Adjudant-chef – Echelle de solde n° 4,2011-04-15,2011-12-31,8
+LEGITEXT000023855580,adjudant-echelle-de-solde-n-4,Adjudant – Echelle de solde n° 4,2011-04-15,2011-12-31,8
+LEGITEXT000023855580,capitaine-article-1,Capitaine (article 1),2011-04-15,2025-12-14,6
+LEGITEXT000023855580,capitaine-article-1-1,Capitaine (article 1-1),2017-01-01,2025-12-14,6
+LEGITEXT000023855580,capitaine-echelle-de-solde-n-1-article-1,Capitaine – Echelle de solde n° 1 (article 1),2025-12-15,,6
+LEGITEXT000023855580,capitaine-echelle-de-solde-n-1-article-1-1,Capitaine – Echelle de solde n° 1 (article 1-1),2025-12-15,,6
+LEGITEXT000023855580,chef-d-escadron,Chef d'escadron,2011-04-15,2025-12-14,7
+LEGITEXT000023855580,chef-d-escadron-echelle-de-solde-n-1,Chef d'escadron – Echelle de solde n° 1,2025-12-15,,14
+LEGITEXT000023855580,chef-d-escadron-echelle-de-solde-n-2,Chef d'escadron – Echelle de solde n° 2,2025-12-15,,7
+LEGITEXT000023855580,classe-fonctionnelle,classe fonctionnelle,2017-08-01,2025-12-14,4
+LEGITEXT000023855580,classe-fonctionnelle-du-grade-de-major,classe fonctionnelle du grade de major,2024-01-01,,4
+LEGITEXT000023855580,colonel-article-1,Colonel (article 1),2011-04-15,2025-12-14,7
+LEGITEXT000023855580,colonel-article-1-1,Colonel (article 1-1),2017-01-01,2025-12-14,6
+LEGITEXT000023855580,colonel-echelle-de-solde-n-2-article-1,Colonel – Echelle de solde n° 2 (article 1),2025-12-15,,15
+LEGITEXT000023855580,colonel-echelle-de-solde-n-2-article-1-1,Colonel – Echelle de solde n° 2 (article 1-1),2025-12-15,,15
+LEGITEXT000023855580,colonel-echelle-de-solde-n-3-article-1,Colonel – Echelle de solde n° 3 (article 1),2025-12-15,,13
+LEGITEXT000023855580,colonel-echelle-de-solde-n-3-article-1-1,Colonel – Echelle de solde n° 3 (article 1-1),2025-12-15,,13
+LEGITEXT000023855580,commandant,Commandant,2017-01-01,2025-12-14,7
+LEGITEXT000023855580,commandant-echelle-de-solde-n-1,Commandant – Echelle de solde n° 1,2025-12-15,,14
+LEGITEXT000023855580,commandant-echelle-de-solde-n-2,Commandant – Echelle de solde n° 2,2025-12-15,,7
+LEGITEXT000023855580,eleve-gendarme,Elève gendarme,2011-04-15,,1
+LEGITEXT000023855580,gendarme,Gendarme,2017-01-01,,13
+LEGITEXT000023855580,gendarme-echelle-de-solde-des-gendarmes,Gendarme – Echelle de solde des gendarmes,2011-04-15,2011-12-31,12
+LEGITEXT000023855580,gendarme-echelle-de-solde-specifique-des-gendarmes,Gendarme – Echelle de solde spécifique des gendarmes,2012-01-01,2016-12-31,13
+LEGITEXT000023855580,general-de-brigade-article-1,Général de brigade (article 1),2011-04-15,2025-12-14,1
+LEGITEXT000023855580,general-de-brigade-article-1-1,Général de brigade (article 1-1),2017-01-01,2025-12-14,1
+LEGITEXT000023855580,general-de-brigade-echelle-de-solde-n-3-article-1,Général de brigade – Echelle de solde n° 3 (article 1),2025-12-15,,4
+LEGITEXT000023855580,general-de-brigade-echelle-de-solde-n-3-article-1-1,Général de brigade – Echelle de solde n° 3 (article 1-1),2025-12-15,,4
+LEGITEXT000023855580,general-de-division-article-1,Général de division (article 1),2011-04-15,2025-12-14,1
+LEGITEXT000023855580,general-de-division-article-1-1,Général de division (article 1-1),2017-01-01,2025-12-14,1
+LEGITEXT000023855580,general-de-division-echelle-de-solde-n-3-article-1,Général de division – Echelle de solde n° 3 (article 1),2025-12-15,,4
+LEGITEXT000023855580,general-de-division-echelle-de-solde-n-3-article-1-1,Général de division – Echelle de solde n° 3 (article 1-1),2025-12-15,,4
+LEGITEXT000023855580,lieutenant-article-1,Lieutenant (article 1),2011-04-15,2025-12-14,4
+LEGITEXT000023855580,lieutenant-article-1-1,Lieutenant (article 1-1),2017-01-01,2025-12-14,4
+LEGITEXT000023855580,lieutenant-colonel-article-1,Lieutenant-colonel (article 1),2011-04-15,2025-12-14,7
+LEGITEXT000023855580,lieutenant-colonel-article-1-1,Lieutenant-colonel (article 1-1),2017-01-01,2025-12-14,7
+LEGITEXT000023855580,lieutenant-colonel-echelle-de-solde-n-2-article-1,Lieutenant-colonel – Echelle de solde n° 2 (article 1),2025-12-15,,11
+LEGITEXT000023855580,lieutenant-colonel-echelle-de-solde-n-2-article-1-1,Lieutenant-colonel – Echelle de solde n° 2 (article 1-1),2025-12-15,,11
+LEGITEXT000023855580,lieutenant-echelle-de-solde-n-1-article-1,Lieutenant – Echelle de solde n° 1 (article 1),2025-12-15,,8
+LEGITEXT000023855580,lieutenant-echelle-de-solde-n-1-article-1-1,Lieutenant – Echelle de solde n° 1 (article 1-1),2025-12-15,,8
+LEGITEXT000023855580,major,Major,2017-01-01,,7
+LEGITEXT000023855580,major-echelle-de-solde-des-majors,Major – Echelle de solde des majors,2011-04-15,2011-12-31,6
+LEGITEXT000023855580,major-echelle-de-solde-specifique-des-sous-officiers-de-gendarmerie-autres-que-les-gendarme,Major – Echelle de solde spécifique des sous-officiers de gendarmerie autres que les gendarme,2013-07-01,2014-08-31,7
+LEGITEXT000023855580,major-echelle-de-solde-specifique-des-sous-officiers-de-gendarmerie-autres-que-les-gendarmes,Major – Echelle de solde spécifique des sous-officiers de gendarmerie autres que les gendarmes,2012-01-01,2016-12-31,7
+LEGITEXT000023855580,marechal-des-logis-chef,Maréchal des logis-chef,2012-01-01,,9
+LEGITEXT000023855580,marechal-des-logis-chef-echelle-de-solde-n-4,Maréchal des logis-chef – Echelle de solde n° 4,2011-04-15,2011-12-31,6
+LEGITEXT000023855580,sous-lieutenant-article-1,Sous-lieutenant (article 1),2011-04-15,2025-12-14,1
+LEGITEXT000023855580,sous-lieutenant-article-1-1,Sous-lieutenant (article 1-1),2017-01-01,2025-12-14,1
+LEGITEXT000023855580,sous-lieutenant-echelle-de-solde-n-1-article-1,Sous-lieutenant – Echelle de solde n° 1 (article 1),2025-12-15,,1
+LEGITEXT000023855580,sous-lieutenant-echelle-de-solde-n-1-article-1-1,Sous-lieutenant – Echelle de solde n° 1 (article 1-1),2025-12-15,,1
+LEGITEXT000024632879,classe-fonctionnelle-du-grade-d-ingenieur-principal,classe fonctionnelle du grade d'ingénieur principal,2025-12-15,,4
+LEGITEXT000024632879,classe-fonctionnelle-du-grade-d-ingenieur-principal-ou-officier-principal,classe fonctionnelle du grade d'ingénieur principal ou officier principal,2017-08-01,2019-12-31,4
+LEGITEXT000024632879,ingenieur,Ingénieur,2011-10-07,2025-11-30,9
+LEGITEXT000024632879,ingenieur-echelle-de-solde-n-1,Ingénieur – Echelle de solde n° 1,2025-12-15,,11
+LEGITEXT000024632879,ingenieur-en-chef,Ingénieur en chef,2011-10-07,2025-11-30,6
+LEGITEXT000024632879,ingenieur-en-chef-de-1re-classe-echelle-de-solde-n-2,Ingénieur en chef de 1re classe – Echelle de solde n° 2,2025-12-15,,15
+LEGITEXT000024632879,ingenieur-en-chef-de-1re-classe-echelle-de-solde-n-3,Ingénieur en chef de 1re classe – Echelle de solde n° 3,2025-12-15,,13
+LEGITEXT000024632879,ingenieur-en-chef-de-1re-classe-ou-officier-en-chef-de-1re-classe,Ingénieur en chef de 1re classe ou officier en chef de 1re classe,2011-10-07,2025-12-14,6
+LEGITEXT000024632879,ingenieur-en-chef-de-2e-classe-echelle-de-solde-n-1,Ingénieur en chef de 2e classe – Echelle de solde n° 1,2025-12-15,,11
+LEGITEXT000024632879,ingenieur-en-chef-de-2e-classe-echelle-de-solde-n-2,Ingénieur en chef de 2e classe – Echelle de solde n° 2,2025-12-15,,11
+LEGITEXT000024632879,ingenieur-en-chef-de-2e-classe-ou-officier-en-chef-de-2e-classe,Ingénieur en chef de 2e classe ou officier en chef de 2e classe,2011-10-07,2025-12-14,7
+LEGITEXT000024632879,ingenieur-general-de-1re-classe,Ingénieur général de 1re classe,2011-10-07,2025-11-30,1
+LEGITEXT000024632879,ingenieur-general-de-1re-classe-echelle-de-solde-n-3,Ingénieur général de 1re classe – Echelle de solde n° 3,2025-12-15,,4
+LEGITEXT000024632879,ingenieur-general-de-1re-classe-ou-officier-general-de-1re-classe,Ingénieur général de 1re classe ou officier général de 1re classe,2011-10-07,2025-12-14,1
+LEGITEXT000024632879,ingenieur-general-de-2e-classe,Ingénieur général de 2e classe,2011-10-07,2025-11-30,1
+LEGITEXT000024632879,ingenieur-general-de-2e-classe-echelle-de-solde-n-3,Ingénieur général de 2e classe – Echelle de solde n° 3,2025-12-15,,4
+LEGITEXT000024632879,ingenieur-general-de-2e-classe-ou-officier-general-de-2e-classe,Ingénieur général de 2e classe ou officier général de 2e classe,2011-10-07,2025-12-14,1
+LEGITEXT000024632879,ingenieur-ou-officier,Ingénieur ou officier,2011-10-07,2025-12-14,11
+LEGITEXT000024632879,ingenieur-principal,Ingénieur principal,2011-10-07,2025-11-30,4
+LEGITEXT000024632879,ingenieur-principal-echelle-de-solde-n-1,Ingénieur principal – Echelle de solde n° 1,2025-12-15,,14
+LEGITEXT000024632879,ingenieur-principal-echelle-de-solde-n-2,Ingénieur principal – Echelle de solde n° 2,2025-12-15,,7
+LEGITEXT000024632879,ingenieur-principal-ou-officier-principal,Ingénieur principal ou officier principal,2011-10-07,2025-12-14,7

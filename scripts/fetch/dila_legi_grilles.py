@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Les grilles indiciaires de la territoriale et de l'hospitalière, lues au LEGI.
+"""Les grilles indiciaires de la territoriale, de l'hospitalière et des militaires, lues au LEGI.
 
     python scripts/fetch/dila_index.py legi --recuperer   # l'index, une fois
     python scripts/fetch/dila_legi_grilles.py             # une minute
@@ -29,8 +29,18 @@ reclassement, ceux dessinés en caractères (les textes d'avant 1995 surtout),
 ceux d'indices majorés, une ligne de plus de valeurs que de colonnes, un
 échelon en double, un indice qui baisse quand l'échelon monte.
 
-CE QU'IL ÉCRIT. Sous ``data/reference/grilles/territoriale/`` et
-``.../hospitaliere/`` : ``textes.csv``, les textes lus ; ``grilles.csv``, les
+LES MILITAIRES. Leurs grilles sont leurs indices de solde (décrets n° 2009-17
+à 2009-23 du 7 janvier 2009, n° 2011-388 pour la gendarmerie, arrêtés d'avant
+2009), décidés au périmètre le 2 novembre 2026. Leurs tableaux écrivent en
+plus l'échelle de solde sous son grade (« Adjudant Echelle de solde n° 4 »,
+puis « Echelle de solde n° 3 », toujours de l'adjudant), l'échelon unique,
+particulier ou provisoire, les échelons exceptionnels numérotés ; ces règles ne
+lisent que leurs textes (``lire_tableau(..., militaire=True)``). Les échelons
+d'avant 2009, comptés en années de services, sont refusés. ``DATES_CORRIGEES``
+rend au décret n° 2014-1257 la date que le LEGI a perdue.
+
+CE QU'IL ÉCRIT. Sous ``data/reference/grilles/territoriale/``,
+``.../hospitaliere/`` et ``.../militaires/`` : ``textes.csv``, les textes lus ; ``grilles.csv``, les
 grilles de chaque texte, une par groupe ; ``echelons.csv``, l'indice brut de
 chaque échelon, période par période, avec l'article qui le fixe ;
 ``non_lus.csv``, les versions d'articles que l'analyseur a refusées, et
@@ -65,7 +75,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 BRUT = RACINE / "data" / "brut" / "dila_legi_grilles.json"
 REFERENCE = RACINE / "data" / "reference" / "grilles"
-VERSANTS = {"territoriale": "FPT", "hospitaliere": "FPH"}
+VERSANTS = {"territoriale": "FPT", "hospitaliere": "FPH", "militaires": "MIL"}
 EN_VIGUEUR = "2999-01-01"
 #: L'indice brut le plus haut : 1 027 au sommet de l'échelle, avant les lettres
 #: de la hors-échelle ; 2 074 depuis que la réforme de la haute fonction
@@ -102,6 +112,20 @@ JETONS = re.compile(r"""
   | (?P<mot>\S+)
 """, re.IGNORECASE | re.VERBOSE)
 GENRES = ("jusque", "date", "duree", "echelon", "he", "valeur", "vide", "nombre", "renvoi", "mot")
+#: Ce que les tableaux des militaires écrivent en plus : l'échelon exceptionnel ou
+#: spécial numéroté (« 2e échelon exceptionnel »), l'échelon unique, particulier
+#: ou provisoire, « Exceptionnel » seul, la case vide que suit son renvoi
+#: (« -(2) »). Leurs seuls textes le lisent : à la territoriale et à
+#: l'hospitalière, « Echelon unique » ouvrirait des tableaux que leurs
+#: certifications n'ont pas vus.
+JETONS_MILITAIRES = re.compile(r"""
+    (?P<echelon_m>\b(?P<rang_m>\d{1,2})\s*(?:er|re|ère|e|è|ème|eme)\s+[ée]chelon\s+
+                      (?P<qualite_m>exceptionnel|sp[ée]cial)\b
+                | \b[ée]chelon\s+(?P<nom_m>unique|particulier|provisoire)\b
+                | (?<![\w'])(?P<seul_m>exceptionnel)\b)
+  | (?P<vide_m>(?<!\S)(?:-|—|–)(?=\(\d))
+  |""" + JETONS.pattern, re.IGNORECASE | re.VERBOSE)
+GENRES_MILITAIRES = ("echelon_m", "vide_m") + GENRES
 
 #: Les mots d'en-tête que le tableau répète et qui ne nomment aucun groupe.
 ENTETE_GENERIQUE = re.compile(
@@ -110,6 +134,19 @@ ENTETE_GENERIQUE = re.compile(
     r"|\b(?:[ÉE]chelons|[ÉE]CHELONS|GRADES|Grades)\b|\bGRADES?\s+ET\s+[ÉE]CHELONS?\b"
     r"|^\s*(?:\d{1,2}|[IVX]+)\s*[.)]\s*|\bEn\s+ce\s+qui\s+concerne\b",
     re.IGNORECASE)
+#: Les en-têtes des tableaux des militaires : « GRADE ÉCHELLE DE SOLDE ÉCHELON »,
+#: « CORPS GRADE ET CLASSE ÉCHELON », « Désignation des échelons », « attribués »,
+#: le mot « Echelon » qui ouvre le tableau, la barre d'une case sans échelle.
+ENTETE_MILITAIRE = re.compile(
+    r"\b(?:CORPS\s+)?GRADES?(?:\s+ET\s+CLASSES?)?\s+(?:–\s+)?(?:[ÉE]CHELLES?\s+DE\s+SOLDE\s+)?"
+    r"[ÉE]CHELONS?\b|\bD[ÉE]SIGNATION\s+DES\s+[ÉE]CHELONS\b|\b(?:OU\s+CLASSEMENT\s+)?ATTRIBU[ÉE]S\b"
+    r"|^\s*[ÉE]CHELONS?\b|(?<!\S)/(?!\S)", re.IGNORECASE)
+#: L'échelle de solde, qui partage le grade écrit avant elle : « Echelle de solde n° 4 ».
+ECHELLE_DE_SOLDE = re.compile(r"[ée]chelles?\s+de\s+solde\b", re.IGNORECASE)
+#: Les échelons comptés en années de services (« Après 21 ans »), avant 2009 :
+#: l'aplatissement entrelace les grades, et le tableau ne se relit pas.
+DUREE_DES_SERVICES = re.compile(r"dur[ée]e\s+des\s+services|\bapr[èe]s\s+\d{1,2}\s+ans\b",
+                                re.IGNORECASE)
 #: Une échelle nommée par son numéro : plusieurs de suite sont les colonnes.
 ECHELLE = re.compile(r"[ée]chelles?\s+(?:de\s+r[ée]mun[ée]ration\s+)?(?:C\s*)?\d{1,2}(?:\s*bis)?",
                      re.IGNORECASE)
@@ -131,6 +168,11 @@ GROUPE_INTRODUIT = re.compile(
     r"applicables?\s+(?:à\s+la\s+|à\s+l'|aux?\s+|à\s+)(?P<groupe>.{3,160}?)"
     r"(?:\s+(?:institu|mentionn|régi|prévu|créé|défini|fix)\w*\b|\s*,|\s+est\s+fix"
     r"|\s+sont\s+fix|\s+de\s+la\s+fonction\s+publique|\s+des\s+établissements|$)",
+    re.IGNORECASE)
+#: Chez les militaires, le groupe peut aussi être « afférent » : « l'échelonnement
+#: indiciaire afférent à la classe fonctionnelle du grade de major ».
+GROUPE_INTRODUIT_MILITAIRE = re.compile(
+    GROUPE_INTRODUIT.pattern.replace(r"applicables?\s+", r"(?:applicables?|aff[ée]rents?)\s+", 1),
     re.IGNORECASE)
 
 
@@ -205,12 +247,22 @@ def _date(trouve: re.Match) -> str:
     return date(int(trouve.group("an")), mois, jour).isoformat()
 
 
-def _jetons(texte: str) -> list[_Jeton]:
+def _jetons(texte: str, militaire: bool = False) -> list[_Jeton]:
+    motif, genres = (JETONS_MILITAIRES, GENRES_MILITAIRES) if militaire else (JETONS, GENRES)
     jetons = []
-    for trouve in JETONS.finditer(texte):
-        genre = next(nom for nom in GENRES if trouve.group(nom) is not None)
+    for trouve in motif.finditer(texte):
+        groupes = trouve.groupdict()
+        genre = next(nom for nom in genres if groupes[nom] is not None)
         brut = trouve.group(0)
-        if genre == "date":
+        if genre == "echelon_m":
+            if groupes["qualite_m"]:
+                nom = f"{_sans_accents(groupes['qualite_m'].lower())}-{int(groupes['rang_m'])}"
+            else:
+                nom = _sans_accents((groupes["nom_m"] or groupes["seul_m"]).lower())
+            jetons.append(_Jeton("echelon", brut, (nom, None)))
+        elif genre == "vide_m":
+            jetons.append(_Jeton("vide", brut))
+        elif genre == "date":
             try:
                 jetons.append(_Jeton("date", brut, _date(trouve)))
             except ValueError:
@@ -271,17 +323,34 @@ def _hors_des_lignes(libelle: str) -> bool:
     return bool(re.search(r"(?<!\d)\d{3,4}(?!\d)", CHIFFRES_NEUTRES.sub(" ", libelle)))
 
 
-def _nettoyer(mots: list[str]) -> str:
-    texte = ENTETE_GENERIQUE.sub(" ", " ".join(mots))
+def _nettoyer(mots: list[str], militaire: bool = False) -> str:
+    texte = " ".join(mots)
+    if militaire:
+        texte = re.sub(r"\b(\d{1,2})\s+(er|re|e)\b", r"\1\2", ENTETE_MILITAIRE.sub(" ", texte))
+    texte = ENTETE_GENERIQUE.sub(" ", texte)
     return re.sub(r"\s+", " ", texte).strip(" :;,.-–")
 
 
-def _intro(phrase: str) -> str:
-    trouve = GROUPE_INTRODUIT.search(phrase)
+def _intro(phrase: str, militaire: bool = False) -> str:
+    trouve = (GROUPE_INTRODUIT_MILITAIRE if militaire else GROUPE_INTRODUIT).search(phrase)
     return trouve.group("groupe").strip(" ,") if trouve else ""
 
 
-def _blocs(jetons: list[_Jeton], groupe_courant: str) -> list[_Bloc]:
+def _sous_groupe(libelle: str, grade: str) -> tuple[str, str]:
+    """Chez les militaires, le groupe d'un libellé et le grade qu'il nomme : une
+    échelle de solde est celle du grade écrit avant elle, ou du précédent ; la
+    phrase qui introduit un second tableau nomme son groupe."""
+    if re.search(r"\bfix[ée]s?\s+(?:comme|ainsi\s+qu')", libelle, re.IGNORECASE):
+        libelle = _intro(libelle, militaire=True) or libelle
+    trouve = ECHELLE_DE_SOLDE.search(libelle)
+    if not trouve:
+        return libelle, libelle
+    grade = libelle[:trouve.start()].strip(" .;,:–-") or grade
+    echelle = libelle[trouve.start():]
+    return (f"{grade} – {echelle}" if grade else echelle), grade
+
+
+def _blocs(jetons: list[_Jeton], groupe_courant: str, militaire: bool = False) -> list[_Bloc]:
     """Premier passage : les en-têtes (mots et dates) et les lignes, en blocs.
     Un bloc s'ouvre sur des dates ou des échelles en colonnes ; un groupe
     nommé entre deux lignes ouvre un segment du bloc."""
@@ -289,6 +358,7 @@ def _blocs(jetons: list[_Jeton], groupe_courant: str) -> list[_Bloc]:
     mots: list[str] = []
     dates: list[str] = []
     paralleles: list[_Segment] = []      # des grades côte à côte, s'il y en a
+    grade = ""                           # chez les militaires, celui des échelles de solde
     i = 0
     while i < len(jetons):
         if not _debut_de_ligne(jetons, i):
@@ -300,7 +370,7 @@ def _blocs(jetons: list[_Jeton], groupe_courant: str) -> list[_Bloc]:
             continue
         if mots or dates or not blocs:
             cote_a_cote = COTE_A_COTE.findall(" ".join(mots))
-            libelle = _nettoyer(mots)
+            libelle = _nettoyer(mots, militaire)
             if _hors_des_lignes(libelle):
                 raise _Refus(f"valeurs hors des lignes, dans « {libelle[:80]} »")
             echelles = ECHELLE.findall(libelle)
@@ -311,6 +381,8 @@ def _blocs(jetons: list[_Jeton], groupe_courant: str) -> list[_Bloc]:
                 noms = [f"{corps} – {n}" if corps else n for n in noms]
             elif len(echelles) >= 2 and not ECHELLE.sub("", libelle).strip(" ,;:"):
                 colonnes = [e.strip() for e in echelles]
+            elif libelle and militaire:
+                groupe_courant, grade = _sous_groupe(libelle, grade)
             elif libelle:
                 groupe_courant = libelle
             if dates or colonnes is not None or not blocs or cote_a_cote:
@@ -407,9 +479,12 @@ def _aligner(ligne: _Ligne, voisine: _Ligne | None, largeur: int
     return [], ""
 
 
-def lire_tableau(texte: str) -> Tableau:
-    """Le tableau d'échelonnement d'un article, relu dans son texte aplati."""
+def lire_tableau(texte: str, militaire: bool = False) -> Tableau:
+    """Le tableau d'échelonnement d'un article, relu dans son texte aplati ; celui
+    d'un texte des militaires, avec ce que leurs tableaux écrivent en plus."""
     texte = re.sub(r"(\d\s*(?:er|e|ème))(?=[ée]chelon)", r"\1 ", COLLES.sub(" ", texte))
+    if militaire and DUREE_DES_SERVICES.search(texte):
+        return Tableau(refus="échelons comptés en années de services, non lus")
     if RECLASSEMENT.search(texte):
         return Tableau(refus="tableau de reclassement, pas une grille")
     if CARACTERES.search(texte):
@@ -421,7 +496,7 @@ def lire_tableau(texte: str) -> Tableau:
     if MAJORES.search(corps):
         return Tableau(refus="tableau d'indices majorés, non lu")
     try:
-        blocs = _blocs(_jetons(corps), _intro(phrase))
+        blocs = _blocs(_jetons(corps, militaire), _intro(phrase, militaire), militaire)
     except _Refus as refus:
         return Tableau(refus=str(refus))
     if not blocs:
@@ -492,8 +567,11 @@ def _ranger(cellules: list[Cellule]) -> None:
             continue
         if c.echelon.endswith("-provisoire"):
             c.rang = int(c.echelon.split("-")[0])
-        elif c.echelon in ("stagiaire", "eleve"):
+        elif c.echelon in ("stagiaire", "eleve", "provisoire"):
             c.rang = 0
+        elif re.fullmatch(r"(?:exceptionnel|special)-\d+", c.echelon):
+            # Chez les militaires, le ne échelon exceptionnel est le ne au-dessus du plus haut.
+            c.rang = plus_haut[(c.groupe, c.date)] + int(c.echelon.split("-")[1])
         else:
             c.rang = plus_haut[(c.groupe, c.date)] + 1
 
@@ -616,6 +694,7 @@ def composer(versions: list[Version]) -> list[Periode]:
 
 #: Le titre d'un texte de grille.
 TITRE_GRILLE = re.compile(r"[ée]chelonnement\s+indiciaire|[ée]chelles?\s+de\s+r[ée]mun[ée]ration"
+                          r"|indices?\s+de\s+solde"
                           r"|classement\s+(?:et\s+(?:à\s+l')?[ée]chelonnement\s+)?indiciaires?"
                           r"|grilles?\s+indiciaires?", re.IGNORECASE)
 TERRITORIALE = re.compile(r"fonction\s+publique\s+territoriale|territoriaux|territoriales\b",
@@ -630,10 +709,19 @@ SIGNATURE = re.compile(r"\bdu\s+(1\s*er|\d{1,2})\s+(janvier|f[ée]vrier|mars|avr
 INDICES = re.compile(r"(?<![\w,.-])\d{3,4}(?![\w,-])")
 
 
+#: Le titre d'un texte des militaires : leurs indices de solde, l'échelonnement
+#: indiciaire qui leur est applicable, un corps militaire, les praticiens des
+#: armées ; non ceux des « personnels civils et militaires de l'État » ensemble.
+MILITAIRES = re.compile(r"indices?\s+de\s+solde|applicables?\s+(?:aux|à\s+certains)\s+militaires\b"
+                        r"|\bcorps\s+militaires?\b|\bpraticiens\s+des\s+arm[ée]es", re.IGNORECASE)
+
+
 def versant(titre: str) -> str:
     """Le versant d'un texte, lu à son titre : « territoriale », « hospitaliere »,
-    ou vide — l'État, que le Noyau RH porte, ou plusieurs versants à la fois,
-    ce que fait un décret qui en modifie d'autres."""
+    « militaires », ou vide — l'État, que le Noyau RH porte, ou plusieurs
+    versants à la fois, ce que fait un décret qui en modifie d'autres."""
+    if MILITAIRES.search(titre):
+        return "militaires"
     territoriale = re.search(r"fonction\s+publique\s+territoriale", titre, re.I)
     hospitaliere = re.search(r"fonction\s+publique\s+hospitali", titre, re.I)
     if territoriale or hospitaliere:
@@ -707,9 +795,24 @@ def _fin(jour: str) -> str:
     return "" if not jour or jour >= EN_VIGUEUR else jour
 
 
+#: Les dates de vigueur que le LEGI garde fausses, corrigées par les textes. Le
+#: décret n° 2014-1257 du 29 octobre 2014 entre en vigueur le premier jour du mois
+#: qui suit sa publication, le 1er novembre 2014 (article 3) ; le décret
+#: n° 2015-1041 du 20 août 2015 l'avait reporté au 1er janvier 2014, mais le décret
+#: n° 2015-1304 du 19 octobre 2015 a retiré ce dernier. Le LEGI a gardé la date
+#: retirée à la version de l'article 2 du décret n° 2009-21 qu'il écrit, et clos
+#: avant son début celle que le décret n° 2014-988 écrit au 1er septembre 2014 ;
+#: le Noyau RH de l'État date de ce jour les indices de cette dernière.
+DATES_CORRIGEES = {
+    "LEGIARTI000029415839": ("2014-09-01", "2014-11-01"),
+    "LEGIARTI000029672106": ("2014-11-01", "2015-01-01"),
+}
+
+
 def extraire(chemin_index: Path | str | None = None) -> dict:
-    """Les grilles de la territoriale et de l'hospitalière, lues dans l'index
-    LEGI : par versant, les textes, les grilles, les échelons et les refus."""
+    """Les grilles de la territoriale, de l'hospitalière et des militaires, lues
+    dans l'index LEGI : par versant, les textes, les grilles, les échelons et
+    les refus."""
     import dila_index
 
     db, source = dila_index.ouvrir_lecture("legi", str(chemin_index) if chemin_index else None)
@@ -726,7 +829,8 @@ def extraire(chemin_index: Path | str | None = None) -> dict:
             "ORDER BY date, id"):
         if titre not in textes or debut >= EN_VIGUEUR or not _ressemble_a_un_tableau(contenu):
             continue
-        tableau = lire_tableau(contenu)
+        debut, fin = DATES_CORRIGEES.get(ident, (debut, fin))
+        tableau = lire_tableau(contenu, militaire=versant(titre) == "militaires")
         if tableau.refus:
             non_lus[titre].append({"texte": textes[titre]["texte"], "article": ident,
                                    "numero": article, "debut": debut, "fin": _fin(fin),

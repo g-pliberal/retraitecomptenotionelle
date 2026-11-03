@@ -4452,8 +4452,8 @@ institutions:
 
       - id: dila_legi_grilles
         titre: >-
-          Grilles indiciaires de la fonction publique territoriale et de la
-          fonction publique hospitalière, version par version
+          Grilles indiciaires de la fonction publique territoriale, de la
+          fonction publique hospitalière et des militaires, version par version
         url: https://echanges.dila.gouv.fr/OPENDATA/LEGI/
         acces: api
         statut_integration: certifie
@@ -4480,6 +4480,17 @@ institutions:
           fédération UNSA Santé et Sociaux (mise à jour du 25 janvier 2022),
           minimum de traitement compris. Les durées d'échelon, que fixent les
           statuts particuliers, n'y sont pas encore (action 158, étape 2).
+          Les militaires, depuis le 3 novembre 2026 (action 158, étape des
+          militaires) : leurs indices de solde, sous
+          data/reference/grilles/militaires/, lus dans les décrets n° 2009-17 à
+          2009-23, 2011-388 et 2011-1235 et les arrêtés de 1994, 2000 et 2004,
+          avec ce que leurs tableaux écrivent en plus (l'échelle de solde sous
+          son grade, l'échelon unique, les échelons exceptionnels numérotés) ;
+          les échelons d'avant 2009 comptés en années de services sont
+          refusés. tests/test_grilles_militaires.py les recoupe aux grilles
+          militaires du Noyau RH de l'État (CISIRH, juillet 2026), de 2009 à
+          2026, et rend au décret n° 2014-1257 sa date du 1er novembre 2014,
+          que le LEGI a perdue.
 
       - id: dila_legi_duree_requise
         titre: Durée d'assurance requise, générations 1953-1957

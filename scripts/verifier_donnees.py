@@ -3717,8 +3717,9 @@ def source_grilles_etat(colonne: str) -> Callable[[], dict[tuple, float]]:
 
 
 def source_grilles_legi(versant: str, serie: str) -> Callable[[], dict[tuple, float]]:
-    """Le rang ou l'indice brut des échelons de la territoriale ou de
-    l'hospitalière, lus au LEGI par l'index du dépôt (action 158) : chaque
+    """Le rang ou l'indice brut des échelons de la territoriale, de
+    l'hospitalière ou des militaires, lus au LEGI par l'index du dépôt
+    (action 158) : chaque
     période sous sa clé « texte|grille|échelon|début » ; à part, les périodes
     dont la colonne est présumée (``_presume``)."""
     def source() -> dict[tuple, float]:
@@ -9529,9 +9530,10 @@ CERTIFICATIONS = (
         ("echelons", ("echelon", "debut"), "duree_max"),
         ("indices", ("indice_brut", "debut"), "indice_majore"),
     )),
-    # Les grilles de la territoriale et de l'hospitalière (action 158), lues au
-    # LEGI : le rang et l'indice brut de chaque période d'échelon ; ceux dont
-    # le texte aplati ne dit pas la colonne, présumée, au niveau ``estimee``.
+    # Les grilles de la territoriale, de l'hospitalière et des militaires
+    # (action 158), lues au LEGI : le rang et l'indice brut de chaque période
+    # d'échelon ; ceux dont le texte aplati ne dit pas la colonne, présumée, au
+    # niveau ``estimee``.
     *(Certification(
         nom=f"grilles_{versant}_{serie}",
         chemin=REFERENCE / "grilles" / versant / "echelons.csv",
@@ -9543,7 +9545,7 @@ CERTIFICATIONS = (
         tolerance=0.5,
         niveau="estimee" if serie.endswith("_presume") else "certifiee",
         complementaire=serie.endswith("_presume"),
-    ) for versant in ("territoriale", "hospitaliere")
+    ) for versant in ("territoriale", "hospitaliere", "militaires")
       for serie in ("rang", "indice", "rang_presume", "indice_presume")),
     Certification(
         nom="esperances_projetees",

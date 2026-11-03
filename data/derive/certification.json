@@ -925,6 +925,28 @@
    "valeurs": 8,
    "verifiee_le": "2026-11-03"
   },
+  "grilles_militaires_indice": {
+   "ajoutees": 0,
+   "colonne": "indice",
+   "corrigees": 0,
+   "empreinte": "8d5b7b203a8e3aab",
+   "identiques": 2875,
+   "niveau": "certifiee",
+   "source": "DILA, base LEGI, textes d'échelonnement indiciaire, par l'index du dépôt",
+   "valeurs": 2875,
+   "verifiee_le": "2026-11-03"
+  },
+  "grilles_militaires_rang": {
+   "ajoutees": 0,
+   "colonne": "rang",
+   "corrigees": 0,
+   "empreinte": "e91542b0fe476d78",
+   "identiques": 2959,
+   "niveau": "certifiee",
+   "source": "DILA, base LEGI, textes d'échelonnement indiciaire, par l'index du dépôt",
+   "valeurs": 2959,
+   "verifiee_le": "2026-11-03"
+  },
   "grilles_territoriale_indice": {
    "ajoutees": 0,
    "colonne": "indice",

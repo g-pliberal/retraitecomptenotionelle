@@ -639,11 +639,12 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         **{f"grilles_etat_{colonne}": "grilles/etat/echelons.csv"
            for colonne in ("rang", "indice", "duree_min", "duree_moy", "duree_max")},
         "grilles_etat_indice_majore": "grilles/etat/indices.csv",
-        # Celles de la territoriale et de l'hospitalière, lues au LEGI : le rang
-        # et l'indice des mêmes échelons, et ceux dont la colonne est présumée,
-        # au niveau `estimee` (action 158, étape 2).
+        # Celles de la territoriale, de l'hospitalière et des militaires, lues
+        # au LEGI : le rang et l'indice des mêmes échelons, et ceux dont la
+        # colonne est présumée, au niveau `estimee` (action 158, étape 2 et
+        # étape des militaires).
         **{f"grilles_{versant}_{serie}": f"grilles/{versant}/echelons.csv"
-           for versant in ("territoriale", "hospitaliere")
+           for versant in ("territoriale", "hospitaliere", "militaires")
            for serie in ("rang", "indice", "rang_presume", "indice_presume")},
         "quotients_mortalite": "mortalite/quotients_periode.csv",
         "quotients_mortalite_anciens": "mortalite/quotients_periode.csv",
@@ -853,7 +854,10 @@ def test_journal_de_certification_decrit_les_series_certifiees():
                "valeurs_point_agirc_arrco_en_cours",
                # Le panorama de 2026 n'a plus rien à dire de l'âge conjoncturel
                # quand le portail porte 2023 et 2024.
-               "age_conjoncturel_depart_panorama"}
+               "age_conjoncturel_depart_panorama",
+               # Aucun tableau des militaires ne laisse sa colonne présumée
+               # (action 158, étape des militaires).
+               "grilles_militaires_rang_presume", "grilles_militaires_indice_presume"}
     assert set(journal["series"]) <= set(fichiers)
     assert set(fichiers) - set(journal["series"]) <= appoint
 
