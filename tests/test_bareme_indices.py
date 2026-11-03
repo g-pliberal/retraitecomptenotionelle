@@ -1,7 +1,7 @@
 """Le barème du décret n° 82-1105 : l'indice majoré de chaque indice brut, depuis 1983 (action 158).
 
 Le barème A, annexé au décret n° 82-1105 du 23 décembre 1982 et remplacé
-vingt-neuf fois depuis, dit quel indice majoré — celui qui se multiplie par la
+vingt-huit fois depuis, dit quel indice majoré — celui qui se multiplie par la
 valeur du point — répond à chaque indice brut des grilles. Le LEGI ne
 reproduit ses tableaux que depuis le 1er juillet 2007 ; avant, l'article 1er dit
 « tableau non reproduit », et les décrets qui les annexent renvoient au Journal

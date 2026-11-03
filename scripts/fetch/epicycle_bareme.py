@@ -8,10 +8,9 @@
 LE BARÈME. Une grille donne l'indice BRUT de chaque échelon ; le traitement se
 calcule sur l'indice MAJORÉ, que le barème A annexé au décret n° 82-1105 du
 23 décembre 1982 fait correspondre à chaque indice brut, de 100 à 1015 (1027
-depuis 2018). Vingt-huit décrets l'ont remplacé depuis le 1er janvier 1983 : par
-des points uniformes, ajoutés à tous les indices majorés (1988 à 1991, 1999,
-2006, 2024), ou par des points donnés au bas de l'échelle (1998 à 2013, 2021,
-2023). Le Noyau RH de l'État n'en a qu'une ligne avant novembre 2006, et
+depuis 2018). Il a été remplacé vingt-huit fois depuis le 1er janvier 1983 : par
+des points ajoutés à tous les indices majorés (1985, 1988 à 1991, 1999, 2006,
+2024), ou par des points donnés au bas de l'échelle (1998 à 2013, 2021, 2023). Le Noyau RH de l'État n'en a qu'une ligne avant novembre 2006, et
 prolonge à tort jusqu'en 1900 les valeurs de mai 2008 des indices bruts 100 à
 302 (action 158).
 

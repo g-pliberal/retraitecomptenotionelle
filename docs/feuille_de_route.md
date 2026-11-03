@@ -6717,15 +6717,15 @@ l'inviterait aussi à relire le dépôt.
 ### 158. Les grilles indiciaires de la fonction publique : la carrière d'un fonctionnaire pré-remplie depuis son corps, plutôt que de mémoire — `en cours`
 
 **Reprise, au 3 novembre 2026.** Périmètre tranché le 2 novembre 2026 : « tout
-ce qu'on peut trouver », les trois versants et les militaires. Les grilles sont
-entrées, certifiées et recoupées : l'État, tiré du Noyau RH (`grilles/etat/`) ;
-la territoriale, l'hospitalière et les militaires, lus au LEGI
-(`dila_legi_grilles.py`), refus consignés — les indices de solde des militaires
-depuis 2009, et 1993 pour quelques corps, redonnent le noyau. Reste : les
-durées d'échelon, dans les statuts ; les tableaux que l'index aplatit (en
-caractères avant 1995, en années de services chez les militaires avant 2009) ;
-le chaînage et les reclassements ; le barème avant 2006 (n° 82-1105). Détail :
-la note des militaires, du 3 novembre 2026.
+ce qu'on peut trouver », les trois versants et les militaires. Entrés,
+certifiés et recoupés : les grilles (l'État au Noyau RH, `grilles/etat/` ; la
+territoriale, l'hospitalière et les militaires au LEGI) et le barème du décret
+n° 82-1105, version par version depuis 1983 (`grilles/bareme/`, transcrit par
+Épicycle, recoupé au LEGI et aux textes). Reste, dans l'ordre de la file : les
+grilles de l'État d'avant le Noyau RH, puis le chaînage et les reclassements ;
+les durées d'échelon (au propriétaire : d'abord ?) ; les tableaux que l'index
+aplatit ; le minimum de traitement. Détail : la note du barème, du 3 novembre
+2026.
 
 
 **D'où elle vient.** La demande du propriétaire, le 12 octobre 2026 : aller
