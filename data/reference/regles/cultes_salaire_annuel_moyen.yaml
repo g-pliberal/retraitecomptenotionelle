@@ -1,26 +1,429 @@
 schema_version: 1
 id: cultes_salaire_annuel_moyen
 intitule: >-
-  Pension de base du régime des cultes : aux règles du régime général (L. 382-27)
-  pour les périodes d'après 1998, sur un salaire annuel moyen des vingt-cinq meilleures
-  années fait des salaires qui ont porté cotisation — le forfait du SMIC mensuel
-  de R. 382-89 et R. 382-90, « une base SMIC pour tous les assurés cultuels ». Les
-  périodes antérieures au 1er janvier 1998 gardent leurs règles (L. 382-27, deuxième
-  phrase) ; celles d'avant 1979 sont validées gratuitement.
+  Pension de base du régime des cultes : depuis le 1er janvier 1998, la fraction des
+  périodes d'après 1997 se calcule aux règles du régime général (L. 721-6, puis L. 382-27),
+  sur un salaire annuel moyen fait de la base forfaitaire de chaque année, et non de ce que
+  l'assuré perçoit (R. 721-39-2, puis R. 382-121) : 169 fois le SMIC horaire par mois
+  jusqu'en 2001, puis le SMIC horaire fois la durée légale du travail mensuel, augmentée de
+  2002 au 30 juin 2005 de la garantie mensuelle de rémunération la plus élevée. Les périodes
+  antérieures au 1er janvier 1998 gardent leurs règles ; celles d'avant 1979 sont validées
+  gratuitement.
+domaine: salaire_de_reference
 regimes: [cavimac]
-etat: conforme
+etape: acquerir_les_droits
+face: droit
+etat: approchee
+lit:
+- >-
+  la date d'effet de la pension : avant le 1er janvier 1998, la pension est forfaitaire, sans
+  salaire annuel moyen
+- >-
+  les années de l'assuré au régime des cultes depuis le 1er janvier 1998, et leurs mois ;
+  pour chaque mois, la base forfaitaire : 169 SMIC horaires jusqu'au 31 décembre 2001, puis
+  le SMIC horaire en vigueur fois la durée légale du travail mensuel, augmentée de 2002 au
+  30 juin 2005 de la garantie mensuelle de rémunération la plus élevée
+- >-
+  le nombre d'années que retient le salaire annuel moyen du régime général, à la génération,
+  et les coefficients qui revalorisent les salaires portés au compte (fiche
+  `salaire_annuel_moyen`)
+ecrit:
+- >-
+  le salaire que chaque année d'après 1997 porte au compte de l'assuré, sa base forfaitaire,
+  sur laquelle se prélèvent les cotisations, et dont le salaire annuel moyen de la fraction
+  de la pension des périodes d'après 1997 fait la moyenne, revalorisée, que
+  `salaire_de_reference` rend à la liquidation (fiche `salaire_annuel_moyen`)
+dates_qui_decident:
+- liquidation.date_effet
+- periode.debut
+versions:
+- id: pension_forfaitaire
+  statut: lue
+  textes:
+  - id: LEGIARTI000006766248
+    article: décret n° 79-607 du 3 juillet 1979, article 24, du 1er janvier 1979 au 21 décembre 1985
+    en_vigueur: 1979-01-01
+    citation: >-
+      « Le montant annuel de la cotisation forfaitaire à la charge des assurés [...] est fixé
+      chaque année de manière à correspondre à la cotisation d'assurance vieillesse qui serait
+      due pour le compte d'un assuré du régime général percevant un salaire lui permettant
+      d'acquérir à soixante-cinq ans, pour la durée maximum d'assurance, une pension égale à la
+      pension définie à l'article 39 »
+  - id: LEGIARTI000006766265
+    article: même décret, article 39, du 1er janvier 1979 au 21 décembre 1985
+    en_vigueur: 1979-01-01
+    citation: « Le montant annuel du maximum de pension est fixé à 7.500 F au 1er janvier 1979. »
+  - id: LEGIARTI000006744307
+    article: code de la sécurité sociale, L. 721-6, rédaction du 21 décembre 1985 au 23 décembre 1997
+    en_vigueur: 1985-12-21
+    citation: >-
+      « La pension est calculée sur des bases forfaitaires, en fonction de la durée
+      d'assurance, dans les limites d'un minimum et d'un maximum fixés par voie
+      réglementaire. »
+  bornes:
+    liquidation.date_effet: [null, 1998-01-01]
+  contenu:
+    droit: >-
+      aucun salaire annuel moyen : la pension est le maximum de l'année au prorata des
+      trimestres (fiche `cultes_fractions_de_pension`, version `regime_forfaitaire`), et les
+      cotisations des montants fixés chaque année par arrêté, sans salaire ni SMIC
+  exemples: aucun trouvé
+- id: annees_d_avant_1998
+  statut: lue
+  textes:
+  - id: JORFARTI000002194640
+    article: >-
+      loi n° 97-1164 du 19 décembre 1997 de financement de la sécurité sociale pour 1998,
+      article 19, II, qui récrit L. 721-6, et VIII
+    en_vigueur: 1998-01-01
+    publie_le: 1997-12-23
+    citation: >-
+      « Les prestations afférentes aux périodes d'assurance antérieures au 1 er janvier 1998
+      sont indiquées dans les conditions législatives et réglementaires en vigueur au 31
+      décembre 1997. » ; « VIII. - Sous réserve des dispositions du VII, les dispositions du
+      présent article prennent effet au 1 er janvier 1998. »
+  - id: LEGIARTI000006744308
+    article: code de la sécurité sociale, L. 721-6, rédaction du 23 décembre 1997 au 20 décembre 2005
+    en_vigueur: 1997-12-23
+  - id: LEGIARTI000006742805
+    article: L. 382-27, rédaction du 20 décembre 2005 au 19 décembre 2008, qui reprend L. 721-6
+    en_vigueur: 2005-12-20
+    citation: >-
+      « Les prestations afférentes aux périodes d'assurance antérieures au 1er janvier 1998
+      sont indiquées dans les conditions législatives et réglementaires en vigueur au 31
+      décembre 1997 sous réserve d'adaptation par décret. »
+  nee_de: JORFARTI000002194640
+  bornes:
+    liquidation.date_effet: [1998-01-01, null]
+    periode.debut: [null, 1998-01-01]
+  contenu:
+    parametres:
+      fractions_des_cultes: cultes_fractions_de_pension
+    droit: >-
+      les années d'avant 1998 n'entrent pas au salaire annuel moyen : elles font la fraction
+      de la pension aux règles du 31 décembre 1997, le maximum au prorata de leurs trimestres
+      (fiche `cultes_fractions_de_pension`)
+  exemples: aucun trouvé
+- id: cent_soixante_neuf_heures
+  statut: lue
+  textes:
+  - id: JORFARTI000002194640
+    article: loi n° 97-1164, article 19, I, qui récrit L. 721-3, II, qui récrit L. 721-6, et VIII
+    en_vigueur: 1998-01-01
+    publie_le: 1997-12-23
+    citation: >-
+      « 1° Des cotisations à la charge des assurés, assises sur une base forfaitaire ou sur la
+      pension mentionnée à l'article L. 721-9 » ; « 2° Des cotisations à la charge des
+      associations, des congrégations ou collectivités religieuses dont relèvent les assurés,
+      assises sur une base forfaitaire » ; « Les taux des cotisations et les bases
+      forfaitaires mentionnés au I sont fixés par décret » ; « la pension de vieillesse est
+      calculée, liquidée et servie dans les conditions définies au deuxième, troisième et
+      quatrième alinéas de l'article L. 351-1 » ; « les dispositions du présent article
+      prennent effet au 1 er janvier 1998 »
+  - id: LEGIARTI000006744304
+    article: L. 721-3, rédaction du 23 décembre 1997 au 1er janvier 2002
+    en_vigueur: 1997-12-23
+  - id: LEGIARTI000006744308
+    article: L. 721-6, rédaction du 23 décembre 1997 au 20 décembre 2005
+    en_vigueur: 1997-12-23
+  - id: JORFTEXT000000389402
+    article: >-
+      décret n° 98-490 du 17 juin 1998, articles 4, 5 et 12, qui récrivent R. 721-29 et
+      R. 721-30 et créent R. 721-39-2
+    en_vigueur: 1998-06-21
+    publie_le: 1998-06-21
+  - id: LEGIARTI000006752924
+    article: R. 721-29, rédaction du 21 juin 1998 au 29 décembre 1999, la base de l'assuré
+    en_vigueur: 1998-06-21
+    citation: >-
+      « La base forfaitaire prévue au 1° du I de l'article L. 721-3 est égale, par mois, à 169
+      fois le montant du salaire minimum de croissance. »
+  - id: LEGIARTI000006752925
+    article: la même, rédaction du 29 décembre 1999 au 26 février 2004, mot pour mot
+    en_vigueur: 1999-12-29
+  - id: LEGIARTI000006752064
+    article: R. 721-30, rédaction du 21 juin 1998 au 29 décembre 1999, la base de la collectivité
+    en_vigueur: 1998-06-21
+    citation: >-
+      « La base forfaitaire prévue au 2° du I de l'article L. 721-3 est égale, par mois, à 169
+      fois le montant du salaire minimum de croissance. »
+  - id: LEGIARTI000006752065
+    article: la même, rédaction du 29 décembre 1999 au 26 février 2004, mot pour mot
+    en_vigueur: 1999-12-29
+  - id: LEGIARTI000006752335
+    article: R. 721-39-2, rédaction du 21 juin 1998 au 29 décembre 1999
+    en_vigueur: 1998-06-21
+    citation: >-
+      « Le salaire annuel moyen mentionné à l'article R. 351-29 est déterminé en retenant la
+      base forfaitaire prévue à l'article R. 721-30. »
+  - id: LEGIARTI000006752336
+    article: la même, rédaction du 29 décembre 1999 au 1er novembre 2006, mot pour mot
+    en_vigueur: 1999-12-29
+  - id: LEGIARTI000006749831
+    article: R. 382-121, qui la reprend depuis le 1er novembre 2006
+    en_vigueur: 2006-11-01
+    citation: >-
+      « Le salaire annuel moyen mentionné à l'article R. 351-29 est déterminé en retenant la
+      base forfaitaire prévue à l'article R. 382-90. »
+  nee_de: JORFARTI000002194640
+  bornes:
+    liquidation.date_effet: [1998-01-01, null]
+    periode.debut: [1998-01-01, 2002-01-01]
+  contenu:
+    parametres:
+      assiette_forfaitaire: cultes_salaire_annuel_moyen
+      assiette_repere_smic: 2028
+      smic_du_mois: true
+      salaire_reference: 25_meilleures_annees
+      salaire_reference_par_generation: salaire_annuel_moyen
+      regles_du_salaire_annuel_moyen: salaire_annuel_moyen
+    droit: >-
+      le salaire annuel moyen de R. 351-29 — les meilleures années, revalorisées, en nombre
+      fixé à la génération (fiche `salaire_annuel_moyen`) — fait, pour chacune de ces années,
+      de la base forfaitaire de ses mois : 169 fois le SMIC horaire par mois, 2 028 heures par
+      an, quoi que l'assuré perçoive
+    conditions: >-
+      la loi assied les cotisations sur une base forfaitaire dès le 1er janvier 1998 ; le
+      décret qui la fixe à 169 SMIC horaires paraît le 21 juin 1998, sans dire de quand elle
+      vaut : le modèle la prend pour toute l'année 1998. Les rédactions du 29 décembre 1999
+      reprennent mot pour mot celles du 21 juin 1998
+  unites:
+    assiette_repere_smic: heures de SMIC par an, douze fois les heures du mois
+  exemples: aucun trouvé
+- id: garantie_mensuelle_de_remuneration
+  statut: lue
+  textes:
+  - id: LEGIARTI000006752066
+    article: R. 721-30, rédaction du 26 février 2004 au 1er novembre 2006, la base de la collectivité
+    en_vigueur: 2004-02-26
+    publie_le: 2004-02-26
+    citation: >-
+      « La base forfaitaire prévue au 2° du I de l'article L. 721-3 est égale, par mois, à la
+      valeur horaire du salaire minimum de croissance en vigueur, multipliée par le nombre
+      légal d'heures de travail mensuel en vigueur. A titre transitoire, du 1er janvier 2002
+      jusqu'au 30 juin 2005, cette base est augmentée de la valeur de la garantie mensuelle de
+      rémunération la plus élevée prévue à l'article 32 de la loi n° 2000-37 du 19 janvier
+      2000 modifiée. »
+  - id: LEGIARTI000006752926
+    article: R. 721-29, rédaction du 26 février 2004 au 1er novembre 2006, la base de l'assuré, dans les mêmes termes
+    en_vigueur: 2004-02-26
+  - id: JORFARTI000002456069
+    article: décret n° 2004-181 du 23 février 2004, article 1er, V et VI, qui récrivent R. 721-29 et R. 721-30
+    en_vigueur: 2004-02-26
+    publie_le: 2004-02-26
+  - id: JORFARTI000001248766
+    article: loi n° 2000-37 du 19 janvier 2000, article 32, I
+    en_vigueur: 2000-01-20
+    publie_le: 2000-01-20
+    citation: >-
+      « Les salariés dont la durée du travail a été réduite à trente-cinq heures ou plus [...]
+      ne peuvent percevoir, postérieurement au 1 er janvier 2000, un salaire mensuel inférieur
+      au produit du salaire minimum de croissance en vigueur à la date de la réduction par le
+      nombre d'heures correspondant à la durée collective qui leur était applicable, dans la
+      limite de cent soixante-neuf heures. Cette garantie est assurée par le versement d'un
+      complément différentiel de salaire. »
+  - id: LEGIARTI000006744305
+    article: L. 721-3, rédaction du 1er janvier 2002 au 20 décembre 2005, les deux cotisations « assises sur une base forfaitaire »
+    en_vigueur: 2002-01-01
+  - id: LEGIARTI000006752336
+    article: R. 721-39-2, rédaction du 29 décembre 1999 au 1er novembre 2006
+    en_vigueur: 1999-12-29
+  - id: LEGIARTI000006749796
+    article: R. 382-90, qui reprend R. 721-30, clause transitoire comprise, depuis le 1er novembre 2006
+    en_vigueur: 2006-11-01
+  - id: LEGIARTI000006749795
+    article: R. 382-89, qui reprend R. 721-29, dans les mêmes termes
+    en_vigueur: 2006-11-01
+  - id: LEGIARTI000006749831
+    article: R. 382-121, la base de R. 382-90 au salaire annuel moyen
+    en_vigueur: 2006-11-01
+  nee_de: LEGIARTI000006752066
+  bornes:
+    liquidation.date_effet: [1998-01-01, null]
+    periode.debut: [2002-01-01, 2005-07-01]
+  contenu:
+    parametres:
+      assiette_forfaitaire: cultes_salaire_annuel_moyen
+      assiette_repere_smic: 1820
+      garantie_mensuelle_la_plus_elevee: true
+      smic_du_mois: true
+      salaire_reference: 25_meilleures_annees
+      salaire_reference_par_generation: salaire_annuel_moyen
+      regles_du_salaire_annuel_moyen: salaire_annuel_moyen
+    droit: >-
+      la base de chaque mois est le SMIC horaire en vigueur fois la durée légale du travail
+      mensuel, 151,67 heures — 1 820 heures par an —, « augmentée de la valeur de la garantie
+      mensuelle de rémunération la plus élevée », celle que l'article 32 de la loi du 19
+      janvier 2000 assure au salarié au SMIC passé aux trente-cinq heures, au plus le SMIC de
+      cent soixante-neuf heures. Le décret du 23 février 2004 l'écrit « du 1er janvier 2002 »,
+      rétroactivement : la rédaction en vigueur en 2002 et en 2003 portait encore 169 SMIC
+      horaires par mois
+    conditions: >-
+      lu à la lettre, « augmentée de la valeur de la garantie » ajouterait la garantie
+      entière à la base, près du double du SMIC mensuel ; la lecture qui tient relève la
+      base jusqu'à la garantie, que l'article 32 borne au SMIC de cent soixante-neuf heures.
+      Le résumé au Journal officiel du décret n° 2002-784 du 3 mai 2002 dit la même intention
+      pour l'assurance volontaire : « maintenir le calcul des cotisations [...] par référence
+      à une assiette équivalant à 169 fois le SMIC horaire pour un mois ». Ce que la caisse
+      appliquait est à lire
+  exemples: aucun trouvé
+- id: duree_legale_du_travail
+  statut: lue
+  textes:
+  - id: LEGIARTI000006752066
+    article: R. 721-30, rédaction du 26 février 2004 au 1er novembre 2006
+    en_vigueur: 2004-02-26
+    publie_le: 2004-02-26
+    citation: >-
+      « La base forfaitaire [...] est égale, par mois, à la valeur horaire du salaire minimum
+      de croissance en vigueur, multipliée par le nombre légal d'heures de travail mensuel en
+      vigueur. A titre transitoire, du 1er janvier 2002 jusqu'au 30 juin 2005, cette base est
+      augmentée de la valeur de la garantie mensuelle de rémunération la plus élevée [...] »
+  - id: LEGIARTI000006752926
+    article: R. 721-29, rédaction du 26 février 2004 au 1er novembre 2006
+    en_vigueur: 2004-02-26
+  - id: LEGIARTI000006749795
+    article: R. 382-89, en vigueur depuis le 1er novembre 2006, la base de l'assuré
+    en_vigueur: 2006-11-01
+    citation: >-
+      « La base forfaitaire prévue au 1° du I de l'article L. 382-25 est égale, par mois, à
+      la valeur horaire du salaire minimum de croissance en vigueur, multipliée par le nombre
+      légal d'heures de travail mensuel en vigueur. »
+  - id: LEGIARTI000006749796
+    article: R. 382-90, en vigueur depuis le 1er novembre 2006, la base de la collectivité
+    en_vigueur: 2006-11-01
+    citation: >-
+      « La base forfaitaire prévue au 2° du I de l'article L. 382-25 est égale, par mois, à
+      la valeur horaire du salaire minimum de croissance en vigueur, multipliée par le nombre
+      légal d'heures de travail mensuel en vigueur. »
+  - id: LEGIARTI000006749831
+    article: R. 382-121, en vigueur depuis le 1er novembre 2006
+    en_vigueur: 2006-11-01
+  - id: LEGIARTI000006752336
+    article: R. 721-39-2, rédaction du 29 décembre 1999 au 1er novembre 2006
+    en_vigueur: 1999-12-29
+  - id: LEGIARTI000006744305
+    article: L. 721-3, rédaction du 1er janvier 2002 au 20 décembre 2005
+    en_vigueur: 2002-01-01
+  - id: LEGIARTI000006742803
+    article: L. 382-25, rédaction du 20 décembre 2005 au 14 juin 2018, qui reprend L. 721-3
+    en_vigueur: 2005-12-20
+    citation: >-
+      « 1° Des cotisations à la charge des assurés, assises sur une base forfaitaire ; 2° Des
+      cotisations à la charge des associations, des congrégations ou collectivités religieuses
+      dont relèvent les assurés, assises sur une base forfaitaire » ; « II.-Les taux des
+      cotisations et les bases forfaitaires mentionnés au I sont fixés par décret »
+  - id: LEGIARTI000006742805
+    article: L. 382-27, rédaction du 20 décembre 2005 au 19 décembre 2008, qui reprend L. 721-6
+    en_vigueur: 2005-12-20
+    citation: >-
+      « Les personnes qui exercent ou qui ont exercé des activités mentionnées à l'article L.
+      382-15 reçoivent une pension de vieillesse dans les conditions définies aux articles
+      L.351-1 à L. 351-1-3 [...] »
+  nee_de: LEGIARTI000006752066
+  bornes:
+    liquidation.date_effet: [1998-01-01, null]
+    periode.debut: [2005-07-01, null]
+  contenu:
+    parametres:
+      assiette_forfaitaire: cultes_salaire_annuel_moyen
+      assiette_repere_smic: 1820
+      smic_du_mois: true
+      salaire_reference: 25_meilleures_annees
+      salaire_reference_par_generation: salaire_annuel_moyen
+      regles_du_salaire_annuel_moyen: salaire_annuel_moyen
+    droit: >-
+      la base de chaque mois est le SMIC horaire en vigueur fois la durée légale du travail
+      mensuel, 151,67 heures, 1 820 heures par an : « le SMIC mensuel », 1 867 € depuis le 1er
+      juin 2026 (circulaire de la CAVIMAC n° 2026/03). R. 382-89, R. 382-90 et R. 382-121
+      reprennent le 1er novembre 2006 R. 721-29, R. 721-30 et R. 721-39-2, dans les mêmes
+      termes aux renvois près ; la caisse calcule la pension « sur la base du SMIC [...] pour
+      tous les assurés cultuels »
+  exemples: aucun trouvé
+approximations:
+- version: [cent_soixante_neuf_heures, garantie_mensuelle_de_remuneration, duree_legale_du_travail]
+  textes: >-
+    R. 721-29 et R. 721-30, puis R. 382-89 et R. 382-90 : la base « par mois », au « salaire
+    minimum de croissance en vigueur »
+  ecart: >-
+    le modèle compte la base de toute l'année au SMIC horaire du 1er janvier
+    (`macro/smic_horaire.csv`), quand elle suit chaque mois le SMIC en vigueur : de 1998 à
+    2009, les six mois qui suivent son relèvement du 1er juillet (décrets annuels, « A compter
+    du 1er juillet 1998 », lus dans l'index LEGI du dépôt) ; depuis, les relèvements en cours
+    d'année, comme ceux du 1er juillet 2012 et du 1er juin 2026
+  effet: >-
+    la base d'une année de 1998 à 2007 trop basse de la moitié du relèvement de juillet,
+    jusqu'à 2,9 %, en 2004 ; le salaire annuel moyen, qui en fait la moyenne avec d'autres
+    années, de moins ; non mesuré sur la pension
+- version: [garantie_mensuelle_de_remuneration]
+  textes: >-
+    R. 721-30, rédaction du 26 février 2004, et R. 382-90 : « A titre transitoire, du 1er
+    janvier 2002 jusqu'au 30 juin 2005, cette base est augmentée de la valeur de la garantie
+    mensuelle de rémunération la plus élevée » ; loi n° 2000-37, article 32
+  ecart: >-
+    le modèle compte de 2002 au 30 juin 2005 la base de la durée légale, 1 820 heures par an,
+    sans la garantie mensuelle de rémunération qui la relève, et que le dépôt ne porte pas
+  effet: >-
+    la base de ces trois ans et demi trop basse, au plus de 2 028 / 1 820 − 1, 11 %, si elle
+    est relevée jusqu'à la garantie, que l'article 32 borne au SMIC de cent soixante-neuf
+    heures ; le salaire annuel moyen, de moins ; non mesuré
+textes_sans_effet:
+- id: LEGIARTI000019959668
+  article: code de la sécurité sociale, L. 382-27
+  en_vigueur: 2008-12-19
+  motif: >-
+    la liste des articles du régime général perd L. 352-1 ; L. 351-1, d'où vient le salaire
+    annuel moyen, y reste, et la phrase des périodes d'avant 1998, mot pour mot
+- id: LEGIARTI000047453094
+  article: L. 382-27
+  en_vigueur: 2023-09-01
+  motif: >-
+    la liste gagne L. 351-1-5, l'âge abaissé des assurés inaptes ; L. 351-1 et la phrase des
+    périodes d'avant 1998, mot pour mot
+- id: LEGIARTI000048697351
+  article: L. 382-27, en vigueur
+  en_vigueur: 2023-12-28
+  motif: >-
+    la liste gagne L. 358-1 à L. 358-7 ; L. 351-1 et la phrase des périodes d'avant 1998, mot
+    pour mot
+- id: LEGIARTI000037064466
+  article: L. 382-25
+  en_vigueur: 2018-06-14
+  motif: >-
+    le I, 1° et 2°, et le II, mot pour mot : les cotisations restent « assises sur une base
+    forfaitaire », que fixe le décret ; la rédaction change le 6°, la contribution de la
+    Caisse nationale d'assurance vieillesse
+- id: LEGIARTI000051289014
+  article: L. 382-25, en vigueur
+  en_vigueur: 2026-01-01
+  motif: >-
+    le I, 1° et 2°, et le II, mot pour mot ; la rédaction change le 4°, la contribution qui
+    finance le régime
 effet: >-
-  Le salaire annuel moyen est désormais fait du forfait de chaque année, dans les
-  deux moteurs (`_assiette_de_reference`) : le ministre déclaré à une fois et demie
-  le salaire moyen recevait une pension de base 2,17 fois trop haute. Tenu par `test_le_salaire_de_reference_des_cultes_est_fait_du_forfait`
-  et son pendant JavaScript. Le modèle appliquait les règles d'après 1998 à toute la
-  carrière, et ne comptait pas les années d'avant 1979 : depuis le 3 octobre 2026, le
-  salaire annuel moyen et la durée de cette fraction ne sont faits que des années
-  d'après 1997, la fraction d'avant 1998 ayant ses règles et sa fiche,
-  `cultes_fractions_de_pension`.
+  Le salaire annuel moyen est fait du forfait de chaque année, dans les deux moteurs
+  (`assiette_de_reference`) : le ministre déclaré à une fois et demie le salaire moyen
+  recevait une pension de base 2,17 fois trop haute. Tenu par
+  `test_le_salaire_de_reference_des_cultes_est_fait_du_forfait` et son pendant JavaScript.
+  Le modèle appliquait les règles d'après 1998 à toute la carrière, et ne comptait pas les
+  années d'avant 1979 : depuis le 3 octobre 2026, le salaire annuel moyen et la durée de
+  cette fraction ne sont faits que des années d'après 1997, la fraction d'avant 1998 ayant
+  ses règles et sa fiche, `cultes_fractions_de_pension`. Lue au droit le 3 novembre 2026, la
+  base forfaitaire reste un peu basse dans le modèle : il la compte au SMIC du 1er janvier,
+  jusqu'à 2,9 % de moins sur une année, et sans la garantie mensuelle de rémunération de
+  2002 au 30 juin 2005, jusqu'à 11 % de moins sur ces années — deux approximations.
 sources:
-  lu_le: 2026-10-03
+  lu_le: 2026-11-03
   prochaine_relecture: 2027-09-30
+  a_relire:
+  - >-
+    La base de 2002 au 30 juin 2005 : la caisse la relevait-elle jusqu'à la garantie mensuelle
+    de rémunération la plus élevée, ou l'y ajoutait-elle ? Et celle du premier semestre 1998,
+    avant le décret du 17 juin 1998. Une circulaire de la caisse, de 1998 ou de 2004, le
+    dirait.
+  - >-
+    Le salaire porté au compte du ministre du culte est-il la somme des bases de ses mois, au
+    SMIC de chaque mois, comme le texte l'écrit ? Un relevé de carrière de la caisse le
+    montrerait.
   lectures:
   - type: legifrance
     reference: >-
@@ -51,16 +454,21 @@ sources:
       ont été validées gratuitement »
     url: https://www.senat.fr/questions/base/2007/qSEQ07120122S.html
     date: 2026-09-23
-textes_a_rattacher:
-- reference: >-
-    code de la sécurité sociale, L. 382-27 en vigueur (LEGIARTI000048697351) : pension
-    « dans les conditions définies aux articles L. 351-1 à L. 351-1-3 [...] L. 351-8
-    à L. 351-13 », et les périodes antérieures au 1er janvier 1998 « dans les conditions
-    législatives et réglementaires en vigueur au 31 décembre 1997 »
-- reference: >-
-    code de la sécurité sociale, R. 382-89 et R. 382-90 (LEGIARTI000006749795, LEGIARTI000006749796)
-    : la base forfaitaire, « valeur horaire du salaire minimum de croissance en
-    vigueur, multipliée par le nombre légal d'heures de travail mensuel »
+  - type: legifrance
+    reference: >-
+      L. 721-3 et L. 721-6 de 1997 à 2005, L. 382-25 et L. 382-27 dans toutes leurs
+      rédactions, R. 721-29, R. 721-30 et R. 721-39-2 de 1998 à 2006, R. 382-89, R. 382-90 et
+      R. 382-121, chacune contre la suivante, et les articles 24 et 39 du décret n° 79-607,
+      dans l'index LEGI du dépôt à jour de l'incrément du 2 novembre 2026 ; les décrets qui
+      relèvent le SMIC de 1998 à 2012
+    date: 2026-11-03
+  - type: jorf
+    reference: >-
+      loi n° 97-1164 du 19 décembre 1997, article 19 ; décret n° 98-490 du 17 juin 1998 ; loi
+      n° 2000-37 du 19 janvier 2000, article 32 ; décret n° 2002-784 du 3 mai 2002 et son
+      résumé ; décret n° 2004-181 du 23 février 2004, article 1er ; dans l'index JORF du dépôt
+      à jour de l'incrément du 3 novembre 2026
+    date: 2026-11-03
 code:
   interrupteurs:
     assiette_forfaitaire: true
@@ -68,7 +476,9 @@ code:
     `assiette_forfaitaire` : c'est la base forfaitaire du régime des cultes : les articles
     R. 382-89 et R. 382-90 l'égalent au SMIC mensuel, que l'assuré perçoive davantage,
     moins, ou rien du tout. Un ministre du culte n'a pas de salaire dont on prélèverait
-    une fraction ; la congrégation et lui cotisent sur un forfait.
+    une fraction ; la congrégation et lui cotisent sur un forfait. Le moteur la compte au
+    repère de la période de l'année, `assiette_repere_smic` heures de SMIC — 2 028 jusqu'en
+    2001, 1 820 depuis —, au SMIC du 1er janvier, au prorata des mois.
   python: >-
     droit/liquider.py : assiette_de_reference, salaire_de_reference ;
     donnees/regimes.py : PeriodeRegime.repere_assiette ; moteur/compte.py :
@@ -78,7 +488,17 @@ code:
     moteur/js/regimes.js : PeriodeRegime.repereAssiette ; moteur/js/compte.js :
     ConstructeurCompte._cotisationLigne
   parametres: >-
-    regimes/cavimac.yaml : assiette_repere_smic, salaire_reference,
-    taux_cotisation_retraite, part_salariale
-  tests: [tests/test_simulateur.py, tests/test_cultes.py, tests/js/moteur.test.js,
-    tests/temoins/simulations.json]
+    contenu.parametres de chaque version : assiette_forfaitaire, assiette_repere_smic,
+    fractions_des_cultes, garantie_mensuelle_la_plus_elevee, regles_du_salaire_annuel_moyen,
+    salaire_reference, salaire_reference_par_generation, smic_du_mois ;
+    regimes/cavimac.yaml : assiette_forfaitaire, assiette_repere_smic, fractions_des_cultes,
+    regles_du_salaire_annuel_moyen, salaire_reference, salaire_reference_par_generation,
+    taux_cotisation_retraite, part_salariale ; macro/smic_horaire.csv : smic_horaire
+  tests:
+  - >-
+    tests/test_cultes_au_droit.py, qui confronte chaque version aux périodes de la CAVIMAC
+    et tient les deux écarts déclarés
+  - tests/test_simulateur.py
+  - tests/test_cultes.py
+  - tests/js/moteur.test.js
+  - tests/temoins/simulations.json

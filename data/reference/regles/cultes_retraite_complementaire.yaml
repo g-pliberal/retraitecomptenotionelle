@@ -1,16 +1,261 @@
 schema_version: 1
 id: cultes_retraite_complementaire
 intitule: >-
-  Retraite complémentaire obligatoire des cultes : depuis le 1er janvier 2006, les
-  personnes du régime des cultes (L. 382-15) « qui bénéficient d'un revenu d'activité
-  perçu individuellement » sont affiliées à une institution de retraite complémentaire
-  (L. 921-1). La CAVIMAC recouvre la cotisation sur l'assiette forfaitaire de ses
-  autres cotisations, le SMIC mensuel, au « taux de base » de 10,02 % — les 7,87
-  % de l'Agirc-Arrco et les 2,15 % de sa contribution d'équilibre générale —, dont
-  les trois cinquièmes à la charge de la collectivité ; une institution de l'Arrco
-  calcule et sert les points.
+  Retraite complémentaire obligatoire des cultes : depuis le 20 décembre 2005, les personnes
+  du régime des cultes (L. 382-15) « qui bénéficient d'un revenu d'activité perçu
+  individuellement » sont affiliées à une institution de retraite complémentaire (L. 921-1),
+  de l'Arrco jusqu'en 2018, de l'Agirc-Arrco depuis. La CAVIMAC recouvre la cotisation sur
+  l'assiette forfaitaire de ses autres cotisations, le SMIC mensuel, au taux de la tranche 1
+  — depuis 2019, un « taux de base » de 10,02 %, les 7,87 % de l'Agirc-Arrco et les 2,15 %
+  de sa contribution d'équilibre générale —, dont les trois cinquièmes à la charge de la
+  collectivité ; l'institution calcule et sert les points.
+domaine: points
 regimes: [arrco_cultes]
-etat: conforme
+etape: acquerir_les_droits
+face: droit
+etat: approchee
+lit:
+- >-
+  le statut de chaque année : ministre du culte qui perçoit un revenu d'activité
+  individuellement, ou membre d'une congrégation qui n'en perçoit pas
+- >-
+  la base forfaitaire de chaque année, celle des autres cotisations des cultes : le SMIC
+  horaire fois la durée légale du travail mensuel (R. 382-89, R. 382-90)
+- >-
+  le taux de la tranche 1 de l'Arrco, puis de l'Agirc-Arrco, sa part salariale et le prix
+  d'achat de leur point ; les contributions d'équilibre de leur barème
+ecrit:
+- >-
+  les points de l'Arrco, puis de l'Agirc-Arrco, du ministre du culte rémunéré, achetés sur
+  la base forfaitaire
+- >-
+  sa cotisation, dont les trois cinquièmes à la charge de la collectivité, et, depuis 2019,
+  la contribution d'équilibre générale, qui n'achète aucun point
+dates_qui_decident:
+- periode.debut
+versions:
+- id: aucune_retraite_complementaire
+  statut: lue
+  textes:
+  - id: LEGIARTI000006745499
+    article: code de la sécurité sociale, L. 921-1, rédaction du 10 août 1994 au 29 mai 1996
+    en_vigueur: 1994-08-10
+    citation: >-
+      « Les catégories de salariés soumis à titre obligatoire à l'assurance vieillesse du
+      régime général de sécurité sociale ou des assurances sociales agricoles et les anciens
+      salariés de même catégorie, qui ne relèvent pas d'un régime complémentaire de retraite
+      [...] sont affiliés obligatoirement à une de ces institutions. »
+  - id: LEGIARTI000006745500
+    article: la même, rédaction du 29 mai 1996 au 1er janvier 2004, qui en excepte les agents généraux d'assurances
+    en_vigueur: 1996-05-29
+  - id: LEGIARTI000006745501
+    article: la même, rédaction du 1er janvier 2004 au 11 août 2004
+    en_vigueur: 2004-01-01
+  - id: LEGIARTI000006745502
+    article: la même, rédaction du 11 août 2004 au 20 décembre 2005, qui étend la solidarité aux opérations de L. 922-1
+    en_vigueur: 2004-08-11
+  - reference: CAVIMAC, espace partenaires (hors JORF)
+    citation: >-
+      « Il a été institué à compter du 1er janvier 2006 (Loi n° 2005 – 1579 du 19 décembre
+      2005) une couverture de retraite complémentaire obligatoire pour les ministres des
+      cultes. »
+    lu_le: 2026-09-23
+  bornes:
+    periode.debut: [null, 2005-12-20]
+  contenu:
+    parametres:
+      statuts_affilies: []
+    droit: >-
+      aucune retraite complémentaire obligatoire : L. 921-1 n'y affilie que des salariés, et
+      les ministres des cultes, qui relèvent de leur régime depuis 1979, n'en sont pas
+  exemples: aucun trouvé
+- id: institution_de_l_arrco
+  statut: lue
+  textes:
+  - id: LEGIARTI000006745503
+    article: L. 921-1, rédaction du 20 décembre 2005 au 24 juin 2006
+    en_vigueur: 2005-12-20
+    publie_le: 2005-12-20
+    citation: >-
+      « Ces dispositions sont applicables aux personnes mentionnées à l'article L. 382-15 qui
+      bénéficient d'un revenu d'activité perçu individuellement. »
+  - id: JORFARTI000002070677
+    article: >-
+      loi n° 2005-1579 du 19 décembre 2005 de financement de la sécurité sociale pour 2006,
+      article 75, VII
+    en_vigueur: 2005-12-20
+    publie_le: 2005-12-20
+    citation: >-
+      « VII. - Le premier alinéa de l'article L. 921-1 est complété par une phrase ainsi
+      rédigée : « Ces dispositions sont applicables aux personnes mentionnées à l'article L.
+      382-15 qui bénéficient d'un revenu d'activité perçu individuellement. » »
+  - id: LEGIARTI000006752066
+    article: R. 721-30, rédaction du 26 février 2004 au 1er novembre 2006, la base forfaitaire
+    en_vigueur: 2004-02-26
+  - id: LEGIARTI000006749795
+    article: R. 382-89, qui la reprend pour l'assuré depuis le 1er novembre 2006
+    en_vigueur: 2006-11-01
+  - id: LEGIARTI000006749796
+    article: R. 382-90, qui la reprend pour la collectivité
+    en_vigueur: 2006-11-01
+  - reference: >-
+      Actes 6, « Le culte et la législation », chapitre « La rémunération des ministres du
+      culte », juin 2008, guide pour les associations cultuelles hors culte catholique (hors
+      JORF, source de seconde main)
+    citation: >-
+      cotisations au 1er mai 2008 sur le forfait de 1 309 € : « Retraite complémentaire
+      1 309.00 3.00 39.27 4.50 58.91 » ; « AGFF […] 1 309.00 0.80 10.47 1.20 15.70 » ; « Par
+      décision de l'ARRCO, la caisse de retraite désignée est Vauban Humanis »
+    lu_le: 2026-10-13
+  nee_de: LEGIARTI000006745503
+  bornes:
+    periode.debut: [2005-12-20, 2019-01-01]
+  contenu:
+    parametres:
+      statuts_affilies: [ministre_du_culte]
+      assiette_forfaitaire: cultes_retraite_complementaire
+      assiette_repere_smic: 1820
+      taux_cotisation_retraite: arrco
+      part_salariale: 0.4
+      points_de: arrco
+      contribution_agff: 0.02
+    droit: >-
+      le ministre du culte rémunéré est affilié à une institution de l'Arrco, qui lui inscrit
+      les points de l'Arrco : la cotisation porte sur la base forfaitaire de ses autres
+      cotisations, le SMIC mensuel, au taux de la tranche 1 de l'Arrco, 3,00 % à sa charge et
+      4,50 % à celle de la collectivité au 1er mai 2008, et l'AGFF s'y ajoute, 0,80 % et
+      1,20 %, qui n'achète aucun point. Le membre d'une congrégation qui ne perçoit pas de
+      revenu individuel n'est pas affilié
+    conditions: >-
+      la loi entre en vigueur le 20 décembre 2005 ; la caisse cotise « à compter du 1er
+      janvier 2006 », comme le modèle, dont le régime commence en 2006. Le taux de la tranche
+      1 de l'Arrco — 6 % appelés à 125 %, 7,50 % jusqu'en 2013, 7,625 % en 2014, 7,75 % de 2015
+      à 2018 (fiche de régime `arrco`) — n'est lu pour les cultes qu'au 1er mai 2008, dans un
+      guide ; les circulaires de la caisse lues commencent en 2020
+  exemples: aucun trouvé
+- id: regime_agirc_arrco
+  statut: lue
+  textes:
+  - id: KALITEXT000036731682
+    reference: >-
+      accord national interprofessionnel du 17 novembre 2017 instituant le régime Agirc-Arrco
+      de retraite complémentaire, étendu et élargi par l'arrêté du 24 avril 2018
+      (JORFTEXT000036847920)
+    article: articles 32, 37 et 38 — le taux de la tranche 1, la contribution d'équilibre générale, leur partage
+    en_vigueur: 2019-01-01
+  - id: JORFARTI000036847923
+    article: arrêté du 24 avril 2018, article 1er
+    en_vigueur: 2018-04-28
+    publie_le: 2018-04-28
+    citation: >-
+      « Sont étendues, conformément aux dispositions de l'article L. 911-3 du code de la
+      sécurité sociale, les stipulations de l'accord national interprofessionnel du 17
+      novembre 2017 instituant le régime AGIRC-ARRCO de retraite complémentaire, pour tous les
+      salariés, anciens salariés et leurs ayants droit et pour les employeurs compris dans son
+      propre champ d'application. »
+  - reference: >-
+      accord national interprofessionnel du 10 mai 2019 sur la retraite complémentaire
+      Agirc-Arrco, dans la publication de la fédération (hors JORF)
+    article: préambule
+    citation: >-
+      « L'accord national interprofessionnel du 17 novembre 2017 a institué, à effet du 1er
+      janvier 2019, un nouveau régime de retraite complémentaire issu du rapprochement de
+      l'Agirc et de l'Arrco. »
+    lu_le: 2026-10-04
+    empreinte: sha256:0f239c783c1a328ba15022f27f961beabead8ab29c76346986312edaccd3f5b3
+  - reference: CAVIMAC, circulaire n° 2020/01 du 17 janvier 2020 (hors JORF)
+    citation: >-
+      « Taux contractuel de référence 10, 02 % », « Part collective (60%) », « Part
+      personnelle (40 %) »
+    lu_le: 2026-10-13
+  - reference: CAVIMAC, circulaire n° 2026/03 du 27 mai 2026 (hors JORF)
+    citation: >-
+      « RCO — Tous cultes - taux de base » 10,02 %, part collective 6,01 %, part
+      personnelle 4,01 %, sur « les assiettes forfaitaires respectives des cotisations
+      mensuelles d'assurance maladie – maternité – invalidité, vieillesse et retraite
+      complémentaire obligatoire des cultes » portées au SMIC, 1 867 €
+    lu_le: 2026-09-23
+  - id: LEGIARTI000006749795
+    article: R. 382-89, la base forfaitaire de l'assuré
+    en_vigueur: 2006-11-01
+  - id: LEGIARTI000006749796
+    article: R. 382-90, celle de la collectivité
+    en_vigueur: 2006-11-01
+  nee_de: KALITEXT000036731682
+  bornes:
+    periode.debut: [2019-01-01, null]
+  contenu:
+    parametres:
+      statuts_affilies: [ministre_du_culte]
+      assiette_forfaitaire: cultes_retraite_complementaire
+      assiette_repere_smic: 1820
+      taux_cotisation_retraite: agirc_arrco
+      part_salariale: 0.4
+      points_de: agirc_arrco
+      contribution_ceg: 0.0215
+    droit: >-
+      l'Agirc-Arrco succède à l'Arrco ; le « taux de base » de la caisse,
+      10,02 % du SMIC mensuel, est le taux de la tranche 1 de l'Agirc-Arrco, 7,87 %, qui
+      achète des points, et sa contribution d'équilibre générale, 2,15 %, qui n'en achète
+      pas, partagés à 60 % pour la collectivité et 40 % pour l'assuré. Les huit taux
+      spécifiques de la caisse ont leur fiche, `cultes_retraite_complementaire_taux_specifiques`
+  exemples: aucun trouvé
+approximations:
+- version: [institution_de_l_arrco]
+  textes: >-
+    accord du 10 février 2001, III.2 : la cotisation à l'AGFF, « supportée par les employeurs
+    et les salariés relevant des régimes de retraite complémentaire AGIRC-ARRCO », 2,00 % sur
+    la tranche A (legislation/contributions_equilibre_agirc_arrco.yaml, qui le cite)
+  ecart: >-
+    le modèle ne fait pas verser l'AGFF au ministre du culte de 2006 à 2018 : le barème des
+    contributions d'équilibre ne la porte pas pour son régime, faute d'un texte lu qui l'y
+    soumette, quand le guide de 2008 la lui fait verser sur le même forfait, 0,80 % à sa
+    charge et 1,20 % à celle de la collectivité
+  effet: >-
+    aucun sur la pension, l'AGFF n'achetant aucun point ; 2 % du forfait de ces années en
+    moins parmi les contributions que le cycle de vie compte ; non mesuré
+textes_sans_effet:
+- reference: >-
+    avenant n° 25 du 18 décembre 2024 à l'accord Agirc-Arrco, avis d'extension du
+    9 avril 2025 (JORFARTI000051439935), texte lu dans la circulaire Agirc-Arrco
+    2025-2-DRJ du 22 janvier 2025, hors JORF
+  article: annexe B, article 2, dernière phrase
+  citation: >-
+    « La dernière phrase de l'article 2 de l'Annexe B est complétée de la façon
+    suivante : après le mot « employeur » est ajoutée la phrase suivante « et aux
+    ministres des cultes et aux membres des congrégations et des collectivités
+    religieuses affiliés au régime de base de la Caisse d'assurance vieillesse,
+    invalidité et maladie des cultes (CAVIMAC). » » ; « Le présent avenant entre en
+    vigueur à compter du 1er janvier 2025. »
+  lu_le: 2026-10-13
+  empreinte: sha256:69986ec98ea0a734b1134ed63a83066269435aa9d8231cf130b81045fa35ebc1
+  motif: >-
+    l'annexe B désigne les « institutions compétentes » : l'avenant confie les
+    cultes à Malakoff Humanis Agirc-Arrco, outre-mer compris, sans toucher
+    l'assiette, le taux ni les points
+- id: LEGIARTI000006745504
+  article: code de la sécurité sociale, L. 921-1
+  en_vigueur: 2006-06-24
+  motif: >-
+    la phrase des cultes, mot pour mot ; la rédaction renvoie au code rural par L. 727-2 et
+    L. 727-3, au lieu de l'article 1050 et de l'article 1051
+- id: LEGIARTI000022267857
+  article: L. 921-1
+  en_vigueur: 2010-05-08
+  motif: >-
+    la phrase des cultes, mot pour mot ; la rédaction nomme le « code rural et de la pêche
+    maritime »
+- id: LEGIARTI000047452643
+  article: L. 921-1, en vigueur
+  en_vigueur: 2023-09-01
+  motif: >-
+    la phrase des cultes, mot pour mot : « Ces dispositions sont applicables aux personnes
+    mentionnées à l'article L. 382-15 qui bénéficient d'un revenu d'activité perçu
+    individuellement » ; la rédaction affilie « Les personnes mentionnées à l'article
+    L. 311-2 et les salariés des professions agricoles » au lieu des « catégories de
+    salariés »
+reformes:
+- cultes_arrco_2006
 effet: >-
   Ministres des cultes rémunérés, depuis 2006 : le modèle ne leur routait que la
   CAVIMAC. Au statut du simulateur, le ministre né en 1975 gagne 14 % de pension
@@ -19,9 +264,10 @@ effet: >-
   de `membre_congregation`, tenu par `test_le_ministre_du_culte_remunere_cotise_a_l_arrco_sur_le_forfait`
   et son pendant JavaScript. Le taux est celui de base : les huit taux spécifiques
   de la CAVIMAC, que rien de publié ne définit, ont leur fiche,
-  `cultes_retraite_complementaire_taux_specifiques`.
+  `cultes_retraite_complementaire_taux_specifiques`. Lue au droit le 3 novembre 2026 : le
+  modèle ne fait pas verser au ministre l'AGFF de 2006 à 2018, qui n'achète aucun point.
 sources:
-  lu_le: 2026-10-13
+  lu_le: 2026-11-03
   prochaine_relecture: 2027-10-13
   a_relire:
   - >-
@@ -93,44 +339,25 @@ sources:
       ; gestion par des institutions de l'Arrco
     url: https://www.cavimac.fr/bienvenue-sur-lespace-partenaires
     date: 2026-09-23
-textes_a_rattacher:
-- reference: >-
-    loi n° 2005-1579 du 19 décembre 2005, article 75, VII (JORFARTI000002070677)
-- reference: >-
-    code de la sécurité sociale, L. 921-1, de sa version du 20 décembre 2005 (LEGIARTI000006745503)
-    à celle en vigueur depuis le 1er septembre 2023 (LEGIARTI000047452643), la phrase
-    dans toutes
-- reference: >-
-    code de la sécurité sociale, R. 382-89 et R. 382-90 : l'assiette forfaitaire
-    du régime des cultes
-textes_sans_effet:
-- reference: >-
-    avenant n° 25 du 18 décembre 2024 à l'accord Agirc-Arrco, avis d'extension du
-    9 avril 2025 (JORFARTI000051439935), texte lu dans la circulaire Agirc-Arrco
-    2025-2-DRJ du 22 janvier 2025, hors JORF
-  article: annexe B, article 2, dernière phrase
-  citation: >-
-    « La dernière phrase de l'article 2 de l'Annexe B est complétée de la façon
-    suivante : après le mot « employeur » est ajoutée la phrase suivante « et aux
-    ministres des cultes et aux membres des congrégations et des collectivités
-    religieuses affiliés au régime de base de la Caisse d'assurance vieillesse,
-    invalidité et maladie des cultes (CAVIMAC). » » ; « Le présent avenant entre en
-    vigueur à compter du 1er janvier 2025. »
-  lu_le: 2026-10-13
-  empreinte: sha256:69986ec98ea0a734b1134ed63a83066269435aa9d8231cf130b81045fa35ebc1
-  motif: >-
-    l'annexe B désigne les « institutions compétentes » : l'avenant confie les
-    cultes à Malakoff Humanis Agirc-Arrco, outre-mer compris, sans toucher
-    l'assiette, le taux ni les points
-reformes:
-- cultes_arrco_2006
+  - type: legifrance
+    reference: >-
+      L. 921-1, ses huit rédactions, du 10 août 1994 au 1er septembre 2023, chacune contre la
+      suivante, dans l'index LEGI du dépôt à jour de l'incrément du 2 novembre 2026
+    date: 2026-11-03
+  - type: jorf
+    reference: >-
+      loi n° 2005-1579 du 19 décembre 2005, article 75 ; arrêté du 24 avril 2018 portant
+      extension et élargissement de l'accord du 17 novembre 2017, articles 1er à 3, dans
+      l'index JORF du dépôt à jour de l'incrément du 3 novembre 2026
+    date: 2026-11-03
 code:
   interrupteurs:
     assiette_forfaitaire: true
   moteur: >-
     `assiette_forfaitaire` : la cotisation se prélève sur l'assiette forfaitaire des autres
     cotisations des cultes, le SMIC mensuel, que la fiche `cultes_salaire_annuel_moyen`
-    décrit.
+    décrit. Les affiliations ne routent le régime qu'au statut `ministre_du_culte`, depuis
+    2006, et les points sont ceux du régime que nomme `points_de`.
   python: >-
     carriere.py : Affiliations.regimes ; droit/acquerir.py : acquerir ;
     donnees/regimes.py : PeriodeRegime.repere_assiette ; moteur/compte.py :
@@ -142,9 +369,19 @@ code:
     ConstructeurCompte._cotisationLigne ; moteur/js/contributions-equilibre.js :
     contributionsDUneCarriere, forfait
   parametres: >-
-    regimes/arrco_cultes.yaml : assiette_repere_smic, taux_cotisation_retraite,
-    part_salariale, points_de ; regimes/valeurs_point.csv : arrco, agirc_arrco ;
-    legislation/affiliations.yaml : affiliations.ministre_du_culte ;
+    contenu.parametres de chaque version : assiette_forfaitaire, assiette_repere_smic,
+    contribution_agff, contribution_ceg, part_salariale, points_de, statuts_affilies,
+    taux_cotisation_retraite ; regimes/arrco_cultes.yaml : assiette_forfaitaire,
+    assiette_repere_smic, taux_cotisation_retraite, part_salariale, points_de ;
+    regimes/valeurs_point.csv : arrco, agirc_arrco ;
+    legislation/affiliations.yaml : affiliations.ministre_du_culte,
+    affiliations.membre_congregation ;
     legislation/contributions_equilibre_agirc_arrco.yaml : contributions
-  tests: [tests/test_simulateur.py, tests/test_contributions_equilibre.py,
-    tests/js/moteur.test.js, tests/temoins/simulations.json]
+  tests:
+  - >-
+    tests/test_cultes_au_droit.py, qui confronte chaque version aux périodes du régime, à
+    ses affiliations et au barème des contributions d'équilibre, et tient l'écart déclaré
+  - tests/test_simulateur.py
+  - tests/test_contributions_equilibre.py
+  - tests/js/moteur.test.js
+  - tests/temoins/simulations.json

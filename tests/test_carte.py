@@ -257,6 +257,7 @@ LUES_AU_DROIT = frozenset("""
     age_reference_decote_sncf_ratp age_surcote_sncf_ratp duree_requise_sncf_ratp
     marins_ouverture_cinquante_ans marins_bonification_enfants marins_salaire_de_reference
     coefficient_anticipation_ircantec surcote_ircantec
+    cultes_salaire_annuel_moyen cultes_retraite_complementaire
 """.split())
 
 
