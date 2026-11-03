@@ -1717,6 +1717,48 @@ def test_le_formulaire_demande_l_assurance_maladie_du_micro_entrepreneur():
     assert 'name="maladie"' not in rendre("/simuler", {})[1]
 
 
+_SALARIE_PUIS = {"metier2_statut": "salarie_prive_non_cadre", "metier2_salaire": "3000"}
+
+
+@pytest.mark.parametrize("champs,demandee", [
+    # De 2009 au départ, au chiffre d'affaires de la vente : 2014 et 2015.
+    ({**_MICRO, "micro": "vente"}, True),
+    ({**_MICRO, "naissance": "1990", "debut": "2015-07", "micro": "services"}, True),
+    ({**_MICRO, "micro": "vente", **_SALARIE_PUIS, "metier2_debut": "2014-04"}, True),
+    # Le second métier, et non le premier.
+    ({"statut": "salarie_prive_non_cadre", "naissance": "1975", "debut": "2000-01",
+      "unite_revenu": "euros_mois", "salaire": "3000", "micro": "vente",
+      "metier2_debut": "2014-01", "metier2_statut": "micro_entrepreneur",
+      "metier2_salaire": "3000"}, True),
+    # Depuis 2016, la grille de la caisse n'a plus qu'un seuil.
+    ({**_MICRO, "naissance": "1990", "debut": "2016-01", "micro": "vente"}, False),
+    # Salarié dès janvier 2014.
+    ({**_MICRO, "micro": "vente", **_SALARIE_PUIS, "metier2_debut": "2014-01"}, False),
+    # Le libéral de 2015 garde la compensation, et la grille n'a pas de Cipav.
+    ({**_MICRO, "naissance": "1990", "debut": "2015-01", "micro": "liberal"}, False),
+    ({**_MICRO, "micro": "cipav"}, False),
+    # Le revenu déjà abattu ne passe pas par les seuils de chiffre d'affaires.
+    (_MICRO, False),
+    # L'activité d'après le départ ne la lit pas.
+    ({"statut": "salarie_prive_non_cadre", "naissance": "1950", "debut": "1970-01",
+      "unite_revenu": "euros_mois", "salaire": "3000", "liquidation": "2012-01",
+      "emploi_retraite": "2013-01", "emploi_retraite_fin": "2016-01",
+      "emploi_retraite_statut": "micro_entrepreneur", "micro": "vente"}, False),
+    # Une réponse déjà dite reste à défaire.
+    ({**_MICRO, "naissance": "1990", "debut": "2016-01", "micro": "vente",
+      "maladie": "hors_rsi"}, True),
+])
+def test_l_assurance_maladie_ne_se_demande_que_si_la_reponse_compte(champs, demandee):
+    """La réponse ne change que les seuils de chiffre d'affaires de 2014 et de
+    2015 (circulaire RSI n° 2016/010, point 1 ; `seuils_micro_hors_maladie_rsi`),
+    et seulement au métier du micro-entrepreneur : ailleurs, la question ne se
+    pose pas (action 177, étape 6, « le site à reprendre »)."""
+    corps = rendre("/simuler", champs)[1]
+    assert '<div class="erreur">' not in corps
+    assert 'name="micro"' in corps
+    assert ('name="maladie"' in corps) is demandee
+
+
 def test_le_chiffre_d_affaires_ne_se_convertit_pas_en_net():
     """Ni brut ni net : en mode net, le chiffre d'affaires se lit tel quel, et
     seule la ligne salariée remonte au brut."""

@@ -1093,7 +1093,7 @@ export function formulaire(saisie, contexte, comparaison = null) {
   ${desaccordDeSituation(saisie, contexte)}
   <div class="grille">${identite}</div>
   <h3>La carrière, période par période${bulleDesPeriodes()}</h3>
-  ${metiersFormulaire(saisie, affiliations, echelle)}${microFormulaire(saisie)}${indiceFormulaire(saisie, echelle)}${collaborateurFormulaire(saisie)}${reversionAgricoleFormulaire(saisie)}
+  ${metiersFormulaire(saisie, affiliations, echelle)}${microFormulaire(saisie, contexte.paquet)}${indiceFormulaire(saisie, echelle)}${collaborateurFormulaire(saisie)}${reversionAgricoleFormulaire(saisie)}
   ${blocPension(saisie)}
   ${lienAutreSaisie(saisie)}
   ${saisie.parPension ? "" : basculeUnite(saisie, echelle)}
@@ -2261,14 +2261,23 @@ function aideDeLaLodeom(lodeom) {
  * activité, la Cipav routant ses périodes vers les régimes du libéral. Le menu
  * ne paraît qu'avec une période de micro-entrepreneur, ou une activité déjà
  * dite ; avec lui, son assurance maladie en 2014 et en 2015 (action 177,
- * étape 6), qui avance son premier trimestre hors du RSI.
+ * étape 6), qui avance son premier trimestre hors du RSI, quand la réponse
+ * compte (`horsDuRsiEnJeu`) ou qu'elle est déjà dite, pour qu'on la défasse.
  */
-function microFormulaire(saisie) {
+function microFormulaire(saisie, paquet) {
   const micro = saisie.lignesCarriere.some((ligne) => ligne.statut === STATUT_MICRO)
     || saisie.emploi_retraite_statut === STATUT_MICRO;
   if (!micro && !saisie.micro) {
     return "";
   }
+  const maladie = saisie.maladie || horsDuRsiEnJeu(saisie, paquet) ? g.liste("maladie",
+    "En 2014 et 2015, votre assurance maladie", MALADIE_MICRO, saisie.maladie,
+    "le plus souvent au RSI", {},
+    "Le micro-entrepreneur qui ne relevait pas de la maladie du RSI, souvent "
+    + "parce qu'il était aussi salarié, ou qui touchait le RSA socle, validait "
+    + "son premier trimestre de 2014 et de 2015 sur un plus petit chiffre "
+    + "d'affaires (circulaire RSI n° 2016/010). Sans réponse, le simulateur le "
+    + "présume au RSI.") : "";
   return `<div class="grille">${g.liste("micro", "Micro-entrepreneur, vous saisissez",
     ACTIVITES_MICRO, saisie.micro, "le chiffre d'affaires, ou le revenu abattu", {},
     "Vos droits se calculent sur votre chiffre d'affaires abattu de 71 % pour la "
@@ -2276,14 +2285,25 @@ function microFormulaire(saisie) {
     + "les recettes libérales : dites votre activité, et saisissez votre chiffre "
     + "d'affaires mensuel. Les architectes, ingénieurs-conseils, ostéopathes, "
     + "psychologues, moniteurs de ski, et qui y était affilié avant 2019, "
-    + "relèvent de la Cipav.")}${g.liste("maladie",
-    "En 2014 et 2015, votre assurance maladie", MALADIE_MICRO, saisie.maladie,
-    "le plus souvent au RSI", {},
-    "Le micro-entrepreneur qui ne relevait pas de la maladie du RSI, souvent "
-    + "parce qu'il était aussi salarié, ou qui touchait le RSA socle, validait "
-    + "son premier trimestre de 2014 et de 2015 sur un plus petit chiffre "
-    + "d'affaires (circulaire RSI n° 2016/010). Sans réponse, le simulateur le "
-    + "présume au RSI.")}</div>`;
+    + "relèvent de la Cipav.")}${maladie}</div>`;
+}
+
+/**
+ * La réponse « hors du RSI » change-t-elle un résultat ? Seulement au chiffre
+ * d'affaires d'une activité que la grille de la caisse distingue — la vente et
+ * les services en 2014 et en 2015, le libéral en 2014
+ * (`seuils_micro_hors_maladie_rsi`) —, et au seul métier du micro-entrepreneur
+ * (`maladie_hors_rsi`, que `parcours` lui donne), quand une de ses périodes
+ * couvre l'une de ces années : ni le revenu déjà abattu, ni l'activité
+ * d'après le départ ne la lisent (action 177, étape 6, « le site à reprendre »).
+ */
+function horsDuRsiEnJeu(saisie, paquet) {
+  const grille = paquet.seuils_micro_hors_maladie_rsi ?? {};
+  const annees = Object.hasOwn(grille, saisie.micro)
+    ? Object.keys(grille[saisie.micro]).map(Number) : [];
+  return saisie.lignesCarriere.some((ligne, rang) => ligne.statut === STATUT_MICRO
+    && annees.some((annee) => saisie.dateDe(ligne.debut).annee <= annee
+      && annee <= saisie.derniereAnnee(rang)));
 }
 
 /**
