@@ -857,7 +857,8 @@ def du_parcours(annee_naissance: int, sexe: str, metiers: list["Metier"],
                 demandes_de_pension: dict[str, float] | None = None,
                 invalidite: dict | None = None, etranger: dict | None = None,
                 dispenses: dict[int, str] | None = None,
-                reversion_agricole: dict | None = None) -> dict:
+                reversion_agricole: dict | None = None,
+                outre_mer: dict[int, str] | None = None) -> dict:
     """La chronologie d'un parcours : un fait par métier, daté au mois, et un
     par année d'interruption.
 
@@ -878,7 +879,10 @@ def du_parcours(annee_naissance: int, sexe: str, metiers: list["Metier"],
     l'assiette minimale : chaque métier, principal ou cumulé, se coupe de même
     où il change, et chaque morceau dispensé le porte
     (``dispense_assiette_minimale``), que la règle ne retient que pour les
-    statuts et les années que le texte dispense.
+    statuts et les années que le texte dispense. ``outre_mer`` donne à une
+    année le département d'outre-mer où l'assuré a travaillé : chaque métier,
+    principal ou cumulé, se coupe de même, et chaque morceau le porte
+    (``outre_mer``).
     """
     if not metiers:
         raise ValueError("une carrière compte au moins un métier")
@@ -920,12 +924,14 @@ def du_parcours(annee_naissance: int, sexe: str, metiers: list["Metier"],
 
     temps_partiel = temps_partiel or {}
     dispenses = dispenses or {}
+    departements = outre_mer or {}
     periodes = []
     for rang, (metier, ouverture, cloture) in enumerate(
             zip(principaux, bornes, bornes[1:] + [fin]), 1):
-        for morceau, (de, a, (quotite, dispense)) in enumerate(_coupee_aux_annees(
+        for morceau, (de, a, (quotite, dispense, departement)) in enumerate(_coupee_aux_annees(
                 ouverture, cloture,
-                lambda annee: (temps_partiel.get(annee, 1.0), dispenses.get(annee, ""))), 1):
+                lambda annee: (temps_partiel.get(annee, 1.0), dispenses.get(annee, ""),
+                               departements.get(annee, ""))), 1):
             attributs = {"affiliation": metier.affiliation,
                          "niveau_salaire": metier.niveau_salaire,
                          "profil": profil_carriere, "part_primes": part_primes}
@@ -941,6 +947,8 @@ def du_parcours(annee_naissance: int, sexe: str, metiers: list["Metier"],
                 attributs["dispense_assiette_minimale"] = dispense
             if metier.lodeom:
                 attributs["lodeom"] = metier.lodeom
+            if departement:
+                attributs["outre_mer"] = departement
             periodes.append(fait(f"emploi_{rang}" if morceau == 1 else f"emploi_{rang}_{morceau}",
                                  ASSURE, EMPLOI, _jour(de), _jour(a), attributs))
     for rang, metier in enumerate(cumuls, 1):
@@ -961,9 +969,11 @@ def du_parcours(annee_naissance: int, sexe: str, metiers: list["Metier"],
                 "une activité cumulée doit s'arrêter après avoir commencé"
             )
         # L'activité cumulée garde le temps plein, mais la dispense est de
-        # l'année : l'activité accessoire saisonnière est souvent celle-ci.
-        for morceau, (de, a, dispense) in enumerate(_coupee_aux_annees(
-                ouverture, cloture, lambda annee: dispenses.get(annee, "")), 1):
+        # l'année : l'activité accessoire saisonnière est souvent celle-ci. Le
+        # département aussi.
+        for morceau, (de, a, (dispense, departement)) in enumerate(_coupee_aux_annees(
+                ouverture, cloture,
+                lambda annee: (dispenses.get(annee, ""), departements.get(annee, ""))), 1):
             periodes.append(fait(f"cumul_{rang}" if morceau == 1 else f"cumul_{rang}_{morceau}",
                                  ASSURE, EMPLOI, _jour(de), _jour(a), {
                 "affiliation": metier.affiliation, "niveau_salaire": metier.niveau_salaire,
@@ -972,7 +982,8 @@ def du_parcours(annee_naissance: int, sexe: str, metiers: list["Metier"],
                 **({"maladie_hors_rsi": True} if metier.maladie_hors_rsi else {}),
                 **({"apprentissage": True} if metier.apprentissage else {}),
                 **({"dispense_assiette_minimale": dispense} if dispense else {}),
-                **({"lodeom": metier.lodeom} if metier.lodeom else {})}))
+                **({"lodeom": metier.lodeom} if metier.lodeom else {}),
+                **({"outre_mer": departement} if departement else {})}))
     for annee in sorted(interruptions or {}):
         periodes.append(fait(f"interruption_{annee}", ASSURE, INTERRUPTION,
                              f"{annee:04d}-01-01", f"{annee + 1:04d}-01-01",

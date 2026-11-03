@@ -12,16 +12,25 @@ dépasse pas 390 € (L. 756-3, D. 756-7 ; action 177, étape 4).
 
 from __future__ import annotations
 
+import dataclasses
 import html
+import json
 import re
+import shutil
+import subprocess
+from pathlib import Path
 from urllib.parse import parse_qs
 
 import pytest
 
+from retraite_notionnelle import chronologie as chrono
+from retraite_notionnelle.carriere import Metier
 from retraite_notionnelle.web.site import ErreurSite, module
 
 from outils_pont import Saisies, saisie_du_portage
 from outils_web import page  # noqa: F401 — la fixture partagée
+
+RACINE = Path(__file__).resolve().parents[1]
 
 #: Née le 15 mars 1962, partie le 1er avril 2027 : son relevé se prolonge
 #: jusqu'au départ.
@@ -171,3 +180,121 @@ def test_le_controle_du_releve_lit_le_seuil_du_departement(page):
     assert rangees(outre_mer="1981:1982:reunion") == [
         (1982, ["442,10 €", "422,01 €", "1 trimestre", "4 trimestres"])]
     assert rangees() == [(1982, ["442,10 €", "553,39 €", "0 trimestre", "4 trimestres"])]
+
+
+# -- les métiers --------------------------------------------------------------------
+
+#: Une salariée, artisane à son compte de juillet 2014 au départ, commerçante
+#: en plus de 2019 à 2022.
+PARCOURS = {
+    **NEE_EN_1962, "debut": "1990-01-01", "statut": "salarie_prive_non_cadre",
+    "unite_revenu": "euros_mois", "salaire": "1500",
+    "metier2_debut": "2014-07-01", "metier2_statut": "artisan", "metier2_salaire": "400",
+    "metier3_debut": "2019-01-01", "metier3_statut": "commercant", "metier3_salaire": "400",
+    "metier3_cumul": "oui", "metier3_fin": "2023-01-01",
+}
+
+
+def _faits(carriere) -> list[tuple]:
+    return [(fait["id"], fait["debut"], fait["fin"], fait["attributs"].get("outre_mer"))
+            for fait in chrono.faits_de(carriere.chronologie, chrono.ASSURE, chrono.EMPLOI)]
+
+
+def test_les_metiers_se_coupent_aux_annees_outre_mer(saisies):
+    """Un métier, principal ou ajouté, se coupe au 1er janvier où le
+    département change, et chaque morceau porte le sien ; la chronologie tient
+    toujours. Sans années outre-mer, rien n'est coupé."""
+    carriere = saisies.carriere({**PARCOURS, "outre_mer": "2015:2017:reunion, 2021:2021:guyane"})
+    assert _faits(carriere) == [
+        ("emploi_1", "1990-01-01", "2014-07-01", None),
+        ("emploi_2", "2014-07-01", "2015-01-01", None),
+        ("emploi_2_2", "2015-01-01", "2018-01-01", "reunion"),
+        ("emploi_2_3", "2018-01-01", "2021-01-01", None),
+        ("emploi_2_4", "2021-01-01", "2022-01-01", "guyane"),
+        ("emploi_2_5", "2022-01-01", "2027-04-01", None),
+        ("cumul_1", "2019-01-01", "2021-01-01", None),
+        ("cumul_1_2", "2021-01-01", "2022-01-01", "guyane"),
+        ("cumul_1_3", "2022-01-01", "2023-01-01", None),
+    ]
+    assert chrono.controler(carriere.chronologie) == []
+    assert [fait[0] for fait in _faits(saisies.carriere(PARCOURS))] == [
+        "emploi_1", "emploi_2", "cumul_1"]
+
+
+def test_les_lignes_des_metiers_portent_le_departement_de_leur_annee(saisies):
+    """Les lignes des années nommées portent leur département, celles de
+    l'activité ajoutée comprises ; depuis 1996, le SMIC des départements est
+    celui de la métropole, et l'artisane, à 4 800 € par an, dépasse les 390 €
+    de l'exonération : couper les métiers ne change ni les revenus ni les
+    trimestres."""
+    carriere = saisies.carriere({**PARCOURS, "outre_mer": "2015:2017:reunion, 2021:2021:guyane"})
+    assert {(ligne.annee, ligne.affiliation): ligne.outre_mer
+            for ligne in carriere.lignes if ligne.outre_mer} == {
+        (2015, "artisan"): "reunion", (2016, "artisan"): "reunion",
+        (2017, "artisan"): "reunion", (2021, "artisan"): "guyane",
+        (2021, "commercant"): "guyane"}
+    sans = saisies.carriere(PARCOURS)
+    assert ([(l.annee, l.affiliation, l.revenu, l.trimestres_valides) for l in carriere.lignes]
+            == [(l.annee, l.affiliation, l.revenu, l.trimestres_valides) for l in sans.lignes])
+
+
+def test_l_annee_d_un_parcours_outre_mer_valide_au_seuil_du_departement(saisies):
+    """Né en 1940, à La Réunion de 1960 à 1995 au plancher de la saisie, un
+    dixième du salaire moyen : son année 1982 valide autant de trimestres que
+    son revenu compte de fois 2 768,20 F, le seuil de La Réunion, et non de
+    fois 3 630 F, celui de la métropole (R. 753-21, R. 351-9 ; arrêté du
+    30 décembre 1981) — un de plus."""
+    requete = {"naissance": "1940-03-15", "debut": "1960-01-01", "liquidation": "2002-04-01",
+               "salaire": "0.1"}
+
+    def annee_1982(**champs):
+        return next(ligne for ligne in saisies.carriere({**requete, **champs}).lignes
+                    if ligne.annee == 1982)
+    avec, sans = annee_1982(outre_mer="1960:1995:reunion"), annee_1982()
+    francs = avec.revenu * 6.55957
+    assert avec.revenu == sans.revenu
+    assert (avec.outre_mer, avec.trimestres_valides) == ("reunion", min(4, int(francs // 2768.20)))
+    assert (sans.outre_mer, sans.trimestres_valides) == ("", min(4, int(francs // 3630.0)))
+    assert avec.trimestres_valides == sans.trimestres_valides + 1
+
+
+# -- les deux moteurs ---------------------------------------------------------------
+
+_CHRONOLOGIE_JS = """
+import { readFileSync } from "node:fs";
+import { duParcours } from "./moteur/js/chronologie.js";
+const { metiers, outre_mer, dispenses } = JSON.parse(process.argv[1]);
+const { presomptions } = JSON.parse(readFileSync("moteur/donnees.json", "utf8"));
+const chronologie = duParcours({
+  annee_naissance: 1962, mois_naissance: 3, sexe: "F", metiers, age_liquidation: 65.0,
+  presomptions, outre_mer: new Map(outre_mer), dispenses: new Map(dispenses),
+});
+process.stdout.write(JSON.stringify(
+  chronologie.faits.filter((fait) => fait.sorte === "periode_d_activite")));
+"""
+
+
+def test_la_chronologie_d_un_parcours_porte_les_annees_outre_mer_dans_les_deux_moteurs():
+    """Le jumeau Python de la chronologie (``chronologie.du_parcours``) coupe
+    les métiers et leur porte le département comme le portage, fait pour
+    fait, la dispense mêlée aux coupures."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    metiers = [Metier(affiliation="salarie_prive_non_cadre", age_debut=27.75, niveau_salaire=0.9),
+               Metier(affiliation="artisan", age_debut=52.25, niveau_salaire=0.1),
+               Metier(affiliation="commercant", age_debut=56.75, niveau_salaire=0.1,
+                      cumul=True, age_fin=60.75)]
+    outre_mer = {**{annee: "reunion" for annee in range(2015, 2018)}, 2021: "guyane"}
+    dispenses = {2016: "rsa", 2017: "rsa"}
+    attendu = [fait for fait in chrono.du_parcours(
+        annee_naissance=1962, mois_naissance=3, sexe="F", metiers=metiers,
+        age_liquidation=65.0, outre_mer=outre_mer, dispenses=dispenses)["faits"]
+        if fait["sorte"] == chrono.EMPLOI]
+    assert [fait["attributs"].get("outre_mer") for fait in attendu].count("reunion") == 2
+    entree = {"metiers": [dataclasses.asdict(metier) for metier in metiers],
+              "outre_mer": list(outre_mer.items()), "dispenses": list(dispenses.items())}
+    execution = subprocess.run(
+        ["node", "--input-type=module", "-e", _CHRONOLOGIE_JS, json.dumps(entree)],
+        cwd=RACINE, capture_output=True, text=True, encoding="utf-8", check=False)
+    assert execution.returncode == 0, execution.stderr
+    assert json.loads(execution.stdout) == attendu

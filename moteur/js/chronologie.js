@@ -811,7 +811,9 @@ export function duResume(anneeNaissance, sexe, moisNaissance = 1, ageLiquidation
  * porte (`coupeeAuxAnnees`). `dispenses` donne à une année le motif qui
  * dispense l'indépendant de l'assiette minimale : chaque métier, principal ou
  * cumulé, se coupe de même, et chaque morceau dispensé le porte
- * (`dispense_assiette_minimale`).
+ * (`dispense_assiette_minimale`). `outre_mer` donne à une année le
+ * département d'outre-mer où l'assuré a travaillé : chaque métier, principal
+ * ou cumulé, se coupe de même, et chaque morceau le porte (`outre_mer`).
  */
 export function duParcours({
   annee_naissance,
@@ -836,6 +838,7 @@ export function duParcours({
   etranger = null,
   dispenses = null,
   reversion_agricole = null,
+  outre_mer = null,
 }) {
   if (!metiers || metiers.length === 0) {
     throw new Error("une carrière compte au moins un métier");
@@ -879,12 +882,14 @@ export function duParcours({
 
   const tempsPartiel = temps_partiel ?? new Map();
   const motifs = dispenses ?? new Map();
+  const departements = outre_mer ?? new Map();
   const periodes = [];
   principaux.forEach((metier, i) => {
     const cloture = i + 1 < bornes.length ? bornes[i + 1] : fin;
     coupeeAuxAnnees(bornes[i], cloture,
-      (annee) => [tempsPartiel.get(annee) ?? 1.0, motifs.get(annee) ?? ""])
-      .forEach(([de, a, [quotite, dispense]], morceau) => {
+      (annee) => [tempsPartiel.get(annee) ?? 1.0, motifs.get(annee) ?? "",
+        departements.get(annee) ?? ""])
+      .forEach(([de, a, [quotite, dispense, departement]], morceau) => {
         const attributs = {
           affiliation: metier.affiliation,
           niveau_salaire: metier.niveau_salaire,
@@ -909,6 +914,9 @@ export function duParcours({
         if (metier.lodeom) {
           attributs.lodeom = metier.lodeom;
         }
+        if (departement) {
+          attributs.outre_mer = departement;
+        }
         periodes.push(fait(morceau === 0 ? `emploi_${i + 1}` : `emploi_${i + 1}_${morceau + 1}`,
           ASSURE, EMPLOI, jour(de), jour(a), attributs));
       });
@@ -931,9 +939,11 @@ export function duParcours({
       throw new Error("une activité cumulée doit s'arrêter après avoir commencé");
     }
     // L'activité cumulée garde le temps plein, mais la dispense est de
-    // l'année : l'activité accessoire saisonnière est souvent celle-ci.
-    coupeeAuxAnnees(ouverture, cloture, (annee) => motifs.get(annee) ?? "")
-      .forEach(([de, a, dispense], morceau) => {
+    // l'année : l'activité accessoire saisonnière est souvent celle-ci. Le
+    // département aussi.
+    coupeeAuxAnnees(ouverture, cloture,
+      (annee) => [motifs.get(annee) ?? "", departements.get(annee) ?? ""])
+      .forEach(([de, a, [dispense, departement]], morceau) => {
         periodes.push(fait(morceau === 0 ? `cumul_${i + 1}` : `cumul_${i + 1}_${morceau + 1}`,
           ASSURE, EMPLOI, jour(de), jour(a), {
             affiliation: metier.affiliation,
@@ -946,6 +956,7 @@ export function duParcours({
             ...(metier.apprentissage ? { apprentissage: true } : {}),
             ...(dispense ? { dispense_assiette_minimale: dispense } : {}),
             ...(metier.lodeom ? { lodeom: metier.lodeom } : {}),
+            ...(departement ? { outre_mer: departement } : {}),
           }));
       });
   });

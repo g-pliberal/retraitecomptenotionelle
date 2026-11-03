@@ -2326,6 +2326,7 @@ class Carriere:
         dispenses: dict[int, str] | None = None,
         reversion_agricole: dict | None = None,
         prolongations_de_la_charge: list[dict] | tuple = (),
+        outre_mer: dict[int, str] | None = None,
     ) -> "Carriere":
         """Construit une carrière à partir de la suite des métiers exercés.
 
@@ -2367,6 +2368,11 @@ class Carriere:
         l'assiette minimale (``legislation/dispenses_assiette_minimale.yaml``) :
         toutes ses activités de l'année le portent, et la règle ne le retient
         que pour les statuts et les années que le texte dispense.
+
+        ``outre_mer`` associe une année au département d'outre-mer où l'assuré
+        a travaillé (:data:`~retraite_notionnelle.donnees.macro.DEPARTEMENTS_D_OUTRE_MER`) :
+        toutes ses activités de l'année le portent, qui donne à ses trimestres
+        leur seuil.
 
         ``retraite_progressive`` déclare une retraite progressive : son
         ``age`` et la ``quotite`` du temps partiel que l'assuré garde jusqu'au
@@ -2425,7 +2431,8 @@ class Carriere:
                 retraite_progressive=retraite_progressive, emploi_retraite=emploi_retraite,
                 demandes_de_pension=demandes_de_pension, invalidite=invalidite,
                 etranger=etranger, dispenses=dispenses,
-                reversion_agricole=reversion_agricole), periodes_assimilees),
+                reversion_agricole=reversion_agricole, outre_mer=outre_mer),
+                periodes_assimilees),
             prolongations_de_la_charge))
         return cls.depuis_chronologie(chronologie, macro, identifiant=identifiant)
 

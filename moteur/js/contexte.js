@@ -504,6 +504,7 @@ export class Contexte {
       periodes_assimilees: saisie.periodesAssimileesDeclarees(),
       prolongations_de_la_charge: saisie.prolongationsDeLaChargeDeclarees(),
       dispenses,
+      outre_mer: saisie.outreMerAnalyse(),
       reversion_agricole: saisie.reversionAgricoleDeclaree(),
       part_primes: saisie.primes,
       identifiant: "assuré",

@@ -2222,6 +2222,8 @@ export class Carriere {
    * principale, qui réduit son revenu et les services de la fonction publique ;
    * ``dispenses`` (une `Map`), au motif qui dispense l'indépendant de
    * l'assiette minimale, que portent toutes ses activités de l'année ;
+   * ``outre_mer`` (une `Map`), au département d'outre-mer où l'assuré a
+   * travaillé, que portent de même toutes ses activités de l'année ;
    * ``prolongations_de_la_charge``, les études, l'apprentissage et l'infirmité
    * des enfants, que `avecProlongationsDeLaCharge` reçoit.
    *
@@ -2256,6 +2258,7 @@ export class Carriere {
     dispenses = null,
     reversion_agricole = null,
     prolongations_de_la_charge = [],
+    outre_mer = null,
   }) {
     const chronologie = preparer(chrono.avecProlongationsDeLaCharge(
       chrono.avecPeriodesAssimilees(chrono.duParcours({
@@ -2264,7 +2267,7 @@ export class Carriere {
         naissances_enfants,
         jour_naissance, presomptions: macro.paquet.presomptions, conjoint, deces,
         retraite_progressive, emploi_retraite, demandes_de_pension, invalidite, etranger,
-        dispenses, reversion_agricole,
+        dispenses, reversion_agricole, outre_mer,
       }), periodes_assimilees), prolongations_de_la_charge), macro.paquet.presomptions);
     return Carriere.depuisChronologie(chronologie, macro, chrono.ASSURE, identifiant);
   }
