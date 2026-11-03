@@ -1,0 +1,36 @@
+date: "2026-11-03"
+session: "action 131, file R-K-bis de la vague 6 : relecture indépendante des corrections de la relecture R-K de la cotisation agricole de 1952 (commits 60584b2 et 076370f, file K-bis)"
+consulte: >-
+  python scripts/veille_droit.py ; docs/veille_droit.md ; la base de la Cnav, rien de neuf.
+  Les index LEGI (à jour au 2 novembre 2026) et JORF (au 3 novembre 2026) de la DILA,
+  récupérés dans la session : un échantillon de 16 des 80 citations de la fiche
+  cotisation_vieillesse_agricole_avant_2003 (graine 20261103), lues en entier, et les 80
+  comparées par script ; les articles de la vieillesse des décrets annuels de financement
+  de 1990 à 2003 (n° 90-765 à 2003-1033) ; le décret n° 87-664, article 2
+  (LEGIARTI000006770506) ; l'article 1123 de l'ancien code rural, ses sept rédactions de
+  1980 à 2000, et L. 731-42 jusqu'en 2004 ; D. 731-121 à D. 731-126, leurs rédactions de
+  2005 à 2026 ; le décret n° 65-314, article 3 (LEGIARTI000006763756) ; l'article 2 du
+  décret n° 86-1084 (LEGIARTI000006769405), D. 732-77 (LEGIARTI000006597491 et
+  LEGIARTI000053365517), R. 732-67 (LEGIARTI000053328816), les décrets n° 97-163 (article
+  2) et 2002-297 (article 5) ; le décret n° 52-1166, articles 22 et 23 ; au JORF, les
+  notices de 1952 à 1982 sur la vieillesse agricole. Recherches plein texte de 8,5 % et de
+  17,37 % dans les deux index ; l'historique git entier (git log -S).
+trouve: >-
+  Conforme. Les 80 citations sont exactes, à la version et à la date dites ; les taux des
+  décrets annuels de 1993 à 2003 sont ceux de la fiche (3,06 à 3,2 % ; 8,14 à 8,445 % ;
+  1,26 à 1,34 % ; complémentaire 2,30 à 2,53 % et 0,16 à 0,25 %), ceux de 1990 à 1992
+  aussi. Aucun texte de l'index ne fixe 8,5 % ni 17,37 % ; les deux taux naissent sans
+  source au commit bdaecdbc du 8 septembre 2026. D. 732-77, l'article 2 du décret n° 86-1084
+  et R. 732-67 ne disent pas comment compter 1952 dans P ; les deux effets se refont au
+  centime au moteur (38,03 à 38,96 € ; 20,52 €). La borne de l'arrondi est juste. Un écart
+  moyen antérieur à K : le 17,37 % court de 2003 à 2025, quand aucune somme des taux de
+  D. 731-121, D. 731-122 et D. 731-124 ne le donne (au plus 17,23 %). Quatre faibles : le
+  décret n° 87-664 (+4 % en 1987) absent de la fiche ; la rédaction de 1991 de l'article
+  1123 non citée pour 1993, et une citation en double ; la reconstitution de 1990 (−9,6 →
+  −9,7 %) toujours non dite ; « quelques points de taux » pour un écart qui va jusqu'à
+  12,78 points.
+reste: >-
+  Au propriétaire : le taux du compte de 2003 à 2025, en plus des deux questions de K-bis.
+  À la session suivante de l'action 131 : le décret n° 87-664 et la rédaction de 1991 de
+  l'article 1123 dans la fiche neuve. Le détail : note
+  2026-11-03-relecture-corrections-de-la-relecture-cotisation-de-1952.md de l'action 131.
