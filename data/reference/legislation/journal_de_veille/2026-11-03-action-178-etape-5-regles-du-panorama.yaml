@@ -1,0 +1,43 @@
+date: "2026-11-03"
+session: "action 178, étape 5 : les règles du panorama de la DREES, édition 2026, confrontées aux tables du scénario 1"
+consulte: >-
+  `python scripts/veille_droit.py` : trois fiches à relire, aucune de ce
+  domaine. Les index LEGI et JORF de la DILA, rapportés de la release et à
+  jour au 2 novembre 2026 (aucun incrément depuis) : L. 161-17-2 et L. 161-17-3
+  n'ont aucune version postérieure au 31 décembre 2025 ; D. 351-1-1 dans sa
+  rédaction du 1er septembre 2026 (LEGIARTI000054059621, décret n° 2026-345),
+  son II ; R. 351-27 dans sa rédaction de 2004 (LEGIARTI000006749436). Le
+  barème « Montant de l'allocation de solidarité aux personnes âgées » de la
+  Cnav, par son API (`cnav_minimum_vieillesse.py`), pour une personne seule et
+  un couple, depuis 2006. Le PDF du panorama et les classeurs des fiches 2, 4,
+  14, 24 et 26, lus cellule par cellule, fusions comprises : l'encadré 1 de la
+  fiche 2, les tableaux 1 à 4 et les encadrés 1 et 2 de la fiche 14, le
+  tableau 1 complémentaire de la fiche 4, le tableau 1 de la fiche 24, les
+  graphiques 1 et 2 et le schéma 2 de la fiche 26.
+trouve: >-
+  Les âges légaux, les durées requises, les âges d'annulation de la décote et
+  la carrière longue du panorama sont ceux des tables du dépôt, avant et
+  après la loi de financement pour 2026, mois de naissance par mois de
+  naissance, sauf deux rédactions que le texte tranche contre la DREES : le
+  4° du II de D. 351-1-1 donne « soixante ans et huit mois » aux nés de
+  décembre 1965, que le panorama fond dans les 60 ans et 9 mois de 1965 ;
+  R. 351-27 donne 2,375 % à la génération 1944, 2,5 % à celles d'avant, quand
+  le panorama écrit 2,5 % « pour la génération 1944 ». Les bornes de la
+  pension d'invalidité de 2026 sont celles du dépôt. La table de l'ASPA d'une
+  personne seule sautait 2008, 2013 et 2015, que le modèle ramenait sur les
+  prix (7 664,96 € au lieu de 7 597,59 € en 2008, 9 407,30 € au lieu de
+  9 447,21 € en 2013) : les trois ancres viennent désormais du barème de la
+  Cnav, au 31 décembre, et le panorama les redonne au centime. Les
+  revalorisations de l'Agirc, de l'Arrco et du RAFP sont celles du dépôt de
+  2008 à 2025 ; la DREES écrit 1,8 % pour les régimes de base en 2008 (1,9 %
+  aux arrêtés, et à l'indice de sa propre fiche 26) et 1,0 % pour l'Ircantec
+  en 2019 (0,3 %).
+reste: >-
+  L'ASPA d'une personne seule de 2022 (valeur de janvier) et douze fois le
+  mensuel en 2007, 2017, 2021 et de 2023 à 2026 : inscrits à l'action 138, étape 2,
+  « à reprendre » et « à décider ». La RCI des indépendants : sa valeur de
+  2022 est celle de janvier, la hausse de juillet ne paraissant qu'en 2023, et
+  le panorama lui prête en 2024 et 2025 la revalorisation des régimes de
+  base, quand le barème de la Cnav lui donne 3,7 et 0,6 % : à la file D, qui
+  tient les règles des indépendants. La majoration pour tierce personne et
+  l'allocation supplémentaire d'invalidité, que le modèle ne sert pas.
