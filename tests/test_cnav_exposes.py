@@ -222,8 +222,8 @@ def test_la_duree_requise_des_nes_avant_1943_est_de_160_trimestres_depuis_2003()
     appels, attendus = {}, {}
     for annee, mois, age, effet, mois_effet, trimestres in DUREE_REQUISE_SELON_LA_DATE_D_EFFET:
         carriere = Carriere(
-            annee_naissance=annee, mois_naissance=mois, sexe="H", age_liquidation=age,
-            identifiant=f"né en {mois}/{annee}",
+            annee_naissance=annee, mois_naissance=mois, jour_naissance=15, sexe="H",
+            age_liquidation=age, identifiant=f"né le 15/{mois}/{annee}",
             lignes=[AnneeCarriere(annee=an, revenu=20_000.0, trimestres_valides=4,
                                   affiliation="salarie_prive_non_cadre")
                     for an in range(annee + 20, effet)])

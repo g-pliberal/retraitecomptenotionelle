@@ -115,25 +115,39 @@ A_L_ANNEE_D_EFFET = {
         "points des professions libérales « entre en vigueur le 1er janvier "
         "2004 » ; L. 643-3 ouvre la pension à l'âge de L. 351-1, au lieu de "
         "l'allocation à soixante-cinq ans (lu le 14 octobre 2026)")),
-    ("cnavpl", "duree"): (2004, 2004, (
-        "même article : depuis 2004, la durée du taux plein du régime général "
-        "(L. 643-3, I, renvoyant au deuxième alinéa de L. 351-1)")),
     ("cnbf", "age"): (2004, 2004, (
         "loi n° 2003-775, article 97, II (JORFARTI000002429604) : L. 723-10-1, "
         "l'âge de L. 351-1 et la durée du taux plein, « entrent en vigueur le "
         "1er janvier 2004 »")),
-    ("cnbf", "duree"): (2004, 2004, "même article"),
+    ("regime_general", "duree"): (2003, 2003, (
+        "R. 351-45, rédactions de 1993 et de 1995 (LEGIARTI000006749449, "
+        "LEGIARTI000006749450) : 160 trimestres « aux pensions prenant effet "
+        "postérieurement au 31 décembre 2002, quelle que soit la date de "
+        "naissance » (I) ; avant, 150 pour les nés avant 1934 et l'escalier de "
+        "151 à 159 des nés de 1934 à 1942 (II) ; 159 pour le né en décembre "
+        "1942 parti le 1er janvier 2003 (III). Le régime général, et les "
+        "régimes qui lui empruntent sa durée, basculent donc en 2003 pour les "
+        "nés de 1933 à 1942 (relu le 3 novembre 2026, action 175, étape 4)")),
+    **{(code, "duree"): (2003, 2003, (
+        "la durée du taux plein du régime général, que la fiche du régime lui "
+        "oppose : sa bascule de 2003 (R. 351-45, ci-dessus)"))
+       for code in ("cancava", "organic", "organic_conjoints_batiment", "msa_salaries",
+                    "cavimac", "ircec_raap", "ircec_racd", "ircec_racl",
+                    "carpimko_complementaire", "cnbf_complementaire",
+                    "cavp_complementaire", "carcdsf_complementaire",
+                    "cipav_complementaire", "arrco_tranche_2_entreprises_nouvelles")},
     ("cavimac", "age"): (2007, 2007, (
         "décret n° 2006-1325 du 31 octobre 2006, article 2 (JORFARTI000001085913) : "
         "l'âge de la pension d'avant 1998 « est également abaissé à soixante "
         "ans », dès sa publication le 1er novembre 2006, sans disposition "
         "transitoire ; la fiche coupe au 1er janvier 2007 (lu le 14 octobre "
         "2026)")),
-    ("asv_conventionnes", "duree"): (2017, 2017, (
+    ("asv_conventionnes", "duree"): (2003, 2017, (
         "arrêté du 1er décembre 2016 (JORFARTI000033538061), article 12 des "
         "statuts : la retraite en temps choisi, à taux plein à l'âge légal "
         "« sans décote ni durée », pour les pensions de 2017 et après ; avant, "
-        "la durée du régime de base (lu le 14 octobre 2026)")),
+        "la durée du régime de base (lu le 14 octobre 2026), et sa bascule de "
+        "2003 (R. 351-45, ci-dessus)")),
     ("carpimko_complementaire", "age"): (2016, 2016, (
         "arrêté du 31 juillet 2015 (JORFARTI000031255547), article 12 quater des "
         "statuts : soixante ans pour les générations 1955 et antérieures, que la "
@@ -153,14 +167,15 @@ A_L_ANNEE_D_EFFET = {
         "pour les hommes ; aucune disposition transitoire dans ses huit "
         "articles. De 1994 à 1997, la même bascule, au premier départ que le "
         "décret ouvre aux nés de 1934 à 1937 (lu le 14 octobre 2026)")),
-    **{(code, "duree"): (1983, 1983, (
+    **{(code, "duree"): (1983, 2003, (
         "accord ASF du 4 février 1983 pour l'Agirc et l'Arrco, article 16, 6° c), "
         "de l'arrêté du 30 décembre 1970 pour l'Ircantec (LEGIARTI000006381610) : "
         "« à compter du 1er avril 1983 », la durée du taux plein au régime de "
         "base annule le coefficient d'anticipation ; avant, l'âge seul, et la "
         "période ne porte aucune durée — les 160 trimestres du relevé sont le "
         "repli du moteur, que l'abattement par l'âge seul ne consulte pas (relu "
-        "le 14 octobre 2026)"))
+        "le 14 octobre 2026). Puis la bascule de 2003 de cette durée (R. 351-45, "
+        "ci-dessus)"))
        for code in ("agirc", "agirc_entreprises_nouvelles", "arrco",
                     "arrco_tranche_2", "ircantec")},
 }
