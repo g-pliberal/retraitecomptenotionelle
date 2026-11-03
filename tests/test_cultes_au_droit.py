@@ -26,8 +26,8 @@ barème. Ce que le modèle ne sert pas, la fiche le déclare, et le test qui sui
 
 from __future__ import annotations
 
-import csv
 import functools
+import re
 from datetime import date, timedelta
 
 import pytest
@@ -35,6 +35,7 @@ import yaml
 
 from retraite_notionnelle.config import RACINE_DONNEES
 from retraite_notionnelle.noyau import carte
+from retraite_notionnelle.simulateur import Simulateur
 
 SALAIRE, COMPLEMENTAIRE = "cultes_salaire_annuel_moyen", "cultes_retraite_complementaire"
 LOT = (SALAIRE, COMPLEMENTAIRE)
@@ -59,10 +60,10 @@ PAR_RENVOI, RENVOYES = {"taux_cotisation_retraite"}, ("arrco", "agirc_arrco")
 #: (`legislation/contributions_equilibre_agirc_arrco.yaml`) : le taux de la
 #: tranche 1, salarié et employeur, ou rien quand le régime ne la verse pas.
 CONTRIBUTIONS = {"contribution_agff": "agff", "contribution_ceg": "ceg"}
-#: Ce que le modèle ne sert pas : il prend pour l'année entière le SMIC du
-#: 1er janvier (`macro/smic_horaire.csv`), quand la base suit chaque mois le
-#: SMIC en vigueur ; il n'ajoute pas la garantie mensuelle de rémunération.
-SANS_SUPPORT = {"smic_du_mois", "garantie_mensuelle_la_plus_elevee"}
+#: Ce que le modèle ne sert pas : il n'ajoute pas la garantie mensuelle de
+#: rémunération. Le SMIC de chaque mois, il le sert depuis le 3 novembre 2026
+#: (`smic_du_mois`, `tests/test_cultes_smic_du_mois.py`).
+SANS_SUPPORT = {"garantie_mensuelle_la_plus_elevee"}
 
 #: Ce que le modèle fait autrement que le droit : la fiche, la version, le
 #: champ qu'elle lit et que le dépôt porte autrement, les régimes où il le
@@ -71,11 +72,15 @@ SANS_SUPPORT = {"smic_du_mois", "garantie_mensuelle_la_plus_elevee"}
 SMIC_DU_MOIS = ("cent_soixante_neuf_heures", "garantie_mensuelle_de_remuneration",
                 "duree_legale_du_travail")
 ECARTS_DECLARES = [
-    *[(SALAIRE, version, "smic_du_mois", None, "R. 382-90") for version in SMIC_DU_MOIS],
     (SALAIRE, "garantie_mensuelle_de_remuneration", "garantie_mensuelle_la_plus_elevee",
      None, "article 32"),
     (COMPLEMENTAIRE, "institution_de_l_arrco", "contribution_agff", None, "10 février 2001"),
 ]
+
+
+@pytest.fixture(scope="module")
+def simulateur() -> Simulateur:
+    return Simulateur()
 
 
 def _versions(nom: str) -> list[dict]:
@@ -256,25 +261,22 @@ def test_le_taux_de_base_de_la_caisse_est_la_tranche_1_et_la_ceg():
     assert round(taux * (1 - periode["part_salariale"]), 4) == 0.0601
 
 
-def _smic_du_1er_janvier() -> dict[int, float]:
-    with (REFERENCE / "macro" / "smic_horaire.csv").open(encoding="utf-8", newline="") as flux:
-        lignes = csv.DictReader(ligne for ligne in flux if not ligne.startswith("#"))
-        return {int(ligne["annee"]): float(ligne["smic_horaire"]) for ligne in lignes}
-
-
-def test_le_smic_de_janvier_manque_au_plus_la_moitie_du_relevement_de_juillet():
-    """De 1998 à 2007, le SMIC n'est relevé qu'au 1er juillet (« A compter du
+def test_le_smic_des_mois_releve_la_base_d_au_plus_2_9_pour_cent_en_2004(simulateur):
+    """De 1998 à 2009, le SMIC n'est relevé qu'au 1er juillet (« A compter du
     1er juillet 1998 […] 40,22 F », et chaque année jusqu'en 2009, décrets lus
-    dans l'index LEGI) : le janvier suivant porte la valeur de juillet. Le
-    forfait que le modèle compte au SMIC de janvier manque la moitié du
-    relèvement, au plus 2,9 %, en 2004 — l'effet que l'approximation déclare."""
-    smic = _smic_du_1er_janvier()
-    manques = {annee: (smic[annee + 1] / smic[annee] - 1) / 2 for annee in range(1998, 2008)}
-    pire = max(manques, key=manques.get)
-    assert (pire, round(manques[pire], 3)) == (2004, 0.029)
-    approximation = next(a for a in carte.fiches()[SALAIRE]["approximations"]
-                         if set(SMIC_DU_MOIS) <= set(a.get("version") or []))
-    assert "2,9 %" in str(approximation["effet"]), approximation["effet"]
+    dans l'index JORF) : la base au SMIC de chaque mois passe celle au SMIC de
+    janvier de la moitié du relèvement, au plus 2,9 %, en 2004 — l'effet que
+    la fiche dit du changement du 3 novembre 2026. Aucune approximation ne
+    déclare plus le SMIC de janvier."""
+    macro = simulateur.macro
+    hausses = {annee: macro.smic_horaire_des_mois(annee) / macro.smic_horaire(annee) - 1
+               for annee in range(1998, 2027)}
+    pire = max(hausses, key=hausses.get)
+    assert (pire, round(hausses[pire], 3)) == (2004, 0.029)
+    fiche = carte.fiches()[SALAIRE]
+    assert "2,9 %" in str(fiche["effet"]), fiche["effet"]
+    assert not any(re.search(r"SMIC (horaire )?du 1er janvier", str(a.get("ecart")))
+                   for a in fiche.get("approximations") or [])
 
 
 def test_la_garantie_de_remuneration_reste_sous_cent_soixante_neuf_heures():

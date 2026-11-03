@@ -731,7 +731,7 @@ export class ConstructeurCompte {
         let assiette = this._assiette(base, annee, borneBasse, borneHaute, part);
         const repere = periode.repereAssiette(
           this.macro.plafond_securite_sociale.valeur(annee),
-          this.macro.smic_horaire.valeur(annee),
+          this.macro.smicHoraireDuForfait(annee, periode.smic_du_mois),
         ) * part;
         if (periode.assiette_forfaitaire) {
           // Assiette FORFAITAIRE : le régime des cultes cotise sur un

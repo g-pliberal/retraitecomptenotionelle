@@ -710,7 +710,8 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
                 plafond = base if borne_haute is None else borne_haute
                 assiette = max(0.0, min(base, plafond) - borne_basse)
                 repere = periode.repere_assiette(
-                    pass_annuel, moteur.macro.smic_horaire(ligne.annee)
+                    pass_annuel,
+                    moteur.macro.smic_horaire_du_forfait(ligne.annee, periode.smic_du_mois),
                 ) * (part if periode.assiette_repere_smic is not None else 1.0)
                 if periode.assiette_forfaitaire:
                     # Assiette FORFAITAIRE : le régime des cultes cotise sur

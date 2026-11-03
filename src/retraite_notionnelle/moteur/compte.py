@@ -880,7 +880,7 @@ class ConstructeurCompte:
                 assiette = self._assiette(base, annee, borne_basse, borne_haute, part)
                 repere = periode.repere_assiette(
                     self.macro.plafond_securite_sociale(annee),
-                    self.macro.smic_horaire(annee),
+                    self.macro.smic_horaire_du_forfait(annee, periode.smic_du_mois),
                 ) * part
                 if periode.assiette_forfaitaire:
                     # Assiette FORFAITAIRE : le régime des cultes ne prélève pas

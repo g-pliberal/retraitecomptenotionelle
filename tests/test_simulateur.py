@@ -3894,13 +3894,27 @@ def test_le_ministre_du_culte_remunere_cotise_a_l_arrco_sur_le_forfait(simulateu
     assert rco("ministre_du_culte", 2.0).montant == pytest.approx(pension.montant, abs=1e-9)
     # Parti en janvier 2026 : vingt années, de 2006 à 2025, de 1 820 heures de
     # SMIC à 7,5 % puis 7,87 %, achetées au prix de l'Arrco puis de
-    # l'Agirc-Arrco, dont les points sont empruntés.
+    # l'Agirc-Arrco, dont les points sont empruntés. Le SMIC est celui de
+    # chaque mois (R. 382-89, circulaire de la CAVIMAC n° 2025/01) : le barème
+    # de janvier, puis les relèvements en cours d'année, (mois, valeur), des
+    # décrets et arrêtés lus (tests/test_cultes_smic_du_mois.py).
+    releves = {2006: {7: 8.27}, 2007: {7: 8.44}, 2008: {5: 8.63, 7: 8.71},
+               2009: {7: 8.82}, 2011: {12: 9.19}, 2012: {7: 9.40}, 2021: {10: 10.48},
+               2022: {5: 10.85, 8: 11.07}, 2023: {5: 11.52}, 2024: {11: 11.88}}
+
+    def smic_des_mois(annee):
+        smic, somme = simulateur.macro.smic_horaire(annee), 0.0
+        for mois in range(1, 13):
+            smic = releves.get(annee, {}).get(mois, smic)
+            somme += smic
+        return somme / 12
+
     attendus = 0.0
     for annee in range(2006, 2026):
         periode = simulateur.catalogue["arrco_cultes"].periode(annee)
         reference, appel, _ = scenario.valeurs_point.achat(periode.points_de, annee)
         echelle, _ = scenario.conversions_points.echelle(periode.points_de, annee, 2026)
-        attendus += (1820 * simulateur.macro.smic_horaire(annee)
+        attendus += (1820 * smic_des_mois(annee)
                      * periode.taux_cotisation_retraite / (appel * reference) * echelle)
     points = float(pension.detail.split(" points")[0].replace(",", ""))
     assert points == pytest.approx(attendus, abs=0.005)

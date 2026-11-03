@@ -58,6 +58,7 @@ periodes:
     assiette: tranche_1
     assiette_repere_smic: 1820
     assiette_forfaitaire: cultes_retraite_complementaire
+    smic_du_mois: true
     taux_cotisation_retraite: 0.075
     part_salariale: 0.40   # la collectivité paie les trois cinquièmes
     points_de: arrco
@@ -91,6 +92,7 @@ periodes:
     assiette: tranche_1
     assiette_repere_smic: 1820
     assiette_forfaitaire: cultes_retraite_complementaire
+    smic_du_mois: true
     taux_cotisation_retraite: 0.075
     part_salariale: 0.40   # la collectivité paie les trois cinquièmes
     points_de: arrco
@@ -120,6 +122,7 @@ periodes:
     assiette: tranche_1
     assiette_repere_smic: 1820
     assiette_forfaitaire: cultes_retraite_complementaire
+    smic_du_mois: true
     taux_cotisation_retraite: 0.07625
     part_salariale: 0.40   # la collectivité paie les trois cinquièmes
     points_de: arrco
@@ -148,6 +151,7 @@ periodes:
     assiette: tranche_1
     assiette_repere_smic: 1820
     assiette_forfaitaire: cultes_retraite_complementaire
+    smic_du_mois: true
     taux_cotisation_retraite: 0.0775
     part_salariale: 0.40   # la collectivité paie les trois cinquièmes
     points_de: arrco
@@ -175,6 +179,7 @@ periodes:
     assiette: tranche_1
     assiette_repere_smic: 1820
     assiette_forfaitaire: cultes_retraite_complementaire
+    smic_du_mois: true
     taux_cotisation_retraite: 0.0787
     part_salariale: 0.40   # la collectivité paie les trois cinquièmes
     points_de: agirc_arrco
@@ -203,6 +208,7 @@ periodes:
     assiette: tranche_1
     assiette_repere_smic: 1820
     assiette_forfaitaire: cultes_retraite_complementaire
+    smic_du_mois: true
     taux_cotisation_retraite: 0.0787
     part_salariale: 0.40   # la collectivité paie les trois cinquièmes
     points_de: agirc_arrco

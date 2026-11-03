@@ -1,0 +1,44 @@
+date: "2026-11-03"
+session: "action 130, file M5 : la base forfaitaire des cultes au SMIC de chaque mois (décision 13)"
+consulte: >-
+  python scripts/veille_droit.py ; les index LEGI (à jour de l'incrément du 2 novembre 2026,
+  20261102-213929) et JORF (du 3 novembre, 20261103-002311) du dépôt, récupérés. Dans LEGI,
+  par dila_cherche.py --num, --diff et --le : R. 721-29 et R. 721-30 dans toutes leurs
+  rédactions (1985, 1998, 1999, 2004), R. 382-89 et R. 382-90 (1er novembre 2006, seule
+  version) ; les décrets du SMIC de 1997 à 2017 par dila_legi_smic.py sur l'index ; les
+  décrets n° 90-498, 94-690 et 2001-584 (forfaits des non-salariés agricoles). Au Journal
+  officiel, par l'index JORF : chaque décret et arrêté qui relève le SMIC de 1997 à 2026,
+  dont les arrêtés du 25 avril 2008, du 29 novembre 2011, du 27 septembre 2021, des
+  19 avril et 29 juillet 2022, du 26 avril 2023 et du 22 mai 2026, les décrets de chaque
+  1er janvier de 2018 à 2026 et le décret n° 2024-951 ; l'article 3 du décret n° 2001-554 ;
+  le décret n° 2004-181 du 23 février 2004 (visas et article 1er) ; l'article 66 de la loi
+  n° 2001-1246. Hors du Journal officiel : les circulaires de la CAVIMAC n° 2024/01 du
+  10 janvier 2024 et n° 2025/01 du 14 janvier 2025 (cavimac.fr, la seconde en image) ;
+  l'exposé « Cultes » de la base de législation de la Cnav, modifié le 24 octobre 2025, par
+  l'API du site ; deux recherches sur le web sur la garantie de 2002 à 2005.
+trouve: >-
+  La base forfaitaire des cultes est mensuelle dans chaque rédaction depuis 1998 : « égale,
+  par mois, à 169 fois le montant du salaire minimum de croissance » (R. 721-29 et
+  R. 721-30, 1998 à 2004), puis « par mois, à la valeur horaire du salaire minimum de
+  croissance en vigueur » (2004, puis R. 382-89 et R. 382-90). La caisse modifie ses
+  assiettes au mois du relèvement : « A compter du 1er novembre 2024 [...] 1 802 €
+  mensuels », les assiettes « vieillesse et retraite complémentaire obligatoire des cultes
+  [...] modifiées à compter de l'échéance du 15 décembre 2024 » (n° 2025/01), et elle arrondit
+  l'assiette du mois à l'euro (« montant mensuel arrondi à 1 767 € », n° 2024/01). Vingt et
+  un relèvements du SMIC hors d'un 1er janvier de 1998 à 2026, deux en 2008 et deux en 2022 ;
+  l'index LEGI ne porte ni les arrêtés de mai 2008 et de décembre 2011, ni rien d'après
+  2017. L'article 3 du décret n° 2001-554 fixe le SMIC à 6,67 € au 1er janvier 2002.
+  Les forfaits des non-salariés agricoles lisent, eux, le SMIC « en vigueur au 1er janvier
+  de l'année considérée ». Rien ne dit comment la caisse comptait la garantie mensuelle de
+  rémunération de 2002 au 30 juin 2005.
+  Fait : la base des cultes et celle de l'Arrco des cultes se comptent au SMIC de chaque
+  mois dans les deux moteurs (drapeau `smic_du_mois`, `smicHoraireDesMois`), test d'abord ;
+  `macro/smic_horaire_releves.csv` porte les vingt et un relèvements ; les fiches
+  `cultes_salaire_annuel_moyen` et `cultes_retraite_complementaire` le disent. Quinze
+  témoins des cultes montent, au scénario 1 de +0,01 % à +0,77 %, au plus +4,08 € par mois.
+reste: >-
+  La garantie mensuelle de rémunération de 2002 au 30 juin 2005, non codée : relever la base
+  jusqu'à elle, ou l'y ajouter ? Une circulaire de la CAVIMAC de ces années le dirait. Le SMIC
+  de 2002, `haute` dans `smic_horaire.csv`, a son texte (décret n° 2001-554, article 3). La
+  base de chaque mois n'est pas arrondie à l'euro comme la caisse le fait, et l'année
+  incomplète prend la moyenne de ses douze mois.

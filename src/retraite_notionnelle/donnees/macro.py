@@ -74,6 +74,25 @@ def lire_smic_releve(racine: Path, annee: int) -> tuple[int, float] | None:
     return dernier
 
 
+def lire_smic_releves(racine: Path) -> tuple[tuple[str, float], ...]:
+    """Tous les relèvements du SMIC en cours d'année, ``(date d'effet, valeur)``,
+    dans l'ordre des dates. Chacun prend effet le premier jour d'un mois : la
+    base des cultes, qui les lit, se compte mois par mois."""
+    import csv
+
+    chemin = racine / "reference" / "macro" / "smic_horaire_releves.csv"
+    if not chemin.exists():
+        return ()
+    with chemin.open(encoding="utf-8") as flux:
+        lignes = (l for l in flux if not l.lstrip().startswith("#"))
+        releves = tuple(sorted((ligne["date_effet"], float(ligne["smic_horaire"]))
+                               for ligne in csv.DictReader(lignes)))
+    for date_effet, _ in releves:
+        if not date_effet.endswith("-01"):
+            raise ValueError(f"smic_horaire_releves.csv : {date_effet} n'est pas un 1er du mois")
+    return releves
+
+
 def _trimestres_au_seuil(revenu: float, seuil: float) -> int:
     """Les trimestres qu'un revenu valide au seuil d'un trimestre, quatre au plus."""
     if seuil <= 0:
@@ -427,6 +446,39 @@ class DonneesMacro:
             nom="smic_horaire",
         )
         return serie.derniere_annee, self.smic_horaire_releve(serie.derniere_annee)
+
+    @cached_property
+    def smic_horaire_releves(self) -> tuple[tuple[str, float], ...]:
+        """Les relèvements du SMIC en cours d'année (``smic_horaire_releves.csv``)."""
+        return lire_smic_releves(self.racine)
+
+    def smic_horaire_des_mois(self, annee: int) -> float:
+        """La moyenne du SMIC horaire EN VIGUEUR chaque mois de l'année : celui
+        du 1er janvier, puis chaque relèvement en cours d'année à compter de son
+        mois. Douze fois elle, fois les heures du mois, fait la base forfaitaire
+        des cultes de l'année entière, « égale, par mois, à la valeur horaire du
+        salaire minimum de croissance en vigueur » (R. 382-89, R. 382-90). Sans
+        relèvement en cours d'année, le SMIC de janvier, au bit près. Jumeau de
+        ``smicHoraireDesMois``."""
+        releves = [(int(date_effet[5:7]), valeur)
+                   for date_effet, valeur in self.smic_horaire_releves
+                   if int(date_effet[:4]) == annee]
+        if not releves:
+            return self.smic_horaire(annee)
+        courant = self.smic_horaire(annee)
+        somme = 0.0
+        for mois in range(1, 13):
+            for debut, valeur in releves:
+                if debut == mois:
+                    courant = valeur
+            somme += courant
+        return somme / 12
+
+    def smic_horaire_du_forfait(self, annee: int, du_mois: bool) -> float:
+        """Le SMIC horaire d'un repère d'assiette en heures de SMIC : celui des
+        mois (``du_mois``, le drapeau ``smic_du_mois`` de la période), sinon
+        celui du 1er janvier. Jumeau de ``smicHoraireDuForfait``."""
+        return self.smic_horaire_des_mois(annee) if du_mois else self.smic_horaire(annee)
 
     def smic_horaire_au_1er_juillet(self, annee: int) -> float:
         """Le SMIC horaire en vigueur le 1er juillet de cette année.

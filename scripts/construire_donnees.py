@@ -54,7 +54,7 @@ from retraite_notionnelle.donnees.chargement import (  # noqa: E402
 )
 from retraite_notionnelle.donnees.depenses import CATEGORIES_DROITS, SYSTEMES  # noqa: E402
 from retraite_notionnelle.donnees.macro import (  # noqa: E402
-    DEPARTEMENTS_D_OUTRE_MER, lire_smic_releve)
+    DEPARTEMENTS_D_OUTRE_MER, lire_smic_releve, lire_smic_releves)
 from retraite_notionnelle.donnees.equilibre import (  # noqa: E402
     POSTES,
     POSTES_TRANSFERTS,
@@ -815,6 +815,7 @@ def _regimes() -> list[dict]:
                     "assiette_repere_smic": p.assiette_repere_smic,
                     "assiette_plancher": p.assiette_plancher,
                     "assiette_forfaitaire": p.assiette_forfaitaire,
+                    "smic_du_mois": p.smic_du_mois,
                     "assiette_minimale_pass": p.assiette_minimale_pass,
                     "cotisation_par_classes": p.cotisation_par_classes,
                     "assiette_grille": p.assiette_grille,
@@ -2578,6 +2579,7 @@ def construire(bilan: bytes, agregats: bytes) -> bytes:
         "version": VERSION,
         "series": _series(),
         "smic_horaire_releve": _smic_horaire_releve(),
+        "smic_horaire_releves": [list(r) for r in lire_smic_releves(DONNEES)],
         "assiette_avpf": _assiette_avpf(),
         "hypotheses": _hypotheses(),
         "courbe_taux_sans_risque": _courbe_taux_sans_risque(),

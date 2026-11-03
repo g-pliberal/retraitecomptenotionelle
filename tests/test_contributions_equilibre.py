@@ -182,7 +182,9 @@ def test_le_ministre_du_culte_verse_la_ceg_sur_son_forfait_depuis_2019(simulateu
     déclaré n'y entre pas. Aucun texte lu ne lui fait verser l'AGFF."""
     verse = ce.contributions_d_une_carriere(
         simulateur, _carriere("ministre_du_culte", {2015: 5_000.0, 2022: 5_000.0}))
-    forfait = 1820 * simulateur.macro.smic_horaire(2022)
+    # Au SMIC de chaque mois : 10,57 € (décret n° 2021-1741), 10,85 € au 1er mai
+    # et 11,07 € au 1er août 2022 (arrêtés des 19 avril et 29 juillet 2022).
+    forfait = 1820 / 12 * (4 * 10.57 + 3 * 10.85 + 5 * 11.07)
     assert 2015 not in verse
     assert verse[2022] == pytest.approx(forfait * 0.0215)
 

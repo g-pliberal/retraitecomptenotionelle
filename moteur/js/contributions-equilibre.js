@@ -86,7 +86,7 @@ function forfait(catalogue, regimes, annee, macro, part) {
     const periode = catalogue.contient(code) ? catalogue.obtenir(code).periode(annee) : null;
     if (periode !== null && periode.assiette_forfaitaire) {
       return periode.repereAssiette(macro.plafond_securite_sociale.valeur(annee),
-        macro.smic_horaire.valeur(annee)) * part;
+        macro.smicHoraireDuForfait(annee, periode.smic_du_mois)) * part;
     }
   }
   return null;

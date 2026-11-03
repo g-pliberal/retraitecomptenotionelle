@@ -215,8 +215,9 @@ def _forfait(catalogue, regimes: frozenset[str], annee: int, macro, part: float)
     for code in sorted(regimes):
         periode = catalogue[code].periode(annee) if code in catalogue else None
         if periode is not None and periode.assiette_forfaitaire:
-            return periode.repere_assiette(macro.plafond_securite_sociale(annee),
-                                           macro.smic_horaire(annee)) * part
+            return periode.repere_assiette(
+                macro.plafond_securite_sociale(annee),
+                macro.smic_horaire_du_forfait(annee, periode.smic_du_mois)) * part
     return None
 
 

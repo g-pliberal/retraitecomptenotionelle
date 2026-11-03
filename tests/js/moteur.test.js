@@ -1478,7 +1478,11 @@ test("le ministre du culte rémunéré cotise à l'Arrco sur le forfait", () => 
   const pension = rco("ministre_du_culte", 0.5);
   assert.ok(pension.montant > 0);
   assert.ok(Math.abs(rco("ministre_du_culte", 2.0).montant - pension.montant) < 1e-9);
-  assert.ok(pension.detail.startsWith("1,348.24 points"), pension.detail);
+  // Vingt ans de 1 820 heures au SMIC de chaque mois, au taux de la tranche 1
+  // sur le taux d'appel et le salaire de référence de l'année : 1 355,82
+  // points, posés à la main (note `130/2026-11-03-base-des-cultes-au-smic-du-mois.md`) ;
+  // 1 348,24 au SMIC de janvier.
+  assert.ok(pension.detail.startsWith("1,355.82 points"), pension.detail);
 });
 
 /**

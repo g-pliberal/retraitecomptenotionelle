@@ -22,7 +22,9 @@ lit:
   les années de l'assuré au régime des cultes depuis le 1er janvier 1998, et leurs mois ;
   pour chaque mois, la base forfaitaire : 169 SMIC horaires jusqu'au 31 décembre 2001, puis
   le SMIC horaire en vigueur fois la durée légale du travail mensuel, augmentée de 2002 au
-  30 juin 2005 de la garantie mensuelle de rémunération la plus élevée
+  30 juin 2005 de la garantie mensuelle de rémunération la plus élevée ; le SMIC horaire en
+  vigueur chaque mois, celui du 1er janvier (`macro/smic_horaire.csv`), puis chaque
+  relèvement en cours d'année à compter de son mois (`macro/smic_horaire_releves.csv`)
 - >-
   le nombre d'années que retient le salaire annuel moyen du régime général, à la génération,
   et les coefficients qui revalorisent les salaires portés au compte (fiche
@@ -265,7 +267,8 @@ versions:
       Le résumé au Journal officiel du décret n° 2002-784 du 3 mai 2002 dit la même intention
       pour l'assurance volontaire : « maintenir le calcul des cotisations [...] par référence
       à une assiette équivalant à 169 fois le SMIC horaire pour un mois ». Ce que la caisse
-      appliquait est à lire
+      appliquait est à lire : cherché le 3 novembre 2026, sans document qui le dise (voir
+      `sources.a_relire`) ; le modèle n'ajoute rien à la durée légale
   exemples: aucun trouvé
 - id: duree_legale_du_travail
   statut: lue
@@ -344,17 +347,16 @@ approximations:
 - version: [cent_soixante_neuf_heures, garantie_mensuelle_de_remuneration, duree_legale_du_travail]
   textes: >-
     R. 721-29 et R. 721-30, puis R. 382-89 et R. 382-90 : la base « par mois », au « salaire
-    minimum de croissance en vigueur »
+    minimum de croissance en vigueur » ; la caisse en fait une assiette unitaire, le SMIC
+    mensuel « arrondi à 1 767 € » (circulaire de la CAVIMAC n° 2024/01)
   ecart: >-
-    le modèle compte la base de toute l'année au SMIC horaire du 1er janvier
-    (`macro/smic_horaire.csv`), quand elle suit chaque mois le SMIC en vigueur : de 1998 à
-    2009, les six mois qui suivent son relèvement du 1er juillet (décrets annuels, « A compter
-    du 1er juillet 1998 », lus dans l'index LEGI du dépôt) ; depuis, les relèvements en cours
-    d'année, comme ceux du 1er juillet 2012 et du 1er juin 2026
+    le modèle compte la base de l'année au SMIC de chaque mois, sans arrondir à l'euro
+    l'assiette du mois comme la caisse le fait ; une année incomplète en prend la moyenne des
+    douze mois, au prorata de ses mois, la ligne de la carrière ne disant pas lesquels
   effet: >-
-    la base d'une année de 1998 à 2007 trop basse de la moitié du relèvement de juillet,
-    jusqu'à 2,9 %, en 2004 ; le salaire annuel moyen, qui en fait la moyenne avec d'autres
-    années, de moins ; non mesuré sur la pension
+    l'arrondi, moins de cinquante centimes par mois, 0,03 % de la base ; l'année incomplète,
+    l'année d'entrée ou celle du départ, au plus la moitié d'un relèvement, 2,9 % de sa base,
+    en 2004 ; non mesuré sur la pension
 - version: [garantie_mensuelle_de_remuneration]
   textes: >-
     R. 721-30, rédaction du 26 février 2004, et R. 382-90 : « A titre transitoire, du 1er
@@ -407,10 +409,14 @@ effet: >-
   Le modèle appliquait les règles d'après 1998 à toute la carrière, et ne comptait pas les
   années d'avant 1979 : depuis le 3 octobre 2026, le salaire annuel moyen et la durée de
   cette fraction ne sont faits que des années d'après 1997, la fraction d'avant 1998 ayant
-  ses règles et sa fiche, `cultes_fractions_de_pension`. Lue au droit le 3 novembre 2026, la
-  base forfaitaire reste un peu basse dans le modèle : il la compte au SMIC du 1er janvier,
-  jusqu'à 2,9 % de moins sur une année, et sans la garantie mensuelle de rémunération de
-  2002 au 30 juin 2005, jusqu'à 11 % de moins sur ces années — deux approximations.
+  ses règles et sa fiche, `cultes_fractions_de_pension`. Depuis le 3 novembre 2026 (décision
+  13 du propriétaire), la base se compte au SMIC de chaque mois, comme la caisse le fait
+  (circulaire n° 2025/01) : elle gagne la moitié du relèvement de juillet de 1998 à 2009, au
+  plus 2,9 %, en 2004, et les relèvements en cours d'année de 2008, 2011, 2012 et de 2021 à
+  2026 ; tenu par `tests/test_cultes_smic_du_mois.py` et son pendant JavaScript. Elle reste
+  sans la garantie mensuelle de rémunération de 2002 au 30 juin 2005, jusqu'à 11 % de moins
+  sur ces années, faute d'un document qui dise comment la caisse la comptait — une
+  approximation.
 sources:
   lu_le: 2026-11-03
   prochaine_relecture: 2027-09-30
@@ -421,9 +427,15 @@ sources:
     avant le décret du 17 juin 1998. Une circulaire de la caisse, de 1998 ou de 2004, le
     dirait.
   - >-
+    Cherché le 3 novembre 2026, sans réponse : ni le décret n° 2004-181 (visas et articles),
+    ni l'article 66 de la loi n° 2001-1246 qu'il vise, ni l'exposé « Cultes » de la base de
+    la Cnav (24 octobre 2025), ni les circulaires de la CAVIMAC en ligne, qui commencent en
+    2020, ne disent comment la caisse comptait la garantie de 2002 à 2005. Une circulaire de
+    la caisse de 2002 à 2005, ou un relevé de carrière de ces années, le dirait.
+  - >-
     Le salaire porté au compte du ministre du culte est-il la somme des bases de ses mois, au
-    SMIC de chaque mois, comme le texte l'écrit ? Un relevé de carrière de la caisse le
-    montrerait.
+    SMIC de chaque mois, comme le texte l'écrit et comme la caisse appelle ses cotisations
+    (circulaire n° 2025/01) ? Un relevé de carrière de la caisse le montrerait.
   lectures:
   - type: legifrance
     reference: >-
@@ -469,6 +481,56 @@ sources:
       résumé ; décret n° 2004-181 du 23 février 2004, article 1er ; dans l'index JORF du dépôt
       à jour de l'incrément du 3 novembre 2026
     date: 2026-11-03
+  - type: jorf
+    reference: >-
+      les textes qui relèvent le SMIC hors d'un 1er janvier, de 1998 à 2026, un à un, dans
+      l'index JORF du dépôt à jour de l'incrément du 3 novembre 2026 : les décrets de chaque
+      1er juillet de 1998 à 2009 (« A compter du 1er juillet 1998 [...] est porté à 40,22 F de
+      l'heure en métropole », JORFARTI000001034949), le décret n° 2012-828 (9,40 € au 1er
+      juillet 2012), le décret n° 2024-951 (11,88 € au 1er novembre 2024), et les arrêtés du
+      25 avril 2008 (8,63 € au 1er mai), du 29 novembre 2011 (9,19 € au 1er décembre), du 27
+      septembre 2021, des 19 avril et 29 juillet 2022, du 26 avril 2023 et du 22 mai 2026 ;
+      les décrets de chaque 1er janvier de 2018 à 2026 ; l'article 3 du décret n° 2001-554,
+      qui fixe le SMIC à « 6,67 Euro de l'heure » au 1er janvier 2002
+      (JORFARTI000002428309) ; chacun avec son identifiant dans
+      `macro/smic_horaire_releves.csv`
+    date: 2026-11-03
+  - type: autre
+    reference: >-
+      CAVIMAC, circulaire n° 2024/01 du 10 janvier 2024 : « les assiettes forfaitaires
+      respectives de calcul des cotisations mensuelles d'assurance maladie – maternité –
+      invalidité, vieillesse et retraite complémentaire obligatoire des cultes [...] sont
+      modifiées [...] afin de tenir compte du relèvement du montant brut du [SMIC] [...]
+      (montant mensuel arrondi à 1 767 €) » ; l'appel « est effectué sur la base de l'assiette
+      forfaitaire globale pour l'ensemble de la collectivité (assiette unitaire arrondie x
+      effectif cotisant) »
+    url: >-
+      https://www.cavimac.fr/sites/default/files/medias/documents/circulaire_2024_01_cotisations_2024_1_3617.pdf
+    date: 2026-11-03
+  - type: autre
+    reference: >-
+      CAVIMAC, circulaire n° 2025/01 du 14 janvier 2025, « Cotisations et contributions
+      sociales applicables à compter du 1er novembre 2024 (échéance au 15 décembre 2024) »,
+      texte de référence le décret n° 2024-951 : « A compter du 1er novembre 2024, le montant
+      brut du salaire minimum interprofessionnel de croissance (SMIC) applicable en
+      métropole [...] est porté à 1 802 € mensuels (augmentation de 2%). A la suite de cette
+      revalorisation du SMIC, les assiettes forfaitaires respectives des cotisations
+      mensuelles d'assurance maladie – maternité – invalidité, vieillesse et retraite
+      complémentaire obligatoire des cultes ainsi que des contributions sociales CSG-CRDS
+      sont modifiées à compter de l'échéance du 15 décembre 2024 » : le relèvement d'un mois
+      vaut pour ce mois, l'échéance du 15 étant celle du mois précédent (« échéances des 10
+      et 15 février 2024 », « au titre du mois de janvier 2024 », n° 2024/01) ; image
+      numérisée, lue page 1
+    url: https://www.cavimac.fr/sites/default/files/medias/documents/Circulaire_2025_01.pdf
+    date: 2026-11-03
+  - type: autre
+    reference: >-
+      Cnav, base de législation, exposé « Cultes » (cotisation_salaire_type_activite_culte_ex,
+      modifié le 24 octobre 2025), lu par l'API du site : « Les cotisations sont calculées
+      au taux de droit commun, sur une base forfaitaire mensuelle égale au Smic multiplié par
+      le nombre légal d'heures de travail en vigueur » ; rien de la garantie de 2002 à 2005
+    url: https://legislation.lassuranceretraite.fr/#/expose?file_leaf_ref=cotisation_salaire_type_activite_culte_ex.aspx
+    date: 2026-11-03
 code:
   interrupteurs:
     assiette_forfaitaire: true
@@ -478,14 +540,18 @@ code:
     moins, ou rien du tout. Un ministre du culte n'a pas de salaire dont on prélèverait
     une fraction ; la congrégation et lui cotisent sur un forfait. Le moteur la compte au
     repère de la période de l'année, `assiette_repere_smic` heures de SMIC — 2 028 jusqu'en
-    2001, 1 820 depuis —, au SMIC du 1er janvier, au prorata des mois.
+    2001, 1 820 depuis —, au SMIC de chaque mois depuis 1998 (`smic_du_mois` : la moyenne des
+    douze mois, du barème de janvier et des relèvements en cours d'année), au prorata des
+    mois.
   python: >-
     droit/liquider.py : assiette_de_reference, salaire_de_reference ;
-    donnees/regimes.py : PeriodeRegime.repere_assiette ; moteur/compte.py :
+    donnees/regimes.py : PeriodeRegime.repere_assiette ; donnees/macro.py :
+    DonneesMacro.smic_horaire_des_mois, smic_horaire_du_forfait ; moteur/compte.py :
     ConstructeurCompte._cotisation_ligne
   javascript: >-
     moteur/js/droit/liquider.js : assietteDeReference, salaireDeReference ;
-    moteur/js/regimes.js : PeriodeRegime.repereAssiette ; moteur/js/compte.js :
+    moteur/js/regimes.js : PeriodeRegime.repereAssiette ; moteur/js/macro.js :
+    DonneesMacro.smicHoraireDesMois, smicHoraireDuForfait ; moteur/js/compte.js :
     ConstructeurCompte._cotisationLigne
   parametres: >-
     contenu.parametres de chaque version : assiette_forfaitaire, assiette_repere_smic,
@@ -493,11 +559,15 @@ code:
     salaire_reference, salaire_reference_par_generation, smic_du_mois ;
     regimes/cavimac.yaml : assiette_forfaitaire, assiette_repere_smic, fractions_des_cultes,
     regles_du_salaire_annuel_moyen, salaire_reference, salaire_reference_par_generation,
-    taux_cotisation_retraite, part_salariale ; macro/smic_horaire.csv : smic_horaire
+    smic_du_mois, taux_cotisation_retraite, part_salariale ; macro/smic_horaire.csv :
+    smic_horaire ; macro/smic_horaire_releves.csv : smic_horaire
   tests:
   - >-
     tests/test_cultes_au_droit.py, qui confronte chaque version aux périodes de la CAVIMAC
-    et tient les deux écarts déclarés
+    et tient l'écart déclaré
+  - >-
+    tests/test_cultes_smic_du_mois.py et tests/js/cultes-smic-du-mois.test.js, la base au SMIC
+    de chaque mois, six années posées à la main
   - tests/test_simulateur.py
   - tests/test_cultes.py
   - tests/js/moteur.test.js

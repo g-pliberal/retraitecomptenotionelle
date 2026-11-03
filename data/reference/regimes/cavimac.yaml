@@ -179,6 +179,7 @@ periodes:
     assiette: plafonnee
     assiette_repere_smic: 2028
     assiette_forfaitaire: cultes_salaire_annuel_moyen
+    smic_du_mois: true
     fractions_des_cultes: cultes_fractions_de_pension
     taux_cotisation_retraite: 0.1475
     part_salariale: 0.4441
@@ -224,6 +225,7 @@ periodes:
     assiette: plafonnee
     assiette_repere_smic: 1820
     assiette_forfaitaire: cultes_salaire_annuel_moyen
+    smic_du_mois: true
     fractions_des_cultes: cultes_fractions_de_pension
     taux_cotisation_retraite: 0.1475
     part_salariale: 0.4441
@@ -263,6 +265,7 @@ periodes:
     assiette: plafonnee
     assiette_repere_smic: 1820
     assiette_forfaitaire: cultes_salaire_annuel_moyen
+    smic_du_mois: true
     fractions_des_cultes: cultes_fractions_de_pension
     taux_cotisation_retraite: 0.1487
     part_salariale: 0.4445
@@ -306,6 +309,7 @@ periodes:
     assiette: plafonnee
     assiette_repere_smic: 1820
     assiette_forfaitaire: cultes_salaire_annuel_moyen
+    smic_du_mois: true
     fractions_des_cultes: cultes_fractions_de_pension
     taux_cotisation_retraite: 0.1487
     part_salariale: 0.4445
@@ -345,6 +349,7 @@ periodes:
     assiette: plafonnee
     assiette_repere_smic: 1820
     assiette_forfaitaire: cultes_salaire_annuel_moyen
+    smic_du_mois: true
     fractions_des_cultes: cultes_fractions_de_pension
     taux_cotisation_retraite: 0.1487
     part_salariale: 0.4445
@@ -390,6 +395,7 @@ periodes:
     assiette: plafonnee
     assiette_repere_smic: 1820
     assiette_forfaitaire: cultes_salaire_annuel_moyen
+    smic_du_mois: true
     fractions_des_cultes: cultes_fractions_de_pension
     taux_cotisation_retraite: 0.1495
     part_salariale: 0.4448
@@ -423,6 +429,7 @@ periodes:
     assiette: plafonnee
     assiette_repere_smic: 1820
     assiette_forfaitaire: cultes_salaire_annuel_moyen
+    smic_du_mois: true
     fractions_des_cultes: cultes_fractions_de_pension
     taux_cotisation_retraite: 0.1533
     part_salariale: 0.4463
@@ -456,6 +463,7 @@ periodes:
     assiette: plafonnee
     assiette_repere_smic: 1820
     assiette_forfaitaire: cultes_salaire_annuel_moyen
+    smic_du_mois: true
     fractions_des_cultes: cultes_fractions_de_pension
     taux_cotisation_retraite: 0.1545
     part_salariale: 0.4466

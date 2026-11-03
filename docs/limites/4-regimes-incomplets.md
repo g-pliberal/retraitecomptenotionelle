@@ -140,10 +140,15 @@ du culte n'a pas de salaire dont on prélèverait une fraction, l'assiette EST l
 forfait, là où `assiette_plancher` ne relevait que les assiettes trop basses.
 
 **Ce que la fiche des cultes approxime.** Le passage du forfait de <!--chiffre:illustration()-->169<!--/--> à <!--chiffre:mesure(constante?de=moteur/js/saisie.js&nom=HEURES_SMIC_PAR_MOIS)-->151,67<!--/--> heures mensuelles est daté de 2002, ce
-que la clause transitoire de R. 382-89 rend probable sans l'écrire ; et la
-garantie mensuelle de rémunération qui, du 1<sup>er</sup> janvier 2002 au
-30 juin 2005, s'ajoutait à cette base n'est pas modélisée — ces quatre années
-sous-estiment donc la cotisation. La pension se calcule en deux fractions,
+que la clause transitoire de R. 382-89 rend probable sans l'écrire. La base
+suit le SMIC de chaque mois, comme le texte l'écrit et comme la caisse le fait
+(circulaire de la CAVIMAC du 14 janvier 2025), mais sans l'arrondi à l'euro
+que la caisse donne à l'assiette du mois, et l'année incomplète à la moyenne de
+ses douze mois. La garantie mensuelle de rémunération dont R. 382-89
+« augmente » cette base du 1<sup>er</sup> janvier 2002 au 30 juin 2005 n'est
+pas modélisée : aucun texte ni document de la caisse lu ne dit si la caisse
+relevait la base jusqu'à la garantie ou l'y ajoutait entière, et ces trois ans
+et demi sous-estiment donc la cotisation. La pension se calcule en deux fractions,
 comme la caisse le fait (fiche `cultes_fractions_de_pension`) : celle des
 périodes d'après 1997 aux règles du régime général, sur un salaire annuel moyen
 fait du forfait ; celle des périodes antérieures au 1<sup>er</sup> janvier

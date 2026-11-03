@@ -2663,8 +2663,14 @@ def assiette_de_reference(moteur, periode: PeriodeRegime, ligne) -> float:
         # ensuite —, proratisé sur ses mois.
         annuelle = moteur.catalogue[periode.regime].periode(ligne.annee) or periode
         if annuelle.assiette_repere_smic is not None:
+            # Au SMIC de chaque mois (``smic_du_mois``) : la base « est égale,
+            # par mois, à la valeur horaire du salaire minimum de croissance en
+            # vigueur » (R. 382-89, R. 382-90). Une année incomplète en prend
+            # la moyenne des douze mois, au prorata : la ligne ne dit pas ses
+            # mois.
             return (annuelle.assiette_repere_smic
-                    * moteur.macro.smic_horaire(ligne.annee) * ligne.fraction_annee)
+                    * moteur.macro.smic_horaire_du_forfait(ligne.annee, annuelle.smic_du_mois)
+                    * ligne.fraction_annee)
     if ligne.micro:
         # LE REVENU COTISÉ DU MICRO-ENTREPRENEUR. Le revenu de l'année est
         # « celui correspondant […] aux cotisations versées par l'assuré au

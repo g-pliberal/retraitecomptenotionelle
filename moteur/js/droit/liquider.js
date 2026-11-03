@@ -1957,8 +1957,13 @@ export function assietteDeReference(moteur, periode, ligne) {
     // Voir `_assiette_de_reference` dans le Python.
     const annuelle = moteur.catalogue.obtenir(periode.regime).periode(ligne.annee) ?? periode;
     if (annuelle.assiette_repere_smic !== null && annuelle.assiette_repere_smic !== undefined) {
+      // Au SMIC de chaque mois (`smic_du_mois`) : la base « est égale, par
+      // mois, à la valeur horaire du salaire minimum de croissance en
+      // vigueur » (R. 382-89, R. 382-90). Une année incomplète en prend la
+      // moyenne des douze mois, au prorata : la ligne ne dit pas ses mois.
       return annuelle.assiette_repere_smic
-        * moteur.macro.smic_horaire.valeur(ligne.annee) * ligne.fraction_annee;
+        * moteur.macro.smicHoraireDuForfait(ligne.annee, annuelle.smic_du_mois)
+        * ligne.fraction_annee;
     }
   }
   if (ligne.micro) {

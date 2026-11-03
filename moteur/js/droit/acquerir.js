@@ -580,7 +580,7 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
         const plafond = borneHaute === null ? base : borneHaute;
         let assiette = Math.max(0.0, Math.min(base, plafond) - borneBasse);
         const repere = periode.repereAssiette(
-          pass, moteur.macro.smic_horaire.valeur(ligne.annee),
+          pass, moteur.macro.smicHoraireDuForfait(ligne.annee, periode.smic_du_mois),
         ) * (periode.assiette_repere_smic !== null
           && periode.assiette_repere_smic !== undefined ? part : 1.0);
         if (periode.assiette_forfaitaire) {

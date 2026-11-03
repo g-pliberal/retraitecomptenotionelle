@@ -4,16 +4,44 @@
 #
 # `smic_horaire.csv` porte le barème du 1er JANVIER : c'est celui qu'oppose la
 # caisse pour valider les trimestres de l'année entière, et un relèvement en
-# cours d'année n'y change rien. Il change en revanche le POINT DE DÉPART de la
-# projection. Un SMIC ne baisse pas : celui de janvier suivant ne peut être
-# inférieur au dernier en vigueur, et le modèle, qui prolongeait le barème de
-# janvier au rythme du salaire moyen, donnait pour janvier 2027 un SMIC à peine
-# égal à celui de juin 2026. Il part désormais du dernier relèvement, porté à
-# janvier suivant au même rythme, au prorata des mois qui restent.
+# cours d'année n'y change rien. Ce fichier porte les autres, chacun à sa date
+# d'effet ; avec le barème de janvier, ils font le SMIC de chaque mois.
 #
-# Ce fichier ne garde que les relèvements postérieurs au dernier barème de
-# janvier connu : dès que `smic_horaire.csv` porte l'année suivante, la ligne
-# ne sert plus, et le chargeur l'ignore.
+# DEUX LECTEURS.
+#   - La PROJECTION ne lit que le dernier relèvement de la dernière année du
+#     barème : un SMIC ne baisse pas, et janvier suivant part du dernier
+#     relèvement en vigueur, porté au rythme du salaire moyen au prorata des
+#     mois qui restent (`lire_smic_releve`).
+#   - La BASE FORFAITAIRE DES CULTES lit tous ceux de l'année : elle « est
+#     égale, par mois, à la valeur horaire du salaire minimum de croissance en
+#     vigueur, multipliée par le nombre légal d'heures de travail mensuel en
+#     vigueur » (R. 382-89 et R. 382-90 ; « par mois, à 169 fois le montant du
+#     salaire minimum de croissance », R. 721-29 et R. 721-30 de 1998 à 2004),
+#     et la caisse modifie ses assiettes au mois du relèvement (circulaire de
+#     la CAVIMAC n° 2025/01 du 14 janvier 2025). D'où la liste depuis 1998,
+#     que le forfait des cultes ne suit pas avant (action 130, décision 13).
+#
+# CHAQUE LIGNE A SON TEXTE, lu dans l'index JORF du dépôt le 3 novembre 2026 :
+# les décrets annuels de 1998 à 2009 (« A compter du 1er juillet 1998 [...] est
+# porté à 40,22 F de l'heure en métropole », JORFARTI000001034949 ; 1999,
+# JORFARTI000001046712 ; 2000, JORFARTI000001965864 ; 2001, « Du 1er juillet au
+# 31 décembre 2001 inclus [...] 43,72 F », JORFARTI000001645920 ; 2002,
+# JORFARTI000002416035 ; 2003, JORFARTI000001274126 ; 2004,
+# JORFARTI000002259434 ; 2005, JORFARTI000001485867 ; 2006,
+# JORFARTI000001278723 ; 2007, JORFARTI000002080353 ; 2008,
+# JORFARTI000019078958 ; 2009, JORFARTI000020793254), et le décret n° 2012-828
+# (JORFARTI000026083666) ; les relèvements automatiques de l'article L. 3231-5
+# du code du travail, par arrêté : 25 avril 2008, « 8,63 € de l'heure » au
+# 1er mai (JORFARTI000018730835) ; 29 novembre 2011, « 9,19 € de l'heure » au
+# 1er décembre (JORFARTI000024874233) ; 27 septembre 2021, 10,48 € au 1er
+# octobre (JORFARTI000044126036) ; 19 avril 2022, 10,85 € au 1er mai
+# (JORFARTI000045602327) ; 29 juillet 2022, 11,07 € au 1er août
+# (JORFARTI000046113526) ; 26 avril 2023, 11,52 € au 1er mai
+# (JORFARTI000047495827) ; le décret n° 2024-951, 11,88 € au 1er novembre 2024
+# (JORFARTI000050392696). Les francs sont convertis par division par 6,55957,
+# à six décimales, comme `smic_horaire.csv`. L'index LEGI ne porte ni les
+# arrêtés ni les textes postérieurs à 2017 : niveau `haute`, aucun script ne
+# relit ces lignes.
 #
 # 2026-06-01 : 12,31 € de l'heure, relèvement automatique de 2,4 % prévu par
 # l'article L. 3231-5 du code du travail quand l'indice des prix des ménages
@@ -24,4 +52,24 @@
 # compter du 1er juin 2026. L'index LEGI ne consolide pas les textes du SMIC
 # postérieurs à 2017, et aucun script ne relit cette ligne : niveau `haute`.
 date_effet,smic_horaire,fiabilite
+1998-07-01,6.131499,haute
+1999-07-01,6.207724,haute
+2000-07-01,6.405908,haute
+2001-07-01,6.665071,haute
+2002-07-01,6.830000,haute
+2003-07-01,7.190000,haute
+2004-07-01,7.610000,haute
+2005-07-01,8.030000,haute
+2006-07-01,8.270000,haute
+2007-07-01,8.440000,haute
+2008-05-01,8.630000,haute
+2008-07-01,8.710000,haute
+2009-07-01,8.820000,haute
+2011-12-01,9.190000,haute
+2012-07-01,9.400000,haute
+2021-10-01,10.480000,haute
+2022-05-01,10.850000,haute
+2022-08-01,11.070000,haute
+2023-05-01,11.520000,haute
+2024-11-01,11.880000,haute
 2026-06-01,12.310000,haute

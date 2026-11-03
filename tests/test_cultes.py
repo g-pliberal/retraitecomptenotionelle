@@ -148,17 +148,19 @@ def test_de_1979_a_1997_le_compte_porte_les_cotisations_des_arretes(simulateur):
     assert round(0.129 * 2 * 9100) == 2348 and round(0.139 * 2 * 15450) == 4295
     maximum = simulateur.scenario_actuel.maximum_des_cultes
     assert maximum.valeur(1984)[0] == pytest.approx(15450 / FRANCS_PAR_EURO, abs=1e-6)
-    # Depuis 1998, la fiche reprend la main.
+    # Depuis 1998, la fiche reprend la main : 169 SMIC horaires par mois, au
+    # SMIC de chaque mois — 40,72 F jusqu'en juin 2000 (décret n° 99-546),
+    # 42,02 F ensuite (décret n° 2000-589).
     periode = simulateur.catalogue["cavimac"].periode(2000)
     ligne = salariale.cotisation_annuelle(carriere, 2000)
     assert dict(ligne.par_regime)["cavimac"] == pytest.approx(
-        2028 * simulateur.macro.smic_horaire(2000) * periode.taux_cotisation_salarie,
+        169 * (6 * 40.72 + 6 * 42.02) / FRANCS_PAR_EURO * periode.taux_cotisation_salarie,
         rel=1e-6)
     # La part déplafonnée se prend sur le même forfait, et non sur le revenu
     # de l'assuré ; les montants des arrêtés la comprennent.
     ligne = totale.cotisation_annuelle(carriere, 2000)
     assert dict(ligne.par_regime)["cavimac"] == pytest.approx(
-        2028 * simulateur.macro.smic_horaire(2000)
+        169 * (6 * 40.72 + 6 * 42.02) / FRANCS_PAR_EURO
         * (periode.taux_cotisation_retraite + periode.taux_cotisation_deplafonnee),
         rel=1e-6)
 

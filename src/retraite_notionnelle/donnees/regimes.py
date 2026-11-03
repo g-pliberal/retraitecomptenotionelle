@@ -709,6 +709,13 @@ class PeriodeRegime:
     #: du culte n'a pas de salaire dont on prélèverait une fraction ; la
     #: congrégation et lui cotisent sur un forfait.
     assiette_forfaitaire: bool
+    #: Le repère en heures de SMIC se compte-t-il au SMIC DE CHAQUE MOIS, et
+    #: non à celui du 1er janvier ? La base forfaitaire des cultes « est égale,
+    #: par mois, à la valeur horaire du salaire minimum de croissance en
+    #: vigueur » (R. 382-89, R. 382-90 ; R. 721-29 et R. 721-30 depuis 1998) :
+    #: un relèvement en cours d'année la relève au mois qu'il prend effet
+    #: (:meth:`DonneesMacro.smic_horaire_des_mois`).
+    smic_du_mois: bool
     #: ASSIETTE MINIMALE, en plafonds annuels de la Sécurité sociale : la
     #: cotisation est due sur au moins cette assiette, quel que soit le
     #: revenu. C'est la forme de la CARPIMKO depuis 2026 — « l'assiette de
@@ -2378,6 +2385,7 @@ class CatalogueRegimes:
                 ),
                 assiette_plancher=bool(p.get("assiette_plancher", False)),
                 assiette_forfaitaire=bool(p.get("assiette_forfaitaire", False)),
+                smic_du_mois=bool(p.get("smic_du_mois", False)),
                 assiette_minimale_pass=(
                     None if p.get("assiette_minimale_pass") is None
                     else float(p["assiette_minimale_pass"])

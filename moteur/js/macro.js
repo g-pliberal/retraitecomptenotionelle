@@ -139,6 +139,11 @@ export class DonneesMacro {
                                                  paquet.smic_horaire_releve ?? null);
     /** La dernière année du barème du SMIC, et son dernier relèvement. */
     this._smicPublie = [serie("smic_horaire").derniereAnnee, paquet.smic_horaire_releve ?? null];
+    /**
+     * Les relèvements du SMIC en cours d'année, [date d'effet, valeur], dans
+     * l'ordre des dates : avec le barème de janvier, le SMIC de chaque mois.
+     */
+    this._smicReleves = paquet.smic_horaire_releves ?? [];
     this.heures_par_trimestre = serie("heures_par_trimestre");
     /**
      * Le salaire qui valide un trimestre de 1946 à 1971, en euros (R. 351-9) :
@@ -616,6 +621,44 @@ export class DonneesMacro {
       horaireMoyen = (janvier * (mois - 1) + valeur * (13 - mois)) / 12;
     }
     return HEURES_ANNUELLES_SMIC * horaireMoyen;
+  }
+
+  /**
+   * La moyenne du SMIC horaire EN VIGUEUR chaque mois de l'année : celui du
+   * 1er janvier, puis chaque relèvement en cours d'année à compter de son mois.
+   * Douze fois elle, fois les heures du mois, fait la base forfaitaire des
+   * cultes de l'année entière, « égale, par mois, à la valeur horaire du
+   * salaire minimum de croissance en vigueur » (R. 382-89, R. 382-90). Sans
+   * relèvement en cours d'année, le SMIC de janvier, au bit près. Voir le
+   * Python.
+   */
+  smicHoraireDesMois(annee) {
+    const releves = this._smicReleves
+      .filter(([date]) => Number(date.slice(0, 4)) === annee)
+      .map(([date, valeur]) => [Number(date.slice(5, 7)), valeur]);
+    if (releves.length === 0) {
+      return this.smic_horaire.valeur(annee);
+    }
+    let courant = this.smic_horaire.valeur(annee);
+    let somme = 0.0;
+    for (let mois = 1; mois <= 12; mois += 1) {
+      for (const [debut, valeur] of releves) {
+        if (debut === mois) {
+          courant = valeur;
+        }
+      }
+      somme += courant;
+    }
+    return somme / 12;
+  }
+
+  /**
+   * Le SMIC horaire d'un repère d'assiette en heures de SMIC : celui des mois
+   * (`duMois`, le drapeau `smic_du_mois` de la période), sinon celui du
+   * 1er janvier. Voir le Python.
+   */
+  smicHoraireDuForfait(annee, duMois) {
+    return duMois ? this.smicHoraireDesMois(annee) : this.smic_horaire.valeur(annee);
   }
 
   /**

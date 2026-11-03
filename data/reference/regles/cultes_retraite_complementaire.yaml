@@ -115,6 +115,7 @@ versions:
       statuts_affilies: [ministre_du_culte]
       assiette_forfaitaire: cultes_retraite_complementaire
       assiette_repere_smic: 1820
+      smic_du_mois: true
       taux_cotisation_retraite: arrco
       part_salariale: 0.4
       points_de: arrco
@@ -189,6 +190,7 @@ versions:
       statuts_affilies: [ministre_du_culte]
       assiette_forfaitaire: cultes_retraite_complementaire
       assiette_repere_smic: 1820
+      smic_du_mois: true
       taux_cotisation_retraite: agirc_arrco
       part_salariale: 0.4
       points_de: agirc_arrco
@@ -356,7 +358,9 @@ code:
   moteur: >-
     `assiette_forfaitaire` : la cotisation se prélève sur l'assiette forfaitaire des autres
     cotisations des cultes, le SMIC mensuel, que la fiche `cultes_salaire_annuel_moyen`
-    décrit. Les affiliations ne routent le régime qu'au statut `ministre_du_culte`, depuis
+    décrit, au SMIC de chaque mois (`smic_du_mois`) : la caisse modifie au mois du relèvement
+    « les assiettes forfaitaires respectives des cotisations mensuelles [...] vieillesse et
+    retraite complémentaire obligatoire des cultes » (circulaire n° 2025/01). Les affiliations ne routent le régime qu'au statut `ministre_du_culte`, depuis
     2006, et les points sont ceux du régime que nomme `points_de`.
   python: >-
     carriere.py : Affiliations.regimes ; droit/acquerir.py : acquerir ;
@@ -370,9 +374,10 @@ code:
     contributionsDUneCarriere, forfait
   parametres: >-
     contenu.parametres de chaque version : assiette_forfaitaire, assiette_repere_smic,
-    contribution_agff, contribution_ceg, part_salariale, points_de, statuts_affilies,
-    taux_cotisation_retraite ; regimes/arrco_cultes.yaml : assiette_forfaitaire,
-    assiette_repere_smic, taux_cotisation_retraite, part_salariale, points_de ;
+    contribution_agff, contribution_ceg, part_salariale, points_de, smic_du_mois,
+    statuts_affilies, taux_cotisation_retraite ; regimes/arrco_cultes.yaml :
+    assiette_forfaitaire, assiette_repere_smic, smic_du_mois, taux_cotisation_retraite,
+    part_salariale, points_de ; macro/smic_horaire_releves.csv : smic_horaire ;
     regimes/valeurs_point.csv : arrco, agirc_arrco ;
     legislation/affiliations.yaml : affiliations.ministre_du_culte,
     affiliations.membre_congregation ;
