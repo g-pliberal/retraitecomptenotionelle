@@ -299,7 +299,7 @@ def test_les_classeurs_des_fiches_se_recuperent_par_la_release():
     }
 
 
-STATUTS ={"au_depot", "a_tirer", "a_confronter", "hors_champ"}
+STATUTS = {"au_depot", "a_tirer", "a_confronter", "confronte", "hors_champ"}
 
 
 def test_chaque_fiche_a_son_statut_au_suivi():

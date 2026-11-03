@@ -1,0 +1,1424 @@
+{
+ "source": {
+  "editeur": "DREES",
+  "document": "Les retraités et les retraites, édition 2026, Panoramas de la DREES, mis en ligne le 14 octobre 2026",
+  "jeux": [
+   "drees_panorama_retraites_2026",
+   "drees_panorama_retraites_2026_classeurs"
+  ],
+  "licence": "Licence ouverte Etalab 2.0 : source et date de mise en ligne citées",
+  "lu_le": "2026-11-03",
+  "methode": "chaque valeur recopiée de sa cellule, dans le classeur de sa fiche (membre de l'archive de la release) ; les citations, du PDF, page imprimée"
+ },
+ "valeurs": {
+  "04_graphique_3": {
+   "cadre": {
+    "2000": {
+     "classeur": "fiche_04.xlsx",
+     "feuille": "F04_Graphique3",
+     "cellule": "F6",
+     "valeur": 100.0
+    },
+    "2001": {
+     "classeur": "fiche_04.xlsx",
+     "feuille": "F04_Graphique3",
+     "cellule": "F7",
+     "valeur": 100.839930581584
+    },
+    "2002": {
+     "classeur": "fiche_04.xlsx",
+     "feuille": "F04_Graphique3",
+     "cellule": "F8",
+     "valeur": 100.54089763892
+    },
+    "2003": {
+     "classeur": "fiche_04.xlsx",
+     "feuille": "F04_Graphique3",
+     "cellule": "F9",
+     "valeur": 99.9168719583613
+    },
+    "2004": {
+     "classeur": "fiche_04.xlsx",
+     "feuille": "F04_Graphique3",
+     "cellule": "F10",
+     "valeur": 99.6249777797831
+    },
+    "2005": {
+     "classeur": "fiche_04.xlsx",
+     "feuille": "F04_Graphique3",
+     "cellule": "F11",
+     "valeur": 100.069858436419
+    },
+    "2006": {
+     "classeur": "fiche_04.xlsx",
+     "feuille": "F04_Graphique3",
+     "cellule": "F12",
+     "valeur": 100.30055867641
+    },
+    "2007": {
+     "classeur": "fiche_04.xlsx",
+     "feuille": "F04_Graphique3",
+     "cellule": "F13",
+     "valeur": 99.4879341781579
+    },
+    "2008": {
+     "classeur": "fiche_04.xlsx",
+     "feuille": "F04_Graphique3",
+     "cellule": "F14",
+     "valeur": 100.1168887761
+    },
+    "2009": {
+     "classeur": "fiche_04.xlsx",
+     "feuille": "F04_Graphique3",
+     "cellule": "F15",
+     "valeur": 100.413321810114
+    },
+    "2010": {
+     "classeur": "fiche_04.xlsx",
+     "feuille": "F04_Graphique3",
+     "cellule": "F16",
+     "valeur": 99.4781409758124
+    },
+    "2011": {
+     "classeur": "fiche_04.xlsx",
+     "feuille": "F04_Graphique3",
+     "cellule": "F17",
+     "valeur": 98.4523139453836
+    },
+    "2012": {
+     "classeur": "fiche_04.xlsx",
+     "feuille": "F04_Graphique3",
+     "cellule": "F18",
+     "valeur": 99.31831214915
+    },
+    "2013": {
+     "classeur": "fiche_04.xlsx",
+     "feuille": "F04_Graphique3",
+     "cellule": "F19",
+     "valeur": 99.4905248046992
+    },
+    "2014": {
+     "classeur": "fiche_04.xlsx",
+     "feuille": "F04_Graphique3",
+     "cellule": "F20",
+     "valeur": 99.40619038067
+    },
+    "2015": {
+     "classeur": "fiche_04.xlsx",
+     "feuille": "F04_Graphique3",
+     "cellule": "F21",
+     "valeur": 99.2184492590681
+    },
+    "2016": {
+     "classeur": "fiche_04.xlsx",
+     "feuille": "F04_Graphique3",
+     "cellule": "F22",
+     "valeur": 98.6108434819052
+    },
+    "2017": {
+     "classeur": "fiche_04.xlsx",
+     "feuille": "F04_Graphique3",
+     "cellule": "F23",
+     "valeur": 97.7589057453733
+    },
+    "2018": {
+     "classeur": "fiche_04.xlsx",
+     "feuille": "F04_Graphique3",
+     "cellule": "F24",
+     "valeur": 96.5470258548091
+    },
+    "2019": {
+     "classeur": "fiche_04.xlsx",
+     "feuille": "F04_Graphique3",
+     "cellule": "F25",
+     "valeur": 95.7940074039835
+    },
+    "2020": {
+     "classeur": "fiche_04.xlsx",
+     "feuille": "F04_Graphique3",
+     "cellule": "F26",
+     "valeur": 96.1395241206722
+    },
+    "2021": {
+     "classeur": "fiche_04.xlsx",
+     "feuille": "F04_Graphique3",
+     "cellule": "F27",
+     "valeur": 94.2103049310925
+    },
+    "2022": {
+     "classeur": "fiche_04.xlsx",
+     "feuille": "F04_Graphique3",
+     "cellule": "F28",
+     "valeur": 93.5089632418851
+    },
+    "2023": {
+     "classeur": "fiche_04.xlsx",
+     "feuille": "F04_Graphique3",
+     "cellule": "F29",
+     "valeur": 93.0475535970769
+    },
+    "2024": {
+     "classeur": "fiche_04.xlsx",
+     "feuille": "F04_Graphique3",
+     "cellule": "F30",
+     "valeur": 94.6473218318685
+    },
+    "2025": {
+     "classeur": "fiche_04.xlsx",
+     "feuille": "F04_Graphique3",
+     "cellule": "F31",
+     "valeur": 94.7428257289712
+    }
+   },
+   "non_cadre": {
+    "2000": {
+     "classeur": "fiche_04.xlsx",
+     "feuille": "F04_Graphique3",
+     "cellule": "G34",
+     "valeur": 100.0
+    },
+    "2001": {
+     "classeur": "fiche_04.xlsx",
+     "feuille": "F04_Graphique3",
+     "cellule": "G35",
+     "valeur": 100.759224213425
+    },
+    "2002": {
+     "classeur": "fiche_04.xlsx",
+     "feuille": "F04_Graphique3",
+     "cellule": "G36",
+     "valeur": 100.623139570646
+    },
+    "2003": {
+     "classeur": "fiche_04.xlsx",
+     "feuille": "F04_Graphique3",
+     "cellule": "G37",
+     "valeur": 99.9798202195352
+    },
+    "2004": {
+     "classeur": "fiche_04.xlsx",
+     "feuille": "F04_Graphique3",
+     "cellule": "G38",
+     "valeur": 99.6798235647
+    },
+    "2005": {
+     "classeur": "fiche_04.xlsx",
+     "feuille": "F04_Graphique3",
+     "cellule": "G39",
+     "valeur": 100.116697815347
+    },
+    "2006": {
+     "classeur": "fiche_04.xlsx",
+     "feuille": "F04_Graphique3",
+     "cellule": "G40",
+     "valeur": 100.388170938383
+    },
+    "2007": {
+     "classeur": "fiche_04.xlsx",
+     "feuille": "F04_Graphique3",
+     "cellule": "G41",
+     "valeur": 99.6031490530155
+    },
+    "2008": {
+     "classeur": "fiche_04.xlsx",
+     "feuille": "F04_Graphique3",
+     "cellule": "G42",
+     "valeur": 100.358561649962
+    },
+    "2009": {
+     "classeur": "fiche_04.xlsx",
+     "feuille": "F04_Graphique3",
+     "cellule": "G43",
+     "valeur": 100.56959049055
+    },
+    "2010": {
+     "classeur": "fiche_04.xlsx",
+     "feuille": "F04_Graphique3",
+     "cellule": "G44",
+     "valeur": 99.6818279076014
+    },
+    "2011": {
+     "classeur": "fiche_04.xlsx",
+     "feuille": "F04_Graphique3",
+     "cellule": "G45",
+     "valeur": 99.3490640583036
+    },
+    "2012": {
+     "classeur": "fiche_04.xlsx",
+     "feuille": "F04_Graphique3",
+     "cellule": "G46",
+     "valeur": 100.173724191435
+    },
+    "2013": {
+     "classeur": "fiche_04.xlsx",
+     "feuille": "F04_Graphique3",
+     "cellule": "G47",
+     "valeur": 100.602497397316
+    },
+    "2014": {
+     "classeur": "fiche_04.xlsx",
+     "feuille": "F04_Graphique3",
+     "cellule": "G48",
+     "valeur": 100.517220395405
+    },
+    "2015": {
+     "classeur": "fiche_04.xlsx",
+     "feuille": "F04_Graphique3",
+     "cellule": "G49",
+     "valeur": 100.354580029856
+    },
+    "2016": {
+     "classeur": "fiche_04.xlsx",
+     "feuille": "F04_Graphique3",
+     "cellule": "G50",
+     "valeur": 99.740016679529
+    },
+    "2017": {
+     "classeur": "fiche_04.xlsx",
+     "feuille": "F04_Graphique3",
+     "cellule": "G51",
+     "valeur": 99.0921441842775
+    },
+    "2018": {
+     "classeur": "fiche_04.xlsx",
+     "feuille": "F04_Graphique3",
+     "cellule": "G52",
+     "valeur": 97.7051729483949
+    },
+    "2019": {
+     "classeur": "fiche_04.xlsx",
+     "feuille": "F04_Graphique3",
+     "cellule": "G53",
+     "valeur": 96.7601680019007
+    },
+    "2020": {
+     "classeur": "fiche_04.xlsx",
+     "feuille": "F04_Graphique3",
+     "cellule": "G54",
+     "valeur": 97.3715654845096
+    },
+    "2021": {
+     "classeur": "fiche_04.xlsx",
+     "feuille": "F04_Graphique3",
+     "cellule": "G55",
+     "valeur": 95.2638512791006
+    },
+    "2022": {
+     "classeur": "fiche_04.xlsx",
+     "feuille": "F04_Graphique3",
+     "cellule": "G56",
+     "valeur": 94.5614967804918
+    },
+    "2023": {
+     "classeur": "fiche_04.xlsx",
+     "feuille": "F04_Graphique3",
+     "cellule": "G57",
+     "valeur": 93.082045176912
+    },
+    "2024": {
+     "classeur": "fiche_04.xlsx",
+     "feuille": "F04_Graphique3",
+     "cellule": "G58",
+     "valeur": 95.6062761649186
+    },
+    "2025": {
+     "classeur": "fiche_04.xlsx",
+     "feuille": "F04_Graphique3",
+     "cellule": "G59",
+     "valeur": 96.2688966198047
+    }
+   }
+  },
+  "04_graphique_4": {
+   "non_cadre": {
+    "1939": {
+     "5": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "D29",
+      "valeur": -0.652044492040787
+     },
+     "10": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "E29",
+      "valeur": -1.0330952379737
+     },
+     "15": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "F29",
+      "valeur": -1.21026372691333
+     },
+     "20": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "G29",
+      "valeur": -1.46459879972997
+     }
+    },
+    "1940": {
+     "5": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "D30",
+      "valeur": 0.0686605165689969
+     },
+     "10": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "E30",
+      "valeur": -0.120372149323629
+     },
+     "15": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "F30",
+      "valeur": -0.293085829197778
+     },
+     "20": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "G30",
+      "valeur": -0.67729085775477
+     }
+    },
+    "1941": {
+     "5": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "D31",
+      "valeur": -0.366499046030867
+     },
+     "10": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "E31",
+      "valeur": -0.569965717099535
+     },
+     "15": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "F31",
+      "valeur": -0.710633772293519
+     },
+     "20": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "G31",
+      "valeur": -1.21394714324985
+     }
+    },
+    "1942": {
+     "5": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "D32",
+      "valeur": -0.60686766136476
+     },
+     "10": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "E32",
+      "valeur": -0.837601896152492
+     },
+     "15": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "F32",
+      "valeur": -0.910972856255981
+     },
+     "20": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "G32",
+      "valeur": -1.58133770053743
+     }
+    },
+    "1943": {
+     "5": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "D33",
+      "valeur": -0.0956768090354814
+     },
+     "10": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "E33",
+      "valeur": -0.37822963217593
+     },
+     "15": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "F33",
+      "valeur": -0.457923769530737
+     },
+     "20": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "G33",
+      "valeur": -1.35614066958964
+     }
+    },
+    "1944": {
+     "5": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "D34",
+      "valeur": 0.088736819671027
+     },
+     "10": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "E34",
+      "valeur": 0.0123452986870376
+     },
+     "15": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "F34",
+      "valeur": -0.237063699216179
+     },
+     "20": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "G34",
+      "valeur": -1.34342396638282
+     }
+    },
+    "1945": {
+     "5": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "D35",
+      "valeur": -0.0520727790564024
+     },
+     "10": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "E35",
+      "valeur": -0.203773693339912
+     },
+     "15": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "F35",
+      "valeur": -0.674880689839654
+     },
+     "20": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "G35",
+      "valeur": -1.80888805270023
+     }
+    },
+    "1946": {
+     "5": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "D36",
+      "valeur": -0.232652729161714
+     },
+     "10": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "E36",
+      "valeur": -0.342515799909066
+     },
+     "15": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "F36",
+      "valeur": -0.959585218705939
+     },
+     "20": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "G36",
+      "valeur": -2.10515230726955
+     }
+    },
+    "1947": {
+     "5": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "D37",
+      "valeur": -0.670988957664946
+     },
+     "10": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "E37",
+      "valeur": -0.665666711264976
+     },
+     "15": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "F37",
+      "valeur": -1.51221238565256
+     }
+    },
+    "1948": {
+     "5": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "D38",
+      "valeur": 0.473082825251822
+     },
+     "10": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "E38",
+      "valeur": 0.49501416152826
+     },
+     "15": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "F38",
+      "valeur": -0.655304704681541
+     }
+    },
+    "1949": {
+     "5": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "D39",
+      "valeur": -0.501577761216367
+     },
+     "10": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "E39",
+      "valeur": -0.835505041535995
+     },
+     "15": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "F39",
+      "valeur": -2.24963016642188
+     }
+    },
+    "1950": {
+     "5": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "D40",
+      "valeur": 0.0233122809597575
+     },
+     "10": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "E40",
+      "valeur": -0.575323511977615
+     },
+     "15": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "F40",
+      "valeur": -1.99067521969278
+     }
+    },
+    "1951": {
+     "5": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "D41",
+      "valeur": 0.373709003713543
+     },
+     "10": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "E41",
+      "valeur": -0.501572290103397
+     },
+     "15": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "F41",
+      "valeur": -1.91671073853941
+     }
+    },
+    "1952": {
+     "5": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "D42",
+      "valeur": -0.135741959233002
+     },
+     "10": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "E42",
+      "valeur": -1.66649643191987
+     }
+    },
+    "1953": {
+     "5": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "D43",
+      "valeur": -0.423669359219545
+     },
+     "10": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "E43",
+      "valeur": -2.13835842506572
+     }
+    },
+    "1954": {
+     "5": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "D44",
+      "valeur": -0.723077510251642
+     },
+     "10": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "E44",
+      "valeur": -2.68339825631011
+     }
+    },
+    "1955": {
+     "5": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "D45",
+      "valeur": -1.36873716589145
+     }
+    },
+    "1956": {
+     "5": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "D46",
+      "valeur": -1.61852452443955
+     }
+    },
+    "1957": {
+     "5": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "D47",
+      "valeur": -1.61008652613215
+     }
+    },
+    "1958": {
+     "5": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "D48",
+      "valeur": -1.58333664720105
+     }
+    },
+    "1959": {
+     "5": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "D49",
+      "valeur": -2.33922869675467
+     }
+    }
+   },
+   "cadre": {
+    "1939": {
+     "5": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "D77",
+      "valeur": -0.965362748314263
+     },
+     "10": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "E77",
+      "valeur": -1.43134033225431
+     },
+     "15": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "F77",
+      "valeur": -1.76911337900322
+     },
+     "20": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "G77",
+      "valeur": -2.24225271013802
+     }
+    },
+    "1940": {
+     "5": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "D78",
+      "valeur": -0.0792371279914192
+     },
+     "10": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "E78",
+      "valeur": -0.308917874283551
+     },
+     "15": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "F78",
+      "valeur": -0.689189344164802
+     },
+     "20": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "G78",
+      "valeur": -1.2742909585677
+     }
+    },
+    "1941": {
+     "5": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "D79",
+      "valeur": -0.437898044497814
+     },
+     "10": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "E79",
+      "valeur": -0.661430186834352
+     },
+     "15": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "F79",
+      "valeur": -1.06192697205255
+     },
+     "20": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "G79",
+      "valeur": -1.75256737663277
+     }
+    },
+    "1942": {
+     "5": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "D80",
+      "valeur": -0.599737803981697
+     },
+     "10": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "E80",
+      "valeur": -0.891822633637801
+     },
+     "15": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "F80",
+      "valeur": -1.23034828921747
+     },
+     "20": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "G80",
+      "valeur": -2.07857270805121
+     }
+    },
+    "1943": {
+     "5": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "D81",
+      "valeur": -0.117452888810163
+     },
+     "10": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "E81",
+      "valeur": -0.520094549652612
+     },
+     "15": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "F81",
+      "valeur": -0.863892518270532
+     },
+     "20": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "G81",
+      "valeur": -1.94521429539788
+     }
+    },
+    "1944": {
+     "5": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "D82",
+      "valeur": 0.0617771385213359
+     },
+     "10": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "E82",
+      "valeur": -0.213025775933076
+     },
+     "15": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "F82",
+      "valeur": -0.713922023866999
+     },
+     "20": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "G82",
+      "valeur": -1.9726606774047
+     }
+    },
+    "1945": {
+     "5": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "D83",
+      "valeur": -0.0658453657127183
+     },
+     "10": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "E83",
+      "valeur": -0.51836281012524
+     },
+     "15": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "F83",
+      "valeur": -1.21449818454343
+     },
+     "20": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "G83",
+      "valeur": -2.48981368487262
+     }
+    },
+    "1946": {
+     "5": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "D84",
+      "valeur": -0.235385751186783
+     },
+     "10": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "E84",
+      "valeur": -0.722876063499328
+     },
+     "15": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "F84",
+      "valeur": -1.54262632142066
+     },
+     "20": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "G84",
+      "valeur": -2.82605008516968
+     }
+    },
+    "1947": {
+     "5": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "D85",
+      "valeur": -0.746232816188297
+     },
+     "10": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "E85",
+      "valeur": -1.10604892021647
+     },
+     "15": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "F85",
+      "valeur": -2.13485734759159
+     }
+    },
+    "1948": {
+     "5": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "D86",
+      "valeur": 0.253729647286733
+     },
+     "10": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "E86",
+      "valeur": -0.0601827536535637
+     },
+     "15": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "F86",
+      "valeur": -1.39183104680889
+     }
+    },
+    "1949": {
+     "5": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "D87",
+      "valeur": -0.912246217810946
+     },
+     "10": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "E87",
+      "valeur": -1.51915364408518
+     },
+     "15": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "F87",
+      "valeur": -3.05984768405268
+     }
+    },
+    "1950": {
+     "5": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "D88",
+      "valeur": -0.551653959805066
+     },
+     "10": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "E88",
+      "valeur": -1.34174999039243
+     },
+     "15": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "F88",
+      "valeur": -2.85874022776001
+     }
+    },
+    "1951": {
+     "5": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "D89",
+      "valeur": 0.139643134749477
+     },
+     "10": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "E89",
+      "valeur": -0.854721605413616
+     },
+     "15": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "F89",
+      "valeur": -2.36417715050872
+     }
+    },
+    "1952": {
+     "5": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "D90",
+      "valeur": -0.292356943416607
+     },
+     "10": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "E90",
+      "valeur": -1.92231281680796
+     }
+    },
+    "1953": {
+     "5": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "D91",
+      "valeur": -0.6176392006101
+     },
+     "10": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "E91",
+      "valeur": -2.52461290220921
+     }
+    },
+    "1954": {
+     "5": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "D92",
+      "valeur": -0.95465898904078
+     },
+     "10": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "E92",
+      "valeur": -2.97077565631952
+     }
+    },
+    "1955": {
+     "5": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "D93",
+      "valeur": -1.73361939461171
+     }
+    },
+    "1956": {
+     "5": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "D94",
+      "valeur": -1.65256438597285
+     }
+    },
+    "1957": {
+     "5": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "D95",
+      "valeur": -1.44906456838081
+     }
+    },
+    "1958": {
+     "5": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "D96",
+      "valeur": -1.70655183120864
+     }
+    },
+    "1959": {
+     "5": {
+      "classeur": "fiche_04.xlsx",
+      "feuille": "F04_Graphique4",
+      "cellule": "D97",
+      "valeur": -1.1474744949228
+     }
+    }
+   }
+  },
+  "06_graphique_4": {
+   "1940": {
+    "prive": {
+     "classeur": "fiche_06.xlsx",
+     "feuille": "F06 - Graphique 4",
+     "cellule": "D24",
+     "valeur": 78.7608738549528
+    },
+    "public": {
+     "classeur": "fiche_06.xlsx",
+     "feuille": "F06 - Graphique 4",
+     "cellule": "E24",
+     "valeur": 76.2715002472936
+    }
+   },
+   "1950": {
+    "prive": {
+     "classeur": "fiche_06.xlsx",
+     "feuille": "F06 - Graphique 4",
+     "cellule": "D29",
+     "valeur": 76.1517257076076
+    },
+    "public": {
+     "classeur": "fiche_06.xlsx",
+     "feuille": "F06 - Graphique 4",
+     "cellule": "E29",
+     "valeur": 72.0884361505407
+    }
+   }
+  },
+  "06_graphique_3": {
+   "1940": {
+    "classeur": "fiche_06.xlsx",
+    "feuille": "F06-Graphique 3",
+    "cellule": "C15",
+    "valeur": -40.0
+   },
+   "1950": {
+    "classeur": "fiche_06.xlsx",
+    "feuille": "F06-Graphique 3",
+    "cellule": "C25",
+    "valeur": -32.0
+   }
+  },
+  "07_tableau_1": {
+   "montant": {
+    "classeur": "fiche_07.xlsx",
+    "feuille": "F07_Tableau 1",
+    "cellule": "C13",
+    "valeur": 1637.0
+   },
+   "ecart_femmes_hommes": {
+    "classeur": "fiche_07.xlsx",
+    "feuille": "F07_Tableau 1",
+    "cellule": "E13",
+    "valeur": -29.4
+   }
+  },
+  "09_encadre_3": {
+   "brut": {
+    "classeur": "fiche_09.xlsx",
+    "feuille": "F09_Tableau encadré 3",
+    "cellule": "F5",
+    "valeur": 395300.0
+   },
+   "net": {
+    "classeur": "fiche_09.xlsx",
+    "feuille": "F09_Tableau encadré 3",
+    "cellule": "F7",
+    "valeur": 388900.0
+   }
+  },
+  "11_graphique_3": {
+   "1940": {
+    "femmes": {
+     "classeur": "fiche_11.xlsx",
+     "feuille": "F11_Graphique 3",
+     "cellule": "F14",
+     "valeur": 133.0
+    },
+    "hommes": {
+     "classeur": "fiche_11.xlsx",
+     "feuille": "F11_Graphique 3",
+     "cellule": "G14",
+     "valeur": 162.0
+    }
+   },
+   "1942": {
+    "femmes": {
+     "classeur": "fiche_11.xlsx",
+     "feuille": "F11_Graphique 3",
+     "cellule": "F15",
+     "valeur": 137.0
+    },
+    "hommes": {
+     "classeur": "fiche_11.xlsx",
+     "feuille": "F11_Graphique 3",
+     "cellule": "G15",
+     "valeur": 161.0
+    }
+   },
+   "1944": {
+    "femmes": {
+     "classeur": "fiche_11.xlsx",
+     "feuille": "F11_Graphique 3",
+     "cellule": "F16",
+     "valeur": 141.0
+    },
+    "hommes": {
+     "classeur": "fiche_11.xlsx",
+     "feuille": "F11_Graphique 3",
+     "cellule": "G16",
+     "valeur": 162.0
+    }
+   },
+   "1946": {
+    "femmes": {
+     "classeur": "fiche_11.xlsx",
+     "feuille": "F11_Graphique 3",
+     "cellule": "F17",
+     "valeur": 145.0
+    },
+    "hommes": {
+     "classeur": "fiche_11.xlsx",
+     "feuille": "F11_Graphique 3",
+     "cellule": "G17",
+     "valeur": 164.0
+    }
+   },
+   "1948": {
+    "femmes": {
+     "classeur": "fiche_11.xlsx",
+     "feuille": "F11_Graphique 3",
+     "cellule": "F19",
+     "valeur": 149.0
+    },
+    "hommes": {
+     "classeur": "fiche_11.xlsx",
+     "feuille": "F11_Graphique 3",
+     "cellule": "G19",
+     "valeur": 163.0
+    }
+   },
+   "1950": {
+    "femmes": {
+     "classeur": "fiche_11.xlsx",
+     "feuille": "F11_Graphique 3",
+     "cellule": "F21",
+     "valeur": 152.0
+    },
+    "hommes": {
+     "classeur": "fiche_11.xlsx",
+     "feuille": "F11_Graphique 3",
+     "cellule": "G21",
+     "valeur": 162.0
+    }
+   },
+   "1952": {
+    "femmes": {
+     "classeur": "fiche_11.xlsx",
+     "feuille": "F11_Graphique 3",
+     "cellule": "F23",
+     "valeur": 157.0
+    },
+    "hommes": {
+     "classeur": "fiche_11.xlsx",
+     "feuille": "F11_Graphique 3",
+     "cellule": "G23",
+     "valeur": 163.0
+    }
+   },
+   "1953": {
+    "femmes": {
+     "classeur": "fiche_11.xlsx",
+     "feuille": "F11_Graphique 3",
+     "cellule": "F24",
+     "valeur": 158.0
+    },
+    "hommes": {
+     "classeur": "fiche_11.xlsx",
+     "feuille": "F11_Graphique 3",
+     "cellule": "G24",
+     "valeur": 163.0
+    }
+   }
+  },
+  "11_tableau_1": {
+   "ensemble": {
+    "classeur": "fiche_11.xlsx",
+    "feuille": "F11_Tableau 1",
+    "cellule": "E18",
+    "valeur": 0.93
+   },
+   "cnav": {
+    "classeur": "fiche_11.xlsx",
+    "feuille": "F11_Tableau 1",
+    "cellule": "E5",
+    "valeur": 0.73
+   }
+  },
+  "11_graphique_2": {
+   "1953": {
+    "classeur": "fiche_11.xlsx",
+    "feuille": "F11_Graphique 2",
+    "cellule": "E25",
+    "valeur": 63.0
+   }
+  },
+  "13_tableau_1": {
+   "polyaffilies": {
+    "classeur": "fiche_13.xlsx",
+    "feuille": "F13_Tableau 1",
+    "cellule": "E20",
+    "valeur": 54.05
+   }
+  },
+  "18_graphique_3": {
+   "regime_general_2024": {
+    "classeur": "fiche_18.xlsx",
+    "feuille": "F18_Graphique 3",
+    "cellule": "V5",
+    "valeur": 17.44377230676213
+   }
+  },
+  "18_graphique_1": {
+   "1950": {
+    "classeur": "fiche_18.xlsx",
+    "feuille": "F18_Graphique 1",
+    "cellule": "E18",
+    "valeur": 18.3
+   },
+   "1957": {
+    "classeur": "fiche_18.xlsx",
+    "feuille": "F18_Graphique 1",
+    "cellule": "E25",
+    "valeur": 35.5
+   }
+  },
+  "29_tableau_1": {
+   "sortie_per_individuel": {
+    "classeur": "fiche_29.xlsx",
+    "feuille": "F29_tableau 1",
+    "cellule": "F5",
+    "valeur": "Déblocage anticipé, rente, sortie en capital (compartiments 1 et 2)."
+   },
+   "compartiment_3": {
+    "classeur": "fiche_29.xlsx",
+    "feuille": "F29_tableau 1",
+    "cellule": "E14",
+    "valeur": "Compartiment 3 – Versements obligatoires du salarié et de l’employeur2."
+   }
+  },
+  "30_graphique_5": {
+   "cotisations_2024": {
+    "classeur": "fiche_30.xlsx",
+    "feuille": "F30_Graphique 5",
+    "cellule": "Q5",
+    "valeur": 5.4
+   },
+   "prestations_2024": {
+    "classeur": "fiche_30.xlsx",
+    "feuille": "F30_Graphique 5",
+    "cellule": "Q6",
+    "valeur": 2.2
+   }
+  },
+  "31_graphique_6": {
+   "cicd_2024": {
+    "classeur": "fiche_31.xlsx",
+    "feuille": "F31_Graphique 6",
+    "cellule": "R6",
+    "valeur": 3160.0
+   }
+  },
+  "32_graphique_2": {
+   "cicd_2024": {
+    "classeur": "fiche_32.xlsx",
+    "feuille": "F32_Graphique 2",
+    "cellule": "R6",
+    "valeur": 1820.0
+   }
+  }
+ },
+ "citations": {
+  "28_encadre_2": {
+   "page": 233,
+   "textes": [
+    "En 2016, près de la moitié des personnes seules éligibles au minimum vieillesse n’y recourent pas",
+    "percevraient 205 euros en moyenne par mois, tandis que les allocataires bénéficient en moyenne de 337 euros",
+    "il s’élève à 77 % pour des montants attendus mensuels inférieurs à 100 euros",
+    "jusqu’à 22 % pour des montants attendus compris entre 500 et 600 euros par mois"
+   ],
+   "non_recourants_euros": 205,
+   "allocataires_euros": 337,
+   "non_recours_moins_de_100_euros": 0.77,
+   "non_recours_500_a_600_euros": 0.22
+  },
+  "04_texte": {
+   "page": 49,
+   "textes": [
+    "la pension brute tous régimes du cas type d’ancien salarié non-cadre diminue de 3,7 % en euros constants",
+    "Sa pension brute baisse de 5,3 % en euros constants et sa pension nette de 7,7 %",
+    "a vu le pouvoir d’achat de sa pension de retraite brute diminuer de 4,4 % au total entre fin 2000 et fin 2025, et le pouvoir d’achat de sa pension nette diminuer de 3,7 %"
+   ]
+  }
+ }
+}

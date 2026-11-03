@@ -123,6 +123,9 @@ CONTROLES = {
     # L'âge des retraités, l'âge où ils partent et leurs conditions de départ,
     # confrontés à l'EACR (le témoin et la mesure restent rapides, plus bas).
     "test_controle_eacr.py",
+    # Les fiches du panorama de la DREES de 2026 que le modèle affronte,
+    # confrontées une à une (action 178, étape 4).
+    "test_controle_drees_panorama.py",
     # Les données : leur socle, leur certification, les lecteurs des
     # documents qui les apportent.
     "test_donnees.py", "test_verification.py", "test_bonifications_jaune.py",

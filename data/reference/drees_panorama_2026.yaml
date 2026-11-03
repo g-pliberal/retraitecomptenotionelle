@@ -20,6 +20,9 @@
 #               à un autre millésime
 #   a_tirer ... ce que le dépôt en tirera, et où ; ou pourquoi rien
 #   etape ..... l'étape de l'action 178 qui s'en charge
+#   confrontation, confronte_par .. pour une fiche confrontée, ce que la
+#               confrontation trouve, et ses tests, dans
+#               tests/test_controle_drees_panorama.py
 #
 # STATUT
 #   au_depot ...... sa donnée vient d'un fichier que le dépôt lit déjà, au
@@ -30,6 +33,8 @@
 #   a_confronter .. elle mesure ce que le modèle calcule ou suppose — un âge,
 #                   un taux, une durée, une règle : à confronter par un test
 #                   du niveau controle, l'écart corrigé ou déclaré
+#   confronte ..... confrontée ainsi (étape 4) : l'écart est déclaré dans son
+#                   test, et celui qui dit une erreur du modèle va à l'étape 5
 #   hors_champ .... elle mesure ce que le modèle ne représente pas ; la
 #                   raison le dit, et rien n'est à faire
 #
@@ -82,7 +87,7 @@ fiches:
     titre: "La revalorisation des pensions individuelles"
     page: 44
     sources: ["CNAV", "MSA", "SRE", "CNRACL", "Agirc-Arrco", "Ircantec", "RAFP", "Insee", "TRAJECTOiRE"]
-    statut: a_confronter
+    statut: confronte
     au_depot: [cnav_revalorisation_pensions, agirc_arrco_valeurs_point, erafp_parametres]
     a_tirer: >-
       La revalorisation annuelle des pensions de chaque régime depuis
@@ -94,6 +99,15 @@ fiches:
       4), et le pouvoir d'achat des liquidants de 2000 (graphique 3),
       confrontés à l'indexation du scénario 1 et des comptes notionnels.
     etape: 4
+    confrontation: >-
+      L'érosion relativement aux prix (graphique 4) retrouvée à trois
+      dixièmes de point, générations 1940 à 1950, par les séries du
+      dépôt ; le pouvoir d'achat des liquidants de 2000 (graphique 3) y
+      baisse de 0,2 à 1,1 point de plus en vingt-cinq ans, écart
+      déclaré.
+    confronte_par:
+      - test_l_erosion_des_pensions_par_generation_est_celle_de_trajectoire
+      - test_le_pouvoir_d_achat_des_liquidants_de_2000_baisse_un_peu_plus_au_modele
   "05":
     titre: "Le niveau des pensions"
     page: 54
@@ -114,7 +128,7 @@ fiches:
     titre: "Les écarts de pensions de droit direct entre générations"
     page: 65
     sources: ["EIR 2020", "ANCETRE", "EACR", "Insee, panel Tous salariés"]
-    statut: a_confronter
+    statut: confronte
     a_tirer: >-
       La pension moyenne par génération, de 1930 à 1957 (graphiques 1 et
       2, tableaux 1 et 2), l'écart entre femmes et hommes au fil des
@@ -123,11 +137,20 @@ fiches:
       confrontés aux indicateurs de cycle de vie du dépôt
       (`cycle_de_vie.py`) et aux cas types.
     etape: 4
+    confrontation: >-
+      Le taux de remplacement médian du privé (graphique 4) est celui du
+      cas type au SMIC à deux points près ; le salaire moyen et le
+      fonctionnaire sédentaire en sont sous la médiane, et l'écart entre
+      femmes et hommes de la grille (graphique 3) n'est que le tiers ou
+      la moitié du publié : écarts déclarés.
+    confronte_par:
+      - test_le_taux_de_remplacement_median_du_prive_est_celui_du_salarie_au_smic
+      - test_l_ecart_entre_femmes_et_hommes_de_la_grille_est_bien_moindre
   "07":
     titre: "La pension des nouveaux retraités"
     page: 74
     sources: ["EACR", "EIR", "ANCETRE"]
-    statut: a_confronter
+    statut: confronte
     a_tirer: >-
       La pension des nouveaux retraités de 2024, 1 637 euros bruts en
       moyenne, par régime (tableau 1), et l'écart de 29 % entre femmes et
@@ -135,6 +158,12 @@ fiches:
       aux liquidants de 2024 ; le cadrage de l'EACR que le dépôt lit
       porte ces montants, qu'il ne retient pas.
     etape: 4
+    confrontation: >-
+      La grille sert 2 102 euros à ses nouveaux retraités de 2024, 28 %
+      de plus que les 1 637 publiés, et n'y compte que 13,5 % de femmes
+      : écart déclaré, pour l'étape 5.
+    confronte_par:
+      - test_la_grille_sert_trop_a_ses_nouveaux_retraites_de_2024
   "08":
     titre: "Les bénéficiaires d’un minimum de pension"
     page: 78
@@ -155,7 +184,7 @@ fiches:
     titre: "Le niveau de vie des retraités"
     page: 88
     sources: ["ERFS 2023", "Insee, Histoire de vie et Patrimoine 2023-2024", "ANCETRE"]
-    statut: a_confronter
+    statut: confronte
     a_tirer: >-
       Le niveau de vie des ménages de retraités est hors du modèle, qui
       décrit une carrière et non un ménage ; seul l'encadré 3 sert : le
@@ -164,6 +193,12 @@ fiches:
       rapprocher de ce que l'action 47 tire du patrimoine des ménages
       pour la reprise de la garantie sur succession.
     etape: 4
+    confrontation: >-
+      La reprise de la garantie sur succession lit le patrimoine des
+      retraités de 2018 (COR), un quart sous les 395 300 euros bruts de
+      2024 : écart déclaré.
+    confronte_par:
+      - test_le_patrimoine_des_retraites_que_lit_la_garantie_date_de_2018
   "10":
     titre: "Les masses financières relatives aux pensions de retraite"
     page: 98
@@ -182,7 +217,7 @@ fiches:
     titre: "Les durées de carrière des retraités et la part des carrières complètes ou incomplètes"
     page: 106
     sources: ["EIR 2020", "Insee"]
-    statut: a_confronter
+    statut: confronte
     au_depot: [drees_eir_caracteristiques]
     a_tirer: >-
       Les durées cotisées et validées par sexe et par génération
@@ -192,6 +227,14 @@ fiches:
       (tableaux 2 et 3), confrontés aux carrières des cas types et de la
       grille.
     etape: 4
+    confrontation: >-
+      Les durées validées par génération du dépôt sont celles du
+      graphique 3, trimestre pour trimestre ; la complétude de la
+      grille, 0,973 pour 1953, passe de quatre points le coefficient de
+      proratisation moyen, 0,93 : erreur du modèle, pour l'étape 5.
+    confronte_par:
+      - test_les_durees_validees_du_depot_sont_celles_du_panorama
+      - test_la_completude_de_la_grille_passe_le_coefficient_de_proratisation
   "12":
     titre: "Les durées d’assurance validées par les actifs pour leur retraite"
     page: 113
@@ -211,7 +254,7 @@ fiches:
     titre: "Les régimes d’affiliation des assurés"
     page: 122
     sources: ["EIR 2020", "GIP Union Retraite, annuaire 2026"]
-    statut: a_confronter
+    statut: confronte
     a_tirer: >-
       La polyaffiliation par âge et par génération, début 2026
       (graphiques 1 à 3), et la répartition des affiliés de la génération
@@ -219,6 +262,12 @@ fiches:
       Retraite, confrontées à la répartition par régime de la grille de
       la page Coût.
     etape: 4
+    confrontation: >-
+      Aucun cas type de la grille n'a deux régimes de base, quand 54 %
+      de la génération 1957 en ont plusieurs : écart déclaré, la limite
+      des têtes de caisse.
+    confronte_par:
+      - test_la_grille_ne_compte_aucun_polyaffilie
   "14":
     titre: "Les règles de liquidation : âges et durées d’assurance"
     page: 128
@@ -278,7 +327,7 @@ fiches:
     titre: "Les départs anticipés à la retraite"
     page: 160
     sources: ["EACR 2024", "EIR 2020", "ANCETRE"]
-    statut: a_confronter
+    statut: confronte
     a_tirer: >-
       La part des départs anticipés par génération et par motif —
       carrière longue, handicap, catégories actives, invalidité
@@ -287,6 +336,12 @@ fiches:
       2024 (graphique 3), et la génération 1957 des fonctionnaires
       (tableau 1), confrontées aux départs anticipés que le modèle ouvre.
     etape: 4
+    confrontation: >-
+      La grille fait partir à 60 ans 21,8 % des nouveaux retraités de la
+      Cnav de 2024, quand 17,4 % des départs au régime général sont des
+      carrières longues : écart déclaré.
+    confronte_par:
+      - test_la_grille_fait_partir_trop_de_carrieres_longues_au_regime_general
   "19":
     titre: "Les opinions et les souhaits en matière de retraite"
     page: 166
@@ -400,7 +455,7 @@ fiches:
     titre: "Le profil des allocataires du minimum vieillesse"
     page: 231
     sources: ["EACR 2024", "EIR 2020", "Insee"]
-    statut: a_confronter
+    statut: confronte
     au_depot: [drees_non_recours_minimum_vieillesse]
     a_tirer: >-
       Le profil des allocataires — sexe, situation conjugale, âge,
@@ -409,11 +464,18 @@ fiches:
       (encadré 2), confrontés à ce que la garantie vieillesse de la
       proposition suppose du recours.
     etape: 4
+    confrontation: >-
+      Le recours de 50 % de la garantie est celui des personnes seules,
+      compté en têtes ; en euros, il serait de 62 %, le non-recours
+      baissant avec le montant : le coût de la garantie est sous-estimé
+      d'un cinquième, erreur du modèle pour l'étape 5.
+    confronte_par:
+      - test_le_recours_a_la_garantie_est_celui_des_tetes_et_non_des_euros
   "29":
     titre: "Les dispositifs d’épargne retraite supplémentaire"
     page: 240
     sources: ["Législation"]
-    statut: a_confronter
+    statut: confronte
     a_tirer: >-
       Les règles des produits d'épargne retraite — les trois
       compartiments du PER, la sortie en rente ou en capital, les
@@ -422,11 +484,17 @@ fiches:
       proposition, « logé dans l'enveloppe du PER » (README), et de sa
       capitalisation volontaire.
     etape: 4
+    confrontation: >-
+      Le pilier sert tout en rente viagère, quand le compartiment 1 du
+      PER laisse sortir en capital ; son régime fiscal n'est pas dit :
+      écart déclaré.
+    confronte_par:
+      - test_le_pilier_sert_en_rente_ce_que_le_per_laisse_sortir_en_capital
   "30":
     titre: "Les masses financières relatives à la retraite supplémentaire"
     page: 250
     sources: ["Enquête Retraite supplémentaire 2005 à 2024"]
-    statut: a_confronter
+    statut: confronte
     a_tirer: >-
       Les masses de la retraite supplémentaire en 2024 — 21,4 milliards
       d'euros de cotisations, 8,9 milliards de prestations, les
@@ -435,11 +503,17 @@ fiches:
       capitalisation volontaire de la proposition feraient passer par le
       PER.
     etape: 4
+    confrontation: >-
+      Les 10 points capitalisés de la proposition font plus du tiers des
+      prélèvements de retraite, six fois et demie les 5,4 % de la
+      retraite supplémentaire en 2024 : comparaison déclarée.
+    confronte_par:
+      - test_le_pilier_ferait_de_la_capitalisation_le_tiers_des_cotisations
   "31":
     titre: "Les adhérents et le montant des cotisations de retraite supplémentaire"
     page: 260
     sources: ["Enquête Retraite supplémentaire 2024", "Insee, enquête Emploi"]
-    statut: a_confronter
+    statut: confronte
     a_tirer: >-
       Les 18,5 millions de contrats fin 2024, la part des personnes en
       emploi qui cotisent et les cotisations annuelles moyennes par
@@ -447,11 +521,17 @@ fiches:
       proposition, une capitalisation volontaire de 5 % de l'assiette,
       entièrement à la charge de l'assuré.
     etape: 4
+    confrontation: >-
+      La capitalisation volontaire de 5 % vaut 2 045 euros au salaire
+      moyen de 2024, les deux tiers des 3 160 euros d'un versement moyen
+      à un contrat individuel : comparaison déclarée.
+    confronte_par:
+      - test_la_capitalisation_volontaire_vaut_les_deux_tiers_d_un_versement_au_per
   "32":
     titre: "Les bénéficiaires et le montant des prestations versées au titre de la retraite supplémentaire"
     page: 267
     sources: ["Enquête Retraite supplémentaire 2010 à 2024", "ANCETRE"]
-    statut: a_confronter
+    statut: confronte
     a_tirer: >-
       Les 2,7 millions de prestations de 2024, le montant moyen d'une
       rente viagère et ses tranches, la part des sorties en rente
@@ -459,6 +539,12 @@ fiches:
       de la proposition sert ; les frais des PER sont déjà au dépôt par
       l'OPEF (`opef_rapport_annuel`).
     etape: 4
+    confrontation: >-
+      La rente du pilier à maturité, 15,6 % du dernier revenu au salaire
+      moyen, passe trois fois la rente moyenne de 2024, 4,5 % du salaire
+      moyen : comparaison déclarée.
+    confronte_par:
+      - test_la_rente_du_pilier_a_maturite_passe_trois_fois_celle_d_aujourd_hui
   "33":
     titre: "Le PER d’entreprise collectif"
     page: 274
