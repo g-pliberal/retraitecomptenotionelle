@@ -108,15 +108,45 @@ l'Institut des politiques publiques (PENSIPP). Écarts connus :
   maison, sur le Smic horaire de chaque heure de 1987 à 2012 et sur des
   forfaits avant ; l'artiste du spectacle, à des taux réduits, et sur un
   salaire forfaitaire par jour s'il est occasionnel ou acteur de complément ;
-  le journaliste, à des taux réduits depuis 1991. Les mêmes barèmes en
-  portent d'autres : des assiettes forfaitaires pour le personnel hôtelier
-  rémunéré au pourboire, les concierges et employés d'immeuble de 1951 à
-  1983, les assistants maternels avant 1991, les dockers, les personnels des
-  centres de vacances, les formateurs occasionnels, le stagiaire aide familial
-  étranger et le stagiaire de la formation professionnelle continue, dont la
-  fiche `stages_formation_professionnelle` lit l'assiette dans la saisie ; des
-  taux réduits pour les professions médicales à temps partiel depuis 1991, et
-  pour les collaborateurs occasionnels du service public de 2008 à 2015.
+  le journaliste, à des taux réduits depuis 1964, et sur les sept dixièmes de
+  son salaire brut quand un accord collectif prévoit la déduction pour frais
+  professionnels. Les mêmes barèmes en portent d'autres : des assiettes
+  forfaitaires pour le personnel hôtelier rémunéré au pourboire, les
+  concierges et employés d'immeuble de 1951 à 1983, les assistants maternels
+  avant 1991, les dockers, les personnels des centres de vacances, les
+  formateurs occasionnels, le stagiaire aide familial étranger et le stagiaire
+  de la formation professionnelle continue, dont la fiche
+  `stages_formation_professionnelle` lit l'assiette dans la saisie, et les
+  collaborateurs occasionnels du service public de 2000 à 2008 ; des taux
+  réduits pour les professions médicales à temps partiel, les médecins depuis
+  1961, et pour les collaborateurs occasionnels du service public de 2008 à
+  2015. Les exposés de la base en décrivent d'autres, sans barème (thème
+  « Carrière : cotisations-salaires ») : des salaires forfaitaires pour le
+  président-directeur général jusqu'en 1963 et le gérant minoritaire de
+  société à responsabilité limitée de 1956 à 1963, au plafond ou à ses trois
+  quarts, pour l'écrivain non salarié de 1957 à 1976, le conjoint salarié de
+  1951 à 1952, l'ouvrier déménageur de Paris jusqu'en 1959 et des
+  Bouches-du-Rhône jusqu'en 1963, le chauffeur de taxi jusqu'en 2017, le
+  cadet de golf, par parcours, de 1951 à 2017, l'énoiseur, au kilo de noix,
+  de 1985 à 2017, le gérant de cabine téléphonique de 1959 à 1990, les agents
+  recenseurs et les enquêteurs jusqu'en 2017, le porteur et le
+  vendeur-colporteur de presse depuis 1991, par cent journaux, les
+  conférenciers, préposés aux vestiaires et gardiens auxiliaires des musées
+  et des monuments, les sportifs et les arbitres depuis 1994, l'animateur
+  d'une association de jeunesse ou d'éducation populaire depuis 1985, à
+  l'heure de Smic, l'étudiant d'une junior-entreprise depuis 1988, à quatre
+  heures de Smic par journée, le travailleur handicapé d'un centre d'aide par
+  le travail de 1960 à 2005 ; l'assiette minimale de l'artiste-auteur, en
+  heures de Smic depuis 1977, et celle du détenu qui
+  travaille, cinquante heures de Smic depuis le contrat d'emploi
+  pénitentiaire ; la valeur forfaitaire de la formation et des avantages en
+  nature du travailleur qu'aucun salaire en espèces ne paie, et du stagiaire
+  en entreprise jusqu'en 2006 — depuis, la gratification minimale du
+  stagiaire, exonérée, n'ouvre aucun droit, et seul son excédent est porté au
+  compte — ; deux Smic mensuels au compte du salarié dont le travail
+  dissimulé est redressé au forfait ; un salaire diminué de trois dixièmes
+  pour frais professionnels au voyageur représentant placier, dans une
+  limite par employeur.
 - **indépendants des DOM** — le modèle exonère de toute cotisation l'artisan,
   le commerçant et le gérant d'un débit de tabac dont la ligne porte un
   département d'outre-mer et dont le revenu de l'année ne dépasse pas le
