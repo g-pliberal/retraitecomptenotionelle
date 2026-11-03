@@ -1095,12 +1095,18 @@ def test_la_pension_moyenne_relative_s_ecarte_de_celle_du_cor(avenir, comptes):
 #: contractuel de l'Ircantec pèsent plus en 2025 — 5,2, 2,0 et 9,1 % des têtes
 #: au lieu de 4,6, 1,6 et 8,1 —, et la reconduction de leur part davantage dans
 #: leurs groupes : les non-salariés, dont le COR fait reculer la dépense avec
-#: celle des exploitants, et les complémentaires.
+#: celle des exploitants, et les complémentaires. Le 3 novembre, l'assiette du
+#: RCO des artisans et du NRCO des commerçants lue au droit (action 177, étape
+#: 9 : l'avant-dernière année jusqu'en 2008, les forfaits de début, le 0,10 %
+#: sans points), qui ôte de 0,1 à 2,3 % à la pension des artisans et des
+#: commerçants d'avant 2009 : complémentaires de +7,87 à +8,17 %, non-salariés
+#: de +10,85 à +11,24 % (tolérances relevées à 9 et 12 %), mesurés l'un et
+#: l'autre état refaits ; LURA et la Cnav ne bougent pas au dixième.
 DECOMPOSITION_GROUPES_SUIVIS = {
     ("pension_relative", "cnav"): 0.04,
     ("depense_part_pib", "lura"): 0.05,
-    ("depense_part_pib", "complementaires"): 0.08,
-    ("depense_part_pib", "non_salaries_base"): 0.11,
+    ("depense_part_pib", "complementaires"): 0.09,
+    ("depense_part_pib", "non_salaries_base"): 0.12,
 }
 #: Et ce qu'elle ne suit pas encore : des CLIQUETS, qui ne doivent que
 #: descendre, comme celui de la pension moyenne relative de l'ensemble. Mesurés
