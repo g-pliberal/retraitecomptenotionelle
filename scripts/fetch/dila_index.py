@@ -96,7 +96,36 @@ BASES = {
 #: fonctions publiques et des militaires, et les textes qui fixent les
 #: carrières — statuts particuliers, dispositions statutaires communes,
 #: organisation des carrières : les durées d'échelon et les reclassements.
-#: Un article porte le titre de son texte, qui le fait entrer avec les autres.
+#: Un article porte le titre de son texte, qui le fait entrer avec les autres ;
+#: l'article qui fixe les durées d'échelon entre aussi par son seul texte
+#: (``DUREES_D_ECHELON``), comme D. 732-76 et D. 732-77 du code rural de 2005 à
+#: 2025, qui ne disent que « points » sous le titre du code (action 131).
+#: Élargi le 3 novembre 2026 (action 158, note du jour).
+#:
+#: Ce qui fixe, dans le texte d'un article, la durée des échelons d'une grille :
+#: « la durée du temps passé dans chacun des échelons », « le temps passé aux
+#: 1er et 2e échelons », « durée passée dans », « durée de l'échelon »,
+#: « ancienneté exigée dans l'échelon pour accéder à l'échelon supérieur »,
+#: « du 1er au 2e échelon : 2 ans », les en-têtes « échelons durée » et les
+#: tableaux qui donnent deux durées par échelon. Le titre d'un statut ne le dit
+#: pas toujours (« portant statuts particuliers », « fixant les dispositions
+#: statutaires applicables », « relatif aux emplois supérieurs »), ni celui
+#: d'un article de code. ``\b`` après « échelon » laisse « échelonnement ».
+DUREES_D_ECHELON = re.compile(
+    r"temps (?:de services? effectifs? )?(?:normalement )?(?:pass[ée]|[àa] passer) "
+    r"(?:dans|aux?|[àa]) (?:\S+ ){0,5}?\S*[ée]chelons?\b|"
+    r"dur[ée]e pass[ée]e dans (?:\S+ ){0,5}?\S*[ée]chelons?\b|"
+    r"dur[ée]es? (?:(?:moyennes?|minimales?|maximales?|et) ){0,4}(?:de l.|d.|dans l.|"
+    r"dans chaque |de chaque |des |de chacun des |dans chacun des )[ée]chelons?\b|"
+    r"(?:anciennet[ée]|dur[ée]e) (?:\S+ ){0,3}?(?:exig[ée]e|requise|donnant acc[èe]s|"
+    r"[àa] accomplir)s? (?:\S+ ){0,5}?\S*[ée]chelons?\b|"
+    r"anciennet[ée] (?:moyenne|minimale|maximale) (?:\S+ ){0,5}?\S*[ée]chelons?\b|"
+    r"du \d+ ?(?:er|e|[èe]me) (?:[ée]chelon )?au \d+ ?(?:e|[èe]me) [ée]chelon\W{0,3}"
+    r"(?:\d+|un|deux|trois|quatre|cinq|six) (?:ans?|mois)\b|"
+    r"[ée]chelons? (?:provisoires? )?:? ?dur[ée]es?\b|"
+    r"[ée]chelons?\W{1,4}\d+ ans?\W{1,4}\d+ ans?\b",
+    re.I)
+
 THEMATIQUE = re.compile(
     r"retrait|pension|cotis|s[ée]curit[ée] sociale|plafond|vieillesse|smic|"
     r"salaire minimum|point d.indice|pr[ée]voyance|"
@@ -111,7 +140,7 @@ THEMATIQUE = re.compile(
     r"(?:[ée]chelonnement|classement|bonification) indiciaire|"
     r"grilles? (?:indiciaires?|de r[ée]mun[ée]ration)|[ée]chelles? de r[ée]mun[ée]ration|"
     r"statut particulier|dispositions statutaires communes|organisation des carri[èe]res|"
-    r"avancement d.[ée]chelon",
+    r"avancement d.[ée]chelon|nombre annuel moyen de points|" + DUREES_D_ECHELON.pattern,
     re.I)
 
 BALISES = re.compile(r"<[^>]+>")

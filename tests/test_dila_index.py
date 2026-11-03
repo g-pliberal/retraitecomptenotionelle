@@ -241,6 +241,145 @@ def test_le_filtre_laisse_les_concours_de_ces_corps():
     assert not index.pertinent(avis)
 
 
+#: D. 732-76 et D. 732-77 du code rural, dans la seule rédaction qu'ils ont eue
+#: du 22 avril 2005 au 1er janvier 2026 (LEGIARTI000006597490 et
+#: LEGIARTI000006597491, lus dans les incréments LEGI de la DILA des 9, 14 et
+#: 15 janvier 2026, dont la liste des versions n'en a pas d'autre avant 2026) :
+#: la majoration des points de chef de 1952 à 1972, pour l'action 131. Le titre
+#: d'un article de code est celui du code, et leur texte ne dit que « points ».
+MAJORATIONS_AGRICOLES = [
+    ("LEGIARTI000006597490", "D732-76",
+     "Le nombre de points acquis par les chefs d'exploitations ou d'entreprises agricoles au "
+     "titre de la période comprise entre le 1er juillet 1952 et le 31 décembre 1972 est majoré "
+     "de 17 % lorsque le nombre annuel moyen de points acquis par les intéressés au cours de "
+     "ladite période est au moins égal à seize."),
+    ("LEGIARTI000006597491", "D732-77",
+     "Le nombre de points acquis par les chefs d'exploitation ou d'entreprise agricole au titre "
+     "de la période comprise entre le 1er juillet 1952 et le 31 décembre 1972 est majoré de : "
+     "1° 5 % lorsque le nombre annuel moyen de points acquis par les intéressés au cours de "
+     "cette période est compris entre 15 et 19,51. Le taux est déterminé par la formule "
+     "suivante : T % = 3,19 x P - 57,23 2° 5 à 30 % et de 30 à 45 % selon que le nombre annuel "
+     "moyen de points acquis par les intéressés au cours de cette période est compris entre "
+     "19,51 et 27,34 ou est supérieur à 27,34. Le taux est alors déterminé par la formule : "
+     "T % = 1,93 x P - 22,74 Le terme P figurant aux formules des 1° et 2° représente le nombre "
+     "annuel moyen de points acquis par l'assuré au cours de la période mentionnée au premier "
+     "alinéa du présent article."),
+]
+
+
+@pytest.mark.parametrize("ident, num, texte", MAJORATIONS_AGRICOLES,
+                         ids=[num for _, num, _ in MAJORATIONS_AGRICOLES])
+def test_le_filtre_garde_d_732_76_et_d_732_77_de_2005_a_2025(ident: str, num: str, texte: str):
+    article = index.Document(ident, "2005-04-22", "2026-01-01", "Article CODE", num,
+                             "Code rural (nouveau)", texte)
+    assert index.pertinent(article)
+
+
+#: Les articles qui fixent la durée des échelons, des trois versants et des
+#: militaires, de 1964 à 2025 : des extraits d'articles réels (identifiant en
+#: commentaire). Ils doivent passer sur leur seul texte, car un statut ne le dit
+#: pas toujours dans son titre (« portant statuts particuliers », « fixant les
+#: dispositions statutaires applicables », « relatif aux emplois supérieurs »),
+#: ni un article de code : les trois premiers, lus dans les incréments LEGI de la
+#: DILA, étaient écartés par le filtre du 2 novembre 2026.
+DUREES_D_ECHELON = [
+    # Décret n° 95-370, art. 34 (LEGIARTI000034773651) : l'État.
+    "La durée du temps passé dans chacun des échelons du corps des ingénieurs d'études est "
+    "fixée conformément au tableau ci-après : GRADES ET ÉCHELONS DURÉE Ingénieur d'études hors "
+    "classe 9e échelon - 8e échelon 3 ans 7e échelon 2 ans 6 mois",
+    # Décret n° 2020-959, art. 27 (LEGIARTI000042199625) : l'hospitalière.
+    "L'emploi de directeur général adjoint de l'Assistance publique-hôpitaux de Paris relevant "
+    "du groupe I comprend huit échelons. La durée passée dans les deux premiers échelons est "
+    "d'un an.",
+    # Décret n° 99-1073, art. 13 (LEGIARTI000006513139) : les emplois de la magistrature.
+    "Le temps passé dans chacun des échelons de l'emploi de chargé de formation à l'Ecole "
+    "nationale de la magistrature est fixé comme suit : ECHELONS : 6e ; DUREE DE L'ECHELON : "
+    "3 ans",
+    # Décret n° 2003-676, art. 12 (LEGIARTI000032578323) : la territoriale.
+    "La durée du temps passé dans chacun des échelons du grade de cadre de santé est fixée "
+    "ainsi qu'il suit : GRADE ET ÉCHELONS DURÉE Cadre de santé 7e échelon 4 ans 6e échelon 4 ans",
+    # Décret n° 2008-952, art. 6-1 (LEGIARTI000025074407) : les militaires, la gendarmerie.
+    "Les conditions d'accès aux échelons du grade de gendarme sont déterminées conformément au "
+    "tableau suivant : GRADE ÉCHELLE DE SOLDE ÉCHELON ANCIENNETÉ EXIGÉE dans l'échelon pour "
+    "accéder à l'échelon supérieur Gendarme Echelle de solde spécifique des gendarmes 13e / 12e "
+    "3 ans",
+    # Décret n° 2008-938, art. 32-1 (LEGIARTI000052465302) : les militaires, la marine.
+    "Le temps passé aux 1er et 2e échelons est de un an et de deux ans au 3e échelon.",
+    # Décret n° 2008-931, art. 17 (LEGIARTI000052465270) : les militaires, les chefs de musique.
+    "Les conditions de durée d'échelon et d'accès aux échelons exceptionnels sont déterminées "
+    "par grade et par échelle de solde conformément au tableau suivant",
+    # Décret n° 64-953, art. 6 (LEGIARTI000043361458).
+    "durée moyenne et la durée minimum du temps de services effectifs passé dans chacun des "
+    "échelons du grade de contrôleur divisionnaire sont fixées ainsi qu'il suit",
+    # Décret n° 70-903, art. 18 (LEGIARTI000006563521).
+    "Le temps normalement passé dans chaque échelon du grade provisoire de technicien supérieur "
+    "en chef est fixé à trois ans pour les 1er, 2e et 3e échelons",
+    # Décret n° 68-503, art. 4 (LEGIARTI000006571922).
+    "ECHELONS AVANCEMENT au choix 30 % AVANCEMENT à l'ancienneté 70 % Du 1er au 2e échelon "
+    "1 an 3 mois. 2 ans.",
+    # Décret n° 89-756, art. 9 (LEGIARTI000006705072).
+    "la durée moyenne donnant accès à l'échelon supérieur est de deux ans dans chacun des 1er "
+    "et 2e échelons",
+    # Décret n° 90-230, art. 10 (LEGIARTI000006458180).
+    "La durée moyenne de service requise pour une promotion à l'échelon supérieur est d'un an "
+    "dans le 1er échelon",
+    # Décret n° 93-145, art. 8 (LEGIARTI000006712672).
+    "L'ancienneté moyenne pour être nommé à l'échelon supérieur est de trois ans dans chacun "
+    "des deux premiers échelons.",
+    # Décret n° 99-314, art. 12 (LEGIARTI000006511446).
+    "durées moyenne et minimale dans chaque échelon sont fixées conformément au tableau "
+    "ci-après :",
+    # Décret n° 2020-959, art. 28 (LEGIARTI000042199627).
+    "La durée à accomplir pour accéder à l'échelon supérieur est fixée comme suit :",
+    # Décret n° 96-41, art. 21 (LEGIARTI000006481651) : un tableau sans phrase qui l'annonce.
+    "sont créés les grades provisoires suivants : GRADES ET ÉCHELONS provisoires DURÉE Moyenne "
+    "DURÉE Minimale Technicien en chef 7e échelon - - 6e échelon 4 ans 3 ans",
+    # Décret n° 92-873, art. 14 (LEGIARTI000006375774) : un tableau dessiné en caractères.
+    ": :-----------------------------: : 1er échelon : 4 ans : 3 ans : : (358)",
+]
+
+
+@pytest.mark.parametrize("texte", DUREES_D_ECHELON, ids=[t[:28] for t in DUREES_D_ECHELON])
+def test_le_filtre_garde_les_durees_d_echelon_sur_leur_seul_texte(texte: str):
+    assert index.THEMATIQUE.search(texte)
+
+
+#: Ce que le filtre écarte toujours, quoique ces articles disent « points » ou
+#: « échelon » : d'autres sens, lus dans les incréments LEGI de la DILA de
+#: décembre 2025 et janvier 2026, où le filtre du 2 novembre 2026 les écartait.
+AUTRES_SENS = [
+    ("LEGIARTI000020638725", "Article CODE", "L143-1", "Code de la route",
+     "L'article L. 130-9 est applicable en Nouvelle-Calédonie et pour son application les "
+     "mots : \" lorsqu'il a récupéré le nombre de points ayant été retirés de son permis de "
+     "conduire ou \" sont supprimés."),
+    ("LEGIARTI000038659119", "Article ARRETE", "9",
+     "Arrêté du 17 juin 2019 fixant les règles d'organisation générale, la nature et le "
+     "programme des épreuves des concours de recrutement d'adjoints administratifs principaux "
+     "de 2e classe de chancellerie du ministère des affaires étrangères",
+     "Si plusieurs candidats ont obtenu le même nombre de points, la priorité est accordée à "
+     "celui qui a obtenu la note la plus élevée à l'épreuve d'admission."),
+    ("LEGIARTI000022479466", "Article CODE", "L566-5", "Code de l'environnement",
+     "II. – A l'échelon du bassin ou groupement de bassins, sur la base de l'évaluation "
+     "préliminaire des risques d'inondation"),
+    ("LEGIARTI000006654764", "Article CODE", "L511-44", "Code monétaire et financier",
+     "Elle précise pour chaque organisme les échelons de qualité de crédit auxquelles "
+     "correspondent les évaluations réalisées."),
+    ("LEGIARTI000006465302", "Article CODE", "L2",
+     "Code des postes et des communications électroniques",
+     "dont le prix est inférieur à cinq fois le tarif applicable à un envoi de correspondance "
+     "du premier échelon de poids de la catégorie normalisée la plus rapide, sont réservés à "
+     "La Poste."),
+]
+
+
+@pytest.mark.parametrize("ident, nature, num, titre, texte", AUTRES_SENS,
+                         ids=[titre[:22] for _, _, _, titre, _ in AUTRES_SENS])
+def test_le_filtre_laisse_les_autres_sens_de_points_et_d_echelon(
+        ident: str, nature: str, num: str, titre: str, texte: str):
+    assert not index.pertinent(index.Document(ident, "2010-01-01", "2999-01-01", nature, num,
+                                              titre, texte))
+
+
 def test_l_index_fts_ignore_casse_et_accents(base: Path):
     assert _fts(base, "sécurité sociale") == {"JORFTEXT000000000001", "JORFARTI000000000003", "LEGIARTI000000000004"}
     assert _fts(base, "SECURITE") == _fts(base, "sécurité")
