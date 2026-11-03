@@ -1,0 +1,32 @@
+date: "2026-11-03"
+session: >-
+  l'action 131, file K de la troisième vague : la majoration des points de chef de
+  1952 à 1972 des pensions agricoles prises du 1er juillet 1986 au 31 décembre 2025,
+  soumise à la lecture de D. 732-76 et D. 732-77 dans leurs rédactions de 2005 à 2025
+consulte: >-
+  python scripts/veille_droit.py ; l'index LEGI du dépôt, récupéré (reconstruit le
+  2 novembre 2026, à jour à l'incrément du 2 novembre, 21 h 39), aucun incrément depuis ;
+  python scripts/textes.py --inscrire, trente-deux rédactions de la loi n° 48-1469 (les
+  marins, que des fiches de l'action 130 citent depuis la veille), laissées à sa file,
+  non inscrites ici ; l'index JORF, récupéré ; au
+  code rural, D. 732-74 à D. 732-79 et R. 732-67, toutes leurs rédactions dans l'index ;
+  l'article 2 du décret n° 86-1084 (LEGIARTI000006769405) ; les articles du décret
+  n° 2005-368 que l'index JORF porte ; Légifrance, qui répond à la session par un défi
+  de Cloudflare (403).
+trouve: >-
+  D. 732-76 et D. 732-77 n'ont dans l'index LEGI que leurs rédactions de 2026
+  (LEGIARTI000053365504, LEGIARTI000054059256, LEGIARTI000053365517) ; leurs voisins de
+  2005 y sont (LEGIARTI000006597484 à 486, 492, 493), et les identifiants 487, 488, 490
+  et 491 manquent. L'index JORF n'a ni D. 732-76 ni D. 732-77 parmi les 773 articles du
+  décret n° 2005-368 qu'il porte. Cause probable : le filtre thématique de l'index, que
+  le titre d'un article de code (« Code rural (nouveau) ») ne passe jamais, et que
+  l'article 2 du décret n° 86-1084 ne passe que par « retraites proportionnelles ».
+  R. 732-67 vise « les formules mentionnées à ses troisième et cinquième alinéas » :
+  D. 732-77 n'avait pas la forme de l'article 2, qui n'en tient donc pas lieu. Aucune
+  règle écrite.
+reste: >-
+  Au propriétaire (note 2026-11-03-d-732-76-et-d-732-77-hors-de-l-index.md) : élargir
+  le filtre de l'index aux points acquis et le reconstruire par le workflow Index DILA,
+  ou copier les deux articles de Légifrance ; puis la majoration des pensions de 1986 à
+  2025, dans les deux moteurs, et les témoins statut_exploitant_agricole_1925, _1935 et
+  _1945 qu'elle déplacera.
