@@ -99,7 +99,8 @@ avec.
    `approchee` ou `a_verifier`.
 4. Écrire la fiche, ou la mettre à jour : lectures, dates, état. Chaque
    rédaction lue y prend son statut, par son identifiant : citée par une
-   version, sans effet avec le mot à mot qui le montre, ou à rattacher. C'est
+   version, sans effet avec le mot à mot qui le montre (`dila_cherche.py legi
+   --num <article> --diff`), ou à rattacher. C'est
    ce qui fait baisser le cliquet des textes (`python scripts/textes.py`).
 5. Donner à la donnée le niveau de fiabilité qu'elle mérite (`certifiee` si
    recontrôlée automatiquement, `haute` si lue, `moyenne` si lue mais
@@ -140,10 +141,21 @@ python scripts/fetch/dila_index.py jorf --mettre-a-jour  # les incréments parus
 python scripts/fetch/dila_cherche.py jorf 'plafond NEAR("securite sociale")' --jusqu 1981
 python scripts/fetch/dila_cherche.py jorf --texte JORFTEXT000000568533 --motif mensuel
 python scripts/fetch/dila_cherche.py legi '"sur la base de" heures' --num R351-9
+python scripts/fetch/dila_cherche.py legi --num L161-17-2                  # son histoire
+python scripts/fetch/dila_cherche.py legi --num L161-17-2 --diff           # mot à mot
+python scripts/fetch/dila_cherche.py legi --num L161-17-2 --le 2026-03-01  # ce jour-là
 ```
 
 Lire les extraits, pas les textes : `--compter` d'abord si la requête est
 large, `--limite` ensuite, `--texte ID --motif` pour ne lire que les fenêtres
-utiles. L'index ne contient que le champ social (`THEMATIQUE` dans
+utiles. L'histoire d'un article se lit sans requête (action 184) : `--num`
+seul liste ses versions, texte par texte, et `--titre` départage deux codes
+qui portent le même numéro ; `--diff` imprime ce que chaque version change,
+mot à mot, ou « (texte inchangé) » ; `--motif` suit une expression de version
+en version. `--le` rend la version en vigueur un jour donné, la précédente, et
+les phrases où le texte dit à quoi il s'applique : la version en vigueur le
+jour d'effet d'une pension n'est pas toujours celle qui la régit, et c'est
+cette phrase, lue, qui le dit. Chaque réponse rappelle, sur la sortie
+d'erreur, le jour où l'index s'arrête. L'index ne contient que le champ social (`THEMATIQUE` dans
 `dila_index.py`) : ce qu'il ne trouve pas peut exister dans le dump, que les
 scripts de certification lisent encore par leur option `--dump`.

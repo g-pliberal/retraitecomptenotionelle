@@ -7787,3 +7787,73 @@ jaune 2027, ou sur la release `documents-apportes` ; ses mentions légales, dont
 la clause de réutilisation dirait si la release peut les servir
 (`rediffusion` du manifeste) ; et l'empreinte SHA-256 du PDF qu'elle sert, pour
 dire si la copie de l'UNSA est la sienne.
+
+### 184. L'histoire d'un article de loi, lue dans l'index de la DILA : ce que le dépôt lexifina/global-law fait mieux, repris, et ce qu'il fait mal, écarté — `en cours`
+
+**Reprise, au 3 novembre 2026.** L'étape 1 est faite : `dila_cherche.py legi
+--num <article>` lit l'histoire d'un article sans requête, `--diff` ce que
+chaque version change, mot à mot, `--le <date>` la version en vigueur ce
+jour-là, la précédente et les phrases où le texte dit à quoi il s'applique ;
+`--titre` départage deux textes, et chaque réponse dit la fraîcheur de
+l'index. Par quoi commencer : l'étape 2, qui change ce que l'index garde et le
+fait reconstruire par `index-dila.yml` ; puis la 3, qui sert le mot à mot à
+`textes.py`. Détail : `184/2026-11-03-etape-1.md`.
+
+**D'où elle vient.** Le 3 novembre 2026, le propriétaire signale
+`https://github.com/lexifina/global-law` : « Je crois qu'on fait la même chose
+mais moins bien actuellement. » Relevé le jour même : ce dépôt range des
+corpus de lois, un sous-module git par pays ; celui de la France,
+`lexifina/france-law`, met toute la base LEGI en historique git — un fichier
+par article, un commit par texte et par jour d'entrée en vigueur, ce texte
+pour auteur —, lue dans le dump du 13 juillet 2025 et ses incréments jusqu'au
+27 octobre 2026 : la source de l'index du dépôt. Il ne recouvre donc que la
+lecture de LEGI, ni le modèle, ni les fiches, ni les exemples publiés, ni le
+JORF. Puis : « Je veux qu'on améliore notre outils le plus possible […] Il
+faut prendre les bonnes idées et rejeter les mauvaises. »
+
+**Ce qui est repris.** L'article à une date (`tools/en_vigueur.py` du corpus),
+le mot à mot d'une version à l'autre (`git log -p --word-diff`), l'expression
+suivie de version en version (`git log -S`), le texte qui a écrit chaque
+version (l'auteur d'un commit, `git blame`), et la réponse qui dit toujours où
+son corpus s'arrête (« every answer states where its record starts and
+ends », dit le serveur MCP du dépôt).
+
+**Ce qui est écarté, et pourquoi.**
+
+- *Dépendre du dépôt, ou de son serveur MCP.* Le corpus français se dit
+  provisoire (son dernier commit : « URGENT TO-DO »), ses vérifications n'ont
+  pas tourné (`REPRODUCE.md` : « check_repo.py: not run for this build »), et
+  chaque correction se reconstruit puis se pousse en force : un commit cité un
+  jour peut disparaître le lendemain. Son manifeste avertit que les citations
+  du droit français n'y sont pas reconnues.
+- *Un chemin de fichier et un commit pour identifiants.* Les fiches,
+  `textes.py` et la certification citent les LEGIARTI, que le corpus ne porte
+  pas.
+- *Omettre les versions à venir.* Le corpus écarte celles qui prennent effet
+  après sa date ; le modèle en a besoin pour les pensions à venir, et l'index
+  les garde.
+- *Dater par la seule entrée en vigueur.* Pour le 1er mars 2026, le corpus rend
+  la version de L. 161-17-2 en vigueur depuis le 31 décembre 2025, que sa NOTA
+  n'applique qu'aux pensions prenant effet à compter du 1er septembre 2026, et
+  ne porte aucune note de portée (manifeste : « no commit carries Applies: »).
+  L'outil du dépôt rend la même version, mais met sous les yeux la phrase qui
+  le dit, et la version précédente.
+- *Laisser le JORF.* Le corpus ne lit que LEGI ; les barèmes anciens et les
+  textes que LEGI ne consolide pas sont au JORF, que l'index garde.
+
+**Les étapes.**
+
+1. *L'histoire d'un article, lue sur l'index tel qu'il est* — faite le
+   3 novembre 2026 (note `184/2026-11-03-etape-1.md`).
+2. *Ce que l'index garde de plus*, qui le fait reconstruire par
+   `index-dila.yml` : les liens de LEGI, le texte qui a créé, modifié ou abrogé
+   chaque version, que `--diff` nommera, lus avec les règles de sens que le
+   corpus a corrigées le 28 octobre 2026 (CHANGELOG de `global-law`) ; la
+   famille de chaque article (ses `VERSIONS`) et l'identifiant de son texte,
+   pour ne plus grouper par numéro et titre ; la NOTA à part du texte ; les
+   alinéas, que l'index fond en une ligne ; `1<sup>er</sup>` sans espace.
+   Puis tout ce qu'un texte a changé, d'un appel (`--auteur`, l'équivalent de
+   `git log --author`).
+3. *Le mot à mot au service des fiches* : `textes.py` le montre quand il
+   inscrit une rédaction « à examiner », pour qu'une rédaction sans effet se
+   déclare la preuve sous les yeux (`docs/veille_droit.md`, étape 4).

@@ -46,7 +46,10 @@ def _texte_jorf(ident: str, nature: str, date: str, titre: str, corps: str) -> s
 
 
 def _article(ident: str, cid: str, date_publi: str, nature: str, titre_txt: str,
-             num: str, corps: str, debut: str = "2999-01-01", fin: str = "2999-01-01") -> str:
+             num: str, corps: str, debut: str = "2999-01-01", fin: str = "2999-01-01",
+             nota: str = "") -> str:
+    # La NOTA précède le texte de l'article dans le dump, comme ici.
+    note = f"<NOTA><CONTENU><p>{nota}</p></CONTENU></NOTA>\n" if nota else ""
     return f"""<?xml version="1.0" encoding="UTF-8"?>
 <ARTICLE>
 <META><META_COMMUN><ID>{ident}</ID><NATURE>Article</NATURE></META_COMMUN>
@@ -55,7 +58,7 @@ def _article(ident: str, cid: str, date_publi: str, nature: str, titre_txt: str,
 <TEXTE autorite="" cid="{cid}" date_publi="{date_publi}" date_signature="{date_publi}" ministere="" nature="{nature}" nor="">
 <TITRE_TXT debut="1952-07-01" fin="2999-01-01" id_txt="{cid}">{titre_txt}</TITRE_TXT>
 </TEXTE></CONTEXTE>
-<BLOC_TEXTUEL><CONTENU><br/>   {corps}<br/></CONTENU></BLOC_TEXTUEL>
+{note}<BLOC_TEXTUEL><CONTENU><br/>   {corps}<br/></CONTENU></BLOC_TEXTUEL>
 </ARTICLE>
 """
 
@@ -488,7 +491,7 @@ def test_recuperer_dit_quand_rien_n_est_publie(tmp_path: Path, monkeypatch):
 # ---------------------------------------------------------------------------
 
 def _options(**valeurs) -> argparse.Namespace:
-    defauts = dict(depuis=None, jusqu=None, nature=None, num=None, limite=20,
+    defauts = dict(depuis=None, jusqu=None, nature=None, num=None, titre=None, limite=20,
                    extrait=14, compter=False)
     defauts.update(valeurs)
     return argparse.Namespace(**defauts)
@@ -580,3 +583,209 @@ for bloc in iter(lambda: sys.stdin.buffer.read(1 << 20), b""):
     attendus = {ligne[0] for ligne in db.execute("SELECT id FROM doc")}
     assert {l[4:] for l in sortie.splitlines() if l.startswith("@@@ ")} == attendus
     assert source.startswith("index JORF du dépôt")
+
+
+# ---------------------------------------------------------------------------
+# L'histoire d'un article (action 184). Ce que le dépôt lexifina/global-law
+# fait mieux — l'article à une date, le mot à mot d'une version à l'autre —,
+# repris sur l'index ; ce qu'il fait mal — dater par la seule entrée en
+# vigueur —, corrigé par les clauses d'application que le texte donne.
+# ---------------------------------------------------------------------------
+
+#: L. 161-17-2 CSS en trois versions simplifiées : l'âge légal à 62 ans, à
+#: 64 ans, puis la suspension de la LFSS 2026, que sa NOTA n'applique qu'aux
+#: pensions prenant effet à compter du 1er septembre 2026. Identifiants fictifs.
+AGE_62 = ("L'âge d'ouverture du droit à une pension de retraite est fixé à soixante-deux ans "
+          "pour les assurés nés à compter du 1er janvier 1955.")
+AGE_64 = AGE_62.replace("soixante-deux", "soixante-quatre").replace("1955.", "1968.")
+AGE_64_SUSPENDU = AGE_64.replace("1968.", "1969.")
+NOTA_2026 = ("Conformément au VI de l'article 105 de la loi n° 2025-1403 du 30 décembre 2025, "
+             "ces dispositions s'appliquent aux pensions prenant effet à compter du "
+             "1er septembre 2026.")
+GARANTIE = ("L'assurance vieillesse garantit une pension de retraite à l'assuré qui en demande "
+            "la liquidation à partir de l'âge mentionné à l'article L. 161-17-2.")
+CHOMAGE = ("Les travailleurs involontairement privés d'emploi, aptes au travail et recherchant "
+           "un emploi, ont droit à un revenu de remplacement.")
+
+
+@pytest.fixture
+def legi(tmp_path: Path) -> Path:
+    def version(rang: int, titre: str, num: str, corps: str, debut: str,
+                fin: str = "2999-01-01", nota: str = "") -> tuple[str, str]:
+        ident = f"LEGIARTI{rang:012d}"
+        cid = "LEGITEXT000006073189" if "sociale" in titre else "LEGITEXT000006072050"
+        return (f"legi/global/code_en_vigueur/LEGI/ARTI/{ident}.xml",
+                _article(ident, cid, "2999-01-01", "CODE", titre, num, corps, debut, fin, nota))
+
+    css, travail = "Code de la sécurité sociale", "Code du travail"
+    # Un nom sans horodatage : un dump daté ferait télécharger à
+    # ``construire`` tous les incréments parus depuis. La date de l'index
+    # s'écrit à part, comme la laisserait le dump du 13 juillet 2025.
+    dump = _archive(tmp_path / "legi_essai.tar.gz", dict([
+        version(101, css, "L161-17-2", AGE_62, "2012-01-01", "2023-09-01"),
+        version(102, css, "L161-17-2", AGE_64, "2023-09-01", "2025-12-31"),
+        version(103, css, "L161-17-2", AGE_64_SUSPENDU, "2025-12-31", nota=NOTA_2026),
+        version(201, css, "L351-1", GARANTIE, "2004-01-01", "2011-07-01"),
+        # Modifiée avant de prendre effet : jamais en vigueur (« mort-née »).
+        version(202, css, "L351-1", GARANTIE.replace("161-17-2", "161-17-3"),
+                "2011-07-01", "2011-07-01"),
+        version(203, css, "L351-1", GARANTIE, "2011-07-01"),
+        version(301, travail, "L351-1", CHOMAGE, "1984-03-23", "2008-05-01"),
+    ]))
+    chemin = tmp_path / "legi.sqlite"
+    index.construire("legi", chemin, tout=True, archive=dump)
+    with sqlite3.connect(chemin) as db:
+        db.execute("UPDATE meta SET valeur = '20250713-140000' WHERE cle = 'dernier_increment'")
+    return chemin
+
+
+def _cli(chemin: Path, *arguments: str) -> int:
+    return cherche.main(["legi", "--index", str(chemin), *arguments])
+
+
+def test_l_histoire_d_un_article_se_lit_sans_requete(legi: Path, capsys):
+    assert _cli(legi, "--num", "L. 161-17-2") == 0
+    assert capsys.readouterr().out.splitlines() == [
+        "LEGIARTI000000000101  2012-01-01 → 2023-09-01  Article CODE art. L161-17-2  "
+        "Code de la sécurité sociale",
+        "LEGIARTI000000000102  2023-09-01 → 2025-12-31  Article CODE art. L161-17-2  "
+        "Code de la sécurité sociale",
+        "LEGIARTI000000000103  2025-12-31  Article CODE art. L161-17-2  "
+        "Code de la sécurité sociale",
+    ]
+
+
+def test_un_numero_absent_de_l_index_le_dit(legi: Path, capsys):
+    assert _cli(legi, "--num", "L999-1") == 1
+    assert "L999-1 n'est pas dans l'index" in capsys.readouterr().err
+
+
+def test_la_limite_garde_les_versions_les_plus_recentes(legi: Path, capsys):
+    assert _cli(legi, "--num", "L161-17-2", "--limite", "2") == 0
+    sortie = capsys.readouterr().out
+    assert "LEGIARTI000000000101" not in sortie
+    assert "LEGIARTI000000000102" in sortie and "LEGIARTI000000000103" in sortie
+    assert sortie.endswith("— 3 versions au total, 2 affichées (--limite)\n")
+
+
+def test_le_titre_departage_deux_articles_du_meme_numero(legi: Path, capsys):
+    assert _cli(legi, "--num", "L351-1") == 0
+    sortie = capsys.readouterr().out
+    assert sortie.index("Code de la sécurité sociale") < sortie.index("Code du travail")
+    assert _cli(legi, "--num", "L351-1", "--titre", "securite sociale") == 0
+    assert "Code du travail" not in capsys.readouterr().out
+    db = sqlite3.connect(legi)
+    assert cherche.chercher(db, "remplacement", _options(titre="TRAVAIL"))[1] == 1
+    assert cherche.chercher(db, "remplacement", _options(titre="sécurité"))[1] == 0
+
+
+def test_la_difference_se_lit_mot_a_mot():
+    assert cherche.difference(AGE_62, AGE_64) == (
+        "… pension de retraite est fixé à [-soixante-deux-]{+soixante-quatre+} ans pour les "
+        "assurés nés à compter du 1er janvier [-1955.-]{+1968.+}")
+    assert cherche.difference(AGE_64, AGE_64) == ""
+
+
+def test_la_difference_ignore_le_balisage_d_un_ordinal():
+    """« 1<sup>er</sup> » devient « 1 er » dans l'index, quand une version
+    antérieure écrivait « 1er » : vu sur L. 161-17-2 le 31 décembre 2025, ce
+    n'est pas un changement du texte."""
+    assert cherche.difference("à compter du 1er janvier 1969.",
+                              "à compter du 1 er janvier 1969.") == ""
+    assert cherche.difference("la 1re catégorie", "la 1 re catégorie") == ""
+
+
+def test_diff_montre_chaque_version_contre_la_precedente(legi: Path, capsys):
+    assert _cli(legi, "--num", "L161-17-2", "--diff") == 0
+    lignes = capsys.readouterr().out.splitlines()
+    assert len(lignes) == 5
+    assert lignes[0].startswith("LEGIARTI000000000101  2012-01-01")
+    assert lignes[1].startswith("LEGIARTI000000000102")
+    assert lignes[2] == "    " + cherche.difference(AGE_62, AGE_64)
+    assert lignes[3].startswith("LEGIARTI000000000103")
+    assert lignes[4].startswith("    {+Conformément au VI de l'article 105")
+    assert lignes[4].endswith("[-1968.-]{+1969.+}")
+
+
+def test_diff_dit_un_texte_inchange_et_passe_une_version_jamais_en_vigueur(legi: Path, capsys):
+    """Une rédaction « sans effet » se prouve par son mot à mot
+    (docs/veille_droit.md, étape 4) : ici, il est vide. Une version mort-née
+    se compare à la précédente, mais la suivante se compare à la dernière qui
+    a été en vigueur."""
+    assert _cli(legi, "--num", "L351-1", "--titre", "sécurité sociale", "--diff") == 0
+    lignes = capsys.readouterr().out.splitlines()
+    assert lignes[1].startswith("LEGIARTI000000000202")
+    assert lignes[1].endswith("(jamais en vigueur)")
+    assert lignes[2] == "    … de l'âge mentionné à l'article L. [-161-17-2.-]{+161-17-3.+}"
+    assert lignes[3].startswith("LEGIARTI000000000203")
+    assert lignes[4] == "    (texte inchangé)"
+
+
+def test_le_rend_la_version_en_vigueur_ce_jour_la_et_ses_dates_d_application(legi: Path, capsys):
+    """La version en vigueur un jour n'est pas toujours celle qu'on applique à
+    une pension prenant effet ce jour-là : la NOTA le dit, et l'outil la met
+    sous les yeux, avec la version précédente."""
+    assert _cli(legi, "--num", "L161-17-2", "--le", "2026-03-01") == 0
+    sortie = capsys.readouterr().out
+    assert sortie.startswith("LEGIARTI000000000103  2025-12-31  Article CODE")
+    assert AGE_64_SUSPENDU in sortie
+    assert "précédente : LEGIARTI000000000102  2023-09-01 → 2025-12-31" in sortie
+    assert f"    « {NOTA_2026} »" in sortie
+    assert "LEGIARTI000000000101" not in sortie
+
+
+def test_le_compte_la_fin_d_une_version_comme_legi(legi: Path, capsys):
+    """DATE_FIN est le premier jour de la version suivante."""
+    assert _cli(legi, "--num", "L161-17-2", "--le", "2025-12-30") == 0
+    sortie = capsys.readouterr().out
+    assert sortie.startswith("LEGIARTI000000000102") and "s'appliquent" not in sortie
+    assert _cli(legi, "--num", "L161-17-2", "--le", "2025-12-31") == 0
+    assert capsys.readouterr().out.startswith("LEGIARTI000000000103")
+
+
+def test_le_avant_la_premiere_version_le_dit(legi: Path, capsys):
+    assert _cli(legi, "--num", "L161-17-2", "--le", "1990-01-01") == 1
+    assert "la première commence le 2012-01-01" in capsys.readouterr().err
+
+
+def test_le_au_dela_de_l_index_previent(legi: Path, capsys):
+    assert _cli(legi, "--num", "L161-17-2", "--le", "2026-03-01") == 0
+    assert "l'index s'arrête au 2025-07-13" in capsys.readouterr().err
+
+
+def test_les_clauses_d_application_se_relevent_et_pas_le_reste():
+    assert cherche.clauses_d_application(f"{NOTA_2026} {AGE_64_SUSPENDU}") == [NOTA_2026]
+    assert cherche.clauses_d_application(AGE_64_SUSPENDU) == []
+    assert cherche.clauses_d_application(
+        "Ces dispositions sont applicables aux pensions de retraite prenant effet à compter "
+        "du 1 er janvier 2026. Le décret entre en vigueur le 1er septembre 2023. Il est "
+        "fixé à l'article L. 351-1.") == [
+        "Ces dispositions sont applicables aux pensions de retraite prenant effet à compter "
+        "du 1 er janvier 2026.",
+        "Le décret entre en vigueur le 1er septembre 2023."]
+
+
+def test_motif_suit_une_expression_de_version_en_version(legi: Path, capsys):
+    assert _cli(legi, "--num", "L161-17-2", "--motif", "1955", "--autour", "12") == 0
+    sortie = capsys.readouterr().out
+    assert "…1er janvier 1955.…" in sortie
+    assert sortie.count("    (absent)") == 2
+
+
+def test_chaque_reponse_dit_la_fraicheur_de_l_index(legi: Path, capsys):
+    """Une certification est vraie à une date (docs/archives/veille_droit.md) :
+    la réponse dit jusqu'où va l'index, et comment le rattraper."""
+    assert _cli(legi, "--num", "L161-17-2") == 0
+    erreur = capsys.readouterr().err
+    assert "index LEGI à jour au 2025-07-13" in erreur
+    assert "python scripts/fetch/dila_index.py legi --mettre-a-jour" in erreur
+    assert _cli(legi, "pension") == 0
+    assert "index LEGI à jour au 2025-07-13" in capsys.readouterr().err
+
+
+@pytest.mark.parametrize("arguments", [
+    ["--diff"], ["--le", "2026-03-01"], ["pension", "--num", "L351-1", "--diff"],
+    ["--num", "L351-1", "--le", "1er mars 2026"]])
+def test_diff_et_le_suivent_un_article(legi: Path, arguments: list[str]):
+    with pytest.raises(SystemExit):
+        _cli(legi, *arguments)
