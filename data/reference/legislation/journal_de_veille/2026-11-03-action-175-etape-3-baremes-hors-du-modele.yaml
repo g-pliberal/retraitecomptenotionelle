@@ -1,0 +1,25 @@
+date: "2026-11-03"
+session: "action 175, étape 3 : les barèmes hors du modèle"
+consulte: >-
+  La base de législation de la Cnav, par son API : les 228 barèmes que l'étape 2
+  laissait à lire et les 495 pages jointes — les taux de change par pays depuis 1990 et
+  les taux de conversion des règlements européens, les rachats, le versement pour la
+  retraite et les cotisations arriérées, les assiettes forfaitaires des activités
+  particulières, l'assurance vieillesse des aidants, la validation gratuite de l'Algérie,
+  l'invalidité, le veuvage, la pension d'orphelin, les anciennes prestations, les
+  avantages en nature, le paiement et les prélèvements sur les retraites ; les exposés
+  « Annulation au profit d'un régime spécial », « Pension d'orphelin », ceux de
+  l'allocation de veuvage et de la pension de vieillesse de veuve ou de veuf, et celui
+  du calcul du minimum contributif, pour son avance.
+trouve: >-
+  Aucune table de change ne convertit les anciens francs ni la monnaie d'un département
+  d'outre-mer. 219 barèmes et 495 pages rangés : des limites déclarées (rachats et
+  versements, assiettes forfaitaires, aidants, Algérie) ou que les fiches disaient déjà,
+  le reste hors du modèle avec sa raison ; huit barèmes que des tests confrontaient déjà,
+  ou que deux tests neufs confrontent. La revalorisation des pensions d'invalidité au
+  1er avril, depuis 2020, n'est pas celle que le moteur leur applique : un écart
+  possible, à la session du modèle.
+reste: >-
+  Huit barèmes de Mayotte que le modèle sert, à l'étape 4 avec leur thème ; les
+  coefficients de revalorisation de la pension d'invalidité, à la session du modèle
+  (note de l'étape 3).
