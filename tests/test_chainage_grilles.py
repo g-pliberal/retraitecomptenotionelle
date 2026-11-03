@@ -151,6 +151,105 @@ def test_un_texte_commun_a_plusieurs_corps_ne_rattache_pas_sur_le_seul_libelle(d
                 and d["texte_grille"] == "LEGITEXT000034028389"]
 
 
+@pytest.fixture(scope="module")
+def noyau() -> dict:
+    """Les lignes du Noyau RH (``grilles/etat/``) qui citent chaque texte : de
+    quel corps ou de quel grade, et à quelles dates (fin incluse)."""
+    textes = {t["texte"]: t for t in _lire(GRILLES / "etat" / "textes.csv")}
+    citations: dict[tuple, list[tuple]] = {}
+    for nom, colonne in (("corps", "corps"), ("grades", "grade")):
+        for ligne in _lire(GRILLES / "etat" / f"{nom}.csv"):
+            for reference in ligne["textes"].split():
+                ident = reference.split(":")[0]
+                qui = (f"le corps {ligne['corps']}" if colonne == "corps"
+                       else f"le grade {ligne['grade']} du corps {ligne['corps']}")
+                citations.setdefault((qui, ident), []).append((ligne["debut"], ligne["fin"]))
+    numeros = {}
+    for (qui, ident) in citations:
+        numeros.setdefault(textes.get(ident, {}).get("numero", ""), set()).add(qui)
+    return {"textes": textes, "citations": citations, "numeros": numeros}
+
+
+def _couvert(intervalles, debut, fin_exclue) -> bool:
+    """[debut, fin_exclue) est couvert par la réunion des intervalles (fin incluse)."""
+    import datetime
+    jour = debut
+    fin_exclue = fin_exclue or "9999-12-31"
+    for d, f in sorted(intervalles):
+        if d <= jour and (not f or f >= jour):
+            if not f:
+                return True
+            jour = (datetime.date.fromisoformat(f) + datetime.timedelta(days=1)).isoformat()
+            if jour >= fin_exclue:
+                return True
+    return jour >= fin_exclue
+
+
+def test_le_noyau_cite_un_statut_par_ses_corps_comme_par_ses_grades(durees, noyau):
+    # Relecture R-B3, point 1 d : les corps de `corps.csv` et ceux des grades de
+    # `grades.csv` étaient réunis dans un seul dictionnaire, indexé par le code du
+    # corps ; les grades écrasaient le corps. Le n° 2011-1317 (attachés, texte du
+    # noyau), le n° 2012-1098 (assistants de service social), le n° 2015-576
+    # (ingénieurs des systèmes d'information et de communication) et le n° 99-911
+    # sont pourtant cités au noyau : aucune raison ne doit dire le contraire.
+    for d in durees:
+        if d["statut"] != "declare":
+            continue
+        for numero in __import__("re").findall(r"le Noyau RH ne cite le n° (\S+) pour aucun corps",
+                                               d["raison"]):
+            assert not noyau["numeros"].get(numero), (numero, sorted(noyau["numeros"][numero])[:3])
+
+
+def test_deux_corps_qui_citent_le_statut_et_ont_les_memes_grades_ne_se_rattachent_pas(durees):
+    # Décret n° 2012-762 (texte 1142 du noyau, « portant dispositions statutaires
+    # communes aux corps d'infirmiers de catégorie A des administrations de l'Etat ») :
+    # `corps.csv` le cite pour le corps 01102 (« Infirmiers des administrations de
+    # l'Etat ») et pour le corps 01153 (« Infirmiers de la défense »), qui ont, du
+    # 2012-06-01 au 2021-12-31, les mêmes grades aux mêmes grilles (« Infirmier hors
+    # classe » 02947 puis 03214, « … de classe supérieure » 02948 puis 03215, « … de
+    # classe normale » 02949 puis 03216). Un seul corps au noyau : aucun rattachement.
+    statuts = {t["texte"]: t["numero"] for t in _lire(GRILLES / "durees" / "textes.csv")}
+    assert not [d for d in durees if statuts[d["texte"]] == "2012-762"
+                and d["statut"] == "rattache" and d["lien"] == "noyau"]
+
+
+def _citations_de_la_preuve(preuve: str):
+    import re
+    return re.findall(r"(le (?:corps|grade \d{5} du corps) \d{5}) cite le texte (\d+)", preuve)
+
+
+def test_la_preuve_du_noyau_dit_qui_cite_le_statut_et_vaut_sur_toute_la_periode(durees, noyau):
+    # Relecture R-B3, point 1 d : « le corps … cite » quand seul un grade cite ;
+    # et une citation de 1984 à 1995 (grades 03762 à 03764 du corps 00550, texte
+    # 1135, n° 83-1260) prise pour toute la période 2002-2020. La preuve nomme qui
+    # cite (le corps, ou tel grade du corps), et ses versions qui citent le texte
+    # couvrent la période du rattachement.
+    lignes = [d for d in durees if d["statut"] == "rattache" and d["lien"] == "noyau"]
+    assert lignes
+    for d in lignes:
+        citations = _citations_de_la_preuve(d["preuve"])
+        assert citations, d["preuve"]
+        intervalles = [i for qui, ident in citations
+                       for i in noyau["citations"].get((qui, ident), [])]
+        assert intervalles, (d["preuve"], citations)
+        assert _couvert(intervalles, d["debut"], d["fin"]), (d["texte"], d["groupe"], d["debut"],
+                                                             d["fin"], citations)
+
+
+def test_la_preuve_d_un_reclassement_dit_qui_cite_le_statut_a_sa_date(reclassements, noyau):
+    import datetime
+    lignes = [r for r in reclassements if r["statut"] == "rattache"]
+    assert lignes
+    for r in lignes:
+        citations = _citations_de_la_preuve(r["preuve"])
+        assert citations, r["preuve"]
+        veille = (datetime.date.fromisoformat(r["date"]) - datetime.timedelta(days=1)).isoformat()
+        for qui, ident in citations:
+            intervalles = noyau["citations"].get((qui, ident), [])
+            assert any(d <= jour and (not f or jour <= f)
+                       for d, f in intervalles for jour in (veille, r["date"])), (r, qui, ident)
+
+
 def test_chaque_grade_de_chaque_tableau_est_rattache_ou_declare(durees):
     attendus = {(l["texte"], l["article"], l["tableau"], l["groupe"])
                 for l in _lire(GRILLES / "durees" / "lignes.csv")}
@@ -318,3 +417,27 @@ def test_un_tableau_que_le_legi_abime_est_a_lire_au_jorf(a_lire):
                 and a["cas"] == "abime"]
     assert "LEGIARTI000042571828" in ligne["articles"]
     assert ligne["numero"] == "96-1113"
+
+
+def test_un_article_de_durees_que_le_lecteur_n_a_pas_lu_ne_se_dit_pas_absent_du_legi(a_lire):
+    # Décret n° 87-1103 (LEGITEXT000006065787), art. 15 (LEGIARTI000006370660),
+    # du 1987-12-31 au 1996-02-08 au LEGI : « La durée maximale et la durée minimale
+    # du temps passé dans chacun des échelons sont fixées ainsi qu'il suit : GRADES
+    # ET ÉCHELONS DUREE Maximale Minimale 7e échelon 3 ans 6 mois 3 ans […] » ; le
+    # lecteur des durées ne l'a pas lu (`durees/non_lus.csv` : « échelons dans le
+    # désordre »). Le tableau n'y manque pas : il n'est pas lu (relecture R-B3,
+    # point 6).
+    (ligne,) = [a for a in a_lire if a["texte"] == "LEGITEXT000006065787"]
+    assert ligne["cas"] == "non_lu"
+    assert "LEGIARTI000006370660" in ligne["detail"]
+    assert "échelons dans le désordre" in ligne["detail"]
+    # Aucun cas `manque` n'a d'article de durées non lu avant son premier tableau lu.
+    premier = {}
+    for t in _lire(GRILLES / "durees" / "tableaux.csv"):
+        premier[t["texte"]] = min(premier.get(t["texte"], t["debut"]), t["debut"])
+    non_lus = _lire(GRILLES / "durees" / "non_lus.csv")
+    for a in a_lire:
+        if a["cas"] == "manque":
+            assert not [n for n in non_lus if n["texte"] == a["texte"]
+                        and n["debut"] < premier[a["texte"]]], a
+            assert "LEGI" not in a["detail"].split(";")[-1], a

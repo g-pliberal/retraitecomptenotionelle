@@ -292,15 +292,75 @@ class Depot:
         self.noyau_echelons = collections.defaultdict(list)
         for echelon in lire(GRILLES / "etat" / "echelons.csv"):
             self.noyau_echelons[echelon["grille"]].append(echelon)
-        self.corps_citant: dict[str, dict[str, str]] = collections.defaultdict(dict)
-        for code, versions in {**self.noyau_corps, **self.noyau_grades}.items():
-            for version in versions:
-                corps = version["corps"]
-                for reference in version["textes"].split():
-                    ident = reference.split(":")[0]
-                    numero = self.noyau_textes.get(ident, {}).get("numero", "")
-                    if numero:
-                        self.corps_citant[numero].setdefault(corps, ident)
+        # Qui cite chaque numéro de texte, et quand : une version de corps
+        # (`corps.csv`) ou une version de l'un de ses grades (`grades.csv`), avec
+        # ses dates. Les deux fichiers se lisent l'un après l'autre : réunis en un
+        # dictionnaire indexé par le code du corps, les grades écrasaient le corps
+        # (relecture R-B3, point 1 d).
+        self.citations: dict[str, dict[str, list[dict]]] = collections.defaultdict(
+            lambda: collections.defaultdict(list))
+        for versions, qui in ((self.noyau_corps, lambda v: f"le corps {v['corps']}"),
+                              (self.noyau_grades,
+                               lambda v: f"le grade {v['grade']} du corps {v['corps']}")):
+            for liste in versions.values():
+                for version in liste:
+                    for reference in version["textes"].split():
+                        ident = reference.split(":")[0]
+                        numero = self.noyau_textes.get(ident, {}).get("numero", "")
+                        if numero:
+                            self.citations[numero][version["corps"]].append(
+                                {"qui": qui(version), "texte": ident, "debut": version["debut"],
+                                 "fin": version["fin"]})
+        self.corps_citant: dict[str, dict[str, str]] = {
+            numero: {c: liste[0]["texte"] for c, liste in sorted(par_corps.items())}
+            for numero, par_corps in self.citations.items()}
+
+    def citations_sur(self, numero: str, corps: str, debut: str, fin: str):
+        """Les morceaux de [debut, fin) où une version du corps ou de l'un de ses
+        grades cite le n° numero : [(début, fin exclue, citations)]."""
+        bouts = sorted(((p, c) for c in self.citations.get(numero, {}).get(corps, [])
+                        for p in [intersection(debut, fin, c["debut"], c["fin"])] if p),
+                       key=lambda b: (b[0], b[1]["qui"], b[1]["texte"]))
+        morceaux: list[list] = []
+        for (d, f), c in bouts:
+            if morceaux and d <= morceaux[-1][1]:
+                morceaux[-1][1] = max(morceaux[-1][1], f)
+                morceaux[-1][2].append(c)
+            else:
+                morceaux.append([d, f, [c]])
+        for morceau in morceaux:
+            # Le corps d'abord : ses grades ne sont cités que là où il ne cite pas.
+            du_corps = [c for c in morceau[2] if c["qui"].startswith("le corps")]
+            if du_corps and self._couvre(du_corps, morceau[0], morceau[1]):
+                morceau[2] = du_corps
+        return [tuple(m) for m in morceaux]
+
+    @staticmethod
+    def _couvre(citations: list[dict], debut: str, fin: str) -> bool:
+        jour = debut
+        for c in sorted(citations, key=lambda c: c["debut"]):
+            if c["debut"] <= jour:
+                jour = max(jour, lendemain(c["fin"]))
+        return jour >= (fin or OUVERT)
+
+    def cite_au(self, numero: str, corps: str, *jours: str) -> list[dict]:
+        """Les citations du n° numero par le corps, ou l'un de ses grades, en
+        vigueur l'un de ces jours."""
+        return [c for c in self.citations.get(numero, {}).get(corps, [])
+                if any(en_vigueur(c, j) for j in jours)]
+
+    def preuve_du_noyau(self, citations: list[dict]) -> str:
+        """« Noyau RH : le corps 00021 cite le texte 160, « … » (du … au …) »,
+        ou « le grade 03762 du corps 00550 cite … » quand seul un grade cite."""
+        groupes: dict[tuple, list[dict]] = collections.defaultdict(list)
+        for c in citations:
+            groupes[(c["qui"], c["texte"])].append(c)
+        return " ; ".join(
+            f"Noyau RH : {qui} cite le texte {ident}, « {self.noyau_textes[ident]['titre']} » ("
+            + ", ".join(sorted({f"du {c['debut']} au {c['fin']}" if c["fin"]
+                                else f"depuis le {c['debut']}" for c in liste})) + ")"
+            for (qui, ident), liste in sorted(groupes.items(), key=lambda g: (
+                not g[0][0].startswith("le corps"), g[0])))
 
     def rangs_legi(self, versant: str, texte: str, grille: str, debut: str, fin: str) -> set[int]:
         return {int(e["rang"]) for e in self.echelons[(versant, texte, grille)]
@@ -429,19 +489,24 @@ def _candidats_noyau(depot: Depot, tableau: dict, groupe: str, rangs: set[int]):
         raisons.append(("unicite", "plusieurs corps du Noyau RH ont ce grade aux mêmes dates : "
                         + ", ".join(sorted(corps_trouves))))
         return prouves, raisons
-    for corps, ident, grade, (debut, fin) in trouves:
-        rangs_grille = depot.rangs_noyau(grade["grille"], debut, fin)
-        if rangs_grille != rangs:
-            raisons.append(("echelons", f"les échelons diffèrent : le tableau a les rangs "
-                            f"{sorted(rangs)}, la grille {grade['grille']} du noyau "
-                            f"{sorted(rangs_grille)} {_fmt(debut, fin)}"))
+    for corps, ident, grade, periode in trouves:
+        morceaux = depot.citations_sur(numero, corps, *periode)
+        if not morceaux:
+            raisons.append(("periode", f"le grade {grade['grade']} du corps {corps} porte ce "
+                            f"libellé {_fmt(*periode)}, mais le Noyau RH n'y cite le n° {numero} "
+                            "ni pour le corps ni pour l'un de ses grades"))
             continue
-        texte = depot.noyau_textes[ident]
-        prouves.append({"source": "etat", "texte_grille": "", "grille": grade["grille"],
-                        "libelle_grille": grade["libelle"], "corps": corps,
-                        "grade": grade["grade"], "debut": debut, "fin": fin, "lien": "noyau",
-                        "preuve": f"Noyau RH : le corps {corps} cite le texte {ident}, "
-                                  f"« {texte['titre']} »"})
+        for debut, fin, citations in morceaux:
+            rangs_grille = depot.rangs_noyau(grade["grille"], debut, fin)
+            if rangs_grille != rangs:
+                raisons.append(("echelons", f"les échelons diffèrent : le tableau a les rangs "
+                                f"{sorted(rangs)}, la grille {grade['grille']} du noyau "
+                                f"{sorted(rangs_grille)} {_fmt(debut, fin)}"))
+                continue
+            prouves.append({"source": "etat", "texte_grille": "", "grille": grade["grille"],
+                            "libelle_grille": grade["libelle"], "corps": corps,
+                            "grade": grade["grade"], "debut": debut, "fin": fin, "lien": "noyau",
+                            "preuve": depot.preuve_du_noyau(citations)})
     return prouves, raisons
 
 
@@ -456,6 +521,8 @@ def _fusionner(lignes: list[dict]) -> list[dict]:
                                                         "grade", "corps", "lien")) \
                 and avant["fin"] == ligne["debut"]:
             avant["fin"] = ligne["fin"]
+            if ligne["preuve"] not in avant["preuve"]:
+                avant["preuve"] += " ; puis " + ligne["preuve"]
         else:
             sortie.append(dict(ligne))
     return sortie
@@ -595,13 +662,17 @@ def statuts_de_la_phrase(depot: Depot, tableau: dict) -> tuple[dict[str, str], s
     return nommes, ""
 
 
-def _corps_du_reclassement(depot: Depot, nommes: dict[str, str]) -> dict[str, tuple[str, str]]:
-    """Les corps du noyau qui citent les statuts nommés : {corps : (texte du
-    noyau, numéro du statut)}."""
-    corps: dict[str, tuple[str, str]] = {}
+def _corps_du_reclassement(depot: Depot, nommes: dict[str, str],
+                           jour: str) -> dict[str, tuple[str, list[dict]]]:
+    """Les corps du noyau qui citent un statut nommé la veille ou le jour du
+    reclassement, par une version du corps ou de l'un de ses grades :
+    {corps : (numéro du statut, citations)}."""
+    corps: dict[str, tuple[str, list[dict]]] = {}
     for n in sorted(nommes):
-        for c, ident in depot.corps_citant.get(n, {}).items():
-            corps.setdefault(c, (ident, n))
+        for c in sorted(depot.citations.get(n, {})):
+            citations = depot.cite_au(n, c, veille(jour), jour)
+            if citations and c not in corps:
+                corps[c] = (n, citations)
     return corps
 
 
@@ -640,10 +711,10 @@ def chainer_reclassements(depot: Depot) -> list[dict]:
             declarer(raison)
             continue
         statuts = ", ".join(f"n° {n}" for n in sorted(nommes))
-        corps = _corps_du_reclassement(depot, nommes)
+        corps = _corps_du_reclassement(depot, nommes, jour)
         if not corps:
-            declarer(f"le Noyau RH ne cite pour aucun corps le statut que nomme la phrase "
-                     f"({statuts})")
+            declarer(f"le Noyau RH ne cite, la veille ni le jour du {jour}, pour aucun corps ni "
+                     f"aucun grade, le statut que nomme la phrase ({statuts})")
             continue
         absorbes = {a for c in corps for v in depot.noyau_corps.get(c, [])
                     for a in v["anterieurs"].split()}
@@ -684,9 +755,11 @@ def chainer_reclassements(depot: Depot) -> list[dict]:
         citations = []
         for c in dict.fromkeys((corps_o, corps_a)):
             if c in corps:
-                ident, numero = corps[c]
-                citations.append(f"{nommes[numero]} ; Noyau RH : le corps {c} cite le texte "
-                                 f"{ident}, « {depot.noyau_textes[ident]['titre']} »")
+                numero, liste = corps[c]
+                # Le corps s'il cite ; sinon les grades du reclassement, s'ils citent.
+                liste = ([x for x in liste if x["qui"].startswith("le corps")]
+                         or [x for x in liste if x["qui"].split()[2] in (go, ga)] or liste)
+                citations.append(f"{nommes[numero]} ; {depot.preuve_du_noyau(liste)}")
         sortie.append({**base, "statut": "rattache", "corps": corps_a,
                        "grade_origine": go, "grille_origine": grille_o,
                        "grade_accueil": ga, "grille_accueil": grille_a,
@@ -730,17 +803,39 @@ def a_lire_au_jorf(depot: Depot) -> list[dict]:
         if t["texte"] not in premier or t["debut"] < premier[t["texte"]]:
             premier[t["texte"]] = t["debut"]
         articles[t["texte"]].add(t["article"])
+    non_lus: dict[str, list[dict]] = collections.defaultdict(list)
+    for n in lire(GRILLES / "durees" / "non_lus.csv"):
+        non_lus[n["texte"]].append(n)
     for texte, debut in premier.items():
         t = depot.durees_textes[texte]
         # Moins de trois mois d'écart est d'ordinaire l'entrée en vigueur
         # différée du texte (« le premier jour du mois qui suit sa
         # publication », décret n° 2016-203, art. 4) : non retenu.
-        if (date.fromisoformat(debut) - date.fromisoformat(t["debut"])).days > ECART_RETENU:
+        if (date.fromisoformat(debut) - date.fromisoformat(t["debut"])).days <= ECART_RETENU:
+            continue
+        ecart = (f"le texte vaut au LEGI depuis le {t['debut']} ; son premier tableau de durées "
+                 f"lu (durees/tableaux.csv) vaut depuis le {debut}")
+        # Un article de durées d'avant, que le lecteur n'a pas lu, est au LEGI :
+        # le tableau n'y manque pas (relecture R-B3, point 6).
+        avant = sorted((n for n in non_lus[texte] if n["debut"] < debut),
+                       key=lambda n: (n["debut"], n["article"]))
+        if avant:
+            vus = list(dict.fromkeys(
+                f"art. {n['numero']}, {n['article']}, {_fmt(n['debut'], n['fin'] or OUVERT)}, "
+                f"« {n['motif']} »" for n in avant))
+            lignes.append({"versant": t["versant"], "texte": texte, "numero": t["numero"],
+                           "titre": t["titre"], "cas": "non_lu",
+                           "articles": " ".join(sorted({n["article"] for n in avant})),
+                           "detail": f"{ecart} ; avant, le LEGI porte {len(vus)} article(s) de "
+                                     "durées que le lecteur n'a pas lus (durees/non_lus.csv) : "
+                                     + " ; ".join(vus[:3])
+                                     + (f" ; et {len(vus) - 3} autres" if len(vus) > 3 else "")})
+        else:
             lignes.append({"versant": t["versant"], "texte": texte, "numero": t["numero"],
                            "titre": t["titre"], "cas": "manque",
                            "articles": " ".join(sorted(articles[texte])),
-                           "detail": f"le texte vaut au LEGI depuis le {t['debut']}, son premier "
-                                     f"tableau de durées n'y vaut que depuis le {debut}"})
+                           "detail": f"{ecart} ; durees/non_lus.csv ne relève, avant, aucun "
+                                     "article de durées non lu"})
     return sorted(lignes, key=lambda l: (l["versant"], l["cas"], l["numero"], l["texte"]))
 
 
@@ -772,8 +867,11 @@ ENTETES = {
                      "phrase (la date qui ouvre la phrase) ; corps, grades et grilles du noyau.",
     "a_lire_au_jorf": "Les textes dont un tableau de durées ou de reclassement est abîmé au "
                       "LEGI (cas abime : dessiné en caractères, en fiches, non reproduit, ou "
-                      "perdu par la consolidation), ou y manque peut-être (cas manque : le texte "
-                      "vaut au LEGI plus de trois mois avant son premier tableau de durées) ; "
+                      "perdu par la consolidation), ou dont le premier tableau de durées lu vaut "
+                      "plus de trois mois après le texte : cas non_lu, le LEGI porte avant un "
+                      "article de durées que le lecteur n'a pas lu (durees/non_lus.csv ; "
+                      "articles : ceux-là) ; cas manque, non_lus.csv n'en relève aucun, et le "
+                      "tableau d'origine manque peut-être (articles : ceux des tableaux lus) ; "
                       "non lus ici.",
 }
 
