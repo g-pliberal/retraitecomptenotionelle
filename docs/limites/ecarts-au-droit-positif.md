@@ -493,9 +493,14 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   l'État, de la CNRACL ou ouvrier de l'État, l'âge d'annulation de sa décote ne
   passe pas soixante-cinq ans s'il a interrompu son activité un an au moins,
   l'année d'une naissance ou les suivantes, et que la saisie dit ces années
-  « élever un enfant » ou « congé de maternité » ; une interruption dite
-  autrement, ou une réduction par un temps partiel, dont la saisie ne demande
-  pas le motif, ne l'ouvre pas. Une naissance dite à l'année
+  « élever un enfant », chacune comptée entière quand elle peut n'en être que la
+  plus grande part ; une année dite « congé de maternité », congé qui ne dure
+  pas une année, une interruption dite autrement, ou une réduction par un temps
+  partiel, dont la saisie ne demande pas le motif, ne l'ouvre pas : le congé de
+  maternité suivi d'un congé parental ou d'une disponibilité se dit « élever un
+  enfant ». L'année « élever un enfant », ou celle qu'un relevé porte à
+  l'assurance vieillesse des parents au foyer, est présumée prise dans un congé
+  ou une disponibilité, ce qu'elle ne prouve pas. Une naissance dite à l'année
   l'ouvre si les conditions tiennent quel que soit son mois, une naissance
   présumée jamais. Restent dehors pour lui l'adoption, les périodes accomplies
   dans l'Union européenne, l'Arrco des cultes, ses autres complémentaires —

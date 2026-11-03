@@ -1,0 +1,40 @@
+date: "2026-11-03"
+session: "action 175, file M4-bis de la sixième vague : corrections de la relecture R-M4 du taux plein à 65 ans des parents de trois enfants fonctionnaires"
+consulte: >-
+  python scripts/veille_droit.py ; les index LEGI et JORF de la DILA, récupérés et mis à
+  jour (LEGI et JORF à jour au 3 novembre 2026) ; python scripts/textes.py --non-lues
+  taux_plein_a_soixante_cinq_ans. Le code des pensions civiles et militaires de retraite,
+  R. 26 ter (LEGIARTI000024111781, seule rédaction), R. 13 (LEGIARTI000023449727), L. 14
+  (ses onze rédactions listées, LEGIARTI000028498863 et LEGIARTI000037200740 lues), L. 18
+  (ses cinq rédactions listées, LEGIARTI000025076852 lue) ; la loi n° 2010-1330, article 20
+  (LEGIARTI000023023835), article 28 (LEGIARTI000025014566) ; la loi n° 2003-775, article 66
+  (LEGIARTI000006758610) ; le décret n° 2011-2103, articles 1er (JORFARTI000025061553) et 8
+  (JORFARTI000025061595) ; la loi n° 84-16, article 34 (ses rédactions de 1984 à 2022) ; le
+  code de la sécurité sociale, L. 331-3 (ses cinq rédactions), L. 331-4 (ses cinq), L. 331-5
+  (ses trois), L. 351-12 (LEGIARTI000006742643), L. 381-1 (LEGIARTI000006742941,
+  LEGIARTI000006742945, LEGIARTI000023034972) ; le code du travail, L. 122-26
+  (LEGIARTI000006646773, LEGIARTI000006646774, LEGIARTI000006646786), L. 1225-17 à
+  L. 1225-20. Une recherche du statut des fonctionnaires d'avant 1984 dans les deux index.
+trouve: >-
+  R. 26 ter, I, 1°, veut une interruption « pendant une durée d'au moins une année » dans la
+  fenêtre de la naissance, « dans le cadre des congés ou de la disponibilité mentionnés au 1°
+  de l'article R. 13 », sans la dire continue, quand son II dit « trente mois consécutifs ».
+  Le congé de maternité en est (R. 13, 1°, a), mais il dure seize semaines, vingt-six à partir
+  du troisième enfant, de dix-huit à quarante-six pour des naissances multiples (L. 331-3,
+  L. 331-4, auxquels renvoie l'article 34, 5°, de la loi n° 84-16), deux de plus pour un état
+  pathologique (L. 331-5), et, depuis le 20 décembre 2005, les jours qui séparent une
+  naissance très prématurée du début du congé ; seize semaines en 1978 au code du travail
+  (L. 122-26). Une année que la saisie dit « congé de maternité » ne prouve donc pas, seule,
+  l'année d'interruption : le modèle ne la compte plus, dans ses deux moteurs. L'AVPF
+  (L. 381-1) s'ouvre au parent sans activité professionnelle, bénéficiaire d'une prestation
+  familiale, sous un plafond de ressources, sans congé ni disponibilité : elle ne prouve pas
+  le cadre de R. 13, que le modèle présume, déclaré. L. 18, III, veut neuf ans d'éducation
+  pour la majoration ; l'article 28, III, ne renvoie qu'au II : non tranché, déclaré. L. 14,
+  I, en vigueur aux dates d'effet (2014-2018, 2018-2023) : « arrondi à l'entier supérieur »,
+  « Le plus petit des deux nombres » ; d'où 2 trimestres de décote de moins au plus pour les
+  nés de janvier à mai 1954 (65 ans et 4 mois), 3 de juin à décembre 1954, 5 en 1955.
+reste: >-
+  Le statut des fonctionnaires d'avant 1984, que l'index ne porte pas : la durée de leur
+  congé de maternité n'est pas lue. L'année d'interruption au mois, que la carrière ne porte
+  pas : une année « élever un enfant » peut n'être que la plus grande part d'une année
+  (note 2026-11-03-corrections-de-la-relecture-r-m4-fonctionnaires.md de l'action 175).

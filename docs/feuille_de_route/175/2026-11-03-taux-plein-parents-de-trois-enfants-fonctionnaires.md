@@ -197,3 +197,8 @@ touche au moteur : le tableau de bord, et le poids du moteur ancré dans `README
 fonctionnaires (le champ ci-dessus) ; à la file M4, la CAVIMAC et les points d'avant 1973,
 puis les non-salariés agricoles, les libéraux et les avocats ; une circulaire du SRE ou de
 la CNRACL sur l'article 28, III, si elle existe.
+
+*Renvoi du 3 novembre 2026* : la relecture R-M4 a relevé qu'une année « congé de maternité »
+ouvrait seule la borne, quand R. 26 ter veut une année d'interruption ; corrigé, avec
+quatre écarts faibles, par la file M4-bis (note
+`2026-11-03-corrections-de-la-relecture-r-m4-fonctionnaires.md`).

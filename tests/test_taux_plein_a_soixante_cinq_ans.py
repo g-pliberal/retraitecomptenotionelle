@@ -168,10 +168,12 @@ def test_la_fiche_date_l_age_du_parent_de_trois_enfants():
         "apres_au_plus": 8, "avant_au_moins": 8, "activite_au_moins": 8}
     # Les fonctionnaires : loi n° 2010-1330, article 28, III, et R. 26 ter, I —
     # « au moins une année » d'interruption, dans un congé ou une disponibilité
-    # de R. 13, 1° ; « huit trimestres » avant, deux fois.
+    # de R. 13, 1° ; « huit trimestres » avant, deux fois. Le congé de maternité
+    # en est, mais ne dure pas une année : seule l'année « élever un enfant »,
+    # qui dit le congé parental ou la disponibilité, la compte entière.
     assert regle["fonctionnaires"] == {
         "regimes": ["fonction_publique_etat", "cnracl", "fspoeie"],
-        "interruptions": ["maternite", "education_enfant"],
+        "interruptions": ["education_enfant"],
         "interruption_au_moins_annees": 1, "avant_au_moins": 8, "activite_au_moins": 8}
     assert fiches.regle(nom, "2025-12-01")["parents_de_trois_enfants"]["enfants"] == 3
     assert not fiches.regle(nom, "2026-01-01")["existe"]
@@ -307,7 +309,11 @@ DECLARATIONS = {
     "Agirc-Arrco": ("accord du 18 mars 2011, article 1er", "article 2 ter", "article 84",
                     "avant soixante-cinq ans", "tranche C", "0,91"),
     "fonctionnaires": ("article 28, III", "R. 26 ter", "article 65-3", "article 50-3",
-                       "R. 13, 2°", "temps partiel", "70,3125 %"),
+                       "R. 13, 2°", "temps partiel", "70,3125 %",
+                       # Le congé de maternité, qui ne dure pas une année ;
+                       # l'AVPF d'un relevé ; l'année d'une période saisie au
+                       # mois ; les neuf ans de L. 18, III.
+                       "L. 331-3", "L. 381-1", "plus de la moitié", "L. 18, III"),
     "CAVIMAC": ("L. 382-27", "décret n° 2006-1325, article 2, II", "46,875 %", "0,9375"),
     "avant 1973": ("décret n° 73-937", "article 3, II", "0,9375"),
     "RCI": ("article 12", "sans aucun abattement", "0,95"),
@@ -507,7 +513,12 @@ def test_la_tranche_c_d_avant_2016_garde_son_coefficient():
 #: congés ou de la disponibilité mentionnés au 1° de l'article R. 13 » — le congé
 #: de maternité, d'adoption, parental, de présence parentale, la disponibilité
 #: pour élever un enfant de moins de huit ans (LEGIARTI000023449727) : les années
-#: que la saisie dit « élever un enfant » ou « congé de maternité » — ; « au
+#: que la saisie dit « élever un enfant » ; une année « congé de maternité » n'en
+#: prouve pas une d'interruption, le congé durant seize semaines, vingt-six à
+#: partir du troisième enfant, trente-quatre ou quarante-six pour des naissances
+#: multiples (code de la sécurité sociale, L. 331-3, LEGIARTI000006742545, et
+#: L. 331-4, LEGIARTI000006742550 ; en 1978, seize semaines au code du travail,
+#: L. 122-26, LEGIARTI000006646774) — ; « au
 #: titre des deux années précédant l'année de la naissance [...], d'une durée
 #: d'assurance, telle que définie à l'article L. 14, égale ou supérieure à huit
 #: trimestres » ; et huit trimestres de durée d'assurance « à raison de
@@ -578,8 +589,16 @@ CAS_FONCTIONNAIRES = {
     "trois ans à élever un enfant": ({"conges": _trois_ans()}, DEROGATION),
     # Une année suffit : 1980, dans la fenêtre 1978-1980.
     "un an, 1980": ({"conges": {1980: "education_enfant"}}, DEROGATION),
-    # Le congé de maternité est un congé de R. 13, 1°, a.
-    "un an de maternité, 1978": ({"conges": {1978: "maternite"}}, DEROGATION),
+    # Le congé de maternité est un congé de R. 13, 1°, a, mais R. 26 ter veut
+    # « une durée d'au moins une année » : seize semaines en 1978 (L. 122-26),
+    # seize à quarante-six depuis (L. 331-3 et L. 331-4) ; l'année que la saisie
+    # dit « congé de maternité » n'en prouve pas une.
+    "un an de maternité, 1978": ({"conges": {1978: "maternite"}}, AGE_FP_DE_1955),
+    # Le congé de maternité suivi d'un congé parental ou d'une disponibilité :
+    # 1979, « élever un enfant », dans la fenêtre 1978-1980 ; 8 trimestres en
+    # 1976 et 1977 ; 20 d'activité avant 1979.
+    "maternité en 1978, puis un an à élever un enfant": (
+        {"conges": {1978: "maternite", 1979: "education_enfant"}}, DEROGATION),
     # Aucune année de congé ni de disponibilité : la saisie ne dit pas pourquoi
     # elle a cessé, et R. 26 ter le demande.
     "sans activité": ({}, AGE_FP_DE_1955),
@@ -722,6 +741,12 @@ BOUT_EN_BOUT = {
                                     "liquidation": "64"}, "fonction_publique_etat", 66.5625),
     "État, sans activité, 65 ans": ({**NEE_EN_1955, "statut": "fonctionnaire_etat"},
                                     "fonction_publique_etat", 70.3125),
+    # Une seule année dite « congé de maternité » : elle ne prouve pas l'année
+    # d'interruption de R. 26 ter ; 66 ans et 3 mois, 5 trimestres.
+    "État, un an de maternité, 65 ans": (
+        {**NEE_EN_1955, "statut": "fonctionnaire_etat",
+         "interruptions": "1978:1978:maternite, 1979:2002:sans_activite"},
+        "fonction_publique_etat", 70.3125),
 }
 
 

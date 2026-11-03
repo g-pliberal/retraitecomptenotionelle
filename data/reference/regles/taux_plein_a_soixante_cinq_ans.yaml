@@ -24,8 +24,8 @@ lit:
 - les trimestres que valide chaque année civile de la carrière, ligne par ligne, et la
   nature de la ligne — l'emploi, le chômage, la maladie, la maternité, l'invalidité,
   l'accident du travail, le service militaire — et l'AVPF qu'elle porte
-- le motif de chaque année d'interruption que la saisie déclare — élever un enfant, congé
-  de maternité —, le statut de chaque ligne, le classement de l'emploi, sédentaire ou
+- le motif de chaque année d'interruption que la saisie déclare — élever un enfant —, le
+  statut de chaque ligne, le classement de l'emploi, sédentaire ou
   actif, et la pension militaire (droit/ouvrir.py, derogation_active, droit_militaire)
 - liquidation.date_effet
 ecrit:
@@ -53,8 +53,9 @@ dates_qui_decident:
 # `fonctionnaires`, les conditions de R. 26 ter, I, que lit
 # `age_du_fonctionnaire_parent_de_trois_enfants` (les générations, les enfants et
 # l'âge sont ceux de `parents_de_trois_enfants` et `age`) — `regimes`, ceux du code
-# des pensions et de ses décrets ; `interruptions`, les motifs de la saisie qui
-# disent un congé ou une disponibilité de R. 13, 1° ;
+# des pensions et de ses décrets ; `interruptions`, les motifs de la saisie dont
+# l'année compte entière pour un congé ou une disponibilité de R. 13, 1° — « élever
+# un enfant » ; le congé de maternité, qui ne dure pas une année, n'y est pas ;
 # `interruption_au_moins_annees`, la durée de l'interruption dans la fenêtre ;
 # `avant_au_moins`, la durée d'assurance des deux années d'avant ;
 # `activite_au_moins`, l'activité avant l'interruption.
@@ -232,6 +233,87 @@ versions:
       susmentionnée, [...] et à l'article L. 122-28-1 du code du travail ; d) Du congé de
       présence parentale [...] ; e) D'une disponibilité pour élever un enfant de moins de
       huit ans »
+  - id: LEGIARTI000006450574
+    article: loi n° 84-16 du 11 janvier 1984, article 34, 5°, rédaction du 12 janvier 1984
+      au 27 juillet 1991, que R. 13, 1°, a, nomme ; la même phrase dans les rédactions
+      suivantes jusqu'au 27 novembre 2020, numérotée « 5° a) » dès le 22 avril 2016
+    en_vigueur: 1984-01-12
+    citation: >-
+      « 5° Au congé pour maternité, ou pour adoption, avec traitement, d'une durée égale à
+      celle prévue par la législation sur la sécurité sociale »
+  - id: LEGIARTI000006742541
+    article: code de la sécurité sociale, L. 331-3, rédaction du 21 décembre 1985 au 26
+      juillet 1994, que R. 13, 1°, a, nomme
+    en_vigueur: 1985-12-21
+    citation: >-
+      « Pendant une période qui débute six semaines avant la date présumée de
+      l'accouchement et se termine dix semaines après celui-ci » ; « Cette période est
+      prolongée de deux semaines en cas de naissances multiples »
+  - id: LEGIARTI000006742546
+    article: code de la sécurité sociale, L. 331-4, rédaction du 21 décembre 1985 au 26
+      juillet 1994
+    en_vigueur: 1985-12-21
+    citation: >-
+      « La période d'indemnisation prévue au premier alinéa de l'article L. 331-3 est
+      portée à huit semaines avant la date présumée de l'accouchement et à dix-huit
+      semaines après celui-ci, vingt semaines en cas de naissances multiples » ; « la
+      période pendant laquelle cette dernière peut bénéficier, après l'accouchement, d'une
+      indemnité journalière de repos est de vingt-deux semaines »
+  - id: LEGIARTI000006742545
+    article: code de la sécurité sociale, L. 331-3, rédaction en vigueur depuis le 24 mars
+      2006 ; les quarante-six semaines dès la rédaction du 26 juillet 1994, l'allongement
+      d'une naissance prématurée dès celle du 20 décembre 2005
+    en_vigueur: 2006-03-24
+    citation: >-
+      « Lorsque des naissances multiples sont prévues, cette période commence douze
+      semaines avant la date présumée de l'accouchement, vingt-quatre semaines en cas de
+      naissance de plus de deux enfants et se termine vingt-deux semaines après la date de
+      l'accouchement » ; « la période d'indemnisation de seize ou de trente-quatre
+      semaines, quarante-six semaines en cas de naissance de plus de deux enfants n'est pas
+      réduite de ce fait » ; « Quand l'accouchement intervient plus de six semaines avant
+      la date initialement prévue et exige l'hospitalisation postnatale de l'enfant, la
+      période pendant laquelle la mère perçoit l'indemnité journalière de repos est
+      augmentée du nombre de jours courant de la date effective de l'accouchement au début
+      de la période de repos »
+  - id: LEGIARTI000006742550
+    article: code de la sécurité sociale, L. 331-4, rédaction en vigueur depuis le 22
+      décembre 2006 ; les vingt-six semaines dès la rédaction du 26 juillet 1994
+    en_vigueur: 2006-12-22
+    citation: >-
+      « La période d'indemnisation prévue au premier alinéa de l'article L. 331-3 est
+      portée à huit semaines avant la date présumée de l'accouchement et à dix-huit
+      semaines après celui-ci » ; « la période d'indemnisation de vingt-six semaines n'est
+      pas réduite de ce fait »
+  - id: LEGIARTI000006742553
+    article: code de la sécurité sociale, L. 331-5, rédaction en vigueur depuis le 24 mars
+      2006
+    en_vigueur: 2006-03-24
+    citation: >-
+      « L'indemnité journalière de repos peut également être attribuée sur prescription
+      médicale pendant une période supplémentaire n'excédant pas deux semaines »
+  - id: LEGIARTI000006646774
+    article: code du travail, L. 122-26, rédaction du 1er octobre 1978 au 3 janvier 1984, le
+      congé de maternité de la salariée ; le statut des fonctionnaires d'alors n'est pas
+      dans l'index du dépôt
+    en_vigueur: 1978-10-01
+    citation: >-
+      « La femme a le droit de suspendre le contrat de travail pendant une période qui
+      commence six semaines avant la date présumée de l'accouchement et se termine dix
+      semaines après la date de celui-ci » ; « sans pouvoir excéder huit semaines avant la
+      date présumée de l'accouchement et quatorze semaines après la date de celui-ci » ;
+      « Le congé de maternité prévu aux deux alinéas précédents est prolongé de deux
+      semaines en cas de naissances multiples »
+  - id: LEGIARTI000006742941
+    article: code de la sécurité sociale, L. 381-1, rédaction du 21 décembre 1985 au 1er
+      janvier 1987, l'assurance vieillesse des parents au foyer, qu'un relevé porte
+    en_vigueur: 1985-12-21
+    citation: >-
+      « La personne isolée et, pour un couple, l'un ou l'autre de ses membres n'exerçant pas
+      d'activité professionnelle, bénéficiaire du complément familial, de l'allocation au
+      jeune enfant ou de l'allocation parentale d'éducation » ; « est affilié
+      obligatoirement à l'assurance vieillesse du régime général de sécurité sociale sous
+      réserve que ses ressources ou celles du ménage soient inférieures à un plafond fixé
+      par décret »
   - id: LEGIARTI000006362714
     article: L. 18 du code des pensions civiles et militaires de retraite, II, rédaction du
       27 juillet 1991 au 1er janvier 2012
@@ -243,6 +325,16 @@ versions:
       filiation est établie et ses enfants adoptifs ; Les enfants ayant fait l'objet d'une
       délégation de l'autorité parentale [...] ; Les enfants placés sous tutelle [...] ;
       Les enfants recueillis à son foyer »
+  - id: LEGIARTI000025076852
+    article: L. 18 du code des pensions civiles et militaires de retraite, III, rédaction du
+      1er janvier 2012 au 16 avril 2023, en vigueur aux dates d'effet de ces pensions ; que
+      l'article 28, III, qui ne renvoie qu'au II, l'exige, le texte ne le dit pas
+    en_vigueur: 2012-01-01
+    citation: >-
+      « III. – A l'exception des enfants décédés par faits de guerre, les enfants devront
+      avoir été élevés pendant au moins neuf ans, soit avant leur seizième anniversaire,
+      soit avant l'âge où ils ont cessé d'être à charge au sens des articles L. 512-3 et R.
+      512-2 à R. 512-3 du code de la sécurité sociale »
   - id: LEGIARTI000025014534
     article: L. 14 du code des pensions civiles et militaires de retraite, I, rédaction du
       23 décembre 2011 au 22 janvier 2014 ; la première phrase, la même dans toutes les
@@ -255,6 +347,28 @@ versions:
       plusieurs autres régimes de retraite de base obligatoires » ; « 1° Soit au nombre de
       trimestres correspondant à la durée qui sépare l'âge auquel la pension est liquidée
       de la limite d'âge du grade détenu par le pensionné »
+  - id: LEGIARTI000028498863
+    article: L. 14 du code des pensions civiles et militaires de retraite, I, rédaction du
+      22 janvier 2014 au 15 juillet 2018, en vigueur aux dates d'effet de ces pensions
+    en_vigueur: 2014-01-22
+    citation: >-
+      « Le nombre de trimestres pris en compte pour ce calcul est égal : 1° Soit au nombre
+      de trimestres correspondant à la durée qui sépare l'âge auquel la pension est
+      liquidée de la limite d'âge du grade détenu par le pensionné » ; « Le nombre de
+      trimestres correspondant est arrondi à l'entier supérieur dans des conditions
+      définies par décret. Le plus petit des deux nombres de trimestres résultant des
+      dispositions du 1° et du 2° du présent I est pris en considération »
+  - id: LEGIARTI000037200740
+    article: L. 14 du code des pensions civiles et militaires de retraite, I, rédaction du
+      15 juillet 2018 au 1er septembre 2023, en vigueur aux dates d'effet de ces pensions
+    en_vigueur: 2018-07-15
+    citation: >-
+      « Le nombre de trimestres pris en compte pour ce calcul est égal : 1° Soit au nombre
+      de trimestres correspondant à la durée qui sépare l'âge auquel la pension est
+      liquidée de la limite d'âge du grade détenu par le pensionné » ; « Le nombre de
+      trimestres correspondant est arrondi à l'entier supérieur dans des conditions
+      définies par décret. Le plus petit des deux nombres de trimestres résultant des
+      dispositions du 1° et du 2° du présent I est pris en considération »
   - id: LEGIARTI000006758610
     article: loi n° 2003-775 du 21 août 2003, article 66, III, seule rédaction
     en_vigueur: 2004-01-01
@@ -406,7 +520,7 @@ versions:
         activite_au_moins: 8
       fonctionnaires:
         regimes: [fonction_publique_etat, cnracl, fspoeie]
-        interruptions: [maternite, education_enfant]
+        interruptions: [education_enfant]
         interruption_au_moins_annees: 1
         avant_au_moins: 8
         activite_au_moins: 8
@@ -575,28 +689,61 @@ approximations:
   textes: >-
     loi n° 2010-1330, article 28, III (LEGIARTI000023023851, LEGIARTI000025014566) ; code des
     pensions civiles et militaires de retraite, R. 26 ter, I (LEGIARTI000024111781), R. 13,
-    1° et 2° (LEGIARTI000023449727), L. 18, II (LEGIARTI000006362714) ; décret n° 2003-1306,
-    article 65-3 (LEGIARTI000024113270), et décret n° 2004-1056, article 50-3
-    (LEGIARTI000024113274)
+    1° et 2° (LEGIARTI000023449727), L. 18, II (LEGIARTI000006362714) et III
+    (LEGIARTI000025076852) ; décret n° 2003-1306, article 65-3 (LEGIARTI000024113270), et
+    décret n° 2004-1056, article 50-3 (LEGIARTI000024113274) ; le congé de maternité : loi
+    n° 84-16, article 34, 5° (LEGIARTI000006450574), code de la sécurité sociale, L. 331-3
+    (LEGIARTI000006742541, LEGIARTI000006742545), L. 331-4 (LEGIARTI000006742546,
+    LEGIARTI000006742550), L. 331-5 (LEGIARTI000006742553), code du travail, L. 122-26
+    (LEGIARTI000006646774) ; l'assurance vieillesse des parents au foyer : code de la
+    sécurité sociale, L. 381-1 (LEGIARTI000006742941)
   ecart: >-
     Aux fonctionnaires : depuis le 3 novembre 2026, le modèle borne à soixante-cinq ans
     l'âge d'annulation de la décote du sédentaire de l'État, de la CNRACL et de l'ouvrier
     de l'État qui remplit les conditions de l'article 28, III, et de R. 26 ter, que les
-    articles 65-3 et 50-3 étendent. Il ne les lit que dans ce que la saisie porte. L'interruption « dans le
-    cadre des congés ou de la disponibilité mentionnés au 1° de l'article R. 13 » : les
-    années qu'elle dit « élever un enfant » ou « congé de maternité », chacune une année
-    entière ; une année dite « sans activité » n'est pas lue comme un congé parental ni
-    comme une disponibilité pour élever un enfant, et une année « élever un enfant » est
-    lue comme l'un d'eux, quand elle a pu être une disponibilité pour convenances
-    personnelles ou une démission. La réduction d'activité, un temps partiel de R. 13, 2°,
-    « pendant une période d'au moins deux années pour une quotité de temps de travail de
-    50 % », un an et huit mois à 60 %, un an et cinq mois à 70 %, n'est pas lue : le
-    temps partiel saisi ne dit pas son motif. Les enfants de L. 18, II, que la saisie ne
-    distingue pas — du conjoint, délégués, sous tutelle, recueillis — sont comptés dans
-    leur nombre ; l'adoption n'est pas saisie.
+    articles 65-3 et 50-3 étendent. Il ne les lit que dans ce que la saisie porte.
+    L'interruption « pendant une durée d'au moins une année », « dans le cadre des congés
+    ou de la disponibilité mentionnés au 1° de l'article R. 13 » : les années que la
+    saisie dit « élever un enfant », chacune comptée une année entière, quand une période
+    sans emploi qu'elle borne au mois donne son motif à l'année dont elle occupe plus de
+    la moitié des mois : une année « élever un enfant » a pu n'en compter que sept. R. 26
+    ter ne dit pas l'année continue, quand son II veut, de l'aidant familial, « trente
+    mois consécutifs ». Depuis le 3 novembre 2026, à la relecture R-M4, une année dite
+    « congé de maternité » ne compte pas : le congé de maternité est un congé de R. 13,
+    1°, a, mais il dure seize semaines, vingt-six à partir du troisième enfant, de
+    dix-huit à quarante-six pour des naissances multiples (L. 331-3 et L. 331-4 du code
+    de la sécurité sociale, auxquels renvoie, pour le fonctionnaire de l'État, l'article
+    34, 5°, de la loi n° 84-16 ; seize en 1978, au code du travail, L. 122-26), deux de
+    plus pour un état pathologique (L. 331-5), et, depuis le 20 décembre 2005, les jours
+    qui séparent une naissance très prématurée du début du congé ; la saisie n'en dit ni
+    la durée, ni le nombre des enfants nés, ni ce qui l'a suivi, et un relevé range
+    l'adoption avec lui. Le congé de maternité suivi d'un congé parental ou d'une
+    disponibilité se dit « élever un enfant ». Une année dite « sans activité » n'est pas
+    lue comme un congé parental ni comme une disponibilité pour élever un enfant, et une
+    année « élever un enfant » est lue comme l'un d'eux, quand elle a pu être une
+    disponibilité pour convenances personnelles ou une démission. De même l'année qu'un
+    relevé porte à l'assurance vieillesse des parents au foyer : L. 381-1 l'ouvre au
+    parent « n'exerçant pas d'activité professionnelle, bénéficiaire du complément
+    familial, de l'allocation au jeune enfant ou de l'allocation parentale d'éducation »,
+    sous un plafond de ressources (LEGIARTI000006742941 ; ni LEGIARTI000006742945 ni
+    LEGIARTI000023034972 ne demandent davantage), sans congé ni disponibilité : elle ne
+    prouve pas le cadre de R. 13, que le modèle présume. La réduction d'activité, un temps partiel de R.
+    13, 2°, « pendant une période d'au moins deux années pour une quotité de temps de
+    travail de 50 % », un an et huit mois à 60 %, un an et cinq mois à 70 %, n'est pas
+    lue : le temps partiel saisi ne dit pas son motif. Les enfants de L. 18, II, que la
+    saisie ne distingue pas — du conjoint, délégués, sous tutelle, recueillis — sont
+    comptés dans leur nombre ; l'adoption n'est pas saisie. Que ces enfants aient dû
+    « avoir été élevés pendant au moins neuf ans » (L. 18, III), ce que la majoration de
+    pension demande, le texte ne le tranche pas : l'article 28, III, ne renvoie qu'au II
+    de L. 18, et le 1° du IV de l'article 20 au deuxième alinéa de L. 351-12 du code de
+    la sécurité sociale, « les enfants élevés dans les conditions prévues au deuxième
+    alinéa de l'article L. 342-4 » ; le modèle ne lit pas cette durée.
   effet: >-
     le fonctionnaire parent qui a cessé son activité sans la dire « élever un enfant », ou
-    qui l'a réduite à temps partiel, parti de soixante-cinq ans à son âge d'annulation. La
+    qui l'a réduite à temps partiel, parti de soixante-cinq ans à son âge d'annulation ;
+    à l'inverse, celui dont l'année « élever un enfant » n'a été que sept mois, une
+    démission, une disponibilité pour convenances personnelles ou une année d'AVPF sans
+    congé ni disponibilité, a la borne que le droit ne lui donne pas. La
     fonctionnaire de l'État née le 15 mars 1955, sans activité de 1978 à 2002, trois
     enfants nés en avril 1978, juin 1980 et juin 1982, partie à soixante-cinq ans en 2020 :
     66 ans et 3 mois (« Limite d'âge moins 3 trimestres » en 2017, de soixante-sept ans),
@@ -604,8 +751,11 @@ approximations:
     70,3125 %, de même à la CNRACL et aux ouvriers de l'État ; dites « élever un enfant »,
     ses années 1978 à 1980 lui donnent 75 %, ce que le droit lui sert si elles ont été un
     congé ou une disponibilité de R. 13 : 6,25 % de sa pension. Née en septembre 1954, 65
-    ans et 7 mois, 3 trimestres : 75 % × (1 − 3 × 1,25 %) = 72,1875 % au lieu de 75 %.
-    Nées de 1951 à 1953, rien : le tableau annule leur décote avant soixante-cinq ans.
+    ans et 7 mois, 3 trimestres : 75 % × (1 − 3 × 1,25 %) = 72,1875 % au lieu de 75 % ;
+    née de janvier à mai 1954, 61 ans et 7 mois en 2015, « Limite d'âge moins 5
+    trimestres » de 66 ans et 7 mois, 65 ans et 4 mois, 2 trimestres : 75 % × (1 − 2 ×
+    1,25 %) = 73,125 %. Nées de 1951 à 1953, rien : le tableau annule leur décote avant
+    soixante-cinq ans.
 - version: [loi_du_9_novembre_2010]
   textes: >-
     L. 382-27 du code de la sécurité sociale (LEGIARTI000019959668, du 19 décembre 2008 au
@@ -703,9 +853,11 @@ effet: >-
   Depuis le 3 novembre 2026, le fonctionnaire sédentaire de l'État, de la CNRACL et
   l'ouvrier de l'État nés en 1954 et en 1955 qui ont interrompu leur activité au moins un
   an pour élever un enfant, et le disent, ont l'âge d'annulation de leur décote borné à
-  soixante-cinq ans : 3 trimestres de décote de moins en 1954, 5 en 1955, partis à
-  soixante-cinq ans, une décote de 3,75 % et de 6,25 % en moins, et le minimum garanti à
-  soixante-cinq ans.
+  soixante-cinq ans : partis à soixante-cinq ans, 2 trimestres de décote de moins au plus
+  pour les nés de janvier à mai 1954 (65 ans et 4 mois), 3 pour ceux de juin à décembre
+  1954 (65 ans et 7 mois), 5 en 1955 (66 ans et 3 mois), le nombre de trimestres
+  « arrondi à l'entier supérieur » (L. 14, I), une décote de 2,5 %, de 3,75 % et de
+  6,25 % en moins, et le minimum garanti à soixante-cinq ans.
 sources:
   lu_le: 2026-11-03
   prochaine_relecture: 2027-06-30
@@ -728,7 +880,10 @@ sources:
     aux avocats (R. 723-38, puis R. 653-2), dont les rédactions de 2016 à 2022 restent à
     lire. Aux fonctionnaires, la réduction d'activité de R. 26 ter, I, 2°, demande le
     motif du temps partiel saisi — un temps partiel pris pour élever un enfant, de R. 13,
-    2° —, que la saisie ne porte pas.
+    2° —, que la saisie ne porte pas. L'année d'interruption de R. 26 ter, I, 1°, se lirait
+    au mois si la carrière portait la durée de chaque période sans emploi, que la saisie
+    borne au mois et que le modèle range à l'année (plus de la moitié de ses mois) ; le
+    congé de maternité compterait alors sa durée avec le congé parental qui le suit.
   - >-
     Une circulaire ou une note du Service des retraites de l'État ou de la CNRACL qui
     dise comment elles ont appliqué l'article 28, III, et R. 26 ter : leurs pages sur la
@@ -909,6 +1064,26 @@ sources:
       plus ces parents ; le SRE : « L'âge à partir duquel la décote n'est plus appliquée au
       fonctionnaire de la catégorie sédentaire est fixé à 67 ans ». Aucune circulaire de
       la caisse sur l'article 28, III, n'a été trouvée, ni d'exemple chiffré
+    date: 2026-11-03
+  - type: legifrance
+    reference: >-
+      index LEGI à jour au 3 novembre 2026, relu le 3 novembre 2026 par la file M4-bis de
+      la sixième vague, sur la relecture R-M4 : R. 26 ter (LEGIARTI000024111781), son I,
+      1°, « une durée d'au moins une année », son II « au moins trente mois consécutifs » ;
+      R. 13 (LEGIARTI000023449727), son 1°, a, le congé pour maternité de l'article 34, 5°,
+      de la loi n° 84-16 et de L. 331-3 du code de la sécurité sociale ; la loi n° 84-16,
+      article 34 (LEGIARTI000006450574, puis ses rédactions jusqu'au 27 novembre 2020 : « 5°
+      Au congé pour maternité, ou pour adoption, avec traitement, d'une durée égale à celle
+      prévue par la législation sur la sécurité sociale ») ; le code de la sécurité
+      sociale, L. 331-3 (de LEGIARTI000006742541 à LEGIARTI000006742545), L. 331-4 (de
+      LEGIARTI000006742546 à LEGIARTI000006742550), L. 331-5 (LEGIARTI000006742553) ; le
+      code du travail, L. 122-26 (LEGIARTI000006646773, LEGIARTI000006646774,
+      LEGIARTI000006646786), L. 1225-17 à L. 1225-20 (LEGIARTI000018764596,
+      LEGIARTI000006900898, LEGIARTI000018764594, LEGIARTI000006900900) ; L. 14
+      (LEGIARTI000028498863, LEGIARTI000037200740) ; L. 18 (LEGIARTI000025076852, son
+      III) ; L. 351-12 du code de la sécurité sociale (LEGIARTI000006742643, son deuxième
+      alinéa) ; L. 381-1 (LEGIARTI000006742941). Le statut des fonctionnaires d'avant 1984
+      n'est pas dans l'index : la durée de leur congé de maternité n'est pas lue
     date: 2026-11-03
 textes_a_rattacher:
 - reference: L. 351-8 CSS, 1° bis et 6°
