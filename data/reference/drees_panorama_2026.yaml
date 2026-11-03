@@ -305,7 +305,7 @@ fiches:
     titre: "L’âge moyen de départ à la retraite et son évolution"
     page: 138
     sources: ["EIR 2020", "EACR", "ANCETRE", "Insee"]
-    statut: au_depot
+    statut: a_confronter
     au_depot: [drees_age_conjoncturel, drees_eir_generations, drees_panorama_retraites_2026_classeurs]
     a_tirer: >-
       Porté à l'étape 2 : l'âge conjoncturel de départ de 2023 et 2024

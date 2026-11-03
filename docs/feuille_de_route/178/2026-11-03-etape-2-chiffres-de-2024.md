@@ -1,13 +1,13 @@
 # Étape 2 : les chiffres de 2024 du panorama de la DREES
 
 **Reprise, au 3 novembre 2026.** L'étape est faite, sauf la fiche 5, qui
-attend le propriétaire : porter à `pensions_brutes_nettes.csv` les montants
-de 2023 et 2024 du panorama (feuille « F05_Tableau 1 compl_bis » du
-classeur), qui déplacent le taux effectif de la page Coût (action 138,
-étape 3). Sur son accord : une source d'appoint dans `verifier_donnees.py`,
-comme `source_age_conjoncturel_panorama`, puis `verifier_donnees.py
---appliquer`, et les tests de la dépense nette. Ce que le suivi donnait encore
-à l'étape 2 va aux étapes 4, 5 et 6, fiche par fiche
+attend le propriétaire : porter à `pensions_brutes_nettes.csv` ses montants
+de 2023 et 2024 (feuille « F05_Tableau 1 compl_bis »), qui déplacent le taux
+effectif de la page Coût (action 138, étape 3) ; sur son accord, une source
+d'appoint dans `verifier_donnees.py`, comme `source_age_conjoncturel_panorama`.
+Les fiches 5, 8 et 15 laissent des confrontations à l'étape 4, close sans
+elles, parce qu'elles n'étaient pas encore à confronter quand elle a commencé ;
+le reste va aux étapes 5 et 6, fiche par fiche
 (`data/reference/drees_panorama_2026.yaml`).
 
 **Le 3 novembre 2026, ce qui est fait.** Tout est tenu par
@@ -76,7 +76,9 @@ cumulants (fiche 23), les nouveaux allocataires du minimum vieillesse et
 leurs dépenses (fiche 27), et les séries que le suivi destine aux référents
 vont à l'étape 6, avec les classeurs.
 
-**Pour les autres files.** File I : `part_minimum_contributif.py` peut citer
+**Pour les autres files.** File J : les confrontations des fiches 5 (par
+régime, tableaux 2 et 4), 8 (la génération 1953 au minimum) et 15 (graphiques
+2, 5 à 7), que l'étape 4 n'a pas vues. File I : `part_minimum_contributif.py` peut citer
 le graphique 1 de la fiche 8 à côté du RSI de 2011. File C :
 `scripts/age_conjoncturel.py` dit encore la série « 2004 à 2022 ». File du
 site : la citation de 2025 de la page des cas types. Le propriétaire : la
