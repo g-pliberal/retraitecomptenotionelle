@@ -23,9 +23,11 @@ inventaire:
     - {reference: "loi n° 52-799 du 10 juillet 1952 assurant la mise en œuvre du régime de l'allocation de vieillesse des personnes non salariées", id: null}
     - {reference: "code rural et de la pêche maritime, L. 732-18 et suivants, R. 732-70 et R. 732-71", id: null}
   manque: >-
-    Le barème en points d'avant 1990 n'est pas lu, et ses années entrent dans
-    la moyenne de la réforme de 2026 par les points que vaut leur rendement ;
-    conjoints et aides familiaux sont sous-estimés.
+    Le barème en points d'avant 1990 n'est pas appliqué : R. 732-69, lu, le
+    compte en revenu cadastral, que le modèle n'a pas, et renvoie pour les
+    années d'avant 1981 à quatre décrets que l'index n'a pas en texte ; ces
+    années entrent dans la moyenne de la réforme de 2026 par les points que
+    vaut leur rendement ; conjoints et aides familiaux sont sous-estimés.
 # LA MAJORATION POUR TROIS ENFANTS, lue le 5 octobre 2026 dans l'index LEGI
 # (action 89) : « à compter du 1er juillet 1974 », les avantages de
 # vieillesse « sont augmentés d'une bonification d'un dixième pour tout
@@ -36,9 +38,42 @@ inventaire:
 # décret n° 2025-1409, qui renvoie à L. 351-12 pour les pensions prenant
 # effet depuis. Le guide de la MSA le dit aussi : « au moins 3 enfants, le
 # montant de votre retraite est majoré de 10 % ». Aucune période ne la
-# déclarait ; la période de 1952 est coupée en 1974.
+# déclarait ; la période de 1953 est coupée en 1974.
 periodes:
   - debut: 1952
+    fin: 1952
+    type_calcul: mixte
+    age_ouverture: 65
+    age_taux_plein: 65
+    duree_requise_trimestres: 150
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    assiette: plafonnee
+    taux_cotisation_retraite: 0.0425
+    pension_forfaitaire_annuelle: 3628.98
+    pension_forfaitaire_annee: 2023
+    decote_par_trimestre: null
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [minimum_vieillesse, reversion]
+    notes: >-
+      L'EXERCICE 1952 NE PRÉLÈVE QUE LA MOITIÉ DE LA COTISATION ANNUELLE :
+      « Pour l'exercice 1952, les cotisations professionnelles visées aux
+      articles 20 et 21 de la loi du 10 juillet 1952 sont égales à la moitié
+      des cotisations annuelles » (décret n° 52-1166 du 18 octobre 1952,
+      article 45, LEGIARTI000019272803, en vigueur depuis le 19 octobre
+      1952). La cotisation annuelle du modèle est une convention, 8,5 % du
+      revenu borné au plafond (voir la période de 1974 à 1985) ; il en
+      prend la moitié en divisant par deux le taux de cette seule année,
+      4,25 %, l'assiette restant le revenu de l'année entière. L'article ne
+      distingue pas le chef des membres de sa famille : la moitié vaut pour
+      le collaborateur comme pour le chef. Ce qu'il ne dit pas reste au
+      modèle comme convention : les points de cette moitié, au rendement de
+      toute cotisation d'avant 1990, et 1952 comptée pour une année dans la
+      durée et dans la moyenne de la majoration des points de 1952 à 1972
+      (fiches cotisation_agricole_de_1952 et retraite_proportionnelle_msa).
+      Pour le reste, la période suivante, dont celle-ci ne diffère que par
+      ce taux.
+  - debut: 1953
     fin: 1973
     type_calcul: mixte
     age_ouverture: 65

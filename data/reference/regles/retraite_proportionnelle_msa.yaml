@@ -60,8 +60,10 @@ effet: >-
   rendement de leurs cotisations, à la valeur de service de la fiche, comme pour les
   pensions prises depuis 2026, et majore du taux la pension qu'elles valent. Les trois
   témoins de chef nés en 1925, 1935 et 1945, partis en 1989, 1999 et 2009, y gagnent
-  46,75 €, 47,76 € et 106,36 € par an, en euros de leur départ (5 %, 5 % et 16,00 %),
-  +1,06 %, +0,62 % et +0,75 % de leur pension de base. La majoration de 17 % de
+  46,13 €, 47,76 € et 106,36 € par an, en euros de leur départ (5 %, 5 % et 16,00 %),
+  +1,05 %, +0,62 % et +0,75 % de leur pension de base ; le premier, 46,75 € et +1,06 %
+  jusqu'à ce que sa cotisation de 1952 ne soit plus que la moitié d'une année, le
+  3 novembre 2026. La majoration de 17 % de
   D. 732-76 (du 22 avril 2005 au 1er janvier 2026), que la DILA rattache à l'article 2
   du décret n° 81-790, n'est pas appliquée : voir a_relire.
 sources:
@@ -120,24 +122,28 @@ sources:
     s'ouvre le jour où naît le régime, « la date de création du régime d'assurance
     vieillesse des professions non salariées agricoles, à savoir le 1er juillet 1952 pour
     la métropole » (décret n° 99-875, article 2, LEGIARTI000006779656) : aucun point du
-    régime ne la précède, et la borne n'en exclut aucun. Mais l'exercice 1952 n'a
-    qu'une demi-année : « Pour l'exercice 1952, les cotisations professionnelles visées
-    aux articles 20 et 21 de la loi du 10 juillet 1952 sont égales à la moitié des
-    cotisations annuelles » (décret n° 52-1166, article 45, LEGIARTI000019272803). Aucun
-    texte lu ne dit les points que valait cette demi-année — ils relèvent des décrets
-    auxquels R. 732-69 renvoie pour les années antérieures à 1981, non lus, et la loi
-    n° 52-799 n'est à l'index JORF que par sa notice —, ni si la moyenne P la compte
-    pour une année ou pour une demie. Le modèle, par convention, compte 1952 comme les
-    autres années : la cotisation de l'année entière, et une année dans P, ici comme
-    dans le reste de la pension proportionnelle. Effet au plus, pour les seuls chefs de
-    1952, si 1952 ne valait que la moitié de sa cotisation : T fois la pension que vaut
-    cette moitié, 45 % au plus, et le déplacement de P qu'elle fait, qui peut faire
-    passer un seuil du barème au chef de peu d'années. Pour le témoin de chef né en
-    1925, parti en février 1989, chef de 1952 à 1972 : 46,75 € de majoration au modèle
-    (P = 18,00, 5 %), 46,13 € à la moitié de la cotisation de 1952, comptée pour une
-    année ou pour une demie (P = 17,76 ou 18,19), le taux restant de 5 % : 0,63 € par an
-    au plus, en euros de son départ. Dans le reste de sa pension proportionnelle, cette
-    moitié vaut 12,52 € par an.
+    régime ne la précède, et la borne n'en exclut aucun. Le décret n° 52-1166 dit :
+    « Pour l'exercice 1952, les cotisations professionnelles visées aux articles 20 et 21
+    de la loi du 10 juillet 1952 sont égales à la moitié des cotisations annuelles »
+    (article 45, LEGIARTI000019272803), et « La double cotisation professionnelle prévue
+    à l'article 19 de la loi du 10 juillet 1952 est due pour chaque exercice commençant
+    au 1er janvier et finissant au 31 décembre » (article 15, LEGIARTI000019272718).
+    L'article 45 ne donne pas la raison de la moitié, et l'article 15 fait courir
+    l'exercice 1952 du 1er janvier au 31 décembre : qu'il ne couvre qu'une demi-année se
+    déduit du 1er juillet 1952, et ne se lit pas. Depuis le 3 novembre 2026, le modèle ne
+    prélève en 1952 que la moitié de la cotisation annuelle (fiche
+    cotisation_agricole_de_1952), dont il tire les points au rendement, comme de toute
+    cotisation d'avant 1990. Aucun texte lu ne dit les points que valait cette moitié —
+    ils relèvent des décrets auxquels R. 732-69 renvoie pour les années antérieures à
+    1981, non lus, et la loi n° 52-799 n'est à l'index JORF que par sa notice —, ni si la
+    moyenne P compte 1952 pour une année ou pour une demie : le modèle, par convention,
+    la compte pour une année. Effet au plus de cette convention : le déplacement de P,
+    qui peut faire passer un seuil du barème au chef de peu d'années. Pour le témoin de
+    chef né en 1925, parti en février 1989, chef de 1952 à 1972 : P = 17,76 sur 21
+    années, 18,19 sur 20,5, 5 % dans les deux cas, 46,13 € de majoration : rien. La
+    moitié de la cotisation de 1952 lui a ôté 0,63 € de majoration (46,75 € et P = 18,00
+    auparavant) et 12,52 € par an du reste de sa pension proportionnelle, en euros de
+    son départ.
   - >-
     L'arrondi, pour les pensions prises de juillet 1986 à 2025 : ni D. 732-77 ni
     l'article 2 du décret n° 86-1084 ne disent s'il faut arrondir le taux T, que leurs

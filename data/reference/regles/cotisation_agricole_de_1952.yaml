@@ -1,0 +1,210 @@
+schema_version: 1
+id: cotisation_agricole_de_1952
+intitule: >-
+  Pour l'exercice 1952, les cotisations professionnelles des non-salariés agricoles,
+  celles des articles 20 et 21 de la loi n° 52-799 du 10 juillet 1952, sont égales à la
+  moitié des cotisations annuelles (décret n° 52-1166 du 18 octobre 1952, article 45).
+domaine: cotisations
+regimes: [msa_non_salaries]
+etape: acquerir_les_droits
+face: cotisation
+etat: transcrite
+lit:
+- l'année de la ligne de carrière, qui est l'exercice au titre duquel la cotisation est due
+- >-
+  le revenu de l'année, borné au plafond, et le taux de cotisation de la fiche du régime
+  (regimes/msa_non_salaries.yaml), qui en font la cotisation annuelle du modèle
+ecrit:
+- >-
+  la cotisation de l'année au régime des non-salariés agricoles, que le scénario 1 change
+  en points par le rendement, et que le compte des scénarios 2 à 6 reçoit
+dates_qui_decident:
+- revenu.annee
+versions:
+- id: avant_le_regime
+  statut: supposee
+  hypothese: >-
+    le régime ne prélève rien avant 1952, l'année où il naît : aucun texte en vigueur
+    avant 1952 ne le dit, puisqu'il n'existe pas
+  fiabilite: >-
+    haute, le décret n° 99-875, article 2, rédaction du 23 février 2001
+    (LEGIARTI000006779656), dit « la date de création du régime d'assurance vieillesse
+    des professions non salariées agricoles, à savoir le 1er juillet 1952 pour la
+    métropole ou le 1er janvier 1964 pour les départements d'outre-mer »
+  bornes:
+    revenu.annee: [null, 1952-01-01]
+  contenu:
+    droit: aucune cotisation au régime, qui naît le 1er juillet 1952
+  exemples: aucun trouvé
+- id: exercice_1952
+  statut: lue
+  nee_de: LEGIARTI000019272803
+  textes:
+  - id: LEGIARTI000019272803
+    article: décret n° 52-1166 du 18 octobre 1952, article 45
+    en_vigueur: 1952-10-19
+    citation: >-
+      « Pour l'exercice 1952, les cotisations professionnelles visées aux articles 20 et
+      21 de la loi du 10 juillet 1952 sont égales à la moitié des cotisations
+      annuelles. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000019272718
+    article: décret n° 52-1166, article 15
+    en_vigueur: 1952-10-19
+    citation: >-
+      « La double cotisation professionnelle prévue à l'article 19 de la loi du 10
+      juillet 1952 est due pour chaque exercice commençant au 1er janvier et finissant
+      au 31 décembre. La situation des assujettis est appréciée au 1er janvier de chaque
+      année. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000019272639
+    article: décret n° 52-1166, article 5
+    en_vigueur: 1952-10-19
+    citation: >-
+      « Les recettes de la caisse nationale d'allocation de vieillesse agricole sont les
+      suivantes : [...] 2° Le produit de la participation du fonds national
+      d'allocation de vieillesse agricole prévue à l'article 19 (2°) de la loi n° 52-799
+      du 10 juillet 1952 ; 3° Le produit des cotisations prévues aux articles 20 et 21
+      de la loi n° 52-799 du 10 juillet 1952 »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000019272741
+    article: décret n° 52-1166, article 22
+    en_vigueur: 1952-10-19
+    citation: >-
+      « Le bureau d'allocation de vieillesse visé à l'article 1er ci-dessus notifie aux
+      assujettis, au cours du premier mois de chaque semestre civil, le montant de la
+      somme qu'ils auront à verser, pour ledit semestre, au titre de la cotisation
+      professionnelle assise sur le revenu cadastral. [...] La ou les cotisations
+      professionnelles mises à la charge des personnes visées aux articles 8 et 9
+      ci-dessus sont ajoutées à la cotisation cadastrale du deuxième semestre ou, le
+      cas échéant, du troisième trimestre de l'année considérée. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000019272715
+    article: décret n° 52-1166, article 14, du 19 octobre 1952 au 3 septembre 1972
+    en_vigueur: 1952-10-19
+    citation: >-
+      « la cotisation personnelle de l'exploitant due au titre de l'article 20 de la loi
+      du 10 juillet 1952 est recouvrée par le bureau dont relève l'exploitation ayant le
+      revenu cadastral initial le plus élevé »
+    lu_le: 2026-11-03
+  bornes:
+    revenu.annee: [1952-01-01, 1953-01-01]
+  contenu:
+    beneficiaire: >-
+      tout assujetti de 1952, chef ou membre de sa famille : l'article 45 vise les
+      cotisations des articles 20 et 21 sans distinguer qui les doit
+    droit: >-
+      la cotisation de 1952 est la moitié de la cotisation annuelle ; le modèle, dont la
+      cotisation annuelle est 8,5 % du revenu borné au plafond, en prend la moitié en
+      portant le taux de cette seule année à 4,25 %, l'assiette restant le revenu de
+      l'année entière
+    parametres:
+      taux_cotisation_retraite: 0.0425
+  exemples: aucun trouvé
+- id: exercices_suivants
+  statut: lue
+  textes:
+  - id: LEGIARTI000019272718
+    article: décret n° 52-1166, article 15
+    en_vigueur: 1952-10-19
+    citation: >-
+      « La double cotisation professionnelle prévue à l'article 19 de la loi du 10
+      juillet 1952 est due pour chaque exercice commençant au 1er janvier et finissant
+      au 31 décembre. »
+    lu_le: 2026-11-03
+  bornes:
+    revenu.annee: [1953-01-01, null]
+  contenu:
+    droit: >-
+      la cotisation de l'exercice entier, du 1er janvier au 31 décembre ; l'article 45
+      ne vaut que pour 1952
+  exemples: aucun trouvé
+approximations:
+- version: exercice_1952
+  ecart: >-
+    la cotisation annuelle que le modèle divise par deux est sa convention, 8,5 % du
+    revenu borné au plafond (fiche du régime, période de 1974 à 1985), et non les
+    cotisations de 1952, personnelle (article 20) et cadastrale (article 21), dont la loi
+    n° 52-799 fixe le montant ; son texte n'est à l'index du Journal officiel que par sa
+    notice (JORFTEXT000000512405)
+  effet: celui de la convention, que la fiche du régime déclare ; non mesuré ici
+- version: exercice_1952
+  ecart: >-
+    la cotisation « réclamée aux assujettis est arrondie à la dizaine de francs
+    inférieure » (décret n° 52-1166, article 23, LEGIARTI000019272750, du 19 octobre 1952
+    au 9 juillet 1975) ; le modèle n'arrondit pas
+  effet: >-
+    moins de dix anciens francs par an, soit 0,1 franc de 1960, 0,015 € : posé à la main,
+    10 / 100 / 6,559 57
+sources:
+  lu_le: 2026-11-03
+  prochaine_relecture: 2027-11-03
+  a_relire:
+  - >-
+    Ce que l'article 45 ne dit pas, et que le modèle tient par convention. (1) La raison
+    de la moitié : l'article ne la donne pas, et l'article 15 fait courir chaque
+    exercice du 1er janvier au 31 décembre ; qu'elle tienne à ce que le régime ne couvre
+    que le second semestre se déduit du 1er juillet 1952, date de sa création (décret
+    n° 99-875, article 2), et du décret n° 55-753, article 18 (LEGIARTI000006763581) :
+    « Les années d'activité postérieures au 1er juillet 1952 ne sont prises en
+    considération que si elles ont donné lieu au payement des cotisations prévues à
+    l'article 19 de la loi du 10 juillet 1952 modifiée ». C'est une déduction, non une
+    lecture. (2) Que la « double cotisation professionnelle » de l'article 19, celle
+    dont dépend la prise en compte des années, soit celle des articles 20 et 21 : le
+    décret ne nomme pas d'autres cotisations parmi les recettes de la caisse (article
+    5, 3°), et son article 22 appelle « cotisations professionnelles » celles de
+    l'exploitant et des membres de sa famille ; la loi n'est pas lue. (3) Les points et
+    la durée de cette demi-cotisation : le modèle compte les points de toute cotisation
+    d'avant 1990 par son rendement, ceux de 1952 sur la moitié, et compte 1952 pour une
+    année entière dans la durée et dans la moyenne P de la majoration des points de
+    chef (fiche retraite_proportionnelle_msa) ; aucun texte lu ne dit l'une ou l'autre.
+  - >-
+    La loi n° 52-799 du 10 juillet 1952, articles 19 à 21, au fac-similé du Journal
+    officiel du 11 juillet 1952 : le montant et l'assiette des cotisations de 1952, et ce
+    qu'est la « double cotisation » de l'article 19. La rédaction d'origine des articles
+    8 et 9 du décret n° 52-1166, que l'index n'a qu'à partir du 8 août 1953.
+  lectures:
+  - type: legifrance
+    reference: >-
+      décret n° 52-1166 du 18 octobre 1952 (LEGITEXT000006060625), articles 1er à 28 et
+      44 à 46 dans leurs rédactions du 19 octobre 1952, dont les articles 5, 14, 15, 22,
+      23 et 45 cités par les versions ; les articles 8, 9, 13, 18, 20, 29 et 30 n'y sont
+      que dans des rédactions postérieures (1953 à 1974). Décret n° 99-875, article 2
+      (LEGIARTI000006779656) ; décret n° 55-753, article 18 (LEGIARTI000006763581) ; loi
+      n° 52-401 du 14 avril 1952, articles 17, 19 et 20 (LEGIARTI000006319214,
+      LEGIARTI000006319216, LEGIARTI000006319218), qui créent le fonds national et
+      renvoient ses ressources à « une loi spéciale avant le 15 juin 1952 ». Au Journal
+      officiel, les notices de la loi n° 52-799 (JORFTEXT000000512405), du décret
+      n° 52-1166 (JORFTEXT000000327336) et de l'arrêté du 23 juillet 1953 « TAUX DES
+      COTISATIONS » (JORFTEXT000000435389), sans leur texte. Lu dans les index LEGI (à
+      jour au 2 novembre 2026) et JORF (au 3 novembre 2026) du dépôt
+    date: 2026-11-03
+code:
+  python: >-
+    droit/acquerir.py : acquerir ; moteur/compte.py : ConstructeurCompte.cotisation_annuelle
+  javascript: >-
+    moteur/js/droit/acquerir.js : acquerir ; moteur/js/compte.js :
+    ConstructeurCompte.cotisationAnnuelle
+  parametres: >-
+    contenu.parametres de chaque version : taux_cotisation_retraite ;
+    regimes/msa_non_salaries.yaml : taux_cotisation_retraite
+  tests: tests/test_simulateur.py
+historique:
+- >-
+  2026-11-03 — née avec l'action 131 : le modèle prélevait en 1952 la cotisation d'une
+  année entière, au compte comme au scénario 1, que la relecture R-K-bis avait relevé ;
+  la période de 1952 de la fiche du régime est coupée à part, au taux de 4,25 %.
+effet: >-
+  Les chefs d'exploitation et les membres de leur famille qui cotisaient en 1952 : leur
+  cotisation de cette année est la moitié de celle d'une année, dans les six scénarios.
+  Pour 100 € de revenu, 4,25 € au lieu de 8,50 €. Le témoin de chef né en 1925, parti en
+  1989, chef de 1952 à 1972 : au scénario 1, 4 448,96 € par an au lieu de 4 462,11 €, en
+  euros de son départ, soit 13,144 € de moins : 12,518 € de pension proportionnelle (la
+  moitié de sa cotisation de 1952 revalorisée, 208,635 €, au rendement de 6 %) et
+  0,626 € de majoration de ses points de 1952 à 1972 (46,13 € au lieu de 46,75 €,
+  P = 17,76 au lieu de 18,00, 5 % dans les deux cas), le calcul posé à la main dans la
+  note de l'action 131 du 3 novembre 2026 ; aux scénarios 2 à 6, 1 109,56 € au lieu de
+  1 112,57 €. Le témoin de collaborateur né en 1925 : 12,52 € de moins au scénario 1,
+  sans majoration. Le coût du compte rétroactif ne bouge qu'aux premières années de sa
+  série, quand les retraités ont cotisé en 1952 : −0,85 % en 1959, presque rien en
+  2024.

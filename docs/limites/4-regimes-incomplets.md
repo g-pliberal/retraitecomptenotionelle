@@ -507,9 +507,10 @@ ce même équivalent. Les pensions
 prises de juillet 1986 à 2025 les majorent aussi, d'un seul taux sur toute la
 période (décret n° 86-1084, article 2, puis D. 732-77), sur le même
 équivalent. Deux conventions s'y ajoutent, faute de texte, dont la fiche
-`retraite_proportionnelle_msa` chiffre l'effet : l'année 1952, dont le régime
-ne couvre que la seconde moitié et ne prélève que la moitié de la cotisation
-annuelle (décret n° 52-1166, article 45), compte pour une année entière ; ni
+`retraite_proportionnelle_msa` chiffre l'effet : l'année 1952, dont le modèle
+ne prélève que la moitié de la cotisation annuelle, comme le veut le décret
+n° 52-1166 (article 45, fiche `cotisation_agricole_de_1952`), compte pour une
+année entière dans la moyenne ; ni
 le taux ni les points majorés ne s'arrondissent, quand R. 732-67 arrondit
 ceux des pensions prises depuis 2026. La majoration que D. 732-76 donne à partir de seize points
 de moyenne n'est appliquée nulle part : aucun texte lu ne dit si elle se cumule
@@ -695,7 +696,7 @@ Ce facteur vaut <!--chiffre:mesure(garantie?annee=2020&quoi=facteur)-->0,62<!--/
 <!--chiffre:mesure(part_pib?scenario=garantie&annee=2026)-->0,46<!--/--> % du PIB en 2026 — <!--chiffre:mesure(cout_annee?scenario=garantie&annee=2026)-->14<!--/--> milliards d'euros de 2026, <!--chiffre:mesure(garantie?annee=2026&quoi=beneficiaires)-->2,8<!--/--> millions de
 bénéficiaires — et <!--chiffre:mesure(part_pib?scenario=garantie&annee=2070)-->0,36<!--/--> % en 2070 — <!--chiffre:mesure(cout_annee?scenario=garantie&annee=2070)-->14<!--/--> milliards, <!--chiffre:mesure(garantie?annee=2070&quoi=beneficiaires)-->2,8<!--/--> millions —, soit
 <!--chiffre:mesure(cumul_avenir?scenario=garantie)-->621<!--/--> milliards constants cumulés sur la projection ; le passé, où le même
-déplacement est appliqué à rebours, en porte <!--chiffre:mesure(cumul_passe?scenario=garantie)-->1 376<!--/--> depuis 1959. Ces chiffres
+déplacement est appliqué à rebours, en porte <!--chiffre:mesure(cumul_passe?scenario=garantie)-->1 377<!--/--> depuis 1959. Ces chiffres
 sont bruts des reprises sur succession ; la sous-section qui suit dit comment
 chacun a été établi.
 

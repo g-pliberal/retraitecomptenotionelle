@@ -6639,6 +6639,72 @@ def test_le_compte_porte_la_cotisation_du_collaborateur_sur_son_forfait(simulate
         "msa_non_salaries": 2084.40}
 
 
+def test_l_exercice_1952_ne_preleve_que_la_moitie_de_la_cotisation_annuelle(simulateur):
+    """« Pour l'exercice 1952, les cotisations professionnelles visées aux
+    articles 20 et 21 de la loi du 10 juillet 1952 sont égales à la moitié des
+    cotisations annuelles » (décret n° 52-1166 du 18 octobre 1952, article 45,
+    LEGIARTI000019272803, sans distinguer le chef de sa famille). Le modèle
+    prélevait en 1952 la cotisation d'une année entière, au compte comme au
+    scénario 1. Chef de 1952 à 1972 à 100 € par an, sous le plafond, parti en
+    1990 : son compte reçoit pour 1952 la moitié des 8,5 % de 100 €, 4,25 €, et
+    pour 1953 les 8,50 € d'une année ; le collaborateur de même. Au scénario 1,
+    la cotisation que le rendement change en points, ramenée aux prix de son
+    année : 4,25 € pour 1952, 8,50 € pour 1953. Dans les deux moteurs."""
+    import json
+    import shutil
+    import subprocess
+
+    from retraite_notionnelle.droit import releve
+
+    naissance = dict(annee_naissance=1925, mois_naissance=1, jour_naissance=15, sexe="H",
+                     age_liquidation=65.0)
+    chef = [dict(annee=annee, revenu=100.0, affiliation="exploitant_agricole")
+            for annee in range(1952, 1973)]
+    collaborateur = [dict(ligne, affiliation="collaborateur_agricole") for ligne in chef]
+    for lignes in (chef, collaborateur):
+        assert _compte_de_l_annee_en_deux_moteurs(simulateur, naissance, lignes, 1952) == {
+            "msa_non_salaries": 4.25}
+        assert _compte_de_l_annee_en_deux_moteurs(simulateur, naissance, lignes, 1953) == {
+            "msa_non_salaries": 8.50}
+    carriere = Carriere(**naissance, lignes=[AnneeCarriere(**ligne) for ligne in chef])
+    assert dict(simulateur.constructeur.cotisation_annuelle(carriere, 1952).par_regime) == {
+        "msa_non_salaries": pytest.approx(4.25)}
+    cotisations = releve.construire(simulateur.scenario_actuel, carriere).droits.cotisations
+    attendu = {1952: 4.25, 1953: 8.50}
+    assert {annee: round(montant / simulateur.macro.coefficient_prix(annee, 1990), 2)
+            for code, annee, montant in cotisations
+            if code == "msa_non_salaries" and annee in attendu} == attendu
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    script = """
+import { readFileSync } from "node:fs";
+import { AnneeCarriere, Carriere } from "./moteur/js/carriere.js";
+import { Contexte } from "./moteur/js/contexte.js";
+import { construire } from "./moteur/js/droit/releve.js";
+const contexte = new Contexte(JSON.parse(readFileSync("moteur/donnees.json", "utf8")));
+const simulateur = contexte.simulateur();
+const [naissance, lignes] = JSON.parse(process.argv[1]);
+const carriere = new Carriere({
+  ...naissance, lignes: lignes.map((ligne) => new AnneeCarriere(ligne)) });
+const obtenus = {};
+for (const [code, annee, montant] of
+  construire(simulateur.scenarioActuel, carriere).droits.cotisations) {
+  if (code === "msa_non_salaries" && (annee === 1952 || annee === 1953)) {
+    obtenus[annee] = Math.round(100 * montant / simulateur.macro.coefficientPrix(annee, 1990))
+      / 100;
+  }
+}
+process.stdout.write(JSON.stringify(obtenus));
+"""
+    execution = subprocess.run(
+        ["node", "--input-type=module", "-e", script, json.dumps([naissance, chef])],
+        cwd=RACINE_TEMOINS.parent.parent, capture_output=True, text=True,
+        encoding="utf-8", check=False)
+    assert execution.returncode == 0, execution.stderr[-2000:]
+    assert {int(annee): montant for annee, montant in json.loads(execution.stdout).items()} \
+        == attendu
+
+
 def test_la_repartition_des_annees_suit_r_173_3_2():
     """« Arrondis à chaque étape à l'entier non nul le plus proche, la fraction
     d'année égale à 0,5 étant comptée pour une année » ; les années
