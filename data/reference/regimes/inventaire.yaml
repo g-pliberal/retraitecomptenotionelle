@@ -364,6 +364,13 @@ inventaire:
         \ en Nouvelle-Calédonie, articles 1er à 4 dans la rédaction de la délibération\
         \ n° 59/CP du 24 février 2022 (JONC du 25 février 2022 ; version consolidée\
         \ du 13 décembre 2022 sur Juridoc)", id: null}
+    - {reference: "Chambre territoriale des comptes de Nouvelle-Calédonie, rapport d'observations\
+        \ définitives « CAFAT, exercices 2020 et suivants », délibéré le 30 juin 2022,\
+        \ p. 62 et 63 et annexe 7 (p. 102) : la valeur du point, la valeur de référence\
+        \ et le taux de rendement de 2015 à 2021 ; CAFAT, fiches « Les paramètres »,\
+        \ janvier 2017 à octobre 2026 ; conseil économique et social de Nouvelle-Calédonie,\
+        \ avis n° 12/2008 du 17 octobre 2008, p. 4 : le rendement de 2001, 2007 et 2008",
+      id: null}
     - {reference: "fiche du CLEISS, retraite complémentaire : « tous les salariés [...]\
         \ soumis à titre obligatoire au régime d'assurance vieillesse de base géré par\
         \ la CAFAT relèvent obligatoirement des régimes Agirc-Arrco » (accord collectif,\
@@ -374,20 +381,24 @@ inventaire:
         \ avenants des 24 août et 12 décembre 1995 (direction du travail de Nouvelle-Calédonie,\
         \ hors JORF)", id: null}
     manque: >-
-      La valeur de référence qui convertit les cotisations en points est publiée par
-      la CAFAT (2 845,44 FCFP en 2026, pour un point de 256,09) : le rendement de 10
-      % est estimé, quand le droit le fait descendre de 10,3 % en 2016 à 9,0 % en 2026
-      ; l'anticipation de dix trimestres, avec 1,5 % d'abattement par trimestre ou sans
-      abattement à 37 années, n'est pas portée (délibération n° 458, articles 2 à 4)
-      ; taux et barème de 2026 projetés sur toute la période ; plafond de 548 600 FCFP
-      remplacé par le plafond national. Le statut `salarie_nouvelle_caledonie` route
-      aussi l'Agirc-Arrco du non-cadre, obligatoire depuis le 1er janvier 1995 ; les
-      années d'avant, depuis 1958, en sont des services passés, validés sans cotisation
-      à une pension prise depuis 1995 et absents du compte notionnel, sur les barèmes
-      de métropole faute de ceux de la généralisation (fiche `services_passes_outre_mer`).
-      Le chômage, que la CAFAT indemnise, ne vaut aucun point complémentaire ; il cotise
-      à la CAFAT et y vaut des points (loi du pays n° 2001-016, Lp. 100-7), que le modèle
-      ne porte pas.
+      Le rendement est celui que la caisse fixe chaque année, de 12,45 % en 2001 à 10,35
+      % de 2008 à 2015, puis 9 % en 2026 (2 845,44 FCFP de valeur de référence pour
+      un point de 256,09) ; avant 2001 rien n'est publié, et la valeur de 2001 est prolongée
+      ; le moteur le sert, à l'année de la liquidation, aux cotisations revalorisées
+      sur les prix, quand la caisse achète les points à la valeur de référence de chaque
+      année. Le taux d'avant avril 2009, non lu, que deux avis du conseil économique
+      et social font de 13 % (calcul du dépôt), n'est pas porté ; l'anticipation de
+      dix trimestres, avec 1,5 % d'abattement par trimestre ou sans abattement à 37
+      années, n'est pas portée (délibération n° 458, articles 2 à 4) ; taux de 2026
+      projeté sur toute la période ; plafond de 548 600 FCFP remplacé par le plafond
+      national. Le statut `salarie_nouvelle_caledonie` route aussi l'Agirc-Arrco du
+      non-cadre, obligatoire depuis le 1er janvier 1995 ; les années d'avant, depuis
+      1958, en sont des services passés, validés sans cotisation à une pension prise
+      depuis 1995 et absents du compte notionnel, sur les barèmes de métropole faute
+      de ceux de la généralisation (fiche `services_passes_outre_mer`). Le chômage,
+      que la CAFAT indemnise, ne vaut aucun point complémentaire ; il cotise à la CAFAT
+      et y vaut des points (loi du pays n° 2001-016, Lp. 100-7), que le modèle ne porte
+      pas.
 
   - code: wallis_et_futuna
     nom: Retraite des salariés de Wallis-et-Futuna
@@ -404,15 +415,24 @@ inventaire:
     - {reference: "Caisse des prestations sociales des îles Wallis et Futuna, pages\
         \ « Retraites » et « Les taux de cotisation » (délibérations de l'assemblée\
         \ territoriale, hors JORF)", id: null}
+    - {reference: "Cour des comptes, observations définitives S2022-2223, « Le territoire\
+        \ des îles Wallis et Futuna, exercices 2016-2021 », délibéré le 14 décembre\
+        \ 2022, p. 33 : la retraite à 21 % des salaires, deux tiers à l'employeur, et\
+        \ les prestations familiales à 6 % de l'employeur ; IEOM, rapports annuels économiques\
+        \ de Wallis-et-Futuna, 2004 à 2022 : le taux de chaque année, et la caisse locale\
+        \ de retraites d'avant 2009", id: null}
     manque: >-
       Le régime existe bel et bien, contrairement à ce que l'inventaire disait : 60
       ans, quinze ans de cotisation, 2,6 % puis 1,3 % par an sur les quinze meilleures
       années ; dès 55 ans avec 7 % d'abattement par année, sans abattement à 57 ans
       avec 35 années (délibération n° 25/AT/2015, non portée). Le taux de cotisation
-      retenu est le taux total de la caisse, 17,10 % en 2009 et 27 % en 2020 : celui
-      de la retraite est de six points plus bas, 11,1 % puis 21 % (IEOM, rapport 2021).
-      Non lus : le plafond, la date de création, le barème d'avant 2009, la réforme
-      en préparation (65 ans).
+      est celui de la retraite seule, 11,1 % en 2009 montant à 21 % en 2020, un tiers
+      au salarié, et 9 % avant 2009 ; la caisse publie le total de ses cotisations,
+      prestations familiales comprises, 17,10 % puis 27 % (Cour des comptes, 2022 ;
+      IEOM). Lus, non portés : le barème de la caisse locale d'avant 2009, à 55 ans
+      sur les quatre dernières années, et sa création en 1977 (IEOM, rapport 2004).
+      Non lus : le plafond, la date d'effet de la réforme de 2015, la réforme en préparation
+      (65 ans).
 
   # ---------------------------------------------------------------------
   # Salariés du privé — complémentaires
