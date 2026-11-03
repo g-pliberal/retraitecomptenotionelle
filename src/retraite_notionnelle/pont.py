@@ -188,16 +188,19 @@ _JUMEAU = 0
 
 @contextlib.contextmanager
 def par_le_jumeau():
-    """Le temps d'un calcul que le portage ne voit pas : le jumeau Python le
-    fait, et la mémoire des calculs, qui ne connaît que le modèle intact, se
-    tait (``memoire.modele_modifie``).
+    """Le temps d'une confrontation : le jumeau Python refait ce que le
+    portage calcule, et la mémoire des calculs, qui ne connaît que le modèle
+    intact, se tait (``memoire.modele_modifie``).
 
-    S'y ouvrent les confrontations qui font refaire au jumeau ce que le
-    portage calcule, jusqu'au retrait de sa paire. Les études qui remplaçaient
-    une fonction du moteur Python le temps d'une variante l'ont écrite en
-    données, une couche ou un paramètre de la demande au pont (note de
-    décision 0006 ; action 161, « le coût sous un modèle modifié ») :
-    ``proposition_prospective.py``, un univers que la demande porte
+    Seules s'y ouvrent les confrontations, et les tests du levier lui-même,
+    que ``tests/test_pont.py`` déclare un à un (``CONFRONTATIONS_DU_JUMEAU``,
+    ``TESTS_DU_LEVIER``) et que ``test_seules_les_confrontations_ouvrent_le_jumeau``
+    tient (action 161, « le coût sous un modèle modifié », sous-étape 6) ;
+    une confrontation part avec la paire qu'elle confronte, et le levier avec
+    la dernière. Aucune étude ni aucun script : une variante qui remplacerait
+    une fonction du moteur, que le portage ne voit pas, s'écrit en données,
+    une couche ou un paramètre de la demande au pont (note de décision
+    0006) — ``proposition_prospective.py``, un univers que la demande porte
     (``Simulateur.univers_de_la_demande``) ; ``stock_age_legal.py`` et
     ``solde_fusion.py``, une règle du moteur sous un paramètre
     (``Parametres.stock_age_legal``, ``Parametres.bareme_regime_unique``)."""
@@ -223,9 +226,9 @@ def par_le_portage(parametres) -> bool:
     la mémoire des calculs se tait — sous ``monkeypatch``
     (``tests/conftest.py``) ou un contexte qui remplace une fonction du coût
     (``memoire.modele_modifie``) : ce qu'ils remplacent, le Python le lit. Non
-    sous :func:`par_le_jumeau` seul : le portage ne voit pas ce qu'il
-    remplace, et le moteur Python, le seul qui le voie, calcule. Ce n'est pas
-    un repli : sans node, le calcul s'arrête (:class:`PontIndisponible`)."""
+    sous :func:`par_le_jumeau`, que seules les confrontations ouvrent : le
+    jumeau Python y refait ce que le portage calcule. Ce n'est pas un repli :
+    sans node, le calcul s'arrête (:class:`PontIndisponible`)."""
     return not _JUMEAU
 
 

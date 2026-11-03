@@ -72,11 +72,13 @@ de la proposition, qui s'écrit en couche (`data/CLAUDE.md`).
   pour un calcul écrit dans un script ou un test, de son code, un seul
   processus faisant chaque calcul pendant que les autres l'attendent
   (`CALCULS_SANS_MEMOIRE=1` s'en passe) et ne sert que sur le modèle intact :
-  qui en remplace une fonction s'ouvre sous `memoire.modele_modifie()`, et
-  `monkeypatch` la fait taire ; qui remplace une fonction du moteur, que le
-  portage ne voit pas, sous `pont.par_le_jumeau()`, qui fait aussi calculer
-  le jumeau, le temps que sa variante s'écrive en données (note de décision
-  0006). `SerieAnnuelle` et
+  qui en remplace une fonction du coût ou d'une étude s'ouvre sous
+  `memoire.modele_modifie()`, et `monkeypatch` la fait taire ; une fonction
+  du moteur, que le portage ne voit pas, ne se remplace pas : sa variante
+  s'écrit en données (note de décision 0006). Seules les confrontations,
+  déclarées une à une dans `tests/test_pont.py`
+  (`CONFRONTATIONS_DU_JUMEAU`), s'ouvrent sous `pont.par_le_jumeau()`, qui
+  fait aussi calculer le jumeau. `SerieAnnuelle` et
   `Carriere` sont immuables après leur constructeur : un champ réassigné
   après coup casserait leurs mémoires sans bruit.
 

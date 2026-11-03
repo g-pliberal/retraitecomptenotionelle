@@ -19,6 +19,7 @@ s'arrête, sans repli sur le moteur Python.
 
 from __future__ import annotations
 
+import ast
 import json
 import re
 import shutil
@@ -1535,13 +1536,10 @@ def test_le_cout_date_et_bat_sa_grille_par_le_portage_sans_les_jumeaux(memoire_i
 
 
 def test_sous_le_jumeau_le_cout_simule_sa_grille_en_python(memoire_isolee, monkeypatch):
-    """Un contexte qui remplace une fonction du moteur Python le temps d'une
-    variante (``scripts/solde_fusion.py``), ou une
-    confrontation qui fait refaire au jumeau ce
-    que le portage calcule, s'ouvre sous ``pont.par_le_jumeau()`` : le portage
-    ne voit pas le remplacement, et la grille se simule par le moteur Python,
-    le seul qui la voie. Le modèle laissé tel quel, elle rend ce que le portage
-    rend, couple pour couple, chaque nombre au bit près."""
+    """Une confrontation qui fait refaire au jumeau ce que le portage calcule
+    s'ouvre sous ``pont.par_le_jumeau()`` : la grille s'y simule par le moteur
+    Python, node absent, et rend ce que le portage rend, couple pour couple,
+    chaque nombre au bit près."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le pont ne se vérifie pas ici")
     from retraite_notionnelle import cout
@@ -1647,6 +1645,112 @@ def test_sur_des_donnees_d_ailleurs_le_cout_calcule_par_le_portage(tmp_path):
         assert not pont.par_le_portage(ailleurs)
         assert not memoire._active()
     assert pont.par_le_portage(Parametres())
+
+
+#: Le levier qui fait calculer le jumeau Python (``pont.par_le_jumeau``).
+LEVIER = "par_le_jumeau"
+
+#: Les confrontations qui font refaire au jumeau Python ce que le portage
+#: calcule, par fichier : avec les tests du levier (:data:`TESTS_DU_LEVIER`),
+#: seules à ouvrir ``pont.par_le_jumeau()`` (action 161, le coût sous un modèle
+#: modifié, sous-étape 6). Aucune étude ni aucun script ne l'ouvre : une
+#: variante qui remplacerait une fonction du moteur, que le portage ne voit
+#: pas, s'écrit en données, une couche ou un paramètre de la demande au pont
+#: (note de décision 0006). Une confrontation part avec la paire qu'elle
+#: confronte, et le levier avec la dernière.
+CONFRONTATIONS_DU_JUMEAU = {
+    "tests/test_cout.py": ("test_le_portage_bat_toute_la_grille_du_cout_comme_le_python",),
+    "tests/test_grille_large.py": (
+        "test_la_grille_large_se_date_et_se_bat_au_portage_sans_les_jumeaux",
+        "test_les_mesures_de_la_grille_large_passent_par_le_portage_sans_les_jumeaux"),
+    "tests/test_pont.py": (
+        "test_la_grille_des_carrieres_types_se_date_au_portage_sans_les_jumeaux",
+        "test_les_departs_des_facteurs_de_la_depense_se_datent_au_portage_sans_les_jumeaux",
+        "test_le_cout_des_avantages_liquide_sa_grille_au_portage_sans_les_jumeaux",
+        "test_le_cout_date_et_bat_sa_grille_par_le_portage_sans_les_jumeaux",
+        "test_le_cout_d_une_variante_simule_sa_grille_par_le_portage",
+        "test_le_cout_sous_la_regle_du_stock_simule_sa_grille_par_le_portage",
+        "test_sur_des_donnees_d_ailleurs_le_cout_date_bat_et_simule_sa_grille_par_le_portage"),
+    "tests/test_solde_fusion.py": (
+        "test_la_grille_se_simule_par_le_portage_au_bit_pres_du_jumeau",),
+    "tests/test_stock_age_legal.py": (
+        "test_les_cas_types_passent_par_le_portage_au_bit_pres_du_jumeau",),
+}
+
+#: Les tests du levier lui-même — ce qu'il aiguille, le moteur Python qui
+#: calcule sous lui —, qui partent avec lui.
+TESTS_DU_LEVIER = {"tests/test_pont.py": (
+    "test_sous_le_jumeau_le_cout_simule_sa_grille_en_python",
+    "test_sur_des_donnees_d_ailleurs_le_cout_calcule_par_le_portage")}
+
+
+def _ouvertures_du_levier(source: str) -> set[str]:
+    """Les définitions de premier niveau d'un module, fonctions et classes —
+    « » pour ce qui est hors d'elles —, qui ouvrent le levier ou touchent son
+    compteur (``pont._JUMEAU``) : qui les nomment dans leur code, hors des
+    chaînes, ou importent le levier."""
+    def nomme(noeud) -> bool:
+        if isinstance(noeud, ast.Name):
+            return noeud.id == LEVIER
+        if isinstance(noeud, ast.Attribute):
+            return noeud.attr in (LEVIER, "_JUMEAU")
+        return isinstance(noeud, ast.alias) and noeud.name.rpartition(".")[2] == LEVIER
+
+    definitions = (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)
+    return {haut.name if isinstance(haut, definitions) else ""
+            for haut in ast.parse(source).body if any(map(nomme, ast.walk(haut)))}
+
+
+def test_seules_les_confrontations_ouvrent_le_jumeau():
+    """Le levier qui fait calculer le jumeau Python, ``pont.par_le_jumeau()``,
+    ne s'ouvre que dans les confrontations, qui font refaire au jumeau ce que
+    le portage calcule, et dans les tests du levier, déclarés un à un
+    (:data:`CONFRONTATIONS_DU_JUMEAU`, :data:`TESTS_DU_LEVIER`) : aucune
+    étude, aucun script, aucun module du modèle ne l'ouvre ni ne touche son
+    compteur (action 161, le coût sous un modèle modifié, sous-étape 6). Plus
+    aucune confrontation, le levier part. Chaque fichier Python du dépôt, suivi
+    ou nouveau, se lit dans son arbre syntaxique, où se voient l'attribut,
+    l'import et le compteur, et non une mention dans une chaîne."""
+    assert _ouvertures_du_levier(textwrap.dedent('''\
+        from retraite_notionnelle import pont
+        from retraite_notionnelle.pont import par_le_jumeau as levier
+
+        def etude():
+            with pont.par_le_jumeau():
+                pass
+
+        class Variante:
+            def __enter__(self):
+                pont._JUMEAU += 1
+
+        def mention():
+            """``pont.par_le_jumeau()``, nommé dans une chaîne, ne s'ouvre pas."""
+        ''')) == {"", "etude", "Variante"}
+    sortie = subprocess.run(
+        ["git", "ls-files", "-z", "--cached", "--others", "--exclude-standard", "--", "*.py"],
+        cwd=RACINE_PROJET, capture_output=True, check=True).stdout.decode("utf-8")
+    trouvees = set()
+    for chemin in sorted(c for c in sortie.split("\0") if c and (RACINE_PROJET / c).is_file()):
+        texte = (RACINE_PROJET / chemin).read_text(encoding="utf-8")
+        if LEVIER in texte or "_JUMEAU" in texte:
+            trouvees |= {(chemin, nom) for nom in _ouvertures_du_levier(texte)}
+    hors_des_tests = sorted(ouverture for ouverture in trouvees
+                            if not ouverture[0].startswith("tests/"))
+    assert hors_des_tests == [], (
+        "une étude n'ouvre pas pont.par_le_jumeau() : sa variante s'écrit en données, une "
+        "couche ou un paramètre de la demande au pont (note de décision 0006), et le portage "
+        "la calcule")
+    declarees = {(chemin, nom) for registre in (CONFRONTATIONS_DU_JUMEAU, TESTS_DU_LEVIER)
+                 for chemin, noms in registre.items() for nom in noms}
+    assert sorted(trouvees - declarees) == [], (
+        "ouvrent pont.par_le_jumeau() sans être déclarées : une confrontation se déclare "
+        "dans CONFRONTATIONS_DU_JUMEAU, et une variante s'écrit en données")
+    assert sorted(declarees - trouvees) == [], (
+        "déclarées, elles n'ouvrent plus pont.par_le_jumeau() : leur déclaration part")
+    if not any(CONFRONTATIONS_DU_JUMEAU.values()):
+        assert not hasattr(pont, LEVIER), (
+            "plus aucune confrontation n'ouvre pont.par_le_jumeau() : le levier part, avec "
+            "TESTS_DU_LEVIER et l'aiguillage de pont.par_le_portage")
 
 
 @pytest.fixture

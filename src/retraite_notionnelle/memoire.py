@@ -41,12 +41,14 @@ LA RÈGLE
 La mémoire ne connaît que le modèle INTACT. Un contexte qui en remplace une
 fonction s'ouvre sous ``modele_modifie()``, et la mémoire se tait tant qu'il
 est ouvert : rien ne s'y lit, rien ne s'y écrit. Un test qui prend
-``monkeypatch`` en fait autant (``tests/conftest.py``). Un contexte qui
-remplace une fonction du moteur Python — le stock à l'âge légal, le régime
-unique des scripts — s'ouvre sous ``pont.par_le_jumeau()``, qui fait taire la
-mémoire et calculer le jumeau, seul à voir le remplacement ; la proposition
-prospective, un univers que la demande au pont porte, ne remplace plus qu'une
-liste du coût. Et ``cout()`` comme
+``monkeypatch`` en fait autant (``tests/conftest.py``). Une étude ne remplace
+pas de fonction du moteur, que le portage ne verrait pas : sa variante s'écrit
+en données, une couche ou un paramètre de la demande au pont (note de décision
+0006), et ses contextes — la proposition prospective, le régime unique par
+barème — ne remplacent que des fonctions du coût. Seules les confrontations,
+qui font refaire au jumeau ce que le portage calcule, s'ouvrent sous
+``pont.par_le_jumeau()``, qui fait taire la mémoire aussi
+(``tests/test_pont.py``, ``CONFRONTATIONS_DU_JUMEAU``). Et ``cout()`` comme
 ``avantages()`` construisent elles-mêmes, depuis les paramètres, le simulateur
 et les données de leur calcul : venus d'ailleurs, ils pourraient ne pas être
 ceux que la clé décrit. Un script qui garde un calcul à lui
@@ -543,9 +545,11 @@ def _seul(empreinte_: str | None, nom_: str):
 def modele_modifie():
     """Le temps d'un remplacement d'une fonction du modèle : la mémoire se tait.
     Le portage, lui, calcule toujours : ce que le contexte remplace du coût ou
-    d'une étude, le Python le lit ; qui remplace une fonction du moteur Python,
-    que le portage ne voit pas, s'ouvre sous ``pont.par_le_jumeau()``, qui
-    fait taire la mémoire aussi."""
+    d'une étude, le Python le lit. Une fonction du moteur, que le portage ne
+    verrait pas, ne se remplace pas ainsi : sa variante s'écrit en données ;
+    et seules les confrontations, qui font refaire au jumeau ce que le portage
+    calcule, s'ouvrent sous ``pont.par_le_jumeau()``, qui fait taire la
+    mémoire aussi."""
     global _MODIFICATIONS
     _MODIFICATIONS += 1
     try:
