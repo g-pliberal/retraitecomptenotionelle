@@ -306,6 +306,22 @@ def test_chaque_grade_de_chaque_tableau_est_rattache_ou_declare(durees):
             assert d["raison"]
 
 
+def test_un_grade_n_a_qu_une_grille_a_la_fois_par_source(durees):
+    # Règle 5 de l'étape 3, que la relecture R-B3 (point 1 c) a vue enfreinte au
+    # noyau (« Infirmier de classe supérieure », grilles 02948 et 03215 le
+    # 2017-01-01) : par source (le LEGI, le noyau), deux rattachements d'un même
+    # grade de tableau ne se recouvrent pas.
+    par_grade: dict[tuple, list[dict]] = {}
+    for d in durees:
+        if d["statut"] == "rattache":
+            cle = (d["texte"], d["article"], d["tableau"], d["groupe"], d["source"] == "etat")
+            par_grade.setdefault(cle, []).append(d)
+    for cle, lignes in par_grade.items():
+        lignes.sort(key=lambda d: d["debut"])
+        for a, b in zip(lignes, lignes[1:]):
+            assert a["fin"] and b["debut"] >= a["fin"], (cle, a["grille"], b["grille"])
+
+
 def test_les_versions_qui_se_chevauchent_ne_se_rattachent_pas_sur_leur_recouvrement(durees):
     # Les trois paires de `tableaux.csv` (colonne chevauche) : deux versions du
     # même article en vigueur ensemble aux dates du LEGI ; le chaînage ne choisit

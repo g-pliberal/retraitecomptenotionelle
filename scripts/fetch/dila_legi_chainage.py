@@ -23,10 +23,13 @@ commun à divers corps, vise tous deux. Il faut, à la fois :
 - *Un texte qui relie le statut à la grille.* Au LEGI : le texte
   d'échelonnement vise le statut par son numéro (« Vu le décret
   n° 2016-201 […] ») ; et, soit il ne vise, parmi les décrets statutaires,
-  que ce statut-là (lien ``visa``), soit l'article qui fixe la grille le
-  nomme, à chacune de ses versions de la période, par son numéro, ou par sa
-  date quand aucun autre décret de ses visas n'a la même (lien ``article``).
-  Au Noyau RH : le corps cite le statut parmi ses textes (lien ``noyau``).
+  que ce statut-là (lien ``visa`` ; le décret qui l'a modifié, « modifié par
+  le décret n° … », n'en est pas un second), soit l'article qui fixe la grille
+  le nomme, à chacune de ses versions en vigueur sur la période, par son
+  numéro, ou par sa date quand aucun autre décret de ses visas n'a la même
+  (lien ``article``). Au Noyau RH : le corps, ou l'un de ses grades, cite le
+  statut parmi ses textes, par des versions qui couvrent la période (lien
+  ``noyau``) ; corps et grades se lisent chacun dans son fichier.
 - *Le même grade.* Le libellé du tableau et celui de la grille, ou du grade du
   noyau, sont égaux après ``normaliser`` : sans accents, ni casse, ni
   ponctuation, au singulier, sans le « (article N) » que le lecteur des
@@ -48,8 +51,13 @@ ne se rattachent pas sur leur recouvrement : le chaînage ne choisit pas.
 CE QUI PROUVE UN RATTACHEMENT D'UN RECLASSEMENT. À l'État seulement, par le
 Noyau RH : la date du reclassement est celle que le lecteur a lue (``effet``),
 ou celle qui ouvre la phrase (« Au 1er juillet 2011, les membres […] ») ; le
-corps est celui que le noyau rattache au texte du tableau, ou au statut que la
-phrase nomme par son numéro ; le libellé du tableau, où l'aplatissement colle
+corps est l'un de ceux que le noyau rattache, la veille ou le jour, au statut
+que la phrase nomme (``statuts_de_la_phrase``) : par son numéro, par sa date
+quand les visas la résolvent en un seul décret identifié au LEGI ou par son
+NOR, ou le texte du tableau quand il est lui-même ce statut ; jamais tous les
+corps d'un décret qui en modifie plusieurs (relecture R-B3 : les géomètres de
+l'IGN, nommés par « le décret du 20 janvier 1967 », rattachés aux
+géomètres-cadastreurs) ; le libellé du tableau, où l'aplatissement colle
 le grade d'origine et le grade d'accueil, se coupe en deux libellés de grades
 de ce corps (ou des corps qu'il absorbe), en vigueur la veille et le jour du
 reclassement, une seule coupe possible ; les échelons d'origine et d'accueil
@@ -909,9 +917,11 @@ ENTETES = {
               "raison (declare). debut, fin : la période commune au tableau et à la grille (fin "
               "exclue ; vide : en vigueur). source : etat (le Noyau RH : corps, grade, grille), "
               "ou le dossier des grilles du LEGI (texte_grille, grille). lien : visa (le texte "
-              "d'échelonnement ne vise que ce statut), article (l'article de la grille nomme ce "
-              "statut), noyau (le corps cite ce statut) ; preuve : la citation. Pour une grille "
-              "du LEGI, le corps est le statut, texte.",
+              "d'échelonnement ne vise que ce statut), article (chaque version de l'article de "
+              "la grille en vigueur sur la période nomme ce statut), noyau (le corps, ou l'un de "
+              "ses grades, cite ce statut sur toute la période) ; preuve : la citation. Pour une "
+              "grille du LEGI, le corps est le statut, texte. Une seule grille à la fois par "
+              "source : un grade peut avoir, aux mêmes dates, une grille du LEGI et une du noyau.",
     "reclassements": "Chaque groupe de chaque tableau de reclassement (de reclassements/), "
                      "rattaché aux grilles d'origine et d'accueil du Noyau RH, ou déclaré. "
                      "date : celle du reclassement ; date_lue : effet (lue par le lecteur), "
