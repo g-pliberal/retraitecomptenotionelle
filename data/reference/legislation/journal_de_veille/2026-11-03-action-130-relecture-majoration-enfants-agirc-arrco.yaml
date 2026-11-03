@@ -1,0 +1,33 @@
+date: "2026-11-03"
+session: "action 130, file R-M3 : relecture indépendante de la majoration pour enfants nés ou élevés de l'Agirc-Arrco calculée avant le coefficient d'anticipation (commits 488c30a et 2d15a5b, paquet cd8db07)"
+consulte: >-
+  python scripts/veille_droit.py ; docs/veille_droit.md ; la base de la Cnav, rien de neuf.
+  Hors du Journal officiel, téléchargés le 3 novembre 2026 et d'empreintes identiques à
+  celles des fiches : la circulaire Agirc-Arrco 2020-02-DRJ du 20 janvier 2020 (fiche 4,
+  II.2.1 à II.4, et III) ; le guide des salariés n° 9, « Majorations pour enfants »,
+  édition mars 2017 (droits directs et réversion) ; le recueil des accords de la caisse
+  (accord Agirc du 9 février 1994, article 2 ; accord Arrco du 25 avril 1996, articles 10 et
+  11 ; accord du 18 mars 2011, article 7) ; l'accord du 8 décembre 1961 et la convention du
+  14 mars 1947 mis à jour au 1er janvier 2018 (annexe A, articles 17 et 18 ; annexe I,
+  articles 6 et 6 bis) ; l'ANI du 17 novembre 2017 applicable au 1er janvier 2019
+  (articles 84, 85 et 94) ; la circulaire 2023-03-DRJ et l'avenant n° 15 ; la circulaire
+  2025-15-DT. Sans empreinte aux fiches : la compilation des valeurs de point de novembre
+  2026 (sha256 868a8a65…), le document n° 7 du COR du 25 mai 2011 (sha256 952c1af1…), la
+  page de l'IFRAP du 11 juillet 2013, mise à jour le 5 février 2015 ; une recherche des
+  éditions antérieures du guide et d'une mise à jour de la circulaire des individus.
+trouve: >-
+  Conforme. Les citations de M3 sont exactes ; les neuf cas et le plafond de 2026
+  (2 367,48 €) se refont au centime sur les valeurs de point et les coefficients des
+  textes ; les deux moteurs les rendent ; trois témoins sur 930 bougent, de l'ordre que
+  donnent leurs coefficients. Aucune autre édition du guide n° 9 ; l'IFRAP dit la même
+  règle en 2013 (Arrco sans le coefficient, Agirc avec). Trois écarts faibles : l'accord
+  Agirc de 1994 (96 % en 1995, 85 % en 1996, 80 % depuis 1997) est déjà dans le barème de
+  8 à 24 %, 80 % des 10 à 30 % que le COR de 2011 donne à l'article 6 bis, alors que M3
+  écrit que le modèle « ne le sert pas » ; le guide dit, pour la réversion, la majoration
+  calculée sans le coefficient dans les deux régimes, que M3 ne relève pas ; la circulaire
+  2025-15-DT n'a pas d'adresse à la fiche
+  (https://www.agirc-arrco.fr/storage/CirculaireAgircArrco2025-15dt.pdf).
+reste: >-
+  L'avenant n° 16 du 22 novembre 2023, non trouvé (l'index JORF n'est pas dans ce
+  conteneur) ; la rédaction de l'article 6 bis de l'annexe I de 1994 à 2011 ; le site
+  réglementaire de la caisse, qui ne répond pas ; une édition du guide d'avant 2017.
