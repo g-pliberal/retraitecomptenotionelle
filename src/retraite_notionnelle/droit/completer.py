@@ -132,6 +132,25 @@ FICHE_DES_ENFANTS_A_CHARGE = "majoration_enfants_a_charge_agirc_arrco"
 #: effet à compter du 1er janvier 2012 » (accord du 18 mars 2011).
 PREMIER_PLAFOND_MAJORATION = DateMois(2012, 1)
 ASSIETTES_DES_ENFANTS_A_CHARGE = ("allocation", "droits_bruts")
+#: La majoration de l'Agirc-Arrco pour enfants nés ou élevés, dont
+#: :class:`FichesDatees <retraite_notionnelle.scenarios.actuel.FichesDatees>`
+#: lit les versions à la date d'effet (:func:`regimes_sans_anticipation`).
+FICHE_DES_ENFANTS_NES_OU_ELEVES = "majoration_enfants_agirc_arrco"
+
+
+def regimes_sans_anticipation(moteur: ScenarioActuel, date_effet: str) -> frozenset[str]:
+    """Les régimes qui calculent la majoration pour enfants nés ou élevés sur
+    les droits « sans tenir compte des coefficients d'anticipation
+    éventuellement appliqués » (circulaire Agirc-Arrco 2020-02-DRJ, fiche 4,
+    II.2.1) pour une pension prenant effet à ``date_effet`` (AAAA-MM-JJ) :
+    l'Arrco de 2012 à 2018, toute la complémentaire depuis 2019
+    (``sans_anticipation``). La version des points acquis à la date d'effet
+    les nomme, comme toutes celles de cette date ; aucun sans la fiche."""
+    version = moteur.fiches_datees.version_aux_dates(
+        FICHE_DES_ENFANTS_NES_OU_ELEVES,
+        {"liquidation.date_effet": date_effet, "periode.debut": date_effet})
+    return frozenset(() if version is None
+                     else version["parametres"].get("sans_anticipation") or ())
 
 #: La majoration pour conjoint à charge, que :class:`FichesDatees
 #: <retraite_notionnelle.scenarios.actuel.FichesDatees>` lit à la date d'effet
@@ -2109,6 +2128,13 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
         traitements = {eligible.indice: eligible.traitement
                        for eligible in liquidees.plafonds}
         bornee_au_traitement = False
+        # SANS LE COEFFICIENT D'ANTICIPATION, là où la caisse la calcule
+        # ainsi (:func:`regimes_sans_anticipation`) : la majoration se pose sur
+        # l'allocation que le coefficient n'a pas réduite, « sur les droits de
+        # base du participant », et le plafond la borne ensuite.
+        anticipations = dict(liquidees.anticipations)
+        sans_anticipation = regimes_sans_anticipation(
+            moteur, date_d_effet(carriere) or ouvrir.SANS_DATE_D_EFFET)
         for indice, pension in enumerate(pensions):
             if pension.montant <= 0.0:
                 continue
@@ -2132,7 +2158,9 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
                         + taux * (points - majores)) / points
             if taux <= 0:
                 continue
-            part = pension.montant * taux
+            coefficient = (anticipations.get(pension.regime, 1.0)
+                           if pension.regime in sans_anticipation else 1.0)
+            part = (pension.montant / coefficient) * taux
             if (plafond_l18 is not None and indice in traitements
                     and pension.regime in plafond_l18["parametres"]["regimes"]):
                 sous = majoration_sous_le_traitement(

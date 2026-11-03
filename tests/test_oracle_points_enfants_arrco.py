@@ -16,9 +16,11 @@ chacun des deux modèles doit rendre exactement ce que SA règle commande.
 * **Les enfants à charge** : 5 % par enfant, la plus forte des deux
   majorations. Avant 2012, sur l'allocation ; de 2012 à 2018, sur les droits
   bruts, sans le coefficient : l'écart est celui d'OpenFisca.
-* **La minoration** : le coefficient d'anticipation frappe l'allocation et sa
-  majoration, chez l'un et l'autre ; OpenFisca le tronque à l'année, l'écart
-  que ``tests/test_oracle.py`` tranche déjà.
+* **La minoration** : le coefficient d'anticipation frappe l'allocation, chez
+  l'un et l'autre, et sa majoration avant 2012 ; depuis, la caisse calcule
+  celle de l'Arrco sans lui (guide n° 9 de mars 2017), qu'OpenFisca minore
+  encore : l'écart est le sien. OpenFisca tronque le coefficient à l'année,
+  l'écart que ``tests/test_oracle.py`` tranche déjà.
 """
 
 from __future__ import annotations
@@ -294,16 +296,20 @@ def test_la_minoration_frappe_l_allocation_et_sa_majoration(temoin, nous):
 def test_la_troncature_est_l_ecart_d_openfisca(temoin, nous):
     """Le barème d'anticipation s'écrit par trimestre ; OpenFisca le lit par
     année entière, en tronquant (``tests/test_oracle.py``). Quinze trimestres :
-    0,8425 au dépôt, 0,88 chez lui, sur l'allocation comme sur sa majoration,
-    que les deux minorent de même."""
+    0,8425 au dépôt, 0,88 chez lui, sur l'allocation. Sa majoration, que les
+    deux comptent sur les mêmes points, OpenFisca la minore avec elle ; le
+    dépôt, pour ce départ de 2014, la sert entière : « Lorsque la retraite est
+    minorée : le régime Arrco ne tient pas compte du coefficient de minoration
+    pour le calcul des majorations pour enfants » (guide des salariés n° 9 de
+    l'Agirc-Arrco, mars 2017). Le second écart est celui d'OpenFisca."""
     (code, entree), = _de_la_regle(temoin, TRONCATURE)
     eux, moi = entree["openfisca"], nous[code]["arrco"]
     assert eux["decote_trimestres_regime_general"] == 15
     arrco = eux["arrco"]
     assert moi["coefficient"] == pytest.approx(0.8425)
     assert moi["coefficient"] < arrco["coefficient_de_minoration"]
-    assert moi["majoration"] == pytest.approx(
-        arrco["majoration_pension"] * moi["coefficient"], abs=0.01)
+    assert moi["majoration"] == pytest.approx(arrco["majoration_pension"], abs=0.01)
+    assert _servie(arrco) < moi["majoration"]
 
 
 # -- le portage -------------------------------------------------------------------

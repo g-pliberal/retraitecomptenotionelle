@@ -73,6 +73,27 @@ DU_PORTAGE = {
 }
 #: La date d'effet à compter de laquelle le portage oppose un plafond.
 PREMIER_PLAFOND = r"const PREMIER_PLAFOND_MAJORATION = new DateMois\((\d{4}), (\d{1,2})\);"
+#: Ce que le moteur lit dans la fiche elle-même, à la date d'effet
+#: (`FichesDatees`) : les régimes dont la majoration se calcule sur les droits
+#: sans le coefficient d'anticipation.
+LUS_PAR_LE_MOTEUR = {"sans_anticipation"}
+#: Les régimes de l'Arrco que la fiche majore.
+ARRCO = {"arrco", "arrco_tranche_2", "arrco_tranche_2_entreprises_nouvelles", "arrco_cultes"}
+#: Ce que les textes disent de l'assiette de la majoration, à chaque date
+#: d'effet : le jour où elle change, les régimes calculés sans le coefficient
+#: (``None`` : tous ceux de la fiche), et ce qu'en cite la version. Avant 2012,
+#: aucun texte lu ne le tranche : le modèle garde le coefficient, et le déclare.
+SANS_ANTICIPATION = (
+    (None, set(), None),
+    # Guide des salariés n° 9, « Majorations pour enfants », mars 2017.
+    (date(2012, 1, 1), ARRCO,
+     "le régime Arrco ne tient pas compte du coefficient de minoration pour le calcul des "
+     "majorations pour enfants ; le régime Agirc en tient compte"),
+    # Circulaire Agirc-Arrco n° 2020-02-DRJ, fiche 4, II.2.1.
+    (date(2019, 1, 1), None,
+     "La majoration est calculée sur les droits de base du participant sans tenir compte des "
+     "coefficients d'anticipation éventuellement appliqués"),
+)
 
 #: Ce que le modèle fait autrement que le droit : la fiche, la version, le
 #: champ qu'elle lit et que le dépôt porte autrement, et ce que cite
@@ -231,7 +252,7 @@ def test_les_periodes_portent_le_plafond_que_chaque_version_lit():
     for version in _versions(MAJORATION):
         parametres = version["contenu"]["parametres"]
         for champ, lu in parametres.items():
-            if champ == "bareme":
+            if champ == "bareme" or champ in LUS_PAR_LE_MOTEUR:
                 continue
             assert champ in A_LA_LIQUIDATION | set(DU_PORTAGE), (version["id"], champ)
             for code in [None] if champ in DU_PORTAGE else fiche["regimes"]:
@@ -299,6 +320,39 @@ def test_le_plafond_du_regime_unifie_est_le_cumul_des_deux_plafonds():
     plafond = version["contenu"]["parametres"]["plafond_majoration_enfants"]
     annee = version["contenu"]["parametres"]["plafond_majoration_annee"]
     assert abs(plafond * _point("arrco", 2018) / _point("agirc_arrco", annee) - cumul) <= 0.01
+
+
+def test_chaque_version_dit_les_regimes_calcules_sans_le_coefficient():
+    """Le moteur lit la fiche à la date d'effet (`FichesDatees`) : chaque
+    version nomme les régimes dont la majoration se calcule sur les droits sans
+    le coefficient d'anticipation (``sans_anticipation``) — l'Arrco de 2012 à
+    2018, et non l'Agirc, que le guide n° 9 de mars 2017 dit « en tenir
+    compte » ; tous depuis 2019, selon la circulaire 2020-02-DRJ ; aucun avant
+    2012, qu'aucun texte lu ne tranche et qu'une approximation déclare. Les
+    versions d'une même date d'effet en nomment les mêmes, et l'une d'elles
+    cite le texte qui le dit."""
+    from retraite_notionnelle.scenarios.actuel import FichesDatees
+
+    assert MAJORATION in FichesDatees.NOMS
+    fiche = carte.fiches()[MAJORATION]
+    for version in _versions(MAJORATION):
+        lus = version["contenu"]["parametres"].get("sans_anticipation")
+        assert lus is not None, version["id"]
+        bornes = _bornes(version, "liquidation.date_effet")
+        _, attendus, citation = [regle for regle in SANS_ANTICIPATION if regle[0] is None
+                                 or (bornes[0] is not None and regle[0] <= bornes[0])][-1]
+        assert set(lus) == (set(fiche["regimes"]) if attendus is None else attendus), (
+            version["id"], lus)
+        if citation is None:
+            assert any(version["id"] in (a.get("version") or [])
+                       and "ne tranche" in str(a.get("ecart") or "")
+                       for a in fiche["approximations"]), version["id"]
+            continue
+        citees = [" ".join(str(texte.get("citation") or "").split())
+                  for voisine in _versions(MAJORATION)
+                  if _bornes(voisine, "liquidation.date_effet") == bornes
+                  for texte in voisine.get("textes") or []]
+        assert any(citation in citee for citee in citees), version["id"]
 
 
 def _taux(code: str, annee: int, enfants: int) -> float:

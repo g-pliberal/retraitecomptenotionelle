@@ -154,7 +154,7 @@ Vérifié sur la copie en production et sur GitHub Pages.
   base, pas d'API : le modèle tourne dans le navigateur.
 - **Les chemins relatifs conservés** : `index.html` charge `moteur/style.css`,
   `moteur/donnees.json` (<!--chiffre:poids(moteur/donnees.json)-->5 873<!--/--> Ko bruts,
-  <!--chiffre:poids_comprime(moteur/donnees.json)-->798<!--/--> Ko compressés) et `moteur/js/*.js`,
+  <!--chiffre:poids_comprime(moteur/donnees.json)-->799<!--/--> Ko compressés) et `moteur/js/*.js`,
   dont les étapes du droit dans `moteur/js/droit/`, relativement à sa propre
   adresse ; la page d'un dossier (`cout/index.html`) les charge un niveau plus
   haut (`../moteur/…`). Le moteur et le paquet de données ne partent qu'au premier

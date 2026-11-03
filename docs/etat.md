@@ -28,7 +28,7 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 | à vérifier | 2 |
 
 - Confrontées à au moins un exemple officiel : **65 sur 259** (218 exemples : 206 reproduits, 12 en écart connu, section 2).
-- Citées dans le code par leur identifiant : **123 sur 259**. Le lien entre une règle et le code qui l'applique n'existe pas encore pour les autres.
+- Citées dans le code par leur identifiant : **124 sur 259**. Le lien entre une règle et le code qui l'applique n'existe pas encore pour les autres.
 - Désignées par les interrupteurs des périodes de régime : **48 sur 259**, par 2 495 renvois ; chacune déclare la valeur que le moteur lit (`code.interrupteurs`) et dit ce qu'il en fait.
 - Mûres, sans rien qui manque à leur contrat : **172 sur 259**. Une fiche tirée d'un registre ne sait pas encore son domaine, ses régimes, son étape ni ses versions : ce qui lui manque est à faire (section 3).
 - Découpées en versions : **172 sur 259**, soit 690 versions, dont 112 supposées ; le partage des versions se contrôle sur chacune.

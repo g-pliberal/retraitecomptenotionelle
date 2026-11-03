@@ -1238,7 +1238,10 @@ class FichesDatees:
     du parent de trois enfants, que ``categories.age_du_parent_de_trois_enfants``
     lit, et la majoration de
     l'Agirc-Arrco pour enfants à charge, que
-    ``completer.majoration_pour_enfants_a_charge`` lit, et la majoration pour
+    ``completer.majoration_pour_enfants_a_charge`` lit, et les régimes de
+    l'Agirc-Arrco qui calculent la majoration pour enfants nés ou élevés sans le
+    coefficient d'anticipation, que ``completer.regimes_sans_anticipation`` lit
+    (fiche ``majoration_enfants_agirc_arrco``), et la majoration pour
     conjoint à charge, que ``completer.majoration_pour_conjoint_a_charge`` lit,
     et les majorations forfaitaires de 1972 à 1982 des pensions prises avant
     1975, que ``revalorisation.majorations_forfaitaires`` lit, et les primes que
@@ -1268,7 +1271,8 @@ class FichesDatees:
             "taux_plein_anciens_deportes_internes", "taux_plein_meres_de_famille_ouvrieres",
             "taux_plein_travailleurs_manuels", "taux_plein_anciens_combattants_prisonniers",
             "taux_plein_a_soixante_cinq_ans",
-            "majoration_enfants_a_charge_agirc_arrco", "majoration_conjoint_a_charge",
+            "majoration_enfants_a_charge_agirc_arrco", "majoration_enfants_agirc_arrco",
+            "majoration_conjoint_a_charge",
             "coefficients_anticipation_agirc_arrco",
             "majorations_forfaitaires_1972_1982",
             "indemnite_sujetions_speciales_police",

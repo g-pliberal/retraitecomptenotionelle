@@ -101,6 +101,27 @@ export const FICHE_DES_ENFANTS_A_CHARGE = "majoration_enfants_a_charge_agirc_arr
 export const ASSIETTES_DES_ENFANTS_A_CHARGE = ["allocation", "droits_bruts"];
 
 /**
+ * La majoration de l'Agirc-Arrco pour enfants nés ou élevés, dont `FichesDatees`
+ * lit les versions à la date d'effet (`regimesSansAnticipation`).
+ */
+export const FICHE_DES_ENFANTS_NES_OU_ELEVES = "majoration_enfants_agirc_arrco";
+
+/**
+ * Les régimes qui calculent la majoration pour enfants nés ou élevés sur les
+ * droits « sans tenir compte des coefficients d'anticipation éventuellement
+ * appliqués » (circulaire Agirc-Arrco 2020-02-DRJ, fiche 4, II.2.1) pour une
+ * pension prenant effet à `dateEffet` (AAAA-MM-JJ) : l'Arrco de 2012 à 2018,
+ * toute la complémentaire depuis 2019 (`sans_anticipation`). La version des
+ * points acquis à la date d'effet les nomme, comme toutes celles de cette
+ * date ; aucun sans la fiche. Voir `regimes_sans_anticipation` du Python.
+ */
+export function regimesSansAnticipation(moteur, dateEffet) {
+  const version = moteur.fichesDatees.versionAuxDates(FICHE_DES_ENFANTS_NES_OU_ELEVES,
+    { "liquidation.date_effet": dateEffet, "periode.debut": dateEffet });
+  return new Set(version === null ? [] : version.parametres.sans_anticipation ?? []);
+}
+
+/**
  * Ce à quoi une version de l'Agirc-Arrco compare son seuil : le nombre de points
  * de l'allocation (avant 2019), ou son montant, coefficients et majorations
  * compris (accord du 17 novembre 2017, article 107).
@@ -1864,6 +1885,12 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
     const traitements = new Map(
       (liquidees.plafonds ?? []).map((eligible) => [eligible.indice, eligible.traitement]));
     let borneeAuTraitement = false;
+    // SANS LE COEFFICIENT D'ANTICIPATION, là où la caisse la calcule ainsi :
+    // la majoration se pose sur l'allocation que le coefficient n'a pas
+    // réduite, et le plafond la borne ensuite. Voir le Python.
+    const anticipations = new Map(liquidees.anticipations ?? []);
+    const sansAnticipation = regimesSansAnticipation(
+      moteur, dateDEffet(carriere) ?? ouvrir.SANS_DATE_D_EFFET);
     for (const [indice, pension] of pensions.entries()) {
       if (pension.montant <= 0.0) {
         continue;
@@ -1884,7 +1911,9 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
       if (taux <= 0) {
         continue;
       }
-      let part = pension.montant * taux;
+      const coefficient = sansAnticipation.has(pension.regime)
+        ? (anticipations.get(pension.regime) ?? 1.0) : 1.0;
+      let part = (pension.montant / coefficient) * taux;
       if (plafondL18 !== null && traitements.has(indice)
           && plafondL18.parametres.regimes.includes(pension.regime)) {
         const sous = majorationSousLeTraitement(
