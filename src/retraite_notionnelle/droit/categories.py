@@ -226,12 +226,25 @@ def age_du_parent_de_trois_enfants(moteur: ScenarioActuel, regime: str,
     d'eux dont la saisie déclare la naissance, :func:`_remplit_pour_l_enfant`
     — ; ``None`` sinon. Une naissance présumée ne dit rien de l'interruption
     qui la suit."""
+    regle = _regle_du_parent(moteur, carriere)
+    if regle is None or regime not in regle["regimes"]:
+        return None
+    parents = regle["parents_de_trois_enfants"]
+    return (float(regle["age"]) if _pour_un_enfant_declare(
+        carriere, lambda naissance: _remplit_pour_l_enfant(carriere, parents, naissance))
+        else None)
+
+
+def _regle_du_parent(moteur: ScenarioActuel, carriere: Carriere) -> dict | None:
+    """La version de la fiche ``taux_plein_a_soixante_cinq_ans`` à la date
+    d'effet de la pension, quand l'assuré est né dans ses générations et a ses
+    enfants ; ``None`` sinon."""
     date = date_d_effet(carriere)
     if date is None:
         return None
     regle = moteur.fiches_datees.regle(FICHE_DES_SOIXANTE_CINQ_ANS, date)
     parents = (regle or {}).get("parents_de_trois_enfants")
-    if not regle or not regle.get("existe") or parents is None or regime not in regle["regimes"]:
+    if not regle or not regle.get("existe") or parents is None:
         return None
     rang = carriere.annee_naissance * 12 + carriere.mois_naissance
     annee_du, mois_du = parents["nes_du"]
@@ -239,12 +252,89 @@ def age_du_parent_de_trois_enfants(moteur: ScenarioActuel, regime: str,
     if (rang < annee_du * 12 + mois_du or rang > annee_au * 12 + mois_au
             or carriere.nombre_enfants < int(parents["enfants"])):
         return None
+    return regle
+
+
+def _pour_un_enfant_declare(carriere: Carriere, remplit) -> bool:
+    """L'un des enfants dont la saisie déclare la naissance la fait-il remplir ?"""
     for enfant in chrono.enfants(carriere.chronologie, carriere.personne):
         naissance = chrono.naissance(carriere.chronologie, enfant)
-        if (naissance is not None and naissance.get("origine") == "declare"
-                and _remplit_pour_l_enfant(carriere, parents, naissance)):
-            return float(regle["age"])
-    return None
+        if naissance is not None and naissance.get("origine") == "declare" and remplit(naissance):
+            return True
+    return False
+
+
+def _remplit_pour_l_enfant_fonctionnaire(carriere: Carriere, conditions: dict,
+                                         naissance: dict) -> bool:
+    """Le fonctionnaire remplit-il, pour l'enfant né à ``naissance``, les
+    conditions de R. 26 ter, I, du code des pensions (loi n° 2010-1330, article
+    28, III) ?
+
+    Une interruption « pendant une durée d'au moins une année » l'année de la
+    naissance et les deux suivantes, ou les trois suivantes pour l'enfant né au
+    second semestre, « dans le cadre des congés ou de la disponibilité
+    mentionnés au 1° de l'article R. 13 » : les années dont la ligne porte l'un
+    des motifs ``interruptions`` ; « au titre des deux années précédant l'année
+    de la naissance [...], une durée d'assurance, telle que définie à l'article
+    L. 14, égale ou supérieure à huit trimestres », tous régimes ; et huit
+    trimestres « à raison de l'exercice d'une activité professionnelle,
+    préalablement à l'interruption » : l'emploi des années qui précèdent la
+    première année de l'interruption dans la fenêtre. Dite à l'année seule, la
+    naissance n'en ouvre le droit que si les deux fenêtres le donnent. La
+    réduction d'activité (2°) n'est pas lue : le temps partiel saisi ne dit pas
+    son motif.
+    """
+    annee = chrono.annee_de(naissance["debut"])
+    au_mois = ((naissance.get("attributs") or {}).get("precision") or "jour") != "annee"
+    mois = chrono.mois_de(naissance["debut"]).mois if au_mois else 1
+    assurance = carriere.trimestres_par_annee(carriere.lignes)
+    avant = assurance.get(annee - 2, 0) + assurance.get(annee - 1, 0)
+    if avant < int(conditions["avant_au_moins"]):
+        return False
+    motifs = frozenset(conditions["interruptions"])
+    conges: dict[int, float] = {}
+    for ligne in carriere.lignes:
+        if ligne.type_periode in motifs:
+            conges[ligne.annee] = min(1.0, conges.get(ligne.annee, 0.0) + ligne.fraction_annee)
+    activite = carriere.trimestres_par_annee(
+        [ligne for ligne in carriere.lignes if ligne.type_periode == "emploi"])
+    debuts = [annee if mois <= 6 else annee + 1] if au_mois else [annee, annee + 1]
+    for debut in debuts:
+        duree = 0.0
+        premiere = None
+        for an in range(debut, debut + 3):
+            part = conges.get(an, 0.0)
+            if part > 0:
+                duree += part
+                premiere = an if premiere is None else premiere
+        if (premiere is None
+                or duree + 1e-9 < float(conditions["interruption_au_moins_annees"])):
+            return False
+        anterieure = somme_ordonnee(trimestres for an, trimestres in activite.items()
+                                    if an < premiere)
+        if anterieure < int(conditions["activite_au_moins"]):
+            return False
+    return True
+
+
+def age_du_fonctionnaire_parent_de_trois_enfants(moteur: ScenarioActuel, regime: str,
+                                                 carriere: Carriere) -> float | None:
+    """L'âge que la loi n° 2010-1330, article 28, III, donne pour borne à l'âge
+    d'annulation de la décote du fonctionnaire de ``regime`` — « ne peut être
+    supérieur à soixante-cinq ans » — quand il est né du 1er juillet 1951 au 31
+    décembre 1955, a ses trois enfants et, pour l'un d'eux dont la naissance est
+    déclarée, :func:`_remplit_pour_l_enfant_fonctionnaire` ; la CNRACL et les
+    ouvriers de l'État de même (décret n° 2003-1306, article 65-3 ; décret
+    n° 2004-1056, article 50-3). ``None`` sinon. Que sa limite d'âge ait été de
+    soixante-cinq ans, l'appelant le dit (``liquider.decote_opposable``)."""
+    regle = _regle_du_parent(moteur, carriere)
+    conditions = (regle or {}).get("fonctionnaires")
+    if conditions is None or regime not in conditions["regimes"]:
+        return None
+    return (float(regle["age"]) if _pour_un_enfant_declare(
+        carriere, lambda naissance: _remplit_pour_l_enfant_fonctionnaire(
+            carriere, conditions, naissance))
+        else None)
 
 
 def taux_plein_par_categorie(moteur: ScenarioActuel, regime: str, carriere: Carriere,

@@ -489,16 +489,19 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   sans coefficient dès ce taux plein, sauf les points de la tranche C d'avant
   2016 (fiche `coefficients_anticipation_agirc_arrco`) ; parti avant
   soixante-cinq ans, l'Agirc-Arrco compte son coefficient de l'âge de sa
-  génération, ce que ses textes ne tranchent pas. Une naissance dite à l'année
+  génération, ce que ses textes ne tranchent pas. Fonctionnaire sédentaire de
+  l'État, de la CNRACL ou ouvrier de l'État, l'âge d'annulation de sa décote ne
+  passe pas soixante-cinq ans s'il a interrompu son activité un an au moins,
+  l'année d'une naissance ou les suivantes, et que la saisie dit ces années
+  « élever un enfant » ou « congé de maternité » ; une interruption dite
+  autrement, ou une réduction par un temps partiel, dont la saisie ne demande
+  pas le motif, ne l'ouvre pas. Une naissance dite à l'année
   l'ouvre si les conditions tiennent quel que soit son mois, une naissance
   présumée jamais. Restent dehors pour lui l'adoption, les périodes accomplies
   dans l'Union européenne, l'Arrco des cultes, ses autres complémentaires —
   l'Ircantec et celle des indépendants, que leurs textes lui servent sans
   coefficient, l'abattent encore jusqu'à l'âge de sa génération —, et les
-  régimes de base où vaut le même âge : les fonctionnaires, dont la décote s'annule pour lui à
-  soixante-cinq ans s'il a interrompu son activité par un congé ou une
-  disponibilité, ou l'a réduite par un temps partiel, ce que la saisie ne
-  demande pas, la CAVIMAC, les points d'avant 1973 des
+  régimes de base où vaut le même âge : la CAVIMAC, les points d'avant 1973 des
   artisans et des commerçants, les non-salariés agricoles, les libéraux et les
   avocats ; dehors aussi l'aidant familial et le parent d'un enfant handicapé.
   Restent dehors

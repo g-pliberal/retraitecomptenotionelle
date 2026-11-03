@@ -1,0 +1,46 @@
+date: "2026-11-03"
+session: "action 175, file M4 de la sixième vague : le taux plein à 65 ans des parents de trois enfants nés de juillet 1951 à 1955, chez les fonctionnaires (décision 14 du propriétaire)"
+consulte: >-
+  python scripts/veille_droit.py ; les index LEGI et JORF de la DILA, récupérés et mis à
+  jour (LEGI à jour au 2 novembre 2026, aucun incrément depuis ; JORF au 3 novembre 2026) :
+  la loi n° 2010-1330, article 28 (LEGIARTI000023023851, LEGIARTI000025014566, --diff : le
+  III identique), article 20 (LEGIARTI000023023835, LEGIARTI000051289925) et article 118
+  (JORFARTI000023022348) ; le code des pensions civiles et militaires de retraite, R. 26 ter
+  (LEGIARTI000024111781, seule rédaction), R. 13 (ses six rédactions, LEGIARTI000023449727
+  et LEGIARTI000051969102 lues), L. 18 (ses cinq rédactions), L. 14 (ses onze rédactions, la
+  première phrase du I suivie de l'une à l'autre), L. 17 (LEGIARTI000023033916) ; la loi
+  n° 2003-775, article 66 (LEGIARTI000006758610) ; L. 161-17-2 (LEGIARTI000025014605) ; le
+  décret n° 2003-1306, article 65-3 (LEGIARTI000024113270) ; le décret n° 2004-1056, article
+  50-3 (LEGIARTI000024113274) ; le décret n° 2010-1740, articles 7 (JORFARTI000023334770) et
+  16 (JORFARTI000023334739) ; le décret n° 2010-1744, article 3 (JORFARTI000023334941) ; le
+  décret n° 2011-620, articles 3 (JORFARTI000024110126) et 10 (JORFARTI000024110234) ; le
+  décret n° 2011-2103, articles 1er (JORFARTI000025061553) et 8 (JORFARTI000025061595) ; la
+  loi n° 2025-199, article 87, IV (JORFARTI000051269910). Les pages « La décote » du Service
+  des retraites de l'État et « La décote et la surcote » de la CNRACL, téléchargées le jour
+  (sha256 a3e4b60a… et 76aa2508…) ; une recherche sur le web d'une circulaire du SRE, de la
+  DGAFP ou de la CNRACL sur l'article 28, III.
+trouve: >-
+  L'article 28, III, borne à soixante-cinq ans l'âge d'annulation de la décote du
+  fonctionnaire sédentaire (« dont la limite d'âge était fixée à soixante-cinq ans ») né du
+  1er juillet 1951 au 31 décembre 1955 qui remplit les conditions des 1° à 3° du IV de
+  l'article 20, ses enfants ceux de L. 18, II ; les articles 65-3 et 50-3 l'écrivent pour la
+  CNRACL et les ouvriers de l'État, aux pensions liquidées à compter du 1er juillet 2011, et
+  renvoient à R. 26 ter : une interruption d'au moins une année dans la fenêtre de la
+  naissance, dans un congé ou une disponibilité de R. 13, 1°, ou un temps partiel de R. 13,
+  2°, deux ans à 50 %, un an et huit mois à 60 %, un an et cinq mois à 70 % ; huit trimestres
+  de durée d'assurance de L. 14 les deux années d'avant ; huit d'activité avant
+  l'interruption. Le tableau de l'article 66, III, et les limites d'âge du décret
+  n° 2011-2103 annulent la décote avant soixante-cinq ans de 1951 à 1953 : la borne ne vaut
+  que pour 1954 (65 ans et 4 ou 7 mois) et 1955 (66 ans et 3 mois). L. 17 ouvre le minimum
+  garanti à cet âge ; le décret n° 2010-1744 ne le minore que de 2011 à 2015. L'article 28
+  n'est pas abrogé par la loi n° 2025-199, qui abroge le IV de l'article 20 auquel il
+  renvoie : ce que le texte ne tranche pas, sans effet, ces générations ayant soixante-dix
+  ans au moins en 2026. Les pages des deux caisses ne nomment plus ces parents ; aucune
+  circulaire ni aucun exemple chiffré trouvé. Le modèle sert la borne dans les deux moteurs ;
+  la fiche taux_plein_a_soixante_cinq_ans cite chaque texte, mot pour mot.
+reste: >-
+  La réduction d'activité de R. 26 ter, I, 2°, que le modèle ne lit pas : la saisie ne dit
+  pas le motif du temps partiel, ni sa durée au mois. Une circulaire du SRE ou de la CNRACL
+  sur l'article 28, III, qui dise comment elles l'ont appliqué. À la file M4 : la CAVIMAC et
+  les points d'avant 1973, puis les non-salariés agricoles, les libéraux et les avocats
+  (note 2026-11-03-taux-plein-parents-de-trois-enfants-fonctionnaires.md de l'action 175).

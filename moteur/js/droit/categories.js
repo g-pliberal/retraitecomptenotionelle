@@ -189,13 +189,27 @@ function remplitPourLEnfant(carriere, parents, naissance) {
  * `age_du_parent_de_trois_enfants` du Python.
  */
 export function ageDuParentDeTroisEnfants(moteur, regime, carriere) {
+  const regle = regleDuParent(moteur, carriere);
+  if (regle === null || !regle.regimes.includes(regime)) {
+    return null;
+  }
+  return pourUnEnfantDeclare(carriere, (naissance) => remplitPourLEnfant(
+    carriere, regle.parents_de_trois_enfants, naissance)) ? Number(regle.age) : null;
+}
+
+/**
+ * La version de la fiche `taux_plein_a_soixante_cinq_ans` à la date d'effet de
+ * la pension, quand l'assuré est né dans ses générations et a ses enfants ;
+ * `null` sinon. Voir `_regle_du_parent` du Python.
+ */
+function regleDuParent(moteur, carriere) {
   const date = dateDEffet(carriere);
   if (date === null) {
     return null;
   }
   const regle = moteur.fichesDatees.regle(FICHE_DES_SOIXANTE_CINQ_ANS, date);
   const parents = regle?.parents_de_trois_enfants ?? null;
-  if (!regle || !regle.existe || parents === null || !regle.regimes.includes(regime)) {
+  if (!regle || !regle.existe || parents === null) {
     return null;
   }
   const rang = carriere.annee_naissance * 12 + carriere.mois_naissance;
@@ -205,14 +219,100 @@ export function ageDuParentDeTroisEnfants(moteur, regime, carriere) {
       || carriere.nombre_enfants < Math.trunc(Number(parents.enfants))) {
     return null;
   }
+  return regle;
+}
+
+/** L'un des enfants dont la saisie déclare la naissance la fait-il remplir ? */
+function pourUnEnfantDeclare(carriere, remplit) {
   for (const enfant of chrono.enfants(carriere.chronologie, carriere.personne)) {
     const naissance = chrono.naissance(carriere.chronologie, enfant);
-    if (naissance !== null && naissance.origine === "declare"
-        && remplitPourLEnfant(carriere, parents, naissance)) {
-      return Number(regle.age);
+    if (naissance !== null && naissance.origine === "declare" && remplit(naissance)) {
+      return true;
     }
   }
-  return null;
+  return false;
+}
+
+/**
+ * Le fonctionnaire remplit-il, pour l'enfant né à `naissance`, les conditions
+ * de R. 26 ter, I, du code des pensions (loi n° 2010-1330, article 28, III) ?
+ * Une interruption « pendant une durée d'au moins une année » l'année de la
+ * naissance et les deux suivantes, ou les trois suivantes pour l'enfant né au
+ * second semestre, « dans le cadre des congés ou de la disponibilité mentionnés
+ * au 1° de l'article R. 13 » : les années dont la ligne porte l'un des motifs
+ * `interruptions` ; « au titre des deux années précédant l'année de la
+ * naissance [...], une durée d'assurance, telle que définie à l'article L. 14,
+ * égale ou supérieure à huit trimestres », tous régimes ; et huit trimestres
+ * « à raison de l'exercice d'une activité professionnelle, préalablement à
+ * l'interruption » : l'emploi des années qui précèdent la première année de
+ * l'interruption dans la fenêtre. Dite à l'année seule, la naissance n'en ouvre
+ * le droit que si les deux fenêtres le donnent. La réduction d'activité (2°)
+ * n'est pas lue : le temps partiel saisi ne dit pas son motif. Voir
+ * `_remplit_pour_l_enfant_fonctionnaire` du Python.
+ */
+function remplitPourLEnfantFonctionnaire(carriere, conditions, naissance) {
+  const annee = chrono.anneeDe(naissance.debut);
+  const auMois = (naissance.attributs?.precision || "jour") !== "annee";
+  const mois = auMois ? chrono.moisDe(naissance.debut).mois : 1;
+  const assurance = carriere.trimestresParAnnee(carriere.lignes);
+  const avant = (assurance.get(annee - 2) ?? 0) + (assurance.get(annee - 1) ?? 0);
+  if (avant < Number(conditions.avant_au_moins)) {
+    return false;
+  }
+  const motifs = new Set(conditions.interruptions);
+  const conges = new Map();
+  for (const ligne of carriere.lignes) {
+    if (motifs.has(ligne.type_periode)) {
+      conges.set(ligne.annee, Math.min(1.0, (conges.get(ligne.annee) ?? 0.0) + ligne.fraction_annee));
+    }
+  }
+  const activite = carriere.trimestresParAnnee(
+    carriere.lignes.filter((ligne) => ligne.type_periode === "emploi"),
+  );
+  const debuts = auMois ? [mois <= 6 ? annee : annee + 1] : [annee, annee + 1];
+  return debuts.every((debut) => {
+    let duree = 0.0;
+    let premiere = null;
+    for (let an = debut; an < debut + 3; an += 1) {
+      const part = conges.get(an) ?? 0.0;
+      if (part > 0) {
+        duree += part;
+        premiere = premiere ?? an;
+      }
+    }
+    if (premiere === null
+        || duree + 1e-9 < Number(conditions.interruption_au_moins_annees)) {
+      return false;
+    }
+    let anterieure = 0;
+    for (const [an, trimestres] of activite) {
+      if (an < premiere) {
+        anterieure += trimestres;
+      }
+    }
+    return anterieure >= Number(conditions.activite_au_moins);
+  });
+}
+
+/**
+ * L'âge que la loi n° 2010-1330, article 28, III, donne pour borne à l'âge
+ * d'annulation de la décote du fonctionnaire de `regime` — « ne peut être
+ * supérieur à soixante-cinq ans » — quand il est né du 1er juillet 1951 au
+ * 31 décembre 1955, a ses trois enfants et, pour l'un d'eux dont la naissance
+ * est déclarée, {@link remplitPourLEnfantFonctionnaire} ; la CNRACL et les
+ * ouvriers de l'État de même (décret n° 2003-1306, article 65-3 ; décret
+ * n° 2004-1056, article 50-3). `null` sinon. Que sa limite d'âge ait été de
+ * soixante-cinq ans, l'appelant le dit (`liquider.decoteOpposable`). Voir
+ * `age_du_fonctionnaire_parent_de_trois_enfants` du Python.
+ */
+export function ageDuFonctionnaireParentDeTroisEnfants(moteur, regime, carriere) {
+  const regle = regleDuParent(moteur, carriere);
+  const conditions = regle?.fonctionnaires ?? null;
+  if (conditions === null || !conditions.regimes.includes(regime)) {
+    return null;
+  }
+  return pourUnEnfantDeclare(carriere, (naissance) => remplitPourLEnfantFonctionnaire(
+    carriere, conditions, naissance)) ? Number(regle.age) : null;
 }
 
 /**

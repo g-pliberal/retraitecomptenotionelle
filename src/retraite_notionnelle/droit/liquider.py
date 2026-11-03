@@ -3413,6 +3413,23 @@ def borne_de_la_duree(moteur, periode: PeriodeRegime, carriere: Carriere,
     return max(0, cible - 150 - int(apres + 1e-9))
 
 
+def _age_du_parent_sedentaire(moteur, periode: PeriodeRegime,
+                              carriere: Carriere) -> float | None:
+    """La borne de l'âge d'annulation de la décote du fonctionnaire parent de
+    trois enfants (loi n° 2010-1330, article 28, III : « dont la limite d'âge
+    était fixée à soixante-cinq ans », l'âge « ne peut être supérieur à
+    soixante-cinq ans ») : le sédentaire seul — ni l'emploi classé en catégorie
+    active dont il a les services, ni le militaire —, quand il en remplit les
+    conditions (:func:`categories.age_du_fonctionnaire_parent_de_trois_enfants`) ;
+    ``None`` sinon."""
+    age = categories.age_du_fonctionnaire_parent_de_trois_enfants(
+        moteur, periode.regime, carriere)
+    if (age is None or ouvrir.derogation_active(moteur, periode, carriere) is not None
+            or ouvrir.droit_militaire(moteur, periode, carriere) is not None):
+        return None
+    return age
+
+
 def decote_opposable(moteur, periode: PeriodeRegime, carriere: Carriere,
             annee_liquidation: int
             ) -> tuple[float | None, float, Fiabilite | None]:
@@ -3481,7 +3498,10 @@ def decote_opposable(moteur, periode: PeriodeRegime, carriere: Carriere,
             return (coefficient,
                     min(age_annulation, ouverture + (20 - trimestres_avant) / 4.0),
                     fiabilite)
-        return coefficient, age_annulation - trimestres_avant / 4.0, fiabilite
+        age = age_annulation - trimestres_avant / 4.0
+        parent = (_age_du_parent_sedentaire(moteur, periode, carriere)
+                  if periode.bareme_decote == "fonction_publique" else None)
+        return coefficient, (age if parent is None else min(age, parent)), fiabilite
     if periode.decote_par_trimestre is None:
         return None, age_annulation, None
     if periode.age_table:

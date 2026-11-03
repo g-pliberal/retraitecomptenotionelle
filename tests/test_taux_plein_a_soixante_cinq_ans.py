@@ -166,6 +166,13 @@ def test_la_fiche_date_l_age_du_parent_de_trois_enfants():
     assert regle["parents_de_trois_enfants"] == {
         "nes_du": [1951, 7], "nes_au": [1955, 12], "enfants": 3,
         "apres_au_plus": 8, "avant_au_moins": 8, "activite_au_moins": 8}
+    # Les fonctionnaires : loi n° 2010-1330, article 28, III, et R. 26 ter, I —
+    # « au moins une année » d'interruption, dans un congé ou une disponibilité
+    # de R. 13, 1° ; « huit trimestres » avant, deux fois.
+    assert regle["fonctionnaires"] == {
+        "regimes": ["fonction_publique_etat", "cnracl", "fspoeie"],
+        "interruptions": ["maternite", "education_enfant"],
+        "interruption_au_moins_annees": 1, "avant_au_moins": 8, "activite_au_moins": 8}
     assert fiches.regle(nom, "2025-12-01")["parents_de_trois_enfants"]["enfants"] == 3
     assert not fiches.regle(nom, "2026-01-01")["existe"]
 
@@ -270,17 +277,8 @@ MINISTRE_DU_CULTE = {"statut": "ministre_du_culte", "debut": "26",
 #: ligne passera à la valeur du droit. Les calculs, posés à la main, sont dans la
 #: note docs/feuille_de_route/175/2026-11-03-correction-taux-plein-parents-de-trois-enfants.md.
 ECARTS_DECLARES = {
-    # Loi n° 2010-1330, article 28, III ; décrets n° 2003-1306, article 65-3,
-    # et n° 2004-1056, article 50-3. La décote court jusqu'à 67 ans moins
-    # 3 trimestres (loi n° 2003-775, article 66, III, pour 2017), 5 trimestres :
-    # 75 % × (1 − 5 × 1,25 %) = 70,3125 % au lieu de 75 %.
-    "fonctionnaire de l'État, 2020": ({**NEE_EN_1955, "statut": "fonctionnaire_etat"},
-                                      "fonction_publique_etat", "taux 70.312%"),
-    "fonctionnaire de la CNRACL, 2020": (
-        {**NEE_EN_1955, "statut": "fonctionnaire_territorial_hospitalier"}, "cnracl",
-        "taux 70.312%"),
-    "ouvrière de l'État, 2020": ({**NEE_EN_1955, "statut": "ouvrier_etat"}, "fspoeie",
-                                 "taux 70.312%"),
+    # Les fonctionnaires, écart déclaré jusqu'au 3 novembre 2026, sont servis :
+    # ``CAS_FONCTIONNAIRES`` et ``BOUT_EN_BOUT``.
     # L. 382-27 : 50 % × (1 − 5 × 1,25 %) = 46,875 % au lieu de 50 % ; la
     # fraction d'avant 1998 (décret n° 2006-1325, article 2, II) : 0,9375.
     "CAVIMAC, 2018": (MINISTRE_DU_CULTE, "cavimac", "taux 46.875%"),
@@ -309,7 +307,7 @@ DECLARATIONS = {
     "Agirc-Arrco": ("accord du 18 mars 2011, article 1er", "article 2 ter", "article 84",
                     "avant soixante-cinq ans", "tranche C", "0,91"),
     "fonctionnaires": ("article 28, III", "R. 26 ter", "article 65-3", "article 50-3",
-                       "R. 13", "70,3125 %"),
+                       "R. 13, 2°", "temps partiel", "70,3125 %"),
     "CAVIMAC": ("L. 382-27", "décret n° 2006-1325, article 2, II", "46,875 %", "0,9375"),
     "avant 1973": ("décret n° 73-937", "article 3, II", "0,9375"),
     "RCI": ("article 12", "sans aucun abattement", "0,95"),
@@ -488,3 +486,289 @@ def test_la_tranche_c_d_avant_2016_garde_son_coefficient():
                                       for rang in (1, 2, 3))
     assert 0 < tranche_c < points
     assert coefficient == pytest.approx(1 - 0.05 * tranche_c / points, abs=1e-4)
+
+
+#: LES FONCTIONNAIRES SÉDENTAIRES. « Pour les fonctionnaires nés entre le 1er
+#: juillet 1951 et le 31 décembre 1955 dont la limite d'âge était fixée à
+#: soixante-cinq ans avant l'entrée en vigueur de la présente loi et qui
+#: remplissent les conditions prévues aux 1° à 3° du IV de l'article 20, l'âge
+#: auquel s'annule le coefficient de minoration prévu à l'article L. 14 du code
+#: des pensions civiles et militaires de retraite ne peut être supérieur à
+#: soixante-cinq ans, par dérogation au III de l'article 66 de la loi n° 2003-775
+#: du 21 août 2003 » (loi n° 2010-1330, article 28, III, LEGIARTI000025014566,
+#: pour les pensions prenant effet à compter du 1er juillet 2011, article 118,
+#: II) ; la même règle à la CNRACL (décret n° 2003-1306, article 65-3,
+#: LEGIARTI000024113270) et aux ouvriers de l'État (décret n° 2004-1056, article
+#: 50-3, LEGIARTI000024113274), « Les modalités d'application du présent article
+#: sont celles prévues pour les fonctionnaires de l'Etat à l'article R. 26 ter ».
+#: R. 26 ter, I (LEGIARTI000024111781) : une interruption « pendant une durée
+#: d'au moins une année » dans l'année de la naissance et les deux suivantes, ou
+#: les trois suivantes pour l'enfant né au second semestre, « dans le cadre des
+#: congés ou de la disponibilité mentionnés au 1° de l'article R. 13 » — le congé
+#: de maternité, d'adoption, parental, de présence parentale, la disponibilité
+#: pour élever un enfant de moins de huit ans (LEGIARTI000023449727) : les années
+#: que la saisie dit « élever un enfant » ou « congé de maternité » — ; « au
+#: titre des deux années précédant l'année de la naissance [...], d'une durée
+#: d'assurance, telle que définie à l'article L. 14, égale ou supérieure à huit
+#: trimestres » ; et huit trimestres de durée d'assurance « à raison de
+#: l'exercice d'une activité professionnelle, préalablement à l'interruption ».
+#:
+#: Hors de la dérogation, l'âge du tableau de l'article 66, III, de la loi
+#: n° 2003-775 (LEGIARTI000006758610), lu à l'« Année au cours de laquelle sont
+#: réunies les conditions mentionnées au I et au II de l'article L. 24 » — l'âge
+#: d'ouverture de L. 161-17-2 (décret n° 2011-2103, article 1er : « 1954 61 ans
+#: et 7 mois », « A compter de 1955 62 ans ») — : « Limite d'âge moins 3
+#: trimestres » en 2017, « moins 4 » en 2016, « moins 2 » en 2018, « moins 6 » en
+#: 2014 ; la limite d'âge, soixante-sept ans dès 1955 (article 28, I), soixante-six
+#: ans et sept mois en 1954, et deux mois en 1953 (article 28, II ; décret
+#: n° 2011-2103, article 8 : « cinq mois par génération »). Les calculs, posés à
+#: la main, sont dans la note
+#: docs/feuille_de_route/175/2026-11-03-taux-plein-parents-de-trois-enfants-fonctionnaires.md.
+
+#: Née en 1955 : soixante-deux ans en 2017, 67 ans moins 3 trimestres.
+AGE_FP_DE_1955 = 67 - 3 / 4
+#: Née en septembre 1954 : 61 ans et 7 mois en avril 2016, 66 ans et 7 mois
+#: moins 4 trimestres.
+AGE_FP_DE_1954 = 66 + 7 / 12 - 1
+#: Née en mars 1953 : 61 ans et 2 mois en mai 2014, 66 ans et 2 mois moins 6
+#: trimestres : sous soixante-cinq ans, la dérogation n'y change rien.
+AGE_FP_DE_1953 = 66 + 2 / 12 - 6 / 4
+#: Née en janvier 1956 : soixante-deux ans en 2018, 67 ans moins 2 trimestres.
+AGE_FP_DE_1956 = 67 - 2 / 4
+
+
+def _fonctionnaire(cle: str, naissance=(1955, 3), affiliation: str = "fonctionnaire_etat",
+                   enfants: int = 3, naissances=("1978-04", "1980-06", "1982-06"),
+                   conges: dict | None = None, debut: int = 1973, reprise: int = 2003,
+                   autres: dict | None = None) -> Carriere:
+    """Une fonctionnaire née le 15 du mois dit, en service de ``debut`` à 1977 et
+    de ``reprise`` à l'année qui précède ses soixante-cinq ans ; de 1978 à
+    ``reprise`` − 1, aucune ligne, sauf les années de ``conges`` — un motif
+    d'interruption de la saisie par année — et celles qu'``autres`` décrit."""
+    annee, mois = naissance
+    conges = conges or {}
+    autres = autres or {}
+    lignes = []
+    for an in range(debut, annee + 65):
+        if an in autres:
+            lignes.append(autres[an])
+        elif an in conges:
+            lignes.append(AnneeCarriere(annee=an, revenu=0.0, trimestres_valides=4,
+                                        affiliation=affiliation, type_periode=conges[an],
+                                        cotisations_versees=False))
+        elif an < 1978 or an >= reprise:
+            lignes.append(AnneeCarriere(annee=an, revenu=20_000.0, trimestres_valides=4,
+                                        affiliation=affiliation))
+    return Carriere(annee_naissance=annee, mois_naissance=mois, jour_naissance=15,
+                    sexe="F", age_liquidation=65.0, nombre_enfants=enfants,
+                    naissances_enfants=tuple(naissances), identifiant=cle, lignes=lignes)
+
+
+def _trois_ans(motif: str = "education_enfant", depuis: int = 1978) -> dict:
+    return {an: motif for an in range(depuis, depuis + 3)}
+
+
+#: Chaque carrière de fonctionnaire de l'État, et l'âge d'annulation de sa décote
+#: à soixante-cinq ans. Sauf mention : née le 15 mars 1955, en service de 1973 à
+#: 1977 et de 2003 à 2019, enfants d'avril 1978, juin 1980 et juin 1982, effet le
+#: 1er avril 2020.
+CAS_FONCTIONNAIRES = {
+    # Fenêtre de l'enfant d'avril 1978 : 1978-1980, trois années de congé, au
+    # moins une ; 1976 et 1977 : 8 trimestres ; 1973-1977 : 20 d'activité avant.
+    "trois ans à élever un enfant": ({"conges": _trois_ans()}, DEROGATION),
+    # Une année suffit : 1980, dans la fenêtre 1978-1980.
+    "un an, 1980": ({"conges": {1980: "education_enfant"}}, DEROGATION),
+    # Le congé de maternité est un congé de R. 13, 1°, a.
+    "un an de maternité, 1978": ({"conges": {1978: "maternite"}}, DEROGATION),
+    # Aucune année de congé ni de disponibilité : la saisie ne dit pas pourquoi
+    # elle a cessé, et R. 26 ter le demande.
+    "sans activité": ({}, AGE_FP_DE_1955),
+    # Née en mars 1978 : fenêtre 1978-1980, sans congé ; l'enfant de juin 1980
+    # (fenêtre 1980-1982, 1981) n'a aucun trimestre en 1978 et 1979 ; celui de
+    # juin 1982, aucun congé de 1982 à 1984.
+    "mars 1978, congé en 1981": ({"naissances": ("1978-03", "1980-06", "1982-06"),
+                                  "conges": {1981: "education_enfant"}}, AGE_FP_DE_1955),
+    # Née en septembre 1978 : fenêtre 1979-1981, 1981 y est ; 8 trimestres en
+    # 1976 et 1977 ; 20 d'activité avant 1981.
+    "septembre 1978, congé en 1981": ({"naissances": ("1978-09", "1980-06", "1982-06"),
+                                       "conges": {1981: "education_enfant"}}, DEROGATION),
+    # Dite à l'année, la naissance de 1978 ouvre le droit si les deux fenêtres
+    # le donnent : 1978-1980 et 1979-1981 contiennent 1979.
+    "à l'année, congé en 1979": ({"naissances": ("1978", "1980", "1982"),
+                                  "conges": {1979: "education_enfant"}}, DEROGATION),
+    # 1981 n'est pas dans 1978-1980 ; « 1980 » : aucun trimestre en 1978 et
+    # 1979 ; « 1982 » : aucun congé de 1982 à 1985.
+    "à l'année, congé en 1981": ({"naissances": ("1978", "1980", "1982"),
+                                  "conges": {1981: "education_enfant"}}, AGE_FP_DE_1955),
+    # Au service en 1976 et 1977 seulement : 8 trimestres d'activité avant 1978,
+    # « fixé à huit trimestres ».
+    "huit trimestres d'activité": ({"debut": 1976, "conges": _trois_ans()}, DEROGATION),
+    # Au chômage indemnisé en 1976 : les deux années d'avant valident 8
+    # trimestres de durée d'assurance, mais l'activité n'en compte que 4 ;
+    # l'enfant de juin 1980 (congé en 1980) n'en a que 4 d'activité avant 1980.
+    "quatre trimestres d'activité": (
+        {"debut": 1976, "conges": _trois_ans(),
+         "autres": {1976: AnneeCarriere(annee=1976, revenu=0.0, trimestres_valides=4,
+                                        affiliation="salarie_prive_non_cadre",
+                                        type_periode="chomage_indemnise",
+                                        cotisations_versees=False)}}, AGE_FP_DE_1955),
+    # « au moins trois enfants ».
+    "deux enfants": ({"enfants": 2, "naissances": ("1978-04", "1980-06"),
+                      "conges": _trois_ans()}, AGE_FP_DE_1955),
+    # Sans naissance dite, aucune fenêtre ne se date.
+    "naissances non dites": ({"naissances": (), "conges": _trois_ans()}, AGE_FP_DE_1955),
+    # Née en septembre 1954, effet le 1er octobre 2019.
+    "née en septembre 1954": ({"naissance": (1954, 9), "conges": _trois_ans()}, DEROGATION),
+    "née en septembre 1954, sans activité": ({"naissance": (1954, 9)}, AGE_FP_DE_1954),
+    # Née en mars 1953 : l'âge du tableau est déjà sous soixante-cinq ans.
+    "née en mars 1953": ({"naissance": (1953, 3), "conges": _trois_ans()}, AGE_FP_DE_1953),
+    # Née en décembre 1955 : soixante-deux ans en décembre 2017.
+    "née en décembre 1955": ({"naissance": (1955, 12), "debut": 1974,
+                              "conges": _trois_ans()}, DEROGATION),
+    # Née en janvier 1956 : hors des générations.
+    "née en janvier 1956": ({"naissance": (1956, 1), "debut": 1974,
+                             "naissances": ("1979-04", "1981-06", "1983-06"),
+                             "conges": _trois_ans(depuis=1979), "reprise": 2004},
+                            AGE_FP_DE_1956),
+}
+
+
+def test_l_age_d_annulation_du_fonctionnaire_parent_de_trois_enfants():
+    """L'âge d'annulation de la décote de la fonctionnaire de l'État, dans les
+    deux moteurs (``droit_et_refait``)."""
+    from outils_pont import droit_et_refait
+
+    appels, attendus = {}, {}
+    for cle, (champs, age) in CAS_FONCTIONNAIRES.items():
+        carriere = _fonctionnaire(cle, **champs)
+        appels[cle] = ("liquider.decote_opposable", pont.MOTEUR,
+                       pont.Periode("fonction_publique_etat", carriere.annee_liquidation),
+                       carriere, carriere.annee_liquidation)
+        attendus[cle] = age
+    lus, refus = droit_et_refait(appels)
+    assert refus == {}, refus
+    obtenus = {cle: lu[1] for cle, lu in lus.items()}
+    assert obtenus == {cle: pytest.approx(age, abs=0.005) for cle, age in attendus.items()}
+
+
+#: Les trois régimes du code des pensions et de ses décrets, et le statut qui y
+#: affilie : la règle est la même (articles 65-3 et 50-3).
+REGIMES_DES_FONCTIONNAIRES = {"fonction_publique_etat": "fonctionnaire_etat",
+                              "cnracl": "fonctionnaire_territorial_hospitalier",
+                              "fspoeie": "ouvrier_etat"}
+
+
+def test_la_cnracl_et_les_ouvriers_de_l_etat_suivent():
+    """Le même âge à la CNRACL et aux ouvriers de l'État ; l'emploi classé en
+    catégorie active, dont la limite d'âge n'était pas de soixante-cinq ans,
+    garde le sien, celui du parent de deux enfants."""
+    from outils_pont import droit_et_refait
+
+    appels = {}
+    for regime, statut in REGIMES_DES_FONCTIONNAIRES.items():
+        for enfants, naissances in ((3, ("1978-04", "1980-06", "1982-06")),
+                                    (2, ("1978-04", "1980-06"))):
+            carriere = _fonctionnaire(f"{regime} {enfants}", affiliation=statut,
+                                      enfants=enfants, naissances=naissances,
+                                      conges=_trois_ans())
+            appels[f"{regime}, {enfants}"] = (
+                "liquider.decote_opposable", pont.MOTEUR,
+                pont.Periode(regime, carriere.annee_liquidation), carriere,
+                carriere.annee_liquidation)
+    for enfants, naissances in ((3, ("1978-04", "1980-06", "1982-06")),
+                                (2, ("1978-04", "1980-06"))):
+        carriere = _fonctionnaire(f"active {enfants}",
+                                  affiliation="fonctionnaire_territorial_hospitalier_actif",
+                                  enfants=enfants, naissances=naissances,
+                                  conges=_trois_ans())
+        appels[f"active, {enfants}"] = (
+            "liquider.decote_opposable", pont.MOTEUR,
+            pont.Periode("cnracl", carriere.annee_liquidation), carriere,
+            carriere.annee_liquidation)
+    lus, refus = droit_et_refait(appels)
+    assert refus == {}, refus
+    ages = {cle: lu[1] for cle, lu in lus.items()}
+    assert {cle: age for cle, age in ages.items() if not cle.startswith("active")} == {
+        f"{regime}, {enfants}": pytest.approx(
+            DEROGATION if enfants == 3 else AGE_FP_DE_1955, abs=0.005)
+        for regime in REGIMES_DES_FONCTIONNAIRES for enfants in (3, 2)}
+    assert ages["active, 3"] == ages["active, 2"] < DEROGATION
+
+
+#: De bout en bout : la fonctionnaire de ``NEE_EN_1955``, ses trois premières
+#: années sans activité dites « élever un enfant » ; partie à soixante-cinq ans,
+#: le 1er avril 2020, au taux plein de L. 13, 75 %, au lieu de 75 % × (1 − 5 ×
+#: 1,25 %) = 70,3125 % ; partie à soixante-quatre ans, le 1er avril 2019, 4
+#: trimestres jusqu'à soixante-cinq ans, 75 % × (1 − 4 × 1,25 %) = 71,25 %, au
+#: lieu de 9 jusqu'à 66 ans et 3 mois (vingt-sept mois), 75 % × (1 − 9 × 1,25 %)
+#: = 66,5625 %.
+CONGES_DE_1978_A_1980 = {**NEE_EN_1955,
+                         "interruptions": "1978:1980:education_enfant, 1981:2002:sans_activite"}
+BOUT_EN_BOUT = {
+    "État, 65 ans": ({**CONGES_DE_1978_A_1980, "statut": "fonctionnaire_etat"},
+                     "fonction_publique_etat", 75.0),
+    "CNRACL, 65 ans": ({**CONGES_DE_1978_A_1980,
+                        "statut": "fonctionnaire_territorial_hospitalier"}, "cnracl", 75.0),
+    "ouvrière de l'État, 65 ans": ({**CONGES_DE_1978_A_1980, "statut": "ouvrier_etat"},
+                                   "fspoeie", 75.0),
+    "État, 64 ans": ({**CONGES_DE_1978_A_1980, "statut": "fonctionnaire_etat",
+                      "liquidation": "64"}, "fonction_publique_etat", 71.25),
+    # LES CAS TÉMOINS : deux enfants ; ou trois, sans dire pourquoi elle a cessé.
+    "État, deux enfants, 65 ans": ({**CONGES_DE_1978_A_1980, "statut": "fonctionnaire_etat",
+                                    "enfants": "2", "naissances": "1978-04, 1980-06"},
+                                   "fonction_publique_etat", 70.3125),
+    "État, deux enfants, 64 ans": ({**CONGES_DE_1978_A_1980, "statut": "fonctionnaire_etat",
+                                    "enfants": "2", "naissances": "1978-04, 1980-06",
+                                    "liquidation": "64"}, "fonction_publique_etat", 66.5625),
+    "État, sans activité, 65 ans": ({**NEE_EN_1955, "statut": "fonctionnaire_etat"},
+                                    "fonction_publique_etat", 70.3125),
+}
+
+
+def test_la_pension_du_fonctionnaire_de_bout_en_bout():
+    """Le simulateur, de la requête au taux de la pension, dans les deux moteurs
+    (``servi_et_refait``) : le taux que la formule affiche, au millième."""
+    import re
+
+    from outils_pont import servi_et_refait
+
+    servis, refus = servi_et_refait(
+        [{"cle": cle, "requete": {**REQUETE, "liquidation": "65", **champs}}
+         for cle, (champs, _, _) in BOUT_EN_BOUT.items()])
+    assert refus == {}, refus
+    taux = {}
+    for cle, (_, regime, _) in BOUT_EN_BOUT.items():
+        details = [p["detail"] for p in servis[cle]["actuel"]["pensions_par_regime"]
+                   if p["regime"] == regime]
+        trouve = re.search(r"taux ([0-9.]+)%", details[0]) if len(details) == 1 else None
+        taux[cle] = float(trouve.group(1)) if trouve else details
+    assert taux == {cle: pytest.approx(attendu, abs=0.0006)
+                    for cle, (_, _, attendu) in BOUT_EN_BOUT.items()}
+
+
+def test_le_minimum_garanti_s_ouvre_a_soixante_cinq_ans():
+    """Le minimum garanti est dû « si l'intéressé a atteint l'âge [...] auquel
+    s'annule le coefficient de minoration prévu aux I et II de l'article L. 14 »
+    (L. 17, LEGIARTI000023033916) : l'âge que l'article 28, III, borne à
+    soixante-cinq ans. La fonctionnaire de ``CONGES_DE_1978_A_1980`` au tiers du
+    salaire moyen, partie à soixante-cinq ans : avec trois enfants, sa pension est
+    portée au minimum ; avec deux, ni sa durée (108 trimestres sur 166) ni l'âge
+    d'annulation de sa génération (66 ans et 3 mois) ne l'ouvrent, et le décret
+    n° 2010-1744, article 3, ne minore cet âge que pour qui atteint l'âge
+    d'ouverture de 2011 à 2015, elle en 2017. Dans les deux moteurs
+    (``servi_et_refait``)."""
+    from outils_pont import servi_et_refait
+
+    cas = {"trois enfants": ("3", "1978-04, 1980-06, 1982-06"),
+           "deux enfants": ("2", "1978-04, 1980-06")}
+    servis, refus = servi_et_refait(
+        [{"cle": cle, "requete": {**REQUETE, **CONGES_DE_1978_A_1980, "liquidation": "65",
+                                  "statut": "fonctionnaire_etat", "salaire": "0.3",
+                                  "enfants": enfants, "naissances": naissances}}
+         for cle, (enfants, naissances) in cas.items()])
+    assert refus == {}, refus
+    details = {cle: [p["detail"] for p in servis[cle]["actuel"]["pensions_par_regime"]
+                     if p["regime"] == "fonction_publique_etat"]
+               for cle in cas}
+    assert {cle: "porté au minimum garanti" in detail[0] for cle, detail in details.items()} \
+        == {"trois enfants": True, "deux enfants": False}, details

@@ -7,10 +7,13 @@ intitule: >-
   bénéficiaire de la prestation de compensation du handicap (L. 351-8, 6°, depuis la loi
   n° 2025-199 ; avant, l'article 20 de la loi n° 2010-1330) ; pour le parent de trois
   enfants né du 1er juillet 1951 au 31 décembre 1955 qui a cessé ou réduit son activité
-  pour en élever un (même article 20). Le bénéficiaire de l'allocation des travailleurs
-  de l'amiante a sa fiche (inaptitude_invalidite_penibilite_amiante).
+  pour en élever un (même article 20), et, chez les fonctionnaires sédentaires de l'État, de
+  la CNRACL et les ouvriers de l'État, l'âge d'annulation de sa décote, qui ne peut être
+  supérieur à soixante-cinq ans (même loi, article 28, III). Le bénéficiaire de
+  l'allocation des travailleurs de l'amiante a sa fiche
+  (inaptitude_invalidite_penibilite_amiante).
 domaine: decote_surcote
-regimes: [msa_salaries, regime_general, rsi]
+regimes: [cnracl, fonction_publique_etat, fspoeie, msa_salaries, regime_general, rsi]
 etape: liquider_chaque_regime
 face: droit
 etat: approchee
@@ -21,6 +24,9 @@ lit:
 - les trimestres que valide chaque année civile de la carrière, ligne par ligne, et la
   nature de la ligne — l'emploi, le chômage, la maladie, la maternité, l'invalidité,
   l'accident du travail, le service militaire — et l'AVPF qu'elle porte
+- le motif de chaque année d'interruption que la saisie déclare — élever un enfant, congé
+  de maternité —, le statut de chaque ligne, le classement de l'emploi, sédentaire ou
+  actif, et la pension militaire (droit/ouvrir.py, derogation_active, droit_militaire)
 - liquidation.date_effet
 ecrit:
 - l'âge du 1° de L. 351-8 de l'assuré au régime général, chez les salariés agricoles et
@@ -28,6 +34,10 @@ ecrit:
   s'annule, d'où se comptent la décote (R. 351-27, I, 2°) et la majoration de durée
   (R. 351-7), et que le minimum contributif demande —, soixante-cinq ans au parent de trois
   enfants qui remplit les conditions
+- l'âge d'annulation de la décote du fonctionnaire sédentaire de l'État, de la CNRACL et de
+  l'ouvrier de l'État (liquider.decote_opposable) — celui jusqu'où se comptent les
+  trimestres de décote de L. 14, I, 1°, et que le minimum garanti demande (L. 17) —,
+  borné à soixante-cinq ans quand il remplit les conditions de R. 26 ter
 dates_qui_decident:
 - liquidation.date_effet
 # Les versions forment un partage de la date d'effet de la pension (§ 4.1). Le
@@ -39,7 +49,15 @@ dates_qui_decident:
 # `apres_au_plus`, les trimestres au plus de l'année de la naissance et des deux
 # suivantes, ou des trois suivantes pour l'enfant né au second semestre ;
 # `avant_au_moins`, les trimestres au moins des deux années qui précèdent ;
-# `activite_au_moins`, les trimestres d'activité avant la naissance.
+# `activite_au_moins`, les trimestres d'activité avant la naissance ;
+# `fonctionnaires`, les conditions de R. 26 ter, I, que lit
+# `age_du_fonctionnaire_parent_de_trois_enfants` (les générations, les enfants et
+# l'âge sont ceux de `parents_de_trois_enfants` et `age`) — `regimes`, ceux du code
+# des pensions et de ses décrets ; `interruptions`, les motifs de la saisie qui
+# disent un congé ou une disponibilité de R. 13, 1° ;
+# `interruption_au_moins_annees`, la durée de l'interruption dans la fenêtre ;
+# `avant_au_moins`, la durée d'assurance des deux années d'avant ;
+# `activite_au_moins`, l'activité avant l'interruption.
 versions:
 - id: avant_la_loi_du_9_novembre_2010
   statut: lue
@@ -157,6 +175,138 @@ versions:
       l'article L. 351-8 ou à l'âge de soixante-cinq ans s'il remplit les conditions
       prévues au 1° bis ou 1° ter de ce même article L. 351-8 ou au III ou IV de l'article
       20 de la loi n° 2010-1330 du 9 novembre 2010 portant réforme des retraites »
+  - id: LEGIARTI000023023851
+    article: loi n° 2010-1330 du 9 novembre 2010, article 28, III, rédaction du 1er juillet
+      au 23 décembre 2011
+    en_vigueur: 2011-07-01
+    citation: >-
+      « III. ― Pour les fonctionnaires nés entre le 1er juillet 1951 et le 31 décembre 1955
+      dont la limite d'âge était fixée à soixante-cinq ans avant l'entrée en vigueur de la
+      présente loi et qui remplissent les conditions prévues aux 1° à 3° du IV de l'article
+      20, l'âge auquel s'annule le coefficient de minoration prévu à l'article L. 14 du
+      code des pensions civiles et militaires de retraite ne peut être supérieur à
+      soixante-cinq ans, par dérogation au III de l'article 66 de la loi n° 2003-775 du 21
+      août 2003 précitée »
+  - id: LEGIARTI000025014566
+    article: loi n° 2010-1330 du 9 novembre 2010, article 28, III, rédaction en vigueur
+      depuis le 23 décembre 2011, le III identique
+    en_vigueur: 2011-12-23
+    citation: >-
+      « l'âge auquel s'annule le coefficient de minoration prévu à l'article L. 14 du code
+      des pensions civiles et militaires de retraite ne peut être supérieur à soixante-cinq
+      ans, par dérogation au III de l'article 66 de la loi n° 2003-775 du 21 août 2003
+      précitée. Pour l'application aux fonctionnaires du 1° du IV de l'article 20, les
+      enfants sont ceux énumérés au II de l'article L. 18 du code des pensions civiles et
+      militaires de retraite »
+  - id: LEGIARTI000024111781
+    article: R. 26 ter du code des pensions civiles et militaires de retraite, I, seule
+      rédaction, que le décret n° 2011-620, article 3 (JORFARTI000024110126), insère
+    en_vigueur: 2011-06-03
+    citation: >-
+      « 1° Sont considérés comme remplissant la condition d'interruption d'activité les
+      fonctionnaires qui ont interrompu leur activité pendant une durée d'au moins une
+      année au cours de la période comprenant l'année civile de la naissance ou de
+      l'adoption de l'enfant et les deux années civiles suivantes ou, si l'enfant est né
+      ou a été adopté au cours d'un second semestre, au cours de la période comprenant les
+      trois années civiles suivant celle de cette naissance ou adoption, et qui justifient,
+      au titre des deux années précédant l'année de la naissance ou de l'adoption, d'une
+      durée d'assurance, telle que définie à l'article L. 14, égale ou supérieure à huit
+      trimestres. Cette interruption d'activité doit être intervenue dans le cadre des
+      congés ou de la disponibilité mentionnés au 1° de l'article R. 13 du présent code ;
+      2° Sont considérés comme remplissant la condition de réduction d'activité les
+      fonctionnaires qui ont accompli leur service à temps partiel pendant une période
+      d'au moins deux années pour une quotité de temps de travail de 50 % [...] ; 3° Le
+      nombre minimum de trimestres de durée d'assurance, telle que définie à l'article L.
+      14, dont doit justifier le fonctionnaire, à raison de l'exercice d'une activité
+      professionnelle, préalablement à l'interruption ou à la réduction d'activité
+      mentionnée dans les deux alinéas précédents, est fixé à huit trimestres »
+  - id: LEGIARTI000023449727
+    article: R. 13 du code des pensions civiles et militaires de retraite, 1°, rédaction du
+      1er janvier 2011 au 1er octobre 2025
+    en_vigueur: 2011-01-01
+    citation: >-
+      « 1° L'interruption d'activité doit être d'une durée continue au moins égale à deux
+      mois et être intervenue dans le cadre : a) Du congé pour maternité [...] ; b) Du
+      congé d'adoption [...] ; c) Du congé parental, tel que prévu aux articles L. 4138-11
+      et L. 4138-14 du code de la défense, à l'article 54 de la loi du 11 janvier 1984
+      susmentionnée, [...] et à l'article L. 122-28-1 du code du travail ; d) Du congé de
+      présence parentale [...] ; e) D'une disponibilité pour élever un enfant de moins de
+      huit ans »
+  - id: LEGIARTI000006362714
+    article: L. 18 du code des pensions civiles et militaires de retraite, II, rédaction du
+      27 juillet 1991 au 1er janvier 2012
+    en_vigueur: 1991-07-27
+    citation: >-
+      « II. - Ouvrent droit à cette majoration : Les enfants légitimes, les enfants naturels
+      dont la filiation est établie et les enfants adoptifs du titulaire de la pension ;
+      Les enfants du conjoint issus d'un mariage précédent, ses enfants naturels dont la
+      filiation est établie et ses enfants adoptifs ; Les enfants ayant fait l'objet d'une
+      délégation de l'autorité parentale [...] ; Les enfants placés sous tutelle [...] ;
+      Les enfants recueillis à son foyer »
+  - id: LEGIARTI000025014534
+    article: L. 14 du code des pensions civiles et militaires de retraite, I, rédaction du
+      23 décembre 2011 au 22 janvier 2014 ; la première phrase, la même dans toutes les
+      rédactions de 2004 à aujourd'hui
+    en_vigueur: 2011-12-23
+    citation: >-
+      « I.-La durée d'assurance totalise la durée des services et bonifications
+      admissibles en liquidation prévue à l'article L. 13, augmentée, le cas échéant, de
+      la durée d'assurance et des périodes reconnues équivalentes validées dans un ou
+      plusieurs autres régimes de retraite de base obligatoires » ; « 1° Soit au nombre de
+      trimestres correspondant à la durée qui sépare l'âge auquel la pension est liquidée
+      de la limite d'âge du grade détenu par le pensionné »
+  - id: LEGIARTI000006758610
+    article: loi n° 2003-775 du 21 août 2003, article 66, III, seule rédaction
+    en_vigueur: 2004-01-01
+    citation: >-
+      « 2° L'âge auquel s'annule le coefficient de minoration, exprimé par rapport à la
+      limite d'âge, par dérogation au 1° du I de l'article L. 14 » ; « Année au cours de
+      laquelle sont réunies les conditions mentionnées au I et au II de l'article L. 24 » ;
+      « 2014 II : 1,125 % III : Limite d'âge moins 6 trimestres », « 2015 II : 1,25 % III :
+      Limite d'âge moins 5 trimestres », « 2016 II : 1,25 % III : Limite d'âge moins 4
+      trimestres », « 2017 II : 1,25 % III : Limite d'âge moins 3 trimestres », « 2018 II :
+      1,25 % III : Limite d'âge moins 2 trimestres »
+  - id: LEGIARTI000023033916
+    article: L. 17 du code des pensions civiles et militaires de retraite, rédaction du 11
+      novembre 2010 au 16 avril 2023
+    en_vigueur: 2010-11-11
+    citation: >-
+      « Si le nombre de trimestres de durée d'assurance, telle que définie à l'article L.
+      14, est égal au nombre de trimestres nécessaire pour obtenir le pourcentage maximum
+      de la pension mentionné à l'article L. 13 ou si l'intéressé a atteint l'âge ou la
+      durée de services auxquels s'annule le coefficient de minoration prévu aux I et II
+      de l'article L. 14 [...], le montant de la pension ne peut être inférieur »
+  - id: LEGIARTI000024113270
+    article: décret n° 2003-1306 du 26 décembre 2003 (CNRACL), article 65-3, seule rédaction
+      en vigueur
+    en_vigueur: 2011-07-01
+    citation: >-
+      « Pour les fonctionnaires nés entre le 1er juillet 1951 et le 31 décembre 1955 dont
+      la limite d'âge était fixée à soixante-cinq ans avant l'entrée en vigueur de la loi
+      n° 2010-1330 du 9 novembre 2010 portant réforme des retraites et qui remplissent les
+      conditions prévues aux 1°,2° et 3° du IV de l'article 20 de la même loi, l'âge
+      auquel s'annule le coefficient de minoration prévu au I de l'article 20 du présent
+      décret ne peut être supérieur à soixante-cinq ans » ; « Les modalités d'application
+      du présent article sont celles prévues pour les fonctionnaires de l'Etat à l'article
+      R. 26 ter du code des pensions civiles et militaires de retraite »
+  - id: LEGIARTI000024113274
+    article: décret n° 2004-1056 du 5 octobre 2004 (ouvriers des établissements industriels
+      de l'État), article 50-3, seule rédaction en vigueur
+    en_vigueur: 2011-07-01
+    citation: >-
+      « Pour les agents nés entre le 1er juillet 1951 et le 31 décembre 1955 dont la limite
+      d'âge était fixée à soixante-cinq ans [...], l'âge auquel s'annule le coefficient de
+      minoration prévu au II de l'article 16 du présent décret ne peut être supérieur à
+      soixante-cinq ans, par dérogation au III de l'article 50 du présent décret » ; « Les
+      modalités d'application du présent article sont celles prévues pour les
+      fonctionnaires de l'Etat à l'article R. 26 ter »
+  - id: JORFARTI000023334739
+    article: décret n° 2010-1740 du 30 décembre 2010, article 16, III
+    publie_le: 2010-12-31
+    citation: >-
+      « Les dispositions des articles 7, 9, 10 et 11 sont applicables aux pensions
+      liquidées à compter du 1er juillet 2011 » ; l'article 7 (JORFARTI000023334770)
+      insère les articles 65-3 et 50-3
   - reference: >-
       circulaire Cnav n° 2014-64 du 23 décembre 2014, « Age taux plein – Mesure dérogatoire
       – Parents de trois enfants – Assurés nés entre le 1er juillet 1951 et le 31 décembre
@@ -223,10 +373,26 @@ versions:
       maladie, de la maternité, du chômage, de la formation, et huit trimestres d'activité
       avant elle, jusqu'au dernier jour du trimestre civil qui la précède. La décote
       s'annule à soixante-cinq ans, et se compte jusqu'à son soixante-cinquième
-      anniversaire (R. 351-27) ; la majoration de durée court après lui (R. 351-7)
+      anniversaire (R. 351-27) ; la majoration de durée court après lui (R. 351-7). Le
+      fonctionnaire sédentaire de l'État, de la CNRACL ou l'ouvrier de l'État né dans les
+      mêmes générations, qui a trois enfants (L. 18, II), a interrompu son activité au
+      moins une année l'année de la naissance de l'un d'eux et les deux suivantes — les
+      trois suivantes s'il est né au second semestre —, dans un congé ou une disponibilité
+      de R. 13, 1°, ou travaillé à temps partiel de R. 13, 2°, deux ans à 50 %, un an et
+      huit mois à 60 %, un an et cinq mois à 70 %, qui a huit trimestres de durée
+      d'assurance les deux années d'avant et huit d'activité avant l'interruption (R. 26
+      ter, I) : l'âge d'annulation de sa décote, la limite d'âge moins les trimestres du
+      tableau de l'article 66, III, de la loi n° 2003-775, ne peut être supérieur à
+      soixante-cinq ans (loi n° 2010-1330, article 28, III ; décrets n° 2003-1306,
+      article 65-3, et n° 2004-1056, article 50-3). Les trimestres de décote se comptent
+      jusqu'à lui (L. 14, I, 1°), et le minimum garanti s'ouvre à lui (L. 17). La borne ne
+      change rien aux générations de 1951 à 1953, dont le tableau annule la décote avant
+      soixante-cinq ans ; elle vaut pour celles de 1954 (65 ans et 4 ou 7 mois) et de 1955
+      (66 ans et 3 mois)
     beneficiaire: >-
       le parent de trois enfants né du 1er juillet 1951 au 31 décembre 1955, qui a cessé ou
-      réduit son activité après la naissance de l'un d'eux
+      réduit son activité après la naissance de l'un d'eux ; le fonctionnaire sédentaire
+      qui l'a interrompue au moins un an dans un congé ou une disponibilité pour l'élever
     parametres:
       existe: true
       age: 65
@@ -236,6 +402,12 @@ versions:
         nes_au: [1955, 12]
         enfants: 3
         apres_au_plus: 8
+        avant_au_moins: 8
+        activite_au_moins: 8
+      fonctionnaires:
+        regimes: [fonction_publique_etat, cnracl, fspoeie]
+        interruptions: [maternite, education_enfant]
+        interruption_au_moins_annees: 1
         avant_au_moins: 8
         activite_au_moins: 8
   exemples: aucun trouvé
@@ -256,7 +428,13 @@ versions:
     droit: >-
       le IV de l'article 20 est abrogé ; l'aidant familial (1° bis) et le parent d'un
       enfant handicapé ou aidant (6°) gardent le taux plein à soixante-cinq ans, que le
-      modèle ne sert pas (approximations)
+      modèle ne sert pas (approximations). L'article 28, III, n'est pas abrogé
+      (LEGIARTI000025014566, en vigueur), mais renvoie aux « conditions prévues aux 1° à 3°
+      du IV de l'article 20 », que le IV abrogé ne porte plus : ce que le texte ne tranche
+      pas. Rien n'en dépend : né au plus tard le 31 décembre 1955, le fonctionnaire dont
+      la pension prend effet à compter du 1er janvier 2026 a soixante-dix ans au moins,
+      au-delà de l'âge d'annulation de sa décote, qui ne passe pas sa limite d'âge,
+      soixante-sept ans au plus (article 28, I)
     parametres:
       existe: false
   exemples: aucun trouvé
@@ -382,60 +560,39 @@ approximations:
     (tests/test_taux_plein_a_soixante_cinq_ans.py, NON_TRANCHE et la tranche C).
 - version: [loi_du_9_novembre_2010]
   textes: >-
-    loi n° 2010-1330, article 28 (LEGIARTI000023023851, du 1er juillet au 23 décembre
-    2011 ; LEGIARTI000025014566, depuis), III et I ; code des pensions civiles et
-    militaires de retraite, R. 26 ter (LEGIARTI000024111781, seule rédaction, depuis le 3
-    juin 2011, que le décret n° 2011-620, article 3, JORFARTI000024110126, insère), L. 13
-    (LEGIARTI000028498258), L. 14 (LEGIARTI000037200740, du 15 juillet 2018 au 1er
-    septembre 2023) et L. 24 (LEGIARTI000028498845) ; loi n° 2003-775, article 66, III
-    (LEGIARTI000006758610) ; L. 161-17-2 du code de la sécurité sociale
-    (LEGIARTI000025014605) ; décret n° 2003-1306 (CNRACL), article 65-3
-    (LEGIARTI000024113270), et décret n° 2004-1056 (ouvriers de l'État), article 50-3
-    (LEGIARTI000024113274), que le décret n° 2011-620, article 10 (JORFARTI000024110234),
-    complète d'un renvoi à R. 26 ter
+    loi n° 2010-1330, article 28, III (LEGIARTI000023023851, LEGIARTI000025014566) ; code des
+    pensions civiles et militaires de retraite, R. 26 ter, I (LEGIARTI000024111781), R. 13,
+    1° et 2° (LEGIARTI000023449727), L. 18, II (LEGIARTI000006362714) ; décret n° 2003-1306,
+    article 65-3 (LEGIARTI000024113270), et décret n° 2004-1056, article 50-3
+    (LEGIARTI000024113274)
   ecart: >-
-    Le modèle annule la décote des fonctionnaires sédentaires de l'État, de la CNRACL et
-    des ouvriers de l'État à l'âge du tableau de l'article 66, III, de la loi n° 2003-775,
-    la limite d'âge moins des trimestres, lu à l'« Année au cours de laquelle sont réunies
-    les conditions mentionnées au I et au II de l'article L. 24 » (fiche
-    decote_fonction_publique). La loi n° 2010-1330, article 28, III, le plafonne
-    pourtant : « Pour les fonctionnaires nés entre le 1er juillet 1951 et le 31 décembre
-    1955 dont la limite d'âge était fixée à soixante-cinq ans avant l'entrée en vigueur
-    de la présente loi et qui remplissent les conditions prévues aux 1° à 3° du IV de
-    l'article 20, l'âge auquel s'annule le coefficient de minoration prévu à l'article
-    L. 14 du code des pensions civiles et militaires de retraite ne peut être supérieur à
-    soixante-cinq ans, par dérogation au III de l'article 66 de la loi n° 2003-775 du 21
-    août 2003 précitée. Pour l'application aux fonctionnaires du 1° du IV de l'article
-    20, les enfants sont ceux énumérés au II de l'article L. 18 du code des pensions
-    civiles et militaires de retraite. » Le décret de la CNRACL, article 65-3, et celui
-    des ouvriers de l'État, article 50-3, écrivent la même règle, et renvoient à R. 26
-    ter : « Les modalités d'application du présent article sont celles prévues pour les
-    fonctionnaires de l'Etat à l'article R. 26 ter du code des pensions civiles et
-    militaires de retraite. » Ce ne sont pas les conditions du régime général : une
-    interruption « pendant une durée d'au moins une année » dans la fenêtre de la
-    naissance, qui « doit être intervenue dans le cadre des congés ou de la disponibilité
-    mentionnés au 1° de l'article R. 13 du présent code », ou un temps partiel de R. 13,
-    2°, « pendant une période d'au moins deux années pour une quotité de temps de travail
-    de 50 % [...], d'au moins une année et huit mois pour une quotité de 60 % et d'au
-    moins une année et cinq mois pour une quotité de 70 % » ; huit trimestres de durée
-    d'assurance les deux années d'avant, et huit d'activité avant l'interruption. La
-    saisie ne demande pas la forme de l'interruption : la règle tient à un fait qu'elle
-    ne porte pas.
+    Aux fonctionnaires : depuis le 3 novembre 2026, le modèle borne à soixante-cinq ans
+    l'âge d'annulation de la décote du sédentaire de l'État, de la CNRACL et de l'ouvrier
+    de l'État qui remplit les conditions de l'article 28, III, et de R. 26 ter, que les
+    articles 65-3 et 50-3 étendent. Il ne les lit que dans ce que la saisie porte. L'interruption « dans le
+    cadre des congés ou de la disponibilité mentionnés au 1° de l'article R. 13 » : les
+    années qu'elle dit « élever un enfant » ou « congé de maternité », chacune une année
+    entière ; une année dite « sans activité » n'est pas lue comme un congé parental ni
+    comme une disponibilité pour élever un enfant, et une année « élever un enfant » est
+    lue comme l'un d'eux, quand elle a pu être une disponibilité pour convenances
+    personnelles ou une démission. La réduction d'activité, un temps partiel de R. 13, 2°,
+    « pendant une période d'au moins deux années pour une quotité de temps de travail de
+    50 % », un an et huit mois à 60 %, un an et cinq mois à 70 %, n'est pas lue : le
+    temps partiel saisi ne dit pas son motif. Les enfants de L. 18, II, que la saisie ne
+    distingue pas — du conjoint, délégués, sous tutelle, recueillis — sont comptés dans
+    leur nombre ; l'adoption n'est pas saisie.
   effet: >-
-    le fonctionnaire parent qui remplit ces conditions, parti de soixante-cinq ans à son
-    âge d'annulation. La fonctionnaire de l'État née le 15 mars 1955, sans activité de
-    1978 à 2002, trois enfants nés en avril 1978, juin 1980 et juin 1982, partie à
-    soixante-cinq ans en 2020 : elle atteint en 2017 soixante-deux ans, l'âge de
-    L. 161-17-2 que vise le 1° du I de L. 24 ; le tableau de l'article 66, III, porte
-    pour 2017 « 1,25 % » par trimestre et la « Limite d'âge moins 3 trimestres », de
-    soixante-sept ans pour qui est né à compter du 1er janvier 1955 (article 28, I) :
-    66 ans et 3 mois, 5 trimestres après soixante-cinq ans. Le modèle lui sert 75 % × (1 −
-    5 × 1,25 %) = 70,3125 % — 75 %, le pourcentage maximum de L. 13 —, de même à la
-    CNRACL et aux ouvriers de l'État, quand le droit lui sert 75 % si son interruption a
-    été un congé ou une disponibilité de R. 13 : 6,25 % de sa pension. Pour les
-    générations de 1951 à 1954, l'âge d'annulation tient à la limite d'âge que fixe le
-    décret de l'article 28, II, que cette lecture n'a pas rouvert : l'écart n'y est pas
-    mesuré.
+    le fonctionnaire parent qui a cessé son activité sans la dire « élever un enfant », ou
+    qui l'a réduite à temps partiel, parti de soixante-cinq ans à son âge d'annulation. La
+    fonctionnaire de l'État née le 15 mars 1955, sans activité de 1978 à 2002, trois
+    enfants nés en avril 1978, juin 1980 et juin 1982, partie à soixante-cinq ans en 2020 :
+    66 ans et 3 mois (« Limite d'âge moins 3 trimestres » en 2017, de soixante-sept ans),
+    5 trimestres après soixante-cinq ans ; le modèle lui sert 75 % × (1 − 5 × 1,25 %) =
+    70,3125 %, de même à la CNRACL et aux ouvriers de l'État ; dites « élever un enfant »,
+    ses années 1978 à 1980 lui donnent 75 %, ce que le droit lui sert si elles ont été un
+    congé ou une disponibilité de R. 13 : 6,25 % de sa pension. Née en septembre 1954, 65
+    ans et 7 mois, 3 trimestres : 75 % × (1 − 3 × 1,25 %) = 72,1875 % au lieu de 75 %.
+    Nées de 1951 à 1953, rien : le tableau annule leur décote avant soixante-cinq ans.
 - version: [loi_du_9_novembre_2010]
   textes: >-
     L. 382-27 du code de la sécurité sociale (LEGIARTI000019959668, du 19 décembre 2008 au
@@ -525,11 +682,15 @@ effet: >-
   soixante-sept ans. Les autres catégories de la fiche restent décotées. Non mesuré.
   Depuis le 3 novembre 2026, l'Agirc et l'Arrco, puis l'Agirc-Arrco, les servent sans
   coefficient dès soixante-cinq ans, sauf la tranche C d'avant 2016 : de 5 % à 8 % de
-  plus à leur complémentaire. L'Ircantec et le RCI, les fonctionnaires, la CAVIMAC et
-  les points d'avant 1973, où vaut le même âge, les abattent encore jusqu'à l'âge de
-  leur génération : les approximations le chiffrent sur des exemples : 5 % au RCI,
-  6,25 % de la pension de base de la fonctionnaire née en 1955, de la ministre du culte
-  et des points d'avant 1973.
+  plus à leur complémentaire. L'Ircantec et le RCI, la CAVIMAC et les points d'avant
+  1973, où vaut le même âge, les abattent encore jusqu'à l'âge de leur génération : les
+  approximations le chiffrent sur des exemples : 5 % au RCI, 6,25 % de la pension de la
+  ministre du culte et des points d'avant 1973. Depuis le 3 novembre 2026, le
+  fonctionnaire sédentaire de l'État, de la CNRACL et l'ouvrier de l'État nés en 1954
+  et en 1955 qui ont interrompu leur activité au moins un an pour élever un enfant, et
+  le disent, ont l'âge d'annulation de leur décote borné à soixante-cinq ans : 3
+  trimestres de décote de moins en 1954, 5 en 1955, partis à soixante-cinq ans, une
+  décote de 3,75 % et de 6,25 % en moins, et le minimum garanti à soixante-cinq ans.
 sources:
   lu_le: 2026-11-03
   prochaine_relecture: 2027-06-30
@@ -547,11 +708,16 @@ sources:
     qu'elle sert aux points de l'Arrco des cultes, que les textes lus ne tranchent pas,
     la circulaire 2020-02-DRJ non plus : une circulaire de la caisse qui nomme ces
     parents, ou sa réponse écrite.
-    À la file du régime général : servir le même âge aux fonctionnaires (article 28, III,
-    et R. 26 ter, dont la forme de l'interruption n'est pas saisie), à la CAVIMAC et aux
-    points d'avant 1973 ; puis aux non-salariés agricoles (article 21, IV), aux libéraux
-    (R. 643-7) et aux avocats (R. 723-38, puis R. 653-2), dont les rédactions de 2016 à
-    2022 restent à lire.
+    À la file du régime général : servir le même âge à la CAVIMAC et aux points d'avant
+    1973 ; puis aux non-salariés agricoles (article 21, IV), aux libéraux (R. 643-7) et
+    aux avocats (R. 723-38, puis R. 653-2), dont les rédactions de 2016 à 2022 restent à
+    lire. Aux fonctionnaires, la réduction d'activité de R. 26 ter, I, 2°, demande le
+    motif du temps partiel saisi — un temps partiel pris pour élever un enfant, de R. 13,
+    2° —, que la saisie ne porte pas.
+  - >-
+    Une circulaire ou une note du Service des retraites de l'État ou de la CNRACL qui
+    dise comment elles ont appliqué l'article 28, III, et R. 26 ter : leurs pages sur la
+    décote, lues le 3 novembre 2026, n'en parlent plus.
   lectures:
   - type: legifrance
     reference: >-
@@ -682,6 +848,53 @@ sources:
       tenir à la durée, aux « 1° bis à 5° de l'article L. 351-8 », aux carrières longues
     url: https://www.agirc-arrco.fr/wp-content/uploads/2021/10/2020-02-DRJ_Regime_Agirc-Arrco_Reglementation_applicable_aux_individus.pdf
     date: 2026-11-03
+  - type: legifrance
+    reference: >-
+      index LEGI à jour au 2 novembre 2026, relu le 3 novembre 2026 par la file M4 de la
+      sixième vague, pour servir les fonctionnaires : la loi n° 2010-1330, article 28
+      (LEGIARTI000023023851, LEGIARTI000025014566, son III identique, --diff) et article
+      20 (LEGIARTI000023023835 ; LEGIARTI000051289925, depuis le 28 février 2025 : « III. ―
+      (Abrogé). IV. ― (Abrogé). ») ; le code des pensions civiles et militaires de retraite,
+      R. 26 ter (LEGIARTI000024111781, seule rédaction), R. 13 (LEGIARTI000023449727, du
+      1er janvier 2011 au 1er octobre 2025 ; LEGIARTI000051969102, depuis, qui ne change
+      que les références aux statuts, au code général de la fonction publique), L. 18
+      (LEGIARTI000006362714, LEGIARTI000025076852, LEGIARTI000047453210,
+      LEGIARTI000047456782 : le II le même), L. 14 (de LEGIARTI000006362704 à
+      LEGIARTI000048844775 : la première phrase du I la même) et L. 17
+      (LEGIARTI000023033916) ; la loi n° 2003-775, article 66 (LEGIARTI000006758610) ;
+      L. 161-17-2 du code de la sécurité sociale (LEGIARTI000025014605) ; le décret
+      n° 2003-1306, article 65-3 (LEGIARTI000024113270), et le décret n° 2004-1056,
+      article 50-3 (LEGIARTI000024113274)
+    date: 2026-11-03
+  - type: jorf
+    reference: >-
+      index JORF à jour au 3 novembre 2026, relu le 3 novembre 2026 par la file M4 de la
+      sixième vague : la loi n° 2010-1330, article 118, II (JORFARTI000023022348) : « Les
+      articles 18 à 40, 79, 83 et 84 sont applicables aux pensions prenant effet à compter
+      du 1er juillet 2011 » ; le décret n° 2010-1740, article 7 (JORFARTI000023334770), qui
+      insère les articles 65-3 et 50-3, et article 16, III (JORFARTI000023334739) ; le
+      décret n° 2011-620, articles 3 (JORFARTI000024110126) et 10 (JORFARTI000024110234) ;
+      le décret n° 2011-2103, article 1er (JORFARTI000025061553 : « 1954 61 ans et 7 mois
+      A compter de 1955 62 ans ») et article 8 (JORFARTI000025061595 : « De cinq mois par
+      génération pour les fonctionnaires atteignant cet âge entre le 1er janvier 2012 et le
+      31 décembre 2014 ») ; le décret n° 2010-1744, article 3 (JORFARTI000023334941), dont
+      le tableau ne minore l'âge qui ouvre le minimum garanti que de 2011 à 2015 ; la loi
+      n° 2025-199, article 87, IV (JORFARTI000051269910), qui abroge les III et IV de
+      l'article 20, non l'article 28
+    date: 2026-11-03
+  - type: autre
+    reference: >-
+      Service des retraites de l'État, « La décote »
+      (https://retraitesdeletat.gouv.fr/actif/le-calcul-de-ma-retraite/la-decote), et
+      CNRACL, « La décote et la surcote »
+      (https://www.cnracl.retraites.fr/actif/ma-future-retraite/montant-de-ma-pension/la-decote-et-la-surcote),
+      lues le 3 novembre 2026, sha256
+      a3e4b60a8a98bea514de3414cef253e8869f8a231abd07d9f6e76960e309503e et
+      76aa2508b1f4dbebea8ef7f42cddba444209376db6b925a54e429305c253c723 : elles ne nomment
+      plus ces parents ; le SRE : « L'âge à partir duquel la décote n'est plus appliquée au
+      fonctionnaire de la catégorie sédentaire est fixé à 67 ans ». Aucune circulaire de
+      la caisse sur l'article 28, III, n'a été trouvée, ni d'exemple chiffré
+    date: 2026-11-03
 textes_a_rattacher:
 - reference: L. 351-8 CSS, 1° bis et 6°
 - reference: loi n° 2010-1330 du 9 novembre 2010, article 20, III
@@ -704,24 +917,42 @@ code:
     précèdent, l'emploi, la maladie, la maternité et le chômage ; l'emploi seul avant
     elle, et, l'année de la naissance, les trimestres civils écoulés avant le sien
     (`categories._remplit_pour_l_enfant`). La décote, la majoration de durée et le
-    minimum contributif lisent cet âge sans autre changement.
+    minimum contributif lisent cet âge sans autre changement. Aux fonctionnaires, l'âge
+    d'annulation que rend la décote en table de la fonction publique
+    (`liquider.decote_opposable`), la limite d'âge moins les trimestres de l'article 66,
+    III, est borné à l'âge de la version pour le sédentaire — ni catégorie active dont il a
+    les services, ni militaire (`liquider._age_du_parent_sedentaire`) — qui remplit les
+    conditions (`categories.age_du_fonctionnaire_parent_de_trois_enfants`) : sa
+    génération, ses enfants, et, pour l'un d'eux dont la naissance est déclarée, une année
+    au moins dans la fenêtre dont la ligne porte un motif de `interruptions`, la durée
+    d'assurance de tous les régimes les deux années d'avant, l'emploi avant la première
+    année de l'interruption (`categories._remplit_pour_l_enfant_fonctionnaire`). Les
+    trimestres de décote et le minimum garanti lisent cet âge sans autre changement.
   python: >-
     droit/categories.py : age_du_parent_de_trois_enfants, _remplit_pour_l_enfant,
-    FICHE_DES_SOIXANTE_CINQ_ANS ; droit/ouvrir.py : age_taux_plein ; carriere.py :
+    age_du_fonctionnaire_parent_de_trois_enfants, _remplit_pour_l_enfant_fonctionnaire,
+    _regle_du_parent, FICHE_DES_SOIXANTE_CINQ_ANS ; droit/liquider.py : decote_opposable,
+    _age_du_parent_sedentaire ; droit/ouvrir.py : age_taux_plein ; carriere.py :
     Carriere.trimestres_par_annee
   javascript: >-
     moteur/js/droit/categories.js : ageDuParentDeTroisEnfants, remplitPourLEnfant,
-    FICHE_DES_SOIXANTE_CINQ_ANS ; moteur/js/droit/ouvrir.js : ageTauxPlein ;
+    ageDuFonctionnaireParentDeTroisEnfants, remplitPourLEnfantFonctionnaire, regleDuParent,
+    FICHE_DES_SOIXANTE_CINQ_ANS ; moteur/js/droit/liquider.js : decoteOpposable,
+    ageDuParentSedentaire ; moteur/js/droit/ouvrir.js : ageTauxPlein ;
     moteur/js/carriere.js : trimestresParAnnee
   parametres: >-
-    contenu.parametres de chaque version : existe, age, regimes, parents_de_trois_enfants ;
+    contenu.parametres de chaque version : existe, age, regimes, parents_de_trois_enfants,
+    fonctionnaires ;
     regimes/regime_general.yaml, regimes/msa_salaries.yaml, regimes/rsi.yaml :
     age_taux_plein_par_generation
   tests:
   - >-
     tests/test_taux_plein_a_soixante_cinq_ans.py, qui date la fiche, rend l'âge de
     dix-sept carrières dans les deux moteurs et sert la pension de bout en bout, et
-    l'Agirc-Arrco sans coefficient (SANS_ABATTEMENT, NON_TRANCHE, la tranche C)
+    l'Agirc-Arrco sans coefficient (SANS_ABATTEMENT, NON_TRANCHE, la tranche C), et, aux
+    fonctionnaires, l'âge d'annulation de dix-sept carrières (CAS_FONCTIONNAIRES), les
+    trois régimes et la catégorie active, la pension de bout en bout (BOUT_EN_BOUT) et le
+    minimum garanti à soixante-cinq ans
 historique:
 - >-
   2026-11-03 — née de l'étape 4 de l'action 175 (la base de législation de la Cnav, thème
@@ -748,3 +979,11 @@ historique:
   ans le taux plein du régime général, la tranche C d'avant 2016 gardant le sien, dans les
   deux moteurs ; avant soixante-cinq ans, l'âge d'où se compte leur coefficient reste
   celui de la génération, que les textes lus ne tranchent pas, déclaré.
+- >-
+  2026-11-03 — les fonctionnaires (file M4 de la sixième vague, décision 14 du
+  propriétaire ; note 2026-11-03-taux-plein-parents-de-trois-enfants-fonctionnaires.md) :
+  l'âge d'annulation de la décote du sédentaire de l'État, de la CNRACL et de l'ouvrier de
+  l'État né de juillet 1951 à 1955, parent de trois enfants, qui a interrompu son activité
+  au moins un an pour élever l'un d'eux, est borné à soixante-cinq ans dans les deux
+  moteurs (loi n° 2010-1330, article 28, III ; R. 26 ter) ; l'écart déclaré ne garde que
+  ce que la saisie ne porte pas.

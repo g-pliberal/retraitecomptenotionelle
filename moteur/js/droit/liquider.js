@@ -2585,7 +2585,11 @@ export function decoteOpposable(moteur, periode, carriere, anneeLiquidation) {
         fiabilite,
       ];
     }
-    return [coefficient, ageAnnulation - trimestresAvant / 4.0, fiabilite];
+    const age = ageAnnulation - trimestresAvant / 4.0;
+    const parent = periode.bareme_decote === "fonction_publique"
+      ? ageDuParentSedentaire(moteur, periode, carriere)
+      : null;
+    return [coefficient, parent === null ? age : Math.min(age, parent), fiabilite];
   }
   if (periode.decote_par_trimestre === null) {
     return [null, ageAnnulation, null];
@@ -2607,6 +2611,24 @@ export function decoteOpposable(moteur, periode, carriere, anneeLiquidation) {
     }
   }
   return [periode.decote_par_trimestre, ageAnnulation, null];
+}
+
+/**
+ * La borne de l'âge d'annulation de la décote du fonctionnaire parent de trois
+ * enfants (loi n° 2010-1330, article 28, III : « dont la limite d'âge était
+ * fixée à soixante-cinq ans », l'âge « ne peut être supérieur à soixante-cinq
+ * ans ») : le sédentaire seul — ni l'emploi classé en catégorie active dont il
+ * a les services, ni le militaire —, quand il en remplit les conditions
+ * (`categories.ageDuFonctionnaireParentDeTroisEnfants`) ; `null` sinon. Voir
+ * `_age_du_parent_sedentaire` du Python.
+ */
+function ageDuParentSedentaire(moteur, periode, carriere) {
+  const age = categories.ageDuFonctionnaireParentDeTroisEnfants(moteur, periode.regime, carriere);
+  if (age === null || ouvrir.derogationActive(moteur, periode, carriere) !== null
+      || ouvrir.droitMilitaire(moteur, periode, carriere) !== null) {
+    return null;
+  }
+  return age;
 }
 
 /** Trimestres retranchés à la durée requise pour compter la décote. */
