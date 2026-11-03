@@ -90,8 +90,11 @@ sources:
     La moyenne P de D. 732-77, « le nombre annuel moyen de points acquis par l'assuré
     au cours de la période » : le texte ne dit pas sur combien d'années la compter. Le
     moteur la compte sur les années de chef de la période qui ont des points, comme pour
-    les pensions prises depuis 2026, et, faute du barème d'avant 1990 (décrets
-    n° 65-346, 67-570, 68-571, 74-443 et 75-97, au fac-similé), donne à chaque année les
+    les pensions prises depuis 2026, et, faute du barème d'avant 1990 (R. 732-69 dans sa
+    rédaction de 2005 : en revenu cadastral, que le modèle n'a pas, « pour les années 1981
+    et suivantes » ; pour les « années antérieures à 1981 », les décrets n° 65-346,
+    67-570, 74-443 et 75-97, dont l'index de la DILA n'a que les notices des n° 67-570 et
+    74-443), donne à chaque année les
     points que vaut le rendement estimé de sa cotisation à la valeur de service de la
     fiche, 4,589 € de 2025 ramenés aux prix du départ, au rapport de durée de R. 732-66
     depuis 1990 ; la période de 1986 à 1989 de la fiche du régime porte cette valeur pour
@@ -112,6 +115,43 @@ sources:
     que l'article 2 du décret n° 86-1084 exclut de la majoration avec leurs points, pour
     les pensions prises jusqu'au 22 avril 2005 ; D. 732-77 ne le dit plus. Le modèle ne
     les connaît pas : le décret n° 68-571 n'est qu'au fac-similé.
+  - >-
+    Les points de 1952. La période de D. 732-77 et de l'article 2 du décret n° 86-1084
+    s'ouvre le jour où naît le régime, « la date de création du régime d'assurance
+    vieillesse des professions non salariées agricoles, à savoir le 1er juillet 1952 pour
+    la métropole » (décret n° 99-875, article 2, LEGIARTI000006779656) : aucun point du
+    régime ne la précède, et la borne n'en exclut aucun. Mais l'exercice 1952 n'a
+    qu'une demi-année : « Pour l'exercice 1952, les cotisations professionnelles visées
+    aux articles 20 et 21 de la loi du 10 juillet 1952 sont égales à la moitié des
+    cotisations annuelles » (décret n° 52-1166, article 45, LEGIARTI000019272803). Aucun
+    texte lu ne dit les points que valait cette demi-année — ils relèvent des décrets
+    auxquels R. 732-69 renvoie pour les années antérieures à 1981, non lus, et la loi
+    n° 52-799 n'est à l'index JORF que par sa notice —, ni si la moyenne P la compte
+    pour une année ou pour une demie. Le modèle, par convention, compte 1952 comme les
+    autres années : la cotisation de l'année entière, et une année dans P, ici comme
+    dans le reste de la pension proportionnelle. Effet au plus, pour les seuls chefs de
+    1952, si 1952 ne valait que la moitié de sa cotisation : T fois la pension que vaut
+    cette moitié, 45 % au plus, et le déplacement de P qu'elle fait, qui peut faire
+    passer un seuil du barème au chef de peu d'années. Pour le témoin de chef né en
+    1925, parti en février 1989, chef de 1952 à 1972 : 46,75 € de majoration au modèle
+    (P = 18,00, 5 %), 46,13 € à la moitié de la cotisation de 1952, comptée pour une
+    année ou pour une demie (P = 17,76 ou 18,19), le taux restant de 5 % : 0,63 € par an
+    au plus, en euros de son départ. Dans le reste de sa pension proportionnelle, cette
+    moitié vaut 12,52 € par an.
+  - >-
+    L'arrondi, pour les pensions prises de juillet 1986 à 2025 : ni D. 732-77 ni
+    l'article 2 du décret n° 86-1084 ne disent s'il faut arrondir le taux T, que leurs
+    formules donnent à plusieurs décimales, ni le nombre de points majorés ; R. 732-67
+    n'arrondit « aux entiers supérieurs » que les « nombres de points annuels » des
+    pensions prises depuis 2026. Le modèle, par convention, n'arrondit ni l'un ni
+    l'autre. Effet au plus : un taux arrondi au centième de point déplacerait la
+    majoration de 0,005 % au plus de la pension que valent les années de la période, et
+    au point entier de 0,5 % au plus — rien pour les témoins partis en 1989 et 1999, à
+    5 %, 0,01 € pour celui de 2009, à 15,9985 % ; un total de points majorés arrondi à
+    l'entier, d'un point au plus, une valeur de service (2,47 €, 2,98 € et 3,45 € pour
+    les trois témoins, 4,589 € au plus en 2025) ; chaque année arrondie à l'entier
+    supérieur, comme depuis 2026, d'un point au plus par année de chef de la période,
+    soit 21, 17 et 7 points pour les trois témoins.
   - >-
     Les pensions prises avant le 1er juillet 1986 : l'article 3 du décret n° 86-1084
     (LEGIARTI000006769406, en vigueur) majore leur nombre total de points, de 2 % entre
@@ -415,12 +455,56 @@ sources:
       calculées les retraites proportionnelles prenant effet avant le 1er juillet 1986 est
       majoré : - de 2 p. 100 lorsque le nombre total de points acquis par l'assuré est
       compris entre 400 et 500 points ; [...] Lorsque le nombre total de points acquis par
-      l'assuré est supérieur à 1 000, la majoration est limitée à 280 points. » Ses visas
-      citent le décret n° 81-790 (LEGITEXT000006065220). Décret n° 2005-368, article 3
+      l'assuré est supérieur à 1 000, la majoration est limitée à 280 points. » Le décret
+      n° 86-1084 (LEGITEXT000006065220 ; au Journal officiel du 8 octobre 1986,
+      JORFTEXT000000870113) vise « le décret n° 68-571 du 26 juin 1968 modifié relatif à
+      la retraite complémentaire de l'assurance vieillesse des personnes non-salariées des
+      professions agricoles » et « le décret n° 81-790 du 18 août 1981 portant relèvement
+      exceptionnel des retraites proportionnelles des personnes non-salariées de
+      l'agriculture » ; le décret n° 81-790 n'a pas de texte dans l'index LEGI, et
+      l'index JORF n'en a que la notice (JORFTEXT000000335107). Décret n° 2005-368, article 3
       (LEGIARTI000006240372) : sont abrogés « 65° Le décret n° 81-790 du 18 août 1981
       portant relèvement exceptionnel des retraites proportionnelles des personnes non
       salariées de l'agriculture » et « 78° Le décret n° 86-1084 du 7 octobre 1986 [...],
       à l'exception des articles 3 et 4 ». Lu dans l'index LEGI du dépôt
+    date: 2026-11-03
+  - type: legifrance
+    reference: >-
+      code rural, R. 732-69 (LEGIARTI000006597478), du 22 avril 2005 au 28 octobre 2017 :
+      « Pour le calcul de la pension de retraite proportionnelle, le nombre de points
+      acquis chaque année par les intéressés en fonction des cotisations versées en
+      application du b) de l'article 1123 et de l'article 1125 (anciens) du code rural
+      dans leur rédaction antérieure à la loi n° 90-85 du 23 janvier 1990 est déterminé
+      selon le barème suivant pour les années 1981 et suivantes : REVENU CADASTRAL NOMBRE
+      DE POINTS Au plus égal à 1 180 F (179,89 €). 15 De 1 180 F (179,80 €) à 5 571 F
+      (849,29 €). 30 De 5 571 F (849,29 €) à 9 830 F (1 498,57 €). 45 Supérieur à 9 830 F
+      (1 498,57 €). 60 Pour les années antérieures à 1981, le nombre de points résulte des
+      dispositions des décrets n° 65-346 du 30 avril 1965, n° 67-570 du 21 juin 1967,
+      n° 74-443 du 15 mai 1974 et n° 75-97 du 10 février 1975. » L'index JORF n'a que les
+      notices des décrets n° 67-570 (JORFTEXT000000514415) et 74-443
+      (JORFTEXT000000328985) ; les n° 65-346 et 75-97, cherchés par leur numéro et par
+      leur date, n'y sont que cités, par R. 732-69 et le décret n° 2025-1409. Le décret
+      n° 80-808 (LEGITEXT000006063328) vise « le décret n° 65-346 du 30 avril 1965 relatif
+      à l'application dans les régimes de mutualité sociale agricole des résultats de la
+      première révision quinquennale prévue à l'article 1407 du code général des impôts ».
+      Le décret n° 68-571
+      (JORFTEXT000000330850, notice : « VALIDATION D'ANNUITES SUPPLEMENTAIRES ») n'est pas
+      de ceux que R. 732-69 nomme. Lu dans les index LEGI et JORF du dépôt
+    date: 2026-11-03
+  - type: legifrance
+    reference: >-
+      décret n° 52-1166 du 18 octobre 1952 fixant les conditions d'application de la loi
+      n° 52-799 du 10 juillet 1952, article 45 (LEGIARTI000019272803) : « Pour l'exercice
+      1952, les cotisations professionnelles visées aux articles 20 et 21 de la loi du 10
+      juillet 1952 sont égales à la moitié des cotisations annuelles. » ; article 15
+      (LEGIARTI000019272718) : « La double cotisation professionnelle prévue à l'article
+      19 de la loi du 10 juillet 1952 est due pour chaque exercice commençant au 1er
+      janvier et finissant au 31 décembre. » Décret n° 99-875 du 13 octobre 1999, article
+      2, du 23 février 2001 au 2 mars 2002 (LEGIARTI000006779656) : « la date de création
+      du régime d'assurance vieillesse des professions non salariées agricoles, à savoir
+      le 1er juillet 1952 pour la métropole ou le 1er janvier 1964 pour les départements
+      d'outre-mer ». La loi n° 52-799 n'est à l'index JORF que par sa notice
+      (JORFTEXT000000512405). Lu dans les index LEGI et JORF du dépôt
     date: 2026-11-03
 textes_a_rattacher:
 - reference: >-

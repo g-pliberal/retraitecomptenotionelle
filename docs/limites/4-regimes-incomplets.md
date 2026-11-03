@@ -490,14 +490,21 @@ rend l'exemple de la MSA : six, treize et six années, et une moyenne de trente 
 points multipliée par vingt-deux années.
 
 Ce qui reste approché, et dans quel sens. Les années d'avant 1990, dont le
-barème de points n'est pas lu, entrent dans la moyenne par l'équivalent en
-points de leur rendement, qui les laisse sous les années du barème et hors des
-meilleures. Les années de chef de 1952 à 1972 y entrent majorées, chacune du
-taux que fixe leur moyenne (R. 732-67), mais sur ce même équivalent : le
-barème de ces années n'est qu'au fac-similé du Journal officiel. Les pensions
+barème de points n'est pas appliqué — R. 732-69 compte en revenu cadastral,
+que le modèle n'a pas, celles de 1981 à 1989, et renvoie pour les précédentes
+à quatre décrets que l'index de la DILA n'a pas en texte —, entrent dans la
+moyenne par l'équivalent en points de leur rendement, qui les laisse sous les
+années du barème et hors des meilleures. Les années de chef de 1952 à 1972 y
+entrent majorées, chacune du taux que fixe leur moyenne (R. 732-67), mais sur
+ce même équivalent. Les pensions
 prises de juillet 1986 à 2025 les majorent aussi, d'un seul taux sur toute la
 période (décret n° 86-1084, article 2, puis D. 732-77), sur le même
-équivalent. La majoration que D. 732-76 donne à partir de seize points
+équivalent. Deux conventions s'y ajoutent, faute de texte, dont la fiche
+`retraite_proportionnelle_msa` chiffre l'effet : l'année 1952, dont le régime
+ne couvre que la seconde moitié et ne prélève que la moitié de la cotisation
+annuelle (décret n° 52-1166, article 45), compte pour une année entière ; ni
+le taux ni les points majorés ne s'arrondissent, quand R. 732-67 arrondit
+ceux des pensions prises depuis 2026. La majoration que D. 732-76 donne à partir de seize points
 de moyenne n'est appliquée nulle part : aucun texte lu ne dit si elle se cumule
 avec l'autre, et la pension des chefs qui l'atteignent est peut-être
 sous-estimée. Les rachats et les conjoints collaborateurs manquent, comme avant
