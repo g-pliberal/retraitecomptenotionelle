@@ -1,0 +1,35 @@
+date: "2026-11-03"
+session: "action 131, file R-K : relecture indépendante de la majoration des points de chef de 1952 à 1972 des pensions prises de juillet 1986 à 2025 (commits 7621be3 et 5835f0d)"
+consulte: >-
+  python scripts/veille_droit.py ; les index LEGI (à jour au 2 novembre 2026) et JORF (au 3
+  novembre 2026) de la DILA, récupérés : code rural, D. 732-77 (LEGIARTI000006597491,
+  LEGIARTI000053365517), D. 732-76 (LEGIARTI000006597490, LEGIARTI000053365504,
+  LEGIARTI000054059256), R. 732-67 (LEGIARTI000053328816), R. 732-66 (LEGIARTI000006597475),
+  R. 732-61 (LEGIARTI000006597469), D. 732-45 et D. 732-46 (LEGIARTI000035918454,
+  LEGIARTI000030400074) ; le décret n° 86-1084, articles 1er à 4 (LEGIARTI000006769404,
+  LEGIARTI000006769405, LEGIARTI000006769406, LEGIARTI000006769403) et sa notice
+  (JORFTEXT000000870113) ; le décret n° 2005-368, article 3 (LEGIARTI000006240372), et ses
+  articles D. 732-76, D. 732-77 et R. 732-69 au JORF (JORFARTI000001910389,
+  JORFARTI000002065029, JORFARTI000002065027) ; les notices des décrets n° 81-790
+  (JORFTEXT000000335107), 67-570, 68-571, 74-443, 94-714 et 97-163 ; le décret n° 55-753,
+  article 50 (LEGI, depuis 1991). Le XML de l'incrément LEGI_20260115-213622, téléchargé le
+  jour (2 798 301 octets, sha256 c48585149e0f545b…), pour les alinéas, les liens et les
+  titres de D. 732-76 et D. 732-77.
+trouve: >-
+  Conforme : D. 732-77 et l'article 2 du décret n° 86-1084 cités mot pour mot (41 citations
+  comparées par script) ; les bornes de juillet 1986, de mai 2005 et de janvier 2026 ; les neuf
+  valeurs des tests et les trois témoins (46,75 €, 47,76 €, 106,36 €), refaits à la main depuis
+  les textes, l'indice des prix et le plafond ; les deux moteurs, y compris la partie Python
+  sous les présomptions décalées ; le paquet, inchangé à la reconstruction. D. 732-76 est
+  déclaré. Cinq écarts faibles : deux phrases de la fiche du régime inexactes à la lettre
+  (« aucun point ne s'acquiert par barème avant 1990 », que R. 732-69 dément pour 1981 à 1989 ;
+  « les mêmes points quelle que soit la date du départ », que le rapport 150 / durée requise
+  dément) ; LEGITEXT000006065220 attaché au décret n° 81-790 quand il est celui du n° 86-1084 ;
+  1952 comptée entière quand la période commence le 1er juillet, non déclaré ; l'arrondi de T
+  et des points majorés, que le texte ne dit pas, non déclaré ; le commit 7621be3 seul portait
+  le paquet d'avant.
+reste: >-
+  Corriger les deux phrases de msa_non_salaries.yaml et l'identifiant de la fiche, déclarer le
+  1er juillet 1952 et l'arrondi (note 2026-11-03-relecture-majoration-de-1986-a-2025.md de
+  l'action 131). La question de D. 732-76 au propriétaire demeure ; les décrets n° 65-346 et
+  75-97, que R. 732-69 nomme pour les points d'avant 1981, ne sont pas dans l'index.
