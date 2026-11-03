@@ -16961,6 +16961,11 @@ null
 "duree_assurance_requise_openfisca":{"ajoutees":0,"colonne":"trimestres","corrigees":0,"empreinte":"5629f87adc5e72ba","identiques":11,"niveau":"haute","source":"OpenFisca-France-Pension, trimtp.yaml du régime général","valeurs":11,"verifiee_le":"2026-09-14"},
 "duree_proratisation":{"ajoutees":0,"colonne":"trimestres","corrigees":0,"empreinte":"88a705f1e8ec84bd","identiques":5,"niveau":"certifiee","source":"DILA, base LEGI, code de la sécurité sociale R. 351-6 II","valeurs":5,"verifiee_le":"2026-09-17"},
 "duree_requise_fonction_publique_openfisca":{"ajoutees":0,"colonne":"trimestres","corrigees":0,"empreinte":"5eebe7660bb5a1db","identiques":5,"niveau":"haute","source":"OpenFisca-France-Pension, trimtp.yaml de la pension civile, colonne de 2003","valeurs":5,"verifiee_le":"2026-09-14"},
+"durees_echelon_duree":{"ajoutees":0,"colonne":"duree","corrigees":0,"empreinte":"439f563622a9477b","identiques":8507,"niveau":"certifiee","source":"DILA, base LEGI, tableaux de durées d'échelon des statuts, par l'index du dépôt","valeurs":8507,"verifiee_le":"2026-11-03"},
+"durees_echelon_duree_maximale":{"ajoutees":0,"colonne":"duree_maximale","corrigees":0,"empreinte":"55fe79bf1e7b6b30","identiques":1058,"niveau":"certifiee","source":"DILA, base LEGI, tableaux de durées d'échelon des statuts, par l'index du dépôt","valeurs":1058,"verifiee_le":"2026-11-03"},
+"durees_echelon_duree_minimale":{"ajoutees":0,"colonne":"duree_minimale","corrigees":0,"empreinte":"1d6cae144fbaa6bd","identiques":3460,"niveau":"certifiee","source":"DILA, base LEGI, tableaux de durées d'échelon des statuts, par l'index du dépôt","valeurs":3460,"verifiee_le":"2026-11-03"},
+"durees_echelon_duree_moyenne":{"ajoutees":0,"colonne":"duree_moyenne","corrigees":0,"empreinte":"9bf64b8ea0acd0f7","identiques":3323,"niveau":"certifiee","source":"DILA, base LEGI, tableaux de durées d'échelon des statuts, par l'index du dépôt","valeurs":3323,"verifiee_le":"2026-11-03"},
+"durees_echelon_rang":{"ajoutees":0,"colonne":"rang","corrigees":0,"empreinte":"937b4c39044b2aa6","identiques":14345,"niveau":"certifiee","source":"DILA, base LEGI, tableaux de durées d'échelon des statuts, par l'index du dépôt","valeurs":14345,"verifiee_le":"2026-11-03"},
 "durees_validees_actifs":{"ajoutees":1134,"colonne":"valeur","corrigees":0,"empreinte":"67c0667beedc61a4","identiques":0,"niveau":"certifiee","source":"DREES, panorama « Les retraités et les retraites » 2026, fiche 12 (EIC 2021)","valeurs":1134,"verifiee_le":"2026-11-03"},
 "effectifs_retraites":{"ajoutees":0,"colonne":"effectifs","corrigees":0,"empreinte":"16f187a2309d5b1b","identiques":334,"niveau":"certifiee","source":"DREES, enquête annuelle auprès des caisses de retraite (EACR)","valeurs":334,"verifiee_le":"2026-09-20"},
 "employeur_public_cnracl_gestionnaire":{"ajoutees":0,"colonne":"taux","corrigees":0,"empreinte":"9061fd34656bebfc","identiques":40,"niveau":"certifiee","source":"CNRACL, documentation juridique, « Cotisations — historique des taux applicables »","valeurs":40,"verifiee_le":"2026-09-22"},
@@ -198766,7 +198771,7 @@ null
 "duree_requise_trimestres":150,
 "ecretement_salaire_reference":null,
 "fin":1989,
-"notes":"SOIXANTE ANS DEPUIS LE 1ER JANVIER 1986 : la loi n° 86-19 du 6 janvier 1986 « relative à l'abaissement à soixante ans de l'âge de la retraite des personnes non salariées des professions agricoles » (LEGITEXT000006068962) ouvre la pension à soixante ans aux pensions « prenant effet postérieurement au 1er janvier 1986 » (article 11, LEGIARTI000006757038). La fiche opposait soixante-cinq ans jusqu'en 2002. Entre soixante et soixante-cinq ans, la pension est minorée à qui n'a pas la durée requise tous régimes confondus (L. 732-25 dans sa codification de 2000, LEGIARTI000006585545), au coefficient du régime général de l'époque, lu à la génération : 2,5 % par trimestre pour les assurés nés avant 1944. Le reste de la période reprend la précédente : barème d'avant 1990 au rendement instantané, assiette bornée au plafond.",
+"notes":"LA VALEUR DE SERVICE, celle des périodes suivantes (4,589 € de 2025, ramenés aux prix de l'année), ne sert ici qu'à compter en points le rendement des cotisations de chef de 1952 à 1972, dont le nombre annuel moyen fixe leur majoration pour les pensions prises depuis le 1er juillet 1986 (décret n° 86-1084, article 2) : aucun point ne s'acquiert par barème avant 1990, et la valeur du point de 1986 à 1989, en francs, n'est pas lue. C'est la convention des pensions prises depuis 2026, dont les années d'avant 1990 comptent aussi pour les points que vaut leur rendement : cotisations et valeur suivant les mêmes prix, une même année vaut les mêmes points quelle que soit la date du départ. SOIXANTE ANS DEPUIS LE 1ER JANVIER 1986 : la loi n° 86-19 du 6 janvier 1986 « relative à l'abaissement à soixante ans de l'âge de la retraite des personnes non salariées des professions agricoles » (LEGITEXT000006068962) ouvre la pension à soixante ans aux pensions « prenant effet postérieurement au 1er janvier 1986 » (article 11, LEGIARTI000006757038). La fiche opposait soixante-cinq ans jusqu'en 2002. Entre soixante et soixante-cinq ans, la pension est minorée à qui n'a pas la durée requise tous régimes confondus (L. 732-25 dans sa codification de 2000, LEGIARTI000006585545), au coefficient du régime général de l'époque, lu à la génération : 2,5 % par trimestre pour les assurés nés avant 1944. Le reste de la période reprend la précédente : barème d'avant 1990 au rendement instantané, assiette bornée au plafond.",
 "part_au_dela_du_plafond":null,
 "part_salariale":1.0,
 "part_salariale_deplafonnee":0.0,
@@ -198803,8 +198808,8 @@ null
 "trimestres_maximum":null,
 "trimestres_maximum_leve_avant_age":null,
 "type_calcul":"mixte",
-"valeur_point_annee":null,
-"valeur_point_euros":null
+"valeur_point_annee":2025,
+"valeur_point_euros":4.589
 },
 {
 "abattement_points":"decote_du_regime_de_base",
