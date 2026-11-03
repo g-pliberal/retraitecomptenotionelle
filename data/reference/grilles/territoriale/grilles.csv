@@ -104,9 +104,8 @@ LEGITEXT000006065792,l-echelle-3,l'échelle 3,1990-08-01,1994-12-28,11
 LEGITEXT000006065792,l-echelle-4,l'échelle 4,1990-08-01,1996-07-31,11
 LEGITEXT000006065792,l-echelle-5,l'échelle 5,1990-08-01,1998-03-31,11
 LEGITEXT000006065792,special-echelle,Spécial Echelle,2007-01-01,2008-06-30,1
-LEGITEXT000006066666,8-eechelon-445-447-449-449,8 eéchelon 445 447 449 449,2017-01-01,2021-12-31,7
-LEGITEXT000006066666,agent-de-maitrise,Agent de maîtrise,2017-01-01,2021-12-31,5
-LEGITEXT000006066666,agent-de-maitrise-principal,Agent de maîtrise principal,1988-05-07,2021-12-31,10
+LEGITEXT000006066666,agent-de-maitrise,Agent de maîtrise,2017-01-01,,13
+LEGITEXT000006066666,agent-de-maitrise-principal,Agent de maîtrise principal,1988-05-07,,10
 LEGITEXT000006066666,agent-de-maitrise-principal-echelon,AGENT DE MAÎTRISE PRINCIPAL Echelon,2014-02-01,2016-12-31,10
 LEGITEXT000006066666,agent-de-maitrise-qualifie,Agent de maîtrise qualifié,1988-05-07,2006-12-31,5
 LEGITEXT000006075393,ingenieur,Ingénieur,2003-11-01,2016-02-29,10
@@ -130,18 +129,12 @@ LEGITEXT000006078005,professeurs-hors-classe,Professeurs hors classe,1991-09-04,
 LEGITEXT000006078006,assistant-qualifie-de-conservation-de-1re-classe,Assistant qualifié de conservation de 1re classe,1999-10-27,2011-11-30,5
 LEGITEXT000006078006,assistant-qualifie-de-conservation-de-2e-classe,Assistant qualifié de conservation de 2e classe,1999-10-27,2011-11-30,12
 LEGITEXT000006078006,assistant-qualifie-de-conservation-hors-classe,Assistant qualifié de conservation hors classe,1999-10-27,2011-11-30,7
-LEGITEXT000006078007,conservateur,Conservateur,2017-01-01,2022-04-16,7
-LEGITEXT000006078007,conservateur-en-chef,Conservateur en chef,2017-01-01,2022-04-16,6
-LEGITEXT000006078007,echelon-de-stage-echelon-unique-464-470-echelon-d-eleves,Echelon de stage Echelon unique 464 470 Echelon d'élèves,2017-01-01,2022-04-16,2
 LEGITEXT000006078008,cadre-d-emplois-des-attaches-territoriaux-de-conservation-du-patrimoine,cadre d'emplois des attachés territoriaux de conservation du patrimoine,1998-02-06,2016-12-31,11
 LEGITEXT000006078008,grade-d-attache-de-conservation-du-patrimoine,Grade d'attaché de conservation du patrimoine,2017-01-01,,11
 LEGITEXT000006078008,grade-d-attache-principal-de-conservation-du-patrimoine,Grade d'attaché principal de conservation du patrimoine,2017-01-01,,10
 LEGITEXT000006078010,cadre-d-emplois-des-bibliothecaires-territoriaux,cadre d'emplois des bibliothécaires territoriaux,1998-02-06,2016-12-31,11
 LEGITEXT000006078010,grade-de-bibliothecaire,Grade de bibliothécaire,2017-01-01,,11
 LEGITEXT000006078010,grade-de-bibliothecaire-principal,Grade de bibliothécaire principal,2017-01-01,,10
-LEGITEXT000006078012,conservateur,Conservateur,2017-01-01,,7
-LEGITEXT000006078012,conservateur-en-chef,Conservateur en chef,2017-01-01,,6
-LEGITEXT000006078012,echelon-de-stage-echelon-unique-464-470-echelon-d-eleves,Echelon de stage Echelon unique 464 470 Echelon d'élèves,2017-01-01,,2
 LEGITEXT000006079017,2e-classe,2e classe,1994-12-29,2016-12-31,6
 LEGITEXT000006079017,conseiller,Conseiller,1994-12-29,,12
 LEGITEXT000006079017,conseiller-principal,Conseiller principal,2017-01-01,,10
@@ -239,7 +232,8 @@ LEGITEXT000029383554,puericultrices-de-classesuperieure,Puéricultrices de class
 LEGITEXT000029383554,puericultrices-hors-classe,Puéricultrices hors classe,2016-01-01,2021-12-31,11
 LEGITEXT000032116807,ingenieur,Ingénieur,2016-03-01,,11
 LEGITEXT000032116807,ingenieur-hors-classe,Ingénieur hors classe,2016-03-01,,6
-LEGITEXT000032116807,ingenieur-principal,Ingénieur principal,2016-03-01,,9
+LEGITEXT000032116807,ingenieur-principal-article-1,Ingénieur principal (article 1),2016-03-01,,9
+LEGITEXT000032116807,ingenieur-principal-article-2,Ingénieur principal (article 2),2016-03-01,2016-12-31,7
 LEGITEXT000032141477,ingenieur-en-chef-article-1,Ingénieur en chef (article 1),2016-03-01,,12
 LEGITEXT000032141477,ingenieur-en-chef-article-2,Ingénieur en chef (article 2),2016-03-01,,4
 LEGITEXT000032141477,ingenieur-en-chef-eleve,Ingénieur en chef élève,2017-01-01,,1

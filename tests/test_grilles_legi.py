@@ -432,6 +432,36 @@ def test_la_date_d_effet_entre_suit_et_les_deux_points():
     assert tableau.dates == ["2012-07-01"]
 
 
+#: Décret n° 88-548 (agents de maîtrise territoriaux), article 1er, version du
+#: 1er janvier 2022 (LEGIARTI000044811879), abrégée : « 8eéchelon ».
+AGENTS_DE_MAITRISE_2022 = (
+    "L'échelonnement indiciaire applicable aux membres du cadre d'emplois des agents de "
+    "maîtrise est fixé ainsi qu'il suit : GRADES ET ÉCHELONS INDICES BRUTS à compter du 1er "
+    "janvier 2022 Agent de maîtrise 13e échelon 562 9e échelon 465 8eéchelon 449 7e échelon "
+    "437 1er échelon 372")
+
+
+def test_l_ordinal_colle_a_l_echelon():
+    tableau = grilles.lire_tableau(AGENTS_DE_MAITRISE_2022)
+    assert tableau.refus == ""
+    assert _valeurs(tableau, "Agent de maîtrise", "2022-01-01") == {
+        "13": 562, "9": 465, "8": 449, "7": 437, "1": 372}
+
+
+@pytest.mark.parametrize("libelle, hors", [
+    ("de 150.000 à 400.000 habitants", False),
+    ("de 40 .000 à 80 .000 habitants", False),
+    ("De 20 000 à moins de 40 000 habitants", False),
+    ("Surveillants grade provisoire du 1er janvier 2002 jusqu'au 31 décembre 2003", False),
+    ("décret n° 87-1107 du 30 décembre 1987", False),
+    # Des indices bruts à la suite ne sont pas un nombre écrit par milliers.
+    ("8 eéchelon 445 447 449 449", True),
+    ("Attaché principal Echelon provisoire :558.", True),
+])
+def test_un_libelle_ne_garde_pas_d_indice(libelle, hors):
+    assert grilles._hors_des_lignes(libelle) is hors
+
+
 #: Arrêté du 3 août 2007 (agents chefs de l'hospitalière), article 1er,
 #: version du 25 juin 2007 (LEGIARTI000019416706), abrégée : « conformément
 #: au tableau ci-après : ».
@@ -793,3 +823,121 @@ def test_verifier_donnees_certifie_le_rang_et_l_indice_des_echelons(index, tmp_p
     assert {(l["lecture"], l["fiabilite"]) for l in certifie} == {
         ("", "certifiee"), ("presumee", "estimee")}
     assert [grilles._cle_echelon(l) for l in certifie] == ordre
+
+
+# ---------------------------------------------------------------------------
+# La donnée, confrontée à des grilles publiées
+# ---------------------------------------------------------------------------
+
+GRILLES = RACINE / "data" / "reference" / "grilles"
+
+
+def _en_vigueur(lignes: list[dict[str, str]], le: str) -> list[dict[str, str]]:
+    return [l for l in lignes if l["debut"] <= le and (not l["fin"] or le <= l["fin"])]
+
+
+def _indices(versant: str, texte: str, grille: str, le: str) -> list[int]:
+    """Les indices bruts d'une grille à une date, du 1er échelon au dernier."""
+    lignes = [l for l in _en_vigueur(_lire_csv(GRILLES / versant / "echelons.csv"), le)
+              if l["texte"] == texte and l["grille"] == grille]
+    assert all(l["fiabilite"] == "certifiee" for l in lignes), grille
+    return [int(l["indice"]) for l in sorted(lignes, key=lambda l: int(l["rang"]))]
+
+
+def _bareme(le: str) -> dict[int, int]:
+    """Le barème de l'indice brut à l'indice majoré à une date, celui du Noyau RH
+    (``grilles/etat/indices.csv``), commun aux trois versants."""
+    return {int(l["indice_brut"]): int(l["indice_majore"])
+            for l in _en_vigueur(_lire_csv(GRILLES / "etat" / "indices.csv"), le)}
+
+
+def _suite(texte: str) -> list[int]:
+    return [int(n) for n in texte.split()]
+
+
+#: « Échelles de rémunération de catégorie C, à compter du 1er janvier 2024 »,
+#: centre de gestion de la fonction publique territoriale du Nord (cdg59.fr,
+#: echelles_de_remunération_de_categorie_C_au_01-01-2022.pdf, lu le
+#: 3 novembre 2026), page 1 pour les échelles C1 à C3 des décrets n° 2016-596 et
+#: 2016-604, page 2 pour les agents de maîtrise du décret n° 88-548 : par
+#: échelon, l'indice brut en vigueur depuis le 1er janvier 2022, puis l'indice
+#: majoré au 1er janvier 2022, au 1er juillet 2023 et au 1er janvier 2024
+#: (décret n° 2023-519). Le minimum de traitement, que ses renvois rappellent,
+#: n'y est pas porté.
+CDG59 = {
+    ("LEGITEXT000032545071", "echelle-c1"): (
+        "367 368 370 371 374 378 381 387 401 419 432",
+        "340 341 342 343 345 348 351 354 363 372 382",
+        "361 362 363 364 365 366 367 368 371 372 382",
+        "366 367 368 369 370 371 372 373 376 377 387"),
+    ("LEGITEXT000032545071", "echelle-c2"): (
+        "368 371 376 387 396 404 416 430 446 461 473 486",
+        "341 343 346 354 360 365 370 380 392 404 412 420",
+        "362 364 365 368 369 371 372 380 392 404 412 420",
+        "367 369 370 373 374 376 377 385 397 409 417 425"),
+    ("LEGITEXT000032545071", "echelle-c3"): (
+        "388 397 412 430 448 460 478 499 525 558",
+        "355 361 368 380 393 403 415 430 450 473",
+        "368 370 371 380 393 403 415 430 450 473",
+        "373 375 376 385 398 408 420 435 455 478"),
+    ("LEGITEXT000006066666", "agent-de-maitrise"): (
+        "372 375 380 388 397 415 437 449 465 479 499 525 562",
+        "343 346 350 355 361 369 385 394 407 416 430 450 476",
+        "364 365 366 368 370 372 385 394 407 416 430 450 476",
+        "369 370 371 373 375 377 390 399 412 421 435 455 481"),
+    ("LEGITEXT000006066666", "agent-de-maitrise-principal"): (
+        "390 400 420 446 468 492 505 526 563 597",
+        "357 363 373 392 409 425 435 451 477 503",
+        "368 371 373 392 409 425 435 451 477 503",
+        "373 376 378 397 414 430 440 456 482 508"),
+}
+
+
+@pytest.mark.parametrize("texte, grille", sorted(CDG59))
+def test_la_territoriale_recompose_les_indices_que_le_centre_de_gestion_publie(texte, grille):
+    bruts, majores_2022, majores_2023, majores_2024 = (_suite(s) for s in CDG59[(texte, grille)])
+    for le in ("2022-01-01", "2024-01-01"):
+        assert _indices("territoriale", texte, grille, le) == bruts, le
+    for le, majores in (("2022-01-01", majores_2022), ("2023-07-01", majores_2023),
+                        ("2024-01-01", majores_2024)):
+        bareme = _bareme(le)
+        assert [bareme[b] for b in bruts] == majores, le
+
+
+#: Fédération UNSA Santé et Sociaux, « Fonction publique hospitalière,
+#: personnel stagiaire et titulaire », mise à jour du 25 janvier 2022
+#: (unsa-fp.org, 621f3a437b917.pdf, lu le 3 novembre 2026), « valeur Indice
+#: Majoré 4.6860 € » : par échelon, du premier au dernier, l'indice majoré
+#: payé — les échelles C1 à C3 « Situation au 01 01 2022 » (pages 2 et 3), les
+#: deux grades des aides-soignants « Situation au 01 10 2021 » (page 4).
+UNSA = {
+    ("2022-01-01", "LEGITEXT000044635475", "echelle-c1"):
+        "343 343 343 343 345 348 351 354 363 372 382",
+    ("2022-01-01", "LEGITEXT000044635475", "echelle-c2"):
+        "343 343 346 354 360 365 370 380 392 404 412 420",
+    ("2022-01-01", "LEGITEXT000044635475", "echelle-c3"):
+        "355 361 368 380 393 403 415 430 450 473",
+    ("2021-10-01", "LEGITEXT000044131693",
+     "classe-normale-du-corps-des-aides-soignants-et-des-auxiliaires-de-puericulture"):
+        "343 350 359 370 383 396 409 424 439 456 480 512",
+    ("2021-10-01", "LEGITEXT000044131693",
+     "classe-superieure-du-corps-des-aides-soignants-et-des-auxiliaires-de-puericulture"):
+        "382 394 406 419 437 455 475 494 514 534 555",
+}
+#: Le minimum de traitement : l'indice majoré 340 du 1er octobre 2021, 343 du
+#: 1er janvier 2022 (décret n° 85-1148, article 8, versions LEGIARTI000044129999
+#: et LEGIARTI000044617596, cette dernière écrite par le décret n° 2021-1749).
+MINIMUM = {"2021-10-01": 340, "2022-01-01": 343}
+
+
+@pytest.mark.parametrize("le, texte, grille", sorted(UNSA))
+def test_l_hospitaliere_recompose_les_indices_que_la_federation_publie(le, texte, grille):
+    bareme = _bareme(le)
+    payes = [max(bareme[b], MINIMUM[le]) for b in _indices("hospitaliere", texte, grille, le)]
+    assert payes == _suite(UNSA[(le, texte, grille)])
+
+
+def test_le_point_de_la_federation_est_celui_du_depot():
+    chemin = RACINE / "data" / "reference" / "legislation" / "point_indice_fonction_publique.csv"
+    point = {int(l["annee"]): float(l["valeur"]) for l in _lire_csv(chemin)}
+    assert round(point[2022] / 12, 4) == 4.6860

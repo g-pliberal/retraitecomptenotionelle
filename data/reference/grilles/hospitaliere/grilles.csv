@@ -31,10 +31,6 @@ LEGITEXT000006081925,echelonnement-indiciaire-duree-moyenne-article-2,ECHELONNEM
 LEGITEXT000019416482,classe-normale,Classe normale,2017-01-01,,9
 LEGITEXT000019416482,hors-classe,Hors classe,2017-01-01,,8
 LEGITEXT000019416502,echelon-echelonnement-duree-moyenne-duree-minimale,ÉCHELON ÉCHELONNEMENT DURÉE MOYENNE DURÉE MINIMALE,2013-07-07,2016-12-31,13
-LEGITEXT000019416514,classe-normale,Classe normale,2017-01-01,2020-12-31,10
-LEGITEXT000019416514,echelon-classe-exceptionnelle,Echelon Classe exceptionnelle,2017-01-01,2020-12-31,6
-LEGITEXT000019416514,eleve-directeur-de-classe-normale-419-419-classe-provisoire-en-voie-d-extinction,Elève directeur de classe normale 419 419 CLASSE PROVISOIRE (EN VOIE D'EXTINCTION),2017-01-01,2020-12-31,10
-LEGITEXT000019416514,hors-classe,Hors classe,2017-01-01,2020-12-31,9
 LEGITEXT000019416690,echelonnement-educateur-technique-specialise-de-classe-superieure,ÉCHELONNEMENT Educateur technique spécialisé de classe supérieure,2007-08-08,2014-02-06,7
 LEGITEXT000019416690,educateur-technique-specialise-de-classe-normale,Educateur technique spécialisé de classe normale,2007-08-08,2014-02-06,10
 LEGITEXT000019416701,agent-chef-de-1re-categorie,Agent chef de 1re catégorie,2007-06-25,,8
@@ -158,14 +154,11 @@ LEGITEXT000037326997,deuxieme-grade-article-2,Deuxième grade (article 2),2021-0
 LEGITEXT000037326997,echelon-provisoire,Echelon provisoire,2019-02-01,,2
 LEGITEXT000037326997,premier-grade,Premier grade,2021-01-01,,14
 LEGITEXT000037326997,premier-grade-classe-superieure,Premier grade Classe supérieure,2019-02-01,,11
-LEGITEXT000037622520,8-eechelon-724-731-739-739,8 eéchelon 724 731 739 739,2018-11-19,,7
-LEGITEXT000037622520,8-eechelon-857-862-862-862,8 eéchelon 857 862 862 862,2018-11-19,,7
-LEGITEXT000037622520,8-eechelon-979-985-995-995,8 eéchelon 979 985 995 995,2018-11-19,,7
 LEGITEXT000037622520,a-compter-de-l-entree-en-vigueur-du-decret-n-2018-1000-du-16-novembre-2018-relatif-au-classement-indiciaire-applicable-au-corps-des-ingenieurs-de-la-fonction-publique-hospitaliere-et-au-corps-des-ingenieurs-de-l-assistance-publique-hopitaux-de-paris-ingenieur-hospitalier-en-chef-de-classe-exceptionnelle,A compter de l'entrée en vigueur du décret n° 2018-1000 du 16 novembre 2018 relatif au classement indiciaire applicable au corps des ingénieurs de la fonction publique hospitalière et au corps des ingénieurs de l'Assistance publique-hôpitaux de Paris Ingénieur hospitalier en chef de classe exceptionnelle,2018-11-19,,7
 LEGITEXT000037622520,emploi-fonctionnel-ingenieur-general-hospitalier-a-compter-de-l-entree-en-vigueur-du-decret-n-2018-1000-du-16-novembre-2018-relatif-au-classement-indiciaire-applicable-au-corps-des-ingenieurs-de-la-fonction-publique-hospitaliere-et-au-corps-des-ingenieurs-de-l-assistance-publique-hopitaux-de-paris-hors-echelle-b-hors-echelle-b-hors-echelle-a-hors-echelle-a,EMPLOI FONCTIONNEL Ingénieur général hospitalier à compter de l'entrée en vigueur du décret n° 2018-1000 du 16 novembre 2018 relatif au classement indiciaire applicable au corps des ingénieurs de la fonction publique hospitalière et au corps des ingénieurs de l'Assistance publique-hôpitaux de Paris Hors échelle B Hors échelle B Hors échelle B Hors échelle A Hors échelle A Hors échelle A,2018-11-19,,1
-LEGITEXT000037622520,ingenieur-hospitalier,Ingénieur hospitalier,2018-11-19,,2
-LEGITEXT000037622520,ingenieur-hospitalier-en-chef-de-classe-normale,Ingénieur hospitalier en chef de classe normale,2018-11-19,,2
-LEGITEXT000037622520,ingenieur-hospitalier-principal,Ingénieur hospitalier principal,2021-01-01,,1
+LEGITEXT000037622520,ingenieur-hospitalier,Ingénieur hospitalier,2018-11-19,,10
+LEGITEXT000037622520,ingenieur-hospitalier-en-chef-de-classe-normale,Ingénieur hospitalier en chef de classe normale,2018-11-19,,10
+LEGITEXT000037622520,ingenieur-hospitalier-principal,Ingénieur hospitalier principal,2018-11-19,,9
 LEGITEXT000038144968,cadre-socio-educatif-article-1,Cadre socio-éducatif (article 1),2019-02-21,2021-05-13,11
 LEGITEXT000038144968,cadre-socio-educatif-article-2,Cadre socio-éducatif (article 2),2021-02-01,2021-05-13,11
 LEGITEXT000038144968,cadre-socio-educatif-de-classe-exceptionnelle-article-1,Cadre socio-éducatif de classe exceptionnelle (article 1),2019-02-21,2021-05-13,6

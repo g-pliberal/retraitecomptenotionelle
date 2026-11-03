@@ -262,7 +262,7 @@ class _Refus(Exception):
 CHIFFRES_NEUTRES = re.compile(
     r"n°\s*\d{2,4}-\d{1,5}|\b\d{1,2}(?:er|re)?\s+(?:janvier|f[ée]vrier|mars|avril|mai|juin"
     r"|juillet|ao[ûu]t|septembre|octobre|novembre|d[ée]cembre)\s+\d{4}\b"
-    r"|\b\d{1,3}(?:\s?[.\s]\d{3})+\b", re.IGNORECASE)
+    r"|\b\d{1,3}(?:\s?\.\d{3})+\b|\b\d{1,3}(?:\s000)+\b", re.IGNORECASE)
 
 
 def _hors_des_lignes(libelle: str) -> bool:
@@ -409,7 +409,7 @@ def _aligner(ligne: _Ligne, voisine: _Ligne | None, largeur: int
 
 def lire_tableau(texte: str) -> Tableau:
     """Le tableau d'échelonnement d'un article, relu dans son texte aplati."""
-    texte = COLLES.sub(" ", texte)
+    texte = re.sub(r"(\d\s*(?:er|e|ème))(?=[ée]chelon)", r"\1 ", COLLES.sub(" ", texte))
     if RECLASSEMENT.search(texte):
         return Tableau(refus="tableau de reclassement, pas une grille")
     if CARACTERES.search(texte):
