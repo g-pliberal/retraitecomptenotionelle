@@ -5,6 +5,7 @@
     python scripts/veille_droit.py --tout     # toutes les fiches, par état
     python scripts/veille_droit.py --jours 90 # seuil d'ancienneté (défaut 120)
     python scripts/veille_droit.py --strict   # code 1 si une fiche est à relire
+    python scripts/veille_droit.py --sans-cnav  # sans demander la base de la Cnav
 
 Les règles sont les fiches de la carte, ``data/reference/regles/`` : une par
 dispositif, avec les textes qui la fondent, les sources lues, la date de la
@@ -15,6 +16,13 @@ plus de ``--jours`` jours ou dont la date de relecture est passée, et quelles
 sources consulter avant de toucher au scénario 1. Les sources à consulter
 sont dans ``data/reference/legislation/veille.yaml`` ; le journal de chaque
 veille, une entrée par fichier, dans ``journal_de_veille/``, à côté.
+
+La base de législation de la Cnav, enfin, il la compare à son registre,
+``data/reference/legislation/cnav/`` (action 175, étape 5) : ce qu'elle a
+changé depuis — un barème ou un exposé modifié, un objet neuf, une circulaire
+nouvelle —, en un quart de minute de réseau, par
+``scripts/fetch/cnav_veille.py``. Une base qui ne répond pas se dit d'une
+ligne, et la veille continue ; ``--sans-cnav`` ne la demande pas.
 
 C'est le premier geste d'une session qui touche au scénario 1, et le dernier :
 au début pour savoir quoi relire, à la fin pour ajouter au journal ce qui
@@ -35,6 +43,8 @@ import yaml
 from retraite_notionnelle.noyau import carte
 
 RACINE = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(RACINE / "scripts" / "fetch"))
+import cnav_veille  # noqa: E402
 REGISTRE = RACINE / "data" / "reference" / "legislation" / "veille.yaml"
 #: Le journal, une entrée par fichier (action 148) : deux sessions qui
 #: consignent leur veille le même jour n'écrivent pas dans le même fichier.
@@ -59,6 +69,8 @@ def main(argv: list[str] | None = None) -> int:
     analyseur.add_argument("--jours", type=int, default=120, help="ancienneté maximale d'une lecture")
     analyseur.add_argument("--strict", action="store_true", help="code 1 si une fiche est à relire")
     analyseur.add_argument("--date", help="date du jour (AAAA-MM-JJ), pour rejouer")
+    analyseur.add_argument("--sans-cnav", action="store_true",
+                           help="ne compare pas la base de législation de la Cnav à son registre")
     args = analyseur.parse_args(argv)
     aujourd_hui = date.fromisoformat(args.date) if args.date else date.today()
 
@@ -95,6 +107,11 @@ def main(argv: list[str] | None = None) -> int:
     print("Sources à consulter avant de toucher au scénario 1 :")
     for source in registre.get("sources_a_consulter", []):
         print(f"  - {source['nom']} — {source.get('url', '')}")
+    print()
+    if args.sans_cnav:
+        print("La base de législation de la Cnav n'est pas comparée à son registre (--sans-cnav).")
+    else:
+        print("\n".join(cnav_veille.veille(aujourd_hui)))
     print("\nPuis : consigner ce qui a été consulté, trouvé et laissé, dans un fichier "
           "neuf du journal,\ndata/reference/legislation/journal_de_veille/"
           f"{aujourd_hui.isoformat()}-action-N-etape-E.yaml.")

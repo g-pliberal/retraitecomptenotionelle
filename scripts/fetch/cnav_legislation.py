@@ -27,7 +27,11 @@ une (``/reference/referencesByFileLeafRef/<nom>``), les références que ces
 objets lient — circulaires, lettres, décrets, règlements et conventions, par
 la route du site ou en PDF sous ``/Pdf/`` —, et celles que ces références
 citent à leur tour, de proche en proche : le 29 octobre 2026, 2 298
-références liées en citaient 2 020 autres, sur quatre rangs. Avec
+références liées en citaient 2 020 autres, sur quatre rangs. Chaque lecture
+part aussi des dernières circulaires de la base
+(``/reference/dernieresCirculaires/``) et de ce que sa recherche sert à
+l'année et à la précédente : une circulaire neuve, que rien ne lie encore, y
+entre sans attendre la recherche entière (action 175, étape 5). Avec
 ``--chercher``, aussi celles que la recherche de la base sert sans que rien ne
 les lie (``/search/custom``) : elle ne rend pas plus de 250 résultats par
 requête et ne compte rien, et se mène donc par année, par mois de chaque année
@@ -145,6 +149,11 @@ MOTS_CHERCHES = (
 #: La première année que la recherche parcourt : la base porte des textes de
 #: 1910.
 PREMIERE_ANNEE = 1900
+#: Les dernières circulaires que la base met en avant, et les années que sa
+#: recherche relit à chaque lecture, sans ``--chercher`` : celle du jour et la
+#: précédente (action 175, étape 5).
+DERNIERES_CIRCULAIRES = "/reference/dernieresCirculaires/"
+ANNEES_RECENTES = 2
 #: Les requêtes qui partent ensemble : la base répond en une demi-seconde, et
 #: deux mille références se lisent ainsi en quelques minutes.
 EN_PARALLELE = 4
@@ -631,6 +640,26 @@ def _chercher(phrase: str) -> tuple[str, list[dict] | None]:
     return phrase, None
 
 
+def annees_recentes(annee: int) -> list[int]:
+    """L'année donnée et celles qui la précèdent, que la recherche relit à
+    chaque lecture : la base y ajoute les textes de l'année, et ceux de la
+    précédente qu'elle publie en retard."""
+    return list(range(annee - ANNEES_RECENTES + 1, annee + 1))
+
+
+def references_recentes(annees: list[int]) -> set[str]:
+    """Les références que la base donne pour récentes, et que rien ne lie
+    peut-être encore : ses dernières circulaires, et ce que sa recherche sert
+    aux années données. Une lecture ordinaire les prend pour racines : une
+    circulaire neuve entre au registre sans attendre ``--chercher`` — le
+    3 novembre 2026, la circulaire 2026/34 du 30 octobre, que rien ne liait."""
+    with ThreadPoolExecutor(EN_PARALLELE) as pool:
+        circulaires = pool.submit(_obtenir, DERNIERES_CIRCULAIRES)
+        resultats = dict(pool.map(_chercher, [str(annee) for annee in annees]))
+    noms = {(fiche.get("file_leaf_ref") or "").strip() for fiche in circulaires.result() or []}
+    return {nom for nom in noms if nom} | trouvees(resultats)
+
+
 def _document(nom: str) -> tuple[str, dict | None]:
     """Un document joint — son contenu, son type et la date que le site en
     donne —, ou rien si le site ne le sert pas. Un nom accentué ne se sert
@@ -852,9 +881,11 @@ def main(argv: list[str] | None = None) -> int:
     for reference, cites in lire_citations().items():
         liens_par_objet[("references", reference)] = [("references", cite) for cite in cites]
 
-    # Les racines : les références que le registre porte, et, avec --chercher,
-    # celles que la recherche de la base sert sans que rien ne les lie.
+    # Les racines : les références que le registre porte, celles que la base
+    # donne pour récentes, et, avec --chercher, celles que la recherche de la
+    # base sert sans que rien ne les lie.
     racines = set(registre["references"])
+    racines |= {connue(nom) for nom in references_recentes(annees_recentes(datetime.now().year))}
     if arguments.chercher:
         requetes = requetes_de_recherche()
         with ThreadPoolExecutor(EN_PARALLELE) as pool:

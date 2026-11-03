@@ -10,7 +10,9 @@ barème, exposé, liste, référence et fenêtre a son sort, et où
 `citations.csv` garde qui cite qui. Ces tests les tiennent ensemble, sans
 réseau : le module lit ce qu'on lui donne, le récupérateur range ce qu'il lit,
 aucun objet du registre n'est sans sort, et chaque sort renvoie à ce qui
-existe.
+existe. La veille (étape 5), `scripts/fetch/cnav_veille.py`, que
+`scripts/veille_droit.py` imprime, dit ce que la base a changé depuis le
+registre, sans l'écrire.
 """
 
 from __future__ import annotations
@@ -36,7 +38,8 @@ SANS_TITRE_POSSIBLE = ("references", "fenetres", "documents")
 #: Les récupérateurs qui lisent la base : les dix que l'action 175 a relevés
 #: le 29 octobre 2026 — neuf `cnav_*.py` qui nomment l'API, et `ines.py` —,
 #: `cnav_revalorisation_salaires.py`, qui en lit les circulaires sous `/Pdf/`,
-#: celui de la base entière, et celui de Mayotte (étape 2).
+#: celui de la base entière, celui de Mayotte (étape 2) et celui de la veille
+#: (étape 5).
 LECTEURS_DE_LA_BASE = (
     "cnav_assiette_avpf.py",
     "cnav_avts.py",
@@ -51,6 +54,7 @@ LECTEURS_DE_LA_BASE = (
     "cnav_reversion.py",
     "ines.py",
     "cnav_legislation.py",
+    "cnav_veille.py",
 )
 
 
@@ -446,6 +450,36 @@ def test_une_reference_ne_se_relit_que_si_ce_qui_la_lie_a_change():
     assert module.references_a_lire(liens, registre, changes=set()) == {"r3.aspx", "r4.aspx"}
 
 
+def test_une_lecture_part_aussi_des_dernieres_circulaires_et_de_la_recherche_recente(
+        monkeypatch):
+    """Une circulaire neuve, que rien ne lie encore, n'entrait au registre que
+    par la recherche entière (`--chercher`) : une lecture ordinaire prend
+    aussi pour racines les dernières circulaires de la base
+    (`/reference/dernieresCirculaires/`) et ce que sa recherche sert à l'année
+    et à la précédente — les références seules, une recherche sans réponse ne
+    donnant rien."""
+    module = _module("cnav_legislation")
+    routes, phrases = [], []
+
+    def obtenir(route, essais=4):
+        routes.append(route)
+        return [{"file_leaf_ref": "circulaire_cnav_2026_34_30102026.pdf"}, {"file_leaf_ref": ""}]
+
+    def chercher(phrase):
+        phrases.append(phrase)
+        return phrase, None if phrase == "2025" else [
+            {"filename": "instruction_ministerielle_2026_36_26032026.pdf"},
+            {"filename": "page.htm"}]
+
+    monkeypatch.setattr(module, "_obtenir", obtenir)
+    monkeypatch.setattr(module, "_chercher", chercher)
+    assert module.annees_recentes(2026) == [2025, 2026]
+    assert module.references_recentes([2025, 2026]) == {
+        "circulaire_cnav_2026_34_30102026.pdf", "instruction_ministerielle_2026_36_26032026.pdf"}
+    assert routes == ["/reference/dernieresCirculaires/"]
+    assert sorted(phrases) == ["2025", "2026"]
+
+
 def test_une_route_qui_flanche_se_redemande(monkeypatch):
     """Le 29 octobre 2026, la base a répondu 500 à `/expose`, deux fois de
     suite, puis l'a servi une minute plus tard : une route se redemande après
@@ -646,3 +680,237 @@ def test_ce_que_lit_un_recuperateur_est_branche_sur_lui():
             assert ligne["sort"] == "branche", f"{chaine} : lu par {script}, et {ligne['sort']}"
             assert script in [s.strip() for s in ligne["script"].split(";")], (
                 f"{chaine} : lu par {script}, que son registre ne nomme pas")
+
+
+# -- la veille (étape 5) -------------------------------------------------------
+
+
+def _veille_du_droit():
+    """`scripts/veille_droit.py`, chargé comme un module."""
+    chemin = RACINE / "scripts" / "veille_droit.py"
+    specification = importlib.util.spec_from_file_location("veille_droit", chemin)
+    module = importlib.util.module_from_spec(specification)
+    sys.modules["veille_droit"] = module
+    specification.loader.exec_module(module)
+    return module
+
+
+def _ligne(nom, titre="T", date="2026-01-01T00:00:00Z", sort="a_lire", renvoi="", script=""):
+    return {"nom": nom, "titre": titre, "theme": "", "modifie_le": date,
+            "sort": sort, "renvoi": renvoi, "script": script}
+
+
+def test_la_veille_dit_ce_que_chaque_collection_a_change_depuis_le_registre():
+    """La veille compare chaque collection de la base au registre, sans
+    l'écrire : ce que le registre ne porte pas ; ce dont la date a changé
+    depuis son sort, à relire, sort compris ; ce dont la date a changé quand
+    il attend encore d'être lu, que le récupérateur redatera ; ce que la base
+    ne sert plus. Une liste n'a pas de date ; un objet que le registre porte
+    sans titre, que la base nomme sans le servir, ne disparaît pas."""
+    module = _module("cnav_veille")
+    avant, apres = "2026-10-26T09:17:00Z", "2026-10-29T06:36:00Z"
+    registre = {
+        "baremes": {"lu.aspx": _ligne("lu.aspx", date=avant, sort="branche",
+                                      renvoi="data/x.csv", script="scripts/fetch/x.py"),
+                    "attend.aspx": _ligne("attend.aspx", date=avant),
+                    "pareil.aspx": _ligne("pareil.aspx", date=avant, sort="hors_modele",
+                                          renvoi="les rachats, que le modèle ne pratique pas"),
+                    "parti.aspx": _ligne("parti.aspx", date=avant, sort="limite",
+                                         renvoi="docs/limites/3-systeme-actuel.md")},
+        "listes": {"l1.aspx": {"nom": "l1.aspx", "titre": "L1", "theme": "", "sort": "a_lire",
+                               "renvoi": "", "script": ""}},
+        "fenetres": {"jamais_servie.aspx": _ligne("jamais_servie.aspx", titre="", date="")},
+    }
+    servis = {
+        "baremes": {"lu.aspx": {"titre": "Lu", "modifie_le": apres},
+                    "attend.aspx": {"titre": "Attend", "modifie_le": apres},
+                    "pareil.aspx": {"titre": "Pareil", "modifie_le": avant},
+                    "neuf.aspx": {"titre": "Neuf", "modifie_le": apres}},
+        "listes": {"l1.aspx": {"titre": "L1"}, "l2.aspx": {"titre": "L2"}},
+        "fenetres": {},
+    }
+    rien = {"neufs": [], "modifies": [], "redates": [], "disparus": []}
+    assert module.comparer(registre, servis) == {
+        "baremes": {"neufs": ["neuf.aspx"], "modifies": ["lu.aspx"], "redates": ["attend.aspx"],
+                    "disparus": ["parti.aspx"]},
+        "listes": {**rien, "neufs": ["l2.aspx"]},
+        "fenetres": rien,
+    }
+
+
+def test_une_reference_que_le_registre_ne_porte_pas_est_nouvelle():
+    """Une référence n'a pas de date de modification : la veille la dit
+    nouvelle quand le registre ne la porte sous aucune casse — la base en lie
+    sous une majuscule fautive —, ou la porte sans titre, nommée par la base
+    sans être servie."""
+    module = _module("cnav_veille")
+    references = {"circulaire_cnav_2026_31_30092026.pdf": {"titre": "Circulaire Cnav 2026/31"},
+                  "circulaire_cnav_2016_35_02082016.pdf": {"titre": "Circulaire Cnav 2016/35"},
+                  "nommee_sans_etre_servie.pdf": {"titre": ""}}
+    assert module.references_nouvelles(references, [
+        "circulaire_cnav_2026_34_30102026.pdf", "circulaire_cnav_2026_31_30092026.pdf",
+        "Circulaire_cnav_2016_35_02082016.pdf", "nommee_sans_etre_servie.pdf"]) == [
+        "circulaire_cnav_2026_34_30102026.pdf", "nommee_sans_etre_servie.pdf"]
+
+
+def test_la_veille_lit_la_base_d_un_appel_par_collection(monkeypatch):
+    """Ce que la veille demande à la base : ses collections, d'un appel
+    chacune — barèmes, exposés, listes, les trois des fenêtres, les avis de
+    mise à jour —, ses dernières circulaires, et sa recherche aux années
+    qu'on lui donne ; ni les références une à une, ni les documents joints,
+    que le récupérateur relit. Les dernières circulaires se demandent d'abord,
+    deux fois au plus : une base injoignable se dit sans une demi-minute de
+    reprises. Un objet servi deux fois prend sa date la plus récente, sans la
+    zone que l'API y accroche ; la recherche ne garde que les références, par
+    leur nom, avec leur titre."""
+    module = _module("cnav_veille")
+    circulaire = {"file_leaf_ref": "circulaire_cnav_2026_34_30102026.pdf",
+                  "titre": "Circulaire Cnav 2026/34 du 30/10/2026", "numero": "2026/34",
+                  "objet": "Droit de rectification", "date_textes": "2026-10-29T22:00:00Z[UTC]"}
+    reponses = {
+        "/baremes": [{"id": 1, "fileLeafRef": "b.aspx", "titre": " B ",
+                      "dateModification": "2026-10-01T08:00:00Z[UTC]"},
+                     {"id": 2, "fileLeafRef": "b.aspx", "titre": "B",
+                      "dateModification": "2026-10-02T08:00:00Z[UTC]"}],
+        "/expose": [{"id": 3, "fileLeafRef": "e.aspx", "titre": "E",
+                     "dateModification": "2026-10-29T06:36:00Z[UTC]"}],
+        "/liste": [{"id": 4, "file_leaf_ref": "l.aspx", "titre": "L"}],
+        "/lexique": [{"id": 5, "file_leaf_ref": "lex.aspx", "titre": "Lex",
+                      "date_modification": "2025-01-01T00:00:00Z[UTC]"}],
+        "/exemple": [], "/complementInformation": [],
+        "/mises-a-jour": [{"id": 356, "titre": "Sapeur-pompier volontaire",
+                           "dateMaj": "2026-09-29T20:00:00Z[UTC]",
+                           "dateModification": "2026-09-30T06:43:00Z[UTC]"}],
+        "/reference/dernieresCirculaires/": [circulaire],
+    }
+    routes, phrases = [], []
+
+    def obtenir(route, essais=4):
+        routes.append((route, essais))
+        return reponses[route]
+
+    def chercher(phrase):
+        phrases.append(phrase)
+        return phrase, [{"filename": f"texte_{phrase}.pdf", "titre": f" Texte de {phrase} "},
+                        {"filename": "page.htm", "titre": "Pas une référence"}]
+
+    monkeypatch.setattr(module.cnav_legislation, "_obtenir", obtenir)
+    monkeypatch.setattr(module.cnav_legislation, "_chercher", chercher)
+    base = module.lire_la_base([2025, 2026])
+    assert routes[0] == ("/reference/dernieresCirculaires/", 2)
+    assert sorted(route for route, _ in routes) == sorted(reponses)
+    assert sorted(phrases) == ["2025", "2026"]
+    assert base["servis"] == {
+        "baremes": {"b.aspx": {"titre": "B", "modifie_le": "2026-10-02T08:00:00Z"}},
+        "exposes": {"e.aspx": {"titre": "E", "modifie_le": "2026-10-29T06:36:00Z"}},
+        "listes": {"l.aspx": {"titre": "L"}},
+        "fenetres": {"lex.aspx": {"titre": "Lex", "modifie_le": "2025-01-01T00:00:00Z"}},
+        "mises_a_jour": {"356": {"titre": "Sapeur-pompier volontaire", "date_maj": "2026-09-30",
+                                 "modifie_le": "2026-09-30T06:43:00Z"}},
+    }
+    assert base["circulaires"] == [circulaire]
+    assert base["recherche"] == {"2025": {"texte_2025.pdf": "Texte de 2025"},
+                                 "2026": {"texte_2026.pdf": "Texte de 2026"}}
+
+
+def test_la_veille_du_droit_dit_ce_que_la_base_de_la_cnav_a_change(tmp_path, monkeypatch,
+                                                                   capsys):
+    """`python scripts/veille_droit.py` compare la base au registre, à l'année
+    de la veille et à la précédente, et dit ce qu'elle a changé depuis : un
+    barème dont la date a changé depuis son sort, avec le script qui le lit ;
+    un exposé à lire qu'elle a redaté ; un avis de mise à jour neuf, de son
+    jour et de son titre ; une circulaire nouvelle, de son titre et de son
+    objet ; une référence que sa recherche sert sans que le registre la porte,
+    une fois. Puis le geste qui les inscrit, et ce que le registre garde à
+    lire."""
+    veille = _veille_du_droit()
+    legislation = veille.cnav_veille.cnav_legislation
+    avant, apres = "2026-10-26T09:17:00Z", "2026-10-29T06:36:00Z"
+    legislation.ecrire_registre("baremes", {"lu.aspx": _ligne(
+        "lu.aspx", date=avant, sort="branche", renvoi="data/x.csv",
+        script="scripts/fetch/x.py")}, tmp_path)
+    legislation.ecrire_registre("exposes", {"e.aspx": _ligne("e.aspx", date=avant)}, tmp_path)
+    legislation.ecrire_registre("references", {"circulaire_cnav_2026_31_30092026.pdf": {
+        "nom": "circulaire_cnav_2026_31_30092026.pdf",
+        "titre": "Circulaire Cnav 2026/31 du 30/09/2026", "theme": "",
+        "date_texte": "2026-09-30", "sort": "a_lire", "renvoi": "", "script": ""}}, tmp_path)
+    base = {
+        "servis": {"baremes": {"lu.aspx": {"titre": "Lu", "modifie_le": apres}},
+                   "exposes": {"e.aspx": {"titre": "E", "modifie_le": apres}},
+                   "listes": {}, "fenetres": {},
+                   "mises_a_jour": {"357": {"titre": "Indus", "date_maj": "2026-10-30",
+                                            "modifie_le": "2026-10-30T07:00:00Z"}}},
+        "circulaires": [
+            {"file_leaf_ref": "circulaire_cnav_2026_34_30102026.pdf",
+             "titre": "Circulaire Cnav 2026/34 du 30/10/2026",
+             "objet": "Droit de rectification"},
+            {"file_leaf_ref": "circulaire_cnav_2026_31_30092026.pdf",
+             "titre": "Circulaire Cnav 2026/31 du 30/09/2026",
+             "objet": "Sapeur-pompier volontaire"}],
+        "recherche": {"2025": {}, "2026": {
+            "circulaire_cnav_2026_34_30102026.pdf": "Circulaire Cnav 2026/34 du 30/10/2026",
+            "instruction_x.pdf": "Instruction X"}},
+    }
+    annees = []
+
+    def lire_la_base(demandees):
+        annees.extend(demandees)
+        return base
+
+    monkeypatch.setattr(veille.cnav_veille, "REGISTRE", tmp_path)
+    monkeypatch.setattr(veille.cnav_veille, "lire_la_base", lire_la_base)
+    assert veille.main(["--date", "2026-11-03"]) == 0
+    sortie = capsys.readouterr().out
+    assert annees == [2025, 2026]
+    for attendu in (
+            "La base de législation de la Cnav, comparée à son registre",
+            "date changée depuis le sort, à relire (1) : lu.aspx [branche : scripts/fetch/x.py]",
+            "date changée, encore à lire (1) : e.aspx",
+            "listes : 0 à la base, rien de changé",
+            "pas au registre (1) : 357 (2026-10-30, Indus)",
+            "- Circulaire Cnav 2026/34 du 30/10/2026 : Droit de rectification "
+            "(circulaire_cnav_2026_34_30102026.pdf)",
+            "- Instruction X (instruction_x.pdf)",
+            "python scripts/fetch/cnav_legislation.py",
+            "Le registre : 3 objets, dont 2 à lire"):
+        assert attendu in sortie, attendu
+    assert sortie.count("circulaire_cnav_2026_34_30102026.pdf") == 1
+    assert "circulaire_cnav_2026_31_30092026.pdf" not in sortie
+
+
+def test_la_veille_du_droit_se_passe_d_une_base_qui_ne_repond_pas(monkeypatch, capsys):
+    """Hors réseau, ou la base en panne, la veille du droit le dit et finit
+    sans erreur ; `--sans-cnav` ne la demande pas."""
+    import urllib.error
+
+    veille = _veille_du_droit()
+
+    def en_panne(annees):
+        raise urllib.error.URLError("hors réseau")
+
+    monkeypatch.setattr(veille.cnav_veille, "lire_la_base", en_panne)
+    assert veille.main(["--date", "2026-11-03"]) == 0
+    assert ("La base de législation de la Cnav n'a pas répondu (hors réseau)"
+            in capsys.readouterr().out)
+
+    def interdite(annees):
+        raise AssertionError("la base demandée malgré --sans-cnav")
+
+    monkeypatch.setattr(veille.cnav_veille, "lire_la_base", interdite)
+    assert veille.main(["--date", "2026-11-03", "--sans-cnav"]) == 0
+    assert "--sans-cnav" in capsys.readouterr().out
+
+
+def test_la_ligne_du_vivier_s_epuise_quand_le_registre_n_a_plus_rien_a_lire():
+    """L'exploitation de la base se mesure à ce que le registre garde à lire :
+    quand il n'y reste rien, la ligne `cnav_legislation_portail` du vivier
+    passe `epuise` (feuille de route, action 175, étape 5)."""
+    import yaml
+
+    sources = yaml.safe_load((RACINE / "data" / "sources_a_explorer.yaml").read_text(
+        encoding="utf-8"))["sources"]
+    portail = next(source for source in sources if source["id"] == "cnav_legislation_portail")
+    a_lire = [f"{genre}/{ligne['nom']}" for genre, lignes in _registre().items()
+              for ligne in lignes if ligne["sort"] == "a_lire"]
+    assert a_lire or portail["statut"] == "epuise", (
+        "le registre n'a plus rien à lire : la ligne cnav_legislation_portail passe `epuise`")
