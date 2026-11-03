@@ -114,8 +114,9 @@ l'Institut des politiques publiques (PENSIPP). Écarts connus :
   trois cent quatre-vingt-dix euros (L. 756-3, L. 756-5, D. 756-7, D. 756-6) :
   ni assiette minimale, ni trimestre, ni salaire porté au compte, ni point,
   l'année ne lui ouvrant « aucun droit à retraite », dit la caisse
-  (`legislation/exoneration_independants_outre_mer.csv`). Le site ne sert pas
-  cette règle : sa saisie ne porte pas le département (action 177, étape 7).
+  (`legislation/exoneration_independants_outre_mer.csv`). Le site la sert :
+  sa saisie dit les années travaillées outre-mer, dont chaque ligne du relevé
+  et chaque métier prennent le département (action 177, étape 7).
   Pour le reste, il les traite comme ceux de la métropole, aux taux et sur
   l'assiette minimale de la série, que reprennent les barèmes des DOM de la
   caisse : depuis 2007 pour les taux de la retraite de base, depuis 2013 pour

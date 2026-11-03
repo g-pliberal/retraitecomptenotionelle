@@ -1,0 +1,20 @@
+date: "2026-11-03"
+session: "action 177, étape 7 : le département d'outre-mer dans la saisie"
+consulte: >-
+  `python scripts/veille_droit.py` : aucune fiche de l'étape à relire. Aucune lecture
+  nouvelle : l'étape porte au site des règles déjà lues, R. 753-21 et R. 351-9 (action
+  138, étape 6 ; fiche `trimestres_avant_1972`), L. 756-3 et D. 756-7 (étape 4 ; fiche
+  `exoneration_independants_outre_mer`), et les seuils de 1982, 2 768,20 F à La Réunion
+  et 3 630 F en métropole, que `tests/test_outre_mer.py` tire de l'arrêté du
+  30 décembre 1981.
+trouve: >-
+  Aucune règle ne change. La saisie dit les années travaillées outre-mer (« Années
+  outre-mer », par années entières), que portent les lignes d'emploi du relevé et, la
+  chronologie les coupant au 1er janvier, les métiers : le site sert le seuil du
+  trimestre des départements jusqu'en 1995 et l'exonération de l'artisan et du
+  commerçant sous 390 €. Deux témoins de simulation : 118 trimestres au lieu de 104 pour
+  le parcours de La Réunion au plancher de la saisie, 7 508,18 € par an au lieu de
+  7 597,79 € pour l'artisane exonérée en 2015.
+reste: >-
+  L'activité exercée après le départ ne porte pas le département ; le relevé déposé en
+  PDF ne l'écrit pas, l'assuré le dit. Rien du droit à relire.
