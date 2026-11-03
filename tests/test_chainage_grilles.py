@@ -641,6 +641,29 @@ def test_le_statut_nomme_par_sa_date_est_identifie_dans_la_preuve(reclassements)
     assert "texte 160" in ligne["preuve"]
 
 
+def test_la_raison_ne_dit_pas_inconnu_du_noyau_un_decret_qu_il_porte_sans_nor(reclassements):
+    # Relecture R-B3-bis, partie 2. Décret n° 2017-786, art. 12
+    # (LEGIARTI000034750817) : « régi par le décret du 22 avril 1960 susvisé » ;
+    # le visa : « Vu le décret n° 60-403 du 22 avril 1960 modifié relatif aux
+    # dispositions statutaires applicables aux chargés d'enseignement de
+    # l'éducation physique et sportive ». Aucune notice du LEGI ; mais le Noyau
+    # RH porte le texte 166, « Décret n° 60-403 du 22 avril 1960 relatif aux
+    # dispositions statutaires applicables aux chargés d'enseignement de
+    # l'éducation physique et sportive. », sans NOR.
+    textes = {(t["numero"], t["date"]) for t in _lire(GRILLES / "etat" / "textes.csv")}
+    import re
+    for r in reclassements:
+        trouve = re.search(r"résout en n° (\S+), décret que ni le LEGI ni le Noyau RH", r["raison"])
+        if trouve:
+            assert not [t for t in textes if t[0] == trouve.group(1)], r["raison"]
+    lignes = [r for r in reclassements if r["article"] == "LEGIARTI000034750817"]
+    assert len(lignes) == 3
+    for r in lignes:
+        assert r["statut"] == "declare"
+        assert "n° 60-403" in r["raison"] and "texte 166" in r["raison"], r["raison"]
+        assert "sans NOR" in r["raison"], r["raison"]
+
+
 def test_une_phrase_qui_ne_nomme_pas_le_statut_d_un_decret_modificatif_est_declaree(
         reclassements):
     # Décret n° 95-108 (LEGITEXT000005617679), « modifiant le décret n° 92-1204

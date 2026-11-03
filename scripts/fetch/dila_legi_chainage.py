@@ -815,9 +815,17 @@ def statuts_de_la_phrase(depot: Depot, tableau: dict) -> tuple[dict[str, str], s
         nor = sorted({t["nor"] for t in depot.noyau_textes.values()
                       if t["numero"] == numero and t["date"] == iso and t["nor"]})
         if not notices and not nor:
+            # Le noyau peut porter le décret sans NOR (n° 60-403, texte 166) :
+            # la raison le dit, sans l'identifier par son numéro et sa date
+            # (relecture R-B3-bis, partie 2).
+            sans_nor = sorted((t["texte"] for t in depot.noyau_textes.values()
+                               if t["numero"] == numero and t["date"] == iso), key=int)
             return {}, (f"la phrase nomme le statut par sa date, « {trouve.group(0)} », que le "
-                        f"visa résout en n° {numero}, décret que ni le LEGI ni le Noyau RH "
-                        "n'identifient")
+                        f"visa résout en n° {numero}, décret "
+                        + (f"qu'aucune notice du LEGI n'identifie, et que le Noyau RH porte sans "
+                           f"NOR (texte {', '.join(sans_nor)}) : le chaînage ne l'y identifie que "
+                           "par son NOR" if sans_nor
+                           else "que ni le LEGI ni le Noyau RH n'identifient"))
         identifie = (f"au LEGI {', '.join(i for i, _ in notices)}, « {notices[0][1]} »"
                      if notices else f"au Noyau RH, NOR {', '.join(nor)}")
         nommes[numero] = (f"la phrase nomme « {trouve.group(0)} » ; le visa de "
