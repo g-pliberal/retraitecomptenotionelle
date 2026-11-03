@@ -83,7 +83,9 @@ par le refus « une phrase coupe le tableau ». Test :
 (4 versions), n° 72-580, art. 13 (4), n° 90-680, art. 24 (7), n° 93-752, art. 17 (3),
 n° 65-383, art. 10-7 (2), n° 96-1113, art. 14 (version du 1er septembre 2017,
 LEGIARTI000042571613). Le 22e reste refusé, **à raison** : la version du 1er janvier 2021 du
-même article (LEGIARTI000042571828) saute le 5e échelon, « Professeur technique hors classe
+même article (LEGIARTI000042571828), telle que la consolidation du LEGI l'écrit, saute le
+5e échelon, que le décret publié au JORF écrit (n° 2020-1435, art. 8 : « 5e échelon 3 ans » ;
+raison corrigée le 3 novembre 2026, note des retouches de R-B2-bis), « Professeur technique hors classe
 7e échelon - 6e échelon 3 ans 4e échelon 2 ans 6 mois ». Rentrent aussi 7 refus « une phrase
 coupe le tableau » au même paragraphe : n° 90-90, art. 18 (4 versions), n° 92-778,
 art. 31-6 et 32 (3). En tout 14 tableaux, 268 lignes. *Contre-lecture* : pour chacune de leurs
@@ -121,7 +123,7 @@ Chaque « DURÉE Moyenne : » ouvrait un tableau : cinq, puis six, pour un seul.
 *La correction.* Les deux points d'un champ de fiche (« … échelon DURÉE Moyenne : »,
 `CHAMP_DE_FICHE`) n'ouvrent plus de tableau, et un tableau qui écrit au moins deux tels
 champs se refuse sous son vrai motif, « un tableau écrit en fiches, un champ par case »
-(`FICHES`). **409** lignes de `non_lus.csv` s'en vont (38 versions d'article). En contrôlant
+(`FICHES`). **409** lignes de `non_lus.csv` s'en vont (39 versions d'article). En contrôlant
 le passage, trois versions disparaissaient de `non_lus.csv` : leurs fiches ne s'ouvrent par
 aucune phrase à deux points (n° 89-750, art. 13, LEGIARTI000006457590 : « … sont fixées selon
 les modalités ci-après. - CLASSES ET ECHELONS … 3e échelon DUREE moyenne : 3 ans DUREE

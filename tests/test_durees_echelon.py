@@ -533,7 +533,7 @@ AIDES_TECHNIQUES = (
     "ans 6 mois DURÉE Minimale : 2 ans"
 )
 
-#: Décret n° 67-715 du 18 août 1967, ingénieurs des télécommunications, article 13,
+#: Décret n° 67-715 du 16 août 1967, ingénieurs des télécommunications, article 13,
 #: du 25 août 1967 au 21 mai 2000 (LEGIARTI000006508433), en entier : des fiches par
 #: grade, « GRADE : Ingénieur général, 1er et 2e échelon DUREE moyenne : 3 ans. ».
 INGENIEURS_DES_TELECOMMUNICATIONS = (
