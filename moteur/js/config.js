@@ -318,6 +318,12 @@ export const PARAMETRES_DEFAUT = Object.freeze({
 
   // --- Fusion des régimes ---------------------------------------------------
   fusion_au_plus_defavorable: true,
+  //: Le barème du régime unique après la bascule : `null`, le défaut, prélève
+  //: le taux du régime fusionné ; une suite de tranches `[haute, taux,
+  //: tauxSalarie]`, la borne haute en plafonds de la Sécurité sociale (`null` :
+  //: sans plafond), prélève par tranches — les barèmes que
+  //: `scripts/solde_fusion.py` chiffre (`tauxDuBareme`, compte.js). Voir config.py.
+  bareme_regime_unique: null,
 
   // --- Scénario « système actuel » ------------------------------------------
   //: Le minimum vieillesse (ASPA) fait-il partie de l'étalon ? C'est le dernier

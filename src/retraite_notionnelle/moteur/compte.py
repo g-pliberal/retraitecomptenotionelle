@@ -18,6 +18,7 @@ Trois principes tiennent tout le reste :
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass, field
 from functools import cached_property
 
@@ -39,6 +40,65 @@ from ..somme import somme_ordonnee
 
 #: Le seul régime dont la contribution employeur est un taux d'équilibre.
 REGIME_ETAT = "fonction_publique_etat"
+
+#: Une tranche du barème du régime unique (``Parametres.bareme_regime_unique``) :
+#: borne haute en plafonds de la Sécurité sociale (``None`` : sans plafond),
+#: taux total, taux à la charge de l'assuré.
+Tranche = tuple[float | None, float, float]
+
+
+def taux_du_bareme(bareme: tuple[Tranche, ...], revenu: float, pass_annuel: float
+                   ) -> tuple[float, float]:
+    """Taux total et taux salarié effectifs d'un revenu annuel sous un barème du
+    régime unique (action 161) : le revenu se découpe en tranches, chacune
+    prélevée à son taux, jusqu'à la borne haute de la dernière qu'il atteint ;
+    les bornes sont en plafonds annuels de la Sécurité sociale. Le jumeau de
+    ``tauxDuBareme`` (``moteur/js/compte.js``), qui fait foi."""
+    if revenu <= 0.0:
+        return 0.0, 0.0
+    total = salarie = basse = 0.0
+    for haute, taux, taux_salarie in bareme:
+        plafond = revenu if haute is None else min(revenu, haute * pass_annuel)
+        tranche = max(0.0, plafond - basse)
+        total += tranche * taux
+        salarie += tranche * taux_salarie
+        basse = plafond
+        if haute is not None and revenu <= haute * pass_annuel:
+            break
+    return total / revenu, salarie / revenu
+
+
+def verifier_bareme(bareme) -> None:
+    """Un barème du régime unique bien formé, ou l'arrêt : une suite de
+    tranches ``(haute, taux, taux_salarie)``, aux bornes croissantes, en
+    plafonds, seule la dernière pouvant n'en avoir pas (``None``), l'assuré n'y
+    payant jamais plus que le taux de sa tranche. Un barème mal formé est une
+    faute de programme, qui doit remonter au lieu de se perdre dans un taux.
+    Le jumeau de ``verifierBareme`` (``moteur/js/compte.js``)."""
+    def faute(motif: str) -> ValueError:
+        return ValueError(f"bareme_regime_unique mal formé, {motif} : {bareme!r}")
+
+    def nombre(valeur) -> bool:
+        return (isinstance(valeur, (int, float)) and not isinstance(valeur, bool)
+                and math.isfinite(valeur))
+
+    if not isinstance(bareme, (tuple, list)) or not bareme:
+        raise faute("sans tranche")
+    basse = 0.0
+    for rang, tranche in enumerate(bareme):
+        if not isinstance(tranche, (tuple, list)) or len(tranche) != 3:
+            raise faute("une tranche porte sa borne et deux taux")
+        haute, taux, taux_salarie = tranche
+        if (not nombre(taux) or not nombre(taux_salarie) or taux_salarie < 0.0
+                or taux_salarie > taux):
+            raise faute("l'assuré paie de zéro au taux de sa tranche")
+        if haute is None:
+            if rang != len(bareme) - 1:
+                raise faute("seule la dernière tranche est sans plafond")
+            continue
+        if not nombre(haute) or haute <= basse:
+            raise faute("les bornes croissent")
+        basse = haute
 
 
 @dataclass(frozen=True)
@@ -162,6 +222,10 @@ class ConstructeurCompte:
         # l'Agirc demande. Import tardif : le scénario 1 importe ce module.
         from ..scenarios.actuel import ValeursPoint
         self.valeurs_point = ValeursPoint(parametres.racine_donnees)
+        # Le barème du régime unique est facultatif ; mal formé, il arrête le
+        # simulateur.
+        if parametres.bareme_regime_unique is not None:
+            verifier_bareme(parametres.bareme_regime_unique)
 
     # -- taux ----------------------------------------------------------------
 
@@ -434,6 +498,10 @@ class ConstructeurCompte:
         n'en gagne pas un en changeant de régime. Un artisan cotise seul avant
         la bascule ; il cotise seul après, à un taux plus élevé — c'est déjà ce
         que dit le modèle, et la répartition doit le suivre.
+
+        Sous le barème d'une étude (``Parametres.bareme_regime_unique``,
+        action 161), les deux taux sont ceux de ses tranches, sur le revenu de
+        l'année ramené à douze mois (:func:`taux_du_bareme`).
         """
         # Un taux d'acquisition commun s'applique ici qu'il ait couvert toute la
         # carrière (``TAUX_UNIFORME``) ou qu'il ne commence qu'à la bascule
@@ -442,9 +510,16 @@ class ConstructeurCompte:
         if self.parametres.source_cotisations is not SourceCotisations.TAUX_HISTORIQUES:
             return self.parametres.taux_cotisation_uniforme, 0.0, "", Fiabilite.CERTIFIEE
 
-        unifie = regime_fusionne.taux_cotisation_retraite
-        salarie = (regime_fusionne.taux_cotisation_salarie
-                   if self.a_un_employeur(ligne, annee) else unifie)
+        bareme = self.parametres.bareme_regime_unique
+        if bareme is None:
+            unifie, salarie = (regime_fusionne.taux_cotisation_retraite,
+                               regime_fusionne.taux_cotisation_salarie)
+        else:
+            unifie, salarie = taux_du_bareme(
+                bareme, ligne.revenu / max(ligne.fraction_annee, 1e-9),
+                self.macro.plafond_securite_sociale(annee))
+        if not self.a_un_employeur(ligne, annee):
+            salarie = unifie
 
         if (self.parametres.part_cotisation is PartCotisation.SALARIALE
                 or self.affiliations.part_salariale_seule(ligne.affiliation)):

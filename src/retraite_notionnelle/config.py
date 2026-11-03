@@ -748,6 +748,15 @@ class Parametres:
     #: l'ensemble des régimes existants.
     fusion_au_plus_defavorable: bool = True
 
+    #: Le barème du régime unique après la bascule : ``None``, le défaut,
+    #: prélève le taux du régime fusionné ; une suite de tranches ``(haute,
+    #: taux, taux_salarie)``, la borne haute en plafonds annuels de la Sécurité
+    #: sociale (``None`` : sans plafond), prélève par tranches, sur le revenu de
+    #: l'année ramené à douze mois — les barèmes que ``scripts/solde_fusion.py``
+    #: chiffre (action 161), et qu'aucun réglage du site ne porte. Voir
+    #: ``moteur.compte.taux_du_bareme``.
+    bareme_regime_unique: tuple[tuple[float | None, float, float], ...] | None = None
+
     # --- Scénario « système actuel » ----------------------------------------
     #: Le minimum vieillesse (ASPA) fait-il partie de l'étalon ?
     #:

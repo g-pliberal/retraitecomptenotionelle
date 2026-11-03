@@ -27,6 +27,71 @@ import { assietteDuCollaborateur } from "./droit/acquerir.js";
 /** Le seul régime dont la contribution employeur est un taux d'équilibre. */
 const REGIME_ETAT = "fonction_publique_etat";
 
+/**
+ * Taux total et taux salarié effectifs d'un revenu annuel sous un barème du
+ * régime unique (`bareme_regime_unique`, action 161) : le revenu se découpe en
+ * tranches, chacune prélevée à son taux, jusqu'à la borne haute de la dernière
+ * qu'il atteint ; les bornes sont en plafonds annuels de la Sécurité sociale.
+ * Voir le Python.
+ *
+ * @returns {[number, number]}
+ */
+export function tauxDuBareme(bareme, revenu, passAnnuel) {
+  if (revenu <= 0.0) {
+    return [0.0, 0.0];
+  }
+  let total = 0.0;
+  let salarie = 0.0;
+  let basse = 0.0;
+  for (const [haute, taux, tauxSalarie] of bareme) {
+    const plafond = haute === null ? revenu : Math.min(revenu, haute * passAnnuel);
+    const tranche = Math.max(0.0, plafond - basse);
+    total += tranche * taux;
+    salarie += tranche * tauxSalarie;
+    basse = plafond;
+    if (haute !== null && revenu <= haute * passAnnuel) {
+      break;
+    }
+  }
+  return [total / revenu, salarie / revenu];
+}
+
+/**
+ * Un barème du régime unique bien formé, ou l'arrêt : une suite de tranches
+ * `[haute, taux, tauxSalarie]`, aux bornes croissantes, en plafonds, seule la
+ * dernière pouvant n'en avoir pas (`null`), l'assuré n'y payant jamais plus que
+ * le taux de sa tranche. Un barème mal formé est une faute de programme, qui
+ * doit remonter au lieu de se perdre dans un taux.
+ */
+function verifierBareme(bareme) {
+  const faute = (motif) => new RangeError(
+    `bareme_regime_unique mal formé, ${motif} : ${JSON.stringify(bareme)}`);
+  const nombre = (valeur) => typeof valeur === "number" && Number.isFinite(valeur);
+  if (!Array.isArray(bareme) || bareme.length === 0) {
+    throw faute("sans tranche");
+  }
+  let basse = 0.0;
+  bareme.forEach((tranche, rang) => {
+    if (!Array.isArray(tranche) || tranche.length !== 3) {
+      throw faute("une tranche porte sa borne et deux taux");
+    }
+    const [haute, taux, tauxSalarie] = tranche;
+    if (!nombre(taux) || !nombre(tauxSalarie) || tauxSalarie < 0.0 || tauxSalarie > taux) {
+      throw faute("l'assuré paie de zéro au taux de sa tranche");
+    }
+    if (haute === null) {
+      if (rang !== bareme.length - 1) {
+        throw faute("seule la dernière tranche est sans plafond");
+      }
+      return;
+    }
+    if (!nombre(haute) || haute <= basse) {
+      throw faute("les bornes croissent");
+    }
+    basse = haute;
+  });
+}
+
 /** Construit un compte notionnel à partir d'une carrière. */
 export class ConstructeurCompte {
   constructor(macro, catalogue, affiliations, indexation, parametres) {
@@ -48,6 +113,11 @@ export class ConstructeurCompte {
     this.valeursPoint = new ValeursPoint(macro.paquet);
     this._statutsMilitaires = null;
     this._partsRetraiteSeule = null;
+    // Le barème du régime unique est facultatif ; mal formé, il arrête le
+    // simulateur.
+    if ((parametres.bareme_regime_unique ?? null) !== null) {
+      verifierBareme(parametres.bareme_regime_unique);
+    }
   }
 
   // -- taux ------------------------------------------------------------------
@@ -292,7 +362,9 @@ export class ConstructeurCompte {
    * Il n'y a plus, après la bascule, ni fonction publique ni régimes spéciaux :
    * un seul régime, au taux du statut pivot privé, dont il hérite la
    * répartition salarié/employeur. Une exception : un assuré qui n'avait pas
-   * d'employeur n'en gagne pas un en changeant de régime.
+   * d'employeur n'en gagne pas un en changeant de régime. Sous le barème d'une
+   * étude (`bareme_regime_unique`, action 161), les deux taux sont ceux de ses
+   * tranches, sur le revenu de l'année ramené à douze mois (`tauxDuBareme`).
    *
    * @returns {[number, number, string, number]} taux, part employeur, origine,
    *   fiabilité.
@@ -304,9 +376,14 @@ export class ConstructeurCompte {
     if (this.parametres.source_cotisations !== SourceCotisations.TAUX_HISTORIQUES) {
       return [this.parametres.taux_cotisation_uniforme, 0.0, "", Fiabilite.CERTIFIEE];
     }
-    const unifie = regimeFusionne.taux_cotisation_retraite;
-    const salarie = this.aUnEmployeur(ligne, annee)
-      ? regimeFusionne.taux_cotisation_salarie : unifie;
+    const bareme = this.parametres.bareme_regime_unique ?? null;
+    let [unifie, salarie] = bareme === null
+      ? [regimeFusionne.taux_cotisation_retraite, regimeFusionne.taux_cotisation_salarie]
+      : tauxDuBareme(bareme, ligne.revenu / Math.max(ligne.fraction_annee, 1e-9),
+        this.macro.plafond_securite_sociale.valeur(annee));
+    if (!this.aUnEmployeur(ligne, annee)) {
+      salarie = unifie;
+    }
 
     if (this.parametres.part_cotisation === PartCotisation.SALARIALE
         || this.affiliations.partSalarialeSeule(ligne.affiliation)) {

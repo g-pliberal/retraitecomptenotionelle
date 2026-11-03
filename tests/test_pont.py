@@ -196,6 +196,42 @@ def test_le_stock_a_l_age_legal_passe_au_portage_dans_la_demande_au_bit_pres_du_
                    for cle, lu in resultats.items() for scenario in touches), regle
 
 
+#: Deux barèmes du régime unique (``Parametres.bareme_regime_unique``) : des
+#: tranches de plafond comme celles du salarié du privé, et un taux déplafonné.
+BAREMES = (((1.0, 0.2815, 0.1145), (8.0, 0.2215, 0.0904), (None, 0.0240, 0.0040)),
+           ((None, 0.2290, 0.0950),))
+
+
+def test_le_bareme_du_regime_unique_passe_au_portage_dans_la_demande_au_bit_pres_du_jumeau():
+    """Le barème du régime unique (``Parametres.bareme_regime_unique``, action
+    161), qu'aucun réglage de référence ne porte, passe au portage dans les
+    paramètres de la demande, et en revient sous les types du Python : sous
+    chaque barème, le portage rend de chaque case ce que le jumeau Python simule
+    sous le même, au bit près, et autre chose que sans lui, dans les scénarios
+    du régime unique. Un barème mal formé arrête le compte du jumeau, comme
+    celui du portage."""
+    sous_un_bareme = replace(Parametres(), bareme_regime_unique=BAREMES[0])
+    assert pont.parametres_des_donnees(
+        _comme_node(pont.parametres_en_donnees(sous_un_bareme))) == sous_un_bareme
+    with pytest.raises(ValueError, match="bareme_regime_unique"):
+        Simulateur(replace(Parametres(), bareme_regime_unique=(
+            (2.0, 0.25, 0.125), (1.0, 0.125, 0.0625)))).constructeur
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    sans = None
+    for bareme in BAREMES:
+        simulateur = Simulateur(replace(Parametres(), bareme_regime_unique=bareme))
+        demandes, attendus = _carrieres_simulees(simulateur)
+        if sans is None:
+            sans, _ = pont.carrieres(demandes, SCENARIOS)
+        resultats, echecs = pont.carrieres(demandes, SCENARIOS, parametres=simulateur.parametres)
+        assert not echecs
+        assert resultats == attendus, bareme
+        for scenario in ("notionnel_retroactif", "notionnel_retroactif_employeur"):
+            assert any(lu["ecarts"][scenario] != sans[cle]["ecarts"][scenario]
+                       for cle, lu in resultats.items()), (bareme, scenario)
+
+
 def test_le_pont_simule_une_saisie_comme_le_site_au_bit_pres_du_moteur_python():
     """Les carrières d'exemple du bilan figé sont des saisies, que le portage
     simule comme le site (``Contexte.simuler``, ``contexte.js``) : de chacune,
