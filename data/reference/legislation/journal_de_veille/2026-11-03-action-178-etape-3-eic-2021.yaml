@@ -1,0 +1,23 @@
+date: "2026-11-03"
+session: "action 178, étape 3 : l'échantillon interrégimes de cotisants de 2021, des fiches 12 et 21 du panorama de la DREES, porté à data/reference/"
+consulte: >-
+  Aucune règle du scénario 1 n'est touchée : l'étape lit des statistiques. Les
+  classeurs des fiches 12 et 21 de l'archive de la release documents-apportes
+  (drees_panorama_retraites_2026_classeurs), chacun à son empreinte ; le PDF
+  du panorama (miroir de l'UNSA) par pdftotext -layout, pour les valeurs qu'il
+  imprime et l'encadré 1 de la fiche 21, qui définit les situations
+  principales ; le jeu du portail de la DREES sur les trimestres validés à
+  30 ans, par son API.
+trouve: >-
+  Les durées validées par les actifs (fiche 12) et la situation en fin de
+  carrière (fiche 21), de l'EIC de 2021 et de celui de 2013 pour la génération
+  1942, sont certifiées dans durees_validees_actifs.csv et fins_de_carriere.csv.
+  Le jeu du portail porte l'EIC de 2013, ses données de 2020 : rien de plus
+  que le classeur. Les classeurs se contredisent par endroits — une génération
+  mal rangée dans une note, un champ incomplet, une lecture qui décrit une
+  autre ligne que celle qu'elle chiffre — ; chaque écart est déclaré dans
+  l'en-tête du fichier qui le porte.
+reste: >-
+  La clôture (étape 7) : les feuilles de l'édition précédente et l'encadré 2
+  de la fiche 21, de l'enquête Emploi. Les confrontations au modèle — les fins
+  de carrière, les débuts de carrière — reviennent à la file qui les mène.

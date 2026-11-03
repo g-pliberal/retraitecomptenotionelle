@@ -40,8 +40,8 @@
 #
 # Classé le 2 novembre 2026, à l'étape 1. Une étape qui tire d'une fiche ce
 # qu'elle apporte change son statut, et le dit dans sa note ; l'étape 2 l'a
-# fait le 3 novembre 2026, et l'étape 6, pour ses huit fiches, le même jour
-# (docs/feuille_de_route/178/).
+# fait le 3 novembre 2026, l'étape 6, pour ses huit fiches, le même jour, et
+# l'étape 3, pour les fiches 12 et 21 (docs/feuille_de_route/178/).
 
 fiches:
   "01":
@@ -280,17 +280,26 @@ fiches:
     titre: "Les durées d’assurance validées par les actifs pour leur retraite"
     page: 113
     sources: ["EIC 2021", "EIC 2013"]
-    statut: a_tirer
-    au_depot: [drees_eic_droits_valides, drees_eic_natures_assimilees, drees_eic_duree_validee]
+    statut: au_depot
+    au_depot: [drees_eic_droits_valides, drees_eic_natures_assimilees, drees_eic_duree_validee,
+               drees_panorama_retraites_2026_classeurs]
     a_tirer: >-
-      L'EIC de 2021, neuve : les trimestres validés à 30 ans et l'âge de
-      début de carrière par génération (graphique 1), le rythme de
-      validation par âge (graphique 2), la nature des trimestres
-      (graphiques 3 à 5), à porter à côté des séries de l'EIC de 2017 que
-      le dépôt lit, par le portail de données d'abord (le jeu des
-      trimestres validés à 30 ans, refait le 9 octobre 2026), puis par le
-      fichier Excel de la fiche.
-    etape: 3
+      Porté à l'étape 3, de son classeur, à `durees_validees_actifs.csv`, à
+      côté des séries de l'EIC de 2017 que le dépôt lit : les trimestres
+      validés à 30 ans, l'âge de la première année complète et la part des
+      affiliés qui n'en ont aucune, générations 1942 à 1990 (graphique 1) ;
+      le rythme de validation par tranche d'âge et le cumul à 49 ans
+      (graphique 2) ; la nature des trimestres de la génération 1966
+      (graphique 3) ; le chômage validé, générations 1942 à 1998
+      (graphique 4) ; les validations de l'année par âge, en 2020 et 2021
+      (graphique 5). Le jeu du portail sur les trimestres validés à 30 ans,
+      refait le 9 octobre 2026, porte toujours l'EIC de 2013, ses données
+      du 26 novembre 2020 : il ne donne de plus que la génération 1942, que
+      le classeur redonne. Reste, pour la clôture, les feuilles de l'édition
+      précédente, de l'EIC de 2017 (« Graphique 1 (2) » à « 5 (2) ») ; la
+      confrontation des débuts de carrière du modèle au graphique 1 revient
+      à la file des confrontations.
+    etape: 7
   "13":
     titre: "Les régimes d’affiliation des assurés"
     page: 122
@@ -441,14 +450,20 @@ fiches:
     page: 182
     sources: ["EIC 2021", "EIC 2013", "Insee, enquête Emploi"]
     statut: a_confronter
+    au_depot: [drees_panorama_retraites_2026_classeurs]
     a_tirer: >-
-      La situation à 59 ans par génération — emploi, chômage, invalidité,
-      inactivité (graphique 1) —, l'année qui précède la liquidation
-      (tableau 1) et les trajectoires de 50 à 67 ans de la génération
-      1954 (tableaux 2 et 3, graphique 2), de l'EIC de 2021, confrontées
-      aux fins de carrière de la grille et aux carrières inactives du
-      modèle (action 138, étape 14).
-    etape: 3
+      Porté à l'étape 3, de son classeur, à `fins_de_carriere.csv` : la
+      situation à 59 ans par génération, de 1942 à 1962 — emploi, chômage,
+      invalidité, absence (graphique 1) — ; celle de l'année qui précède la
+      liquidation, de 1942 à 1954, et, en 1954, selon l'âge de départ et le
+      travail après 50 ans (tableau 1) ; les trajectoires, les situations
+      de 50 à 67 ans et les transitions de la génération 1954 (tableaux 2
+      et 3, graphique 2). Reste à les confronter aux fins de carrière de la
+      grille et aux carrières inactives du modèle (action 138, étape 14),
+      que l'étape 3 ne fait pas ; et, pour la clôture, l'encadré 2, de
+      l'enquête Emploi : la part des 53-69 ans ni en emploi ni en retraite,
+      de 2005 à 2024, et la composition de leur revenu en 2023.
+    etape: 4
   "22":
     titre: "Les dispositifs de cumul d’une activité avec la retraite"
     page: 193

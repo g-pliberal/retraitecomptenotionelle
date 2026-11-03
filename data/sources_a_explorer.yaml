@@ -7355,7 +7355,19 @@ sources:
       indicateur de l'EIC de 2021 (graphique 1). Dire quelle vague il porte,
       puis confronter ces durées aux carrières du modèle (action 178,
       étape 3).
-    statut: a_explorer
+    statut: epuise
+    explore_le: 2026-11-03
+    note: >-
+      Lu le 3 novembre 2026 par l'API du portail, au troisième essai (la
+      connexion tombe) : dix-huit générations, de 1942 à 1982, l'EIC de 2013 ;
+      ses données datent du 26 novembre 2020, seule sa fiche a été refaite le
+      9 octobre 2026. Sa génération 1942 est celle que le panorama de 2026
+      reprend, à la décimale près (38,33 trimestres à 30 ans, 38,3 au
+      classeur) ; pour les autres, le classeur de la fiche 12 donne l'EIC de
+      2021, que `data/reference/macro/durees_validees_actifs.csv` certifie
+      (action 178, étape 3).
+      La confrontation aux carrières du modèle revient à la file des
+      confrontations.
 
   - id: drees_retraite_supplementaire
     url: https://data.drees.solidarites-sante.gouv.fr/explore/dataset/2034_la-retraite-supplementaire-facultative-et-l-epargne-retraite/
