@@ -735,6 +735,23 @@ def test_un_tableau_en_fiches_n_est_compte_qu_une_fois():
             ("1", "un tableau écrit en fiches, un ")]
 
 
+#: Deux versions d'un même article que le LEGI met en vigueur ensemble : n° 91-868,
+#: art. 7, LEGIARTI000033602862 (du 1er janvier au 23 septembre 2017, réunie à la
+#: version de 2007 qui redit son tableau) et LEGIARTI000035742510 (du 1er janvier 2017) ;
+#: n° 96-366, art. 5, LEGIARTI000006482187 (du 1er août 1995 au 24 juin 1998) et
+#: LEGIARTI000006482188 (du 24 juin 1996) ; n° 92-847, art. 14, LEGIARTI000006374721
+#: (du 30 août 1992 au 8 février 1996) et LEGIARTI000006374722 (du 1er août 1995).
+CHEVAUCHEMENTS = {
+    "LEGIARTI000006711235": "LEGIARTI000035742510", "LEGIARTI000035742510": "LEGIARTI000006711235",
+    "LEGIARTI000006482187": "LEGIARTI000006482188", "LEGIARTI000006482188": "LEGIARTI000006482187",
+    "LEGIARTI000006374721": "LEGIARTI000006374722", "LEGIARTI000006374722": "LEGIARTI000006374721"}
+
+
+def test_les_periodes_qui_se_chevauchent_sont_marquees(tableaux_lus):
+    marques = {t["article"]: t["chevauche"] for t in tableaux_lus if t["chevauche"]}
+    assert marques == CHEVAUCHEMENTS
+
+
 def test_chaque_ligne_est_certifiee_et_datee(lignes, tableaux_lus):
     assert lignes and all(l["fiabilite"] == "certifiee" for l in lignes)
     assert all(t["debut"] and t["article"].startswith("LEGIARTI") for t in tableaux_lus)

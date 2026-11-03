@@ -62,7 +62,9 @@ CE QUE LA DONNÉE NE DIT PAS. Un tableau nomme ses grades par son libellé, non
 par les clés de ``grilles/<versant>/grilles.csv`` : rattacher chaque tableau
 aux grilles du dépôt, par le texte d'échelonnement qui vise le statut, reste à
 faire. Les réductions et majorations d'ancienneté (l'avancement accéléré, la
-bonification), écrites en phrases, ne sont pas lues.
+bonification), écrites en phrases, ne sont pas lues. Deux versions d'un article
+que le LEGI met en vigueur ensemble gardent leurs dates, et chacun de leurs
+tableaux nomme l'autre (``chevauche``) : le rattachement choisit.
 """
 
 from __future__ import annotations
@@ -766,6 +768,7 @@ def extraire(chemin_index: Path | str | None = None) -> dict:
                 "rang": str(rang), **{c: "" if getattr(ligne, c) is None else str(getattr(ligne, c))
                                       for c in CHAMPS.values()},
                 "condition": ligne.condition})
+    _chevauchements(sortie["tableaux"])
     for refus in non_lus:
         comptes[refus["texte"]]["non_lus"] += 1
     par_texte = {info["texte"]: titre for titre, info in infos.items()}
@@ -776,6 +779,22 @@ def extraire(chemin_index: Path | str | None = None) -> dict:
                                  "non_lus": str(comptes[texte]["non_lus"])})
     sortie["textes"].sort(key=lambda t: (t["versant"], t["signature"], t["texte"]))
     return sortie
+
+
+def _chevauchements(tableaux_lus: list[dict]) -> None:
+    """Marque, dans ``chevauche``, les tableaux du même article et du même rang
+    dont la période recouvre la sienne : deux versions que le LEGI met en vigueur
+    ensemble. Les dates restent celles du LEGI ; le choix est au rattachement."""
+    par_article: dict[tuple, list[dict]] = collections.defaultdict(list)
+    for tableau in tableaux_lus:
+        tableau["chevauche"] = ""
+        par_article[(tableau["texte"], tableau["numero"], tableau["tableau"])].append(tableau)
+    for liste in par_article.values():
+        for tableau in liste:
+            autres = [a["article"] for a in liste if a is not tableau
+                      and a["debut"] < (tableau["fin"] or EN_VIGUEUR)
+                      and tableau["debut"] < (a["fin"] or EN_VIGUEUR)]
+            tableau["chevauche"] = " ".join(autres)
 
 
 def _rangs(lignes: list[Ligne]) -> list[int]:
@@ -809,8 +828,8 @@ def _rangs(lignes: list[Ligne]) -> list[int]:
 COLONNES = {
     "textes": ("texte", "versant", "numero", "nature", "signature", "debut", "fin", "titre",
                "tableaux_lus", "non_lus"),
-    "tableaux": ("texte", "article", "numero", "tableau", "debut", "fin", "versions", "colonnes",
-                 "lignes", "intro", "entete"),
+    "tableaux": ("texte", "article", "numero", "tableau", "debut", "fin", "versions", "chevauche",
+                 "colonnes", "lignes", "intro", "entete"),
     "lignes": ("texte", "article", "tableau", "ligne", "groupe", "echelon", "rang", "duree",
                "duree_moyenne", "duree_minimale", "duree_maximale", "condition"),
     "non_lus": ("texte", "article", "numero", "tableau", "debut", "fin", "motif"),
@@ -824,8 +843,11 @@ ENTETES = {
     "tableaux": "Chaque tableau de durées d'échelon : l'article et la période où il le porte "
                 "(fin exclue : le jour où la version suivante entre en vigueur ; vide : en "
                 "vigueur), son rang dans l'article, les versions de l'article qui le redisent "
-                "pendant cette période (article : la première), ses colonnes dans l'ordre de l'en-tête "
-                "(unique, moyenne, minimale, maximale), la phrase qui l'annonce et son en-tête.",
+                "pendant cette période (article : la première), les tableaux du même article "
+                "et du même rang dont la période, aux dates du LEGI, recouvre la sienne "
+                "(chevauche : leur première version ; le rattachement aux grilles choisit), ses "
+                "colonnes dans l'ordre de l'en-tête (unique, moyenne, minimale, maximale), la "
+                "phrase qui l'annonce et son en-tête.",
     "lignes": "Chaque ligne d'un tableau : groupe (le grade, le libellé écrit avant elle), "
               "l'échelon, son rang (le numéro ; le spécial au-dessus du plus haut de son grade, "
               "l'exceptionnel au-dessus encore), les durées en mois que le tableau écrit (duree : "
