@@ -400,3 +400,16 @@ Les rattachements à faire sans deviner, que B3 dresse ; la règle du décret qu
 modifie un seul statut, nommé dans son titre ; les 40 cas `manque` et les 87
 `non_lu`, à lire ; une relecture indépendante de ces corrections, contre les
 sources.
+
+*Renvoi, le 3 novembre 2026.* La relecture R-B3-bis
+(`2026-11-03-relecture-corrections-r-b3.md`) a relevé deux citations de cette
+note qui ne sont pas mot pour mot. Au LEGI, les notices du n° 67-91
+s'intitulent « Décret n°67-91 du 20 janvier 1967 relatif au statut particulier
+des géomètres de l'institut géographique national *IGN* »
+(LEGITEXT000006061489, jusqu'au 2012-01-01) et « Décret n° 67-91 du 20 janvier
+1967 relatif au statut particulier des géomètres de l' Institut national de
+l'information géographique et forestière » (LEGITEXT000024751171, depuis le
+2012-01-01) ; au Noyau RH, le corps 00409 s'intitule « Ingénieurs des systèmes
+d'information et de communication du ministère de l'intérieur ». Les
+corrections de ses autres écarts sont dans
+`2026-11-03-corrections-de-la-relecture-r-b3-bis.md`.

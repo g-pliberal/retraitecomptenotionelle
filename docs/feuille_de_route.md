@@ -7116,14 +7116,14 @@ l'inviterait aussi à relire le dépôt.
 
 **Reprise, au 3 novembre 2026.** Périmètre : les trois versants et les
 militaires. Entrés et certifiés : grilles, barème depuis 1983, reclassements
-(450 tableaux), durées d'échelon (778). Chaînage (étape 3) relu par R-B3, corrigé
-par B3-bis : 5 reclassements faux défaits, le corps cherché au seul statut que
-la phrase nomme ; noyau lu par corps et par grades, citations datées ; 498 des
-1 675 grades de durées et 13 des 862 groupes de reclassement rattachés, relus à
-la source ; `a_lire_au_jorf.csv` : 137 abîmés, 87 non lus, 40 manquants. Reste :
-relire ces corrections ; rattacher plus sans deviner (date qui ouvre la phrase,
-grade avant l'en-tête, décret modifiant un seul statut) ; les 97 versions hors du
-motif ; les refus, au JORF ; le minimum de traitement. Détail : note B3-bis.
+(450 tableaux), durées d'échelon (778). Chaînage (étape 3) relu deux fois
+(R-B3, R-B3-bis), corrigé par B3-ter : échelons comparés date par date et par
+nature, décret commun des infirmiers rattaché à chacun de ses corps ; 511 des
+1 675 grades de durées et 13 des 862 groupes de reclassement rattachés. Reste,
+test d'abord : relire B3-ter ; rattacher plus sans deviner (sommet d'échelon non
+écrit, autres décrets communs, n° 60-403 par numéro et date, date qui ouvre la
+phrase) ; les dates d'effet que les lecteurs ne lisent pas ; les 97 versions hors
+du motif ; les refus, au JORF ; le minimum de traitement. Détail : note B3-ter.
 
 
 **D'où elle vient.** La demande du propriétaire, le 12 octobre 2026 : aller
