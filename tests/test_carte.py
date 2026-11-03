@@ -261,6 +261,7 @@ LUES_AU_DROIT = frozenset("""
     majoration_enfants_agirc_arrco coefficients_anticipation_agirc_arrco
     taux_plein_a_soixante_cinq_ans
     assiette_rco_independants
+    cavec_minoration_age_seul carpv_minoration_age_seul
 """.split())
 
 

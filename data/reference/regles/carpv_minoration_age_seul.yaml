@@ -3,30 +3,234 @@ id: carpv_minoration_age_seul
 intitule: >-
   Régime complémentaire de la CARPV : taux plein à 65 ans, anticipation dès 60 ans
   à « 1,25 % par trimestre manquant avant l'âge de soixante-cinq ans », que la durée
-  n'annule pas ; aucune majoration pour report ; bonification de 10 % pour trois
-  enfants.
+  n'annule pas ; l'inapte à 60 ans sans minoration. Statuts de 2021, en vigueur le
+  1er janvier 2022, puis règlement de 2026 ; la même règle supposée avant 2022.
+domaine: decote_surcote
 regimes: [carpv_complementaire]
+etape: liquider_chaque_regime
+face: droit
 etat: approchee
+lit:
+- >-
+  l'âge du vétérinaire « à l'entrée en jouissance », au premier jour du mois qui suit
+  sa demande, et les trimestres qui le séparent de soixante-cinq ans
+- >-
+  l'inaptitude à l'exercice de toute activité professionnelle rémunérée, que valide le
+  médecin conseil et confirme la commission d'inaptitude
+- la date d'effet de la pension, qui choisit la rédaction des statuts ou du règlement
+ecrit:
+- >-
+  le coefficient d'anticipation qui réduit la pension complémentaire, de 0,75 à 60 ans
+  à un à 65 ans, que `abattement_points` rend à `liquider_chaque_regime`
+dates_qui_decident:
+- liquidation.date_effet
+versions:
+- id: statuts_d_avant_2022
+  statut: supposee
+  hypothese: >-
+    les pensions qui prennent effet avant le 1er janvier 2022 relèvent des statuts du
+    régime complémentaire de la section professionnelle des vétérinaires, titre II,
+    leur article 21, devenu 13 en 2014 (arrêté du 16 avril 2014, JORFARTI000028939421 :
+    à l'article 14, « les mots : « article 21 » sont remplacés par les mots : « article
+    13 » »), que le Journal officiel ne publie qu'en partie. Seul en est lu le sixième
+    alinéa de l'article 21, dans la rédaction de l'arrêté du 11 janvier 2011
+    (JORFARTI000023448554, publié le 19 janvier 2011) : « Les invalides reconnus inaptes
+    à l'exercice de toute activité professionnelle rémunérée en application de l'article
+    L. 643-4 du code de la sécurité sociale et titulaires de la rente d'invalidité à 100
+    % en application des articles 17 à 20 bis du titre III peuvent demander à
+    bénéficier de la retraite à 60 ans sans minoration » — une minoration existait donc
+    avant 65 ans, et une retraite à 60 ans. La fiche présume la règle de 2021
+  fiabilite: >-
+    faible pour le taux, que rien ne date avant 2022 ; moyenne pour la minoration
+    elle-même et l'âge de 60 ans, que l'alinéa de 2011 suppose
+  bornes:
+    liquidation.date_effet: [null, 2022-01-01]
+  contenu:
+    parametres:
+      age_ouverture: 60
+      age_taux_plein: 65
+      decote_par_trimestre: 0.0125
+    droit: celui de la version statuts_de_2021, présumé
+  exemples: aucun trouvé
+- id: statuts_de_2021
+  statut: lue
+  textes:
+  - id: JORFARTI000044220745
+    article: >-
+      statuts de la section professionnelle des vétérinaires, dans la rédaction de
+      l'annexe de l'arrêté du 18 octobre 2021, article 34
+    en_vigueur: 2022-01-01
+    publie_le: 2021-10-19
+    citation: >-
+      « La pension de retraite complémentaire est attribuée à taux plein à l'âge de
+      soixante-cinq ans. « Cependant, les adhérents remplissant les conditions de
+      l'article 33 peuvent demander à bénéficier de leur pension de retraite
+      complémentaire dès leur soixantième anniversaire. Dans ce cas, la pension de
+      retraite complémentaire est liquidée à un taux réduit par application d'un
+      coefficient d'anticipation fixé suivant l'âge à l'entrée en jouissance, soit 1,25
+      % par trimestre manquant avant l'âge de soixante-cinq ans. « Les adhérents reconnus
+      inaptes à l'exercice de toute activité professionnelle rémunérée peuvent demander
+      à bénéficier de la pension de retraite complémentaire à soixante ans sans
+      minoration. »
+  - id: JORFARTI000044220741
+    article: arrêté du 18 octobre 2021, article 2
+    en_vigueur: 2022-01-01
+    publie_le: 2021-10-19
+    citation: >-
+      « Les modifications des statuts prévues par le présent arrêté entrent en vigueur
+      le 1er janvier 2022. »
+  nee_de: JORFARTI000044220745
+  bornes:
+    liquidation.date_effet: [2022-01-01, 2026-07-18]
+  contenu:
+    parametres:
+      age_ouverture: 60
+      age_taux_plein: 65
+      decote_par_trimestre: 0.0125
+    droit: >-
+      1,25 % par trimestre manquant avant 65 ans, dès 60 ans ; aucune durée d'assurance
+      n'y entre
+    conditions: >-
+      avoir versé les cotisations exigibles des régimes de la caisse (article 33) ;
+      l'inapte à 60 ans sans minoration ; la pension prend effet « au premier jour du
+      mois qui suit la demande » (article 35)
+  exemples: aucun trouvé
+- id: reglement_de_2026
+  statut: lue
+  textes:
+  - id: JORFARTI000054436031
+    article: >-
+      règlement du régime d'assurance vieillesse complémentaire de la section, annexe I
+      de l'arrêté du 10 juillet 2026, article 2
+    en_vigueur: 2026-07-18
+    publie_le: 2026-07-17
+    citation: >-
+      « La pension de retraite complémentaire est attribuée à taux plein à l'âge de
+      soixante-cinq ans. « Cependant, les adhérents remplissant les conditions de
+      l'article 1 er peuvent demander à bénéficier de leur pension de retraite
+      complémentaire dès leur soixantième anniversaire. Dans ce cas, la pension de
+      retraite complémentaire est liquidée à un taux réduit par application d'un
+      coefficient d'anticipation fixé suivant l'âge à l'entrée en jouissance, soit 1,25
+      % par trimestre manquant avant l'âge de soixante-cinq ans. « Les adhérents reconnus
+      inaptes à l'exercice de toute activité professionnelle rémunérée peuvent demander
+      à bénéficier de la pension de retraite complémentaire à soixante ans sans
+      minoration. »
+  - id: JORFARTI000054153484
+    article: >-
+      décret n° 2026-418 du 29 mai 2026, article 6, 4° : le premier alinéa de l'article
+      4 du décret du 21 octobre 1950 renvoie les conditions d'attribution et de service
+      à « un règlement de la section professionnelle des vétérinaires, approuvé par
+      arrêté du ministre chargé de la sécurité sociale »
+    en_vigueur: 2026-07-01
+    publie_le: 2026-05-31
+  - id: JORFARTI000054153813
+    article: décret n° 2026-418, article 30
+    en_vigueur: 2026-07-01
+    publie_le: 2026-05-31
+    citation: « Le présent décret entre en vigueur le 1 er juillet 2026. »
+  nee_de: JORFARTI000054436031
+  bornes:
+    liquidation.date_effet: [2026-07-18, null]
+  contenu:
+    parametres:
+      age_ouverture: 60
+      age_taux_plein: 65
+      decote_par_trimestre: 0.0125
+    droit: la règle de 2021, mot pour mot, que le règlement reprend des statuts
+    conditions: >-
+      celles de 2021 (articles 1er et 3) ; du 1er au 17 juillet 2026, le décret renvoie
+      à un règlement que l'arrêté n'approuve qu'au 18 : la fiche garde les statuts
+      jusque-là, de même règle (ce que le texte ne tranche pas)
+  exemples: aucun trouvé
+approximations:
+- version: [statuts_d_avant_2022]
+  textes: >-
+    statuts du régime complémentaire, titre II, article 21 puis 13, au seul Bulletin
+    officiel hors du sixième alinéa de 2011
+  ecart: >-
+    Le modèle sert avant 2022 la règle de 2021 — 60 ans, 65 ans, 1,25 % par trimestre
+    manquant —, dont nul texte lu ne donne le taux : l'alinéa de 2011 ne dit que la
+    minoration et la retraite à 60 ans.
+  effet: non mesuré
+- version: [statuts_d_avant_2022, statuts_de_2021, reglement_de_2026]
+  textes: >-
+    statuts, article 21, sixième alinéa, dans la rédaction de 2011 ; statuts de 2021,
+    article 34 ; règlement de 2026, article 2
+  ecart: >-
+    Le modèle minore l'inapte comme les autres : la fiche `inaptitude_au_travail` ne
+    nomme pas la CARPV parmi les régimes qui le servent au taux plein. Les statuts le
+    servent à 60 ans sans minoration — depuis 2022, tout inapte ; de 2011 à 2021, au
+    moins l'invalide inapte titulaire de la rente d'invalidité à 100 %.
+  effet: >-
+    non mesuré dans la population ; pour l'inapte, toute la minoration de son âge : 20
+    trimestres × 1,25 % = 25 % de la pension complémentaire à 60 ans, 12 × 1,25 % = 15 %
+    à 62 ans
+- version: [statuts_de_2021, reglement_de_2026]
+  textes: statuts de 2021, article 41 ; règlement de 2026, article 9
+  ecart: >-
+    La réversion « supporte le même coefficient de minoration », sauf « si le décès de
+    l'adhérent se produit avant son soixante-cinquième anniversaire » : le conjoint
+    survivant la reçoit alors « sans minoration ». Le moteur applique le taux de
+    réversion à la retraite servie, coefficient compris (`droit/reversion.py`, sa
+    notice), quel que soit l'âge au décès.
+  effet: >-
+    non mesuré dans la population ; pour le conjoint survivant d'un vétérinaire parti à
+    62 ans et mort avant 65 ans, une réversion de 15 % trop basse
+textes_sans_effet:
+- id: JORFARTI000028939421
+  article: arrêté du 16 avril 2014, annexe, titre II
+  publie_le: 2014-05-17
+  motif: >-
+    une renumérotation des articles du régime complémentaire (l'article 21 cité devient
+    13) et la suppression des quatrième et cinquième alinéas de l'article 13, que
+    l'annexe ne reproduit pas : rien n'y montre un âge ni un taux
+- id: JORFARTI000031549970
+  article: arrêté du 2 novembre 2015, annexe
+  publie_le: 2015-12-01
+  motif: >-
+    la cotisation du titre II (articles 4, 12 et 13) et la date d'effet de la réversion
+    (article 21) ; rien de l'âge ni de la minoration
+- id: JORFARTI000033955892
+  article: arrêté du 23 janvier 2017, annexe
+  publie_le: 2017-01-31
+  motif: le titre III, l'invalidité-décès ; rien de la liquidation
+- id: JORFARTI000053142605
+  article: arrêté du 16 décembre 2025, annexe, article 50
+  publie_le: 2025-12-23
+  motif: les points gratuits de l'invalide ; rien de la liquidation
+reformes:
+- carpv_statuts_2021
 effet: >-
   La fiche écrivait la règle d'âge en laissant sa durée requise vide ; le moteur
   opposait la durée de la carrière, qui annulait la minoration : un vétérinaire
   parti à 64 ans avec sa durée ne perdait rien, là où la caisse lui retire 5 %.
   `decote_annulee_par_la_duree: false` sur toutes les périodes, et `majoration_enfants`
-  depuis 2022. Approximation : la règle d'âge est supposée la même avant 2021, comme
-  la fiche le faisait déjà ; la bonification n'est servie qu'à partir de 2022.
+  depuis 2022. Lue au droit le 3 novembre 2026 (action 130) : trois versions, la règle
+  des statuts de 2021, en vigueur le 1er janvier 2022, supposée avant ; l'inapte et la
+  réversion de qui meurt avant 65 ans sans minoration ne sont pas servis.
 sources:
-  lu_le: 2026-09-23
+  lu_le: 2026-11-03
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
-    Lire des statuts de la CARPV antérieurs à 2021 pour dater la bonification et
-    la règle d'âge.
+    Lire des statuts de la CARPV antérieurs à 2021, au Bulletin officiel (titre II,
+    article 21 puis 13), pour dater la règle d'âge, son taux et la bonification.
+  - >-
+    Comment la caisse compte un trimestre entamé : la pension prend effet au premier
+    jour d'un mois, et l'article dit « par trimestre manquant » sans dire l'arrondi ;
+    le modèle compte le trimestre entamé, comme R. 351-27 au régime général.
   lectures:
   - type: jorf
     reference: >-
-      Les deux textes lus dans l'index JORF du dépôt ; les modifications antérieures
-      (1999 à 2017) n'y portent que des titres ou des articles sans rapport.
-    date: 2026-09-23
+      Dans l'index JORF du dépôt, à jour au 3 novembre 2026 : les textes de la CARPV
+      depuis le décret n° 50-1318, cherchés à l'âge, à la minoration, à l'anticipation
+      et à l'inaptitude ; lus là où ils en parlent, et dans leur objet, les annexes des
+      arrêtés du 11 janvier 2011, du 16 avril 2014, des 18 février et 2 novembre 2015,
+      des 23 janvier et 3 août 2017 et du 16 décembre 2025 ; les articles 33 à 37 et 41
+      des statuts de 2021 et l'article 2 de leur arrêté ; les articles 6 et 30 du décret
+      n° 2026-418 ; l'arrêté du 10 juillet 2026 et les articles 1er à 4 et 9 de
+      son règlement. Avant 2010, l'index n'a des statuts que des titres et des analyses.
+    date: 2026-11-03
   - type: autre
     reference: >-
       CARPV, page « Comprendre vos cotisations et vos appels de cotisations » (classes
@@ -34,15 +238,6 @@ sources:
     url: >-
       https://www.carpv.fr/vos-retraites/comprendre-vos-cotisations-et-vos-appels-de-cotisations/
     date: 2026-09-23
-textes_a_rattacher:
-- reference: >-
-    statuts, articles 34 et 37, dans la rédaction de l'arrêté du 18 octobre 2021
-    (JORFTEXT000044220734)
-- reference: >-
-    règlement du régime, articles 2 et 5, approuvé par l'arrêté du 10 juillet 2026
-    (JORFTEXT000054436022)
-reformes:
-- carpv_statuts_2021
 code:
   interrupteurs:
     decote_annulee_par_la_duree: false
@@ -59,6 +254,7 @@ code:
     ageOuverture, ageTauxPlein ; moteur/js/droit/completer.js : completer,
     tauxMajorationEnfants
   parametres: >-
-    regimes/carpv_complementaire.yaml : age_ouverture, age_taux_plein,
-    decote_par_trimestre, avantages_non_contributifs
-  tests: [tests/test_sections_sante.py, tests/js/moteur.test.js]
+    contenu.parametres de chaque version : age_ouverture, age_taux_plein,
+    decote_par_trimestre ; regimes/carpv_complementaire.yaml : age_ouverture,
+    age_taux_plein, decote_par_trimestre, avantages_non_contributifs
+  tests: [tests/test_sections_sante.py, tests/test_sections_liberales.py, tests/js/moteur.test.js]

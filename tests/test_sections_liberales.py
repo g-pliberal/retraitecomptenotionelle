@@ -164,6 +164,63 @@ def test_la_cavec_majore_pour_trois_enfants_depuis_juillet_2025(simulateur):
     assert _majoration(resultat, "cavec_complementaire") == 0.0
 
 
+#: Les minorations à l'âge seul lues au droit le 3 novembre 2026 (action 130),
+#: et le régime que chacune minore.
+MINORATIONS_LUES_AU_DROIT = {
+    "cavec_minoration_age_seul": "cavec_complementaire",
+    "carpv_minoration_age_seul": "carpv_complementaire",
+}
+
+
+@pytest.mark.parametrize("fiche,regime", sorted(MINORATIONS_LUES_AU_DROIT.items()))
+def test_chaque_pension_minoree_porte_les_ages_et_le_taux_de_sa_version(
+        simulateur, fiche, regime):
+    """Statuts de la CAVEC (article 3.13 en 2008, article 12 en 2018, article
+    1.1.3 du règlement de 2026) et de la CARPV (article 34 en 2021, article 2
+    du règlement de 2026) : taux plein à 65 ans, liquidation dès 60 ans,
+    1,25 % par trimestre manquant, aucune durée n'y entrant. Chaque premier du
+    mois que couvre une version, de la création du régime à 2040, la période
+    qui liquide une pension prenant effet ce jour porte l'âge d'ouverture,
+    l'âge du taux plein et le taux que la version lit, et la durée n'y annule
+    pas la minoration."""
+    from datetime import date
+
+    from retraite_notionnelle.noyau import carte
+
+    caisse = simulateur.catalogue[regime]
+    versions = carte.fiches()[fiche].get("versions") or []
+    assert versions
+    for version in versions:
+        lus = version["contenu"]["parametres"]
+        debut, fin = version["bornes"]["liquidation.date_effet"]
+        jour = debut or date(caisse.creation, 1, 1)
+        while jour < (fin or date(2041, 1, 1)):
+            periode = caisse.periode_a_l_effet(jour.isoformat())
+            assert (periode.age_ouverture, periode.age_taux_plein,
+                    periode.decote_par_trimestre) == (
+                lus["age_ouverture"], lus["age_taux_plein"],
+                lus["decote_par_trimestre"]), (version["id"], jour)
+            assert periode.decote_annulee_par_la_duree is False, (version["id"], jour)
+            jour = date(jour.year + jour.month // 12, jour.month % 12 + 1, 1)
+
+
+@pytest.mark.parametrize("fiche", sorted(MINORATIONS_LUES_AU_DROIT))
+def test_chaque_version_lue_commence_quand_son_texte_entre_en_vigueur(fiche):
+    """Une version lue naît d'un texte (`nee_de`) qu'elle cite parmi les siens,
+    et commence le jour où il entre en vigueur : le 1er janvier 2022 que
+    l'arrêté du 18 octobre 2021 fixe aux statuts de la CARPV (article 2), le
+    lendemain de leur publication pour les arrêtés qui n'en fixent pas."""
+    from retraite_notionnelle.noyau import carte
+
+    lues = [v for v in carte.fiches()[fiche].get("versions") or []
+            if v.get("statut", "lue") == "lue"]
+    assert lues
+    for version in lues:
+        texte = next(t for t in version["textes"] if t.get("id") == version["nee_de"])
+        assert version["bornes"]["liquidation.date_effet"][0] == texte["en_vigueur"], (
+            version["id"])
+
+
 # -- la Cipav -------------------------------------------------------------------
 
 

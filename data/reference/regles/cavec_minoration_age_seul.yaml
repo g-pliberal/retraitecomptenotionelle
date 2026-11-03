@@ -4,9 +4,286 @@ intitule: >-
   Régime complémentaire de la CAVEC : liquidation « à 65 ans à taux plein ; entre
   60 et 65 ans, avec application d'un abattement définitif de 1,25 % par trimestre
   manquant », sans condition de durée d'assurance, pour toutes les générations ;
-  65 ans depuis 1983 au moins.
+  à 60 ans sans abattement au titre de l'inaptitude. Statuts de 2008, de 2018,
+  règlement de 2026 ; la même règle supposée avant 2008.
+domaine: decote_surcote
 regimes: [cavec_complementaire]
+etape: liquider_chaque_regime
+face: droit
 etat: approchee
+lit:
+- >-
+  l'âge de l'expert-comptable ou du commissaire aux comptes à la date d'effet de sa
+  pension, au premier jour du trimestre civil qui suit sa demande, et les trimestres
+  qui le séparent de 65 ans
+- >-
+  l'inaptitude : depuis 2008, la retraite du régime de base de la CNAVPL liquidée à
+  ce titre ; depuis le 28 juin 2019, l'inaptitude au travail, que valide le médecin
+  conseil et confirme la commission d'inaptitude
+- la date d'effet de la pension, qui choisit la rédaction des statuts ou du règlement
+ecrit:
+- >-
+  le coefficient qui affecte les points acquis par cotisations et par rachat, de 0,75 à
+  60 ans à un à 65 ans, que `abattement_points` rend à `liquider_chaque_regime`
+dates_qui_decident:
+- liquidation.date_effet
+versions:
+- id: statuts_d_avant_2008
+  statut: supposee
+  hypothese: >-
+    les pensions qui prennent effet avant le 2 mars 2008 relèvent des statuts approuvés
+    par l'arrêté du 23 mai 1953 et des arrêtés qui les ont modifiés, que le Journal
+    officiel ne publie qu'en titre ou en analyse et le Bulletin officiel du ministère en
+    entier (« sera publié intégralement au Bulletin officiel », arrêté du 13 mai 1994,
+    JORFARTI000001391556) ; l'arrêté du 22 février 2008 « rédige » l'article 3.13, qui
+    existait donc avant lui. La fiche présume la règle de 2008 : la caisse écrit
+    qu'en 1983 ses administrateurs « choisissent de ne pas abaisser l'âge de départ en
+    retraite à 60 ans (comme annoncé pour le régime général […]). Il reste et restera
+    fixé à 65 ans » (« Depuis 1949, une histoire d'avenir, le livre des 70 ans »)
+  fiabilite: >-
+    faible pour le taux, que rien ne date avant 2008 ; moyenne pour l'âge du taux plein,
+    65 ans, que la caisse dit gardé depuis 1983
+  bornes:
+    liquidation.date_effet: [null, 2008-03-02]
+  contenu:
+    parametres:
+      age_ouverture: 60
+      age_taux_plein: 65
+      decote_par_trimestre: 0.0125
+    droit: celui de la version statuts_de_2008, présumé
+  exemples: aucun trouvé
+- id: statuts_de_2008
+  statut: lue
+  textes:
+  - id: JORFARTI000018197778
+    article: >-
+      statuts de la section professionnelle des experts-comptables et des commissaires
+      aux comptes, article 3.13, dans la rédaction de l'annexe de l'arrêté du 22 février
+      2008
+    en_vigueur: 2008-03-02
+    publie_le: 2008-03-01
+    citation: >-
+      « La retraite est liquidée sur demande expresse par lettre recommandée par
+      l'intéressé : ― à 65 ans à taux plein ; ― entre 60 et 65 ans, avec application
+      d'un abattement définitif de 1,25 % par trimestre manquant. L'abattement s'applique
+      au nombre de points acquis ; ― à 60 ans lorsque la retraite du régime de base de la
+      CNAVPL est liquidée au titre de l'inaptitude. »
+  - id: JORFARTI000018197775
+    article: >-
+      arrêté du 22 février 2008, article 1er, qui approuve les articles 3.1 à 3.20 du
+      régime de retraite complémentaire, sans date d'effet propre
+    en_vigueur: 2008-03-02
+    publie_le: 2008-03-01
+  nee_de: JORFARTI000018197778
+  bornes:
+    liquidation.date_effet: [2008-03-02, 2018-09-05]
+  contenu:
+    parametres:
+      age_ouverture: 60
+      age_taux_plein: 65
+      decote_par_trimestre: 0.0125
+    droit: >-
+      un abattement définitif de 1,25 % par trimestre manquant entre 60 et 65 ans, sur
+      les points acquis ; aucune durée d'assurance n'y entre, et aucune liquidation avant
+      60 ans
+    conditions: >-
+      à 60 ans sans abattement « lorsque la retraite du régime de base de la CNAVPL est
+      liquidée au titre de l'inaptitude » ; la retraite est liquidée « à dater du premier
+      jour du trimestre civil suivant la demande » (article 3.15)
+  exemples: aucun trouvé
+- id: statuts_de_2018
+  statut: lue
+  textes:
+  - id: JORFARTI000037363871
+    article: >-
+      statuts de la section professionnelle des experts-comptables et des commissaires
+      aux comptes, que l'annexe de l'arrêté du 20 août 2018 « remplace », partie 2,
+      article 12
+    en_vigueur: 2018-09-05
+    publie_le: 2018-09-04
+    citation: >-
+      « La retraite est liquidée sur demande de l'affilié adressée par lettre
+      recommandée : « - à 65 ans à taux plein ; « - entre 60 et 65 ans, avec application
+      d'un abattement définitif de 1,25 % par trimestre manquant ; « L'abattement
+      s'applique au nombre de points acquis par cotisations et par rachat ; « - à 60 ans
+      lorsque la retraite du régime de base de la CNAVPL est liquidée au titre de
+      l'inaptitude. « La demande de retraite du régime complémentaire au titre de
+      l'inaptitude doit faire l'objet d'une présentation et d'une validation par le
+      médecin conseil. « Cette décision doit être confirmée par la commission
+      d'inaptitude. « Cette retraite est liquidée à taux plein. »
+  nee_de: JORFARTI000037363871
+  bornes:
+    liquidation.date_effet: [2018-09-05, 2019-06-28]
+  contenu:
+    parametres:
+      age_ouverture: 60
+      age_taux_plein: 65
+      decote_par_trimestre: 0.0125
+    droit: >-
+      la règle de 2008, l'abattement portant sur les points acquis « par cotisations et
+      par rachat »
+    conditions: >-
+      l'inapte de 2008, dont la demande est validée par le médecin conseil et confirmée
+      par la commission d'inaptitude
+  exemples: aucun trouvé
+- id: inaptitude_au_travail_2019
+  statut: lue
+  textes:
+  - id: JORFARTI000038689131
+    article: >-
+      annexe de l'arrêté du 19 juin 2019, II, 7°, qui modifie le cinquième alinéa de
+      l'article 12 de la partie 2 des statuts
+    en_vigueur: 2019-06-28
+    publie_le: 2019-06-27
+    citation: >-
+      7° Le cinquième alinéa de l'article 12 est ainsi modifié : a) Les mots : « lorsque
+      la retraite du régime de base de la CNAVPL est liquidée » sont supprimés ; b) Après
+      le mot : « inaptitude » sont insérés les mots : « au travail »
+  - id: JORFARTI000037363871
+    article: statuts de 2018, partie 2, article 12, ses deux premières phrases
+    en_vigueur: 2018-09-05
+    publie_le: 2018-09-04
+  nee_de: JORFARTI000038689131
+  bornes:
+    liquidation.date_effet: [2019-06-28, 2026-07-18]
+  contenu:
+    parametres:
+      age_ouverture: 60
+      age_taux_plein: 65
+      decote_par_trimestre: 0.0125
+    droit: la règle de 2018
+    conditions: >-
+      à 60 ans « au titre de l'inaptitude au travail », que la caisse reconnaît
+      elle-même, sans plus attendre la liquidation du régime de base à ce titre
+  exemples: aucun trouvé
+- id: reglement_de_2026
+  statut: lue
+  textes:
+  - id: LEGIARTI000054437585
+    article: >-
+      règlement du régime d'assurance vieillesse complémentaire de la section, approuvé
+      par l'arrêté du 10 juillet 2026, article 1.1.3 (au Journal officiel,
+      JORFARTI000054435943)
+    en_vigueur: 2026-07-18
+    publie_le: 2026-07-17
+    citation: >-
+      « La retraite est liquidée sur demande du cotisant adressée soit de façon
+      dématérialisée, soit par tous moyens donnant date certaine à sa réception par la
+      CAVEC. « - à 65 ans à taux plein ; « - entre 60 et 65 ans, avec application d'un
+      abattement définitif de 1,25 % par trimestre manquant, l'abattement s'applique au
+      nombre de points acquis, par cotisations et par rachat ; « - à 60 ans au titre de
+      l'inaptitude au travail. »
+  - id: JORFARTI000054153497
+    article: >-
+      décret n° 2026-418 du 29 mai 2026, article 8, 7° : l'article 5 du décret du 21 mai
+      1953 renvoie les conditions d'attribution et de service à « un règlement de la
+      section professionnelle des experts comptables et des commissaires aux comptes,
+      approuvé par arrêté du ministre chargé de la sécurité sociale »
+    en_vigueur: 2026-07-01
+    publie_le: 2026-05-31
+  - id: JORFARTI000054153813
+    article: décret n° 2026-418, article 30
+    en_vigueur: 2026-07-01
+    publie_le: 2026-05-31
+    citation: « Le présent décret entre en vigueur le 1 er juillet 2026. »
+  nee_de: LEGIARTI000054437585
+  bornes:
+    liquidation.date_effet: [2026-07-18, null]
+  contenu:
+    parametres:
+      age_ouverture: 60
+      age_taux_plein: 65
+      decote_par_trimestre: 0.0125
+    droit: la règle de 2018, mot pour mot, que le règlement reprend des statuts
+    conditions: >-
+      l'inapte de 2019 ; du 1er au 17 juillet 2026, le décret renvoie à un règlement que
+      l'arrêté n'approuve qu'au 18 : la fiche garde les statuts jusque-là, de même règle
+      (ce que le texte ne tranche pas)
+  exemples: aucun trouvé
+approximations:
+- version: [statuts_d_avant_2008]
+  textes: >-
+    statuts approuvés par l'arrêté du 23 mai 1953 et leurs modifications, au seul
+    Bulletin officiel
+  ecart: >-
+    Le modèle sert avant 2008 la règle de 2008 — 60 ans, 65 ans, 1,25 % par trimestre
+    manquant —, que nul texte lu ne date : la caisse ne dit que l'âge du taux plein,
+    65 ans, gardé en 1983.
+  effet: non mesuré
+- version: [statuts_de_2008, statuts_de_2018, inaptitude_au_travail_2019, reglement_de_2026]
+  textes: >-
+    statuts de 2008, article 3.13 ; statuts de 2018, partie 2, article 12, et sa
+    rédaction de 2019 ; règlement de 2026, article 1.1.3
+  ecart: >-
+    Le modèle abat l'inapte comme les autres : la fiche `inaptitude_au_travail` ne nomme
+    pas la CAVEC parmi les régimes qui le servent au taux plein, et `abattement_regime_de_base`
+    ne le dispense donc pas. Les statuts le servent à 60 ans sans abattement.
+  effet: >-
+    non mesuré dans la population ; pour l'inapte, toute la minoration de son âge : 20
+    trimestres × 1,25 % = 25 % de la pension complémentaire à 60 ans, 12 × 1,25 % = 15 %
+    à 62 ans
+- version: [statuts_de_2008, statuts_de_2018, inaptitude_au_travail_2019, reglement_de_2026]
+  textes: >-
+    statuts de 2008, article 3.17 ; statuts de 2018, partie 2, article 16 ; règlement de
+    2026, article 1.2.2
+  ecart: >-
+    Les points de l'adhérent décédé « sont réversibles à 60 % sur la tête du conjoint
+    survivant âgé d'au moins 60 ans tel qu'il est défini à l'article 3.16, sans
+    application du coefficient de réduction prévu à l'article 3.13 » (2008) ; depuis
+    2018, 50 % des points acquis avant le 1er janvier 2009 et 60 % des autres, toujours
+    « sans application du coefficient de réduction » (article 12, puis 1.1.3). Le moteur
+    applique le taux de réversion à la retraite servie, coefficient compris
+    (`droit/reversion.py`, sa notice).
+  effet: >-
+    non mesuré dans la population ; pour le conjoint survivant d'un expert-comptable
+    parti à 62 ans, une réversion de 15 % trop basse : sur des points d'après 2009,
+    0,60 × 0,85 = 0,51 des points au lieu de 0,60
+textes_sans_effet:
+- id: JORFARTI000023172861
+  article: arrêté du 26 novembre 2010, annexe
+  publie_le: 2010-12-07
+  motif: le siège, l'affiliation et la gouvernance ; rien de la liquidation
+- id: JORFARTI000025395367
+  article: arrêté du 9 février 2012, annexe, article 3.12
+  publie_le: 2012-02-23
+  motif: >-
+    l'article 3.12 ajoute que le montant est « diminué, le cas échéant, par le
+    coefficient de réduction prévu à l'article 3-13 », ce que l'article 3.13 disait
+    déjà ; l'article 3.14 touche la majoration, non l'abattement
+- id: JORFARTI000025687514
+  article: arrêté du 27 mars 2012, annexe
+  publie_le: 2012-04-14
+  motif: l'affiliation et la classe de cotisation ; rien de la liquidation
+- id: JORFARTI000028104499
+  article: arrêté du 7 octobre 2013, annexe
+  publie_le: 2013-10-22
+  motif: la gouvernance et le régime invalidité-décès
+- id: JORFARTI000029613769
+  article: arrêté du 7 octobre 2014, annexe, article 3.5
+  publie_le: 2014-10-21
+  motif: l'assiette de la cotisation
+- id: JORFARTI000049880543
+  article: arrêté du 2 juillet 2024, annexe, II
+  publie_le: 2024-07-05
+  motif: >-
+    les articles 3, 5, 10, 14, 15 et 17 du régime complémentaire, la cotisation, le
+    versement et la réversion ; l'article 12 n'y est pas
+- id: JORFARTI000051849616
+  article: arrêté du 4 juillet 2025, annexe, article 12, premier alinéa
+  publie_le: 2025-07-06
+  motif: >-
+    « par lettre recommandée » devient « soit de façon dématérialisée, soit par tous
+    moyens donnant date certaine à sa réception par la CAVEC » : la forme de la demande ;
+    la majoration de l'article 13 relève de la fiche `surcote_par_age_seul`
+- id: JORFARTI000053142594
+  article: arrêté du 16 décembre 2025, annexe
+  publie_le: 2025-12-23
+  motif: les statuts généraux et le capital décès
+reformes:
+- cavec_report_2008
+- woerth_2010
+- reforme_2023
+- cavec_report_2026
 effet: >-
   La note de la fiche disait la règle, mais la période laissait la durée annuler
   la minoration, et lisait avant 2008 les âges du régime général : un expert-comptable
@@ -14,23 +291,31 @@ effet: >-
   15 %. Depuis le 23 septembre 2026, ouverture à 60 ans et taux plein à 65 ans pour
   toutes les générations, `decote_annulee_par_la_duree: false` partout ; la loi
   de 2010 et celle de 2023 sont déclarées `non_appliquee` à la section ; tenu par
-  tests/test_sections_liberales.py. Approximation : avant 2008, le taux de l'abattement
-  n'est pas connu, et celui de 2008 en tient lieu.
+  tests/test_sections_liberales.py. Lue au droit le 3 novembre 2026 (action 130) :
+  cinq versions, la règle la même de 2008 à 2026 ; avant 2008, celle de 2008 en tient
+  lieu ; l'inapte et la réversion sans abattement ne sont pas servis.
 sources:
-  lu_le: 2026-09-23
+  lu_le: 2026-11-03
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
     Dater le taux de l'abattement d'avant 2008, que seuls les statuts publiés au
     Bulletin officiel portent.
+  - >-
+    Comment la caisse compte un trimestre entamé : la pension prend effet au premier
+    jour d'un trimestre civil, l'âge n'y tombe pas toujours sur un trimestre entier, et
+    les statuts disent « par trimestre manquant » sans dire l'arrondi ; le modèle compte
+    le trimestre entamé, comme R. 351-27 au régime général.
   lectures:
   - type: jorf
     reference: >-
-      L'arrêté de 2008, ceux qui l'ont modifié jusqu'au 4 juillet 2025, l'arrêté
-      du 10 juillet 2026 et l'article 8 du décret n° 2026-418, lus dans l'index
-      JORF du dépôt : ni la loi de 2010 ni celle de 2023 n'y déplacent les âges
-      de la section.
-    date: 2026-09-23
+      Dans l'index JORF du dépôt, à jour au 3 novembre 2026 : l'arrêté du 22 février
+      2008 et ses articles ; ceux du 26 novembre 2010, des 9 février et 27 mars 2012,
+      des 7 octobre 2013 et 2014, du 20 août 2018, du 19 juin 2019, du 2 juillet 2024,
+      du 4 juillet 2025 et du 16 décembre 2025, leurs annexes ; les articles 8 et 30 du
+      décret n° 2026-418 ; l'arrêté du 10 juillet 2026 et son règlement, aussi lu dans
+      l'index LEGI. Avant 2008, l'index n'a des statuts que des titres et des analyses.
+    date: 2026-11-03
   - type: autre
     reference: >-
       CAVEC, « Depuis 1949, une histoire d'avenir, le livre des 70 ans » : en 1983,
@@ -41,20 +326,6 @@ sources:
     url: >-
       https://www.cavec.fr/wp-content/uploads/Cavec-depuis-1949-une-histoire-davenir-le-livre-des-70-ans.pdf
     date: 2026-09-23
-textes_a_rattacher:
-- reference: >-
-    statuts, article 3.13, approuvés par l'arrêté du 22 février 2008 (JORFARTI000018197778)
-- reference: >-
-    statuts dans leurs rédactions de 2018 à 2025, et règlement du régime approuvé
-    par l'arrêté du 10 juillet 2026 (LEGIARTI000054437585)
-- reference: >-
-    décret du 21 mai 1953, dans la rédaction de l'article 8 du décret n° 2026-418
-    (JORFARTI000054153497)
-reformes:
-- cavec_report_2008
-- woerth_2010
-- reforme_2023
-- cavec_report_2026
 code:
   interrupteurs:
     decote_annulee_par_la_duree: false
@@ -69,6 +340,7 @@ code:
     decoteOpposable, trimestresDeDecote ; moteur/js/droit/ouvrir.js : ageOuverture,
     ageTauxPlein
   parametres: >-
-    regimes/cavec_complementaire.yaml : age_ouverture, age_taux_plein,
-    decote_par_trimestre
+    contenu.parametres de chaque version : age_ouverture, age_taux_plein,
+    decote_par_trimestre ; regimes/cavec_complementaire.yaml : age_ouverture,
+    age_taux_plein, decote_par_trimestre
   tests: [tests/test_sections_liberales.py]
