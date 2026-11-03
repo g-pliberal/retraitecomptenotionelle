@@ -161,6 +161,26 @@ def test_la_preuve_article_cite_les_versions_en_vigueur_sur_la_periode(durees):
     assert "LEGIARTI000051351757" in ligne["preuve"]
 
 
+def test_la_preuve_dit_pourquoi_la_grille_du_meme_nom_est_ecartee(durees):
+    # Relecture R-B3, point 1 c. Décret n° 2021-1264 (LEGITEXT000044130353) : son
+    # art. 1 (LEGIARTI000044130360) fixe une « Classe supérieure » de dix échelons
+    # pour « les corps de pédicures-podologues, ergothérapeutes, psychomotriciens et
+    # orthoptistes », son art. 2 (LEGIARTI000044130362) une « Classe supérieure » de
+    # neuf pour « les corps de masseurs-kinésithérapeutes et d'orthophonistes ». Le
+    # tableau 2 de durées du n° 2015-1048 (LEGIARTI000044133226) se rattache à la
+    # première, le tableau 3 à la seconde : les échelons seuls les départagent, et
+    # la preuve le dit.
+    for tableau, gardee, ecartee in (("2", "classe-superieure-article-1",
+                                      "classe-superieure-article-2"),
+                                     ("3", "classe-superieure-article-2",
+                                      "classe-superieure-article-1")):
+        (ligne,) = [d for d in durees if d["article"] == "LEGIARTI000044133226"
+                    and d["tableau"] == tableau and d["statut"] == "rattache"]
+        assert ligne["grille"] == gardee
+        assert f"la grille {ecartee}" in ligne["preuve"] and "écartée" in ligne["preuve"]
+        assert "échelons" in ligne["preuve"].split(ecartee)[1]
+
+
 def test_un_texte_commun_a_plusieurs_corps_ne_rattache_pas_sur_le_seul_libelle(durees):
     # Décret n° 95-370 (agriculture), art. 25 (LEGIARTI000034773631) : « Ingénieur
     # de recherche hors classe : Echelon spécial 4e échelon - 3e échelon 3 ans

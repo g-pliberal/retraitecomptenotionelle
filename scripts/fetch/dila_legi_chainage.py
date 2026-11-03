@@ -429,6 +429,7 @@ def _candidats_legi(depot: Depot, tableau: dict, groupe: str, rangs: set[int]):
                         + (f"le n° {numero}" if numero else "ce texte, qui n'a pas de numéro")))
         return prouves, raisons
     cle = normaliser(groupe)
+    ecartees: list[tuple[str, str, str, str, str]] = []
     for e, visa in sorted(visants.items()):
         statutaires = _visas_statutaires(depot.visas[e])
         meme_date = [v for v in depot.visas[e] if signature and nomme(v, "", signature)]
@@ -462,15 +463,29 @@ def _candidats_legi(depot: Depot, tableau: dict, groupe: str, rangs: set[int]):
                                 + ", ".join(cites[:5]) + (", …" if len(cites) > 5 else "")
                                 + f") et l'article de sa grille {grille['grille']} ne nomme pas "
                                 f"le n° {numero}"))
+                ecartees.append((e, grille["grille"], debut, fin,
+                                 f"son article ne nomme pas le n° {numero}"))
                 continue
             rangs_grille = depot.rangs_legi(versant, e, grille["grille"], debut, fin)
             if rangs_grille != rangs:
                 raisons.append(("echelons", f"les échelons diffèrent : le tableau a les rangs "
                                 f"{sorted(rangs)}, la grille {nom} {sorted(rangs_grille)}"))
+                ecartees.append((e, grille["grille"], debut, fin,
+                                 f"ses échelons {sorted(rangs_grille)} ne sont pas ceux du "
+                                 f"tableau {sorted(rangs)}"))
                 continue
             prouves.append({"source": versant, "texte_grille": e, "grille": grille["grille"],
                             "libelle_grille": grille["libelle"], "corps": "", "grade": "",
                             "debut": debut, "fin": fin, "lien": lien, "preuve": preuve})
+    # Deux grilles du même nom dans un texte : la preuve dit pourquoi l'autre
+    # est écartée (relecture R-B3, point 1 c).
+    for p in prouves:
+        autres = [f"la grille {g} {_fmt(d, f)}, écartée : {pourquoi}"
+                  for e, g, d, f, pourquoi in ecartees
+                  if e == p["texte_grille"] and d < (p["fin"] or OUVERT) and p["debut"] < (f or OUVERT)]
+        if autres:
+            p["preuve"] += (f" ; {p['texte_grille']} a aussi, du même libellé, "
+                            + " ; ".join(autres))
     if not prouves and not raisons:
         raisons.append(("libelle", f"aucune grille des {len(visants)} textes du LEGI qui visent "
                         f"le n° {numero} ne porte ce libellé"))
