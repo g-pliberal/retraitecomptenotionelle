@@ -232,7 +232,8 @@ periodes:
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     assiette: plafonnee_4_pass
-    assiette_annee_de_revenu: {artisan: 2}
+    # Le conjoint à l'option, sur l'avant-dernière année, de 2007 à 2012 : fiche `assiette_rco_independants`.
+    assiette_annee_de_revenu: {artisan: 2, conjoint_collaborateur_artisan: 2}
     assiette_de_debut: {artisan: [3, 2]}
     # Les points de la pension d'invalidité : fiche `points_invalidite_independants`.
     points_invalidite: {par: trimestre, proportionnels: true, forfait: 16}
@@ -255,7 +256,7 @@ periodes:
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     assiette: plafonnee
-    assiette_annee_de_revenu: {artisan: 2}
+    assiette_annee_de_revenu: {artisan: 2, conjoint_collaborateur_artisan: 2}
     assiette_de_debut: {artisan: [3, 2]}
     # Les points de la pension d'invalidité : fiche `points_invalidite_independants`.
     points_invalidite: {par: trimestre, proportionnels: true, forfait: 16}
@@ -278,7 +279,7 @@ periodes:
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     assiette: tranche_1_4_pass
-    assiette_annee_de_revenu: {artisan: 2}
+    assiette_annee_de_revenu: {artisan: 2, conjoint_collaborateur_artisan: 2}
     assiette_de_debut: {artisan: [3, 2]}
     taux_cotisation_retraite: 0.0700
     notes: >-
@@ -299,6 +300,7 @@ periodes:
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     assiette: plafonnee
+    assiette_annee_de_revenu: {conjoint_collaborateur_artisan: 2}
     assiette_de_debut: {artisan: [3, 2]}
     # Les points de la pension d'invalidité : fiche `points_invalidite_independants`.
     points_invalidite: {par: trimestre, proportionnels: true, forfait: 16}
@@ -321,6 +323,7 @@ periodes:
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     assiette: tranche_1_4_pass
+    assiette_annee_de_revenu: {conjoint_collaborateur_artisan: 2}
     assiette_de_debut: {artisan: [3, 2]}
     taux_cotisation_retraite: 0.0750
     notes: >-
@@ -341,6 +344,7 @@ periodes:
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     assiette: plafonnee
+    assiette_annee_de_revenu: {conjoint_collaborateur_artisan: 2}
     assiette_de_debut: {artisan: [3, 2]}
     # Les points de la pension d'invalidité : fiche `points_invalidite_independants`.
     points_invalidite: {par: trimestre, proportionnels: true, forfait: 16}
@@ -363,6 +367,7 @@ periodes:
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     assiette: tranche_1_4_pass
+    assiette_annee_de_revenu: {conjoint_collaborateur_artisan: 2}
     assiette_de_debut: {artisan: [3, 2]}
     taux_cotisation_retraite: 0.0760
     notes: >-
@@ -383,6 +388,7 @@ periodes:
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     assiette: plafonnee
+    assiette_annee_de_revenu: {conjoint_collaborateur_artisan: 2}
     # Les points de la pension d'invalidité : fiche `points_invalidite_independants`.
     points_invalidite: {par: trimestre, proportionnels: true, forfait: 16}
     taux_cotisation_retraite: 0.0720
@@ -404,6 +410,7 @@ periodes:
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     assiette: tranche_1_4_pass
+    assiette_annee_de_revenu: {conjoint_collaborateur_artisan: 2}
     taux_cotisation_retraite: 0.0760
     notes: >-
       D. 635-7, rédaction du 1er janvier 2012 : la seconde tranche, 7,6 % au-delà du plafond et jusqu'à quatre fois celui-ci, sans les forfaits de début d'activité.

@@ -27,7 +27,7 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 from ..calendrier import MOIS_PAR_AN, DateMois
-from ..carriere import salaire_moyen_annuel
+from ..carriere import CONJOINTS_COLLABORATEURS, salaire_moyen_annuel
 from ..donnees.chargement import (
     charger_chomage_complementaires,
     Fiabilite,
@@ -70,6 +70,17 @@ def revenu_de_l_annee(carriere, affiliation: str, annee: int) -> float:
     total = 0.0
     for autre in carriere.lignes_de(annee):
         if autre.affiliation == affiliation and autre.cotise:
+            total += autre.revenu
+    return total
+
+
+def revenu_a_l_option(carriere, affiliation: str, annee: int) -> float:
+    """Le revenu d'une autre année du conjoint collaborateur À L'OPTION :
+    celui de ses lignes cotisées sur une fraction du revenu du chef, et non sur
+    le forfait ; nul s'il n'y en a pas. Jumeau de ``revenuALOption``."""
+    total = 0.0
+    for autre in carriere.lignes_de(annee):
+        if autre.affiliation == affiliation and autre.cotise and not autre.forfait_conjoint:
             total += autre.revenu
     return total
 
@@ -621,19 +632,37 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
                 # étant depuis les revenus de 2009 régularisée sur le revenu
                 # de l'année (décret n° 2008-1427). Le revenu de l'autre année
                 # se prend à proportion des mois de l'exercice, comme ses
-                # bornes. Le conjoint collaborateur, absent de la table, cotise
-                # sur « le revenu retenu [...] pour le calcul de sa cotisation
-                # d'assurance vieillesse de base » (D. 635-10-2). Le RCO des
-                # commerçants, de sa création en 2004 aux cotisations de 2008,
-                # suit la même règle (D. 635-2, rédaction du 24 août 2004).
-                # L'exercice ouvert depuis moins de deux ans, l'avant-dernière
-                # année n'en est pas : l'artisan cotise sur ses forfaits, le
-                # commerçant sur les « revenus forfaitaires mentionnés au
-                # sixième alinéa de l'article L. 131-6 » (D. 635-10), que
-                # L. 131-6 dit provisionnels et régularisés : le modèle garde
-                # le revenu de l'année.
+                # bornes. Le RCO des commerçants, de sa création en 2004 aux
+                # cotisations de 2008, suit la même règle (D. 635-2, rédaction
+                # du 24 août 2004). L'exercice ouvert depuis moins de deux ans,
+                # l'avant-dernière année n'en est pas : l'artisan cotise sur
+                # ses forfaits, le commerçant sur les « revenus forfaitaires
+                # mentionnés au sixième alinéa de l'article L. 131-6 »
+                # (D. 635-10), que L. 131-6 dit provisionnels et régularisés :
+                # le modèle garde le revenu de l'année.
+                # LE CONJOINT COLLABORATEUR cotise sur « le revenu retenu [...]
+                # pour le calcul de sa cotisation d'assurance vieillesse de
+                # base », qui « ne fait toutefois pas l'objet de la
+                # régularisation » (D. 635-10-2, du 13 décembre 2006 au
+                # 1er janvier 2013). Au forfait du tiers du plafond, celui de
+                # l'année. À l'option, une fraction du revenu du chef, sa base
+                # est calculée « à titre provisionnel, en pourcentage du revenu
+                # professionnel de l'avant-dernière année », puis régularisée
+                # (D. 633-19-1 ; L. 131-6 ; L. 131-6-2 en 2012) : sa
+                # complémentaire reste sur la fraction du revenu du chef de
+                # l'avant-dernière année, de 2007 à 2012, que porte sa ligne de
+                # cette année-là, même après une année d'interruption. Sans
+                # ligne à l'option cette année-là — ses deux premières années,
+                # le passage du forfait à l'option —, le revenu du chef qu'elle
+                # lirait (D. 633-19-6) manque au modèle, qui garde celui de
+                # l'année.
                 decalage = dict(periode.assiette_annee_de_revenu).get(ligne.affiliation)
-                if (decalage and ligne.cotise
+                if decalage and ligne.cotise and ligne.affiliation in CONJOINTS_COLLABORATEURS:
+                    anterieur = (0.0 if ligne.forfait_conjoint else revenu_a_l_option(
+                        carriere, ligne.affiliation, ligne.annee - decalage))
+                    if anterieur > 0:
+                        base = anterieur * part
+                elif (decalage and ligne.cotise
                         and annees_deja_exercees(carriere, ligne.affiliation, ligne.annee,
                                                  decalage) >= decalage):
                     base = revenu_de_l_annee(

@@ -12,7 +12,7 @@
 
 import { DateMois } from "../calendrier.js";
 import {
-  assietteMinimale as assietteMinimaleDe, chomageComplementaires,
+  assietteMinimale as assietteMinimaleDe, chomageComplementaires, CONJOINTS_COLLABORATEURS,
   dispenseLesComplementaires, forfaitMicro, salaireMoyenAnnuel,
 } from "../carriere.js";
 import { nomFiabilite, Fiabilite } from "../serie.js";
@@ -44,6 +44,21 @@ export function revenuDeLAnnee(carriere, affiliation, annee) {
   let total = 0.0;
   for (const l of carriere.lignesDe(annee)) {
     if (l.affiliation === affiliation && l.cotise) {
+      total += l.revenu;
+    }
+  }
+  return total;
+}
+
+/**
+ * Le revenu d'une autre année du conjoint collaborateur À L'OPTION : celui de
+ * ses lignes cotisées sur une fraction du revenu du chef, et non sur le
+ * forfait ; nul s'il n'y en a pas. Jumeau de `revenu_a_l_option`.
+ */
+export function revenuALOption(carriere, affiliation, annee) {
+  let total = 0.0;
+  for (const l of carriere.lignesDe(annee)) {
+    if (l.affiliation === affiliation && l.cotise && !l.forfait_conjoint) {
       total += l.revenu;
     }
   }
@@ -515,10 +530,18 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
         // L'AVANT-DERNIÈRE ANNÉE : jusqu'aux cotisations de 2008, le RCO des
         // artisans et celui des commerçants sont assis sur le revenu de
         // l'avant-dernière année, sans ajustement, l'exercice ouvert depuis
-        // deux ans ; celui du conjoint collaborateur, sur l'assiette de sa
-        // cotisation de base : voir acquerir.py.
+        // deux ans ; celui du conjoint collaborateur à l'option, de 2007 à
+        // 2012, sur la fraction du revenu du chef de l'avant-dernière année,
+        // que porte sa ligne de cette année-là, et au forfait sur celui de
+        // l'année : voir acquerir.py.
         const decalage = periode.assiette_annee_de_revenu?.[ligne.affiliation];
-        if (decalage && ligne.cotise
+        if (decalage && ligne.cotise && CONJOINTS_COLLABORATEURS.has(ligne.affiliation)) {
+          const anterieur = ligne.forfait_conjoint ? 0.0
+            : revenuALOption(carriere, ligne.affiliation, ligne.annee - decalage);
+          if (anterieur > 0) {
+            base = anterieur * part;
+          }
+        } else if (decalage && ligne.cotise
             && anneesDejaExercees(carriere, ligne.affiliation, ligne.annee, decalage)
               >= decalage) {
           base = revenuDeLAnnee(carriere, ligne.affiliation, ligne.annee - decalage) * part;

@@ -286,6 +286,12 @@ class AnneeCarriere:
     #: de son revenu annuel moyen (:func:`revenu_cotise`) ; l'assiette minimale
     #: ne le touche pas.
     micro: str = ""
+    #: La ligne d'un CONJOINT COLLABORATEUR cotise-t-elle sur le forfait du
+    #: tiers du plafond, faute d'assiette saisie (D. 633-19-2, 1° ;
+    #: :func:`assiette_du_conjoint_collaborateur`) ? Sa complémentaire n'est
+    #: assise sur l'avant-dernière année qu'à l'option, une fraction du revenu
+    #: du chef (D. 635-10-2 ; :func:`~retraite_notionnelle.droit.acquerir.revenu_a_l_option`).
+    forfait_conjoint: bool = False
 
     @property
     def cotise(self) -> bool:
@@ -708,9 +714,12 @@ def _ligne_annuelle(
                          + ", ".join(DEPARTEMENTS_D_OUTRE_MER))
     cotise = type_periode == "emploi"
     regle = None if cotise else motifs.get(type_periode, motifs.get("sans_activite"))
+    saisi = revenu
     if cotise:
         revenu = assiette_du_conjoint_collaborateur(macro, affiliation, annee,
                                                     revenu, part)
+    # Le conjoint sans assiette saisie cotise au forfait, qui remplace le revenu.
+    forfait_conjoint = cotise and revenu != saisi
     # L'ASSIETTE MINIMALE DES INDÉPENDANTS : un artisan qui déclare 3 000 €
     # cotise en 2026 sur 450 SMIC horaires, soit 5 409 €, et valide trois
     # trimestres au lieu d'un. Le revenu de la ligne reste celui qu'il a
@@ -798,6 +807,7 @@ def _ligne_annuelle(
         outre_mer=outre_mer if cotise else "",
         cotisations_versees=cotise and not exoneree,
         micro=micro,
+        forfait_conjoint=forfait_conjoint,
         # Pendant une période indemnisée, les régimes complémentaires
         # attribuent des points sur le salaire d'avant. L'Unédic les paie pour
         # le chômage ; l'Agirc-Arrco les donne pour la maladie, sans

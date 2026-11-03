@@ -1172,6 +1172,72 @@ def test_le_conjoint_collaborateur_cotise_au_rco_sur_l_assiette_de_l_annee(
                 points, rel=1e-12), (moteur, annee)
 
 
+def test_le_conjoint_a_l_option_cotise_au_rco_sur_l_avant_derniere_annee(
+        points_des_deux_moteurs):
+    """À l'option, une fraction du revenu du chef (D. 633-19-2, 2° à 5°,
+    LEGIARTI000006737951), la cotisation de base du conjoint collaborateur est
+    « définie[s] et recouvrée[s] dans les conditions prévues par la sous-section
+    1 » (D. 633-19-1, LEGIARTI000006737949), donc « calculée[s], à titre
+    provisionnel, en pourcentage du revenu professionnel de l'avant-dernière
+    année », puis régularisée (L. 131-6, LEGIARTI000006740121,
+    LEGIARTI000020675442 ; L. 131-6-2, LEGIARTI000025013725, en 2012). Sa
+    complémentaire « est calculée sur le revenu retenu [...] pour le calcul de
+    sa cotisation d'assurance vieillesse de base » et « ne fait toutefois pas
+    l'objet de la régularisation » (D. 635-10-2, LEGIARTI000006738041, du
+    13 décembre 2006 au 1er janvier 2013) : elle reste assise sur la fraction du
+    revenu du chef de l'avant-dernière année, que porte la ligne du conjoint de
+    cette année-là, de 2007 à 2012, après 2009 encore, quand celle du chef est
+    régularisée. Le conjoint d'artisan à l'option depuis 2005 : 10 000 € de 2005
+    à 7 % en 2007 (D. 635-7, LEGIARTI000006738025), 11 000 € de 2006 à 7 % en
+    2008, 12 000 € de 2007 à 7,1 % en 2009 (décret n° 2007-1900, article 1er,
+    III), 13 000 €, 14 000 € et 15 000 € de 2008 à 2010 à 7,2 % de 2010 à 2012
+    (D. 635-7, LEGIARTI000017869802, LEGIARTI000025091410,
+    LEGIARTI000025629857). Celui qui passe du forfait à l'option en 2009 : le
+    revenu du chef de 2007 et de 2008, que le modèle ignore, n'est pas le
+    forfait de ces années ; il garde le revenu de 2009 et de 2010, puis, en
+    2011, son revenu de 2009 (approximation déclarée, fiche
+    `assiette_rco_independants`). Le conjoint de commerçant à l'option depuis
+    2005, au NRCO à 6,5 % (D. 635-10, LEGIARTI000006738028,
+    LEGIARTI000020032165) : les mêmes revenus de 2005 à 2008, de 2007 à 2010.
+    Revenus de référence : table « ARTISANS : RCO - revenu de référence » de la
+    caisse (4,145 ; 4,207 ; 4,500 ; 4,692 ; 4,79053 ; 4,89113 €), série de
+    l'IPP pour les commerçants (14,648 ; 14,809 ; 15,3 ; 15,483 €). Dans les
+    deux moteurs."""
+    revenus = {2005: 10000.0, 2006: 11000.0, 2007: 12000.0, 2008: 13000.0,
+               2009: 14000.0, 2010: 15000.0, 2011: 16000.0, 2012: 17000.0}
+    cas = [
+        {"naissance": 1950, "age": 65.0, "releve": _releve(
+            "conjoint_collaborateur_artisan", revenus)},
+        {"naissance": 1950, "age": 65.0, "releve": _releve(
+            "conjoint_collaborateur_artisan",
+            {2007: 0.0, 2008: 0.0, 2009: 14000.0, 2010: 15000.0, 2011: 16000.0})},
+        {"naissance": 1950, "age": 65.0, "releve": _releve(
+            "conjoint_collaborateur_commercant",
+            {annee: revenu for annee, revenu in revenus.items() if annee <= 2010})},
+    ]
+    attendus = [
+        {("rco_artisans", 2007): 10000.0 * 0.07 / 4.145,
+         ("rco_artisans", 2008): 11000.0 * 0.07 / 4.207,
+         ("rco_artisans", 2009): 12000.0 * 0.071 / 4.5,
+         ("rco_artisans", 2010): 13000.0 * 0.072 / 4.692,
+         ("rco_artisans", 2011): 14000.0 * 0.072 / 4.79053,
+         ("rco_artisans", 2012): 15000.0 * 0.072 / 4.89113},
+        {("rco_artisans", 2007): 32184 / 3 * 0.07 / 4.145,
+         ("rco_artisans", 2008): 33276 / 3 * 0.07 / 4.207,
+         ("rco_artisans", 2009): 14000.0 * 0.071 / 4.5,
+         ("rco_artisans", 2010): 15000.0 * 0.072 / 4.692,
+         ("rco_artisans", 2011): 14000.0 * 0.072 / 4.79053},
+        {("nric", 2007): 10000.0 * 0.065 / 14.648,
+         ("nric", 2008): 11000.0 * 0.065 / 14.809,
+         ("nric", 2009): 12000.0 * 0.065 / 15.3,
+         ("nric", 2010): 13000.0 * 0.065 / 15.483},
+    ]
+    for moteur, carrieres in points_des_deux_moteurs(cas).items():
+        for credits, attendu in zip(carrieres, attendus):
+            for cle, points in attendu.items():
+                assert credits.get(cle) == pytest.approx(points, rel=1e-12), (moteur, cle)
+
+
 def test_les_deux_premieres_annees_de_l_artisan_cotisent_au_forfait(points_des_deux_moteurs):
     """« Pour les assurés commençant l'exercice d'une activité artisanale ou
     assimilée, la cotisation annuelle d'assurance vieillesse complémentaire est

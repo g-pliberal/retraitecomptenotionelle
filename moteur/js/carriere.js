@@ -200,6 +200,11 @@ export class AnneeCarriere {
     //: annuel moyen (`revenuCotise`), et l'assiette minimale ne le touche pas.
     //: Voir carriere.py.
     micro = "",
+    //: La ligne d'un CONJOINT COLLABORATEUR cotise-t-elle sur le forfait du
+    //: tiers du plafond, faute d'assiette saisie (D. 633-19-2, 1°) ? Sa
+    //: complémentaire n'est assise sur l'avant-dernière année qu'à l'option,
+    //: une fraction du revenu du chef (D. 635-10-2). Voir carriere.py.
+    forfait_conjoint = false,
   }) {
     Object.assign(this, {
       annee, revenu, affiliation, type_periode, quotite,
@@ -209,7 +214,7 @@ export class AnneeCarriere {
       services_fonction_publique, services_plafond_trimestres_par_enfant,
       reputes_cotises_nature,
       assiette_minimale_base, dispense_assiette_minimale, lodeom, outre_mer,
-      revenu_retabli, jours_de_services, micro,
+      revenu_retabli, jours_de_services, micro, forfait_conjoint,
     });
   }
 
@@ -671,9 +676,12 @@ function ligneAnnuelle({
   }
   const cotise = typePeriode === "emploi";
   const motifs = macro.paquet.periodes_non_travaillees ?? {};
+  const saisi = revenu;
   if (cotise) {
     revenu = assietteDuConjointCollaborateur(macro, affiliation, annee, revenu, part);
   }
+  // Le conjoint sans assiette saisie cotise au forfait, qui remplace le revenu.
+  const forfaitConjoint = cotise && revenu !== saisi;
   const regle = cotise ? null
     : (propre(motifs, typePeriode) ?? propre(motifs, "sans_activite") ?? null);
   const ouvreComplementaires = regle !== null && regle[1] === true;
@@ -756,6 +764,7 @@ function ligneAnnuelle({
     // Le département d'outre-mer, qui a donné son seuil aux trimestres.
     outre_mer: cotise ? outreMer : "",
     micro,
+    forfait_conjoint: forfaitConjoint,
     // Pendant une période indemnisée, les régimes complémentaires attribuent
     // des points sur le salaire d'avant. L'Unédic les paie pour le chômage ;
     // l'Agirc-Arrco les donne pour la maladie, sans contrepartie.
