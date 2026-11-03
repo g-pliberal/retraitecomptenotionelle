@@ -578,8 +578,8 @@ C_TERRITORIALE_2022 = (
 
 def test_les_versions_et_leurs_colonnes_font_des_periodes():
     """Décret n° 2016-604, article 1er : la version de 2017 annonce quatre dates,
-    celle de 2018 (décret n° 2017-1736, qui reporte d'un an le protocole PPCR) les
-    décale, celle de 2022 (décret n° 2021-1819) refait les échelles. Une colonne
+    celle de 2018 (décret n° 2017-1737, article 116, qui reporte d'un an le
+    protocole PPCR) les décale, celle de 2022 (décret n° 2021-1819) refait les échelles. Une colonne
     ne vaut que dans sa version : les dates de 2018 à 2020 de la première ne
     s'appliquent jamais."""
     v2018 = C_TERRITORIALE_2017.replace(

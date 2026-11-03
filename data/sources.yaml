@@ -4445,6 +4445,37 @@ institutions:
           monté — fausse de 1,0 % en 1992 —, et c'est la confrontation à la
           transcription, année par année, qui l'a établi.
 
+      - id: dila_legi_grilles
+        titre: >-
+          Grilles indiciaires de la fonction publique territoriale et de la
+          fonction publique hospitalière, version par version
+        url: https://echanges.dila.gouv.fr/OPENDATA/LEGI/
+        acces: api
+        statut_integration: certifie
+        cible: data/reference/grilles/territoriale/echelons.csv
+        recuperation: scripts/fetch/dila_legi_grilles.py
+        note: >-
+          Les décrets et arrêtés d'échelonnement indiciaire des deux versants,
+          lus dans l'index LEGI du dépôt reconstruit le 2 novembre 2026 : leurs
+          tableaux, que l'index aplatit, relus par un analyseur qui refuse ce
+          qu'il ne lit pas sûrement — les tableaux dessinés en caractères (les
+          textes d'avant 1995 surtout), de reclassement, d'indices majorés, les
+          indices extrêmes d'un grade sans ses échelons —, chaque refus consigné
+          dans non_lus.csv. Sous data/reference/grilles/territoriale/ et
+          .../hospitaliere/ : les textes, les grilles, et l'indice brut de
+          chaque échelon période par période, avec l'article qui le fixe ;
+          scripts/verifier_donnees.py en certifie le rang et l'indice, et place
+          au niveau estimee les rares périodes dont le texte aplati ne dit pas
+          la colonne. tests/test_grilles_legi.py recoupe les échelles C1 à C3
+          et les agents de maîtrise de la territoriale à la grille du centre de
+          gestion du Nord (« Échelles de rémunération de catégorie C, à compter
+          du 1er janvier 2024 », cdg59.fr), indice brut et indice majoré aux
+          1er janvier 2022, 1er juillet 2023 et 1er janvier 2024 ; les échelles
+          C1 à C3 et les aides-soignants de l'hospitalière à celle de la
+          fédération UNSA Santé et Sociaux (mise à jour du 25 janvier 2022),
+          minimum de traitement compris. Les durées d'échelon, que fixent les
+          statuts particuliers, n'y sont pas encore (action 158, étape 2).
+
       - id: dila_legi_duree_requise
         titre: Durée d'assurance requise, générations 1953-1957
         url: https://echanges.dila.gouv.fr/OPENDATA/LEGI/
