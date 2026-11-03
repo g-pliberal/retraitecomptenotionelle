@@ -7618,16 +7618,16 @@ avec son test. Le modèle et le site gardent PyYAML seul.
 
 ### 177. Les écarts que les barèmes de la Cnav ont trouvés au modèle : chacun corrigé dans les deux moteurs, ou sa limite dite — `en cours`
 
-**Reprise, au 3 novembre 2026.** Les étapes 1 à 6, 8 et 9 sont faites ; la 9
-est écrite dans les deux moteurs : l'avant-dernière année du RCO et du NRCO
-jusqu'en 2008, les forfaits de début de l'artisan, le 0,10 % de 1985 à 1996
-sans points (fiche `assiette_rco_independants`). Restent déclarés le minimum de
-la cotisation jusqu'en 2015, à lire d'abord (D. 633-2, D. 612-6), et le
-forfait du commerçant qui commence (`177/2026-11-03-etape-9-assiette-du-rco-ecrite.md`).
-Par quoi commencer : les taux de Mayotte (étape 8) ; en 2026, le décret, 150 €
-le trimestre (propriétaire). La file du site mène l'étape 7 et l'assurance
-maladie : sa note va sous `177/`, sans toucher à ce bloc. Un écart par commit,
-le test vu rouge d'abord ; sur Opus, après `python scripts/veille_droit.py`.
+**Reprise, au 3 novembre 2026.** Les étapes 1 à 6, 8 et 9 sont faites ; la 9,
+relue (R-M2), puis corrigée : l'avant-dernière année du RCO et du NRCO jusqu'en
+2008, et celle du conjoint à l'option de 2007 à 2012, les forfaits de début, le
+0,10 % sans points (fiche `assiette_rco_independants`). Restent déclarés le
+minimum de la cotisation jusqu'en 2015, à lire d'abord (D. 633-2, D. 612-6), le
+forfait du commerçant qui commence et celui de l'artisan de 2009 à 2011
+(`177/2026-11-03-corrections-de-la-relecture-r-m2.md`). Par quoi commencer : les
+taux de Mayotte (étape 8) ; en 2026, le décret, 150 € le trimestre. La file du
+site mène l'étape 7 : sa note va sous `177/`, sans toucher à ce bloc. Un écart
+par commit, le test vu rouge d'abord ; sur Opus, après `veille_droit.py`.
 
 **D'où elle vient.** Le 31 octobre 2026, l'étape 2 de l'action 175 — les
 barèmes de la base de législation de la Cnav confrontés, un à un, aux séries

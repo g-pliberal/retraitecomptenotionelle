@@ -102,6 +102,15 @@ ne change aucun point.
 scénario 1 bougent, tous à la baisse, de 0,1 à 2,3 % de la pension, en médiane
 1,2 % : les artisans et les commerçants dont une année tombe avant 2009.
 
+*Corrigé le 3 novembre 2026, après la relecture R-M2*
+(`2026-11-03-relecture-assiette-du-rco.md`, `2026-11-03-corrections-de-la-relecture-r-m2.md`) :
+pas tous à la baisse, le forfait relevant l'artisane qui commence sous le tiers
+du plafond (`dispense_rsa_releve_artisane`, 18 % de points du RCO de plus,
+5,8 % de pension aux scénarios 3 et 5) ; et le conjoint collaborateur à
+l'option cotise, de 2007 à 2012, sur la fraction du revenu du chef de
+l'avant-dernière année, sa cotisation de base provisionnelle, que D. 635-10-2
+ne régularise pas, et non sur celle de l'année, que le modèle lui prenait.
+
 **Une autre décision du propriétaire, le 3 novembre 2026.** À Mayotte, en
 2026, le modèle garde le décret : 150 € de cotisations par trimestre, et non
 les 250 € du barème de la caisse, qui reste un écart déclaré

@@ -1101,7 +1101,26 @@ def test_la_pension_moyenne_relative_s_ecarte_de_celle_du_cor(avenir, comptes):
 #: sans points), qui ôte de 0,1 à 2,3 % à la pension des artisans et des
 #: commerçants d'avant 2009 : complémentaires de +7,87 à +8,17 %, non-salariés
 #: de +10,85 à +11,24 % (tolérances relevées à 9 et 12 %), mesurés l'un et
-#: l'autre état refaits ; LURA et la Cnav ne bougent pas au dixième.
+#: l'autre état refaits ; LURA et la Cnav ne bougent pas au dixième. Tout ce
+#: déplacement vient de la correction : +0,30 et +0,39 point, que la relecture
+#: R-M2 retrouve dans l'arbre sans ses quatre commits du modèle ; le même jour,
+#: après le conjoint collaborateur remis sur l'avant-dernière année, +8,1703 et
+#: +11,2390 %, la grille n'ayant pas de conjoint. Pourquoi l'écart monte quand
+#: les pensions baissent : il compare la croissance de la dépense, de la
+#: dernière année observée à l'horizon, à celle du COR, et la correction ne
+#: touche que les années d'avant 2009, qui pèsent dans les pensions servies au
+#: départ bien plus qu'en 2070 ; la dépense de départ baisse plus que celle de
+#: l'horizon, et la pente monte. Pourquoi les non-salariés bougent, qui n'ont
+#: pas de RCO (``GROUPES_DU_MODELE`` : msa_non_salaries, cnavpl, cnbf ; le RCO
+#: et le NRCO vont au RCI, leur ``integre_dans``, parmi les complémentaires) :
+#: par le calage des poids (``_poids_par_groupe``), qui multiplie le
+#: coefficient de chaque cas type par la moyenne des corrections de ses
+#: groupes, pondérée par ce qu'il y touche, puis ramène les poids à leur somme.
+#: Le RCO plus bas l'année du calage change la correction des complémentaires,
+#: et avec elle le poids de chaque cas type à proportion de ce qu'il y sert :
+#: ceux des non-salariés n'y servant pas la même part, le groupe change de
+#: composition, et de pente. Ce que le code et la règle disent ; la mesure
+#: n'isole pas ces deux effets.
 DECOMPOSITION_GROUPES_SUIVIS = {
     ("pension_relative", "cnav"): 0.04,
     ("depense_part_pib", "lura"): 0.05,

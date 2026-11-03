@@ -1,0 +1,39 @@
+date: "2026-11-03"
+session: "action 177, étape 9, la file M2 : les corrections de la relecture R-M2 de l'assiette du RCO et du NRCO"
+consulte: >-
+  `python scripts/veille_droit.py` : aucune fiche des artisans ni des commerçants à
+  relire ; la base de la Cnav, rien de changé. L'index LEGI récupéré, à jour au
+  2 novembre 2026 (aucun incrément depuis) ; l'index du JORF, à jour au 3 novembre.
+  Relus dans l'index LEGI, à leur version en vigueur : D. 635-10-2 (LEGIARTI000006738041,
+  LEGIARTI000025263590), D. 633-19-1, D. 633-19-2, D. 633-19-6, D. 633-19-7
+  (LEGIARTI000006737949, LEGIARTI000006737951, LEGIARTI000006737955,
+  LEGIARTI000006737957), D. 633-4 (2006-2014), D. 633-6 (2006-2008), L. 633-10
+  (LEGIARTI000006743702, LEGIARTI000025013919), L. 131-6 (LEGIARTI000006740120,
+  LEGIARTI000006740121, LEGIARTI000020169101, LEGIARTI000020675442,
+  LEGIARTI000025013718), L. 131-6-2 (LEGIARTI000025013725), D. 635-2
+  (LEGIARTI000020032159), D. 635-7 (LEGIARTI000006738025, LEGIARTI000017869802,
+  LEGIARTI000025091410, LEGIARTI000025629857), D. 635-10 (LEGIARTI000006738028,
+  LEGIARTI000020032165), D. 633-2 (LEGIARTI000006737877 à LEGIARTI000006737879). Dans
+  l'index du JORF : le décret n° 2007-1900, article 1er (JORFARTI000017765872). Dans la
+  base de la Cnav : l'exposé « Points cotisés artisans avant 2013 » (24 octobre 2025),
+  les 633 exposés cherchés pour le conjoint collaborateur, la table « ARTISANS : RCO -
+  revenu de référence » (sha256 fbce0850…c0b91a9) ; la série de l'IPP des revenus de
+  référence des commerçants (sha256 35cbc1b5…e703b6a1b).
+trouve: >-
+  Le conjoint collaborateur à l'option, une fraction du revenu du chef, cotise au RCO
+  et au NRCO, de 2007 à 2012, sur la fraction du revenu du chef de l'avant-dernière
+  année : sa cotisation de base est provisionnelle sur cette année (D. 633-19-1,
+  L. 633-10, L. 131-6), et D. 635-10-2 ne régularise pas la complémentaire. Corrigé
+  dans les deux moteurs (8f5447b), le test d'abord ; un témoin bouge,
+  `conjoint_collaborateur_au_tiers`, −0,19 %. Le forfait de l'artisan qui commence de
+  2009 à 2011 (D. 635-7), définitif ou régularisé comme la cotisation de D. 635-2 : aucun
+  texte lu ne tranche, déclaré dans la fiche et la limite publiée. Le revenu minimum de
+  D. 633-2, 200 heures de Smic, vaut jusqu'au 5 avril 2012. Le forfait relève
+  l'artisane qui commence sous le tiers du plafond (`dispense_rsa_releve_artisane`,
+  +18,3 % de points du RCO, +5,8 % de pension aux scénarios 3 et 5) : écrit dans
+  l'effet de la fiche.
+reste: >-
+  Le minimum de la cotisation jusqu'en 2015 ; le forfait du commerçant qui commence, et
+  celui de l'artisan de 2009 à 2011 ; un exemple de la caisse, ou une circulaire du
+  RSI, pour la complémentaire du conjoint collaborateur à l'option ; ses deux premières
+  années et le passage du forfait à l'option, approchés par le revenu de l'année.

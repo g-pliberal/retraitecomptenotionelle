@@ -251,7 +251,17 @@ l'Institut des politiques publiques (PENSIPP). Écarts connus :
   RCO des artisans et le NRCO des commerçants assis sur le revenu de
   l'avant-dernière année, sans ajustement ; l'artisan qui commence au tiers
   puis à la moitié du plafond, jusqu'en 2011 ; la cotisation additionnelle de
-  1985 à 1996 sans points. Il ne sert pas le minimum de la cotisation, le
+  1985 à 1996 sans points ; le conjoint collaborateur sur l'assiette de sa
+  cotisation de base, sans régularisation (D. 635-10-2) — au forfait, le tiers
+  du plafond de l'année ; à l'option, de 2007 à 2012, la fraction du revenu du
+  chef de l'avant-dernière année, que le modèle lit sur la ligne du conjoint
+  de cette année-là, et, quand elle manque ou est au forfait (ses deux
+  premières années, le passage du forfait à l'option), le revenu de l'année.
+  Il tient pour définitif le forfait de l'artisan qui commence de 2009 à 2011,
+  que D. 635-7 assied sur un tiers puis la moitié du plafond, quand D. 635-2
+  calcule depuis 2009 toute la cotisation à titre provisionnel, puis la
+  régularise sur le revenu de l'année (L. 131-6) : aucun texte lu ne dit si ce
+  forfait l'était. Il ne sert pas le minimum de la cotisation, le
   revenu minimum du régime de base jusqu'en 2012, puis l'assiette de ce
   régime dès quatre-vingt-dix jours d'affiliation jusqu'en 2015 (D. 635-2),
   dont les modalités restent à lire ; ni le forfait du commerçant qui
