@@ -7,8 +7,9 @@ sources : l'index LEGI publié du dépôt, récupéré sans reconstruction
 (`dila_index.py legi --recuperer`, à jour de l'incrément 20261102-213929, celui de B2-bis et
 de R-B2-bis), et l'index JORF publié (`--recuperer`, à jour de l'incrément 20261103-002311),
 interrogés par `dila_cherche.py` (`--num … --titre`, `--texte`) et directement dans leur table
-`doc`. Commits : 34c2ab3 (point 1, le paquet et la page Méthode), 920758d (point 3), 299deb8
-(point 2), cff6ebe (point 4), puis celui de cette note (point 5).
+`doc`. Commits : ddde684 (point 1, le paquet et la page Méthode), f16c3d7 (point 3), 39643e8
+(point 2), d75b842 (point 4), 6db5939 (point 5 et cette note), puis le paquet refait sur le
+dernier `main`.
 
 ## 1. Le n° 83-1260, art. 34 : une coquille du LEGI, prouvée au JORF
 
@@ -55,7 +56,7 @@ le LEGI fait commencer la version suivante, au lendemain du JO du 3 août 1990 q
 tableau qui la remplace. La rédaction d'origine vaut du 8 janvier 1984 (date du LEGI) au
 4 août 1990 (fin exclue).
 
-*La correction* (34c2ab3). `COQUILLES_DU_LEGI` du lecteur nomme la version, le champ, ce que
+*La correction* (ddde684). `COQUILLES_DU_LEGI` du lecteur nomme la version, le champ, ce que
 le LEGI écrit (1980-08-04), ce que le dépôt retient (1990-08-04) et la preuve ; `corriger` ne
 corrige que si le LEGI écrit encore la coquille relevée. La colonne neuve `correction` de
 `tableaux.csv` la dit, mot pour mot : « fin corrigée : le LEGI écrit 1980-08-04, coquille pour
@@ -87,13 +88,13 @@ articles 9 et 10 entrent en vigueur le 1er septembre 2017. Les dispositions du c
 entrent en vigueur le 1er janvier 2021. » C'est donc la consolidation du LEGI qui perd le
 5e échelon, non le décret.
 
-*La correction* (299deb8). `ABIMEES_PAR_LE_LEGI` ajoute au motif du refus, dans
+*La correction* (39643e8). `ABIMEES_PAR_LE_LEGI` ajoute au motif du refus, dans
 `non_lus.csv` : « un échelon manque dans « Professeur technique hors classe » ; la
 consolidation du LEGI saute le 5e échelon, que le décret publié écrit : décret n° 2020-1435 du
 23 novembre 2020, art. 8 (JORFARTI000042558759, JORF du 25 novembre 2020), « Professeur
 technique hors classe 7e échelon - 6e échelon 3 ans 5e échelon 3 ans 4e échelon 2 ans 6 mois
 … », « 5e échelon 3 ans » ». La phrase de B2-bis (« saute le 5e échelon ») est corrigée dans sa
-note et son entrée de veille (cff6ebe). Test :
+note et son entrée de veille (d75b842). Test :
 `test_un_refus_dit_ce_que_le_decret_publie_ecrit_et_que_le_legi_perd`.
 
 *Le JORF permet-il de lire le tableau complet ?* **Oui**, en deux articles du même décret :
@@ -146,7 +147,7 @@ dispositions suivantes : « Les durées moyennes et minimales du temps passé da
 des grades du corps des agents-chefs sont égales respectivement à l'ancienneté moyenne et à
 l'ancienneté moyenne réduite du quart. » ».
 
-*La correction* (920758d). `REGLE_AILLEURS` nomme, pour ces deux tableaux, la version de
+*La correction* (f16c3d7). `REGLE_AILLEURS` nomme, pour ces deux tableaux, la version de
 l'article qui écrit la règle ; `regle_de_l_anciennete` l'y lit, dans l'index, mot pour mot ;
 `tableaux.csv` la porte dans `regle_du_quart`, comme pour les dix autres, et l'article dans la
 colonne neuve `regle_du_quart_article` (vide pour les dix : le même article). Aucune durée n'en
@@ -172,7 +173,7 @@ le dit.
   (JORFTEXT000000513902 : « Décret n°67-715 du 16 août 1967 RELATIF AU STATUT PARTICULIER DU
   CORPS DES INGENIEURS DES TELECOMMUNICATIONS ») et le LEGI (LEGIARTI000006508433 : « Décret
   n°67-715 du 16 août 1967 relatif au statut particulier du corps des ingénieurs des
-  télécommunications ») disent **16** : corrigé (cff6ebe).
+  télécommunications ») disent **16** : corrigé (d75b842).
 - « 409 lignes de `non_lus.csv` s'en vont (38 versions d'article) » : recompté ici, de
   f28cdbd^ à f28cdbd, version par version (lignes ôtées moins lignes écrites) : 409 lignes en
   moins, en **39** versions (481 ôtées, 97 écrites dont 72 pour des versions déjà consignées,
@@ -180,7 +181,7 @@ le dit.
 
 ## 5. Le trou hérité de B2 : mesuré, consigné, non forcé
 
-*La mesure.* Un script du bloc-notes, hors du dépôt, lancé depuis la racine à 299deb8, lit tous
+*La mesure.* Un script du bloc-notes, hors du dépôt, lancé depuis la racine à 39643e8, lit tous
 les articles de l'index LEGI que le motif des durées (`DUREES_D_ECHELON`, de `dila_index.py`)
 ne retient pas, et garde ceux qui portent la signature d'un tableau de durées :
 
@@ -246,7 +247,7 @@ lus, avec leur raison » ne vaut que pour les articles que le motif retient. Le 
 | Non lus, dont avec un rang de tableau ; « jamais en vigueur » | 1 249, 750 ; 10 | 1 248, 749 ; 9 |
 | Tableaux à moyenne seule, dont avec la règle du quart | 36, 10 | 36, 12 |
 | Tableaux qui portent une correction de date | — | 1 |
-| Valeurs recontrôlées (page Méthode) | 441 771 | 441 799 (+15 rangs, +13 durées) |
+| Valeurs recontrôlées (page Méthode) | 441 771 ; 441 779 sur le `main` de la publication (cd8db07) | 441 799 ; 441 807 (+15 rangs, +13 durées) |
 
 `python scripts/verifier_donnees.py --appliquer` certifie les 15 lignes (« 14521 identiques,
 0 corrigées, 0 ajoutées » au rang ; 8 639 à la durée unique) ; seules les traces des séries
@@ -259,11 +260,16 @@ dont 5 ajoutés.
 Les durées ne servent pas au calcul des pensions : le modèle et son portage ne lisent pas
 `data/reference/grilles/durees/`. Dans `moteur/donnees.json`, `construire_donnees.py` ne change,
 de cette file, que la trace de certification de deux séries, `durees_echelon_rang` et
-`durees_echelon_duree` (valeurs, identiques, empreinte) ; le paquet refait porte aussi la fiche
-`majoration_enfants_agirc_arrco`, que la file M3 (488c30a) a écrite sans refaire le paquet, et
-que GitHub aurait refaite. `construire_pages.py --verifier` ne trouvait périmée que la page
-Méthode, refaite : seul y bouge le compte des valeurs recontrôlées, 441 771 → 441 799. Aucun
-chiffre de pension ne bouge du fait de cette file.
+`durees_echelon_duree` (valeurs, identiques, empreinte). Le paquet de ddde684, refait sur
+3dd70c4, portait aussi la fiche `majoration_enfants_agirc_arrco`, que la file M3 (488c30a)
+avait écrite sans refaire le paquet ; au rebasage sur cd8db07, `pousser.sh` a gardé le paquet de
+`main`, que la file M5 venait de refaire avec cette fiche, et le paquet a été refait une
+seconde fois, après la publication, sur ce `main` : il ne diffère alors de celui de `main` que
+par ces deux traces. `construire_pages.py --verifier` ne trouvait périmée que la page Méthode,
+refaite : seul y bouge le compte des valeurs recontrôlées, 441 779 → 441 807 ; les autres
+écarts de la prose sont ses chiffres ancrés (ce compte ; le poids du paquet, 5 894 → 5 900 Ko,
+que `main` n'avait pas refait après le paquet de la file M5, de même taille). Aucun chiffre de
+pension ne bouge du fait de cette file.
 
 ## Ce qui n'a pas été vérifié, ce qui reste
 

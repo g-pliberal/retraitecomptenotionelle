@@ -356,7 +356,7 @@ puis « Qu'est-ce qui décide du résultat ? ». On peut s'arrêter au titre.
 
 Puis descendre, par-dessus « Pour aller plus loin », jusqu'à « D'où viennent
 les chiffres », le bon endroit pour conclure : « Rien ici n'est à
-croire sur parole. » <!--chiffre:somme(moteur/donnees.json:certification.series.*.valeurs)-->441 779<!--/--> valeurs recontrôlées automatiquement contre le
+croire sur parole. » <!--chiffre:somme(moteur/donnees.json:certification.series.*.valeurs)-->441 807<!--/--> valeurs recontrôlées automatiquement contre le
 fichier de l'institution qui les produit, sur <!--chiffre:entrees(moteur/donnees.json:certification.series)-->226<!--/--> séries ; <!--chiffre:entrees(moteur/donnees.json:inventaire)-->114<!--/--> régimes
 recensés dont <!--chiffre:entrees(moteur/donnees.json:regimes)-->80<!--/--> calculés ; <!--chiffre:valeur(moteur/donnees.json:institutions_citees)-->43<!--/--> institutions citées. Ce compte mesure la
 fidélité de la recopie, non la justesse des pensions : si on vous le demande,
