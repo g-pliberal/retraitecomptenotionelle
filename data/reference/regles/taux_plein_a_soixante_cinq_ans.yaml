@@ -1,0 +1,81 @@
+schema_version: 1
+id: taux_plein_a_soixante_cinq_ans
+intitule: >-
+  Le taux plein dès soixante-cinq ans, quand l'âge du taux plein de la génération est plus
+  élevé, pour l'aidant familial qui a interrompu son activité (L. 351-8, 1° bis) ; pour le
+  parent qui a une majoration de durée pour enfant handicapé, ou qui a aidé son enfant
+  bénéficiaire de la prestation de compensation du handicap (L. 351-8, 6°, depuis la loi
+  n° 2025-199 ; avant, l'article 20 de la loi n° 2010-1330) ; pour le parent de trois
+  enfants né du 1er juillet 1951 au 31 décembre 1955 qui a cessé ou réduit son activité
+  pour en élever un (même article 20). Le bénéficiaire de l'allocation des travailleurs
+  de l'amiante a sa fiche (inaptitude_invalidite_penibilite_amiante).
+regimes: [msa_salaries, regime_general, rsi]
+etat: pas_encore_modelisee
+effet: >-
+  Les assurés de ces catégories partis entre soixante-cinq ans et l'âge du taux plein de
+  leur génération (de soixante-cinq ans et quatre mois à soixante-sept ans) sans la durée
+  requise : le modèle les décote. Non mesuré.
+sources:
+  lu_le: 2026-11-03
+  prochaine_relecture: 2027-06-30
+  a_relire:
+  - >-
+    Le parent de trois enfants se lit sur ce que la saisie déclare : la carrière, année
+    par année, et les naissances. La condition, telle que la caisse l'applique (exposé
+    « Taux plein à 65 ans ») : huit trimestres d'activité avant la naissance ou
+    l'adoption, huit dans les deux années civiles qui la précèdent, et au plus huit dans
+    l'année de la naissance et les deux suivantes, trois si l'enfant est né au second
+    semestre. À modéliser d'abord, dans les deux moteurs, pour les pensions prenant
+    effet de 2016 à 2022 : lire avant le décret d'application de l'article 20 de la loi
+    n° 2010-1330, et la circulaire Cnav qui l'applique.
+  - >-
+    Les autres catégories tiennent à un fait que la saisie ne porte pas : trente mois
+    d'interruption pour aider une personne handicapée, comme aidant familial ou tierce
+    personne ; un trimestre de majoration pour enfant handicapé (L. 351-4-1) ; trente
+    mois d'aide à son enfant bénéficiaire de la prestation de compensation.
+  lectures:
+  - type: legifrance
+    reference: >-
+      L. 351-8 CSS, index LEGI à jour au 2 novembre 2026 : ses rédactions du 1er juillet
+      2011 (LEGIARTI000023030950), du 22 janvier 2014 (LEGIARTI000028498855), du
+      1er septembre 2023 (LEGIARTI000047452736) et du 28 février 2025
+      (LEGIARTI000051289852), qui porte : « 1° bis Les assurés ayant interrompu leur
+      activité professionnelle en raison de leur qualité d'aidant familial telle que
+      définie à l'article L. 245-12 du code de l'action sociale et des familles qui
+      atteignent l'âge de soixante-cinq ans dans des conditions déterminées par décret en
+      Conseil d'Etat » et « 6° Les assurés atteignant l'âge de soixante-cinq ans qui
+      bénéficient d'un nombre minimal de trimestres fixé par décret au titre de la
+      majoration de durée d'assurance prévue à l'article L. 351-4-1 ou qui, pendant une
+      durée et dans des conditions fixées par décret, ont apporté une aide effective à
+      leur enfant bénéficiaire de l'élément de la prestation [de compensation] »
+    date: 2026-11-03
+  - type: circulaire_cnav
+    reference: >-
+      base de législation de la Cnav, exposé « Taux plein à 65 ans »
+      (retraite_personnelle_taux_taux_plein_65_ans_ex.aspx, version du 18 septembre
+      2026) : l'article 87 de la loi n° 2025-199 intègre au 6° de L. 351-8 le parent
+      d'un enfant handicapé et le parent aidant, et abroge l'article 20 de la loi
+      n° 2010-1330 qui gardait le taux plein à soixante-cinq ans aux assurés nés du
+      1er juillet 1951 au 31 décembre 1955 ayant eu ou élevé au moins trois enfants ;
+      les conditions de chaque catégorie, l'activité préalable et la cessation ou la
+      diminution d'activité du parent de trois enfants, l'interruption de trente mois
+      de l'aidant
+    date: 2026-09-18
+textes_a_rattacher:
+- reference: L. 351-8 CSS, 1° bis et 6°
+- reference: loi n° 2010-1330 du 9 novembre 2010, article 20
+- reference: loi n° 2025-199 du 28 février 2025, article 87
+- id: LEGIARTI000051289852
+  article: L. 351-8 CSS
+  en_vigueur: 2025-02-28
+  change: >-
+    le 6° garde le taux plein à soixante-cinq ans au parent qui a une majoration de durée
+    pour enfant handicapé ou qui a aidé son enfant bénéficiaire de la prestation de
+    compensation, pour les pensions prenant effet à compter du 1er janvier 2026 (loi
+    n° 2025-199, article 87, VIII, C)
+historique:
+- >-
+  2026-11-03 — née de l'étape 4 de l'action 175 (la base de législation de la Cnav, thème
+  « Retraite personnelle de base ») : ces taux pleins n'avaient pas de fiche depuis que
+  la fiche inaptitude_invalidite_penibilite_amiante a rendu, le 30 septembre 2026, son
+  texte à rattacher « L. 351-8 1° bis et 6° ».
