@@ -1604,6 +1604,240 @@ d'un assuré qui ne dépose pas son relevé.
 **Ce que le propriétaire tranche** : les sources retenues ; s'il réunit des
 relevés réels, et sous quelle anonymisation.
 
+### 185. Les écarts que l'action 145 a lus sans les calculer : chacun porté au modèle à son texte, ou sa limite dite — `à faire`
+
+**D'où elle vient.** L'action 145 a documenté, sans rien calculer, les régimes
+que l'inventaire ne nommait pas. Ses notes du 13, du 14 et du 16 octobre 2026
+relèvent ce que le droit lu prévoit et que le modèle ne fait pas, et demandent
+au propriétaire si ces écarts ouvrent une action ; celles du 2 novembre y
+ajoutent ce que les recherches complémentaires ont lu sans le porter. Le
+3 novembre 2026, le propriétaire a décidé, par la session d'orchestration :
+clore l'action 145, et ouvrir celle-ci pour ces écarts, avec la trace du barème
+de la CRFM, dont la part attend l'arrêté de 1977. Chaque écart est inscrit ici
+tel que sa note le dit, avec son renvoi `145/<note>:<ligne>` sous
+`docs/archives/feuille_de_route/` : ce qu'il est, ce qui manque, la source qu'il
+cite. Un renvoi court, `:83`, va à la note de l'écart ; `R` et `C`, aux deux
+notes du 2 novembre, `145/2026-11-02-recherches-complementaires.md` et
+`145/2026-11-02-correction-cafat-wallis.md`. Aucun écart n'est tranché ici ;
+chacun se relit à sa source avant d'être corrigé.
+
+**Déjà faits, hors d'elle.** Les annuités du CESE au pourcentage de leur mandat,
+par l'action 121, le 14 octobre 2026 (`121/2026-10-14-cese-et-carmf.md`, aux
+archives) ; le rendement de la CAFAT et le taux de Wallis-et-Futuna depuis 2009,
+par l'action 145, le 2 novembre, sur décision du propriétaire
+(`145/2026-11-02-correction-cafat-wallis.md:39-60`). L'historique des fiches,
+des fichiers de régime et des commits, relu le 3 novembre 2026, ne montre aucune
+autre correction de ces écarts depuis les notes.
+
+**Note du 13 octobre, six régimes.**
+
+1. **Gérants de débits de tabac : un rendement double**
+   (`145/2026-10-13-etape-2-six-regimes.md:41-53`). Le modèle fait coûter le
+   point 4,94 € de cotisation ; l'arrêté du 13 novembre 1963 (article 14) et le
+   décret n° 63-1104 (article 2) le font coûter cent fois sa valeur d'achat en
+   remises corrigées : à remises corrigées égales aux remises brutes, il sert le
+   double du droit. Manque : la correction des remises, hors de l'index, à lire
+   avant de corriger (`:50-51`, `:83`). Ni l'anticipation dès soixante ans, ni
+   les seuils de quinze ans et de 400 points, ni le capital sous sept ans ne
+   sont portés. La ligne d'inventaire dit encore le barème du point « hors
+   index », faux depuis 2006 (`:97-101` ; `regimes/gerants_debits_tabac.yaml`,
+   `manque`). Fiche `ravgdt_allocation_viagere`.
+2. **CESE : l'allocation viagère des mandats courts**
+   (`145/2026-10-13-etape-2-six-regimes.md:54-61`). Le premier écart de la note,
+   les annuités au pourcentage de la liquidation, est corrigé (action 121).
+   Reste l'allocation viagère des mandats de moins de cinq ans, réduite de
+   moitié depuis le 16 novembre 2015 (article 20 du règlement, que la fiche
+   cite) et servie entière ; et, déclarées par l'action 121, les coupures à
+   l'année civile et le pourcentage lu en trimestres entiers
+   (`121/2026-10-14-cese-et-carmf.md:41-45`). Manque : les règlements de 1958 et
+   de 2015 de la caisse (`:85-86`). Fiche `cese_pension_des_membres`.
+3. **IGRANTE : 3,5 % de points en moins**
+   (`145/2026-10-13-etape-2-six-regimes.md:62-66`). L'arrêté du 10 mars 1971
+   majore « forfaitairement de 3,50 % » les points avant leur transfert à
+   l'Ircantec ; le modèle les convertit un pour un, et
+   `test_un_regime_ferme_ne_vaut_jamais_plus_que_son_successeur` borne ce
+   coefficient à 1, à revoir avec la correction. Fiche `igrante_points`.
+4. **Conjoints de commerçants : des points de l'assuré**
+   (`145/2026-10-13-etape-2-six-regimes.md:67-73`). Depuis 2004, les droits de
+   l'ancien régime sont des points au compte de l'assuré, au NRCO puis au RCI
+   (règlement du RCI, articles 7, 14, 15 et 33, annexes 1 et 3) ; le modèle
+   porte la cotisation additionnelle à un rendement nul. Manque : l'article 16
+   du règlement du NRCO (`:84`). Fiche `organic_conjoints_de_commercants`.
+5. **IPACTE : des conditions d'affiliation**
+   (`145/2026-10-13-etape-2-six-regimes.md:74-77`). Le décret de 1951
+   (n° 51-1445) la réserve à la catégorie A, à l'indice 225 au moins, à temps
+   complet ; le modèle la donne à tout contractuel au-dessus du plafond, et lui
+   refuse l'IGRANTE jusqu'à trois plafonds. Manque : les articles que LEGI ne
+   porte pas — l'âge, l'allocation, la réversion —, au fac-similé du Journal
+   officiel de 1951 et de 1960 (`:81-83`). Fiche `ipacte_points`.
+6. **Quatre moindres** (`145/2026-10-13-etape-2-six-regimes.md:78-80`) : les
+   37,52 points de l'ASV d'avant juillet 1972 ; la validation des services
+   d'avant 1951 et 1960 et leurs points gratuits ; l'assiette de l'IPACTE
+   jusqu'à 4,75 plafonds depuis 1961 ; les exclus de l'IGRANTE (les
+   auxiliaires).
+
+**Note du 14 octobre, trois hors champ.**
+
+7. **Crédit foncier : la rente d'avant 1989**
+   (`145/2026-10-14-etape-2-hors-champ.md:52-55`). Les anciens agents entrés
+   avant 1989 sont simulés au régime général sur toute leur carrière, quand
+   leurs années d'avant 1989 valent une rente forfaitaire (loi n° 89-18, article
+   13 ; décret n° 89-157). Manque : le barème d'avant 1989 (décret du 6 août
+   1931), hors de l'index (`:30-31`). La note demande au propriétaire s'il vaut
+   un statut, comme la Compagnie générale des eaux et la CCI de Roubaix
+   (`:58-60`). Fiche `credit_foncier_transfert_1989`.
+8. **CRFOM : la limite d'âge et les bonifications**
+   (`145/2026-10-14-etape-2-hors-champ.md:55-56`). Ses derniers tributaires sont
+   simulés au code des pensions civiles et militaires sans la limite d'âge du
+   cadre ni les bonifications de services hors d'Europe (loi n° 75-1278, article
+   73 ; décret n° 50-461, absent de l'index, `:43-50`). Fiche
+   `crfom_regime_du_decret_1950`.
+9. **ORTF : la position spéciale**
+   (`145/2026-10-14-etape-2-hors-champ.md:56-58`). Ses agents en position
+   spéciale (loi n° 74-696, article 30) ne sont pas simulés ; nés en 1919 ou
+   avant (`:41-42`). Fiche `ortf_position_speciale_1974`.
+
+**Note du 14 octobre, navigants, députés et Mayotte.**
+
+10. **Navigants : la majoration temporaire**
+    (`145/2026-10-14-etape-2-navigants-deputes-mayotte.md:39-45`). De
+    cinquante-cinq ans à l'âge légal, 0,8 % du plafond mensuel par annuité,
+    doublée de soixante-deux ans à l'âge légal depuis novembre 2023 ; ni elle,
+    ni la majoration de trois enfants, ni le minimum de 795 € par annuité, ni la
+    prestation de R. 6527-46-1 ne sont portés ; le salaire moyen est celui de la
+    carrière entière, non des vingt-cinq meilleures annuités. Fiche
+    `crpn_pension_des_navigants`.
+11. **Navigants : 111 % en 2024 et 2025**
+    (`145/2026-10-14-etape-2-navigants-deputes-mayotte.md:46-48`). Le taux
+    d'appel est écrit (R. 426-8, rédaction du décret n° 2021-570 ; D. 6527-15) ;
+    la fiche de régime `crpnpac` garde 105 % jusqu'en 2025.
+12. **Députés : la part de l'Assemblée**
+    (`145/2026-10-14-etape-2-navigants-deputes-mayotte.md:49-53`). « La
+    subvention inscrite dans la Dotation égale au double des retenues »
+    (règlement publié au Journal officiel du 4 janvier 2018, article 2, 4°) : la
+    cotisation simulée est le tiers de l'effort réel. Ni la bonification de deux
+    trimestres par enfant né pendant le mandat d'une députée, ni l'arrondi au
+    trimestre supérieur. Fiche `deputes_pension_des_anciens_deputes`.
+13. **Mayotte, de 1987 à 2002 : la formule du décret**
+    (`145/2026-10-14-etape-2-navigants-deputes-mayotte.md:54-57`). 1,5 % par
+    année des cinq meilleures années, 150 trimestres au plus, sans minoration,
+    un minimum de 22,5 % du SMIG (décret n° 87-175) ; la fiche de régime prête
+    celle du régime général. Fiche `mayotte_pension_de_base`.
+14. **Mayotte, de 2018 à 2027 : seize à vingt-quatre années**
+    (`145/2026-10-14-etape-2-navigants-deputes-mayotte.md:58-61`). Le salaire
+    moyen des générations 1956 à 1964 se calcule sur moins de vingt-cinq ans
+    (décret n° 2003-589) ; au 1er janvier 2028, le régime se fond dans le code
+    de la sécurité sociale (ordonnance n° 2026-647, `:33-36`), que la fiche de
+    régime prolonge.
+
+**Note du 16 octobre, Saint-Pierre-et-Miquelon.**
+
+15. **Le revenu moyen avant juillet 2016**
+    (`145/2026-10-16-etape-2-saint-pierre-et-miquelon.md:28-30`) : celui de
+    toute la carrière (décret n° 89-110, article 8), quand la fiche de régime
+    prend les dix meilleures années ; les années 1960 à 1987, au forfait, ne
+    sont pas portées.
+16. **Depuis juillet 2016**
+    (`145/2026-10-16-etape-2-saint-pierre-et-miquelon.md:31-32`) : quarante à
+    vingt-huit années pour les nés avant 1962, et la surcote de 1,25 %
+    (ordonnance n° 2015-896, `:21-24`).
+17. **Les taux de cotisation**
+    (`145/2026-10-16-etape-2-saint-pierre-et-miquelon.md:33-42`) : écrits
+    (arrêtés du 11 juillet 1989, du 29 janvier 1996 et du 24 septembre 1998 ;
+    décret n° 89-110, article 38-3 ; décret n° 2017-1000, article 6-2), quand la
+    fiche de régime prête ceux du régime général : la cotisation simulée est
+    trop haute de 42 à 52 % de 1989 à 2016, de 17 % en 2025. Restent à lire : le
+    forfait des années 1960 à 1987 depuis 2016, le plafond local de 1987 à 2015,
+    le taux d'avant septembre 1989, la réversion et les allocations minimales
+    (`:57-59`). Fiche `saint_pierre_et_miquelon_pension_de_base`.
+
+**Note du 16 octobre, le Pacifique, et celles du 2 novembre.**
+
+18. **CAFAT, hors du rendement corrigé**
+    (`145/2026-10-16-etape-2-pacifique.md:26-35`). Ni l'anticipation, ni le
+    plafond du territoire, ni le minimum par années de cotisation ne sont
+    portés ; le chômage cotise et vaut des points (Lp. 100-7). Le taux de 13 %
+    d'avant avril 2009, déduit des avis n° 04/2007 et n° 01/2009, calcul de la
+    session, non lu dans un texte (`R:67-72`), n'est pas porté (`C:96-101`). Le
+    rendement d'avant 2001 est introuvable (`R:217-219`) : la valeur de 2001 est
+    prolongée jusqu'en 1958, `estimee` (`C:46-49`) ; ceux de 2001, 2007 et 2008
+    sont ceux du conseil, que la chambre territoriale des comptes contredit
+    (`R:50-57`, `C:45-46`). Le prix d'achat de chaque année n'est pas versé à
+    `valeurs_point.csv` : pour un départ de 2026, la revalorisation sur les prix
+    s'écarte de celle de la valeur de référence de −2,2 % à +1,4 % (`C:50-55`).
+    Fiche `cafat_pension_de_base`.
+19. **CPS de Polynésie** (`145/2026-10-16-etape-2-pacifique.md:36-40`). Le
+    salaire de référence est la moyenne des 180 meilleurs mois des 240 derniers,
+    non des dix meilleures années ; ni les abattements, ni la pension réduite
+    dès 57 ans, ni la majoration de 1,84 % par année au-delà de la durée ne sont
+    portés. Manque : les délibérations n° 87-11 AT et n° 95-180 AT et la loi du
+    pays n° 2019-6, sur LexPol, injoignable (`:68-69`) ; le rapport 2021 du
+    comité d'orientation et de suivi des retraites en donne les paramètres de
+    2011 à 2021 (`R:192-204`). Fiche `cps_polynesie_pension_des_salaries`.
+20. **Wallis-et-Futuna, hors du taux corrigé**
+    (`145/2026-10-16-etape-2-pacifique.md:41-47`). La délibération n° 25/AT/2015
+    (taux plein à 35 ans, anticipation dès 55 ans) : sa date d'effet n'est pas
+    lue, et le 1er janvier 2016 de la fiche n'a rien pour lui (`R:125-128`). Le
+    barème de la caisse locale d'avant 2009 — 3,2 % par année du salaire moyen
+    des quatre dernières années, 65 % au plus, à 55 ans, la moitié du SMIG au
+    moins — et sa création le 4 août 1977, qui changerait l'étiquette « depuis
+    1975 », lus au rapport 2004 de l'IEOM, p. 64 et 65, et non portés
+    (`R:114-124`, `C:61-64`). À vérifier, sans preuve encore : un plafond du
+    barème à 65 %, où la fiche écrit 71,5 % à quarante ans, et un plafond de
+    cotisation (`R:134-138`). Fiche `wallis_et_futuna_pension_des_salaries`.
+21. **Fonctionnaires de Nouvelle-Calédonie**
+    (`145/2026-10-16-etape-2-pacifique.md:48-54`). L'abattement est par tranches
+    d'âge, 10, 16, 24, 35 et 40 %, non 2,5 % par trimestre ; toutes les pensions
+    sont minorées de 8 % en 2026 et 2027 ; l'âge se réduit pour les services
+    calédoniens d'avant 2014 ; la retenue et la contribution portent sur le
+    traitement majoré de 73 %, et la cotisation simulée est trop basse d'environ
+    42 %. Manque, sur Juridoc : la délibération n° 300 de 1961 et les rédactions
+    du code calédonien d'avant 2025 (`:71-72`). Fiche
+    `clr_nouvelle_caledonie_pension_des_fonctionnaires`.
+
+**Note du 16 octobre, trois hors champ.**
+
+22. **CRFM de Mayotte : la part de pension des agents intégrés**
+    (`145/2026-10-16-etape-2-trois-hors-champ.md:50-52`). La part CRFM et l'âge
+    de 55 ans sont simulés aux seules règles du régime d'accueil (loi
+    n° 2001-616, article 64-1, VII ; décret n° 2012-1256, `:18-29`). Le
+    règlement est identifié : l'arrêté préfectoral 77-50/RG du 16 mars 1977,
+    modifié par l'arrêté n° 265/CRF du 25 février 1994 (`R:142-149`) ; son
+    barème reste introuvable, à demander aux Archives départementales de
+    Mayotte, à la préfecture, à la CRFM ou à la CNRACL (`R:169-174`). Pas de
+    statut avant ce barème : la part CRFM attend l'arrêté de 1977 (`R:175-177` ;
+    le propriétaire, le 3 novembre 2026). La fiche `crfm_mayotte_pension_unique`
+    ne cite encore ni l'arrêté ni les deux décisions que la note relève
+    (`R:177-179`).
+23. **Élus de Nouvelle-Calédonie**
+    (`145/2026-10-16-etape-2-trois-hors-champ.md:52-53`). Les mandats indemnisés
+    valent des points de la CAFAT depuis 1977 (délibération n° 431 du 22 juillet
+    1977, citée par la cour administrative d'appel de Paris, 1er février 2006,
+    n° 02PA01530 ; `:30-36`). Non lu : ce que le congrès et les provinces en ont
+    fait depuis 1999 ; la Polynésie n'a pas de fiche, faute d'un texte lu
+    (`:36-38`). Fiche `elus_nouvelle_caledonie_cafat`.
+24. **Régies ferroviaires d'outre-mer**
+    (`145/2026-10-16-etape-2-trois-hors-champ.md:53-54`). Les services
+    d'outre-mer des anciens cheminots des régies ne sont pas portés. Manque : le
+    règlement de la caisse, approuvé par l'arrêté du 13 mai 1996, « disponible à
+    la Caisse des dépôts », non publié (`:39-40`). Fiche
+    `regies_ferroviaires_pensions_en_extinction`.
+
+**Les sources injoignables.** LexPol, le Journal officiel de Wallis-et-Futuna
+(ses numéros de 2009 et de 2015 ne sont pas en ligne) et le site de la CPSWF
+refusent le conteneur ou n'ont pas le texte ; l'archive du web est bloquée par
+la politique réseau de l'environnement, à laquelle le propriétaire peut ajouter
+web.archive.org ; Gallica refuse le conteneur (`R:181-213` ;
+`145/2026-10-16-etape-2-trois-hors-champ.md:46-49`).
+
+**Ce qui est à faire**, une étape par session, un écart à la fois : relire le
+texte qu'il cite, puis le test d'abord, sur la valeur de la source ; la donnée
+ou la règle dans les deux moteurs, ou la limite dite. Une règle du scénario 1
+suit `docs/veille_droit.md`, sur Opus.
+
+**Ce que le propriétaire tranche** : l'ordre des écarts ; si le Crédit foncier
+vaut un statut (écart 7). La part CRFM attend l'arrêté de 1977.
+
 ---
 
 ## Les actions en cours
@@ -6710,94 +6944,6 @@ Restent, nés de l'étape : les autres régimes en points que la table ne date
 pas, l'Ircantec d'abord, relevée au 1er avril à partir de 2009 selon
 OpenFisca ; le texte de l'accord du 30 octobre 2015 ; et, le 14 octobre 2026,
 la décision du 1er novembre, une ligne de plus à la table datée.
-
-### 145. Les régimes que l'inventaire ne nommait pas : documentés, non calculés — `en cours`
-
-**Reprise, au 2 novembre 2026.** Faites, les trois étapes, les recherches
-complémentaires et la correction que le propriétaire a décidée (note
-`2026-11-02-correction-cafat-wallis.md`) : la CAFAT sert le rendement que la
-caisse fixe chaque année, de 12,45 % en 2001 à 9 % en 2026 ; Wallis-et-Futuna
-cotise le taux de la retraite seule, de 11,1 % en 2009 à 21 %, 9 % avant. La
-part CRFM attend l'arrêté de 1977. Reste, avant de clore : que le propriétaire
-dise si les écarts des notes du 13, du 14 et du 16 octobre, avec le barème
-d'avant 2009 de Wallis-et-Futuna, ouvrent une action nouvelle ; aucun n'est du
-ressort de celle-ci, qui documente sans calculer.
-
-**Demande**, le 4 octobre 2026 : « Je veux que tu documentes les régimes de
-retraite que nous n'avons pas encore documenter pour l'instant. Il faut
-documenter le plus de régimes de retraite possibles dans le détail le plus fin
-possible. Je veux juste que tu documentes pour l'instant. Ne fait pas de
-changement dans les moteurs. »
-
-**Étape 1, le 4 octobre 2026 : les régimes absents de l'inventaire.**
-
-- *La méthode.* L'inventaire se disait complet ; il a été relu contre trois
-  énumérations qu'il ne citait pas. Les décrets annuels de contribution au
-  fonds spécial d'allocation vieillesse, de 1984 à 1993, nomment tous les
-  débiteurs de pensions (décret n° 84-104, article 2, `LEGIARTI000006766410`,
-  à décret n° 93-426, `LEGIARTI000006928885`) ; la convention du GIP Info
-  Retraite nomme ses trente-huit membres de 2004 ; la carte des mandats de la
-  Caisse des dépôts (février 2026) et ses arrêtés de délégation de 2003 à
-  2006 détaillent ses « pensions sur fonds spéciaux ». L'article 61 du décret
-  n° 46-1378 et R. 711-1, relus dans leurs trois rédactions, y ont ajouté la
-  Compagnie générale des eaux, que `docs/regimes.md` tenait pour citée de
-  mémoire.
-- *Ce qui est entré.* Neuf lignes **à modéliser** : les régimes spéciaux de la
-  CCI de Paris (fermé en 2006), de la Compagnie générale des eaux (1991) et
-  de l'ancienne CCI de Roubaix (1998) ; le personnel statutaire de la CANSSM ;
-  le personnel titulaire des ports autonomes de Bordeaux, du Havre et de
-  Marseille ; le RETREP des maîtres du privé ; les pensions des ministres des
-  cultes d'Alsace-Moselle ; l'allocation temporaire complémentaire des
-  ingénieurs du contrôle aérien ; l'affiliation des représentants au
-  Parlement européen. Huit lignes **hors champ** : la SUDAC, la caisse du
-  personnel sédentaire de la CGMF, la caisse du chemin de fer
-  franco-éthiopien, les régimes locaux d'Alsace-Moselle, les cantonniers de
-  l'État et les pensions sur fonds spéciaux, les régimes par rente des élus
-  locaux d'avant 1992, l'Assemblée de l'Union française, la Caisse nationale
-  des retraites pour la vieillesse de 1850. Chaque ligne cite ses textes, avec
-  leur identifiant quand l'index le porte, et dit ce qui manque ou pourquoi.
-- *Les fiches de règles.* Sept, toutes `pas_encore_modelisee`, découpées en
-  versions datées et citant leurs articles : `retrep_avantages_temporaires`
-  (six versions, du décret de 1980 au décret n° 2023-435),
-  `atc_icna_allocation` (cinq), `cultes_alsace_moselle_pension` (trois, la
-  première supposée faute du texte de 1909), `parlement_europeen_affiliation`
-  (trois), et les trois transferts au régime général —
-  `compagnie_generale_eaux_transfert_1991`, `cci_roubaix_transfert_1998`,
-  `cci_paris_transfert_2006` —, qui suivent un même gabarit : une rente
-  forfaitaire du régime général, 64 650 F puis 62 150 F pour cent cinquante
-  trimestres validés depuis le 1er juillet 1930, puis, en 2006, le
-  rétablissement des droits au régime général et l'affiliation à
-  l'Agirc-Arrco. Le personnel de la CANSSM et les ports n'ont pas de fiche :
-  leurs règlements ne sont publiés nulle part où le dépôt lit.
-- *Ce qui n'est pas entré.* Les compléments de pension CGE et SEVESC de la
-  Caisse des dépôts (des bonifications d'insalubrité d'agents détachés, au-
-  dessus de la CNRACL), le fonds de la mairie de Fort-de-France, les rentes
-  d'invalidité de la Ville de Paris, les régimes facultatifs, les
-  organisations internationales, les membres du Gouvernement (aucun texte
-  d'affiliation dans l'index) ; `docs/regimes.md` les nomme, avec les pistes
-  connues par leur seul titre.
-- *Les tests.* Deux assertions fermaient la couverture « à modéliser » ;
-  elles l'acceptent désormais, à condition qu'une fiche de règles décrive la
-  ligne ou que son `manque` dise longuement ce qui bloque
-  (`test_l_inventaire_couvre_les_regimes_que_le_code_enumere`), et le filtre
-  de la page Données propose exactement les couvertures que l'inventaire
-  porte. Aucun moteur n'est touché.
-- *Ce que ça déplace.* Aucun témoin de simulation ; les pages Méthode et
-  Programme comptent cent huit régimes, et le parcours de présentation suit.
-
-**Les étapes suivantes.**
-
-2. *Les fiches des régimes sans fiche.* Une fiche `pas_encore_modelisee` ou
-   `approchee`, selon que le régime est calculé, par régime de l'inventaire
-   qui n'a que la fiche générique de liquidation, en lisant ses textes dans
-   l'index ou sur le site de sa caisse ; l'outre-mer d'abord, dont les
-   délibérations sont citées par les lignes de l'inventaire.
-3. *Les pistes.* La caisse de retraites de la presse (ordonnance
-   n° 45-2411), les ingénieurs des minéraux solides (1947), l'Institut de
-   France (décret n° 49-1372), les praticiens-conseils (1963), l'ONIVIT
-   (décret n° 79-814), le statut du personnel de la CANSSM, les règlements
-   des ports : à lire au fac-similé du Journal officiel ou aux archives, puis
-   inscrire ou écarter.
 
 ### 151. Partir très tard : le départ jusqu'au bout des tables de mortalité, puis la limite d'âge des fonctionnaires et ses exceptions — `en cours`
 
