@@ -1,0 +1,15 @@
+date: "2026-11-03"
+session: "action 161, le coût sous un modèle modifié : le régime unique par barème, une règle du compte sous un paramètre facultatif, l'étude par le portage"
+consulte: >-
+  Aucune source de droit nouvelle : la session ne touche à aucune règle du
+  scénario 1. Les barèmes que l'étude pose, lus tels quels dans le catalogue
+  des régimes que le dépôt porte déjà : le régime général et l'Agirc-Arrco de
+  l'année de bascule, et la fusion des régimes du modèle.
+trouve: >-
+  Aucune règle du droit n'a changé. Le barème du régime unique est une
+  variante d'étude des comptes notionnels, que scripts/solde_fusion.py
+  chiffre : elle s'écrit au moteur sous un paramètre facultatif
+  (Parametres.bareme_regime_unique), que le scénario 1 ne lit pas et que le
+  site ne porte pas.
+reste: >-
+  Rien pour la veille.

@@ -6926,13 +6926,13 @@ de `contribution_etat`.
 **Reprise, au 3 novembre 2026.** Le JavaScript fait foi (note de décision
 0005), et le Python garde ce que dit la note 0006. En cours : le coût sous un
 modèle modifié. Faits : le relevé, le plan, le jumeau à part, les données
-d'ailleurs, « sans la suspension », la proposition prospective en univers,
-puis le stock à l'âge légal, une règle du compte sous un paramètre facultatif,
-l'étude par le portage, sa sortie à l'octet. Suivent, une par session : le
-régime unique par barème, en paramètre de la demande ; le levier
-`pont.par_le_jumeau()` réservé aux confrontations ; puis les retraits. Détail :
-`2026-11-02-le-cout-sous-un-modele-modifie.md` (le plan),
-`2026-11-03-le-stock-a-l-age-legal.md`.
+d'ailleurs, « sans la suspension », la proposition prospective en univers, le
+stock à l'âge légal, puis le régime unique par barème, une règle du compte
+sous un paramètre facultatif, l'étude par le portage, sa sortie à l'octet :
+plus aucune étude n'ouvre `pont.par_le_jumeau()`. Suivent, une par session :
+ce levier réservé aux confrontations, qu'un test tienne ; puis les retraits.
+Détail : `2026-11-02-le-cout-sous-un-modele-modifie.md` (le plan),
+`2026-11-03-le-regime-unique-par-bareme.md`.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur
