@@ -3012,6 +3012,42 @@ def source_minimum_vieillesse_effectifs() -> dict[tuple, float]:
             for indicateur, valeur in grandeurs.items()}
 
 
+#: Fiche 23 : ce que l'enquête Emploi mesure du profil des cumulants — un
+#: sondage, d'où ``haute`` —, et ce que l'EACR, l'EIC et l'EIR comptent.
+CHAMPS_CUMUL_ENQUETE_EMPLOI = frozenset({"age", "csp", "temps_travail"})
+
+
+def _profil_cumul(enquete_emploi: bool) -> dict[tuple, float]:
+    return {tuple(cle): valeur for *cle, valeur in _serie_panorama("cumul_profil")
+            if (cle[1] in CHAMPS_CUMUL_ENQUETE_EMPLOI) == enquete_emploi}
+
+
+def source_cumul_profil_enquete_emploi() -> dict[tuple, float]:
+    """Le profil des cumulants, de l'enquête Emploi de l'INSEE.
+
+    Le panorama de 2026, fiche 23 : leurs tranches d'âge de 2014 à 2024,
+    France hors Mayotte (le complément du tableau 1), leurs catégories et
+    leur temps de travail en 2024 (tableaux 2 et 3), par sexe (action 178,
+    étape 6).
+
+    Clé (annee, champ, regime, modalite, sexe, indicateur).
+    """
+    return _profil_cumul(True)
+
+
+def source_cumul_profil_regimes() -> dict[tuple, float]:
+    """Le cumul dans un même régime, et celui de la génération 1950.
+
+    Le panorama de 2026, fiche 23 : les cumulants de quatre caisses, de l'EACR
+    (tableau 4), leur part par âge (graphique 1), et la part des retraités nés
+    en 1950 qui ont cumulé avant 67 ans, par régime de retraite et d'emploi
+    (tableaux 5 et 6, l'EIC et l'EIR) (action 178, étape 6).
+
+    Clé (annee, champ, regime, modalite, sexe, indicateur).
+    """
+    return _profil_cumul(False)
+
+
 def source_age_depart_csp() -> dict[tuple, float]:
     """L'âge conjoncturel de départ, par catégorie socioprofessionnelle.
 
@@ -8656,6 +8692,86 @@ CERTIFICATIONS = (
             "# Ne pas modifier les valeurs certifiées à la main : elles seraient",
             "# écrasées au prochain scripts/verifier_donnees.py --appliquer.",
         ),
+    ),
+    Certification(
+        nom="cumul_profil_enquete_emploi",
+        chemin=REFERENCE / "macro" / "cumul_emploi_retraite_profil.csv",
+        cles=("annee", "champ", "regime", "modalite", "sexe", "indicateur"),
+        colonne="valeur",
+        source=source_cumul_profil_enquete_emploi,
+        origine="DREES, panorama « Les retraités et les retraites » 2026, fiche 23, "
+                "tableaux 1 à 3 (enquête Emploi)",
+        decimales=None,
+        tolerance=0.005,
+        niveau="haute",
+        entete=(
+            "# Le profil des retraités qui cumulent un emploi et leur retraite",
+            "# source_id: drees_panorama_retraites_2026_classeurs",
+            "# unite: selon l'indicateur — personnes, milliers, %",
+            "# fiabilite:",
+            "#   haute : champs age, csp et temps_travail, fiche 23, tableaux 1 (son",
+            "#           complément) à 3, du panorama de la DREES « Les retraités et",
+            "#           les retraites », édition 2026, calculés sur l'enquête Emploi",
+            "#           de l'INSEE : un sondage ;",
+            "#   certifiee : champs meme_regime (tableau 4 et graphique 1, l'EACR) et",
+            "#           generation_1950 (tableaux 5 et 6, l'EIC et l'EIR). Tous lus",
+            "#           dans le classeur de la fiche par",
+            "#           scripts/fetch/drees_panorama_classeurs.py et recontrôlés par",
+            "#           scripts/verifier_donnees.py.",
+            "#",
+            "# LES COLONNES",
+            "# ------------",
+            "# champ : age, les cumulants de 55 ans ou plus résidant en France hors",
+            "#   Mayotte, par tranche d'âge (`modalite` 55_59, 60_64, dont 60_61 et",
+            "#   62_64, 65_69, 70_plus, et 55_plus, l'ensemble), de 2014 à 2024 —",
+            "#   cumulants (personnes), part_population_pct, part_retraites_pct,",
+            "#   part_emploi_pct, repartition_pct, part_femmes_pct ; la France",
+            "#   métropolitaine, à gauche du complément, ne se reporte pas ; csp et",
+            "#   temps_travail, en 2024, par sexe — part_cumulants_pct et",
+            "#   part_emploi_non_retraites_pct, la part parmi les personnes de 55",
+            "#   ans ou plus en emploi et non retraitées ; 80_pct et 50_pct sont le",
+            "#   temps partiel à 80 % et à mi-temps, que le classeur écrit en",
+            "#   nombres (0,8 et 0,5) ;",
+            "# meme_regime : les retraités qui cumulent dans le régime de leur",
+            "#   pension, par caisse (`regime`) — cumulants_milliers (2013, 2022 à",
+            "#   2024, le régime général s'arrêtant en 2022), part_femmes_pct et",
+            "#   part_retraites_pct, hors nouveaux retraités de l'année, par sexe",
+            "#   (`modalite` ensemble), puis par âge de 61 à 80 ans (`modalite`",
+            "#   l'âge), en 2024, sauf la Cnav, en 2022 ;",
+            "# generation_1950 : part_ayant_cumule_pct, la part des retraités nés en",
+            "#   1950 qui ont cumulé au moins une année entre leur départ et leurs",
+            "#   67 ans, vus vivants fin 2020 (`annee` 2020) : par régime de",
+            "#   retraite principal (`regime`) et d'emploi principal (`modalite`",
+            "#   emploi_…), puis, dans la fonction publique, par sexe.",
+            "#",
+            "# CE QUE LA FICHE SE CONTREDIT",
+            "# ----------------------------",
+            "# Son chapeau dit 21,4 % de la génération 1950 en cumul avant 67 ans ;",
+            "# son texte et son tableau 5, 22,7 %, que le fichier suit. Son texte",
+            "# cite l'EIR de 2020 et l'EIC de 2021, ses tableaux l'EIC de 2020 et",
+            "# l'EIR de 2021.",
+            "#",
+            "# À QUOI CETTE SÉRIE SERT",
+            "# ------------------------",
+            "# À rien encore : le code exclut le cumul. Elle dit qui cumule — des",
+            "# cadres et des indépendants pour 43 %, à temps partiel pour 70,5 % —,",
+            "# pour la décision que le propriétaire prendra de ce dispositif, à côté",
+            "# des effectifs de cumul_emploi_retraite.csv (action 178, étape 6).",
+            "#",
+            "# Ne pas modifier les valeurs certifiées à la main : elles seraient",
+            "# écrasées au prochain scripts/verifier_donnees.py --appliquer.",
+        ),
+    ),
+    Certification(
+        nom="cumul_profil_regimes",
+        chemin=REFERENCE / "macro" / "cumul_emploi_retraite_profil.csv",
+        cles=("annee", "champ", "regime", "modalite", "sexe", "indicateur"),
+        colonne="valeur",
+        source=source_cumul_profil_regimes,
+        origine="DREES, panorama « Les retraités et les retraites » 2026, fiche 23, "
+                "tableaux 4 à 6 et graphique 1 (EACR, EIC, EIR)",
+        decimales=None,
+        tolerance=0.005,
     ),
     Certification(
         nom="age_depart_csp",

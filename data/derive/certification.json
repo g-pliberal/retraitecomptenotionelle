@@ -364,6 +364,28 @@
    "valeurs": 33,
    "verifiee_le": "2026-11-03"
   },
+  "cumul_profil_enquete_emploi": {
+   "ajoutees": 552,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "9fff73f16ff3bf1f",
+   "identiques": 0,
+   "niveau": "haute",
+   "source": "DREES, panorama « Les retraités et les retraites » 2026, fiche 23, tableaux 1 à 3 (enquête Emploi)",
+   "valeurs": 552,
+   "verifiee_le": "2026-11-03"
+  },
+  "cumul_profil_regimes": {
+   "ajoutees": 139,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "bae90be6b491d149",
+   "identiques": 0,
+   "niveau": "certifiee",
+   "source": "DREES, panorama « Les retraités et les retraites » 2026, fiche 23, tableaux 4 à 6 et graphique 1 (EACR, EIC, EIR)",
+   "valeurs": 139,
+   "verifiee_le": "2026-11-03"
+  },
   "decomposition_depense_retraite": {
    "ajoutees": 0,
    "colonne": "valeur",

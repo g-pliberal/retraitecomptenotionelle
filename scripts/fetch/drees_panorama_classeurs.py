@@ -80,10 +80,11 @@ def nombre(valeur) -> float | None:
 
 
 def annee(valeur) -> int | None:
-    """Une année d'en-tête : 2004.0, « 2018 3 » (renvoi en note), « 2024(p) »."""
+    """Une année d'en-tête : 2004.0, « 2018 3 » ou « 20141 » (renvoi en note,
+    collé ou non), « 2024(p) »."""
     if isinstance(valeur, (int, float)):
         return int(valeur) if 1900 < valeur < 2100 and valeur == int(valeur) else None
-    trouve = re.match(r"\s*((?:19|20)\d\d)\b", str(valeur))
+    trouve = re.match(r"\s*((?:19|20)\d\d)(?:\d?\b)", str(valeur))
     return int(trouve.group(1)) if trouve else None
 
 
@@ -321,9 +322,17 @@ REGIMES_MINIMUM_VIEILLESSE = (
 TERRITOIRES = (("Métropole", "metropole"), ("DROM", "drom"))
 
 
-def _cle(libelle, table) -> str | None:
-    texte = _texte(libelle) if isinstance(libelle, str) else ""
-    return next((cle for debut, cle in table if texte.startswith(debut)), None)
+def _simple(valeur) -> str:
+    """Le texte d'une case, l'apostrophe courbe redressée : les en-têtes d'une
+    même feuille emploient l'une et l'autre."""
+    return _texte(valeur).replace("’", "'")
+
+
+def _cle(libelle, table):
+    """La clé du premier libellé de ``table`` par lequel la case commence ;
+    une case numérique se lit comme le classeur l'écrit (« 0.8 »)."""
+    texte = _simple(libelle) if libelle is not None else ""
+    return next((cle for debut, cle in table if texte.startswith(debut.replace("’", "'"))), None)
 
 
 def lire_minimum_vieillesse_regimes(grille: dict) -> dict[str, dict[str, dict[str, float]]]:
@@ -375,6 +384,232 @@ def lire_minimum_vieillesse_effectifs(grille: dict) -> dict[str, dict[str, float
     return serie
 
 
+#: Fiche 23 : les tranches d'âge des cumulants (tableau 1 et son complément),
+#: leurs catégories (tableau 2), leur temps de travail (tableau 3) — « 80 % »
+#: et « 50 % », que le classeur écrit en nombres —, leurs grandeurs.
+TRANCHES_CUMUL = (
+    ("De 55 à 59 ans", "55_59"), ("De 60 à 64 ans", "60_64"), ("de 60 à 61 ans", "60_61"),
+    ("de 62 à 64 ans", "62_64"), ("De 65 à 69 ans", "65_69"), ("70 ans ou plus", "70_plus"),
+    ("55 ans ou plus", "55_plus"),
+)
+GRANDEURS_CUMUL_AGE = (
+    ("cumulants", "Effectifs de cumulants"), ("part_population_pct", "Part parmi la population"),
+    ("part_retraites_pct", "Part parmi les retraités"),
+    ("part_emploi_pct", "Part parmi les personnes en emploi"),
+    ("repartition_pct", "Répartition par âge"), ("part_femmes_pct", "Proportion de femmes"),
+)
+CATEGORIES_CUMUL = (
+    ("Agriculteurs exploitants", "agriculteurs_exploitants"),
+    ("Artisans, commerçants et chefs d'entreprise", "artisans_commercants_chefs_entreprise"),
+    ("Cadres et professions intellectuelles supérieures", "cadres"),
+    ("Professions intermédiaires", "professions_intermediaires"), ("Employés", "employes"),
+    ("Ouvriers", "ouvriers"), ("Total", "total"),
+)
+TEMPS_CUMUL = (
+    ("Temps complet", "temps_complet"), ("Temps partiel", "temps_partiel"),
+    ("plus de 80 %", "plus_80_pct"), ("0.8", "80_pct"), ("entre 50 % et moins de 80 %", "50_80_pct"),
+    ("0.5", "50_pct"), ("moins d'un mi-temps", "moins_mi_temps"), ("Total", "total"),
+)
+REPARTITIONS_CUMUL = {
+    "Tableau 2. Répartition par catégorie socioprofessionnelle": ("csp", CATEGORIES_CUMUL),
+    "Tableau 3. Répartition des personnes ayant cumulé un emploi et une retraite, selon la "
+    "durée du temps de travail": ("temps_travail", TEMPS_CUMUL),
+}
+#: Fiche 23, tableau 4 et graphique 1 : les caisses, « CNAVPL » avant « CNAV ».
+CAISSES_CUMUL = (("Régime général", "regime_general"), ("CNAVPL", "cnavpl"),
+                 ("CNAV", "regime_general"), ("MSA salariés", "msa_salaries"),
+                 ("MSA non-salariés", "msa_exploitants"))
+#: Fiche 23, tableaux 5 et 6 : les régimes de retraite (en colonnes) et
+#: d'emploi (en lignes) de la génération 1950, puis ceux de la fonction publique.
+RETRAITE_1950 = (("Régime général", "regime_general"), ("Fonction publique", "fonction_publique"),
+                 ("Professions libérales", "professions_liberales"), ("MSA", "msa"),
+                 ("Ensemble des retraités", "ensemble"))
+EMPLOI_1950 = (("Régime général", "emploi_regime_general"),
+               ("Fonction publique", "emploi_fonction_publique"),
+               ("Professions libérales", "emploi_professions_liberales"), ("MSA", "emploi_msa"),
+               ("Tous régimes d'emploi confondus", "emploi_tous_regimes"))
+FONCTION_PUBLIQUE_1950 = (
+    ("FPE civils", ("fpe_civils", "ensemble")), ("FPE militaires", ("fpe_militaires", "ensemble")),
+    ("CNRACL", ("cnracl", "ensemble")),
+    ("Fonctionnaires civils partis avant 60 ans", ("fonctionnaires_civils", "partis_avant_60")),
+    ("Fonctionnaires civils partis à 60 ans ou après",
+     ("fonctionnaires_civils", "partis_60_ou_apres")),
+)
+
+
+def _premiere_colonne(grille: dict, debut: str, apres: int = 0) -> int:
+    trouvees = [c for (_, c), v in grille.items()
+                if c > apres and isinstance(v, str) and _simple(v).startswith(debut)]
+    if not trouvees:
+        raise FeuilleIllisible(f"aucun en-tête « {debut} »")
+    return min(trouvees)
+
+
+def _colonnes_sous_les_sexes(grille: dict, grandeurs: dict[str, str]) -> dict[tuple, int]:
+    """Les colonnes groupées sous « Femmes », « Hommes » et « Ensemble » :
+    chaque sexe couvre la sienne jusqu'à celle du suivant, et, sous lui,
+    chaque grandeur se reconnaît au début de son en-tête."""
+    debuts = {SEXES[nom]: _colonne(grille, nom, exact=True) for nom in SEXES}
+    colonnes = {}
+    for sexe, debut in debuts.items():
+        fin = min((c for c in debuts.values() if c > debut), default=debut + 100)
+        for nom, libelle in grandeurs.items():
+            trouvees = [c for (_, c), v in grille.items() if debut <= c < fin
+                        and isinstance(v, str) and _simple(v).startswith(libelle)]
+            if not trouvees:
+                raise FeuilleIllisible(f"aucun en-tête « {libelle} » sous « {sexe} »")
+            colonnes[(sexe, nom)] = min(trouvees)
+    return colonnes
+
+
+def _annee_des_vivants(grille: dict) -> str:
+    """L'année du champ « vivants au 31 décembre 2020 » : celle où
+    l'échantillon voit la génération."""
+    for valeur in grille.values():
+        trouve = re.search(r"vivants au 31 décembre ((?:19|20)\d\d)", _texte(valeur))
+        if trouve:
+            return trouve.group(1)
+    raise FeuilleIllisible("le champ ne dit plus l'année où la génération est vue")
+
+
+def lire_cumul_par_age(grille: dict) -> dict[tuple, float]:
+    """Fiche 23, tableau 1 ou son complément : un bloc par année, les tranches
+    d'âge en lignes ; le complément porte la France métropolitaine à gauche
+    et la France hors Mayotte à droite, celle du tableau 1, seule lue."""
+    if not any(isinstance(v, str) and _texte(v).startswith(debut) for v in grille.values()
+               for debut in ("Tableau 1. Effectifs de personnes cumulant emploi et retraite",
+                             "Tableau 1 complémentaire. Effectifs des personnes en cumul")):
+        raise FeuilleIllisible("aucun titre du tableau 1")
+    libelles = min((c for (_, c), v in grille.items()
+                    if isinstance(v, str) and _texte(v).startswith("France (hors Mayotte)")),
+                   default=1)
+    colonnes = {nom: _premiere_colonne(grille, debut, libelles)
+                for nom, debut in GRANDEURS_CUMUL_AGE}
+    annees = {ligne: annee(v) for (ligne, c), v in grille.items()
+              if c == libelles + 1 and annee(v)}
+    lu = {}
+    for (ligne, colonne), libelle in sorted(grille.items()):
+        tranche = _cle(libelle, TRANCHES_CUMUL) if colonne == libelles else None
+        au_dessus = [l for l in annees if l < ligne]
+        if tranche and au_dessus:
+            an = str(annees[max(au_dessus)])
+            for nom, col in colonnes.items():
+                valeur = nombre(grille.get((ligne, col), ""))
+                if valeur is not None:
+                    lu[(an, "age", "tous_regimes", tranche, "ensemble", nom)] = valeur
+    if not lu:
+        raise FeuilleIllisible("aucune tranche d'âge sous une année")
+    return lu
+
+
+def lire_cumul_repartition(grille: dict) -> dict[tuple, float]:
+    """Fiche 23, tableau 2 (les catégories) ou 3 (le temps de travail) : sous
+    chaque sexe, la part parmi les cumulants et parmi les personnes en emploi
+    non retraitées, en lignes les modalités."""
+    titre = next((debut for debut in REPARTITIONS_CUMUL for v in grille.values()
+                  if isinstance(v, str) and _texte(v).startswith(debut)), None)
+    if titre is None:
+        raise FeuilleIllisible("ni le tableau 2 ni le tableau 3")
+    champ, modalites = REPARTITIONS_CUMUL[titre]
+    an = _annee_du_titre(grille, titre)
+    colonnes = _colonnes_sous_les_sexes(grille, {
+        "part_cumulants_pct": "Part parmi l'ensemble des cumulants",
+        "part_emploi_non_retraites_pct": "Part parmi l'ensemble des personnes"})
+    lu = {}
+    for (ligne, colonne), libelle in sorted(grille.items()):
+        modalite = _cle(libelle, modalites) if colonne == 1 else None
+        for (sexe, nom), col in (colonnes.items() if modalite else ()):
+            valeur = nombre(grille.get((ligne, col), ""))
+            if valeur is not None:
+                lu[(an, champ, "tous_regimes", modalite, sexe, nom)] = valeur
+    return lu
+
+
+def lire_cumul_meme_regime(tableau: dict, graphique: dict) -> dict[tuple, float]:
+    """Fiche 23, tableau 4 : les cumulants dans un même régime, caisse par
+    caisse — leurs effectifs, en milliers, des années de l'en-tête, la part
+    des femmes et la part des cumulants par sexe de la dernière ; graphique
+    1 : cette part par âge, l'année de chaque caisse étant celle de la note."""
+    _verifier_titre(tableau, "Tableau 4. Retraités de droit direct cumulant un emploi et une "
+                             "retraite dans un même régime")
+    _verifier_titre(graphique, "Graphique 1. Part des retraités de droit direct cumulant un "
+                               "emploi et une retraite au sein du même régime")
+    effectifs = _colonne(tableau, "Effectifs (en milliers)")
+    evolution = _colonne(tableau, "Évolution")
+    femmes = _colonne(tableau, "Part des femmes parmi les cumulants")
+    parts = _colonne(tableau, "Part des cumulants au sein des retraités du régime")
+    annees = {c: str(annee(v)) for (_, c), v in tableau.items()
+              if effectifs <= c < evolution and annee(v)}
+    annee_femmes = next(str(annee(v)) for (_, c), v in sorted(tableau.items())
+                        if c == femmes and annee(v))
+    annee_parts = next(str(annee(v)) for (_, c), v in sorted(tableau.items())
+                       if c == parts and annee(v))
+    sexes = {c: SEXES[_texte(v)] for (_, c), v in tableau.items()
+             if c >= parts and isinstance(v, str) and _texte(v) in SEXES}
+    lu = {}
+    for (ligne, colonne), libelle in sorted(tableau.items()):
+        caisse = _cle(libelle, CAISSES_CUMUL) if colonne == 1 else None
+        if not caisse:
+            continue
+        cases = [(an, "ensemble", "cumulants_milliers", c) for c, an in annees.items()]
+        cases.append((annee_femmes, "ensemble", "part_femmes_pct", femmes))
+        cases += [(annee_parts, sexe, "part_retraites_pct", c) for c, sexe in sexes.items()]
+        for an, sexe, nom, col in cases:
+            valeur = nombre(tableau.get((ligne, col), ""))
+            if valeur is not None:
+                lu[(an, "meme_regime", caisse, "ensemble", sexe, nom)] = valeur
+    note = re.search(r"Les données concernent ((?:19|20)\d\d), sauf celles de la CNAV, qui "
+                     r"portent sur ((?:19|20)\d\d)", " ".join(_texte(v) for v in graphique.values()))
+    if not note:
+        raise FeuilleIllisible("la note du graphique 1 ne dit plus l'année de chaque caisse")
+    colonnes = {}
+    for (_, c), v in graphique.items():
+        caisse = _cle(v, CAISSES_CUMUL) if c > 1 and isinstance(v, str) else None
+        if caisse:
+            cnav = _texte(v).startswith("CNAV") and not _texte(v).startswith("CNAVPL")
+            colonnes[c] = (caisse, note.group(2) if cnav else note.group(1))
+    for (ligne, colonne), v in sorted(graphique.items()):
+        if colonne == 1 and _age(v) is not None:
+            for col, (caisse, an) in colonnes.items():
+                valeur = nombre(graphique.get((ligne, col), ""))
+                if valeur is not None:
+                    lu[(an, "meme_regime", caisse, str(_age(v)), "ensemble",
+                        "part_retraites_pct")] = valeur
+    return lu
+
+
+def lire_cumul_generation_1950(regimes: dict, fonction_publique: dict) -> dict[tuple, float]:
+    """Fiche 23, tableau 5 : la part des retraités nés en 1950 qui ont cumulé
+    avant 67 ans, par régime de retraite principal (en colonnes) et d'emploi
+    principal (en lignes) ; tableau 6 : dans la fonction publique, par sexe."""
+    _verifier_titre(regimes, "Tableau 5. Part des retraités nés en 1950 ayant cumulé")
+    _verifier_titre(fonction_publique, "Tableau 6. Part des retraités des régimes de la FPE et "
+                                       "de la CNRACL nés en 1950")
+    nom = "part_ayant_cumule_pct"
+    lu = {}
+    an = _annee_des_vivants(regimes)
+    retraite = {c: cle for (_, c), v in regimes.items()
+                if c > 1 and isinstance(v, str) and (cle := _cle(v, RETRAITE_1950))}
+    if "ensemble" not in retraite.values():
+        raise FeuilleIllisible("le tableau 5 n'a plus sa colonne d'ensemble")
+    for (ligne, colonne), libelle in sorted(regimes.items()):
+        emploi = _cle(libelle, EMPLOI_1950) if colonne == 1 else None
+        for col, regime in (retraite.items() if emploi else ()):
+            valeur = nombre(regimes.get((ligne, col), ""))
+            if valeur is not None:
+                lu[(an, "generation_1950", regime, emploi, "ensemble", nom)] = valeur
+    an = _annee_des_vivants(fonction_publique)
+    sexes = {_colonne(fonction_publique, libelle, exact=True): sexe
+             for libelle, sexe in SEXES.items()}
+    for (ligne, colonne), libelle in sorted(fonction_publique.items()):
+        cle = _cle(libelle, FONCTION_PUBLIQUE_1950) if colonne == 1 else None
+        for col, sexe in (sexes.items() if cle else ()):
+            valeur = nombre(fonction_publique.get((ligne, col), ""))
+            if valeur is not None:
+                lu[(an, "generation_1950", *cle, sexe, nom)] = valeur
+    return lu
+
+
 def _jeu() -> dict:
     import yaml
 
@@ -399,6 +634,7 @@ def lire(chemin: Path, jeu: dict) -> dict:
     with zipfile.ZipFile(chemin) as archive:
         f15 = _classeur(archive, jeu, "fiche_15.xlsx")
         f22 = _classeur(archive, jeu, "fiche_22.xlsx")
+        f23 = _classeur(archive, jeu, "fiche_23.xlsx")
         f25 = _classeur(archive, jeu, "fiche_25.xlsx")
         f27 = _classeur(archive, jeu, "fiche_27.xlsx")
     return {
@@ -415,6 +651,13 @@ def lire(chemin: Path, jeu: dict) -> dict:
             _annee_du_titre(f27["F27_Tableau 1"], "Tableau 1. Nombre d’allocataires du minimum"):
             lire_minimum_vieillesse_regimes(f27["F27_Tableau 1"])},
         "minimum_vieillesse_effectifs": lire_minimum_vieillesse_effectifs(f27["F27_Graphique 1"]),
+        "cumul_profil": [[*cle, valeur] for cle, valeur in sorted({
+            **lire_cumul_par_age(f23["F23_Tableau 1 compl."]),
+            **lire_cumul_repartition(f23["F23_Tableau 2"]),
+            **lire_cumul_repartition(f23["F23_Tableau 3"]),
+            **lire_cumul_meme_regime(f23["F23_Tableau 4"], f23["F23_Graphique 1"]),
+            **lire_cumul_generation_1950(f23["F23_Tableau 5"], f23["F23_Tableau 6"]),
+        }.items())],
     }
 
 

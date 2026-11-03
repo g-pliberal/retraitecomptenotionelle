@@ -752,6 +752,8 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         "pensions_invalidite_age": "macro/pensions_invalidite_age.csv",
         "minimum_vieillesse_regimes": "macro/minimum_vieillesse_regimes.csv",
         "minimum_vieillesse_effectifs": "macro/minimum_vieillesse_effectifs.csv",
+        "cumul_profil_enquete_emploi": "macro/cumul_emploi_retraite_profil.csv",
+        "cumul_profil_regimes": "macro/cumul_emploi_retraite_profil.csv",
         "age_depart_csp": "macro/age_depart_csp.csv",
         "structure_financement_regimes": "regimes/structure_financement.csv",
         "cotisants_regimes": "regimes/cotisants.csv",

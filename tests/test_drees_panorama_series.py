@@ -296,6 +296,258 @@ def test_les_allocataires_du_minimum_vieillesse_remontent_a_1960():
 
 
 # ---------------------------------------------------------------------------
+# Le profil des cumulants (fiche 23)
+# ---------------------------------------------------------------------------
+
+ENTETES_AGE = ("Effectifs de cumulants", "Part parmi la population entière (en %)",
+               "Part parmi les retraités (en %)", "Part parmi les personnes en emploi (en %)",
+               "Répartition par âge des cumulants (en %)", "Proportion de femmes (en %)")
+
+
+def _bloc_par_age(grille, ligne, annee, lignes):
+    """Un bloc annuel de « F23_Tableau 1 compl. » : la France métropolitaine
+    à gauche, la France hors Mayotte à droite, sous l'année et les en-têtes."""
+    grille.update({(ligne, 2): annee, (ligne, 10): annee})
+    for decalage, entete in enumerate(ENTETES_AGE):
+        grille[(ligne + 1, 2 + decalage)] = grille[(ligne + 1, 10 + decalage)] = entete
+    grille.update({(ligne + 2, 1): "France métropolitaine", (ligne + 2, 9): "France (hors Mayotte)"})
+    for rang, (libelle, metropole, france) in enumerate(lignes):
+        grille[(ligne + 3 + rang, 1)] = grille[(ligne + 3 + rang, 9)] = libelle
+        for decalage, (gauche, droite) in enumerate(zip(metropole, france)):
+            grille[(ligne + 3 + rang, 2 + decalage)] = gauche
+            grille[(ligne + 3 + rang, 10 + decalage)] = droite
+
+
+def test_le_cumul_par_age_se_lit_annee_par_annee_en_france_hors_mayotte():
+    """La feuille « F23_Tableau 1 compl. », réduite à deux années : un bloc
+    par année, la France métropolitaine à gauche, la France hors Mayotte à
+    droite, celle du tableau 1, seule lue. L'année de 2014 porte son renvoi en
+    note, « 20141 » : 2014, et le renvoi 1."""
+    grille = {(1, 1): "Tableau 1 complémentaire. Effectifs des personnes en cumul emploi-retraite, "
+                      "par tranche d'âge, et proportion dans l'ensemble de la population des 55 ans "
+                      "ou plus"}
+    _bloc_par_age(grille, 3, "20141", [
+        ("De 55 à 59 ans", (58000.0, 1.4, 18.6, 2.1, 12.8, 49.9), (59000.0, 1.4, 18.6, 2.1, 12.9, 50.1)),
+        ("De 60 à 64 ans, dont :", (211000.0,) * 6, (212000.0, 5.2, 8.3, 19.6, 46.5, 47.8))])
+    _bloc_par_age(grille, 14, 2024.0, [
+        ("55 ans ou plus", (601000.0,) * 6, (619000.0, 2.6, 4.2, 10.7, 100.0, 44.1))])
+    lu = _classeurs().lire_cumul_par_age(grille)
+    assert lu == {
+        ("2014", "age", "tous_regimes", "55_59", "ensemble", "cumulants"): 59000.0,
+        ("2014", "age", "tous_regimes", "55_59", "ensemble", "part_population_pct"): 1.4,
+        ("2014", "age", "tous_regimes", "55_59", "ensemble", "part_retraites_pct"): 18.6,
+        ("2014", "age", "tous_regimes", "55_59", "ensemble", "part_emploi_pct"): 2.1,
+        ("2014", "age", "tous_regimes", "55_59", "ensemble", "repartition_pct"): 12.9,
+        ("2014", "age", "tous_regimes", "55_59", "ensemble", "part_femmes_pct"): 50.1,
+        ("2014", "age", "tous_regimes", "60_64", "ensemble", "cumulants"): 212000.0,
+        ("2014", "age", "tous_regimes", "60_64", "ensemble", "part_population_pct"): 5.2,
+        ("2014", "age", "tous_regimes", "60_64", "ensemble", "part_retraites_pct"): 8.3,
+        ("2014", "age", "tous_regimes", "60_64", "ensemble", "part_emploi_pct"): 19.6,
+        ("2014", "age", "tous_regimes", "60_64", "ensemble", "repartition_pct"): 46.5,
+        ("2014", "age", "tous_regimes", "60_64", "ensemble", "part_femmes_pct"): 47.8,
+        ("2024", "age", "tous_regimes", "55_plus", "ensemble", "cumulants"): 619000.0,
+        ("2024", "age", "tous_regimes", "55_plus", "ensemble", "part_population_pct"): 2.6,
+        ("2024", "age", "tous_regimes", "55_plus", "ensemble", "part_retraites_pct"): 4.2,
+        ("2024", "age", "tous_regimes", "55_plus", "ensemble", "part_emploi_pct"): 10.7,
+        ("2024", "age", "tous_regimes", "55_plus", "ensemble", "repartition_pct"): 100.0,
+        ("2024", "age", "tous_regimes", "55_plus", "ensemble", "part_femmes_pct"): 44.1,
+    }
+
+
+def test_les_categories_et_le_temps_de_travail_se_lisent_sous_le_sexe():
+    """Les feuilles « F23_Tableau 2 » et « F23_Tableau 3 », réduites à deux
+    lignes : deux colonnes sous chaque sexe, la part parmi les cumulants et
+    parmi les personnes en emploi non retraitées, l'apostrophe droite ou
+    courbe ; « 80 % » et « 50 % », que le classeur écrit en nombres (0,8 et
+    0,5), sont des durées du temps partiel."""
+    module = _classeurs()
+    sexes = {(3, 2): "Femmes", (3, 4): "Hommes", (3, 6): "Ensemble"}
+    for colonne in (2, 4, 6):
+        sexes[(4, colonne)] = "Part parmi l’ensemble des cumulants"
+        sexes[(4, colonne + 1)] = "Part parmi l'ensemble des personnes en emploi et non retraitées"
+    categories = {**sexes, (1, 1): "Tableau 2. Répartition par catégorie socioprofessionnelle des "
+                                   "personnes ayant cumulé un emploi et une retraite, en 2024",
+                  (4, 1): "Catégorie socioprofessionnelle",
+                  (5, 1): "Agriculteurs exploitants", (5, 2): 1.4, (5, 3): 1.3, (5, 4): 4.0,
+                  (5, 5): 4.0, (5, 6): 2.8, (5, 7): 2.6}
+    assert module.lire_cumul_repartition(categories) == {
+        ("2024", "csp", "tous_regimes", "agriculteurs_exploitants", sexe, indicateur): valeur
+        for sexe, valeurs in (("F", (1.4, 1.3)), ("H", (4.0, 4.0)), ("ensemble", (2.8, 2.6)))
+        for indicateur, valeur in zip(("part_cumulants_pct", "part_emploi_non_retraites_pct"),
+                                      valeurs)}
+    temps = {**sexes, (1, 1): "Tableau 3. Répartition des personnes ayant cumulé un emploi et une "
+                              "retraite, selon la durée du temps de travail, en 2024",
+             (4, 1): "Temps de travail", (8, 1): 0.8, (8, 2): 4.1, (8, 3): 6.0, (8, 4): 2.5,
+             (8, 5): 1.6, (8, 6): 3.2, (8, 7): 3.8}
+    lu = module.lire_cumul_repartition(temps)
+    assert lu[("2024", "temps_travail", "tous_regimes", "80_pct", "ensemble",
+               "part_cumulants_pct")] == 3.2
+    assert len(lu) == 6
+    del categories[(3, 4)]
+    with pytest.raises(module.FeuilleIllisible):
+        module.lire_cumul_repartition(categories)
+
+
+def test_le_cumul_dans_un_meme_regime_se_lit_par_caisse_et_par_age():
+    """Les feuilles « F23_Tableau 4 » et « F23_Graphique 1 », réduites : les
+    effectifs de quatre années, la part des femmes et la part des cumulants
+    par sexe de la dernière ; par âge, la part des cumulants de chaque caisse,
+    en 2024, sauf la Cnav, en 2022, comme le dit la note du graphique."""
+    module = _classeurs()
+    tableau = {
+        (1, 1): "Tableau 4. Retraités de droit direct cumulant un emploi et une retraite dans un "
+                "même régime",
+        (3, 2): "Nombre de personnes cumulant une pension de retraite et un revenu d'activité",
+        (3, 7): "Part des femmes parmi les cumulants (en %)",
+        (3, 8): "Part des cumulants au sein des retraités du régime, hors nouveaux retraités de "
+                "l’année2 (en %)",
+        (4, 2): "Effectifs (en milliers)", (4, 6): "Évolution (en %)", (4, 7): 2024.0,
+        (4, 8): "Femmes", (4, 9): "Hommes", (4, 10): "Ensemble",
+        (5, 2): 2013.0, (5, 3): 2022.0, (5, 4): 2023.0, (5, 5): 2024.0, (5, 6): "2023-2024",
+        (5, 8): 2024.0,
+        (6, 1): "Régime général1", (6, 2): 351.1, (6, 3): 425.4, (6, 4): "nd", (6, 5): "nd",
+        (6, 6): "nd", (6, 7): "nd", (6, 8): "nd", (6, 9): "nd", (6, 10): "nd",
+        (7, 1): "CNAVPL", (7, 2): "nd", (7, 3): 37.9, (7, 4): 46.8, (7, 5): 46.8, (7, 6): 0.0,
+        (7, 7): 33.0, (7, 8): 8.3, (7, 9): 11.5, (7, 10): 10.2,
+    }
+    graphique = {
+        (1, 1): "Graphique 1. Part des retraités de droit direct cumulant un emploi et une "
+                "retraite au sein du même régime, par sexe et par âge, hors nouveaux retraités "
+                "de l’année",
+        (3, 1): "Âge (en années)", (3, 2): "CNAV1", (3, 3): "CNAVPL", (3, 4): "MSA salariés",
+        (3, 5): "MSA non-salariés",
+        (4, 1): 61.0, (4, 2): 8.4, (4, 3): 24.7, (4, 4): 22.0, (4, 5): 20.9,
+        (25, 1): "1. Le régime général intègre les indépendants de l’ex-SSI depuis 2020. Les "
+                 "données concernent 2024, sauf celles de la CNAV, qui portent sur 2022, "
+                 "dernière année connue.",
+    }
+    cle = ("meme_regime",)
+    assert module.lire_cumul_meme_regime(tableau, graphique) == {
+        ("2013", *cle, "regime_general", "ensemble", "ensemble", "cumulants_milliers"): 351.1,
+        ("2022", *cle, "regime_general", "ensemble", "ensemble", "cumulants_milliers"): 425.4,
+        ("2022", *cle, "cnavpl", "ensemble", "ensemble", "cumulants_milliers"): 37.9,
+        ("2023", *cle, "cnavpl", "ensemble", "ensemble", "cumulants_milliers"): 46.8,
+        ("2024", *cle, "cnavpl", "ensemble", "ensemble", "cumulants_milliers"): 46.8,
+        ("2024", *cle, "cnavpl", "ensemble", "ensemble", "part_femmes_pct"): 33.0,
+        ("2024", *cle, "cnavpl", "ensemble", "F", "part_retraites_pct"): 8.3,
+        ("2024", *cle, "cnavpl", "ensemble", "H", "part_retraites_pct"): 11.5,
+        ("2024", *cle, "cnavpl", "ensemble", "ensemble", "part_retraites_pct"): 10.2,
+        ("2022", *cle, "regime_general", "61", "ensemble", "part_retraites_pct"): 8.4,
+        ("2024", *cle, "cnavpl", "61", "ensemble", "part_retraites_pct"): 24.7,
+        ("2024", *cle, "msa_salaries", "61", "ensemble", "part_retraites_pct"): 22.0,
+        ("2024", *cle, "msa_exploitants", "61", "ensemble", "part_retraites_pct"): 20.9,
+    }
+    graphique[(25, 1)] = "1. Le régime général intègre les indépendants de l’ex-SSI depuis 2020."
+    with pytest.raises(module.FeuilleIllisible):
+        module.lire_cumul_meme_regime(tableau, graphique)
+
+
+def test_le_cumul_de_la_generation_1950_se_lit_par_regime():
+    """Les feuilles « F23_Tableau 5 » et « F23_Tableau 6 », réduites : la part
+    des retraités nés en 1950 qui ont cumulé, par régime de retraite (en
+    colonnes) et d'emploi (en lignes) ; dans la fonction publique, par sexe,
+    « ns » n'étant pas une valeur. L'année est celle où l'échantillon les voit
+    vivants, que dit le champ : le 31 décembre 2020."""
+    module = _classeurs()
+    regimes = {
+        (1, 1): "Tableau 5. Part des retraités nés en 1950 ayant cumulé un emploi et une retraite "
+                "depuis leur départ à la retraite, selon le régime principal de retraite et d’emploi",
+        (4, 1): "Régime d'emploi principal", (4, 2): "Régime de retraite principal",
+        (5, 2): "Régime général", (5, 3): "Fonction publique1", (5, 4): "Professions libérales",
+        (5, 5): "MSA, salariés et non-salariés", (5, 6): "Ensemble des retraités",
+        (8, 1): "Fonction publique1", (8, 2): 0.6, (8, 3): 11.7, (8, 4): 0.2, (8, 5): 0.2, (8, 6): 2.7,
+        (11, 1): "Tous régimes d'emploi confondus", (11, 2): 20.1, (11, 3): 32.0, (11, 4): 36.5,
+        (11, 5): 21.7, (11, 6): 22.7,
+        (13, 1): "1. FPE, CNRACL et régimes spéciaux. Champ > Retraités de droit direct d’un "
+                 "régime de base, nés en 1950, vivants au 31 décembre 2020. Sources > Drees, "
+                 "EIC 2020, EIR 2021.",
+    }
+    fonction_publique = {
+        (1, 1): "Tableau 6. Part des retraités des régimes de la FPE et de la CNRACL nés en 1950 "
+                "ayant cumulé un emploi et une retraite",
+        (3, 2): "Femmes", (3, 3): "Hommes", (3, 4): "Ensemble",
+        (5, 1): "FPE militaires1", (5, 2): "ns", (5, 3): 70.0, (5, 4): 68.0,
+        (7, 1): "Fonctionnaires civils partis avant 60 ans2", (7, 2): 29.0, (7, 3): 27.0, (7, 4): 28.0,
+        (10, 1): "ns : non significatif. Champ > Retraités de droit direct de la FPE et de la "
+                 "CNRACL, nés en 1950, vivants au 31 décembre 2020. Sources > Drees, EIC 2020, "
+                 "EIR 2021.",
+    }
+    cle = ("2020", "generation_1950")
+    lu = module.lire_cumul_generation_1950(regimes, fonction_publique)
+    assert lu == {
+        **{(*cle, regime, "emploi_fonction_publique", "ensemble", "part_ayant_cumule_pct"): v
+           for regime, v in (("regime_general", 0.6), ("fonction_publique", 11.7),
+                             ("professions_liberales", 0.2), ("msa", 0.2), ("ensemble", 2.7))},
+        **{(*cle, regime, "emploi_tous_regimes", "ensemble", "part_ayant_cumule_pct"): v
+           for regime, v in (("regime_general", 20.1), ("fonction_publique", 32.0),
+                             ("professions_liberales", 36.5), ("msa", 21.7), ("ensemble", 22.7))},
+        (*cle, "fpe_militaires", "ensemble", "H", "part_ayant_cumule_pct"): 70.0,
+        (*cle, "fpe_militaires", "ensemble", "ensemble", "part_ayant_cumule_pct"): 68.0,
+        (*cle, "fonctionnaires_civils", "partis_avant_60", "F", "part_ayant_cumule_pct"): 29.0,
+        (*cle, "fonctionnaires_civils", "partis_avant_60", "H", "part_ayant_cumule_pct"): 27.0,
+        (*cle, "fonctionnaires_civils", "partis_avant_60", "ensemble", "part_ayant_cumule_pct"): 28.0,
+    }
+
+
+def _profil():
+    lignes = _lire(MACRO / "cumul_emploi_retraite_profil.csv")
+    return lignes, {(int(l["annee"]), l["champ"], l["regime"], l["modalite"], l["sexe"],
+                     l["indicateur"]): float(l["valeur"]) for l in lignes}
+
+
+def test_le_profil_des_cumulants_de_2024_vient_du_panorama():
+    """Fiche 23, page 198 : « En 2024, […] 619 000 personnes âgées de 55 ans
+    ou plus résidant en France déclarent exercer une activité professionnelle
+    tout en percevant une pension de retraite, soit 4,2 % des retraités.
+    Parmi eux, 43 % sont cadres ou indépendants » ; tableau 1 (page 201) :
+    54 000 de 55 à 59 ans, 35,3 % des retraités de cet âge ; tableau 3 (page
+    202) : « 70,5 % des personnes cumulant un emploi et une retraite
+    travaillent à temps partiel, dont 40,1 % d'entre elles moins d'un
+    mi-temps ». L'enquête Emploi est un sondage : ``haute``."""
+    lignes, valeurs = _profil()
+    age = ("age", "tous_regimes")
+    assert valeurs[(2024, *age, "55_plus", "ensemble", "cumulants")] == 619_000
+    assert valeurs[(2024, *age, "55_plus", "ensemble", "part_retraites_pct")] == 4.2
+    assert valeurs[(2024, *age, "55_59", "ensemble", "cumulants")] == 54_000
+    assert valeurs[(2024, *age, "55_59", "ensemble", "part_retraites_pct")] == 35.3
+    assert {annee for annee, champ, *_ in valeurs if champ == "age"} == set(range(2014, 2025))
+    csp = {modalite: v for (annee, champ, _, modalite, sexe, indicateur), v in valeurs.items()
+           if (champ, sexe, indicateur) == ("csp", "ensemble", "part_cumulants_pct")}
+    assert csp["cadres"] + csp["artisans_commercants_chefs_entreprise"] == 43.0
+    temps = ("temps_travail", "tous_regimes")
+    assert valeurs[(2024, *temps, "temps_partiel", "ensemble", "part_cumulants_pct")] == 70.5
+    assert valeurs[(2024, *temps, "moins_mi_temps", "ensemble", "part_cumulants_pct")] == 40.1
+    assert {l["fiabilite"] for l in lignes if l["champ"] in ("age", "csp", "temps_travail")} == {
+        "haute"}
+
+
+def test_le_cumul_dans_un_meme_regime_et_celui_de_la_generation_1950_viennent_du_panorama():
+    """Fiche 23, page 204 : « 22,7 % des retraités de la génération 1950 ont
+    cumulé un emploi et une retraite avant 67 ans », le tableau 5 ; le chapeau
+    de la page 198 en dit 21,4 %, que rien d'autre ne porte. Le tableau 6
+    (page 205) : « 25 % des femmes pensionnées de la CNRACL nées en 1950 ont
+    cumulé ». Le
+    tableau 4 : 351 100 cumulants au régime général en 2013, 425 400 en
+    2022, rien depuis ; page 204, la part des cumulants « sous de 2 % au-delà
+    de 75 ans au régime général » (graphique 1, 2022). L'EACR, l'EIC et l'EIR
+    sont des comptages : ``certifiee``."""
+    lignes, valeurs = _profil()
+    generation = ("generation_1950",)
+    assert valeurs[(2020, *generation, "ensemble", "emploi_tous_regimes", "ensemble",
+                    "part_ayant_cumule_pct")] == 22.7
+    assert valeurs[(2020, *generation, "cnracl", "ensemble", "F", "part_ayant_cumule_pct")] == 25
+    meme = ("meme_regime", "regime_general", "ensemble", "ensemble", "cumulants_milliers")
+    assert {annee: v for (annee, *reste), v in valeurs.items() if tuple(reste) == meme} == {
+        2013: 351.1, 2022: 425.4}
+    agees = {int(modalite): v for (annee, champ, regime, modalite, _, _), v in valeurs.items()
+             if (annee, champ, regime) == (2022, "meme_regime", "regime_general")
+             and modalite.isdigit()}
+    assert min(agees) == 61 and all(v < 2 for age, v in agees.items() if age > 75)
+    assert {l["fiabilite"] for l in lignes
+            if l["champ"] in ("meme_regime", "generation_1950")} == {"certifiee"}
+
+
+# ---------------------------------------------------------------------------
 # À la source : les séries recoupées entre elles, quand l'archive est là
 # ---------------------------------------------------------------------------
 
@@ -334,3 +586,19 @@ def test_le_graphique_du_minimum_vieillesse_arrondit_le_total_du_tableau(lu):
     les 754 460 du tableau 1 arrondis au millier."""
     total = lu["minimum_vieillesse_regimes"]["2024"]["ensemble"]["ensemble"]["asv_aspa"]
     assert lu["minimum_vieillesse_effectifs"]["2024"]["allocataires_milliers"] == round(total / 1000)
+
+
+def test_le_tableau_1_est_son_complement_en_2014_et_en_2024(lu):
+    """Fiche 23 : le tableau 1 (2014 et 2024, France hors Mayotte) est le
+    bloc de droite de son complément, pour ces deux années ; les cumulants
+    de 55 ans ou plus sont ceux de la fiche 22, en milliers."""
+    with zipfile.ZipFile(ARCHIVE) as archive:
+        module = _classeurs()
+        tableau = module._classeur(archive, module._jeu(), "fiche_23.xlsx")["F23_Tableau 1"]
+    principal = module.lire_cumul_par_age(tableau)
+    profil = {tuple(cle): valeur for *cle, valeur in lu["cumul_profil"]}
+    assert principal and {cle: profil[cle] for cle in principal} == principal
+    assert {cle[0] for cle in principal} == {"2014", "2024"}
+    for annee in ("2014", "2024"):
+        assert profil[(annee, "age", "tous_regimes", "55_plus", "ensemble", "cumulants")] == (
+            1000 * lu["cumul"][annee]["cumulants_milliers"])
