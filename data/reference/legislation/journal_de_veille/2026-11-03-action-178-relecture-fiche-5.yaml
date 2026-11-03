@@ -1,0 +1,26 @@
+date: "2026-11-03"
+session: "action 178, file R-A : relecture indépendante de la fiche 5 du panorama de la DREES (pensions de 2023 et 2024) et du taux effectif de la page Coût (commits 0521e59, 127aa4a, a78366a)"
+consulte: >-
+  Aucune règle du scénario 1 n'est touchée : la relecture porte sur une
+  donnée. L'archive des classeurs du panorama « Les retraités et les
+  retraites », édition 2026, de la release documents-apportes, et son membre
+  fiche_05.xlsx, chacun à l'empreinte du manifeste : feuilles « F05_Tableau 1
+  compl_bis » (entière, B2 à AS38) et « F05_Tableau 1 » ; le PDF
+  du panorama, du miroir de l'UNSA, à l'empreinte du manifeste, folios 54 et
+  55. Le portail de la DREES, pour le tableau 2.1-a : connexion coupée.
+trouve: >-
+  Conforme sur les points décisifs : les huit cellules (I, L, O, R des
+  lignes 27 et 28), leur champ (résidents en France ou à l'étranger), les 60
+  valeurs de 2008 à 2022 et les 52 cases du test, à l'euro près ; le taux,
+  117 / 1 719, 121 / 1 764 et 128 / 1 855 ; la masse nette de 2024, 12,73 %
+  du PIB, et la ligne nette du bilan de 2026, 393,4 et 247,4 Md €, refaites ;
+  le paquet de main porte ces taux. Le folio 54 imprime aussi 1 693 euros
+  pour les résidents en France ou à l'étranger. Deux écarts faibles : la
+  conclusion sur le demi-point, juste pour la mesure de la DREES, non pour
+  le compte de la CCSS ; la dépense servie à l'étranger, affirmée sans
+  source.
+reste: >-
+  Le tableau 2.1-a, quand le portail répondra ; le rapport de la CCSS de mai
+  2024 et Ancetre 2023, jamais relus, pour l'écart d'environ 0,4 point entre
+  leur compte et la mesure de la DREES ; le champ de la dépense des comptes
+  de la protection sociale à l'égard des pensions servies à l'étranger.
