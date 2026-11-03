@@ -5,11 +5,11 @@
 peuvent décoter ; le pilote des carrières inactives ; le 28, les hommes selon le rang, l'ASPA,
 les invalides et les inaptes, la décote entre les deux âges, celle des résidents, la surcote
 des statutaires, les limites ; au modèle, la descente, le militaire au mois ; le 3 novembre, le
-taux plein des femmes entre les deux âges. Reste, une session par point : le calage de la durée
-des femmes ; les agents décotés avant 60 ans ; la surcote du salariat sans les statutaires, et
-selon la génération ; les artisans, les saisonniers agricoles ; les femmes âgées. Au
+taux plein des femmes entre les deux âges, les agents décotés avant 60 ans. Reste, une session
+par point : la surcote du salariat sans les statutaires, et selon la génération ; les artisans,
+les saisonniers agricoles ; les femmes âgées ; le calage de la durée des femmes. Au
 propriétaire : 152, 157, le CASD, l'incitation, le militaire, la sonde au mois, le recours de
-la page, les hommes entre les deux âges. Détail : `…-taux-plein-entre-les-deux-ages.md`.
+la page, les hommes entre les deux âges, la décote d'après 1960. Détail : `…-avant-60-ans.md`.
 
 **Le 7 octobre 2026, la demande.** Le propriétaire : « 138.14 ». L'étape :
 « Ce qui demande une population ou des microdonnées, avec l'action 136 (étape
