@@ -1079,6 +1079,40 @@ GENERATION_DES_INAPTES = 1953
 #: liquidants de la Cnav (:func:`decote_du_flux`).
 TEMOIN_EACR = RACINE / "tests" / "temoins" / "drees_eacr_tables_2026.json"
 
+#: La trente-cinquième version (action 138, étape 14, le 3 novembre 2026) : le
+#: taux plein entre les deux âges. Étalées jusqu'à :data:`AGE_FIN_ETALEMENT`,
+#: les carrières incomplètes ne valident plus rien après lui : la jumelle du
+#: taux plein de celle à qui sa durée manque à l'âge légal attendait l'âge
+#: d'annulation de la décote, et presque aucune femme ne partait entre les deux
+#: âges au taux plein par la durée, quand l'EIR en voit 4,0 % des nées en 1953,
+#: qui l'ont complétée en validant encore (``departs_generations.csv``). Chaque
+#: jumelle du taux plein d'une carrière incomplète de femme (:func:`peut_completer`)
+#: se décline : une part valide chaque année depuis l'âge légal de sa
+#: génération, l'année où elle l'atteint comprise, jusqu'à son taux plein, aux
+#: générations simulées où elle le prend ainsi entre les deux âges
+#: (:func:`durees_completees`) ; le reste attend comme avant. La part, la même
+#: à toutes les générations, donne à la génération simulée 1955, à son poids
+#: de 1953, les départs par la durée entre les deux âges que l'EIR trouve aux
+#: nées en 1953 (:func:`parts_qui_completent`). Trois conventions : la jumelle
+#: qui complète garde les années d'avant l'âge légal de sa sœur, inactive
+#: entre la fin de leur étalement et lui ; elle se juge au salaire de son cas
+#: type, avant sa déclinaison par le rang, comme la décote ; sa part ne dépend
+#: ni de la tranche, ni du rang, ni de la génération.
+DUREES_COMPLETEES = True
+
+#: Les sexes dont les carrières incomplètes complètent leur durée sous
+#: :data:`DUREES_COMPLETEES` : les femmes. Le taux plein des hommes entre les
+#: deux âges passe déjà celui de l'EIR, par leurs carrières pleines entrées
+#: tard — l'artisan, entré à 24 ans, au taux plein à 65 ans et demi, les
+#: fonctionnaires sédentaires —, et leurs carrières incomplètes, à 35 années
+#: et moins, n'ont pas de durée à compléter avant l'âge d'annulation.
+SEXES_QUI_COMPLETENT = ("F",)
+
+#: La génération de l'EIR dont les départs par la durée entre les deux âges
+#: donnent leur part aux jumelles qui complètent (:func:`parts_qui_completent`) :
+#: les nés en 1953, que l'enquête de 2020 voit presque tous partis.
+GENERATION_DES_DUREES_COMPLETEES = 1953
+
 #: La dix-neuvième version (action 138, étape 14, le 18 octobre 2026) : une part
 #: des carrières qui ont le taux plein part après lui, avec une surcote — 14,2 %
 #: des femmes et 14,5 % des hommes nés en 1953 (``departs_generations.csv``),
@@ -1373,6 +1407,11 @@ class CasTypeLarge(CasType):
     #: où le modèle sert une surcote à sa pension (:data:`SURCOTE_DES_STATUTAIRES`),
     #: et non de l'âge légal.
     depuis_la_surcote: bool = False
+    #: Les générations où la carrière complète sa durée (:data:`DUREES_COMPLETEES`),
+    #: paires ``(génération, 1.0 ou 0.0)`` triées : elle y valide chaque année
+    #: depuis l'âge légal de la génération, ``legaux``, l'année où elle
+    #: l'atteint comprise, jusqu'à son départ.
+    completee: tuple[tuple[int, float], ...] = ()
 
     def age_liquidation_pour(self, simulateur: Simulateur, generation: int,
                              variante: str = "droit") -> float:
@@ -1441,13 +1480,22 @@ class CasTypeLarge(CasType):
         une carrière incomplète dont la durée suit la génération (``cibles``,
         :data:`DUREE_DES_FEMMES_SELON_LA_GENERATION`), celles de ses années
         validées de cette génération, comptées de son entrée
-        (:func:`decalages_de_tranche`)."""
+        (:func:`decalages_de_tranche`). Une génération où la carrière complète
+        sa durée (:attr:`completee`) n'a plus d'inactivité depuis l'année où
+        elle atteint son âge légal."""
         if not self.cibles:
-            return self.interruptions_relatives
-        base, duree, assimilee, etalee = self.tranche_de_base
-        cible = int(round(_par_generation(self.cibles, generation, 0.0)))
-        return decalages_de_tranche(base, duree, cible, assimilee, etalee,
-                                    self.debut_de(generation))
+            decalages = self.interruptions_relatives
+        else:
+            base, duree, assimilee, etalee = self.tranche_de_base
+            cible = int(round(_par_generation(self.cibles, generation, 0.0)))
+            decalages = decalages_de_tranche(base, duree, cible, assimilee, etalee,
+                                             self.debut_de(generation))
+        if not _par_generation(self.completee, generation, 0.0):
+            return decalages
+        depuis = math.floor(_par_generation(self.legaux, generation, AGE_FIN_ETALEMENT)
+                            - self.debut_de(generation) + 1e-9)
+        return tuple((decalage, motif) for decalage, motif in decalages
+                     if decalage < depuis or motif != "inactivite")
 
     def debut_de(self, generation: int) -> float:
         """L'âge d'entrée de cette génération : celui des ``entrees``, paires
@@ -1522,7 +1570,7 @@ class CasTypeLarge(CasType):
         cas type du dépôt ?"""
         return bool(self.avant or self.niveaux or self.ages_partiel or self.volumes
                     or self.entrees or self.services or self.natures or self.annees_par_nature
-                    or self.cibles)
+                    or self.cibles or self.completee)
 
     def _options_du_parcours(self, simulateur: Simulateur, generation: int,
                              age_liquidation: float) -> dict:
@@ -1613,6 +1661,9 @@ class Variante:
     #: Les années qu'elle attend après l'âge légal, avec une surcote
     #: (:data:`DEPARTS_AVEC_SURCOTE`) ; zéro sans elle.
     surcote: float = 0.0
+    #: Complète-t-elle sa durée en validant après l'âge légal, jusqu'à son taux
+    #: plein (:data:`DUREES_COMPLETEES`) ?
+    complete: bool = False
     #: Ce que chaque génération donne à son poids, paires ``(génération,
     #: part)`` triées : la part des départs avec décote de sa génération,
     #: rapportée à celle que son poids porte (:data:`DECOTE_SELON_LA_GENERATION`) ;
@@ -3182,6 +3233,8 @@ def population(effectifs, source: CaracteristiquesRetraites,
         variantes = departs_avec_decote(variantes, effectifs, source, donnees.quintiles,
                                         decotes, ouvertures, attentes, ages_legaux(racine),
                                         inaptes, avances, echelles_des_attentes(racine))
+    if DUREES_COMPLETEES:
+        variantes = completer_les_durees(variantes, effectifs, source, racine)
     variantes = salaires_population(variantes, donnees)
     if ASSIMILEES_SELON_LE_RANG:
         variantes = assimilees_selon_le_rang(variantes, donnees.quintiles)
@@ -3875,6 +3928,128 @@ def departs_avec_decote(variantes: list[Variante], effectifs,
             sortie.append(v.fois(inapte, inapte=True, parts_des_generations=de_l_inapte,
                                  cas=replace(v.cas, code=f"{v.cas.code}~inapte",
                                              inaptitude=True)))
+    return sortie
+
+
+def par_la_duree_entre_les_deux_ages(publies: dict, sexe: str) -> float:
+    """La part des nés en 1953 (:data:`GENERATION_DES_DUREES_COMPLETEES`) de ce
+    sexe partis entre l'âge légal et l'âge d'annulation de la décote au taux
+    plein par la durée (``departs_generations.csv``) : la place, fois la part
+    de la condition parmi ses départs."""
+    generation = GENERATION_DES_DUREES_COMPLETEES
+    return (publies[(generation, "position", "entre", sexe, "part")] / 100.0
+            * publies[(generation, "position", "entre", sexe, "condition_taux_plein_duree")]
+            / 100.0)
+
+
+def peut_completer(v: Variante) -> bool:
+    """Vrai pour une carrière que :data:`DUREES_COMPLETEES` décline : la
+    jumelle du taux plein d'une carrière incomplète, d'un sexe de
+    :data:`SEXES_QUI_COMPLETENT`, ni décotée, ni inapte, ni déjà déclinée."""
+    return (incomplete(v) and v.cas.sexe in SEXES_QUI_COMPLETENT
+            and v.cas.regle_liquidation == "taux_plein" and not v.decote and not v.inapte
+            and not v.surcote and not v.complete)
+
+
+def qui_complete(cas: CasType, legaux: tuple[tuple[int, float], ...],
+                 generations: frozenset[int] | None = None) -> CasTypeLarge:
+    """La jumelle de ce cas type qui complète sa durée (:attr:`CasTypeLarge.completee`)
+    aux ``generations`` de la grille, à toutes sans elles, de l'âge légal de
+    chacune, ``legaux`` (:func:`ages_legaux`)."""
+    completee = _en_paires([(generation, 1.0 if generations is None or generation in generations
+                             else 0.0) for generation in C.generations()])
+    return elargi(cas, code=f"{cas.code}~complete", legaux=legaux, completee=completee)
+
+
+def durees_completees(variantes: list[Variante], racine: Path) -> dict[str, frozenset[int]]:
+    """Les générations de la grille (``cout.generations``) où chaque carrière
+    qui peut compléter sa durée (:func:`peut_completer`) partirait, la
+    complétant (:func:`qui_complete`), entre l'âge légal et l'âge d'annulation
+    de la décote, à :data:`TOLERANCE_DE_PLACE` près, par code : celles où sa
+    durée lui manque à l'âge légal, et où elle la complète avant l'âge
+    d'annulation. Une génération que le modèle refuse de calculer n'en est
+    pas. Gardées sous l'empreinte du modèle et le code de ce script."""
+    from retraite_notionnelle.scenarios.actuel import AgesAnnulationDecote, AgesOuverture
+
+    parametres = Parametres(racine_donnees=racine)
+    legaux = ages_legaux(racine)
+    cas_types = tuple(qui_complete(v.cas, legaux) for v in variantes if peut_completer(v))
+    generations = C.generations()
+
+    def calcul() -> dict[str, frozenset[int]]:
+        simulateur = Simulateur(parametres).pour_la_projection()
+        departs = Departs(simulateur, [(cas, generation) for cas in cas_types
+                                       for generation in generations], du_jour=True)
+        ouvertures, annulations = AgesOuverture(racine), AgesAnnulationDecote(racine)
+        sortie = {}
+        for cas in cas_types:
+            siennes = []
+            for generation in generations:
+                legal, annulation = ouvertures.age(generation), annulations.age(generation)
+                if legal is None or annulation is None:
+                    continue
+                try:
+                    age = departs.age(cas, generation)
+                except (ValueError, KeyError):
+                    continue
+                if legal[0] + TOLERANCE_DE_PLACE < age < annulation[0] - TOLERANCE_DE_PLACE:
+                    siennes.append(generation)
+            sortie[cas.code.removesuffix("~complete")] = frozenset(siennes)
+        return sortie
+
+    return memoire.memoriser_pour(
+        parametres, ("duree_completee_de_la_population", parametres, cas_types, generations),
+        calcul)
+
+
+def parts_qui_completent(variantes: list[Variante], effectifs,
+                         source: CaracteristiquesRetraites, publies: dict,
+                         completees: dict[str, frozenset[int]]) -> dict[str, float]:
+    """La part de la jumelle du taux plein de chaque carrière qui peut
+    compléter sa durée qui la complète, sexe par sexe de
+    :data:`SEXES_QUI_COMPLETENT` : les départs par la durée entre les deux âges
+    des nés en 1953 (:func:`par_la_duree_entre_les_deux_ages`), fois le poids
+    de tous les retraités du sexe, rapportés au poids, à leur part de 1953,
+    des carrières qui la complètent à la génération simulée dont 1953 est une
+    cohorte (:func:`durees_completees`) ; une au plus, aucune sans elles."""
+    generation = GENERATION_DES_DUREES_COMPLETEES
+    simulee = next(g for g in C.generations() if abs(g - generation) <= C._DEMI_TRANCHE)
+    poids = poids_retraites(variantes, effectifs, source.millesime)
+    sortie = {}
+    for sexe in SEXES_QUI_COMPLETENT:
+        tous = somme_ordonnee(p for v, p in zip(variantes, poids) if v.cas.sexe == sexe)
+        eligibles = somme_ordonnee(
+            p * v.part_de_la_generation(generation) for v, p in zip(variantes, poids)
+            if v.cas.sexe == sexe and peut_completer(v)
+            and simulee in completees.get(v.cas.code, ()))
+        cible = par_la_duree_entre_les_deux_ages(publies, sexe) * tous
+        sortie[sexe] = min(1.0, cible / eligibles) if eligibles > 0.0 else 0.0
+    return sortie
+
+
+def completer_les_durees(variantes: list[Variante], effectifs,
+                         source: CaracteristiquesRetraites, racine: Path) -> list[Variante]:
+    """Chaque carrière qui peut compléter sa durée (:func:`peut_completer`) et
+    la complète à une génération au moins (:func:`durees_completees`) se
+    décline : la part de son sexe (:func:`parts_qui_completent`) la complète à
+    ces générations (:func:`qui_complete`), sous son code suivi de
+    « ~complete », le reste attend comme avant ; les autres variantes telles
+    quelles. Les deux gardent ce que chaque génération donne au poids de la
+    jumelle du taux plein."""
+    completees = durees_completees(variantes, racine)
+    parts = parts_qui_completent(variantes, effectifs, source, departs_publies(racine),
+                                 completees)
+    legaux = ages_legaux(racine)
+    sortie = []
+    for v in variantes:
+        siennes = completees.get(v.cas.code, frozenset())
+        part = parts.get(v.cas.sexe, 0.0)
+        if not (peut_completer(v) and siennes and part):
+            sortie.append(v)
+            continue
+        if part < 1.0:
+            sortie.append(v.fois(1.0 - part))
+        sortie.append(v.fois(part, complete=True, cas=qui_complete(v.cas, legaux, siennes)))
     return sortie
 
 

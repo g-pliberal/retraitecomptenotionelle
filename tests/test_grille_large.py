@@ -1523,7 +1523,8 @@ def test_les_carrieres_allongees_entrent_comme_les_pleines(simulateur, source, p
     réputés tels — quarante-deux années, dont les quatre trimestres de chômage
     que D. 351-1-2 répute depuis avril 2014 —, pour les 166 de sa génération :
     elle part à 60 ans en carrière longue ; entrée à 21 ans, à 62 ans au taux
-    plein, comme avant. La carrière garde son poids ; celle de dix à vingt
+    plein, comme avant. La carrière garde son poids, avec sa jumelle qui
+    complète sa durée (``DUREES_COMPLETEES``) ; celle de dix à vingt
     ans, qui tient entre 21 ans et l'âge légal, et celles des hommes gardent
     leur entrée ; les carrières pleines, leurs cinquièmes et leurs natures, que
     la masse assimilée des seules carrières pleines règle
@@ -1537,9 +1538,12 @@ def test_les_carrieres_allongees_entrent_comme_les_pleines(simulateur, source, p
     variantes = G.grille("population", simulateur.effectifs, source, ())
     poids = _poids(variantes, simulateur.effectifs, source.millesime)
     trente = f"{G.GABARIT}~f~30_40~p95"
+    complete = f"{G.GABARIT}~f~30_40~complete~p95"
     classes = [v for v in variantes
                if v.cas.code == trente or v.cas.code.startswith(f"{trente}~entree")]
     total = sum(poids[v.cas.code] for v in classes)
+    entier = total + sum(poids[v.cas.code] for v in variantes if v.cas.code == complete
+                         or v.cas.code.startswith(f"{complete}~entree"))
     repartition: dict[tuple[float, float], float] = {}
     for v in classes:
         cle = (v.cas.debut_de(1955), G._par_generation(v.cas.cibles, 1955, 0.0))
@@ -1564,8 +1568,8 @@ def test_les_carrieres_allongees_entrent_comme_les_pleines(simulateur, source, p
     avant = {v.cas.code: v for v in G.grille("population", simulateur.effectifs, source, ())}
     assert avant[trente].cas.debut_de(1955) == 21
     assert G._par_generation(avant[trente].cas.cibles, 1955, 0.0) == 41.0
-    assert _poids(list(avant.values()), simulateur.effectifs,
-                  source.millesime)[trente] == pytest.approx(total)
+    poids_avant = _poids(list(avant.values()), simulateur.effectifs, source.millesime)
+    assert poids_avant[trente] + poids_avant.get(complete, 0.0) == pytest.approx(entier)
     assert {v.cas.code: v.cas for v in variantes if v.tranche == "40_plus"} == {
         code: v.cas for code, v in avant.items() if v.tranche == "40_plus"}
 
@@ -2378,7 +2382,7 @@ def test_les_invalides_et_les_inaptes_partent_au_taux_plein_des_l_age_legal(
     inaptes = [v for v in variantes if v.inapte]
     assert {v.cas.code.replace("~inapte", "", 1) for v in inaptes} == {
         v.cas.code for v in variantes if G.incomplete(v) and v.cas.regle_liquidation
-        == "taux_plein" and not (v.decote or v.inapte or v.surcote)}
+        == "taux_plein" and not (v.decote or v.inapte or v.surcote or v.complete)}
     assert all(v.cas.inaptitude and v.cas.regle_liquidation == "taux_plein"
                and "~inapte" in v.cas.code and G.incomplete(v)
                and not v.decote and not v.surcote for v in inaptes)
@@ -2551,6 +2555,99 @@ def test_l_attente_d_un_depart_avec_decote_suit_l_ecart_des_deux_ages(
             pytest.approx(64.0 + attente * 3.0 / 5.0), "decote")
         assert jumelle.cas.age_liquidation_pour(projection, 1955) == pytest.approx(
             62.0 + attente)
+
+
+# -- le taux plein entre les deux âges (action 138, étape 14) -------------------
+
+def test_le_taux_plein_par_la_duree_entre_les_deux_ages_se_lit_dans_l_eir(parametres):
+    """Des femmes nées en 1953, 26,7 % partent entre leur âge légal, 61 ans et
+    2 mois, et l'annulation de leur décote, 66 ans et 2 mois, et 15,1 % de
+    celles-là au taux plein par la durée : 4,0 % de la génération, qui
+    n'avaient pas leur durée à l'âge légal et l'ont complétée en validant
+    encore. Des hommes, 26,4 % et 21,7 % : 5,7 %. Seules les femmes
+    complètent : le taux plein des hommes entre les deux âges passe déjà
+    celui de l'EIR, par leurs carrières pleines entrées tard."""
+    publies = G.departs_publies(parametres.racine_donnees)
+    assert G.GENERATION_DES_DUREES_COMPLETEES == 1953
+    assert G.par_la_duree_entre_les_deux_ages(publies, "F") == pytest.approx(0.267 * 0.151)
+    assert G.par_la_duree_entre_les_deux_ages(publies, "H") == pytest.approx(0.264 * 0.217)
+    assert G.SEXES_QUI_COMPLETENT == ("F",)
+
+
+def test_une_femme_qui_complete_sa_duree_part_entre_les_deux_ages(simulateur, source,
+                                                                   parametres):
+    """Née en 1955, la femme d'une carrière de vingt à trente ans du salariat
+    privé, de la classe médiane, valide les années que sa génération lui
+    donne (``DUREE_DES_FEMMES_SELON_LA_GENERATION``), étalées jusqu'à 60 ans,
+    et seize trimestres de ses deux enfants (L. 351-4) : à 62 ans, son âge
+    légal (L. 161-17-2), il lui en manque dix des 166 de sa génération
+    (L. 161-17-3). La jumelle du taux plein attend 67 ans sans rien valider,
+    l'âge d'annulation de la décote (L. 351-8, 1°), au taux plein par l'âge ;
+    celle qui complète sa durée valide chaque année depuis l'âge légal, et
+    part au taux plein dix trimestres plus tard, à 64 ans et demi, entre les
+    deux âges. Née en 1940, où elle ne la compléterait pas avant l'âge
+    d'annulation, elle a la carrière et le départ de sa sœur. Aucun homme ne
+    complète sa durée."""
+    assert G.DUREES_COMPLETEES
+    variantes = G.grille("population", simulateur.effectifs, source, ())
+    projection = simulateur.pour_la_projection()
+    par_code = {v.cas.code: v for v in variantes}
+    soeur = par_code[f"{G.GABARIT}~f~20_30~p50"]
+    jumelle = par_code[f"{G.GABARIT}~f~20_30~complete~p50"]
+    assert jumelle.complete and not soeur.complete
+    annees = dict(soeur.cas.cibles)[1955]
+    manquants = 166 - (4 * int(annees) + 2 * 8)
+    assert manquants == 10
+    assert G.condition_au_depart(projection, soeur.cas, 1955) == (
+        pytest.approx(67.0), "taux_plein_age")
+    assert G.condition_au_depart(projection, jumelle.cas, 1955) == (
+        pytest.approx(62.0 + manquants / 4.0), "taux_plein_autre")
+    assert projection.echeancier(jumelle.cas.construire(projection, 1955)
+                                 ).au_depart.trimestres_valides == 166
+    assert projection.echeancier(soeur.cas.construire(projection, 1955)
+                                 ).au_depart.trimestres_valides == 166 - manquants
+    assert jumelle.cas.decalages_de(1940) == soeur.cas.decalages_de(1940)
+    assert jumelle.cas.age_liquidation_pour(projection, 1940) == pytest.approx(
+        soeur.cas.age_liquidation_pour(projection, 1940))
+    assert not any(v.complete for v in variantes if v.cas.sexe == "H")
+
+
+def test_les_femmes_qui_completent_leur_duree_pesent_la_part_de_l_eir(simulateur, source,
+                                                                       parametres):
+    """Sous ``DUREES_COMPLETEES``, la jumelle du taux plein de chaque carrière
+    incomplète de femme qui le peut se décline : une part complète sa durée,
+    la même chez toutes, le reste attend comme avant ; ensemble, elles pèsent
+    ce que pesait la jumelle, de la même part de chaque génération. À la
+    génération simulée 1955, dont les nées en 1953 sont une cohorte, celles
+    qui complètent pèsent, à leur poids de 1953, 4,0 % de toutes les
+    retraitées, les départs par la durée entre les deux âges que l'EIR trouve
+    aux nées en 1953 ; une carrière qui ne complète à aucune génération ne se
+    décline pas."""
+    variantes = G.grille("population", simulateur.effectifs, source, ())
+    poids = _poids(variantes, simulateur.effectifs, source.millesime)
+    par_code = {v.cas.code: v for v in variantes}
+    completes = [v for v in variantes if v.complete]
+    assert completes
+    parts, eligibles = set(), 0.0
+    for v in completes:
+        assert v.cas.sexe == "F" and v.cas.regle_liquidation == "taux_plein"
+        soeur = par_code.get(v.cas.code.replace("~complete", ""))
+        de_la_soeur = 0.0
+        if soeur is not None:
+            assert not soeur.complete and soeur.cas.regle_liquidation == "taux_plein"
+            assert v.parts_des_generations == soeur.parts_des_generations
+            assert v.tranche == soeur.tranche
+            de_la_soeur = poids[soeur.cas.code]
+        parts.add(round(poids[v.cas.code] / (poids[v.cas.code] + de_la_soeur), 9))
+        if G._par_generation(v.cas.completee, 1955, 0.0):
+            eligibles += (poids[v.cas.code] + de_la_soeur) * v.part_de_la_generation(1953)
+    assert len(parts) == 1
+    part = parts.pop()
+    toutes = sum(poids[v.cas.code] for v in variantes if v.cas.sexe == "F")
+    assert part == pytest.approx(min(1.0, 0.267 * 0.151 * toutes / eligibles))
+    assert sum(poids[v.cas.code] * v.part_de_la_generation(1953) for v in completes
+               if G._par_generation(v.cas.completee, 1955, 0.0)) == pytest.approx(
+        min(eligibles, 0.267 * 0.151 * toutes))
 
 
 # -- les départs d'une génération, contre l'EIR (action 138, étape 14) ----------
