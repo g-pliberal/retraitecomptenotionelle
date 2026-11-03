@@ -1,0 +1,43 @@
+date: "2026-11-03"
+session: "action 130, file R-M1-ter : relecture indépendante des corrections de la relecture R-M1-bis (commit a66e323, file M1-ter), la grille des marins de 1995 bornée au premier semestre"
+consulte: >-
+  python scripts/veille_droit.py ; docs/veille_droit.md ; la note et le commit de M1-ter
+  (a66e323). Les index de la DILA, récupérés et mis à jour (JORF à l'incrément du
+  3 novembre 2026, 20261103-002311 ; LEGI à celui du 2 novembre, 20261102-213929 ; aucun
+  depuis). Dans JORF : l'arrêté du 30 juin 1995 en entier (JORFTEXT000000188385 ;
+  JORFARTI000001014013, JORFARTI000001014119, JORFARTI000001977662, JORFARTI000001594620),
+  l'arrêté du 30 décembre 1995 (JORFARTI000001593286), celui du 29 décembre 1994
+  (JORFARTI000001974748), celui du 31 janvier 1995 (JORFARTI000002373607), celui du
+  31 décembre 2007 (JORFARTI000017964781), le décret n° 2001-1203 en entier et la liste de
+  ses articles (JORFTEXT000000580421), l'arrêté du 2 août 1995 portant classement
+  (JORFTEXT000000554960), le décret n° 95-942 et son article 5 (JORFTEXT000000736551,
+  JORFARTI000001784299), la recherche "salaires forfaitaires" marins de 1995 et 1996
+  (19 documents). Dans LEGI : le code des pensions de retraite des marins, L. 42
+  (LEGIARTI000006791949) et R. 11 (LEGIARTI000006791987) ; toutes les rédactions des
+  articles 3 (46) et 7 (27) du décret n° 85-1148. Le dépôt : tests/test_marins.py, la fiche
+  marins_salaire_de_reference, la série legislation/point_indice_fonction_publique.csv, les
+  salaires moyens et le plafond du modèle de 1985 à 2007.
+trouve: >-
+  Conforme : chaque citation, mot pour mot ; les vingt-trois points de POINT_DE_L_ARTICLE_3,
+  chacun dans la rédaction en vigueur ce jour-là, et les indices de l'article 7 ; le plafond
+  de juillet à octobre 1995 (8 × 158 × 317,99 F = 401 939,36 F, 61 275,26 €) et la borne
+  (1,2573037, soit une majoration de 25,7304 %, « plus de 25,7 % ») ; 80,5 %, 75,1 %, 86,1 %,
+  62,8 % et 65,6 %, et les centimes. Les 76 tests de test_marins.py sont verts, y compris sous
+  PRESOMPTIONS_DECALEES=1, et ils mordent sur onze valeurs faussées. Trois écarts faibles :
+  la recherche des arrêtés donne aussi l'arrêté du 2 août 1995 portant classement, sans
+  montant, que la note dit absent ; en 1994, l'article 3 fixe 30 926 F, et 31 018 F « pour
+  les agents dont l'indice majoré est inférieur ou égal à 275 », sans dire lequel fait le
+  traitement de l'indice 100 (l'indice majoré 158 de l'article 7 est sous 275), et la série
+  du point en prend la moyenne, 47,2165 € : le plafond du modèle, 59 681,66 €, est à 88,65 €
+  au plus des deux lectures du droit (59 593,03 € ou 59 770,31 €), 44,33 € au plus sur le
+  salaire de référence abattu, ce que la fiche ne déclare pas ; les vingt-trois relectures
+  LEGI sont sautées sur GitHub, dont la suite ne récupère pas l'index. Deux négligeables :
+  « plus de 27,49 % » pour un seuil de 27,4899 % ; la borne du premier semestre vérifiée en
+  une occurrence. L'en-tête de la série dit absents de la base deux relèvements (1er novembre
+  1991, 1er janvier 1994) que l'index porte (LEGIARTI000006454434, LEGIARTI000006454438).
+reste: >-
+  Au propriétaire, comme avant : faut-il lire les tableaux des arrêtés de 1985 à 2007 au
+  Journal officiel imprimé (celui du 30 juin 1995, JO n° 164, page 10596) ? Faut-il que la
+  suite de GitHub récupère l'index de la DILA ? À une session des données : la valeur de 1994
+  de la série du point, et son en-tête. Note 2026-11-03-relecture-corrections-r-m1-bis.md de
+  l'action 130.
