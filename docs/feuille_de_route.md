@@ -2810,11 +2810,11 @@ sixième, les périodes assimilées manquantes, a ses étapes 1 à 6 faites
 (`130/2026-10-17-sixieme-domaine-etape-6.md`). Au propriétaire, README muet :
 sa septième étape, la décision de la proposition, la retraite progressive, le
 cumul et la seconde pension, l'abattement des marins (R. 11, 3°), l'Ircantec
-d'avant 1983, la base forfaitaire des cultes. Lus au droit : RAFP, CNAVPL, IEG,
-SNCF, RATP, marins, Ircantec, cultes ; restent 89 fiches, 527 manques. La file
-E seule récrit ce bloc ; la file G (surcote de la SNCF et de la RATP) écrit sa
-note sous `130/` sans y toucher. Par quoi commencer : un lot dans
-`LUES_AU_DROIT`. Détail : `130/2026-11-03-carte-des-fiches-cultes-lus-au-droit.md`.
+d'avant 1983, la base des cultes, la majoration de l'Agirc-Arrco sans coefficient.
+Lus au droit : RAFP, CNAVPL, IEG, SNCF, RATP, marins, Ircantec, cultes, majoration
+de l'Agirc-Arrco ; restent 88 fiches, 521 manques. La file E seule récrit ce bloc,
+la file G note sous `130/`. Par quoi commencer : un lot, ainsi
+`coefficients_anticipation_agirc_arrco`. Détail : `130/2026-11-03-carte-des-fiches-majoration-enfants-agirc-arrco-lue-au-droit.md`.
 
 Le dépôt devenait de plus en plus lourd à faire avancer. Une modification du
 moteur du scénario 1 touchait vingt fichiers en médiane, dont sept ou huit de

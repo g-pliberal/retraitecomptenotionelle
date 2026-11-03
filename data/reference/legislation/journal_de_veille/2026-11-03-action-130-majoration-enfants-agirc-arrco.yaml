@@ -1,0 +1,44 @@
+date: "2026-11-03"
+session: "action 130, file E : la carte des fiches, la majoration pour enfants de l'Agirc-Arrco lue au droit (huitième lot)"
+consulte: >-
+  python scripts/veille_droit.py ; les index LEGI et JORF du dépôt, récupérés et à jour de
+  l'incrément du 2 novembre 2026 (20261102-213929), et du 3 novembre pour le JORF
+  (20261103-002311) ; python scripts/textes.py --inscrire, aucune rédaction nouvelle. Hors
+  du Journal officiel, dans les copies de la caisse : l'accord national interprofessionnel
+  du 17 novembre 2017, version applicable au 1er janvier 2019, articles 93, 94 et 96 ; le
+  recueil « Accords nationaux des partenaires sociaux », accord Arrco du 25 avril 1996
+  (articles 1er, 2 et 10 à 13) et accord du 18 mars 2011 (articles 7 et 8) ; l'accord du 8
+  décembre 1961 (annexe A, article 17) et la convention du 14 mars 1947 (annexe I,
+  article 6 bis), mis à jour au 1er janvier 2018 ; le guide des salariés n° 9 de
+  l'Agirc-Arrco, « Majorations pour enfants », mars 2017, diffusé par Carcept Prev. Au
+  Journal officiel : l'arrêté du 24 avril 2018 qui étend l'accord de 2017. La copie du
+  Medef de la convention de 1947 mise à jour en 2007 ne se sert plus (accords.medef.com,
+  « Site introuvable »).
+trouve: >-
+  La majoration pour enfants nés ou élevés de l'Agirc-Arrco tient à deux dates : la date
+  d'effet choisit l'accord et son plafond, l'année d'acquisition de chaque point son taux.
+  Avant 1999, les règlements des caisses de l'Arrco, non lus ; de 1999 à 2011, l'accord de
+  1996, 5 % sur les points de l'Arrco depuis 1999 (article 11), les majorations des
+  règlements gardées aux droits d'avant, si leurs conditions sont remplies au 31 décembre
+  1998 (article 2) ; de 2012 à 2018, l'accord du 18 mars 2011 et ses annexes, 10 % sur les
+  points depuis 2012, 1 000 € par régime au 1er janvier 2012 « (montant revalorisé en
+  fonction de la valeur du point) », « sauf pour les participants nés avant le 2 août 1951
+  » ; depuis 2019, l'article 94 de l'accord de 2017, le cumul des deux plafonds, 2 071,58 €,
+  2 367,48 € depuis le 1er novembre 2024. Le guide n° 9 de mars 2017 donne le plafond au 1er
+  novembre 2016, 1 028,12 € à l'Agirc et 1 031,15 € à l'Arrco, que les valeurs du point du
+  dépôt refont à un centime près, et dit que l'Arrco calculait la majoration sans le
+  coefficient de minoration, l'Agirc avec ; ses deux exemples tombent sur le barème du
+  dépôt, hors des caisses d'avant 1999 qui ne majoraient pas. Cinq écarts du modèle
+  déclarés : l'assiette, coefficient d'anticipation compris ; les caisses d'avant 1999
+  présumées au barème de l'accord ; la génération du plafond, 1952 pour le 2 août 1951 ;
+  un centime d'arrondi ; les conditions de 1998. L'accord de 2011 proratise le plafond, ses
+  annexes et le guide non. Le cliquet des textes ne bouge pas, 9 389 ; la carte passe de
+  89 fiches à lire au droit à 88, de 527 manques à 521. L'AGFF des cultes manque à la liste
+  `regimes` de la contribution `agff` des contributions d'équilibre.
+reste: >-
+  Le calcul de la majoration sans le coefficient d'anticipation, pour une étape du modèle,
+  à décider par le propriétaire. Les règlements des caisses de l'Arrco d'avant 1999, les
+  rédactions d'avant 2012 de l'article 6 bis de l'annexe I et de l'article 17 de l'annexe
+  A, la circulaire du 7 juillet 2011 ; les exemples de la caisse à inscrire au registre des
+  exemples officiels. La fiche coefficients_anticipation_agirc_arrco, un lot à elle seule.
+  L'AGFF des cultes, dans un fichier d'une autre zone.
