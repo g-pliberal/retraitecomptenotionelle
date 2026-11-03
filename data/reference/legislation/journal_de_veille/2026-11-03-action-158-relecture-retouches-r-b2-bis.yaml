@@ -1,0 +1,34 @@
+date: "2026-11-03"
+session: "action 158, relecture R-B2-ter des retouches de B2-ter aux durées d'échelon (commits ddde684 à 54983bd) : la coquille du n° 83-1260, art. 34, le 22e refus, la règle du quart des agents chefs, les coquilles de B2-bis, le trou du motif, les tests, rouverts au LEGI et au JORF"
+consulte: >-
+  Aucune règle du scénario 1 n'est écrite ; rien n'est modifié dans le dépôt. L'index LEGI
+  publié du dépôt, à jour au 2 novembre 2026 (incrément 20261102-213929), et l'index JORF
+  publié, à jour au 3 novembre 2026 (incrément 20261103-002311), récupérés sans
+  reconstruction. Au LEGI : n° 83-1260, art. 34 (LEGIARTI000027940471, son histoire) ;
+  n° 96-1113, art. 14 (LEGIARTI000042571828, son histoire) ; n° 91-45, art. 6 et 32 ;
+  n° 91-936, art. 6 et 29 ; les articles des 24 autres tableaux à moyenne seule ; les
+  102 versions hors du motif des durées, dont les cinq rangées hors des durées (n° 75-62,
+  art. 18 ; 95-869, art. 20 ; 82-1067, art. 30 ; 2001-188, art. 14) et les trois tirées
+  (graine 20261103 : n° 90-90, art. 18 ; 82-700, art. 13-1 ; 96-182, art. 18) ; n° 67-715,
+  art. 13 (titre). Au JORF : décret n° 90-685 du 27 juillet 1990 (art. 5, ses 43 articles,
+  notice, visas) ; n° 88-1072 et n° 89-74 (résumés) ; n° 83-1260 (JO du 7 janvier 1984) ; les
+  26 textes de 1984 à 1990 qui le citent ; décret n° 2020-1435 du 23 novembre 2020 (art. 2, 8,
+  11, notice) ; décret n° 2007-1185 (art. 3, 10, 11) ; décret n° 2008-319 (art. 2, 6) ;
+  n° 67-715 (titre).
+trouve: >-
+  Les six points sont conformes. Les 15 lignes du n° 83-1260, art. 34, sont égales au texte du
+  LEGI (grade, échelon, durée) ; le décret n° 90-685, art. 5 (JO n° 178 du 3 août 1990),
+  prouve que la fin est en 1990 ; le jour, 4 août, est celui du LEGI. Le motif du 22e refus
+  cite l'art. 8 du n° 2020-1435 mot pour mot ; la notice de ce décret date le chapitre II « en
+  2020 » et l'art. 11 le chapitre III au 1er janvier 2021, sans que l'index dise le chapitre
+  de l'art. 8 : ne pas rendre le tableau est juste. Les deux règles du quart sont citées mot
+  pour mot ; 36 tableaux à moyenne seule, 12 avec la règle. Le n° 67-715 est du 16 août 1967 ;
+  39 versions perdent 409 lignes, mais le fichier n'en perd que 384, 25 lignes étant écrites
+  pour 25 versions neuves (écart faible, de rédaction). Le trou se recompte à l'identique
+  (102, 58, 48 ; 97, 54, 44) ; les trois versions tirées sont des durées d'échelon. Les
+  5 tests ajoutés tirent leurs valeurs des textes et mordent (7 mutations sur 7) ;
+  certification sans écart, paquet inchangé.
+reste: >-
+  Le jour d'entrée en vigueur d'un décret de 1990 sans article qui la fixe, non lu. Le
+  chapitre de l'art. 8 du n° 2020-1435, que l'index ne porte pas. Les 97 versions hors du
+  motif, à lire dans une étape à elles.
