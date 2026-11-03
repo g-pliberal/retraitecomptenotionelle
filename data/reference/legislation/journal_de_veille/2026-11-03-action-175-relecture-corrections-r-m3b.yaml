@@ -1,0 +1,36 @@
+date: "2026-11-03"
+session: "action 175, file R-M3-bis : relecture indépendante des corrections de la relecture R-M3b (commit 5cf7bbc, file M3-bis), la majoration pour enfants reversée depuis 2019 sans le coefficient d'anticipation du défunt"
+consulte: >-
+  python scripts/veille_droit.py ; docs/veille_droit.md ; la base de la Cnav, rien de neuf.
+  Hors du Journal officiel, téléchargés le jour, d'empreintes identiques à celles des
+  fiches : la circulaire Agirc-Arrco 2020-02-DRJ (sha256 52477988…), fiches 4, 5 et 6 ;
+  l'accord du 17 novembre 2017 applicable au 1er janvier 2019 (sha256 b8af8df7…), articles
+  94, 102 et 109 ; la circulaire 2024-5-DRJ et l'avenant n° 19 (sha256 83577e9a…) ;
+  l'accord du 5 octobre 2023 (sha256 eb336c93…) ; la convention du 14 mars 1947 mise à jour
+  au 1er janvier 2018 (sha256 38966c27…), annexe I, articles 6 et 6 bis ; le recueil des
+  accords (sha256 0186b6b1…), accords du 9 février 1994, article 2, du 18 mars 2011,
+  articles 1er à 3, et du 30 octobre 2015, article 3. En plus : l'accord du 10 mai 2019
+  (https://www.agirc-arrco.fr/wp-content/uploads/2021/11/Accord_national_interprofessionnel_10052019.pdf,
+  sha256 0f239c783c1a328ba15022f27f961beabead8ab29c76346986312edaccd3f5b3).
+trouve: >-
+  Conforme. La majoration reversée sans le coefficient, pour les décès depuis le 1er
+  janvier 2019, quelle que soit la date de liquidation du défunt, est la règle de la
+  circulaire (fiche 6, préambule et I.1.2.2, 1.) ; chaque citation est exacte, à sa page ;
+  295,21 €, 259,78 €, 1 044,61 €, 974,36 €, 209,68 €, 267,22 € et l'effet de 175,30 € à
+  274,66 € par an, tranche 2 de l'Arrco comprise, se refont au centime ; les deux moteurs
+  les rendent, sous PRESOMPTIONS_DECALEES=1 aussi ; le paquet se refait à l'octet ; les six
+  écarts faibles de R-M3b sont corrigés. Le plafond de la majoration reversée depuis 2019
+  d'une allocation d'avant reste non tranché : la fiche 4, II.2.2, se lit pour le défunt
+  comme pour le conjoint. L'accord du 10 mai 2019 ne touche ni l'article 94 ni le 109. Les
+  60 % de la réversion : l'article 109 et la fiche 6, I.1.2.1, les calculent sans le
+  coefficient d'anticipation, dans la limite des points abattus du défunt ; le modèle les
+  calcule coefficient compris (265,69 € et 1 366,13 € par an de moins aux deux cas du test).
+  Trois écarts faibles, sans effet : la circulaire 2024-5-DRJ a 4 pages, non 3 ; les
+  8,55 € de R-M3b sont une erreur d'un centime, non un arrondi ; la déclaration du plafond
+  ne nomme pas la phrase qui fait hésiter.
+reste: >-
+  À la file du modèle : servir les 60 % de la réversion sans le coefficient d'anticipation,
+  dans la limite des points abattus, le test d'abord (note
+  2026-11-03-relecture-corrections-de-la-relecture-r-m3b.md de l'action 175, point 4). À la
+  caisse, par écrit : le plafond de la majoration reversée depuis 2019 d'une allocation de
+  2012 à 2018. Les avenants n° 1 à 18 de l'accord de 2017 restent à lire.
