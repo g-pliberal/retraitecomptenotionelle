@@ -11,12 +11,13 @@
  * - `carrieres` : `{cas: [{cle, options}], scenarios, univers, parametres}` —
  *   chaque carrière d'un seul statut, aux options de `carriereSimple`, simulée
  *   sous les réglages de référence, ou sous les `parametres` d'une étude quand
- *   la demande en porte (`simulateurSous`) : l'année de son départ et celle de chaque
- *   scénario, l'écart de chacun au système actuel, pilier capitalisé compris
- *   (`variationTotale`) ou non (`variation`), la pension du système actuel et
- *   la durée qu'il requiert ; la pension de
- *   chaque scénario, pilier capitalisé compris, et la rente des points
- *   volontaires ; et, pour qui est déjà parti, ce que le système actuel et
+ *   la demande en porte (`simulateurSous`) : l'année de son départ et celle
+ *   de chaque scénario, l'écart de chacun au système actuel, pilier
+ *   capitalisé compris (`variationTotale`) ou non (`variation`), la pension
+ *   du système actuel et la durée qu'il requiert ; la pension de chaque
+ *   scénario, pilier capitalisé compris, et la rente des points volontaires ;
+ *   la pension de l'étalon et de chaque scénario, hors du pilier, en euros
+ *   constants ; et, pour qui est déjà parti, ce que le système actuel et
  *   chaque scénario lui servent aujourd'hui (`aujourd_hui`), sinon `null`.
  * - `saisies` : `{cas: [{cle, saisie}], scenarios}` — chaque saisie, simulée
  *   comme le site la simule (`Contexte.simuler`) : la fiche de paie de l'année
@@ -211,6 +212,11 @@ function carrieres({ cas, scenarios, univers = {}, parametres = null }) {
       pensions_totales: parScenario(scenarios, (scenario) => comparaison.pensionTotale(scenario)),
       rentes_volontaires: parScenario(scenarios,
         (scenario) => comparaison.renteCapitaliseeVolontaire(scenario)),
+      // La pension de l'étalon et de chaque scénario, hors du pilier, en euros
+      // constants : ce que `scripts/stock_age_legal.py` lit de ses cas types.
+      pensions_euros_constants: parScenario(["actuel", ...scenarios],
+        (scenario) => comparaison.enEurosConstants(comparaison[scenario].pension_annuelle,
+          scenario)),
       aujourd_hui: aujourdHui === null ? null : {
         pension_annuelle: aujourdHui.pension("actuel"),
         pensions_totales: parScenario(scenarios, (scenario) => aujourdHui.pensionTotale(scenario)),

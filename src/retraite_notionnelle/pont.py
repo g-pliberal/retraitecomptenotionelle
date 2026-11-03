@@ -193,12 +193,13 @@ def par_le_jumeau():
     tait (``memoire.modele_modifie``).
 
     S'y ouvrent les études qui remplacent une fonction du moteur Python le
-    temps d'une variante — ``scripts/solde_fusion.py``,
-    ``stock_age_legal.py`` —, jusqu'à ce que leur variante s'écrive en
-    données, une couche ou un paramètre de la demande au pont (note de
-    décision 0006 ; action 161, « le coût sous un modèle modifié »), comme
-    ``proposition_prospective.py`` l'a écrite, un univers que la demande
-    porte (``Simulateur.univers_de_la_demande``) ; et les confrontations qui
+    temps d'une variante — ``scripts/solde_fusion.py`` —, jusqu'à ce que
+    leur variante s'écrive en données, une couche ou un paramètre de la
+    demande au pont (note de décision 0006 ; action 161, « le coût sous un
+    modèle modifié »), comme ``proposition_prospective.py`` l'a écrite, un
+    univers que la demande porte (``Simulateur.univers_de_la_demande``), et
+    ``stock_age_legal.py``, une règle du moteur sous un paramètre
+    (``Parametres.stock_age_legal``) ; et les confrontations qui
     font refaire au jumeau ce que le portage calcule, jusqu'au retrait de sa
     paire."""
     global _JUMEAU
@@ -312,7 +313,9 @@ def carrieres(cas: list[dict], scenarios, paquet: bytes | None = None,
     (``variation_totale``) ou non (``variation``), la pension du système
     actuel et la durée qu'il requiert ; la pension de chaque scénario, pilier
     capitalisé compris (``pension_totale``), et la rente des points
-    volontaires (``rente_capitalisee_volontaire``) ; et, pour qui est déjà
+    volontaires (``rente_capitalisee_volontaire``) ; la pension de l'étalon
+    et de chaque scénario, hors du pilier, en euros constants
+    (``pensions_euros_constants``) ; et, pour qui est déjà
     parti, ce que le système actuel et chaque scénario lui servent
     aujourd'hui (``Comparaison.aujourd_hui``), sinon ``None``. Puis, sous leur
     clé, les motifs des carrières que le portage refuse. ``univers`` porte les
@@ -332,6 +335,7 @@ def carrieres(cas: list[dict], scenarios, paquet: bytes | None = None,
             "trimestres_requis": lu["trimestres_requis"],
             "pensions_totales": _par_scenario(lu["pensions_totales"]),
             "rentes_volontaires": _par_scenario(lu["rentes_volontaires"]),
+            "pensions_euros_constants": _par_scenario(lu["pensions_euros_constants"]),
             "aujourd_hui": _aujourd_hui(lu["aujourd_hui"]),
         }
         for cle, lu in reponse["resultats"].items()

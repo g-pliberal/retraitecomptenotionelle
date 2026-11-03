@@ -44,9 +44,10 @@ avant le choix, et le diviseur de l'âge effectif reste la règle.
 
 CE QU'IL EMPRUNTE
 -----------------
-``ScenarioNotionnel.retroactif`` et ``ScenarioNotionnel._droits_acquis``,
-remplacés le temps du calcul et rendus ensuite ; le solde vient de
-``cout.calculer_cout`` tel quel.
+Rien qu'il remplace : chaque variante est une règle du moteur,
+``Parametres.stock_age_legal`` (action 161), que le portage calcule, la règle
+dans les paramètres de la demande au pont — le coût et sa grille, comme les
+cas types ; le solde vient de ``cout.calculer_cout`` tel quel.
 """
 
 from __future__ import annotations
@@ -62,16 +63,13 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from retraite_notionnelle import cout as C  # noqa: E402
 from retraite_notionnelle import memoire, pont  # noqa: E402
-from retraite_notionnelle.castypes import CAS_TYPES, calculer_cas_types  # noqa: E402
-from retraite_notionnelle.config import Parametres  # noqa: E402
+from retraite_notionnelle.castypes import CAS_TYPES, cases_de_la_grille  # noqa: E402
+from retraite_notionnelle.config import Parametres, StockAgeLegal  # noqa: E402
 from retraite_notionnelle.donnees.assiette import AssietteActivite  # noqa: E402
 from retraite_notionnelle.donnees.depenses import DepensesRetraite  # noqa: E402
 from retraite_notionnelle.donnees.equilibre import ComptesRetraite  # noqa: E402
 from retraite_notionnelle.donnees.population import Population  # noqa: E402
-from retraite_notionnelle.scenarios.actuel import AgesOuverture  # noqa: E402
-from retraite_notionnelle.scenarios.notionnel import ScenarioNotionnel  # noqa: E402
 from retraite_notionnelle.simulateur import Simulateur  # noqa: E402
-from retraite_notionnelle.droit import ouvrir
 
 VARIANTES: tuple[str, ...] = ("reference", "droit_commun", "tout_droit", "acquis")
 RETROACTIFS: tuple[str, ...] = (
@@ -88,92 +86,14 @@ CAS_STOCK: tuple[tuple[str, int], ...] = (
 )
 
 
-class StockALAgeLegal:
-    """Le temps d'un calcul : le stock converti à l'âge de référence pour qui est parti à l'heure."""
-
-    def __init__(self, variante: str, simulateur: Simulateur) -> None:
-        if variante not in VARIANTES:
-            raise ValueError(f"variante inconnue : {variante!r} (attendu : {VARIANTES})")
-        self.variante = variante
-        self.simulateur = simulateur
-        self.ages = AgesOuverture(simulateur.parametres.racine_donnees)
-        self._sauvegarde: dict[str, object] = {}
-        #: Couples (carrière, âge de départ, âge légal, âge de conversion) touchés.
-        self.touches: list[tuple[str, float, float, float]] = []
-
-    def age_legal(self, carriere) -> float | None:
-        if self.variante == "tout_droit":
-            return ouvrir.age_ouverture_droit(self.simulateur.scenario_actuel, carriere)
-        valeur = self.ages.age(carriere.annee_naissance)
-        return None if valeur is None else valeur[0]
-
-    def _retroactif(self, original):
-        variante = self
-
-        def retroactif(scenario, carriere, regime_fusionne=None, **kwargs):
-            resultat = original(scenario, carriere, regime_fusionne, **kwargs)
-            if variante.variante not in ("droit_commun", "tout_droit"):
-                return resultat
-            parametres = scenario.parametres
-            age = carriere.age_liquidation or 0.0
-            plancher = parametres.age_reference_fixe
-            if carriere.annee_liquidation >= parametres.annee_bascule or age >= plancher:
-                return resultat
-            legal = variante.age_legal(carriere)
-            if legal is None or age < legal:
-                return resultat
-            conversion = scenario.convertisseur.coefficient(
-                plancher, carriere.annee_liquidation, scenario._sexe(carriere),
-                carriere.mois_liquidation, scenario.convertisseur.population_de(carriere),
-            )
-            resultat.pension_annuelle = resultat.compte.capital / conversion.diviseur
-            resultat.conversion = conversion
-            variante.touches.append((carriere.identifiant, age, legal, plancher))
-            return resultat
-        return retroactif
-
-    def _droits_acquis(self, original):
-        variante = self
-
-        def droits_acquis(scenario, carriere, bascule, neutralisations):
-            droits = original(scenario, carriere, bascule, neutralisations)
-            if variante.variante != "acquis" or droits is None:
-                return droits
-            legal = variante.age_legal(carriere)
-            if legal is None or legal >= droits.age_conversion:
-                return droits
-            conversion = scenario.convertisseur.coefficient(
-                legal, bascule, scenario._sexe(carriere),
-                population=scenario.convertisseur.population_de(carriere),
-            )
-            capital = droits.pension_figee * conversion.diviseur
-            variante.touches.append((carriere.identifiant, carriere.age_liquidation or 0.0,
-                                     legal, droits.age_conversion))
-            return dataclasses.replace(
-                droits, age_conversion=legal, diviseur=conversion.diviseur,
-                capital_a_la_bascule=capital,
-                capital=capital * droits.coefficient_revalorisation,
-            )
-        return droits_acquis
-
-    def __enter__(self) -> "StockALAgeLegal":
-        # Le contexte remplace une fonction du moteur Python, que le portage ne
-        # voit pas : le jumeau calcule, et la mémoire des calculs, qui ne
-        # connaît que le modèle intact, se tait (``pont.par_le_jumeau``).
-        self._memoire = pont.par_le_jumeau()
-        self._memoire.__enter__()
-        self._sauvegarde = {
-            "retroactif": ScenarioNotionnel.retroactif,
-            "_droits_acquis": ScenarioNotionnel._droits_acquis,
-        }
-        ScenarioNotionnel.retroactif = self._retroactif(ScenarioNotionnel.retroactif)
-        ScenarioNotionnel._droits_acquis = self._droits_acquis(ScenarioNotionnel._droits_acquis)
-        return self
-
-    def __exit__(self, *exc) -> None:
-        ScenarioNotionnel.retroactif = self._sauvegarde["retroactif"]
-        ScenarioNotionnel._droits_acquis = self._sauvegarde["_droits_acquis"]
-        self._memoire.__exit__(None, None, None)
+def parametres_de(variante: str, parametres: Parametres) -> Parametres:
+    """Les paramètres de ``variante`` : la règle du stock que le moteur
+    applique (``Parametres.stock_age_legal``) ; ``reference`` n'en pose
+    aucune."""
+    if variante not in VARIANTES:
+        raise ValueError(f"variante inconnue : {variante!r} (attendu : {VARIANTES})")
+    regle = None if variante == "reference" else StockAgeLegal(variante)
+    return dataclasses.replace(parametres, stock_age_legal=regle)
 
 
 @dataclass
@@ -192,18 +112,37 @@ class Resultat:
     #: Pension annuelle en euros constants, par (cas type, génération), pour
     #: les scénarios 4 et 6 — et 3 et 5 sous ``acquis``.
     pensions: dict[str, dict[str, float]]
-    touches: int
     cout: C.Cout | None = field(default=None, repr=False)
 
 
 def calculer(variante: str, parametres: Parametres) -> Resultat:
-    """Les lectures d'une variante, sur les données du dépôt.
+    """Les lectures d'une variante, sur les données de ``parametres``, gardées
+    par la mémoire des calculs (``retraite_notionnelle/memoire.py``) : la
+    règle est au moteur, qui reste intact."""
+    etude = parametres_de(variante, parametres)
+    return memoire.memoriser_pour(etude, ("stock_age_legal", variante, etude),
+                                  lambda: _calculer(variante, etude))
 
-    Un calcul gardé (``retraite_notionnelle/memoire.py``) : la mémoire se tait
-    sous le contexte, qui s'ouvre donc DANS le calcul que la clé nomme.
-    """
-    return memoire.memoriser_pour(parametres, ("stock_age_legal", variante, parametres),
-                                  lambda: _calculer(variante, parametres))
+
+def pensions_des_cas(etude: Simulateur) -> dict[str, dict[str, float]]:
+    """La pension de chaque système, en euros constants, par cas type et
+    génération de ``CAS_STOCK``, dans son ordre : le portage date les cas
+    types et les simule, sous les paramètres de l'étude, que la demande au
+    pont porte (action 161)."""
+    paquet = pont.paquet_des_donnees(etude.parametres.racine_donnees)
+    codes = {code for code, _ in CAS_STOCK}
+    options, _ = cases_de_la_grille(
+        etude, tuple(cas for cas in CAS_TYPES if cas.code in codes),
+        tuple(sorted({generation for _, generation in CAS_STOCK})), paquet=paquet)
+    compares = [scenario for scenario, _ in C.SCENARIOS if scenario != "actuel"]
+    lus, _ = pont.carrieres(
+        [{"cle": f"{code}|{generation}", "options": options[code, generation]}
+         for code, generation in CAS_STOCK if (code, generation) in options],
+        compares, paquet, parametres=etude.parametres)
+    return {cle: {scenario: lus[cle]["pensions_euros_constants"][scenario]
+                  for scenario, _ in C.SCENARIOS}
+            for cle in (f"{code}|{generation}" for code, generation in CAS_STOCK)
+            if cle in lus}
 
 
 def _calculer(variante: str, parametres: Parametres) -> Resultat:
@@ -211,23 +150,8 @@ def _calculer(variante: str, parametres: Parametres) -> Resultat:
     depenses, population = DepensesRetraite(racine), Population(racine)
     comptes, assiette = ComptesRetraite(racine), AssietteActivite(racine)
     simulateur = Simulateur(parametres)
-    with StockALAgeLegal(variante, simulateur) as stock:
-        cout = C.calculer_cout(simulateur, depenses, population, comptes, assiette=assiette)
-        touches = len(stock.touches)
-        grille = calculer_cas_types(
-            simulateur, tuple(c for c in CAS_TYPES if any(c.code == code for code, _ in CAS_STOCK)),
-            tuple(sorted({g for _, g in CAS_STOCK})),
-        )
-    pensions: dict[str, dict[str, float]] = {}
-    for code, generation in CAS_STOCK:
-        comparaison = grille.resultats.get((code, generation))
-        if comparaison is None:
-            continue
-        pensions[f"{code}|{generation}"] = {
-            scenario: comparaison.en_euros_constants(
-                getattr(comparaison, scenario).pension_annuelle, scenario)
-            for scenario, _ in C.SCENARIOS
-        }
+    cout = C.calculer_cout(simulateur, depenses, population, comptes, assiette=assiette)
+    pensions = pensions_des_cas(simulateur)
     solde = cout.solde
     lectures = {
         scenario: Lecture(
@@ -239,7 +163,7 @@ def _calculer(variante: str, parametres: Parametres) -> Resultat:
         )
         for scenario, _ in C.SCENARIOS
     }
-    return Resultat(variante, lectures, pensions, touches, cout)
+    return Resultat(variante, lectures, pensions, cout)
 
 
 LIBELLES = {
@@ -293,12 +217,11 @@ def main(argv: list[str] | None = None) -> int:
     resultats = {}
     for variante in ["reference", *[v for v in arguments.variantes if v != "reference"]]:
         resultats[variante] = calculer(variante, parametres)
-        print(f"{variante}: {resultats[variante].touches} couples touchés", file=sys.stderr)
     print(tableau(resultats))
     if arguments.json:
         arguments.json.write_text(json.dumps({
             v: {"lectures": {s: dataclasses.asdict(l) for s, l in r.lectures.items()},
-                "pensions": r.pensions, "touches": r.touches}
+                "pensions": r.pensions}
             for v, r in resultats.items()}, indent=1, ensure_ascii=False, default=str))
     return 0
 

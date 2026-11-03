@@ -575,19 +575,18 @@ def test_les_contextes_qui_remplacent_le_modele_font_taire_la_memoire():
     jumeau, le seul qui voie leur remplacement (``pont.par_le_jumeau``),
     jusqu'à ce que leur variante s'écrive en données (action 161) : la
     proposition prospective l'est, un univers que le portage calcule, et elle
-    ne remplace plus qu'une liste du coût."""
+    ne remplace plus qu'une liste du coût ; le stock à l'âge légal aussi, une
+    règle du moteur sous un paramètre de la demande, et il n'a plus de
+    contexte (``tests/test_stock_age_legal.py``)."""
     import proposition_prospective
     import solde_fusion
-    import stock_age_legal
 
     from retraite_notionnelle import Parametres, pont
-    from retraite_notionnelle.simulateur import Simulateur
 
     contextes = (
         (proposition_prospective.PropositionProspective(), True),
         (solde_fusion.RegimeUniqueVariante(solde_fusion.Hypothese("A", "le modèle", None)),
          False),
-        (stock_age_legal.StockALAgeLegal("reference", Simulateur(Parametres())), False),
     )
     for contexte, au_portage in contextes:
         assert memoire._active() and pont.par_le_portage(Parametres())

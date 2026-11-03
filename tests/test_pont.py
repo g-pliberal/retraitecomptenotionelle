@@ -100,6 +100,12 @@ def _carrieres_simulees(simulateur: Simulateur, scenarios=SCENARIOS,
                                  for scenario in scenarios},
             "rentes_volontaires": {scenario: comparaison.rente_capitalisee_volontaire(scenario)
                                    for scenario in scenarios},
+            # La pension de l'étalon et de chaque scénario, hors du pilier, en
+            # euros constants : ce que ``scripts/stock_age_legal.py`` lit.
+            "pensions_euros_constants": {
+                scenario: comparaison.en_euros_constants(
+                    getattr(comparaison, scenario).pension_annuelle, scenario)
+                for scenario in ("actuel", *scenarios)},
             "aujourd_hui": _aujourd_hui(comparaison.aujourd_hui, scenarios),
         }
     return demandes, attendus
@@ -118,7 +124,8 @@ def test_le_pont_rend_au_bit_pres_ce_que_le_moteur_python_simule():
         assert type(lu["annee_liquidation"]) is int
         assert type(lu["trimestres_requis"]) is int
         assert type(lu["pension_annuelle"]) is float
-        for lecture in ("variations", "ecarts", "pensions_totales", "rentes_volontaires"):
+        for lecture in ("variations", "ecarts", "pensions_totales", "rentes_volontaires",
+                        "pensions_euros_constants"):
             assert all(type(nombre) is float for nombre in lu[lecture].values()), lecture
         if lu["aujourd_hui"] is not None:
             assert type(lu["aujourd_hui"]["pension_annuelle"]) is float
@@ -1448,7 +1455,7 @@ def test_le_cout_date_et_bat_sa_grille_par_le_portage_sans_les_jumeaux(memoire_i
 
 def test_sous_le_jumeau_le_cout_simule_sa_grille_en_python(memoire_isolee, monkeypatch):
     """Un contexte qui remplace une fonction du moteur Python le temps d'une
-    variante (``scripts/solde_fusion.py``, ``stock_age_legal.py``), ou une
+    variante (``scripts/solde_fusion.py``), ou une
     confrontation qui fait refaire au jumeau ce
     que le portage calcule, s'ouvre sous ``pont.par_le_jumeau()`` : le portage
     ne voit pas le remplacement, et la grille se simule par le moteur Python,

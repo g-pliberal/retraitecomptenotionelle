@@ -1,17 +1,20 @@
 """Le stock converti à l'âge de référence pour qui est parti à l'âge légal : ce que le script
-déplace, et rien d'autre."""
+déplace, et rien d'autre. La règle est au moteur, sous ``Parametres.stock_age_legal``
+(action 161) : ``tests/js/stock-age-legal.test.js`` la tient carrière par carrière,
+``tests/test_pont.py`` son jumeau ; ici, ce que l'étude en lit, calculé par le portage."""
 
 from __future__ import annotations
 
+import shutil
 import sys
+from dataclasses import replace
 from pathlib import Path
 
 import pytest
 
 from retraite_notionnelle import cout as C
-from retraite_notionnelle import memoire
-from retraite_notionnelle.config import Parametres
-from retraite_notionnelle.scenarios.notionnel import ScenarioNotionnel
+from retraite_notionnelle import memoire, pont
+from retraite_notionnelle.config import Parametres, StockAgeLegal
 from retraite_notionnelle.simulateur import Simulateur
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
@@ -33,7 +36,6 @@ def droit_commun():
 
 def test_la_variante_de_reference_est_la_page(reference):
     page = memoire.cout(PARAMETRES)
-    assert reference.touches == 0
     for ligne in page.solde.projetees():
         for scenario, _ in C.SCENARIOS:
             assert reference.lectures[scenario].soldes[ligne.annee] == pytest.approx(
@@ -41,7 +43,6 @@ def test_la_variante_de_reference_est_la_page(reference):
 
 
 def test_le_stock_ne_peut_que_monter_et_les_prospectifs_ne_bougent_pas(reference, droit_commun):
-    assert droit_commun.touches > 0
     for cle, pensions in reference.pensions.items():
         for scenario in stock_age_legal.RETROACTIFS:
             assert droit_commun.pensions[cle][scenario] >= pensions[scenario] - 1e-9, (cle, scenario)
@@ -62,23 +63,56 @@ def test_le_solde_de_la_proposition_baisse_puis_rejoint_la_reference(reference, 
     assert apres[C.HORIZON] == pytest.approx(avant[C.HORIZON], abs=1e-4)
 
 
-def test_l_age_legal_est_celui_de_la_generation_ou_du_droit_de_l_assure():
-    simulateur = Simulateur(PARAMETRES)
-    commun = stock_age_legal.StockALAgeLegal("droit_commun", simulateur)
-    tout = stock_age_legal.StockALAgeLegal("tout_droit", simulateur)
-    conduite = simulateur.carriere_simple(1960, "H", "agent_sncf", 20.0, 52.0)
-    assert commun.age_legal(conduite) == pytest.approx(62.0)
-    assert tout.age_legal(conduite) < 62.0
+def test_chaque_variante_est_une_regle_du_moteur():
+    """Une variante de l'étude est la règle du stock que le moteur applique
+    (``Parametres.stock_age_legal``) : l'étude ne remplace plus aucune
+    fonction du moteur le temps d'un calcul. La référence n'en pose aucune."""
+    assert stock_age_legal.parametres_de("reference", PARAMETRES) == PARAMETRES
+    for variante in ("droit_commun", "tout_droit", "acquis"):
+        assert stock_age_legal.parametres_de(variante, PARAMETRES) == replace(
+            PARAMETRES, stock_age_legal=StockAgeLegal(variante))
     with pytest.raises(ValueError):
-        stock_age_legal.StockALAgeLegal("inconnue", simulateur)
+        stock_age_legal.parametres_de("inconnue", PARAMETRES)
 
 
-def test_le_contexte_rend_ses_attributs():
-    simulateur = Simulateur(PARAMETRES)
-    avant = (ScenarioNotionnel.retroactif, ScenarioNotionnel._droits_acquis)
-    with stock_age_legal.StockALAgeLegal("tout_droit", simulateur):
-        assert ScenarioNotionnel.retroactif is not avant[0]
-    assert (ScenarioNotionnel.retroactif, ScenarioNotionnel._droits_acquis) == avant
+def test_les_cas_types_passent_par_le_portage_au_bit_pres_du_jumeau(monkeypatch):
+    """Les cas types de l'étude se datent et se simulent par le portage, la
+    règle du stock dans les paramètres de la demande (action 161) : la pension
+    de chaque système, en euros constants, au bit près de ce que le jumeau
+    Python en simule sous la même règle et ``pont.par_le_jumeau()`` — sans que
+    le moteur Python ne calcule rien."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage ne calcule pas ici")
+    from outils_pont import empecher_les_jumeaux_du_cout
+    from retraite_notionnelle.castypes import CAS_TYPES, calculer_cas_types
+
+    codes = {code for code, _ in stock_age_legal.CAS_STOCK}
+    generations = tuple(sorted({generation for _, generation in stock_age_legal.CAS_STOCK}))
+    simulateurs = {variante: Simulateur(stock_age_legal.parametres_de(variante, PARAMETRES))
+                   for variante in ("droit_commun", "tout_droit")}
+    attendus = {}
+    with pont.par_le_jumeau():
+        for variante, simulateur in simulateurs.items():
+            grille = calculer_cas_types(
+                simulateur, tuple(cas for cas in CAS_TYPES if cas.code in codes), generations)
+            attendus[variante] = {
+                f"{code}|{generation}": {
+                    scenario: comparaison.en_euros_constants(
+                        getattr(comparaison, scenario).pension_annuelle, scenario)
+                    for scenario, _ in C.SCENARIOS}
+                for code, generation in stock_age_legal.CAS_STOCK
+                if (comparaison := grille.resultats.get((code, generation))) is not None}
+    empecher_les_jumeaux_du_cout(monkeypatch)
+    for variante, simulateur in simulateurs.items():
+        lues = stock_age_legal.pensions_des_cas(simulateur)
+        assert lues == attendus[variante], variante
+        assert list(lues) == [f"{code}|{generation}"
+                              for code, generation in stock_age_legal.CAS_STOCK], variante
+    # Un agent de conduite parti à cinquante-deux ans : le droit commun le
+    # laisse au diviseur de son âge, son propre droit le relève.
+    conduite = "agent_sncf_conduite|1960"
+    assert (attendus["tout_droit"][conduite]["notionnel_liberal"]
+            > attendus["droit_commun"][conduite]["notionnel_liberal"])
 
 
 def test_l_accueil_cite_ce_que_coute_le_diviseur_de_l_age_de_l_assure(reference, droit_commun):
@@ -101,4 +135,3 @@ def test_l_accueil_cite_ce_que_coute_le_diviseur_de_l_age_de_l_assure(reference,
         ecart_annee = (reference.lectures[liberal].soldes[annee]
                        - droit_commun.lectures[liberal].soldes[annee]) * 100
         assert abs(ecart_annee) < 0.05, annee
-
