@@ -28,20 +28,20 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 | à vérifier | 2 |
 
 - Confrontées à au moins un exemple officiel : **65 sur 259** (218 exemples : 206 reproduits, 12 en écart connu, section 2).
-- Citées dans le code par leur identifiant : **122 sur 259**. Le lien entre une règle et le code qui l'applique n'existe pas encore pour les autres.
+- Citées dans le code par leur identifiant : **123 sur 259**. Le lien entre une règle et le code qui l'applique n'existe pas encore pour les autres.
 - Désignées par les interrupteurs des périodes de régime : **48 sur 259**, par 2 495 renvois ; chacune déclare la valeur que le moteur lit (`code.interrupteurs`) et dit ce qu'il en fait.
 - Mûres, sans rien qui manque à leur contrat : **172 sur 259**. Une fiche tirée d'un registre ne sait pas encore son domaine, ses régimes, son étape ni ses versions : ce qui lui manque est à faire (section 3).
 - Découpées en versions : **172 sur 259**, soit 690 versions, dont 112 supposées ; le partage des versions se contrôle sur chacune.
 - Réformes du calendrier : 126, dont 10 déclarées non appliquées.
 
-**La loi, rédaction par rédaction** (`data/reference/textes/`, § 6.6) : 16 386 rédactions d'articles, de 227 textes, lues le 2026-11-03 (index LEGI du dépôt : Freemium_legi_global_20250713-140000.tar.gz, incréments appliqués jusqu'au 20261102-213929). C'est le dénominateur de l'avancement : ce que les fiches ont lu, contre ce que la loi a écrit.
+**La loi, rédaction par rédaction** (`data/reference/textes/`, § 6.6) : 16 388 rédactions d'articles, de 227 textes, lues le 2026-11-03 (index LEGI du dépôt : Freemium_legi_global_20250713-140000.tar.gz, incréments appliqués jusqu'au 20261102-213929). C'est le dénominateur de l'avancement : ce que les fiches ont lu, contre ce que la loi a écrit.
 
 | Statut | Rédactions |
 |---|---|
 | rattachées à une version | 1 672 |
 | sans effet | 66 |
-| à rattacher | 592 |
-| à examiner | 4 701 |
+| à rattacher | 595 |
+| à examiner | 4 700 |
 | sans statut | 9 355 |
 
 **La personne** (§ 5) : une chronologie de faits datés, dans un réseau de personnes — aujourd'hui l'assuré, ses enfants et son conjoint —, que le relevé et le parcours déclarent (`src/retraite_notionnelle/chronologie.py`, et son jumeau). La carrière que le moteur liquide en est la vue. Ce que la saisie ne dit pas est présumé : 32 présomptions au vocabulaire, dont 3 posent leur fait dans la chronologie ; les autres s'appliquent dans le code, jusqu'à l'étape qui posera le leur.
@@ -402,7 +402,7 @@ Et 36 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
   | `approximations` | 25 |
   | `regimes` | 1 |
 
-- **Les textes** : 592 rédactions à rattacher à une version de la fiche qui les cite, 4 701 à examiner, et 9 355 sans statut, que le cliquet tient à 9 355 au plus. Les textes qui en ont le plus : `css` 4 820, `decret_46_2769` 938, `rural` 852, `cpcmr` 568, `decret_90_1215` 319 (`python scripts/textes.py`).
+- **Les textes** : 595 rédactions à rattacher à une version de la fiche qui les cite, 4 700 à examiner, et 9 355 sans statut, que le cliquet tient à 9 355 au plus. Les textes qui en ont le plus : `css` 4 820, `decret_46_2769` 938, `rural` 852, `cpcmr` 568, `decret_90_1215` 319 (`python scripts/textes.py`).
 - **Les relectures prévues les plus proches** : 2026-11-30 (`majoration_dix_pour_cent`) ; 2026-12-31 (`age_legal_par_generation`) ; 2026-12-31 (`agirc_arrco_valeur_achat`) ; 2026-12-31 (`carriere_longue`) ; 2026-12-31 (`certification_legi_perimee`).
 - **Les régimes hors champ** : 23, chacun avec sa raison dans l'inventaire.
 

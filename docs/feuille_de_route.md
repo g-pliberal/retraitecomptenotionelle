@@ -4997,16 +4997,16 @@ R. 111-2 ; la condition de L. 816-1 ; le tableau de 2008 des régimes
 
 ### 131. Les dix fiches nées à la phase 6, relues à la source : les écarts qu'elles montrent, à corriger — `en cours`
 
-**Reprise, au 3 novembre 2026.** Faits, des coupures au mois aux points de 1952 à 1972
-(R. 732-67). Restent, tous au propriétaire : des classes, l'acte vétérinaire, dix décrets au
+**Reprise, au 3 novembre 2026.** Faits, des coupures au mois aux points de 1952 à 1972,
+ceux des pensions de 2026 (R. 732-67) et, depuis le 3 novembre, de juillet 1986 à 2025
+(D. 732-77). Restent, tous au propriétaire : des classes, l'acte vétérinaire, dix décrets au
 fac-similé et la grille de 2008 ; de `coefficients_anticipation_agirc_arrco`, l'ASF de 1983 à
 2003 ; de `decote_avant_1983`, l'ajournement des artisans et commerçants et les « soixante et un
-ans » agricoles ; la durée du minimum de D. 634-14 (la Cnav) ; de
-`pension_non_salaries_agricoles_2026`, le barème des points d'avant 1990, et la majoration de 1952
-à 1972 des pensions de 1986 à 2025, dont les textes, D. 732-76 et D. 732-77 de 2005 à 2025, sont
-hors des index LEGI et JORF, que leur filtre écarte (l'élargir ? note du 3 novembre) ; les années
-au prorata de l'exploitant et l'assiette minimale des indépendants au compte ; l'AVI du
-collaborateur et la forme de son champ. Détail : les notes.
+ans » agricoles ; la durée du minimum de D. 634-14 (la Cnav) ; le barème des points d'avant
+1990 ; les 17 % de D. 732-76, que le moteur n'applique pas : se cumulent-ils avec D. 732-77 ?
+(note du 3 novembre, majoration de 1986 à 2025) ; les années au prorata de l'exploitant et
+l'assiette minimale des indépendants au compte ; l'AVI du collaborateur et la forme de son
+champ. Détail : les notes.
 
 **La relecture, le 27 septembre 2026**, menée pendant la phase 7 par une autre
 session, à la demande du propriétaire, après avoir vérifié qu'elle ne lui

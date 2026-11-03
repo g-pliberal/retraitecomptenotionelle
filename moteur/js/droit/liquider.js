@@ -413,6 +413,42 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
           `cotisations revalorisées ${formatFixe(cumul, 0, true)} € `
           + `× rendement ${formatPourcentage(rendement, 2)}`,
         );
+        // LES POINTS DE CHEF DE 1952 À 1972 SE MAJORENT, pour les pensions
+        // prises du 1er juillet 1986 au 31 décembre 2025 : voir le Python.
+        if (code === coordonner.REGIME_DES_NON_SALARIES_AGRICOLES
+            && carriere.dateLiquidation.rang >= MAJORATION_DE_1952_A_1972_DEPUIS.rang
+            && carriere.dateLiquidation.rang < MAJORATION_DE_1952_A_1972_JUSQU_A.rang) {
+          let valeur = valeurDuPoint(moteur, periode.points_de ?? code, carriere.dateLiquidation);
+          if (valeur === null) {
+            valeur = [valeurPointFiche(moteur, periode, anneeLiquidation), Fiabilite.MOYENNE];
+          }
+          let coefficientDuree = 1.0;
+          if (periode.bareme_points === "msa_proportionnelle") {
+            const requisMsa = ouvrir.dureeRequise(moteur, periode, carriere)[0];
+            if (requisMsa > 0) {
+              coefficientDuree = 37.5 / (requisMsa / 4.0);
+            }
+          }
+          const cotisations = droits.cotisations
+            .filter(([regimeDuCredit]) => regimeDuCredit === code)
+            .map(([, annee, cotisation]) => [annee, cotisation]);
+          const chef = [...new Set(cotisations.map(([annee]) => annee))].filter(
+            (annee) => ["chef", "chef_secondaire"].includes(carriere.qualiteAgricole(annee)));
+          const [majoration, taux, moyenne] = majorationDesPointsDe1952A1972DAvant2026(
+            cotisations, chef, rendement, valeur[0] * coefficientDuree);
+          if (majoration > 0) {
+            montant += majoration;
+            fiabiliteRegime = Math.min(fiabiliteRegime, valeur[1]);
+            details.push(
+              `majoration des points de chef de 1952 à 1972 ${formatFixe(majoration, 2, true)} € `
+              + `(${formatPourcentage(taux, 2)} pour une moyenne de ${formatFixe(moyenne, 2)} `
+              + "points par an, "
+              + (carriere.dateLiquidation.rang >= MAJORATION_DE_1952_A_1972_CODIFIEE_DEPUIS.rang
+                ? "D. 732-77" : "décret n° 86-1084, article 2")
+              + ")",
+            );
+          }
+        }
       }
 
       fiabiliteGlobale = Math.min(fiabiliteGlobale, fiabiliteRegime);
@@ -1567,6 +1603,46 @@ export function majorerLesPointsDe1952A1972(points, chef) {
     }
   }
   return [majores, taux, moyenne];
+}
+
+/**
+ * Les pensions prises du 1er juillet 1986 (décret n° 86-1084, articles 1er
+ * et 2) au 31 décembre 2025 (D. 732-77, clos le 1er janvier 2026) majorent
+ * les points de chef de 1952 à 1972 ; D. 732-77 les majore depuis le
+ * 22 avril 2005, soit pour une pension prise depuis le 1er mai. Voir le Python.
+ */
+export const MAJORATION_DE_1952_A_1972_DEPUIS = new DateMois(1986, 7);
+export const MAJORATION_DE_1952_A_1972_JUSQU_A = new DateMois(2026, 1);
+export const MAJORATION_DE_1952_A_1972_CODIFIEE_DEPUIS = new DateMois(2005, 5);
+
+/**
+ * La majoration des points de chef de 1952 à 1972 des pensions prises du
+ * 1er juillet 1986 au 31 décembre 2025 : un seul taux, celui que fixe leur
+ * nombre annuel moyen, sur la pension que valent ces années, sans arrondi
+ * par année (décret n° 86-1084, article 2, puis D. 732-77). `cotisations` :
+ * des [année, cotisation revalorisée] ; `chef` : les années de chef. Rend
+ * [majoration en euros, taux, moyenne]. Voir le Python.
+ */
+export function majorationDesPointsDe1952A1972DAvant2026(cotisations, chef, rendement,
+  service) {
+  const [debut, fin] = PERIODE_DES_POINTS_MAJORES;
+  const deChef = new Set(chef);
+  const parAnnee = new Map();
+  for (const [annee, cotisation] of cotisations) {
+    if (debut <= annee && annee <= fin && deChef.has(annee)) {
+      parAnnee.set(annee, (parAnnee.get(annee) ?? 0.0) + cotisation);
+    }
+  }
+  const annees = [...parAnnee.keys()].filter((annee) => parAnnee.get(annee) > 0)
+    .sort((a, b) => a - b);
+  if (annees.length === 0 || service <= 0) {
+    return [0.0, 0.0, 0.0];
+  }
+  const pensions = annees.map((annee) => parAnnee.get(annee) * rendement);
+  const moyenne = pensions.reduce((somme, pension) => somme + pension / service, 0)
+    / annees.length;
+  const taux = tauxDeMajorationDe1952A1972(moyenne);
+  return [taux * pensions.reduce((somme, pension) => somme + pension, 0), taux, moyenne];
 }
 
 /**

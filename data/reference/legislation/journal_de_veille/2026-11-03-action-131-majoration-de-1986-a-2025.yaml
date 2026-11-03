@@ -1,0 +1,38 @@
+date: "2026-11-03"
+session: >-
+  l'action 131, file K de la quatrième vague : la majoration des points de chef de 1952
+  à 1972 des pensions agricoles prises du 1er juillet 1986 au 31 décembre 2025, sur
+  D. 732-76 et D. 732-77, que l'index élargi par l'action 158 porte désormais
+consulte: >-
+  python scripts/veille_droit.py ; l'index LEGI du dépôt, récupéré (à jour à l'incrément
+  du 2 novembre 2026, 21 h 39 ; aucun incrément depuis), et l'index JORF, récupéré ;
+  python scripts/textes.py --inscrire, qui apportait 464 rédactions, presque toutes
+  d'autres files (décrets n° 85-1148, 48-1108, 82-1105…), dont seules D. 732-76 et
+  D. 732-77 sont gardées ; au code rural, D. 732-76 (LEGIARTI000006597490) et D. 732-77
+  (LEGIARTI000006597491) de 2005 à 2025, et R. 732-67 de 2026 (LEGIARTI000053328816) ;
+  le décret n° 86-1084, articles 1 à 4 et visas ; la notice du décret n° 81-790
+  (JORFTEXT000000335107) ; le décret n° 2005-368, article 3 (LEGIARTI000006240372), et
+  ses articles D. 732-76 et D. 732-77 au JORF (JORFARTI000001910389,
+  JORFARTI000002065029) ; les décrets n° 94-714 et 97-163, qui visent les deux décrets
+  sans dire leur cumul ; le XML des deux articles dans l'incrément LEGI_20260115-213622
+  de la DILA (alinéas, liens de concordance).
+trouve: >-
+  D. 732-77 reprend le barème de l'article 2 du décret n° 86-1084, pour les pensions
+  prises depuis le 1er juillet 1986 : 5 % de 15 à 19,51 points annuels moyens, 3,19 P -
+  57,23 % jusqu'à 27,34, 1,93 P - 22,74 % au-delà, 45 % au plus, un seul taux sur les
+  points de la période ; ses formules sont bien ses troisième et cinquième alinéas.
+  D. 732-76 n'en est pas une autre rédaction : il codifie l'article 2 du décret
+  n° 81-790 (lien de concordance de la DILA), une majoration de 17 % des mêmes points
+  quand leur moyenne est au moins de seize ; les deux sources ont coexisté jusqu'au
+  22 avril 2005, abrogées le même jour (décret n° 2005-368, article 3, 65° et 78°).
+  Écrit, dans les deux moteurs, le test d'abord : D. 732-77 et l'article 2 du décret
+  n° 86-1084 pour les pensions de juillet 1986 à 2025 ; les témoins de chef nés en 1925,
+  1935 et 1945 gagnent 46,75 €, 47,76 € et 106,36 € par an, posés à la main.
+reste: >-
+  Au propriétaire (note 131/2026-11-03-majoration-de-1986-a-2025.md, fiche
+  retraite_proportionnelle_msa) : D. 732-76 se cumule-t-il avec D. 732-77, et comment,
+  pour les pensions de 1986 à 2025 et pour celles de 2026, auxquelles R. 732-67 renvoie
+  aux deux ? Le moteur n'applique que D. 732-77. À lire : le décret n° 81-790 au
+  fac-similé, ou une circulaire de la MSA. Les pensions d'avant juillet 1986 (article 3
+  du décret n° 86-1084) ne sont pas écrites. Les 462 autres rédactions de --inscrire
+  attendent leurs files.

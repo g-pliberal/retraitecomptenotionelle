@@ -9,7 +9,9 @@ intitule: >-
   moyenne des meilleures années. Seize points par an au moins pour les pensions de 1994 à
   2025 ; le collaborateur et l'aide familial cotisent sur un forfait de 400 SMIC depuis
   2004 ; le chef à titre secondaire n'a, avant 2026, que cette retraite, sans la
-  forfaitaire.
+  forfaitaire. Pour les pensions prises du 1er juillet 1986 au 31 décembre 2025, les
+  points acquis comme chef de 1952 à 1972 se majorent d'un taux que fixe leur nombre
+  annuel moyen (décret n° 86-1084, article 2, puis D. 732-77).
 regimes: [msa_non_salaries]
 etat: approchee
 etape: acquerir_les_droits
@@ -50,11 +52,73 @@ effet: >-
   19 octobre 2026, l'année du décès du chef, qu'il cotise au prorata depuis 2009
   (L. 731-10-1), ne lui vaut que les points d'une année au prorata, comme celle de
   R. 731-83, dans la pension qu'il « eût obtenue » : mort le 15 août 2024 à 12 000 € par
-  an, sa carrière arrêtée au 1er juillet, 9,5 points, et non 30.
+  an, sa carrière arrêtée au 1er juillet, 9,5 points, et non 30. Depuis le 3 novembre
+  2026 (action 131), les points de chef de 1952 à 1972 des pensions prises du 1er juillet
+  1986 au 31 décembre 2025 se majorent : 5 % de 15 à 19,51 points annuels moyens,
+  3,19 P - 57,23 % jusqu'à 27,34, 1,93 P - 22,74 % au-delà, 45 % au plus, rien sous
+  quinze ; le moteur, qui n'a pas le barème d'avant 1990, compte ces points par le
+  rendement de leurs cotisations, à la valeur de service de la fiche, comme pour les
+  pensions prises depuis 2026, et majore du taux la pension qu'elles valent. Les trois
+  témoins de chef nés en 1925, 1935 et 1945, partis en 1989, 1999 et 2009, y gagnent
+  46,75 €, 47,76 € et 106,36 € par an, en euros de leur départ (5 %, 5 % et 16,00 %),
+  +1,06 %, +0,62 % et +0,75 % de leur pension de base. La majoration de 17 % de
+  D. 732-76 (du 22 avril 2005 au 1er janvier 2026), que la DILA rattache à l'article 2
+  du décret n° 81-790, n'est pas appliquée : voir a_relire.
 sources:
-  lu_le: 2026-10-19
+  lu_le: 2026-11-03
   prochaine_relecture: 2027-03-31
   a_relire:
+  - >-
+    QUESTION AU PROPRIÉTAIRE (3 novembre 2026). D. 732-76 (LEGIARTI000006597490, du
+    22 avril 2005 au 1er janvier 2026) majore « de 17 % » les mêmes points de chef de
+    1952 à 1972 « lorsque le nombre annuel moyen de points acquis par les intéressés au
+    cours de ladite période est au moins égal à seize », sans date de pension ; D. 732-77
+    les majore de son barème, sans date non plus. Aucun texte lu ne dit si les deux se
+    cumulent, ni comment (taux ajoutés ou majorations successives), ni si D. 732-76 ne
+    valait que pour des pensions d'avant juillet 1986. Leurs sources ont coexisté : le
+    décret n° 2005-368 abroge le même jour le décret n° 81-790, source de D. 732-76 selon
+    les liens de la DILA (article 3, 65°), et le décret n° 86-1084 « à l'exception des
+    articles 3 et 4 » (78°) ; le texte du décret n° 81-790 n'est qu'au fac-similé du
+    Journal officiel du 20 août 1981 (notice JORFTEXT000000335107 : « relèvement
+    exceptionnel des retraites proportionnelles [...] à compter du 01-07-1981 »).
+    R. 732-67 renvoie aux deux pour les pensions prises depuis 2026. Le moteur
+    n'applique que D. 732-77, que chaque lecture impose pour les pensions prises depuis
+    le 1er juillet 1986 : s'il fallait aussi D. 732-76, la pension des chefs à seize
+    points de moyenne ou plus serait sous-estimée. À lire : le décret n° 81-790 au
+    fac-similé, et une circulaire ou un barème de la MSA qui applique les deux.
+  - >-
+    La moyenne P de D. 732-77, « le nombre annuel moyen de points acquis par l'assuré
+    au cours de la période » : le texte ne dit pas sur combien d'années la compter. Le
+    moteur la compte sur les années de chef de la période qui ont des points, comme pour
+    les pensions prises depuis 2026, et, faute du barème d'avant 1990 (décrets
+    n° 65-346, 67-570, 68-571, 74-443 et 75-97, au fac-similé), donne à chaque année les
+    points que vaut le rendement estimé de sa cotisation à la valeur de service de la
+    fiche, 4,589 € de 2025 ramenés aux prix du départ, au rapport de durée de R. 732-66
+    depuis 1990 ; la période de 1986 à 1989 de la fiche du régime porte cette valeur pour
+    ce seul compte. Le relevé de la MSA, qui porte les points de chaque année, ou le
+    barème lu, la remplaceraient.
+  - >-
+    D. 732-77 ne dit pas le taux à 19,51 points tout juste, que son 1° (« compris entre
+    15 et 19,51 ») et son 2° (« compris entre 19,51 et 27,34 ») comprennent tous deux : le
+    moteur y donne 5 %, le 1° ; la formule du 2° y donnerait 5,0069 %. Sa codification
+    place la formule « T % = 3,19 x P - 57,23 » au troisième alinéa, sous le 1°, et la
+    seconde au cinquième, sous le 2° : le moteur suit sa source, l'article 2 du décret
+    n° 86-1084 (« Dans le premier cas » et « Dans le second cas » du 2°), et R. 732-67,
+    qui lit ainsi les deux alinéas pour les pensions de 2026 ; les bornes que le texte
+    donne au 2° (« 5 à 30 % et de 30 à 45 % ») sont celles des deux formules à 19,51,
+    27,34 et 35,10 points. Le plafond de 45 % est celui de ce 2°.
+  - >-
+    Les années pour lesquelles le décret n° 68-571 accordait des points supplémentaires,
+    que l'article 2 du décret n° 86-1084 exclut de la majoration avec leurs points, pour
+    les pensions prises jusqu'au 22 avril 2005 ; D. 732-77 ne le dit plus. Le modèle ne
+    les connaît pas : le décret n° 68-571 n'est qu'au fac-similé.
+  - >-
+    Les pensions prises avant le 1er juillet 1986 : l'article 3 du décret n° 86-1084
+    (LEGIARTI000006769406, en vigueur) majore leur nombre total de points, de 2 % entre
+    400 et 500 points à 280 points au plus au-delà de 1 000 ; le décret n° 81-790, au
+    seul fac-similé, porte selon sa notice « relèvement exceptionnel des retraites
+    proportionnelles » à compter du 1er juillet 1981. Le moteur n'applique ni l'un ni
+    l'autre.
   - >-
     L'année que R. 731-83 fait cotiser au prorata, jusqu'au premier jour du mois qui
     suit la cessation, qui quitte l'agriculture pour un autre métier : R. 732-70 et
@@ -290,6 +354,74 @@ sources:
       actuellement en matière de retraite »
     url: https://www.assemblee-nationale.fr/dyn/14/questions/QANR5L14QE96453
     date: 2026-10-17
+  - type: legifrance
+    reference: >-
+      code rural, D. 732-77 (LEGIARTI000006597491), seule rédaction du 22 avril 2005 au
+      1er janvier 2026, en six alinéas : « Le nombre de points acquis par les chefs
+      d'exploitation ou d'entreprise agricole au titre de la période comprise entre le
+      1er juillet 1952 et le 31 décembre 1972 est majoré de : / 1° 5 % lorsque le nombre
+      annuel moyen de points acquis par les intéressés au cours de cette période est
+      compris entre 15 et 19,51. Le taux est déterminé par la formule suivante : / T % =
+      3,19 x P - 57,23 / 2° 5 à 30 % et de 30 à 45 % selon que le nombre annuel moyen de
+      points acquis par les intéressés au cours de cette période est compris entre 19,51
+      et 27,34 ou est supérieur à 27,34. Le taux est alors déterminé par la formule : /
+      T % = 1,93 x P - 22,74 / Le terme P figurant aux formules des 1° et 2° représente
+      le nombre annuel moyen de points acquis par l'assuré au cours de la période
+      mentionnée au premier alinéa du présent article. » Source, selon les liens de la
+      DILA : « Décret n°86-1084 du 7 octobre 1986 - art. 2 (Ab) » (CONCORDANCE). Publié
+      par le décret n° 2005-368 au Journal officiel du 22 avril 2005
+      (JORFARTI000002065029), du même texte. Lu dans les index LEGI et JORF du dépôt, et
+      les alinéas dans le XML de l'article (incrément LEGI_20260115-213622 de la DILA)
+    date: 2026-11-03
+  - type: legifrance
+    reference: >-
+      code rural, D. 732-76 (LEGIARTI000006597490), seule rédaction du 22 avril 2005 au
+      1er janvier 2026 : « Le nombre de points acquis par les chefs d'exploitations ou
+      d'entreprises agricoles au titre de la période comprise entre le 1er juillet 1952 et
+      le 31 décembre 1972 est majoré de 17 % lorsque le nombre annuel moyen de points
+      acquis par les intéressés au cours de ladite période est au moins égal à seize. »
+      Source, selon les liens de la DILA : « Décret 81-790 1981-08-18 art. 2 »
+      (CONCORDANCE), dont l'index JORF n'a que la notice (JORFTEXT000000335107, « Décret
+      n°81-790 du 18 août 1981 PORTANT RELEVEMENT EXCEPTIONNEL DES RETRAITES
+      PROPORTIONNELLES DES PERSONNES NON SALARIEES DE L'AGRICULTURE,A COMPTER DU
+      01-07-1981 », « Texte totalement abrogé »). Publié par le décret n° 2005-368 au
+      Journal officiel du 22 avril 2005 (JORFARTI000001910389), du même texte. Les deux
+      articles sont, de 2005 à 2025, au « Sous-sous-paragraphe 2 : Dispositions relatives
+      au nombre de points acquis au titre de certaines années » de la retraite
+      proportionnelle. Lu dans les index LEGI et JORF du dépôt, et dans le XML de
+      l'incrément LEGI_20260115-213622
+    date: 2026-11-03
+  - type: legifrance
+    reference: >-
+      décret n° 86-1084 du 7 octobre 1986, du 8 octobre 1986 au 22 avril 2005 : article
+      1er (LEGIARTI000006769404) : « Le nombre de points sur la base duquel sont calculées
+      les retraites proportionnelles est majoré, à compter du 1er juillet 1986, dans les
+      conditions prévues aux articles suivants. » ; article 2 (LEGIARTI000006769405) :
+      « Pour le calcul des retraites proportionnelles prenant effet postérieurement au 30
+      juin 1986, le nombre de points acquis par les chefs d'exploitation ou d'entreprise
+      agricole au titre de la période comprise entre le 1er juillet 1952 et le 31 décembre
+      1972 est majoré de : 1° 5 p. 100 lorsque le nombre annuel moyen de points acquis par
+      les intéressés au cours de cette période est compris entre 15 et 19,51 ; 2° 5 à 30
+      p. 100 et de 30 à 45 p. 100 selon que le nombre annuel moyen de points acquis par les
+      intéressés au cours de cette période est compris entre 19,51 et 27,34 ou est
+      supérieur à 27,34. Dans le premier cas, le taux est déterminé par la formule
+      suivante : T p. 100 = 3,19 P - 57,23 Dans le second cas, il est déterminé par la
+      formule : T p. 100 = 1,93 P - 22,74 Le terme P représentant le nombre annuel moyen
+      de points acquis par l'assuré au cours de la période visée ci-dessus. Pour
+      l'application des dispositions du présent article, sont exclues les années pour
+      lesquelles des points supplémentaires ont été accordés en application du décret
+      susvisé du 26 juin 1968 ainsi que les points afférents auxdites années. » ; article
+      3 (LEGIARTI000006769406, en vigueur) : « Le nombre de points sur la base duquel sont
+      calculées les retraites proportionnelles prenant effet avant le 1er juillet 1986 est
+      majoré : - de 2 p. 100 lorsque le nombre total de points acquis par l'assuré est
+      compris entre 400 et 500 points ; [...] Lorsque le nombre total de points acquis par
+      l'assuré est supérieur à 1 000, la majoration est limitée à 280 points. » Ses visas
+      citent le décret n° 81-790 (LEGITEXT000006065220). Décret n° 2005-368, article 3
+      (LEGIARTI000006240372) : sont abrogés « 65° Le décret n° 81-790 du 18 août 1981
+      portant relèvement exceptionnel des retraites proportionnelles des personnes non
+      salariées de l'agriculture » et « 78° Le décret n° 86-1084 du 7 octobre 1986 [...],
+      à l'exception des articles 3 et 4 ». Lu dans l'index LEGI du dépôt
+    date: 2026-11-03
 textes_a_rattacher:
 - reference: >-
     code rural et de la pêche maritime, R. 732-73, D. 731-123, L. 732-28 et R. 732-65,
@@ -313,6 +445,11 @@ textes_a_rattacher:
     décret n° 2025-1409 du 30 décembre 2025, article 1, I, 6° b et II, et article 6
     (JORFTEXT000053227462) ; décret n° 2025-1410 du 30 décembre 2025, article 13
     (JORFARTI000053227751)
+- reference: >-
+    code rural et de la pêche maritime, D. 732-77 (LEGIARTI000006597491) et D. 732-76
+    (LEGIARTI000006597490), du 22 avril 2005 au 1er janvier 2026 ; décret n° 86-1084,
+    articles 1er et 2 (LEGIARTI000006769404, LEGIARTI000006769405), du 8 octobre 1986 au
+    22 avril 2005, et article 3 (LEGIARTI000006769406)
 code:
   interrupteurs:
     bareme_points: msa_proportionnelle
@@ -325,12 +462,18 @@ code:
   python: >-
     droit/acquerir.py : acquerir, points_msa, points_msa_retenus, POINTS_MSA_MINIMUM,
     assiette_du_collaborateur ; droit/liquider.py : liquider_chaque_regime,
-    valeur_point_fiche, annees_hors_forfait ; droit/ouvrir.py : duree_requise ;
+    valeur_point_fiche, annees_hors_forfait,
+    majoration_des_points_de_1952_a_1972_d_avant_2026,
+    taux_de_majoration_de_1952_a_1972, MAJORATION_DE_1952_A_1972_DEPUIS,
+    MAJORATION_DE_1952_A_1972_JUSQU_A, MAJORATION_DE_1952_A_1972_CODIFIEE_DEPUIS ; droit/ouvrir.py : duree_requise ;
     scenarios/actuel.py : MinimumContributif.avts
   javascript: >-
     moteur/js/droit/acquerir.js : acquerir, pointsMsa, pointsMsaRetenus,
     POINTS_MSA_MINIMUM, assietteDuCollaborateur ; moteur/js/droit/liquider.js :
-    liquiderChaqueRegime, valeurPointFiche, anneesHorsForfait ;
+    liquiderChaqueRegime, valeurPointFiche, anneesHorsForfait,
+    majorationDesPointsDe1952A1972DAvant2026, tauxDeMajorationDe1952A1972,
+    MAJORATION_DE_1952_A_1972_DEPUIS, MAJORATION_DE_1952_A_1972_JUSQU_A,
+    MAJORATION_DE_1952_A_1972_CODIFIEE_DEPUIS ;
     moteur/js/droit/ouvrir.js : dureeRequise ; moteur/js/regimes.js :
     MinimumContributif.avts
   parametres: >-

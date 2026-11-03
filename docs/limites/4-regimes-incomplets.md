@@ -494,9 +494,13 @@ barème de points n'est pas lu, entrent dans la moyenne par l'équivalent en
 points de leur rendement, qui les laisse sous les années du barème et hors des
 meilleures. Les années de chef de 1952 à 1972 y entrent majorées, chacune du
 taux que fixe leur moyenne (R. 732-67), mais sur ce même équivalent : le
-barème de ces années n'est qu'au fac-similé du Journal officiel. La même
-majoration manque aux pensions prises de juillet 1986 à 2025 (D. 732-76 et
-D. 732-77). Les rachats et les conjoints collaborateurs manquent, comme avant
+barème de ces années n'est qu'au fac-similé du Journal officiel. Les pensions
+prises de juillet 1986 à 2025 les majorent aussi, d'un seul taux sur toute la
+période (décret n° 86-1084, article 2, puis D. 732-77), sur le même
+équivalent. La majoration que D. 732-76 donne à partir de seize points
+de moyenne n'est appliquée nulle part : aucun texte lu ne dit si elle se cumule
+avec l'autre, et la pension des chefs qui l'atteignent est peut-être
+sous-estimée. Les rachats et les conjoints collaborateurs manquent, comme avant
 la réforme.
 
 ## La part patronale du public, et ce qu'on n'en sait pas

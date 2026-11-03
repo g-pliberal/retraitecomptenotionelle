@@ -928,6 +928,44 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
                     f"cotisations revalorisées {cumul:,.0f} € "
                     f"× rendement {rendement:.2%}"
                 )
+                # LES POINTS DE CHEF DE 1952 À 1972 SE MAJORENT, pour les
+                # pensions prises du 1er juillet 1986 au 31 décembre 2025
+                # (décret n° 86-1084, article 2, puis D. 732-77), du taux que
+                # fixe leur nombre annuel moyen, compté comme les points que
+                # vaut leur rendement à la valeur de service de la
+                # liquidation, au rapport de durée de la proportionnelle.
+                if (code == coordonner.REGIME_DES_NON_SALARIES_AGRICOLES
+                        and MAJORATION_DE_1952_A_1972_DEPUIS.rang
+                        <= carriere.date_liquidation.rang
+                        < MAJORATION_DE_1952_A_1972_JUSQU_A.rang):
+                    valeur = valeur_du_point(
+                        moteur, periode.points_de or code, carriere.date_liquidation)
+                    if valeur is None:
+                        valeur = (valeur_point_fiche(moteur, periode, annee_liquidation),
+                                  Fiabilite.MOYENNE)
+                    coefficient_duree = 1.0
+                    if periode.bareme_points == "msa_proportionnelle":
+                        requis_msa = ouvrir.duree_requise(moteur, periode, carriere)[0]
+                        if requis_msa > 0:
+                            coefficient_duree = 37.5 / (requis_msa / 4.0)
+                    cotisations = [(annee, cotisation) for regime_du_credit, annee, cotisation
+                                   in droits.cotisations if regime_du_credit == code]
+                    chef = [annee for annee in {annee for annee, _ in cotisations}
+                            if carriere.qualite_agricole(annee) in ("chef", "chef_secondaire")]
+                    majoration, taux, moyenne = (
+                        majoration_des_points_de_1952_a_1972_d_avant_2026(
+                            cotisations, chef, rendement, valeur[0] * coefficient_duree))
+                    if majoration > 0:
+                        montant += majoration
+                        fiabilite_regime = min(fiabilite_regime, valeur[1])
+                        details.append(
+                            f"majoration des points de chef de 1952 à 1972 {majoration:,.2f} € "
+                            f"({taux:.2%} pour une moyenne de {moyenne:.2f} points par an, "
+                            + ("D. 732-77" if carriere.date_liquidation.rang
+                               >= MAJORATION_DE_1952_A_1972_CODIFIEE_DEPUIS.rang
+                               else "décret n° 86-1084, article 2")
+                            + ")"
+                        )
 
             fiabilite_globale = min(fiabilite_globale, fiabilite_regime)
             montant_brut = montant
@@ -2159,9 +2197,11 @@ def taux_de_majoration_de_1952_a_1972(moyenne: float) -> float:
     """Le taux dont se majorent les points de chef de 1952 à 1972, selon leur
     nombre annuel moyen P : 5 % de 15 à 19,51 points, « T p. 100 = 3,19 P -
     57,23 » jusqu'à 27,34, « T p. 100 = 1,93 P - 22,74 » au-delà, rien sous
-    quinze (décret n° 86-1084, article 2, que D. 732-76 et D. 732-77 ont
-    codifié en 2005) ; la seconde formule « dans la limite d'une majoration de
-    45 % » (R. 732-67)."""
+    quinze (décret n° 86-1084, article 2, que D. 732-77 a codifié en 2005) ;
+    la seconde formule « dans la limite d'une majoration de 45 % » (R. 732-67).
+    La majoration de 17 % de D. 732-76, à partir de seize points, n'est pas
+    appliquée : son cumul avec celle-ci n'est écrit nulle part (fiche
+    retraite_proportionnelle_msa)."""
     if moyenne < 15.0:
         return 0.0
     if moyenne <= 19.51:
@@ -2198,6 +2238,58 @@ def majorer_les_points_de_1952_a_1972(
         for annee in annees:
             majores[annee] = float(math.ceil(points[annee] * (1.0 + taux) - 1e-9))
     return majores, taux, moyenne
+
+
+#: LES PENSIONS PRISES DU 1ER JUILLET 1986 AU 31 DÉCEMBRE 2025 MAJORENT LES
+#: POINTS DE CHEF DE 1952 À 1972. Le décret n° 86-1084 les majore « à compter
+#: du 1er juillet 1986 » (article 1er, LEGIARTI000006769404), « pour le calcul
+#: des retraites proportionnelles prenant effet postérieurement au 30 juin
+#: 1986 » (article 2, LEGIARTI000006769405), jusqu'au 22 avril 2005, où
+#: D. 732-77 (LEGIARTI000006597491) le codifie, jusqu'au 1er janvier 2026 :
+#: une pension qui prend effet le premier jour d'un mois relève du premier
+#: depuis juillet 1986, du second depuis mai 2005, et de R. 732-67 depuis
+#: janvier 2026 (`pension_des_non_salaries_agricoles`).
+MAJORATION_DE_1952_A_1972_DEPUIS = DateMois(1986, 7)
+MAJORATION_DE_1952_A_1972_JUSQU_A = DateMois(2026, 1)
+MAJORATION_DE_1952_A_1972_CODIFIEE_DEPUIS = DateMois(2005, 5)
+
+
+def majoration_des_points_de_1952_a_1972_d_avant_2026(
+        cotisations, chef, rendement: float,
+        service: float) -> tuple[float, float, float]:
+    """La majoration, en euros, des points de chef de 1952 à 1972 d'une
+    pension prise du 1er juillet 1986 au 31 décembre 2025, avec son taux et
+    la moyenne qui le fixe.
+
+    « Le nombre de points acquis par les chefs d'exploitation ou d'entreprise
+    agricole au titre de la période comprise entre le 1er juillet 1952 et le
+    31 décembre 1972 est majoré » du taux que fixe « le nombre annuel moyen
+    de points acquis par l'assuré au cours de la période » (D. 732-77 ;
+    décret n° 86-1084, article 2) : un seul taux sur les points de la
+    période, sans l'arrondi par année que R. 732-67 n'écrit que pour les
+    pensions prises depuis 2026. ``cotisations`` : des ``(année, cotisation
+    revalorisée)`` ; ``chef`` : les années de chef. Faute du barème d'avant
+    1990, chaque année compte les points que vaut son rendement, sa
+    cotisation × ``rendement`` / ``service``, comme dans la moyenne des
+    pensions prises depuis 2026 ; une année sans cotisation n'entre pas dans
+    la moyenne. La majoration est le taux de la pension que valent ces
+    années. Les années pour lesquelles le décret n° 68-571 accordait des
+    points supplémentaires, que l'article 2 du décret n° 86-1084 excluait
+    (D. 732-77 ne le dit plus), le modèle ne les connaît pas.
+    """
+    debut, fin = PERIODE_DES_POINTS_MAJORES
+    de_chef = set(chef)
+    par_annee: dict[int, float] = {}
+    for annee, cotisation in cotisations:
+        if debut <= annee <= fin and annee in de_chef:
+            par_annee[annee] = par_annee.get(annee, 0.0) + cotisation
+    annees = sorted(annee for annee, montant in par_annee.items() if montant > 0)
+    if not annees or service <= 0:
+        return 0.0, 0.0, 0.0
+    pensions = [par_annee[annee] * rendement for annee in annees]
+    moyenne = somme_ordonnee(pension / service for pension in pensions) / len(annees)
+    taux = taux_de_majoration_de_1952_a_1972(moyenne)
+    return taux * somme_ordonnee(pensions), taux, moyenne
 
 
 def pension_des_non_salaries_agricoles(

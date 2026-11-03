@@ -69,17 +69,20 @@ effet: >-
   d'exploitation de 1952 à 1972 entrent dans la moyenne majorés, chaque année, du taux
   que fixe leur nombre annuel moyen P — 5 % de 15 à 19,51 points, 3,19 P - 57,23 %
   jusqu'à 27,34, 1,93 P - 22,74 % au-delà, 45 % au plus, rien sous quinze —, et
-  arrondis à l'entier supérieur (R. 732-67, sur D. 732-76 et D. 732-77 d'avant 2026).
+  arrondis à l'entier supérieur (R. 732-67, sur D. 732-77 d'avant 2026 ; la majoration
+  de 17 % de D. 732-76, à laquelle R. 732-67 renvoie aussi, n'est pas appliquée : voir
+  a_relire).
   Faute du barème de ces années, qui n'existe qu'au fac-similé, le moteur majore les
   points que vaut leur rendement : le chef de 1968 à 1972, à 20 000 € de 2028 par an
   et salarié ensuite, parti en février 2028, a 22,79 points par an de moyenne, majorés
   de 15,46 %, et sa moyenne d'avant 2016 passe de 23 à 27 points. Le conjoint
   collaborateur des mêmes années n'a pas de majoration, réservée aux points « acquis
   par les chefs d'exploitation ou d'entreprise agricole ». Les années pour lesquelles le
-  décret n° 68-571 accordait des points supplémentaires, que la majoration exclut,
-  années et points, le moteur ne les connaît pas.
+  décret n° 68-571 accordait des points supplémentaires, que l'article 2 du décret
+  n° 86-1084 excluait, années et points, et que D. 732-77 ne nomme plus, le moteur ne
+  les connaît pas.
 sources:
-  lu_le: 2026-10-28
+  lu_le: 2026-11-03
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
@@ -97,12 +100,16 @@ sources:
     leur majoration (R. 732-67), par l'équivalent en points de leur rendement.
   - >-
     D. 732-76 et D. 732-77 dans leur rédaction de 2005 à 2025, auxquels R. 732-67
-    renvoie : l'index LEGI ne les porte que dans leur rédaction de 2026, sans rapport.
-    Le moteur prend le texte qu'ils codifiaient, l'article 2 du décret n° 86-1084, que
-    le décret n° 2005-368 abroge en codifiant le livre VII (article 3, 78°, « à
-    l'exception des articles 3 et 4 ») ; R. 732-67 en confirme les bornes (19,51 et
-    27,34 points) et la limite de 45 %. Relire les deux articles sur Légifrance, dans
-    un navigateur.
+    renvoie, lus le 3 novembre 2026 dans l'index élargi et cités mot pour mot dans la
+    fiche retraite_proportionnelle_msa. D. 732-77 (LEGIARTI000006597491) codifie
+    l'article 2 du décret n° 86-1084, dont il reprend le barème, que le moteur applique ;
+    R. 732-67 en confirme la lecture des deux formules (19,51 et 27,34 points) et la
+    limite de 45 %. D. 732-76 (LEGIARTI000006597490), que la DILA rattache à l'article 2
+    du décret n° 81-790, majore « de 17 % » les mêmes points quand leur nombre annuel
+    moyen est « au moins égal à seize » : le moteur ne l'applique pas. Se cumule-t-il
+    avec D. 732-77, et comment ? Question au propriétaire, posée dans la fiche
+    retraite_proportionnelle_msa ; s'il le fallait, la pension des chefs à seize points
+    de moyenne ou plus serait sous-estimée.
   - >-
     Les années pour lesquelles le décret n° 68-571 du 26 juin 1968 (« validation
     d'annuités supplémentaires », selon sa notice) accordait des points supplémentaires,

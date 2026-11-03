@@ -104,6 +104,8 @@ periodes:
     salaire_reference: carriere_entiere
     assiette: plafonnee
     taux_cotisation_retraite: 0.085
+    valeur_point_euros: 4.589
+    valeur_point_annee: 2025
     pension_forfaitaire_annuelle: 3628.98
     pension_forfaitaire_annee: 2023
     decote_par_trimestre: 0.025
@@ -111,6 +113,17 @@ periodes:
     surcote_par_trimestre: null
     avantages_non_contributifs: [majoration_enfants, minimum_vieillesse, reversion]
     notes: >-
+      LA VALEUR DE SERVICE, celle des périodes suivantes (4,589 € de 2025,
+      ramenés aux prix de l'année), ne sert ici qu'à compter en points le
+      rendement des cotisations de chef de 1952 à 1972, dont le nombre
+      annuel moyen fixe leur majoration pour les pensions prises depuis le
+      1er juillet 1986 (décret n° 86-1084, article 2) : aucun point ne
+      s'acquiert par barème avant 1990, et la valeur du point de 1986 à
+      1989, en francs, n'est pas lue. C'est la convention des pensions
+      prises depuis 2026, dont les années d'avant 1990 comptent aussi pour
+      les points que vaut leur rendement : cotisations et valeur suivant les
+      mêmes prix, une même année vaut les mêmes points quelle que soit la
+      date du départ.
       SOIXANTE ANS DEPUIS LE 1ER JANVIER 1986 : la loi n° 86-19 du
       6 janvier 1986 « relative à l'abaissement à soixante ans de l'âge de
       la retraite des personnes non salariées des professions agricoles »

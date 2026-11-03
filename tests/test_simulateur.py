@@ -6117,9 +6117,10 @@ def test_les_points_de_chef_de_1952_a_1972_se_majorent_annee_par_annee():
     « s'appliquent séparément pour chacune des années civiles comprises dans
     cette période », et « sauf si le résultat est déjà entier, les nombres de
     points annuels ainsi obtenus sont arrondis aux entiers supérieurs »
-    (R. 732-67). Leur taux est celui de D. 732-76 et D. 732-77 dans leur
-    rédaction antérieure au décret n° 2025-1409, qui codifiaient l'article 2
-    du décret n° 86-1084 : sur les points « acquis par les chefs
+    (R. 732-67). Leur taux est celui de D. 732-77 dans sa rédaction
+    antérieure au décret n° 2025-1409, qui codifiait l'article 2 du décret
+    n° 86-1084 (la majoration de 17 % de D. 732-76 n'est pas appliquée,
+    faute d'un texte qui dise son cumul) : sur les points « acquis par les chefs
     d'exploitation ou d'entreprise agricole », 5 % quand leur nombre annuel
     moyen P est « compris entre 15 et 19,51 » ; « T p. 100 = 3,19 P - 57,23 »
     jusqu'à 27,34 ; « T p. 100 = 1,93 P - 22,74 » au-delà, « dans la limite
@@ -6262,6 +6263,197 @@ process.stdout.write(JSON.stringify(details));
         encoding="utf-8", check=False)
     assert execution.returncode == 0, execution.stderr[-2000:]
     assert json.loads(execution.stdout) == [chef, collaborateur]
+
+
+def test_les_points_de_chef_de_1952_a_1972_se_majorent_d_un_seul_taux_avant_2026():
+    """Pour les pensions prises du 1er juillet 1986 au 31 décembre 2025, « le
+    nombre de points acquis par les chefs d'exploitation ou d'entreprise
+    agricole au titre de la période comprise entre le 1er juillet 1952 et le
+    31 décembre 1972 est majoré de : 1° 5 % lorsque le nombre annuel moyen de
+    points acquis par les intéressés au cours de cette période est compris
+    entre 15 et 19,51 [...] 2° 5 à 30 % et de 30 à 45 % selon que [ce
+    nombre] est compris entre 19,51 et 27,34 ou est supérieur à 27,34 »
+    (D. 732-77, LEGIARTI000006597491, du 22 avril 2005 au 1er janvier 2026 ;
+    avant, le décret n° 86-1084, article 2, LEGIARTI000006769405, « pour le
+    calcul des retraites proportionnelles prenant effet postérieurement au
+    30 juin 1986 ») : un seul taux sur les points de la période, sans
+    l'arrondi par année que R. 732-67 n'écrit que depuis 2026. Le moteur, qui
+    n'a pas le barème d'avant 1990, compte en points le rendement des
+    cotisations de chaque année (cotisation × rendement / valeur de service),
+    et majore du taux la pension qu'elles valent. Posé à la main, à 6 % de
+    rendement et 3 € de valeur de service : 1 000 € font 20 points ; dix
+    années de chef de 1960 à 1969, P = 20, T = 3,19 × 20 - 57,23 = 6,57 %, sur
+    10 × 1 000 × 6 % = 600 €, soit 39,42 € ; 1965 versé en deux fois
+    (600 € et 400 €) compte pour une année ; les années de conjoint
+    collaborateur (1955 à 1959) et celles d'après 1972 (1973 et 1974) restent
+    hors de la moyenne et de la majoration. 800 € font 16 points : 5 % de
+    2 × 48 €, 4,80 €. 700 € font 14 points : rien. 1 500 € font 30 points :
+    1,93 × 30 - 22,74 = 35,16 % de 3 × 90 €, 94,932 €. 2 000 € font 40 points :
+    54,46 %, ramenés aux 45 % que le 2° donne pour plus haut taux, de 120 €,
+    54 €. Une année de chef sans cotisation n'entre pas dans la moyenne :
+    1 000 € en 1960 et rien en 1961 font P = 20, et 6,57 % de 60 €, 3,942 €.
+    Dans les deux moteurs."""
+    import json
+    import shutil
+    import subprocess
+
+    cas = [
+        ([(annee, 5000.0) for annee in range(1955, 1960)]
+         + [(annee, 1000.0) for annee in range(1960, 1970) if annee != 1965]
+         + [(1965, 600.0), (1965, 400.0), (1973, 1000.0), (1974, 1000.0)],
+         list(range(1960, 1975))),
+        ([(1952, 800.0), (1953, 800.0)], [1952, 1953]),
+        ([(1960, 700.0), (1961, 700.0)], [1960, 1961]),
+        ([(1970, 1500.0), (1971, 1500.0), (1972, 1500.0)], [1970, 1971, 1972]),
+        ([(1972, 2000.0)], [1972]),
+        ([(1960, 1000.0), (1961, 0.0)], [1960, 1961]),
+        ([(1960, 1000.0)], []),
+    ]
+    attendus = [
+        (39.42, 0.0657, 20.0),
+        (4.80, 0.05, 16.0),
+        (0.0, 0.0, 14.0),
+        (94.932, 0.3516, 30.0),
+        (54.0, 0.45, 40.0),
+        (3.942, 0.0657, 20.0),
+        (0.0, 0.0, 0.0),
+    ]
+    for (cotisations, chef), attendu in zip(cas, attendus):
+        assert liquider.majoration_des_points_de_1952_a_1972_d_avant_2026(
+            cotisations, chef, 0.06, 3.0) == pytest.approx(attendu, abs=1e-9)
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    script = """
+import { majorationDesPointsDe1952A1972DAvant2026 } from "./moteur/js/droit/liquider.js";
+const cas = JSON.parse(process.argv[1]);
+process.stdout.write(JSON.stringify(cas.map(([cotisations, chef]) =>
+  majorationDesPointsDe1952A1972DAvant2026(cotisations, chef, 0.06, 3.0))));
+"""
+    execution = subprocess.run(
+        ["node", "--input-type=module", "-e", script, json.dumps(cas)],
+        cwd=RACINE_TEMOINS.parent.parent, capture_output=True, text=True,
+        encoding="utf-8", check=False)
+    assert execution.returncode == 0, execution.stderr[-2000:]
+    obtenus = json.loads(execution.stdout)
+    for obtenu, attendu in zip(obtenus, attendus):
+        assert obtenu == pytest.approx(list(attendu), abs=1e-9)
+
+
+def test_la_pension_agricole_de_1986_a_2025_majore_les_points_de_chef_de_1952_a_1972(
+        simulateur):
+    """La majoration des points de chef de 1952 à 1972 (décret n° 86-1084,
+    article 2, puis D. 732-77) dans la pension que le moteur liquide, posée
+    à la main. Le chef d'exploitation de 1968 à 1972, salarié ensuite, part
+    à soixante-cinq ans ; son revenu vaut chaque année R € de son année de
+    départ, ramenés par les prix, sous le plafond : chaque année lui vaut au
+    régime R × 8,5 % de cotisation, revalorisée aux prix du départ, et
+    R × 8,5 % × 6 % de pension. Le moteur la compte en points à la valeur de
+    service de la fiche, 4,589 € de 2025 ramenés aux prix du départ, au
+    rapport de 37,5 années à la durée requise depuis 1990 : P = R × 0,51 % /
+    valeur, le taux T de D. 732-77, et la majoration T × 5 × R × 0,51 %.
+    Le conjoint collaborateur des mêmes années, qui n'est pas chef, n'a rien :
+    la majoration est l'écart des deux pensions, au coefficient d'âge près.
+    Parti le 1er juin 1986, avant le 1er juillet, le chef n'a rien non plus
+    (article 2, « prenant effet postérieurement au 30 juin 1986 ») ; parti
+    le 1er juillet 1986, à 9 000 € : P = 45,9 / 2,254 = 20,36 points, 7,72 %.
+    Parti en février 1999 à 12 000 €, chef jusqu'en 1975 : P = 61,2 / 2,982 =
+    20,52, 8,23 % sur ses seules années de 1968 à 1972. Parti en février
+    2009 à 15 000 €, sous D. 732-77 : P = 76,5 / (3,539 × 150 / 152) = 21,90,
+    12,63 %. Dans les deux moteurs."""
+    import json
+    import re
+    import shutil
+    import subprocess
+
+    macro = simulateur.scenario_actuel.macro
+    scenario = simulateur.scenario_actuel
+    regime = simulateur.catalogue["msa_non_salaries"]
+    # (naissance, mois, revenu, dernière année de chef, texte attendu, ou None)
+    departs = [
+        (1921, 5, 9000.0, 1972, None),
+        (1921, 6, 9000.0, 1972, "décret n° 86-1084, article 2"),
+        (1934, 1, 12000.0, 1975, "décret n° 86-1084, article 2"),
+        (1944, 1, 15000.0, 1972, "D. 732-77"),
+    ]
+    motif = re.compile(
+        r"majoration des points de chef de 1952 à 1972 ([\d,.]+) € \(([\d.]+)% pour une "
+        r"moyenne de ([\d.]+) points par an, (décret n° 86-1084, article 2|D\. 732-77)\)")
+
+    def carriere(naissance, mois, revenu, fin, affiliation):
+        depart = naissance + 65 + (1 if mois == 12 else 0)
+        lignes = [dict(annee=annee, revenu=revenu / macro.coefficient_prix(annee, depart),
+                       affiliation=affiliation if annee <= fin else "salarie_prive_non_cadre")
+                  for annee in range(1968, depart)]
+        assert all(ligne["revenu"] < macro.plafond_securite_sociale(ligne["annee"])
+                   for ligne in lignes if ligne["annee"] <= fin)
+        return lignes, Carriere(annee_naissance=naissance, mois_naissance=mois,
+                                jour_naissance=15, sexe="H", age_liquidation=65.0,
+                                lignes=[AnneeCarriere(**ligne) for ligne in lignes])
+
+    entrees, sorties = [], []
+    for naissance, mois, revenu, fin, texte in departs:
+        pensions = []
+        for affiliation in ("exploitant_agricole", "collaborateur_agricole"):
+            lignes, liquidee = carriere(naissance, mois, revenu, fin, affiliation)
+            entrees.append([naissance, mois, lignes])
+            pension = next(p for p in scenario.calculer(liquidee).pensions_par_regime
+                           if p.regime == "msa_non_salaries")
+            pensions.append(pension)
+            sorties.append([pension.detail, pension.montant])
+        chef, collaborateur = pensions
+        cotisees = (fin - 1967) * revenu * 0.085
+        assert f"cotisations revalorisées {cotisees:,.0f} €" in chef.detail
+        assert "majoration des points" not in collaborateur.detail
+        trouve = motif.search(chef.detail)
+        if texte is None:
+            assert trouve is None, chef.detail
+            assert chef.montant == collaborateur.montant
+            continue
+        assert trouve is not None, chef.detail
+        depart = naissance + 65
+        periode = regime.periode(depart)
+        assert (periode.valeur_point_euros, periode.valeur_point_annee) == (4.589, 2025)
+        requis = ouvrir.duree_requise(scenario, periode, liquidee)[0]
+        coefficient = (37.5 / (requis / 4.0)
+                       if periode.bareme_points == "msa_proportionnelle" else 1.0)
+        service = 4.589 * macro.coefficient_prix(2025, depart) * coefficient
+        par_an = revenu * 0.085 * 0.06
+        moyenne = par_an / service
+        assert 19.51 < moyenne <= 27.34
+        taux = (3.19 * moyenne - 57.23) / 100
+        majoration = taux * 5 * par_an
+        assert trouve.group(4) == texte
+        assert float(trouve.group(3)) == pytest.approx(moyenne, abs=0.005)
+        assert float(trouve.group(2)) == pytest.approx(taux * 100, abs=0.005)
+        assert float(trouve.group(1).replace(",", "")) == pytest.approx(majoration, abs=0.005)
+        age = re.search(r"coefficient de majoration ([\d.]+)", chef.detail)
+        coefficient_age = float(age.group(1)) if age else 1.0
+        assert chef.montant - collaborateur.montant == pytest.approx(
+            majoration * coefficient_age, rel=1e-4)
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    script = """
+import { readFileSync } from "node:fs";
+import { AnneeCarriere, Carriere } from "./moteur/js/carriere.js";
+import { Contexte } from "./moteur/js/contexte.js";
+const contexte = new Contexte(JSON.parse(readFileSync("moteur/donnees.json", "utf8")));
+const simulateur = contexte.simulateur();
+const sorties = JSON.parse(process.argv[1]).map(([naissance, mois, lignes]) => {
+  const carriere = new Carriere({
+    annee_naissance: naissance, mois_naissance: mois, jour_naissance: 15, sexe: "H",
+    age_liquidation: 65.0, lignes: lignes.map((ligne) => new AnneeCarriere(ligne)) });
+  const pension = simulateur.scenarioActuel.calculer(carriere).pensions_par_regime
+    .find((p) => p.regime === "msa_non_salaries");
+  return [pension.detail, pension.montant];
+});
+process.stdout.write(JSON.stringify(sorties));
+"""
+    execution = subprocess.run(
+        ["node", "--input-type=module", "-e", script, json.dumps(entrees)],
+        cwd=RACINE_TEMOINS.parent.parent, capture_output=True, text=True,
+        encoding="utf-8", check=False)
+    assert execution.returncode == 0, execution.stderr[-2000:]
+    assert json.loads(execution.stdout) == sorties
 
 
 def test_l_annee_ou_l_exploitant_cesse_avant_son_depart_compte_entiere(simulateur):
