@@ -38,7 +38,7 @@ trouve: >-
   n'est prouvé que de 2008 à 2026 ; avant, la grille est estimée, et les montants réels de
   1995 et 2006 la disent trop basse (13e catégorie de 1995 : +14,5 %), la vingtième réelle de
   1995 vers 80,5 % du plafond. Écarts faibles : le paquet n'est pas dans le commit (version
-  38 sur main, l'essai JavaScript y est rouge, vert sur le paquet refait) ; docs/limites ne
+  38 sur main jusqu'à 144a622, l'essai JavaScript y était rouge ; refait depuis, il passe) ; docs/limites ne
   dit pas ce qui n'est pas lu avant 1985 ; le barème A donne 152 dès 1985 et 169 en mai et
   juin 2001, quand la série suit la lettre de l'article 7 (150, 164), sans effet. Négligeables :
   98 298,16 € au barème B, non 98 298,14 € ; l'article 1er du décret n° 48-1108 cité ne vaut
@@ -48,7 +48,6 @@ reste: >-
   Restreindre l'affirmation de 1985 à 2007 dans la fiche marins_salaire_de_reference, la note
   et le journal de M1, ou la prouver par la vingtième catégorie réelle de quelques années au
   Journal officiel imprimé ; déclarer le choix de lecture contre le barème A et, dans
-  docs/limites, ce qui n'est pas lu avant le 5 novembre 1985 ; le paquet attend la prochaine
-  fabrique verte de GitHub, la course qui contient e5dd612 étant rouge sur test_cout
-  (complémentaires), étrangère aux marins (note
+  docs/limites, ce qui n'est pas lu avant le 5 novembre 1985 ; la course de GitHub qui
+  contient e5dd612 est rouge sur test_cout (complémentaires), étrangère aux marins (note
   2026-11-03-relecture-abattement-des-marins.md de l'action 130).

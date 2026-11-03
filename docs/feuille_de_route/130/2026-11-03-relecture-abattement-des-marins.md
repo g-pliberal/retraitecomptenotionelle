@@ -172,6 +172,9 @@ convention du forfait le plus proche du revenu en amortit l'effet sur la pension
   sur un seul test, `test_cout.py::test_la_projection_suit_le_cor_groupe_par_groupe`
   (« ('depense_part_pib', 'complementaires') : +8.2% du COR à l'horizon, tolérance 8% ») :
   le groupe des complémentaires, que l'abattement d'un régime de base ne déplace pas.
+  **Depuis 144a622** (action 177, « le paquet et les fichiers fabriqués refaits »), poussé
+  pendant cette relecture, le paquet de `main` est en version 39, la série comprise, et
+  l'essai y passe : l'écart ne tient plus qu'à ce que la note affirme.
 - `python -m pytest -m rapide`, sur le paquet refait : 4 193 réussis, 16 échecs, aucun des
   marins — 13 pages toutes faites (`test_pages_en_dossier.py`), dont les agrégats ont bougé
   depuis la dernière fabrique, sans aucune clé des marins, et qui passent sur l'état
@@ -210,6 +213,6 @@ approcher l'indice majoré 150 de 1985. **Écart faible** : la ligne des marins 
 - Déclarer dans la fiche le choix de la lettre de l'article 7 contre le barème A (novembre
   1985 à février 1986, mai et juin 2001), et dans `docs/limites/` ce qui n'est pas lu
   (points 2 et 6) ; ramener, si l'on veut, le plafond au barème B (98 298,16 €).
-- Le paquet : la prochaine fabrique verte de GitHub le refera ; d'ici là, l'essai
-  JavaScript de la session reste rouge sur `main`.
+- Le paquet : refait sur `main` depuis 144a622, l'essai JavaScript de la session y passe ;
+  rien n'attend plus, que la course verte de GitHub.
 - Une confirmation de l'ENIM reste souhaitable, comme la note le dit.
