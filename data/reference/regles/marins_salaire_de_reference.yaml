@@ -260,9 +260,18 @@ approximations:
     l'arrêté du 31 janvier 1995 en corrige un montant, « Pour le salaire forfaitaire par
     mois de la 13e catégorie, au lieu de: << 14 773,03 >>, lire: << 14 733,03 >>. »
     (JORFARTI000002373607), soit 14 733,03 × 12 = 176 796,36 F par an, sans en écrire
-    l'unité — le franc des textes réglementaires, que le décret n° 2001-1203 fait lire en
-    euros « à compter du 1er janvier 2002 », au taux de « 6,55957 F pour un euro »
-    (JORFTEXT000000580421) ; l'arrêté du 2 janvier 2006 modifie les forfaits « pour compter
+    l'unité — le franc des textes réglementaires, qu'un paragraphe d'explication, que
+    l'index JORF donne à la suite des signatures du décret n° 2001-1203 et hors de ses
+    articles (JORFTEXT000000580421), dit lire « à compter du 1er janvier 2002 comme des
+    références à l'euro, en appliquant le taux de conversion de 6,55957 F pour un euro,
+    avec arrondissement à la deuxième décimale », « En application des règlements
+    communautaires », dont le n° 2866/98 « concernant les taux de conversion entre l'euro
+    et les monnaies des États membres adoptant l'euro » ; cette grille ne vaut que du
+    1er janvier au 30 juin 1995 : l'arrêté du 30 juin 1995 « portant majoration des
+    salaires forfaitaires » les modifie « pour compter du 1er juillet 1995, conformément au
+    tableau ci-joint » (article 1er, JORFARTI000001014013), et l'arrêté du 30 décembre 1995
+    « pour compter du 1er janvier 1996 » (article 1er, JORFARTI000001593286) ; l'arrêté du
+    2 janvier 2006 modifie les forfaits « pour compter
     du 1er janvier 2006 » (article 1, JORFARTI000001105232), et son rectificatif écrit, dans la « 2e sous-colonne » du tableau, « en ce qui concerne la
     10e catégorie, au lieu de : « 25 243,53 », lire : « 25 243,83 » » (JORFARTI000001490715),
     sans nommer la sous-colonne : un forfait annuel par sa grandeur, une déduction — la
@@ -270,32 +279,50 @@ approximations:
     (arrêté du 31 décembre 2007, JORFARTI000017964781). Ce qu'il ne dit pas : la vingtième
     catégorie d'aucune année d'avant 2008, l'écart des autres années, la structure de la
     grille d'avant 2008 — le nombre de ses catégories, leurs rapports —, ni la grille du
-    1er juillet 1995, que l'arrêté du 30 juin 1995 « portant majoration » renvoie au Journal
+    1er juillet au 31 décembre 1995, que l'arrêté du 30 juin 1995 renvoie au Journal
     officiel imprimé (« Vous pouvez consulter le tableau dans le JO no 0164 du 16/07/95 Page
-    10596 », JORFARTI000001014119)
+    10596 », JORFARTI000001014119) : son titre dit une majoration, et rien de ce que l'index
+    en porte — le texte (JORFTEXT000000188385), ses articles 1er et 2, son visa et le titre
+    de son tableau (JORFARTI000001014013, JORFARTI000001594620, JORFARTI000001977662,
+    JORFARTI000001014119) — n'en donne un montant ni un taux ; l'article L. 42 qu'il vise
+    (LEGIARTI000006791949) n'en fixe pas non plus : « En cas de modification générale des
+    salaires dépassant 5 % par rapport aux taux antérieurs, il est procédé à la révision du
+    salaire forfaitaire », sans dire de combien, ni interdire une révision plus petite
   effet: >-
     mesuré sur les deux seuls montants que l'index garde, la grille estimée est trop basse :
     la 13e catégorie du 1er janvier 1995, « 14 733,03 » F par mois (arrêté du 31 janvier
     1995, JORFARTI000002373607), 26 952,43 € par an, quand le modèle prend 23 530,15 € — le
-    réel 14,5 % plus haut ; la 10e catégorie de 2006, « 25 243,83 » € (rectificatif du
-    21 janvier 2006, JORFARTI000001490715), quand le modèle prend 24 709,23 € — 2,2 % plus
+    réel 14,5 % plus haut, du 1er janvier au 30 juin 1995 ; la 10e catégorie de 2006,
+    « 25 243,83 » € (rectificatif du 21 janvier 2006, JORFARTI000001490715), quand le modèle prend 24 709,23 € — 2,2 % plus
     haut ; ailleurs non mesuré, et la convention du forfait le plus proche du revenu en
     amortit l'effet sur la pension tant que le revenu du marin tombe dans la grille, à une
     catégorie près. L'effet possible sur les carrières d'avant 2008 : le forfait de chaque
     année d'avant 2008 fait l'assiette des cotisations du marin — ce que son compte reçoit
     aux scénarios en comptes notionnels — et le salaire de référence d'une pension qui prend
     effet avant 2008. Au-delà de la vingtième catégorie, l'écart ne s'amortit plus : le
-    modèle prend 42 547,27 € en 1995 ; la vingtième réelle, si elle suit l'écart de la
-    treizième et la structure de 2008 (la vingtième y vaut 1,8082 fois la treizième, comme
-    en 2026), vaudrait 48 735,45 € — un salaire de référence et une pension plus bas que le
-    droit de 12,7 % au plus pour le marin des plus hautes catégories qui part en 1995, de
-    2,1 % en 2006 si l'écart de la dixième vaut pour lui. Sur le plafond de R. 11, 3°, la
-    vingtième réelle de 1995 ainsi estimée serait à 80,5 % de celui du 1er janvier 1995
-    (8 × 158 × 314,22 F = 397 174,08 F, 60 548,80 €) ; la grille du modèle relevée tout
-    entière de l'écart de 1995, le plus grand des deux, laisserait la vingtième sous 86,1 %
-    du plafond de 1985 à 2007 (2005), et l'abattement ne mordrait toujours pas ; les seuils
-    d'avant 1985 de l'approximation de R. 11, 3° monteraient de 76,5 et 102,8 à 87,6 et
-    117,7
+    modèle prend 42 547,27 € en 1995 ; la vingtième réelle du 1er janvier 1995, si elle suit
+    l'écart de la treizième et la structure de 2008 (la vingtième y vaut 1,8082 fois la
+    treizième, comme en 2026), vaudrait 48 735,45 € — un salaire de référence et une pension
+    plus bas que le droit de 12,7 % au plus pour le marin des plus hautes catégories dont la
+    pension prend effet du 1er janvier au 30 juin 1995, de 2,1 % en 2006 si l'écart de la
+    dixième vaut pour lui. Du 1er juillet au 31 décembre 1995, la grille est celle de
+    l'arrêté du 30 juin 1995, majorée selon son titre, quand le modèle n'en a qu'une pour
+    l'année : l'écart du salaire de référence, de la pension et des cotisations y est plus
+    grand, d'un montant inconnu, l'arrêté ne donnant pas de quoi le refaire. Sur le plafond
+    de R. 11, 3°, la vingtième réelle du 1er janvier 1995 ainsi estimée serait à 80,5 % de
+    celui du 1er janvier 1995 (8 × 158 × 314,22 F = 397 174,08 F, 60 548,80 €) ; au second
+    semestre, elle ne passerait celui du droit — 61 275,26 € jusqu'au 31 octobre (8 × 158 ×
+    317,99 F = 401 939,36 F : « 31 799 F à compter du 1er mars 1995 », article 3 du décret
+    n° 85-1148, LEGIARTI000006454441 ; l'indice majoré 158, article 7,
+    LEGIARTI000006454542), plus haut au 1er novembre — que si la majoration du 1er juillet
+    1995 la relevait de plus de 25,7 % ; la grille du modèle relevée tout entière de l'écart
+    du 1er janvier 1995, le plus grand des deux mesurés, et non le plus grand possible,
+    laisserait la vingtième sous 86,1 % du plafond de 1985 à 2007 (2005), et l'abattement ne
+    mordrait toujours pas ; les seuils d'avant 1985 de l'approximation de R. 11, 3°
+    monteraient de 76,5 et 102,8 à 87,6 et 117,7. Chaque montant se calcule sans arrondi en
+    chemin, sur les salaires moyens du modèle non arrondis : arrondis au centime, ou les
+    facteurs à six décimales, ils déplacent le dernier centime (24 709,22 ou 24 709,24 € pour
+    24 709,23 € ; 48 735,44 € pour 48 735,45 €)
 effet: >-
   Le modèle prend la catégorie de la DERNIÈRE année, rangée par le revenu, et compte
   les services au trimestre ; la caisse prend la catégorie moyenne de trente-six
@@ -329,8 +356,9 @@ sources:
     Journal officiel imprimé (fac-similés de Légifrance), que l'index ne porte pas — la
     vingtième catégorie de quelques années (1986, 1995, 2000, 2005) suffirait à prouver que
     le plafond de R. 11, 3° n'a pas été atteint, la grille entière à corriger l'estimation,
-    que les montants réels de 1995 et de 2006 montrent trop basse. Au propriétaire de dire
-    s'il faut les chercher.
+    que les montants réels de 1995 et de 2006 montrent trop basse ; celui de l'arrêté du
+    30 juin 1995 (JO n° 164 du 16 juillet 1995, page 10596) dirait de combien le second
+    semestre 1995 s'écarte. Au propriétaire de dire s'il faut les chercher.
   lectures:
   - type: legifrance
     reference: >-
@@ -398,6 +426,20 @@ sources:
       l'article 3 du décret n° 85-1148 au 1er janvier 1995 (LEGIARTI000006454440 : « 31 422 F
       à compter du 1er décembre 1994 »)
     date: 2026-11-03
+  - type: jorf
+    reference: >-
+      après la relecture R-M1-bis, dans l'index JORF du dépôt, à jour de l'incrément du
+      3 novembre 2026 : l'arrêté du 30 juin 1995 en entier (JORFTEXT000000188385 ; articles
+      JORFARTI000001014013, JORFARTI000001014119, JORFARTI000001977662,
+      JORFARTI000001594620), l'arrêté du 30 décembre 1995 (article 1er,
+      JORFARTI000001593286), les arrêtés des salaires forfaitaires publiés en 1995 et 1996,
+      et le paragraphe d'explication que l'index donne à la suite du décret n° 2001-1203
+      (JORFTEXT000000580421) ; dans l'index LEGI, à jour de l'incrément du 2 novembre 2026,
+      l'article 3 du décret n° 85-1148 en vigueur le 1er décembre 1985, le 1er janvier de
+      chaque année de 1986 à 2007, le 1er mars et le 1er novembre 1995 (de
+      LEGIARTI000006454423 à LEGIARTI000006454459), et son article 7 en 1995
+      (LEGIARTI000006454542)
+    date: 2026-11-03
 historique:
 - >-
   2026-11-02 — lue au droit (action 130) : trois versions sur la date d'effet — la loi du
@@ -423,6 +465,13 @@ historique:
   d'avant 2008, le plafond sous la grille relevée de l'écart de 1995 ; une question au
   propriétaire. « Sous 75,1 % du plafond (2005) » se lit « au plus 75,1 % » : la vingtième
   de 2005 y est à 75,11 %. Aucune règle de calcul ne change.
+- >-
+  2026-11-03 — après la relecture R-M1-bis (action 130, file M1-ter, note
+  `130/2026-11-03-corrections-de-la-relecture-r-m1-bis.md`) : le 14,5 % et le 12,7 % de
+  1995 bornés au 1er semestre, la grille du 1er juillet 1995 étant majorée d'un montant que
+  l'index ne porte pas, et le seuil que cette majoration devrait passer pour que la
+  vingtième atteigne le plafond du droit ; la phrase du taux du franc désignée comme un
+  paragraphe d'explication ; l'arrondi des centimes dit. Aucune règle de calcul ne change.
 code:
   moteur: >-
     La période des marins liquide le dernier salaire (`salaire_reference`) :

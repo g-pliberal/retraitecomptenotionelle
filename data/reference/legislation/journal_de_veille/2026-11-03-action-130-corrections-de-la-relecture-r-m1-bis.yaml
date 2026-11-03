@@ -1,0 +1,42 @@
+date: "2026-11-03"
+session: "action 130, file M1-ter : les corrections de la relecture R-M1-bis de la limite de la grille des salaires forfaitaires des marins d'avant 2008"
+consulte: >-
+  python scripts/veille_droit.py ; docs/veille_droit.md ; la relecture R-M1-bis (aa35999) ;
+  les index de la DILA, récupérés et mis à jour (JORF à l'incrément du 3 novembre 2026,
+  20261103-002311 ; LEGI à celui du 2 novembre, 20261102-213929 ; aucun depuis). Dans JORF :
+  l'arrêté du 30 juin 1995 en entier (JORFTEXT000000188385 ; JORFARTI000001014013,
+  JORFARTI000001014119, JORFARTI000001977662, JORFARTI000001594620), l'arrêté du
+  30 décembre 1995 (JORFARTI000001593286), la recherche des arrêtés des salaires forfaitaires
+  des marins publiés en 1995 et 1996, le décret n° 95-942 (JORFTEXT000000736551) et le
+  décret n° 2001-1203 en entier (JORFTEXT000000580421). Dans LEGI : le code des pensions de
+  retraite des marins, L. 42 (LEGIARTI000006791949) ; le décret n° 85-1148, article 3 en
+  vigueur le 1er décembre 1985, le 1er janvier de chaque année de 1986 à 2007, le 1er mars
+  et le 1er novembre 1995 (de LEGIARTI000006454423 à LEGIARTI000006454459), et son article 7
+  en 1995 (LEGIARTI000006454542). Le dépôt : les salaires moyens du modèle de 1980, 1985,
+  1995, 2005, 2006 et 2008, non arrondis ; la série legislation/point_indice_fonction_publique.csv.
+trouve: >-
+  La grille du 1er janvier 1995 ne vaut que du 1er janvier au 30 juin 1995 : l'arrêté du
+  30 juin 1995, « portant majoration des salaires forfaitaires », les modifie « pour compter
+  du 1er juillet 1995 », et celui du 30 décembre 1995 « pour compter du 1er janvier 1996 ».
+  Le 14,5 % et le 12,7 % ne valent donc qu'au premier semestre 1995 ; au second, l'écart du
+  salaire de référence, de la pension et des cotisations est plus grand, d'un montant
+  inconnu : ni l'arrêté, dont le tableau est au Journal officiel imprimé (n° 164 du
+  16 juillet 1995, page 10596), ni l'article L. 42 qu'il vise (« En cas de modification
+  générale des salaires dépassant 5 % […] il est procédé à la révision ») n'en donnent le
+  montant. Borne : la vingtième ainsi estimée ne passerait le plafond du droit de juillet à
+  octobre 1995, 61 275,26 € (8 × 158 × 317,99 F), que sous une majoration de plus de 25,7 %.
+  La phrase du taux du franc est un paragraphe d'explication donné à la suite du décret
+  n° 2001-1203, non un article. Les centimes d'écart de la relecture tiennent aux arrondis
+  en chemin. Le deuxième test pose le plafond depuis les articles 3 et 7 du décret
+  n° 85-1148, et un test nouveau relit les vingt-trois points dans LEGI ; en 1994, l'article 3
+  fixe 30 926 F, et 31 018 F « pour les agents dont l'indice majoré est inférieur ou égal à
+  275 » : le texte ne dit pas lequel fait le traitement de l'indice 100. La fiche
+  marins_salaire_de_reference et la ligne des marins de docs/limites/4-regimes-incomplets.md
+  le disent ; aucune règle de calcul ne change. Hors de la tâche : la série du point porte en
+  1994 la moyenne des deux valeurs de l'article 3 (47,2165 €), et son en-tête dit absents de
+  la base deux relèvements (1er novembre 1991, 1er janvier 1994) que l'index porte.
+reste: >-
+  Au propriétaire, comme avant : faut-il lire les tableaux des arrêtés de 1985 à 2007 au
+  Journal officiel imprimé ? Celui du 30 juin 1995 dirait de combien le second semestre 1995
+  s'écarte. À une session des données : la valeur de 1994 de la série du point et son
+  en-tête. Note 2026-11-03-corrections-de-la-relecture-r-m1-bis.md de l'action 130.

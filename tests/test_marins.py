@@ -388,17 +388,90 @@ def test_le_marin_qui_passe_le_plafond_liquide_un_salaire_abattu(simulateur):
 #: 13e catégorie, au lieu de: << 14 773,03 >>, lire: << 14 733,03 >> » (arrêté
 #: du 31 janvier 1995, qui corrige celui du 29 décembre 1994, « pour compter du
 #: 1er janvier 1995 ») : 14 733,03 × 12 = 176 796,36 F par an, au taux de
-#: « 6,55957 F pour un euro » (décret n° 2001-1203). « en ce qui concerne la 10e
+#: « 6,55957 F pour un euro » (paragraphe d'explication publié avec le décret
+#: n° 2001-1203, après ses signatures). « en ce qui concerne la 10e
 #: catégorie, au lieu de : « 25 243,53 », lire : « 25 243,83 » » (rectificatif de
 #: l'arrêté du 2 janvier 2006, « pour compter du 1er janvier 2006 »).
 GRILLE_REELLE_AVANT_2008 = [
     (1995, 13, 14733.03 * 12 / 6.55957, "JORFARTI000002373607"),
     (2006, 10, 25243.83, "JORFARTI000001490715"),
 ]
+#: La grille du 1er janvier 1995 ne vaut que six mois : l'arrêté du 30 juin 1995
+#: « portant majoration des salaires forfaitaires » les modifie « pour compter du
+#: 1er juillet 1995, conformément au tableau ci-joint » (article 1er), tableau
+#: que l'index ne porte pas (« Vous pouvez consulter le tableau dans le JO no 0164
+#: du 16/07/95 Page 10596 ») ; l'arrêté du 30 décembre 1995, « pour compter du
+#: 1er janvier 1996 » (article 1er).
+GRILLES_DE_1995 = ("JORFARTI000001014013", "JORFARTI000001014119", "JORFARTI000001593286")
 #: Le plafond de R. 11, 3° au 1er janvier 1995, au droit : l'indice majoré 158
 #: de l'article 7 (depuis le 1er août 1991), au point de « 31 422 F » pour cent
 #: points (article 3, LEGIARTI000006454440), huit fois : 397 174,08 F.
 PLAFOND_DU_1ER_JANVIER_1995 = 8 * 158 * 314.22 / 6.55957
+#: Le plafond du droit au second semestre 1995, jusqu'au 31 octobre : l'indice
+#: majoré 158 (article 7, LEGIARTI000006454542), au point de « 31 799 F à compter
+#: du 1er mars 1995 » (article 3, LEGIARTI000006454441), huit fois : 401 939,36 F.
+PLAFOND_DU_1ER_JUILLET_1995 = 8 * 158 * 317.99 / 6.55957
+#: Le point de cent indices majorés que l'article 3 du décret n° 85-1148 « est
+#: fixée à » le 1er janvier de chaque année de 1986 à 2007, et le 1er décembre
+#: 1985 : jour : (ce que la rédaction en vigueur ce jour-là écrit, rédaction). En
+#: 1994, l'alinéa suivant fixe 31 018 F « pour les agents dont l'indice majoré est
+#: inférieur ou égal à 275 » : le texte ne dit pas lequel des deux fait le
+#: traitement de l'indice 100 ; le test prend 30 926 F, le plus bas, qui ne peut
+#: que relever le rapport du forfait au plafond.
+POINT_DE_L_ARTICLE_3 = {
+    "1985-12-01": ("26428 F", "LEGIARTI000006454423"),
+    "1986-01-01": ("26428 F", "LEGIARTI000006454423"),
+    "1987-01-01": ("26428 F", "LEGIARTI000006454423"),
+    "1988-01-01": ("26 719 F", "LEGIARTI000006454426"),
+    "1989-01-01": ("27 523 F à compter du 1er septembre 1988", "LEGIARTI000006454428"),
+    "1990-01-01": ("28 270 F à compter du 1er janvier 1990", "LEGIARTI000006454431"),
+    "1991-01-01": ("28 973 F à compter du 1er décembre 1990", "LEGIARTI000006454433"),
+    "1992-01-01": ("29 408 F à compter du 1er novembre 1991", "LEGIARTI000006454434"),
+    "1993-01-01": ("30 190 F à compter du 1er octobre 1992", "LEGIARTI000006454436"),
+    "1994-01-01": ("30 926 F à compter du 1er janvier 1994", "LEGIARTI000006454438"),
+    "1995-01-01": ("31 422 F à compter du 1er décembre 1994", "LEGIARTI000006454440"),
+    "1996-01-01": ("32 244 F à compter du 1er novembre 1995", "LEGIARTI000006454442"),
+    "1997-01-01": ("32 244 F à compter du 1er novembre 1995", "LEGIARTI000006454442"),
+    "1998-01-01": ("32 567 F à compter du 1er octobre 1997", "LEGIARTI000006454444"),
+    "1999-01-01": ("32 990 F à compter du 1er novembre 1998", "LEGIARTI000006454446"),
+    "2000-01-01": ("33 419 F à compter du 1er décembre 1999", "LEGIARTI000006454448"),
+    "2001-01-01": ("33 586 F à compter du 1er décembre 2000", "LEGIARTI000006454449"),
+    "2002-01-01": ("5 181,75 Euros à compter du 1er janvier 2002", "LEGIARTI000006454452"),
+    "2003-01-01": ("5 249,33 Euros à compter du 1er décembre 2002", "LEGIARTI000006454454"),
+    "2004-01-01": ("5 275,58 Euros à compter du 1er janvier 2004", "LEGIARTI000006454455"),
+    "2005-01-01": ("5 275,58 Euros à compter du 1er janvier 2004", "LEGIARTI000006454455"),
+    "2006-01-01": ("5 371,10 Euros à compter du 1er novembre 2005", "LEGIARTI000006454458"),
+    "2007-01-01": ("5 397,95 Euros à compter du 1er juillet 2006", "LEGIARTI000006454459"),
+}
+
+
+def _plafond_du_texte(jour: str) -> float:
+    """Huit fois (R. 11, 3°) le traitement de l'indice majoré que l'article 7 fait
+    correspondre à l'indice 100 ce jour-là (`INDICE_100`), au point de l'article 3
+    (`POINT_DE_L_ARTICLE_3`) : cent points, en francs jusqu'en 2001, au taux de
+    6,55957 F pour un euro."""
+    ecrit, _ = POINT_DE_L_ARTICLE_3[jour]
+    montant, unite = ecrit.split(" à compter")[0].rsplit(" ", 1)
+    cent_points = float(montant.replace(" ", "").replace(",", "."))
+    return 8 * _indice_au(jour) * cent_points / 100 / (6.55957 if unite == "F" else 1)
+
+
+@pytest.mark.parametrize("jour", POINT_DE_L_ARTICLE_3)
+def test_chaque_point_se_relit_dans_sa_redaction_de_l_article_3(jour):
+    """Dans l'index LEGI du dépôt quand il est là : la rédaction de l'article 3
+    est celle du décret n° 85-1148, en vigueur ce jour-là, et fixe le point de
+    cent indices à ce que `POINT_DE_L_ARTICLE_3` en écrit."""
+    ecrit, legi = POINT_DE_L_ARTICLE_3[jour]
+    base = RACINE_DONNEES / "brut" / "dila" / "legi.sqlite"
+    if not base.exists():
+        pytest.skip("l'index LEGI n'est pas récupéré (dila_index.py legi --recuperer)")
+    with sqlite3.connect(base) as connexion:
+        debut, fin, num, titre, texte = connexion.execute(
+            "select date, fin, num, titre, texte from doc where id = ?", (legi,)).fetchone()
+    assert num == "3" and "85-1148" in titre, legi
+    assert debut <= jour < (fin or "9999-12-31"), (legi, debut, fin)
+    assert "afférents à l'indice 100 majoré" in texte
+    assert f"est fixée à {ecrit}" in texte or f"puis à {ecrit}" in texte, legi
 
 
 def _euros(montant: float) -> str:
@@ -447,9 +520,17 @@ def test_la_grille_d_avant_2008_est_sous_les_deux_montants_reels_et_la_fiche_le_
     pour la 13e catégorie du 1er janvier 1995, 25 243,83 € pour la 10e du
     1er janvier 2006. La fiche déclare la limite : les deux rectificatifs, les
     forfaits que le modèle prend, les écarts, et ce qu'ils font de la vingtième
-    de 1995 — 48 735,45 € à la structure de 2008, 80,5 % du plafond du jour."""
+    de 1995 — 48 735,45 € à la structure de 2008, 80,5 % du plafond du jour.
+    Ces chiffres de 1995 ne valent que du 1er janvier au 30 juin : la grille du
+    1er juillet, majorée, n'est pas lue, et la fiche le dit, avec ce que la
+    majoration devrait atteindre pour que la vingtième passe le plafond du droit
+    du second semestre ; et le taux du franc, d'un paragraphe d'explication."""
     dit = _limite_de_la_grille()
     assert "26 952,43 €" in dit and "176 796,36 F" in dit and "2e sous-colonne" in dit
+    assert "paragraphe d'explication" in dit and "JORFTEXT000000580421" in dit
+    assert "du 1er janvier au 30 juin 1995" in dit
+    assert "pour compter du 1er juillet 1995" in dit and "pour compter du 1er janvier 1996" in dit
+    assert all(identifiant in dit for identifiant in GRILLES_DE_1995)
     for annee, categorie, reel, identifiant in GRILLE_REELLE_AVANT_2008:
         modele = _forfait_estime(simulateur, annee, categorie)
         assert modele < reel, annee
@@ -465,6 +546,8 @@ def test_la_grille_d_avant_2008_est_sous_les_deux_montants_reels_et_la_fiche_le_
     assert f"vaudrait {_euros(estimee)} €" in dit
     assert f"à {_dixiemes(100 * estimee / PLAFOND_DU_1ER_JANVIER_1995)} % de celui du 1er janvier 1995" in dit
     assert f"{_euros(PLAFOND_DU_1ER_JANVIER_1995)} €" in dit
+    assert f"{_euros(PLAFOND_DU_1ER_JUILLET_1995)} €" in dit
+    assert f"la relevait de plus de {_dixiemes(100 * (PLAFOND_DU_1ER_JUILLET_1995 / estimee - 1))} %" in dit
 
 
 def _grille(annee: int) -> dict[int, float]:
@@ -475,19 +558,16 @@ def _grille(annee: int) -> dict[int, float]:
 
 def test_de_1985_a_2007_la_vingtieme_estimee_reste_sous_le_plafond_meme_relevee(simulateur):
     """De 1985 à 2007, aucune grille n'est lue : que la vingtième catégorie reste
-    sous le plafond de R. 11, 3° n'est qu'une estimation. Sur la grille du modèle,
-    son rapport au plafond du 1er janvier (du 1er décembre en 1985) culmine en
-    2005 ; relevée de l'écart de 1995, le plus grand des deux montants réels,
-    elle reste sous le plafond. La fiche écrit ces deux rapports."""
-    from retraite_notionnelle.droit import liquider
-
-    moteur = simulateur.scenario_actuel
-    rapports = {}
-    for annee in range(1985, 2008):
-        periode = moteur.catalogue["marins"].periode(annee)
-        plafond = liquider.plafond_du_salaire_de_reference(
-            moteur, periode, annee, 12 if annee == 1985 else 1)
-        rapports[annee] = _forfait_estime(simulateur, annee, 20) / plafond
+    sous le plafond de R. 11, 3° n'est qu'une estimation. Le plafond se pose
+    depuis le texte, au 1er janvier (au 1er décembre en 1985) : huit fois le
+    traitement de l'indice majoré de l'article 7, au point de l'article 3
+    (`_plafond_du_texte`). Le rapport de la vingtième de la grille du modèle à ce
+    plafond culmine en 2005 ; relevée de l'écart du 1er janvier 1995, le plus
+    grand des deux montants réels, elle reste sous le plafond. La fiche écrit
+    ces deux rapports."""
+    rapports = {int(jour[:4]): _forfait_estime(simulateur, int(jour[:4]), 20)
+                / _plafond_du_texte(jour) for jour in POINT_DE_L_ARTICLE_3}
+    assert sorted(rapports) == list(range(1985, 2008))
     culmine = max(rapports, key=rapports.get)
     ecart = _ecart_de_1995(simulateur)
     assert culmine == 2005 and ecart > 1 and rapports[culmine] * ecart < 1

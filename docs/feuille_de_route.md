@@ -3061,9 +3061,9 @@ fabriqués.
 sixième, les périodes assimilées manquantes, a ses étapes 1 à 6 faites
 (`130/2026-10-17-sixieme-domaine-etape-6.md`). Au propriétaire, README muet :
 sa septième étape, la décision de la proposition, la retraite progressive, le
-cumul et la seconde pension, l'abattement des marins (R. 11, 3°), l'Ircantec
+cumul et la seconde pension, l'abattement et la grille d'avant 2008 des marins, l'Ircantec
 d'avant 1983, la base des cultes, la majoration de l'Agirc-Arrco avant le coefficient.
-Lus au droit : RAFP, CNAVPL, IEG, SNCF, RATP, marins, Ircantec, cultes, majoration
+Lus au droit : RAFP, CNAVPL, IEG, SNCF, RATP, marins (limite de la grille corrigée, `130/2026-11-03-corrections-de-la-relecture-r-m1-bis.md`), Ircantec, cultes, majoration
 et coefficients de l'Agirc-Arrco ; restent 88 fiches, 523 manques. La file E seule
 récrit ce bloc, la file G note sous `130/`. Par quoi commencer : un lot, ainsi les
 minorations des libéraux (`cavec_minoration_age_seul`…). Détail : `130/2026-11-03-carte-des-fiches-coefficients-anticipation-agirc-arrco-lus-au-droit.md`.
