@@ -424,3 +424,27 @@ def test_le_panorama_ne_prend_le_relais_du_portail_qu_apres_sa_derniere_annee(mo
 
     monkeypatch.setattr(verificateur, "source_age_conjoncturel", absent)
     assert {a for a, _ in verificateur.source_age_conjoncturel_panorama()} == {"2023", "2024"}
+
+
+#: Fiche 8, feuille « F08_Graphique 1 » : la part des nouveaux retraités dont
+#: la pension a été portée à un minimum, en %, de 2020 à 2024 (2024
+#: provisoire).
+PORTES_AU_MINIMUM = {
+    "cnav": {2020: 17.8, 2021: 17.5, 2022: 18.3, 2023: 17.9, 2024: 17.4},
+    "msa_salaries": {2020: 27.3, 2021: 25.1, 2022: 28.6, 2023: 33.1, 2024: 35.6},
+}
+
+
+def test_la_part_des_nouveaux_retraites_au_minimum_est_celle_de_l_eacr():
+    """Le graphique 1 de la fiche 8 (page 83) : 17 % au régime général en
+    2024. Le dépôt la certifie de la feuille E-Minima de l'EACR, rapportée aux
+    liquidants du cadrage (``minimum_contributif_liquidants.csv``) : les mêmes
+    parts au dixième, de 2020 à 2024. Avant, le panorama les dit de 0,2 à
+    0,8 point plus hautes de 2012 à 2017, et de 1,1 point au régime général
+    en 2019 : un autre compte, que la note de l'étape laisse à l'étape 4."""
+    lignes = _lire(RACINE / "data" / "reference" / "regimes" / "minimum_contributif_liquidants.csv")
+    parts = {(l["caisse"], int(l["annee"])): float(l["part"]) for l in lignes
+             if l["sexe"] == "ensemble"}
+    for caisse, serie in PORTES_AU_MINIMUM.items():
+        for annee, part in serie.items():
+            assert parts[(caisse, annee)] == pytest.approx(part, abs=0.051), (caisse, annee)
