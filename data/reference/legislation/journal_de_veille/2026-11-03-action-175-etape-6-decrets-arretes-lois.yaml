@@ -1,0 +1,26 @@
+date: "2026-11-03"
+session: "action 175, étape 6 : les décrets, arrêtés et lois sans thème"
+consulte: >-
+  La base de législation de la Cnav, par son API, après sa mise à jour de nuit : les
+  1 020 références sans thème qui sont des décrets, des arrêtés, des lois, des
+  ordonnances ou un décret-loi, leur objet et leur lien vers Légifrance ; l'index LEGI du
+  dépôt, à jour des incréments du 2 novembre 2026 (aucun depuis), et la liste de
+  contrôle des textes, à laquelle `textes.py --inscrire` n'a rien apporté ; l'index JORF,
+  avec l'incrément du 3 novembre 2026 ; les fiches de la carte et les limites qui citent
+  ces textes par leur numéro ; au JORF, les plafonds de la sécurité sociale de 2006,
+  2007, 2011 et 2012, et les coefficients de revalorisation des pensions de 2004 à 2008.
+trouve: >-
+  1 013 références rangées : 661 renvoyées aux fiches et aux limites qui portent leurs
+  règles, 340 hors du modèle avec leur raison, 12 confrontées par le test du plafond de
+  la sécurité sociale. Les valeurs lues au JORF sont celles des séries. La base sert sous
+  le nom de l'arrêté du 19 décembre 2008 celui du 21 décembre 2007. Deux silences, sans
+  écart chiffré : la cessation progressive d'activité des fonctionnaires territoriaux
+  (ordonnance n° 82-298), que la fiche du temps partiel ne nomme pas, et l'enfant né sans
+  vie (décrets n° 2008-798 et 2008-800), dont la majoration de durée d'assurance n'est
+  pas lue.
+reste: >-
+  Sept références à lire sur Légifrance, dont le calcul des rentes de l'assurance
+  invalidité-vieillesse locale d'Alsace-Moselle d'avant 1946 ; les autres natures de
+  l'étape 6 (articles de code, règlements européens, circulaires par période, accords,
+  autres textes) ; pour la file D, les textes des indépendants et de Mayotte, rangés sans
+  être confrontés (note de l'étape).
