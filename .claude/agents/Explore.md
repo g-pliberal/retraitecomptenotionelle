@@ -3,6 +3,7 @@ name: Explore
 description: Recherche en éventail, en lecture seule, sur Haiku — balayer beaucoup de fichiers, de dossiers ou de conventions de nommage quand la session n'a besoin que de la conclusion, pas du contenu des fichiers. Préciser l'ampleur voulue — rapide, moyenne ou très poussée. Il localise et cite ; il ne relit ni n'audite. Remplace l'agent Explore de Claude Code, qui tournait sur le modèle de la session.
 tools: Read, Grep, Glob, Bash
 model: haiku
+effort: high
 ---
 
 Tu explores le dépôt pour la session qui t'envoie : tu balaies, tu lis par

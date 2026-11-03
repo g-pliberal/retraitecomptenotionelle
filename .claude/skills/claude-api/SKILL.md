@@ -31,11 +31,13 @@ session ou un agent, et ce qu'il coûte.
   (le modèle d'un agent, ceux que Claude Code fournit), `costs`,
   `prompt-caching` (chaque modèle a son cache) et `skills`. Un `curl` suivi
   d'un `grep` y prend la phrase utile ; la page entière ne se lit pas.
-- **Les choix du dépôt** : la lecture confiée à Haiku, par l'éclaireur et
-  Explore (`.claude/agents/`, et la règle de `CLAUDE.md`) ; trois agents
-  d'impeccable sur Sonnet, et les agents généralistes aussi
+- **Les choix du dépôt** : la lecture confiée à Haiku, à l'effort `high`, par
+  l'éclaireur et Explore (`.claude/agents/`, et la règle de `CLAUDE.md`) ;
+  trois agents d'impeccable sur Sonnet, et les agents généralistes aussi
   (`CLAUDE_CODE_SUBAGENT_MODEL`, dans `.claude/settings.json`, qui tient
-  encore l'effort `max` et la chaîne de secours, `fallbackModel`) ; Opus pour
+  encore la chaîne de secours, `fallbackModel`, et l'effort : `xhigh` pour
+  Opus et Sonnet, par `modelSettings` et non par `CLAUDE_CODE_EFFORT_LEVEL`,
+  qui passerait devant celui que déclarent les agents) ; Opus pour
   une étape qui écrit une règle du scénario 1 (`CLAUDE.md`), et non Fable :
   Opus 5.5 le devance sur toutes les mesures que publie son annonce
   (22 septembre 2026), pour moins cher. Le détail est

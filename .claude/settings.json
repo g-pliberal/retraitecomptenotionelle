@@ -1,7 +1,10 @@
 {
   "env": {
-    "CLAUDE_CODE_EFFORT_LEVEL": "max",
     "CLAUDE_CODE_SUBAGENT_MODEL": "sonnet"
+  },
+  "modelSettings": {
+    "claude-opus-5-5": { "effortLevel": "xhigh" },
+    "claude-sonnet-5-5": { "effortLevel": "xhigh" }
   },
   "fallbackModel": ["sonnet", "opus"],
   "hooks": {
