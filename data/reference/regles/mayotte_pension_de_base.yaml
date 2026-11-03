@@ -157,6 +157,15 @@ versions:
   - {id: LEGIARTI000033155432, article: "décret n° 2003-589 du 1er juillet 2003, article 11", en_vigueur: 2016-09-26}
   - {id: LEGIARTI000051228498, article: "décret n° 2003-589 du 1er juillet 2003, article 15", en_vigueur: 2025-02-22}
   - {id: LEGIARTI000048241267, article: "décret n° 2003-589 du 1er juillet 2003, article 17", en_vigueur: 2023-10-22}
+  - {id: LEGIARTI000025021004, article: "ordonnance n° 2002-411 du 27 mars 2002, article 23-1", en_vigueur: 2012-07-01}
+  - {id: LEGIARTI000025036406, article: "ordonnance n° 2002-411 du 27 mars 2002, article 23-1", en_vigueur: 2015-01-01}
+  - {id: LEGIARTI000054468933, article: "ordonnance n° 2002-411 du 27 mars 2002, article 23-1", en_vigueur: 2026-07-23}
+  - {id: LEGIARTI000025021012, article: "ordonnance n° 2002-411 du 27 mars 2002, article 23-4", en_vigueur: 2012-07-01}
+  - {id: LEGIARTI000047453493, article: "ordonnance n° 2002-411 du 27 mars 2002, article 23-4", en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000053279805, article: "ordonnance n° 2002-411 du 27 mars 2002, article 23-4", en_vigueur: 2025-12-31}
+  - {id: LEGIARTI000026513336, article: "décret n° 2003-589 du 1er juillet 2003, article 32", en_vigueur: 2012-10-21}
+  - {id: LEGIARTI000038680068, article: "décret n° 2011-2085 du 30 décembre 2011, article 4-2", en_vigueur: 2019-06-25}
+  - {id: LEGIARTI000053297541, article: "décret n° 2011-2085 du 30 décembre 2011, article 4-2", en_vigueur: 2026-01-01}
   nee_de: LEGIARTI000033155445
   bornes:
     liquidation.date_effet: [2018-01-01, 2028-01-01]
@@ -194,6 +203,22 @@ versions:
     reversion: >-
       sous plafond de ressources, 2 080 heures du SMIC de Mayotte pour le conjoint seul,
       1,6 fois ce plafond pour le ménage (décret, article 17)
+    non_salaries: >-
+      « les résidents à Mayotte ayant la qualité de travailleurs non salariés des
+      professions artisanales, industrielles et commerciales » sont affiliés au régime
+      depuis le 1er juillet 2012, « et agricoles » jusqu'en 2014, les libéraux de L. 631-1
+      depuis le 23 juillet 2026 (ordonnance, articles 23-1 et 23-4, II) ; « le droit à
+      pension de vieillesse des travailleurs non salariés est déterminé selon les
+      dispositions prévues au chapitre Ier », le revenu annuel moyen adapté par décret
+      (article 23-4, I) : « l'ensemble des cotisations permettant la validation d'au
+      moins un trimestre d'assurance et versées pendant le nombre d'années d'assurance
+      défini à l'article 7 », sans les années de deux trimestres assimilés ou plus,
+      « à moins que cette neutralisation ne soit défavorable à l'assuré » (décret,
+      article 32) ; depuis 2019, leur cotisation « ne peut être calculée sur une
+      assiette inférieure à 450 fois le salaire horaire minimum interprofessionnel de
+      croissance applicable à Mayotte », quatre-vingt-dix jours d'affiliation exigés
+      depuis 2026, au taux de 5,85 % en 2019, 0,70 point de plus chaque année jusqu'à
+      17,75 % en 2036 (décret n° 2011-2085, article 4-2)
   exemples: aucun trouvé
 - id: code_de_la_securite_sociale_2028
   statut: lue
@@ -252,8 +277,32 @@ approximations:
   ecart: >-
     Les cotisations restent assises sur le plafond et aux taux du régime général : la
     caisse a les siens, que l'ordonnance n° 96-1122 (article 28-2, II) fait converger
-    jusqu'en 2036, et qu'aucune série du dépôt ne porte.
+    jusqu'en 2036, et qu'aucune série du dépôt ne porte. Le non-salarié paie seul le
+    taux entier du régime général, quand l'article 4-2 du décret n° 2011-2085 lui donne
+    5,85 % en 2019 et 10,05 % en 2025 ; aucun texte lu ne dit son taux de 2012 à 2018.
   effet: la cotisation est celle du régime général ; la pension de base n'en dépend pas
+- version: duree_a_la_generation
+  ecart: >-
+    Le non-salarié de Mayotte : 2012 compte entière, quand l'affiliation part du
+    1er juillet ; son revenu annuel moyen garde les années de deux trimestres assimilés
+    ou plus, que l'article 32 du décret n° 2003-589 neutralise ; son cumul
+    emploi-retraite, au plafond de la caisse (article 34), n'est pas lu, comme celui du
+    salarié de Mayotte.
+  effet: >-
+    non mesuré ; les non-salariés de Mayotte de 2012, et ceux qu'une maladie ou un
+    chômage indemnisé a écartés deux trimestres ou plus d'une année
+- version: duree_a_la_generation
+  ecart: >-
+    Le barème de la caisse « Revenu validant un trimestre - Travailleurs indépendants »
+    porte pour 2026 250 € de cotisations par trimestre : 17,87 % de 1 399,50 €, le taux
+    des artisans et des commerçants de la métropole, quand celui de Mayotte est de
+    10,75 % (150 €) ; en 2025, ses 135 € sont bien 10,05 % de 1 347 €. Le modèle valide
+    au revenu cotisé, comme le décret n° 2003-589 (article 8) et la circulaire qui
+    publie le barème : l'écart est déclaré dans tests/test_cnav_baremes.py.
+  effet: >-
+    les non-salariés de Mayotte de 2026 dont la cotisation tombe entre 150 € et 250 € par
+    trimestre : le modèle leur valide un à trois trimestres de plus que le barème, trois
+    à l'assiette minimale quand le barème en donnerait un
 - version: code_de_la_securite_sociale_2028
   ecart: >-
     La fiche de régime prolonge le régime de Mayotte après 2027 ; le droit le fond dans
@@ -264,7 +313,7 @@ approximations:
     non mesuré ; les pensions prenant effet depuis 2028, dont les paramètres de
     convergence ne sont pas encore fixés
 sources:
-  lu_le: 2026-10-31
+  lu_le: 2026-11-02
   prochaine_relecture: 2027-04-30
   a_relire:
   - >-
@@ -278,8 +327,16 @@ sources:
     plafond de l'article 21 du décret n° 2003-589 —, que les barèmes de la Cnav ne
     portent pas.
   - >-
-    Lire le chapitre III du décret n° 2003-589 (articles 31 et suivants), qui adapte le
-    revenu annuel moyen des non-salariés, et dire s'ils méritent un statut.
+    Le taux de cotisation des non-salariés de Mayotte de 2012 à 2018 : l'article 4 du
+    décret n° 2011-2085 ne fixe qu'une part salariale et une part patronale, et le décret
+    n° 2019-632 dit « clarifier » les taux des indépendants ; une circulaire de la caisse
+    de Mayotte ou de l'Urssaf le dirait. Puis porter dans la série ceux de l'article 4-2
+    (`taux_plafonne_non_salarie` de cssm_mayotte), par un récupérateur, comme ceux de
+    D. 633-3.
+  - >-
+    Relire le barème « Revenu validant un trimestre - Travailleurs indépendants » de
+    Mayotte à sa prochaine version : celle du 23 décembre 2025 porte pour 2026 le taux de
+    la métropole.
   lectures:
   - type: legifrance
     reference: >-
@@ -310,6 +367,33 @@ sources:
       mois, sauf 2024 (2 644 € pour 2 645,39 €)
     url: https://legislation.lassuranceretraite.fr/
     date: 2026-10-31
+  - type: legifrance
+    reference: >-
+      ordonnance n° 2002-411, articles 23-1, 23-3 et 23-4, toutes leurs rédactions ;
+      décret n° 2003-589, articles 8, 8-0, 8-1, 31 à 37 dans leurs rédactions du
+      21 octobre 2012, et 4-1, 34 et 36-2 dans celles du 1er janvier 2026 ; ordonnance
+      n° 96-1122, articles 28-1 et 28-2, toutes leurs rédactions ; décret n° 2011-2085,
+      articles 2-1, 3, 4, 4-1 et 4-2, toutes leurs rédactions ; décret n° 2019-632 :
+      index LEGI du dépôt, à jour au 2 novembre 2026 (action 177, étape 8)
+    date: 2026-11-02
+  - type: jorf
+    reference: >-
+      décret n° 2019-632 du 24 juin 2019, sa notice : « aménagement de la convergence
+      des taux de cotisations des travailleurs indépendants mahorais avec ceux de la
+      métropole » ; rapport au Président de la République sur l'ordonnance
+      n° 2011-1923 : index JORF du dépôt
+    date: 2026-11-02
+  - type: circulaire_cnav
+    reference: >-
+      circulaires Cnav n° 2025-04 du 20 janvier 2025 et n° 2025-34 du 23 décembre 2025 :
+      « le salaire ou revenu cotisé à retenir » pour un trimestre, 1 347 € puis
+      1 399,50 €, et, « concernant les travailleurs indépendants, le montant de
+      cotisations à retenir », 135 € puis 250 € ; barèmes de la base « Revenu validant
+      un trimestre - Travailleurs indépendants » de Mayotte (version du 23 décembre
+      2025) et de la métropole (version du 15 mai 2026), et « Plafonds cumul emploi
+      retraite plafonné - Travailleurs indépendants » de Mayotte
+    url: https://legislation.lassuranceretraite.fr/
+    date: 2026-11-02
 reformes: []
 code:
   moteur: >-
@@ -317,28 +401,37 @@ code:
     minoration lus à la génération par les tables `mayotte_2018`, `mayotte_2026_01` et
     `mayotte_2026_09` ; les trimestres au SMIG de Mayotte depuis 2002 et le salaire
     annuel moyen au plafond de la caisse depuis 2005, lus dans
-    `mayotte_smig_et_plafond.csv`
+    `mayotte_smig_et_plafond.csv` ; le statut `independant_mayotte`, routé à la caisse
+    depuis 2012, sans employeur, ses trimestres au même seuil et, depuis 2019, son
+    assiette minimale au Smic de Mayotte (`assiette_minimale_independants.csv`)
   python: >-
     donnees/regimes.py : CatalogueRegimes ; droit/liquider.py : liquider_chaque_regime,
     salaire_de_reference ; donnees/macro.py : REGIME_DE_MAYOTTE,
     DonneesMacro.trimestres_valides, DonneesMacro.seuil_d_un_trimestre,
     DonneesMacro.plafond_de_cotisations, DonneesMacro.smig_mayotte,
-    DonneesMacro.plafond_mayotte, DonneesMacro.statuts_de_mayotte
+    DonneesMacro.plafond_mayotte, DonneesMacro.statuts_de_mayotte,
+    DonneesMacro.smic_horaire_de ; carriere.py : _ligne_annuelle
   javascript: >-
     moteur/js/regimes.js : CatalogueRegimes ; moteur/js/droit/liquider.js :
     liquiderChaqueRegime, salaireDeReference ; moteur/js/macro.js : REGIME_DE_MAYOTTE,
     DonneesMacro.trimestresValides, DonneesMacro.seuilDUnTrimestre,
-    DonneesMacro.plafondDeCotisations
+    DonneesMacro.plafondDeCotisations, DonneesMacro.smicHoraireDe ; moteur/js/carriere.js :
+    ligneAnnuelle
   parametres: >-
     regimes/cssm_mayotte.yaml : taux_plein, duree_requise_trimestres, salaire_reference,
     decote_par_trimestre ; legislation/ages_regimes.csv,
     legislation/duree_requise_regimes_speciaux.csv ;
     legislation/mayotte_smig_et_plafond.csv : smig_horaire, plafond_annuel ;
-    legislation/validation_trimestres_mayotte.csv : heures
+    legislation/validation_trimestres_mayotte.csv : heures ;
+    legislation/affiliations.yaml : affiliations.independant_mayotte ;
+    legislation/assiette_minimale_independants.csv
   tests: >-
     tests/test_mayotte.py, les trimestres au SMIG de Mayotte et le salaire annuel moyen
-    au plafond de la caisse, dans les deux moteurs ; tests/temoins/simulations.json, les
-    carrières du statut salarie_mayotte, que le portage rejoue
+    au plafond de la caisse, les trimestres et l'assiette minimale de l'indépendant de
+    Mayotte, dans les deux moteurs ; tests/test_cnav_baremes.py, les cotisations qui
+    valident un trimestre d'indépendant au barème de la caisse ;
+    tests/temoins/simulations.json, les carrières des statuts salarie_mayotte et
+    independant_mayotte, que le portage rejoue
 historique:
 - >-
   2026-10-14 — écrite à l'étape 2 de l'action 145 : le régime de Mayotte n'avait que la
@@ -351,8 +444,18 @@ historique:
   plafond de la caisse depuis 2005 (article 7), lus dans `mayotte_smig_et_plafond.csv`,
   dans les deux moteurs. Des 913 témoins de simulation, les cinq de Mayotte baissent,
   de 13 à 28 % au scénario 1, au plafond.
+- >-
+  2026-11-03 — action 177, étape 8 : les non-salariés de Mayotte ont leur statut,
+  `independant_mayotte`, routé à la caisse depuis 2012 (ordonnance n° 2002-411, articles
+  23-1 et 23-4), sans employeur ; leurs trimestres au revenu cotisé, comme le salarié,
+  et, depuis 2019, leur assiette minimale de 450 heures du Smic de Mayotte (décret
+  n° 2011-2085, article 4-2), dans les deux moteurs. Huit témoins naissent, aucun ne
+  bouge. Leurs taux, trouvés, ne sont pas encore dans la série.
 effet: >-
   Les salariés de Mayotte : leur pension est simulée au droit depuis 2003, à leur
   salaire moyen près pour les nés avant 1965, et à leurs trimestres d'avant 2002 et à
   leur plafond d'avant 2005 près ; celles de 1987 à 2002 le sont à la formule du
-  régime général et non à celle du décret.
+  régime général et non à celle du décret. Les non-salariés de Mayotte, depuis 2012 :
+  leur pension est simulée à la caisse de Mayotte, leurs trimestres au revenu cotisé et,
+  depuis 2019, à l'assiette minimale, trois trimestres pour l'artisan qui déclare
+  1 000 € ; leur cotisation, au taux du régime général.

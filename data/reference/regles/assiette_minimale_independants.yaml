@@ -7,9 +7,11 @@ intitule: >-
   de 90 jours d'affiliation depuis 2012 ; le micro-entrepreneur n'y est pas soumis. Sauf demande contraire, en sont
   dispensés depuis 2016 le bénéficiaire du RSA ou de la prime d'activité, depuis
   2020 l'activité accessoire saisonnière (L. 613-11), et, de 2004 à 2015, le
-  libéral dont l'activité n'est pas principale ou déjà pensionné (D. 642-4).
-regimes: [cancava, carpimko_complementaire, cavom_complementaire, cnavpl, organic,
-  regime_general, rsi]
+  libéral dont l'activité n'est pas principale ou déjà pensionné (D. 642-4). À
+  Mayotte, depuis 2019, 450 heures du Smic de Mayotte, sous la même condition de
+  90 jours depuis 2026 (décret n° 2011-2085, article 4-2).
+regimes: [cancava, carpimko_complementaire, cavom_complementaire, cnavpl, cssm_mayotte,
+  organic, regime_general, rsi]
 etat: approchee
 etape: acquerir_les_droits
 effet: >-
@@ -21,9 +23,11 @@ effet: >-
   CARPIMKO perd le demi-plafond de 2026. De 1973 à 1984, l'artisane qui déclare 100
   € par an valide un trimestre par an : née en 1945 et partie à soixante-cinq ans,
   19 trimestres et 782 € de CANCAVA, au lieu de 7 et de 230 € sans le minimum.
-  L'artisane à 3 000 € valide trois trimestres en 2022, et non deux.
+  L'artisane à 3 000 € valide trois trimestres en 2022, et non deux. L'artisane de
+  Mayotte qui déclare 1 000 € valide trois trimestres par an depuis 2019, au lieu
+  d'aucun.
 sources:
-  lu_le: 2026-10-31
+  lu_le: 2026-11-02
   prochaine_relecture: 2027-01-31
   a_relire:
   - >-
@@ -113,6 +117,19 @@ sources:
       10, 16 et 21, sans autre condition au minimum. Index LEGI à jour du 30 octobre
       2026, lu le 31
     date: 2026-10-31
+  - type: legifrance
+    reference: >-
+      décret n° 2011-2085 du 30 décembre 2011, article 4-2, I, créé par le décret
+      n° 2019-632 pour « les cotisations de sécurité sociale dues au titre des périodes
+      courant à compter du 1er janvier 2019 » (LEGIARTI000038680034) : la cotisation
+      d'assurance vieillesse de base des travailleurs indépendants de Mayotte « ne peut
+      être calculée sur une assiette inférieure à 450 fois le salaire horaire minimum
+      interprofessionnel de croissance applicable à Mayotte » (LEGIARTI000038680068) ;
+      depuis le 1er janvier 2026, « L'assiette minimale s'applique aux travailleurs
+      indépendants dont la durée d'affiliation est au moins égale à quatre-vingt-dix
+      jours au cours de l'année considérée » (LEGIARTI000053297541, décret n° 2026-82).
+      Ni prorata, ni dispense. Index LEGI à jour du 2 novembre 2026 (action 177, étape 8)
+    date: 2026-11-02
 textes_a_rattacher:
 - reference: >-
     décret n° 73-76 du 22 janvier 1973, article 2 (LEGIARTI000006765785)
@@ -128,6 +145,10 @@ textes_a_rattacher:
 - reference: >-
     loi n° 2015-1702 du 21 décembre 2015, article 21 ; loi n° 2019-1446 du 24
     décembre 2019, article 10
+- reference: >-
+    décret n° 2011-2085 du 30 décembre 2011, article 4-2 (LEGIARTI000038680068,
+    LEGIARTI000053297541) ; décret n° 2019-632 du 24 juin 2019, article 2
+    (LEGIARTI000038680034)
 approximations:
 - ecart: >-
     Les dispenses (`legislation/dispenses_assiette_minimale.yaml`) se déclarent ligne
@@ -163,7 +184,9 @@ code:
     — pour le libéral, depuis 2004 et proratisés —, puis 5,25 %, 7,70 % et 11,5 % du
     plafond, 4 758 € en 2022 (la colonne `euros`), 450 SMIC horaires depuis 2023, rien
     sous quatre-vingt-dix jours d'affiliation depuis 2012 (`AssietteMinimale.montant`,
-    `montantAssietteMinimale`). Ses trimestres se valident
+    `montantAssietteMinimale`) ; pour l'indépendant de Mayotte, 450 heures du Smic de
+    Mayotte depuis 2019, que `smic_horaire_de` donne au statut que le routage porte à
+    sa caisse, rien sous quatre-vingt-dix jours depuis 2026. Ses trimestres se valident
     sur le plus grand des deux, et la ligne porte le minimum (`assiette_minimale_base`),
     que `acquerir.assiette_minimale` n'oppose qu'aux régimes de base que la table
     nomme : les points de la CNAVPL (`acquerir`), le salaire annuel moyen des régimes
@@ -178,14 +201,16 @@ code:
     minimale en plafonds de la CARPIMKO et de la CAVOM, au scénario 1 comme au compte
     (`dispense_les_complementaires`).
   python: >-
-    carriere.py : _ligne_annuelle ; donnees/chargement.py : AssietteMinimale.montant,
+    carriere.py : _ligne_annuelle ; donnees/macro.py : DonneesMacro.smic_horaire_de ;
+    donnees/chargement.py : AssietteMinimale.montant,
     charger_assiettes_minimales, assiette_minimale, charger_dispenses_assiette_minimale,
     dispense_assiette_minimale, dispense_les_complementaires ; droit/acquerir.py :
     assiette_minimale, acquerir ; droit/liquider.py : salaire_de_reference ;
     droit/seconde.py : _revenus ; moteur/compte.py :
     ConstructeurCompte._cotisation_ligne
   javascript: >-
-    moteur/js/carriere.js : ligneAnnuelle, assietteMinimale, montantAssietteMinimale,
+    moteur/js/carriere.js : ligneAnnuelle, assietteMinimale, montantAssietteMinimale ;
+    moteur/js/macro.js : DonneesMacro.smicHoraireDe ; moteur/js/carriere.js :
     dispenseAssietteMinimale, dispenseLesComplementaires ; moteur/js/droit/acquerir.js :
     assietteMinimale, acquerir ; moteur/js/droit/liquider.js : salaireDeReference ;
     moteur/js/droit/seconde.js : revenus ; moteur/js/compte.js :
@@ -198,6 +223,9 @@ code:
     assiette_minimale_pass
   tests:
   - tests/test_independants.py
+  - >-
+    tests/test_mayotte.py, l'assiette minimale de l'indépendant de Mayotte, dans les deux
+    moteurs, et sa condition de quatre-vingt-dix jours depuis 2026
   - >-
     tests/test_cnav_baremes.py, où la série redonne les tables de la caisse de 1973 à
     2026, et celles des DOM hors de 2022
