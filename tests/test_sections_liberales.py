@@ -221,6 +221,51 @@ def test_chaque_version_lue_commence_quand_son_texte_entre_en_vigueur(fiche):
             version["id"])
 
 
+#: Les textes dont naît chaque version des deux fiches, leur publication au
+#: Journal officiel et le jour où ils entrent en vigueur, relevés le 3 novembre
+#: 2026 à l'index JORF du dépôt (relecture R-E, file E-bis) : aucun de ces
+#: arrêtés ne fixe sa date, sauf celui du 18 octobre 2021 (article 2, « entrent
+#: en vigueur le 1er janvier 2022 ») ; les autres entrent en vigueur le
+#: lendemain de leur publication. La CARPV : l'alinéa de l'inapte de 2011, la
+#: renumérotation de 2014, l'alinéa récrit le 2 novembre 2015.
+NAISSANCES_AU_JOURNAL_OFFICIEL = {
+    "cavec_minoration_age_seul": {
+        "JORFARTI000018197778": ("2008-03-01", "2008-03-02"),
+        "JORFARTI000037363871": ("2018-09-04", "2018-09-05"),
+        "JORFARTI000038689131": ("2019-06-27", "2019-06-28"),
+        "LEGIARTI000054437585": ("2026-07-17", "2026-07-18"),
+    },
+    "carpv_minoration_age_seul": {
+        "JORFARTI000023448554": ("2011-01-19", "2011-01-20"),
+        "JORFARTI000028939421": ("2014-05-17", "2014-05-18"),
+        "JORFARTI000031549970": ("2015-12-01", "2015-12-02"),
+        "JORFARTI000044220745": ("2021-10-19", "2022-01-01"),
+        "JORFARTI000054436031": ("2026-07-17", "2026-07-18"),
+    },
+}
+
+
+@pytest.mark.parametrize("fiche", sorted(NAISSANCES_AU_JOURNAL_OFFICIEL))
+def test_chaque_version_nait_d_un_texte_a_sa_date_du_journal_officiel(fiche):
+    """Chaque version née d'un texte, lue ou supposée, commence le jour où il
+    entre en vigueur, à la date que donne le Journal officiel et non la fiche
+    seule : les naissances de la fiche sont celles de la table, ni plus ni
+    moins, et chacune y porte la publication et l'entrée en vigueur relevées."""
+    from datetime import date
+
+    from retraite_notionnelle.noyau import carte
+
+    attendues = {texte: (date.fromisoformat(publie), date.fromisoformat(en_vigueur))
+                 for texte, (publie, en_vigueur) in NAISSANCES_AU_JOURNAL_OFFICIEL[fiche].items()}
+    nees = [v for v in carte.fiches()[fiche]["versions"] if v.get("nee_de")]
+    assert sorted(v["nee_de"] for v in nees) == sorted(attendues)
+    for version in nees:
+        texte = next(t for t in version["textes"] if t.get("id") == version["nee_de"])
+        publie, en_vigueur = attendues[version["nee_de"]]
+        assert (texte["publie_le"], texte["en_vigueur"]) == (publie, en_vigueur), version["id"]
+        assert version["bornes"]["liquidation.date_effet"][0] == en_vigueur, version["id"]
+
+
 # -- la Cipav -------------------------------------------------------------------
 
 

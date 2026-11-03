@@ -88,8 +88,9 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   l'allocation de solidarité aux personnes âgées que la réversion de la
   personne seule de cinquante-cinq à soixante-quatre ans y atteint (article
   23), la réversion des complémentaires des artisans et des commerçants
-  pour un décès d'avant leur fusion, et celle des autres régimes, dont la ligne
-  le dit ; les approximations de chaque fiche sont déclarées. Le formulaire demande le
+  pour un décès d'avant leur fusion, et celle des autres régimes, la CNAVPL et
+  ses sections libérales parmi eux, dont la ligne le dit, qui vaut zéro ; les
+  approximations de chaque fiche sont déclarées. Le formulaire demande le
   conjoint dans un bloc facultatif, et la page montre sa réversion pour un
   décès supposé juste après le départ, ou cette année pour qui est déjà parti :
   personne ne déclare la date du sien. La dépense de tous les ménages, elle, se

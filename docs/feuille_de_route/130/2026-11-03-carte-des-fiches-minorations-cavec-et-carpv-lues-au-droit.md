@@ -103,3 +103,8 @@ conjoint reçoit 60 % des points ; le moteur sert 60 % de la retraite servie,
 - **Le lot suivant** : la CAVAMAC (`cavamac_minoration_age_seul`), dont les statuts
   de 2011 exonèrent l'inapte, l'ancien déporté, l'ancien combattant, le grand
   invalide et l'invalide à 66 % ; ou la CARCDSF.
+
+*Renvoi, au 3 novembre 2026 : la relecture R-E et la file E-bis corrigent ce
+lot — la réversion des deux caisses n'est pas servie du tout, et non « 15 % trop
+basse » ; l'arrêté de la CARPV du 2 novembre 2015 récrit l'alinéa de l'inapte et
+devient une version ; voir `130/2026-11-03-corrections-de-la-relecture-r-e.md`.*

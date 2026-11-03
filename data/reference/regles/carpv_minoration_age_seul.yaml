@@ -15,6 +15,9 @@ lit:
   l'âge du vétérinaire « à l'entrée en jouissance », au premier jour du mois qui suit
   sa demande, et les trimestres qui le séparent de soixante-cinq ans
 - >-
+  l'inaptitude : de 2011 à 2021, l'invalide reconnu inapte « en application de l'article
+  L. 643-4 », titulaire de la rente d'invalidité à 100 % jusqu'au 1er décembre 2015,
+  puis reconnu inapte au taux fonctionnel ou professionnel de 100 % ; depuis 2022,
   l'inaptitude à l'exercice de toute activité professionnelle rémunérée, que valide le
   médecin conseil et confirme la commission d'inaptitude
 - la date d'effet de la pension, qui choisit la rédaction des statuts ou du règlement
@@ -25,32 +28,149 @@ ecrit:
 dates_qui_decident:
 - liquidation.date_effet
 versions:
-- id: statuts_d_avant_2022
+- id: statuts_d_avant_2011
   statut: supposee
   hypothese: >-
-    les pensions qui prennent effet avant le 1er janvier 2022 relèvent des statuts du
+    les pensions qui prennent effet avant le 20 janvier 2011 relèvent des statuts du
     régime complémentaire de la section professionnelle des vétérinaires, titre II,
-    leur article 21, devenu 13 en 2014 (arrêté du 16 avril 2014, JORFARTI000028939421 :
-    à l'article 14, « les mots : « article 21 » sont remplacés par les mots : « article
-    13 » »), que le Journal officiel ne publie qu'en partie. Seul en est lu le sixième
-    alinéa de l'article 21, dans la rédaction de l'arrêté du 11 janvier 2011
-    (JORFARTI000023448554, publié le 19 janvier 2011) : « Les invalides reconnus inaptes
-    à l'exercice de toute activité professionnelle rémunérée en application de l'article
-    L. 643-4 du code de la sécurité sociale et titulaires de la rente d'invalidité à 100
-    % en application des articles 17 à 20 bis du titre III peuvent demander à
-    bénéficier de la retraite à 60 ans sans minoration » — une minoration existait donc
-    avant 65 ans, et une retraite à 60 ans. La fiche présume la règle de 2021
+    dont nul texte n'est lu : l'index JORF du dépôt n'en porte que des titres, ainsi
+    l'arrêté du 9 mars 1960 (JORFTEXT000000803770), « APPROBATION DE MODIFICATIONS
+    APPORTEES AUX ART. 10, 16 ET 21 DU TITRE II DES STATUTS DE LA SECTION
+    PROFESSIONNELLE DES VETERINAIRES RELATIFS AU REGIME COMPLEMENTAIRE D'ASSURANCE
+    VIEILLESSE », celui du 16 septembre 1968 (JORFTEXT000000437434), qui vise les
+    articles « 9, 17, 21, 23, 24, 32 & 34 » des statuts des régimes d'assurance
+    vieillesse complémentaire et d'invalidité-décès, et celui du 8 juillet 1977
+    (JORFTEXT000000489267), les articles « 21, 23, 23 BIS, 24, 36 », sans dire de quel
+    régime ; celui du 30 décembre 1970 (JORFTEXT000000483025) vise l'article 21 des
+    statuts du régime d'assurance invalidité-décès. La fiche présume la règle de 2021
   fiabilite: >-
-    faible pour le taux, que rien ne date avant 2022 ; moyenne pour la minoration
-    elle-même et l'âge de 60 ans, que l'alinéa de 2011 suppose
+    faible pour l'âge d'ouverture, l'âge du taux plein et le taux, que nul texte lu ne
+    date avant 2011
   bornes:
-    liquidation.date_effet: [null, 2022-01-01]
+    liquidation.date_effet: [null, 2011-01-20]
   contenu:
     parametres:
       age_ouverture: 60
       age_taux_plein: 65
       decote_par_trimestre: 0.0125
     droit: celui de la version statuts_de_2021, présumé
+  exemples: aucun trouvé
+- id: statuts_de_2011
+  statut: supposee
+  hypothese: >-
+    du 20 janvier 2011, lendemain de la publication de l'arrêté du 11 janvier 2011, qui
+    ne fixe pas de date, au 17 mai 2014, l'article 21 du titre II n'est au Journal
+    officiel que par son sixième alinéa, que l'arrêté récrit : l'invalide inapte
+    titulaire de la rente à 100 % « peut demander à bénéficier de la retraite à 60 ans
+    sans minoration » — une minoration existait donc avant 65 ans, et une retraite à 60
+    ans. Le reste de l'article, l'âge du taux plein et le taux, n'est pas publié. La
+    fiche présume la règle de 2021
+  fiabilite: >-
+    moyenne pour la minoration elle-même et l'ouverture à 60 ans, que l'alinéa de 2011
+    suppose ; faible pour l'âge du taux plein et le taux, que rien ne date avant 2022
+  textes:
+  - id: JORFARTI000023448554
+    article: >-
+      arrêté du 11 janvier 2011, annexe, titre II, article 21, qui remplace le sixième
+      alinéa
+    en_vigueur: 2011-01-20
+    publie_le: 2011-01-19
+    citation: >-
+      « Le sixième alinéa de l'article 21 est remplacé par les dispositions suivantes :
+      « Les invalides reconnus inaptes à l'exercice de toute activité professionnelle
+      rémunérée en application de l'article L. 643-4 du code de la sécurité sociale et
+      titulaires de la rente d'invalidité à 100 % en application des articles 17 à 20
+      bis du titre III peuvent demander à bénéficier de la retraite à 60 ans sans
+      minoration. Les invalides titulaires d'une rente en application des articles 17 à
+      20 bis du titre III ne peuvent demander à bénéficier des dispositions de l'article
+      23 ci-dessous concernant la retraite progressive. » »
+  nee_de: JORFARTI000023448554
+  bornes:
+    liquidation.date_effet: [2011-01-20, 2014-05-18]
+  contenu:
+    parametres:
+      age_ouverture: 60
+      age_taux_plein: 65
+      decote_par_trimestre: 0.0125
+    droit: celui de la version statuts_de_2021, présumé
+    conditions: >-
+      à 60 ans sans minoration, l'invalide reconnu inapte « en application de l'article
+      L. 643-4 » et titulaire de la rente d'invalidité à 100 % du titre III
+  exemples: aucun trouvé
+- id: statuts_de_2014
+  statut: supposee
+  hypothese: >-
+    du 18 mai 2014, lendemain de la publication de l'arrêté du 16 avril 2014, qui ne
+    fixe pas de date, au 1er décembre 2015 : l'article 21 devient l'article 13 (II, a),
+    perd ses quatrième et cinquième alinéas, et son sixième, celui de l'inapte, renvoie
+    à l'article 15 et non plus 23 (II, h). Le Journal officiel ne publie pas les
+    alinéas supprimés : leur objet, et l'effet de leur suppression, sont inconnus. La
+    fiche présume la règle de 2011, et celle-ci de 2021
+  fiabilite: >-
+    celle de la version statuts_de_2011 ; l'effet de la suppression des deux alinéas,
+    inconnu
+  textes:
+  - id: JORFARTI000028939421
+    article: arrêté du 16 avril 2014, annexe, II, a) et h)
+    en_vigueur: 2014-05-18
+    publie_le: 2014-05-17
+    citation: >-
+      « a) Les deux alinéas de l'article 14 sont insérés à la fin de l'article 13 et
+      l'article 14 est abrogé. Les articles 8, 8 bis, 10, 15, 16, 17, 18 et 19 sont
+      abrogés et les articles 9, 11, 12, 13, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29 et 30
+      deviennent respectivement les articles 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
+      19, 20, 21 et 22 ; […] h) L'article 13 est ainsi modifié : ― les quatrième et
+      cinquième alinéas sont supprimés ; ― au sixième alinéa, les mots : « article 23
+      » sont remplacés par les mots : « article 15 » »
+  nee_de: JORFARTI000028939421
+  bornes:
+    liquidation.date_effet: [2014-05-18, 2015-12-02]
+  contenu:
+    parametres:
+      age_ouverture: 60
+      age_taux_plein: 65
+      decote_par_trimestre: 0.0125
+    droit: celui de la version statuts_de_2011, présumé
+    conditions: celles de 2011, l'alinéa de l'inapte devenu le quatrième de l'article 13
+  exemples: aucun trouvé
+- id: inapte_a_100_pour_cent_2015
+  statut: supposee
+  hypothese: >-
+    du 2 décembre 2015, lendemain de la publication de l'arrêté du 2 novembre 2015, qui
+    ne fixe pas de date, au 31 décembre 2021 : l'arrêté récrit le quatrième alinéa de
+    l'article 13, celui de l'inapte, qui ne vise plus le titulaire de la rente
+    d'invalidité à 100 % mais l'invalide « reconnu inapte au taux fonctionnel ou
+    professionnel de 100 % » (annexe, I, 3°). La rédaction consolidée de l'alinéa
+    n'est publiée nulle part ; l'arrêté de 2011 et ce 3° la donnent : « Les invalides
+    reconnus inaptes à l'exercice de toute activité professionnelle rémunérée en
+    application de l'article L. 643-4 du code de la sécurité sociale et reconnus
+    inaptes au taux fonctionnel ou professionnel de 100 % en application des articles
+    17 à 20 bis du titre III peuvent demander à bénéficier de la retraite
+    complémentaire à 60 ans sans minoration ». La fiche présume la règle de 2014
+  fiabilite: celle de la version statuts_de_2014
+  textes:
+  - id: JORFARTI000031549970
+    article: arrêté du 2 novembre 2015, annexe, I, 3°
+    en_vigueur: 2015-12-02
+    publie_le: 2015-12-01
+    citation: >-
+      « 3° Au quatrième alinéa de l'article 13, les mots : « titulaires de la rente
+      d'invalidité à 100 % » sont remplacés par les mots : « reconnus inaptes au taux
+      fonctionnel ou professionnel de 100 % », et après les mots : « peuvent demander à
+      bénéficier de la retraite », est inséré le mot : « complémentaire » »
+  nee_de: JORFARTI000031549970
+  bornes:
+    liquidation.date_effet: [2015-12-02, 2022-01-01]
+  contenu:
+    parametres:
+      age_ouverture: 60
+      age_taux_plein: 65
+      decote_par_trimestre: 0.0125
+    droit: celui de la version statuts_de_2014, présumé
+    conditions: >-
+      à 60 ans sans minoration, l'invalide reconnu inapte « en application de l'article
+      L. 643-4 » et « reconnu inapte au taux fonctionnel ou professionnel de 100 % » au
+      titre III
   exemples: aucun trouvé
 - id: statuts_de_2021
   statut: lue
@@ -143,53 +263,63 @@ versions:
       jusque-là, de même règle (ce que le texte ne tranche pas)
   exemples: aucun trouvé
 approximations:
-- version: [statuts_d_avant_2022]
+- version: [statuts_d_avant_2011, statuts_de_2011, statuts_de_2014, inapte_a_100_pour_cent_2015]
   textes: >-
     statuts du régime complémentaire, titre II, article 21 puis 13, au seul Bulletin
-    officiel hors du sixième alinéa de 2011
+    officiel hors des alinéas que récrivent les arrêtés de 2011, 2014 et 2015
   ecart: >-
     Le modèle sert avant 2022 la règle de 2021 — 60 ans, 65 ans, 1,25 % par trimestre
-    manquant —, dont nul texte lu ne donne le taux : l'alinéa de 2011 ne dit que la
-    minoration et la retraite à 60 ans.
+    manquant —, dont nul texte lu ne donne le taux ni l'âge du taux plein : l'alinéa
+    de 2011 ne dit que la minoration et la retraite à 60 ans, et rien n'est lu avant
+    2011. L'arrêté de 2014 supprime deux alinéas de l'article, que nul texte publié ne
+    donne : leur effet est inconnu.
   effet: non mesuré
-- version: [statuts_d_avant_2022, statuts_de_2021, reglement_de_2026]
+- version: [statuts_de_2011, statuts_de_2014, inapte_a_100_pour_cent_2015, statuts_de_2021, reglement_de_2026]
   textes: >-
-    statuts, article 21, sixième alinéa, dans la rédaction de 2011 ; statuts de 2021,
-    article 34 ; règlement de 2026, article 2
+    arrêté du 11 janvier 2011, article 21, sixième alinéa ; arrêté du 16 avril 2014,
+    II, a) et h) ; arrêté du 2 novembre 2015, I, 3° ; statuts de 2021, article 34 ;
+    règlement de 2026, article 2
   ecart: >-
     Le modèle minore l'inapte comme les autres : la fiche `inaptitude_au_travail` ne
     nomme pas la CARPV parmi les régimes qui le servent au taux plein. Les statuts le
-    servent à 60 ans sans minoration — depuis 2022, tout inapte ; de 2011 à 2021, au
-    moins l'invalide inapte titulaire de la rente d'invalidité à 100 %.
+    servent à 60 ans sans minoration : du 20 janvier 2011 au 1er décembre 2015,
+    l'invalide reconnu inapte « en application de l'article L. 643-4 » et titulaire de
+    la rente d'invalidité à 100 % ; du 2 décembre 2015 au 31 décembre 2021, l'invalide
+    reconnu inapte en application du même article et « reconnu inapte au taux
+    fonctionnel ou professionnel de 100 % » ; depuis 2022, tout adhérent reconnu inapte
+    à l'exercice de toute activité professionnelle rémunérée. Avant 2011, rien n'est
+    lu. Ce que le texte ne tranche pas, de 2011 à 2021 : si l'inaptitude reconnue « en
+    application de l'article L. 643-4 », qui liquide la base sans coefficient à l'âge
+    du I de L. 643-3 (rédaction du 19 décembre 2008, LEGIARTI000019959512), peut
+    l'être avant cet âge, 62 ans pour les générations nées depuis 1955.
   effet: >-
     non mesuré dans la population ; pour l'inapte, toute la minoration de son âge : 20
     trimestres × 1,25 % = 25 % de la pension complémentaire à 60 ans, 12 × 1,25 % = 15 %
     à 62 ans
-- version: [statuts_de_2021, reglement_de_2026]
-  textes: statuts de 2021, article 41 ; règlement de 2026, article 9
+- version: [statuts_d_avant_2011, statuts_de_2011, statuts_de_2014, inapte_a_100_pour_cent_2015, statuts_de_2021, reglement_de_2026]
+  textes: >-
+    statuts de 2021, articles 38, 40 et 41 ; règlement de 2026, articles 6, 8 et 9 ;
+    avant 2022, nul texte lu de la réversion
   ecart: >-
-    La réversion « supporte le même coefficient de minoration », sauf « si le décès de
-    l'adhérent se produit avant son soixante-cinquième anniversaire » : le conjoint
-    survivant la reçoit alors « sans minoration ». Le moteur applique le taux de
-    réversion à la retraite servie, coefficient compris (`droit/reversion.py`, sa
-    notice), quel que soit l'âge au décès.
+    Le modèle ne sert aucune réversion de la CARPV : aucune fiche de réversion ne nomme
+    `carpv_complementaire`, et la ligne vaut zéro, motif `non_portee`
+    (`droit/reversion.py`, `moteur/js/droit/reversion.js`), dans les deux moteurs. Les
+    statuts de 2021 et le règlement de 2026 servent au conjoint survivant âgé de
+    soixante ans, marié deux ans au moins ou dont un enfant est issu du mariage, non
+    remarié (articles 38 et 6), « 60 % des points acquis par le vétérinaire décédé »,
+    100 % de ceux que la cotisation majorée a acquis (articles 40 et 8) ; la réversion
+    « supporte le même coefficient de minoration », sauf « si le décès de l'adhérent se
+    produit avant son soixante-cinquième anniversaire » : il la reçoit alors « sans
+    minoration » (articles 41 et 9).
   effet: >-
-    non mesuré dans la population ; pour le conjoint survivant d'un vétérinaire parti à
-    62 ans et mort avant 65 ans, une réversion de 15 % trop basse
+    non mesuré dans la population ; pour le conjoint survivant, toute la réversion. Le
+    vétérinaire né le 10 février 1964, au travail depuis ses 26 ans à deux fois le
+    salaire moyen, parti à 62 ans le 1er mars 2026 au coefficient 0,85, mort en juin
+    2027, avant 65 ans, laisse au conjoint né en 1962, marié en juin 1988, 60 % de sa
+    pension sans le coefficient : 0,60 × 17 406,29 / 0,85 = 12 286,79 € par an, aux
+    montants de 2026 ; le modèle sert 0 (essai du 3 novembre 2026, les deux moteurs au
+    bit près)
 textes_sans_effet:
-- id: JORFARTI000028939421
-  article: arrêté du 16 avril 2014, annexe, titre II
-  publie_le: 2014-05-17
-  motif: >-
-    une renumérotation des articles du régime complémentaire (l'article 21 cité devient
-    13) et la suppression des quatrième et cinquième alinéas de l'article 13, que
-    l'annexe ne reproduit pas : rien n'y montre un âge ni un taux
-- id: JORFARTI000031549970
-  article: arrêté du 2 novembre 2015, annexe
-  publie_le: 2015-12-01
-  motif: >-
-    la cotisation du titre II (articles 4, 12 et 13) et la date d'effet de la réversion
-    (article 21) ; rien de l'âge ni de la minoration
 - id: JORFARTI000033955892
   article: arrêté du 23 janvier 2017, annexe
   publie_le: 2017-01-31
@@ -205,9 +335,10 @@ effet: >-
   opposait la durée de la carrière, qui annulait la minoration : un vétérinaire
   parti à 64 ans avec sa durée ne perdait rien, là où la caisse lui retire 5 %.
   `decote_annulee_par_la_duree: false` sur toutes les périodes, et `majoration_enfants`
-  depuis 2022. Lue au droit le 3 novembre 2026 (action 130) : trois versions, la règle
-  des statuts de 2021, en vigueur le 1er janvier 2022, supposée avant ; l'inapte et la
-  réversion de qui meurt avant 65 ans sans minoration ne sont pas servis.
+  depuis 2022. Lue au droit le 3 novembre 2026 (action 130) : six versions, la règle
+  des statuts de 2021, en vigueur le 1er janvier 2022, supposée avant, et les alinéas
+  de l'inapte de 2011, 2014 et 2015 ; l'inapte sans minoration n'est pas servi, ni
+  aucune réversion (relecture R-E, corrigée par la file E-bis).
 sources:
   lu_le: 2026-11-03
   prochaine_relecture: 2027-03-31
@@ -219,6 +350,12 @@ sources:
     Comment la caisse compte un trimestre entamé : la pension prend effet au premier
     jour d'un mois, et l'article dit « par trimestre manquant » sans dire l'arrondi ;
     le modèle compte le trimestre entamé, comme R. 351-27 au régime général.
+  - >-
+    Les quatrième et cinquième alinéas de l'article 13 que supprime l'arrêté du 16
+    avril 2014, et ce que la caisse en a fait : leur objet n'est pas publié.
+  - >-
+    De 2011 à 2021, si l'inaptitude reconnue « en application de l'article L. 643-4 »
+    peut l'être avant l'âge du I de L. 643-3, où la base liquide l'inapte.
   lectures:
   - type: jorf
     reference: >-
@@ -230,6 +367,15 @@ sources:
       des statuts de 2021 et l'article 2 de leur arrêté ; les articles 6 et 30 du décret
       n° 2026-418 ; l'arrêté du 10 juillet 2026 et les articles 1er à 4 et 9 de
       son règlement. Avant 2010, l'index n'a des statuts que des titres et des analyses.
+    date: 2026-11-03
+  - type: jorf
+    reference: >-
+      Relu par la file E-bis, d'après la relecture R-E, dans les index JORF et LEGI à
+      jour au 3 novembre 2026 : les annexes entières et les articles 1er à 3 des arrêtés
+      du 11 janvier 2011, du 16 avril 2014 et du 2 novembre 2015, dont aucun ne fixe de
+      date ; les titres des arrêtés du 9 mars 1960, du 16 septembre 1968, du 30 décembre
+      1970 et du 8 juillet 1977 ; les articles 38 à 41 des statuts de 2021 et 6 à 9 du
+      règlement de 2026 ; L. 643-3, I, de 2004 à 2026, et L. 643-4, de 2008 et de 2023.
     date: 2026-11-03
   - type: autre
     reference: >-

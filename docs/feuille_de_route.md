@@ -3295,12 +3295,12 @@ fabriqués.
 périodes assimilées manquantes, a ses étapes 1 à 6 faites (`130/2026-10-17-sixieme-domaine-etape-6.md`) ;
 l'abattement des marins (R. 11, 3°) ; relues conformes, la base des cultes (R-M5) et la majoration
 de l'Agirc-Arrco avant le coefficient (R-M3). L'Ircantec d'avant 1983 (décision 9) attend la file M3.
-Les 17 décisions du propriétaire du 3 novembre et les neuf questions qui attendent sa réponse sont
-dans `130/2026-11-03-decisions-du-proprietaire.md`. Lus au droit : RAFP, CNAVPL, IEG, SNCF, RATP,
-marins, Ircantec, cultes, Agirc-Arrco, minorations de la CAVEC et de la CARPV, et deux fiches
-d'autres actions ; restent 85 fiches, 503 manques. La file E seule récrit ce bloc, la file G note
-sous `130/`. Par quoi commencer : un lot, ainsi la CAVAMAC (`cavamac_minoration_age_seul`) ou la
-CARCDSF. Détail : `130/2026-11-03-carte-des-fiches-minorations-cavec-et-carpv-lues-au-droit.md`.
+Au propriétaire, README muet : la décision de la proposition, septième étape du sixième domaine, et la
+retraite progressive, le cumul et la seconde pension ; le reste de ce qui l'attend, avec ses 17 décisions,
+dans `130/2026-11-03-decisions-du-proprietaire.md`. Lus au droit : RAFP, CNAVPL, IEG, SNCF, RATP, marins,
+Ircantec, cultes, Agirc-Arrco, CAVEC et CARPV, corrigées d'après R-E, et deux fiches d'autres actions ;
+restent 85 fiches, 503 manques. La file E seule récrit ce bloc, la file G note sous `130/`. Ensuite : la
+CAVAMAC (`cavamac_minoration_age_seul`) ou la CARCDSF. Détail : `130/2026-11-03-corrections-de-la-relecture-r-e.md`.
 
 Le dépôt devenait de plus en plus lourd à faire avancer. Une modification du
 moteur du scénario 1 touchait vingt fichiers en médiane, dont sept ou huit de

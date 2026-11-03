@@ -1,0 +1,38 @@
+date: "2026-11-03"
+session: "action 130, file E-bis, vague 6 : les corrections de la relecture R-E, minorations de la CAVEC et de la CARPV"
+consulte: >-
+  python scripts/veille_droit.py ; docs/veille_droit.md ; les index JORF et LEGI du dépôt,
+  récupérés puis mis à jour de l'incrément 20261103-214151 ; python scripts/textes.py
+  --inscrire, dont les inscriptions, aux fiches d'autres files, ne sont pas commitées.
+  Dans JORF, la CARPV : les annexes entières et les articles des arrêtés du 11 janvier 2011,
+  du 16 avril 2014 et du 2 novembre 2015 ; les titres des arrêtés du 9 mars 1960, du
+  16 septembre 1968, du 30 décembre 1970 et du 8 juillet 1977 ; les articles 33 à 35 et 38 à
+  41 des statuts de 2021, l'article 2 de leur arrêté ; les articles 6 à 9 du règlement de
+  2026 et les articles de son arrêté. La CAVEC : les articles 3.13 et 3.16 à 3.18 des statuts
+  de 2008 ; les articles 12, 15 et 16 de la partie 2 des statuts de 2018 ; les articles 1.2.1
+  et 1.2.2 du règlement de 2026 ; le II de l'arrêté du 2 juillet 2024 ; les articles des
+  arrêtés du 20 août 2018, du 19 juin 2019 et du 10 juillet 2026 ; le décret n° 53-506 du
+  21 mai 1953 et l'arrêté du 23 mai 1953 (analyse et titre). Dans LEGI : L. 643-3, I, de 2004
+  à 2026, et son IV ; L. 643-4, rédactions de 2008 et de 2023 ; L. 161-17-2, rédactions de
+  2011, de 2023 et de la loi n° 2025-1403 ; D. 161-2-1-9 de 2023 ; L. 351-1 de 2010. Le livre
+  des 70 ans de la CAVEC, retéléchargé (sha256 f37b161d…d030), page 15.
+trouve: >-
+  La réversion de la CAVEC, de la CARPV et de la CNAVPL n'est pas servie par le modèle :
+  aucune fiche de réversion ne les nomme, la ligne vaut zéro, motif non_portee, dans les deux
+  moteurs (essai au bit près) ; les statuts la servent à 60 % des points (CAVEC : 50 % de
+  ceux d'avant 2009), sans le coefficient à la CAVEC, sans lui à la CARPV quand l'assuré meurt
+  avant 65 ans : pour un départ à 62 ans en 2026, 12 286,79 € par an à la CARPV, de
+  16 245,20 € à 19 494,24 € à la CAVEC, sur le cas de l'essai. L'arrêté de la CARPV du
+  2 novembre 2015 (I, 3°) récrit l'alinéa de l'inapte, celui de 2011 devenu le quatrième de
+  l'article 13 en 2014 ; la fiche a six versions, dont celles de 2011, 2014 et 2015,
+  supposées pour le taux. L'arrêté du 23 mai 1953 fixe des cotisations : le régime de la
+  CAVEC naît du décret n° 53-506. Hors du lot, deux écarts de la CNAVPL : l'inapte minoré,
+  contre L. 643-4, 2°, a (1 833,36 € par an à 64 ans en 2028, sur le cas), et la base ouverte
+  à 60 ans à la génération 1964, quand L. 643-3, I, et L. 161-17-2 l'ouvrent à 63 ans, puis
+  62 ans et 9 mois.
+reste: >-
+  À une file du modèle : la réversion de la CNAVPL et de ses sections, l'inapte des sections
+  et de la CNAVPL, l'ouverture de la CNAVPL à 60 ans. Au Bulletin officiel : les statuts
+  d'avant 2008 de la CAVEC et d'avant 2022 de la CARPV, les deux alinéas que l'arrêté de 2014
+  supprime ; le décret qui fixe l'âge du IV de L. 643-3, que l'index thématique ne porte pas.
+  Les inscriptions de textes.py, à la veille suivante.

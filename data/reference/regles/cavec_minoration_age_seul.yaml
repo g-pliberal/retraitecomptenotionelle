@@ -31,18 +31,25 @@ versions:
 - id: statuts_d_avant_2008
   statut: supposee
   hypothese: >-
-    les pensions qui prennent effet avant le 2 mars 2008 relèvent des statuts approuvés
-    par l'arrêté du 23 mai 1953 et des arrêtés qui les ont modifiés, que le Journal
-    officiel ne publie qu'en titre ou en analyse et le Bulletin officiel du ministère en
-    entier (« sera publié intégralement au Bulletin officiel », arrêté du 13 mai 1994,
-    JORFARTI000001391556) ; l'arrêté du 22 février 2008 « rédige » l'article 3.13, qui
-    existait donc avant lui. La fiche présume la règle de 2008 : la caisse écrit
+    les pensions qui prennent effet avant le 2 mars 2008 relèvent des statuts du régime
+    complémentaire que le décret n° 53-506 du 21 mai 1953 institue (JORFTEXT000000670150,
+    dont l'index n'a que l'analyse : « ART. 5: AVANTAGES DU REGIME,GESTION DE LA CAISSE
+    COMPLEMENTAIRE ») et des arrêtés qui les ont modifiés, que le Journal officiel ne
+    publie qu'en titre ou en analyse et le Bulletin officiel du ministère en entier
+    (« sera publié intégralement au Bulletin officiel », arrêté du 13 mai 1994,
+    JORFARTI000001391556) ; nul texte lu ne dit quel arrêté les approuve, celui du 23
+    mai 1953 (JORFTEXT000000472264) portant « FIXATION DES COTISATIONS DE L'ASSURANCE
+    VIEILLESSE COMPLEMENTAIRE POUR L'ANNEE 1953 ». L'arrêté du 22 février 2008 « rédige »
+    l'article 3.13, qui existait donc avant lui. La fiche présume la règle de 2008 : la
+    caisse écrit
     qu'en 1983 ses administrateurs « choisissent de ne pas abaisser l'âge de départ en
     retraite à 60 ans (comme annoncé pour le régime général […]). Il reste et restera
     fixé à 65 ans » (« Depuis 1949, une histoire d'avenir, le livre des 70 ans »)
   fiabilite: >-
-    faible pour le taux, que rien ne date avant 2008 ; moyenne pour l'âge du taux plein,
-    65 ans, que la caisse dit gardé depuis 1983
+    faible pour le taux et pour l'ouverture à 60 ans, que rien ne date avant 2008 : la
+    phrase de la caisse peut viser l'âge de départ, que 1983 n'abaisse pas à 60 ans,
+    aussi bien que l'âge du taux plein ; moyenne pour l'âge du taux plein, 65 ans, que
+    la caisse dit gardé depuis 1983
   bornes:
     liquidation.date_effet: [null, 2008-03-02]
   contenu:
@@ -89,7 +96,13 @@ versions:
     conditions: >-
       à 60 ans sans abattement « lorsque la retraite du régime de base de la CNAVPL est
       liquidée au titre de l'inaptitude » ; la retraite est liquidée « à dater du premier
-      jour du trimestre civil suivant la demande » (article 3.15)
+      jour du trimestre civil suivant la demande » (article 3.15). La version commence le
+      lendemain de la publication ; mais les statuts de 2018 (partie 2, article 16) et le
+      règlement de 2026 (article 1.2.2) datent « avant le 1er janvier 2009 » les points
+      que l'article 3.17 de 2008 dit acquis « avant la mise en œuvre des présents
+      statuts » : ce qui situe leur mise en œuvre au 1er janvier 2009, au moins pour
+      la réversion. La règle d'avant étant supposée la même, rien ne bouge (ce que le texte
+      ne tranche pas)
   exemples: aucun trouvé
 - id: statuts_de_2018
   statut: lue
@@ -203,12 +216,12 @@ versions:
 approximations:
 - version: [statuts_d_avant_2008]
   textes: >-
-    statuts approuvés par l'arrêté du 23 mai 1953 et leurs modifications, au seul
-    Bulletin officiel
+    statuts du régime que le décret n° 53-506 du 21 mai 1953 institue, et leurs
+    modifications, au seul Bulletin officiel
   ecart: >-
     Le modèle sert avant 2008 la règle de 2008 — 60 ans, 65 ans, 1,25 % par trimestre
-    manquant —, que nul texte lu ne date : la caisse ne dit que l'âge du taux plein,
-    65 ans, gardé en 1983.
+    manquant —, que nul texte lu ne date : la caisse ne dit qu'un âge de 65 ans, gardé
+    en 1983, et l'ouverture à 60 ans n'a pas de source.
   effet: non mesuré
 - version: [statuts_de_2008, statuts_de_2018, inaptitude_au_travail_2019, reglement_de_2026]
   textes: >-
@@ -217,27 +230,43 @@ approximations:
   ecart: >-
     Le modèle abat l'inapte comme les autres : la fiche `inaptitude_au_travail` ne nomme
     pas la CAVEC parmi les régimes qui le servent au taux plein, et `abattement_regime_de_base`
-    ne le dispense donc pas. Les statuts le servent à 60 ans sans abattement.
+    ne le dispense donc pas. Les statuts le servent sans abattement : du 2 mars 2008 au
+    27 juin 2019, « à 60 ans lorsque la retraite du régime de base de la CNAVPL est
+    liquidée au titre de l'inaptitude », que la base ne liquide qu'« à partir de l'âge
+    prévu au premier alinéa de l'article L. 351-1 » (L. 643-3, I, de 2004 à 2023 ;
+    L. 643-4, 2°, a, rédaction du 19 décembre 2008, LEGIARTI000019959512), l'âge de
+    L. 161-17-2 depuis le 1er juillet 2011, « soixante-deux ans pour les assurés nés à
+    compter du 1er janvier 1955 » (LEGIARTI000025014605) ; depuis le 28 juin 2019, « à
+    60 ans au titre de l'inaptitude au travail ».
   effet: >-
-    non mesuré dans la population ; pour l'inapte, toute la minoration de son âge : 20
-    trimestres × 1,25 % = 25 % de la pension complémentaire à 60 ans, 12 × 1,25 % = 15 %
-    à 62 ans
-- version: [statuts_de_2008, statuts_de_2018, inaptitude_au_travail_2019, reglement_de_2026]
+    non mesuré dans la population ; pour l'inapte, toute la minoration de l'âge où les
+    statuts le servent : depuis le 28 juin 2019, 20 trimestres × 1,25 % = 25 % de la
+    pension complémentaire à 60 ans ; avant, pour les générations nées depuis 1955,
+    à l'âge légal de la base, 12 × 1,25 % = 15 % à 62 ans
+- version: [statuts_d_avant_2008, statuts_de_2008, statuts_de_2018, inaptitude_au_travail_2019, reglement_de_2026]
   textes: >-
-    statuts de 2008, article 3.17 ; statuts de 2018, partie 2, article 16 ; règlement de
-    2026, article 1.2.2
+    statuts de 2008, articles 3.16 et 3.17 ; statuts de 2018, partie 2, articles 15 et
+    16 ; règlement de 2026, articles 1.2.1 et 1.2.2 ; avant 2008, nul texte lu
   ecart: >-
-    Les points de l'adhérent décédé « sont réversibles à 60 % sur la tête du conjoint
-    survivant âgé d'au moins 60 ans tel qu'il est défini à l'article 3.16, sans
-    application du coefficient de réduction prévu à l'article 3.13 » (2008) ; depuis
-    2018, 50 % des points acquis avant le 1er janvier 2009 et 60 % des autres, toujours
-    « sans application du coefficient de réduction » (article 12, puis 1.1.3). Le moteur
-    applique le taux de réversion à la retraite servie, coefficient compris
-    (`droit/reversion.py`, sa notice).
+    Le modèle ne sert aucune réversion de la CAVEC : aucune fiche de réversion ne nomme
+    `cavec_complementaire`, et la ligne vaut zéro, motif `non_portee`
+    (`droit/reversion.py`, `moteur/js/droit/reversion.js`), dans les deux moteurs. Les
+    statuts servent au conjoint survivant âgé d'au moins 60 ans, marié deux ans au
+    moins avant le décès ou dont un enfant est issu du mariage, et non remarié
+    (articles 3.16 et 3.18 en 2008, 15 en 2018, 1.2.1 en 2026), « sans application du
+    coefficient de réduction » : en 2008, 60 % des points, ceux « acquis avant la mise
+    en œuvre des présents statuts » à 50 % (article 3.17) ; depuis 2018, 50 % des
+    points acquis « avant le 1er janvier 2009 » et 60 % des autres (article 16, puis
+    1.2.2), en totalité ceux des années de la cotisation facultative.
   effet: >-
-    non mesuré dans la population ; pour le conjoint survivant d'un expert-comptable
-    parti à 62 ans, une réversion de 15 % trop basse : sur des points d'après 2009,
-    0,60 × 0,85 = 0,51 des points au lieu de 0,60
+    non mesuré dans la population ; pour le conjoint survivant, toute la réversion.
+    L'expert-comptable né le 10 février 1964, au travail depuis ses 26 ans à deux fois
+    le salaire moyen, parti à 62 ans le 1er mars 2026 au coefficient 0,85, mort en juin
+    2027, laisse au conjoint né en 1962, marié en juin 1988, de 50 % à 60 % de sa
+    pension sans le coefficient, selon la part des points d'avant 2009, que le modèle,
+    qui compte la CAVEC en cotisations revalorisées, ne sépare pas : de 0,50 × 27 616,84
+    / 0,85 = 16 245,20 € à 0,60 × 27 616,84 / 0,85 = 19 494,24 € par an, aux montants
+    de 2026 ; le modèle sert 0 (essai du 3 novembre 2026, les deux moteurs au bit près)
 textes_sans_effet:
 - id: JORFARTI000023172861
   article: arrêté du 26 novembre 2010, annexe
@@ -293,14 +322,18 @@ effet: >-
   de 2010 et celle de 2023 sont déclarées `non_appliquee` à la section ; tenu par
   tests/test_sections_liberales.py. Lue au droit le 3 novembre 2026 (action 130) :
   cinq versions, la règle la même de 2008 à 2026 ; avant 2008, celle de 2008 en tient
-  lieu ; l'inapte et la réversion sans abattement ne sont pas servis.
+  lieu ; l'inapte sans abattement n'est pas servi, ni aucune réversion (relecture R-E,
+  corrigée par la file E-bis).
 sources:
   lu_le: 2026-11-03
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
-    Dater le taux de l'abattement d'avant 2008, que seuls les statuts publiés au
-    Bulletin officiel portent.
+    Dater le taux de l'abattement d'avant 2008, et l'âge d'ouverture, que seuls les
+    statuts publiés au Bulletin officiel portent.
+  - >-
+    Le jour où la caisse a mis en œuvre les statuts de 2008 : le 1er janvier 2009, que
+    les statuts de 2018 donnent pour la réversion, ou le 2 mars 2008.
   - >-
     Comment la caisse compte un trimestre entamé : la pension prend effet au premier
     jour d'un trimestre civil, l'âge n'y tombe pas toujours sur un trimestre entier, et
@@ -326,6 +359,26 @@ sources:
     url: >-
       https://www.cavec.fr/wp-content/uploads/Cavec-depuis-1949-une-histoire-davenir-le-livre-des-70-ans.pdf
     date: 2026-09-23
+  - type: autre
+    reference: >-
+      Le même livre, relu par la file E-bis : 80 564 762 octets, sha256
+      f37b161dfcd8636591b5e49aeb3aafa916baa27bde6773896678f696a0efd030 ; la phrase de
+      1983, page 15 du PDF, « (comme annoncé pour le régime général par Pierre Mauroy
+      en 1982) », que la fiche cite à l'ellipse près.
+    url: >-
+      https://www.cavec.fr/wp-content/uploads/Cavec-depuis-1949-une-histoire-davenir-le-livre-des-70-ans.pdf
+    date: 2026-11-03
+  - type: jorf
+    reference: >-
+      Relu par la file E-bis, d'après la relecture R-E, dans les index JORF et LEGI à
+      jour au 3 novembre 2026 : les articles 3.13 et 3.16 à 3.18 des statuts de 2008 ;
+      les articles 12, 15 et 16 de la partie 2 des statuts de 2018 ; les articles 1.2.1
+      et 1.2.2 du règlement de 2026 ; le II de l'arrêté du 2 juillet 2024 ; les articles
+      des arrêtés du 20 août 2018, du 19 juin 2019 et du 10 juillet 2026, dont aucun ne
+      fixe de date ; le décret n° 53-506 du 21 mai 1953 et l'arrêté du 23 mai 1953 ;
+      L. 643-3, I, de 2004 à 2026, L. 643-4 de 2008, L. 161-17-2 de 2011, L. 351-1 de
+      2010.
+    date: 2026-11-03
 code:
   interrupteurs:
     decote_annulee_par_la_duree: false
