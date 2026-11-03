@@ -175,7 +175,7 @@ versions:
     lu_le: 2026-11-03
     empreinte: sha256:0186b6b165ad2a5f5f561deb969c6a35c661dc2e1fedbfcdcaa24801f51104c1
   - reference: >-
-      accord national interprofessionnel du 8 décembre 1961, « Mise à jour au 1 janvier
+      accord national interprofessionnel du 8 décembre 1961, « Textes mis à jour au 1er janvier
       2018 », copie de la caisse (hors JORF)
     article: >-
       annexe A, article 17, « Majorations familiales afférentes aux allocations de retraite
@@ -194,7 +194,7 @@ versions:
     lu_le: 2026-11-03
     empreinte: sha256:5af24910e87017e7f50ce4db12f5329edf3bb286e1c69749de19a559419d9e03
   - reference: >-
-      convention collective nationale du 14 mars 1947, « Mise à jour au 1 janvier 2018 »,
+      convention collective nationale du 14 mars 1947, « Textes mis à jour au 1er janvier 2018 »,
       copie de la caisse (hors JORF)
     article: annexe I, article 6 bis, 2), « Dispositions applicables aux liquidations d'allocations prenant effet à compter du 1er janvier 2012 »
     en_vigueur: 2012-01-01
@@ -353,13 +353,14 @@ versions:
       sécurité sociale, les stipulations de l'accord national interprofessionnel du 17
       novembre 2017 instituant le régime AGIRC-ARRCO de retraite complémentaire »
   - reference: >-
-      circulaire Agirc-Arrco 2025-15-DT, « Paramètres du régime 2025-2026 » (hors JORF)
+      circulaire Agirc-Arrco 2025-15-DT, « Paramètres du régime 2025-2026 » (hors JORF),
+      https://www.agirc-arrco.fr/storage/CirculaireAgircArrco2025-15dt.pdf
     article: circulaire
     en_vigueur: 2026-01-01
     citation: >-
       « Le montant du plafond des majorations pour enfants nés ou élevés reste fixé à
       2 367,48 € »
-    lu_le: 2026-10-05
+    lu_le: 2026-11-03
     empreinte: sha256:2e34ce291edcfa5e9d21bf0b80e7c30d8889f7342ee8b5dae4463801ad04b288
   - reference: >-
       circulaire Agirc-Arrco n° 2020-02-DRJ du 20 janvier 2020, « Réglementation
@@ -546,6 +547,39 @@ approximations:
   effet: >-
     non mesuré ; les parents d'un troisième enfant né après 1998, partis de 1999 à 2011,
     reçoivent au modèle la majoration de leurs points d'avant 1999
+- version: [accord_de_2011_points_d_avant_1999, accord_de_2011_points_de_1999_a_2011,
+    accord_de_2011_points_depuis_2012, regime_unifie_points_d_avant_1999,
+    regime_unifie_points_de_1999_a_2011, regime_unifie_points_depuis_2012]
+  textes: >-
+    guide des salariés n° 9 de l'Agirc-Arrco, « Majorations pour enfants », édition de
+    mars 2017, partie « Réversion », « 2. Les modalités de calcul », p. 12,
+    https://www.carcept-prev.fr/sites/carcept/files/media/documents/2018/05/Majorations-pour-enfants.pdf,
+    sha256 9dfcdaf5c2d655737ce3509a28fbebe7143322006f62a3abfe23f361972743b2, relu le
+    3 novembre 2026 ; accord du 17 novembre 2017, article 109
+    (https://www.agirc-arrco.fr/storage/2024/09/201809dc_ANI_du_17_novembre_2017.pdf,
+    sha256 b8af8df7372e4f897c1ca0c4fd9bf4baaa5b706ec4737b8e51b593c5a2a4fccb) ; fiche
+    reversion_agirc_arrco
+  ecart: >-
+    Pour la réversion, le guide dit, sans distinguer les régimes : « Lorsque la retraite a
+    été minorée, il n'est pas tenu compte du coefficient de minoration pour le calcul de
+    la majoration pour enfants » ; pour le retraité de 2012 à 2018, que « le régime Agirc
+    en tient compte ». L'article 109, pour un décès depuis 2019 : « Les majorations pour
+    enfants nés ou élevés applicables aux droits du participant décédé sont réversibles
+    au taux de 100% » ; « L'allocation de réversion est calculée sans qu'il soit tenu
+    compte des coefficients dont les droits du participant décédé ont pu être affectés »,
+    dans la limite des points « compte tenu éventuellement de l'abattement appliqué aux
+    droits lors de la liquidation » ; il ne dit pas si la majoration reversée se calcule
+    sans le coefficient. Le modèle ne reverse aucune majoration pour un décès d'avant 2019
+    (fiche reversion_agirc_arrco, son approximation des versions d'avant 2019) ; depuis
+    2019, il reverse en entier la majoration servie au défunt (`majoration_reversible`,
+    droit/reversion.py), menée à l'année du décès : celle d'une pension de l'Agirc
+    liquidée de 2012 à 2018 sous un coefficient d'anticipation le garde, comme les 60 %
+    le gardent (fiche reversion_agirc_arrco). Non corrigé : la règle n'est pas courte, et
+    aucun texte lu ne la tranche pour ce défunt.
+  effet: >-
+    si la caisse reverse cette majoration sans le coefficient, la réversion d'un tel
+    défunt, décédé depuis 2019, est sous-estimée de la part qu'il lui retire (5 % à 0,95,
+    22 % à 0,78) ; non mesuré
 sources:
   lu_le: 2026-11-03
   prochaine_relecture: 2027-06-30
@@ -588,11 +622,23 @@ sources:
     majoration avant le plafond, comme le modèle, ou au montant plafonné ? Aucun texte lu
     ne le chiffre ; les deux exemples du guide n° 9 partent au taux plein.
   - >-
-    L'accord Agirc du 9 février 1994, article 2 : « Les majorations pour charges de
-    famille visées à l'article 6 bis de l'annexe 1 [...] sont affectées, à compter du 1er
-    janvier 1995, d'un pourcentage de service égal à » 96 %, 85 % puis 80 % au 1er
-    janvier 1997 ; le modèle ne le sert pas. Dire jusqu'à quand il a valu, dans les
-    rédactions d'alors de l'article 6 bis.
+    L'accord Agirc du 9 février 1994, article 2 (recueil de la caisse, p. 15) : « Les
+    majorations pour charges de famille visées à l'article 6 bis de l'annexe 1 à la
+    convention collective nationale du 14 mars 1947 sont affectées, à compter du 1er
+    janvier 1995, d'un pourcentage de service égal à : - 96 % à compter du 1er janvier
+    1995 - 85 % à compter du 1er janvier 1996 - 80 % à compter du 1er janvier 1997 ». Le
+    modèle sert ces 80 % de fait, à toute date d'effet, sans les appliquer une seconde
+    fois : son barème de l'Agirc d'avant 2012 est celui que l'article 6 bis écrit depuis
+    2012 pour les « périodes antérieures au 1er janvier 2012 », « 8 % pour 3 enfants » à
+    « 24 % pour 7 enfants ou plus », soit 80 % de 10 à 30 % ; le COR le décrit ainsi
+    avant 2012 : « application d'un pourcentage de service de 80% (01/03/94) à la
+    majoration suivante : 10% pour 3 enfants », « 30% pour 7 enfants et + » (séance du
+    25 mai 2011, document n° 7, https://www.cor-retraites.fr/sites/default/files/2019-06/doc-1530.pdf,
+    sha256 952c1af12ace77881e18b58599bd900044fbfc0880950c0964f8308197029a00, relu le
+    3 novembre 2026 ; une source secondaire, qui date le pourcentage du 1er mars 1994,
+    quand l'accord fait foi). Restent à lire les rédactions de l'article 6 bis de 1994 à
+    2011, et ce que le modèle doit aux pensions de 1995 et 1996 (96 % et 85 %) et d'avant
+    1995 (10 à 30 %), une tâche à part.
   - >-
     Le site réglementaire de la caisse (reglementation.agirc-arrco.fr), dont le
     certificat ne se vérifiait pas le 3 novembre 2026 : y relire l'assiette de la
@@ -645,7 +691,7 @@ sources:
   - type: autre
     reference: >-
       Accord du 8 décembre 1961, annexe A, article 17, et convention du 14 mars 1947,
-      annexe I, article 6 bis, « Mise à jour au 1 janvier 2018 »
+      annexe I, article 6 bis, « Textes mis à jour au 1er janvier 2018 »
     url: https://www.agirc-arrco.fr/storage/2021/11/Accord_8dec1961-1.pdf
     date: 2018-01-01
   - type: autre
@@ -742,6 +788,13 @@ historique:
   le coefficient (`sans_anticipation`), que le moteur lit à la date d'effet — l'Arrco de
   2012 à 2018 (guide n° 9), tous depuis 2019 (circulaire 2020-02-DRJ) ; avant 2012, que
   rien ne tranche, le coefficient reste, déclaré.
+- >-
+  2026-11-03 — après la relecture de la majoration avant le coefficient (action 175, note
+  2026-11-03-agirc-arrco-des-parents-de-trois-enfants.md) : le pourcentage de service de
+  80 % de l'accord Agirc du 9 février 1994 est dit servi de fait par le barème de 8 à
+  24 %, non à ajouter ; la réversion du guide n° 9 et l'article 109 de l'accord de 2017,
+  déclarés ; la circulaire 2025-15-DT reçoit son adresse, son empreinte refaite ; le titre
+  des copies de 1947 et de 1961 cité tel qu'elles l'impriment.
 effet: >-
   Parents de trois enfants salariés du privé avant 2019. Le modèle servait 10 %
   à tous les points ; les points Arrco de 1999 à 2011 n'en valent que 5, ceux de

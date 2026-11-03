@@ -79,7 +79,19 @@ def test_les_versions_datent_le_protocole_et_la_structure_financiere(simulateur)
     assert asf["exoneration_au_taux_plein"] is True
     assert asf["exonerations"] == [{"motifs": ["inaptitude", *categories.FICHES_DES_CATEGORIES],
                                     "regimes": None}]
-    assert regle(FICHE, "2026-10-01") == asf
+    assert regle(FICHE, "2011-06-01") == asf
+    # Dès le 1er juillet 2011, le parent de trois enfants au taux plein du
+    # régime général à soixante-cinq ans (accord du 18 mars 2011, article 1er ;
+    # accord du 17 novembre 2017, article 84, 3), hors l'Arrco des cultes, dont
+    # la pension de base est celle de la CAVIMAC.
+    parents = regle(FICHE, "2011-07-01")
+    assert parents == {**asf, "exonerations": [
+        *asf["exonerations"],
+        {"motifs": [categories.FICHE_DES_SOIXANTE_CINQ_ANS],
+         "regimes": ["agirc", "agirc_arrco", "agirc_entreprises_nouvelles", "arrco",
+                     "arrco_tranche_2", "arrco_tranche_2_entreprises_nouvelles", "unirs"]}]}
+    assert regle(FICHE, "2016-01-01") == regle(FICHE, "2019-01-01") == parents
+    assert regle(FICHE, "2026-10-01") == parents
 
 
 # -- la structure financière, au 1er avril 1983 ------------------------------------

@@ -3081,8 +3081,24 @@ export function exonereParMotif(moteur, regle, periode, carriere, ageLiquidation
       moteur, invalidite.REGIME_DES_SALARIES, carriere, ageLiquidation)) {
       return true;
     }
+    if (motifs.includes(categories.FICHE_DES_SOIXANTE_CINQ_ANS)
+        && parentAuTauxPleinDuRegimeGeneral(moteur, carriere, ageLiquidation)) {
+      return true;
+    }
   }
   return false;
+}
+
+/**
+ * Le parent de trois enfants a-t-il, à cet âge, le taux plein du régime
+ * général que lui donne le IV de l'article 20 de la loi n° 2010-1330 à
+ * soixante-cinq ans (`categories.ageDuParentDeTroisEnfants`) ? Voir
+ * `liquider.parent_au_taux_plein_du_regime_general`.
+ */
+export function parentAuTauxPleinDuRegimeGeneral(moteur, carriere, ageLiquidation) {
+  const age = categories.ageDuParentDeTroisEnfants(
+    moteur, invalidite.REGIME_DES_SALARIES, carriere);
+  return age !== null && ageLiquidation >= age - 1e-9;
 }
 
 /**

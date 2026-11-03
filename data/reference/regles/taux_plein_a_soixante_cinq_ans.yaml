@@ -309,54 +309,77 @@ approximations:
     accord du 18 mars 2011 relatif aux retraites complémentaires AGIRC-ARRCO-AGFF, article
     1er, dans le recueil « Accords nationaux des partenaires sociaux » de la caisse (hors
     JORF), https://www.agirc-arrco.fr/storage/2021/11/liste_accords_paritaires_Agirc_Arrco.pdf,
-    sha256 0186b6b165ad2a5f5f561deb969c6a35c661dc2e1fedbfcdcaa24801f51104c1 ; accord
-    national interprofessionnel du 17 novembre 2017, « Applicable au 1er janvier 2019 »,
-    articles 84 et 98 (hors JORF),
+    sha256 0186b6b165ad2a5f5f561deb969c6a35c661dc2e1fedbfcdcaa24801f51104c1 ; convention
+    collective nationale du 14 mars 1947, annexe V, préambule et article 2 ter, et accord
+    du 8 décembre 1961, annexe E, articles 2 ter et 6, « Textes mis à jour au 1er janvier 2018 »
+    (hors JORF), https://www.agirc-arrco.fr/storage/2021/11/CCN_14mars1947-1.pdf, sha256
+    38966c272726dd11abbcc5ffa18ffb67d2731caa86ca4ce3aa94d0169568ce78, et
+    https://www.agirc-arrco.fr/storage/2021/11/Accord_8dec1961-1.pdf, sha256
+    5af24910e87017e7f50ce4db12f5329edf3bb286e1c69749de19a559419d9e03 ; accord national
+    interprofessionnel du 17 novembre 2017, « Applicable au 1er janvier 2019 », articles
+    84, 98, et sa note 1, et 102 (hors JORF),
     https://www.agirc-arrco.fr/storage/2024/09/201809dc_ANI_du_17_novembre_2017.pdf,
-    sha256 b8af8df7372e4f897c1ca0c4fd9bf4baaa5b706ec4737b8e51b593c5a2a4fccb ; tous deux
-    téléchargés et relus le 3 novembre 2026
+    sha256 b8af8df7372e4f897c1ca0c4fd9bf4baaa5b706ec4737b8e51b593c5a2a4fccb ; circulaire
+    Agirc-Arrco 2020-02-DRJ du 20 janvier 2020, fiche 3, I.1.1 et I.1.2.2 (hors JORF),
+    https://www.agirc-arrco.fr/wp-content/uploads/2021/10/2020-02-DRJ_Regime_Agirc-Arrco_Reglementation_applicable_aux_individus.pdf,
+    sha256 524779881a0e4e377382f4b3d8ab9cf0ebd4aa21fe2eca841dd523491f4806ae ; loi
+    n° 2010-1330, article 20, IV (LEGIARTI000023023835) ; tous téléchargés ou relus le
+    3 novembre 2026
   ecart: >-
-    Le modèle compte le coefficient d'anticipation de l'Arrco et de l'Agirc, puis de
-    l'Agirc-Arrco, jusqu'à l'âge de la génération. Les deux accords servent pourtant ces
-    parents sans abattement. L'accord du 18 mars 2011, article 1er, « pour toute
-    liquidation d'allocations AGIRC et/ou ARRCO prenant effet à compter du 1er juillet
-    2011 et jusqu'au 31 décembre 2018 au plus tard » : « Les participants aux régimes
-    AGIRC et ARRCO qui justifient avoir, avant l'âge fixé au 1° de l'article L. 351-8 du
-    code de la Sécurité sociale, fait liquider, leur pension d'assurance vieillesse, à
-    taux plein, auprès du régime général d'assurance vieillesse de la Sécurité sociale ou
-    du régime des assurances sociales agricoles », notamment « en application des III et
-    IV de l'article 20 de la loi n° 2010-1330 du 9 novembre 2010 [...] (aidants
-    familiaux, assurés handicapés, parents d'enfant handicapé et parents de 3 enfants sous
-    certaines conditions) ; pourront faire liquider leurs allocations AGIRC et/ou ARRCO,
-    sans abattement, sur les tranches A et B des rémunérations ». L'accord national
-    interprofessionnel du 17 novembre 2017, article 84, depuis le 1er janvier 2019 : « 1.
-    Le participant peut bénéficier de sa pension au titre du présent régime sans
-    abattement dès lors qu'il a atteint l'âge visé au 1° de l'article L. 351-8 du code de
-    la sécurité sociale » ; « 3. Le participant bénéficie de sa pension au titre du
-    présent régime avant l'âge visé au paragraphe 1. et sans application des coefficients
-    viagers mentionnés au paragraphe 2. à l'âge auquel il a obtenu la pension d'assurance
+    Depuis le 3 novembre 2026, le modèle sert ces parents sans coefficient d'anticipation
+    à l'Agirc et à l'Arrco, puis à l'Agirc-Arrco, quand ils ont à leur départ le taux plein
+    du régime général à soixante-cinq ans (fiche coefficients_anticipation_agirc_arrco,
+    ses versions dès le 1er juillet 2011). L'accord du 18 mars 2011, article 1er, « pour
+    toute liquidation d'allocations AGIRC et/ou ARRCO prenant effet à compter du 1er
+    juillet 2011 et jusqu'au 31 décembre 2018 au plus tard » : « Les participants aux
+    régimes AGIRC et ARRCO qui justifient avoir, avant l'âge fixé au 1° de l'article
+    L. 351-8 du code de la Sécurité sociale, fait liquider, leur pension d'assurance
+    vieillesse, à taux plein, auprès du régime général d'assurance vieillesse de la
+    Sécurité sociale ou du régime des assurances sociales agricoles », notamment « en
+    application des III et IV de l'article 20 de la loi n° 2010-1330 du 9 novembre 2010
+    [...] (aidants familiaux, assurés handicapés, parents d'enfant handicapé et parents de
+    3 enfants sous certaines conditions) ; pourront faire liquider leurs allocations AGIRC
+    et/ou ARRCO, sans abattement, sur les tranches A et B des rémunérations » ; l'annexe V
+    de 1947 et l'annexe E de 1961, article 2 ter, les y admettent « à l'âge de 65 ans ».
+    L'accord national interprofessionnel du 17 novembre 2017, article 84, depuis le 1er
+    janvier 2019 : « 3. Le participant bénéficie de sa pension au titre du présent régime
+    avant l'âge visé au paragraphe 1. et sans application des coefficients viagers
+    mentionnés au paragraphe 2. à l'âge auquel il a obtenu la pension d'assurance
     vieillesse du régime général ou du régime des assurances sociales agricoles à taux
-    plein » ; le coefficient de solidarité de l'article 98 ne touche que « Les
-    participants, nés à partir du 1er janvier 1957 ». Ce que les textes lus ne tranchent
-    pas : depuis 2019, avant soixante-cinq ans, sans le taux plein du régime de base, le
-    coefficient se compte de « cet âge », celui du 1° de L. 351-8 (article 84, 2), que le
-    IV de l'article 20 fixe pour ces parents : « Par dérogation aux dispositions de
-    l'article L. 351-8 du code de la sécurité sociale, l'âge mentionné au 1° dudit article
-    est fixé à soixante-cinq ans » ; aucun ne dit si l'Agirc-Arrco le lit ainsi, et le
-    modèle compte de l'âge de la génération ; les points de l'Arrco des cultes, dont
-    la pension de base est celle de la CAVIMAC, quand les deux accords ne nomment que le
-    régime général et les assurances sociales agricoles.
+    plein » ; son article 98 exclut des coefficients de solidarité, qui ne visent que
+    « Les participants, nés à partir du 1er janvier 1957 », « les participants visés au
+    III et IV de l'article 20 de la loi n° 2010-1330 du 9 novembre 2010 ainsi qu'au 1° bis
+    de l'article L. 351-8 du code de la sécurité sociale qui bénéficient du taux plein dans
+    le régime de base dès 65 ans », sa note 1 nommant les « assurés nés entre le 1er
+    juillet 1951 et le 31 décembre 1955 parents d'au moins trois enfants ». La tranche C
+    garde son coefficient : « Cette annexe n'est pas applicable aux droits constitués
+    jusqu'au 31 décembre 2015 sur la tranche C des rémunérations » (annexe V, préambule ;
+    accord de 2017, article 102). Ce que les textes lus ne tranchent pas, et que le modèle
+    sert à l'âge de la génération : partis avant soixante-cinq ans, sans le taux plein du
+    régime de base, de quel âge se compte leur coefficient — l'accord de 2011 fige l'âge
+    de la retraite « dans les rédactions respectives des articles L. 351-8, 1°, et
+    L. 161-17-2 du code de la Sécurité sociale en vigueur à la date du présent accord »
+    (article 3) et ne les admet qu'« à l'âge de 65 ans » ; depuis 2019, le coefficient se
+    compte de « cet âge », celui du 1° de L. 351-8 (article 84, 2), que le IV de l'article
+    20 fixe pour eux : « Par dérogation aux dispositions de l'article L. 351-8 du code de
+    la sécurité sociale, l'âge mentionné au 1° dudit article est fixé à soixante-cinq ans »,
+    quand la circulaire 2020-02-DRJ dit « l'âge de 67 ans, âge visé au 1° de l'article
+    L. 351-8 du code de la sécurité sociale pour les participants nés à compter du 1er
+    janvier 1955 », sans nommer la dérogation ; de même, l'âge d'où se compte le
+    coefficient des points de la tranche C d'avant 2016 ; et les points de l'Arrco des
+    cultes, dont la pension de base est celle de la CAVIMAC, quand les accords ne nomment
+    que le régime général et les assurances sociales agricoles : le modèle ne les exonère
+    pas.
   effet: >-
-    la complémentaire de ces parents partis de soixante-cinq ans à l'âge de leur
-    génération, sous le coefficient de la table des âges de l'article 84, 2, que le
-    modèle applique aussi avant 2019, au trimestre supérieur. Née le 15 mars 1953, partie
-    le 1er avril 2018, à treize mois et demi de 66 ans et 2 mois : 5 trimestres, « moins
-    1 an 1 trimestre », 0,95 au lieu de 1. Née le 15 septembre 1954, partie le 1er
-    octobre 2019, à dix-huit mois et demi de 66 ans et 7 mois : 7 trimestres, « moins 1
-    an 3 trimestres », 0,93. Née le 15 mars 1955, partie le 1er avril 2020, à vingt-trois
-    mois et demi de 67 ans : 8 trimestres, « moins 2 ans », 0,92. Soit 5 %, 7 % et 8 %
-    de leur complémentaire, ce que les deux moteurs servent
-    (tests/test_taux_plein_a_soixante_cinq_ans.py).
+    ce que le modèle sert sans le trancher. Née le 15 mars 1953, partie avant soixante-cinq
+    ans, à soixante-quatre ans, le 1er avril 2017 : vingt-cinq mois et demi jusqu'à 66 ans
+    et 2 mois, 9 trimestres, « moins 2 ans 1 trimestre », 0,91 ; comptés de soixante-cinq
+    ans, onze mois et demi, 4 trimestres, « moins 1 an », 0,96 : 5 points de sa
+    complémentaire si la caisse compte de soixante-cinq ans. La cadre née le même jour,
+    partie à soixante-cinq ans le 1er avril 2018 : les points de sa tranche C d'avant 2016
+    à 0,95 (5 trimestres jusqu'à 66 ans et 2 mois), à 1 s'ils se comptaient de
+    soixante-cinq ans. Les deux moteurs le servent
+    (tests/test_taux_plein_a_soixante_cinq_ans.py, NON_TRANCHE et la tranche C).
 - version: [loi_du_9_novembre_2010]
   textes: >-
     loi n° 2010-1330, article 28 (LEGIARTI000023023851, du 1er juillet au 23 décembre
@@ -500,9 +523,11 @@ effet: >-
   2011 à 2022 sans la durée requise : leur décote ne se compte plus que jusqu'à soixante-cinq
   ans, et s'annule à soixante-cinq ans au lieu de soixante-cinq ans et quatre mois à
   soixante-sept ans. Les autres catégories de la fiche restent décotées. Non mesuré.
-  Leurs complémentaires, et les fonctionnaires, la CAVIMAC et les points d'avant 1973,
-  où vaut le même âge, les abattent encore jusqu'à l'âge de leur génération : les
-  approximations le chiffrent sur des exemples : de 5 % à 8 % de la complémentaire,
+  Depuis le 3 novembre 2026, l'Agirc et l'Arrco, puis l'Agirc-Arrco, les servent sans
+  coefficient dès soixante-cinq ans, sauf la tranche C d'avant 2016 : de 5 % à 8 % de
+  plus à leur complémentaire. L'Ircantec et le RCI, les fonctionnaires, la CAVIMAC et
+  les points d'avant 1973, où vaut le même âge, les abattent encore jusqu'à l'âge de
+  leur génération : les approximations le chiffrent sur des exemples : 5 % au RCI,
   6,25 % de la pension de base de la fonctionnaire née en 1955, de la ministre du culte
   et des points d'avant 1973.
 sources:
@@ -515,12 +540,13 @@ sources:
     personne ; un trimestre de majoration pour enfant handicapé (L. 351-4-1) ; trente
     mois d'aide à son enfant bénéficiaire de la prestation de compensation.
   - >-
-    À la file des complémentaires : servir sans coefficient à ces parents l'Agirc-Arrco,
-    que l'accord du 18 mars 2011 (article 1er) et celui du 17 novembre 2017 (article 84)
-    servent sans abattement, l'Ircantec, qui les nomme (arrêté du 30 décembre 1970,
-    article 16, I, 3°, d), et le RCI (règlement, article 12) ; dire de quel âge
-    l'Agirc-Arrco compte leur coefficient avant soixante-cinq ans depuis 2019, et ce
-    qu'elle sert aux points de l'Arrco des cultes, que les textes lus ne tranchent pas.
+    À la file des complémentaires : servir sans coefficient à ces parents l'Ircantec,
+    qui les nomme (arrêté du 30 décembre 1970, article 16, I, 3°, d), et le RCI
+    (règlement, article 12) ; dire de quel âge l'Agirc-Arrco compte leur coefficient
+    avant soixante-cinq ans, et celui des points de la tranche C d'avant 2016, et ce
+    qu'elle sert aux points de l'Arrco des cultes, que les textes lus ne tranchent pas,
+    la circulaire 2020-02-DRJ non plus : une circulaire de la caisse qui nomme ces
+    parents, ou sa réponse écrite.
     À la file du régime général : servir le même âge aux fonctionnaires (article 28, III,
     et R. 26 ter, dont la forme de l'interruption n'est pas saisie), à la CAVIMAC et aux
     points d'avant 1973 ; puis aux non-salariés agricoles (article 21, IV), aux libéraux
@@ -631,6 +657,31 @@ sources:
       de L. 351-8 vient du 19° du II, que le A applique aux pensions prenant effet à
       compter du 1er janvier 2026
     date: 2026-11-03
+  - type: autre
+    reference: >-
+      Agirc-Arrco, convention collective nationale du 14 mars 1947, annexe V, préambule et
+      article 2 ter, et accord du 8 décembre 1961, annexe E, articles 2 ter et 6, « Mise à
+      jour au 1 janvier 2018 », téléchargés le 3 novembre 2026, sha256
+      38966c272726dd11abbcc5ffa18ffb67d2731caa86ca4ce3aa94d0169568ce78 et
+      5af24910e87017e7f50ce4db12f5329edf3bb286e1c69749de19a559419d9e03 : « à l'âge de 65
+      ans, les participants au régime ayant fait liquider leur pension d'assurance
+      vieillesse à taux plein en application du 1° bis de l'article L.351-8 du Code de la
+      sécurité sociale, ou des paragraphes III et IV de l'article 20 de la loi du 9
+      novembre 2010 portant réforme des retraites » ; à l'Arrco, « Les dispositions de la
+      présente annexe visent les allocations correspondant aux tranches 1 et 2 des
+      rémunérations »
+    url: https://www.agirc-arrco.fr/storage/2021/11/CCN_14mars1947-1.pdf
+    date: 2026-11-03
+  - type: autre
+    reference: >-
+      circulaire Agirc-Arrco 2020-02-DRJ du 20 janvier 2020, « Réglementation applicable
+      aux individus », fiche 3, I.1.1, I.1.2.1 et I.1.2.2, et fiche 4, III.3.2.1,
+      téléchargée le 3 novembre 2026, sha256
+      524779881a0e4e377382f4b3d8ab9cf0ebd4aa21fe2eca841dd523491f4806ae : elle ne nomme
+      pas ces parents ; l'origine du taux plein du régime général « peut notamment »
+      tenir à la durée, aux « 1° bis à 5° de l'article L. 351-8 », aux carrières longues
+    url: https://www.agirc-arrco.fr/wp-content/uploads/2021/10/2020-02-DRJ_Regime_Agirc-Arrco_Reglementation_applicable_aux_individus.pdf
+    date: 2026-11-03
 textes_a_rattacher:
 - reference: L. 351-8 CSS, 1° bis et 6°
 - reference: loi n° 2010-1330 du 9 novembre 2010, article 20, III
@@ -669,7 +720,8 @@ code:
   tests:
   - >-
     tests/test_taux_plein_a_soixante_cinq_ans.py, qui date la fiche, rend l'âge de
-    dix-sept carrières dans les deux moteurs et sert la pension de bout en bout
+    dix-sept carrières dans les deux moteurs et sert la pension de bout en bout, et
+    l'Agirc-Arrco sans coefficient (SANS_ABATTEMENT, NON_TRANCHE, la tranche C)
 historique:
 - >-
   2026-11-03 — née de l'étape 4 de l'action 175 (la base de législation de la Cnav, thème
@@ -689,3 +741,10 @@ historique:
   fonctionnaires, de la CAVIMAC, des points d'avant 1973 et du RCI, sont déclarés et
   chiffrés, en attendant le calcul ; trois références reprises (note
   2026-11-03-correction-taux-plein-parents-de-trois-enfants.md).
+- >-
+  2026-11-03 — l'Agirc-Arrco des parents de trois enfants (action 175, note
+  2026-11-03-agirc-arrco-des-parents-de-trois-enfants.md) : l'Agirc et l'Arrco de 2011 à
+  2018, puis l'Agirc-Arrco, les servent sans coefficient dès qu'ils ont à soixante-cinq
+  ans le taux plein du régime général, la tranche C d'avant 2016 gardant le sien, dans les
+  deux moteurs ; avant soixante-cinq ans, l'âge d'où se compte leur coefficient reste
+  celui de la génération, que les textes lus ne tranchent pas, déclaré.

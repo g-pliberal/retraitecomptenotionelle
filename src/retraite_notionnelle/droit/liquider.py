@@ -4120,7 +4120,29 @@ def exonere_par_motif(moteur, regle: dict, periode: PeriodeRegime, carriere: Car
         if "inaptitude" in motifs and invalidite.taux_plein_de_l_inapte(
                 moteur, invalidite.REGIME_DES_SALARIES, carriere, age_liquidation):
             return True
+        if (categories.FICHE_DES_SOIXANTE_CINQ_ANS in motifs
+                and parent_au_taux_plein_du_regime_general(moteur, carriere, age_liquidation)):
+            return True
     return False
+
+
+def parent_au_taux_plein_du_regime_general(moteur, carriere: Carriere,
+                                           age_liquidation: float) -> bool:
+    """Le parent de trois enfants a-t-il, à cet âge, le taux plein du régime
+    général que lui donne le IV de l'article 20 de la loi n° 2010-1330 à
+    soixante-cinq ans (:func:`.categories.age_du_parent_de_trois_enfants`) ?
+    L'Agirc et l'Arrco le servent alors « sans abattement, sur les tranches A et
+    B des rémunérations » (accord du 18 mars 2011, article 1er), « à l'âge de 65
+    ans » (convention du 14 mars 1947, annexe V, et accord du 8 décembre 1961,
+    annexe E, article 2 ter), et l'Agirc-Arrco « sans application des
+    coefficients viagers » (accord du 17 novembre 2017, article 84, 3) : la
+    tranche C d'avant 2016 garde le coefficient de l'âge (:func:`liquider_chaque_regime`).
+    Avant soixante-cinq ans, l'âge d'où se compte leur coefficient, que les textes
+    lus ne tranchent pas, reste celui de la génération (fiche
+    ``taux_plein_a_soixante_cinq_ans``, ses approximations)."""
+    age = categories.age_du_parent_de_trois_enfants(
+        moteur, invalidite.REGIME_DES_SALARIES, carriere)
+    return age is not None and age_liquidation >= age - 1e-9
 
 
 def coefficient_pour_age(moteur, periode: PeriodeRegime, carriere: Carriere,

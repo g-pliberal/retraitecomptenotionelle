@@ -472,13 +472,24 @@ def test_les_versions_de_l_anticipation_se_coupent_aux_jours_des_textes():
 def test_la_coupe_ne_change_pas_ce_que_le_moteur_lit():
     """Depuis le 1er avril 1983, chaque version porte ce que la structure
     financière portait : la coupe est une lecture, aucun chiffre du modèle ne
-    bouge."""
+    bouge ; dès le 1er juillet 2011, plus le parent de trois enfants au taux
+    plein du régime général à soixante-cinq ans (accord du 18 mars 2011,
+    article 1er ; tests/test_taux_plein_a_soixante_cinq_ans.py)."""
     versions = [v for v in _versions(ANTICIPATION)
                 if (_bornes(v, "liquidation.date_effet")[0] or date.min) >= date(1983, 4, 1)]
-    lus = {json.dumps(v["contenu"]["parametres"], sort_keys=True) for v in versions}
     assert len(versions) == len(COUPES_DE_L_ANTICIPATION) - 1
-    assert lus == {json.dumps(_version(ANTICIPATION, "structure_financiere")["contenu"]
-                              ["parametres"], sort_keys=True)}
+    asf = _version(ANTICIPATION, "structure_financiere")["contenu"]["parametres"]
+    parents = {**asf, "exonerations": [
+        *asf["exonerations"],
+        {"motifs": ["taux_plein_a_soixante_cinq_ans"],
+         "regimes": ["agirc", "agirc_arrco", "agirc_entreprises_nouvelles", "arrco",
+                     "arrco_tranche_2", "arrco_tranche_2_entreprises_nouvelles", "unirs"]}]}
+    lus = {}
+    for v in versions:
+        avant = _bornes(v, "liquidation.date_effet")[0] < date(2011, 7, 1)
+        lus.setdefault(avant, set()).add(json.dumps(v["contenu"]["parametres"], sort_keys=True))
+    assert lus == {True: {json.dumps(asf, sort_keys=True)},
+                   False: {json.dumps(parents, sort_keys=True)}}
 
 
 def test_la_table_des_ages_est_l_escalier_du_portage():

@@ -485,13 +485,17 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   activité après une naissance que la saisie dit a l'âge du taux plein à
   soixante-cinq ans, d'où se compte aussi sa décote, au régime général, chez
   les salariés agricoles, les artisans et les commerçants (fiche
-  `taux_plein_a_soixante_cinq_ans`) ; une naissance dite à l'année l'ouvre si
-  les conditions tiennent quel que soit son mois, une naissance présumée
-  jamais. Restent dehors pour lui l'adoption, les périodes accomplies dans
-  l'Union européenne, ses complémentaires — l'Agirc-Arrco, l'Ircantec et celle
-  des indépendants, que leurs textes lui servent sans coefficient, l'abattent
-  encore jusqu'à l'âge de sa génération —, et les régimes de base où vaut le
-  même âge : les fonctionnaires, dont la décote s'annule pour lui à
+  `taux_plein_a_soixante_cinq_ans`), et l'Agirc et l'Arrco, puis l'Agirc-Arrco,
+  sans coefficient dès ce taux plein, sauf les points de la tranche C d'avant
+  2016 (fiche `coefficients_anticipation_agirc_arrco`) ; parti avant
+  soixante-cinq ans, l'Agirc-Arrco compte son coefficient de l'âge de sa
+  génération, ce que ses textes ne tranchent pas. Une naissance dite à l'année
+  l'ouvre si les conditions tiennent quel que soit son mois, une naissance
+  présumée jamais. Restent dehors pour lui l'adoption, les périodes accomplies
+  dans l'Union européenne, l'Arrco des cultes, ses autres complémentaires —
+  l'Ircantec et celle des indépendants, que leurs textes lui servent sans
+  coefficient, l'abattent encore jusqu'à l'âge de sa génération —, et les
+  régimes de base où vaut le même âge : les fonctionnaires, dont la décote s'annule pour lui à
   soixante-cinq ans s'il a interrompu son activité par un congé ou une
   disponibilité, ou l'a réduite par un temps partiel, ce que la saisie ne
   demande pas, la CAVIMAC, les points d'avant 1973 des

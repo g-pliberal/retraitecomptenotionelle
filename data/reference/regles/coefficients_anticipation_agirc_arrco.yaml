@@ -51,7 +51,11 @@ effet: >-
   les travailleurs manuels et les mères de famille ouvrières au taux de soixante-cinq
   ans du régime général (protocole du 14 juin 1976). Le moteur levait l'abattement dès
   le 1er janvier 1983, et à toute date sur les points de l'UNIRS ; il n'exceptait pas
-  ces deux catégories (18 octobre 2026).
+  ces deux catégories (18 octobre 2026). Il abattait aussi, jusqu'à l'âge de sa
+  génération, le parent de trois enfants né de juillet 1951 à 1955 au taux plein du
+  régime général dès soixante-cinq ans, que l'Agirc et l'Arrco servent sans abattement
+  depuis le 1er juillet 2011, sauf la tranche C d'avant 2016 : 5 à 8 % de sa
+  complémentaire (3 novembre 2026 ; fiche taux_plein_a_soixante_cinq_ans).
 lit:
 - >-
   l'âge de l'assuré à la date d'effet de sa pension, et l'âge de la retraite de sa
@@ -65,7 +69,10 @@ lit:
 - >-
   ce qui l'exonère encore : l'inaptitude reconnue, une catégorie au taux plein du régime
   général (L. 351-8), le départ anticipé des assurés handicapés ; à l'Arrco, de juillet
-  1976 à mars 1983, le travailleur manuel et la mère de famille ouvrière
+  1976 à mars 1983, le travailleur manuel et la mère de famille ouvrière ; depuis le
+  1er juillet 2011, le parent de trois enfants né de juillet 1951 à 1955 que le IV de
+  l'article 20 de la loi n° 2010-1330 met au taux plein du régime général à soixante-cinq
+  ans (fiche taux_plein_a_soixante_cinq_ans)
 - >-
   la date d'effet de la pension, qui choisit le texte ; et, pour les points de l'Agirc de
   la tranche C, les périodes de 1991 à 2015 qui les ont inscrits
@@ -82,8 +89,10 @@ dates_qui_decident:
 # moteur (droit/liquider.py, `abattement_points`, et son jumeau) y lit ce qui
 # exonère des coefficients : `exoneration_au_taux_plein`, l'abattement levé pour
 # qui a la durée du taux plein, et la table des trimestres manquants avec lui ;
-# `exonerations`, chacune des `motifs` — l'inaptitude, ou la fiche d'un taux plein
-# par catégorie de L. 351-8 — que les `regimes` nommés servent sans coefficient,
+# `exonerations`, chacune des `motifs` — l'inaptitude, la fiche d'un taux plein
+# par catégorie de L. 351-8, ou celle du taux plein à soixante-cinq ans du parent de
+# trois enfants (`liquider.parent_au_taux_plein_du_regime_general`) — que les
+# `regimes` nommés servent sans coefficient,
 # tous quand ils ne sont pas nommés. Les tables sont celles des périodes
 # (`bareme_anticipation`). Elles se coupent aux jours où un texte change la
 # règle (tests/test_agirc_arrco_au_droit.py) ; depuis le 1er avril 1983, toutes
@@ -443,7 +452,7 @@ versions:
       « A raison de cinq mois par génération pour les assurés nés entre le 1er janvier
       1952 et le 31 décembre 1954 »
   - reference: >-
-      convention collective nationale du 14 mars 1947, « Mise à jour au 1 janvier 2018 »,
+      convention collective nationale du 14 mars 1947, « Textes mis à jour au 1er janvier 2018 »,
       copie de la caisse (hors JORF),
       https://www.agirc-arrco.fr/storage/2021/11/CCN_14mars1947-1.pdf
     article: annexe I, articles 6, § 1er, 8, § 2, et 9 ; annexe V, articles 1er à 5, et sa note
@@ -458,7 +467,15 @@ versions:
       les anciens déportés ou internés, les anciens combattants et prisonniers de
       guerre ; annexe V, article 2 : « avoir un âge compris entre celui fixé par l'article
       L. 161-17-2 du Code de la sécurité sociale et celui visé au 1° de l'article L.
-      351-8 de ce Code » ; article 4, à qui manquent « 20 trimestres au plus », « en
+      351-8 de ce Code » ; article 2 ter : « Par dérogation aux conditions d'âge et de
+      durée d'assurance prévues à l'article 2, peuvent prétendre au bénéfice de la
+      présente annexe : - à l'âge de 65 ans, les participants au régime ayant fait
+      liquider leur pension d'assurance vieillesse à taux plein en application du 1° bis
+      de l'article L.351-8 du Code de la sécurité sociale, ou des paragraphes III et IV
+      de l'article 20 de la loi du 9 novembre 2010 portant réforme des retraites » ;
+      préambule : « Cette annexe n'est pas applicable aux droits constitués jusqu'au 31
+      décembre 2015 sur la tranche C des rémunérations » ; article 4, à qui manquent
+      « 20 trimestres au plus », « en
       assimilant à l'âge visé au 1er alinéa de l'article 6 de l'annexe I l'âge auquel
       les intéressés auraient effectivement compté le nombre de trimestres d'assurance
       requis pour bénéficier d'une pension à taux plein » ; article 5, « les participants
@@ -467,13 +484,14 @@ versions:
     lu_le: 2026-11-03
     empreinte: sha256:38966c272726dd11abbcc5ffa18ffb67d2731caa86ca4ce3aa94d0169568ce78
   - reference: >-
-      accord national interprofessionnel du 8 décembre 1961, « Mise à jour au 1 janvier
+      accord national interprofessionnel du 8 décembre 1961, « Textes mis à jour au 1er janvier
       2018 », copie de la caisse (hors JORF),
       https://www.agirc-arrco.fr/storage/2021/11/Accord_8dec1961-1.pdf
     article: annexe A, articles 18 et 19 ; annexe E, articles 1er à 6, et sa note
     citation: >-
       le même âge, la même table, sauf « dans les conditions prévues par l'article 19 de
-      la présente annexe et par l'annexe E » ; article 19 : « 1 - Anciens déportés ou
+      la présente annexe et par l'annexe E » ; annexe E, article 2 ter, mot pour mot celui
+      de l'annexe V de 1947 ; article 19 : « 1 - Anciens déportés ou
       internés », « 2 - Anciens combattants et prisonniers de guerre », « 3 - Mères de
       famille ouvrières », « 4 - Mineurs de fond », qui ont « 30 ans de services miniers
       validés par la CANSSM [...], dont 15 ans au fond », sans coefficient « à partir de
@@ -493,7 +511,8 @@ versions:
       Sans coefficient sur les tranches A et B : de l'âge légal à cet âge, qui a la durée
       du taux plein et la pension du régime général ou agricole ; avant l'âge légal, la
       carrière longue, le handicap, l'incapacité permanente, l'amiante ; à 65 ans, le 1°
-      bis de L. 351-8 ; et les catégories : à l'Arrco, l'inapte, l'ancien déporté,
+      bis de L. 351-8 et le parent de trois enfants des III et IV de l'article 20 de la
+      loi n° 2010-1330 ; et les catégories : à l'Arrco, l'inapte, l'ancien déporté,
       l'ancien combattant, la mère de famille ouvrière, le mineur de fond ; à l'Agirc,
       l'inapte, l'ancien déporté, l'ancien combattant, et le mineur qui a la durée. De
       l'âge légal à cet âge, à qui manquent vingt trimestres au plus, le coefficient de
@@ -506,6 +525,9 @@ versions:
           taux_plein_meres_de_famille_ouvrieres, taux_plein_travailleurs_manuels,
           taux_plein_anciens_combattants_prisonniers]
         regimes: null
+      - motifs: [taux_plein_a_soixante_cinq_ans]
+        regimes: [agirc, agirc_arrco, agirc_entreprises_nouvelles, arrco, arrco_tranche_2,
+          arrco_tranche_2_entreprises_nouvelles, unirs]
   exemples: aucun trouvé
 - id: accord_du_30_octobre_2015
   statut: lue
@@ -525,7 +547,7 @@ versions:
     lu_le: 2026-11-03
     empreinte: sha256:0186b6b165ad2a5f5f561deb969c6a35c661dc2e1fedbfcdcaa24801f51104c1
   - reference: >-
-      convention collective nationale du 14 mars 1947, « Mise à jour au 1 janvier 2018 »,
+      convention collective nationale du 14 mars 1947, « Textes mis à jour au 1er janvier 2018 »,
       copie de la caisse (hors JORF)
     article: annexe I, article 6, § 3 a) ; annexe V, préambule
     citation: >-
@@ -551,6 +573,9 @@ versions:
           taux_plein_meres_de_famille_ouvrieres, taux_plein_travailleurs_manuels,
           taux_plein_anciens_combattants_prisonniers]
         regimes: null
+      - motifs: [taux_plein_a_soixante_cinq_ans]
+        regimes: [agirc, agirc_arrco, agirc_entreprises_nouvelles, arrco, arrco_tranche_2,
+          arrco_tranche_2_entreprises_nouvelles, unirs]
   exemples: aucun trouvé
 - id: regime_unifie
   statut: lue
@@ -561,7 +586,7 @@ versions:
       Agirc-Arrco de retraite complémentaire, version « applicable au 1er janvier 2019 »,
       copie de la fédération (hors JORF),
       https://www.agirc-arrco.fr/storage/2024/09/201809dc_ANI_du_17_novembre_2017.pdf
-    article: articles 84, 85, 1 et 3, et 102
+    article: articles 84, 85, 1 et 3, 98, et sa note 1, et 102
     en_vigueur: 2019-01-01
     citation: >-
       « Le participant peut bénéficier de sa pension au titre du présent régime sans
@@ -578,7 +603,15 @@ versions:
       ainsi obtenue ne pourra être inférieure à celle qui serait versée après application
       du coefficient d'anticipation correspondant à l'âge atteint » ; « La liquidation se
       fait simultanément sur toutes les tranches », hors le report des points de la
-      tranche C d'avant 2016, « sans abattement »
+      tranche C d'avant 2016, « sans abattement » ; article 98, hors des coefficients de
+      solidarité, qui ne visent que les participants « nés à partir du 1er janvier
+      1957 » : « les participants visés au III et IV de l'article 20 de la loi n°
+      2010-1330 du 9 novembre 2010 ainsi qu'au 1° bis de l'article L. 351-8 du code de la
+      sécurité sociale qui bénéficient du taux plein dans le régime de base dès 65 ans »,
+      et sa note 1 : « Il s'agit d'assurés ayant apporté une aide effective à leur enfant
+      handicapé, d'assurés nés entre le 1er juillet 1951 et le 31 décembre 1955 parents
+      d'au moins trois enfants, de personnes ayant interrompu leur activité
+      professionnelle en raison de leur qualité d'aidant familial »
     lu_le: 2026-11-03
     empreinte: sha256:b8af8df7372e4f897c1ca0c4fd9bf4baaa5b706ec4737b8e51b593c5a2a4fccb
   - id: JORFARTI000036847923
@@ -614,7 +647,8 @@ versions:
       l'anticipation va au plus tôt dix ans avant, sous la même table. Sans coefficient à
       l'âge où l'assuré a obtenu à taux plein sa pension du régime général ou agricole —
       par la durée tous régimes de base, une catégorie des 1° bis à 5° de L. 351-8, la
-      carrière longue — ; et le mineur de fond dès soixante ans. De l'âge légal à cet âge,
+      carrière longue, le IV de l'article 20 de la loi n° 2010-1330 à soixante-cinq ans,
+      que l'article 98 nomme — ; et le mineur de fond dès soixante ans. De l'âge légal à cet âge,
       à qui manquent vingt trimestres au plus, le coefficient de ses trimestres manquants
       s'il vaut mieux. Les points de la tranche C d'avant 2016 prennent le coefficient de
       l'âge, ou leur report sans abattement
@@ -625,6 +659,9 @@ versions:
           taux_plein_meres_de_famille_ouvrieres, taux_plein_travailleurs_manuels,
           taux_plein_anciens_combattants_prisonniers]
         regimes: null
+      - motifs: [taux_plein_a_soixante_cinq_ans]
+        regimes: [agirc, agirc_arrco, agirc_entreprises_nouvelles, arrco, arrco_tranche_2,
+          arrco_tranche_2_entreprises_nouvelles, unirs]
   exemples: aucun trouvé
 - id: avenant_15
   statut: lue
@@ -677,6 +714,9 @@ versions:
           taux_plein_meres_de_famille_ouvrieres, taux_plein_travailleurs_manuels,
           taux_plein_anciens_combattants_prisonniers]
         regimes: null
+      - motifs: [taux_plein_a_soixante_cinq_ans]
+        regimes: [agirc, agirc_arrco, agirc_entreprises_nouvelles, arrco, arrco_tranche_2,
+          arrco_tranche_2_entreprises_nouvelles, unirs]
   exemples:
   - agirc_arrco_tranche_c_63_ans_11_mois
   - aa_livret4_minoration_64_ans_6_mois
@@ -948,7 +988,7 @@ sources:
     date: 2026-09-27
   - type: autre
     reference: >-
-      Convention collective nationale du 14 mars 1947, « Mise à jour au 1 janvier
+      Convention collective nationale du 14 mars 1947, « Textes mis à jour au 1er janvier
       2018 ». Annexe I, article 6, § 1er : « L'âge de la retraite dans le régime géré
       par l'AGIRC est égal à celui visé au 1° de l'article L. 351-8 du Code de la
       sécurité sociale (dans la rédaction au 18 mars 2011 de l'article L. 351-8-1° et de
@@ -965,7 +1005,7 @@ sources:
     date: 2026-09-27
   - type: autre
     reference: >-
-      Accord national interprofessionnel du 8 décembre 1961, « Mise à jour au 1 janvier
+      Accord national interprofessionnel du 8 décembre 1961, « Textes mis à jour au 1er janvier
       2018 ». Annexe A, article 18 : même âge, « dans la rédaction au 18 mars 2011 »,
       même table ; annexe E, article 1er : allocations « calculés en supprimant les
       coefficients d'anticipation prévus par l'article 18 de l'annexe A » pour qui a le
@@ -1076,7 +1116,7 @@ sources:
     date: 2026-09-27
   - type: autre
     reference: >-
-      Convention du 14 mars 1947, « Mise à jour au 1 janvier 2018 », annexe V, note (1) :
+      Convention du 14 mars 1947, « Textes mis à jour au 1er janvier 2018 », annexe V, note (1) :
       « Les dispositions de la présente annexe s'appliquent sur la base de la rédaction au
       18 mars 2011 de l'ensemble des dispositions législatives qui y sont visées, pour toute
       liquidation prenant effet à compter du 1er juillet 2011 » ; article 2 : « avoir versé
@@ -1162,7 +1202,7 @@ sources:
       AGIRC, les intéressés peuvent demander, au moment de la liquidation, le report de la
       liquidation de ces points, sans abattement, à l'âge mentionné au 1° de l'article
       L. 351-8 du code de la sécurité sociale ». Avant 2019, convention du 14 mars 1947,
-      « Mise à jour au 1 janvier 2018 », annexe I, article 6, § 3 a) : liquidée à partir de
+      « Textes mis à jour au 1er janvier 2018 », annexe I, article 6, § 3 a) : liquidée à partir de
       l'âge de l'article, la liquidation « doit être opérée sur l'ensemble des droits
       constitués sur les tranches B et C (s'il y a lieu) à la même échéance » ; « La
       liquidation au titre de la tranche C, demandée avant cet âge, est subordonnée à celle
@@ -1356,18 +1396,25 @@ code:
     la pension, pondéré par les montants. Les versions disent, à la date d'effet, ce qui
     exonère (`liquider.exonerations_agirc_arrco`, `liquider.exonere_par_motif`, et leurs
     jumeaux `exonerationsAgircArrco`, `exonereParMotif`) : avant le 1er avril 1983, l'âge
-    seul, quelle que soit la période ; tests/test_exonerations_agirc_arrco.py.
+    seul, quelle que soit la période ; tests/test_exonerations_agirc_arrco.py. Depuis le
+    1er juillet 2011, le parent de trois enfants que la fiche taux_plein_a_soixante_cinq_ans
+    met au taux plein du régime général à l'âge de sa liquidation
+    (`liquider.parent_au_taux_plein_du_regime_general`, `parentAuTauxPleinDuRegimeGeneral`,
+    qui lisent `categories.age_du_parent_de_trois_enfants`), hors l'Arrco des cultes ;
+    tests/test_taux_plein_a_soixante_cinq_ans.py.
   python: >-
     droit/liquider.py : liquider_chaque_regime, abattement_points, coefficient_pour_age,
     _coefficient_anticipation, _PALIERS_ANTICIPATION,
     _COEFFICIENT_ANTICIPATION_PLANCHER, exonerations_agirc_arrco, exonere_par_motif,
-    FICHE_DES_COEFFICIENTS_AGIRC_ARRCO ; droit/acquerir.py : acquerir, Droits ;
+    parent_au_taux_plein_du_regime_general, FICHE_DES_COEFFICIENTS_AGIRC_ARRCO ;
+    droit/categories.py : age_du_parent_de_trois_enfants ; droit/acquerir.py : acquerir, Droits ;
     droit/ouvrir.py : age_taux_plein
   javascript: >-
     moteur/js/droit/liquider.js : liquiderChaqueRegime, abattementPoints,
     coefficientPourAge, coefficientAnticipation, PALIERS_ANTICIPATION,
     COEFFICIENT_ANTICIPATION_PLANCHER, exonerationsAgircArrco, exonereParMotif,
-    FICHE_DES_COEFFICIENTS_AGIRC_ARRCO ; moteur/js/droit/acquerir.js : acquerir,
+    parentAuTauxPleinDuRegimeGeneral, FICHE_DES_COEFFICIENTS_AGIRC_ARRCO ;
+    moteur/js/droit/categories.js : ageDuParentDeTroisEnfants ; moteur/js/droit/acquerir.js : acquerir,
     Droits ; moteur/js/droit/ouvrir.js : ageTauxPlein
   parametres: >-
     contenu.parametres de chaque version : exoneration_au_taux_plein, exonerations ;
@@ -1378,5 +1425,5 @@ code:
     age_taux_plein, age_taux_plein_par_generation, duree_requise_trimestres,
     duree_requise_par_generation
   tests: [tests/test_simulateur.py, tests/test_exonerations_agirc_arrco.py,
-    tests/test_agirc_arrco_au_droit.py,
+    tests/test_agirc_arrco_au_droit.py, tests/test_taux_plein_a_soixante_cinq_ans.py,
     tests/test_oracle.py, tests/js/moteur.test.js, tests/temoins/simulations.json]

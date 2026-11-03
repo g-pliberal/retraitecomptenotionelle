@@ -270,14 +270,6 @@ MINISTRE_DU_CULTE = {"statut": "ministre_du_culte", "debut": "26",
 #: ligne passera à la valeur du droit. Les calculs, posés à la main, sont dans la
 #: note docs/feuille_de_route/175/2026-11-03-correction-taux-plein-parents-de-trois-enfants.md.
 ECARTS_DECLARES = {
-    # Accord du 18 mars 2011, article 1er : « sans abattement ». Le modèle
-    # compte jusqu'à 66 ans et 2 mois, 5 trimestres : 0,95 au lieu de 1.
-    "Arrco, 2018": ({}, "arrco", "coefficient d'anticipation 0.9500"),
-    # Accord du 17 novembre 2017, article 84, 1 et 3. Jusqu'à 66 ans et 7 mois,
-    # 7 trimestres : 0,93 au lieu de 1.
-    "Agirc-Arrco, 2019": (NEE_EN_1954, "agirc_arrco", "coefficient d'anticipation 0.9300"),
-    # Jusqu'à 67 ans, 8 trimestres : 0,92 au lieu de 1.
-    "Agirc-Arrco, 2020": (NEE_EN_1955, "agirc_arrco", "coefficient d'anticipation 0.9200"),
     # Loi n° 2010-1330, article 28, III ; décrets n° 2003-1306, article 65-3,
     # et n° 2004-1056, article 50-3. La décote court jusqu'à 67 ans moins
     # 3 trimestres (loi n° 2003-775, article 66, III, pour 2017), 5 trimestres :
@@ -298,7 +290,11 @@ ECARTS_DECLARES = {
 #: Les régimes où le moteur lit encore l'âge de la génération, celui d'où se
 #: comptent leur décote ou leur coefficient : pour l'assurée « interrompue
 #: trois ans » de 2018, 66 ans et 2 mois au lieu de 65 ans — chaque fois un écart
-#: déclaré. Les points d'avant 1973 des artisans et des commerçants (décret
+#: déclaré, sauf à l'Arrco, qui sert ces parents sans abattement dès soixante-cinq
+#: ans (``test_l_agirc_arrco_sert_ces_parents_sans_abattement``) : l'âge d'où elle
+#: compte leur coefficient avant soixante-cinq ans, et celui des points de la
+#: tranche C d'avant 2016, les textes lus ne le tranchent pas, et le modèle garde
+#: celui de la génération (``NON_TRANCHE``). Les points d'avant 1973 des artisans et des commerçants (décret
 #: n° 73-937, article 3, II : 0,9375 au lieu de 1), le RCI (règlement, article
 #: 12 : 0,95 au lieu de 1) s'y tiennent, par l'âge, à l'abri du paquet : leur
 #: pension de bout en bout passe par le RCO des artisans, que le paquet de main
@@ -310,8 +306,8 @@ ENCORE_A_L_AGE_DE_LA_GENERATION = ("arrco", "cavimac", "cancava_avant_1973",
 #: version de 2011 : le régime, ses textes, mot pour mot, et la valeur que le
 #: modèle sert encore.
 DECLARATIONS = {
-    "Agirc-Arrco": ("accord du 18 mars 2011, article 1er", "parents de 3 enfants sous "
-                    "certaines conditions", "article 84", "0,95", "0,93", "0,92"),
+    "Agirc-Arrco": ("accord du 18 mars 2011, article 1er", "article 2 ter", "article 84",
+                    "avant soixante-cinq ans", "tranche C", "0,91"),
     "fonctionnaires": ("article 28, III", "R. 26 ter", "article 65-3", "article 50-3",
                        "R. 13", "70,3125 %"),
     "CAVIMAC": ("L. 382-27", "décret n° 2006-1325, article 2, II", "46,875 %", "0,9375"),
@@ -372,3 +368,123 @@ def test_la_fiche_declare_chaque_ecart():
                 for regime, mots in DECLARATIONS.items()}
     assert manquent == {regime: [] for regime in DECLARATIONS}
     assert not any("garde l'âge de sa génération" in a for a in approximations)
+
+
+#: L'AGIRC-ARRCO SERT CES PARENTS SANS ABATTEMENT dès qu'ils ont, à soixante-cinq
+#: ans, le taux plein du régime général. De 2011 à 2018 : « Les participants aux
+#: régimes AGIRC et ARRCO qui justifient avoir, avant l'âge fixé au 1° de
+#: l'article L. 351-8 [...], fait liquider, leur pension d'assurance vieillesse, à
+#: taux plein, auprès du régime général [...] en application des III et IV de
+#: l'article 20 de la loi n° 2010-1330 [...] (aidants familiaux, assurés
+#: handicapés, parents d'enfant handicapé et parents de 3 enfants sous certaines
+#: conditions) ; pourront faire liquider leurs allocations AGIRC et/ou ARRCO, sans
+#: abattement, sur les tranches A et B des rémunérations » (accord du 18 mars
+#: 2011, article 1er), « à l'âge de 65 ans » (convention du 14 mars 1947, annexe
+#: V, et accord du 8 décembre 1961, annexe E, article 2 ter). Depuis 2019 : « sans
+#: application des coefficients viagers [...] à l'âge auquel il a obtenu la
+#: pension d'assurance vieillesse du régime général [...] à taux plein » (accord
+#: du 17 novembre 2017, article 84, 3), que l'article 98 leur reconnaît dès
+#: soixante-cinq ans (sa note 1 : « d'assurés nés entre le 1er juillet 1951 et le
+#: 31 décembre 1955 parents d'au moins trois enfants »). Chaque cas est une
+#: requête de ``REQUETE``, partie à 65 ans, sauf ce qu'il change ; la valeur
+#: attendue est le coefficient que la formule de chaque régime affiche, ``None``
+#: quand elle n'en affiche aucun. Les calculs, posés à la main, sont dans la note
+#: docs/feuille_de_route/175/2026-11-03-agirc-arrco-des-parents-de-trois-enfants.md.
+SANS_ABATTEMENT = {
+    # Née le 15 mars 1953, effet le 1er avril 2018 : sans abattement, au lieu de
+    # 0,95 (5 trimestres jusqu'à 66 ans et 2 mois, « moins 1 an 1 trimestre »).
+    "Arrco, 2018": ({}, {"arrco": None, "arrco_tranche_2": None}),
+    # Née le 15 septembre 1954, effet le 1er octobre 2019 : au lieu de 0,93.
+    "Agirc-Arrco, 2019": (NEE_EN_1954, {"agirc_arrco": None, "arrco": None,
+                                        "arrco_tranche_2": None}),
+    # Née le 15 mars 1955, effet le 1er avril 2020 : au lieu de 0,92.
+    "Agirc-Arrco, 2020": (NEE_EN_1955, {"agirc_arrco": None, "arrco": None,
+                                        "arrco_tranche_2": None}),
+    # LE CAS TÉMOIN : deux enfants, ni le taux plein du régime général à
+    # soixante-cinq ans (« taux 46.875% »), ni l'exonération : 5 trimestres
+    # jusqu'à 66 ans et 2 mois, 0,95, comme avant.
+    "deux enfants, 2018": ({"enfants": "2", "naissances": "1976-04, 1978-06"},
+                           {"arrco": 0.95, "arrco_tranche_2": 0.95}),
+}
+
+#: CE QUE LES TEXTES NE TRANCHENT PAS : partie avant soixante-cinq ans, sans le
+#: taux plein du régime général, de quel âge l'Agirc-Arrco compte le coefficient
+#: de ces parents. L'accord du 18 mars 2011 fige l'âge de la retraite « dans les
+#: rédactions respectives des articles L. 351-8, 1°, et L. 161-17-2 [...] en
+#: vigueur à la date du présent accord », et ne les sert sans abattement qu'« à
+#: l'âge de 65 ans » (article 2 ter des annexes V et E) ; l'accord de 2017
+#: compte le coefficient de « cet âge », celui du 1° de L. 351-8 (article 84, 2),
+#: que le IV de l'article 20 fixe pour eux à soixante-cinq ans, quand la
+#: circulaire 2020-02-DRJ dit soixante-sept ans « pour les participants nés à
+#: compter du 1er janvier 1955 », sans nommer la dérogation. Le modèle garde
+#: l'âge de la génération, déclaré : partie à 64 ans le 1er avril 2017, 25 mois
+#: et demi jusqu'à 66 ans et 2 mois, 9 trimestres, « moins 2 ans 1 trimestre »,
+#: 0,91 ; compté de 65 ans, 11 mois et demi, 4 trimestres, « moins 1 an », 0,96.
+NON_TRANCHE = {
+    "à 64 ans, 2017": ({"liquidation": "64"}, {"arrco": 0.91, "arrco_tranche_2": 0.91}),
+}
+
+
+def _coefficients_servis(cas: dict) -> dict[str, dict[str, float | None]]:
+    """Le coefficient d'anticipation que la formule de chaque régime de ``cas``
+    affiche, dans les deux moteurs (``servi_et_refait``)."""
+    import re
+
+    from outils_pont import servi_et_refait
+
+    servis, refus = servi_et_refait(
+        [{"cle": cle, "requete": {**REQUETE, "liquidation": "65", **champs}}
+         for cle, (champs, _) in cas.items()])
+    assert refus == {}, refus
+    lus = {}
+    for cle, (_, attendus) in cas.items():
+        lus[cle] = {}
+        for pension in servis[cle]["actuel"]["pensions_par_regime"]:
+            if pension["regime"] in attendus:
+                trouve = re.search(r"coefficient d'anticipation ([0-9.]+)", pension["detail"])
+                lus[cle][pension["regime"]] = float(trouve.group(1)) if trouve else None
+    return lus
+
+
+def test_l_agirc_arrco_sert_ces_parents_sans_abattement():
+    """À soixante-cinq ans, l'Arrco de 2018 et l'Agirc-Arrco de 2019 et de 2020
+    sans coefficient ; le parent de deux enfants garde le sien."""
+    assert _coefficients_servis(SANS_ABATTEMENT) == {
+        cle: attendus for cle, (_, attendus) in SANS_ABATTEMENT.items()}
+
+
+def test_avant_soixante_cinq_ans_l_age_de_la_generation_reste():
+    """Le point que les textes ne tranchent pas : le modèle compte encore le
+    coefficient de l'âge de la génération, déclaré à la fiche."""
+    assert _coefficients_servis(NON_TRANCHE) == {
+        cle: attendus for cle, (_, attendus) in NON_TRANCHE.items()}
+
+
+def test_la_tranche_c_d_avant_2016_garde_son_coefficient():
+    """La cadre de ``REQUETE``, à huit fois le salaire moyen : ses points de
+    l'Arrco sans abattement, ceux de l'Agirc aussi, sauf ceux de la tranche C
+    acquis jusqu'en 2015, que l'accord n'exonère pas (« sans abattement, sur
+    les tranches A et B des rémunérations » ; annexe V de 1947 : « Cette annexe
+    n'est pas applicable aux droits constitués jusqu'au 31 décembre 2015 sur la
+    tranche C des rémunérations ») : ils gardent le coefficient de l'âge, 0,95
+    (5 trimestres jusqu'à 66 ans et 2 mois, « moins 1 an 1 trimestre »). Le
+    coefficient affiché de l'Agirc est la moyenne des deux, pondérée par les
+    points : 1 − 0,05 × points de la tranche C / points."""
+    import re
+
+    from outils_pont import servi_et_refait
+
+    requete = {**REQUETE, "liquidation": "65", "statut": "salarie_prive_cadre", "salaire": "8"}
+    servis, refus = servi_et_refait([{"cle": "cadre", "requete": requete}])
+    assert refus == {}, refus
+    details = {p["regime"]: p["detail"] for p in servis["cadre"]["actuel"]["pensions_par_regime"]}
+    assert "coefficient d'anticipation" not in details["arrco"], details["arrco"]
+    trouve = re.search(
+        r"([0-9,.]+) points × valeur de service [0-9.]+ € × coefficient d'anticipation "
+        r"([0-9.]+), dont ([0-9,.]+) points de la tranche C d'avant 2016 au coefficient "
+        r"pour âge 0\.9500", details["agirc"])
+    assert trouve is not None, details["agirc"]
+    points, coefficient, tranche_c = (float(trouve.group(rang).replace(",", ""))
+                                      for rang in (1, 2, 3))
+    assert 0 < tranche_c < points
+    assert coefficient == pytest.approx(1 - 0.05 * tranche_c / points, abs=1e-4)

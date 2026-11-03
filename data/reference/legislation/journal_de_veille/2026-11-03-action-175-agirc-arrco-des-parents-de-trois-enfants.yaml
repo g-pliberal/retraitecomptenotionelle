@@ -1,0 +1,46 @@
+date: "2026-11-03"
+session: "action 175, file M3 de la vague 5 : l'Agirc-Arrco des parents de trois enfants nés de juillet 1951 à 1955, et les trois écarts faibles de la relecture R-M3"
+consulte: >-
+  python scripts/veille_droit.py (rien de neuf à la base de la Cnav) ; docs/veille_droit.md ;
+  les relectures R-M4, R-M4-bis et R-M3 et la note de M4-bis ; l'index LEGI récupéré et mis
+  à jour (à l'incrément du 2 novembre 2026, 20261102-213929, aucun depuis) : la loi
+  n° 2010-1330, article 20 (LEGIARTI000023023835). Téléchargés le jour, empreinte
+  recalculée, identique à celle des fiches : le recueil « Accords nationaux des partenaires
+  sociaux » (sha256 0186b6b1…04c1 : accord Agirc du 9 février 1994, article 2 ; accord du
+  18 mars 2011, articles 1er à 3 ; accord du 30 octobre 2015, article 12) ; la convention du
+  14 mars 1947 et l'accord du 8 décembre 1961, « Textes mis à jour au 1er janvier 2018 »
+  (sha256 38966c27…ce78 et 5af24910…9e03 : annexe I, articles 6 et 6 bis ; annexes V et E,
+  articles 1er à 6) ; l'accord du 17 novembre 2017 « Applicable au 1er janvier 2019 »
+  (sha256 b8af8df7…fccb : articles 84, 85, 98 et sa note 1, 102, 109) ; la circulaire
+  2020-02-DRJ (sha256 52477988…06ae : fiche 3, I.1.1 à I.1.2.2 ; fiche 4, III.3) ; le guide
+  des salariés n° 9 de mars 2017 (sha256 9dfcdaf5…43b2 : « Réversion », p. 12) ; la
+  circulaire 2025-15-DT (https://www.agirc-arrco.fr/storage/CirculaireAgircArrco2025-15dt.pdf,
+  sha256 2e34ce29…b288) ; le COR, séance du 25 mai 2011, document n° 7 (sha256
+  952c1af1…9a00). Le site reglementation.agirc-arrco.fr : certificat non vérifiable d'ici.
+trouve: >-
+  L'Agirc et l'Arrco servent ces parents « sans abattement, sur les tranches A et B des
+  rémunérations » pour les liquidations du 1er juillet 2011 au 31 décembre 2018 (accord du
+  18 mars 2011, article 1er), « à l'âge de 65 ans » (annexes V et E, article 2 ter), tous
+  les points de l'Arrco (annexe E, article 6 : « tranches 1 et 2 »), hors les droits de la
+  tranche C de l'Agirc constitués jusqu'au 31 décembre 2015 (annexe V, préambule) ; depuis
+  2019, l'article 84, 3, à l'âge du taux plein du régime général, que l'article 98 et sa
+  note 1 leur reconnaissent dès soixante-cinq ans ; le coefficient de solidarité ne vise
+  que les générations nées depuis 1957. Le modèle les sert ainsi dans les deux moteurs : un
+  motif de plus dans les versions de la fiche coefficients_anticipation_agirc_arrco depuis
+  le 1er juillet 2011, hors l'Arrco des cultes ; de 5,26 % à 8,70 % de la complémentaire
+  non cadre sur les cas posés à la main ; aucun témoin ne bouge. Ce que les textes ne
+  tranchent pas, gardé et déclaré : l'âge d'où se compte leur coefficient avant soixante-cinq
+  ans (0,91 servi à soixante-quatre ans en 2017, 0,96 compté de soixante-cinq), et celui de
+  la tranche C d'avant 2016. Majoration pour enfants : le barème de 8 à 24 % de l'Agirc
+  d'avant 2012 porte déjà les 80 % de l'accord de 1994 ; la majoration reversée depuis 2019
+  garde le coefficient d'une pension de l'Agirc de 2012 à 2018, quand le guide de 2017 dit
+  le contraire pour la réversion et que l'article 109 ne le dit pas de la majoration :
+  déclaré. Trois fiches citaient « Mise à jour au 1 janvier 2018 » pour un titre qui
+  s'imprime « Textes mis à jour au 1er janvier 2018 » : corrigé.
+reste: >-
+  Une circulaire de l'Agirc-Arrco qui dise l'âge d'où se compte le coefficient de ces
+  parents partis avant soixante-cinq ans, celui de leur tranche C d'avant 2016 et ce
+  qu'elle sert à l'Arrco des cultes, ou la réponse écrite de la caisse ; l'Ircantec et le
+  RCI, qui les servent sans coefficient ; la majoration reversée depuis 2019 d'une pension
+  de l'Agirc de 2012 à 2018 ; les taux de 1995, 1996 et d'avant 1995 de l'accord Agirc de
+  1994, une tâche à part.
