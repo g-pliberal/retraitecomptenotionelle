@@ -216,7 +216,7 @@ approximations:
     nul de 2008 à 2026, prouvé sur les grilles publiées, que le dépôt lit : aucun forfait
     n'approche le plafond, la vingtième catégorie restant sous 79 % de lui ; de 1985 à 2007,
     les arrêtés ne sont pas lus (approximation des arrêtés annuels, ci-dessous) : sur la
-    grille que le modèle estime, la vingtième catégorie reste sous 75,1 % du plafond (2005),
+    grille que le modèle estime, la vingtième catégorie atteint au plus 75,1 % du plafond (2005),
     et il faudrait que la grille réelle fût plus haute d'un tiers pour qu'il morde — très
     probable, non démontré ; le plafond du modèle est plus bas que celui du droit après un
     relèvement du point en cours d'année. En projection, sous le point gardé et la grille
@@ -254,7 +254,25 @@ approximations:
   ecart: >-
     avant 2008, les montants des arrêtés ne sont pas lus (décrets de 1956 à 1961, arrêtés
     de 1991 à 2006 : visas et titres seuls dans l'index) : la grille de 2008 est ramenée
-    par le salaire moyen, de fiabilité estimée
+    par le salaire moyen, de fiabilité estimée. Ce que l'index en garde : l'arrêté du
+    29 décembre 1994 modifie les forfaits « pour compter du 1er janvier 1995, conformément
+    au tableau ci-joint » (article 1er, JORFARTI000001974748), tableau qu'il ne porte pas, et
+    l'arrêté du 31 janvier 1995 en corrige un montant, « Pour le salaire forfaitaire par
+    mois de la 13e catégorie, au lieu de: << 14 773,03 >>, lire: << 14 733,03 >>. »
+    (JORFARTI000002373607), soit 14 733,03 × 12 = 176 796,36 F par an, sans en écrire
+    l'unité — le franc des textes réglementaires, que le décret n° 2001-1203 fait lire en
+    euros « à compter du 1er janvier 2002 », au taux de « 6,55957 F pour un euro »
+    (JORFTEXT000000580421) ; l'arrêté du 2 janvier 2006 modifie les forfaits « pour compter
+    du 1er janvier 2006 » (article 1, JORFARTI000001105232), et son rectificatif écrit, dans la « 2e sous-colonne » du tableau, « en ce qui concerne la
+    10e catégorie, au lieu de : « 25 243,53 », lire : « 25 243,83 » » (JORFARTI000001490715),
+    sans nommer la sous-colonne : un forfait annuel par sa grandeur, une déduction — la
+    10e catégorie vaut « 25 980,90 » « Par an » et « 72,17 » « Par jour » au 1er janvier 2008
+    (arrêté du 31 décembre 2007, JORFARTI000017964781). Ce qu'il ne dit pas : la vingtième
+    catégorie d'aucune année d'avant 2008, l'écart des autres années, la structure de la
+    grille d'avant 2008 — le nombre de ses catégories, leurs rapports —, ni la grille du
+    1er juillet 1995, que l'arrêté du 30 juin 1995 « portant majoration » renvoie au Journal
+    officiel imprimé (« Vous pouvez consulter le tableau dans le JO no 0164 du 16/07/95 Page
+    10596 », JORFARTI000001014119)
   effet: >-
     mesuré sur les deux seuls montants que l'index garde, la grille estimée est trop basse :
     la 13e catégorie du 1er janvier 1995, « 14 733,03 » F par mois (arrêté du 31 janvier
@@ -262,15 +280,31 @@ approximations:
     réel 14,5 % plus haut ; la 10e catégorie de 2006, « 25 243,83 » € (rectificatif du
     21 janvier 2006, JORFARTI000001490715), quand le modèle prend 24 709,23 € — 2,2 % plus
     haut ; ailleurs non mesuré, et la convention du forfait le plus proche du revenu en
-    amortit l'effet sur la pension
+    amortit l'effet sur la pension tant que le revenu du marin tombe dans la grille, à une
+    catégorie près. L'effet possible sur les carrières d'avant 2008 : le forfait de chaque
+    année d'avant 2008 fait l'assiette des cotisations du marin — ce que son compte reçoit
+    aux scénarios en comptes notionnels — et le salaire de référence d'une pension qui prend
+    effet avant 2008. Au-delà de la vingtième catégorie, l'écart ne s'amortit plus : le
+    modèle prend 42 547,27 € en 1995 ; la vingtième réelle, si elle suit l'écart de la
+    treizième et la structure de 2008 (la vingtième y vaut 1,8082 fois la treizième, comme
+    en 2026), vaudrait 48 735,45 € — un salaire de référence et une pension plus bas que le
+    droit de 12,7 % au plus pour le marin des plus hautes catégories qui part en 1995, de
+    2,1 % en 2006 si l'écart de la dixième vaut pour lui. Sur le plafond de R. 11, 3°, la
+    vingtième réelle de 1995 ainsi estimée serait à 80,5 % de celui du 1er janvier 1995
+    (8 × 158 × 314,22 F = 397 174,08 F, 60 548,80 €) ; la grille du modèle relevée tout
+    entière de l'écart de 1995, le plus grand des deux, laisserait la vingtième sous 86,1 %
+    du plafond de 1985 à 2007 (2005), et l'abattement ne mordrait toujours pas ; les seuils
+    d'avant 1985 de l'approximation de R. 11, 3° monteraient de 76,5 et 102,8 à 87,6 et
+    117,7
 effet: >-
   Le modèle prend la catégorie de la DERNIÈRE année, rangée par le revenu, et compte
   les services au trimestre ; la caisse prend la catégorie moyenne de trente-six
   mois et arrondit au semestre (R. 12 : quatorze ans huit mois et vingt-sept jours
-  font quatorze ans et demi). La grille elle-même est exacte : les vingt montants de
+  font quatorze ans et demi). La grille lue, depuis 2008, est exacte : les vingt montants de
   2026 publiés par l'ENIM sont ceux du dépôt, au centime, comme les trois montants de
-  2024 que cite son exemple. L'abattement de R. 11, 3°, au-delà de huit fois le
-  traitement de l'indice 100, est appliqué depuis le 3 novembre 2026 : ce traitement est
+  2024 que cite son exemple ; celle d'avant 2008, estimée, est sous les deux montants réels
+  que l'index garde (approximation des arrêtés annuels). L'abattement de R. 11, 3°,
+  au-delà de huit fois le traitement de l'indice 100, est appliqué depuis le 3 novembre 2026 : ce traitement est
   celui de l'indice brut 100, l'indice majoré 208 depuis 2024 (article 7 du décret
   n° 85-1148), et non de l'indice majoré 100 ; le plafond, 98 298,14 € en 2026, aucune
   catégorie ne l'a atteint de 2008 à 2026, sur les grilles publiées ; de 1985 à 2007, rien
@@ -290,6 +324,13 @@ sources:
     ceux qui les modifient, au Journal officiel imprimé (fac-similés de Légifrance), que
     les index du dépôt ne portent qu'en analyses. Tant qu'ils ne sont pas lus, le modèle
     n'abat pas les pensions d'avant cette date.
+  - >-
+    La grille des salaires forfaitaires d'avant 2008 : les tableaux des arrêtés annuels, au
+    Journal officiel imprimé (fac-similés de Légifrance), que l'index ne porte pas — la
+    vingtième catégorie de quelques années (1986, 1995, 2000, 2005) suffirait à prouver que
+    le plafond de R. 11, 3° n'a pas été atteint, la grille entière à corriger l'estimation,
+    que les montants réels de 1995 et de 2006 montrent trop basse. Au propriétaire de dire
+    s'il faut les chercher.
   lectures:
   - type: legifrance
     reference: >-
@@ -344,6 +385,19 @@ sources:
       douzième, 89506 et 93537 de la treizième)
     url: https://www.ccomptes.fr/sites/default/files/2023-10/20230918-S2023-0865-Etablissement-invalides-marine-ENIM.pdf
     date: 2026-11-03
+  - type: jorf
+    reference: >-
+      pour la limite de la grille d'avant 2008, dans l'index JORF du dépôt, à jour de
+      l'incrément du 3 novembre 2026 : les arrêtés des salaires forfaitaires du 29 décembre
+      1994 (article 1er, JORFARTI000001974748 ; son tableau, JORFARTI000001344200, par son
+      titre seul), du 31 janvier 1995 (JORFARTI000002373607), du 30 juin 1995
+      (JORFARTI000001014119), du 2 janvier 2006 (article 1, JORFARTI000001105232) et son
+      rectificatif (JORFARTI000001490715), du 26 décembre 2006 (sans tableau), du
+      31 décembre 2007 (JORFARTI000017964781) et du 19 mars 2026 (JORFARTI000053743024) ; le
+      décret n° 2001-1203 (JORFTEXT000000580421), pour le taux du franc ; dans l'index LEGI,
+      l'article 3 du décret n° 85-1148 au 1er janvier 1995 (LEGIARTI000006454440 : « 31 422 F
+      à compter du 1er décembre 1994 »)
+    date: 2026-11-03
 historique:
 - >-
   2026-11-02 — lue au droit (action 130) : trois versions sur la date d'effet — la loi du
@@ -362,6 +416,13 @@ historique:
   la relecture R-M1 du même jour : l'affirmation restreinte ainsi, le choix de l'article 7
   contre le barème A et l'arrondi du barème B déclarés, l'écart de la grille estimée
   mesuré en 1995 et en 2006.
+- >-
+  2026-11-03 — la limite de la grille d'avant 2008 déclarée (action 130, file M1, note
+  `130/2026-11-03-limite-de-la-grille-des-marins.md`) : ce que l'index en garde et ce
+  qu'il n'en dit pas, l'effet possible sur les pensions et les comptes des carrières
+  d'avant 2008, le plafond sous la grille relevée de l'écart de 1995 ; une question au
+  propriétaire. « Sous 75,1 % du plafond (2005) » se lit « au plus 75,1 % » : la vingtième
+  de 2005 y est à 75,11 %. Aucune règle de calcul ne change.
 code:
   moteur: >-
     La période des marins liquide le dernier salaire (`salaire_reference`) :

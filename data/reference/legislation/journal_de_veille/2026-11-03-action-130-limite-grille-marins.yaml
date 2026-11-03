@@ -1,0 +1,42 @@
+date: "2026-11-03"
+session: "action 130, file M1 : la limite déclarée de la grille des salaires forfaitaires des marins d'avant 2008, après la relecture de l'abattement (R. 11, 3°) et sa prise en compte par 57aa927"
+consulte: >-
+  python scripts/veille_droit.py ; docs/veille_droit.md ; les index de la DILA, récupérés et
+  mis à jour (JORF à l'incrément du 3 novembre 2026, 20261103-002311 ; LEGI à celui du
+  2 novembre, aucun depuis). Dans JORF : les arrêtés des salaires forfaitaires des marins du
+  29 décembre 1994 (article 1er, JORFARTI000001974748 ; tableau JORFARTI000001344200, titre
+  seul), du 31 janvier 1995 (JORFARTI000002373607), du 30 juin 1995 (JORFARTI000001014013,
+  JORFARTI000001014119), du 2 janvier 2006 (article 1, JORFARTI000001105232 ; tableau
+  JORFARTI000001490692, titre seul) et son rectificatif (JORFARTI000001490715), du
+  26 décembre 2006 (JORFARTI000002473548, sans tableau), du 31 décembre 2007
+  (JORFARTI000017964781), du 26 août 2008 (JORFARTI000019428703) et du 19 mars 2026
+  (JORFARTI000053743024) ; le décret n° 2001-1203 (JORFTEXT000000580421) ; pour vérifier
+  57aa927, le barème B du décret n° 2023-519 (JORFARTI000047749261), les décrets n° 86-166
+  (JORFTEXT000000881232), n° 2001-370 (JORFARTI000002487322) et n° 2001-559
+  (JORFARTI000002402166). Dans LEGI : le décret n° 85-1148, article 3 (LEGIARTI000006454440,
+  441, 442 ; LEGIARTI000047751772), article 5 (LEGIARTI000047781303), article 7
+  (LEGIARTI000006454537, 538, 549, 550) et article 8 (LEGIARTI000006454571) ; le décret
+  n° 86-166, article 2 (LEGIARTI000006455048) ; le décret n° 48-1108, article 1er
+  (LEGIARTI000006561748, LEGIARTI000018696261). Le dépôt : la grille estimée et les plafonds
+  de 1968 à 2007, refaits par le moteur Python ; les paquets de e5dd612 et de 144a622.
+trouve: >-
+  Les deux seuls montants réels de la grille d'avant 2008 que l'index garde, chacun dans un
+  rectificatif, la montrent trop basse : la 13e catégorie du 1er janvier 1995, 14 733,03 F
+  par mois, 26 952,43 € par an, quand le modèle prend 23 530,15 € (le réel 14,5 % plus haut) ;
+  la 10e du 1er janvier 2006, 25 243,83, dans une sous-colonne que le rectificatif ne nomme
+  pas, un forfait annuel par sa grandeur, quand le modèle prend 24 709,23 € (2,2 %). L'index
+  ne dit ni la 20e d'aucune année d'avant 2008, ni la structure de la grille, ni l'écart des
+  autres années. Effet possible : au-delà de la 20e, le salaire de référence et la pension
+  des plus hautes catégories plus bas que le droit de 12,7 % au plus en 1995 ; les
+  cotisations portées au compte notionnel de même ; dans la grille, l'écart s'amortit à une
+  catégorie près. Relevée de l'écart de 1995, la 20e resterait sous 86,1 % du plafond de
+  R. 11, 3° de 1985 à 2007 (2005) ; les seuils d'avant 1985 monteraient à 87,6 et 117,7. Ce
+  que 57aa927 écrit de la relecture est conforme aux sources, sauf « sous 75,1 % » : la 20e
+  de 2005 est à 75,11 %, « au plus 75,1 % ». La fiche marins_salaire_de_reference déclare la
+  limite ; docs/limites/4-regimes-incomplets.md dit le sens de l'erreur ; trois tests de
+  tests/test_marins.py tiennent les chiffres. Aucune règle de calcul ne change.
+reste: >-
+  Au propriétaire : faut-il lire les tableaux des arrêtés de 1985 à 2007 au Journal officiel
+  imprimé (fac-similés de Légifrance, que l'outil n'atteint pas) — la 20e catégorie de
+  quelques années pour prouver le plafond, la grille entière pour corriger l'estimation ?
+  Note 2026-11-03-limite-de-la-grille-des-marins.md de l'action 130.

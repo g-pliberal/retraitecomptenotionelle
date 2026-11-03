@@ -23,6 +23,7 @@ qu'elle couvre en entier.
 from __future__ import annotations
 
 import csv
+import math
 import sqlite3
 from datetime import date
 
@@ -375,3 +376,143 @@ def test_le_marin_qui_passe_le_plafond_liquide_un_salaire_abattu(simulateur):
                    if p.regime == "marins")
     assert f"SR {attendu:,.2f} €" in pension.detail
     assert "compté pour moitié au-delà de 98,298.14 €" in pension.detail
+
+
+# ---------------------------------------------------------------------------
+# La grille d'avant 2008, estimée : la limite que la fiche déclare
+# ---------------------------------------------------------------------------
+
+#: Les deux seuls montants réels de la grille d'avant 2008 que l'index JORF du
+#: dépôt garde, chacun dans un rectificatif : l'année, la catégorie, le forfait
+#: annuel en euros, l'identifiant. « Pour le salaire forfaitaire par mois de la
+#: 13e catégorie, au lieu de: << 14 773,03 >>, lire: << 14 733,03 >> » (arrêté
+#: du 31 janvier 1995, qui corrige celui du 29 décembre 1994, « pour compter du
+#: 1er janvier 1995 ») : 14 733,03 × 12 = 176 796,36 F par an, au taux de
+#: « 6,55957 F pour un euro » (décret n° 2001-1203). « en ce qui concerne la 10e
+#: catégorie, au lieu de : « 25 243,53 », lire : « 25 243,83 » » (rectificatif de
+#: l'arrêté du 2 janvier 2006, « pour compter du 1er janvier 2006 »).
+GRILLE_REELLE_AVANT_2008 = [
+    (1995, 13, 14733.03 * 12 / 6.55957, "JORFARTI000002373607"),
+    (2006, 10, 25243.83, "JORFARTI000001490715"),
+]
+#: Le plafond de R. 11, 3° au 1er janvier 1995, au droit : l'indice majoré 158
+#: de l'article 7 (depuis le 1er août 1991), au point de « 31 422 F » pour cent
+#: points (article 3, LEGIARTI000006454440), huit fois : 397 174,08 F.
+PLAFOND_DU_1ER_JANVIER_1995 = 8 * 158 * 314.22 / 6.55957
+
+
+def _euros(montant: float) -> str:
+    return f"{montant:,.2f}".replace(",", " ").replace(".", ",")
+
+
+def _dixiemes(valeur: float, vers_le_haut: bool = False) -> str:
+    arrondi = math.ceil(valeur * 10) / 10 if vers_le_haut else round(valeur, 1)
+    return f"{arrondi:.1f}".replace(".", ",")
+
+
+def _forfait_estime(simulateur, annee: int, categorie: int) -> float:
+    """Le forfait d'une catégorie une année que la grille ne publie pas : celui de
+    2008, lu, ramené par le salaire moyen, tel que le moteur le range."""
+    from retraite_notionnelle.carriere import salaire_moyen_annuel
+    from retraite_notionnelle.donnees.chargement import Fiabilite
+
+    moyen = lambda a: salaire_moyen_annuel(simulateur.macro, a)  # noqa: E731
+    de_2008 = next(float(l["montant_annuel"])
+                   for l in _lignes("regimes/salaires_forfaitaires.csv")
+                   if l["regime"] == "marins" and l["annee"] == "2008"
+                   and int(l["categorie"]) == categorie)
+    estime = de_2008 * moyen(annee) / moyen(2008)
+    forfait, rangee, fiabilite = simulateur.scenario_actuel.grilles.forfait(
+        "marins", annee, estime, moyen)
+    assert rangee == categorie and forfait == pytest.approx(estime, rel=1e-12)
+    assert fiabilite == Fiabilite.ESTIMEE
+    return forfait
+
+
+def _limite_de_la_grille() -> str:
+    fiche = carte.fiches()["marins_salaire_de_reference"]
+    limite = next(a for a in fiche["approximations"] if "arrêtés annuels" in str(a["textes"]))
+    return limite["ecart"] + " " + limite["effet"]
+
+
+def _ecart_de_1995(simulateur) -> float:
+    annee, categorie, reel, _ = GRILLE_REELLE_AVANT_2008[0]
+    return reel / _forfait_estime(simulateur, annee, categorie)
+
+
+def test_la_grille_d_avant_2008_est_sous_les_deux_montants_reels_et_la_fiche_le_dit(
+        simulateur):
+    """Avant 2008, la grille du modèle est celle de 2008 ramenée par le salaire
+    moyen. Les deux montants réels que l'index garde la dépassent : 26 952,43 €
+    pour la 13e catégorie du 1er janvier 1995, 25 243,83 € pour la 10e du
+    1er janvier 2006. La fiche déclare la limite : les deux rectificatifs, les
+    forfaits que le modèle prend, les écarts, et ce qu'ils font de la vingtième
+    de 1995 — 48 735,45 € à la structure de 2008, 80,5 % du plafond du jour."""
+    dit = _limite_de_la_grille()
+    assert "26 952,43 €" in dit and "176 796,36 F" in dit and "2e sous-colonne" in dit
+    for annee, categorie, reel, identifiant in GRILLE_REELLE_AVANT_2008:
+        modele = _forfait_estime(simulateur, annee, categorie)
+        assert modele < reel, annee
+        assert identifiant in dit and f"le modèle prend {_euros(modele)} €" in dit, annee
+        assert f"{_dixiemes(100 * (reel / modele - 1))} % plus haut" in dit, annee
+        assert f"de {_dixiemes(100 * (1 - modele / reel))} %" in dit, annee
+    vingtieme_1995 = _forfait_estime(simulateur, 1995, 20)
+    structure = {annee: _grille(annee)[20] / _grille(annee)[13] for annee in (2008, 2026)}
+    assert round(structure[2008], 4) == round(structure[2026], 4)
+    estimee = GRILLE_REELLE_AVANT_2008[0][2] * structure[2008]
+    assert f"vaut {structure[2008]:.4f} fois la treizième".replace(".", ",") in dit
+    assert f"le modèle prend {_euros(vingtieme_1995)} € en 1995" in dit
+    assert f"vaudrait {_euros(estimee)} €" in dit
+    assert f"à {_dixiemes(100 * estimee / PLAFOND_DU_1ER_JANVIER_1995)} % de celui du 1er janvier 1995" in dit
+    assert f"{_euros(PLAFOND_DU_1ER_JANVIER_1995)} €" in dit
+
+
+def _grille(annee: int) -> dict[int, float]:
+    return {int(l["categorie"]): float(l["montant_annuel"])
+            for l in _lignes("regimes/salaires_forfaitaires.csv")
+            if l["regime"] == "marins" and int(l["annee"]) == annee}
+
+
+def test_de_1985_a_2007_la_vingtieme_estimee_reste_sous_le_plafond_meme_relevee(simulateur):
+    """De 1985 à 2007, aucune grille n'est lue : que la vingtième catégorie reste
+    sous le plafond de R. 11, 3° n'est qu'une estimation. Sur la grille du modèle,
+    son rapport au plafond du 1er janvier (du 1er décembre en 1985) culmine en
+    2005 ; relevée de l'écart de 1995, le plus grand des deux montants réels,
+    elle reste sous le plafond. La fiche écrit ces deux rapports."""
+    from retraite_notionnelle.droit import liquider
+
+    moteur = simulateur.scenario_actuel
+    rapports = {}
+    for annee in range(1985, 2008):
+        periode = moteur.catalogue["marins"].periode(annee)
+        plafond = liquider.plafond_du_salaire_de_reference(
+            moteur, periode, annee, 12 if annee == 1985 else 1)
+        rapports[annee] = _forfait_estime(simulateur, annee, 20) / plafond
+    culmine = max(rapports, key=rapports.get)
+    ecart = _ecart_de_1995(simulateur)
+    assert culmine == 2005 and ecart > 1 and rapports[culmine] * ecart < 1
+    point = next(a for a in carte.fiches()["marins_salaire_de_reference"]["approximations"]
+                 if "articles 3 et 5" in str(a["textes"]))["effet"]
+    assert f"au plus {_dixiemes(100 * rapports[culmine])} % du plafond ({culmine})" in point
+    assert (f"sous {_dixiemes(100 * rapports[culmine] * ecart, True)} % du plafond de 1985 à "
+            f"2007 ({culmine})") in _limite_de_la_grille()
+
+
+def test_avant_1985_les_seuils_de_l_indice_100_montent_sous_la_grille_relevee(simulateur):
+    """De 1968 à 1984, la vingtième catégorie de la grille du modèle ne passe huit
+    fois le traitement de l'indice 100 que s'il était celui d'un indice majoré
+    plus bas qu'un seuil : 76,5 en 1968, 102,8 en 1980, le plus haut ; relevés de
+    l'écart de 1995, 87,6 et 117,7. La fiche les écrit."""
+    points = {int(l["annee"]): float(l["valeur"])
+              for l in _lignes("legislation/point_indice_fonction_publique.csv")}
+    seuils = {annee: _forfait_estime(simulateur, annee, 20) / (8 * points[annee])
+              for annee in range(1968, 1985)}
+    plus_haut = max(seuils, key=seuils.get)
+    ecart = _ecart_de_1995(simulateur)
+    assert plus_haut == 1980
+    avant = next(a for a in carte.fiches()["marins_salaire_de_reference"]["approximations"]
+                 if "depuis le 5 novembre 1985" in str(a["textes"]))["effet"]
+    assert f"{_dixiemes(seuils[1968])} en 1968, à {_dixiemes(seuils[1980])} en 1980" in avant
+    assert (f"monteraient de {_dixiemes(seuils[1968])} et {_dixiemes(seuils[1980])} à "
+            f"{_dixiemes(seuils[1968] * ecart)} et {_dixiemes(seuils[1980] * ecart)}") \
+        in _limite_de_la_grille()
