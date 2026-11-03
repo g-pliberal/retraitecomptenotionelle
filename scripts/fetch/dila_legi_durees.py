@@ -64,7 +64,10 @@ aux grilles du dépôt, par le texte d'échelonnement qui vise le statut, reste 
 faire. Les réductions et majorations d'ancienneté (l'avancement accéléré, la
 bonification), écrites en phrases, ne sont pas lues. Deux versions d'un article
 que le LEGI met en vigueur ensemble gardent leurs dates, et chacun de leurs
-tableaux nomme l'autre (``chevauche``) : le rattachement choisit.
+tableaux nomme l'autre (``chevauche``) : le rattachement choisit. La règle qu'un
+article écrit avec sa durée moyenne (« La durée maximale … est égale à la durée
+moyenne majorée du quart ») se consigne mot pour mot (``regle_du_quart``) : aucune
+durée n'en est déduite.
 """
 
 from __future__ import annotations
@@ -661,6 +664,28 @@ def _texte_de(titre: str, info: dict) -> dict:
             "debut": info["debut"], "fin": _fin(info["fin"]), "titre": titre}
 
 
+_MAJOREE = re.compile(r"\bmajor[ée]e?\s+du\s+quart\b", re.IGNORECASE)
+_DUREE_MAXIMALE = re.compile(r"\bLa\s+dur[ée]e\s+maxim", re.IGNORECASE)
+_REDUITE = re.compile(r"\b(?:r[ée]duite|minor[ée]e)\s+du\s+quart\b[^.]*\.", re.IGNORECASE)
+_UN_AN_AU_MOINS = re.compile(
+    r"\s*Cette\s+dur[ée]e\s+ne\s+peut\s+[êe]tre\s+inf[ée]rieure\s+[àa]\s+un\s+an\.", re.IGNORECASE)
+
+
+def regle_du_quart(contenu: str) -> str:
+    """La règle que l'article écrit pour les durées maximale et minimale, à partir
+    de la moyenne (« La durée maximale … est égale à la durée moyenne majorée du
+    quart. La durée minimale … réduite du quart. »), mot pour mot ; rien sinon.
+    Elle se consigne avec la moyenne : aucune durée n'en est déduite."""
+    majoree = _MAJOREE.search(contenu)
+    debuts = list(_DUREE_MAXIMALE.finditer(contenu, 0, majoree.start())) if majoree else []
+    reduite = _REDUITE.search(contenu, majoree.end()) if majoree else None
+    if not debuts or not reduite:
+        return ""
+    fin = reduite.end()
+    un_an = _UN_AN_AU_MOINS.match(contenu, fin)
+    return re.sub(r"\s+", " ", contenu[debuts[-1].start():un_an.end() if un_an else fin]).strip()
+
+
 def _en_prose(contenu: str) -> str:
     """Le motif d'un article qui fixe des durées sans tableau lisible, ou rien."""
     motif = _durees_d_echelon()
@@ -734,7 +759,8 @@ def extraire(chemin_index: Path | str | None = None) -> dict:
                                 "motif": tableau.refus})
                 continue
             cle = (texte, numero, rang)
-            contenu_lu = (tableau.colonnes, [
+            regle = regle_du_quart(contenu)
+            contenu_lu = (tableau.colonnes, regle, [
                 (l.groupe, l.echelon, l.duree, l.duree_moyenne, l.duree_minimale,
                  l.duree_maximale, l.condition) for l in tableau.lignes])
             avant = lus.get(cle)
@@ -746,7 +772,7 @@ def extraire(chemin_index: Path | str | None = None) -> dict:
                 lus[(texte, numero, rang, avant["debut"])] = lus.pop(cle)
             lus[cle] = {"texte": texte, "article": ident, "numero": numero, "tableau": str(rang),
                         "debut": debut, "fin": fin, "intro": extrait.intro, "tableau_lu": tableau,
-                        "contenu": contenu_lu, "versions": [ident]}
+                        "contenu": contenu_lu, "versions": [ident], "regle": regle}
 
     sortie: dict = {"source": source, "textes": [], "tableaux": [], "lignes": [],
                     "non_lus": sorted(non_lus, key=lambda n: (n["texte"], n["numero"],
@@ -759,7 +785,8 @@ def extraire(chemin_index: Path | str | None = None) -> dict:
         sortie["tableaux"].append({
             "texte": lu["texte"], "article": lu["article"], "numero": lu["numero"],
             "tableau": lu["tableau"], "debut": lu["debut"], "fin": _fin(lu["fin"]),
-            "versions": " ".join(lu["versions"]), "colonnes": " ".join(tableau.colonnes), "lignes": str(len(tableau.lignes)),
+            "versions": " ".join(lu["versions"]), "colonnes": " ".join(tableau.colonnes),
+            "regle_du_quart": lu["regle"], "lignes": str(len(tableau.lignes)),
             "intro": lu["intro"], "entete": tableau.entete})
         for n, (ligne, rang) in enumerate(zip(tableau.lignes, _rangs(tableau.lignes)), 1):
             sortie["lignes"].append({
@@ -829,7 +856,7 @@ COLONNES = {
     "textes": ("texte", "versant", "numero", "nature", "signature", "debut", "fin", "titre",
                "tableaux_lus", "non_lus"),
     "tableaux": ("texte", "article", "numero", "tableau", "debut", "fin", "versions", "chevauche",
-                 "colonnes", "lignes", "intro", "entete"),
+                 "colonnes", "regle_du_quart", "lignes", "intro", "entete"),
     "lignes": ("texte", "article", "tableau", "ligne", "groupe", "echelon", "rang", "duree",
                "duree_moyenne", "duree_minimale", "duree_maximale", "condition"),
     "non_lus": ("texte", "article", "numero", "tableau", "debut", "fin", "motif"),
@@ -847,7 +874,9 @@ ENTETES = {
                 "et du même rang dont la période, aux dates du LEGI, recouvre la sienne "
                 "(chevauche : leur première version ; le rattachement aux grilles choisit), ses "
                 "colonnes dans l'ordre de l'en-tête (unique, moyenne, minimale, maximale), la "
-                "phrase qui l'annonce et son en-tête.",
+                "règle que l'article écrit pour les durées maximale et minimale à partir de la "
+                "moyenne (regle_du_quart : « majorée du quart », « réduite du quart », mot pour "
+                "mot ; aucune durée n'en est déduite), la phrase qui l'annonce et son en-tête.",
     "lignes": "Chaque ligne d'un tableau : groupe (le grade, le libellé écrit avant elle), "
               "l'échelon, son rang (le numéro ; le spécial au-dessus du plus haut de son grade, "
               "l'exceptionnel au-dessus encore), les durées en mois que le tableau écrit (duree : "

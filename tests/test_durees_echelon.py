@@ -752,6 +752,33 @@ def test_les_periodes_qui_se_chevauchent_sont_marquees(tableaux_lus):
     assert marques == CHEVAUCHEMENTS
 
 
+#: Décret n° 2014-99 du 4 février 2014, moniteurs-éducateurs de la fonction publique
+#: hospitalière, article 10, du 7 février 2014 au 22 mai 2016 (LEGIARTI000028566814),
+#: son II, mot pour mot.
+QUART_2014_99 = (
+    "La durée maximale du temps passé dans chaque échelon est égale à la durée moyenne "
+    "majorée du quart. La durée minimale du temps passé dans chaque échelon est égale à la "
+    "durée moyenne réduite du quart. Cette durée ne peut être inférieure à un an.")
+
+
+def test_la_regle_du_quart_se_cite_mot_pour_mot():
+    article = ("… 2e échelon 2 ans 1er échelon 1 an II. - " + QUART_2014_99)
+    assert dur.regle_du_quart(article) == QUART_2014_99
+    assert dur.regle_du_quart("La durée moyenne est fixée ainsi qu'il suit : 1er échelon 1 an") == ""
+
+
+def test_la_regle_du_quart_est_consignee_avec_la_moyenne(tableaux_lus):
+    """Le décret n° 2015-1048, article 14, du 1er septembre 2015 au 22 mai 2016
+    (LEGIARTI000031083656), écrit « minorée du quart » ; les tableaux de moyenne
+    seule du décret n° 95-1272 n'écrivent pas la règle."""
+    regles = {t["article"]: t["regle_du_quart"] for t in tableaux_lus}
+    assert regles["LEGIARTI000028566814"] == QUART_2014_99
+    assert regles["LEGIARTI000031083656"] == QUART_2014_99.replace("réduite", "minorée")
+    assert regles["LEGIARTI000006481280"] == ""
+    moyenne_seule = [t for t in tableaux_lus if t["colonnes"] == "moyenne"]
+    assert (len(moyenne_seule), sum(bool(t["regle_du_quart"]) for t in moyenne_seule)) == (36, 10)
+
+
 def test_chaque_ligne_est_certifiee_et_datee(lignes, tableaux_lus):
     assert lignes and all(l["fiabilite"] == "certifiee" for l in lignes)
     assert all(t["debut"] and t["article"].startswith("LEGIARTI") for t in tableaux_lus)
