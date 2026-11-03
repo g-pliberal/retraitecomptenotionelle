@@ -7790,14 +7790,15 @@ dire si la copie de l'UNSA est la sienne.
 
 ### 184. L'histoire d'un article de loi, lue dans l'index de la DILA : ce que le dépôt lexifina/global-law fait mieux, repris, et ce qu'il fait mal, écarté — `en cours`
 
-**Reprise, au 3 novembre 2026.** L'étape 1 est faite : `dila_cherche.py legi
---num <article>` lit l'histoire d'un article sans requête, `--diff` ce que
-chaque version change, mot à mot, `--le <date>` la version en vigueur ce
-jour-là, la précédente et les phrases où le texte dit à quoi il s'applique ;
-`--titre` départage deux textes, et chaque réponse dit la fraîcheur de
-l'index. Par quoi commencer : l'étape 2, qui change ce que l'index garde et le
-fait reconstruire par `index-dila.yml` ; puis la 3, qui sert le mot à mot à
-`textes.py`. Détail : `184/2026-11-03-etape-1.md`.
+**Reprise, au 3 novembre 2026.** L'étape 1 est faite (`dila_cherche.py legi
+--num`, `--diff`, `--le`). Les étapes 2 et 3 ont été revues le même jour,
+après mesure (« Les étapes, revues ») : la suivante trie, par leur mot à mot,
+les 14 648 rédactions sans statut final — 984 identiques à celle qu'elles
+remplacent, 6 992 à lire par leur mot à mot. Elle s'ouvre sur une décision du
+propriétaire : `textes.py` dit-il seul « sans effet » d'une rédaction
+identique à la précédente, ou ne fait-il que la proposer ? Le texte qui a
+écrit chaque version attend la veille de la LFSS 2027. Détail :
+`184/2026-11-03-mesure-du-stock.md`.
 
 **D'où elle vient.** Le 3 novembre 2026, le propriétaire signale
 `https://github.com/lexifina/global-law` : « Je crois qu'on fait la même chose
@@ -7857,3 +7858,40 @@ ends », dit le serveur MCP du dépôt).
 3. *Le mot à mot au service des fiches* : `textes.py` le montre quand il
    inscrit une rédaction « à examiner », pour qu'une rédaction sans effet se
    déclare la preuve sous les yeux (`docs/veille_droit.md`, étape 4).
+
+**Les étapes, revues le 3 novembre 2026**, après mesure sur l'index du
+2 novembre, quand le propriétaire demande : « Les étapes 2 et 3 vont vraiment
+nous aider ? », puis : « Réécrit l'action 184. » Elles remplacent les étapes 2
+et 3 ci-dessus ; la mesure, et comment la refaire, sont dans la note
+`184/2026-11-03-mesure-du-stock.md`.
+
+2. *Trier les rédactions sans statut final par leur mot à mot* — l'ancienne
+   étape 3, recadrée, et menée d'abord, sur l'index tel qu'il est. Le
+   3 novembre 2026, 14 648 rédactions de la liste de contrôle n'ont pas de
+   statut final : 9 350 sans statut, 4 700 « à examiner », 598 « à
+   rattacher » ; 66 seulement sont déclarées sans effet. Comparées à la
+   dernière version en vigueur du même article, 984 ont, mot pour mot, le
+   texte de celle qu'elles remplacent, dont 803 au code de la sécurité
+   sociale ; 6 992 changent quelque chose, et leur mot à mot fait 29 % de ce
+   qu'il faudrait lire des deux versions ; 6 649 sont des premières versions,
+   sans rien à quoi se comparer. `textes.py` classe ce stock ainsi — les
+   identiques, puis les autres du plus petit mot à mot au plus grand, les
+   premières versions à part — et imprime le mot à mot de chacune. L'étape
+   s'ouvre sur une décision du propriétaire. Le § 6.6 de l'architecture veut
+   une rédaction « déclarée sans effet » sur une version de fiche ; or 907 des
+   984 sont sans statut, et aucune fiche ne cite leur article. Ou bien
+   `textes.py` constate seul qu'une rédaction identique à la précédente est
+   sans effet, son mot à mot vide pour preuve, et le cliquet baisse d'autant ;
+   ou bien il la propose, et elle attend qu'une fiche couvre son article.
+3. *Le texte qui a écrit chaque version* — ce qui reste de l'ancienne étape 2,
+   remis à la veille de la loi de financement de la sécurité sociale pour
+   2027, attendue en fin d'année, et mené seulement si cette veille en a
+   l'usage : les liens de LEGI versés à l'index, `--diff` qui nomme le texte,
+   `--auteur` qui rend tout ce qu'un texte a changé. `textes.py --inscrire`
+   trouve déjà les rédactions nouvelles, par leur date ; le gain serait de les
+   grouper par texte. Le reste de l'ancienne étape 2 est abandonné : la
+   famille des versions ne départagerait que 74 des 6 753 articles du stock,
+   ceux où deux versions en vigueur au même moment portent le même numéro
+   dans le même texte ; « 1 er » et « 1er » se valent depuis l'étape 1 ; la
+   NOTA à part et les alinéas rendraient le mot à mot plus lisible, sans faire
+   trancher une rédaction de plus.
