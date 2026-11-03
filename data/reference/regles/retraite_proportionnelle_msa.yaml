@@ -136,14 +136,33 @@ sources:
     cotisation d'avant 1990. Aucun texte lu ne dit les points que valait cette moitié —
     ils relèvent des décrets auxquels R. 732-69 renvoie pour les années antérieures à
     1981, non lus, et la loi n° 52-799 n'est à l'index JORF que par sa notice —, ni si la
-    moyenne P compte 1952 pour une année ou pour une demie : le modèle, par convention,
-    la compte pour une année. Effet au plus de cette convention : le déplacement de P,
-    qui peut faire passer un seuil du barème au chef de peu d'années. Pour le témoin de
-    chef né en 1925, parti en février 1989, chef de 1952 à 1972 : P = 17,76 sur 21
-    années, 18,19 sur 20,5, 5 % dans les deux cas, 46,13 € de majoration : rien. La
-    moitié de la cotisation de 1952 lui a ôté 0,63 € de majoration (46,75 € et P = 18,00
-    auparavant) et 12,52 € par an du reste de sa pension proportionnelle, en euros de
-    son départ.
+    moyenne P compte 1952 pour une année ou pour une demie. D. 732-77 (LEGIARTI000006597491)
+    et l'article 2 du décret n° 86-1084 (LEGIARTI000006769405) disent « le nombre annuel
+    moyen de points acquis par l'assuré au cours de la période », R. 732-67
+    (LEGIARTI000053328816) des conditions « relatives au nombre moyen de leurs points au
+    titre de l'ensemble de la période comprise entre le 1 er juillet 1952 et le 31
+    décembre 1972 » : aucun ne
+    dit comment compter une année que la période ne couvre qu'à moitié, et la lecture
+    du 3 novembre 2026 ne le tranche pas. Deux lectures, S étant les points des n
+    années de chef de la période. (A) 1952 compte pour une année : P = S / n ; c'est la
+    convention du modèle, pour les pensions prises avant 2026 comme depuis. (B) 1952
+    compte pour une demie, comme sa cotisation : P = S / (n − 0,5), plus haut de
+    S / (2n(n − 0,5)). Effet de A au lieu de B, posé à la main. Au seuil de quinze
+    points, le chef dont S va de 15(n − 0,5) à 15n perd ses 5 % : de 1952 à 1972, S de
+    307,5 à 315 points, P de 14,64 à 15 sous A et de 15 à 15,37 sous B ; il perd
+    0,05 × S × la valeur de service, de 38,03 € à 38,96 € par an pour un départ de
+    1989 (valeur de 2,473 812 €), de 70,56 € à 72,28 € en euros de 2025 (4,589 €). De
+    19,51 à 27,34 points, le taux baisse de 3,19 × S / (2n(n − 0,5)) points. Le chef de
+    1952 sans interruption n'y arrive pas : au plafond chaque année, P = 18,18 sous A,
+    18,63 sous B, mesuré au moteur pour des départs de 1986 à 1999 ; le chef de 1952
+    puis de 1966 à 1972 seulement, au plafond, y arrive : P = 22,08 sous A et 23,55
+    sous B, un taux de 13,21 % au lieu de 17,91 %, 57,75 € de majoration au lieu de
+    78,27 € par an pour un départ de 1989, 20,52 € de moins. Le témoin de chef né en
+    1925, parti en février 1989, chef de 1952 à 1972 : P = 17,76 sous A, 18,19 sous
+    B, 5 % dans les deux cas, 46,13 € de majoration : rien. La moitié de la cotisation
+    de 1952 lui a ôté 0,63 € de majoration (46,75 € et P = 18,00 auparavant) et
+    12,52 € par an du reste de sa pension proportionnelle, en euros de son départ. La
+    MSA, qui dirait par écrit comment elle compte 1952, trancherait.
   - >-
     L'arrondi, pour les pensions prises de juillet 1986 à 2025 : ni D. 732-77 ni
     l'article 2 du décret n° 86-1084 ne disent s'il faut arrondir le taux T, que leurs

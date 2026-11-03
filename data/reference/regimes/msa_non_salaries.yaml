@@ -62,7 +62,8 @@ periodes:
       des cotisations annuelles » (décret n° 52-1166 du 18 octobre 1952,
       article 45, LEGIARTI000019272803, en vigueur depuis le 19 octobre
       1952). La cotisation annuelle du modèle est une convention, 8,5 % du
-      revenu borné au plafond (voir la période de 1974 à 1985) ; il en
+      revenu borné au plafond, qu'aucun texte lu ne fixe (voir la période de
+      1974 à 1985, et la fiche cotisation_vieillesse_agricole_avant_2003) ; il en
       prend la moitié en divisant par deux le taux de cette seule année,
       4,25 %, l'assiette restant le revenu de l'année entière. L'article ne
       distingue pas le chef des membres de sa famille : la moitié vaut pour
@@ -129,6 +130,14 @@ periodes:
       une carrière à quatre fois le salaire moyen sortait par ces dix années
       une pension de base supérieure au maximum que le régime peut servir.
       Le plafond retenu est celui que le régime s'est donné en 1990.
+      LE TAUX DE 8,5 % EST UNE CONVENTION, de 1953 à 2002 (sa moitié en
+      1952) : aucun texte lu ne le fixe. Avant 1983, les textes des
+      cotisations ne sont pas à l'index ; de 1983 à 1989, les décrets
+      annuels de financement fixent un montant par tranche de revenu
+      cadastral (article 1123, a) et une cotisation cadastrale (article
+      1125), aucun taux sur le revenu ; de 1990 à 2002, voir cette période.
+      Les textes lus, cités mot pour mot, et la question posée au
+      propriétaire : fiche cotisation_vieillesse_agricole_avant_2003.
       L'ÂGE EST DE SOIXANTE-CINQ ANS JUSQU'EN 1985 : l'article 1122 de
       l'ancien code rural (LEGIARTI000006581025, version en vigueur du
       5 juillet 1980 au 8 janvier 1986) donne « droit à la retraite à
@@ -231,6 +240,16 @@ periodes:
       plans de revalorisation portent de 1997 à 2008 la retraite
       proportionnelle du chef à un minimum de points (fiche
       majoration_retraite_proportionnelle).
+      LE TAUX DE 8,5 % N'EST PAS CELUI DES TEXTES : de 1993 à 2002, les
+      décrets annuels de financement prélèvent trois cotisations sur les
+      revenus professionnels, de 3,06 à 3,2 % et de 8,14 à 8,445 % bornés
+      au plafond, de 1,26 à 1,34 % sur leur totalité, et une cotisation
+      complémentaire que fixe chaque département autour d'un taux moyen ;
+      de 1990 à 1992, une part reste assise sur le revenu cadastral. Le
+      modèle n'en garde qu'un taux, proche du deuxième. Au scénario 1, les
+      points de ces années viennent du barème de R. 732-71, que le taux ne
+      touche pas ; au compte des scénarios 2 à 6, la question est posée au
+      propriétaire (fiche cotisation_vieillesse_agricole_avant_2003).
   - debut: 2003
     fin: 2003
     type_calcul: mixte

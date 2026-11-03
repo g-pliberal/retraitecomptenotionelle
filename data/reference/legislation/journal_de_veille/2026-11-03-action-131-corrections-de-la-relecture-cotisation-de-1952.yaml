@@ -1,0 +1,33 @@
+date: "2026-11-03"
+session: "action 131, file K-bis : les corrections de la relecture R-K de la cotisation agricole de 1952, et le taux de 8,5 % d'avant 2003"
+consulte: >-
+  python scripts/veille_droit.py --sans-cnav ; les index LEGI (à jour au 2 novembre 2026) et
+  JORF (au 3 novembre 2026) de la DILA, récupérés : code rural (ancien), articles 1121-1, 1123
+  (rédactions du 5 juillet 1980 au 22 juin 2000) et 1125 (du 25 janvier 1990 au 22 juin 2000) ;
+  code rural, L. 731-42 (rédactions de 2000 à 2004) ; les décrets annuels de financement du
+  régime des non-salariés agricoles de 1983 à 2003 (n° 83-664, 84-585, 85-735, 86-596, 87-612,
+  88-688, 89-510, 90-765, 91-912, 92-793, 93-1153, 94-715, 95-1038, 96-679, 97-771, 98-768,
+  99-725, 2000-952, 2001-677, 2002-1228, 2003-1033), articles de la vieillesse lus un à un ; au
+  JORF, les notices de la loi n° 52-799 (JORFTEXT000000512405), de l'arrêté du 23 juillet 1953
+  (JORFTEXT000000435389), du décret n° 82-396 (JORFTEXT000000519366) et les titres des textes de
+  1952 à 1982 sur la vieillesse agricole ; D. 732-77 (LEGIARTI000006597491 et
+  LEGIARTI000053365517), le décret n° 86-1084, article 2 (LEGIARTI000006769405), R. 732-67
+  (LEGIARTI000053328816) ; les décrets n° 94-714, 97-163 et 2002-297, pour leur « nombre annuel
+  moyen de points » ; le décret n° 99-875, article 2 (LEGIARTI000006779656).
+trouve: >-
+  Aucun texte ne fixe le taux de 8,5 % que le modèle prélève de 1953 à 2002 : avant 1983, les
+  textes ne sont à l'index qu'en notice ; de 1983 à 1989, les décrets fixent des montants par
+  tranche de revenu cadastral et le plafond de la cotisation cadastrale ; de 1990 à 1992, une
+  assiette mixte ; de 1993 à 2002, trois taux (3,06 à 3,2 %, 8,14 à 8,445 % bornés au plafond,
+  1,26 à 1,34 % sur la totalité) et une complémentaire départementale ; en 2003, les taux de
+  2002, quand le modèle passe à 17,37 %. Fiche neuve cotisation_vieillesse_agricole_avant_2003,
+  80 textes cités mot pour mot ; le modèle n'est pas changé. La moyenne P de D. 732-77 et de
+  R. 732-67 : aucun texte ne dit comment compter 1952, que la période ne couvre qu'à moitié ;
+  le calcul est gardé, les deux lectures et leur effet déclarés (fiche
+  retraite_proportionnelle_msa). L'arrondi de l'article 23 : 0,015 24 € par cotisation
+  réclamée, deux par an au plus.
+reste: >-
+  Au propriétaire : le taux à porter au compte de 1993 à 2002, la convention d'avant 1993 et le
+  17,37 % de 2003 ; 1952 dans la moyenne P, une année ou une demie (une lettre à la MSA). Au
+  fac-similé : la loi n° 52-799, articles 19 à 21, l'arrêté du 23 juillet 1953 et les textes de
+  financement de 1953 à 1982. À la session du coût : l'inversion de la grille que R-K relève.

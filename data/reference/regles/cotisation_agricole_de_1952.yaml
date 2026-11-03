@@ -123,19 +123,25 @@ approximations:
 - version: exercice_1952
   ecart: >-
     la cotisation annuelle que le modèle divise par deux est sa convention, 8,5 % du
-    revenu borné au plafond (fiche du régime, période de 1974 à 1985), et non les
+    revenu borné au plafond, qu'aucun texte lu ne fixe (fiche
+    cotisation_vieillesse_agricole_avant_2003, version avant_1983), et non les
     cotisations de 1952, personnelle (article 20) et cadastrale (article 21), dont la loi
     n° 52-799 fixe le montant ; son texte n'est à l'index du Journal officiel que par sa
     notice (JORFTEXT000000512405)
-  effet: celui de la convention, que la fiche du régime déclare ; non mesuré ici
+  effet: >-
+    celui de la convention, que la fiche cotisation_vieillesse_agricole_avant_2003
+    déclare : non mesuré, la cotisation réelle de 1952 ne se chiffrant pas sans la loi
+    n° 52-799
 - version: exercice_1952
   ecart: >-
     la cotisation « réclamée aux assujettis est arrondie à la dizaine de francs
     inférieure » (décret n° 52-1166, article 23, LEGIARTI000019272750, du 19 octobre 1952
     au 9 juillet 1975) ; le modèle n'arrondit pas
   effet: >-
-    moins de dix anciens francs par an, soit 0,1 franc de 1960, 0,015 € : posé à la main,
-    10 / 100 / 6,559 57
+    moins de dix anciens francs par cotisation réclamée, 0,1 franc de 1960, soit
+    10 / 100 / 6,559 57 = 0,015 24 € ; l'article 22 réclame la cotisation cadastrale par
+    semestre et ajoute la cotisation personnelle à celle du second : deux cotisations
+    réclamées par an au plus, moins de 0,030 5 € par an, posé à la main
 sources:
   lu_le: 2026-11-03
   prochaine_relecture: 2027-11-03
@@ -157,7 +163,10 @@ sources:
     la durée de cette demi-cotisation : le modèle compte les points de toute cotisation
     d'avant 1990 par son rendement, ceux de 1952 sur la moitié, et compte 1952 pour une
     année entière dans la durée et dans la moyenne P de la majoration des points de
-    chef (fiche retraite_proportionnelle_msa) ; aucun texte lu ne dit l'une ou l'autre.
+    chef ; aucun texte lu ne dit l'une ou l'autre. Les deux lectures de P et leur effet
+    sont dans la fiche retraite_proportionnelle_msa : compter 1952 pour une année ôte
+    ses 5 % au chef de 1952 à 1972 dont la moyenne, comptée sur vingt années et demie,
+    va de 15 à 15,37 points.
   - >-
     La loi n° 52-799 du 10 juillet 1952, articles 19 à 21, au fac-similé du Journal
     officiel du 11 juillet 1952 : le montant et l'assiette des cotisations de 1952, et ce
@@ -194,6 +203,11 @@ historique:
   2026-11-03 — née avec l'action 131 : le modèle prélevait en 1952 la cotisation d'une
   année entière, au compte comme au scénario 1, que la relecture R-K-bis avait relevé ;
   la période de 1952 de la fiche du régime est coupée à part, au taux de 4,25 %.
+- >-
+  2026-11-03 — la relecture R-K, puis la file K-bis : la convention de 8,5 % renvoie
+  à la fiche cotisation_vieillesse_agricole_avant_2003, née ce jour, qui lit les textes
+  de chaque année avant 2003 ; la borne de l'arrondi est de 0,015 24 € par cotisation
+  réclamée, deux par an au plus ; les deux lectures de la moyenne P sont dites.
 effet: >-
   Les chefs d'exploitation et les membres de leur famille qui cotisaient en 1952 : leur
   cotisation de cette année est la moitié de celle d'une année, dans les six scénarios.

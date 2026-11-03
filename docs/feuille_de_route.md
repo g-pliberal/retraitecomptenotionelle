@@ -5231,16 +5231,16 @@ R. 111-2 ; la condition de L. 816-1 ; le tableau de 2008 des régimes
 
 ### 131. Les dix fiches nées à la phase 6, relues à la source : les écarts qu'elles montrent, à corriger — `en cours`
 
-**Reprise, au 3 novembre 2026.** Faits, des coupures au mois à la cotisation de 1952, que le
-modèle ne prélève plus qu'à moitié, comme le veut le décret n° 52-1166, article 45 (note K du
-3 novembre, `cotisation-de-1952`), par les points de 1952 à 1972 (R. 732-67, D. 732-77). Attend
-sa relecture. Restent au propriétaire : des classes, l'acte vétérinaire, dix décrets et la loi
-n° 52-799 au fac-similé, la grille de 2008 ; l'ASF de 1983 à 2003
-(`coefficients_anticipation_agirc_arrco`) ; l'ajournement des artisans et commerçants et les
-« soixante et un ans » agricoles (`decote_avant_1983`) ; la durée du minimum de D. 634-14 ; le
-barème des points d'avant 1990 ; les 17 % de D. 732-76 : se cumulent-ils avec D. 732-77 ? ; les
-années au prorata de l'exploitant et l'assiette minimale des indépendants au compte ; l'AVI du
-collaborateur et la forme de son champ. Détail : les notes.
+**Reprise, au 3 novembre 2026.** Faits, des coupures au mois à la cotisation de 1952, à moitié
+(note K), relue (R-K, conforme) et corrigée (K-bis, `corrections-de-la-relecture-cotisation-de-1952`) :
+le taux de 8,5 % d'avant 2003 n'a aucun texte, ceux de 1983 à 2003 sont lus
+(`cotisation_vieillesse_agricole_avant_2003`). Attend sa relecture. Au propriétaire : le taux du
+compte de 1993 à 2002 et d'avant ; 1952 dans la moyenne P, une année ou une demie (la MSA) ; des
+classes, l'acte vétérinaire, dix décrets et la loi n° 52-799 au fac-similé, la grille de 2008 ;
+l'ASF de 1983 à 2003 ; l'ajournement et les « soixante et un ans » (`decote_avant_1983`) ; la durée
+du minimum de D. 634-14 ; le barème des points d'avant 1990 ; les 17 % de D. 732-76 ; les années au
+prorata de l'exploitant et l'assiette minimale au compte ; l'AVI du collaborateur et son champ.
+Détail : les notes.
 
 **La relecture, le 27 septembre 2026**, menée pendant la phase 7 par une autre
 session, à la demande du propriétaire, après avoir vérifié qu'elle ne lui

@@ -1,0 +1,1082 @@
+schema_version: 1
+id: cotisation_vieillesse_agricole_avant_2003
+intitule: >-
+  Avant 2003, la cotisation vieillesse des non-salariés agricoles est celle que fixent les
+  textes de chaque année : jusqu'en 1989, des montants assis sur le revenu cadastral ; de
+  1990 à 1992, une part cadastrale et une part des revenus professionnels ; de 1993 à
+  2002, trois taux sur ces revenus (article 1123 du code rural, puis L. 731-42), avec une
+  cotisation complémentaire que fixe chaque département.
+domaine: cotisations
+regimes: [msa_non_salaries]
+etape: acquerir_les_droits
+face: cotisation
+etat: approchee
+lit:
+- >-
+  l'année de la ligne de carrière, qui est l'exercice au titre duquel la cotisation est
+  due
+- >-
+  le revenu de l'année, borné au plafond, et le taux de la période de la fiche du régime
+  (regimes/msa_non_salaries.yaml, taux_cotisation_retraite) : 8,5 % de 1953 à 2002, 4,25 %
+  en 1952 (fiche cotisation_agricole_de_1952)
+ecrit:
+- >-
+  la cotisation de l'année au régime des non-salariés agricoles, que le scénario 1 change
+  en points par le rendement avant 1990, et que le compte des scénarios 2 à 6 reçoit
+dates_qui_decident:
+- revenu.annee
+versions:
+- id: avant_le_regime
+  statut: supposee
+  hypothese: >-
+    le régime ne prélève rien avant 1952, l'année où il naît : aucun texte en vigueur
+    avant 1952 ne le dit, puisqu'il n'existe pas
+  fiabilite: >-
+    haute, le décret n° 99-875, article 2, rédaction du 23 février 2001
+    (LEGIARTI000006779656), dit « la date de création du régime d'assurance vieillesse des
+    professions non salariées agricoles, à savoir le 1er juillet 1952 pour la métropole ou
+    le 1er janvier 1964 pour les départements d'outre-mer »
+  bornes:
+    revenu.annee: [null, 1952-01-01]
+  contenu:
+    droit: >-
+      aucune cotisation au régime, qui naît le 1er juillet 1952
+  exemples: aucun trouvé
+- id: avant_1983
+  statut: supposee
+  hypothese: >-
+    la cotisation de l'année est, pour le modèle, 8,5 % du revenu de l'année borné au
+    plafond, la moitié en 1952 : aucun texte lu ne fixe de taux sur le revenu de ces
+    années
+  fiabilite: >-
+    basse : les textes qui fixent ces cotisations ne sont pas lus. La loi n° 52-799 du 10
+    juillet 1952, dont les articles 19 à 21 les fixent, n'est à l'index du Journal
+    officiel que par sa notice (JORFTEXT000000512405), comme l'arrêté du 23 juillet 1953 «
+    TAUX DES COTISATIONS » (JORFTEXT000000435389) ; de 1952 à 1982, cet index n'a de ces
+    textes que des notices, sans les montants (le décret n° 82-396 du 11 mai 1982,
+    JORFTEXT000000519366, y est sans texte) ; l'index LEGI n'a l'article 1123 du code
+    rural que depuis sa rédaction du 5 juillet 1980, et aucun des décrets annuels de
+    financement avant le décret n° 83-664 du 21 juillet 1983
+  textes:
+  - id: LEGIARTI000006581056
+    article: >-
+      code rural (ancien), article 1123, rédaction du 5 juillet 1980
+    en_vigueur: 1980-07-05
+    citation: >-
+      « 1° Par une double cotisation professionnelle : a) L'une à la charge de chaque
+      membre non salarié âgé d'au moins dix-huit ans dépendant du régime, à l'exception
+      des chefs d'exploitation définis à l'article 1121-1 et des titulaires soit d'une
+      allocation, pension ou rente de vieillesse, soit d'une retraite, âgés d'au moins
+      soixante-cinq ans ou de soixante ans en cas d'inaptitude au travail, et de leurs
+      conjoints ; b) L'autre à la charge de chaque exploitation ou entreprise et dont le
+      montant global est fixé chaque année dans le budget annexe des prestations sociales
+      agricoles »
+    lu_le: 2026-11-03
+  bornes:
+    revenu.annee: [1952-01-01, 1983-01-01]
+  contenu:
+    droit: >-
+      la cotisation de l'année, que fixent la loi n° 52-799 et les textes de chaque année,
+      non lus ; depuis le 5 juillet 1980, l'article 1123 en fait une « double cotisation
+      professionnelle », l'une due par chaque membre non salarié d'au moins dix-huit ans,
+      l'autre par chaque exploitation, « dont le montant global est fixé chaque année dans
+      le budget annexe des prestations sociales agricoles » : aucun taux sur le revenu
+      n'est lu
+  exemples: aucun trouvé
+- id: montants_cadastraux_de_1983_a_1989
+  statut: lue
+  textes:
+  - id: LEGIARTI000006581057
+    article: >-
+      code rural (ancien), article 1123, rédaction du 8 janvier 1986
+    en_vigueur: 1986-01-08
+    citation: >-
+      « 1° Par une double cotisation professionnelle : a) L'une à la charge de chaque
+      membre non salarié âgé d'au moins dix-huit ans dépendant du régime, à l'exception
+      des chefs d'exploitation définis à l'article 1121-1 ; b) L'autre à la charge de
+      chaque exploitation ou entreprise et dont le montant global est fixé chaque année
+      dans le budget annexe des prestations sociales agricoles »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006764293
+    article: décret n° 83-664 du 21 juillet 1983, article 9
+    en_vigueur: 1983-07-23
+    citation: >-
+      « Pour le calcul de la cotisation cadastrale prévue à l'article 1125 du code rural
+      ainsi que pour celui de la cotisation complémentaire d'assurance vieillesse
+      agricole, le revenu cadastral pris en compte est plafonné à 23.359 F. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006764296
+    article: décret n° 83-664, article 10
+    en_vigueur: 1983-07-23
+    citation: >-
+      « Le montant de la cotisation prévue à l'article 1123 (1°, a) du code rural est fixé
+      comme suit »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006767156
+    article: décret n° 84-585 du 6 juillet 1984, article 9
+    en_vigueur: 1984-07-11
+    citation: >-
+      « Le revenu cadastral pris en compte pour le calcul de la cotisation cadastrale
+      prévue à l'article 1125 du code rural ainsi que pour celui de la cotisation
+      complémentaire d'assurance vieillesse agricole est plafonné à 25.695 F »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006767157
+    article: décret n° 84-585, article 10
+    en_vigueur: 1984-07-11
+    citation: >-
+      « Le montant de la cotisation prévue à l'article 1123, 1° a du code rural est fixé
+      comme suit »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006768698
+    article: décret n° 85-735 du 18 juillet 1985, article 9
+    en_vigueur: 1985-07-20
+    citation: >-
+      « Le revenu cadastral déterminé à l'article 2, servant d'assiette à la cotisation
+      prévue à l'article 1125 du code rural et à la cotisation destinée à la couverture
+      des dépenses complémentaires d'assurance vieillesse agricole, est plafonné à 27.751
+      F. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006768699
+    article: décret n° 85-735, article 10
+    en_vigueur: 1985-07-20
+    citation: >-
+      « Le montant de la cotisation assise sur le revenu cadastral, prévue à l'article
+      1123-1° a du code rural, est fixé comme suit »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006769128
+    article: décret n° 86-596 du 14 mars 1986, article 9
+    en_vigueur: 1986-03-19
+    citation: >-
+      « Le revenu cadastral servant d'assiette à la cotisation prévue à l'article 1123-1°
+      b du code rural et à la cotisation destinée à la couverture des dépenses
+      complémentaires d'assurance vieillesse agricole est plafonné à 29.971 F. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006769129
+    article: décret n° 86-596, article 10
+    en_vigueur: 1986-03-19
+    citation: >-
+      « Le montant de la cotisation assise sur le revenu cadastral, prévue à l'article
+      1123-1° a du code rural, est fixé comme suit »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006770494
+    article: décret n° 87-612 du 31 juillet 1987, article 9
+    en_vigueur: 1987-08-04
+    citation: >-
+      « Le revenu cadastral servant d'assiette à la cotisation prévue à l'article 1123
+      (1°, b), du code rural et à la cotisation destinée à la couverture des dépenses
+      complémentaires d'assurance vieillesse agricole, est plafonné à 31 529 F. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006770495
+    article: décret n° 87-612, article 10
+    en_vigueur: 1987-08-04
+    citation: >-
+      « La cotisation prévue à l'article 1123, (1°, a), du code rural est égale, selon les
+      tranches de revenu cadastral ou les tranches de rémunération, au montant fixé dans
+      les tableaux ci-dessous »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006772790
+    article: décret n° 88-688 du 7 mai 1988, article 9
+    en_vigueur: 1988-05-08
+    citation: >-
+      « Le revenu cadastral servant d'assiette à la cotisation prévue à l'article 1123
+      (1°, b) du code rural et à la cotisation destinée à la couverture des dépenses
+      complémentaires d'assurance vieillesse agricole est plafonné à 31 354 F. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006772791
+    article: décret n° 88-688, article 10
+    en_vigueur: 1988-05-08
+    citation: >-
+      « La cotisation prévue à l'article 1123 (1°, a) du code rural est égale, selon les
+      tranches de revenu cadastral ou les tranches de rémunération, au montant fixé dans
+      les tableaux ci-dessous »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006774421
+    article: décret n° 89-510 du 20 juillet 1989, article 9
+    en_vigueur: 1989-07-22
+    citation: >-
+      « Le revenu cadastral servant d'assiette à la cotisation prévue au b de l'article
+      1123 (1°) du code rural et à la cotisation destinée à la couverture des dépenses
+      complémentaires d'assurance vieillesse agricole, est plafonné à 31 448 F. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006774422
+    article: décret n° 89-510, article 10
+    en_vigueur: 1989-07-22
+    citation: >-
+      « La cotisation prévue au a de l'article 1123 (1°) du code rural est égale, selon
+      les tranches de revenu cadastral ou les tranches de rémunération, au montant fixé
+      dans les tableaux ci-dessous »
+    lu_le: 2026-11-03
+  bornes:
+    revenu.annee: [1983-01-01, 1990-01-01]
+  contenu:
+    droit: >-
+      deux cotisations, aucune en taux du revenu professionnel. Celle du a de l'article
+      1123, due pour chaque membre non salarié d'au moins dix-huit ans, est un montant en
+      francs par tranche de revenu cadastral de l'exploitation, que fixe le décret de
+      chaque année (de 340 F à 860 F en 1983, jusqu'à 2 010 F en 1989). Celle du b, à la
+      charge de l'exploitation, est la cotisation cadastrale de l'article 1125, dont
+      l'article 1123 dit que « le montant global est fixé chaque année dans le budget
+      annexe des prestations sociales agricoles » ; les décrets n'en fixent que le plafond
+      du revenu cadastral qui lui sert d'assiette (23 359 F en 1983, 31 448 F en 1989), et
+      aucun article de ces décrets, lus à l'index article par article, n'en donne le
+      montant par franc de revenu cadastral
+  exemples: aucun trouvé
+- id: assiette_mixte_de_1990_a_1992
+  statut: lue
+  textes:
+  - id: LEGIARTI000006581059
+    article: >-
+      code rural (ancien), article 1123, rédaction du 25 janvier 1990
+    en_vigueur: 1990-01-25
+    citation: >-
+      « elles comprennent : a) Une cotisation due pour chaque personne non salariée âgée
+      d'au moins dix-huit ans, à l'exception des chefs d'exploitation ou d'entreprise
+      mentionnés à l'article 1121-1 ; b) Une cotisation due pour chaque chef
+      d'exploitation ou d'entreprise. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006581066
+    article: >-
+      code rural (ancien), article 1125, rédaction du 25 janvier 1990
+    en_vigueur: 1990-01-25
+    citation: >-
+      « La cotisation prévue au b de l'article 1123 ci-dessus varie, dans la limite d'un
+      plafond, suivant l'importance et la nature des exploitations ou des affaires »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006581060
+    article: >-
+      code rural (ancien), article 1123, rédaction du 20 janvier 1991
+    en_vigueur: 1991-01-20
+    citation: >-
+      « c) Une cotisation à la charge de chaque chef d'exploitation ou d'entreprise,
+      calculée sur la totalité des revenus professionnels ou sur l'assiette forfaitaire
+      définis à l'article 1003-12. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006581067
+    article: >-
+      code rural (ancien), article 1125, rédaction du 1er janvier 1992
+    en_vigueur: 1992-01-01
+    citation: >-
+      « La cotisation prévue au troisième alinéa (b) de l'article 1123 est calculée, dans
+      la limite du plafond prévu à l'article L. 241-3 du code de la sécurité sociale, en
+      pourcentage des revenus professionnels du chef d'exploitation ou d'entreprise ou de
+      l'assiette forfaitaire définis à l'article 1003-12. Son taux est fixé par décret. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006775081
+    article: décret n° 90-765 du 28 août 1990, article 13
+    en_vigueur: 1990-08-30
+    citation: >-
+      « La cotisation prévue au a de l'article 1123 du code rural est égale, selon les
+      tranches de revenu cadastral ou les tranches de rémunération, au montant fixé dans
+      les tableaux ci-dessous »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006775082
+    article: décret n° 90-765, article 14
+    en_vigueur: 1990-08-30
+    citation: >-
+      « La cotisation prévue au b de l'article 1123 du code rural est composée de deux
+      éléments : le premier calculé suivant les modalités prévues à l'article 1125 du code
+      rural, le second calculé sur les revenus professionnels ou l'assiette forfaitaire
+      définis à l'article 1003-12 du code rural auxquels est appliqué un taux de 2,25 p.
+      100 dans la limite du plafond de la sécurité sociale en vigueur au 1er janvier de
+      l'année au titre de laquelle les cotisations sont dues. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006775083
+    article: décret n° 90-765, article 15
+    en_vigueur: 1990-08-30
+    citation: >-
+      « Le taux de la cotisation due pour la couverture des dépenses complémentaires
+      afférentes à l'assurance vieillesse agricole et assise sur les revenus définis à
+      l'article 1003-12 du code rural est fixé par arrêté préfectoral sur proposition du
+      comité départemental des prestations sociales agricoles, dans la limite de plus ou
+      moins 15 p. 100 d'un taux moyen de 0,67 p. 100. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006776124
+    article: décret n° 91-912 du 12 septembre 1991, article 11
+    en_vigueur: 1991-09-14
+    citation: >-
+      « La cotisation prévue au a de l'article 1123 du code rural est égale, selon les
+      tranches de revenu cadastral ou les tranches de rémunération, au montant fixé dans
+      les tableaux ci-dessous »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006776126
+    article: décret n° 91-912, article 13
+    en_vigueur: 1991-09-14
+    citation: >-
+      « La cotisation prévue au b de l'article 1123 du code rural est composée de deux
+      éléments : le premier calculé suivant les modalités prévues à l'article 1125 du code
+      rural, le second calculé sur les revenus professionnels ou l'assiette forfaitaire
+      définis à l'article 1003-12 du code rural auxquels est appliqué un taux de 7,41 p.
+      100 dans la limite du plafond prévu à l'article L. 241-3 du code de la sécurité
+      sociale. Du montant de cette cotisation est déduite une remise forfaitaire dans les
+      conditions prévues par l'article 7 du décret n° 91-91 du 23 janvier 1991. Cette
+      remise est de 462 F pour les chefs d'exploitation ou d'entreprise exerçant une
+      activité à temps plein. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006776127
+    article: décret n° 91-912, article 14
+    en_vigueur: 1991-09-14
+    citation: >-
+      « La cotisation prévue au c de l'article 1123 du code rural est égale à 1,155 p. 100
+      de la totalité des revenus professionnels ou de l'assiette forfaitaire définis à
+      l'article 1003-12 du code rural. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006776128
+    article: décret n° 91-912, article 15
+    en_vigueur: 1991-09-14
+    citation: >-
+      « Le taux de la cotisation due pour la couverture des dépenses complémentaires
+      afférentes à l'assurance vieillesse agricole et assise sur les revenus
+      professionnels ou l'assiette forfaitaire définis à l'article 1003-12 du code rural
+      est fixé, par arrêté préfectoral sur proposition du comité départemental des
+      prestations sociales agricoles, dans la limite de plus ou moins 17 p. 100 d'un taux
+      moyen de 1,78 p. 100 sur la partie plafonnée des revenus professionnels ou de
+      l'assiette forfaitaire et d'un taux moyen de 0,16 p. 100 sur la totalité desdits
+      revenus ou assiette forfaitaire. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006776472
+    article: décret n° 92-793 du 14 août 1992, article 12
+    en_vigueur: 1992-08-15
+    citation: >-
+      « Pour la cotisation mentionnée au a de l'article 1123 du code rural, le premier
+      élément de cotisation, prévu au I de l'article 4 de la loi du 31 décembre 1991
+      susvisée, est égal, selon les tranches de revenu cadastral ou les tranches de
+      rémunération, au montant fixé »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006776473
+    article: décret n° 92-793, article 13
+    en_vigueur: 1992-08-15
+    citation: >-
+      « Pour la cotisation mentionnée au a de l'article 1123 du code rural, le taux du
+      deuxième élément de cotisation prévu au I de l'article 4 de la loi du 31 décembre
+      1991 susvisée est fixé à 1,23 p. 100 des revenus professionnels du chef
+      d'exploitation ou d'entreprise ou de l'assiette forfaitaire, tels qu'ils sont
+      définis à l'article 1003-12 du code rural, dans la limite du plafond prévu à
+      l'article L. 241-3 du code de la sécurité sociale. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006776474
+    article: décret n° 92-793, article 14
+    en_vigueur: 1992-08-15
+    citation: >-
+      « La cotisation prévue au b de l'article 1123 du code rural est calculée sur les
+      revenus professionnels ou l'assiette forfaitaire définis à l'article 1003-12 du code
+      rural auxquels est appliqué un taux de 8,105 p. 100 dans la limite du plafond prévu
+      à l'article L. 241-3 du code de la sécurité sociale. Du montant de cette cotisation
+      est déduite une remise forfaitaire dans les conditions prévues par l'article 7 du
+      décret du 23 janvier 1991 susvisé. Cette remise est de 504 F pour les chefs
+      d'exploitation ou d'entreprise exerçant une activité à temps plein. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006776475
+    article: décret n° 92-793, article 15
+    en_vigueur: 1992-08-15
+    citation: >-
+      « La cotisation prévue au c de l'article 1123 du code rural est égale à 1,28 p. 100
+      de la totalité des revenus professionnels ou de l'assiette forfaitaire définis à
+      l'article 1003-12 du code rural. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006776476
+    article: décret n° 92-793, article 16
+    en_vigueur: 1992-08-15
+    citation: >-
+      « Le taux de la cotisation due pour la couverture des dépenses complémentaires
+      afférentes à l'assurance vieillesse agricole et assise sur les revenus
+      professionnels ou l'assiette forfaitaire définis à l'article 1003-12 du code rural
+      est fixé, par arrêté préfectoral sur proposition du comité départemental des
+      prestations sociales agricoles, dans la limite de plus ou moins 18 p. 100 d'un taux
+      moyen de 2,17 p. 100 sur la partie plafonnée des revenus professionnels ou de
+      l'assiette forfaitaire et d'un taux moyen de 0,16 p. 100 sur la totalité desdits
+      revenus ou assiette forfaitaire. »
+    lu_le: 2026-11-03
+  bornes:
+    revenu.annee: [1990-01-01, 1993-01-01]
+  contenu:
+    droit: >-
+      le passage aux revenus professionnels, depuis la rédaction de l'article 1123 du 25
+      janvier 1990. En 1990 et 1991, la cotisation du a reste un montant par tranche de
+      revenu cadastral ou de rémunération ; celle du b se compose d'une part cadastrale
+      (article 1125) et d'une part de 2,25 % en 1990, de 7,41 % en 1991, des revenus
+      professionnels bornés au plafond ; depuis 1991, celle du c porte sur la totalité des
+      revenus professionnels, 1,155 % en 1991, 1,28 % en 1992. En 1992, le b n'est plus
+      que 8,105 % des revenus bornés au plafond (article 1125 : « Son taux est fixé par
+      décret »), et le a ajoute à son montant par tranche un second élément de 1,23 % des
+      revenus bornés au plafond. S'y ajoute la cotisation des dépenses complémentaires de
+      l'assurance vieillesse, fixée par arrêté préfectoral autour d'un taux moyen : 0,67 %
+      des revenus en 1990 ; 1,78 % de leur partie plafonnée et 0,16 % de leur totalité en
+      1991 ; 2,17 % et 0,16 % en 1992
+  exemples: aucun trouvé
+- id: trois_taux_de_1993_a_2002
+  statut: lue
+  textes:
+  - id: LEGIARTI000006581061
+    article: >-
+      code rural (ancien), article 1123, rédaction du 1er janvier 1994
+    en_vigueur: 1994-01-01
+    citation: >-
+      « a) Une cotisation due pour chaque personne non salariée âgée d'au moins dix-huit
+      ans, à l'exception des chefs d'exploitation ou d'entreprise mentionnés à l'article
+      1121-1 ; b) Une cotisation due pour chaque chef d'exploitation ou d'entreprise et
+      une cotisation due pour chaque aide familial majeur au sens du 2° de l'article
+      1106-1. Cette cotisation est calculée dans les conditions prévues à l'article 1125 ;
+      c) Une cotisation à la charge de chaque chef d'exploitation ou d'entreprise,
+      calculée sur la totalité des revenus professionnels ou sur l'assiette forfaitaire
+      définis à l'article 1003-12. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006585487
+    article: code rural, L. 731-42, rédaction du 1er janvier 2001
+    en_vigueur: 2001-01-01
+    citation: >-
+      « 1° Une cotisation due pour chaque personne non salariée âgée d'au moins dix-huit
+      ans, à l'exception des personnes mentionnées à l'article L. 732-28 et calculée, dans
+      la limite du plafond prévu à l'article L. 241-3 du code de la sécurité sociale, en
+      pourcentage des revenus professionnels du chef d'exploitation ou d'entreprise ou de
+      l'assiette forfaitaire, tels qu'ils sont définis aux articles L. 731-14 à L. 731-22
+      »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006581061
+    article: >-
+      code rural (ancien), article 1123, rédaction du 1er janvier 1994
+    en_vigueur: 1994-01-01
+    citation: >-
+      « a) Une cotisation due pour chaque personne non salariée âgée d'au moins dix-huit
+      ans, à l'exception des chefs d'exploitation ou d'entreprise mentionnés à l'article
+      1121-1 ; b) Une cotisation due pour chaque chef d'exploitation ou d'entreprise et
+      une cotisation due pour chaque aide familial majeur au sens du 2° de l'article
+      1106-1. Cette cotisation est calculée dans les conditions prévues à l'article 1125 ;
+      c) Une cotisation à la charge de chaque chef d'exploitation ou d'entreprise,
+      calculée sur la totalité des revenus professionnels ou sur l'assiette forfaitaire
+      définis à l'article 1003-12. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006777137
+    article: décret n° 93-1153 du 8 octobre 1993, article 12
+    en_vigueur: 1993-10-10
+    citation: >-
+      « Pour la cotisation mentionnée au a de l'article 1123 du code rural, le taux est
+      fixé à 3,06 p. 100 des revenus professionnels du chef d'exploitation ou d'entreprise
+      ou de l'assiette forfaitaire, tels qu'ils sont définis à l'article 1003-12 du code
+      rural, dans la limite du plafond prévu à l'article L. 241-3 du code de la sécurité
+      sociale. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006777138
+    article: décret n° 93-1153, article 13
+    en_vigueur: 1993-10-10
+    citation: >-
+      « La cotisation prévue au b de l'article 1123 du code rural est calculée sur les
+      revenus professionnels ou l'assiette forfaitaire définis à l'article 1003-12 du code
+      rural auxquels est appliqué un taux de 8,140 p. 100 dans la limite du plafond prévu
+      à l'article L. 241-3 du code de la sécurité sociale. Du montant de cette cotisation
+      est déduite une remise forfaitaire dans les conditions prévues par l'article 7 du
+      décret du 23 janvier 1991 susvisé. Cette remise est de 504 F pour les chefs
+      d'exploitation ou d'entreprise exerçant une activité à temps plein. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006777139
+    article: décret n° 93-1153, article 14
+    en_vigueur: 1993-10-10
+    citation: >-
+      « La cotisation prévue au c de l'article 1123 du code rural est égale à 1,306 p. 100
+      de la totalité des revenus professionnels ou de l'assiette forfaitaire définis à
+      l'article 1003-12 du code rural. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006777140
+    article: décret n° 93-1153, article 15
+    en_vigueur: 1993-10-10
+    citation: >-
+      « Le taux de la cotisation due pour la couverture des dépenses complémentaires
+      afférentes à l'assurance vieillesse agricole et assise sur les revenus
+      professionnels ou l'assiette forfaitaire définis à l'article 1003-12 du code rural
+      est fixé, par arrêté préfectoral sur proposition du comité départemental des
+      prestations sociales agricoles, dans la limite de plus ou moins 20 p. 100 d'un taux
+      moyen de 2,30 p. 100 sur la partie plafonnée des revenus professionnels ou de
+      l'assiette forfaitaire et d'un taux moyen de 0,16 p. 100 sur la totalité desdits
+      revenus ou assiette forfaitaire. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006777702
+    article: décret n° 94-715 du 18 août 1994, article 15
+    en_vigueur: 1994-08-20
+    citation: >-
+      « Pour la cotisation mentionnée au a de l'article 1123 du code rural, le taux est
+      fixé à 3,10 p. 100 des revenus professionnels du chef d'exploitation ou d'entreprise
+      ou de l'assiette forfaitaire, tels qu'ils sont définis à l'article 1003-12 du code
+      rural, dans la limite du plafond prévu à l'article L. 241-3 du code de la sécurité
+      sociale. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006777704
+    article: décret n° 94-715, article 16
+    en_vigueur: 1994-08-20
+    citation: >-
+      « La cotisation prévue au b de l'article 1123 du code rural au titre du chef
+      d'exploitation ou d'entreprise agricoles est calculée sur les revenus professionnels
+      ou l'assiette forfaitaire définis à l'article 1003-12 du code rural auxquels est
+      appliqué un taux de 8,36 p. 100 dans la limite du plafond prévu à l'article L. 241-3
+      du code de la sécurité sociale. Du montant de cette cotisation est déduite une
+      remise forfaitaire dans les conditions prévues par l'article 7 du décret n° 91-91 du
+      23 janvier 1991. Cette remise est de 504 F pour les chefs d'exploitation ou
+      d'entreprise exerçant une activité à temps plein. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006777706
+    article: décret n° 94-715, article 18
+    en_vigueur: 1994-08-20
+    citation: >-
+      « La cotisation prévue au c de l'article 1123 du code rural est égale à 1,34 p. 100
+      de la totalité des revenus professionnels ou de l'assiette forfaitaire définis à
+      l'article 1003-12 du code rural. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006777707
+    article: décret n° 94-715, article 19
+    en_vigueur: 1994-08-20
+    citation: >-
+      « Le taux de la cotisation due pour la couverture des dépenses complémentaires
+      afférentes à l'assurance vieillesse agricole des chefs d'exploitation ou
+      d'entreprise agricoles et assise sur les revenus professionnels ou l'assiette
+      forfaitaire définis à l'article 1003-12 du code rural est fixé, par arrêté
+      préfectoral sur proposition du comité départemental des prestations sociales
+      agricoles, dans la limite de plus ou moins 20 p. 100 d'un taux moyen de 2,41 p. 100
+      sur la partie plafonnée des revenus professionnels ou de l'assiette forfaitaire et
+      d'un taux moyen de 0,16 p. 100 sur la totalité desdits revenus ou assiette
+      forfaitaire. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006770956
+    article: décret n° 95-1038 du 21 septembre 1995, article 15
+    en_vigueur: 1995-09-22
+    citation: >-
+      « Pour la cotisation mentionnée au a de l'article 1123 du code rural, le taux est
+      fixé à 3,10 p. 100 des revenus professionnels du chef d'exploitation ou d'entreprise
+      ou de l'assiette forfaitaire, tels qu'ils sont définis à l'article 1003-12 du code
+      rural, dans la limite du plafond prévu à l'article L. 241-3 du code de la sécurité
+      sociale. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006770957
+    article: décret n° 95-1038, article 16
+    en_vigueur: 1995-09-22
+    citation: >-
+      « La cotisation prévue au b de l'article 1123 du code rural au titre du chef
+      d'exploitation ou d'entreprise agricoles est calculée sur les revenus professionnels
+      ou l'assiette forfaitaire définis à l'article 1003-12 du code rural auxquels est
+      appliqué un taux de 8,27 p. 100 dans la limite du plafond prévu à l'article L. 241-3
+      du code de la sécurité sociale. Du montant de cette cotisation est déduite une
+      remise forfaitaire dans les conditions prévues par l'article 7 du décret du 23
+      janvier 1991 susvisé. Cette remise est supprimée pour les cotisations dues au titre
+      de la période postérieure au 31 août 1995, en application du II (2°) de l'article 5
+      de la loi du 4 août 1995 susvisée. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006770959
+    article: décret n° 95-1038, article 18
+    en_vigueur: 1995-09-22
+    citation: >-
+      « La cotisation prévue au c de l'article 1123 du code rural est égale à 1,26 p. 100
+      de la totalité des revenus professionnels ou de l'assiette forfaitaire définis à
+      l'article 1003-12 du code rural. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006770960
+    article: décret n° 95-1038, article 19
+    en_vigueur: 1995-09-22
+    citation: >-
+      « Le taux de la cotisation due pour la couverture des dépenses complémentaires
+      afférentes à l'assurance vieillesse agricole des chefs d'exploitation ou
+      d'entreprise agricoles et assise sur les revenus professionnels ou l'assiette
+      forfaitaire définis à l'article 1003-12 du code rural est fixé, par arrêté
+      préfectoral, sur proposition du comité départemental des prestations sociales
+      agricoles, dans la limite de plus ou moins 20 p. 100 d'un taux moyen de 2,48 p. 100
+      sur la partie plafonnée des revenus professionnels ou de l'assiette forfaitaire et
+      d'un taux moyen de 0,24 p. 100 sur la totalité desdits revenus ou assiette
+      forfaitaire. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006771185
+    article: décret n° 96-679 du 30 juillet 1996, article 12
+    en_vigueur: 1996-07-31
+    citation: >-
+      « Pour la cotisation mentionnée au a de l'article 1123 du code rural, le taux est
+      fixé à 3,2 p. 100 des revenus professionnels du chef d'exploitation ou d'entreprise
+      ou de l'assiette forfaitaire, tels qu'ils sont définis à l'article 1003-12 du code
+      rural, dans la limite du plafond prévu à l'article L. 241-3 du code de la sécurité
+      sociale. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006771186
+    article: décret n° 96-679, article 13
+    en_vigueur: 1996-07-31
+    citation: >-
+      « La cotisation prévue au b de l'article 1123 du code rural au titre du chef
+      d'exploitation ou d'entreprise agricoles est calculée sur les revenus professionnels
+      ou l'assiette forfaitaire définis à l'article 1003-12 du code rural auxquels est
+      appliqué un taux de 8,445 p. 100 dans la limite du plafond prévu à l'article L.
+      241-3 du code de la sécurité sociale. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006771188
+    article: décret n° 96-679, article 15
+    en_vigueur: 1996-07-31
+    citation: >-
+      « La cotisation prévue au c de l'article 1123 du code rural est égale à 1,29 p. 100
+      de la totalité des revenus professionnels ou de l'assiette forfaitaire définis à
+      l'article 1003-12 du code rural. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006771189
+    article: décret n° 96-679, article 16
+    en_vigueur: 1996-07-31
+    citation: >-
+      « Le taux de la cotisation due pour la couverture des dépenses complémentaires
+      afférentes à l'assurance vieillesse agricole des chefs d'exploitation ou
+      d'entreprise agricoles et assise sur les revenus professionnels ou l'assiette
+      forfaitaire définis à l'article 1003-12 du code rural est fixé, par arrêté
+      préfectoral sur proposition du comité départemental des prestations sociales
+      agricoles, dans la limite de plus ou moins 20 p. 100 d'un taux moyen de 2,53 p. 100
+      sur la partie plafonnée des revenus professionnels ou de l'assiette forfaitaire et
+      d'un taux moyen de 0,25 p. 100 sur la totalité desdits revenus ou assiette
+      forfaitaire. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006771782
+    article: décret n° 97-771 du 30 juillet 1997, article 10
+    en_vigueur: 1997-07-31
+    citation: >-
+      « Pour la cotisation mentionnée au a de l'article 1123 du code rural, le taux est
+      fixé à 3,2 % des revenus professionnels du chef d'exploitation ou d'entreprise ou de
+      l'assiette forfaitaire, tels qu'ils sont définis à l'article 1003-12 du code rural,
+      dans la limite du plafond prévu à l'article L. 241-3 du code de la sécurité sociale.
+      »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006771783
+    article: décret n° 97-771, article 11
+    en_vigueur: 1997-07-31
+    citation: >-
+      « La cotisation prévue au b de l'article 1123 du code rural au titre du chef
+      d'exploitation ou d'entreprise agricoles est calculée sur les revenus professionnels
+      ou l'assiette forfaitaire définis à l'article 1003-12 du code rural auxquels est
+      appliqué un taux de 8,445 % dans la limite du plafond prévu à l'article L. 241-3 du
+      code de la sécurité sociale. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006771785
+    article: décret n° 97-771, article 13
+    en_vigueur: 1997-07-31
+    citation: >-
+      « La cotisation prévue au c de l'article 1123 du code rural est égale à 1,29 % de la
+      totalité des revenus professionnels ou de l'assiette forfaitaire définis à l'article
+      1003-12 du code rural. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006771786
+    article: décret n° 97-771, article 14
+    en_vigueur: 1997-07-31
+    citation: >-
+      « Le taux de la cotisation due pour la couverture des dépenses complémentaires
+      afférentes à l'assurance vieillesse agricole des chefs d'exploitation ou
+      d'entreprise agricoles et assise sur les revenus professionnels ou l'assiette
+      forfaitaire définis à l'article 1003-12 du code rural est fixé, par arrêté
+      préfectoral sur proposition du comité départemental des prestations sociales
+      agricoles, dans la limite de plus ou moins 15 % d'un taux moyen de 2,53 % sur la
+      partie plafonnée des revenus professionnels ou de l'assiette forfaitaire et d'un
+      taux moyen de 0,25 % sur la totalité desdits revenus ou assiette forfaitaire. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006772340
+    article: décret n° 98-768 du 31 août 1998, article 10
+    en_vigueur: 1998-09-01
+    citation: >-
+      « Pour la cotisation mentionnée au a de l'article 1123 du code rural, le taux est
+      fixé à 3,2 % des revenus professionnels du chef d'exploitation ou d'entreprise ou de
+      l'assiette forfaitaire, tels qu'ils sont définis à l'article 1003-12 du code rural,
+      dans la limite du plafond prévu à l'article L. 241-3 du code de la sécurité sociale.
+      »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006772341
+    article: décret n° 98-768, article 11
+    en_vigueur: 1998-09-01
+    citation: >-
+      « La cotisation prévue au b de l'article 1123 du code rural au titre du chef
+      d'exploitation ou d'entreprise agricoles est calculée sur les revenus professionnels
+      ou l'assiette forfaitaire définis à l'article 1003-12 du code rural auxquels est
+      appliqué un taux de 8,445 %, dans la limite du plafond prévu à l'article L. 241-3 du
+      code de la sécurité sociale. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006772343
+    article: décret n° 98-768, article 13
+    en_vigueur: 1998-09-01
+    citation: >-
+      « La cotisation prévue au c de l'article 1123 du code rural est égale à 1,29 % de la
+      totalité des revenus professionnels ou de l'assiette forfaitaire définis à l'article
+      1003-12 du code rural. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006772344
+    article: décret n° 98-768, article 14
+    en_vigueur: 1998-09-01
+    citation: >-
+      « Le taux de la cotisation due pour la couverture des dépenses complémentaires
+      afférentes à l'assurance vieillesse agricole des chefs d'exploitation ou
+      d'entreprise agricoles et assise sur les revenus professionnels ou l'assiette
+      forfaitaire définis à l'article 1003-12 du code rural est fixé par arrêté
+      préfectoral, sur proposition du comité départemental des prestations sociales
+      agricoles, dans la limite de plus ou moins 15 % d'un taux moyen de 2,53 % sur la
+      partie plafonnée des revenus professionnels ou de l'assiette forfaitaire et d'un
+      taux moyen de 0,25 % sur la totalité desdits revenus ou assiette forfaitaire. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006780266
+    article: décret n° 99-725 du 3 août 1999, article 11
+    en_vigueur: 1999-08-12
+    citation: >-
+      « Pour la cotisation mentionnée au a de l'article 1123 du code rural, le taux est
+      fixé à 3,2 % des revenus professionnels du chef d'exploitation ou d'entreprise ou de
+      l'assiette forfaitaire, tels qu'ils sont définis à l'article 1003-12 du code rural,
+      dans la limite du plafond prévu à l'article L. 241-3 du code de la sécurité sociale.
+      »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006780268
+    article: décret n° 99-725, article 12
+    en_vigueur: 1999-08-12
+    citation: >-
+      « La cotisation prévue au b de l'article 1123 du code rural au titre du chef
+      d'exploitation ou d'entreprise agricoles est calculée sur les revenus professionnels
+      ou l'assiette forfaitaire définis à l'article 1003-12 du code rural auxquels est
+      appliqué un taux de 8,44 % dans la limite du plafond prévu à l'article L. 241-3 du
+      code de la sécurité sociale. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006780271
+    article: décret n° 99-725, article 15
+    en_vigueur: 1999-08-12
+    citation: >-
+      « La cotisation prévue au c de l'article 1123 du code rural est égale à 1,29 % de la
+      totalité des revenus professionnels ou de l'assiette forfaitaire définis à l'article
+      1003-12 du code rural. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006780272
+    article: décret n° 99-725, article 16
+    en_vigueur: 1999-08-12
+    citation: >-
+      « Le taux de la cotisation due pour la couverture des dépenses complémentaires
+      afférentes à l'assurance vieillesse agricole des chefs d'exploitation ou
+      d'entreprise agricoles et assise sur les revenus professionnels ou l'assiette
+      forfaitaire définis à l'article 1003-12 du code rural est fixé, par arrêté
+      préfectoral sur proposition du comité départemental des prestations sociales
+      agricoles, dans la limite de plus ou moins 15 % d'un taux moyen de 2,53 % sur la
+      partie plafonnée des revenus professionnels ou de l'assiette forfaitaire et d'un
+      taux moyen de 0,25 % sur la totalité desdits revenus ou assiette forfaitaire. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006779811
+    article: décret n° 2000-952 du 28 septembre 2000, article 11
+    en_vigueur: 2000-09-29
+    citation: >-
+      « Pour la cotisation mentionnée au 1° de l'article L. 731-42 du code rural, le taux
+      est fixé à 3,2 % des revenus professionnels du chef d'exploitation ou d'entreprise
+      ou de l'assiette forfaitaire, tels qu'ils sont définis aux articles L. 731-14 à L.
+      731-22 du code rural, dans la limite du plafond prévu à l'article L. 241-3 du code
+      de la sécurité sociale. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006779812
+    article: décret n° 2000-952, article 12
+    en_vigueur: 2000-09-29
+    citation: >-
+      « La cotisation prévue au 2° de l'article L. 731-42 du code rural au titre du chef
+      d'exploitation ou d'entreprise agricoles est calculée sur les revenus professionnels
+      ou l'assiette forfaitaire définis aux articles L. 731-14 à L. 731-22 du code rural
+      auxquels est appliqué un taux de 8,44 % dans la limite du plafond prévu à l'article
+      L. 241-3 du code de la sécurité sociale. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006779816
+    article: décret n° 2000-952, article 16
+    en_vigueur: 2000-09-29
+    citation: >-
+      « La cotisation prévue au 3° de l'article L. 731-42 du code rural est égale à 1,29 %
+      de la totalité des revenus professionnels ou de l'assiette forfaitaire définis aux
+      articles L. 731-14 à L. 731-22 du code rural. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006779817
+    article: décret n° 2000-952, article 17
+    en_vigueur: 2000-09-29
+    citation: >-
+      « Le taux de la cotisation due pour la couverture des dépenses complémentaires
+      afférentes à l'assurance vieillesse agricole des chefs d'exploitation ou
+      d'entreprise agricoles et assise sur les revenus professionnels ou l'assiette
+      forfaitaire définis aux articles L. 731-14 à L. 731-22 du code rural est fixé, par
+      arrêté préfectoral sur proposition du comité départemental des prestations sociales
+      agricoles, dans la limite de plus ou moins 10 % d'un taux moyen de 2,53 % sur la
+      partie plafonnée des revenus professionnels ou de l'assiette forfaitaire et d'un
+      taux moyen de 0,25 % sur la totalité desdits revenus ou assiette forfaitaire. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006780051
+    article: décret n° 2001-677 du 27 juillet 2001, article 11
+    en_vigueur: 2001-07-29
+    citation: >-
+      « Pour la cotisation mentionnée au 1° de l'article L. 731-42 du code rural, le taux
+      est fixé à 3,2 % des revenus professionnels du chef d'exploitation ou d'entreprise
+      ou de l'assiette forfaitaire, tels qu'ils sont définis aux articles L. 731-14 à L.
+      731-21 du code rural, dans la limite du plafond prévu à l'article L. 241-3 du code
+      de la sécurité sociale. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006780052
+    article: décret n° 2001-677, article 12
+    en_vigueur: 2001-07-29
+    citation: >-
+      « La cotisation prévue au a du 2° de l'article L. 731-42 du code rural au titre du
+      chef d'exploitation ou d'entreprise agricole est calculée sur les revenus
+      professionnels ou l'assiette forfaitaire, définis aux articles L. 731-14 à L. 731-21
+      du code rural auxquels est appliqué un taux de 8,44 % dans la limite du plafond
+      prévu à l'article L. 241-3 du code de la sécurité sociale. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006780057
+    article: décret n° 2001-677, article 16
+    en_vigueur: 2001-07-29
+    citation: >-
+      « La cotisation prévue au 3° de l'article L. 731-42 du code rural est égale à 1,29 %
+      de la totalité des revenus professionnels ou de l'assiette forfaitaire définis aux
+      articles L. 731-14 à L. 731-21 du code rural. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006780058
+    article: décret n° 2001-677, article 17
+    en_vigueur: 2001-07-29
+    citation: >-
+      « Le taux de la cotisation due pour la couverture des dépenses complémentaires
+      afférentes à l'assurance vieillesse agricole des chefs d'exploitation ou
+      d'entreprise agricole et assise sur les revenus professionnels ou l'assiette
+      forfaitaire définis aux articles L. 731-14 à L. 731-21 du code rural est fixé par
+      arrêté préfectoral, sur proposition du comité départemental des prestations sociales
+      agricoles, dans la limite de plus 5 % ou de moins 10 % d'un taux moyen de 2,53 % sur
+      la partie plafonnée des revenus professionnels ou de l'assiette forfaitaire et d'un
+      taux moyen de 0,25 % sur la totalité desdits revenus ou assiette forfaitaire. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006780888
+    article: décret n° 2002-1228 du 1er octobre 2002, article 12
+    en_vigueur: 2002-10-04
+    citation: >-
+      « Pour la cotisation mentionnée au 1° de l'article L. 731-42 du code rural, le taux
+      est fixé à 3,2 % des revenus professionnels du chef d'exploitation ou d'entreprise
+      ou de l'assiette forfaitaire, tels qu'ils sont définis aux articles L. 731-14 à L.
+      731-21 du code rural, dans la limite du plafond prévu à l'article L. 241-3 du code
+      de la sécurité sociale. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006780889
+    article: décret n° 2002-1228, article 13
+    en_vigueur: 2002-10-04
+    citation: >-
+      « La cotisation prévue au a du 2° de l'article L. 731-42 du code rural au titre du
+      chef d'exploitation ou d'entreprise agricole est calculée sur les revenus
+      professionnels ou l'assiette forfaitaire définis aux articles L. 731-14 à L. 731-21
+      du code rural auxquels est appliqué un taux de 8,44 % dans la limite du plafond
+      prévu à l'article L. 241-3 du code de la sécurité sociale. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006780892
+    article: décret n° 2002-1228, article 16
+    en_vigueur: 2002-10-04
+    citation: >-
+      « La cotisation prévue au 3° de l'article L. 731-42 du code rural est égale à 1,29 %
+      de la totalité des revenus professionnels ou de l'assiette forfaitaire définis aux
+      articles L. 731-14 à L. 731-21 du code rural. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006780893
+    article: décret n° 2002-1228, article 17
+    en_vigueur: 2002-10-04
+    citation: >-
+      « Le taux de la cotisation due pour la couverture des dépenses complémentaires
+      afférentes à l'assurance vieillesse agricole des chefs d'exploitation ou
+      d'entreprise agricole et assise sur les revenus professionnels ou l'assiette
+      forfaitaire définis aux articles L. 731-14 à L. 731-21 du code rural est fixé par
+      arrêté préfectoral, sur proposition du comité départemental des prestations sociales
+      agricoles, dans la limite de plus ou moins 5 % d'un taux moyen de 2,53 % sur la
+      partie plafonnée des revenus professionnels ou de l'assiette forfaitaire et de 0,25
+      % sur la totalité desdits revenus ou assiette forfaitaire. »
+    lu_le: 2026-11-03
+  bornes:
+    revenu.annee: [1993-01-01, 2003-01-01]
+  contenu:
+    droit: >-
+      trois cotisations sur les revenus professionnels du chef d'exploitation. Celle du a
+      de l'article 1123 (du 1° de L. 731-42 depuis 2000), bornée au plafond : 3,06 % en
+      1993, 3,10 % en 1994 et 1995, 3,2 % de 1996 à 2002. Celle du b (du 2° de L. 731-42
+      en 2000, du a du 2° depuis 2001), bornée au plafond : 8,140 % en 1993, 8,36 % en
+      1994, 8,27 % en 1995, 8,445 % de 1996 à 1998, 8,44 % de 1999 à 2002. Celle du c (du
+      3°), sur la totalité des revenus : 1,306 % en 1993, 1,34 % en 1994, 1,26 % en 1995,
+      1,29 % de 1996 à 2002. S'y ajoute la cotisation des dépenses complémentaires de
+      l'assurance vieillesse, fixée par arrêté préfectoral autour d'un taux moyen sur la
+      partie plafonnée des revenus et d'un autre sur leur totalité : 2,30 % et 0,16 % en
+      1993, 2,41 % et 0,16 % en 1994, 2,48 % et 0,24 % en 1995, 2,53 % et 0,25 % de 1996 à
+      2002
+  exemples: aucun trouvé
+- id: depuis_2003
+  statut: lue
+  textes:
+  - id: LEGIARTI000006781102
+    article: décret n° 2003-1033 du 29 octobre 2003, article 12
+    en_vigueur: 2003-10-30
+    citation: >-
+      « Pour la cotisation mentionnée au 1° de l'article L. 731-42 du code rural, le taux
+      est fixé à 3,2 % des revenus professionnels du chef d'exploitation ou d'entreprise
+      ou de l'assiette forfaitaire, tels qu'ils sont définis aux articles L. 731-14 à L.
+      731-21 du code rural, dans la limite du plafond prévu à l'article L. 241-3 du code
+      de la sécurité sociale. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006781103
+    article: décret n° 2003-1033, article 13
+    en_vigueur: 2003-10-30
+    citation: >-
+      « La cotisation prévue au a du 2° de l'article L. 731-42 du code rural au titre du
+      chef d'exploitation ou d'entreprise agricole est calculée sur les revenus
+      professionnels ou l'assiette forfaitaire définis aux articles L. 731-14 à L. 731-21
+      du code rural auxquels est appliqué un taux de 8,44 % dans la limite du plafond
+      prévu à l'article L. 241-3 du code de la sécurité sociale. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006781106
+    article: décret n° 2003-1033, article 16
+    en_vigueur: 2003-10-30
+    citation: >-
+      « La cotisation prévue au 3° de l'article L. 731-42 du code rural est égale à 1,29 %
+      de la totalité des revenus professionnels ou de l'assiette forfaitaire définis aux
+      articles L. 731-14 à L. 731-21 du code rural. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006781107
+    article: décret n° 2003-1033, article 17
+    en_vigueur: 2003-10-30
+    citation: >-
+      « Le taux de la cotisation due pour la couverture des dépenses complémentaires
+      afférentes à l'assurance vieillesse agricole des chefs d'exploitation ou
+      d'entreprise agricole et assise sur les revenus professionnels ou l'assiette
+      forfaitaire définis aux articles L. 731-14 à L. 731-21 du code rural est fixé par
+      arrêté préfectoral, sur proposition du comité départemental des prestations sociales
+      agricoles, dans la limite de plus ou moins 5 % d'un taux moyen de 2,53 % sur la
+      partie plafonnée des revenus professionnels ou de l'assiette forfaitaire et de 0,25
+      % sur la totalité desdits revenus ou assiette forfaitaire. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006585488
+    article: code rural, L. 731-42, rédaction du 1er janvier 2004
+    en_vigueur: 2004-01-01
+    citation: >-
+      « 1° Une cotisation due pour chaque personne non salariée âgée d'au moins seize ans,
+      à l'exception des personnes mentionnées à l'article L. 732-28 et calculée, dans la
+      limite du plafond prévu à l'article L. 241-3 du code de la sécurité sociale, en
+      pourcentage des revenus professionnels du chef d'exploitation ou d'entreprise ou de
+      l'assiette forfaitaire, tels qu'ils sont définis aux articles L. 731-14 à L. 731-22
+      »
+    lu_le: 2026-11-03
+  bornes:
+    revenu.annee: [2003-01-01, null]
+  contenu:
+    droit: >-
+      en 2003, les taux de 2002 : 3,2 % au 1° de L. 731-42, 8,44 % au a du 2°, bornés au
+      plafond, 1,29 % au 3°, sur la totalité des revenus, et la cotisation complémentaire
+      autour de 2,53 % et 0,25 % ; depuis 2004, la cotisation du 1° et celle du 2°, « en
+      pourcentage des revenus professionnels », dont cette fiche ne lit pas les taux : la
+      fiche du régime porte la cotisation de ces années
+  exemples: aucun trouvé
+approximations:
+- version: avant_1983
+  ecart: >-
+    le modèle prélève 8,5 % du revenu de l'année borné au plafond (4,25 % en 1952), dont
+    le scénario 1 tire les points par le rendement de 6 % ; la cotisation de ces années,
+    que la loi n° 52-799 et les textes de chaque année fixent, n'est pas lue
+  effet: >-
+    non mesuré : sans les montants de ces années, l'écart ne se chiffre pas. Il touche la
+    pension proportionnelle du scénario 1, que chaque année de chef porte à 8,5 % × 6 % =
+    0,51 % de son revenu borné au plafond, revalorisé, et le compte des scénarios 2 à 6
+- version: montants_cadastraux_de_1983_a_1989
+  ecart: >-
+    les textes fixent un montant par tranche de revenu cadastral et une cotisation
+    cadastrale, le modèle un taux de 8,5 % du revenu de l'année borné au plafond : il n'a
+    pas le revenu cadastral
+  effet: >-
+    non mesuré : sans le revenu cadastral, que la saisie ne porte pas, ces montants ne se
+    rapportent pas au revenu. Il touche, comme avant 1983, la pension proportionnelle du
+    scénario 1 et le compte des scénarios 2 à 6
+- version: assiette_mixte_de_1990_a_1992
+  ecart: >-
+    le modèle prélève 8,5 % du revenu borné au plafond, quand la cotisation a une part
+    cadastrale en 1990 et 1991, une part sur la totalité du revenu depuis 1991 (le c), et
+    une cotisation complémentaire que le modèle ne prélève pas
+  effet: >-
+    non mesuré. Au scénario 1, depuis 1990, les points viennent du barème de R. 732-71,
+    que l'assiette fixe et non le taux : rien n'y bouge. L'écart ne touche que le compte
+    des scénarios 2 à 6
+- version: trois_taux_de_1993_a_2002
+  ecart: >-
+    le modèle prélève 8,5 % du revenu borné au plafond, près du seul taux du b (8,14 % à
+    8,445 %) ; il omet le a (3,06 % à 3,2 %, borné au plafond), le c (1,26 % à 1,34 %, sur
+    la totalité du revenu) et la cotisation complémentaire (2,30 % à 2,53 % de la partie
+    plafonnée et 0,16 % à 0,25 % de la totalité, aux taux moyens)
+  effet: >-
+    non mesuré sur le coût. Posé à la main, pour un revenu sous le plafond en 1996 : le
+    compte des scénarios 2 à 6 reçoit 8,5 % du revenu, quand les trois cotisations
+    nationales en prélèvent 3,2 + 8,445 + 1,29 = 12,935 %, et 15,715 % avec la
+    complémentaire au taux moyen (2,53 + 0,25) ; 8,5 / 12,935 = 66 % et 8,5 / 15,715 = 54
+    % de ce qui est prélevé. Au scénario 1, les points de ces années viennent du barème de
+    R. 732-71 et non du taux : rien n'y bouge
+- version: depuis_2003
+  ecart: >-
+    le modèle prélève 17,37 % du revenu borné au plafond dès 2003 (période de 2003 de la
+    fiche du régime), quand le décret n° 2003-1033 fixe pour 2003 les taux de 2002 : 3,2 %
+    et 8,44 % bornés au plafond, 1,29 % sur la totalité du revenu, et la complémentaire
+    autour de 2,53 % et 0,25 % ; d'où vient 17,37 %, cette lecture ne le dit pas
+  effet: >-
+    non mesuré : en 2003, pour un revenu sous le plafond, le compte des scénarios 2 à 6
+    reçoit 17,37 %, quand les trois cotisations nationales en prélèvent 12,93 % (3,2 +
+    8,44 + 1,29), 15,71 % avec la complémentaire au taux moyen ; les années suivantes ne
+    sont pas lues ici
+sources:
+  lu_le: 2026-11-03
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - >-
+    QUESTION AU PROPRIÉTAIRE (3 novembre 2026). Le taux de 8,5 % qu'emploie le modèle de
+    1953 à 2002 (et sa moitié en 1952) n'est écrit dans aucun texte lu. De 1993 à 2002,
+    les décrets annuels fixent trois taux et une cotisation complémentaire (versions) ; de
+    1983 à 1992, des montants en revenu cadastral, puis une assiette mixte ; avant 1983,
+    les textes ne sont pas à l'index. Faut-il porter au compte, de 1993 à 2002, la somme
+    des taux lus, et lesquels : le a et le b, bornés au plafond, le c, sur la totalité du
+    revenu, que le modèle ne sait pas encore prélever d'un seul taux, la complémentaire,
+    fixée par département autour d'un taux moyen ? Et quelle convention garder avant 1993,
+    sans le revenu cadastral ? À noter : le décret n° 2003-1033 fixe pour 2003 les mêmes
+    taux qu'en 2002 (3,2 %, LEGIARTI000006781102 ; 8,44 %, LEGIARTI000006781103 ; 1,29 %,
+    LEGIARTI000006781106 ; complémentaire à 2,53 % et 0,25 %, LEGIARTI000006781107), quand
+    le modèle passe de 8,5 % en 2002 à 17,37 % en 2003 (période de 2003 de la fiche du
+    régime), un taux que cette lecture ne retrouve pas.
+  - >-
+    À lire au fac-similé du Journal officiel : la loi n° 52-799 du 10 juillet 1952,
+    articles 19 à 21 (Journal officiel du 11 juillet 1952), l'arrêté du 23 juillet 1953 «
+    TAUX DES COTISATIONS », et les décrets ou arrêtés de financement de 1953 à 1982, que
+    l'index n'a qu'en notice. Le montant de la cotisation cadastrale de 1983 à 1991
+    (article 1125) : les budgets annexes des prestations sociales agricoles de ces années,
+    dans les lois de finances.
+  lectures:
+  - type: legifrance
+    reference: >-
+      code rural (ancien), articles 1123 (rédactions du 5 juillet 1980 au 22 juin 2000),
+      1125 (du 25 janvier 1990 au 22 juin 2000) et 1121-1 (du 5 juillet 1980 au 22 juin
+      2000) ; code rural, L. 731-42 (rédactions du 22 juin 2000 au 1er janvier 2004) ; les
+      décrets annuels « relatif au financement » du régime des non-salariés agricoles, de
+      1983 à 2003, articles de la vieillesse lus un à un : n° 83-664, 84-585, 85-735,
+      86-596, 87-612, 88-688, 89-510, 90-765, 91-912, 92-793, 93-1153, 94-715, 95-1038,
+      96-679, 97-771, 98-768, 99-725, 2000-952, 2001-677, 2002-1228 et 2003-1033 ; au
+      Journal officiel, les notices de la loi n° 52-799 (JORFTEXT000000512405), de
+      l'arrêté du 23 juillet 1953 (JORFTEXT000000435389) et du décret n° 82-396
+      (JORFTEXT000000519366), sans leur texte. Lu dans les index LEGI (à jour au 2
+      novembre 2026) et JORF (au 3 novembre 2026) du dépôt
+    date: 2026-11-03
+textes_sans_effet:
+- id: LEGIARTI000006581058
+  motif: >-
+    l'article 1123 du 31 décembre 1988 au 25 janvier 1990 ajoute seulement que « L'assiette
+    des cotisations mentionnées au a et au b dues par les associés exploitants d'une
+    exploitation agricole à responsabilité limitée » se répartit entre eux : les montants et
+    leur assiette cadastrale ne changent pas
+- id: LEGIARTI000006581062
+  motif: >-
+    l'article 1123 du 10 juillet 1999 au 22 juin 2000 ajoute au b la cotisation due « pour le
+    conjoint collaborateur d'exploitation ou d'entreprise mentionné à l'article 1122-1-1 » :
+    les taux du chef, que fixe le décret annuel, ne changent pas
+- id: LEGIARTI000006585486
+  motif: >-
+    L. 731-42 du 22 juin 2000 au 1er janvier 2001 codifie l'article 1123 : les mêmes trois
+    cotisations, dont la première « en pourcentage des revenus professionnels du chef
+    d'exploitation ou d'entreprise », leurs taux restant ceux du décret annuel
+code:
+  python: >-
+    droit/acquerir.py : acquerir ; moteur/compte.py : ConstructeurCompte.cotisation_annuelle
+  javascript: >-
+    moteur/js/droit/acquerir.js : acquerir ; moteur/js/compte.js :
+    ConstructeurCompte.cotisationAnnuelle
+  parametres: >-
+    regimes/msa_non_salaries.yaml : taux_cotisation_retraite
+  tests: tests/test_simulateur.py
+historique:
+- >-
+  2026-11-03 — née avec l'action 131 (file K-bis), sur la relecture R-K : le taux de 8,5 %
+  qu'emploie le modèle de 1953 à 2002 n'avait aucune source dans le dépôt ; les textes de
+  chaque année sont lus, et ne le donnent pas. Le modèle n'est pas changé : la question
+  est posée au propriétaire.
+effet: >-
+  Les chefs d'exploitation et les membres de leur famille qui ont cotisé avant 2003. Au
+  scénario 1, avant 1990, le rendement tire leurs points d'une cotisation que le modèle
+  porte à 8,5 % du revenu borné au plafond, sans texte : non mesuré. Depuis 1990, le
+  barème de R. 732-71 les tire de l'assiette : rien. Aux scénarios 2 à 6, le compte reçoit
+  ces 8,5 %, quand les textes de 1993 à 2002 prélèvent 12,935 % du revenu sous le plafond
+  en 1996 aux trois cotisations nationales, 15,715 % avec la complémentaire au taux moyen
+  : effet sur le coût non mesuré.
