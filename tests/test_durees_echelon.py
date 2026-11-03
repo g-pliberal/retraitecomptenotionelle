@@ -520,6 +520,43 @@ def test_l_emploi_nomme_avant_l_en_tete_est_le_groupe():
     assert durees[4] == [None, 36, 36, 30, 24, 18, 18]
 
 
+#: Décret n° 98-343 du 6 mai 1998, aides techniques de laboratoire, article 39, du
+#: 1er août 2000 au 30 décembre 2006 (LEGIARTI000006506811), en entier : un tableau
+#: rendu en fiches, « ÉCHELON : 5e échelon DURÉE Moyenne : 4 ans DURÉE Minimale : 3 ans ».
+AIDES_TECHNIQUES = (
+    "Le grade d'aide technique principal de laboratoire comporte six échelons. La durée "
+    "moyenne et la durée minimale du temps passé dans chaque échelon sont fixées ainsi qu'il "
+    "suit : ÉCHELON : 5e échelon DURÉE Moyenne : 4 ans DURÉE Minimale : 3 ans ÉCHELON : 4e "
+    "échelon DURÉE Moyenne : 3 ans 6 mois DURÉE Minimale : 2 ans 9 mois ÉCHELON : 3e échelon "
+    "DURÉE Moyenne : 3 ans 6 mois DURÉE Minimale : 2 ans 9 mois ÉCHELON : 2e échelon DURÉE "
+    "Moyenne : 2 ans 6 mois DURÉE Minimale : 2 ans ÉCHELON : 1er échelon DURÉE Moyenne : 2 "
+    "ans 6 mois DURÉE Minimale : 2 ans"
+)
+
+#: Décret n° 67-715 du 18 août 1967, ingénieurs des télécommunications, article 13,
+#: du 25 août 1967 au 21 mai 2000 (LEGIARTI000006508433), en entier : des fiches par
+#: grade, « GRADE : Ingénieur général, 1er et 2e échelon DUREE moyenne : 3 ans. ».
+INGENIEURS_DES_TELECOMMUNICATIONS = (
+    "Le temps passé dans chacun des échelons des grades du corps des ingénieurs des "
+    "télécommunications pour accéder à l'échelon supérieur est fixé ainsi qu'il suit : GRADE "
+    ": Ingénieur général, 1er et 2e échelon DUREE moyenne : 3 ans. DUREE minimum : 2 ans 3 "
+    "mois. GRADE : Ingénieur en chef : 5e échelon DUREE moyenne : 3 ans. DUREE minimum : 2 "
+    "ans 3 mois. GRADE : Ingénieur en chef : 1er, 2e, 3e et 4e échelon DUREE moyenne : 2 ans."
+    " DUREE minimum : 1 ans 6 mois. GRADE : Ingénieur de 1re classe, 1er et 2e échelon DUREE "
+    "moyenne : 2 ans. DUREE minimum : 1 ans 6 mois. GRADE : Ingénieur de 2e classe : 6e et 7e"
+    " échelon DUREE moyenne : 2 ans. DUREE minimum : 1 ans 6 mois. GRADE : Ingénieur de 2e "
+    "classe : 3e, 4e et 5e échelon DUREE moyenne : 1 an 6 mois. DUREE minimum : 1 ans 6 mois."
+    " GRADE : Ingénieur de 2e classe : 1er et 2e échelon DUREE moyenne : 1 an. DUREE minimum "
+    ": 1 an."
+)
+
+
+def test_un_tableau_en_fiches_est_un_seul_tableau_et_se_refuse():
+    for article in (AIDES_TECHNIQUES, INGENIEURS_DES_TELECOMMUNICATIONS):
+        (extrait,) = dur.tableaux(article)
+        assert dur.lire_tableau(extrait).refus.startswith("un tableau écrit en fiches")
+
+
 # ---------------------------------------------------------------------------
 # Les fichiers du dépôt, recoupés aux articles du LEGI lus à la main
 # ---------------------------------------------------------------------------
@@ -685,6 +722,17 @@ def test_aucun_libelle_ne_garde_la_case_d_un_echelon(lignes):
                and l["groupe"] == "Attaché hors classe"]
     assert [(l["echelon"], l["rang"], l["duree"]) for l in attache][:3] == [
         ("special", "8", ""), ("7", "7", ""), ("6", "6", "36")]
+
+
+def test_un_tableau_en_fiches_n_est_compte_qu_une_fois():
+    """Et des fiches que nulle phrase n'annonce par ses deux points se consignent
+    aussi : n° 89-750, art. 13, du 1er novembre 1989 au 8 janvier 1998
+    (LEGIARTI000006457590), « … sont fixées selon les modalités ci-après. - CLASSES
+    ET ECHELONS … 3e échelon DUREE moyenne : 3 ans DUREE minimale : 2 ans 6 mois »."""
+    non_lus = _lire("non_lus")
+    for article in ("LEGIARTI000006506811", "LEGIARTI000006508433", "LEGIARTI000006457590"):
+        assert [(n["tableau"], n["motif"][:31]) for n in non_lus if n["article"] == article] == [
+            ("1", "un tableau écrit en fiches, un ")]
 
 
 def test_chaque_ligne_est_certifiee_et_datee(lignes, tableaux_lus):

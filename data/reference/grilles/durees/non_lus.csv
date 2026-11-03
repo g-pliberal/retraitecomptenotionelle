@@ -2,108 +2,14 @@
 # source_id: dila_legi_durees — DILA, base LEGI, par l'index du dépôt (scripts/fetch/dila_index.py) ; scripts/fetch/dila_legi_durees.py
 texte,article,numero,tableau,debut,fin,motif
 LEGITEXT000005616481,LEGIARTI000006376767,8,1,1994-08-27,2006-11-18,tableau dessiné en caractères
-LEGITEXT000005616904,LEGIARTI000006479165,42,1,1990-08-01,2007-05-03,l'en-tête n'a qu'une colonne quand la phrase nomme les durées minimale et moyenne
-LEGITEXT000005616904,LEGIARTI000006479165,42,2,1990-08-01,2007-05-03,un libellé porte une durée ou un échelon : « 3 ans Echelon »
-LEGITEXT000005616904,LEGIARTI000006479165,42,3,1990-08-01,2007-05-03,un libellé porte une durée ou un échelon : « 2 ans 9 mois Echelon »
-LEGITEXT000005616904,LEGIARTI000006479165,42,4,1990-08-01,2007-05-03,un libellé porte une durée ou un échelon : « 2 ans 9 mois Echelon »
-LEGITEXT000005616904,LEGIARTI000006479165,42,5,1990-08-01,2007-05-03,un libellé porte une durée ou un échelon : « 2 ans Echelon »
+LEGITEXT000005616904,LEGIARTI000006479165,42,1,1990-08-01,2007-05-03,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
 LEGITEXT000005617057,LEGIARTI000006476510,10,,1995-08-01,,durées renvoyées à un autre texte
 LEGITEXT000005617322,LEGIARTI000006476719,7,,1994-12-30,2000-08-05,durées écrites en phrases
 LEGITEXT000005617476,LEGIARTI000006377051,38,1,1995-01-12,2011-06-01,"une durée hors de sa ligne, après « (406) »"
-LEGITEXT000005617480,LEGIARTI000006377106,16,1,1995-01-12,1996-02-08,l'en-tête n'a qu'une colonne quand la phrase nomme les durées maximale et minimale
-LEGITEXT000005617480,LEGIARTI000006377106,16,10,1995-01-12,1996-02-08,le grade « GRADE ET ECHELON : Technicien principal » ne descend pas au 1er échelon
-LEGITEXT000005617480,LEGIARTI000006377106,16,11,1995-01-12,1996-02-08,un libellé porte une durée ou un échelon : « 3 ans 6 mois GRADE ET ECHELON : Technicien princip »
-LEGITEXT000005617480,LEGIARTI000006377106,16,12,1995-01-12,1996-02-08,un libellé porte une durée ou un échelon : « 2 ans 9 mois GRADE ET ECHELON : Technicien princip »
-LEGITEXT000005617480,LEGIARTI000006377106,16,13,1995-01-12,1996-02-08,un libellé porte une durée ou un échelon : « 2 ans 9 mois GRADE ET ECHELON : Technicien princip »
-LEGITEXT000005617480,LEGIARTI000006377106,16,14,1995-01-12,1996-02-08,un libellé porte une durée ou un échelon : « 1 an 6 mois GRADE ET ECHELON : Technicien principa »
-LEGITEXT000005617480,LEGIARTI000006377106,16,15,1995-01-12,1996-02-08,un libellé porte une durée ou un échelon : « 1 an 6 mois GRADE ET ECHELON : Technicien principa »
-LEGITEXT000005617480,LEGIARTI000006377106,16,16,1995-01-12,1996-02-08,un libellé porte une durée ou un échelon : « 1 an 6 mois GRADE ET ECHELON : Technicien principa »
-LEGITEXT000005617480,LEGIARTI000006377106,16,17,1995-01-12,1996-02-08,un libellé porte une durée ou un échelon : « 1 an 6 mois GRADE ET ECHELON : Technicien »
-LEGITEXT000005617480,LEGIARTI000006377106,16,18,1995-01-12,1996-02-08,le grade « GRADE ET ECHELON : Technicien » ne descend pas au 1er échelon
-LEGITEXT000005617480,LEGIARTI000006377106,16,19,1995-01-12,1996-02-08,un libellé porte une durée ou un échelon : « 4 ans GRADE ET ECHELON : Technicien »
-LEGITEXT000005617480,LEGIARTI000006377106,16,2,1995-01-12,1996-02-08,le grade « GRADE ET ECHELON : Technicien-chef » ne descend pas au 1er échelon
-LEGITEXT000005617480,LEGIARTI000006377106,16,20,1995-01-12,1996-02-08,un libellé porte une durée ou un échelon : « 2 ans 6 mois GRADE ET ECHELON : Technicien »
-LEGITEXT000005617480,LEGIARTI000006377106,16,21,1995-01-12,1996-02-08,un libellé porte une durée ou un échelon : « 2 ans 6 mois GRADE ET ECHELON : Technicien »
-LEGITEXT000005617480,LEGIARTI000006377106,16,22,1995-01-12,1996-02-08,un libellé porte une durée ou un échelon : « 2 ans 6 mois GRADE ET ECHELON : Technicien »
-LEGITEXT000005617480,LEGIARTI000006377106,16,23,1995-01-12,1996-02-08,un libellé porte une durée ou un échelon : « 2 ans 6 mois GRADE ET ECHELON : Technicien »
-LEGITEXT000005617480,LEGIARTI000006377106,16,24,1995-01-12,1996-02-08,un libellé porte une durée ou un échelon : « 2 ans 6 mois GRADE ET ECHELON : Technicien »
-LEGITEXT000005617480,LEGIARTI000006377106,16,25,1995-01-12,1996-02-08,un libellé porte une durée ou un échelon : « 1 an 6 mois GRADE ET ECHELON : Technicien »
-LEGITEXT000005617480,LEGIARTI000006377106,16,26,1995-01-12,1996-02-08,un libellé porte une durée ou un échelon : « 1 an 6 mois GRADE ET ECHELON : Technicien »
-LEGITEXT000005617480,LEGIARTI000006377106,16,27,1995-01-12,1996-02-08,un libellé porte une durée ou un échelon : « 1 an 6 mois GRADE ET ECHELON : Technicien »
-LEGITEXT000005617480,LEGIARTI000006377106,16,28,1995-01-12,1996-02-08,un libellé porte une durée ou un échelon : « 1 an 6 mois GRADE ET ECHELON : Technicien »
-LEGITEXT000005617480,LEGIARTI000006377106,16,29,1995-01-12,1996-02-08,un libellé porte une durée ou un échelon : « 1 an 6 mois GRADE ET ECHELON : Technicien »
-LEGITEXT000005617480,LEGIARTI000006377106,16,3,1995-01-12,1996-02-08,un libellé porte une durée ou un échelon : « 3 ans 9 mois GRADE ET ECHELON : Technicien-chef »
-LEGITEXT000005617480,LEGIARTI000006377106,16,4,1995-01-12,1996-02-08,un libellé porte une durée ou un échelon : « 2 ans 9 mois GRADE ET ECHELON : Technicien-chef »
-LEGITEXT000005617480,LEGIARTI000006377106,16,5,1995-01-12,1996-02-08,un libellé porte une durée ou un échelon : « 2 ans 9 mois GRADE ET ECHELON : Technicien-chef »
-LEGITEXT000005617480,LEGIARTI000006377106,16,6,1995-01-12,1996-02-08,un libellé porte une durée ou un échelon : « 2 ans 6 mois GRADE ET ECHELON : Technicien-chef »
-LEGITEXT000005617480,LEGIARTI000006377106,16,7,1995-01-12,1996-02-08,un libellé porte une durée ou un échelon : « 1 an 9 mois GRADE ET ECHELON : Technicien-chef »
-LEGITEXT000005617480,LEGIARTI000006377106,16,8,1995-01-12,1996-02-08,un libellé porte une durée ou un échelon : « 1 an 6 mois GRADE ET ECHELON : Technicien-chef »
-LEGITEXT000005617480,LEGIARTI000006377106,16,9,1995-01-12,1996-02-08,un libellé porte une durée ou un échelon : « 1 an 6 mois GRADE ET ECHELON : Technicien principa »
-LEGITEXT000005617480,LEGIARTI000006377107,16,1,1996-02-08,2003-02-23,l'en-tête n'a qu'une colonne quand la phrase nomme les durées maximale et minimale
-LEGITEXT000005617480,LEGIARTI000006377107,16,10,1996-02-08,2003-02-23,le grade « GRADE ET ECHELON : Technicien principal » ne descend pas au 1er échelon
-LEGITEXT000005617480,LEGIARTI000006377107,16,11,1996-02-08,2003-02-23,un libellé porte une durée ou un échelon : « 3 ans 6 mois GRADE ET ECHELON : Technicien princip »
-LEGITEXT000005617480,LEGIARTI000006377107,16,12,1996-02-08,2003-02-23,un libellé porte une durée ou un échelon : « 2 ans 9 mois GRADE ET ECHELON : Technicien princip »
-LEGITEXT000005617480,LEGIARTI000006377107,16,13,1996-02-08,2003-02-23,un libellé porte une durée ou un échelon : « 2 ans 9 mois GRADE ET ECHELON : Technicien princip »
-LEGITEXT000005617480,LEGIARTI000006377107,16,14,1996-02-08,2003-02-23,un libellé porte une durée ou un échelon : « 1 an 6 mois GRADE ET ECHELON : Technicien principa »
-LEGITEXT000005617480,LEGIARTI000006377107,16,15,1996-02-08,2003-02-23,un libellé porte une durée ou un échelon : « 1 an 6 mois GRADE ET ECHELON : Technicien principa »
-LEGITEXT000005617480,LEGIARTI000006377107,16,16,1996-02-08,2003-02-23,un libellé porte une durée ou un échelon : « 1 an 6 mois GRADE ET ECHELON : Technicien principa »
-LEGITEXT000005617480,LEGIARTI000006377107,16,17,1996-02-08,2003-02-23,un libellé porte une durée ou un échelon : « 1 an 6 mois GRADE ET ECHELON : Technicien »
-LEGITEXT000005617480,LEGIARTI000006377107,16,18,1996-02-08,2003-02-23,le grade « GRADE ET ECHELON : Technicien » ne descend pas au 1er échelon
-LEGITEXT000005617480,LEGIARTI000006377107,16,19,1996-02-08,2003-02-23,un libellé porte une durée ou un échelon : « 3 ans GRADE ET ECHELON : Technicien »
-LEGITEXT000005617480,LEGIARTI000006377107,16,2,1996-02-08,2003-02-23,le grade « GRADE ET ECHELON : Technicien-chef » ne descend pas au 1er échelon
-LEGITEXT000005617480,LEGIARTI000006377107,16,20,1996-02-08,2003-02-23,un libellé porte une durée ou un échelon : « 2 ans 6 mois GRADE ET ECHELON : Technicien »
-LEGITEXT000005617480,LEGIARTI000006377107,16,21,1996-02-08,2003-02-23,un libellé porte une durée ou un échelon : « 2 ans 6 mois GRADE ET ECHELON : Technicien »
-LEGITEXT000005617480,LEGIARTI000006377107,16,22,1996-02-08,2003-02-23,un libellé porte une durée ou un échelon : « 2 ans 6 mois GRADE ET ECHELON : Technicien »
-LEGITEXT000005617480,LEGIARTI000006377107,16,23,1996-02-08,2003-02-23,un libellé porte une durée ou un échelon : « 2 ans 6 mois GRADE ET ECHELON : Technicien »
-LEGITEXT000005617480,LEGIARTI000006377107,16,24,1996-02-08,2003-02-23,un libellé porte une durée ou un échelon : « 2 ans 6 mois GRADE ET ECHELON : Technicien »
-LEGITEXT000005617480,LEGIARTI000006377107,16,25,1996-02-08,2003-02-23,un libellé porte une durée ou un échelon : « 1 an 6 mois GRADE ET ECHELON : Technicien »
-LEGITEXT000005617480,LEGIARTI000006377107,16,26,1996-02-08,2003-02-23,un libellé porte une durée ou un échelon : « 1 an 6 mois GRADE ET ECHELON : Technicien »
-LEGITEXT000005617480,LEGIARTI000006377107,16,27,1996-02-08,2003-02-23,un libellé porte une durée ou un échelon : « 1 an 6 mois GRADE ET ECHELON : Technicien »
-LEGITEXT000005617480,LEGIARTI000006377107,16,28,1996-02-08,2003-02-23,un libellé porte une durée ou un échelon : « 1 an 6 mois GRADE ET ECHELON : Technicien »
-LEGITEXT000005617480,LEGIARTI000006377107,16,29,1996-02-08,2003-02-23,un libellé porte une durée ou un échelon : « 1 an 6 mois GRADE ET ECHELON : Technicien »
-LEGITEXT000005617480,LEGIARTI000006377107,16,3,1996-02-08,2003-02-23,un libellé porte une durée ou un échelon : « 3 ans 9 mois GRADE ET ECHELON : Technicien-chef »
-LEGITEXT000005617480,LEGIARTI000006377107,16,4,1996-02-08,2003-02-23,un libellé porte une durée ou un échelon : « 2 ans 9 mois GRADE ET ECHELON : Technicien-chef »
-LEGITEXT000005617480,LEGIARTI000006377107,16,5,1996-02-08,2003-02-23,un libellé porte une durée ou un échelon : « 2 ans 9 mois GRADE ET ECHELON : Technicien-chef »
-LEGITEXT000005617480,LEGIARTI000006377107,16,6,1996-02-08,2003-02-23,un libellé porte une durée ou un échelon : « 2 ans 6 mois GRADE ET ECHELON : Technicien-chef »
-LEGITEXT000005617480,LEGIARTI000006377107,16,7,1996-02-08,2003-02-23,un libellé porte une durée ou un échelon : « 1 an 9 mois GRADE ET ECHELON : Technicien-chef »
-LEGITEXT000005617480,LEGIARTI000006377107,16,8,1996-02-08,2003-02-23,un libellé porte une durée ou un échelon : « 1 an 6 mois GRADE ET ECHELON : Technicien-chef »
-LEGITEXT000005617480,LEGIARTI000006377107,16,9,1996-02-08,2003-02-23,un libellé porte une durée ou un échelon : « 1 an 6 mois GRADE ET ECHELON : Technicien principa »
-LEGITEXT000005617480,LEGIARTI000006377136,28,1,1995-01-12,2003-02-23,l'en-tête n'a qu'une colonne quand la phrase nomme les durées maximale et minimale
-LEGITEXT000005617480,LEGIARTI000006377136,28,2,1995-01-12,2003-02-23,le grade « GRADE ET ECHELON : Grade provisoire de technicien-chef » ne descend pas au 1er échelon
-LEGITEXT000005617480,LEGIARTI000006377136,28,3,1995-01-12,2003-02-23,un libellé porte une durée ou un échelon : « 3 ans GRADE ET ECHELON : Grade provisoire de techn »
-LEGITEXT000005617480,LEGIARTI000006377136,28,4,1995-01-12,2003-02-23,un libellé porte une durée ou un échelon : « 2 ans 3 mois GRADE ET ECHELON : Grade provisoire d »
-LEGITEXT000005617480,LEGIARTI000006377136,28,5,1995-01-12,2003-02-23,un libellé porte une durée ou un échelon : « 2 ans 3 mois GRADE ET ECHELON : Grade provisoire d »
-LEGITEXT000005617480,LEGIARTI000006377136,28,6,1995-01-12,2003-02-23,un libellé porte une durée ou un échelon : « 2 ans 3 mois GRADE ET ECHELON : Grade provisoire d »
-LEGITEXT000005617480,LEGIARTI000006377136,28,7,1995-01-12,2003-02-23,un libellé porte une durée ou un échelon : « 2 ans 3 mois GRADE ET ECHELON : Grade provisoire d »
-LEGITEXT000005617480,LEGIARTI000006377136,28,8,1995-01-12,2003-02-23,un libellé porte une durée ou un échelon : « 1 an 6 mois GRADE ET ECHELON : Grade provisoire de »
-LEGITEXT000005617482,LEGIARTI000006377205,14,1,1995-08-01,1998-02-06,l'en-tête n'a qu'une colonne quand la phrase nomme les durées maximale et minimale
-LEGITEXT000005617482,LEGIARTI000006377205,14,10,1995-08-01,1998-02-06,un libellé porte une durée ou un échelon : « 3 ans »
-LEGITEXT000005617482,LEGIARTI000006377205,14,11,1995-08-01,1998-02-06,un libellé porte une durée ou un échelon : « 3 ans »
-LEGITEXT000005617482,LEGIARTI000006377205,14,12,1995-08-01,1998-02-06,un libellé porte une durée ou un échelon : « 2 ans 6 mois »
-LEGITEXT000005617482,LEGIARTI000006377205,14,13,1995-08-01,1998-02-06,un libellé porte une durée ou un échelon : « 1 an 6 mois »
-LEGITEXT000005617482,LEGIARTI000006377205,14,14,1995-08-01,1998-02-06,un libellé porte une durée ou un échelon : « 1 an 6 mois »
-LEGITEXT000005617482,LEGIARTI000006377205,14,15,1995-08-01,1998-02-06,un libellé porte une durée ou un échelon : « 1 an 6 mois »
-LEGITEXT000005617482,LEGIARTI000006377205,14,16,1995-08-01,1998-02-06,un libellé porte une durée ou un échelon : « 1 an 6 mois GRADE ET ECHELON : Educateur de jeunes »
-LEGITEXT000005617482,LEGIARTI000006377205,14,17,1995-08-01,1998-02-06,le grade «  » ne descend pas au 1er échelon
-LEGITEXT000005617482,LEGIARTI000006377205,14,18,1995-08-01,1998-02-06,un libellé porte une durée ou un échelon : « 3 ans »
-LEGITEXT000005617482,LEGIARTI000006377205,14,19,1995-08-01,1998-02-06,un libellé porte une durée ou un échelon : « 2 ans 6 mois »
-LEGITEXT000005617482,LEGIARTI000006377205,14,2,1995-08-01,1998-02-06,le grade «  » ne descend pas au 1er échelon
-LEGITEXT000005617482,LEGIARTI000006377205,14,20,1995-08-01,1998-02-06,un libellé porte une durée ou un échelon : « 2 ans 6 mois »
-LEGITEXT000005617482,LEGIARTI000006377205,14,21,1995-08-01,1998-02-06,un libellé porte une durée ou un échelon : « 2 ans 6 mois »
-LEGITEXT000005617482,LEGIARTI000006377205,14,22,1995-08-01,1998-02-06,un libellé porte une durée ou un échelon : « 2 ans 6 mois »
-LEGITEXT000005617482,LEGIARTI000006377205,14,23,1995-08-01,1998-02-06,un libellé porte une durée ou un échelon : « 2 ans 6 mois »
-LEGITEXT000005617482,LEGIARTI000006377205,14,24,1995-08-01,1998-02-06,un libellé porte une durée ou un échelon : « 1 an 6 mois »
-LEGITEXT000005617482,LEGIARTI000006377205,14,25,1995-08-01,1998-02-06,un libellé porte une durée ou un échelon : « 1 an 6 mois »
-LEGITEXT000005617482,LEGIARTI000006377205,14,26,1995-08-01,1998-02-06,un libellé porte une durée ou un échelon : « 1 an 6 mois »
-LEGITEXT000005617482,LEGIARTI000006377205,14,27,1995-08-01,1998-02-06,un libellé porte une durée ou un échelon : « 1 an 6 mois »
-LEGITEXT000005617482,LEGIARTI000006377205,14,28,1995-08-01,1998-02-06,un libellé porte une durée ou un échelon : « 1 an 6 mois »
-LEGITEXT000005617482,LEGIARTI000006377205,14,3,1995-08-01,1998-02-06,un libellé porte une durée ou un échelon : « 3 ans 6 mois »
-LEGITEXT000005617482,LEGIARTI000006377205,14,4,1995-08-01,1998-02-06,un libellé porte une durée ou un échelon : « 2 ans 6 mois »
-LEGITEXT000005617482,LEGIARTI000006377205,14,5,1995-08-01,1998-02-06,un libellé porte une durée ou un échelon : « 2 ans 6 mois »
-LEGITEXT000005617482,LEGIARTI000006377205,14,6,1995-08-01,1998-02-06,un libellé porte une durée ou un échelon : « 1 an 9 mois »
-LEGITEXT000005617482,LEGIARTI000006377205,14,7,1995-08-01,1998-02-06,un libellé porte une durée ou un échelon : « 1 an 9 mois »
-LEGITEXT000005617482,LEGIARTI000006377205,14,8,1995-08-01,1998-02-06,un libellé porte une durée ou un échelon : « 1 an 9 mois GRADE ET ECHELON : Educateur principal »
-LEGITEXT000005617482,LEGIARTI000006377205,14,9,1995-08-01,1998-02-06,le grade «  » ne descend pas au 1er échelon
+LEGITEXT000005617480,LEGIARTI000006377106,16,1,1995-01-12,1996-02-08,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
+LEGITEXT000005617480,LEGIARTI000006377107,16,1,1996-02-08,2003-02-23,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
+LEGITEXT000005617480,LEGIARTI000006377136,28,1,1995-01-12,2003-02-23,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
+LEGITEXT000005617482,LEGIARTI000006377205,14,1,1995-08-01,1998-02-06,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
 LEGITEXT000005617600,LEGIARTI000006476876,21,,1995-01-25,,durées renvoyées à un autre texte
 LEGITEXT000005617600,LEGIARTI000006476886,31,,1995-01-25,,durées renvoyées à un autre texte
 LEGITEXT000005617613,LEGIARTI000006476841,42,,1995-01-26,,durées renvoyées à un autre texte
@@ -170,23 +76,7 @@ LEGITEXT000005622310,LEGIARTI000006483071,15,1,1995-01-01,1996-08-01,un libellé
 LEGITEXT000005622310,LEGIARTI000006483071,15,2,1995-01-01,1996-08-01,un libellé porte une durée ou un échelon : « 2 ans 6 mois Du 3e au »
 LEGITEXT000005622310,LEGIARTI000006483071,15,3,1995-01-01,1996-08-01,un libellé porte une durée ou un échelon : « 2 ans 6 mois Du 4e au »
 LEGITEXT000005622310,LEGIARTI000006483071,15,4,1995-01-01,1996-08-01,un libellé porte une durée ou un échelon : « 2 ans 6 mois Du 5e au »
-LEGITEXT000005622859,LEGIARTI000006483868,21,1,1995-08-01,2006-12-22,"une durée hors de sa ligne, après « DURÉE MOYENNE »"
-LEGITEXT000005622859,LEGIARTI000006483868,21,10,1995-08-01,2006-12-22,un libellé porte une durée ou un échelon : « 2 ans 3 mois »
-LEGITEXT000005622859,LEGIARTI000006483868,21,11,1995-08-01,2006-12-22,un libellé porte une durée ou un échelon : « 2 ans 3 mois »
-LEGITEXT000005622859,LEGIARTI000006483868,21,12,1995-08-01,2006-12-22,un libellé porte une durée ou un échelon : « 2 ans 3 mois »
-LEGITEXT000005622859,LEGIARTI000006483868,21,13,1995-08-01,2006-12-22,un libellé porte une durée ou un échelon : « 2 ans »
-LEGITEXT000005622859,LEGIARTI000006483868,21,14,1995-08-01,2006-12-22,un libellé porte une durée ou un échelon : « 1 an 6 mois »
-LEGITEXT000005622859,LEGIARTI000006483868,21,15,1995-08-01,2006-12-22,un libellé porte une durée ou un échelon : « 1 an 6 mois »
-LEGITEXT000005622859,LEGIARTI000006483868,21,16,1995-08-01,2006-12-22,un libellé porte une durée ou un échelon : « 1 an 6 mois »
-LEGITEXT000005622859,LEGIARTI000006483868,21,17,1995-08-01,2006-12-22,un libellé porte une durée ou un échelon : « 1 an »
-LEGITEXT000005622859,LEGIARTI000006483868,21,2,1995-08-01,2006-12-22,un libellé porte une durée ou un échelon : « 2 ans 3 mois »
-LEGITEXT000005622859,LEGIARTI000006483868,21,3,1995-08-01,2006-12-22,un libellé porte une durée ou un échelon : « 2 ans GRADES ET ECHELONS Attaché principal de 2e c »
-LEGITEXT000005622859,LEGIARTI000006483868,21,4,1995-08-01,2006-12-22,un libellé porte une durée ou un échelon : « 2 ans »
-LEGITEXT000005622859,LEGIARTI000006483868,21,5,1995-08-01,2006-12-22,un libellé porte une durée ou un échelon : « 2 ans »
-LEGITEXT000005622859,LEGIARTI000006483868,21,6,1995-08-01,2006-12-22,un libellé porte une durée ou un échelon : « 2 ans »
-LEGITEXT000005622859,LEGIARTI000006483868,21,7,1995-08-01,2006-12-22,un libellé porte une durée ou un échelon : « 1 an GRADES ET EHELONS Attaché des services déconc »
-LEGITEXT000005622859,LEGIARTI000006483868,21,8,1995-08-01,2006-12-22,un libellé porte une durée ou un échelon : « 3 ans »
-LEGITEXT000005622859,LEGIARTI000006483868,21,9,1995-08-01,2006-12-22,un libellé porte une durée ou un échelon : « 2 ans 3 mois »
+LEGITEXT000005622859,LEGIARTI000006483868,21,1,1995-08-01,2006-12-22,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
 LEGITEXT000005622879,LEGIARTI000006483924,3,1,1997-02-22,2007-12-09,un libellé porte une durée ou un échelon : « deux ans pour les »
 LEGITEXT000005622879,LEGIARTI000017725941,3,1,2007-12-09,2011-01-01,un libellé porte une durée ou un échelon : « deux ans pour les »
 LEGITEXT000005622879,LEGIARTI000006483928,6,1,1997-02-22,2001-12-22,un libellé porte une durée ou un échelon : « deux ans pour les »
@@ -197,39 +87,29 @@ LEGITEXT000005622879,LEGIARTI000006483937,9,1,2004-07-08,2007-12-09,un libellé 
 LEGITEXT000005623067,LEGIARTI000006484059,13,,1995-08-01,2012-01-01,durées renvoyées à un autre texte
 LEGITEXT000005623067,LEGIARTI000006484064,18,1,1995-08-01,2012-01-01,une durée minimale au-dessus d'une autre au 6e échelon
 LEGITEXT000005623290,LEGIARTI000006484247,12,,1997-04-19,2003-09-13,durées renvoyées à un autre texte
-LEGITEXT000005623290,LEGIARTI000006484255,15,1,1997-04-19,2003-09-13,un libellé porte une durée ou un échelon : « 2 ans ............................... : I : II : I »
+LEGITEXT000005623290,LEGIARTI000006484255,15,1,1997-04-19,2003-09-13,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
 LEGITEXT000005623290,LEGIARTI000006484240,9,,1997-04-19,2003-09-13,durées renvoyées à un autre texte
-LEGITEXT000005623355,LEGIARTI000006484005,26,1,1995-08-01,2005-12-11,un libellé porte une durée ou un échelon : « 2 ans 3 mois GRADES ET CLASSES : INSPECTEUR PRINCI »
-LEGITEXT000005623355,LEGIARTI000006484005,26,10,1995-08-01,2005-12-11,un libellé porte une durée ou un échelon : « 2 ans 3 mois »
-LEGITEXT000005623355,LEGIARTI000006484005,26,11,1995-08-01,2005-12-11,un libellé porte une durée ou un échelon : « 2 ans 3 mois »
-LEGITEXT000005623355,LEGIARTI000006484005,26,12,1995-08-01,2005-12-11,un libellé porte une durée ou un échelon : « 2 ans »
-LEGITEXT000005623355,LEGIARTI000006484005,26,13,1995-08-01,2005-12-11,un libellé porte une durée ou un échelon : « 1 an 6 mois »
-LEGITEXT000005623355,LEGIARTI000006484005,26,14,1995-08-01,2005-12-11,un libellé porte une durée ou un échelon : « 1 an 6 mois »
-LEGITEXT000005623355,LEGIARTI000006484005,26,15,1995-08-01,2005-12-11,un libellé porte une durée ou un échelon : « 1 an 6 mois »
-LEGITEXT000005623355,LEGIARTI000006484005,26,16,1995-08-01,2005-12-11,un libellé porte une durée ou un échelon : « 1 an »
-LEGITEXT000005623355,LEGIARTI000006484005,26,17,1995-08-01,2005-12-11,un libellé porte une durée ou un échelon : « 1 an GRADES ET CLASSES : INSPECTEUR-ELEVE »
-LEGITEXT000005623355,LEGIARTI000006484005,26,18,1995-08-01,2005-12-11,un libellé porte une durée ou un échelon : « 1 an »
-LEGITEXT000005623355,LEGIARTI000006484005,26,2,1995-08-01,2005-12-11,un libellé porte une durée ou un échelon : « 2 ans »
-LEGITEXT000005623355,LEGIARTI000006484005,26,3,1995-08-01,2005-12-11,un libellé porte une durée ou un échelon : « 1 an 6 mois »
-LEGITEXT000005623355,LEGIARTI000006484005,26,4,1995-08-01,2005-12-11,un libellé porte une durée ou un échelon : « 1 an 6 mois »
-LEGITEXT000005623355,LEGIARTI000006484005,26,5,1995-08-01,2005-12-11,un libellé porte une durée ou un échelon : « 1 an 6 mois »
-LEGITEXT000005623355,LEGIARTI000006484005,26,6,1995-08-01,2005-12-11,un libellé porte une durée ou un échelon : « 1 an 6 mois GRADES ET CLASSES : INSPECTEUR »
-LEGITEXT000005623355,LEGIARTI000006484005,26,7,1995-08-01,2005-12-11,un libellé porte une durée ou un échelon : « 3 ans »
-LEGITEXT000005623355,LEGIARTI000006484005,26,8,1995-08-01,2005-12-11,un libellé porte une durée ou un échelon : « 2 ans 3 mois »
-LEGITEXT000005623355,LEGIARTI000006484005,26,9,1995-08-01,2005-12-11,un libellé porte une durée ou un échelon : « 2 ans 3 mois »
+LEGITEXT000005623355,LEGIARTI000006484005,26,1,1995-08-01,2005-12-11,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
+LEGITEXT000005623372,LEGIARTI000006484550,21,1,1995-08-01,2007-01-01,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
+LEGITEXT000005623550,LEGIARTI000006484337,17,1,1997-05-23,2004-11-26,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
+LEGITEXT000005623580,LEGIARTI000006484419,22,1,1995-08-01,2007-04-01,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
 LEGITEXT000005623669,LEGIARTI000006484973,4,,1995-08-01,,durées écrites en phrases
 LEGITEXT000005623827,LEGIARTI000006564821,20,1,1997-06-01,2007-03-01,"une durée hors de sa ligne, après « Durée moyenne (dans l'échelon) »"
 LEGITEXT000005624276,LEGIARTI000006486746,11,1,1998-01-01,2001-01-01,un libellé porte une durée ou un échelon : « 1° Un an pour les quatre premiers échelons du grad »
 LEGITEXT000005624336,LEGIARTI000006486794,10,,1995-08-01,2000-06-11,durées renvoyées à un autre texte
 LEGITEXT000005624353,LEGIARTI000006486844,13,,1997-10-03,2006-06-01,durées écrites en phrases
 LEGITEXT000005624353,LEGIARTI000006486845,13,,2006-06-01,,durées écrites en phrases
+LEGITEXT000005624353,LEGIARTI000006486884,32,1,1997-10-03,2006-06-01,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
 LEGITEXT000005624353,LEGIARTI000006486829,6,,1997-10-03,2006-06-01,durées écrites en phrases
 LEGITEXT000005624353,LEGIARTI000006486830,6,,2006-06-01,,durées écrites en phrases
 LEGITEXT000005624353,LEGIARTI000006486836,9,,1996-08-01,2006-06-01,durées écrites en phrases
 LEGITEXT000005624353,LEGIARTI000006486837,9,,2006-06-01,2010-10-23,durées écrites en phrases
 LEGITEXT000005624397,LEGIARTI000006486476,15,1,1997-10-10,2007-05-03,tableau dessiné en caractères
+LEGITEXT000005624511,LEGIARTI000006505367,21,1,1995-08-01,2006-12-01,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
 LEGITEXT000005624512,LEGIARTI000006505388,2,,1995-08-01,,durées écrites en phrases
 LEGITEXT000005624578,LEGIARTI000006505129,24,1,1995-08-01,2018-04-21,une durée minimale au-dessus d'une autre au 1e échelon
+LEGITEXT000005624750,LEGIARTI000006505984,25,1,1995-08-01,2000-02-13,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
+LEGITEXT000005624750,LEGIARTI000006505985,25,1,2000-02-13,2007-01-01,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
 LEGITEXT000005624751,LEGIARTI000006506019,3,,1997-12-14,2000-02-13,durées écrites en phrases
 LEGITEXT000005624751,LEGIARTI000006506020,3,,2000-02-13,2008-12-14,durées écrites en phrases
 LEGITEXT000005625450,LEGIARTI000006506432,4,,1998-03-24,2004-10-31,durées renvoyées à un autre texte
@@ -237,15 +117,10 @@ LEGITEXT000005625450,LEGIARTI000006506446,9,,2004-10-31,2011-09-01,durées renvo
 LEGITEXT000005625574,LEGIARTI000006506543,2,,1998-04-05,2009-10-03,durées écrites en phrases
 LEGITEXT000005625574,LEGIARTI000021095784,2,,2009-10-03,,durées écrites en phrases
 LEGITEXT000005625600,LEGIARTI000006506609,19,1,1994-08-01,2003-06-21,tableau dessiné en caractères
+LEGITEXT000005625613,LEGIARTI000006506666,20,1,1995-08-01,2007-01-01,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
 LEGITEXT000005625738,LEGIARTI000006506809,39,1,1998-05-10,1997-07-30,version jamais en vigueur : le LEGI la date d'une fin antérieure ou égale à son début
-LEGITEXT000005625738,LEGIARTI000006506809,39,2,1998-05-10,1997-07-30,version jamais en vigueur : le LEGI la date d'une fin antérieure ou égale à son début
-LEGITEXT000005625738,LEGIARTI000006506810,39,1,1998-07-30,2000-08-01,l'en-tête n'a qu'une colonne quand la phrase nomme les durées minimale et moyenne
-LEGITEXT000005625738,LEGIARTI000006506810,39,2,1998-07-30,2000-08-01,un libellé porte une durée ou un échelon : « 3 ans ÉCHELONS »
-LEGITEXT000005625738,LEGIARTI000006506811,39,1,2000-08-01,2006-12-30,l'en-tête n'a qu'une colonne quand la phrase nomme les durées minimale et moyenne
-LEGITEXT000005625738,LEGIARTI000006506811,39,2,2000-08-01,2006-12-30,un libellé porte une durée ou un échelon : « 3 ans ÉCHELON »
-LEGITEXT000005625738,LEGIARTI000006506811,39,3,2000-08-01,2006-12-30,un libellé porte une durée ou un échelon : « 2 ans 9 mois ÉCHELON »
-LEGITEXT000005625738,LEGIARTI000006506811,39,4,2000-08-01,2006-12-30,un libellé porte une durée ou un échelon : « 2 ans 9 mois ÉCHELON »
-LEGITEXT000005625738,LEGIARTI000006506811,39,5,2000-08-01,2006-12-30,un libellé porte une durée ou un échelon : « 2 ans ÉCHELON »
+LEGITEXT000005625738,LEGIARTI000006506810,39,1,1998-07-30,2000-08-01,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
+LEGITEXT000005625738,LEGIARTI000006506811,39,1,2000-08-01,2006-12-30,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
 LEGITEXT000005625742,LEGIARTI000006506869,16,,1996-08-01,2007-02-28,durées écrites en phrases
 LEGITEXT000005625742,LEGIARTI000006506870,16,,2007-02-28,,durées écrites en phrases
 LEGITEXT000005625983,LEGIARTI000006507288,2,,1996-08-01,2005-05-26,durées écrites en phrases
@@ -256,8 +131,10 @@ LEGITEXT000005626477,LEGIARTI000006508324,9,1,2000-02-13,2004-10-31,tableau dess
 LEGITEXT000005626550,LEGIARTI000006508508,3,,1998-09-11,2002-05-04,durées écrites en phrases
 LEGITEXT000005627129,LEGIARTI000006509384,2,,1996-08-01,2010-01-13,durées écrites en phrases
 LEGITEXT000005627129,LEGIARTI000021713589,2,,2010-01-13,,durées écrites en phrases
-LEGITEXT000005627284,LEGIARTI000006509642,32,1,1998-12-30,1999-01-01,"une durée hors de sa ligne, après « DURÉE Moyenne »"
-LEGITEXT000005627284,LEGIARTI000006509650,37,1,1998-12-30,2007-10-01,"une durée hors de sa ligne, après « DURÉE Moyenne »"
+LEGITEXT000005627284,LEGIARTI000006509642,32,1,1998-12-30,1999-01-01,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
+LEGITEXT000005627284,LEGIARTI000006509650,37,1,1998-12-30,2007-10-01,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
+LEGITEXT000005627284,LEGIARTI000006509652,38,1,1998-12-30,2007-10-01,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
+LEGITEXT000005627284,LEGIARTI000006509678,54,1,1998-12-30,1999-01-01,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
 LEGITEXT000005627284,LEGIARTI000006509693,64,1,1998-12-30,2007-10-01,tableau dessiné en caractères
 LEGITEXT000005627503,LEGIARTI000006509526,10,,1999-02-17,,durées écrites en phrases
 LEGITEXT000005627621,LEGIARTI000006510402,4,1,1999-01-01,,aucun échelon
@@ -268,6 +145,7 @@ LEGITEXT000005627813,LEGIARTI000006510394,4,,1999-04-16,2008-12-14,durées écri
 LEGITEXT000005627849,LEGIARTI000006511428,8,1,1999-04-25,2005-09-10,tableau dessiné en caractères
 LEGITEXT000005627955,LEGIARTI000006378631,12,1,1999-05-21,2005-11-01,une phrase coupe le tableau
 LEGITEXT000005627955,LEGIARTI000006378632,12,1,2005-11-01,2007-01-01,"une durée hors de sa ligne, après « DURÉE Maximale »"
+LEGITEXT000005628097,LEGIARTI000006511643,7,1,1999-06-25,2005-09-10,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
 LEGITEXT000005628237,LEGIARTI000006723613,9,1,1993-08-01,2002-12-24,tableau dessiné en caractères
 LEGITEXT000005628257,LEGIARTI000006511845,3,1,1999-07-27,,moins de deux durées
 LEGITEXT000005628257,LEGIARTI000006511845,3,2,1999-07-27,,l'en-tête n'a qu'une colonne quand la phrase nomme les durées minimale et moyenne
@@ -407,11 +285,7 @@ LEGITEXT000006052466,LEGIARTI000006413918,8,,2006-01-01,2007-05-03,durées renvo
 LEGITEXT000006052466,LEGIARTI000006413919,8,,2007-05-03,2016-01-01,durées renvoyées à un autre texte
 LEGITEXT000006052594,LEGIARTI000032609521,2,,2016-05-30,,durées écrites en phrases
 LEGITEXT000006052748,LEGIARTI000006726515,3,,2005-11-26,,durées écrites en phrases
-LEGITEXT000006052783,LEGIARTI000006402228,11,1,2005-12-02,2007-05-16,l'en-tête n'a qu'une colonne quand la phrase nomme les durées maximale et minimale
-LEGITEXT000006052783,LEGIARTI000006402228,11,2,2005-12-02,2007-05-16,un libellé porte une durée ou un échelon : « 3 ans »
-LEGITEXT000006052783,LEGIARTI000006402228,11,3,2005-12-02,2007-05-16,un libellé porte une durée ou un échelon : « 2 ans 9 mois »
-LEGITEXT000006052783,LEGIARTI000006402228,11,4,2005-12-02,2007-05-16,un libellé porte une durée ou un échelon : « 2 ans 9 mois »
-LEGITEXT000006052783,LEGIARTI000006402228,11,5,2005-12-02,2007-05-16,un libellé porte une durée ou un échelon : « 2 ans »
+LEGITEXT000006052783,LEGIARTI000006402228,11,1,2005-12-02,2007-05-16,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
 LEGITEXT000006052837,LEGIARTI000006414197,10,,2005-12-11,,durées écrites en phrases
 LEGITEXT000006052929,LEGIARTI000023740237,4,,2011-07-01,2019-01-01,durées écrites en phrases
 LEGITEXT000006053568,LEGIARTI000006414480,11,,2006-04-15,2019-01-01,durées écrites en phrases
@@ -445,7 +319,7 @@ LEGITEXT000006056935,LEGIARTI000006416775,11,1,2007-10-01,2021-04-11,"une durée
 LEGITEXT000006056935,LEGIARTI000043350248,11,1,2021-04-11,,"une durée hors de sa ligne, après « et 11e échelons »"
 LEGITEXT000006056938,LEGIARTI000032141267,12,1,2016-02-29,,"une durée hors de sa ligne, après « 1er, 2e, et 3e échelons »"
 LEGITEXT000006057069,LEGIARTI000006403331,10,1,2007-11-01,2015-01-25,un libellé porte une durée ou un échelon : « six mois pour le »
-LEGITEXT000006060572,LEGIARTI000006562466,8 ter,1,1990-08-01,2007-05-03,"une durée hors de sa ligne, après « DUREE Moyenne »"
+LEGITEXT000006060572,LEGIARTI000006562466,8 ter,1,1990-08-01,2007-05-03,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
 LEGITEXT000006060633,LEGIARTI000006509859,6,,1952-03-07,,durées écrites en phrases
 LEGITEXT000006060633,LEGIARTI000006509860,7,,1952-03-07,,durées écrites en phrases
 LEGITEXT000006060794,LEGIARTI000006504939,8,,1957-03-13,,durées écrites en phrases
@@ -459,7 +333,7 @@ LEGITEXT000006060912,LEGIARTI000006509880,13,,1959-06-19,,durées écrites en ph
 LEGITEXT000006060915,LEGIARTI000006509820,11,,1973-03-22,1999-12-22,durées écrites en phrases
 LEGITEXT000006060915,LEGIARTI000006509810,7,1,1976-01-01,1999-12-22,"un libellé porte une durée ou un échelon : « Pour l'emploi de sous-directeur des stages, à deux »"
 LEGITEXT000006060915,LEGIARTI000006509816,8-4,1,1994-09-22,2004-05-19,"un libellé porte une durée ou un échelon : « 1° Un an , pour les deux premiers échelons de la 2 »"
-LEGITEXT000006060953,LEGIARTI000006561499,6-2,1,1990-08-01,2006-12-30,"une durée hors de sa ligne, après « Durée Moyenne »"
+LEGITEXT000006060953,LEGIARTI000006561499,6-2,1,1990-08-01,2006-12-30,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
 LEGITEXT000006060972,LEGIARTI000006508284,4,,1960-01-20,2003-12-11,durées écrites en phrases
 LEGITEXT000006060972,LEGIARTI000006508288,8,,1960-01-20,2003-12-11,durées écrites en phrases
 LEGITEXT000006060993,LEGIARTI000006563674,3,,1961-05-01,,durées écrites en phrases
@@ -493,39 +367,22 @@ LEGITEXT000006061248,LEGIARTI000006504603,4,1,1962-01-01,,un libellé porte une 
 LEGITEXT000006061251,LEGIARTI000006503814,4,,1965-02-20,2005-04-22,durées écrites en phrases
 LEGITEXT000006061267,LEGIARTI000006563844,5,,1963-09-01,,durées écrites en phrases
 LEGITEXT000006061269,LEGIARTI000006566652,13,,1965-05-05,1993-08-01,durées écrites en phrases
-LEGITEXT000006061269,LEGIARTI000006566653,13,1,1996-08-01,2005-11-01,"une durée hors de sa ligne, après « durée moyenne »"
-LEGITEXT000006061269,LEGIARTI000006566653,13,2,1996-08-01,2005-11-01,"une durée hors de sa ligne, après « durée moyenne »"
-LEGITEXT000006061269,LEGIARTI000006566653,13,3,1996-08-01,2005-11-01,"une durée hors de sa ligne, après « durée moyenne »"
+LEGITEXT000006061269,LEGIARTI000006566653,13,1,1996-08-01,2005-11-01,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
+LEGITEXT000006061269,LEGIARTI000006566653,13,2,1996-08-01,2005-11-01,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
+LEGITEXT000006061269,LEGIARTI000006566653,13,3,1996-08-01,2005-11-01,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
 LEGITEXT000006061284,LEGIARTI000006505006,4,,1965-07-08,2010-04-10,durées écrites en phrases
 LEGITEXT000006061295,LEGIARTI000006503467,12,,1964-01-01,2006-01-05,durées écrites en phrases
 LEGITEXT000006061295,LEGIARTI000006503471,15,,1964-01-01,2006-01-05,durées écrites en phrases
-LEGITEXT000006061393,LEGIARTI000006510270,14,1,1996-08-01,2007-05-03,l'en-tête n'a qu'une colonne quand la phrase nomme les durées minimale et moyenne
-LEGITEXT000006061393,LEGIARTI000006510270,14,2,1996-08-01,2007-05-03,aucun échelon
-LEGITEXT000006061393,LEGIARTI000006510270,14,3,1996-08-01,2007-05-03,aucun échelon
-LEGITEXT000006061393,LEGIARTI000006510270,14,4,1996-08-01,2007-05-03,aucun échelon
-LEGITEXT000006061393,LEGIARTI000006510270,14,5,1996-08-01,2007-05-03,aucun échelon
-LEGITEXT000006061393,LEGIARTI000006510270,14,6,1996-08-01,2007-05-03,aucun échelon
-LEGITEXT000006061393,LEGIARTI000006510270,14,7,1996-08-01,2007-05-03,un libellé porte une durée ou un échelon : « 1 an 6 mois . GRADES ET ECHELONS : Sous-chef de se »
-LEGITEXT000006061393,LEGIARTI000006510276,16-2,1,1990-08-01,2007-05-03,l'en-tête n'a qu'une colonne quand la phrase nomme les durées minimale et moyenne
-LEGITEXT000006061393,LEGIARTI000006510276,16-2,2,1990-08-01,2007-05-03,un libellé porte une durée ou un échelon : « 3 ans ECHELON »
+LEGITEXT000006061393,LEGIARTI000006510270,14,1,1996-08-01,2007-05-03,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
+LEGITEXT000006061393,LEGIARTI000006510276,16-2,1,1990-08-01,2007-05-03,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
 LEGITEXT000006061419,LEGIARTI000006567263,16,,1967-03-08,,durées écrites en phrases
 LEGITEXT000006061419,LEGIARTI000006567254,8,1,1976-12-04,,un libellé porte une durée ou un échelon : « Un an pour les quatre premiers échelons de la 2e c »
 LEGITEXT000006061441,LEGIARTI000006567210,16,1,2001-09-20,2003-03-29,un libellé porte une durée ou un échelon : « Un an pour les quatre premiers échelons de la 2e c »
 LEGITEXT000006061441,LEGIARTI000006567211,16,1,2002-03-29,2016-03-01,un libellé porte une durée ou un échelon : « six mois pour le »
 LEGITEXT000006061441,LEGIARTI000032001659,16,1,2016-03-01,2021-01-01,un libellé porte une durée ou un échelon : « six mois pour le »
 LEGITEXT000006061441,LEGIARTI000006567220,20,,1967-04-08,2019-11-11,durées écrites en phrases
-LEGITEXT000006061466,LEGIARTI000006508433,13,1,1967-08-25,2000-05-21,le 1e échelon de « GRADE : Ingénieur général » a 0 case(s) pour 1 colonne(s)
-LEGITEXT000006061466,LEGIARTI000006508433,13,2,1967-08-25,2000-05-21,aucun échelon
-LEGITEXT000006061466,LEGIARTI000006508433,13,3,1967-08-25,2000-05-21,aucun échelon
-LEGITEXT000006061466,LEGIARTI000006508433,13,4,1967-08-25,2000-05-21,un libellé porte une durée ou un échelon : « 1 ans 6 mois . GRADE : Ingénieur de 1re classe »
-LEGITEXT000006061466,LEGIARTI000006508433,13,5,1967-08-25,2000-05-21,aucun échelon
-LEGITEXT000006061466,LEGIARTI000006508433,13,6,1967-08-25,2000-05-21,un libellé porte une durée ou un échelon : « 1 ans 6 mois . GRADE : Ingénieur de 2e classe »
-LEGITEXT000006061466,LEGIARTI000006508434,13,1,2000-05-21,2006-02-03,le 1e échelon de « GRADE : Ingénieur général » a 0 case(s) pour 1 colonne(s)
-LEGITEXT000006061466,LEGIARTI000006508434,13,2,2000-05-21,2006-02-03,aucun échelon
-LEGITEXT000006061466,LEGIARTI000006508434,13,3,2000-05-21,2006-02-03,aucun échelon
-LEGITEXT000006061466,LEGIARTI000006508434,13,4,2000-05-21,2006-02-03,un libellé porte une durée ou un échelon : « 1 ans 6 mois . GRADE : Ingénieur de 1re classe »
-LEGITEXT000006061466,LEGIARTI000006508434,13,5,2000-05-21,2006-02-03,aucun échelon
-LEGITEXT000006061466,LEGIARTI000006508434,13,6,2000-05-21,2006-02-03,un libellé porte une durée ou un échelon : « 1 ans 6 mois . GRADE : Ingénieur de 2e classe »
+LEGITEXT000006061466,LEGIARTI000006508433,13,1,1967-08-25,2000-05-21,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
+LEGITEXT000006061466,LEGIARTI000006508434,13,1,2000-05-21,2006-02-03,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
 LEGITEXT000006061466,LEGIARTI000006508435,13,1,2006-02-03,2009-02-01,le 1e échelon de « Ingénieur en chef » a 1 case(s) pour 2 colonne(s)
 LEGITEXT000006061533,LEGIARTI000006563934,21,2,2007-02-28,2014-11-01,le 1e échelon de « Ingénieurs en chef » a 2 case(s) pour 1 colonne(s)
 LEGITEXT000006061533,LEGIARTI000006563934,21,3,2007-02-28,2014-11-01,"une durée hors de sa ligne, après « Graveur général des monnaies »"
@@ -535,42 +392,29 @@ LEGITEXT000006061533,LEGIARTI000006563934,21,6,2007-02-28,2014-11-01,un libellé
 LEGITEXT000006061538,LEGIARTI000034303973,3,,2017-04-01,,durées écrites en phrases
 LEGITEXT000006061538,LEGIARTI000006563882,4,,2000-01-01,2017-04-01,durées écrites en phrases
 LEGITEXT000006061564,LEGIARTI000006571922,4,1,1967-01-01,2017-09-01,durées écrites d'un échelon au suivant ou à l'accès d'un échelon : elles se liraient décalées d'un échelon
-LEGITEXT000006061574,LEGIARTI000006564059,14-2,1,1990-08-01,2007-05-03,"une durée hors de sa ligne, après « DUREE Moyenne »"
+LEGITEXT000006061574,LEGIARTI000006564059,14-2,1,1990-08-01,2007-05-03,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
 LEGITEXT000006061593,LEGIARTI000006454934,8,,1977-01-01,1989-01-01,durées écrites en phrases
 LEGITEXT000006061593,LEGIARTI000006454935,8,,1989-01-01,1992-08-01,durées écrites en phrases
 LEGITEXT000006061611,LEGIARTI000006504681,19,,1967-01-01,2020-03-06,durées écrites en phrases
 LEGITEXT000006061611,LEGIARTI000006504682,20,,1973-01-01,2020-03-06,durées écrites en phrases
 LEGITEXT000006061620,LEGIARTI000006561998,17,,2005-08-01,2022-07-01,durées écrites en phrases
+LEGITEXT000006061620,LEGIARTI000006562042,21-3,1,2000-01-01,2007-12-15,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
+LEGITEXT000006061620,LEGIARTI000006562093,35-3,1,1998-10-28,2017-01-01,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
 LEGITEXT000006061620,LEGIARTI000034479060,37,1,2017-01-01,2021-01-01,le grade « Secrétaire des affaires étrangères principal et attaché prin » ne descend pas au 1er échelon
 LEGITEXT000006061620,LEGIARTI000034491727,37,1,2021-01-01,2023-01-01,le grade « Secrétaire des affaires étrangères principal et attaché prin » ne descend pas au 1er échelon
 LEGITEXT000006061620,LEGIARTI000045601411,37,1,2023-01-01,,le grade « Secrétaire des affaires étrangères hors classe et attaché ho » ne descend pas au 1er échelon
 LEGITEXT000006061620,LEGIARTI000045597008,4-2,1,2022-07-01,,échelon en double dans «  »
-LEGITEXT000006061620,LEGIARTI000006562100,40,1,2002-01-05,2007-05-03,"une durée hors de sa ligne, après « DUREE Moyenne »"
-LEGITEXT000006061620,LEGIARTI000006562101,40,1,2007-05-03,2015-01-01,"une durée hors de sa ligne, après « DUREE Moyenne »"
+LEGITEXT000006061620,LEGIARTI000006562100,40,1,2002-01-05,2007-05-03,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
+LEGITEXT000006061620,LEGIARTI000006562101,40,1,2007-05-03,2015-01-01,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
 LEGITEXT000006061636,LEGIARTI000006566890,19,,1994-05-25,2007-04-01,durées écrites en phrases
 LEGITEXT000006061636,LEGIARTI000006566873,4,,1994-05-25,2007-04-01,durées écrites en phrases
 LEGITEXT000006061651,LEGIARTI000006566862,4,,1969-06-10,2005-07-21,durées écrites en phrases
 LEGITEXT000006061678,LEGIARTI000006566844,20,,1969-08-15,,durées écrites en phrases
 LEGITEXT000006061678,LEGIARTI000006566845,21,,1969-08-15,,durées écrites en phrases
-LEGITEXT000006061720,LEGIARTI000006513020,20,1,1993-08-01,2006-01-05,le grade « Ingénieur des travaux » ne descend pas au 1er échelon
-LEGITEXT000006061720,LEGIARTI000006513020,20,2,1993-08-01,2006-01-05,un libellé porte une durée ou un échelon : « 3 ans »
-LEGITEXT000006061720,LEGIARTI000006513020,20,3,1993-08-01,2006-01-05,un libellé porte une durée ou un échelon : « 3 ans »
-LEGITEXT000006061720,LEGIARTI000006513020,20,4,1993-08-01,2006-01-05,un libellé porte une durée ou un échelon : « 3 ans »
-LEGITEXT000006061720,LEGIARTI000006513020,20,5,1993-08-01,2006-01-05,un libellé porte une durée ou un échelon : « 2 ans 9 mois »
-LEGITEXT000006061720,LEGIARTI000006513020,20,6,1993-08-01,2006-01-05,un libellé porte une durée ou un échelon : « 2 ans 3 mois »
-LEGITEXT000006061720,LEGIARTI000006513020,20,7,1993-08-01,2006-01-05,un libellé porte une durée ou un échelon : « 2 ans »
-LEGITEXT000006061720,LEGIARTI000006513020,20,8,1993-08-01,2006-01-05,un libellé porte une durée ou un échelon : « 2 ans »
-LEGITEXT000006061720,LEGIARTI000006513020,20,9,1993-08-01,2006-01-05,un libellé porte une durée ou un échelon : « 1 an 6 mois »
-LEGITEXT000006061720,LEGIARTI000006513021,21,1,1994-08-01,2006-01-05,le grade «  » ne descend pas au 1er échelon
-LEGITEXT000006061720,LEGIARTI000006513021,21,2,1994-08-01,2006-01-05,un libellé porte une durée ou un échelon : « 2 ans 9 mois »
-LEGITEXT000006061720,LEGIARTI000006513021,21,3,1994-08-01,2006-01-05,un libellé porte une durée ou un échelon : « 2 ans 9 mois »
-LEGITEXT000006061720,LEGIARTI000006513021,21,4,1994-08-01,2006-01-05,un libellé porte une durée ou un échelon : « 2 ans 3 mois »
-LEGITEXT000006061720,LEGIARTI000006513021,21,5,1994-08-01,2006-01-05,un libellé porte une durée ou un échelon : « 2 ans 3 mois »
-LEGITEXT000006061720,LEGIARTI000006513021,21,6,1994-08-01,2006-01-05,un libellé porte une durée ou un échelon : « 2 ans 3 mois »
-LEGITEXT000006061720,LEGIARTI000006513021,21,7,1994-08-01,2006-01-05,un libellé porte une durée ou un échelon : « 2 ans »
-LEGITEXT000006061733,LEGIARTI000006562215,10-2,1,1990-08-01,2008-01-01,l'en-tête n'a qu'une colonne quand la phrase nomme les durées minimale et moyenne
-LEGITEXT000006061733,LEGIARTI000006562215,10-2,2,1990-08-01,2008-01-01,un libellé porte une durée ou un échelon : « 3 ans »
-LEGITEXT000006061753,LEGIARTI000006502855,7 quarter,1,1990-08-01,2007-05-03,"une durée hors de sa ligne, après « durée moyenne »"
+LEGITEXT000006061720,LEGIARTI000006513020,20,1,1993-08-01,2006-01-05,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
+LEGITEXT000006061720,LEGIARTI000006513021,21,1,1994-08-01,2006-01-05,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
+LEGITEXT000006061733,LEGIARTI000006562215,10-2,1,1990-08-01,2008-01-01,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
+LEGITEXT000006061753,LEGIARTI000006502855,7 quarter,1,1990-08-01,2007-05-03,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
 LEGITEXT000006061762,LEGIARTI000006453736,10-5,1,1988-04-20,1989-09-01,durées écrites d'un échelon au suivant ou à l'accès d'un échelon : elles se liraient décalées d'un échelon
 LEGITEXT000006061762,LEGIARTI000006453743,10-8,1,1996-09-01,1998-09-04,un libellé porte une durée ou un échelon : « 2 ans 6 mois Du 2e au »
 LEGITEXT000006061762,LEGIARTI000006453744,10-8,1,1998-09-04,2002-09-01,un libellé porte une durée ou un échelon : « 2 ans 6 mois Du 2e au »
@@ -584,7 +428,7 @@ LEGITEXT000006061813,LEGIARTI000006566540,19,1,1993-08-01,2005-05-31,un libellé
 LEGITEXT000006061813,LEGIARTI000006566541,20,,1994-08-01,2005-05-31,durées écrites en phrases
 LEGITEXT000006061872,LEGIARTI000006565579,17,1,1970-07-01,2015-12-31,un libellé porte une durée ou un échelon : « Un an pour chacun des trois premiers échelons ; De »
 LEGITEXT000006061872,LEGIARTI000031831608,17,1,2015-12-31,2017-01-01,l'en-tête change d'ordre au milieu du tableau
-LEGITEXT000006061881,LEGIARTI000006565614,3,1,1996-08-01,,"une durée hors de sa ligne, après « durée moyenne »"
+LEGITEXT000006061881,LEGIARTI000006565614,3,1,1996-08-01,,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
 LEGITEXT000006061896,LEGIARTI000006564139,10,,1972-12-27,,durées écrites en phrases
 LEGITEXT000006061938,LEGIARTI000006508207,20,1,1993-08-01,,"une durée hors de sa ligne, après « DUREE : Moyenne »"
 LEGITEXT000006061938,LEGIARTI000006508209,22,,1972-05-10,,durées écrites en phrases
@@ -600,62 +444,27 @@ LEGITEXT000006061979,LEGIARTI000006454964,9,,1977-09-02,1990-01-01,durées écri
 LEGITEXT000006061979,LEGIARTI000006454965,9,,1990-01-01,1993-08-01,durées écrites en phrases
 LEGITEXT000006061984,LEGIARTI000006563588,3,,1970-01-01,2006-03-16,durées écrites en phrases
 LEGITEXT000006061984,LEGIARTI000006563589,3,,2006-03-16,2006-12-30,durées écrites en phrases
-LEGITEXT000006062019,LEGIARTI000006565527,15-2,1,1990-08-01,1998-01-01,"une durée hors de sa ligne, après « Durée moyenne »"
+LEGITEXT000006062019,LEGIARTI000006565522,15,1,1973-11-14,2000-10-19,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
+LEGITEXT000006062019,LEGIARTI000006565527,15-2,1,1990-08-01,1998-01-01,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
 LEGITEXT000006062075,LEGIARTI000022346068,20,1,2010-06-14,2017-01-01,"une durée hors de sa ligne, après « durée moyenne »"
 LEGITEXT000006062077,LEGIARTI000006565495,23,,1973-03-15,2006-10-05,durées écrites en phrases
 LEGITEXT000006062092,LEGIARTI000006565446,7,,1973-03-29,2019-11-08,durées écrites en phrases
 LEGITEXT000006062099,LEGIARTI000006704222,11,1,1972-01-01,1991-01-01,un libellé porte une durée ou un échelon : « Dans le grade de médecin général de la santé : deu »
 LEGITEXT000006062100,LEGIARTI000006452911,8,,1972-01-01,,durées écrites en phrases
-LEGITEXT000006062157,LEGIARTI000006563403,8,1,1990-08-01,2007-12-31,"une durée hors de sa ligne, après « DUREE Moyenne »"
+LEGITEXT000006062157,LEGIARTI000006563403,8,1,1990-08-01,2007-12-31,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
 LEGITEXT000006062282,LEGIARTI000006502167,6,,2003-01-01,2009-01-01,durées écrites en phrases
-LEGITEXT000006062305,LEGIARTI000006665370,11,1,1990-01-01,2001-12-31,aucun échelon
-LEGITEXT000006062305,LEGIARTI000006665370,11,10,1990-01-01,2001-12-31,aucun échelon
-LEGITEXT000006062305,LEGIARTI000006665370,11,11,1990-01-01,2001-12-31,aucun échelon
-LEGITEXT000006062305,LEGIARTI000006665370,11,12,1990-01-01,2001-12-31,aucun échelon
-LEGITEXT000006062305,LEGIARTI000006665370,11,13,1990-01-01,2001-12-31,aucun échelon
-LEGITEXT000006062305,LEGIARTI000006665370,11,14,1990-01-01,2001-12-31,aucun échelon
-LEGITEXT000006062305,LEGIARTI000006665370,11,15,1990-01-01,2001-12-31,aucun échelon
-LEGITEXT000006062305,LEGIARTI000006665370,11,16,1990-01-01,2001-12-31,aucun échelon
-LEGITEXT000006062305,LEGIARTI000006665370,11,17,1990-01-01,2001-12-31,aucun échelon
-LEGITEXT000006062305,LEGIARTI000006665370,11,18,1990-01-01,2001-12-31,aucun échelon
-LEGITEXT000006062305,LEGIARTI000006665370,11,19,1990-01-01,2001-12-31,aucun échelon
-LEGITEXT000006062305,LEGIARTI000006665370,11,2,1990-01-01,2001-12-31,aucun échelon
-LEGITEXT000006062305,LEGIARTI000006665370,11,20,1990-01-01,2001-12-31,aucun échelon
-LEGITEXT000006062305,LEGIARTI000006665370,11,21,1990-01-01,2001-12-31,aucun échelon
-LEGITEXT000006062305,LEGIARTI000006665370,11,22,1990-01-01,2001-12-31,aucun échelon
-LEGITEXT000006062305,LEGIARTI000006665370,11,23,1990-01-01,2001-12-31,aucun échelon
-LEGITEXT000006062305,LEGIARTI000006665370,11,24,1990-01-01,2001-12-31,un libellé porte une durée ou un échelon : « 1 an 6 mois L'échelon fonctionnel du grade de dire »
-LEGITEXT000006062305,LEGIARTI000006665370,11,3,1990-01-01,2001-12-31,aucun échelon
-LEGITEXT000006062305,LEGIARTI000006665370,11,4,1990-01-01,2001-12-31,aucun échelon
-LEGITEXT000006062305,LEGIARTI000006665370,11,5,1990-01-01,2001-12-31,aucun échelon
-LEGITEXT000006062305,LEGIARTI000006665370,11,6,1990-01-01,2001-12-31,aucun échelon
-LEGITEXT000006062305,LEGIARTI000006665370,11,7,1990-01-01,2001-12-31,aucun échelon
-LEGITEXT000006062305,LEGIARTI000006665370,11,8,1990-01-01,2001-12-31,aucun échelon
-LEGITEXT000006062305,LEGIARTI000006665370,11,9,1990-01-01,2001-12-31,aucun échelon
+LEGITEXT000006062305,LEGIARTI000006665370,11,1,1990-01-01,2001-12-31,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
 LEGITEXT000006062305,LEGIARTI000006665380,17,1,1975-04-23,2000-08-07,aucun échelon
 LEGITEXT000006062305,LEGIARTI000006665380,17,2,1975-04-23,2000-08-07,un libellé porte une durée ou un échelon : « 2 ans 3 mois GRADES ET ECHELONS Directeur du trava »
-LEGITEXT000006062305,LEGIARTI000006665380,17,3,1975-04-23,2000-08-07,un libellé porte une durée ou un échelon : « 1 an 6 mois »
+LEGITEXT000006062305,LEGIARTI000006665380,17,3,1975-04-23,2000-08-07,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
 LEGITEXT000006062305,LEGIARTI000006665380,17,4,1975-04-23,2000-08-07,un libellé porte une durée ou un échelon : « de cinq ans peuvent être promus compte tenu des di »
 LEGITEXT000006062337,LEGIARTI000006508171,7,1,1995-08-01,2004-05-25,"une durée hors de sa ligne, après « DUREE : Moyenne »"
 LEGITEXT000006062373,LEGIARTI000006565342,7,,1995-08-01,,durées écrites en phrases
-LEGITEXT000006062389,LEGIARTI000006509546,13,1,1996-08-01,,l'en-tête n'a qu'une colonne quand la phrase nomme les durées minimale et moyenne
-LEGITEXT000006062389,LEGIARTI000006509546,13,10,1996-08-01,,un libellé porte une durée ou un échelon : « 2 ans EMPLOIS ET ECHELONS : Agent principal des se »
-LEGITEXT000006062389,LEGIARTI000006509546,13,11,1996-08-01,,un libellé porte une durée ou un échelon : « 2 ans EMPLOIS ET ECHELONS : Agent principal des se »
-LEGITEXT000006062389,LEGIARTI000006509546,13,2,1996-08-01,,un libellé porte une durée ou un échelon : « 2 ans 9 mois EMPLOIS ET ECHELONS : Agent principal »
-LEGITEXT000006062389,LEGIARTI000006509546,13,3,1996-08-01,,un libellé porte une durée ou un échelon : « 2 ans 3 mois EMPLOIS ET ECHELONS : Agent principal »
-LEGITEXT000006062389,LEGIARTI000006509546,13,4,1996-08-01,,un libellé porte une durée ou un échelon : « 2 ans 3 mois EMPLOIS ET ECHELONS : Agent principal »
-LEGITEXT000006062389,LEGIARTI000006509546,13,5,1996-08-01,,un libellé porte une durée ou un échelon : « 2 ans EMPLOIS ET ECHELONS : Agent principal des se »
-LEGITEXT000006062389,LEGIARTI000006509546,13,6,1996-08-01,,un libellé porte une durée ou un échelon : « 2 ans EMPLOIS ET ECHELONS : Agent principal des se »
-LEGITEXT000006062389,LEGIARTI000006509546,13,7,1996-08-01,,un libellé porte une durée ou un échelon : « 1 an 6 mois EMPLOIS ET ECHELONS : Agent principal  »
-LEGITEXT000006062389,LEGIARTI000006509546,13,8,1996-08-01,,un libellé porte une durée ou un échelon : « 2 ans 9 mois EMPLOIS ET ECHELONS : Agent principal »
-LEGITEXT000006062389,LEGIARTI000006509546,13,9,1996-08-01,,un libellé porte une durée ou un échelon : « 2 ans 3 mois EMPLOIS ET ECHELONS : Agent principal »
-LEGITEXT000006062389,LEGIARTI000006509537,6,1,1974-01-01,1990-08-01,l'en-tête n'a qu'une colonne quand la phrase nomme les durées minimale et moyenne
-LEGITEXT000006062389,LEGIARTI000006509537,6,2,1974-01-01,1990-08-01,un libellé porte une durée ou un échelon : « 2 ans 9 mois ECHELON »
-LEGITEXT000006062389,LEGIARTI000006509537,6,3,1974-01-01,1990-08-01,un libellé porte une durée ou un échelon : « 2 ans 9 mois ECHELON »
-LEGITEXT000006062389,LEGIARTI000006509537,6,4,1974-01-01,1990-08-01,un libellé porte une durée ou un échelon : « 2 ans ECHELON »
-LEGITEXT000006062419,LEGIARTI000006571623,14 ter,1,1990-08-01,2007-05-03,"une durée hors de sa ligne, après « durée maximale »"
-LEGITEXT000006062419,LEGIARTI000006571608,8 bis,1,1990-08-01,2007-05-03,"une durée hors de sa ligne, après « Durée maximale »"
-LEGITEXT000006062421,LEGIARTI000006563262,19-2,1,1990-08-01,2007-05-03,"une durée hors de sa ligne, après « II - DUREE Moyenne »"
+LEGITEXT000006062389,LEGIARTI000006509546,13,1,1996-08-01,,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
+LEGITEXT000006062389,LEGIARTI000006509537,6,1,1974-01-01,1990-08-01,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
+LEGITEXT000006062419,LEGIARTI000006571623,14 ter,1,1990-08-01,2007-05-03,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
+LEGITEXT000006062419,LEGIARTI000006571608,8 bis,1,1990-08-01,2007-05-03,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
+LEGITEXT000006062421,LEGIARTI000006563262,19-2,1,1990-08-01,2007-05-03,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
 LEGITEXT000006062423,LEGIARTI000006562357,2,1,1995-08-01,2006-05-14,un libellé porte une durée ou un échelon : « Dix-huit mois pour le »
 LEGITEXT000006062423,LEGIARTI000006562358,2,,2006-05-14,,durées écrites en phrases
 LEGITEXT000006062423,LEGIARTI000006562362,4,,2006-05-14,,durées écrites en phrases
@@ -669,38 +478,15 @@ LEGITEXT000006062677,LEGIARTI000006502866,1,,1977-04-03,2007-03-23,durées écri
 LEGITEXT000006062695,LEGIARTI000006713338,11,,1977-06-01,1993-03-28,durées écrites en phrases
 LEGITEXT000006062695,LEGIARTI000006713323,2,,1977-06-01,1997-02-22,durées écrites en phrases
 LEGITEXT000006062695,LEGIARTI000006713327,4,,1977-06-01,1997-02-22,durées écrites en phrases
-LEGITEXT000006062745,LEGIARTI000006564627,24,1,1976-07-01,1994-11-26,"une durée hors de sa ligne, après « Durée moyenne »"
+LEGITEXT000006062745,LEGIARTI000006564627,24,1,1976-07-01,1994-11-26,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
+LEGITEXT000006062745,LEGIARTI000006564655,42-3,1,1995-08-01,2007-04-01,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
 LEGITEXT000006062801,LEGIARTI000006452994,18,1,1979-01-07,,un libellé porte une durée ou un échelon : « HORS catégorie. 1re catégorie. 2e catégorie. 3e ca »
 LEGITEXT000006062801,LEGIARTI000006453000,24,1,1979-01-07,,durées écrites d'un échelon au suivant ou à l'accès d'un échelon : elles se liraient décalées d'un échelon
 LEGITEXT000006062873,LEGIARTI000006571830,17,1,2002-09-29,,"une durée hors de sa ligne, après « "" "" "" »"
 LEGITEXT000006062958,LEGIARTI000006486313,20,,1990-09-09,,durées écrites en phrases
 LEGITEXT000006062958,LEGIARTI000006486325,31,,1979-12-13,,durées écrites en phrases
-LEGITEXT000006062958,LEGIARTI000006486296,5,1,1979-12-13,,le grade «  » ne descend pas au 1er échelon
-LEGITEXT000006062958,LEGIARTI000006486296,5,10,1979-12-13,,aucun échelon
-LEGITEXT000006062958,LEGIARTI000006486296,5,11,1979-12-13,,aucun échelon
-LEGITEXT000006062958,LEGIARTI000006486296,5,12,1979-12-13,,aucun échelon
-LEGITEXT000006062958,LEGIARTI000006486296,5,13,1979-12-13,,aucun échelon
-LEGITEXT000006062958,LEGIARTI000006486296,5,14,1979-12-13,,le grade «  » ne descend pas au 1er échelon
-LEGITEXT000006062958,LEGIARTI000006486296,5,15,1979-12-13,,aucun échelon
-LEGITEXT000006062958,LEGIARTI000006486296,5,16,1979-12-13,,aucun échelon
-LEGITEXT000006062958,LEGIARTI000006486296,5,17,1979-12-13,,aucun échelon
-LEGITEXT000006062958,LEGIARTI000006486296,5,18,1979-12-13,,aucun échelon
-LEGITEXT000006062958,LEGIARTI000006486296,5,19,1979-12-13,,aucun échelon
-LEGITEXT000006062958,LEGIARTI000006486296,5,2,1979-12-13,,aucun échelon
-LEGITEXT000006062958,LEGIARTI000006486296,5,20,1979-12-13,,aucun échelon
-LEGITEXT000006062958,LEGIARTI000006486296,5,21,1979-12-13,,aucun échelon
-LEGITEXT000006062958,LEGIARTI000006486296,5,22,1979-12-13,,aucun échelon
-LEGITEXT000006062958,LEGIARTI000006486296,5,23,1979-12-13,,aucun échelon
-LEGITEXT000006062958,LEGIARTI000006486296,5,24,1979-12-13,,aucun échelon
-LEGITEXT000006062958,LEGIARTI000006486296,5,25,1979-12-13,,un libellé porte une durée ou un échelon : « 1 an 6 mois »
-LEGITEXT000006062958,LEGIARTI000006486296,5,3,1979-12-13,,aucun échelon
-LEGITEXT000006062958,LEGIARTI000006486296,5,4,1979-12-13,,aucun échelon
-LEGITEXT000006062958,LEGIARTI000006486296,5,5,1979-12-13,,aucun échelon
-LEGITEXT000006062958,LEGIARTI000006486296,5,6,1979-12-13,,aucun échelon
-LEGITEXT000006062958,LEGIARTI000006486296,5,7,1979-12-13,,le grade «  » ne descend pas au 1er échelon
-LEGITEXT000006062958,LEGIARTI000006486296,5,8,1979-12-13,,aucun échelon
-LEGITEXT000006062958,LEGIARTI000006486296,5,9,1979-12-13,,aucun échelon
-LEGITEXT000006063130,LEGIARTI000006565277,14-2,1,1990-08-01,2007-05-03,"une durée hors de sa ligne, après « Durée moyenne »"
+LEGITEXT000006062958,LEGIARTI000006486296,5,1,1979-12-13,,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
+LEGITEXT000006063130,LEGIARTI000006565277,14-2,1,1990-08-01,2007-05-03,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
 LEGITEXT000006063298,LEGIARTI000006561652,11,1,1992-09-01,2012-05-09,durées écrites d'un échelon au suivant ou à l'accès d'un échelon : elles se liraient décalées d'un échelon
 LEGITEXT000006063298,LEGIARTI000026329426,11,1,2012-08-30,2017-09-01,durées écrites d'un échelon au suivant ou à l'accès d'un échelon : elles se liraient décalées d'un échelon
 LEGITEXT000006063325,LEGIARTI000006705032,22,,1980-10-08,,durées renvoyées à un autre texte
@@ -711,32 +497,13 @@ LEGITEXT000006063550,LEGIARTI000006703351,26,3,1981-01-28,1990-01-01,un libellé
 LEGITEXT000006063550,LEGIARTI000006703351,26,4,1981-01-28,1990-01-01,un libellé porte une durée ou un échelon : « 1 an 9 mois . Classes : 2è classe. Avancements d'é »
 LEGITEXT000006063550,LEGIARTI000006703351,26,5,1981-01-28,1990-01-01,un libellé porte une durée ou un échelon : « 1 an 9 mois . Classes : 2è classe. Avancements d'é »
 LEGITEXT000006063550,LEGIARTI000006703351,26,6,1981-01-28,1990-01-01,un libellé porte une durée ou un échelon : « 1 an 6 mois . Classes : 2è classe. Avancements d'é »
-LEGITEXT000006063981,LEGIARTI000006508064,36,1,1995-08-01,2007-01-01,l'en-tête n'a qu'une colonne quand la phrase nomme les durées minimale et moyenne
-LEGITEXT000006063981,LEGIARTI000006508064,36,10,1995-08-01,2007-01-01,un libellé porte une durée ou un échelon : « 3 ans GRADES ET ECHELONS : Attaché »
-LEGITEXT000006063981,LEGIARTI000006508064,36,11,1995-08-01,2007-01-01,un libellé porte une durée ou un échelon : « 2 ans 3 mois GRADES ET ECHELONS : Attaché »
-LEGITEXT000006063981,LEGIARTI000006508064,36,12,1995-08-01,2007-01-01,un libellé porte une durée ou un échelon : « 2 ans 3 mois GRADES ET ECHELONS : Attaché »
-LEGITEXT000006063981,LEGIARTI000006508064,36,13,1995-08-01,2007-01-01,un libellé porte une durée ou un échelon : « 2 ans 3 mois GRADES ET ECHELONS : Attaché »
-LEGITEXT000006063981,LEGIARTI000006508064,36,14,1995-08-01,2007-01-01,un libellé porte une durée ou un échelon : « 2 ans 3 mois GRADES ET ECHELONS : Attaché »
-LEGITEXT000006063981,LEGIARTI000006508064,36,15,1995-08-01,2007-01-01,un libellé porte une durée ou un échelon : « 2 ans GRADES ET ECHELONS : Attaché »
-LEGITEXT000006063981,LEGIARTI000006508064,36,16,1995-08-01,2007-01-01,un libellé porte une durée ou un échelon : « 1 an 6 mois GRADES ET ECHELONS : Attaché »
-LEGITEXT000006063981,LEGIARTI000006508064,36,17,1995-08-01,2007-01-01,un libellé porte une durée ou un échelon : « 1 an 6 mois GRADES ET ECHELONS : Attaché »
-LEGITEXT000006063981,LEGIARTI000006508064,36,18,1995-08-01,2007-01-01,un libellé porte une durée ou un échelon : « 1 an 6 mois GRADES ET ECHELONS : Attaché »
-LEGITEXT000006063981,LEGIARTI000006508064,36,19,1995-08-01,2007-01-01,un libellé porte une durée ou un échelon : « 1 an GRADES ET ECHELONS : Attaché »
-LEGITEXT000006063981,LEGIARTI000006508064,36,2,1995-08-01,2007-01-01,un libellé porte une durée ou un échelon : « 2 ans 3 mois GRADES ET ECHELONS : Attaché principa »
-LEGITEXT000006063981,LEGIARTI000006508064,36,3,1995-08-01,2007-01-01,un libellé porte une durée ou un échelon : « 2 ans 3 mois GRADES ET ECHELONS : Attaché principa »
-LEGITEXT000006063981,LEGIARTI000006508064,36,4,1995-08-01,2007-01-01,un libellé porte une durée ou un échelon : « 2 ans GRADES ET ECHELONS : Attaché principal de 2e »
-LEGITEXT000006063981,LEGIARTI000006508064,36,5,1995-08-01,2007-01-01,un libellé porte une durée ou un échelon : « 2 ans 3 mois GRADES ET ECHELONS : Attaché principa »
-LEGITEXT000006063981,LEGIARTI000006508064,36,6,1995-08-01,2007-01-01,un libellé porte une durée ou un échelon : « 2 ans GRADES ET ECHELONS : Attaché principal de 2e »
-LEGITEXT000006063981,LEGIARTI000006508064,36,7,1995-08-01,2007-01-01,un libellé porte une durée ou un échelon : « 2 ans GRADES ET ECHELONS : Attaché principal de 2e »
-LEGITEXT000006063981,LEGIARTI000006508064,36,8,1995-08-01,2007-01-01,un libellé porte une durée ou un échelon : « 2 ans GRADES ET ECHELONS : Attaché principal de 2e »
-LEGITEXT000006063981,LEGIARTI000006508064,36,9,1995-08-01,2007-01-01,un libellé porte une durée ou un échelon : « 1 an GRADES ET ECHELONS : Attaché »
+LEGITEXT000006063981,LEGIARTI000006508064,36,1,1995-08-01,2007-01-01,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
 LEGITEXT000006063981,LEGIARTI000006508099,58,,2002-05-04,2007-09-01,durées écrites en phrases
 LEGITEXT000006063981,LEGIARTI000020091170,58,,2007-09-01,,durées écrites en phrases
-LEGITEXT000006064030,LEGIARTI000006570571,131,1,2002-02-03,2007-05-03,"une durée hors de sa ligne, après « Durée Moyenne »"
+LEGITEXT000006064030,LEGIARTI000006570571,131,1,2002-02-03,2007-05-03,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
 LEGITEXT000006064030,LEGIARTI000006570628,183,1,2002-02-03,2021-10-29,"une durée hors de sa ligne, après « Echelon de stage »"
 LEGITEXT000006064030,LEGIARTI000044269935,183,1,2021-10-29,2024-01-01,"une durée hors de sa ligne, après « Echelon de stage »"
-LEGITEXT000006064030,LEGIARTI000006570653,211,1,2002-02-03,2007-05-03,l'en-tête n'a qu'une colonne quand la phrase nomme les durées minimale et moyenne
-LEGITEXT000006064030,LEGIARTI000006570653,211,2,2002-02-03,2007-05-03,un libellé porte une durée ou un échelon : « 3 ans ECHELONS »
+LEGITEXT000006064030,LEGIARTI000006570653,211,1,2002-02-03,2007-05-03,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
 LEGITEXT000006064030,LEGIARTI000027940471,34,1,1984-01-08,1980-08-04,version jamais en vigueur : le LEGI la date d'une fin antérieure ou égale à son début
 LEGITEXT000006064030,LEGIARTI000006570446,55,1,2002-02-03,2017-09-01,aucun échelon
 LEGITEXT000006064345,LEGIARTI000006561560,45,,1984-12-28,2011-12-11,durées écrites en phrases
@@ -786,109 +553,28 @@ LEGITEXT000006064416,LEGIARTI000006507978,23,,1995-08-01,2007-01-01,durées renv
 LEGITEXT000006064473,LEGIARTI000006562768,3,,1984-05-22,2005-10-25,durées écrites en phrases
 LEGITEXT000006064692,LEGIARTI000006511164,54,,1985-10-04,2000-02-23,durées écrites en phrases
 LEGITEXT000006064692,LEGIARTI000006511165,54,,2000-02-23,,durées écrites en phrases
-LEGITEXT000006064723,LEGIARTI000006511039,32,1,1985-10-19,2004-08-03,l'en-tête n'a qu'une colonne quand la phrase nomme les durées minimale et moyenne
-LEGITEXT000006064723,LEGIARTI000006511039,32,2,1985-10-19,2004-08-03,un libellé porte une durée ou un échelon : « 1 an 6 mois GRADE ET ECHELONS provisoires : Inspec »
-LEGITEXT000006064723,LEGIARTI000006511039,32,3,1985-10-19,2004-08-03,un libellé porte une durée ou un échelon : « 1 an 6 mois GRADE ET ECHELONS provisoires : Inspec »
-LEGITEXT000006064723,LEGIARTI000006511039,32,4,1985-10-19,2004-08-03,un libellé porte une durée ou un échelon : « 1 an 6 mois GRADE ET ECHELONS provisoires : Inspec »
-LEGITEXT000006064723,LEGIARTI000006511039,32,5,1985-10-19,2004-08-03,un libellé porte une durée ou un échelon : « 1 an 6 mois Les inspecteurs principaux nommés en a »
+LEGITEXT000006064723,LEGIARTI000006511039,32,1,1985-10-19,2004-08-03,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
 LEGITEXT000006064838,LEGIARTI000006510942,22,1,1985-12-31,,aucun échelon
 LEGITEXT000006064838,LEGIARTI000006510942,22,2,1985-12-31,,l'en-tête n'a qu'une colonne quand la phrase nomme les durées minimale et moyenne
 LEGITEXT000006064838,LEGIARTI000006510964,44,1,1985-12-31,,aucun échelon
 LEGITEXT000006064838,LEGIARTI000006510964,44,2,1985-12-31,,l'en-tête n'a qu'une colonne quand la phrase nomme les durées minimale et moyenne
 LEGITEXT000006064838,LEGIARTI000006510967,47,1,1985-12-31,,aucun échelon
 LEGITEXT000006064838,LEGIARTI000006510967,47,2,1985-12-31,,l'en-tête n'a qu'une colonne quand la phrase nomme les durées minimale et moyenne
-LEGITEXT000006064861,LEGIARTI000006512466,102,1,1995-08-01,2006-12-06,l'en-tête n'a qu'une colonne quand la phrase nomme les durées minimale et moyenne
-LEGITEXT000006064861,LEGIARTI000006512466,102,10,1995-08-01,2006-12-06,un libellé porte une durée ou un échelon : « 3 ans Secrétaire d'administration de classe supéri »
-LEGITEXT000006064861,LEGIARTI000006512466,102,11,1995-08-01,2006-12-06,un libellé porte une durée ou un échelon : « 2 ans 3 mois Secrétaire d'administration de classe »
-LEGITEXT000006064861,LEGIARTI000006512466,102,12,1995-08-01,2006-12-06,un libellé porte une durée ou un échelon : « 2 ans 3 mois Secrétaire d'administration de classe »
-LEGITEXT000006064861,LEGIARTI000006512466,102,13,1995-08-01,2006-12-06,un libellé porte une durée ou un échelon : « 2 ans Secrétaire d'administration de classe supéri »
-LEGITEXT000006064861,LEGIARTI000006512466,102,14,1995-08-01,2006-12-06,un libellé porte une durée ou un échelon : « 1 an 6 mois Secrétaire d'administration de classe  »
-LEGITEXT000006064861,LEGIARTI000006512466,102,15,1995-08-01,2006-12-06,un libellé porte une durée ou un échelon : « 1 an 6 mois Secrétaire d'administration de classe  »
-LEGITEXT000006064861,LEGIARTI000006512466,102,16,1995-08-01,2006-12-06,un libellé porte une durée ou un échelon : « 1 an 6 mois Secrétaire d'administration de classe  »
-LEGITEXT000006064861,LEGIARTI000006512466,102,17,1995-08-01,2006-12-06,le grade « Echelon terminal Secrétaire d'administration de classe norma » ne descend pas au 1er échelon
-LEGITEXT000006064861,LEGIARTI000006512466,102,18,1995-08-01,2006-12-06,un libellé porte une durée ou un échelon : « 3 ans Secrétaire d'administration de classe normal »
-LEGITEXT000006064861,LEGIARTI000006512466,102,19,1995-08-01,2006-12-06,un libellé porte une durée ou un échelon : « 2 ans 3 mois Secrétaire d'administration de classe »
-LEGITEXT000006064861,LEGIARTI000006512466,102,2,1995-08-01,2006-12-06,le grade « Echelon terminal Secrétaire d'administration de classe excep » ne descend pas au 1er échelon
-LEGITEXT000006064861,LEGIARTI000006512466,102,20,1995-08-01,2006-12-06,un libellé porte une durée ou un échelon : « 1 an 6 mois Secrétaire d'administration de classe  »
-LEGITEXT000006064861,LEGIARTI000006512466,102,21,1995-08-01,2006-12-06,un libellé porte une durée ou un échelon : « 1 an 6 mois Secrétaire d'administration de classe  »
-LEGITEXT000006064861,LEGIARTI000006512466,102,22,1995-08-01,2006-12-06,un libellé porte une durée ou un échelon : « 1 an 6 mois Secrétaire d'administration de classe  »
-LEGITEXT000006064861,LEGIARTI000006512466,102,23,1995-08-01,2006-12-06,un libellé porte une durée ou un échelon : « 1 an 6 mois Secrétaire d'administration de classe  »
-LEGITEXT000006064861,LEGIARTI000006512466,102,24,1995-08-01,2006-12-06,un libellé porte une durée ou un échelon : « 1 an 6 mois Secrétaire d'administration de classe  »
-LEGITEXT000006064861,LEGIARTI000006512466,102,25,1995-08-01,2006-12-06,un libellé porte une durée ou un échelon : « 1 an 6 mois Secrétaire d'administration de classe  »
-LEGITEXT000006064861,LEGIARTI000006512466,102,26,1995-08-01,2006-12-06,un libellé porte une durée ou un échelon : « 1 an 6 mois Secrétaire d'administration de classe  »
-LEGITEXT000006064861,LEGIARTI000006512466,102,27,1995-08-01,2006-12-06,un libellé porte une durée ou un échelon : « 1 an 6 mois Secrétaire d'administration de classe  »
-LEGITEXT000006064861,LEGIARTI000006512466,102,28,1995-08-01,2006-12-06,un libellé porte une durée ou un échelon : « 1 an 6 mois Secrétaire d'administration de classe  »
-LEGITEXT000006064861,LEGIARTI000006512466,102,3,1995-08-01,2006-12-06,un libellé porte une durée ou un échelon : « 3 ans Secrétaire d'administration de classe except »
-LEGITEXT000006064861,LEGIARTI000006512466,102,4,1995-08-01,2006-12-06,un libellé porte une durée ou un échelon : « 2 ans 3 mois Secrétaire d'administration de classe »
-LEGITEXT000006064861,LEGIARTI000006512466,102,5,1995-08-01,2006-12-06,un libellé porte une durée ou un échelon : « 2 ans 3 mois Secrétaire d'administration de classe »
-LEGITEXT000006064861,LEGIARTI000006512466,102,6,1995-08-01,2006-12-06,un libellé porte une durée ou un échelon : « 2 ans Secrétaire d'administration de classe except »
-LEGITEXT000006064861,LEGIARTI000006512466,102,7,1995-08-01,2006-12-06,un libellé porte une durée ou un échelon : « 2 ans Secrétaire d'administration de classe except »
-LEGITEXT000006064861,LEGIARTI000006512466,102,8,1995-08-01,2006-12-06,un libellé porte une durée ou un échelon : « 1 an 6 mois Secrétaire d'administration de classe  »
-LEGITEXT000006064861,LEGIARTI000006512466,102,9,1995-08-01,2006-12-06,le grade « Echelon terminal Secrétaire d'administration de classe supér » ne descend pas au 1er échelon
-LEGITEXT000006064861,LEGIARTI000006512479,110,1,1990-08-01,2007-05-03,le grade «  » ne descend pas au 1er échelon
-LEGITEXT000006064861,LEGIARTI000006512479,110,2,1990-08-01,2007-05-03,un libellé porte une durée ou un échelon : « 3 ans ECHELON »
-LEGITEXT000006064861,LEGIARTI000006512497,125,1,1986-01-15,1990-08-01,l'en-tête n'a qu'une colonne quand la phrase nomme les durées minimale et moyenne
-LEGITEXT000006064861,LEGIARTI000006512497,125,10,1986-01-15,1990-08-01,le grade «  » ne descend pas au 1er échelon
-LEGITEXT000006064861,LEGIARTI000006512497,125,11,1986-01-15,1990-08-01,le grade «  » ne descend pas au 1er échelon
-LEGITEXT000006064861,LEGIARTI000006512497,125,12,1986-01-15,1990-08-01,le grade «  » ne descend pas au 1er échelon
-LEGITEXT000006064861,LEGIARTI000006512497,125,13,1986-01-15,1990-08-01,"une durée hors de sa ligne, après « Durée moyenne »"
-LEGITEXT000006064861,LEGIARTI000006512497,125,2,1986-01-15,1990-08-01,"le grade « Echelon terminal Agents de bureau, 1er niveau » ne descend pas au 1er échelon"
-LEGITEXT000006064861,LEGIARTI000006512497,125,3,1986-01-15,1990-08-01,"un libellé porte une durée ou un échelon : « 3 ans 6 mois Agents de bureau, 1er niveau »"
-LEGITEXT000006064861,LEGIARTI000006512497,125,4,1986-01-15,1990-08-01,"un libellé porte une durée ou un échelon : « 3 ans 6 mois Agents de bureau, 1er niveau »"
-LEGITEXT000006064861,LEGIARTI000006512497,125,5,1986-01-15,1990-08-01,"un libellé porte une durée ou un échelon : « 3 ans 6 mois Agents de bureau, 1er niveau »"
-LEGITEXT000006064861,LEGIARTI000006512497,125,6,1986-01-15,1990-08-01,le grade «  » ne descend pas au 1er échelon
-LEGITEXT000006064861,LEGIARTI000006512497,125,7,1986-01-15,1990-08-01,le grade «  » ne descend pas au 1er échelon
-LEGITEXT000006064861,LEGIARTI000006512497,125,8,1986-01-15,1990-08-01,le grade «  » ne descend pas au 1er échelon
-LEGITEXT000006064861,LEGIARTI000006512497,125,9,1986-01-15,1990-08-01,le grade «  » ne descend pas au 1er échelon
+LEGITEXT000006064861,LEGIARTI000006512466,102,1,1995-08-01,2006-12-06,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
+LEGITEXT000006064861,LEGIARTI000006512479,110,1,1990-08-01,2007-05-03,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
+LEGITEXT000006064861,LEGIARTI000006512497,125,1,1986-01-15,1990-08-01,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
 LEGITEXT000006064861,LEGIARTI000006512560,155,,1986-01-15,2011-09-01,durées écrites en phrases
-LEGITEXT000006064861,LEGIARTI000006512407,65,1,1986-01-15,1990-08-01,l'en-tête n'a qu'une colonne quand la phrase nomme les durées minimale et moyenne
-LEGITEXT000006064861,LEGIARTI000006512407,65,10,1986-01-15,1990-08-01,un libellé porte une durée ou un échelon : « 1 an 6 mois Agents techniques de 2e niveau »
-LEGITEXT000006064861,LEGIARTI000006512407,65,11,1986-01-15,1990-08-01,un libellé porte une durée ou un échelon : « 1 an 6 mois Agents techniques de 2e niveau »
-LEGITEXT000006064861,LEGIARTI000006512407,65,12,1986-01-15,1990-08-01,un libellé porte une durée ou un échelon : « 1 an 6 mois Agents techniques de 2e niveau »
-LEGITEXT000006064861,LEGIARTI000006512407,65,13,1986-01-15,1990-08-01,un libellé porte une durée ou un échelon : « 1 an 6 mois Agents techniques de 2e niveau »
-LEGITEXT000006064861,LEGIARTI000006512407,65,14,1986-01-15,1990-08-01,un libellé porte une durée ou un échelon : « 1 an 6 mois Agents techniques de 2e niveau »
-LEGITEXT000006064861,LEGIARTI000006512407,65,15,1986-01-15,1990-08-01,un libellé porte une durée ou un échelon : « 1 an 6 mois Agents techniques de 2e niveau »
-LEGITEXT000006064861,LEGIARTI000006512407,65,2,1986-01-15,1990-08-01,le grade « Echelon terminal Agents techniques de 1er niveau » ne descend pas au 1er échelon
-LEGITEXT000006064861,LEGIARTI000006512407,65,3,1986-01-15,1990-08-01,un libellé porte une durée ou un échelon : « 1 an 6 mois Agents techniques de 1er niveau »
-LEGITEXT000006064861,LEGIARTI000006512407,65,4,1986-01-15,1990-08-01,un libellé porte une durée ou un échelon : « 1 an 6 mois Agents techniques de 1er niveau »
-LEGITEXT000006064861,LEGIARTI000006512407,65,5,1986-01-15,1990-08-01,un libellé porte une durée ou un échelon : « 1 an 6 mois Agents techniques de 1er niveau »
-LEGITEXT000006064861,LEGIARTI000006512407,65,6,1986-01-15,1990-08-01,un libellé porte une durée ou un échelon : « 1 an 6 mois GRADES ET ECHELONS : Agents techniques »
-LEGITEXT000006064861,LEGIARTI000006512407,65,7,1986-01-15,1990-08-01,le grade « Echelon terminal Agents techniques de 2e niveau » ne descend pas au 1er échelon
-LEGITEXT000006064861,LEGIARTI000006512407,65,8,1986-01-15,1990-08-01,un libellé porte une durée ou un échelon : « 1 an 6 mois Agents techniques de 2e niveau »
-LEGITEXT000006064861,LEGIARTI000006512407,65,9,1986-01-15,1990-08-01,un libellé porte une durée ou un échelon : « 1 an 6 mois Agents techniques de 2e niveau »
-LEGITEXT000006064861,LEGIARTI000006512423,72,1,1986-01-15,1990-08-01,l'en-tête n'a qu'une colonne quand la phrase nomme les durées minimale et moyenne
-LEGITEXT000006064861,LEGIARTI000006512423,72,10,1986-01-15,1990-08-01,"un libellé porte une durée ou un échelon : « 3 ans 6 mois Aides techniques, 2e niveau »"
-LEGITEXT000006064861,LEGIARTI000006512423,72,11,1986-01-15,1990-08-01,"un libellé porte une durée ou un échelon : « 2 ans 6 mois Aides techniques, 2e niveau »"
-LEGITEXT000006064861,LEGIARTI000006512423,72,12,1986-01-15,1990-08-01,"un libellé porte une durée ou un échelon : « 2 ans 6 mois Aides techniques, 2e niveau »"
-LEGITEXT000006064861,LEGIARTI000006512423,72,13,1986-01-15,1990-08-01,"un libellé porte une durée ou un échelon : « 1 an 6 mois Aides techniques, 2e niveau »"
-LEGITEXT000006064861,LEGIARTI000006512423,72,2,1986-01-15,1990-08-01,"le grade « Echelon terminal Aides techniques, 1er niveau » ne descend pas au 1er échelon"
-LEGITEXT000006064861,LEGIARTI000006512423,72,3,1986-01-15,1990-08-01,"un libellé porte une durée ou un échelon : « 3 ans 6 mois Aides techniques, 1er niveau »"
-LEGITEXT000006064861,LEGIARTI000006512423,72,4,1986-01-15,1990-08-01,"un libellé porte une durée ou un échelon : « 3 ans 6 mois Aides techniques, 1er niveau »"
-LEGITEXT000006064861,LEGIARTI000006512423,72,5,1986-01-15,1990-08-01,"un libellé porte une durée ou un échelon : « 3 ans 6 mois Aides techniques, 1er niveau »"
-LEGITEXT000006064861,LEGIARTI000006512423,72,6,1986-01-15,1990-08-01,"un libellé porte une durée ou un échelon : « 3 ans 6 mois Aides techniques, 2e niveau »"
-LEGITEXT000006064861,LEGIARTI000006512423,72,7,1986-01-15,1990-08-01,"le grade « Echelon terminal Aides techniques, 2e niveau » ne descend pas au 1er échelon"
-LEGITEXT000006064861,LEGIARTI000006512423,72,8,1986-01-15,1990-08-01,"un libellé porte une durée ou un échelon : « 3 ans 6 mois Aides techniques, 2e niveau »"
-LEGITEXT000006064861,LEGIARTI000006512423,72,9,1986-01-15,1990-08-01,"un libellé porte une durée ou un échelon : « 3 ans 6 mois Aides techniques, 2e niveau »"
-LEGITEXT000006064861,LEGIARTI000006512451,93,1,1995-08-01,2006-12-06,l'en-tête n'a qu'une colonne quand la phrase nomme les durées minimale et moyenne
-LEGITEXT000006064861,LEGIARTI000006512451,93,2,1995-08-01,2006-12-06,un libellé porte une durée ou un échelon : « 2 ans 3 mois Attaché principal de 1re classe »
-LEGITEXT000006064861,LEGIARTI000006512451,93,3,1995-08-01,2006-12-06,un libellé porte une durée ou un échelon : « 2 ans 3 mois Attaché principal de 1re classe »
-LEGITEXT000006064861,LEGIARTI000006512451,93,4,1995-08-01,2006-12-06,un libellé porte une durée ou un échelon : « 2 ans Attaché principal de 2e classe »
-LEGITEXT000006064861,LEGIARTI000006512451,93,5,1995-08-01,2006-12-06,un libellé porte une durée ou un échelon : « 2 ans 3 mois Attaché principal de 2e classe »
-LEGITEXT000006064861,LEGIARTI000006512451,93,6,1995-08-01,2006-12-06,un libellé porte une durée ou un échelon : « 2 ans Attaché principal de 2e classe »
-LEGITEXT000006064861,LEGIARTI000006512451,93,7,1995-08-01,2006-12-06,un libellé porte une durée ou un échelon : « 2 ans Attaché principal de 2e classe »
-LEGITEXT000006064861,LEGIARTI000006512451,93,8,1995-08-01,2006-12-06,un libellé porte une durée ou un échelon : « 2 ans Attaché principal de 2e classe »
+LEGITEXT000006064861,LEGIARTI000006512407,65,1,1986-01-15,1990-08-01,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
+LEGITEXT000006064861,LEGIARTI000006512423,72,1,1986-01-15,1990-08-01,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
+LEGITEXT000006064861,LEGIARTI000006512451,93,1,1995-08-01,2006-12-06,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
 LEGITEXT000006064861,LEGIARTI000006512452,93,1,2006-12-06,2011-08-19,"une durée hors de sa ligne, après « Echelon de stage »"
 LEGITEXT000006064861,LEGIARTI000024496197,93,1,2011-08-19,,"une durée hors de sa ligne, après « Echelon de stage »"
 LEGITEXT000006065078,LEGIARTI000006512115,14,1,1989-09-01,2017-09-01,durées écrites d'un échelon au suivant ou à l'accès d'un échelon : elles se liraient décalées d'un échelon
 LEGITEXT000006065079,LEGIARTI000006512142,13,1,1989-09-01,2017-09-01,durées écrites d'un échelon au suivant ou à l'accès d'un échelon : elles se liraient décalées d'un échelon
 LEGITEXT000006065080,LEGIARTI000006512159,8,1,1990-09-01,2014-03-01,durées écrites d'un échelon au suivant ou à l'accès d'un échelon : elles se liraient décalées d'un échelon
 LEGITEXT000006065201,LEGIARTI000006453639,2,,1986-09-19,2006-11-23,durées écrites en phrases
-LEGITEXT000006065201,LEGIARTI000006453640,2,1,2006-11-23,2007-05-03,l'en-tête n'a qu'une colonne quand la phrase nomme les durées minimale et moyenne
-LEGITEXT000006065201,LEGIARTI000006453640,2,2,2006-11-23,2007-05-03,un libellé porte une durée ou un échelon : « 3 ans ÉCHELON »
-LEGITEXT000006065201,LEGIARTI000006453640,2,3,2006-11-23,2007-05-03,un libellé porte une durée ou un échelon : « 2 ans 9 mois ÉCHELON »
-LEGITEXT000006065201,LEGIARTI000006453640,2,4,2006-11-23,2007-05-03,un libellé porte une durée ou un échelon : « 2 ans 9 mois ÉCHELON »
-LEGITEXT000006065201,LEGIARTI000006453640,2,5,2006-11-23,2007-05-03,un libellé porte une durée ou un échelon : « 2 ans ÉCHELON »
-LEGITEXT000006065239,LEGIARTI000006510422,2,1,1986-10-18,2004-07-01,"une durée hors de sa ligne, après « DUREE Moyenne »"
+LEGITEXT000006065201,LEGIARTI000006453640,2,1,2006-11-23,2007-05-03,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
+LEGITEXT000006065239,LEGIARTI000006510422,2,1,1986-10-18,2004-07-01,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
 LEGITEXT000006065357,LEGIARTI000006454312,24,,1987-01-01,,durées écrites en phrases
 LEGITEXT000006065433,LEGIARTI000006510348,7,,1986-02-20,2005-04-22,durées écrites en phrases
 LEGITEXT000006065542,LEGIARTI000006369940,52,1,1986-03-16,1987-12-31,moins de deux durées
@@ -898,9 +584,7 @@ LEGITEXT000006065551,LEGIARTI000006505183,19-2,1,1997-05-31,1998-09-04,durées �
 LEGITEXT000006065551,LEGIARTI000006505183,19-2,2,1997-05-31,1998-09-04,un libellé porte une durée ou un échelon : « 3 ans ECHELONS : Du 2e au »
 LEGITEXT000006065551,LEGIARTI000006505183,19-2,3,1997-05-31,1998-09-04,un libellé porte une durée ou un échelon : « 3 ans 6 mois ECHELONS : Du 3e au »
 LEGITEXT000006065551,LEGIARTI000006505183,19-2,4,1997-05-31,1998-09-04,un libellé porte une durée ou un échelon : « 4 ans ECHELONS : Du 4e au »
-LEGITEXT000006065595,LEGIARTI000006858895,17,1,1992-11-25,1998-12-30,le grade «  » ne descend pas au 1er échelon
-LEGITEXT000006065595,LEGIARTI000006858895,17,2,1992-11-25,1998-12-30,aucun échelon
-LEGITEXT000006065595,LEGIARTI000006858895,17,3,1992-11-25,1998-12-30,un libellé porte une durée ou un échelon : « 3 ans . Echelon »
+LEGITEXT000006065595,LEGIARTI000006858895,17,1,1992-11-25,1998-12-30,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
 LEGITEXT000006065598,LEGIARTI000006510814,44,,1986-03-18,2005-05-19,durées écrites en phrases
 LEGITEXT000006065641,LEGIARTI000006510508,10 ter,1,1990-08-01,2001-07-06,l'en-tête n'a qu'une colonne quand la phrase nomme les durées minimale et moyenne
 LEGITEXT000006065641,LEGIARTI000006510508,10 ter,2,1990-08-01,2001-07-06,un libellé porte une durée ou un échelon : « 3 ans ECHELONS »
@@ -928,11 +612,12 @@ LEGITEXT000006065793,LEGIARTI000006370891,10-1,1,1999-01-06,2005-11-01,tableau d
 LEGITEXT000006065793,LEGIARTI000006370892,10-1,1,2005-11-01,2007-01-01,tableau dessiné en caractères
 LEGITEXT000006065936,LEGIARTI000006454351,10,,1987-01-21,1993-09-01,durées écrites en phrases
 LEGITEXT000006065936,LEGIARTI000006454352,10,,1993-09-01,2003-04-01,durées écrites en phrases
+LEGITEXT000006066273,LEGIARTI000006564857,12,1,1987-12-12,1993-08-01,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
 LEGITEXT000006066325,LEGIARTI000006704806,30,,1988-12-01,1989-08-04,durées écrites en phrases
 LEGITEXT000006066325,LEGIARTI000006704807,30,,1989-08-04,1991-08-01,durées écrites en phrases
 LEGITEXT000006066325,LEGIARTI000006704808,30,,1991-08-01,1992-08-01,durées écrites en phrases
 LEGITEXT000006066325,LEGIARTI000006704811,31,,1989-08-04,1991-08-01,durées écrites en phrases
-LEGITEXT000006066329,LEGIARTI000006704943,3,1,1988-12-01,1990-08-01,"une durée hors de sa ligne, après « durée minimale »"
+LEGITEXT000006066329,LEGIARTI000006704943,3,1,1988-12-01,1990-08-01,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
 LEGITEXT000006066329,LEGIARTI000006704944,3,1,1990-08-01,1998-04-01,le 9e échelon de « Echelles dotées de 10 échelons » a 4 case(s) pour 2 colonne(s)
 LEGITEXT000006066329,LEGIARTI000006704944,3,2,1990-08-01,1998-04-01,l'en-tête n'a qu'une colonne quand la phrase nomme les durées minimale et moyenne
 LEGITEXT000006066329,LEGIARTI000006704945,3,1,1998-04-01,2006-02-26,tableau dessiné en caractères
@@ -974,57 +659,16 @@ LEGITEXT000006067232,LEGIARTI000006705307,31,,1991-08-01,1992-08-01,durées écr
 LEGITEXT000006067232,LEGIARTI000006705308,31,,1992-08-01,2001-09-12,durées écrites en phrases
 LEGITEXT000006067232,LEGIARTI000006705309,31,,2001-09-12,2002-01-01,durées écrites en phrases
 LEGITEXT000006067232,LEGIARTI000006705313,32,,1989-01-01,1991-08-01,durées écrites en phrases
-LEGITEXT000006067306,LEGIARTI000006457505,9,1,1989-11-01,1992-08-01,"une durée hors de sa ligne, après « DUREE moyenne »"
-LEGITEXT000006067306,LEGIARTI000006457505,9,2,1989-11-01,1992-08-01,un libellé porte une durée ou un échelon : « 1 an 6 mois Technicien supérieur d'études et de fa »
-LEGITEXT000006067306,LEGIARTI000006457505,9,3,1989-11-01,1992-08-01,un libellé porte une durée ou un échelon : « 1 an 6 mois »
-LEGITEXT000006067306,LEGIARTI000006457505,9,4,1989-11-01,1992-08-01,un libellé porte une durée ou un échelon : « 1 an 6 mois Technicien supérieur d'études et de fa »
-LEGITEXT000006067306,LEGIARTI000006457505,9,5,1989-11-01,1992-08-01,un libellé porte une durée ou un échelon : « 2 ans 6 mois »
-LEGITEXT000006067306,LEGIARTI000006457505,9,6,1989-11-01,1992-08-01,un libellé porte une durée ou un échelon : « 2 ans 6 mois »
-LEGITEXT000006067306,LEGIARTI000006457505,9,7,1989-11-01,1992-08-01,un libellé porte une durée ou un échelon : « 2 ans 6 mois »
-LEGITEXT000006067306,LEGIARTI000006457505,9,8,1989-11-01,1992-08-01,un libellé porte une durée ou un échelon : « 1 an 6 mois »
-LEGITEXT000006067306,LEGIARTI000006457505,9,9,1989-11-01,1992-08-01,un libellé porte une durée ou un échelon : « 1 an 6 mois »
+LEGITEXT000006067306,LEGIARTI000006457505,9,1,1989-11-01,1992-08-01,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
 LEGITEXT000006067306,LEGIARTI000006457506,9,1,1992-08-01,1999-02-05,le 1e échelon de « Technicien supérieur d'études et de fabrications d » a 1 case(s) pour 2 colonne(s)
 LEGITEXT000006067306,LEGIARTI000006457507,9,1,1999-02-05,2011-09-01,le 1e échelon de « Technicien supérieur d'études et de fabrications d » a 1 case(s) pour 2 colonne(s)
-LEGITEXT000006067308,LEGIARTI000006457590,13,1,1989-11-01,1998-01-08,un libellé porte une durée ou un échelon : « 1 an 6 mois »
-LEGITEXT000006067308,LEGIARTI000006457590,13,2,1989-11-01,1998-01-08,un libellé porte une durée ou un échelon : « 1 an 6 mois Ingénieur d'études et de fabrications  »
-LEGITEXT000006067308,LEGIARTI000006457590,13,3,1989-11-01,1998-01-08,un libellé porte une durée ou un échelon : « 2 ans 6 mois »
-LEGITEXT000006067308,LEGIARTI000006457590,13,4,1989-11-01,1998-01-08,un libellé porte une durée ou un échelon : « 1 an 6 mois Ingénieur d'études et de fabrications  »
-LEGITEXT000006067308,LEGIARTI000006457590,13,5,1989-11-01,1998-01-08,un libellé porte une durée ou un échelon : « 1 an 6 mois »
-LEGITEXT000006067308,LEGIARTI000006457590,13,6,1989-11-01,1998-01-08,un libellé porte une durée ou un échelon : « 1 an 6 mois »
-LEGITEXT000006067308,LEGIARTI000006457590,13,7,1989-11-01,1998-01-08,un libellé porte une durée ou un échelon : « 1 an 6 mois »
-LEGITEXT000006067308,LEGIARTI000006457590,13,8,1989-11-01,1998-01-08,un libellé porte une durée ou un échelon : « 1 an 6 mois »
-LEGITEXT000006067308,LEGIARTI000006457591,13,1,1998-01-08,2005-12-11,un libellé porte une durée ou un échelon : « 2 ans 3 mois »
-LEGITEXT000006067308,LEGIARTI000006457591,13,10,1998-01-08,2005-12-11,un libellé porte une durée ou un échelon : « 2 ans 3 mois »
-LEGITEXT000006067308,LEGIARTI000006457591,13,11,1998-01-08,2005-12-11,un libellé porte une durée ou un échelon : « 2 ans »
-LEGITEXT000006067308,LEGIARTI000006457591,13,12,1998-01-08,2005-12-11,un libellé porte une durée ou un échelon : « 2 ans »
-LEGITEXT000006067308,LEGIARTI000006457591,13,13,1998-01-08,2005-12-11,un libellé porte une durée ou un échelon : « 1 an 6 mois »
-LEGITEXT000006067308,LEGIARTI000006457591,13,14,1998-01-08,2005-12-11,aucun échelon
-LEGITEXT000006067308,LEGIARTI000006457591,13,15,1998-01-08,2005-12-11,l'en-tête n'a qu'une colonne quand la phrase nomme les durées minimale et moyenne
-LEGITEXT000006067308,LEGIARTI000006457591,13,16,1998-01-08,2005-12-11,un libellé porte une durée ou un échelon : « 2 ans 9 mois »
-LEGITEXT000006067308,LEGIARTI000006457591,13,17,1998-01-08,2005-12-11,un libellé porte une durée ou un échelon : « 2 ans 3 mois »
-LEGITEXT000006067308,LEGIARTI000006457591,13,18,1998-01-08,2005-12-11,un libellé porte une durée ou un échelon : « 2 ans 3 mois »
-LEGITEXT000006067308,LEGIARTI000006457591,13,19,1998-01-08,2005-12-11,un libellé porte une durée ou un échelon : « 2 ans 3 mois »
-LEGITEXT000006067308,LEGIARTI000006457591,13,2,1998-01-08,2005-12-11,un libellé porte une durée ou un échelon : « 2 ans 3 mois »
-LEGITEXT000006067308,LEGIARTI000006457591,13,20,1998-01-08,2005-12-11,un libellé porte une durée ou un échelon : « 2 ans »
-LEGITEXT000006067308,LEGIARTI000006457591,13,21,1998-01-08,2005-12-11,aucun échelon
-LEGITEXT000006067308,LEGIARTI000006457591,13,22,1998-01-08,2005-12-11,l'en-tête n'a qu'une colonne quand la phrase nomme les durées minimale et moyenne
-LEGITEXT000006067308,LEGIARTI000006457591,13,23,1998-01-08,2005-12-11,un libellé porte une durée ou un échelon : « 2 ans 9 mois »
-LEGITEXT000006067308,LEGIARTI000006457591,13,24,1998-01-08,2005-12-11,un libellé porte une durée ou un échelon : « 2 ans 9 mois »
-LEGITEXT000006067308,LEGIARTI000006457591,13,25,1998-01-08,2005-12-11,un libellé porte une durée ou un échelon : « 2 ans 3 mois »
-LEGITEXT000006067308,LEGIARTI000006457591,13,26,1998-01-08,2005-12-11,un libellé porte une durée ou un échelon : « 2 ans 3 mois »
-LEGITEXT000006067308,LEGIARTI000006457591,13,27,1998-01-08,2005-12-11,un libellé porte une durée ou un échelon : « 2 ans 3 mois »
-LEGITEXT000006067308,LEGIARTI000006457591,13,28,1998-01-08,2005-12-11,un libellé porte une durée ou un échelon : « 2 ans »
-LEGITEXT000006067308,LEGIARTI000006457591,13,3,1998-01-08,2005-12-11,un libellé porte une durée ou un échelon : « 2 ans 3 mois »
-LEGITEXT000006067308,LEGIARTI000006457591,13,4,1998-01-08,2005-12-11,un libellé porte une durée ou un échelon : « 2 ans »
-LEGITEXT000006067308,LEGIARTI000006457591,13,5,1998-01-08,2005-12-11,un libellé porte une durée ou un échelon : « 1 an 6 mois CLASSES ET ECHELONS : Ingénieur d'étud »
-LEGITEXT000006067308,LEGIARTI000006457591,13,6,1998-01-08,2005-12-11,un libellé porte une durée ou un échelon : « 3 ans »
-LEGITEXT000006067308,LEGIARTI000006457591,13,7,1998-01-08,2005-12-11,un libellé porte une durée ou un échelon : « 3 ans »
-LEGITEXT000006067308,LEGIARTI000006457591,13,8,1998-01-08,2005-12-11,un libellé porte une durée ou un échelon : « 3 ans »
-LEGITEXT000006067308,LEGIARTI000006457591,13,9,1998-01-08,2005-12-11,un libellé porte une durée ou un échelon : « 2 ans 9 mois »
+LEGITEXT000006067308,LEGIARTI000006457590,13,1,1989-11-01,1998-01-08,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
+LEGITEXT000006067308,LEGIARTI000006457591,13,1,1998-01-08,2005-12-11,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
+LEGITEXT000006067308,LEGIARTI000006457591,13,2,1998-01-08,2005-12-11,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
 LEGITEXT000006067308,LEGIARTI000006457598,15,1,2005-12-11,2008-07-11,"une durée hors de sa ligne, après « DURÉE Moyenne »"
 LEGITEXT000006067314,LEGIARTI000006705075,10,,1989-01-01,2002-04-23,durées écrites en phrases
 LEGITEXT000006067314,LEGIARTI000006705072,9,,1989-01-01,2002-04-23,durées écrites en phrases
-LEGITEXT000006067491,LEGIARTI000006711475,11,1,1991-01-01,2000-09-30,"une durée hors de sa ligne, après « Durée moyenne »"
+LEGITEXT000006067491,LEGIARTI000006711475,11,1,1991-01-01,2000-09-30,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
 LEGITEXT000006067549,LEGIARTI000006711658,4,,1991-08-01,2002-01-01,durées écrites en phrases
 LEGITEXT000006067551,LEGIARTI000006711633,4,,1991-08-01,2002-01-01,durées écrites en phrases
 LEGITEXT000006067553,LEGIARTI000006711608,4,,1991-08-01,2002-01-01,durées écrites en phrases
@@ -1093,6 +737,8 @@ LEGITEXT000006075553,LEGIARTI000006458182,11,,1992-02-08,2012-06-01,durées écr
 LEGITEXT000006075553,LEGIARTI000006458183,12,,1992-02-08,1992-08-01,durées écrites en phrases
 LEGITEXT000006075553,LEGIARTI000006458185,13,,1992-02-08,1993-03-28,durées écrites en phrases
 LEGITEXT000006075553,LEGIARTI000006458186,13,,1993-03-28,2012-06-01,durées écrites en phrases
+LEGITEXT000006075769,LEGIARTI000006707287,17,1,1988-12-01,1991-08-01,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
+LEGITEXT000006075769,LEGIARTI000006707288,17,1,1991-08-01,1996-09-28,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
 LEGITEXT000006075769,LEGIARTI000006707289,17,1,1996-09-28,2006-04-09,tableau dessiné en caractères
 LEGITEXT000006075769,LEGIARTI000006707290,17,1,2006-04-09,2016-01-01,le grade « Classe supérieure » ne descend pas au 1er échelon
 LEGITEXT000006075829,LEGIARTI000006458440,12,1,1990-01-01,2002-04-28,une durée minimale au-dessus d'une autre au 4e échelon
@@ -1100,22 +746,23 @@ LEGITEXT000006075852,LEGIARTI000006458529,23,1,2007-08-22,2013-09-01,"une durée
 LEGITEXT000006075857,LEGIARTI000006458562,5,,1990-01-01,2013-09-01,durées écrites en phrases
 LEGITEXT000006076091,LEGIARTI000006458817,42 bis,,2001-10-01,2004-01-01,durées renvoyées à un autre texte
 LEGITEXT000006076328,LEGIARTI000006459421,16,1,1990-08-01,2008-01-01,une durée minimale au-dessus d'une autre au 5e échelon
-LEGITEXT000006076330,LEGIARTI000006459491,12,1,2005-10-01,2008-01-01,l'en-tête n'a qu'une colonne quand la phrase nomme les durées minimale et moyenne
-LEGITEXT000006076330,LEGIARTI000006459491,12,2,2005-10-01,2008-01-01,un libellé porte une durée ou un échelon : « 3 ans »
+LEGITEXT000006076330,LEGIARTI000006459491,12,1,2005-10-01,2008-01-01,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
 LEGITEXT000006076526,LEGIARTI000006709566,22,1,1994-12-18,2011-06-16,échelons dans le désordre dans « Classe normale créée le 1er août 1996 »
 LEGITEXT000006076526,LEGIARTI000006709506,3,,1990-01-01,2001-12-20,durées écrites en phrases
 LEGITEXT000006076526,LEGIARTI000006709522,9,1,1994-12-18,2011-06-16,échelons dans le désordre dans « Classe normale créée le 1er août 1996 »
-LEGITEXT000006076551,LEGIARTI000006372760,13,1,1993-02-03,1995-04-13,"une durée hors de sa ligne, après « INDICES bruts : 453. DUREES Maximale »"
-LEGITEXT000006076551,LEGIARTI000006372761,13,1,1995-04-13,1998-04-22,"une durée hors de sa ligne, après « INDICES bruts : 469. DUREES Maximale »"
-LEGITEXT000006076551,LEGIARTI000006372762,13,1,1998-04-22,1999-09-16,"une durée hors de sa ligne, après « INDICES bruts : 469. DUREES Maximale »"
-LEGITEXT000006076551,LEGIARTI000006372763,13,1,1999-09-16,2002-01-01,"une durée hors de sa ligne, après « INDICES bruts : 469. DUREES Maximale »"
+LEGITEXT000006076551,LEGIARTI000006372760,13,1,1993-02-03,1995-04-13,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
+LEGITEXT000006076551,LEGIARTI000006372761,13,1,1995-04-13,1998-04-22,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
+LEGITEXT000006076551,LEGIARTI000006372762,13,1,1998-04-22,1999-09-16,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
+LEGITEXT000006076551,LEGIARTI000006372763,13,1,1999-09-16,2002-01-01,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
 LEGITEXT000006076551,LEGIARTI000006372766,13,1,2007-06-14,2008-07-01,"une durée hors de sa ligne, après « 499 »"
 LEGITEXT000006076551,LEGIARTI000021145153,13,1,2008-07-01,,"une durée hors de sa ligne, après « 499 »"
 LEGITEXT000006076556,LEGIARTI000006372920,16,,1990-09-26,1991-06-15,durées écrites en phrases
 LEGITEXT000006076556,LEGIARTI000006372921,16,,1991-06-15,1995-04-13,durées écrites en phrases
 LEGITEXT000006076556,LEGIARTI000006372922,16,,1995-04-13,1998-04-22,durées écrites en phrases
-LEGITEXT000006076559,LEGIARTI000006372860,23,1,1990-09-26,1991-06-15,"une durée hors de sa ligne, après « INDICES bruts : 547. DUREES Maximale »"
-LEGITEXT000006076559,LEGIARTI000006372861,23,1,1991-06-15,2002-01-01,"une durée hors de sa ligne, après « INDICES bruts : 547. DUREES Maximale »"
+LEGITEXT000006076559,LEGIARTI000006372850,17,1,1990-08-01,1991-06-15,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
+LEGITEXT000006076559,LEGIARTI000006372851,17,1,1991-06-15,2002-01-01,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
+LEGITEXT000006076559,LEGIARTI000006372860,23,1,1990-09-26,1991-06-15,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
+LEGITEXT000006076559,LEGIARTI000006372861,23,1,1991-06-15,2002-01-01,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
 LEGITEXT000006076672,LEGIARTI000006710251,10,,1989-01-01,2003-09-09,durées écrites en phrases
 LEGITEXT000006076672,LEGIARTI000006710252,10,,2003-09-09,2014-12-27,durées écrites en phrases
 LEGITEXT000006076672,LEGIARTI000006710249,9,,1989-01-01,2003-09-09,durées écrites en phrases
@@ -1133,7 +780,7 @@ LEGITEXT000006077003,LEGIARTI000006460449,12,,1991-01-01,2016-03-01,durées renv
 LEGITEXT000006077045,LEGIARTI000006460530,4,,1991-01-01,2011-12-01,durées renvoyées à un autre texte
 LEGITEXT000006077045,LEGIARTI000006460531,5,,1991-01-01,2011-12-01,durées renvoyées à un autre texte
 LEGITEXT000006077045,LEGIARTI000006460535,9,,1991-01-01,2011-12-01,durées renvoyées à un autre texte
-LEGITEXT000006077047,LEGIARTI000006460498,7,1,1991-01-01,1992-07-01,"une durée hors de sa ligne, après « Durée moyenne »"
+LEGITEXT000006077047,LEGIARTI000006460498,7,1,1991-01-01,1992-07-01,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
 LEGITEXT000006077088,LEGIARTI000006710419,11,,1990-08-01,2007-08-07,durées écrites en phrases
 LEGITEXT000006077088,LEGIARTI000006710435,16,,1990-08-01,2007-08-07,durées écrites en phrases
 LEGITEXT000006077088,LEGIARTI000006710464,25,,1990-08-01,2007-08-07,durées écrites en phrases
@@ -1165,11 +812,15 @@ LEGITEXT000006077996,LEGIARTI000006373530,19,1,1996-03-31,2009-12-20,tableau des
 LEGITEXT000006077996,LEGIARTI000021500155,19,2,2009-12-20,2017-01-01,l'en-tête n'a qu'une colonne quand la phrase nomme les durées maximale et minimale
 LEGITEXT000006077996,LEGIARTI000034434432,19,1,2017-01-01,,une phrase coupe le tableau
 LEGITEXT000006077997,LEGIARTI000006373875,17,1,1991-09-04,1995-08-01,tableau dessiné en caractères
+LEGITEXT000006077998,LEGIARTI000006373693,18,1,1991-09-04,1996-08-01,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
+LEGITEXT000006077998,LEGIARTI000006373694,18,1,1996-08-01,1998-02-06,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
 LEGITEXT000006078002,LEGIARTI000006373772,16,1,1991-09-04,1999-10-27,tableau dessiné en caractères
 LEGITEXT000006078003,LEGIARTI000006373452,21,1,1991-09-04,1996-03-31,tableau dessiné en caractères
 LEGITEXT000006078003,LEGIARTI000006373453,21,1,1996-03-31,2008-04-01,tableau dessiné en caractères
 LEGITEXT000006078003,LEGIARTI000018520000,21,2,2008-04-01,2017-01-01,l'en-tête n'a qu'une colonne quand la phrase nomme les durées maximale et minimale
 LEGITEXT000006078003,LEGIARTI000034434382,21,1,2017-01-01,2022-04-17,une phrase coupe le tableau
+LEGITEXT000006078004,LEGIARTI000006373611,18,1,1991-09-04,1996-08-01,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
+LEGITEXT000006078004,LEGIARTI000006373612,18,1,1996-08-01,1998-02-06,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
 LEGITEXT000006078009,LEGIARTI000006374076,18,1,1991-09-04,1996-08-01,tableau dessiné en caractères
 LEGITEXT000006078011,LEGIARTI000006374009,16,1,1991-09-04,1993-08-08,tableau dessiné en caractères
 LEGITEXT000006078011,LEGIARTI000006374010,16,1,1993-08-08,1996-08-01,tableau dessiné en caractères
@@ -1197,7 +848,7 @@ LEGITEXT000006079087,LEGIARTI000006468256,5,2,1992-05-02,1995-05-12,l'en-tête n
 LEGITEXT000006079088,LEGIARTI000006468210,27,,1992-05-02,1998-10-21,durées écrites en phrases
 LEGITEXT000006079088,LEGIARTI000006468211,27,1,1998-10-21,2002-12-29,tableau dessiné en caractères
 LEGITEXT000006079088,LEGIARTI000006468144,5,1,2002-12-29,2015-11-01,le 8e échelon de « 1er grade » a 4 case(s) pour 2 colonne(s)
-LEGITEXT000006079139,LEGIARTI000006713468,6,,1991-08-01,2004-11-03,durées écrites en phrases
+LEGITEXT000006079139,LEGIARTI000006713468,6,1,1991-08-01,2004-11-03,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
 LEGITEXT000006079142,LEGIARTI000006713510,10,1,2005-10-02,2006-08-04,tableau dessiné en caractères
 LEGITEXT000006079142,LEGIARTI000006713520,14,1,1996-09-28,2005-10-02,tableau dessiné en caractères
 LEGITEXT000006079306,LEGIARTI000006468399,22,1,1998-04-03,2005-12-21,tableau dessiné en caractères
@@ -1250,6 +901,7 @@ LEGITEXT000006079802,LEGIARTI000006374937,15,1,1996-08-01,2017-01-01,le 2e éche
 LEGITEXT000006079903,LEGIARTI000032172766,10,1,2016-02-29,,"une durée hors de sa ligne, après « 7e, 8e, 9e échelons »"
 LEGITEXT000006079907,LEGIARTI000032172740,12,1,2016-02-29,,"une durée hors de sa ligne, après « 7e, 8e, 9e, et 10e échelons »"
 LEGITEXT000006079948,LEGIARTI000006468799,14,1,1992-09-11,1996-08-01,le grade « Directeur hors classe » ne descend pas au 1er échelon
+LEGITEXT000006079948,LEGIARTI000006468800,14,1,1996-08-01,2005-05-26,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
 LEGITEXT000006079965,LEGIARTI000006468912,38,1,1992-09-13,1998-01-01,"une durée hors de sa ligne, après « ans »"
 LEGITEXT000006079965,LEGIARTI000006468913,38,1,1998-01-01,2005-12-09,tableau dessiné en caractères
 LEGITEXT000006079965,LEGIARTI000006468914,38,1,2005-12-09,2006-12-30,tableau dessiné en caractères
@@ -1263,48 +915,12 @@ LEGITEXT000006080320,LEGIARTI000006469540,23,1,1992-11-07,2000-09-01,une phrase 
 LEGITEXT000006080320,LEGIARTI000006469543,24,1,1996-09-01,2000-09-01,un libellé porte une durée ou un échelon : « 2 ans 6 mois Du 2e au »
 LEGITEXT000006080345,LEGIARTI000006469755,23,1,1993-08-01,1997-11-05,"une durée hors de sa ligne, après « Stage »"
 LEGITEXT000006080572,LEGIARTI000006469926,9,,1994-08-01,1995-09-05,durées écrites en phrases
-LEGITEXT000006080653,LEGIARTI000006712596,13,1,1992-01-01,2001-01-01,l'en-tête n'a qu'une colonne quand la phrase nomme les durées minimale et moyenne
-LEGITEXT000006080653,LEGIARTI000006712596,13,10,1992-01-01,2001-01-01,le grade «  » ne descend pas au 1er échelon
-LEGITEXT000006080653,LEGIARTI000006712596,13,11,1992-01-01,2001-01-01,un libellé porte une durée ou un échelon : « 1 an 6 mois »
-LEGITEXT000006080653,LEGIARTI000006712596,13,12,1992-01-01,2001-01-01,un libellé porte une durée ou un échelon : « 1 an 6 mois »
-LEGITEXT000006080653,LEGIARTI000006712596,13,13,1992-01-01,2001-01-01,un libellé porte une durée ou un échelon : « 1 an 6 mois »
-LEGITEXT000006080653,LEGIARTI000006712596,13,14,1992-01-01,2001-01-01,un libellé porte une durée ou un échelon : « 1 an 6 mois »
-LEGITEXT000006080653,LEGIARTI000006712596,13,15,1992-01-01,2001-01-01,un libellé porte une durée ou un échelon : « 1 an 6 mois »
-LEGITEXT000006080653,LEGIARTI000006712596,13,16,1992-01-01,2001-01-01,un libellé porte une durée ou un échelon : « 1 an 6 mois »
-LEGITEXT000006080653,LEGIARTI000006712596,13,17,1992-01-01,2001-01-01,un libellé porte une durée ou un échelon : « 1 an 6 mois »
-LEGITEXT000006080653,LEGIARTI000006712596,13,18,1992-01-01,2001-01-01,un libellé porte une durée ou un échelon : « 1 an 6 mois »
-LEGITEXT000006080653,LEGIARTI000006712596,13,19,1992-01-01,2001-01-01,un libellé porte une durée ou un échelon : « 1 an 6 mois »
-LEGITEXT000006080653,LEGIARTI000006712596,13,2,1992-01-01,2001-01-01,le grade «  » ne descend pas au 1er échelon
-LEGITEXT000006080653,LEGIARTI000006712596,13,3,1992-01-01,2001-01-01,un libellé porte une durée ou un échelon : « 1 an 6 mois »
-LEGITEXT000006080653,LEGIARTI000006712596,13,4,1992-01-01,2001-01-01,un libellé porte une durée ou un échelon : « 1 an 6 mois Grades et échelons : Pharmacien inspec »
-LEGITEXT000006080653,LEGIARTI000006712596,13,5,1992-01-01,2001-01-01,le grade «  » ne descend pas au 1er échelon
-LEGITEXT000006080653,LEGIARTI000006712596,13,6,1992-01-01,2001-01-01,un libellé porte une durée ou un échelon : « 1 an 6 mois »
-LEGITEXT000006080653,LEGIARTI000006712596,13,7,1992-01-01,2001-01-01,un libellé porte une durée ou un échelon : « 1 an 6 mois »
-LEGITEXT000006080653,LEGIARTI000006712596,13,8,1992-01-01,2001-01-01,un libellé porte une durée ou un échelon : « 1 an 6 mois »
-LEGITEXT000006080653,LEGIARTI000006712596,13,9,1992-01-01,2001-01-01,un libellé porte une durée ou un échelon : « 1 an 6 mois Grades et échelons : Pharmacien inspec »
+LEGITEXT000006080653,LEGIARTI000006712596,13,1,1992-01-01,2001-01-01,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
 LEGITEXT000006080653,LEGIARTI000006712597,13,1,2001-01-01,2017-01-01,aucun échelon
 LEGITEXT000006080653,LEGIARTI000006712597,13,2,2001-01-01,2017-01-01,l'en-tête n'a qu'une colonne quand la phrase nomme les durées minimale et moyenne
 LEGITEXT000006080653,LEGIARTI000006712597,13,3,2001-01-01,2017-01-01,le 6e échelon de « Pharmacien inspecteur en chef de santé publique » a 2 case(s) pour 1 colonne(s)
 LEGITEXT000006080653,LEGIARTI000006712597,13,4,2001-01-01,2017-01-01,le 8e échelon de « Pharmacien inspecteur de santé publique » a 2 case(s) pour 1 colonne(s)
-LEGITEXT000006080653,LEGIARTI000006712609,23,1,1992-01-01,2001-01-01,l'en-tête n'a qu'une colonne quand la phrase nomme les durées minimale et moyenne
-LEGITEXT000006080653,LEGIARTI000006712609,23,10,1992-01-01,2001-01-01,le grade «  » ne descend pas au 1er échelon
-LEGITEXT000006080653,LEGIARTI000006712609,23,11,1992-01-01,2001-01-01,un libellé porte une durée ou un échelon : « 1 an 6 mois »
-LEGITEXT000006080653,LEGIARTI000006712609,23,12,1992-01-01,2001-01-01,un libellé porte une durée ou un échelon : « 1 an 6 mois »
-LEGITEXT000006080653,LEGIARTI000006712609,23,13,1992-01-01,2001-01-01,un libellé porte une durée ou un échelon : « 3 ans »
-LEGITEXT000006080653,LEGIARTI000006712609,23,14,1992-01-01,2001-01-01,un libellé porte une durée ou un échelon : « 2 ans 3 mois »
-LEGITEXT000006080653,LEGIARTI000006712609,23,15,1992-01-01,2001-01-01,un libellé porte une durée ou un échelon : « 1 an 6 mois »
-LEGITEXT000006080653,LEGIARTI000006712609,23,16,1992-01-01,2001-01-01,un libellé porte une durée ou un échelon : « 1 an 6 mois »
-LEGITEXT000006080653,LEGIARTI000006712609,23,17,1992-01-01,2001-01-01,un libellé porte une durée ou un échelon : « 1 an 6 mois »
-LEGITEXT000006080653,LEGIARTI000006712609,23,18,1992-01-01,2001-01-01,un libellé porte une durée ou un échelon : « 1 an 6 mois »
-LEGITEXT000006080653,LEGIARTI000006712609,23,19,1992-01-01,2001-01-01,un libellé porte une durée ou un échelon : « 1 an 6 mois »
-LEGITEXT000006080653,LEGIARTI000006712609,23,2,1992-01-01,2001-01-01,le grade «  » ne descend pas au 1er échelon
-LEGITEXT000006080653,LEGIARTI000006712609,23,3,1992-01-01,2001-01-01,un libellé porte une durée ou un échelon : « 1 an 6 mois »
-LEGITEXT000006080653,LEGIARTI000006712609,23,4,1992-01-01,2001-01-01,un libellé porte une durée ou un échelon : « 1 an 6 mois Grades et échelons : Pharmacien inspec »
-LEGITEXT000006080653,LEGIARTI000006712609,23,5,1992-01-01,2001-01-01,le grade «  » ne descend pas au 1er échelon
-LEGITEXT000006080653,LEGIARTI000006712609,23,6,1992-01-01,2001-01-01,un libellé porte une durée ou un échelon : « 1 an 6 mois »
-LEGITEXT000006080653,LEGIARTI000006712609,23,7,1992-01-01,2001-01-01,un libellé porte une durée ou un échelon : « 1 an 6 mois »
-LEGITEXT000006080653,LEGIARTI000006712609,23,8,1992-01-01,2001-01-01,un libellé porte une durée ou un échelon : « 1 an 6 mois »
-LEGITEXT000006080653,LEGIARTI000006712609,23,9,1992-01-01,2001-01-01,un libellé porte une durée ou un échelon : « 2 ans 3 mois Grades et échelons : Pharmacien inspe »
+LEGITEXT000006080653,LEGIARTI000006712609,23,1,1992-01-01,2001-01-01,"un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
 LEGITEXT000006080691,LEGIARTI000006470096,15,1,2005-12-30,2007-05-03,le grade «  » ne descend pas au 1er échelon
 LEGITEXT000006080691,LEGIARTI000006470096,15,2,2005-12-30,2007-05-03,un libellé porte une durée ou un échelon : « 4 ans 3 ans »
 LEGITEXT000006080803,LEGIARTI000006470167,12,1,1993-01-08,1994-01-07,un libellé porte une durée ou un échelon : « 1° Un an pour les deux premiers échelons du second »

@@ -39,7 +39,9 @@ durée de plus de dix ans ; une durée minimale au-dessus de la moyenne ou de la
 maximale ; un en-tête d'une seule colonne quand la phrase en nomme deux ; les
 durées écrites d'échelon à échelon (« du 1er au 2e échelon : 2 ans ») ou à
 l'accès à l'échelon (« pour accéder au 3e échelon »), qui se liraient décalées
-d'un échelon ; un tableau dessiné en caractères ; une phrase qui coupe le
+d'un échelon ; un tableau dessiné en caractères ; un tableau écrit en fiches
+(« 5e échelon DURÉE Moyenne : 4 ans DURÉE Minimale : 3 ans »), compté une fois,
+même quand nulle phrase ne l'annonce par ses deux points ; une phrase qui coupe le
 tableau. Le paragraphe qui suit le tableau (« II.-Les anciennetés détenues dans
 les 6e et 8e échelons… ») l'arrête, même quand il nomme des échelons. Les durées écrites en phrases, et celles qu'un article renvoie à un
 autre texte (« sont fixées à l'article 4 du décret du 20 septembre 1973 »), ne
@@ -292,6 +294,16 @@ class Extrait:
     corps: str
 
 
+#: Le champ d'un tableau rendu en fiches : « 5e échelon DURÉE Moyenne : 4 ans » ; ses
+#: deux points n'annoncent pas un autre tableau.
+CHAMP_DE_FICHE = re.compile(
+    r"\b[ée]chelons?\s+dur[ée]es?\s+(?:moyennes?|minimales?|maximales?|minimum|maximum)$",
+    re.IGNORECASE)
+EN_FICHES = "un tableau écrit en fiches, un champ par case (« DURÉE Moyenne : 4 ans »)"
+FICHES = re.compile(r"\bdur[ée]es?\s+(?:moyennes?|minimales?|maximales?|minimum|maximum)\s*:",
+                    re.IGNORECASE)
+
+
 def tableaux(article: str) -> list[Extrait]:
     """Les tableaux de durées d'un article, chacun avec la phrase qui l'annonce :
     celle qui finit par « : » et nomme les durées d'échelon."""
@@ -300,7 +312,7 @@ def tableaux(article: str) -> list[Extrait]:
         avant = article[:deux_points.start()]
         point = max(avant.rfind(". "), avant.rfind(" : "), avant.rfind(": "))
         intro = _propre(avant[point + 2 if point >= 0 else 0:])
-        if not intro:
+        if not intro or CHAMP_DE_FICHE.search(intro):
             continue
         suite = article[deux_points.end():deux_points.end() + 400]
         if not _UN_ECHELON.search(suite) and not re.search(ORDINAL, suite, re.IGNORECASE):
@@ -421,6 +433,9 @@ def lire_tableau(extrait: Extrait) -> Tableau:
         return tableau
     if NON_REPRODUIT.search(corps[:400]):
         tableau.refus = "tableau non reproduit au LEGI"
+        return tableau
+    if len(FICHES.findall(corps)) >= 2:
+        tableau.refus = EN_FICHES
         return tableau
     militaire = not _UN_ECHELON.search(corps)
     elements = []
@@ -696,6 +711,11 @@ def extraire(chemin_index: Path | str | None = None) -> dict:
                                 "tableau": str(rang) if extraits else "", "debut": debut,
                                 "fin": _fin(fin), "motif": JAMAIS}
                                for rang in range(1, max(len(extraits), 1) + 1))
+            continue
+        if not extraits and len(FICHES.findall(contenu)) >= 2:
+            # Des fiches que nulle phrase n'annonce par ses deux points.
+            non_lus.append({"texte": texte, "article": ident, "numero": numero, "tableau": "1",
+                            "debut": debut, "fin": _fin(fin), "motif": EN_FICHES})
             continue
         if not extraits:
             motif_prose = _en_prose(contenu)
