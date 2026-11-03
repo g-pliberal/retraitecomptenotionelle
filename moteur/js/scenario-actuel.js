@@ -550,6 +550,9 @@ export function resultatDesDeparts(moteur, carriere, departs, liquidations, cont
     for (const avantage of resultat.avantages) {
       const parts = (avantage.par_regime ?? []).map(
         ([code, part]) => [code, part * (parRegime.has(code) ? parRegime.get(code) : moyen)]);
+      // Celles de la majoration sans le coefficient d'anticipation, de même.
+      const sansAnticipation = (avantage.par_regime_sans_anticipation ?? []).map(
+        ([code, part]) => [code, part * (parRegime.has(code) ? parRegime.get(code) : moyen)]);
       const montant = parts.length > 0
         ? parts.reduce((somme, [, part]) => somme + part, 0.0)
         : avantage.montant * moyen;
@@ -563,12 +566,14 @@ export function resultatDesDeparts(moteur, carriere, departs, liquidations, cont
       const deja = avantages.get(avantage.code);
       if (deja === undefined) {
         avantages.set(avantage.code, { ...avantage, montant, par_regime: parts,
-          a_charge: aCharge });
+          par_regime_sans_anticipation: sansAnticipation, a_charge: aCharge });
       } else {
         const details = [...new Set([deja.detail, avantage.detail].filter((d) => d))];
         avantages.set(avantage.code, {
           ...deja, montant: deja.montant + montant, detail: details.join(" ; "),
           par_regime: [...deja.par_regime, ...parts],
+          par_regime_sans_anticipation: [...deja.par_regime_sans_anticipation,
+            ...sansAnticipation],
           a_charge: fusionnerLesCharges(deja.a_charge ?? [], aCharge),
         });
       }

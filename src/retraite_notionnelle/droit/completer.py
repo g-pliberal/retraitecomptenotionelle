@@ -2160,6 +2160,10 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
                 continue
             coefficient = (anticipations.get(pension.regime, 1.0)
                            if pension.regime in sans_anticipation else 1.0)
+            # Le coefficient qui reste dans la part, que la réversion ne garde
+            # pas (``AvantageApplique.par_regime_sans_anticipation``).
+            restant = (1.0 if pension.regime in sans_anticipation
+                       else anticipations.get(pension.regime, 1.0))
             part = (pension.montant / coefficient) * taux
             if (plafond_l18 is not None and indice in traitements
                     and pension.regime in plafond_l18["parametres"]["regimes"]):
@@ -2183,16 +2187,19 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
                 majoration += part
             else:
                 seau = periode_du_plafond.plafond_majoration_regime or ""
-                cumul = seaux.setdefault(seau, [0.0, plafond])
+                cumul = seaux.setdefault(seau, [0.0, plafond, 0.0])
                 cumul[0] += part
                 cumul[1] = max(cumul[1], plafond)
-            parts.append((pension.regime, part, seau))
+                cumul[2] += part / restant
+            parts.append((pension.regime, part, seau, part / restant))
             taux_cite = max(taux_cite, taux)
         plafonnee = bool(seaux)
         retenues: dict[str, float] = {}
-        for seau, (cumul, plafond) in seaux.items():
+        retenues_sans: dict[str, float] = {}
+        for seau, (cumul, plafond, cumul_sans) in seaux.items():
             majoration += min(cumul, plafond)
             retenues[seau] = plafond / cumul if cumul > plafond else 1.0
+            retenues_sans[seau] = plafond / cumul_sans if cumul_sans > plafond else 1.0
         if majoration > 0:
             total += majoration
             detail = f"jusqu'à {taux_cite:.0%} selon le régime"
@@ -2209,7 +2216,15 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
                 detail=detail,
                 par_regime=tuple(
                     (code, part * (1.0 if seau is None else retenues[seau]))
-                    for code, part, seau in parts
+                    for code, part, seau, _ in parts
+                ),
+                # LA MÊME, SANS LE COEFFICIENT D'ANTICIPATION, sous le même
+                # plafond : ce que la réversion reprend quand sa version le
+                # dit (``majoration_sans_anticipation``, fiche
+                # ``reversion_agirc_arrco``).
+                par_regime_sans_anticipation=tuple(
+                    (code, sans * (1.0 if seau is None else retenues_sans[seau]))
+                    for code, _, seau, sans in parts
                 ),
             ))
 

@@ -163,6 +163,31 @@ versions:
       non indemnisé », invalide avant 21 ans
     lu_le: 2026-10-05
     empreinte: sha256:b8af8df7372e4f897c1ca0c4fd9bf4baaa5b706ec4737b8e51b593c5a2a4fccb
+  - reference: >-
+      circulaire Agirc-Arrco 2020-02-DRJ du 20 janvier 2020, « Régime Agirc-Arrco :
+      réglementation applicable aux individus » (hors JORF),
+      https://www.agirc-arrco.fr/wp-content/uploads/2021/10/2020-02-DRJ_Regime_Agirc-Arrco_Reglementation_applicable_aux_individus.pdf
+    article: >-
+      fiche 6, « Droits de réversion », son préambule (page 1 de la fiche, 74e du
+      fichier) et I.1.2.2, « Majorations pour enfants », 1. (page 6, 79e du fichier) ;
+      fiche 4, II.2.2, « Plafond de la majoration pour enfants nés ou élevés » (page 6,
+      55e du fichier)
+    citation: >-
+      « Les dispositions de l'Accord national interprofessionnel (ANI) du 17 novembre
+      2017 au titre du régime Agirc-Arrco s'appliquent pour les décès survenus à compter
+      du 1er janvier 2019. » ; « Les majorations pour enfants nés ou élevés applicables
+      aux droits du participant décédé sont réversibles au taux de 100 %. » ; « Les
+      majorations sont calculées sur les droits de base du participant décédé, sans
+      tenir compte d'un éventuel coefficient d'anticipation dont les droits directs ont
+      pu être affectés. » ; « En cas de partage des droits de réversion (cf. II), la
+      majoration est calculée sur le montant proratisé des droits de base de l'ancien
+      salarié. » ; le plafond : « Ce montant s'applique distinctement pour les droits
+      directs et les droits de réversion servis à un même allocataire. » ; « les
+      majorations pour enfants nés ou élevés ne sont pas plafonnées lorsqu'elles sont
+      calculées sur les réversions attribuées aux ayants droit de ces participants [nés
+      avant le 2 août 1951] à effet du 1er janvier 2012 ou postérieurement »
+    lu_le: 2026-11-03
+    empreinte: sha256:524779881a0e4e377382f4b3d8ab9cf0ebd4aa21fe2eca841dd523491f4806ae
   bornes:
     conjoint.deces: [2019-01-01, null]
   contenu:
@@ -181,7 +206,8 @@ versions:
       d'assurance du défunt, plafonnée à 172 trimestres par l'article 112 dans sa
       rédaction de 2019, à 169 trimestres depuis décembre 2023, 170 depuis octobre 2025,
       171 dès avril 2028 et 172 dès avril 2029 selon la fédération ; la majoration pour
-      enfants du défunt reversée en entier
+      enfants du défunt reversée en entier, sans le coefficient d'anticipation de sa
+      pension (circulaire 2020-02-DRJ, fiche 6, I.1.2.2)
     parametres:
       taux: 0.60
       ex_conjoints: non_remaries
@@ -192,6 +218,7 @@ versions:
       invalidite_sans_age: true
       deux_enfants_a_charge_moins_de_ans: 18
       majoration_reversible: 1.0
+      majoration_sans_anticipation: true
       rien_apres_un_capital: true
       fiabilite: haute
   exemples: [aa_reversion_leila, aa_reversion_kim, aa_reversion_annie, aa_reversion_eric,
@@ -264,6 +291,28 @@ approximations:
     sans dire qui la constate — la Sécurité sociale, un médecin expert, la CDAPH, le
     juge des tutelles —, que la fédération admet tous
   effet: non mesuré
+- version: [accord_2017]
+  textes: >-
+    circulaire Agirc-Arrco 2020-02-DRJ, fiche 4, II.2.2 : « Le montant du plafonnement
+    applicable à un allocataire est celui en vigueur à la date d'effet de sa retraite. »
+    ; « Ce montant s'applique distinctement pour les droits directs et les droits de
+    réversion servis à un même allocataire. » ; fiche 6, I.1.2.2, 1.
+  ecart: >-
+    la majoration pour enfants reversée, sans le coefficient d'anticipation du défunt,
+    garde le plafond qui bornait la sienne — celui de sa date d'effet et de son régime,
+    1 000 € par régime au 1er janvier 2012 pour une allocation de 2012 à 2018 (convention
+    du 14 mars 1947, annexe I, article 6 bis, 2) —, mené comme sa pension ; aucun texte
+    lu ne dit si la réversion d'un décès depuis 2019 prend plutôt le plafond de l'accord
+    de 2017, « cumul des plafonds en vigueur à l'Agirc et à l'Arrco » (article 94), à sa
+    propre date d'effet, ni sur quelle somme de régimes il se compare ; le défunt né
+    avant le 2 août 1951 n'en a aucun, la réversion non plus, ce que la circulaire dit
+  effet: >-
+    non mesuré ; seules les majorations reversées qui passent le plafond du défunt :
+    à l'Agirc de 2014, 1 028,11 €, dès 12 851 € de droits sans coefficient majorés de
+    8 % ; la cadre née le 15 mars 1952, partie le 1er avril 2014, recevrait en 2020
+    1 156,51 € au lieu de 1 044,61 € si sa réversion prenait le plafond de 2019,
+    2 071,58 € mené à 2 092,32 €, où sa majoration de l'Agirc et celle de l'Arrco,
+    267,22 €, tiennent (tests/test_reversion.py ; note du 3 novembre 2026)
 presomptions:
   conjoint_de_l_autre_sexe: >-
     l'âge du veuf ou de la veuve, avant 1994, quand le sexe du conjoint n'est pas dit
@@ -274,7 +323,7 @@ presomptions:
     la réversion que la page montre sans décès déclaré, pour un décès supposé juste
     après le départ, ou cette année pour qui est déjà parti
 sources:
-  lu_le: 2026-10-09
+  lu_le: 2026-11-03
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
@@ -297,6 +346,17 @@ sources:
     depuis le 5 octobre 2026. Léo, qui demande sa réversion dix-huit mois après le
     décès, n'y est pas : le modèle ne date pas la demande.
   lectures:
+  - type: autre
+    reference: >-
+      circulaire Agirc-Arrco 2020-02-DRJ du 20 janvier 2020, sha256
+      524779881a0e4e377382f4b3d8ab9cf0ebd4aa21fe2eca841dd523491f4806ae : fiche 6,
+      préambule (74e page du fichier) et I.1.2.2, 1. (79e) ; fiche 4, II.2.2 (55e) : la
+      majoration pour enfants reversée « sans tenir compte d'un éventuel coefficient
+      d'anticipation dont les droits directs ont pu être affectés », pour les décès
+      survenus depuis le 1er janvier 2019 ; son plafond, qui « s'applique distinctement
+      pour les droits directs et les droits de réversion »
+    date: 2026-11-03
+    url: https://www.agirc-arrco.fr/wp-content/uploads/2021/10/2020-02-DRJ_Regime_Agirc-Arrco_Reglementation_applicable_aux_individus.pdf
   - type: autre
     reference: >-
       accord national interprofessionnel du 17 novembre 2017, version « applicable au
@@ -354,7 +414,7 @@ code:
     age_minimum_veuve, age_minimum_veuf, age_minimum_minore, perte_au_remariage,
     invalidite_sans_age, deux_enfants_a_charge_moins_de_ans, fiabilite,
     age_minimum_arrco, age_minimum_agirc, age_minimum, majoration_reversible,
-    rien_apres_un_capital
+    rien_apres_un_capital, majoration_sans_anticipation
   tests: tests/test_reversion.py ; les témoins reversion_* des simulations
   moteur: >-
     La majoration de chaque régime du défunt, que la réversion lit, lui vient de
@@ -383,7 +443,17 @@ historique:
   mariages, avec les précédents conjoints non remariés, la réversion entière au
   conjoint marié avant le 13 janvier 1998 quand le mariage précédent a été dissous
   avant le 1er juillet 1980, et la perte de la réversion au remariage du survivant.
+- >-
+  2026-11-03 — action 175, après la relecture R-M3b : pour un décès depuis 2019, la
+  majoration pour enfants reversée se calcule sans le coefficient d'anticipation du
+  défunt (circulaire 2020-02-DRJ, fiche 6, I.1.2.2 ; `majoration_sans_anticipation`),
+  sous le plafond qui bornait la sienne ; elle le gardait pour une allocation de l'Agirc
+  de 2012 à 2018 et pour toute allocation d'avant 2012. Note
+  docs/feuille_de_route/175/2026-11-03-corrections-de-la-relecture-r-m3b.md.
 effet: >-
   Tout conjoint, ou ex-conjoint marié, d'un salarié ou ancien salarié du privé qui
   décède. Le modèle la calcule pour le conjoint que la saisie déclare, sur la
-  retraite servie, partagée avec les précédents conjoints qu'elle déclare.
+  retraite servie, partagée avec les précédents conjoints qu'elle déclare. Depuis le
+  3 novembre 2026, la majoration pour enfants reversée d'un défunt parti avec un
+  coefficient d'anticipation ne le garde plus : 295,21 € au lieu de 259,78 € en 2020
+  pour la cadre née en 1950 partie à soixante-deux ans en 2012 (0,88).

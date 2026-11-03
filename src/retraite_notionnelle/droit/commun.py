@@ -157,6 +157,12 @@ class AvantageApplique:
     #: cessent avec la charge (:func:`parts_de_la_majoration`, fiche
     #: ``majoration_enfants_a_charge_agirc_arrco``).
     a_charge: tuple[tuple[str, tuple[tuple[str, float], ...]], ...] = ()
+    #: Les parts de la majoration pour enfants nés ou élevés, régime par régime,
+    #: sans le coefficient d'anticipation qui a pu réduire celles de
+    #: ``par_regime``, sous le même plafond : ce que la réversion reprend quand
+    #: sa version le dit (:func:`parts_sans_anticipation`, fiche
+    #: ``reversion_agirc_arrco``).
+    par_regime_sans_anticipation: tuple[tuple[str, float], ...] = ()
 
 
 #: Le code de la majoration pour enfants, que la revalorisation mène à chaque
@@ -197,6 +203,17 @@ def parts_de_la_majoration(avantages, quand: str | None = None,
             parts.extend((code, -part) for code, part in avantage.a_charge[0][1])
             parts.extend(servies)
     return parts
+
+
+def parts_sans_anticipation(avantages) -> list[tuple[str, float]]:
+    """Les parts de la majoration pour enfants nés ou élevés, régime par
+    régime, sans le coefficient d'anticipation qui a pu réduire celle de la
+    date d'effet, sous le même plafond
+    (``AvantageApplique.par_regime_sans_anticipation``) : celle que la
+    réversion de l'Agirc-Arrco reprend depuis 2019 (circulaire 2020-02-DRJ,
+    fiche 6, I.1.2.2)."""
+    return [part for avantage in avantages if avantage.code == MAJORATION_ENFANTS
+            for part in avantage.par_regime_sans_anticipation]
 
 
 def fusionner_les_charges(une, autre):

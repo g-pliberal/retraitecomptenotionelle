@@ -370,6 +370,9 @@ def resultat_des_departs(moteur, carriere: Carriere, departs, liquidations,
         for avantage in liquidation.avantages:
             parts = tuple((code, part * par_regime.get(code, moyen))
                           for code, part in avantage.par_regime)
+            # Celles de la majoration sans le coefficient d'anticipation, de même.
+            sans_anticipation = tuple((code, part * par_regime.get(code, moyen))
+                                      for code, part in avantage.par_regime_sans_anticipation)
             montant = (somme_ordonnee(part for _, part in parts) if parts
                        else avantage.montant * moyen)
             # Les étapes des enfants à charge sont ramenées comme les parts.
@@ -380,14 +383,17 @@ def resultat_des_departs(moteur, carriere: Carriere, departs, liquidations,
                 majoration += montant
             deja = avantages.get(avantage.code)
             if deja is None:
-                avantages[avantage.code] = replace(avantage, montant=montant, par_regime=parts,
-                                                   a_charge=a_charge)
+                avantages[avantage.code] = replace(
+                    avantage, montant=montant, par_regime=parts,
+                    par_regime_sans_anticipation=sans_anticipation, a_charge=a_charge)
             else:
                 details = [d for d in (deja.detail, avantage.detail) if d]
                 avantages[avantage.code] = replace(
                     deja, montant=deja.montant + montant,
                     detail=" ; ".join(dict.fromkeys(details)),
                     par_regime=deja.par_regime + parts,
+                    par_regime_sans_anticipation=(deja.par_regime_sans_anticipation
+                                                  + sans_anticipation),
                     a_charge=fusionner_les_charges(deja.a_charge, a_charge))
         servi = somme_ordonnee(p.montant * f for p, f in zip(regimes, facteurs)) + majoration
         total += servi

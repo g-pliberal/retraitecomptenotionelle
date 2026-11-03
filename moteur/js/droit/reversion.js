@@ -1630,11 +1630,15 @@ function enfantsDeMoinsDe(carriere, deces, ans) {
  * maximum]` : le régime général reverse la pension d'avant son maximum, sous
  * le maximum de la réversion. `avantLeDepart` dit que le défunt est mort avant
  * son départ, et que `pensions` sont celles qu'il eût obtenues à son décès.
- * Voir `reversion` du Python.
+ * `majorationsSansAnticipation` donne, régime par régime, sa majoration pour
+ * enfants sans le coefficient d'anticipation de sa pension, sous le même
+ * plafond : la version qui le dit (`majoration_sans_anticipation`) la reverse
+ * au lieu de `majorations`. Voir `reversion` du Python.
  */
 export function reversion(moteur, pensions, carriere, annee, decesSuppose = null,
   enCapital = new Set(), majorations = null, durees = null, minima = null,
-  maxima = null, avantLeDepart = false, majorationsDesPensions = null) {
+  maxima = null, avantLeDepart = false, majorationsDesPensions = null,
+  majorationsSansAnticipation = null) {
   const conjoint = carriere.conjoint;
   const deces = decesSuppose === null ? carriere.deces : decesSuppose;
   if (deces === null || conjoint === null) {
@@ -1789,9 +1793,14 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
       dateEffet = lendemain;
     }
     // La majoration pour enfants du défunt « réversible au taux de 100 % »
-    // (article 109) : en plus des 60 %, qui ne la comptent pas.
+    // (article 109) : en plus des 60 %, qui ne la comptent pas ; « sans tenir
+    // compte d'un éventuel coefficient d'anticipation dont les droits directs
+    // ont pu être affectés » (circulaire 2020-02-DRJ, fiche 6, I.1.2.2), quand
+    // la version le dit.
+    const reversibles = parametres.majoration_sans_anticipation
+      && majorationsSansAnticipation !== null ? majorationsSansAnticipation : majorations;
     const majoration = Number(parametres.majoration_reversible ?? 0.0)
-      * ((majorations ?? {})[regime] ?? 0.0) * part;
+      * ((reversibles ?? {})[regime] ?? 0.0) * part;
     lignes.set(regime, jusquAuRemariage(ligne(regime, base, taux * base * part + majoration,
       "servie", fiche, version, taux, dateEffet, fiabilite, majoration).avec({ part }),
     parametres, conjoint));

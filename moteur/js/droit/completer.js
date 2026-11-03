@@ -1913,6 +1913,9 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
       }
       const coefficient = sansAnticipation.has(pension.regime)
         ? (anticipations.get(pension.regime) ?? 1.0) : 1.0;
+      // Le coefficient qui reste dans la part, que la réversion ne garde pas.
+      const restant = sansAnticipation.has(pension.regime)
+        ? 1.0 : (anticipations.get(pension.regime) ?? 1.0);
       let part = (pension.montant / coefficient) * taux;
       if (plafondL18 !== null && traitements.has(indice)
           && plafondL18.parametres.regimes.includes(pension.regime)) {
@@ -1939,19 +1942,22 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
         majoration += part;
       } else {
         seau = periodeDuPlafond.plafond_majoration_regime ?? "";
-        const cumul = seaux.get(seau) ?? [0.0, plafond];
+        const cumul = seaux.get(seau) ?? [0.0, plafond, 0.0];
         cumul[0] += part;
         cumul[1] = Math.max(cumul[1], plafond);
+        cumul[2] += part / restant;
         seaux.set(seau, cumul);
       }
-      parts.push([pension.regime, part, seau]);
+      parts.push([pension.regime, part, seau, part / restant]);
       tauxCite = Math.max(tauxCite, taux);
     }
     const plafonnee = seaux.size > 0;
     const retenues = new Map();
-    for (const [seau, [cumul, plafond]] of seaux) {
+    const retenuesSans = new Map();
+    for (const [seau, [cumul, plafond, cumulSans]] of seaux) {
       majoration += Math.min(cumul, plafond);
       retenues.set(seau, cumul > plafond ? plafond / cumul : 1.0);
+      retenuesSans.set(seau, cumulSans > plafond ? plafond / cumulSans : 1.0);
     }
     if (majoration > 0) {
       total += majoration;
@@ -1971,6 +1977,13 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
         detail,
         par_regime: parts.map(([code, part, seau]) => [
           code, part * (seau === null ? 1.0 : retenues.get(seau)),
+        ]),
+        // LA MÊME, SANS LE COEFFICIENT D'ANTICIPATION, sous le même plafond :
+        // ce que la réversion reprend quand sa version le dit
+        // (`majoration_sans_anticipation`, fiche `reversion_agirc_arrco`).
+        // Voir le Python.
+        par_regime_sans_anticipation: parts.map(([code, , seau, sans]) => [
+          code, sans * (seau === null ? 1.0 : retenuesSans.get(seau)),
         ]),
       });
     }

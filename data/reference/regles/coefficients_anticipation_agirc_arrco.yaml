@@ -54,7 +54,7 @@ effet: >-
   ces deux catégories (18 octobre 2026). Il abattait aussi, jusqu'à l'âge de sa
   génération, le parent de trois enfants né de juillet 1951 à 1955 au taux plein du
   régime général dès soixante-cinq ans, que l'Agirc et l'Arrco servent sans abattement
-  depuis le 1er juillet 2011, sauf la tranche C d'avant 2016 : 5 à 8 % de sa
+  depuis le 1er juillet 2011, sauf la tranche C d'avant 2016 : 5,26 % à 8,70 % de sa
   complémentaire (3 novembre 2026 ; fiche taux_plein_a_soixante_cinq_ans).
 lit:
 - >-
@@ -1400,7 +1400,9 @@ code:
     1er juillet 2011, le parent de trois enfants que la fiche taux_plein_a_soixante_cinq_ans
     met au taux plein du régime général à l'âge de sa liquidation
     (`liquider.parent_au_taux_plein_du_regime_general`, `parentAuTauxPleinDuRegimeGeneral`,
-    qui lisent `categories.age_du_parent_de_trois_enfants`), hors l'Arrco des cultes ;
+    qui lisent `categories.age_du_parent_de_trois_enfants`), hors l'Arrco des cultes,
+    que les autres motifs exonèrent sur ce que le moteur lit au régime des salariés :
+    une asymétrie, déclarée à la fiche taux_plein_a_soixante_cinq_ans ;
     tests/test_taux_plein_a_soixante_cinq_ans.py.
   python: >-
     droit/liquider.py : liquider_chaque_regime, abattement_points, coefficient_pour_age,

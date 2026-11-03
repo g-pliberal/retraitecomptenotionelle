@@ -557,29 +557,37 @@ approximations:
     sha256 9dfcdaf5c2d655737ce3509a28fbebe7143322006f62a3abfe23f361972743b2, relu le
     3 novembre 2026 ; accord du 17 novembre 2017, article 109
     (https://www.agirc-arrco.fr/storage/2024/09/201809dc_ANI_du_17_novembre_2017.pdf,
-    sha256 b8af8df7372e4f897c1ca0c4fd9bf4baaa5b706ec4737b8e51b593c5a2a4fccb) ; fiche
-    reversion_agirc_arrco
+    sha256 b8af8df7372e4f897c1ca0c4fd9bf4baaa5b706ec4737b8e51b593c5a2a4fccb) ;
+    circulaire Agirc-Arrco 2020-02-DRJ, fiche 6, préambule et I.1.2.2, 1., et fiche 4,
+    II.2.2
+    (https://www.agirc-arrco.fr/wp-content/uploads/2021/10/2020-02-DRJ_Regime_Agirc-Arrco_Reglementation_applicable_aux_individus.pdf,
+    sha256 524779881a0e4e377382f4b3d8ab9cf0ebd4aa21fe2eca841dd523491f4806ae, relue le
+    3 novembre 2026, 74e, 79e et 55e pages du fichier) ; fiche reversion_agirc_arrco
   ecart: >-
     Pour la réversion, le guide dit, sans distinguer les régimes : « Lorsque la retraite a
     été minorée, il n'est pas tenu compte du coefficient de minoration pour le calcul de
     la majoration pour enfants » ; pour le retraité de 2012 à 2018, que « le régime Agirc
     en tient compte ». L'article 109, pour un décès depuis 2019 : « Les majorations pour
     enfants nés ou élevés applicables aux droits du participant décédé sont réversibles
-    au taux de 100% » ; « L'allocation de réversion est calculée sans qu'il soit tenu
-    compte des coefficients dont les droits du participant décédé ont pu être affectés »,
-    dans la limite des points « compte tenu éventuellement de l'abattement appliqué aux
-    droits lors de la liquidation » ; il ne dit pas si la majoration reversée se calcule
-    sans le coefficient. Le modèle ne reverse aucune majoration pour un décès d'avant 2019
-    (fiche reversion_agirc_arrco, son approximation des versions d'avant 2019) ; depuis
-    2019, il reverse en entier la majoration servie au défunt (`majoration_reversible`,
-    droit/reversion.py), menée à l'année du décès : celle d'une pension de l'Agirc
-    liquidée de 2012 à 2018 sous un coefficient d'anticipation le garde, comme les 60 %
-    le gardent (fiche reversion_agirc_arrco). Non corrigé : la règle n'est pas courte, et
-    aucun texte lu ne la tranche pour ce défunt.
+    au taux de 100% ». La circulaire 2020-02-DRJ le tranche pour les « décès survenus à
+    compter du 1er janvier 2019 » (fiche 6, préambule) : « Les majorations sont calculées
+    sur les droits de base du participant décédé, sans tenir compte d'un éventuel
+    coefficient d'anticipation dont les droits directs ont pu être affectés » (I.1.2.2,
+    1.), sans distinguer la date de liquidation du défunt. Le modèle la suit depuis le 3
+    novembre 2026 (fiche reversion_agirc_arrco, `majoration_sans_anticipation`) : il
+    reverse la majoration du défunt sans son coefficient, sous le plafond qui bornait la
+    sienne, que la circulaire dit s'appliquer « distinctement pour les droits directs et
+    les droits de réversion » sans dire lequel prend une réversion depuis 2019 d'une
+    allocation d'avant (fiche reversion_agirc_arrco, son approximation de l'accord de
+    2017). Reste l'écart d'avant 2019 : le modèle ne reverse aucune majoration pour un
+    décès d'avant 2019 (même fiche, son approximation des versions d'avant 2019), quand
+    le guide la dit reversée sans le coefficient.
   effet: >-
-    si la caisse reverse cette majoration sans le coefficient, la réversion d'un tel
-    défunt, décédé depuis 2019, est sous-estimée de la part qu'il lui retire (5 % à 0,95,
-    22 % à 0,78) ; non mesuré
+    pour un décès d'avant 2019, la réversion du conjoint d'un parent de trois enfants
+    est sous-estimée de toute la majoration ; non mesuré. Depuis 2019, la majoration
+    reversée d'un défunt parti sous un coefficient croît de son inverse, sous le
+    plafond : 295,21 € au lieu de 259,78 € en 2020 pour la cadre née en 1950 partie en
+    2012 à 0,88 (tests/test_reversion.py)
 sources:
   lu_le: 2026-11-03
   prochaine_relecture: 2027-06-30
@@ -622,7 +630,7 @@ sources:
     majoration avant le plafond, comme le modèle, ou au montant plafonné ? Aucun texte lu
     ne le chiffre ; les deux exemples du guide n° 9 partent au taux plein.
   - >-
-    L'accord Agirc du 9 février 1994, article 2 (recueil de la caisse, p. 15) : « Les
+    L'accord Agirc du 9 février 1994, article 2 (recueil de la caisse, p. 16) : « Les
     majorations pour charges de famille visées à l'article 6 bis de l'annexe 1 à la
     convention collective nationale du 14 mars 1947 sont affectées, à compter du 1er
     janvier 1995, d'un pourcentage de service égal à : - 96 % à compter du 1er janvier
@@ -795,6 +803,12 @@ historique:
   24 %, non à ajouter ; la réversion du guide n° 9 et l'article 109 de l'accord de 2017,
   déclarés ; la circulaire 2025-15-DT reçoit son adresse, son empreinte refaite ; le titre
   des copies de 1947 et de 1961 cité tel qu'elles l'impriment.
+- >-
+  2026-11-03 — après la relecture R-M3b (action 175, note
+  2026-11-03-corrections-de-la-relecture-r-m3b.md) : la majoration reversée depuis 2019,
+  que la fiche disait tranchée par aucun texte lu, l'est par la circulaire 2020-02-DRJ,
+  fiche 6, I.1.2.2 : sans le coefficient d'anticipation du défunt, ce que le modèle sert
+  désormais ; l'article 2 de l'accord Agirc de 1994 est à la page 16 du recueil, non 15.
 effet: >-
   Parents de trois enfants salariés du privé avant 2019. Le modèle servait 10 %
   à tous les points ; les points Arrco de 1999 à 2011 n'en valent que 5, ceux de

@@ -229328,6 +229328,7 @@ null
 "fiabilite":"haute",
 "invalidite_sans_age":true,
 "majoration_reversible":1.0,
+"majoration_sans_anticipation":true,
 "perte_au_remariage":["mariage"],
 "rien_apres_un_capital":true,
 "taux":0.6

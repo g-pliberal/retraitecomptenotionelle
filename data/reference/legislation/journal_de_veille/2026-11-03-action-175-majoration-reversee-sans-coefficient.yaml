@@ -1,0 +1,48 @@
+date: "2026-11-03"
+session: "action 175, file M3-bis de la vague 6 : l'écart moyen et les six écarts faibles de la relecture R-M3b (la majoration pour enfants reversée de l'Agirc-Arrco, l'Agirc-Arrco des parents de trois enfants)"
+consulte: >-
+  python scripts/veille_droit.py (rien de neuf à la base de la Cnav) ; docs/veille_droit.md ;
+  les notes de R-M3b et de M3. Téléchargés le jour, empreinte recalculée : la circulaire
+  Agirc-Arrco 2020-02-DRJ (sha256 52477988…06ae : fiche 6, préambule, I.1.2.1 et I.1.2.2 ;
+  fiche 4, II.2.1, II.2.2, III et III.1 ; fiche 5, I.1) ; l'accord du 17 novembre 2017
+  « applicable au 1er janvier 2019 » (sha256 b8af8df7…fccb : articles 93 à 96, 102, 109 à
+  111) ; la circulaire 2024-5-DRJ et l'avenant n° 19,
+  https://www.agirc-arrco.fr/wp-content/uploads/2024/02/CirculaireAgircArrco2024_5drj.pdf
+  (sha256 83577e9a…688f) ; l'accord du 5 octobre 2023,
+  https://www.agirc-arrco.fr/storage/2023/10/ANI_Agirc-Arrco_05102023.pdf (sha256
+  eb336c93…e5d0) ; la convention du 14 mars 1947, « Textes mis à jour au 1er janvier 2018 »
+  (sha256 38966c27…ce78 : annexe I, article 6, § 1er et § 3 a), article 6 bis) ; le recueil
+  « Accords nationaux des partenaires sociaux » (sha256 0186b6b1…04c1 : accord Agirc du 9
+  février 1994, article 2, page 16 ; accord du 18 mars 2011, articles 1er à 3, pages 147 à
+  149). L'index LEGI n'a pas été relu : aucune règle touchée ne tient à un texte de
+  Légifrance. Non lus : la version consolidée de l'accord de 2017 (Calaméo), le site
+  réglementaire de la caisse.
+trouve: >-
+  La circulaire 2020-02-DRJ tranche la majoration pour enfants reversée, pour les décès
+  survenus depuis le 1er janvier 2019 : « Les majorations sont calculées sur les droits de
+  base du participant décédé, sans tenir compte d'un éventuel coefficient d'anticipation
+  dont les droits directs ont pu être affectés » (fiche 6, I.1.2.2), sans distinguer la date
+  de liquidation du défunt. Le modèle, qui la reversait avec le coefficient pour une
+  allocation de l'Agirc de 2012 à 2018 et pour toute allocation d'avant 2012, la sert
+  désormais sans lui dans les deux moteurs (fiche reversion_agirc_arrco,
+  `majoration_sans_anticipation`), sous le plafond qui bornait celle du défunt : 295,21 €
+  au lieu de 259,78 € en 2020 pour une cadre née en 1950 partie en 2012 à 0,88 ; 1 044,61 €,
+  le plafond, au lieu de 974,36 € pour une cadre née en 1952 partie en 2014 à 0,8425. Aucun
+  témoin ne bouge. L'avenant n° 19 n'ajoute à l'article 109 qu'une exception pour les décès
+  d'actifs d'avant 2019 ; l'accord du 5 octobre 2023 ne le touche pas. Les six écarts
+  faibles, corrigés aux fiches et dans la note : l'article 102 n'écrit pas que la tranche C
+  d'avant 2016 garde son coefficient (l'annexe I de 1947, article 6, § 3 a), le dit de 2016 à
+  2018, la circulaire en passant depuis 2019, fiche 4, III.1) ; cinq témoins parents de
+  trois enfants nés en 1954 et 1955, tous fonctionnaires ; un effet de 175,30 € à 274,66 €
+  par an, la tranche 2 de l'Arrco comprise, que ni M3 ni R-M3b ne comptaient ; 5,26 % à
+  8,70 % ; les pages 149 et 16 du recueil ; l'asymétrie de l'Arrco des cultes, déclarée.
+reste: >-
+  Le plafond de la majoration reversée depuis 2019 d'une allocation d'avant 2019 : celui du
+  défunt, que le modèle garde, ou celui de l'accord de 2017 à la date d'effet de la
+  réversion ; la circulaire ne le dit pas (fiche reversion_agirc_arrco, approximation). Les
+  60 % de la réversion, calculés sur la retraite servie, coefficient compris, que l'article
+  109 et la circulaire (fiche 6, I.1.2.1) veulent sans lui : la même classe d'erreur,
+  déclarée, à corriger à son tour. La version consolidée de l'accord de 2017. La fiche 5,
+  I.1, de la circulaire dit le report de la tranche C d'avant 2016 « à l'âge de 67 ans »,
+  l'article 102 « à l'âge mentionné au 1° de l'article L. 351-8 » : une pièce de plus au
+  point non tranché des parents de trois enfants.

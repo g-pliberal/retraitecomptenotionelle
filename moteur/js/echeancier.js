@@ -28,6 +28,7 @@ import * as chrono from "./chronologie.js";
 import { formatFixe } from "./format.js";
 import {
   MAJORATION_ENFANTS, dateDEffet, majorationDuConjoint, partsDeLaMajoration,
+  partsSansAnticipation,
 } from "./droit/commun.js";
 import * as leCumul from "./droit/cumul.js";
 import * as lesDeparts from "./droit/departs.js";
@@ -343,16 +344,17 @@ export class Echeancier {
     let maxima;
     let durees;
     let apres;
+    let sansAnticipation;
     if (avantLeDepart) {
-      [annee, pensions, enCapital, majorations, minima, maxima, durees, apres] = (
-        this._pensionsEuesAuDeces(carriere, deces));
+      [annee, pensions, enCapital, majorations, minima, maxima, durees, apres,
+        sansAnticipation] = this._pensionsEuesAuDeces(carriere, deces);
     } else {
-      [annee, pensions, enCapital, majorations, minima, maxima, apres] = this._pensionsAuDeces(
-        carriere, carriere.deces);
+      [annee, pensions, enCapital, majorations, minima, maxima, apres, sansAnticipation] = (
+        this._pensionsAuDeces(carriere, carriere.deces));
       durees = this.dureesAuDepart;
     }
     this.reversion = reversion(this.moteur, pensions, carriere, annee, null, enCapital,
-      majorations, durees, minima, maxima, avantLeDepart, apres);
+      majorations, durees, minima, maxima, avantLeDepart, apres, sansAnticipation);
     const survivant = carriere.conjoint.personne;
     const evenement = new Evenement({
       id: `reversion_${survivant}`, date: moisSuivant(carriere.deces),
@@ -375,10 +377,10 @@ export class Echeancier {
       + `${String(liquidation.mois).padStart(2, "0")}-01`;
     const courante = `${String(this.simulateur.parametres.annee_courante).padStart(4, "0")}-01-01`;
     const deces = depart > courante ? depart : courante;
-    const [annee, pensions, enCapital, majorations, minima, maxima, apres] = (
+    const [annee, pensions, enCapital, majorations, minima, maxima, apres, sansAnticipation] = (
       this._pensionsAuDeces(carriere, deces));
     this.reversion = reversion(this.moteur, pensions, carriere, annee, deces, enCapital,
-      majorations, this.dureesAuDepart, minima, maxima, false, apres);
+      majorations, this.dureesAuDepart, minima, maxima, false, apres, sansAnticipation);
   }
 
   /**
@@ -428,7 +430,8 @@ export class Echeancier {
     }
     return [annee, pensions, new Set(), majorations, minima, maxima,
       Object.fromEntries(resultat.releve.durees.trimestresParRegime),
-      majorationsApres(this.moteur, resultat.regimes, demande.dateEffet, annee)];
+      majorationsApres(this.moteur, resultat.regimes, demande.dateEffet, annee),
+      parts(partsSansAnticipation(resultat.avantages))];
   }
 
   /**
@@ -507,12 +510,19 @@ export class Echeancier {
     }
     // La part que chaque minimum reversé ajoute à la pension, menée de même.
     const minima = Object.assign({}, ...MINIMA_REVERSES.map((code) => menees(code)));
+    // La majoration pour enfants sans le coefficient d'anticipation du défunt,
+    // que la réversion reprend quand sa version le dit, menée de même.
+    const sansAnticipation = new Map();
+    for (const [regime, part] of partsSansAnticipation(this.auDepart.avantages_appliques)) {
+      sansAnticipation.set(regime, (sansAnticipation.get(regime) ?? 0.0) + part);
+    }
     return [annee, [...servies, ...this.auDepart.pensions_par_regime
       .filter((p) => !vues.has(p.regime))
       .map((p) => [p.regime, p.montant, p.fiabilite])], enCapital,
     menees(MAJORATION_ENFANTS), minima, maxima,
     majorationsApres(this.moteur, departs, `${String(carriere.dateLiquidation.annee)
-      .padStart(4, "0")}-${String(carriere.dateLiquidation.mois).padStart(2, "0")}-01`, annee)];
+      .padStart(4, "0")}-${String(carriere.dateLiquidation.mois).padStart(2, "0")}-01`, annee),
+    mener(sansAnticipation)];
   }
 
   /**

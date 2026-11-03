@@ -1744,7 +1744,8 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
               minima: dict[str, float] | None = None,
               maxima: dict[str, tuple[float, float, float]] | None = None,
               avant_le_depart: bool = False,
-              majorations_des_pensions: dict[str, tuple[tuple[str, float], ...]] | None = None
+              majorations_des_pensions: dict[str, tuple[tuple[str, float], ...]] | None = None,
+              majorations_sans_anticipation: dict[str, float] | None = None
               ) -> Reversion | None:
     """La réversion que le décès de la personne de ``carriere`` ouvre à son
     conjoint, régime par régime ; ``None`` sans décès ou sans conjoint.
@@ -1775,7 +1776,10 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
     régime, les majorations forfaitaires de 1972 à 1982 que sa pension reçoit
     après l'année des montants, ``(jour, taux)`` : la réversion du régime
     général les suit, comprises dans son montant calculé jusqu'à sa date
-    d'effet, à leur date ensuite.
+    d'effet, à leur date ensuite. ``majorations_sans_anticipation`` donne,
+    régime par régime, sa majoration pour enfants sans le coefficient
+    d'anticipation de sa pension, sous le même plafond : la version qui le dit
+    (``majoration_sans_anticipation``) la reverse au lieu de ``majorations``.
     """
     conjoint = carriere.conjoint
     deces = carriere.deces if deces_suppose is None else deces_suppose
@@ -1909,9 +1913,15 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
             # l'être (article 111) : elle part au mois qui suit le décès.
             date_effet = lendemain
         # La majoration pour enfants du défunt « réversible au taux de 100 % »
-        # (article 109) : en plus des 60 %, qui ne la comptent pas.
+        # (article 109) : en plus des 60 %, qui ne la comptent pas ; « sans
+        # tenir compte d'un éventuel coefficient d'anticipation dont les droits
+        # directs ont pu être affectés » (circulaire 2020-02-DRJ, fiche 6,
+        # I.1.2.2), quand la version le dit.
+        reversibles = (majorations_sans_anticipation
+                       if parametres.get("majoration_sans_anticipation")
+                       and majorations_sans_anticipation is not None else majorations)
         majoration = (float(parametres.get("majoration_reversible") or 0.0)
-                      * (majorations or {}).get(regime, 0.0) * part)
+                      * (reversibles or {}).get(regime, 0.0) * part)
         lignes[regime] = _jusqu_au_remariage(replace(
             ligne(regime, base, taux * base * part + majoration, "servie", fiche, version,
                   taux, date_effet, fiabilite),

@@ -52,7 +52,7 @@ from .droit import progressive as _progressive
 from .droit import reversion as _reversion
 from .droit import seconde as _seconde
 from .droit.commun import (MAJORATION_ENFANTS, date_d_effet, majoration_du_conjoint,
-                           parts_de_la_majoration)
+                           parts_de_la_majoration, parts_sans_anticipation)
 from .journal import Entree, Journal
 from .noyau import vocabulaire
 from .revalorisation import (aujourd_hui, faire_vivre, foyer_a_l_echeance,
@@ -315,11 +315,11 @@ class Echeancier:
         self._inscrire(deces, deces.id, "evenement", deces, deces.date)
         avant_le_depart = carriere.deces < date_d_effet(carriere)
         if avant_le_depart:
-            annee, pensions, en_capital, majorations, minima, maxima, durees, apres = (
-                self._pensions_eues_au_deces(carriere, deces))
+            (annee, pensions, en_capital, majorations, minima, maxima, durees, apres,
+             sans_anticipation) = self._pensions_eues_au_deces(carriere, deces)
         else:
-            annee, pensions, en_capital, majorations, minima, maxima, apres = (
-                self._pensions_au_deces(carriere, carriere.deces))
+            (annee, pensions, en_capital, majorations, minima, maxima, apres,
+             sans_anticipation) = self._pensions_au_deces(carriere, carriere.deces)
             durees = self.durees_au_depart
         self.reversion = _reversion.reversion(self.moteur, pensions, carriere, annee,
                                               en_capital=en_capital,
@@ -327,7 +327,8 @@ class Echeancier:
                                               durees=durees,
                                               minima=minima, maxima=maxima,
                                               avant_le_depart=avant_le_depart,
-                                              majorations_des_pensions=apres)
+                                              majorations_des_pensions=apres,
+                                              majorations_sans_anticipation=sans_anticipation)
         survivant = carriere.conjoint.personne
         evenement = Evenement(id=f"reversion_{survivant}", date=_reversion.mois_suivant(
             carriere.deces), personnes=(survivant,), vise={"regimes": "du défunt"},
@@ -345,14 +346,15 @@ class Echeancier:
         depart = (f"{carriere.date_liquidation.annee:04d}"
                   f"-{carriere.date_liquidation.mois:02d}-01")
         deces = max(depart, f"{self.simulateur.parametres.annee_courante:04d}-01-01")
-        annee, pensions, en_capital, majorations, minima, maxima, apres = (
-            self._pensions_au_deces(carriere, deces))
+        (annee, pensions, en_capital, majorations, minima, maxima, apres,
+         sans_anticipation) = self._pensions_au_deces(carriere, deces)
         self.reversion = _reversion.reversion(self.moteur, pensions, carriere, annee,
                                               deces_suppose=deces, en_capital=en_capital,
                                               majorations=majorations,
                                               durees=self.durees_au_depart,
                                               minima=minima, maxima=maxima,
-                                              majorations_des_pensions=apres)
+                                              majorations_des_pensions=apres,
+                                              majorations_sans_anticipation=sans_anticipation)
 
     def _pensions_eues_au_deces(self, carriere: Carriere, deces: Evenement) -> tuple[
             int, list[tuple[str, float, Fiabilite]], frozenset[str], dict[str, float],
@@ -398,7 +400,8 @@ class Echeancier:
                   if p.ecretement_du_maximum or p.surcote or p.coefficient_du_maximum != 1.0}
         return (annee, pensions, frozenset(), majorations, minima, maxima,
                 dict(liquidation.releve.durees.trimestres_par_regime),
-                _majorations_apres(self.moteur, liquidation.regimes, demande.date_effet, annee))
+                _majorations_apres(self.moteur, liquidation.regimes, demande.date_effet, annee),
+                parts(parts_sans_anticipation(liquidation.avantages)))
 
     def _pensions_au_deces(self, carriere: Carriere, deces: str) -> tuple[
             int, list[tuple[str, float, Fiabilite]], frozenset[str], dict[str, float],
@@ -412,7 +415,10 @@ class Echeancier:
         minimum contributif ou le minimum de pension de la SNCF y ajoute ;
         enfin, régime par régime, ce que le
         maximum des pensions en a retiré et ce que la surcote y ajoute, menés
-        de même, et le coefficient qui multiplie son maximum."""
+        de même, et le coefficient qui multiplie son maximum ; les majorations
+        forfaitaires de 1972 à 1982 venues après le départ ; sa majoration pour
+        enfants sans le coefficient d'anticipation de sa pension, menée de
+        même."""
         annee = max(carriere.annee_liquidation,
                     min(int(deces[:4]), self.simulateur.parametres.annee_courante))
         vivante = faire_vivre(self.simulateur, carriere, self.au_depart, annee)
@@ -470,13 +476,18 @@ class Echeancier:
         # La part que chaque minimum reversé ajoute à la pension, menée de même.
         minima = {regime: part for code in _reversion.MINIMA_REVERSES
                   for regime, part in menees(code).items()}
+        # La majoration pour enfants sans le coefficient d'anticipation du
+        # défunt, que la réversion reprend quand sa version le dit, menée de même.
+        sans_anticipation: dict[str, float] = {}
+        for regime, part in parts_sans_anticipation(self.au_depart.avantages_appliques):
+            sans_anticipation[regime] = sans_anticipation.get(regime, 0.0) + part
         depart = (f"{carriere.date_liquidation.annee:04d}"
                   f"-{carriere.date_liquidation.mois:02d}-01")
         return annee, servies + [(p.regime, p.montant, p.fiabilite)
                                  for p in self.au_depart.pensions_par_regime
                                  if p.regime not in vues], en_capital, menees(
             MAJORATION_ENFANTS), minima, maxima, _majorations_apres(
-            self.moteur, departs, depart, annee)
+            self.moteur, departs, depart, annee), mener(sans_anticipation)
 
     def _progresser(self, carriere: Carriere) -> None:
         """La retraite progressive que la carrière demande : examinée, et,

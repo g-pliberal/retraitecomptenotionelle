@@ -531,8 +531,17 @@ approximations:
     le régime de base dès 65 ans », sa note 1 nommant les « assurés nés entre le 1er
     juillet 1951 et le 31 décembre 1955 parents d'au moins trois enfants ». La tranche C
     garde son coefficient : « Cette annexe n'est pas applicable aux droits constitués
-    jusqu'au 31 décembre 2015 sur la tranche C des rémunérations » (annexe V, préambule ;
-    accord de 2017, article 102). Ce que les textes lus ne tranchent pas, et que le modèle
+    jusqu'au 31 décembre 2015 sur la tranche C des rémunérations » (annexe V, préambule) ;
+    « Ce coefficient correspond à l'application des coefficients d'anticipation visés au
+    § 1er du présent article sur les droits du participant constitués sur la tranche C
+    jusqu'au 31 décembre 2015 » (convention de 1947, annexe I, article 6, § 3 a), pages
+    30 et 31 de la copie mise à jour au 1er janvier 2018) ; depuis 2019, l'article 102 de
+    l'accord de 2017 ne l'écrit pas, il en permet le report « sans abattement », et la
+    circulaire 2020-02-DRJ le dit en passant, fiche 4, III.1 (page 9 de la fiche) : « les
+    participants qui liquident leur retraite complémentaire Agirc-Arrco avec application
+    d'un coefficient d'anticipation en fonction de l'âge, y compris les droits constitués
+    sur la tranche C des salaires avant 2016 au titre de l'ancien régime Agirc liquidés
+    avant l'âge de 67 ans ». Ce que les textes lus ne tranchent pas, et que le modèle
     sert à l'âge de la génération : partis avant soixante-cinq ans, sans le taux plein du
     régime de base, de quel âge se compte leur coefficient — l'accord de 2011 fige l'âge
     de la retraite « dans les rédactions respectives des articles L. 351-8, 1°, et
@@ -547,7 +556,11 @@ approximations:
     coefficient des points de la tranche C d'avant 2016 ; et les points de l'Arrco des
     cultes, dont la pension de base est celle de la CAVIMAC, quand les accords ne nomment
     que le régime général et les assurances sociales agricoles : le modèle ne les exonère
-    pas.
+    pas. Le choix est asymétrique : les autres motifs de la fiche
+    coefficients_anticipation_agirc_arrco, qui valent pour tous ses régimes (`regimes:
+    null`), exonèrent l'Arrco des cultes sur ce que le moteur lit au régime des salariés
+    — l'inaptitude (`invalidite.taux_plein_de_l_inapte`, sur `REGIME_DES_SALARIES`), une
+    catégorie de L. 351-8 — ; aucun texte lu ne tranche l'un ni l'autre.
   effet: >-
     ce que le modèle sert sans le trancher. Née le 15 mars 1953, partie avant soixante-cinq
     ans, à soixante-quatre ans, le 1er avril 2017 : vingt-cinq mois et demi jusqu'à 66 ans
@@ -681,16 +694,18 @@ effet: >-
   ans, et s'annule à soixante-cinq ans au lieu de soixante-cinq ans et quatre mois à
   soixante-sept ans. Les autres catégories de la fiche restent décotées. Non mesuré.
   Depuis le 3 novembre 2026, l'Agirc et l'Arrco, puis l'Agirc-Arrco, les servent sans
-  coefficient dès soixante-cinq ans, sauf la tranche C d'avant 2016 : de 5 % à 8 % de
-  plus à leur complémentaire. L'Ircantec et le RCI, la CAVIMAC et les points d'avant
-  1973, où vaut le même âge, les abattent encore jusqu'à l'âge de leur génération : les
-  approximations le chiffrent sur des exemples : 5 % au RCI, 6,25 % de la pension de la
-  ministre du culte et des points d'avant 1973. Depuis le 3 novembre 2026, le
-  fonctionnaire sédentaire de l'État, de la CNRACL et l'ouvrier de l'État nés en 1954
-  et en 1955 qui ont interrompu leur activité au moins un an pour élever un enfant, et
-  le disent, ont l'âge d'annulation de leur décote borné à soixante-cinq ans : 3
-  trimestres de décote de moins en 1954, 5 en 1955, partis à soixante-cinq ans, une
-  décote de 3,75 % et de 6,25 % en moins, et le minimum garanti à soixante-cinq ans.
+  coefficient dès soixante-cinq ans, sauf la tranche C d'avant 2016 : de 5,26 % à 8,70 %
+  de plus à leur complémentaire, 175,30 € à 274,66 € par an dans les cas posés à la main
+  (note 2026-11-03-corrections-de-la-relecture-r-m3b.md, action 175). L'Ircantec et le
+  RCI, la CAVIMAC et les points d'avant 1973, où vaut le même âge, les abattent encore
+  jusqu'à l'âge de leur génération : les approximations le chiffrent sur des exemples :
+  5 % au RCI, 6,25 % de la pension de la ministre du culte et des points d'avant 1973.
+  Depuis le 3 novembre 2026, le fonctionnaire sédentaire de l'État, de la CNRACL et
+  l'ouvrier de l'État nés en 1954 et en 1955 qui ont interrompu leur activité au moins un
+  an pour élever un enfant, et le disent, ont l'âge d'annulation de leur décote borné à
+  soixante-cinq ans : 3 trimestres de décote de moins en 1954, 5 en 1955, partis à
+  soixante-cinq ans, une décote de 3,75 % et de 6,25 % en moins, et le minimum garanti à
+  soixante-cinq ans.
 sources:
   lu_le: 2026-11-03
   prochaine_relecture: 2027-06-30

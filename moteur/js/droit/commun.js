@@ -108,6 +108,19 @@ export function partsDeLaMajoration(avantages, quand = null, avecACharge = true)
 }
 
 /**
+ * Les parts de la majoration pour enfants nés ou élevés, régime par régime,
+ * sans le coefficient d'anticipation qui a pu réduire celle de la date
+ * d'effet, sous le même plafond (`par_regime_sans_anticipation` de
+ * l'avantage) : celle que la réversion de l'Agirc-Arrco reprend depuis 2019
+ * (circulaire 2020-02-DRJ, fiche 6, I.1.2.2). Voir
+ * `parts_sans_anticipation` du Python.
+ */
+export function partsSansAnticipation(avantages) {
+  return avantages.filter((avantage) => avantage.code === MAJORATION_ENFANTS)
+    .flatMap((avantage) => avantage.par_regime_sans_anticipation ?? []);
+}
+
+/**
  * Les étapes de deux majorations pour enfants à charge réunies, celles de deux
  * départs que le scénario additionne : à chaque date de l'une ou de l'autre,
  * la somme de leurs parts. Voir `fusionner_les_charges` du Python.

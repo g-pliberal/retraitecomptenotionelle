@@ -1094,6 +1094,124 @@ def test_l_echeancier_reverse_la_majoration_de_l_agirc_arrco(saisies):
         assert avec[regime]["montant"] == pytest.approx(
             sans[regime]["montant"] + avec[regime]["majoration"])
 
+
+# -- la majoration reversée sans le coefficient d'anticipation du défunt --------------
+#
+# Circulaire Agirc-Arrco 2020-02-DRJ du 20 janvier 2020, fiche 6, « Droits de
+# réversion » : « Les dispositions de l'Accord national interprofessionnel (ANI) du
+# 17 novembre 2017 au titre du régime Agirc-Arrco s'appliquent pour les décès
+# survenus à compter du 1er janvier 2019 » ; I.1.2.2, « Majorations pour enfants »,
+# 1. : « Les majorations pour enfants nés ou élevés applicables aux droits du
+# participant décédé sont réversibles au taux de 100 %. » ; « Les majorations sont
+# calculées sur les droits de base du participant décédé, sans tenir compte d'un
+# éventuel coefficient d'anticipation dont les droits directs ont pu être
+# affectés. » Le texte ne distingue pas la date de liquidation du défunt : son
+# allocation de l'Agirc de 2012 à 2018, dont la majoration gardait le coefficient,
+# est reversée sans lui. Les calculs, posés à la main, sont dans la note
+# docs/feuille_de_route/175/2026-11-03-corrections-de-la-relecture-r-m3b.md.
+
+#: Une cadre aux trois enfants nés en avril 1976, juin 1978 et juin 1980, au
+#: travail dès dix-huit ans, partie à soixante-deux ans, morte en mai 2020 ; son
+#: conjoint, né la même année qu'elle, a cinquante-cinq ans au décès : la réversion
+#: part le 1er juin 2020, sous l'accord de 2017. Les réglages sont ceux de
+#: ``REQUETE`` (tests/test_taux_plein_a_soixante_cinq_ans.py).
+CADRE_AUX_TROIS_ENFANTS = {
+    "age_reference": "fixe_apres_bascule", "bascule": "2026",
+    "conversion_acquis": "reference", "debut": "18", "emploi": "cor_2026",
+    "enfants": "3", "euros": "2026", "indexation": "triple_lock_inverse",
+    "naissances": "1976-04, 1978-06, 1980-06", "primes": "0", "profil": "plat",
+    "projection": "cor_reference", "sexe": "F", "statut": "salarie_prive_cadre",
+    "stock": "prix", "table": "unisexe", "liquidation": "62", "deces": "2020-05",
+}
+
+#: Ce que vaut en 2020 un point de l'Agirc au modèle : 0,4378 € au 1er novembre
+#: 2018, suivi au point de l'Agirc-Arrco, 1,2588 € au 1er janvier 2019, 1,2714 € du
+#: 1er novembre 2019 à la fin de 2020 (data/reference/regimes/valeurs_service_datees.csv).
+POINT_AGIRC_EN_2020 = 0.4378 * 1.2714 / 1.2588
+
+#: Chaque cas : ce qu'il change à ``CADRE_AUX_TROIS_ENFANTS`` ; les points de
+#: l'Agirc que la formule affiche ; le coefficient d'anticipation, lu à la table
+#: de la convention du 14 mars 1947, annexe I, article 6, § 1er ; la majoration
+#: reversée, en euros de 2020 ; celle de l'Arrco, quand elle se pose à la main.
+#: Le taux : « pour les périodes antérieures au 1er janvier 2012 [...] 8 % pour 3
+#: enfants » (annexe I, article 6 bis, 2), « applicables aux liquidations
+#: d'allocations prenant effet à compter du 1er janvier 2012 »). Le plafond :
+#: « plafonné à 1000 euros par an (montant revalorisé en fonction de la valeur du
+#: point), pour toute liquidation prenant effet à compter du 1er janvier 2012 (sauf
+#: pour les participants nés avant le 2 août 1951) » (même article), du point de
+#: 0,4233 € au 1er janvier 2012 à celui de la date d'effet, mené comme la pension :
+#: 1 000 € × 0,4352 / 0,4233 × (point de 2020 / 0,4352).
+MAJORATION_REVERSEE = {
+    # Née le 15 mars 1950, sans activité de 1985 à 2012 : tous ses points de
+    # l'Agirc sont d'avant 2012, à 8 %, et ceux de l'Arrco d'avant 1999, à 10 %.
+    # Partie le 1er avril 2012, à 62 ans et 2 semaines, « moins 3 ans » de 65 ans,
+    # 0,88 ; née avant le 2 août 1951, sans plafond. Avec le coefficient :
+    # 259,78 € ; sans lui : 8 % × 8 345,20 × 0,442182 = 295,21 €.
+    "née en 1950, sans plafond": (
+        {"naissance": "1950-03-15", "conjoint": "1950", "salaire": "2",
+         "interruptions": "1985:2012:sans_activite"},
+        8_345.20, 0.88, 0.08 * 8_345.20 * POINT_AGIRC_EN_2020,
+        # La majoration de l'Arrco, de 2012 à 2018, se calcule déjà sans le
+        # coefficient (guide n° 9) : 10 % × 1 649,20 × 1,2714 = 209,68 €.
+        0.10 * 1_649.20 * 1.2714),
+    # Née le 15 mars 1952, sans activité de 1991 à 2014, partie le 1er avril
+    # 2014, à 3 ans 8 mois et demi de 65 ans et 9 mois, l'âge que le modèle lit
+    # pour 1952 : « moins 3 ans 3 trimestres », 0,8425. Avec le
+    # coefficient, 8 % × 32 693,28 × 0,4352 × 0,8425 = 958,97 €, sous le plafond de
+    # 1 028,11 € ; sans lui, 1 138,25 €, au-delà : 1 044,61 € en 2020, au lieu de
+    # 974,36 €.
+    "née en 1952, au plafond sans le coefficient": (
+        {"naissance": "1952-03-15", "conjoint": "1952", "salaire": "6",
+         "interruptions": "1991:2014:sans_activite"},
+        32_693.28, 0.8425, 1_000.0 * POINT_AGIRC_EN_2020 / 0.4233,
+        0.10 * 2_101.77 * 1.2714),
+    # Sans activité de 2000 à 2014 : au plafond avec le coefficient comme sans
+    # lui (8 % × 65 611,76 × 0,4352 × 0,8425 = 1 924,56 €) ; rien ne change.
+    "née en 1952, au plafond avec le coefficient": (
+        {"naissance": "1952-03-15", "conjoint": "1952", "salaire": "6",
+         "interruptions": "2000:2014:sans_activite"},
+        65_611.76, 0.8425, 1_000.0 * POINT_AGIRC_EN_2020 / 0.4233, None),
+}
+
+
+def test_la_fiche_reverse_la_majoration_sans_le_coefficient():
+    """La version de l'accord de 2017 le dit, et cite la circulaire qui le
+    tranche."""
+    import yaml
+
+    chemin = (Path(__file__).resolve().parents[1]
+              / "data/reference/regles/reversion_agirc_arrco.yaml")
+    fiche = yaml.safe_load(chemin.read_text(encoding="utf-8"))
+    version, = [v for v in fiche["versions"] if v["id"] == "accord_2017"]
+    assert version["contenu"]["parametres"]["majoration_sans_anticipation"] is True
+    citations = " ".join(texte.get("citation", "") for texte in version["textes"])
+    assert ("sans tenir compte d'un éventuel coefficient d'anticipation dont les "
+            "droits directs ont pu être affectés") in " ".join(citations.split())
+
+
+@pytest.mark.parametrize("cle", MAJORATION_REVERSEE)
+def test_la_majoration_reversee_depuis_2019_ne_garde_pas_le_coefficient(saisies, cle):
+    """La réversion que l'échéancier liquide au décès, dans les deux moteurs
+    (``droit_et_refait``) : la retraite du défunt, que les 60 % lisent, garde son
+    coefficient (fiche ``reversion_agirc_arrco``, déclaré) ; la majoration
+    reversée ne le garde pas, sous le plafond qui bornait celle du défunt."""
+    from outils_pont import droit_et_refait
+    from retraite_notionnelle import pont
+
+    champs, points, coefficient, attendue, arrco = MAJORATION_REVERSEE[cle]
+    parametres, carriere = saisies.lire({**CADRE_AUX_TROIS_ENFANTS, **champs})
+    lus, refus = droit_et_refait(
+        {"reversion": ("echeancier.parcourir.reversion", pont.SIMULATEUR, carriere)},
+        parametres)
+    assert refus == {}, refus
+    lignes = {ligne.regime: ligne for ligne in lus["reversion"].regimes}
+    agirc = lignes["agirc"]
+    assert (agirc.version, agirc.date_effet) == ("accord_2017", "2020-06-01")
+    assert agirc.base == pytest.approx(points * POINT_AGIRC_EN_2020 * coefficient, abs=0.01)
+    assert agirc.majoration == pytest.approx(attendue, abs=0.01)
+    if arrco is not None:
+        assert lignes["arrco"].majoration == pytest.approx(arrco, abs=0.01)
+
 # -- le RAFP --------------------------------------------------------------------------
 
 def test_le_rafp_reverse_la_moitie_sans_age_ni_duree_du_mariage(simulateur):
