@@ -1,0 +1,37 @@
+date: "2026-11-03"
+session: "action 158, relecture R-B2 des durées d'échelon (commit 04cbe34) : trente-deux lignes, cinq tableaux non lus, les sept écarts au Noyau RH et les tests, rouverts au LEGI"
+consulte: >-
+  Aucune règle du scénario 1 n'est écrite ; rien n'est modifié. L'index LEGI publié du
+  dépôt, à jour au 2 novembre 2026 (incrément 20261102-213929), récupéré sans
+  reconstruction, interrogé article par article (texte, versions, mot à mot). Les articles
+  des trente-deux lignes tirées (graine 20261103) : décrets n° 96-158 (art. 15), 98-898
+  (art. 20), 99-669 (art. 17, trois versions), 2002-1520 (art. 16), 92-345 (art. 10),
+  2021-1869 (art. 18), 92-344 (art. 18), 87-1099 (art. 17), 95-25 (art. 16), 2013-490
+  (art. 14), 91-855 (art. 16), 2021-1079 (art. 15), 2016-2003 (art. 13), 2017-901
+  (art. 17), 2014-99 (art. 10), 91-868 (art. 7), 91-45 (art. 6), 2011-661 (art. 24),
+  2017-1260 (art. 14), 2010-1139 (art. 19), 2014-1585 (art. 19), 2014-1455 (art. 22),
+  2008-940 (art. 34), 2008-944 (art. 28), 2012-1029 (art. 31), 2008-952 (art. 8),
+  2008-942 (art. 14). Pour les non lus : n° 98-343 (art. 39), 59-772 (art. 8-4), 67-715
+  (art. 13), 72-583 (art. 6), 72-580 (art. 13). Pour le Noyau RH : n° 91-1025 (art. 11),
+  93-622 (art. 14), 2021-1550 (art. 9), et les grilles du noyau au dépôt
+  (data/reference/grilles/etat/). Pour les tests : les dix articles recopiés, l'article 24
+  du décret n° 2010-329 dans trois versions, les articles 6-1 du n° 2008-952 et 14 du
+  n° 76-1001. Pour les versions jamais en vigueur : n° 83-1260 (art. 34), 91-290
+  (art. 14-4), 2014-923 (art. 25).
+trouve: >-
+  Trente-deux lignes sur trente-deux justes pour le grade, l'échelon, la durée et
+  l'article ; trois viennent de versions que le LEGI dit jamais en vigueur. Six tableaux,
+  178 lignes, sont certifiés d'après de telles versions, avec une période impossible ; deux
+  ne redisent pas la version en vigueur le même jour (n° 99-669, n° 2014-923). Des cinq
+  tableaux non lus, quatre sont écartés à raison (fiches, phrases), un à tort : celui des
+  adjoints d'enseignement (n° 72-583, art. 6), complet, refusé pour la phrase du II ; même
+  défaut chez les agrégés (n° 72-580, art. 13). Au Noyau RH, six écarts sont des zéros du
+  noyau, le texte a raison ; le septième (n° 2021-1550) vient d'une comparaison au grade
+  éteint des administrateurs civils : au grade 05041, le noyau donne 48 mois comme le texte.
+  Les valeurs attendues des tests viennent des articles, recopiés mot pour mot.
+reste: >-
+  Ôter ou marquer les tableaux des versions jamais en vigueur avant le chaînage aux grilles.
+  Arrêter un tableau à la phrase qui le suit même quand elle nomme des échelons, puis relire
+  les refus « un échelon manque ». Compter une fiche comme un seul tableau non lu. Consigner
+  la règle du quart (n° 2014-99, art. 10, II) avec la moyenne. Corriger l'explication du
+  septième écart au Noyau RH.
