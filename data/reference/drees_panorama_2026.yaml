@@ -39,7 +39,8 @@
 #                   raison le dit, et rien n'est à faire
 #
 # Classé le 2 novembre 2026, à l'étape 1. Une étape qui tire d'une fiche ce
-# qu'elle apporte change son statut, et le dit dans sa note.
+# qu'elle apporte change son statut, et le dit dans sa note ; l'étape 2 l'a
+# fait le 3 novembre 2026 (docs/feuille_de_route/178/).
 
 fiches:
   "01":
@@ -47,15 +48,18 @@ fiches:
     page: 20
     sources: ["EACR", "EIR", "ANCETRE", "Insee"]
     statut: au_depot
-    au_depot: [drees_eacr]
+    au_depot: [drees_eacr, drees_eacr_tables]
     a_tirer: >-
-      Les 17,3 millions de retraités de droit direct de fin 2024 et leurs
-      effectifs par régime (tableaux 1 et 2), recoupés au cadrage de
-      l'EACR que le dépôt lit (`effectifs_retraites.csv`) ; le rapport de
-      1,77 personne en emploi par retraité en 2024 (graphique 1) et la
-      part des polypensionnés par génération (graphique 3), aux
-      référents, que la page Coût et sa grille peuvent confronter.
-    etape: 2
+      Recoupés à l'étape 2 (`tests/test_drees_panorama_2024.py`) : les retraités de droit direct
+      tous régimes de 2004 à 2024 (tableau 1), 17 298 000 fin 2024, à la
+      ligne « Tous régimes » du cadrage (`effectifs_retraites.csv`), leurs
+      femmes et leurs hommes à la table C, et sept régimes du tableau 2 à
+      leur caisse ; les régimes spéciaux et les professions libérales, qui
+      réunissent des caisses que le cadrage n'a pas toutes, ne se recoupent
+      pas. Restent le rapport de 1,77 personne en emploi par retraité
+      (graphique 1) et la part des polypensionnés par génération
+      (graphique 3), séries du classeur, aux référents.
+    etape: 6
   "02":
     titre: "Les nouveaux retraités de droit direct"
     page: 29
@@ -63,13 +67,14 @@ fiches:
     statut: au_depot
     au_depot: [drees_eacr, drees_eacr_tables]
     a_tirer: >-
-      Les 718 000 nouveaux retraités de 2024 (tableau 1) et leur
-      répartition par régime (tableau 2), recoupés au flux `nl_ddir` du
-      cadrage et à la table B de l'EACR ; l'encadré 1, qui compte les
-      mois où chaque génération atteint l'âge d'ouverture des droits sous
-      la loi de financement pour 2026, confronté à
-      `age_ouverture_requis.csv` à l'étape 5.
-    etape: 2
+      Recoupés à l'étape 2 (`tests/test_drees_panorama_2024.py`) : les 858 000 liquidants d'un droit
+      direct de 2024 (tableau 1), le champ `nl_ddir` de la table C, et ceux
+      du régime général, des deux MSA et de la CNRACL (tableau 2), la table
+      B ; les 718 000 primo-liquidants, que l'EIR seul compte, n'ont pas
+      d'équivalent à l'EACR. Reste l'encadré 1, les mois où chaque
+      génération atteint l'âge d'ouverture des droits sous la loi de
+      financement pour 2026, confronté à `age_ouverture_requis.csv`.
+    etape: 5
   "03":
     titre: "Les effectifs de retraités de droit dérivé"
     page: 35
@@ -78,11 +83,14 @@ fiches:
     au_depot: [drees_eacr]
     a_tirer: >-
       Les 4,4 millions de bénéficiaires d'une pension de réversion fin
-      2024, dont 886 000 de réversion seule (tableaux 1 et 3), recoupés à
-      `droits_derives.csv` ; la part des veuves par âge et par génération
-      (graphiques 2 et 4), aux référents, où la réversion du modèle peut
-      se confronter.
-    etape: 2
+      2024, dont 886 000 de réversion seule (tableaux 1 et 3), ne se
+      recoupent pas : le dépôt ne garde de la réversion que sa masse
+      (`droits_derives.csv`, le champ `ddert` du cadrage multiplié par son
+      montant moyen), et le panorama ne donne pas ce montant ; constaté à
+      l'étape 2. Restent la part des veuves par âge et par génération
+      (graphiques 2 et 4), séries du classeur, aux référents, où la
+      réversion du modèle peut se confronter.
+    etape: 6
   "04":
     titre: "La revalorisation des pensions individuelles"
     page: 44
@@ -113,16 +121,20 @@ fiches:
     page: 54
     sources: ["EACR", "EIR", "ANCETRE", "Insee"]
     statut: a_tirer
-    au_depot: [drees_pension_nette, drees_eir_distribution, drees_eir_caracteristiques]
+    au_depot: [drees_pension_nette, drees_eir_distribution, drees_eir_caracteristiques, drees_eacr_tables]
     a_tirer: >-
-      La pension moyenne de droit direct de fin 2024, 1 752 euros bruts
-      et 1 626 euros nets (tableau 1), à porter à
-      `pensions_brutes_nettes.csv`, qui s'arrête aux montants de 2022,
-      avec son test ; puis, par régime (tableau 2) et par régime
-      principal (tableau 4, ANCETRE), confrontée à la pension que la
-      grille de la page Coût sert en 2024 (étape 4). La distribution et
-      la composition de la pension (tableau 3, graphique 4) sont celles
-      de l'EIR de 2020, que le dépôt lit déjà.
+      Le tableau 1 (1 752 euros bruts et 1 626 nets fin 2024) est celui
+      des retraités résidant en France ; `pensions_brutes_nettes.csv`
+      porte ceux qui résident en France ou à l'étranger, que la feuille
+      « F05_Tableau 1 compl_bis » du classeur redonne de 2008 à 2022 à
+      l'euro près, et prolonge : 1 608 et 1 693 euros bruts de droit
+      direct en 2023 et 2024, 1 495 et 1 573 nets ; 1 764 et 1 855 bruts
+      toutes pensions, 1 643 et 1 727 nets. Les porter déplace le taux
+      effectif de la page Coût (action 138, étape 3, que le propriétaire
+      mène) : à son accord, constaté à l'étape 2. Recoupé : la pension
+      moyenne hors majoration de 2024, 1 647 euros, celle de la table C.
+      Puis, par régime (tableaux 2 et 4), la confrontation à la grille de
+      la page Coût (étape 4).
     etape: 2
   "06":
     titre: "Les écarts de pensions de droit direct entre générations"
@@ -168,18 +180,22 @@ fiches:
     titre: "Les bénéficiaires d’un minimum de pension"
     page: 78
     sources: ["EACR", "EIR 2020"]
-    statut: a_tirer
+    statut: a_confronter
     au_depot: [drees_eacr]
     a_tirer: >-
-      Les parts de la génération 1953 au minimum de pension (EIR 2020,
-      tableaux 1 à 4), qui remplacent celles de l'édition 2018 (EIR 2012)
-      que cite `scripts/part_minimum_contributif.py` ; la part des
-      nouveaux retraités portés au minimum par régime jusqu'en 2024
-      (graphique 1, 17 % au régime général), recoupée à la feuille
-      E-Minima de l'EACR que le dépôt lit ; l'encadré 2, la majoration
-      exceptionnelle de la réforme de 2023, confronté au minimum
-      contributif du scénario 1.
-    etape: 2
+      Recoupée à l'étape 2 (`tests/test_drees_panorama_2024.py`) : la part des nouveaux retraités
+      portés au minimum (graphique 1), 17,4 % au régime général et 35,6 %
+      à la MSA salariés en 2024, celle de `minimum_contributif_liquidants.csv`
+      de 2020 à 2024 ; de 2012 à 2019, le panorama la dit de 0,2 à 1,1
+      point plus haute, un autre compte à éclaircir. Les parts de la
+      génération 1953 (EIR 2020, tableaux 1 à 4) ne remplacent pas celles
+      de l'édition 2018 que cite `scripts/part_minimum_contributif.py` : la
+      SSI est au régime général dans l'EIR 2020, et rien n'y distingue plus
+      les artisans ni les commerçants ; le graphique 1 donne ceux du RSI
+      jusqu'en 2012 (39,3 % et 47,1 % en 2011). Restent ces parts,
+      confrontées au minimum contributif du modèle, et l'encadré 2, la
+      majoration exceptionnelle de 2023, à l'étape 5.
+    etape: 4
   "09":
     titre: "Le niveau de vie des retraités"
     page: 88
@@ -206,13 +222,16 @@ fiches:
     statut: au_depot
     au_depot: [drees_comptes_protection_sociale]
     a_tirer: >-
-      Les 395 milliards d'euros de pensions de retraite de 2024, 13,5 %
-      du PIB (tableau 1, graphique 1), sont une part du risque
-      vieillesse-survie que `depenses_retraite.csv` porte entier, 426,7
-      milliards en 2024 : à recouper poste par poste, comme la
-      répartition par régime verseur (graphique 2) à
-      `depenses_retraite_regimes.csv`.
-    etape: 2
+      Recoupés à l'étape 2 (`tests/test_drees_panorama_2024.py`) : les 426,7 milliards d'euros de
+      prestations du risque vieillesse-survie de 2024 (encadré 1), le poste
+      E11-2 de `depenses_retraite.csv`. Les 395,3 milliards de pensions de
+      retraite des régimes obligatoires (tableau 1) en sont une part dont
+      le dépôt n'a pas les sous-postes ; leur répartition par régime
+      verseur (graphique 2) groupe les caisses autrement que
+      `depenses_retraite_regimes.csv` : ni l'une ni l'autre ne se
+      recoupent. Les sous-postes de l'encadré 1, s'ils viennent au dépôt,
+      le permettraient.
+    etape: 7
   "11":
     titre: "Les durées de carrière des retraités et la part des carrières complètes ou incomplètes"
     page: 106
@@ -286,16 +305,18 @@ fiches:
     titre: "L’âge moyen de départ à la retraite et son évolution"
     page: 138
     sources: ["EIR 2020", "EACR", "ANCETRE", "Insee"]
-    statut: a_tirer
-    au_depot: [drees_age_conjoncturel, drees_eir_generations]
+    statut: au_depot
+    au_depot: [drees_age_conjoncturel, drees_eir_generations, drees_panorama_retraites_2026_classeurs]
     a_tirer: >-
-      L'âge conjoncturel de départ de 2023 et de 2024, 62 ans et 11 mois
-      fin 2024 (graphique 1), à porter à `age_conjoncturel_depart.csv`,
-      qui s'arrête à 2022, avec son test ; l'âge conjoncturel par régime
-      (graphique 2), l'âge moyen par génération (graphiques 5 et 6) et
-      l'espérance de durée de retraite (graphique 7), confrontés aux
+      Porté à l'étape 2 : l'âge conjoncturel de départ de 2023 et 2024
+      (graphique 1), 62,95 ans fin 2024, « 62 ans et 11 mois », certifié
+      dans `age_conjoncturel_depart.csv` en appoint du jeu du portail, qui
+      s'arrête à 2022 ; le panorama révise de quelques centièmes des
+      années anciennes, qu'il ne touche pas. Restent l'âge conjoncturel par
+      régime (graphique 2), l'âge moyen par génération (graphiques 5 et 6)
+      et l'espérance de durée de retraite (graphique 7), confrontés aux
       départs du modèle.
-    etape: 2
+    etape: 4
   "16":
     titre: "La diversité des âges de départ à la retraite"
     page: 145
@@ -303,13 +324,14 @@ fiches:
     statut: au_depot
     au_depot: [drees_eacr_tables]
     a_tirer: >-
-      Les taux de retraités et de primo-liquidants par âge en 2024
-      (graphiques 1 à 4), que la table B de l'EACR porte et que
-      `test_controle_eacr.py` confronte déjà à la grille ; la répartition
-      de la génération 1953 par âge de première liquidation (tableaux 1
-      et 2, EIR 2020) et les départs après 67 ans (encadré 2), aux
-      référents.
-    etape: 2
+      Recoupée à l'étape 2 (`tests/test_drees_panorama_2024.py`) : la répartition des nouveaux
+      retraités de 2024 par âge (graphique 3), au régime général, aux deux
+      MSA et à la CNRACL, les liquidants de la table B au dixième près ; la
+      table B porte aussi les taux par âge (graphiques 1, 2 et 4), que
+      `test_controle_eacr.py` confronte à la grille. Restent la répartition
+      de la génération 1953 par âge de première liquidation (tableaux 1 et
+      2, EIR 2020) et les départs après 67 ans (encadré 2), aux référents.
+    etape: 6
   "17":
     titre: "Les taux de liquidation des pensions"
     page: 154
@@ -317,12 +339,15 @@ fiches:
     statut: au_depot
     au_depot: [drees_eacr_tables]
     a_tirer: >-
-      Le taux plein, la décote et la surcote par génération (graphiques 1
-      à 5), que la table H de l'EACR porte et que `test_controle_eacr.py`
-      confronte déjà ; reste à recouper les parts publiées pour la
-      génération 1953 (un peu moins de neuf sur dix sans décote, 11 %
-      avec, 15 % de surcote) aux mêmes données.
-    etape: 2
+      Recoupées à l'étape 2 (`tests/test_drees_panorama_2024.py`) : la décote et la surcote des
+      nouveaux retraités de 2024 (tableaux complémentaires du classeur),
+      au régime général, aux deux MSA et dans la fonction publique de
+      l'État, celles de la table H ; un écart déclaré, la surcote des
+      civils de l'État, 37,6 % au panorama, 38,9 % au cube du SRE de la
+      table H. Restent les parts de la génération 1953 (graphique 1, EIR
+      2020 : un peu moins de neuf sur dix sans décote, 11 % avec, 15 % de
+      surcote) et les séries par génération (graphiques 3 à 5).
+    etape: 6
   "18":
     titre: "Les départs anticipés à la retraite"
     page: 160
@@ -380,15 +405,18 @@ fiches:
     titre: "Les dispositifs de cumul d’une activité avec la retraite"
     page: 193
     sources: ["EACR", "CNAV", "Insee, enquête Emploi"]
-    statut: a_tirer
+    statut: au_depot
+    au_depot: [drees_panorama_retraites_2026_classeurs]
     a_tirer: >-
-      Les effectifs du cumul emploi-retraite de 2014 à 2024 (tableau 1,
-      619 000 cumulants en 2024) et de la retraite progressive en 2024
-      (tableau 2, environ 42 400 personnes fin 2024), que le dépôt n'a
-      pas : à `data/reference/macro/`, avec leur test ; ils serviront la
-      décision, laissée au propriétaire, sur la retraite progressive et
-      le cumul, que le code exclut aujourd'hui.
-    etape: 2
+      Porté à l'étape 2 : les cumulants de 2014 à 2024 (tableau 1, 619 000
+      en 2024, l'enquête Emploi, au niveau `haute`) et les bénéficiaires de
+      la retraite progressive par régime en 2015, 2023 et 2024 (tableau 2,
+      42 440 fin 2024, l'EACR), certifiés dans
+      `data/reference/macro/cumul_emploi_retraite.csv`, pour la décision,
+      laissée au propriétaire, sur la retraite progressive et le cumul, que
+      le code exclut. Reste la série du régime général depuis 2006
+      (graphique 1, recueil statistique de la Cnav).
+    etape: 6
   "23":
     titre: "Le profil des assurés cumulant emploi et retraite"
     page: 198
@@ -396,11 +424,14 @@ fiches:
     statut: a_tirer
     a_tirer: >-
       Le profil des cumulants — âge, catégorie, temps de travail
-      (tableaux 1 à 3) — et la part des retraités de la génération 1950
-      qui ont cumulé avant 67 ans, 21,4 % (tableaux 5 et 6), à
-      `data/reference/macro/` avec la fiche 22, pour la même décision du
-      propriétaire.
-    etape: 2
+      (tableaux 1 à 3, l'enquête Emploi de 2024) —, ceux de l'EACR dans un
+      même régime (tableau 4, lacunaire : le régime général n'y a rien
+      après 2022) et la part des retraités de la génération 1950 qui ont
+      cumulé avant 67 ans, 21,4 % (tableaux 5 et 6), à
+      `cumul_emploi_retraite.csv`, à côté de la fiche 22, pour la même
+      décision du propriétaire ; l'étape 2 l'a laissé aux séries du
+      classeur.
+    etape: 6
   "24":
     titre: "Les pensions d’invalidité"
     page: 207
@@ -415,15 +446,18 @@ fiches:
     titre: "Le profil des bénéficiaires d’une pension d’invalidité"
     page: 212
     sources: ["EACR 2015 à 2024", "Insee"]
-    statut: a_tirer
-    au_depot: [drees_pensionnes_2022]
+    statut: au_depot
+    au_depot: [drees_pensionnes_2022, drees_panorama_retraites_2026_classeurs]
     a_tirer: >-
-      Les 843 400 bénéficiaires d'une pension d'invalidité fin 2024, dont
-      106 000 nouveaux, par régime, par âge et par montant (tableaux 1 à
-      4, graphiques 1 et 2), de l'EACR de 2024, quand le dépôt ne lit que
-      les effectifs du 31 décembre 2022 (tables I et J) : la mise à jour,
-      montants compris, avec son test.
-    etape: 2
+      Porté à l'étape 2 : les bénéficiaires d'une pension d'invalidité de
+      2015 à 2024 et leur pension moyenne (graphique 1), puis, fin 2024,
+      par régime, leur nombre, 843 400, leur âge, la part des femmes
+      (tableau 1), les 105 800 nouveaux (tableau 2), la pension mensuelle,
+      900 euros (tableau 3) et la dépense, 9 110 millions (tableau 4),
+      certifiés dans `data/reference/macro/pensions_invalidite.csv` ; les
+      842 300 de 2022 sont la somme des caisses de la table I du témoin de
+      2022. Reste la répartition par âge (graphique 2 et son complément).
+    etape: 6
   "26":
     titre: "Le minimum vieillesse et l’allocation supplémentaire d’invalidité"
     page: 220
@@ -446,11 +480,12 @@ fiches:
     a_tirer: >-
       Les 754 460 allocataires de l'ASV ou de l'Aspa fin 2024, que le
       classeur de l'INSEE redonne à 552 près
-      (`allocataires_minimum_vieillesse.csv`) ; restent les 70 660
-      nouveaux allocataires et les dépenses (tableau 1, graphique 1), à
-      recouper aux classeurs du jeu `drees_minimum_vieillesse` du vivier,
-      dépouillé le 16 octobre 2026.
-    etape: 2
+      (`allocataires_minimum_vieillesse.csv`), sont recoupés par
+      `tests/test_recours_aspa.py` (action 138, étape 14). Restent les
+      70 660 nouveaux allocataires et les dépenses (tableau 1, graphique
+      1), que le dépôt ne lit pas encore : le jeu `drees_minimum_vieillesse`
+      du vivier, ou le classeur de la fiche ; l'étape 2 ne l'a pas fait.
+    etape: 6
   "28":
     titre: "Le profil des allocataires du minimum vieillesse"
     page: 231

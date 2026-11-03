@@ -448,3 +448,18 @@ def test_la_part_des_nouveaux_retraites_au_minimum_est_celle_de_l_eacr():
     for caisse, serie in PORTES_AU_MINIMUM.items():
         for annee, part in serie.items():
             assert parts[(caisse, annee)] == pytest.approx(part, abs=0.051), (caisse, annee)
+
+
+def test_la_pension_moyenne_du_depot_est_celle_du_panorama_jusqu_en_2022():
+    """Fiche 5, feuille « F05_Tableau 1 compl_bis » : la pension moyenne des
+    retraités résidant en France ou à l'étranger, le champ de
+    ``pensions_brutes_nettes.csv`` (le tableau 1 imprimé, page 55, est celui
+    des seuls résidents en France). Fin 2022, 1 565 euros bruts de droit
+    direct, 1 457 nets, 1 719 et 1 602 toutes pensions : les montants que le
+    dépôt certifie du tableau 2.1-a, comme ceux de 2008 à 2021. Le panorama
+    chiffre aussi 2023 et 2024, que le fichier n'a pas : les y porter attend
+    le propriétaire (note de l'étape 2)."""
+    lignes = _lire(MACRO / "pensions_brutes_nettes.csv")
+    valeurs = {(int(l["annee"]), l["indicateur"]): float(l["valeur"]) for l in lignes}
+    assert {indicateur: v for (annee, indicateur), v in valeurs.items() if annee == 2022} == {
+        "brute_directe": 1565, "nette_directe": 1457, "brute_totale": 1719, "nette_totale": 1602}

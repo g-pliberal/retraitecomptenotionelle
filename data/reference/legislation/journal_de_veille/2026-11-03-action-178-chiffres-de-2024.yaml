@@ -1,0 +1,23 @@
+date: "2026-11-03"
+session: "action 178, étape 2 : les chiffres de 2024 du panorama de la DREES, édition 2026, recoupés au dépôt et portés à data/reference/"
+consulte: >-
+  Aucune règle du scénario 1 n'est touchée : l'étape lit des statistiques. Le
+  PDF du panorama (miroir de l'UNSA, empreinte 9eb36a06…) par pdftotext
+  -layout, et les classeurs des fiches 1 à 3, 5, 6, 8, 10, 15 à 17, 19, 22,
+  23, 25 et 27 de l'archive de la release documents-apportes ; en regard, le
+  cadrage et les tables B, C, H et I de l'EACR que le dépôt lit, les comptes
+  de la protection sociale, minimum_contributif_liquidants.csv et
+  pensions_brutes_nettes.csv.
+trouve: >-
+  Les totaux de 2024 du panorama sont ceux de l'EACR et des comptes que lit le
+  dépôt : 17 298 000 retraités de droit direct, 858 000 liquidants, l'âge des
+  nouveaux retraités, leur décote et leur surcote, la part au minimum de 2020
+  à 2024, 426,7 milliards de prestations vieillesse-survie, les 842 300
+  pensionnés d'invalidité de 2022 ; un écart, la surcote des civils de l'État
+  (37,6 % contre 38,9 %). Le panorama apporte l'âge conjoncturel de 2023 et
+  2024, le cumul emploi-retraite, la retraite progressive et l'invalidité de
+  2024, certifiés au dépôt.
+reste: >-
+  La décision du propriétaire sur les montants de 2023 et 2024 de
+  pensions_brutes_nettes.csv, qui déplacent le taux effectif de la page Coût
+  (action 138, étape 3) ; ce que le suivi renvoie aux étapes 4, 5 et 6.
