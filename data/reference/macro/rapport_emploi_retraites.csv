@@ -1,0 +1,93 @@
+# Les personnes en emploi et les retraités de droit direct, 2004-2024
+# source_id: drees_panorama_retraites_2026_classeurs
+# unite: milliers
+# fiabilite:
+#   certifiee : retraites_milliers et retraites_france_milliers, fiche 1,
+#             graphique 1, du panorama de la DREES « Les retraités et les
+#             retraites », édition 2026 (l'EIR, le modèle Ancetre) ;
+#   haute : emploi_interieur_milliers, que la DREES reprend des comptes
+#           nationaux de l'INSEE. Lus dans le classeur de la fiche par
+#           scripts/fetch/drees_panorama_classeurs.py et recontrôlés par
+#           scripts/verifier_donnees.py.
+#
+# `indicateur` : retraites_milliers, les retraités de droit direct
+# vivants au 31 décembre, résidant en France ou à l'étranger (la ligne
+# « Tous régimes » de effectifs_retraites.csv) ; retraites_france_milliers,
+# ceux qui résident en France ; emploi_interieur_milliers. Le rapport
+# du graphique, 1,77 personne en emploi par retraité en 2024, est
+# emploi_interieur_milliers / retraites_milliers. La DREES dit fragiles
+# les retraités de 2018 et 2019, tirés d'Ancetre, et revus à la baisse,
+# en 2020, ceux qui résident à l'étranger : une rupture de série.
+#
+# À QUOI CETTE SÉRIE SERT
+# ------------------------
+# Aux référents : le rapport entre personnes en emploi et retraités que
+# la DREES observe, et les retraités qui résident en France ; aucun
+# calcul du site ne la lit (action 178, étape 6).
+#
+# Ne pas modifier les valeurs certifiées à la main : elles seraient
+# écrasées au prochain scripts/verifier_donnees.py --appliquer.
+annee,indicateur,valeur,fiabilite
+2004,emploi_interieur_milliers,26232.4,haute
+2004,retraites_france_milliers,12066,certifiee
+2004,retraites_milliers,12961,certifiee
+2005,emploi_interieur_milliers,26413.4,haute
+2005,retraites_france_milliers,12346,certifiee
+2005,retraites_milliers,13263,certifiee
+2006,emploi_interieur_milliers,26702.3,haute
+2006,retraites_france_milliers,12706,certifiee
+2006,retraites_milliers,13636,certifiee
+2007,emploi_interieur_milliers,27089.4,haute
+2007,retraites_france_milliers,13076,certifiee
+2007,retraites_milliers,14022,certifiee
+2008,emploi_interieur_milliers,27227.5,haute
+2008,retraites_france_milliers,13434,certifiee
+2008,retraites_milliers,14418,certifiee
+2009,emploi_interieur_milliers,26922.3,haute
+2009,retraites_france_milliers,13729,certifiee
+2009,retraites_milliers,14743,certifiee
+2010,emploi_interieur_milliers,26948.3,haute
+2010,retraites_france_milliers,14047,certifiee
+2010,retraites_milliers,15082,certifiee
+2011,emploi_interieur_milliers,27155.6,haute
+2011,retraites_france_milliers,14173,certifiee
+2011,retraites_milliers,15291,certifiee
+2012,emploi_interieur_milliers,27253.2,haute
+2012,retraites_france_milliers,14239,certifiee
+2012,retraites_milliers,15349,certifiee
+2013,emploi_interieur_milliers,27305.1,haute
+2013,retraites_france_milliers,14517,certifiee
+2013,retraites_milliers,15629,certifiee
+2014,emploi_interieur_milliers,27452,haute
+2014,retraites_france_milliers,14718,certifiee
+2014,retraites_milliers,15828,certifiee
+2015,emploi_interieur_milliers,27521.2,haute
+2015,retraites_france_milliers,14873,certifiee
+2015,retraites_milliers,15980,certifiee
+2016,emploi_interieur_milliers,27719.7,haute
+2016,retraites_france_milliers,14913,certifiee
+2016,retraites_milliers,16135,certifiee
+2017,emploi_interieur_milliers,28046.8,haute
+2017,retraites_france_milliers,15090,certifiee
+2017,retraites_milliers,16252,certifiee
+2018,emploi_interieur_milliers,28327.8,haute
+2018,retraites_france_milliers,15346,certifiee
+2018,retraites_milliers,16496,certifiee
+2019,emploi_interieur_milliers,28662,haute
+2019,retraites_france_milliers,15582,certifiee
+2019,retraites_milliers,16712,certifiee
+2020,emploi_interieur_milliers,28645.3,haute
+2020,retraites_france_milliers,15706,certifiee
+2020,retraites_milliers,16674,certifiee
+2021,emploi_interieur_milliers,29395.2,haute
+2021,retraites_france_milliers,15869,certifiee
+2021,retraites_milliers,16801,certifiee
+2022,emploi_interieur_milliers,30063.9,haute
+2022,retraites_france_milliers,16062,certifiee
+2022,retraites_milliers,16975,certifiee
+2023,emploi_interieur_milliers,30394.8,haute
+2023,retraites_france_milliers,16296,certifiee
+2023,retraites_milliers,17184,certifiee
+2024,emploi_interieur_milliers,30623.3,haute
+2024,retraites_france_milliers,16429,certifiee
+2024,retraites_milliers,17298,certifiee

@@ -1441,7 +1441,10 @@ institutions:
           data/reference/macro/pensions_invalidite_age.csv,
           data/reference/macro/minimum_vieillesse_regimes.csv,
           data/reference/macro/minimum_vieillesse_effectifs.csv,
-          data/reference/macro/cumul_emploi_retraite_profil.csv
+          data/reference/macro/cumul_emploi_retraite_profil.csv,
+          data/reference/macro/rapport_emploi_retraites.csv,
+          data/reference/macro/retraites_generations.csv,
+          data/reference/macro/reversion_beneficiaires.csv
         recuperation: scripts/fetch/drees_panorama_classeurs.py
         contenu:
           vue_d_ensemble.xlsx:

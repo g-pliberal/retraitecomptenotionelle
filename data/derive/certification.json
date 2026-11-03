@@ -1794,6 +1794,28 @@
    "valeurs": 516,
    "verifiee_le": "2026-10-11"
   },
+  "rapport_emploi_retraites": {
+   "ajoutees": 0,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "5283f73304d41e75",
+   "identiques": 42,
+   "niveau": "certifiee",
+   "source": "DREES, panorama « Les retraités et les retraites » 2026, fiche 1, graphique 1",
+   "valeurs": 42,
+   "verifiee_le": "2026-11-03"
+  },
+  "rapport_emploi_retraites_emploi": {
+   "ajoutees": 0,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "207fe4b5953f08e8",
+   "identiques": 21,
+   "niveau": "haute",
+   "source": "DREES, panorama « Les retraités et les retraites » 2026, fiche 1, graphique 1 (INSEE, comptes nationaux)",
+   "valeurs": 21,
+   "verifiee_le": "2026-11-03"
+  },
   "ressources_eec_retraite": {
    "ajoutees": 0,
    "colonne": "part_pib",
@@ -1827,6 +1849,28 @@
    "valeurs": 33,
    "verifiee_le": "2026-11-03"
   },
+  "retraites_generations": {
+   "ajoutees": 627,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "10d50573679dba0c",
+   "identiques": 0,
+   "niveau": "certifiee",
+   "source": "DREES, panorama « Les retraités et les retraites » 2026, fiches 1, 16 et 17 (EIR 2020, EACR)",
+   "valeurs": 627,
+   "verifiee_le": "2026-11-03"
+  },
+  "retraites_generations_ancetre": {
+   "ajoutees": 12,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "3aac72ae907f2590",
+   "identiques": 0,
+   "niveau": "haute",
+   "source": "DREES, panorama « Les retraités et les retraites » 2026, fiche 1, graphique 3 (modèle Ancetre)",
+   "valeurs": 12,
+   "verifiee_le": "2026-11-03"
+  },
   "retraites_regimes": {
    "ajoutees": 1284,
    "colonne": "retraites",
@@ -1848,6 +1892,17 @@
    "source": "INSEE, Emploi et revenus des indépendants 2025, fiches 1.3 et 1.6",
    "valeurs": 78,
    "verifiee_le": "2026-10-17"
+  },
+  "reversion_beneficiaires": {
+   "ajoutees": 0,
+   "colonne": "part_pct",
+   "corrigees": 0,
+   "empreinte": "dd72e36a1da14399",
+   "identiques": 78,
+   "niveau": "certifiee",
+   "source": "DREES, panorama « Les retraités et les retraites » 2026, fiche 3, graphiques 2 et 4",
+   "valeurs": 78,
+   "verifiee_le": "2026-11-03"
   },
   "salaire_moyen": {
    "ajoutees": 0,

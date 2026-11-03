@@ -23,6 +23,16 @@ que ``scripts/verifier_donnees.py`` confronte aux fichiers de référence :
   bénéficiaires d'une pension d'invalidité de droit direct depuis 2015, et,
   fin 2024, par régime, leur âge, leurs nouveaux, leur pension, leur dépense.
 
+Puis les séries des graphiques et des tableaux que le PDF ne chiffre pas
+(étape 6) : ``retraite_progressive_cnav`` (fiche 22, graphique 1, depuis
+1989) ; ``invalidite_par_age`` (fiche 25, graphique 2 et son complément) ;
+``minimum_vieillesse_regimes`` et ``minimum_vieillesse_effectifs`` (fiche 27,
+tableau 1 et graphique 1) ; ``cumul_profil`` (fiche 23) ;
+``rapport_emploi_retraites`` (fiche 1, graphique 1) ; ``retraites_generations``
+(fiches 1, 16 et 17 : polypension, âge et taux de liquidation par génération) ;
+``reversion`` (fiche 3, graphiques 2 et 4). Les séries à plusieurs clés
+s'écrivent en listes, chaque élément ses clés puis sa valeur.
+
 Une feuille se lit par ses libellés : la colonne d'une grandeur est celle dont
 l'en-tête la nomme, la ligne d'un régime celle qui porte son nom, et un
 libellé qui manque arrête la lecture au lieu de prendre la case voisine. Une
@@ -251,6 +261,19 @@ def _annee_du_titre(grille: dict, debut: str) -> str:
             if annees:
                 return annees[-1]
     raise FeuilleIllisible(f"aucune année au titre « {debut} »")
+
+
+def _generation_du_titre(grille: dict, debut: str) -> str:
+    """La génération que nomme le titre qui commence par ``debut`` (« … nés
+    en », « … née en ») : l'année qui le suit, non l'échantillon qui clôt le
+    titre (« …, en 2020 »)."""
+    for valeur in grille.values():
+        texte = _texte(valeur) if isinstance(valeur, str) else ""
+        if texte.startswith(debut):
+            trouve = re.match(r"\s*((?:19|20)\d\d)\b", texte[len(debut):])
+            if trouve:
+                return trouve.group(1)
+    raise FeuilleIllisible(f"aucune génération après « {debut} »")
 
 
 def lire_retraite_progressive_cnav(grille: dict) -> dict[str, float]:
@@ -610,6 +633,252 @@ def lire_cumul_generation_1950(regimes: dict, fonction_publique: dict) -> dict[t
     return lu
 
 
+# ---------------------------------------------------------------------------
+# Les séries que le suivi porte aux référents : fiches 1, 3, 16 et 17
+# ---------------------------------------------------------------------------
+
+SEXES_EN_TETE = tuple(SEXES.items())
+AGES_PREMIERE_1953 = (
+    ("Moins de 55 ans", "moins_55"), ("55 ans", "55"), ("56-59 ans", "56_59"), ("60 ans", "60"),
+    ("61 ans", "61"), ("62 ans", "62"), ("63-65 ans", "63_65"), ("66 ans", "66"),
+    ("67 ans ou plus", "67_plus"), ("Âge moyen", "age_moyen"),
+)
+AGES_PREMIERE_GENERATIONS = (
+    ("Moins de 55 ans", "moins_55"), ("55 ans", "55"), ("56-59 ans", "56_59"), ("60 ans", "60"),
+    ("61 ans", "61"), ("62 ans", "62"), ("63-64 ans", "63_64"), ("65 ans", "65"),
+    ("66 ans ou plus", "66_plus"),
+)
+#: Fiche 16, tableau 2 : les en-têtes d'âge sont des textes ou des nombres.
+AGES_REGIME_PRINCIPAL = (
+    ("Moins de 55", "moins_55"), ("55", "55"), ("56-59", "56_59"), ("60", "60"), ("61", "61"),
+    ("62", "62"), ("63-65", "63_65"), ("66", "66"), ("67 ou plus", "67_plus"),
+)
+REGIMES_PRINCIPAUX = (
+    ("Régime général", "regime_general"), ("MSA salariés", "msa_salaries"),
+    ("FPE civils", "fonction_publique_etat_civile"), ("FPE militaires", "fonction_publique_etat_militaire"),
+    ("CNRACL", "cnracl"), ("Régimes spéciaux", "regimes_speciaux"),
+    ("MSA non-salariés", "msa_exploitants"), ("Professions libérales", "professions_liberales"),
+    ("Ensemble", "ensemble"),
+)
+MOTIFS_TAUX = (
+    ("Départ avec décote", "decote"), ("Départ au taux plein, dont", "taux_plein"),
+    ("Décote non applicable", "decote_non_applicable"),
+    ("Départ au taux plein par l'âge", "taux_plein_age"), ("Ex-invalidité", "ex_invalidite"),
+    ("Inaptitude au travail", "inaptitude"), ("Départ au taux plein pour autre motif", "autre_motif"),
+    ("Départ au taux plein (sans surcote) par la durée", "taux_plein_duree"),
+    ("Départ avec surcote", "surcote"),
+)
+REGIMES_DECOTE = (
+    ("Régime général", "regime_general"), ("MSA salariés", "msa_salaries"),
+    ("MSA non-salariés", "msa_exploitants"), ("FPE civils", "fonction_publique_etat_civile"),
+    ("CNRACL", "cnracl"), ("Tous régimes", "tous_regimes"),
+)
+
+
+def _lignes(grille: dict, table=None) -> dict[int, str]:
+    """Les lignes de données : celles dont la première case commence par un
+    libellé de ``table``, ou, sans elle, porte une année ou une génération."""
+    if table is None:
+        return {l: str(annee(v)) for (l, c), v in grille.items() if c == 1 and annee(v)}
+    return {l: cle for (l, c), v in grille.items() if c == 1 and (cle := _cle(v, table))}
+
+
+def _entetes(grille: dict, table, premiere: int, *, apres: int = 1,
+             avant: int = 10 ** 6) -> dict[int, str]:
+    """Les colonnes, entre ``apres`` et ``avant``, dont l'en-tête, au-dessus de
+    la ligne ``premiere``, commence par un libellé de ``table``."""
+    return {c: cle for (l, c), v in grille.items()
+            if l < premiere and apres < c < avant and (cle := _cle(v, table))}
+
+
+def _generations_en_tete(grille: dict, premiere: int) -> dict[int, str]:
+    return {c: str(annee(v)) for (l, c), v in grille.items() if l < premiere and c > 1 and annee(v)}
+
+
+def _cases(grille: dict, lignes: dict[int, str], colonnes: dict[int, str]) -> dict[tuple, float]:
+    """{(clé de ligne, clé de colonne): valeur}, une case non numérique omise."""
+    if not lignes or not colonnes:
+        raise FeuilleIllisible("aucune ligne ou aucune colonne reconnue")
+    lu = {}
+    for ligne, cle_ligne in lignes.items():
+        for colonne, cle_colonne in colonnes.items():
+            valeur = nombre(grille.get((ligne, colonne), ""))
+            if valeur is not None:
+                lu[(cle_ligne, cle_colonne)] = valeur
+    return lu
+
+
+def _exiger(colonnes: dict, attendues: set, feuille: str) -> dict:
+    if not attendues <= set(colonnes.values()):
+        raise FeuilleIllisible(f"{feuille} : il manque {sorted(attendues - set(colonnes.values()))}")
+    return colonnes
+
+
+def lire_rapport_emploi_retraites(grille: dict) -> dict[str, dict[str, float]]:
+    """Fiche 1, graphique 1 : les retraités de droit direct, résidant en
+    France ou à l'étranger puis en France seulement, et l'emploi intérieur,
+    en milliers, une ligne par année ; le rapport, qu'ils donnent, ne se lit
+    pas."""
+    _verifier_titre(grille, "Graphique 1. Rapport entre les effectifs de personnes en emploi")
+    retraites = _colonne(grille, "Effectifs de retraités de droits directs")
+    emploi = _colonne(grille, "Emploi intérieur")
+    lignes = _lignes(grille)
+    colonnes = _entetes(grille, (("Résidant en France ou à l'étranger", "retraites_milliers"),
+                                 ("Résidant en France uniquement", "retraites_france_milliers")),
+                        min(lignes, default=0), apres=retraites - 1, avant=emploi)
+    colonnes[emploi] = "emploi_interieur_milliers"
+    _exiger(colonnes, {"retraites_milliers", "retraites_france_milliers"}, "fiche 1, graphique 1")
+    lu: dict[str, dict[str, float]] = {}
+    for (an, nom), valeur in _cases(grille, lignes, colonnes).items():
+        lu.setdefault(an, {})[nom] = valeur
+    return lu
+
+
+def lire_polypensionnes(grille: dict) -> dict[tuple, float]:
+    """Fiche 1, graphique 3 : la part des polypensionnés par génération et
+    par sexe."""
+    _verifier_titre(grille, "Graphique 3. Part des polypensionnés, par génération et par sexe")
+    lignes = _lignes(grille)
+    colonnes = _exiger(_entetes(grille, SEXES_EN_TETE, min(lignes, default=0)),
+                       set(SEXES.values()), "fiche 1, graphique 3")
+    return {(generation, "polypension", "tous_regimes", "ensemble", sexe, "part_pct"): valeur
+            for (generation, sexe), valeur in _cases(grille, lignes, colonnes).items()}
+
+
+def lire_age_premiere_liquidation(tableau: dict, graphique: dict) -> dict[tuple, float]:
+    """Fiche 16, tableau 1 : les nés en 1953 par âge à la première
+    liquidation, par sexe — la colonne « Ensemble » de chaque sexe ; les
+    résidents en France et à l'étranger ne se lisent pas —, et leur âge
+    moyen ; graphique 5 : les générations d'avant, que le tableau complète."""
+    titre = "Tableau 1. Répartition des retraités nés en"
+    _verifier_titre(tableau, titre)
+    _verifier_titre(graphique, "Graphique 5. Répartition des retraités, selon la génération et "
+                               "l’âge à la première liquidation")
+    generation = _generation_du_titre(tableau, titre)
+    lignes = _lignes(tableau, AGES_PREMIERE_1953)
+    premiere = min(lignes, default=0)
+    groupes = {_colonne(tableau, "Femmes", exact=True): "F",
+               _colonne(tableau, "Hommes", exact=True): "H"}
+    ligne_groupes = min(l for (l, c), v in tableau.items() if c in groupes and _texte(v) == "Femmes")
+    colonnes = {}
+    for (l, c), v in tableau.items():
+        if l < premiere and isinstance(v, str) and _texte(v) == "Ensemble":
+            gauche = [g for g in groupes if g <= c]
+            colonnes[c] = "ensemble" if l == ligne_groupes else groupes[max(gauche)] if gauche else None
+    _exiger(colonnes, set(SEXES.values()), "fiche 16, tableau 1")
+    champ = ("age_premiere_liquidation", "tous_regimes")
+    lu = {}
+    for (modalite, sexe), valeur in _cases(tableau, lignes, colonnes).items():
+        if modalite == "age_moyen":
+            lu[(generation, *champ, "ensemble", sexe, "age_moyen")] = valeur
+        else:
+            lu[(generation, *champ, modalite, sexe, "part_pct")] = valeur
+    lignes = _lignes(graphique, AGES_PREMIERE_GENERATIONS)
+    colonnes = _generations_en_tete(graphique, min(lignes, default=0))
+    for (modalite, autre), valeur in _cases(graphique, lignes, colonnes).items():
+        if autre != generation:
+            lu[(autre, *champ, modalite, "ensemble", "part_pct")] = valeur
+    return lu
+
+
+def lire_liquidation_regime_principal(grille: dict) -> dict[tuple, float]:
+    """Fiche 16, tableau 2 : les nés en 1953 par régime principal — l'âge
+    moyen de liquidation dans ce régime, avec et sans les départs avant l'âge
+    d'ouverture des droits, la répartition par âge, la part parmi les
+    retraités."""
+    titre = "Tableau 2. Âge de départ à la retraite et répartition des retraités nés en"
+    _verifier_titre(grille, titre)
+    generation = _generation_du_titre(grille, titre)
+    lignes = _lignes(grille, REGIMES_PRINCIPAUX)
+    premiere = min(lignes, default=0)
+    age = _colonne(grille, "Âge moyen à la liquidation")
+    repartition = _colonne(grille, "Répartition par âge")
+    part = _colonne(grille, "Part parmi les retraités")
+    colonnes = {c: ("ensemble", nom) for c, nom in _entetes(
+        grille, (("Ensemble", "age_moyen"),
+                 ("Après neutralisation des départs avant", "age_moyen_hors_departs_avant_aod")),
+        premiere, apres=age - 1, avant=repartition).items()}
+    colonnes.update({c: (modalite, "part_pct") for c, modalite in _entetes(
+        grille, AGES_REGIME_PRINCIPAL, premiere, apres=repartition - 1, avant=part).items()})
+    colonnes[part] = ("ensemble", "part_retraites_pct")
+    return {(generation, "age_liquidation_regime_principal", regime, modalite, "ensemble", nom): v
+            for (regime, (modalite, nom)), v in _cases(grille, lignes, colonnes).items()}
+
+
+def lire_taux_liquidation(generation_seule: dict, generations: dict) -> dict[tuple, float]:
+    """Fiche 17, graphique 1 : les nés en 1953 par taux de liquidation et
+    motif du taux plein, par sexe (les colonnes de résidence ne se lisent
+    pas) ; graphique 3 : les générations d'avant, une par colonne."""
+    titre = "Graphique 1. Répartition des retraités de la génération née en"
+    _verifier_titre(generation_seule, titre)
+    _verifier_titre(generations, "Graphique 3. Répartition des retraités, selon la génération et "
+                                 "le taux de liquidation")
+    generation = _generation_du_titre(generation_seule, titre)
+    champ = ("taux_liquidation", "tous_regimes")
+    lignes = _lignes(generation_seule, MOTIFS_TAUX)
+    colonnes = _exiger(_entetes(generation_seule, SEXES_EN_TETE, min(lignes, default=0)),
+                       set(SEXES.values()), "fiche 17, graphique 1")
+    lu = {(generation, *champ, motif, sexe, "part_pct"): valeur
+          for (motif, sexe), valeur in _cases(generation_seule, lignes, colonnes).items()}
+    lignes = _lignes(generations, MOTIFS_TAUX)
+    colonnes = _generations_en_tete(generations, min(lignes, default=0))
+    lu.update({(autre, *champ, motif, "ensemble", "part_pct"): valeur
+               for (motif, autre), valeur in _cases(generations, lignes, colonnes).items()})
+    return lu
+
+
+def lire_decote_surcote(decote: dict, surcote: dict) -> dict[tuple, float]:
+    """Fiche 17, graphiques 4 et 5 : la part des retraités partis avec une
+    décote, puis avec une surcote, par génération et par régime."""
+    lu = {}
+    for grille, nom in ((decote, "decote"), (surcote, "surcote")):
+        _verifier_titre(grille, "Graphique {}. Part des retraités ayant liquidé leurs droits avec "
+                                "une {}".format(4 if nom == "decote" else 5,
+                                                "décote" if nom == "decote" else nom))
+        lignes = _lignes(grille)
+        colonnes = _exiger(_entetes(grille, REGIMES_DECOTE, min(lignes, default=0)),
+                           {"regime_general", "tous_regimes"}, f"fiche 17, {nom}")
+        lu.update({(generation, nom, regime, "ensemble", "ensemble", "part_pct"): valeur
+                   for (generation, regime), valeur in _cases(grille, lignes, colonnes).items()})
+    return lu
+
+
+def _groupe(libelle) -> str | None:
+    """« De 1936 à 1940 » → 1936_1940, « Avant 1935 » → avant_1935 ;
+    « 50 à 54 ans » → 50_54, « Moins de 50 ans » → moins_50."""
+    texte = _texte(libelle) if isinstance(libelle, str) else ""
+    if trouve := re.fullmatch(r"(?:De )?(\d+) à (\d+)(?: ans)?", texte):
+        return f"{trouve.group(1)}_{trouve.group(2)}"
+    if trouve := re.fullmatch(r"(Avant|Moins de) (\d+)(?: ans)?", texte):
+        return f"{'avant' if trouve.group(1) == 'Avant' else 'moins'}_{trouve.group(2)}"
+    return None
+
+
+def lire_reversion(femmes: dict, generations: dict) -> dict[tuple, float]:
+    """Fiche 3, graphique 2 : la part des femmes de 60 ans ou plus résidant
+    en France qui touchent une réversion, avec ou sans droit direct, par
+    année ; graphique 4 : la part des personnes qui en ont touché une, par
+    groupe de générations et par âge."""
+    _verifier_titre(femmes, "Graphique 2. Part des retraitées d’une pension de droit dérivé parmi "
+                            "les femmes âgées de 60 ans ou plus")
+    _verifier_titre(generations, "Graphique 4. Part des personnes bénéficiant d’une pension de "
+                                 "droit dérivé, selon l’âge et la génération")
+    lignes = _lignes(femmes)
+    colonnes = _exiger(_entetes(femmes, (
+        ("Bénéficiaires d'une pension de droit dérivé cumulée", "reversion_et_droit_direct"),
+        ("Bénéficiaires d'une pension de droit dérivé seule", "reversion_seule")),
+        min(lignes, default=0)), {"reversion_et_droit_direct", "reversion_seule"},
+        "fiche 3, graphique 2")
+    lu = {("femmes_60_plus", an, modalite, "part_pct"): valeur
+          for (an, modalite), valeur in _cases(femmes, lignes, colonnes).items()}
+    lignes = {l: cle for (l, c), v in generations.items() if c == 1 and (cle := _groupe(v))}
+    colonnes = {c: cle for (l, c), v in generations.items()
+                if l < min(lignes, default=0) and c > 1 and (cle := _groupe(v))}
+    lu.update({("generations", groupe, age, "part_pct"): valeur
+               for (groupe, age), valeur in _cases(generations, lignes, colonnes).items()})
+    return lu
+
+
 def _jeu() -> dict:
     import yaml
 
@@ -632,7 +901,11 @@ def _classeur(archive: zipfile.ZipFile, jeu: dict, nom: str) -> dict:
 def lire(chemin: Path, jeu: dict) -> dict:
     """Les séries de l'archive, chaque classeur vérifié à son empreinte."""
     with zipfile.ZipFile(chemin) as archive:
+        f01 = _classeur(archive, jeu, "fiche_01.xlsx")
+        f03 = _classeur(archive, jeu, "fiche_03.xlsx")
         f15 = _classeur(archive, jeu, "fiche_15.xlsx")
+        f16 = _classeur(archive, jeu, "fiche_16.xlsx")
+        f17 = _classeur(archive, jeu, "fiche_17.xlsx")
         f22 = _classeur(archive, jeu, "fiche_22.xlsx")
         f23 = _classeur(archive, jeu, "fiche_23.xlsx")
         f25 = _classeur(archive, jeu, "fiche_25.xlsx")
@@ -658,6 +931,16 @@ def lire(chemin: Path, jeu: dict) -> dict:
             **lire_cumul_meme_regime(f23["F23_Tableau 4"], f23["F23_Graphique 1"]),
             **lire_cumul_generation_1950(f23["F23_Tableau 5"], f23["F23_Tableau 6"]),
         }.items())],
+        "rapport_emploi_retraites": lire_rapport_emploi_retraites(f01["F01_Graphique 1"]),
+        "retraites_generations": [[*cle, valeur] for cle, valeur in sorted({
+            **lire_polypensionnes(f01["F01_Graphique 3"]),
+            **lire_age_premiere_liquidation(f16["F16_Tableau 1"], f16["F16_Graphique 5"]),
+            **lire_liquidation_regime_principal(f16["F16_Tableau 2"]),
+            **lire_taux_liquidation(f17["F17_Graphique 1"], f17["F17_Graphique 3"]),
+            **lire_decote_surcote(f17["F17_Graphique 4"], f17["F17_Graphique 5"]),
+        }.items())],
+        "reversion": [[*cle, valeur] for cle, valeur in sorted(
+            lire_reversion(f03["F03_Graphique 2"], f03["F03_Graphique 4"]).items())],
     }
 
 

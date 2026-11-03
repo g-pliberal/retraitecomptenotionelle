@@ -1,0 +1,109 @@
+# Les bénéficiaires d'une pension de réversion, en part de la population
+# source_id: drees_panorama_retraites_2026_classeurs
+# unite: pour cent
+# fiabilite:
+#   certifiee : fiche 3, graphiques 2 et 4, du panorama de la DREES
+#             « Les retraités et les retraites », édition 2026 (l'EIR, le
+#             modèle Ancetre, la population de l'INSEE), lus dans le
+#             classeur de la fiche par
+#             scripts/fetch/drees_panorama_classeurs.py et recontrôlés
+#             par scripts/verifier_donnees.py.
+#
+# champ femmes_60_plus : `periode`, l'année, de 2004 à 2024 ; `modalite`,
+#   reversion_et_droit_direct ou reversion_seule — la part des femmes de
+#   60 ans ou plus résidant en France, vivantes au 31 décembre (graphique
+#   2) ;
+# champ generations : `periode`, le groupe de générations (avant_1935,
+#   puis 1936_1940 à 1966_1970 ; 1935 est donc du premier) ; `modalite`,
+#   la tranche d'âge (moins_50, 50_54 à 80_84) — la part des personnes
+#   vivantes fin 2020 qui ont touché une réversion à cet âge, sans tenir
+#   compte de la mortalité différentielle (graphique 4, l'EIR de 2020).
+#
+# À QUOI CETTE SÉRIE SERT
+# ------------------------
+# Aux référents : la réversion du dépôt n'est qu'une masse
+# (droits_derives.csv) ; ces parts disent qui la touche, à quel âge et
+# dans quelle génération, de quoi confronter celle que le modèle
+# calculera ; aucun calcul du site ne la lit (action 178, étape 6).
+#
+# Ne pas modifier les valeurs certifiées à la main : elles seraient
+# écrasées au prochain scripts/verifier_donnees.py --appliquer.
+champ,periode,modalite,part_pct,fiabilite
+femmes_60_plus,2004,reversion_et_droit_direct,33.7,certifiee
+femmes_60_plus,2004,reversion_seule,7,certifiee
+femmes_60_plus,2005,reversion_et_droit_direct,33.8,certifiee
+femmes_60_plus,2005,reversion_seule,6.8,certifiee
+femmes_60_plus,2006,reversion_et_droit_direct,33.5,certifiee
+femmes_60_plus,2006,reversion_seule,6.7,certifiee
+femmes_60_plus,2007,reversion_et_droit_direct,33.2,certifiee
+femmes_60_plus,2007,reversion_seule,6.5,certifiee
+femmes_60_plus,2008,reversion_et_droit_direct,32.5,certifiee
+femmes_60_plus,2008,reversion_seule,5.5,certifiee
+femmes_60_plus,2009,reversion_et_droit_direct,32.5,certifiee
+femmes_60_plus,2009,reversion_seule,5.3,certifiee
+femmes_60_plus,2010,reversion_et_droit_direct,32.4,certifiee
+femmes_60_plus,2010,reversion_seule,5.3,certifiee
+femmes_60_plus,2011,reversion_et_droit_direct,31.6,certifiee
+femmes_60_plus,2011,reversion_seule,5.1,certifiee
+femmes_60_plus,2012,reversion_et_droit_direct,30.7,certifiee
+femmes_60_plus,2012,reversion_seule,4,certifiee
+femmes_60_plus,2013,reversion_et_droit_direct,30.8,certifiee
+femmes_60_plus,2013,reversion_seule,4.1,certifiee
+femmes_60_plus,2014,reversion_et_droit_direct,30.3,certifiee
+femmes_60_plus,2014,reversion_seule,4.1,certifiee
+femmes_60_plus,2015,reversion_et_droit_direct,29.9,certifiee
+femmes_60_plus,2015,reversion_seule,4.1,certifiee
+femmes_60_plus,2016,reversion_et_droit_direct,29.1,certifiee
+femmes_60_plus,2016,reversion_seule,3.3,certifiee
+femmes_60_plus,2017,reversion_et_droit_direct,28.5,certifiee
+femmes_60_plus,2017,reversion_seule,3.5,certifiee
+femmes_60_plus,2018,reversion_et_droit_direct,28.2,certifiee
+femmes_60_plus,2018,reversion_seule,3.5,certifiee
+femmes_60_plus,2019,reversion_et_droit_direct,27.7,certifiee
+femmes_60_plus,2019,reversion_seule,3.6,certifiee
+femmes_60_plus,2020,reversion_et_droit_direct,28.2,certifiee
+femmes_60_plus,2020,reversion_seule,3,certifiee
+femmes_60_plus,2021,reversion_et_droit_direct,27.9,certifiee
+femmes_60_plus,2021,reversion_seule,3,certifiee
+femmes_60_plus,2022,reversion_et_droit_direct,27.5,certifiee
+femmes_60_plus,2022,reversion_seule,3,certifiee
+femmes_60_plus,2023,reversion_et_droit_direct,27.1,certifiee
+femmes_60_plus,2023,reversion_seule,3,certifiee
+femmes_60_plus,2024,reversion_et_droit_direct,26.8,certifiee
+femmes_60_plus,2024,reversion_seule,3.1,certifiee
+generations,1936_1940,50_54,4,certifiee
+generations,1936_1940,55_59,7.4,certifiee
+generations,1936_1940,60_64,11.5,certifiee
+generations,1936_1940,65_69,16.5,certifiee
+generations,1936_1940,70_74,22.4,certifiee
+generations,1936_1940,75_79,30,certifiee
+generations,1936_1940,moins_50,1.5,certifiee
+generations,1941_1945,50_54,3.1,certifiee
+generations,1941_1945,55_59,6.4,certifiee
+generations,1941_1945,60_64,10.1,certifiee
+generations,1941_1945,65_69,14.1,certifiee
+generations,1941_1945,70_74,19.3,certifiee
+generations,1941_1945,moins_50,1.3,certifiee
+generations,1946_1950,50_54,2.2,certifiee
+generations,1946_1950,55_59,5.9,certifiee
+generations,1946_1950,60_64,9.2,certifiee
+generations,1946_1950,65_69,12.9,certifiee
+generations,1946_1950,moins_50,1.1,certifiee
+generations,1951_1955,50_54,2.6,certifiee
+generations,1951_1955,55_59,5.5,certifiee
+generations,1951_1955,60_64,8.6,certifiee
+generations,1951_1955,moins_50,1,certifiee
+generations,1956_1960,50_54,1.9,certifiee
+generations,1956_1960,55_59,4.7,certifiee
+generations,1956_1960,moins_50,1,certifiee
+generations,1961_1965,50_54,1.2,certifiee
+generations,1961_1965,moins_50,0.7,certifiee
+generations,1966_1970,moins_50,0.5,certifiee
+generations,avant_1935,50_54,4.8,certifiee
+generations,avant_1935,55_59,9.1,certifiee
+generations,avant_1935,60_64,14,certifiee
+generations,avant_1935,65_69,20.2,certifiee
+generations,avant_1935,70_74,27.7,certifiee
+generations,avant_1935,75_79,36.3,certifiee
+generations,avant_1935,80_84,46.7,certifiee
+generations,avant_1935,moins_50,1.8,certifiee

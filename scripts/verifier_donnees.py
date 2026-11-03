@@ -3048,6 +3048,74 @@ def source_cumul_profil_regimes() -> dict[tuple, float]:
     return _profil_cumul(False)
 
 
+def _rapport_emploi_retraites(emploi: bool) -> dict[tuple, float]:
+    return {(annee, indicateur): valeur
+            for annee, grandeurs in _serie_panorama("rapport_emploi_retraites").items()
+            for indicateur, valeur in grandeurs.items()
+            if (indicateur == "emploi_interieur_milliers") == emploi}
+
+
+def source_rapport_emploi_retraites() -> dict[tuple, float]:
+    """Les retraités de droit direct, de 2004 à 2024, que la DREES compte.
+
+    Le panorama de 2026, fiche 1, graphique 1 : ceux qui résident en France
+    ou à l'étranger, puis en France seulement, en milliers (action 178,
+    étape 6). Clé (annee, indicateur).
+    """
+    return _rapport_emploi_retraites(False)
+
+
+def source_rapport_emploi_retraites_emploi() -> dict[tuple, float]:
+    """L'emploi intérieur de 2004 à 2024, que la DREES reprend des comptes
+    nationaux de l'INSEE pour le rapporter aux retraités : une transcription,
+    d'où ``haute`` (fiche 1, graphique 1). Clé (annee, indicateur)."""
+    return _rapport_emploi_retraites(True)
+
+
+def _generations_panorama(ancetre: bool) -> dict[tuple, float]:
+    """Les séries par génération ; la part des polypensionnés des générations
+    nées après 1953 est estimée par le modèle Ancetre, non comptée dans l'EIR."""
+    return {tuple(cle): valeur for *cle, valeur in _serie_panorama("retraites_generations")
+            if (cle[1] == "polypension" and int(cle[0]) > 1953) == ancetre}
+
+
+def source_retraites_generations() -> dict[tuple, float]:
+    """Les retraités par génération, de l'EIR de 2020 et de l'EACR.
+
+    Le panorama de 2026 : la part des polypensionnés (fiche 1, graphique 3),
+    l'âge de la première liquidation (fiche 16, tableau 1 et graphique 5) et
+    de la liquidation dans le régime principal (tableau 2), le taux de
+    liquidation et le motif du taux plein (fiche 17, graphiques 1 et 3), la
+    décote et la surcote par régime (graphiques 4 et 5) (action 178, étape 6).
+
+    Clé (generation, champ, regime, modalite, sexe, indicateur).
+    """
+    return _generations_panorama(False)
+
+
+def source_retraites_generations_ancetre() -> dict[tuple, float]:
+    """La part des polypensionnés des générations 1954 à 1957, que la DREES
+    estime par son modèle Ancetre (fiche 1, graphique 3) : ``haute``.
+
+    Clé (generation, champ, regime, modalite, sexe, indicateur).
+    """
+    return _generations_panorama(True)
+
+
+def source_reversion_beneficiaires() -> dict[tuple, float]:
+    """Les bénéficiaires d'une réversion, du panorama de 2026, fiche 3.
+
+    Le graphique 2 : la part des femmes de 60 ans ou plus résidant en France
+    qui touchent une réversion, avec ou sans droit direct, de 2004 à 2024 ;
+    le graphique 4 : la part des personnes vivantes fin 2020 qui en ont
+    touché une, par groupe de générations et par âge (action 178, étape 6).
+
+    Clé (champ, periode, modalite).
+    """
+    return {(champ, periode, modalite): valeur
+            for champ, periode, modalite, _, valeur in _serie_panorama("reversion")}
+
+
 def source_age_depart_csp() -> dict[tuple, float]:
     """L'âge conjoncturel de départ, par catégorie socioprofessionnelle.
 
@@ -8797,6 +8865,173 @@ CERTIFICATIONS = (
                 "tableaux 4 à 6 et graphique 1 (EACR, EIC, EIR)",
         decimales=None,
         tolerance=0.005,
+    ),
+    Certification(
+        nom="rapport_emploi_retraites",
+        chemin=REFERENCE / "macro" / "rapport_emploi_retraites.csv",
+        cles=("annee", "indicateur"),
+        colonne="valeur",
+        source=source_rapport_emploi_retraites,
+        origine="DREES, panorama « Les retraités et les retraites » 2026, fiche 1, graphique 1",
+        decimales=None,
+        tolerance=0.005,
+        entete=(
+            "# Les personnes en emploi et les retraités de droit direct, 2004-2024",
+            "# source_id: drees_panorama_retraites_2026_classeurs",
+            "# unite: milliers",
+            "# fiabilite:",
+            "#   certifiee : retraites_milliers et retraites_france_milliers, fiche 1,",
+            "#             graphique 1, du panorama de la DREES « Les retraités et les",
+            "#             retraites », édition 2026 (l'EIR, le modèle Ancetre) ;",
+            "#   haute : emploi_interieur_milliers, que la DREES reprend des comptes",
+            "#           nationaux de l'INSEE. Lus dans le classeur de la fiche par",
+            "#           scripts/fetch/drees_panorama_classeurs.py et recontrôlés par",
+            "#           scripts/verifier_donnees.py.",
+            "#",
+            "# `indicateur` : retraites_milliers, les retraités de droit direct",
+            "# vivants au 31 décembre, résidant en France ou à l'étranger (la ligne",
+            "# « Tous régimes » de effectifs_retraites.csv) ; retraites_france_milliers,",
+            "# ceux qui résident en France ; emploi_interieur_milliers. Le rapport",
+            "# du graphique, 1,77 personne en emploi par retraité en 2024, est",
+            "# emploi_interieur_milliers / retraites_milliers. La DREES dit fragiles",
+            "# les retraités de 2018 et 2019, tirés d'Ancetre, et revus à la baisse,",
+            "# en 2020, ceux qui résident à l'étranger : une rupture de série.",
+            "#",
+            "# À QUOI CETTE SÉRIE SERT",
+            "# ------------------------",
+            "# Aux référents : le rapport entre personnes en emploi et retraités que",
+            "# la DREES observe, et les retraités qui résident en France ; aucun",
+            "# calcul du site ne la lit (action 178, étape 6).",
+            "#",
+            "# Ne pas modifier les valeurs certifiées à la main : elles seraient",
+            "# écrasées au prochain scripts/verifier_donnees.py --appliquer.",
+        ),
+    ),
+    Certification(
+        nom="rapport_emploi_retraites_emploi",
+        chemin=REFERENCE / "macro" / "rapport_emploi_retraites.csv",
+        cles=("annee", "indicateur"),
+        colonne="valeur",
+        source=source_rapport_emploi_retraites_emploi,
+        origine="DREES, panorama « Les retraités et les retraites » 2026, fiche 1, graphique 1 "
+                "(INSEE, comptes nationaux)",
+        decimales=None,
+        tolerance=0.005,
+        niveau="haute",
+    ),
+    Certification(
+        nom="retraites_generations",
+        chemin=REFERENCE / "macro" / "retraites_generations.csv",
+        cles=("generation", "champ", "regime", "modalite", "sexe", "indicateur"),
+        colonne="valeur",
+        source=source_retraites_generations,
+        origine="DREES, panorama « Les retraités et les retraites » 2026, fiches 1, 16 et 17 "
+                "(EIR 2020, EACR)",
+        decimales=None,
+        tolerance=0.005,
+        entete=(
+            "# Les retraités par génération : polypension, âge et taux de liquidation",
+            "# source_id: drees_panorama_retraites_2026_classeurs",
+            "# unite: pour cent, ou années pour les âges moyens",
+            "# fiabilite:",
+            "#   certifiee : fiches 1 (graphique 3), 16 (tableaux 1 et 2, graphique 5)",
+            "#             et 17 (graphiques 1, 3, 4 et 5) du panorama de la DREES",
+            "#             « Les retraités et les retraites », édition 2026, de l'EIR",
+            "#             de 2020 et de l'EACR ;",
+            "#   haute : la part des polypensionnés des générations 1954 à 1957, que",
+            "#           la DREES estime par le modèle Ancetre. Lus dans les classeurs",
+            "#           des fiches par scripts/fetch/drees_panorama_classeurs.py et",
+            "#           recontrôlés par scripts/verifier_donnees.py.",
+            "#",
+            "# LES CHAMPS",
+            "# ----------",
+            "# polypension : la part des polypensionnés, par sexe, générations 1926",
+            "#   à 1957, à 66 ou 67 ans (fiche 1) ;",
+            "# age_premiere_liquidation : la répartition par âge de la première",
+            "#   liquidation (part_pct) — générations paires de 1930 à 1952",
+            "#   (graphique 5), puis 1953 par sexe, avec son âge moyen (tableau 1 ;",
+            "#   ses colonnes de résidence ne se reportent pas, et le graphique, qui",
+            "#   l'arrondit autrement, ne donne pas 1953) ;",
+            "# age_liquidation_regime_principal : les nés en 1953 par régime",
+            "#   principal — age_moyen, age_moyen_hors_departs_avant_aod,",
+            "#   part_pct par âge, part_retraites_pct (fiche 16, tableau 2) ;",
+            "# taux_liquidation : la répartition par taux de liquidation et motif du",
+            "#   taux plein dans le régime de base principal — 1953 par sexe",
+            "#   (graphique 1, sans ses colonnes de résidence), les générations paires",
+            "#   de 1928 à 1952 (graphique 3) ; taux_plein réunit les motifs qui le",
+            "#   suivent, sauf la surcote ;",
+            "# decote, surcote : la part des retraités partis avec l'une ou l'autre,",
+            "#   par régime, générations 1938 (ou 1940) à 1957 (graphiques 4 et 5) ;",
+            "#   de 1939 à 1945, chaque génération impaire vaut, à la décimale, la",
+            "#   moyenne de ses voisines, dans chaque colonne : un trait du graphique",
+            "#   plutôt qu'une mesure, les graphiques 5 de la fiche 16 et 3 de la",
+            "#   fiche 17 ne portant que des générations paires.",
+            "#",
+            "# À QUOI CETTE SÉRIE SERT",
+            "# ------------------------",
+            "# Aux référents : à confronter, génération par génération, les départs,",
+            "# les taux de liquidation et la polypension de la grille de cas types,",
+            "# qui ne compte aucun polyaffilié (action 178, étape 4) ; aucun calcul",
+            "# du site ne la lit (action 178, étape 6).",
+            "#",
+            "# Ne pas modifier les valeurs certifiées à la main : elles seraient",
+            "# écrasées au prochain scripts/verifier_donnees.py --appliquer.",
+        ),
+    ),
+    Certification(
+        nom="retraites_generations_ancetre",
+        chemin=REFERENCE / "macro" / "retraites_generations.csv",
+        cles=("generation", "champ", "regime", "modalite", "sexe", "indicateur"),
+        colonne="valeur",
+        source=source_retraites_generations_ancetre,
+        origine="DREES, panorama « Les retraités et les retraites » 2026, fiche 1, graphique 3 "
+                "(modèle Ancetre)",
+        decimales=None,
+        tolerance=0.005,
+        niveau="haute",
+    ),
+    Certification(
+        nom="reversion_beneficiaires",
+        chemin=REFERENCE / "macro" / "reversion_beneficiaires.csv",
+        cles=("champ", "periode", "modalite"),
+        colonne="part_pct",
+        source=source_reversion_beneficiaires,
+        origine="DREES, panorama « Les retraités et les retraites » 2026, fiche 3, "
+                "graphiques 2 et 4",
+        decimales=None,
+        tolerance=0.005,
+        entete=(
+            "# Les bénéficiaires d'une pension de réversion, en part de la population",
+            "# source_id: drees_panorama_retraites_2026_classeurs",
+            "# unite: pour cent",
+            "# fiabilite:",
+            "#   certifiee : fiche 3, graphiques 2 et 4, du panorama de la DREES",
+            "#             « Les retraités et les retraites », édition 2026 (l'EIR, le",
+            "#             modèle Ancetre, la population de l'INSEE), lus dans le",
+            "#             classeur de la fiche par",
+            "#             scripts/fetch/drees_panorama_classeurs.py et recontrôlés",
+            "#             par scripts/verifier_donnees.py.",
+            "#",
+            "# champ femmes_60_plus : `periode`, l'année, de 2004 à 2024 ; `modalite`,",
+            "#   reversion_et_droit_direct ou reversion_seule — la part des femmes de",
+            "#   60 ans ou plus résidant en France, vivantes au 31 décembre (graphique",
+            "#   2) ;",
+            "# champ generations : `periode`, le groupe de générations (avant_1935,",
+            "#   puis 1936_1940 à 1966_1970 ; 1935 est donc du premier) ; `modalite`,",
+            "#   la tranche d'âge (moins_50, 50_54 à 80_84) — la part des personnes",
+            "#   vivantes fin 2020 qui ont touché une réversion à cet âge, sans tenir",
+            "#   compte de la mortalité différentielle (graphique 4, l'EIR de 2020).",
+            "#",
+            "# À QUOI CETTE SÉRIE SERT",
+            "# ------------------------",
+            "# Aux référents : la réversion du dépôt n'est qu'une masse",
+            "# (droits_derives.csv) ; ces parts disent qui la touche, à quel âge et",
+            "# dans quelle génération, de quoi confronter celle que le modèle",
+            "# calculera ; aucun calcul du site ne la lit (action 178, étape 6).",
+            "#",
+            "# Ne pas modifier les valeurs certifiées à la main : elles seraient",
+            "# écrasées au prochain scripts/verifier_donnees.py --appliquer.",
+        ),
     ),
     Certification(
         nom="age_depart_csp",

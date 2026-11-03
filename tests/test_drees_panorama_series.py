@@ -548,6 +548,239 @@ def test_le_cumul_dans_un_meme_regime_et_celui_de_la_generation_1950_viennent_du
 
 
 # ---------------------------------------------------------------------------
+# Aux référents : les séries des fiches 1, 3, 16 et 17
+# ---------------------------------------------------------------------------
+
+def test_le_rapport_entre_emploi_et_retraites_se_lit_par_annee():
+    """La feuille « F01_Graphique 1 », réduite à deux années, dont l'une
+    porte son renvoi en note (« 20181 ») : les retraités, résidant en France
+    ou à l'étranger puis en France seulement, et l'emploi intérieur ; le
+    rapport, que ces effectifs donnent, ne se lit pas."""
+    grille = {
+        (1, 1): "Graphique 1. Rapport entre les effectifs de personnes en emploi et les effectifs "
+                "de retraités de droit direct, résidant en France ou à l’étranger",
+        (3, 2): "Effectifs de retraités de droits directs  (en milliers)",
+        (3, 4): "Emploi intérieur (en milliers)", (3, 5): "Rapport entre cotisants et retraités",
+        (4, 2): "Résidant en France ou à l'étranger", (4, 3): "Résidant en France uniquement",
+        (4, 5): "Résidant en France ou à l'étranger", (4, 6): "Résidant en France uniquement",
+        (19, 1): "20181", (19, 2): 16496.0, (19, 3): 15346.0, (19, 4): 28327.8, (19, 5): 1.717,
+        (25, 1): 2024.0, (25, 2): 17298.0, (25, 3): 16429.0, (25, 4): 30623.3, (25, 5): 1.770,
+    }
+    assert _classeurs().lire_rapport_emploi_retraites(grille) == {
+        "2018": {"retraites_milliers": 16496.0, "retraites_france_milliers": 15346.0,
+                 "emploi_interieur_milliers": 28327.8},
+        "2024": {"retraites_milliers": 17298.0, "retraites_france_milliers": 16429.0,
+                 "emploi_interieur_milliers": 30623.3},
+    }
+
+
+def test_les_series_par_generation_se_lisent_en_lignes_ou_en_colonnes():
+    """Les générations se lisent en lignes (« F01_Graphique 3 », « F17_Graphique
+    4 ») ou en colonnes (« F16_Graphique 5 », « F17_Graphique 3 ») ; une
+    génération sans valeur, comme 1927, n'a pas de ligne."""
+    module = _classeurs()
+    poly = {(1, 1): "Graphique 3. Part des polypensionnés, par génération et par sexe",
+            (3, 1): "Génération", (3, 2): "Femmes", (3, 3): "Hommes", (3, 4): "Ensemble",
+            (4, 1): 1926.0, (4, 2): 26.8, (4, 3): 51.5, (4, 4): 39.9, (5, 1): 1927.0}
+    assert module.lire_polypensionnes(poly) == {
+        ("1926", "polypension", "tous_regimes", "ensemble", sexe, "part_pct"): v
+        for sexe, v in (("F", 26.8), ("H", 51.5), ("ensemble", 39.9))}
+    ages = {(1, 1): "Graphique 5. Répartition des retraités, selon la génération et l’âge à la "
+                    "première liquidation",
+            (3, 2): 1930.0, (3, 14): 1953.0, (4, 1): "Moins de 55 ans", (4, 2): 3.0, (4, 14): 3.0,
+            (12, 1): "66 ans ou plus", (12, 2): 3.0, (12, 14): 11.0}
+    premiere = {(1, 1): "Tableau 1. Répartition des retraités nés en 1953, selon l’âge à la "
+                        "première liquidation",
+                (3, 3): "Femmes", (3, 6): "Hommes", (3, 8): "Ensemble",
+                (4, 2): "résidant en France", (4, 3): "résidant à l'étranger", (4, 4): "Ensemble",
+                (4, 5): "résidant en France", (4, 6): "résidant à l'étranger", (4, 7): "Ensemble",
+                (9, 1): "61 ans", (9, 2): 45.0, (9, 3): 29.0, (9, 4): 44.0, (9, 5): 31.0,
+                (9, 6): 31.0, (9, 7): 31.0, (9, 8): 38.0,
+                (15, 1): "Âge moyen à la première liquidation", (15, 4): 61.7, (15, 7): 60.9,
+                (15, 8): 61.3}
+    lu = module.lire_age_premiere_liquidation(premiere, ages)
+    cle = ("age_premiere_liquidation", "tous_regimes")
+    assert lu == {
+        ("1930", *cle, "moins_55", "ensemble", "part_pct"): 3.0,
+        ("1930", *cle, "66_plus", "ensemble", "part_pct"): 3.0,
+        ("1953", *cle, "61", "F", "part_pct"): 44.0, ("1953", *cle, "61", "H", "part_pct"): 31.0,
+        ("1953", *cle, "61", "ensemble", "part_pct"): 38.0,
+        ("1953", *cle, "ensemble", "F", "age_moyen"): 61.7,
+        ("1953", *cle, "ensemble", "H", "age_moyen"): 60.9,
+        ("1953", *cle, "ensemble", "ensemble", "age_moyen"): 61.3,
+    }
+
+
+def test_le_depart_des_nes_en_1953_se_lit_par_regime_principal():
+    """La feuille « F16_Tableau 2 », réduite à une ligne : l'âge moyen, avec et
+    sans les départs avant l'âge d'ouverture des droits, la répartition par
+    âge, dont les en-têtes sont des nombres (55, 60…) ou des textes
+    (« 56-59 »), et la part parmi les retraités ; « 0,0 » est un nombre."""
+    grille = {
+        (1, 1): "Tableau 2. Âge de départ à la retraite et répartition des retraités nés en "
+                "1953, selon le régime principal",
+        (3, 2): "Âge moyen à la liquidation dans le régime principal",
+        (3, 4): "Répartition par âge (en années) à la liquidation dans le régime principal (en %)",
+        (3, 13): "Part parmi les retraités (en %)",
+        (4, 2): "Ensemble", (4, 3): "Après neutralisation des départs avant l'AOD",
+        (4, 4): "Moins de 55", (4, 5): 55.0, (4, 6): "56-59", (4, 12): "67 ou plus",
+        (5, 1): "Régime général", (5, 2): 62.0, (5, 3): 62.3, (5, 4): "0,0", (5, 5): 0.1,
+        (5, 6): 8.3, (5, 12): 1.1, (5, 13): 72.9,
+    }
+    cle = ("1953", "age_liquidation_regime_principal", "regime_general")
+    assert _classeurs().lire_liquidation_regime_principal(grille) == {
+        (*cle, "ensemble", "ensemble", "age_moyen"): 62.0,
+        (*cle, "ensemble", "ensemble", "age_moyen_hors_departs_avant_aod"): 62.3,
+        (*cle, "moins_55", "ensemble", "part_pct"): 0.0, (*cle, "55", "ensemble", "part_pct"): 0.1,
+        (*cle, "56_59", "ensemble", "part_pct"): 8.3, (*cle, "67_plus", "ensemble", "part_pct"): 1.1,
+        (*cle, "ensemble", "ensemble", "part_retraites_pct"): 72.9,
+    }
+
+
+def test_le_taux_de_liquidation_se_lit_par_motif_et_par_generation():
+    """Les feuilles « F17_Graphique 1 » (les nés en 1953, par sexe ; les
+    colonnes de résidence ne se lisent pas ; la génération est celle qui suit
+    « née en », non l'année de l'échantillon qui clôt le titre),
+    « F17_Graphique 3 » (par génération) et « F17_Graphique 4 » (la décote
+    par régime)."""
+    module = _classeurs()
+    generation_1953 = {
+        (1, 1): "Graphique 1. Répartition des retraités de la génération née en 1953, selon le "
+                "taux de liquidation dans le régime de base principal et le motif d'obtention du "
+                "taux plein le cas échéant, en 2020",
+        (4, 2): "Femmes", (4, 3): "Hommes", (4, 4): "Retraités résidant  en France",
+        (4, 5): "Retraités résidant  à l'étranger", (4, 6): "Ensemble",
+        (5, 1): "Départ avec décote", (5, 2): 12.5, (5, 3): 8.7, (5, 4): 10.0, (5, 5): 31.9,
+        (5, 6): 10.7,
+        (12, 1): "Départ au taux plein (sans surcote) par la durée (y compris carrière longue "
+                 "mais hors invalidité ou inaptitude)", (12, 6): 45.2,
+    }
+    par_generation = {
+        (1, 1): "Graphique 3. Répartition des retraités, selon la génération et le taux de "
+                "liquidation dans le régime de base principal et le motif d'obtention du taux",
+        (3, 2): 1928.0, (3, 13): 1952.0,
+        (12, 1): "Départ avec surcote", (12, 2): 0.2, (12, 13): 14.9,
+    }
+    cle = ("taux_liquidation", "tous_regimes")
+    assert module.lire_taux_liquidation(generation_1953, par_generation) == {
+        ("1953", *cle, "decote", "F", "part_pct"): 12.5,
+        ("1953", *cle, "decote", "H", "part_pct"): 8.7,
+        ("1953", *cle, "decote", "ensemble", "part_pct"): 10.7,
+        ("1953", *cle, "taux_plein_duree", "ensemble", "part_pct"): 45.2,
+        ("1928", *cle, "surcote", "ensemble", "part_pct"): 0.2,
+        ("1952", *cle, "surcote", "ensemble", "part_pct"): 14.9,
+    }
+    decote = {(1, 1): "Graphique 4. Part des retraités ayant liquidé leurs droits avec une "
+                      "décote, par génération",
+              (3, 2): "Régime général1", (3, 5): "FPE civils", (3, 7): "Tous régimes",
+              (4, 1): 1938.0, (4, 2): 7.9, (4, 7): 6.1,
+              (19, 1): 1953.0, (19, 2): 11.6, (19, 5): 18.2, (19, 7): 10.7}
+    surcote = {(1, 1): "Graphique 5. Part des retraités ayant liquidé leurs droits avec une "
+                       "surcote, par génération",
+               (3, 2): "Régime général1", (3, 5): "Tous régimes",
+               (17, 1): 1953.0, (17, 2): 13.8, (17, 5): 15.8}
+    assert module.lire_decote_surcote(decote, surcote) == {
+        ("1938", "decote", "regime_general", "ensemble", "ensemble", "part_pct"): 7.9,
+        ("1938", "decote", "tous_regimes", "ensemble", "ensemble", "part_pct"): 6.1,
+        ("1953", "decote", "regime_general", "ensemble", "ensemble", "part_pct"): 11.6,
+        ("1953", "decote", "fonction_publique_etat_civile", "ensemble", "ensemble",
+         "part_pct"): 18.2,
+        ("1953", "decote", "tous_regimes", "ensemble", "ensemble", "part_pct"): 10.7,
+        ("1953", "surcote", "regime_general", "ensemble", "ensemble", "part_pct"): 13.8,
+        ("1953", "surcote", "tous_regimes", "ensemble", "ensemble", "part_pct"): 15.8,
+    }
+
+
+def test_la_reversion_se_lit_par_annee_et_par_generation():
+    """Les feuilles « F03_Graphique 2 » (les femmes de 60 ans ou plus, par
+    année) et « F03_Graphique 4 » (par groupe de générations et par âge)."""
+    module = _classeurs()
+    femmes = {(1, 1): "Graphique 2. Part des retraitées d’une pension de droit dérivé parmi les "
+                      "femmes âgées de 60 ans ou plus résidant en France",
+              (3, 2): "Bénéficiaires d'une pension de droit dérivé cumulée à une pension de droit "
+                      "direct", (3, 3): "Bénéficiaires  d'une pension de droit dérivé seule",
+              (24, 1): 2024.0, (24, 2): 26.8, (24, 3): 3.1}
+    generations = {(1, 1): "Graphique 4. Part des personnes bénéficiant d’une pension de droit "
+                           "dérivé, selon l’âge et la génération",
+                   (3, 1): "Génération", (3, 2): "Moins de 50 ans", (3, 5): "60 à 64 ans",
+                   (4, 1): "Avant 1935", (4, 2): 1.8, (4, 5): 14.0,
+                   (7, 1): "De 1946 à 1950", (7, 2): 1.1, (7, 5): 9.2}
+    assert module.lire_reversion(femmes, generations) == {
+        ("femmes_60_plus", "2024", "reversion_et_droit_direct", "part_pct"): 26.8,
+        ("femmes_60_plus", "2024", "reversion_seule", "part_pct"): 3.1,
+        ("generations", "avant_1935", "moins_50", "part_pct"): 1.8,
+        ("generations", "avant_1935", "60_64", "part_pct"): 14.0,
+        ("generations", "1946_1950", "moins_50", "part_pct"): 1.1,
+        ("generations", "1946_1950", "60_64", "part_pct"): 9.2,
+    }
+
+
+def test_le_rapport_entre_emploi_et_retraites_vient_du_panorama():
+    """Fiche 1, page 20 : « 1,77 actif en emploi pour un retraité en 2024,
+    contre 1,78 en 2012 » ; 16,4 millions de retraités de droit direct vivent
+    en France. Le graphique 1 (page 22) n'imprime pas ses effectifs, que le
+    classeur donne de 2004 à 2024."""
+    valeurs = {(int(l["annee"]), l["indicateur"]): float(l["valeur"])
+               for l in _lire(MACRO / "rapport_emploi_retraites.csv")}
+    rapport = {annee: valeurs[(annee, "emploi_interieur_milliers")]
+               / valeurs[(annee, "retraites_milliers")] for annee in (2012, 2024)}
+    assert (round(rapport[2012], 2), round(rapport[2024], 2)) == (1.78, 1.77)
+    assert round(valeurs[(2024, "retraites_france_milliers")] / 1000, 1) == 16.4
+    assert {annee for annee, _ in valeurs} == set(range(2004, 2025))
+
+
+def test_les_series_par_generation_viennent_du_panorama():
+    """Fiche 1, graphique 3 (page 26) : la part des polypensionnés, de la
+    génération 1926 à 1957, celles d'après 1953 estimées par Ancetre
+    (``haute``). Fiche 16, tableau 1 (page 150) : les nés en 1953 sont partis
+    à 61,3 ans en moyenne à leur première liquidation, 38 % à 61 ans ;
+    tableau 2 (page 153) : 62,0 ans au régime général, 61,4 tous régimes.
+    Fiche 17, graphique 1 (page 155) : 10,7 % des nés en 1953 sont partis avec
+    une décote, 14,5 % avec une surcote ; graphique 4 (page 158) : la décote
+    tous régimes de 1953, la même."""
+    lignes = _lire(MACRO / "retraites_generations.csv")
+    valeurs = {(int(l["generation"]), l["champ"], l["regime"], l["modalite"], l["sexe"],
+                l["indicateur"]): float(l["valeur"]) for l in lignes}
+    poly = {generation: v for (generation, champ, _, _, sexe, _), v in valeurs.items()
+            if (champ, sexe) == ("polypension", "ensemble")}
+    assert min(poly) == 1926 and max(poly) == 1957 and poly[1950] == 37.5
+    assert {l["fiabilite"] for l in lignes if l["champ"] == "polypension"
+            and int(l["generation"]) > 1953} == {"haute"}
+    assert {l["fiabilite"] for l in lignes if not (l["champ"] == "polypension"
+                                                     and int(l["generation"]) > 1953)} == {
+        "certifiee"}
+    premiere = ("age_premiere_liquidation", "tous_regimes")
+    assert valeurs[(1953, *premiere, "ensemble", "ensemble", "age_moyen")] == 61.3
+    assert valeurs[(1953, *premiere, "61", "ensemble", "part_pct")] == 38
+    principal = ("age_liquidation_regime_principal",)
+    assert valeurs[(1953, *principal, "regime_general", "ensemble", "ensemble", "age_moyen")] == 62
+    assert valeurs[(1953, *principal, "ensemble", "ensemble", "ensemble", "age_moyen")] == 61.4
+    taux = ("taux_liquidation", "tous_regimes")
+    assert valeurs[(1953, *taux, "decote", "ensemble", "part_pct")] == 10.7
+    assert valeurs[(1953, *taux, "surcote", "ensemble", "part_pct")] == 14.5
+    assert valeurs[(1953, "decote", "tous_regimes", "ensemble", "ensemble", "part_pct")] == 10.7
+
+
+def test_la_reversion_vient_du_panorama():
+    """Fiche 3, page 39 : « Fin 2024, 3,1 % des femmes âgées de 60 ans ou
+    plus résidant en France bénéficient d'une pension de droit dérivé sans
+    bénéficier d'une pension de droit direct, et 26,8 % bénéficient d'une
+    pension de droit dérivé cumulée à une pension de droit direct » ; page
+    40 : « Parmi les personnes vivantes en 2020 et nées avant 1935, 14 % ont
+    touché une pension de réversion entre 60 et 64 ans (contre 9,2 % des
+    personnes nées entre 1946 et 1950). »"""
+    lignes = _lire(MACRO / "reversion_beneficiaires.csv")
+    valeurs = {(l["champ"], l["periode"], l["modalite"]): float(l["part_pct"]) for l in lignes}
+    assert valeurs[("femmes_60_plus", "2024", "reversion_seule")] == 3.1
+    assert valeurs[("femmes_60_plus", "2024", "reversion_et_droit_direct")] == 26.8
+    assert valeurs[("generations", "avant_1935", "60_64")] == 14
+    assert valeurs[("generations", "1946_1950", "60_64")] == 9.2
+    assert {int(periode) for champ, periode, _ in valeurs if champ == "femmes_60_plus"} == set(
+        range(2004, 2025))
+    assert {l["fiabilite"] for l in lignes} == {"certifiee"}
+
+
+# ---------------------------------------------------------------------------
 # À la source : les séries recoupées entre elles, quand l'archive est là
 # ---------------------------------------------------------------------------
 
