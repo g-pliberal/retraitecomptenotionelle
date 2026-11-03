@@ -1,16 +1,5 @@
 # Étape 4, thème « Retraite personnelle de base » : les exposés et leurs références
 
-**Reprise, au 3 novembre 2026.** Le thème « Retraite personnelle de base » est rangé :
-ses 45 exposés, et les 31 listes, 26 fenêtres, 400 références et 65 avis qu'ils lient.
-Suivant, dans l'ordre de l'étape : « Carrière », d'abord « cotisations-salaires »
-(`grep` du thème dans `exposes.csv`), sous la convention de cette note — les sorts, et
-les tableaux d'un exposé confrontés dans `tests/test_cnav_exposes.py`. Restent marqués
-du thème, à lire avec le leur : 78 listes d'accords et 2 des règlements européens
-(accords internationaux), 57 listes de périodes de guerre (Carrière, périodes
-assimilées), et les 92 références qu'elles seules lient. Aux sessions du modèle : le
-taux plein à 65 ans du parent de trois enfants (fiche `taux_plein_a_soixante_cinq_ans`)
-et la garantie de D. 173-2. Détail : cette note.
-
 **Le 3 novembre 2026, ce qui est fait.**
 
 - *La lecture* : les 45 exposés du thème, relus par l'API à la version que le registre

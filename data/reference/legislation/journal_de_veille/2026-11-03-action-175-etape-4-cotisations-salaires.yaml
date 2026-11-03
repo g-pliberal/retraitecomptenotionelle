@@ -1,0 +1,36 @@
+date: "2026-11-03"
+session: "action 175, étape 4 : le thème « Carrière : cotisations-salaires » de la base de la Cnav"
+consulte: >-
+  python scripts/veille_droit.py (rien de neuf à la base depuis le registre). La base de
+  législation de la Cnav, par son API, à l'import du 3 novembre 2026 à 5 h : les 65
+  exposés du thème « Carrière > Cotisations-salaires », les fenêtres d'information, les
+  listes et les 252 références qu'ils lient, les 20 avis de mise à jour qui touchent ses
+  références. L'index LEGI de la DILA, à jour au 2 novembre 2026 : D. 171-2 (rédactions
+  de 1985 et de 2015), D. 171-3 et D. 171-4 (de 1985 à 2015) ; le décret n° 73-88,
+  article 1er (rédactions de 1978, de janvier et d'août 1985), L. 381-1 (1985). L'index
+  JORF, qui n'a que la notice de la loi n° 85-17 du 4 janvier 1985.
+trouve: >-
+  Le salaire qui valide un trimestre, période par période — 1 800 anciens francs de 1946
+  à 1948, l'allocation aux vieux travailleurs salariés jusqu'en 1971, 200 heures de Smic,
+  150 depuis 2014 —, est celui des séries, confronté désormais par
+  tests/test_cnav_exposes.py. Quatre écarts déclarés, aucun corrigé : l'activité
+  accessoire de l'agent d'un régime spécial, qui jusqu'au 18 juillet 2015 n'ouvrait aucun
+  droit au régime général (D. 171-2, D. 171-4), que le modèle lui ouvre (fiche
+  un_statut_par_annee) ; l'AVPF du père, que la caisse ne sert que depuis 1979, et
+  pleinement depuis 1985, quand le modèle la sert depuis 1972 (fiche avpf) ; la validation
+  des services de non-titulaire par un régime spécial (D. 173-13, D. 173-19) ; l'élu local
+  qui a cessé son activité pour son mandat, affilié au régime général depuis 1992. Les
+  assiettes forfaitaires et les abattements d'une vingtaine d'activités que les exposés
+  décrivent sans barème, déclarés aux limites, qui datent le taux réduit du journaliste
+  de 1964 et non de 1991. Le registre range tout le thème. La base sert, depuis l'import
+  du 3 novembre 2026 à 5 h, ses liens sous la forme de son site SharePoint
+  (/sites/N_GDLC_Campus…/SitePages/…), que cnav_legislation.liens ne reconnaît pas.
+reste: >-
+  La forme des liens, à porter au récupérateur du registre avant qu'il relise la base,
+  le test d'abord. L'étape 4 aux autres thèmes, d'abord « Carrière : versements
+  volontaires » ; la liste des pays de l'Espace économique européen, avec les règlements
+  européens. À la session du modèle : l'activité accessoire d'avant 2015, quand une ligne
+  de la carrière saura qu'elle est cumulée ; l'AVPF du père, après lecture des lois de
+  1979 et de 1985. Pour la file D : les deux exposés des indépendants et ce qu'ils disent
+  de l'assiette unique de 2025 et de la cotisation minimale ; les deux exposés de Mayotte,
+  avec leur thème.
