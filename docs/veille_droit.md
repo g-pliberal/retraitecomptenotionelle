@@ -102,6 +102,11 @@ avec.
    version, sans effet avec le mot à mot qui le montre (`dila_cherche.py legi
    --num <article> --diff`), ou à rattacher. C'est
    ce qui fait baisser le cliquet des textes (`python scripts/textes.py`).
+   Les rédactions que la fiche n'a pas lues des articles qu'elle cite, et
+   leur mot à mot, sont dans `python scripts/textes.py --non-lues <fiche>` ;
+   une rédaction « (texte inchangé) » s'y déclare sans effet. La veille
+   compte parmi les fiches à relire celles qui en ont une en vigueur ou à
+   venir.
 5. Donner à la donnée le niveau de fiabilité qu'elle mérite (`certifiee` si
    recontrôlée automatiquement, `haute` si lue, `moyenne` si lue mais
    susceptible d'être dépassée avant recontrôle), et laisser ce niveau

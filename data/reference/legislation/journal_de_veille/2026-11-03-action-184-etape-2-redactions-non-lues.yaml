@@ -1,0 +1,21 @@
+date: "2026-11-03"
+session: "action 184, étape 2 : les rédactions qu'une fiche n'a pas lues, des articles qu'elle cite"
+consulte: >-
+  Aucune règle du scénario 1 n'est touchée : la session outille la veille.
+  L'index LEGI du dépôt, à jour au 2 novembre 2026 (`--recuperer`), contre la
+  liste de contrôle des textes du jour et les citations des fiches.
+trouve: >-
+  57 fiches citent un article dont une rédaction en vigueur ou à venir n'a
+  été lue par aucune d'elles : 94 rédactions distinctes. Parmi elles,
+  L. 351-3 du code de la sécurité sociale au 1er novembre 2026 (l'incapacité
+  permanente professionnelle, I de l'article 95 de la loi n° 2025-1403 du
+  30 décembre 2025), L. 732-54-1, L. 732-54-2 et L. 732-54-4 du code rural au
+  1er janvier 2026, R. 351-25 et D. 173-21-1 du code de la sécurité sociale au
+  1er janvier 2026, L. 86 et L. 86-1 du code des pensions civiles et
+  militaires au 31 décembre 2025. `python scripts/veille_droit.py` les compte
+  désormais parmi les fiches à relire.
+reste: >-
+  Lire chacune dans sa fiche, par `python scripts/textes.py --non-lues
+  <fiche>`, et lui donner son statut : rattachée à une version, sans effet
+  avec son mot à mot, ou à rattacher. Aucune n'a été lue ici ; rien ne dit
+  encore qu'une seule change ce que le modèle calcule.

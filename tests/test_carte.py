@@ -326,6 +326,26 @@ def test_la_veille_est_une_vue_de_la_carte(tmp_path):
     assert any("2026-06-30" in r for r in raisons), raisons
 
 
+def test_la_veille_compte_les_redactions_en_vigueur_qu_une_fiche_n_a_pas_lues(tmp_path):
+    """Une fiche fraîche est à relire quand un article qu'elle cite a une
+    rédaction en vigueur ou à venir qu'elle n'a pas lue (action 184, étape 2,
+    ``textes.non_lues``) ; une rédaction passée, ou un homonyme, ne suffit pas."""
+    fiche = yaml.safe_load((carte.REGLES / "reversion.yaml").read_text(encoding="utf-8"))
+    fiche = {**fiche, "id": "fraiche", "etat": "conforme",
+             "sources": {**fiche["sources"], "lu_le": date(2026, 9, 1),
+                         "prochaine_relecture": date(2027, 3, 31)}}
+    _ecrire(tmp_path, fiche)
+    _ecrire(tmp_path, {**fiche, "id": "passee"})
+    vivante = {"vivante": True, "homonyme": False}
+    non_lues = {"fraiche": [vivante, vivante, {"vivante": True, "homonyme": True}],
+                "passee": [{"vivante": False, "homonyme": False}]}
+    vue = carte.a_relire(date(2026, 9, 26), jours=120, dossier=tmp_path, non_lues=non_lues)
+    assert [(f["id"], r) for f, r in vue] == [(
+        "fraiche", ["2 rédactions en vigueur ou à venir non lues "
+                    "(python scripts/textes.py --non-lues fraiche)"])]
+    assert carte.a_relire(date(2026, 9, 26), jours=120, dossier=tmp_path) == []
+
+
 def test_une_fiche_ne_lit_que_des_presomptions_nommees(tmp_path):
     """Le champ `presomptions` d'une fiche nomme les présomptions qu'elle lit,
     sous leur nom au vocabulaire (§ 5.6) : un nom inconnu est refusé."""

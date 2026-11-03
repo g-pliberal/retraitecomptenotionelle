@@ -171,13 +171,15 @@ def _date(valeur) -> date | None:
     return date.fromisoformat(str(valeur))
 
 
-def a_relire(aujourd_hui: date, jours: int = 120,
-             dossier: Path = REGLES) -> list[tuple[dict, list[str]]]:
+def a_relire(aujourd_hui: date, jours: int = 120, dossier: Path = REGLES,
+             non_lues: dict[str, list[dict]] | None = None) -> list[tuple[dict, list[str]]]:
     """La veille, vue de la carte : les fiches à relire, et pourquoi.
 
     Une fiche à vérifier, ou dont la règle manque au modèle ; une fiche lue il
     y a plus de ``jours`` jours, ou jamais ; une fiche dont la date de
-    relecture est passée. Dans l'ordre des états, puis des noms.
+    relecture est passée ; une fiche dont un article cité a une rédaction en
+    vigueur ou à venir qu'elle n'a pas lue, quand ``non_lues`` les donne
+    (``textes.non_lues``, action 184). Dans l'ordre des états, puis des noms.
     """
     rang = {etat: i for i, etat in enumerate(etats())}
     sortie = []
@@ -194,6 +196,12 @@ def a_relire(aujourd_hui: date, jours: int = 120,
         prochaine = _date(sources.get("prochaine_relecture"))
         if prochaine is not None and prochaine <= aujourd_hui:
             raisons.append(f"relecture prévue le {prochaine}")
+        vivantes = len([r for r in (non_lues or {}).get(fiche["id"], [])
+                        if r["vivante"] and not r["homonyme"]])
+        if vivantes:
+            raisons.append(f"{vivantes} rédaction{'s' * (vivantes > 1)} en vigueur ou à venir "
+                           f"non lue{'s' * (vivantes > 1)} "
+                           f"(python scripts/textes.py --non-lues {fiche['id']})")
         if raisons:
             sortie.append((fiche, raisons))
     return sorted(sortie, key=lambda x: (rang.get(x[0].get("etat"), len(rang)), x[0]["id"]))

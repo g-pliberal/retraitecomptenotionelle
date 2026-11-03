@@ -118,6 +118,53 @@ def sans_statut(dossier: Path = TEXTES, fiches: dict[str, dict] | None = None) -
     return [ident for ident, statut in statuts(dossier, fiches).items() if statut is None]
 
 
+def _vit(redaction: dict) -> bool:
+    """Elle a été en vigueur au moins un jour : LEGI garde aussi des versions
+    modifiées avant d'avoir pris effet (fin au plus tard le jour du début)."""
+    return not redaction["fin"] or redaction["fin"] > redaction["debut"]
+
+
+def _ensemble(une: dict, autre: dict) -> bool:
+    """En vigueur ensemble, un jour au moins : [début, fin[ se recouvrent."""
+    return (_vit(une) and _vit(autre)
+            and une["debut"] < (autre["fin"] or "9999") and autre["debut"] < (une["fin"] or "9999"))
+
+
+def non_lues(dossier: Path = TEXTES, fiches: dict[str, dict] | None = None,
+             jour: date | None = None) -> dict[str, list[dict]]:
+    """Pour chaque fiche, les rédactions qu'elle n'a pas lues des articles
+    qu'elle cite (action 184, étape 2) : celles du même article — même texte,
+    même numéro — sans statut final, ni rattachées ni sans effet, et qu'elle
+    ne nomme pas. En vigueur au ``jour`` dit ou à venir (``vivante``) d'abord,
+    puis de la plus récente à la plus ancienne. Un article sans numéro ne se
+    suit pas ; deux rédactions du même numéro en vigueur ensemble sont deux
+    articles, que rien ne départage dans la liste (``homonyme``)."""
+    if fiches is None:
+        fiches = carte.fiches()
+    jour_dit = (jour or date.today()).isoformat()
+    cite = citations(fiches)
+    statut = statuts(dossier, fiches)
+    par_article: dict[tuple[str, str], list[dict]] = {}
+    for redaction in redactions(dossier):
+        if redaction["article"].strip():
+            par_article.setdefault((redaction["texte"], redaction["article"]), []).append(redaction)
+    sortie: dict[str, list[dict]] = {}
+    for groupe in par_article.values():
+        lectrices = {nom for r in groupe for nom in cite.get(r["id"], {})}
+        for nom in sorted(lectrices):
+            vue = [{**r, "statut": statut[r["id"]],
+                    "vivante": not r["fin"] or r["fin"] > jour_dit,
+                    "homonyme": any(_ensemble(r, autre) for autre in groupe if autre is not r)}
+                   for r in groupe
+                   if statut[r["id"]] not in ("rattachee", "sans_effet")
+                   and nom not in cite.get(r["id"], {})]
+            sortie.setdefault(nom, []).extend(vue)
+    for nom, vue in sortie.items():
+        vue.sort(key=lambda r: r["id"], reverse=True)
+        vue.sort(key=lambda r: (r["vivante"], r["debut"]), reverse=True)
+    return {nom: sortie[nom] for nom in sorted(sortie) if sortie[nom]}
+
+
 def controler(dossier: Path = TEXTES, fiches: dict[str, dict] | None = None) -> list[str]:
     """Ce qui ne va pas dans la liste : rien, si elle tient et si le cliquet
     est juste. Les statuts sont ceux du vocabulaire, liste fermée."""

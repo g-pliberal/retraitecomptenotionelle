@@ -11,6 +11,7 @@ cliquet.
 from __future__ import annotations
 
 import shutil
+from datetime import date
 
 import pytest
 import yaml
@@ -87,6 +88,64 @@ def test_la_liste_refuse_ce_qui_n_est_pas_une_redaction(liste):
     assert any("« hier » n'est pas une date" in e for e in erreurs), erreurs
 
 
+H, I = (f"LEGIARTI{n:012d}" for n in range(8, 10))
+
+
+@pytest.fixture
+def histoire(tmp_path):
+    """L'histoire de poche de trois articles (action 184, étape 2) : L. 351-1
+    en quatre rédactions, dont une à venir ; une annexe dont deux articles
+    distincts portent le même numéro, en vigueur ensemble ; deux articles sans
+    numéro ; L. 351-2, qu'aucune fiche ne cite."""
+    (tmp_path / "textes.csv").write_text("texte,titre\ncss,Code de la sécurité sociale\n",
+                                         encoding="utf-8")
+    lignes = ["id,texte,article,debut,fin,inscrite_le",
+              f"{A},css,L351-1,1985-01-01,2004-01-01,",
+              f"{B},css,L351-1,2004-01-01,2023-09-01,",
+              f"{C},css,L351-1,2023-09-01,2027-01-01,2026-09-26",
+              f"{I},css,L351-1,2027-01-01,,2026-09-26",
+              f"{D},css,L351-2,1985-01-01,,",
+              f"{E},css,Annexe,1985-01-01,,",
+              f"{F},css,Annexe,1985-01-01,,",
+              f"{G},css,,1985-01-01,,",
+              f"{H},css,,1990-01-01,,"]
+    (tmp_path / "redactions.csv").write_text("\n".join(lignes) + "\n", encoding="utf-8")
+    (tmp_path / "perimetre.yaml").write_text(
+        yaml.safe_dump({"codes": [], "cliquet": {"redactions_sans_statut": 0}}),
+        encoding="utf-8")
+    return tmp_path
+
+
+LECTRICE = {"regle": {"versions": [{"id": "v1", "textes": [{"id": A}, {"id": E}, {"id": G}]}]}}
+
+
+def test_une_fiche_voit_les_redactions_des_articles_qu_elle_cite_et_n_a_pas_lues(histoire):
+    """Une fiche qui cite une rédaction d'un article voit les autres
+    rédactions de cet article qui n'ont pas de statut final : en vigueur ou à
+    venir d'abord, puis de la plus récente à la plus ancienne. Un article
+    qu'elle ne cite pas n'y est pas, ni un article sans numéro, que rien ne
+    distingue d'un autre ; deux rédactions du même numéro en vigueur ensemble
+    sont deux articles, que l'on signale."""
+    vue = textes.non_lues(histoire, LECTRICE, date(2026, 11, 3))
+    assert list(vue) == ["regle"]
+    assert [(r["id"], r["vivante"], r["homonyme"], r["statut"]) for r in vue["regle"]] == [
+        (I, True, False, "a_examiner"), (C, True, False, "a_examiner"),
+        (F, True, True, None), (B, False, False, None)]
+
+
+def test_une_redaction_lue_sort_de_la_vue(histoire):
+    """Rattachée ou déclarée sans effet par une autre fiche, une rédaction a
+    son statut final ; nommée par la fiche elle-même, à relire ou à rattacher,
+    elle est lue. Nommée à rattacher par une autre fiche seulement, elle reste
+    à lire."""
+    fiches = {"regle": {**LECTRICE["regle"], "textes_a_relire": [{"id": I}]},
+              "autre": {"versions": [{"id": "v1", "textes": [{"id": B}]}],
+                        "textes_a_rattacher": [{"id": C}]}}
+    vue = textes.non_lues(histoire, fiches, date(2026, 11, 3))
+    assert [(r["id"], r["statut"]) for r in vue["regle"]] == [(C, "a_rattacher"), (F, None)]
+    assert [r["id"] for r in vue["autre"]] == [I], "la rédaction à venir, que regle seule nomme"
+
+
 def test_la_liste_du_depot_tient_et_son_cliquet_est_juste():
     """Les rédactions du périmètre, chacune une fois, datées, sous un texte
     connu ; et autant de rédactions sans statut que le cliquet en admet."""
@@ -152,3 +211,33 @@ def test_deux_textes_du_meme_jour_ne_partagent_pas_une_cle():
         "arrete_2026_07_10_carmf_2"
     assert script.cle_libre("arrete_2026_07_10", "Arrêté du 10 juillet 2026 sans sigle",
                             titres) == "arrete_2026_07_10_2"
+
+
+def test_le_mot_a_mot_d_une_redaction_non_lue():
+    """Ce qu'une rédaction change à la dernière version qui a été en vigueur
+    du même article, dans l'index ; une version mort-née ne compte pas ; une
+    rédaction identique se propose sans effet, la fiche la déclare."""
+    import importlib.util
+    import sqlite3
+    from pathlib import Path
+
+    chemin = Path(__file__).resolve().parents[1] / "scripts" / "textes.py"
+    spec = importlib.util.spec_from_file_location("script_textes", chemin)
+    script = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(script)
+
+    titre = "Code de la sécurité sociale"
+    db = sqlite3.connect(":memory:")
+    db.execute("CREATE TABLE doc (id TEXT, date TEXT, fin TEXT, nature TEXT, num TEXT, "
+               "titre TEXT, texte TEXT)")
+    db.executemany("INSERT INTO doc VALUES (?, ?, ?, 'Article CODE', 'L351-1', ?, ?)", [
+        (A, "1985-01-01", "2004-01-01", titre, "La pension est due à 60 ans."),
+        (B, "2004-01-01", "2010-01-01", titre, "La pension est due à 62 ans."),
+        (C, "2010-01-01", "2010-01-01", titre, "La pension est due à 63 ans."),
+        (D, "2010-01-01", "2999-01-01", titre, "La pension est due à 62 ans."),
+    ])
+    assert script.mot_a_mot(db, titre, "L351-1", A) == "(première version)"
+    assert script.mot_a_mot(db, titre, "L351-1", B) == "La pension est due à [-60-]{+62+} ans."
+    assert script.mot_a_mot(db, titre, "L351-1", D).startswith("(texte inchangé)")
+    assert "textes_sans_effet" in script.mot_a_mot(db, titre, "L351-1", D)
+    assert script.mot_a_mot(db, titre, "L351-1", E) == "(absente de l'index)"

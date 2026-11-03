@@ -7790,15 +7790,15 @@ dire si la copie de l'UNSA est la sienne.
 
 ### 184. L'histoire d'un article de loi, lue dans l'index de la DILA : ce que le dépôt lexifina/global-law fait mieux, repris, et ce qu'il fait mal, écarté — `en cours`
 
-**Reprise, au 3 novembre 2026.** L'étape 1 est faite (`dila_cherche.py legi
---num`, `--diff`, `--le`). Les étapes 2 et 3 ont été revues le même jour,
-après mesure (« Les étapes, revues ») : la suivante trie, par leur mot à mot,
-les 14 648 rédactions sans statut final — 984 identiques à celle qu'elles
-remplacent, 6 992 à lire par leur mot à mot. Elle s'ouvre sur une décision du
-propriétaire : `textes.py` dit-il seul « sans effet » d'une rédaction
-identique à la précédente, ou ne fait-il que la proposer ? Le texte qui a
-écrit chaque version attend la veille de la LFSS 2027. Détail :
-`184/2026-11-03-mesure-du-stock.md`.
+**Reprise, au 3 novembre 2026.** Les étapes 1 et 2 sont faites. L'étape 2,
+recentrée par le propriétaire, montre à chaque fiche les rédactions non lues
+des articles qu'elle cite (`textes.py --non-lues <fiche>`, avec leur mot à
+mot), et la veille compte celles en vigueur ou à venir : le 3 novembre, 57
+fiches, 94 rédactions. Leur lecture va aux sessions de chaque zone, par la
+veille ; une rédaction identique à sa précédente se propose sans effet, la
+fiche la déclare. Reste l'étape 3, le texte qui a écrit chaque version, remise
+à la veille de la LFSS 2027 et menée seulement si elle en a l'usage. Détail :
+`184/2026-11-03-etape-2.md`.
 
 **D'où elle vient.** Le 3 novembre 2026, le propriétaire signale
 `https://github.com/lexifina/global-law` : « Je crois qu'on fait la même chose

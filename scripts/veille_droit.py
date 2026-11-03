@@ -40,7 +40,7 @@ from pathlib import Path
 
 import yaml
 
-from retraite_notionnelle.noyau import carte
+from retraite_notionnelle.noyau import carte, textes
 
 RACINE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RACINE / "scripts" / "fetch"))
@@ -85,7 +85,7 @@ def main(argv: list[str] | None = None) -> int:
           + f". Dernière veille consignée : {derniere}.")
     print()
 
-    revoir = carte.a_relire(aujourd_hui, args.jours)
+    revoir = carte.a_relire(aujourd_hui, args.jours, non_lues=textes.non_lues(jour=aujourd_hui))
     if revoir:
         print(f"À RELIRE ({len(revoir)}) :")
         for fiche, raisons in revoir:
