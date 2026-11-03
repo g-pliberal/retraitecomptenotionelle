@@ -1,0 +1,21 @@
+date: "2026-11-03"
+session: "action 175, étape 5 : la veille de la base de la Cnav"
+consulte: >-
+  La base de législation de la Cnav, par son API : ses collections datées (barèmes,
+  exposés, fenêtres d'information, avis de mise à jour) et ses listes, comparées au
+  registre data/reference/legislation/cnav/ ; ses dernières circulaires
+  (/reference/dernieresCirculaires/) ; sa recherche, aux années 2025 et 2026, puis
+  entière (1 792 requêtes), et les références qu'elle sert, relues par
+  scripts/fetch/cnav_legislation.py.
+trouve: >-
+  La circulaire Cnav 2026/34 du 30 octobre 2026, « Droit de rectification des
+  informations ayant une incidence sur le montant des indus », que rien ne liait dans la
+  base : entrée au registre, à lire, sans thème. L'exposé « Sommes payées à tort »,
+  modifié le 29 octobre, cite la circulaire 2022/24 au lieu de la 2022/11. Aucun barème,
+  aucune liste, aucune fenêtre ni aucun avis neuf, changé depuis son sort ou parti.
+  `python scripts/veille_droit.py` dit désormais ce que la base change depuis le
+  registre, et le récupérateur part aussi des dernières circulaires.
+reste: >-
+  La circulaire 2026/34, à lire à l'étape 6 avec les références sans thème ; les
+  exposés et les références des étapes 4 et 6. La ligne cnav_legislation_portail du
+  vivier passe epuise quand le registre n'a plus rien à lire.
