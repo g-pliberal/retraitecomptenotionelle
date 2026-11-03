@@ -488,10 +488,16 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   `taux_plein_a_soixante_cinq_ans`) ; une naissance dite à l'année l'ouvre si
   les conditions tiennent quel que soit son mois, une naissance présumée
   jamais. Restent dehors pour lui l'adoption, les périodes accomplies dans
-  l'Union européenne, ses complémentaires — l'Ircantec, qui le sert sans
-  coefficient, l'abat encore — et les non-salariés agricoles, les libéraux et
-  les avocats, qui ont le même âge ; dehors aussi l'aidant familial et le
-  parent d'un enfant handicapé. Restent dehors
+  l'Union européenne, ses complémentaires — l'Agirc-Arrco, l'Ircantec et celle
+  des indépendants, que leurs textes lui servent sans coefficient, l'abattent
+  encore jusqu'à l'âge de sa génération —, et les régimes de base où vaut le
+  même âge : les fonctionnaires, dont la décote s'annule pour lui à
+  soixante-cinq ans s'il a interrompu son activité par un congé ou une
+  disponibilité, ou l'a réduite par un temps partiel, ce que la saisie ne
+  demande pas, la CAVIMAC, les points d'avant 1973 des
+  artisans et des commerçants, les non-salariés agricoles, les libéraux et les
+  avocats ; dehors aussi l'aidant familial et le parent d'un enfant handicapé.
+  Restent dehors
   l'ASPA dès l'âge de la catégorie, les évadés et les rapatriés pour maladie,
   la carte de patriote résistant, que la saisie ne distingue pas, et la date où
   chaque régime aligné a reçu chaque règle. La proposition n'en fait pas

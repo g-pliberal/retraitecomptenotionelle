@@ -181,7 +181,9 @@ versions:
       la naissance, « Sont expressément exclus : les trimestres validés au titre de
       l'assurance vieillesse des parents au foyer ; les périodes pendant lesquelles
       l'assuré a perçu une pension d'invalidité ; les périodes d'indemnisation au titre de
-      la législation sur les accidents du travail » ; avant, « Sont retenues : les
+      la législation sur les accidents du travail/maladies professionnelles pour
+      incapacité temporaire ou permanente au moins égale à 66 % » ; avant, « Sont
+      retenues : les
       périodes ayant donné lieu à cotisations à charge de l'assuré ; les versements pour
       la retraite [...] ; les périodes assimilées maladie, maternité, chômage, rééducation
       professionnelle et les congés de formation » ; avant soixante-cinq ans, « le taux
@@ -284,16 +286,204 @@ approximations:
     périodes de formation et de rééducation professionnelle, que la saisie ne porte pas.
   effet: non mesuré
 - version: [loi_du_9_novembre_2010]
+  textes: >-
+    décret n° 2011-620, article 4, 14° et 16° (JORFARTI000024110134) ; R. 723-38
+    (LEGIARTI000024113046, du 3 juin 2011 au 8 juillet 2019), puis R. 653-2
+    (LEGIARTI000038770285, du 8 juillet 2019 au 1er septembre 2023)
   ecart: >-
-    Les autres régimes où vaut le même âge ne le servent pas : les non-salariés agricoles
+    D'autres régimes où vaut le même âge ne le servent pas : les non-salariés agricoles
     (loi n° 2010-1330, article 21, IV), les professions libérales (R. 643-7) et les
-    avocats (R. 723-38), que le décret n° 2011-620, article 4, 14° et 16°, y étend. Ni
-    l'Ircantec, qui sert sans coefficient l'agent qui a ce taux plein à soixante-cinq ans
-    (arrêté du 30 décembre 1970, article 16, I, 3°, d) : le modèle l'abat jusqu'à l'âge
-    de sa génération. L'Agirc-Arrco garde l'âge de sa génération : ni l'accord du 18 mars
-    2011 ni celui du 17 novembre 2017, tels que la fiche coefficients_anticipation_agirc_arrco
-    les cite, ne nomment ces parents.
+    avocats, dont le décret n° 2011-620, article 4, 14° et 16°, écrit la règle dans
+    R. 643-7 et R. 723-38 ; depuis le 8 juillet 2019, R. 653-2 la porte pour les avocats,
+    mot pour mot : la réduction se compte « du soixante-cinquième anniversaire s'ils
+    remplissent les conditions prévues au 1° bis ou au 1° ter de l'article L. 351-8 ou aux
+    III ou IV de l'article 20 de la loi n° 2010-1330 du 9 novembre 2010 portant réforme
+    des retraites ». Ni l'Ircantec, qui sert sans coefficient l'agent qui a ce taux plein
+    à soixante-cinq ans (arrêté du 30 décembre 1970, article 16, I, 3°, d) : le modèle
+    l'abat jusqu'à l'âge de sa génération. L'Agirc-Arrco, les fonctionnaires, la CAVIMAC,
+    les points d'avant 1973 des artisans et des commerçants et le RCI ont chacun leur
+    approximation, qui suit.
   effet: non mesuré
+- version: [loi_du_9_novembre_2010]
+  textes: >-
+    accord du 18 mars 2011 relatif aux retraites complémentaires AGIRC-ARRCO-AGFF, article
+    1er, dans le recueil « Accords nationaux des partenaires sociaux » de la caisse (hors
+    JORF), https://www.agirc-arrco.fr/storage/2021/11/liste_accords_paritaires_Agirc_Arrco.pdf,
+    sha256 0186b6b165ad2a5f5f561deb969c6a35c661dc2e1fedbfcdcaa24801f51104c1 ; accord
+    national interprofessionnel du 17 novembre 2017, « Applicable au 1er janvier 2019 »,
+    articles 84 et 98 (hors JORF),
+    https://www.agirc-arrco.fr/storage/2024/09/201809dc_ANI_du_17_novembre_2017.pdf,
+    sha256 b8af8df7372e4f897c1ca0c4fd9bf4baaa5b706ec4737b8e51b593c5a2a4fccb ; tous deux
+    téléchargés et relus le 3 novembre 2026
+  ecart: >-
+    Le modèle compte le coefficient d'anticipation de l'Arrco et de l'Agirc, puis de
+    l'Agirc-Arrco, jusqu'à l'âge de la génération. Les deux accords servent pourtant ces
+    parents sans abattement. L'accord du 18 mars 2011, article 1er, « pour toute
+    liquidation d'allocations AGIRC et/ou ARRCO prenant effet à compter du 1er juillet
+    2011 et jusqu'au 31 décembre 2018 au plus tard » : « Les participants aux régimes
+    AGIRC et ARRCO qui justifient avoir, avant l'âge fixé au 1° de l'article L. 351-8 du
+    code de la Sécurité sociale, fait liquider, leur pension d'assurance vieillesse, à
+    taux plein, auprès du régime général d'assurance vieillesse de la Sécurité sociale ou
+    du régime des assurances sociales agricoles », notamment « en application des III et
+    IV de l'article 20 de la loi n° 2010-1330 du 9 novembre 2010 [...] (aidants
+    familiaux, assurés handicapés, parents d'enfant handicapé et parents de 3 enfants sous
+    certaines conditions) ; pourront faire liquider leurs allocations AGIRC et/ou ARRCO,
+    sans abattement, sur les tranches A et B des rémunérations ». L'accord national
+    interprofessionnel du 17 novembre 2017, article 84, depuis le 1er janvier 2019 : « 1.
+    Le participant peut bénéficier de sa pension au titre du présent régime sans
+    abattement dès lors qu'il a atteint l'âge visé au 1° de l'article L. 351-8 du code de
+    la sécurité sociale » ; « 3. Le participant bénéficie de sa pension au titre du
+    présent régime avant l'âge visé au paragraphe 1. et sans application des coefficients
+    viagers mentionnés au paragraphe 2. à l'âge auquel il a obtenu la pension d'assurance
+    vieillesse du régime général ou du régime des assurances sociales agricoles à taux
+    plein » ; le coefficient de solidarité de l'article 98 ne touche que « Les
+    participants, nés à partir du 1er janvier 1957 ». Ce que les textes lus ne tranchent
+    pas : depuis 2019, avant soixante-cinq ans, sans le taux plein du régime de base, le
+    coefficient se compte de « cet âge », celui du 1° de L. 351-8 (article 84, 2), que le
+    IV de l'article 20 fixe pour ces parents : « Par dérogation aux dispositions de
+    l'article L. 351-8 du code de la sécurité sociale, l'âge mentionné au 1° dudit article
+    est fixé à soixante-cinq ans » ; aucun ne dit si l'Agirc-Arrco le lit ainsi, et le
+    modèle compte de l'âge de la génération ; les points de l'Arrco des cultes, dont
+    la pension de base est celle de la CAVIMAC, quand les deux accords ne nomment que le
+    régime général et les assurances sociales agricoles.
+  effet: >-
+    la complémentaire de ces parents partis de soixante-cinq ans à l'âge de leur
+    génération, sous le coefficient de la table des âges de l'article 84, 2, que le
+    modèle applique aussi avant 2019, au trimestre supérieur. Née le 15 mars 1953, partie
+    le 1er avril 2018, à treize mois et demi de 66 ans et 2 mois : 5 trimestres, « moins
+    1 an 1 trimestre », 0,95 au lieu de 1. Née le 15 septembre 1954, partie le 1er
+    octobre 2019, à dix-huit mois et demi de 66 ans et 7 mois : 7 trimestres, « moins 1
+    an 3 trimestres », 0,93. Née le 15 mars 1955, partie le 1er avril 2020, à vingt-trois
+    mois et demi de 67 ans : 8 trimestres, « moins 2 ans », 0,92. Soit 5 %, 7 % et 8 %
+    de leur complémentaire, ce que les deux moteurs servent
+    (tests/test_taux_plein_a_soixante_cinq_ans.py).
+- version: [loi_du_9_novembre_2010]
+  textes: >-
+    loi n° 2010-1330, article 28 (LEGIARTI000023023851, du 1er juillet au 23 décembre
+    2011 ; LEGIARTI000025014566, depuis), III et I ; code des pensions civiles et
+    militaires de retraite, R. 26 ter (LEGIARTI000024111781, seule rédaction, depuis le 3
+    juin 2011, que le décret n° 2011-620, article 3, JORFARTI000024110126, insère), L. 13
+    (LEGIARTI000028498258), L. 14 (LEGIARTI000037200740, du 15 juillet 2018 au 1er
+    septembre 2023) et L. 24 (LEGIARTI000028498845) ; loi n° 2003-775, article 66, III
+    (LEGIARTI000006758610) ; L. 161-17-2 du code de la sécurité sociale
+    (LEGIARTI000025014605) ; décret n° 2003-1306 (CNRACL), article 65-3
+    (LEGIARTI000024113270), et décret n° 2004-1056 (ouvriers de l'État), article 50-3
+    (LEGIARTI000024113274), que le décret n° 2011-620, article 10 (JORFARTI000024110234),
+    complète d'un renvoi à R. 26 ter
+  ecart: >-
+    Le modèle annule la décote des fonctionnaires sédentaires de l'État, de la CNRACL et
+    des ouvriers de l'État à l'âge du tableau de l'article 66, III, de la loi n° 2003-775,
+    la limite d'âge moins des trimestres, lu à l'« Année au cours de laquelle sont réunies
+    les conditions mentionnées au I et au II de l'article L. 24 » (fiche
+    decote_fonction_publique). La loi n° 2010-1330, article 28, III, le plafonne
+    pourtant : « Pour les fonctionnaires nés entre le 1er juillet 1951 et le 31 décembre
+    1955 dont la limite d'âge était fixée à soixante-cinq ans avant l'entrée en vigueur
+    de la présente loi et qui remplissent les conditions prévues aux 1° à 3° du IV de
+    l'article 20, l'âge auquel s'annule le coefficient de minoration prévu à l'article
+    L. 14 du code des pensions civiles et militaires de retraite ne peut être supérieur à
+    soixante-cinq ans, par dérogation au III de l'article 66 de la loi n° 2003-775 du 21
+    août 2003 précitée. Pour l'application aux fonctionnaires du 1° du IV de l'article
+    20, les enfants sont ceux énumérés au II de l'article L. 18 du code des pensions
+    civiles et militaires de retraite. » Le décret de la CNRACL, article 65-3, et celui
+    des ouvriers de l'État, article 50-3, écrivent la même règle, et renvoient à R. 26
+    ter : « Les modalités d'application du présent article sont celles prévues pour les
+    fonctionnaires de l'Etat à l'article R. 26 ter du code des pensions civiles et
+    militaires de retraite. » Ce ne sont pas les conditions du régime général : une
+    interruption « pendant une durée d'au moins une année » dans la fenêtre de la
+    naissance, qui « doit être intervenue dans le cadre des congés ou de la disponibilité
+    mentionnés au 1° de l'article R. 13 du présent code », ou un temps partiel de R. 13,
+    2°, « pendant une période d'au moins deux années pour une quotité de temps de travail
+    de 50 % [...], d'au moins une année et huit mois pour une quotité de 60 % et d'au
+    moins une année et cinq mois pour une quotité de 70 % » ; huit trimestres de durée
+    d'assurance les deux années d'avant, et huit d'activité avant l'interruption. La
+    saisie ne demande pas la forme de l'interruption : la règle tient à un fait qu'elle
+    ne porte pas.
+  effet: >-
+    le fonctionnaire parent qui remplit ces conditions, parti de soixante-cinq ans à son
+    âge d'annulation. La fonctionnaire de l'État née le 15 mars 1955, sans activité de
+    1978 à 2002, trois enfants nés en avril 1978, juin 1980 et juin 1982, partie à
+    soixante-cinq ans en 2020 : elle atteint en 2017 soixante-deux ans, l'âge de
+    L. 161-17-2 que vise le 1° du I de L. 24 ; le tableau de l'article 66, III, porte
+    pour 2017 « 1,25 % » par trimestre et la « Limite d'âge moins 3 trimestres », de
+    soixante-sept ans pour qui est né à compter du 1er janvier 1955 (article 28, I) :
+    66 ans et 3 mois, 5 trimestres après soixante-cinq ans. Le modèle lui sert 75 % × (1 −
+    5 × 1,25 %) = 70,3125 % — 75 %, le pourcentage maximum de L. 13 —, de même à la
+    CNRACL et aux ouvriers de l'État, quand le droit lui sert 75 % si son interruption a
+    été un congé ou une disponibilité de R. 13 : 6,25 % de sa pension. Pour les
+    générations de 1951 à 1954, l'âge d'annulation tient à la limite d'âge que fixe le
+    décret de l'article 28, II, que cette lecture n'a pas rouvert : l'écart n'y est pas
+    mesuré.
+- version: [loi_du_9_novembre_2010]
+  textes: >-
+    L. 382-27 du code de la sécurité sociale (LEGIARTI000019959668, du 19 décembre 2008 au
+    1er septembre 2023) ; loi n° 2010-1330, article 20, IV (LEGIARTI000023023835) ; décret
+    n° 2006-1325, article 2 (LEGIARTI000023397816, pour les pensions prenant effet à
+    compter du 1er juillet 2011) ; R. 351-27, I, 2° (LEGIARTI000024113020)
+  ecart: >-
+    Le modèle lit la pension de la CAVIMAC à l'âge de la génération, ses deux fractions
+    décotées jusqu'à lui (regimes/cavimac.yaml, fiche cultes_fractions_de_pension). Les
+    ministres des cultes et les membres des congrégations « reçoivent une pension de
+    vieillesse dans les conditions définies aux articles L. 351-1 à L. 351-1-3, [...]
+    L. 351-8 à L. 351-13 » (L. 382-27), et le IV de l'article 20 « est applicable dans
+    tous les régimes obligatoires de retraite auxquels s'appliquent les dispositions de
+    l'article L. 351-8 » : l'âge du 1° de L. 351-8 y est soixante-cinq ans pour ces
+    parents. La fraction des périodes d'avant 1998, qui, sans la durée, « peut également
+    être allouée à partir de l'âge mentionné au I », prend alors « le coefficient de
+    minoration fixé au 2° du I et au II de l'article R. 351-27 » (décret n° 2006-1325,
+    article 2, II), que R. 351-27 compte jusqu'à « leur soixante-cinquième anniversaire,
+    s'ils remplissent les conditions prévues au 1° bis ou 1° ter de l'article L. 351-8 ou
+    au III ou IV de l'article 20 ».
+  effet: >-
+    le parent de la CAVIMAC parti de soixante-cinq ans à l'âge de sa génération. Une
+    ministre du culte née le 15 mars 1953, au culte depuis 1979, sans activité de 1982 à
+    1999, trois enfants nés en avril 1982, juin 1984 et juin 1986, partie à soixante-cinq
+    ans le 1er avril 2018, à 5 trimestres de 66 ans et 2 mois : le modèle sert la
+    fraction d'après 1997 au taux de 50 % × (1 − 5 × 1,25 %) = 46,875 %, et celle d'avant
+    1998 sous la décote 1 − 5 × 1,25 % = 0,9375 ; le droit les sert sans décote : 6,25 %
+    de sa pension de la CAVIMAC.
+- version: [loi_du_9_novembre_2010]
+  textes: >-
+    décret n° 73-937 du 2 octobre 1973, article 3 (LEGIARTI000026474703, du 7 octobre
+    2012 au 1er septembre 2023 ; LEGIARTI000006765819, du 19 février 2004 au 7 octobre
+    2012)
+  ecart: >-
+    Le modèle compte depuis 2013 la minoration des points d'avant 1973 des artisans et des
+    commerçants jusqu'à l'âge de la génération (regimes/cancava_avant_1973.yaml et
+    regimes/organic_avant_1973.yaml : l'âge d'annulation de la décote du régime général).
+    Le décret n° 73-937, article 3, II, la compte pourtant « de leur soixante-cinquième
+    anniversaire s'ils remplissent les conditions prévues aux 1° bis ou 1° ter de
+    l'article L. 351-8 ou aux III ou IV de l'article 20 de la loi n° 2010-1330 du 9
+    novembre 2010 portant réforme des retraites ou, dans le cas contraire, de l'âge prévu
+    au 1° de l'article L. 351-8 », à « 1,25 % pour l'assuré né après 1952 ». Du 1er
+    juillet 2011 au 7 octobre 2012, la rédaction du 19 février 2004 la comptait jusqu'au
+    « soixante-cinquième anniversaire » de tous, ce que le modèle sert jusqu'en 2012.
+  effet: >-
+    le parent artisan ou commerçant qui a des points d'avant 1973, parti de soixante-cinq
+    ans à l'âge de sa génération. Une artisane née le 15 mars 1953, au travail dès
+    dix-huit ans, sans activité de 1976 à 1999, trois enfants nés en avril 1976, juin 1978
+    et juin 1980, partie à soixante-cinq ans le 1er avril 2018, à 5 trimestres de 66 ans
+    et 2 mois : le modèle sert ses points d'avant 1973 sous le coefficient 1 − 5 × 1,25 %
+    = 0,9375, et ceux d'une commerçante de même ; le droit les sert entiers : 6,25 % de
+    cette part de sa pension.
+- version: [loi_du_9_novembre_2010]
+  textes: >-
+    arrêté du 9 février 2012 portant approbation du règlement du régime complémentaire
+    obligatoire d'assurance vieillesse des professions artisanales, industrielles et
+    commerciales, article 12 (LEGIARTI000054891893, du 1er janvier 2013 au 26 juin 2024)
+  ecart: >-
+    Le modèle abat les points du RCI, et ceux du RCO des artisans et du NRIC des
+    commerçants qu'il liquide avec eux, jusqu'à l'âge de la génération (fiche
+    abattement_rci). Le règlement du RCI, article 12, les sert pourtant « sans aucun
+    abattement : a) A partir de l'âge fixé à l'article L. 161-17-2 du code de la sécurité
+    sociale et à partir de la première liquidation à taux plein de la retraite de base
+    servie par le régime social des indépendants » : la retraite de base de ces parents,
+    que le modèle sert à taux plein dès soixante-cinq ans, l'ouvre.
+  effet: >-
+    le parent artisan ou commerçant parti de soixante-cinq ans à l'âge de sa génération.
+    L'artisane de l'approximation précédente, à 5 trimestres de 66 ans et 2 mois, reçoit
+    dans le modèle ses points du RCI et du RCO des artisans sous le coefficient 0,95, et
+    une commerçante ses points du RCI et du NRIC de même ; le droit les sert entiers :
+    5 % de sa complémentaire.
 - version: [loi_du_9_novembre_2010, loi_du_28_fevrier_2025]
   ecart: >-
     Les autres taux pleins à soixante-cinq ans de la fiche ne sont pas servis : l'aidant
@@ -310,6 +500,11 @@ effet: >-
   2011 à 2022 sans la durée requise : leur décote ne se compte plus que jusqu'à soixante-cinq
   ans, et s'annule à soixante-cinq ans au lieu de soixante-cinq ans et quatre mois à
   soixante-sept ans. Les autres catégories de la fiche restent décotées. Non mesuré.
+  Leurs complémentaires, et les fonctionnaires, la CAVIMAC et les points d'avant 1973,
+  où vaut le même âge, les abattent encore jusqu'à l'âge de leur génération : les
+  approximations le chiffrent sur des exemples : de 5 % à 8 % de la complémentaire,
+  6,25 % de la pension de base de la fonctionnaire née en 1955, de la ministre du culte
+  et des points d'avant 1973.
 sources:
   lu_le: 2026-11-03
   prochaine_relecture: 2027-06-30
@@ -320,12 +515,17 @@ sources:
     personne ; un trimestre de majoration pour enfant handicapé (L. 351-4-1) ; trente
     mois d'aide à son enfant bénéficiaire de la prestation de compensation.
   - >-
-    Aux sessions des complémentaires et des autres régimes de base : l'Ircantec, qui
-    nomme ces parents (arrêté du 30 décembre 1970, article 16, I, 3°, d), à faire suivre
-    le taux plein du régime général à soixante-cinq ans ; l'Agirc-Arrco, à relire dans
-    l'accord du 18 mars 2011 et l'accord du 17 novembre 2017 ; les non-salariés agricoles
-    (article 21, IV), les libéraux (R. 643-7) et les avocats (R. 723-38), dont les
-    rédactions de 2016 à 2022 restent à lire.
+    À la file des complémentaires : servir sans coefficient à ces parents l'Agirc-Arrco,
+    que l'accord du 18 mars 2011 (article 1er) et celui du 17 novembre 2017 (article 84)
+    servent sans abattement, l'Ircantec, qui les nomme (arrêté du 30 décembre 1970,
+    article 16, I, 3°, d), et le RCI (règlement, article 12) ; dire de quel âge
+    l'Agirc-Arrco compte leur coefficient avant soixante-cinq ans depuis 2019, et ce
+    qu'elle sert aux points de l'Arrco des cultes, que les textes lus ne tranchent pas.
+    À la file du régime général : servir le même âge aux fonctionnaires (article 28, III,
+    et R. 26 ter, dont la forme de l'interruption n'est pas saisie), à la CAVIMAC et aux
+    points d'avant 1973 ; puis aux non-salariés agricoles (article 21, IV), aux libéraux
+    (R. 643-7) et aux avocats (R. 723-38, puis R. 653-2), dont les rédactions de 2016 à
+    2022 restent à lire.
   lectures:
   - type: legifrance
     reference: >-
@@ -391,6 +591,46 @@ sources:
       65 ans et 9 mois », « 1953 66 ans et 2 mois », « 1954 66 ans et 7 mois », « à partir
       de 1955 67 ans »
     date: 2026-07-29
+  - type: autre
+    reference: >-
+      Agirc-Arrco, recueil « Accords nationaux des partenaires sociaux » : l'accord du 18
+      mars 2011, article 1er (« parents de 3 enfants sous certaines conditions [...]
+      sans abattement »), téléchargé le 3 novembre 2026, sha256
+      0186b6b165ad2a5f5f561deb969c6a35c661dc2e1fedbfcdcaa24801f51104c1
+    url: https://www.agirc-arrco.fr/storage/2021/11/liste_accords_paritaires_Agirc_Arrco.pdf
+    date: 2026-11-03
+  - type: autre
+    reference: >-
+      Agirc-Arrco, accord national interprofessionnel du 17 novembre 2017, « Applicable
+      au 1er janvier 2019 », article 84, 1 à 3, sa table des âges, et article 98,
+      téléchargé le 3 novembre 2026, sha256
+      b8af8df7372e4f897c1ca0c4fd9bf4baaa5b706ec4737b8e51b593c5a2a4fccb
+    url: https://www.agirc-arrco.fr/storage/2024/09/201809dc_ANI_du_17_novembre_2017.pdf
+    date: 2026-11-03
+  - type: legifrance
+    reference: >-
+      index LEGI à jour au 2 novembre 2026, relu le 3 novembre 2026 après la relecture
+      indépendante : la loi n° 2010-1330, article 28 (LEGIARTI000023023851,
+      LEGIARTI000025014566) ; le code des pensions civiles et militaires de retraite,
+      R. 26 ter (LEGIARTI000024111781), L. 13 (LEGIARTI000028498258), L. 14
+      (LEGIARTI000037200740) et L. 24 (LEGIARTI000028498845) ; la loi n° 2003-775,
+      article 66 (LEGIARTI000006758610) ; le décret n° 2003-1306, article 65-3
+      (LEGIARTI000024113270) ; le décret n° 2004-1056, article 50-3
+      (LEGIARTI000024113274) ; L. 382-27 (LEGIARTI000019959668) ; le décret n° 2006-1325,
+      article 2 (LEGIARTI000023397816) ; le décret n° 73-937, article 3
+      (LEGIARTI000006765819, LEGIARTI000026474703) ; R. 723-38 (LEGIARTI000024113046,
+      LEGIARTI000038787833) et R. 653-2 (LEGIARTI000038770285) ; le règlement du RCI,
+      arrêté du 9 février 2012, article 12 (LEGIARTI000054891893, LEGIARTI000054896398)
+    date: 2026-11-03
+  - type: jorf
+    reference: >-
+      index JORF à jour au 2 novembre 2026, relu le 3 novembre 2026 : le décret
+      n° 2011-620, article 3 (JORFARTI000024110126), article 4, 14° et 16°
+      (JORFARTI000024110134), et article 10 (JORFARTI000024110234) ; la loi n° 2025-199,
+      article 87 (JORFARTI000051269910), dont le VIII n'a que deux parties, A et B : le 6°
+      de L. 351-8 vient du 19° du II, que le A applique aux pensions prenant effet à
+      compter du 1er janvier 2026
+    date: 2026-11-03
 textes_a_rattacher:
 - reference: L. 351-8 CSS, 1° bis et 6°
 - reference: loi n° 2010-1330 du 9 novembre 2010, article 20, III
@@ -401,7 +641,7 @@ textes_a_rattacher:
     le 6° garde le taux plein à soixante-cinq ans au parent qui a une majoration de durée
     pour enfant handicapé ou qui a aidé son enfant bénéficiaire de la prestation de
     compensation, pour les pensions prenant effet à compter du 1er janvier 2026 (loi
-    n° 2025-199, article 87, VIII, C)
+    n° 2025-199, article 87, II, 19°, que le VIII, A, applique à ces pensions)
 code:
   moteur: >-
     L'âge du 1° de L. 351-8 que lit tout le moteur (`ouvrir.age_taux_plein`) est, dans les
@@ -441,3 +681,11 @@ historique:
   deux moteurs, sur décision du propriétaire du même jour (action 175, note
   2026-11-03-taux-plein-parents-de-trois-enfants.md) : la fiche passe de
   pas_encore_modelisee à approchee.
+- >-
+  2026-11-03 — corrigée après la relecture indépendante du même jour (note
+  2026-11-03-relecture-taux-plein-parents-de-trois-enfants.md), chaque texte rouvert :
+  l'Agirc-Arrco, que la fiche disait garder l'âge de la génération, sert ces parents sans
+  abattement (accords du 18 mars 2011 et du 17 novembre 2017) ; cet écart, et ceux des
+  fonctionnaires, de la CAVIMAC, des points d'avant 1973 et du RCI, sont déclarés et
+  chiffrés, en attendant le calcul ; trois références reprises (note
+  2026-11-03-correction-taux-plein-parents-de-trois-enfants.md).

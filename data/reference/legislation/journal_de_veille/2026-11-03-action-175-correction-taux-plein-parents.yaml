@@ -1,0 +1,43 @@
+date: "2026-11-03"
+session: "action 175, file M4 : correction du taux plein à 65 ans des parents de trois enfants nés de juillet 1951 à 1955, après la relecture R-M4 (db2457d)"
+consulte: >-
+  python scripts/veille_droit.py ; les index LEGI et JORF de la DILA, récupérés et mis à
+  jour (à jour au 2 novembre 2026, aucun incrément depuis) : la loi n° 2010-1330, articles 20
+  (LEGIARTI000023023835) et 28 (LEGIARTI000023023851, LEGIARTI000025014566) ; le code des
+  pensions civiles et militaires de retraite, R. 26 ter (LEGIARTI000024111781), L. 13
+  (LEGIARTI000028498258), L. 14 (LEGIARTI000037200740), L. 24 (LEGIARTI000028498845) ; la loi
+  n° 2003-775, article 66 (LEGIARTI000006758610) ; L. 161-17-2 (LEGIARTI000025014605) ; le
+  décret n° 2003-1306, article 65-3 (LEGIARTI000024113270) ; le décret n° 2004-1056, article
+  50-3 (LEGIARTI000024113274) ; L. 382-27 (LEGIARTI000019959668) ; le décret n° 2006-1325,
+  article 2 (LEGIARTI000023397816) ; R. 351-27 (LEGIARTI000024113020) ; le décret n° 73-937,
+  article 3 (LEGIARTI000006765819, LEGIARTI000026474703) ; R. 723-38 (LEGIARTI000024113046,
+  LEGIARTI000038787833) et R. 653-2 (LEGIARTI000038770285) ; le règlement du RCI, arrêté du 9
+  février 2012, article 12 (LEGIARTI000054891893, LEGIARTI000054896398) ; le décret
+  n° 2011-620, articles 3 (JORFARTI000024110126), 4 (JORFARTI000024110134) et 10
+  (JORFARTI000024110234) ; la loi n° 2025-199, article 87 (JORFARTI000051269910). Le recueil
+  des accords de l'Agirc-Arrco (sha256 0186b6b1…), accord du 18 mars 2011, article 1er ;
+  l'accord du 17 novembre 2017 (sha256 b8af8df7…), articles 84 et 98 ; la circulaire Cnav
+  n° 2014-64 (sha256 f6717a0f…), point 2.3.2.1, tous trois téléchargés le jour.
+trouve: >-
+  La relecture est confirmée, texte par texte. L'Agirc-Arrco sert ces parents sans
+  abattement (accord du 18 mars 2011, article 1er, « parents de 3 enfants sous certaines
+  conditions » ; accord du 17 novembre 2017, article 84, 1 et 3) : la fiche
+  taux_plein_a_soixante_cinq_ans le disait garder l'âge de la génération ; l'écart, 0,95,
+  0,93 et 0,92 au lieu de 1 de 2018 à 2020, est déclaré. Les fonctionnaires sédentaires
+  (article 28, III ; R. 26 ter ; articles 65-3 et 50-3 ; 70,3125 % au lieu de 75 % pour une
+  fonctionnaire née en 1955 partie à 65 ans), la CAVIMAC (L. 382-27 ; 46,875 % et 0,9375
+  au lieu de 50 % et 1) et les points d'avant 1973 (décret n° 73-937, article 3, II ;
+  0,9375) sont déclarés. Un écart de plus, que la relecture n'avait pas : le RCI, avec les
+  points du RCO des artisans et du NRIC des commerçants, sert « sans aucun abattement » dès
+  la retraite de base à taux plein (article 12), quand le modèle sert 0,95. Trois
+  références reprises : le 6° de L. 351-8 vient de l'article 87, II, 19°, que le VIII, A,
+  applique (pas de VIII, C) ; R. 653-2 pour les avocats depuis le 8 juillet 2019 ; le point
+  2.3.2.1 de la circulaire cité en entier.
+reste: >-
+  À la file des complémentaires : servir sans coefficient l'Agirc-Arrco, l'Ircantec et le
+  RCI à ces parents, et dire de quel âge l'Agirc-Arrco compte leur coefficient avant 65 ans
+  depuis 2019, et ce qu'elle sert aux points de l'Arrco des cultes, que les textes lus ne
+  tranchent pas. À la file M4 : servir le même âge aux fonctionnaires (la forme de
+  l'interruption, que R. 26 ter demande, n'est pas saisie), à la CAVIMAC et aux points
+  d'avant 1973, puis aux non-salariés agricoles, aux libéraux et aux avocats (note
+  2026-11-03-correction-taux-plein-parents-de-trois-enfants.md de l'action 175).

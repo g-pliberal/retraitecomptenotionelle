@@ -188,26 +188,24 @@ def test_l_age_du_taux_plein_du_parent_de_trois_enfants():
     assert obtenus == {cle: pytest.approx(age, abs=0.005) for cle, age in attendus.items()}
 
 
-def test_les_regimes_alignes_suivent_les_complementaires_non():
+def test_les_regimes_alignes_suivent():
     """Le même âge aux salariés agricoles et aux artisans et commerçants, à qui
     s'applique L. 351-8 (« Le présent article est applicable dans tous les
     régimes obligatoires de retraite auxquels s'appliquent les dispositions de
-    l'article L. 351-8 ») ; l'Arrco, en 2018, garde l'âge de la génération, celui
-    que la caisse a servi selon la fiche coefficients_anticipation_agirc_arrco
-    (« l'âge de la retraite est celui du 1° de L. 351-8 [...] ; la caisse a servi
-    celui de la loi du 21 décembre 2011 »)."""
+    l'article L. 351-8 »). Les complémentaires et les autres régimes où vaut le
+    même âge, que le modèle ne sert pas encore : ``ENCORE_A_L_AGE_DE_LA_GENERATION``
+    et ``ECARTS_DECLARES``."""
     from outils_pont import droit_et_refait
 
     carriere = _carriere("interrompue trois ans", sans=(1980, 1981, 1982))
     annee = carriere.annee_liquidation
     appels = {regime: ("liquider.decote_opposable", pont.MOTEUR,
                        pont.Periode(regime, annee), carriere, annee)
-              for regime in ("msa_salaries", "rsi", "arrco")}
+              for regime in ("msa_salaries", "rsi")}
     lus, refus = droit_et_refait(appels)
     assert refus == {}, refus
     assert {regime: lu[1] for regime, lu in lus.items()} == {
-        "msa_salaries": DEROGATION, "rsi": DEROGATION,
-        "arrco": pytest.approx(AGE_DE_1953, abs=0.005)}
+        "msa_salaries": DEROGATION, "rsi": DEROGATION}
 
 
 #: Une assurée née le 15 mars 1953, au travail dès dix-huit ans, sans activité
@@ -247,3 +245,130 @@ def test_la_pension_du_regime_general_de_bout_en_bout(age, enfants, taux):
     general = [p for p in servis["assurée"]["actuel"]["pensions_par_regime"]
                if p["regime"] == "regime_general"]
     assert len(general) == 1 and taux in general[0]["detail"], general
+
+
+#: La même assurée, née le 15 septembre 1954 : sans activité de 1977 à 1999,
+#: l'enfant d'avril 1977 ouvre le droit ; partie à 65 ans le 1er octobre 2019.
+NEE_EN_1954 = {"naissance": "1954-09-15", "interruptions": "1977:1999:sans_activite",
+               "naissances": "1977-04, 1979-06, 1981-06"}
+#: Née le 15 mars 1955 : sans activité de 1978 à 2002, l'enfant d'avril 1978
+#: ouvre le droit ; partie à 65 ans en 2020.
+NEE_EN_1955 = {"naissance": "1955-03-15", "interruptions": "1978:2002:sans_activite",
+               "naissances": "1978-04, 1980-06, 1982-06"}
+#: Une ministre du culte, au culte dès 1979 : 8 trimestres cotisés en 1980 et
+#: 1981, aucun de 1982 à 1984, l'enfant d'avril 1982 ouvre le droit.
+MINISTRE_DU_CULTE = {"statut": "ministre_du_culte", "debut": "26",
+                     "interruptions": "1982:1999:sans_activite",
+                     "naissances": "1982-04, 1984-06, 1986-06"}
+
+#: Ailleurs, la même règle est écrite, et le modèle ne la sert pas encore : il y
+#: lit l'âge de la génération. Chaque cas est un ÉCART DÉCLARÉ — la fiche le
+#: porte dans ses approximations, avec sa source et son effet — et ce que le
+#: modèle en sert encore, au mot près de son détail ; le droit le sert chaque
+#: fois sans abattement, ou au taux plein. La carrière est celle de ``REQUETE``,
+#: partie à 65 ans, sauf ce que le cas change. Quand le calcul viendra, chaque
+#: ligne passera à la valeur du droit. Les calculs, posés à la main, sont dans la
+#: note docs/feuille_de_route/175/2026-11-03-correction-taux-plein-parents-de-trois-enfants.md.
+ECARTS_DECLARES = {
+    # Accord du 18 mars 2011, article 1er : « sans abattement ». Le modèle
+    # compte jusqu'à 66 ans et 2 mois, 5 trimestres : 0,95 au lieu de 1.
+    "Arrco, 2018": ({}, "arrco", "coefficient d'anticipation 0.9500"),
+    # Accord du 17 novembre 2017, article 84, 1 et 3. Jusqu'à 66 ans et 7 mois,
+    # 7 trimestres : 0,93 au lieu de 1.
+    "Agirc-Arrco, 2019": (NEE_EN_1954, "agirc_arrco", "coefficient d'anticipation 0.9300"),
+    # Jusqu'à 67 ans, 8 trimestres : 0,92 au lieu de 1.
+    "Agirc-Arrco, 2020": (NEE_EN_1955, "agirc_arrco", "coefficient d'anticipation 0.9200"),
+    # Loi n° 2010-1330, article 28, III ; décrets n° 2003-1306, article 65-3,
+    # et n° 2004-1056, article 50-3. La décote court jusqu'à 67 ans moins
+    # 3 trimestres (loi n° 2003-775, article 66, III, pour 2017), 5 trimestres :
+    # 75 % × (1 − 5 × 1,25 %) = 70,3125 % au lieu de 75 %.
+    "fonctionnaire de l'État, 2020": ({**NEE_EN_1955, "statut": "fonctionnaire_etat"},
+                                      "fonction_publique_etat", "taux 70.312%"),
+    "fonctionnaire de la CNRACL, 2020": (
+        {**NEE_EN_1955, "statut": "fonctionnaire_territorial_hospitalier"}, "cnracl",
+        "taux 70.312%"),
+    "ouvrière de l'État, 2020": ({**NEE_EN_1955, "statut": "ouvrier_etat"}, "fspoeie",
+                                 "taux 70.312%"),
+    # L. 382-27 : 50 % × (1 − 5 × 1,25 %) = 46,875 % au lieu de 50 % ; la
+    # fraction d'avant 1998 (décret n° 2006-1325, article 2, II) : 0,9375.
+    "CAVIMAC, 2018": (MINISTRE_DU_CULTE, "cavimac", "taux 46.875%"),
+    "CAVIMAC, avant 1998": (MINISTRE_DU_CULTE, "cavimac", "décote 0.9375"),
+}
+
+#: Les régimes où le moteur lit encore l'âge de la génération, celui d'où se
+#: comptent leur décote ou leur coefficient : pour l'assurée « interrompue
+#: trois ans » de 2018, 66 ans et 2 mois au lieu de 65 ans — chaque fois un écart
+#: déclaré. Les points d'avant 1973 des artisans et des commerçants (décret
+#: n° 73-937, article 3, II : 0,9375 au lieu de 1), le RCI (règlement, article
+#: 12 : 0,95 au lieu de 1) s'y tiennent, par l'âge, à l'abri du paquet : leur
+#: pension de bout en bout passe par le RCO des artisans, que le paquet de main
+#: peut servir en retard sur le jumeau.
+ENCORE_A_L_AGE_DE_LA_GENERATION = ("arrco", "cavimac", "cancava_avant_1973",
+                                   "organic_avant_1973", "rci")
+
+#: Ce que la fiche doit dire de chaque écart, dans une approximation de la
+#: version de 2011 : le régime, ses textes, mot pour mot, et la valeur que le
+#: modèle sert encore.
+DECLARATIONS = {
+    "Agirc-Arrco": ("accord du 18 mars 2011, article 1er", "parents de 3 enfants sous "
+                    "certaines conditions", "article 84", "0,95", "0,93", "0,92"),
+    "fonctionnaires": ("article 28, III", "R. 26 ter", "article 65-3", "article 50-3",
+                       "R. 13", "70,3125 %"),
+    "CAVIMAC": ("L. 382-27", "décret n° 2006-1325, article 2, II", "46,875 %", "0,9375"),
+    "avant 1973": ("décret n° 73-937", "article 3, II", "0,9375"),
+    "RCI": ("article 12", "sans aucun abattement", "0,95"),
+}
+
+
+def test_ailleurs_le_moteur_lit_encore_l_age_de_la_generation():
+    """L'âge d'où se comptent la décote ou le coefficient, dans les deux moteurs
+    (``droit_et_refait``) : celui de la génération, là où le droit dit
+    soixante-cinq ans — un écart déclaré, en attendant le calcul."""
+    from outils_pont import droit_et_refait
+
+    carriere = _carriere("interrompue trois ans", sans=(1980, 1981, 1982))
+    annee = carriere.annee_liquidation
+    appels = {regime: ("liquider.decote_opposable", pont.MOTEUR,
+                       pont.Periode(regime, annee), carriere, annee)
+              for regime in ENCORE_A_L_AGE_DE_LA_GENERATION}
+    lus, refus = droit_et_refait(appels)
+    assert refus == {}, refus
+    assert {regime: lu[1] for regime, lu in lus.items()} == {
+        regime: pytest.approx(AGE_DE_1953, abs=0.005)
+        for regime in ENCORE_A_L_AGE_DE_LA_GENERATION}
+
+
+def test_ailleurs_le_modele_sert_encore_l_age_de_la_generation():
+    """Ce que le modèle sert encore où la même règle est écrite, dans les deux
+    moteurs (``servi_et_refait``) : chaque fois un écart déclaré, en attendant
+    le calcul."""
+    from outils_pont import servi_et_refait
+
+    cas = [{"cle": cle, "requete": {**REQUETE, "liquidation": "65", **champs}}
+           for cle, (champs, _, _) in ECARTS_DECLARES.items()]
+    servis, refus = servi_et_refait(cas)
+    assert refus == {}, refus
+    details = {cle: [p["detail"] for p in servis[cle]["actuel"]["pensions_par_regime"]
+                     if p["regime"] == regime]
+               for cle, (_, regime, _) in ECARTS_DECLARES.items()}
+    assert {cle: any(attendu in detail for detail in details[cle])
+            for cle, (_, _, attendu) in ECARTS_DECLARES.items()} == {
+        cle: True for cle in ECARTS_DECLARES}, details
+
+
+def test_la_fiche_declare_chaque_ecart():
+    """Chaque écart a son approximation dans la version de 2011 : le régime, ses
+    textes cités, la valeur que le modèle sert encore. L'Agirc-Arrco n'y est
+    plus donnée pour garder l'âge de la génération : ses deux accords servent
+    ces parents sans abattement."""
+    from retraite_notionnelle.noyau import carte
+
+    fiche = carte.fiches()[categories.FICHE_DES_SOIXANTE_CINQ_ANS]
+    approximations = [" ".join(str(a.get(champ) or "") for champ in ("textes", "ecart", "effet"))
+                      for a in fiche.get("approximations") or []
+                      if "loi_du_9_novembre_2010" in (a.get("version") or [])]
+    manquent = {regime: [mot for mot in mots
+                         if not any(regime in a and mot in a for a in approximations)]
+                for regime, mots in DECLARATIONS.items()}
+    assert manquent == {regime: [] for regime in DECLARATIONS}
+    assert not any("garde l'âge de sa génération" in a for a in approximations)
