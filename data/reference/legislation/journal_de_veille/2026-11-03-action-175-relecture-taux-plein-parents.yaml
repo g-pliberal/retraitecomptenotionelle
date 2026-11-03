@@ -1,0 +1,36 @@
+date: "2026-11-03"
+session: "action 175, file R-M4 : relecture indépendante du taux plein à 65 ans des parents de trois enfants nés de juillet 1951 à 1955 (commits ee8e6ac et 213318b)"
+consulte: >-
+  python scripts/veille_droit.py ; les index LEGI et JORF de la DILA, récupérés et mis à
+  jour (à jour au 2 novembre 2026, aucun incrément depuis) : la loi n° 2010-1330, articles 20
+  (LEGIARTI000023023835), 21 (LEGIARTI000028498869), 28 (LEGIARTI000025014566) et 118
+  (JORFARTI000023022348) ; le décret n° 2011-620, articles 2 (LEGIARTI000024111672), 3
+  (JORFARTI000024110126) et 10 (JORFARTI000024110234) ; L. 351-8, L. 351-12, L. 161-17-2,
+  L. 634-2, L. 382-27, R. 351-7, R. 351-12 (ses sept rédactions de 2011 à 2023), R. 351-27,
+  D. 634-5, R. 653-2 ; L. 742-3 du code rural ; le décret n° 2003-1306, article 65-3 ; le
+  décret n° 2004-1056, article 50-3 ; le décret n° 73-937, article 3 ; l'arrêté du 30
+  décembre 1970, article 16 ; la loi n° 2025-199, article 87 (JORFARTI000051269910). La
+  circulaire Cnav n° 2014-64 (PDF, sha256 f6717a0f…) ; les exposés « Taux plein à 65 ans » et
+  « Taux de la retraite personnelle », servis par l'API de la Cnav. Le recueil des accords de
+  l'Agirc-Arrco (sha256 0186b6b1…), accord du 18 mars 2011, article 1er ; l'accord du 17
+  novembre 2017 (sha256 b8af8df7…), article 84.
+trouve: >-
+  Au régime général, chez les salariés agricoles et chez les artisans et commerçants, la
+  règle, ses dates et chaque citation de la fiche taux_plein_a_soixante_cinq_ans sont
+  conformes aux textes, et chaque valeur du test se refait à la main. Trois écarts. Grave :
+  l'Agirc-Arrco sert ces parents sans abattement — accord du 18 mars 2011, article 1er, « en
+  application des III et IV de l'article 20 de la loi n° 2010-1330 [...] parents de 3 enfants
+  sous certaines conditions », de juillet 2011 à 2018 ; accord du 17 novembre 2017, article
+  84, 1 et 3, depuis 2019 — quand la fiche écrit qu'il garde l'âge de la génération, le test
+  l'affirme et le modèle sert un coefficient de 0,95 ou 0,93. Moyen : la même règle vaut pour
+  les fonctionnaires sédentaires (article 28, III ; R. 26 ter ; décret n° 2003-1306, article
+  65-3 ; décret n° 2004-1056, article 50-3), à la CAVIMAC (L. 382-27) et pour les points
+  d'avant 1973 des artisans et commerçants (décret n° 73-937, article 3, II), ni servis ni
+  déclarés. Mineur : un « article 87, VIII, C » qui n'existe pas, R. 653-2 pour les avocats
+  depuis 2019, une citation coupée de la circulaire.
+reste: >-
+  Rectifier la fiche et le test de l'Agirc-Arrco et servir les complémentaires sans
+  coefficient à ces parents ; déclarer, ou servir, les fonctionnaires, la CAVIMAC et les
+  points d'avant 1973 ; reprendre les trois références (note
+  2026-11-03-relecture-taux-plein-parents-de-trois-enfants.md de l'action 175). Le lot rapide
+  local a 24 échecs nés de f716130 (action 177), étrangers à cette règle.
