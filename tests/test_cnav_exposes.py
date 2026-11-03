@@ -378,3 +378,46 @@ def test_les_ages_de_la_carriere_longue_sont_ceux_de_la_caisse(date_effet):
                 and float(ligne["generation"]) <= de and a <= float(ligne["generation_fin"])]
         assert ages, (date_effet, debut, age_debut)
         assert round(min(ages) * 12) == _mois(annees, mois), (date_effet, debut, age_debut)
+
+
+# -- le salaire qui valide un trimestre -----------------------------------------------
+
+#: « Validation des périodes de cotisations »
+#: (`cotisation_salaire_validation_periode_cotisation_validation_periode_cotisation_ex.aspx`,
+#: version du 13 novembre 2025) : ce qui valide un trimestre au salarié, chaque règle
+#: sous l'année de son premier jour. L'année 1946 compte « autant de trimestres que le
+#: salaire correspondant aux retenues [...] représente de fois 1.800 AF », comme 1947 et
+#: 1948 ; le Smic et l'allocation aux vieux travailleurs salariés sont ceux du 1er
+#: janvier de l'année.
+SALAIRE_VALIDANT_UN_TRIMESTRE = (
+    (1946, "1 800 anciens francs"),
+    (1949, "le montant trimestriel de l'allocation aux vieux travailleurs salariés"),
+    (1972, 200),
+    (2014, 150),
+)
+
+#: Un franc vaut cent anciens francs, et un euro 6,55957 francs.
+EUROS_PAR_ANCIEN_FRANC = 1 / 100 / 6.55957
+
+
+def test_le_salaire_qui_valide_un_trimestre_est_celui_de_la_caisse():
+    """Depuis 1972, des heures de Smic (`validation_trimestres.csv`) : 200 jusqu'en
+    2013, 150 depuis ; de 1946 à 1971, un montant en euros
+    (`salaire_validant_trimestre_avant_1972.csv`), 1 800 anciens francs jusqu'en
+    1948, puis une ligne par année, que `cnav_avts.py` tire du barème de l'allocation
+    aux vieux travailleurs salariés que l'exposé désigne."""
+    heures = {int(ligne["annee"]): float(ligne["heures"])
+              for ligne in _csv("validation_trimestres")}
+    avant_1972 = {int(ligne["annee"]): float(ligne["valeur"])
+                  for ligne in _csv("salaire_validant_trimestre_avant_1972")}
+    debuts = [debut for debut, _ in SALAIRE_VALIDANT_UN_TRIMESTRE]
+    for rang, (debut, regle) in enumerate(SALAIRE_VALIDANT_UN_TRIMESTRE):
+        fin = debuts[rang + 1] if rang + 1 < len(debuts) else 2027
+        for annee in range(debut, fin):
+            if isinstance(regle, int):
+                assert heures[max(d for d in heures if d <= annee)] == regle, annee
+            elif annee < 1949:
+                assert avant_1972[annee] == pytest.approx(1800 * EUROS_PAR_ANCIEN_FRANC), annee
+            else:
+                assert avant_1972[annee] > avant_1972[1948], annee
+    assert min(heures) == 1972 and max(avant_1972) == 1971
