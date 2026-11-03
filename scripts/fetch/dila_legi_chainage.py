@@ -147,12 +147,36 @@ def nomme(texte: str, numero: str, signature: str) -> str:
     return ""
 
 
+def _date_en_lettres_souple(iso: str) -> str:
+    """La date en lettres, le premier du mois écrit « 1er » ou « 1 » (les
+    titres du LEGI écrivent « Décret n°90-680 du 1 août 1990 »), les accents
+    facultatifs."""
+    annee, mois, jour = (int(x) for x in iso.split("-"))
+    nom = _MOIS.split("|")[mois - 1]
+    return rf"{r'1(?:\s*er)?' if jour == 1 else jour}\s+{nom}\s+{annee}"
+
+
+def decrets_de_la_date(visas: list[str], iso: str) -> set[str]:
+    """Les numéros des décrets que les visas portent à cette date : « Vu le
+    décret n° 67-91 du 20 janvier 1967 […] » ; le numéro est celui qui précède
+    la date, non celui du décret qui a modifié le statut (« modifié par le
+    décret n° 2000-972 du 28 septembre 2000 »)."""
+    motif = re.compile(rf"\bd[ée]cret\s+n[°o]\s*(\d{{2,4}}-\d{{1,4}})\s+du\s+"
+                       rf"{_date_en_lettres_souple(iso)}(?!\d)", re.IGNORECASE)
+    return {n for v in visas for n in motif.findall(v)}
+
+
 def date_de_la_phrase(intro: str) -> str:
     """La date qui ouvre la phrase d'un reclassement (« Au 1er juillet 2011, »),
     ou rien : une date au milieu de la phrase est celle d'un texte cité."""
     trouve = DATE_EN_TETE.search(intro)
     if not trouve:
         return ""
+    return _iso(trouve)
+
+
+def _iso(trouve: re.Match) -> str:
+    """La date ISO d'une date en lettres reconnue par ``_DATE``."""
     jour = 1 if re.match(r"1\s*er", trouve.group("jour")) else int(trouve.group("jour"))
     mois = [_sans_accents(m) for m in MOIS].index(_sans_accents(trouve.group("mois").lower())) + 1
     return date(int(trouve.group("annee")), mois, jour).isoformat()
@@ -202,6 +226,22 @@ class Index:
 
     def visas(self, texte: str) -> list[str]:
         return [FIN_DE_VISA.split(v)[0].strip(" ,") for v in VISA.findall(self.texte(texte))]
+
+    def notices_du_decret(self, numero: str, iso: str) -> list[tuple[str, str]]:
+        """Les notices LEGITEXT dont le titre est celui de ce décret : « Décret
+        n° 67-91 du 20 janvier 1967 […] » (le LEGI en garde parfois deux, avant
+        et après un changement de titre)."""
+        if not hasattr(self, "_decrets"):
+            self._decrets: dict[str, list[tuple[str, str]]] = collections.defaultdict(list)
+            titre = re.compile(r"^\s*D[ée]cret\s+n[°o]\s*(\d{2,4}-\d{1,4})\s+du\s+", re.IGNORECASE)
+            for ident, libelle in self.db.execute(
+                    "SELECT id, titre FROM doc WHERE id >= 'LEGITEXT' AND id < 'LEGITEXU'"):
+                trouve = titre.match(libelle or "")
+                if trouve:
+                    self._decrets[trouve.group(1)].append((ident, libelle))
+        date_du_titre = re.compile(rf"^\s*D[ée]cret\s+n[°o]\s*{re.escape(numero)}\s+du\s+"
+                                   rf"{_date_en_lettres_souple(iso)}(?!\d)", re.IGNORECASE)
+        return sorted((i, t) for i, t in self._decrets.get(numero, []) if date_du_titre.match(t))
 
     def source(self) -> str:
         meta = dict(self.db.execute("SELECT cle, valeur FROM meta").fetchall())
@@ -488,17 +528,80 @@ def chainer_durees(depot: Depot) -> list[dict]:
 # Les reclassements
 # ---------------------------------------------------------------------------
 
-def _corps_du_reclassement(depot: Depot, tableau: dict) -> dict[str, str]:
-    """Les corps du noyau que le texte du tableau, ou le statut que sa phrase
-    nomme par son numéro, rattache ; avec le texte du noyau qui le prouve."""
-    numeros = set(NUMERO.findall(tableau["intro"]))
-    numero = depot.reclassements_textes[tableau["texte"]]["numero"]
-    if numero:
-        numeros.add(numero)
-    corps: dict[str, str] = {}
-    for n in sorted(numeros):
+DECRET_PAR_NUMERO = re.compile(r"\bd[ée]crets?\s+n[°o]\s*(\d{2,4}-\d{1,4})(?![\d-])",
+                               re.IGNORECASE)
+DECRET_PAR_DATE = re.compile(rf"\bd[ée]cret\s+du\s+{_DATE}", re.IGNORECASE)
+RENVOI_NON_RESOLU = re.compile(r"\bd[ée]crets\s+du\b|\bm[êe]me\s+d[ée]cret\b", re.IGNORECASE)
+PRESENT_DECRET = re.compile(
+    r"\b(?:r[ée]gie?s?|cr[ée]{2}e?s?|institu[ée]e?s?)\s+par\s+(?:les\s+dispositions\s+du\s+"
+    r"|le\s+chapitre\s+[IVX\d]+\s+du\s+|le\s+)pr[ée]sent\s+d[ée]cret", re.IGNORECASE)
+
+
+def est_un_statut(titre: str) -> bool:
+    """Le titre d'un décret qui est lui-même un statut (« portant statut
+    particulier du corps … »), non d'un décret qui en modifie un (« modifiant le
+    décret n° 92-1204 … portant statut particulier … »)."""
+    return bool(STATUTAIRE.search(titre)) and not re.search(
+        r"\bmodifi|\bportant\s+modification", titre, re.IGNORECASE)
+
+
+def statuts_de_la_phrase(depot: Depot, tableau: dict) -> tuple[dict[str, str], str]:
+    """Les statuts dont relève le corps reclassé, que la phrase qui annonce le
+    tableau nomme : par leur numéro (« régi par le décret n° 90-90 ») ; par leur
+    date (« régi par le décret du 20 janvier 1967 susvisé »), quand les visas du
+    texte la résolvent en un seul décret et que ce décret est identifié, au LEGI
+    par sa notice ou au Noyau RH par son NOR ; ou par « le présent décret »,
+    quand le texte est lui-même un statut. Une phrase qui ne nomme aucun statut
+    vaut pour le texte s'il est un statut, sinon elle ne prouve rien : un décret
+    qui modifie plusieurs statuts reclasse des corps dont les grades portent
+    les mêmes noms. Rend {numéro : comment la phrase le nomme}, ou la raison de
+    déclarer."""
+    intro = tableau["intro"]
+    texte = depot.reclassements_textes[tableau["texte"]]
+    renvoi = RENVOI_NON_RESOLU.search(intro)
+    if renvoi:
+        return {}, (f"la phrase renvoie à « {renvoi.group(0)} … », que le chaînage ne résout "
+                    "pas en un statut")
+    nommes = {n: f"la phrase nomme le décret n° {n}" for n in DECRET_PAR_NUMERO.findall(intro)}
+    for trouve in DECRET_PAR_DATE.finditer(intro):
+        iso = _iso(trouve)
+        visas = depot.index.visas(tableau["texte"])
+        numeros = decrets_de_la_date(visas, iso)
+        if len(numeros) != 1:
+            return {}, (f"la phrase nomme le statut par sa date, « {trouve.group(0)} », que les "
+                        f"visas de {tableau['texte']} ne résolvent pas en un seul décret ("
+                        + (", ".join(sorted(numeros)) or "aucun") + ")")
+        (numero,) = numeros
+        motif = re.compile(rf"n[°o]\s*{re.escape(numero)}\s+du", re.IGNORECASE)
+        (visa,) = [v for v in visas if motif.search(v)][:1]
+        notices = depot.index.notices_du_decret(numero, iso)
+        nor = sorted({t["nor"] for t in depot.noyau_textes.values()
+                      if t["numero"] == numero and t["date"] == iso and t["nor"]})
+        if not notices and not nor:
+            return {}, (f"la phrase nomme le statut par sa date, « {trouve.group(0)} », que le "
+                        f"visa résout en n° {numero}, décret que ni le LEGI ni le Noyau RH "
+                        "n'identifient")
+        identifie = (f"au LEGI {', '.join(i for i, _ in notices)}, « {notices[0][1]} »"
+                     if notices else f"au Noyau RH, NOR {', '.join(nor)}")
+        nommes[numero] = (f"la phrase nomme « {trouve.group(0)} » ; le visa de "
+                          f"{tableau['texte']} : « {visa} » ; n° {numero}, {identifie}")
+    if not nommes or PRESENT_DECRET.search(intro):
+        if texte["numero"] and est_un_statut(texte["titre"]):
+            nommes[texte["numero"]] = (f"le texte du tableau est le statut : « {texte['titre']} »")
+        elif not nommes:
+            return {}, (f"la phrase ne nomme pas le statut du corps reclassé, et le texte "
+                        f"{'n° ' + texte['numero'] if texte['numero'] else tableau['texte']} n'est "
+                        f"pas lui-même un statut : « {texte['titre']} »")
+    return nommes, ""
+
+
+def _corps_du_reclassement(depot: Depot, nommes: dict[str, str]) -> dict[str, tuple[str, str]]:
+    """Les corps du noyau qui citent les statuts nommés : {corps : (texte du
+    noyau, numéro du statut)}."""
+    corps: dict[str, tuple[str, str]] = {}
+    for n in sorted(nommes):
         for c, ident in depot.corps_citant.get(n, {}).items():
-            corps.setdefault(c, ident)
+            corps.setdefault(c, (ident, n))
     return corps
 
 
@@ -532,10 +635,15 @@ def chainer_reclassements(depot: Depot) -> list[dict]:
                      "l'entrée en vigueur de l'article ne la prouve pas (le décret n° 2017-786 "
                      "reclasse « Au 1er septembre 2017 » par un article en vigueur le 8 mai)")
             continue
-        corps = _corps_du_reclassement(depot, tableau)
+        nommes, raison = statuts_de_la_phrase(depot, tableau)
+        if raison:
+            declarer(raison)
+            continue
+        statuts = ", ".join(f"n° {n}" for n in sorted(nommes))
+        corps = _corps_du_reclassement(depot, nommes)
         if not corps:
-            declarer("le Noyau RH ne rattache à aucun corps ni ce texte ni le statut que nomme "
-                     "la phrase")
+            declarer(f"le Noyau RH ne cite pour aucun corps le statut que nomme la phrase "
+                     f"({statuts})")
             continue
         absorbes = {a for c in corps for v in depot.noyau_corps.get(c, [])
                     for a in v["anterieurs"].split()}
@@ -556,8 +664,8 @@ def chainer_reclassements(depot: Depot) -> list[dict]:
                                     n["grade"], n["grille"], n["corps"]))
         if not coupes:
             declarer("le libellé ne se coupe pas en deux grades des corps "
-                     f"{', '.join(sorted(corps))} du Noyau RH, en vigueur la veille et le jour "
-                     f"du {jour}")
+                     f"{', '.join(sorted(corps))} du Noyau RH ({statuts}), en vigueur la veille "
+                     f"et le jour du {jour}")
             continue
         if len(coupes) > 1:
             declarer("plusieurs coupes du libellé en grades du Noyau RH : "
@@ -573,14 +681,17 @@ def chainer_reclassements(depot: Depot) -> list[dict]:
                      f"contre {sorted(rangs_o)} ({grille_o}), accueil {sorted(nouveau)} contre "
                      f"{sorted(rangs_a)} ({grille_a})")
             continue
-        ident = corps.get(corps_a) or corps.get(corps_o, "")
-        titre = depot.noyau_textes.get(ident, {}).get("titre", "")
+        citations = []
+        for c in dict.fromkeys((corps_o, corps_a)):
+            if c in corps:
+                ident, numero = corps[c]
+                citations.append(f"{nommes[numero]} ; Noyau RH : le corps {c} cite le texte "
+                                 f"{ident}, « {depot.noyau_textes[ident]['titre']} »")
         sortie.append({**base, "statut": "rattache", "corps": corps_a,
                        "grade_origine": go, "grille_origine": grille_o,
                        "grade_accueil": ga, "grille_accueil": grille_a,
-                       "preuve": f"Noyau RH : le corps {corps_a} cite le texte {ident}, "
-                                 f"« {titre} » ; grade {go} ({grille_o}) le {veille(jour)}, "
-                                 f"{ga} ({grille_a}) le {jour}", "raison": ""})
+                       "preuve": " ; ".join(citations) + f" ; grade {go} ({grille_o}) le "
+                                 f"{veille(jour)}, {ga} ({grille_a}) le {jour}", "raison": ""})
     return sortie
 
 

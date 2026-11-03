@@ -204,6 +204,98 @@ def test_un_reclassement_de_l_etat_se_rattache_aux_grilles_du_noyau(reclassement
     assert (ligne["grade_accueil"], ligne["grille_accueil"]) == ("02780", "02783")
 
 
+#: Les visas du décret n° 2016-581 (LEGITEXT000032523056) qui portent un statut
+#: de géomètres, lus dans l'index LEGI du dépôt (incrément 20261102-213929).
+VISAS_2016_581 = [
+    "Vu le décret n° 67-91 du 20 janvier 1967 modifié relatif au statut particulier des "
+    "géomètres de l'Institut national de l'information géographique et forestière",
+    "Vu le décret n° 2010-983 du 26 août 2010 portant statut particulier du corps des "
+    "géomètres-cadastreurs des finances publiques",
+]
+
+
+def test_les_visas_resolvent_la_date_d_un_statut_en_son_numero():
+    # « régi par le décret du 20 janvier 1967 susvisé » (n° 2016-581, art. 12,
+    # LEGIARTI000032523172) : parmi les visas, seul le n° 67-91 porte cette date.
+    assert chainage.decrets_de_la_date(VISAS_2016_581, "1967-01-20") == {"67-91"}
+    assert chainage.decrets_de_la_date(VISAS_2016_581, "2010-08-26") == {"2010-983"}
+    assert chainage.decrets_de_la_date(VISAS_2016_581, "1990-08-01") == set()
+    # Un visa qui nomme le décret qui a modifié le statut ne compte que le statut
+    # visé par sa date : arrêté du 28 septembre 2000 (LEGITEXT000019669914).
+    visa = ("Vu le décret n° 90-973 du 30 octobre 1990 portant statut particulier du corps "
+            "des ingénieurs du génie sanitaire, modifié par le décret n° 2000-972 du "
+            "28 septembre 2000")
+    assert chainage.decrets_de_la_date([visa], "1990-10-30") == {"90-973"}
+    # Deux décrets du même jour : la date ne résout rien seule.
+    assert chainage.decrets_de_la_date(
+        ["Vu le décret n° 91-1 du 14 mai 1991 portant statut particulier",
+         "Vu le décret n° 91-2 du 14 mai 1991 portant statut particulier"],
+        "1991-05-14") == {"91-1", "91-2"}
+
+
+def test_les_geometres_de_l_ign_ne_se_rattachent_pas_aux_geometres_cadastreurs(reclassements):
+    # Décret n° 2016-581, art. 12 (LEGIARTI000032523172) : « I. - Au 1er janvier
+    # 2016, les fonctionnaires appartenant au corps des géomètres de l'Institut
+    # national de l'information géographique et forestière régi par le décret du
+    # 20 janvier 1967 susvisé […] sont reclassés dans ce même corps ». Le visa :
+    # « Vu le décret n° 67-91 du 20 janvier 1967 modifié relatif au statut
+    # particulier des géomètres de l'Institut national de l'information
+    # géographique et forestière ». Noyau RH : ce statut (texte 944) est cité par
+    # les grades du corps 00395, « Géomètres de l'Institut national de
+    # l'information géographique et forestière » ; le corps 01005 des
+    # géomètres-cadastreurs des finances publiques ne le cite pas.
+    lignes = [r for r in reclassements if r["article"] == "LEGIARTI000032523172"]
+    assert len(lignes) == 3
+    for r in lignes:
+        assert r["statut"] == "declare" and r["corps"] != "01005", r
+        assert "67-91" in r["raison"] and "01005" not in r["raison"], r
+
+
+def test_les_professeurs_des_ecoles_de_polynesie_ne_se_rattachent_pas_a_la_metropole(
+        reclassements):
+    # Décret n° 2017-786, art. 164 (LEGIARTI000034750879) : « Au 1er septembre
+    # 2017, les fonctionnaires appartenant au corps des professeurs des écoles régi
+    # par le décret du 23 décembre 2003 susvisé […] » ; le visa : « Vu le décret
+    # n° 2003-1260 du 23 décembre 2003 modifié fixant les dispositions statutaires
+    # applicables aux professeurs des écoles du corps de l'Etat créé pour la
+    # Polynésie française ». Le corps 00021 (métropole) ne cite pas ce statut.
+    lignes = [r for r in reclassements if r["article"] == "LEGIARTI000034750879"]
+    assert len(lignes) == 2
+    for r in lignes:
+        assert r["statut"] == "declare" and r["corps"] != "00021", r
+        assert "2003-1260" in r["raison"], r
+
+
+def test_le_statut_nomme_par_sa_date_est_identifie_dans_la_preuve(reclassements):
+    # Décret n° 2017-786, art. 139 (LEGIARTI000034750757) : « régi par le décret
+    # du 1er août 1990 susvisé » ; le visa : « Vu le décret n° 90-680 du 1er août
+    # 1990 modifié relatif au statut particulier des professeurs des écoles » ; au
+    # LEGI, LEGITEXT000006076298, « Décret n°90-680 du 1 août 1990 relatif au
+    # statut particulier des professeurs des écoles » ; au Noyau RH, le texte 160,
+    # cité par le corps 00021.
+    (ligne,) = [r for r in reclassements if r["article"] == "LEGIARTI000034750757"
+                and r["groupe"] == "Professeur des écoles hors classe"]
+    assert ligne["statut"] == "rattache" and ligne["corps"] == "00021"
+    assert "décret du 1er août 1990" in ligne["preuve"]
+    assert "n° 90-680" in ligne["preuve"] and "LEGITEXT000006076298" in ligne["preuve"]
+    assert "texte 160" in ligne["preuve"]
+
+
+def test_une_phrase_qui_ne_nomme_pas_le_statut_d_un_decret_modificatif_est_declaree(
+        reclassements):
+    # Décret n° 95-108 (LEGITEXT000005617679), « modifiant le décret n° 92-1204
+    # du 10 novembre 1992 portant statut particulier du corps des inspecteurs des
+    # affaires maritimes » ; art. LEGIARTI000006476949 : « A compter du 1er août
+    # 1993, les inspecteurs de 1re et de 2e classe des affaires maritimes sont
+    # reclassés dans le grade d'inspecteur » : la phrase ne nomme aucun statut,
+    # et le texte n'est pas lui-même un statut particulier.
+    lignes = [r for r in reclassements if r["article"] == "LEGIARTI000006476949"]
+    assert lignes
+    for r in lignes:
+        assert r["statut"] == "declare"
+        assert "ne nomme pas le statut" in r["raison"], r
+
+
 def test_chaque_groupe_de_chaque_reclassement_est_rattache_ou_declare(reclassements):
     attendus = {(l["texte"], l["article"], l["tableau"], l["groupe"])
                 for l in _lire(GRILLES / "reclassements" / "lignes.csv")}
