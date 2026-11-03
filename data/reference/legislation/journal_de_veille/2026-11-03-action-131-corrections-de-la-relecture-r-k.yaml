@@ -1,0 +1,32 @@
+date: "2026-11-03"
+session: "action 131, file K-bis : les corrections de la relecture R-K de la majoration des points de chef de 1952 à 1972 (commits 7621be3 et 5835f0d)"
+consulte: >-
+  python scripts/veille_droit.py ; les index LEGI (à jour au 2 novembre 2026) et JORF (au 3
+  novembre 2026) de la DILA, récupérés : code rural, R. 732-69 (LEGIARTI000006597478), R. 732-70
+  (LEGIARTI000006597479), R. 732-66 (LEGIARTI000006597475), R. 732-67 (LEGIARTI000053328816),
+  D. 732-77 (LEGIARTI000006597491) ; le décret n° 86-1084, article 2 (LEGIARTI000006769405), et
+  son texte (LEGITEXT000006065220, JORFTEXT000000870113) ; le décret n° 81-790, cherché dans
+  LEGI et au JORF (JORFTEXT000000335107) ; les notices des décrets n° 67-570
+  (JORFTEXT000000514415), 68-571 (JORFTEXT000000330850) et 74-443 (JORFTEXT000000328985) ; les
+  n° 65-346 et 75-97, cherchés par numéro et par date ; le décret n° 80-808
+  (LEGITEXT000006063328) ; le décret n° 52-1166, articles 15 et 45 (LEGIARTI000019272718,
+  LEGIARTI000019272803) ; le décret n° 55-753, articles 18, 38, 50 et 51 ; le décret
+  n° 99-875, article 2 (LEGIARTI000006779656) ; la loi n° 52-799 (JORFTEXT000000512405).
+trouve: >-
+  R. 732-69 (2005) donne un barème en revenu cadastral « pour les années 1981 et suivantes »
+  et renvoie, pour les années antérieures, aux décrets n° 65-346, 67-570, 74-443 et 75-97, que
+  l'index n'a pas en texte : deux phrases de msa_non_salaries.yaml, et une de la période de
+  1974 à 1985, récrites ; le décret n° 68-571, que R. 732-69 ne nomme pas, ôté de la liste du
+  barème. Le rapport de 150 trimestres à la durée requise change les points d'une même année
+  avec la date du départ : dit. LEGITEXT000006065220 est le décret n° 86-1084 ; le n° 81-790
+  n'a pas de texte dans LEGI. Le régime naît le 1er juillet 1952 (décret n° 99-875, article 2)
+  et la cotisation de l'exercice 1952 est la moitié de l'annuelle (décret n° 52-1166,
+  article 45) ; aucun texte lu ne dit les points de cette demi-année ni si P la compte pour
+  une année : le modèle la compte entière, déclaré, 0,63 € par an au plus pour le témoin de
+  1925. L'arrondi de T et des points majorés, que ni D. 732-77 ni l'article 2 ne disent :
+  convention déclarée, avec son effet au plus. Aucun calcul ne change.
+reste: >-
+  La cotisation de 1952, que le modèle prélève entière dans toute la pension proportionnelle
+  quand le décret n° 52-1166 n'en demande que la moitié : une étape à elle, avec les années au
+  prorata de l'exploitant. La ligne manque de msa_non_salaries.yaml (« n'est pas lu »), à
+  corriger avec l'inventaire. La question de D. 732-76 au propriétaire demeure.
