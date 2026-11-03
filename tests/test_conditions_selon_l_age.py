@@ -106,6 +106,111 @@ _LIGNES: list[tuple[str, str, str, list]] = [
 ]
 
 
+_REGIME = "Régime de base principal"
+
+#: Ses lignes du régime de base principal : la part des monopensionnés et des
+#: polypensionnés de deux régimes de chaque régime parmi les retraités de la
+#: condition, une case vide se lisant zéro — aucun salarié du régime général
+#: dont la décote soit inapplicable.
+_REGIMES: list[tuple[str, str, str, list]] = [
+    ("Ensemble", _REGIME, "Monopensionnés, anciens salariés : salariés du régime général",
+     [62.1, 55.3, None, 39.0, 68.2, 62.1, 51.9, 56.2, 54.6, 51.7]),
+    ("Femme", _REGIME, "Monopensionnés, anciens salariés : salariés du régime général",
+     [67.6, 63.3, None, 41.2, 73.0, 68.6, 37.8, 67.9, 59.6, 57.8]),
+    ("Homme", _REGIME, "Monopensionnés, anciens salariés : salariés du régime général",
+     [59.7, 36.9, None, 36.9, 62.0, 47.9, 67.5, 27.3, 49.7, 44.5]),
+    ("Ensemble", _REGIME, "Monopensionnés, anciens salariés : fonctionnaires civils d’État",
+     [1.1, 8.6, 16.6, 8.4, 4.5, None, 8.5, 9.0, 3.4, 5.5]),
+    ("Femme", _REGIME, "Monopensionnés, anciens salariés : fonctionnaires civils d’État",
+     [2.2, 6.7, 20.2, 9.2, 5.4, None, 15.7, 7.5, 4.3, 6.3]),
+    ("Homme", _REGIME, "Monopensionnés, anciens salariés : fonctionnaires civils d’État",
+     [0.7, 12.8, 11.9, 7.5, 3.4, None, 0.6, 12.8, 2.6, 4.6]),
+    ("Ensemble", _REGIME, "Monopensionnés, anciens salariés : fonctionnaires militaires d’État",
+     [None, None, None, None, 0.3, None, None, 3.0, 2.6, 1.5]),
+    ("Femme", _REGIME, "Monopensionnés, anciens salariés : fonctionnaires militaires d’État",
+     [None, None, None, None, 0.1, None, None, 0.5, 0.5, 0.3]),
+    ("Homme", _REGIME, "Monopensionnés, anciens salariés : fonctionnaires militaires d’État",
+     [None, None, None, None, 0.5, None, None, 9.4, 4.7, 2.9]),
+    ("Ensemble", _REGIME, "Monopensionnés, anciens salariés : MSA salariés",
+     [1.6, 1.0, None, 0.6, 0.9, 2.0, 1.0, 0.5, 0.7, 0.8]),
+    ("Femme", _REGIME, "Monopensionnés, anciens salariés : MSA salariés",
+     [1.6, 0.9, None, 0.4, 0.6, 1.3, 0.7, 0.4, 0.6, 0.7]),
+    ("Homme", _REGIME, "Monopensionnés, anciens salariés : MSA salariés",
+     [1.6, 1.2, None, 0.8, 1.3, 3.6, 1.3, 0.6, 0.7, 1.0]),
+    ("Ensemble", _REGIME, "Monopensionnés, anciens salariés : fonctionnaires CNRACL",
+     [0.7, 3.4, 12.4, 1.6, 1.3, None, 5.2, 0.3, 1.6, 2.1]),
+    ("Femme", _REGIME, "Monopensionnés, anciens salariés : fonctionnaires CNRACL",
+     [1.4, 4.0, 19.7, 2.1, 1.5, None, 9.8, 0.3, 2.7, 3.2]),
+    ("Homme", _REGIME, "Monopensionnés, anciens salariés : fonctionnaires CNRACL",
+     [0.4, 2.3, 2.7, 1.1, 0.9, None, 0.1, 0.3, 0.6, 0.8]),
+    ("Ensemble", _REGIME, "Monopensionnés, anciens salariés : régimes spéciaux",
+     [0.1, 2.0, 10.1, 0.1, 0.2, 0.0, 8.4, 1.8, 0.6, 1.7]),
+    ("Femme", _REGIME, "Monopensionnés, anciens salariés : régimes spéciaux",
+     [0.1, 0.8, 4.9, 0.1, 0.2, 0.0, 9.9, 0.3, 0.2, 0.7]),
+    ("Homme", _REGIME, "Monopensionnés, anciens salariés : régimes spéciaux",
+     [0.1, 4.6, 17.0, 0.2, 0.2, None, 6.9, 5.3, 1.0, 2.8]),
+    ("Ensemble", _REGIME, "Monopensionnés, anciens non-salariés : MSA non-salariés",
+     [0.8, 1.4, None, 2.1, 1.0, 2.6, 0.3, 0.6, 3.0, 1.8]),
+    ("Femme", _REGIME, "Monopensionnés, anciens non-salariés : MSA non-salariés",
+     [0.2, 1.8, None, 1.0, 0.6, 3.1, 0.0, 0.8, 2.9, 1.7]),
+    ("Homme", _REGIME, "Monopensionnés, anciens non-salariés : MSA non-salariés",
+     [1.1, 0.5, None, 3.2, 1.6, 1.6, 0.6, 0.1, 3.1, 1.9]),
+    ("Ensemble", _REGIME, "Monopensionnés, anciens non-salariés : Professions libérales",
+     [0.0, 0.8, None, 0.2, 0.2, 0.1, 0.1, 0.5, 0.0, 0.2]),
+    ("Femme", _REGIME, "Monopensionnés, anciens non-salariés : Professions libérales",
+     [0.0, 0.4, None, 0.1, 0.1, 0.0, None, 0.2, 0.0, 0.1]),
+    ("Homme", _REGIME, "Monopensionnés, anciens non-salariés : Professions libérales",
+     [0.0, 1.5, None, 0.3, 0.3, 0.1, 0.1, 1.2, 0.0, 0.3]),
+    ("Ensemble", _REGIME, "Polypensionnés de 2 régimes de base, anciens salariés : salariés du régime général",
+     [15.7, 12.2, 0.0, 14.9, 14.3, 20.0, 11.2, 14.3, 18.0, 15.0]),
+    ("Femme", _REGIME, "Polypensionnés de 2 régimes de base, anciens salariés : salariés du régime général",
+     [10.6, 10.7, 0.0, 13.5, 10.3, 17.9, 6.9, 15.0, 15.1, 13.0]),
+    ("Homme", _REGIME, "Polypensionnés de 2 régimes de base, anciens salariés : salariés du régime général",
+     [17.9, 15.6, 0.0, 16.2, 19.5, 24.5, 15.9, 12.6, 20.8, 17.3]),
+    ("Ensemble", _REGIME, "Polypensionnés de 2 régimes de base, anciens salariés : fonctionnaires civils d’État",
+     [2.4, 3.8, 16.7, 11.0, 3.3, 0.0, 3.7, 3.2, 2.2, 4.1]),
+    ("Femme", _REGIME, "Polypensionnés de 2 régimes de base, anciens salariés : fonctionnaires civils d’État",
+     [4.1, 2.8, 13.3, 12.3, 3.5, 0.0, 6.5, 1.8, 2.4, 3.9]),
+    ("Homme", _REGIME, "Polypensionnés de 2 régimes de base, anciens salariés : fonctionnaires civils d’État",
+     [1.7, 6.3, 21.3, 9.7, 3.1, None, 0.7, 6.4, 2.0, 4.5]),
+    ("Ensemble", _REGIME, "Polypensionnés de 2 régimes de base, anciens salariés : fonctionnaires militaires d’État",
+     [None, None, None, None, 0.2, None, None, 3.4, 0.3, 0.7]),
+    ("Femme", _REGIME, "Polypensionnés de 2 régimes de base, anciens salariés : fonctionnaires militaires d’État",
+     [None, None, None, None, 0.0, None, None, 0.2, 0.0, 0.1]),
+    ("Homme", _REGIME, "Polypensionnés de 2 régimes de base, anciens salariés : fonctionnaires militaires d’État",
+     [None, None, None, None, 0.5, None, None, 11.4, 0.6, 1.5]),
+    ("Ensemble", _REGIME, "Polypensionnés de 2 régimes de base, anciens salariés : MSA salariés",
+     [2.3, 0.6, None, 1.2, 1.2, 1.9, 1.0, 0.5, 1.8, 1.4]),
+    ("Ensemble", _REGIME, "Polypensionnés de 2 régimes de base, anciens salariés : fonctionnaires CNRACL",
+     [4.8, 3.0, 26.9, 7.6, 1.8, None, 5.4, 0.5, 2.4, 4.4]),
+    ("Femme", _REGIME, "Polypensionnés de 2 régimes de base, anciens salariés : MSA salariés",
+     [2.1, 0.5, None, 0.8, 0.8, 1.1, 0.6, 0.4, 1.3, 0.9]),
+    ("Femme", _REGIME, "Polypensionnés de 2 régimes de base, anciens salariés : fonctionnaires CNRACL",
+     [5.3, 3.1, 35.2, 8.8, 1.8, None, 10.0, 0.6, 3.1, 5.2]),
+    ("Homme", _REGIME, "Polypensionnés de 2 régimes de base, anciens salariés : MSA salariés",
+     [2.4, 1.0, None, 1.6, 1.8, 3.5, 1.5, 0.7, 2.2, 1.9]),
+    ("Homme", _REGIME, "Polypensionnés de 2 régimes de base, anciens salariés : fonctionnaires CNRACL",
+     [4.6, 2.9, 15.9, 6.4, 1.8, None, 0.2, 0.5, 1.7, 3.4]),
+    ("Ensemble", _REGIME, "Polypensionnés de 2 régimes de base, anciens salariés : régimes spéciaux",
+     [0.4, 0.5, 16.1, 0.6, 0.1, 0.0, 1.4, 0.7, 0.5, 1.7]),
+    ("Femme", _REGIME, "Polypensionnés de 2 régimes de base, anciens salariés : régimes spéciaux",
+     [0.2, 0.2, 5.8, 0.3, 0.1, 0.0, 0.9, 0.1, 0.1, 0.6]),
+    ("Homme", _REGIME, "Polypensionnés de 2 régimes de base, anciens salariés : régimes spéciaux",
+     [0.5, 1.1, 30.0, 0.8, 0.1, 0.0, 2.0, 2.1, 0.8, 3.0]),
+    ("Ensemble", _REGIME, "Polypensionnés de 2 régimes de base, anciens non-salariés : MSA non-salariés",
+     [2.9, 1.1, None, 4.1, 1.8, 3.3, 0.9, 0.8, 3.9, 2.6]),
+    ("Femme", _REGIME, "Polypensionnés de 2 régimes de base, anciens non-salariés : MSA non-salariés",
+     [2.8, 1.1, None, 4.3, 1.5, 3.5, 0.6, 0.9, 4.9, 2.8]),
+    ("Homme", _REGIME, "Polypensionnés de 2 régimes de base, anciens non-salariés : MSA non-salariés",
+     [2.9, 1.0, None, 3.9, 2.1, 2.8, 1.3, 0.4, 3.0, 2.4]),
+    ("Ensemble", _REGIME, "Polypensionnés de 2 régimes de base, anciens non-salariés : Professions libérales",
+     [0.0, 2.1, 0.0, 3.5, 0.3, 0.4, 0.3, 1.4, 0.3, 0.9]),
+    ("Femme", _REGIME, "Polypensionnés de 2 régimes de base, anciens non-salariés : Professions libérales",
+     [0.1, 1.2, None, 2.7, 0.2, 0.5, 0.0, 0.5, 0.3, 0.6]),
+    ("Homme", _REGIME, "Polypensionnés de 2 régimes de base, anciens non-salariés : Professions libérales",
+     [0.0, 4.2, 0.0, 4.2, 0.4, 0.4, 0.6, 3.7, 0.3, 1.3]),
+]
+
 def _grille(lignes: list[tuple[str, str, str, list]]) -> dict[tuple[int, int], float | str]:
     """La feuille comme ``lecture_xlsx.feuilles`` la rend : les cellules vides
     absentes."""
@@ -115,18 +220,28 @@ def _grille(lignes: list[tuple[str, str, str, list]]) -> dict[tuple[int, int], f
             if v is not None}
 
 
+#: Les régimes de base principaux de la feuille, sous le code que le dépôt leur
+#: donne : monopensionnés et polypensionnés de deux régimes.
+_CODES_REGIMES = [f"part_{nombre}_{regime}" for nombre in ("mono", "poly")
+                  for regime in ("regime_general", "fonction_publique_etat_civile",
+                                 "fonction_publique_etat_militaire", "msa_salaries",
+                                 "cnracl", "regimes_speciaux", "msa_non_salaries",
+                                 "professions_liberales")]
+
+
 def test_le_lecteur_lit_l_age_des_retraites_de_chaque_condition():
     """Chaque condition sous son code, et l'ensemble : l'effectif, l'âge moyen,
     la part de chaque tranche d'âge au 31 décembre, une case vide se lisant
     zéro ; le reste de la feuille ne se lit pas. 16,6 % des résidentes parties
     avec une décote ont 85 ans et plus, 16,5 % de toutes."""
-    lu = recuperateur.conditions_selon_l_age(_grille(_LIGNES))
+    lu = recuperateur.conditions_selon_l_age(_grille(_LIGNES + _REGIMES))
     assert sorted(lu) == sorted(["carriere_longue", "decote", "decote_inapplicable",
                                  "surcote", "invalidite", "inaptitude", "autres_motifs",
                                  "taux_plein_age", "taux_plein_duree", "ensemble"])
     assert sorted(lu["decote"]) == sorted(
         ["effectifs", "age_moyen", "age_moins_50", "age_50_55", "age_55_60", "age_60_65",
-         "age_65_70", "age_70_75", "age_75_80", "age_80_85", "age_85_plus"])
+         "age_65_70", "age_70_75", "age_75_80", "age_80_85", "age_85_plus",
+         *_CODES_REGIMES])
     assert lu["decote"]["effectifs"]["F"] == 741.0
     assert lu["decote"]["age_85_plus"]["F"] == 16.6
     assert lu["ensemble"]["age_85_plus"]["F"] == 16.5
@@ -134,6 +249,29 @@ def test_le_lecteur_lit_l_age_des_retraites_de_chaque_condition():
     assert lu["carriere_longue"]["age_80_85"]["ensemble"] == 0.0
     assert lu["ensemble"]["age_moyen"]["H"] == 72.7
     assert lu["taux_plein_duree"]["age_70_75"]["F"] == 23.3
+
+
+def test_le_lecteur_lit_le_regime_principal_des_retraites_de_chaque_condition():
+    """Pour chaque condition, et pour tous, la part de chaque régime de base
+    principal, monopensionnés et polypensionnés de deux régimes, une case vide
+    se lisant zéro. Les régimes spéciaux comptent 4,6 % des résidents partis
+    avec une décote parmi leurs monopensionnés et 1,1 % parmi leurs
+    polypensionnés, 2,8 et 3,0 % de tous ; 17,0 et 30,0 % de ceux dont la
+    décote est inapplicable. Aucun salarié du régime général n'a de décote
+    inapplicable, ni aucun agent des régimes spéciaux de taux plein pour
+    inaptitude parmi les monopensionnés."""
+    lu = recuperateur.conditions_selon_l_age(_grille(_LIGNES + _REGIMES))
+    assert lu["decote"]["part_mono_regimes_speciaux"]["H"] == 4.6
+    assert lu["decote"]["part_poly_regimes_speciaux"]["H"] == 1.1
+    assert lu["ensemble"]["part_mono_regimes_speciaux"]["H"] == 2.8
+    assert lu["ensemble"]["part_poly_regimes_speciaux"]["H"] == 3.0
+    assert lu["decote_inapplicable"]["part_mono_regimes_speciaux"]["H"] == 17.0
+    assert lu["decote_inapplicable"]["part_poly_regimes_speciaux"]["H"] == 30.0
+    assert lu["decote"]["part_mono_regimes_speciaux"]["F"] == 0.8
+    assert lu["decote_inapplicable"]["part_mono_regime_general"]["F"] == 0.0
+    assert lu["inaptitude"]["part_mono_regimes_speciaux"]["H"] == 0.0
+    assert lu["decote"]["part_mono_fonction_publique_etat_civile"]["H"] == 12.8
+    assert lu["taux_plein_age"]["part_poly_fonction_publique_etat_militaire"]["H"] == 11.4
 
 
 def test_le_lecteur_refuse_une_condition_dont_les_ages_ne_font_pas_cent():
@@ -144,12 +282,31 @@ def test_le_lecteur_refuse_une_condition_dont_les_ages_ne_font_pas_cent():
     casse[-2] = ("Femme", _AGE, "Au moins 85 ans",
                  [None, 26.6, 20.3, 0.5, 9.7, 23.1, 8.2, 26.9, 16.2, 16.5])
     with pytest.raises(RuntimeError, match="tranches"):
-        recuperateur.conditions_selon_l_age(_grille(casse))
+        recuperateur.conditions_selon_l_age(_grille(casse + _REGIMES))
     casse = [list(ligne) for ligne in _LIGNES]
     casse[1] = ("Femme", "Effectifs", "Effectifs (en milliers)",
                 [571.0, 741.0, 625.0, 662.0, 565.0, 811.0, 64.0, 1703.0, 2674.0, 9452.0])
     with pytest.raises(RuntimeError, match="effectifs"):
-        recuperateur.conditions_selon_l_age(_grille(casse))
+        recuperateur.conditions_selon_l_age(_grille(casse + _REGIMES))
+
+
+def test_le_lecteur_refuse_un_regime_que_les_deux_sexes_ne_redonnent_pas():
+    """Chaque régime de chaque condition se lit pour les trois sexes, et les
+    retraités des deux sexes qu'il compte redonnent ceux de l'ensemble, à
+    l'arrondi de ses parts près : 4,6 % des 321 milliers d'hommes et 0,8 % des
+    741 milliers de femmes partis avec une décote font les 2,0 % des 1 062
+    milliers des deux sexes ; 14,6 % des hommes ne les feraient pas. Une ligne
+    absente se refuse aussi."""
+    casse = [list(ligne) for ligne in _REGIMES]
+    rang = next(i for i, (sexe, _, libelle, _) in enumerate(_REGIMES)
+                if sexe == "Homme" and libelle.endswith("anciens salariés : régimes spéciaux")
+                and libelle.startswith("Monopensionnés"))
+    casse[rang][3] = [0.1, 14.6, 17.0, 0.2, 0.2, None, 6.9, 5.3, 1.0, 2.8]
+    with pytest.raises(RuntimeError, match="régime"):
+        recuperateur.conditions_selon_l_age(_grille(_LIGNES + [tuple(l) for l in casse]))
+    with pytest.raises(RuntimeError, match="part_mono_regimes_speciaux"):
+        recuperateur.conditions_selon_l_age(_grille(
+            _LIGNES + [l for i, l in enumerate(_REGIMES) if i != rang]))
 
 
 def _certifie() -> dict[tuple[str, str, str, str], float]:
@@ -172,6 +329,37 @@ def test_le_fichier_certifie_redonne_ce_que_le_classeur_imprime():
     assert lu[("2020", "decote", "age_60_65", "H")] == 23.1
     assert lu[("2020", "ensemble", "age_70_75", "H")] == 23.6
     assert lu[("2020", "decote", "age_moyen", "F")] == 73.1
+
+
+def test_le_fichier_certifie_redonne_le_regime_principal_de_chaque_condition():
+    """Ce que le classeur des résidents de 2020 imprime du régime principal :
+    4,6 % des 321 milliers de résidents partis avec une décote sont des
+    monopensionnés des régimes spéciaux, 1,1 % des polypensionnés, soit 18,3
+    milliers ; 17,0 et 30,0 % des 468 milliers dont la décote est
+    inapplicable ; 2,8 et 3,0 % de tous. Les femmes, 0,8 et 0,2 % des 741
+    milliers de décotées. Et, régime par régime, les deux sexes redonnent
+    l'ensemble de chaque condition, à l'arrondi de ses parts près."""
+    lu = _certifie()
+    assert lu[("2020", "decote", "part_mono_regimes_speciaux", "H")] == 4.6
+    assert lu[("2020", "decote", "part_poly_regimes_speciaux", "H")] == 1.1
+    assert lu[("2020", "decote_inapplicable", "part_mono_regimes_speciaux", "H")] == 17.0
+    assert lu[("2020", "decote_inapplicable", "part_poly_regimes_speciaux", "H")] == 30.0
+    assert lu[("2020", "ensemble", "part_mono_regimes_speciaux", "H")] == 2.8
+    assert lu[("2020", "ensemble", "part_poly_regimes_speciaux", "H")] == 3.0
+    assert lu[("2020", "decote", "part_mono_regimes_speciaux", "F")] == 0.8
+    assert lu[("2020", "decote", "part_poly_regimes_speciaux", "F")] == 0.2
+    decotes = lu[("2020", "decote", "effectifs", "H")] * (4.6 + 1.1) / 100.0
+    assert decotes == pytest.approx(18.3, abs=0.05)
+    conditions = {c for (_, c, _, _) in lu}
+    for condition in conditions:
+        effectifs = {sexe: lu[("2020", condition, "effectifs", sexe)]
+                     for sexe in ("F", "H", "ensemble")}
+        tolerance = 0.0005 * sum(effectifs.values()) + 0.5
+        for code in _CODES_REGIMES:
+            parts = {sexe: lu[("2020", condition, code, sexe)] for sexe in effectifs}
+            deux = sum(effectifs[s] * parts[s] / 100.0 for s in ("F", "H"))
+            assert deux == pytest.approx(effectifs["ensemble"] * parts["ensemble"] / 100.0,
+                                         abs=tolerance), (condition, code)
 
 
 def test_le_fichier_certifie_redonne_la_decote_des_quintiles():

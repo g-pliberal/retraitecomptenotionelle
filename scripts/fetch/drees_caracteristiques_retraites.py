@@ -79,6 +79,16 @@ redonnent. La part des décotés dans chaque tranche s'en tire : 8,8 % des
 résidentes de 85 ans et plus sont parties avec une décote, 4,6 % de celles de
 75 à 79 ans ; la population de la page y prend la décote des générations
 d'avant 1950, que l'EIR ne suit pas une à une.
+
+La même feuille dit, pour chaque condition et pour tous, le régime de base
+principal des retraités : la part des monopensionnés et des polypensionnés de
+deux régimes de chaque régime. Le récupérateur la lit aussi, et vérifie que
+les deux sexes redonnent l'ensemble, régime par régime, à l'arrondi près. La
+part des agents des régimes spéciaux partis avec une décote s'en tire : 4,6 +
+1,1 % des 321 000 résidents partis avec une décote, 18 300, parmi les 140 000
+de ces régimes à qui elle s'appliquait et dont la condition est connue, 13 % ;
+21 % chez les femmes. La population de la page en fait décoter ses agents des
+IEG et de la conduite.
 """
 
 from __future__ import annotations
@@ -633,6 +643,26 @@ COLONNES_CONDITIONS: dict[str, str] = {
 #: Le début de la variable des lignes de l'âge, que suit l'année de l'enquête.
 VARIABLE_AGE = "Âge au 31 décembre"
 
+#: La variable des lignes du régime de base principal, et les régimes qu'on y
+#: lit, sous les codes et les libellés de :data:`INDICATEURS` : les
+#: monopensionnés et les polypensionnés de deux régimes de chacun, parmi les
+#: retraités de la condition. La part des agents des régimes spéciaux partis
+#: avec une décote s'en tire (action 138, étape 14).
+VARIABLE_REGIME = "Régime de base principal"
+REGIMES_CONDITIONS: dict[str, str] = {
+    code: libelle for code, libelle in INDICATEURS.items()
+    if code.startswith(("part_mono_", "part_poly_"))
+    and code not in ("part_monopensionnes", "part_poly_2_regimes", "part_poly_3_regimes")}
+
+
+def _code_de_regime(libelle: str) -> str | None:
+    """Le code d'une ligne du régime principal (:data:`REGIMES_CONDITIONS`),
+    cherché par le début de son libellé, le plus long gagnant ; aucun pour
+    une autre."""
+    codes = [code for code, debut in REGIMES_CONDITIONS.items()
+             if libelle.startswith(" ".join(debut.split()))]
+    return max(codes, key=lambda c: len(REGIMES_CONDITIONS[c])) if codes else None
+
 
 def _code_de_tranche(libelle: str) -> str | None:
     """Le code d'une ligne de l'âge au 31 décembre : ``age_moyen``,
@@ -650,18 +680,23 @@ def _code_de_tranche(libelle: str) -> str | None:
 
 def conditions_selon_l_age(grille: dict[tuple[int, int], float | str]
                            ) -> dict[str, dict[str, dict[str, float]]]:
-    """L'effectif et l'âge au 31 décembre des retraités de chaque condition de
-    liquidation, et de tous : condition, indicateur, sexe. Les indicateurs :
-    ``effectifs``, en milliers ; ``age_moyen``, en années ; et la part de
-    chaque tranche d'âge parmi les retraités de la condition, en pour cent,
-    une case vide se lisant zéro.
+    """L'effectif, l'âge au 31 décembre et le régime principal des retraités
+    de chaque condition de liquidation, et de tous : condition, indicateur,
+    sexe. Les indicateurs : ``effectifs``, en milliers ; ``age_moyen``, en
+    années ; la part de chaque tranche d'âge parmi les retraités de la
+    condition, en pour cent ; et celle des monopensionnés et des
+    polypensionnés de deux régimes de chaque régime (:data:`REGIMES_CONDITIONS`),
+    en pour cent ; une case vide se lisant zéro, hors de l'effectif et de
+    l'âge moyen.
 
     Les colonnes sont cherchées par le début de leur en-tête, le plus long
-    gagnant ; l'effectif à la première occurrence de son libellé, l'âge dans
-    les lignes de sa variable. Ce qui est lu se vérifie : les tranches de
-    chaque condition font cent, à l'arrondi près ; les conditions comptent les
-    retraités de l'ensemble, un sur cent n'en ayant pas ; les deux sexes le
-    redonnent.
+    gagnant ; l'effectif à la première occurrence de son libellé, l'âge et le
+    régime dans les lignes de leur variable. Ce qui est lu se vérifie : les
+    tranches de chaque condition font cent, à l'arrondi près ; les conditions
+    comptent les retraités de l'ensemble, un sur cent n'en ayant pas ; les
+    deux sexes le redonnent ; et, régime par régime, les retraités des deux
+    sexes qu'il compte redonnent ceux de l'ensemble, à l'arrondi de ses parts
+    près, ses parts ne dépassant pas cent.
     """
     derniere_colonne = max(colonne for _, colonne in grille)
     derniere_ligne = max(ligne for ligne, _ in grille)
@@ -690,6 +725,8 @@ def conditions_selon_l_age(grille: dict[tuple[int, int], float | str]
             indicateur = "effectifs"
         elif variable.startswith(VARIABLE_AGE):
             indicateur = _code_de_tranche(libelle)
+        elif variable.startswith(VARIABLE_REGIME):
+            indicateur = _code_de_regime(libelle)
         else:
             continue
         if indicateur is None:
@@ -707,7 +744,7 @@ def conditions_selon_l_age(grille: dict[tuple[int, int], float | str]
     tranches = sorted({i for serie in valeurs.values() for i in serie
                        if i.startswith("age_") and i != "age_moyen"})
     manquants = [f"{code}/{indicateur}" for code, serie in valeurs.items()
-                 for indicateur in ("effectifs", "age_moyen", *tranches)
+                 for indicateur in ("effectifs", "age_moyen", *tranches, *REGIMES_CONDITIONS)
                  if len(serie.get(indicateur, {})) < 3]
     if manquants or len(tranches) < 5:
         raise RuntimeError(f"conditions selon l'âge illisibles : "
@@ -733,6 +770,21 @@ def conditions_selon_l_age(grille: dict[tuple[int, int], float | str]
             raise RuntimeError(f"conditions selon l'âge : les effectifs des deux sexes "
                                f"font {deux:g} milliers ({code}), l'ensemble "
                                f"{serie['effectifs']['ensemble']:g}")
+    for code, serie in valeurs.items():
+        effectifs = serie["effectifs"]
+        tolerance = 0.0005 * sum(effectifs[sexe] for sexe in SEXES.values()) + 0.5
+        for regime in REGIMES_CONDITIONS:
+            parts = serie[regime]
+            deux = (effectifs["F"] * parts["F"] + effectifs["H"] * parts["H"]) / 100.0
+            if abs(deux - effectifs["ensemble"] * parts["ensemble"] / 100.0) > tolerance:
+                raise RuntimeError(
+                    f"conditions selon le régime : les deux sexes comptent {deux:g} milliers "
+                    f"de retraités ({code}, {regime}), l'ensemble "
+                    f"{effectifs['ensemble'] * parts['ensemble'] / 100.0:g}")
+        for sexe in SEXES.values():
+            if sum(serie[regime][sexe] for regime in REGIMES_CONDITIONS) > 100.5:
+                raise RuntimeError(f"conditions selon le régime : les régimes de "
+                                   f"{code}/{sexe} dépassent cent")
     return valeurs
 
 

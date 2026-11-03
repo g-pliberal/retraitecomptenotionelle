@@ -288,15 +288,15 @@
    "verifiee_le": "2026-10-06"
   },
   "conditions_selon_l_age_residents": {
-   "ajoutees": 330,
+   "ajoutees": 480,
    "colonne": "valeur",
    "corrigees": 0,
-   "empreinte": "9a9b5f1db517a407",
-   "identiques": 0,
+   "empreinte": "c7946346cd5dc6c7",
+   "identiques": 330,
    "niveau": "certifiee",
    "source": "DREES, échantillon interrégimes de retraités (EIR)",
-   "valeurs": 330,
-   "verifiee_le": "2026-10-28"
+   "valeurs": 810,
+   "verifiee_le": "2026-11-03"
   },
   "cotisants_regimes": {
    "ajoutees": 0,
