@@ -4,10 +4,145 @@ intitule: >-
   Majoration des points de l'Ircantec depuis le 1er janvier 2010 : 0,75 % par trimestre
   entier écoulé entre l'âge du taux plein automatique et l'entrée en jouissance, 0,625 %
   par trimestre cotisé après l'âge légal et au-delà de la durée requise, avant cet âge ;
-  les deux s'ajoutent.
+  les deux s'ajoutent, sans qu'une même période les porte toutes deux.
+domaine: decote_surcote
 regimes: [ircantec]
-etat: transcrite
 etape: liquider_chaque_regime
+face: droit
+etat: approchee
+lit:
+- >-
+  l'âge de l'agent à l'entrée en jouissance de sa pension (article 17 de l'arrêté), et
+  l'âge du taux plein de sa génération : soixante-cinq ans, puis, depuis le 1er juillet
+  2011, l'âge du 1° de l'article L. 351-8 du code de la sécurité sociale
+- >-
+  ses trimestres d'assurance cotisés entre l'âge légal — soixante ans, puis l'âge de
+  L. 161-17-2 — et l'âge du taux plein, et sa durée d'assurance tous régimes au regard de
+  la durée du taux plein de sa génération (L. 351-1)
+- la date d'effet de la pension, qui choisit la rédaction de l'article 16
+ecrit:
+- >-
+  la majoration du total des points de l'Ircantec, 0,75 % par trimestre entier écoulé
+  après l'âge du taux plein, 0,625 % par trimestre cotisé au-delà de la durée avant lui,
+  que `surcote_points` rend à `abattement_points`
+dates_qui_decident:
+- liquidation.date_effet
+versions:
+- id: aucune_majoration
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006381606, article: "arrêté du 30 décembre 1970, article 16 : « L'allocation de retraite est liquidée à l'âge de soixante-cinq ans », sans majoration de celle liquidée plus tard", en_vigueur: 1971-02-09, publie_le: 1971-02-09}
+  - {id: LEGIARTI000006381612, article: "même article, dernière rédaction avant les majorations, sans elles", en_vigueur: 2004-01-01}
+  bornes:
+    liquidation.date_effet: [null, 2010-01-01]
+  contenu:
+    parametres:
+      surcote_points: null
+    droit: >-
+      aucune majoration des points de qui liquide après soixante-cinq ans ni de la durée
+      cotisée au-delà de la durée du taux plein : de 1971 au 25 septembre 2008, aucune des
+      rédactions de l'article 16 n'en écrit ; celle du 25 septembre 2008 les crée « A
+      compter du 1er janvier 2010 ». Les points cotisés après soixante-cinq ans s'ajoutent
+      au compte, sans plus
+  exemples: aucun trouvé
+- id: majorations_de_2010
+  statut: lue
+  textes:
+  - {id: LEGIARTI000019511923, article: "arrêté du 30 décembre 1970, article 16, paragraphe 4, rédaction du 25 septembre 2008", en_vigueur: 2008-09-25, citation: "A compter du 1er janvier 2010, lorsque la liquidation de la pension est demandée par le participant après l'âge normal de soixante-cinq ans, le nombre total de points est majoré de 0, 75 % par trimestre entier écoulé entre le soixante-cinquième anniversaire de l'assuré et la date d'entrée en jouissance de la pension mentionnée à l'article 17"}
+  nee_de: LEGIARTI000019511923
+  bornes:
+    liquidation.date_effet: [2010-01-01, 2011-07-01]
+  contenu:
+    parametres:
+      surcote_points: surcote_ircantec
+      age_taux_plein: 65
+      age_taux_plein_par_generation: null
+      age_ouverture: 60
+      age_ouverture_par_generation: null
+      duree_requise_par_generation: duree_requise_par_generation
+      majoration_par_trimestre_ecoule: 0.0075
+      majoration_par_trimestre_cotise: 0.00625
+      trimestre_en_jours: null
+    droit: >-
+      le 1° de la citation, et : « En outre, la durée d'assurance ayant donné lieu à
+      cotisations à la charge de l'assuré accomplie après l'âge et la limite prévus à
+      l'article L. 351-1 du code de la sécurité sociale et avant l'âge de soixante-cinq ans
+      donne lieu à une majoration du total des points égale à 0, 625 % par trimestre
+      accompli » — après soixante ans et au-delà de la durée du taux plein
+    conditions: >-
+      le texte ne dit ni où compter le trimestre à cheval sur soixante-cinq ans, ni qu'une
+      même période ne peut porter les deux majorations, ni la longueur du trimestre : le
+      modèle range le trimestre à cheval au 2°, compte le 1° en trimestres entiers depuis
+      l'âge du taux plein et l'un et l'autre au mois, comme la rédaction de 2023 l'écrira,
+      au trimestre de quatre-vingt-dix jours près. La caisse compte aussi les trimestres
+      d'avant le 1er janvier 2010, et la surcote « même si la dernière activité exercée par
+      l'agent ne relève pas de l'Ircantec » (base documentaire, « La surcote —
+      Définition ») ; le modèle de même
+  exemples: aucun trouvé
+- id: ages_de_2010
+  statut: lue
+  textes:
+  - {id: LEGIARTI000024266924, article: "arrêté du 30 décembre 1970, article 16, paragraphe 4, rédaction du 1er juillet 2011", en_vigueur: 2011-07-01}
+  nee_de: LEGIARTI000024266924
+  bornes:
+    liquidation.date_effet: [2011-07-01, 2023-09-14]
+  contenu:
+    parametres:
+      surcote_points: surcote_ircantec
+      age_taux_plein_par_generation: age_annulation_decote
+      age_ouverture_par_generation: age_legal_par_generation
+      duree_requise_par_generation: duree_requise_par_generation
+      majoration_par_trimestre_ecoule: 0.0075
+      majoration_par_trimestre_cotise: 0.00625
+      trimestre_en_jours: null
+    droit: >-
+      la majoration du 1° court « après l'âge prévu au 1° de l'article L. 351-8 du code de
+      la sécurité sociale », celle du 2° pour la durée « accomplie après l'âge prévu à
+      l'article L. 161-17-2 du code de la sécurité sociale et la limite prévue à l'article
+      L. 351-1 du même code et avant l'âge prévu au 1° de l'article L. 351-8 du même code »
+      : les âges de la génération, au lieu de soixante et soixante-cinq ans. Le même texte,
+      devenu le IV, dans les rédactions du 31 mars et du 21 décembre 2018
+    conditions: celles de la version majorations_de_2010
+  exemples: aucun trouvé
+- id: precisions_de_2023
+  statut: lue
+  textes:
+  - {id: LEGIARTI000048065521, article: "arrêté du 30 décembre 1970, article 16, IV, rédaction de l'arrêté du 11 septembre 2023", en_vigueur: 2023-09-14}
+  - {id: JORFTEXT000048063234, article: "arrêté du 11 septembre 2023 portant modification de l'arrêté du 30 décembre 1970 (titre au Journal officiel)", en_vigueur: 2023-09-14, publie_le: 2023-09-13}
+  nee_de: LEGIARTI000048065521
+  bornes:
+    liquidation.date_effet: [2023-09-14, null]
+  contenu:
+    parametres:
+      surcote_points: surcote_ircantec
+      age_taux_plein_par_generation: age_annulation_decote
+      age_ouverture_par_generation: age_legal_par_generation
+      duree_requise_par_generation: duree_requise_par_generation
+      majoration_par_trimestre_ecoule: 0.0075
+      majoration_par_trimestre_cotise: 0.00625
+      trimestre_en_jours: 90
+    droit: >-
+      le 1° et le 2° de 2011, et : « Lorsque le trimestre ayant donné lieu à cotisation
+      débute avant l'âge prévu au 1° et se termine après l'atteinte de ce même âge, le
+      trimestre accompli est pris en compte dans la durée d'assurance donnant lieu à la
+      majoration du total des points prévus au présent 2°. En aucun cas une même période ne
+      peut donner lieu à la fois à l'attribution de la majoration prévue au 1° et à celle
+      prévue au 2° du présent article. 3° Pour l'application du présent IV, un trimestre
+      équivaut à une période de 90 jours. »
+  exemples: aucun trouvé
+approximations:
+- version: [precisions_de_2023]
+  textes: >-
+    article 16, IV, 3° (le trimestre de quatre-vingt-dix jours) et IV, 2° (une même période
+    pour les deux majorations), rédaction du 14 septembre 2023
+  ecart: >-
+    le modèle compte au mois, trois mois pour un trimestre, quand le IV en compte
+    quatre-vingt-dix jours ; et il ne retire pas du 1° les mois du trimestre à cheval sur
+    l'âge du taux plein qu'il range au 2°, quand le IV interdit qu'une même période porte
+    les deux majorations
+  effet: >-
+    un trimestre de plus ou de moins à l'un ou l'autre bout de la fenêtre, 0,75 % ou
+    0,625 % des points ; non mesuré
 effet: >-
   Les affiliés de l'Ircantec qui cotisent après l'âge légal au-delà de la durée requise,
   ou qui liquident après l'âge du taux plein automatique : deux ans après cet âge valent
@@ -19,14 +154,19 @@ effet: >-
   près, et y range le trimestre à cheval sur l'âge du taux plein, comme la rédaction du 14
   septembre 2023 (`liquider._fenetre_ircantec`) : il la comptait par année civile, à l'âge
   atteint dans l'année. Il compte en mois, non en trimestres de 90 jours, et ne retire pas
-  du 1° le mois du trimestre à cheval qui suit l'âge du taux plein.
+  du 1° le mois du trimestre à cheval qui suit l'âge du taux plein : l'approximation de la
+  version de 2023, lue au droit le 3 novembre 2026.
 sources:
-  lu_le: 2026-09-27
+  lu_le: 2026-11-03
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
     Les deux pages lues du régime ne donnent pas d'exemple chiffré : en chercher un
     (autres pages de la base documentaire, guide du régime) qui rejoue les deux taux.
+  - >-
+    Avant 2023, le texte ne dit pas où compter le trimestre à cheval sur l'âge du taux
+    plein, ni la longueur du trimestre : la caisse appliquait-elle déjà ce que la
+    rédaction du 14 septembre 2023 écrit, comme le modèle le présume ?
   lectures:
   - type: legifrance
     reference: >-
@@ -85,21 +225,12 @@ sources:
       la dernière activité exercée par l'agent ne relève pas de l'Ircantec »
     url: https://baseircantec.retraites.fr/demander-sa-retraite/liquidation-de-la-retraite/la-surcote/definition
     date: 2026-09-27
-textes_a_rattacher:
-- id: LEGIARTI000019511923
-  reference: >-
-    arrêté du 30 décembre 1970, article 16, paragraphe 4, rédaction du 25 septembre 2008
-    au 1er juillet 2011 : les deux majorations, « A compter du 1er janvier 2010 » ; la
-    première après soixante-cinq ans, la seconde entre soixante et soixante-cinq ans,
-    au-delà de la durée
-- id: LEGIARTI000024266924
-  reference: >-
-    article 16, paragraphe 4, rédaction du 1er juillet 2011 au 31 mars 2018 : les âges des
-    articles L. 161-17-2 et L. 351-8, 1°, au lieu de soixante et soixante-cinq ans
-- id: LEGIARTI000048065521
-  reference: >-
-    article 16, IV, rédaction du 14 septembre 2023, en vigueur : le trimestre à cheval
-    compté au 2°, le non-cumul des deux majorations, le trimestre de 90 jours
+  - type: legifrance
+    reference: >-
+      arrêté du 30 décembre 1970, article 16, ses treize rédactions, du 9 février 1971 au
+      14 septembre 2023, chacune contre la suivante, dans l'index LEGI du dépôt à jour de
+      l'incrément du 2 novembre 2026 : aucune majoration avant celle du 25 septembre 2008
+    date: 2026-11-03
 textes_sans_effet:
 - id: LEGIARTI000036755233
   article: arrêté du 30 décembre 1970, article 16
@@ -125,7 +256,8 @@ code:
     0,625 % par trimestre COTISÉ au-delà de la durée requise entre l'âge légal et l'âge
     du taux plein (son 2°), sans qu'une même période puisse être comptée deux fois. La
     fenêtre du 2° se compte au mois, et celle que l'âge du taux plein ferme garde son
-    trimestre entamé (`liquider._fenetre_ircantec`).
+    trimestre entamé (`liquider._fenetre_ircantec`). La période de l'Ircantec porte
+    `surcote_points` depuis 2010.
   python: >-
     droit/liquider.py : liquider_chaque_regime, abattement_points, surcote_points,
     surcote_ircantec, _fenetre_ircantec, _SURCOTE_IRCANTEC_AGE,
@@ -135,6 +267,17 @@ code:
     surcoteIrcantec, fenetreIrcantec, SURCOTE_IRCANTEC_AGE, SURCOTE_IRCANTEC_DUREE ;
     moteur/js/droit/ouvrir.js : ageTauxPlein, ageOuvertureCommun
   parametres: >-
-    regimes/ircantec.yaml : age_taux_plein, age_ouverture
-  tests: [tests/test_simulateur.py, tests/test_oracle.py, tests/js/moteur.test.js,
-    tests/temoins/simulations.json]
+    contenu.parametres de chaque version : surcote_points, age_taux_plein,
+    age_taux_plein_par_generation, age_ouverture, age_ouverture_par_generation,
+    duree_requise_par_generation, majoration_par_trimestre_ecoule,
+    majoration_par_trimestre_cotise, trimestre_en_jours ; regimes/ircantec.yaml :
+    age_taux_plein, age_ouverture, age_taux_plein_par_generation,
+    age_ouverture_par_generation, duree_requise_par_generation, surcote_points
+  tests:
+  - >-
+    tests/test_ircantec.py, qui confronte chaque version aux périodes de l'Ircantec et aux
+    constantes du portage, et tient l'écart déclaré
+  - tests/test_simulateur.py
+  - tests/test_oracle.py
+  - tests/js/moteur.test.js
+  - tests/temoins/simulations.json

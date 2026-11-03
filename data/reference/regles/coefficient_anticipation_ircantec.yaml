@@ -1,21 +1,580 @@
 schema_version: 1
 id: coefficient_anticipation_ircantec
 intitule: >-
-  Coefficient d'anticipation de l'Ircantec : escalier à trois marches ancré sur
-  l'âge du taux plein, plancher 0,43 à dix ans d'anticipation, et seconde table
-  par la durée.
+  Coefficient d'anticipation de l'Ircantec : la pension liquidée avant l'âge normal,
+  soixante-cinq ans puis l'âge du 1° de L. 351-8, au plus tôt dix ans avant lui, voit
+  ses points affectés d'un coefficient de réduction — une table par année d'âge
+  jusqu'en 1983, un escalier à trois marches au trimestre depuis, de 0,43 à un —, sauf
+  exonération ; depuis le 1er avril 1983, levé pour qui a le taux plein au régime
+  général, et lu, à défaut, sur la durée manquante, sans descendre sous celui de l'âge.
+domaine: decote_surcote
 regimes: [igrante, ipacte, ircantec]
-etat: conforme
+etape: liquider_chaque_regime
+face: droit
+etat: approchee
+lit:
+- >-
+  l'âge de l'agent à la date d'effet de sa pension, et l'âge normal de sa génération :
+  soixante-cinq ans, puis, depuis le 1er juillet 2011, l'âge du 1° de l'article L. 351-8
+  du code de la sécurité sociale, et l'âge légal de L. 161-17-2
+- >-
+  depuis le 1er avril 1983, sa durée d'assurance tous régimes, et celle qui ouvre le taux
+  plein du régime général à sa génération (L. 331, puis L. 351-1)
+- >-
+  ce qui l'exonère : l'inaptitude reconnue, une catégorie au taux plein du régime général,
+  le départ anticipé pour carrière longue ou pour handicap, et les autres motifs que
+  l'article énumère, rédaction par rédaction
+- la date d'effet de la pension, qui choisit la rédaction de l'article 16
+ecrit:
+- >-
+  le coefficient qui affecte le total des points de l'Ircantec, et ceux de l'IPACTE et de
+  l'IGRANTE qu'elle a repris en 1971, de 0,43 à un, que `abattement_points` rend à
+  `liquider_chaque_regime`
+dates_qui_decident:
+- liquidation.date_effet
+versions:
+- id: ipacte_et_igrante
+  statut: supposee
+  hypothese: >-
+    les pensions de l'IPACTE (décret n° 51-1445 du 12 décembre 1951) et de l'IGRANTE
+    (décret n° 59-1569 du 31 décembre 1959) qui prennent effet avant le 1er janvier 1971
+    relèvent des arrêtés de ces institutions, du 12 décembre 1951 et du 17 février 1960,
+    que l'arrêté du 30 décembre 1970 annule et remplace (« les dispositions des arrêtés
+    du 12-12-1951, du 31-12-1959, du 17-02-1960, du 18-04-1961 sont annulées et remplacées
+    par celles du présent arrêté », analyse du Journal officiel, JORFTEXT000000833718) ;
+    leurs articles des âges et de l'anticipation (arrêté du 12 décembre 1951, articles 5
+    et 10 ; décret n° 60-1019, « limite d'âge ») ne sont pas dans l'index LEGI : la fiche
+    présume la table que l'Ircantec reprend le 1er janvier 1971, comme les fiches de
+    régime de l'IPACTE et de l'IGRANTE le présument de leurs âges
+  fiabilite: faible, aucun texte de l'IPACTE ni de l'IGRANTE sur l'anticipation n'a été lu
+  bornes:
+    liquidation.date_effet: [null, 1971-01-01]
+  contenu:
+    parametres:
+      age_taux_plein: 65
+      age_taux_plein_par_generation: null
+      anticipation_maximale_annees: 10
+      coefficient_plancher: 0.43
+      coefficients_par_annee_d_age: [0.43, 0.50, 0.57, 0.64, 0.71, 0.78, 0.83, 0.88, 0.92, 0.96]
+      paliers_d_anticipation: null
+      duree_requise_par_generation: null
+      duree_de_la_seconde_table_trimestres: null
+    droit: celui de la version arrete_de_1970, présumé
+  exemples: aucun trouvé
+- id: arrete_de_1970
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006368109, article: "décret n° 70-1277 du 23 décembre 1970, article 2 : l'institution « constituée, pour l'application du présent décret », le 1er janvier 1971, jour où le régime remplace l'IPACTE et l'IGRANTE", en_vigueur: 1971-01-01}
+  - {id: LEGIARTI000006381606, article: "arrêté du 30 décembre 1970, article 16", en_vigueur: 1971-02-09, publie_le: 1971-02-09}
+  - {id: JORFTEXT000000833718, article: "arrêté du 30 décembre 1970, qui annule et remplace les arrêtés de l'IPACTE et de l'IGRANTE (analyse du Journal officiel)", en_vigueur: 1971-02-09, publie_le: 1971-02-09}
+  nee_de: LEGIARTI000006368109
+  bornes:
+    liquidation.date_effet: [1971-01-01, 1976-01-03]
+  contenu:
+    parametres:
+      age_taux_plein: 65
+      age_taux_plein_par_generation: null
+      anticipation_maximale_annees: 10
+      coefficient_plancher: 0.43
+      coefficients_par_annee_d_age: [0.43, 0.50, 0.57, 0.64, 0.71, 0.78, 0.83, 0.88, 0.92, 0.96]
+      paliers_d_anticipation: null
+      duree_requise_par_generation: null
+      duree_de_la_seconde_table_trimestres: null
+    droit: >-
+      « L'allocation de retraite est liquidée à l'âge de soixante-cinq ans. Cependant elle
+      peut faire l'objet d'une anticipation, au plus tôt à cinquante-cinq ans. Dans ce cas,
+      le total des points de retraite est affecté des coefficients de réduction ci-après :
+      AGES COEFFICIENTS […] 55 ans 0,43 60 ans 0,78 56 ans 0,50 61 ans 0,83 57 ans 0,57
+      62 ans 0,88 58 ans 0,64 63 ans 0,92 59 ans 0,71 64 ans 0,96 » : une ligne par année
+      d'âge, que la fiche lit à l'âge révolu
+    conditions: >-
+      « Toutefois, ce coefficient de réduction n'est pas applicable : 1° Dans le cas d'une
+      inaptitude au travail reconnue entre soixante et soixante-cinq ans par la sécurité
+      sociale. 2° Aux anciens déportés et internés âgés de soixante ans au moins et
+      titulaires soit de la carte de déporté ou interné de la résistance, soit de la carte
+      de déporté ou interné politique. 3° Lorsqu'un agent bénéficiaire du régime est licencié
+      de son emploi dans l'intérêt du service entre soixante-trois et soixante-cinq ans. »
+      Aucune durée d'assurance n'exonère : le coefficient se lit à l'âge seul
+  exemples: aucun trouvé
+- id: anciens_combattants_1976
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006381607, article: "arrêté du 30 décembre 1970, article 16, rédaction de l'arrêté du 26 décembre 1975", en_vigueur: 1976-01-03}
+  - {id: JORFTEXT000000453283, article: "arrêté du 26 décembre 1975, qui modifie les articles 11, 13, 16, 17, 19 à 22 et 25 de l'arrêté du 30 décembre 1970 (analyse du Journal officiel)", en_vigueur: 1976-01-03, publie_le: 1976-01-03}
+  nee_de: LEGIARTI000006381607
+  bornes:
+    liquidation.date_effet: [1976-01-03, 1977-07-26]
+  contenu:
+    parametres:
+      age_taux_plein: 65
+      age_taux_plein_par_generation: null
+      anticipation_maximale_annees: 10
+      coefficient_plancher: 0.43
+      coefficients_par_annee_d_age: [0.43, 0.50, 0.57, 0.64, 0.71, 0.78, 0.83, 0.88, 0.92, 0.96]
+      paliers_d_anticipation: null
+      duree_requise_par_generation: null
+      duree_de_la_seconde_table_trimestres: null
+    droit: >-
+      la table de 1970, l'allocation « normalement » liquidée à soixante-cinq ans
+    conditions: >-
+      les exonérations de 1970, et un nouveau 3° : « Aux anciens combattants et prisonniers
+      de guerre qui bénéficient d'une pension de vieillesse du régime général de sécurité
+      sociale ou du régime agricole des assurances sociales liquidée entre soixante et
+      soixante-cinq ans dans les conditions prévues par la loi n° 73-051 [73-1051] du
+      21 novembre 1973 et par le décret n° 74-428 du 15 mai 1974 » ; le licenciement
+      devient le 4°
+  exemples: aucun trouvé
+- id: travailleurs_manuels_1977
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006381608, article: "arrêté du 30 décembre 1970, article 16, rédaction du 26 juillet 1977", en_vigueur: 1977-07-26}
+  nee_de: LEGIARTI000006381608
+  bornes:
+    liquidation.date_effet: [1977-07-26, 1978-09-30]
+  contenu:
+    parametres:
+      age_taux_plein: 65
+      age_taux_plein_par_generation: null
+      anticipation_maximale_annees: 10
+      coefficient_plancher: 0.43
+      coefficients_par_annee_d_age: [0.43, 0.50, 0.57, 0.64, 0.71, 0.78, 0.83, 0.88, 0.92, 0.96]
+      paliers_d_anticipation: null
+      duree_requise_par_generation: null
+      duree_de_la_seconde_table_trimestres: null
+    droit: la table de 1970
+    conditions: >-
+      les exonérations de 1976, la loi lue n° 73-1051, et un nouveau 4° : « Aux travailleurs
+      manuels et mères de famille qui bénéficient d'une pension de vieillesse du régime
+      général de sécurité sociale entre soixante et soixante-cinq ans dans les conditions
+      prévues par la loi n° 75-1279 du 30 décembre 1975 et par le décret n° 76-404 du 10 mai
+      1976 » ; le licenciement devient le 5°
+  exemples: aucun trouvé
+- id: femmes_de_la_loi_de_1977
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006381609, article: "arrêté du 30 décembre 1970, article 16, rédaction de l'arrêté du 20 septembre 1978", en_vigueur: 1978-09-30}
+  - {id: JORFTEXT000000861183, article: "arrêté du 20 septembre 1978 relatif aux modalités de fonctionnement du régime (titre au Journal officiel)", en_vigueur: 1978-09-30, publie_le: 1978-09-30}
+  nee_de: LEGIARTI000006381609
+  bornes:
+    liquidation.date_effet: [1978-09-30, 1982-07-01]
+  contenu:
+    parametres:
+      age_taux_plein: 65
+      age_taux_plein_par_generation: null
+      anticipation_maximale_annees: 10
+      coefficient_plancher: 0.43
+      coefficients_par_annee_d_age: [0.43, 0.50, 0.57, 0.64, 0.71, 0.78, 0.83, 0.88, 0.92, 0.96]
+      paliers_d_anticipation: null
+      duree_requise_par_generation: null
+      duree_de_la_seconde_table_trimestres: null
+    droit: la table de 1970
+    conditions: >-
+      les exonérations de 1977, et un nouveau 5° : « Aux femmes qui bénéficient d'une
+      pension de vieillesse du régime général de sécurité sociale attribuée dans les
+      conditions fixées par la loi n° 77-774 du 12 juillet 1977 » — la femme de trente-sept
+      ans et demi d'assurance, au taux plein du régime général dès soixante ans à compter
+      de 1979 ; le licenciement devient le 6°
+  exemples: aucun trouvé
+- id: ordonnance_du_26_mars_1982
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006381610, article: "arrêté du 30 décembre 1970, article 16, rédaction de l'arrêté du 26 juillet 1983, son 6°, a) et b)", en_vigueur: 1983-08-31, citation: "6° a) A compter du 1er juillet 1982 aux agents visés aux articles L. 351-16 et L. 351-17 du code du travail remplissant les conditions fixées par l'article 9, alinéa 2, de l'ordonnance du 26 mars 1982 susvisée ; b) A compter du 1er juillet 1982, aux anciens agents remplissant les conditions fixées par l'article 9, alinéa 3, de l'ordonnance du 26 mars 1982 susvisée"}
+  - {id: JORFTEXT000000837384, article: "arrêté du 26 juillet 1983 : le coefficient « n'est plus applicable, à compter du 01-07-1982 » aux bénéficiaires de l'ordonnance n° 82-270 du 26 mars 1982 (analyse du Journal officiel)", en_vigueur: 1983-08-31, publie_le: 1983-08-31}
+  - {id: LEGIARTI000006381609, article: "arrêté du 30 décembre 1970, article 16, rédaction de 1978, sa table", en_vigueur: 1978-09-30}
+  nee_de: LEGIARTI000006381610
+  bornes:
+    liquidation.date_effet: [1982-07-01, 1983-04-01]
+  contenu:
+    parametres:
+      age_taux_plein: 65
+      age_taux_plein_par_generation: null
+      anticipation_maximale_annees: 10
+      coefficient_plancher: 0.43
+      coefficients_par_annee_d_age: [0.43, 0.50, 0.57, 0.64, 0.71, 0.78, 0.83, 0.88, 0.92, 0.96]
+      paliers_d_anticipation: null
+      duree_requise_par_generation: null
+      duree_de_la_seconde_table_trimestres: null
+    droit: >-
+      la table de 1970, que l'arrêté du 26 juillet 1983 ne remplace qu'à sa publication
+    conditions: >-
+      les exonérations de 1978, et, rétroactivement, celles de l'ordonnance du 26 mars 1982
+      sur l'abaissement de l'âge de la retraite : les agents des articles L. 351-16 et
+      L. 351-17 du code du travail et les anciens agents de son article 9, alinéas 2 et 3
+  exemples: aucun trouvé
+- id: structure_financiere_1983
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006381610, article: "arrêté du 30 décembre 1970, article 16, rédaction de l'arrêté du 26 juillet 1983, son 6° c) et son II", en_vigueur: 1983-08-31, citation: "c) A compter du 1er avril 1983, aux agents ou anciens agents justifiant d'une durée d'assurance susceptible de les faire bénéficier au titre du régime général ou du régime d'assurances sociales agricoles d'une pension au taux plein dans les conditions définies par l'article L. 331 du code de la sécurité sociale"}
+  - {id: JORFTEXT000000837384, article: "arrêté du 26 juillet 1983 : « et à compter du 01-04-1983, aux agents susceptibles de bénéficier à 60 ans d'une pension à taux plein au titre du régime général ou de celui des assurances sociales agricoles » (analyse du Journal officiel)", en_vigueur: 1983-08-31, publie_le: 1983-08-31}
+  - {id: LEGIARTI000006381609, article: "arrêté du 30 décembre 1970, article 16, rédaction de 1978, sa table", en_vigueur: 1978-09-30}
+  nee_de: LEGIARTI000006381610
+  bornes:
+    liquidation.date_effet: [1983-04-01, 1983-08-31]
+  contenu:
+    parametres:
+      age_taux_plein: 65
+      age_taux_plein_par_generation: null
+      anticipation_maximale_annees: 10
+      coefficient_plancher: 0.43
+      coefficients_par_annee_d_age: [0.43, 0.50, 0.57, 0.64, 0.71, 0.78, 0.83, 0.88, 0.92, 0.96]
+      paliers_d_anticipation: null
+      duree_requise_par_generation: duree_requise_par_generation
+      duree_de_la_seconde_table_trimestres: 150
+    droit: >-
+      la table de 1970, et la seconde table, « A compter du 1er avril 1983 » : « les agents
+      ou anciens agents âgés de soixante à soixante-cinq ans justifiant d'une durée
+      d'assurance, au sens de l'ordonnance du 26 mars 1982 susvisée, comprise entre
+      trente-deux ans et demi et trente-sept ans et demi peuvent également faire liquider
+      leur retraite par anticipation. Dans ce cas, le total des points de retraite est
+      affecté des coefficients de réduction prévus au paragraphe Ier, en assimilant à l'âge
+      de soixante-cinq ans l'âge auquel l'intéressé aurait effectivement compté trentre-sept
+      années et demie d'assurance. Toutefois, le total des points de retraite ainsi calculé
+      ne pourra être inférieur à celui qui aurait été obtenu après application du
+      coefficient d'abattement correspondant à l'âge de l'intéressé » (II)
+    conditions: >-
+      les exonérations de 1982, et, à compter du 1er avril 1983, qui a la durée du taux plein
+      du régime général (6° c)
+  exemples: aucun trouvé
+- id: escalier_au_trimestre_1983
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006381610, article: "arrêté du 30 décembre 1970, article 16, rédaction de l'arrêté du 26 juillet 1983", en_vigueur: 1983-08-31}
+  - {id: JORFTEXT000000837384, article: "arrêté du 26 juillet 1983 : les coefficients de réduction « variant selon l'âge de liquidation et fixés désormais par trimestre » (analyse du Journal officiel)", en_vigueur: 1983-08-31, publie_le: 1983-08-31}
+  nee_de: LEGIARTI000006381610
+  bornes:
+    liquidation.date_effet: [1983-08-31, 2004-01-01]
+  contenu:
+    parametres:
+      age_taux_plein: 65
+      age_taux_plein_par_generation: null
+      anticipation_maximale_annees: 10
+      coefficient_plancher: 0.43
+      coefficients_par_annee_d_age: null
+      paliers_d_anticipation: [[12, 0.01], [20, 0.0125], [40, 0.0175]]
+      duree_requise_par_generation: duree_requise_par_generation
+      duree_de_la_seconde_table_trimestres: 150
+    droit: >-
+      « A cinquante-cinq ans, les points effectivement inscrits au compte de l'intéressé
+      sont affectés du coefficient 0,43 ; En cas de prise de retraite entre cinquante-cinq
+      et soixante ans, le coefficient ci-dessus est majoré de 0,017 5 par trimestre écoulé
+      entre l'âge de cinquante-cinq ans et l'âge atteint lors de la liquidation de la
+      retraite ; En cas de prise de retraite entre soixante ans et soixante-deux ans, le
+      coefficient applicable à soixante ans, soit 0,78, est majoré de 0,012 5 par trimestre
+      écoulé […] ; En cas de prise de retraite entre soixante-deux ans et soixante-cinq ans,
+      le coefficient applicable à soixante-deux ans, soit 0,88, est majoré de 0,01 par
+      trimestre écoulé » : l'escalier que le portage lit, au trimestre entier écoulé ; et
+      la seconde table de la version structure_financiere_1983
+    conditions: >-
+      « 1° Dans le cas d'une inaptitude au travail reconnue entre soixante et soixante-cinq
+      ans par la sécurité sociale ; 2° Aux anciens déportés et internés […] ; 3° Aux anciens
+      combattants et prisonniers de guerre […] ; 4° Aux mères de famille qui bénéficient
+      d'une pension de vieillesse du régime général de sécurité sociale entre soixante et
+      soixante-cinq ans dans les conditions prévues par l'article L. 332 du code de la
+      sécurité sociale ; 5° Lorsqu'un agent bénéficiaire du régime est licencié de son
+      emploi dans l'intérêt du service entre soixante-trois et soixante-cinq ans ; 6° a) et
+      b) [l'ordonnance de 1982] ; c) [le taux plein du régime général] ; d) Aux personnels
+      admis en cessation anticipée d'activité au titre des ordonnances n° 82-108 du
+      30 janvier 1982 et n° 82-297 du 31 mars 1982 » ; le travailleur manuel et la femme de
+      la loi de 1977 en sortent, que le taux plein du 6° c) couvre à soixante ans. La
+      rédaction du 2 octobre 1990 n'y ajoute que la retraite progressive (§ 3)
+  exemples: aucun trouvé
+- id: retraite_anticipee_2004
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006381612, article: "arrêté du 30 décembre 1970, article 16, rédaction du 1er janvier 2004", en_vigueur: 2004-01-01}
+  nee_de: LEGIARTI000006381612
+  bornes:
+    liquidation.date_effet: [2004-01-01, 2011-07-01]
+  contenu:
+    parametres:
+      age_taux_plein: 65
+      age_taux_plein_par_generation: null
+      anticipation_maximale_annees: 10
+      coefficient_plancher: 0.43
+      coefficients_par_annee_d_age: null
+      paliers_d_anticipation: [[12, 0.01], [20, 0.0125], [40, 0.0175]]
+      duree_requise_par_generation: duree_requise_par_generation
+      duree_de_la_seconde_table_trimestres: null
+    droit: >-
+      l'escalier de 1983 ; « Paragraphe 2. Les agents ou anciens agents âgés de soixante à
+      soixante-cinq ans à la date d'effet de la liquidation de leur allocation et
+      justifiant d'une durée d'assurance inférieure à celle déterminée en application du
+      troisième alinéa de l'article L. 351-1 du code de la sécurité sociale peuvent
+      également faire liquider leur retraite par anticipation. Dans ce cas, le total des
+      points de retraite est affecté des coefficients de réduction prévus au paragraphe 1
+      en assimilant à l'âge de soixante-cinq ans l'âge auquel l'intéressé aurait
+      effectivement accompli la durée d'assurance fixée en application de l'article
+      L. 351-1 précité » : la seconde table lit la durée du taux plein de la génération,
+      sans borne basse
+    conditions: >-
+      les exonérations de 1983, le 6° récrit : « a) Aux agents et anciens agents admis à
+      faire liquider leur retraite au régime général en application de l'article L. 351-1-1
+      du code de la sécurité sociale ; b) Aux agents et anciens agents handicapés admis à
+      faire liquider leur retraite au régime général en application de l'article L. 351-1-3
+      […] ; c) A compter du 1er avril 1983, [le taux plein] dans les conditions définies par
+      l'article L. 351-1 […] ; d) [la cessation anticipée d'activité] ». La rédaction du
+      25 septembre 2008 n'y ajoute que les majorations du § 4 (fiche surcote_ircantec)
+  exemples: aucun trouvé
+- id: ages_de_2010
+  statut: lue
+  textes:
+  - {id: LEGIARTI000024266924, article: "arrêté du 30 décembre 1970, article 16, rédaction du 1er juillet 2011", en_vigueur: 2011-07-01}
+  nee_de: LEGIARTI000024266924
+  bornes:
+    liquidation.date_effet: [2011-07-01, 2018-03-31]
+  contenu:
+    parametres:
+      age_taux_plein_par_generation: age_annulation_decote
+      anticipation_maximale_annees: 10
+      coefficient_plancher: 0.43
+      coefficients_par_annee_d_age: null
+      paliers_d_anticipation: [[12, 0.01], [20, 0.0125], [40, 0.0175]]
+      duree_requise_par_generation: duree_requise_par_generation
+      duree_de_la_seconde_table_trimestres: null
+    droit: >-
+      « L'allocation de retraite est normalement liquidée à l'âge prévu au 1° de l'article
+      L. 351-8 du code de la sécurité sociale. Cependant, elle peut faire l'objet d'une
+      anticipation, au plus tôt dix ans avant que l'assuré ait atteint cet âge » ; le
+      coefficient 0,43 dix ans avant, « majoré de 0,0175 par trimestre écoulé » jusqu'à
+      « l'âge prévu à l'article L. 161-17-2 », 0,78 à cet âge, majoré de 0,012 5 par
+      trimestre jusqu'à ce même âge « augmenté de deux années », 0,88 là, majoré de 0,01
+      jusqu'à l'âge du 1° de L. 351-8. L'âge légal y précède de cinq ans l'âge du 1° de
+      L. 351-8 pour chaque génération de la loi du 9 novembre 2010 : le portage, qui ancre
+      ses paliers sur l'âge du taux plein, rend les mêmes coefficients. La seconde table
+      (paragraphe 2) vaut de l'âge légal à l'âge du 1° de L. 351-8, et y assimile l'âge où la
+      durée « déterminée au deuxième alinéa de l'article L. 351-1 » aurait été accomplie
+    conditions: >-
+      les exonérations regroupées en trois : « 1° Aux personnes admises à faire liquider
+      leur pension de vieillesse avant l'âge légal » — carrière longue, handicap, cessation
+      anticipée d'activité, incapacité permanente (L. 351-1-4), amiante (article 41 de la
+      loi n° 98-1194) ; « 2° Aux personnes qui bénéficient d'une pension de vieillesse à taux
+      plein du régime général […] dès lors qu'elles ont atteint l'âge légal » — le taux
+      plein de L. 351-1, l'inaptitude (L. 351-7), les déportés, les anciens combattants, les
+      mères de famille ouvrières ; « 3° […] à l'âge de soixante-cinq ans » — l'aidant
+      familial (1° bis de L. 351-8), le handicapé du 1° ter, le parent d'un enfant
+      handicapé, le parent de trois enfants né du 1er juillet 1951 au 31 décembre 1955 ; le
+      licenciement n'y est plus
+  exemples: aucun trouvé
+- id: handicapes_a_l_age_legal_2018
+  statut: lue
+  textes:
+  - {id: LEGIARTI000036755233, article: "arrêté du 30 décembre 1970, article 16, rédaction de l'arrêté du 29 mars 2018", en_vigueur: 2018-03-31}
+  - {id: JORFTEXT000036750696, article: "arrêté du 29 mars 2018 portant modification de l'arrêté du 30 décembre 1970 (titre au Journal officiel)", en_vigueur: 2018-03-31, publie_le: 2018-03-30}
+  nee_de: LEGIARTI000036755233
+  bornes:
+    liquidation.date_effet: [2018-03-31, 2018-12-21]
+  contenu:
+    parametres:
+      age_taux_plein_par_generation: age_annulation_decote
+      anticipation_maximale_annees: 10
+      coefficient_plancher: 0.43
+      coefficients_par_annee_d_age: null
+      paliers_d_anticipation: [[12, 0.01], [20, 0.0125], [40, 0.0175]]
+      duree_requise_par_generation: duree_requise_par_generation
+      duree_de_la_seconde_table_trimestres: null
+    droit: le I et le II de 2011, renumérotés, mot pour mot
+    conditions: >-
+      le handicapé du 1° ter de L. 351-8 — l'incapacité permanente d'au moins le taux que
+      fixe le décret, au taux plein du régime général à l'âge légal — passe du 3° au 2° :
+      « f) Aux agents et anciens agents handicapés visés au 1 ter de l'article L. 351-8 du
+      code de la sécurité sociale qui bénéficient d'une pension de vieillesse à taux plein
+      du régime général », exonéré dès l'âge légal ; le 3° b) est abrogé. La retraite
+      progressive (III) suit celle du régime général
+  exemples: aucun trouvé
+- id: compte_de_prevention_2018
+  statut: lue
+  textes:
+  - {id: LEGIARTI000037845437, article: "arrêté du 30 décembre 1970, article 16, rédaction de l'arrêté du 18 décembre 2018", en_vigueur: 2018-12-21}
+  - {id: JORFTEXT000037833127, article: "arrêté du 18 décembre 2018 portant modification de l'arrêté du 30 décembre 1970 (titre au Journal officiel)", en_vigueur: 2018-12-21, publie_le: 2018-12-20}
+  nee_de: LEGIARTI000037845437
+  bornes:
+    liquidation.date_effet: [2018-12-21, 2023-09-14]
+  contenu:
+    parametres:
+      age_taux_plein_par_generation: age_annulation_decote
+      anticipation_maximale_annees: 10
+      coefficient_plancher: 0.43
+      coefficients_par_annee_d_age: null
+      paliers_d_anticipation: [[12, 0.01], [20, 0.0125], [40, 0.0175]]
+      duree_requise_par_generation: duree_requise_par_generation
+      duree_de_la_seconde_table_trimestres: null
+    droit: le I et le II de 2011
+    conditions: >-
+      un nouveau 1° f) : « Les agents bénéficiant des dispositions de l'article L. 161-17-4
+      du code de la sécurité sociale et liquidant à taux plein leur pension de vieillesse du
+      régime général de sécurité sociale ou du régime agricole des assurances sociales en
+      application de l'article L. 351-6-1 du même code » — l'âge légal abaissé par les
+      trimestres du compte professionnel de prévention
+  exemples: aucun trouvé
+- id: ancres_fixes_2023
+  statut: lue
+  textes:
+  - {id: LEGIARTI000048065521, article: "arrêté du 30 décembre 1970, article 16, rédaction de l'arrêté du 11 septembre 2023", en_vigueur: 2023-09-14}
+  - {id: JORFTEXT000048063234, article: "arrêté du 11 septembre 2023 portant modification de l'arrêté du 30 décembre 1970 (titre au Journal officiel)", en_vigueur: 2023-09-14, publie_le: 2023-09-13}
+  nee_de: LEGIARTI000048065521
+  bornes:
+    liquidation.date_effet: [2023-09-14, null]
+  contenu:
+    parametres:
+      age_taux_plein_par_generation: age_annulation_decote
+      anticipation_maximale_annees: 10
+      coefficient_plancher: 0.43
+      coefficients_par_annee_d_age: null
+      paliers_d_anticipation: [[12, 0.01], [20, 0.0125], [40, 0.0175]]
+      duree_requise_par_generation: duree_requise_par_generation
+      duree_de_la_seconde_table_trimestres: null
+    droit: >-
+      « En cas de liquidation de la retraite entre l'âge prévu au 1° de l'article L. 351-8
+      susmentionné diminué de dix ans et 62 ans, le coefficient ci-dessus est majoré de
+      0,0175 par trimestre écoulé […] ; En cas de liquidation de la retraite entre l'âge de
+      62 ans et 64 ans, le coefficient applicable à 62 ans, soit 0,78, est majoré de 0,0125
+      par trimestre écoulé entre 62 ans et l'âge atteint lors de la liquidation de la
+      retraite. En cas de liquidation de la retraite entre l'âge de 64 ans et l'âge prévu
+      au 1° de l'article L. 351-8 susvisé, le coefficient applicable à 64 ans, soit 0,88, est
+      majoré de 0,01 par trimestre écoulé » : des âges fixes, et non plus l'âge légal, que
+      la loi du 14 avril 2023 porte à soixante-quatre ans. Pour toute génération qui atteint
+      après ce jour l'âge du 1° de L. 351-8, soixante-sept ans, ils tombent vingt et douze
+      trimestres avant lui, où le portage rend 0,78 et 0,88. La seconde table (II) s'écrit
+      désormais en clair : « le coefficient est minoré de 0,01 par trimestre manquant pour
+      atteindre la durée d'assurance […]. Si le nombre de trimestres nécessaire […] est
+      strictement supérieur à 12 trimestres, le coefficient est affecté d'une minoration de
+      0,0125 pour chaque trimestre manquant au-delà des 12 trimestres », sans plancher
+      propre ; c'est l'escalier du portage jusqu'à vingt trimestres manquants, et au-delà,
+      le coefficient tombe sous 0,78, que la table des âges donne au moins à l'âge légal,
+      et que le II garantit
+    conditions: >-
+      un nouveau 1° g) : l'inaptitude reconnue (L. 351-7) ou l'incapacité permanente
+      (L. 351-1-5) au taux plein du 2° de L. 351-8, exonérées avant l'âge légal ; au 2°, le
+      taux plein « d'un régime de retraite obligatoire de base » à l'âge légal, et non plus
+      du seul régime général ; les 2° b) et f) et le 3° b) abrogés. La retraite progressive
+      (III) suit celle du régime de base
+  exemples: [ircantec_minoration_duree_63_ans, ircantec_minoration_age_avant_l_age_legal]
+approximations:
+- version: [ipacte_et_igrante, arrete_de_1970, anciens_combattants_1976, travailleurs_manuels_1977,
+    femmes_de_la_loi_de_1977, ordonnance_du_26_mars_1982, structure_financiere_1983]
+  textes: article 16, I, rédactions du 9 février 1971 au 31 août 1983, la table par année d'âge
+  ecart: >-
+    le modèle lit dès 1951 l'escalier au trimestre que l'arrêté du 26 juillet 1983 crée :
+    entre deux anniversaires, il relève le coefficient à chaque trimestre, quand la table
+    garde celui de l'âge révolu — 0,8175 à soixante ans et neuf mois, pour 0,78 ; à chaque
+    anniversaire, les deux donnent le même
+  effet: >-
+    jusqu'à 3,75 points de coefficient de plus de soixante à soixante-deux ans, trois de
+    soixante-deux à soixante-cinq, aux pensions prises avant le 31 août 1983 ; non mesuré
+- version: [ipacte_et_igrante, arrete_de_1970, anciens_combattants_1976, travailleurs_manuels_1977,
+    femmes_de_la_loi_de_1977, ordonnance_du_26_mars_1982, structure_financiere_1983,
+    escalier_au_trimestre_1983, retraite_anticipee_2004, ages_de_2010,
+    handicapes_a_l_age_legal_2018, compte_de_prevention_2018, ancres_fixes_2023]
+  textes: >-
+    article 16, I : « au plus tôt à cinquante-cinq ans », puis « au plus tôt dix ans avant »
+    l'âge du 1° de L. 351-8
+  ecart: >-
+    le modèle liquide l'Ircantec avec la pension de base, à l'âge d'ouverture de sa période
+    — soixante ans, puis l'âge légal de la génération — et jamais avant : il ne sert pas
+    l'anticipation de dix ans que l'article ouvre, ni les coefficients de 0,43 à 0,78
+    qu'elle porte (fiche liquidation_regime_par_regime)
+  effet: >-
+    mesuré par l'exemple ircantec_minoration_age_avant_l_age_legal, en écart connu : 0,7625
+    publiés à soixante et un ans et neuf mois, 0,9 rendus par le modèle, qui attend l'âge
+    légal
+- version: [ipacte_et_igrante, arrete_de_1970, anciens_combattants_1976, travailleurs_manuels_1977,
+    femmes_de_la_loi_de_1977, ordonnance_du_26_mars_1982]
+  textes: article 16, 6° c) et II, « A compter du 1er avril 1983 »
+  ecart: >-
+    la période unique de l'IPACTE et celle de l'IGRANTE, que le moteur lit pour toute
+    liquidation de leurs points, portent la durée requise du régime général : il en
+    exonère dès 1951 qui a la durée, et y lit la seconde table, quand l'article ne le fait
+    qu'à compter du 1er avril 1983 ; la période de l'Ircantec de 1971 à 1982 abat à l'âge
+    seul, comme le texte
+  effet: >-
+    jusqu'à 22 points de coefficient de plus (0,78 à soixante ans) sur les points de
+    l'IPACTE et de l'IGRANTE liquidés avant le 1er avril 1983 par qui a cent cinquante
+    trimestres ; non mesuré
+- version: [ages_de_2010, handicapes_a_l_age_legal_2018, compte_de_prevention_2018, ancres_fixes_2023]
+  textes: article 16, I, rédaction du 1er juillet 2011, l'âge prévu au 1° de L. 351-8
+  ecart: >-
+    la période unique de l'IPACTE et celle de l'IGRANTE gardent soixante-cinq ans : le
+    moteur y liquide les points sans l'âge du taux plein de la génération, que la période
+    de l'Ircantec lit depuis 2011
+  effet: >-
+    les générations du second semestre 1951 à 1954 qui ont des points de l'IPACTE ou de
+    l'IGRANTE, acquis avant 1971 : jusqu'à six trimestres d'anticipation non abattus
+    (génération 1954, soixante-six ans et sept mois) ; non mesuré
+- version: [escalier_au_trimestre_1983]
+  textes: article 16, II (paragraphe 2), rédaction du 31 août 1983
+  ecart: >-
+    de 1994 à 2003, le modèle lit la seconde table sur la durée du taux plein du régime
+    général de la génération, que la loi du 22 juillet 1993 relève d'un trimestre par
+    génération dès 1934 ; le II l'ouvre à la durée « comprise entre trente-deux ans et
+    demi et trente-sept ans et demi », et assimile à soixante-cinq ans l'âge où l'agent
+    « aurait effectivement compté trente-sept années et demie d'assurance ». Lu à la
+    lettre, il compte les trimestres manquants jusqu'à cent cinquante, et ne s'ouvre plus
+    au-delà : l'agent né en 1940 qui en a cent cinquante-deux, sans les cent cinquante-sept
+    du taux plein, n'aurait que la table des âges, quand le modèle lui compte cinq
+    trimestres manquants
+  effet: >-
+    les générations 1934 à 1943 liquidées de 1994 à 2003, de soixante à soixante-cinq ans,
+    sans le taux plein du régime général : jusqu'à dix points de coefficient, dans un
+    sens ou dans l'autre ; non mesuré, et la pratique de la caisse reste à lire
+- version: [arrete_de_1970, anciens_combattants_1976]
+  textes: >-
+    article 16, 3° et 4°, rédactions du 3 janvier 1976 et du 26 juillet 1977
+  ecart: >-
+    le modèle exonère l'Ircantec dès que le régime général sert la catégorie : l'ancien
+    combattant ou prisonnier dès le 1er janvier 1974, le travailleur manuel et la mère de
+    famille ouvrière dès le 1er juillet 1976, quand l'article ne les nomme qu'au 3 janvier
+    1976 et au 26 juillet 1977
+  effet: >-
+    les pensions de ces assurés prises du 1er janvier 1974 au 2 janvier 1976, et du
+    1er juillet 1976 au 25 juillet 1977 : jusqu'à 22 points de coefficient de plus ; non
+    mesuré
+- version: [arrete_de_1970, anciens_combattants_1976, travailleurs_manuels_1977,
+    femmes_de_la_loi_de_1977, ordonnance_du_26_mars_1982, structure_financiere_1983,
+    escalier_au_trimestre_1983, retraite_anticipee_2004]
+  textes: >-
+    article 16 : le licenciement dans l'intérêt du service, de 1971 au 1er juillet 2011 ;
+    les femmes de la loi du 12 juillet 1977, du 30 septembre 1978 au 1er avril 1983 ; les
+    agents de l'ordonnance du 26 mars 1982 et la cessation anticipée d'activité, depuis
+    le 1er juillet 1982
+  ecart: >-
+    le modèle ne connaît ni l'agent licencié dans l'intérêt du service entre soixante-trois
+    et soixante-cinq ans, ni la femme de trente-sept ans et demi d'assurance de la loi de
+    1977 — les quatre catégories qu'il lit au régime général ne la comptent pas —, ni les
+    bénéficiaires des mesures de 1982 : il les abat
+  effet: jusqu'à 22 points de coefficient de moins ; non mesuré, des populations rares
+- version: [ages_de_2010, handicapes_a_l_age_legal_2018, compte_de_prevention_2018, ancres_fixes_2023]
+  textes: >-
+    article 16, 3°, rédaction du 1er juillet 2011 : l'aidant familial, le parent d'un enfant
+    handicapé, le parent de trois enfants né du 1er juillet 1951 au 31 décembre 1955
+  ecart: >-
+    le modèle n'exonère pas à soixante-cinq ans qui a le taux plein du régime général à cet
+    âge par l'un de ces motifs : l'âge du taux plein qu'il lit à l'Ircantec est celui de la
+    génération, et ses catégories ne les comptent pas
+  effet: >-
+    un parent de trois enfants né en 1955, sans la durée, parti à soixante-cinq ans : 0,92
+    au lieu de un ; non mesuré
+- version: [ancres_fixes_2023]
+  textes: >-
+    article 16, I, 2°, rédaction du 14 septembre 2023 : le taux plein « d'un régime de
+    retraite obligatoire de base »
+  ecart: >-
+    le modèle ne lit que le taux plein du régime général, par la durée, la catégorie ou
+    l'inaptitude : l'ancien contractuel devenu fonctionnaire, au taux plein de la fonction
+    publique à l'âge légal sans la durée, reste abattu
+  effet: non mesuré
 effet: >-
-  Toute liquidation Ircantec anticipée. Les quarante et une lignes de la table publiée
-  sont rejouées par tests/test_ircantec_minoration.py et le modèle les rend toutes.
-  La table de la caisse ajoute ce que le texte ne disait pas : les ancrages sont
-  des ÂGES FIXES — 1 à 67 ans, 0,88 à 64, 0,78 à 62, 0,43 à 57 — identiques pour
-  les onze générations, alors que l'âge légal passe de 62 à 64 ans sur cette plage.
-  C'est l'âge du taux plein qui ancre l'escalier, jamais l'âge d'ouverture, et le
-  modèle fait déjà ainsi.
+  Toute liquidation anticipée de l'Ircantec, et des points de l'IPACTE et de l'IGRANTE
+  qu'elle a repris. Les quarante et une lignes de la table publiée en 2023 sont rejouées
+  par tests/test_ircantec_minoration.py, et le modèle les rend toutes : les ancrages sont
+  des âges fixes, 1 à soixante-sept ans, 0,88 à soixante-quatre, 0,78 à soixante-deux,
+  0,43 à cinquante-sept, ce que la rédaction du 14 septembre 2023 écrit ; le modèle ancre
+  l'escalier sur l'âge du taux plein, et rend les mêmes. Lue au droit le 3 novembre 2026,
+  rédaction par rédaction depuis 1971 : le modèle sert l'escalier au trimestre dès 1951,
+  quand la table de 1970 ne comptait que les années d'âge ; il exonère à la durée les
+  points de l'IPACTE et de l'IGRANTE dès 1951, quand l'article ne le fait que depuis le
+  1er avril 1983 ; il ne sert pas l'anticipation avant l'âge légal.
 sources:
-  lu_le: 2026-10-13
+  lu_le: 2026-11-03
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
@@ -27,6 +586,20 @@ sources:
     (loi de financement pour 2026) : relire les tableaux quand elle les republiera.
     La seconde table de l'article, celle qui lit la DURÉE manquante, a désormais son
     exemple publié (ircantec_minoration_duree_63_ans), que le modèle rend.
+  - >-
+    La seconde table de 1994 à 2003 (approximation de la version
+    escalier_au_trimestre_1983) : la caisse lisait-elle les trente-sept ans et demi du II,
+    à la lettre, ou la durée du taux plein de la génération, comme le modèle ? Chercher
+    une circulaire de l'Ircantec de 1994, ou sa base documentaire.
+  - >-
+    Les exonérations d'après 2011 restent à confronter une à une au modèle : l'incapacité
+    permanente (L. 351-1-4, puis L. 351-1-5), l'amiante, le handicapé du 1° ter, le compte
+    professionnel de prévention ; le modèle en sert-il le taux plein au régime général, et
+    l'Ircantec le suit-elle, par `taux_plein_de_l_inapte` ou autrement ?
+  - >-
+    L'IPACTE et l'IGRANTE avant 1971 : l'arrêté du 12 décembre 1951 (articles 5 et 10) et
+    celui du 17 février 1960, que l'index LEGI ne porte pas, diraient leurs âges et leur
+    anticipation ; la version ipacte_et_igrante les présume.
   lectures:
   - type: legifrance
     reference: >-
@@ -54,19 +627,48 @@ sources:
       2025-07), comparée ligne à ligne à celle de décembre 2023 (dossier 2024-01)
     url: https://baseircantec.retraites.fr/sites/default/files/2025-07/Tableaux%20tx%20de%20mino%20retraite%20%C3%A0%20tx%20r%C3%A9duit%202023%20externe.pdf
     date: 2026-10-13
-exemples:
-- ircantec_minoration_duree_63_ans
-textes_a_rattacher:
-- reference: >-
-    article 16 de l'arrêté du 30 décembre 1970 (LEGIARTI000006381606, LEGIARTI000024266924)
-- reference: L. 351-8 1° CSS
+  - type: legifrance
+    reference: >-
+      arrêté du 30 décembre 1970, article 16, ses treize rédactions, du 9 février 1971 au
+      14 septembre 2023, chacune contre la suivante, dans l'index LEGI du dépôt à jour de
+      l'incrément du 2 novembre 2026 ; décret n° 70-1277 du 23 décembre 1970, article 2 ;
+      code de la sécurité sociale, L. 351-8 (rédaction de 2014), L. 161-17-4 et L. 351-6-1
+    date: 2026-11-03
+  - type: jorf
+    reference: >-
+      les arrêtés qui ont fait les rédactions, par l'index JORF du dépôt : du 30 décembre
+      1970, du 26 décembre 1975, du 20 septembre 1978, du 26 juillet 1983 (son analyse : les
+      coefficients « fixés désormais par trimestre », les exonérations à compter du
+      1er juillet 1982 et du 1er avril 1983), du 29 mars 2018, du 18 décembre 2018 et du
+      11 septembre 2023
+    date: 2026-11-03
+textes_sans_effet:
+- id: LEGIARTI000006381611
+  article: arrêté du 30 décembre 1970, article 16
+  en_vigueur: 1990-10-02
+  motif: >-
+    le I et le II de 1983, mot pour mot, renumérotés « § 1 » et « § 2 » ; la rédaction
+    ajoute la retraite progressive (« § 3. Lorsque, à partir du 1er octobre 1989, l'agent
+    bénéficie de la retraite progressive […] ») et la note du décret n° 99-971 sur le
+    ministère des anciens combattants
+- id: LEGIARTI000019511923
+  article: arrêté du 30 décembre 1970, article 16
+  en_vigueur: 2008-09-25
+  motif: >-
+    les paragraphes 1 et 2 de 2004, mot pour mot, aux espaces près (« 0, 43 ») ; la
+    rédaction ajoute les majorations du paragraphe 4, « A compter du 1er janvier 2010 »
+    (fiche surcote_ircantec)
 code:
   interrupteurs:
     abattement_points: ircantec
   moteur: >-
-    `abattement_points: ircantec` applique le barème de l'article 16 de l'arrêté du 30
-    décembre 1970, qui est le MÊME escalier que celui de l'Agirc-Arrco, aux mêmes marches,
-    et se lit de la même façon.
+    `abattement_points: ircantec` applique l'escalier de l'article 16 de l'arrêté du 30
+    décembre 1970, qui est le MÊME que celui de l'Agirc-Arrco, aux mêmes marches, et se lit
+    de la même façon : `coefficient_pour_age` le lit aux trimestres qui séparent la
+    liquidation de l'âge du taux plein de la période (`age_taux_plein`, ou
+    `age_taux_plein_par_generation` depuis 2011), arrondis au supérieur, au plancher de
+    0,43 dix ans avant ; la seconde table, sur la durée manquante, quand la période porte
+    `duree_requise_par_generation`, dont la durée exonère aussi.
   python: >-
     droit/liquider.py : liquider_chaque_regime, abattement_points, coefficient_pour_age,
     _coefficient_anticipation, _PALIERS_ANTICIPATION,
@@ -78,8 +680,19 @@ code:
     COEFFICIENT_ANTICIPATION_PLANCHER ; moteur/js/droit/ouvrir.js : ageTauxPlein ;
     moteur/js/droit/invalidite.js : tauxPleinDeLInapte
   parametres: >-
-    regimes/igrante.yaml, regimes/ipacte.yaml, regimes/ircantec.yaml : age_taux_plein,
-    duree_requise_trimestres
-  tests: [tests/test_ircantec_minoration.py, tests/test_simulateur.py,
-    tests/test_oracle.py, tests/test_invalidite.py, tests/js/moteur.test.js,
-    tests/temoins/simulations.json]
+    contenu.parametres de chaque version : age_taux_plein, age_taux_plein_par_generation,
+    anticipation_maximale_annees, coefficient_plancher, coefficients_par_annee_d_age,
+    paliers_d_anticipation, duree_requise_par_generation,
+    duree_de_la_seconde_table_trimestres ; regimes/igrante.yaml, regimes/ipacte.yaml,
+    regimes/ircantec.yaml : age_ouverture, age_taux_plein, age_taux_plein_par_generation,
+    duree_requise_trimestres, duree_requise_par_generation
+  tests:
+  - >-
+    tests/test_ircantec.py, qui confronte chaque version aux périodes des trois régimes et
+    aux constantes du portage, et tient les écarts déclarés
+  - tests/test_ircantec_minoration.py
+  - tests/test_simulateur.py
+  - tests/test_oracle.py
+  - tests/test_invalidite.py
+  - tests/js/moteur.test.js
+  - tests/temoins/simulations.json
