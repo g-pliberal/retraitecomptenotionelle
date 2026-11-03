@@ -449,7 +449,7 @@ fiches:
     titre: "La situation des assurés en fin de carrière"
     page: 182
     sources: ["EIC 2021", "EIC 2013", "Insee, enquête Emploi"]
-    statut: a_confronter
+    statut: confronte
     au_depot: [drees_panorama_retraites_2026_classeurs]
     a_tirer: >-
       Porté à l'étape 3, de son classeur, à `fins_de_carriere.csv` : la
@@ -458,12 +458,21 @@ fiches:
       liquidation, de 1942 à 1954, et, en 1954, selon l'âge de départ et le
       travail après 50 ans (tableau 1) ; les trajectoires, les situations
       de 50 à 67 ans et les transitions de la génération 1954 (tableaux 2
-      et 3, graphique 2). Reste à les confronter aux fins de carrière de la
-      grille et aux carrières inactives du modèle (action 138, étape 14),
-      que l'étape 3 ne fait pas ; et, pour la clôture, l'encadré 2, de
-      l'enquête Emploi : la part des 53-69 ans ni en emploi ni en retraite,
-      de 2005 à 2024, et la composition de leur revenu en 2023.
+      et 3, graphique 2). Confronté à l'étape 4 aux fins de carrière de la
+      grille ; reste à confronter les carrières inactives de la population
+      de l'étape 14 de l'action 138 quand elle remplacera la grille ; et,
+      pour la clôture, l'encadré 2, de l'enquête Emploi : la part des
+      53-69 ans ni en emploi ni en retraite, de 2005 à 2024, et la
+      composition de leur revenu en 2023.
     etape: 4
+    confrontation: >-
+      L'année qui précède leur liquidation, 88,7 % des nouveaux retraités
+      de 2024 de la grille sont en emploi, quand 70,9 % des liquidants de
+      la génération 1954 le sont ; aucun cas type ne finit au chômage,
+      quand 10,4 % d'entre eux y sont : écart déclaré, celui des cas types
+      de la grille.
+    confronte_par:
+      - test_la_grille_ne_finit_aucune_carriere_au_chomage
   "22":
     titre: "Les dispositifs de cumul d’une activité avec la retraite"
     page: 193

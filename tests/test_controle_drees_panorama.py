@@ -1,10 +1,11 @@
 """Le panorama de la DREES, édition 2026, confronté au modèle (action 178, étapes 4 et 5).
 
-Douze fiches du suivi (``data/reference/drees_panorama_2026.yaml``) mesurent
+Treize fiches du suivi (``data/reference/drees_panorama_2026.yaml``) mesurent
 ce que le modèle calcule ou suppose : la revalorisation des pensions servies,
 le taux de remplacement, la pension des nouveaux retraités, les durées de
-carrière, la polyaffiliation, les départs anticipés, le recours au minimum
-vieillesse, la retraite supplémentaire. Ce module tient deux choses :
+carrière, la polyaffiliation, les départs anticipés, les fins de carrière, le
+recours au minimum vieillesse, la retraite supplémentaire. Ce module tient
+deux choses :
 
 * LE TÉMOIN, ``tests/temoins/drees_panorama_2026_confrontations.json`` :
   chaque valeur confrontée, recopiée de sa cellule dans le classeur de sa
@@ -167,12 +168,14 @@ def test_chaque_citation_du_temoin_est_dans_le_pdf(fichier):
 def test_chaque_fiche_de_l_etape_4_nomme_ses_confrontations():
     """Au suivi, chaque fiche que l'étape 4 a confrontée nomme les tests de ce
     module qui la confrontent ; chacun existe. Les fiches 8 et 15, que l'étape
-    2 lui a renvoyées le 3 novembre 2026, attendent leur confrontation."""
+    2 lui a renvoyées le 3 novembre 2026, attendent leur confrontation ; la
+    fiche 21, que l'étape 3 lui a renvoyée le même jour, est confrontée à la
+    grille depuis."""
     suivi = yaml.safe_load(SUIVI.read_text(encoding="utf-8"))["fiches"]
     etape_4 = {numero: ligne for numero, ligne in suivi.items()
                if ligne.get("etape") == 4 and ligne["statut"] == "confronte"}
-    assert sorted(etape_4) == ["04", "06", "07", "09", "11", "13", "18", "28", "29", "30",
-                               "31", "32"]
+    assert sorted(etape_4) == ["04", "06", "07", "09", "11", "13", "18", "21", "28", "29",
+                               "30", "31", "32"]
     attendent = sorted(numero for numero, ligne in suivi.items()
                        if ligne.get("etape") == 4 and ligne["statut"] != "confronte")
     assert attendent == ["08", "15"]
@@ -441,6 +444,60 @@ def test_la_grille_fait_partir_trop_de_carrieres_longues_au_regime_general(grill
     assert {c.code for c in nouveaux if c.age_liquidation < 62} == {"smic_carriere_complete"}
     part = 100 * anticipes / tetes
     assert 1.15 < part / _publie(temoin, "18_graphique_3", "regime_general_2024") < 1.45
+
+
+# --- Fiche 21 : la situation des assurés en fin de carrière ------------------
+
+
+#: La situation de l'EIC où se range chaque interruption de la grille
+#: (encadré 1 de la fiche 21) : le chômage, indemnisé ou non ; l'invalidité,
+#: dont la pension valide des trimestres ; l'inactivité, qui n'en valide
+#: aucun, et que l'EIC compte en absence.
+SITUATIONS_DE_L_EIC = {"chomage_indemnise": "chomage", "chomage_solidarite": "chomage",
+                       "chomage_non_indemnise": "chomage", "invalidite": "maladie_invalidite",
+                       "inactivite": "absence"}
+
+
+def test_la_grille_ne_finit_aucune_carriere_au_chomage(grille):
+    """Tableau 1 de la fiche 21 : l'année qui précède leur liquidation, les
+    liquidants de 67 ans ou avant de la génération 1954, la dernière que
+    l'EIC de 2021 suit jusqu'à cet âge, sont en emploi pour 70,9 %, au
+    chômage pour 10,4 %, en maladie ou en invalidité pour 7,5 %, absents
+    pour 11,3 % (``fins_de_carriere.csv``, que l'étape 3 certifie au classeur
+    de la fiche).
+
+    ÉCART DÉCLARÉ. Les nouveaux retraités de 2024 de la grille de la page
+    Coût, dans le même champ — partis à 67 ans ou avant, mais pas dès 50 —,
+    sont en emploi l'année qui précède leur liquidation pour 88,7 % d'entre
+    eux, 18 points de plus : seuls l'inapte, sans activité depuis ses
+    quarante-neuf ans, et l'ex-invalide, en invalidité depuis ses
+    quarante-six, ne travaillent pas, et aucun cas type ne finit au chômage.
+    L'écart tient aux cas types de la grille, comme ceux des fiches 7 et 18 :
+    qu'il se referme dira que la population de l'étape 14 de l'action 138,
+    et ses carrières inactives, ont remplacé la grille."""
+    with (MACRO / "fins_de_carriere.csv").open(encoding="utf-8") as flux:
+        publie = {ligne["modalite"]: float(ligne["valeur"])
+                  for ligne in csv.DictReader(l for l in flux if not l.startswith("#"))
+                  if (ligne["generation"], ligne["champ"], ligne["groupe"], ligne["sexe"])
+                  == ("1954", "situation_avant_liquidation", "ensemble", "ensemble")}
+    cas_types = {cas.code: cas for cas in GRILLE_DU_COUT}
+    parts: dict[str, float] = {}
+    for cohorte in grille:
+        if not cohorte.nouvelle or not 50 < cohorte.age_liquidation <= 67:
+            continue
+        cas = cas_types[cohorte.code]
+        interruptions = {int(cas.age_debut + decalage): motif
+                         for decalage, motif in cas.interruptions_relatives}
+        motif = interruptions.get(cohorte.age_liquidation - 1)
+        situation = "emploi" if motif is None else SITUATIONS_DE_L_EIC[motif]
+        parts[situation] = parts.get(situation, 0.0) + cohorte.tetes
+    total = sum(parts.values())
+    parts = {situation: 100 * tetes / total for situation, tetes in parts.items()}
+    assert sorted(parts) == ["absence", "emploi", "maladie_invalidite"]
+    assert publie["chomage"] > 10
+    assert 15 < parts["emploi"] - publie["emploi"] < 21
+    assert 0.4 < parts["absence"] / publie["absence"] < 0.6
+    assert 0.65 < parts["maladie_invalidite"] / publie["maladie_invalidite"] < 0.9
 
 
 # --- Fiche 28 : le recours au minimum vieillesse -----------------------------
