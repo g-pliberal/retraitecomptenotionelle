@@ -1,4 +1,4 @@
-"""Le panorama de la DREES, édition 2026, confronté au modèle (action 178, étape 4).
+"""Le panorama de la DREES, édition 2026, confronté au modèle (action 178, étapes 4 et 5).
 
 Douze fiches du suivi (``data/reference/drees_panorama_2026.yaml``) mesurent
 ce que le modèle calcule ou suppose : la revalorisation des pensions servies,
@@ -15,11 +15,18 @@ vieillesse, la retraite supplémentaire. Ce module tient deux choses :
   déclare dans le test qui le mesure, borné, pour qu'un écart qui bouge se
   voie. Ceux qui disent une erreur du modèle sont consignés pour l'étape 5
   (``docs/feuille_de_route/178/2026-11-03-etape-4-confrontations.md``).
+
+L'étape 5 y ajoute LES RÈGLES : les tableaux de législation des fiches 14, 24
+et 26, l'encadré 1 de la fiche 2 et la revalorisation de la fiche 4, confrontés
+aux tables de ``data/reference/legislation/``, par leur propre témoin,
+``tests/temoins/drees_panorama_2026_regles.json``
+(``docs/feuille_de_route/178/2026-11-03-etape-5-regles.md``).
 """
 
 from __future__ import annotations
 
 import csv
+import io
 import json
 import re
 import shutil
@@ -47,6 +54,8 @@ import lecture_xlsx  # noqa: E402
 import source_locale  # noqa: E402
 
 TEMOIN = RACINE / "tests" / "temoins" / "drees_panorama_2026_confrontations.json"
+REGLES = RACINE / "tests" / "temoins" / "drees_panorama_2026_regles.json"
+LEGISLATION = RACINE_DONNEES / "reference" / "legislation"
 SUIVI = RACINE / "data" / "reference" / "drees_panorama_2026.yaml"
 MACRO = RACINE_DONNEES / "reference" / "macro"
 
@@ -119,14 +128,15 @@ def _indices(reference: str) -> tuple[int, int]:
     return int(ligne) - 1, colonne - 1
 
 
-def test_chaque_valeur_du_temoin_est_celle_de_sa_cellule(temoin):
+@pytest.mark.parametrize("fichier", [TEMOIN, REGLES], ids=["etape_4", "etape_5"])
+def test_chaque_valeur_du_temoin_est_celle_de_sa_cellule(fichier):
     """Chaque valeur confrontée est celle que le classeur de sa fiche porte, à
     la cellule que le témoin nomme, au bit près."""
     archive = _depose("drees_panorama_retraites_2026_classeurs")
     if archive is None:
         pytest.skip("classeurs absents de data/brut/ : "
                     "python scripts/fetch/source_locale.py --recuperer")
-    cellules = list(_cellules(temoin["valeurs"]))
+    cellules = list(_cellules(json.loads(fichier.read_text(encoding="utf-8"))["valeurs"]))
     assert len(cellules) > 150
     grilles: dict = {}
     with zipfile.ZipFile(archive) as classeurs:
@@ -138,9 +148,11 @@ def test_chaque_valeur_du_temoin_est_celle_de_sa_cellule(temoin):
             assert grilles[cle].get(_indices(cellule["cellule"])) == cellule["valeur"], cellule
 
 
-def test_chaque_citation_du_temoin_est_dans_le_pdf(temoin):
+@pytest.mark.parametrize("fichier", [TEMOIN, REGLES], ids=["etape_4", "etape_5"])
+def test_chaque_citation_du_temoin_est_dans_le_pdf(fichier):
     """Les phrases que les tests citent sont celles du PDF, lu dans l'ordre de
     lecture, césures et espaces mis à part."""
+    temoin = json.loads(fichier.read_text(encoding="utf-8"))
     pdf = _depose("drees_panorama_retraites_2026")
     if pdf is None or shutil.which("pdftotext") is None:
         pytest.skip("PDF absent de data/brut/, ou pdftotext absent")
@@ -153,15 +165,20 @@ def test_chaque_citation_du_temoin_est_dans_le_pdf(temoin):
 
 
 def test_chaque_fiche_de_l_etape_4_nomme_ses_confrontations():
-    """Au suivi, chaque fiche de l'étape 4 est confrontée, et nomme les tests
-    de ce module qui la confrontent ; chacun existe."""
+    """Au suivi, chaque fiche que l'étape 4 a confrontée nomme les tests de ce
+    module qui la confrontent ; chacun existe. Les fiches 8 et 15, que l'étape
+    2 lui a renvoyées le 3 novembre 2026, attendent leur confrontation."""
     suivi = yaml.safe_load(SUIVI.read_text(encoding="utf-8"))["fiches"]
-    etape_4 = {numero: ligne for numero, ligne in suivi.items() if ligne.get("etape") == 4}
+    etape_4 = {numero: ligne for numero, ligne in suivi.items()
+               if ligne.get("etape") == 4 and ligne["statut"] == "confronte"}
     assert sorted(etape_4) == ["04", "06", "07", "09", "11", "13", "18", "28", "29", "30",
                                "31", "32"]
+    attendent = sorted(numero for numero, ligne in suivi.items()
+                       if ligne.get("etape") == 4 and ligne["statut"] != "confronte")
+    assert attendent == ["08", "15"]
+    assert {suivi[numero]["statut"] for numero in attendent} == {"a_confronter"}
     module = sys.modules[__name__]
     for numero, ligne in etape_4.items():
-        assert ligne["statut"] == "confronte", numero
         assert len(" ".join(str(ligne["confrontation"]).split())) > 40, numero
         assert ligne["confronte_par"], numero
         for nom in ligne["confronte_par"]:
@@ -522,3 +539,539 @@ def test_la_rente_du_pilier_a_maturite_passe_trois_fois_celle_d_aujourd_hui(etag
     rente = pilier["etages"]["capitalise"] / pilier["dernier_revenu"]
     aujourd_hui = _publie(temoin, "32_graphique_2", "cicd_2024") / _smpt_2024()
     assert 3.0 < rente / aujourd_hui < 4.5
+
+
+# === Étape 5 : les règles ====================================================
+#
+# Les tableaux de législation du panorama, confrontés aux tables du scénario 1,
+# mois de naissance par mois de naissance. Un écart que le texte tranche contre
+# la DREES est déclaré ici, avec le texte ; un écart du dépôt, corrigé ou
+# déclaré avec ce qui le tient ouvert.
+
+
+@pytest.fixture(scope="module")
+def regles() -> dict:
+    return json.loads(REGLES.read_text(encoding="utf-8"))
+
+
+def _fusions(classeur: bytes, feuille: str) -> set[str]:
+    """Les plages fusionnées d'une feuille, lues dans le XML du classeur."""
+    with zipfile.ZipFile(io.BytesIO(classeur)) as archive:
+        relations = dict(re.findall(r'Id="(rId\d+)"[^>]*Target="([^"]+)"',
+                                    archive.read("xl/_rels/workbook.xml.rels").decode("utf-8")))
+        feuilles = dict(re.findall(r'<sheet name="([^"]+)"[^>]*r:id="(rId\d+)"',
+                                   archive.read("xl/workbook.xml").decode("utf-8")))
+        xml = archive.read("xl/" + relations[feuilles[feuille]].lstrip("/")).decode("utf-8")
+    return set(re.findall(r'<mergeCell ref="([A-Z]+\d+:[A-Z]+\d+)"', xml))
+
+
+def test_chaque_fusion_du_temoin_est_celle_du_classeur(regles):
+    """Une cellule vide que couvre une fusion prend la valeur de sa première
+    cellule : la fusion est dans le classeur, commence à la cellule nommée, et
+    couvre la ligne de la génération qui la lit."""
+    for cle, tableau in regles["valeurs"].items():
+        for ligne in tableau.get("lignes", []) if isinstance(tableau, dict) else []:
+            rang = _indices(ligne["generation"]["cellule"])[0]
+            for noeud in ligne.values():
+                if "fusion" in noeud:
+                    debut, fin = noeud["fusion"].split(":")
+                    assert debut == noeud["cellule"], (cle, noeud)
+                    assert _indices(debut)[0] <= rang <= _indices(fin)[0], (cle, noeud)
+    archive = _depose("drees_panorama_retraites_2026_classeurs")
+    if archive is None:
+        pytest.skip("classeurs absents de data/brut/ : "
+                    "python scripts/fetch/source_locale.py --recuperer")
+    lues: dict = {}
+    with zipfile.ZipFile(archive) as classeurs:
+        for noeud in _cellules(regles["valeurs"]):
+            if "fusion" in noeud:
+                cle = (noeud["classeur"], noeud["feuille"])
+                if cle not in lues:
+                    lues[cle] = _fusions(classeurs.read(cle[0]), cle[1])
+                assert noeud["fusion"] in lues[cle], noeud
+
+
+MOIS_DU_LIBELLE = {"avril": 4, "juillet": 7, "septembre": 9}
+
+
+def _naissances(libelle) -> list[tuple[int, int]]:
+    """Les mois de naissance (année, mois) qu'une ligne d'un tableau couvre ;
+    « et suivantes » s'arrête cinq ans plus loin, « avant le » dix ans plus tôt."""
+    texte = " ".join(str(libelle).split())
+    def suite(debut, fin):
+        return [(n // 12, n % 12 + 1) for n in range(debut[0] * 12 + debut[1] - 1,
+                                                     fin[0] * 12 + fin[1])]
+    if isinstance(libelle, float) or re.fullmatch(r"\d{4}", texte):
+        annee = int(float(libelle))
+        return suite((annee, 1), (annee, 12))
+    if trouve := re.fullmatch(r"(\d{4})-(\d{4})", texte):
+        return suite((int(trouve[1]), 1), (int(trouve[2]), 12))
+    if trouve := re.fullmatch(r"Du 01/(\d\d)/(\d{4}) au \d\d/(\d\d)/(\d{4})", texte):
+        return suite((int(trouve[2]), int(trouve[1])), (int(trouve[4]), int(trouve[3])))
+    if trouve := re.fullmatch(r"Avant le 01/(\d\d)/(\d{4})", texte):
+        annee, mois = int(trouve[2]), int(trouve[1])
+        return suite((annee - 10, mois), (annee - (mois == 1), (mois - 2) % 12 + 1))
+    if trouve := re.fullmatch(r"(\d{4}) et suivantes", texte):
+        return suite((int(trouve[1]), 1), (int(trouve[1]) + 4, 12))
+    if trouve := re.fullmatch(r"(\d{4}), avant le 1er (\w+)", texte):
+        return suite((int(trouve[1]), 1), (int(trouve[1]), MOIS_DU_LIBELLE[trouve[2]] - 1))
+    if trouve := re.fullmatch(r"(\d{4}), à partir du 1er (\w+)", texte):
+        return suite((int(trouve[1]), MOIS_DU_LIBELLE[trouve[2]]), (int(trouve[1]), 12))
+    raise ValueError(f"libellé de génération inconnu : {texte!r}")
+
+
+def _en_mois(age) -> int | None:
+    """« 62 ans et 9 mois » : 753 mois ; « - », « Inutile » : rien."""
+    trouve = re.match(r"(\d+) ans(?: et (\d+) mois)?", " ".join(str(age).split()))
+    return None if trouve is None else 12 * int(trouve[1]) + int(trouve[2] or 0)
+
+
+def _csv(nom: str) -> list[dict]:
+    with open(LEGISLATION / nom, encoding="utf-8") as fichier:
+        return list(csv.DictReader(ligne for ligne in fichier if not ligne.startswith("#")))
+
+
+def _escalier(nom: str, colonne: str, **filtre) -> list[tuple[float, float]]:
+    """Une table par génération (année décimale, mois compris), en escalier."""
+    return sorted((float(ligne["generation"]), float(ligne[colonne])) for ligne in _csv(nom)
+                  if all(ligne[cle] == valeur for cle, valeur in filtre.items()))
+
+
+def _a_la_naissance(table: list[tuple[float, float]], annee: int, mois: int) -> float:
+    """La ligne qui couvre ce mois de naissance : la dernière qui commence avant
+    lui (``1961.667`` est septembre 1961, arrondi au millième)."""
+    naissance = annee + (mois - 1) / 12
+    return [valeur for generation, valeur in table if generation <= naissance + 1e-3][-1]
+
+
+def _confronter(regles: dict, cle: str, colonnes: dict, declares: dict | None = None) -> int:
+    """Chaque mois de naissance de chaque ligne : la valeur du panorama, en mois
+    ou en trimestres, contre celle que ``colonnes[nom](annee, mois)`` lit au
+    dépôt ; ``declares`` porte les écarts connus, (colonne, année, mois) →
+    (panorama, dépôt). Rend le nombre de mois confrontés."""
+    declares = dict(declares or {})
+    vus = 0
+    for ligne in regles["valeurs"][cle]["lignes"]:
+        for annee, mois in _naissances(ligne["generation"]["valeur"]):
+            for nom, lire in colonnes.items():
+                if nom not in ligne:
+                    continue
+                valeur = ligne[nom]["valeur"]
+                publie = int(valeur) if isinstance(valeur, float) else _en_mois(valeur)
+                if publie is None:
+                    continue
+                au_depot = lire(annee, mois)
+                if (nom, annee, mois) in declares:
+                    assert (publie, au_depot) == declares.pop((nom, annee, mois)), (nom, annee, mois)
+                else:
+                    assert publie == au_depot, (cle, nom, annee, mois, ligne[nom])
+                vus += 1
+    assert not declares, f"écarts déclarés qui n'ont pas paru : {declares}"
+    return vus
+
+
+# --- Fiche 14, tableaux 1 à 3, et encadré 1 de la fiche 2 : âges et durées ---
+
+
+def test_les_ages_legaux_du_panorama_sont_ceux_du_depot(regles):
+    """Tableau 1 et son complément : l'âge légal du privé, des actifs et des
+    super-actifs, avant et après la loi de financement pour 2026, mois de
+    naissance par mois de naissance. Le dépôt ne porte, pour les actifs et les
+    super-actifs, que le calendrier de 2026 : là où celui de 2023 s'en écarte
+    (nés de 1969 à 1973, et de 1974 à 1978), l'âge de 2026 se trouve atteint après
+    le 1er septembre 2026, si bien qu'aucune pension n'a pu prendre effet sous
+    l'ancien — l'argument de ``age_ouverture_requis.csv`` pour le privé."""
+    legal = _escalier("age_ouverture_requis.csv", "age")
+    suspendu = _escalier("age_ouverture_avant_suspension.csv", "age")
+    actifs = _escalier("categorie_active.csv", "age_ouverture", classement="active")
+    super_actifs = _escalier("categorie_active.csv", "age_ouverture", classement="super_active")
+
+    def mois(table):
+        return lambda annee, m: round(12 * _a_la_naissance(table, annee, m))
+
+    def avant_la_suspension(annee, m):
+        """Le calendrier de 2023, que le dépôt porte pour les nés de 1964 à 1968."""
+        table = suspendu if 1964 <= annee <= 1968 else legal
+        return round(12 * _a_la_naissance(table, annee, m))
+
+    vus = _confronter(regles, "14_tableau_1", {
+        "prive_apres": mois(legal), "prive_avant": avant_la_suspension,
+        "actifs_apres": mois(actifs)})
+    vus += _confronter(regles, "14_tableau_1_comp", {"super_actifs_apres": mois(super_actifs)})
+    assert vus > 1000
+    # Le calendrier de 2023 des actifs et des super-actifs : là où il diffère,
+    # le dépôt n'a que celui de 2026, atteint plus tôt, et après septembre 2026.
+    for cle, nom, table, nes in (("14_tableau_1", "actifs_avant", actifs, range(1969, 1974)),
+                                 ("14_tableau_1_comp", "super_actifs_avant", super_actifs,
+                                  range(1974, 1979))):
+        for ligne in regles["valeurs"][cle]["lignes"]:
+            for annee, m in _naissances(ligne["generation"]["valeur"]):
+                publie = _en_mois(ligne.get(nom, {}).get("valeur"))
+                if publie is None or annee < 1950:
+                    continue
+                au_depot = round(12 * _a_la_naissance(table, annee, m))
+                if annee in nes:
+                    assert publie > au_depot, (nom, annee, m)
+                    atteint = annee * 12 + m - 1 + au_depot + 1
+                    assert atteint >= 2026 * 12 + 8, (nom, annee, m)
+                else:
+                    assert publie == au_depot, (nom, annee, m)
+
+
+def test_les_durees_requises_du_panorama_sont_celles_du_depot(regles):
+    """Tableau 2 : la durée requise du privé, avant et après la loi de
+    financement pour 2026, et celle des sédentaires de la fonction publique,
+    qui suit, de 1944 à 1948, l'année où le droit s'ouvre, à soixante ans
+    (``duree_requise_fonction_publique.csv`` ; 150 trimestres avant 2004, que la
+    fiche du régime porte), puis celle du privé."""
+    requise = _escalier("duree_assurance_requise.csv", "trimestres")
+    suspendue = _escalier("duree_requise_avant_suspension.csv", "trimestres")
+    publique = {int(ligne["annee_ouverture"]): int(ligne["trimestres"])
+                for ligne in _csv("duree_requise_fonction_publique.csv")}
+
+    def trimestres(annee, m):
+        return int(_a_la_naissance(requise, annee, m))
+
+    def avant_la_suspension(annee, m):
+        """Le calendrier de 2023, que le dépôt porte pour les nés de 1964 et 1965."""
+        return int(_a_la_naissance(suspendue if annee in (1964, 1965) else requise, annee, m))
+
+    def sedentaires(annee, m):
+        if annee <= 1948:
+            return publique.get(annee + 60, 150 if annee + 60 < 2004 else None)
+        return int(_a_la_naissance(requise, annee, m))
+
+    vus = _confronter(regles, "14_tableau_2", {
+        "prive_apres": trimestres, "prive_avant": avant_la_suspension,
+        "sedentaires_apres": sedentaires, "sedentaires_avant": lambda a, m: (
+            sedentaires(a, m) if a <= 1963 else avant_la_suspension(a, m))})
+    assert vus > 300
+
+
+def _annulation_fonction_publique(limite: float, ouverture: float, annee: int, mois: int,
+                                  minorations: dict[int, int]) -> int | None:
+    """L'âge d'annulation de la décote d'un fonctionnaire, en mois : sa limite
+    d'âge, moins les trimestres que la loi de 2003 retranche l'année où son droit
+    s'ouvre (``decote_fonction_publique.csv``) ; rien avant 2006, où la décote
+    n'existe pas."""
+    ouvert_en = (annee * 12 + mois - 1 + round(12 * ouverture)) // 12
+    if ouvert_en < min(minorations):
+        return None
+    retranche = minorations[min(ouvert_en, max(minorations))]
+    return round(12 * limite) - 3 * retranche
+
+
+def test_les_ages_d_annulation_de_la_decote_sont_ceux_du_depot(regles):
+    """Tableau 3 : l'âge d'annulation de la décote du privé, et celui des
+    fonctionnaires, sédentaires et actifs, que le dépôt tire de leur limite
+    d'âge et de l'année où leur droit s'ouvre ; le « - » du panorama est
+    l'absence de décote, avant 2006."""
+    prive = _escalier("age_annulation_decote.csv", "age")
+    legal = _escalier("age_ouverture_requis.csv", "age")
+    actifs = {nom: _escalier("categorie_active.csv", nom, classement="active")
+              for nom in ("age_ouverture", "age_annulation")}
+    minorations = {int(ligne["annee"]): int(ligne["trimestres_avant_limite"])
+                   for ligne in _csv("decote_fonction_publique.csv")}
+    tirets = 0
+    for ligne in regles["valeurs"]["14_tableau_3"]["lignes"]:
+        for annee, m in _naissances(ligne["generation"]["valeur"]):
+            calcules = {
+                "prive": round(12 * _a_la_naissance(prive, annee, m)),
+                "sedentaires": _annulation_fonction_publique(
+                    _a_la_naissance(prive, annee, m), _a_la_naissance(legal, annee, m),
+                    annee, m, minorations),
+                "actifs": _annulation_fonction_publique(
+                    _a_la_naissance(actifs["age_annulation"], annee, m),
+                    _a_la_naissance(actifs["age_ouverture"], annee, m), annee, m, minorations)}
+            for nom, calcule in calcules.items():
+                if nom not in ligne:
+                    continue
+                publie = _en_mois(ligne[nom]["valeur"])
+                tirets += publie is None
+                assert publie == calcule, (nom, annee, m, ligne[nom])
+    assert tirets == 12 * 7
+
+
+def test_les_mois_de_depart_de_l_encadre_de_la_fiche_2_sont_ceux_de_l_age_legal(regles):
+    """Encadré 1 de la fiche 2 : combien de mois de naissance de chaque
+    génération atteignent l'âge légal chaque année, la pension prenant effet au
+    premier jour du mois qui suit l'anniversaire ; l'âge de chaque ligne, et
+    l'ensemble, sur ``age_ouverture_requis.csv``."""
+    legal = _escalier("age_ouverture_requis.csv", "age")
+    ensemble: dict[str, int] = {}
+    for ligne in regles["valeurs"]["02_encadre_1"]["lignes"]:
+        comptes: dict[str, int] = {}
+        for annee, m in _naissances(ligne["generation"]["valeur"]):
+            age = round(12 * _a_la_naissance(legal, annee, m))
+            assert age == _en_mois(ligne["age"]["valeur"]), (annee, m)
+            depart = str((annee * 12 + m - 1 + age + 1) // 12)
+            comptes[depart] = comptes.get(depart, 0) + 1
+            ensemble[depart] = ensemble.get(depart, 0) + 1
+        dans_le_tableau = {annee: n for annee, n in comptes.items() if "2022" <= annee <= "2034"}
+        assert dans_le_tableau == {annee: int(n["valeur"]) for annee, n in ligne["mois"].items()}, ligne
+    publie = regles["valeurs"]["02_encadre_1"]["ensemble"]
+    assert {annee: n for annee, n in ensemble.items() if annee in publie} == {
+        annee: int(n["valeur"]) for annee, n in publie.items()}
+
+
+# --- Fiche 14, tableau 4 : la carrière longue ---------------------------------
+
+
+def _carriere_longue(annee: int, mois: int, debut: int, jusqu_a: float = 2100.0) -> int | None:
+    """L'âge de départ, en mois, de la porte des débuts avant ``debut`` ans pour
+    un assuré né ce mois-là : celui de la rédaction en vigueur au mois où il
+    l'atteint (``carriere_longue.csv``, par ``date_effet``) — le premier jour
+    du mois qui suit son anniversaire tombe dans la période de cette
+    rédaction ; ``jusqu_a`` écarte les rédactions postérieures."""
+    naissance = annee + (mois - 1) / 12
+    lignes = [ligne for ligne in _csv("carriere_longue.csv")
+              if int(ligne["age_debut_maximum"]) == debut
+              and float(ligne["generation"]) - 1e-3 <= naissance < float(ligne["generation_fin"]) - 1e-3]
+    effets = sorted({float(l["date_effet"]) for l in _csv("carriere_longue.csv")
+                     if float(l["date_effet"]) < jusqu_a})
+    for rang, effet in enumerate(effets):
+        suivante = effets[rang + 1] if rang + 1 < len(effets) else 9999.0
+        couvrantes = [ligne for ligne in lignes if float(ligne["date_effet"]) == effet]
+        if not couvrantes:
+            continue
+        age = round(12 * float(max(couvrantes, key=lambda l: float(l["generation"]))["age_depart"]))
+        if effet - 1e-3 <= (annee * 12 + mois - 1 + age + 1) / 12 < suivante - 1e-3:
+            return age
+    return None
+
+
+def test_la_carriere_longue_du_panorama_est_celle_du_depot(regles):
+    """Tableau 4 : la porte des débuts avant vingt ans, avant et après la loi
+    de financement pour 2026 — « les âges de départ en vigueur au moment où
+    ces générations les ont atteints » (note 1) —, et celles des débuts avant
+    seize, dix-huit et vingt et un ans, là où le panorama les dit utiles.
+
+    Un écart, que le texte tranche contre la DREES : le II de D. 351-1-1, dans
+    sa rédaction du 1er septembre 2026 (décret n° 2026-345,
+    LEGIARTI000054059621), 4° : « pour les assurés nés entre le 1er décembre
+    et le 31 décembre 1965 inclus », « soixante ans et huit mois ». Le panorama
+    fond décembre dans les 60 ans et 9 mois du reste de 1965."""
+    vus = _confronter(regles, "14_tableau_4", {
+        "avant_20_avant": lambda a, m: _carriere_longue(a, m, 20, jusqu_a=2026.667),
+        "avant_20_apres": lambda a, m: _carriere_longue(a, m, 20),
+        "avant_16": lambda a, m: _carriere_longue(a, m, 16),
+        "avant_18": lambda a, m: _carriere_longue(a, m, 18),
+        "avant_21": lambda a, m: _carriere_longue(a, m, 21)},
+        declares={("avant_20_apres", 1965, 12): (729, 728)})
+    assert vus > 400
+
+
+def test_la_decote_et_la_surcote_du_panorama_sont_celles_du_depot(regles):
+    """Encadrés 1 et 2 de la fiche 14 : le coefficient de minoration du régime
+    général, la décote de la fonction publique, ses trimestres au plus, et les
+    taux de la surcote.
+
+    Un écart de rédaction : « 2,5 % pour la génération 1944 » ; R. 351-27, dans
+    sa rédaction de 2004 (LEGIARTI000006749436), donne 2,5 % « pour l'assuré né
+    avant le 1er janvier 1944 » et 2,375 % à celui né en 1944 — la marche de
+    0,125 point par génération, qui mène aux 1,375 % de 1952 que le panorama dit
+    aussi."""
+    assert regles["citations"]["14_encadre_1"]["textes"][1].startswith(
+        "Il passe de 2,5 % pour la génération 1944")
+    minoration = {int(float(l["generation"])): float(l["coefficient"])
+                  for l in _csv("coefficient_minoration.csv")}
+    assert minoration[1943] == 0.025 and minoration[1944] == 0.02375
+    assert minoration[1952] == 0.01375
+    assert {taux for generation, taux in minoration.items() if generation >= 1953} == {0.0125}
+    # Au plus vingt trimestres de décote avant 1961, douze à compter de 1969 :
+    # l'âge d'annulation moins l'âge légal.
+    annulation = _escalier("age_annulation_decote.csv", "age")
+    legal = _escalier("age_ouverture_requis.csv", "age")
+    ecart = {g: round(4 * (_a_la_naissance(annulation, g, 1) - _a_la_naissance(legal, g, 1)))
+             for g in (1955, 1960, 1969, 1975)}
+    assert ecart == {1955: 20, 1960: 20, 1969: 12, 1975: 12}
+    publique = {int(l["annee"]): float(l["coefficient"]) for l in _csv("decote_fonction_publique.csv")}
+    assert min(publique) == 2006 and publique[2006] == 0.00125 and publique[2015] == 0.0125
+    surcote = [l for l in _csv("surcote_baremes.csv") if l["bareme"] == "regime_general"]
+    taux = {(l["debut"], l["rang_minimum"], l["apres_65_ans"]): float(l["taux"]) for l in surcote}
+    assert taux == {("2004", "1", "0"): 0.0075, ("2007", "1", "0"): 0.0075,
+                    ("2007", "5", "0"): 0.01, ("2007", "1", "1"): 0.0125,
+                    ("2009", "1", "0"): 0.0125}
+    parentale = _csv("surcote_parentale.csv")[0]
+    assert float(parentale["age_ouverture"]) == 63
+    assert float(parentale["taux_par_trimestre"]) * int(parentale["trimestres_maximum"]) == 0.05
+
+
+# --- Fiche 4, tableau 1 : la revalorisation, régime par régime ----------------
+
+
+def _au_31_decembre(dates: dict[str, float], annee: int) -> float:
+    return dates[max(date for date in dates if date <= f"{annee}-12-31")]
+
+
+def _indices_des_regimes() -> dict[str, dict[str, float]]:
+    """Pour chaque ligne du tableau, l'indice de la pension servie, daté, tel que
+    le dépôt le lit : les coefficients des régimes de base (la ligne de 2020
+    des pensions sous 2 000 €), les valeurs de service datées de l'Agirc et de
+    l'Arrco, puis de l'Agirc-Arrco, et les valeurs annuelles de l'Ircantec, du
+    RAFP et des complémentaires des indépendants (au 1er janvier)."""
+    base, indice = {}, 1.0
+    for ligne in _csv("revalorisation_pensions.csv"):
+        if not ligne["mensuel_superieur_a"]:
+            indice *= float(ligne["coefficient"])
+            base[ligne["date_effet"]] = indice
+    with open(RACINE_DONNEES / "reference" / "regimes" / "valeurs_service_datees.csv",
+              encoding="utf-8") as fichier:
+        datees = list(csv.DictReader(l for l in fichier if not l.startswith("#")))
+    with open(RACINE_DONNEES / "reference" / "regimes" / "valeurs_point.csv",
+              encoding="utf-8") as fichier:
+        points = list(csv.DictReader(l for l in fichier if not l.startswith("#")))
+
+    def annuelle(regime):
+        return {f"{l['annee']}-01-01": float(l["valeur"]) for l in points
+                if l["regime"] == regime and l["mesure"] == "valeur_service"}
+
+    fusion = {l["date_effet"]: float(l["valeur"]) for l in datees if l["regime"] == "agirc_arrco"}
+    indices = {"base": base, "ircantec": annuelle("ircantec"), "rafp": annuelle("rafp")}
+    for regime in ("agirc", "arrco"):
+        propre = {l["date_effet"]: float(l["valeur"]) for l in datees if l["regime"] == regime}
+        dernier = propre[max(propre)]
+        indices[regime] = {**propre, **{date: dernier * valeur / fusion["2019-01-01"]
+                                        for date, valeur in fusion.items() if date > "2019-01-01"}}
+    rci = annuelle("rci")
+    for ligne, avant_2013 in (("rsi_commercants", "nric"), ("rsi_artisans", "rco_artisans")):
+        propre = annuelle(avant_2013)
+        indices[ligne] = {**propre, **{date: propre["2012-01-01"] * valeur / rci["2013-01-01"]
+                                       for date, valeur in rci.items()}}
+    return indices
+
+
+#: Les écarts du tableau complémentaire, (ligne, année) → (panorama, dépôt), en %.
+ECARTS_DE_REVALORISATION = {
+    # La DREES écrit 1,8 % ; les arrêtés et la circulaire font 1,1 % au
+    # 1er janvier 2008 et 0,8 % au 1er septembre, 1,9 %, comme l'indice du
+    # graphique 1 de sa fiche 26 (116,13 / 113,97).
+    ("base", 2008): (1.8, 1.9),
+    # 2020 : 1 % sous 2 000 € par mois, 0,3 % au-dessus ; la DREES prend la
+    # moyenne, 0,7 % (note 1), le dépôt porte le barème par tranche.
+    ("base", 2020): (0.7, 1.0),
+    # Le point de l'Ircantec passe de 0,47887 à 0,48031 € au 1er janvier 2019,
+    # 0,3 % comme les pensions de base ; la DREES écrit 1,0 %.
+    ("ircantec", 2019): (1.0, 0.3),
+    # 2013 : les deux complémentaires du RSI fusionnent dans la RCI ; aucune
+    # série du dépôt ne les enjambe.
+    ("rsi_commercants", 2013): (1.3, 0.0), ("rsi_artisans", 2013): (1.3, 0.0),
+    # La valeur de 2022 de la RCI, au dépôt, est celle de janvier, la hausse
+    # de 4 % du 1er juillet 2022 ne paraissant qu'en 2023 ; puis la DREES
+    # prête à la RCI la revalorisation des régimes de base, quand le barème de
+    # la Cnav (circulaires 2023/33 et 2024/36) lui donne 3,7 et 0,6 %. Les
+    # règles des indépendants sont à la file D cette nuit : à elle de trancher.
+    ("rsi_commercants", 2022): (5.1, 1.1), ("rsi_artisans", 2022): (5.1, 1.1),
+    ("rsi_commercants", 2023): (0.8, 4.8), ("rsi_artisans", 2023): (0.8, 4.8),
+    ("rsi_commercants", 2024): (5.3, 3.7), ("rsi_artisans", 2024): (5.3, 3.7),
+    ("rsi_commercants", 2025): (2.2, 0.6), ("rsi_artisans", 2025): (2.2, 0.6),
+    # La RCO des artisans : 0,29331 puis 0,29770 €, 1,5 % ; la DREES, 1,7 %.
+    ("rsi_artisans", 2008): (1.7, 1.5),
+}
+
+
+def test_les_revalorisations_du_panorama_sont_celles_du_depot(regles):
+    """Tableau 1 complémentaire de la fiche 4 : la revalorisation de chaque
+    régime, d'une fin d'année à la suivante, de 2008 à 2025, au dixième de point,
+    hors les écarts déclarés, chacun borné."""
+    indices = _indices_des_regimes()
+    restants = dict(ECARTS_DE_REVALORISATION)
+    for ligne, annees in regles["valeurs"]["04_tableau_1_comp"].items():
+        for annee, noeud in annees.items():
+            annee = int(annee)
+            au_depot = round(100 * (_au_31_decembre(indices[ligne], annee)
+                                    / _au_31_decembre(indices[ligne], annee - 1) - 1), 1)
+            if (ligne, annee) in restants:
+                assert (noeud["valeur"], au_depot) == restants.pop((ligne, annee)), (ligne, annee)
+            else:
+                assert au_depot == noeud["valeur"], (ligne, annee)
+    assert not restants
+
+
+# --- Fiche 24 : la pension d'invalidité ---------------------------------------
+
+
+def test_les_bornes_de_la_pension_d_invalidite_sont_celles_du_depot(regles):
+    """Tableau 1 de la fiche 24, au 1er janvier 2026 : 30 et 50 % du salaire
+    annuel moyen des dix meilleures années, au moins l'allocation aux vieux
+    travailleurs salariés, au plus ces taux du plafond de la sécurité sociale.
+    La majoration pour tierce personne, que le modèle ne sert pas, reste au
+    panorama."""
+    tableau = regles["valeurs"]["24_tableau_1"]
+    fiche = yaml.safe_load((RACINE_DONNEES / "reference" / "regles"
+                            / "pension_d_invalidite_substituee.yaml").read_text(encoding="utf-8"))
+    parametres = fiche["versions"][-1]["contenu"]["parametres"]
+    assert parametres["annees_du_salaire_moyen"] == 10
+    avts = {l["date"]: float(l["valeur"]) for l in _csv("pension_minimum_avant_1983.csv")}
+    with open(MACRO / "plafond_securite_sociale.csv", encoding="utf-8") as fichier:
+        plafond = {int(l["annee"]): float(l["pass_eur"])
+                   for l in csv.DictReader(x for x in fichier if not x.startswith("#"))}
+    for categorie, taux in enumerate(parametres["taux_des_categories"], start=1):
+        ligne = tableau[f"categorie_{categorie}"]
+        assert ligne["taux"]["valeur"] == 100 * taux
+        assert ligne["minimum"]["valeur"] == round(avts["2026-01-01"] / 12, 2)
+        assert ligne["maximum"]["valeur"] == round(taux * plafond[2026] / 12, 2)
+    assert tableau["tierce_personne"]["minimum"]["valeur"] == 1288.13
+
+
+# --- Fiche 26 : le minimum vieillesse -----------------------------------------
+
+
+#: Le montant mensuel d'une personne seule que le modèle sert, là où il
+#: s'écarte de celui que le panorama publie au 31 décembre : (panorama, modèle).
+ECARTS_DE_L_ASPA = {
+    # Douze fois le mensuel arrondi, où la caisse fixe l'annuel : 7 455,24 €
+    # contre 7 455,30 € en 2007, 11 532,96 contre 11 533,02 en 2023, 12 411,36
+    # contre 12 411,44 en 2025 ; inscrit, « à décider » (test_ines.py,
+    # douze_fois_le_mensuel).
+    2007: (621.28, 621.27), 2023: (961.09, 961.08), 2025: (1034.29, 1034.28),
+    # 2022 : la valeur de janvier, quand le couple et le panorama prennent celle
+    # du 1er juillet ; inscrit, « à reprendre (138.2) » (test_ines.py,
+    # bareme_de_2022).
+    2022: (953.46, 916.78),
+}
+
+
+def test_le_minimum_vieillesse_du_panorama_est_celui_que_le_modele_sert(simulateur, regles):
+    """Graphique 2 de la fiche 26 : le minimum vieillesse au 31 décembre de
+    chaque année, depuis 2006, d'une personne seule et d'un couple
+    d'allocataires, contre le montant annuel que le modèle sert, au centime,
+    les années que la table ne porte pas comprises. L'allocation
+    supplémentaire d'invalidité, que le modèle ne sert pas, reste au panorama.
+
+    La lecture du graphique dit « fin 2025 […] 1 620 euros » pour un couple :
+    c'est le montant de 2026 ; sa cellule de 2025 porte 1 605,73 €."""
+    minimum = simulateur.scenario_actuel.minimum_vieillesse
+
+    def au_centime(annuel: float, publie: float) -> bool:
+        """Le mensuel du panorama est l'annuel divisé par douze, arrondi."""
+        return abs(annuel / 12 - publie) <= 0.005 + 1e-9
+
+    restants = dict(ECARTS_DE_L_ASPA)
+    for annee, ligne in regles["valeurs"]["26_graphique_2"].items():
+        annee = int(annee)
+        seule = minimum.plafond(annee)[0]
+        if annee in restants:
+            assert not au_centime(seule, ligne["seule"]["valeur"]), annee
+            assert (ligne["seule"]["valeur"], round(seule / 12, 2)) == restants.pop(annee), annee
+        else:
+            assert au_centime(seule, ligne["seule"]["valeur"]), (annee, seule)
+        assert au_centime(minimum.plafond_couple(annee)[0], ligne["couple"]["valeur"]), annee
+    assert not restants
+    lecture = " ".join(regles["valeurs"]["26_graphique_2_lecture"]["valeur"].split())
+    assert "Fin 2025, pour un couple, le montant du minimum vieillesse est de 1 620 euros" in lecture
+    assert round(minimum.plafond_couple(2026)[0] / 12, 2) == 1620.18
+
+
+def test_chaque_fiche_de_l_etape_5_nomme_ses_confrontations():
+    """Au suivi, chaque fiche de l'étape 5 est confrontée, et nomme les tests
+    de ce module qui la confrontent ; chacun existe."""
+    suivi = yaml.safe_load(SUIVI.read_text(encoding="utf-8"))["fiches"]
+    etape_5 = {numero: ligne for numero, ligne in suivi.items() if ligne.get("etape") == 5}
+    assert sorted(etape_5) == ["02", "14", "24", "26"]
+    module = sys.modules[__name__]
+    for numero, ligne in etape_5.items():
+        assert ligne["statut"] == "confronte", numero
+        assert len(" ".join(str(ligne["confrontation"]).split())) > 40, numero
+        for nom in ligne["confronte_par"]:
+            assert nom.startswith("test_") and callable(getattr(module, nom, None)), (numero, nom)

@@ -64,7 +64,7 @@ fiches:
     titre: "Les nouveaux retraités de droit direct"
     page: 29
     sources: ["EACR", "EIR", "ANCETRE"]
-    statut: au_depot
+    statut: confronte
     au_depot: [drees_eacr, drees_eacr_tables]
     a_tirer: >-
       Recoupés à l'étape 2 (`tests/test_drees_panorama_2024.py`) : les 858 000 liquidants d'un droit
@@ -75,6 +75,14 @@ fiches:
       génération atteint l'âge d'ouverture des droits sous la loi de
       financement pour 2026, confronté à `age_ouverture_requis.csv`.
     etape: 5
+    confrontation: >-
+      L'encadré 1 se retrouve cellule par cellule : l'âge légal de chaque
+      génération, de 1959 à 1970, est celui de `age_ouverture_requis.csv`,
+      et le nombre de mois de naissance qui l'atteignent chaque année, de
+      2022 à 2034, celui que donne la pension prise au premier jour du
+      mois qui suit l'anniversaire (étape 5).
+    confronte_par:
+      - test_les_mois_de_depart_de_l_encadre_de_la_fiche_2_sont_ceux_de_l_age_legal
   "03":
     titre: "Les effectifs de retraités de droit dérivé"
     page: 35
@@ -116,6 +124,7 @@ fiches:
     confronte_par:
       - test_l_erosion_des_pensions_par_generation_est_celle_de_trajectoire
       - test_le_pouvoir_d_achat_des_liquidants_de_2000_baisse_un_peu_plus_au_modele
+      - test_les_revalorisations_du_panorama_sont_celles_du_depot
   "05":
     titre: "Le niveau des pensions"
     page: 54
@@ -291,7 +300,7 @@ fiches:
     titre: "Les règles de liquidation : âges et durées d’assurance"
     page: 128
     sources: ["Législation"]
-    statut: a_confronter
+    statut: confronte
     a_tirer: >-
       L'âge d'ouverture des droits, la durée requise, l'âge d'annulation
       de la décote et les conditions de la carrière longue par génération
@@ -301,6 +310,22 @@ fiches:
       `duree_assurance_requise.csv`, `carriere_longue.csv`) : une règle
       du scénario 1, sur Opus.
     etape: 5
+    confrontation: >-
+      Les âges légaux, du privé, des actifs et des super-actifs, les
+      durées requises, les âges d'annulation de la décote et les âges de
+      la carrière longue, avant et après la loi de financement pour 2026,
+      sont ceux des tables du dépôt, mois de naissance par mois de
+      naissance ; la décote et la surcote des encadrés aussi. Deux écarts
+      de rédaction, que le texte tranche contre la DREES : 60 ans et 8
+      mois pour les nés de décembre 1965 (D. 351-1-1, II, 4°, version du
+      1er septembre 2026), et 2,375 %, non 2,5 %, pour la génération 1944
+      (R. 351-27).
+    confronte_par:
+      - test_les_ages_legaux_du_panorama_sont_ceux_du_depot
+      - test_les_durees_requises_du_panorama_sont_celles_du_depot
+      - test_les_ages_d_annulation_de_la_decote_sont_ceux_du_depot
+      - test_la_carriere_longue_du_panorama_est_celle_du_depot
+      - test_la_decote_et_la_surcote_du_panorama_sont_celles_du_depot
   "15":
     titre: "L’âge moyen de départ à la retraite et son évolution"
     page: 138
@@ -436,12 +461,20 @@ fiches:
     titre: "Les pensions d’invalidité"
     page: 207
     sources: ["Législation"]
-    statut: a_confronter
+    statut: confronte
     a_tirer: >-
       Les montants minimum et maximum des pensions d'invalidité du régime
       général au 1er janvier 2026 (tableau 1), confrontés aux paramètres
       de l'invalidité du scénario 1 : une règle du scénario 1, sur Opus.
     etape: 5
+    confrontation: >-
+      Les taux des trois catégories, 30 et 50 % du salaire des dix
+      meilleures années, le minimum, l'allocation aux vieux travailleurs
+      salariés de 2026, et le maximum, ces taux du plafond de 2026, sont
+      ceux du dépôt au centime ; la majoration pour tierce personne, que
+      le modèle ne sert pas, reste au panorama.
+    confronte_par:
+      - test_les_bornes_de_la_pension_d_invalidite_sont_celles_du_depot
   "25":
     titre: "Le profil des bénéficiaires d’une pension d’invalidité"
     page: 212
@@ -462,7 +495,7 @@ fiches:
     titre: "Le minimum vieillesse et l’allocation supplémentaire d’invalidité"
     page: 220
     sources: ["Législation", "CNAV", "Insee"]
-    statut: a_confronter
+    statut: confronte
     a_tirer: >-
       Les montants du minimum vieillesse et de l'allocation
       supplémentaire d'invalidité, personne seule et couple (graphique 2,
@@ -471,6 +504,18 @@ fiches:
       garantie vieillesse de la proposition : une règle du scénario 1,
       sur Opus.
     etape: 5
+    confrontation: >-
+      Le minimum vieillesse d'un couple, au 31 décembre de chaque année
+      depuis 2006, est celui que le modèle sert, au centime ; celui d'une
+      personne seule aussi, depuis que 2008, 2013 et 2015, que le modèle
+      ramenait sur les prix, viennent du barème de la Cnav (étape 5).
+      Restent déclarés le montant de janvier en 2022 et douze fois le
+      mensuel en 2007, 2023 et 2025, inscrits à l'action 138, étape 2.
+      L'allocation supplémentaire d'invalidité, que le modèle ne sert
+      pas, reste au panorama ; la garantie de la proposition, indexée sur
+      les prix, se compare au graphique 1 (note de l'étape 5).
+    confronte_par:
+      - test_le_minimum_vieillesse_du_panorama_est_celui_que_le_modele_sert
   "27":
     titre: "Les allocataires du minimum vieillesse et les allocations versées"
     page: 226
