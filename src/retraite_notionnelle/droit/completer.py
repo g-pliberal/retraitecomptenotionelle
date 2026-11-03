@@ -152,6 +152,19 @@ def regimes_sans_anticipation(moteur: ScenarioActuel, date_effet: str) -> frozen
     return frozenset(() if version is None
                      else version["parametres"].get("sans_anticipation") or ())
 
+def regimes_suivant_le_service(moteur: ScenarioActuel, date_effet: str) -> frozenset[str]:
+    """Les régimes dont la majoration pour enfants nés ou élevés suit, après
+    la date d'effet ``date_effet`` (AAAA-MM-JJ), le pourcentage de service de
+    chaque année (``pourcentage_de_service``) : l'Agirc, pour une retraite
+    liquidée du 1er mars 1994 au 31 décembre 1996 (accord du 9 février 1994,
+    article 2 ; avenant A-159) ; aucun avant, que la Cour de cassation a
+    gardée entière (Cass. soc., 23 novembre 1999, n° 97-18.980)."""
+    version = moteur.fiches_datees.version_aux_dates(
+        FICHE_DES_ENFANTS_NES_OU_ELEVES,
+        {"liquidation.date_effet": date_effet, "periode.debut": date_effet})
+    return frozenset(() if version is None
+                     else version["parametres"].get("pourcentage_de_service") or ())
+
 #: La majoration pour conjoint à charge, que :class:`FichesDatees
 #: <retraite_notionnelle.scenarios.actuel.FichesDatees>` lit à la date d'effet
 #: (:func:`majoration_pour_conjoint_a_charge`), et les proratas qu'une version
@@ -2135,6 +2148,17 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
         anticipations = dict(liquidees.anticipations)
         sans_anticipation = regimes_sans_anticipation(
             moteur, date_d_effet(carriere) or ouvrir.SANS_DATE_D_EFFET)
+        # LE POURCENTAGE DE SERVICE DE L'AGIRC, de 1995 à 1997 : la part de la
+        # date d'effet, puis celle de chaque 1er janvier où il change ; la
+        # dernière, celle de 1997, reste. Ce qu'elles servent au-delà d'elle
+        # s'écrit en étapes (``AvantageApplique.a_charge``), que la
+        # revalorisation suit et que la réversion ne reprend pas. Aucune
+        # majoration pour enfants à charge n'est servie avant 1999 : leurs
+        # étapes ne s'y mêlent pas.
+        suit_le_service = regimes_suivant_le_service(
+            moteur, date_d_effet(carriere) or ouvrir.SANS_DATE_D_EFFET)
+        # date -> [(régime, ce que la part sert au-delà de celle de 1997), ...].
+        au_dela_du_service: dict[str, list[tuple[str, float]]] = {}
         for indice, pension in enumerate(pensions):
             if pension.montant <= 0.0:
                 continue
@@ -2177,6 +2201,23 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
                     part = sous
                     if part <= 0.0:
                         continue
+            au_dela = 0.0
+            servis = (moteur.majorations_enfants_points.etapes(
+                pension.regime, annee_liquidation, carriere.nombre_enfants,
+                annee_liquidation) if pension.regime in suit_le_service else [])
+            a_l_effet = (moteur.majorations_enfants_points.taux(
+                pension.regime, annee_liquidation, carriere.nombre_enfants,
+                annee_liquidation) if servis else None)
+            if a_l_effet:
+                finale = part * (servis[-1][1] / a_l_effet)
+                au_dela = part - finale
+                debut = date_d_effet(carriere) or ouvrir.SANS_DATE_D_EFFET
+                for depuis, servi in [(debut, part), *(
+                        (f"{annee}-01-01", part * (taux_servi / a_l_effet))
+                        for annee, taux_servi in servis)]:
+                    de_la_date = au_dela_du_service.setdefault(depuis, [])
+                    if servi - finale != 0.0:
+                        de_la_date.append((pension.regime, servi - finale))
             code_du_plafond, periode_du_plafond = regime_du_plafond(
                 moteur, pension.regime, periode, carriere.date_liquidation)
             plafond = (None if periode_du_plafond is None else plafond_majoration(
@@ -2190,8 +2231,8 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
                 cumul = seaux.setdefault(seau, [0.0, plafond, 0.0])
                 cumul[0] += part
                 cumul[1] = max(cumul[1], plafond)
-                cumul[2] += part / restant
-            parts.append((pension.regime, part, seau, part / restant))
+                cumul[2] += (part - au_dela) / restant
+            parts.append((pension.regime, part, seau, (part - au_dela) / restant))
             taux_cite = max(taux_cite, taux)
         plafonnee = bool(seaux)
         retenues: dict[str, float] = {}
@@ -2226,6 +2267,8 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
                     (code, sans * (1.0 if seau is None else retenues_sans[seau]))
                     for code, _, seau, sans in parts
                 ),
+                a_charge=tuple((depuis, tuple(parts_du_jour))
+                               for depuis, parts_du_jour in sorted(au_dela_du_service.items())),
             ))
 
     # LA MAJORATION POUR ENFANTS À CHARGE de la complémentaire, qui remplace

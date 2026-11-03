@@ -1,0 +1,41 @@
+date: "2026-11-03"
+session: "action 130, file M3 : la majoration pour enfants de l'Agirc en 1995 et 1996, le pourcentage de service de l'accord du 9 février 1994"
+consulte: >-
+  python scripts/veille_droit.py ; docs/veille_droit.md ; l'index JORF du dépôt, récupéré
+  à jour au 3 novembre 2026 (incrément 20261103-002311) : les arrêtés du 8 novembre 1994
+  portant extension et élargissement de l'accord du 9 février 1994 (JORFTEXT000000715119)
+  et de l'avenant A-159 du 1er mars 1994 (JORFTEXT000000349883), au Journal officiel du
+  26 novembre 1994, dont le texte renvoie aux fascicules Conventions collectives n° 94-5
+  et n° 94-18 du Bulletin officiel. Hors des index : le recueil de la caisse « Accords
+  nationaux des partenaires sociaux » (sha256 0186b6b1…04c1), l'accord du 9 février 1994
+  lu en entier ; la convention du 14 mars 1947 mise à jour au 1er janvier 2018 (sha256
+  38966c27…ce78), article 6 bis et délibération D58 ; le document n° 7 de la séance du COR
+  du 25 mai 2011 (sha256 952c1af1…9a00), page 3 ; Cass. soc., 23 novembre 1999,
+  n° 97-18.980 (publié au bulletin) et n° 97-20.249, et l'arrêt rectificatif du
+  16 décembre 1999, copies de Juricaf ; CA Lyon, 18 novembre 2004, RG 03/03980, sur
+  Légifrance par l'outil de lecture du web (l'outil en ligne de commande y est refusé,
+  403) ; les questions écrites n° 40542 (JO AN du 24 janvier 2000) et n° 42356 (JO AN du
+  22 juin 2004) ; la circulaire 2020-02-DRJ (sha256 52477988…06ae), fiche 4, II.2.2, et
+  fiche 6, I.1.2.2 ; la circulaire 2024-5-DRJ (sha256 83577e9a…688f), 4 pages. La revue
+  Retraite et société de 2012 (Cairn) refuse l'outil (403).
+trouve: >-
+  L'accord du 9 février 1994, article 2, affecte les majorations de l'article 6 bis d'un
+  pourcentage de service de 96 % en 1995, 85 % en 1996 et 80 % depuis 1997 : il tient à
+  l'année où la majoration est servie, non à celle où le point est acquis, et frappe
+  tous les points de l'Agirc. L'avenant A-159 l'a porté à l'article 6 bis « avec effet
+  du 1er mars 1994 » ; la Cour de cassation l'a jugé illicite pour les retraites
+  liquidées avant cette date ; la cour d'appel de Lyon y a soumis, depuis 1995, une
+  retraite liquidée le 1er juillet 1994. La majoration réduite, 10 % pour trois enfants à
+  30 % pour sept, n'est lue qu'au COR et dans la question écrite de 2000. Le modèle
+  servait 8 % pour trois enfants à toute date ; il sert désormais 10 % avant 1995, et
+  pour toujours avant le 1er mars 1994, 9,6 % en 1995, 8,5 % en 1996, 8 % depuis 1997, et
+  suit le pourcentage après la date d'effet, dans les deux moteurs. Aucun témoin ne bouge.
+  La fiche reversion_agirc_arrco nomme la phrase qui rend douteux le plafond de la
+  majoration reversée (circulaire 2020-02-DRJ, fiche 4, II.2.2, « un allocataire »,
+  « Ce montant »).
+reste: >-
+  La rédaction de l'article 6 bis que l'avenant A-159 a écrite, et celle d'avant, au
+  fascicule Conventions collectives n° 94-18 du Bulletin officiel, introuvables en ligne :
+  elles diraient la majoration de 10 à 30 %. Ce que la caisse a servi de 1995 à l'arrêt de
+  1999 aux cadres partis avant le 1er mars 1994, et si elle leur a rendu la différence :
+  une circulaire de l'Agirc de 1999 ou 2000.

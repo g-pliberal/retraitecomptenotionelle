@@ -1823,22 +1823,46 @@ export class SurcoteParentale {
  * Majoration pour enfants de l'Agirc-Arrco, par période d'ACQUISITION des
  * points — portage de `MajorationsEnfantsPoints` : 10 à 30 % pour l'Arrco
  * d'avant 1999, 5 % de 1999 à 2011, 8 à 24 % pour l'Agirc d'avant 2012, 10 %
- * depuis (accord du 17 novembre 2017, article 94).
+ * depuis (accord du 17 novembre 2017, article 94) ; aux points de l'Agirc
+ * d'avant 2012, le pourcentage de service de l'année où la majoration est
+ * SERVIE (accord du 9 février 1994, article 2) : 10 à 30 % jusqu'en 1994, 96 %
+ * de ce barème en 1995, 85 % en 1996, 80 % depuis 1997.
  */
 export class MajorationsEnfantsPoints {
+  /** L'année de service que le barème sert à qui ne la dit pas : la dernière. */
+  static SERVI_DEPUIS_TOUJOURS = 2100;
+
   constructor(paquet) {
-    // { régime : [[début, fin, barème, fiabilité], …] }
+    // { régime : [[début, fin, barème, fiabilité, servi début, servi fin], …] }
     this._table = paquet.majoration_enfants_points ?? {};
   }
 
-  /** Taux des points que `regime` a inscrits en `annee`, ou `null`. */
-  taux(regime, annee, nombreEnfants) {
-    for (const [debut, fin, bareme] of this._table[regime] ?? []) {
-      if (annee >= debut && annee <= fin) {
+  /**
+   * Taux des points que `regime` a inscrits en `annee`, servis en
+   * `anneeService` (la dernière année de la table sans elle), ou `null`.
+   */
+  taux(regime, annee, nombreEnfants, anneeService = null) {
+    const service = anneeService ?? MajorationsEnfantsPoints.SERVI_DEPUIS_TOUJOURS;
+    for (const [debut, fin, bareme, , serviDebut, serviFin] of this._table[regime] ?? []) {
+      if (annee >= debut && annee <= fin && service >= serviDebut && service <= serviFin) {
         return bareme[Math.min(nombreEnfants, bareme.length - 1)];
       }
     }
     return null;
+  }
+
+  /**
+   * Les années de service, après `anneeService`, où le taux des points que
+   * `regime` a inscrits en `annee` change, et le taux de chacune, dans
+   * l'ordre : le pourcentage de service de l'Agirc, de 1995 à 1997.
+   */
+  etapes(regime, annee, nombreEnfants, anneeService) {
+    return (this._table[regime] ?? [])
+      .filter(([debut, fin, , , serviDebut]) => annee >= debut && annee <= fin
+        && serviDebut > anneeService)
+      .map(([, , bareme, , serviDebut]) => [
+        serviDebut, bareme[Math.min(nombreEnfants, bareme.length - 1)]])
+      .sort((a, b) => a[0] - b[0]);
   }
 }
 

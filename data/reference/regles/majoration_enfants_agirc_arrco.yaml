@@ -3,8 +3,11 @@ id: majoration_enfants_agirc_arrco
 intitule: >-
   Majoration pour enfants nés ou élevés de l'Agirc-Arrco par année d'acquisition
   des points : 10 à 30 % pour l'Arrco d'avant 1999 si le règlement de la caisse
-  la prévoyait, 5 % pour l'Arrco de 1999 à 2011, 8 à 24 % pour l'Agirc d'avant 2012,
-  10 % depuis ; plafond en euros sur l'ensemble, 1 000 € par régime au 1er janvier
+  la prévoyait, 5 % pour l'Arrco de 1999 à 2011, pour l'Agirc d'avant 2012 10 à 30 %
+  affectés d'un pourcentage de service de l'année où la majoration est servie, 96 % en
+  1995, 85 % en 1996, 80 % depuis 1997 (8 à 24 %), sauf pour une retraite liquidée
+  avant le 1er mars 1994, 10 % depuis ; plafond en euros sur l'ensemble, 1 000 € par
+  régime au 1er janvier
   2012 pour les allocations de 2012 à 2018, celui du régime unifié depuis, opposé aux
   participants nés à compter du 2 août 1951.
 domaine: enfants
@@ -25,7 +28,8 @@ lit:
   d'effet de la pension
 - >-
   les points de chaque régime de la complémentaire, chacun avec l'année où il a été
-  acquis et le régime qui l'a inscrit (droit/acquerir.py)
+  acquis et le régime qui l'a inscrit (droit/acquerir.py), et l'année où la majoration
+  est servie, qui décide du pourcentage de service de l'Agirc de 1995 à 1997
 - >-
   l'allocation de chaque régime, coefficient d'anticipation compris, et ce coefficient
   (droit/liquider.py : anticipations)
@@ -51,7 +55,12 @@ dates_qui_decident:
 # `plafond_nes_a_compter_du`, la génération que le portage retient ;
 # `sans_anticipation`, que le moteur lit ici même (`FichesDatees`), les régimes
 # dont la majoration se calcule sur les droits sans le coefficient
-# d'anticipation, les mêmes dans les versions d'une même date d'effet.
+# d'anticipation, les mêmes dans les versions d'une même date d'effet ;
+# `pourcentage_de_service`, qu'il lit de même, les régimes dont la majoration
+# suit, après la date d'effet, le barème de chaque année de service de la table
+# (`servi_debut`, `servi_fin`) : l'Agirc, pour une retraite liquidée du 1er mars
+# 1994 au 31 décembre 1996. Le barème d'une version est celui que la table sert
+# aux années de ses dates d'effet.
 versions:
 - id: reglements_d_avant_le_regime_unique
   statut: supposee
@@ -60,16 +69,321 @@ versions:
     règlement, que le dépôt ne lit pas ; l'accord du 25 avril 1996 en garde les
     majorations pour les droits d'avant 1999 (article 2), et les accords de 2011 et de
     2017 les servent au barème de 10 à 30 %, « lorsqu'une majoration pour enfant né ou
-    élevé est prévue par un règlement » (article 94, 1). Le modèle présume toutes les
-    caisses à ce barème, et l'Agirc à celui de l'article 6 bis de l'annexe I de 1947,
-    8 à 24 %, dont la rédaction d'alors n'est pas lue ; aucun plafond
+    élevé est prévue par un règlement » (article 94, 1) : le modèle présume toutes les
+    caisses à ce barème. L'Agirc sert la majoration de l'article 6 bis de
+    l'annexe I de 1947 entière, 10 % pour trois enfants à 30 % pour sept, que le COR
+    décrit et dont la rédaction d'alors n'est pas lue ; la retraite liquidée avant le
+    1er mars 1994 la garde ensuite, la Cour de cassation ayant jugé illicite le
+    pourcentage de service qui l'eût réduite ; aucun plafond
   fiabilite: moyenne
+  textes:
+  - reference: >-
+      Cour de cassation, chambre sociale, 23 novembre 1999, n° 97-18.980 et quatre autres,
+      publié au bulletin (Bull. 1999 V n° 453), rectifié le 16 décembre 1999, copie de
+      Juricaf, https://juricaf.org/arret/FRANCE-COURDECASSATION-19991123-9718980
+    article: motifs et dispositif rectifié
+    citation: >-
+      « un avenant (A-159) a notamment modifié les articles 1er, 6 bis et 12 de la
+      Convention collective nationale de retraite et de prévoyance des cadres, du 14 mars
+      1947, avec effet du 1er mars 1994, en affectant d'un " pourcentage de service " les
+      majorations de points pour charges de famille » ; « Dit que les modifications
+      apportées par l'avenant A-159 à l'article 6 bis précité sont illicites en tant
+      qu'elles s'appliquent aux participants dont la retraite a été liquidée avant
+      l'entrée en vigueur de l'accord de révision. »
+    lu_le: 2026-11-03
+    empreinte: sha256:21ca4cde332bda5dedbf35f2fc52618c90830d141698a8500fb000002008a901
+  - reference: >-
+      COR, séance du 25 mai 2011, document n° 7 (DSS), « Document de travail, n'engage pas
+      le Conseil », page 3, colonne « Régime complémentaire (AGIRC) Annexe I, art. 6 bis »,
+      https://www.cor-retraites.fr/sites/default/files/2019-06/doc-1530.pdf (source
+      secondaire : la rédaction de l'article 6 bis d'alors n'est pas publiée en ligne)
+    citation: >-
+      « majoration du total des points en fonction du nombre d'enfants nés ou élevés et
+      application d'un pourcentage de service de 80% (01/03/94) à la majoration suivante :
+      10% pour 3 enfants 15% pour 4 enfants 20% pour 5 enfants 25% pour 6 enfants 30% pour
+      7 enfants et + » ; « Pas de majoration pour enfant à charge »
+    lu_le: 2026-11-03
+    empreinte: sha256:952c1af12ace77881e18b58599bd900044fbfc0880950c0964f8308197029a00
   bornes:
-    liquidation.date_effet: [null, 1999-01-01]
+    liquidation.date_effet: [null, 1994-03-01]
   contenu:
     droit: >-
-      la majoration du règlement de chaque caisse de l'Arrco, et celle de l'Agirc, sur
-      tous les points de la pension, sans plafond
+      la majoration du règlement de chaque caisse de l'Arrco, et celle de l'article 6 bis
+      à l'Agirc, sur tous les points de la pension, sans plafond ; celle de l'Agirc ne suit
+      pas le pourcentage de service
+    parametres:
+      bareme:
+      - regimes: [arrco, arrco_tranche_2, arrco_tranche_2_entreprises_nouvelles]
+        taux: [0, 0, 0, 0.10, 0.15, 0.20, 0.25, 0.30]
+      - regimes: [agirc, agirc_entreprises_nouvelles]
+        taux: [0, 0, 0, 0.10, 0.15, 0.20, 0.25, 0.30]
+      sans_anticipation: []
+      pourcentage_de_service: []
+  exemples: aucun trouvé
+- id: avenant_a159_avant_le_pourcentage
+  statut: supposee
+  hypothese: >-
+    avant le 1er janvier 1999, chaque régime membre de l'Arrco majorait selon son
+    règlement, que le dépôt ne lit pas ; l'accord du 25 avril 1996 en garde les
+    majorations pour les droits d'avant 1999 (article 2), et les accords de 2011 et de
+    2017 les servent au barème de 10 à 30 %, « lorsqu'une majoration pour enfant né ou
+    élevé est prévue par un règlement » (article 94, 1) : le modèle présume toutes les
+    caisses à ce barème. L'Agirc sert la majoration de l'article 6 bis
+    entière à la date d'effet, le pourcentage de service ne prenant effet que le 1er
+    janvier 1995 ; la retraite liquidée depuis le 1er mars 1994, date d'effet de
+    l'avenant A-159, le suit ensuite : 96 % en 1995, 85 % en 1996, 80 % depuis 1997 ; aucun
+    plafond
+  fiabilite: moyenne
+  textes:
+  - reference: >-
+      accord du 9 février 1994 relatif au régime de retraite des cadres, dans le recueil de
+      la caisse « Accords nationaux des partenaires sociaux », page imprimée 16 (hors JORF ;
+      étendu et élargi par arrêté du 8 novembre 1994, JORFTEXT000000715119)
+    article: article 2
+    en_vigueur: 1995-01-01
+    citation: >-
+      « Les majorations pour charges de famille visées à l'article 6 bis de l'annexe 1 à la
+      convention collective nationale du 14 mars 1947 sont affectées, à compter du 1er
+      janvier 1995, d'un pourcentage de service égal à : - 96 % à compter du 1er janvier
+      1995 - 85 % à compter du 1er janvier 1996 - 80 % à compter du 1er janvier 1997 »
+    lu_le: 2026-11-03
+    empreinte: sha256:0186b6b165ad2a5f5f561deb969c6a35c661dc2e1fedbfcdcaa24801f51104c1
+  - reference: >-
+      Cour de cassation, chambre sociale, 23 novembre 1999, n° 97-18.980 et quatre autres,
+      publié au bulletin (Bull. 1999 V n° 453), rectifié le 16 décembre 1999, copie de
+      Juricaf, https://juricaf.org/arret/FRANCE-COURDECASSATION-19991123-9718980
+    article: motifs et dispositif rectifié
+    citation: >-
+      « un avenant (A-159) a notamment modifié les articles 1er, 6 bis et 12 de la
+      Convention collective nationale de retraite et de prévoyance des cadres, du 14 mars
+      1947, avec effet du 1er mars 1994, en affectant d'un " pourcentage de service " les
+      majorations de points pour charges de famille » ; « Dit que les modifications
+      apportées par l'avenant A-159 à l'article 6 bis précité sont illicites en tant
+      qu'elles s'appliquent aux participants dont la retraite a été liquidée avant
+      l'entrée en vigueur de l'accord de révision. »
+    lu_le: 2026-11-03
+    empreinte: sha256:21ca4cde332bda5dedbf35f2fc52618c90830d141698a8500fb000002008a901
+  - reference: >-
+      cour d'appel de Lyon, 1re chambre civile, 18 novembre 2004, RG 03/03980, Légifrance
+      JURITEXT000006944863, lue par l'outil de lecture du web de la session, sans copie
+      ni empreinte
+    article: motifs
+    citation: >-
+      « en affectant d'un pourcentage de service les majorations applicables aux
+      allocations servies à compter du 1er janvier 1995 » ; « Monsieur X... a fait liquider
+      ses droits à la retraite le 1er juillet 1994 soit postérieurement au 1er mars 1994
+      date d'entrée en vigueur de cet avenant » ; « la date du 1er janvier 1995 relative au
+      pourcentage de 96 % sur les majorations pour charges de famille stipulée dans
+      l'article 2 de l'accord concerne la prise d'effet de ce mode de calcul et non la
+      catégorie de retraites visée par cette mesure »
+    lu_le: 2026-11-03
+  - reference: >-
+      COR, séance du 25 mai 2011, document n° 7 (DSS), « Document de travail, n'engage pas
+      le Conseil », page 3, colonne « Régime complémentaire (AGIRC) Annexe I, art. 6 bis »,
+      https://www.cor-retraites.fr/sites/default/files/2019-06/doc-1530.pdf (source
+      secondaire : la rédaction de l'article 6 bis d'alors n'est pas publiée en ligne)
+    citation: >-
+      « majoration du total des points en fonction du nombre d'enfants nés ou élevés et
+      application d'un pourcentage de service de 80% (01/03/94) à la majoration suivante :
+      10% pour 3 enfants 15% pour 4 enfants 20% pour 5 enfants 25% pour 6 enfants 30% pour
+      7 enfants et + » ; « Pas de majoration pour enfant à charge »
+    lu_le: 2026-11-03
+    empreinte: sha256:952c1af12ace77881e18b58599bd900044fbfc0880950c0964f8308197029a00
+  bornes:
+    liquidation.date_effet: [1994-03-01, 1995-01-01]
+  contenu:
+    droit: >-
+      la majoration du règlement de chaque caisse de l'Arrco ; celle de l'article 6 bis à
+      l'Agirc, 10 à 30 %, qui suit ensuite le pourcentage de service de chaque année ; sans
+      plafond
+    parametres:
+      bareme:
+      - regimes: [arrco, arrco_tranche_2, arrco_tranche_2_entreprises_nouvelles]
+        taux: [0, 0, 0, 0.10, 0.15, 0.20, 0.25, 0.30]
+      - regimes: [agirc, agirc_entreprises_nouvelles]
+        taux: [0, 0, 0, 0.10, 0.15, 0.20, 0.25, 0.30]
+      sans_anticipation: []
+      pourcentage_de_service: [agirc, agirc_entreprises_nouvelles]
+  exemples: aucun trouvé
+- id: avenant_a159_service_a_96_pour_cent
+  statut: supposee
+  hypothese: >-
+    avant le 1er janvier 1999, chaque régime membre de l'Arrco majorait selon son
+    règlement, que le dépôt ne lit pas ; l'accord du 25 avril 1996 en garde les
+    majorations pour les droits d'avant 1999 (article 2), et les accords de 2011 et de
+    2017 les servent au barème de 10 à 30 %, « lorsqu'une majoration pour enfant né ou
+    élevé est prévue par un règlement » (article 94, 1) : le modèle présume toutes les
+    caisses à ce barème. L'Agirc sert 96 % de la majoration de l'article 6
+    bis, 10 × 0,96 = 9,6 % pour trois enfants à 30 × 0,96 = 28,8 % pour sept, puis 85 % en
+    1996 et 80 % depuis 1997 ; la majoration de 10 à 30 % n'est lue qu'au COR ; aucun
+    plafond
+  fiabilite: moyenne
+  textes:
+  - reference: >-
+      accord du 9 février 1994 relatif au régime de retraite des cadres, dans le recueil de
+      la caisse « Accords nationaux des partenaires sociaux », page imprimée 16 (hors JORF ;
+      étendu et élargi par arrêté du 8 novembre 1994, JORFTEXT000000715119)
+    article: article 2
+    en_vigueur: 1995-01-01
+    citation: >-
+      « Les majorations pour charges de famille visées à l'article 6 bis de l'annexe 1 à la
+      convention collective nationale du 14 mars 1947 sont affectées, à compter du 1er
+      janvier 1995, d'un pourcentage de service égal à : - 96 % à compter du 1er janvier
+      1995 - 85 % à compter du 1er janvier 1996 - 80 % à compter du 1er janvier 1997 »
+    lu_le: 2026-11-03
+    empreinte: sha256:0186b6b165ad2a5f5f561deb969c6a35c661dc2e1fedbfcdcaa24801f51104c1
+  - reference: >-
+      cour d'appel de Lyon, 1re chambre civile, 18 novembre 2004, RG 03/03980, Légifrance
+      JURITEXT000006944863, lue par l'outil de lecture du web de la session, sans copie
+      ni empreinte
+    article: motifs
+    citation: >-
+      « en affectant d'un pourcentage de service les majorations applicables aux
+      allocations servies à compter du 1er janvier 1995 » ; « Monsieur X... a fait liquider
+      ses droits à la retraite le 1er juillet 1994 soit postérieurement au 1er mars 1994
+      date d'entrée en vigueur de cet avenant » ; « la date du 1er janvier 1995 relative au
+      pourcentage de 96 % sur les majorations pour charges de famille stipulée dans
+      l'article 2 de l'accord concerne la prise d'effet de ce mode de calcul et non la
+      catégorie de retraites visée par cette mesure »
+    lu_le: 2026-11-03
+  - reference: >-
+      COR, séance du 25 mai 2011, document n° 7 (DSS), « Document de travail, n'engage pas
+      le Conseil », page 3, colonne « Régime complémentaire (AGIRC) Annexe I, art. 6 bis »,
+      https://www.cor-retraites.fr/sites/default/files/2019-06/doc-1530.pdf (source
+      secondaire : la rédaction de l'article 6 bis d'alors n'est pas publiée en ligne)
+    citation: >-
+      « majoration du total des points en fonction du nombre d'enfants nés ou élevés et
+      application d'un pourcentage de service de 80% (01/03/94) à la majoration suivante :
+      10% pour 3 enfants 15% pour 4 enfants 20% pour 5 enfants 25% pour 6 enfants 30% pour
+      7 enfants et + » ; « Pas de majoration pour enfant à charge »
+    lu_le: 2026-11-03
+    empreinte: sha256:952c1af12ace77881e18b58599bd900044fbfc0880950c0964f8308197029a00
+  bornes:
+    liquidation.date_effet: [1995-01-01, 1996-01-01]
+  contenu:
+    droit: >-
+      la majoration du règlement de chaque caisse de l'Arrco ; à l'Agirc, 96 % de celle de
+      l'article 6 bis, qui suit ensuite le pourcentage de chaque année ; sans plafond
+    parametres:
+      bareme:
+      - regimes: [arrco, arrco_tranche_2, arrco_tranche_2_entreprises_nouvelles]
+        taux: [0, 0, 0, 0.10, 0.15, 0.20, 0.25, 0.30]
+      - regimes: [agirc, agirc_entreprises_nouvelles]
+        taux: [0, 0, 0, 0.096, 0.144, 0.192, 0.24, 0.288]
+      sans_anticipation: []
+      pourcentage_de_service: [agirc, agirc_entreprises_nouvelles]
+  exemples: aucun trouvé
+- id: avenant_a159_service_a_85_pour_cent
+  statut: supposee
+  hypothese: >-
+    avant le 1er janvier 1999, chaque régime membre de l'Arrco majorait selon son
+    règlement, que le dépôt ne lit pas ; l'accord du 25 avril 1996 en garde les
+    majorations pour les droits d'avant 1999 (article 2), et les accords de 2011 et de
+    2017 les servent au barème de 10 à 30 %, « lorsqu'une majoration pour enfant né ou
+    élevé est prévue par un règlement » (article 94, 1) : le modèle présume toutes les
+    caisses à ce barème. L'Agirc sert 85 % de la majoration de l'article 6
+    bis, 10 × 0,85 = 8,5 % pour trois enfants à 30 × 0,85 = 25,5 % pour sept, puis 80 %
+    depuis 1997 ; la majoration de 10 à 30 % n'est lue qu'au COR ; aucun plafond
+  fiabilite: moyenne
+  textes:
+  - reference: >-
+      accord du 9 février 1994 relatif au régime de retraite des cadres, dans le recueil de
+      la caisse « Accords nationaux des partenaires sociaux », page imprimée 16 (hors JORF ;
+      étendu et élargi par arrêté du 8 novembre 1994, JORFTEXT000000715119)
+    article: article 2
+    en_vigueur: 1995-01-01
+    citation: >-
+      « Les majorations pour charges de famille visées à l'article 6 bis de l'annexe 1 à la
+      convention collective nationale du 14 mars 1947 sont affectées, à compter du 1er
+      janvier 1995, d'un pourcentage de service égal à : - 96 % à compter du 1er janvier
+      1995 - 85 % à compter du 1er janvier 1996 - 80 % à compter du 1er janvier 1997 »
+    lu_le: 2026-11-03
+    empreinte: sha256:0186b6b165ad2a5f5f561deb969c6a35c661dc2e1fedbfcdcaa24801f51104c1
+  - reference: >-
+      cour d'appel de Lyon, 1re chambre civile, 18 novembre 2004, RG 03/03980, Légifrance
+      JURITEXT000006944863, lue par l'outil de lecture du web de la session, sans copie
+      ni empreinte
+    article: motifs
+    citation: >-
+      « en affectant d'un pourcentage de service les majorations applicables aux
+      allocations servies à compter du 1er janvier 1995 » ; « Monsieur X... a fait liquider
+      ses droits à la retraite le 1er juillet 1994 soit postérieurement au 1er mars 1994
+      date d'entrée en vigueur de cet avenant » ; « la date du 1er janvier 1995 relative au
+      pourcentage de 96 % sur les majorations pour charges de famille stipulée dans
+      l'article 2 de l'accord concerne la prise d'effet de ce mode de calcul et non la
+      catégorie de retraites visée par cette mesure »
+    lu_le: 2026-11-03
+  - reference: >-
+      COR, séance du 25 mai 2011, document n° 7 (DSS), « Document de travail, n'engage pas
+      le Conseil », page 3, colonne « Régime complémentaire (AGIRC) Annexe I, art. 6 bis »,
+      https://www.cor-retraites.fr/sites/default/files/2019-06/doc-1530.pdf (source
+      secondaire : la rédaction de l'article 6 bis d'alors n'est pas publiée en ligne)
+    citation: >-
+      « majoration du total des points en fonction du nombre d'enfants nés ou élevés et
+      application d'un pourcentage de service de 80% (01/03/94) à la majoration suivante :
+      10% pour 3 enfants 15% pour 4 enfants 20% pour 5 enfants 25% pour 6 enfants 30% pour
+      7 enfants et + » ; « Pas de majoration pour enfant à charge »
+    lu_le: 2026-11-03
+    empreinte: sha256:952c1af12ace77881e18b58599bd900044fbfc0880950c0964f8308197029a00
+  bornes:
+    liquidation.date_effet: [1996-01-01, 1997-01-01]
+  contenu:
+    droit: >-
+      la majoration du règlement de chaque caisse de l'Arrco ; à l'Agirc, 85 % de celle de
+      l'article 6 bis, puis 80 % depuis 1997 ; sans plafond
+    parametres:
+      bareme:
+      - regimes: [arrco, arrco_tranche_2, arrco_tranche_2_entreprises_nouvelles]
+        taux: [0, 0, 0, 0.10, 0.15, 0.20, 0.25, 0.30]
+      - regimes: [agirc, agirc_entreprises_nouvelles]
+        taux: [0, 0, 0, 0.085, 0.1275, 0.17, 0.2125, 0.255]
+      sans_anticipation: []
+      pourcentage_de_service: [agirc, agirc_entreprises_nouvelles]
+  exemples: aucun trouvé
+- id: avenant_a159_service_a_80_pour_cent
+  statut: supposee
+  hypothese: >-
+    avant le 1er janvier 1999, chaque régime membre de l'Arrco majorait selon son
+    règlement, que le dépôt ne lit pas ; l'accord du 25 avril 1996 en garde les
+    majorations pour les droits d'avant 1999 (article 2), et les accords de 2011 et de
+    2017 les servent au barème de 10 à 30 %, « lorsqu'une majoration pour enfant né ou
+    élevé est prévue par un règlement » (article 94, 1) : le modèle présume toutes les
+    caisses à ce barème. L'Agirc sert 80 % de la majoration de l'article 6
+    bis, 8 % pour trois enfants à 24 % pour sept, que l'article 6 bis et l'accord de 2017
+    écrivent tels pour les points d'avant 2012 ; aucun plafond
+  fiabilite: moyenne
+  textes:
+  - reference: >-
+      accord du 9 février 1994 relatif au régime de retraite des cadres, dans le recueil de
+      la caisse « Accords nationaux des partenaires sociaux », page imprimée 16 (hors JORF ;
+      étendu et élargi par arrêté du 8 novembre 1994, JORFTEXT000000715119)
+    article: article 2
+    en_vigueur: 1995-01-01
+    citation: >-
+      « Les majorations pour charges de famille visées à l'article 6 bis de l'annexe 1 à la
+      convention collective nationale du 14 mars 1947 sont affectées, à compter du 1er
+      janvier 1995, d'un pourcentage de service égal à : - 96 % à compter du 1er janvier
+      1995 - 85 % à compter du 1er janvier 1996 - 80 % à compter du 1er janvier 1997 »
+    lu_le: 2026-11-03
+    empreinte: sha256:0186b6b165ad2a5f5f561deb969c6a35c661dc2e1fedbfcdcaa24801f51104c1
+  - reference: >-
+      COR, séance du 25 mai 2011, document n° 7 (DSS), « Document de travail, n'engage pas
+      le Conseil », page 3, colonne « Régime complémentaire (AGIRC) Annexe I, art. 6 bis »,
+      https://www.cor-retraites.fr/sites/default/files/2019-06/doc-1530.pdf (source
+      secondaire : la rédaction de l'article 6 bis d'alors n'est pas publiée en ligne)
+    citation: >-
+      « majoration du total des points en fonction du nombre d'enfants nés ou élevés et
+      application d'un pourcentage de service de 80% (01/03/94) à la majoration suivante :
+      10% pour 3 enfants 15% pour 4 enfants 20% pour 5 enfants 25% pour 6 enfants 30% pour
+      7 enfants et + » ; « Pas de majoration pour enfant à charge »
+    lu_le: 2026-11-03
+    empreinte: sha256:952c1af12ace77881e18b58599bd900044fbfc0880950c0964f8308197029a00
+  bornes:
+    liquidation.date_effet: [1997-01-01, 1999-01-01]
+  contenu:
+    droit: >-
+      la majoration du règlement de chaque caisse de l'Arrco ; à l'Agirc, 80 % de celle de
+      l'article 6 bis ; sans plafond
     parametres:
       bareme:
       - regimes: [arrco, arrco_tranche_2, arrco_tranche_2_entreprises_nouvelles]
@@ -479,7 +793,41 @@ versions:
         arrco_cultes, agirc, agirc_entreprises_nouvelles]
   exemples: aucun trouvé
 approximations:
-- version: [reglements_d_avant_le_regime_unique, regime_unique_points_d_avant_1999,
+- version: [reglements_d_avant_le_regime_unique, avenant_a159_avant_le_pourcentage,
+    avenant_a159_service_a_96_pour_cent, avenant_a159_service_a_85_pour_cent]
+  textes: >-
+    accord du 9 février 1994, article 2 ; COR, séance du 25 mai 2011, document n° 7,
+    page 3 ; Cass. soc., 23 novembre 1999, n° 97-18.980
+  ecart: >-
+    La majoration que le pourcentage de service réduit, « 10% pour 3 enfants » à « 30%
+    pour 7 enfants et + », n'est lue que dans une source secondaire, le document du COR ;
+    l'accord la renvoie à « l'article 6 bis de l'annexe 1 », dont ni la rédaction d'avant
+    l'avenant A-159 ni celle qu'il a écrite (Bulletin officiel, fascicule Conventions
+    collectives n° 94-18) ne sont publiées en ligne. Le barème de 8 à 24 % que l'article
+    6 bis écrit depuis 2012 pour les points d'avant 2012 en est les 80 %, ce qui la
+    conforte.
+  effet: >-
+    si l'article 6 bis d'alors disait autre chose, la majoration de l'Agirc des retraites
+    prenant effet avant 1997 est fausse d'autant ; non mesuré, faute du texte
+- version: [reglements_d_avant_le_regime_unique]
+  textes: >-
+    Cass. soc., 23 novembre 1999, n° 97-18.980, rectifié le 16 décembre 1999 ; question
+    écrite n° 40542 de M. Léonce Deprez, JO Assemblée nationale du 24 janvier 2000,
+    page 424
+  ecart: >-
+    La Cour de cassation juge le pourcentage de service illicite pour les retraites
+    liquidées avant le 1er mars 1994, le 23 novembre 1999 ; jusque-là, la caisse l'a
+    appliqué à toutes (la question écrite de janvier 2000 parle de « la diminution
+    rétroactive des majorations familiales de pension des cadres »). Le modèle sert la
+    majoration entière à ces retraites, à toute date, comme l'arrêt le dit, sans lire ce
+    que la caisse a servi de 1995 à l'arrêt, ni si elle a rendu ce qu'elle avait retenu.
+  effet: >-
+    les cadres de trois enfants partis avant le 1er mars 1994 : de 1995 jusqu'à ce que la
+    caisse applique l'arrêt, le modèle leur sert 10 % où la caisse servait 9,6 %, 8,5 %
+    puis 8 % ; non mesuré
+- version: [reglements_d_avant_le_regime_unique, avenant_a159_avant_le_pourcentage,
+    avenant_a159_service_a_96_pour_cent, avenant_a159_service_a_85_pour_cent,
+    avenant_a159_service_a_80_pour_cent, regime_unique_points_d_avant_1999,
     accord_de_2011_points_d_avant_1999, regime_unifie_points_d_avant_1999]
   textes: >-
     accord du 25 avril 1996, article 2 ; annexe A de l'accord du 8 décembre 1961,
@@ -495,7 +843,9 @@ approximations:
     dans l'exemple du guide n° 9 de mars 2017, 2 000 points de 1988 à 1998 d'une caisse
     sans majoration, 250,26 € par an de trop pour 338,11 € dus ; non mesuré sur la
     population, faute de savoir quelles caisses la servaient
-- version: [reglements_d_avant_le_regime_unique, regime_unique_points_d_avant_1999,
+- version: [reglements_d_avant_le_regime_unique, avenant_a159_avant_le_pourcentage,
+    avenant_a159_service_a_96_pour_cent, avenant_a159_service_a_85_pour_cent,
+    avenant_a159_service_a_80_pour_cent, regime_unique_points_d_avant_1999,
     regime_unique_points_depuis_1999]
   textes: >-
     accord du 25 avril 1996 relatif aux régimes de l'Arrco, articles 10 et 11 ; guide des
@@ -605,8 +955,11 @@ sources:
   a_relire:
   - >-
     Les règlements des caisses de l'Arrco d'avant 1999, et ceux de la Camarca ; les
-    rédactions d'avant 2012 de l'article 6 bis de l'annexe I de 1947 — depuis quand
-    l'Agirc sert-elle 8 à 24 % ? — et de l'article 17 de l'annexe A de 1961 : la copie du
+    rédactions d'avant 2012 de l'article 6 bis de l'annexe I de 1947 — celle que l'avenant
+    A-159 du 1er mars 1994 a écrite (Bulletin officiel du ministère, fascicule
+    Conventions collectives n° 94-18, d'après l'arrêté d'extension du 8 novembre 1994,
+    JORFTEXT000000349883) et celle d'avant, qui diraient la majoration de 10 à 30 % que le
+    pourcentage de service réduit — et de l'article 17 de l'annexe A de 1961 : la copie du
     Medef, que lisait la fiche des coefficients d'anticipation, ne se sert plus
     (accords.medef.com, « Site introuvable », le 3 novembre 2026).
   - >-
@@ -630,23 +983,9 @@ sources:
     majoration avant le plafond, comme le modèle, ou au montant plafonné ? Aucun texte lu
     ne le chiffre ; les deux exemples du guide n° 9 partent au taux plein.
   - >-
-    L'accord Agirc du 9 février 1994, article 2 (recueil de la caisse, p. 16) : « Les
-    majorations pour charges de famille visées à l'article 6 bis de l'annexe 1 à la
-    convention collective nationale du 14 mars 1947 sont affectées, à compter du 1er
-    janvier 1995, d'un pourcentage de service égal à : - 96 % à compter du 1er janvier
-    1995 - 85 % à compter du 1er janvier 1996 - 80 % à compter du 1er janvier 1997 ». Le
-    modèle sert ces 80 % de fait, à toute date d'effet, sans les appliquer une seconde
-    fois : son barème de l'Agirc d'avant 2012 est celui que l'article 6 bis écrit depuis
-    2012 pour les « périodes antérieures au 1er janvier 2012 », « 8 % pour 3 enfants » à
-    « 24 % pour 7 enfants ou plus », soit 80 % de 10 à 30 % ; le COR le décrit ainsi
-    avant 2012 : « application d'un pourcentage de service de 80% (01/03/94) à la
-    majoration suivante : 10% pour 3 enfants », « 30% pour 7 enfants et + » (séance du
-    25 mai 2011, document n° 7, https://www.cor-retraites.fr/sites/default/files/2019-06/doc-1530.pdf,
-    sha256 952c1af12ace77881e18b58599bd900044fbfc0880950c0964f8308197029a00, relu le
-    3 novembre 2026 ; une source secondaire, qui date le pourcentage du 1er mars 1994,
-    quand l'accord fait foi). Restent à lire les rédactions de l'article 6 bis de 1994 à
-    2011, et ce que le modèle doit aux pensions de 1995 et 1996 (96 % et 85 %) et d'avant
-    1995 (10 à 30 %), une tâche à part.
+    Ce que la caisse a servi, de 1995 à l'arrêt du 23 novembre 1999, aux cadres partis
+    avant le 1er mars 1994, et si elle leur a rendu ce que le pourcentage de service avait
+    retenu : une circulaire de l'Agirc de 1999 ou 2000 le dirait.
   - >-
     Le site réglementaire de la caisse (reglementation.agirc-arrco.fr), dont le
     certificat ne se vérifiait pas le 3 novembre 2026 : y relire l'assiette de la
@@ -655,6 +994,43 @@ sources:
     La circulaire Agirc-Arrco du 7 juillet 2011 (point 3.3.1), qui dirait la
     proratisation et la génération du 2 août 1951 : non retrouvée.
   lectures:
+  - type: autre
+    reference: >-
+      Recueil de la caisse « Accords nationaux des partenaires sociaux » : accord du 9
+      février 1994 relatif au régime de retraite des cadres, articles 1er et 2 (page
+      imprimée 16, 14e page du fichier), lu en entier
+    url: https://www.agirc-arrco.fr/storage/2021/11/liste_accords_paritaires_Agirc_Arrco.pdf
+    date: 2026-11-03
+  - type: autre
+    reference: >-
+      Cour de cassation, chambre sociale, 23 novembre 1999, n° 97-18.980, 97-19.055,
+      97-20.248, 97-21.053 et 97-21.393, publié au bulletin (Bull. 1999 V n° 453),
+      rectifié par l'arrêt du 16 décembre 1999 (même numéro), copie de Juricaf ; et du même
+      jour, n° 97-20.249, qui déclare la Fédération des familles de France sans intérêt à
+      agir
+    url: https://juricaf.org/arret/FRANCE-COURDECASSATION-19991123-9718980
+    date: 1999-11-23
+  - type: autre
+    reference: >-
+      cour d'appel de Lyon, 18 novembre 2004, RG 03/03980 (JURITEXT000006944863) : la
+      retraite liquidée le 1er juillet 1994 suit le pourcentage de service depuis 1995
+    url: https://www.legifrance.gouv.fr/juri/id/JURITEXT000006944863/
+    date: 2004-11-18
+  - type: autre
+    reference: >-
+      Journal officiel du 26 novembre 1994 : arrêtés du 8 novembre 1994 portant extension et
+      élargissement de l'accord du 9 février 1994 (JORFTEXT000000715119 ; texte publié au
+      fascicule Conventions collectives n° 94-5) et de l'avenant A-159 du 1er mars 1994
+      (JORFTEXT000000349883 ; fascicule n° 94-18), lus dans l'index de la DILA
+    date: 1994-11-26
+  - type: autre
+    reference: >-
+      question écrite n° 40542 de M. Léonce Deprez, JO Assemblée nationale du 24 janvier
+      2000, page 424 : les majorations familiales de l'Agirc « sont passées de 10 % pour 3
+      enfants et 30 % maximum pour 7 enfants à 8 % pour 3 enfants et 24 % maximum pour 7
+      enfants » ; sans réponse publiée
+    url: https://www.assemblee-nationale.fr/dyn/11/questions/QANR5L11QE40542
+    date: 2000-01-24
   - type: legifrance
     reference: >-
       ANI du 17 novembre 2017, article 94, base KALI (KALIARTI000036731850), version
@@ -743,32 +1119,41 @@ code:
     pension le taux moyen de ses points, au barème commun ceux que la table ne dit pas,
     sur l'allocation, sans le coefficient d'anticipation pour les régimes que la version
     de la date d'effet nomme (`sans_anticipation`, que `FichesDatees` lit :
-    `regimes_sans_anticipation`), coefficient compris pour les autres ; puis il borne en
-    euros la
+    `regimes_sans_anticipation`), coefficient compris pour les autres ; aux points de
+    l'Agirc d'avant 2012, le barème de l'année de service de la date d'effet, puis, pour
+    les régimes que la version nomme (`pourcentage_de_service` :
+    `regimes_suivant_le_service`), ce que la majoration sert au-delà de celle de 1997,
+    depuis la date d'effet et chaque 1er janvier où le pourcentage change
+    (`MajorationsEnfantsPoints.etapes`), en étapes (`a_charge`) que la revalorisation
+    suit et que la réversion ne reprend pas ; puis il borne en euros la
     majoration de chaque régime qui oppose le plafond (`plafond_majoration`,
     `regime_du_plafond`) : 1 000 € au titre de l'Arrco et autant au titre de l'Agirc au
     1er janvier 2012, suivis au point de chacun, pour les allocations de 2012 à 2018, le
     plafond du régime unifié depuis 2019, aux seules générations nées depuis 1952.
   python: >-
     droit/acquerir.py : acquerir ; scenarios/actuel.py : MajorationsEnfantsPoints,
-    MajorationsEnfantsPoints.taux, FichesDatees ; droit/completer.py : completer,
-    plafond_majoration, regime_du_plafond, regimes_sans_anticipation
+    MajorationsEnfantsPoints.taux, MajorationsEnfantsPoints.etapes, FichesDatees ;
+    droit/completer.py : completer, plafond_majoration, regime_du_plafond,
+    regimes_sans_anticipation, regimes_suivant_le_service
   javascript: >-
     moteur/js/droit/acquerir.js : acquerir ; moteur/js/regimes.js :
-    MajorationsEnfantsPoints, MajorationsEnfantsPoints.taux, FichesDatees ;
-    moteur/js/droit/completer.js : completer, plafondMajoration, regimeDuPlafond,
-    regimesSansAnticipation
+    MajorationsEnfantsPoints, MajorationsEnfantsPoints.taux,
+    MajorationsEnfantsPoints.etapes, FichesDatees ; moteur/js/droit/completer.js :
+    completer, plafondMajoration, regimeDuPlafond, regimesSansAnticipation,
+    regimesSuivantLeService
   parametres: >-
     contenu.parametres de chaque version : bareme, plafond_majoration_enfants,
-    plafond_majoration_annee, plafond_nes_a_compter_du, sans_anticipation ;
-    legislation/majoration_enfants_points.csv : regimes, acquis_debut, acquis_fin,
-    bareme, fiabilite ; regimes/agirc.yaml, regimes/agirc_arrco.yaml,
+    plafond_majoration_annee, plafond_nes_a_compter_du, sans_anticipation,
+    pourcentage_de_service ; legislation/majoration_enfants_points.csv : regimes,
+    acquis_debut, acquis_fin, servi_debut, servi_fin, bareme, fiabilite ;
+    regimes/agirc.yaml, regimes/agirc_arrco.yaml,
     regimes/agirc_entreprises_nouvelles.yaml, regimes/arrco.yaml,
     regimes/arrco_cultes.yaml, regimes/arrco_tranche_2.yaml,
     regimes/arrco_tranche_2_entreprises_nouvelles.yaml : plafond_majoration_enfants,
     plafond_majoration_annee, plafond_majoration_regime
   tests:
   - tests/test_agirc_arrco_au_droit.py
+  - tests/test_majoration_enfants_agirc_1994_a_1996.py
   - tests/test_majoration_enfants_agirc_arrco_avant_coefficient.py
   - tests/test_destinie.py
   - tests/test_droit.py
@@ -809,6 +1194,15 @@ historique:
   que la fiche disait tranchée par aucun texte lu, l'est par la circulaire 2020-02-DRJ,
   fiche 6, I.1.2.2 : sans le coefficient d'anticipation du défunt, ce que le modèle sert
   désormais ; l'article 2 de l'accord Agirc de 1994 est à la page 16 du recueil, non 15.
+- >-
+  2026-11-03 — le pourcentage de service de l'Agirc (action 130, file M3, note
+  2026-11-03-majoration-enfants-agirc-1995-1996.md) : l'accord du 9 février 1994, article
+  2, lu en entier ; l'arrêt de la Cour de cassation du 23 novembre 1999, qui garde la
+  majoration entière aux retraites liquidées avant le 1er mars 1994 ; l'arrêt de Lyon du
+  18 novembre 2004, qui y soumet celle du 1er juillet 1994. La version d'avant 1999 est
+  coupée en cinq ; la table sert aux points de l'Agirc d'avant 2012 10 à 30 % jusqu'en
+  1994, 96 % de ce barème en 1995, 85 % en 1996, 80 % depuis 1997, et le moteur suit le
+  pourcentage après la date d'effet. Le modèle servait 8 % à toute date.
 effet: >-
   Parents de trois enfants salariés du privé avant 2019. Le modèle servait 10 %
   à tous les points ; les points Arrco de 1999 à 2011 n'en valent que 5, ceux de
@@ -824,3 +1218,8 @@ effet: >-
   2026, la majoration de l'Arrco de 2012 à 2018, et de toute la complémentaire depuis
   2019, se calcule sans le coefficient d'anticipation : celle de qui part avant l'âge du
   taux plein croît de l'inverse du coefficient, de 1/0,99 à 1/0,43, sous le plafond.
+  Depuis le 3 novembre 2026, l'Agirc sert aux cadres de trois enfants 10 % et non 8 %
+  avant 1995, 9,6 % en 1995, 8,5 % en 1996 : un cadre parti le 1er avril 1995 au double
+  du salaire moyen, 6 852,20 € d'Agirc, reçoit 657,81 € de majoration et non 548,18 €,
+  puis 8,5 % en 1996 et 8 % depuis 1997, 582,44 € et 548,18 € au point de 1995 ; parti
+  avant le 1er mars 1994, il garde 10 %.

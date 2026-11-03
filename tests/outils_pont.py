@@ -125,7 +125,11 @@ def actuel_en_donnees(actuel) -> dict:
             for pension in actuel.pensions_par_regime],
         "avantages_appliques": [
             {"code": avantage.code, "montant": avantage.montant, "detail": avantage.detail,
-             "par_regime": [[regime, part] for regime, part in avantage.par_regime]}
+             "par_regime": [[regime, part] for regime, part in avantage.par_regime],
+             "par_regime_sans_anticipation": [
+                 [regime, part] for regime, part in avantage.par_regime_sans_anticipation],
+             "a_charge": [[depuis, [[regime, part] for regime, part in parts]]
+                          for depuis, parts in avantage.a_charge]}
             for avantage in actuel.avantages_appliques],
         "trimestres_valides": actuel.trimestres_valides,
         "trimestres_requis": actuel.trimestres_requis,

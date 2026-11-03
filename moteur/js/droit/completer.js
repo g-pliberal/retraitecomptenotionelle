@@ -122,6 +122,20 @@ export function regimesSansAnticipation(moteur, dateEffet) {
 }
 
 /**
+ * Les régimes dont la majoration pour enfants nés ou élevés suit, après la date
+ * d'effet `dateEffet` (AAAA-MM-JJ), le pourcentage de service de chaque année
+ * (`pourcentage_de_service`) : l'Agirc, pour une retraite liquidée du 1er mars
+ * 1994 au 31 décembre 1996 (accord du 9 février 1994, article 2 ; avenant
+ * A-159) ; aucun avant, que la Cour de cassation a gardée entière (Cass. soc.,
+ * 23 novembre 1999, n° 97-18.980). Voir `regimes_suivant_le_service` du Python.
+ */
+export function regimesSuivantLeService(moteur, dateEffet) {
+  const version = moteur.fichesDatees.versionAuxDates(FICHE_DES_ENFANTS_NES_OU_ELEVES,
+    { "liquidation.date_effet": dateEffet, "periode.debut": dateEffet });
+  return new Set(version === null ? [] : version.parametres.pourcentage_de_service ?? []);
+}
+
+/**
  * Ce à quoi une version de l'Agirc-Arrco compare son seuil : le nombre de points
  * de l'allocation (avant 2019), ou son montant, coefficients et majorations
  * compris (accord du 17 novembre 2017, article 107).
@@ -1891,6 +1905,16 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
     const anticipations = new Map(liquidees.anticipations ?? []);
     const sansAnticipation = regimesSansAnticipation(
       moteur, dateDEffet(carriere) ?? ouvrir.SANS_DATE_D_EFFET);
+    // LE POURCENTAGE DE SERVICE DE L'AGIRC, de 1995 à 1997 : la part de la date
+    // d'effet, puis celle de chaque 1er janvier où il change ; la dernière,
+    // celle de 1997, reste. Ce qu'elles servent au-delà d'elle s'écrit en
+    // étapes (`a_charge`), que la revalorisation suit et que la réversion ne
+    // reprend pas. Aucune majoration pour enfants à charge n'est servie avant
+    // 1999 : leurs étapes ne s'y mêlent pas. Voir le Python.
+    const suitLeService = regimesSuivantLeService(
+      moteur, dateDEffet(carriere) ?? ouvrir.SANS_DATE_D_EFFET);
+    // date -> [[régime, ce que la part sert au-delà de celle de 1997], …].
+    const auDelaDuService = new Map();
     for (const [indice, pension] of pensions.entries()) {
       if (pension.montant <= 0.0) {
         continue;
@@ -1932,6 +1956,26 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
           }
         }
       }
+      let auDela = 0.0;
+      const servis = suitLeService.has(pension.regime)
+        ? moteur.majorationsEnfantsPoints.etapes(
+          pension.regime, anneeLiquidation, carriere.nombre_enfants, anneeLiquidation)
+        : [];
+      const aLEffet = servis.length > 0 ? moteur.majorationsEnfantsPoints.taux(
+        pension.regime, anneeLiquidation, carriere.nombre_enfants, anneeLiquidation) : null;
+      if (aLEffet) {
+        const finale = part * (servis[servis.length - 1][1] / aLEffet);
+        auDela = part - finale;
+        const debut = dateDEffet(carriere) ?? ouvrir.SANS_DATE_D_EFFET;
+        for (const [depuis, servi] of [[debut, part], ...servis.map(
+          ([annee, taux]) => [`${annee}-01-01`, part * (taux / aLEffet)])]) {
+          const deLaDate = auDelaDuService.get(depuis) ?? [];
+          if (servi - finale !== 0.0) {
+            deLaDate.push([pension.regime, servi - finale]);
+          }
+          auDelaDuService.set(depuis, deLaDate);
+        }
+      }
       const [codeDuPlafond, periodeDuPlafond] = regimeDuPlafond(
         moteur, pension.regime, periode, carriere.dateLiquidation);
       const plafond = periodeDuPlafond === null ? null : plafondMajoration(
@@ -1945,10 +1989,10 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
         const cumul = seaux.get(seau) ?? [0.0, plafond, 0.0];
         cumul[0] += part;
         cumul[1] = Math.max(cumul[1], plafond);
-        cumul[2] += part / restant;
+        cumul[2] += (part - auDela) / restant;
         seaux.set(seau, cumul);
       }
-      parts.push([pension.regime, part, seau, part / restant]);
+      parts.push([pension.regime, part, seau, (part - auDela) / restant]);
       tauxCite = Math.max(tauxCite, taux);
     }
     const plafonnee = seaux.size > 0;
@@ -1985,6 +2029,9 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
         par_regime_sans_anticipation: parts.map(([code, , seau, sans]) => [
           code, sans * (seau === null ? 1.0 : retenuesSans.get(seau)),
         ]),
+        ...(auDelaDuService.size > 0
+          ? { a_charge: [...auDelaDuService.entries()].sort(([a], [b]) => (a < b ? -1 : 1)) }
+          : {}),
       });
     }
   }

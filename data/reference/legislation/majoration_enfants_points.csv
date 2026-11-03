@@ -38,12 +38,42 @@
 # l'exemple n'en servait pas, et la Camarca des salariés agricoles servait
 # 2,5 % par enfant.
 #
-# `regimes` liste les fiches qui inscrivent ces points ; `bareme`, le taux par
+# LE POURCENTAGE DE SERVICE DE L'AGIRC, DE 1995 À 1997. « Les majorations pour
+# charges de famille visées à l'article 6 bis de l'annexe 1 à la convention
+# collective nationale du 14 mars 1947 sont affectées, à compter du 1er janvier
+# 1995, d'un pourcentage de service égal à : - 96 % à compter du 1er janvier
+# 1995 - 85 % à compter du 1er janvier 1996 - 80 % à compter du 1er janvier
+# 1997 » (accord du 9 février 1994 relatif au régime de retraite des cadres,
+# article 2, recueil de la caisse, page imprimée 16, lu le 3 novembre 2026). Le
+# pourcentage tient à l'année où la majoration est SERVIE, non à celle où le
+# point est acquis : `servi_debut` et `servi_fin` la bornent. Il frappe « 10%
+# pour 3 enfants », « 15% pour 4 enfants », « 20% pour 5 enfants », « 25% pour 6
+# enfants », « 30% pour 7 enfants et + » (COR, séance du 25 mai 2011, document
+# n° 7, page 3 ; une source secondaire, l'article 6 bis d'alors n'étant pas
+# publié en ligne) : 10 × 0,96 = 9,6 %, 15 × 0,96 = 14,4 %, 20 × 0,96 = 19,2 %,
+# 25 × 0,96 = 24 %, 30 × 0,96 = 28,8 % en 1995 ; 10 × 0,85 = 8,5 %,
+# 15 × 0,85 = 12,75 %, 20 × 0,85 = 17 %, 25 × 0,85 = 21,25 %,
+# 30 × 0,85 = 25,5 % en 1996 ; 80 % de 10 à 30 %, 8 à 24 %, depuis 1997, que
+# l'article 6 bis et l'article 94 récrivent tels depuis 2012 pour les points
+# d'avant 2012. Une retraite liquidée avant le 1er mars 1994, date d'effet de
+# l'avenant A-159, garde la majoration entière : la Cour de cassation a jugé
+# ses modifications « illicites en tant qu'elles s'appliquent aux participants
+# dont la retraite a été liquidée avant l'entrée en vigueur de l'accord de
+# révision » (Cass. soc., 23 novembre 1999, n° 97-18.980). Le moteur lit ce gel,
+# et les régimes qui suivent le pourcentage après la date d'effet, dans la
+# fiche `majoration_enfants_agirc_arrco` (`pourcentage_de_service`).
+#
+# `regimes` liste les fiches qui inscrivent ces points ; `acquis_debut` et
+# `acquis_fin`, les années où le point est acquis ; `servi_debut` et
+# `servi_fin`, celles où la majoration est servie ; `bareme`, le taux par
 # nombre d'enfants à partir de zéro, le dernier valant au-delà.
-regimes,acquis_debut,acquis_fin,bareme,fiabilite
-arrco arrco_tranche_2 arrco_tranche_2_entreprises_nouvelles unirs,1900,1998,0 0 0 0.10 0.15 0.20 0.25 0.30,moyenne
-arrco arrco_tranche_2 arrco_tranche_2_entreprises_nouvelles arrco_cultes,1999,2011,0 0 0 0.05,haute
-arrco arrco_tranche_2 arrco_tranche_2_entreprises_nouvelles arrco_cultes,2012,2018,0 0 0 0.10,haute
-agirc agirc_entreprises_nouvelles,1900,2011,0 0 0 0.08 0.12 0.16 0.20 0.24,haute
-agirc agirc_entreprises_nouvelles,2012,2018,0 0 0 0.10,haute
-agirc_arrco arrco_cultes,2019,2100,0 0 0 0.10,haute
+regimes,acquis_debut,acquis_fin,servi_debut,servi_fin,bareme,fiabilite
+arrco arrco_tranche_2 arrco_tranche_2_entreprises_nouvelles unirs,1900,1998,1900,2100,0 0 0 0.10 0.15 0.20 0.25 0.30,moyenne
+arrco arrco_tranche_2 arrco_tranche_2_entreprises_nouvelles arrco_cultes,1999,2011,1900,2100,0 0 0 0.05,haute
+arrco arrco_tranche_2 arrco_tranche_2_entreprises_nouvelles arrco_cultes,2012,2018,1900,2100,0 0 0 0.10,haute
+agirc agirc_entreprises_nouvelles,1900,2011,1900,1994,0 0 0 0.10 0.15 0.20 0.25 0.30,moyenne
+agirc agirc_entreprises_nouvelles,1900,2011,1995,1995,0 0 0 0.096 0.144 0.192 0.24 0.288,moyenne
+agirc agirc_entreprises_nouvelles,1900,2011,1996,1996,0 0 0 0.085 0.1275 0.17 0.2125 0.255,moyenne
+agirc agirc_entreprises_nouvelles,1900,2011,1997,2100,0 0 0 0.08 0.12 0.16 0.20 0.24,haute
+agirc agirc_entreprises_nouvelles,2012,2018,1900,2100,0 0 0 0.10,haute
+agirc_arrco arrco_cultes,2019,2100,1900,2100,0 0 0 0.10,haute

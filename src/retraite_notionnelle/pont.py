@@ -1008,7 +1008,12 @@ def actuel_des_donnees(actuel: dict) -> dict:
             {"code": avantage["code"], "montant": _flottant(avantage["montant"]),
              "detail": avantage["detail"],
              "par_regime": [(regime, _flottant(part))
-                            for regime, part in avantage["par_regime"]]}
+                            for regime, part in avantage["par_regime"]],
+             "par_regime_sans_anticipation": [
+                 (regime, _flottant(part))
+                 for regime, part in avantage["par_regime_sans_anticipation"]],
+             "a_charge": [(depuis, [(regime, _flottant(part)) for regime, part in parts])
+                          for depuis, parts in avantage["a_charge"]]}
             for avantage in actuel["avantages_appliques"]],
         "trimestres_valides": _entier(actuel["trimestres_valides"], "trimestres_valides"),
         "trimestres_requis": _entier(actuel["trimestres_requis"], "trimestres_requis"),
@@ -1050,7 +1055,9 @@ def scenario_actuel(cas: list[dict], paquet: bytes | None = None,
     Python (:func:`scenario_actuel_des_donnees`). ``"actuel"`` en porte la
     pension et, à part, ce qui est hors de la répartition ; chaque pension de
     régime (``regime``, ``montant``, ``detail``) ; chaque avantage appliqué
-    (``code``, ``montant``, et la part de chaque régime, ``par_regime``) ; la
+    (``code``, ``montant``, la part de chaque régime, ``par_regime``, celle
+    que la réversion reprend, ``par_regime_sans_anticipation``, et les étapes
+    de la majoration, ``a_charge``) ; la
     durée validée, le taux, l'ouverture et son motif. À côté : la date du
     départ, le passage aux euros constants, et la réversion, ``None`` sans
     elle (son ``annee``, et chacun de ses ``regimes`` : ``regime``,

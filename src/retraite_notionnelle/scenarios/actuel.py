@@ -1810,13 +1810,20 @@ class MajorationsEnfantsPoints:
     inscrit, et du régime qui l'a inscrit (accord du 17 novembre 2017,
     article 94) : 10 à 30 % pour l'Arrco d'avant 1999, 5 % de 1999 à 2011,
     8 à 24 % pour l'Agirc d'avant 2012, 10 % depuis. Le modèle servait 10 % à
-    tous les points. Voir ``majoration_enfants_points.csv``.
+    tous les points. Les points de l'Agirc d'avant 2012 prennent aussi le
+    pourcentage de service de l'année où la majoration est SERVIE (accord du
+    9 février 1994, article 2) : 10 à 30 % jusqu'en 1994, 96 % de ce barème en
+    1995, 85 % en 1996, 80 % depuis 1997. Voir ``majoration_enfants_points.csv``.
     """
 
     FICHIER = "majoration_enfants_points.csv"
+    #: L'année de service que le barème sert à qui ne la dit pas : la dernière
+    #: que la table borne.
+    SERVI_DEPUIS_TOUJOURS = 2100
 
     def __init__(self, racine: Path) -> None:
-        self._table: dict[str, list[tuple[int, int, tuple[float, ...], Fiabilite]]] = {}
+        self._table: dict[str, list[tuple[int, int, tuple[float, ...], Fiabilite,
+                                          int, int]]] = {}
         chemin = racine / "reference" / "legislation" / self.FICHIER
         if not chemin.exists():
             return
@@ -1828,15 +1835,29 @@ class MajorationsEnfantsPoints:
                     self._table.setdefault(code, []).append((
                         int(ligne["acquis_debut"]), int(ligne["acquis_fin"]),
                         bareme, Fiabilite.depuis_texte(ligne["fiabilite"]),
+                        int(ligne["servi_debut"]), int(ligne["servi_fin"]),
                     ))
 
-    def taux(self, regime: str, annee: int, nombre_enfants: int) -> float | None:
-        """Taux des points que ``regime`` a inscrits en ``annee`` ; ``None``
+    def taux(self, regime: str, annee: int, nombre_enfants: int,
+             annee_service: int | None = None) -> float | None:
+        """Taux des points que ``regime`` a inscrits en ``annee``, servis en
+        ``annee_service`` (la dernière année de la table sans elle) ; ``None``
         quand la table ne dit rien de ce régime ou de cette année."""
-        for debut, fin, bareme, _ in self._table.get(regime, ()):
-            if debut <= annee <= fin:
+        service = self.SERVI_DEPUIS_TOUJOURS if annee_service is None else annee_service
+        for debut, fin, bareme, _, servi_debut, servi_fin in self._table.get(regime, ()):
+            if debut <= annee <= fin and servi_debut <= service <= servi_fin:
                 return bareme[min(nombre_enfants, len(bareme) - 1)]
         return None
+
+    def etapes(self, regime: str, annee: int, nombre_enfants: int,
+               annee_service: int) -> list[tuple[int, float]]:
+        """Les années de service, après ``annee_service``, où le taux des points
+        que ``regime`` a inscrits en ``annee`` change, et le taux de chacune,
+        dans l'ordre : le pourcentage de service de l'Agirc, de 1995 à 1997."""
+        return sorted(
+            (servi_debut, bareme[min(nombre_enfants, len(bareme) - 1)])
+            for debut, fin, bareme, _, servi_debut, _fin in self._table.get(regime, ())
+            if debut <= annee <= fin and servi_debut > annee_service)
 
 
 class DecoteFonctionPublique:

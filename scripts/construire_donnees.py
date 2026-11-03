@@ -135,7 +135,7 @@ CALIBRATIONS = DONNEES / "derive" / "calibrations_mortalite.json"
 #: qu'un site en cache ne lise pas un paquet qu'il ne comprend pas : le site
 #: attend la sienne (``VERSION_PAQUET``, ``moteur/js/contexte.js``), et redemande
 #: au serveur un paquet qui n'a pas celle-là, depuis le 11 octobre 2026.
-VERSION = 39
+VERSION = 40
 
 
 def _serie(serie: SerieAnnuelle) -> dict:
@@ -1980,12 +1980,13 @@ def _surcote_parentale() -> list:
 
 
 def _majoration_enfants_points() -> dict:
-    """Majoration pour enfants des points, par régime et période d'acquisition."""
+    """Majoration pour enfants des points, par régime, période d'acquisition et
+    années de service."""
     from retraite_notionnelle.scenarios.actuel import MajorationsEnfantsPoints
 
     return {
-        code: [[debut, fin, list(bareme), int(fiabilite)]
-               for debut, fin, bareme, fiabilite in lignes]
+        code: [[debut, fin, list(bareme), int(fiabilite), servi_debut, servi_fin]
+               for debut, fin, bareme, fiabilite, servi_debut, servi_fin in lignes]
         for code, lignes in sorted(MajorationsEnfantsPoints(DONNEES)._table.items())
     }
 

@@ -16,7 +16,9 @@ deux dates : la date d'effet (`liquidation.date_effet`) choisit l'accord, et
 son plafond ; la période (`periode.debut`), le taux. Chaque paramètre porte le
 nom de ce qui le porte au dépôt : le barème, la colonne `bareme` de
 `legislation/majoration_enfants_points.csv`, lue sur les années d'acquisition
-que la version couvre en entier, avant sa date d'effet ; le plafond, les
+que la version couvre en entier, avant sa date d'effet, et sur les années de
+service de ses dates d'effet (le pourcentage de service de l'Agirc, accord du
+9 février 1994, article 2) ; le plafond, les
 champs des périodes de chaque régime, lus aux années de liquidation qu'elle
 couvre ; ce que le portage tranche lui-même, dans
 `moteur/js/droit/completer.js`. Ce que le modèle fait autrement, la fiche le
@@ -76,7 +78,7 @@ PREMIER_PLAFOND = r"const PREMIER_PLAFOND_MAJORATION = new DateMois\((\d{4}), (\
 #: Ce que le moteur lit dans la fiche elle-même, à la date d'effet
 #: (`FichesDatees`) : les régimes dont la majoration se calcule sur les droits
 #: sans le coefficient d'anticipation.
-LUS_PAR_LE_MOTEUR = {"sans_anticipation"}
+LUS_PAR_LE_MOTEUR = {"sans_anticipation", "pourcentage_de_service"}
 #: Les régimes de l'Arrco que la fiche majore.
 ARRCO = {"arrco", "arrco_tranche_2", "arrco_tranche_2_entreprises_nouvelles", "arrco_cultes"}
 #: Ce que les textes disent de l'assiette de la majoration, à chaque date
@@ -134,20 +136,29 @@ def _annees_d_acquisition(version: dict) -> range:
 
 
 @functools.cache
-def _lignes_du_bareme() -> tuple[tuple[frozenset, int, int, tuple], ...]:
+def _lignes_du_bareme() -> tuple[tuple[frozenset, int, int, tuple, int, int], ...]:
     chemin = REFERENCE / "legislation" / "majoration_enfants_points.csv"
     with chemin.open(encoding="utf-8", newline="") as flux:
         lignes = csv.DictReader(ligne for ligne in flux if not ligne.startswith("#"))
         return tuple((frozenset(ligne["regimes"].split()), int(ligne["acquis_debut"]),
-                      int(ligne["acquis_fin"]), tuple(float(t) for t in ligne["bareme"].split()))
+                      int(ligne["acquis_fin"]), tuple(float(t) for t in ligne["bareme"].split()),
+                      int(ligne["servi_debut"]), int(ligne["servi_fin"]))
                      for ligne in lignes)
 
 
-def _bareme_porte(code: str, annee: int) -> set:
+def _bareme_porte(code: str, annee: int, services: range) -> set:
     """Les barèmes que la table porte pour les points que le régime inscrit
-    cette année ; rien hors d'elle."""
-    return {bareme for regimes, debut, fin, bareme in _lignes_du_bareme()
-            if code in regimes and debut <= annee <= fin}
+    cette année, servis l'une des années de ``services`` ; rien hors d'elle."""
+    return {bareme for regimes, debut, fin, bareme, servi_debut, servi_fin in _lignes_du_bareme()
+            if code in regimes and debut <= annee <= fin
+            and any(servi_debut <= service <= servi_fin for service in services)}
+
+
+def _annees_de_service(version: dict) -> range:
+    """Les années de ses dates d'effet, où la majoration est servie au départ."""
+    debut, fin = _bornes(version, "liquidation.date_effet")
+    return range(DEBUT if debut is None else debut.year,
+                 HORIZON + 1 if fin is None else (fin - timedelta(days=1)).year + 1)
 
 
 @functools.cache
@@ -239,8 +250,9 @@ def test_le_bareme_de_chaque_version_est_celui_des_points():
         assert sum(len(ligne["regimes"]) for ligne in lignes) == len(lus), version["id"]
         annees = _annees_d_acquisition(version)
         assert annees, version["id"]
+        services = _annees_de_service(version)
         for code in regimes:
-            portes = set().union(*(_bareme_porte(code, annee) for annee in annees))
+            portes = set().union(*(_bareme_porte(code, annee, services) for annee in annees))
             assert portes == ({lus[code]} if code in lus else set()), (version["id"], code, portes)
 
 
@@ -355,8 +367,10 @@ def test_chaque_version_dit_les_regimes_calcules_sans_le_coefficient():
         assert any(citation in citee for citee in citees), version["id"]
 
 
-def _taux(code: str, annee: int, enfants: int) -> float:
-    bareme, = _bareme_porte(code, annee)
+def _taux(code: str, annee: int, enfants: int, service: int = 2017) -> float:
+    """Le taux des points que le régime inscrit cette année, servis en
+    ``service`` : 2017, l'année des exemples du guide."""
+    bareme, = _bareme_porte(code, annee, range(service, service + 1))
     return bareme[min(enfants, len(bareme) - 1)]
 
 

@@ -470,8 +470,10 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
     abattus: list[tuple[str, int, float]] = []
 
     def crediter(code: str, annee: int, points: float, abattu: bool = False) -> None:
+        # Servis à la date d'effet : l'Agirc y prend le pourcentage de service
+        # de son année (accord du 9 février 1994, article 2).
         credits.append((code, annee, points, moteur.majorations_enfants_points.taux(
-            code, annee, carriere.nombre_enfants)))
+            code, annee, carriere.nombre_enfants, carriere.annee_liquidation)))
         if abattu:
             abattus.append((code, annee, points))
     fiabilite_points: dict[str, Fiabilite] = {}

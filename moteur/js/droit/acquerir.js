@@ -400,8 +400,10 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
   // Ceux d'entre eux qui gardent le coefficient pour âge au taux plein.
   const abattus = [];
   const crediter = (code, annee, points, abattu = false) => {
-    credits.push([code, annee, points,
-      moteur.majorationsEnfantsPoints.taux(code, annee, carriere.nombre_enfants)]);
+    // Servis à la date d'effet : l'Agirc y prend le pourcentage de service de
+    // son année (accord du 9 février 1994, article 2).
+    credits.push([code, annee, points, moteur.majorationsEnfantsPoints.taux(
+      code, annee, carriere.nombre_enfants, anneeLiquidation)]);
     if (abattu) {
       abattus.push([code, annee, points]);
     }

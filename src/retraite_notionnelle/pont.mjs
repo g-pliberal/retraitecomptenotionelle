@@ -735,7 +735,8 @@ function simulations({ cas }) {
  * `ScenarioActuel.calculer` — tel que les confrontations le lisent : la
  * pension, et à part ce qui est hors de la répartition ; chaque pension de
  * régime, son montant, son type de calcul et son détail ; chaque avantage
- * appliqué, son montant, son détail et la part de chaque régime ; la durée
+ * appliqué, son montant, son détail, la part de chaque régime, celle que la
+ * réversion reprend et les étapes de la majoration ; la durée
  * validée et la durée requise, le taux ; l'ouverture et son motif ; chaque
  * départ que l'échéancier inscrit, sa date d'effet et son motif.
  */
@@ -745,9 +746,15 @@ function actuelEnDonnees(actuel) {
     pension_hors_repartition: actuel.pension_hors_repartition,
     pensions_par_regime: actuel.pensions_par_regime
       .map(({ regime, montant, type_calcul, detail }) => ({ regime, montant, type_calcul, detail })),
-    avantages_appliques: actuel.avantages_appliques.map(({ code, montant, detail, par_regime }) => ({
+    avantages_appliques: actuel.avantages_appliques.map(({
+      code, montant, detail, par_regime, par_regime_sans_anticipation, a_charge,
+    }) => ({
       code, montant, detail,
       par_regime: (par_regime ?? []).map(([regime, part]) => [regime, part]),
+      par_regime_sans_anticipation: (par_regime_sans_anticipation ?? [])
+        .map(([regime, part]) => [regime, part]),
+      a_charge: (a_charge ?? []).map(([depuis, parts]) => [
+        depuis, parts.map(([regime, part]) => [regime, part])]),
     })),
     trimestres_valides: actuel.trimestres_valides,
     trimestres_requis: actuel.trimestres_requis,
