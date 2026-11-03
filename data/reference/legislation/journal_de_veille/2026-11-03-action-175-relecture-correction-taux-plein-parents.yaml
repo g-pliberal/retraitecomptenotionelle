@@ -1,0 +1,39 @@
+date: "2026-11-03"
+session: "action 175, file R-M4-bis : relecture indépendante de la correction du taux plein à 65 ans des parents de trois enfants (commit e5e8d34, file M4-bis)"
+consulte: >-
+  python scripts/veille_droit.py ; les index LEGI et JORF de la DILA, récupérés dans la
+  session (LEGI à jour au 2 novembre 2026, aucun incrément depuis ; JORF au 3 novembre) :
+  la loi n° 2010-1330, articles 20 (LEGIARTI000023023835) et 28 (LEGIARTI000023023851,
+  LEGIARTI000025014566) ; R. 26 ter (LEGIARTI000024111781), L. 13 (LEGIARTI000028498258),
+  L. 14 (LEGIARTI000037200740) et L. 24 (LEGIARTI000028498845) du code des pensions ; la
+  loi n° 2003-775, article 66 (LEGIARTI000006758610) ; L. 161-17-2 (LEGIARTI000025014605),
+  L. 351-8 (ses six rédactions), L. 382-27 (LEGIARTI000019959668), R. 351-27
+  (LEGIARTI000024113020), R. 723-38 (LEGIARTI000024113046, LEGIARTI000038787833), R. 653-2
+  (LEGIARTI000038770285) ; le décret n° 2003-1306, article 65-3 ; le décret n° 2004-1056,
+  article 50-3 ; le décret n° 2006-1325, article 2 ; le décret n° 73-937, article 3 (ses
+  deux rédactions de 2004 et 2012) ; le règlement du RCI, article 12 (LEGIARTI000054891893,
+  LEGIARTI000054896398) ; le décret n° 2011-620, articles 3, 4 et 10 ; la loi n° 2025-199,
+  article 87 (JORFARTI000051269910). Téléchargés le jour, empreinte recalculée : le recueil
+  des accords de l'Agirc-Arrco (sha256 0186b6b1…), accord du 18 mars 2011, article 1er ;
+  l'accord du 17 novembre 2017 (sha256 b8af8df7…), articles 84 et 98 ; la circulaire Cnav
+  n° 2014-64 (sha256 f6717a0f…) ; la circulaire Agirc-Arrco 2020-02-DRJ du 20 janvier 2020,
+  « Réglementation applicable aux individus » (sha256 52477988…), fiche 3.
+trouve: >-
+  Conforme. Chaque écart de la relecture R-M4 est corrigé ou déclaré ; chaque citation
+  ajoutée à la fiche taux_plein_a_soixante_cinq_ans est exacte, mot pour mot, dans la
+  rédaction en vigueur à la date qui compte ; chaque chiffre se refait à la main (0,95, 0,93
+  et 0,92 à l'Agirc-Arrco ; 70,3125 % au lieu de 75 % pour la fonctionnaire née en 1955 ;
+  6,25 % à la CAVIMAC et aux points d'avant 1973 ; 5 % au RCI) ; aucun calcul n'a changé ;
+  les tests sont verts, sous PRESOMPTIONS_DECALEES=1 aussi. Le point ouvert — de quel âge
+  l'Agirc-Arrco compte depuis 2019 le coefficient de ces parents partis avant 65 ans sans
+  le taux plein — est déclaré, et la circulaire 2020-02-DRJ ne le tranche pas : elle donne
+  67 ans « pour les participants nés à compter du 1er janvier 1955 » sans nommer la
+  dérogation. Trois remarques faibles, sans effet : l'article 98 de l'accord de 2017 et sa
+  note 1 nomment ces parents, que la fiche ne cite pas ; l'accord de 2011 ne les sert sans
+  abattement que « sur les tranches A et B des rémunérations » ; sa clause de « rédaction
+  en vigueur, à la date du présent accord » n'est pas citée.
+reste: >-
+  Rien à corriger dans le travail relu. À la session qui servira les complémentaires à ces
+  parents : garder le coefficient de l'âge aux points de la tranche C d'avant 2016, citer
+  l'article 98 et sa note, et faire trancher le point ouvert par l'Agirc-Arrco (note
+  2026-11-03-relecture-correction-taux-plein-parents.md de l'action 175).
