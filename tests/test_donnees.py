@@ -389,10 +389,12 @@ def test_une_annee_non_mesuree_ne_se_dit_pas_certifiee():
     assert effectifs.fiabilite("cnav", 2022) == Fiabilite.CERTIFIEE
 
     # Et un BARÈME garde son niveau entre deux changements : la loi de 2016 est
-    # celle de 2015, et c'est la loi qui le dit, pas une interpolation.
+    # celle de 2015, et c'est la loi qui le dit, pas une interpolation. La
+    # série de l'ASPA n'a plus de trou depuis le 3 novembre 2026 (action 178,
+    # étape 5) : le maximum de pension des cultes, dont la table saute 1998.
     minimum = charger_serie_annuelle(
-        RACINE_DONNEES / "reference" / "legislation" / "minimum_vieillesse.csv",
-        "valeur", nom="minimum_vieillesse")
+        RACINE_DONNEES / "reference" / "legislation" / "cultes_maximum_pension.csv",
+        "valeur", nom="cultes_maximum_pension")
     annees = list(minimum.annees())
     trou = next(a + 1 for a, b in zip(annees, annees[1:]) if b - a > 1)
     assert minimum.fiabilite(trou) == minimum.fiabilite(trou - 1)

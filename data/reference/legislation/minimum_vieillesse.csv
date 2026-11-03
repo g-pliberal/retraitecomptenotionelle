@@ -32,9 +32,12 @@
 # de la retirer d'un seul geste : ce n'est pas une pension, c'est une aide
 # sociale, récupérable sur les successions au-delà d'un seuil.
 #
-# Montants MENSUELS MAXIMAUX d'une personne seule, portés ici à l'année. Ce
-# sont les valeurs au 1er janvier ; la revalorisation supplémentaire du
-# 1er juillet 2022 n'est pas retenue, le modèle travaillant à l'année.
+# Montants MENSUELS MAXIMAUX d'une personne seule, portés ici à l'année. Chaque
+# année porte le montant en vigueur à son 31 décembre — celui d'octobre en
+# 2014, de septembre en 2008, d'avril les années où la revalorisation tombait
+# en avril —, sauf 2022, qui porte celui du 1er janvier : la revalorisation
+# supplémentaire du 1er juillet 2022 n'est pas retenue, le modèle travaillant
+# à l'année (inscrit, « à reprendre », action 138, étape 2).
 #
 # Entre deux valeurs connues, et au-delà de la dernière, le montant est projeté
 # sur les prix depuis l'ancre EN VIGUEUR. Jusqu'en 2006, le scénario 1 ne lit
@@ -57,6 +60,16 @@
 # d'ailleurs et restent `haute` — transcriptions de publications, jamais
 # `certifiee`.
 #
+# 2008, 2013 ET 2015 MANQUAIENT, et le modèle les ramenait sur les prix depuis
+# l'année d'avant : 7 664,96 € pour 2008, 9 407,30 € pour 2013, 9 603,84 € pour
+# 2015, ces deux-là sous le niveau `certifiee` de leur ancre. Ils viennent
+# depuis le 3 novembre 2026 (action 178, étape 5) du barème « Montant de
+# l'allocation de solidarité aux personnes âgées » de la Cnav, qui donne
+# l'annuel à chaque date : 7 597,59 € au 1er septembre 2008 (circulaire Cnav
+# 2008/45), 9 447,21 € au 1er avril 2013 (2013/29), et en 2015 les 9 600 €
+# d'octobre 2014 (2014/58), que rien n'a revalorisés. Le panorama de la DREES
+# de 2026 les redonne au centime (fiche 26, graphique 2, au 31 décembre).
+#
 # LE MONTANT EST ANNUEL, ET CELA A CORRIGÉ UNE VALEUR. Le dépôt portait le
 # mensuel maximal multiplié par douze — 708,95 × 12 = 8 507,40 € pour 2010 ;
 # l'article fixe 8 507,49 € par an, dont le mensuel arrondi se déduit. Neuf
@@ -64,11 +77,14 @@
 annee,valeur,fiabilite
 2006,7323.480000,certifiee
 2007,7455.240000,moyenne
+2008,7597.590000,haute
 2009,8125.590000,certifiee
 2010,8507.490000,certifiee
 2011,8907.340000,certifiee
 2012,9325.980000,certifiee
+2013,9447.210000,haute
 2014,9600.000000,certifiee
+2015,9600.000000,haute
 2016,9609.600000,haute
 2017,9638.400000,haute
 2018,9998.400000,certifiee

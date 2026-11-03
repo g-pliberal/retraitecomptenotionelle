@@ -213,6 +213,22 @@ def test_avant_2007_le_minimum_vieillesse_tient_en_deux_etages(simulateur):
         assert _erreurs(_etape("foyer_et_net").valider(foyer_.donnees(), "foyer")) == []
 
 
+def test_l_aspa_d_une_personne_seule_suit_le_bareme_de_la_cnav_les_annees_que_la_table_taisait(
+        simulateur):
+    """Action 178, étape 5. La table d'une personne seule sautait 2008, 2013 et
+    2015, et le modèle les remplissait en ramenant sur les prix le montant de
+    l'année d'avant : 7 664,96 € pour 2008, quand la caisse sert 7 597,59 € par
+    an depuis le 1er septembre 2008 ; 9 407,30 € pour 2013, contre 9 447,21 €
+    depuis le 1er avril ; 9 603,84 € pour 2015, que rien n'a revalorisé depuis
+    les 9 600 € d'octobre 2014. Le barème « Montant de l'allocation de
+    solidarité aux personnes âgées » de la Cnav (circulaires 2008/45, 2013/29
+    et 2014/58), que le panorama de la DREES redonne au centime (fiche 26,
+    graphique 2) : le montant en vigueur au 31 décembre, comme pour le couple."""
+    minimum = simulateur.scenario_actuel.minimum_vieillesse
+    assert [minimum.plafond(annee)[0] for annee in (2008, 2013, 2015)] == pytest.approx(
+        [7597.59, 9447.21, 9600.00], abs=1e-6)
+
+
 @pytest.mark.parametrize("nom", sorted(CARRIERES))
 def test_la_liquidation_suit_le_contrat_c6(simulateur, nom):
     """Ses composantes — une pension par régime, puis la majoration pour

@@ -1616,6 +1616,19 @@ test("avant 2007, le minimum vieillesse tient en deux étages", () => {
 });
 
 /**
+ * Le portage de `test_l_aspa_d_une_personne_seule_suit_le_bareme_de_la_cnav_les_annees_que_la_table_taisait`
+ * (tests/test_liquidation.py) : 2008, 2013 et 2015 au barème de la Cnav, au
+ * 31 décembre, et non le montant de l'année d'avant ramené sur les prix.
+ */
+test("l'ASPA d'une personne seule suit le barème de la Cnav les années que la table taisait", () => {
+  const minimum = new MinimumVieillesse(paquet, new DonneesMacro(paquet));
+  for (const [annee, attendu] of [[2008, 7597.59], [2013, 9447.21], [2015, 9600.0]]) {
+    const [montant] = minimum.plafond(annee);
+    assert.ok(Math.abs(montant - attendu) < 1e-6, `${annee} : ${montant} contre ${attendu}`);
+  }
+});
+
+/**
  * Le portage de `test_avant_1972_le_trimestre_se_valide_au_trimestre_de_l_avts`
  * (tests/test_salaire_annuel_moyen.py) : R. 351-9, 18 F de 1946 à 1948, puis le
  * trimestre de l'allocation aux vieux travailleurs salariés au 1er janvier.

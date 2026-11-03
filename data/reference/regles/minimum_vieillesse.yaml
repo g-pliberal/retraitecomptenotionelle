@@ -56,7 +56,7 @@ effet: >-
   1956, et au montant des villes de plus de 5 000 habitants jusqu'en 1961. Ces montants
   sont relus au Journal officiel, ligne entière, de 1982 à 2003 (13 octobre 2026).
 sources:
-  lu_le: 2026-10-13
+  lu_le: 2026-11-03
   prochaine_relecture: 2027-01-31
   a_relire:
   - >-
@@ -174,6 +174,18 @@ sources:
       1991 : le plafond du couple la borne, ce que la notice du n° 87-78 chiffre
       (14 865 F) sans que l'article l'écrive
     date: 2003-01-01
+  - type: circulaire_cnav
+    reference: >-
+      base législative de la Cnav, barème « Montant de l'allocation de solidarité
+      aux personnes âgées » (`aspa_montant_bar`), par son API
+      (`cnav_minimum_vieillesse.py`), relu le 3 novembre 2026 (action 178, étape 5)
+      pour une personne seule : le montant annuel à chaque date, avec la circulaire
+      qui le fixe — 7 597,59 € au 1er septembre 2008 (2008/45), 9 447,21 € au
+      1er avril 2013 (2013/29), 9 600 € au 1er octobre 2014 (2014/58), puis rien
+      avant le 1er avril 2016 —, que la table n'avait pas et que le modèle
+      ramenait sur les prix ; le panorama de la DREES de 2026 (fiche 26,
+      graphique 2) les redonne au 31 décembre, au centime
+    date: 2025-12-22
 textes_a_rattacher:
 - id: LEGIARTI000006745108
   reference: L. 814-2 CSS, rédaction de 1990, le premier étage avant l'ASPA
