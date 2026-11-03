@@ -93,6 +93,7 @@ import {
   MOIS_DE_GUERRE_MAXIMUM, TRAJECTOIRES_EMPLOI, TRAVAUX_MANUELS, UNITES_REVENU, age, entier, estEntier, jourEnClair,
   CATEGORIES_INVALIDITE,
   ABATTEMENTS_MICRO, ACTIVITES_MICRO, MALADIE_MICRO, STATUT_MICRO, BAREMES_LODEOM,
+  DEPARTEMENTS_OUTRE_MER,
   ASSIETTES_COLLABORATEUR, PARTS_COLLABORATEUR, INDICES, STATUTS_A_L_INDICE,
   nombreBrut, parmi, reel, refus,
 } from "./saisie.js";
@@ -1039,6 +1040,13 @@ export function formulaire(saisie, contexte, comparaison = null) {
       "« 2016:2019:rsa » : au RSA de 2016 à 2019, séparées par des virgules", "text",
       { autocomplete: "off", spellcheck: "false" },
       aideDesDispenses(contexte.paquet)),
+    // LES ANNÉES OUTRE-MER (action 177, étape 7) : facultatives, par années
+    // entières comme les dispenses. Sans elles, toute la carrière se passe en
+    // métropole.
+    g.champ("outre_mer", "Années outre-mer", saisie.outre_mer,
+      "« 1975:1994:reunion » : à La Réunion de 1975 à 1994", "text",
+      { autocomplete: "off", spellcheck: "false" },
+      aideDeLOutreMer(contexte.paquet)),
     // LA LODEOM (action 138, étape 18 ; bloc lodeom des prélèvements) :
     // facultative. Outre-mer, l'exonération de l'employeur remplace la réduction
     // générale ; seule la fiche de paie du salarié du privé la lit.
@@ -2174,6 +2182,35 @@ function aideDesDispenses(paquet) {
     + `peu. Les textes vous en dispensent : ${motifs.join(" ; ")}. Ces années-là, `
     + "vous ne cotisez que sur votre revenu, et ne validez que ce qu'il valide. "
     + "Si vous avez demandé à cotiser sur l'assiette minimale, ne déclarez rien.";
+}
+
+/** Où se passent les années de chaque département, pour la bulle du champ. */
+const LIEUX_D_OUTRE_MER = Object.freeze({
+  guadeloupe: "en Guadeloupe", guyane: "en Guyane", martinique: "en Martinique",
+  reunion: "à La Réunion",
+});
+
+/**
+ * La bulle du champ des années outre-mer (action 177, étape 7) : chaque
+ * département sous son code (`DEPARTEMENTS_OUTRE_MER`), ce que ses années
+ * changent — le seuil du trimestre jusqu'en 1995 (R. 753-21, R. 351-9), et
+ * l'exonération de l'indépendant sous le montant que le paquet porte
+ * aujourd'hui (`exoneration_independants_outre_mer`, L. 756-3, D. 756-7) —,
+ * et Mayotte, qui se dit par le statut.
+ */
+function aideDeLOutreMer(paquet) {
+  const lieux = DEPARTEMENTS_OUTRE_MER.map((code) => `${LIEUX_D_OUTRE_MER[code]} (« ${code} »)`);
+  const [, , , montant] = (paquet.exoneration_independants_outre_mer ?? [])
+    .find(([, , fin]) => fin === null) ?? [];
+  const exoneration = montant === undefined ? ""
+    : " L'artisan ou le commerçant dont le revenu de l'année n'y dépasse pas "
+      + `${g.euros(montant)} ne cotise pas, et l'année ne lui ouvre aucun droit.`;
+  return `Les années travaillées ${lieux.slice(0, -1).join(", ")} ou ${lieux.at(-1)}. `
+    + "Jusqu'en 1995, le salaire minimum y était plus bas qu'en métropole : un "
+    + `trimestre s'y validait sur un plus petit salaire.${exoneration} Toute `
+    + "activité de ces années le porte, celles d'un relevé comprises : nommez-les "
+    + "jusqu'à votre départ si vous y travaillez encore. Mayotte se dit par le "
+    + "statut de la période, salarié ou travailleur indépendant de Mayotte.";
 }
 
 /** Le bloc `lodeom` du salarié du privé, au paquet. */

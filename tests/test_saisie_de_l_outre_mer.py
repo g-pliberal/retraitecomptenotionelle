@@ -25,7 +25,7 @@ import pytest
 
 from retraite_notionnelle import chronologie as chrono
 from retraite_notionnelle.carriere import Metier
-from retraite_notionnelle.web.site import ErreurSite, module
+from retraite_notionnelle.web.site import ErreurSite, module, rendre
 
 from outils_pont import Saisies, saisie_du_portage
 from outils_web import page  # noqa: F401 — la fixture partagée
@@ -158,7 +158,7 @@ def test_sous_390_euros_l_artisan_des_dom_ne_valide_rien(saisies):
 def _texte(fragment: str) -> str:
     """Le texte d'un fragment de page, balises ôtées, espaces fines comprises."""
     return re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", "", fragment))
-                  .replace(" ", " ").replace("\xa0", " ")).strip()
+                  .replace("\u202f", " ").replace("\xa0", " ")).strip()
 
 
 def test_le_controle_du_releve_lit_le_seuil_du_departement(page):
@@ -298,3 +298,35 @@ def test_la_chronologie_d_un_parcours_porte_les_annees_outre_mer_dans_les_deux_m
         cwd=RACINE, capture_output=True, text=True, encoding="utf-8", check=False)
     assert execution.returncode == 0, execution.stderr
     assert json.loads(execution.stdout) == attendu
+
+
+# -- le formulaire ------------------------------------------------------------------
+
+def test_le_formulaire_demande_les_annees_outre_mer_dans_ses_options():
+    """Le champ paraît dans les options, repliées : il ne coûte rien au
+    formulaire vierge (``test_le_simulateur_tient_en_peu_de_mots``). Il garde
+    ce qu'on a dit, et nomme sous son point d'interrogation chaque département
+    sous son code, et le montant de l'exonération que le paquet porte
+    aujourd'hui (``exoneration_independants_outre_mer``)."""
+    corps = rendre("/simuler", {"outre_mer": "1975:1994:reunion"})[1]
+    bloc = re.search(r'<div><label for="outre_mer">.*?</div>', corps, re.S)
+    assert bloc, "le formulaire n'a pas de champ des années outre-mer"
+    assert 'name="outre_mer" value="1975:1994:reunion"' in bloc.group(0)
+    for code in module("saisie").DEPARTEMENTS_OUTRE_MER:
+        assert f"« {code} »" in bloc.group(0), code
+    paquet = json.loads((RACINE / "moteur" / "donnees.json").read_text(encoding="utf-8"))
+    *_, (_, _, fin, euros) = paquet["exoneration_independants_outre_mer"]
+    assert fin is None and f"{euros:g} €" in _texte(bloc.group(0))
+    assert '<label for="outre_mer">' in _options_de_modelisation(corps)
+
+
+def _options_de_modelisation(corps: str) -> str:
+    """Le dépliant des « Options de modélisation », jusqu'à sa propre
+    fermeture : il en contient d'autres, et la page en a d'autres avant lui."""
+    debut = corps.rindex('<details class="options">', 0, corps.index("Options de modélisation"))
+    profondeur = 0
+    for balise in re.finditer(r"<details\b|</details>", corps[debut:]):
+        profondeur += -1 if balise.group(0) == "</details>" else 1
+        if profondeur == 0:
+            return corps[debut:debut + balise.end()]
+    raise AssertionError("les options de modélisation ne se ferment pas")
