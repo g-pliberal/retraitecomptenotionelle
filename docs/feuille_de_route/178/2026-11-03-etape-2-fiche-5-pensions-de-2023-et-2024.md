@@ -6,8 +6,10 @@ confrontations des fiches 5 (par régime, tableaux 2 et 4), 8 et 15, que
 l'étape 4, close, n'a pas vues ; le reste aux étapes 5 et 6, fiche par fiche
 (`data/reference/drees_panorama_2026.yaml`) ; à la session de l'action 138,
 étape 3, une ligne dans sa note du taux effectif (point 2 de son « Ce qui
-reste ») : le taux de 2022, tenu, n'était pas bas d'un demi-point. Au
-propriétaire, rien. Détail : plus bas, « Ce que la source ne tranche pas ».
+reste ») : selon la mesure de la DREES, +0,05 point en 2023, le taux de 2022
+n'était pas bas d'un demi-point ; l'écart d'environ 0,4 point avec la CSG de
+la CCSS, citée et non relue, reste ouvert. Au propriétaire, rien. Détail :
+plus bas, « Ce que la source ne tranche pas ».
 
 **La demande.** Vague 5 du 3 novembre 2026 : le propriétaire a dit oui à la
 question de l'étape 2 — porter à `pensions_brutes_nettes.csv` les montants de
@@ -38,15 +40,17 @@ En euros courants par mois. Les soixante valeurs de 2008 à 2022 (lignes 12 à
 du tableau 2.1-a ; lues deux fois, par `openpyxl` et par le lecteur du dépôt
 (`lecture_xlsx`), sans écart.
 
-**Le champ, et pourquoi celui-là.** Le tableau 1 imprimé (page 55 du PDF,
-ouvert ici à l'empreinte du manifeste, `9eb36a06…735e9be` ; feuille
+**Le champ, et pourquoi celui-là.** Le tableau 1 imprimé (folio 55, page 56
+du fichier PDF, ouvert ici à l'empreinte du manifeste, `9eb36a06…735e9be` ; feuille
 « F05_Tableau 1 » du classeur) ne compte que les résidents en France : 1 752 €
 bruts et 1 626 € nets de droit direct fin 2024 (F27, G27), 1 920 € et 1 785 €
 toutes pensions (J27, K27), les mêmes au PDF. Le fichier porte, depuis le 24 octobre, les
 retraités résidant en France ou à l'étranger : c'est le champ du tableau 2.1-a
-qu'il certifie, et celui de la dépense à laquelle le modèle applique le taux,
-qui paie aussi les pensions servies à l'étranger, sans CSG. Le tableau 1 aurait
-cassé la série en 2023 et compté pour nulle l'exonération des non-résidents.
+qu'il certifie, et le tableau 1 aurait cassé la série en 2023. Hypothèse, non
+prouvée ici : la dépense à laquelle le modèle applique le taux compte aussi les
+pensions servies à l'étranger, qui ne paient pas la CSG ; aucune source du
+dépôt ne le dit (l'en-tête de `pensions_droits.csv` est muet), et le choix du
+champ n'en dépend pas.
 
 **Ce qui est fait**, test d'abord, chaque test vu rouge pour la raison
 attendue avant le code.
@@ -103,8 +107,11 @@ d'un demi-point » : la borne par les têtes d'Ancetre sautait de 5,4 % à 6,1 %
 en 2023 (22,3 % d'exonérés de droit direct contre 30,3 %), et la CSG des
 retraites de la CCSS, 23,7 Md€ en 2023, faisait 6,3 % des masses de la DREES,
 « à quoi la CRDS, la CASA et la cotisation maladie ajoutent près d'un point ».
-La DREES mesure 6,86 % en 2023 : le demi-point n'y est pas. Le panorama ne dit
-pas pourquoi le compte de la CCSS et le sien diffèrent, ni d'où vient la
+La DREES mesure 6,86 % en 2023, +0,05 point : selon sa mesure, le demi-point
+n'y est pas. Mais les chiffres de la CCSS, tels que la note les cite, mènent
+vers 7,3 % environ : reste un écart d'environ 0,4 point que la mesure de la
+DREES n'explique pas. Le panorama ne dit pas pourquoi le compte de la CCSS et
+le sien diffèrent, ni d'où vient la
 baisse des exonérés d'Ancetre 2023 : ces deux points restent ouverts, et ces
 chiffres de la CCSS et d'Ancetre n'ont pas été relus ici, seulement cités de
 la note. La feuille dit aussi (B31) : « Après correction d'une erreur dans
