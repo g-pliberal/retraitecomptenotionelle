@@ -7619,16 +7619,16 @@ avec son test. Le modèle et le site gardent PyYAML seul.
 
 ### 177. Les écarts que les barèmes de la Cnav ont trouvés au modèle : chacun corrigé dans les deux moteurs, ou sa limite dite — `en cours`
 
-**Reprise, au 3 novembre 2026.** Les étapes 1 à 6 et 8 sont faites ; la 9 est
-lue : jusqu'aux revenus de 2008, le RCO des artisans cotise sur le revenu de
-l'avant-dernière année, un tiers puis la moitié du plafond les deux premières,
-le NRCO de 2004 à 2008 de même, quand le modèle prend l'année même : de 5 à
-11 % du RCO ; deux autres écarts vus en chemin (`177/2026-11-03-etape-9-assiette-du-rco-des-artisans.md`).
-Par quoi commencer : la réponse du propriétaire, la règle ou la limite ; puis
-les taux de Mayotte (étape 8). La file du site mène l'étape 7 en même temps, et
-l'assurance maladie : sa note va sous `177/`, sans toucher à ce bloc. Un écart
-par commit, le test vu rouge d'abord ; des règles du scénario 1, sur Opus,
-après `python scripts/veille_droit.py`.
+**Reprise, au 3 novembre 2026.** Les étapes 1 à 6, 8 et 9 sont faites ; la 9
+est écrite dans les deux moteurs : l'avant-dernière année du RCO et du NRCO
+jusqu'en 2008, les forfaits de début de l'artisan, le 0,10 % de 1985 à 1996
+sans points (fiche `assiette_rco_independants`). Restent déclarés le minimum de
+la cotisation jusqu'en 2015, à lire d'abord (D. 633-2, D. 612-6), et le
+forfait du commerçant qui commence (`177/2026-11-03-etape-9-assiette-du-rco-ecrite.md`).
+Par quoi commencer : les taux de Mayotte (étape 8) ; en 2026, le décret, 150 €
+le trimestre (propriétaire). La file du site mène l'étape 7 et l'assurance
+maladie : sa note va sous `177/`, sans toucher à ce bloc. Un écart par commit,
+le test vu rouge d'abord ; sur Opus, après `python scripts/veille_droit.py`.
 
 **D'où elle vient.** Le 31 octobre 2026, l'étape 2 de l'action 175 — les
 barèmes de la base de législation de la Cnav confrontés, un à un, aux séries

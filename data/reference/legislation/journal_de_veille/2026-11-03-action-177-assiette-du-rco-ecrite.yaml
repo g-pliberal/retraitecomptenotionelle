@@ -1,0 +1,40 @@
+date: "2026-11-03"
+session: "action 177, étape 9, la file M2 : l'assiette du RCO des artisans et du NRCO des commerçants, écrite dans les deux moteurs"
+consulte: >-
+  `python scripts/veille_droit.py` : aucune fiche des artisans ni des commerçants à
+  relire. Les index LEGI (à jour au 2 novembre 2026) et JORF (un incrément du 3 novembre)
+  récupérés et mis à jour. Relus dans l'index LEGI, à leur version en vigueur : le décret
+  n° 78-351, articles 3 à 6 et 12, rédactions de 1978 et du 1er janvier 1985
+  (LEGIARTI000006766103 à LEGIARTI000006766108, LEGIARTI000006766114) ; toutes les
+  rédactions de D. 635-1, D. 635-2, D. 635-4, D. 635-6, D. 635-7, D. 635-10, D. 635-10-2,
+  D. 633-6, D. 633-19-2 de 1985 à 2016, de L. 131-6 de 2003 à 2005, de R. 242-16 de 2002 à
+  2008, et D. 742-24. Dans l'index JORF : le décret n° 2008-1427, article 1er
+  (JORFARTI000019996956), le décret n° 2011-2038, sa notice et ses articles 1er à 4
+  (JORFTEXT000025055789, JORFARTI000025055794 à JORFARTI000025055807). Dans la base de
+  législation de la Cnav : les exposés « Points cotisés artisans avant 2013 » (24 octobre
+  2025) et « Rachat aide familial » (14 octobre 2026).
+trouve: >-
+  La note de l'étape 9 se confirme texte à texte, et le propriétaire a décidé le
+  3 novembre 2026 de corriger le modèle. Écrit dans les deux moteurs, un écart par commit :
+  jusqu'aux cotisations de 2008, le RCO des artisans assis sur le revenu de
+  l'avant-dernière année, borné aux plafonds de l'année due ; les deux premières années
+  de l'artisan au tiers puis à la moitié du plafond de la sécurité sociale, jusqu'en 2011
+  (l'exposé « Rachat aide familial » de la caisse lit « le tiers du plafond visé au
+  premier alinéa du I » comme celui de la sécurité sociale) ; le NRCO des commerçants de
+  2004 à 2008 de même ; la cotisation additionnelle de 0,10 % de 1985 à 1996 sans points
+  (article 6 du décret n° 78-351 au 1er janvier 1985, D. 635-7 de 1985, et la caisse :
+  « Cette cotisation n'etait pas génératrice de droit »). Trouvé en chemin : la
+  complémentaire du conjoint collaborateur reste sur l'assiette de sa cotisation de base,
+  sans régularisation (D. 635-10-2) ; le forfait du commerçant qui commence renvoie à
+  L. 131-6, dix-huit puis vingt-sept fois la base mensuelle des allocations familiales
+  (R. 242-16), qu'aucun texte lu ne dit régularisé ou non. Fiche nouvelle :
+  `assiette_rco_independants`, lue au droit. Décision du propriétaire, le même jour : à
+  Mayotte en 2026, le décret (150 € par trimestre) plutôt que le barème de la caisse
+  (250 €), qui reste un écart déclaré (fiche `mayotte_pension_de_base`).
+reste: >-
+  Le minimum de la cotisation (décret n° 78-351, article 3, I ; D. 635-4 ; D. 635-2
+  jusqu'en 2015) : les rédactions de D. 633-2 et de D. 612-6, la condition de
+  quatre-vingt-dix jours, le micro-entrepreneur, à lire avant de l'écrire. Le forfait du
+  commerçant qui commence, et celui de l'artisan de 2009 à 2011 : régularisés ou non. Le
+  règlement du RCO des artisans de 1978, que l'index ne porte pas : la reprise
+  d'activité, l'assiette inférieure sur demande motivée.

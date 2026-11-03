@@ -260,6 +260,7 @@ LUES_AU_DROIT = frozenset("""
     cultes_salaire_annuel_moyen cultes_retraite_complementaire
     majoration_enfants_agirc_arrco coefficients_anticipation_agirc_arrco
     taux_plein_a_soixante_cinq_ans
+    assiette_rco_independants
 """.split())
 
 

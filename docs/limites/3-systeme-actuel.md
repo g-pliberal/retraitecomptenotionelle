@@ -245,6 +245,24 @@ l'Institut des politiques publiques (PENSIPP). Écarts connus :
   sur trois carrières types (feuille de route, action 177, étape 5) : moins
   d'un centième de la retraite de base quand ces années comptent parmi les
   meilleures, rien sinon ; l'année du départ n'est pas mesurée.
+- **assiette de la complémentaire des artisans et des commerçants** — le
+  modèle sert, depuis le 3 novembre 2026, ce que la fiche
+  `assiette_rco_independants` lit au droit : jusqu'aux cotisations de 2008, le
+  RCO des artisans et le NRCO des commerçants assis sur le revenu de
+  l'avant-dernière année, sans ajustement ; l'artisan qui commence au tiers
+  puis à la moitié du plafond, jusqu'en 2011 ; la cotisation additionnelle de
+  1985 à 1996 sans points. Il ne sert pas le minimum de la cotisation, le
+  revenu minimum du régime de base jusqu'en 2012, puis l'assiette de ce
+  régime dès quatre-vingt-dix jours d'affiliation jusqu'en 2015 (D. 635-2),
+  dont les modalités restent à lire ; ni le forfait du commerçant qui
+  commence, dix-huit puis vingt-sept fois la base mensuelle des allocations
+  familiales (D. 635-10, R. 242-16), dont aucun texte lu ne dit s'il était
+  régularisé : il garde le revenu de ses deux premières années ; ni
+  l'assiette inférieure accordée sur demande motivée. Il tient pour un début
+  d'exercice la reprise après une année sans activité, ce que le texte ne dit
+  pas et que R. 242-16 dit des cotisations de début d'activité, et prend le
+  forfait et le revenu de l'avant-dernière année à proportion des mois de
+  l'exercice. Non mesuré.
 - **rachats et versements** — le modèle ne pratique ni les rachats ni les
   versements pour la retraite (fiche `rachats_et_versements`, pas encore
   modélisée), dont la base de législation de la Cnav publie les barèmes : le

@@ -298,7 +298,10 @@ approximations:
     des artisans et des commerçants de la métropole, quand celui de Mayotte est de
     10,75 % (150 €) ; en 2025, ses 135 € sont bien 10,05 % de 1 347 €. Le modèle valide
     au revenu cotisé, comme le décret n° 2003-589 (article 8) et la circulaire qui
-    publie le barème : l'écart est déclaré dans tests/test_cnav_baremes.py.
+    publie le barème : l'écart est déclaré dans tests/test_cnav_baremes.py. Décision
+    du propriétaire, le 3 novembre 2026 : le modèle garde le décret, 150 € par
+    trimestre en 2026, et non les 250 € du barème de la caisse, qui reste un écart
+    déclaré (action 177, étape 9).
   effet: >-
     les non-salariés de Mayotte de 2026 dont la cotisation tombe entre 150 € et 250 € par
     trimestre : le modèle leur valide un à trois trimestres de plus que le barème, trois

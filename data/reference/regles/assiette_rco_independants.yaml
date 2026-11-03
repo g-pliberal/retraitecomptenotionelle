@@ -1,0 +1,611 @@
+schema_version: 1
+id: assiette_rco_independants
+intitule: >-
+  La complémentaire obligatoire des artisans (1979-2012) et celle des industriels et
+  commerçants (2004-2012) cotisent, jusqu'aux cotisations de 2008, sur le revenu
+  professionnel de l'avant-dernière année, sans ajustement, dans la limite de trois
+  plafonds, quatre depuis 1997 (trois pour les commerçants), de l'année où la cotisation
+  est due ; depuis les revenus de 2009, sur celui de l'année, après régularisation.
+  L'artisan qui commence cotise l'année de son début sur un tiers du plafond, la
+  suivante sur la moitié, jusqu'en 2011. Les points de l'exercice sont sa cotisation,
+  divisée par le revenu de référence, sans la cotisation additionnelle de 0,10 % due de
+  1985 à 1996. Le conjoint collaborateur cotise sur l'assiette de sa cotisation de base.
+domaine: cotisations
+regimes: [rco_artisans, nric]
+etape: acquerir_les_droits
+face: droit
+etat: approchee
+lit:
+- >-
+  le revenu de chaque année d'artisan ou de commerçant, et celui des deux années qui
+  la précèdent dans la même affiliation
+- la part de l'année que la ligne couvre, au mois
+- le plafond annuel de la sécurité sociale de l'année de la cotisation
+ecrit:
+- >-
+  les points de l'exercice au RCO des artisans et au NRCO des commerçants (`acquerir`)
+dates_qui_decident:
+- revenu.annee
+versions:
+- id: avant_1979
+  statut: lue
+  textes:
+  - id: LEGIARTI000006766114
+    article: "décret n° 78-351 du 14 mars 1978, article 12"
+    en_vigueur: 1978-03-19
+    lu_le: 2026-11-03
+    citation: >-
+      Le présent décret entrera en vigueur : Pour l'obligation de cotiser, le 1er
+      janvier 1979 ; Pour l'entrée en jouissance des prestations, le 1er avril 1979.
+  nee_de: LEGIARTI000006766114
+  bornes:
+    revenu.annee: [null, 1979-01-01]
+  contenu:
+    parametres: {}
+    droit: >-
+      aucune cotisation à une complémentaire obligatoire des artisans ni des commerçants :
+      l'obligation de cotiser naît le 1er janvier 1979 pour les artisans, le 1er janvier
+      2004 pour les commerçants
+    conditions: aucune
+  exemples: aucun trouvé
+- id: avant_derniere_annee_1979
+  statut: lue
+  textes:
+  - id: LEGIARTI000006766103
+    article: "décret n° 78-351 du 14 mars 1978, article 3"
+    en_vigueur: 1978-03-19
+    lu_le: 2026-11-03
+    citation: >-
+      I - Pour les assurés en activité autres que ceux visés aux II et III ci-après, la
+      cotisation annuelle du régime d'assurance vieillesse complémentaire est assise sur
+      les revenus professionnels non-salariés de l'avant-dernière année civile déclarés
+      dans les conditions fixées à l'article 3 du décret du 22 janvier 1973 susvisé et
+      dans la limite d'un plafond égal à trois fois celui visé à l'article L. 663-9 du
+      code de la sécurité sociale en vigueur dans l'année où la cotisation est due. [...]
+      II - Pour les assurés commençant l'exercice d'une activité artisanale ou assimilée,
+      la cotisation annuelle d'assurance vieillesse complémentaire est assise : a) Pour
+      l'année ou la fraction d'année de début d'exercice, sur un revenu correspondant au
+      tiers du plafond visé au premier alinéa du I du présent article ; b) Pour l'année
+      suivante, sur un revenu correspondant à la moitié dudit plafond. III - Pour les
+      aides familiaux, la cotisation annuelle d'assurance vieillesse complémentaire est
+      assise sur un revenu égal au tiers du plafond visé au premier alinéa du I du
+      présent article.
+  - id: LEGIARTI000006766105
+    article: "décret n° 78-351 du 14 mars 1978, article 5"
+    en_vigueur: 1978-03-19
+    lu_le: 2026-11-03
+    citation: >-
+      I - Le taux de la cotisation annuelle d'assurance vieillesse complémentaire est
+      fixé à 4,40 p. 100 du revenu visé aux articles 3 et 4. [...] IV - Les articles 12
+      à 14, 16 et 18 du décret du 22 janvier 1973 susvisé sont applicables à la
+      cotisation d'assurance vieillesse complémentaire.
+  - id: LEGIARTI000006766107
+    article: "décret n° 78-351 du 14 mars 1978, article 6"
+    en_vigueur: 1978-03-19
+    lu_le: 2026-11-03
+    citation: >-
+      I - Il est ouvert, au nom de chacun des assurés, un compte de points de retraite ;
+      le nombre de points portés à ce compte chaque année est déterminé en divisant le
+      montant des cotisations de l'assuré afférentes à l'exercice par un revenu de
+      référence.
+  nee_de: LEGIARTI000006766103
+  bornes:
+    revenu.annee: [1979-01-01, 1985-01-01]
+  contenu:
+    parametres:
+      annees_de_decalage: 2
+      diviseurs_du_plafond_au_debut: [3, 2]
+      plafonds_de_l_assiette: 3
+      taux_des_points: 0.044
+    droit: >-
+      la cotisation de l'exercice N, à 4,40 %, est assise sur le revenu de N − 2, dans la
+      limite de trois plafonds de l'année N ; l'année de début d'exercice, sur un tiers
+      du plafond, la suivante sur la moitié ; ses points sont la cotisation divisée par
+      le revenu de référence de l'exercice. Aucun ajustement sur le revenu de l'année :
+      l'article 5, IV, ne rend applicables que les articles 12 à 14, 16 et 18 du décret
+      n° 73-76, non son article 9, qui ajuste la cotisation du régime de base
+    conditions: >-
+      le plafond du forfait est celui de la sécurité sociale, non l'assiette maximale
+      de trois plafonds : la caisse calcule la cotisation complémentaire de l'aide
+      familial, que le III assied dans les mêmes mots « sur un revenu égal au tiers du
+      plafond visé au premier alinéa du I », « sur le tiers du plafond de la sécurité
+      sociale » (exposé « Rachat aide familial »), et la rédaction de 2004 l'écrit
+      (D. 635-7, « au tiers du plafond mentionné à l'article L. 241-3 ») ; « Toutefois,
+      le montant de cette cotisation ne peut être inférieur à celui qui serait dû au
+      titre d'un revenu égal au revenu minimum prévu à l'article 2 du décret du 22
+      janvier 1973 » (article 3, I), que le modèle n'oppose pas ; le règlement peut,
+      « sur demande motivée », asseoir la cotisation « sur un revenu inférieur »
+      (article 4, II, LEGIARTI000006766104)
+  exemples: aucun trouvé
+- id: cotisation_additionnelle_1985
+  statut: lue
+  textes:
+  - id: LEGIARTI000006766106
+    article: "décret n° 78-351 du 14 mars 1978, article 5"
+    en_vigueur: 1985-01-01
+    lu_le: 2026-11-03
+    citation: >-
+      I - Le taux de la cotisation annuelle d'assurance vieillesse complémentaire est
+      fixé à 4,40 p. 100 du revenu visé aux articles 3 et 4. A compter du 1er janvier
+      1985, est due en sus de la cotisation visée ci-dessus une cotisation additionnelle
+      fixée à 0,10 p. 100 dudit revenu.
+  - id: LEGIARTI000006766108
+    article: "décret n° 78-351 du 14 mars 1978, article 6"
+    en_vigueur: 1985-01-01
+    lu_le: 2026-11-03
+    citation: >-
+      I - Il est ouvert, au nom de chacun des assurés, un compte de points de retraite ;
+      le nombre de points portés à ce compte chaque année est déterminé en divisant par
+      un revenu de référence le montant de la cotisation prévue à l'article 5-I, 1er
+      alinéa, et versée par l'assuré au titre de cet exercice.
+  - id: LEGIARTI000006738335
+    article: "code de la sécurité sociale, D. 635-4"
+    en_vigueur: 1985-12-21
+    lu_le: 2026-11-03
+    citation: >-
+      la cotisation annuelle du régime d'assurance vieillesse complémentaire est assise
+      sur les revenus professionnels non-salariés de l'avant-dernière année civile [...]
+      et dans la limite d'un plafond égal à trois fois celui mentionné à l'article
+      L. 633-10 en vigueur dans l'année où la cotisation est due. [...] Pour les assurés
+      commençant l'exercice d'une activité artisanale ou assimilée, la cotisation
+      annuelle d'assurance vieillesse complémentaire est assise : 1°) pour l'année ou la
+      fraction d'année de début d'exercice, sur un revenu correspondant au tiers du
+      plafond mentionné au premier alinéa du présent article ; 2°) pour l'année
+      suivante, sur un revenu correspondant à la moitié dudit plafond.
+  - id: LEGIARTI000006738336
+    article: "code de la sécurité sociale, D. 635-4"
+    en_vigueur: 1986-02-27
+    lu_le: 2026-11-03
+    citation: >-
+      les mêmes phrases, et la cotisation des chauffeurs de taxi
+  - id: LEGIARTI000006738071
+    article: "code de la sécurité sociale, D. 635-6"
+    en_vigueur: 1985-12-21
+    lu_le: 2026-11-03
+    citation: >-
+      Le taux de la cotisation annuelle d'assurance vieillesse complémentaire est fixé à
+      4,40 p. 100 du revenu mentionné aux articles D. 635-4 et D. 635-5. A compter du 1er
+      janvier 1985, est due en sus de la cotisation mentionnée ci-dessus une cotisation
+      additionnelle fixée à 0,10 p. 100 dudit revenu.
+  - id: LEGIARTI000006738024
+    article: "code de la sécurité sociale, D. 635-7"
+    en_vigueur: 1985-12-21
+    lu_le: 2026-11-03
+    citation: >-
+      Il est ouvert au nom de chacun des assurés un compte de points de retraite ; le
+      nombre de points portés à ce compte chaque année est déterminé en divisant par un
+      revenu de référence le montant de la cotisation prévue au premier alinéa de
+      l'article D. 635-6, et versée par l'assuré au titre de cet exercice.
+  nee_de: LEGIARTI000006766106
+  bornes:
+    revenu.annee: [1985-01-01, 1997-01-01]
+  contenu:
+    parametres:
+      annees_de_decalage: 2
+      diviseurs_du_plafond_au_debut: [3, 2]
+      plafonds_de_l_assiette: 3
+      taux_des_points: 0.044
+      taux_additionnel: 0.001
+    droit: >-
+      la même assiette ; la cotisation de 4,40 % achète les points, la cotisation
+      additionnelle de 0,10 %, due « en sus », n'en achète aucun
+    conditions: >-
+      la caisse : « Une cotisation additionnelle de 0,10 point a été prélevée entre 1985
+      et 1996. Cette cotisation a servi à financer l'abaissement de l'âge de la retraite
+      à 60 ans. Cette cotisation n'etait pas génératrice de droit » (exposé « Points
+      cotisés artisans avant 2013 », version du 24 octobre 2025)
+  exemples: aucun trouvé
+- id: quatre_plafonds_1997
+  statut: lue
+  textes:
+  - id: LEGIARTI000006738337
+    article: "code de la sécurité sociale, D. 635-4"
+    en_vigueur: 1997-02-26
+    lu_le: 2026-11-03
+    citation: >-
+      la cotisation annuelle du régime d'assurance vieillesse complémentaire est assise
+      sur les revenus professionnels non salariés de l'avant-dernière année civile [...]
+      et dans la limite d'un plafond égal à quatre fois celui mentionné à l'article
+      L. 633-10 en vigueur dans l'année où la cotisation est due.
+  - id: LEGIARTI000006738338
+    article: "code de la sécurité sociale, D. 635-4"
+    en_vigueur: 2002-05-01
+    lu_le: 2026-11-03
+    citation: >-
+      les mêmes phrases, sans la cotisation sur la limite à défaut de déclaration
+  - id: LEGIARTI000006738072
+    article: "code de la sécurité sociale, D. 635-6"
+    en_vigueur: 1997-02-26
+    lu_le: 2026-11-03
+    citation: >-
+      Le taux de la cotisation annuelle d'assurance vieillesse complémentaire est fixé à
+      compter du 1er janvier 1997 à 4,90 %, à compter du 1er janvier 1998 à 5,30 %, à
+      compter du 1er janvier 1999 à 5,70 % et à compter du 1er janvier 2000 à 6 % du
+      revenu mentionné aux articles D. 635-4 et D. 635-5.
+  - id: LEGIARTI000006738075
+    article: "code de la sécurité sociale, D. 635-6"
+    en_vigueur: 2003-10-29
+    lu_le: 2026-11-03
+    citation: >-
+      Le taux de la cotisation annuelle d'assurance vieillesse complémentaire, assise
+      sur le revenu mentionné aux articles D. 635-4 et D. 635-5, est fixé à 6,20 % pour
+      l'année 2003, à 6,70 % pour l'année 2004 et à 7 % pour l'année 2005 et les années
+      suivantes.
+  nee_de: LEGIARTI000006738337
+  bornes:
+    revenu.annee: [1997-01-01, 2004-01-01]
+  contenu:
+    parametres:
+      annees_de_decalage: 2
+      diviseurs_du_plafond_au_debut: [3, 2]
+      plafonds_de_l_assiette: 4
+    droit: >-
+      la même assiette, dans la limite de quatre plafonds ; plus de cotisation
+      additionnelle : toute la cotisation, celle du premier alinéa de D. 635-6, achète
+      les points (D. 635-7, LEGIARTI000006738024)
+    conditions: >-
+      le minimum du revenu minimum de D. 633-2 et l'assiette inférieure « sur demande
+      motivée » restent
+  exemples: aucun trouvé
+- id: avant_derniere_annee_des_deux_regimes_2004
+  statut: lue
+  textes:
+  - id: LEGIARTI000006738013
+    article: "code de la sécurité sociale, D. 635-1"
+    en_vigueur: 2004-08-24
+    lu_le: 2026-11-03
+    citation: >-
+      La Caisse nationale de l'organisation autonome d'assurance vieillesse des
+      professions artisanales et la Caisse nationale de l'organisation autonome
+      d'assurance vieillesse des professions industrielles et commerciales assurent,
+      chacune en ce qui la concerne, la gestion d'un régime complémentaire obligatoire
+      d'assurance vieillesse.
+  - id: LEGIARTI000006738016
+    article: "code de la sécurité sociale, D. 635-2"
+    en_vigueur: 2004-08-24
+    lu_le: 2026-11-03
+    citation: >-
+      La cotisation annuelle au régime complémentaire obligatoire d'assurance vieillesse
+      est assise sur les revenus de l'avant-dernière année tels que définis par l'article
+      L. 131-6 et recouvrée dans les mêmes conditions que la cotisation d'assurance
+      vieillesse de base, y compris les dispositions de l'article D. 633-9, sous réserve
+      des dispositions des articles D. 635-7 et D. 635-10. Toutefois, le montant de cette
+      cotisation ne peut être inférieur à celui qui serait dû au titre d'un revenu égal
+      au revenu minimum prévu à l'article D. 633-2.
+  - id: LEGIARTI000006738017
+    article: "code de la sécurité sociale, D. 635-2"
+    en_vigueur: 2008-01-01
+    lu_le: 2026-11-03
+    citation: >-
+      La cotisation annuelle au régime complémentaire obligatoire d'assurance vieillesse
+      est assise sur les revenus de l'avant-dernière année, tels que définis par
+      l'article L. 131-6.
+  - id: LEGIARTI000006738025
+    article: "code de la sécurité sociale, D. 635-7"
+    en_vigueur: 2004-08-24
+    lu_le: 2026-11-03
+    citation: >-
+      Le taux de la cotisation annuelle d'assurance vieillesse complémentaire des
+      artisans est fixé à 7 %. Ce taux s'applique sur le revenu professionnel dans une
+      limite égale à quatre fois le plafond prévu à l'article L. 241-3. [...] Pour les
+      assurés commençant l'exercice d'une profession artisanale ou assimilée, la
+      cotisation annuelle est assise : 1° Pour l'année ou la fraction d'année de début
+      d'exercice, sur un revenu correspondant au tiers du plafond mentionné à l'article
+      L. 241-3 ; 2° Pour l'année suivante, sur un revenu correspondant à la moitié dudit
+      plafond.
+  - id: LEGIARTI000006738027
+    article: "code de la sécurité sociale, D. 635-10"
+    en_vigueur: 2004-08-24
+    lu_le: 2026-11-03
+    citation: >-
+      Le taux de la cotisation annuelle d'assurance vieillesse complémentaire des
+      industriels et commerçants est fixé pour l'année 2004 à 3,5 % pour le premier
+      semestre et à 4,5 % pour le second semestre. Ce taux s'applique sur le revenu
+      professionnel dans une limite égale à trois fois le plafond prévu à l'article
+      L. 241-3. Pour les assurés commençant l'exercice de leur activité, la cotisation
+      annuelle est calculée sur les revenus forfaitaires mentionnés au sixième alinéa de
+      l'article L. 131-6.
+  - id: LEGIARTI000006738028
+    article: "code de la sécurité sociale, D. 635-10"
+    en_vigueur: 2005-03-26
+    lu_le: 2026-11-03
+    citation: >-
+      Le taux de la cotisation annuelle d'assurance vieillesse complémentaire des
+      industriels et commerçants est fixé à 6,5 %. [...] Pour les assurés commençant
+      l'exercice de leur activité, la cotisation annuelle est calculée sur les revenus
+      forfaitaires mentionnés au sixième alinéa de l'article L. 131-6.
+  - id: LEGIARTI000006740118
+    article: "code de la sécurité sociale, L. 131-6"
+    en_vigueur: 2003-12-20
+    lu_le: 2026-11-03
+    citation: >-
+      Les cotisations sont calculées, chaque année, à titre provisionnel, en pourcentage
+      du revenu professionnel de l'avant-dernière année ou des revenus forfaitaires.
+      Lorsque le revenu professionnel est définitivement connu, les cotisations font
+      l'objet d'une régularisation. [...] les cotisations mentionnées au premier alinéa
+      dues au titre de la première année civile d'activité sont calculées à titre
+      provisionnel sur une base forfaitaire qui ne peut excéder dix-huit fois la valeur
+      de la base mensuelle de calcul des prestations familiales en vigueur au 1er
+      octobre de l'année précédente ; celles dues au titre de la deuxième année civile
+      d'activité sont calculées à titre provisionnel sur une base forfaitaire qui ne
+      peut excéder vingt-sept fois cette valeur.
+  - id: LEGIARTI000006738041
+    article: "code de la sécurité sociale, D. 635-10-2"
+    en_vigueur: 2006-12-13
+    lu_le: 2026-11-03
+    citation: >-
+      La cotisation d'assurance vieillesse complémentaire du conjoint collaborateur est
+      calculée sur le revenu retenu, dans les limites respectivement prévues à l'article
+      D. 635-7 pour le conjoint d'artisan et à l'article D. 635-10 pour le conjoint
+      d'industriel ou de commerçant, pour le calcul de sa cotisation d'assurance
+      vieillesse de base. La cotisation d'assurance complémentaire ne fait toutefois pas
+      l'objet de la régularisation à laquelle la cotisation d'assurance de base donne
+      lieu le cas échéant.
+  - id: LEGIARTI000006737951
+    article: "code de la sécurité sociale, D. 633-19-2"
+    en_vigueur: 2006-12-13
+    lu_le: 2026-11-03
+    citation: >-
+      Le conjoint collaborateur peut demander que sa cotisation soit calculée : 1° Soit
+      sur un revenu forfaitaire égal au tiers du plafond mentionné au premier alinéa de
+      l'article L. 633-10 ; [...]
+  nee_de: LEGIARTI000006738016
+  bornes:
+    revenu.annee: [2004-01-01, 2009-01-01]
+  contenu:
+    parametres:
+      annees_de_decalage: 2
+      diviseurs_du_plafond_au_debut: [3, 2]
+      plafonds_de_l_assiette: 4
+      plafonds_de_l_assiette_des_commercants: 3
+    droit: >-
+      l'artisan, et le commerçant au régime né le 1er janvier 2004 (loi n° 2003-775),
+      cotisent sur le revenu de l'avant-dernière année ; l'artisan qui commence, sur un
+      tiers puis la moitié du plafond de la sécurité sociale ; le commerçant qui
+      commence, sur les revenus forfaitaires de L. 131-6 ; le conjoint collaborateur,
+      depuis son affiliation de 2007, sur l'assiette de sa cotisation de base, sans
+      régularisation
+    conditions: >-
+      les revenus de 2007 et de 2008 ne sont la base d'aucune cotisation définitive : la
+      cotisation de 2008 est assise sur le revenu de 2006, celle de 2009 sur le revenu de
+      2009 (décret n° 2008-1427, II)
+  exemples: aucun trouvé
+- id: regularisation_2009
+  statut: lue
+  textes:
+  - id: JORFARTI000019996956
+    article: "décret n° 2008-1427 du 22 décembre 2008, article 1er"
+    en_vigueur: 2008-12-28
+    publie_le: 2008-12-28
+    lu_le: 2026-11-03
+    citation: >-
+      I. ― La première phrase de l'article D. 635-2 du code de la sécurité sociale est
+      remplacée par les dispositions suivantes : « La cotisation annuelle au régime
+      complémentaire obligatoire d'assurance vieillesse est calculée suivant les
+      modalités prévues au cinquième alinéa de l'article L. 131-6. » II.-Les dispositions
+      du présent article s'appliquent aux cotisations dues au titre des revenus des
+      années 2009 et suivantes.
+  - id: LEGIARTI000020032159
+    article: "code de la sécurité sociale, D. 635-2"
+    en_vigueur: 2008-12-29
+    lu_le: 2026-11-03
+    citation: >-
+      La cotisation annuelle au régime complémentaire obligatoire d'assurance vieillesse
+      est calculée suivant les modalités prévues au cinquième alinéa de l'article
+      L. 131-6.
+  - id: LEGIARTI000017869802
+    article: "code de la sécurité sociale, D. 635-7"
+    en_vigueur: 2008-01-01
+    lu_le: 2026-11-03
+    citation: >-
+      Pour les assurés commençant l'exercice d'une profession artisanale ou assimilée,
+      la cotisation annuelle est assise : 1° Pour l'année ou la fraction d'année de début
+      d'exercice, sur un revenu correspondant au tiers du plafond mentionné à l'article
+      L. 241-3 ; 2° Pour l'année suivante, sur un revenu correspondant à la moitié dudit
+      plafond.
+  - id: LEGIARTI000020032165
+    article: "code de la sécurité sociale, D. 635-10"
+    en_vigueur: 2009-01-01
+    lu_le: 2026-11-03
+    citation: >-
+      Pour les assurés commençant l'exercice de leur activité, la cotisation annuelle est
+      calculée sur les revenus forfaitaires mentionnés au septième alinéa de l'article
+      L. 131-6.
+  nee_de: JORFARTI000019996956
+  bornes:
+    revenu.annee: [2009-01-01, 2012-01-01]
+  contenu:
+    parametres:
+      diviseurs_du_plafond_au_debut: [3, 2]
+      plafonds_de_l_assiette: 4
+      plafonds_de_l_assiette_des_commercants: 3
+    droit: >-
+      la cotisation est provisionnelle, puis régularisée sur le revenu de l'année ;
+      l'artisan qui commence cotise encore sur un tiers puis la moitié du plafond, que
+      D. 635-7 assied sans les dire provisionnels
+    conditions: >-
+      le revenu minimum de D. 633-2 reste le minimum de la cotisation (D. 635-2)
+  exemples: aucun trouvé
+- id: sans_forfait_2012
+  statut: lue
+  textes:
+  - id: JORFARTI000025055800
+    article: "décret n° 2011-2038 du 29 décembre 2011, article 3"
+    en_vigueur: 2012-01-01
+    publie_le: 2011-12-30
+    lu_le: 2026-11-03
+    citation: >-
+      II. ― Sont supprimés : 1° A l'article D. 635-7 du même code, les sixième, septième
+      et huitième alinéas ; 2° A l'article D. 635-10 du même code, la phrase : « Pour les
+      assurés commençant l'exercice de leur activité, la cotisation annuelle est
+      calculée sur les revenus forfaitaires mentionnés au septième alinéa de l'article
+      L. 131-6. »
+  - id: LEGIARTI000025091410
+    article: "code de la sécurité sociale, D. 635-7"
+    en_vigueur: 2012-01-01
+    lu_le: 2026-11-03
+    citation: >-
+      Le taux de la cotisation annuelle d'assurance vieillesse complémentaire des
+      artisans est fixé à : 1° 7,2 % pour la part du revenu professionnel n'excédant pas
+      le plafond prévu au quatrième alinéa du présent article ; 2° 7,6 % pour la part du
+      revenu professionnel excédant le seuil fixé au 1°, dans la limite de quatre fois le
+      plafond annuel prévu à l'article L. 241-3. [...]
+  nee_de: JORFARTI000025055800
+  bornes:
+    revenu.annee: [2012-01-01, 2013-01-01]
+  contenu:
+    parametres:
+      plafonds_de_l_assiette: 4
+      plafonds_de_l_assiette_des_commercants: 3
+    droit: >-
+      plus de forfait propre à la complémentaire : la cotisation des deux premières
+      années est provisionnelle, sur le revenu forfaitaire de D. 131-1, puis régularisée
+      sur le revenu de l'année
+    conditions: >-
+      depuis le 5 avril 2012, dès quatre-vingt-dix jours d'affiliation dans l'année, la
+      cotisation « ne peut être calculée sur une assiette inférieure » à celle du régime
+      de base (D. 635-2, LEGIARTI000025629861)
+  exemples: aucun trouvé
+- id: rci_2013
+  statut: lue
+  textes:
+  - id: LEGIARTI000025263548
+    article: "code de la sécurité sociale, D. 635-2"
+    en_vigueur: 2013-01-01
+    lu_le: 2026-11-03
+    citation: >-
+      La cotisation annuelle au régime complémentaire obligatoire d'assurance vieillesse
+      est calculée suivant les modalités prévues aux premier, deuxième et troisième
+      alinéas de l'article L. 131-6-2.
+  nee_de: LEGIARTI000025263548
+  bornes:
+    revenu.annee: [2013-01-01, null]
+  contenu:
+    parametres: {}
+    droit: >-
+      le RCO des artisans et le NRCO des commerçants sont fondus dans le RCI, dont la
+      cotisation est provisionnelle, puis régularisée sur le revenu de l'année : hors de
+      cette fiche
+    conditions: aucune
+  exemples: aucun trouvé
+approximations:
+- version: [avant_derniere_annee_1979, cotisation_additionnelle_1985, quatre_plafonds_1997,
+    avant_derniere_annee_des_deux_regimes_2004, regularisation_2009, sans_forfait_2012]
+  ecart: >-
+    le modèle n'oppose pas le minimum de la cotisation, « celui qui serait dû au titre
+    d'un revenu égal au revenu minimum » du régime de base (décret n° 78-351, article 3,
+    I ; D. 635-4 ; D. 635-2 jusqu'au 5 avril 2012), puis l'assiette du régime de base dès
+    quatre-vingt-dix jours d'affiliation (D. 635-2, LEGIARTI000025629861) : ses
+    modalités — l'année incomplète, les rédactions de D. 633-2 — restent à lire
+  effet: >-
+    non mesuré ; l'artisan ou le commerçant dont le revenu de l'avant-dernière année
+    est sous le revenu minimum du régime de base, deux cents heures de Smic jusqu'en
+    2011
+- version: [avant_derniere_annee_1979, cotisation_additionnelle_1985, quatre_plafonds_1997,
+    avant_derniere_annee_des_deux_regimes_2004, regularisation_2009]
+  ecart: >-
+    le modèle prend pour début d'exercice toute année qu'aucune année d'activité de la
+    même affiliation ne précède : le texte ne dit pas la reprise d'activité, que
+    R. 242-16 (LEGIARTI000006748778) ne tient pour un début qu'au-delà de l'année qui
+    suit la cessation ; il prend le forfait et le revenu de l'avant-dernière année à
+    proportion des mois de l'exercice, comme ses bornes, quand le texte ne dit pas de
+    prorata pour « l'année ou la fraction d'année de début d'exercice » ; il ne sert ni
+    l'assiette inférieure « sur demande motivée » (article 4, II), ni l'arrondi de la
+    cotisation à deux francs puis à l'euro
+  effet: >-
+    non mesuré ; l'artisan qui reprend une activité, ou dont l'activité commence ou finit
+    en cours d'année
+- version: [avant_derniere_annee_des_deux_regimes_2004, regularisation_2009]
+  ecart: >-
+    le commerçant qui commence cotise sur « les revenus forfaitaires mentionnés au
+    sixième alinéa de l'article L. 131-6 » (D. 635-10), dix-huit puis vingt-sept fois la
+    base mensuelle des allocations familiales (R. 242-16), que L. 131-6 dit calculées « à
+    titre provisionnel » puis régularisées, sans que D. 635-2 régularise d'autre
+    cotisation complémentaire avant 2009 : le modèle garde le revenu de ses deux
+    premières années, ce que donnerait la régularisation, et n'a pas la base mensuelle
+  effet: >-
+    non mesuré ; le commerçant qui commence de 2004 à 2011, au revenu éloigné du forfait
+effet: >-
+  Les artisans de 1979 à 2012 et les commerçants de 2004 à 2012. Jusqu'au 3 novembre 2026,
+  le modèle tirait les points de chaque exercice du revenu de l'année, et la cotisation
+  additionnelle de 1985 à 1996 en achetait : de 5 à 11 % de RCO en trop, de 1 à 3 % de la
+  pension, selon la carrière (`177/2026-11-03-etape-9-assiette-du-rco-des-artisans.md`).
+  Les témoins des artisans et des commerçants perdent de 0,1 à 2,3 % de leur pension.
+sources:
+  lu_le: 2026-11-03
+  prochaine_relecture: 2027-11-03
+  a_relire:
+  - >-
+    Le minimum de la cotisation : les rédactions de D. 633-2 de 1985 à 2012, son prorata
+    sur une année incomplète, la condition de quatre-vingt-dix jours et l'assiette du
+    régime de base de 2012 à 2014 (D. 635-2, LEGIARTI000025629861, LEGIARTI000025263548),
+    les 5,25 % du plafond de 2015 « déterminé conformément au premier alinéa de
+    l'article D. 612-6 » (LEGIARTI000030034575), le micro-entrepreneur ; plus rien
+    depuis 2016 (LEGIARTI000031799392).
+  - >-
+    Le règlement du RCO des artisans, approuvé le 15 décembre 1978, que l'index ne porte
+    pas : la reprise d'activité, l'assiette inférieure sur demande motivée de
+    l'article 4, II. Les annexes du 7 juillet 2009 (JORFARTI000021059798) et du 23 avril
+    2009 (JORFARTI000020676129) ne touchent qu'à la cotisation à défaut de déclaration
+    et aux cotisations arriérées.
+  - >-
+    Si le forfait de l'artisan qui commence de 2009 à 2011 (D. 635-7) était définitif,
+    comme sa rédaction le laisse lire, ou régularisé comme la cotisation que D. 635-2
+    calcule depuis 2009 ; et si celui du commerçant, de 2004 à 2011, l'était.
+  lectures:
+  - type: legifrance
+    reference: >-
+      décret n° 78-351, articles 3 à 6, rédactions de 1978 et du 1er janvier 1985
+      (LEGIARTI000006766103 à LEGIARTI000006766108) ; D. 635-1, D. 635-2, D. 635-4,
+      D. 635-6, D. 635-7, D. 635-10, D. 635-10-2, D. 633-6, D. 633-19-2, R. 242-16 et
+      L. 131-6, toutes leurs rédactions de 1985 à 2016 dans l'index LEGI, à jour du
+      2 novembre 2026
+    date: 2026-11-03
+  - type: jorf
+    reference: >-
+      décret n° 2008-1427 du 22 décembre 2008, article 1er (JORFARTI000019996956) ;
+      décret n° 2011-2038 du 29 décembre 2011, sa notice et ses articles 1er à 4
+      (JORFTEXT000025055789, JORFARTI000025055794 à JORFARTI000025055807), index du JORF à
+      jour du 3 novembre 2026
+    date: 2026-11-03
+  - type: autre
+    reference: >-
+      base de législation de la Cnav, exposés « Points cotisés artisans avant 2013 »
+      (version du 24 octobre 2025) : « Le nombre de points cotisés est égal à : Montant
+      des cotisations RCO réglées sur l'année N ÷ Revenu de référence de l'année N » ;
+      « Une cotisation additionnelle de 0,10 point a été prélevée entre 1985 et 1996 [...].
+      Cette cotisation n'etait pas génératrice de droit » ; et « Rachat aide familial »
+      (version du 14 octobre 2026) : « Les cotisations concernées sont : la retraite de
+      base, l'invalidité-décès et, depuis le 01/01/1979, la retraite complémentaire. Les
+      cotisations sont calculées sur le tiers du plafond de la sécurité sociale
+      multiplié par le taux de la cotisation pour l'année considérée »
+    url: https://legislation.lassuranceretraite.fr/
+    date: 2026-11-03
+code:
+  moteur: >-
+    `assiette_annee_de_revenu`, une table du statut au décalage, et `assiette_de_debut`,
+    du statut aux diviseurs du plafond : l'exercice ouvert depuis deux ans cotise sur le
+    revenu des lignes de la même affiliation deux ans plus tôt (`revenu_de_l_annee`), à
+    proportion de ses mois ; l'artisan, ses deux premières années, sur le plafond divisé
+    par 3 puis par 2 (`annees_deja_exercees`), avant les bornes de l'exercice ; les
+    points de 1985 à 1996, au taux de calcul de 4,40 % (`taux_calcul_points`).
+  python: >-
+    droit/acquerir.py : acquerir, revenu_de_l_annee, annees_deja_exercees
+  javascript: >-
+    moteur/js/droit/acquerir.js : acquerir, revenuDeLAnnee, anneesDejaExercees
+  parametres: >-
+    contenu.parametres de chaque version : annees_de_decalage,
+    diviseurs_du_plafond_au_debut, plafonds_de_l_assiette,
+    plafonds_de_l_assiette_des_commercants, taux_des_points, taux_additionnel ;
+    regimes/rco_artisans.yaml, regimes/nric.yaml : assiette_annee_de_revenu,
+    assiette, taux_cotisation_retraite ; regimes/rco_artisans.yaml : assiette_de_debut,
+    taux_calcul_points
+  tests: [tests/test_independants.py, tests/temoins/simulations.json]
+historique:
+- >-
+  2026-11-03 — écrite (action 177, étape 9), sur la décision du propriétaire du même jour
+  de corriger le modèle : l'avant-dernière année du RCO des artisans et du NRCO des
+  commerçants, les forfaits de début de l'artisan, la cotisation additionnelle de 1985 à
+  1996 sans points, le conjoint collaborateur sur l'assiette de sa cotisation de base.
+  Approchée : le minimum de la cotisation, la reprise, le prorata, et le forfait du
+  commerçant qui commence.
