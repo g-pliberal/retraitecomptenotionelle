@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import csv
 import math
+import re
 import shutil
 import sys
 from dataclasses import replace
@@ -2248,7 +2249,10 @@ def test_la_part_des_departs_avec_decote_se_rapporte_aux_carrieres_qui_peuvent_d
     d'âge de 2020 où tombent les nés de 1923 à 1927 et de 1938 à 1942 ; une
     jumelle qui ne peut pas décoter ne pèse rien — celle de la femme née en
     1955 d'une carrière de trente à quarante ans, qui a sa durée à 62 ans —, sa
-    carrière gardant son poids."""
+    carrière gardant son poids. Sous ``DECOTE_DES_AGENTS``, les agents ne
+    décotent plus que pour la part que l'EIR leur trouve, le reste partant à
+    son taux plein ; les jumelles gardent la part que la trentième version
+    leur donne, les sœurs du taux plein des agents comptant avec eux."""
     assert G.DECOTE_DES_CARRIERES_QUI_LE_PEUVENT and G.DECOTE_DES_RESIDENTS
     generations = (1925, 1940, 1955, 1965)
     naissances = {g: range(g - C._DEMI_TRANCHE, g + C._DEMI_TRANCHE + 1) for g in generations}
@@ -2267,6 +2271,7 @@ def test_la_part_des_departs_avec_decote_se_rapporte_aux_carrieres_qui_peuvent_d
             if G.avec_decote(projection, v.cas, generation, depart.taux_liquidation):
                 decotent.add(v.cas.code)
         assert decotent == (set() if generation < 1965 else {v.cas.code for v in agents})
+        decotent |= {re.sub(r"(~p\d+)$", r"~plein\1", code) for code in decotent}
         for v in jumelles:
             if any(v.part_de_la_generation(n) > 0.0 for n in naissances[generation]):
                 assert G.decote_a_l_ouverture(
@@ -2648,6 +2653,92 @@ def test_les_femmes_qui_completent_leur_duree_pesent_la_part_de_l_eir(simulateur
     assert sum(poids[v.cas.code] * v.part_de_la_generation(1953) for v in completes
                if G._par_generation(v.cas.completee, 1955, 0.0)) == pytest.approx(
         min(eligibles, 0.267 * 0.151 * toutes))
+
+
+#: La part des agents des régimes spéciaux partis avec une décote, refaite à la
+#: main de ce que le classeur des résidents de 2020 imprime
+#: (``conditions_selon_l_age_residents.csv``) : l'effectif de chaque condition
+#: de liquidation, en milliers, fois la part des monopensionnés et des
+#: polypensionnés des régimes spéciaux parmi ses retraités, en pour cent ; les
+#: décotés, parmi ceux de toutes les conditions connues sauf la décote
+#: inapplicable — carrière longue, décote, surcote, invalidité, inaptitude,
+#: autres motifs, taux plein par l'âge, taux plein par la durée.
+AGENTS_DECOTES_DE_L_EIR = {
+    "F": 741 * (0.8 + 0.2) / (571 * (0.1 + 0.2) + 741 * (0.8 + 0.2) + 662 * (0.1 + 0.3)
+                              + 565 * (0.2 + 0.1) + 811 * (0.0 + 0.0) + 64 * (9.9 + 0.9)
+                              + 1703 * (0.3 + 0.1) + 2674 * (0.2 + 0.1)),
+    "H": 321 * (4.6 + 1.1) / (1317 * (0.1 + 0.5) + 321 * (4.6 + 1.1) + 674 * (0.2 + 0.8)
+                              + 435 * (0.2 + 0.1) + 370 * (0.0 + 0.0) + 58 * (6.9 + 2.0)
+                              + 694 * (5.3 + 2.1) + 2754 * (1.0 + 0.8)),
+}
+
+
+def test_la_part_des_agents_qui_decotent_se_lit_dans_l_eir(parametres):
+    """Sous ``DECOTE_DES_AGENTS``, les agents des IEG et de la conduite ne
+    décotent à l'ouverture de leur statut que pour la part des retraités des
+    régimes spéciaux de 2020 partis avec une décote parmi ceux à qui elle
+    s'appliquait : 4,6 + 1,1 % des 321 milliers d'hommes partis avec une
+    décote, 18,3 milliers, parmi les 140 milliers des régimes spéciaux de
+    toutes les conditions connues, sans les 220 milliers dont la décote est
+    inapplicable, 13,0 % ; chez les femmes, 7,4 milliers parmi 35,2, 21,0 %."""
+    assert G.DECOTE_DES_AGENTS
+    parts = G.decote_des_agents(parametres.racine_donnees)
+    for sexe, attendue in AGENTS_DECOTES_DE_L_EIR.items():
+        assert parts[sexe] == pytest.approx(attendue, rel=1e-9), sexe
+    assert parts["H"] == pytest.approx(0.130, abs=5e-4)
+    assert parts["F"] == pytest.approx(0.210, abs=5e-4)
+
+
+def test_une_part_des_agents_part_a_son_taux_plein(simulateur, source, parametres):
+    """Sous ``DECOTE_DES_AGENTS``, chaque agent des IEG et de la conduite qui
+    décote à l'ouverture de son statut à une génération au moins
+    (``ouvertures_decotees``) se décline : la part de son sexe que l'EIR voit
+    décoter (``decote_des_agents``) part à l'ouverture, sous son code ; le
+    reste part à son taux plein, sous son code suivi de « ~plein ». Ensemble,
+    ils pèsent le poids de l'agent à chaque année de naissance, chacun à sa
+    part aux générations où l'agent décote ; aux autres, l'agent le porte
+    seul. Né en 1965, en janvier comme la grille, l'agent de conduite part à
+    50 ans, en 2015 : la décote des régimes spéciaux, qui ne mord qu'aux
+    droits ouverts depuis juillet 2010, y vaut cinq dixièmes de 1,25 % par
+    trimestre manquant, et s'annule à 55 ans moins dix trimestres ; il lui en
+    manque dix, et son taux est de 75 % fois (1 - 10 x 0,625 %), 70,31 %
+    (``decote_regimes_speciaux.csv``). Sa sœur part à son taux plein, plus
+    tard, au taux de 75 %, sans décote. Né en 1950, l'agent ne décote pas, et
+    sa sœur ne pèse rien."""
+    assert G.DECOTE_DES_AGENTS
+    variantes = G.grille("population", simulateur.effectifs, source, ())
+    poids = _poids(variantes, simulateur.effectifs, source.millesime)
+    par_code = {v.cas.code: v for v in variantes}
+    parts = G.decote_des_agents(parametres.racine_donnees)
+    agents = [v for v in variantes if v.cas.regle_liquidation == "ouverture" and not v.decote]
+    soeurs = [v for v in variantes if "~plein" in v.cas.code]
+    assert len(soeurs) == len(agents) > 0
+    for v in agents:
+        soeur = par_code[re.sub(r"(~p\d+)$", r"~plein\1", v.cas.code)]
+        assert soeur.cas.regle_liquidation == "taux_plein"
+        assert not soeur.decote and soeur.groupe == v.groupe
+        assert poids[soeur.cas.code] / (poids[v.cas.code] + poids[soeur.cas.code]) == (
+            pytest.approx(1.0 - parts[v.cas.sexe], rel=1e-9))
+        for naissance in range(1878, 2023):
+            assert (poids[v.cas.code] * v.part_de_la_generation(naissance)
+                    + poids[soeur.cas.code] * soeur.part_de_la_generation(naissance)) == (
+                pytest.approx(poids[v.cas.code] + poids[soeur.cas.code], rel=1e-9)), (
+                v.cas.code, naissance)
+    agent = par_code["agent_sncf_conduite~mono~h~p50"]
+    soeur = par_code["agent_sncf_conduite~mono~h~plein~p50"]
+    assert agent.part_de_la_generation(1965) == pytest.approx(1.0)
+    assert soeur.part_de_la_generation(1965) == pytest.approx(1.0)
+    assert agent.part_de_la_generation(1950) == pytest.approx(1.0 / parts["H"])
+    assert soeur.part_de_la_generation(1950) == 0.0
+    projection = simulateur.pour_la_projection()
+    a_l_ouverture = projection.echeancier(agent.cas.construire(projection, 1965)).au_depart
+    au_taux_plein = projection.echeancier(soeur.cas.construire(projection, 1965)).au_depart
+    assert agent.cas.age_liquidation_pour(projection, 1965) == pytest.approx(50.0)
+    assert a_l_ouverture.taux_liquidation == pytest.approx(0.75 * (1 - 10 * 0.0125 * 5 / 10))
+    assert G.avec_decote(projection, agent.cas, 1965, a_l_ouverture.taux_liquidation)
+    assert soeur.cas.age_liquidation_pour(projection, 1965) > 50.0
+    assert au_taux_plein.taux_liquidation == pytest.approx(0.75)
+    assert not G.avec_decote(projection, soeur.cas, 1965, au_taux_plein.taux_liquidation)
 
 
 # -- les départs d'une génération, contre l'EIR (action 138, étape 14) ----------

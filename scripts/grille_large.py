@@ -1113,6 +1113,45 @@ SEXES_QUI_COMPLETENT = ("F",)
 #: les nés en 1953, que l'enquête de 2020 voit presque tous partis.
 GENERATION_DES_DUREES_COMPLETEES = 1953
 
+#: La trente-sixième version (action 138, étape 14, le 3 novembre 2026) : les
+#: agents décotés avant 60 ans. Les agents des IEG et de la conduite partent à
+#: l'ouverture de leur statut, et y décotaient tous depuis que la décote des
+#: régimes spéciaux mord, aux générations 1960 et 1965 : 45 % des hommes de 50
+#: à 59 ans du stock de 2020, quand l'EIR en compte 5,7 % ; 1,2 point de la
+#: décote des hommes du stock. L'EIR dit, condition par condition, le régime
+#: principal des résidents de 2020 (``conditions_selon_l_age_residents.csv``) :
+#: les régimes spéciaux comptent 18 300 des 321 000 hommes partis avec une
+#: décote, 13,0 % des 140 000 de leurs retraités à qui elle s'appliquait et
+#: dont la condition est connue ; 21,0 % des femmes (:func:`decote_des_agents`).
+#: Chaque agent qui décote à l'ouverture de son statut à une génération au
+#: moins (:func:`ouvertures_decotees`) se décline en deux : la part de son sexe
+#: y part, avec sa décote ; le reste part à son taux plein, que le pilote fixe,
+#: sous son code suivi de « ~plein » (:func:`agents_a_leur_taux_plein`). Les
+#: jumelles des carrières incomplètes gardent leur part, celle de la trentième
+#: version : la part de chaque génération, moins le poids de tous les agents
+#: qui y décotaient (:func:`parts_des_jumelles`). Ce que les agents ne
+#: décotent plus ne passe pas à elles : la part que la population prête depuis
+#: la génération 1960 à tous ses retraités, celle des liquidants de la Cnav de
+#: 2024, 13,0 % des hommes, les ferait décoter pour 64,6 % chez les hommes nés
+#: de 1963 à 1987, et partir inaptes pour presque tout le reste, que la décote
+#: borne : leurs inaptes n'y pèseraient plus que 6,5 % des hommes, et non les
+#: 7,6 % de l'EIR. Trois conventions : la part des agents est la même à toutes
+#: les générations, celle du stock de 2020, où les droits ouverts depuis
+#: juillet 2010 décotent d'abord peu ; l'agent et sa sœur du taux plein se
+#: partagent son poids à cette part, qu'il porte seul où il ne décote pas ;
+#: le taux plein est celui que le pilote fixe à l'agent, l'âge d'annulation de
+#: sa décote au terme de la montée en charge, et non l'âge, plus précoce, où la
+#: montée en charge annule déjà la sienne — 55 ans pour l'agent de conduite né
+#: en 1965, et non 52 ans et demi.
+DECOTE_DES_AGENTS = True
+
+#: Le régime principal de l'EIR dont les agents des IEG et de la conduite
+#: prennent leur décote (:func:`decote_des_agents`), et les colonnes de la
+#: feuille qu'elle ne compte pas : celle des départs dont la décote est
+#: inapplicable — d'avant juillet 2010 aux régimes spéciaux —, et celle de tous.
+REGIME_DES_AGENTS = "regimes_speciaux"
+CONDITIONS_HORS_DECOTE = ("decote_inapplicable", "ensemble")
+
 #: La dix-neuvième version (action 138, étape 14, le 18 octobre 2026) : une part
 #: des carrières qui ont le taux plein part après lui, avec une surcote — 14,2 %
 #: des femmes et 14,5 % des hommes nés en 1953 (``departs_generations.csv``),
@@ -3233,6 +3272,9 @@ def population(effectifs, source: CaracteristiquesRetraites,
         variantes = departs_avec_decote(variantes, effectifs, source, donnees.quintiles,
                                         decotes, ouvertures, attentes, ages_legaux(racine),
                                         inaptes, avances, echelles_des_attentes(racine))
+        if DECOTE_DES_AGENTS and ouvertures is not None:
+            variantes = agents_a_leur_taux_plein(variantes, ouvertures,
+                                                 decote_des_agents(racine))
     if DUREES_COMPLETEES:
         variantes = completer_les_durees(variantes, effectifs, source, racine)
     variantes = salaires_population(variantes, donnees)
@@ -3305,6 +3347,31 @@ def decote_du_flux(sexe: str) -> float:
     return next(conditions.decote
                 for conditions in conditions_publiees(temoin, ANNEE_DU_FLUX, sexe)
                 if conditions.caisse == CAISSE_DU_FLUX and conditions.champ == "flux")
+
+
+def decote_des_agents(racine: Path) -> dict[str, float]:
+    """La part des agents des régimes spéciaux partis avec une décote, sexe par
+    sexe (:data:`DECOTE_DES_AGENTS`) : parmi les résidents en France de
+    l'enquête, ceux de ces régimes, monopensionnés et polypensionnés de deux
+    régimes, partis avec une décote, rapportés à ceux de ces régimes de toutes
+    les conditions de liquidation connues, sans ceux dont la décote est
+    inapplicable (``conditions_selon_l_age_residents.csv``, :data:`REGIME_DES_AGENTS`,
+    :data:`CONDITIONS_HORS_DECOTE`) : chaque condition pèse son effectif, fois
+    la part de ces régimes parmi ses retraités."""
+    lignes = _lire_macro(racine, "conditions_selon_l_age_residents.csv")
+    valeurs = {(l["condition"], l["indicateur"], l["sexe"]): float(l["valeur"])
+               for l in lignes}
+    conditions = sorted({condition for condition, _, _ in valeurs}
+                        - set(CONDITIONS_HORS_DECOTE))
+
+    def agents(condition: str, sexe: str) -> float:
+        return valeurs[(condition, "effectifs", sexe)] * somme_ordonnee(
+            valeurs[(condition, f"part_{nombre}_{REGIME_DES_AGENTS}", sexe)]
+            for nombre in ("mono", "poly")) / 100.0
+
+    return {sexe: agents("decote", sexe) / somme_ordonnee(agents(condition, sexe)
+                                                         for condition in conditions)
+            for sexe in ("F", "H")}
 
 
 def decotes_selon_l_age(racine: Path) -> tuple[int, dict[str, dict[tuple[int, int | None],
@@ -3616,6 +3683,41 @@ def ouvertures_decotees(variantes: list[Variante], racine: Path) -> dict[str, fr
     return memoire.memoriser_pour(
         parametres, ("decote_a_l_ouverture_de_la_population", parametres, cas_types,
                      generations), calcul)
+
+
+def agents_a_leur_taux_plein(variantes: list[Variante], ouvertures: dict[str, frozenset[int]],
+                             parts: dict[str, float]) -> list[Variante]:
+    """Chaque carrière qui part à l'ouverture de son statut, et y décote à une
+    génération de la grille au moins (:func:`ouvertures_decotees`), en deux
+    (:data:`DECOTE_DES_AGENTS`) : la part ``parts`` de son sexe
+    (:func:`decote_des_agents`) part à l'ouverture, sous son code ; le reste à
+    son taux plein, que le pilote fixe, sous son code suivi de « ~plein ».
+    Chacune pèse sa part du poids de la carrière, et, aux générations simulées
+    où la carrière décote, ce poids-là ; aux autres, la première porte tout le
+    poids de la carrière, la seconde rien. Les autres variantes telles
+    quelles."""
+    simulees = [(naissance, generation) for generation in C.generations()
+                for naissance in range(generation - C._DEMI_TRANCHE,
+                                       generation + C._DEMI_TRANCHE + 1)]
+    sortie = []
+    for v in variantes:
+        siennes = ouvertures.get(v.cas.code, frozenset())
+        part = parts.get(v.cas.sexe, 0.0)
+        if (v.cas.regle_liquidation != "ouverture" or v.decote or not siennes
+                or not 0.0 < part < 1.0):
+            sortie.append(v)
+            continue
+        a_l_ouverture = _en_paires([
+            (naissance, v.part_de_la_generation(naissance)
+             * (1.0 if generation in siennes else 1.0 / part))
+            for naissance, generation in simulees])
+        au_taux_plein = _en_paires([
+            (naissance, v.part_de_la_generation(naissance) * (generation in siennes))
+            for naissance, generation in simulees])
+        sortie.append(v.fois(part, parts_des_generations=a_l_ouverture))
+        sortie.append(v.fois(1.0 - part, parts_des_generations=au_taux_plein, cas=replace(
+            v.cas, code=f"{v.cas.code}~plein", regle_liquidation="taux_plein")))
+    return sortie
 
 
 def _apte_et_inapte(cas: CasType) -> tuple[CasType, CasType]:
