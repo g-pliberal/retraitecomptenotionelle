@@ -3929,6 +3929,17 @@ def source_grilles_legi(versant: str, serie: str) -> Callable[[], dict[tuple, fl
     return source
 
 
+def source_reclassements(serie: str) -> Callable[[], dict[tuple, float]]:
+    """Le rang de l'échelon d'origine ou d'accueil de chaque ligne des tableaux
+    de reclassement, lus au LEGI par l'index du dépôt (action 158) : sous la clé
+    « texte|article|tableau|ligne »."""
+    def source() -> dict[tuple, float]:
+        valeurs = _lire_json("dila_legi_reclassements.json",
+                             "scripts/fetch/dila_legi_reclassements.py")[serie]
+        return {tuple(cle.split("|")): float(valeur) for cle, valeur in sorted(valeurs.items())}
+    return source
+
+
 def source_bareme_indices(serie: str) -> Callable[[], dict[tuple, float]]:
     """L'indice majoré de chaque indice brut, version par version du barème du
     décret n° 82-1105 depuis 1983, transcrit par Épicycle (action 158) : chaque
@@ -10337,6 +10348,19 @@ CERTIFICATIONS = (
         niveau="estimee" if suffixe else "haute",
         complementaire=bool(suffixe),
     ) for suffixe in ("", "_corriges")),
+    # Les reclassements d'une grille à la suivante (action 158) : le rang des
+    # échelons d'origine et d'accueil de chaque ligne des tableaux de
+    # correspondance que les statuts écrivent, lus au LEGI.
+    *(Certification(
+        nom=f"reclassements_{serie}",
+        chemin=REFERENCE / "grilles" / "reclassements" / "lignes.csv",
+        cles=("texte", "article", "tableau", "ligne"),
+        colonne=serie,
+        source=source_reclassements(serie),
+        origine="DILA, base LEGI, tableaux de reclassement des statuts, par l'index du dépôt",
+        decimales=0,
+        tolerance=0.5,
+    ) for serie in ("rang_origine", "rang_nouveau")),
     Certification(
         nom="esperances_projetees",
         chemin=REFERENCE / "mortalite" / "esperances_vie.csv",

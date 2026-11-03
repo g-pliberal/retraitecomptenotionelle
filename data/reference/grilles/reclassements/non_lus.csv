@@ -1,0 +1,459 @@
+# Les tableaux de reclassement que l'analyseur n'a pas lus, et pourquoi.
+# source_id: dila_legi_reclassements — DILA, base LEGI, par l'index du dépôt (scripts/fetch/dila_index.py) ; scripts/fetch/dila_legi_reclassements.py
+texte,article,numero,tableau,debut,fin,motif
+LEGITEXT000005615929,LEGIARTI000006472857,9,1,1993-08-01,,ligne sans ancienneté : l'échelon « 8 e échelon » suit l'échelon nouveau
+LEGITEXT000005615951,LEGIARTI000006473037,14,1,1994-06-08,2016-01-01,ligne sans ancienneté : « 6e » suit l'échelon nouveau
+LEGITEXT000005616085,LEGIARTI000006473106,11,1,1994-06-26,,ligne sans ancienneté : « ancienneté supérieure à 1 an 6 mois 12e » suit l'échelon nouveau
+LEGITEXT000005617066,LEGIARTI000006476597,26,1,1994-11-29,2012-05-11,ligne sans ancienneté : l'échelon « 7e échelon » suit l'échelon nouveau
+LEGITEXT000005617476,LEGIARTI000006377033,25,1,1995-01-12,1998-02-06,ligne sans ancienneté : « (612) ANCIENNETE » suit l'échelon nouveau
+LEGITEXT000005617476,LEGIARTI000006377034,25,1,1998-02-06,2011-06-01,ligne sans ancienneté : « (612) » suit l'échelon nouveau
+LEGITEXT000005617479,LEGIARTI000006377301,25,1,1995-08-01,1998-02-06,ligne sans ancienneté : « (612) ANCIENNETE » suit l'échelon nouveau
+LEGITEXT000005617479,LEGIARTI000006377302,25,1,1998-02-06,2011-12-01,ligne sans ancienneté : « (612) » suit l'échelon nouveau
+LEGITEXT000005617480,LEGIARTI000006377128,25,1,1995-01-12,1998-02-06,ligne sans ancienneté : « (612) ANCIENNETE » suit l'échelon nouveau
+LEGITEXT000005617480,LEGIARTI000006377130,25,1,2003-02-13,2010-12-01,ligne sans ancienneté : « (612) » suit l'échelon nouveau
+LEGITEXT000005617482,LEGIARTI000006377221,23,1,1995-08-01,1998-02-06,ligne sans ancienneté : « (612) ANCIENNETE » suit l'échelon nouveau
+LEGITEXT000005617482,LEGIARTI000006377222,23,1,1998-02-06,2013-06-13,ligne sans ancienneté : « (612) » suit l'échelon nouveau
+LEGITEXT000005617483,LEGIARTI000006376959,25,1,1995-08-01,1998-02-06,ligne sans ancienneté : « (612) ANCIENNETE » suit l'échelon nouveau
+LEGITEXT000005617483,LEGIARTI000006376960,25,1,1998-02-06,2012-08-01,ligne sans ancienneté : « (579) » suit l'échelon nouveau
+LEGITEXT000005617613,LEGIARTI000006476825,26,1,1995-01-26,,ligne sans ancienneté : « ancienneté » suit l'échelon nouveau
+LEGITEXT000005617613,LEGIARTI000006476832,33,1,1995-01-26,,ligne sans ancienneté : l'échelon « 12e échelon » suit l'échelon nouveau
+LEGITEXT000005617613,LEGIARTI000006476842,43,1,1995-01-26,,ligne sans ancienneté : l'échelon « 12e échelon » suit l'échelon nouveau
+LEGITEXT000005617752,LEGIARTI000006477071,7,1,1993-08-01,,ligne sans ancienneté : « depuis » suit l'échelon nouveau
+LEGITEXT000005617886,LEGIARTI000006477209,29,1,1994-10-01,2008-01-01,échelon nouveau qui baisse dans « Chef de service administratif Attaché principal d'administra »
+LEGITEXT000005617886,LEGIARTI000006477210,29-1,1,1995-08-01,2008-01-01,ligne sans ancienneté : « 1/2 » suit l'échelon nouveau
+LEGITEXT000005617887,LEGIARTI000006477612,10,1,1995-02-26,,"ligne sans ancienneté : « Moitié, majorée de 2 ans, de l' » suit l'échelon nouveau"
+LEGITEXT000005618011,LEGIARTI000006477790,12,1,1993-08-01,,ligne sans ancienneté : « Ancienneté augmentée de 1 an » suit l'échelon nouveau
+LEGITEXT000005618256,LEGIARTI000006478052,96,1,1994-07-01,2007-05-03,tableau non reproduit au LEGI
+LEGITEXT000005618698,LEGIARTI000006478662,11,1,1994-08-01,,ligne sans ancienneté : l'échelon « 5e échelon » suit l'échelon nouveau
+LEGITEXT000005618698,LEGIARTI000006478660,9,1,1994-08-01,,ligne sans ancienneté : l'échelon « 5e échelon » suit l'échelon nouveau
+LEGITEXT000005618711,LEGIARTI000006478561,8,1,1994-08-01,,ligne sans ancienneté : la dernière
+LEGITEXT000005618754,LEGIARTI000006478741,19,1,1995-05-10,1997-06-01,ligne sans ancienneté : l'échelon « 1er échelon » suit l'échelon nouveau
+LEGITEXT000005618754,LEGIARTI000006478742,19,1,1997-06-01,2005-07-01,tableau dessiné en caractères
+LEGITEXT000005618766,LEGIARTI000006478897,17,1,2005-01-01,2005-12-30,ligne sans ancienneté : l'échelon « 2e échelon » suit l'échelon nouveau
+LEGITEXT000005618768,LEGIARTI000006478706,20,1,1996-07-18,2006-01-01,ligne sans ancienneté : « au-delà de 2 ans reportée dans le » suit l'échelon nouveau
+LEGITEXT000005618768,LEGIARTI000006478707,21,1,1995-05-10,2006-01-01,ligne sans ancienneté : l'échelon « 3e échelon » suit l'échelon nouveau
+LEGITEXT000005618881,LEGIARTI000006479054,14,1,1998-08-19,,ligne sans ancienneté : l'échelon « 2 e échelon » suit l'échelon nouveau
+LEGITEXT000005619130,LEGIARTI000006479788,22,1,1995-08-03,,ligne sans ancienneté : « Ancienneté » suit l'échelon nouveau
+LEGITEXT000005619130,LEGIARTI000006479790,24,1,1995-08-03,,ligne sans ancienneté : « 3e » suit l'échelon nouveau
+LEGITEXT000005619132,LEGIARTI000006479836,25,1,1995-08-01,2007-05-06,ligne sans ancienneté : « Echelon provisoire n° 2 » suit l'échelon nouveau
+LEGITEXT000005619802,LEGIARTI000006481520,18,1,1993-08-01,,ligne sans ancienneté : « Ancienneté au-delà de 3 ans conservée » suit l'échelon nouveau
+LEGITEXT000005619806,LEGIARTI000006481488,12,1,1995-11-10,,ligne sans ancienneté : « 10e » suit l'échelon nouveau
+LEGITEXT000005619806,LEGIARTI000006481491,14,1,1995-11-10,,ligne sans ancienneté : « 10e » suit l'échelon nouveau
+LEGITEXT000005619806,LEGIARTI000006481496,19,1,1995-11-10,,ligne sans ancienneté : « 10e » suit l'échelon nouveau
+LEGITEXT000005619806,LEGIARTI000006481499,21,1,1995-11-10,,ligne sans ancienneté : « 10e » suit l'échelon nouveau
+LEGITEXT000005620762,LEGIARTI000006482051,24,1,1996-04-12,,ligne sans ancienneté : « 1/2 majorée de 1 an de l' » suit l'échelon nouveau
+LEGITEXT000005620785,LEGIARTI000006482116,23,1,1994-08-01,,ligne sans ancienneté : « 4e » suit l'échelon nouveau
+LEGITEXT000005621090,LEGIARTI000006482228,3,1,1995-08-01,,ligne sans ancienneté : « 4/5 de l'ancienneté » suit l'échelon nouveau
+LEGITEXT000005621676,LEGIARTI000006482757,23,1,1996-09-05,2009-01-01,ligne sans ancienneté : « après 6 mois » suit l'échelon nouveau
+LEGITEXT000005622056,LEGIARTI000006483167,7,1,1995-08-01,,ligne sans ancienneté : l'échelon « 10 e échelon » suit l'échelon nouveau
+LEGITEXT000005622859,LEGIARTI000006483878,30,1,1995-08-01,2006-12-22,ligne sans ancienneté : « ANCIENNETÉ » suit l'échelon nouveau
+LEGITEXT000005623008,LEGIARTI000006483760,5,1,1994-08-01,,ligne sans ancienneté : « après 1 an 6 mois » suit l'échelon nouveau
+LEGITEXT000005623290,LEGIARTI000006484257,16,1,1997-04-19,2003-09-13,ligne sans ancienneté : « III » suit l'échelon nouveau
+LEGITEXT000005623401,LEGIARTI000006484572,7,1,1995-08-01,,ligne sans ancienneté : « 5 e » suit l'échelon nouveau
+LEGITEXT000005623580,LEGIARTI000006484422,25,1,1995-08-01,2007-04-01,tableau dessiné en caractères
+LEGITEXT000005623636,LEGIARTI000006363635,24,1,1997-05-30,2007-06-01,tableau non reproduit au LEGI
+LEGITEXT000005623676,LEGIARTI000006484960,30,1,1995-08-01,2007-01-01,ligne sans ancienneté : « II : SITUATION NOUVELLE : Attaché principal de 2e  » suit l'échelon nouveau
+LEGITEXT000005623741,LEGIARTI000006484807,8,1,1996-08-01,,ligne sans ancienneté : « 4 fois l' » suit l'échelon nouveau
+LEGITEXT000005623741,LEGIARTI000006484808,9,1,1996-08-01,,ligne sans ancienneté : « 4 fois l' » suit l'échelon nouveau
+LEGITEXT000005623827,LEGIARTI000006564822,21,1,1997-06-01,2007-03-01,ligne sans ancienneté : « Ancienneté dans l'échelon » suit l'échelon nouveau
+LEGITEXT000005624336,LEGIARTI000006486800,16,1,1997-10-01,2000-06-11,ligne sans ancienneté : « ANCIENNETE D'ECHELON » suit l'échelon nouveau
+LEGITEXT000005624376,LEGIARTI000006486385,1,1,1998-01-01,,ligne sans ancienneté : « 2e chevron » suit l'échelon nouveau
+LEGITEXT000005624511,LEGIARTI000006505371,25,1,1995-08-01,2006-12-01,ligne sans ancienneté : « Ancienneté » suit l'échelon nouveau
+LEGITEXT000005624750,LEGIARTI000006506000,30 ter,1,1998-10-29,2000-02-13,ligne sans ancienneté : « III = » suit l'échelon nouveau
+LEGITEXT000005624750,LEGIARTI000006506001,30 ter,1,2000-02-13,2007-01-01,ligne sans ancienneté : « III = » suit l'échelon nouveau
+LEGITEXT000005625535,LEGIARTI000006506497,5,1,1998-04-01,,ligne sans ancienneté : « jusqu'à 1 an » suit l'échelon nouveau
+LEGITEXT000005625600,LEGIARTI000006506611,20,1,1994-08-01,2003-06-21,ligne sans ancienneté : « III = » suit l'échelon nouveau
+LEGITEXT000005625637,LEGIARTI000006506371,3,1,1996-08-01,,ligne sans ancienneté : l'échelon « 5e échelon » suit l'échelon nouveau
+LEGITEXT000005625742,LEGIARTI000006506868,15,1,2007-02-28,,ligne sans ancienneté : l'échelon « 10e échelon » suit l'échelon nouveau
+LEGITEXT000005626023,LEGIARTI000006507371,14,1,1995-08-01,,échelon nouveau qui baisse dans « Inspecteur régional Inspecteur régional »
+LEGITEXT000005626289,LEGIARTI000006507600,23,1,1997-01-01,2007-06-01,tableau non reproduit au LEGI
+LEGITEXT000005626311,LEGIARTI000006507416,14,1,1996-08-01,,ligne sans ancienneté : « 7e » suit l'échelon nouveau
+LEGITEXT000005626708,LEGIARTI000006508628,8,1,1996-08-01,2002-03-21,tableau dessiné en caractères
+LEGITEXT000005626710,LEGIARTI000006508667,23,1,1996-08-01,2018-07-19,ligne sans ancienneté : « 2 fois l' » suit l'échelon nouveau
+LEGITEXT000005627503,LEGIARTI000006509529,13,1,1999-02-17,,tableau dessiné en caractères
+LEGITEXT000005627995,LEGIARTI000006510864,9,1,1996-08-01,,ligne sans ancienneté : « 4e » suit l'échelon nouveau
+LEGITEXT000005628299,LEGIARTI000006511944,45,1,1996-08-01,,ligne sans ancienneté : « 3e » suit l'échelon nouveau
+LEGITEXT000005628299,LEGIARTI000006511946,47,1,1996-08-01,,ligne sans ancienneté : « 9e » suit l'échelon nouveau
+LEGITEXT000005628356,LEGIARTI000006511740,3,1,1996-08-01,,ligne sans ancienneté : l'échelon « 6e échelon » suit l'échelon nouveau
+LEGITEXT000005628914,LEGIARTI000006513208,24,1,2000-01-01,2002-04-28,échelon nouveau qui baisse dans « et du chevron Administrateur civil hors classe Conseiller de »
+LEGITEXT000005628914,LEGIARTI000006513209,24,1,2002-04-28,,échelon nouveau qui baisse dans « et du chevron Administrateur civil hors classe Conseiller de »
+LEGITEXT000005629202,LEGIARTI000006724253,28,1,2000-03-14,2005-08-05,tableau dessiné en caractères
+LEGITEXT000005629752,LEGIARTI000006566199,17,1,2000-08-05,2002-02-12,"échelons d'origine dans le désordre dans « ANCIENNE SITUATION Grades, classes et échelons : Directeur a »"
+LEGITEXT000005630066,LEGIARTI000006566281,24,1,2000-10-19,2007-09-19,ligne sans ancienneté : l'échelon « 5e échelon » suit l'échelon nouveau
+LEGITEXT000005630066,LEGIARTI000006566282,25,1,2000-10-19,2007-09-19,ligne sans ancienneté : l'échelon « 5e échelon » suit l'échelon nouveau
+LEGITEXT000005630684,LEGIARTI000006567804,21,1,2001-02-27,2017-01-01,échelon nouveau qui baisse dans « Classe fonctionnelle Classe fonctionnelle »
+LEGITEXT000005631281,LEGIARTI000006379509,28,1,2002-01-01,2002-05-05,tableau non reproduit au LEGI
+LEGITEXT000005631281,LEGIARTI000006379510,28,1,2002-05-05,2012-05-01,ligne sans ancienneté : « Ancienneté minorée de 1 an » suit l'échelon nouveau
+LEGITEXT000005631654,LEGIARTI000006569063,13,1,2001-11-10,2023-01-01,ligne sans ancienneté : « du grade d'inspecteur général et dans le » suit l'échelon nouveau
+LEGITEXT000005631848,LEGIARTI000006725200,18,1,2007-08-07,2018-06-25,ligne sans ancienneté : « avec » suit l'échelon nouveau
+LEGITEXT000005631848,LEGIARTI000006725202,19,1,2007-08-07,2018-06-25,ligne sans ancienneté : la dernière
+LEGITEXT000005631976,LEGIARTI000006724843,35,1,2002-01-01,2008-01-01,tableau non reproduit au LEGI
+LEGITEXT000005632011,LEGIARTI000006725320,20,1,2002-01-01,2012-12-29,ligne sans ancienneté : « 2e » suit l'échelon nouveau
+LEGITEXT000005632011,LEGIARTI000006725322,21,1,2003-12-28,2012-12-29,ligne sans ancienneté : « 6e » suit l'échelon nouveau
+LEGITEXT000005632096,LEGIARTI000006569990,13,1,2002-01-12,2017-03-23,ligne sans ancienneté : « avec conservation de l'ancienneté » suit l'échelon nouveau
+LEGITEXT000005632345,LEGIARTI000006570334,17,1,2002-02-26,2009-10-01,ligne sans ancienneté : « 5/6 de » suit l'échelon nouveau
+LEGITEXT000005632645,LEGIARTI000006571009,25,1,2002-04-17,2009-10-01,ligne sans ancienneté : l'échelon « 1er échelon » suit l'échelon nouveau
+LEGITEXT000005632645,LEGIARTI000006571011,26,1,2002-04-17,2009-10-01,ligne sans ancienneté : l'échelon « 3e échelon » suit l'échelon nouveau
+LEGITEXT000005632645,LEGIARTI000006571014,29,1,2002-04-17,2009-10-01,ligne sans ancienneté : « Trois cinquièmes de l' » suit l'échelon nouveau
+LEGITEXT000005632686,LEGIARTI000006725249,25,1,2002-04-23,2017-09-23,ligne sans ancienneté : l'échelon « 5e échelon » suit l'échelon nouveau
+LEGITEXT000005632686,LEGIARTI000006725250,26,1,2002-04-23,2017-09-23,ligne sans ancienneté : l'échelon « 5e échelon » suit l'échelon nouveau
+LEGITEXT000005632759,LEGIARTI000006571070,12,1,2002-04-28,,ligne sans ancienneté : l'échelon « 6e échelon » suit l'échelon nouveau
+LEGITEXT000005632887,LEGIARTI000006571189,7,1,2002-05-04,,ligne sans ancienneté : « Ancienneté » suit l'échelon nouveau
+LEGITEXT000005632993,LEGIARTI000006571291,23,1,2002-05-05,2017-09-22,ligne sans ancienneté : l'échelon « 2e échelon » suit l'échelon nouveau
+LEGITEXT000005633125,LEGIARTI000006571246,2,1,2002-06-18,,ligne sans ancienneté : « ancienneté » suit l'échelon nouveau
+LEGITEXT000005633333,LEGIARTI000006571703,4,1,2002-09-08,,ligne sans ancienneté : l'échelon « 5e échelon » suit l'échelon nouveau
+LEGITEXT000005634159,LEGIARTI000006564419,10,1,2003-03-29,2025-12-01,ligne sans ancienneté : l'échelon « 5 e échelon » suit l'échelon nouveau
+LEGITEXT000005634159,LEGIARTI000052110530,10,1,2025-12-01,,ligne sans ancienneté : l'échelon « 5 e échelon » suit l'échelon nouveau
+LEGITEXT000005634601,LEGIARTI000006564602,15,1,2003-06-26,2006-11-29,tableau non reproduit au LEGI
+LEGITEXT000005634601,LEGIARTI000006564603,15,1,2006-11-29,2009-05-08,ligne sans ancienneté : « du grade de technicien opérationnel » suit l'échelon nouveau
+LEGITEXT000005635039,LEGIARTI000006672104,17,1,2000-08-07,2020-09-01,échelons d'origine dans le désordre dans « Directeur adjoint du travail de classe fonctionnelle Directe »
+LEGITEXT000005805608,LEGIARTI000006453411,20,1,2004-09-01,,ligne sans ancienneté : l'échelon « 1 er échelon provisoire » suit l'échelon nouveau
+LEGITEXT000005853733,LEGIARTI000006412830,2,1,2004-10-01,,ligne sans ancienneté : l'échelon « 4e échelon » suit l'échelon nouveau
+LEGITEXT000005853733,LEGIARTI000006412836,5,1,2004-10-01,,ligne sans ancienneté : l'échelon « 3e échelon » suit l'échelon nouveau
+LEGITEXT000005867656,LEGIARTI000006412949,17,1,2004-11-03,2015-04-01,ligne sans ancienneté : « 6e » suit l'échelon nouveau
+LEGITEXT000005867656,LEGIARTI000006412950,18,1,2004-11-03,2015-04-01,ligne sans ancienneté : « 2e » suit l'échelon nouveau
+LEGITEXT000005971737,LEGIARTI000034254265,23-1,1,2018-01-01,2019-01-01,ligne sans ancienneté : « Un an d'ancienneté SITUATION D'ORIGINE dans le gra » suit l'échelon nouveau
+LEGITEXT000005971737,LEGIARTI000036439901,23-1,1,2019-01-01,2023-08-01,ligne sans ancienneté : « Un an d'ancienneté SITUATION D'ORIGINE dans le gra » suit l'échelon nouveau
+LEGITEXT000006004280,LEGIARTI000021095867,13,1,2009-10-03,2016-12-01,ligne sans ancienneté : l'échelon « 1er échelon » suit l'échelon nouveau
+LEGITEXT000006005215,LEGIARTI000021095918,13,1,2009-10-03,2016-12-01,ligne sans ancienneté : l'échelon « 1er échelon » suit l'échelon nouveau
+LEGITEXT000006051557,LEGIARTI000006413065,15,1,2005-04-22,2009-09-05,ligne sans ancienneté : « 3e » suit l'échelon nouveau
+LEGITEXT000006051557,LEGIARTI000021020943,15,1,2009-09-05,2023-01-01,ligne sans ancienneté : « 3e » suit l'échelon nouveau
+LEGITEXT000006051635,LEGIARTI000006413339,11,1,2005-05-10,2023-01-01,ligne sans ancienneté : l'échelon « Echelon spécial » suit l'échelon nouveau
+LEGITEXT000006051635,LEGIARTI000006413340,12,1,2005-05-10,2023-01-01,ligne sans ancienneté : « spécial » suit l'échelon nouveau
+LEGITEXT000006051635,LEGIARTI000006413341,13,1,2005-05-10,2023-01-01,ligne sans ancienneté : l'échelon « 3e échelon » suit l'échelon nouveau
+LEGITEXT000006051635,LEGIARTI000006413342,14,1,2005-05-10,2023-01-01,ligne sans ancienneté : « spécial » suit l'échelon nouveau
+LEGITEXT000006051838,LEGIARTI000006413643,31,1,2005-05-31,,ligne sans ancienneté : « Ancienneté » suit l'échelon nouveau
+LEGITEXT000006051928,LEGIARTI000006413686,19,1,2005-07-01,2017-01-01,échelons d'origine dans le désordre dans « Capitaine de police Capitaine de police »
+LEGITEXT000006052033,LEGIARTI000006413744,7,1,2005-07-21,2025-12-01,ligne sans ancienneté : l'échelon « 1er échelon » suit l'échelon nouveau
+LEGITEXT000006052142,LEGIARTI000006726416,34,1,2005-08-05,2018-06-01,ligne sans ancienneté : l'échelon « 2e échelon » suit l'échelon nouveau
+LEGITEXT000006052164,LEGIARTI000006413789,18,1,2006-01-01,2016-07-31,ligne sans ancienneté : « 1/2 » suit l'échelon nouveau
+LEGITEXT000006052164,LEGIARTI000006413790,19,1,2006-01-01,2016-07-31,ligne sans ancienneté : « 2/3 » suit l'échelon nouveau
+LEGITEXT000006052376,LEGIARTI000006413865,19,1,2005-09-10,,ligne sans ancienneté : « 4e » suit l'échelon nouveau
+LEGITEXT000006052376,LEGIARTI000006413865,19,2,2005-09-10,,ligne sans ancienneté : « 7e » suit l'échelon nouveau
+LEGITEXT000006052466,LEGIARTI000006413931,20,1,2006-01-01,2016-01-01,ligne sans ancienneté : « 3/4 » suit l'échelon nouveau
+LEGITEXT000006052494,LEGIARTI000006413828,10,1,2005-10-01,2017-01-01,ligne sans ancienneté : « Ancienneté majorée de 1 an » suit l'échelon nouveau
+LEGITEXT000006052494,LEGIARTI000006413827,9,1,2005-10-01,2017-01-01,ligne sans ancienneté : « Ancienneté majorée de 1 an » suit l'échelon nouveau
+LEGITEXT000006052575,LEGIARTI000006414047,33,1,2005-11-01,2023-10-30,ligne sans ancienneté : « du grade d'ingénieur des services techniques » suit l'échelon nouveau
+LEGITEXT000006052575,LEGIARTI000006414049,35,1,2005-11-01,2023-10-30,ligne sans ancienneté : la dernière
+LEGITEXT000006052837,LEGIARTI000006414198,11,1,2005-12-11,,ligne sans ancienneté : « après 3 ans » suit l'échelon nouveau
+LEGITEXT000006052901,LEGIARTI000006726573,18,1,2005-12-21,2017-01-01,ligne sans ancienneté : « 7e » suit l'échelon nouveau
+LEGITEXT000006052901,LEGIARTI000006726573,18,2,2005-12-21,2017-01-01,ligne sans ancienneté : « 4e » suit l'échelon nouveau
+LEGITEXT000006053211,LEGIARTI000006414232,16,1,2006-02-03,2009-02-01,ligne sans ancienneté : la dernière
+LEGITEXT000006053343,LEGIARTI000006726609,8,1,2006-02-26,2017-01-01,ligne sans ancienneté : « Ancienneté majorée de 1 an » suit l'échelon nouveau
+LEGITEXT000006053343,LEGIARTI000006726610,9,1,2006-02-26,2017-01-01,ligne sans ancienneté : « Ancienneté majorée de 1 an » suit l'échelon nouveau
+LEGITEXT000006053345,LEGIARTI000006726620,2,1,2006-02-26,2006-11-01,tableau non reproduit au LEGI
+LEGITEXT000006053568,LEGIARTI000006414515,46,1,2006-04-15,2023-12-31,ligne sans ancienneté : « après 2 ans » suit l'échelon nouveau
+LEGITEXT000006053625,LEGIARTI000006251015,2,1,2006-04-28,,ligne sans ancienneté : « de ce grade » suit l'échelon nouveau
+LEGITEXT000006054160,LEGIARTI000006414671,12,1,2006-08-04,,ligne sans ancienneté : l'échelon « 5e échelon » suit l'échelon nouveau
+LEGITEXT000006054160,LEGIARTI000006414673,14,1,2006-08-04,,ligne sans ancienneté : l'échelon « 3e échelon » suit l'échelon nouveau
+LEGITEXT000006054160,LEGIARTI000006414673,14,2,2006-08-04,,ligne sans ancienneté : l'échelon « 6e échelon » suit l'échelon nouveau
+LEGITEXT000006054160,LEGIARTI000006414674,15,1,2006-08-04,,ligne sans ancienneté : l'échelon « 4e échelon » suit l'échelon nouveau
+LEGITEXT000006054160,LEGIARTI000006414674,15,2,2006-08-04,,ligne sans ancienneté : l'échelon « 6e échelon » suit l'échelon nouveau
+LEGITEXT000006054721,LEGIARTI000006402638,18,1,2006-11-18,2014-02-01,ligne sans ancienneté : « Ancienneté majorée de 9 mois » suit l'échelon nouveau
+LEGITEXT000006054805,LEGIARTI000006414943,5,1,2006-12-01,2013-10-02,ligne sans ancienneté : « 4/5 de l'ancienneté » suit l'échelon nouveau
+LEGITEXT000006054897,LEGIARTI000006402767,6,1,2006-12-13,,"ligne sans ancienneté : « de cette catégorie. A l'issue de leur stage, ils s » suit l'échelon nouveau"
+LEGITEXT000006055176,LEGIARTI000006414998,12,1,2007-01-01,2013-10-02,ligne sans ancienneté : la dernière
+LEGITEXT000006055714,LEGIARTI000006416098,47,1,2007-03-24,,ligne sans ancienneté : la dernière
+LEGITEXT000006056076,LEGIARTI000006416698,46,1,2007-05-03,,"ligne sans ancienneté : « de leur grade ; 2° Au titre de 2008, avoir » suit l'échelon nouveau"
+LEGITEXT000006056076,LEGIARTI000006416700,48,2,2007-05-03,,ligne sans ancienneté : « de leur grade et comptant » suit l'échelon nouveau
+LEGITEXT000006056097,LEGIARTI000006416021,7,1,2007-01-01,,ligne sans ancienneté : l'échelon « 6e échelon » suit l'échelon nouveau
+LEGITEXT000006056097,LEGIARTI000006416022,8,1,2007-01-01,,ligne sans ancienneté : l'échelon « 3e échelon » suit l'échelon nouveau
+LEGITEXT000006056215,LEGIARTI000006403223,29,1,2007-06-01,2008-06-14,ligne sans ancienneté : « 1/2 de l'ancienneté au-delà de 2 ans conservée » suit l'échelon nouveau
+LEGITEXT000006056215,LEGIARTI000018984585,29,1,2008-06-14,,ligne sans ancienneté : « 1/2 de l'ancienneté au-delà de 2 ans conservée » suit l'échelon nouveau
+LEGITEXT000006056296,LEGIARTI000006722395,14,1,2007-05-13,2017-01-01,ligne sans ancienneté : l'échelon « 7e échelon » suit l'échelon nouveau
+LEGITEXT000006056399,LEGIARTI000006416729,20,1,2007-06-01,,ligne sans ancienneté : « 2/3 » suit l'échelon nouveau
+LEGITEXT000006056939,LEGIARTI000043350288,10,1,2021-04-11,,ligne sans ancienneté : l'échelon « 5e échelon » suit l'échelon nouveau
+LEGITEXT000006060580,LEGIARTI000006571450,25,1,1980-01-10,2003-12-26,ligne sans ancienneté : « ). Attachés commerciaux de 1re classe ; Attachés c » suit l'échelon nouveau
+LEGITEXT000006060580,LEGIARTI000006571455,27,1,1980-01-10,2003-12-26,ligne sans ancienneté : « maintien de l'ancienneté d'échelon antérieurement  » suit l'échelon nouveau
+LEGITEXT000006060899,LEGIARTI000006504995,20,1,1959-01-01,1998-06-06,ligne sans ancienneté : « Ancienneté de classe ou d'échelon conservée : Inté » suit l'échelon nouveau
+LEGITEXT000006061233,LEGIARTI000006568946,13,1,1963-07-11,2005-05-10,ligne sans ancienneté : « Maintien de l' » suit l'échelon nouveau
+LEGITEXT000006061250,LEGIARTI000006569146,19,1,1962-01-01,2005-11-01,tableau non reproduit au LEGI
+LEGITEXT000006061354,LEGIARTI000006563856,3,1,1966-05-22,2010-04-10,ligne sans ancienneté : « Ancienneté majorée de 16 mois » suit l'échelon nouveau
+LEGITEXT000006061354,LEGIARTI000006563857,4,1,1966-05-22,2010-04-10,ligne sans ancienneté : « Échelon provisoire » suit l'échelon nouveau
+LEGITEXT000006061419,LEGIARTI000006567263,16,1,1967-03-08,,ligne sans ancienneté : « ancienneté majorée de 18 mois. Directeur adjoint » suit l'échelon nouveau
+LEGITEXT000006061419,LEGIARTI000006567263,16,2,1967-03-08,,ligne sans ancienneté : « ancienneté majorée de 6 mois. Inspecteur de 2e cla » suit l'échelon nouveau
+LEGITEXT000006061420,LEGIARTI000006567318,6,1,1967-03-08,,ligne sans ancienneté : « Ancienneté majorée de 1 an » suit l'échelon nouveau
+LEGITEXT000006061420,LEGIARTI000006567319,7,1,1967-03-08,,ligne sans ancienneté : « Maintien dans la limite de 2 ans de » suit l'échelon nouveau
+LEGITEXT000006061441,LEGIARTI000006567221,21,1,1967-04-08,2019-11-11,ligne sans ancienneté : « (1) » suit l'échelon nouveau
+LEGITEXT000006061457,LEGIARTI000006567174,7,1,1966-01-01,,ligne sans ancienneté : « Ancienneté diminuée de 1 an » suit l'échelon nouveau
+LEGITEXT000006061532,LEGIARTI000006509845,3,1,1968-03-24,,ligne sans ancienneté : « ANCIENNETE D'ECHELON : Maintenue SITUATION ANCIENN » suit l'échelon nouveau
+LEGITEXT000006061533,LEGIARTI000006563937,23,1,1968-03-24,2007-02-28,tableau non reproduit au LEGI
+LEGITEXT000006061636,LEGIARTI000006566892,21,1,1994-05-25,2007-04-01,ligne sans ancienneté : « un » suit l'échelon nouveau
+LEGITEXT000006061678,LEGIARTI000006566841,17,1,1969-08-15,,ligne sans ancienneté : l'échelon « 6e échelon » suit l'échelon nouveau
+LEGITEXT000006061768,LEGIARTI000006568680,11,1,1970-01-01,2005-10-01,ligne sans ancienneté : l'échelon « 5e échelon » suit l'échelon nouveau
+LEGITEXT000006061778,LEGIARTI000006563519,17,1,1999-09-02,2007-05-03,tableau non reproduit au LEGI
+LEGITEXT000006061778,LEGIARTI000006563523,20,1,1999-09-02,2007-05-03,tableau non reproduit au LEGI
+LEGITEXT000006061793,LEGIARTI000006566710,19,1,1972-01-09,,ligne sans ancienneté : la dernière
+LEGITEXT000006061793,LEGIARTI000006566711,20,1,1972-01-09,,ligne sans ancienneté : « avec » suit l'échelon nouveau
+LEGITEXT000006061979,LEGIARTI000006454978,17,1,1972-08-25,1990-01-01,ligne sans ancienneté : « Ancienneté d'échelon : ancienneté majorée de 1 an. » suit l'échelon nouveau
+LEGITEXT000006061979,LEGIARTI000006454981,19,1,1972-08-25,1990-01-01,ligne sans ancienneté : « Ancienneté d'échelon » suit l'échelon nouveau
+LEGITEXT000006062305,LEGIARTI000006665384,21,1,1975-04-23,2000-08-07,ligne sans ancienneté : « Ancienneté dans l'échelon » suit l'échelon nouveau
+LEGITEXT000006062305,LEGIARTI000006665385,22,1,1975-04-23,2000-08-07,ligne sans ancienneté : « Ancienneté dans l'échelon » suit l'échelon nouveau
+LEGITEXT000006062305,LEGIARTI000006665386,23,1,1975-04-23,2000-08-07,"ligne sans ancienneté : « SITUATION NOUVELLE Grades, classes, échelons : - D » suit l'échelon nouveau"
+LEGITEXT000006062305,LEGIARTI000006665366,9 bis 2,1,1975-07-01,2000-08-07,ligne sans ancienneté : « Ancienneté : Ancienneté égale à 6 mois. SITUATION  » suit l'échelon nouveau
+LEGITEXT000006062331,LEGIARTI000006508555,5,1,1973-07-01,,ligne sans ancienneté : « Après 3 ans » suit l'échelon nouveau
+LEGITEXT000006062354,LEGIARTI000006566730,6,1,1973-07-01,,ligne sans ancienneté : « Ancienneté diminuée des deux cinquièmes » suit l'échelon nouveau
+LEGITEXT000006062406,LEGIARTI000019491570,19,1,2009-01-01,,ligne sans ancienneté : « Sans anciennté » suit l'échelon nouveau
+LEGITEXT000006062419,LEGIARTI000006571609,8 ter,1,1990-08-01,2007-05-03,ligne sans ancienneté : « Ancienneté d'échelon » suit l'échelon nouveau
+LEGITEXT000006062465,LEGIARTI000006501465,5,1,1976-03-26,,ligne sans ancienneté : « Ancienneté dans l'échelon : Ancienneté majorée de  » suit l'échelon nouveau
+LEGITEXT000006062521,LEGIARTI000006480320,29,1,1976-01-01,2009-01-01,ligne sans ancienneté : « Egale à l'ancienneté de grade diminuée de 6 ans et » suit l'échelon nouveau
+LEGITEXT000006062522,LEGIARTI000006407688,19,1,1976-01-01,2009-01-01,tableau non reproduit au LEGI
+LEGITEXT000006062644,LEGIARTI000006363276,14-2,1,2003-11-15,2007-11-01,tableau non reproduit au LEGI
+LEGITEXT000006062664,LEGIARTI000006508615,8,1,1973-07-01,,ligne sans ancienneté : « Après 4 ans » suit l'échelon nouveau
+LEGITEXT000006062668,LEGIARTI000006480540,20,1,1976-01-01,2009-01-01,ligne sans ancienneté : « Egale à l'ancienneté de grade diminuée de 6 ans et » suit l'échelon nouveau
+LEGITEXT000006062668,LEGIARTI000019491518,21,1,2009-01-01,,échelon d'origine en double dans « Professeur en chef de 1re classe Professeur en chef de 1re c »
+LEGITEXT000006062707,LEGIARTI000006455004,8,1,1977-01-01,,ligne sans ancienneté : « Ancienneté d'échelon » suit l'échelon nouveau
+LEGITEXT000006062756,LEGIARTI000006455022,12,1,1977-09-02,,ligne sans ancienneté : « Ancienneté d'échelon » suit l'échelon nouveau
+LEGITEXT000006062971,LEGIARTI000006480695,30,1,1979-01-01,2009-01-01,"ligne sans ancienneté : « ou depuis la nomination dans le corps, lorsqu'elle » suit l'échelon nouveau"
+LEGITEXT000006062971,LEGIARTI000020667788,30,1,2009-01-01,2015-01-01,ligne sans ancienneté : « 1 / 2 d' » suit l'échelon nouveau
+LEGITEXT000006063631,LEGIARTI000006568698,4,1,1982-01-01,,ligne sans ancienneté : « Ancienneté majorée de 11 ans » suit l'échelon nouveau
+LEGITEXT000006063642,LEGIARTI000006502669,30,1,1982-12-18,2009-01-01,ligne sans ancienneté : « 5 mois » suit l'échelon nouveau
+LEGITEXT000006063642,LEGIARTI000006502670,31,1,1982-12-18,2009-01-01,ligne sans ancienneté : l'échelon « 3e échelon » suit l'échelon nouveau
+LEGITEXT000006064839,LEGIARTI000006512240,62,1,1985-12-31,2006-01-07,ligne sans ancienneté : « ANCIENNETE DANS LE NOUVEL ECHELON » suit l'échelon nouveau
+LEGITEXT000006065450,LEGIARTI000006510851,8,1,1985-01-01,,ligne sans ancienneté : « Trois quarts de l'ancienneté » suit l'échelon nouveau
+LEGITEXT000006065542,LEGIARTI000006369941,53,1,1986-03-16,1987-12-31,ligne sans ancienneté : « SITUATION dans leur emploi d'origine : Attaché com » suit l'échelon nouveau
+LEGITEXT000006065757,LEGIARTI000006455777,26,1,1987-12-19,,ligne sans ancienneté : l'échelon « 3e échelon » suit l'échelon nouveau
+LEGITEXT000006065779,LEGIARTI000006370291,38-4,1,2003-07-23,2013-09-01,ligne sans ancienneté : l'échelon « 5e échelon » suit l'échelon nouveau
+LEGITEXT000006065791,LEGIARTI000006370817,9,1,2005-11-01,2014-02-01,ligne sans ancienneté : « Ancienneté majorée de 1 an » suit l'échelon nouveau
+LEGITEXT000006065791,LEGIARTI000006370818,9-1,1,1990-08-01,1998-02-06,ligne sans ancienneté : « SITUATION NOUVELLE » suit l'échelon nouveau
+LEGITEXT000006065791,LEGIARTI000006370819,9-1,1,1998-02-06,1998-04-01,ligne sans ancienneté : « SITUATION NOUVELLE » suit l'échelon nouveau
+LEGITEXT000006065791,LEGIARTI000006370820,9-1,1,2005-11-01,2014-02-01,ligne sans ancienneté : « Ancienneté majorée de 1 an » suit l'échelon nouveau
+LEGITEXT000006066325,LEGIARTI000006704843,44,1,1988-12-01,1993-08-01,ligne sans ancienneté : « ( » suit l'échelon nouveau
+LEGITEXT000006066325,LEGIARTI000006704845,45,1,1988-12-01,1993-08-01,ligne sans ancienneté : « de reclassement » suit l'échelon nouveau
+LEGITEXT000006066325,LEGIARTI000006704848,47,1,1988-12-01,1989-08-04,ligne sans ancienneté : « 1/2 » suit l'échelon nouveau
+LEGITEXT000006066325,LEGIARTI000006704849,47,1,1989-08-04,1993-08-01,ligne sans ancienneté : « de reclassement » suit l'échelon nouveau
+LEGITEXT000006066574,LEGIARTI000006456139,22,1,1995-02-26,2007-05-03,ligne sans ancienneté : « Six septièmes de l' » suit l'échelon nouveau
+LEGITEXT000006067228,LEGIARTI000006706059,58,1,1989-01-01,1993-08-01,ligne sans ancienneté : « a) » suit l'échelon nouveau
+LEGITEXT000006067228,LEGIARTI000006706061,59,1,1989-01-01,1993-08-01,tableau dessiné en caractères
+LEGITEXT000006067230,LEGIARTI000006706150,19,1,1989-01-01,2002-01-10,ligne sans ancienneté : « 3/4 » suit l'échelon nouveau
+LEGITEXT000006067230,LEGIARTI000006706151,19,1,2002-01-10,2014-12-27,ligne sans ancienneté : « 4e » suit l'échelon nouveau
+LEGITEXT000006067230,LEGIARTI000006706153,20,1,1989-01-01,2002-01-10,ligne sans ancienneté : « SITUATION NOUVELLE » suit l'échelon nouveau
+LEGITEXT000006067232,LEGIARTI000006705349,45,1,1989-01-01,1993-08-01,tableau dessiné en caractères
+LEGITEXT000006067276,LEGIARTI000006456803,7,1,1989-01-01,,ligne sans ancienneté : « SITUATION NOUVELLE » suit l'échelon nouveau
+LEGITEXT000006067308,LEGIARTI000006457606,19,1,1989-11-01,1996-08-01,échelon d'origine en double dans « Dans le corps des ingénieurs techniciens d'études et de fabr »
+LEGITEXT000006067315,LEGIARTI000006706540,13,1,1994-10-20,2002-04-23,ligne sans ancienneté : « Situation nouvelle Echelons » suit l'échelon nouveau
+LEGITEXT000006067315,LEGIARTI000006706542,14,1,1994-10-20,2002-04-23,ligne sans ancienneté : « Situation nouvelle Echelons » suit l'échelon nouveau
+LEGITEXT000006067728,LEGIARTI000006711304,26-1,1,2007-06-25,2017-09-23,ligne sans ancienneté : la dernière
+LEGITEXT000006068000,LEGIARTI000006699174,27,1,1994-01-01,2002-01-01,ligne sans ancienneté : « Situation nouvelle - 1er classe 6e » suit l'échelon nouveau
+LEGITEXT000006070393,LEGIARTI000006380913,5,1,1984-01-01,1987-09-01,ligne sans ancienneté : « = 252 » suit l'échelon nouveau
+LEGITEXT000006070393,LEGIARTI000006380913,5,10,1984-01-01,1987-09-01,ligne sans ancienneté : « = 252 » suit l'échelon nouveau
+LEGITEXT000006070393,LEGIARTI000006380913,5,2,1984-01-01,1987-09-01,ligne sans ancienneté : « = 263 » suit l'échelon nouveau
+LEGITEXT000006070393,LEGIARTI000006380913,5,3,1984-01-01,1987-09-01,ligne sans ancienneté : « = 252 » suit l'échelon nouveau
+LEGITEXT000006070393,LEGIARTI000006380913,5,7,1984-01-01,1987-09-01,ligne sans ancienneté : « = 238 » suit l'échelon nouveau
+LEGITEXT000006070393,LEGIARTI000006380913,5,8,1984-01-01,1987-09-01,ligne sans ancienneté : « = 238 » suit l'échelon nouveau
+LEGITEXT000006070393,LEGIARTI000006380913,5,9,1984-01-01,1987-09-01,ligne sans ancienneté : « = 238 » suit l'échelon nouveau
+LEGITEXT000006070393,LEGIARTI000006380911,ANNEXE,1,1980-11-13,1982-05-02,ligne sans ancienneté : « = 250 » suit l'échelon nouveau
+LEGITEXT000006070393,LEGIARTI000006380911,ANNEXE,10,1980-11-13,1982-05-02,ligne sans ancienneté : « = 250 » suit l'échelon nouveau
+LEGITEXT000006070393,LEGIARTI000006380911,ANNEXE,2,1980-11-13,1982-05-02,ligne sans ancienneté : « = 263 » suit l'échelon nouveau
+LEGITEXT000006070393,LEGIARTI000006380911,ANNEXE,3,1980-11-13,1982-05-02,ligne sans ancienneté : « = 250 » suit l'échelon nouveau
+LEGITEXT000006070393,LEGIARTI000006380911,ANNEXE,7,1980-11-13,1982-05-02,ligne sans ancienneté : « = 232 » suit l'échelon nouveau
+LEGITEXT000006070393,LEGIARTI000006380911,ANNEXE,8,1980-11-13,1982-05-02,ligne sans ancienneté : « = 232 » suit l'échelon nouveau
+LEGITEXT000006070393,LEGIARTI000006380911,ANNEXE,9,1980-11-13,1982-05-02,ligne sans ancienneté : « = 232 » suit l'échelon nouveau
+LEGITEXT000006070393,LEGIARTI000006380912,ANNEXE,1,1982-05-02,1984-01-01,ligne sans ancienneté : « = 252 » suit l'échelon nouveau
+LEGITEXT000006070393,LEGIARTI000006380912,ANNEXE,10,1982-05-02,1984-01-01,ligne sans ancienneté : « = 252 » suit l'échelon nouveau
+LEGITEXT000006070393,LEGIARTI000006380912,ANNEXE,2,1982-05-02,1984-01-01,ligne sans ancienneté : « = 263 » suit l'échelon nouveau
+LEGITEXT000006070393,LEGIARTI000006380912,ANNEXE,3,1982-05-02,1984-01-01,ligne sans ancienneté : « = 252 » suit l'échelon nouveau
+LEGITEXT000006070393,LEGIARTI000006380912,ANNEXE,7,1982-05-02,1984-01-01,ligne sans ancienneté : « = 238 » suit l'échelon nouveau
+LEGITEXT000006070393,LEGIARTI000006380912,ANNEXE,8,1982-05-02,1984-01-01,ligne sans ancienneté : « = 238 » suit l'échelon nouveau
+LEGITEXT000006070393,LEGIARTI000006380912,ANNEXE,9,1982-05-02,1984-01-01,ligne sans ancienneté : « = 238 » suit l'échelon nouveau
+LEGITEXT000006070393,LEGIARTI000006380914,ANNEXE,1,1987-09-01,,ligne sans ancienneté : « = 252 » suit l'échelon nouveau
+LEGITEXT000006070393,LEGIARTI000006380914,ANNEXE,10,1987-09-01,,ligne sans ancienneté : « = 252 » suit l'échelon nouveau
+LEGITEXT000006070393,LEGIARTI000006380914,ANNEXE,2,1987-09-01,,ligne sans ancienneté : « = 263 » suit l'échelon nouveau
+LEGITEXT000006070393,LEGIARTI000006380914,ANNEXE,3,1987-09-01,,ligne sans ancienneté : « = 252 » suit l'échelon nouveau
+LEGITEXT000006070393,LEGIARTI000006380914,ANNEXE,7,1987-09-01,,ligne sans ancienneté : « = 238 » suit l'échelon nouveau
+LEGITEXT000006070393,LEGIARTI000006380914,ANNEXE,8,1987-09-01,,ligne sans ancienneté : « = 238 » suit l'échelon nouveau
+LEGITEXT000006070393,LEGIARTI000006380914,ANNEXE,9,1987-09-01,,ligne sans ancienneté : « = 238 » suit l'échelon nouveau
+LEGITEXT000006070446,LEGIARTI000006381392,7,1,1970-01-01,1983-01-01,tableau dessiné en caractères
+LEGITEXT000006070446,LEGIARTI000006381393,7,1,1983-01-01,,tableau dessiné en caractères
+LEGITEXT000006070446,LEGIARTI000006381394,8,1,1970-01-01,,tableau dessiné en caractères
+LEGITEXT000006072907,LEGIARTI000006719404,Annexe,1,1973-11-28,1982-06-13,"ligne sans ancienneté : « de leur emploi, d'une bonification d'ancienneté de » suit l'échelon nouveau"
+LEGITEXT000006072908,LEGIARTI000006719489,Annexe 2,1,1977-02-18,,ligne sans ancienneté : « (IB.416) » suit l'échelon nouveau
+LEGITEXT000006072941,LEGIARTI000006720022,Annexe 2,1,1973-11-28,1974-01-22,"ligne sans ancienneté : « de leur emploi, d'une bonification d'ancienneté de » suit l'échelon nouveau"
+LEGITEXT000006072941,LEGIARTI000006720023,Annexe 2,1,1974-01-22,,"ligne sans ancienneté : « de leur emploi, d'une bonification d'ancienneté de » suit l'échelon nouveau"
+LEGITEXT000006075308,LEGIARTI000006458014,30,1,1990-12-12,2009-10-02,ligne sans ancienneté : « Dans la limite de 60 mois » suit l'échelon nouveau
+LEGITEXT000006075308,LEGIARTI000006458016,32,1,1990-12-12,2009-10-02,ligne sans ancienneté : « Dans la limite de 54 mois » suit l'échelon nouveau
+LEGITEXT000006075810,LEGIARTI000006458298,3,1,1989-01-01,,ligne sans ancienneté : « Ancienneté majorée d'un quart Les autres membres d » suit l'échelon nouveau
+LEGITEXT000006075852,LEGIARTI000006458539,29,1,1990-01-01,2007-08-22,ligne sans ancienneté : l'échelon « 4e échelon » suit l'échelon nouveau
+LEGITEXT000006075852,LEGIARTI000006458540,30,1,1990-01-01,2007-08-22,ligne sans ancienneté : l'échelon « 4e échelon » suit l'échelon nouveau
+LEGITEXT000006075852,LEGIARTI000006458541,31,1,1990-01-01,2007-08-22,ligne sans ancienneté : l'échelon « 2e échelon » suit l'échelon nouveau
+LEGITEXT000006076672,LEGIARTI000006710259,13,1,2003-09-09,2014-12-27,ligne sans ancienneté : « moins de 8 ans » suit l'échelon nouveau
+LEGITEXT000006076672,LEGIARTI000006710261,14,1,2003-09-09,2014-12-27,ligne sans ancienneté : « de 6 ans à » suit l'échelon nouveau
+LEGITEXT000006076675,LEGIARTI000006710288,4,1,1990-08-01,,ligne sans ancienneté : « 2e » suit l'échelon nouveau
+LEGITEXT000006077132,LEGIARTI000006460782,38,1,1991-01-23,1995-08-01,ligne sans ancienneté : « Ancienneté diminuée d'un an » suit l'échelon nouveau
+LEGITEXT000006077193,LEGIARTI000006710064,15-1,1,1996-08-01,2017-04-30,ligne sans ancienneté : « 3/4 de l'ancienneté » suit l'échelon nouveau
+LEGITEXT000006078553,LEGIARTI000006467632,23,1,1992-01-12,2007-08-22,ligne sans ancienneté : « Echelon de stage » suit l'échelon nouveau
+LEGITEXT000006078555,LEGIARTI000006467567,31,1,1991-01-01,2010-08-28,ligne sans ancienneté : l'échelon « 4 e échelon » suit l'échelon nouveau
+LEGITEXT000006079141,LEGIARTI000006713557,8,1,1992-05-22,2009-12-01,ligne sans ancienneté : « 2e » suit l'échelon nouveau
+LEGITEXT000006079142,LEGIARTI000006713528,17,2,2005-10-02,2006-08-04,tableau non reproduit au LEGI
+LEGITEXT000006079142,LEGIARTI000006713529,18,1,1989-01-01,2005-10-02,ligne sans ancienneté : « 5e » suit l'échelon nouveau
+LEGITEXT000006079142,LEGIARTI000006713530,19,1,1989-01-01,2005-10-02,ligne sans ancienneté : « a) » suit l'échelon nouveau
+LEGITEXT000006079142,LEGIARTI000006713531,20,1,1989-01-01,2005-10-02,ligne sans ancienneté : « a) » suit l'échelon nouveau
+LEGITEXT000006079306,LEGIARTI000006468403,25,1,1990-01-01,2005-12-21,ligne sans ancienneté : « a) Infirmiers diplômés d'Etat ayant » suit l'échelon nouveau
+LEGITEXT000006079787,LEGIARTI000006375125,27-1,1,2003-08-01,2016-04-01,ligne sans ancienneté : « 3/2 de la fraction d'ancienneté supérieure à 10 an » suit l'échelon nouveau
+LEGITEXT000006079790,LEGIARTI000006375023,35-1,1,2003-07-25,2017-09-22,ligne sans ancienneté : l'échelon « 4e échelon » suit l'échelon nouveau
+LEGITEXT000006079790,LEGIARTI000006375025,35-3,1,2003-07-25,2017-09-22,ligne sans ancienneté : l'échelon « 2e échelon » suit l'échelon nouveau
+LEGITEXT000006079790,LEGIARTI000006375026,35-4,1,2003-07-25,2017-09-22,ligne sans ancienneté : « ancienneté d'échelon » suit l'échelon nouveau
+LEGITEXT000006079899,LEGIARTI000006468578,8,1,1992-07-01,,ligne sans ancienneté : « Ancienneté égale à A : Réviseur Réviseur » suit l'échelon nouveau
+LEGITEXT000006080132,LEGIARTI000006469297,40,1,1990-08-01,,ligne sans ancienneté : « 10 e » suit l'échelon nouveau
+LEGITEXT000006080132,LEGIARTI000006469299,42,1,1990-08-01,,ligne sans ancienneté : « 10 e » suit l'échelon nouveau
+LEGITEXT000006080132,LEGIARTI000006469300,43,1,1990-08-01,,ligne sans ancienneté : « 9 e » suit l'échelon nouveau
+LEGITEXT000006080132,LEGIARTI000006469304,45,1,1990-08-01,,ligne sans ancienneté : « 10 e » suit l'échelon nouveau
+LEGITEXT000006080132,LEGIARTI000006469305,46,1,1990-08-01,,ligne sans ancienneté : « 9 e » suit l'échelon nouveau
+LEGITEXT000006080132,LEGIARTI000006469306,47,1,1990-08-01,,ligne sans ancienneté : « avant 4 ans » suit l'échelon nouveau
+LEGITEXT000006080132,LEGIARTI000006469308,49,1,1990-08-01,,ligne sans ancienneté : « 10 e » suit l'échelon nouveau
+LEGITEXT000006080132,LEGIARTI000006469309,50,1,1990-08-01,,ligne sans ancienneté : « 10 e » suit l'échelon nouveau
+LEGITEXT000006080132,LEGIARTI000006469310,51,1,1990-08-01,,ligne sans ancienneté : « 7 e » suit l'échelon nouveau
+LEGITEXT000006080316,LEGIARTI000006469606,16,1,1992-08-01,1995-09-05,ligne sans ancienneté : « Brigadier » suit l'échelon nouveau
+LEGITEXT000006080345,LEGIARTI000006469767,31,1,1992-11-15,1997-11-05,ligne sans ancienneté : « Conservée. 2e classe Inspecteur de 1re classe » suit l'échelon nouveau
+LEGITEXT000006080572,LEGIARTI000006469939,18,1,1992-08-01,1995-09-05,ligne sans ancienneté : « Enquêteur de 1re classe » suit l'échelon nouveau
+LEGITEXT000006081027,LEGIARTI000006712737,31-1,1,1996-08-01,2008-04-07,ligne sans ancienneté : « SITUATION Nouvelle » suit l'échelon nouveau
+LEGITEXT000006081769,LEGIARTI000006470904,17,1,1993-08-01,1993-07-31,ligne sans ancienneté : « Un huitième de l' » suit l'échelon nouveau
+LEGITEXT000006081834,LEGIARTI000006471160,18,1,1993-01-01,2000-02-13,ligne sans ancienneté : « Six septièmes de l' » suit l'échelon nouveau
+LEGITEXT000006081834,LEGIARTI000006471161,18,1,2000-02-13,2007-01-01,ligne sans ancienneté : « Six septièmes de l' » suit l'échelon nouveau
+LEGITEXT000006081872,LEGIARTI000006713074,12,1,1994-05-20,2007-05-13,ligne sans ancienneté : « Situation nouvelle - 6e » suit l'échelon nouveau
+LEGITEXT000006081872,LEGIARTI000006713074,12,2,1994-05-20,2007-05-13,ligne sans ancienneté : « Situation nouvelle - 6e » suit l'échelon nouveau
+LEGITEXT000006081875,LEGIARTI000006713179,13,1,2007-08-07,2014-02-07,ligne sans ancienneté : « classe normale 1/2 » suit l'échelon nouveau
+LEGITEXT000006081876,LEGIARTI000006713224,13,1,2007-08-07,2014-02-07,ligne sans ancienneté : « classe normale » suit l'échelon nouveau
+LEGITEXT000006081876,LEGIARTI000006713235,18-1,1,1996-05-10,1997-08-01,tableau dessiné en caractères
+LEGITEXT000006082039,LEGIARTI000006472928,22,1,1993-09-01,2004-09-01,ligne sans ancienneté : l'échelon « 1er échelon » suit l'échelon nouveau
+LEGITEXT000006082581,LEGIARTI000006933533,2,1,1992-08-01,,ligne sans ancienneté : « Ancienneté requise b) » suit l'échelon nouveau
+LEGITEXT000017872511,LEGIARTI000017872592,40,1,2008-01-01,2012-05-12,ligne sans ancienneté : « 3/4 » suit l'échelon nouveau
+LEGITEXT000018502129,LEGIARTI000018502188,21,1,2008-04-01,,ligne sans ancienneté : l'échelon « 3e échelon » suit l'échelon nouveau
+LEGITEXT000019478708,LEGIARTI000019478773,29,1,2009-01-01,2016-01-01,échelon d'origine en double dans « Officier en chef de 1re classe Officier en chef de 1re class »
+LEGITEXT000019478823,LEGIARTI000019478864,46,1,2009-01-01,2011-11-19,ligne sans ancienneté : « Médecin chef des services hors classe » suit l'échelon nouveau
+LEGITEXT000019478823,LEGIARTI000024813213,46,1,2011-11-19,2026-05-11,ligne sans ancienneté : « Médecin chef des services hors classe » suit l'échelon nouveau
+LEGITEXT000019479487,LEGIARTI000019479569,34,1,2009-01-01,2013-01-01,échelon d'origine en double dans « Administrateur en chef de 1re classe Administrateur en chef  »
+LEGITEXT000019479931,LEGIARTI000019480031,37,1,2009-01-01,2023-10-23,ligne sans ancienneté : l'échelon « 4e échelon » suit l'échelon nouveau
+LEGITEXT000019480475,LEGIARTI000019480576,38,1,2009-01-01,2026-05-11,ligne sans ancienneté : « Général de division » suit l'échelon nouveau
+LEGITEXT000019480605,LEGIARTI000019480662,21,1,2009-01-01,2023-10-23,ligne sans ancienneté : « Ingénieur général de 1re classe » suit l'échelon nouveau
+LEGITEXT000019480688,LEGIARTI000019480737,18,1,2009-01-01,2026-05-11,échelon d'origine en double dans « Ingénieur en chef de 1re classe Ingénieur en chef de 1re cla »
+LEGITEXT000019481342,LEGIARTI000019481444,39,1,2009-01-01,2020-12-03,ligne sans ancienneté : « Général de division aérienne » suit l'échelon nouveau
+LEGITEXT000019481575,LEGIARTI000019481645,33,1,2009-01-01,2026-05-11,ligne sans ancienneté : l'échelon « 1er échelon » suit l'échelon nouveau
+LEGITEXT000019481693,LEGIARTI000019481768,28,1,2009-01-01,2019-03-18,ligne sans ancienneté : l'échelon « 4e échelon » suit l'échelon nouveau
+LEGITEXT000019482516,LEGIARTI000019482611,41,1,2009-01-01,2026-05-11,échelon d'origine en double dans « Colonel Colonel »
+LEGITEXT000019483322,LEGIARTI000019483421,36,1,2009-01-01,2013-01-01,ligne sans ancienneté : l'échelon « 4e échelon » suit l'échelon nouveau
+LEGITEXT000019483678,LEGIARTI000019483721,15,1,2009-01-01,2025-12-15,ligne sans ancienneté : l'échelon « 2e échelon » suit l'échelon nouveau
+LEGITEXT000019483678,LEGIARTI000053027204,15,1,2025-12-15,,ligne sans ancienneté : « avant 12 ans » suit l'échelon nouveau
+LEGITEXT000019485606,LEGIARTI000019485529,24,1,1976-01-01,2009-01-01,ligne sans ancienneté : « Egale à l'ancienneté de grade diminuée de 3 ans » suit l'échelon nouveau
+LEGITEXT000020063809,LEGIARTI000020063831,8,1,2009-01-01,2013-10-02,ligne sans ancienneté : la dernière
+LEGITEXT000020858114,LEGIARTI000020859306,13,1,1973-01-01,,ligne sans ancienneté : « Ancienneté non conservée » suit l'échelon nouveau
+LEGITEXT000022754329,LEGIARTI000022754383,19,1,2010-09-01,,ligne sans ancienneté : « 8ème » suit l'échelon nouveau
+LEGITEXT000022789440,LEGIARTI000022789550,37,1,2011-09-01,,ligne sans ancienneté : « Avec » suit l'échelon nouveau
+LEGITEXT000023051090,LEGIARTI000023051228,19,1,2010-12-01,2011-06-03,ligne sans ancienneté : « 1/2 » suit l'échelon nouveau
+LEGITEXT000023051090,LEGIARTI000024111265,19,1,2011-06-03,,ligne sans ancienneté : « 1/2 » suit l'échelon nouveau
+LEGITEXT000023307978,LEGIARTI000023308022,20,1,2011-01-01,2019-02-01,ligne sans ancienneté : l'échelon « 5e échelon » suit l'échelon nouveau
+LEGITEXT000023947821,LEGIARTI000023947865,25,1,2011-05-06,,ligne sans ancienneté : « Quatre fois l'ancienneté au-delà d'un an » suit l'échelon nouveau
+LEGITEXT000024738616,LEGIARTI000024738670,29,1,2011-11-02,,ligne sans ancienneté : la dernière
+LEGITEXT000024875118,LEGIARTI000024875150,9,1,2011-12-01,,ligne sans ancienneté : « à partir de 4 ans » suit l'échelon nouveau
+LEGITEXT000024875204,LEGIARTI000024875228,11,1,2011-12-01,,ligne sans ancienneté : « 12e » suit l'échelon nouveau
+LEGITEXT000024875235,LEGIARTI000024875260,11,1,2011-12-01,,ligne sans ancienneté : « du grade de contrôleur divisionnaire mentionné à l » suit l'échelon nouveau
+LEGITEXT000024875724,LEGIARTI000024875746,7,1,2011-12-01,,ligne sans ancienneté : « 11e » suit l'échelon nouveau
+LEGITEXT000024875767,LEGIARTI000024875791,7,1,2011-12-01,,ligne sans ancienneté : « 13e » suit l'échelon nouveau
+LEGITEXT000024876070,LEGIARTI000024876095,7,1,2011-12-01,,ligne sans ancienneté : « 10e » suit l'échelon nouveau
+LEGITEXT000024876118,LEGIARTI000024876158,13,1,2011-12-01,,ligne sans ancienneté : « à partir de 4 ans » suit l'échelon nouveau
+LEGITEXT000025018125,LEGIARTI000025018182,20,1,2012-01-01,,ligne sans ancienneté : « Même numéro d'échelon » suit l'échelon nouveau
+LEGITEXT000025598404,LEGIARTI000025598438,17,1,2012-04-01,,ligne sans ancienneté : l'échelon « 11e échelon » suit l'échelon nouveau
+LEGITEXT000025598404,LEGIARTI000025598444,18,1,2012-04-01,,ligne sans ancienneté : l'échelon « 7e échelon » suit l'échelon nouveau
+LEGITEXT000025689961,LEGIARTI000025689990,9,1,2012-04-16,,ligne sans ancienneté : l'échelon « 6e échelon » suit l'échelon nouveau
+LEGITEXT000025730865,LEGIARTI000025730923,19,1,2012-05-01,,ligne sans ancienneté : « Pas d'ancienneté reprise » suit l'échelon nouveau
+LEGITEXT000025730960,LEGIARTI000025731022,19,1,2012-05-01,2017-01-01,ligne sans ancienneté : l'échelon « 12e échelon » suit l'échelon nouveau
+LEGITEXT000025730960,LEGIARTI000034033991,19,1,2017-01-01,,ligne sans ancienneté : l'échelon « 12e échelon » suit l'échelon nouveau
+LEGITEXT000025855139,LEGIARTI000025855189,23,1,2012-05-11,,échelon nouveau qui baisse dans « SITUATION DANS LE GRADE d'infirmier de classe normale SITUAT »
+LEGITEXT000026352488,LEGIARTI000026352574,45,1,2013-01-01,2015-01-01,ligne sans ancienneté : l'échelon « Echelon unique » suit l'échelon nouveau
+LEGITEXT000026352488,LEGIARTI000029862520,45,1,2015-01-01,2022-10-20,ligne sans ancienneté : l'échelon « Echelon unique » suit l'échelon nouveau
+LEGITEXT000026386178,LEGIARTI000026386237,21,1,2012-10-01,2024-11-10,ligne sans ancienneté : « 11e » suit l'échelon nouveau
+LEGITEXT000026386178,LEGIARTI000026386249,27,1,2012-10-01,2024-11-10,ligne sans ancienneté : « 11e » suit l'échelon nouveau
+LEGITEXT000026386361,LEGIARTI000026386402,12,1,2012-10-01,,ligne sans ancienneté : « 11e » suit l'échelon nouveau
+LEGITEXT000026386361,LEGIARTI000026386402,12,2,2012-10-01,,ligne sans ancienneté : « 11e » suit l'échelon nouveau
+LEGITEXT000026428691,LEGIARTI000026428765,23,1,2012-10-01,2024-07-08,ligne sans ancienneté : l'échelon « 9e échelon » suit l'échelon nouveau
+LEGITEXT000026796722,LEGIARTI000026796774,25,1,2013-01-01,2016-05-15,échelon nouveau qui baisse dans « Infirmier de classe normale Infirmier en soins généraux de c »
+LEGITEXT000026796722,LEGIARTI000032578335,25,1,2016-05-15,,échelon nouveau qui baisse dans « Infirmier de classe normale Infirmier en soins généraux de c »
+LEGITEXT000026852035,LEGIARTI000026852087,23,1,2012-12-29,,ligne sans ancienneté : « Deux fois l'anciennté acquise au-delà d'un an et s » suit l'échelon nouveau
+LEGITEXT000026897818,LEGIARTI000026897930,39,1,2013-01-01,2018-04-09,ligne sans ancienneté : « exceptionnel » suit l'échelon nouveau
+LEGITEXT000027115956,LEGIARTI000027115986,28,1,2013-03-01,,ligne sans ancienneté : « 2 fois l' » suit l'échelon nouveau
+LEGITEXT000027331919,LEGIARTI000027332029,31,1,1965-04-22,,ligne sans ancienneté : « avec maintien de l'ancienneté d'échelon » suit l'échelon nouveau
+LEGITEXT000027331919,LEGIARTI000027332032,32,1,1965-04-22,,ligne sans ancienneté : « avec l'ancienneté d'échelon majorée de 1 an et lim » suit l'échelon nouveau
+LEGITEXT000027363211,LEGIARTI000027363237,8,1,2013-04-28,,ligne sans ancienneté : « à partir d'un an » suit l'échelon nouveau
+LEGITEXT000027444711,LEGIARTI000027444799,19,1,2013-06-01,,ligne sans ancienneté : « 11e » suit l'échelon nouveau
+LEGITEXT000028194861,LEGIARTI000028194901,14,1,2013-11-15,,ligne sans ancienneté : l'échelon « 8e échelon » suit l'échelon nouveau
+LEGITEXT000028321216,LEGIARTI000028321258,14,1,2013-12-14,,ligne sans ancienneté : la dernière
+LEGITEXT000028342342,LEGIARTI000028342391,18,1,2013-12-20,,ligne sans ancienneté : « Quatre fois l'ancienneté au-delà d'un an » suit l'échelon nouveau
+LEGITEXT000028445790,LEGIARTI000028445821,18,1,2014-01-10,,ligne sans ancienneté : l'échelon « 7e échelon » suit l'échelon nouveau
+LEGITEXT000028541547,LEGIARTI000028541564,5,1,2014-02-01,,ligne sans ancienneté : l'échelon « 9e échelon » suit l'échelon nouveau
+LEGITEXT000028566780,LEGIARTI000028566822,13,1,2014-02-07,2017-01-01,ligne sans ancienneté : « 12e » suit l'échelon nouveau
+LEGITEXT000028566849,LEGIARTI000028566894,14,1,2014-02-07,2017-01-01,ligne sans ancienneté : « à partir de trois ans » suit l'échelon nouveau
+LEGITEXT000028567015,LEGIARTI000028567053,11,1,2014-02-07,2017-01-01,ligne sans ancienneté : « 13e » suit l'échelon nouveau
+LEGITEXT000029149915,LEGIARTI000029149925,3,1,2014-07-01,,ligne sans ancienneté : l'échelon « 9e échelon » suit l'échelon nouveau
+LEGITEXT000029383792,LEGIARTI000029383849,26,1,2014-09-01,,ligne sans ancienneté : l'échelon « 4e échelon provisoire » suit l'échelon nouveau
+LEGITEXT000029383792,LEGIARTI000029383851,27,1,2014-09-01,,ligne sans ancienneté : l'échelon « 4e échelon » suit l'échelon nouveau
+LEGITEXT000029987844,LEGIARTI000029987905,23,1,2014-12-27,2021-01-01,ligne sans ancienneté : « 3 fois l' » suit l'échelon nouveau
+LEGITEXT000029987844,LEGIARTI000029987905,23,2,2014-12-27,2021-01-01,ligne sans ancienneté : « 3 fois l' » suit l'échelon nouveau
+LEGITEXT000030046699,LEGIARTI000030046713,11,1,2015-01-01,,ligne sans ancienneté : l'échelon « 7e échelon » suit l'échelon nouveau
+LEGITEXT000030833615,LEGIARTI000030833677,22,1,2015-08-01,2019-02-01,ligne sans ancienneté : l'échelon « 9e échelon » suit l'échelon nouveau
+LEGITEXT000032117021,LEGIARTI000032117106,28,1,2016-03-01,,échelons d'origine dans le désordre dans « Ingénieur Ingénieur »
+LEGITEXT000032128652,LEGIARTI000032128681,7,1,2016-03-01,,ligne sans ancienneté : l'échelon « 10e échelon » suit l'échelon nouveau
+LEGITEXT000032276794,LEGIARTI000032276850,26,1,2016-04-01,,échelon nouveau qui baisse dans « Puéricultrice cadre de santé Cadre de santé infirmier et tec »
+LEGITEXT000032458921,LEGIARTI000032458923,18,1,1972-05-26,,ligne sans ancienneté : « Ancienneté majorée de 2 ans » suit l'échelon nouveau
+LEGITEXT000032523322,LEGIARTI000032523343,21,1,2017-01-01,,ligne sans ancienneté : l'échelon « 3e échelon » suit l'échelon nouveau
+LEGITEXT000032523322,LEGIARTI000032523365,9,1,2016-01-01,,ligne sans ancienneté : l'échelon « 7e échelon » suit l'échelon nouveau
+LEGITEXT000032524595,LEGIARTI000032524648,27,1,2016-01-01,2019-02-01,ligne sans ancienneté : l'échelon « 9e échelon » suit l'échelon nouveau
+LEGITEXT000032562638,LEGIARTI000032562668,10,1,2016-05-22,,échelons d'origine dans le désordre dans « Situation d'origine dans le deuxième grade : assistant socio »
+LEGITEXT000032569078,LEGIARTI000032569110,7,4,2017-01-01,,ligne sans ancienneté : « du troisième grade avec » suit l'échelon nouveau
+LEGITEXT000032569078,LEGIARTI000032569112,8,2,2017-01-01,,ligne sans ancienneté : la dernière
+LEGITEXT000033077370,LEGIARTI000033077440,23,1,2016-09-01,,ligne sans ancienneté : « après quatre ans » suit l'échelon nouveau
+LEGITEXT000033078274,LEGIARTI000033078335,21,1,2016-09-01,2022-01-01,ligne sans ancienneté : « de la 2e classe du grade de cadre de santé de sape » suit l'échelon nouveau
+LEGITEXT000033133947,LEGIARTI000033134016,24,1,2016-10-01,2017-12-31,échelon nouveau qui baisse dans « Médecin et pharmacien de sapeurs-pompiers professionnels hor »
+LEGITEXT000033133947,LEGIARTI000036413410,24,1,2017-12-31,,échelon nouveau qui baisse dans « Médecin et pharmacien de sapeurs-pompiers professionnels hor »
+LEGITEXT000033275563,LEGIARTI000033275597,6,4,2016-10-21,,ligne sans ancienneté : « du troisième grade avec » suit l'échelon nouveau
+LEGITEXT000034036667,LEGIARTI000034036681,3,2,2017-02-16,,ligne sans ancienneté : l'échelon « 8e échelon » suit l'échelon nouveau
+LEGITEXT000034036744,LEGIARTI000034036829,36,4,2017-02-16,,ligne sans ancienneté : l'échelon « 4e échelon » suit l'échelon nouveau
+LEGITEXT000034054701,LEGIARTI000034054861,87,1,2017-02-18,,ligne sans ancienneté : « du grade d'ingénieur d'études et de fabrications a » suit l'échelon nouveau
+LEGITEXT000034336520,LEGIARTI000034336551,17,1,2017-01-01,,ligne sans ancienneté : « 2 fois l' » suit l'échelon nouveau
+LEGITEXT000034430167,LEGIARTI000034430197,11,1,2017-04-16,,ligne sans ancienneté : « 2 fois l' » suit l'échelon nouveau
+LEGITEXT000034523648,LEGIARTI000034523674,8,1,2017-04-30,,ligne sans ancienneté : « 2 fois l' » suit l'échelon nouveau
+LEGITEXT000034717590,LEGIARTI000034717912,48,1,2017-09-01,,ligne sans ancienneté : l'échelon « 13e échelon » suit l'échelon nouveau
+LEGITEXT000034717590,LEGIARTI000034717948,73,1,2017-09-01,,ligne sans ancienneté : l'échelon « 13e échelon » suit l'échelon nouveau
+LEGITEXT000034735950,LEGIARTI000034736026,16,1,2017-09-01,,ligne sans ancienneté : l'échelon « 13e échelon » suit l'échelon nouveau
+LEGITEXT000034744118,LEGIARTI000034744133,4,2,2018-01-01,2017-12-31,ligne sans ancienneté : la dernière
+LEGITEXT000034744118,LEGIARTI000036461760,4,2,2019-01-01,,ligne sans ancienneté : la dernière
+LEGITEXT000035420473,LEGIARTI000035420544,19,1,2017-09-01,,ligne sans ancienneté : « 9e » suit l'échelon nouveau
+LEGITEXT000035596248,LEGIARTI000035596271,12,1,2017-09-22,,ligne sans ancienneté : « 3 fois l' » suit l'échelon nouveau
+LEGITEXT000035601349,LEGIARTI000035601385,23,1,2017-09-23,,ligne sans ancienneté : « 6/5 » suit l'échelon nouveau
+LEGITEXT000035601553,LEGIARTI000035601578,11,1,2017-01-01,,ligne sans ancienneté : l'échelon « 10e échelon » suit l'échelon nouveau
+LEGITEXT000036937784,LEGIARTI000036937824,14,1,2018-05-25,,ligne sans ancienneté : « 2 fois l' » suit l'échelon nouveau
+LEGITEXT000037325515,LEGIARTI000037325578,18,1,2019-02-01,,échelons d'origine dans le désordre dans « DEUXIEME GRADE CLASSE SUPERIEURE DU PREMIER GRADE »
+LEGITEXT000037325515,LEGIARTI000037325546,32,1,2018-08-24,,échelons d'origine dans le désordre dans « CLASSE SUPERIEURE DU PREMIER GRADE PREMIER GRADE »
+LEGITEXT000037446730,LEGIARTI000037446767,13,1,2018-09-30,,ligne sans ancienneté : l'échelon « 7e échelon » suit l'échelon nouveau
+LEGITEXT000037620744,LEGIARTI000037620779,11,1,2018-11-19,,ligne sans ancienneté : « 2/3de l' » suit l'échelon nouveau
+LEGITEXT000037972714,LEGIARTI000037972734,22,1,2018-12-30,,ligne sans ancienneté : « 2 fois l' » suit l'échelon nouveau
+LEGITEXT000038079146,LEGIARTI000038079197,17,1,2019-02-01,,ligne sans ancienneté : « 3 fois l' » suit l'échelon nouveau
+LEGITEXT000038236368,LEGIARTI000038236426,33,1,2022-01-01,2026-05-11,ligne sans ancienneté : « exceptionnel » suit l'échelon nouveau
+LEGITEXT000039156142,LEGIARTI000039156219,21,1,2019-10-01,2023-01-01,ligne sans ancienneté : « spécial » suit l'échelon nouveau
+LEGITEXT000039203888,LEGIARTI000039203959,41,1,2019-10-12,2025-01-01,ligne sans ancienneté : « (provisoire) » suit l'échelon nouveau
+LEGITEXT000039203888,LEGIARTI000039203965,45,1,2019-10-12,2025-01-01,ligne sans ancienneté : « Echelon fonctionnel » suit l'échelon nouveau
+LEGITEXT000039203888,LEGIARTI000039203969,49,1,2019-10-12,2025-01-01,ligne sans ancienneté : l'échelon « 12e échelon » suit l'échelon nouveau
+LEGITEXT000042368534,LEGIARTI000042368602,24,1,2020-10-01,,ligne sans ancienneté : « 2 fois l' » suit l'échelon nouveau
+LEGITEXT000042368870,LEGIARTI000042368922,24,1,2020-10-01,,échelon nouveau qui baisse dans « avec maintien de l'indice à titre personnel »
+LEGITEXT000043361355,LEGIARTI000043361511,11,1,1964-09-12,,ligne sans ancienneté : « avec maintien de l’ » suit l'échelon nouveau
+LEGITEXT000044129583,LEGIARTI000044129638,20,1,2021-10-01,,ligne sans ancienneté : « 1 an et six mois d'ancienneté - au-delà d'un an et » suit l'échelon nouveau
+LEGITEXT000044617608,LEGIARTI000044617671,23,1,2021-12-31,2022-10-01,ligne sans ancienneté : « 1 an et 6 mois d'ancienneté - au-delà d'un an et » suit l'échelon nouveau
+LEGITEXT000044617608,LEGIARTI000046347138,23,1,2022-10-01,,ligne sans ancienneté : « 1 an et 6 mois d'ancienneté - au-delà d'un an et » suit l'échelon nouveau
+LEGITEXT000044849005,LEGIARTI000044849080,25,1,2021-12-31,,ligne sans ancienneté : « 1 an et 6 mois d'ancienneté - au-delà d'un an et » suit l'échelon nouveau
+LEGITEXT000044876744,LEGIARTI000044876820,25,1,2021-12-31,,ligne sans ancienneté : « 1 an et 6 mois d'ancienneté - au-delà d'un an et » suit l'échelon nouveau
+LEGITEXT000046243404,LEGIARTI000046243450,7,1,2022-09-02,,ligne sans ancienneté : « 3/4 » suit l'échelon nouveau
+LEGITEXT000046592107,LEGIARTI000046592161,19,2,2023-01-01,2023-02-04,ligne sans ancienneté : « chevron II 9 » suit l'échelon nouveau
+LEGITEXT000046592107,LEGIARTI000047088212,19,2,2023-02-04,2026-10-05,ligne sans ancienneté : « chevron II 9 » suit l'échelon nouveau
+LEGITEXT000046592107,LEGIARTI000054949749,19,2,2026-10-05,,ligne sans ancienneté : « chevron II 9 » suit l'échelon nouveau
+LEGITEXT000047711251,LEGIARTI000047711272,9,1,2023-06-23,,ligne sans ancienneté : « Sans objet Grade Echelon d'origine Echelon de recl » suit l'échelon nouveau
+LEGITEXT000047917224,LEGIARTI000047917292,28,2,2023-08-03,,ligne sans ancienneté : « à partir de 3 ans » suit l'échelon nouveau
+LEGITEXT000048854597,LEGIARTI000048854708,50,2,2023-12-31,,ligne sans ancienneté : l'échelon « 13e échelon provisoire » suit l'échelon nouveau
+LEGITEXT000048854597,LEGIARTI000048854742,57,1,2023-12-31,,ligne sans ancienneté : « de la classe supérieure du grade de capitaine péni » suit l'échelon nouveau
+LEGITEXT000049194338,LEGIARTI000049194351,5,1,2024-02-26,,ligne sans ancienneté : l'échelon « 9e échelon » suit l'échelon nouveau
+LEGITEXT000052106183,LEGIARTI000052106386,96,2,2025-12-01,,"ligne sans ancienneté : « chevron I 11 12 mois Ingénieur général des ponts,  » suit l'échelon nouveau"
+LEGITEXT000052106183,LEGIARTI000052106386,96,4,2025-12-01,,ligne sans ancienneté : « chevron III 11 6 mois » suit l'échelon nouveau
+LEGITEXT000052322997,LEGIARTI000052323008,2,1,2025-10-01,,ligne sans ancienneté : « avec » suit l'échelon nouveau
+LEGITEXT000052460270,LEGIARTI000052460318,12,1,2025-10-31,,ligne sans ancienneté : « 3 Ancienneté dans le chevron conservée 2 e chevron » suit l'échelon nouveau
+LEGITEXT000052460270,LEGIARTI000052460318,12,2,2025-10-31,,ligne sans ancienneté : « 5 Ancienneté dans le chevron conservée 1 er chevro » suit l'échelon nouveau
+LEGITEXT000052460270,LEGIARTI000052460318,12,3,2025-10-31,,ligne sans ancienneté : « avant 1 an » suit l'échelon nouveau
+LEGITEXT000052461373,LEGIARTI000052461399,10,1,2025-10-31,,ligne sans ancienneté : la dernière
+LEGITEXT000054864178,LEGIARTI000054864212,13,1,2027-02-01,,ligne sans ancienneté : « chevron II 8 » suit l'échelon nouveau

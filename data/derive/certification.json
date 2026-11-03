@@ -1882,6 +1882,28 @@
    "valeurs": 21,
    "verifiee_le": "2026-11-03"
   },
+  "reclassements_rang_nouveau": {
+   "ajoutees": 0,
+   "colonne": "rang_nouveau",
+   "corrigees": 0,
+   "empreinte": "9425f28bdb38b69b",
+   "identiques": 7365,
+   "niveau": "certifiee",
+   "source": "DILA, base LEGI, tableaux de reclassement des statuts, par l'index du dépôt",
+   "valeurs": 7365,
+   "verifiee_le": "2026-11-03"
+  },
+  "reclassements_rang_origine": {
+   "ajoutees": 0,
+   "colonne": "rang_origine",
+   "corrigees": 0,
+   "empreinte": "1b75a56e7c6453da",
+   "identiques": 7365,
+   "niveau": "certifiee",
+   "source": "DILA, base LEGI, tableaux de reclassement des statuts, par l'index du dépôt",
+   "valeurs": 7365,
+   "verifiee_le": "2026-11-03"
+  },
   "ressources_eec_retraite": {
    "ajoutees": 0,
    "colonne": "part_pib",

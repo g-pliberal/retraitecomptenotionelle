@@ -653,6 +653,10 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         # `haute`, et ses valeurs corrigées, `estimee` (action 158).
         "bareme_indices": "grilles/bareme/indices.csv",
         "bareme_indices_corriges": "grilles/bareme/indices.csv",
+        # Les reclassements d'une grille à la suivante, lus au LEGI : le rang
+        # des échelons d'origine et d'accueil de chaque ligne (action 158).
+        "reclassements_rang_origine": "grilles/reclassements/lignes.csv",
+        "reclassements_rang_nouveau": "grilles/reclassements/lignes.csv",
         "quotients_mortalite": "mortalite/quotients_periode.csv",
         "quotients_mortalite_anciens": "mortalite/quotients_periode.csv",
         # Les quotients que l'INSEE projette, que le modèle lit au lieu de sa

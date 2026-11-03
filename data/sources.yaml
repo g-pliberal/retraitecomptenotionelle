@@ -4547,6 +4547,32 @@ institutions:
           pas, à celles de la territoriale. Avant 1990, ni le LEGI ni le JORF
           de la DILA ne reproduisent les tableaux.
 
+      - id: dila_legi_reclassements
+        titre: >-
+          Reclassements d'une grille indiciaire à la suivante, échelon par
+          échelon, dans les trois versants et chez les militaires
+        url: https://echanges.dila.gouv.fr/OPENDATA/LEGI/
+        acces: api
+        statut_integration: certifie
+        cible: data/reference/grilles/reclassements/lignes.csv
+        recuperation: scripts/fetch/dila_legi_reclassements.py
+        note: >-
+          Depuis le 3 novembre 2026 (action 158, étape 2) : les tableaux de
+          correspondance que les statuts particuliers et les décrets
+          d'organisation des carrières écrivent quand ils refont une grille
+          (« sont reclassés conformément au tableau suivant »), lus dans
+          l'index LEGI du dépôt — l'échelon d'origine, la condition
+          d'ancienneté qui le partage, l'échelon d'accueil et l'ancienneté
+          conservée telle que le texte l'écrit. Les tableaux de promotion et
+          de recrutement ne sont pas lus ; un tableau douteux est refusé et
+          consigné dans non_lus.csv. scripts/verifier_donnees.py certifie le
+          rang des échelons d'origine et d'accueil ; tests/test_reclassements.py
+          recoupe aux articles du LEGI le passage de l'échelle 4 en C2 de la
+          territoriale (décret n° 2016-596) et celui de l'ancienne échelle 4
+          de l'État (décret n° 2005-1228). Les durées d'échelon, sans
+          lesquelles l'ancienneté conservée « dans la limite de la durée de
+          l'échelon » ne s'applique pas, n'y sont pas.
+
       - id: dila_legi_duree_requise
         titre: Durée d'assurance requise, générations 1953-1957
         url: https://echanges.dila.gouv.fr/OPENDATA/LEGI/
