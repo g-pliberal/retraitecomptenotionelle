@@ -6923,16 +6923,16 @@ de `contribution_etat`.
 
 ### 161. Un seul exemplaire du code : les doublons entre le Python et le JavaScript retirés une paire à la fois, chaque retrait relu — `en cours`
 
-**Reprise, au 2 novembre 2026.** Le JavaScript fait foi (note de décision
-0005), et le Python garde ce que dit la note 0006, que le propriétaire a
-confirmée ce jour. En cours : le coût sous un modèle modifié. Faits : le
-relevé, le plan, le jumeau séparé de la mémoire, les données d'ailleurs,
-« sans la suspension » au droit contrefactuel, puis la proposition
-prospective en univers, que le portage calcule, la variante dans la demande
-au pont, ses chiffres à l'octet. Suivent, une par session : le stock à l'âge
-légal et le régime unique en paramètres facultatifs ; puis les retraits, qui
-n'ôtent que des règles. Détail : `2026-11-02-le-cout-sous-un-modele-modifie.md`
-(le plan), `2026-11-02-la-proposition-prospective-en-univers.md`.
+**Reprise, au 3 novembre 2026.** Le JavaScript fait foi (note de décision
+0005), et le Python garde ce que dit la note 0006. En cours : le coût sous un
+modèle modifié. Faits : le relevé, le plan, le jumeau à part, les données
+d'ailleurs, « sans la suspension », la proposition prospective en univers,
+puis le stock à l'âge légal, une règle du compte sous un paramètre facultatif,
+l'étude par le portage, sa sortie à l'octet. Suivent, une par session : le
+régime unique par barème, en paramètre de la demande ; le levier
+`pont.par_le_jumeau()` réservé aux confrontations ; puis les retraits. Détail :
+`2026-11-02-le-cout-sous-un-modele-modifie.md` (le plan),
+`2026-11-03-le-stock-a-l-age-legal.md`.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur

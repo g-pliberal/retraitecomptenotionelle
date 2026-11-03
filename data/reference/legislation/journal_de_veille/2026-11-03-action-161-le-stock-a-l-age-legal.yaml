@@ -1,0 +1,16 @@
+date: "2026-11-03"
+session: "action 161, le coût sous un modèle modifié : le stock à l'âge légal, une règle du compte sous un paramètre facultatif, l'étude par le portage"
+consulte: >-
+  Aucune source de droit nouvelle : la session ne touche à aucune règle du
+  scénario 1. Les âges que le dépôt porte déjà, lus tels quels : l'âge légal
+  par génération (age_ouverture_requis.csv, D. 161-2-1-9), et l'âge que le
+  droit de chaque assuré lui ouvre, régime spécial et carrière longue compris
+  (droit.ouvrir, age_ouverture_droit).
+trouve: >-
+  Aucune règle du droit n'a changé. Le stock à l'âge légal est une variante
+  d'étude des comptes notionnels, que scripts/stock_age_legal.py chiffre :
+  elle s'écrit au moteur sous un paramètre facultatif
+  (Parametres.stock_age_legal), que le scénario 1 ne lit pas et que le site
+  ne porte pas.
+reste: >-
+  Rien pour la veille.
