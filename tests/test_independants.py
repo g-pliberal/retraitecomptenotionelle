@@ -1278,3 +1278,31 @@ def test_le_nrco_des_commercants_cotise_sur_l_avant_derniere_annee(points_des_de
             for annee, points in attendu.items():
                 assert credits.get(("nric", annee)) == pytest.approx(
                     points, rel=1e-12), (moteur, annee)
+
+
+def test_la_cotisation_additionnelle_de_1985_a_1996_n_achete_pas_de_points(
+        points_des_deux_moteurs):
+    """« A compter du 1er janvier 1985, est due en sus de la cotisation visée
+    ci-dessus une cotisation additionnelle fixée à 0,10 p. 100 dudit revenu »
+    (décret n° 78-351, article 5, I, LEGIARTI000006766106 ; D. 635-6,
+    LEGIARTI000006738071, jusqu'au 26 février 1997) ; « le nombre de points
+    portés à ce compte chaque année est déterminé en divisant par un revenu de
+    référence le montant de la cotisation prévue à l'article 5-I, 1er alinéa »
+    (article 6, I, LEGIARTI000006766108), « au premier alinéa de l'article
+    D. 635-6 » (D. 635-7, LEGIARTI000006738024) : la cotisation de 4,40 %. La
+    caisse : « Une cotisation additionnelle de 0,10 point a été prélevée entre
+    1985 et 1996 [...]. Cette cotisation n'etait pas génératrice de droit »
+    (exposé « Points cotisés artisans avant 2013 »). Depuis 1997, D. 635-6 ne
+    porte plus qu'un taux, 4,90 % (LEGIARTI000006738072). L'artisan à 10 000 €
+    par an depuis 1983 a 10 000 × 4,40 % / 1,655596 points en 1985,
+    10 000 × 4,40 % / 2,344666 en 1996, 10 000 × 4,90 % / 2,661760 en 1997.
+    Dans les deux moteurs."""
+    cas = [{"naissance": 1940, "age": 65.0, "releve": _releve(
+        "artisan", {annee: 10000.0 for annee in range(1983, 1999)})}]
+    attendus = {1985: 10000.0 * 0.044 / 1.655596,
+                1996: 10000.0 * 0.044 / 2.344666,
+                1997: 10000.0 * 0.049 / 2.661760}
+    for moteur, (credits,) in points_des_deux_moteurs(cas).items():
+        for annee, points in attendus.items():
+            assert credits.get(("rco_artisans", annee)) == pytest.approx(
+                points, rel=1e-12), (moteur, annee)

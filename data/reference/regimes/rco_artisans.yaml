@@ -45,7 +45,7 @@ periodes:
     points_invalidite: {par: trimestre, proportionnels: true, forfait: 16}
     taux_cotisation_retraite: 0.0440
     notes: >-
-      4,40 %, taux de l'article 5 du décret n° 78-351 du 14 mars 1978 qui institue le régime. Il n'est pas lu dans ce décret — le JORF n'en garde que la notice — mais dans l'état codifié du 21 décembre 1985, le plus ancien que porte LEGI, ET dans le fait qu'aucun texte ne l'a modifié entre-temps : les trois seuls textes qui touchent au régime sur la période sont le décret n° 81-407 du 23 avril 1981, qui répartit les biens de l'organisation autonome et fixe le versement du complémentaire au régime de base sans toucher aux cotisations, le décret n° 84-1064 du 30 novembre 1984, qui ajoute la cotisation additionnelle de 0,10 % à compter du 1er janvier 1985, et la codification de décembre 1985. Le décret fondateur date les cotisations du 1er janvier 1979 (art. 12), d'où le début de cette période. La chaîne est complète et sans trou ; elle reste une déduction, le texte de l'article 5 n'étant pas publié en accès ouvert.
+      4,40 %, taux de l'article 5 du décret n° 78-351 du 14 mars 1978 qui institue le régime, lu dans l'index LEGI le 3 novembre 2026 (LEGIARTI000006766105, rédaction du 19 mars 1978 au 1er janvier 1985) : « Le taux de la cotisation annuelle d'assurance vieillesse complémentaire est fixé à 4,40 p. 100 du revenu visé aux articles 3 et 4 ». Les autres textes qui touchent au régime sur la période ne changent pas ce taux : le décret n° 81-407 du 23 avril 1981, qui répartit les biens de l'organisation autonome et fixe le versement du complémentaire au régime de base, le décret n° 84-1064 du 30 novembre 1984, qui ajoute la cotisation additionnelle de 0,10 % à compter du 1er janvier 1985, et la codification de décembre 1985. Le décret fondateur date les cotisations du 1er janvier 1979 (art. 12), d'où le début de cette période. L'assiette, l'avant-dernière année et les forfaits de début : fiche `assiette_rco_independants`.
       LE RÉGIME ACCUMULE DE VRAIS POINTS DEPUIS QUE SON BARÈME EST VERSÉ.
       Il se déclarait « en points » sans qu'aucun prix de point lui soit
       connu : le moteur retombait alors sur le rendement instantané de
@@ -81,8 +81,10 @@ periodes:
     # Les points de la pension d'invalidité : fiche `points_invalidite_independants`.
     points_invalidite: {par: trimestre, proportionnels: true, forfait: 16}
     taux_cotisation_retraite: 0.0450
+    # Les points, de la seule cotisation de 4,40 % : fiche `assiette_rco_independants`.
+    taux_calcul_points: 0.0440
     notes: >-
-      D. 635-6, état du 21 décembre 1985 : 4,40 %, plus une cotisation additionnelle de 0,10 % due à compter du 1er janvier 1985. Cette additionnelle est datée par son propre texte, le décret n° 84-1064 du 30 novembre 1984 — « INSTITUTION D'UNE COTISATION ADDITIONNELLE FIXEE A 0,10% DU REVENU », applicable au 1er janvier 1985. Assiette : trois fois le plafond (D. 635-4).
+      D. 635-6, état du 21 décembre 1985 : 4,40 %, plus une cotisation additionnelle de 0,10 % due à compter du 1er janvier 1985. Cette additionnelle est datée par son propre texte, le décret n° 84-1064 du 30 novembre 1984 — « INSTITUTION D'UNE COTISATION ADDITIONNELLE FIXEE A 0,10% DU REVENU », applicable au 1er janvier 1985 —, que l'article 5 du décret n° 78-351 écrit dans sa rédaction du 1er janvier 1985 (LEGIARTI000006766106). Elle n'achète pas de points : l'article 6 les tire de « la cotisation prévue à l'article 5-I, 1er alinéa » (LEGIARTI000006766108), D. 635-7 de « la cotisation prévue au premier alinéa de l'article D. 635-6 » (LEGIARTI000006738024), et la caisse le dit : « Cette cotisation n'etait pas génératrice de droit » (exposé « Points cotisés artisans avant 2013 ») ; d'où le taux de calcul des points, 4,40 %. Assiette : trois fois le plafond (D. 635-4).
   - debut: 1997
     fin: 1997
     type_calcul: points
