@@ -1107,10 +1107,15 @@ def test_la_pension_moyenne_relative_s_ecarte_de_celle_du_cor(avenir, comptes):
 #: après le conjoint collaborateur remis sur l'avant-dernière année, +8,1703 et
 #: +11,2390 %, la grille n'ayant pas de conjoint. Pourquoi l'écart monte quand
 #: les pensions baissent : il compare la croissance de la dépense, de la
-#: dernière année observée à l'horizon, à celle du COR, et la correction ne
-#: touche que les années d'avant 2009, qui pèsent dans les pensions servies au
-#: départ bien plus qu'en 2070 ; la dépense de départ baisse plus que celle de
-#: l'horizon, et la pente monte. Pourquoi les non-salariés bougent, qui n'ont
+#: dernière année observée à l'horizon, à celle du COR, et la correction
+#: touche pour l'essentiel les années d'avant 2009 (l'avant-dernière année
+#: jusqu'en 2008, le 0,10 % de 1985 à 1996), qui pèsent dans les pensions
+#: servies au départ bien plus qu'en 2070 ; les forfaits de début valent
+#: jusqu'en 2011, et la grille en sert encore à l'artisan né en 1985, qui
+#: commence en 2009 (``castypes.py``, ``age_debut=24``) : au forfait en 2009
+#: et 2010, sa pension pèse à l'horizon, non au départ. La dépense de départ
+#: baisse plus que celle de l'horizon, et la pente monte. Pourquoi les
+#: non-salariés bougent, qui n'ont
 #: pas de RCO (``GROUPES_DU_MODELE`` : msa_non_salaries, cnavpl, cnbf ; le RCO
 #: et le NRCO vont au RCI, leur ``integre_dans``, parmi les complémentaires) :
 #: par le calage des poids (``_poids_par_groupe``), qui multiplie le

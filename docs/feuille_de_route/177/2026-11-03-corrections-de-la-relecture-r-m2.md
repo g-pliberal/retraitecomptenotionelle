@@ -119,3 +119,10 @@ pourquoi les non-salariés bougent sans RCO : le RCO et le NRCO vont au RCI
 **Ce qui reste.** Le minimum de la cotisation jusqu'en 2015 ; le forfait du
 commerçant qui commence, et celui de l'artisan de 2009 à 2011 ; un exemple de la
 caisse pour le conjoint à l'option.
+
+**Ajout du 3 novembre 2026, file M2-ter.** L'empreinte 8f5447b, au titre du
+§ 1 et dans l'entrée du journal de veille de cette session, ne désigne aucun
+commit du dépôt : le travail publié est cc55cdd. e24714d, au § 3, en est un,
+d'avant le travail, dont le témoin des simulations est celui d'eab4dae. Le
+détail, et le témoin de page que cette note ne nommait pas :
+`2026-11-03-retouches-de-la-relecture-r-m2-bis.md`.
