@@ -1,0 +1,71 @@
+# Le traitement de l'indice 100 de la fonction publique, en indice majoré
+# -----------------------------------------------------------------------
+# source_id: legifrance_textes
+#
+# Des textes se réfèrent au « traitement de l'indice 100 » sans en écrire le
+# montant : ainsi le 3° de l'article R. 11 du code des pensions de retraite des
+# marins, depuis 1968, que l'article L. 5552-19 du code des transports reprend
+# en 2010 (« sous réserve d'un abattement au-delà d'un plafond ») : « Lorsque
+# le salaire ainsi défini excède huit fois le montant du traitement brut
+# correspondant à l'indice 100 dans la fonction publique, la portion dépassant
+# cette limite n'est comptée que pour moitié. » L'indice 100 est le plus bas
+# de la hiérarchie générale : « Les indices minimum et maximum de la
+# hiérarchie générale sont respectivement égaux à 100 et à 800 » (décret
+# n° 48-1108 du 10 juillet 1948, article 1er, LEGIARTI000006561748).
+#
+# Ce traitement, l'article 7 du décret n° 85-1148 du 24 octobre 1985 le dit,
+# pour tous ces textes : « Pour l'application des dispositions législatives et
+# réglementaires se référant au traitement de l'indice 100 prévu par le décret
+# du 10 juillet 1948 susvisé, ce traitement est constitué par le traitement
+# afférent à l'indice majoré 150 (indice brut 100) » à sa rédaction d'origine ;
+# depuis le 1er juillet 2008 (décret n° 2008-622, article 2, 3°), « se
+# référant au traitement de l'indice 100 ou de l'indice brut 100, ce
+# traitement est constitué par le traitement afférent à l'indice majoré 201 »,
+# 203 depuis le 1er juillet 2009, 208 depuis le 1er janvier 2024 (décret
+# n° 2023-519, article 2). Ce n'est donc pas le traitement de l'indice majoré
+# 100. Les dérogations de son second alinéa — l'indice brut 175, puis 169, 164
+# et 173, pour une liste de textes jusqu'au 31 décembre 2003 ; un indice
+# majoré pour le seul article 65 de la loi du 11 janvier 1984 depuis le
+# 18 janvier 2005 — ne visent pas le code des marins.
+#
+# Une ligne par rédaction qui change l'indice : sa date d'effet, l'indice
+# majoré qu'elle écrit, son identifiant LEGI. La date est celle que le décret
+# modificatif écrit quand la base LEGI date la rédaction de sa publication :
+# « à compter du 1er juillet 1998 » (n° 98-462), du 1er avril 1999 (n° 99-208),
+# du 1er juillet 1999 (n° 99-491), du 1er décembre 1999 (n° 99-943), du
+# 1er juillet 2001 (n° 2001-559), du 1er juillet 2005 (n° 2005-726), lus dans
+# l'index JORF du dépôt. En mai et juin 2001, le premier alinéa dit encore
+# 164 : le décret n° 2001-370 ne le touche pas, et le n° 2001-559, qui y
+# remplace « l'indice majoré 169 », vise un mot qu'il ne porte pas.
+#
+# AVANT LE 5 NOVEMBRE 1985, RIEN N'EST LU : les décrets de rémunération qui
+# précèdent (n° 68-566, n° 70-393, n° 74-652 et leurs modifications) ne sont,
+# dans les index du dépôt, qu'en analyses. La fiche
+# `marins_salaire_de_reference` le déclare.
+#
+# Le traitement d'un indice majoré est cet indice fois la valeur du point de
+# l'année (`point_indice_fonction_publique.csv`, au 1er janvier) ; au-delà de
+# la série du point, le dernier connu. Lues dans l'index LEGI du dépôt, à jour
+# de l'incrément du 2 novembre 2026 ; `tests/test_marins.py` relit chaque
+# rédaction quand l'index est là.
+date_effet,indice_majore,legi,fiabilite
+1985-11-05,150,LEGIARTI000006454537,haute
+1986-02-07,152,LEGIARTI000006454538,haute
+1988-10-01,154,LEGIARTI000006454539,haute
+1989-02-01,155,LEGIARTI000006454540,haute
+1990-01-01,156,LEGIARTI000006454541,haute
+1991-08-01,158,LEGIARTI000006454542,haute
+1998-07-01,160,LEGIARTI000006454544,haute
+1999-04-01,161,LEGIARTI000006454545,haute
+1999-07-01,163,LEGIARTI000006454546,haute
+1999-12-01,164,LEGIARTI000006454547,haute
+2001-07-01,172,LEGIARTI000006454550,haute
+2004-07-01,174,LEGIARTI000006454552,haute
+2005-07-01,186,LEGIARTI000006454554,haute
+2006-07-01,190,LEGIARTI000006454555,haute
+2006-11-01,191,LEGIARTI000006454556,haute
+2007-07-01,194,LEGIARTI000006454557,haute
+2008-05-01,199,LEGIARTI000018728042,haute
+2008-07-01,201,LEGIARTI000019111495,haute
+2009-07-01,203,LEGIARTI000020817875,haute
+2024-01-01,208,LEGIARTI000047751780,haute

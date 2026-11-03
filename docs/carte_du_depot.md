@@ -78,11 +78,11 @@ Le suivi, seul trait en pointillé, se fait à la main, règle par règle et
 JavaScript d'abord (note de décision 0005), sous les mêmes noms d'étapes des
 deux côtés, jusqu'au retrait de chaque jumeau Python. Les témoins le
 tiennent :
-<!--chiffre:entrees(tests/temoins/simulations.json:)-->929<!--/--> simulations
+<!--chiffre:entrees(tests/temoins/simulations.json:)-->930<!--/--> simulations
 complètes, que le moteur Python refait au bit près (`tests/test_pont.py`), et
 <!--chiffre:entrees(tests/temoins/pages.json:)-->85<!--/--> pages figées, que
 `node --test` rejoue ;
-<!--chiffre:portage(valeurs)-->174 533<!--/--> nombres comparés, dont
+<!--chiffre:portage(valeurs)-->174 702<!--/--> nombres comparés, dont
 <!--chiffre:portage(identiques)-->100,0<!--/--> % identiques au bit près.
 
 Une exception, voulue : le coût pour toute la population ne se calcule qu'en

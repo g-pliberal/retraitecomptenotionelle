@@ -135,7 +135,7 @@ CALIBRATIONS = DONNEES / "derive" / "calibrations_mortalite.json"
 #: qu'un site en cache ne lise pas un paquet qu'il ne comprend pas : le site
 #: attend la sienne (``VERSION_PAQUET``, ``moteur/js/contexte.js``), et redemande
 #: au serveur un paquet qui n'a pas celle-là, depuis le 11 octobre 2026.
-VERSION = 38
+VERSION = 39
 
 
 def _serie(serie: SerieAnnuelle) -> dict:
@@ -796,6 +796,9 @@ def _regimes() -> list[dict]:
                     "ecretement_salaire_reference": (
                         None if p.ecretement_salaire_reference is None
                         else list(p.ecretement_salaire_reference)),
+                    "plafond_en_traitements_de_l_indice_100":
+                        p.plafond_en_traitements_de_l_indice_100,
+                    "part_au_dela_du_plafond": p.part_au_dela_du_plafond,
                     "capital_seuil_points": p.capital_seuil_points,
                     "bareme_points": p.bareme_points,
                     "points_de": p.points_de,
@@ -1821,6 +1824,10 @@ def _minimum_garanti() -> dict:
         "montants": {str(annee): [valeur, int(fiabilite)]
                      for annee, (valeur, fiabilite)
                      in sorted(minimum._montants.items())},
+        # Le traitement de l'indice 100 (article 7 du décret n° 85-1148), que
+        # le plafond des marins lit (R. 11, 3°).
+        "indice_100": [[annee, mois, jour, indice, int(fiabilite)]
+                       for annee, mois, jour, indice, fiabilite in minimum._indice_100],
     }
 
 

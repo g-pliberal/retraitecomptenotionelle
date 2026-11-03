@@ -942,6 +942,29 @@ champs_periode:
       l'assiette.
     defaut: null
 
+  plafond_en_traitements_de_l_indice_100:
+    description: >-
+      Le PLAFOND du salaire de référence, en traitements de l'indice 100 de la
+      fonction publique : au-delà, la portion du salaire ne compte que pour
+      `part_au_dela_du_plafond`. C'est le régime des marins : « Lorsque le
+      salaire ainsi défini excède huit fois le montant du traitement brut
+      correspondant à l'indice 100 dans la fonction publique, la portion
+      dépassant cette limite n'est comptée que pour moitié » (R. 11, 3° du code
+      des pensions de retraite des marins). Le traitement de l'indice 100 est
+      celui de l'indice majoré que l'article 7 du décret n° 85-1148 lui fait
+      correspondre à la date d'effet
+      (`legislation/indice_100_fonction_publique.csv`), au point de l'année ;
+      avant le 5 novembre 1985, qu'elle ne lit pas, rien n'est abattu. `null` :
+      aucun plafond.
+    defaut: null
+
+  part_au_dela_du_plafond:
+    description: >-
+      La part de la portion du salaire de référence qui dépasse
+      `plafond_en_traitements_de_l_indice_100` que la pension retient : 0,5,
+      « pour moitié » (R. 11, 3°). `null` avec le plafond.
+    defaut: null
+
   taux_calcul_points:
     description: >-
       Le TAUX DE CALCUL DES POINTS, quand le régime le fixe à part de son taux

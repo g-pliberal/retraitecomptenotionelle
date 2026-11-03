@@ -67,6 +67,11 @@ periodes:
     salaire_reference: dernier_salaire
     assiette: forfaitaire
     assiette_grille: marins
+    # R. 11, 3° : au-delà de huit fois le traitement de l'indice 100, la
+    # portion du salaire « n'est comptée que pour moitié » (fiche
+    # `marins_salaire_de_reference`).
+    plafond_en_traitements_de_l_indice_100: 8
+    part_au_dela_du_plafond: 0.5
     taux_cotisation_retraite: 0.1085
     perimetre_taux: agent_seul
     decote_par_trimestre: null

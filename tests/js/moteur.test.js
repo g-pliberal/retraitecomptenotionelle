@@ -27,7 +27,9 @@ import {
   complementMinimum, majorationOuverte, plancherDuRegime, selonLaRegle,
 } from "../../moteur/js/droit/completer.js";
 import { appels } from "../../moteur/js/droit/liquidation.js";
-import { moyenneSelonLaRegle, salaireDeReference } from "../../moteur/js/droit/liquider.js";
+import {
+  abattreAuDelaDuPlafond, moyenneSelonLaRegle, plafondDuSalaireDeReference, salaireDeReference,
+} from "../../moteur/js/droit/liquider.js";
 import * as ouvrir from "../../moteur/js/droit/ouvrir.js";
 import * as limiteAge from "../../moteur/js/droit/limite_age.js";
 import * as leCumul from "../../moteur/js/droit/cumul.js";
@@ -45,6 +47,7 @@ import {
 } from "../../moteur/js/carriere.js";
 import { ABATTEMENTS_MICRO } from "../../moteur/js/saisie.js";
 import * as gabarit from "../../moteur/js/gabarit.js";
+import { formatFixe } from "../../moteur/js/format.js";
 import { Fiabilite, SerieAnnuelle } from "../../moteur/js/serie.js";
 import { PARAMETRES_DEFAUT } from "../../moteur/js/config.js";
 import { DonneesMortalite } from "../../moteur/js/mortalite.js";
@@ -338,6 +341,49 @@ test("les âges et la bonification des marins sont ceux du Python", () => {
   assert.equal(taux(1), 0);
   assert.ok(Math.abs(taux(2) - 0.05) < 1e-9);
   assert.ok(Math.abs(taux(5) - 0.15) < 1e-9);
+});
+
+/**
+ * L'abattement des marins (R. 11, 3° ; L. 5552-19 du code des transports) :
+ * au-delà de huit fois le traitement de l'indice 100 — celui de l'indice
+ * majoré que l'article 7 du décret n° 85-1148 lui fait correspondre à la date
+ * d'effet, au point de l'année —, la portion du salaire ne compte que pour
+ * moitié. Les valeurs sont celles de `tests/test_marins.py`, posées à la main :
+ * 8 × 208 × 59,0734 = 98 298,1376 € en 2026 ; 8 × 156 × 43,0973 en 1990 ;
+ * rien avant le 5 novembre 1985, que la série ne lit pas.
+ */
+test("le salaire des marins ne compte que pour moitié au-delà du plafond de R. 11", () => {
+  const simulateur = new Contexte(paquet).simulateur();
+  const scenario = simulateur.scenarioActuel;
+  const proche = (a, b) => assert.ok(Math.abs(a - b) < 1e-6, `${a} ≠ ${b}`);
+  const plafond = (annee, mois, code = "marins") => plafondDuSalaireDeReference(
+    scenario, scenario.catalogue.obtenir(code).periode(annee), annee, mois);
+  proche(plafond(2026, 1), 98298.1376);
+  proche(plafond(1990, 1), 53785.4304);
+  proche(plafond(2008, 6), 86622.7896);
+  proche(plafond(2008, 7), 87493.3704);
+  proche(plafond(1985, 12), 46265.28);
+  assert.equal(plafond(1985, 10), null);
+  assert.equal(plafond(2026, 1, "regime_general"), null);
+  proche(abattreAuDelaDuPlafond(100000, 98298.1376, 0.5), 99149.0688);
+  assert.equal(abattreAuDelaDuPlafond(76867.05, 98298.1376, 0.5), 76867.05);
+
+  // Le marin de vingtième catégorie parti le 1er juillet 2045 : son forfait
+  // passe le plafond, que le point sans décret au-delà de 2027 garde à
+  // 98 298,1376 €. Il liquide 98 298,1376 + (121 749,59 − 98 298,1376) / 2.
+  const carriere = simulateur.carriereSimple({
+    annee_naissance: 1990, sexe: "H", affiliation: "marin", age_debut: 20,
+    age_liquidation: 55.5, niveau_salaire: 4.0, profil_carriere: "plat", jour_naissance: 1,
+  });
+  const forfait = scenario.grilles.forfait(
+    "marins", 2045, carriere.ligne(2045).revenuAnnualise,
+    (a) => salaireMoyenAnnuel(scenario.macro, a));
+  assert.equal(forfait[1], 20);
+  const attendu = 98298.1376 + (forfait[0] - 98298.1376) / 2;
+  const pension = scenario.calculer(carriere).pensions_par_regime
+    .find((p) => p.regime === "marins");
+  assert.ok(pension.detail.startsWith(`SR ${formatFixe(attendu, 2, true)} €`), pension.detail);
+  assert.ok(pension.detail.includes("compté pour moitié au-delà de 98,298.14 €"), pension.detail);
 });
 
 /**

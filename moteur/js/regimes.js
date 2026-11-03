@@ -1006,6 +1006,33 @@ export class MinimumGaranti {
     this._montants = contenu.montants ?? {};
     this._anneesBareme = Object.keys(this._bareme).map(Number).sort((a, b) => a - b);
     this._anneesMontants = Object.keys(this._montants).map(Number).sort((a, b) => a - b);
+    // L'indice majoré dont le traitement est celui de l'indice 100 (article 7
+    // du décret n° 85-1148), par date d'effet : [année, mois, jour, indice,
+    // fiabilité], dans l'ordre.
+    this._indice100 = contenu.indice_100 ?? [];
+  }
+
+  /**
+   * Le traitement brut annuel de l'indice 100 de la fonction publique au
+   * premier jour de `mois` : celui de l'indice majoré que l'article 7 du décret
+   * n° 85-1148 lui fait correspondre ce jour-là, au point de l'année (au
+   * 1er janvier ; le dernier connu au-delà de la série), et sa fiabilité.
+   * `null` avant la rédaction d'origine de l'article, le 5 novembre 1985, ou
+   * sans point. Voir le Python.
+   */
+  traitementDeLIndice100(annee, mois) {
+    let applicable = null;
+    for (const [debutAnnee, debutMois, debutJour, indice, fiabilite] of this._indice100) {
+      if (debutAnnee < annee || (debutAnnee === annee
+          && (debutMois < mois || (debutMois === mois && debutJour <= 1)))) {
+        applicable = [indice, fiabilite];
+      }
+    }
+    const point = this._pointIndice(annee);
+    if (applicable === null || point === null) {
+      return null;
+    }
+    return [applicable[0] * point[0], Math.min(applicable[1], point[1])];
   }
 
   /** Barème en vigueur l'année de liquidation, ou ``null`` avant 1976. */

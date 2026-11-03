@@ -538,6 +538,18 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
         dureesCultes === null ? null : cultes.ALIGNEMENT,
         anneesAlignees === null ? null : anneesAlignees[0],
       );
+    // L'ABATTEMENT DES MARINS (R. 11, 3°) : au-delà de huit fois le traitement
+    // de l'indice 100 à la date d'effet, la portion du salaire « n'est comptée
+    // que pour moitié ». Voir `plafondDuSalaireDeReference`.
+    const salaireAvantAbattement = salaireReference;
+    const plafondDuSalaire = plafondDuSalaireDeReference(
+      moteur, periode, anneeLiquidation,
+      (carriere.age_liquidation !== null && carriere.age_liquidation !== undefined
+        && anneeLiquidation === carriere.anneeLiquidation) ? carriere.moisLiquidation : 1);
+    if (plafondDuSalaire !== null) {
+      salaireReference = abattreAuDelaDuPlafond(
+        salaireReference, plafondDuSalaire, periode.part_au_dela_du_plafond);
+    }
     const [requis, fiabiliteDuree] = ouvrir.dureeRequise(moteur, periode, carriere);
     if (fiabiliteDuree !== null) {
       fiabiliteGlobale = Math.min(fiabiliteGlobale, fiabiliteDuree);
@@ -1015,6 +1027,10 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
         + `${formatFixe(salaireReference, 2, true)} € `
         + (primeDeLaPension !== null && primeDeLaPension.nature === "traitement"
           ? `(${formatFixe(traitementLiquide, 2, true)} € ${primeDeLaPension.detail()}) `
+          : "")
+        + (plafondDuSalaire !== null && salaireAvantAbattement > plafondDuSalaire
+          ? `(forfait ${formatFixe(salaireAvantAbattement, 2, true)} € compté pour moitié `
+            + `au-delà de ${formatFixe(plafondDuSalaire, 2, true)} €, R. 11, 3°) `
           : "")
         + `× taux ${formatPourcentage(taux, 3)} × ${trimestresRegime}/${proratisation}`
         + (trimestresRegime / proratisation > rapportMaximum
@@ -1901,6 +1917,35 @@ export function revenuDesCotisationsMinimales(annee, revenu, smic, fraction = 1.
     taux += t;
   }
   return cotisations / taux;
+}
+
+/**
+ * Le plafond au-delà duquel le salaire de référence ne compte qu'en partie,
+ * pour une pension qui prend effet au premier jour de `mois` ; `null` pour un
+ * régime qui n'en a pas, ou quand le traitement de l'indice 100 n'est pas lu à
+ * cette date.
+ *
+ * C'est le régime des marins : « Lorsque le salaire ainsi défini excède huit
+ * fois le montant du traitement brut correspondant à l'indice 100 dans la
+ * fonction publique, la portion dépassant cette limite n'est comptée que pour
+ * moitié » (R. 11, 3° de leur code, depuis 1968 ; L. 5552-19 du code des
+ * transports depuis 2010). Le traitement de l'indice 100 est celui de l'indice
+ * majoré que l'article 7 du décret n° 85-1148 lui fait correspondre — 208
+ * depuis le 1er janvier 2024 —, et non celui de l'indice majoré 100. Avant le
+ * 5 novembre 1985, que la série ne lit pas, rien n'est abattu. Voir le Python.
+ */
+export function plafondDuSalaireDeReference(moteur, periode, annee, mois) {
+  const traitements = periode.plafond_en_traitements_de_l_indice_100 ?? null;
+  if (traitements === null) {
+    return null;
+  }
+  const traitement = moteur.minimumGaranti.traitementDeLIndice100(annee, mois);
+  return traitement === null ? null : traitements * traitement[0];
+}
+
+/** Le salaire, entier jusqu'au plafond, et pour `part` au-delà. */
+export function abattreAuDelaDuPlafond(salaire, plafond, part) {
+  return salaire <= plafond ? salaire : plafond + part * (salaire - plafond);
 }
 
 /**

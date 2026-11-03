@@ -16,7 +16,10 @@ lit:
   derniers mois avant la liquidation, et celles de fonctions supérieures qu'il a tenues
   cinq ans au moins (R. 11)
 - les salaires forfaitaires de ces catégories, que fixent les arrêtés annuels
-- le traitement brut de l'indice 100 de la fonction publique (R. 11, 3°)
+- >-
+  le traitement de l'indice 100 de la fonction publique à la date d'effet (R. 11, 3°) :
+  celui de l'indice majoré que l'article 7 du décret n° 85-1148 lui fait correspondre,
+  au point d'indice de l'année
 - la durée de ses services, que le décompte final arrondit au semestre (R. 12)
 - la date d'effet de sa pension
 ecrit:
@@ -60,6 +63,8 @@ versions:
   - {id: LEGIARTI000006791988, article: "même code, R. 12", en_vigueur: 1968-03-31, publie_le: 1968-03-31}
   - {id: LEGIARTI000006791907, article: "même code, L. 14", en_vigueur: 1968-03-31, publie_le: 1968-03-31}
   - {id: LEGIARTI000006791949, article: "même code, L. 42", en_vigueur: 1968-03-31, publie_le: 1968-03-31}
+  - {id: LEGIARTI000006561748, article: "décret n° 48-1108 du 10 juillet 1948, article 1er : « Les indices minimum et maximum de la hiérarchie générale sont respectivement égaux à 100 et à 800 »", en_vigueur: 1948-07-11}
+  - {id: LEGIARTI000006454537, article: "décret n° 85-1148 du 24 octobre 1985, article 7, rédaction d'origine : « Pour l'application des dispositions législatives et réglementaires se référant au traitement de l'indice 100 prévu par le décret du 10 juillet 1948 susvisé, ce traitement est constitué par le traitement afférent à l'indice majoré 150 (indice brut 100) »", en_vigueur: 1985-11-05}
   nee_de: LEGIARTI000006791987
   bornes:
     liquidation.date_effet: [1968-03-31, 1999-04-09]
@@ -92,6 +97,14 @@ versions:
       fraction de semestre égale ou supérieure à trois mois est comptée pour six mois ; la
       fraction de semestre inférieure à trois mois est négligée » (R. 12)
     conditions: >-
+      le traitement de l'indice 100 n'est pas celui de l'indice majoré 100 : l'indice 100 est
+      le plus bas de la hiérarchie générale (décret n° 48-1108, article 1er), et depuis le
+      5 novembre 1985, « pour l'application des dispositions législatives et réglementaires se
+      référant au traitement de l'indice 100 prévu par le décret du 10 juillet 1948 susvisé, ce
+      traitement est constitué par le traitement afférent à l'indice majoré 150 (indice brut
+      100) » (décret n° 85-1148, article 7, rédaction d'origine), indice relevé de 152 en 1986
+      à 199 en mai 2008 (`legislation/indice_100_fonction_publique.csv`) ; avant le 5 novembre
+      1985, les décrets de rémunération qui le fixaient ne sont dans les index qu'en analyses ;
       le quotient de la catégorie moyenne s'arrondit à l'entier supérieur à cinq dixièmes, et
       « toute période inférieure à trente jours est considérée comme ayant été accomplie dans
       la catégorie la plus avantageuse » du mois (R. 11, 1°) ; le salaire forfaitaire est
@@ -112,6 +125,9 @@ versions:
   - {id: LEGIARTI000006791908, article: "même article, qui y ajoute le versement forfaitaire unique, jusqu'au 30 novembre 2010", en_vigueur: 2005-09-09}
   - {id: LEGIARTI000006791949, article: "même code, L. 42, jusqu'au 30 novembre 2010", en_vigueur: 1968-03-31}
   - {id: LEGIARTI000023079221, article: "code des transports, L. 5552-19, rédaction de l'ordonnance n° 2010-1307 du 28 octobre 2010, qui reprend L. 14 : le salaire forfaitaire « correspondant, sous réserve d'un abattement au-delà d'un plafond, à la catégorie dans laquelle se trouvait le marin pendant une période déterminée »", en_vigueur: 2010-12-01}
+  - {id: LEGIARTI000006454537, article: "décret n° 85-1148 du 24 octobre 1985, article 7 : le traitement de l'indice 100, celui de l'indice majoré 150 (indice brut 100) à sa rédaction d'origine", en_vigueur: 1985-11-05}
+  - {id: LEGIARTI000019111495, article: "même article, rédaction du décret n° 2008-622 du 27 juin 2008, article 2, 3° : « Pour l'application des dispositions législatives et réglementaires se référant au traitement de l'indice 100 ou de l'indice brut 100, ce traitement est constitué par le traitement afférent à l'indice majoré 201 »", en_vigueur: 2008-07-01}
+  - {id: LEGIARTI000047751780, article: "même article, rédaction du décret n° 2023-519 du 28 juin 2023, article 2 : « l'indice majoré 208 », en vigueur le 1er janvier 2024", en_vigueur: 2024-01-01}
   nee_de: LEGIARTI000006792028
   bornes:
     liquidation.date_effet: [1999-04-09, null]
@@ -146,7 +162,12 @@ versions:
       1er janvier 2018, les salaires forfaitaires sont révisés au 1er avril de chaque année
       par le coefficient de L. 161-25 du code de la sécurité sociale (L. 5553-5). Ni R. 11,
       ni R. 12, ni R. 31 n'ont de rédaction depuis (index LEGI à jour de l'incrément du
-      2 novembre 2026)
+      2 novembre 2026). Le traitement de l'indice 100 de R. 11, 3° : celui de l'indice
+      majoré 158 à 199 jusqu'au 30 juin 2008 (décret n° 85-1148, article 7), puis, « se
+      référant au traitement de l'indice 100 ou de l'indice brut 100 », de l'indice majoré
+      201, 203 dès le 1er juillet 2009, 208 dès le 1er janvier 2024
+      (`legislation/indice_100_fonction_publique.csv`) : 8 × 208 × 59,0734 = 98 298,14 € en
+      2026, quand la vingtième catégorie est à 76 867,05 €
   exemples: [enim_bonification_deux_enfants]
 approximations:
 - version: [loi_du_12_avril_1941, code_de_1968, contrats_simultanes]
@@ -161,19 +182,36 @@ approximations:
     nul pour le marin resté dans la même catégorie ses trois dernières années, sans
     fonctions supérieures tenues cinq ans ; le salaire d'une catégorie entière pour celui
     qui finit sa carrière plus bas qu'il ne l'a tenue ; non mesuré
-- version: [loi_du_12_avril_1941, code_de_1968, contrats_simultanes]
-  textes: R. 11, 3° ; code des transports, L. 5552-19, depuis le 1er décembre 2010
+- version: [loi_du_12_avril_1941, code_de_1968]
+  textes: R. 11, 3° ; décret n° 85-1148, article 7, depuis le 5 novembre 1985
   ecart: >-
-    l'abattement n'est pas appliqué : la portion du salaire forfaitaire qui excède huit
-    fois le traitement brut de l'indice 100 ne compte que pour moitié, et le modèle la
-    liquide entière. Lu au traitement annuel de l'indice 100 majoré (cent fois la valeur
-    du point, `legislation/point_indice_fonction_publique.csv`), le plafond vaut
-    47 258,72 € en 2026
+    avant le 5 novembre 1985, le traitement de l'indice 100 n'est pas lu : les décrets de
+    rémunération qui le fixaient (n° 68-566 du 21 juin 1968, n° 70-393 du 12 mai 1970,
+    n° 74-652 du 19 juillet 1974 et leurs modifications) ne sont, dans les index JORF et
+    LEGI du dépôt, qu'en analyses, et Légifrance refuse l'outil de la session. Le modèle
+    n'abat pas les pensions qui prennent effet avant ; avant le 31 mars 1968, l'abattement
+    n'est que présumé (loi du 12 avril 1941)
   effet: >-
-    en 2026, les catégories 15 à 20, de 49 285,81 € à 76 867,05 €, dépassent le plafond :
-    le salaire de référence est surestimé de 2,1 % à 19,3 % ; depuis 2008, les catégories
-    17 à 20, puis 16 à 20 dès 2013, et 15 à 20 dès 2024, la vingtième de 13,7 % en 2008 à
-    19,3 % en 2026 ; à confirmer auprès de l'ENIM, qui ne l'écrit pas sur ses pages
+    nul tant que ce traitement valait au moins celui de l'indice majoré 103 : de 1968 à 1984,
+    la vingtième catégorie de la grille du modèle, celle de 2008 ramenée par le salaire
+    moyen, ne passe huit fois le traitement de l'indice 100 que s'il était celui d'un indice
+    majoré inférieur à 76,5 en 1968, à 102,8 en 1980, le plus haut de ces seuils, au point
+    de leur année ; il valait celui de l'indice majoré 150 au
+    5 novembre 1985, et le barème du décret n° 82-1105 que le dépôt tient
+    (`grilles/bareme/indices.csv`) donne l'indice majoré 150 à l'indice brut 100 en 1983 et
+    1984 — une lecture du barème, pas de l'article qui fixait le traitement de l'indice 100
+- version: [code_de_1968, contrats_simultanes]
+  textes: décret n° 85-1148, article 3 ; R. 11, 3°
+  ecart: >-
+    le traitement de l'indice 100 se prend au point du 1er janvier de l'année
+    (`legislation/point_indice_fonction_publique.csv`), et non au point du jour : un
+    relèvement en cours d'année, comme celui du 1er juillet 2023, ne relève le plafond
+    qu'au 1er janvier suivant ; au-delà de 2027, dernière valeur de la série, le point reste
+    le dernier connu, faute de décret qui le relève
+  effet: >-
+    nul de 1985 à 2026 : aucun forfait n'approche le plafond, la vingtième catégorie restant
+    sous 79 % de lui ; en projection, sous le point gardé et la grille portée par le salaire
+    moyen, la vingtième catégorie le passe en 2037
 - version: [loi_du_12_avril_1941, code_de_1968, contrats_simultanes]
   textes: R. 12
   ecart: >-
@@ -199,24 +237,25 @@ effet: >-
   mois et arrondit au semestre (R. 12 : quatorze ans huit mois et vingt-sept jours
   font quatorze ans et demi). La grille elle-même est exacte : les vingt montants de
   2026 publiés par l'ENIM sont ceux du dépôt, au centime, comme les trois montants de
-  2024 que cite son exemple. Lue au droit le 2 novembre 2026 : l'abattement de R. 11,
-  3°, au-delà de huit fois le traitement de l'indice 100, n'est pas appliqué, et
-  surestime jusqu'à 19,3 % le salaire de référence des plus hautes catégories.
+  2024 que cite son exemple. L'abattement de R. 11, 3°, au-delà de huit fois le
+  traitement de l'indice 100, est appliqué depuis le 3 novembre 2026 : ce traitement est
+  celui de l'indice brut 100, l'indice majoré 208 depuis 2024 (article 7 du décret
+  n° 85-1148), et non de l'indice majoré 100 ; le plafond, 98 298,14 € en 2026, aucune
+  catégorie ne l'a atteint de 1985 à 2026, et rien de ce que le modèle calcule pour ces
+  années ne bouge ; en projection, la vingtième catégorie le passe en 2037.
 sources:
-  lu_le: 2026-11-02
-  prochaine_relecture: 2027-11-02
+  lu_le: 2026-11-03
+  prochaine_relecture: 2027-11-03
   a_relire:
   - >-
     Un parcours ne porte pas de catégorie : la moyenne des trente-six mois et la
     règle des cinq ans demanderaient d'en saisir une.
   - >-
-    L'abattement de R. 11, 3° : « Lorsque le salaire ainsi défini excède huit fois le
-    montant du traitement brut correspondant à l'indice 100 dans la fonction publique, la
-    portion dépassant cette limite n'est comptée que pour moitié », que L. 5552-19 reprend
-    depuis 2010 (« sous réserve d'un abattement au-delà d'un plafond »). Le modèle ne
-    l'applique pas. Demander à l'ENIM comment elle le lit — l'indice 100 majoré, 5 907,34 €
-    par an depuis le 1er juillet 2023, ou un autre —, et l'écrire dans une étape du modèle,
-    les deux moteurs ensemble : en 2026, les catégories 15 à 20.
+    Le traitement de l'indice 100 avant le 5 novembre 1985 : les décrets de rémunération
+    n° 68-566 du 21 juin 1968, n° 70-393 du 12 mai 1970, n° 74-652 du 19 juillet 1974 et
+    ceux qui les modifient, au Journal officiel imprimé (fac-similés de Légifrance), que
+    les index du dépôt ne portent qu'en analyses. Tant qu'ils ne sont pas lus, le modèle
+    n'abat pas les pensions d'avant cette date.
   lectures:
   - type: legifrance
     reference: >-
@@ -243,6 +282,34 @@ sources:
       au Journal officiel par l'index JORF du dépôt : décret n° 68-292 du 21 mars 1968
       (analyse) ; décret n° 99-265 du 1er avril 1999, qui insère le titre V, R. 30 et R. 31
     date: 2026-11-02
+  - type: legifrance
+    reference: >-
+      dans l'index LEGI du dépôt, à jour de l'incrément du 2 novembre 2026 : R. 11
+      (LEGIARTI000006791987) et L. 5552-19 (LEGIARTI000023079221), relus ; le décret
+      n° 48-1108 du 10 juillet 1948, article 1er (LEGIARTI000006561748) ; les vingt-sept
+      rédactions de l'article 7 du décret n° 85-1148, de LEGIARTI000006454537 (5 novembre
+      1985) à LEGIARTI000047751780 (1er janvier 2024) ; le décret n° 82-1105, article 2
+      (LEGIARTI000006455045), et le décret n° 86-166, article 2 (LEGIARTI000006455048)
+    date: 2026-11-03
+  - type: jorf
+    reference: >-
+      au Journal officiel par l'index JORF du dépôt, la date d'effet de chaque relèvement de
+      l'article 7 : décrets n° 98-462, n° 99-208, n° 99-491, n° 99-943, n° 2001-370 (qui ne
+      touche pas son premier alinéa), n° 2001-559, n° 2004-679, n° 2005-726, n° 2006-759,
+      n° 2006-1283, n° 2007-1054, n° 2008-400, n° 2008-622 (JORFARTI000019108393),
+      n° 2009-824 et n° 2023-519 (JORFARTI000047749229) ; les décrets n° 68-566, n° 70-393
+      et n° 74-652, en analyses seulement
+    date: 2026-11-03
+  - type: autre
+    reference: >-
+      Cour des comptes, « L'Établissement national des invalides de la marine (ÉNIM),
+      exercices 2016 à 2021 », observations définitives S2023-0865, délibérées le 9 janvier
+      2023 : rien sur le plafond de R. 11, 3° ; ni dans sept réponses ministérielles sur les
+      pensions des marins, à l'Assemblée nationale (questions n° 49920 de la neuvième
+      législature, 47597 de la dixième, 53593 et orale 1453 de la onzième, 4639 de la
+      douzième, 89506 et 93537 de la treizième)
+    url: https://www.ccomptes.fr/sites/default/files/2023-10/20230918-S2023-0865-Etablissement-invalides-marine-ENIM.pdf
+    date: 2026-11-03
 historique:
 - >-
   2026-11-02 — lue au droit (action 130) : trois versions sur la date d'effet — la loi du
@@ -250,6 +317,13 @@ historique:
   depuis le 9 avril 1999, R. 31 pour les contrats à temps partiel simultanés. Le 3° de
   R. 11, l'abattement au-delà de huit fois l'indice 100, est lu, et déclaré : le modèle ne
   l'applique pas.
+- >-
+  2026-11-03 — l'abattement de R. 11, 3° écrit dans les deux moteurs (action 130, file
+  M1) : le traitement de l'indice 100 est celui de l'indice brut 100, que l'article 7 du
+  décret n° 85-1148 constitue de celui d'un indice majoré — 150 en 1985, 208 depuis 2024 —,
+  et non de l'indice majoré 100, que l'approximation du 2 novembre avait pris sans source :
+  le plafond vaut 98 298,14 € en 2026, et non 47 258,72 €. Aucune catégorie ne l'a atteint
+  de 1985 à 2026 ; avant le 5 novembre 1985, le traitement n'est pas lu, et déclaré.
 code:
   moteur: >-
     La période des marins liquide le dernier salaire (`salaire_reference`) :
@@ -260,24 +334,42 @@ code:
     sur ses mois : la catégorie de la dernière année, rangée par le revenu, et non la
     catégorie moyenne des trente-six derniers mois, ni celle de fonctions supérieures
     tenues cinq ans. Hors des années que la grille publie, la plus proche est portée
-    par le salaire moyen, de fiabilité estimée. Le forfait est liquidé entier, sans
-    l'abattement de R. 11, 3°. Les services se comptent au trimestre, non au semestre.
+    par le salaire moyen, de fiabilité estimée. Au-delà de huit fois le traitement de
+    l'indice 100 à la date d'effet (`plafond_du_salaire_de_reference`, que la période
+    arme de `plafond_en_traitements_de_l_indice_100`), la portion du salaire ne compte
+    que pour moitié (`abattre_au_dela_du_plafond`, `part_au_dela_du_plafond`) : le
+    traitement de l'indice majoré que l'article 7 du décret n° 85-1148 fait correspondre
+    à l'indice 100 ce jour-là (`MinimumGaranti.traitement_de_l_indice_100`), au point du
+    1er janvier de l'année, le dernier connu au-delà de la série ; rien avant le
+    5 novembre 1985. Le détail du montant le dit. Les services se comptent au trimestre,
+    non au semestre.
   python: >-
-    droit/liquider.py : salaire_de_reference, assiette_de_reference ;
-    donnees/regimes.py : SalairesForfaitaires, SalairesForfaitaires.forfait
+    droit/liquider.py : salaire_de_reference, assiette_de_reference,
+    plafond_du_salaire_de_reference, abattre_au_dela_du_plafond ;
+    donnees/regimes.py : SalairesForfaitaires, SalairesForfaitaires.forfait ;
+    scenarios/actuel.py : MinimumGaranti.traitement_de_l_indice_100
   javascript: >-
-    moteur/js/droit/liquider.js : salaireDeReference, assietteDeReference ;
-    moteur/js/regimes.js : SalairesForfaitaires, SalairesForfaitaires.forfait
+    moteur/js/droit/liquider.js : salaireDeReference, assietteDeReference,
+    plafondDuSalaireDeReference, abattreAuDelaDuPlafond ;
+    moteur/js/regimes.js : SalairesForfaitaires, SalairesForfaitaires.forfait,
+    MinimumGaranti.traitementDeLIndice100
   parametres: >-
     contenu.parametres de chaque version : assiette, assiette_grille, mois_de_reference,
     annees_de_fonctions_superieures, plafond_en_traitements_de_l_indice_100,
     part_au_dela_du_plafond, mois_du_decompte_des_services, contrats_simultanes ;
-    regimes/marins.yaml : salaire_reference, assiette, assiette_grille ;
-    regimes/salaires_forfaitaires.csv : marins, annee, categorie, montant_annuel
+    regimes/marins.yaml : salaire_reference, assiette, assiette_grille,
+    plafond_en_traitements_de_l_indice_100, part_au_dela_du_plafond ;
+    regimes/salaires_forfaitaires.csv : marins, annee, categorie, montant_annuel ;
+    legislation/indice_100_fonction_publique.csv : date_effet, indice_majore ;
+    legislation/point_indice_fonction_publique.csv : annee, valeur
   tests:
   - >-
     tests/test_marins.py, qui confronte chaque version à la période des marins, tient les
-    écarts déclarés et mesure l'abattement de 2026
+    écarts déclarés, relit chaque rédaction de l'article 7 au LEGI, et pose à la main le
+    plafond et l'abattement
+  - >-
+    tests/js/moteur.test.js, « le salaire des marins ne compte que pour moitié au-delà du
+    plafond de R. 11 », qui pose les mêmes valeurs au portage
   - tests/test_simulateur.py
   - >-
     tests/test_cumul_activites.py, tests/test_liquidation.py et tests/test_web.py,
@@ -285,4 +377,5 @@ code:
   - >-
     tests/temoins/simulations.json, que le portage rejoue (tests/js/moteur.test.js) :
     neuf témoins changent sans le forfait à la liquidation — statut_marin et ses
-    générations 1925 à 1968, marin_avant_cinquante_cinq et metiers_maximum
+    générations 1925 à 1968, marin_avant_cinquante_cinq et metiers_maximum — ; un
+    dixième, marin_au_dela_du_plafond, sans l'abattement

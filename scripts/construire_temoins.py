@@ -392,6 +392,15 @@ def _cas() -> list[dict]:
     cas.append(("marin_avant_cinquante_cinq", {
         "statut": "marin", "debut": "20", "liquidation": "50",
     }))
+    # L'ABATTEMENT DES MARINS : au-delà de huit fois le traitement de l'indice
+    # 100 (R. 11, 3° ; article 7 du décret n° 85-1148), la portion du forfait
+    # ne compte que pour moitié. Aucune catégorie ne l'a atteint de 1985 à
+    # 2026 : ce marin de vingtième catégorie, né en 1990 et parti le
+    # 1er juillet 2045, le passe sous le point gardé à sa valeur de 2027.
+    cas.append(("marin_au_dela_du_plafond", {
+        "statut": "marin", "salaire": "4", "profil": "plat",
+        "naissance": "1990", "debut": "20", "liquidation": "55.5",
+    }))
 
     # LE MOIS. Douze départs séparés d'un mois, pour que le diff montre ce que
     # chaque mois déplace — et surtout qu'il ne montre plus la marche de six à

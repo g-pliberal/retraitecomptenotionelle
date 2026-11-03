@@ -1,0 +1,41 @@
+date: "2026-11-03"
+session: "action 130, file M1 : l'abattement du salaire de référence des marins au-delà du plafond de R. 11, 3°"
+consulte: >-
+  python scripts/veille_droit.py ; docs/veille_droit.md ; les index LEGI et JORF du dépôt,
+  récupérés et mis à jour jusqu'à l'incrément du 3 novembre 2026 (JORF_20261103-002311),
+  LEGI sans incrément depuis le 2 novembre (20261102-213929). Dans LEGI : R. 11 du code des
+  pensions de retraite des marins (LEGIARTI000006791987) et L. 5552-19 du code des
+  transports (LEGIARTI000023079221), relus ; les cent trente et une rédactions qui écrivent
+  « indice 100 » ; l'article 1er du décret n° 48-1108 du 10 juillet 1948
+  (LEGIARTI000006561748) ; les vingt-sept rédactions de l'article 7 du décret n° 85-1148 du
+  24 octobre 1985, de LEGIARTI000006454537 à LEGIARTI000047751780 ; l'article 2 du décret
+  n° 82-1105 et l'article 2 du décret n° 86-166. Dans JORF : les décrets qui relèvent
+  l'article 7, n° 98-462, n° 99-208, n° 99-491, n° 99-943, n° 2001-370, n° 2001-559,
+  n° 2004-679, n° 2005-726, n° 2006-759, n° 2006-1283, n° 2007-1054, n° 2008-400,
+  n° 2008-622, n° 2009-824 et n° 2023-519 ; les analyses des décrets n° 68-566, n° 70-393
+  et n° 74-652. Hors des index : le rapport S2023-0865 de la Cour des comptes sur l'ÉNIM
+  (exercices 2016 à 2021) et sept réponses ministérielles de l'Assemblée nationale sur les
+  pensions des marins ; Légifrance et Gallica refusent l'outil de la session (403), le
+  site de l'ENIM renvoie à son portail.
+trouve: >-
+  Le traitement « correspondant à l'indice 100 dans la fonction publique » de R. 11, 3°
+  n'est pas celui de l'indice majoré 100, que la note du 2 novembre avait pris sans
+  source : l'indice 100 est le plus bas de la hiérarchie générale (décret n° 48-1108,
+  article 1er), et l'article 7 du décret n° 85-1148 dit, pour tout texte qui se réfère à
+  son traitement, de quel indice majoré il est fait — 150 (indice brut 100) le 5 novembre
+  1985, 152 en 1986, 158 en 1991, 164 en 1999, 172 en 2001, 194 en 2007 ; depuis le
+  1er juillet 2008, « se référant au traitement de l'indice 100 ou de l'indice brut 100 »,
+  201, 203 dès le 1er juillet 2009, 208 dès le 1er janvier 2024. Le plafond vaut donc
+  8 × 208 × 59,0734 = 98 298,14 € en 2026, et non 47 258,72 € ; aucune catégorie ne l'a
+  atteint de 1985 à 2026, la vingtième restant sous 79 % de lui. La règle est écrite dans
+  les deux moteurs, la série dans legislation/indice_100_fonction_publique.csv ; rien de
+  ce que le modèle calcule de 1985 à 2026 ne bouge ; en projection, sous le point gardé à
+  sa valeur de 2027, la vingtième catégorie passe le plafond en 2037. En mai et juin 2001,
+  le premier alinéa de l'article 7 dit encore 164 : le décret n° 2001-370 ne le touche
+  pas, et le n° 2001-559 y remplace un « 169 » qu'il ne porte pas.
+reste: >-
+  Le traitement de l'indice 100 avant le 5 novembre 1985 : les décrets n° 68-566, n° 70-393,
+  n° 74-652 et leurs modifications, au Journal officiel imprimé ; tant qu'ils ne sont pas
+  lus, le modèle n'abat pas, et la fiche marins_salaire_de_reference le déclare. Ni
+  l'ENIM, ni la Cour des comptes, ni une réponse ministérielle n'écrivent le plafond de
+  R. 11, 3° : une confirmation de la caisse reste à demander.

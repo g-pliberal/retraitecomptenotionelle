@@ -2648,6 +2648,35 @@ class MinimumGaranti:
                     )
         self._annees_bareme = sorted(self._bareme)
         self._annees_montants = sorted(self._montants)
+        # L'indice majoré dont le traitement est celui de l'indice 100 (article
+        # 7 du décret n° 85-1148), par date d'effet : (année, mois, jour,
+        # indice, fiabilité), dans l'ordre.
+        self._indice_100: list[tuple[int, int, int, int, Fiabilite]] = []
+        chemin = dossier / "indice_100_fonction_publique.csv"
+        if chemin.exists():
+            with chemin.open(encoding="utf-8") as flux:
+                lignes = (l for l in flux if not l.lstrip().startswith("#"))
+                for ligne in csv.DictReader(lignes):
+                    annee, mois, jour = (int(x) for x in ligne["date_effet"].split("-"))
+                    self._indice_100.append((annee, mois, jour, int(ligne["indice_majore"]),
+                                             Fiabilite.depuis_texte(ligne["fiabilite"])))
+            self._indice_100.sort()
+
+    def traitement_de_l_indice_100(self, annee: int, mois: int
+                                   ) -> tuple[float, Fiabilite] | None:
+        """Le traitement brut annuel de l'indice 100 de la fonction publique au
+        premier jour de ``mois`` : celui de l'indice majoré que l'article 7 du
+        décret n° 85-1148 lui fait correspondre ce jour-là, au point de l'année
+        (au 1er janvier ; le dernier connu au-delà de la série). ``None`` avant
+        la rédaction d'origine de l'article, le 5 novembre 1985, ou sans point."""
+        applicable = None
+        for debut_annee, debut_mois, debut_jour, indice, fiabilite in self._indice_100:
+            if (debut_annee, debut_mois, debut_jour) <= (annee, mois, 1):
+                applicable = (indice, fiabilite)
+        point = self._point_indice(annee)
+        if applicable is None or point is None:
+            return None
+        return applicable[0] * point[0], min(applicable[1], point[1])
 
     def ratio_point_indice(self, depart: int, arrivee: int) -> float | None:
         """Ce que devient un traitement indiciaire entre deux années.

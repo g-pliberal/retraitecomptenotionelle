@@ -1072,13 +1072,25 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
                     "25_meilleures_annees", "10_meilleures_annees")
                 else None
             )
-            salaire_reference = salaire_de_reference(moteur, 
+            salaire_reference = salaire_de_reference(moteur,
                 code, carriere, periode, annee_liquidation, plafonner,
                 carriere.annee_naissance, avpf, membres,
                 enfants_majores=enfants_majores,
                 depuis=None if durees_cultes is None else cultes.ALIGNEMENT,
                 annees=None if annees_alignees is None else annees_alignees[0],
             )
+        # L'ABATTEMENT DES MARINS (R. 11, 3°) : au-delà de huit fois le
+        # traitement de l'indice 100 à la date d'effet, la portion du salaire
+        # « n'est comptée que pour moitié ». Voir `plafond_du_salaire_de_reference`.
+        salaire_avant_abattement = salaire_reference
+        plafond_du_salaire = plafond_du_salaire_de_reference(
+            moteur, periode, annee_liquidation,
+            carriere.mois_liquidation
+            if (carriere.age_liquidation is not None
+                and annee_liquidation == carriere.annee_liquidation) else 1)
+        if plafond_du_salaire is not None:
+            salaire_reference = abattre_au_dela_du_plafond(
+                salaire_reference, plafond_du_salaire, periode.part_au_dela_du_plafond)
         requis, fiabilite_duree = ouvrir.duree_requise(moteur, periode, carriere)
         if fiabilite_duree is not None:
             fiabilite_globale = min(fiabilite_globale, fiabilite_duree)
@@ -1629,6 +1641,10 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
                 + (f"({traitement_liquide:,.2f} € {prime_de_la_pension.detail()}) "
                    if prime_de_la_pension is not None
                    and prime_de_la_pension.nature == "traitement" else "")
+                + (f"(forfait {salaire_avant_abattement:,.2f} € compté pour moitié "
+                   f"au-delà de {plafond_du_salaire:,.2f} €, R. 11, 3°) "
+                   if plafond_du_salaire is not None
+                   and salaire_avant_abattement > plafond_du_salaire else "")
                 + f"× taux {taux:.3%} × {trimestres_regime}/{proratisation}"
                 + (f", taux maximum {periode.taux_maximum_bonifie:.0%} atteint"
                    if trimestres_regime / proratisation > rapport_maximum else "")
@@ -2597,6 +2613,42 @@ def revenu_des_cotisations_minimales(annee: int, revenu: float, smic: float,
         t * max(revenu, cotisation[0] * smic * fraction)
         for t, cotisation in zip(taux, COTISATIONS_DE_BASE_DU_CHEF))
     return cotisations / somme_ordonnee(taux)
+
+
+def plafond_du_salaire_de_reference(moteur, periode: PeriodeRegime, annee: int,
+                                    mois: int) -> float | None:
+    """Le plafond au-delà duquel le salaire de référence ne compte qu'en partie,
+    pour une pension qui prend effet au premier jour de ``mois`` ; ``None`` pour
+    un régime qui n'en a pas, ou quand le traitement de l'indice 100 n'est pas
+    lu à cette date.
+
+    C'est le régime des marins : « Lorsque le salaire ainsi défini excède huit
+    fois le montant du traitement brut correspondant à l'indice 100 dans la
+    fonction publique, la portion dépassant cette limite n'est comptée que pour
+    moitié » (R. 11, 3° du code des pensions de retraite des marins, depuis
+    1968 ; L. 5552-19 du code des transports, « sous réserve d'un abattement
+    au-delà d'un plafond », depuis 2010). Le traitement de l'indice 100 n'est
+    pas celui de l'indice majoré 100 : « Pour l'application des dispositions
+    législatives et réglementaires se référant au traitement de l'indice 100
+    ou de l'indice brut 100, ce traitement est constitué par le traitement
+    afférent à l'indice majoré 208 » (article 7 du décret n° 85-1148, depuis
+    le 1er janvier 2024), 98 298,14 € pour huit en 2026. Avant le 5 novembre
+    1985, que la série ne lit pas, rien n'est abattu (fiche
+    ``marins_salaire_de_reference``).
+    """
+    if periode.plafond_en_traitements_de_l_indice_100 is None:
+        return None
+    traitement = moteur.minimum_garanti.traitement_de_l_indice_100(annee, mois)
+    if traitement is None:
+        return None
+    return periode.plafond_en_traitements_de_l_indice_100 * traitement[0]
+
+
+def abattre_au_dela_du_plafond(salaire: float, plafond: float, part: float) -> float:
+    """Le salaire, entier jusqu'au plafond, et pour ``part`` au-delà."""
+    if salaire <= plafond:
+        return salaire
+    return plafond + part * (salaire - plafond)
 
 
 def salaire_de_reference(moteur, code: str, carriere: Carriere,

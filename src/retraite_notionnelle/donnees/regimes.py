@@ -623,6 +623,12 @@ class PeriodeRegime:
     #: pour rien au-delà du troisième — la CRPCEN, « pour moitié » de trois à
     #: sept plafonds (décret n° 90-1215, article 89). ``None`` : aucun.
     ecretement_salaire_reference: tuple[float, float, float] | None
+    #: Le PLAFOND du salaire de référence, en traitements de l'indice 100 de
+    #: la fonction publique, au-delà duquel la portion du salaire ne compte que
+    #: pour ``part_au_dela_du_plafond`` : les marins, huit traitements et
+    #: moitié (R. 11, 3° de leur code). ``None`` : aucun.
+    plafond_en_traitements_de_l_indice_100: float | None
+    part_au_dela_du_plafond: float | None
     #: POINTS D'AJUSTEMENT, qui s'ajoutent aux points par trimestre : leur
     #: nombre vaut ``points_ajustement_par_forfait`` fois la cotisation
     #: proportionnelle divisée par la cotisation forfaitaire, dans la limite
@@ -2331,6 +2337,14 @@ class CatalogueRegimes:
                 ecretement_salaire_reference=(
                     None if p.get("ecretement_salaire_reference") is None
                     else tuple(float(x) for x in p["ecretement_salaire_reference"])
+                ),
+                plafond_en_traitements_de_l_indice_100=(
+                    None if p.get("plafond_en_traitements_de_l_indice_100") is None
+                    else float(p["plafond_en_traitements_de_l_indice_100"])
+                ),
+                part_au_dela_du_plafond=(
+                    None if p.get("part_au_dela_du_plafond") is None
+                    else float(p["part_au_dela_du_plafond"])
                 ),
                 bareme_points=p.get("bareme_points"),
                 meilleures_annees_non_salaries=bool(
