@@ -746,6 +746,10 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         "cumul_emploi_retraite": "macro/cumul_emploi_retraite.csv",
         "retraite_progressive": "macro/cumul_emploi_retraite.csv",
         "pensions_invalidite": "macro/pensions_invalidite.csv",
+        # Les séries de ses classeurs que le PDF ne chiffre pas (action 178,
+        # étape 6).
+        "retraite_progressive_cnav": "macro/cumul_emploi_retraite.csv",
+        "pensions_invalidite_age": "macro/pensions_invalidite_age.csv",
         "age_depart_csp": "macro/age_depart_csp.csv",
         "structure_financement_regimes": "regimes/structure_financement.csv",
         "cotisants_regimes": "regimes/cotisants.csv",

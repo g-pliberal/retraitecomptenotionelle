@@ -234,6 +234,76 @@ def lire_invalidite(beneficiaires: dict, nouveaux: dict, montants: dict, depense
     return lu
 
 
+def _age(valeur) -> int | None:
+    """Un âge de ligne : 20.0, ou « 20 » ; « Âge (en années) » n'en est pas un."""
+    if isinstance(valeur, (int, float)):
+        return int(valeur) if 0 <= valeur < 120 and valeur == int(valeur) else None
+    texte = _texte(valeur)
+    return int(texte) if texte.isdigit() and int(texte) < 120 else None
+
+
+def _annee_du_titre(grille: dict, debut: str) -> str:
+    """L'année que le titre nomme en dernier : « …, par âge, en 2024 »."""
+    for valeur in grille.values():
+        if isinstance(valeur, str) and _texte(valeur).startswith(debut):
+            annees = re.findall(r"\b((?:19|20)\d\d)\b", _texte(valeur))
+            if annees:
+                return annees[-1]
+    raise FeuilleIllisible(f"aucune année au titre « {debut} »")
+
+
+def lire_retraite_progressive_cnav(grille: dict) -> dict[str, float]:
+    """Fiche 22, graphique 1 : les assurés en retraite progressive au régime
+    général, une ligne par année depuis 1989, du recueil de la Cnav."""
+    _verifier_titre(grille, "Graphique 1. Évolution des effectifs d’assurés en retraite progressive")
+    effectifs = _colonne(grille, "Effectifs", exact=True)
+    serie = {str(annee(v)): nombre(grille.get((ligne, effectifs), ""))
+             for (ligne, colonne), v in sorted(grille.items()) if colonne == 1 and annee(v)}
+    serie = {an: valeur for an, valeur in serie.items() if valeur is not None}
+    if not serie:
+        raise FeuilleIllisible("aucune année sous « Effectifs »")
+    return serie
+
+
+def lire_invalidite_par_age(graphique: dict, complement: dict
+                            ) -> dict[str, dict[str, dict[str, float]]]:
+    """Fiche 25, graphique 2 : les bénéficiaires de l'année du titre, par âge,
+    l'ensemble ; son complément : par sexe, une colonne par année sous
+    l'en-tête de son sexe. Les cases sont des personnes, arrondies à la
+    dizaine, quoi qu'en dise l'en-tête du graphique (« en milliers ») : ses
+    âges font les 843 400 bénéficiaires du tableau 1."""
+    titre = "Graphique 2. Nombre et part des bénéficiaires d’une pension d’invalidité"
+    _verifier_titre(graphique, titre)
+    _verifier_titre(complement, "Graphique 2 complémentaire. Évolution du nombre de "
+                                "bénéficiaires de pensions d'invalidité par âge et par sexe")
+    lu: dict[str, dict[str, dict[str, float]]] = {}
+    beneficiaires = _colonne(graphique, "Nombre de bénéficiaires")
+    ensemble = lu.setdefault(_annee_du_titre(graphique, titre), {}).setdefault("ensemble", {})
+    for (ligne, colonne), v in sorted(graphique.items()):
+        if colonne == 1 and _age(v) is not None:
+            valeur = nombre(graphique.get((ligne, beneficiaires), ""))
+            if valeur is not None:
+                ensemble[str(_age(v))] = valeur
+    sexes = {_colonne(complement, "Femmes", exact=True): "F",
+             _colonne(complement, "Hommes", exact=True): "H"}
+    ligne_annees = min(ligne for (ligne, colonne), v in complement.items()
+                       if colonne > 1 and annee(v))
+    colonnes = {}
+    for (ligne, colonne), v in complement.items():
+        if ligne == ligne_annees and annee(v):
+            gauche = [c for c in sexes if c <= colonne]
+            if not gauche:
+                raise FeuilleIllisible(f"la colonne {colonne} n'a pas de sexe")
+            colonnes[colonne] = (str(annee(v)), sexes[max(gauche)])
+    for (ligne, colonne), v in sorted(complement.items()):
+        if colonne == 1 and ligne > ligne_annees and _age(v) is not None:
+            for col, (an, sexe) in colonnes.items():
+                valeur = nombre(complement.get((ligne, col), ""))
+                if valeur is not None:
+                    lu.setdefault(an, {}).setdefault(sexe, {})[str(_age(v))] = valeur
+    return lu
+
+
 def _jeu() -> dict:
     import yaml
 
@@ -263,9 +333,12 @@ def lire(chemin: Path, jeu: dict) -> dict:
         "age_conjoncturel": lire_age_conjoncturel(f15["F15_Graphique 1"]),
         "cumul": lire_cumul(f22["F22_Tableau1"]),
         "retraite_progressive": lire_retraite_progressive(f22["F22_Tableau2"]),
+        "retraite_progressive_cnav": lire_retraite_progressive_cnav(f22["F22_Graphique1"]),
         "invalidite": lire_invalidite(f25["F25_Tableau 1"], f25["F25_Tableau 2"],
                                       f25["F25_Tableau 3"], f25["F25_Tableau 4"],
                                       f25["F25_Graphique 1"]),
+        "invalidite_par_age": lire_invalidite_par_age(f25["F25_Graphique 2"],
+                                                      f25["F25_Graphique 2 compl"]),
     }
 
 

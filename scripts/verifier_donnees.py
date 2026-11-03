@@ -2867,6 +2867,16 @@ def _panorama_2026() -> dict:
     return _lire_json("drees_panorama_2026.json", "scripts/fetch/drees_panorama_classeurs.py")
 
 
+def _serie_panorama(cle: str) -> dict:
+    """Une série du panorama de 2026 ; un fichier lu avant qu'elle n'y entre
+    ne la porte pas, et la source est alors absente, non fausse."""
+    charge = _panorama_2026()
+    if cle not in charge:
+        raise SourceAbsente(f"drees_panorama_2026.json ne porte pas « {cle} » "
+                            "(relancer scripts/fetch/drees_panorama_classeurs.py)")
+    return charge[cle]
+
+
 def source_age_conjoncturel_panorama() -> dict[tuple, float]:
     """L'âge conjoncturel de départ des années que le portail n'a pas encore.
 
@@ -2934,6 +2944,39 @@ def source_pensions_invalidite() -> dict[tuple, float]:
             for annee, regimes in _panorama_2026()["invalidite"].items()
             for regime, grandeurs in regimes.items()
             for indicateur, valeur in grandeurs.items()}
+
+
+def source_retraite_progressive_cnav() -> dict[tuple, float]:
+    """La retraite progressive au régime général depuis 1989.
+
+    Le panorama de 2026, fiche 22, graphique 1 : les assurés en retraite
+    progressive, chaque année depuis 1989, que la DREES reprend du recueil
+    statistique de la Cnav — une transcription, d'où le niveau ``haute``.
+    Source d'APPOINT : les trois années du tableau 2, de l'EACR, gardent leur
+    source, que le graphique redonne à l'unité près (action 178, étape 6).
+
+    Clé (annee, dispositif, regime, indicateur).
+    """
+    eacr = _panorama_2026()["retraite_progressive"].get("regime_general", {})
+    return {(annee, "retraite_progressive", "regime_general", "beneficiaires"): effectif
+            for annee, effectif in _serie_panorama("retraite_progressive_cnav").items()
+            if annee not in eacr}
+
+
+def source_pensions_invalidite_age() -> dict[tuple, float]:
+    """Les pensions d'invalidité de droit direct, par âge et par sexe.
+
+    Le panorama de 2026, fiche 25, de l'EACR : le graphique 2, l'ensemble des
+    bénéficiaires de fin 2024 par âge, de 20 à 70 ans ; son complément, les
+    femmes et les hommes, de 2014 à 2024. Des personnes, arrondies à la
+    dizaine (action 178, étape 6).
+
+    Clé (annee, sexe, age).
+    """
+    return {(annee, sexe, age): effectif
+            for annee, sexes in _serie_panorama("invalidite_par_age").items()
+            for sexe, ages in sexes.items()
+            for age, effectif in ages.items()}
 
 
 def source_age_depart_csp() -> dict[tuple, float]:
@@ -8349,9 +8392,13 @@ CERTIFICATIONS = (
             "#           DREES « Les retraités et les retraites », édition 2026,",
             "#           calculé sur l'enquête Emploi de l'INSEE : un sondage ;",
             "#   certifiee : retraite_progressive (2015, 2023, 2024), fiche 22,",
-            "#           tableau 2, de l'EACR. Les deux lus dans le classeur de la",
-            "#           fiche par scripts/fetch/drees_panorama_classeurs.py et",
-            "#           recontrôlés par scripts/verifier_donnees.py.",
+            "#           tableau 2, de l'EACR ;",
+            "#   haute : retraite_progressive du régime général, les autres années",
+            "#           depuis 1989, fiche 22, graphique 1, que la DREES reprend du",
+            "#           recueil statistique de la Cnav (action 178, étape 6). Tous",
+            "#           lus dans le classeur de la fiche par",
+            "#           scripts/fetch/drees_panorama_classeurs.py et recontrôlés par",
+            "#           scripts/verifier_donnees.py.",
             "#",
             "# `indicateur` : pour le cumul, cumulants_milliers, part_retraites_pct",
             "# (parmi les retraités) et part_femmes_pct, retraite progressive",
@@ -8424,6 +8471,68 @@ CERTIFICATIONS = (
             "# À tenir à jour, montants compris, ce que le dépôt ne lisait que pour",
             "# 2022 (action 178, étape 2) : l'invalidité est l'une des sorties",
             "# d'activité que l'âge légal ne fait pas reculer.",
+            "#",
+            "# Ne pas modifier les valeurs certifiées à la main : elles seraient",
+            "# écrasées au prochain scripts/verifier_donnees.py --appliquer.",
+        ),
+    ),
+    # Les séries des classeurs du panorama de 2026 que le PDF ne chiffre pas
+    # (action 178, étape 6).
+    Certification(
+        nom="retraite_progressive_cnav",
+        chemin=REFERENCE / "macro" / "cumul_emploi_retraite.csv",
+        cles=("annee", "dispositif", "regime", "indicateur"),
+        colonne="valeur",
+        source=source_retraite_progressive_cnav,
+        origine="DREES, panorama « Les retraités et les retraites » 2026, fiche 22, "
+                "graphique 1 (recueil statistique de la Cnav)",
+        decimales=None,
+        tolerance=0.005,
+        niveau="haute",
+        complementaire=True,
+    ),
+    Certification(
+        nom="pensions_invalidite_age",
+        chemin=REFERENCE / "macro" / "pensions_invalidite_age.csv",
+        cles=("annee", "sexe", "age"),
+        colonne="beneficiaires",
+        source=source_pensions_invalidite_age,
+        origine="DREES, panorama « Les retraités et les retraites » 2026, fiche 25, graphique 2",
+        decimales=0,
+        tolerance=0.5,
+        entete=(
+            "# Les pensions d'invalidité de droit direct, par âge et par sexe",
+            "# source_id: drees_panorama_retraites_2026_classeurs",
+            "# unite: personnes, au 31 décembre, arrondies à la dizaine",
+            "# fiabilite:",
+            "#   certifiee : fiche 25 du panorama de la DREES « Les retraités et les",
+            "#             retraites », édition 2026, de l'EACR : le graphique 2",
+            "#             (l'ensemble, fin 2024) et son complément (les femmes et",
+            "#             les hommes, de 2014 à 2024), lus dans le classeur de la",
+            "#             fiche par scripts/fetch/drees_panorama_classeurs.py et",
+            "#             recontrôlés par scripts/verifier_donnees.py.",
+            "#",
+            "# `sexe` : ensemble (le graphique 2, 2024 seulement), F et H (le",
+            "# complément). `age` : l'âge atteint au 31 décembre, de 20 à 70 ans.",
+            "#",
+            "# DES PERSONNES, NON DES MILLIERS",
+            "# --------------------------------",
+            "# L'en-tête du graphique dit « en milliers » ; ses âges font pourtant",
+            "# 843 430 bénéficiaires, les 843 400 du tableau 1",
+            "# (pensions_invalidite.csv), et le texte de la fiche les cite en",
+            "# personnes : « 9 540 d'entre elles ont 40 ans ». Chaque case étant",
+            "# arrondie à la dizaine, les femmes et les hommes du complément font",
+            "# 843 460 en 2024. La part dans la population, que la feuille donne au",
+            "# dixième, se recalcule de l'estimation de la population de l'INSEE.",
+            "#",
+            "# À QUOI CETTE SÉRIE SERT",
+            "# ------------------------",
+            "# À dire où l'invalidité se loge : elle croît avec l'âge jusqu'à 61 ans,",
+            "# 78 050 bénéficiaires, près de 9 % de la population de cet âge, puis",
+            "# tombe à 13 820 à 62 ans, quand les pensions se changent en retraite à",
+            "# l'âge d'ouverture des droits. Le dépôt n'en lisait que les effectifs",
+            "# et les montants, par régime ; aucun calcul du site ne la lit",
+            "# (action 178, étape 6).",
             "#",
             "# Ne pas modifier les valeurs certifiées à la main : elles seraient",
             "# écrasées au prochain scripts/verifier_donnees.py --appliquer.",

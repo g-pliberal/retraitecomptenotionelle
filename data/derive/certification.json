@@ -1310,6 +1310,17 @@
    "valeurs": 67,
    "verifiee_le": "2026-11-03"
   },
+  "pensions_invalidite_age": {
+   "ajoutees": 1086,
+   "colonne": "beneficiaires",
+   "corrigees": 0,
+   "empreinte": "0ee17ab9aa8ab442",
+   "identiques": 0,
+   "niveau": "certifiee",
+   "source": "DREES, panorama « Les retraités et les retraites » 2026, fiche 25, graphique 2",
+   "valeurs": 1086,
+   "verifiee_le": "2026-11-03"
+  },
   "pensions_non_salaries": {
    "ajoutees": 75,
    "colonne": "valeur",
@@ -1737,6 +1748,17 @@
    "niveau": "certifiee",
    "source": "DREES, panorama « Les retraités et les retraites » 2026, fiche 22, tableau 2",
    "valeurs": 36,
+   "verifiee_le": "2026-11-03"
+  },
+  "retraite_progressive_cnav": {
+   "ajoutees": 33,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "996eacabbb714fe3",
+   "identiques": 0,
+   "niveau": "haute",
+   "source": "DREES, panorama « Les retraités et les retraites » 2026, fiche 22, graphique 1 (recueil statistique de la Cnav)",
+   "valeurs": 33,
    "verifiee_le": "2026-11-03"
   },
   "retraites_regimes": {

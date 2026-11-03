@@ -6,9 +6,13 @@
 #           DREES « Les retraités et les retraites », édition 2026,
 #           calculé sur l'enquête Emploi de l'INSEE : un sondage ;
 #   certifiee : retraite_progressive (2015, 2023, 2024), fiche 22,
-#           tableau 2, de l'EACR. Les deux lus dans le classeur de la
-#           fiche par scripts/fetch/drees_panorama_classeurs.py et
-#           recontrôlés par scripts/verifier_donnees.py.
+#           tableau 2, de l'EACR ;
+#   haute : retraite_progressive du régime général, les autres années
+#           depuis 1989, fiche 22, graphique 1, que la DREES reprend du
+#           recueil statistique de la Cnav (action 178, étape 6). Tous
+#           lus dans le classeur de la fiche par
+#           scripts/fetch/drees_panorama_classeurs.py et recontrôlés par
+#           scripts/verifier_donnees.py.
 #
 # `indicateur` : pour le cumul, cumulants_milliers, part_retraites_pct
 # (parmi les retraités) et part_femmes_pct, retraite progressive
@@ -28,9 +32,35 @@
 # Ne pas modifier les valeurs certifiées à la main : elles seraient
 # écrasées au prochain scripts/verifier_donnees.py --appliquer.
 annee,dispositif,regime,indicateur,valeur,fiabilite
+1989,retraite_progressive,regime_general,beneficiaires,660,haute
+1990,retraite_progressive,regime_general,beneficiaires,920,haute
+1991,retraite_progressive,regime_general,beneficiaires,1020,haute
+1992,retraite_progressive,regime_general,beneficiaires,1210,haute
+1993,retraite_progressive,regime_general,beneficiaires,1290,haute
+1994,retraite_progressive,regime_general,beneficiaires,1220,haute
+1995,retraite_progressive,regime_general,beneficiaires,1140,haute
+1996,retraite_progressive,regime_general,beneficiaires,1050,haute
+1997,retraite_progressive,regime_general,beneficiaires,1010,haute
+1998,retraite_progressive,regime_general,beneficiaires,920,haute
+1999,retraite_progressive,regime_general,beneficiaires,840,haute
+2000,retraite_progressive,regime_general,beneficiaires,770,haute
+2001,retraite_progressive,regime_general,beneficiaires,720,haute
+2002,retraite_progressive,regime_general,beneficiaires,720,haute
+2003,retraite_progressive,regime_general,beneficiaires,670,haute
+2004,retraite_progressive,regime_general,beneficiaires,520,haute
+2005,retraite_progressive,regime_general,beneficiaires,420,haute
+2006,retraite_progressive,regime_general,beneficiaires,530,haute
+2007,retraite_progressive,regime_general,beneficiaires,1160,haute
+2008,retraite_progressive,regime_general,beneficiaires,1650,haute
+2009,retraite_progressive,regime_general,beneficiaires,1780,haute
+2010,retraite_progressive,regime_general,beneficiaires,2030,haute
+2011,retraite_progressive,regime_general,beneficiaires,2200,haute
+2012,retraite_progressive,regime_general,beneficiaires,2410,haute
+2013,retraite_progressive,regime_general,beneficiaires,2770,haute
 2014,cumul,tous_regimes,cumulants_milliers,456,haute
 2014,cumul,tous_regimes,part_femmes_pct,47,haute
 2014,cumul,tous_regimes,part_retraites_pct,3.3,haute
+2014,retraite_progressive,regime_general,beneficiaires,3060,haute
 2015,cumul,tous_regimes,cumulants_milliers,462,haute
 2015,cumul,tous_regimes,part_femmes_pct,44,haute
 2015,cumul,tous_regimes,part_retraites_pct,3.4,haute
@@ -40,24 +70,31 @@ annee,dispositif,regime,indicateur,valeur,fiabilite
 2016,cumul,tous_regimes,cumulants_milliers,452,haute
 2016,cumul,tous_regimes,part_femmes_pct,47,haute
 2016,cumul,tous_regimes,part_retraites_pct,3.2,haute
+2016,retraite_progressive,regime_general,beneficiaires,11560,haute
 2017,cumul,tous_regimes,cumulants_milliers,450,haute
 2017,cumul,tous_regimes,part_femmes_pct,49,haute
 2017,cumul,tous_regimes,part_retraites_pct,3.2,haute
+2017,retraite_progressive,regime_general,beneficiaires,15910,haute
 2018,cumul,tous_regimes,cumulants_milliers,466,haute
 2018,cumul,tous_regimes,part_femmes_pct,47,haute
 2018,cumul,tous_regimes,part_retraites_pct,3.3,haute
+2018,retraite_progressive,regime_general,beneficiaires,18150,haute
 2019,cumul,tous_regimes,cumulants_milliers,502,haute
 2019,cumul,tous_regimes,part_femmes_pct,45,haute
 2019,cumul,tous_regimes,part_retraites_pct,3.4,haute
+2019,retraite_progressive,regime_general,beneficiaires,21530,haute
 2020,cumul,tous_regimes,cumulants_milliers,487,haute
 2020,cumul,tous_regimes,part_femmes_pct,43,haute
 2020,cumul,tous_regimes,part_retraites_pct,3.3,haute
+2020,retraite_progressive,regime_general,beneficiaires,23020,haute
 2021,cumul,tous_regimes,cumulants_milliers,506,haute
 2021,cumul,tous_regimes,part_femmes_pct,47,haute
 2021,cumul,tous_regimes,part_retraites_pct,3.6,haute
+2021,retraite_progressive,regime_general,beneficiaires,22600,haute
 2022,cumul,tous_regimes,cumulants_milliers,543,haute
 2022,cumul,tous_regimes,part_femmes_pct,42,haute
 2022,cumul,tous_regimes,part_retraites_pct,3.8,haute
+2022,retraite_progressive,regime_general,beneficiaires,24240,haute
 2023,cumul,tous_regimes,cumulants_milliers,607,haute
 2023,cumul,tous_regimes,part_femmes_pct,43,haute
 2023,cumul,tous_regimes,part_retraites_pct,4.2,haute

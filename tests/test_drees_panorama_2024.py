@@ -349,9 +349,15 @@ def test_le_cumul_emploi_retraite_et_la_retraite_progressive_viennent_du_panoram
             for annee in (2015, 2023, 2024)] == [5_210, 26_820, 31_370]
     assert progressive[(2024, "regime_general", "age_moyen")] == 62.2
     # L'enquête Emploi est un sondage : le cumul n'est que ``haute`` ; l'EACR
-    # compte les bénéficiaires de la retraite progressive.
+    # compte les bénéficiaires de la retraite progressive. Les autres années
+    # du régime général, que la DREES reprend du recueil de la Cnav, sont
+    # ``haute`` aussi (étape 6, ``tests/test_drees_panorama_series.py``).
     assert {(l["dispositif"], l["fiabilite"]) for l in lignes} == {
-        ("cumul", "haute"), ("retraite_progressive", "certifiee")}
+        ("cumul", "haute"), ("retraite_progressive", "certifiee"),
+        ("retraite_progressive", "haute")}
+    assert {l["regime"] for l in lignes
+            if (l["dispositif"], l["fiabilite"]) == ("retraite_progressive", "haute")} == {
+        "regime_general"}
 
 
 def test_les_pensions_d_invalidite_de_2024_viennent_du_panorama():
