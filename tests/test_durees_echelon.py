@@ -770,6 +770,20 @@ def test_la_redaction_d_origine_des_charges_de_recherche_est_lue(lignes, tableau
     assert not [n for n in _lire("non_lus") if n["article"] == "LEGIARTI000027940471"]
 
 
+def test_un_refus_dit_ce_que_le_decret_publie_ecrit_et_que_le_legi_perd(lignes):
+    """N° 96-1113, art. 14, depuis le 1er janvier 2021 (LEGIARTI000042571828), au LEGI :
+    « Professeur technique hors classe 7e échelon - 6e échelon 3 ans 4e échelon 2 ans
+    6 mois » ; au JORF, le décret n° 2020-1435 du 23 novembre 2020, art. 8
+    (JORFARTI000042558759) : « … 7e échelon - 6e échelon 3 ans 5e échelon 3 ans 4e
+    échelon 2 ans 6 mois … ». Le refus reste ; son motif dit la vraie raison."""
+    (refus,) = [n for n in _lire("non_lus") if n["article"] == "LEGIARTI000042571828"]
+    assert refus["motif"].startswith("un échelon manque dans « Professeur technique hors classe »")
+    for mot in ("consolidation du LEGI", "5e échelon", "n° 2020-1435", "JORFARTI000042558759",
+                "« 5e échelon 3 ans »"):
+        assert mot in refus["motif"], mot
+    assert not [l for l in lignes if l["article"] == "LEGIARTI000042571828"]
+
+
 def test_aucun_libelle_ne_garde_la_case_d_un_echelon(lignes):
     """Décret n° 2011-1317, article 18, du 20 octobre 2011 au 2 octobre 2013
     (LEGIARTI000024684456) : « Attaché hors classe Spécial 7e ― 6e 3 ans » ; le

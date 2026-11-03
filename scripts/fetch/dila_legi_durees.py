@@ -681,6 +681,20 @@ COQUILLES_DU_LEGI = {
 }
 
 
+#: Les versions dont la consolidation du LEGI perd ce que le décret publié au JORF
+#: écrit : la raison s'ajoute au motif du refus. Le tableau n'est pas rendu pour
+#: autant : il reste à relire à la main (note du 3 novembre 2026, retouches de
+#: R-B2-bis).
+ABIMEES_PAR_LE_LEGI = {
+    # N° 96-1113, art. 14, depuis le 1er janvier 2021.
+    "LEGIARTI000042571828": (
+        "la consolidation du LEGI saute le 5e échelon, que le décret publié écrit : décret "
+        "n° 2020-1435 du 23 novembre 2020, art. 8 (JORFARTI000042558759, JORF du "
+        "25 novembre 2020), « Professeur technique hors classe 7e échelon - 6e échelon "
+        "3 ans 5e échelon 3 ans 4e échelon 2 ans 6 mois … », « 5e échelon 3 ans »"),
+}
+
+
 def corriger(ident: str, debut: str, fin: str) -> tuple[str, str, str]:
     """Les dates d'une version, corrigées si le LEGI y écrit une coquille connue
     (``COQUILLES_DU_LEGI``), et la correction, avec sa preuve ; rien ne se corrige
@@ -827,9 +841,11 @@ def extraire(chemin_index: Path | str | None = None) -> dict:
         for rang, extrait in enumerate(extraits, 1):
             tableau = lire_tableau(extrait)
             if tableau.refus:
+                abime = ABIMEES_PAR_LE_LEGI.get(ident)
                 non_lus.append({"texte": texte, "article": ident, "numero": numero,
                                 "tableau": str(rang), "debut": debut, "fin": _fin(fin),
-                                "motif": tableau.refus})
+                                "motif": f"{tableau.refus} ; {abime}" if abime
+                                else tableau.refus})
                 continue
             cle = (texte, numero, rang)
             regle, article_de_la_regle = regle_du_quart(contenu), ""
@@ -971,7 +987,8 @@ ENTETES = {
     "non_lus": "Les tableaux de durées que l'analyseur n'a pas lus, les articles qui fixent "
                "des durées en phrases ou les renvoient à un autre texte (tableau vide), les "
                "versions que le LEGI date d'une fin antérieure ou égale à leur début, jamais "
-               "en vigueur, et pourquoi.",
+               "en vigueur, et pourquoi ; quand la consolidation du LEGI perd ce que le "
+               "décret publié au JORF écrit, le motif le dit, avec sa preuve.",
 }
 SOURCE_ID = ("# source_id: dila_legi_durees — DILA, base LEGI, par l'index du dépôt "
              "(scripts/fetch/dila_index.py) ; scripts/fetch/dila_legi_durees.py")

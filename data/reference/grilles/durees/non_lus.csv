@@ -1,4 +1,4 @@
-# Les tableaux de durées que l'analyseur n'a pas lus, les articles qui fixent des durées en phrases ou les renvoient à un autre texte (tableau vide), les versions que le LEGI date d'une fin antérieure ou égale à leur début, jamais en vigueur, et pourquoi.
+# Les tableaux de durées que l'analyseur n'a pas lus, les articles qui fixent des durées en phrases ou les renvoient à un autre texte (tableau vide), les versions que le LEGI date d'une fin antérieure ou égale à leur début, jamais en vigueur, et pourquoi ; quand la consolidation du LEGI perd ce que le décret publié au JORF écrit, le motif le dit, avec sa preuve.
 # source_id: dila_legi_durees — DILA, base LEGI, par l'index du dépôt (scripts/fetch/dila_index.py) ; scripts/fetch/dila_legi_durees.py
 texte,article,numero,tableau,debut,fin,motif
 LEGITEXT000005616481,LEGIARTI000006376767,8,1,1994-08-27,2006-11-18,tableau dessiné en caractères
@@ -71,7 +71,7 @@ LEGITEXT000005622215,LEGIARTI000006483371,11,,2000-09-01,2013-12-20,durées renv
 LEGITEXT000005622215,LEGIARTI000006483386,17,,1996-12-11,2000-09-01,durées écrites en phrases
 LEGITEXT000005622215,LEGIARTI000006483387,17,,2000-09-01,2007-05-03,durées écrites en phrases
 LEGITEXT000005622310,LEGIARTI000006483070,14,1,1995-01-01,2017-09-01,durées écrites d'un échelon au suivant ou à l'accès d'un échelon : elles se liraient décalées d'un échelon
-LEGITEXT000005622310,LEGIARTI000042571828,14,1,2021-01-01,,un échelon manque dans « Professeur technique hors classe »
+LEGITEXT000005622310,LEGIARTI000042571828,14,1,2021-01-01,,"un échelon manque dans « Professeur technique hors classe » ; la consolidation du LEGI saute le 5e échelon, que le décret publié écrit : décret n° 2020-1435 du 23 novembre 2020, art. 8 (JORFARTI000042558759, JORF du 25 novembre 2020), « Professeur technique hors classe 7e échelon - 6e échelon 3 ans 5e échelon 3 ans 4e échelon 2 ans 6 mois … », « 5e échelon 3 ans »"
 LEGITEXT000005622310,LEGIARTI000006483071,15,1,1995-01-01,1996-08-01,un libellé porte une durée ou un échelon : « 2 ans 6 mois Du 2e au »
 LEGITEXT000005622310,LEGIARTI000006483071,15,2,1995-01-01,1996-08-01,un libellé porte une durée ou un échelon : « 2 ans 6 mois Du 3e au »
 LEGITEXT000005622310,LEGIARTI000006483071,15,3,1995-01-01,1996-08-01,un libellé porte une durée ou un échelon : « 2 ans 6 mois Du 4e au »
