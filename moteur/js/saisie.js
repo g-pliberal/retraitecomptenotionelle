@@ -34,6 +34,7 @@ import {
 } from "./chronologie.js";
 import { CONJOINTS_COLLABORATEURS, anneeDEntree, retoursAuStatut } from "./carriere.js";
 import * as g from "./gabarit.js";
+import { DEPARTEMENTS_D_OUTRE_MER } from "./macro.js";
 import { AGE_TERMINAL } from "./mortalite.js";
 // Les motifs sans emploi et les clés des règles vivent dans `cles.js`, que le
 // démarrage des pages lit sans charger la saisie (action 174, étape 5) : la
@@ -443,6 +444,17 @@ export const BAREMES_LODEOM = [
   ["competitivite_renforcee", "barème de compétitivité renforcée"],
   ["innovation_et_croissance", "barème d'innovation et de croissance"],
 ];
+
+/**
+ * Les départements d'outre-mer où l'assuré a pu travailler (action 177, étape
+ * 7), sous les codes du modèle (`DEPARTEMENTS_D_OUTRE_MER`, dans `macro.js`) :
+ * leurs années donnent leur seuil aux trimestres de 1948 à 1995 (R. 753-21,
+ * R. 351-9), et exonèrent l'artisan et le commerçant dont le revenu ne dépasse
+ * pas le montant de D. 756-7 (L. 756-3). Mayotte n'en est pas : sa caisse a ses
+ * statuts, que la période dit.
+ */
+export const DEPARTEMENTS_OUTRE_MER = Object.freeze(
+  Object.keys(DEPARTEMENTS_D_OUTRE_MER).sort());
 
 /**
  * L'option du conjoint collaborateur d'un artisan ou d'un commerçant (fiche
@@ -866,6 +878,12 @@ export const DEFAUTS = Object.freeze({
   // années le porte, d'un relevé ou des métiers, et la règle ne le retient que
   // là où le texte dispense le statut. Voir `dispensesAnalysees`.
   dispenses: "",
+  // Les années travaillées dans un département d'outre-mer, et lequel :
+  // « 1975:1994:reunion » (action 177, étape 7 ; `DEPARTEMENTS_OUTRE_MER`).
+  // Toute activité de ces années le porte, d'un relevé ou des métiers, comme
+  // une dispense, et les années qui prolongent un relevé jusqu'au départ
+  // aussi ; les autres sont en métropole. Voir `outreMerAnalyse`.
+  outre_mer: "",
   indexation: "masse_salariale",
   lissage: 1,
   age_reference: "fixe_apres_bascule",
@@ -1081,6 +1099,7 @@ export class Saisie {
       interruptions: (parametres.interruptions || "").trim(),
       temps_partiel: (parametres.temps_partiel || "").trim(),
       dispenses: (parametres.dispenses || "").trim(),
+      outre_mer: (parametres.outre_mer || "").trim(),
       indexation: parmi(parametres, "indexation", INDEXATIONS, DEFAUTS.indexation),
       lissage: entier(parametres, "lissage", DEFAUTS.lissage),
       age_reference: parmi(parametres, "age_reference", AGES_REFERENCE, DEFAUTS.age_reference),
@@ -1187,6 +1206,7 @@ export class Saisie {
     }
     this.tempsPartielAnalyse();
     this.dispensesAnalysees();
+    this.outreMerAnalyse();
     this.verifierNaissances();
     this.prolongationsDeLaChargeDeclarees();
     this.verifierConjoint();
@@ -2033,6 +2053,72 @@ export class Saisie {
     return motifs;
   }
 
+  /**
+   * « 1975:1994:reunion, 2001:2003:martinique » → `Map` année → département.
+   * La forme est celle des dispenses, et leurs refus — une ligne mal formée ou
+   * sans département, une année hors de toute carrière possible, une plage à
+   * l'envers, deux départements pour une même année —, et un département que
+   * le modèle ne connaît pas (`DEPARTEMENTS_OUTRE_MER`) ; Mayotte, dont la
+   * caisse a ses statuts, se dit par celui de la période.
+   */
+  outreMerAnalyse() {
+    const departements = new Map();
+    for (const brut of this.outre_mer.replace(/\n/g, ",").split(",")) {
+      const morceau = brut.trim();
+      if (!morceau) {
+        continue;
+      }
+      const parties = morceau.split(":");
+      if (parties.length !== 3 || !parties.slice(0, 2).every((partie) => estEntier(partie))
+        || !parties[2].trim()) {
+        throw new ErreurSaisie(
+          `Années outre-mer mal formées : « ${morceau} ». Attendu `
+          + "« année_début:année_fin:département », par exemple 1975:1994:reunion.",
+        );
+      }
+      const [debut, fin] = parties.slice(0, 2).map(Number);
+      const departement = parties[2].trim();
+      // Les années sont citées telles qu'elles ont été écrites, comme celles
+      // d'une dispense.
+      for (const [texte, annee] of [[parties[0], debut], [parties[1], fin]]) {
+        if (!(annee >= ANNEE_CARRIERE_MINIMALE && annee <= ANNEE_CARRIERE_MAXIMALE)) {
+          throw new ErreurSaisie(
+            `Années outre-mer « ${morceau} » : ${texte.trim()} ne tombe dans aucune `
+            + `carrière possible. Attendu entre ${ANNEE_CARRIERE_MINIMALE} et `
+            + `${ANNEE_CARRIERE_MAXIMALE}.`,
+          );
+        }
+      }
+      if (fin < debut) {
+        throw new ErreurSaisie(
+          `Années outre-mer « ${morceau} » : elles finissent (${fin}) avant de `
+          + `commencer (${debut}).`,
+        );
+      }
+      if (departement === "mayotte") {
+        throw new ErreurSaisie(
+          `Années outre-mer « ${morceau} » : Mayotte a sa propre caisse ; dites-le `
+          + "par le statut de la période, salarié ou travailleur indépendant de Mayotte.",
+        );
+      }
+      if (!DEPARTEMENTS_OUTRE_MER.includes(departement)) {
+        throw new ErreurSaisie(
+          `Années outre-mer « ${morceau} » : département inconnu « ${departement} ». `
+          + `Attendu l'un de : ${DEPARTEMENTS_OUTRE_MER.join(", ")}.`,
+        );
+      }
+      for (let annee = debut; annee <= fin; annee += 1) {
+        if (departements.has(annee)) {
+          throw new ErreurSaisie(
+            `Années outre-mer « ${morceau} » : l'année ${annee} a déjà son département.`,
+          );
+        }
+        departements.set(annee, departement);
+      }
+    }
+    return departements;
+  }
+
   /** Vrai si la carrière est LUE plutôt que reconstituée. */
   get releveActif() {
     return this.releve.trim().length > 0;
@@ -2073,11 +2159,14 @@ export class Saisie {
    * quotité, et garde son revenu, que le relevé porte déjà réduit. **Les
    * dispenses de l'assiette minimale**, dans le leur : la ligne d'emploi en
    * prend le motif (`dispensesAnalysees`, que `dispensesConnues` contrôle).
+   * **Les années outre-mer**, dans le leur : la ligne d'emploi en prend le
+   * département (`outreMerAnalyse`).
    */
   releveAnalyse(motifsConnus = null, dispensesConnues = null) {
     const interruptions = this.interruptionsAnalysees(motifsConnus);
     const tempsPartiel = this.tempsPartielAnalyse();
     const dispenses = this.dispensesAnalysees(dispensesConnues);
+    const departements = this.outreMerAnalyse();
     const depart = this.dateLiquidation;
     // Les lignes sont COMPTÉES avant d'être lues : le refus doit coûter le
     // découpage du texte, et rien de plus. Les analyser d'abord pour les
@@ -2176,6 +2265,7 @@ export class Saisie {
         quotite: typePeriode === "emploi" ? tempsPartiel.get(annee) ?? 1.0 : 1.0,
         dispense_assiette_minimale: typePeriode === "emploi" ? dispenses.get(annee) ?? "" : "",
         lodeom: typePeriode === "emploi" ? this.lodeom : "",
+        outre_mer: typePeriode === "emploi" ? departements.get(annee) ?? "" : "",
       });
     }
     return lignes;
@@ -3419,6 +3509,7 @@ export class Saisie {
       ...(this.revenu_fiscal !== null ? { revenu_fiscal: nombreBrut(this.revenu_fiscal) } : {}),
       ...(this.temps_partiel ? { temps_partiel: this.temps_partiel } : {}),
       ...(this.dispenses ? { dispenses: this.dispenses } : {}),
+      ...(this.outre_mer ? { outre_mer: this.outre_mer } : {}),
       interruptions: this.interruptions, indexation: this.indexation,
       lissage: this.lissage,
       age_reference: this.age_reference, table: this.table,

@@ -636,7 +636,7 @@ export class Contexte {
           revenu: ligne.revenu,
           retenus: retenus.get(ligne.annee),
           valides: valides.get(ligne.annee),
-          seuil: simulateur.macro.seuilDUnTrimestre(ligne.annee),
+          seuil: simulateur.macro.seuilDUnTrimestre(ligne.annee, ligne.outre_mer),
         }));
     } catch (erreur) {
       // Comme `departsDeLEstimation` : une carrière que la saisie refuse tait
@@ -786,7 +786,9 @@ function etrangerDeclare(simulateur, saisie) {
  * « Interruptions », qui garde le dernier mot — `sans_activite` pour qui ne
  * travaille plus. Le champ « Temps partiel » et la retraite progressive les
  * mettent à temps partiel ; celui des dispenses de l'assiette minimale leur
- * donne son motif. La radiation pour invalidité, qui clôt l'emploi de
+ * donne son motif, et celui des années outre-mer son département, la
+ * métropole aux années qu'il ne nomme pas, quand le modèle poursuivrait
+ * celui de la dernière année. La radiation pour invalidité, qui clôt l'emploi de
  * fonctionnaire, les arrête à sa date quand elle ne tombe pas avant la
  * dernière année du relevé : ce qui la suit, le relevé ne le dit pas.
  *
@@ -809,9 +811,14 @@ function releveJusquAuDepart(simulateur, saisie, releve, motifs) {
   const declaree = saisie.retraiteProgressiveDeclaree();
   const progressive = declaree === null ? null
     : [saisie.dateDe(declaree.age, true), declaree.quotite];
+  const departements = saisie.outreMerAnalyse();
   return prolongerReleve(releve, fin, simulateur.macro,
     saisie.interruptionsApres(new DateMois(derniere + 1, 1), motifs), progressive,
-    saisie.tempsPartielAnalyse(), saisie.dispensesAnalysees());
+    saisie.tempsPartielAnalyse(), saisie.dispensesAnalysees())
+    .map((ligne) => (ligne.annee > derniere
+      ? { ...ligne, outre_mer: ligne.type_periode === "emploi"
+        ? departements.get(ligne.annee) ?? "" : "" }
+      : ligne));
 }
 
 /**
