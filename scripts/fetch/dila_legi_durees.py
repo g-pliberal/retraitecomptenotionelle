@@ -39,7 +39,9 @@ l'accès à l'échelon (« pour accéder au 3e échelon »), qui se liraient dé
 d'un échelon ; un tableau dessiné en caractères ; une phrase qui coupe le
 tableau. Les durées écrites en phrases, et celles qu'un article renvoie à un
 autre texte (« sont fixées à l'article 4 du décret du 20 septembre 1973 »), ne
-sont pas lues : elles y sont consignées aussi.
+sont pas lues : elles y sont consignées aussi. Une version que le LEGI date
+d'une fin antérieure ou égale à son début n'a jamais été en vigueur : elle
+n'est ni lue ni réunie à la suivante, et s'y consigne, tableau par tableau.
 
 CE QU'IL ÉCRIT, sous ``data/reference/grilles/durees/`` : ``textes.csv``, les
 textes qui portent un tableau lu ou refusé, avec leur versant (celui des
@@ -555,6 +557,17 @@ def _fin(jour: str) -> str:
     return "" if not jour or jour >= EN_VIGUEUR else jour
 
 
+#: Le motif d'une version que le LEGI date d'une fin antérieure ou égale à son
+#: début : elle n'a jamais été en vigueur, et n'est pas lue.
+JAMAIS = "version jamais en vigueur : le LEGI la date d'une fin antérieure ou égale à son début"
+
+
+def jamais_en_vigueur(debut: str, fin: str) -> bool:
+    """La version d'un article que le LEGI date d'une fin antérieure ou égale à
+    son début (« jamais en vigueur » pour ``dila_cherche.py``)."""
+    return bool(_fin(fin)) and fin <= debut
+
+
 def _versant(titre: str, visas: str) -> str:
     from dila_legi_grilles import versant  # noqa: PLC0415
     lu = versant(titre, visas)
@@ -615,6 +628,14 @@ def extraire(chemin_index: Path | str | None = None) -> dict:
             continue
         texte = infos[titre]["texte"]
         extraits = tableaux(contenu)
+        if jamais_en_vigueur(debut, fin):
+            # Ni lue, ni réunie à la suivante : consignée, tableau par tableau.
+            if extraits or _en_prose(contenu):
+                non_lus.extend({"texte": texte, "article": ident, "numero": numero,
+                                "tableau": str(rang) if extraits else "", "debut": debut,
+                                "fin": _fin(fin), "motif": JAMAIS}
+                               for rang in range(1, max(len(extraits), 1) + 1))
+            continue
         if not extraits:
             motif_prose = _en_prose(contenu)
             if motif_prose:
@@ -730,9 +751,10 @@ ENTETES = {
               "la durée unique ; vide : le tableau n'a pas cette colonne, ou l'échelon le plus "
               "haut, qui n'en a pas), la condition d'accès que le tableau écrit à la place d'une "
               "durée.",
-    "non_lus": "Les tableaux de durées que l'analyseur n'a pas lus, et les articles qui fixent "
-               "des durées en phrases ou les renvoient à un autre texte (tableau vide), et "
-               "pourquoi.",
+    "non_lus": "Les tableaux de durées que l'analyseur n'a pas lus, les articles qui fixent "
+               "des durées en phrases ou les renvoient à un autre texte (tableau vide), les "
+               "versions que le LEGI date d'une fin antérieure ou égale à leur début, jamais "
+               "en vigueur, et pourquoi.",
 }
 SOURCE_ID = ("# source_id: dila_legi_durees — DILA, base LEGI, par l'index du dépôt "
              "(scripts/fetch/dila_index.py) ; scripts/fetch/dila_legi_durees.py")

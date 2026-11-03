@@ -452,6 +452,64 @@ def test_les_officiers_du_cadre_special_echelle_par_echelle(lignes):
     assert _ligne(lignes, article, "Colonel Echelle de solde n° 2", "12")["duree"] == "18"
 
 
+#: Les versions que le LEGI date d'une fin antérieure ou égale à leur début, que
+#: ``dila_cherche.py legi --num … --diff`` marque « (jamais en vigueur) » : n° 99-669,
+#: art. 17, du 1er janvier 2021 au 1er juin 2020 ; n° 83-1260, art. 34, du
+#: 8 janvier 1984 au 4 août 1980 ; n° 91-868, art. 7, du 1er janvier 2021 au
+#: 19 novembre 2018 ; n° 91-290, art. 14-4, du 1er septembre 2014 au 30 août 2012 ;
+#: n° 2014-923, art. 25, n° 92-851, art. 14, du 1er janvier 2017 au même jour ;
+#: n° 2014-1455, art. 22, du 15 décembre 2025 au même jour.
+JAMAIS_EN_VIGUEUR = {
+    "LEGIARTI000034810141", "LEGIARTI000027940471", "LEGIARTI000035606585",
+    "LEGIARTI000025845550", "LEGIARTI000032578591", "LEGIARTI000034434459",
+    "LEGIARTI000052465286"}
+
+
+def test_une_version_jamais_en_vigueur_se_reconnait_a_ses_dates():
+    assert dur.jamais_en_vigueur("2021-01-01", "2020-06-01")
+    assert dur.jamais_en_vigueur("2017-01-01", "2017-01-01")
+    assert not dur.jamais_en_vigueur("2021-01-01", "2026-01-01")
+    assert not dur.jamais_en_vigueur("2017-01-01", "2999-01-01")
+    assert not dur.jamais_en_vigueur("2017-01-01", "")
+
+
+def test_une_version_jamais_en_vigueur_n_est_pas_lue(lignes, tableaux_lus):
+    """Elle n'est ni dans les tableaux ni dans les lignes, même réunie à la
+    suivante (n° 92-851, art. 14) ; ``non_lus.csv`` la consigne avec sa raison."""
+    assert not [t["article"] for t in tableaux_lus if set(t["versions"].split()) & JAMAIS_EN_VIGUEUR]
+    assert not [l["article"] for l in lignes if l["article"] in JAMAIS_EN_VIGUEUR]
+    assert all(not t["fin"] or t["fin"] > t["debut"] for t in tableaux_lus)
+    consignees = {n["article"] for n in _lire("non_lus")
+                  if n["motif"].startswith("version jamais en vigueur")}
+    assert JAMAIS_EN_VIGUEUR <= consignees
+
+
+def test_la_version_en_vigueur_a_ces_dates_est_lue(lignes, tableaux_lus):
+    """N° 99-669, art. 17, en vigueur du 1er janvier 2021 au 1er janvier 2026
+    (LEGIARTI000041916038) : « Directeur technique de classe exceptionnelle
+    Echelon spécial - 5e échelon - 4e échelon 3 ans 3e échelon 2 ans 6 mois »,
+    classe que la version jamais en vigueur n'écrit pas. N° 2014-923, art. 25,
+    en vigueur depuis le 1er janvier 2017 (LEGIARTI000037468710) : « 4e échelon
+    provisoire 2 ans ». N° 2014-1455, art. 22, en vigueur depuis le
+    15 décembre 2025 (LEGIARTI000053027219) : « Général de brigade Echelle de
+    solde n° 3 … 1 er échelon 1 an ». N° 92-851, art. 14, en vigueur depuis le
+    1er janvier 2017 (LEGIARTI000037468701) : « Médecin hors classe … 4e échelon
+    3 ans »."""
+    ce = "Directeur technique de classe exceptionnelle"
+    (penitentiaire,) = [t for t in tableaux_lus
+                        if "LEGIARTI000041916038" in t["versions"].split()]
+    assert penitentiaire["fin"] == "2026-01-01"
+    assert _ligne(lignes, penitentiaire["article"], ce, "4")["duree"] == "36"
+    assert _ligne(lignes, penitentiaire["article"], ce, "3")["duree"] == "30"
+    assert [l["duree"] for l in lignes if l["article"] == "LEGIARTI000037468710"
+            and l["echelon"] == "4-provisoire"] == ["24"]
+    assert _ligne(lignes, "LEGIARTI000053027219", "Général de brigade Echelle de solde n° 3",
+                  "1")["duree"] == "12"
+    (medecins,) = [t for t in tableaux_lus if "LEGIARTI000037468701" in t["versions"].split()]
+    assert (medecins["article"], medecins["debut"]) == ("LEGIARTI000037468701", "2017-01-01")
+    assert _ligne(lignes, "LEGIARTI000037468701", "Médecin hors classe", "4")["duree"] == "36"
+
+
 def test_chaque_ligne_est_certifiee_et_datee(lignes, tableaux_lus):
     assert lignes and all(l["fiabilite"] == "certifiee" for l in lignes)
     assert all(t["debut"] and t["article"].startswith("LEGIARTI") for t in tableaux_lus)
