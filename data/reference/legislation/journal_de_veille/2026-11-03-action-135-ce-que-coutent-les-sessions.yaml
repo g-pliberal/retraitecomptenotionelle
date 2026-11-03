@@ -1,0 +1,16 @@
+date: "2026-11-03"
+session: "action 135 : ce que coûtent les sessions, l'effort à xhigh, la relève de l'orchestration"
+consulte: >-
+  Aucune source de droit : la session ne touche à aucune règle du scénario 1,
+  seulement aux réglages de Claude Code (.claude/settings.json, l'éclaireur et
+  Explore), à CLAUDE.md et au skill claude-api. Lues ce jour : la page des
+  tarifs de l'API, la documentation de Claude Code (model-config, sub-agents,
+  settings-reference) et celle de l'API sur la réflexion (thinking).
+trouve: >-
+  Aucune règle n'a changé. Sur six sessions du jour, la relecture du contexte
+  fait l'essentiel du coût, la réflexion à peu près le tiers, les sous-agents
+  presque rien ; la session d'orchestration relit tout son contexte, démesuré,
+  à chaque appel. L'effort passe de max à xhigh, l'éclaireur et Explore à high.
+reste: >-
+  actions/cache sur GitHub ; la réflexion à xhigh, à mesurer ; Sonnet pour des
+  sessions entières, au propriétaire ; les leviers 4 et 5.

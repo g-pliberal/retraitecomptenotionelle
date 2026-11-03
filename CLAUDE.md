@@ -96,10 +96,19 @@ entier d'un côté, et efface ce que l'autre session y a écrit.
 
 Chaque appel d'outil relit toute la conversation : ce qu'une session a lu,
 elle le repaie à chaque geste suivant, et elle coûte d'autant plus cher
-qu'elle dure. D'où six règles.
+qu'elle dure. D'où sept règles.
 
 - **Une session, une étape.** L'étape poussée sur `main`, la session s'arrête
   et le dit au propriétaire ; l'étape suivante s'ouvre dans une session neuve.
+- **La session d'orchestration passe la main à chaque vague.** Celle qui
+  lance et suit les autres sessions est la seule qui dure : leurs comptes
+  rendus, ses consignes et sa réflexion s'y accumulent, que chacun de ses
+  appels relit, et une heure sans appel lui fait récrire tout son cache. Une
+  vague close — chaque session lancée a rendu compte, la suite est verte —,
+  elle ne lance pas la suivante : elle ouvre la session qui lui succède
+  (`create_session`), avec son état pour consigne — les files, ce qui est
+  fait, ce qui attend, les questions posées au propriétaire et ses
+  réponses —, lui confie la vague, donne son nom au propriétaire et s'arrête.
 - **Au démarrage, le bloc « Reprise » seul.** Chaque action `en cours` de la
   feuille de route s'ouvre, sous son titre, sur un paragraphe
   `**Reprise, au <date>.**` de dix lignes au plus : où elle en est, ce qui
