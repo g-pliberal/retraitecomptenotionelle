@@ -1,0 +1,227 @@
+# Les grilles de chaque texte, une par groupe (grade, échelle, classe) : sa clé, son dernier libellé, la période qu'elle couvre, ses échelons.
+# source_id: dila_legi_grilles — DILA, base LEGI, par l'index du dépôt (scripts/fetch/dila_index.py) ; scripts/fetch/dila_legi_grilles.py
+texte,grille,libelle,debut,fin,echelons
+LEGITEXT000005621894,corps-des-psychologues-classe-classe-normale,CORPS DES PSYCHOLOGUES. CLASSE Classe normale,1996-08-01,2016-12-31,11
+LEGITEXT000005621894,hors-classe,Hors classe,1996-08-01,2016-12-31,7
+LEGITEXT000005626241,echelle-1,Echelle 1,1998-04-01,,8
+LEGITEXT000005626241,echelle-2,Echelle 2,1998-04-01,,11
+LEGITEXT000005626241,echelle-3,Echelle 3,1998-04-01,,11
+LEGITEXT000005626241,echelle-4,Echelle 4,1998-04-01,,11
+LEGITEXT000005626241,echelle-5,Echelle 5,1998-04-01,,11
+LEGITEXT000006056729,attache-d-administration-hospitaliere,Attaché d'administration hospitalière,2007-08-07,2016-12-31,12
+LEGITEXT000006056729,attache-principal-d-administration-hospitaliere,Attaché principal d'administration hospitalière,2007-08-07,2016-12-31,10
+LEGITEXT000006059738,corps-des-dessinateurs-dessinateur-principal,Corps des dessinateurs Dessinateur principal,1990-01-01,2016-12-31,3
+LEGITEXT000006059738,corps-des-techniciens-superieurs-technicien-superieur-hospitalier,CORPS DES TECHNICIENS SUPÉRIEURS Technicien supérieur hospitalier,2003-12-28,2011-06-29,13
+LEGITEXT000006059738,ingenieur-hospitalier,Ingénieur hospitalier,2007-06-25,2016-12-31,10
+LEGITEXT000006059738,ingenieur-hospitalier-en-chef-de-classe-exceptionnelle,Ingénieur hospitalier en chef de classe exceptionnelle,2007-06-25,2016-12-31,7
+LEGITEXT000006059738,ingenieur-hospitalier-en-chef-de-classe-normale,Ingénieur hospitalier en chef de classe normale,2007-06-25,2016-12-31,10
+LEGITEXT000006059738,ingenieur-hospitalier-principal,Ingénieur hospitalier principal,2007-06-25,2016-12-31,9
+LEGITEXT000006059738,technicien-superieur-hospitalier-chef,Technicien supérieur hospitalier chef,2003-12-28,2011-06-29,8
+LEGITEXT000006059738,technicien-superieur-hospitalier-principal,Technicien supérieur hospitalier principal,2003-12-28,2011-06-29,8
+LEGITEXT000006072914,echelle-4-echelon,Echelle 4 ÉCHELON,1994-10-26,1996-07-31,11
+LEGITEXT000006072914,echelle-5-echelon,Echelle 5 ÉCHELON,1994-10-26,,11
+LEGITEXT000006076532,classe-normale,Classe normale,1994-12-18,2011-06-15,13
+LEGITEXT000006076532,classe-superieure,Classe supérieure,1990-01-01,2011-06-15,8
+LEGITEXT000006076532,corps-des-adjoints-administratifs-hospitaliers-corps-des-permanenciers-auxiliaires-de-regulation-medicale-corps-des-standardistes-adjoint-administratif-hospitalier-principal-permanencier-auxiliaire-de-regulation-medicale-chef-chef-de-standard-telephonique-principal,Corps des adjoints administratifs hospitaliers Corps des permanenciers auxiliaires de régulation médicale Corps des standardistes Adjoint administratif hospitalier principal Permanencier auxiliaire de régulation médicale chef Chef de standard téléphonique principal,1990-08-01,2011-06-15,3
+LEGITEXT000006076532,corps-des-adjoints-des-cadres-hospitaliers-corps-des-secretaires-medicaux-classe-exceptionnelle,Corps des adjoints des cadres hospitaliers Corps des secrétaires médicaux Classe exceptionnelle,1990-01-01,2011-06-15,7
+LEGITEXT000006076532,corps-des-chefs-de-bureau,Corps des chefs de bureau,1990-01-01,2011-06-15,8
+LEGITEXT000006081920,corps-des-assistants-socio-educatifs,corps des assistants socio-éducatifs,1993-01-01,2014-02-06,12
+LEGITEXT000006081925,echelonnement-indiciaire-duree-moyenne-article-1,ECHELONNEMENT indiciaire DUREE MOYENNE (article 1),1993-01-01,,10
+LEGITEXT000006081925,echelonnement-indiciaire-duree-moyenne-article-2,ECHELONNEMENT indiciaire DUREE MOYENNE (article 2),1993-01-01,,11
+LEGITEXT000019416482,classe-normale,Classe normale,2017-01-01,,9
+LEGITEXT000019416482,hors-classe,Hors classe,2017-01-01,,8
+LEGITEXT000019416502,echelon-echelonnement-duree-moyenne-duree-minimale,ÉCHELON ÉCHELONNEMENT DURÉE MOYENNE DURÉE MINIMALE,2013-07-07,2016-12-31,13
+LEGITEXT000019416514,classe-normale,Classe normale,2017-01-01,2020-12-31,10
+LEGITEXT000019416514,echelon-classe-exceptionnelle,Echelon Classe exceptionnelle,2017-01-01,2020-12-31,6
+LEGITEXT000019416514,eleve-directeur-de-classe-normale-419-419-classe-provisoire-en-voie-d-extinction,Elève directeur de classe normale 419 419 CLASSE PROVISOIRE (EN VOIE D'EXTINCTION),2017-01-01,2020-12-31,10
+LEGITEXT000019416514,hors-classe,Hors classe,2017-01-01,2020-12-31,9
+LEGITEXT000019416690,echelonnement-educateur-technique-specialise-de-classe-superieure,ÉCHELONNEMENT Educateur technique spécialisé de classe supérieure,2007-08-08,2014-02-06,7
+LEGITEXT000019416690,educateur-technique-specialise-de-classe-normale,Educateur technique spécialisé de classe normale,2007-08-08,2014-02-06,10
+LEGITEXT000019416701,agent-chef-de-1re-categorie,Agent chef de 1re catégorie,2007-06-25,,8
+LEGITEXT000019416701,agent-chef-de-2e-categorie,Agent chef de 2e catégorie,2007-06-25,,13
+LEGITEXT000019416701,agent-chef-de-classe-exceptionnelle,Agent chef de classe exceptionnelle,2007-06-25,,7
+LEGITEXT000019416885,echelonnement-educateur-de-jeunes-enfants-de-classe-superieure,ÉCHELONNEMENT Educateur de jeunes enfants de classe supérieure,2007-08-08,2014-02-06,7
+LEGITEXT000019416885,educateur-de-jeunes-enfants-de-classe-normale,Educateur de jeunes enfants de classe normale,2007-08-08,2014-02-06,10
+LEGITEXT000019416895,cadres-socio-educatifs,Cadres socio-éducatifs,2007-05-14,2016-05-21,8
+LEGITEXT000019416895,cadres-superieurs-socio-educatifs,cadres supérieurs socio-éducatifs,2007-05-14,2016-05-21,7
+LEGITEXT000019419571,corps-des-directeurs-d-ecole-de-sages-femmes-directeurs-d-ecole-preparant-au-certificat-cadre-sage-femme,CORPS DES DIRECTEURS D'ÉCOLE DE SAGES-FEMMES Directeurs d'école préparant au certificat cadre sage-femme,2003-09-10,2014-12-26,6
+LEGITEXT000019419571,directeurs-d-ecole-preparant-au-diplome-d-etat-de-sage-femme,Directeurs d'école préparant au diplôme d'État de sage-femme,2003-09-10,2014-12-26,7
+LEGITEXT000019419793,de-classe-normale,de classe normale,2002-01-02,2011-06-29,8
+LEGITEXT000019419793,de-classe-superieure,de classe supérieure,2002-01-02,2011-06-29,6
+LEGITEXT000019419812,corps-des-sages-femmes-de-classe-normale,Corps des sages-femmes – Sages-femmes de classe normale,2002-01-11,2014-12-26,8
+LEGITEXT000019419812,corps-des-sages-femmes-de-classe-superieure,Corps des sages-femmes – Sages-femmes de classe supérieure,2002-01-11,2014-12-26,7
+LEGITEXT000019419812,provisoires-sages-femmes-cadres,provisoires Sages-femmes cadres,2002-01-11,2014-12-26,3
+LEGITEXT000019419812,provisoires-sages-femmes-cadres-superieurs,provisoires Sages-femmes cadres supérieurs,2002-01-11,2014-12-26,3
+LEGITEXT000019419812,sages-femmes-cadres,Sages-femmes cadres,2002-01-11,2014-12-26,6
+LEGITEXT000019419812,sages-femmes-cadres-superieurs,Sages-femmes cadres supérieurs,2002-01-11,2014-12-26,4
+LEGITEXT000019419842,classe-normale,Classe normale,2010-12-01,2016-05-21,9
+LEGITEXT000019419842,corps-des-infirmiers-anesthesistes-de-classe-normale,CORPS DES INFIRMIERS ANESTHESISTES – Infirmiers anesthésistes de classe normale,2002-01-02,2016-05-21,8
+LEGITEXT000019419842,corps-des-infirmiers-anesthesistes-de-classe-superieure,CORPS DES INFIRMIERS ANESTHESISTES – Infirmiers anesthésistes de classe supérieure,2002-01-02,2016-05-21,7
+LEGITEXT000019419842,corps-des-infirmiers-classe-superieure,CORPS DES INFIRMIERS Classe supérieure,2010-12-01,2016-05-21,7
+LEGITEXT000019419842,corps-des-infirmiers-de-bloc-operatoire-et-des-puericultrices-infirmiers-de-bloc-operatoire-et-puericultrices-de-classe-normale,CORPS DES INFIRMIERS DE BLOC OPERATOIRE ET DES PUERICULTRICES – Infirmiers de bloc opératoire et puéricultrices de classe normale,2002-01-02,2016-05-21,8
+LEGITEXT000019419842,corps-des-infirmiers-de-bloc-operatoire-et-des-puericultrices-infirmiers-de-bloc-operatoire-et-puericultrices-de-classe-superieure,CORPS DES INFIRMIERS DE BLOC OPERATOIRE ET DES PUERICULTRICES – Infirmiers de bloc opératoire et puéricultrices de classe supérieure,2002-01-02,2016-05-21,7
+LEGITEXT000019419842,corps-des-infirmiers-infirmiers-de-classe-normale,CORPS DES INFIRMIERS – Infirmiers de classe normale,2002-01-02,2010-11-30,8
+LEGITEXT000019419842,corps-des-infirmiers-infirmiers-de-classe-superieure,CORPS DES INFIRMIERS – Infirmiers de classe supérieure,2002-01-02,2010-11-30,6
+LEGITEXT000019419856,corps-des-surveillants-surveillants-grade-provisoire-du-1er-janvier-2002-jusqu-au-31-decembre-2003,CORPS DES SURVEILLANTS Surveillants grade provisoire du 1er janvier 2002 jusqu'au 31 décembre 2003,2002-01-02,2016-05-21,7
+LEGITEXT000020129649,directeur-general-du-centre-national-de-gestion-des-praticiens-hospitaliers-et-des-personnels-de-direction-de-la-fonction-publique-hospitaliere,Directeur général du Centre national de gestion des praticiens hospitaliers et des personnels de direction de la fonction publique hospitalière,2017-01-01,,6
+LEGITEXT000022870379,deuxieme-grade-article-1,Deuxième grade (article 1),2010-12-01,2016-05-21,11
+LEGITEXT000022870379,deuxieme-grade-article-2,Deuxième grade (article 2),2012-07-01,2016-05-21,11
+LEGITEXT000022870379,deuxieme-grade-article-3,Deuxième grade (article 3),2015-07-01,2016-05-21,11
+LEGITEXT000022870379,premier-grade-article-1,Premier grade (article 1),2010-12-01,2016-05-21,11
+LEGITEXT000022870379,premier-grade-article-2,Premier grade (article 2),2012-07-01,2016-05-21,11
+LEGITEXT000022870379,premier-grade-article-3,Premier grade (article 3),2015-07-01,2016-05-21,11
+LEGITEXT000022870379,quatrieme-grade-article-2,Quatrième grade (article 2),2012-07-01,2016-05-21,7
+LEGITEXT000022870379,quatrieme-grade-article-3,Quatrième grade (article 3),2015-07-01,2016-05-21,7
+LEGITEXT000022870379,troisieme-grade-article-2,Troisième grade (article 2),2012-07-01,2016-05-21,11
+LEGITEXT000022870379,troisieme-grade-article-3,Troisième grade (article 3),2015-07-01,2016-05-21,11
+LEGITEXT000024181035,deuxieme-grade,Deuxième grade,2011-06-16,2016-05-21,13
+LEGITEXT000024181035,premier-grade,Premier grade,2011-06-16,2016-05-21,13
+LEGITEXT000024181035,troisieme-grade,Troisième grade,2011-06-16,2016-05-21,11
+LEGITEXT000024376633,deuxieme-grade,Deuxième grade,2014-02-01,2016-05-21,13
+LEGITEXT000024376633,deuxieme-grade-technicien-superieur-hospitalier-de-2e-classe,Deuxième grade technicien supérieur hospitalier de 2e classe,2011-06-30,2014-01-31,13
+LEGITEXT000024376633,premier-grade,Premier grade,2014-02-01,2016-05-21,13
+LEGITEXT000024376633,premier-grade-technicien-hospitalier,Premier grade technicien hospitalier,2011-06-30,2014-01-31,13
+LEGITEXT000024376633,troisieme-grade,Troisième grade,2014-02-01,2016-05-21,11
+LEGITEXT000024376633,troisieme-grade-technicien-superieur-hospitalier-de-1re-classe,Troisième grade technicien supérieur hospitalier de 1re classe,2011-06-30,2014-01-31,11
+LEGITEXT000025196307,deuxieme-grade-technicien-superieur-hospitalier-de-2e-classe,Deuxième grade technicien supérieur hospitalier de 2e classe,2012-01-26,2016-05-21,13
+LEGITEXT000025196307,premier-grade-technicien-hospitalier,Premier grade technicien hospitalier,2012-01-26,2016-05-21,13
+LEGITEXT000025196307,troisieme-grade-technicien-superieur-hospitalier-de-1re-classe,Troisième grade technicien supérieur hospitalier de 1re classe,2012-01-26,2016-05-21,11
+LEGITEXT000026854057,grade-de-cadre-de-sante-paramedical-article-1,Grade de cadre de santé paramédical (article 1),2012-12-29,2016-05-21,11
+LEGITEXT000026854057,grade-de-cadre-de-sante-paramedical-article-2,Grade de cadre de santé paramédical (article 2),2015-07-01,2016-05-21,11
+LEGITEXT000026854057,grade-de-cadre-superieur-de-sante-paramedical-article-1,Grade de cadre supérieur de santé paramédical (article 1),2012-12-29,2016-05-21,7
+LEGITEXT000026854057,grade-de-cadre-superieur-de-sante-paramedical-article-2,Grade de cadre supérieur de santé paramédical (article 2),2015-07-01,2016-05-21,7
+LEGITEXT000028445844,2-hors-classe,2 ° HORS CLASSE,2015-07-01,2016-12-31,8
+LEGITEXT000028445844,classe-normale,Classe normale,2014-01-10,2022-03-31,8
+LEGITEXT000028445844,hors-classe,Hors classe,2014-01-10,2022-03-31,8
+LEGITEXT000028541996,echelle-3,Echelle 3,2014-02-01,2014-12-31,11
+LEGITEXT000028541996,l-echelonnement-indiciaire-applicable-a-l-echelle-6-de-la-categorie-c-instituee-par-l-article-1er-du-decret-n-2006-228-du-24-fevrier-2006-susvise-est-fixe-ainsi-qu-il-suit-echelle-6,l'échelonnement indiciaire applicable à l'échelle 6 de rémunération de la catégorie C instituée par l'article 1er du décret n° 2006-228 du 24 février 2006 susvisé est fixé ainsi qu'il suit Echelle 6,2015-01-01,2016-05-21,9
+LEGITEXT000028541996,l-echelonnement-indiciaire-applicable-aux-echelles-4-et-5-de-la-categorie-c-instituees-par-l-article-1er-du-decret-n-2006-228-du-24-fevrier-2006-susvise-est-fixe-ainsi-qu-il-suit-echelle-4-echelle-5,l'échelonnement indiciaire applicable aux échelles 4 et 5 de rémunération de la catégorie C instituées par l'article 1er du décret n° 2006-228 du 24 février 2006 susvisé est fixé ainsi qu'il suit Echelle 4 Echelle 5,2014-02-01,2016-05-21,12
+LEGITEXT000028567690,grade-des-moniteurs-educateurs,Grade des moniteurs-éducateurs,2014-02-07,2016-05-21,13
+LEGITEXT000028567690,l-echelonnement-indiciaire-applicable-aux-deux-du-corps-des-moniteurs-educateurs-de-la-fonction-publique-hospitaliere-est-fixe-ainsi-qu-il-suit-a-compter-de-la-date-d-entree-en-vigueur-du-decret-n-2014-103-du-4-fevrier-2014-susvise-a-compter-de-la-date-d-entree-en-vigueur-du-present-arrete-grade-des-moniteurs-educateurs-principaux,L'échelonnement indiciaire applicable aux deux du corps des moniteurs-éducateurs de la fonction publique hospitalière est fixé ainsi qu'il suit à compter de la date d'entrée en vigueur du décret n° 2014-103 du 4 février 2014 susvisé A compter de la date d'entrée en vigueur du présent arrêté Grade des moniteurs-éducateurs principaux,2014-02-07,2016-05-21,13
+LEGITEXT000028567787,assistants-socio-educatifs,Assistants socio-éducatifs,2014-02-07,2016-05-21,13
+LEGITEXT000028567787,l-echelonnement-indiciaire-applicable-aux-deux-du-corps-des-assistants-socio-educatifs-de-la-fonction-publique-hospitaliere-est-fixe-ainsi-qu-il-suit-a-compter-de-la-date-d-entree-en-vigueur-du-decret-n-2014-105-du-4-fevrier-2014-susvise-assistants-socio-educatifs-principaux,L'échelonnement indiciaire applicable aux deux du corps des assistants socio-éducatifs de la fonction publique hospitalière est fixé ainsi qu'il suit à compter de la date d'entrée en vigueur du décret n° 2014-105 du 4 février 2014 susvisé Assistants socio-éducatifs principaux,2014-02-07,2016-05-21,15
+LEGITEXT000028567799,grade-de-classe-normale,Grade de classe normale,2014-02-07,2016-05-21,13
+LEGITEXT000028567799,l-echelonnement-indiciaire-applicable-aux-membres-des-corps-des-conseillers-en-economie-sociale-et-familiale-des-educateurs-techniques-specialises-et-des-educateurs-de-jeunes-enfants-de-la-fonction-publique-hospitaliere-est-fixe-ainsi-qu-il-suit-a-compter-de-la-date-d-entree-en-vigueur-du-decret-n-2014-104-du-4-fevrier-2014-susvise-grade-de-classe-superieure,"L'échelonnement indiciaire applicable aux membres des corps des conseillers en économie sociale et familiale, des éducateurs techniques spécialisés et des éducateurs de jeunes enfants de la fonction publique hospitalière est fixé ainsi qu'il suit à compter de la date d'entrée en vigueur du décret n° 2014-104 du 4 février 2014 susvisé Grade de classe supérieure",2014-02-07,2016-05-21,11
+LEGITEXT000028567821,deuxieme-grade-animateur-principal-de-2e-classe,Deuxième grade animateur principal de 2e classe,2014-02-07,2016-05-21,13
+LEGITEXT000028567821,l-echelonnement-indiciaire-applicable-aux-membres-du-corps-des-assistants-socio-educatifs-de-la-fonction-publique-hospitaliere-est-fixe-ainsi-qu-il-suit-a-compter-de-la-date-d-entree-en-vigueur-du-decret-n-2014-106-du-4-fevrier-2014-susvise-a-compter-de-la-date-d-entree-en-vigueur-du-present-arrete-troisieme-grade-animateur-principal-de-1re-classe,L'échelonnement indiciaire applicable aux membres du corps des assistants socio-éducatifs de la fonction publique hospitalière est fixé ainsi qu'il suit à compter de la date d'entrée en vigueur du décret n° 2014-106 du 4 février 2014 susvisé A compter de la date d'entrée en vigueur du présent arrêté Troisième grade animateur principal de 1re classe,2014-02-07,2016-05-21,11
+LEGITEXT000028567821,premier-grade-animateur,Premier grade animateur,2014-02-07,2016-05-21,13
+LEGITEXT000030083089,emplois-fonctionnels,EMPLOIS FONCTIONNELS,2014-12-27,2016-12-31,7
+LEGITEXT000030083089,premier-grade,Premier grade,2014-12-27,2016-12-31,11
+LEGITEXT000030083089,second-grade,Second grade,2014-12-27,2016-12-31,9
+LEGITEXT000031109333,grade-de-classe-normale,Grade de classe normale,2015-08-24,2016-05-21,11
+LEGITEXT000031109333,l-echelonnement-indiciaire-applicable-aux-deux-du-corps-des-ergotherapeutes-classe-dans-la-categorie-a-de-la-fonction-publique-hospitaliere-est-fixe-ainsi-qu-il-suit-a-compter-de-la-date-d-entree-en-vigueur-du-decret-n-2015-1049-du-21-aout-2015-susvise-grade-de-classe-superieure,L'échelonnement indiciaire applicable aux deux du corps des ergothérapeutes classé dans la catégorie A de la fonction publique hospitalière est fixé ainsi qu'il suit à compter de la date d'entrée en vigueur du décret n° 2015-1049 du 21 août 2015 susvisé Grade de classe supérieure,2015-08-24,2016-05-21,11
+LEGITEXT000032573410,classe-normale,Classe normale,2016-05-22,2021-10-30,9
+LEGITEXT000032573410,classe-superieure,Classe supérieure,2016-05-22,2021-10-30,8
+LEGITEXT000032574522,classe-normale,Classe normale,2016-05-22,2021-10-30,9
+LEGITEXT000032574522,infirmier-de-classe-superieure,Infirmier de classe supérieure,2016-05-22,2021-10-30,8
+LEGITEXT000032574522,infirmier-ere-anesthesiste-de-classe-normale,Infirmier(ère) anesthésiste de classe normale,2016-05-22,2021-10-30,8
+LEGITEXT000032574522,infirmier-ere-anesthesiste-de-classe-superieure,Infirmier(ère) anesthésiste de classe supérieure,2016-05-22,2021-10-30,7
+LEGITEXT000032574522,infirmier-ere-puericulteur-rice-et-infirmier-ere-de-bloc-operatoire-de-classe-normale,Infirmier(ère) puériculteur(rice) et infirmier(ère) de bloc opératoire de classe normale,2016-05-22,2021-10-30,8
+LEGITEXT000032574522,infirmier-ere-puericulteur-rice-et-infirmier-ere-de-bloc-operatoire-de-classe-superieure,Infirmier(ère) puériculteur(rice) et infirmier(ère) de bloc opératoire de classe supérieure,2016-05-22,2021-10-30,7
+LEGITEXT000032574542,classe-normale-du-corps-des-ergotherapeutes,CLASSE NORMALE DU CORPS DES ERGOTHÉRAPEUTES,2016-05-22,2021-09-30,11
+LEGITEXT000032574542,classe-superieure-du-corps-des-ergotherapeutes,Classe supérieure du corps des ergothérapeutes,2016-05-22,2021-09-30,11
+LEGITEXT000032574542,deuxieme-grade-du-corps-des-infirmiers-en-soins-generaux-et-specialises,Deuxième grade du corps des infirmiers en soins généraux et spécialisés,2016-05-22,2021-09-30,11
+LEGITEXT000032574542,grade-de-cadre-de-sante,Grade de cadre de santé,2016-05-22,2021-09-30,8
+LEGITEXT000032574542,grade-de-cadre-de-sante-paramedical,Grade de cadre de santé paramédical,2016-05-22,2021-09-30,11
+LEGITEXT000032574542,grade-de-cadre-superieur-de-sante,Grade de cadre supérieur de santé,2016-05-22,2021-09-30,6
+LEGITEXT000032574542,grade-de-cadre-superieur-de-sante-paramedical,Grade de cadre supérieur de santé paramédical,2016-05-22,2021-09-30,7
+LEGITEXT000032574542,premier-grade-du-corps-des-infirmiers-en-soins-generaux-et-specialises,Premier grade du corps des infirmiers en soins généraux et spécialisés,2016-05-22,2021-09-30,11
+LEGITEXT000032574542,quatrieme-grade-du-corps-des-infirmiers-en-soins-generaux-et-specialises,Quatrième grade du corps des infirmiers en soins généraux et spécialisés,2016-05-22,2017-05-11,7
+LEGITEXT000032574542,troisieme-grade-du-corps-des-infirmiers-en-soins-generaux-et-specialises,Troisième grade du corps des infirmiers en soins généraux et spécialisés,2016-05-22,2021-09-30,11
+LEGITEXT000032574753,deuxieme-grade-article-1,Deuxième grade (article 1),2016-05-22,2022-08-31,13
+LEGITEXT000032574753,deuxieme-grade-article-2,Deuxième grade (article 2),2016-05-22,2022-08-31,13
+LEGITEXT000032574753,premier-grade-article-1,Premier grade (article 1),2016-05-22,2022-08-31,13
+LEGITEXT000032574753,premier-grade-article-2,Premier grade (article 2),2016-05-22,2022-08-31,13
+LEGITEXT000032574753,troisieme-grade,Troisième grade,2016-05-22,2022-08-31,11
+LEGITEXT000032574772,cadre-socio-educatif,Cadre socio-éducatif,2016-05-22,2019-01-31,8
+LEGITEXT000032574772,cadre-superieur-socio-educatif,Cadre supérieur socio-éducatif,2016-05-22,2019-01-31,8
+LEGITEXT000032575052,echelle-c1,Echelle de rémunération C1,2017-01-01,2021-12-31,12
+LEGITEXT000032575052,echelle-c2,Echelle de rémunération C2,2017-01-01,2021-12-31,12
+LEGITEXT000032575052,echelle-c3,Echelle de rémunération C3,2017-01-01,2021-12-31,10
+LEGITEXT000033620137,agents-nommes-dans-les-emplois-fonctionnels-de-coordonnateur-en-maieutique,agents nommés dans les emplois fonctionnels de coordonnateur en maïeutique,2017-01-01,2022-02-28,7
+LEGITEXT000033620137,premier-grade,Premier grade,2017-01-01,2022-02-28,10
+LEGITEXT000033620137,second-grade,Second grade,2017-01-01,2022-02-28,10
+LEGITEXT000033626375,membres-du-corps-des-moniteurs-d-atelier,membres du corps des moniteurs d'atelier,2017-01-01,,13
+LEGITEXT000034547404,grade-de-psychologue-de-classe-normale,Grade de psychologue de classe normale,2017-04-30,,11
+LEGITEXT000034547404,grade-de-psychologue-hors-classe,Grade de psychologue hors classe,2017-04-30,,8
+LEGITEXT000034773197,l-echelonnement-indiciaire-applicable-aux-deux-du-corps-des-infirmiers-anesthesistes-de-la-fonction-publique-hospitaliere-est-fixe-ainsi-qu-il-suit-a-compter-de-la-date-d-entree-en-vigueur-du-decret-n-2017-988-du-10-mai-2017-susvise-a-compter-de-la-date-d-entree-en-vigueur-du-decret-n-2017-988-du-10-mai-2017-deuxieme-grade,L'échelonnement indiciaire applicable aux deux du corps des infirmiers anesthésistes de la fonction publique hospitalière est fixé ainsi qu'il suit à compter de la date d'entrée en vigueur du décret n° 2017-988 du 10 mai 2017 susvisé A compter de la date d'entrée en vigueur du décret n° 2017-988 du 10 mai 2017 Deuxième grade,2017-05-12,2021-09-30,6
+LEGITEXT000034773197,premier-grade,Premier grade,2017-05-12,2021-09-30,10
+LEGITEXT000035603791,emploi-fonctionnel-ingenieur-general-hospitalier,Emploi fonctionnel Ingénieur général hospitalier,2018-01-01,2018-11-18,3
+LEGITEXT000035603791,emploi-fonctionnel-ingenieur-general-hospitalier-hors-echelle-b-hors-echelle-b-hors-echelle-b-hors-echelle-a-hors-echelle-a-hors-echelle-a,Emploi fonctionnel Ingénieur général hospitalier Hors échelle B Hors échelle B Hors échelle B Hors échelle B Hors échelle B Hors échelle A Hors échelle A Hors échelle A Hors échelle A Hors échelle A,2017-01-01,2017-12-31,1
+LEGITEXT000035603791,ingenieur-hospitalier,Ingénieur hospitalier,2017-01-01,2018-11-18,10
+LEGITEXT000035603791,ingenieur-hospitalier-en-chef-de-classe-exceptionnelle,Ingénieur hospitalier en chef de classe exceptionnelle,2017-01-01,2018-11-18,7
+LEGITEXT000035603791,ingenieur-hospitalier-en-chef-de-classe-normale,Ingénieur hospitalier en chef de classe normale,2017-01-01,2018-11-18,10
+LEGITEXT000035603791,ingenieur-hospitalier-principal,Ingénieur hospitalier principal,2017-01-01,2018-11-18,8
+LEGITEXT000037326997,classe-normale,Classe normale,2019-02-01,,11
+LEGITEXT000037326997,deuxieme-grade-article-1,Deuxième grade (article 1),2019-02-01,,11
+LEGITEXT000037326997,deuxieme-grade-article-2,Deuxième grade (article 2),2021-01-01,,11
+LEGITEXT000037326997,echelon-provisoire,Echelon provisoire,2019-02-01,,2
+LEGITEXT000037326997,premier-grade,Premier grade,2021-01-01,,14
+LEGITEXT000037326997,premier-grade-classe-superieure,Premier grade Classe supérieure,2019-02-01,,11
+LEGITEXT000037622520,8-eechelon-724-731-739-739,8 eéchelon 724 731 739 739,2018-11-19,,7
+LEGITEXT000037622520,8-eechelon-857-862-862-862,8 eéchelon 857 862 862 862,2018-11-19,,7
+LEGITEXT000037622520,8-eechelon-979-985-995-995,8 eéchelon 979 985 995 995,2018-11-19,,7
+LEGITEXT000037622520,a-compter-de-l-entree-en-vigueur-du-decret-n-2018-1000-du-16-novembre-2018-relatif-au-classement-indiciaire-applicable-au-corps-des-ingenieurs-de-la-fonction-publique-hospitaliere-et-au-corps-des-ingenieurs-de-l-assistance-publique-hopitaux-de-paris-ingenieur-hospitalier-en-chef-de-classe-exceptionnelle,A compter de l'entrée en vigueur du décret n° 2018-1000 du 16 novembre 2018 relatif au classement indiciaire applicable au corps des ingénieurs de la fonction publique hospitalière et au corps des ingénieurs de l'Assistance publique-hôpitaux de Paris Ingénieur hospitalier en chef de classe exceptionnelle,2018-11-19,,7
+LEGITEXT000037622520,emploi-fonctionnel-ingenieur-general-hospitalier-a-compter-de-l-entree-en-vigueur-du-decret-n-2018-1000-du-16-novembre-2018-relatif-au-classement-indiciaire-applicable-au-corps-des-ingenieurs-de-la-fonction-publique-hospitaliere-et-au-corps-des-ingenieurs-de-l-assistance-publique-hopitaux-de-paris-hors-echelle-b-hors-echelle-b-hors-echelle-a-hors-echelle-a,EMPLOI FONCTIONNEL Ingénieur général hospitalier à compter de l'entrée en vigueur du décret n° 2018-1000 du 16 novembre 2018 relatif au classement indiciaire applicable au corps des ingénieurs de la fonction publique hospitalière et au corps des ingénieurs de l'Assistance publique-hôpitaux de Paris Hors échelle B Hors échelle B Hors échelle B Hors échelle A Hors échelle A Hors échelle A,2018-11-19,,1
+LEGITEXT000037622520,ingenieur-hospitalier,Ingénieur hospitalier,2018-11-19,,2
+LEGITEXT000037622520,ingenieur-hospitalier-en-chef-de-classe-normale,Ingénieur hospitalier en chef de classe normale,2018-11-19,,2
+LEGITEXT000037622520,ingenieur-hospitalier-principal,Ingénieur hospitalier principal,2021-01-01,,1
+LEGITEXT000038144968,cadre-socio-educatif-article-1,Cadre socio-éducatif (article 1),2019-02-21,2021-05-13,11
+LEGITEXT000038144968,cadre-socio-educatif-article-2,Cadre socio-éducatif (article 2),2021-02-01,2021-05-13,11
+LEGITEXT000038144968,cadre-socio-educatif-de-classe-exceptionnelle-article-1,Cadre socio-éducatif de classe exceptionnelle (article 1),2019-02-21,2021-05-13,6
+LEGITEXT000038144968,cadre-socio-educatif-de-classe-exceptionnelle-article-2,Cadre socio-éducatif de classe exceptionnelle (article 2),2021-02-01,2021-05-13,6
+LEGITEXT000038144968,cadre-superieur-socio-educatif-article-1,Cadre supérieur socio-éducatif (article 1),2019-02-21,2021-05-13,8
+LEGITEXT000038144968,cadre-superieur-socio-educatif-article-2,Cadre supérieur socio-éducatif (article 2),2021-02-01,2021-05-13,8
+LEGITEXT000041725140,deuxieme-grade-classe-superieure,Deuxième grade classe supérieure,2020-04-01,2021-09-30,9
+LEGITEXT000041725140,premier-grade-classe-normale,Premier grade classe normale,2020-04-01,2021-09-30,10
+LEGITEXT000043497943,applicables-cadre-socio-educatif-de-classe-exceptionnelle,applicables Cadre socio-éducatif de classe exceptionnelle,2021-05-14,,6
+LEGITEXT000043497943,cadre-socio-educatif,Cadre socio-éducatif,2021-05-14,,11
+LEGITEXT000043497943,cadre-superieur-socio-educatif,Cadre supérieur socio-éducatif,2021-05-14,,8
+LEGITEXT000044129759,cadres-de-sante-paramedicaux,Cadres de santé paramédicaux,2021-10-01,,11
+LEGITEXT000044129759,cadres-de-sante-paramedicaux-cadres-de-sante-paramedicaux-hors-classe,Cadres de santé paramédicaux Cadres de santé paramédicaux hors classe,2022-01-01,,6
+LEGITEXT000044129759,cadres-de-sante-paramedicaux-cadres-superieurs-de-sante-paramedicaux,Cadres de santé paramédicaux Cadres supérieurs de santé paramédicaux,2021-10-01,2021-12-30,8
+LEGITEXT000044129759,cadres-superieurs-de-sante-paramedicaux,Cadres supérieurs de santé paramédicaux,2022-01-01,,8
+LEGITEXT000044129911,deuxieme-grade-classe-superieure,Deuxième grade classe supérieure,2021-10-01,,8
+LEGITEXT000044129911,premier-grade-classe-normale,Premier grade classe normale,2021-10-01,,10
+LEGITEXT000044129975,deuxieme-grade-du-corps-des-infirmiers-en-soins-generaux-et-specialises,Deuxième grade du corps des infirmiers en soins généraux et spécialisés,2021-10-01,,11
+LEGITEXT000044129975,premier-grade-du-corps-des-infirmiers-en-soins-generaux-et-specialises,Premier grade du corps des infirmiers en soins généraux et spécialisés,2021-10-01,,11
+LEGITEXT000044129975,troisieme-grade-du-corps-des-infirmiers-en-soins-generaux-et-specialises,Troisième grade du corps des infirmiers en soins généraux et spécialisés,2021-10-01,,11
+LEGITEXT000044130114,deuxieme-grade-du-corps-des-infirmiers-anesthesistes,Deuxième grade du corps des infirmiers anesthésistes,2021-10-01,,8
+LEGITEXT000044130114,premier-grade-du-corps-des-infirmiers-anesthesistes,Premier grade du corps des infirmiers anesthésistes,2021-10-01,,10
+LEGITEXT000044130197,classe-normale,Classe normale,2022-01-26,,11
+LEGITEXT000044130197,manipulateurs-d-electroradiologie-medicale-de-classe-normale,Manipulateurs d'électroradiologie médicale de classe normale,2021-10-01,2022-01-25,11
+LEGITEXT000044130197,manipulateurs-d-electroradiologie-medicale-manipulateurs-d-electroradiologie-medicale-de-classe-superieure,Manipulateurs d'électroradiologie médicale Manipulateurs d'électroradiologie médicale de classe supérieure,2021-10-01,2022-01-25,10
+LEGITEXT000044130197,manipulateurs-d-electroradiologie-medicale-techniciens-de-laboratoire-medical-et-preparateurs-en-pharmacie-hospitaliere-classe-superieure,"Manipulateurs d'électroradiologie médicale, techniciens de laboratoire médical et préparateurs en pharmacie hospitalière Classe supérieure",2022-01-26,,10
+LEGITEXT000044130353,classe-normale-article-1,Classe normale (article 1),2021-10-01,,11
+LEGITEXT000044130353,classe-normale-article-2,Classe normale (article 2),2021-10-01,,11
+LEGITEXT000044130353,classe-superieure-article-1,Classe supérieure (article 1),2021-10-01,,10
+LEGITEXT000044130353,classe-superieure-article-2,Classe supérieure (article 2),2021-10-01,,9
+LEGITEXT000044130353,classe-superieure-du-corps-des-masseurs-kinesitherapeutes-et-orthophonistes,Classe supérieure du corps des masseurs-kinésithérapeutes et orthophonistes,2021-10-01,,2
+LEGITEXT000044131693,classe-normale-du-corps-des-aides-soignants-et-des-auxiliaires-de-puericulture,Classe normale du corps des aides-soignants et des auxiliaires de puériculture,2021-10-01,,12
+LEGITEXT000044131693,classe-superieure-du-corps-des-aides-soignants-et-des-auxiliaires-de-puericulture,Classe supérieure du corps des aides-soignants et des auxiliaires de puériculture,2021-10-01,,11
+LEGITEXT000044275697,classe-normale-9,Classe normale 9,2021-10-31,,8
+LEGITEXT000044275697,classe-superieure,Classe supérieure,2021-10-31,,8
+LEGITEXT000044275697,deuxieme-grade,Deuxième grade,2021-10-31,,10
+LEGITEXT000044275697,premier-grade,Premier grade,2021-10-31,,8
+LEGITEXT000044635475,echelle-c1,échelle de rémunération C1,2022-01-01,,11
+LEGITEXT000044635475,echelle-c2,échelle de rémunération C2,2022-01-01,,12
+LEGITEXT000044635475,echelle-c3,échelle de rémunération C3,2022-01-01,,10
+LEGITEXT000045423677,agents-nommes-dans-les-emplois-fonctionnels-de-coordonnateur-en-maieutique,agents nommés dans les emplois fonctionnels de coordonnateur en maïeutique,2022-03-01,,7
+LEGITEXT000045423677,premier-grade,Premier grade,2022-03-01,,10
+LEGITEXT000045423677,second-grade,Second grade,2022-03-01,,10
+LEGITEXT000045458771,classe-exceptionnelle,CLASSE EXCEPTIONNELLE,2022-04-01,,5
+LEGITEXT000045458771,classe-normale,CLASSE NORMALE,2022-04-01,,9
+LEGITEXT000045458771,groupe-i,Groupe I,2022-04-01,,4
+LEGITEXT000045458771,groupe-ii,Groupe II,2022-04-01,,6
+LEGITEXT000045458771,hors-classe,HORS CLASSE,2022-04-01,,9
+LEGITEXT000046244419,deuxieme-grade-article-1,Deuxième grade (article 1),2022-09-01,,12
+LEGITEXT000046244419,deuxieme-grade-article-2,« Deuxième grade (article 2),2022-09-01,,12
+LEGITEXT000046244419,premier-grade-article-1,Premier grade (article 1),2022-09-01,,13
+LEGITEXT000046244419,premier-grade-article-2,Premier grade (article 2),2022-09-01,,13
+LEGITEXT000046244419,troisieme-grade,« Troisième grade,2022-09-01,,11
+LEGITEXT000049064189,ingenieur-en-chef,Ingénieur en chef,2024-02-01,,11
+LEGITEXT000049064189,ingenieur-en-chef-de-classe-exceptionnelle,Ingénieur en chef de classe exceptionnelle,2024-02-01,,7
+LEGITEXT000049064189,ingenieur-en-chef-hors-classe,Ingénieur en chef hors classe,2024-02-01,,8
+LEGITEXT000049064585,ingenieur,Ingénieur,2024-02-01,,10
+LEGITEXT000049064585,ingenieur-hors-classe,Ingénieur hors classe,2024-02-01,,6
+LEGITEXT000049064585,ingenieur-principal,Ingénieur principal,2024-02-01,,9

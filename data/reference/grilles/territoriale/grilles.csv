@@ -1,0 +1,289 @@
+# Les grilles de chaque texte, une par groupe (grade, échelle, classe) : sa clé, son dernier libellé, la période qu'elle couvre, ses échelons.
+# source_id: dila_legi_grilles — DILA, base LEGI, par l'index du dépôt (scripts/fetch/dila_index.py) ; scripts/fetch/dila_legi_grilles.py
+texte,grille,libelle,debut,fin,echelons
+LEGITEXT000005617477,technicien-chef,Technicien chef,2003-02-23,2011-06-02,8
+LEGITEXT000005617477,technicien-superieur,Technicien supérieur,2003-02-23,2011-06-02,13
+LEGITEXT000005617477,technicien-superieur-chef,Technicien supérieur chef,2003-02-23,2011-06-02,8
+LEGITEXT000005617477,technicien-superieur-principal,Technicien supérieur principal,2003-02-23,2011-06-02,8
+LEGITEXT000005617478,1-er-grade,1 er grade,2006-11-01,2011-05-31,13
+LEGITEXT000005617478,2-e-grade,2 e grade,2006-11-01,2011-05-31,8
+LEGITEXT000005617478,3-e-grade,3 e grade,2006-11-01,2011-05-31,7
+LEGITEXT000005617478,educateur-hors-classe,Educateur hors classe,1995-08-01,2011-05-31,7
+LEGITEXT000005617481,1-er-grade,1 er grade,2006-11-01,2012-07-31,13
+LEGITEXT000005617481,2-e-grade,2 e grade,2006-11-01,2012-07-31,8
+LEGITEXT000005617481,3-e-grade,3 e grade,2006-11-01,2012-07-31,7
+LEGITEXT000005617481,redacteur-chef,Rédacteur-chef,1995-08-01,2012-07-31,7
+LEGITEXT000005617485,educateur-chef-de-jeunes-enfants,Educateur-chef de jeunes enfants,1998-02-06,2013-06-12,7
+LEGITEXT000005617485,educateur-de-jeunes-enfants,Educateur de jeunes enfants,1998-02-06,2013-06-12,12
+LEGITEXT000005617485,educateur-principal-de-jeunes-enfants,Educateur principal de jeunes enfants,1998-02-06,2013-06-12,5
+LEGITEXT000005619309,1-er-grade,1 er grade,2006-11-01,2011-06-02,13
+LEGITEXT000005619309,2-e-grade,2 e grade,2006-11-01,2011-06-02,8
+LEGITEXT000005619309,3-e-grade,3 e grade,2006-11-01,2011-06-02,8
+LEGITEXT000005619309,controleur,Contrôleur,2004-02-03,2006-10-31,13
+LEGITEXT000005619309,controleur-en-chef,Contrôleur en chef,2004-02-03,2006-10-31,8
+LEGITEXT000005619309,controleur-principal,Contrôleur principal,2004-02-03,2006-10-31,8
+LEGITEXT000005623787,1er-grade,1er grade,2006-11-01,2011-05-31,13
+LEGITEXT000005623787,2e-grade,2e grade,2006-11-01,2011-05-31,8
+LEGITEXT000005623787,3e-grade,3e grade,2006-11-01,2011-05-31,7
+LEGITEXT000005634826,cadre-de-sante,Cadre de santé,2003-08-01,2021-12-31,8
+LEGITEXT000006004760,agent-territorial-de-mayotte,Agent territorial de Mayotte,2004-12-31,2009-10-02,8
+LEGITEXT000006004760,agent-territorial-qualifie-de-mayotte,Agent territorial qualifié de Mayotte,2004-12-31,2009-10-02,5
+LEGITEXT000006005722,ouvrier-territorial-de-mayotte,Ouvrier territorial de Mayotte,2004-12-31,2009-10-02,8
+LEGITEXT000006005722,ouvrier-territorial-qualifie-de-mayotte,Ouvrier territorial qualifié de Mayotte,2004-12-31,2009-10-02,5
+LEGITEXT000006065512,administrateur-territorial-de-1-ere-classe,Administrateur territorial de 1 ère classe,1986-03-15,1987-12-30,5
+LEGITEXT000006065512,administrateur-territorial-de-2-eme-classe,Administrateur territorial de 2 ème classe,1986-03-15,1987-12-30,7
+LEGITEXT000006065512,administrateur-territorial-hors-classe,Administrateur territorial hors classe,1986-03-15,1987-12-30,4
+LEGITEXT000006065780,2e-classe,2e classe,1987-12-31,2000-06-03,7
+LEGITEXT000006065780,administrateur,Administrateur,2003-07-23,2013-08-31,9
+LEGITEXT000006065780,administrateur-1re-classe,Administrateur 1re classe,1987-12-31,2000-06-03,6
+LEGITEXT000006065780,administrateur-hors-classe,Administrateur hors classe,2003-07-23,2013-08-31,7
+LEGITEXT000006065780,administrateur-hors-classe-6er-echelon1-hors-echelle-a,Administrateur hors classe 6er échelon1 hors échelle A,1987-12-31,2000-06-03,5
+LEGITEXT000006065780,administrateurs,Administrateurs,2013-09-01,2026-06-30,10
+LEGITEXT000006065780,administrateurs-generaux,Administrateurs généraux,2013-09-01,2026-06-30,6
+LEGITEXT000006065780,administrateurs-hors-classe,Administrateurs hors classe,2013-09-01,2026-06-30,9
+LEGITEXT000006065780,administrateurs-territoriaux-du-deuxieme-grade,Administrateurs territoriaux du deuxième grade,2026-07-01,,32
+LEGITEXT000006065780,administrateurs-territoriaux-du-grade-transitoire,Administrateurs territoriaux du grade transitoire,2026-07-01,,37
+LEGITEXT000006065780,administrateurs-territoriaux-du-premier-grade,Administrateurs territoriaux du premier grade,2026-07-01,,30
+LEGITEXT000006065780,administrateurs-territoriaux-du-troisieme-grade,Administrateurs territoriaux du troisième grade,2026-07-01,,30
+LEGITEXT000006065780,eleve,Elève,1996-03-31,2013-08-31,2
+LEGITEXT000006065780,eleves,Elèves,2013-09-01,,2
+LEGITEXT000006065783,attache,Attaché,2006-12-01,,12
+LEGITEXT000006065783,attache-hors-classe,Attaché hors classe,2017-01-01,,7
+LEGITEXT000006065783,attache-principal,Attaché principal,2006-12-01,,10
+LEGITEXT000006065783,attache-territorial,Attaché territorial,2017-01-01,,3
+LEGITEXT000006065783,attache-territorial-principal,Attaché territorial principal,2017-01-01,,8
+LEGITEXT000006065783,directeur-territorial,Directeur territorial,2006-12-01,,7
+LEGITEXT000006065783,directeur-territorial-article-1-1,Directeur territorial (article 1-1),2017-01-01,,4
+LEGITEXT000006065783,directeur-territorial-article-1-2,Directeur territorial (article 1-2),2017-01-01,,3
+LEGITEXT000006065786,emplois-secretaire-general-adjoint-de-communes-de-150-000-a400-000-habitants,EMPLOIS Secrétaire général adjoint de communes - de 150.000 à 400.000 habitants,1996-08-01,1998-03-21,8
+LEGITEXT000006065786,emplois-secretaire-general-adjoint-de-communes-de-40-000-a150-000-habitants,EMPLOIS Secrétaire général adjoint de communes - de 40 .000 à 150.000 habitants,1996-08-01,1998-03-21,9
+LEGITEXT000006065786,emplois-secretaire-general-adjoint-de-communes-de-plus-de-400-000-habitants,EMPLOIS Secrétaire général adjoint de communes - de plus de 400.000 habitants,1996-08-01,1998-03-21,8
+LEGITEXT000006065786,emplois-secretaire-general-adjoint-de-ville-de-150-000-a400-000-habitants,EMPLOIS Secrétaire général adjoint de ville - de 150.000 à 400.000 habitants,1987-12-31,1996-07-31,8
+LEGITEXT000006065786,emplois-secretaire-general-adjoint-de-ville-de-20-000-a40-000-habitants,EMPLOIS Secrétaire général adjoint de ville - de 20 .000 à 40 .000 habitants,1987-12-31,1994-12-28,8
+LEGITEXT000006065786,emplois-secretaire-general-adjoint-de-ville-de-40-000-a150-000-habitants,EMPLOIS Secrétaire général adjoint de ville - de 40 .000 à 150.000 habitants,1994-12-29,1996-07-31,9
+LEGITEXT000006065786,emplois-secretaire-general-adjoint-de-ville-de-40-000-a80-000-habitants,EMPLOIS Secrétaire général adjoint de ville - de 40 .000 à 80 .000 habitants,1987-12-31,1994-12-28,8
+LEGITEXT000006065786,emplois-secretaire-general-adjoint-de-ville-de-80-000-a150-000-habitants,EMPLOIS Secrétaire général adjoint de ville - de 80 .000 à 150.000 habitants,1987-12-31,1994-12-28,8
+LEGITEXT000006065786,emplois-secretaire-general-adjoint-de-ville-de-plus-de-400-000-habitants,EMPLOIS Secrétaire général adjoint de ville - de plus de 400.000 habitants,1987-12-31,1996-07-31,8
+LEGITEXT000006065786,emplois-secretaire-general-de-communes-ou-directeur-d-office-public-d-h-l-m-de-10-000-a15-000-logements,EMPLOIS Secrétaire général de communes ou directeur d'office public d'H.L.M - de 10 .000 à 15 .000 logements,1996-08-01,1998-03-21,8
+LEGITEXT000006065786,emplois-secretaire-general-de-communes-ou-directeur-d-office-public-d-h-l-m-de-10-000-a20-000-habitants,EMPLOIS Secrétaire général de communes ou directeur d'office public d'H.L.M - de 10 .000 à 20 .000 habitants,1996-08-01,1998-03-21,9
+LEGITEXT000006065786,emplois-secretaire-general-de-communes-ou-directeur-d-office-public-d-h-l-m-de-15-000-a20-000-logements,EMPLOIS Secrétaire général de communes ou directeur d'office public d'H.L.M: - de 15 .000 à 20 .000 logements,1996-08-01,1998-03-21,8
+LEGITEXT000006065786,emplois-secretaire-general-de-communes-ou-directeur-d-office-public-d-h-l-m-de-150-000-a400-000-habitants,EMPLOIS Secrétaire général de communes ou directeur d'office public d'H.L.M: - de 150.000 à 400.000 habitants,1996-08-01,1998-03-21,7
+LEGITEXT000006065786,emplois-secretaire-general-de-communes-ou-directeur-d-office-public-d-h-l-m-de-20-000-a40-000-habitants,EMPLOIS Secrétaire général de communes ou directeur d'office public d'H.L.M - de 20 .000 à 40 .000 habitants,1996-08-01,1998-03-21,9
+LEGITEXT000006065786,emplois-secretaire-general-de-communes-ou-directeur-d-office-public-d-h-l-m-de-40-000-a80-000-habitants,EMPLOIS Secrétaire général de communes ou directeur d'office public d'H.L.M: - de 40 .000 à 80 .000 habitants,1996-08-01,1998-03-21,8
+LEGITEXT000006065786,emplois-secretaire-general-de-communes-ou-directeur-d-office-public-d-h-l-m-de-5-000-a10-000-habitants,EMPLOIS Secrétaire général de communes ou directeur d'office public d'H.L.M - de 5 .000 à 10 .000 habitants,1996-08-01,1998-03-21,9
+LEGITEXT000006065786,emplois-secretaire-general-de-communes-ou-directeur-d-office-public-d-h-l-m-de-80-000-a150-000-habitants,EMPLOIS Secrétaire général de communes ou directeur d'office public d'H.L.M: - de 80 .000 à 150.000 habitants,1996-08-01,1998-03-21,8
+LEGITEXT000006065786,emplois-secretaire-general-de-communes-ou-directeur-d-office-public-d-h-l-m-de-plus-de-20-000-logements,EMPLOIS Secrétaire général de communes ou directeur d'office public d'H.L.M: - de plus de 20 .000 logements,1996-08-01,1998-03-21,7
+LEGITEXT000006065786,emplois-secretaire-general-de-communes-ou-directeur-d-office-public-d-h-l-m-de-plus-de-400-000-habitants,EMPLOIS Secrétaire général de communes ou directeur d'office public d'H.L.M: - de plus de 400.000 habitants,1996-08-01,1998-03-21,4
+LEGITEXT000006065786,emplois-secretaire-general-de-ville-ou-directeur-d-office-public-d-h-l-m-de-10-000-a15-000-logements,EMPLOIS Secrétaire général de ville ou directeur d'office public d'H.L.M - de 10 .000 à 15 .000 logements,1987-12-31,1996-07-31,8
+LEGITEXT000006065786,emplois-secretaire-general-de-ville-ou-directeur-d-office-public-d-h-l-m-de-10-000-a20-000-habitants,EMPLOIS Secrétaire général de ville ou directeur d'office public d'H.L.M - de 10 .000 à 20 .000 habitants,1987-12-31,1996-07-31,9
+LEGITEXT000006065786,emplois-secretaire-general-de-ville-ou-directeur-d-office-public-d-h-l-m-de-15-000-a20-000-logements,EMPLOIS Secrétaire général de ville ou directeur d'office public d'H.L.M - de 15 .000 à 20 .000 logements,1987-12-31,1996-07-31,8
+LEGITEXT000006065786,emplois-secretaire-general-de-ville-ou-directeur-d-office-public-d-h-l-m-de-150-000-a400-000-habitants,EMPLOIS Secrétaire général de ville ou directeur d'office public d'H.L.M - de 150.000 à 400.000 habitants,1987-12-31,1996-07-31,7
+LEGITEXT000006065786,emplois-secretaire-general-de-ville-ou-directeur-d-office-public-d-h-l-m-de-20-000-a40-000-habitants,EMPLOIS Secrétaire général de ville ou directeur d'office public d'H.L.M - de 20 .000 à 40 .000 habitants,1987-12-31,1996-07-31,9
+LEGITEXT000006065786,emplois-secretaire-general-de-ville-ou-directeur-d-office-public-d-h-l-m-de-40-000-a80-000-habitants,EMPLOIS Secrétaire général de ville ou directeur d'office public d'H.L.M - de 40 .000 à 80 .000 habitants,1987-12-31,1996-07-31,8
+LEGITEXT000006065786,emplois-secretaire-general-de-ville-ou-directeur-d-office-public-d-h-l-m-de-5-000-a10-000-habitants,EMPLOIS Secrétaire général de ville ou directeur d'office public d'H.L.M - de 5 .000 à 10 .000 habitants,1987-12-31,1996-07-31,9
+LEGITEXT000006065786,emplois-secretaire-general-de-ville-ou-directeur-d-office-public-d-h-l-m-de-80-000-a150-000-habitants,EMPLOIS Secrétaire général de ville ou directeur d'office public d'H.L.M - de 80 .000 à 150.000 habitants,1987-12-31,1996-07-31,8
+LEGITEXT000006065786,emplois-secretaire-general-de-ville-ou-directeur-d-office-public-d-h-l-m-de-plus-de-20-000-logements,EMPLOIS Secrétaire général de ville ou directeur d'office public d'H.L.M - de plus de 20 .000 logements,1987-12-31,1996-07-31,7
+LEGITEXT000006065786,emplois-secretaire-general-de-ville-ou-directeur-d-office-public-d-h-l-m-de-plus-de-400-000-habitants,EMPLOIS Secrétaire général de ville ou directeur d'office public d'H.L.M - de plus de 400.000 habitants,1987-12-31,1996-07-31,4
+LEGITEXT000006065786,secretaire-general-adjoint-de-communes-de-20-000-a40-000-habitants,Secrétaire général adjoint de communes - de 20 .000 à 40 .000 habitants,1996-08-01,1998-03-21,9
+LEGITEXT000006065786,secretaire-general-adjoint-de-ville-de-20-000-a40-000-habitants,Secrétaire général adjoint de ville - de 20 .000 à 40 .000 habitants,1994-12-29,1996-07-31,9
+LEGITEXT000006065792,1er-echelon-echelle,1er échelon Echelle,2007-01-01,2008-06-30,1
+LEGITEXT000006065792,2e-echelon-echelle,2e échelon Echelle,2007-01-01,2008-06-30,1
+LEGITEXT000006065792,3e-echelon-echelle,3e échelon Echelle,2007-01-01,2008-06-30,1
+LEGITEXT000006065792,4e-echelon-echelle,4e échelon Echelle,2007-01-01,2008-06-30,1
+LEGITEXT000006065792,5e-echelon-echelle,5e échelon Echelle,2007-01-01,2008-06-30,1
+LEGITEXT000006065792,6e-echelon-echelle,6e échelon Echelle,2007-01-01,2008-06-30,1
+LEGITEXT000006065792,7e-echelon-echelle,7e échelon Echelle,2007-01-01,2008-06-30,1
+LEGITEXT000006065792,echelle-2,Echelle 2,1998-04-01,2005-10-31,11
+LEGITEXT000006065792,echelle-3,Echelle 3,1998-04-01,2016-12-31,11
+LEGITEXT000006065792,echelle-4,Echelle 4,1998-04-01,2016-12-31,12
+LEGITEXT000006065792,echelle-5,Echelle 5,1998-04-01,2016-12-31,12
+LEGITEXT000006065792,echelle-6,Echelle 6,2008-07-01,2016-12-31,10
+LEGITEXT000006065792,l-echelle-1,l'échelle 1,1990-08-01,1992-07-31,11
+LEGITEXT000006065792,l-echelle-2,l'échelle 2,1990-08-01,1994-12-28,11
+LEGITEXT000006065792,l-echelle-3,l'échelle 3,1990-08-01,1994-12-28,11
+LEGITEXT000006065792,l-echelle-4,l'échelle 4,1990-08-01,1996-07-31,11
+LEGITEXT000006065792,l-echelle-5,l'échelle 5,1990-08-01,1998-03-31,11
+LEGITEXT000006065792,special-echelle,Spécial Echelle,2007-01-01,2008-06-30,1
+LEGITEXT000006066666,8-eechelon-445-447-449-449,8 eéchelon 445 447 449 449,2017-01-01,2021-12-31,7
+LEGITEXT000006066666,agent-de-maitrise,Agent de maîtrise,2017-01-01,2021-12-31,5
+LEGITEXT000006066666,agent-de-maitrise-principal,Agent de maîtrise principal,1988-05-07,2021-12-31,10
+LEGITEXT000006066666,agent-de-maitrise-principal-echelon,AGENT DE MAÎTRISE PRINCIPAL Echelon,2014-02-01,2016-12-31,10
+LEGITEXT000006066666,agent-de-maitrise-qualifie,Agent de maîtrise qualifié,1988-05-07,2006-12-31,5
+LEGITEXT000006075393,ingenieur,Ingénieur,2003-11-01,2016-02-29,10
+LEGITEXT000006075393,ingenieur-en-chef,Ingénieur en chef,1990-02-10,1993-12-29,7
+LEGITEXT000006075393,ingenieur-en-chef-de-1re-categorie-hors-classe,Ingénieur en chef de 1re catégorie Hors classe,1990-02-10,1993-12-29,3
+LEGITEXT000006075393,ingenieur-en-chef-de-classe-exceptionnelle,Ingénieur en chef de classe exceptionnelle,2003-11-01,2016-02-29,7
+LEGITEXT000006075393,ingenieur-en-chef-de-classe-normale,Ingénieur en chef de classe normale,2003-11-01,2016-02-29,10
+LEGITEXT000006075393,ingenieur-principal,Ingénieur principal,2003-11-01,2016-02-29,9
+LEGITEXT000006075393,ingenieur-subdivisionnaire,Ingénieur subdivisionnaire,1990-02-10,1993-12-29,9
+LEGITEXT000006075393,premiere-classe,Première classe,1990-02-10,1993-12-29,4
+LEGITEXT000006075393,seconde-classe,Seconde classe,1990-02-10,1993-12-29,8
+LEGITEXT000006077993,indices-bruts,INDICES BRUTS,1994-12-29,2012-03-31,11
+LEGITEXT000006078000,directeur-d-etablissement-artistique-de-1-ere-categorie,Directeur d'établissement artistique de 1 ère catégorie,2017-01-01,2017-12-31,9
+LEGITEXT000006078000,directeur-d-etablissement-artistique-de-1re-categorie,Directeur d'établissement artistique de 1re catégorie,2018-01-01,,9
+LEGITEXT000006078000,directeur-d-etablissement-artistique-de-2-eme-categorie,Directeur d'établissement artistique de 2 ème catégorie,2017-01-01,2017-12-31,10
+LEGITEXT000006078000,directeur-d-etablissement-artistique-de-2e-categorie,Directeur d'établissement artistique de 2e catégorie,2018-01-01,,10
+LEGITEXT000006078005,professeur-d-enseignement-artistique-de-classe-normale,Professeur d'enseignement artistique de classe normale,2017-01-01,,9
+LEGITEXT000006078005,professeur-d-enseignement-artistique-hors-classe,Professeur d'enseignement artistique hors classe,2017-01-01,,8
+LEGITEXT000006078005,professeurs-de-classe-normale,Professeurs de classe normale,1991-09-04,2016-12-31,9
+LEGITEXT000006078005,professeurs-hors-classe,Professeurs hors classe,1991-09-04,2016-12-31,7
+LEGITEXT000006078006,assistant-qualifie-de-conservation-de-1re-classe,Assistant qualifié de conservation de 1re classe,1999-10-27,2011-11-30,5
+LEGITEXT000006078006,assistant-qualifie-de-conservation-de-2e-classe,Assistant qualifié de conservation de 2e classe,1999-10-27,2011-11-30,12
+LEGITEXT000006078006,assistant-qualifie-de-conservation-hors-classe,Assistant qualifié de conservation hors classe,1999-10-27,2011-11-30,7
+LEGITEXT000006078007,conservateur,Conservateur,2017-01-01,2022-04-16,7
+LEGITEXT000006078007,conservateur-en-chef,Conservateur en chef,2017-01-01,2022-04-16,6
+LEGITEXT000006078007,echelon-de-stage-echelon-unique-464-470-echelon-d-eleves,Echelon de stage Echelon unique 464 470 Echelon d'élèves,2017-01-01,2022-04-16,2
+LEGITEXT000006078008,cadre-d-emplois-des-attaches-territoriaux-de-conservation-du-patrimoine,cadre d'emplois des attachés territoriaux de conservation du patrimoine,1998-02-06,2016-12-31,11
+LEGITEXT000006078008,grade-d-attache-de-conservation-du-patrimoine,Grade d'attaché de conservation du patrimoine,2017-01-01,,11
+LEGITEXT000006078008,grade-d-attache-principal-de-conservation-du-patrimoine,Grade d'attaché principal de conservation du patrimoine,2017-01-01,,10
+LEGITEXT000006078010,cadre-d-emplois-des-bibliothecaires-territoriaux,cadre d'emplois des bibliothécaires territoriaux,1998-02-06,2016-12-31,11
+LEGITEXT000006078010,grade-de-bibliothecaire,Grade de bibliothécaire,2017-01-01,,11
+LEGITEXT000006078010,grade-de-bibliothecaire-principal,Grade de bibliothécaire principal,2017-01-01,,10
+LEGITEXT000006078012,conservateur,Conservateur,2017-01-01,,7
+LEGITEXT000006078012,conservateur-en-chef,Conservateur en chef,2017-01-01,,6
+LEGITEXT000006078012,echelon-de-stage-echelon-unique-464-470-echelon-d-eleves,Echelon de stage Echelon unique 464 470 Echelon d'élèves,2017-01-01,,2
+LEGITEXT000006079017,2e-classe,2e classe,1994-12-29,2016-12-31,6
+LEGITEXT000006079017,conseiller,Conseiller,1994-12-29,,12
+LEGITEXT000006079017,conseiller-principal,Conseiller principal,2017-01-01,,10
+LEGITEXT000006079017,conseiller-principal-1re-classe,Conseiller principal 1re classe,1994-12-29,2016-12-31,4
+LEGITEXT000006079768,secretaire-medico-social,Secrétaire médico-social,1992-08-30,,12
+LEGITEXT000006079768,secretaire-medico-social-en-chef,Secrétaire médico-social en chef,1992-08-30,,7
+LEGITEXT000006079768,secretaire-medico-social-principal,Secrétaire médico-social principal,1992-08-30,,5
+LEGITEXT000006079771,biologistes-veterinaires-et-pharmaciens-territoriaux-de-1re-classe,"Biologistes, vétérinaires et pharmaciens territoriaux de 1re classe",1992-08-30,2011-12-31,3
+LEGITEXT000006079771,biologistes-veterinaires-et-pharmaciens-territoriaux-de-2e-classe,"Biologistes, vétérinaires et pharmaciens territoriaux de 2e classe",1992-08-30,2011-12-31,8
+LEGITEXT000006079771,biologistes-veterinaires-et-pharmaciens-territoriaux-hors-classe,"Biologistes, vétérinaires et pharmaciens territoriaux hors classe",1992-08-30,2011-12-31,6
+LEGITEXT000006079771,biologistes-veterinaires-ou-pharmaciens-de-classe-exceptionnelle,"Biologistes, vétérinaires ou pharmaciens de classe exceptionnelle",1992-08-30,2011-12-31,8
+LEGITEXT000006079775,assistant-medico-technique-de-classe-normale,Assistant médico-technique de classe normale,2003-08-01,2013-03-31,8
+LEGITEXT000006079775,assistant-medico-technique-de-classe-superieure,Assistant médico-technique de classe supérieure,2003-08-01,2013-03-31,6
+LEGITEXT000006079775,assistant-qualifie-de-laboratoire-de-classe-normale,ASSISTANT QUALIFIE DE LABORATOIRE de classe normale,1993-12-30,2003-07-31,8
+LEGITEXT000006079775,assistant-qualifie-de-laboratoire-de-classe-superieure,ASSISTANT QUALIFIE DE LABORATOIRE de classe supérieure,1994-12-29,2003-07-31,5
+LEGITEXT000006079775,assistant-qualifie-de-laboratoire-hors-classe,Assistant qualifié de laboratoire hors classe,1993-12-30,2003-07-31,7
+LEGITEXT000006079778,assistant-socio-educatif,Assistant socio-éducatif,1992-08-01,2013-06-12,10
+LEGITEXT000006079778,assistant-socio-educatif-principal,Assistant socio-éducatif principal,1992-08-01,2013-06-12,7
+LEGITEXT000006079780,cadre-d-emplois-des-conseillers-territoriaux-socio-educatifs,cadre d'emplois des conseillers territoriaux socio-éducatifs,1992-08-01,2013-06-12,8
+LEGITEXT000006079781,puericultrice-de-classe-normale,Puéricultrice de classe normale,2003-08-01,2021-12-31,8
+LEGITEXT000006079781,puericultrice-de-classe-superieure,Puéricultrice de classe supérieure,2003-08-01,2021-12-31,7
+LEGITEXT000006079783,infirmier-de-classe-normale,Infirmier de classe normale,2003-08-01,2012-12-31,8
+LEGITEXT000006079783,infirmier-de-classe-superieure,Infirmier de classe supérieure,2003-08-01,2012-12-31,6
+LEGITEXT000006079785,reeducateur-de-classe-normale,Rééducateur de classe normale,2003-08-01,2013-03-31,8
+LEGITEXT000006079785,reeducateur-de-classe-superieure,Rééducateur de classe supérieure,2003-08-01,2013-03-31,6
+LEGITEXT000006079789,sage-femme-de-classe-exceptionnelle,Sage-femme de classe exceptionnelle,2003-07-25,2016-12-31,7
+LEGITEXT000006079789,sage-femme-de-classe-normale,Sage-femme de classe normale,2003-07-25,2016-12-31,8
+LEGITEXT000006079789,sage-femme-de-classe-superieure,Sage-femme de classe supérieure,2003-07-25,2016-12-31,7
+LEGITEXT000006079789,sage-femme-hors-classe,Sage-femme hors-classe,2017-01-01,2022-04-30,10
+LEGITEXT000006079789,sages-femmes-de-classe-normale,Sages-femmes de classe normale,2017-01-01,2022-04-30,10
+LEGITEXT000006079791,medecin-territorial-de-1re-classe,Médecin territorial de 1re classe,1992-08-30,2014-08-31,5
+LEGITEXT000006079791,medecin-territorial-de-2e-classe,Médecin territorial de 2e classe,1992-08-30,2014-08-31,11
+LEGITEXT000006079791,medecin-territorial-hors-classe,Médecin territorial hors classe,1992-08-30,2014-08-31,5
+LEGITEXT000006079795,cadre-d-emplois-des-moniteurs-educateurs-territoriaux,cadre d'emplois des moniteurs-éducateurs territoriaux,1992-08-30,2013-06-12,13
+LEGITEXT000006079797,educateur-chef-de-jeunes-enfants,Educateur-chef de jeunes enfants,1992-08-30,,7
+LEGITEXT000006079797,educateur-de-jeunes-enfants,Educateur de jeunes enfants,1992-08-30,,12
+LEGITEXT000006079797,educateur-principal-de-jeunes-enfants,Educateur principal de jeunes enfants,1992-08-30,,5
+LEGITEXT000006079800,puericultrice-cadre,Puéricultrice cadre,2003-08-01,2015-12-31,8
+LEGITEXT000006079800,puericultrice-cadre-de-sante,Puéricultrice cadre de santé,2016-01-01,2021-12-31,8
+LEGITEXT000006079800,puericultrice-cadre-superieur,Puéricultrice cadre supérieur,2003-08-01,2015-12-31,6
+LEGITEXT000006079800,puericultrice-cadre-superieur-de-sante,Puéricultrice cadre supérieur de santé,2016-01-01,2021-12-31,6
+LEGITEXT000006079803,grade-de-psychologue-de-classe-normale,Grade de psychologue de classe normale,2017-01-01,,11
+LEGITEXT000006079803,grade-de-psychologue-hors-classe,Grade de psychologue hors classe,2017-01-01,,8
+LEGITEXT000006079803,psychologue-de-classe-normale,Psychologue de classe normale,1992-08-30,2016-12-31,11
+LEGITEXT000006079803,psychologue-hors-classe,Psychologue hors classe,1992-08-30,2016-12-31,7
+LEGITEXT000021093740,cadre-d-emplois-des-agents-territoriaux-de-mayotte,cadre d'emplois des agents territoriaux de Mayotte,2009-10-03,,6
+LEGITEXT000021093740,cadre-d-emplois-des-ouvriers-territoriaux-de-mayotte,cadre d'emplois des ouvriers territoriaux de Mayotte,2009-10-03,,6
+LEGITEXT000022021286,deuxieme-grade,Deuxième grade,2010-03-27,,13
+LEGITEXT000022021286,premier-grade,Premier grade,2010-03-27,,13
+LEGITEXT000022021286,troisieme-grade,Troisième grade,2010-03-27,,11
+LEGITEXT000025020173,biologistes-veterinaires-et-pharmaciens-territoriaux-de-classe-normale,"Biologistes, vétérinaires et pharmaciens territoriaux de classe normale",2012-01-01,2016-12-31,11
+LEGITEXT000025020173,biologistes-veterinaires-et-pharmaciens-territoriaux-hors-classe,"Biologistes, vétérinaires et pharmaciens territoriaux hors classe",2012-01-01,2016-12-31,6
+LEGITEXT000025020173,biologistes-veterinaires-ou-pharmaciens-de-classe-exceptionnelle,"Biologistes, vétérinaires ou pharmaciens de classe exceptionnelle",2012-01-01,,8
+LEGITEXT000025020173,biologistes-veterinaires-ou-pharmaciens-de-classe-normale,"Biologistes, vétérinaires ou pharmaciens de classe normale",2017-01-01,,11
+LEGITEXT000025020173,biologistes-veterinaires-ou-pharmaciens-de-hors-classe,"Biologistes, vétérinaires ou pharmaciens de hors classe",2017-01-01,,6
+LEGITEXT000026796689,classe-normale,Classe normale,2013-01-01,2015-12-31,9
+LEGITEXT000026796689,classe-superieure,Classe supérieure,2013-01-01,2015-12-31,7
+LEGITEXT000026796689,infirmier-de-classe-normale,Infirmier de classe normale,2016-01-01,2021-12-31,9
+LEGITEXT000026796689,infirmier-de-classe-superieure,Infirmier de classe supérieure,2016-01-01,2021-12-31,8
+LEGITEXT000026797753,,,2013-01-01,2021-12-31,3
+LEGITEXT000026797753,classes-et-infirmier-en-soins-generaux-hors-classe,CLASSES ET Infirmier en soins généraux hors classe,2013-01-01,2015-12-31,11
+LEGITEXT000026797753,infirmier-en-soins-generaux,Infirmier en soins généraux,2022-01-01,,11
+LEGITEXT000026797753,infirmier-en-soins-generaux-de-classe-normale,Infirmier en soins généraux de classe normale,2013-01-01,2021-12-31,9
+LEGITEXT000026797753,infirmier-en-soins-generaux-de-classe-superieure,Infirmier en soins généraux de classe supérieure,2013-01-01,2021-12-31,7
+LEGITEXT000026797753,infirmier-en-soins-generaux-hors-classe,Infirmier en soins généraux hors classe,2022-01-01,,11
+LEGITEXT000026797753,infirmiers-en-soins-generaux-hors-classe,Infirmiers en soins généraux hors classe,2016-01-01,2021-12-31,11
+LEGITEXT000027244703,classe-normale,Classe normale,2013-04-01,2015-12-31,9
+LEGITEXT000027244703,classe-superieure,Classe supérieure,2013-04-01,2015-12-31,7
+LEGITEXT000027244703,technicien-paramedical-de-classe-normale,Technicien paramédical de classe normale,2016-01-01,,9
+LEGITEXT000027244703,technicien-paramedical-de-classe-superieure,Technicien paramédical de classe supérieure,2022-09-01,,10
+LEGITEXT000027244703,technicien-paramedicalde-classe-superieure,Technicien paramédicalde classe supérieure,2016-01-01,2022-08-31,8
+LEGITEXT000027534850,conseiller-socio-educatif,Conseiller socio-éducatif,2013-06-13,,13
+LEGITEXT000027534850,conseiller-superieur-socio-educatif,Conseiller supérieur socio-éducatif,2013-06-13,,8
+LEGITEXT000027534850,conseillers-hors-classe-socio-educatif,Conseillers hors classe socio-éducatif,2019-02-01,,6
+LEGITEXT000027534922,moniteur-educateur-et-intervenant-familial,Moniteur-éducateur et intervenant familial,2013-06-13,,13
+LEGITEXT000027534922,moniteur-educateur-et-intervenant-familial-principal,Moniteur-éducateur et intervenant familial principal,2013-06-13,,13
+LEGITEXT000027535070,assistant-socio-educatif,Assistant socio-éducatif,2013-06-13,2019-01-31,13
+LEGITEXT000027535070,assistant-socio-educatif-principal,Assistant socio-éducatif principal,2013-06-13,2019-01-31,11
+LEGITEXT000027535247,educateur-de-jeunes-enfants,Educateur de jeunes enfants,2013-06-13,2019-01-31,13
+LEGITEXT000027535247,educateur-principal-de-jeunes-enfants,Educateur principal de jeunes enfants,2013-06-13,2019-01-31,11
+LEGITEXT000029382963,medecin-de-1re-classe,Médecin de 1re classe,2014-09-01,,6
+LEGITEXT000029382963,medecin-de-2e-classe,Médecin de 2e classe,2014-09-01,,9
+LEGITEXT000029382963,medecin-hors-classe,Médecin hors classe,2014-09-01,,6
+LEGITEXT000029383554,avant-le-1er-echelon-de-la-classe-superieure,Avant le 1er échelon de la classe supérieure,2016-01-01,2021-12-31,4
+LEGITEXT000029383554,classes-et-puericultrice-hors-classe,CLASSES ET Puéricultrice hors classe,2014-09-01,2015-12-31,11
+LEGITEXT000029383554,echelon,ECHELON,2022-01-01,,2
+LEGITEXT000029383554,provisoires-dans-le-grade-de-puericultrice-avant-le-1er-echelon-de-la-classe-superieure,PROVISOIRES dans le grade de puéricultrice Avant le 1er échelon de la classe supérieure,2014-09-01,2015-12-31,4
+LEGITEXT000029383554,puericultrice,Puéricultrice,2022-01-01,,11
+LEGITEXT000029383554,puericultrice-de-classe-normale,Puéricultrice de classe normale,2014-09-01,2021-12-31,9
+LEGITEXT000029383554,puericultrice-de-classe-superieure,Puéricultrice de classe supérieure,2014-09-01,2015-12-31,7
+LEGITEXT000029383554,puericultrice-de-classenormale,Puéricultrice de classenormale,2016-01-01,2017-05-10,9
+LEGITEXT000029383554,puericultrice-hors-classe,Puéricultrice hors classe,2022-01-01,,9
+LEGITEXT000029383554,puericultrices-de-classe-superieure,Puéricultrices de classe supérieure,2017-05-11,2021-12-31,7
+LEGITEXT000029383554,puericultrices-de-classesuperieure,Puéricultrices de classesupérieure,2016-01-01,2017-05-10,7
+LEGITEXT000029383554,puericultrices-hors-classe,Puéricultrices hors classe,2016-01-01,2021-12-31,11
+LEGITEXT000032116807,ingenieur,Ingénieur,2016-03-01,,11
+LEGITEXT000032116807,ingenieur-hors-classe,Ingénieur hors classe,2016-03-01,,6
+LEGITEXT000032116807,ingenieur-principal,Ingénieur principal,2016-03-01,,9
+LEGITEXT000032141477,ingenieur-en-chef-article-1,Ingénieur en chef (article 1),2016-03-01,,12
+LEGITEXT000032141477,ingenieur-en-chef-article-2,Ingénieur en chef (article 2),2016-03-01,,4
+LEGITEXT000032141477,ingenieur-en-chef-eleve,Ingénieur en chef élève,2017-01-01,,1
+LEGITEXT000032141477,ingenieur-en-chef-hors-classe,Ingénieur en chef hors classe,2016-03-01,,9
+LEGITEXT000032141477,ingenieur-general-classe-exceptionnelle-hed,Ingénieur général Classe exceptionnelle HED,2016-03-01,2016-12-31,5
+LEGITEXT000032141477,ingenieurs-generaux-classe-exceptionnelle-hed-hed-hed,Ingénieurs généraux Classe exceptionnelle HED HED HED,2017-01-01,,5
+LEGITEXT000032280243,cadre-de-sante,Cadre de santé,2022-01-01,,11
+LEGITEXT000032280243,cadre-de-sante-de-1re-classe,Cadre de santé de 1re classe,2016-04-01,2021-12-31,9
+LEGITEXT000032280243,cadre-de-sante-de-2e-classe,Cadre de santé de 2e classe,2016-04-01,2021-12-31,10
+LEGITEXT000032280243,cadre-superieur-de-sante,Cadre supérieur de santé,2016-04-01,,8
+LEGITEXT000032280243,provisoires-dans-le-grade-de-cadre-de-sante-de-1re-classe,PROVISOIRES dans le grade de cadre de santé de 1re classe,2016-04-01,2021-12-31,2
+LEGITEXT000032545071,echelle-c1,Echelle C1,2017-01-01,,12
+LEGITEXT000032545071,echelle-c2,Echelle C2,2017-01-01,,12
+LEGITEXT000032545071,echelle-c3,Echelle C3,2017-01-01,,10
+LEGITEXT000034701297,educateur-territorial-de-jeunes-enfants,Educateur territorial de jeunes enfants,2021-01-01,,14
+LEGITEXT000034701297,educateur-territorial-de-jeunes-enfants-de-classe-exceptionnelle-article-1,Educateur territorial de jeunes enfants de classe exceptionnelle (article 1),2019-02-01,,11
+LEGITEXT000034701297,educateur-territorial-de-jeunes-enfants-de-classe-exceptionnelle-article-2,Educateur territorial de jeunes enfants de classe exceptionnelle (article 2),2021-01-01,,11
+LEGITEXT000034701297,educateur-territorial-de-jeunes-enfants-de-premiere-classe,Educateur territorial de jeunes enfants de première classe,2019-02-01,,11
+LEGITEXT000034701297,educateur-territorial-de-jeunes-enfants-de-seconde-classe,Educateur territorial de jeunes enfants de seconde classe,2019-02-01,,11
+LEGITEXT000034701940,assistant-socio-educatif,Assistant socio-éducatif,2021-01-01,,14
+LEGITEXT000034701940,assistant-socio-educatif-de-classe-exceptionnelle-article-1,Assistant socio-éducatif de classe exceptionnelle (article 1),2019-01-01,,11
+LEGITEXT000034701940,assistant-socio-educatif-de-classe-exceptionnelle-article-2,Assistant socio-éducatif de classe exceptionnelle (article 2),2021-01-01,,11
+LEGITEXT000034701940,assistant-socio-educatif-de-premiere-classe,Assistant socio-éducatif de première classe,2019-01-01,,11
+LEGITEXT000034701940,assistant-socio-educatif-de-seconde-classe,Assistant socio-éducatif de seconde classe,2019-01-01,,11
+LEGITEXT000042368997,classe-normale,Classe normale,2020-09-28,2021-12-31,8
+LEGITEXT000042368997,classe-superieure,Classe supérieure,2020-09-28,2021-12-31,10
+LEGITEXT000042368997,hors-classe,Hors classe,2020-09-28,2021-12-31,10
+LEGITEXT000042368997,pedicure-podologue-ergotherapeute-psychomotricien-orthoptiste-et-manipulateur-d-electroradiologie-medicale,"Pédicure-podologue, ergothérapeute, psychomotricien, orthoptiste et manipulateur d'électroradiologie médicale",2022-01-01,2022-04-30,11
+LEGITEXT000042368997,pedicure-podologue-ergotherapeute-psychomotricien-orthoptiste-et-manipulateur-d-electroradiologie-medicale-hors-classe,"Pédicure-podologue, ergothérapeute, psychomotricien, orthoptiste et manipulateur d'électroradiologie médicale hors classe",2022-01-01,2022-04-30,10
+LEGITEXT000042368997,pedicure-podologue-ergotherapeute-psychomotricien-orthoptiste-technicien-de-laboratoire-medical-manipulateur-d-electroradiologie-medicale-preparateur-en-pharmacie-hospitaliere-et-dieteticien,"Pédicure-podologue, ergothérapeute, psychomotricien, orthoptiste technicien de laboratoire médical, manipulateur d'électroradiologie médicale, préparateur en pharmacie hospitalière et diététicien",2022-05-01,,11
+LEGITEXT000042368997,pedicure-podologue-ergotherapeute-psychomotricien-orthoptiste-technicien-de-laboratoire-medical-manipulateur-d-electroradiologie-medicale-preparateur-en-pharmacie-hospitaliere-et-dieteticien-hors-classe,"Pédicure-podologue, ergothérapeute, psychomotricien, orthoptiste technicien de laboratoire médical, manipulateur d'électroradiologie médicale, préparateur en pharmacie hospitalière et diététicien hors classe",2022-05-01,,10
+LEGITEXT000042369024,classe-normale,Classe normale,2020-09-28,2021-12-31,9
+LEGITEXT000042369024,classe-superieure,Classe supérieure,2020-09-28,2021-12-31,11
+LEGITEXT000042369024,echelon,ECHELON,2022-01-01,,2
+LEGITEXT000042369024,hors-classe,Hors classe,2020-09-28,2021-12-31,10
+LEGITEXT000042369024,masseur-kinesitherapeute-et-orthophoniste,Masseur-kinésithérapeute et orthophoniste,2022-01-01,,11
+LEGITEXT000042369024,masseur-kinesitherapeute-et-orthophoniste-hors-classe,Masseur-kinésithérapeute et orthophoniste hors classe,2022-01-01,,9
+LEGITEXT000044618043,classe-normale-article-1,Classe normale (article 1),2021-12-31,,12
+LEGITEXT000044618043,classe-normale-article-2,Classe normale (article 2),2021-12-31,,12
+LEGITEXT000044618043,classe-superieure-article-1,Classe supérieure (article 1),2021-12-31,,11
+LEGITEXT000044618043,classe-superieure-article-2,Classe supérieure (article 2),2021-12-31,,11
+LEGITEXT000045065406,experts-de-haut-niveau-et-aux-directeurs-de-projet-des-collectivites-territoriales-et-de-leurs-etablissements-publics,experts de haut niveau et aux directeurs de projet des collectivités territoriales et de leurs établissements publics,2022-01-24,2026-06-30,8
+LEGITEXT000045595632,conservateur,Conservateur,2022-04-17,,8
+LEGITEXT000045595632,conservateur-en-chef,Conservateur en chef,2022-04-17,,7
+LEGITEXT000045595632,eleve,Elève,2022-04-17,,2
+LEGITEXT000045729245,sage-femme-de-classe-normale,Sage-femme de classe normale,2022-05-01,,10
+LEGITEXT000045729245,sage-femme-hors-classe,Sage-femme hors classe,2022-05-01,,10
