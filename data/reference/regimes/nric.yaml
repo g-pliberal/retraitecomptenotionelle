@@ -40,6 +40,7 @@ periodes:
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     assiette: plafonnee_3_pass
+    assiette_annee_de_revenu: {commercant: 2, gerant_debit_tabac: 2}
     # Les points de la pension d'invalidité : fiche `points_invalidite_independants`.
     points_invalidite: {par: mois, proportionnels: false, forfait: 2}
     taux_cotisation_retraite: 0.0400
@@ -53,6 +54,28 @@ periodes:
       RCI est celui du commerçant — c'est lui qui sert de dénominateur au
       coefficient appliqué aux artisans.
   - debut: 2005
+    fin: 2008
+    type_calcul: points
+    age_ouverture: 60
+    age_taux_plein: 65
+    duree_requise_trimestres: 160
+    taux_plein: 1.0
+    age_ouverture_par_generation: age_legal_par_generation
+    age_taux_plein_par_generation: age_annulation_decote
+    decote_par_generation: decote_regime_general
+    abattement_points: abattement_rci
+    salaire_reference: carriere_entiere
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: null
+    avantages_non_contributifs: [reversion]
+    assiette: plafonnee_3_pass
+    assiette_annee_de_revenu: {commercant: 2, gerant_debit_tabac: 2}
+    # Les points de la pension d'invalidité : fiche `points_invalidite_independants`.
+    points_invalidite: {par: mois, proportionnels: false, forfait: 2}
+    taux_cotisation_retraite: 0.0650
+    notes: >-
+      D. 635-10, état du 26 mars 2005 : 6,5 % dans la limite de trois fois le plafond, inchangé jusqu'à la fusion dans le RCI.
+  - debut: 2009
     fin: 2012
     type_calcul: points
     age_ouverture: 60
@@ -72,4 +95,4 @@ periodes:
     points_invalidite: {par: mois, proportionnels: false, forfait: 2}
     taux_cotisation_retraite: 0.0650
     notes: >-
-      D. 635-10, état du 26 mars 2005 : 6,5 % dans la limite de trois fois le plafond, inchangé jusqu'à la fusion dans le RCI.
+      D. 635-10, état du 1er janvier 2009 (LEGIARTI000020032165) : 6,5 % dans la limite de trois fois le plafond, inchangé jusqu'à la fusion dans le RCI. Depuis les revenus de 2009, la cotisation est « calculée suivant les modalités prévues au cinquième alinéa de l'article L. 131-6 » (décret n° 2008-1427, article 1er, JORFARTI000019996956) : provisionnelle, puis régularisée sur le revenu de l'année, que le modèle porte.

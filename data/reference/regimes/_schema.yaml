@@ -1123,9 +1123,11 @@ champs_periode:
       est assise sur le revenu de l'année qu'il précède d'autant, et non sur
       celui de l'année — 2, l'avant-dernière, sans ajustement : l'artisan au
       RCO jusqu'aux cotisations de 2008 (décret n° 78-351, article 3 ;
-      D. 635-4 ; D. 635-2). Le revenu est celui des lignes cotisées de la même
-      affiliation cette année-là, nul s'il n'y en a pas, à proportion des
-      mois de l'exercice comme ses bornes, qui restent celles de l'exercice.
+      D. 635-4 ; D. 635-2), le commerçant au sien de 2004 à 2008 (D. 635-2).
+      Le revenu est celui des lignes cotisées de la même affiliation cette
+      année-là, à proportion des mois de l'exercice comme ses bornes, qui
+      restent celles de l'exercice ; l'exercice ouvert depuis moins d'autant
+      d'années, le revenu de l'année, ou le forfait de `assiette_de_debut`.
       Un statut absent de la table cotise sur le revenu de l'année : le
       conjoint collaborateur, sur l'assiette de sa cotisation de base
       (D. 635-10-2). `null` : le revenu de l'année pour tous.

@@ -513,11 +513,14 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
           base = baseLigne * (1.0 - ligne.part_primes);
         }
         // L'AVANT-DERNIÈRE ANNÉE : jusqu'aux cotisations de 2008, le RCO des
-        // artisans est assis sur le revenu de l'avant-dernière année, sans
-        // ajustement ; celui du conjoint collaborateur, sur l'assiette de sa
+        // artisans et celui des commerçants sont assis sur le revenu de
+        // l'avant-dernière année, sans ajustement, l'exercice ouvert depuis
+        // deux ans ; celui du conjoint collaborateur, sur l'assiette de sa
         // cotisation de base : voir acquerir.py.
         const decalage = periode.assiette_annee_de_revenu?.[ligne.affiliation];
-        if (decalage && ligne.cotise) {
+        if (decalage && ligne.cotise
+            && anneesDejaExercees(carriere, ligne.affiliation, ligne.annee, decalage)
+              >= decalage) {
           base = revenuDeLAnnee(carriere, ligne.affiliation, ligne.annee - decalage) * part;
         }
         // LE DÉBUT D'EXERCICE : l'artisan qui commence cotise au RCO sur un

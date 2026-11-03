@@ -623,9 +623,19 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
                 # se prend à proportion des mois de l'exercice, comme ses
                 # bornes. Le conjoint collaborateur, absent de la table, cotise
                 # sur « le revenu retenu [...] pour le calcul de sa cotisation
-                # d'assurance vieillesse de base » (D. 635-10-2).
+                # d'assurance vieillesse de base » (D. 635-10-2). Le RCO des
+                # commerçants, de sa création en 2004 aux cotisations de 2008,
+                # suit la même règle (D. 635-2, rédaction du 24 août 2004).
+                # L'exercice ouvert depuis moins de deux ans, l'avant-dernière
+                # année n'en est pas : l'artisan cotise sur ses forfaits, le
+                # commerçant sur les « revenus forfaitaires mentionnés au
+                # sixième alinéa de l'article L. 131-6 » (D. 635-10), que
+                # L. 131-6 dit provisionnels et régularisés : le modèle garde
+                # le revenu de l'année.
                 decalage = dict(periode.assiette_annee_de_revenu).get(ligne.affiliation)
-                if decalage and ligne.cotise:
+                if (decalage and ligne.cotise
+                        and annees_deja_exercees(carriere, ligne.affiliation, ligne.annee,
+                                                 decalage) >= decalage):
                     base = revenu_de_l_annee(
                         carriere, ligne.affiliation, ligne.annee - decalage) * part
                 # LE DÉBUT D'EXERCICE : « Pour les assurés commençant

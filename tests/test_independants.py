@@ -1230,3 +1230,51 @@ def test_les_deux_premieres_annees_de_l_artisan_cotisent_au_forfait(points_des_d
             for annee, points in attendu.items():
                 assert credits.get(("rco_artisans", annee)) == pytest.approx(
                     points, rel=1e-12), (moteur, annee)
+
+
+def test_le_nrco_des_commercants_cotise_sur_l_avant_derniere_annee(points_des_deux_moteurs):
+    """« La cotisation annuelle au régime complémentaire obligatoire
+    d'assurance vieillesse est assise sur les revenus de l'avant-dernière année
+    tels que définis par l'article L. 131-6 » (D. 635-2, LEGIARTI000006738016,
+    du 24 août 2004, et LEGIARTI000006738017), le régime que gère, « chacune en
+    ce qui la concerne », la caisse des artisans et celle des industriels et
+    commerçants (D. 635-1, LEGIARTI000006738013), aux taux de D. 635-10 (4 % en
+    2004, la moyenne des 3,5 % et 4,5 % des deux semestres, puis 6,5 %,
+    LEGIARTI000006738027, LEGIARTI000006738028), jusqu'aux revenus de 2009,
+    régularisés sur le revenu de l'année (décret n° 2008-1427). Celui qui
+    commence cotise sur « les revenus forfaitaires mentionnés au sixième alinéa
+    de l'article L. 131-6 » (D. 635-10), que L. 131-6 dit calculées « à titre
+    provisionnel » puis régularisées « lorsque le revenu professionnel est
+    définitivement connu » : le modèle garde le revenu de ses deux premières
+    années, et l'avant-dernière ensuite. Le conjoint collaborateur cotise sur
+    l'assiette de sa cotisation de base (D. 635-10-2), un tiers du plafond.
+    Dans les deux moteurs."""
+    cas = [
+        {"naissance": 1948, "age": 62.0, "releve": _releve("commercant", {
+            2001: 15000.0, 2002: 16000.0, 2003: 17000.0, 2004: 18000.0, 2005: 19000.0,
+            2006: 20000.0, 2007: 21000.0, 2008: 22000.0, 2009: 23000.0})},
+        {"naissance": 1948, "age": 62.0, "releve": _releve("commercant", {
+            2005: 12000.0, 2006: 13000.0, 2007: 14000.0, 2008: 15000.0, 2009: 16000.0})},
+        {"naissance": 1948, "age": 62.0, "releve": _releve(
+            "conjoint_collaborateur_commercant", {2007: 0.0, 2008: 0.0})},
+    ]
+    attendus = [
+        {2004: 16000.0 * 0.04 / 13.89,
+         2005: 17000.0 * 0.065 / 14.112,
+         2006: 18000.0 * 0.065 / 14.389,
+         2007: 19000.0 * 0.065 / 14.648,
+         2008: 20000.0 * 0.065 / 14.809,
+         2009: 23000.0 * 0.065 / 15.3},
+        {2005: 12000.0 * 0.065 / 14.112,
+         2006: 13000.0 * 0.065 / 14.389,
+         2007: 12000.0 * 0.065 / 14.648,
+         2008: 13000.0 * 0.065 / 14.809,
+         2009: 16000.0 * 0.065 / 15.3},
+        {2007: 32184 / 3 * 0.065 / 14.648,
+         2008: 33276 / 3 * 0.065 / 14.809},
+    ]
+    for moteur, carrieres in points_des_deux_moteurs(cas).items():
+        for credits, attendu in zip(carrieres, attendus):
+            for annee, points in attendu.items():
+                assert credits.get(("nric", annee)) == pytest.approx(
+                    points, rel=1e-12), (moteur, annee)
