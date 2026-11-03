@@ -1,0 +1,39 @@
+date: "2026-11-03"
+session: "action 175, file R-M4-bis : relecture indépendante des corrections de la relecture R-M4 (commit badc7bf, file M4-bis), le congé de maternité seul qui n'ouvre plus le taux plein à 65 ans des fonctionnaires parents de trois enfants"
+consulte: >-
+  python scripts/veille_droit.py ; docs/veille_droit.md ; la base de la Cnav, rien de neuf.
+  L'index de la DILA récupéré dans la session (LEGI à jour au 3 novembre 2026 après son
+  incrément, JORF au 3 novembre) : R. 26 ter (LEGIARTI000024111781) ; R. 13
+  (LEGIARTI000023449727) ; loi n° 84-16, article 34, ses seize rédactions de 1984 à 2020 ;
+  loi n° 84-53, article 57, et loi n° 86-33, article 41, leurs rédactions jusqu'au 27
+  novembre 2020 ; décret n° 72-154, article 4 (LEGIARTI000006769789, LEGIARTI000006769790) ;
+  code de la sécurité sociale, L. 331-3 à L. 331-5, toutes leurs rédactions, L. 381-1, toutes
+  ses rédactions, L. 351-12 (LEGIARTI000006742643) ; code du travail, L. 122-26
+  (LEGIARTI000006646773 à LEGIARTI000006646786) ; L. 14 (LEGIARTI000028498863,
+  LEGIARTI000037200740) ; L. 18 (LEGIARTI000025076852) ; loi n° 2003-775, article 66
+  (LEGIARTI000006758610) ; décret n° 2011-2103, articles 1er et 8 (JORFARTI000025061553,
+  JORFARTI000025061595) ; loi n° 2010-1330, article 28 (LEGIARTI000025014566). Les 61
+  fragments cités entre « » dans la fiche taux_plein_a_soixante_cinq_ans, cherchés par
+  script dans le texte de l'index : aucun absent. Cherchés sans succès : l'ordonnance
+  n° 59-244 et l'ancien code de la sécurité sociale, d'avant le 21 décembre 1985.
+trouve: >-
+  Conforme, sauf deux écarts faibles, de forme. L'année « congé de maternité » seule
+  n'ouvre plus la borne, comme R. 26 ter le veut : le statut du fonctionnaire (loi n° 84-16,
+  article 34, 5° ; loi n° 84-53, article 57, 5° ; loi n° 86-33, article 41, 5° ; décret
+  n° 72-154, article 4) fixe la durée du congé à « celle prévue par la législation sur la
+  sécurité sociale », qui ne passe jamais une année aux rédactions lues (30 semaines au
+  plus de 1985 à 1994, 46 depuis, deux de plus par L. 331-5). 66,25 ; 65 ; 70,3125 % ; 2
+  trimestres de janvier à mai 1954 et 3 de juin à décembre se refont à la main ; les deux
+  moteurs les rendent, sous PRESOMPTIONS_DECALEES=1 aussi ; le paquet se refait à l'octet ;
+  la présomption de l'AVPF est déclarée dans la fiche et la limite, et aucune rédaction de
+  L. 381-1 ne demande un congé ni une disponibilité. Les cinq écarts de R-M4 sont corrigés.
+  Écart 1 : « seize semaines en 1978 » cite la rédaction de L. 122-26 du 1er octobre 1978,
+  quand l'enfant du cas naît en avril 1978, sous celle de 1973 (quatorze semaines), et
+  c'est le congé de la salariée. Écart 2 : la fiche ne cite le renvoi à la sécurité sociale
+  que pour l'État, non pour la CNRACL ni les ouvriers de l'État.
+reste: >-
+  À une file du modèle : les deux écarts faibles, dans la fiche et deux commentaires du test
+  (note 2026-11-03-relecture-corrections-r-m4-fonctionnaires.md de l'action 175, point 6).
+  À lire hors de l'index : l'ordonnance n° 59-244 (le congé du fonctionnaire avant 1984) et
+  l'ancien code de la sécurité sociale, auquel les statuts renvoyaient avant le 21 décembre
+  1985.
