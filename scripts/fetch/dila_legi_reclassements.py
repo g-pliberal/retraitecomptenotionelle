@@ -54,8 +54,9 @@ suivantes d'un article qui redisent le même tableau ne font pas un second
 reclassement. L'ancienneté conservée se garde « dans la limite de la durée de
 l'échelon » : l'appliquer demande les durées d'échelon, que les statuts
 fixent et que le dépôt n'a pas encore. Les grilles d'origine et d'accueil ne
-sont nommées que par le libellé du tableau et la phrase qui l'annonce ; les
-rattacher aux grilles de ``grilles/<versant>/`` reste à faire.
+sont nommées que par le libellé du tableau et la phrase qui l'annonce ;
+``dila_legi_chainage.py`` les rattache aux grilles du Noyau RH quand le texte
+le prouve, à l'État seulement (``grilles/chainage/reclassements.csv``).
 """
 
 from __future__ import annotations

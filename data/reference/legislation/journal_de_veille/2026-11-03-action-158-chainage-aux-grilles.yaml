@@ -1,0 +1,33 @@
+date: "2026-11-03"
+session: "action 158, étape 3, file B3 : le chaînage des durées d'échelon et des reclassements aux grilles du dépôt (scripts/fetch/dila_legi_chainage.py, data/reference/grilles/chainage/)"
+consulte: >-
+  Aucune règle du scénario 1 n'est écrite : ni les durées ni les reclassements ne servent au
+  calcul. L'index LEGI publié du dépôt, à jour au 2 novembre 2026 (incrément 20261102-213929),
+  récupéré sans reconstruction : les visas (notices LEGITEXT) de tous les textes de grilles du
+  dépôt, et les articles qui fixent les grilles rattachées ; rouverts à la main : n° 2016-201,
+  art. 24, et n° 2016-203 (visas, art. 1 et 4) ; n° 90-680, art. 24 ; n° 95-370, art. 25, et
+  n° 2017-171 (visas, art. 116) ; n° 2004-1439, art. 23-1 ; n° 96-1113, art. 14 ; l'arrêté du
+  26 septembre 2005 (techniciens de police technique et scientifique), art. 1 ; n° 97-511,
+  n° 2003-770, n° 2007-400 (les articles de leurs grilles). Le Noyau RH du CISIRH (juillet
+  2026), au dépôt : textes 160 et 296, corps 00021 et 00172, grades 04235 et 02780, grilles
+  03313, 00422 et 02783. Le JORF n'a pas été ouvert.
+trouve: >-
+  Un texte d'échelonnement commun à plusieurs corps vise des statuts dont les grades portent
+  le même nom : le n° 2017-171 vise le n° 95-370 (agriculture), mais son art. 116 fixe la
+  grille « Ingénieur de recherche hors classe » du corps « régi par le décret du 31 décembre
+  1985 », à quatre échelons quand le n° 95-370 en écrit cinq. Un rattachement exige donc un
+  texte qui relie le statut à la grille (seul décret statutaire visé, ou statut nommé dans
+  l'article de la grille, ou corps du Noyau RH qui le cite), le même libellé, une période
+  commune, les mêmes échelons, une seule grille. 498 des 1 675 grades des tableaux de durées
+  et 18 des 862 groupes de reclassement se rattachent ; le reste est déclaré, avec sa raison.
+  Au Noyau RH, le rang ordonne sans numéroter (grille 00422 : provisoire, élève, stagiaire
+  aux rangs 1 à 3). Le décret n° 2017-786 reclasse « Au 1er septembre 2017 » par un article
+  en vigueur au LEGI dès le 8 mai 2017 : l'entrée en vigueur de l'article ne prouve pas la
+  date d'un reclassement, et le lecteur des reclassements ne lit pas la date qui ouvre la
+  phrase.
+reste: >-
+  La relecture du chaînage. Rattacher davantage sans deviner : la date qui ouvre la phrase
+  dans le lecteur des reclassements, le grade écrit avant l'en-tête, les en-têtes que le
+  lecteur des grilles garde dans les libellés ; les reclassements de la territoriale et de
+  l'hospitalière. Les 264 cas de a_lire_au_jorf.csv, si le propriétaire accepte une lecture
+  au JORF.

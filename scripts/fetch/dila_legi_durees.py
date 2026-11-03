@@ -62,9 +62,9 @@ article, ses colonnes, la phrase qui l'annonce et son en-tête ;
 que ``scripts/verifier_donnees.py`` confronte aux fichiers.
 
 CE QUE LA DONNÉE NE DIT PAS. Un tableau nomme ses grades par son libellé, non
-par les clés de ``grilles/<versant>/grilles.csv`` : rattacher chaque tableau
-aux grilles du dépôt, par le texte d'échelonnement qui vise le statut, reste à
-faire. Les réductions et majorations d'ancienneté (l'avancement accéléré, la
+par les clés de ``grilles/<versant>/grilles.csv`` : ``dila_legi_chainage.py``
+rattache chaque tableau aux grilles du dépôt, ou dit pourquoi il ne le fait
+pas (``grilles/chainage/durees.csv``). Les réductions et majorations d'ancienneté (l'avancement accéléré, la
 bonification), écrites en phrases, ne sont pas lues. Un article que le motif des
 durées (``DUREES_D_ECHELON``) ne retient pas n'est ni lu ni consigné, même
 s'il porte un tableau de durées (« L'avancement d'échelon s'effectue selon les
@@ -73,7 +73,7 @@ durées suivantes : 1er échelon : un an », « CONDITIONS d'accès à l'échelo
 2026, en trouve 97 versions au moins (note des retouches de la relecture
 R-B2-bis). Deux versions d'un article
 que le LEGI met en vigueur ensemble gardent leurs dates, et chacun de leurs
-tableaux nomme l'autre (``chevauche``) : le rattachement choisit. La règle qu'un
+tableaux nomme l'autre (``chevauche``) : le rattachement ne choisit pas. La règle qu'un
 article écrit avec sa durée moyenne (« La durée maximale … est égale à la durée
 moyenne majorée du quart ») se consigne mot pour mot (``regle_du_quart``) : aucune
 durée n'en est déduite. Celle qu'un autre article du décret écrit (« l'ancienneté
@@ -977,7 +977,8 @@ ENTETES = {
                 "son rang dans l'article, les versions de l'article qui le redisent "
                 "pendant cette période (article : la première), les tableaux du même article "
                 "et du même rang dont la période, aux dates du LEGI, recouvre la sienne "
-                "(chevauche : leur première version ; le rattachement aux grilles choisit), ses "
+                "(chevauche : leur première version ; le rattachement aux grilles ne choisit "
+                "pas), ses "
                 "colonnes dans l'ordre de l'en-tête (unique, moyenne, minimale, maximale), la "
                 "règle que l'article écrit pour les durées maximale et minimale à partir de la "
                 "moyenne (regle_du_quart : « majorée du quart », « réduite du quart », mot pour "

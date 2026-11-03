@@ -7114,16 +7114,16 @@ l'inviterait aussi à relire le dépôt.
 
 ### 158. Les grilles indiciaires de la fonction publique : la carrière d'un fonctionnaire pré-remplie depuis son corps, plutôt que de mémoire — `en cours`
 
-**Reprise, au 3 novembre 2026.** Périmètre tranché le 2 novembre 2026 : « tout
-ce qu'on peut trouver », les trois versants et les militaires ; le 3, la durée
-des échelons d'abord. Entrés, certifiés et recoupés : les grilles, le barème du
-décret n° 82-1105 depuis 1983, les reclassements (450 tableaux), les durées
-d'échelon, relues deux fois (778 tableaux, 14 521 lignes, lus au LEGI, une
-coquille du LEGI corrigée sur le JORF ; 1 248 non lus, avec leur raison ; 97
-versions d'article que le motif ne retient pas, comptées, non lues). Reste,
-dans l'ordre : le chaînage aux grilles ; ces 97 versions ; les tableaux refusés,
-au JORF quand le LEGI les abîme ; ceux que l'index aplatit ; le minimum de
-traitement. Détail : la note des retouches de la relecture R-B2-bis, du 3 novembre.
+**Reprise, au 3 novembre 2026.** Périmètre : les trois versants et les
+militaires. Entrés et certifiés : grilles, barème depuis 1983, reclassements
+(450 tableaux), durées d'échelon (778 tableaux). Chaînage fait (étape 3, à
+relire) : 498 des 1 675 grades des tableaux de durées rattachés à leur grille,
+corps et période, 18 des 862 groupes de reclassement (État) ; le reste déclaré,
+avec sa raison ; `grilles/chainage/a_lire_au_jorf.csv`, 264 cas pour le JORF.
+Reste : la relecture du chaînage ; puis en rattacher plus sans deviner (date
+qui ouvre la phrase, au lecteur des reclassements ; grade écrit avant
+l'en-tête ; en-têtes des libellés de grilles) ; les 97 versions hors du motif ;
+les refus, au JORF ; le minimum de traitement. Détail : la note de l'étape 3.
 
 
 **D'où elle vient.** La demande du propriétaire, le 12 octobre 2026 : aller

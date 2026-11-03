@@ -4610,10 +4610,37 @@ institutions:
           lus à la main, la territoriale (décrets n° 2010-329, 95-952,
           91-857, 92-867), l'État (n° 92-1436, 83-1260, 56-448, 98-1262,
           95-83), l'hospitalière (n° 93-145) et les militaires (n° 2008-952,
-          76-1001). Les tableaux ne sont pas encore rattachés aux grilles du
-          dépôt. Un article que le motif des durées ne retient pas n'est ni
-          lu ni consigné : 97 versions au moins, comptées sur l'index le
-          3 novembre 2026 (action 158, retouches de la relecture R-B2-bis).
+          76-1001). Leur rattachement aux grilles du dépôt : la source
+          dila_legi_chainage. Un article que le motif des durées ne retient
+          pas n'est ni lu ni consigné : 97 versions au moins, comptées sur
+          l'index le 3 novembre 2026 (action 158, retouches de la relecture
+          R-B2-bis).
+
+      - id: dila_legi_chainage
+        titre: >-
+          Le chaînage des durées d'échelon et des reclassements aux grilles
+          du dépôt : chaque grade de chaque tableau rattaché à sa grille, à son
+          corps et à sa période, ou déclaré, avec sa raison
+        url: https://echanges.dila.gouv.fr/OPENDATA/LEGI/
+        acces: api
+        statut_integration: automatise
+        cible: data/reference/grilles/chainage/durees.csv
+        recuperation: scripts/fetch/dila_legi_chainage.py
+        note: >-
+          Depuis le 3 novembre 2026 (action 158, étape 3) : rien ne se
+          rattache sur le seul libellé. Une durée se rattache à une grille du
+          LEGI quand le texte d'échelonnement vise le statut et soit ne vise
+          que lui parmi les décrets statutaires, soit nomme ce statut dans
+          l'article qui fixe la grille ; à une grille du Noyau RH quand le
+          corps cite le statut ; et toujours au même libellé, sur une période
+          commune, avec les mêmes échelons, une seule grille à la fois. Les
+          reclassements, à l'État seulement, quand la phrase écrit leur date
+          et que leur libellé se coupe en deux grades du corps. Le reste est
+          déclaré, avec sa raison ; a_lire_au_jorf.csv dresse les textes dont
+          un tableau est abîmé au LEGI ou y manque peut-être.
+          tests/test_chainage_grilles.py recoupe aux articles du LEGI et au
+          noyau les décrets n° 2016-201 et 2016-203, n° 90-680, n° 95-370 et
+          2017-171, n° 2004-1439 et n° 96-1113.
 
       - id: dila_legi_duree_requise
         titre: Durée d'assurance requise, générations 1953-1957
