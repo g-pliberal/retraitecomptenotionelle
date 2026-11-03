@@ -1,0 +1,16 @@
+date: "2026-11-03"
+session: "action 177, la file du site : la page dépliée sous son budget, et l'assurance maladie du micro-entrepreneur demandée quand elle compte"
+consulte: >-
+  `python scripts/veille_droit.py` : aucune fiche du micro-entrepreneur à relire. Aucune
+  lecture nouvelle : la file sert au formulaire ce que l'étape 6 a lu, la circulaire RSI
+  n° 2016/010, point 1, et la grille de la caisse hors de la maladie du RSI de 2014 et
+  de 2015 (`legislation/micro_social.yaml`, `seuils_hors_maladie_rsi`), que le paquet
+  porte (`seuils_micro_hors_maladie_rsi`).
+trouve: >-
+  Aucune règle ne change. La question de l'assurance maladie ne paraît plus qu'au
+  chiffre d'affaires d'une activité que cette grille distingue (la vente et les services
+  en 2014 et en 2015, le libéral en 2014), quand une période de micro-entrepreneur couvre
+  l'une de ces années, ou si la réponse est déjà dite ; aucun témoin ne bouge. La page
+  témoin du simulateur repasse sous son budget de mots, trois redites ôtées.
+reste: >-
+  Rien du droit à relire.
