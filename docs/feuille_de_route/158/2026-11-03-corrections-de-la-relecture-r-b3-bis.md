@@ -24,10 +24,10 @@ mémoire.
   notice cités ici ont été ouverts pendant la session ; le JORF ne l'a pas été.
 - *L'état d'avant* est celui de fd7dab8, identique à 33b4ba7 (B3-bis) pour
   `chainage/`. Les comptes se refont en comparant les fichiers de `chainage/`
-  de fd7dab8 à ceux de bbfdb76, ligne à ligne sur (texte, article, tableau,
+  de fd7dab8 à ceux de b08843e, ligne à ligne sur (texte, article, tableau,
   groupe, statut, début, fin, source, texte de grille, grille, corps, lien).
-- *Les commits* : c5a1a54 (l'exceptionnel), c1ed16d (date par date), fe4e8dc
-  (le n° 60-403), c3050f3 (les articles non lus), bbfdb76 (les infirmiers).
+- *Les commits* : b15e055 (l'exceptionnel), 4361577 (date par date), a7361b8
+  (le n° 60-403), efeac83 (les articles non lus), b08843e (les infirmiers).
   Chaque test nouveau a été vu rouge, pour la raison de l'écart, avant le code,
   sauf `test_un_grade_se_rattache_les_jours_ou_sa_grille_a_ses_echelons`, écrit
   après la coupe pour garder les grades qu'elle gagne, et vu rouge sur le
@@ -170,7 +170,7 @@ seul 2017-09-01 (grille 03351, six échelons, comme le tableau), est déclarée 
 2017-09-02 au 2021-01-01, où le noyau donne à la grille 03351 un 7e échelon,
 sans indice.
 
-*Les comptes, durées* (fd7dab8 → c1ed16d) : lignes rattachées 582 → 587 (8
+*Les comptes, durées* (fd7dab8 → 4361577) : lignes rattachées 582 → 587 (8
 coupées, remplacées par 8 plus courtes ; 5 gagnées : chargés de recherche 1,
 infirmiers territoriaux 2, art. 24 2) ; lignes déclarées 1 185 → 1 190 (+6 :
 greffiers 2, art. 12 2, puéricultrice 1, lycée agricole 1 ; −1 : les
@@ -245,7 +245,7 @@ supérieure a, le 2017-01-01, deux grades en vigueur dans chaque corps (03043 et
 échelons l'une et l'autre, comme le tableau : ce jour-là n'est rattaché à
 aucune, il est déclaré (« le chaînage ne choisit pas »).
 
-*Les comptes, durées* (c3050f3 → bbfdb76) : 26 lignes rattachées de plus, au
+*Les comptes, durées* (efeac83 → b08843e) : 26 lignes rattachées de plus, au
 noyau. Les 9 grades des art. 14 de 2012 à 2021, déclarés pour « plusieurs
 corps », se rattachent aux corps 01102 et 01153, 18 lignes ; ceux du 01144
 s'écrivent « Infirmier hors classe de l'éducation nationale et de
@@ -260,7 +260,7 @@ onze échelons). Lignes déclarées : −9 (les « plusieurs corps »), +1 (le
 
 ## 4. Les comptes, d'un bout à l'autre
 
-fd7dab8 → bbfdb76. Durées : 1 767 → 1 795 lignes ; rattachées 582 → 613 (+39,
+fd7dab8 → b08843e. Durées : 1 767 → 1 795 lignes ; rattachées 582 → 613 (+39,
 −8) ; déclarées 1 185 → 1 182 (+10, −13) ; grades rattachés 498 → 511 (13
 gagnés, aucun perdu). Reclassements : 862 groupes, 13 rattachés, 849 déclarés,
 avant et après ; 4 raisons récrites (les brigadiers, les trois groupes du
