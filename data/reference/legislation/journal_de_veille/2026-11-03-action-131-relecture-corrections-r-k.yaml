@@ -1,0 +1,38 @@
+date: "2026-11-03"
+session: "action 131, file R-K-bis : relecture indépendante des corrections de la relecture R-K (commits ddb8824 et a7f4519, file K-bis)"
+consulte: >-
+  python scripts/veille_droit.py (la base de la Cnav n'a pas répondu). Les index LEGI (à jour
+  au 2 novembre 2026) et JORF (au 3 novembre 2026) de la DILA, récupérés. Dans LEGI, mot à mot
+  et à leur version : R. 732-69 (LEGIARTI000006597478, LEGIARTI000035918355,
+  LEGIARTI000053337682, par --diff), R. 732-70 (LEGIARTI000006597479), R. 732-66
+  (LEGIARTI000006597475), R. 732-67 (LEGIARTI000053328816), D. 732-77 (LEGIARTI000006597491) ;
+  le décret n° 86-1084, article 2 (LEGIARTI000006769405) et ses visas (LEGITEXT000006065220) ;
+  le décret n° 99-875, article 2, ses trois rédactions (LEGIARTI000006779654 à
+  LEGIARTI000006779656) ; le décret n° 52-1166, articles 15 et 45 (LEGIARTI000019272718,
+  LEGIARTI000019272803), et ses autres articles qui nomment 1952 ; le décret n° 55-753,
+  article 18 (LEGIARTI000006763581) ; la loi n° 60-768, article 5 (LEGIARTI000006758011) ; la
+  loi n° 52-401, articles 17, 19 et 20 ; le décret n° 80-808 (LEGITEXT000006063328) ; le décret
+  n° 2005-368, article 3 (LEGIARTI000006240372). Au JORF : les notices des décrets n° 86-1084
+  (JORFTEXT000000870113), 81-790 (JORFTEXT000000335107), 68-571 (JORFTEXT000000330850), 67-570
+  (JORFTEXT000000514415), 74-443 (JORFTEXT000000328985) et de la loi n° 52-799
+  (JORFTEXT000000512405) ; les n° 65-346, 75-97 et 81-790, cherchés par numéro et par date.
+trouve: >-
+  Conforme. Les 26 fragments cités par ddb8824 et la note de K-bis, exacts mot pour mot (par
+  un script). Le décret n° 99-875 (1999, points gratuits de retraite proportionnelle), article
+  2, rédaction de 2001 à 2002 seulement, dit bien « la date de création du régime [...] à
+  savoir le 1er juillet 1952 pour la métropole » ; le décret n° 55-753 (article 18) et la loi
+  n° 60-768 (article 5) le confirment. Le décret n° 68-571 accorde des points supplémentaires
+  pour des années validées (décret n° 86-1084, article 2), et R. 732-69 ne le nomme pas : son
+  retrait du barème est juste. Les effets de 0,63 € (46,7545 − 46,1286 € pour le témoin né en
+  1925) et de l'arrondi (0,0085 € pour celui de 1945), refaits à la main sur les cotisations
+  captées au moteur Python : exacts. Aucun code, test ni témoin touché ; le paquet refait sur
+  le dernier main ne change rien. Deux écarts faibles, de rédaction : « l'exercice 1952 n'a
+  qu'une demi-année » est une inférence que l'article 45 du décret n° 52-1166 ne dit pas (il
+  divise par deux les cotisations des articles 20 et 21, et l'article 15 fait commencer
+  l'exercice au 1er janvier) ; la ligne manque « n'est pas lu » reste inexacte, déclarée par
+  K-bis.
+reste: >-
+  La phrase « l'exercice 1952 n'a qu'une demi-année », dans retraite_proportionnelle_msa et
+  la note de K-bis, à récrire d'après le 1er juillet 1952, avec l'étape de la cotisation de
+  1952 ; la fiche peut citer le décret n° 55-753 (article 18) et la loi n° 60-768 (article
+  5), plus proches que le décret n° 99-875. La ligne manque, avec l'inventaire.
