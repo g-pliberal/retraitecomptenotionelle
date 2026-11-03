@@ -721,8 +721,10 @@ def test_le_conjoint_route_ses_regimes():
 def test_le_forfait_ouvre_les_points_du_rci_et_de_la_complementaire(simulateur):
     """La complémentaire cotise sur le revenu retenu pour la base
     (D. 635-10-2) : au forfait, le conjoint d'un artisan acquiert les points
-    qu'acquiert l'artisan au tiers du plafond, à la RCO des artisans de 2007 à
-    2012 et au RCI depuis."""
+    qu'acquiert l'artisan au tiers du plafond, à la RCO des artisans de 2009 à
+    2012 et au RCI depuis. En 2007 et en 2008, l'artisan cotise sur
+    l'avant-dernière année, et le conjoint sur son forfait de l'année :
+    `test_le_conjoint_collaborateur_cotise_au_rco_sur_l_assiette_de_l_annee`."""
     macro = simulateur.macro
     annees = range(2007, 2026)
     _, conjoint = _conjoint(simulateur, "conjoint_collaborateur_artisan",
@@ -730,7 +732,7 @@ def test_le_forfait_ouvre_les_points_du_rci_et_de_la_complementaire(simulateur):
     _, artisan = _conjoint(simulateur, "artisan",
                            {annee: macro.plafond_securite_sociale(annee) / 3
                             for annee in annees})
-    for code, periode in (("rco_artisans", range(2007, 2013)), ("rci", range(2013, 2026))):
+    for code, periode in (("rco_artisans", range(2009, 2013)), ("rci", range(2013, 2026))):
         attendus = _credites(artisan, code, periode)
         assert set(attendus) == set(periode)
         assert _credites(conjoint, code, periode) == {
@@ -1005,3 +1007,166 @@ def test_les_trimestres_cotises_de_l_exemple_de_la_caisse(simulateur):
         1962, "F", [LigneRelevee(2016, "artisan", revenu_cotise)], 64.0)
     (annee,) = [ligne for ligne in carriere.lignes if ligne.annee == 2016]
     assert annee.trimestres_valides == 3
+
+
+# --- L'assiette du RCO des artisans : l'avant-dernière année (action 177, étape 9) ---
+
+#: Le jumeau JavaScript : les points que chaque relevé crédite, régime par
+#: régime et année par année, au portage.
+_JUMEAU_POINTS = """
+import { readFileSync } from "node:fs";
+import { Simulateur } from "./moteur/js/simulateur.js";
+import { acquerir } from "./moteur/js/droit/acquerir.js";
+import { compter } from "./moteur/js/droit/compter.js";
+import { coordonner } from "./moteur/js/droit/coordonner.js";
+const cas = JSON.parse(process.argv[1]);
+const simulateur = new Simulateur(JSON.parse(readFileSync("./moteur/donnees.json", "utf8")));
+const actuel = simulateur.scenarioActuel;
+const sortie = cas.map(({ releve, naissance, age }) => {
+  const carriere = simulateur.carriereReleve({
+    annee_naissance: naissance, sexe: "F", releve, age_liquidation: age });
+  const coordination = coordonner(actuel, carriere);
+  const droits = acquerir(actuel, coordination, compter(actuel, coordination));
+  return droits.points.map(([code, annee, points]) => [code, annee, points]);
+});
+process.stdout.write(JSON.stringify(sortie));
+"""
+
+
+@pytest.fixture
+def points_des_deux_moteurs(simulateur):
+    """Ce qui rend, pour chaque relevé, les points crédités par le portage et
+    par son jumeau Python : ``{"javascript": [...], "python": [...]}``, chaque
+    relevé y donnant ``{(régime, année): points}``."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+
+    def sommer(credits) -> dict[tuple[str, int], float]:
+        total: dict[tuple[str, int], float] = {}
+        for code, annee, points in credits:
+            total[(code, annee)] = total.get((code, annee), 0.0) + points
+        return total
+
+    def calculer(cas) -> dict[str, list[dict[tuple[str, int], float]]]:
+        python = []
+        for c in cas:
+            carriere = simulateur.carriere_releve(
+                c["naissance"], "F", [LigneRelevee(**ligne) for ligne in c["releve"]],
+                c["age"])
+            actuel = simulateur.scenario_actuel
+            coordination = coordonner.coordonner(actuel, carriere)
+            droits = acquerir.acquerir(actuel, coordination,
+                                       compter.compter(actuel, coordination))
+            python.append(sommer((code, annee, points)
+                                 for code, annee, points, _ in droits.points))
+        execution = subprocess.run(
+            ["node", "--input-type=module", "-e", _JUMEAU_POINTS, json.dumps(cas)],
+            cwd=RACINE, capture_output=True, text=True, encoding="utf-8", check=False)
+        assert execution.returncode == 0, execution.stderr[-2000:]
+        javascript = [sommer(credits) for credits in json.loads(execution.stdout)]
+        return {"javascript": javascript, "python": python}
+
+    return calculer
+
+
+def _releve(metier: str, revenus: dict[int, float]) -> list[dict]:
+    return [{"annee": annee, "affiliation": metier, "revenu": revenu}
+            for annee, revenu in sorted(revenus.items())]
+
+
+#: Un artisan installé en 1977, à son compte jusqu'en 1986 ; son revenu de
+#: 1980 dépasse trois plafonds de 1982 (37 512 €).
+REVENUS_DE_1977 = {1977: 5000.0, 1978: 6000.0, 1979: 7000.0, 1980: 40000.0,
+                   1981: 9000.0, 1982: 10000.0, 1983: 11000.0, 1984: 12000.0,
+                   1985: 13000.0, 1986: 14000.0}
+#: Un artisan installé en 2002, à son compte jusqu'en 2009, sous le plafond.
+REVENUS_DE_2002 = {2002: 20000.0, 2003: 21000.0, 2004: 22000.0, 2005: 23000.0,
+                   2006: 24000.0, 2007: 25000.0, 2008: 26000.0, 2009: 27000.0}
+
+
+def test_le_rco_des_artisans_cotise_sur_l_avant_derniere_annee(points_des_deux_moteurs):
+    """« La cotisation annuelle du régime d'assurance vieillesse
+    complémentaire est assise sur les revenus professionnels non-salariés de
+    l'avant-dernière année civile [...] et dans la limite d'un plafond égal à
+    trois fois celui visé à l'article L. 663-9 du code de la sécurité sociale
+    en vigueur dans l'année où la cotisation est due » (décret n° 78-351 du
+    14 mars 1978, article 3, I, LEGIARTI000006766103 ; D. 635-4 de 1985 à
+    2004 ; D. 635-2, LEGIARTI000006738016 et LEGIARTI000006738017, jusqu'aux
+    cotisations de 2008), le taux de 4,40 % (article 5, LEGIARTI000006766105),
+    les points, la cotisation « afférente[s] à l'exercice » divisée par le
+    revenu de référence de l'exercice (article 6, LEGIARTI000006766107). Depuis
+    les revenus de 2009, la cotisation est « calculée suivant les modalités
+    prévues au cinquième alinéa de l'article L. 131-6 » (décret n° 2008-1427,
+    article 1er, JORFARTI000019996956) : provisionnelle, puis régularisée sur le
+    revenu de l'année. Les points de 1982, assis sur le revenu de 1980 borné à
+    trois plafonds de 1982 ; ceux de 2008, sur le revenu de 2006 ; ceux de
+    2009, sur le revenu de 2009. Revenus de référence : `valeurs_point.csv` ;
+    plafonds : `plafond_securite_sociale.csv`. Dans les deux moteurs."""
+    cas = [{"naissance": 1940, "age": 65.0, "releve": _releve("artisan", REVENUS_DE_1977)},
+           {"naissance": 1948, "age": 62.0, "releve": _releve("artisan", REVENUS_DE_2002)}]
+    attendus = {
+        # 4,40 % du revenu de l'avant-dernière année, par le revenu de référence.
+        1979: 5000.0 * 0.044 / 0.893351,
+        1980: 6000.0 * 0.044 / 1.003115,
+        1981: 7000.0 * 0.044 / 1.137270,
+        # Le revenu de 1980, 40 000 €, borné à trois plafonds de 1982.
+        1982: 3 * 12504 * 0.044 / 1.282096,
+        1983: 9000.0 * 0.044 / 1.410153,
+        1984: 10000.0 * 0.044 / 1.544309,
+        # 6,70 % en 2004 (D. 635-6, état du 29 octobre 2003), 7 % de 2005 à
+        # 2008 (D. 635-7, état du 24 août 2004 ; décret n° 2007-1900, III),
+        # 7,1 % en 2009 (même décret, III), sous le plafond.
+        2004: 20000.0 * 0.067 / 3.882,
+        2005: 21000.0 * 0.07 / 4.104,
+        2006: 22000.0 * 0.07 / 4.145,
+        2007: 23000.0 * 0.07 / 4.145,
+        2008: 24000.0 * 0.07 / 4.207,
+        2009: 27000.0 * 0.071 / 4.5,
+    }
+    for moteur, (avant_1987, depuis_2002) in points_des_deux_moteurs(cas).items():
+        for annee, points in attendus.items():
+            credites = (avant_1987 if annee < 2000 else depuis_2002).get(
+                ("rco_artisans", annee))
+            assert credites == pytest.approx(points, rel=1e-12), (moteur, annee)
+
+
+def test_le_revenu_des_deux_dernieres_annees_ne_cotise_pas_au_rco(points_des_deux_moteurs):
+    """Assise sur le revenu de l'avant-dernière année, sans ajustement sur
+    celui de l'année (le décret n° 78-351 ne rend applicables à la cotisation
+    complémentaire que « les articles 12 à 14, 16 et 18 du décret du
+    22 janvier 1973 », article 5, IV, et non l'article 9, qui ajuste celle du
+    régime de base), la cotisation de l'artisan qui cesse en 1986 ne lit
+    jamais ses revenus de 1985 ni de 1986 : les doubler ne change aucun point
+    du RCO. Dans les deux moteurs."""
+    doubles = {**REVENUS_DE_1977, 1985: 26000.0, 1986: 28000.0}
+    cas = [{"naissance": 1940, "age": 65.0, "releve": _releve("artisan", revenus)}
+           for revenus in (REVENUS_DE_1977, doubles)]
+    for moteur, (avant, apres) in points_des_deux_moteurs(cas).items():
+        rco = [{annee: points for (code, annee), points in credits.items()
+                if code == "rco_artisans"} for credits in (avant, apres)]
+        assert rco[0].keys() == rco[1].keys(), moteur
+        for annee in rco[0]:
+            assert rco[1][annee] == pytest.approx(rco[0][annee], rel=1e-12), (moteur, annee)
+
+
+def test_le_conjoint_collaborateur_cotise_au_rco_sur_l_assiette_de_l_annee(
+        points_des_deux_moteurs):
+    """« La cotisation d'assurance vieillesse complémentaire du conjoint
+    collaborateur est calculée sur le revenu retenu [...] pour le calcul de sa
+    cotisation d'assurance vieillesse de base. La cotisation d'assurance
+    complémentaire ne fait toutefois pas l'objet de la régularisation »
+    (D. 635-10-2, LEGIARTI000006738041, du 13 décembre 2006 au 1er janvier
+    2013) : ni l'avant-dernière année de l'artisan, ni la régularisation. Le
+    conjoint d'artisan sans revenu cotise sur « un revenu forfaitaire égal au
+    tiers du plafond » de l'année (D. 633-19-2, 1°, LEGIARTI000006737951) :
+    32 184 / 3 € en 2007 à 7 %, 33 276 / 3 € en 2008 à 7 %, 34 308 / 3 € en
+    2009 à 7,1 %. Dans les deux moteurs."""
+    cas = [{"naissance": 1948, "age": 62.0, "releve": _releve(
+        "conjoint_collaborateur_artisan", {annee: 0.0 for annee in range(2005, 2010)})}]
+    attendus = {2007: 32184 / 3 * 0.07 / 4.145,
+                2008: 33276 / 3 * 0.07 / 4.207,
+                2009: 34308 / 3 * 0.071 / 4.5}
+    for moteur, (credits,) in points_des_deux_moteurs(cas).items():
+        for annee, points in attendus.items():
+            assert credits.get(("rco_artisans", annee)) == pytest.approx(
+                points, rel=1e-12), (moteur, annee)

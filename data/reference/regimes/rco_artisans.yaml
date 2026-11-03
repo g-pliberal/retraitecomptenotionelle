@@ -39,6 +39,7 @@ periodes:
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     assiette: plafonnee_3_pass
+    assiette_annee_de_revenu: {artisan: 2}
     # Les points de la pension d'invalidité : fiche `points_invalidite_independants`.
     points_invalidite: {par: trimestre, proportionnels: true, forfait: 16}
     taux_cotisation_retraite: 0.0440
@@ -74,6 +75,7 @@ periodes:
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     assiette: plafonnee_3_pass
+    assiette_annee_de_revenu: {artisan: 2}
     # Les points de la pension d'invalidité : fiche `points_invalidite_independants`.
     points_invalidite: {par: trimestre, proportionnels: true, forfait: 16}
     taux_cotisation_retraite: 0.0450
@@ -94,6 +96,7 @@ periodes:
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     assiette: plafonnee_4_pass
+    assiette_annee_de_revenu: {artisan: 2}
     # Les points de la pension d'invalidité : fiche `points_invalidite_independants`.
     points_invalidite: {par: trimestre, proportionnels: true, forfait: 16}
     taux_cotisation_retraite: 0.0490
@@ -114,6 +117,7 @@ periodes:
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     assiette: plafonnee_4_pass
+    assiette_annee_de_revenu: {artisan: 2}
     # Les points de la pension d'invalidité : fiche `points_invalidite_independants`.
     points_invalidite: {par: trimestre, proportionnels: true, forfait: 16}
     taux_cotisation_retraite: 0.0530
@@ -134,6 +138,7 @@ periodes:
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     assiette: plafonnee_4_pass
+    assiette_annee_de_revenu: {artisan: 2}
     # Les points de la pension d'invalidité : fiche `points_invalidite_independants`.
     points_invalidite: {par: trimestre, proportionnels: true, forfait: 16}
     taux_cotisation_retraite: 0.0570
@@ -154,6 +159,7 @@ periodes:
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     assiette: plafonnee_4_pass
+    assiette_annee_de_revenu: {artisan: 2}
     # Les points de la pension d'invalidité : fiche `points_invalidite_independants`.
     points_invalidite: {par: trimestre, proportionnels: true, forfait: 16}
     taux_cotisation_retraite: 0.0600
@@ -174,6 +180,7 @@ periodes:
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     assiette: plafonnee_4_pass
+    assiette_annee_de_revenu: {artisan: 2}
     # Les points de la pension d'invalidité : fiche `points_invalidite_independants`.
     points_invalidite: {par: trimestre, proportionnels: true, forfait: 16}
     taux_cotisation_retraite: 0.0620
@@ -194,6 +201,7 @@ periodes:
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     assiette: plafonnee_4_pass
+    assiette_annee_de_revenu: {artisan: 2}
     # Les points de la pension d'invalidité : fiche `points_invalidite_independants`.
     points_invalidite: {par: trimestre, proportionnels: true, forfait: 16}
     taux_cotisation_retraite: 0.0670
@@ -214,6 +222,7 @@ periodes:
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     assiette: plafonnee_4_pass
+    assiette_annee_de_revenu: {artisan: 2}
     # Les points de la pension d'invalidité : fiche `points_invalidite_independants`.
     points_invalidite: {par: trimestre, proportionnels: true, forfait: 16}
     taux_cotisation_retraite: 0.0700
@@ -235,6 +244,7 @@ periodes:
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     assiette: plafonnee
+    assiette_annee_de_revenu: {artisan: 2}
     # Les points de la pension d'invalidité : fiche `points_invalidite_independants`.
     points_invalidite: {par: trimestre, proportionnels: true, forfait: 16}
     taux_cotisation_retraite: 0.0700
@@ -256,6 +266,7 @@ periodes:
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     assiette: tranche_1_4_pass
+    assiette_annee_de_revenu: {artisan: 2}
     taux_cotisation_retraite: 0.0700
     notes: >-
       Même dérogation (article 1er, IV, du décret n° 2007-1900) : seconde tranche, 7 % au titre de 2008, au-delà du plafond et jusqu'à quatre fois celui-ci.

@@ -36,6 +36,21 @@ export function partSoumise(moteur, ligne) {
 }
 
 /**
+ * Le revenu d'une autre année que la cotisation lit : celui des lignes
+ * cotisées de la même affiliation, nul s'il n'y en a pas. Jumeau de
+ * `revenu_de_l_annee`.
+ */
+export function revenuDeLAnnee(carriere, affiliation, annee) {
+  let total = 0.0;
+  for (const l of carriere.lignesDe(annee)) {
+    if (l.affiliation === affiliation && l.cotise) {
+      total += l.revenu;
+    }
+  }
+  return total;
+}
+
+/**
  * L'assiette minimale que la ligne oppose à l'un de ces régimes : celle du
  * régime de BASE d'un indépendant (D. 633-2, D. 642-4), nulle ailleurs.
  */
@@ -481,6 +496,14 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
           // Une année RÉTABLIE : l'Ircantec valide le traitement de l'année,
           // les primes restent au RAFP.
           base = baseLigne * (1.0 - ligne.part_primes);
+        }
+        // L'AVANT-DERNIÈRE ANNÉE : jusqu'aux cotisations de 2008, le RCO des
+        // artisans est assis sur le revenu de l'avant-dernière année, sans
+        // ajustement ; celui du conjoint collaborateur, sur l'assiette de sa
+        // cotisation de base : voir acquerir.py.
+        const decalage = periode.assiette_annee_de_revenu?.[ligne.affiliation];
+        if (decalage && ligne.cotise) {
+          base = revenuDeLAnnee(carriere, ligne.affiliation, ligne.annee - decalage) * part;
         }
         // Commissions de la CAVAMAC, produits de l'office de la CPRN : le
         // facteur reconstitue l'assiette depuis le revenu, avant les bornes.

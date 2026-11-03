@@ -832,6 +832,12 @@ class PeriodeRegime:
     #: 1,47 en 2018, 1,93 depuis 2019 (décret n° 2007-458, art. 2). ``None`` :
     #: aucun, ou ceux de ``points_ajustement_par_forfait``.
     points_ajustement_au_plafond: float | None = None
+    #: L'ANNÉE DE REVENU de la cotisation, quand ce n'est pas celle de
+    #: l'exercice, statut par statut : ``(("artisan", 2),)``, l'avant-dernière
+    #: — l'artisan au RCO jusqu'aux cotisations de 2008 (décret n° 78-351,
+    #: article 3 ; D. 635-4 ; D. 635-2). Vide : le revenu de l'année. Voir
+    #: ``acquerir``.
+    assiette_annee_de_revenu: tuple[tuple[str, int], ...] = ()
     notes: str = ""
 
     def prise_en_charge(self, forfait: float, proportionnelle: float) -> float:
@@ -2302,6 +2308,9 @@ class CatalogueRegimes:
                     None if p.get("points_ajustement_au_plafond") is None
                     else float(p["points_ajustement_au_plafond"])
                 ),
+                assiette_annee_de_revenu=tuple(sorted(
+                    (str(statut), int(decalage)) for statut, decalage
+                    in (p.get("assiette_annee_de_revenu") or {}).items())),
                 points_par_trimestre_valide=(
                     None if p.get("points_par_trimestre_valide") is None
                     else float(p["points_par_trimestre_valide"])

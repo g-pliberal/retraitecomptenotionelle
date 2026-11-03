@@ -63,6 +63,17 @@ def part_soumise(moteur: ScenarioActuel, ligne) -> float:
         ligne.affiliation, ligne.annee, ligne.part_primes).soumise
 
 
+def revenu_de_l_annee(carriere, affiliation: str, annee: int) -> float:
+    """Le revenu d'une autre année que la cotisation lit : celui des lignes
+    cotisées de la même affiliation, nul s'il n'y en a pas. Jumeau de
+    ``revenuDeLAnnee``."""
+    total = 0.0
+    for autre in carriere.lignes_de(annee):
+        if autre.affiliation == affiliation and autre.cotise:
+            total += autre.revenu
+    return total
+
+
 def assiette_minimale(moteur: ScenarioActuel, codes, ligne) -> float:
     """L'assiette minimale que la ligne oppose à l'un de ces régimes.
 
@@ -585,6 +596,25 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
                     # Une année RÉTABLIE : l'Ircantec valide le
                     # traitement de l'année, les primes restent au RAFP.
                     base = base_ligne * (1.0 - ligne.part_primes)
+                # L'AVANT-DERNIÈRE ANNÉE : jusqu'aux cotisations de 2008, la
+                # cotisation du RCO des artisans est « assise sur les revenus
+                # professionnels non-salariés de l'avant-dernière année
+                # civile », dans la limite d'un multiple du plafond « en
+                # vigueur dans l'année où la cotisation est due » (décret
+                # n° 78-351, article 3 ; D. 635-4 ; D. 635-2), sans l'ajustement
+                # que le régime de base fait sur le revenu de l'année : le
+                # revenu des deux dernières années d'une activité qui cesse ne
+                # cotise jamais, ni ceux de 2007 et de 2008, la cotisation
+                # étant depuis les revenus de 2009 régularisée sur le revenu
+                # de l'année (décret n° 2008-1427). Le revenu de l'autre année
+                # se prend à proportion des mois de l'exercice, comme ses
+                # bornes. Le conjoint collaborateur, absent de la table, cotise
+                # sur « le revenu retenu [...] pour le calcul de sa cotisation
+                # d'assurance vieillesse de base » (D. 635-10-2).
+                decalage = dict(periode.assiette_annee_de_revenu).get(ligne.affiliation)
+                if decalage and ligne.cotise:
+                    base = revenu_de_l_annee(
+                        carriere, ligne.affiliation, ligne.annee - decalage) * part
                 # L'assiette de la CAVAMAC est faite des commissions
                 # versées par les compagnies, celle de la CPRN des produits
                 # de l'office : le facteur les reconstitue depuis le

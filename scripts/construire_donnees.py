@@ -834,6 +834,10 @@ def _regimes() -> list[dict]:
                     # JavaScript le lit nul.
                     **({"trimestres_retenus_maximum": p.trimestres_retenus_maximum}
                        if p.trimestres_retenus_maximum is not None else {}),
+                    # Les périodes du RCO des artisans jusqu'en 2008 le posent :
+                    # absent, le moteur JavaScript lit le revenu de l'année.
+                    **({"assiette_annee_de_revenu": dict(p.assiette_annee_de_revenu)}
+                       if p.assiette_annee_de_revenu else {}),
                     # La fiche datée du salaire annuel moyen, aux seules
                     # périodes qui y renvoient : absente, la moyenne annuelle.
                     **({"regles_du_salaire_annuel_moyen": p.regles_du_salaire_annuel_moyen}
