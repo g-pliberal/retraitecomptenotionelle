@@ -1,0 +1,45 @@
+date: "2026-11-03"
+session: "action 130, file E : la carte des fiches, l'Ircantec lue au droit (sixième lot)"
+consulte: >-
+  python scripts/veille_droit.py ; les index LEGI et JORF du dépôt, récupérés et à jour de
+  l'incrément du 2 novembre 2026 (20261102-213929), et du 3 novembre pour le JORF
+  (20261103-002311) ; python scripts/textes.py --inscrire, trente-deux rédactions
+  nouvelles « à examiner », toutes de la loi n° 48-1469, que la fiche des marins cite.
+  Dans LEGI, l'arrêté du 30 décembre 1970 relatif au régime de l'Ircantec, article 16, ses
+  treize rédactions (LEGIARTI000006381606 à LEGIARTI000006381612, LEGIARTI000019511923,
+  LEGIARTI000024266924, LEGIARTI000036755233, LEGIARTI000037845437,
+  LEGIARTI000048065521), chacune contre la suivante, et son article 17 dans sa rédaction
+  de 1971 ; le décret n° 70-1277 du 23 décembre 1970, la liste de ses articles et son
+  article 2 ; le code de la sécurité sociale,
+  L. 351-8 (rédaction de 2014, ses 1° bis et 1° ter), L. 161-17-4 et L. 351-6-1. Au
+  Journal officiel, par l'index JORF : les arrêtés du 30 décembre 1970 (son analyse :
+  ceux de l'IPACTE et de l'IGRANTE « annulés et remplacés »), du 26 décembre 1975, du
+  20 septembre 1978, du 26 juillet 1983 (son analyse : les coefficients « fixés désormais
+  par trimestre », les exonérations à compter du 1er juillet 1982 et du 1er avril 1983),
+  du 29 mars 2018, du 18 décembre 2018 et du 11 septembre 2023.
+trouve: >-
+  L'article 16 change sa règle à onze dates depuis 1971, qui coupent les treize versions
+  du coefficient : jusqu'au 31 août 1983, une table par année d'âge, de 0,43 à
+  cinquante-cinq ans à 0,96 à soixante-quatre ; le 26 juillet 1983, l'escalier au
+  trimestre, et, rétroactivement au 1er avril 1983, l'exonération au taux plein du régime
+  général et une seconde table sur trente-sept ans et demi ; le 1er janvier 2004, la
+  seconde table sur la durée de la génération ; le 1er juillet 2011, les âges de la loi
+  de 2010 ; le 14 septembre 2023, des ancres fixes à 62 et 64 ans, que le modèle rend
+  par l'âge du taux plein. Les majorations de la surcote naissent le 25 septembre 2008,
+  « A compter du 1er janvier 2010 ». Deux erreurs du modèle, déclarées : il lit dès 1951
+  l'escalier au trimestre, jusqu'à 3,75 points de coefficient de trop entre deux
+  anniversaires avant le 31 août 1983 ; et la période unique de l'IPACTE et de l'IGRANTE
+  porte la durée requise, qui exonère leurs points dès 1951 au lieu du 1er avril 1983,
+  jusqu'à 22 points de trop. Des écarts plus petits, déclarés : l'anticipation avant
+  l'âge légal non servie (déjà mesurée par un exemple de la caisse), soixante-cinq ans
+  gardé aux points de l'IPACTE et de l'IGRANTE après 2011, des exonérations servies trop
+  tôt ou pas du tout, le trimestre de quatre-vingt-dix jours de la surcote. Le cliquet des
+  textes descend de 9 418 à 9 411 ; la carte, de 93 fiches à lire au droit à 91.
+reste: >-
+  Les deux erreurs d'avant 1983, pour une étape du modèle, à décider par le propriétaire.
+  La pratique de la caisse de 1994 à 2003, quand la seconde table lit trente-sept ans et
+  demi et la durée des générations monte : une circulaire de l'Ircantec de 1994. Les
+  exonérations d'après 2011 que le modèle sert peut-être par l'inaptitude (incapacité
+  permanente, amiante, handicapé du 1° ter, compte de prévention). Les arrêtés de l'IPACTE
+  (12 décembre 1951) et de l'IGRANTE (17 février 1960), absents de LEGI. Un exemple chiffré
+  de la surcote.

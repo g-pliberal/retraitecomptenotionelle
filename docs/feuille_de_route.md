@@ -2805,16 +2805,16 @@ fabriqués.
 
 ### 130. L'architecture du dépôt : décidée, les phases 0 à 8 faites, les domaines à ouvrir — `en cours`
 
-**Reprise, au 2 novembre 2026.** Fait : phases 0 à 8, cinq domaines clos ; le
+**Reprise, au 3 novembre 2026.** Fait : phases 0 à 8, cinq domaines clos ; le
 sixième, les périodes assimilées manquantes, a ses étapes 1 à 6 faites
 (`130/2026-10-17-sixieme-domaine-etape-6.md`). Au propriétaire, README muet :
 sa septième étape, la décision de la proposition, la retraite progressive, le
-cumul et la seconde pension, et l'abattement des marins (R. 11, 3°). La carte
-mûrit : RAFP, CNAVPL, IEG, SNCF, RATP et marins lus au droit ; restent 92
-fiches à lire, 550 manques, les points ouverts des phases 2 à 8. La file E seule
-récrit ce bloc ; la file G corrige en même temps la durée de la CRPCEN et de la
-Comédie-Française, dans sa note. Par quoi commencer : un lot dans `LUES_AU_DROIT`
-(`docs/veille_droit.md`). Détail : `130/2026-11-02-carte-des-fiches-marins-lus-au-droit.md`.
+cumul et la seconde pension, l'abattement des marins (R. 11, 3°), les deux
+erreurs de l'Ircantec d'avant 1983. La carte mûrit : RAFP, CNAVPL, IEG, SNCF,
+RATP, marins et Ircantec lus au droit ; restent 91 fiches, 539 manques. La file
+E seule récrit ce bloc ; la file G corrige en même temps la surcote de la SNCF
+et de la RATP, et écrit sa note sous `130/` sans y toucher. Par quoi commencer :
+un lot dans `LUES_AU_DROIT`. Détail : `130/2026-11-03-carte-des-fiches-ircantec-lue-au-droit.md`.
 
 Le dépôt devenait de plus en plus lourd à faire avancer. Une modification du
 moteur du scénario 1 touchait vingt fichiers en médiane, dont sept ou huit de
