@@ -18,7 +18,11 @@ les mêmes cas types aux mêmes poids, la simule une fois
   que l'enquête ne voit pas, se juge sur les nés en 1953
   (``GENERATIONS_DES_DEPARTS``) ;
 * les fonctionnaires civils de l'État et de la CNRACL : leurs retraités de
-  2024 et leurs liquidants de chaque année de 2020 à 2025 ;
+  2024 et leurs liquidants de chaque année de 2020 à 2025 ; ceux de l'État en
+  regard de la table H de l'EACR, qui compte tous ses liquidants civils, le
+  champ de la mesure — non des seuls départs pour ancienneté de 2025 du jaune
+  (tableau B-3, 42,7 %), que la note de la version leur opposait (relecture
+  R-I, point 4.5) ;
 * le régime général (le groupe ``regime_general`` de la population, celui de
   ``scripts/controle_eacr.py``) : ses liquidants et ses retraités de 2024, et
   la décote de ses liquidants ;

@@ -1285,7 +1285,12 @@ TRIMESTRES_DE_RECHERCHE = 40
 #: les départs de sa caisse, que le jaune publie seule chaque année ; l'EIR ne
 #: voyant que les nés en 1950 et en 1953, les générations d'avant 1950 prennent
 #: la part de 1950, celles d'après 1953 la part de 1953, et leurs attentes
-#: restent celles des nés en 1953.
+#: restent celles des nés en 1953. La cible n'est pas le chiffre de l'EIR qui
+#: juge la mesure (relecture R-I, point 4.2) : la cible est la part des
+#: résidents en France, conditions inconnues comprises (nés en 1953 : 14,2 %
+#: des femmes, 14,4 % des hommes) ; :func:`confronter_departs` juge toutes les
+#: résidences parmi les conditions connues (14,2 / 99,2 = 14,31 % et
+#: 14,5 / 99,0 = 14,65 %), 0,1 à 0,25 point de plus, que la version ne vise pas.
 SURCOTE_SELON_LA_GENERATION = True
 
 #: La part des départs de chaque année qui surcotent, à tous les départs des
@@ -1293,7 +1298,16 @@ SURCOTE_SELON_LA_GENERATION = True
 #: CNRACL (tableau 105), recopiée de ``macro/caracteristiques_fonction_publique.csv``,
 #: qu'aucun calcul ne lit : paires ``(année, part)`` triées, de 2004, où naît la
 #: surcote, à 2025. Le jaune ne publie pas les années 2005 à 2010 de l'État, ni
-#: 2005 à 2012 de la CNRACL.
+#: 2005 à 2012 de la CNRACL. La série se prend telle quelle, sa rupture de 2012
+#: comprise (relecture R-I, point 4.1) : sa note 154 (p. 182) dit qu'en 2012
+#: « l'effectif de nouveaux retraités avait connu une forte baisse (-34 %),
+#: principalement liée au contrecoup des départs anticipés massifs pour parents
+#: de trois enfants de 2011 et à la montée en charge de la mesure d'âge. De ce
+#: fait, alors que l'effectif de surcotés se réduisait à 16 910 concernés contre
+#: 21 000 en 2011, la part des surcotés avait progressée ». Le sédentaire de l'État en
+#: tire une suite qui n'est pas monotone : né en 1951, à son âge légal en 2011,
+#: il surcote pour 38,8 % ; en 1952, à la fin de 2012, pour 44,7 % ; en 1953,
+#: pour 42,9 % ; en 1955, en 2017, pour 38,8 %.
 SURCOTES_DU_JAUNE_PAR_ANNEE = {
     "fpe_civils": ((2004, 0.14), (2011, 0.28), (2012, 0.36), (2013, 0.31), (2014, 0.31),
                    (2015, 0.31), (2016, 0.3), (2017, 0.28), (2018, 0.31), (2019, 0.32),
