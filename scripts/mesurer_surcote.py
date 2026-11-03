@@ -126,6 +126,13 @@ AGES_DU_STOCK = tuple(range(60, 68))
 GENERATIONS_COMPTEES = (1955, 1960, 1965)
 AGE_DES_GENERATIONS = 67
 
+#: La caisse de la table H qui juge chaque groupe de la population : la Cnav
+#: (régime général, indépendants compris depuis 2020), l'État civil et
+#: militaire (cubes du SRE), les exploitants agricoles (MSA non-salariés).
+#: La CNRACL, les régimes spéciaux et les professions libérales n'y sont pas.
+CAISSE_DU_GROUPE = {"regime_general": CNAV, "fonction_publique_etat_civile": ETAT,
+                    "fonction_publique_etat_militaire": "0013", "msa_non_salaries": "0022"}
+
 #: Les sexes d'une part, et leur ensemble.
 SEXES_ET_ENSEMBLE = ("ensemble", "F", "H")
 
@@ -280,6 +287,29 @@ def parts_de_la_pesee(lots: dict, par_code: dict, conditions: dict, decotes: dic
                                      decotee, sexe_de)
             for age in AGES_DU_STOCK},
     }
+    def connue(c) -> bool:
+        return (c.code, c.generation) in conditions
+
+    def decotee_a_la_condition(c) -> bool:
+        return conditions[(c.code, c.generation)][1] == "decote"
+
+    sortie["par_groupe"] = {}
+    for groupe in sorted({par_code[c.code].groupe for c in du_flux}):
+        def du_groupe(c, groupe=groupe) -> bool:
+            return par_code[c.code].groupe == groupe and connue(c)
+
+        sortie["par_groupe"][groupe] = {
+            "liquidants_2024": parts_par_sexe(du_flux, lambda c, du_groupe=du_groupe: (
+                c.nouvelle and du_groupe(c)), decotee_a_la_condition, sexe_de),
+            "stock_2024_par_age": {
+                str(age): parts_par_sexe(du_flux, lambda c, age=age, du_groupe=du_groupe: (
+                    c.age == age and du_groupe(c)), decotee_a_la_condition, sexe_de)
+                for age in AGES_DU_STOCK},
+            "inconnues_2024_de_60_a_67_ans": part(
+                du_flux, lambda c, groupe=groupe: (par_code[c.code].groupe == groupe
+                                                   and c.age in AGES_DU_STOCK),
+                lambda c: not connue(c)),
+        }
     stock = lots.get(ANNEE_DU_STOCK, [])
     debut, fin = TRANCHE_DU_STOCK
     sexes = {}
@@ -388,9 +418,25 @@ def sources(temoin: dict) -> dict:
                        if ligne and (sexe == "ensemble" or complete) else None)
                 for sexe, ligne in lignes.items()}
 
-    stock = temoin["conditions_par_age"]["series"]["stock"]
+    par_caisse = temoin["conditions_par_age"]["series"]
+    stock = par_caisse[CNAV]["stock"]
     flux_par_age = {sexe: annees[str(M.ANNEE_EACR)] for sexe, annees
-                    in temoin["conditions_par_age"]["series"]["flux"].items()}
+                    in par_caisse[CNAV]["flux"].items()}
+
+    def parts_de_la_caisse(series: dict) -> dict:
+        annee = str(M.ANNEE_EACR)
+
+        def decote(ligne: dict | None) -> float | None:
+            return ligne.get("decote", 0.0) / ligne["ensemble"] if ligne else None
+
+        return {"decote_liquidants_2024": {
+                    sexe: decote(series["flux"].get(sexe, {}).get(annee, {}).get("Ensemble"))
+                    for sexe in SEXES_ET_ENSEMBLE},
+                "stock_2024_par_age": {
+                    str(age): {sexe: decote(series.get("stock", {}).get(sexe, {})
+                                            .get(annee, {}).get(str(age)))
+                               for sexe in SEXES_ET_ENSEMBLE}
+                    for age in AGES_DU_STOCK}}
     return {
         "cnav": {"liquidants_2024": de_la_table_h(CNAV, "flux", M.ANNEE_EACR),
                  "retraites_2024": de_la_table_h(CNAV, "stock", M.ANNEE_EACR),
@@ -410,6 +456,7 @@ def sources(temoin: dict) -> dict:
                  "liquidants_2024_de_68_ans_et_plus":
                      somme_ordonnee(apres_67) / par_age["Ensemble"],
                  "liquidants_2024_a_67_ans": par_age["67"] / par_age["Ensemble"]},
+        "caisses": {code: parts_de_la_caisse(series) for code, series in par_caisse.items()},
         "etat": {"retraites_2024": de_la_table_h(ETAT, "stock", M.ANNEE_EACR),
                  "liquidants": {str(annee): de_la_table_h(ETAT, "flux", annee)
                                 for annee in ANNEES_DES_LIQUIDANTS}},
@@ -547,7 +594,9 @@ def mesurer(grille: str = "population", constante: str = "SURCOTE_SELON_LA_GENER
                    or par_code[c.code].cas.affiliation in FONCTIONNAIRES_CIVILS)}
     generations = {(cas_par_code[p.code], p.generation) for p in tetes.pensionnes
                    if p.generation in GENERATIONS_COMPTEES}
-    couples = liquidants | stocks | generations
+    de_2024 = {(cas_par_code[c.code], c.generation) for c in brutes[M.ANNEE_EACR]
+               if c.nouvelle or c.age in AGES_DU_STOCK}
+    couples = liquidants | stocks | generations | de_2024
     conditions = {(code, generation): (age, condition) for code, generation, age, condition
                   in G._par_morceaux(G._conditions, parametres, couples, processus)}
     decotes = G.proratisations(
@@ -798,6 +847,25 @@ def imprimer_la_decote(resultat: dict) -> None:
                                for p in (eteinte, version)]
                     print(f"| {generation}, {champ}, {sexe}, {classe} | {_pc(source)} | "
                           f"{_pc(cible)} | {_pc(valeurs[0])} | {_pc(valeurs[1])} |")
+    print()
+    print("Chaque groupe de la population en 2024, à la condition du départ, contre la "
+          "caisse de la table H qui le juge (« — » sans caisse) : ses liquidants, son stock "
+          "à chaque âge (la génération 2024 moins l'âge).")
+    print()
+    print("| groupe, champ | source | éteinte | version |")
+    print("|---|---|---|---|")
+    caisses = resultat["sources"]["caisses"]
+    for groupe in sorted(version["par_groupe"]):
+        caisse = caisses.get(CAISSE_DU_GROUPE.get(groupe, ""), {})
+        e, v = eteinte["par_groupe"].get(groupe, {}), version["par_groupe"][groupe]
+        print(_ligne(f"{groupe}, liquidants de 2024", caisse.get(
+            "decote_liquidants_2024", {}).get("ensemble"),
+            e.get("liquidants_2024", {}).get("ensemble"), v["liquidants_2024"]["ensemble"]))
+        for age in map(str, AGES_DU_STOCK):
+            print(_ligne(f"{groupe}, stock de 2024 à {age} ans", caisse.get(
+                "stock_2024_par_age", {}).get(age, {}).get("ensemble"),
+                e.get("stock_2024_par_age", {}).get(age, {}).get("ensemble"),
+                v["stock_2024_par_age"][age]["ensemble"]))
     print()
     print(f"Chaque groupe de la population dans les départs de la génération pris à "
           f"{AGE_DES_GENERATIONS} ans (version) : son poids, sa décote, sa surcote.")

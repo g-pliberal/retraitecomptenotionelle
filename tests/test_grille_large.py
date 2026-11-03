@@ -3387,6 +3387,19 @@ def test_la_mesure_de_la_surcote_lit_ses_sources_annee_par_annee():
         16_144 / 46_737)
     assert cnav["decote_liquidants_2024_par_age"]["67"]["ensemble"] == pytest.approx(
         1_970 / 60_530)
+    # Les autres caisses de la table H : l'État civil, ses liquidants de 2024,
+    # 8 289 décotés sur 8 289 + 17 547 + 19 242 = 45 078, et son stock à 64
+    # ans, 9 726 sur 50 663 ; les exploitants agricoles, 1 521 sur 30 425 et
+    # 1 482 sur 24 219.
+    caisses = sources["caisses"]
+    assert caisses["0012"]["decote_liquidants_2024"]["ensemble"] == pytest.approx(
+        8_289 / 45_078)
+    assert caisses["0012"]["stock_2024_par_age"]["64"]["ensemble"] == pytest.approx(
+        9_726 / 50_663)
+    assert caisses["0022"]["decote_liquidants_2024"]["ensemble"] == pytest.approx(
+        1_521 / 30_425)
+    assert caisses["0022"]["stock_2024_par_age"]["64"]["ensemble"] == pytest.approx(
+        1_482 / 24_219)
 
 
 def test_la_mesure_de_la_surcote_construit_la_version_la_constante_allumee(monkeypatch):
@@ -3504,6 +3517,17 @@ def test_la_mesure_compte_les_stocks_a_la_condition_et_la_decote_d_apres_1960():
         {"ensemble": 2 / 8, "F": 0.0, "H": 1.0})
     assert regime["decote_liquidants_2024_par_age"]["64"] == {"ensemble": None, "F": None,
                                                               "H": None}
+    # Chaque groupe, à la condition du départ, parmi les conditions lues : le
+    # régime général de 2024, à 64 ans, la femme décotée (3) sur 4 + 2 + 3 ;
+    # ses liquidants, le cadre et la femme de 62 ans, 2 + 6 sur 2 + 6 ;
+    # l'État, aucun liquidant, et ses 74 et 84 ans hors des âges suivis.
+    groupes = parts["par_groupe"]
+    assert groupes["regime_general"]["stock_2024_par_age"]["64"] == pytest.approx(
+        {"ensemble": 3 / 9, "F": 1.0, "H": 0.0})
+    assert groupes["regime_general"]["liquidants_2024"] == pytest.approx(
+        {"ensemble": 1.0, "F": 1.0, "H": 1.0})
+    assert groupes["fonction_publique_etat_civile"]["liquidants_2024"] == {
+        "ensemble": None, "F": None, "H": None}
 
 
 def test_la_mesure_compte_les_departs_de_chaque_generation_par_classe():

@@ -62,19 +62,35 @@ def test_le_temoin_de_l_eacr_dit_sa_source_et_redonne_ses_totaux(eacr):
 
 
 def test_le_temoin_garde_les_conditions_de_la_cnav_age_par_age(eacr):
-    """La table H de la Cnav, âge par âge (action 138, étape 14, la décote des
-    générations nées depuis 1960). Le stock de 2024 à 67 ans, la génération
-    1957, compte 85 676 retraités partis avec une décote sur 653 763, soit
-    13,1 % : la part que le graphique 4 de la fiche 17 du panorama de la DREES
-    (édition 2026, p. 158 de l'ouvrage) donne au régime général pour la
-    génération 1957, « calculée à l'âge de 67 ans ». À 64 ans, la génération
-    1960 : 69 611 sur 551 996, dont 40 845 des 285 736 femmes et 28 766 des
-    266 260 hommes. Les âges et « plus de 95 » redonnent, au stock, la ligne
-    « Ensemble » de chaque condition (1 386 961 décotés sur 14 744 736) ; les
-    âges et « plus de 70 », au flux (86 776 sur 648 346)."""
+    """La table H, âge par âge (action 138, étape 14, la décote des
+    générations nées depuis 1960). Le stock de la Cnav de 2024 à 67 ans, la
+    génération 1957, compte 85 676 retraités partis avec une décote sur
+    653 763, soit 13,1 % : la part que le graphique 4 de la fiche 17 du
+    panorama de la DREES (édition 2026, p. 158 de l'ouvrage) donne au régime
+    général pour la génération 1957, « calculée à l'âge de 67 ans ». À 64 ans,
+    la génération 1960 : 69 611 sur 551 996, dont 40 845 des 285 736 femmes et
+    28 766 des 266 260 hommes. Les âges et « plus de 95 » redonnent, au stock,
+    la ligne « Ensemble » de chaque condition (1 386 961 décotés sur
+    14 744 736) ; les âges et « plus de 70 », au flux (86 776 sur 648 346).
+    Les autres caisses, à 67 ans : la MSA salariés, 2 454 sur 47 916, 5,1 %,
+    et les exploitants, 2 050 sur 31 225, 6,6 %, celles du graphique ; l'État
+    civil, dont le SRE ne donne pas la ligne « Ensemble », refaite de la
+    somme, 11 159 sur 11 159 + 20 230 + 38 369 = 69 758, 16,0 %, quand le
+    graphique dit 15,8 % ; à 64 ans, 9 726 sur 9 726 + 11 466 + 29 471 =
+    50 663."""
     par_age = eacr["conditions_par_age"]
-    assert (par_age["feuille"], par_age["caisse"]) == ("H-Conditions_liq", "0015")
-    stock = par_age["series"]["stock"]
+    assert par_age["feuille"] == "H-Conditions_liq"
+    assert {"0015", "0012", "0021", "0022"} <= set(par_age["series"])
+    a_67 = {code: par_age["series"][code]["stock"]["ensemble"]["2024"]["67"]
+            for code in ("0021", "0022", "0012")}
+    assert (a_67["0021"]["decote"], a_67["0021"]["ensemble"]) == (2_454, 47_916)
+    assert (a_67["0022"]["decote"], a_67["0022"]["ensemble"]) == (2_050, 31_225)
+    assert (a_67["0012"]["decote"], a_67["0012"]["ensemble"]) == (11_159, 69_758)
+    assert [round(100 * a_67[c]["decote"] / a_67[c]["ensemble"], 1)
+            for c in ("0021", "0022", "0012")] == [5.1, 6.6, 16.0]
+    etat_64 = par_age["series"]["0012"]["stock"]["ensemble"]["2024"]["64"]
+    assert (etat_64["decote"], etat_64["ensemble"]) == (9_726, 50_663)
+    stock = par_age["series"]["0015"]["stock"]
     assert stock["ensemble"]["2024"]["67"]["decote"] == 85_676
     assert stock["ensemble"]["2024"]["67"]["ensemble"] == 653_763
     assert round(100 * 85_676 / 653_763, 1) == 13.1
@@ -86,7 +102,7 @@ def test_le_temoin_garde_les_conditions_de_la_cnav_age_par_age(eacr):
         28_766, 266_260)
     for champ, reste, total in (("stock", "plus de 95", (1_386_961, 14_744_736)),
                                 ("flux", "plus de 70", (86_776, 648_346))):
-        ages = par_age["series"][champ]["ensemble"]["2024"]
+        ages = par_age["series"]["0015"][champ]["ensemble"]["2024"]
         for taux in ("decote", "ensemble"):
             somme = sum(valeurs.get(taux, 0.0) for age, valeurs in ages.items()
                         if age.isdigit() or age == reste)
