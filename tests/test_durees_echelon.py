@@ -656,15 +656,15 @@ def test_les_officiers_du_cadre_special_echelle_par_echelle(lignes):
 
 #: Les versions que le LEGI date d'une fin antérieure ou égale à leur début, que
 #: ``dila_cherche.py legi --num … --diff`` marque « (jamais en vigueur) » : n° 99-669,
-#: art. 17, du 1er janvier 2021 au 1er juin 2020 ; n° 83-1260, art. 34, du
-#: 8 janvier 1984 au 4 août 1980 ; n° 91-868, art. 7, du 1er janvier 2021 au
-#: 19 novembre 2018 ; n° 91-290, art. 14-4, du 1er septembre 2014 au 30 août 2012 ;
-#: n° 2014-923, art. 25, n° 92-851, art. 14, du 1er janvier 2017 au même jour ;
-#: n° 2014-1455, art. 22, du 15 décembre 2025 au même jour.
+#: art. 17, du 1er janvier 2021 au 1er juin 2020 ; n° 91-868, art. 7, du
+#: 1er janvier 2021 au 19 novembre 2018 ; n° 91-290, art. 14-4, du 1er septembre 2014
+#: au 30 août 2012 ; n° 2014-923, art. 25, n° 92-851, art. 14, du 1er janvier 2017 au
+#: même jour ; n° 2014-1455, art. 22, du 15 décembre 2025 au même jour. Le n° 83-1260,
+#: art. 34, du 8 janvier 1984 au 4 août 1980, n'en est plus : une coquille du LEGI,
+#: corrigée sur la preuve du JORF (``COQUILLES_DU_LEGI``, plus bas).
 JAMAIS_EN_VIGUEUR = {
-    "LEGIARTI000034810141", "LEGIARTI000027940471", "LEGIARTI000035606585",
-    "LEGIARTI000025845550", "LEGIARTI000032578591", "LEGIARTI000034434459",
-    "LEGIARTI000052465286"}
+    "LEGIARTI000034810141", "LEGIARTI000035606585", "LEGIARTI000025845550",
+    "LEGIARTI000032578591", "LEGIARTI000034434459", "LEGIARTI000052465286"}
 
 
 def test_une_version_jamais_en_vigueur_se_reconnait_a_ses_dates():
@@ -710,6 +710,64 @@ def test_la_version_en_vigueur_a_ces_dates_est_lue(lignes, tableaux_lus):
     (medecins,) = [t for t in tableaux_lus if "LEGIARTI000037468701" in t["versions"].split()]
     assert (medecins["article"], medecins["debut"]) == ("LEGIARTI000037468701", "2017-01-01")
     assert _ligne(lignes, "LEGIARTI000037468701", "Médecin hors classe", "4")["duree"] == "36"
+
+
+#: Décret n° 83-1260 du 30 décembre 1983, corps des EPST, article 34, rédaction
+#: d'origine (LEGIARTI000027940471), en entier, au LEGI. Le LEGI la date du
+#: 8 janvier 1984 au 4 août 1980 : coquille pour 1990. Au JORF, le décret n° 90-685
+#: du 27 juillet 1990, art. 5 (JORFARTI000000984252) : « Le tableau de l'article 34
+#: du décret du 30 décembre 1983 susvisé est remplacé par le tableau ci-dessous: …
+#: Vous pouvez consulter le tableau dans le JO no 0178 du 03/08/1990 » ; de 1984 à
+#: 1990, les seuls décrets qui modifient le n° 83-1260, n° 88-1072 et n° 89-74, ne
+#: touchent que ses articles 104 et 185 ; au LEGI, la version suivante commence le
+#: 4 août 1990. Les articles du JORF de 1984 sont vides dans l'index : le contenu
+#: est celui du LEGI.
+CHARGES_DE_RECHERCHE_1984 = (
+    "Les chargés de recherche qui réunissent dans leur grade les conditions d'ancienneté "
+    "d'échelon fixées au tableau ci dessous peuvent bénéficier d'un aVancement d'échelon : "
+    "GRADES ET ECHELONS ANCIENNETE REQUISE dans l'échelon Chargés de recherche de première "
+    "classe 9e échelon Echelon terminal 8e échelon 3 ans 7e échelon 3 ans 6e échelon 3 ans "
+    "5e échelon 2 ans 6 mois 4e échelon 2 ans 6 mois 3e échelon 2 ans 6 mois 2e échelon 2 ans "
+    "6 mois 1er échelon 2 ans Chargés de recherche de deuxième classe 6e échelon Echelon "
+    "terminal 5e échelon 2 ans 4e échelon 1 an 5 mois 3e échelon 1 an 4 mois 2e échelon 1 an "
+    "3 mois 1er échelon 1 an Les avancements d'échelon des chargés de recherche sont décidés "
+    "chaque année par le directeur général de l'établissement."
+)
+CHARGES_DE_RECHERCHE_1984_DUREES = {
+    **{("Chargés de recherche de première classe", e): d for e, d in (
+        ("9", None), ("8", 36), ("7", 36), ("6", 36), ("5", 30), ("4", 30), ("3", 30),
+        ("2", 30), ("1", 24))},
+    **{("Chargés de recherche de deuxième classe", e): d for e, d in (
+        ("6", None), ("5", 24), ("4", 17), ("3", 16), ("2", 15), ("1", 12))}}
+
+
+def test_une_coquille_du_legi_se_corrige_sur_la_preuve_du_jorf():
+    """La fin « 1980-08-04 » se lit 1990-08-04 ; la correction cite sa preuve. Si le
+    LEGI écrit un jour la bonne date, rien ne se corrige."""
+    debut, fin, correction = dur.corriger("LEGIARTI000027940471", "1984-01-08", "1980-08-04")
+    assert (debut, fin) == ("1984-01-08", "1990-08-04")
+    for mot in ("1980-08-04", "n° 90-685", "JORFARTI000000984252", "JO n° 178 du 3 août 1990",
+                "version du LEGI"):
+        assert mot in correction, mot
+    assert dur.corriger("LEGIARTI000027940471", "1984-01-08", "1990-08-04") == (
+        "1984-01-08", "1990-08-04", "")
+    assert dur.corriger("LEGIARTI000027940483", "1990-08-04", "2002-02-03") == (
+        "1990-08-04", "2002-02-03", "")
+
+
+def test_la_redaction_d_origine_des_charges_de_recherche_est_lue(lignes, tableaux_lus):
+    assert _durees(_un_tableau(CHARGES_DE_RECHERCHE_1984), "duree") == \
+        CHARGES_DE_RECHERCHE_1984_DUREES
+    (version,) = _versions(tableaux_lus, "LEGIARTI000027940471")
+    assert (version["debut"], version["fin"], version["colonnes"], version["lignes"]) == (
+        "1984-01-08", "1990-08-04", "unique", "15")
+    assert "JORFARTI000000984252" in version["correction"]
+    assert not [t["article"] for t in tableaux_lus
+                if t["correction"] and t["article"] != "LEGIARTI000027940471"]
+    au_depot = {(l["groupe"], l["echelon"]): int(l["duree"]) if l["duree"] else None
+                for l in lignes if l["article"] == "LEGIARTI000027940471"}
+    assert au_depot == CHARGES_DE_RECHERCHE_1984_DUREES
+    assert not [n for n in _lire("non_lus") if n["article"] == "LEGIARTI000027940471"]
 
 
 def test_aucun_libelle_ne_garde_la_case_d_un_echelon(lignes):

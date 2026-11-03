@@ -47,7 +47,10 @@ les 6e et 8e échelons… ») l'arrête, même quand il nomme des échelons. Les
 autre texte (« sont fixées à l'article 4 du décret du 20 septembre 1973 »), ne
 sont pas lues : elles y sont consignées aussi. Une version que le LEGI date
 d'une fin antérieure ou égale à son début n'a jamais été en vigueur : elle
-n'est ni lue ni réunie à la suivante, et s'y consigne, tableau par tableau.
+n'est ni lue ni réunie à la suivante, et s'y consigne, tableau par tableau ;
+sauf quand la date est une coquille du LEGI que le JORF prouve
+(``COQUILLES_DU_LEGI``) : elle se corrige, et ``tableaux.csv`` dit la
+correction et sa preuve.
 
 CE QU'IL ÉCRIT, sous ``data/reference/grilles/durees/`` : ``textes.csv``, les
 textes qui portent un tableau lu ou refusé, avec leur versant (celui des
@@ -649,6 +652,45 @@ def jamais_en_vigueur(debut: str, fin: str) -> bool:
     return bool(_fin(fin)) and fin <= debut
 
 
+@dataclass(frozen=True)
+class Coquille:
+    """Une date que le LEGI écrit de travers : le champ (``debut`` ou ``fin``), ce
+    que le LEGI écrit, ce que le dépôt retient, et la preuve, lue au JORF."""
+    champ: str
+    au_legi: str
+    retenue: str
+    preuve: str
+
+
+#: Les coquilles du LEGI, corrigées sur la preuve du JORF, version par version
+#: (action 158, retouches de la relecture R-B2-bis, note du 3 novembre 2026).
+COQUILLES_DU_LEGI = {
+    # Décret n° 83-1260, art. 34, rédaction d'origine : sa fin, « 1980-08-04 »,
+    # précède le texte même (décret du 30 décembre 1983, JO du 7 janvier 1984).
+    "LEGIARTI000027940471": Coquille(
+        "fin", "1980-08-04", "1990-08-04",
+        "fin corrigée : le LEGI écrit 1980-08-04, coquille pour 1990-08-04 ; au JORF, le "
+        "décret n° 90-685 du 27 juillet 1990, art. 5 (JORFARTI000000984252), publié au JO "
+        "n° 178 du 3 août 1990, remplace ce tableau (« Le tableau de l'article 34 du décret "
+        "du 30 décembre 1983 susvisé est remplacé par le tableau ci-dessous »), et de 1984 à "
+        "1990 les seuls décrets qui modifient le n° 83-1260 (n° 88-1072 et n° 89-74) ne "
+        "touchent que ses articles 104 et 185 ; le contenu est celui de la version du LEGI, "
+        "les articles du JORF de 1984 étant vides dans l'index"),
+}
+
+
+def corriger(ident: str, debut: str, fin: str) -> tuple[str, str, str]:
+    """Les dates d'une version, corrigées si le LEGI y écrit une coquille connue
+    (``COQUILLES_DU_LEGI``), et la correction, avec sa preuve ; rien ne se corrige
+    si le LEGI écrit autre chose que la coquille relevée."""
+    coquille = COQUILLES_DU_LEGI.get(ident)
+    dates = {"debut": debut, "fin": fin}
+    if not coquille or dates[coquille.champ] != coquille.au_legi:
+        return debut, fin, ""
+    dates[coquille.champ] = coquille.retenue
+    return dates["debut"], dates["fin"], coquille.preuve
+
+
 def _versant(titre: str, visas: str) -> str:
     from dila_legi_grilles import versant  # noqa: PLC0415
     lu = versant(titre, visas)
@@ -731,6 +773,7 @@ def extraire(chemin_index: Path | str | None = None) -> dict:
             continue
         texte = infos[titre]["texte"]
         extraits = tableaux(contenu)
+        debut, fin, correction = corriger(ident, debut, fin)
         if jamais_en_vigueur(debut, fin):
             # Ni lue, ni réunie à la suivante : consignée, tableau par tableau.
             if extraits or _en_prose(contenu):
@@ -767,12 +810,14 @@ def extraire(chemin_index: Path | str | None = None) -> dict:
             if avant and avant["contenu"] == contenu_lu and avant["fin"] == debut:
                 avant["fin"] = fin            # la version suivante redit le même tableau
                 avant["versions"].append(ident)
+                avant["corrections"] += [correction] if correction else []
                 continue
             if avant:
                 lus[(texte, numero, rang, avant["debut"])] = lus.pop(cle)
             lus[cle] = {"texte": texte, "article": ident, "numero": numero, "tableau": str(rang),
                         "debut": debut, "fin": fin, "intro": extrait.intro, "tableau_lu": tableau,
-                        "contenu": contenu_lu, "versions": [ident], "regle": regle}
+                        "contenu": contenu_lu, "versions": [ident], "regle": regle,
+                        "corrections": [correction] if correction else []}
 
     sortie: dict = {"source": source, "textes": [], "tableaux": [], "lignes": [],
                     "non_lus": sorted(non_lus, key=lambda n: (n["texte"], n["numero"],
@@ -785,6 +830,7 @@ def extraire(chemin_index: Path | str | None = None) -> dict:
         sortie["tableaux"].append({
             "texte": lu["texte"], "article": lu["article"], "numero": lu["numero"],
             "tableau": lu["tableau"], "debut": lu["debut"], "fin": _fin(lu["fin"]),
+            "correction": " ; ".join(lu["corrections"]),
             "versions": " ".join(lu["versions"]), "colonnes": " ".join(tableau.colonnes),
             "regle_du_quart": lu["regle"], "lignes": str(len(tableau.lignes)),
             "intro": lu["intro"], "entete": tableau.entete})
@@ -855,8 +901,9 @@ def _rangs(lignes: list[Ligne]) -> list[int]:
 COLONNES = {
     "textes": ("texte", "versant", "numero", "nature", "signature", "debut", "fin", "titre",
                "tableaux_lus", "non_lus"),
-    "tableaux": ("texte", "article", "numero", "tableau", "debut", "fin", "versions", "chevauche",
-                 "colonnes", "regle_du_quart", "lignes", "intro", "entete"),
+    "tableaux": ("texte", "article", "numero", "tableau", "debut", "fin", "correction",
+                 "versions", "chevauche", "colonnes", "regle_du_quart", "lignes", "intro",
+                 "entete"),
     "lignes": ("texte", "article", "tableau", "ligne", "groupe", "echelon", "rang", "duree",
                "duree_moyenne", "duree_minimale", "duree_maximale", "condition"),
     "non_lus": ("texte", "article", "numero", "tableau", "debut", "fin", "motif"),
@@ -869,7 +916,9 @@ ENTETES = {
               "les tableaux lus, et les tableaux ou articles non lus.",
     "tableaux": "Chaque tableau de durées d'échelon : l'article et la période où il le porte "
                 "(fin exclue : le jour où la version suivante entre en vigueur ; vide : en "
-                "vigueur), son rang dans l'article, les versions de l'article qui le redisent "
+                "vigueur), la date que le dépôt corrige quand le LEGI y écrit une coquille, "
+                "et sa preuve, lue au JORF (correction ; vide : les dates du LEGI), "
+                "son rang dans l'article, les versions de l'article qui le redisent "
                 "pendant cette période (article : la première), les tableaux du même article "
                 "et du même rang dont la période, aux dates du LEGI, recouvre la sienne "
                 "(chevauche : leur première version ; le rattachement aux grilles choisit), ses "
