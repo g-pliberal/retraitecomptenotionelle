@@ -1,0 +1,30 @@
+date: "2026-11-03"
+session: "action 130, file R-E-bis : relecture indépendante des corrections de R-E (commit 471a14b, CAVEC et CARPV), et trois écarts de la CNAVPL"
+consulte: >-
+  python scripts/veille_droit.py ; docs/veille_droit.md ; la base de la Cnav, rien de neuf.
+  Les index JORF et LEGI récupérés, puis mis à jour de l'incrément 20261103-214151. La CARPV :
+  les arrêtés du 11 janvier 2011, du 16 avril 2014 et du 2 novembre 2015, leurs articles et
+  les alinéas de leurs annexes ; les statuts de 2021 (articles 33, 34, 38 à 41) et l'article 2
+  de leur arrêté ; le règlement de 2026 (articles 1er, 2, 6 à 9) et l'article 1er de son
+  arrêté ; les titres des arrêtés de 1960, 1968, 1970 et 1977. La CAVEC : les statuts de 2008
+  (articles 3.13, 3.15 à 3.18), de 2018 (partie 2, articles 12, 15, 16), le II, 7°, de 2019,
+  le II de 2024, le règlement de 2026 (articles 1.1.3, 1.2.1, 1.2.2), les articles de leurs
+  arrêtés ; le décret n° 53-506 et l'arrêté du 23 mai 1953 ; le livre des 70 ans, retéléchargé
+  (sha256 f37b161d…d030), page 15. Au LEGI : L. 643-3 de 2004 à 2026, L. 643-4 de 2004, 2008
+  et 2023, L. 643-5, L. 643-7, L. 161-17-2 de 2011 à 2026, D. 161-2-1-9, L. 351-1, D. 643-14,
+  D. 351-1-14.
+trouve: >-
+  Les corrections de E-bis sont conformes à la source. Le décret de l'âge du IV de L. 643-3,
+  que E-bis dit absent de l'index, y est : D. 643-14 (LEGIARTI000047634694, pensions depuis le
+  1er septembre 2023) renvoie à D. 351-1-14, soixante-deux ans pour l'inapte ; la CNAVPL sert
+  donc l'inapte à 62 ans sans coefficient, que le modèle refuse à 62 ans et minore au-delà, à
+  toute date de 2018 à 2028. La réversion de la CNAVPL (L. 643-7), de ses dix sections et de
+  ses ASV n'est servie dans aucun des deux moteurs (non_portee). La base de la CNAVPL est
+  ouverte à 60 ans au vétérinaire, à l'expert-comptable et au biologiste libéral, essayés de
+  la génération 1955 à 1969, quand L. 161-17-2 dit de 62 à 64 ans : ouvrir prend le plus bas
+  des âges des régimes en points, et la CARPV, la CAVEC et l'ASV des directeurs de laboratoire
+  ouvrent à 60 ans sans table d'âges.
+reste: >-
+  À l'orchestration, pour le propriétaire : la réversion de la CNAVPL et de ses sections ;
+  l'inapte de la CNAVPL (L. 643-4, D. 643-14) ; l'ouverture à 60 ans par le minimum des âges
+  de ouvrir. Ce que la loi fixe à l'ASV des directeurs de laboratoire, non lu.
