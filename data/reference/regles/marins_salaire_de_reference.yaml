@@ -221,6 +221,34 @@ approximations:
     probable, non démontré ; le plafond du modèle est plus bas que celui du droit après un
     relèvement du point en cours d'année. En projection, sous le point gardé et la grille
     portée par le salaire moyen, la vingtième catégorie le passe en 2037
+- version: [code_de_1968]
+  textes: décret n° 85-1148, article 3, rédactions du 21 décembre 1993 et du 19 juillet 1994 ; R. 11, 3°
+  ecart: >-
+    convention du modèle, le texte ne tranchant pas : du 1er janvier au 30 novembre 1994,
+    l'article 3 fixe deux valeurs du traitement « afférents à l'indice 100 majoré » —
+    « 30 926 F à compter du 1er janvier 1994 », puis « Par dérogation à l'alinéa précédent
+    […], pour les agents dont l'indice majoré est inférieur ou égal à 275, à 31 018 F à
+    compter du 1er janvier 1994 » (LEGIARTI000006454438), relevées à 31 080 F et à 31 173 F
+    « à compter du 1er août 1994 » (LEGIARTI000006454439) —, et ni lui ni l'article 7, qui
+    constitue le traitement de l'indice 100 par « le traitement afférent à l'indice majoré
+    158 » (LEGIARTI000006454542), ne disent laquelle fait ce traitement : on peut lire la
+    dérogation, 158 étant inférieur à 275, ou l'alinéa général, la dérogation visant des
+    agents, et le traitement de l'indice 100 n'étant celui d'aucun. La série
+    (`legislation/point_indice_fonction_publique.csv`) porte en 1994 un point de 47,2165 €,
+    la moyenne, au dix-millième, des deux points de l'article (309,26 F et 310,18 F, soit
+    47,1464 € et 47,2866 €) : une valeur qu'aucun des deux alinéas n'écrit, et que le
+    modèle garde
+  effet: >-
+    du 1er janvier au 31 juillet 1994, le plafond du droit vaut 8 × 158 × 309,26 F =
+    390 904,64 F, soit 59 593,03 €, à l'alinéa général, ou 8 × 158 × 310,18 F =
+    392 067,52 F, soit 59 770,31 €, à la dérogation ; le modèle prend 8 × 158 × 47,2165 € =
+    59 681,66 €, à 88,63 € du premier et à 88,65 € du second : à 88,65 € au plus (0,15 %)
+    de la valeur que le droit retiendra. Au-delà du plafond, la portion n'étant comptée que
+    pour moitié, le salaire de référence d'un marin qui le passe s'en déplace de 44,33 € par
+    an au plus. Aucune pension que le modèle calcule n'en change : la vingtième catégorie de
+    sa grille reste sous l'un et l'autre plafond (approximation des articles 3 et 5,
+    ci-dessus). Du 1er août au 30 novembre 1994, le plafond du modèle est sous les deux
+    lectures, l'écart tenant alors au point du 1er janvier (même approximation)
 - version: [code_de_1968, contrats_simultanes]
   textes: décret n° 85-1148, article 7 ; décret n° 82-1105, barème A
   ecart: >-
@@ -440,6 +468,17 @@ sources:
       LEGIARTI000006454423 à LEGIARTI000006454459), et son article 7 en 1995
       (LEGIARTI000006454542)
     date: 2026-11-03
+  - type: legifrance
+    reference: >-
+      après la relecture R-M1-ter, dans l'index LEGI du dépôt, à jour de l'incrément du
+      2 novembre 2026 : les rédactions de l'article 3 du décret n° 85-1148 du 21 décembre
+      1993 (LEGIARTI000006454438) et du 19 juillet 1994 (LEGIARTI000006454439), les deux
+      seules des quarante-six que l'index garde à porter une dérogation ; son article 7 du
+      1er août 1991 (LEGIARTI000006454542), dont la dérogation à l'indice majoré 202 ne vise
+      pas le code des pensions de retraite des marins ; dans l'index JORF, à jour de
+      l'incrément du 3 novembre 2026, l'arrêté du 2 août 1995 portant classement des
+      officiers des navires transportant des passagers (JORFTEXT000000554960), sans montant
+    date: 2026-11-03
 historique:
 - >-
   2026-11-02 — lue au droit (action 130) : trois versions sur la date d'effet — la loi du
@@ -472,6 +511,13 @@ historique:
   l'index ne porte pas, et le seuil que cette majoration devrait passer pour que la
   vingtième atteigne le plafond du droit ; la phrase du taux du franc désignée comme un
   paragraphe d'explication ; l'arrondi des centimes dit. Aucune règle de calcul ne change.
+- >-
+  2026-11-03 — après la relecture R-M1-ter (action 130, file M1-quater, note
+  `130/2026-11-03-retouches-de-la-relecture-r-m1-ter.md`) : en 1994, l'article 3 fixe deux
+  points, et le texte ne dit pas lequel fait le traitement de l'indice 100 ; le point de la
+  série, leur moyenne, qu'aucun alinéa n'écrit, déclaré en convention du modèle, avec son
+  effet au plus, 88,65 € sur le plafond et 44,33 € sur le salaire de référence. Aucune
+  règle de calcul ne change.
 code:
   moteur: >-
     La période des marins liquide le dernier salaire (`salaire_reference`) :

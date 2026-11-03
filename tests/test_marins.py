@@ -443,17 +443,35 @@ POINT_DE_L_ARTICLE_3 = {
     "2006-01-01": ("5 371,10 Euros à compter du 1er novembre 2005", "LEGIARTI000006454458"),
     "2007-01-01": ("5 397,95 Euros à compter du 1er juillet 2006", "LEGIARTI000006454459"),
 }
+#: Du 1er janvier au 30 novembre 1994, l'article 3 fixe deux points : après
+#: l'alinéa que `POINT_DE_L_ARTICLE_3` cite, « Par dérogation à l'alinéa
+#: précédent, la valeur annuelle du traitement et de la solde afférents à
+#: l'indice 100 majoré et soumis aux retenues pour pension est fixée, pour les
+#: agents dont l'indice majoré est inférieur ou égal à 275, à 31 018 F à compter
+#: du 1er janvier 1994. » La rédaction suivante, du 19 juillet au 30 novembre
+#: 1994, relève l'un et l'autre « à compter du 1er août 1994 » — rédaction :
+#: (l'alinéa général, la dérogation).
+POINTS_DE_1994 = {
+    "LEGIARTI000006454438": ("30 926 F à compter du 1er janvier 1994",
+                             "31 018 F à compter du 1er janvier 1994"),
+    "LEGIARTI000006454439": ("31 080 F à compter du 1er août 1994",
+                             "31 173 F à compter du 1er août 1994"),
+}
+
+
+def _point(ecrit: str) -> float:
+    """Le traitement d'un point d'indice majoré, en euros, que l'article 3 écrit
+    pour cent : en francs jusqu'en 2001, au taux de 6,55957 F pour un euro."""
+    montant, unite = ecrit.split(" à compter")[0].rsplit(" ", 1)
+    cent_points = float(montant.replace(" ", "").replace(",", "."))
+    return cent_points / 100 / (6.55957 if unite == "F" else 1)
 
 
 def _plafond_du_texte(jour: str) -> float:
     """Huit fois (R. 11, 3°) le traitement de l'indice majoré que l'article 7 fait
     correspondre à l'indice 100 ce jour-là (`INDICE_100`), au point de l'article 3
-    (`POINT_DE_L_ARTICLE_3`) : cent points, en francs jusqu'en 2001, au taux de
-    6,55957 F pour un euro."""
-    ecrit, _ = POINT_DE_L_ARTICLE_3[jour]
-    montant, unite = ecrit.split(" à compter")[0].rsplit(" ", 1)
-    cent_points = float(montant.replace(" ", "").replace(",", "."))
-    return 8 * _indice_au(jour) * cent_points / 100 / (6.55957 if unite == "F" else 1)
+    (`POINT_DE_L_ARTICLE_3`)."""
+    return 8 * _indice_au(jour) * _point(POINT_DE_L_ARTICLE_3[jour][0])
 
 
 @pytest.mark.parametrize("jour", POINT_DE_L_ARTICLE_3)
@@ -472,6 +490,79 @@ def test_chaque_point_se_relit_dans_sa_redaction_de_l_article_3(jour):
     assert debut <= jour < (fin or "9999-12-31"), (legi, debut, fin)
     assert "afférents à l'indice 100 majoré" in texte
     assert f"est fixée à {ecrit}" in texte or f"puis à {ecrit}" in texte, legi
+
+
+def test_sans_l_index_chaque_point_se_recoupe_dans_la_serie_que_le_modele_lit(simulateur):
+    """L'index LEGI n'est pas récupéré sur GitHub. Sans lui, chaque point de
+    `POINT_DE_L_ARTICLE_3`, recopié de sa rédaction, se recoupe au dix-millième
+    d'euro, où elle s'arrondit, dans la série que le modèle lit
+    (`legislation/point_indice_fonction_publique.csv`, le point du 1er janvier),
+    et le plafond du modèle ce jour-là vaut huit fois l'indice de l'article 7
+    (`INDICE_100`) fois ce point : un point faussé, dans le test ou dans la
+    série, ou pris dans une autre rédaction, fait échouer ce test. Deux jours
+    s'écartent, déclarés : le 1er décembre 1985, la série porte le point du
+    1er janvier 1985, d'avant le décret n° 85-1148, et ce jour-là se recoupe par
+    le 1er janvier 1986, de la même rédaction ; en 1994, la série porte la
+    moyenne des deux points de l'article 3 (`POINTS_DE_1994`), convention que la
+    fiche déclare."""
+    from retraite_notionnelle.droit import liquider
+
+    points = {int(l["annee"]): float(l["valeur"])
+              for l in _lignes("legislation/point_indice_fonction_publique.csv")}
+    moteur = simulateur.scenario_actuel
+    assert POINT_DE_L_ARTICLE_3["1985-12-01"] == POINT_DE_L_ARTICLE_3["1986-01-01"]
+    for jour, (ecrit, legi) in POINT_DE_L_ARTICLE_3.items():
+        annee, mois = int(jour[:4]), int(jour[5:7])
+        if annee == 1985:
+            continue
+        lu = sum(map(_point, POINTS_DE_1994[legi])) / 2 if annee == 1994 else _point(ecrit)
+        assert round(lu, 4) == points[annee], (jour, lu, points[annee])
+        plafond = liquider.plafond_du_salaire_de_reference(
+            moteur, moteur.catalogue["marins"].periode(annee), annee, mois)
+        assert plafond == pytest.approx(8 * _indice_au(jour) * points[annee], abs=1e-6), jour
+
+
+def test_en_1994_le_texte_ne_dit_pas_lequel_des_deux_points_fait_le_plafond_et_la_fiche_le_dit(
+        simulateur):
+    """Du 1er janvier au 30 novembre 1994, l'article 3 fixe deux points
+    (`POINTS_DE_1994`), et ni lui ni l'article 7 ne disent lequel fait le
+    traitement de l'indice 100. Au 1er janvier, à l'indice majoré 158, le plafond
+    du droit vaut 8 × 158 × 309,26 F = 390 904,64 F, soit 59 593,03 €, ou
+    8 × 158 × 310,18 F = 392 067,52 F, soit 59 770,31 € ; le modèle prend
+    8 × 158 × 47,2165 = 59 681,66 €, au point de la série, leur moyenne, qu'aucun
+    alinéa n'écrit : à 88,65 € au plus de la valeur du droit ; et le salaire de
+    référence, compté pour moitié au-delà du plafond, à 44,33 € au plus (calcul
+    posé à la main dans la note des retouches de R-M1-ter, le 3 novembre 2026).
+    Du 1er août au 30 novembre, le plafond du modèle est sous les deux lectures.
+    La vingtième catégorie de la grille du modèle reste sous l'une et l'autre.
+    La fiche déclare cette convention du modèle et son effet au plus."""
+    from retraite_notionnelle.droit import liquider
+
+    moteur = simulateur.scenario_actuel
+    periode = moteur.catalogue["marins"].periode(1994)
+    janvier, aout = POINTS_DE_1994.values()
+    assert janvier[0] == POINT_DE_L_ARTICLE_3["1994-01-01"][0]
+    general, derogation = (8 * _indice_au("1994-01-01") * _point(ecrit) for ecrit in janvier)
+    modele = liquider.plafond_du_salaire_de_reference(moteur, periode, 1994, 1)
+    assert [round(x, 2) for x in (general, modele, derogation)] == [59593.03, 59681.66, 59770.31]
+    proche, ecart = sorted((modele - general, derogation - modele))
+    assert (round(proche, 2), round(ecart, 2), round(ecart / 2, 2)) == (88.63, 88.65, 44.33)
+    en_aout = liquider.plafond_du_salaire_de_reference(moteur, periode, 1994, 8)
+    assert all(en_aout < 8 * _indice_au("1994-08-01") * _point(ecrit) for ecrit in aout)
+    assert _forfait_estime(simulateur, 1994, 20) < general
+    for legi, (alinea, par_derogation) in POINTS_DE_1994.items():
+        texte = _texte_legi(legi)
+        if texte is not None:
+            assert f"est fixée à {alinea}" in texte, legi
+            assert f"inférieur ou égal à 275, à {par_derogation}" in texte, legi
+    declaree = next(a for a in carte.fiches()["marins_salaire_de_reference"]["approximations"]
+                    if "LEGIARTI000006454438" in a["ecart"])
+    dit = declaree["ecart"] + " " + declaree["effet"]
+    assert declaree["version"] == ["code_de_1968"] and "convention du modèle" in dit
+    assert all(legi in dit for legi in POINTS_DE_1994)
+    assert all(f"{_euros(montant)} €" in dit
+               for montant in (general, derogation, modele, proche, ecart, ecart / 2)), dit
+    assert f"({100 * ecart / modele:.2f} %)".replace(".", ",") in dit
 
 
 def _euros(montant: float) -> str:
@@ -521,22 +612,30 @@ def test_la_grille_d_avant_2008_est_sous_les_deux_montants_reels_et_la_fiche_le_
     1er janvier 2006. La fiche déclare la limite : les deux rectificatifs, les
     forfaits que le modèle prend, les écarts, et ce qu'ils font de la vingtième
     de 1995 — 48 735,45 € à la structure de 2008, 80,5 % du plafond du jour.
-    Ces chiffres de 1995 ne valent que du 1er janvier au 30 juin : la grille du
-    1er juillet, majorée, n'est pas lue, et la fiche le dit, avec ce que la
-    majoration devrait atteindre pour que la vingtième passe le plafond du droit
-    du second semestre ; et le taux du franc, d'un paragraphe d'explication."""
+    Ces chiffres de 1995 ne valent que du 1er janvier au 30 juin, borne qui suit
+    chacun d'eux : la grille du 1er juillet, majorée, n'est pas lue, et la fiche
+    le dit, avec ce que la majoration devrait atteindre pour que la vingtième
+    passe le plafond du droit du second semestre ; et le taux du franc, d'un
+    paragraphe d'explication."""
     dit = _limite_de_la_grille()
     assert "26 952,43 €" in dit and "176 796,36 F" in dit and "2e sous-colonne" in dit
     assert "paragraphe d'explication" in dit and "JORFTEXT000000580421" in dit
-    assert "du 1er janvier au 30 juin 1995" in dit
+    assert "cette grille ne vaut que du 1er janvier au 30 juin 1995" in dit
     assert "pour compter du 1er juillet 1995" in dit and "pour compter du 1er janvier 1996" in dit
     assert all(identifiant in dit for identifiant in GRILLES_DE_1995)
+    #: Ce qui suit, dans la fiche, l'écart du réel au modèle, puis celui de la
+    #: pension : en 1995, la borne du semestre.
+    suites = {1995: (", du 1er janvier au 30 juin 1995",
+                     " au plus pour le marin des plus hautes catégories dont la pension prend"
+                     " effet du 1er janvier au 30 juin 1995"),
+              2006: ("", " en 2006")}
     for annee, categorie, reel, identifiant in GRILLE_REELLE_AVANT_2008:
         modele = _forfait_estime(simulateur, annee, categorie)
         assert modele < reel, annee
         assert identifiant in dit and f"le modèle prend {_euros(modele)} €" in dit, annee
-        assert f"{_dixiemes(100 * (reel / modele - 1))} % plus haut" in dit, annee
-        assert f"de {_dixiemes(100 * (1 - modele / reel))} %" in dit, annee
+        plus_haut, plus_bas = suites[annee]
+        assert f"{_dixiemes(100 * (reel / modele - 1))} % plus haut{plus_haut}" in dit, annee
+        assert f"de {_dixiemes(100 * (1 - modele / reel))} %{plus_bas}" in dit, annee
     vingtieme_1995 = _forfait_estime(simulateur, 1995, 20)
     structure = {annee: _grille(annee)[20] / _grille(annee)[13] for annee in (2008, 2026)}
     assert round(structure[2008], 4) == round(structure[2026], 4)

@@ -160,3 +160,9 @@ sont, eux, ceux de l'article 3, à l'arrondi de la série près.
 La question au propriétaire demeure : les tableaux des arrêtés de 1985 à 2007,
 au Journal officiel imprimé ; celui du 30 juin 1995 dirait de combien le second
 semestre 1995 s'écarte. Une relecture indépendante de ces corrections suit.
+
+*Renvoi du 3 novembre 2026, après la relecture R-M1-ter.* Deux errata sont
+établis dans `2026-11-03-retouches-de-la-relecture-r-m1-ter.md`, points 3 et 4.
+La recherche de 1995 et 1996 donne aussi l'arrêté du 2 août 1995 portant
+classement des officiers (JORFTEXT000000554960), qui ne porte aucun montant. Le
+seuil de novembre 1995, 27,4899 %, se lit « plus de 27,48 % ».

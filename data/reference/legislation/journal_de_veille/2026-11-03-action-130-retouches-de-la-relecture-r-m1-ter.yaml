@@ -1,0 +1,35 @@
+date: "2026-11-03"
+session: "action 130, file M1-quater : les retouches de la relecture R-M1-ter de la grille des marins d'avant 2008"
+consulte: >-
+  python scripts/veille_droit.py ; docs/veille_droit.md ; la relecture R-M1-ter (265b237) ;
+  les index de la DILA, récupérés et mis à jour (LEGI à l'incrément du 2 novembre 2026,
+  20261102-213929 ; JORF à celui du 3 novembre, 20261103-002311 ; aucun depuis). Dans LEGI :
+  les vingt-trois rédactions de l'article 3 du décret n° 85-1148 que le test nomme
+  (LEGIARTI000006454423 à LEGIARTI000006454459), et en entier LEGIARTI000006454437, …438 et
+  …439 ; la dérogation cherchée dans ses quarante-six rédactions ; son article 7 du
+  1er août 1991 (LEGIARTI000006454542), en entier. Dans JORF : l'arrêté du 2 août 1995
+  portant classement des officiers des navires transportant des passagers
+  (JORFTEXT000000554960) et la recherche « "salaires forfaitaires" marins » de 1995 et 1996.
+  Le dépôt : la série legislation/point_indice_fonction_publique.csv de 1985 à 2007, le
+  plafond du modèle en janvier et en août 1994 et le 1er janvier de 1986 à 2007.
+trouve: >-
+  Du 1er janvier au 30 novembre 1994, l'article 3 fixe deux points — 30 926 F, et 31 018 F
+  « pour les agents dont l'indice majoré est inférieur ou égal à 275 » (LEGIARTI000006454438) ;
+  31 080 F et 31 173 F à compter du 1er août 1994 (LEGIARTI000006454439) —, seules de ses
+  quarante-six rédactions à porter une dérogation, et ni lui ni l'article 7 (« l'indice
+  majoré 158 ») ne disent lequel fait le traitement de l'indice 100. Le modèle prend le
+  point de la série, 47,2165 €, leur moyenne, qu'aucun alinéa n'écrit : plafond de
+  59 681,66 € au 1er janvier 1994, entre 59 593,03 € et 59 770,31 €, soit 88,65 € au plus
+  d'écart, et 44,33 € par an au plus sur le salaire de référence (calcul posé à la main) ;
+  la vingtième catégorie du modèle reste sous les deux. Déclaré dans la fiche
+  marins_salaire_de_reference en convention du modèle ; la valeur n'est pas changée. Un test
+  neuf recoupe, sans l'index, chacun des vingt-trois points du test dans la série que le
+  modèle lit. L'arrêté du 2 août 1995 est un arrêté de classement, sans montant : erratum à
+  la note de M1-ter, qui disait « pas d'autre arrêté ». Le seuil de novembre 1995 est de
+  27,4899 % : « plus de 27,48 % ». La dérogation de l'article 7 (indice majoré 202) ne vise
+  pas le code des marins. Aucune règle de calcul ne change.
+reste: >-
+  Au propriétaire, comme avant : la lecture des tableaux des arrêtés de 1985 à 2007 au
+  Journal officiel imprimé, et la récupération de l'index de la DILA par la suite de GitHub.
+  À une session des données : l'en-tête de la série du point, pour 1994. Note
+  2026-11-03-retouches-de-la-relecture-r-m1-ter.md de l'action 130.
