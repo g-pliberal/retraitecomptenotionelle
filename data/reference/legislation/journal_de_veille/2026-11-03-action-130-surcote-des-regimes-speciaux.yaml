@@ -1,0 +1,34 @@
+date: "2026-11-03"
+session: "action 130 : le taux et la limite de la surcote des régimes spéciaux réformés en 2008"
+consulte: >-
+  python scripts/veille_droit.py ; les index LEGI et JORF du dépôt, récupérés et à jour de
+  l'incrément du 2 novembre 2026 (aucun incrément depuis). Dans LEGI : le décret n° 2008-639
+  (SNCF), article 13, ses rédactions du 1er juillet 2008 au 1er janvier 2017 ; le décret
+  n° 2008-637 (RATP), article 24, de même ; l'annexe 3 du statut des IEG, article 10, ses
+  rédactions de 2008 à 2018 ; le décret n° 90-1215 (CRPCEN), article 85-1, le décret n° 68-960
+  (Comédie-Française), article 12, et le décret n° 68-382 (Opéra), article 14, leurs
+  rédactions de 2008 à aujourd'hui ; le code des pensions civiles et militaires de retraite,
+  L. 14, ses rédactions de 2004 à 2023. Au Journal officiel : la loi n° 2008-1330 du
+  17 décembre 2008, article 89. Sur le web : la circulaire de la CNIEG n° 2021-04 « La
+  surcote », qui répond 404 ; aucune page de la CPRPSNCF ni de la CRP RATP sur les trimestres
+  de 2008.
+trouve: >-
+  Les six décrets donnent à la surcote « le taux […] prévu pour les fonctionnaires de l'Etat en
+  application du III de l'article L. 14 », « par trimestre supplémentaire dans la limite de
+  vingt trimestres ». L. 14, III, dit 0,75 % jusqu'au 18 décembre 2008, 1,25 % ensuite, mais
+  la loi n° 2008-1330 (article 89, III) n'applique le 1,25 % qu'aux trimestres cotisés et
+  effectués à compter du 1er janvier 2009 : ceux du second semestre de 2008 gardent 0,75 %. La
+  limite tombe le 19 septembre 2011 à la CRPCEN, le 23 septembre 2011 à la Comédie-Française,
+  le 1er janvier 2017 à la SNCF, à la RATP, aux IEG et à l'Opéra. Le modèle servait 0,75 % à
+  tout trimestre de la SNCF de 2009 à 2017, 1,25 % aux trimestres de 2008 des cinq autres
+  régimes, et aucune limite : corrigé dans les deux moteurs
+  (`liquider.coefficient_surcote_regimes_speciaux`) et dans les données
+  (`surcote_trimestres_maximum` des périodes de 2009 à 2016). La limite ne joue sur aucun
+  témoin hors de l'Opéra : à la SNCF et à la RATP, la limite d'âge de soixante-cinq ans arrête
+  la surcote, comptée depuis soixante ans et depuis juillet 2008, à vingt trimestres.
+reste: >-
+  Aucune caisse n'écrit ce qu'elle sert aux deux trimestres du second semestre de 2008 : la
+  lecture par renvoi reste à confirmer (fiche `surcote_regimes_speciaux`, `transcrite`). La
+  même limite de vingt trimestres, que L. 14, III, garde aux fonctionnaires jusqu'au
+  10 novembre 2010, le barème `fonction_publique` ne la porte pas pour les trimestres de 2009
+  et 2010 : à vérifier, hors de cette étape.
