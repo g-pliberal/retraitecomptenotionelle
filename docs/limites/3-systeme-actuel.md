@@ -264,6 +264,16 @@ l'Institut des politiques publiques (PENSIPP). Écarts connus :
   travailleur indépendant qui cesse son activité pour l'aider. Un salaire
   porté au compte sur une assiette forfaitaire du Smic, que la base de
   législation de la Cnav publie, et que la saisie n'a pas de quoi dire.
+- **élus locaux** — le modèle affilie l'élu local indemnisé à l'Ircantec
+  depuis 1973, et au régime général depuis 2013, quand ses indemnités
+  dépassent la moitié du plafond (`legislation/affiliations.yaml`). Il ne sert
+  pas l'affiliation au régime général, depuis le 1er avril 1992, de l'élu qui
+  a cessé toute activité professionnelle pour exercer son mandat et ne relève
+  d'aucun autre régime — maires, adjoints des grandes villes, présidents et
+  vice-présidents délégués des exécutifs départementaux, régionaux et
+  intercommunaux —, quel que soit le montant de ses indemnités, ni l'option
+  ouverte depuis le 1er septembre 2023 à l'élu dont les indemnités restent
+  sous le seuil (exposé « Elu local », circulaire Cnav 2024/12).
 - **Algérie** — le modèle ne sert pas la validation gratuite, au régime
   général, des périodes d'activité salariée en Algérie d'avant le 1er juillet
   1962 (loi n° 64-1330), sur un salaire forfaitaire annuel que la base de
