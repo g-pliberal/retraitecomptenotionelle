@@ -788,13 +788,14 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
           if (fiabiliteSurcote !== null) {
             fiabiliteGlobale = Math.min(fiabiliteGlobale, fiabiliteSurcote);
           }
+        } else if (BAREMES_REGIMES_SPECIAUX.has(periode.bareme_decote)) {
+          coefficientSurcote = coefficientSurcoteRegimesSpeciaux(
+            moteur, periode, carriere, trimestres, requis, ageOuverture);
         } else {
-          supplementaires = BAREMES_REGIMES_SPECIAUX.has(periode.bareme_decote)
-            ? trimestresDeSurcoteRegimesSpeciaux(carriere, trimestres, requis, ageOuverture)
-            : Math.min(
-              supplementaires,
-              trimestresCotisesApres(carriere, ageOuverture, anneeLiquidation),
-            );
+          supplementaires = Math.min(
+            supplementaires,
+            trimestresCotisesApres(carriere, ageOuverture, anneeLiquidation),
+          );
           if (supplementaires > 0) {
             coefficientSurcote = 1.0 + periode.surcote_par_trimestre * supplementaires;
           }
@@ -2361,6 +2362,55 @@ export function trimestresDeSurcoteRegimesSpeciaux(carriere, trimestres, requis,
     }
   }
   return Math.min(Math.max(0, trimestres - requis), Math.floor(apres + 1e-9));
+}
+
+/** Le premier mois des trimestres que la surcote des fonctionnaires majore de 1,25 %. */
+const SURCOTE_AU_TAUX_DE_2009_DEPUIS = new DateMois(2009, 1);
+
+/**
+ * Le coefficient de majoration des régimes spéciaux réformés en 2008 —
+ * portage de `coefficient_surcote_regimes_speciaux` : les trimestres de
+ * `trimestresDeSurcoteRegimesSpeciaux`, ceux de 2009 et après au taux de la
+ * période, ceux de 2008 au taux que le barème de la fonction publique donne à
+ * leur date, dans la limite de trimestres que la période porte, ceux de 2009
+ * d'abord.
+ */
+export function coefficientSurcoteRegimesSpeciaux(moteur, periode, carriere, trimestres, requis,
+  ageSurcote) {
+  const comptes = trimestresDeSurcoteRegimesSpeciaux(carriere, trimestres, requis, ageSurcote);
+  if (comptes <= 0) {
+    return 1.0;
+  }
+  let debut = carriere.dateDeLAge(ageSurcote);
+  if (debut.rang < SURCOTE_AU_TAUX_DE_2009_DEPUIS.rang) {
+    debut = SURCOTE_AU_TAUX_DE_2009_DEPUIS;
+  }
+  const fin = carriere.dateLiquidation;
+  let apres = 0.0;
+  if (debut.rang < fin.rang) {
+    for (const ligne of carriere.lignes) {
+      if (ligne.cotise) {
+        apres += trimestresDeLaLigneEntre(carriere, ligne, debut, fin);
+      }
+    }
+  }
+  const maximum = periode.surcote_trimestres_maximum ?? null;
+  const depuis2009 = Math.min(comptes, Math.floor(apres + 1e-9));
+  const auTauxDe2009 = maximum === null ? depuis2009 : Math.min(depuis2009, maximum);
+  let de2008 = comptes - depuis2009;
+  if (maximum !== null) {
+    de2008 = Math.min(de2008, maximum - auTauxDe2009);
+  }
+  let coefficient = 1.0 + periode.surcote_par_trimestre * auTauxDe2009;
+  if (de2008 > 0) {
+    // Les derniers trimestres de 2008, dans l'ordre : octobre, et juillet avant lui.
+    const dates = [];
+    for (let rang = de2008 - 1; rang >= 0; rang -= 1) {
+      dates.push([SURCOTE_AU_TAUX_DE_2009_DEPUIS.plusMois(-3 * (rang + 1)), false]);
+    }
+    coefficient += moteur.surcoteBaremes.coefficient("fonction_publique", dates)[0] - 1.0;
+  }
+  return coefficient;
 }
 
 /**

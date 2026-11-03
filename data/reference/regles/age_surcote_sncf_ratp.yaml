@@ -184,16 +184,6 @@ effet: >-
 sources:
   lu_le: 2026-11-02
   prochaine_relecture: 2027-11-02
-  a_relire:
-  - >-
-    Le taux de la surcote : la période de 2009 à 2017 de `regimes/sncf.yaml` porte 0,75 %
-    par trimestre, celle de 2009 à 2016 de `regimes/ratp.yaml` 1,25 %, sous la même phrase
-    des deux décrets, « celui prévu pour les fonctionnaires de l'Etat en application du
-    III de l'article L. 14 », que la rédaction du 19 décembre 2008 de L. 14
-    (LEGIARTI000019959691) fixe à « 1,25 % par trimestre supplémentaire, dans la limite
-    de vingt trimestres ». Et cette limite, que les deux décrets gardent jusqu'au
-    31 décembre 2016, `trimestres_de_surcote_regimes_speciaux` ne la porte pas. À lire
-    dans la fiche `surcote_regimes_speciaux`, pour une étape du modèle.
   lectures:
   - type: legifrance
     reference: >-

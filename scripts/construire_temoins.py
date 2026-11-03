@@ -1882,6 +1882,14 @@ def _cas() -> list[dict]:
         # cinquante-cinq ans : il doit la durée de la génération qui les a ce
         # mois-là, 168 trimestres, et non les 169 de la sienne (article 12-1).
         ("sncf_generation_1970", "agent_sncf", 1970, "56"),
+        # La surcote est celle du fonctionnaire, 1,25 % par trimestre depuis
+        # 2009, dans la limite de vingt trimestres jusqu'au 31 décembre 2016
+        # (article 13, II, du décret n° 2008-639 ; article 14, III, du décret
+        # n° 68-382) : l'agent de conduite né en 1951, parti à sa limite d'âge
+        # en 2016, en a vingt depuis ses soixante ans ; l'agent de l'Opéra né
+        # en 1950, parti à soixante-six ans, plus de vingt, que la limite arrête.
+        ("sncf_surcote_de_2016", "agent_sncf", 1951, "65"),
+        ("opera_limite_de_la_surcote", "personnel_opera", 1950, "66"),
     ):
         cas_statut(nom, statut, naissance)
         assert cas[-1][0] == nom, f"{nom} : aucun âge d'entrée admissible"

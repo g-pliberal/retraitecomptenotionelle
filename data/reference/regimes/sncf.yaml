@@ -59,7 +59,7 @@ periodes:
       50 ans avec 150 trimestres donnait 75 % du dernier traitement.
       C'est le cas où l'écart à l'âge de référence atteint 15 ans.
   - debut: 2009
-    fin: 2017
+    fin: 2016
     type_calcul: annuites
     age_ouverture: 52
     age_taux_plein: 57
@@ -75,7 +75,8 @@ periodes:
     perimetre_taux: agent_seul
     decote_par_trimestre: 0.0125
     bareme_decote: decote_regimes_speciaux
-    surcote_par_trimestre: 0.0075
+    surcote_par_trimestre: 0.0125
+    surcote_trimestres_maximum: 20
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
     age_surcote_regimes_speciaux: age_surcote_sncf_ratp
     avantages_non_contributifs: [enfants_sncf, categorie_active, majoration_enfants, reversion,
@@ -107,6 +108,44 @@ periodes:
       tôt (`duree_requise_table`, essayées dans l'ordre). La fiche
       opposait à tous la table commune par génération : 167 trimestres à
       un agent né en 1960 parti en 2010, dont le droit en demande 154.
+      LA SURCOTE EST CELLE DU FONCTIONNAIRE, DANS LA LIMITE DE VINGT
+      TRIMESTRES : « Le taux du coefficient de majoration est égal, par
+      trimestre supplémentaire dans la limite de vingt trimestres, à celui
+      prévu pour les fonctionnaires de l'Etat en application du III de
+      l'article L. 14 » (article 13, II, jusqu'au 31 décembre 2016, lu le 3
+      novembre 2026), que la loi n° 2008-1330 porte à 1,25 % pour les
+      trimestres effectués à compter du 1er janvier 2009 ; ceux du second
+      semestre de 2008 gardent 0,75 %
+      (`liquider.coefficient_surcote_regimes_speciaux`). La fiche servait
+      0,75 % à tous, quand la RATP, sous la même phrase, servait 1,25 %.
+
+  - debut: 2017
+    fin: 2017
+    type_calcul: annuites
+    age_ouverture: 52
+    age_taux_plein: 57
+    duree_requise_trimestres: 160
+    duree_requise_par_generation: duree_requise_par_generation
+    age_table: sncf_conduite_2011
+    duree_requise_table: [sncf_2014]
+    duree_requise_calendrier: regimes_speciaux_2008
+    taux_plein: 0.75
+    salaire_reference: derniers_6_mois
+    assiette: hors_primes
+    taux_cotisation_retraite: 0.0892
+    perimetre_taux: agent_seul
+    decote_par_trimestre: 0.0125
+    bareme_decote: decote_regimes_speciaux
+    surcote_par_trimestre: 0.0125
+    taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
+    age_surcote_regimes_speciaux: age_surcote_sncf_ratp
+    avantages_non_contributifs: [enfants_sncf, categorie_active, majoration_enfants, reversion,
+                                 minimum_pension_sncf]
+    notes: >-
+      La période de 2009, sans la limite de vingt trimestres de la surcote,
+      que l'article 13, II, ne porte plus à compter du 1er janvier 2017 ; le
+      relèvement des âges de 2017, étalé par génération, est dans les tables
+      que les deux périodes nomment.
 
   - debut: 2018
     fin: 2024

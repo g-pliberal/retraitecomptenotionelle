@@ -4,7 +4,8 @@ intitule: >-
   Surcote des régimes spéciaux réformés en 2008, SNCF, RATP, IEG, CRPCEN, Comédie-Française
   et Opéra : un coefficient par trimestre d'assurance cotisé et effectué après le 1er juillet
   2008, au-delà de l'âge que fixe chaque décret et en sus de la durée requise, pour qui
-  totalise au moins cent soixante trimestres.
+  totalise au moins cent soixante trimestres ; au taux du fonctionnaire, 0,75 % pour un trimestre de
+  2008 et 1,25 % depuis 2009, dans la limite de vingt trimestres tant que le décret l'écrit.
 regimes: [comedie_francaise, crpcen, ieg, opera_de_paris, ratp, sncf]
 etat: transcrite
 etape: liquider_chaque_regime
@@ -17,9 +18,12 @@ effet: >-
   compte que deux, ceux du second semestre 2008 : leurs pensions baissent de 9 à 15 % sur les
   six témoins. Comptés au mois près, les trimestres d'après l'âge en gagnent un aux agents de
   la SNCF et de la RATP nés en 1965 partis à soixante-quatre ans (+1,2 %). Neuf témoins sur
-  535 bougent, le bilan et les pages non.
+  535 bougent, le bilan et les pages non. Le 3 novembre 2026, le taux et la limite : la SNCF
+  servait 0,75 % à tout trimestre de 2009 à 2017, les cinq autres 1,25 % aux deux trimestres de
+  2008, et aucune la limite de vingt trimestres, qui ne joue sur aucun témoin hors de l'Opéra :
+  à la SNCF et à la RATP, la limite d'âge de soixante-cinq ans arrête la surcote à vingt.
 sources:
-  lu_le: 2026-09-27
+  lu_le: 2026-11-03
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
@@ -38,6 +42,13 @@ sources:
   - >-
     Trouver un exemple publié de surcote de l'un de ces régimes (CNIEG, CRPCEN, CPRPSNCF, CRP
     RATP) : la fiche reste `transcrite` jusque-là.
+  - >-
+    Le taux des trimestres du second semestre de 2008 est lu par renvoi : les décrets donnent «
+    celui prévu pour les fonctionnaires de l'Etat en application du III de l'article L. 14 », et
+    la loi n° 2008-1330 n'applique le 1,25 % qu'aux trimestres effectués à compter du 1er janvier
+    2009. Aucune caisse ne l'écrit dans ce que le dépôt a lu ; la circulaire de la CNIEG n° 2021-04
+    « La surcote », que les moteurs de recherche indexent, répond 404 le 3 novembre 2026. La lire,
+    ou demander à la CPRPSNCF et à la CNIEG ce qu'elles servent à ces deux trimestres.
   lectures:
   - type: legifrance
     reference: >-
@@ -58,6 +69,29 @@ sources:
       LEGIARTI000020057012), à la Comédie-Française (article 12, III, LEGIARTI000029134341) et
       à l'Opéra (article 14, III, LEGIARTI000029135161). Lu dans l'index LEGI du dépôt
     date: 2026-09-27
+  - type: legifrance
+    reference: >-
+      le taux et la limite, chaque rédaction des six articles d'après le 1er juillet 2008, dans
+      l'index LEGI à jour de l'incrément du 2 novembre 2026 : « Le taux du coefficient de
+      majoration est égal, par trimestre supplémentaire dans la limite de vingt trimestres, à
+      celui prévu pour les fonctionnaires de l'Etat en application du III de l'article L. 14 du
+      code des pensions civiles et militaires de retraite » ; la limite disparaît des rédactions
+      du 19 septembre 2011 à la CRPCEN (LEGIARTI000024573568), du 23 septembre 2011 à la
+      Comédie-Française (LEGIARTI000024579850), du 1er janvier 2017 à la SNCF
+      (LEGIARTI000023733189), à la RATP (LEGIARTI000023732931), aux IEG (LEGIARTI000029150204) et
+      à l'Opéra (LEGIARTI000029135161), qui l'écrivait encore de 2015 à 2016
+      (LEGIARTI000030058962)
+    date: 2026-11-03
+  - type: legifrance
+    reference: >-
+      code des pensions civiles et militaires de retraite, L. 14, III : « Le coefficient de
+      majoration est de 0,75 % par trimestre supplémentaire, dans la limite de vingt trimestres
+      » du 1er janvier 2004 au 18 décembre 2008 (LEGIARTI000006362704), « de 1,25 % » ensuite
+      (LEGIARTI000019959691), la limite tombant le 11 novembre 2010 (LEGIARTI000023033613) ; loi
+      n° 2008-1330 du 17 décembre 2008, article 89 (JORFARTI000019943457), II, 3°, qui remplace «
+      0,75 % » par « 1,25 % », et III : « Les 2° et 3° du II sont applicables aux trimestres
+      d'assurance cotisés et effectués à compter du 1er janvier 2009 »
+    date: 2026-11-03
 textes_a_rattacher:
 - reference: décret n° 2008-639, article 13, II (LEGIARTI000054622824)
 - reference: décret n° 2008-637, article 24, II (LEGIARTI000047914227)
@@ -66,6 +100,10 @@ textes_a_rattacher:
     décret n° 90-1215, article 85-1, II (LEGIARTI000047909834, LEGIARTI000020057012)
 - reference: décret n° 68-960, article 12, III (LEGIARTI000029134341)
 - reference: décret n° 68-382, article 14, III (LEGIARTI000029135161)
+- reference: >-
+    code des pensions civiles et militaires de retraite, L. 14, III (LEGIARTI000006362704,
+    LEGIARTI000019959691)
+- reference: loi n° 2008-1330 du 17 décembre 2008, article 89, III (JORFARTI000019943457)
 reformes:
 - regimes_speciaux_2008
 code:
@@ -77,25 +115,35 @@ code:
     rien sous cent soixante trimestres ; sinon le plus petit des trimestres au-delà de la
     durée requise et des trimestres cotisés depuis l'âge de la surcote (`ouvrir.age_surcote`)
     et depuis le 1er juillet 2008, au mois près, jusqu'à la date d'effet de la pension.
+    `liquider.coefficient_surcote_regimes_speciaux` : ceux de 2009 et après au taux de la
+    période (`surcote_par_trimestre`), ceux de 2008 au taux que le barème `fonction_publique`
+    de `legislation/surcote_baremes.csv` donne à leur date, 0,75 % ; au plus
+    `surcote_trimestres_maximum`, ceux de 2009 d'abord, que portent les périodes de 2009 à 2016
+    de la SNCF, de la RATP, des IEG et de l'Opéra. La CRPCEN et la Comédie-Française n'en
+    portent pas : leur limite tombe en septembre 2011, quand nul n'a pu compter vingt trimestres
+    depuis juillet 2008.
     `age_surcote_regimes_speciaux`, que posent les périodes de la CRPCEN depuis 2008 : l'âge
     de la surcote se lit dans `legislation/age_surcote_regimes_speciaux.csv`, le calendrier
     du b et du c de l'article 84, soixante ans avant 1957, soixante-quatre ans à compter de
     1970.
   python: >-
     droit/liquider.py : liquider_chaque_regime, trimestres_de_surcote_regimes_speciaux,
-    SURCOTE_REGIMES_SPECIAUX_DEPUIS, _BAREMES_REGIMES_SPECIAUX ; droit/compter.py :
+    coefficient_surcote_regimes_speciaux, SURCOTE_REGIMES_SPECIAUX_DEPUIS,
+    SURCOTE_AU_TAUX_DE_2009_DEPUIS, _BAREMES_REGIMES_SPECIAUX ; droit/compter.py :
     trimestres_de_la_ligne_entre ; droit/ouvrir.py : age_surcote, age_ouverture_commun ;
     scenarios/actuel.py : AgesSurcoteRegimesSpeciaux
   javascript: >-
     moteur/js/droit/liquider.js : liquiderChaqueRegime,
-    trimestresDeSurcoteRegimesSpeciaux, SURCOTE_REGIMES_SPECIAUX_DEPUIS,
+    trimestresDeSurcoteRegimesSpeciaux, coefficientSurcoteRegimesSpeciaux,
+    SURCOTE_REGIMES_SPECIAUX_DEPUIS, SURCOTE_AU_TAUX_DE_2009_DEPUIS,
     BAREMES_REGIMES_SPECIAUX ; moteur/js/droit/compter.js : trimestresDeLaLigneEntre ;
     moteur/js/droit/ouvrir.js : ageSurcote, ageOuvertureCommun ; moteur/js/regimes.js :
     AgesSurcoteRegimesSpeciaux
   parametres: >-
     regimes/comedie_francaise.yaml, regimes/crpcen.yaml, regimes/ieg.yaml,
     regimes/opera_de_paris.yaml, regimes/ratp.yaml, regimes/sncf.yaml :
-    surcote_par_trimestre, duree_requise_trimestres, age_ouverture ;
-    legislation/age_surcote_regimes_speciaux.csv : age
-  tests: [tests/test_simulateur.py, tests/js/moteur.test.js,
-    tests/temoins/simulations.json]
+    surcote_par_trimestre, surcote_trimestres_maximum, duree_requise_trimestres, age_ouverture ;
+    legislation/age_surcote_regimes_speciaux.csv : age ; legislation/surcote_baremes.csv :
+    fonction_publique
+  tests: [tests/test_surcote_regimes_speciaux.py, tests/test_simulateur.py,
+    tests/js/moteur.test.js, tests/temoins/simulations.json]

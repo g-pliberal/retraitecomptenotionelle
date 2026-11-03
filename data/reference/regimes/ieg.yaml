@@ -180,6 +180,8 @@ periodes:
     decote_par_trimestre: 0.0125
     bareme_decote: decote_regimes_speciaux
     surcote_par_trimestre: 0.0125
+    # « dans la limite de vingt trimestres » (annexe 3 du statut, article 10, II), jusqu'au 31 décembre 2016
+    surcote_trimestres_maximum: 20
     age_surcote_regimes_speciaux: age_ouverture_ieg_actifs
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
     avantages_non_contributifs: [enfants_ieg, categorie_active, majoration_enfants, reversion]

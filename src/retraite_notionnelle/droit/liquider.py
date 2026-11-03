@@ -1363,17 +1363,16 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
                     )
                     if fiabilite_surcote is not None:
                         fiabilite_globale = min(fiabilite_globale, fiabilite_surcote)
+                elif periode.bareme_decote in _BAREMES_REGIMES_SPECIAUX:
+                    coefficient_surcote = coefficient_surcote_regimes_speciaux(
+                        moteur, periode, carriere, trimestres, requis, age_ouverture)
                 else:
-                    if periode.bareme_decote in _BAREMES_REGIMES_SPECIAUX:
-                        supplementaires = trimestres_de_surcote_regimes_speciaux(
-                            carriere, trimestres, requis, age_ouverture)
-                    else:
-                        supplementaires = min(
-                            supplementaires,
-                            _trimestres_cotises_apres(
-                                carriere, age_ouverture, annee_liquidation
-                            ),
-                        )
+                    supplementaires = min(
+                        supplementaires,
+                        _trimestres_cotises_apres(
+                            carriere, age_ouverture, annee_liquidation
+                        ),
+                    )
                     if supplementaires > 0:
                         coefficient_surcote = (
                             1.0 + periode.surcote_par_trimestre * supplementaires
@@ -3174,6 +3173,64 @@ def trimestres_de_surcote_regimes_speciaux(carriere: Carriere, trimestres: int,
             if ligne.cotise:
                 apres += trimestres_de_la_ligne_entre(carriere, ligne, debut, fin)
     return min(max(0, trimestres - requis), int(apres + 1e-9))
+
+
+#: Le premier mois des trimestres que la surcote des fonctionnaires majore de
+#: 1,25 % : la loi n° 2008-1330, article 89, III, n'applique le nouveau taux
+#: du III de l'article L. 14 qu'« aux trimestres d'assurance cotisés et
+#: effectués à compter du 1er janvier 2009 ».
+SURCOTE_AU_TAUX_DE_2009_DEPUIS = DateMois(2009, 1)
+
+
+def coefficient_surcote_regimes_speciaux(moteur, periode: PeriodeRegime, carriere: Carriere,
+                                         trimestres: int, requis: int,
+                                         age_surcote: float) -> float:
+    """Le coefficient de majoration des régimes spéciaux réformés en 2008.
+
+    « Le taux du coefficient de majoration est égal, par trimestre
+    supplémentaire dans la limite de vingt trimestres, à celui prévu pour les
+    fonctionnaires de l'Etat en application du III de l'article L. 14 » : la
+    même phrase dans les six décrets (décret n° 2008-639, article 13, II, et
+    ses voisins). Le taux du fonctionnaire est de 0,75 % jusqu'au 18 décembre
+    2008, puis de 1,25 %, mais pour les seuls « trimestres d'assurance cotisés
+    et effectués à compter du 1er janvier 2009 » (loi n° 2008-1330, article 89,
+    III) : un trimestre du second semestre de 2008 garde 0,75 %. Le modèle
+    servait 0,75 % à tout trimestre de la SNCF de 2009 à 2017, 1,25 % à ceux de
+    2008 des cinq autres régimes, et aucune limite.
+
+    Les trimestres de :func:`trimestres_de_surcote_regimes_speciaux` sont les
+    derniers de la carrière : ceux de 2009 et après prennent le taux de la
+    période, ceux de 2008 celui que le barème de la fonction publique donne à
+    leur date. La limite, ``surcote_trimestres_maximum``, que les périodes
+    portent tant que leur décret l'écrit — jusqu'au 31 décembre 2016 à la
+    SNCF, à la RATP, aux IEG et à l'Opéra —, retient d'abord ceux de 2009.
+    """
+    comptes = trimestres_de_surcote_regimes_speciaux(carriere, trimestres, requis, age_surcote)
+    if comptes <= 0:
+        return 1.0
+    debut = carriere.date_de_l_age(age_surcote)
+    if debut.rang < SURCOTE_AU_TAUX_DE_2009_DEPUIS.rang:
+        debut = SURCOTE_AU_TAUX_DE_2009_DEPUIS
+    fin = carriere.date_liquidation
+    apres = 0.0
+    if debut.rang < fin.rang:
+        for ligne in carriere.lignes:
+            if ligne.cotise:
+                apres += trimestres_de_la_ligne_entre(carriere, ligne, debut, fin)
+    maximum = periode.surcote_trimestres_maximum
+    depuis_2009 = min(comptes, int(apres + 1e-9))
+    au_taux_de_2009 = depuis_2009 if maximum is None else min(depuis_2009, maximum)
+    de_2008 = comptes - depuis_2009
+    if maximum is not None:
+        de_2008 = min(de_2008, maximum - au_taux_de_2009)
+    coefficient = 1.0 + periode.surcote_par_trimestre * au_taux_de_2009
+    if de_2008 > 0:
+        # Les derniers trimestres de 2008, dans l'ordre : octobre, et juillet
+        # avant lui.
+        dates = [(SURCOTE_AU_TAUX_DE_2009_DEPUIS.plus_mois(-3 * (rang + 1)), False)
+                 for rang in range(de_2008 - 1, -1, -1)]
+        coefficient += moteur.surcote_baremes.coefficient("fonction_publique", dates)[0] - 1.0
+    return coefficient
 
 
 def borne_de_la_duree(moteur, periode: PeriodeRegime, carriere: Carriere,
