@@ -44,7 +44,8 @@ commun à divers corps, vise tous deux. Il faut, à la fois :
   c'est leur nombre, élève, stagiaire et échelons provisoires mis à part. Les
   jours où une grille rattachée ailleurs n'a pas ces échelons sont déclarés.
 - *Une seule grille à la fois* pour un grade d'un tableau, et un seul corps
-  au noyau.
+  au noyau, sauf le décret commun dont l'article qui énumère ses corps est lu
+  (``COMMUNS``) : son tableau vaut pour chacun d'eux, une ligne par corps.
 
 Ce qui manque à l'une de ces conditions est déclaré, avec la plus avancée des
 raisons rencontrées, et les candidats qu'elle écarte. Deux versions d'un même
@@ -593,6 +594,72 @@ def _candidats_legi(depot: Depot, tableau: dict, groupe: str, rangs: set[int]):
     return prouves, raisons, trous
 
 
+#: Les décrets communs à plusieurs corps dont l'article qui énumère les corps
+#: a été lu au LEGI : (article, citation mot pour mot). Le tableau de durées d'un
+#: tel décret qui vaut pour « les corps […] régis par le présent décret » se
+#: rattache au grade de chacun des corps du noyau qui ont ce décret pour texte
+#: d'origine (relecture R-B3-bis, partie 3). Les autres décrets communs (le
+#: n° 91-783, les assistants de service social) ne sont pas lus : leurs grades
+#: restent déclarés, un seul corps au noyau.
+COMMUNS = {
+    "2012-762": (
+        "LEGIARTI000025855207",
+        "Sont classés dans la catégorie A prévue à l'article 29 de la loi du 11 janvier 1984 "
+        "susvisée et sont régis par le présent décret les corps ci-dessous énumérés : 1° Le "
+        "corps des infirmiers de l'Etat qui constitue un corps à vocation interministérielle "
+        "relevant du ministre chargé de la santé ; 2° Le corps des infirmiers de la défense ; "
+        "3° Le corps des infirmiers de l'éducation nationale et de l'enseignement supérieur."),
+}
+
+
+def _decret_commun(depot: Depot, tableau: dict, numero: str, corps: set[str]) -> str:
+    """La preuve qu'un tableau de durées vaut pour chacun de ces corps du noyau,
+    ou rien : le décret est dans ``COMMUNS``, l'article cité y est seul en
+    vigueur sur la période et porte la citation, la phrase du tableau dit les
+    corps « régis par le présent décret », et chaque corps a ce décret pour
+    texte d'origine au noyau."""
+    if numero not in COMMUNS:
+        return ""
+    article, citation = COMMUNS[numero]
+    if depot.index.versions_sur(article, tableau["debut"], tableau["fin"]) != [article] \
+            or citation not in depot.index.texte(article) \
+            or not PRESENT_DECRET.search(tableau["intro"]):
+        return ""
+    origines = {c for c in corps for v in depot.noyau_corps[c] for r in v["textes"].split()
+                if r.endswith(":origine")
+                and depot.noyau_textes.get(r.split(":")[0], {}).get("numero") == numero}
+    if origines != corps:
+        return ""
+    return (f"décret commun à ses corps, n° {numero}, {article} : « {citation} » ; le tableau : "
+            f"« {tableau['intro'].rstrip(' :')} » ; les corps {', '.join(sorted(corps))} ont ce "
+            "décret pour texte d'origine au Noyau RH")
+
+
+def _un_grade_a_la_fois(noyau: list[dict]) -> tuple[list[dict], list[tuple]]:
+    """Au noyau, deux grades d'un même corps rattachés aux mêmes jours (une
+    version finit le jour où la suivante commence, et les deux grilles ont les
+    échelons du tableau) : ces jours ne se rattachent à aucun, et se déclarent,
+    [(début, fin exclue, raison)]."""
+    recouvrements = []
+    for i, a in enumerate(noyau):
+        for b in noyau[i + 1:]:
+            d, f = max(a["debut"], b["debut"]), min(a["fin"], b["fin"])
+            if a["corps"] == b["corps"] and a["grade"] != b["grade"] and d < f:
+                recouvrements.append((d, f, a["corps"], (
+                    f"deux grades du corps {a['corps']} au Noyau RH valent ensemble {_fmt(d, f)}, "
+                    f"{a['grade']} (grille {a['grille']}) et {b['grade']} (grille {b['grille']}), "
+                    "aux échelons du tableau l'un et l'autre : le chaînage ne choisit pas")))
+    sortie = []
+    for p in noyau:
+        bouts = [(p["debut"], p["fin"])]
+        for d, f, corps, _ in recouvrements:
+            if corps == p["corps"]:
+                bouts = [x for bd, bf in bouts for x in ((bd, min(bf, d)), (max(bd, f), bf))
+                         if x[0] < x[1]]
+        sortie += [{**p, "debut": bd, "fin": bf} for bd, bf in bouts]
+    return sortie, [(d, f, raison) for d, f, _, raison in recouvrements]
+
+
 def _candidats_noyau(depot: Depot, tableau: dict, groupe: str, rangs: set[int]):
     statut = depot.durees_textes[tableau["texte"]]
     numero = statut["numero"]
@@ -622,7 +689,8 @@ def _candidats_noyau(depot: Depot, tableau: dict, groupe: str, rangs: set[int]):
                             f"{numero} ({', '.join(sorted(corps_cites))}) ne porte ce libellé"))
         return prouves, raisons, trous
     corps_trouves = {t[0] for t in trouves}
-    if len(corps_trouves) > 1:
+    commun = _decret_commun(depot, tableau, numero, corps_trouves) if len(corps_trouves) > 1 else ""
+    if len(corps_trouves) > 1 and not commun:
         raisons.append(("unicite", "plusieurs corps du Noyau RH ont ce grade aux mêmes dates : "
                         + ", ".join(sorted(corps_trouves))))
         return prouves, raisons, trous
@@ -646,7 +714,8 @@ def _candidats_noyau(depot: Depot, tableau: dict, groupe: str, rangs: set[int]):
                 prouves.append({"source": "etat", "texte_grille": "", "grille": grade["grille"],
                                 "libelle_grille": grade["libelle"], "corps": corps,
                                 "grade": grade["grade"], "debut": d, "fin": f, "lien": "noyau",
-                                "preuve": depot.preuve_du_noyau(ici)})
+                                "preuve": (f"{commun} ; " if commun else "")
+                                          + depot.preuve_du_noyau(ici)})
     return prouves, raisons, trous
 
 
@@ -725,7 +794,8 @@ def chainer_durees(depot: Depot) -> list[dict]:
             raisons.append(("unicite", "plusieurs grilles du LEGI prouvées aux mêmes dates : "
                             + ", ".join(f"{l['grille']} ({l['texte_grille']})" for l in legi)))
             legi = []
-        prouves = legi + _fusionner(noyau)
+        noyau, recouvrements = _un_grade_a_la_fois(_fusionner(noyau))
+        prouves = legi + noyau
         couverts = [(p["debut"], p["fin"]) for p in prouves]
         if tableau["chevauche"]:
             autre = par_article[(tableau["chevauche"], tableau["tableau"])]
@@ -750,7 +820,8 @@ def chainer_durees(depot: Depot) -> list[dict]:
         # Rattaché en partie : les jours où une grille rattachée n'a pas les
         # échelons du tableau sont déclarés, non tus (relecture R-B3-bis, partie 2).
         rattachees = {(p["source"], p["texte_grille"], p["grille"], p["corps"]) for p in prouves}
-        for d, f, ici in _non_couverts([t[:3] for t in trous if t[3] in rattachees], couverts):
+        for d, f, ici in _non_couverts([t[:3] for t in trous if t[3] in rattachees]
+                                       + recouvrements, couverts):
             sortie.append({**base, "debut": d, "fin": "" if f == OUVERT else f,
                            "statut": "declare", "raison": _resumer(ici)})
         if not prouves:
@@ -1066,7 +1137,9 @@ ENTETES = {
               "la grille en vigueur sur la période nomme ce statut), noyau (le corps, ou l'un de "
               "ses grades, cite ce statut sur toute la période) ; preuve : la citation. Pour une "
               "grille du LEGI, le corps est le statut, texte. Une seule grille à la fois par "
-              "source : un grade peut avoir, aux mêmes dates, une grille du LEGI et une du noyau.",
+              "source, et au noyau par corps : un grade peut avoir, aux mêmes dates, une grille "
+              "du LEGI et une du noyau, et, pour un décret commun à plusieurs corps (preuve : "
+              "« décret commun à ses corps »), une grille dans chacun.",
     "reclassements": "Chaque groupe de chaque tableau de reclassement (de reclassements/), "
                      "rattaché aux grilles d'origine et d'accueil du Noyau RH, ou déclaré. "
                      "date : celle du reclassement ; date_lue : effet (lue par le lecteur), "

@@ -245,16 +245,79 @@ def test_le_noyau_cite_un_statut_par_ses_corps_comme_par_ses_grades(durees, noya
 
 
 def test_deux_corps_qui_citent_le_statut_et_ont_les_memes_grades_ne_se_rattachent_pas(durees):
-    # Décret n° 2012-762 (texte 1142 du noyau, « portant dispositions statutaires
-    # communes aux corps d'infirmiers de catégorie A des administrations de l'Etat ») :
-    # `corps.csv` le cite pour le corps 01102 (« Infirmiers des administrations de
-    # l'Etat ») et pour le corps 01153 (« Infirmiers de la défense »), qui ont, du
-    # 2012-06-01 au 2021-12-31, les mêmes grades aux mêmes grilles (« Infirmier hors
-    # classe » 02947 puis 03214, « … de classe supérieure » 02948 puis 03215, « … de
-    # classe normale » 02949 puis 03216). Un seul corps au noyau : aucun rattachement.
+    # Décret n° 91-783 (texte 112 du noyau, « relatif aux dispositions statutaires
+    # communes applicables aux corps d'assistants de service social ») : origine
+    # des corps 00671 (« Assistants de service social du MAE ») et 00873
+    # (« Assistants de service social »), qui ont les grades du tableau aux mêmes
+    # dates. L'article qui énumère les corps de ce décret n'est pas lu ici
+    # (`COMMUNS`) : aucun rattachement, la raison le dit.
     statuts = {t["texte"]: t["numero"] for t in _lire(GRILLES / "durees" / "textes.csv")}
-    assert not [d for d in durees if statuts[d["texte"]] == "2012-762"
-                and d["statut"] == "rattache" and d["lien"] == "noyau"]
+    lignes = [d for d in durees if statuts[d["texte"]] == "91-783"
+              and d["groupe"] in ("Assistant de service social principal", "Assistant de service social")]
+    assert lignes and not [d for d in lignes if d["statut"] == "rattache" and d["lien"] == "noyau"]
+    assert all("plusieurs corps du Noyau RH" in d["raison"] for d in lignes if d["statut"] == "declare")
+
+
+def test_un_decret_commun_qui_enumere_ses_corps_rattache_le_grade_a_chacun(durees):
+    # Relecture R-B3-bis, partie 3. Décret n° 2012-762, art. 1
+    # (LEGIARTI000025855207, seule version, depuis le 2012-05-11) : « Sont classés
+    # dans la catégorie A […] et sont régis par le présent décret les corps
+    # ci-dessous énumérés : 1° Le corps des infirmiers de l'Etat […] ; 2° Le corps
+    # des infirmiers de la défense ; 3° Le corps des infirmiers de l'éducation
+    # nationale et de l'enseignement supérieur. » Son art. 14, à chaque version :
+    # « La durée [moyenne] du temps passé dans chacun des échelons des grades des
+    # corps d'infirmiers régis par le présent décret est fixée ainsi qu'il suit » ;
+    # LEGIARTI000025855171 (2012-05-11 au 2016-01-01) et LEGIARTI000032526045
+    # (2016-01-01 au 2017-01-01) : hors classe 11 échelons, classe supérieure 7,
+    # classe normale 9 ; LEGIARTI000032526029 (2017-01-01 au 2022-01-01) : 10, 7, 8.
+    # Noyau RH : `corps.csv`, « 1142:origine » pour les corps 01102 et 01153 (et
+    # 01144, dont les grades s'écrivent « … de l'éducation nationale et de
+    # l'enseignement supérieur »), depuis le 2012-06-01 ; leurs grades ont les
+    # mêmes grilles : 02947 (11 échelons), 02948 (7), 02949 (9) jusqu'au
+    # 2017-01-01 inclus, 03214 (10), 03215 (7), 03216 (8) du 2017-01-01 au
+    # 2021-12-31. Le 2017-01-01, la classe supérieure a deux grades en vigueur
+    # (03043 et 04074 au corps 01102, 03249 et 04155 au 01153), aux grilles 02948
+    # et 03215, de sept échelons chacune : ce jour-là est déclaré. Depuis le
+    # 2022-01-01, l'art. 14 (LEGIARTI000044635065) : « Infirmier hors classe
+    # 11e échelon - 10e échelon 4 ans […] Infirmier 11e échelon - 10e échelon
+    # 4 ans […] » ; au noyau, les trois corps ont ces deux grades (05052 et 05053
+    # au 01102, 05050 et 05051 au 01153, 05048 et 05049 au 01144), aux grilles
+    # 03752 et 03751, de onze échelons ; le 01144, depuis le 2024-05-01, aux
+    # grilles 03923 et 03922, de onze échelons.
+    statuts = {t["texte"]: t["numero"] for t in _lire(GRILLES / "durees" / "textes.csv")}
+    lignes = [d for d in durees if statuts[d["texte"]] == "2012-762" and d["source"] in ("etat", "")]
+    attendus = {("LEGIARTI000044635065", "Infirmier hors classe", corps, grille, debut, fin)
+                for corps, grille, debut, fin in (
+                    ("01102", "03752", "2022-01-01", ""), ("01153", "03752", "2022-01-01", ""),
+                    ("01144", "03752", "2022-01-01", "2024-05-01"),
+                    ("01144", "03923", "2024-05-01", ""))}
+    attendus |= {("LEGIARTI000044635065", "Infirmier", corps, grille, debut, fin)
+                 for corps, grille, debut, fin in (
+                     ("01102", "03751", "2022-01-01", ""), ("01153", "03751", "2022-01-01", ""),
+                     ("01144", "03751", "2022-01-01", "2024-05-01"),
+                     ("01144", "03922", "2024-05-01", ""))}
+    for corps in ("01102", "01153"):
+        for article, debut, fin, grilles in (
+                ("LEGIARTI000025855171", "2012-06-01", "2016-01-01", ("02947", "02948", "02949")),
+                ("LEGIARTI000032526045", "2016-01-01", "2017-01-01", ("02947", "02948", "02949")),
+                ("LEGIARTI000032526029", "2017-01-01", "2022-01-01", ("03214", "03215", "03216"))):
+            for groupe, grille in zip(("Infirmier hors classe", "Infirmier de classe supérieure",
+                                       "Infirmier de classe normale"), grilles):
+                jour = "2017-01-02" if grille == "03215" else debut
+                attendus.add((article, groupe, corps, grille, jour, fin))
+    assert {(d["article"], d["groupe"], d["corps"], d["grille"], d["debut"], d["fin"])
+            for d in lignes if d["statut"] == "rattache"} == attendus
+    for d in lignes:
+        if d["statut"] == "rattache":
+            assert d["lien"] == "noyau"
+            assert "LEGIARTI000025855207" in d["preuve"]
+            assert "sont régis par le présent décret les corps ci-dessous énumérés" in d["preuve"]
+            assert f"le corps {d['corps']} cite le texte 1142" in d["preuve"]
+    (jour,) = [d for d in lignes if d["statut"] == "declare"
+               and d["article"] == "LEGIARTI000032526029"
+               and d["groupe"] == "Infirmier de classe supérieure"]
+    assert (jour["debut"], jour["fin"]) == ("2017-01-01", "2017-01-02")
+    assert "02948" in jour["raison"] and "03215" in jour["raison"]
 
 
 def _citations_de_la_preuve(preuve: str):
@@ -309,12 +372,14 @@ def test_chaque_grade_de_chaque_tableau_est_rattache_ou_declare(durees):
 def test_un_grade_n_a_qu_une_grille_a_la_fois_par_source(durees):
     # Règle 5 de l'étape 3, que la relecture R-B3 (point 1 c) a vue enfreinte au
     # noyau (« Infirmier de classe supérieure », grilles 02948 et 03215 le
-    # 2017-01-01) : par source (le LEGI, le noyau), deux rattachements d'un même
+    # 2017-01-01) : par source (le LEGI, le noyau), et au noyau par corps (un
+    # décret commun vaut pour chacun de ses corps), deux rattachements d'un même
     # grade de tableau ne se recouvrent pas.
     par_grade: dict[tuple, list[dict]] = {}
     for d in durees:
         if d["statut"] == "rattache":
-            cle = (d["texte"], d["article"], d["tableau"], d["groupe"], d["source"] == "etat")
+            cle = (d["texte"], d["article"], d["tableau"], d["groupe"], d["source"] == "etat",
+                   d["corps"])
             par_grade.setdefault(cle, []).append(d)
     for cle, lignes in par_grade.items():
         lignes.sort(key=lambda d: d["debut"])
