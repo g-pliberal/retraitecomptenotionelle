@@ -136,3 +136,7 @@ la zone (`test_simulateur.py -k` la majoration et le régime agricole,
 `test_regle_de_chacun.py`, `test_contrats.py`, `test_pension_minimum_avant_1983.py`) : verts.
 
 La question de D. 732-76 au propriétaire demeure, non traitée ici.
+
+*Renvoi du 3 novembre 2026 (file K) : « L'exercice 1952 n'a qu'une demi-année » (§ 3) est une
+déduction du 1er juillet 1952, que l'article 45 ne dit pas ; et la cotisation de 1952 est
+désormais à moitié. Voir `2026-11-03-cotisation-de-1952.md`.*

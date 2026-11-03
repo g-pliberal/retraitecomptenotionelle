@@ -1,0 +1,37 @@
+date: "2026-11-03"
+session: "action 131, file K de la vague 6 : la cotisation de 1952 des non-salariés agricoles, à la moitié de la cotisation annuelle (décret n° 52-1166, article 45)"
+consulte: >-
+  python scripts/veille_droit.py ; les index LEGI (à jour au 2 novembre 2026, aucun
+  incrément depuis) et JORF (au 3 novembre 2026) de la DILA, récupérés : le décret n° 52-1166
+  du 18 octobre 1952 (LEGITEXT000006060625), articles 1er à 28 et 44 à 46 dans leurs
+  rédactions du 19 octobre 1952, dont les articles 5 (LEGIARTI000019272639), 14
+  (LEGIARTI000019272715), 15 (LEGIARTI000019272718), 16 (LEGIARTI000006763716), 22
+  (LEGIARTI000019272741), 23 (LEGIARTI000019272750) et 45 (LEGIARTI000019272803), et les
+  rédactions de 1953 des articles 8 et 9 ; le décret n° 99-875, article 2
+  (LEGIARTI000006779656) ; le décret n° 55-753, article 18 (LEGIARTI000006763581) ; la loi
+  n° 52-401 du 14 avril 1952, articles 17, 19, 20 et 21 ; au JORF, les notices de la loi
+  n° 52-799 (JORFTEXT000000512405), du décret n° 52-1166 (JORFTEXT000000327336) et de
+  l'arrêté du 23 juillet 1953 « TAUX DES COTISATIONS » (JORFTEXT000000435389), et les textes
+  de 1952 et 1953 sur l'allocation de vieillesse agricole et ses cotisations. python
+  scripts/textes.py --inscrire, lancé : il inscrivait 546 rédactions d'autres fiches, laissées
+  à la session qui les lit.
+trouve: >-
+  L'article 45 : « Pour l'exercice 1952, les cotisations professionnelles visées aux articles
+  20 et 21 de la loi du 10 juillet 1952 sont égales à la moitié des cotisations annuelles »,
+  sans distinguer le chef de sa famille. Le modèle prélevait en 1952 la cotisation entière,
+  au scénario 1 (acquerir, vers le rendement) et au compte des scénarios 2 à 6, dans les
+  deux moteurs : 8,50 € pour 100 € de revenu. Corrigé en données, la période de 1952 de
+  msa_non_salaries.yaml coupée à 4,25 %, le test d'abord ; fiche neuve
+  cotisation_agricole_de_1952. Le témoin de chef né en 1925 perd 13,144 € par an au scénario
+  1 (12,518 € de pension proportionnelle, 0,626 € de majoration, P = 17,76), refait à la main
+  au centime ; celui de collaborateur, 12,518 €. La raison de la moitié (le second semestre),
+  que la double cotisation de l'article 19 soit celle des articles 20 et 21, les points de
+  cette moitié et 1952 comptée pour une année dans P : déduits ou convenus, non lus, et
+  déclarés. L'arrondi à la dizaine de francs (article 23, de 1952 à 1975) : non appliqué,
+  moins de 0,015 € par an. Les deux écarts faibles de R-K-bis corrigés : la « demi-année »
+  dite déduite ; la ligne manque dit « n'est pas appliqué ».
+reste: >-
+  La loi n° 52-799, articles 19 à 21, au fac-similé du Journal officiel du 11 juillet 1952 :
+  le montant et l'assiette des cotisations de 1952, et la double cotisation de l'article 19 ;
+  les articles 8 et 9 du décret n° 52-1166 dans leur rédaction d'origine. La question de
+  D. 732-76 au propriétaire demeure. La relecture de cette étape.
