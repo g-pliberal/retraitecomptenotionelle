@@ -157,7 +157,12 @@ versions:
     en_vigueur: 1986-02-27
     lu_le: 2026-11-03
     citation: >-
-      les mêmes phrases, et la cotisation des chauffeurs de taxi
+      Pour les assurés en activité autres que ceux qui sont mentionnés aux troisième et
+      quatrième alinéas ci-après, la cotisation annuelle du régime d'assurance vieillesse
+      complémentaire est assise sur les revenus professionnels non-salariés de
+      l'avant-dernière année civile déclarés dans les conditions fixées à l'article
+      D. 633-3 et dans la limite d'un plafond égal à trois fois celui mentionné à
+      l'article L. 633-10 en vigueur dans l'année où la cotisation est due.
   - id: LEGIARTI000006738071
     article: "code de la sécurité sociale, D. 635-6"
     en_vigueur: 1985-12-21
@@ -212,7 +217,14 @@ versions:
     en_vigueur: 2002-05-01
     lu_le: 2026-11-03
     citation: >-
-      les mêmes phrases, sans la cotisation sur la limite à défaut de déclaration
+      Pour les assurés en activité autres que ceux qui sont mentionnés aux troisième et
+      quatrième alinéas ci-après, la cotisation annuelle du régime d'assurance vieillesse
+      complémentaire est assise sur les revenus professionnels non salariés de
+      l'avant-dernière année civile déclarés dans les conditions fixées à l'article
+      D. 633-3 et dans la limite d'un plafond égal à quatre fois celui mentionné à
+      l'article L. 633-10 en vigueur dans l'année où la cotisation est due. Toutefois, le
+      montant de cette cotisation ne peut être inférieur à celui qui serait dû au titre
+      d'un revenu égal au revenu minimum prévu à l'article D. 633-2.
   - id: LEGIARTI000006738072
     article: "code de la sécurité sociale, D. 635-6"
     en_vigueur: 1997-02-26
@@ -359,8 +371,9 @@ versions:
       plafonds_de_l_assiette: 4
       plafonds_de_l_assiette_des_commercants: 3
     droit: >-
-      l'artisan, et le commerçant au régime né le 1er janvier 2004 (loi n° 2003-775),
-      cotisent sur le revenu de l'avant-dernière année ; l'artisan qui commence, sur un
+      l'artisan, et le commerçant, à son régime complémentaire obligatoire depuis 2004
+      (D. 635-10, son taux « pour l'année 2004 »), cotisent sur le revenu de
+      l'avant-dernière année ; l'artisan qui commence, sur un
       tiers puis la moitié du plafond de la sécurité sociale ; le commerçant qui
       commence, sur les revenus forfaitaires de L. 131-6 ; le conjoint collaborateur,
       depuis son affiliation de 2007, sur l'assiette de sa cotisation de base, sans
@@ -393,6 +406,15 @@ versions:
       La cotisation annuelle au régime complémentaire obligatoire d'assurance vieillesse
       est calculée suivant les modalités prévues au cinquième alinéa de l'article
       L. 131-6.
+  - id: LEGIARTI000020169101
+    article: "code de la sécurité sociale, L. 131-6"
+    en_vigueur: 2009-01-01
+    lu_le: 2026-11-03
+    citation: >-
+      Les cotisations sont établies sur une base annuelle. Elles sont calculées, à titre
+      provisionnel, en pourcentage du revenu professionnel de l'avant-dernière année ou
+      des revenus forfaitaires. Lorsque le revenu professionnel est définitivement connu,
+      les cotisations font l'objet d'une régularisation.
   - id: LEGIARTI000017869802
     article: "code de la sécurité sociale, D. 635-7"
     en_vigueur: 2008-01-01
@@ -450,6 +472,29 @@ versions:
       le plafond prévu au quatrième alinéa du présent article ; 2° 7,6 % pour la part du
       revenu professionnel excédant le seuil fixé au 1°, dans la limite de quatre fois le
       plafond annuel prévu à l'article L. 241-3. [...]
+  - id: LEGIARTI000025013725
+    article: "code de la sécurité sociale, L. 131-6-2"
+    en_vigueur: 2011-12-23
+    lu_le: 2026-11-03
+    citation: >-
+      Les cotisations sont dues annuellement. Elles sont calculées, à titre
+      provisionnel, en pourcentage du revenu d'activité de l'avant-dernière année. Pour
+      les deux premières années d'activité, les cotisations provisionnelles sont
+      calculées sur un revenu forfaitaire fixé par décret [...]. Lorsque le revenu
+      d'activité est définitivement connu, les cotisations font l'objet d'une
+      régularisation.
+  - id: LEGIARTI000025629861
+    article: "code de la sécurité sociale, D. 635-2"
+    en_vigueur: 2012-04-05
+    lu_le: 2026-11-03
+    citation: >-
+      La cotisation annuelle au régime complémentaire obligatoire d'assurance vieillesse
+      est calculée suivant les modalités prévues aux premier, deuxième et troisième
+      alinéas de l'article L. 131-6-2. [...] Pour les travailleurs indépendants dont la
+      durée d'affiliation est au moins égale à quatre-vingt-dix jours au cours de l'année
+      au titre de laquelle la cotisation est due, ladite cotisation ne peut être calculée
+      sur une assiette inférieure à celle mentionnée au dernier alinéa de l'article
+      D. 633-2.
   nee_de: JORFARTI000025055800
   bornes:
     revenu.annee: [2012-01-01, 2013-01-01]
@@ -458,9 +503,10 @@ versions:
       plafonds_de_l_assiette: 4
       plafonds_de_l_assiette_des_commercants: 3
     droit: >-
-      plus de forfait propre à la complémentaire : la cotisation des deux premières
-      années est provisionnelle, sur le revenu forfaitaire de D. 131-1, puis régularisée
-      sur le revenu de l'année
+      plus de forfait propre à la complémentaire : sa cotisation suit L. 131-6-2,
+      provisionnelle, sur le revenu forfaitaire de D. 131-1 les deux premières années
+      (décret n° 2011-2038, article 1er), puis régularisée « lorsque le revenu d'activité
+      est définitivement connu »
     conditions: >-
       depuis le 5 avril 2012, dès quatre-vingt-dix jours d'affiliation dans l'année, la
       cotisation « ne peut être calculée sur une assiette inférieure » à celle du régime
@@ -557,9 +603,9 @@ sources:
     reference: >-
       décret n° 78-351, articles 3 à 6, rédactions de 1978 et du 1er janvier 1985
       (LEGIARTI000006766103 à LEGIARTI000006766108) ; D. 635-1, D. 635-2, D. 635-4,
-      D. 635-6, D. 635-7, D. 635-10, D. 635-10-2, D. 633-6, D. 633-19-2, R. 242-16 et
-      L. 131-6, toutes leurs rédactions de 1985 à 2016 dans l'index LEGI, à jour du
-      2 novembre 2026
+      D. 635-6, D. 635-7, D. 635-10, D. 635-10-2, D. 633-6, D. 633-19-2, R. 242-16,
+      L. 131-6 (rédactions de 2003 et de 2009) et L. 131-6-2 (rédaction de 2011), de 1985
+      à 2016 dans l'index LEGI, à jour du 2 novembre 2026
     date: 2026-11-03
   - type: jorf
     reference: >-

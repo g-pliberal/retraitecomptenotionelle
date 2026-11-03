@@ -142,4 +142,4 @@ l'autre n'a été lu ici.
 Aucun fichier d'une autre file n'a été touché, hors des lignes de la règle dans
 les fichiers partagés : `tests/test_carte.py` (`LUES_AU_DROIT`),
 `scripts/construire_donnees.py` (deux champs de période),
-`data/reference/textes/perimetre.yaml` (le cliquet, abaissé à 9 356).
+`data/reference/textes/perimetre.yaml` (le cliquet, abaissé à 9 355).
