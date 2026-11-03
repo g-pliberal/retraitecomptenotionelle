@@ -1,0 +1,44 @@
+date: "2026-11-03"
+session: "action 130, file R-M1-bis : relecture indépendante de la limite déclarée de la grille des salaires forfaitaires des marins d'avant 2008 (commit 8cf8615, file M1-bis)"
+consulte: >-
+  python scripts/veille_droit.py ; docs/veille_droit.md ; les index JORF et LEGI de la DILA,
+  récupérés et mis à jour (JORF à l'incrément du 3 novembre 2026, 20261103-002311 ; LEGI à
+  celui du 2 novembre, 20261102-213929 ; aucun depuis). Dans JORF : les arrêtés des salaires
+  forfaitaires des marins du 29 décembre 1994 (JORFARTI000001974748, JORFARTI000001344200,
+  JORFARTI000002168293), du 31 janvier 1995 (JORFARTI000002373607, JORFARTI000001392506), du
+  30 juin 1995 (JORFARTI000001014013, JORFARTI000001014119, JORFARTI000001977662,
+  JORFARTI000001594620), du 2 janvier 2006 (JORFARTI000001105232, JORFARTI000001490692,
+  JORFARTI000001877987) et son rectificatif (JORFARTI000001490715), du 26 décembre 2006
+  (JORFARTI000002473548, JORFARTI000002075984), du 31 décembre 2007 (JORFARTI000017964781)
+  et du 19 mars 2026 (JORFARTI000053743024) ; la liste des arrêtés des salaires forfaitaires
+  publiés en 1994, 1995, 2005 et 2006 ; le décret n° 2001-1203 (JORFTEXT000000580421). Dans
+  LEGI : R. 11 du code des pensions de retraite des marins (LEGIARTI000006791987) ; le
+  décret n° 85-1148, article 3 au 1er décembre 1985, au 1er janvier 1995 et au 1er janvier
+  2005 (LEGIARTI000006454423, LEGIARTI000006454440, LEGIARTI000006454455), article 7 aux
+  mêmes dates (LEGIARTI000006454537, LEGIARTI000006454542, LEGIARTI000006454552). Le dépôt :
+  regimes/salaires_forfaitaires.csv, legislation/indice_100_fonction_publique.csv,
+  legislation/point_indice_fonction_publique.csv, le salaire moyen du modèle ; le commit
+  8cf8615, sa note, la fiche marins_salaire_de_reference, docs/limites/4-regimes-incomplets.md,
+  les notes et journaux de M1 et de R-M1. Les essais : tests/test_marins.py et -m rapide,
+  normaux et sous PRESOMPTIONS_DECALEES=1.
+trouve: >-
+  Citations conformes, mot pour mot ; chaque chiffre de la limite refait à la main (26 952,43,
+  23 530,15, +14,5 %, 24 709,23, +2,2 %, 1,808202, 60 548,80, 42 547,27, 48 735,45, 12,7 %,
+  80,5 %, 73 436,07, 75,11 %, 86,04 %, 1,3313, 1,162, 76,455, 102,751, 87,57, 117,69), le
+  rapport de la vingtième au plafond refait année par année de 1985 à 2007, de 65,62 % (1985)
+  à 75,11 % (2005) ; tests verts (53 réussis, 53 sous la garde ; -m rapide 4 242 et 4 044) ;
+  ni code ni témoin dans le commit ; les six écarts de R-M1 corrigés ou déclarés. Écart moyen :
+  l'arrêté du 30 juin 1995, « portant majoration », modifie la grille « pour compter du
+  1er juillet 1995 », tableau non lu ; le 14,5 % et le « 12,7 % au plus » d'un départ en 1995
+  ne valent que jusqu'au 30 juin, l'écart étant plus grand ensuite, ce que la fiche ne dit
+  pas. Écarts faibles : la ligne des limites dit le forfait des plus hautes catégories
+  « sous-estimé » sans la condition de la fiche ; le deuxième test prend le plafond au code
+  au lieu de le poser (valeurs refaites : justes). Négligeables : trois centimes entre les
+  facteurs arrondis de la note et ses résultats ; la phrase citée du décret n° 2001-1203 est
+  un paragraphe d'explication, non un article.
+reste: >-
+  Restreindre au premier semestre 1995 le 14,5 % et le 12,7 % dans la fiche, la note et le
+  journal de M1-bis ; conditionner la ligne des limites ; poser le plafond dans le deuxième
+  test. La question au propriétaire demeure (tableaux des arrêtés de 1985 à 2007, celui du
+  30 juin 1995 compris). Note 2026-11-03-relecture-limite-de-la-grille-des-marins.md de
+  l'action 130.
