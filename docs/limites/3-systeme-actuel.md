@@ -89,6 +89,16 @@ l'Institut des politiques publiques (PENSIPP). Écarts connus :
   servies depuis le 22 septembre 2026 ; seule en reste dehors sa troisième
   condition, la retraite de même nature déjà obtenue avant le 1er juillet
   2017 (voir « Ce qui reste hors du modèle »).
+- **régimes spéciaux et régime général** — l'assuré qui a relevé du régime
+  général et d'un régime spécial que nomme D. 173-1 (la Banque de France,
+  les clercs de notaire, la Comédie-Française, les industries électriques et
+  gazières, les marins, les mines, l'Opéra, la RATP, la SNCF…) a droit, pour
+  ses périodes du régime spécial, aux « avantages dont [il] aurai[t]
+  bénéficié sous le régime général » (D. 173-2) : la caisse calcule cette
+  fraction selon ses règles, et le régime spécial ne peut servir moins. Le
+  modèle liquide chaque régime sur ses seules règles, sans cette garantie
+  (base de législation de la Cnav, exposés « Fraction de retraite pour le
+  régime spécial »).
 - **assiettes forfaitaires des salariés** — le modèle porte au compte le
   salaire que la saisie déclare, aux taux de droit commun, faute d'un statut
   qui distingue ceux que la caisse traite autrement, et dont la base de
