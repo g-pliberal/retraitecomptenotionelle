@@ -1,0 +1,34 @@
+date: "2026-11-03"
+session: "action 130, file M3 : la majoration pour enfants de l'Agirc-Arrco avant le coefficient d'anticipation (décision du propriétaire)"
+consulte: >-
+  python scripts/veille_droit.py ; la base de la Cnav, rien de neuf. Hors du Journal
+  officiel, dans les copies de la caisse, téléchargées le 3 novembre 2026 et d'empreintes
+  identiques à celles des fiches : la circulaire Agirc-Arrco n° 2020-02-DRJ du 20 janvier
+  2020, fiche 4, II.2.1 à II.4 ; le guide des salariés n° 9, « Majorations pour enfants »,
+  mars 2017 ; l'accord du 17 novembre 2017, version applicable au 1er janvier 2019,
+  articles 84, 94 et 95 ; la circulaire 2023-03-DRJ et l'avenant n° 15 ; l'accord du 8
+  décembre 1961, annexe A, articles 15 à 19, et la convention du 14 mars 1947, annexe I,
+  articles 4 à 6 bis, mis à jour au 1er janvier 2018 ; au recueil des accords, l'accord
+  Agirc du 9 février 1994 (article 2), l'accord Arrco du 25 avril 1996 (articles 10 à 13),
+  l'accord du 13 novembre 2003 (article 8) et l'accord du 18 mars 2011 (articles 7 et 8) ;
+  la liste des circulaires de la caisse. Le site réglementaire de la caisse
+  (reglementation.agirc-arrco.fr) refusait la connexion, faute de certificat vérifiable.
+trouve: >-
+  Aucun accord ni aucune annexe ne dit si la majoration pour enfants nés ou élevés se
+  calcule avant ou après le coefficient d'anticipation : tous majorent « l'allocation » et
+  appliquent le coefficient aux points. La caisse le tranche : depuis 2019, la majoration
+  « est calculée sur les droits de base du participant sans tenir compte des coefficients
+  d'anticipation éventuellement appliqués » (circulaire 2020-02-DRJ, fiche 4, II.2.1),
+  puis plafonnée ; en mars 2017, « le régime Arrco ne tient pas compte du coefficient de
+  minoration pour le calcul des majorations pour enfants ; le régime Agirc en tient
+  compte » (guide n° 9), sans date, que le modèle lit pour les retraites de 2012 à 2018.
+  Avant 2012, rien ne tranche. Le modèle suit la caisse depuis 2012 à l'Arrco, depuis
+  2019 partout ; avant, il garde le coefficient, déclaré. Trois témoins sur 930 bougent,
+  de +10,77 à +93,73 € par an. Trouvé en lisant : l'accord Agirc du 9 février 1994 affecte
+  les majorations pour charges de famille d'un pourcentage de service, 80 % depuis 1997,
+  que le modèle ne sert pas.
+reste: >-
+  L'assiette d'avant 2012 ; une édition du guide de 2012 qui confirme la lecture de 2012 à
+  2018 ; à l'Agirc de 2012 à 2018, le coefficient avant ou après le plafond, et pour la
+  majoration pour enfants à charge ; le pourcentage de service de l'Agirc de 1994, et
+  jusqu'à quand ; le site réglementaire de la caisse, à relire quand il répond.
