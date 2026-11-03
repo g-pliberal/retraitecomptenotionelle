@@ -322,6 +322,129 @@ def test_un_grade_n_a_qu_une_grille_a_la_fois_par_source(durees):
             assert a["fin"] and b["debut"] >= a["fin"], (cle, a["grille"], b["grille"])
 
 
+def _echelons_en_vigueur(echelons, jour):
+    return [e for e in echelons if e["debut"] <= jour and (not e["fin"] or jour <= e["fin"])]
+
+
+def test_les_echelons_de_la_grille_sont_ceux_du_tableau_a_chaque_date(durees):
+    # Relecture R-B3-bis, partie 2 : le chaînage réunissait les échelons de
+    # toute la période, et rattachait sur des jours où la grille n'a pas ceux du
+    # tableau. Chaque jour où les échelons de la grille changent, sur la période
+    # rattachée, elle a les rangs du tableau : au LEGI, ceux de son fichier
+    # d'échelons ; au noyau, leur nombre, élève, stagiaire et provisoires mis à
+    # part (le rang du noyau ordonne sans numéroter).
+    import datetime
+    tableau: dict[tuple, set[int]] = {}
+    for l in _lire(GRILLES / "durees" / "lignes.csv"):
+        rangs = tableau.setdefault((l["texte"], l["article"], l["tableau"], l["groupe"]), set())
+        if l["rang"] != "0":
+            rangs.add(int(l["rang"]))
+    legi: dict[tuple, list[dict]] = {}
+    for versant in ("etat_legi", "territoriale", "hospitaliere", "militaires"):
+        for e in _lire(GRILLES / versant / "echelons.csv"):
+            if e["rang"] != "0":
+                legi.setdefault((versant, e["texte"], e["grille"]), []).append(e)
+    noyau: dict[str, list[dict]] = {}
+    for e in _lire(GRILLES / "etat" / "echelons.csv"):
+        if e["nature"] not in ("stagiaire", "eleve", "provisoire") and e["rang"] not in ("", "0"):
+            noyau.setdefault(e["grille"], []).append(e)
+    ecarts = []
+    for d in durees:
+        if d["statut"] != "rattache":
+            continue
+        echelons = (noyau.get(d["grille"], []) if d["source"] == "etat"
+                    else legi.get((d["source"], d["texte_grille"], d["grille"]), []))
+        fin = d["fin"] or "9999-12-31"
+        jours = {d["debut"]} | {j for e in echelons for j in (
+            e["debut"], (datetime.date.fromisoformat(e["fin"]) + datetime.timedelta(days=1))
+            .isoformat() if e["fin"] else "9999-12-31") if d["debut"] < j < fin}
+        for jour in sorted(jours):
+            presents = {int(e["rang"]) for e in _echelons_en_vigueur(echelons, jour)}
+            if d["source"] == "etat":
+                presents = set(range(1, len(presents) + 1))
+            if presents != tableau[(d["texte"], d["article"], d["tableau"], d["groupe"])]:
+                ecarts.append((d["groupe"], d["grille"], d["debut"], d["fin"], jour))
+    assert not ecarts, ecarts[:8]
+
+
+def test_un_grade_n_est_pas_rattache_les_jours_ou_sa_grille_n_a_pas_ses_echelons(durees):
+    # Relecture R-B3-bis, partie 2. Décret n° 2015-1275, art. 18
+    # (LEGIARTI000035606314, du 2017-01-01 au 2024-03-01) : « Greffier 13e échelon
+    # - 12e échelon 4 ans […] ». La grille, décret n° 2015-1277, art. 3 : ses
+    # versions LEGIARTI000035603091 (du 2016-01-01 au 2018-01-01) et
+    # LEGIARTI000036489952 (du 2018-01-01 au 2023-11-01) ne sont pas lues
+    # (`etat_legi/non_lus.csv` : « valeurs hors des lignes ») ; la suivante,
+    # LEGIARTI000048278636, en vigueur le 1er novembre 2023 : « Greffier
+    # 13e échelon 651 12e échelon 612 […] 1er échelon 426 ». Rattaché du
+    # 2023-11-01 au 2024-03-01 ; avant, déclaré, la grille sans échelon.
+    lignes = _lignes_de(durees, "LEGIARTI000035606314", "Greffier")
+    (rattache,) = [d for d in lignes if d["statut"] == "rattache"]
+    assert (rattache["grille"], rattache["debut"], rattache["fin"]) == (
+        "greffier", "2023-11-01", "2024-03-01")
+    assert "LEGIARTI000048278636" in rattache["preuve"]
+    assert "LEGIARTI000035603091" not in rattache["preuve"]
+    assert "LEGIARTI000036489952" not in rattache["preuve"]
+    (declare,) = [d for d in lignes if d["statut"] == "declare"]
+    assert (declare["debut"], declare["fin"]) == ("2017-01-01", "2023-11-01")
+    assert "aucun échelon" in declare["raison"] and "greffier" in declare["raison"]
+    # Décret n° 2016-2008, art. 12 (LEGIARTI000033792383) : « Lieutenant-colonel
+    # 8e échelon - 7e échelon 3 ans et 6 mois […] » ; « Commandant 9e échelon -
+    # 8e échelon 3 ans et 6 mois […] ». La grille du dépôt (n° 2016-2007,
+    # art. 3, LEGIARTI000033792732 : « 8 1015 7 979 985 995 995 », une valeur
+    # seule au 8e échelon sous quatre colonnes datées) n'a le 8e échelon des
+    # lieutenants-colonels, et le 9e des commandants, qu'au 2021-01-01.
+    for groupe, grille in (("Lieutenant-colonel", "lieutenants-colonels"),
+                           ("Commandant", "commandants")):
+        lignes = _lignes_de(durees, "LEGIARTI000033792383", groupe)
+        (rattache,) = [d for d in lignes if d["statut"] == "rattache"]
+        assert (rattache["grille"], rattache["debut"], rattache["fin"]) == (
+            grille, "2021-01-01", "2025-06-14")
+        (declare,) = [d for d in lignes if d["statut"] == "declare"]
+        assert (declare["debut"], declare["fin"]) == ("2017-01-01", "2021-01-01")
+        assert "échelons diffèrent" in declare["raison"]
+
+
+def test_un_grade_se_rattache_les_jours_ou_sa_grille_a_ses_echelons(durees):
+    # Relecture R-B3-bis, partie 2 : comparés date par date, les échelons
+    # rattachent aussi les jours où la grille a ceux du tableau, quand elle ne
+    # les a pas sur toute la période.
+    def rattaches(article, groupe):
+        return sorted((d["grille"], d["debut"], d["fin"]) for d in _lignes_de(durees, article, groupe)
+                      if d["statut"] == "rattache")
+
+    # Décret n° 83-1260, art. 34 (LEGIARTI000034794301, du 2017-09-01 au
+    # 2024-01-01) : « Chargés de recherche hors classe 7e échelon - 6e échelon
+    # 5 ans […] 1er échelon 1 an ». Décret n° 2012-1162, art. 2, « régis par le
+    # décret du 30 décembre 1983 susvisé » : LEGIARTI000034774290 et
+    # LEGIARTI000036489856, jusqu'au 2022-05-01, « Chargé de recherche hors
+    # classe 7e échelon HEA HEA HEA 6e échelon 1021 […] 1er échelon 767 » ;
+    # LEGIARTI000045731731, depuis le 2022-05-01, « Chargé de recherche hors
+    # classe Echelon exceptionnel HEB 7e échelon HEA […] ».
+    assert rattaches("LEGIARTI000034794301", "Chargés de recherche hors classe") == [
+        ("charge-de-recherche-hors-classe", "2017-09-01", "2022-05-01")]
+    # Décret n° 2012-1420, art. 18 (LEGIARTI000026796816, du 2013-01-01 au
+    # 2016-05-15) : « Infirmier en soins généraux hors classe 11e échelon ― ―
+    # 10e échelon 4 ans […] ». Décret n° 2012-1421, art. 1 : LEGIARTI000026797761,
+    # jusqu'au 2016-01-01, « Infirmier en soins généraux hors classe 11e échelon
+    # 700 730 […] 1er échelon 439 444 » ; LEGIARTI000032546841, depuis, « Infirmiers
+    # en soins généraux hors classe 11e échelon 736 - - - 10e échelon […] ». Le
+    # lecteur des grilles en fait deux grilles ; chacune a les onze échelons sur
+    # son morceau, et l'autre aucun.
+    assert rattaches("LEGIARTI000026796816", "Infirmier en soins généraux hors classe") == [
+        ("infirmier-en-soins-generaux-hors-classe", "2013-01-01", "2016-01-01"),
+        ("infirmiers-en-soins-generaux-hors-classe", "2016-01-01", "2016-05-15")]
+    # Décret n° 2016-2008, art. 24 : LEGIARTI000033792407, « Jusqu'au
+    # 31 décembre 2019 : […] 3° Le grade de lieutenant-colonel comprend sept
+    # échelons » ; LEGIARTI000036439940, depuis le 2017-12-24, « Jusqu'au
+    # 31 décembre 2020 », puis « Lieutenant-colonel 7e échelon - 6e échelon
+    # 3 ans et 3 mois […] ». La grille du dépôt a sept échelons jusqu'au
+    # 2020-12-31 ; l'art. 12, LEGIARTI000036439942, « A compter du 1er janvier
+    # 2021 », en donne huit.
+    for groupe, grille in (("Lieutenant-colonel", "lieutenants-colonels"),
+                           ("Commandant", "commandants")):
+        assert rattaches("LEGIARTI000033792407", groupe) == [(grille, "2017-01-01", "2021-01-01")]
+
+
 def test_les_versions_qui_se_chevauchent_ne_se_rattachent_pas_sur_leur_recouvrement(durees):
     # Les trois paires de `tableaux.csv` (colonne chevauche) : deux versions du
     # même article en vigueur ensemble aux dates du LEGI ; le chaînage ne choisit

@@ -37,9 +37,12 @@ commun à divers corps, vise tous deux. Il faut, à la fois :
 - *Une période commune*, l'intersection de celle du tableau (fin exclue) et
   de celle de la grille ou du grade (fin incluse).
 - *Les mêmes échelons* : les rangs que le tableau écrit sont ceux que la
-  grille a pendant la période, stagiaire et élève (rang zéro) mis à part.
-  Au noyau, dont le rang ordonne sans numéroter (``Depot._renumeroter``),
-  c'est leur nombre, élève, stagiaire et échelons provisoires mis à part.
+  grille a à chaque date de la période, stagiaire et élève (rang zéro) mis à
+  part (``periodes`` : la période se coupe là où les échelons changent, et
+  seuls les morceaux aux rangs du tableau se rattachent ; relecture R-B3-bis).
+  Au noyau, dont le rang ordonne sans numéroter (``Depot.periodes_noyau``),
+  c'est leur nombre, élève, stagiaire et échelons provisoires mis à part. Les
+  jours où une grille rattachée ailleurs n'a pas ces échelons sont déclarés.
 - *Une seule grille à la fois* pour un grade d'un tableau, et un seul corps
   au noyau.
 
@@ -208,6 +211,26 @@ def intersection(debut: str, fin_exclue: str, debut2: str, fin_incluse2: str):
 
 def en_vigueur(ligne: dict, jour: str) -> bool:
     return ligne["debut"] <= jour and (not ligne["fin"] or jour <= ligne["fin"])
+
+
+def periodes(echelons: list[dict], debut: str, fin_exclue: str, rangs_de) -> list[tuple]:
+    """[debut, fin_exclue) coupée à chaque jour où les échelons en vigueur
+    changent (fin incluse) : [(début, fin exclue, rangs_de(échelons en vigueur))],
+    deux morceaux qui se suivent aux mêmes rangs réunis. Les échelons se
+    comparent ainsi date par date, non réunis sur toute la période (relecture
+    R-B3-bis, partie 2 : une grille sans échelon de 2017 à 2023 passait pour
+    avoir ceux de 2023)."""
+    fin = fin_exclue or OUVERT
+    bornes = sorted({debut, fin} | {b for e in echelons for b in (e["debut"], lendemain(e["fin"]))
+                                    if debut < b < fin})
+    morceaux: list[tuple] = []
+    for d, f in zip(bornes, bornes[1:]):
+        rangs = rangs_de([e for e in echelons if en_vigueur(e, d)])
+        if morceaux and morceaux[-1][2] == rangs:
+            morceaux[-1] = (morceaux[-1][0], f, rangs)
+        else:
+            morceaux.append((d, f, rangs))
+    return morceaux
 
 
 # ---------------------------------------------------------------------------
@@ -405,27 +428,27 @@ class Depot:
             for (qui, ident), liste in sorted(groupes.items(), key=lambda g: (
                 not g[0][0].startswith("le corps"), g[0])))
 
-    def rangs_legi(self, versant: str, texte: str, grille: str, debut: str, fin: str) -> set[int]:
-        return {int(e["rang"]) for e in self.echelons[(versant, texte, grille)]
-                if e["rang"] != "0" and intersection(debut, fin, e["debut"], e["fin"])}
+    def periodes_legi(self, versant: str, texte: str, grille: str, debut: str, fin: str):
+        """Les rangs de la grille du LEGI, morceau par morceau de [debut, fin) :
+        [(début, fin exclue, rangs)], stagiaire et élève (rang zéro) mis à part."""
+        return periodes([e for e in self.echelons[(versant, texte, grille)] if e["rang"] != "0"],
+                        debut, fin, lambda en_vigueur: {int(e["rang"]) for e in en_vigueur})
 
     def articles_legi(self, versant: str, texte: str, grille: str, debut: str, fin: str) -> set[str]:
         return {e["article"] for e in self.echelons[(versant, texte, grille)]
                 if e["rang"] != "0" and intersection(debut, fin, e["debut"], e["fin"])}
 
-    def _renumeroter(self, grille: str, garder) -> set[int]:
+    def periodes_noyau(self, grille: str, debut: str, fin: str):
         """Au noyau, le rang ordonne les échelons sans les numéroter : la
         grille 00422 des gardiens de la paix met au rang 1 un échelon
         provisoire, au 2 l'élève, au 3 le stagiaire, au 4 le 1er échelon. Les
         échelons d'élève, de stagiaire et provisoires mis à part, le n-ième
-        rang est donc l'échelon n : ce qui se compare est leur nombre."""
-        rangs = sorted({int(e["rang"]) for e in self.noyau_echelons[grille]
-                        if e["nature"] not in ("stagiaire", "eleve", "provisoire")
-                        and e["rang"] not in ("", "0") and garder(e)})
-        return set(range(1, len(rangs) + 1))
-
-    def rangs_noyau(self, grille: str, debut: str, fin: str) -> set[int]:
-        return self._renumeroter(grille, lambda e: intersection(debut, fin, e["debut"], e["fin"]))
+        rang est donc l'échelon n : ce qui se compare est leur nombre, morceau
+        par morceau de [debut, fin), comme ``periodes_legi``."""
+        return periodes([e for e in self.noyau_echelons[grille]
+                         if e["nature"] not in ("stagiaire", "eleve", "provisoire")
+                         and e["rang"] not in ("", "0")], debut, fin,
+                        lambda en_vigueur: set(range(1, len({e["rang"] for e in en_vigueur}) + 1)))
 
     def natures_noyau_au(self, grille: str, jour: str) -> list[str]:
         """La nature de chaque échelon de la grille ce jour-là, dans l'ordre du
@@ -469,16 +492,26 @@ def _fmt(debut: str, fin: str) -> str:
     return f"du {debut} au {fin}" if fin and fin < OUVERT else f"depuis le {debut}"
 
 
+def _echelons_differents(rangs: set[int], grille: str, rangs_grille: set[int], quand: str) -> str:
+    """« les échelons diffèrent : le tableau a les rangs […], la grille … […] du … au … »."""
+    return (f"les échelons diffèrent : le tableau a les rangs {sorted(rangs)}, {grille} "
+            + (f"{sorted(rangs_grille)}" if rangs_grille else "n'a aucun échelon")
+            + (f" {quand}" if quand else ""))
+
+
 def _candidats_legi(depot: Depot, tableau: dict, groupe: str, rangs: set[int]):
-    """Les rattachements prouvés par le LEGI, et les raisons des refus."""
+    """Les rattachements prouvés par le LEGI, les raisons des refus, et les
+    trous : les morceaux de la période où une grille candidate n'a pas les
+    échelons du tableau, [(début, fin exclue, raison, (source, texte, grille,
+    corps))]."""
     statut = depot.durees_textes[tableau["texte"]]
     numero, signature = statut["numero"], statut["signature"]
-    prouves, raisons = [], []
+    prouves, raisons, trous = [], [], []
     visants = {} if not numero else {e: v for e, v in depot.visant.get(numero, [])}
     if not visants:
         raisons.append(("texte", "aucun texte de grille du LEGI au dépôt ne vise "
                         + (f"le n° {numero}" if numero else "ce texte, qui n'a pas de numéro")))
-        return prouves, raisons
+        return prouves, raisons, trous
     cle = normaliser(groupe)
     ecartees: list[tuple[str, str, str, str, str]] = []
     for e, visa in sorted(visants.items()):
@@ -494,20 +527,30 @@ def _candidats_legi(depot: Depot, tableau: dict, groupe: str, rangs: set[int]):
                                 + _fmt(grille["debut"], lendemain(grille["fin"]))))
                 continue
             debut, fin = periode
-            # Chaque version de l'article en vigueur sur la période, non la seule
-            # que le fichier des échelons nomme (relecture R-B3, point 1 c).
-            articles = {v for a in depot.articles_legi(versant, e, grille["grille"], debut, fin)
-                        for v in depot.index.versions_sur(a, debut, fin)}
-            par_article = {a: nomme(depot.index.texte(a), numero, signature) for a in articles}
-            if articles and all(par_article.values()) and not (
+
+            def versions(d: str, f: str) -> set[str]:
+                # Chaque version de l'article en vigueur sur [d, f), non la seule
+                # que le fichier des échelons nomme (relecture R-B3, point 1 c).
+                return {v for a in depot.articles_legi(versant, e, grille["grille"], d, f)
+                        for v in depot.index.versions_sur(a, d, f)}
+
+            def nommes(articles: set[str]) -> dict[str, str]:
+                return {a: nomme(depot.index.texte(a), numero, signature) for a in articles}
+
+            def preuve_article(articles: set[str]) -> str:
+                return (f"{visa} ; l'article qui fixe la grille (" + ", ".join(sorted(articles))
+                        + ") nomme ce statut par "
+                        + ("son numéro" if set(nommes(articles).values()) == {"numero"}
+                           else "sa date, que nul autre décret de ses visas ne porte"))
+
+            # Le lien se prouve sur toute la période ; la preuve cite les
+            # versions en vigueur sur la période rattachée.
+            par_article = nommes(versions(debut, fin))
+            if par_article and all(par_article.values()) and not (
                     "date" in par_article.values() and len(meme_date) > 1):
                 lien = "article"
-                preuve = (f"{visa} ; l'article qui fixe la grille ("
-                          + ", ".join(sorted(articles)) + ") nomme ce statut par "
-                          + ("son numéro" if set(par_article.values()) == {"numero"}
-                             else "sa date, que nul autre décret de ses visas ne porte"))
             elif statutaires == {numero}:
-                lien, preuve = "visa", f"{visa} ; seul décret statutaire que vise {e}"
+                lien = "visa"
             else:
                 cites = sorted(statutaires)
                 raisons.append(("statut", f"le texte {e} vise {len(cites)} décrets statutaires ("
@@ -517,17 +560,24 @@ def _candidats_legi(depot: Depot, tableau: dict, groupe: str, rangs: set[int]):
                 ecartees.append((e, grille["grille"], debut, fin,
                                  f"son article ne nomme pas le n° {numero}"))
                 continue
-            rangs_grille = depot.rangs_legi(versant, e, grille["grille"], debut, fin)
-            if rangs_grille != rangs:
-                raisons.append(("echelons", f"les échelons diffèrent : le tableau a les rangs "
-                                f"{sorted(rangs)}, la grille {nom} {sorted(rangs_grille)}"))
-                ecartees.append((e, grille["grille"], debut, fin,
-                                 f"ses échelons {sorted(rangs_grille)} ne sont pas ceux du "
-                                 f"tableau {sorted(rangs)}"))
-                continue
-            prouves.append({"source": versant, "texte_grille": e, "grille": grille["grille"],
-                            "libelle_grille": grille["libelle"], "corps": "", "grade": "",
-                            "debut": debut, "fin": fin, "lien": lien, "preuve": preuve})
+            # Les échelons, date par date (relecture R-B3-bis, partie 2).
+            morceaux = depot.periodes_legi(versant, e, grille["grille"], debut, fin)
+            for d, f, rangs_grille in morceaux:
+                if rangs_grille != rangs:
+                    raison = _echelons_differents(rangs, f"la grille {nom}", rangs_grille,
+                                                  _fmt(d, f) if len(morceaux) > 1 else "")
+                    raisons.append(("echelons", raison))
+                    trous.append((d, f, raison, (versant, e, grille["grille"], "")))
+                    ecartees.append((e, grille["grille"], d, f,
+                                     (f"ses échelons {sorted(rangs_grille)} ne sont pas ceux du "
+                                      f"tableau {sorted(rangs)}") if rangs_grille
+                                     else "elle n'a aucun échelon"))
+                    continue
+                preuve = (preuve_article(versions(d, f)) if lien == "article"
+                          else f"{visa} ; seul décret statutaire que vise {e}")
+                prouves.append({"source": versant, "texte_grille": e, "grille": grille["grille"],
+                                "libelle_grille": grille["libelle"], "corps": "", "grade": "",
+                                "debut": d, "fin": f, "lien": lien, "preuve": preuve})
     # Deux grilles du même nom dans un texte : la preuve dit pourquoi l'autre
     # est écartée (relecture R-B3, point 1 c).
     for p in prouves:
@@ -540,20 +590,20 @@ def _candidats_legi(depot: Depot, tableau: dict, groupe: str, rangs: set[int]):
     if not prouves and not raisons:
         raisons.append(("libelle", f"aucune grille des {len(visants)} textes du LEGI qui visent "
                         f"le n° {numero} ne porte ce libellé"))
-    return prouves, raisons
+    return prouves, raisons, trous
 
 
 def _candidats_noyau(depot: Depot, tableau: dict, groupe: str, rangs: set[int]):
     statut = depot.durees_textes[tableau["texte"]]
     numero = statut["numero"]
-    prouves, raisons = [], []
+    prouves, raisons, trous = [], [], []
     if statut["versant"] not in ("etat", "plusieurs"):
-        return prouves, raisons
+        return prouves, raisons, trous
     corps_cites = depot.corps_citant.get(numero, {}) if numero else {}
     if not corps_cites:
         raisons.append(("texte", "le Noyau RH ne cite "
                         + (f"le n° {numero}" if numero else "ce texte") + " pour aucun corps"))
-        return prouves, raisons
+        return prouves, raisons, trous
     cle = normaliser_noyau(groupe)
     trouves = []
     for corps, ident in sorted(corps_cites.items()):
@@ -570,12 +620,12 @@ def _candidats_noyau(depot: Depot, tableau: dict, groupe: str, rangs: set[int]):
         if not raisons:
             raisons.append(("libelle", "aucun grade des corps du Noyau RH qui citent le n° "
                             f"{numero} ({', '.join(sorted(corps_cites))}) ne porte ce libellé"))
-        return prouves, raisons
+        return prouves, raisons, trous
     corps_trouves = {t[0] for t in trouves}
     if len(corps_trouves) > 1:
         raisons.append(("unicite", "plusieurs corps du Noyau RH ont ce grade aux mêmes dates : "
                         + ", ".join(sorted(corps_trouves))))
-        return prouves, raisons
+        return prouves, raisons, trous
     for corps, ident, grade, periode in trouves:
         morceaux = depot.citations_sur(numero, corps, *periode)
         if not morceaux:
@@ -584,17 +634,20 @@ def _candidats_noyau(depot: Depot, tableau: dict, groupe: str, rangs: set[int]):
                             "ni pour le corps ni pour l'un de ses grades"))
             continue
         for debut, fin, citations in morceaux:
-            rangs_grille = depot.rangs_noyau(grade["grille"], debut, fin)
-            if rangs_grille != rangs:
-                raisons.append(("echelons", f"les échelons diffèrent : le tableau a les rangs "
-                                f"{sorted(rangs)}, la grille {grade['grille']} du noyau "
-                                f"{sorted(rangs_grille)} {_fmt(debut, fin)}"))
-                continue
-            prouves.append({"source": "etat", "texte_grille": "", "grille": grade["grille"],
-                            "libelle_grille": grade["libelle"], "corps": corps,
-                            "grade": grade["grade"], "debut": debut, "fin": fin, "lien": "noyau",
-                            "preuve": depot.preuve_du_noyau(citations)})
-    return prouves, raisons
+            # Les échelons, date par date (relecture R-B3-bis, partie 2).
+            for d, f, rangs_grille in depot.periodes_noyau(grade["grille"], debut, fin):
+                if rangs_grille != rangs:
+                    raison = _echelons_differents(rangs, f"la grille {grade['grille']} du noyau",
+                                                  rangs_grille, _fmt(d, f))
+                    raisons.append(("echelons", raison))
+                    trous.append((d, f, raison, ("etat", "", grade["grille"], corps)))
+                    continue
+                ici = [c for c in citations if intersection(d, f, c["debut"], c["fin"])]
+                prouves.append({"source": "etat", "texte_grille": "", "grille": grade["grille"],
+                                "libelle_grille": grade["libelle"], "corps": corps,
+                                "grade": grade["grade"], "debut": d, "fin": f, "lien": "noyau",
+                                "preuve": depot.preuve_du_noyau(ici)})
+    return prouves, raisons, trous
 
 
 def _fusionner(lignes: list[dict]) -> list[dict]:
@@ -620,6 +673,29 @@ def _se_chevauchent(lignes: list[dict]) -> bool:
     return any(b["debut"] < a["fin"] for a, b in zip(legi, legi[1:]))
 
 
+def _resumer(raisons: list[str]) -> str:
+    return " ; ".join(raisons[:3]) + (f" ; et {len(raisons) - 3} autres" if len(raisons) > 3 else "")
+
+
+def _non_couverts(trous: list[tuple], couverts: list[tuple]) -> list[tuple]:
+    """Les morceaux des trous [(début, fin exclue, raison)] que ne couvre aucun
+    intervalle de couverts [(début, fin exclue)] : [(début, fin exclue,
+    raisons)], deux morceaux qui se suivent aux mêmes raisons réunis."""
+    bornes = sorted({b for d, f, _ in trous for b in (d, f)} | {b for c in couverts for b in c})
+    sortie: list[tuple] = []
+    for d, f in zip(bornes, bornes[1:]):
+        if any(cd <= d and f <= cf for cd, cf in couverts):
+            continue
+        ici = list(dict.fromkeys(r for td, tf, r in trous if td <= d and f <= tf))
+        if not ici:
+            continue
+        if sortie and sortie[-1][1] == d and sortie[-1][2] == ici:
+            sortie[-1] = (sortie[-1][0], f, ici)
+        else:
+            sortie.append((d, f, ici))
+    return sortie
+
+
 def chainer_durees(depot: Depot) -> list[dict]:
     rangs: dict[tuple, set[int]] = collections.defaultdict(set)
     ordre: list[tuple] = []
@@ -640,15 +716,17 @@ def chainer_durees(depot: Depot) -> list[dict]:
                            "statut": "declare",
                            "raison": "le tableau ne nomme pas le grade de ses lignes (groupe vide)"})
             continue
-        legi, raisons = _candidats_legi(depot, tableau, cle[3], rangs[cle])
-        noyau, raisons_noyau = _candidats_noyau(depot, tableau, cle[3], rangs[cle])
+        legi, raisons, trous = _candidats_legi(depot, tableau, cle[3], rangs[cle])
+        noyau, raisons_noyau, trous_noyau = _candidats_noyau(depot, tableau, cle[3], rangs[cle])
         raisons += raisons_noyau
+        trous += trous_noyau
         legi = _fusionner(legi)
         if _se_chevauchent(legi):
             raisons.append(("unicite", "plusieurs grilles du LEGI prouvées aux mêmes dates : "
                             + ", ".join(f"{l['grille']} ({l['texte_grille']})" for l in legi)))
             legi = []
         prouves = legi + _fusionner(noyau)
+        couverts = [(p["debut"], p["fin"]) for p in prouves]
         if tableau["chevauche"]:
             autre = par_article[(tableau["chevauche"], tableau["tableau"])]
             d = max(tableau["debut"], autre["debut"])
@@ -660,6 +738,7 @@ def chainer_durees(depot: Depot) -> list[dict]:
                 if p["fin"] > f:
                     coupes.append({**p, "debut": max(p["debut"], f)})
             prouves = coupes
+            couverts.append((d, f))
             sortie.append({**base, "debut": d, "fin": "" if f == OUVERT else f,
                            "statut": "declare",
                            "raison": f"deux versions de l'article ({tableau['article']} et "
@@ -668,13 +747,17 @@ def chainer_durees(depot: Depot) -> list[dict]:
         for p in prouves:
             sortie.append({**base, **p, "fin": "" if p["fin"] == OUVERT else p["fin"],
                            "statut": "rattache", "raison": ""})
+        # Rattaché en partie : les jours où une grille rattachée n'a pas les
+        # échelons du tableau sont déclarés, non tus (relecture R-B3-bis, partie 2).
+        rattachees = {(p["source"], p["texte_grille"], p["grille"], p["corps"]) for p in prouves}
+        for d, f, ici in _non_couverts([t[:3] for t in trous if t[3] in rattachees], couverts):
+            sortie.append({**base, "debut": d, "fin": "" if f == OUVERT else f,
+                           "statut": "declare", "raison": _resumer(ici)})
         if not prouves:
             etape = max(ETAPES.index(e) for e, _ in raisons)
             retenues = list(dict.fromkeys(r for e, r in raisons if ETAPES.index(e) == etape))
-            raison = " ; ".join(retenues[:3]) + (f" ; et {len(retenues) - 3} autres"
-                                                 if len(retenues) > 3 else "")
             sortie.append({**base, "debut": tableau["debut"], "fin": tableau["fin"],
-                           "statut": "declare", "raison": raison})
+                           "statut": "declare", "raison": _resumer(retenues)})
     return sortie
 
 
@@ -961,7 +1044,9 @@ ENTETES = {
     "durees": "Chaque grade de chaque tableau de durées (texte, article, tableau, groupe, de "
               "durees/), rattaché à une grille du dépôt (statut rattache) ou déclaré, avec sa "
               "raison (declare). debut, fin : la période commune au tableau et à la grille (fin "
-              "exclue ; vide : en vigueur). source : etat (le Noyau RH : corps, grade, grille), "
+              "exclue ; vide : en vigueur), où la grille a, à chaque date, les échelons du "
+              "tableau ; les jours où une grille rattachée ne les a pas sont déclarés, en une "
+              "ligne à eux. source : etat (le Noyau RH : corps, grade, grille), "
               "ou le dossier des grilles du LEGI (texte_grille, grille). lien : visa (le texte "
               "d'échelonnement ne vise que ce statut), article (chaque version de l'article de "
               "la grille en vigueur sur la période nomme ce statut), noyau (le corps, ou l'un de "
