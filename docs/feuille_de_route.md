@@ -6718,14 +6718,14 @@ l'inviterait aussi à relire le dépôt.
 
 **Reprise, au 3 novembre 2026.** Périmètre tranché le 2 novembre 2026 : « tout
 ce qu'on peut trouver », les trois versants et les militaires. Entrés,
-certifiés et recoupés : les grilles (l'État au Noyau RH, `grilles/etat/`, et
-avant lui au LEGI, `grilles/etat_legi/`, depuis les années 1990 ; la
-territoriale, l'hospitalière et les militaires au LEGI) et le barème du décret
-n° 82-1105 depuis 1983 (`grilles/bareme/`). Avant 1990, ni le LEGI ni le JORF
-n'ont les tableaux. Reste, dans l'ordre de la file : le chaînage et les
-reclassements ; les durées d'échelon (au propriétaire : d'abord ?) ; les
-tableaux que l'index aplatit ; le minimum de traitement. Détail : la note de
-l'État d'avant le noyau, du 3 novembre 2026.
+certifiés et recoupés : les grilles (l'État au Noyau RH puis au LEGI, la
+territoriale, l'hospitalière et les militaires au LEGI), le barème du décret
+n° 82-1105 depuis 1983 et les reclassements d'une grille à la suivante, échelon
+par échelon (`grilles/reclassements/`, 450 tableaux). Reste, dans l'ordre de la
+file : le chaînage, chaque tableau rattaché à ses grilles ; les durées
+d'échelon (au propriétaire : d'abord ? sans elles, aucun reclassement ne
+s'applique) ; les tableaux que l'index aplatit ; le minimum de traitement.
+Détail : la note des reclassements, du 3 novembre 2026.
 
 
 **D'où elle vient.** La demande du propriétaire, le 12 octobre 2026 : aller
