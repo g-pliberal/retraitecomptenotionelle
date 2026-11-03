@@ -294,7 +294,7 @@ sources:
       docs/veille_droit.md à côté du texte de Légifrance. Dérouler la
       recherche par thème et par date, pas seulement la page d'accueil.
     statut: en_cours
-    explore_le: 2026-10-29
+    explore_le: 2026-11-03
     note: >-
       Lu le 14 octobre 2026 par son API (`/api/v1/baremes`, 397 barèmes
       en un JSON) : neuf récupérateurs de `scripts/fetch/` l'interrogent
@@ -311,6 +311,12 @@ sources:
       liste, fenêtre d'information, avis de mise à jour, document joint et
       référence — citées et trouvées par la recherche comprises — y a son
       sort, et la ligne passe `epuise` quand il n'y reste rien `a_lire`.
+      Depuis le 3 novembre 2026 (étape 5), `python scripts/veille_droit.py`
+      compare la base au registre et dit ce qu'elle a changé depuis — un
+      barème ou un exposé modifié, un objet neuf, une circulaire nouvelle
+      (`scripts/fetch/cnav_veille.py`) — ; `tests/test_cnav_legislation.py`
+      exige que la ligne passe `epuise` le jour où le registre n'a plus rien
+      à lire.
 
   - id: cnav_circulaire_2026_07
     url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_cnav_2026_07_05032026.pdf

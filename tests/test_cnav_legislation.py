@@ -817,7 +817,8 @@ def test_la_veille_du_droit_dit_ce_que_la_base_de_la_cnav_a_change(tmp_path, mon
                                                                    capsys):
     """`python scripts/veille_droit.py` compare la base au registre, à l'année
     de la veille et à la précédente, et dit ce qu'elle a changé depuis : un
-    barème dont la date a changé depuis son sort, avec le script qui le lit ;
+    barème dont la date a changé depuis son sort, avec le script qui le lit,
+    et la date du sort et celle du jour, que la session qui le relit écrit ;
     un exposé à lire qu'elle a redaté ; un avis de mise à jour neuf, de son
     jour et de son titre ; une circulaire nouvelle, de son titre et de son
     objet ; une référence que sa recherche sert sans que le registre la porte,
@@ -864,7 +865,8 @@ def test_la_veille_du_droit_dit_ce_que_la_base_de_la_cnav_a_change(tmp_path, mon
     assert annees == [2025, 2026]
     for attendu in (
             "La base de législation de la Cnav, comparée à son registre",
-            "date changée depuis le sort, à relire (1) : lu.aspx [branche : scripts/fetch/x.py]",
+            "date changée depuis le sort, à relire (1) : lu.aspx [branche : scripts/fetch/x.py] "
+            "2026-10-26T09:17:00Z → 2026-10-29T06:36:00Z",
             "date changée, encore à lire (1) : e.aspx",
             "listes : 0 à la base, rien de changé",
             "pas au registre (1) : 357 (2026-10-30, Indus)",
@@ -879,8 +881,9 @@ def test_la_veille_du_droit_dit_ce_que_la_base_de_la_cnav_a_change(tmp_path, mon
 
 
 def test_la_veille_du_droit_se_passe_d_une_base_qui_ne_repond_pas(monkeypatch, capsys):
-    """Hors réseau, ou la base en panne, la veille du droit le dit et finit
-    sans erreur ; `--sans-cnav` ne la demande pas."""
+    """Hors réseau, la base en panne, ou une réponse d'une forme que la veille
+    ne connaît pas : la veille du droit le dit et finit sans erreur ;
+    `--sans-cnav` ne la demande pas."""
     import urllib.error
 
     veille = _veille_du_droit()
@@ -891,6 +894,14 @@ def test_la_veille_du_droit_se_passe_d_une_base_qui_ne_repond_pas(monkeypatch, c
     monkeypatch.setattr(veille.cnav_veille, "lire_la_base", en_panne)
     assert veille.main(["--date", "2026-11-03"]) == 0
     assert ("La base de législation de la Cnav n'a pas répondu (hors réseau)"
+            in capsys.readouterr().out)
+
+    def deformee(annees):
+        return {"servis": {}, "circulaires": {"message": "une forme nouvelle"}, "recherche": {}}
+
+    monkeypatch.setattr(veille.cnav_veille, "lire_la_base", deformee)
+    assert veille.main(["--date", "2026-11-03"]) == 0
+    assert ("La base de législation de la Cnav a répondu sous une forme que la veille ne lit pas"
             in capsys.readouterr().out)
 
     def interdite(annees):

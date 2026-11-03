@@ -25,9 +25,10 @@ site sert un par un hors de l'API : le récupérateur les relit, et dit ceux
 qui ont changé.
 
 CE QU'IL DIT, par genre : ce que le registre ne porte pas ; ce dont la date a
-changé depuis son sort, qui se relit, sort compris ; ce dont la date a changé
-quand il attend encore d'être lu, que le récupérateur redatera ; ce que la
-base ne sert plus. Puis les références que le registre ne porte pas, ou sans
+changé depuis son sort, avec la date du sort et celle du jour — la session qui
+le relit écrit au registre le sort et la date de la version lue, que le
+récupérateur garde ensuite — ; ce dont la date a changé quand il attend encore
+d'être lu, que le récupérateur redatera ; ce que la base ne sert plus. Puis les références que le registre ne porte pas, ou sans
 titre, parmi les dernières circulaires et ce que sert la recherche ; le geste
 qui les inscrit ; et ce que le registre garde à lire, qui mesure
 l'exploitation : quand il n'y reste rien, la ligne ``cnav_legislation_portail``
@@ -176,12 +177,15 @@ def _enumerer(elements: list[str]) -> str:
 def _decrire(quoi: str, nom: str, ancien: dict | None, lu: dict | None) -> str:
     """Un objet qui a changé : un neuf, de son titre — et d'un avis, de son
     jour — ; ce qui a changé depuis son sort, du script qui le lit ou de son
-    renvoi ; ce que la base ne sert plus, de son sort."""
+    renvoi, et de la date du sort et de celle du jour, que la session qui le
+    relit écrit au registre avec le sort ; ce que la base ne sert plus, de son
+    sort."""
     if quoi == "neufs" and lu:
         jour = f"{lu['date_maj']}, " if lu.get("date_maj") else ""
         return f"{nom} ({jour}{lu.get('titre') or 'sans titre'})"
-    if quoi == "modifies" and ancien:
-        return f"{nom} [{ancien['sort']} : {ancien.get('script') or ancien.get('renvoi')}]"
+    if quoi == "modifies" and ancien and lu:
+        return (f"{nom} [{ancien['sort']} : {ancien.get('script') or ancien.get('renvoi')}] "
+                f"{ancien.get('modifie_le')} → {lu.get('modifie_le')}")
     if quoi == "disparus" and ancien and ancien["sort"] != "a_lire":
         return f"{nom} [{ancien['sort']}]"
     return nom
@@ -286,10 +290,17 @@ def veille(aujourd_hui: date | None = None) -> list[str]:
                 f"({getattr(erreur, 'reason', erreur)}) : relancer python scripts/veille_droit.py "
                 "pour la comparer à son registre.", a_lire(registre)]
     except ILLISIBLES as erreur:
-        return [f"La base de législation de la Cnav a répondu sous une forme que la veille ne "
-                f"lit pas ({type(erreur).__name__} : {erreur}) : scripts/fetch/cnav_veille.py "
-                "est à reprendre.", a_lire(registre)]
-    return rapport(registre, base, REGISTRE)
+        return _illisible(erreur, registre)
+    try:
+        return rapport(registre, base, REGISTRE)
+    except ILLISIBLES as erreur:
+        return _illisible(erreur, registre)
+
+
+def _illisible(erreur: Exception, registre: dict[str, dict[str, dict]]) -> list[str]:
+    return [f"La base de législation de la Cnav a répondu sous une forme que la veille ne lit "
+            f"pas ({type(erreur).__name__} : {erreur}) : scripts/fetch/cnav_veille.py est à "
+            "reprendre.", a_lire(registre)]
 
 
 def main(argv: list[str] | None = None) -> int:

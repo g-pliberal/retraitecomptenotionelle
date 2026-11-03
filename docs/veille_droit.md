@@ -52,11 +52,19 @@ jour n'écrivent plus au même endroit.
 imprime les fiches à relire — état `a_verifier` ou `manquante`, lecture de
 plus de cent vingt jours, date de relecture passée — et la liste des sources.
 `--tout` imprime tout, `--strict` rend 1 s'il reste quelque chose à relire.
+Il compare aussi la base de législation de la Cnav à son registre,
+`data/reference/legislation/cnav/` (`scripts/fetch/cnav_veille.py`, action
+175) : ce qu'elle a changé depuis — un barème ou un exposé dont la date a
+changé depuis son sort, un objet neuf ou parti, une circulaire nouvelle, une
+référence que sa recherche sert sans que le registre la porte —, et ce que le
+registre garde à lire. Une base qui ne répond pas se dit d'une ligne ;
+`--sans-cnav` ne la demande pas.
 
 **Les tests** : `tests/test_carte.py` impose la forme des fiches, exige que
 chaque exemple cité existe, et que toute réforme du calendrier
 (`reformes.yaml`) datée de 2023 ou après ait sa fiche ; `tests/test_donnees.py`
-tient le journal. Ajouter une réforme sans la lire à la source et sans
+tient le journal ; `tests/test_cnav_legislation.py`, le registre de la base de
+la Cnav et sa veille. Ajouter une réforme sans la lire à la source et sans
 l'inscrire dans une fiche fait échouer la suite.
 
 ## La règle, pour toute session qui touche au scénario 1
@@ -68,7 +76,11 @@ rédactions parues depuis entrent dans la liste de contrôle des textes, « à
 examiner ». Consulter les sources listées pour tout texte paru depuis la
 dernière date du journal : loi de financement de l'année et ses décrets,
 circulaires Cnav, dates « Vérifié le » des fiches service-public, décrets
-retraite au Journal officiel par l'index DILA.
+retraite au Journal officiel par l'index DILA. Ce que le script dit de la base
+de la Cnav entre au registre par `python scripts/fetch/cnav_legislation.py` :
+le neuf à lire, ce qui attend avec sa date du jour ; ce qui a changé depuis son
+sort se relit, par le script ou le test que le registre nomme, et le sort
+avec.
 
 **Pour chaque règle qu'on écrit ou modifie.**
 
