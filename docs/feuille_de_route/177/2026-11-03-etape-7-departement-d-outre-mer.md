@@ -18,7 +18,7 @@ D. 756-7 ; étape 4). Quatre commits, chacun son test vu rouge d'abord
    vierge, déjà à son budget de 191 mots. Les codes sont ceux du modèle
    (`DEPARTEMENTS_D_OUTRE_MER`) ; Mayotte se refuse, qui se dit par le statut
    de la période.
-2. *La saisie* (`saisie.js`, `cdaeb42`). `outreMerAnalyse` lit et refuse comme
+2. *La saisie* (`saisie.js`, `0bf6a1f`). `outreMerAnalyse` lit et refuse comme
    les dispenses — une ligne mal formée, une année hors de toute carrière, une
    plage à l'envers, deux départements la même année —, plus un département
    inconnu et Mayotte ; `verifier` le prononce, l'adresse le garde. Chaque
@@ -30,12 +30,12 @@ D. 756-7 ; étape 4). Quatre commits, chacun son test vu rouge d'abord
    la dernière ligne ; le contrôle du relevé (action 138, étape 10) lit son
    seuil au département de la ligne : 1982 à La Réunion contre 422,01 €, et non
    553,39 €. Le parcours reçoit les années.
-4. *La chronologie, dans les deux moteurs* (`9079673`). `duParcours` et son
+4. *La chronologie, dans les deux moteurs* (`2d79904`). `duParcours` et son
    jumeau `du_parcours` coupent chaque métier, principal ou ajouté, au
    1er janvier où le département change, et chaque morceau porte `outre_mer` ;
    `Carriere.depuisParcours` et `depuis_parcours` le transmettent. Le jumeau
    Python rend les mêmes faits que le portage, la dispense mêlée aux coupures.
-5. *Le formulaire* (`pages.js`, `fe2dafb`, `541eca4`). Le champ et sa bulle :
+5. *Le formulaire* (`pages.js`, `f685a7d`, `487465f`). Le champ et sa bulle :
    chaque département sous son code, ce que ses années changent, le montant de
    l'exonération lu au paquet (`exoneration_independants_outre_mer`), l'année
    d'arrivée et celle de départ à nommer, même entamées.
