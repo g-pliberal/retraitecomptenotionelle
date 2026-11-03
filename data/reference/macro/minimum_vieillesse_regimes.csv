@@ -1,0 +1,113 @@
+# Les allocataires du minimum vieillesse, par régime de versement
+# source_id: drees_panorama_retraites_2026_classeurs
+# unite: personnes, au 31 décembre, arrondies à la dizaine
+# fiabilite:
+#   certifiee : fiche 27, tableau 1, du panorama de la DREES « Les
+#             retraités et les retraites », édition 2026 — l'enquête
+#             de la DREES sur les allocations du minimum vieillesse,
+#             la Caisse des dépôts et le FSV —, lu dans le classeur
+#             de la fiche par scripts/fetch/drees_panorama_classeurs.py
+#             et recontrôlé par scripts/verifier_donnees.py.
+#
+# `regime` : le régime qui verse, `ensemble` pour le total ; sncf,
+# canssm, enim, fspoeie, cnracl, fonction_publique_etat et autres sont
+# des lignes de regimes_speciaux ; champ_enquete_drees, les dix
+# organismes de la métropole et les deux caisses des DROM que
+# l'enquête interroge. `territoire` : ensemble, metropole, drom.
+# `allocation` : asv (l'allocation supplémentaire, ancien L. 815-2),
+# aspa (L. 815-1), asv_aspa (l'une ou l'autre, le minimum vieillesse),
+# premier_etage (les allocations qui portent à l'AVTS), asi
+# (l'allocation supplémentaire d'invalidité, L. 815-24). Une case
+# « <100 » n'a pas de ligne ; les évolutions depuis 2023 et les parts
+# par caisse du tableau ne se reportent pas.
+#
+# À QUOI CETTE SÉRIE SERT
+# ------------------------
+# À dire qui sert le minimum vieillesse : 653 550 de ses 754 460
+# allocataires au régime général, 65 850 au Saspa, 58 700 dans les
+# DROM. Les allocataires par âge et par ménage, que lit la mesure du
+# recours (action 138, étape 14), sont ceux de l'INSEE
+# (allocataires_minimum_vieillesse.csv) ; aucun calcul du site ne lit
+# celle-ci (action 178, étape 6).
+#
+# Ne pas modifier les valeurs certifiées à la main : elles seraient
+# écrasées au prochain scripts/verifier_donnees.py --appliquer.
+annee,regime,territoire,allocation,allocataires,fiabilite
+2024,canssm,ensemble,aspa,180,certifiee
+2024,canssm,ensemble,asv_aspa,250,certifiee
+2024,canssm,ensemble,premier_etage,1850,certifiee
+2024,cavimac,ensemble,aspa,1090,certifiee
+2024,cavimac,ensemble,asv,1120,certifiee
+2024,cavimac,ensemble,asv_aspa,2210,certifiee
+2024,champ_enquete_drees,ensemble,aspa,652030,certifiee
+2024,champ_enquete_drees,ensemble,asv,101880,certifiee
+2024,champ_enquete_drees,ensemble,asv_aspa,753910,certifiee
+2024,champ_enquete_drees,ensemble,premier_etage,91630,certifiee
+2024,cnracl,ensemble,asi,540,certifiee
+2024,cnracl,ensemble,aspa,130,certifiee
+2024,cnracl,ensemble,asv_aspa,140,certifiee
+2024,enim,ensemble,aspa,320,certifiee
+2024,enim,ensemble,asv,130,certifiee
+2024,enim,ensemble,asv_aspa,450,certifiee
+2024,ensemble,drom,aspa,45930,certifiee
+2024,ensemble,drom,asv,15300,certifiee
+2024,ensemble,drom,asv_aspa,61230,certifiee
+2024,ensemble,drom,premier_etage,5130,certifiee
+2024,ensemble,ensemble,asi,66940,certifiee
+2024,ensemble,ensemble,aspa,652470,certifiee
+2024,ensemble,ensemble,asv,101990,certifiee
+2024,ensemble,ensemble,asv_aspa,754460,certifiee
+2024,ensemble,ensemble,premier_etage,93280,certifiee
+2024,ensemble,metropole,aspa,606540,certifiee
+2024,ensemble,metropole,asv,86690,certifiee
+2024,ensemble,metropole,asv_aspa,693230,certifiee
+2024,ensemble,metropole,premier_etage,88150,certifiee
+2024,fonction_publique_etat,ensemble,asi,0,certifiee
+2024,fonction_publique_etat,ensemble,aspa,170,certifiee
+2024,fonction_publique_etat,ensemble,asv_aspa,260,certifiee
+2024,fonction_publique_etat,ensemble,premier_etage,0,certifiee
+2024,msa_exploitants,drom,aspa,1150,certifiee
+2024,msa_exploitants,drom,asv,1380,certifiee
+2024,msa_exploitants,drom,asv_aspa,2530,certifiee
+2024,msa_exploitants,drom,premier_etage,370,certifiee
+2024,msa_exploitants,ensemble,asi,1650,certifiee
+2024,msa_exploitants,ensemble,aspa,4130,certifiee
+2024,msa_exploitants,ensemble,asv,4940,certifiee
+2024,msa_exploitants,ensemble,asv_aspa,9060,certifiee
+2024,msa_exploitants,ensemble,premier_etage,680,certifiee
+2024,msa_exploitants,metropole,aspa,2980,certifiee
+2024,msa_exploitants,metropole,asv,3550,certifiee
+2024,msa_exploitants,metropole,asv_aspa,6530,certifiee
+2024,msa_exploitants,metropole,premier_etage,310,certifiee
+2024,msa_salaries,ensemble,asi,4490,certifiee
+2024,msa_salaries,ensemble,aspa,19650,certifiee
+2024,msa_salaries,ensemble,asv,2690,certifiee
+2024,msa_salaries,ensemble,asv_aspa,22330,certifiee
+2024,msa_salaries,ensemble,premier_etage,1680,certifiee
+2024,professions_liberales,ensemble,asi,120,certifiee
+2024,professions_liberales,ensemble,aspa,240,certifiee
+2024,professions_liberales,ensemble,asv_aspa,250,certifiee
+2024,professions_liberales,ensemble,premier_etage,1650,certifiee
+2024,regime_general,drom,aspa,44780,certifiee
+2024,regime_general,drom,asv,13920,certifiee
+2024,regime_general,drom,asv_aspa,58700,certifiee
+2024,regime_general,drom,premier_etage,4760,certifiee
+2024,regime_general,ensemble,asi,60080,certifiee
+2024,regime_general,ensemble,aspa,571970,certifiee
+2024,regime_general,ensemble,asv,81580,certifiee
+2024,regime_general,ensemble,asv_aspa,653550,certifiee
+2024,regime_general,ensemble,premier_etage,75770,certifiee
+2024,regime_general,metropole,aspa,527190,certifiee
+2024,regime_general,metropole,asv,67660,certifiee
+2024,regime_general,metropole,asv_aspa,594850,certifiee
+2024,regime_general,metropole,premier_etage,71010,certifiee
+2024,regimes_speciaux,ensemble,asi,590,certifiee
+2024,regimes_speciaux,ensemble,aspa,890,certifiee
+2024,regimes_speciaux,ensemble,asv,320,certifiee
+2024,regimes_speciaux,ensemble,asv_aspa,1210,certifiee
+2024,regimes_speciaux,ensemble,premier_etage,1880,certifiee
+2024,saspa,ensemble,aspa,54520,certifiee
+2024,saspa,ensemble,asv,11340,certifiee
+2024,saspa,ensemble,asv_aspa,65850,certifiee
+2024,saspa,ensemble,premier_etage,11540,certifiee
+2024,sncf,ensemble,premier_etage,0,certifiee

@@ -304,6 +304,77 @@ def lire_invalidite_par_age(graphique: dict, complement: dict
     return lu
 
 
+#: Fiche 27, tableau 1 : les régimes de versement du minimum vieillesse, dans
+#: l'ordre où une ligne se reconnaît — « Total champ enquête Drees » avant
+#: « Total » ; la SNCF, la CANSSM, l'Enim, le FSPOEIE, la CNRACL, la FPE et
+#: les autres sont les lignes des régimes spéciaux.
+REGIMES_MINIMUM_VIEILLESSE = (
+    ("Régime général", "regime_general"), ("Saspa", "saspa"),
+    ("MSA non-salariés", "msa_exploitants"), ("MSA salariés", "msa_salaries"),
+    ("Cavimac", "cavimac"), ("Professions libérales", "professions_liberales"),
+    ("Régimes spéciaux", "regimes_speciaux"), ("SNCF", "sncf"), ("CANSSM", "canssm"),
+    ("Enim", "enim"), ("FSPOEIE", "fspoeie"), ("CNRACL", "cnracl"),
+    ("FPE", "fonction_publique_etat"), ("Autres", "autres"),
+    ("Total champ enquête Drees", "champ_enquete_drees"), ("Total", "ensemble"),
+)
+
+TERRITOIRES = (("Métropole", "metropole"), ("DROM", "drom"))
+
+
+def _cle(libelle, table) -> str | None:
+    texte = _texte(libelle) if isinstance(libelle, str) else ""
+    return next((cle for debut, cle in table if texte.startswith(debut)), None)
+
+
+def lire_minimum_vieillesse_regimes(grille: dict) -> dict[str, dict[str, dict[str, float]]]:
+    """Fiche 27, tableau 1 : les allocataires de fin d'année par régime de
+    versement, et, sous un régime, ses lignes « Métropole » et « DROM ». Les
+    évolutions depuis l'année d'avant et les parts par caisse ne se lisent
+    pas : les effectifs donnent les unes, une autre année porte les autres."""
+    _verifier_titre(grille, "Tableau 1. Nombre d’allocataires du minimum vieillesse")
+    colonnes = {"premier_etage": _colonne(grille, "Toutes allocations dites de premier étage"),
+                "asv": _colonne(grille, "ASV (ancien"), "aspa": _colonne(grille, "Aspa (L. 815-1)"),
+                "asv_aspa": _colonne(grille, "ASV et Aspa", exact=True),
+                "asi": _colonne(grille, "Allocation supplémentaire d'invalidité")}
+    lu: dict[str, dict[str, dict[str, float]]] = {}
+    regime = None
+    for (ligne, colonne), libelle in sorted(grille.items()):
+        if colonne != 1:
+            continue
+        territoire = _cle(libelle, TERRITOIRES)
+        cle = None if territoire else _cle(libelle, REGIMES_MINIMUM_VIEILLESSE)
+        if cle:
+            regime, territoire = cle, "ensemble"
+        elif not (territoire and regime):
+            continue
+        valeurs = {nom: nombre(grille.get((ligne, col), "")) for nom, col in colonnes.items()}
+        lu.setdefault(regime, {})[territoire] = {nom: v for nom, v in valeurs.items()
+                                                 if v is not None}
+    if not {"regime_general", "ensemble"} <= set(lu):
+        raise FeuilleIllisible("le tableau 1 n'a plus son régime général ou son total")
+    return lu
+
+
+def lire_minimum_vieillesse_effectifs(grille: dict) -> dict[str, dict[str, float]]:
+    """Fiche 27, graphique 1 : les allocataires de l'ASV ou de l'Aspa depuis
+    1960, en milliers, et leur part parmi les 60 ans ou plus et parmi les
+    65 ans ou plus, une ligne par année."""
+    _verifier_titre(grille, "Graphique 1. Évolution du nombre d’allocataires de l’ASV ou de l’Aspa")
+    colonnes = {"allocataires_milliers": _colonne(grille, "Nombre d'allocataires"),
+                "part_60_plus_pct": _colonne(grille, "Part d'allocataires dans la population "
+                                                     "âgée de 60 ans ou plus"),
+                "part_65_plus_pct": _colonne(grille, "Part d'allocataires dans la population "
+                                                     "âgée de 65 ans ou plus")}
+    serie: dict[str, dict[str, float]] = {}
+    for (ligne, colonne), v in sorted(grille.items()):
+        if colonne == 1 and annee(v):
+            valeurs = {nom: nombre(grille.get((ligne, col), "")) for nom, col in colonnes.items()}
+            serie[str(annee(v))] = {nom: x for nom, x in valeurs.items() if x is not None}
+    if not serie:
+        raise FeuilleIllisible("aucune année au graphique 1")
+    return serie
+
+
 def _jeu() -> dict:
     import yaml
 
@@ -329,6 +400,7 @@ def lire(chemin: Path, jeu: dict) -> dict:
         f15 = _classeur(archive, jeu, "fiche_15.xlsx")
         f22 = _classeur(archive, jeu, "fiche_22.xlsx")
         f25 = _classeur(archive, jeu, "fiche_25.xlsx")
+        f27 = _classeur(archive, jeu, "fiche_27.xlsx")
     return {
         "age_conjoncturel": lire_age_conjoncturel(f15["F15_Graphique 1"]),
         "cumul": lire_cumul(f22["F22_Tableau1"]),
@@ -339,6 +411,10 @@ def lire(chemin: Path, jeu: dict) -> dict:
                                       f25["F25_Graphique 1"]),
         "invalidite_par_age": lire_invalidite_par_age(f25["F25_Graphique 2"],
                                                       f25["F25_Graphique 2 compl"]),
+        "minimum_vieillesse_regimes": {
+            _annee_du_titre(f27["F27_Tableau 1"], "Tableau 1. Nombre d’allocataires du minimum"):
+            lire_minimum_vieillesse_regimes(f27["F27_Tableau 1"])},
+        "minimum_vieillesse_effectifs": lire_minimum_vieillesse_effectifs(f27["F27_Graphique 1"]),
     }
 
 

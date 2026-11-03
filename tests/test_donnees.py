@@ -750,6 +750,8 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         # étape 6).
         "retraite_progressive_cnav": "macro/cumul_emploi_retraite.csv",
         "pensions_invalidite_age": "macro/pensions_invalidite_age.csv",
+        "minimum_vieillesse_regimes": "macro/minimum_vieillesse_regimes.csv",
+        "minimum_vieillesse_effectifs": "macro/minimum_vieillesse_effectifs.csv",
         "age_depart_csp": "macro/age_depart_csp.csv",
         "structure_financement_regimes": "regimes/structure_financement.csv",
         "cotisants_regimes": "regimes/cotisants.csv",

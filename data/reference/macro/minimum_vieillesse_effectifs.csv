@@ -1,0 +1,145 @@
+# Les allocataires du minimum vieillesse depuis 1960
+# source_id: drees_panorama_retraites_2026_classeurs
+# unite: milliers d'allocataires, au 31 décembre ; pour cent
+# fiabilite:
+#   certifiee : fiche 27, graphique 1, du panorama de la DREES « Les
+#             retraités et les retraites », édition 2026 — l'EACR,
+#             l'enquête sur les allocations du minimum vieillesse, le
+#             FSV, les estimations de population de l'INSEE —, lu
+#             dans le classeur de la fiche par
+#             scripts/fetch/drees_panorama_classeurs.py et recontrôlé
+#             par scripts/verifier_donnees.py.
+#
+# `indicateur` : allocataires_milliers, les allocataires de l'ASV ou
+# de l'Aspa (depuis 1960) ; part_60_plus_pct, leur part parmi les 60
+# ans ou plus (depuis 1990) ; part_65_plus_pct, parmi les 65 ans ou
+# plus (depuis 2009). Le total de 2024, 754, arrondit les 754 460 du
+# tableau 1 (minimum_vieillesse_regimes.csv).
+#
+# À QUOI CETTE SÉRIE SERT
+# ------------------------
+# À situer le minimum vieillesse dans son histoire : près de 2,5
+# millions d'allocataires en 1960, 11 % des 60 ans ou plus en 1990,
+# moins de 4 % depuis 2010, un creux en 2017, 550 300, puis une
+# remontée avec les revalorisations exceptionnelles de 2018 à 2020.
+# Aucun calcul du site ne la lit (action 178, étape 6).
+#
+# Ne pas modifier les valeurs certifiées à la main : elles seraient
+# écrasées au prochain scripts/verifier_donnees.py --appliquer.
+annee,indicateur,valeur,fiabilite
+1960,allocataires_milliers,2468.9,certifiee
+1961,allocataires_milliers,2378.5,certifiee
+1962,allocataires_milliers,2354.5,certifiee
+1963,allocataires_milliers,2287.9,certifiee
+1964,allocataires_milliers,2341.5,certifiee
+1965,allocataires_milliers,2348.2,certifiee
+1966,allocataires_milliers,2356.7,certifiee
+1967,allocataires_milliers,2330.6,certifiee
+1968,allocataires_milliers,2317.5,certifiee
+1969,allocataires_milliers,2251,certifiee
+1970,allocataires_milliers,2210,certifiee
+1971,allocataires_milliers,2141,certifiee
+1972,allocataires_milliers,2092.3,certifiee
+1973,allocataires_milliers,2066.9,certifiee
+1974,allocataires_milliers,2033.6,certifiee
+1975,allocataires_milliers,2041.9,certifiee
+1976,allocataires_milliers,2025.4,certifiee
+1977,allocataires_milliers,1981.8,certifiee
+1978,allocataires_milliers,1927.6,certifiee
+1979,allocataires_milliers,1854.8,certifiee
+1980,allocataires_milliers,1753.8,certifiee
+1981,allocataires_milliers,1706.6,certifiee
+1982,allocataires_milliers,1700.1,certifiee
+1983,allocataires_milliers,1653.8,certifiee
+1984,allocataires_milliers,1604.8,certifiee
+1985,allocataires_milliers,1539.5,certifiee
+1986,allocataires_milliers,1482.2,certifiee
+1987,allocataires_milliers,1421,certifiee
+1988,allocataires_milliers,1367.2,certifiee
+1989,allocataires_milliers,1298.8,certifiee
+1990,allocataires_milliers,1212.9,certifiee
+1990,part_60_plus_pct,11.1,certifiee
+1991,allocataires_milliers,1161.2,certifiee
+1991,part_60_plus_pct,10.5,certifiee
+1992,allocataires_milliers,1098.6,certifiee
+1992,part_60_plus_pct,9.7,certifiee
+1993,allocataires_milliers,1061.7,certifiee
+1993,part_60_plus_pct,9.3,certifiee
+1994,allocataires_milliers,1040.9,certifiee
+1994,part_60_plus_pct,9,certifiee
+1995,allocataires_milliers,988.8,certifiee
+1995,part_60_plus_pct,8.4,certifiee
+1996,allocataires_milliers,942.6,certifiee
+1996,part_60_plus_pct,7.9,certifiee
+1997,allocataires_milliers,886.1,certifiee
+1997,part_60_plus_pct,7.4,certifiee
+1998,allocataires_milliers,840.7,certifiee
+1998,part_60_plus_pct,6.9,certifiee
+1999,allocataires_milliers,807.8,certifiee
+1999,part_60_plus_pct,6.6,certifiee
+2000,allocataires_milliers,765.9,certifiee
+2000,part_60_plus_pct,6.2,certifiee
+2001,allocataires_milliers,723.1,certifiee
+2001,part_60_plus_pct,5.8,certifiee
+2002,allocataires_milliers,668,certifiee
+2002,part_60_plus_pct,5.3,certifiee
+2003,allocataires_milliers,634.2,certifiee
+2003,part_60_plus_pct,5,certifiee
+2004,allocataires_milliers,621.7,certifiee
+2004,part_60_plus_pct,4.9,certifiee
+2005,allocataires_milliers,609.4,certifiee
+2005,part_60_plus_pct,4.7,certifiee
+2006,allocataires_milliers,598.5,certifiee
+2006,part_60_plus_pct,4.6,certifiee
+2007,allocataires_milliers,585.6,certifiee
+2007,part_60_plus_pct,4.2,certifiee
+2008,allocataires_milliers,575.2,certifiee
+2008,part_60_plus_pct,4,certifiee
+2009,allocataires_milliers,583.2,certifiee
+2009,part_60_plus_pct,4,certifiee
+2009,part_65_plus_pct,4.6,certifiee
+2010,allocataires_milliers,576.3,certifiee
+2010,part_60_plus_pct,3.9,certifiee
+2010,part_65_plus_pct,4.4,certifiee
+2011,allocataires_milliers,572.6,certifiee
+2011,part_60_plus_pct,3.7,certifiee
+2011,part_65_plus_pct,4.3,certifiee
+2012,allocataires_milliers,564.4,certifiee
+2012,part_60_plus_pct,3.6,certifiee
+2012,part_65_plus_pct,4.2,certifiee
+2013,allocataires_milliers,557.8,certifiee
+2013,part_60_plus_pct,3.5,certifiee
+2013,part_65_plus_pct,4,certifiee
+2014,allocataires_milliers,554.2,certifiee
+2014,part_60_plus_pct,3.4,certifiee
+2014,part_65_plus_pct,4,certifiee
+2015,allocataires_milliers,554.4,certifiee
+2015,part_60_plus_pct,3.3,certifiee
+2015,part_65_plus_pct,3.9,certifiee
+2016,allocataires_milliers,552.3,certifiee
+2016,part_60_plus_pct,3.3,certifiee
+2016,part_65_plus_pct,3.9,certifiee
+2017,allocataires_milliers,550.3,certifiee
+2017,part_60_plus_pct,3.2,certifiee
+2017,part_65_plus_pct,3.8,certifiee
+2018,allocataires_milliers,568.1,certifiee
+2018,part_60_plus_pct,3.2,certifiee
+2018,part_65_plus_pct,3.9,certifiee
+2019,allocataires_milliers,601.6,certifiee
+2019,part_60_plus_pct,3.4,certifiee
+2019,part_65_plus_pct,4,certifiee
+2020,allocataires_milliers,635.3,certifiee
+2020,part_60_plus_pct,3.5,certifiee
+2020,part_65_plus_pct,4.2,certifiee
+2021,allocataires_milliers,664,certifiee
+2021,part_60_plus_pct,3.6,certifiee
+2021,part_65_plus_pct,4.3,certifiee
+2022,allocataires_milliers,691,certifiee
+2022,part_60_plus_pct,3.7,certifiee
+2022,part_65_plus_pct,4.4,certifiee
+2023,allocataires_milliers,723,certifiee
+2023,part_60_plus_pct,3.8,certifiee
+2023,part_65_plus_pct,4.5,certifiee
+2024,allocataires_milliers,754,certifiee
+2024,part_60_plus_pct,3.9,certifiee
+2024,part_65_plus_pct,4.6,certifiee

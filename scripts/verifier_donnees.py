@@ -2979,6 +2979,39 @@ def source_pensions_invalidite_age() -> dict[tuple, float]:
             for age, effectif in ages.items()}
 
 
+def source_minimum_vieillesse_regimes() -> dict[tuple, float]:
+    """Les allocataires du minimum vieillesse par régime de versement.
+
+    Le panorama de 2026, fiche 27, tableau 1, fin 2024 : l'ASV, l'Aspa, leur
+    somme, les allocations de premier étage et l'allocation supplémentaire
+    d'invalidité, par régime, et par territoire au régime général, à la MSA
+    des non-salariés et au total ; l'enquête de la DREES sur les allocations
+    du minimum vieillesse, avec la Caisse des dépôts et le FSV (action 178,
+    étape 6).
+
+    Clé (annee, regime, territoire, allocation).
+    """
+    return {(annee, regime, territoire, allocation): effectif
+            for annee, regimes in _serie_panorama("minimum_vieillesse_regimes").items()
+            for regime, territoires in regimes.items()
+            for territoire, allocations in territoires.items()
+            for allocation, effectif in allocations.items()}
+
+
+def source_minimum_vieillesse_effectifs() -> dict[tuple, float]:
+    """Les allocataires de l'ASV ou de l'Aspa depuis 1960.
+
+    Le panorama de 2026, fiche 27, graphique 1 : leur nombre au 31 décembre,
+    en milliers, depuis 1960 ; leur part parmi les 60 ans ou plus depuis 1990,
+    parmi les 65 ans ou plus depuis 2009 (action 178, étape 6).
+
+    Clé (annee, indicateur).
+    """
+    return {(annee, indicateur): valeur
+            for annee, grandeurs in _serie_panorama("minimum_vieillesse_effectifs").items()
+            for indicateur, valeur in grandeurs.items()}
+
+
 def source_age_depart_csp() -> dict[tuple, float]:
     """L'âge conjoncturel de départ, par catégorie socioprofessionnelle.
 
@@ -8533,6 +8566,92 @@ CERTIFICATIONS = (
             "# l'âge d'ouverture des droits. Le dépôt n'en lisait que les effectifs",
             "# et les montants, par régime ; aucun calcul du site ne la lit",
             "# (action 178, étape 6).",
+            "#",
+            "# Ne pas modifier les valeurs certifiées à la main : elles seraient",
+            "# écrasées au prochain scripts/verifier_donnees.py --appliquer.",
+        ),
+    ),
+    Certification(
+        nom="minimum_vieillesse_regimes",
+        chemin=REFERENCE / "macro" / "minimum_vieillesse_regimes.csv",
+        cles=("annee", "regime", "territoire", "allocation"),
+        colonne="allocataires",
+        source=source_minimum_vieillesse_regimes,
+        origine="DREES, panorama « Les retraités et les retraites » 2026, fiche 27, tableau 1",
+        decimales=0,
+        tolerance=0.5,
+        entete=(
+            "# Les allocataires du minimum vieillesse, par régime de versement",
+            "# source_id: drees_panorama_retraites_2026_classeurs",
+            "# unite: personnes, au 31 décembre, arrondies à la dizaine",
+            "# fiabilite:",
+            "#   certifiee : fiche 27, tableau 1, du panorama de la DREES « Les",
+            "#             retraités et les retraites », édition 2026 — l'enquête",
+            "#             de la DREES sur les allocations du minimum vieillesse,",
+            "#             la Caisse des dépôts et le FSV —, lu dans le classeur",
+            "#             de la fiche par scripts/fetch/drees_panorama_classeurs.py",
+            "#             et recontrôlé par scripts/verifier_donnees.py.",
+            "#",
+            "# `regime` : le régime qui verse, `ensemble` pour le total ; sncf,",
+            "# canssm, enim, fspoeie, cnracl, fonction_publique_etat et autres sont",
+            "# des lignes de regimes_speciaux ; champ_enquete_drees, les dix",
+            "# organismes de la métropole et les deux caisses des DROM que",
+            "# l'enquête interroge. `territoire` : ensemble, metropole, drom.",
+            "# `allocation` : asv (l'allocation supplémentaire, ancien L. 815-2),",
+            "# aspa (L. 815-1), asv_aspa (l'une ou l'autre, le minimum vieillesse),",
+            "# premier_etage (les allocations qui portent à l'AVTS), asi",
+            "# (l'allocation supplémentaire d'invalidité, L. 815-24). Une case",
+            "# « <100 » n'a pas de ligne ; les évolutions depuis 2023 et les parts",
+            "# par caisse du tableau ne se reportent pas.",
+            "#",
+            "# À QUOI CETTE SÉRIE SERT",
+            "# ------------------------",
+            "# À dire qui sert le minimum vieillesse : 653 550 de ses 754 460",
+            "# allocataires au régime général, 65 850 au Saspa, 58 700 dans les",
+            "# DROM. Les allocataires par âge et par ménage, que lit la mesure du",
+            "# recours (action 138, étape 14), sont ceux de l'INSEE",
+            "# (allocataires_minimum_vieillesse.csv) ; aucun calcul du site ne lit",
+            "# celle-ci (action 178, étape 6).",
+            "#",
+            "# Ne pas modifier les valeurs certifiées à la main : elles seraient",
+            "# écrasées au prochain scripts/verifier_donnees.py --appliquer.",
+        ),
+    ),
+    Certification(
+        nom="minimum_vieillesse_effectifs",
+        chemin=REFERENCE / "macro" / "minimum_vieillesse_effectifs.csv",
+        cles=("annee", "indicateur"),
+        colonne="valeur",
+        source=source_minimum_vieillesse_effectifs,
+        origine="DREES, panorama « Les retraités et les retraites » 2026, fiche 27, graphique 1",
+        decimales=None,
+        tolerance=0.005,
+        entete=(
+            "# Les allocataires du minimum vieillesse depuis 1960",
+            "# source_id: drees_panorama_retraites_2026_classeurs",
+            "# unite: milliers d'allocataires, au 31 décembre ; pour cent",
+            "# fiabilite:",
+            "#   certifiee : fiche 27, graphique 1, du panorama de la DREES « Les",
+            "#             retraités et les retraites », édition 2026 — l'EACR,",
+            "#             l'enquête sur les allocations du minimum vieillesse, le",
+            "#             FSV, les estimations de population de l'INSEE —, lu",
+            "#             dans le classeur de la fiche par",
+            "#             scripts/fetch/drees_panorama_classeurs.py et recontrôlé",
+            "#             par scripts/verifier_donnees.py.",
+            "#",
+            "# `indicateur` : allocataires_milliers, les allocataires de l'ASV ou",
+            "# de l'Aspa (depuis 1960) ; part_60_plus_pct, leur part parmi les 60",
+            "# ans ou plus (depuis 1990) ; part_65_plus_pct, parmi les 65 ans ou",
+            "# plus (depuis 2009). Le total de 2024, 754, arrondit les 754 460 du",
+            "# tableau 1 (minimum_vieillesse_regimes.csv).",
+            "#",
+            "# À QUOI CETTE SÉRIE SERT",
+            "# ------------------------",
+            "# À situer le minimum vieillesse dans son histoire : près de 2,5",
+            "# millions d'allocataires en 1960, 11 % des 60 ans ou plus en 1990,",
+            "# moins de 4 % depuis 2010, un creux en 2017, 550 300, puis une",
+            "# remontée avec les revalorisations exceptionnelles de 2018 à 2020.",
+            "# Aucun calcul du site ne la lit (action 178, étape 6).",
             "#",
             "# Ne pas modifier les valeurs certifiées à la main : elles seraient",
             "# écrasées au prochain scripts/verifier_donnees.py --appliquer.",

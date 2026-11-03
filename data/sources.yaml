@@ -1438,7 +1438,9 @@ institutions:
           data/reference/macro/age_conjoncturel_depart.csv,
           data/reference/macro/cumul_emploi_retraite.csv,
           data/reference/macro/pensions_invalidite.csv,
-          data/reference/macro/pensions_invalidite_age.csv
+          data/reference/macro/pensions_invalidite_age.csv,
+          data/reference/macro/minimum_vieillesse_regimes.csv,
+          data/reference/macro/minimum_vieillesse_effectifs.csv
         recuperation: scripts/fetch/drees_panorama_classeurs.py
         contenu:
           vue_d_ensemble.xlsx:

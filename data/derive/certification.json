@@ -1222,6 +1222,28 @@
    "valeurs": 15,
    "verifiee_le": "2026-10-05"
   },
+  "minimum_vieillesse_effectifs": {
+   "ajoutees": 116,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "dd3d4e708ca5734a",
+   "identiques": 0,
+   "niveau": "certifiee",
+   "source": "DREES, panorama « Les retraités et les retraites » 2026, fiche 27, graphique 1",
+   "valeurs": 116,
+   "verifiee_le": "2026-11-03"
+  },
+  "minimum_vieillesse_regimes": {
+   "ajoutees": 78,
+   "colonne": "allocataires",
+   "corrigees": 0,
+   "empreinte": "bbe2c5a21ac68189",
+   "identiques": 0,
+   "niveau": "certifiee",
+   "source": "DREES, panorama « Les retraités et les retraites » 2026, fiche 27, tableau 1",
+   "valeurs": 78,
+   "verifiee_le": "2026-11-03"
+  },
   "natures_assimilees": {
    "ajoutees": 196,
    "colonne": "valeur",
