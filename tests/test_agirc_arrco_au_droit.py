@@ -1,7 +1,7 @@
 """L'Agirc-Arrco, lue au droit.
 
-Une fiche de la carte, lue au droit le 3 novembre 2026 (action 130) : la
-majoration pour enfants nés ou élevés de l'Arrco et de l'Agirc, puis du régime
+Deux fiches de la carte, lues au droit le 3 novembre 2026 (action 130). La
+première, la majoration pour enfants nés ou élevés de l'Arrco et de l'Agirc, puis du régime
 unifié (`majoration_enfants_agirc_arrco`), dans l'accord du 25 avril 1996
 relatif aux régimes de l'Arrco (articles 2 et 11), l'accord du 18 mars 2011
 (article 7), l'article 17 de l'annexe A de l'accord du 8 décembre 1961 et
@@ -21,12 +21,22 @@ champs des périodes de chaque régime, lus aux années de liquidation qu'elle
 couvre ; ce que le portage tranche lui-même, dans
 `moteur/js/droit/completer.js`. Ce que le modèle fait autrement, la fiche le
 déclare, et le test qui suit `ECARTS_DECLARES` le tient.
+
+La seconde, les coefficients d'anticipation de l'Agirc et de l'Arrco, puis du
+régime unifié (`coefficients_anticipation_agirc_arrco`), dont le moteur lit les
+versions à la date d'effet de la pension : ce qui exonère, et rien d'autre.
+Ses versions se coupent aux jours où un texte change la règle, du protocole du
+14 juin 1976 à l'avenant n° 15 du 16 mars 2023 ; la coupe ne change pas ce que
+le moteur lit. Les deux tables des textes, celle des âges et celle des
+trimestres manquants, sont l'escalier du portage (`moteur/js/droit/liquider.js`),
+et l'âge que la caisse a servi de 2011 à 2018, celui des données.
 """
 
 from __future__ import annotations
 
 import csv
 import functools
+import json
 import re
 from datetime import date, timedelta
 from pathlib import Path
@@ -38,7 +48,8 @@ from retraite_notionnelle.config import RACINE_DONNEES
 from retraite_notionnelle.noyau import carte
 
 MAJORATION = "majoration_enfants_agirc_arrco"
-LOT = (MAJORATION,)
+ANTICIPATION = "coefficients_anticipation_agirc_arrco"
+LOT = (MAJORATION, ANTICIPATION)
 REFERENCE = RACINE_DONNEES / "reference"
 PORTAGE = Path(__file__).resolve().parents[1] / "moteur" / "js" / "droit" / "completer.js"
 #: La création de l'Agirc, et la dernière année que les confrontations
@@ -47,7 +58,8 @@ DEBUT, HORIZON = 1947, 2050
 MOIS = ("janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août",
         "septembre", "octobre", "novembre", "décembre")
 #: Les dates qui décident, fiche par fiche.
-DATES = {MAJORATION: {"liquidation.date_effet", "periode.debut"}}
+DATES = {MAJORATION: {"liquidation.date_effet", "periode.debut"},
+         ANTICIPATION: {"liquidation.date_effet"}}
 
 #: Les paramètres que le moteur lit dans la période de la date d'effet ; le
 #: barème, lui, se lit à l'année d'acquisition de chaque point.
@@ -316,3 +328,150 @@ def test_les_exemples_du_guide_de_2017_tombent_sur_le_bareme():
     assert round(agirc, 2) == 1305.60
     plafond = 1000 * _point("agirc", 2016) / _point("agirc", 2011)
     assert round(min(agirc, plafond), 2) in (1028.11, 1028.12)
+
+
+# -- les coefficients d'anticipation -------------------------------------------
+
+LIQUIDER = Path(__file__).resolve().parents[1] / "moteur" / "js" / "droit" / "liquider.js"
+#: Les jours où un texte change la règle, tels que chacun l'écrit : les
+#: versions de la fiche se coupent là, et nulle part ailleurs.
+COUPES_DE_L_ANTICIPATION = (
+    date(1976, 7, 1),   # protocole du 14 juin 1976 : « à partir du 1er juillet 1976 »
+    date(1983, 4, 1),   # arrêté du 21 mars 1983 : « APPLICATION A COMPTER DU 01-04-1983 »
+    date(1997, 1, 1),   # accord du 23 décembre 1996, article 1er : « à effet du 1er janvier 1997 »
+    date(1999, 1, 1),   # accord Arrco du 25 avril 1996, article 10 : « à compter du 1er janvier 1999 »
+    date(2004, 1, 1),   # accord du 13 novembre 2003, article 15 : « du 1er janvier 2004 »
+    date(2011, 7, 1),   # accord du 18 mars 2011, article 1er : « à compter du 1er juillet 2011 »
+    date(2016, 1, 1),   # accord du 30 octobre 2015, article 3 : « à compter du 1er janvier 2016 »
+    date(2019, 1, 1),   # accord du 17 novembre 2017 : « applicable au 1er janvier 2019 »
+    date(2023, 3, 16),  # avenant n° 15 : « entre en vigueur à la date de sa signature »
+)
+#: La table de l'article 84, 2, de l'accord du 17 novembre 2017, de « moins 10
+#: ans » à « moins 1 trimestre » ; l'article 6 de l'annexe I de la convention
+#: de 1947 et l'article 18 de l'annexe A de l'accord de 1961, mis à jour au
+#: 1er janvier 2018, écrivent la même.
+TABLE_DES_AGES = (
+    0.43, 0.4475, 0.465, 0.4825, 0.5, 0.5175, 0.535, 0.5525, 0.57, 0.5875,
+    0.605, 0.6225, 0.64, 0.6575, 0.675, 0.6925, 0.71, 0.7275, 0.745, 0.7625,
+    0.78, 0.7925, 0.805, 0.8175, 0.83, 0.8425, 0.855, 0.8675, 0.88, 0.89,
+    0.9, 0.91, 0.92, 0.93, 0.94, 0.95, 0.96, 0.97, 0.98, 0.99)
+#: La table de l'article 85, 3, du même accord, de vingt trimestres manquants
+#: à un.
+TABLE_DES_TRIMESTRES_MANQUANTS = (
+    0.78, 0.7925, 0.805, 0.8175, 0.83, 0.8425, 0.855, 0.8675, 0.88, 0.89,
+    0.90, 0.91, 0.92, 0.93, 0.94, 0.95, 0.96, 0.97, 0.98, 0.99)
+#: L'âge de la retraite que la caisse servait de 2011 à 2018, génération par
+#: génération (sa table créée le 27 décembre 2018) : « 65 ans » avant le
+#: 1er juillet 1951, puis « 65 ans 4 mois », « 65 ans 9 mois », « 66 ans 2
+#: mois », « 66 ans 7 mois » et « 67 ans » ; en années et en mois.
+AGES_DE_LA_CAISSE_EN_2018 = {1951: (65, 0), 1951.5: (65, 4), 1952: (65, 9), 1953: (66, 2),
+                             1954: (66, 7), 1955: (67, 0)}
+#: Ce que le modèle fait autrement que le droit, chaque fois déclaré : une
+#: version que l'approximation touche, et un mot de ce qu'elle dit.
+ECARTS_DE_L_ANTICIPATION = (
+    ("structure_financiere_de_1996", "salariés en activité"),
+    ("accord_du_18_mars_2011", "mères de famille"),
+    ("regime_unifie", "mineurs"),
+    ("regime_unifie", "report"),
+)
+
+
+def _constante_du_portage(nom: str):
+    """Une constante de `liquider.js`, sa valeur littérale."""
+    trouve = re.search(rf"^const {nom} = (.+);$", LIQUIDER.read_text(encoding="utf-8"), re.M)
+    assert trouve, f"le portage ne définit plus {nom}"
+    return json.loads(trouve.group(1))
+
+
+def _escalier(trimestres: int) -> float:
+    """Le coefficient du portage pour tant de trimestres, lu dans ses paliers
+    (`coefficientAnticipation`)."""
+    coefficient, precedent = 1.0, 0
+    for borne, pas in _constante_du_portage("PALIERS_ANTICIPATION"):
+        coefficient -= max(0, min(trimestres, borne) - precedent) * pas
+        precedent = borne
+    return round(coefficient, 6)
+
+
+def _accord_arrco_de_1996(trimestres: int) -> float:
+    """L'article 10 de l'accord Arrco du 25 avril 1996, à tant de trimestres
+    avant soixante-cinq ans : 0,43 à cinquante-cinq ans, « majoré de 0,0175
+    par trimestre écoulé » jusqu'à soixante, de 0,0125 jusqu'à soixante-deux,
+    de 0,01 jusqu'à soixante-cinq."""
+    ecoules = 40 - trimestres
+    coefficient = 0.43 + 0.0175 * min(ecoules, 20) + 0.0125 * min(max(ecoules - 20, 0), 8)
+    return round(coefficient + 0.01 * max(ecoules - 28, 0), 6)
+
+
+def test_les_versions_de_l_anticipation_se_coupent_aux_jours_des_textes():
+    """Les versions se suivent sans trou ni chevauchement, de la première
+    pension à aujourd'hui, et ne changent qu'aux jours où un texte change la
+    règle ; aucun texte ne reste à rattacher."""
+    fiche = carte.fiches()[ANTICIPATION]
+    bornes = sorted((_bornes(v, "liquidation.date_effet") for v in fiche["versions"]),
+                    key=lambda borne: borne[0] or date.min)
+    assert [debut for debut, _ in bornes] == [None, *COUPES_DE_L_ANTICIPATION]
+    assert [fin for _, fin in bornes] == [*COUPES_DE_L_ANTICIPATION, None]
+    assert not fiche.get("textes_a_rattacher")
+
+
+def test_la_coupe_ne_change_pas_ce_que_le_moteur_lit():
+    """Depuis le 1er avril 1983, chaque version porte ce que la structure
+    financière portait : la coupe est une lecture, aucun chiffre du modèle ne
+    bouge."""
+    versions = [v for v in _versions(ANTICIPATION)
+                if (_bornes(v, "liquidation.date_effet")[0] or date.min) >= date(1983, 4, 1)]
+    lus = {json.dumps(v["contenu"]["parametres"], sort_keys=True) for v in versions}
+    assert len(versions) == len(COUPES_DE_L_ANTICIPATION) - 1
+    assert lus == {json.dumps(_version(ANTICIPATION, "structure_financiere")["contenu"]
+                              ["parametres"], sort_keys=True)}
+
+
+def test_la_table_des_ages_est_l_escalier_du_portage():
+    """La table de l'accord de 2017 descend de 0,99 un trimestre avant l'âge
+    de la retraite à 0,43 dix ans avant : c'est l'escalier du portage,
+    trimestre par trimestre, et la formule de l'accord Arrco de 1996 ; son
+    plancher est celui du portage."""
+    assert len(TABLE_DES_AGES) == 40
+    assert [_escalier(t) for t in range(40, 0, -1)] == list(TABLE_DES_AGES)
+    assert [_accord_arrco_de_1996(t) for t in range(40, 0, -1)] == list(TABLE_DES_AGES)
+    assert _constante_du_portage("COEFFICIENT_ANTICIPATION_PLANCHER") == TABLE_DES_AGES[0]
+
+
+def test_la_table_des_trimestres_manquants_est_le_bas_de_la_table_des_ages():
+    """« 20 0,78 » à « 1 0,99 » (article 85, 3) : les vingt dernières lignes
+    de la table des âges, ce qu'écrivaient déjà les annexes de 2011, « en
+    assimilant à l'âge » de la retraite « l'âge auquel les intéressés auraient
+    effectivement compté le nombre de trimestres d'assurance requis »."""
+    assert len(TABLE_DES_TRIMESTRES_MANQUANTS) == 20
+    assert TABLE_DES_TRIMESTRES_MANQUANTS == TABLE_DES_AGES[20:]
+    assert [_escalier(t) for t in range(20, 0, -1)] == list(TABLE_DES_TRIMESTRES_MANQUANTS)
+
+
+def test_l_age_de_2011_a_2018_est_celui_que_la_caisse_servait():
+    """De 2011 à 2018, l'accord du 18 mars 2011 fige l'âge de la retraite dans
+    la rédaction de L. 351-8 et de L. 161-17-2 du jour de l'accord ; la caisse
+    a servi celui de la loi du 21 décembre 2011. Les périodes des régimes de
+    la fiche lisent l'âge d'annulation de la décote de chaque génération, et
+    la table du dépôt porte celui de la caisse, au mois près."""
+    chemin = REFERENCE / "legislation" / "age_annulation_decote.csv"
+    with chemin.open(encoding="utf-8", newline="") as flux:
+        ages = {float(ligne["generation"]): float(ligne["age"])
+                for ligne in csv.DictReader(l for l in flux if not l.startswith("#"))}
+    for generation, (ans, mois) in AGES_DE_LA_CAISSE_EN_2018.items():
+        assert ages[generation] == round(ans + mois / 12, 2), generation
+    for code in carte.fiches()[ANTICIPATION]["regimes"]:
+        lus = {periode.get("age_taux_plein_par_generation")
+               for annee in range(2011, 2019) for periode in _periodes(code, annee)}
+        assert lus <= {"age_annulation_decote"}, (code, lus)
+
+
+@pytest.mark.parametrize("version, mot", ECARTS_DE_L_ANTICIPATION)
+def test_ce_que_le_modele_fait_autrement_l_anticipation_le_declare(version, mot):
+    """Le modèle exonère dès 1983 qui a la durée, quelle que soit sa
+    situation ; il exonère les mêmes catégories dans tous les régimes ; il ne
+    connaît ni les mineurs de fond, ni le report des points de la tranche C :
+    une approximation touche la version et le dit."""
+    fiche = carte.fiches()[ANTICIPATION]
+    assert any(version in (a.get("version") or []) and mot in str(a.get("ecart"))
+               for a in fiche.get("approximations") or []), (version, mot)
