@@ -1,0 +1,42 @@
+date: "2026-11-02"
+session: "action 130, file G : la durée requise de la CRPCEN et de la Comédie-Française, lue à soixante ans"
+consulte: >-
+  python scripts/veille_droit.py ; l'index LEGI du dépôt, récupéré et à jour de
+  l'incrément du 2 novembre 2026 (20261102-213929), sans incrément nouveau ; python
+  scripts/textes.py --inscrire : quatorze rédactions anciennes inscrites « à examiner »,
+  sans rapport avec la durée (loi n° 83-1179, article 29 ; décret n° 80-7, article 3 ;
+  ordonnance n° 58-1270, articles 21-1, 26 et 76-2 ; décret n° 50-1348, article 2 ; loi
+  n° 89-18, articles 43 et 72), que l'index porte et que la liste n'avait pas, et
+  qu'une autre session a publiées la première. Dans
+  LEGI : l'article 85 du décret n° 90-1215 (CRPCEN), rédactions du 1er janvier 2017
+  (LEGIARTI000029134265) et du 1er janvier 2025 (LEGIARTI000047909839) ;
+  l'article 12 du décret n° 68-960 (Comédie-Française, LEGIARTI000029134341) ; l'article
+  31-1 du règlement annexé au décret n° 2007-262 (Banque de France), de sa rédaction de
+  2012 (LEGIARTI000025882187) à celle du 1er janvier 2025 (LEGIARTI000047909725). La page
+  « La décote » de la CRPCEN (mise à jour le 16 janvier 2026), relue en ligne.
+trouve: >-
+  Le III de l'article 85 de la CRPCEN (« pour les pensions prenant effet à compter du 1er
+  janvier 2017 », abrogé au 1er janvier 2025), le VI de l'article 12 de la
+  Comédie-Française (pour les mêmes pensions, en vigueur) et l'article 31-1 de la Banque
+  de France (par renvoi au VI de l'article 5 de la loi du 21 août 2003 depuis 2012, en
+  toutes lettres du 26 juin 2014 au 31 décembre 2024) écrivent la règle de l'article 9-1
+  des IEG : la durée « en vigueur lorsque les assurés atteignent l'âge de soixante ans »
+  et, à qui peut liquider avant, celle des assurés qui les atteignent l'année où sa
+  liquidation peut intervenir. Le modèle lisait le calendrier de 2008 au mois où le droit
+  s'ouvre : un trimestre de trop au clerc et au sociétaire nés de mars à juin 1957 (165 au
+  lieu de 164) et de janvier à juin 1958 (166 au lieu de 165). Il le lit désormais au mois
+  des soixante ans (`crpcen_calendrier_a_60`, `comedie_francaise_calendrier_a_60`). Rien
+  à la Banque de France après soixante ans. Avant soixante ans, le modèle ouvre la
+  carrière longue au clerc et à l'agent de la Banque, et leur opposait la table de 2014 à
+  leur propre génération : elle se lit désormais à celle qui a soixante ans le mois où
+  ils réunissent les conditions (`age_de_lecture`, 60). La CRPCEN ne publie rien
+  génération par génération avant 1961 (« Entre 155 et 167 ») : ni confirmation ni
+  démenti.
+reste: >-
+  Demander à la CRPCEN, à la caisse de la Comédie-Française et à la Banque de France la
+  durée qu'elles opposent aux générations 1957 et 1958 et à qui part avant soixante ans.
+  La durée « applicable avant » que la CRPCEN et la Banque gardent depuis 2025 à qui a
+  réuni les conditions plus tôt : le dépôt la lit à soixante ans, comme aux IEG. Le
+  moteur date les conditions d'un départ anticipé au mois de la liquidation, et non au
+  premier mois où il est permis : une règle du moteur, pour toutes les caisses, à mesurer.
+  Les quatorze rédactions inscrites, à examiner par la session de leur domaine.
