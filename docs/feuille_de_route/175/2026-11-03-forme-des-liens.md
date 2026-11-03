@@ -1,14 +1,5 @@
 # La forme des liens de la base : l'état passager de son import de nuit
 
-**Reprise, au 3 novembre 2026.** Rien n'est à réparer dans la lecture des liens : la forme
-qu'a vue l'étape 4, les chemins du site SharePoint de la caisse, était l'état de la base
-pendant son import de nuit ; à 5 h 44 UTC, le même import liait de nouveau par les routes
-du site, et `cnav_legislation.py`, inchangé, refait le registre à l'octet près. La mise en
-garde du bloc de l'étape 4 ne tient donc plus. Reste au propriétaire une question (cette
-note) : le récupérateur doit-il refuser de relire la base pendant son import ? Si oui,
-commencer par le test, sur un lien relevé à 5 h 01 ; sinon, ôter ce bloc. D'ici là, ne pas
-relancer `cnav_legislation.py` entre 5 h et 6 h UTC.
-
 **Ce qui a été vérifié, le 3 novembre 2026, avec l'en-tête des récupérateurs du dépôt**
 (`cnav_api.ENTETES`, rien d'autre). De 5 h 44 à 5 h 46 UTC, les sept collections de
 l'API, puis trois fois `/expose` et `/liste`, servis à l'identique : l'import de la nuit

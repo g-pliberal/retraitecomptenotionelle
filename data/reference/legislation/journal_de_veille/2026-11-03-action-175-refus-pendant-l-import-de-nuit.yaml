@@ -1,0 +1,20 @@
+date: "2026-11-03"
+session: "action 175 : le refus de relire la base de législation de la Cnav pendant son import de nuit"
+consulte: >-
+  Les notes de l'action 175 du 3 novembre 2026, la forme des liens et l'étape 4 (thème
+  « Carrière : cotisations-salaires »). La base de législation de la Cnav, par son API et
+  l'en-tête des récupérateurs du dépôt, le 3 novembre 2026 à 16 h 00 UTC : les contenus
+  de /expose, /liste et /baremes, pour leurs liens vers le site SharePoint de la caisse ;
+  puis python scripts/fetch/cnav_legislation.py, avec son refus, relu sur elle de 16 h 05 à
+  16 h 13 UTC.
+trouve: >-
+  Sur la base ordinaire, sept liens portent « sites/ » dans les contenus des trois
+  collections : cinq vers le dossier RefReg/textes, sans fichier, un vers une page de
+  N_I_GDLC_Campus_Bar, un vers info-retraite.fr ; aucun des cinq chemins par lesquels la
+  base liait pendant son import de nuit, le même jour à 5 h 01. Le récupérateur refuse
+  désormais de relire une base qui lie par l'un d'eux, le dit et n'écrit rien (décision
+  du propriétaire). Relu sur la base ordinaire, il ne refuse pas, et refait le registre
+  à l'octet près : 9 541 objets, 21 liens morts, 78 objets nommés sans être servis.
+reste: >-
+  La mise en garde du bloc « Reprise » de l'étape 4, à récrire par la session qui
+  reprendra l'étape et qui tient ce bloc.
