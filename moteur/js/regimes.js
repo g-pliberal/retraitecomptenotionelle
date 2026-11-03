@@ -93,6 +93,16 @@ export const REFORME_2023_EFFET = [2023, 9];
 export const GENERATION_REFORME_2023 = 1961.667;
 
 /**
+ * La durée unique de R. 351-45, I : 160 trimestres pour toute pension prenant
+ * effet à compter du 1er janvier 2003, quelle que soit la génération ; la
+ * génération de décembre 1942, que le III garde à 159 trimestres pour une
+ * pension prenant effet ce jour-là — portage du Python.
+ */
+export const DUREE_UNIQUE_2003 = 160;
+export const DUREE_UNIQUE_2003_EFFET = [2003, 1];
+export const GENERATION_DECEMBRE_1942 = 1942.917;
+
+/**
  * Durée requise propre à un régime spécial, par génération.
  *
  * La SNCF, la RATP et les IEG écrivent chacune leur table dans leur texte, et la

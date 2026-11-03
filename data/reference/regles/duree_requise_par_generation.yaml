@@ -29,8 +29,13 @@ effet: >-
   opposait la table de 2023 aux nés de septembre 1961 à 1965 partis avant septembre
   2023 — 169 trimestres au lieu de 168 au né en 1962 parti en carrière longue en
   janvier 2022, 172 au lieu de 169 à un départ de 1965 : `duree_requise_avant_reforme_2023.csv`.
+  Et jusqu'au 3 novembre 2026, il opposait aux nés de 1934 à 1942 l'escalier de 151 à
+  159 trimestres à toute date d'effet, quand R. 351-45 ne le leur oppose que pour une
+  pension prenant effet avant 2003 : depuis, 160 trimestres, sauf au né en décembre 1942
+  parti le 1er janvier 2003 — jusqu'à neuf trimestres de décote en moins, de 2003 à
+  leurs soixante-cinq ans.
 sources:
-  lu_le: 2026-09-24
+  lu_le: 2026-11-03
   prochaine_relecture: 2026-12-31
   a_relire:
   - >-
@@ -77,6 +82,32 @@ sources:
   - type: service_public
     reference: fiche F14044
     date: 2026-08-14
+  - type: legifrance
+    reference: >-
+      R. 351-45 CSS, rédactions du 28 août 1993 (LEGIARTI000006749449) et du 10 mai
+      1995 (LEGIARTI000006749450, jusqu'au 1er janvier 2009), index LEGI à jour au
+      2 novembre 2026 : « I. - La durée d'assurance et de périodes reconnues
+      équivalentes de 160 trimestres […] est applicable aux pensions prenant effet
+      postérieurement au 31 décembre 2002, quelle que soit la date de naissance de
+      l'assuré. II. - En ce qui concerne les pensions prenant effet avant le 1er janvier
+      2003, […] 150 trimestres pour l'assuré né avant le 1er janvier 1934 ; 151
+      trimestres pour l'assuré né en 1934 ; […] 159 trimestres pour l'assuré né en
+      1942. III. - Par dérogation au I ci-dessus, la durée […] demeure fixée à 159
+      trimestres pour les assurés nés en décembre 1942 et dont la pension prend effet
+      au 1er janvier 2003 » ; puis R. 351-27, de sa rédaction du 1er janvier 2009
+      (LEGIARTI000020082993) à celle du 1er septembre 2023 : « Pour les assurés nés
+      avant le 1er janvier 1949, cette limite est fixée à 160 trimestres »
+    date: 2026-11-03
+  - type: circulaire_cnav
+    reference: >-
+      base de législation de la Cnav, exposé « Durée d'assurance pour le taux plein »
+      (version du 15 septembre 2026), « Anciennes dispositions, avant le 01/01/2009 » :
+      « Le nombre de trimestres était fixé à 160 trimestres pour les retraites
+      attribuées à partir de 2003. L'assuré né en décembre 1942, qui totalisait 159
+      trimestres bénéficiait du taux plein si le point de départ de sa retraite était
+      fixé le 01/01/2003 » ; ses tableaux, confrontés aux séries par
+      tests/test_cnav_exposes.py (action 175, étape 4)
+    date: 2026-09-15
 textes_a_rattacher:
 - reference: L. 161-17-3 CSS (réécrit par la loi n° 2025-1403, article 105)
 - reference: loi n° 2025-1403, article 105 VI
@@ -108,21 +139,26 @@ code:
     contrefactuels de la page des résultats (action 138, étape 10) posent sur elle la
     table qu'ils gardent (`TableRecouverte`, `ScenarioActuel._sous_le_droit`) : celle
     d'avant la suspension pour la loi de 2023 sans elle, celle de 2014 au 31 août 2023,
-    qui vaut alors aussi pour les pensions d'avant septembre 2026.
+    qui vaut alors aussi pour les pensions d'avant septembre 2026. L'escalier des nés
+    de 1934 à 1942 ne vaut que pour une pension prenant effet avant 2003 : depuis, la
+    table cède la place à 160 trimestres (`DUREE_UNIQUE_2003`), sauf à la génération
+    de décembre 1942 partie le 1er janvier 2003 (R. 351-45, I à III).
   python: >-
     droit/ouvrir.py : duree_requise, REFORME_2023_EFFET, GENERATION_REFORME_2023,
-    SUSPENSION_2026_EFFET, GENERATIONS_SUSPENSION ; scenarios/actuel.py :
+    SUSPENSION_2026_EFFET, GENERATIONS_SUSPENSION, DUREE_UNIQUE_2003,
+    DUREE_UNIQUE_2003_EFFET, GENERATION_DECEMBRE_1942 ; scenarios/actuel.py :
     DureesRequises, DureesRequisesAvantReforme2023, DureesRequisesAvantSuspension,
     TableRecouverte, ScenarioActuel._sous_le_droit
   javascript: >-
     moteur/js/droit/ouvrir.js : dureeRequise ; moteur/js/regimes.js : DureesRequises,
     DureesRequisesAvantReforme2023, DureesRequisesAvantSuspension, TableRecouverte,
     REFORME_2023_EFFET, GENERATION_REFORME_2023, SUSPENSION_2026_EFFET,
-    GENERATIONS_SUSPENSION ; moteur/js/scenario-actuel.js : ScenarioActuel._sousLeDroit
+    GENERATIONS_SUSPENSION, DUREE_UNIQUE_2003, DUREE_UNIQUE_2003_EFFET,
+    GENERATION_DECEMBRE_1942 ; moteur/js/scenario-actuel.js : ScenarioActuel._sousLeDroit
   parametres: >-
     legislation/duree_assurance_requise.csv,
     legislation/duree_requise_avant_reforme_2023.csv,
     legislation/duree_requise_avant_suspension.csv : generation, trimestres
   tests: [tests/test_simulateur.py, tests/test_donnees.py,
     tests/test_droits_contrefactuels.py, tests/test_oracle.py, tests/js/moteur.test.js,
-    tests/temoins/simulations.json]
+    tests/test_cnav_exposes.py, tests/temoins/simulations.json]

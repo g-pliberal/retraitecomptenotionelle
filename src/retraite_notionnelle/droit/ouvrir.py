@@ -56,6 +56,16 @@ GENERATIONS_SUSPENSION = (1964.0, 1966.0)
 REFORME_2023_EFFET = (2023, 9)
 GENERATION_REFORME_2023 = 1961.667
 
+#: La durée unique de R. 351-45, I, dans ses rédactions de 1993 et de 1995 :
+#: « 160 trimestres [...] applicable aux pensions prenant effet
+#: postérieurement au 31 décembre 2002, quelle que soit la date de naissance
+#: de l'assuré », que R. 351-27 garde depuis 2009 aux nés avant 1949 ; sa
+#: première date d'effet ; et la génération de décembre 1942, que le III garde
+#: à 159 trimestres pour une pension prenant effet le 1er janvier 2003.
+DUREE_UNIQUE_2003 = 160
+DUREE_UNIQUE_2003_EFFET = (2003, 1)
+GENERATION_DECEMBRE_1942 = 1942.917
+
 #: Durée minimale de services qui ouvre une pension militaire, même différée :
 #: « lorsqu'ils ont accompli […] moins de quinze ans de services effectifs »,
 #: dit le 5° de l'article L. 25, la pension n'est due qu'à l'âge légal.
@@ -467,6 +477,21 @@ def duree_requise(moteur, periode: PeriodeRegime,
                 return avant
         par_generation = moteur.durees_requises.trimestres(carriere.generation)
         if par_generation is not None:
+            # L'ESCALIER DES NÉS DE 1934 À 1942 NE VAUT QU'AVANT 2003 : 151 à
+            # 159 trimestres « en ce qui concerne les pensions prenant effet
+            # avant le 1er janvier 2003 » (R. 351-45, II) ; depuis, 160,
+            # « quelle que soit la date de naissance » (I), sauf au né en
+            # décembre 1942 parti le 1er janvier 2003 (III). Le module leur
+            # opposait l'escalier à toute date : 157 trimestres au né en 1940
+            # parti en 2003, à qui la caisse en demandait 160.
+            if (par_generation[0] < DUREE_UNIQUE_2003
+                    and carriere.age_liquidation is not None
+                    and (carriere.annee_liquidation, carriere.mois_liquidation)
+                    >= DUREE_UNIQUE_2003_EFFET
+                    and not (carriere.generation == GENERATION_DECEMBRE_1942
+                             and (carriere.annee_liquidation, carriere.mois_liquidation)
+                             == DUREE_UNIQUE_2003_EFFET)):
+                return DUREE_UNIQUE_2003, par_generation[1]
             return par_generation
     return requis, None
 

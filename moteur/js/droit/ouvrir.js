@@ -19,6 +19,7 @@ import { AnneeCarriere, chomageComplementaires } from "../carriere.js";
 import {
   GENERATIONS_SUSPENSION, SUSPENSION_2026_EFFET,
   GENERATION_REFORME_2023, REFORME_2023_EFFET,
+  DUREE_UNIQUE_2003, DUREE_UNIQUE_2003_EFFET, GENERATION_DECEMBRE_1942,
 } from "../regimes.js";
 import { Fiabilite, fiabiliteDepuisTexte, nomFiabilite } from "../serie.js";
 import { dateDEffet, ligneCotisee, periodeDeLiquidation } from "./commun.js";
@@ -363,6 +364,20 @@ export function dureeRequise(moteur, periode, carriere) {
     }
     const parGeneration = moteur.dureesRequises.trimestres(carriere.generation);
     if (parGeneration !== null) {
+      // L'ESCALIER DES NÉS DE 1934 À 1942 NE VAUT QU'AVANT 2003 (R. 351-45,
+      // II) : depuis, 160 trimestres, quelle que soit la génération (I).
+      // Voir le Python.
+      const [anneeUnique, moisUnique] = DUREE_UNIQUE_2003_EFFET;
+      if (parGeneration[0] < DUREE_UNIQUE_2003
+          && carriere.age_liquidation !== null && carriere.age_liquidation !== undefined
+          && (carriere.anneeLiquidation > anneeUnique
+            || (carriere.anneeLiquidation === anneeUnique
+              && carriere.moisLiquidation >= moisUnique))
+          && !(carriere.generation === GENERATION_DECEMBRE_1942
+            && carriere.anneeLiquidation === anneeUnique
+            && carriere.moisLiquidation === moisUnique)) {
+        return [DUREE_UNIQUE_2003, parGeneration[1]];
+      }
       return parGeneration;
     }
   }
