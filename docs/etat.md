@@ -14,35 +14,35 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 | régime partiel | 4 354 564 | 11 % |
 | sections libérales, couverture mêlée | 424 386 | 1 % |
 
-*Modélisé ne veut pas dire exact* : les 162 règles approchées de la carte touchent aussi des régimes modélisés (section 2).
+*Modélisé ne veut pas dire exact* : les 165 règles approchées de la carte touchent aussi des régimes modélisés (section 2).
 
-**La carte des règles** (`data/reference/regles/`) : 257 fiches, dont 2 relations. La veille en est une vue (`python scripts/veille_droit.py`).
+**La carte des règles** (`data/reference/regles/`) : 258 fiches, dont 2 relations. La veille en est une vue (`python scripts/veille_droit.py`).
 
 | État | Fiches |
 |---|---|
-| conformes | 37 |
+| conformes | 34 |
 | transcrites | 29 |
-| approchées | 162 |
-| pas encore modélisées | 26 |
+| approchées | 165 |
+| pas encore modélisées | 27 |
 | manquantes | 1 |
 | à vérifier | 2 |
 
-- Confrontées à au moins un exemple officiel : **65 sur 257** (218 exemples : 206 reproduits, 12 en écart connu, section 2).
-- Citées dans le code par leur identifiant : **120 sur 257**. Le lien entre une règle et le code qui l'applique n'existe pas encore pour les autres.
-- Désignées par les interrupteurs des périodes de régime : **48 sur 257**, par 2 483 renvois ; chacune déclare la valeur que le moteur lit (`code.interrupteurs`) et dit ce qu'il en fait.
-- Mûres, sans rien qui manque à leur contrat : **166 sur 257**. Une fiche tirée d'un registre ne sait pas encore son domaine, ses régimes, son étape ni ses versions : ce qui lui manque est à faire (section 3).
-- Découpées en versions : **167 sur 257**, soit 655 versions, dont 111 supposées ; le partage des versions se contrôle sur chacune.
+- Confrontées à au moins un exemple officiel : **65 sur 258** (218 exemples : 206 reproduits, 12 en écart connu, section 2).
+- Citées dans le code par leur identifiant : **120 sur 258**. Le lien entre une règle et le code qui l'applique n'existe pas encore pour les autres.
+- Désignées par les interrupteurs des périodes de régime : **48 sur 258**, par 2 483 renvois ; chacune déclare la valeur que le moteur lit (`code.interrupteurs`) et dit ce qu'il en fait.
+- Mûres, sans rien qui manque à leur contrat : **170 sur 258**. Une fiche tirée d'un registre ne sait pas encore son domaine, ses régimes, son étape ni ses versions : ce qui lui manque est à faire (section 3).
+- Découpées en versions : **170 sur 258**, soit 679 versions, dont 112 supposées ; le partage des versions se contrôle sur chacune.
 - Réformes du calendrier : 126, dont 10 déclarées non appliquées.
 
 **La loi, rédaction par rédaction** (`data/reference/textes/`, § 6.6) : 16 386 rédactions d'articles, de 227 textes, lues le 2026-11-03 (index LEGI du dépôt : Freemium_legi_global_20250713-140000.tar.gz, incréments appliqués jusqu'au 20261102-213929). C'est le dénominateur de l'avancement : ce que les fiches ont lu, contre ce que la loi a écrit.
 
 | Statut | Rédactions |
 |---|---|
-| rattachées à une version | 1 619 |
-| sans effet | 58 |
-| à rattacher | 590 |
-| à examiner | 4 708 |
-| sans statut | 9 411 |
+| rattachées à une version | 1 641 |
+| sans effet | 66 |
+| à rattacher | 592 |
+| à examiner | 4 705 |
+| sans statut | 9 382 |
 
 **La personne** (§ 5) : une chronologie de faits datés, dans un réseau de personnes — aujourd'hui l'assuré, ses enfants et son conjoint —, que le relevé et le parcours déclarent (`src/retraite_notionnelle/chronologie.py`, et son jumeau). La carrière que le moteur liquide en est la vue. Ce que la saisie ne dit pas est présumé : 32 présomptions au vocabulaire, dont 3 posent leur fait dans la chronologie ; les autres s'appliquent dans le code, jusqu'à l'étape qui posera le leur.
 
@@ -81,14 +81,14 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 | `pas_de_periode_assimilee` | aucune | `apprentissage`, `conge_supplementaire_naissance`, `sportifs_haut_niveau`, `stages_formation_professionnelle` | aucune étape encore : les fiches apprentissage, stages_formation_professionnelle, sportifs_haut_niveau et conge_supplementaire_naissance sont pas_encore_modelisee, et le moteur compte comme aujourd'hui. Une période déclarée (chronologie.avec_periodes_assimilees, et son jumeau JavaScript) ou un emploi en apprentissage (l'attribut apprentissage d'un métier) prend la place de la présomption ; son fait entrera à l'étape `compter_les_durees` |
 | `residence_en_france` | en France | `residence_et_minimum_vieillesse` | foyer_et_net (droit/foyer.py), qui ne sert l'allocation de solidarité aux personnes âgées qu'à qui réside en France ; son jumeau JavaScript ; son fait entrera à l'étape `preparer_la_chronologie` |
 
-**Le relevé des droits** (§ 7.2 et 7.6) : pour chaque demande, quatre étapes le construisent, une par module dans `src/retraite_notionnelle/droit/` et son jumeau `moteur/js/droit/`, chacune écrivant la donnée que son schéma décrit (`data/reference/etapes/`) ; la liquidation du scénario 1 ne lit que lui. Les relevés des 13 cas types, à chacune de leurs générations — 91 relevés —, comptent 23 126 lignes, dont 782 citent la fiche qui les écrit (3 %) et 14 sa version.
+**Le relevé des droits** (§ 7.2 et 7.6) : pour chaque demande, quatre étapes le construisent, une par module dans `src/retraite_notionnelle/droit/` et son jumeau `moteur/js/droit/`, chacune écrivant la donnée que son schéma décrit (`data/reference/etapes/`) ; la liquidation du scénario 1 ne lit que lui. Les relevés des 13 cas types, à chacune de leurs générations — 91 relevés —, comptent 23 131 lignes, dont 782 citent la fiche qui les écrit (3 %) et 14 sa version.
 
 | Étape | Module | Ce qu'elle écrit | Fiches qui disent l'appliquer |
 |---|---|---|---|
 | `preparer_la_chronologie` | `droit/preparer.py` | la chronologie, présomptions posées (contrat C.1) | `conjoint_collaborateur_independants`, `limite_age_banque_de_france`, `limite_age_contractuels`, `limite_age_fonction_publique`, `limite_age_ieg`, `limite_age_militaires`, `limite_age_mines`, `limite_age_opera`, `limite_age_ouvriers_etat`, `limite_age_seita`, `limite_age_sncf_ratp`, `maintien_en_fonctions_jusqu_a_70_ans`, `maintiens_en_fonctions_de_certains_corps`, `plafond_limite_age_fonction_publique`, `prolongation_activite_carriere_incomplete`, `prolongation_activite_categorie_active`, `recul_limite_age_enfants` |
 | `coordonner_les_affiliations` | `droit/coordonner.py` | les régimes qui reçoivent chaque ligne, les rétablissements, les groupes | `cci_paris_transfert_2006`, `cci_roubaix_transfert_1998`, `compagnie_generale_eaux_transfert_1991`, `credit_foncier_transfert_1989`, `crfm_mayotte_pension_unique`, `crfom_regime_du_decret_1950`, `elus_nouvelle_caledonie_cafat`, `interpenetration_fonction_publique`, `liquidation_unique_regimes_alignes`, `maintien_affiliation_crpcen_ieg`, `parlement_europeen_affiliation`, `rafp_beneficiaires`, `regies_ferroviaires_pensions_en_extinction`, `retablissement_fonction_publique`, `totalisation_des_periodes_etrangeres` |
 | `compter_les_durees` | `droit/compter.py` | les trimestres de chaque compte, par régime et par année ; ceux des enfants | `apprentissage`, `bonification_cinquieme_militaires`, `bonification_cinquieme_police_penitentiaire`, `bonification_cinquieme_sapeurs_pompiers`, `cnavpl_majoration_duree_assurance`, `conge_supplementaire_naissance`, `enfants_crpcen`, `enfants_fonction_publique`, `enfants_ieg`, `enfants_ratp`, `enfants_sncf`, `fin_indemnisation_chomage`, `majoration_duree_assurance_enfants`, `majoration_duree_elus_locaux`, `majoration_duree_hospitaliers_actifs`, `majoration_duree_sapeurs_pompiers_volontaires`, `priorite_majorations_enfants`, `service_civique`, `services_et_duree_fonction_publique`, `sportifs_haut_niveau`, `stages_formation_professionnelle`, `volontariat_civil_et_international` |
-| `acquerir_les_droits` | `droit/acquerir.py` | les points et les cotisations, la durée plafonnée, les points gratuits | `agirc_arrco_valeur_achat`, `assiette_minimale_agricole`, `assiette_minimale_independants`, `asv_autres_professions_de_sante`, `asv_medecins_ajustement`, `asv_medecins_points`, `chomage_retraite_complementaire`, `cotisation_par_classes_liberales`, `cultes_retraite_complementaire_taux_specifiques`, `droits_apres_la_premiere_pension`, `exoneration_independants_outre_mer`, `financement_chomage_complementaire`, `garantie_minimale_points_agirc`, `igrante_points`, `ipacte_points`, `ircantec_valeurs_point`, `micro_social_abattement`, `organic_conjoints_de_commercants`, `points_au_prorata_des_cotisations`, `points_invalidite_independants`, `rafp_assiette_plafond`, `rafp_compte_epargne_temps`, `rafp_cotisation_volontaire_outre_mer`, `rafp_gipa_hors_plafond`, `ravgdt_allocation_viagere`, `rci_seuil_premiere_tranche`, `rco_points_gratuits`, `rco_points_gratuits_66`, `retraite_proportionnelle_msa`, `services_passes_outre_mer` |
+| `acquerir_les_droits` | `droit/acquerir.py` | les points et les cotisations, la durée plafonnée, les points gratuits | `agirc_arrco_valeur_achat`, `assiette_minimale_agricole`, `assiette_minimale_independants`, `asv_autres_professions_de_sante`, `asv_medecins_ajustement`, `asv_medecins_points`, `chomage_retraite_complementaire`, `cotisation_par_classes_liberales`, `cultes_retraite_complementaire`, `cultes_retraite_complementaire_taux_specifiques`, `cultes_salaire_annuel_moyen`, `droits_apres_la_premiere_pension`, `exoneration_independants_outre_mer`, `financement_chomage_complementaire`, `garantie_minimale_points_agirc`, `igrante_points`, `ipacte_points`, `ircantec_valeurs_point`, `micro_social_abattement`, `organic_conjoints_de_commercants`, `points_au_prorata_des_cotisations`, `points_invalidite_independants`, `rafp_assiette_plafond`, `rafp_compte_epargne_temps`, `rafp_cotisation_volontaire_outre_mer`, `rafp_gipa_hors_plafond`, `ravgdt_allocation_viagere`, `rci_seuil_premiere_tranche`, `rco_points_gratuits`, `rco_points_gratuits_66`, `retraite_proportionnelle_msa`, `services_passes_outre_mer` |
 
 **La liquidation** (§ 7.3, 7.4 et 7.7) : `liquider(demande, état, contexte)`, une fonction pure (`src/retraite_notionnelle/droit/liquidation.py`, et son jumeau), enchaîne l'acquisition et trois étapes, et mesure par des liquidations d'essai ce qu'apporte chaque avantage. L'échéancier (`echeancier.py`) l'appelle au départ, applique à l'échéance les deux étapes qui ne liquident rien, et inscrit tout à son journal (`journal.py`) ; le pilote (`pilote.py`) date les départs des cas types sans rien liquider. Les 929 témoins font chacun de 1 à 12 appels de `liquider`, liquidations d'essai comprises, et au plus 6 par départ ; aucun ne dépasse les 6 par départ que le nombre déclaré accorde (§ 7.8).
 
@@ -96,7 +96,7 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 |---|---|---|---|
 | `ouvrir_le_droit` | `droit/ouvrir.py` | l'âge d'ouverture et son motif, la durée requise, les trimestres cotisés | `age_legal_par_generation`, `age_ouverture_ieg_actifs`, `carriere_longue`, `carriere_longue_reputes_cotises_autres`, `depart_anticipe_parents_trois_enfants`, `duree_requise_ieg`, `duree_requise_par_generation`, `duree_requise_sncf_ratp`, `inaptitude_au_travail`, `marins_ouverture_cinquante_ans`, `ortf_position_speciale_1974`, `retraite_anticipee_handicap` |
 | `liquider_chaque_regime` | `droit/liquider.py` | la pension de chaque régime et sa formule, les régimes qui portent les minima | `age_reference_decote_ieg`, `age_reference_decote_sncf_ratp`, `age_surcote_sncf_ratp`, `agirc_arrco_valeur_service`, `atc_icna_allocation`, `cafat_pension_de_base`, `cese_pension_des_membres`, `clr_nouvelle_caledonie_pension_des_fonctionnaires`, `cnavpl_valeur_service`, `coefficient_anticipation_ircantec`, `coefficients_anticipation_agirc_1947`, `coefficients_anticipation_agirc_arrco`, `cps_polynesie_pension_des_salaries`, `crpn_pension_des_navigants`, `cultes_alsace_moselle_pension`, `cultes_fractions_de_pension`, `decompte_des_services_fonction_publique`, `decote_avant_1983`, `decote_opera_de_paris`, `decote_regime_general`, `decote_regimes_speciaux`, `deputes_pension_des_anciens_deputes`, `entrepreneurs_du_batiment_complementaire`, `indemnite_de_feu_sapeurs_pompiers`, `indemnite_sujetions_speciales_police`, `majoration_duree_apres_65_ans`, `majoration_forfaitaire_reversion`, `marins_salaire_de_reference`, `mayotte_pension_de_base`, `minoration_racl_2014_2024`, `pension_maximale_regime_general`, `pension_non_salaries_agricoles_2026`, `pension_proratisee`, `points_avant_1973_independants`, `prime_speciale_sujetion_aides_soignants`, `rafp_garantie_outre_mer`, `rafp_majoration_capital`, `retraite_pour_invalidite_fonction_publique`, `retrep_avantages_temporaires`, `revenu_annuel_moyen_independants`, `reversion`, `reversion_agirc_arrco`, `reversion_crpcen`, `reversion_fonction_publique`, `reversion_ieg`, `reversion_ircantec`, `reversion_rafp`, `reversion_rci`, `reversion_sncf`, `saint_pierre_et_miquelon_pension_de_base`, `salaire_annuel_moyen`, `seconde_pension`, `surcote_ircantec`, `surcote_par_age_seul`, `surcote_regime_general`, `surcote_regimes_speciaux`, `taux_plein_anciens_combattants_prisonniers`, `taux_plein_anciens_deportes_internes`, `taux_plein_et_proratisation`, `taux_plein_meres_de_famille_ouvrieres`, `taux_plein_travailleurs_manuels`, `wallis_et_futuna_pension_des_salaries` |
-| `completer_tous_regimes` | `droit/completer.py` | les minima, la surcote parentale, la majoration pour enfants | `complement_differentiel_rco`, `ircantec_majoration_enfants`, `majoration_conjoint_a_charge`, `majoration_dix_pour_cent`, `majoration_enfants_a_charge_agirc_arrco`, `majoration_enfants_plafond_fonction_publique`, `majoration_retraite_proportionnelle`, `marins_bonification_enfants`, `minimum_contributif`, `minimum_contributif_international`, `minimum_garanti`, `minimum_pension_ieg`, `minimum_pension_sncf`, `pension_majoree_reference`, `surcote_parentale`, `versement_forfaitaire_unique`, `versement_unique_agirc_arrco`, `versement_unique_ircantec`, `versement_unique_rci` |
+| `completer_tous_regimes` | `droit/completer.py` | les minima, la surcote parentale, la majoration pour enfants | `complement_differentiel_rco`, `ircantec_majoration_enfants`, `majoration_conjoint_a_charge`, `majoration_dix_pour_cent`, `majoration_enfants_a_charge_agirc_arrco`, `majoration_enfants_agirc_arrco`, `majoration_enfants_plafond_fonction_publique`, `majoration_retraite_proportionnelle`, `marins_bonification_enfants`, `minimum_contributif`, `minimum_contributif_international`, `minimum_garanti`, `minimum_pension_ieg`, `minimum_pension_sncf`, `pension_majoree_reference`, `surcote_parentale`, `versement_forfaitaire_unique`, `versement_unique_agirc_arrco`, `versement_unique_ircantec`, `versement_unique_rci` |
 | `faire_vivre` | `revalorisation.py` | le coefficient de chaque pension, du départ à l'échéance | `majoration_exceptionnelle_2023`, `majorations_forfaitaires_1972_1982`, `relevement_des_exploitants_2023`, `revalorisation_des_pensions` |
 | `foyer_et_net` | `droit/foyer.py` | l'ASPA, au départ puis à chaque échéance | `assiette_sociale_independants`, `cotisation_maladie_des_non_residents`, `cotisation_maladie_pensions_complementaires`, `cotisation_vieillesse_independants`, `csg_des_pensions_selon_le_revenu`, `minimum_vieillesse`, `residence_et_minimum_vieillesse` |
 
@@ -105,11 +105,11 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 | Scénario | Univers | Couches posées sur le droit réel | Fiches ajoutées | Fiches du droit réel sans décision |
 |---|---|---|---|---|
 | 1 | `actuel` | aucune : c'est l'étalon | 0 | — |
-| 2 | `notionnel_retroactif` | `comptes_notionnels` | 5 | 124 sur 257 |
-| 3 | `notionnel_prospectif` | `contributif_seul`, `valorisation_des_droits_acquis`, `comptes_notionnels` | 6 | 124 sur 257 |
-| 4 | `notionnel_retroactif_employeur` | `comptes_notionnels`, `part_patronale` | 5 | 124 sur 257 |
-| 5 | `notionnel_prospectif_employeur` | `contributif_seul`, `valorisation_des_droits_acquis`, `comptes_notionnels`, `part_patronale` | 6 | 124 sur 257 |
-| 6 | `notionnel_liberal` | `comptes_notionnels`, `part_patronale`, `taux_unique`, `capitalisation_obligatoire`, `garantie_vieillesse`, `age_legal_de_la_proposition` | 8 | 124 sur 257 |
+| 2 | `notionnel_retroactif` | `comptes_notionnels` | 5 | 125 sur 258 |
+| 3 | `notionnel_prospectif` | `contributif_seul`, `valorisation_des_droits_acquis`, `comptes_notionnels` | 6 | 125 sur 258 |
+| 4 | `notionnel_retroactif_employeur` | `comptes_notionnels`, `part_patronale` | 5 | 125 sur 258 |
+| 5 | `notionnel_prospectif_employeur` | `contributif_seul`, `valorisation_des_droits_acquis`, `comptes_notionnels`, `part_patronale` | 6 | 125 sur 258 |
+| 6 | `notionnel_liberal` | `comptes_notionnels`, `part_patronale`, `taux_unique`, `capitalisation_obligatoire`, `garantie_vieillesse`, `age_legal_de_la_proposition` | 8 | 125 sur 258 |
 
 **La réorganisation** (§ 6.5, § 11). Les registres devenus des vues de la carte : la veille. Restent des registres : la frontière contributive, l'inventaire des régimes.
 
@@ -164,6 +164,7 @@ Et 36 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
 | `regies_ferroviaires_pensions_en_extinction` | pas_encore_modelisee | Les anciens agents des chemins de fer d'outre-mer et d'Afrique du Nord, nés pour la plupart avant 1940 : le modèle ne simule pas leurs serv… |
 | `retrep_avantages_temporaires` | pas_encore_modelisee | Tous les maîtres et documentalistes du privé sous contrat qui partent aux âges des enseignants publics : ceux qui avaient quinze ans d'éche… |
 | `service_civique` | pas_encore_modelisee | Tout assuré qui a accompli un service civique en France depuis le 14 mai 2010 : un contrat de six à douze mois valide aujourd'hui autant de… |
+| `taux_plein_a_soixante_cinq_ans` | pas_encore_modelisee | Les assurés de ces catégories partis entre soixante-cinq ans et l'âge du taux plein de leur génération (de soixante-cinq ans et quatre mois… |
 | `volontariat_civil_et_international` | pas_encore_modelisee | Tout assuré qui a accompli un volontariat civil, depuis le 15 mars 2000, ou un volontariat international en entreprise ou en administration… |
 | `cultes_retraite_complementaire_taux_specifiques` | a_verifier | Le ministre dont la collectivité applique un taux spécifique cotise de 11 à 113 % de plus qu'au taux de base, et le modèle ne lui compte qu… |
 | `fin_de_la_suspension_2028` | a_verifier | Tout changement de calendrier touche les générations 1965 et suivantes. |
@@ -213,6 +214,8 @@ Et 36 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
 | `crpn_pension_des_navigants` | approchee | Les navigants de l'aéronautique civile : leur pension de la caisse est simulée sans la majoration temporaire de cinquante-cinq ans à l'âge… |
 | `csg_des_pensions_selon_le_revenu` | approchee | Tout retraité en mode net : un foyer d'une part sous 13 048 € de revenu fiscal n'est plus prélevé |
 | `cultes_fractions_de_pension` | approchee | Les ministres des cultes et les membres des congrégations, au scénario 1, partis à soixante-quatre ans : + 98 % nés en 1925, + 30 % en 1945… |
+| `cultes_retraite_complementaire` | approchee | Ministres des cultes rémunérés, depuis 2006 : le modèle ne leur routait que la CAVIMAC. |
+| `cultes_salaire_annuel_moyen` | approchee | Le salaire annuel moyen est fait du forfait de chaque année, dans les deux moteurs (`assiette_de_reference`) : le ministre déclaré à une fo… |
 | `cumul_emploi_retraite_complementaire_des_independants` | approchee | L'artisan ou le commerçant qui travaille avant le taux plein : sa complémentaire, que le modèle servait entière, est suspendue avec sa base… |
 | `cumul_emploi_retraite_complementaires_des_liberaux` | approchee | Le libéral qui reprend une activité libérale avant le taux plein, au-delà du plafond de la sécurité sociale : la dentiste partie avant 2015… |
 | `cumul_emploi_retraite_et_retraite_progressive` | approchee | Le retraité qui travaille avant le taux plein : la salariée née en 1960, partie à 62 ans en 2022 sans la durée requise, qui reprend un empl… |
@@ -259,6 +262,7 @@ Et 36 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
 | `majoration_duree_assurance_enfants` | approchee | Toute mère affiliée au régime général ou à un régime aligné : la règle commande la décote, la proratisation, la surcote parentale et le sal… |
 | `majoration_duree_hospitaliers_actifs` | approchee | L'aide-soignant ou l'agent hospitalier actif : quinze trimestres pour trente-sept ans et demi de services, qui effacent la décote de qui pa… |
 | `majoration_enfants_a_charge_agirc_arrco` | approchee | Le salarié du privé qui part avec un enfant de moins de dix-huit ans voit sa complémentaire majorée de 5 % par enfant, au lieu de la majora… |
+| `majoration_enfants_agirc_arrco` | approchee | Parents de trois enfants salariés du privé avant 2019. |
 | `majoration_enfants_liberaux_avocats` | approchee | Les fiches de la CNAVPL, de la CNBF et de sa complémentaire ne la portaient pas : 10 % de pension en moins pour tout parent de trois enfant… |
 | `majoration_enfants_plafond_fonction_publique` | approchee | Les pensions du code des pensions que la majoration pour enfants porterait au-delà du traitement : sans surcote, à partir de sept enfants a… |
 | `majoration_exceptionnelle_2023` | approchee | Les retraités du régime général, des indépendants, des salariés agricoles et des cultes partis avant le 1er septembre 2023 au taux plein av… |
@@ -330,9 +334,9 @@ Et 36 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
 | `versement_unique_rci` | approchee | L'artisane de 2020 qui a déclaré 4 000 € : 15,83 points, servis 19,33 € par an |
 | `wallis_et_futuna_pension_des_salaries` | approchee | Les salariés de Wallis-et-Futuna : leur pension est simulée à 60 ans au barème jusqu'à trente ans, et leur cotisation au taux de la retraite |
 
-**Un état peut-être périmé.** Pour 30 des 162 règles approchées, l'effet raconte à l'imparfait l'erreur qui a été corrigée, sans dire ce qui reste. Le tableau ne peut pas savoir si elles sont encore approchées : leur fiche le dira quand elle mûrira, l'écart actuel dans ses approximations, le récit dans son historique.
+**Un état peut-être périmé.** Pour 31 des 165 règles approchées, l'effet raconte à l'imparfait l'erreur qui a été corrigée, sans dire ce qui reste. Le tableau ne peut pas savoir si elles sont encore approchées : leur fiche le dira quand elle mûrira, l'écart actuel dans ses approximations, le récit dans son historique.
 
-**Des approximations non déclarées.** 26 des 162 fiches approchées ne déclarent encore ses approximations, chacune avec son effet ou « non mesuré » : l'effet n'en est dit qu'en mots.
+**Des approximations non déclarées.** 25 des 165 fiches approchées ne déclarent encore ses approximations, chacune avec son effet ou « non mesuré » : l'effet n'en est dit qu'en mots.
 
 **Les exemples officiels que le modèle ne reproduit pas**, entrés en écart connu, avec la règle qui le déclare :
 
@@ -378,26 +382,26 @@ Et 36 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
   - 176. Le portail statistique de la Cnav, exploité en entier : chaque série, recueil et étude à sa place dans le dépôt
   - 177. Les écarts que les barèmes de la Cnav ont trouvés au modèle : chacun corrigé dans les deux moteurs, ou sa limite dite
   - 178. Le panorama « Les retraités et les retraites » de la DREES, édition 2026, exploité en entier : chaque fiche à sa place dans le dépôt
-- **Les sources à exploiter** : 9 à explorer sur 332 (125 explorées, 197 épuisées). 0 d'entre elles visent un régime partiel, et pourraient le compléter :
-  - et 6 sources sans régime désigné.
+- **Les sources à exploiter** : 8 à explorer sur 332 (125 explorées, 198 épuisées). 0 d'entre elles visent un régime partiel, et pourraient le compléter :
+  - et 5 sources sans régime désigné.
 - **Les autres modèles** (§ 3.4) : 70 au registre (`data/reference/referents.yaml`) : 32 au code ouvert, 1 sur demande, 13 documenté(s) sans leur code, 24 non public(s). 28 ont déjà été confrontés au dépôt ou lui donnent des valeurs (Barèmes IPP, OpenFisca-France, OpenFisca-France-Pension, Destinie 2, Ines, TRAJECTOiRE, ANCETRE, legiretraite (paquet R), EDIFIS, Maquette globale de projection du COR, Maquette simplifiée du secrétariat général du COR, PRISME (Projection des Retraites, Simulations, Modélisation et Évaluations), Saphir, modele-ti, modele-social, modele-as, Catala (catala-examples), ir-catala, EUROMOD (France), Retraites 2027, Simulateur de dépense publique, volet retraites, « Quand pourrai-je partir à la retraite ? », Simulateur de SUD éducation, devcrafting/retraites, calcul-verification-pension-retraite, Simulateur de cas types de Nos Retraites, Les modèles de pension de l'OCDE, Ageing Report et ses fiches pays) ; le registre compte 242 écarts, dont 210 chez eux. Aucun n'est plus à confronter au scénario 1 en premier : tous ceux dont le code est ouvert et qui ne dépendent d'aucune autre source du registre l'ont été.
 - **Ce que les autres modèles font mieux** (action 138) : 291 points, lus chez 66 modèles : 44 à reprendre, 48 à trancher par le propriétaire (des choix du programme), 150 repris, 10 écartés, 39 coupés (léger ou nul, déclaré sans être fait). Les points à reprendre, par chantier de la feuille de route : 138.2 (1), 138.3 (8), 138.5 (5), 138.7 (2), 138.8 (1), 138.11 (1), 138.12 (1), 138.14 (12), 138.18 (4), 138.19 (2), 155.1 (1), 155.2 (1), 155.3 (3), 156.1 (1), 157.1 (1).
-- **Les fiches sans exemple officiel** : 192.
-- **Les domaines sans décision** (§ 8) : 124 fiches du droit réel qu'aucun des 5 univers de la proposition ne décide. 76 disent leur étape, et c'est une décision qui manque : `agirc_arrco_valeur_achat`, `assiette_minimale_independants`, `assiette_sociale_independants`, `asv_autres_professions_de_sante`, `asv_medecins_ajustement`, `asv_medecins_points`, `cci_paris_transfert_2006`, `cci_roubaix_transfert_1998`, `chomage_retraite_complementaire`, `compagnie_generale_eaux_transfert_1991`, `conjoint_collaborateur_independants`, `cotisation_maladie_des_non_residents`, `cotisation_maladie_pensions_complementaires`, `cotisation_vieillesse_independants`, `credit_foncier_transfert_1989`, `crfm_mayotte_pension_unique`, `crfom_regime_du_decret_1950`, `csg_des_pensions_selon_le_revenu`, `cultes_retraite_complementaire_taux_specifiques`, `cumul_emploi_retraite_complementaire_des_independants`, `cumul_emploi_retraite_complementaires_des_liberaux`, `cumul_emploi_retraite_et_retraite_progressive`, `cumul_emploi_retraite_fonction_publique`, `cumul_emploi_retraite_ircantec`, `cumul_emploi_retraite_rco_agricole`, `droits_apres_la_premiere_pension`, `elus_nouvelle_caledonie_cafat`, `exoneration_independants_outre_mer`, `financement_chomage_complementaire`, `igrante_points`, `interpenetration_fonction_publique`, `ipacte_points`, `ircantec_valeurs_point`, `limite_age_banque_de_france`, `limite_age_contractuels`, `limite_age_fonction_publique`, `limite_age_ieg`, `limite_age_militaires`, `limite_age_mines`, `limite_age_opera`, `limite_age_ouvriers_etat`, `limite_age_seita`, `limite_age_sncf_ratp`, `liquidation_regime_par_regime`, `liquidation_unique_regimes_alignes`, `maintien_affiliation_crpcen_ieg`, `maintien_en_fonctions_jusqu_a_70_ans`, `maintiens_en_fonctions_de_certains_corps`, `majoration_exceptionnelle_2023`, `majorations_forfaitaires_1972_1982`, `micro_social_abattement`, `organic_conjoints_de_commercants`, `parlement_europeen_affiliation`, `pension_d_invalidite_substituee`, `plafond_limite_age_fonction_publique`, `points_au_prorata_des_cotisations`, `points_invalidite_independants`, `prolongation_activite_carriere_incomplete`, `prolongation_activite_categorie_active`, `rafp_age_d_ouverture`, `rafp_beneficiaires`, `rafp_compte_epargne_temps`, `rafp_cotisation_volontaire_outre_mer`, `rafp_gipa_hors_plafond`, `ravgdt_allocation_viagere`, `rci_seuil_premiere_tranche`, `rco_points_gratuits_66`, `recul_limite_age_enfants`, `regies_ferroviaires_pensions_en_extinction`, `relevement_des_exploitants_2023`, `residence_et_minimum_vieillesse`, `retablissement_fonction_publique`, `retraite_progressive`, `retraite_proportionnelle_msa`, `services_passes_outre_mer`, `totalisation_des_periodes_etrangeres`. Les 48 autres ne disent pas encore leur étape, et une couche ne les atteint que par leur nom : la plupart sont des règles de la liquidation, que le compte notionnel remplace, et leur étape les rangera.
-- **Faire mûrir la carte** : 539 champs obligatoires manquent, à 91 fiches. Par champ :
+- **Les fiches sans exemple officiel** : 193.
+- **Les domaines sans décision** (§ 8) : 125 fiches du droit réel qu'aucun des 5 univers de la proposition ne décide. 76 disent leur étape, et c'est une décision qui manque : `agirc_arrco_valeur_achat`, `assiette_minimale_independants`, `assiette_sociale_independants`, `asv_autres_professions_de_sante`, `asv_medecins_ajustement`, `asv_medecins_points`, `cci_paris_transfert_2006`, `cci_roubaix_transfert_1998`, `chomage_retraite_complementaire`, `compagnie_generale_eaux_transfert_1991`, `conjoint_collaborateur_independants`, `cotisation_maladie_des_non_residents`, `cotisation_maladie_pensions_complementaires`, `cotisation_vieillesse_independants`, `credit_foncier_transfert_1989`, `crfm_mayotte_pension_unique`, `crfom_regime_du_decret_1950`, `csg_des_pensions_selon_le_revenu`, `cultes_retraite_complementaire_taux_specifiques`, `cumul_emploi_retraite_complementaire_des_independants`, `cumul_emploi_retraite_complementaires_des_liberaux`, `cumul_emploi_retraite_et_retraite_progressive`, `cumul_emploi_retraite_fonction_publique`, `cumul_emploi_retraite_ircantec`, `cumul_emploi_retraite_rco_agricole`, `droits_apres_la_premiere_pension`, `elus_nouvelle_caledonie_cafat`, `exoneration_independants_outre_mer`, `financement_chomage_complementaire`, `igrante_points`, `interpenetration_fonction_publique`, `ipacte_points`, `ircantec_valeurs_point`, `limite_age_banque_de_france`, `limite_age_contractuels`, `limite_age_fonction_publique`, `limite_age_ieg`, `limite_age_militaires`, `limite_age_mines`, `limite_age_opera`, `limite_age_ouvriers_etat`, `limite_age_seita`, `limite_age_sncf_ratp`, `liquidation_regime_par_regime`, `liquidation_unique_regimes_alignes`, `maintien_affiliation_crpcen_ieg`, `maintien_en_fonctions_jusqu_a_70_ans`, `maintiens_en_fonctions_de_certains_corps`, `majoration_exceptionnelle_2023`, `majorations_forfaitaires_1972_1982`, `micro_social_abattement`, `organic_conjoints_de_commercants`, `parlement_europeen_affiliation`, `pension_d_invalidite_substituee`, `plafond_limite_age_fonction_publique`, `points_au_prorata_des_cotisations`, `points_invalidite_independants`, `prolongation_activite_carriere_incomplete`, `prolongation_activite_categorie_active`, `rafp_age_d_ouverture`, `rafp_beneficiaires`, `rafp_compte_epargne_temps`, `rafp_cotisation_volontaire_outre_mer`, `rafp_gipa_hors_plafond`, `ravgdt_allocation_viagere`, `rci_seuil_premiere_tranche`, `rco_points_gratuits_66`, `recul_limite_age_enfants`, `regies_ferroviaires_pensions_en_extinction`, `relevement_des_exploitants_2023`, `residence_et_minimum_vieillesse`, `retablissement_fonction_publique`, `retraite_progressive`, `retraite_proportionnelle_msa`, `services_passes_outre_mer`, `totalisation_des_periodes_etrangeres`. Les 49 autres ne disent pas encore leur étape, et une couche ne les atteint que par leur nom : la plupart sont des règles de la liquidation, que le compte notionnel remplace, et leur étape les rangera.
+- **Faire mûrir la carte** : 523 champs obligatoires manquent, à 88 fiches. Par champ :
 
   | Champ | Fiches à qui il manque |
   |---|---|
-  | `domaine` | 91 |
-  | `ecrit` | 91 |
-  | `lit` | 91 |
-  | `dates_qui_decident` | 90 |
-  | `versions` | 90 |
-  | `etape` | 59 |
-  | `approximations` | 26 |
+  | `dates_qui_decident` | 88 |
+  | `domaine` | 88 |
+  | `ecrit` | 88 |
+  | `lit` | 88 |
+  | `versions` | 88 |
+  | `etape` | 57 |
+  | `approximations` | 25 |
   | `regimes` | 1 |
 
-- **Les textes** : 590 rédactions à rattacher à une version de la fiche qui les cite, 4 708 à examiner, et 9 411 sans statut, que le cliquet tient à 9 411 au plus. Les textes qui en ont le plus : `css` 4 876, `decret_46_2769` 938, `rural` 852, `cpcmr` 568, `decret_90_1215` 319 (`python scripts/textes.py`).
+- **Les textes** : 592 rédactions à rattacher à une version de la fiche qui les cite, 4 705 à examiner, et 9 382 sans statut, que le cliquet tient à 9 382 au plus. Les textes qui en ont le plus : `css` 4 847, `decret_46_2769` 938, `rural` 852, `cpcmr` 568, `decret_90_1215` 319 (`python scripts/textes.py`).
 - **Les relectures prévues les plus proches** : 2026-11-30 (`majoration_dix_pour_cent`) ; 2026-12-31 (`age_legal_par_generation`) ; 2026-12-31 (`agirc_arrco_valeur_achat`) ; 2026-12-31 (`carriere_longue`) ; 2026-12-31 (`certification_legi_perimee`).
 - **Les régimes hors champ** : 23, chacun avec sa raison dans l'inventaire.
 
