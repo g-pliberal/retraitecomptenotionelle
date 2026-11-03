@@ -3940,6 +3940,16 @@ def source_reclassements(serie: str) -> Callable[[], dict[tuple, float]]:
     return source
 
 
+def source_durees(serie: str) -> Callable[[], dict[tuple, float]]:
+    """Le rang de l'échelon ou l'une de ses durées, en mois, de chaque ligne des
+    tableaux de durées d'échelon que les statuts écrivent, lus au LEGI par
+    l'index du dépôt (action 158) : sous la clé « texte|article|tableau|ligne »."""
+    def source() -> dict[tuple, float]:
+        valeurs = _lire_json("dila_legi_durees.json", "scripts/fetch/dila_legi_durees.py")[serie]
+        return {tuple(cle.split("|")): float(valeur) for cle, valeur in sorted(valeurs.items())}
+    return source
+
+
 def source_bareme_indices(serie: str) -> Callable[[], dict[tuple, float]]:
     """L'indice majoré de chaque indice brut, version par version du barème du
     décret n° 82-1105 depuis 1983, transcrit par Épicycle (action 158) : chaque
@@ -10361,6 +10371,19 @@ CERTIFICATIONS = (
         decimales=0,
         tolerance=0.5,
     ) for serie in ("rang_origine", "rang_nouveau")),
+    # La durée des échelons (action 158) : le rang de l'échelon et chacune des
+    # durées, en mois, que les tableaux des statuts écrivent — la durée unique,
+    # moyenne, minimale, maximale —, lus au LEGI.
+    *(Certification(
+        nom=f"durees_echelon_{serie}",
+        chemin=REFERENCE / "grilles" / "durees" / "lignes.csv",
+        cles=("texte", "article", "tableau", "ligne"),
+        colonne=serie,
+        source=source_durees(serie),
+        origine="DILA, base LEGI, tableaux de durées d'échelon des statuts, par l'index du dépôt",
+        decimales=0,
+        tolerance=0.5,
+    ) for serie in ("rang", "duree", "duree_moyenne", "duree_minimale", "duree_maximale")),
     Certification(
         nom="esperances_projetees",
         chemin=REFERENCE / "mortalite" / "esperances_vie.csv",

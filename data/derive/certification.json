@@ -628,6 +628,61 @@
    "valeurs": 5,
    "verifiee_le": "2026-09-14"
   },
+  "durees_echelon_duree": {
+   "ajoutees": 0,
+   "colonne": "duree",
+   "corrigees": 0,
+   "empreinte": "439f563622a9477b",
+   "identiques": 8507,
+   "niveau": "certifiee",
+   "source": "DILA, base LEGI, tableaux de durées d'échelon des statuts, par l'index du dépôt",
+   "valeurs": 8507,
+   "verifiee_le": "2026-11-03"
+  },
+  "durees_echelon_duree_maximale": {
+   "ajoutees": 0,
+   "colonne": "duree_maximale",
+   "corrigees": 0,
+   "empreinte": "55fe79bf1e7b6b30",
+   "identiques": 1058,
+   "niveau": "certifiee",
+   "source": "DILA, base LEGI, tableaux de durées d'échelon des statuts, par l'index du dépôt",
+   "valeurs": 1058,
+   "verifiee_le": "2026-11-03"
+  },
+  "durees_echelon_duree_minimale": {
+   "ajoutees": 0,
+   "colonne": "duree_minimale",
+   "corrigees": 0,
+   "empreinte": "1d6cae144fbaa6bd",
+   "identiques": 3460,
+   "niveau": "certifiee",
+   "source": "DILA, base LEGI, tableaux de durées d'échelon des statuts, par l'index du dépôt",
+   "valeurs": 3460,
+   "verifiee_le": "2026-11-03"
+  },
+  "durees_echelon_duree_moyenne": {
+   "ajoutees": 0,
+   "colonne": "duree_moyenne",
+   "corrigees": 0,
+   "empreinte": "9bf64b8ea0acd0f7",
+   "identiques": 3323,
+   "niveau": "certifiee",
+   "source": "DILA, base LEGI, tableaux de durées d'échelon des statuts, par l'index du dépôt",
+   "valeurs": 3323,
+   "verifiee_le": "2026-11-03"
+  },
+  "durees_echelon_rang": {
+   "ajoutees": 0,
+   "colonne": "rang",
+   "corrigees": 0,
+   "empreinte": "937b4c39044b2aa6",
+   "identiques": 14345,
+   "niveau": "certifiee",
+   "source": "DILA, base LEGI, tableaux de durées d'échelon des statuts, par l'index du dépôt",
+   "valeurs": 14345,
+   "verifiee_le": "2026-11-03"
+  },
   "durees_validees_actifs": {
    "ajoutees": 1134,
    "colonne": "valeur",

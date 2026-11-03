@@ -6971,12 +6971,12 @@ l'inviterait aussi à relire le dépôt.
 **Reprise, au 3 novembre 2026.** Périmètre tranché le 2 novembre 2026 : « tout
 ce qu'on peut trouver », les trois versants et les militaires ; le 3, la durée
 des échelons d'abord. Entrés, certifiés et recoupés : les grilles, le barème du
-décret n° 82-1105 depuis 1983, les reclassements (450 tableaux). L'index de la
-DILA, élargi et reconstruit le 3 novembre, garde sur leur seul texte les
-articles qui fixent les durées d'échelon (1 633 textes au LEGI). Reste, dans
-l'ordre de la file : lire ces durées, grille par grille ; le chaînage des
-reclassements ; les tableaux que l'index aplatit ; le minimum de traitement.
-Détail : la note de l'index, du 3 novembre 2026.
+décret n° 82-1105 depuis 1983, les reclassements (450 tableaux), les durées
+d'échelon (762 tableaux, 14 345 lignes, lus au LEGI ; 1 655 non lus, avec leur
+raison). Reste, dans l'ordre de la file : rattacher durées et reclassements
+aux grilles (le chaînage) ; relire les tableaux refusés ; les tableaux que
+l'index aplatit ; le minimum de traitement. Détail : la note des durées
+d'échelon, du 3 novembre 2026.
 
 
 **D'où elle vient.** La demande du propriétaire, le 12 octobre 2026 : aller

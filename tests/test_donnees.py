@@ -657,6 +657,10 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         # des échelons d'origine et d'accueil de chaque ligne (action 158).
         "reclassements_rang_origine": "grilles/reclassements/lignes.csv",
         "reclassements_rang_nouveau": "grilles/reclassements/lignes.csv",
+        # La durée des échelons, lue au LEGI : le rang de l'échelon et ses
+        # durées unique, moyenne, minimale et maximale (action 158).
+        **{f"durees_echelon_{serie}": "grilles/durees/lignes.csv"
+           for serie in ("rang", "duree", "duree_moyenne", "duree_minimale", "duree_maximale")},
         "quotients_mortalite": "mortalite/quotients_periode.csv",
         "quotients_mortalite_anciens": "mortalite/quotients_periode.csv",
         # Les quotients que l'INSEE projette, que le modèle lit au lieu de sa

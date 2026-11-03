@@ -4573,6 +4573,34 @@ institutions:
           lesquelles l'ancienneté conservée « dans la limite de la durée de
           l'échelon » ne s'applique pas, n'y sont pas.
 
+      - id: dila_legi_durees
+        titre: >-
+          Durée de chaque échelon des grades, dans les trois versants et chez
+          les militaires
+        url: https://echanges.dila.gouv.fr/OPENDATA/LEGI/
+        acces: api
+        statut_integration: certifie
+        cible: data/reference/grilles/durees/lignes.csv
+        recuperation: scripts/fetch/dila_legi_durees.py
+        note: >-
+          Depuis le 3 novembre 2026 (action 158, étape 2) : les tableaux que
+          les statuts écrivent pour fixer « la durée du temps passé dans
+          chacun des échelons » — la durée unique depuis 2017, la durée
+          moyenne et la durée minimale de l'État, la durée maximale et la
+          durée minimale de la territoriale, l'ancienneté exigée des
+          militaires et les conditions d'accès à leurs échelons
+          exceptionnels —, lus dans l'index LEGI du dépôt, en mois, à chaque
+          période de leur article, avec les versions de l'article qui les
+          redisent. Un tableau douteux est refusé et consigné dans
+          non_lus.csv, avec les durées écrites en phrases ou renvoyées à un
+          autre texte. scripts/verifier_donnees.py certifie le rang et les
+          durées ; tests/test_durees_echelon.py recoupe aux articles du LEGI,
+          lus à la main, la territoriale (décrets n° 2010-329, 95-952,
+          91-857, 92-867), l'État (n° 92-1436, 83-1260, 56-448, 98-1262,
+          95-83), l'hospitalière (n° 93-145) et les militaires (n° 2008-952,
+          76-1001). Les tableaux ne sont pas encore rattachés aux grilles du
+          dépôt.
+
       - id: dila_legi_duree_requise
         titre: Durée d'assurance requise, générations 1953-1957
         url: https://echanges.dila.gouv.fr/OPENDATA/LEGI/
