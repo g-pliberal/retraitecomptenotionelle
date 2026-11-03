@@ -4261,6 +4261,13 @@ BUDGETS_DEPLIES: dict[str, int] = {
     # (action 138, étape 4) en ajoutent 41, leurs libellés et leurs exemples.
     # Puis 7 362 : la catégorie de la pension d'invalidité (action 138, étape
     # 4) en ajoute 12, son libellé et son indication, son menu n'y comptant pas.
+    # Le 3 novembre 2026, 7 375 : les années outre-mer (action 177, étape 7) en
+    # ajoutent 13, leur libellé et leur exemple ; trois redites ôtées en rendent
+    # 20, et la page en porte 7 355. L'aide brève du revenu redisait le brut et
+    # le mois de son libellé ; la note de l'épargne, que les points volontaires
+    # ne sont pas prélevés, ce que le haut de la section a dit ; l'estimation
+    # officielle, que ce qu'on y recopie reste dans le navigateur, ce que le
+    # chapeau dit pour toute la saisie.
     "/simuler?" + urlencode(SIMULATION_TEMOIN): 7362,
     # Coût tout déplié : 33 549 mots le 24 octobre 2026 (action 173, étape 5),
     # dont près de dix-sept mille dans les tableaux des graphiques, que

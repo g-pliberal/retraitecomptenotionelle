@@ -1862,8 +1862,10 @@ function champRevenu(nom, saisie, echelle, valeur, bref = false, siVide = "",
   const repere = converti
     ? ((montant) => echelle.netMensuel(montant, saisie.statut, saisie.derniereAnnee(0)))
     : ((montant) => montant);
+  // Le libellé dit déjà le brut, ou le net, et le mois : l'aide brève n'en
+  // garde que l'unité, que le libellé ne dit pas.
   const aide = bref
-    ? `en euros ${mot}s par mois${vide}`
+    ? `en euros${vide}`
     : `Repères : SMIC ${g.euros(repere(echelle.smic))}, salaire moyen `
       + `${g.euros(repere(echelle.mensuel(1)))}`;
   let complement;
@@ -5209,7 +5211,8 @@ function departEnClair(depart) {
  *
  * LES CHAMPS APPARTIENNENT AU FORMULAIRE DU HAUT (`form="simulateur"`) : ils
  * partent avec le reste de la saisie, dans l'adresse, et restent dans le
- * navigateur comme elle. Ils n'entrent dans aucun calcul.
+ * navigateur comme elle — le chapeau de la page le dit pour tout, et la
+ * section ne le redit pas. Ils n'entrent dans aucun calcul.
  *
  * Le net retire, à chaque âge, ce que prélève SA tranche de CSG — sous la
  * présomption, le revenu fiscal du foyer est fait de cette pension seule —, et
@@ -5288,8 +5291,7 @@ de la vôtre dans la colonne « Votre estimation » : l'écart s'affiche à côt
   <p class="comparer"><button type="submit" form="simulateur" id="comparer-estimation">Comparer</button></p>
   <p class="discret">${leNet} Vos revenus à venir suivent le salaire moyen ;
   l'estimation officielle leur prête « une évolution régulière », un peu plus
-  rapide.${minimum}
-  Ce que vous recopiez reste dans votre navigateur.</p>
+  rapide.${minimum}</p>
 </div>`;
 }
 
@@ -7267,12 +7269,13 @@ function salaireNetEpargne(epargne, remuneration, parametres, saisie) {
   );
   const repartition = g.pourcentage(parametres.taux_cotisation_liberal, false, 0);
   // Ce que sont les points rendus, et ce qu'ils font à la rente et au net, le
-  // haut de la section l'a dit : ne reste ici que ce qu'ils ajoutent au compte.
+  // haut de la section l'a dit, et le partage le redit en gras : ils ne sont
+  // pas prélevés. Ne reste ici que ce qu'ils ajoutent au compte.
   // Ils viennent après ce que font les cinq points imposés, à qui « sans eux »
   // renvoie.
   const ajout = remuneration.verseLeVolontaire
-    ? ` Les ${volontaire} <strong>volontaires</strong> ne sont pas prélevés ; `
-      + "placés sur le même compte, ils y ajoutent "
+    ? ` Placés sur le même compte, les ${volontaire} <strong>volontaires</strong> `
+      + "y ajoutent "
       + `${g.eurosCentimes(remuneration.epargneVolontaireMensuelle)} `
       + `par mois et ${g.euros(remuneration.epargneVolontaireCumulee)} `
       + "d'ici votre départ."
