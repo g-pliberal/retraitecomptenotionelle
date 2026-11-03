@@ -2858,6 +2858,84 @@ def source_age_conjoncturel() -> dict[tuple, float]:
     }
 
 
+#: La dernière année du jeu du portail quand il a été lu, le 21 septembre
+#: 2026 : le panorama prend le relais après elle si le jeu n'est pas là.
+DERNIERE_ANNEE_AGE_CONJONCTUREL_PORTAIL = 2022
+
+
+def _panorama_2026() -> dict:
+    return _lire_json("drees_panorama_2026.json", "scripts/fetch/drees_panorama_classeurs.py")
+
+
+def source_age_conjoncturel_panorama() -> dict[tuple, float]:
+    """L'âge conjoncturel de départ des années que le portail n'a pas encore.
+
+    Le panorama de 2026 (fiche 15, graphique 1) chiffre 2023 et 2024, que le
+    jeu du portail, arrêté à 2022, ne porte pas ; il révise aussi d'un à
+    quatre centièmes quelques années anciennes. Il ne prend donc le relais
+    qu'APRÈS la dernière année du portail : une année n'a jamais deux
+    sources. Source d'appoint : quand le portail aura ces années, elle n'aura
+    plus rien à dire (action 178, étape 2).
+    """
+    panorama = _panorama_2026()["age_conjoncturel"]
+    try:
+        derniere = max(int(annee) for annee, _ in source_age_conjoncturel())
+    except SourceAbsente:
+        derniere = DERNIERE_ANNEE_AGE_CONJONCTUREL_PORTAIL
+    return {(annee, sexe): age for annee, sexes in panorama.items() if int(annee) > derniere
+            for sexe, age in sexes.items()}
+
+
+def source_cumul_emploi_retraite() -> dict[tuple, float]:
+    """Les retraités qui cumulent une activité et leur retraite, 2014 à 2024.
+
+    Le panorama de 2026, fiche 22, tableau 1 : leur nombre, en milliers, leur
+    part parmi les retraités et celle des femmes. La DREES les calcule sur
+    l'enquête Emploi de l'INSEE : un SONDAGE, d'où le niveau ``haute``, comme
+    l'âge de départ par catégorie. Le code exclut le cumul ; ces effectifs
+    serviront la décision que le propriétaire en prendra (action 178, étape 2).
+
+    Clé (annee, dispositif, regime, indicateur).
+    """
+    return {(annee, "cumul", "tous_regimes", indicateur): valeur
+            for annee, grandeurs in _panorama_2026()["cumul"].items()
+            for indicateur, valeur in grandeurs.items()}
+
+
+def source_retraite_progressive() -> dict[tuple, float]:
+    """Les bénéficiaires de la retraite progressive, par régime.
+
+    Le panorama de 2026, fiche 22, tableau 2, de l'EACR : leur nombre en
+    2015, 2023 et 2024 et, pour 2024, les femmes, les hommes, la part des
+    femmes, la part parmi les retraités de 60 à 69 ans et l'âge moyen. Le
+    code exclut la retraite progressive, comme le cumul.
+
+    Clé (annee, dispositif, regime, indicateur).
+    """
+    return {(annee, "retraite_progressive", regime, indicateur): valeur
+            for regime, annees in _panorama_2026()["retraite_progressive"].items()
+            for annee, grandeurs in annees.items()
+            for indicateur, valeur in grandeurs.items()}
+
+
+def source_pensions_invalidite() -> dict[tuple, float]:
+    """Les pensions d'invalidité de droit direct, du panorama de 2026.
+
+    Fiche 25, de l'EACR : les bénéficiaires depuis 2015 et leur pension
+    moyenne en euros constants de 2024 (graphique 1) ; fin 2024, par régime,
+    leur nombre, leur âge moyen, la part des femmes (tableau 1), les nouveaux
+    de l'année (tableau 2), la pension mensuelle brute (tableau 3) et la
+    dépense annualisée (tableau 4). Le dépôt ne lisait que les têtes du
+    31 décembre 2022, caisse par caisse (``pensionnes_de_2022.json``).
+
+    Clé (annee, regime, indicateur).
+    """
+    return {(annee, regime, indicateur): valeur
+            for annee, regimes in _panorama_2026()["invalidite"].items()
+            for regime, grandeurs in regimes.items()
+            for indicateur, valeur in grandeurs.items()}
+
+
 def source_age_depart_csp() -> dict[tuple, float]:
     """L'âge conjoncturel de départ, par catégorie socioprofessionnelle.
 
@@ -8211,7 +8289,9 @@ CERTIFICATIONS = (
             "#   certifiee : jeu « Âge conjoncturel moyen de départ à la retraite,",
             "#             selon le sexe » du portail open data de la DREES, figure",
             "#             du panorama « Les retraités et les retraites », recontrôlé",
-            "#             par scripts/verifier_donnees.py.",
+            "#             par scripts/verifier_donnees.py ; 2023 et 2024, que ce jeu n'a",
+            "#             pas encore, du panorama de 2026 (fiche 15, graphique 1, lu",
+            "#             par scripts/fetch/drees_panorama_classeurs.py), en appoint.",
             "#",
             "# CE QUE CET ÂGE EST, ET CE QU'IL N'EST PAS",
             "# ------------------------------------------",
@@ -8232,6 +8312,117 @@ CERTIFICATIONS = (
             "#",
             "# Cette série ne porte AUCUNE pension et n'entre dans aucun calcul du",
             "# site : elle mesure la grille, elle ne la corrige pas.",
+            "#",
+            "# Ne pas modifier les valeurs certifiées à la main : elles seraient",
+            "# écrasées au prochain scripts/verifier_donnees.py --appliquer.",
+        ),
+    ),
+    Certification(
+        nom="age_conjoncturel_depart_panorama",
+        chemin=REFERENCE / "macro" / "age_conjoncturel_depart.csv",
+        cles=("annee", "sexe"),
+        colonne="age",
+        source=source_age_conjoncturel_panorama,
+        origine="DREES, panorama « Les retraités et les retraites » 2026, fiche 15",
+        decimales=2,
+        tolerance=0.005,
+        unite=" ans",
+        complementaire=True,
+    ),
+    Certification(
+        nom="cumul_emploi_retraite",
+        chemin=REFERENCE / "macro" / "cumul_emploi_retraite.csv",
+        cles=("annee", "dispositif", "regime", "indicateur"),
+        colonne="valeur",
+        source=source_cumul_emploi_retraite,
+        origine="DREES, panorama « Les retraités et les retraites » 2026, fiche 22, tableau 1",
+        decimales=None,
+        tolerance=0.005,
+        niveau="haute",
+        entete=(
+            "# Le cumul d'une activité avec la retraite, et la retraite progressive",
+            "# source_id: drees_panorama_retraites_2026_classeurs",
+            "# unite: selon l'indicateur — milliers, personnes, %, années",
+            "# fiabilite:",
+            "#   haute : cumul (2014-2024), fiche 22, tableau 1, du panorama de la",
+            "#           DREES « Les retraités et les retraites », édition 2026,",
+            "#           calculé sur l'enquête Emploi de l'INSEE : un sondage ;",
+            "#   certifiee : retraite_progressive (2015, 2023, 2024), fiche 22,",
+            "#           tableau 2, de l'EACR. Les deux lus dans le classeur de la",
+            "#           fiche par scripts/fetch/drees_panorama_classeurs.py et",
+            "#           recontrôlés par scripts/verifier_donnees.py.",
+            "#",
+            "# `indicateur` : pour le cumul, cumulants_milliers, part_retraites_pct",
+            "# (parmi les retraités) et part_femmes_pct, retraite progressive",
+            "# comprise ; pour la retraite progressive, beneficiaires, femmes et",
+            "# hommes (personnes), part_femmes_pct, part_retraites_60_69_pct (parmi",
+            "# les retraités de l'année âgés de 60 à 69 ans) et age_moyen (années).",
+            "# Le régime `ensemble` réunit le régime général, la MSA salariés, la",
+            "# fonction publique de l'État civile et la CNRACL.",
+            "#",
+            "# À QUOI CETTE SÉRIE SERT",
+            "# ------------------------",
+            "# À rien encore : le code exclut le cumul et la retraite progressive.",
+            "# Ces effectifs — 619 000 cumulants en 2024, 42 440 personnes en",
+            "# retraite progressive — sont là pour la décision que le propriétaire",
+            "# prendra de ces deux dispositifs (action 178, étape 2).",
+            "#",
+            "# Ne pas modifier les valeurs certifiées à la main : elles seraient",
+            "# écrasées au prochain scripts/verifier_donnees.py --appliquer.",
+        ),
+    ),
+    Certification(
+        nom="retraite_progressive",
+        chemin=REFERENCE / "macro" / "cumul_emploi_retraite.csv",
+        cles=("annee", "dispositif", "regime", "indicateur"),
+        colonne="valeur",
+        source=source_retraite_progressive,
+        origine="DREES, panorama « Les retraités et les retraites » 2026, fiche 22, tableau 2",
+        decimales=None,
+        tolerance=0.005,
+    ),
+    Certification(
+        nom="pensions_invalidite",
+        chemin=REFERENCE / "macro" / "pensions_invalidite.csv",
+        cles=("annee", "regime", "indicateur"),
+        colonne="valeur",
+        source=source_pensions_invalidite,
+        origine="DREES, panorama « Les retraités et les retraites » 2026, fiche 25",
+        decimales=None,
+        tolerance=0.005,
+        entete=(
+            "# Les pensions d'invalidité de droit direct, par régime",
+            "# source_id: drees_panorama_retraites_2026_classeurs",
+            "# unite: selon l'indicateur — milliers, années, %, euros, millions d'euros",
+            "# fiabilite:",
+            "#   certifiee : fiche 25 du panorama de la DREES « Les retraités et les",
+            "#             retraites », édition 2026, de l'EACR, lue dans le",
+            "#             classeur de la fiche par",
+            "#             scripts/fetch/drees_panorama_classeurs.py et recontrôlée",
+            "#             par scripts/verifier_donnees.py.",
+            "#",
+            "# `indicateur` : beneficiaires_milliers, au 31 décembre ;",
+            "# pension_moyenne_euros_2024, la pension mensuelle moyenne en euros",
+            "# constants de 2024 (graphique 1, l'ensemble, 2015-2024) ; fin 2024,",
+            "# par régime, age_moyen, part_femmes_pct (tableau 1),",
+            "# nouveaux_milliers, les nouveaux bénéficiaires de l'année (tableau 2),",
+            "# montant_mensuel_euros, brut, à l'euro (tableau 3), et depenses_meur,",
+            "# la dépense annualisée, réversion comprise (tableau 4).",
+            "#",
+            "# LE CHAMP EST CELUI DE LA DREES",
+            "# -------------------------------",
+            "# Le régime général (la CNAM), la MSA, la CNIEG, l'ENIM, la CRPCEN, la",
+            "# Banque de France ; pour la fonction publique et la CNRACL, les",
+            "# pensions d'invalidité servies avant l'âge d'ouverture des droits. La",
+            "# SNCF et la RATP n'y sont pas. Fin 2022, les caisses de la table I de",
+            "# l'EACR (tests/temoins/pensionnes_de_2022.json) en font 842 298, les",
+            "# 842 300 du graphique 1.",
+            "#",
+            "# À QUOI CETTE SÉRIE SERT",
+            "# ------------------------",
+            "# À tenir à jour, montants compris, ce que le dépôt ne lisait que pour",
+            "# 2022 (action 178, étape 2) : l'invalidité est l'une des sorties",
+            "# d'activité que l'âge légal ne fait pas reculer.",
             "#",
             "# Ne pas modifier les valeurs certifiées à la main : elles seraient",
             "# écrasées au prochain scripts/verifier_donnees.py --appliquer.",

@@ -1433,7 +1433,12 @@ institutions:
             les successions, qui nomme ses magistrats. Si la DREES le demande,
             l'asset se retire.
         millesime: 14 octobre 2026
-        statut_integration: a_faire
+        statut_integration: certifie
+        cible: >-
+          data/reference/macro/age_conjoncturel_depart.csv,
+          data/reference/macro/cumul_emploi_retraite.csv,
+          data/reference/macro/pensions_invalidite.csv
+        recuperation: scripts/fetch/drees_panorama_classeurs.py
         contenu:
           vue_d_ensemble.xlsx:
             document: https://drees.solidarites-sante.gouv.fr/sites/default/files/2026-10/Vue%20d%27ensemble%20-%20Les%20retrait%C3%A9s%20et%20les%20retraites%20-%20%C3%89dition%202026.xlsx

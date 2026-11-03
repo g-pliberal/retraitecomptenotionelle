@@ -5,7 +5,9 @@
 #   certifiee : jeu « Âge conjoncturel moyen de départ à la retraite,
 #             selon le sexe » du portail open data de la DREES, figure
 #             du panorama « Les retraités et les retraites », recontrôlé
-#             par scripts/verifier_donnees.py.
+#             par scripts/verifier_donnees.py ; 2023 et 2024, que ce jeu n'a
+#             pas encore, du panorama de 2026 (fiche 15, graphique 1, lu
+#             par scripts/fetch/drees_panorama_classeurs.py), en appoint.
 #
 # CE QUE CET ÂGE EST, ET CE QU'IL N'EST PAS
 # ------------------------------------------
@@ -87,3 +89,9 @@ annee,sexe,age,fiabilite
 2022,F,63.00,certifiee
 2022,H,62.33,certifiee
 2022,ensemble,62.68,certifiee
+2023,F,63.08,certifiee
+2023,H,62.37,certifiee
+2023,ensemble,62.75,certifiee
+2024,F,63.29,certifiee
+2024,H,62.59,certifiee
+2024,ensemble,62.95,certifiee

@@ -736,6 +736,13 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         # des pensions : la dépense nette de la page Coût (action 138, étape 3).
         "pensions_brutes_nettes": "macro/pensions_brutes_nettes.csv",
         "age_conjoncturel_depart": "macro/age_conjoncturel_depart.csv",
+        # Le panorama de la DREES de 2026 : l'âge conjoncturel de 2023 et 2024,
+        # en appoint, le cumul, la retraite progressive et l'invalidité
+        # (action 178, étape 2).
+        "age_conjoncturel_depart_panorama": "macro/age_conjoncturel_depart.csv",
+        "cumul_emploi_retraite": "macro/cumul_emploi_retraite.csv",
+        "retraite_progressive": "macro/cumul_emploi_retraite.csv",
+        "pensions_invalidite": "macro/pensions_invalidite.csv",
         "age_depart_csp": "macro/age_depart_csp.csv",
         "structure_financement_regimes": "regimes/structure_financement.csv",
         "cotisants_regimes": "regimes/cotisants.csv",
@@ -843,7 +850,10 @@ def test_journal_de_certification_decrit_les_series_certifiees():
                "employeur_public_cnracl",
                # La valeur de l'année en cours, reconduite : rien à dire de la
                # parution de la compilation de novembre au 31 décembre.
-               "valeurs_point_agirc_arrco_en_cours"}
+               "valeurs_point_agirc_arrco_en_cours",
+               # Le panorama de 2026 n'a plus rien à dire de l'âge conjoncturel
+               # quand le portail porte 2023 et 2024.
+               "age_conjoncturel_depart_panorama"}
     assert set(journal["series"]) <= set(fichiers)
     assert set(fichiers) - set(journal["series"]) <= appoint
 

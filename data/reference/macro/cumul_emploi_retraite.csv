@@ -1,0 +1,99 @@
+# Le cumul d'une activité avec la retraite, et la retraite progressive
+# source_id: drees_panorama_retraites_2026_classeurs
+# unite: selon l'indicateur — milliers, personnes, %, années
+# fiabilite:
+#   haute : cumul (2014-2024), fiche 22, tableau 1, du panorama de la
+#           DREES « Les retraités et les retraites », édition 2026,
+#           calculé sur l'enquête Emploi de l'INSEE : un sondage ;
+#   certifiee : retraite_progressive (2015, 2023, 2024), fiche 22,
+#           tableau 2, de l'EACR. Les deux lus dans le classeur de la
+#           fiche par scripts/fetch/drees_panorama_classeurs.py et
+#           recontrôlés par scripts/verifier_donnees.py.
+#
+# `indicateur` : pour le cumul, cumulants_milliers, part_retraites_pct
+# (parmi les retraités) et part_femmes_pct, retraite progressive
+# comprise ; pour la retraite progressive, beneficiaires, femmes et
+# hommes (personnes), part_femmes_pct, part_retraites_60_69_pct (parmi
+# les retraités de l'année âgés de 60 à 69 ans) et age_moyen (années).
+# Le régime `ensemble` réunit le régime général, la MSA salariés, la
+# fonction publique de l'État civile et la CNRACL.
+#
+# À QUOI CETTE SÉRIE SERT
+# ------------------------
+# À rien encore : le code exclut le cumul et la retraite progressive.
+# Ces effectifs — 619 000 cumulants en 2024, 42 440 personnes en
+# retraite progressive — sont là pour la décision que le propriétaire
+# prendra de ces deux dispositifs (action 178, étape 2).
+#
+# Ne pas modifier les valeurs certifiées à la main : elles seraient
+# écrasées au prochain scripts/verifier_donnees.py --appliquer.
+annee,dispositif,regime,indicateur,valeur,fiabilite
+2014,cumul,tous_regimes,cumulants_milliers,456,haute
+2014,cumul,tous_regimes,part_femmes_pct,47,haute
+2014,cumul,tous_regimes,part_retraites_pct,3.3,haute
+2015,cumul,tous_regimes,cumulants_milliers,462,haute
+2015,cumul,tous_regimes,part_femmes_pct,44,haute
+2015,cumul,tous_regimes,part_retraites_pct,3.4,haute
+2015,retraite_progressive,ensemble,beneficiaires,5750,certifiee
+2015,retraite_progressive,msa_salaries,beneficiaires,540,certifiee
+2015,retraite_progressive,regime_general,beneficiaires,5210,certifiee
+2016,cumul,tous_regimes,cumulants_milliers,452,haute
+2016,cumul,tous_regimes,part_femmes_pct,47,haute
+2016,cumul,tous_regimes,part_retraites_pct,3.2,haute
+2017,cumul,tous_regimes,cumulants_milliers,450,haute
+2017,cumul,tous_regimes,part_femmes_pct,49,haute
+2017,cumul,tous_regimes,part_retraites_pct,3.2,haute
+2018,cumul,tous_regimes,cumulants_milliers,466,haute
+2018,cumul,tous_regimes,part_femmes_pct,47,haute
+2018,cumul,tous_regimes,part_retraites_pct,3.3,haute
+2019,cumul,tous_regimes,cumulants_milliers,502,haute
+2019,cumul,tous_regimes,part_femmes_pct,45,haute
+2019,cumul,tous_regimes,part_retraites_pct,3.4,haute
+2020,cumul,tous_regimes,cumulants_milliers,487,haute
+2020,cumul,tous_regimes,part_femmes_pct,43,haute
+2020,cumul,tous_regimes,part_retraites_pct,3.3,haute
+2021,cumul,tous_regimes,cumulants_milliers,506,haute
+2021,cumul,tous_regimes,part_femmes_pct,47,haute
+2021,cumul,tous_regimes,part_retraites_pct,3.6,haute
+2022,cumul,tous_regimes,cumulants_milliers,543,haute
+2022,cumul,tous_regimes,part_femmes_pct,42,haute
+2022,cumul,tous_regimes,part_retraites_pct,3.8,haute
+2023,cumul,tous_regimes,cumulants_milliers,607,haute
+2023,cumul,tous_regimes,part_femmes_pct,43,haute
+2023,cumul,tous_regimes,part_retraites_pct,4.2,haute
+2023,retraite_progressive,ensemble,beneficiaires,27650,certifiee
+2023,retraite_progressive,msa_salaries,beneficiaires,820,certifiee
+2023,retraite_progressive,regime_general,beneficiaires,26820,certifiee
+2024,cumul,tous_regimes,cumulants_milliers,619,haute
+2024,cumul,tous_regimes,part_femmes_pct,44,haute
+2024,cumul,tous_regimes,part_retraites_pct,4.2,haute
+2024,retraite_progressive,cnracl,age_moyen,61.8,certifiee
+2024,retraite_progressive,cnracl,beneficiaires,4230,certifiee
+2024,retraite_progressive,cnracl,femmes,3380,certifiee
+2024,retraite_progressive,cnracl,hommes,850,certifiee
+2024,retraite_progressive,cnracl,part_femmes_pct,80,certifiee
+2024,retraite_progressive,cnracl,part_retraites_60_69_pct,6.7,certifiee
+2024,retraite_progressive,ensemble,age_moyen,62.3,certifiee
+2024,retraite_progressive,ensemble,beneficiaires,42440,certifiee
+2024,retraite_progressive,ensemble,femmes,28660,certifiee
+2024,retraite_progressive,ensemble,hommes,13780,certifiee
+2024,retraite_progressive,ensemble,part_femmes_pct,68,certifiee
+2024,retraite_progressive,ensemble,part_retraites_60_69_pct,5.5,certifiee
+2024,retraite_progressive,fonction_publique_etat_civile,age_moyen,62.5,certifiee
+2024,retraite_progressive,fonction_publique_etat_civile,beneficiaires,5990,certifiee
+2024,retraite_progressive,fonction_publique_etat_civile,femmes,3940,certifiee
+2024,retraite_progressive,fonction_publique_etat_civile,hommes,2040,certifiee
+2024,retraite_progressive,fonction_publique_etat_civile,part_femmes_pct,66,certifiee
+2024,retraite_progressive,fonction_publique_etat_civile,part_retraites_60_69_pct,13.7,certifiee
+2024,retraite_progressive,msa_salaries,age_moyen,64.2,certifiee
+2024,retraite_progressive,msa_salaries,beneficiaires,850,certifiee
+2024,retraite_progressive,msa_salaries,femmes,480,certifiee
+2024,retraite_progressive,msa_salaries,hommes,380,certifiee
+2024,retraite_progressive,msa_salaries,part_femmes_pct,56,certifiee
+2024,retraite_progressive,msa_salaries,part_retraites_60_69_pct,2.1,certifiee
+2024,retraite_progressive,regime_general,age_moyen,62.2,certifiee
+2024,retraite_progressive,regime_general,beneficiaires,31370,certifiee
+2024,retraite_progressive,regime_general,femmes,20860,certifiee
+2024,retraite_progressive,regime_general,hommes,10510,certifiee
+2024,retraite_progressive,regime_general,part_femmes_pct,67,certifiee
+2024,retraite_progressive,regime_general,part_retraites_60_69_pct,5,certifiee

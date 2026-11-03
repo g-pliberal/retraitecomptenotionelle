@@ -1,5 +1,5 @@
 {
- "dernier_passage_le": "2026-11-02",
+ "dernier_passage_le": "2026-11-03",
  "series": {
   "age_annulation_decote_openfisca": {
    "ajoutees": 0,
@@ -22,6 +22,17 @@
    "source": "DREES, panorama « Les retraités et les retraites »",
    "valeurs": 57,
    "verifiee_le": "2026-09-21"
+  },
+  "age_conjoncturel_depart_panorama": {
+   "ajoutees": 6,
+   "colonne": "age",
+   "corrigees": 0,
+   "empreinte": "47bbd9ebfa96b63d",
+   "identiques": 0,
+   "niveau": "certifiee",
+   "source": "DREES, panorama « Les retraités et les retraites » 2026, fiche 15",
+   "valeurs": 6,
+   "verifiee_le": "2026-11-03"
   },
   "age_depart_csp": {
    "ajoutees": 56,
@@ -341,6 +352,17 @@
    "source": "COR, rapport annuel, scénario de référence",
    "valeurs": 12,
    "verifiee_le": "2026-10-06"
+  },
+  "cumul_emploi_retraite": {
+   "ajoutees": 33,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "c7e3c9ea6f9abae9",
+   "identiques": 0,
+   "niveau": "haute",
+   "source": "DREES, panorama « Les retraités et les retraites » 2026, fiche 22, tableau 1",
+   "valeurs": 33,
+   "verifiee_le": "2026-11-03"
   },
   "decomposition_depense_retraite": {
    "ajoutees": 0,
@@ -1255,6 +1277,17 @@
    "valeurs": 10,
    "verifiee_le": "2026-09-19"
   },
+  "pensions_invalidite": {
+   "ajoutees": 67,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "09d31e76a1438804",
+   "identiques": 0,
+   "niveau": "certifiee",
+   "source": "DREES, panorama « Les retraités et les retraites » 2026, fiche 25",
+   "valeurs": 67,
+   "verifiee_le": "2026-11-03"
+  },
   "pensions_non_salaries": {
    "ajoutees": 75,
    "colonne": "valeur",
@@ -1672,6 +1705,17 @@
    "source": "COR, rapport annuel, ressources du système de retraite, données complémentaires sous convention EEC",
    "valeurs": 46,
    "verifiee_le": "2026-10-06"
+  },
+  "retraite_progressive": {
+   "ajoutees": 36,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "b39956d0cbbb4fc6",
+   "identiques": 0,
+   "niveau": "certifiee",
+   "source": "DREES, panorama « Les retraités et les retraites » 2026, fiche 22, tableau 2",
+   "valeurs": 36,
+   "verifiee_le": "2026-11-03"
   },
   "retraites_regimes": {
    "ajoutees": 1284,

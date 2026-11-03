@@ -19,7 +19,9 @@ sens strict, 395,3 milliards, dont il n'a pas les sous-postes.
 from __future__ import annotations
 
 import csv
+import importlib.util
 import json
+import sys
 from pathlib import Path
 
 import pytest
@@ -188,3 +190,237 @@ def test_le_risque_vieillesse_survie_de_2024_est_celui_des_comptes():
     poste E11-2 entier, qui est le premier chiffre."""
     depenses = {int(l["annee"]): float(l["depenses_meur"]) for l in _lire(DEPENSES)}
     assert depenses[2024] / 1000 == pytest.approx(426.7, abs=0.05)
+
+
+# ---------------------------------------------------------------------------
+# Ce que le dépôt n'avait pas : les séries des classeurs, que
+# ``scripts/fetch/drees_panorama_classeurs.py`` lit et dépose, et que
+# ``scripts/verifier_donnees.py`` certifie dans ``data/reference/``.
+# ---------------------------------------------------------------------------
+
+def _classeurs():
+    chemin = RACINE / "scripts" / "fetch" / "drees_panorama_classeurs.py"
+    specification = importlib.util.spec_from_file_location("drees_panorama_classeurs", chemin)
+    module = importlib.util.module_from_spec(specification)
+    sys.modules["drees_panorama_classeurs"] = module
+    specification.loader.exec_module(module)
+    return module
+
+
+def test_l_age_conjoncturel_se_lit_par_sexe_sous_la_ligne_des_annees():
+    """La feuille « F15_Graphique 1 », réduite à deux années : la ligne des
+    années, puis une ligne par sexe, nommée dans la première colonne."""
+    grille = {
+        (1, 1): "Graphique 1. Âge conjoncturel moyen de départ à la retraite, selon le sexe, "
+                "entre 2004 et 2024",
+        (3, 2): 2004.0, (3, 22): 2024.0,
+        (4, 1): "Femmes", (4, 2): 61.11, (4, 22): 63.29,
+        (5, 1): "Hommes", (5, 2): 60.06, (5, 22): 62.59,
+        (6, 1): "Ensemble", (6, 2): 60.58, (6, 22): 62.95,
+        (8, 1): "Champ > Personnes résidant en France",
+    }
+    assert _classeurs().lire_age_conjoncturel(grille) == {
+        "2004": {"F": 61.11, "H": 60.06, "ensemble": 60.58},
+        "2024": {"F": 63.29, "H": 62.59, "ensemble": 62.95},
+    }
+
+
+def test_le_cumul_et_la_retraite_progressive_se_lisent_par_leurs_libelles():
+    """Les feuilles « F22_Tableau1 » et « F22_Tableau2 », réduites à une
+    année et à deux régimes ; une case « nd » n'est pas une valeur."""
+    module = _classeurs()
+    cumul = {
+        (1, 1): " Tableau 1. Effectifs de retraités en situation de cumul d’une activité "
+                "avec la retraite, de 2014 à 2024",
+        (2, 1): "Année", (2, 2): "Effectifs de cumulants\n(en milliers)1, 2",
+        (2, 3): "Part parmi les retraités\n (en %)1, 2", (2, 4): "Proportion de femmes\n(en %)1, 2",
+        (13, 1): 2024.0, (13, 2): 619.0, (13, 3): 4.2, (13, 4): 44.0,
+        (14, 1): "1. Y compris retraite progressive.",
+    }
+    assert module.lire_cumul(cumul) == {
+        "2024": {"cumulants_milliers": 619.0, "part_retraites_pct": 4.2, "part_femmes_pct": 44.0}}
+    progressive = {
+        (1, 2): "Tableau 2. Effectifs de bénéficiaires de la retraite progressive, en 2024",
+        (3, 3): "Effectifs", (3, 9): "Part parmi les retraités de l'année ayant entre 60 et 69 ans (en %)",
+        (3, 12): "Âge moyen (en années)",
+        (4, 3): "Ensemble", (4, 6): "Femmes", (4, 7): "Hommes", (4, 8): "Part des\nfemmes\n(en %)",
+        (5, 3): 2015.0, (5, 4): 2023.0, (5, 5): 2024.0,
+        (6, 2): "Régime général", (6, 3): 5210.0, (6, 4): 26820.0, (6, 5): 31370.0, (6, 6): 20860.0,
+        (6, 7): 10510.0, (6, 8): 67.0, (6, 9): 5.0, (6, 12): 62.2,
+        (8, 2): "FPE civils", (8, 4): "nd", (8, 5): 5990.0, (8, 6): 3940.0, (8, 7): 2040.0,
+        (8, 8): 66.0, (8, 9): 13.7, (8, 12): 62.5,
+        (10, 2): "Ensemble", (10, 3): 5750.0, (10, 4): 27650.0, (10, 5): 42440.0, (10, 6): 28660.0,
+        (10, 7): 13780.0, (10, 8): 68.0, (10, 9): 5.5, (10, 12): 62.3,
+    }
+    assert module.lire_retraite_progressive(progressive) == {
+        "regime_general": {"2015": {"beneficiaires": 5210.0}, "2023": {"beneficiaires": 26820.0},
+                           "2024": {"beneficiaires": 31370.0, "femmes": 20860.0, "hommes": 10510.0,
+                                    "part_femmes_pct": 67.0, "part_retraites_60_69_pct": 5.0,
+                                    "age_moyen": 62.2}},
+        "fonction_publique_etat_civile": {
+            "2024": {"beneficiaires": 5990.0, "femmes": 3940.0, "hommes": 2040.0,
+                     "part_femmes_pct": 66.0, "part_retraites_60_69_pct": 13.7, "age_moyen": 62.5}},
+        "ensemble": {"2015": {"beneficiaires": 5750.0}, "2023": {"beneficiaires": 27650.0},
+                     "2024": {"beneficiaires": 42440.0, "femmes": 28660.0, "hommes": 13780.0,
+                              "part_femmes_pct": 68.0, "part_retraites_60_69_pct": 5.5,
+                              "age_moyen": 62.3}},
+    }
+
+
+def test_l_invalidite_se_lit_par_regime_et_par_annee():
+    """Les feuilles de la fiche 25, réduites à l'ensemble et à un régime : une
+    virgule décimale écrite en texte (« 54,5 ») est un nombre, « <1 » ou
+    « - » ne le sont pas."""
+    module = _classeurs()
+    regimes = {(4, 1): "Régimes dans le champ de l’invalidité retenu par la Drees1",
+               (5, 1): "Régime général (CNAM)", (8, 1): "MSA non-salariés"}
+    beneficiaires = {**regimes, (1, 1): "Tableau 1. Bénéficiaires d’une pension d’invalidité, fin 2024",
+                     (3, 2): "Effectifs\n(en milliers)", (3, 3): "Âge moyen", (3, 4): "Part \ndes femmes (en %)",
+                     (4, 2): 843.4, (4, 3): 53.1, (4, 4): 56.0, (5, 2): 718.5, (5, 3): 53.5, (5, 4): 57.0,
+                     (8, 2): 8.9, (8, 3): "56,1", (8, 4): 39.0}
+    nouveaux = {**regimes, (1, 1): "Tableau 2. Nouveaux bénéficiaires d’une pension d’invalidité, en 2024",
+                (4, 2): "Effectifs\n(en milliers)", (5, 2): 105.8, (6, 2): 90.6}
+    nouveaux = {(ligne + 1 if ligne >= 4 and colonne == 1 else ligne, colonne): valeur
+                for (ligne, colonne), valeur in nouveaux.items()}
+    montants = {**regimes, (1, 1): "Tableau 3. Montant mensuel des pensions d’invalidité, fin 2024",
+                (3, 2): "Pension d’invalidité\nde droit direct", (4, 2): 900.0, (5, 2): 909.8423,
+                (8, 2): 580.0}
+    depenses = {**regimes, (1, 1): "Tableau 4. Dépenses de pensions d’invalidité, fin 2024",
+                (3, 6): "Total des pensions de droit direct", (3, 8): "Total",
+                (4, 6): 9100.0, (4, 8): 9110.0, (5, 8): 7820.0, (8, 8): "<10"}
+    evolution = {(1, 1): "Graphique 1. Évolution du nombre de bénéficiaires d’une pension d’invalidité",
+                 (2, 2): "Effectifs de bénéficiaires\nd'une pension d'invalidité\nde droit direct \n(en milliers)\n",
+                 (2, 3): "Pension d'invalidité de droit direct moyenne \n(en euros constants de 2024)",
+                 (3, 1): 2015.0, (3, 2): 780.0, (3, 3): 903.291, (12, 1): 2024.0, (12, 2): 843.4,
+                 (12, 3): 898.2425}
+    lu = module.lire_invalidite(beneficiaires, nouveaux, montants, depenses, evolution)
+    assert lu["2024"]["ensemble"] == {"beneficiaires_milliers": 843.4, "age_moyen": 53.1,
+                                      "part_femmes_pct": 56.0, "nouveaux_milliers": 105.8,
+                                      "montant_mensuel_euros": 900.0, "depenses_meur": 9110.0,
+                                      "pension_moyenne_euros_2024": 898.24}
+    assert lu["2024"]["msa_exploitants"] == {"beneficiaires_milliers": 8.9, "age_moyen": 56.1,
+                                             "part_femmes_pct": 39.0, "montant_mensuel_euros": 580.0}
+    # Le tableau 3 affiche ses montants à l'euro, et en garde un, 939,84, non arrondi.
+    assert lu["2024"]["regime_general"]["montant_mensuel_euros"] == 910.0
+    assert lu["2015"]["ensemble"] == {"beneficiaires_milliers": 780.0,
+                                      "pension_moyenne_euros_2024": 903.29}
+
+
+MACRO = RACINE / "data" / "reference" / "macro"
+
+
+def test_l_age_conjoncturel_de_2023_et_2024_vient_du_panorama():
+    """Fiche 15, page 138 : « Fin 2024, l'âge moyen conjoncturel de départ à
+    la retraite s'élève à 62 ans et 11 mois » ; la feuille « F15_Graphique 1 »
+    le chiffre, 62,95 ans, 63,29 pour les femmes, 62,59 pour les hommes, et
+    62,75, 63,08 et 62,37 en 2023. Le jeu du portail de données, que le
+    fichier certifie, s'arrête à 2022 : le panorama apporte les deux années
+    qui suivent, en source d'appoint, au même niveau."""
+    lignes = _lire(MACRO / "age_conjoncturel_depart.csv")
+    ages = {(int(l["annee"]), l["sexe"]): float(l["age"]) for l in lignes}
+    assert {(2023, "F"): 63.08, (2023, "H"): 62.37, (2023, "ensemble"): 62.75,
+            (2024, "F"): 63.29, (2024, "H"): 62.59, (2024, "ensemble"): 62.95} == {
+        cle: ages[cle] for cle in ages if cle[0] >= 2023}
+    annees, mois = divmod(ages[(2024, "ensemble")] * 12, 12)
+    assert (annees, int(mois)) == (62, 11)
+    assert all(l["fiabilite"] == "certifiee" for l in lignes)
+
+
+def test_le_cumul_emploi_retraite_et_la_retraite_progressive_viennent_du_panorama():
+    """Fiche 22, tableau 1 (page 194) : les cumulants de 2014 à 2024, en
+    milliers, 4,2 % des retraités et 44 % de femmes en 2024 ; tableau 2
+    (page 195) : « fin 2024, environ 42 400 personnes » en retraite
+    progressive, 31 370 au régime général, 5 210 et 26 820 en 2015 et 2023."""
+    lignes = _lire(MACRO / "cumul_emploi_retraite.csv")
+    valeurs = {(int(l["annee"]), l["dispositif"], l["regime"], l["indicateur"]): float(l["valeur"])
+               for l in lignes}
+    cumulants = {annee: v for (annee, dispositif, _, indicateur), v in valeurs.items()
+                 if dispositif == "cumul" and indicateur == "cumulants_milliers"}
+    assert cumulants == {2014: 456, 2015: 462, 2016: 452, 2017: 450, 2018: 466, 2019: 502,
+                         2020: 487, 2021: 506, 2022: 543, 2023: 607, 2024: 619}
+    assert valeurs[(2024, "cumul", "tous_regimes", "part_retraites_pct")] == 4.2
+    assert valeurs[(2024, "cumul", "tous_regimes", "part_femmes_pct")] == 44
+    progressive = {(annee, regime, indicateur): v
+                   for (annee, dispositif, regime, indicateur), v in valeurs.items()
+                   if dispositif == "retraite_progressive"}
+    assert progressive[(2024, "ensemble", "beneficiaires")] == 42_440
+    assert progressive[(2024, "ensemble", "femmes")] + progressive[(2024, "ensemble", "hommes")] == 42_440
+    assert [progressive[(annee, "regime_general", "beneficiaires")]
+            for annee in (2015, 2023, 2024)] == [5_210, 26_820, 31_370]
+    assert progressive[(2024, "regime_general", "age_moyen")] == 62.2
+    # L'enquête Emploi est un sondage : le cumul n'est que ``haute`` ; l'EACR
+    # compte les bénéficiaires de la retraite progressive.
+    assert {(l["dispositif"], l["fiabilite"]) for l in lignes} == {
+        ("cumul", "haute"), ("retraite_progressive", "certifiee")}
+
+
+def test_les_pensions_d_invalidite_de_2024_viennent_du_panorama():
+    """Fiche 25, page 212 : « Fin 2024, 843 400 personnes bénéficient d'une
+    pension d'invalidité de droit direct […]. Parmi elles, 106 000 sont de
+    nouveaux bénéficiaires » ; tableau 1 (page 213), 718 500 au régime
+    général, 53,1 ans en moyenne, 56 % de femmes ; tableau 3 (page 216),
+    900 euros bruts par mois ; tableau 4 (page 217), 9 110 millions d'euros
+    de dépense annualisée."""
+    lignes = _lire(MACRO / "pensions_invalidite.csv")
+    valeurs = {(int(l["annee"]), l["regime"], l["indicateur"]): float(l["valeur"]) for l in lignes}
+    ensemble = {indicateur: v for (annee, regime, indicateur), v in valeurs.items()
+                if (annee, regime) == (2024, "ensemble")}
+    assert ensemble["beneficiaires_milliers"] == 843.4
+    assert round(ensemble["nouveaux_milliers"]) == 106
+    assert ensemble["age_moyen"] == 53.1 and ensemble["part_femmes_pct"] == 56
+    assert ensemble["montant_mensuel_euros"] == 900
+    assert ensemble["depenses_meur"] == 9_110
+    assert valeurs[(2024, "regime_general", "beneficiaires_milliers")] == 718.5
+    assert {annee for annee, _, _ in valeurs} == set(range(2015, 2025))
+    assert {l["fiabilite"] for l in lignes} == {"certifiee"}
+
+
+def test_les_beneficiaires_de_2022_sont_ceux_des_tables_de_l_eacr():
+    """Fiche 25, graphique 1 (page 213) : 842 300 bénéficiaires fin 2022. Les
+    caisses de la table I de l'EACR, que le dépôt lit pour 2022
+    (``tests/temoins/pensionnes_de_2022.json``), en font 842 298 : le champ
+    de la DREES est le leur, sans la SNCF ni la RATP."""
+    temoin = json.loads((RACINE / "tests" / "temoins" / "pensionnes_de_2022.json")
+                        .read_text(encoding="utf-8"))
+    somme = sum(caisse["total"] for caisse in temoin["invalidite"]["caisses"].values())
+    assert somme / 1000 == pytest.approx(842.3, abs=0.05)
+    lignes = _lire(MACRO / "pensions_invalidite.csv")
+    assert {float(l["valeur"]) for l in lignes
+            if (l["annee"], l["regime"], l["indicateur"]) == ("2022", "ensemble",
+                                                                "beneficiaires_milliers")} == {842.3}
+
+
+def _verificateur():
+    chemin = RACINE / "scripts" / "verifier_donnees.py"
+    specification = importlib.util.spec_from_file_location("verifier_donnees_panorama", chemin)
+    module = importlib.util.module_from_spec(specification)
+    sys.modules["verifier_donnees_panorama"] = module  # ses dataclasses s'y cherchent
+    specification.loader.exec_module(module)
+    return module
+
+
+def test_le_panorama_ne_prend_le_relais_du_portail_qu_apres_sa_derniere_annee(monkeypatch):
+    """L'âge conjoncturel a deux sources, le jeu du portail et le panorama :
+    une année n'en a jamais deux. Le panorama ne donne que les années qui
+    suivent la dernière du portail — 2022 s'il n'est pas là —, et plus rien
+    quand le portail les a."""
+    verificateur = _verificateur()
+    panorama = {"age_conjoncturel": {str(a): {"F": 63.0, "H": 62.0, "ensemble": 62.5}
+                                     for a in range(2004, 2025)}}
+    monkeypatch.setattr(verificateur, "_panorama_2026", lambda: panorama)
+
+    def portail(derniere):
+        return lambda: {(str(a), s): 62.0 for a in range(2004, derniere + 1)
+                        for s in ("F", "H", "ensemble")}
+
+    monkeypatch.setattr(verificateur, "source_age_conjoncturel", portail(2022))
+    assert sorted(verificateur.source_age_conjoncturel_panorama()) == [
+        (a, s) for a in ("2023", "2024") for s in ("F", "H", "ensemble")]
+    monkeypatch.setattr(verificateur, "source_age_conjoncturel", portail(2024))
+    assert verificateur.source_age_conjoncturel_panorama() == {}
+
+    def absent():
+        raise verificateur.SourceAbsente("le jeu du portail")
+
+    monkeypatch.setattr(verificateur, "source_age_conjoncturel", absent)
+    assert {a for a, _ in verificateur.source_age_conjoncturel_panorama()} == {"2023", "2024"}
