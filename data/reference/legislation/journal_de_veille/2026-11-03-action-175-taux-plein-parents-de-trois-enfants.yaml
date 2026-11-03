@@ -1,0 +1,28 @@
+date: "2026-11-03"
+session: "action 175, file M4 : le taux plein à 65 ans du parent de trois enfants né de juillet 1951 à 1955"
+consulte: >-
+  python scripts/veille_droit.py ; les index LEGI et JORF de la DILA, récupérés et mis à
+  jour (LEGI au 2 novembre 2026, JORF au 3) : la loi n° 2010-1330, articles 20 (seule
+  rédaction), 21 et 118 ; le décret n° 2011-620 du 31 mai 2011, articles 1er à 11, dont
+  l'article 2 (seule rédaction) ; L. 351-12 ; R. 351-12, ses sept rédactions de juin 2011 à
+  septembre 2023 ; R. 351-27 et R. 351-7, rédactions de 2011 à 2023 ; L. 161-17-2 ;
+  l'arrêté du 30 décembre 1970, article 16 ; la loi n° 2025-199, article 87. La base de
+  législation de la Cnav, par son API : la circulaire n° 2014-64 du 23 décembre 2014 (PDF),
+  les exposés « Taux plein à 65 ans » et « Taux de la retraite personnelle ».
+trouve: >-
+  Le IV de l'article 20 fixe à soixante-cinq ans l'âge du 1° de L. 351-8, pour les pensions
+  prenant effet du 1er juillet 2011 au 31 décembre 2025, au parent de trois enfants né du
+  1er juillet 1951 au 31 décembre 1955 qui a interrompu ou réduit son activité après une
+  naissance : au plus huit trimestres dans la fenêtre qui la suit, huit au moins les deux
+  années qui la précèdent, huit d'activité avant elle (décret n° 2011-620, article 2). R.
+  351-27 compte alors la décote jusqu'au soixante-cinquième anniversaire, R. 351-7 la
+  majoration de durée après lui. Servi dans les deux moteurs au régime général, chez les
+  salariés agricoles et les artisans et commerçants ; aucune condition décisive ne manque au
+  formulaire. Le même âge vaut chez les non-salariés agricoles (article 21, IV), les
+  libéraux (R. 643-7) et les avocats (R. 723-38), et l'Ircantec sert ces parents sans
+  coefficient (article 16, I, 3°, d) : non servis.
+reste: >-
+  Faire suivre l'Ircantec ; relire l'Agirc-Arrco dans ses accords ; lire R. 643-7, R. 723-38
+  et L. 732-25 du code rural de 2016 à 2022 avant d'étendre les régimes de la version ;
+  l'aidant familial et le parent d'un enfant handicapé, que la saisie ne porte pas (fiche
+  taux_plein_a_soixante_cinq_ans, a_relire ; note de l'action 175 du même jour).

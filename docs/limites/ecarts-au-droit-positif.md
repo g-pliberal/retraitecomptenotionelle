@@ -480,7 +480,18 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   prisonnier de guerre selon ses mois de captivité et de services ont le taux
   plein sans la durée requise, au régime général et chez les salariés
   agricoles, aux artisans et aux commerçants pour le premier et le dernier, et
-  leurs complémentaires sans coefficient (fiches `taux_plein_*`). Restent dehors
+  leurs complémentaires sans coefficient (fiches `taux_plein_*`). Le parent de
+  trois enfants né de juillet 1951 à décembre 1955 qui a cessé ou réduit son
+  activité après une naissance que la saisie dit a l'âge du taux plein à
+  soixante-cinq ans, d'où se compte aussi sa décote, au régime général, chez
+  les salariés agricoles, les artisans et les commerçants (fiche
+  `taux_plein_a_soixante_cinq_ans`) ; une naissance dite à l'année l'ouvre si
+  les conditions tiennent quel que soit son mois, une naissance présumée
+  jamais. Restent dehors pour lui l'adoption, les périodes accomplies dans
+  l'Union européenne, ses complémentaires — l'Ircantec, qui le sert sans
+  coefficient, l'abat encore — et les non-salariés agricoles, les libéraux et
+  les avocats, qui ont le même âge ; dehors aussi l'aidant familial et le
+  parent d'un enfant handicapé. Restent dehors
   l'ASPA dès l'âge de la catégorie, les évadés et les rapatriés pour maladie,
   la carte de patriote résistant, que la saisie ne distingue pas, et la date où
   chaque régime aligné a reçu chaque règle. La proposition n'en fait pas
