@@ -15,6 +15,10 @@ que ``scripts/verifier_donnees.py`` confronte aux fichiers de référence :
 * ``age_conjoncturel`` — fiche 15, graphique 1 : l'âge conjoncturel moyen de
   départ à la retraite, par sexe, de 2004 à 2024 ; le jeu du portail de
   données, que ``age_conjoncturel_depart.csv`` certifie, s'arrête à 2022 ;
+* ``pensions_moyennes`` — fiche 5, tableau 1 complémentaire bis : la pension
+  mensuelle moyenne brute et la nette des retraités résidant en France ou à
+  l'étranger, de droit direct et totale, de 2004 à 2024 ; le tableau 2.1-a,
+  que ``pensions_brutes_nettes.csv`` certifie, s'arrête à 2022 ;
 * ``cumul`` — fiche 22, tableau 1 : les retraités qui cumulent une activité
   et leur retraite, de 2014 à 2024, l'enquête Emploi de l'INSEE ;
 * ``retraite_progressive`` — fiche 22, tableau 2 : ses bénéficiaires par
@@ -164,6 +168,52 @@ def lire_age_conjoncturel(grille: dict) -> dict[str, dict[str, float]]:
     if not serie or any(len(sexes) != 3 for sexes in serie.values()):
         raise FeuilleIllisible("une année sans ses trois âges")
     return dict(sorted(serie.items()))
+
+
+#: Fiche 5, tableau 1 complémentaire bis : les deux pensions que le dépôt suit,
+#: par le début de leur en-tête, et leur nom dans ``pensions_brutes_nettes.csv``
+#: ; la pension de droit direct HORS majoration n'en est pas une.
+PENSIONS_MOYENNES = (
+    ("Pension de droit direct, y compris majoration", "directe"),
+    ("Pension totale", "totale"),
+)
+
+
+def lire_pensions_moyennes(grille: dict) -> dict[str, dict[str, float]]:
+    """Fiche 5, tableau 1 complémentaire bis : la pension mensuelle moyenne de
+    l'ensemble des retraités résidant en France ou à l'étranger, le champ de
+    ``pensions_brutes_nettes.csv``, brute et nette, de droit direct majoration
+    comprise et totale, une ligne par année. Sous l'en-tête de chaque pension,
+    et avant celui de la suivante, la colonne de l'ensemble, brute puis nette.
+    Le tableau 1 et son complément, résidents en France seulement, ont le même
+    dessin : leur titre arrête la lecture."""
+    _verifier_titre(grille, "Tableau 1 complémentaire bis. Montant mensuel moyen de la "
+                            "pension des retraités résidant en France ou à l")
+    premiere_annee = min(ligne for (ligne, colonne), v in grille.items()
+                         if colonne == 1 and annee(v))
+    colonnes: dict[int, str] = {}
+    for debut, pension in PENSIONS_MOYENNES:
+        colonne = _colonne(grille, debut)
+        ligne_entete = next(l for (l, c), v in sorted(grille.items()) if c == colonne
+                            and isinstance(v, str) and _texte(v).startswith(debut))
+        suivante = min((c for (l, c), v in grille.items()
+                        if l == ligne_entete and c > colonne and isinstance(v, str)),
+                       default=max(c for _, c in grille) + 1)
+        for nature in ("Brute", "Nette"):
+            trouvee = next((c for c in range(colonne, suivante)
+                            if {nature, "Ensemble"} <= {
+                                _texte(v) for (l, col), v in grille.items()
+                                if col == c and ligne_entete < l < premiere_annee}), None)
+            if trouvee is None:
+                raise FeuilleIllisible(f"aucune colonne « {nature} », « Ensemble » "
+                                       f"sous la pension {pension}")
+            colonnes[trouvee] = f"{nature.lower()}_{pension}"
+    serie: dict[str, dict[str, float]] = {}
+    for (ligne, colonne), v in sorted(grille.items()):
+        if colonne == 1 and annee(v):
+            valeurs = {nom: nombre(grille.get((ligne, col), "")) for col, nom in colonnes.items()}
+            serie[str(annee(v))] = {nom: x for nom, x in valeurs.items() if x is not None}
+    return serie
 
 
 def lire_cumul(grille: dict) -> dict[str, dict[str, float]]:
@@ -1284,6 +1334,7 @@ def lire(chemin: Path, jeu: dict) -> dict:
     with zipfile.ZipFile(chemin) as archive:
         f01 = _classeur(archive, jeu, "fiche_01.xlsx")
         f03 = _classeur(archive, jeu, "fiche_03.xlsx")
+        f05 = _classeur(archive, jeu, "fiche_05.xlsx")
         f12 = _classeur(archive, jeu, "fiche_12.xlsx")
         f15 = _classeur(archive, jeu, "fiche_15.xlsx")
         f16 = _classeur(archive, jeu, "fiche_16.xlsx")
@@ -1295,6 +1346,7 @@ def lire(chemin: Path, jeu: dict) -> dict:
         f27 = _classeur(archive, jeu, "fiche_27.xlsx")
     return {
         "age_conjoncturel": lire_age_conjoncturel(f15["F15_Graphique 1"]),
+        "pensions_moyennes": lire_pensions_moyennes(f05["F05_Tableau 1 compl_bis"]),
         "cumul": lire_cumul(f22["F22_Tableau1"]),
         "retraite_progressive": lire_retraite_progressive(f22["F22_Tableau2"]),
         "retraite_progressive_cnav": lire_retraite_progressive_cnav(f22["F22_Graphique1"]),

@@ -306,6 +306,57 @@ def test_l_invalidite_se_lit_par_regime_et_par_annee():
                                       "pension_moyenne_euros_2024": 903.29}
 
 
+#: La feuille « F05_Tableau 1 compl_bis » de la fiche 5, réduite à son titre,
+#: à ses en-têtes et à trois années, chaque case à sa place (indices
+#: commençant à zéro : (27, 8) est la cellule I28). Les valeurs sont celles du
+#: classeur, lues le 3 novembre 2026, à l'empreinte du manifeste.
+PENSIONS_MOYENNES_F05 = {
+    (1, 1): "Tableau 1 complémentaire bis. Montant mensuel moyen de la pension des "
+            "retraités résidant en France ou à l’étranger",
+    (3, 2): "Montant mensuel moyen par retraité, tous régimes (en euros courants)",
+    (3, 20): "Évolution de la pension de droit direct, y compris majoration pour 3 "
+             "enfants ou plus \n(en %)",
+    (4, 2): "Pension de droit direct, hors majoration pour 3 enfants ou plus",
+    (4, 8): "Pension de droit direct, y compris majoration pour 3 enfants ou plus",
+    (4, 14): "Pension totale (droit direct , droit dérivé et majoration pour 3 enfants "
+             "ou plus)",
+    (5, 2): "Brute", (5, 5): "Nette", (5, 8): "Brute", (5, 9): "Brute", (5, 11): "Nette",
+    (5, 12): "Nette", (5, 14): "Brute", (5, 17): "Nette", (5, 20): "Brute",
+    (6, 2): "Ensemble", (6, 5): "Ensemble", (6, 8): "Ensemble", (6, 9): "Femmes",
+    (6, 11): "Ensemble", (6, 12): "Femmes", (6, 14): "Ensemble", (6, 17): "Ensemble",
+    (7, 1): 2004.0, (7, 2): 1029.0, (7, 5): "nd", (7, 8): 1066.0, (7, 9): 753.0,
+    (7, 11): "nd", (7, 12): "nd", (7, 14): 1188.0, (7, 17): "nd",
+    (21, 1): "2018 3", (21, 2): 1379.0, (21, 5): 1273.0, (21, 8): 1420.0, (21, 9): 1102.0,
+    (21, 11): 1312.0, (21, 12): 1020.0, (21, 14): 1563.0, (21, 17): 1445.0,
+    (27, 1): 2024.0, (27, 2): 1647.0, (27, 5): 1530.0, (27, 8): 1693.0, (27, 9): 1354.0,
+    (27, 11): 1573.0, (27, 12): 1261.0, (27, 14): 1855.0, (27, 17): 1727.0, (27, 20): 5.3,
+    (29, 1): "nd : non disponible. ",
+}
+
+
+def test_la_pension_moyenne_se_lit_par_ses_en_tetes_sur_le_champ_france_et_etranger():
+    """Fiche 5, tableau 1 complémentaire bis : la pension mensuelle moyenne
+    de l'ensemble des retraités, de droit direct majoration comprise et
+    totale, brute et nette ; ni la droit direct hors majoration, ni les
+    femmes, ni les évolutions. Une case « nd » n'est pas une valeur. Le
+    tableau 1 et son complément, qui ne comptent que les résidents en France,
+    ne sont pas le champ de ``pensions_brutes_nettes.csv`` : leur titre
+    arrête la lecture."""
+    module = _classeurs()
+    assert module.lire_pensions_moyennes(PENSIONS_MOYENNES_F05) == {
+        "2004": {"brute_directe": 1066.0, "brute_totale": 1188.0},
+        "2018": {"brute_directe": 1420.0, "nette_directe": 1312.0,
+                 "brute_totale": 1563.0, "nette_totale": 1445.0},
+        "2024": {"brute_directe": 1693.0, "nette_directe": 1573.0,
+                 "brute_totale": 1855.0, "nette_totale": 1727.0},
+    }
+    residents = {**PENSIONS_MOYENNES_F05,
+                 (1, 1): "Tableau 1 complémentaire. Montant brut mensuel moyen de la "
+                         "pension des retraités résidant en France"}
+    with pytest.raises(module.FeuilleIllisible):
+        module.lire_pensions_moyennes(residents)
+
+
 MACRO = RACINE / "data" / "reference" / "macro"
 
 
