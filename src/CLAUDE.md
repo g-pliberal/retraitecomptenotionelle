@@ -19,8 +19,9 @@ de la proposition, qui s'écrit en couche (`data/CLAUDE.md`).
   le coût date, bâtit et simule sa grille au portage, la table y date ses
   carrières types, le coût des avantages y date, bâtit et liquide la sienne,
   sous ses scénarios neutralisés, la grille large s'y date et s'y bâtit, et
-  ses mesures s'y lisent, mais la fabrique calcule encore par lui le coût sous
-  un modèle modifié ; une règle portée d'un seul côté rougirait la suite ou
+  ses mesures s'y lisent, comme le coût sous un modèle modifié, ses variantes
+  écrites en données ; mais les confrontations refont au jumeau ce que le
+  portage calcule, et une règle portée d'un seul côté rougirait la suite ou
   les ferait mentir.
   `python scripts/jumeaux.py <nom>` dit si une étape a son jumeau et tout ce
   qui en dépend. Un code neuf

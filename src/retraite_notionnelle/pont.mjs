@@ -25,10 +25,12 @@
  *   aux euros constants, la pension du système actuel et celle de chaque
  *   scénario.
  * - `grille_du_cout` : `{cas: [{cle, carriere, propositions}], scenarios,
- *   parametres, univers}` — chaque case de la grille du coût, sa carrière
- *   passée en données (`carriere_en_donnees` de `pont.py`), simulée sous les
- *   paramètres de la projection : ce que le coût lit de la comparaison, et la
- *   proposition seule sur chacune des carrières nommées de `propositions`.
+ *   parametres, univers, comptes}` — chaque case de la grille du coût, sa
+ *   carrière passée en données (`carriere_en_donnees` de `pont.py`), simulée
+ *   sous les paramètres de la projection : ce que le coût lit de la
+ *   comparaison, la proposition seule sur chacune des carrières nommées de
+ *   `propositions`, et les lignes du compte de chaque scénario que `comptes`
+ *   nomme (`lignesDuCompte`).
  *
  * Dans ces deux lectures, `univers` porte les variantes d'une étude, que le
  * paquet ne porte pas — la proposition prospective, à la place du scénario 6
@@ -382,14 +384,24 @@ function voletDuCout(resultat, carriere) {
   };
 }
 
+/** Les lignes d'un compte, année par année : ce qu'il porte, et sur quels
+ *  revenus (`_lignes_du_compte` de `cout.py`). */
+function lignesDuCompte(compte) {
+  return {
+    cotisations: compte.cotisations.map((ligne) => [ligne.annee, ligne.cotisation]),
+    revenus: compte.cotisations.map((ligne) => [ligne.annee, ligne.revenu]),
+  };
+}
+
 /**
  * Chaque case de la grille du coût : ce que `cout.py` lit de la comparaison
- * (`_simulations_en_python`, son jumeau Python), et la proposition seule sur
- * chaque carrière nommée de `propositions`. Seule la comparaison peut refuser
- * une case, comme `calculer_cas_types` ne range parmi les échecs que ce que
- * la simulation refuse.
+ * (`_simulations_en_python`, son jumeau Python), la proposition seule sur
+ * chaque carrière nommée de `propositions`, et les lignes du compte de chaque
+ * scénario que `comptes` nomme. Seule la comparaison peut refuser une case,
+ * comme `calculer_cas_types` ne range parmi les échecs que ce que la
+ * simulation refuse.
  */
-function grilleDuCout({ cas, scenarios, parametres, univers = {} }) {
+function grilleDuCout({ cas, scenarios, parametres, univers = {}, comptes = [] }) {
   const simulateur = simulateurSous(parametres, univers);
   const resultats = {};
   const echecs = {};
@@ -425,6 +437,7 @@ function grilleDuCout({ cas, scenarios, parametres, univers = {} }) {
         const autre = carriereDesDonnees(lue);
         return [nom, voletDuCout(simulateur.proposition(autre), autre)];
       })),
+      comptes: parScenario(comptes, (scenario) => lignesDuCompte(comparaison[scenario].compte)),
     };
   }
   return { resultats, echecs };

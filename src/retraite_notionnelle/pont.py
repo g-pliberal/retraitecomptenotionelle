@@ -192,16 +192,15 @@ def par_le_jumeau():
     fait, et la mémoire des calculs, qui ne connaît que le modèle intact, se
     tait (``memoire.modele_modifie``).
 
-    S'y ouvrent les études qui remplacent une fonction du moteur Python le
-    temps d'une variante — ``scripts/solde_fusion.py`` —, jusqu'à ce que
-    leur variante s'écrive en données, une couche ou un paramètre de la
-    demande au pont (note de décision 0006 ; action 161, « le coût sous un
-    modèle modifié »), comme ``proposition_prospective.py`` l'a écrite, un
-    univers que la demande porte (``Simulateur.univers_de_la_demande``), et
-    ``stock_age_legal.py``, une règle du moteur sous un paramètre
-    (``Parametres.stock_age_legal``) ; et les confrontations qui
-    font refaire au jumeau ce que le portage calcule, jusqu'au retrait de sa
-    paire."""
+    S'y ouvrent les confrontations qui font refaire au jumeau ce que le
+    portage calcule, jusqu'au retrait de sa paire. Les études qui remplaçaient
+    une fonction du moteur Python le temps d'une variante l'ont écrite en
+    données, une couche ou un paramètre de la demande au pont (note de
+    décision 0006 ; action 161, « le coût sous un modèle modifié ») :
+    ``proposition_prospective.py``, un univers que la demande porte
+    (``Simulateur.univers_de_la_demande``) ; ``stock_age_legal.py`` et
+    ``solde_fusion.py``, une règle du moteur sous un paramètre
+    (``Parametres.stock_age_legal``, ``Parametres.bareme_regime_unique``)."""
     global _JUMEAU
     from .memoire import modele_modifie
 
@@ -659,7 +658,7 @@ def _volet_du_cout(lu: dict) -> dict:
 
 
 def grille_du_cout(cas: list[dict], scenarios, parametres, paquet: bytes | None = None,
-                   univers: dict[str, dict] | None = None,
+                   univers: dict[str, dict] | None = None, comptes=(),
                    ) -> tuple[dict[str, dict], dict[str, str]]:
     """Chaque case de la grille du coût, ``{"cle", "carriere",
     "propositions"}`` — sa carrière, et celles, nommées, sur lesquelles le coût
@@ -669,11 +668,15 @@ def grille_du_cout(cas: list[dict], scenarios, parametres, paquet: bytes | None 
     jumeau. Puis, sous leur clé, les motifs des cases que le portage refuse.
     ``univers`` porte les variantes d'une étude, chacune à la place du calcul
     que le paquet porte sous sa clé (``Simulateur.univers_de_la_demande``,
-    action 161)."""
+    action 161). ``comptes`` nomme les scénarios dont chaque case rend de plus
+    les lignes du compte, sous ``comptes`` — ce qu'il porte, année par année,
+    et sur quels revenus : le compte du scénario 4 sous le barème d'un régime
+    unique, que ``scripts/solde_fusion.py`` lit (action 161)."""
     reponse = _demander({"grille_du_cout": {
         "parametres": parametres_en_donnees(parametres),
         "univers": dict(univers or {}),
         "scenarios": list(scenarios),
+        "comptes": list(comptes),
         "cas": [{"cle": un["cle"], "carriere": carriere_en_donnees(un["carriere"]),
                  "propositions": {nom: carriere_en_donnees(carriere)
                                   for nom, carriere in un["propositions"].items()}}
@@ -692,6 +695,9 @@ def grille_du_cout(cas: list[dict], scenarios, parametres, paquet: bytes | None 
             "population": lu["population"],
             "propositions": {nom: _volet_du_cout(volet)
                              for nom, volet in lu["propositions"].items()},
+            "comptes": {scenario: {"cotisations": _serie(compte["cotisations"]),
+                                   "revenus": _serie(compte["revenus"])}
+                        for scenario, compte in lu["comptes"].items()},
         }
         for cle, lu in reponse["resultats"].items()
     }

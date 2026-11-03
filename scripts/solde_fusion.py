@@ -58,13 +58,17 @@ la page. Le coefficient d'équilibre : calculé, jamais appliqué.
 
 CE QU'IL EMPRUNTE
 -----------------
-Trois points d'entrée privés de ``cout.py`` — ``_pensionnes``,
-``_rapports_recettes`` et ``SoldeAnnuel.ressources_de`` —, remplacés le temps
-d'un calcul par :class:`RegimeUniqueVariante` et rendus ensuite, comme
-``mortalite_population.py`` emprunte ``_pensionnes``. Le taux du régime
-unique est substitué de la même façon dans ``ConstructeurCompte.taux_unifie``.
-Rien ici n'est porté dans ``moteur/js/`` : la page Coût du site garde sa
-convention, et la feuille de route dit ce qu'il faudrait pour l'y mettre.
+Le barème est une règle du moteur, ``Parametres.bareme_regime_unique``, que
+le portage calcule (``tauxDuBareme``, ``moteur/js/compte.js``, action 161) :
+chaque hypothèse est un réglage (:func:`parametres_de`), et le compte du
+scénario 4 de chaque case vient de la demande au pont (``comptes`` de
+``pont.grille_du_cout``). Restent empruntés à ``cout.py``, qui calcule le
+coût, ses points d'entrée privés — ``_pensionnes``, ``_simulations``,
+``_rapports_recettes`` et ``SoldeAnnuel.ressources_de`` —, remplacés le
+temps d'un calcul par :class:`RegimeUniqueVariante` et rendus ensuite, comme
+``mortalite_population.py`` emprunte ``_pensionnes``. La page Coût du site
+garde sa convention, et la feuille de route dit ce qu'il faudrait pour y
+mettre le reste.
 """
 
 from __future__ import annotations
@@ -79,17 +83,13 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from retraite_notionnelle import cout as C  # noqa: E402
-from retraite_notionnelle import memoire, pont  # noqa: E402
-from retraite_notionnelle.config import (  # noqa: E402
-    Parametres, PartCotisation, SourceCotisations,
-)
+from retraite_notionnelle import memoire  # noqa: E402
+from retraite_notionnelle.config import Parametres  # noqa: E402
 from retraite_notionnelle.donnees.assiette import AssietteActivite  # noqa: E402
-from retraite_notionnelle.donnees.chargement import Fiabilite  # noqa: E402
 from retraite_notionnelle.donnees.depenses import DepensesRetraite  # noqa: E402
 from retraite_notionnelle.donnees.equilibre import ComptesRetraite  # noqa: E402
 from retraite_notionnelle.donnees.population import Population  # noqa: E402
 from retraite_notionnelle.donnees.regimes import CatalogueRegimes  # noqa: E402
-from retraite_notionnelle.moteur.compte import ConstructeurCompte  # noqa: E402
 from retraite_notionnelle.moteur.fusion import (  # noqa: E402
     CritereTaux, RegleFusion, fusionner,
 )
@@ -100,6 +100,9 @@ SCENARIOS_FUSION: tuple[str, ...] = (
     "notionnel_retroactif", "notionnel_prospectif",
     "notionnel_retroactif_employeur", "notionnel_prospectif_employeur",
 )
+#: Le scénario dont le compte dit ce que le régime unique prélève : le 4, taux
+#: réels avant la bascule, régime unique après, part totale.
+COMPTE = "notionnel_retroactif_employeur"
 #: Clés ajoutées aux masses de cotisations : ce que le régime unique prélève
 #: sur la grille, et les revenus sur lesquels il le prélève.
 FUSION = "regime_unique"
@@ -170,27 +173,20 @@ def hypotheses(catalogue: CatalogueRegimes, annee: int) -> dict[str, Hypothese]:
     }
 
 
-def taux_du_bareme(bareme: tuple[Tranche, ...], revenu: float, pass_annuel: float
-                   ) -> tuple[float, float]:
-    """Taux total et taux salarié effectifs d'un revenu annuel sous un barème."""
-    if revenu <= 0.0:
-        return 0.0, 0.0
-    total = salarie = basse = 0.0
-    for haute, taux, taux_salarie in bareme:
-        plafond = revenu if haute is None else min(revenu, haute * pass_annuel)
-        tranche = max(0.0, plafond - basse)
-        total += tranche * taux
-        salarie += tranche * taux_salarie
-        basse = plafond
-        if haute is not None and revenu <= haute * pass_annuel:
-            break
-    return total / revenu, salarie / revenu
+def parametres_de(hypothese: Hypothese, parametres: Parametres) -> Parametres:
+    """Le réglage du moteur que pose ``hypothese`` : son barème du régime
+    unique (``Parametres.bareme_regime_unique``, action 161), ou aucun, sous A,
+    le régime unique du modèle."""
+    return dataclasses.replace(parametres, bareme_regime_unique=hypothese.bareme)
 
 
 class RegimeUniqueVariante:
-    """Le temps d'un calcul : un autre barème, et une recette qui le suit.
+    """Le temps d'un calcul : une recette qui suit le taux du régime unique.
 
-    Rend à ``cout.py`` et à ``ConstructeurCompte`` leurs attributs à la sortie,
+    Le barème est un réglage du moteur (:func:`parametres_de`), que le portage
+    calcule ; le contexte ne remplace que des fonctions du coût, et la mémoire
+    des calculs, qui ne connaît que le modèle intact, se tait
+    (``memoire.modele_modifie``). Rend à ``cout.py`` ses attributs à la sortie,
     quoi qu'il arrive. ``convention`` est modifiable entre deux lectures du
     solde — le stock de pensions ne dépend pas de la recette.
     """
@@ -201,63 +197,33 @@ class RegimeUniqueVariante:
         self.convention = convention
         self._sauvegarde: dict[str, object] = {}
 
-    # -- le taux du régime unique -------------------------------------------
-
-    def _taux_unifie(self, original):
-        bareme = self.hypothese.bareme
-
-        def taux_unifie(constructeur, ligne, annee, regime_fusionne):
-            if (bareme is None or constructeur.parametres.source_cotisations
-                    is not SourceCotisations.TAUX_HISTORIQUES):
-                return original(constructeur, ligne, annee, regime_fusionne)
-            revenu = ligne.revenu if ligne.cotise else ligne.revenu_reference
-            revenu /= max(ligne.fraction_annee, 1e-9)
-            unifie, salarie = taux_du_bareme(
-                bareme, revenu, constructeur.macro.plafond_securite_sociale(annee))
-            if not constructeur.a_un_employeur(ligne, annee):
-                salarie = unifie
-            if constructeur.parametres.part_cotisation is PartCotisation.SALARIALE:
-                return salarie, 0.0, "", Fiabilite.CERTIFIEE
-            return unifie, unifie - salarie, "", Fiabilite.CERTIFIEE
-        return taux_unifie
-
     # -- la recette suit le taux -------------------------------------------
 
     @staticmethod
     def _pensionnes(original):
         def pensionnes(simulateur, cas_types, liquidation="droit"):
-            # Le contexte remplace une fonction du moteur Python : la grille se
-            # simule donc par lui (``pont.par_le_portage``), une fois, et l'on
-            # garde au passage le compte du scénario 4 de chaque case — taux
-            # réels avant la bascule, régime unique après, part totale.
+            # La grille se simule une fois, et l'on garde au passage le compte
+            # du scénario 4 de chaque case, que la demande au pont rend sous
+            # ``comptes`` (``pont.grille_du_cout``).
             comptes: dict = {}
-            en_python = C._simulations_en_python
+            simulations = C._simulations
 
-            def simulations(projection, cas, scenarios):
-                simuler = projection.simuler
-                cles = {id(un["carriere"]): un["cle"] for un in cas}
-
-                def gardee(carriere):
-                    comparaison = simuler(carriere)
-                    comptes[cles[id(carriere)]] = (
-                        comparaison.notionnel_retroactif_employeur.compte.cotisations)
-                    return comparaison
-                projection.simuler = gardee
-                try:
-                    return en_python(projection, cas, scenarios)
-                finally:
-                    del projection.simuler
-            C._simulations_en_python = simulations
+            def gardees(projection, cas, demandes=()):
+                simulees, refusees = simulations(projection, cas, (*demandes, COMPTE))
+                for cle, simulee in simulees.items():
+                    comptes[cle] = simulee["comptes"][COMPTE]
+                return simulees, refusees
+            C._simulations = gardees
             try:
                 pensionnes, motifs = original(simulateur, cas_types, liquidation)
             finally:
-                C._simulations_en_python = en_python
+                C._simulations = simulations
             complets = []
             for pensionne in pensionnes:
-                lignes = comptes[f"{pensionne.code}|{pensionne.generation}"]
+                compte = comptes[f"{pensionne.code}|{pensionne.generation}"]
                 cotisations = dict(pensionne.cotisations)
-                cotisations[FUSION] = {l.annee: l.cotisation for l in lignes}
-                cotisations[REVENU] = {l.annee: l.revenu for l in lignes}
+                cotisations[FUSION] = compte["cotisations"]
+                cotisations[REVENU] = compte["revenus"]
                 complets.append(dataclasses.replace(pensionne, cotisations=cotisations))
             return complets, motifs
         return pensionnes
@@ -296,20 +262,18 @@ class RegimeUniqueVariante:
         return ressources_de
 
     def __enter__(self) -> "RegimeUniqueVariante":
-        # Le contexte remplace une fonction du moteur Python, que le portage ne
-        # voit pas : le jumeau calcule, et la mémoire des calculs, qui ne
-        # connaît que le modèle intact, se tait (``pont.par_le_jumeau``).
-        self._memoire = pont.par_le_jumeau()
+        # Le contexte remplace des fonctions du coût, que le Python lit : la
+        # mémoire des calculs, qui ne connaît que le modèle intact, se tait, et
+        # le portage calcule (``memoire.modele_modifie``).
+        self._memoire = memoire.modele_modifie()
         self._memoire.__enter__()
         self._sauvegarde = {
-            "taux_unifie": ConstructeurCompte.taux_unifie,
             "CLES_RECETTES": C.CLES_RECETTES,
             "_pensionnes": C._pensionnes,
             "_rapports_recettes": C._rapports_recettes,
             "ressources_de": C.SoldeAnnuel.ressources_de,
             "_tva_affectee": C.SoldeAnnuel._tva_affectee,
         }
-        ConstructeurCompte.taux_unifie = self._taux_unifie(ConstructeurCompte.taux_unifie)
         C.CLES_RECETTES = C.CLES_RECETTES + (FUSION, REVENU)
         C._pensionnes = self._pensionnes(C._pensionnes)
         C._rapports_recettes = self._rapports_recettes(C._rapports_recettes)
@@ -324,7 +288,6 @@ class RegimeUniqueVariante:
         return self
 
     def __exit__(self, *exc) -> None:
-        ConstructeurCompte.taux_unifie = self._sauvegarde["taux_unifie"]
         C.CLES_RECETTES = self._sauvegarde["CLES_RECETTES"]
         C._pensionnes = self._sauvegarde["_pensionnes"]
         C._rapports_recettes = self._sauvegarde["_rapports_recettes"]
@@ -384,7 +347,7 @@ def _calculer(hypothese: Hypothese, parametres: Parametres,
     racine = parametres.racine_donnees
     depenses, population = DepensesRetraite(racine), Population(racine)
     comptes, assiette = ComptesRetraite(racine), AssietteActivite(racine)
-    simulateur = Simulateur(parametres)
+    simulateur = Simulateur(parametres_de(hypothese, parametres))
     with RegimeUniqueVariante(hypothese) as variante:
         cout = C.calculer_cout(simulateur, depenses, population, comptes,
                                assiette=assiette)

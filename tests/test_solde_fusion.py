@@ -1,21 +1,28 @@
-"""Le solde sous quatre régimes uniques : ce que le script déplace, et rien d'autre."""
+"""Le solde sous quatre régimes uniques : ce que le script déplace, et rien d'autre. Le
+barème est au moteur, sous ``Parametres.bareme_regime_unique`` (action 161) :
+``tests/js/bareme-regime-unique.test.js`` le tient ligne par ligne, ``tests/test_pont.py``
+son jumeau ; ici, ce que l'étude en lit, calculé par le portage."""
 
 from __future__ import annotations
 
+import shutil
 import sys
+from dataclasses import replace
 from pathlib import Path
 
 import pytest
 
 from retraite_notionnelle import cout as C
-from retraite_notionnelle import memoire
+from retraite_notionnelle import memoire, pont
 from retraite_notionnelle.config import Parametres
-from retraite_notionnelle.moteur.compte import ConstructeurCompte
+from retraite_notionnelle.moteur.compte import ConstructeurCompte, taux_du_bareme
 from retraite_notionnelle.simulateur import Simulateur
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 
 import solde_fusion  # noqa: E402
+
+PARAMETRES = Parametres()
 
 
 @pytest.fixture(scope="module")
@@ -38,15 +45,73 @@ def resultat_a(hypotheses):
 
 
 def test_le_bareme_par_tranches_se_lit_tranche_par_tranche(hypotheses):
+    """Le barème B, tel que le moteur le lit (``taux_du_bareme``, le jumeau de
+    ``tauxDuBareme``)."""
     _, toutes = hypotheses
     bareme = toutes["B"].bareme
     (_, taux_1, _), (_, taux_2, _), (_, taux_3, _) = bareme
     pass_annuel = 47_100.0
-    assert solde_fusion.taux_du_bareme(bareme, 0.5 * pass_annuel, pass_annuel)[0] == pytest.approx(taux_1)
-    assert solde_fusion.taux_du_bareme(bareme, 2 * pass_annuel, pass_annuel)[0] == pytest.approx((taux_1 + taux_2) / 2)
-    assert solde_fusion.taux_du_bareme(bareme, 10 * pass_annuel, pass_annuel)[0] == pytest.approx(
+    assert taux_du_bareme(bareme, 0.5 * pass_annuel, pass_annuel)[0] == pytest.approx(taux_1)
+    assert taux_du_bareme(bareme, 2 * pass_annuel, pass_annuel)[0] == pytest.approx((taux_1 + taux_2) / 2)
+    assert taux_du_bareme(bareme, 10 * pass_annuel, pass_annuel)[0] == pytest.approx(
         (taux_1 + 7 * taux_2 + 2 * taux_3) / 10)
-    assert solde_fusion.taux_du_bareme(bareme, 0.0, pass_annuel) == (0.0, 0.0)
+    assert taux_du_bareme(bareme, 0.0, pass_annuel) == (0.0, 0.0)
+
+
+def test_chaque_hypothese_est_un_bareme_du_moteur(hypotheses):
+    """Une hypothèse de l'étude est le barème du régime unique que le moteur
+    applique (``Parametres.bareme_regime_unique``) : l'étude ne remplace plus
+    aucune fonction du moteur le temps d'un calcul. A, le régime unique du
+    modèle, n'en pose aucun ; le moteur tient les trois autres pour bien
+    formés."""
+    _, toutes = hypotheses
+    assert solde_fusion.parametres_de(toutes["A"], PARAMETRES) == PARAMETRES
+    for lettre in "BCD":
+        parametres = solde_fusion.parametres_de(toutes[lettre], PARAMETRES)
+        assert parametres == replace(PARAMETRES, bareme_regime_unique=toutes[lettre].bareme)
+        assert Simulateur(parametres).constructeur.parametres.bareme_regime_unique is not None
+    taux_unifie = ConstructeurCompte.taux_unifie
+    with solde_fusion.RegimeUniqueVariante(toutes["C"]):
+        assert ConstructeurCompte.taux_unifie is taux_unifie
+
+
+def test_la_grille_se_simule_par_le_portage_au_bit_pres_du_jumeau(hypotheses, monkeypatch):
+    """Sous chaque barème, la grille du coût se simule par le portage, le
+    barème dans les paramètres de la demande, et rend de chaque couple, avec ce
+    que le coût en lit, ce que le compte du scénario 4 prélève et sur quels
+    revenus (action 161) : au bit près de ce que le jumeau Python en simule
+    sous le même barème et ``pont.par_le_jumeau()`` — sans que le moteur
+    Python ne calcule rien. Le prélèvement du régime unique y change après la
+    bascule, et non avant."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage ne calcule pas ici")
+    from outils_pont import empecher_les_jumeaux_du_cout
+    from retraite_notionnelle.castypes import GRILLE_DU_COUT
+
+    monkeypatch.setattr(C, "generations", lambda: (1965, 2000))
+    grille = tuple(cas for cas in GRILLE_DU_COUT
+                   if cas.code in ("salaire_moyen", "artisan", "fonctionnaire_sedentaire"))
+    _, toutes = hypotheses
+    lus = {}
+    for lettre in "BC":
+        simulateur = Simulateur(solde_fusion.parametres_de(toutes[lettre], PARAMETRES))
+        with solde_fusion.RegimeUniqueVariante(toutes[lettre]):
+            with pont.par_le_jumeau():
+                lus[f"{lettre}, jumeau"] = C._pensionnes(simulateur, grille, "droit")
+    empecher_les_jumeaux_du_cout(monkeypatch)
+    for lettre in "BC":
+        simulateur = Simulateur(solde_fusion.parametres_de(toutes[lettre], PARAMETRES))
+        with solde_fusion.RegimeUniqueVariante(toutes[lettre]):
+            lus[lettre] = C._pensionnes(simulateur, grille, "droit")
+        assert lus[lettre] == lus[f"{lettre}, jumeau"], lettre
+        assert len(lus[lettre][0]) == len(grille) * 2, lettre
+    bascule = PARAMETRES.annee_bascule
+    for b, c in zip(lus["B"][0], lus["C"][0], strict=True):
+        assert b.cotisations[solde_fusion.REVENU] == c.cotisations[solde_fusion.REVENU]
+        fusion_b, fusion_c = b.cotisations[solde_fusion.FUSION], c.cotisations[solde_fusion.FUSION]
+        assert ({a: v for a, v in fusion_b.items() if a < bascule}
+                == {a: v for a, v in fusion_c.items() if a < bascule})
+        assert any(fusion_b[a] != fusion_c[a] for a in fusion_b if a >= bascule), b.code
 
 
 def test_les_quatre_hypotheses_se_rangent_par_taux(hypotheses):
@@ -106,17 +171,18 @@ def test_la_recette_suit_la_regle_du_programme(resultat_a, reference):
 
 
 def test_le_contexte_rend_ses_attributs(hypotheses):
+    """Le contexte ne remplace que des fonctions du coût, et les rend."""
     _, toutes = hypotheses
-    avant = (ConstructeurCompte.taux_unifie, C.CLES_RECETTES, C._pensionnes,
+    avant = (C._simulations, C.CLES_RECETTES, C._pensionnes,
              C._rapports_recettes, C.SoldeAnnuel.ressources_de,
              C.SoldeAnnuel._tva_affectee)
     with solde_fusion.RegimeUniqueVariante(toutes["C"]):
         assert C.CLES_RECETTES != avant[1]
-        assert ConstructeurCompte.taux_unifie is not avant[0]
+        assert C._pensionnes is not avant[2]
         # La TVA à taux unique n'est pas un taux de cotisation : les variantes
         # la laissent hors de la comparaison.
         assert C.SoldeAnnuel._tva_affectee is not avant[5]
-    assert (ConstructeurCompte.taux_unifie, C.CLES_RECETTES, C._pensionnes,
+    assert (C._simulations, C.CLES_RECETTES, C._pensionnes,
             C._rapports_recettes, C.SoldeAnnuel.ressources_de,
             C.SoldeAnnuel._tva_affectee) == avant
 

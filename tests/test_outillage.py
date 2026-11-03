@@ -569,15 +569,14 @@ def test_sous_un_modele_modifie_la_memoire_se_tait(monkeypatch, memoire_isolee):
 
 
 def test_les_contextes_qui_remplacent_le_modele_font_taire_la_memoire():
-    """Les études qui remplacent une fonction du coût ou du moteur Python le
-    temps d'une variante (note de décision 0006) font taire la mémoire des
-    calculs. Celles qui en remplacent une du moteur font de plus calculer le
-    jumeau, le seul qui voie leur remplacement (``pont.par_le_jumeau``),
-    jusqu'à ce que leur variante s'écrive en données (action 161) : la
-    proposition prospective l'est, un univers que le portage calcule, et elle
-    ne remplace plus qu'une liste du coût ; le stock à l'âge légal aussi, une
-    règle du moteur sous un paramètre de la demande, et il n'a plus de
-    contexte (``tests/test_stock_age_legal.py``)."""
+    """Les études qui remplacent une fonction du coût le temps d'une variante
+    (note de décision 0006) font taire la mémoire des calculs, et le portage
+    calcule : ce qu'elles remplaçaient du moteur s'est écrit en données
+    (action 161). La proposition prospective, un univers que le portage
+    calcule, ne remplace plus qu'une liste du coût ; le régime unique par
+    barème, une règle du moteur sous un paramètre de la demande, que des
+    fonctions du coût ; le stock à l'âge légal, une règle du moteur aussi, n'a
+    plus de contexte (``tests/test_stock_age_legal.py``)."""
     import proposition_prospective
     import solde_fusion
 
@@ -586,7 +585,7 @@ def test_les_contextes_qui_remplacent_le_modele_font_taire_la_memoire():
     contextes = (
         (proposition_prospective.PropositionProspective(), True),
         (solde_fusion.RegimeUniqueVariante(solde_fusion.Hypothese("A", "le modèle", None)),
-         False),
+         True),
     )
     for contexte, au_portage in contextes:
         assert memoire._active() and pont.par_le_portage(Parametres())

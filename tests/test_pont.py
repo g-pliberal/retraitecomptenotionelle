@@ -1437,6 +1437,51 @@ def test_les_parametres_du_cout_passent_le_pont():
     assert lus[2030]["pensions"]["notionnel_liberal"] != lus[2026]["pensions"]["notionnel_liberal"]
 
 
+def test_les_lignes_du_compte_d_un_scenario_passent_le_pont_sous_un_bareme():
+    """Les scénarios que la demande nomme (``comptes``), la grille du coût rend
+    de plus, de chaque case, les lignes de leur compte — ce qu'il porte, année
+    par année, et sur quels revenus —, ce que ``scripts/solde_fusion.py`` lit
+    du scénario 4 sous le barème d'un régime unique (action 161) : au bit près
+    du jumeau (``cout._simulations_en_python``), sous le modèle comme sous un
+    barème, qui ne change que ce que le compte porte après la bascule. Sans
+    ``comptes``, aucune ligne."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    from retraite_notionnelle import cout
+
+    scenarios = [cle for cle, _ in cout.SCENARIOS]
+    comptes = ("notionnel_retroactif", "notionnel_retroactif_employeur")
+    lus = {}
+    for bareme in (None, BAREMES[0]):
+        simulateur = Simulateur(replace(Parametres(), bareme_regime_unique=bareme)
+                                ).pour_la_projection()
+        cas = [{"cle": f"{code}|{generation}", "propositions": {},
+                "carriere": _carriere_du_cout(simulateur, code, generation)}
+               for code, generation in CASES_DU_COUT]
+        attendus, refus = cout._simulations_en_python(simulateur, cas, scenarios, comptes)
+        resultats, echecs = pont.grille_du_cout(cas, scenarios, simulateur.parametres,
+                                                pont.paquet_des_donnees(), comptes=comptes)
+        assert not refus and not echecs
+        assert _types(resultats) == _types(attendus)
+        assert resultats == attendus, bareme
+        assert all(set(lu["comptes"]) == set(comptes) for lu in resultats.values())
+        lus[bareme] = resultats
+    sans = pont.grille_du_cout(cas[:1], scenarios, simulateur.parametres,
+                               pont.paquet_des_donnees())[0]
+    assert all(lu["comptes"] == {} for lu in sans.values())
+    bascule = Parametres().annee_bascule
+    touches = 0
+    for cle, lu in lus[BAREMES[0]].items():
+        for scenario in comptes:
+            avec, modele = lu["comptes"][scenario], lus[None][cle]["comptes"][scenario]
+            assert avec["revenus"] == modele["revenus"], (cle, scenario)
+            assert ({annee: c for annee, c in avec["cotisations"].items() if annee < bascule}
+                    == {annee: c for annee, c in modele["cotisations"].items()
+                        if annee < bascule}), (cle, scenario)
+            touches += avec["cotisations"] != modele["cotisations"]
+    assert touches > 0
+
+
 # -- le coût branché sur le pont --------------------------------------------------
 
 #: Une grille d'essai où passe ce que le coût lit en profondeur : l'entrée
