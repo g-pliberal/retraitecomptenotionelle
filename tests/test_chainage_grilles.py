@@ -376,6 +376,40 @@ def test_les_visas_resolvent_la_date_d_un_statut_en_son_numero():
         "1991-05-14") == {"91-1", "91-2"}
 
 
+def test_le_decret_qui_a_modifie_le_statut_n_est_pas_un_second_statut():
+    # Arrêté du 28 septembre 2000 (LEGITEXT000019669914), « fixant l'échelonnement
+    # indiciaire du corps des ingénieurs du génie sanitaire » ; ses visas, lus dans
+    # l'index LEGI : « Vu le décret n° 48-1108 du 10 juillet 1948 portant classement
+    # hiérarchique des grades et emplois […] » et « Vu le décret n° 90-973 du
+    # 30 octobre 1990 portant statut particulier du corps des ingénieurs du génie
+    # sanitaire, modifié par le décret n° 2000-972 du 28 septembre 2000, Arrêtent : ».
+    # Un seul statut est visé (relecture R-B3, point 2).
+    visas = ["Vu le décret n° 48-1108 du 10 juillet 1948 portant classement hiérarchique des "
+             "grades et emplois des personnels civils et militaires de l'Etat relevant du "
+             "régime général des retraites, ensemble les textes qui l'ont complété ou modifié",
+             "Vu le décret n° 90-973 du 30 octobre 1990 portant statut particulier du corps "
+             "des ingénieurs du génie sanitaire, modifié par le décret n° 2000-972 du "
+             "28 septembre 2000, Arrêtent :"]
+    assert chainage._visas_statutaires(visas) == {"90-973"}
+    # Arrêté LEGITEXT000019591133 : « Vu le décret n° 94-1020 du 23 novembre 1994
+    # fixant les dispositions statutaires communes applicables aux corps des
+    # infirmières et infirmiers des services médicaux des administrations de l'Etat,
+    # modifié par les décrets n° 96-60 du 24 janvier 1996, n° 98-936 du 13 octobre
+    # 1998 et n° 2003-695 du 28 juillet 2003, Arrêtent : ».
+    assert chainage._visas_statutaires([
+        "Vu le décret n° 94-1020 du 23 novembre 1994 fixant les dispositions statutaires "
+        "communes applicables aux corps des infirmières et infirmiers des services médicaux "
+        "des administrations de l'Etat, modifié par les décrets n° 96-60 du 24 janvier 1996, "
+        "n° 98-936 du 13 octobre 1998 et n° 2003-695 du 28 juillet 2003, Arrêtent :"]) == {
+        "94-1020"}
+    # Deux statuts visés ensemble restent deux.
+    assert chainage._visas_statutaires([
+        "Vu le décret n° 2016-201 du 26 février 2016 portant statut particulier du cadre "
+        "d'emplois des ingénieurs territoriaux",
+        "Vu le décret n° 2016-200 du 26 février 2016 portant statut particulier du cadre "
+        "d'emplois des ingénieurs en chef territoriaux"]) == {"2016-201", "2016-200"}
+
+
 def test_les_geometres_de_l_ign_ne_se_rattachent_pas_aux_geometres_cadastreurs(reclassements):
     # Décret n° 2016-581, art. 12 (LEGIARTI000032523172) : « I. - Au 1er janvier
     # 2016, les fonctionnaires appartenant au corps des géomètres de l'Institut

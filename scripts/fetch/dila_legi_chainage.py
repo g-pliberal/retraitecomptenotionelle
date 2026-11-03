@@ -266,11 +266,26 @@ class Index:
         return f"{meta.get('dump', '?')}, à jour au {meta.get('dernier_increment', '?')}"
 
 
+#: Les décrets qui ont modifié le statut visé : « modifié par le décret n° 2000-972
+#: du 28 septembre 2000 », « modifié par les décrets n° 96-60 du 24 janvier 1996,
+#: n° 98-936 […] et n° 2003-695 […] », « modifié en dernier lieu par … ».
+MODIFIE_PAR = re.compile(
+    r"modifi[ée]e?s?\s+(?:en\s+dernier\s+lieu\s+)?par\s+(?:le|les)\s+d[ée]crets?\s+"
+    r"((?:n[°o]\s*\d{2,4}-\d{1,4}(?![\d-])(?:\s+du\s+(?:1\s*er|\d{1,2})\s+\S+\s+\d{4})?"
+    r"(?:\s*,\s*|\s+et\s+(?:par\s+)?(?:le\s+d[ée]cret\s+)?)?)+)", re.IGNORECASE)
+
+
 def _visas_statutaires(visas: list[str]) -> set[str]:
     """Les numéros des décrets statutaires qu'un texte vise ; ni les lois, ni
-    les décrets de rémunération."""
-    return {n for v in visas if re.match(r"Vu\s+(?:le|les)\s+d[ée]crets?\b", v)
-            and STATUTAIRE.search(v) for n in NUMERO.findall(v)}
+    les décrets de rémunération, ni ceux qui ont modifié le statut visé (« Vu
+    le décret n° 90-973 […], modifié par le décret n° 2000-972 […] » ne vise
+    qu'un statut : relecture R-B3, point 2)."""
+    numeros = set()
+    for v in visas:
+        if re.match(r"Vu\s+(?:le|les)\s+d[ée]crets?\b", v) and STATUTAIRE.search(v):
+            modificatifs = {n for m in MODIFIE_PAR.finditer(v) for n in NUMERO.findall(m.group(1))}
+            numeros |= set(NUMERO.findall(v)) - modificatifs
+    return numeros
 
 
 class Depot:
