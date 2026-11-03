@@ -280,10 +280,13 @@ def test_le_smic_des_mois_releve_la_base_d_au_plus_2_9_pour_cent_en_2004(simulat
 
 
 def test_la_garantie_de_remuneration_reste_sous_cent_soixante_neuf_heures():
-    """La garantie de l'article 32 de la loi n° 2000-37 ne passe pas le SMIC
-    de « cent soixante-neuf heures » : le forfait que le modèle compte à la
-    durée légale, 1 820 heures par an, lui manque au plus 2 028 / 1 820 − 1,
-    11 % — l'effet que l'approximation déclare."""
+    """Si la garantie la plus élevée ne passe pas le SMIC du mois de « cent
+    soixante-neuf heures », le forfait que le modèle compte à la durée légale,
+    1 820 heures par an, lui manque au plus 2 028 / 1 820 − 1, 11 % — l'effet
+    que l'approximation déclare, comme estimation : l'article 32 de la loi
+    n° 2000-37 fixe la garantie, à la réduction, au SMIC « en vigueur à la
+    date de la réduction », « dans la limite de cent soixante-neuf heures »,
+    puis la revalorise chaque 1er juillet sans suivre le SMIC."""
     heures = {v["id"]: v["contenu"]["parametres"]["assiette_repere_smic"]
               for v in _versions(SALAIRE)
               if "assiette_repere_smic" in (v["contenu"].get("parametres") or {})}

@@ -188,7 +188,17 @@ versions:
       la loi assied les cotisations sur une base forfaitaire dès le 1er janvier 1998 ; le
       décret qui la fixe à 169 SMIC horaires paraît le 21 juin 1998, sans dire de quand elle
       vaut : le modèle la prend pour toute l'année 1998. Les rédactions du 29 décembre 1999
-      reprennent mot pour mot celles du 21 juin 1998
+      reprennent mot pour mot celles du 21 juin 1998. Elles disent « par mois, à 169 fois le
+      montant du salaire minimum de croissance », sans « en vigueur » ni date : suivre le SMIC
+      de chaque mois sous cette rédaction, du 21 juin 1998 au 26 février 2004, est une
+      lecture du modèle. Ce qui la justifie : la base est « par mois », et les textes du temps
+      qui veulent un SMIC fixe nomment sa date — « celui en vigueur au 1er janvier de l'année
+      civile considérée » (D. 742-3, décret n° 2002-784, JORFARTI000001824475), « par mois, à
+      169 fois le salaire horaire minimum de croissance en vigueur au 1er juillet de l'année
+      civile précédente » (R. 742-14, décret n° 2002-1253, JORFARTI000002446426) — ; la
+      rédaction du 26 février 2004 écrit « en vigueur ». Ce qui manque : aucun document de la
+      caisse d'avant 2008 n'est lu ; le plus ancien, un guide d'Actes 6 de juin 2008, montre la
+      base suivre le relèvement du 1er mai 2008 (voir `sources.lectures`)
   unites:
     assiette_repere_smic: heures de SMIC par an, douze fois les heures du mois
   exemples: aucun trouvé
@@ -256,14 +266,19 @@ versions:
       la base de chaque mois est le SMIC horaire en vigueur fois la durée légale du travail
       mensuel, 151,67 heures — 1 820 heures par an —, « augmentée de la valeur de la garantie
       mensuelle de rémunération la plus élevée », celle que l'article 32 de la loi du 19
-      janvier 2000 assure au salarié au SMIC passé aux trente-cinq heures, au plus le SMIC de
-      cent soixante-neuf heures. Le décret du 23 février 2004 l'écrit « du 1er janvier 2002 »,
+      janvier 2000 assure au salarié au SMIC passé aux trente-cinq heures : le SMIC « en
+      vigueur à la date de la réduction » fois les heures de sa durée collective, « dans la
+      limite de cent soixante-neuf heures », puis « revalorisé au 1er juillet » sur les prix et
+      la moitié du pouvoir d'achat du salaire mensuel de base ouvrier. Le décret du 23 février
+      2004 l'écrit « du 1er janvier 2002 »,
       rétroactivement : la rédaction en vigueur en 2002 et en 2003 portait encore 169 SMIC
       horaires par mois
     conditions: >-
       lu à la lettre, « augmentée de la valeur de la garantie » ajouterait la garantie
       entière à la base, près du double du SMIC mensuel ; la lecture qui tient relève la
-      base jusqu'à la garantie, que l'article 32 borne au SMIC de cent soixante-neuf heures.
+      base jusqu'à la garantie. L'article 32 ne la borne pas au SMIC du mois de cent
+      soixante-neuf heures : il la fixe, à la réduction, au SMIC du jour dans la limite de
+      cent soixante-neuf heures, puis la revalorise chaque 1er juillet sans suivre le SMIC.
       Le résumé au Journal officiel du décret n° 2002-784 du 3 mai 2002 dit la même intention
       pour l'assurance volontaire : « maintenir le calcul des cotisations [...] par référence
       à une assiette équivalant à 169 fois le SMIC horaire pour un mois ». Ce que la caisse
@@ -346,9 +361,12 @@ versions:
 approximations:
 - version: [cent_soixante_neuf_heures, garantie_mensuelle_de_remuneration, duree_legale_du_travail]
   textes: >-
-    R. 721-29 et R. 721-30, puis R. 382-89 et R. 382-90 : la base « par mois », au « salaire
-    minimum de croissance en vigueur » ; la caisse en fait une assiette unitaire, le SMIC
-    mensuel « arrondi à 1 767 € » (circulaire de la CAVIMAC n° 2024/01)
+    R. 721-29 et R. 721-30, rédaction du 26 février 2004, puis R. 382-89 et R. 382-90 : la
+    base « par mois », au « salaire minimum de croissance en vigueur » ; leur rédaction du 21
+    juin 1998, « par mois, à 169 fois le montant du salaire minimum de croissance », sans
+    « en vigueur », que le modèle lit de même (version `cent_soixante_neuf_heures`) ; la
+    caisse en fait une assiette unitaire, le SMIC mensuel « arrondi à 1 767 € » (circulaire
+    de la CAVIMAC n° 2024/01)
   ecart: >-
     le modèle compte la base de l'année au SMIC de chaque mois, sans arrondir à l'euro
     l'assiette du mois comme la caisse le fait ; une année incomplète en prend la moyenne des
@@ -366,9 +384,15 @@ approximations:
     le modèle compte de 2002 au 30 juin 2005 la base de la durée légale, 1 820 heures par an,
     sans la garantie mensuelle de rémunération qui la relève, et que le dépôt ne porte pas
   effet: >-
-    la base de ces trois ans et demi trop basse, au plus de 2 028 / 1 820 − 1, 11 %, si elle
-    est relevée jusqu'à la garantie, que l'article 32 borne au SMIC de cent soixante-neuf
-    heures ; le salaire annuel moyen, de moins ; non mesuré
+    la base de ces trois ans et demi trop basse. Si la caisse la relevait jusqu'à la
+    garantie, d'au plus 2 028 / 1 820 − 1, 11 % : une estimation, non un texte, qui suppose
+    la garantie la plus élevée jamais au-dessus du SMIC du mois de cent soixante-neuf heures
+    — l'article 32 la fixe à la réduction au SMIC « en vigueur à la date de la réduction »,
+    « dans la limite de cent soixante-neuf heures », puis la revalorise chaque 1er juillet
+    sur les prix et la moitié du pouvoir d'achat du salaire mensuel de base ouvrier, sans la
+    borner ensuite. Si elle l'y ajoutait entière, comme le texte le dit à la lettre, de près
+    de moitié, la base étant alors près du double. Le salaire annuel moyen, de moins ; non
+    mesuré
 textes_sans_effet:
 - id: LEGIARTI000019959668
   article: code de la sécurité sociale, L. 382-27
@@ -414,9 +438,11 @@ effet: >-
   (circulaire n° 2025/01) : elle gagne la moitié du relèvement de juillet de 1998 à 2009, au
   plus 2,9 %, en 2004, et les relèvements en cours d'année de 2008, 2011, 2012 et de 2021 à
   2026 ; tenu par `tests/test_cultes_smic_du_mois.py` et son pendant JavaScript. Elle reste
-  sans la garantie mensuelle de rémunération de 2002 au 30 juin 2005, jusqu'à 11 % de moins
-  sur ces années, faute d'un document qui dise comment la caisse la comptait — une
-  approximation.
+  sans la garantie mensuelle de rémunération de 2002 au 30 juin 2005 : jusqu'à 11 % de moins
+  sur ces années si la caisse relevait la base jusqu'à la garantie, une estimation que
+  l'article 32 de la loi n° 2000-37 n'écrit pas ; près de moitié moins si elle l'y ajoutait
+  entière, comme le texte le dit à la lettre. Faute d'un document qui dise comment la caisse
+  la comptait, une approximation.
 sources:
   lu_le: 2026-11-03
   prochaine_relecture: 2027-09-30
@@ -488,9 +514,14 @@ sources:
       1er juillet de 1998 à 2009 (« A compter du 1er juillet 1998 [...] est porté à 40,22 F de
       l'heure en métropole », JORFARTI000001034949), le décret n° 2012-828 (9,40 € au 1er
       juillet 2012), le décret n° 2024-951 (11,88 € au 1er novembre 2024), et les arrêtés du
-      25 avril 2008 (8,63 € au 1er mai), du 29 novembre 2011 (9,19 € au 1er décembre), du 27
-      septembre 2021, des 19 avril et 29 juillet 2022, du 26 avril 2023 et du 22 mai 2026 ;
-      les décrets de chaque 1er janvier de 2018 à 2026 ; l'article 3 du décret n° 2001-554,
+      25 avril 2008 (8,63 € au 1er mai), du 29 novembre 2011 (article 1er, « pour prendre
+      effet au 1er décembre 2011 », JORFARTI000024874230 ; article 2, « 9,19 € de l'heure »
+      « à compter de cette date », JORFARTI000024874233), du 27 septembre 2021, des 19 avril
+      et 29 juillet 2022, du 26 avril 2023 et du 22 mai 2026 ; les décrets du 1er janvier de
+      2018 à 2024 et de 2026 (n° 2017-1719, 2018-1173, 2019-1387, 2020-1598, 2021-1741,
+      2022-1608, 2023-1216 et 2025-1228) ; 2025 n'en a pas : l'index n'a aucun texte qui
+      relève le SMIC entre le décret n° 2024-951 et le n° 2025-1228, et janvier 2025 garde les
+      11,88 € du 1er novembre 2024 ; l'article 3 du décret n° 2001-554,
       qui fixe le SMIC à « 6,67 Euro de l'heure » au 1er janvier 2002
       (JORFARTI000002428309) ; chacun avec son identifiant dans
       `macro/smic_horaire_releves.csv`
@@ -519,8 +550,12 @@ sources:
       complémentaire obligatoire des cultes ainsi que des contributions sociales CSG-CRDS
       sont modifiées à compter de l'échéance du 15 décembre 2024 » : le relèvement d'un mois
       vaut pour ce mois, l'échéance du 15 étant celle du mois précédent (« échéances des 10
-      et 15 février 2024 », « au titre du mois de janvier 2024 », n° 2024/01) ; image
-      numérisée, lue page 1
+      et 15 février 2024 », « au titre du mois de janvier 2024 », n° 2024/01). Le PDF, trois
+      pages, a une couche de texte, relue en entier le 3 novembre 2026 : le tableau de sa
+      page 2 s'intitule « Cotisations sociales mensuelles applicables à compter du 1er janvier
+      2025 », 1 802 € d'assiette pour la vieillesse comme pour la « RCO » ; il dit le barème
+      de 2025, que le SMIC ne change pas au 1er janvier 2025 (aucun décret), quand le résumé
+      et le corps datent le relèvement de l'assiette du mois de novembre 2024
     url: https://www.cavimac.fr/sites/default/files/medias/documents/Circulaire_2025_01.pdf
     date: 2026-11-03
   - type: autre
@@ -530,6 +565,28 @@ sources:
       au taux de droit commun, sur une base forfaitaire mensuelle égale au Smic multiplié par
       le nombre légal d'heures de travail en vigueur » ; rien de la garantie de 2002 à 2005
     url: https://legislation.lassuranceretraite.fr/#/expose?file_leaf_ref=cotisation_salaire_type_activite_culte_ex.aspx
+    date: 2026-11-03
+  - type: jorf
+    reference: >-
+      relus après la relecture R-M5, dans l'index JORF du dépôt à jour de l'incrément du 3
+      novembre 2026 : le décret n° 2002-1253 du 11 octobre 2002, article 2, qui récrit
+      R. 742-14 (JORFARTI000002446426) ; le décret n° 2002-784, article 1er
+      (JORFARTI000001824475) ; la loi n° 2000-37, article 32 (JORFARTI000001248766) ; l'arrêté
+      du 29 novembre 2011, articles 1er et 2 ; les décrets et arrêtés qui relèvent le SMIC de
+      2017 à 2026 ; et, dans l'index LEGI, R. 721-29 et R. 721-30 du 21 juin 1998 au 26
+      février 2004 (LEGIARTI000006752924, 6752925, 6752064, 6752065)
+    date: 2026-11-03
+  - type: autre
+    reference: >-
+      Actes 6, « La rémunération des ministres du culte » (© 1995-2008, Alain Ledain et
+      Gérard Hung Chei Tui) : « La situation des assurés du régime des cultes est alignée sur
+      celle des assurés du régime général tant en maladie qu'en vieillesse sur la base
+      forfaitaire du SMIC arrondie à l'euro près : 1 309 € à compter du 1er mai 2008 », la
+      même base de 1 309,00 pour l'« Assurance vieillesse CAVIMAC » et la « Retraite
+      complémentaire » ; « SMIC horaire au 1er janvier 2008 : 8,44 euros / SMIC horaire au
+      1er mai 2008 : 8,63 euros ». 8,63 × 151,67 = 1 308,91 : la base suit le relèvement du
+      1er mai 2008. De seconde main, et d'après 2004
+    url: http://www.actes6.com/images_ok/file/social/remuneration_ministres_culte.pdf
     date: 2026-11-03
 code:
   interrupteurs:

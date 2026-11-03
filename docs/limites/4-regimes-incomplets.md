@@ -141,8 +141,10 @@ forfait, là où `assiette_plancher` ne relevait que les assiettes trop basses.
 
 **Ce que la fiche des cultes approxime.** Le passage du forfait de <!--chiffre:illustration()-->169<!--/--> à <!--chiffre:mesure(constante?de=moteur/js/saisie.js&nom=HEURES_SMIC_PAR_MOIS)-->151,67<!--/--> heures mensuelles est daté de 2002, ce
 que la clause transitoire de R. 382-89 rend probable sans l'écrire. La base
-suit le SMIC de chaque mois, comme le texte l'écrit et comme la caisse le fait
-(circulaire de la CAVIMAC du 14 janvier 2025), mais sans l'arrondi à l'euro
+suit le SMIC de chaque mois, comme le texte l'écrit depuis le 26 février 2004
+(« en vigueur »), comme le modèle le lit pour la rédaction de 1998, qui ne le
+dit pas, et comme la caisse le fait (circulaire de la CAVIMAC du 14 janvier
+2025), mais sans l'arrondi à l'euro
 que la caisse donne à l'assiette du mois, et l'année incomplète à la moyenne de
 ses douze mois. La garantie mensuelle de rémunération dont R. 382-89
 « augmente » cette base du 1<sup>er</sup> janvier 2002 au 30 juin 2005 n'est

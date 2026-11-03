@@ -1,0 +1,34 @@
+date: "2026-11-03"
+session: "action 130, file M5-bis : les retouches de la relecture R-M5 (base forfaitaire des cultes au SMIC de chaque mois), sans calcul qui change"
+consulte: >-
+  Les index LEGI (à jour au 2 novembre 2026, 20261102-213929) et JORF (à jour au 3 novembre
+  2026, 20261103-002311) de la DILA, récupérés. Dans LEGI : R. 721-29 et R. 721-30, rédactions
+  du 21 juin 1998 et du 29 décembre 1999 (LEGIARTI000006752924, 6752925, 6752064, 6752065).
+  Dans JORF : le décret n° 2002-784, article 1er (JORFARTI000001824475) ; le décret
+  n° 2002-1253, article 2 (JORFARTI000002446426) ; l'arrêté du 29 novembre 2011, articles 1er
+  et 2 (JORFARTI000024874230, JORFARTI000024874233) ; la liste des décrets et arrêtés qui
+  relèvent le SMIC de 2017 à 2026, et les titres de 2025 qui nomment le salaire minimum ; le
+  décret n° 2024-951, article 1er ; la loi n° 2000-37, article 32 (JORFARTI000001248766), et
+  une recherche de la garantie mensuelle de rémunération de 2001 à 2005 ; les décrets
+  n° 90-498 (JORFARTI000001735045), n° 94-690 (JORFARTI000002131575) et n° 2001-584
+  (JORFARTI000001260750). Hors des index, téléchargés et lus : les circulaires de la CAVIMAC
+  n° 2024/01 et n° 2025/01 ; la fiche d'Actes 6 « La rémunération des ministres du culte »
+  (© 1995-2008) ; l'accord national interprofessionnel Agirc-Arrco du 17 novembre 2017 et le
+  recueil des accords de 1993 à 2015, que le dépôt certifie ; la circulaire 2023-03-DRJ.
+trouve: >-
+  Les six écarts faibles de R-M5, confirmés au texte et corrigés dans la fiche
+  cultes_salaire_annuel_moyen, l'en-tête de smic_horaire_releves.csv, la partie 4 des limites
+  et des commentaires de tests : la rédaction de 1998, « par mois, à 169 fois le montant du
+  salaire minimum de croissance », sans « en vigueur », lue au SMIC de chaque mois, lecture
+  déclarée ; la date du relèvement de 2011 à l'article 1er de l'arrêté ; aucun décret au
+  1er janvier 2025 ; le tableau de la circulaire n° 2025/01 « applicables à compter du
+  1er janvier 2025 », le PDF à couche de texte ; la borne de 11 % de la garantie, un calcul
+  (2 028 / 1 820 − 1) sous une hypothèse que l'article 32 n'écrit pas, une estimation ; le
+  décret n° 2001-584 dans ses mots. Le guide de 2008 montre la base à 1 309 € au 1er mai 2008,
+  le SMIC du relèvement de mai. L'acte de l'Arrco qui fixe l'assiette des cultes n'est pas
+  parmi les accords certifiés du dépôt : l'accord du 17 novembre 2017 et le recueil de 1993 à
+  2015 ne nomment pas les cultes. Aucun chiffre ne bouge ; le paquet ne change pas.
+reste: >-
+  L'acte de l'Arrco (délibération, convention ou circulaire) qui fixe l'assiette des cultes
+  depuis 2006 ; une circulaire de la CAVIMAC de 2002 à 2005, pour la garantie ; un document de
+  la caisse d'avant 2008, pour la lecture de 1998.

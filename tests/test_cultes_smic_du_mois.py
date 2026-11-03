@@ -48,7 +48,9 @@ RELEVEMENTS = [
     ("2008-05-01", 8.63, "JORFARTI000018730835"),   # arrêté du 25 avril 2008
     ("2008-07-01", 8.71, "JORFARTI000019078958"),   # décret n° 2008-617
     ("2009-07-01", 8.82, "JORFARTI000020793254"),   # décret n° 2009-800
-    ("2011-12-01", 9.19, "JORFARTI000024874233"),   # arrêté du 29 novembre 2011
+    # arrêté du 29 novembre 2011 : 9,19 € à son article 2, la date à son
+    # article 1er, « pour prendre effet au 1er décembre 2011 », JORFARTI000024874230
+    ("2011-12-01", 9.19, "JORFARTI000024874233"),
     ("2012-07-01", 9.40, "JORFARTI000026083666"),   # décret n° 2012-828
     ("2021-10-01", 10.48, "JORFARTI000044126036"),  # arrêté du 27 septembre 2021
     ("2022-05-01", 10.85, "JORFARTI000045602327"),  # arrêté du 19 avril 2022

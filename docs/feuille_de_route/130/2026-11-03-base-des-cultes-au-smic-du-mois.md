@@ -166,3 +166,11 @@ Une question : la garantie de 2002 à 2005 se compte-t-elle en relevant la base
 jusqu'à elle, ou en l'ajoutant ? Sans document de la caisse, la règle n'est pas
 écrite ; un ministre du culte qui a cotisé ces années, ou la CAVIMAC, peut le
 dire.
+
+*Renvoi du 3 novembre 2026, après la relecture R-M5.* Quatre phrases de cette
+note sont corrigées dans `2026-11-03-retouches-de-la-relecture-r-m5.md` : 2025
+n'a pas de décret du 1er janvier (point 3) ; la circulaire n° 2025/01 a une
+couche de texte, et son tableau dit « à compter du 1er janvier 2025 » (point 4) ;
+les 11 % de la garantie sont une estimation, que l'article 32 n'écrit pas
+(point 5) ; le décret n° 2001-584 dit « celui en vigueur au 1er janvier de
+l'année au titre de laquelle les cotisations sont dues » (point 6).

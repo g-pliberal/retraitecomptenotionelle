@@ -280,6 +280,17 @@ sources:
     `contributions_equilibre_agirc_arrco.yaml` ne leur fait pas verser (action 138).
   - >-
     Le lecteur de relevé rattache encore toute ligne de la CAVIMAC au ministre rémunéré.
+  - >-
+    L'acte de l'Arrco, puis de l'Agirc-Arrco, qui fixe l'assiette des cultes n'est pas lu.
+    Cherché le 3 novembre 2026 parmi les accords que le dépôt certifie, sans le trouver :
+    l'accord du 17 novembre 2017 ne nomme pas les cultes — son article 30 assied les
+    cotisations sur les éléments de L. 242-1 et, « Par dérogation, dans certaines situations
+    visées au présent Accord ou dans son annexe A (inactivité totale ou partielle, salariés
+    travaillant à l'étranger, apprentis…) », sur « une assiette forfaitaire, fictive ou
+    particulière » — ; le recueil des accords de 1993 à 2015 non plus. La circulaire
+    2019-1-DRJ, fiche 3, que cite `regimes/arrco_cultes.yaml`, n'a pas sa copie dans le
+    dépôt. L'assiette se lit dans les circulaires de la CAVIMAC (n° 2024/01, n° 2025/01) et
+    dans un guide de 2008 : la même que la vieillesse, aux mêmes dates.
   lectures:
   - type: legifrance
     reference: >-
