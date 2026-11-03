@@ -104,10 +104,11 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 
 from ..carriere import Carriere
-from ..config import AgeConversionDroitsAcquis, Parametres, SituationFoyer
+from ..config import AgeConversionDroitsAcquis, Parametres, SituationFoyer, StockAgeLegal
 from ..donnees.chargement import Fiabilite
 from ..droit.etranger import pensions_etrangeres_servies
 from ..droit.foyer import condition_de_residence
+from ..droit.ouvrir import age_ouverture_droit
 from ..moteur.age_reference import AgeReference, EcartAge
 from ..moteur.capitalisation import Capitalisation, ConstructeurCapitalisation
 from ..moteur.compte import CompteNotionnel, ConstructeurCompte
@@ -350,6 +351,12 @@ class ScenarioNotionnel:
         #: autres scénarios ne le reçoivent pas, et ne peuvent donc pas le
         #: servir par inadvertance.
         self.capitalisation = capitalisation
+        # La règle du stock est facultative ; un nom que le moteur ne connaît
+        # pas est une faute de programme, qui doit remonter.
+        regle = parametres.stock_age_legal
+        if regle is not None and regle not in tuple(StockAgeLegal):
+            raise ValueError(f"stock_age_legal inconnu : {regle!r} ; le moteur connaît "
+                             + ", ".join(membre.value for membre in StockAgeLegal))
 
     def _sexe(self, carriere: Carriere) -> str | None:
         from ..config import TableConversion
@@ -357,6 +364,36 @@ class ScenarioNotionnel:
         if self.parametres.table_conversion is TableConversion.UNISEXE:
             return None
         return carriere.sexe
+
+    def _age_legal(self, carriere: Carriere, regle: StockAgeLegal) -> float | None:
+        """L'âge légal que lit la règle du stock (:class:`StockAgeLegal`) :
+        celui que le droit de l'assuré lui ouvrait, sous ``TOUT_DROIT`` —
+        régime spécial et carrière longue compris (``age_ouverture_droit``) ;
+        sinon celui de sa génération, dans le droit que le scénario 1
+        applique. ``None`` quand le droit n'en dit rien."""
+        if regle == StockAgeLegal.TOUT_DROIT:
+            return age_ouverture_droit(self.scenario_actuel, carriere)
+        valeur = self.scenario_actuel.ages_ouverture.valeur(carriere.annee_naissance)
+        return None if valeur is None else valeur[0]
+
+    def _age_du_diviseur(self, carriere: Carriere) -> float:
+        """L'âge auquel le compte rétroactif prend son diviseur : celui du
+        départ. Sous ``stock_age_legal`` ``DROIT_COMMUN`` ou ``TOUT_DROIT``,
+        l'âge de référence, pour une pension liquidée avant la bascule, à
+        l'âge légal ou après mais avant lui : le stock à l'âge légal, que
+        ``scripts/stock_age_legal.py`` chiffre (action 161). Qui est parti
+        avant l'âge légal garde son diviseur ; après la bascule, la règle est
+        connue avant le choix, et le diviseur de l'âge effectif reste la
+        règle."""
+        age = carriere.age_liquidation or 0.0
+        regle = self.parametres.stock_age_legal
+        if regle not in (StockAgeLegal.DROIT_COMMUN, StockAgeLegal.TOUT_DROIT):
+            return age
+        reference = self.parametres.age_reference_fixe
+        if carriere.annee_liquidation >= self.parametres.annee_bascule or age >= reference:
+            return age
+        legal = self._age_legal(carriere, regle)
+        return age if legal is None or age < legal else reference
 
     # -- scénario 2 ----------------------------------------------------------
 
@@ -380,8 +417,8 @@ class ScenarioNotionnel:
             regime_fusionne=regime_fusionne,
         )
         conversion, _ = self.convertisseur.resoudre(
-            compte.capital, age_liquidation, annee_liquidation, self._sexe(carriere),
-            carriere.mois_liquidation, carriere,
+            compte.capital, self._age_du_diviseur(carriere), annee_liquidation,
+            self._sexe(carriere), carriere.mois_liquidation, carriere,
         )
         pension = compte.capital / conversion.diviseur
 
@@ -727,6 +764,12 @@ class ScenarioNotionnel:
             age_conversion = self.age_reference.age(bascule)
         else:
             age_conversion = carriere.age_liquidation or self.age_reference.age(bascule)
+        # Le stock à l'âge légal, sous ``ACQUIS`` : les droits acquis se
+        # convertissent à l'âge légal de la génération quand il est plus bas.
+        if self.parametres.stock_age_legal == StockAgeLegal.ACQUIS:
+            legal = self._age_legal(carriere, StockAgeLegal.ACQUIS)
+            if legal is not None and legal < age_conversion:
+                age_conversion = legal
         conversion = self.convertisseur.coefficient(
             age_conversion, bascule, self._sexe(carriere),
             population=self.convertisseur.population_pour_pension(

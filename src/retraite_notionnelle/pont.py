@@ -300,11 +300,14 @@ def _aujourd_hui(lu: dict | None) -> dict | None:
 
 
 def carrieres(cas: list[dict], scenarios, paquet: bytes | None = None,
-              univers: dict[str, dict] | None = None,
+              univers: dict[str, dict] | None = None, parametres=None,
               ) -> tuple[dict[str, dict], dict[str, str]]:
     """Chaque carrière d'un seul statut, ``{"cle", "options"}`` aux options de
     ``carriere_simple``, simulée par le portage sous les réglages de
-    référence : sous sa clé, l'année de son départ et celle de chaque
+    référence, ou sous les ``parametres`` d'une étude, que la demande porte —
+    le stock à l'âge légal (``Parametres.stock_age_legal``, action 161),
+    qu'aucun réglage de référence ne porte : sous sa clé, l'année de son
+    départ et celle de chaque
     scénario, l'écart de chacun au système actuel, pilier capitalisé compris
     (``variation_totale``) ou non (``variation``), la pension du système
     actuel et la durée qu'il requiert ; la pension de chaque scénario, pilier
@@ -315,8 +318,10 @@ def carrieres(cas: list[dict], scenarios, paquet: bytes | None = None,
     clé, les motifs des carrières que le portage refuse. ``univers`` porte les
     variantes d'une étude, chacune à la place du calcul que le paquet porte
     sous sa clé (``Simulateur.univers_de_la_demande``, action 161)."""
-    reponse = _demander({"carrieres": {"cas": cas, "scenarios": list(scenarios),
-                                       "univers": dict(univers or {})}}, paquet)
+    demande = {"cas": cas, "scenarios": list(scenarios), "univers": dict(univers or {})}
+    if parametres is not None:
+        demande["parametres"] = parametres_en_donnees(parametres)
+    reponse = _demander({"carrieres": demande}, _paquet_de(parametres, paquet))
     resultats = {
         cle: {
             "annee_liquidation": lu["annee_liquidation"],

@@ -8,9 +8,10 @@
  * le paquet qu'elle va remplacer ; `null` lit `moteur/donnees.json`. `demande`
  * en porte une seule de ces lectures :
  *
- * - `carrieres` : `{cas: [{cle, options}], scenarios, univers}` — chaque
- *   carrière d'un seul statut, aux options de `carriereSimple`, simulée sous
- *   les réglages de référence : l'année de son départ et celle de chaque
+ * - `carrieres` : `{cas: [{cle, options}], scenarios, univers, parametres}` —
+ *   chaque carrière d'un seul statut, aux options de `carriereSimple`, simulée
+ *   sous les réglages de référence, ou sous les `parametres` d'une étude quand
+ *   la demande en porte (`simulateurSous`) : l'année de son départ et celle de chaque
  *   scénario, l'écart de chacun au système actuel, pilier capitalisé compris
  *   (`variationTotale`) ou non (`variation`), la pension du système actuel et
  *   la durée qu'il requiert ; la pension de
@@ -191,8 +192,9 @@ function parScenario(scenarios, lire) {
   return Object.fromEntries(scenarios.map((scenario) => [scenario, lire(scenario)]));
 }
 
-function carrieres({ cas, scenarios, univers = {} }) {
-  const simulateur = sousLesUnivers(contexte.base, univers);
+function carrieres({ cas, scenarios, univers = {}, parametres = null }) {
+  const simulateur = parametres === null
+    ? sousLesUnivers(contexte.base, univers) : simulateurSous(parametres, univers);
   return parCas(cas, ({ options }) => {
     const interruptions = new Map(Object.entries(options.interruptions ?? {})
       .map(([annee, motif]) => [Number(annee), motif]));

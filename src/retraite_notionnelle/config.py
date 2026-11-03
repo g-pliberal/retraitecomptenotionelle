@@ -275,6 +275,40 @@ class AgeConversionDroitsAcquis(str, Enum):
     LIQUIDATION = "liquidation"
 
 
+class StockAgeLegal(str, Enum):
+    """Le stock à l'âge légal : la pension de qui est parti à l'âge que sa loi
+    lui ouvrait, convertie sans lui faire payer cet âge.
+
+    Les scénarios rétroactifs recalculent les pensions déjà servies comme des
+    comptes notionnels, au diviseur de l'âge du départ, plus long à 60 ans
+    qu'à 65 : l'assuré parti à 60 ans en 2010, à l'âge que sa loi lui ouvrait,
+    se voit compter après coup quatre années de rente de plus. C'est la parade
+    à ce grief que ``scripts/stock_age_legal.py`` chiffre (action 161), et
+    l'âge de référence est ``Parametres.age_reference_fixe``. ``None``, le
+    défaut, ne convertit rien.
+
+    * ``DROIT_COMMUN`` : dans les scénarios rétroactifs, une pension liquidée
+      avant la bascule, à l'âge légal de la génération ou après, mais avant
+      l'âge de référence, se divise au diviseur de l'âge de référence. L'âge
+      légal est celui du droit que le scénario 1 applique, par génération
+      (``age_ouverture_requis.csv``) : un agent de conduite parti à 50 ans,
+      une carrière longue, gardent le diviseur de leur âge.
+    * ``TOUT_DROIT`` : de même, l'âge légal étant celui que le droit de
+      l'assuré lui ouvrait, régime spécial et carrière longue compris
+      (``droit.ouvrir.age_ouverture_droit``).
+    * ``ACQUIS`` : dans les scénarios PROSPECTIFS, les droits acquis à la
+      bascule se convertissent à l'âge légal de la génération quand il est
+      plus bas que l'âge de conversion (:class:`AgeConversionDroitsAcquis`).
+
+    Après la bascule, la règle est connue avant le choix, et le diviseur de
+    l'âge effectif reste la règle.
+    """
+
+    DROIT_COMMUN = "droit_commun"
+    TOUT_DROIT = "tout_droit"
+    ACQUIS = "acquis"
+
+
 class TableConversion(str, Enum):
     """Table de mortalité servant au coefficient de conversion."""
 
@@ -691,6 +725,12 @@ class Parametres:
     age_conversion_droits_acquis: AgeConversionDroitsAcquis = (
         AgeConversionDroitsAcquis.REFERENCE
     )
+
+    #: Le stock à l'âge légal : ``None``, le défaut, ne convertit rien ;
+    #: ``DROIT_COMMUN``, ``TOUT_DROIT`` et ``ACQUIS`` sont les variantes que
+    #: ``scripts/stock_age_legal.py`` chiffre (action 161), et qu'aucun
+    #: réglage du site ne porte. Voir :class:`StockAgeLegal`.
+    stock_age_legal: StockAgeLegal | None = None
 
     #: Table de génération (mortalité prospective) plutôt que table du moment.
     #: Une table du moment sous-estime la longévité des générations récentes et

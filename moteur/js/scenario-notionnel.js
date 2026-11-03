@@ -28,9 +28,12 @@
  */
 
 import { Carriere } from "./carriere.js";
-import { AgeConversionDroitsAcquis, SituationFoyer, TableConversion } from "./config.js";
+import {
+  AgeConversionDroitsAcquis, SituationFoyer, StockAgeLegal, TableConversion,
+} from "./config.js";
 import { pensionsEtrangeresServies } from "./droit/etranger.js";
 import { conditionDeResidence } from "./droit/foyer.js";
+import { ageOuvertureDroit } from "./droit/ouvrir.js";
 import { MinimumVieillesse } from "./regimes.js";
 
 /** Produit les deux variantes de comptes notionnels. */
@@ -46,6 +49,13 @@ export class ScenarioNotionnel {
     // scénarios ne le reçoivent pas, et ne peuvent donc pas le servir par
     // inadvertance.
     this.capitalisation = capitalisation;
+    // La règle du stock est facultative ; un nom que le moteur ne connaît pas
+    // est une faute de programme, qui doit remonter.
+    const regle = parametres.stock_age_legal ?? null;
+    if (regle !== null && !Object.values(StockAgeLegal).includes(regle)) {
+      throw new RangeError(`stock_age_legal inconnu : '${regle}' ; le moteur connaît `
+        + Object.values(StockAgeLegal).join(", "));
+    }
   }
 
   _sexe(carriere) {
@@ -53,6 +63,44 @@ export class ScenarioNotionnel {
       return null;
     }
     return carriere.sexe;
+  }
+
+  /**
+   * L'âge légal que lit la règle du stock (`stock_age_legal`) : celui que le
+   * droit de l'assuré lui ouvrait, sous `TOUT_DROIT` — régime spécial et
+   * carrière longue compris (`ageOuvertureDroit`) ; sinon celui de sa
+   * génération, dans le droit que le scénario 1 applique. `null` quand le droit
+   * n'en dit rien.
+   */
+  _ageLegal(carriere, regle) {
+    if (regle === StockAgeLegal.TOUT_DROIT) {
+      return ageOuvertureDroit(this.scenarioActuel, carriere);
+    }
+    const valeur = this.scenarioActuel.agesOuverture.valeur(carriere.annee_naissance);
+    return valeur === null ? null : valeur[0];
+  }
+
+  /**
+   * L'âge auquel le compte rétroactif prend son diviseur : celui du départ.
+   * Sous `stock_age_legal` `DROIT_COMMUN` ou `TOUT_DROIT`, l'âge de référence,
+   * pour une pension liquidée avant la bascule, à l'âge légal ou après mais
+   * avant lui : le stock à l'âge légal, que `scripts/stock_age_legal.py`
+   * chiffre (action 161). Qui est parti avant l'âge légal garde son diviseur ;
+   * après la bascule, la règle est connue avant le choix, et le diviseur de
+   * l'âge effectif reste la règle. Voir le Python.
+   */
+  _ageDuDiviseur(carriere) {
+    const age = carriere.age_liquidation || 0.0;
+    const regle = this.parametres.stock_age_legal ?? null;
+    if (regle !== StockAgeLegal.DROIT_COMMUN && regle !== StockAgeLegal.TOUT_DROIT) {
+      return age;
+    }
+    const reference = this.parametres.age_reference_fixe;
+    if (carriere.anneeLiquidation >= this.parametres.annee_bascule || age >= reference) {
+      return age;
+    }
+    const legal = this._ageLegal(carriere, regle);
+    return legal === null || age < legal ? age : reference;
   }
 
   // -- scénarios 2, 4 et 5 ---------------------------------------------------
@@ -73,7 +121,7 @@ export class ScenarioNotionnel {
       carriere, anneeLiquidation, carriere.premiereAnnee, regimeFusionne,
     );
     const [conversion] = this.convertisseur.resoudre(
-      compte.capital, ageLiquidation, anneeLiquidation, this._sexe(carriere),
+      compte.capital, this._ageDuDiviseur(carriere), anneeLiquidation, this._sexe(carriere),
       carriere.moisLiquidation, carriere,
     );
 
@@ -391,10 +439,18 @@ export class ScenarioNotionnel {
       !neutralisations.has("points_gratuits"),
       "fictive");
 
-    const ageConversion = this.parametres.age_conversion_droits_acquis
+    let ageConversion = this.parametres.age_conversion_droits_acquis
         === AgeConversionDroitsAcquis.REFERENCE
       ? this.ageReference.age(bascule)
       : (carriere.age_liquidation || this.ageReference.age(bascule));
+    // Le stock à l'âge légal, sous `ACQUIS` : les droits acquis se convertissent
+    // à l'âge légal de la génération quand il est plus bas.
+    if ((this.parametres.stock_age_legal ?? null) === StockAgeLegal.ACQUIS) {
+      const legal = this._ageLegal(carriere, StockAgeLegal.ACQUIS);
+      if (legal !== null && legal < ageConversion) {
+        ageConversion = legal;
+      }
+    }
     const conversion = this.convertisseur.coefficient(
       ageConversion, bascule, this._sexe(carriere), 1,
       this.convertisseur.populationPourPension(droits.pension_annuelle, bascule, carriere),

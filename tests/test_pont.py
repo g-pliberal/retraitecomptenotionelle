@@ -60,7 +60,7 @@ SAISIES = (
 )
 
 
-def _aujourd_hui(aujourd_hui) -> dict | None:
+def _aujourd_hui(aujourd_hui, scenarios=SCENARIOS) -> dict | None:
     """Ce que les écarts médians lisent de la pension d'aujourd'hui d'un
     retraité, ou rien pour qui n'est pas encore parti."""
     if aujourd_hui is None:
@@ -68,14 +68,16 @@ def _aujourd_hui(aujourd_hui) -> dict | None:
     return {
         "pension_annuelle": aujourd_hui.pension("actuel"),
         "pensions_totales": {scenario: aujourd_hui.pension_totale(scenario)
-                             for scenario in SCENARIOS},
+                             for scenario in scenarios},
         "rente_capitalisee_volontaire": aujourd_hui.rente_capitalisee_volontaire,
     }
 
 
-def _carrieres_simulees(simulateur: Simulateur) -> tuple[list[dict], dict[str, dict]]:
+def _carrieres_simulees(simulateur: Simulateur, scenarios=SCENARIOS,
+                        ) -> tuple[list[dict], dict[str, dict]]:
     """Les cases de ``CASES``, demandées au pont, et ce que le moteur Python en
-    simule, sous les univers de ``simulateur``."""
+    simule de ``scenarios``, sous les univers et les paramètres de
+    ``simulateur``."""
     demandes, attendus = [], {}
     for code, generation in CASES:
         cas = next(cas for cas in CAS_TYPES if cas.code == code)
@@ -86,19 +88,19 @@ def _carrieres_simulees(simulateur: Simulateur) -> tuple[list[dict], dict[str, d
         attendus[cle] = {
             "annee_liquidation": comparaison.carriere.annee_liquidation,
             "annees_liquidation": {scenario: comparaison.carriere_de(scenario).annee_liquidation
-                                   for scenario in SCENARIOS},
+                                   for scenario in scenarios},
             "variations": {scenario: comparaison.variation_totale(scenario)
-                           for scenario in SCENARIOS},
+                           for scenario in scenarios},
             # L'écart hors du pilier, que les études lisent des cas types.
-            "ecarts": {scenario: comparaison.variation(scenario) for scenario in SCENARIOS},
+            "ecarts": {scenario: comparaison.variation(scenario) for scenario in scenarios},
             "pension_annuelle": comparaison.actuel.pension_annuelle,
             "trimestres_requis": comparaison.actuel.trimestres_requis,
             # Ce que les écarts médians du bilan lisent d'une case.
             "pensions_totales": {scenario: comparaison.pension_totale(scenario)
-                                 for scenario in SCENARIOS},
+                                 for scenario in scenarios},
             "rentes_volontaires": {scenario: comparaison.rente_capitalisee_volontaire(scenario)
-                                   for scenario in SCENARIOS},
-            "aujourd_hui": _aujourd_hui(comparaison.aujourd_hui),
+                                   for scenario in scenarios},
+            "aujourd_hui": _aujourd_hui(comparaison.aujourd_hui, scenarios),
         }
     return demandes, attendus
 
@@ -154,6 +156,37 @@ def test_une_variante_passe_au_portage_dans_la_demande_au_bit_pres_du_jumeau():
         assert any(lu["ecarts"]["notionnel_liberal"] != sans[cle]["ecarts"]["notionnel_liberal"]
                    for cle, lu in resultats.items()
                    if (lu["aujourd_hui"] is not None) == parties), parties
+
+
+PROSPECTIFS = ("notionnel_prospectif", "notionnel_prospectif_employeur")
+
+
+def test_le_stock_a_l_age_legal_passe_au_portage_dans_la_demande_au_bit_pres_du_jumeau():
+    """La règle du stock à l'âge légal (``Parametres.stock_age_legal``,
+    action 161), qu'aucun réglage de référence ne porte, passe au portage dans
+    les paramètres de la demande : sous chacune de ses trois variantes, le
+    portage rend de chaque case ce que le jumeau Python simule sous la même
+    règle, au bit près, et autre chose que sans elle — les cases déjà parties
+    dans les scénarios rétroactifs, sous ``droit_commun`` et ``tout_droit`` ;
+    celles qui partiront dans les prospectifs, sous ``acquis``."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    from retraite_notionnelle.config import StockAgeLegal
+
+    scenarios = SCENARIOS + PROSPECTIFS
+    sans = None
+    for regle, touches in ((StockAgeLegal.DROIT_COMMUN, SCENARIOS),
+                           (StockAgeLegal.TOUT_DROIT, SCENARIOS),
+                           (StockAgeLegal.ACQUIS, PROSPECTIFS)):
+        simulateur = Simulateur(replace(Parametres(), stock_age_legal=regle))
+        demandes, attendus = _carrieres_simulees(simulateur, scenarios)
+        if sans is None:
+            sans, _ = pont.carrieres(demandes, scenarios)
+        resultats, echecs = pont.carrieres(demandes, scenarios, parametres=simulateur.parametres)
+        assert not echecs
+        assert resultats == attendus, regle
+        assert any(lu["ecarts"][scenario] != sans[cle]["ecarts"][scenario]
+                   for cle, lu in resultats.items() for scenario in touches), regle
 
 
 def test_le_pont_simule_une_saisie_comme_le_site_au_bit_pres_du_moteur_python():
@@ -1461,6 +1494,36 @@ def test_le_cout_d_une_variante_simule_sa_grille_par_le_portage(memoire_isolee, 
     for generation in (1950, 2000):
         assert any(p.propre != q.propre for p, q in zip(par_le_portage[0], du_scenario_6)
                    if p.generation == generation), generation
+
+
+def test_le_cout_sous_la_regle_du_stock_simule_sa_grille_par_le_portage(memoire_isolee,
+                                                                         monkeypatch):
+    """Le coût sous la règle du stock à l'âge légal
+    (``Parametres.stock_age_legal``, ``scripts/stock_age_legal.py``) simule sa
+    grille par le portage, la règle dans les paramètres de la demande
+    (action 161) : couple pour couple, chaque nombre sous son type, ce que le
+    jumeau calcule sous la même règle et ``pont.par_le_jumeau()`` ; et autre
+    chose que sans elle, sur la génération que la règle touche — partie avant
+    la bascule sous ``droit_commun``, après sous ``acquis``."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    from retraite_notionnelle import cout
+    from retraite_notionnelle.config import StockAgeLegal
+
+    monkeypatch.setattr(cout, "generations", lambda: (1950, 2000))
+    sans = cout._pensionnes(Simulateur(Parametres()), GRILLE_D_ESSAI, "droit")[0]
+    for regle, touchee in ((StockAgeLegal.DROIT_COMMUN, 1950), (StockAgeLegal.ACQUIS, 2000)):
+        simulateur = Simulateur(replace(Parametres(), stock_age_legal=regle))
+        with pont.par_le_jumeau():
+            en_python = cout._pensionnes(simulateur, GRILLE_D_ESSAI, "droit")
+        par_le_portage = cout._pensionnes(simulateur, GRILLE_D_ESSAI, "droit")
+        assert par_le_portage == en_python, regle
+        assert (_types([vars(p) for p in par_le_portage[0]])
+                == _types([vars(p) for p in en_python[0]])), regle
+        # La pension de chaque scénario : ``acquis`` ne touche que les
+        # prospectifs, que le volet de la proposition ne porte pas.
+        assert any(p.pensions != q.pensions for p, q in zip(par_le_portage[0], sans)
+                   if p.generation == touchee), regle
 
 
 def test_sous_monkeypatch_le_cout_simule_sa_grille_par_le_portage(monkeypatch):

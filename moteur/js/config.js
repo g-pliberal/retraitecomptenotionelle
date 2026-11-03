@@ -131,6 +131,25 @@ export const AgeConversionDroitsAcquis = Object.freeze({
   LIQUIDATION: "liquidation",
 });
 
+/**
+ * Le stock à l'âge légal (`stock_age_legal`) : la pension de qui est parti à
+ * l'âge que sa loi lui ouvrait, convertie sans lui faire payer cet âge — les
+ * variantes que `scripts/stock_age_legal.py` chiffre (action 161). `null`, le
+ * défaut, ne convertit rien. ``DROIT_COMMUN`` et ``TOUT_DROIT`` : dans les
+ * scénarios rétroactifs, une pension liquidée avant la bascule, à l'âge légal
+ * ou après mais avant l'âge de référence, se divise au diviseur de l'âge de
+ * référence ; l'âge légal est celui de la génération, ou celui que le droit de
+ * l'assuré lui ouvrait, régime spécial et carrière longue compris. ``ACQUIS`` :
+ * dans les scénarios prospectifs, les droits acquis se convertissent à l'âge
+ * légal de la génération quand il est plus bas que l'âge de conversion. Voir
+ * config.py.
+ */
+export const StockAgeLegal = Object.freeze({
+  DROIT_COMMUN: "droit_commun",
+  TOUT_DROIT: "tout_droit",
+  ACQUIS: "acquis",
+});
+
 /** Table de mortalité servant au coefficient de conversion. */
 /**
  * La valeur de `population_conversion` qui rattache chaque carrière au vingtile
@@ -288,6 +307,10 @@ export const PARAMETRES_DEFAUT = Object.freeze({
   //: prospectif. ``reference`` fait payer l'anticipation une seconde fois sur
   //: des droits déjà ouverts ; ``liquidation`` rend la conversion neutre.
   age_conversion_droits_acquis: AgeConversionDroitsAcquis.REFERENCE,
+  //: Le stock à l'âge légal : `null`, le défaut, ne convertit rien ;
+  //: `droit_commun`, `tout_droit` et `acquis` sont les variantes que
+  //: `scripts/stock_age_legal.py` chiffre (`StockAgeLegal`). Voir config.py.
+  stock_age_legal: null,
   //: Table de génération plutôt que table du moment.
   table_generation: true,
   // L'âge terminal des tables est une constante du module de mortalité
