@@ -1352,6 +1352,258 @@ aucun calcul, mais ce qu'on lit des scénarios 2 à 6, ou ce qui les garde.
 **Ce que le propriétaire tranche** : si le réglage « Part de la cotisation
 portée au compte » reste sur le site, et sous quel libellé.
 
+### 179. Le traitement passé des fonctionnaires : le point d'indice de chaque année, et non le salaire moyen — `à faire`
+
+**D'où elle vient.** La demande du propriétaire, le 3 novembre 2026, sur les
+montants des systèmes 2 et 3 : « Je veux un calcul très précis et pas des
+approximations », « Il faut quelque chose de solide concernant les salaires
+passés », car « L'enjeu est trop important pour qu'on donne des chiffres
+erronés » ; et sa règle : « on se base sur des sources vérifiées, on n'invente
+rien. Il faudra pouvoir justifier chaque chiffre avec preuve à l'appui. » Le
+chantier compte cinq actions, 179 à 183, chacune lancée dans une session neuve.
+Celle-ci prend le défaut le plus lourd que la session du jour a mesuré ; sa
+note du 3 novembre 2026 en donne le calcul, à refaire tel quel.
+
+- Sans relevé, le moteur rebâtit toute carrière d'un seul montant par métier :
+  le revenu d'une année est le niveau saisi, fois le profil d'âge que l'INSEE
+  donne au groupe, fois le salaire moyen par tête (SMPT) de l'année
+  (`moteur/js/carriere.js:2365-2372`), fonctionnaires compris. Saisir son
+  indice majoré n'y change rien : il se valorise au point de l'année courante,
+  puis se rapporte au SMPT (`moteur/js/saisie.js:1437-1440`,
+  `moteur/js/contexte.js:283-291`).
+- Le point d'indice (`legislation/point_indice_fonction_publique.csv`, valeur
+  au 1er janvier) a été multiplié par 1,37 de 1990 à 2024, le SMPT
+  (`macro/salaire_moyen.csv`) par 2,22. À indice constant, le traitement d'une
+  année valait, rapporté à 2024, 1,87 fois ce que le modèle en reconstitue en
+  1975, 1,62 en 1990, 1,52 en 2000, 1,24 en 2010 et 1,14 en 2020.
+- Le compte notionnel le reçoit en entier. Fonctionnaire de l'État née en 1962,
+  carrière simple de 22 à 64 ans au niveau 1 : 588 € par mois au système 2 du
+  site et 2 624 € au système 3, en euros de 2026 ; 792 € et 3 421 € si son
+  traitement avait suivi le point, quand le système 1 sert 3 246 €. Née en
+  1958, partie à 62 ans : +25 % et +20 %. C'est un ordre de grandeur : les
+  refontes de grilles n'y entrent pas, et la progression y reste celle du
+  profil de l'INSEE.
+- Le scénario 1 d'un fonctionnaire parti avant l'année courante en dépend
+  aussi, par le traitement de ses derniers mois, rebâti de la même façon : à
+  mesurer.
+- Ni `docs/limites/` ni la méthodologie ne disent qu'un groupe ait suivi une
+  autre courbe que le salaire moyen. L'action 158 apporte les grilles, mais au
+  fonctionnaire qui pré-remplit sa carrière ; les autres gardent le SMPT.
+
+**Ce qui est à faire**, une étape par session, chaque chiffre neuf tiré d'une
+source vérifiée, cité, et recomposé par un test :
+
+1. **La limite dite** (site et limites) : `docs/limites/` et la page Simuler
+   disent, pour un statut payé à l'indice dont la carrière n'a ni grille ni
+   traitement saisi, que les systèmes 2 à 4 sont sous-estimés, de l'ordre que
+   la note mesure ; un test des pages le tient.
+2. **Le point de chaque année, à la source** (données) : sa valeur à chaque
+   date d'effet, lue au décret n° 85-1148 du 24 octobre 1985 (article 3,
+   versions LEGI) et, avant lui, aux textes qui l'ont fixée — le fichier n'en
+   garde que le 1er janvier, et ne la lit au décret que depuis 1996 —, puis sa
+   moyenne annuelle au mois près. Un test recompose, pour quelques indices et
+   quelques années, un traitement que publie la DGAFP (barème des
+   traitements).
+3. **Le moteur** (modèle et portage, `carriere.js` puis son jumeau
+   `carriere.py`, au bit près des témoins) : d'abord le test, vu rouge — une
+   carrière d'un statut payé à l'indice, au profil plat, rend chaque année
+   l'indice fois la moyenne annuelle du point ; puis, pour ces statuts, le
+   traitement suit le point d'une année à l'autre, la progression reste celle
+   du profil, et l'indice saisi se valorise au point de l'année de sa ligne.
+   `python scripts/resumer_temoins.py` dit ce qui bouge, scénario par
+   scénario, le scénario 1 compris.
+4. **Le profil confronté** (données) : ce que le profil de l'INSEE
+   (`macro/profil_salaire_statut_public.csv`, coupe de 2023) fois le point
+   rend, contre les traitements moyens par âge et par année que la DGAFP et
+   l'INSEE publient. L'écart — les carrières qui avancent, les grilles qu'on
+   refait — se mesure, il ne se suppose pas.
+5. **La grille, quand l'action 158 l'aura** (modèle) : le corps, la date
+   d'entrée et les promotions donnent l'indice de chaque année (action 158,
+   étape 3), qui prend la place du profil ; ce qui reste du biais se mesure sur
+   ses carrières.
+
+**Ce que le propriétaire tranche** : les statuts qui suivent le point — les
+trois versants et les militaires, payés à l'indice ; les ouvriers de l'État et
+les magistrats, à vérifier au texte ; ce que suivent les primes, faute de série
+par corps : le point, le SMPT, ou la part moyenne que publie le rapport annuel
+de la DGAFP, lue à la source ; ce que vaut le traitement avant 1960, première
+année du fichier du point.
+
+### 180. Le relevé de carrière : le salaire au-dessus du plafond, le traitement des fonctionnaires et les années en points, rendus par ses propres lignes — `à faire`
+
+**D'où elle vient.** La même demande, le 3 novembre 2026 (action 179). Le
+relevé déposé est « la saisie exacte, celle qui ne suppose rien »
+(`moteur/js/pages.js:1663`), mais trois de ses manques, déclarés
+(`docs/limites/5-hors-du-modele.md:380-402`), restent sans correction :
+
+- **Le plafond.** Le relevé du régime général ne porte le salaire que sous le
+  plafond de la Sécurité sociale, et la simulation lit ce revenu tronqué
+  (`moteur/js/releve-lu.js:955-963`). Cadre du privé payé deux plafonds en
+  2020 : le compte du système 2 reçoit 4 297,89 € au lieu de 8 014,94 €, soit
+  53,6 % de ses cotisations salariales de l'année (note du 3 novembre 2026). Le
+  relevé tous régimes d'info-retraite porte, lui, le revenu entier.
+- **Les fonctionnaires.** Leur relevé ne donne que des services, sans
+  traitement (action 158) : l'année est lue sans revenu, et la simulation lui
+  prête zéro si l'assuré ne la remplit pas (`moteur/js/releve-lu.js:932-940`).
+- **Les points.** Une année que le relevé ne chiffre qu'en points reçoit le
+  revenu le plus bas qui les ouvre : un plancher, et, pour le cadre d'avant
+  2019 dont le relevé fond les points de l'Agirc dans ceux de l'Agirc-Arrco, un
+  revenu trop haut (`docs/limites/5-hors-du-modele.md:387-399`).
+
+**Ce qui est à faire**, une étape par session, chaque règle tirée des barèmes
+de la caisse et recomposée par un test, sur un exemple qu'elle publie ou un
+calcul posé à la main :
+
+1. **Au-dessus du plafond** (saisie et modèle) : quand le relevé porte les
+   points complémentaires de l'année, ils rendent le salaire entier — les
+   points, fois le salaire de référence de l'année, font la cotisation au taux
+   de calcul des points, que les taux de chaque tranche partagent entre le
+   plafond et l'au-delà. Les points forfaitaires d'une garantie minimale ne
+   disent qu'un maximum, et la lecture le dit.
+2. **Les années de fonctionnaire** (saisie) : leurs services, datés au relevé,
+   reçoivent le traitement que l'action 179, puis la grille de l'action 158,
+   leur donne, écrit dans les lignes du relevé, que l'assuré voit et corrige.
+3. **Les années en points** (saisie) : le revenu exact là où le barème est
+   proportionnel, le cadre d'avant 2019 lu au barème de l'Agirc, et chaque
+   plancher qui reste dit ligne par ligne.
+4. **Les points du RAFP**, depuis 2005 : les primes de l'année, que ses points
+   disent sous le plafond de 20 % du traitement (action 158, étape 5).
+
+**Ce que le propriétaire tranche** : si le site demande d'abord le relevé tous
+régimes, qui porte le revenu entier ; ce que la simulation fait quand les
+points contredisent le revenu porté.
+
+### 181. Les salaires passés du privé sans relevé : plusieurs salaires connus, et la courbe de son groupe plutôt que la moyenne — `à faire`
+
+**D'où elle vient.** La même demande, le 3 novembre 2026 (action 179), et la
+remarque du propriétaire : la stagnation des salaires, que des professions ont
+subie plus durement que d'autres. Ce que le modèle en fait :
+
+- Sans relevé, un seul montant par métier, « un salaire d'aujourd'hui »
+  (`moteur/js/contexte.js:283-285`) et « celui du milieu de carrière »
+  (`moteur/js/pages.js:2026-2033`), déformé par un profil d'âge que l'INSEE
+  observe une année (2024 pour le privé, `macro/profil_salaire_categorie.csv`),
+  puis porté dans le temps par le SMPT de toute l'économie
+  (`macro/salaire_moyen.csv` : les salaires et traitements bruts rapportés à
+  l'emploi salarié, en personnes physiques).
+- La stagnation générale y est : le SMPT est la série observée, certifiée de
+  1950 à 2025, et non un taux supposé. N'y est pas qu'un groupe ait suivi une
+  autre courbe. Le seul que le modèle connaisse est le salaire minimum, par le
+  profil `smic` : 0,56 fois le salaire moyen en 1951, 0,40 en 1970, 0,56 en
+  1999 et 0,52 en 2024 (`docs/methodologie.md:2523-2525`).
+- Le SMPT est une moyenne par tête : le temps partiel et la structure des
+  emplois la déplacent, et un salarié qui garde son emploi n'en suit pas
+  forcément la courbe. L'écart est à mesurer contre une série en équivalent
+  temps plein, ou à structure constante.
+- Pour un métier d'autrefois, l'assuré donne un salaire d'aujourd'hui, qu'il
+  n'a jamais touché.
+
+**Ce qui est à faire**, une étape par session, chaque série certifiée à sa
+source et chaque chiffre recomposé par un test :
+
+1. **Plusieurs salaires connus** (saisie, modèle et site) : un métier reçoit,
+   si l'assuré les a, des salaires datés — une fiche de paie, un avis
+   d'imposition —, chacun en euros de son année ; entre deux, le niveau relatif
+   s'interpole, et la carrière rebâtie passe exactement par chacun, ce que le
+   test vérifie. Puis la liste d'un champ de saisie de plus
+   (`moteur/CLAUDE.md`).
+2. **Les séries par groupe** (données, sans code du modèle) : celles que
+   l'INSEE et la DARES publient du salaire moyen par catégorie
+   socioprofessionnelle et par secteur — depuis quand, en quelle unité (par
+   tête, en équivalent temps plein, à structure constante) —, chacune
+   récupérée, certifiée par `scripts/verifier_donnees.py` et recoupée à un
+   chiffre publié.
+3. **Le moteur** (modèle et portage, avec son jumeau) : la courbe d'un métier
+   devient celle de son groupe, rapportée à la moyenne ; avant la première
+   année de la série, le SMPT, et la page le dit.
+4. **L'écart dit** (limites et site) : ce que la courbe de groupe déplace, par
+   génération et par groupe, chiffré par `python scripts/resumer_temoins.py`.
+
+**Ce que le propriétaire tranche** : les groupes — la catégorie, le secteur,
+le décile ; la série de base, par tête ou en équivalent temps plein ; ce que
+devient un changement de groupe en cours de carrière.
+
+### 182. Les taux de cotisation au mois près, et non au 1er janvier — `à faire`
+
+**D'où elle vient.** La même demande, le 3 novembre 2026 (action 179) : « Je
+veux un calcul très précis et pas des approximations. » Le taux d'une année
+est celui du 1er janvier (`docs/methodologie.md:1267-1269`,
+`regimes/taux_cotisation_annuels.csv:12-14`) : un changement en cours d'année
+n'agit qu'au 1er janvier suivant. Ce que la règle déplace, dans le dépôt même :
+
+- La retenue des fonctionnaires passe de 8,9 % à 7,85 % le 1er février 1991
+  (article L. 61, versions LEGI : `regimes/fonction_publique_etat.yaml:190-196`).
+  Le modèle garde 8,9 % toute l'année, quand un mois à 8,9 % et onze à 7,85 %
+  font 7,94 % : 12 % de trop sur 1991. Le régime général garde de même tout
+  1991 le taux du 1er janvier, que la réforme du 1er février a changé
+  (`docs/methodologie.md:1268-1269`).
+- Avant 1967, le régime général prend une moyenne de période, 8,60 %
+  (`regimes/regime_general.yaml`, périodes 1945-1950 et 1951-1971, notes des
+  lignes 64 à 74), quand son taux est de 8 % en 1946, d'après la même fiche, et
+  de 8,5 % en 1967, d'après la table annuelle.
+- La table annuelle ne couvre que le régime général, les salariés agricoles,
+  les cultes, Mayotte, Saint-Pierre-et-Miquelon et les régimes des
+  indépendants d'avant 2018 ; les autres gardent le taux de leurs périodes,
+  dont certaines sont des moyennes.
+- L'Arrco prend le taux contractuel de sa fiche, 4 % appelé à 102,5 % en 1971
+  (`regimes/arrco.yaml:118-123`) ; ce que des accords ont pu fixer au-delà est
+  à établir aux textes.
+
+**Ce qui est à faire**, une étape par session, chaque taux lu à son texte daté :
+
+1. **Les dates** (données) : chaque taux garde la date d'effet de son texte
+   (versions LEGI, barèmes datés d'OpenFisca), et non sa valeur au 1er janvier.
+   Le test : la retenue de 1991, 7,9375 %, de ses deux versions de L. 61.
+2. **Le moteur** (modèle et portage, avec son jumeau) : le taux d'une année
+   est la moyenne de ses taux datés, pondérée par les mois que la ligne cotise,
+   ceux d'avant le départ l'année du départ ; le scénario 1 aussi, là où un
+   taux achète des points, l'étape suivant alors `docs/veille_droit.md`.
+3. **Avant 1967** (données) : le taux du régime général de chaque année, de
+   1945 à 1966, lu aux ordonnances et aux décrets du Journal officiel, chacun
+   avec son texte.
+4. **Les moyennes qui restent** (données) : la liste des fiches dont le taux
+   est une moyenne de période, et pour chacune le taux de chacun de ses textes.
+5. **Le plafond** (données) : vérifier que le plafond annuel est la somme des
+   douze plafonds mensuels, les années où il a changé en cours d'année.
+6. **L'Arrco et l'Agirc au-delà du taux obligatoire** (données) : ce que les
+   accords en disent, et, à défaut, ce que les points du relevé en montrent
+   (action 180).
+
+**Ce que le propriétaire tranche** : si la règle du 1er janvier tombe partout,
+paramètres du scénario 1 compris, ou pour les seuls taux de cotisation.
+
+### 183. La preuve : la carrière rebâtie confrontée à des carrières réelles, et son erreur publiée — `à faire`
+
+**D'où elle vient.** La même demande, le 3 novembre 2026 (action 179) : « Il
+faudra pouvoir justifier chaque chiffre avec preuve à l'appui. » Les
+confrontations du dépôt éprouvent les règles sur des carrières données :
+l'estimation officielle, Destinie 2, TRAJECTOiRE sur les cas types du COR, la
+carrière du propriétaire contre « Mon estimation retraite » (action 142,
+étape 2). Aucune ne mesure de combien une carrière rebâtie d'un montant par
+métier s'écarte de la carrière réelle, ni donc ce que valent les montants
+d'un assuré qui ne dépose pas son relevé.
+
+**Ce qui est à faire**, une étape par session :
+
+1. **Les sources** (données, sans code) : les trajectoires de salaire publiées
+   et ouvertes — l'échantillon interrégimes de cotisants de la DREES, les cas
+   types du COR et leurs profils, les panels de l'INSEE —, ce que chacune donne
+   (moyennes par génération et par âge, quantiles, carrières types), sa
+   licence et son unité.
+2. **La confrontation** (modèle) : pour chaque trajectoire, la carrière que le
+   simulateur rebâtit de ce qu'un assuré saisirait — un montant par métier,
+   puis les salaires connus de l'action 181 —, comparée année par année, et
+   l'erreur rangée par groupe, par génération et par statut.
+3. **L'erreur publiée** (site) : la page Méthode dit, chiffres à l'appui, de
+   combien une carrière rebâtie peut s'écarter de la réelle ; la page Simuler
+   le rappelle sous le résultat d'une carrière rebâtie.
+4. **Des relevés réels**, si le propriétaire en réunit avec l'accord de leurs
+   titulaires : chacun devient un témoin, la carrière rebâtie contre le
+   relevé.
+
+**Ce que le propriétaire tranche** : les sources retenues ; s'il réunit des
+relevés réels, et sous quelle anonymisation.
+
 ---
 
 ## Les actions en cours
