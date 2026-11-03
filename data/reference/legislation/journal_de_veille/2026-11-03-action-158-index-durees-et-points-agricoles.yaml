@@ -1,0 +1,30 @@
+date: "2026-11-03"
+session: "action 158 : le filtre de l'index de la DILA élargi aux durées d'échelon et à D. 732-76 et D. 732-77 du code rural, l'index reconstruit"
+consulte: >-
+  Aucune règle du scénario 1 n'est écrite. Seize incréments LEGI de la DILA, du 30 décembre 2025
+  au 16 janvier 2026, et onze incréments JORF, du 1er au 20 janvier 2026, sur
+  echanges.dila.gouv.fr : les XML de D. 732-76 (LEGIARTI000006597490) et de D. 732-77
+  (LEGIARTI000006597491) du code rural, republiés le 31 décembre 2025 et les 9, 14 et 15 janvier
+  2026, avec leur liste des versions et leurs liens ; ceux de R. 732-84 (LEGIARTI000006597487).
+  R. 732-67 (LEGIARTI000053328816) et les rédactions de 2026 de D. 732-76 et D. 732-77 dans
+  l'index. L'index LEGI et JORF publié le 2 novembre 2026, puis celui que le workflow
+  index-dila.yml a reconstruit le 3 novembre 2026 (run 41617807038). Les textes d'origine des
+  corps de l'État que cite le Noyau RH du CISIRH.
+trouve: >-
+  D. 732-76 et D. 732-77 n'ont eu chacun qu'une rédaction, du 22 avril 2005 au 1er janvier 2026,
+  la majoration des points de chef de 1952 à 1972, sans aucun des mots du filtre ; le décret
+  n° 2025-1409 du 30 décembre 2025 a réemployé leurs numéros pour le versement de l'article
+  L. 351-14-1 du code de la sécurité sociale. Le filtre d'avant prenait les statuts à leur
+  titre : 864 des 1 115 tableaux de durées d'échelon de l'index n'y étaient que par lui, et il
+  écartait des articles de durées sous des titres qu'il ne retient pas (décrets n° 95-370,
+  2020-959, 99-1073, 2019-1594, code de la recherche). Élargi, il garde les 1 115 sur leur seul
+  texte, et sur les incréments 32 documents LEGI et 88 JORF entrent, tous du sujet, aucun ne
+  sort. Reconstruit, l'index LEGI a 327 817 documents au lieu de 325 879, le JORF 518 291 au
+  lieu de 516 798, aucun sorti ; D. 732-76 et D. 732-77 y sont, au LEGI et au JORF, d'un texte
+  identique à celui des incréments ; l'index LEGI compte 1 633 textes de durées d'échelon au
+  lieu de 1 280, le JORF 1 682 au lieu de 1 360.
+reste: >-
+  Lire les durées d'échelon dans l'index reconstruit, grille par grille : la session suivante de
+  la file B. Pour l'action 131, lire D. 732-76 et D. 732-77 dans l'index ; R. 732-84 de 2005 à
+  2025 et l'article 2 du décret n° 81-790 restent hors de l'index. Puis le chaînage des
+  reclassements, les tableaux que l'index aplatit, le minimum de traitement.

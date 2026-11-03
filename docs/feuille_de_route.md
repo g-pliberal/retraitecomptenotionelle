@@ -6969,15 +6969,14 @@ l'inviterait aussi à relire le dépôt.
 ### 158. Les grilles indiciaires de la fonction publique : la carrière d'un fonctionnaire pré-remplie depuis son corps, plutôt que de mémoire — `en cours`
 
 **Reprise, au 3 novembre 2026.** Périmètre tranché le 2 novembre 2026 : « tout
-ce qu'on peut trouver », les trois versants et les militaires. Entrés,
-certifiés et recoupés : les grilles (l'État au Noyau RH puis au LEGI, la
-territoriale, l'hospitalière et les militaires au LEGI), le barème du décret
-n° 82-1105 depuis 1983 et les reclassements d'une grille à la suivante, échelon
-par échelon (`grilles/reclassements/`, 450 tableaux). Reste, dans l'ordre de la
-file : le chaînage, chaque tableau rattaché à ses grilles ; les durées
-d'échelon (au propriétaire : d'abord ? sans elles, aucun reclassement ne
-s'applique) ; les tableaux que l'index aplatit ; le minimum de traitement.
-Détail : la note des reclassements, du 3 novembre 2026.
+ce qu'on peut trouver », les trois versants et les militaires ; le 3, la durée
+des échelons d'abord. Entrés, certifiés et recoupés : les grilles, le barème du
+décret n° 82-1105 depuis 1983, les reclassements (450 tableaux). L'index de la
+DILA, élargi et reconstruit le 3 novembre, garde sur leur seul texte les
+articles qui fixent les durées d'échelon (1 633 textes au LEGI). Reste, dans
+l'ordre de la file : lire ces durées, grille par grille ; le chaînage des
+reclassements ; les tableaux que l'index aplatit ; le minimum de traitement.
+Détail : la note de l'index, du 3 novembre 2026.
 
 
 **D'où elle vient.** La demande du propriétaire, le 12 octobre 2026 : aller
