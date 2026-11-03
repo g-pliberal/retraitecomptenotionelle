@@ -20,6 +20,25 @@ sources:
     cnav_assiette_avpf.py). En 2026, la circulaire 2025/33 fixe 2 031,38 € par mois, 169
     fois le SMIC de janvier 2026 et non celui de juillet 2025 que R. 381-3 désigne :
     voir si la caisse s'en explique.
+  - >-
+    LE PÈRE, que le modèle affilie comme la mère : toute période d'éducation que la
+    saisie déclare depuis juillet 1972 porte l'assiette au compte, quel que soit le
+    sexe. La caisse n'affilie l'homme que depuis le 1er juillet 1979, et jusqu'au 31
+    décembre 1984 seulement s'il assume la charge d'un enfant ou d'un adulte handicapé ;
+    depuis le 1er janvier 1985, comme la femme (exposé « Parent au foyer - AVPF »,
+    version du 24 octobre 2025 ; circulaire Cnav 25/79 du 6 mars 1979). Le décret n°
+    73-88 ne nomme que « les mères de famille et les femmes » de 1978 à 1980
+    (LEGIARTI000006761985), « les femmes isolées » encore dans sa rédaction du 5 janvier
+    1985 (LEGIARTI000006761986), « les personnes isolées » et « celui des conjoints ou
+    concubins » depuis celle du 4 août 1985 (LEGIARTI000006761987) ; L. 381-1, à sa
+    codification, « la personne isolée et, pour un couple, l'un ou l'autre de ses
+    membres ». Lire la loi de 1979 et la loi n° 85-17 du 4 janvier 1985, dont l'index
+    de la DILA n'a que la notice, puis ne servir l'AVPF au père, dans les deux moteurs,
+    que depuis la date que les textes fixent, l'exception du handicap d'avant 1985
+    déclarée. Ni la condition de ressources, ni l'assiette ramenée, pour le bénéficiaire de la
+    prestation partagée d'éducation à taux partiel, à vingt ou à cinquante pour cent selon
+    le taux servi, ne se saisissent (action 175, étape 4, « Carrière :
+    cotisations-salaires »).
   lectures:
   - type: legifrance
     reference: L. 381-1 CSS
@@ -52,6 +71,15 @@ sources:
       l'assurance vieillesse du régime général ». Les périodes de 1972 à 1982 du régime
       général la comptent depuis le 14 octobre 2026.
     date: 2026-10-14
+  - type: legifrance
+    reference: >-
+      décret n° 73-88, article 1er, rédactions du 1er janvier 1978
+      (LEGIARTI000006761985 : « les mères de famille et les femmes »), du 5 janvier 1985
+      (LEGIARTI000006761986 : « les femmes isolées ») et du 4 août 1985
+      (LEGIARTI000006761987 : « les personnes isolées », « celui des conjoints ou
+      concubins ») ; L. 381-1 CSS, rédaction du 21 décembre 1985 (LEGIARTI000006742941),
+      lus dans l'index LEGI : le père n'y entre qu'en 1985
+    date: 2026-11-03
 textes_a_rattacher:
 - reference: L. 381-1 CSS
 - id: LEGIARTI000047961951
