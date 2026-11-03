@@ -274,6 +274,11 @@ def parts_de_la_pesee(lots: dict, par_code: dict, conditions: dict, decotes: dic
                                                                    and du_regime_general(c)),
                                      decotee, sexe_de)
             for age in AGES_DU_STOCK},
+        "decote_liquidants_2024_par_age": {
+            str(age): parts_par_sexe(du_flux, lambda c, age=age: (c.nouvelle and c.age == age
+                                                                   and du_regime_general(c)),
+                                     decotee, sexe_de)
+            for age in AGES_DU_STOCK},
     }
     stock = lots.get(ANNEE_DU_STOCK, [])
     debut, fin = TRANCHE_DU_STOCK
@@ -308,22 +313,26 @@ def parts_de_la_pesee(lots: dict, par_code: dict, conditions: dict, decotes: dic
 
 def parts_par_generation(lignes) -> dict:
     """La part de chaque classe de condition parmi les départs de chaque
-    génération, tous régimes (« tous ») et au seul régime général, les deux
-    sexes ensemble puis chacun. ``lignes`` : ``(génération, sexe, du régime
-    général, poids, classe)``."""
+    génération, tous régimes (« tous ») et groupe par groupe de la population
+    (le régime général toujours, vide s'il n'y part personne), les deux sexes
+    ensemble puis chacun ; et le poids de chaque groupe dans la génération
+    (« poids »). ``lignes`` : ``(génération, sexe, groupe, poids, classe)``."""
     masses: dict = {}
-    for generation, sexe, du_regime_general, poids, classe in lignes:
-        champs = ("tous", "regime_general") if du_regime_general else ("tous",)
-        for champ in champs:
+    for generation, sexe, groupe, poids, classe in lignes:
+        champs = masses.setdefault(str(generation), {"tous": {}, REGIME_GENERAL: {}})
+        for champ in ("tous", groupe):
             for cle in ("ensemble", sexe):
-                masse = (masses.setdefault(str(generation), {"tous": {}, "regime_general": {}})
-                         [champ].setdefault(cle, {}))
+                masse = champs.setdefault(champ, {}).setdefault(cle, {})
                 masse[classe] = masse.get(classe, 0.0) + poids
-    for champs in masses.values():
+    for generation, champs in masses.items():
+        total = somme_ordonnee(champs["tous"]["ensemble"].values())
+        poids_des_groupes = {champ: somme_ordonnee(sexes["ensemble"].values()) / total
+                             for champ, sexes in champs.items() if champ != "tous" and sexes}
         for sexes in champs.values():
             for cle, masse in sexes.items():
-                total = somme_ordonnee(masse.values())
-                sexes[cle] = {classe: valeur / total for classe, valeur in masse.items()}
+                somme = somme_ordonnee(masse.values())
+                sexes[cle] = {classe: valeur / somme for classe, valeur in masse.items()}
+        champs["poids"] = poids_des_groupes
     return masses
 
 
@@ -351,8 +360,7 @@ def lignes_des_generations(tetes: G.GrilleEnTetes, par_code: dict, conditions: d
                      * tetes.part_de(pensionne.code, generation))
             if masse > 0.0:
                 variante = par_code[pensionne.code]
-                lignes.append((generation, variante.cas.sexe, variante.groupe == REGIME_GENERAL,
-                               masse, lu[1]))
+                lignes.append((generation, variante.cas.sexe, variante.groupe, masse, lu[1]))
     return lignes
 
 
@@ -381,14 +389,21 @@ def sources(temoin: dict) -> dict:
                 for sexe, ligne in lignes.items()}
 
     stock = temoin["conditions_par_age"]["series"]["stock"]
+    flux_par_age = {sexe: annees[str(M.ANNEE_EACR)] for sexe, annees
+                    in temoin["conditions_par_age"]["series"]["flux"].items()}
     return {
         "cnav": {"liquidants_2024": de_la_table_h(CNAV, "flux", M.ANNEE_EACR),
                  "retraites_2024": de_la_table_h(CNAV, "stock", M.ANNEE_EACR),
                  "decote_liquidants_2024": de_la_table_h(CNAV, "flux", M.ANNEE_EACR, "decote"),
                  "decote_liquidants": {str(annee): decote_de_l_annee(str(annee))
                                        for annee in ANNEES_DE_LA_DECOTE},
+                 "decote_liquidants_2024_par_age": {
+                     str(age): {sexe: (flux_par_age[sexe][str(age)].get("decote", 0.0)
+                                       / flux_par_age[sexe][str(age)]["ensemble"])
+                                for sexe in SEXES_ET_ENSEMBLE}
+                     for age in AGES_DU_STOCK},
                  "stock_2024_par_age": {
-                     str(age): {sexe: (stock[sexe][str(M.ANNEE_EACR)][str(age)]["decote"]
+                     str(age): {sexe: (stock[sexe][str(M.ANNEE_EACR)][str(age)].get("decote", 0.0)
                                        / stock[sexe][str(M.ANNEE_EACR)][str(age)]["ensemble"])
                                 for sexe in SEXES_ET_ENSEMBLE}
                      for age in AGES_DU_STOCK},
@@ -750,6 +765,12 @@ def imprimer_la_decote(resultat: dict) -> None:
                          v["decote_liquidants"][annee][sexe]))
     for age in map(str, AGES_DU_STOCK):
         for sexe in SEXES_ET_ENSEMBLE:
+            print(_ligne(f"régime général, liquidants de 2024 de {age} ans, décote, {sexe}",
+                         cnav["decote_liquidants_2024_par_age"][age][sexe],
+                         e["decote_liquidants_2024_par_age"][age][sexe],
+                         v["decote_liquidants_2024_par_age"][age][sexe]))
+    for age in map(str, AGES_DU_STOCK):
+        for sexe in SEXES_ET_ENSEMBLE:
             print(_ligne(f"régime général, stock de 2024 à {age} ans (née en "
                          f"{M.ANNEE_EACR - int(age)}), décote, {sexe}",
                          cnav["stock_2024_par_age"][age][sexe],
@@ -777,6 +798,18 @@ def imprimer_la_decote(resultat: dict) -> None:
                                for p in (eteinte, version)]
                     print(f"| {generation}, {champ}, {sexe}, {classe} | {_pc(source)} | "
                           f"{_pc(cible)} | {_pc(valeurs[0])} | {_pc(valeurs[1])} |")
+    print()
+    print(f"Chaque groupe de la population dans les départs de la génération pris à "
+          f"{AGE_DES_GENERATIONS} ans (version) : son poids, sa décote, sa surcote.")
+    print()
+    print("| génération, groupe | poids | décote | surcote |")
+    print("|---|---|---|---|")
+    for generation in map(str, GENERATIONS_COMPTEES):
+        champs = version["generations"].get(generation, {})
+        for groupe, poids in sorted(champs.get("poids", {}).items(), key=lambda g: -g[1]):
+            classes = champs[groupe]["ensemble"]
+            print(f"| {generation}, {groupe} | {_pc(poids)} | "
+                  f"{_pc(classes.get('decote', 0.0))} | {_pc(classes.get('surcote', 0.0))} |")
 
 
 def main(argv: list[str] | None = None) -> int:

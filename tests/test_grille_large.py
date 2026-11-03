@@ -3379,6 +3379,14 @@ def test_la_mesure_de_la_surcote_lit_ses_sources_annee_par_annee():
         {"ensemble": 69_611 / 551_996, "F": 40_845 / 285_736, "H": 28_766 / 266_260})
     assert cnav["stock_2024_par_age"]["67"]["ensemble"] == pytest.approx(85_676 / 653_763)
     assert sorted(cnav["stock_2024_par_age"], key=int) == [str(a) for a in range(60, 68)]
+    # Ses liquidants de 2024, âge par âge : à 62 ans, 17 321 / 184 872 ; à 65
+    # ans, 16 144 / 46 737 ; à 67 ans, 1 970 / 60 530.
+    assert cnav["decote_liquidants_2024_par_age"]["62"]["ensemble"] == pytest.approx(
+        17_321 / 184_872)
+    assert cnav["decote_liquidants_2024_par_age"]["65"]["ensemble"] == pytest.approx(
+        16_144 / 46_737)
+    assert cnav["decote_liquidants_2024_par_age"]["67"]["ensemble"] == pytest.approx(
+        1_970 / 60_530)
 
 
 def test_la_mesure_de_la_surcote_construit_la_version_la_constante_allumee(monkeypatch):
@@ -3417,7 +3425,8 @@ def test_la_mesure_compte_les_stocks_a_la_condition_et_la_decote_d_apres_1960():
     inconnues sur 10 ; à 70-74 ans, aucune connue. La décote des liquidants du
     régime général : en 2022, 3 sur 3 + 1, les hommes 3 sur 3, les femmes 0
     sur 1 ; en 2024, 2 sur 2 + 6, les hommes 2 sur 2, les femmes 0 sur 6 ;
-    aucun en 2020. Son stock de 2024 par âge : à 64 ans, 4 décotés sur
+    aucun en 2020 ; âge par âge en 2024, à 62 ans, les mêmes, et aucun
+    liquidant de 64 ans. Son stock de 2024 par âge : à 64 ans, 4 décotés sur
     4 + 2 + 3, les hommes 4 sur 6, les femmes 0 sur 3 ; à 63 ans, 1 sur 1 ; à
     62 ans, 2 sur 2 + 6."""
     from retraite_notionnelle.controle_eacr import Cohorte
@@ -3491,21 +3500,29 @@ def test_la_mesure_compte_les_stocks_a_la_condition_et_la_decote_d_apres_1960():
                                                   "H": pytest.approx(1.0)}
     assert regime["stock_2024_par_age"]["62"] == pytest.approx(
         {"ensemble": 2 / 8, "F": 0.0, "H": 1.0})
+    assert regime["decote_liquidants_2024_par_age"]["62"] == pytest.approx(
+        {"ensemble": 2 / 8, "F": 0.0, "H": 1.0})
+    assert regime["decote_liquidants_2024_par_age"]["64"] == {"ensemble": None, "F": None,
+                                                              "H": None}
 
 
 def test_la_mesure_compte_les_departs_de_chaque_generation_par_classe():
     """La part de chaque classe de départ dans une génération de la grille,
-    tous régimes et au seul régime général, sexe par sexe, sur des lignes
-    posées à la main ``(génération, sexe, régime général, poids, classe)`` :
-    la génération 1960, 3 + 1 + 2 + 2 = 8 têtes, dont 3 + 2 = 5 décotées et 2
-    surcotées ; ses femmes, 3 sur 4 décotées ; ses hommes, 2 et 2 sur 4 ; au
-    régime général, 3 + 2 + 2 = 7, dont 5 décotées ; la génération 1965, un
-    homme hors du régime général, en carrière longue."""
+    tous régimes et groupe par groupe, sexe par sexe, et le poids de chaque
+    groupe, sur des lignes posées à la main ``(génération, sexe, groupe,
+    poids, classe)`` : la génération 1960, 3 + 1 + 2 + 2 = 8 têtes, dont
+    3 + 2 = 5 décotées et 2 surcotées ; ses femmes, 3 sur 4 décotées ; ses
+    hommes, 2 et 2 sur 4 ; au régime général, 3 + 2 + 2 = 7, dont 5 décotées,
+    7 têtes sur 8 ; la fonction publique de l'État, 1 sur 8 ; la génération
+    1965, un homme de la CNRACL, en carrière longue."""
     S = _mesure_de_la_surcote()
-    lignes = [(1960, "F", True, 3.0, "decote"), (1960, "F", False, 1.0, "taux_plein_autre"),
-              (1960, "H", True, 2.0, "surcote"), (1960, "H", True, 2.0, "decote"),
-              (1965, "H", False, 4.0, "carriere_longue")]
+    rg, fpe = "regime_general", "fonction_publique_etat_civile"
+    lignes = [(1960, "F", rg, 3.0, "decote"), (1960, "F", fpe, 1.0, "taux_plein_autre"),
+              (1960, "H", rg, 2.0, "surcote"), (1960, "H", rg, 2.0, "decote"),
+              (1965, "H", "cnracl", 4.0, "carriere_longue")]
     parts = S.parts_par_generation(lignes)
+    assert parts["1960"]["poids"] == pytest.approx({rg: 7 / 8, fpe: 1 / 8})
+    assert parts["1960"][fpe]["F"] == pytest.approx({"taux_plein_autre": 1.0})
     assert parts["1960"]["tous"]["ensemble"] == pytest.approx(
         {"decote": 5 / 8, "surcote": 2 / 8, "taux_plein_autre": 1 / 8})
     assert parts["1960"]["tous"]["F"] == pytest.approx(
@@ -3514,7 +3531,8 @@ def test_la_mesure_compte_les_departs_de_chaque_generation_par_classe():
     assert parts["1960"]["regime_general"]["ensemble"] == pytest.approx(
         {"decote": 5 / 7, "surcote": 2 / 7})
     assert parts["1965"]["tous"]["H"] == pytest.approx({"carriere_longue": 1.0})
-    assert "1965" not in parts or parts["1965"]["regime_general"] == {}
+    assert parts["1965"]["regime_general"] == {}
+    assert parts["1965"]["cnracl"]["ensemble"] == pytest.approx({"carriere_longue": 1.0})
 
 
 # -- la grille élargie au portage (action 161, étape 7) ----------------------------
