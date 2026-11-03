@@ -4640,7 +4640,13 @@ institutions:
           un tableau est abîmé au LEGI ou y manque peut-être.
           tests/test_chainage_grilles.py recoupe aux articles du LEGI et au
           noyau les décrets n° 2016-201 et 2016-203, n° 90-680, n° 95-370 et
-          2017-171, n° 2004-1439 et n° 96-1113.
+          2017-171, n° 2004-1439 et n° 96-1113. Corrigé le même jour après la
+          relecture R-B3 (file B3-bis) : un reclassement ne cherche que les
+          corps du statut que sa phrase nomme, par son numéro ou par une date
+          que les visas résolvent en un seul décret identifié ; le noyau se lit
+          par ses corps et par ses grades, chaque citation datée ; le lien
+          article lit chaque version de la période ; a_lire_au_jorf.csv
+          distingue les articles de durées non lus (cas non_lu).
 
       - id: dila_legi_duree_requise
         titre: Durée d'assurance requise, générations 1953-1957

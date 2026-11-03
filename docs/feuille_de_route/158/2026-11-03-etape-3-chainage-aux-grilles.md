@@ -252,3 +252,10 @@ corps du noyau (34) ; échelons (1) ; plusieurs coupes (1).
 ni son portage ne lisent `grilles/`. Des fichiers partagés ont reçu des
 lignes : `data/sources.yaml` (l'entrée `dila_legi_chainage`, et une phrase de
 celle des durées).
+
+*Renvoi, le 3 novembre 2026.* La relecture R-B3
+(`2026-11-03-relecture-chainage-aux-grilles.md`) a trouvé 5 reclassements
+rattachés au mauvais corps et un défaut au noyau ; leurs corrections, et la
+citation exacte de l'art. 116 du n° 2017-171 (« applicable au corps des
+ingénieurs de recherche régi par le décret du 31 décembre 1985 susvisé »), sont
+dans `2026-11-03-corrections-de-la-relecture-r-b3.md`.

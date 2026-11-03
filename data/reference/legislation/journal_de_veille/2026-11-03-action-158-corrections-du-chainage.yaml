@@ -1,0 +1,30 @@
+date: "2026-11-03"
+session: "action 158, file B3-bis : les corrections de la relecture R-B3 du chaînage des durées et des reclassements aux grilles (scripts/fetch/dila_legi_chainage.py, data/reference/grilles/chainage/)"
+consulte: >-
+  Aucune règle du scénario 1 n'est écrite : ni les durées ni les reclassements ne servent au
+  calcul. L'index LEGI publié du dépôt, à jour de l'incrément 20261102-213929, récupéré sans
+  reconstruction : les visas de n° 2016-581 (LEGITEXT000032523056) et n° 2017-786
+  (LEGITEXT000034750633) ; leurs art. 12, 36, 123, 139, 157 et 164 ; n° 2004-1439, art. 23-1 ;
+  n° 2017-1031, art. 39 ; n° 2019-50, art. 24 et 37 ; les notices des n° 67-91, 2003-1260,
+  90-680, 92-1189, 70-738, 86-492 ; les articles de durées des n° 96-158, 97-364, 84-238,
+  2011-1317, 2012-1098, 2015-576, 91-1025, 98-385, 87-1103 ; les arrêtés d'échelonnement
+  LEGITEXT000019591150, 019668607 et 019420380 (visas et articles), 019669914 (visas) ; les versions
+  des art. 3 de LEGITEXT000031320442 et 5 de LEGITEXT000026383946 ; n° 2021-1264, art. 1 et 2 ;
+  n° 2017-171, art. 116. Le Noyau RH du CISIRH (juillet 2026), au dépôt : corps, grades et
+  textes des corps 00003, 00021, 00172, 00195, 00250, 00395, 00409, 00490, 00493, 00550, 00641,
+  00649, 01005, 01040, 01102, 01114, 01140, 01153, 01172, 01230, 01282, 01329. Le JORF n'a pas
+  été ouvert.
+trouve: >-
+  Un décret qui modifie plusieurs statuts nomme souvent le statut du corps reclassé par sa
+  seule date (« régi par le décret du 20 janvier 1967 susvisé ») : ses visas la résolvent en
+  un numéro (n° 67-91), que le LEGI identifie par sa notice. Chercher le corps parmi tous ceux
+  que le noyau relie au décret modificatif rattachait les géomètres de l'IGN aux
+  géomètres-cadastreurs et les professeurs des écoles de Polynésie à la métropole : 13 des 862
+  groupes de reclassement restent rattachés, au lieu de 18. Au Noyau RH, un corps cite son
+  statut dans corps.csv quand ses grades ne le citent pas ; les deux se lisent, chaque
+  citation avec ses dates. Un visa « modifié par le décret n° … » ne vise qu'un statut.
+reste: >-
+  Une relecture indépendante de ces corrections. Rattacher davantage sans deviner : la date qui
+  ouvre la phrase dans le lecteur des reclassements, le grade écrit avant l'en-tête, le décret
+  qui modifie un seul statut, nommé dans son titre. Les 40 cas manque et les 87 non_lu de
+  a_lire_au_jorf.csv.

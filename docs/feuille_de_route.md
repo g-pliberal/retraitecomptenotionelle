@@ -7116,14 +7116,14 @@ l'inviterait aussi à relire le dépôt.
 
 **Reprise, au 3 novembre 2026.** Périmètre : les trois versants et les
 militaires. Entrés et certifiés : grilles, barème depuis 1983, reclassements
-(450 tableaux), durées d'échelon (778 tableaux). Chaînage fait (étape 3, à
-relire) : 498 des 1 675 grades des tableaux de durées rattachés à leur grille,
-corps et période, 18 des 862 groupes de reclassement (État) ; le reste déclaré,
-avec sa raison ; `grilles/chainage/a_lire_au_jorf.csv`, 264 cas pour le JORF.
-Reste : la relecture du chaînage ; puis en rattacher plus sans deviner (date
-qui ouvre la phrase, au lecteur des reclassements ; grade écrit avant
-l'en-tête ; en-têtes des libellés de grilles) ; les 97 versions hors du motif ;
-les refus, au JORF ; le minimum de traitement. Détail : la note de l'étape 3.
+(450 tableaux), durées d'échelon (778). Chaînage (étape 3) relu par R-B3, corrigé
+par B3-bis : 5 reclassements faux défaits, le corps cherché au seul statut que
+la phrase nomme ; noyau lu par corps et par grades, citations datées ; 498 des
+1 675 grades de durées et 13 des 862 groupes de reclassement rattachés, relus à
+la source ; `a_lire_au_jorf.csv` : 137 abîmés, 87 non lus, 40 manquants. Reste :
+relire ces corrections ; rattacher plus sans deviner (date qui ouvre la phrase,
+grade avant l'en-tête, décret modifiant un seul statut) ; les 97 versions hors du
+motif ; les refus, au JORF ; le minimum de traitement. Détail : note B3-bis.
 
 
 **D'où elle vient.** La demande du propriétaire, le 12 octobre 2026 : aller
