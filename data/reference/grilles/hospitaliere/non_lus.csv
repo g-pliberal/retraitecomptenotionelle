@@ -2,6 +2,7 @@
 # source_id: dila_legi_grilles — DILA, base LEGI, par l'index du dépôt (scripts/fetch/dila_index.py) ; scripts/fetch/dila_legi_grilles.py
 texte,article,numero,debut,fin,motif
 LEGITEXT000005619183,LEGIARTI000006699881,1,1995-08-01,,"indices extrêmes des grades, sans leurs échelons"
+LEGITEXT000005620348,LEGIARTI000006731660,1,1996-02-15,,aucun échelon
 LEGITEXT000005621237,LEGIARTI000006732008,2,1995-08-01,2014-02-07,échelon 13 de « ECHELONNEMENT INDICIAIRE DUREE MOYENNE » : 2 valeurs pour 1 colonnes
 LEGITEXT000005629203,LEGIARTI000006724000,1,2000-03-14,2005-08-05,"indices extrêmes des grades, sans leurs échelons"
 LEGITEXT000005631850,LEGIARTI000006724699,1,2001-12-20,2007-08-07,2 valeurs par ligne pour 0 dates : colonnes non lues
@@ -10,10 +11,10 @@ LEGITEXT000005631984,LEGIARTI000006725265,1,2002-01-01,2008-01-01,aucun échelon
 LEGITEXT000006052147,LEGIARTI000006243602,1,2005-08-05,2008-01-01,"indices extrêmes des grades, sans leurs échelons"
 LEGITEXT000006052147,LEGIARTI000017889706,1,2008-01-01,2015-01-01,"indices extrêmes des grades, sans leurs échelons"
 LEGITEXT000006052147,LEGIARTI000030092861,1,2015-01-01,2017-01-01,"valeurs hors des lignes, dans « Classe exceptionnelle 1015-hors échelle C. (Echelon »"
-LEGITEXT000006052147,LEGIARTI000034772583,1,2017-01-01,2017-05-12,"valeurs hors des lignes, dans « 1 ° Classe exceptionnelle 1021-hors échelle C. (Echelon »"
-LEGITEXT000006052147,LEGIARTI000036878773,1,2017-05-12,2018-06-01,"valeurs hors des lignes, dans « 1 ° Classe exceptionnelle 1021-hors échelle C. (Echelon »"
-LEGITEXT000006052147,LEGIARTI000036879017,1,2018-06-01,2021-01-01,"valeurs hors des lignes, dans « 1 ° Classe exceptionnelle 1021-hors échelle C. (Echelon »"
-LEGITEXT000006052147,LEGIARTI000036879326,1,2021-01-01,2026-01-01,"valeurs hors des lignes, dans « 1 ° Classe exceptionnelle 1021-hors échelle C. (Echelon »"
+LEGITEXT000006052147,LEGIARTI000034772583,1,2017-01-01,2017-05-12,"valeurs hors des lignes, dans « Classe exceptionnelle 1021-hors échelle C. (Echelon »"
+LEGITEXT000006052147,LEGIARTI000036878773,1,2017-05-12,2018-06-01,"valeurs hors des lignes, dans « Classe exceptionnelle 1021-hors échelle C. (Echelon »"
+LEGITEXT000006052147,LEGIARTI000036879017,1,2018-06-01,2021-01-01,"valeurs hors des lignes, dans « Classe exceptionnelle 1021-hors échelle C. (Echelon »"
+LEGITEXT000006052147,LEGIARTI000036879326,1,2021-01-01,2026-01-01,"valeurs hors des lignes, dans « Classe exceptionnelle 1021-hors échelle C. (Echelon »"
 LEGITEXT000006058086,LEGIARTI000006717078,1,1988-02-20,,"valeurs hors des lignes, dans « Groupe hors échelle C 7e échelon , groupe hors échelle B . 6e échelon , groupe h »"
 LEGITEXT000006058622,LEGIARTI000006717924,ANNEXE I,1988-12-01,1989-08-04,aucun échelon
 LEGITEXT000006058622,LEGIARTI000006717925,ANNEXE I,1989-08-04,1991-01-15,aucun échelon
@@ -74,6 +75,7 @@ LEGITEXT000006059738,LEGIARTI000006714454,Annexe I,1993-08-01,1996-08-01,"tablea
 LEGITEXT000006059738,LEGIARTI000006714455,Annexe I,1996-08-01,2007-06-25,"tableau de reclassement, pas une grille"
 LEGITEXT000006059738,LEGIARTI000006714459,Annexe III,1990-01-01,1994-12-18,aucun échelon
 LEGITEXT000006059738,LEGIARTI000006714460,Annexe III,1994-12-18,2003-12-28,aucun échelon
+LEGITEXT000006059757,LEGIARTI000006714481,Annexe,1990-08-01,2008-04-07,aucun échelon
 LEGITEXT000006059862,LEGIARTI000006715163,Annexe,1991-08-01,2002-01-02,aucun échelon
 LEGITEXT000006059863,LEGIARTI000006715167,ANNEXE I,1991-08-01,2002-01-02,aucun échelon
 LEGITEXT000006059864,LEGIARTI000006715451,ANNEXE I,1991-08-01,2002-01-02,aucun échelon
@@ -112,6 +114,11 @@ LEGITEXT000006067233,LEGIARTI000006705417,2,1993-08-01,2002-01-01,"indices extr�
 LEGITEXT000006067233,LEGIARTI000006705420,3,1991-08-01,1992-08-01,"indices extrêmes des grades, sans leurs échelons"
 LEGITEXT000006067233,LEGIARTI000006705421,3,1992-08-01,1993-08-01,"indices extrêmes des grades, sans leurs échelons"
 LEGITEXT000006067233,LEGIARTI000006705422,3,1993-08-01,2002-01-01,"indices extrêmes des grades, sans leurs échelons"
+LEGITEXT000006067749,LEGIARTI000006710896,2,1990-08-01,2008-04-07,"indices extrêmes des grades, sans leurs échelons"
+LEGITEXT000006067749,LEGIARTI000006710897,3,1990-08-01,2008-04-07,"indices extrêmes des grades, sans leurs échelons"
+LEGITEXT000006067749,LEGIARTI000006710898,4,1990-08-01,2008-04-07,"indices extrêmes des grades, sans leurs échelons"
+LEGITEXT000006067749,LEGIARTI000006710900,5,1990-08-01,2008-04-07,"indices extrêmes des grades, sans leurs échelons"
+LEGITEXT000006067981,LEGIARTI000006712794,2,1996-06-16,2004-01-02,aucun échelon
 LEGITEXT000006072693,LEGIARTI000006706516,1,1989-01-01,1995-08-01,"indices extrêmes des grades, sans leurs échelons"
 LEGITEXT000006072706,LEGIARTI000006711371,1,1990-01-01,1993-08-01,aucun échelon
 LEGITEXT000006072706,LEGIARTI000006711372,1,1993-08-01,1996-08-01,aucun échelon
@@ -199,6 +206,11 @@ LEGITEXT000006072915,LEGIARTI000006719653,Annexe,1962-02-04,,"tableau dessiné e
 LEGITEXT000006072915,LEGIARTI000006719654,Annexe,1962-02-04,,"tableau dessiné en caractères, non lu"
 LEGITEXT000006072915,LEGIARTI000006719655,Annexe,1962-02-04,,"tableau dessiné en caractères, non lu"
 LEGITEXT000006072915,LEGIARTI000006719656,Annexe,1962-02-04,,"tableau dessiné en caractères, non lu"
+LEGITEXT000006072916,LEGIARTI000006719661,Annexe,1962-05-17,,"tableau dessiné en caractères, non lu"
+LEGITEXT000006072916,LEGIARTI000006719662,Annexe,1962-05-17,,"tableau dessiné en caractères, non lu"
+LEGITEXT000006072916,LEGIARTI000006719663,Annexe,1962-05-17,,"tableau dessiné en caractères, non lu"
+LEGITEXT000006072916,LEGIARTI000006719664,Annexe,1962-05-17,,"tableau dessiné en caractères, non lu"
+LEGITEXT000006072916,LEGIARTI000006719665,Annexe,1962-05-17,,"tableau dessiné en caractères, non lu"
 LEGITEXT000006072917,LEGIARTI000006719671,Annexe 1,1969-03-31,,"tableau dessiné en caractères, non lu"
 LEGITEXT000006072917,LEGIARTI000006719672,Annexe 1,1969-03-31,,"tableau dessiné en caractères, non lu"
 LEGITEXT000006072917,LEGIARTI000006719673,Annexe 1,1969-03-31,1971-05-28,"tableau dessiné en caractères, non lu"
@@ -367,6 +379,9 @@ LEGITEXT000006077086,LEGIARTI000006714058,1,1990-08-01,2007-06-25,aucun échelon
 LEGITEXT000006077086,LEGIARTI000006714059,2,1990-08-01,2007-06-25,aucun échelon
 LEGITEXT000006077086,LEGIARTI000006714060,3,1990-08-01,2007-06-25,aucun échelon
 LEGITEXT000006077196,LEGIARTI000006714089,Annexe,1990-01-01,1996-08-01,"tableau dessiné en caractères, non lu"
+LEGITEXT000006081032,LEGIARTI000006728507,Annexe,1996-06-16,1996-08-01,"tableau de reclassement, pas une grille"
+LEGITEXT000006081032,LEGIARTI000006728512,Annexe,1996-06-16,2004-01-02,"tableau dessiné en caractères, non lu"
+LEGITEXT000006081032,LEGIARTI000006728508,Annexe,1996-08-01,2008-04-07,"tableau de reclassement, pas une grille"
 LEGITEXT000006081881,LEGIARTI000006930477,1,1991-08-01,,"indices extrêmes des grades, sans leurs échelons"
 LEGITEXT000006081882,LEGIARTI000006930479,1,1993-01-01,2014-02-07,"indices extrêmes des grades, sans leurs échelons"
 LEGITEXT000006081883,LEGIARTI000006930481,1,1993-01-01,2014-02-07,"indices extrêmes des grades, sans leurs échelons"
@@ -437,8 +452,6 @@ LEGITEXT000024376736,LEGIARTI000024376743,2,2011-06-30,2016-05-22,aucun échelon
 LEGITEXT000028445844,LEGIARTI000028445857,2,2014-01-10,2017-01-01,aucun échelon
 LEGITEXT000028445844,LEGIARTI000035606905,2,2017-01-01,2018-01-01,3 valeurs par ligne pour 4 dates : colonnes non lues
 LEGITEXT000028445844,LEGIARTI000036501221,2,2018-01-01,2022-04-01,3 valeurs par ligne pour 4 dates : colonnes non lues
-LEGITEXT000028541996,LEGIARTI000028541999,1,2014-02-01,2016-05-22,échelon 12 de « L'échelonnement indiciaire applicable aux échelles 4 et 5 de rémunération de la catégorie C instituées par l'article 1er du décret n° 2006-228 du 24 février 2006 susvisé est fixé ainsi qu'il suit Echelle 4 Echelle 5 » : 2 valeurs pour 1 colonnes
-LEGITEXT000028541996,LEGIARTI000032574841,1,2017-01-01,2016-05-22,échelon 12 de « L'échelonnement indiciaire applicable aux échelles 4 et 5 de rémunération de la catégorie C instituées par l'article 1er du décret n° 2016-644 du 19 mai 2016 instituant différentes échelles de rémunération applicables aux fonctionnaires de catégorie C de la fonction publique hospitalière est fixé ainsi qu'il suit Echelle 4 Echelle 5 » : 2 valeurs pour 1 colonnes
 LEGITEXT000032568288,LEGIARTI000032568296,1,2016-05-22,2018-01-01,"indices extrêmes des grades, sans leurs échelons"
 LEGITEXT000032568288,LEGIARTI000036490615,1,2018-01-01,2019-02-01,"indices extrêmes des grades, sans leurs échelons"
 LEGITEXT000032574797,LEGIARTI000032574804,1,2016-05-22,2018-01-01,échelon 4-provisoire de « Grade de classe supérieure » : 1 valeurs pour 3 colonnes
@@ -455,3 +468,4 @@ LEGITEXT000035435728,LEGIARTI000035435735,2,2017-09-01,2018-01-01,"tableau de re
 LEGITEXT000035435728,LEGIARTI000036501114,2,2018-01-01,2021-10-01,"tableau de reclassement, pas une grille"
 LEGITEXT000037097631,LEGIARTI000037097635,1,2017-01-01,2018-11-09,échelon 5 de « Attaché hors-classe ES HEA HEA HEA HEA » : 4 valeurs pour 5 colonnes
 LEGITEXT000037097631,LEGIARTI000037604108,1,2018-11-09,,"tableau de reclassement, pas une grille"
+LEGITEXT000052963310,LEGIARTI000052963320,2,2025-12-01,,"tableau de reclassement, pas une grille"

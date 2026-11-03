@@ -4494,7 +4494,8 @@ institutions:
       - id: dila_legi_grilles
         titre: >-
           Grilles indiciaires de la fonction publique territoriale, de la
-          fonction publique hospitalière et des militaires, version par version
+          fonction publique hospitalière, des militaires et de l'État d'avant
+          le Noyau RH, version par version
         url: https://echanges.dila.gouv.fr/OPENDATA/LEGI/
         acces: api
         statut_integration: certifie
@@ -4532,6 +4533,17 @@ institutions:
           militaires du Noyau RH de l'État (CISIRH, juillet 2026), de 2009 à
           2026, et rend au décret n° 2014-1257 sa date du 1er novembre 2014,
           que le LEGI a perdue.
+          L'État d'avant le Noyau RH, depuis le 3 novembre 2026 (action 158,
+          étape 2) : les textes d'échelonnement de l'État que le LEGI garde,
+          sous data/reference/grilles/etat_legi/, à part du dossier etat du
+          noyau ; un titre qui tait le versant se lit à ses visas (l'arrêté du
+          11 mai 2007 de la catégorie C est de l'hospitalière).
+          tests/test_grilles_etat_legi.py recoupe les professeurs des écoles,
+          les certifiés, les agrégés (arrêtés de 1990) et les attachés
+          d'administration centrale (arrêté du 23 août 1995) au noyau, et les
+          échelles 2 à 5 de la catégorie C au 1er avril 1998, que le noyau n'a
+          pas, à celles de la territoriale. Avant 1990, ni le LEGI ni le JORF
+          de la DILA ne reproduisent les tableaux.
 
       - id: dila_legi_duree_requise
         titre: Durée d'assurance requise, générations 1953-1957

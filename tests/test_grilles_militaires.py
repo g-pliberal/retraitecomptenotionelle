@@ -232,13 +232,13 @@ def test_les_regles_des_militaires_ne_lisent_que_leurs_textes():
      "et aux aspirants", "militaires"),
     # Les personnels civils et militaires ensemble, ce sont tous ceux de l'État.
     ("Décret n° 2008-385 du 23 avril 2008 relatif à l'échelonnement indiciaire des corps et "
-     "emplois des personnels civils et militaires de l'Etat", ""),
+     "emplois des personnels civils et militaires de l'Etat", "etat"),
     # Des corps civils dont le nom dit « officier » ou « militaire ».
     ("Arrêté du 13 mars 1989 fixant l'échelonnement indiciaire applicable au corps des "
      "officiers contrôleurs en chef de la circulation aérienne et au corps des officiers "
-     "contrôleurs de la circulation aérienne", ""),
+     "contrôleurs de la circulation aérienne", "etat"),
     ("Arrêté du 7 mars 1985 relatif à l'échelonnement indiciaire de certains personnels de "
-     "l'enseignement supérieur (école militaire de SAINT-CYR et autres écoles de COETQUIDAN)", ""),
+     "l'enseignement supérieur (école militaire de SAINT-CYR et autres écoles de COETQUIDAN)", "etat"),
 ])
 def test_le_versant_des_militaires_se_lit_au_titre(titre, versant):
     assert grilles.versant(titre) == versant

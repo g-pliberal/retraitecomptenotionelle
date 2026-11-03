@@ -1,6 +1,16 @@
 # Les grilles de chaque texte, une par groupe (grade, échelle, classe) : sa clé, son dernier libellé, la période qu'elle couvre, ses échelons.
 # source_id: dila_legi_grilles — DILA, base LEGI, par l'index du dépôt (scripts/fetch/dila_index.py) ; scripts/fetch/dila_legi_grilles.py
 texte,grille,libelle,debut,fin,echelons
+LEGITEXT000005616483,brigadier-chef-principal,Brigadier-chef principal,2017-01-01,2021-12-31,10
+LEGITEXT000005616483,brigadiers-chefs-principaux,brigadiers-chefs principaux,2022-01-01,,11
+LEGITEXT000005616483,brigadiers-chefs-principaux-echelon,BRIGADIERS-CHEFS PRINCIPAUX Echelon,2015-01-01,2016-12-31,9
+LEGITEXT000005616483,chef-de-police,Chef de police,2017-01-01,2021-12-31,8
+LEGITEXT000005616483,chefs-de-police-municipale,chefs de police municipale,2022-01-01,,9
+LEGITEXT000005616483,chefs-de-police-municipale-echelon,CHEFS DE POLICE MUNICIPALE Echelon,2015-01-01,2016-12-31,7
+LEGITEXT000005616483,l-echelonnement-indiciaire-applicable-au-grade-de-brigadier-chef-principal-est-le-suivant,L'échelonnement indiciaire applicable au grade de brigadier-chef principal est le suivant,2006-11-18,2014-01-31,8
+LEGITEXT000005616483,l-echelonnement-indiciaire-applicable-au-grade-de-brigadier-chef-principal-est-le-suivant-brigadiers-chefs-principaux-echelon,L'échelonnement indiciaire applicable au grade de brigadier-chef principal est le suivant BRIGADIERS-CHEFS PRINCIPAUX Echelon,2014-02-01,2014-12-31,9
+LEGITEXT000005616483,l-echelonnement-indiciaire-applicable-au-grade-de-chef-de-police-municipale-est-le-suivant,L'échelonnement indiciaire applicable au grade de chef de police municipale est le suivant,1994-08-27,2014-01-31,6
+LEGITEXT000005616483,l-echelonnement-indiciaire-applicable-au-grade-de-chef-de-police-municipale-est-le-suivant-chefs-de-police-municipale-echelon,L'échelonnement indiciaire applicable au grade de chef de police municipale est le suivant CHEFS DE POLICE MUNICIPALE Echelon,2014-02-01,2014-12-31,7
 LEGITEXT000005617477,technicien-chef,Technicien chef,2003-02-23,2011-06-02,8
 LEGITEXT000005617477,technicien-superieur,Technicien supérieur,2003-02-23,2011-06-02,13
 LEGITEXT000005617477,technicien-superieur-chef,Technicien supérieur chef,2003-02-23,2011-06-02,8
@@ -22,14 +32,24 @@ LEGITEXT000005619309,3-e-grade,3 e grade,2006-11-01,2011-06-02,8
 LEGITEXT000005619309,controleur,Contrôleur,2004-02-03,2006-10-31,13
 LEGITEXT000005619309,controleur-en-chef,Contrôleur en chef,2004-02-03,2006-10-31,8
 LEGITEXT000005619309,controleur-principal,Contrôleur principal,2004-02-03,2006-10-31,8
+LEGITEXT000005623630,attache,Attaché,1997-05-30,,12
+LEGITEXT000005623630,attache-principal-de-2e-classe,Attaché principal de 2e classe,1997-05-30,,7
+LEGITEXT000005623630,en-attache-principal-de-1re-classe,(en ) Attaché principal de 1re classe,1997-05-30,,3
 LEGITEXT000005623787,1er-grade,1er grade,2006-11-01,2011-05-31,13
 LEGITEXT000005623787,2e-grade,2e grade,2006-11-01,2011-05-31,8
 LEGITEXT000005623787,3e-grade,3e grade,2006-11-01,2011-05-31,7
+LEGITEXT000005629028,1er-grade,1er grade,2006-11-01,2011-04-30,13
+LEGITEXT000005629028,2e-grade,2e grade,2006-11-01,2011-04-30,8
+LEGITEXT000005629028,3e-grade,3e grade,2006-11-01,2011-04-30,8
 LEGITEXT000005634826,cadre-de-sante,Cadre de santé,2003-08-01,2021-12-31,8
 LEGITEXT000006004760,agent-territorial-de-mayotte,Agent territorial de Mayotte,2004-12-31,2009-10-02,8
 LEGITEXT000006004760,agent-territorial-qualifie-de-mayotte,Agent territorial qualifié de Mayotte,2004-12-31,2009-10-02,5
 LEGITEXT000006005722,ouvrier-territorial-de-mayotte,Ouvrier territorial de Mayotte,2004-12-31,2009-10-02,8
 LEGITEXT000006005722,ouvrier-territorial-qualifie-de-mayotte,Ouvrier territorial qualifié de Mayotte,2004-12-31,2009-10-02,5
+LEGITEXT000006054723,directeur-de-police-municipale,Directeur de police municipale,2006-11-18,,11
+LEGITEXT000006054723,directeur-principal-de-police-municipale,Directeur principal de police municipale,2015-01-01,,10
+LEGITEXT000006055667,infirmier-d-encadrement-de-sapeurs-pompiers-professionnels,Infirmier d'encadrement de sapeurs-pompiers professionnels,2007-03-21,2016-08-31,8
+LEGITEXT000006058700,l-echelonnement-indiciaire-applicable-aux-de-sous-lieutenant-et-lieutenant-de-sapeurs-pompiers-professionnels-est-fixe-de-la-maniere-suivante-grade-sous-lieutenant-et-lieutenant,L'échelonnement indiciaire applicable aux de sous-lieutenant et lieutenant de sapeurs-pompiers professionnels est fixé de la manière suivante GRADE Sous-lieutenant et lieutenant,1989-01-05,,12
 LEGITEXT000006065512,administrateur-territorial-de-1-ere-classe,Administrateur territorial de 1 ère classe,1986-03-15,1987-12-30,5
 LEGITEXT000006065512,administrateur-territorial-de-2-eme-classe,Administrateur territorial de 2 ème classe,1986-03-15,1987-12-30,7
 LEGITEXT000006065512,administrateur-territorial-hors-classe,Administrateur territorial hors classe,1986-03-15,1987-12-30,4
@@ -93,16 +113,12 @@ LEGITEXT000006065792,4e-echelon-echelle,4e échelon Echelle,2007-01-01,2008-06-3
 LEGITEXT000006065792,5e-echelon-echelle,5e échelon Echelle,2007-01-01,2008-06-30,1
 LEGITEXT000006065792,6e-echelon-echelle,6e échelon Echelle,2007-01-01,2008-06-30,1
 LEGITEXT000006065792,7e-echelon-echelle,7e échelon Echelle,2007-01-01,2008-06-30,1
-LEGITEXT000006065792,echelle-2,Echelle 2,1998-04-01,2005-10-31,11
-LEGITEXT000006065792,echelle-3,Echelle 3,1998-04-01,2016-12-31,11
-LEGITEXT000006065792,echelle-4,Echelle 4,1998-04-01,2016-12-31,12
-LEGITEXT000006065792,echelle-5,Echelle 5,1998-04-01,2016-12-31,12
+LEGITEXT000006065792,echelle-1,échelle 1,1990-08-01,1992-07-31,11
+LEGITEXT000006065792,echelle-2,Echelle 2,1990-08-01,2005-10-31,11
+LEGITEXT000006065792,echelle-3,Echelle 3,1990-08-01,2016-12-31,11
+LEGITEXT000006065792,echelle-4,Echelle 4,1990-08-01,2016-12-31,12
+LEGITEXT000006065792,echelle-5,Echelle 5,1990-08-01,2016-12-31,12
 LEGITEXT000006065792,echelle-6,Echelle 6,2008-07-01,2016-12-31,10
-LEGITEXT000006065792,l-echelle-1,l'échelle 1,1990-08-01,1992-07-31,11
-LEGITEXT000006065792,l-echelle-2,l'échelle 2,1990-08-01,1994-12-28,11
-LEGITEXT000006065792,l-echelle-3,l'échelle 3,1990-08-01,1994-12-28,11
-LEGITEXT000006065792,l-echelle-4,l'échelle 4,1990-08-01,1996-07-31,11
-LEGITEXT000006065792,l-echelle-5,l'échelle 5,1990-08-01,1998-03-31,11
 LEGITEXT000006065792,special-echelle,Spécial Echelle,2007-01-01,2008-06-30,1
 LEGITEXT000006066666,agent-de-maitrise,Agent de maîtrise,2017-01-01,,13
 LEGITEXT000006066666,agent-de-maitrise-principal,Agent de maîtrise principal,1988-05-07,,10
@@ -195,11 +211,10 @@ LEGITEXT000026796689,classe-superieure,Classe supérieure,2013-01-01,2015-12-31,
 LEGITEXT000026796689,infirmier-de-classe-normale,Infirmier de classe normale,2016-01-01,2021-12-31,9
 LEGITEXT000026796689,infirmier-de-classe-superieure,Infirmier de classe supérieure,2016-01-01,2021-12-31,8
 LEGITEXT000026797753,,,2013-01-01,2021-12-31,3
-LEGITEXT000026797753,classes-et-infirmier-en-soins-generaux-hors-classe,CLASSES ET Infirmier en soins généraux hors classe,2013-01-01,2015-12-31,11
 LEGITEXT000026797753,infirmier-en-soins-generaux,Infirmier en soins généraux,2022-01-01,,11
 LEGITEXT000026797753,infirmier-en-soins-generaux-de-classe-normale,Infirmier en soins généraux de classe normale,2013-01-01,2021-12-31,9
 LEGITEXT000026797753,infirmier-en-soins-generaux-de-classe-superieure,Infirmier en soins généraux de classe supérieure,2013-01-01,2021-12-31,7
-LEGITEXT000026797753,infirmier-en-soins-generaux-hors-classe,Infirmier en soins généraux hors classe,2022-01-01,,11
+LEGITEXT000026797753,infirmier-en-soins-generaux-hors-classe,Infirmier en soins généraux hors classe,2013-01-01,,11
 LEGITEXT000026797753,infirmiers-en-soins-generaux-hors-classe,Infirmiers en soins généraux hors classe,2016-01-01,2021-12-31,11
 LEGITEXT000027244703,classe-normale,Classe normale,2013-04-01,2015-12-31,9
 LEGITEXT000027244703,classe-superieure,Classe supérieure,2013-04-01,2015-12-31,7
@@ -219,17 +234,20 @@ LEGITEXT000029382963,medecin-de-1re-classe,Médecin de 1re classe,2014-09-01,,6
 LEGITEXT000029382963,medecin-de-2e-classe,Médecin de 2e classe,2014-09-01,,9
 LEGITEXT000029382963,medecin-hors-classe,Médecin hors classe,2014-09-01,,6
 LEGITEXT000029383554,avant-le-1er-echelon-de-la-classe-superieure,Avant le 1er échelon de la classe supérieure,2016-01-01,2021-12-31,4
-LEGITEXT000029383554,classes-et-puericultrice-hors-classe,CLASSES ET Puéricultrice hors classe,2014-09-01,2015-12-31,11
 LEGITEXT000029383554,echelon,ECHELON,2022-01-01,,2
 LEGITEXT000029383554,provisoires-dans-le-grade-de-puericultrice-avant-le-1er-echelon-de-la-classe-superieure,PROVISOIRES dans le grade de puéricultrice Avant le 1er échelon de la classe supérieure,2014-09-01,2015-12-31,4
 LEGITEXT000029383554,puericultrice,Puéricultrice,2022-01-01,,11
 LEGITEXT000029383554,puericultrice-de-classe-normale,Puéricultrice de classe normale,2014-09-01,2021-12-31,9
 LEGITEXT000029383554,puericultrice-de-classe-superieure,Puéricultrice de classe supérieure,2014-09-01,2015-12-31,7
 LEGITEXT000029383554,puericultrice-de-classenormale,Puéricultrice de classenormale,2016-01-01,2017-05-10,9
-LEGITEXT000029383554,puericultrice-hors-classe,Puéricultrice hors classe,2022-01-01,,9
+LEGITEXT000029383554,puericultrice-hors-classe,Puéricultrice hors classe,2014-09-01,,11
 LEGITEXT000029383554,puericultrices-de-classe-superieure,Puéricultrices de classe supérieure,2017-05-11,2021-12-31,7
 LEGITEXT000029383554,puericultrices-de-classesuperieure,Puéricultrices de classesupérieure,2016-01-01,2017-05-10,7
 LEGITEXT000029383554,puericultrices-hors-classe,Puéricultrices hors classe,2016-01-01,2021-12-31,11
+LEGITEXT000030140415,administrateur,Administrateur,2015-01-25,2025-08-31,10
+LEGITEXT000030140415,administrateur-general,Administrateur général,2015-01-25,2016-12-31,6
+LEGITEXT000030140415,administrateur-hors-classe,Administrateur hors classe,2015-01-25,2025-08-31,9
+LEGITEXT000030140415,administrateurs-de-la-ville-de-paris-administrateur-general,Administrateurs de la ville de Paris Administrateur général,2017-01-01,2025-08-31,6
 LEGITEXT000032116807,ingenieur,Ingénieur,2016-03-01,,11
 LEGITEXT000032116807,ingenieur-hors-classe,Ingénieur hors classe,2016-03-01,,6
 LEGITEXT000032116807,ingenieur-principal-article-1,Ingénieur principal (article 1),2016-03-01,,9
@@ -248,6 +266,30 @@ LEGITEXT000032280243,provisoires-dans-le-grade-de-cadre-de-sante-de-1re-classe,P
 LEGITEXT000032545071,echelle-c1,Echelle C1,2017-01-01,,12
 LEGITEXT000032545071,echelle-c2,Echelle C2,2017-01-01,,12
 LEGITEXT000032545071,echelle-c3,Echelle C3,2017-01-01,,10
+LEGITEXT000033078253,a-compter-de-l-entree-en-vigueur-du-present-decret-cadre-superieur-de-sante-de-sapeurs-pompiers-professionnels,À COMPTER de l'entrée en vigueur du présent décret Cadre supérieur de santé de sapeurs-pompiers professionnels,2016-09-01,2021-12-31,7
+LEGITEXT000033078253,cadre-de-sante-de-sapeurs-pompiers-professionnels,Cadre de santé de sapeurs-pompiers professionnels,2022-01-01,,11
+LEGITEXT000033078253,cadre-de-sante-de-sapeurs-pompiers-professionnels-de-1re-classe,Cadre de santé de sapeurs-pompiers professionnels de 1re classe,2016-09-01,2021-12-31,9
+LEGITEXT000033078253,cadre-de-sante-de-sapeurs-pompiers-professionnels-de-2e-classe,Cadre de santé de sapeurs-pompiers professionnels de 2e classe,2016-09-01,2021-12-31,10
+LEGITEXT000033078253,cadre-superieur-de-sante-de-sapeurs-pompiers-professionnels,Cadre supérieur de santé de sapeurs-pompiers professionnels,2022-01-01,,8
+LEGITEXT000033078770,a-compter-de-l-entree-en-vigueur-du-present-decret-infirmier-hors-classe,à compter de l'entrée en vigueur du présent décret Infirmier hors classe,2016-09-01,2021-12-31,11
+LEGITEXT000033078770,infirmier-de-classe-normale,Infirmier de classe normale,2016-09-01,2021-12-31,9
+LEGITEXT000033078770,infirmier-de-classe-superieure,Infirmier de classe supérieure,2016-09-01,2021-12-31,7
+LEGITEXT000033078770,infirmier-de-sapeurs-pompiers-professionnels,Infirmier de sapeurs-pompiers professionnels,2022-01-01,,11
+LEGITEXT000033078770,infirmier-de-sapeurs-pompiers-professionnels-hors-classe,Infirmier de sapeurs-pompiers professionnels hors classe,2022-01-01,,11
+LEGITEXT000033134491,echelon-provisoire,ÉCHELON PROVISOIRE,2016-10-01,2016-12-31,1
+LEGITEXT000033134491,medecin-et-pharmacien-de-classe-exceptionnelle,Médecin et pharmacien de classe exceptionnelle,2016-10-01,2016-12-31,6
+LEGITEXT000033134491,medecin-et-pharmacien-de-classe-normale,Médecin et pharmacien de classe normale,2016-10-01,2016-12-31,9
+LEGITEXT000033134491,medecin-et-pharmacien-hors-classe,Médecin et pharmacien hors classe,2016-10-01,2016-12-31,6
+LEGITEXT000033134491,provisoires,PROVISOIRES,2016-10-01,2016-12-31,2
+LEGITEXT000033792667,colonel,Colonel,2017-01-01,,9
+LEGITEXT000033792667,colonel-hors-classe,Colonel hors classe,2017-01-01,,6
+LEGITEXT000033792667,controleur-general,Contrôleur général,2017-01-01,,5
+LEGITEXT000033792720,capitaines,CAPITAINES,2017-01-01,2025-06-13,10
+LEGITEXT000033792720,capitaines-de-sapeurs-pompiers-professionnels,capitaines de sapeurs-pompiers professionnels,2025-06-14,,10
+LEGITEXT000033792720,commandants,COMMANDANTS,2017-01-01,2025-06-13,9
+LEGITEXT000033792720,commandants-de-sapeurs-pompiers-professionnels,commandants de sapeurs-pompiers professionnels,2025-06-14,,9
+LEGITEXT000033792720,lieutenants-colonels,LIEUTENANTS-COLONELS,2017-01-01,2025-06-13,8
+LEGITEXT000033792720,lieutenants-colonels-de-sapeurs-pompiers-professionnels,lieutenants-colonels de sapeurs-pompiers professionnels,2025-06-14,,9
 LEGITEXT000034701297,educateur-territorial-de-jeunes-enfants,Educateur territorial de jeunes enfants,2021-01-01,,14
 LEGITEXT000034701297,educateur-territorial-de-jeunes-enfants-de-classe-exceptionnelle-article-1,Educateur territorial de jeunes enfants de classe exceptionnelle (article 1),2019-02-01,,11
 LEGITEXT000034701297,educateur-territorial-de-jeunes-enfants-de-classe-exceptionnelle-article-2,Educateur territorial de jeunes enfants de classe exceptionnelle (article 2),2021-01-01,,11
@@ -281,3 +323,8 @@ LEGITEXT000045595632,conservateur-en-chef,Conservateur en chef,2022-04-17,,7
 LEGITEXT000045595632,eleve,Elève,2022-04-17,,2
 LEGITEXT000045729245,sage-femme-de-classe-normale,Sage-femme de classe normale,2022-05-01,,10
 LEGITEXT000045729245,sage-femme-hors-classe,Sage-femme hors classe,2022-05-01,,10
+LEGITEXT000049351578,gardes-champetres-chefs-principaux,gardes champêtres chefs principaux,2024-04-01,,10
+LEGITEXT000052121396,administrateurs-de-la-ville-de-paris-administrateurs-du-troisieme-grade,Administrateurs de la Ville de Paris Administrateurs du troisième grade,2025-08-22,,30
+LEGITEXT000052121396,administrateurs-du-deuxieme-grade,Administrateurs du deuxième grade,2025-08-22,,32
+LEGITEXT000052121396,administrateurs-du-grade-transitoire,Administrateurs du grade transitoire,2025-08-22,,37
+LEGITEXT000052121396,administrateurs-du-premier-grade,Administrateurs du premier grade,2025-08-22,,30

@@ -370,9 +370,11 @@ C_TERRITORIALE_1990 = (
 def test_la_liste_par_echelle_et_par_date():
     tableau = grilles.lire_tableau(C_TERRITORIALE_1990)
     assert tableau.refus == ""
-    assert tableau.groupes == ["l'échelle 1", "l'échelle 2"]
-    assert _valeurs(tableau, "l'échelle 1", "1991-08-01") == {"1": 209, "2": 220, "3": 229}
-    assert _valeurs(tableau, "l'échelle 2", "1990-08-01") == {"1": 220, "2": 241}
+    # « En ce qui concerne l' » ôté, l'échelle a la clé de celles des versions
+    # suivantes, écrites « Echelle 2 » en tête de colonne (action 158, l'État).
+    assert tableau.groupes == ["échelle 1", "échelle 2"]
+    assert _valeurs(tableau, "échelle 1", "1991-08-01") == {"1": 209, "2": 220, "3": 229}
+    assert _valeurs(tableau, "échelle 2", "1990-08-01") == {"1": 220, "2": 241}
 
 
 #: Arrêté du 31 décembre 2001 (personnels infirmiers de l'hospitalière),
@@ -644,16 +646,16 @@ def test_une_periode_presumee_ne_se_fond_pas_dans_une_periode_lue():
     # Des agents de l'État, au ministère qui a les collectivités territoriales.
     ("Décret n° 2009-369 du 1er avril 2009 fixant l'échelonnement indiciaire de certains "
      "personnels relevant du ministère de l'intérieur, de l'outre-mer et des collectivités "
-     "territoriales", ""),
+     "territoriales", "etat"),
     # Les trois versants à la fois : un décret qui en modifie d'autres.
     ("Décret n° 2017-1737 du 21 décembre 2017 modifiant l'échelonnement indiciaire de divers "
      "corps, cadres d'emplois et emplois de la fonction publique de l'Etat, de la fonction "
      "publique territoriale et de la fonction publique hospitalière", ""),
     ("Décret n° 2010-1007 du 26 août 2010 fixant l'échelonnement indiciaire des personnels "
-     "enseignants", ""),
+     "enseignants", "etat"),
     # Les personnels enseignants et hospitaliers des CHU sont des corps de l'État.
     ("Décret n° 2013-304 du 10 avril 2013 relatif à l'échelonnement indiciaire applicable aux "
-     "personnels enseignants et hospitaliers des centres hospitaliers et universitaires", ""),
+     "personnels enseignants et hospitaliers des centres hospitaliers et universitaires", "etat"),
 ])
 def test_le_versant_se_lit_au_titre(titre, versant):
     assert grilles.versant(titre) == versant

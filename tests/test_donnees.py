@@ -644,9 +644,10 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         # Celles de la territoriale, de l'hospitalière et des militaires, lues
         # au LEGI : le rang et l'indice des mêmes échelons, et ceux dont la
         # colonne est présumée, au niveau `estimee` (action 158, étape 2 et
-        # étape des militaires).
+        # étape des militaires) ; celles de l'État d'avant le Noyau RH, lues au
+        # LEGI elles aussi (`etat_legi`, action 158, étape 2).
         **{f"grilles_{versant}_{serie}": f"grilles/{versant}/echelons.csv"
-           for versant in ("territoriale", "hospitaliere", "militaires")
+           for versant in ("territoriale", "hospitaliere", "militaires", "etat_legi")
            for serie in ("rang", "indice", "rang_presume", "indice_presume")},
         # Le barème du décret n° 82-1105 depuis 1983, transcrit par Épicycle :
         # `haute`, et ses valeurs corrigées, `estimee` (action 158).

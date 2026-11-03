@@ -1,0 +1,383 @@
+# Les versions d'articles qui portent un tableau que l'analyseur n'a pas lu, et pourquoi.
+# source_id: dila_legi_grilles — DILA, base LEGI, par l'index du dépôt (scripts/fetch/dila_index.py) ; scripts/fetch/dila_legi_grilles.py
+texte,article,numero,debut,fin,motif
+LEGITEXT000005621838,LEGIARTI000006732483,Annexe,1996-09-28,2006-04-09,"tableau dessiné en caractères, non lu"
+LEGITEXT000005626266,LEGIARTI000006474419,1,1998-07-26,1998-12-23,aucun échelon
+LEGITEXT000005626303,LEGIARTI000006474496,1,1998-07-31,2003-12-31,"tableau dessiné en caractères, non lu"
+LEGITEXT000005626303,LEGIARTI000006474497,2,1998-07-31,2003-12-31,"tableau dessiné en caractères, non lu"
+LEGITEXT000005626305,LEGIARTI000006474574,1,1998-07-31,,"tableau dessiné en caractères, non lu"
+LEGITEXT000005626305,LEGIARTI000006474575,2,1998-07-31,,"tableau dessiné en caractères, non lu"
+LEGITEXT000005629838,LEGIARTI000006474466,1,2000-08-26,2007-01-01,aucun échelon
+LEGITEXT000006057070,LEGIARTI000006268723,2,2007-10-10,,"indices extrêmes des grades, sans leurs échelons"
+LEGITEXT000006058857,LEGIARTI000006888151,1,1989-03-18,1988-12-01,"tableau dessiné en caractères, non lu"
+LEGITEXT000006061525,LEGIARTI000006502473,Annexe tableau 1,2007-01-01,2008-01-01,"indices extrêmes des grades, sans leurs échelons"
+LEGITEXT000006061525,LEGIARTI000006502474,Annexe tableau 2,2002-01-01,,aucun échelon
+LEGITEXT000006061767,LEGIARTI000006562230,3,1970-01-29,2005-09-30,"indices extrêmes des grades, sans leurs échelons"
+LEGITEXT000006066261,LEGIARTI000006455711,ANNEXE,1992-02-08,2006-03-07,"valeurs hors des lignes, dans « Classement prenant effet OU EMPLOIS CLASSEMENT hiérarchique OBSERVATIONS EMPLOIS »"
+LEGITEXT000006066261,LEGIARTI000006455712,ANNEXE,2006-03-07,2010-09-01,"valeurs hors des lignes, dans « Classement prenant effet OU EMPLOIS CLASSEMENT hiérarchique OBSERVATIONS EMPLOIS »"
+LEGITEXT000006066261,LEGIARTI000022758126,ANNEXE,2010-09-01,2012-01-01,"valeurs hors des lignes, dans « Classement prenant effet OU EMPLOIS CLASSEMENT hiérarchique OBSERVATIONS EMPLOIS »"
+LEGITEXT000006066261,LEGIARTI000024751403,ANNEXE,2012-01-01,2013-12-14,"valeurs hors des lignes, dans « Classement prenant effet OU EMPLOIS CLASSEMENT hiérarchique OBSERVATIONS EMPLOIS »"
+LEGITEXT000006066261,LEGIARTI000028343150,ANNEXE,2013-12-14,2022-01-01,"valeurs hors des lignes, dans « Classement prenant effet OU EMPLOIS CLASSEMENT hiérarchique OBSERVATIONS EMPLOIS »"
+LEGITEXT000006066261,LEGIARTI000043634315,ANNEXE,2022-01-01,,"valeurs hors des lignes, dans « Classement prenant effet OU EMPLOIS CLASSEMENT hiérarchique OBSERVATIONS EMPLOIS »"
+LEGITEXT000006066580,LEGIARTI000006456702,1,1987-08-01,1988-12-01,"indices extrêmes des grades, sans leurs échelons"
+LEGITEXT000006066983,LEGIARTI000006456874,1,1988-12-01,1990-12-31,"valeurs hors des lignes, dans « GRADE Officier contrôleur en chef de la circulation aérienne - CLASSEMENT hiérar »"
+LEGITEXT000006067899,LEGIARTI000006471853,1,1995-08-01,1996-08-01,"indices extrêmes des grades, sans leurs échelons"
+LEGITEXT000006067899,LEGIARTI000006471854,1,1995-08-01,1998-01-01,"indices extrêmes des grades, sans leurs échelons"
+LEGITEXT000006067899,LEGIARTI000006471855,1,1998-01-01,2009-10-31,"indices extrêmes des grades, sans leurs échelons"
+LEGITEXT000006070393,LEGIARTI000006380913,5,1984-01-01,1987-09-01,"tableau de reclassement, pas une grille"
+LEGITEXT000006070393,LEGIARTI000006380916,6,1984-01-01,1987-09-01,aucun échelon
+LEGITEXT000006070393,LEGIARTI000006380904,ANNEXE,1959-11-15,1982-05-02,aucun échelon
+LEGITEXT000006070393,LEGIARTI000006380907,ANNEXE,1959-11-15,1980-02-06,aucun échelon
+LEGITEXT000006070393,LEGIARTI000006380910,ANNEXE,1959-11-15,1982-05-02,"tableau de reclassement, pas une grille"
+LEGITEXT000006070393,LEGIARTI000006380915,ANNEXE,1959-11-15,1982-05-02,aucun échelon
+LEGITEXT000006070393,LEGIARTI000006380908,ANNEXE,1980-02-06,1982-05-02,aucun échelon
+LEGITEXT000006070393,LEGIARTI000006380911,ANNEXE,1980-11-13,1982-05-02,"tableau de reclassement, pas une grille"
+LEGITEXT000006070393,LEGIARTI000006380912,ANNEXE,1982-05-02,1984-01-01,"tableau de reclassement, pas une grille"
+LEGITEXT000006070393,LEGIARTI000006380905,ANNEXE,1984-01-01,1987-09-01,aucun échelon
+LEGITEXT000006070393,LEGIARTI000006380909,ANNEXE,1984-01-01,,aucun échelon
+LEGITEXT000006070393,LEGIARTI000006380941,ANNEXE,1984-01-01,,"tableau de reclassement, pas une grille"
+LEGITEXT000006070393,LEGIARTI000006380906,ANNEXE,1987-09-01,,aucun échelon
+LEGITEXT000006070393,LEGIARTI000006380914,ANNEXE,1987-09-01,,"tableau de reclassement, pas une grille"
+LEGITEXT000006070393,LEGIARTI000006380917,ANNEXE,1989-01-07,1990-09-21,aucun échelon
+LEGITEXT000006070393,LEGIARTI000006380936,ANNEXE,1989-01-07,1990-09-21,aucun échelon
+LEGITEXT000006070393,LEGIARTI000006380918,ANNEXE,1990-09-21,,aucun échelon
+LEGITEXT000006070393,LEGIARTI000006380937,ANNEXE,1990-09-21,,aucun échelon
+LEGITEXT000006070393,LEGIARTI000006380944,ANNEXE,1991-08-20,,"tableau dessiné en caractères, non lu"
+LEGITEXT000006070393,LEGIARTI000006380919,Annexe,1959-11-15,1982-05-02,aucun échelon
+LEGITEXT000006070393,LEGIARTI000006380921,Annexe,1959-11-15,1982-05-02,aucun échelon
+LEGITEXT000006070393,LEGIARTI000006380923,Annexe,1959-11-15,1982-04-06,aucun échelon
+LEGITEXT000006070393,LEGIARTI000006380926,Annexe,1959-11-15,1982-04-06,aucun échelon
+LEGITEXT000006070393,LEGIARTI000006380930,Annexe,1959-11-15,,aucun échelon
+LEGITEXT000006070393,LEGIARTI000006380934,Annexe,1959-11-15,1982-01-01,aucun échelon
+LEGITEXT000006070393,LEGIARTI000006380938,Annexe,1959-11-15,1982-01-07,aucun échelon
+LEGITEXT000006070393,LEGIARTI000006380942,Annexe,1959-11-15,1982-05-02,aucun échelon
+LEGITEXT000006070393,LEGIARTI000006380935,Annexe,1982-01-01,1982-05-04,aucun échelon
+LEGITEXT000006070393,LEGIARTI000006380939,Annexe,1982-01-07,1982-05-02,"tableau de reclassement, pas une grille"
+LEGITEXT000006070393,LEGIARTI000006380927,Annexe,1982-04-06,1982-05-02,aucun échelon
+LEGITEXT000006070393,LEGIARTI000006380940,Annexe,1982-05-02,1982-11-25,"tableau de reclassement, pas une grille"
+LEGITEXT000006070393,LEGIARTI000006380943,Annexe,1982-05-02,1982-11-25,aucun échelon
+LEGITEXT000006070393,LEGIARTI000006380920,Annexe,1984-01-01,,aucun échelon
+LEGITEXT000006070393,LEGIARTI000006380922,Annexe,1984-01-01,,aucun échelon
+LEGITEXT000006070393,LEGIARTI000006380924,Annexe,1989-01-07,1990-09-21,aucun échelon
+LEGITEXT000006070393,LEGIARTI000006380928,Annexe,1989-01-07,1990-09-21,aucun échelon
+LEGITEXT000006070393,LEGIARTI000006380931,Annexe,1989-01-07,1990-09-21,aucun échelon
+LEGITEXT000006070393,LEGIARTI000006380933,Annexe,1989-01-07,,aucun échelon
+LEGITEXT000006070393,LEGIARTI000006380925,Annexe,1990-09-21,,"valeurs hors des lignes, dans « EMPLOI Archiviste d'un service de 1re catégorie à compter du - 1er décembre 1974 »"
+LEGITEXT000006070393,LEGIARTI000006380929,Annexe,1990-09-21,,aucun échelon
+LEGITEXT000006070393,LEGIARTI000006380932,Annexe,1990-09-21,,aucun échelon
+LEGITEXT000006070394,LEGIARTI000006380947,2,1975-01-01,1983-01-01,"indices extrêmes des grades, sans leurs échelons"
+LEGITEXT000006070394,LEGIARTI000006380948,2,1983-01-01,1984-01-01,3 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000006070394,LEGIARTI000006380949,2,1984-01-01,1985-06-16,3 valeurs par ligne pour 1 dates : colonnes non lues
+LEGITEXT000006070394,LEGIARTI000006380950,2,1985-06-16,,"indices extrêmes des grades, sans leurs échelons"
+LEGITEXT000006070394,LEGIARTI000006380951,3,1970-01-01,,"indices extrêmes des grades, sans leurs échelons"
+LEGITEXT000006070394,LEGIARTI000006380959,Tableau annexe 1,1970-01-01,1983-01-01,"tableau de reclassement, pas une grille"
+LEGITEXT000006070394,LEGIARTI000006380960,Tableau annexe 1,1983-01-01,1984-01-01,"tableau de reclassement, pas une grille"
+LEGITEXT000006070394,LEGIARTI000006380961,Tableau annexe 1,1984-01-01,1985-06-16,"tableau de reclassement, pas une grille"
+LEGITEXT000006070394,LEGIARTI000006380962,Tableau annexe 1,1985-06-16,,"tableau de reclassement, pas une grille"
+LEGITEXT000006070394,LEGIARTI000006380964,Tableau annexe 3,1970-01-01,1983-01-01,"tableau dessiné en caractères, non lu"
+LEGITEXT000006070394,LEGIARTI000006380967,Tableau annexe 3,1970-01-01,1984-01-01,"tableau dessiné en caractères, non lu"
+LEGITEXT000006070394,LEGIARTI000006380968,Tableau annexe 3,1970-01-01,1984-01-01,"tableau dessiné en caractères, non lu"
+LEGITEXT000006070394,LEGIARTI000006380972,Tableau annexe 3,1970-01-01,,"tableau dessiné en caractères, non lu"
+LEGITEXT000006070394,LEGIARTI000006380973,Tableau annexe 3,1970-01-01,,"tableau dessiné en caractères, non lu"
+LEGITEXT000006070394,LEGIARTI000006380974,Tableau annexe 3,1970-01-01,,"tableau dessiné en caractères, non lu"
+LEGITEXT000006070394,LEGIARTI000006380975,Tableau annexe 3,1970-01-01,,"tableau dessiné en caractères, non lu"
+LEGITEXT000006070394,LEGIARTI000006380976,Tableau annexe 3,1970-01-01,,"tableau dessiné en caractères, non lu"
+LEGITEXT000006070394,LEGIARTI000006380977,Tableau annexe 3,1970-01-01,,"tableau dessiné en caractères, non lu"
+LEGITEXT000006070394,LEGIARTI000006380978,Tableau annexe 3,1970-01-01,,"tableau dessiné en caractères, non lu"
+LEGITEXT000006070394,LEGIARTI000006380965,Tableau annexe 3,1983-01-01,1984-01-01,"tableau dessiné en caractères, non lu"
+LEGITEXT000006070394,LEGIARTI000006380969,Tableau annexe 3,1984-01-01,1985-06-16,"tableau dessiné en caractères, non lu"
+LEGITEXT000006070394,LEGIARTI000006380966,Tableau annexe 3,1987-10-22,,"tableau dessiné en caractères, non lu"
+LEGITEXT000006070394,LEGIARTI000006380970,Tableau annexe 3,1987-10-22,,"tableau dessiné en caractères, non lu"
+LEGITEXT000006070394,LEGIARTI000006380971,Tableau annexe 3,1987-10-22,,"tableau dessiné en caractères, non lu"
+LEGITEXT000006072849,LEGIARTI000006717358,Annexe n° 1,1975-01-18,1991-08-01,aucun échelon
+LEGITEXT000006072849,LEGIARTI000006717359,Annexe n° 1,1991-08-01,,aucun échelon
+LEGITEXT000006072862,LEGIARTI000006717992,ANNEXE I,1980-10-08,,aucun échelon
+LEGITEXT000006072862,LEGIARTI000006717993,ANNEXE II,1980-10-08,,aucun échelon
+LEGITEXT000006072903,LEGIARTI000006719363,Annexe,1982-06-13,1988-05-06,"tableau dessiné en caractères, non lu"
+LEGITEXT000006072903,LEGIARTI000006719365,Annexe,1982-06-13,1988-05-06,"tableau dessiné en caractères, non lu"
+LEGITEXT000006072903,LEGIARTI000006719366,Annexe,1982-06-13,1988-05-06,"tableau dessiné en caractères, non lu"
+LEGITEXT000006072903,LEGIARTI000006719364,Annexe,1988-05-06,,"tableau dessiné en caractères, non lu"
+LEGITEXT000006072903,LEGIARTI000006719367,Annexe,1988-05-06,1989-05-07,"tableau dessiné en caractères, non lu"
+LEGITEXT000006072903,LEGIARTI000006719368,Annexe,1988-05-06,1990-08-01,"tableau dessiné en caractères, non lu"
+LEGITEXT000006072903,LEGIARTI000006719369,Annexe,1989-05-07,,"tableau dessiné en caractères, non lu"
+LEGITEXT000006072903,LEGIARTI000006719370,Annexe,1990-08-01,,"tableau dessiné en caractères, non lu"
+LEGITEXT000006072908,LEGIARTI000006719485,Annexe 1,1977-02-18,,"tableau dessiné en caractères, non lu"
+LEGITEXT000006072908,LEGIARTI000006719486,Annexe 1,1977-02-18,,"tableau dessiné en caractères, non lu"
+LEGITEXT000006072908,LEGIARTI000006719487,Annexe 1,1977-02-18,,"tableau dessiné en caractères, non lu"
+LEGITEXT000006073046,LEGIARTI000006721075,Annexe,1978-03-29,,"tableau dessiné en caractères, non lu"
+LEGITEXT000006073053,LEGIARTI000006721111,Annexe,1977-03-20,1978-03-29,"tableau dessiné en caractères, non lu"
+LEGITEXT000006075391,LEGIARTI000006372497,1,1990-02-10,1996-08-01,"tableau dessiné en caractères, non lu"
+LEGITEXT000006075391,LEGIARTI000006372498,1,1996-08-01,2001-07-19,"tableau dessiné en caractères, non lu"
+LEGITEXT000006075391,LEGIARTI000017838749,1,2008-01-01,2017-01-01,aucun échelon
+LEGITEXT000006075391,LEGIARTI000034434811,1,2017-01-01,2019-01-01,aucun échelon
+LEGITEXT000006075391,LEGIARTI000034435273,1,2019-01-01,,aucun échelon
+LEGITEXT000006076632,LEGIARTI000006459875,1,2007-01-01,2009-10-31,"indices extrêmes des grades, sans leurs échelons"
+LEGITEXT000006080969,LEGIARTI000006925920,1,1993-01-28,2001-01-01,aucun échelon
+LEGITEXT000006080969,LEGIARTI000006925921,2,1993-01-28,2001-01-01,"tableau de reclassement, pas une grille"
+LEGITEXT000019373379,LEGIARTI000021244377,10,2009-11-09,,"valeurs hors des lignes, dans « 2 échelon 199 »"
+LEGITEXT000019373379,LEGIARTI000019373418,4,2008-08-25,2017-01-01,"valeurs hors des lignes, dans « Echelon provisoire 801 Chargé d'études documentaires principal de 2e classe »"
+LEGITEXT000019373379,LEGIARTI000019373426,8,2008-08-25,,échelon 8 en double dans « Classe supérieure ou grade assimilé »
+LEGITEXT000019373379,LEGIARTI000019373428,9,2008-08-25,2013-07-07,3 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000019373379,LEGIARTI000027669269,9,2013-07-07,2014-02-01,3 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000019412289,LEGIARTI000019412302,4,2007-12-14,,5 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000019412289,LEGIARTI000019412303,5,2007-12-14,,4 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000019412289,LEGIARTI000019412304,6,2007-12-14,,4 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000019412289,LEGIARTI000019412305,7,2007-12-14,,5 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000019412289,LEGIARTI000019412300,8,2007-12-14,,3 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000019413653,LEGIARTI000019413655,1,1998-03-21,,échelon 8 en double dans « Traducteur »
+LEGITEXT000019424453,LEGIARTI000019424457,1,2007-09-13,2016-02-29,"valeurs hors des lignes, dans « ÉCHELON 2e échelon fonctionnel HEA 1er échelon fonctionnel 1015 »"
+LEGITEXT000019424483,LEGIARTI000019424488,3,2007-09-13,2016-02-29,"valeurs hors des lignes, dans « ÉCHELON 2e échelon exceptionnel 612 1er échelon exceptionnel 592 »"
+LEGITEXT000019424846,LEGIARTI000019424849,1,2007-10-07,2017-01-01,"valeurs hors des lignes, dans « 4e échelon . 966 3e échelon . 901 »"
+LEGITEXT000019425150,LEGIARTI000019425155,1,2007-12-09,,aucun échelon
+LEGITEXT000019464673,LEGIARTI000019464679,1,2008-09-14,2017-01-01,5 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000019496587,LEGIARTI000019496588,1,2006-02-01,2014-06-19,aucun échelon
+LEGITEXT000019496761,LEGIARTI000019496764,1,2006-03-17,2012-05-09,échelon 3 en double dans « Premier conseiller 7e échelon HE groupe B 6e échelon HE groupe A »
+LEGITEXT000019528387,LEGIARTI000019528393,1,2006-12-01,,"valeurs hors des lignes, dans « 6e échelon . 314 333 347 »"
+LEGITEXT000019528827,LEGIARTI000019528832,1,2006-10-18,2017-01-01,"valeurs hors des lignes, dans « 1er échelon après dans l'auditorat 655 Auditeur de 2e classe »"
+LEGITEXT000019562913,LEGIARTI000019562916,3,2004-08-01,2011-12-01,"valeurs hors des lignes, dans « 2e échelon exceptionnel. 612 1er échelon exceptionnel 592 18e échelon . 544 17e  »"
+LEGITEXT000019562996,LEGIARTI000019563001,1,2004-08-01,2011-12-01,échelon fonctionnel en double dans « grade de cadre supérieur de second niveau de France Télécom »
+LEGITEXT000019565715,LEGIARTI000019565720,1,2005-10-23,,"valeurs hors des lignes, dans « Echelon provisoire 593 Ingénieur »"
+LEGITEXT000019565858,LEGIARTI000019565861,1,2005-10-23,,aucun échelon
+LEGITEXT000019568073,LEGIARTI000019568077,1,2004-06-12,2012-09-01,"« Technicien principal » : l'indice baisse quand l'échelon monte (5 : 485, 6 : 416)"
+LEGITEXT000019568073,LEGIARTI000026353172,1,2012-09-01,,"« Technicien principal » : l'indice baisse quand l'échelon monte (5 : 485, 6 : 416)"
+LEGITEXT000019586082,LEGIARTI000019586085,1,2004-10-01,,"valeurs hors des lignes, dans « Attribué dans la limite de 2000 emplois pour les brigadiers qui occupent des emp »"
+LEGITEXT000019590244,LEGIARTI000022845126,1,2010-09-24,,3 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000019591124,LEGIARTI000019591126,1,2003-08-25,,aucun échelon
+LEGITEXT000019609673,LEGIARTI000019609722,,2002-01-01,2017-04-30,"valeurs hors des lignes, dans « 5e échelon . 750 »"
+LEGITEXT000019649860,LEGIARTI000019649866,1,2001-02-28,2012-09-20,échelon 5 en double dans « Classe normale »
+LEGITEXT000019652180,LEGIARTI000019652186,1,2001-12-15,2009-05-01,aucun échelon
+LEGITEXT000019652180,LEGIARTI000020547927,1,2009-05-01,,aucun échelon
+LEGITEXT000019654206,LEGIARTI000019654208,1,2002-04-15,,"valeurs hors des lignes, dans « Contrôleur sanitaire de classe normale 13e échelon , 544 »"
+LEGITEXT000019671609,LEGIARTI000019671612,1,2000-05-19,2017-02-17,"valeurs hors des lignes, dans « normaux Grade Auditeurs de 2e classe 1er échelon avant 427 2e échelon après 471  »"
+LEGITEXT000019678722,LEGIARTI000019678728,1,1997-11-17,,échelon 5 en double dans « // »
+LEGITEXT000019679143,LEGIARTI000019679146,1,1998-10-10,2017-01-01,"valeurs hors des lignes, dans « ler échelon 593 Ingénieur des services culturels et du patrimoine de classe norm »"
+LEGITEXT000019696189,LEGIARTI000019696195,1,1997-01-10,2010-09-01,11 valeurs par ligne pour 1 dates : colonnes non lues
+LEGITEXT000019696189,LEGIARTI000022758121,1,2010-09-01,,11 valeurs par ligne pour 1 dates : colonnes non lues
+LEGITEXT000019696189,LEGIARTI000019696197,2,1997-01-10,,3 valeurs par ligne pour 1 dates : colonnes non lues
+LEGITEXT000019696264,LEGIARTI000019696267,1,1996-03-03,,1 valeurs par ligne pour 2 dates : colonnes non lues
+LEGITEXT000019699129,LEGIARTI000019699139,1,1959-01-12,,9 valeurs par ligne pour 1 dates : colonnes non lues
+LEGITEXT000019702433,LEGIARTI000019702438,1,1996-08-01,2009-04-26,aucun échelon
+LEGITEXT000019708066,LEGIARTI000019708067,1,1999-02-21,2009-05-20,"valeurs hors des lignes, dans « 2e échelon 2387 »"
+LEGITEXT000019708066,LEGIARTI000020667636,1,2009-05-20,2015-01-01,"valeurs hors des lignes, dans « Filière technique Pour les agents concernés par les dispositions des articles 25 »"
+LEGITEXT000019708066,LEGIARTI000030684762,1,2015-01-01,,"valeurs hors des lignes, dans « Filière technique Pour les agents concernés par les dispositions des articles 25 »"
+LEGITEXT000019721284,LEGIARTI000019721296,2,2008-11-05,2011-09-01,"valeurs hors des lignes, dans « Trésorier principal du Trésor public de 1re catégorie Echelon unique 985 Trésori »"
+LEGITEXT000019721284,LEGIARTI000022794592,2,2011-09-01,,"valeurs hors des lignes, dans « Inspecteur divisionnaire des finances publiques hors classe Echelon unique 985 I »"
+LEGITEXT000019734768,LEGIARTI000019734771,1,1971-01-01,2010-11-12,"valeurs hors des lignes, dans « Ingénieur divisionnaire des travaux géographiques et cartographiques de l'Etat ( »"
+LEGITEXT000019745482,LEGIARTI000019745485,1,1994-01-01,2011-01-01,2 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000019745482,LEGIARTI000023431544,1,2011-01-01,2012-09-20,aucun échelon
+LEGITEXT000019756150,LEGIARTI000019756154,1,1978-03-25,,"valeurs hors des lignes, dans « 1 échelon 546 Physicien et chimiste »"
+LEGITEXT000019757647,LEGIARTI000019757669,1,1977-08-01,2008-11-05,"valeurs hors des lignes, dans « Ingénieur mécanicien électricien Hors classe 852 1re classe 801 2e classe 579 3e »"
+LEGITEXT000019757647,LEGIARTI000019757691,1,2008-11-05,2010-01-01,"valeurs hors des lignes, dans « Ingénieur mécanicien électricien Hors classe 852 1re classe 801 2e classe 579 3e »"
+LEGITEXT000019757647,LEGIARTI000020786125,1,2010-01-01,2011-01-01,"valeurs hors des lignes, dans « Ingénieur mécanicien électricien Hors classe 852 1re classe 801 2e classe 579 3e »"
+LEGITEXT000019757647,LEGIARTI000023404426,1,2011-01-01,2012-01-01,"valeurs hors des lignes, dans « Ingénieur mécanicien électricien Hors classe 852 1re classe 801 2e classe 579 3e »"
+LEGITEXT000019757647,LEGIARTI000024751667,1,2012-01-01,2016-03-01,"valeurs hors des lignes, dans « Ingénieur mécanicien électricien Hors classe 852 1re classe 801 2e classe 579 3e »"
+LEGITEXT000019757647,LEGIARTI000032001587,1,2016-03-01,2017-01-01,"valeurs hors des lignes, dans « Ingénieur mécanicien électricien Hors classe 852 1re classe 801 2e classe 579 3e »"
+LEGITEXT000019757647,LEGIARTI000034034852,1,2017-01-01,2023-01-01,"valeurs hors des lignes, dans « Ingénieur mécanicien électricien Hors classe 852 1re classe 801 2e classe 579 3e »"
+LEGITEXT000019757647,LEGIARTI000046594838,1,2023-01-01,,"valeurs hors des lignes, dans « Ingénieur mécanicien électricien Hors classe 852 1re classe 801 2e classe 579 3e »"
+LEGITEXT000019762475,LEGIARTI000019762480,1,1990-04-11,2017-01-01,échelon 5 en double dans « emploi de secrétaire général adjoint de la grande chancellerie de la Légion d'honneur »
+LEGITEXT000019764359,LEGIARTI000019764365,2,1990-03-17,,"tableau de reclassement, pas une grille"
+LEGITEXT000019765008,LEGIARTI000019765060,1,1985-04-12,2013-04-13,"valeurs hors des lignes, dans « 1er échelon Après deux ans 528 Avant deux ans 480 Chefs de travaux des facultés  »"
+LEGITEXT000019765530,LEGIARTI000019765536,1,1985-10-09,2017-01-01,aucun échelon
+LEGITEXT000019768475,LEGIARTI000019768485,1,1984-05-04,2012-11-01,"valeurs hors des lignes, dans « Stage 340 Secrétaires d'administration de la recherche Classe exceptionnelle »"
+LEGITEXT000019768475,LEGIARTI000026511195,1,2012-11-01,,"valeurs hors des lignes, dans « Stage 340 Secrétaires d'administration de la recherche Classe exceptionnelle »"
+LEGITEXT000019769153,LEGIARTI000019769158,1,1986-09-01,2011-09-01,"valeurs hors des lignes, dans « Stage 340 Secrétaires d'administration de recherche et de formation Classe excep »"
+LEGITEXT000019769153,LEGIARTI000024744838,1,2011-09-01,2017-01-01,"échelon 8 de « en CORPS, , ET Ingénieurs de recherche (date d'effet » : 2 valeurs pour 1 colonnes"
+LEGITEXT000019769153,LEGIARTI000034034862,1,2017-01-01,2017-01-01,"échelon 8 de « en CORPS, , ET Ingénieurs d'études Hors classe (date d'effet » : 2 valeurs pour 1 colonnes"
+LEGITEXT000019769153,LEGIARTI000034448958,1,2017-01-01,,échelon 8 de « en Attachés d'administration de recherche et de formation Attaché principal de 1re classe (date d'effet » : 2 valeurs pour 1 colonnes
+LEGITEXT000019777241,LEGIARTI000019777247,2,1991-08-18,2010-09-01,"valeurs hors des lignes, dans « Stage - jusqu'au douzième mois 305 - du treizième au quinzième mois 379 - à part »"
+LEGITEXT000019777543,LEGIARTI000019777549,1,1987-01-24,,2 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000019777767,LEGIARTI000019777923,1,1993-11-19,,échelon 1 en double dans « Echelon provisoire n° »
+LEGITEXT000019797630,LEGIARTI000019797641,1,1989-03-19,2013-04-06,"valeurs hors des lignes, dans « 5e échelon . 664 »"
+LEGITEXT000019800978,LEGIARTI000019800982,1,1992-06-15,2017-01-01,"valeurs hors des lignes, dans « En chef 7e échelon (échelon terminal) 579 »"
+LEGITEXT000019859064,LEGIARTI000019859069,1,1992-12-10,2012-01-01,3 valeurs par ligne pour 1 dates : colonnes non lues
+LEGITEXT000019859064,LEGIARTI000024751657,1,2012-01-01,,3 valeurs par ligne pour 1 dates : colonnes non lues
+LEGITEXT000019859110,LEGIARTI000019859115,2,1992-01-23,2010-08-28,"valeurs hors des lignes, dans « Echelon provisoire 823 »"
+LEGITEXT000019867278,LEGIARTI000019867282,2,1995-08-31,,"valeurs hors des lignes, dans « Echelon provisoire 513 »"
+LEGITEXT000020096799,LEGIARTI000020541257,2,2009-04-23,2010-01-01,échelon eleve en double dans « Stagiaire »
+LEGITEXT000020096799,LEGIARTI000020096823,3,2009-01-14,2009-04-23,"valeurs hors des lignes, dans « EMPLOI ET ÉCHELON Responsable d'unité locale de police 660 Brigadier-major »"
+LEGITEXT000020096799,LEGIARTI000020541249,3,2009-04-23,2010-01-01,"valeurs hors des lignes, dans « EMPLOI ET ÉCHELON Responsable d'unité locale de police 660 Brigadier-major »"
+LEGITEXT000020096799,LEGIARTI000021539333,3,2010-01-01,2010-05-30,"valeurs hors des lignes, dans « EMPLOI ET ÉCHELON Responsable d'unité locale de police 660 Brigadier-major »"
+LEGITEXT000020478486,LEGIARTI000020478521,1,2009-04-04,2014-04-02,aucun échelon
+LEGITEXT000020478486,LEGIARTI000020478525,2,2009-04-04,,aucun échelon
+LEGITEXT000020478486,LEGIARTI000020478523,3,2009-04-04,2013-10-02,aucun échelon
+LEGITEXT000020478486,LEGIARTI000020478541,4,2009-04-04,2017-01-01,aucun échelon
+LEGITEXT000020478486,LEGIARTI000020478539,5,2009-04-04,2017-01-01,aucun échelon
+LEGITEXT000020478486,LEGIARTI000020478527,6,2009-04-04,2017-01-01,aucun échelon
+LEGITEXT000020478486,LEGIARTI000020478529,7,2009-04-04,2015-06-01,aucun échelon
+LEGITEXT000020478486,LEGIARTI000020478531,8,2009-04-04,2012-01-01,aucun échelon
+LEGITEXT000020478486,LEGIARTI000034356520,9-1,2017-01-01,2018-01-01,"valeurs hors des lignes, dans « Délégué principal 10e échelon -- -- -- 1015 »"
+LEGITEXT000020478486,LEGIARTI000036489657,9-1,2018-01-01,,"valeurs hors des lignes, dans « Délégué principal 10e échelon -- -- -- 1015 »"
+LEGITEXT000020553689,LEGIARTI000020553699,1,2009-04-26,2015-11-01,2 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000020628749,LEGIARTI000020628751,1,2009-05-18,2010-04-01,"valeurs hors des lignes, dans « Classe normale Temporaire 579 »"
+LEGITEXT000020628749,LEGIARTI000022039164,1,2010-04-01,,"valeurs hors des lignes, dans « Classe normale Temporaire 579 »"
+LEGITEXT000020691777,LEGIARTI000020691783,1,2008-07-11,2010-03-25,"valeurs hors des lignes, dans « Echelon provisoire 548 Ingénieur d'études et de fabrications »"
+LEGITEXT000020785504,LEGIARTI000020785511,1,2009-06-25,2012-05-01,"valeurs hors des lignes, dans « Inspecteur-élève après un an 340 Inspecteur-élève avant un an 302 II. - Emplois  »"
+LEGITEXT000020785504,LEGIARTI000025766236,1,2012-05-01,2017-01-01,"valeurs hors des lignes, dans « Inspecteur-élève après un an 340 Inspecteur-élève avant un an 302 II. - Emplois  »"
+LEGITEXT000020785504,LEGIARTI000034034536,1,2017-01-01,2017-01-01,"valeurs hors des lignes, dans « Inspecteur-élève après un an 340 Inspecteur-élève avant un an 302 II. - Emplois  »"
+LEGITEXT000021205650,LEGIARTI000021205664,4,2009-10-29,2017-02-13,"valeurs hors des lignes, dans « 8 échelon 747 »"
+LEGITEXT000021214923,LEGIARTI000021214938,1,2009-10-31,2017-01-01,"« Ingénieur en chef du contrôle de la navigation aérienne » : l'indice baisse quand l'échelon monte (4 : 916, 7 : 855)"
+LEGITEXT000021214923,LEGIARTI000021214940,2,2009-10-31,2015-12-31,"« Ingénieur principal des études et de l'exploitation de l'aviation civile de 1re classe » : l'indice baisse quand l'échelon monte (2 : 1015, 6 : 860)"
+LEGITEXT000021214923,LEGIARTI000021214942,3,2009-10-31,2015-12-31,échelon 6 en double dans « Ingénieur électronicien divisionnaire des systèmes de la sécurité aérienne »
+LEGITEXT000021214923,LEGIARTI000021214944,4,2009-10-31,2013-11-15,"« Technicien supérieur des études et de l'exploitation de l'aviation civile de classe exceptionnelle » : l'indice baisse quand l'échelon monte (3 : 599, 6 : 582)"
+LEGITEXT000021263530,LEGIARTI000021263538,2,2009-11-16,,aucun échelon
+LEGITEXT000021871250,LEGIARTI000021871265,4,2010-02-26,2017-01-01,"valeurs hors des lignes, dans « Agent comptable de centre régional des œuvres universitaires et scolaires classé »"
+LEGITEXT000022011622,LEGIARTI000029406822,10-1,2014-09-01,2017-01-01,8 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000022011622,LEGIARTI000022011644,2,2010-03-25,2017-01-01,"valeurs hors des lignes, dans « Echelon provisoire 548 Ingénieur d'études et de fabrications »"
+LEGITEXT000022011622,LEGIARTI000030371754,3 bis,2015-04-01,2016-01-01,échelon 7 en double dans « Cadre supérieur de santé paramédical »
+LEGITEXT000022011622,LEGIARTI000029309129,3-1,2014-10-01,2016-01-01,échelon 7 en double dans « Quatrième grade »
+LEGITEXT000022011622,LEGIARTI000034036989,3-3,2017-01-01,2018-01-01,"tableau de reclassement, pas une grille"
+LEGITEXT000022011622,LEGIARTI000036489769,3-3,2018-01-01,2018-12-30,"tableau de reclassement, pas une grille"
+LEGITEXT000022011622,LEGIARTI000038033766,3-3,2018-12-30,2022-01-01,"tableau de reclassement, pas une grille"
+LEGITEXT000022011622,LEGIARTI000044879775,3-3,2022-01-01,2022-10-01,"tableau de reclassement, pas une grille"
+LEGITEXT000022011622,LEGIARTI000046346230,3-3,2022-10-01,,"tableau de reclassement, pas une grille"
+LEGITEXT000022277001,LEGIARTI000038039870,3,2019-01-01,2023-07-01,1 valeurs par ligne pour 2 dates : colonnes non lues
+LEGITEXT000022277001,LEGIARTI000054873575,3,2027-02-01,,échelon 1 en double dans « 6 »
+LEGITEXT000022277001,LEGIARTI000022277026,5,2010-05-30,2010-12-01,"valeurs hors des lignes, dans « Responsable d'unité locale de police. 660 Major de police »"
+LEGITEXT000022277001,LEGIARTI000023402769,5,2010-12-01,2011-01-01,"valeurs hors des lignes, dans « EMPLOI ET ÉCHELON Responsable d'unité locale de police. 663 Major de police »"
+LEGITEXT000022277001,LEGIARTI000023402803,5,2011-01-01,2011-07-01,"valeurs hors des lignes, dans « EMPLOI ET ÉCHELON Responsable d'unité locale de police 663 Major de police Echel »"
+LEGITEXT000022277001,LEGIARTI000023750120,5,2011-07-01,2012-01-01,échelon 1 de « Major de police Echelon exceptionnel 4e échelon 3e échelon 2e échelon » : 5 valeurs pour 1 colonnes
+LEGITEXT000022277001,LEGIARTI000029415846,5,2014-09-01,2015-11-29,16 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000022277001,LEGIARTI000047909439,5,2023-08-01,,échelon 6 de « Major de police » : 1 valeurs pour 3 colonnes
+LEGITEXT000022754932,LEGIARTI000022754940,1,2011-09-01,2017-01-01,"valeurs hors des lignes, dans « Inspecteur des finances publiques 12e échelon . 801 11e échelon . 759 10e échelo »"
+LEGITEXT000022755004,LEGIARTI000034034548,1,2017-01-01,2018-01-01,aucun échelon
+LEGITEXT000022755004,LEGIARTI000036489802,1,2018-01-01,2023-04-01,aucun échelon
+LEGITEXT000023272527,LEGIARTI000023272540,3,2010-09-01,2012-11-29,2 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000023272527,LEGIARTI000026700465,3,2012-11-29,2014-06-19,2 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000024877121,LEGIARTI000024877132,1,2011-12-01,2017-01-31,échelon fonctionnel en double dans « Cadre supérieur de second niveau »
+LEGITEXT000024877121,LEGIARTI000033925651,1,2017-01-31,2021-01-01,17 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000024877121,LEGIARTI000042563722,1,2021-01-01,2025-02-20,"valeurs hors des lignes, dans « applicables le premier jour du mois suivant la publication du présent décret à p »"
+LEGITEXT000024877121,LEGIARTI000033925654,2,2017-01-31,2020-12-01,15 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000024877121,LEGIARTI000042563725,2,2020-12-01,,11 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000024877121,LEGIARTI000033925657,3,2017-01-31,,16 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000024877121,LEGIARTI000033925660,4,2017-01-31,2020-12-01,19 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000024877121,LEGIARTI000042563728,4,2020-12-01,,19 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000024877121,LEGIARTI000033925663,5,2017-01-31,2020-12-01,12 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000024877121,LEGIARTI000042563731,5,2020-12-01,,12 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000024878075,LEGIARTI000024878119,7,2011-12-01,2013-06-19,"valeurs hors des lignes, dans « Chef d'établissement de classe supérieure Echelon unique 841 Chef d'établissemen »"
+LEGITEXT000024970160,LEGIARTI000024970168,1,2011-12-15,2017-01-01,échelon 4 en double dans « Classe fonctionnelle III »
+LEGITEXT000025759568,LEGIARTI000034034543,1,2017-01-01,2018-01-01,aucun échelon
+LEGITEXT000025759568,LEGIARTI000036489822,1,2018-01-01,2023-04-01,aucun échelon
+LEGITEXT000026383946,LEGIARTI000034034510,18,2017-01-01,2017-01-01,"« Conseiller d'administration de l'écologie, du développement et de l'aménagement durables » : l'indice baisse quand l'échelon monte (5 : 961, 6 : 912)"
+LEGITEXT000026383946,LEGIARTI000026384005,4,2012-09-20,2017-01-01,échelon 6 en double dans « 2e classe »
+LEGITEXT000026383946,LEGIARTI000026384011,7,2012-09-20,2017-01-01,échelon 5 en double dans « Classe normale »
+LEGITEXT000026508950,LEGIARTI000026508952,1,2012-10-20,,échelon 14 en double dans « Classe normale »
+LEGITEXT000027273826,LEGIARTI000027273835,1,2013-04-06,2017-02-13,"valeurs hors des lignes, dans « Hors classe 6e échelon 5e échelon 4e échelon 3e échelon 2e échelon 1er échelon G »"
+LEGITEXT000027297018,LEGIARTI000027297037,1,2013-04-13,2017-01-01,aucun échelon
+LEGITEXT000027297018,LEGIARTI000034774302,1,2017-09-01,2018-01-01,"valeurs hors des lignes, dans « À COMPTER DU 1 erSEPTEMBRE 2017 Professeurs des universités, astronomes et physi »"
+LEGITEXT000027297018,LEGIARTI000036489890,1,2018-01-01,,"valeurs hors des lignes, dans « À COMPTER DU 1 erSEPTEMBRE 2017 Professeurs des universités, astronomes et physi »"
+LEGITEXT000027297018,LEGIARTI000027297047,7,2013-04-13,,6 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000027297018,LEGIARTI000027297049,8,2013-04-13,2017-01-01,"valeurs hors des lignes, dans « 6 échelon 648 »"
+LEGITEXT000028248391,LEGIARTI000033925666,1,2017-01-31,2021-01-01,3 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000028248391,LEGIARTI000042563261,1,2021-01-01,2025-02-20,"valeurs hors des lignes, dans « applicables le premier jour du mois suivant la publication du présent décret à p »"
+LEGITEXT000028248391,LEGIARTI000033925690,10,2017-01-31,2020-12-01,10 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000028248391,LEGIARTI000033925693,11,2017-01-31,2020-12-01,14 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000028248391,LEGIARTI000033925696,12,2017-01-31,2020-12-01,8 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000028248391,LEGIARTI000033925699,13,2017-01-31,2020-12-01,12 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000028248391,LEGIARTI000033925702,14,2017-01-31,2020-12-01,14 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000028248391,LEGIARTI000033925705,15,2017-01-31,2020-12-01,8 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000028248391,LEGIARTI000033925708,16,2017-01-31,2020-12-01,14 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000028248391,LEGIARTI000033925711,17,2017-01-31,2020-12-01,8 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000028248391,LEGIARTI000033925714,18,2017-01-31,2020-12-01,8 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000028248391,LEGIARTI000033925669,2,2017-01-31,2020-12-01,12 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000028248391,LEGIARTI000033925717,21,2017-01-31,,11 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000028248391,LEGIARTI000033925720,22,2017-01-31,,14 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000028248391,LEGIARTI000033925672,3,2017-01-31,2020-12-01,10 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000028248391,LEGIARTI000033925675,4,2017-01-31,2020-12-01,14 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000028248391,LEGIARTI000033925678,5,2017-01-31,2020-12-01,8 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000028248391,LEGIARTI000028248429,7,2013-11-30,2017-01-31,"valeurs hors des lignes, dans « Chef d'établissement de classe supérieure Echelon unique 841 Chef d'établissemen »"
+LEGITEXT000028248391,LEGIARTI000033925681,7,2017-01-31,,"valeurs hors des lignes, dans « Chef d'établissement de classe supérieure Echelon unique 853 Chef d'établissemen »"
+LEGITEXT000028248391,LEGIARTI000033925684,8,2017-01-31,2020-12-01,14 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000028248391,LEGIARTI000033925687,9,2017-01-31,2020-12-01,8 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000028248509,LEGIARTI000028248516,4,1991-01-01,2016-02-29,"« grade d'inspecteur principal » : l'indice baisse quand l'échelon monte (6 : 693, 7 : 652)"
+LEGITEXT000028267187,LEGIARTI000028267190,1,1991-01-01,2016-02-29,"« grade d'inspecteur » : l'indice baisse quand l'échelon monte (7 : 679, 8 : 611)"
+LEGITEXT000028267330,LEGIARTI000028267334,7,1991-01-01,,échelon 6 en double dans « grade de chef d'établissement de 4e classe de La Poste »
+LEGITEXT000029100847,LEGIARTI000029100894,12,2014-06-19,2017-01-01,2 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000029100847,LEGIARTI000034034413,16,2017-02-13,2017-05-12,1 valeurs par ligne pour 2 dates : colonnes non lues
+LEGITEXT000029100847,LEGIARTI000034772748,16,2017-05-12,2018-01-01,4 valeurs par ligne pour 5 dates : colonnes non lues
+LEGITEXT000029100847,LEGIARTI000036489896,16,2018-01-01,2025-04-01,4 valeurs par ligne pour 5 dates : colonnes non lues
+LEGITEXT000029100847,LEGIARTI000051345313,16,2025-04-01,2026-01-01,4 valeurs par ligne pour 5 dates : colonnes non lues
+LEGITEXT000030324103,LEGIARTI000030324189,1,1989-09-11,,11 valeurs par ligne pour 1 dates : colonnes non lues
+LEGITEXT000030683823,LEGIARTI000030683830,1,2015-07-01,2017-01-01,"valeurs hors des lignes, dans « Echelon provisoire 716 Groupe IV »"
+LEGITEXT000030683823,LEGIARTI000034034391,1,2017-01-01,2017-01-01,"valeurs hors des lignes, dans « Echelon provisoire 721 728 Groupe IV »"
+LEGITEXT000030683823,LEGIARTI000035602730,1,2017-01-01,2018-01-01,"valeurs hors des lignes, dans « Echelon provisoire 721 728 Groupe IV »"
+LEGITEXT000030683823,LEGIARTI000036489949,1,2018-01-01,2026-01-01,"valeurs hors des lignes, dans « Echelon provisoire 721 728 Groupe IV »"
+LEGITEXT000030683823,LEGIARTI000052530861,1,2026-01-01,,"valeurs hors des lignes, dans « Echelon provisoire 721 728 Groupe IV »"
+LEGITEXT000031320442,LEGIARTI000035603091,3,2016-01-01,2018-01-01,"valeurs hors des lignes, dans « Greffier principal Echelon spécial - 705 713 723 11 ème échelon - 701 707 707 »"
+LEGITEXT000031320442,LEGIARTI000036489952,3,2018-01-01,2023-11-01,"valeurs hors des lignes, dans « Greffier principal Echelon spécial - 705 713 723 11 ème échelon - 701 707 707 »"
+LEGITEXT000031397889,LEGIARTI000031397895,1,2015-11-01,2017-01-01,2 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000032118258,LEGIARTI000032118270,1,2016-02-29,2018-12-01,"valeurs hors des lignes, dans « 2e échelon fonctionnel HEA 1er échelon fonctionnel 1015 »"
+LEGITEXT000032118258,LEGIARTI000037636763,1,2018-12-01,2021-04-11,"valeurs hors des lignes, dans « 2e échelon fonctionnel HEA 1er échelon fonctionnel 1027 »"
+LEGITEXT000032118258,LEGIARTI000043347565,1,2021-04-11,2025-02-20,19 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000032118258,LEGIARTI000043347568,2,2021-04-11,,15 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000032118258,LEGIARTI000043347571,3,2021-04-11,,16 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000032118258,LEGIARTI000043347574,4,2021-04-11,,15 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000032118258,LEGIARTI000043347577,5,2021-04-11,,18 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000032118258,LEGIARTI000043347580,6,2021-04-11,,14 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000032118258,LEGIARTI000043347583,7,2021-04-11,,18 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000032118572,LEGIARTI000043346945,1,2021-04-11,,10 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000032118572,LEGIARTI000043346971,10,2021-04-11,,14 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000032118572,LEGIARTI000043346974,11,2021-04-11,,12 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000032118572,LEGIARTI000043346977,12,2021-04-11,,15 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000032118572,LEGIARTI000043346980,13,2021-04-11,,14 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000032118572,LEGIARTI000043346983,14,2021-04-11,,15 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000032118572,LEGIARTI000043346986,15,2021-04-11,,7 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000032118572,LEGIARTI000043346989,16,2021-04-11,,14 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000032118572,LEGIARTI000043346992,17,2021-04-11,,14 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000032118572,LEGIARTI000043346995,18,2021-04-11,,14 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000032118572,LEGIARTI000043346998,19,2021-04-11,,13 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000032118572,LEGIARTI000043346948,2,2021-04-11,,12 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000032118572,LEGIARTI000043347001,20,2021-04-11,,13 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000032118572,LEGIARTI000043347004,21,2021-04-11,,11 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000032118572,LEGIARTI000043347007,22,2021-04-11,,15 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000032118572,LEGIARTI000043347010,23,2021-04-11,,10 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000032118572,LEGIARTI000043347013,24,2021-04-11,,10 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000032118572,LEGIARTI000043347016,25,2021-04-11,,15 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000032118572,LEGIARTI000043347019,26,2021-04-11,,14 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000032118572,LEGIARTI000043347022,27,2021-04-11,,13 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000032118572,LEGIARTI000043346952,3,2021-04-11,,7 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000032118572,LEGIARTI000043346956,4,2021-04-11,2025-02-20,15 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000032118572,LEGIARTI000043346959,5,2021-04-11,,14 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000032118572,LEGIARTI000043346962,6,2021-04-11,,14 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000032118572,LEGIARTI000032118610,7,2016-02-29,2018-12-01,"valeurs hors des lignes, dans « Chef d'établissement de classe supérieure Echelon unique 841 Chef d'établissemen »"
+LEGITEXT000032118572,LEGIARTI000037636694,7,2018-12-01,,"valeurs hors des lignes, dans « Chef d'établissement de classe supérieure Echelon unique 853 Chef d'établissemen »"
+LEGITEXT000032118572,LEGIARTI000043346965,8,2021-04-11,,14 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000032118572,LEGIARTI000043346968,9,2021-04-11,,13 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000032152183,LEGIARTI000032152190,1,2016-04-01,2017-02-13,échelon 5 en double dans « 1re classe »
+LEGITEXT000032152183,LEGIARTI000034034448,1,2017-02-13,2017-05-12,1 valeurs par ligne pour 2 dates : colonnes non lues
+LEGITEXT000032152183,LEGIARTI000034772753,1,2017-05-12,2018-01-01,4 valeurs par ligne pour 5 dates : colonnes non lues
+LEGITEXT000032152183,LEGIARTI000036489962,1,2018-01-01,,4 valeurs par ligne pour 5 dates : colonnes non lues
+LEGITEXT000033716979,LEGIARTI000033716986,1,2016-12-29,2017-12-31,"valeurs hors des lignes, dans « Attaché principal 10e échelon (à compter du 1er janvier 2020 ) 1015 »"
+LEGITEXT000033716979,LEGIARTI000036401246,1,2017-12-31,,"valeurs hors des lignes, dans « Attaché principal 10e échelon (à compter du 1er janvier 2021 ) 1015 »"
+LEGITEXT000033792703,LEGIARTI000033792713,1,2017-01-01,2018-01-01,aucun échelon
+LEGITEXT000033792703,LEGIARTI000036490567,1,2018-01-01,2018-12-29,aucun échelon
+LEGITEXT000033792703,LEGIARTI000037970479,1,2018-12-29,,aucun échelon
+LEGITEXT000034028389,LEGIARTI000034028648,95,2017-02-13,2018-01-01,"valeurs hors des lignes, dans « er échelon provisoire 607 613 Inspecteur de la jeunesse et des sports de 1re cla »"
+LEGITEXT000034028389,LEGIARTI000036601648,95,2017-12-31,2019-01-01,"valeurs hors des lignes, dans « er échelon provisoire 607 613 Inspecteur de la jeunesse et des sports hors class »"
+LEGITEXT000034028389,LEGIARTI000036490172,95,2018-01-01,2017-12-31,"valeurs hors des lignes, dans « er échelon provisoire 607 613 Inspecteur de la jeunesse et des sports de 1re cla »"
+LEGITEXT000034028389,LEGIARTI000034028816,97,2017-02-13,2017-01-01,échelon 6 en double dans « 2e classe »
+LEGITEXT000034028389,LEGIARTI000036490154,97,2018-01-01,2017-01-01,échelon 6 en double dans « 2e classe »
+LEGITEXT000035072959,LEGIARTI000035072970,1,2017-07-03,2025-02-20,7 valeurs par ligne pour 0 dates : colonnes non lues
+LEGITEXT000035072959,LEGIARTI000035072972,2,2017-07-03,,aucun échelon
+LEGITEXT000035072959,LEGIARTI000035072974,3,2017-07-03,,aucun échelon
+LEGITEXT000035591624,LEGIARTI000035591630,1,2017-01-01,2018-01-01,échelon 2 de « Conseillers techniques et pédagogiques supérieurs classe exceptionnelle » : 3 valeurs pour 4 colonnes
+LEGITEXT000035591624,LEGIARTI000036490353,1,2018-01-01,,échelon 2 de « Conseillers techniques et pédagogiques supérieurs classe exceptionnelle » : 3 valeurs pour 4 colonnes
+LEGITEXT000035596803,LEGIARTI000045248958,1,2022-02-28,,échelon 6 de « Groupe III » : 2 valeurs pour 4 colonnes
+LEGITEXT000035624178,LEGIARTI000035624187,2,2017-09-24,2018-01-01,"valeurs hors des lignes, dans « Echelon A compter de la date d'entrée en vigueur du décret 2017-1391 susvisé »"
+LEGITEXT000035624178,LEGIARTI000036490370,2,2018-01-01,,"valeurs hors des lignes, dans « Echelon A compter de la date d'entrée en vigueur du décret 2017-1391 susvisé »"
+LEGITEXT000035638946,LEGIARTI000035638952,1,2017-01-01,2018-01-01,6 valeurs par ligne pour 3 dates : colonnes non lues
+LEGITEXT000035638946,LEGIARTI000036490373,1,2018-01-01,,6 valeurs par ligne pour 3 dates : colonnes non lues
+LEGITEXT000036652021,LEGIARTI000036652033,1,2018-03-01,,échelon 1 de « Emploi régi par le décret n° 2007-120 du 30 janvier 2007 EMPLOI ET Directeur fonctionnel » : 1 valeurs pour 4 colonnes
+LEGITEXT000038381050,LEGIARTI000038381058,1,2001-12-31,2012-01-01,"valeurs hors des lignes, dans « 16 e échelon . 638 .. DURÉE dans l'échelon (années) Assistants principaux 1e éch »"
+LEGITEXT000038381050,LEGIARTI000038382967,1,2012-01-01,,"valeurs hors des lignes, dans « 16 e échelon . 638 .. DURÉE dans l'échelon (années) Assistants principaux 1e éch »"
+LEGITEXT000038717886,LEGIARTI000038717894,2,2017-01-01,,3 valeurs par ligne pour 4 dates : colonnes non lues
+LEGITEXT000041507157,LEGIARTI000041507162,1,2020-01-31,,3 valeurs par ligne pour 4 dates : colonnes non lues
+LEGITEXT000042508049,LEGIARTI000042508054,1,2017-01-01,2021-02-11,échelon 10 en double dans « Traducteur »
+LEGITEXT000043098760,LEGIARTI000019424143,1,2007-09-10,,"valeurs hors des lignes, dans « Catégorie 4 DURÉE dans l'échelon (années) Classe 3 Fonctionnel - 499 7e échelon »"
+LEGITEXT000043098760,LEGIARTI000019424142,2,2007-09-10,,échelon 8 de « A » : 2 valeurs pour 1 colonnes
+LEGITEXT000047711185,LEGIARTI000047711188,1,2023-07-01,,"tableau de reclassement, pas une grille"
+LEGITEXT000047711185,LEGIARTI000047711190,2,2023-07-01,2024-02-03,"tableau de reclassement, pas une grille"
+LEGITEXT000047711185,LEGIARTI000049080573,2,2024-02-03,,"tableau de reclassement, pas une grille"
+LEGITEXT000047712249,LEGIARTI000047712256,1,2023-07-01,,"valeurs hors des lignes, dans « Président de section 10 2 074 9 2 068 8 2 062 7 2 056 6 2 049 5 2 043 4 2 037 3  »"
+LEGITEXT000047712291,LEGIARTI000047712295,1,2023-07-01,,échelon 1 en double dans « 6 »
+LEGITEXT000047712291,LEGIARTI000047712297,2,2023-07-01,,"valeurs hors des lignes, dans « Les provisoires mentionnés à l'article 17 du décret n° 2023-486 du 21 juin 2023  »"
+LEGITEXT000052475698,LEGIARTI000052475744,1,2025-12-01,,"valeurs hors des lignes, dans « Magistrats du troisième grade 1 ° Premier président de la Cour de cassation et d »"

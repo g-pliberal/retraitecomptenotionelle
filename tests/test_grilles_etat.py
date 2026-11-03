@@ -224,7 +224,9 @@ def test_verifier_donnees_certifie_les_echelons_et_le_bareme(extrait, tmp_path, 
     ordre = {f: [l[grilles.COLONNES[f][0]] for l in _lire_csv(dossier / f"{f}.csv")]
              for f in grilles.CERTIFIEES}
 
-    certifications = [c for c in verifier.CERTIFICATIONS if c.nom.startswith("grilles_etat_")]
+    # Celles du Noyau RH seules : non ``grilles_etat_legi_*``, l'État lu au LEGI.
+    certifications = [c for c in verifier.CERTIFICATIONS if c.nom.startswith("grilles_etat_")
+                      and c.chemin.parent.name == "etat"]
     assert sorted((c.chemin.name, c.colonne) for c in certifications) == sorted(
         (f"{fichier}.csv", colonne)
         for fichier, colonnes in grilles.CERTIFIEES.items() for colonne in colonnes)
