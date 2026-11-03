@@ -167,10 +167,11 @@ def test_chaque_citation_du_temoin_est_dans_le_pdf(fichier):
 
 def test_chaque_fiche_de_l_etape_4_nomme_ses_confrontations():
     """Au suivi, chaque fiche que l'étape 4 a confrontée nomme les tests de ce
-    module qui la confrontent ; chacun existe. Les fiches 8 et 15, que l'étape
-    2 lui a renvoyées le 3 novembre 2026, attendent leur confrontation ; la
-    fiche 21, que l'étape 3 lui a renvoyée le même jour, est confrontée à la
-    grille depuis."""
+    module qui la confrontent ; chacun existe. Les fiches 5, 8 et 15, que
+    l'étape 2 lui a renvoyées le 3 novembre 2026, attendent leur
+    confrontation — la 5 par régime (tableaux 2 et 4), une fois ses montants
+    de 2023 et 2024 portés au dépôt ; la fiche 21, que l'étape 3 lui a
+    renvoyée le même jour, est confrontée à la grille depuis."""
     suivi = yaml.safe_load(SUIVI.read_text(encoding="utf-8"))["fiches"]
     etape_4 = {numero: ligne for numero, ligne in suivi.items()
                if ligne.get("etape") == 4 and ligne["statut"] == "confronte"}
@@ -178,7 +179,7 @@ def test_chaque_fiche_de_l_etape_4_nomme_ses_confrontations():
                                "30", "31", "32"]
     attendent = sorted(numero for numero, ligne in suivi.items()
                        if ligne.get("etape") == 4 and ligne["statut"] != "confronte")
-    assert attendent == ["08", "15"]
+    assert attendent == ["05", "08", "15"]
     assert {suivi[numero]["statut"] for numero in attendent} == {"a_confronter"}
     module = sys.modules[__name__]
     for numero, ligne in etape_4.items():
