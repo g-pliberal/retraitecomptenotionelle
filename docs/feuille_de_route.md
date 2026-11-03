@@ -7118,12 +7118,12 @@ l'inviterait aussi à relire le dépôt.
 ce qu'on peut trouver », les trois versants et les militaires ; le 3, la durée
 des échelons d'abord. Entrés, certifiés et recoupés : les grilles, le barème du
 décret n° 82-1105 depuis 1983, les reclassements (450 tableaux), les durées
-d'échelon, corrigées après la relecture R-B2 (777 tableaux, 14 506 lignes, lus
-au LEGI ; 1 249 non lus, avec leur raison ; versions jamais en vigueur ôtées,
-chevauchements marqués, règle du quart citée). Reste, dans l'ordre de la file :
-rattacher durées et reclassements aux grilles (le chaînage) ; relire les
-tableaux refusés ; les tableaux que l'index aplatit ; le minimum de traitement.
-Détail : la note des corrections de la relecture R-B2, du 3 novembre 2026.
+d'échelon, relues deux fois (778 tableaux, 14 521 lignes, lus au LEGI, une
+coquille du LEGI corrigée sur le JORF ; 1 248 non lus, avec leur raison ; 97
+versions d'article que le motif ne retient pas, comptées, non lues). Reste,
+dans l'ordre : le chaînage aux grilles ; ces 97 versions ; les tableaux refusés,
+au JORF quand le LEGI les abîme ; ceux que l'index aplatit ; le minimum de
+traitement. Détail : la note des retouches de la relecture R-B2-bis, du 3 novembre.
 
 
 **D'où elle vient.** La demande du propriétaire, le 12 octobre 2026 : aller

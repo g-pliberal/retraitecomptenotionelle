@@ -65,7 +65,13 @@ CE QUE LA DONNÉE NE DIT PAS. Un tableau nomme ses grades par son libellé, non
 par les clés de ``grilles/<versant>/grilles.csv`` : rattacher chaque tableau
 aux grilles du dépôt, par le texte d'échelonnement qui vise le statut, reste à
 faire. Les réductions et majorations d'ancienneté (l'avancement accéléré, la
-bonification), écrites en phrases, ne sont pas lues. Deux versions d'un article
+bonification), écrites en phrases, ne sont pas lues. Un article que le motif des
+durées (``DUREES_D_ECHELON``) ne retient pas n'est ni lu ni consigné, même
+s'il porte un tableau de durées (« L'avancement d'échelon s'effectue selon les
+durées suivantes : 1er échelon : un an », « CONDITIONS d'accès à l'échelon »,
+« GRAND CHOIX CHOIX ANCIENNETÉ ») : un comptage sur l'index, le 3 novembre
+2026, en trouve 97 versions au moins (note des retouches de la relecture
+R-B2-bis). Deux versions d'un article
 que le LEGI met en vigueur ensemble gardent leurs dates, et chacun de leurs
 tableaux nomme l'autre (``chevauche``) : le rattachement choisit. La règle qu'un
 article écrit avec sa durée moyenne (« La durée maximale … est égale à la durée
