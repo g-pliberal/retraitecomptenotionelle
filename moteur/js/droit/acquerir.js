@@ -51,6 +51,21 @@ export function revenuDeLAnnee(carriere, affiliation, annee) {
 }
 
 /**
+ * Les années d'exercice qui précèdent celle-ci sans interruption, au plus
+ * `maximum` : 0 l'année qui commence un exercice, qu'aucune ligne cotisée de
+ * la même affiliation ne précède l'année d'avant ; 1 la suivante. Jumeau de
+ * `annees_deja_exercees`.
+ */
+export function anneesDejaExercees(carriere, affiliation, annee, maximum) {
+  let rang = 0;
+  while (rang < maximum && carriere.lignesDe(annee - rang - 1).some(
+    (l) => l.affiliation === affiliation && l.cotise)) {
+    rang += 1;
+  }
+  return rang;
+}
+
+/**
  * L'assiette minimale que la ligne oppose à l'un de ces régimes : celle du
  * régime de BASE d'un indépendant (D. 633-2, D. 642-4), nulle ailleurs.
  */
@@ -504,6 +519,17 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
         const decalage = periode.assiette_annee_de_revenu?.[ligne.affiliation];
         if (decalage && ligne.cotise) {
           base = revenuDeLAnnee(carriere, ligne.affiliation, ligne.annee - decalage) * part;
+        }
+        // LE DÉBUT D'EXERCICE : l'artisan qui commence cotise au RCO sur un
+        // tiers, puis sur la moitié du plafond, jusqu'en 2011 : voir
+        // acquerir.py.
+        const diviseurs = periode.assiette_de_debut?.[ligne.affiliation];
+        if (diviseurs && ligne.cotise) {
+          const rang = anneesDejaExercees(carriere, ligne.affiliation, ligne.annee,
+            diviseurs.length);
+          if (rang < diviseurs.length) {
+            base = passPlein / diviseurs[rang] * part;
+          }
         }
         // Commissions de la CAVAMAC, produits de l'office de la CPRN : le
         // facteur reconstitue l'assiette depuis le revenu, avant les bornes.

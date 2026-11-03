@@ -74,6 +74,19 @@ def revenu_de_l_annee(carriere, affiliation: str, annee: int) -> float:
     return total
 
 
+def annees_deja_exercees(carriere, affiliation: str, annee: int, maximum: int) -> int:
+    """Les années d'exercice qui précèdent celle-ci sans interruption, au plus
+    ``maximum`` : 0 l'année qui commence un exercice, qu'aucune ligne cotisée
+    de la même affiliation ne précède l'année d'avant ; 1 la suivante. Jumeau
+    de ``anneesDejaExercees``."""
+    rang = 0
+    while rang < maximum and any(
+            autre.affiliation == affiliation and autre.cotise
+            for autre in carriere.lignes_de(annee - rang - 1)):
+        rang += 1
+    return rang
+
+
 def assiette_minimale(moteur: ScenarioActuel, codes, ligne) -> float:
     """L'assiette minimale que la ligne oppose à l'un de ces régimes.
 
@@ -615,6 +628,26 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
                 if decalage and ligne.cotise:
                     base = revenu_de_l_annee(
                         carriere, ligne.affiliation, ligne.annee - decalage) * part
+                # LE DÉBUT D'EXERCICE : « Pour les assurés commençant
+                # l'exercice d'une activité artisanale ou assimilée », la
+                # cotisation est assise « pour l'année ou la fraction d'année
+                # de début d'exercice, sur un revenu correspondant au tiers du
+                # plafond », « pour l'année suivante, sur un revenu
+                # correspondant à la moitié dudit plafond » (décret n° 78-351,
+                # article 3, II ; D. 635-4 ; D. 635-7), jusqu'à ce que le
+                # décret n° 2011-2038 les supprime en 2012. L'exercice commence
+                # l'année qu'aucune ligne de la même affiliation ne précède
+                # l'année d'avant : le texte ne dit pas la reprise, que
+                # R. 242-16 ne tient pour un début d'activité que passée
+                # l'année qui suit la cessation. Le forfait se prend à
+                # proportion des mois de l'année, comme les bornes.
+                diviseurs = dict(periode.assiette_de_debut).get(ligne.affiliation)
+                if diviseurs and ligne.cotise:
+                    rang = annees_deja_exercees(carriere, ligne.affiliation, ligne.annee,
+                                                len(diviseurs))
+                    if rang < len(diviseurs):
+                        base = (moteur.macro.plafond_securite_sociale(ligne.annee)
+                                / diviseurs[rang] * part)
                 # L'assiette de la CAVAMAC est faite des commissions
                 # versées par les compagnies, celle de la CPRN des produits
                 # de l'office : le facteur les reconstitue depuis le

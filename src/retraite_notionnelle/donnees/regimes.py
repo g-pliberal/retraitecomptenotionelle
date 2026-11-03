@@ -838,6 +838,12 @@ class PeriodeRegime:
     #: article 3 ; D. 635-4 ; D. 635-2). Vide : le revenu de l'année. Voir
     #: ``acquerir``.
     assiette_annee_de_revenu: tuple[tuple[str, int], ...] = ()
+    #: LE FORFAIT DU DÉBUT D'EXERCICE, statut par statut : les diviseurs du
+    #: plafond de l'année, ``(("artisan", (3, 2)),)`` — l'artisan au RCO de
+    #: 1979 à 2011, « au tiers du plafond », puis « à la moitié dudit
+    #: plafond » (décret n° 78-351, article 3, II ; D. 635-4 ; D. 635-7).
+    #: Vide : aucun forfait. Voir ``acquerir``.
+    assiette_de_debut: tuple[tuple[str, tuple[int, ...]], ...] = ()
     notes: str = ""
 
     def prise_en_charge(self, forfait: float, proportionnelle: float) -> float:
@@ -2311,6 +2317,9 @@ class CatalogueRegimes:
                 assiette_annee_de_revenu=tuple(sorted(
                     (str(statut), int(decalage)) for statut, decalage
                     in (p.get("assiette_annee_de_revenu") or {}).items())),
+                assiette_de_debut=tuple(sorted(
+                    (str(statut), tuple(int(d) for d in diviseurs)) for statut, diviseurs
+                    in (p.get("assiette_de_debut") or {}).items())),
                 points_par_trimestre_valide=(
                     None if p.get("points_par_trimestre_valide") is None
                     else float(p["points_par_trimestre_valide"])

@@ -1170,3 +1170,63 @@ def test_le_conjoint_collaborateur_cotise_au_rco_sur_l_assiette_de_l_annee(
         for annee, points in attendus.items():
             assert credits.get(("rco_artisans", annee)) == pytest.approx(
                 points, rel=1e-12), (moteur, annee)
+
+
+def test_les_deux_premieres_annees_de_l_artisan_cotisent_au_forfait(points_des_deux_moteurs):
+    """« Pour les assurés commençant l'exercice d'une activité artisanale ou
+    assimilée, la cotisation annuelle d'assurance vieillesse complémentaire est
+    assise : a) Pour l'année ou la fraction d'année de début d'exercice, sur un
+    revenu correspondant au tiers du plafond visé au premier alinéa du I du
+    présent article ; b) Pour l'année suivante, sur un revenu correspondant à
+    la moitié dudit plafond » (décret n° 78-351, article 3, II,
+    LEGIARTI000006766103 ; D. 635-4, LEGIARTI000006738335 à
+    LEGIARTI000006738338) ; « au tiers du plafond mentionné à l'article
+    L. 241-3 », puis « à la moitié dudit plafond » (D. 635-7,
+    LEGIARTI000006738025, LEGIARTI000017869802), jusqu'au décret n° 2011-2038,
+    article 3, II, 1° (JORFARTI000025055800), qui les supprime au 1er janvier
+    2012. Le plafond est celui de la sécurité sociale : la caisse calcule la
+    complémentaire de l'aide familial, que le même article assied « sur un
+    revenu égal au tiers du plafond visé au premier alinéa du I », « sur le
+    tiers du plafond de la sécurité sociale » (exposé « Rachat aide familial »
+    de la Cnav). L'artisan installé en 1980 cotise à 4,40 % sur 9 165 / 3 € en
+    1980, sur 10 482 / 2 € en 1981, puis sur son revenu de 1980 en 1982 ; celui
+    de 2008, sur 33 276 / 3 € à 7 % en 2008 et sur 34 308 / 2 € à 7,1 % en
+    2009 ; celui de 2011, sur 35 352 / 3 € à 7,2 % en 2011, puis sur son revenu
+    de 2012 — des points du RCO, que le RCI reprendra à la liquidation. Celui
+    qui reprend en 1998, après
+    quatorze ans sans activité, commence un nouvel exercice — ce que le texte
+    ne dit pas, et que R. 242-16 (LEGIARTI000006748778) dit des cotisations de
+    début d'activité de 2002 à 2008 : « Ne sont assimilées à un début
+    d'activité ni la modification des conditions d'exercice [...], ni la
+    reprise d'activité intervenue soit dans l'année au cours de laquelle est
+    survenue la cessation d'activité, soit dans l'année suivante » — : sur
+    25 776 / 3 € à 5,30 % en 1998, 26 471 / 2 € à 5,70 % en 1999, puis sur son
+    revenu de 1998 à 6 % en 2000. Dans les deux moteurs."""
+    cas = [
+        {"naissance": 1940, "age": 65.0, "releve": _releve(
+            "artisan", {1980: 10000.0, 1981: 11000.0, 1982: 12000.0})},
+        {"naissance": 1948, "age": 62.0, "releve": _releve(
+            "artisan", {2008: 30000.0, 2009: 31000.0})},
+        {"naissance": 1950, "age": 65.0, "releve": _releve(
+            "artisan", {2011: 30000.0, 2012: 32000.0})},
+        {"naissance": 1940, "age": 65.0, "releve": _releve(
+            "artisan", {**{annee: 10000.0 for annee in range(1979, 1984)},
+                        1998: 20000.0, 1999: 21000.0, 2000: 22000.0})},
+    ]
+    attendus = [
+        {1980: 9165 / 3 * 0.044 / 1.003115,
+         1981: 10482 / 2 * 0.044 / 1.137270,
+         1982: 10000.0 * 0.044 / 1.282096},
+        {2008: 33276 / 3 * 0.07 / 4.207,
+         2009: 34308 / 2 * 0.071 / 4.5},
+        {2011: 35352 / 3 * 0.072 / 4.79053,
+         2012: 32000.0 * 0.072 / 4.89113},
+        {1998: 25776 / 3 * 0.053 / 2.878237,
+         1999: 26471 / 2 * 0.057 / 3.103862,
+         2000: 20000.0 * 0.06 / 3.282227},
+    ]
+    for moteur, carrieres in points_des_deux_moteurs(cas).items():
+        for credits, attendu in zip(carrieres, attendus):
+            for annee, points in attendu.items():
+                assert credits.get(("rco_artisans", annee)) == pytest.approx(
+                    points, rel=1e-12), (moteur, annee)

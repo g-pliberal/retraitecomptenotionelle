@@ -1108,6 +1108,21 @@ champs_periode:
       (D. 635-10-2). `null` : le revenu de l'année pour tous.
     defaut: null
 
+  assiette_de_debut:
+    description: >-
+      Une table, du statut aux diviseurs du plafond annuel de la sécurité
+      sociale de l'exercice : les premières années civiles d'un exercice, la
+      cotisation est assise sur ce plafond divisé par le premier diviseur la
+      première année, par le second la suivante, quel que soit le revenu —
+      l'artisan au RCO de 1979 à 2011, « au tiers du plafond », puis « à la
+      moitié dudit plafond » (décret n° 78-351, article 3, II ; D. 635-4 ;
+      D. 635-7, jusqu'au décret n° 2011-2038). Un exercice commence l'année
+      qu'aucune ligne cotisée de la même affiliation ne précède l'année
+      d'avant, comme R. 242-16 le dit des débuts d'activité ; le forfait se
+      prend à proportion des mois de l'année, comme les bornes. `null` :
+      aucun forfait.
+    defaut: null
+
   assiette_plancher:
     description: >-
       L'assiette est-elle relevée au repère quand elle lui est inférieure ?

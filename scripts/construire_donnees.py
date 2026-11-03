@@ -838,6 +838,11 @@ def _regimes() -> list[dict]:
                     # absent, le moteur JavaScript lit le revenu de l'année.
                     **({"assiette_annee_de_revenu": dict(p.assiette_annee_de_revenu)}
                        if p.assiette_annee_de_revenu else {}),
+                    # Celles du RCO des artisans jusqu'en 2011 : absent, aucun
+                    # forfait de début d'exercice.
+                    **({"assiette_de_debut": {statut: list(diviseurs) for statut, diviseurs
+                                              in p.assiette_de_debut}}
+                       if p.assiette_de_debut else {}),
                     # La fiche datée du salaire annuel moyen, aux seules
                     # périodes qui y renvoient : absente, la moyenne annuelle.
                     **({"regles_du_salaire_annuel_moyen": p.regles_du_salaire_annuel_moyen}
