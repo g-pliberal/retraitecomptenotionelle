@@ -61,6 +61,39 @@ def test_le_temoin_de_l_eacr_dit_sa_source_et_redonne_ses_totaux(eacr):
         assert sum(e for age, e in serie.items() if age != "Ensemble") == serie["Ensemble"], code
 
 
+def test_le_temoin_garde_les_conditions_de_la_cnav_age_par_age(eacr):
+    """La table H de la Cnav, âge par âge (action 138, étape 14, la décote des
+    générations nées depuis 1960). Le stock de 2024 à 67 ans, la génération
+    1957, compte 85 676 retraités partis avec une décote sur 653 763, soit
+    13,1 % : la part que le graphique 4 de la fiche 17 du panorama de la DREES
+    (édition 2026, p. 158 de l'ouvrage) donne au régime général pour la
+    génération 1957, « calculée à l'âge de 67 ans ». À 64 ans, la génération
+    1960 : 69 611 sur 551 996, dont 40 845 des 285 736 femmes et 28 766 des
+    266 260 hommes. Les âges et « plus de 95 » redonnent, au stock, la ligne
+    « Ensemble » de chaque condition (1 386 961 décotés sur 14 744 736) ; les
+    âges et « plus de 70 », au flux (86 776 sur 648 346)."""
+    par_age = eacr["conditions_par_age"]
+    assert (par_age["feuille"], par_age["caisse"]) == ("H-Conditions_liq", "0015")
+    stock = par_age["series"]["stock"]
+    assert stock["ensemble"]["2024"]["67"]["decote"] == 85_676
+    assert stock["ensemble"]["2024"]["67"]["ensemble"] == 653_763
+    assert round(100 * 85_676 / 653_763, 1) == 13.1
+    assert stock["ensemble"]["2024"]["64"]["decote"] == 69_611
+    assert stock["ensemble"]["2024"]["64"]["ensemble"] == 551_996
+    assert (stock["F"]["2024"]["64"]["decote"], stock["F"]["2024"]["64"]["ensemble"]) == (
+        40_845, 285_736)
+    assert (stock["H"]["2024"]["64"]["decote"], stock["H"]["2024"]["64"]["ensemble"]) == (
+        28_766, 266_260)
+    for champ, reste, total in (("stock", "plus de 95", (1_386_961, 14_744_736)),
+                                ("flux", "plus de 70", (86_776, 648_346))):
+        ages = par_age["series"][champ]["ensemble"]["2024"]
+        for taux in ("decote", "ensemble"):
+            somme = sum(valeurs.get(taux, 0.0) for age, valeurs in ages.items()
+                        if age.isdigit() or age == reste)
+            assert somme == ages["Ensemble"][taux], (champ, taux)
+        assert (ages["Ensemble"]["decote"], ages["Ensemble"]["ensemble"]) == total
+
+
 def test_les_tranches_couvrent_tous_les_ages():
     assert M.tranche_de(22) == "moins_60" and M.tranche_de(64) == "60_64"
     assert M.tranche_de(95) == "90_95" and M.tranche_de(96) == "plus_95"

@@ -4,7 +4,7 @@
   "62 EACR diffusée Part 1 - version du 26 mai 2026.xlsx",
   "62 EACR diffusée Part 2 - version du 26 mai 2026.xlsx"
  ],
- "lu_le": "2026-10-16",
+ "lu_le": "2026-11-03",
  "conditions_liquidation": {
   "feuille": "H-Conditions_liq",
   "caisses": {
@@ -1388,6 +1388,2052 @@
        "decote": 1228226.0,
        "ensemble": 12795748.0,
        "taux_plein": 11567522.0
+      }
+     }
+    }
+   }
+  }
+ },
+ "conditions_par_age": {
+  "feuille": "H-Conditions_liq",
+  "caisse": "0015",
+  "sources": [
+   "EACR 2020",
+   "EACR 2021",
+   "EACR 2022",
+   "EACR 2023",
+   "EACR 2024"
+  ],
+  "series": {
+   "flux": {
+    "F": {
+     "2020": {
+      "55": {
+       "ensemble": 62.0,
+       "taux_plein": 62.0
+      },
+      "56": {
+       "ensemble": 81.0,
+       "taux_plein": 81.0
+      },
+      "57": {
+       "ensemble": 95.0,
+       "taux_plein": 95.0
+      },
+      "58": {
+       "ensemble": 109.0,
+       "taux_plein": 109.0
+      },
+      "59": {
+       "ensemble": 171.0,
+       "taux_plein": 171.0
+      },
+      "60": {
+       "decote": 619.0,
+       "ensemble": 28139.0,
+       "taux_plein": 27520.0
+      },
+      "61": {
+       "decote": 473.0,
+       "ensemble": 20552.0,
+       "taux_plein": 20079.0
+      },
+      "62": {
+       "decote": 23077.0,
+       "ensemble": 144143.0,
+       "taux_plein": 117646.0
+      },
+      "63": {
+       "decote": 9533.0,
+       "ensemble": 47008.0,
+       "taux_plein": 21383.0
+      },
+      "64": {
+       "decote": 4404.0,
+       "ensemble": 18674.0,
+       "taux_plein": 3883.0
+      },
+      "65": {
+       "decote": 6400.0,
+       "ensemble": 19801.0,
+       "taux_plein": 5108.0
+      },
+      "66": {
+       "decote": 2895.0,
+       "ensemble": 22285.0,
+       "taux_plein": 13040.0
+      },
+      ">66": {
+       "decote": 57.0,
+       "ensemble": 29642.0,
+       "taux_plein": 22656.0
+      },
+      "Ensemble": {
+       "decote": 47458.0,
+       "ensemble": 330762.0,
+       "taux_plein": 231833.0
+      }
+     },
+     "2021": {
+      "55": {
+       "ensemble": 61.0,
+       "taux_plein": 61.0
+      },
+      "56": {
+       "ensemble": 73.0,
+       "taux_plein": 73.0
+      },
+      "57": {
+       "ensemble": 91.0,
+       "taux_plein": 91.0
+      },
+      "58": {
+       "ensemble": 111.0,
+       "taux_plein": 111.0
+      },
+      "59": {
+       "ensemble": 146.0,
+       "taux_plein": 146.0
+      },
+      "60": {
+       "decote": 681.0,
+       "ensemble": 22943.0,
+       "taux_plein": 22262.0
+      },
+      "61": {
+       "decote": 383.0,
+       "ensemble": 20491.0,
+       "taux_plein": 20108.0
+      },
+      "62": {
+       "decote": 23675.0,
+       "ensemble": 153763.0,
+       "surcote": 3912.0,
+       "taux_plein": 126176.0
+      },
+      "63": {
+       "decote": 10562.0,
+       "ensemble": 51183.0,
+       "surcote": 18163.0,
+       "taux_plein": 22458.0
+      },
+      "64": {
+       "decote": 4951.0,
+       "ensemble": 22458.0,
+       "surcote": 13364.0,
+       "taux_plein": 4143.0
+      },
+      "65": {
+       "decote": 6687.0,
+       "ensemble": 19397.0,
+       "surcote": 9043.0,
+       "taux_plein": 3667.0
+      },
+      "66": {
+       "decote": 3626.0,
+       "ensemble": 12650.0,
+       "surcote": 6099.0,
+       "taux_plein": 2925.0
+      },
+      ">66": {
+       "decote": 322.0,
+       "ensemble": 46783.0,
+       "surcote": 8993.0,
+       "taux_plein": 37468.0
+      },
+      "Ensemble": {
+       "decote": 50887.0,
+       "ensemble": 350150.0,
+       "surcote": 59574.0,
+       "taux_plein": 239689.0
+      }
+     },
+     "2022": {
+      "55": {
+       "ensemble": 53.0,
+       "taux_plein": 53.0
+      },
+      "56": {
+       "ensemble": 49.0,
+       "taux_plein": 49.0
+      },
+      "57": {
+       "ensemble": 92.0,
+       "taux_plein": 92.0
+      },
+      "58": {
+       "ensemble": 116.0,
+       "taux_plein": 116.0
+      },
+      "59": {
+       "ensemble": 126.0,
+       "taux_plein": 126.0
+      },
+      "60": {
+       "decote": 842.0,
+       "ensemble": 21196.0,
+       "taux_plein": 20354.0
+      },
+      "61": {
+       "decote": 530.0,
+       "ensemble": 21710.0,
+       "taux_plein": 21180.0
+      },
+      "62": {
+       "decote": 23580.0,
+       "ensemble": 155343.0,
+       "surcote": 4185.0,
+       "taux_plein": 127578.0
+      },
+      "63": {
+       "decote": 10950.0,
+       "ensemble": 53002.0,
+       "surcote": 19290.0,
+       "taux_plein": 22762.0
+      },
+      "64": {
+       "decote": 5830.0,
+       "ensemble": 24570.0,
+       "surcote": 14254.0,
+       "taux_plein": 4486.0
+      },
+      "65": {
+       "decote": 7674.0,
+       "ensemble": 21310.0,
+       "surcote": 9845.0,
+       "taux_plein": 3791.0
+      },
+      "66": {
+       "decote": 4192.0,
+       "ensemble": 12954.0,
+       "surcote": 6250.0,
+       "taux_plein": 2512.0
+      },
+      "67": {
+       "decote": 926.0,
+       "ensemble": 38338.0,
+       "surcote": 6237.0,
+       "taux_plein": 31175.0
+      },
+      "68": {
+       "ensemble": 6752.0,
+       "surcote": 1895.0,
+       "taux_plein": 4857.0
+      },
+      "69": {
+       "ensemble": 2743.0,
+       "surcote": 926.0,
+       "taux_plein": 1817.0
+      },
+      "70": {
+       "ensemble": 1712.0,
+       "surcote": 681.0,
+       "taux_plein": 1031.0
+      },
+      ">70": {
+       "ensemble": 5845.0,
+       "surcote": 957.0,
+       "taux_plein": 4888.0
+      },
+      "Ensemble": {
+       "decote": 40181.0,
+       "ensemble": 343013.0,
+       "surcote": 64520.0,
+       "taux_plein": 238312.0
+      }
+     },
+     "2023": {
+      "55": {
+       "ensemble": 49.0,
+       "taux_plein": 49.0
+      },
+      "56": {
+       "ensemble": 71.0,
+       "taux_plein": 71.0
+      },
+      "57": {
+       "ensemble": 83.0,
+       "taux_plein": 83.0
+      },
+      "58": {
+       "ensemble": 107.0,
+       "taux_plein": 107.0
+      },
+      "59": {
+       "ensemble": 141.0,
+       "taux_plein": 141.0
+      },
+      "60": {
+       "decote": 453.0,
+       "ensemble": 13113.0,
+       "taux_plein": 12660.0
+      },
+      "61": {
+       "decote": 447.0,
+       "ensemble": 15921.0,
+       "taux_plein": 15474.0
+      },
+      "62": {
+       "decote": 13645.0,
+       "ensemble": 99662.0,
+       "surcote": 3429.0,
+       "taux_plein": 82588.0
+      },
+      "63": {
+       "decote": 8103.0,
+       "ensemble": 40248.0,
+       "surcote": 15205.0,
+       "taux_plein": 16940.0
+      },
+      "64": {
+       "decote": 4522.0,
+       "ensemble": 19249.0,
+       "surcote": 11351.0,
+       "taux_plein": 3376.0
+      },
+      "65": {
+       "decote": 6426.0,
+       "ensemble": 17680.0,
+       "surcote": 8362.0,
+       "taux_plein": 2892.0
+      },
+      "66": {
+       "decote": 3406.0,
+       "ensemble": 10603.0,
+       "surcote": 5194.0,
+       "taux_plein": 2003.0
+      },
+      "67": {
+       "decote": 773.0,
+       "ensemble": 29265.0,
+       "surcote": 5334.0,
+       "taux_plein": 23158.0
+      },
+      "68": {
+       "decote": 1.0,
+       "ensemble": 8474.0,
+       "surcote": 1913.0,
+       "taux_plein": 6560.0
+      },
+      "69": {
+       "ensemble": 2552.0,
+       "surcote": 795.0,
+       "taux_plein": 1757.0
+      },
+      "70": {
+       "ensemble": 1490.0,
+       "surcote": 505.0,
+       "taux_plein": 985.0
+      },
+      ">70": {
+       "ensemble": 6888.0,
+       "surcote": 1094.0,
+       "taux_plein": 5794.0
+      },
+      "Ensemble": {
+       "decote": 37776.0,
+       "ensemble": 265596.0,
+       "surcote": 53182.0,
+       "taux_plein": 174638.0
+      }
+     },
+     "2024": {
+      "55": {
+       "ensemble": 59.0,
+       "taux_plein": 59.0
+      },
+      "56": {
+       "ensemble": 92.0,
+       "taux_plein": 92.0
+      },
+      "57": {
+       "ensemble": 94.0,
+       "taux_plein": 94.0
+      },
+      "58": {
+       "ensemble": 109.0,
+       "taux_plein": 109.0
+      },
+      "59": {
+       "ensemble": 171.0,
+       "taux_plein": 171.0
+      },
+      "60": {
+       "decote": 2.0,
+       "ensemble": 7605.0,
+       "taux_plein": 7603.0
+      },
+      "61": {
+       "decote": 1690.0,
+       "ensemble": 24065.0,
+       "taux_plein": 22375.0
+      },
+      "62": {
+       "decote": 9821.0,
+       "ensemble": 104436.0,
+       "surcote": 85.0,
+       "taux_plein": 94530.0
+      },
+      "63": {
+       "decote": 14835.0,
+       "ensemble": 75377.0,
+       "surcote": 19625.0,
+       "taux_plein": 40917.0
+      },
+      "64": {
+       "decote": 6060.0,
+       "ensemble": 26645.0,
+       "surcote": 15921.0,
+       "taux_plein": 4664.0
+      },
+      "65": {
+       "decote": 8571.0,
+       "ensemble": 23657.0,
+       "surcote": 11030.0,
+       "taux_plein": 4056.0
+      },
+      "66": {
+       "decote": 4697.0,
+       "ensemble": 14760.0,
+       "surcote": 7291.0,
+       "taux_plein": 2772.0
+      },
+      "67": {
+       "decote": 961.0,
+       "ensemble": 36796.0,
+       "surcote": 7096.0,
+       "taux_plein": 28739.0
+      },
+      "68": {
+       "ensemble": 10980.0,
+       "surcote": 2576.0,
+       "taux_plein": 8404.0
+      },
+      "69": {
+       "ensemble": 3425.0,
+       "surcote": 1033.0,
+       "taux_plein": 2392.0
+      },
+      "70": {
+       "ensemble": 2286.0,
+       "surcote": 822.0,
+       "taux_plein": 1464.0
+      },
+      "Ensemble": {
+       "decote": 46637.0,
+       "ensemble": 339640.0,
+       "surcote": 66672.0,
+       "taux_plein": 226331.0
+      },
+      "plus de 70": {
+       "ensemble": 9083.0,
+       "surcote": 1193.0,
+       "taux_plein": 7890.0
+      }
+     }
+    },
+    "H": {
+     "2020": {
+      "55": {
+       "ensemble": 80.0,
+       "taux_plein": 80.0
+      },
+      "56": {
+       "ensemble": 142.0,
+       "taux_plein": 142.0
+      },
+      "57": {
+       "ensemble": 145.0,
+       "taux_plein": 145.0
+      },
+      "58": {
+       "ensemble": 184.0,
+       "taux_plein": 184.0
+      },
+      "59": {
+       "ensemble": 363.0,
+       "taux_plein": 363.0
+      },
+      "60": {
+       "decote": 853.0,
+       "ensemble": 59824.0,
+       "taux_plein": 58971.0
+      },
+      "61": {
+       "decote": 630.0,
+       "ensemble": 34277.0,
+       "taux_plein": 33647.0
+      },
+      "62": {
+       "decote": 13801.0,
+       "ensemble": 96657.0,
+       "taux_plein": 80883.0
+      },
+      "63": {
+       "decote": 6431.0,
+       "ensemble": 35183.0,
+       "taux_plein": 17189.0
+      },
+      "64": {
+       "decote": 3130.0,
+       "ensemble": 16840.0,
+       "taux_plein": 4925.0
+      },
+      "65": {
+       "decote": 5626.0,
+       "ensemble": 17999.0,
+       "taux_plein": 4612.0
+      },
+      "66": {
+       "decote": 2813.0,
+       "ensemble": 15628.0,
+       "taux_plein": 6817.0
+      },
+      ">66": {
+       "decote": 88.0,
+       "ensemble": 22171.0,
+       "taux_plein": 13958.0
+      },
+      "Ensemble": {
+       "decote": 33372.0,
+       "ensemble": 299493.0,
+       "taux_plein": 221916.0
+      }
+     },
+     "2021": {
+      "55": {
+       "ensemble": 79.0,
+       "taux_plein": 79.0
+      },
+      "56": {
+       "ensemble": 144.0,
+       "taux_plein": 144.0
+      },
+      "57": {
+       "ensemble": 157.0,
+       "taux_plein": 157.0
+      },
+      "58": {
+       "ensemble": 209.0,
+       "taux_plein": 209.0
+      },
+      "59": {
+       "ensemble": 336.0,
+       "taux_plein": 336.0
+      },
+      "60": {
+       "decote": 878.0,
+       "ensemble": 52917.0,
+       "taux_plein": 52039.0
+      },
+      "61": {
+       "decote": 561.0,
+       "ensemble": 34468.0,
+       "taux_plein": 33907.0
+      },
+      "62": {
+       "decote": 14167.0,
+       "ensemble": 103779.0,
+       "surcote": 2445.0,
+       "taux_plein": 87167.0
+      },
+      "63": {
+       "decote": 7466.0,
+       "ensemble": 39281.0,
+       "surcote": 13023.0,
+       "taux_plein": 18792.0
+      },
+      "64": {
+       "decote": 3637.0,
+       "ensemble": 19459.0,
+       "surcote": 10646.0,
+       "taux_plein": 5176.0
+      },
+      "65": {
+       "decote": 5546.0,
+       "ensemble": 18217.0,
+       "surcote": 8248.0,
+       "taux_plein": 4423.0
+      },
+      "66": {
+       "decote": 3518.0,
+       "ensemble": 12128.0,
+       "surcote": 5800.0,
+       "taux_plein": 2810.0
+      },
+      ">66": {
+       "decote": 381.0,
+       "ensemble": 30551.0,
+       "surcote": 9869.0,
+       "taux_plein": 20301.0
+      },
+      "Ensemble": {
+       "decote": 36154.0,
+       "ensemble": 311725.0,
+       "surcote": 50031.0,
+       "taux_plein": 225540.0
+      }
+     },
+     "2022": {
+      "55": {
+       "ensemble": 73.0,
+       "taux_plein": 73.0
+      },
+      "56": {
+       "ensemble": 134.0,
+       "taux_plein": 134.0
+      },
+      "57": {
+       "ensemble": 149.0,
+       "taux_plein": 149.0
+      },
+      "58": {
+       "ensemble": 175.0,
+       "taux_plein": 175.0
+      },
+      "59": {
+       "ensemble": 273.0,
+       "taux_plein": 273.0
+      },
+      "60": {
+       "decote": 1127.0,
+       "ensemble": 50392.0,
+       "taux_plein": 49265.0
+      },
+      "61": {
+       "decote": 879.0,
+       "ensemble": 37839.0,
+       "taux_plein": 36960.0
+      },
+      "62": {
+       "decote": 14800.0,
+       "ensemble": 106365.0,
+       "surcote": 2634.0,
+       "taux_plein": 88931.0
+      },
+      "63": {
+       "decote": 8071.0,
+       "ensemble": 41262.0,
+       "surcote": 14005.0,
+       "taux_plein": 19186.0
+      },
+      "64": {
+       "decote": 4378.0,
+       "ensemble": 21475.0,
+       "surcote": 11147.0,
+       "taux_plein": 5950.0
+      },
+      "65": {
+       "decote": 6470.0,
+       "ensemble": 19953.0,
+       "surcote": 8941.0,
+       "taux_plein": 4542.0
+      },
+      "66": {
+       "decote": 3907.0,
+       "ensemble": 12789.0,
+       "surcote": 5987.0,
+       "taux_plein": 2895.0
+      },
+      "67": {
+       "decote": 922.0,
+       "ensemble": 21953.0,
+       "surcote": 5519.0,
+       "taux_plein": 15512.0
+      },
+      "68": {
+       "ensemble": 5886.0,
+       "surcote": 2073.0,
+       "taux_plein": 3813.0
+      },
+      "69": {
+       "ensemble": 2782.0,
+       "surcote": 1114.0,
+       "taux_plein": 1668.0
+      },
+      "70": {
+       "ensemble": 1883.0,
+       "surcote": 872.0,
+       "taux_plein": 1011.0
+      },
+      ">70": {
+       "ensemble": 3944.0,
+       "surcote": 1206.0,
+       "taux_plein": 2738.0
+      },
+      "Ensemble": {
+       "decote": 40554.0,
+       "ensemble": 327327.0,
+       "surcote": 53498.0,
+       "taux_plein": 233275.0
+      }
+     },
+     "2023": {
+      "55": {
+       "ensemble": 70.0,
+       "taux_plein": 70.0
+      },
+      "56": {
+       "ensemble": 105.0,
+       "taux_plein": 105.0
+      },
+      "57": {
+       "ensemble": 125.0,
+       "taux_plein": 125.0
+      },
+      "58": {
+       "ensemble": 124.0,
+       "taux_plein": 124.0
+      },
+      "59": {
+       "ensemble": 217.0,
+       "taux_plein": 217.0
+      },
+      "60": {
+       "decote": 689.0,
+       "ensemble": 28042.0,
+       "taux_plein": 27353.0
+      },
+      "61": {
+       "decote": 818.0,
+       "ensemble": 22852.0,
+       "taux_plein": 22034.0
+      },
+      "62": {
+       "decote": 7624.0,
+       "ensemble": 57509.0,
+       "surcote": 1512.0,
+       "taux_plein": 48373.0
+      },
+      "63": {
+       "decote": 4901.0,
+       "ensemble": 25772.0,
+       "surcote": 8900.0,
+       "taux_plein": 11971.0
+      },
+      "64": {
+       "decote": 2799.0,
+       "ensemble": 14505.0,
+       "surcote": 7721.0,
+       "taux_plein": 3985.0
+      },
+      "65": {
+       "decote": 4233.0,
+       "ensemble": 13899.0,
+       "surcote": 6281.0,
+       "taux_plein": 3385.0
+      },
+      "66": {
+       "decote": 2500.0,
+       "ensemble": 8960.0,
+       "surcote": 4453.0,
+       "taux_plein": 2007.0
+      },
+      "67": {
+       "decote": 669.0,
+       "ensemble": 14864.0,
+       "surcote": 4223.0,
+       "taux_plein": 9972.0
+      },
+      "68": {
+       "ensemble": 5536.0,
+       "surcote": 1834.0,
+       "taux_plein": 3702.0
+      },
+      "69": {
+       "ensemble": 2100.0,
+       "surcote": 821.0,
+       "taux_plein": 1279.0
+      },
+      "70": {
+       "ensemble": 1522.0,
+       "surcote": 673.0,
+       "taux_plein": 849.0
+      },
+      ">70": {
+       "ensemble": 6888.0,
+       "surcote": 1485.0,
+       "taux_plein": 5403.0
+      },
+      "Ensemble": {
+       "decote": 24233.0,
+       "ensemble": 203090.0,
+       "surcote": 37903.0,
+       "taux_plein": 140954.0
+      }
+     },
+     "2024": {
+      "55": {
+       "ensemble": 125.0,
+       "taux_plein": 125.0
+      },
+      "56": {
+       "ensemble": 158.0,
+       "taux_plein": 158.0
+      },
+      "57": {
+       "ensemble": 173.0,
+       "taux_plein": 173.0
+      },
+      "58": {
+       "ensemble": 215.0,
+       "taux_plein": 215.0
+      },
+      "59": {
+       "ensemble": 390.0,
+       "taux_plein": 390.0
+      },
+      "60": {
+       "decote": 1.0,
+       "ensemble": 27758.0,
+       "taux_plein": 27757.0
+      },
+      "61": {
+       "decote": 2290.0,
+       "ensemble": 37949.0,
+       "taux_plein": 35659.0
+      },
+      "62": {
+       "decote": 7500.0,
+       "ensemble": 80436.0,
+       "surcote": 27.0,
+       "taux_plein": 72909.0
+      },
+      "63": {
+       "decote": 11968.0,
+       "ensemble": 53525.0,
+       "surcote": 13144.0,
+       "taux_plein": 28413.0
+      },
+      "64": {
+       "decote": 5316.0,
+       "ensemble": 24723.0,
+       "surcote": 12630.0,
+       "taux_plein": 6777.0
+      },
+      "65": {
+       "decote": 7573.0,
+       "ensemble": 23080.0,
+       "surcote": 10180.0,
+       "taux_plein": 5327.0
+      },
+      "66": {
+       "decote": 4482.0,
+       "ensemble": 14482.0,
+       "surcote": 6632.0,
+       "taux_plein": 3368.0
+      },
+      "67": {
+       "decote": 1009.0,
+       "ensemble": 23734.0,
+       "surcote": 6247.0,
+       "taux_plein": 16478.0
+      },
+      "68": {
+       "ensemble": 9370.0,
+       "surcote": 2966.0,
+       "taux_plein": 6404.0
+      },
+      "69": {
+       "ensemble": 3544.0,
+       "surcote": 1286.0,
+       "taux_plein": 2258.0
+      },
+      "70": {
+       "ensemble": 2546.0,
+       "surcote": 1015.0,
+       "taux_plein": 1531.0
+      },
+      "Ensemble": {
+       "decote": 40139.0,
+       "ensemble": 308706.0,
+       "surcote": 55696.0,
+       "taux_plein": 212871.0
+      },
+      "plus de 70": {
+       "ensemble": 6498.0,
+       "surcote": 1569.0,
+       "taux_plein": 4929.0
+      }
+     }
+    },
+    "ensemble": {
+     "2020": {
+      "55": {
+       "ensemble": 142.0,
+       "taux_plein": 142.0
+      },
+      "56": {
+       "ensemble": 223.0,
+       "taux_plein": 223.0
+      },
+      "57": {
+       "ensemble": 240.0,
+       "taux_plein": 240.0
+      },
+      "58": {
+       "ensemble": 293.0,
+       "taux_plein": 293.0
+      },
+      "59": {
+       "ensemble": 534.0,
+       "taux_plein": 534.0
+      },
+      "60": {
+       "decote": 1472.0,
+       "ensemble": 87963.0,
+       "taux_plein": 86491.0
+      },
+      "61": {
+       "decote": 1103.0,
+       "ensemble": 54829.0,
+       "taux_plein": 53726.0
+      },
+      "62": {
+       "decote": 36878.0,
+       "ensemble": 240800.0,
+       "taux_plein": 198529.0
+      },
+      "63": {
+       "decote": 15964.0,
+       "ensemble": 82191.0,
+       "taux_plein": 38572.0
+      },
+      "64": {
+       "decote": 7534.0,
+       "ensemble": 35514.0,
+       "taux_plein": 8808.0
+      },
+      "65": {
+       "decote": 12026.0,
+       "ensemble": 37800.0,
+       "taux_plein": 9720.0
+      },
+      "66": {
+       "decote": 5708.0,
+       "ensemble": 37913.0,
+       "taux_plein": 19857.0
+      },
+      ">66": {
+       "decote": 145.0,
+       "ensemble": 51813.0,
+       "taux_plein": 36614.0
+      },
+      "Ensemble": {
+       "decote": 80830.0,
+       "ensemble": 630255.0,
+       "taux_plein": 453749.0
+      }
+     },
+     "2021": {
+      "55": {
+       "ensemble": 140.0,
+       "taux_plein": 140.0
+      },
+      "56": {
+       "ensemble": 217.0,
+       "taux_plein": 217.0
+      },
+      "57": {
+       "ensemble": 248.0,
+       "taux_plein": 248.0
+      },
+      "58": {
+       "ensemble": 320.0,
+       "taux_plein": 320.0
+      },
+      "59": {
+       "ensemble": 482.0,
+       "taux_plein": 482.0
+      },
+      "60": {
+       "decote": 1559.0,
+       "ensemble": 75860.0,
+       "taux_plein": 74301.0
+      },
+      "61": {
+       "decote": 944.0,
+       "ensemble": 54959.0,
+       "taux_plein": 54015.0
+      },
+      "62": {
+       "decote": 37842.0,
+       "ensemble": 257542.0,
+       "surcote": 6357.0,
+       "taux_plein": 213343.0
+      },
+      "63": {
+       "decote": 18028.0,
+       "ensemble": 90464.0,
+       "surcote": 31186.0,
+       "taux_plein": 41250.0
+      },
+      "64": {
+       "decote": 8588.0,
+       "ensemble": 41917.0,
+       "surcote": 24010.0,
+       "taux_plein": 9319.0
+      },
+      "65": {
+       "decote": 12233.0,
+       "ensemble": 37614.0,
+       "surcote": 17291.0,
+       "taux_plein": 8090.0
+      },
+      "66": {
+       "decote": 7144.0,
+       "ensemble": 24778.0,
+       "surcote": 11899.0,
+       "taux_plein": 5735.0
+      },
+      ">66": {
+       "decote": 703.0,
+       "ensemble": 77334.0,
+       "surcote": 18862.0,
+       "taux_plein": 57769.0
+      },
+      "Ensemble": {
+       "decote": 87041.0,
+       "ensemble": 661875.0,
+       "surcote": 109605.0,
+       "taux_plein": 465229.0
+      }
+     },
+     "2022": {
+      "55": {
+       "ensemble": 126.0,
+       "taux_plein": 126.0
+      },
+      "56": {
+       "ensemble": 183.0,
+       "taux_plein": 183.0
+      },
+      "57": {
+       "ensemble": 241.0,
+       "taux_plein": 241.0
+      },
+      "58": {
+       "ensemble": 291.0,
+       "taux_plein": 291.0
+      },
+      "59": {
+       "ensemble": 399.0,
+       "taux_plein": 399.0
+      },
+      "60": {
+       "decote": 1969.0,
+       "ensemble": 71588.0,
+       "taux_plein": 69619.0
+      },
+      "61": {
+       "decote": 1409.0,
+       "ensemble": 59549.0,
+       "taux_plein": 58140.0
+      },
+      "62": {
+       "decote": 38380.0,
+       "ensemble": 261708.0,
+       "surcote": 6819.0,
+       "taux_plein": 216509.0
+      },
+      "63": {
+       "decote": 19021.0,
+       "ensemble": 94264.0,
+       "surcote": 33295.0,
+       "taux_plein": 41948.0
+      },
+      "64": {
+       "decote": 10208.0,
+       "ensemble": 46045.0,
+       "surcote": 25401.0,
+       "taux_plein": 10436.0
+      },
+      "65": {
+       "decote": 14144.0,
+       "ensemble": 41263.0,
+       "surcote": 18786.0,
+       "taux_plein": 8333.0
+      },
+      "66": {
+       "decote": 8099.0,
+       "ensemble": 25743.0,
+       "surcote": 12237.0,
+       "taux_plein": 5407.0
+      },
+      "67": {
+       "decote": 1848.0,
+       "ensemble": 60291.0,
+       "surcote": 11756.0,
+       "taux_plein": 46687.0
+      },
+      "68": {
+       "ensemble": 12638.0,
+       "surcote": 3968.0,
+       "taux_plein": 8670.0
+      },
+      "69": {
+       "ensemble": 5525.0,
+       "surcote": 2040.0,
+       "taux_plein": 3485.0
+      },
+      "70": {
+       "ensemble": 3595.0,
+       "surcote": 1553.0,
+       "taux_plein": 2042.0
+      },
+      ">70": {
+       "ensemble": 9789.0,
+       "surcote": 2163.0,
+       "taux_plein": 7626.0
+      },
+      "Ensemble": {
+       "decote": 95078.0,
+       "ensemble": 693238.0,
+       "surcote": 118018.0,
+       "taux_plein": 480142.0
+      }
+     },
+     "2023": {
+      "55": {
+       "ensemble": 139.0,
+       "taux_plein": 139.0
+      },
+      "56": {
+       "ensemble": 226.0,
+       "taux_plein": 226.0
+      },
+      "57": {
+       "ensemble": 249.0,
+       "taux_plein": 249.0
+      },
+      "58": {
+       "ensemble": 302.0,
+       "taux_plein": 302.0
+      },
+      "59": {
+       "ensemble": 515.0,
+       "taux_plein": 515.0
+      },
+      "60": {
+       "decote": 1650.0,
+       "ensemble": 62055.0,
+       "taux_plein": 60405.0
+      },
+      "61": {
+       "decote": 1841.0,
+       "ensemble": 58881.0,
+       "taux_plein": 57040.0
+      },
+      "62": {
+       "decote": 32943.0,
+       "ensemble": 239839.0,
+       "surcote": 7204.0,
+       "taux_plein": 199692.0
+      },
+      "63": {
+       "decote": 19769.0,
+       "ensemble": 98624.0,
+       "surcote": 35288.0,
+       "taux_plein": 43567.0
+      },
+      "64": {
+       "decote": 11308.0,
+       "ensemble": 49827.0,
+       "surcote": 27238.0,
+       "taux_plein": 11281.0
+      },
+      "65": {
+       "decote": 16510.0,
+       "ensemble": 46746.0,
+       "surcote": 20772.0,
+       "taux_plein": 9464.0
+      },
+      "66": {
+       "decote": 8697.0,
+       "ensemble": 27943.0,
+       "surcote": 13432.0,
+       "taux_plein": 5814.0
+      },
+      "67": {
+       "decote": 2005.0,
+       "ensemble": 62782.0,
+       "surcote": 13056.0,
+       "taux_plein": 47721.0
+      },
+      "68": {
+       "decote": 1.0,
+       "ensemble": 19829.0,
+       "surcote": 5111.0,
+       "taux_plein": 14717.0
+      },
+      "69": {
+       "ensemble": 6564.0,
+       "surcote": 2194.0,
+       "taux_plein": 4370.0
+      },
+      "70": {
+       "ensemble": 4119.0,
+       "surcote": 1569.0,
+       "taux_plein": 2550.0
+      },
+      ">70": {
+       "ensemble": 13776.0,
+       "surcote": 2579.0,
+       "taux_plein": 11197.0
+      },
+      "Ensemble": {
+       "decote": 94724.0,
+       "ensemble": 692416.0,
+       "surcote": 128443.0,
+       "taux_plein": 469249.0
+      }
+     },
+     "2024": {
+      "55": {
+       "ensemble": 184.0,
+       "taux_plein": 184.0
+      },
+      "56": {
+       "ensemble": 250.0,
+       "taux_plein": 250.0
+      },
+      "57": {
+       "ensemble": 267.0,
+       "taux_plein": 267.0
+      },
+      "58": {
+       "ensemble": 324.0,
+       "taux_plein": 324.0
+      },
+      "59": {
+       "ensemble": 561.0,
+       "taux_plein": 561.0
+      },
+      "60": {
+       "decote": 3.0,
+       "ensemble": 35363.0,
+       "taux_plein": 35360.0
+      },
+      "61": {
+       "decote": 3980.0,
+       "ensemble": 62014.0,
+       "taux_plein": 58034.0
+      },
+      "62": {
+       "decote": 17321.0,
+       "ensemble": 184872.0,
+       "surcote": 112.0,
+       "taux_plein": 167439.0
+      },
+      "63": {
+       "decote": 26803.0,
+       "ensemble": 128902.0,
+       "surcote": 32769.0,
+       "taux_plein": 69330.0
+      },
+      "64": {
+       "decote": 11376.0,
+       "ensemble": 51368.0,
+       "surcote": 28551.0,
+       "taux_plein": 11441.0
+      },
+      "65": {
+       "decote": 16144.0,
+       "ensemble": 46737.0,
+       "surcote": 21210.0,
+       "taux_plein": 9383.0
+      },
+      "66": {
+       "decote": 9179.0,
+       "ensemble": 29242.0,
+       "surcote": 13923.0,
+       "taux_plein": 6140.0
+      },
+      "67": {
+       "decote": 1970.0,
+       "ensemble": 60530.0,
+       "surcote": 13343.0,
+       "taux_plein": 45217.0
+      },
+      "68": {
+       "ensemble": 20350.0,
+       "surcote": 5542.0,
+       "taux_plein": 14808.0
+      },
+      "69": {
+       "ensemble": 6969.0,
+       "surcote": 2319.0,
+       "taux_plein": 4650.0
+      },
+      "70": {
+       "ensemble": 4832.0,
+       "surcote": 1837.0,
+       "taux_plein": 2995.0
+      },
+      "Ensemble": {
+       "decote": 86776.0,
+       "ensemble": 648346.0,
+       "surcote": 122368.0,
+       "taux_plein": 439202.0
+      },
+      "plus de 70": {
+       "ensemble": 15581.0,
+       "surcote": 2762.0,
+       "taux_plein": 12819.0
+      }
+     }
+    }
+   },
+   "stock": {
+    "F": {
+     "2024": {
+      "55": {
+       "ensemble": 59.0,
+       "taux_plein": 59.0
+      },
+      "56": {
+       "ensemble": 145.0,
+       "taux_plein": 145.0
+      },
+      "57": {
+       "ensemble": 233.0,
+       "taux_plein": 233.0
+      },
+      "58": {
+       "ensemble": 305.0,
+       "taux_plein": 305.0
+      },
+      "59": {
+       "decote": 1.0,
+       "ensemble": 517.0,
+       "taux_plein": 516.0
+      },
+      "60": {
+       "decote": 2.0,
+       "ensemble": 8133.0,
+       "taux_plein": 8131.0
+      },
+      "61": {
+       "decote": 2256.0,
+       "ensemble": 41677.0,
+       "taux_plein": 39421.0
+      },
+      "62": {
+       "decote": 10780.0,
+       "ensemble": 147021.0,
+       "surcote": 196.0,
+       "taux_plein": 136045.0
+      },
+      "63": {
+       "decote": 34271.0,
+       "ensemble": 260001.0,
+       "surcote": 25507.0,
+       "taux_plein": 200223.0
+      },
+      "64": {
+       "decote": 40845.0,
+       "ensemble": 285736.0,
+       "surcote": 42585.0,
+       "taux_plein": 202306.0
+      },
+      "65": {
+       "decote": 49521.0,
+       "ensemble": 306855.0,
+       "surcote": 51569.0,
+       "taux_plein": 205765.0
+      },
+      "66": {
+       "decote": 52886.0,
+       "ensemble": 309447.0,
+       "surcote": 56505.0,
+       "taux_plein": 200056.0
+      },
+      "67": {
+       "decote": 51069.0,
+       "ensemble": 344675.0,
+       "surcote": 58685.0,
+       "taux_plein": 234921.0
+      },
+      "68": {
+       "decote": 51169.0,
+       "ensemble": 353811.0,
+       "surcote": 54704.0,
+       "taux_plein": 247938.0
+      },
+      "69": {
+       "decote": 50002.0,
+       "ensemble": 357843.0,
+       "surcote": 52458.0,
+       "taux_plein": 255383.0
+      },
+      "70": {
+       "decote": 48188.0,
+       "ensemble": 361021.0,
+       "surcote": 57278.0,
+       "taux_plein": 255555.0
+      },
+      "71": {
+       "decote": 45593.0,
+       "ensemble": 356260.0,
+       "surcote": 54354.0,
+       "taux_plein": 256313.0
+      },
+      "72": {
+       "decote": 40075.0,
+       "ensemble": 361043.0,
+       "surcote": 54652.0,
+       "taux_plein": 266316.0
+      },
+      "73": {
+       "decote": 33623.0,
+       "ensemble": 350542.0,
+       "surcote": 49808.0,
+       "taux_plein": 267111.0
+      },
+      "74": {
+       "decote": 32088.0,
+       "ensemble": 357445.0,
+       "surcote": 48368.0,
+       "taux_plein": 276989.0
+      },
+      "75": {
+       "decote": 28675.0,
+       "ensemble": 350022.0,
+       "surcote": 46715.0,
+       "taux_plein": 274632.0
+      },
+      "76": {
+       "decote": 24755.0,
+       "ensemble": 342356.0,
+       "surcote": 42275.0,
+       "taux_plein": 275326.0
+      },
+      "77": {
+       "decote": 23088.0,
+       "ensemble": 327040.0,
+       "surcote": 37268.0,
+       "taux_plein": 266684.0
+      },
+      "78": {
+       "decote": 20620.0,
+       "ensemble": 307349.0,
+       "surcote": 30835.0,
+       "taux_plein": 255894.0
+      },
+      "79": {
+       "decote": 14844.0,
+       "ensemble": 229445.0,
+       "surcote": 21174.0,
+       "taux_plein": 193427.0
+      },
+      "80": {
+       "decote": 14378.0,
+       "ensemble": 219308.0,
+       "surcote": 18311.0,
+       "taux_plein": 186619.0
+      },
+      "81": {
+       "decote": 13689.0,
+       "ensemble": 207737.0,
+       "surcote": 12844.0,
+       "taux_plein": 181204.0
+      },
+      "82": {
+       "decote": 12097.0,
+       "ensemble": 186181.0,
+       "surcote": 7945.0,
+       "taux_plein": 166139.0
+      },
+      "83": {
+       "decote": 10955.0,
+       "ensemble": 163559.0,
+       "surcote": 4889.0,
+       "taux_plein": 147715.0
+      },
+      "84": {
+       "decote": 11861.0,
+       "ensemble": 163777.0,
+       "surcote": 3425.0,
+       "taux_plein": 148491.0
+      },
+      "85": {
+       "decote": 12964.0,
+       "ensemble": 164043.0,
+       "surcote": 1990.0,
+       "taux_plein": 149089.0
+      },
+      "86": {
+       "decote": 12504.0,
+       "ensemble": 153101.0,
+       "surcote": 1006.0,
+       "taux_plein": 139591.0
+      },
+      "87": {
+       "decote": 12660.0,
+       "ensemble": 143650.0,
+       "surcote": 722.0,
+       "taux_plein": 130268.0
+      },
+      "88": {
+       "decote": 12624.0,
+       "ensemble": 133994.0,
+       "surcote": 558.0,
+       "taux_plein": 120812.0
+      },
+      "89": {
+       "decote": 12273.0,
+       "ensemble": 120789.0,
+       "surcote": 394.0,
+       "taux_plein": 108122.0
+      },
+      "90": {
+       "decote": 12077.0,
+       "ensemble": 110890.0,
+       "surcote": 298.0,
+       "taux_plein": 98515.0
+      },
+      "91": {
+       "decote": 10999.0,
+       "ensemble": 95760.0,
+       "surcote": 227.0,
+       "taux_plein": 84534.0
+      },
+      "92": {
+       "decote": 9555.0,
+       "ensemble": 85476.0,
+       "surcote": 148.0,
+       "taux_plein": 75773.0
+      },
+      "93": {
+       "decote": 7909.0,
+       "ensemble": 70473.0,
+       "surcote": 99.0,
+       "taux_plein": 62465.0
+      },
+      "94": {
+       "decote": 6335.0,
+       "ensemble": 58059.0,
+       "surcote": 68.0,
+       "taux_plein": 51656.0
+      },
+      "95": {
+       "decote": 4569.0,
+       "ensemble": 43166.0,
+       "surcote": 65.0,
+       "taux_plein": 38532.0
+      },
+      "Ensemble": {
+       "decote": 839276.0,
+       "ensemble": 7983968.0,
+       "surcote": 838015.0,
+       "taux_plein": 6306677.0
+      },
+      "plus de 95": {
+       "decote": 7476.0,
+       "ensemble": 105024.0,
+       "surcote": 90.0,
+       "taux_plein": 97458.0
+      }
+     }
+    },
+    "H": {
+     "2024": {
+      "55": {
+       "ensemble": 125.0,
+       "taux_plein": 125.0
+      },
+      "56": {
+       "ensemble": 246.0,
+       "taux_plein": 246.0
+      },
+      "57": {
+       "ensemble": 387.0,
+       "taux_plein": 387.0
+      },
+      "58": {
+       "ensemble": 583.0,
+       "taux_plein": 583.0
+      },
+      "59": {
+       "ensemble": 938.0,
+       "taux_plein": 938.0
+      },
+      "60": {
+       "decote": 1.0,
+       "ensemble": 28683.0,
+       "taux_plein": 28682.0
+      },
+      "61": {
+       "decote": 3120.0,
+       "ensemble": 83575.0,
+       "taux_plein": 80455.0
+      },
+      "62": {
+       "decote": 8984.0,
+       "ensemble": 168903.0,
+       "surcote": 55.0,
+       "taux_plein": 159864.0
+      },
+      "63": {
+       "decote": 26073.0,
+       "ensemble": 244023.0,
+       "surcote": 16227.0,
+       "taux_plein": 201723.0
+      },
+      "64": {
+       "decote": 28766.0,
+       "ensemble": 266260.0,
+       "surcote": 30744.0,
+       "taux_plein": 206750.0
+      },
+      "65": {
+       "decote": 34781.0,
+       "ensemble": 285399.0,
+       "surcote": 39767.0,
+       "taux_plein": 210851.0
+      },
+      "66": {
+       "decote": 37486.0,
+       "ensemble": 288869.0,
+       "surcote": 43657.0,
+       "taux_plein": 207726.0
+      },
+      "67": {
+       "decote": 34607.0,
+       "ensemble": 309088.0,
+       "surcote": 46846.0,
+       "taux_plein": 227635.0
+      },
+      "68": {
+       "decote": 32807.0,
+       "ensemble": 314852.0,
+       "surcote": 45529.0,
+       "taux_plein": 236516.0
+      },
+      "69": {
+       "decote": 32501.0,
+       "ensemble": 315347.0,
+       "surcote": 44355.0,
+       "taux_plein": 238491.0
+      },
+      "70": {
+       "decote": 30558.0,
+       "ensemble": 318066.0,
+       "surcote": 50199.0,
+       "taux_plein": 237309.0
+      },
+      "71": {
+       "decote": 29878.0,
+       "ensemble": 311438.0,
+       "surcote": 50516.0,
+       "taux_plein": 231044.0
+      },
+      "72": {
+       "decote": 25960.0,
+       "ensemble": 315070.0,
+       "surcote": 54456.0,
+       "taux_plein": 234654.0
+      },
+      "73": {
+       "decote": 20858.0,
+       "ensemble": 303980.0,
+       "surcote": 52140.0,
+       "taux_plein": 230982.0
+      },
+      "74": {
+       "decote": 19840.0,
+       "ensemble": 310922.0,
+       "surcote": 51299.0,
+       "taux_plein": 239783.0
+      },
+      "75": {
+       "decote": 17540.0,
+       "ensemble": 301829.0,
+       "surcote": 50838.0,
+       "taux_plein": 233451.0
+      },
+      "76": {
+       "decote": 15956.0,
+       "ensemble": 298633.0,
+       "surcote": 50273.0,
+       "taux_plein": 232404.0
+      },
+      "77": {
+       "decote": 15339.0,
+       "ensemble": 284285.0,
+       "surcote": 46267.0,
+       "taux_plein": 222679.0
+      },
+      "78": {
+       "decote": 13686.0,
+       "ensemble": 263625.0,
+       "surcote": 40346.0,
+       "taux_plein": 209593.0
+      },
+      "79": {
+       "decote": 11834.0,
+       "ensemble": 198398.0,
+       "surcote": 28975.0,
+       "taux_plein": 157589.0
+      },
+      "80": {
+       "decote": 13192.0,
+       "ensemble": 188923.0,
+       "surcote": 26561.0,
+       "taux_plein": 149170.0
+      },
+      "81": {
+       "decote": 12226.0,
+       "ensemble": 176690.0,
+       "surcote": 18997.0,
+       "taux_plein": 145467.0
+      },
+      "82": {
+       "decote": 11307.0,
+       "ensemble": 156895.0,
+       "surcote": 12234.0,
+       "taux_plein": 133354.0
+      },
+      "83": {
+       "decote": 9937.0,
+       "ensemble": 134936.0,
+       "surcote": 7672.0,
+       "taux_plein": 117327.0
+      },
+      "84": {
+       "decote": 9684.0,
+       "ensemble": 131047.0,
+       "surcote": 5168.0,
+       "taux_plein": 116195.0
+      },
+      "85": {
+       "decote": 8547.0,
+       "ensemble": 123717.0,
+       "surcote": 2863.0,
+       "taux_plein": 112307.0
+      },
+      "86": {
+       "decote": 7380.0,
+       "ensemble": 111458.0,
+       "surcote": 1391.0,
+       "taux_plein": 102687.0
+      },
+      "87": {
+       "decote": 6427.0,
+       "ensemble": 98818.0,
+       "surcote": 886.0,
+       "taux_plein": 91505.0
+      },
+      "88": {
+       "decote": 6178.0,
+       "ensemble": 87891.0,
+       "surcote": 722.0,
+       "taux_plein": 80991.0
+      },
+      "89": {
+       "decote": 5120.0,
+       "ensemble": 73862.0,
+       "surcote": 419.0,
+       "taux_plein": 68323.0
+      },
+      "90": {
+       "decote": 4421.0,
+       "ensemble": 63593.0,
+       "surcote": 301.0,
+       "taux_plein": 58871.0
+      },
+      "91": {
+       "decote": 3620.0,
+       "ensemble": 50944.0,
+       "surcote": 217.0,
+       "taux_plein": 47107.0
+      },
+      "92": {
+       "decote": 2806.0,
+       "ensemble": 42077.0,
+       "surcote": 105.0,
+       "taux_plein": 39166.0
+      },
+      "93": {
+       "decote": 2068.0,
+       "ensemble": 32338.0,
+       "surcote": 112.0,
+       "taux_plein": 30158.0
+      },
+      "94": {
+       "decote": 1608.0,
+       "ensemble": 25006.0,
+       "surcote": 63.0,
+       "taux_plein": 23335.0
+      },
+      "95": {
+       "decote": 1014.0,
+       "ensemble": 16807.0,
+       "surcote": 59.0,
+       "taux_plein": 15734.0
+      },
+      "Ensemble": {
+       "decote": 547685.0,
+       "ensemble": 6760768.0,
+       "surcote": 820332.0,
+       "taux_plein": 5392751.0
+      },
+      "plus de 95": {
+       "decote": 1575.0,
+       "ensemble": 32242.0,
+       "surcote": 73.0,
+       "taux_plein": 30594.0
+      }
+     }
+    },
+    "ensemble": {
+     "2024": {
+      "55": {
+       "ensemble": 184.0,
+       "taux_plein": 184.0
+      },
+      "56": {
+       "ensemble": 391.0,
+       "taux_plein": 391.0
+      },
+      "57": {
+       "ensemble": 620.0,
+       "taux_plein": 620.0
+      },
+      "58": {
+       "ensemble": 888.0,
+       "taux_plein": 888.0
+      },
+      "59": {
+       "decote": 1.0,
+       "ensemble": 1455.0,
+       "taux_plein": 1454.0
+      },
+      "60": {
+       "decote": 3.0,
+       "ensemble": 36816.0,
+       "taux_plein": 36813.0
+      },
+      "61": {
+       "decote": 5376.0,
+       "ensemble": 125252.0,
+       "taux_plein": 119876.0
+      },
+      "62": {
+       "decote": 19764.0,
+       "ensemble": 315924.0,
+       "surcote": 251.0,
+       "taux_plein": 295909.0
+      },
+      "63": {
+       "decote": 60344.0,
+       "ensemble": 504024.0,
+       "surcote": 41734.0,
+       "taux_plein": 401946.0
+      },
+      "64": {
+       "decote": 69611.0,
+       "ensemble": 551996.0,
+       "surcote": 73329.0,
+       "taux_plein": 409056.0
+      },
+      "65": {
+       "decote": 84302.0,
+       "ensemble": 592254.0,
+       "surcote": 91336.0,
+       "taux_plein": 416616.0
+      },
+      "66": {
+       "decote": 90372.0,
+       "ensemble": 598316.0,
+       "surcote": 100162.0,
+       "taux_plein": 407782.0
+      },
+      "67": {
+       "decote": 85676.0,
+       "ensemble": 653763.0,
+       "surcote": 105531.0,
+       "taux_plein": 462556.0
+      },
+      "68": {
+       "decote": 83976.0,
+       "ensemble": 668663.0,
+       "surcote": 100233.0,
+       "taux_plein": 484454.0
+      },
+      "69": {
+       "decote": 82503.0,
+       "ensemble": 673190.0,
+       "surcote": 96813.0,
+       "taux_plein": 493874.0
+      },
+      "70": {
+       "decote": 78746.0,
+       "ensemble": 679087.0,
+       "surcote": 107477.0,
+       "taux_plein": 492864.0
+      },
+      "71": {
+       "decote": 75471.0,
+       "ensemble": 667698.0,
+       "surcote": 104870.0,
+       "taux_plein": 487357.0
+      },
+      "72": {
+       "decote": 66035.0,
+       "ensemble": 676113.0,
+       "surcote": 109108.0,
+       "taux_plein": 500970.0
+      },
+      "73": {
+       "decote": 54481.0,
+       "ensemble": 654522.0,
+       "surcote": 101948.0,
+       "taux_plein": 498093.0
+      },
+      "74": {
+       "decote": 51928.0,
+       "ensemble": 668367.0,
+       "surcote": 99667.0,
+       "taux_plein": 516772.0
+      },
+      "75": {
+       "decote": 46215.0,
+       "ensemble": 651851.0,
+       "surcote": 97553.0,
+       "taux_plein": 508083.0
+      },
+      "76": {
+       "decote": 40711.0,
+       "ensemble": 640989.0,
+       "surcote": 92548.0,
+       "taux_plein": 507730.0
+      },
+      "77": {
+       "decote": 38427.0,
+       "ensemble": 611325.0,
+       "surcote": 83535.0,
+       "taux_plein": 489363.0
+      },
+      "78": {
+       "decote": 34306.0,
+       "ensemble": 570974.0,
+       "surcote": 71181.0,
+       "taux_plein": 465487.0
+      },
+      "79": {
+       "decote": 26678.0,
+       "ensemble": 427843.0,
+       "surcote": 50149.0,
+       "taux_plein": 351016.0
+      },
+      "80": {
+       "decote": 27570.0,
+       "ensemble": 408231.0,
+       "surcote": 44872.0,
+       "taux_plein": 335789.0
+      },
+      "81": {
+       "decote": 25915.0,
+       "ensemble": 384427.0,
+       "surcote": 31841.0,
+       "taux_plein": 326671.0
+      },
+      "82": {
+       "decote": 23404.0,
+       "ensemble": 343076.0,
+       "surcote": 20179.0,
+       "taux_plein": 299493.0
+      },
+      "83": {
+       "decote": 20892.0,
+       "ensemble": 298495.0,
+       "surcote": 12561.0,
+       "taux_plein": 265042.0
+      },
+      "84": {
+       "decote": 21545.0,
+       "ensemble": 294824.0,
+       "surcote": 8593.0,
+       "taux_plein": 264686.0
+      },
+      "85": {
+       "decote": 21511.0,
+       "ensemble": 287760.0,
+       "surcote": 4853.0,
+       "taux_plein": 261396.0
+      },
+      "86": {
+       "decote": 19884.0,
+       "ensemble": 264559.0,
+       "surcote": 2397.0,
+       "taux_plein": 242278.0
+      },
+      "87": {
+       "decote": 19087.0,
+       "ensemble": 242468.0,
+       "surcote": 1608.0,
+       "taux_plein": 221773.0
+      },
+      "88": {
+       "decote": 18802.0,
+       "ensemble": 221885.0,
+       "surcote": 1280.0,
+       "taux_plein": 201803.0
+      },
+      "89": {
+       "decote": 17393.0,
+       "ensemble": 194651.0,
+       "surcote": 813.0,
+       "taux_plein": 176445.0
+      },
+      "90": {
+       "decote": 16498.0,
+       "ensemble": 174483.0,
+       "surcote": 599.0,
+       "taux_plein": 157386.0
+      },
+      "91": {
+       "decote": 14619.0,
+       "ensemble": 146704.0,
+       "surcote": 444.0,
+       "taux_plein": 131641.0
+      },
+      "92": {
+       "decote": 12361.0,
+       "ensemble": 127553.0,
+       "surcote": 253.0,
+       "taux_plein": 114939.0
+      },
+      "93": {
+       "decote": 9977.0,
+       "ensemble": 102811.0,
+       "surcote": 211.0,
+       "taux_plein": 92623.0
+      },
+      "94": {
+       "decote": 7943.0,
+       "ensemble": 83065.0,
+       "surcote": 131.0,
+       "taux_plein": 74991.0
+      },
+      "95": {
+       "decote": 5583.0,
+       "ensemble": 59973.0,
+       "surcote": 124.0,
+       "taux_plein": 54266.0
+      },
+      "Ensemble": {
+       "decote": 1386961.0,
+       "ensemble": 14744736.0,
+       "surcote": 1658347.0,
+       "taux_plein": 11699428.0
+      },
+      "plus de 95": {
+       "decote": 9051.0,
+       "ensemble": 137266.0,
+       "surcote": 163.0,
+       "taux_plein": 128052.0
       }
      }
     }

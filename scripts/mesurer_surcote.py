@@ -30,7 +30,16 @@ les mêmes cas types aux mêmes poids, la simule une fois
   fonctionnaires civils parmi ceux qui ont surcoté ;
 * l'âge des liquidants de 2024, contre la table C de l'EACR
   (``controle_eacr.mesure``), et ceux du régime général, âge par âge ;
-* la distribution des pensions de 2020, contre l'EIR (``grille_large.confronter``).
+* la distribution des pensions de 2020, contre l'EIR (``grille_large.confronter``) ;
+* la décote des générations nées depuis 1960 (action 138, étape 14, décision
+  17 du propriétaire) : celle des liquidants du régime général de chaque année
+  de 2020 à 2024, et de son stock de 2024 âge par âge — chaque âge est une
+  génération —, contre la table H de la Cnav ; les départs de chaque
+  génération comptée de la grille (1955, 1960, 1965), pris à 67 ans, par
+  classe de condition, tous régimes et au seul régime général, contre la
+  fiche 17 du panorama de la DREES de 2026 (``retraites_generations.csv``,
+  jusqu'à la génération 1957) et contre la décote que la population prête à
+  chaque génération (``grille_large.decotes_des_generations``).
 
 DEUX FAÇONS DE COMPTER UNE SURCOTE. Au drapeau : la cohorte d'une jumelle qui
 surcote (``Variante.surcote``), d'une génération simulée qui atteint son âge
@@ -41,7 +50,14 @@ l'âge légal et après l'âge de son taux plein ; c'est ainsi que se comptent l
 liquidants, parmi ceux dont la condition se lit. Une jumelle dont l'attente
 ne mène pas au-delà de son taux plein part sans surcote ; une carrière qui
 n'est pas jumelle peut partir après son taux plein. Le script donne l'une et
-l'autre part des liquidants, et leur croisement.
+l'autre part des liquidants, et leur croisement ; et, depuis la relecture
+R-I-bis (point 3), des stocks aussi : à la condition, un départ d'avant
+2004, que la loi ne surcotait pas, l'est sans qu'on la lise. La table H
+compte des pensions liquidées avec une surcote : c'est la condition qui s'y
+compare.
+
+LE DÉPÔT. La sortie ``--json`` dit le commit et l'arbre où la mesure a tourné,
+et si des fichiers suivis y étaient modifiés (``depot``) : de quoi la refaire.
 
 Sur la population, la simulation dure près de deux heures sur quatre cœurs ;
 la mémoire des calculs en garde les morceaux (``memoire.py``), et la refaire
@@ -92,6 +108,27 @@ REGIME_GENERAL = "regime_general"
 CNAV = "0015"
 ETAT = "0012"
 
+#: Les années dont la mesure compte la décote des liquidants du régime
+#: général : celles de la table H de la Cnav (action 138, étape 14, la décote
+#: des générations nées depuis 1960).
+ANNEES_DE_LA_DECOTE = tuple(range(2020, 2025))
+
+#: Les âges du stock de 2024 que la mesure suit au régime général : chacun est
+#: une génération, 2024 moins l'âge, de 1957 (67 ans) à 1964 (60 ans), celle
+#: que la DREES lit à 67 ans (panorama de 2026, fiche 17, graphique 4) ; plus
+#: jeune, la part de ses retraités déjà partis.
+AGES_DU_STOCK = tuple(range(60, 68))
+
+#: Les générations de la grille dont la mesure compte tous les départs pris à
+#: :data:`AGE_DES_GENERATIONS`, par classe de condition, et l'âge où elle les
+#: compte : celui où la DREES lit les générations nées depuis 1954 (fiche 17,
+#: graphique 4), l'âge d'annulation de la décote.
+GENERATIONS_COMPTEES = (1955, 1960, 1965)
+AGE_DES_GENERATIONS = 67
+
+#: Les sexes d'une part, et leur ensemble.
+SEXES_ET_ENSEMBLE = ("ensemble", "F", "H")
+
 
 def surcotee(v: G.Variante, generation: int) -> bool:
     """Vrai pour une cohorte de ``v``, de la génération simulée ``generation``,
@@ -110,6 +147,40 @@ def part(lot, garder, compter) -> float | None:
     if not total:
         return None
     return somme_ordonnee(c.tetes for c in gardees if compter(c)) / total
+
+
+def parts_par_sexe(lot, garder, compter, sexe_de) -> dict:
+    """:func:`part`, pour les deux sexes ensemble puis chacun (``sexe_de``)."""
+    return {sexe: part(lot, lambda c, sexe=sexe: garder(c) and sexe in ("ensemble", sexe_de(c)),
+                       compter) for sexe in SEXES_ET_ENSEMBLE}
+
+
+def annee_de_depart(c, annee: int) -> int:
+    """L'année où part la cohorte ``c`` de l'année ``annee`` : son année de
+    naissance, ``annee`` moins son âge, plus son âge de liquidation."""
+    return annee - c.age + c.age_liquidation
+
+
+def a_la_condition(lot, annee: int, garder, conditions: dict, compter=None) -> dict:
+    """Les cohortes de ``lot`` que ``garder`` retient, comptées à la condition
+    de leur départ : la part qui part avec une surcote parmi celles dont la
+    condition se lit (ou que ``compter`` compte parmi les surcotées), et celle
+    des autres. Un départ d'avant :data:`grille_large.ANNEE_DE_LA_SURCOTE`
+    se lit sans condition : la loi ne servait pas de surcote."""
+    def avant(c) -> bool:
+        return annee_de_depart(c, annee) < G.ANNEE_DE_LA_SURCOTE
+
+    def connue(c) -> bool:
+        return avant(c) or (c.code, c.generation) in conditions
+
+    def surcotee_(c) -> bool:
+        return not avant(c) and conditions[(c.code, c.generation)][1] == "surcote"
+
+    membres = [c for c in lot if garder(c)]
+    connues = [c for c in membres if connue(c)]
+    return {"surcote": part(connues, lambda c: True, surcotee_),
+            "inconnues": part(membres, lambda c: True, lambda c: not connue(c)),
+            **({} if compter is None else {"compter": compter(connues, surcotee_)})}
 
 
 def parts_des_liquidants(lot, garder, par_code: dict, conditions: dict) -> dict:
@@ -159,6 +230,12 @@ def parts_de_la_pesee(lots: dict, par_code: dict, conditions: dict, decotes: dic
     def drapeau(c) -> bool:
         return surcotee(par_code[c.code], c.generation)
 
+    def sexe_de(c) -> str:
+        return par_code[c.code].cas.sexe
+
+    def decotee(c) -> bool:
+        return decotes.get((c.code, c.generation), (0, False, 0, False))[3]
+
     du_flux = lots.get(M.ANNEE_EACR, [])
     sortie: dict = {}
     for nom, affiliations in CAISSES.items():
@@ -170,6 +247,8 @@ def parts_de_la_pesee(lots: dict, par_code: dict, conditions: dict, decotes: dic
         valeurs = [p["condition"] for p in liquidants.values() if p["condition"] is not None]
         sortie[nom] = {
             "retraites_2024": part(du_flux, siennes, drapeau),
+            "retraites_2024_condition": a_la_condition(du_flux, M.ANNEE_EACR, siennes,
+                                                       conditions),
             "liquidants": liquidants,
             "liquidants_moyenne": somme_ordonnee(valeurs) / len(valeurs) if valeurs else None,
         }
@@ -182,27 +261,99 @@ def parts_de_la_pesee(lots: dict, par_code: dict, conditions: dict, decotes: dic
                                                 conditions),
         "croisement_2024": croisement(du_flux, du_regime_general, par_code, conditions),
         "retraites_2024": part(du_flux, du_regime_general, drapeau),
+        "retraites_2024_condition": a_la_condition(du_flux, M.ANNEE_EACR, du_regime_general,
+                                                   conditions),
         "decote_liquidants_2024": part(
-            du_flux, lambda c: c.nouvelle and du_regime_general(c),
-            lambda c: decotes.get((c.code, c.generation), (0, False, 0, False))[3]),
+            du_flux, lambda c: c.nouvelle and du_regime_general(c), decotee),
+        "decote_liquidants": {
+            str(annee): parts_par_sexe(lot, lambda c: c.nouvelle and du_regime_general(c),
+                                       decotee, sexe_de)
+            for annee, lot in sorted(lots.items()) if annee in ANNEES_DE_LA_DECOTE},
+        "stock_2024_par_age": {
+            str(age): parts_par_sexe(du_flux, lambda c, age=age: (c.age == age
+                                                                   and du_regime_general(c)),
+                                     decotee, sexe_de)
+            for age in AGES_DU_STOCK},
     }
     stock = lots.get(ANNEE_DU_STOCK, [])
     debut, fin = TRANCHE_DU_STOCK
     sexes = {}
     for sexe in ("F", "H"):
         def du_sexe(c, sexe=sexe) -> bool:
-            return par_code[c.code].cas.sexe == sexe
+            return sexe_de(c) == sexe
 
+        def de_la_tranche(c, du_sexe=du_sexe) -> bool:
+            return du_sexe(c) and debut <= c.age <= fin
+
+        def fonctionnaires(connues, surcotee_) -> float | None:
+            return part(connues, surcotee_, lambda c: affiliation(c) in FONCTIONNAIRES_CIVILS)
+
+        condition = a_la_condition(stock, ANNEE_DU_STOCK, du_sexe, conditions, fonctionnaires)
         sexes[sexe] = {
             "surcote": part(stock, du_sexe, drapeau),
-            f"{debut}_{fin}": part(stock, lambda c: du_sexe(c) and debut <= c.age <= fin,
-                                   drapeau),
+            f"{debut}_{fin}": part(stock, de_la_tranche, drapeau),
             "fonctionnaires_parmi_surcotes": part(
                 stock, lambda c: du_sexe(c) and drapeau(c),
                 lambda c: affiliation(c) in FONCTIONNAIRES_CIVILS),
+            "condition": {
+                "surcote": condition["surcote"],
+                f"{debut}_{fin}": a_la_condition(stock, ANNEE_DU_STOCK, de_la_tranche,
+                                                 conditions)["surcote"],
+                "fonctionnaires_parmi_surcotes": condition["compter"],
+                "inconnues": condition["inconnues"]},
         }
     sortie[f"retraites_{ANNEE_DU_STOCK}"] = sexes
     return sortie
+
+
+def parts_par_generation(lignes) -> dict:
+    """La part de chaque classe de condition parmi les départs de chaque
+    génération, tous régimes (« tous ») et au seul régime général, les deux
+    sexes ensemble puis chacun. ``lignes`` : ``(génération, sexe, du régime
+    général, poids, classe)``."""
+    masses: dict = {}
+    for generation, sexe, du_regime_general, poids, classe in lignes:
+        champs = ("tous", "regime_general") if du_regime_general else ("tous",)
+        for champ in champs:
+            for cle in ("ensemble", sexe):
+                masse = (masses.setdefault(str(generation), {"tous": {}, "regime_general": {}})
+                         [champ].setdefault(cle, {}))
+                masse[classe] = masse.get(classe, 0.0) + poids
+    for champs in masses.values():
+        for sexes in champs.values():
+            for cle, masse in sexes.items():
+                total = somme_ordonnee(masse.values())
+                sexes[cle] = {classe: valeur / total for classe, valeur in masse.items()}
+    return masses
+
+
+def lignes_des_generations(tetes: G.GrilleEnTetes, par_code: dict, conditions: dict,
+                           generations=GENERATIONS_COMPTEES,
+                           age: int = AGE_DES_GENERATIONS) -> list[tuple]:
+    """Les départs de chaque génération de la grille déjà pris à ``age`` ans,
+    comme ``grille_large.departs`` les compte : chaque cas type du poids que la
+    page lui donne l'année de ses ``age`` ans, de sa survie propre à nombre de
+    décès égal (``cout._survies_alignees``) et de ce que la génération donne à
+    son poids (``GrilleEnTetes.part_de``) ; en lignes de
+    :func:`parts_par_generation`."""
+    from retraite_notionnelle import cout as C
+
+    lignes = []
+    for generation in generations:
+        poids = tetes.poids(generation + age)
+        alignees = C._survies_alignees(tetes.pensionnes, poids, generation + age)
+        for pensionne in tetes.pensionnes:
+            lu = conditions.get((pensionne.code, pensionne.generation))
+            if pensionne.generation != generation or lu is None or lu[0] >= age + 1.0:
+                continue
+            masse = (poids.get(pensionne.code, 0.0)
+                     * alignees.get((pensionne.code, generation, 0), 1.0)
+                     * tetes.part_de(pensionne.code, generation))
+            if masse > 0.0:
+                variante = par_code[pensionne.code]
+                lignes.append((generation, variante.cas.sexe, variante.groupe == REGIME_GENERAL,
+                               masse, lu[1]))
+    return lignes
 
 
 def sources(temoin: dict) -> dict:
@@ -219,16 +370,57 @@ def sources(temoin: dict) -> dict:
     par_age = temoin["liquidants_par_age"]["series"][CNAV]
     apres_67 = [effectif for age, effectif in par_age.items()
                 if age.startswith(">") or (age.isdigit() and int(age) > 67)]
+    flux = temoin["conditions_liquidation"]["series"][CNAV]["flux"]
+
+    def decote_de_l_annee(annee: str) -> dict:
+        lignes = {sexe: flux[sexe].get(annee) for sexe in SEXES_ET_ENSEMBLE}
+        complete = all(lignes.values()) and (
+            lignes["F"]["ensemble"] + lignes["H"]["ensemble"] == lignes["ensemble"]["ensemble"])
+        return {sexe: (ligne["decote"] / ligne["ensemble"]
+                       if ligne and (sexe == "ensemble" or complete) else None)
+                for sexe, ligne in lignes.items()}
+
+    stock = temoin["conditions_par_age"]["series"]["stock"]
     return {
         "cnav": {"liquidants_2024": de_la_table_h(CNAV, "flux", M.ANNEE_EACR),
                  "retraites_2024": de_la_table_h(CNAV, "stock", M.ANNEE_EACR),
                  "decote_liquidants_2024": de_la_table_h(CNAV, "flux", M.ANNEE_EACR, "decote"),
+                 "decote_liquidants": {str(annee): decote_de_l_annee(str(annee))
+                                       for annee in ANNEES_DE_LA_DECOTE},
+                 "stock_2024_par_age": {
+                     str(age): {sexe: (stock[sexe][str(M.ANNEE_EACR)][str(age)]["decote"]
+                                       / stock[sexe][str(M.ANNEE_EACR)][str(age)]["ensemble"])
+                                for sexe in SEXES_ET_ENSEMBLE}
+                     for age in AGES_DU_STOCK},
                  "liquidants_2024_de_68_ans_et_plus":
-                     somme_ordonnee(apres_67) / par_age["Ensemble"]},
+                     somme_ordonnee(apres_67) / par_age["Ensemble"],
+                 "liquidants_2024_a_67_ans": par_age["67"] / par_age["Ensemble"]},
         "etat": {"retraites_2024": de_la_table_h(ETAT, "stock", M.ANNEE_EACR),
                  "liquidants": {str(annee): de_la_table_h(ETAT, "flux", annee)
                                 for annee in ANNEES_DES_LIQUIDANTS}},
     }
+
+
+#: Le fichier certifié des retraités par génération (panorama de la DREES de
+#: 2026, fiche 17, graphiques 4 et 5).
+RETRAITES_GENERATIONS = RACINE / "data" / "reference" / "macro" / "retraites_generations.csv"
+
+
+def sources_des_generations(chemin: Path = RETRAITES_GENERATIONS) -> dict:
+    """La part des retraités de chaque génération partis avec une décote ou une
+    surcote, par régime, que la DREES publie (``retraites_generations.csv``,
+    fiche 17, graphiques 4 et 5) : ``{décote|surcote: {régime: {génération:
+    part}}}``, en fraction."""
+    import csv
+
+    sortie: dict = {}
+    with chemin.open(encoding="utf-8") as fichier:
+        lignes = csv.DictReader(ligne for ligne in fichier if not ligne.startswith("#"))
+        for ligne in lignes:
+            if ligne["champ"] in ("decote", "surcote") and ligne["sexe"] == "ensemble":
+                (sortie.setdefault(ligne["champ"], {}).setdefault(ligne["regime"], {})
+                 [ligne["generation"]]) = float(ligne["valeur"]) / 100.0
+    return sortie
 
 
 @contextmanager
@@ -258,6 +450,33 @@ def construire(grille: str, parametres: Parametres, constante: str,
                         G.multiplicateurs(valeurs))
 
 
+def les_deux_grilles(grille: str, parametres: Parametres, constante: str) -> dict:
+    """La grille ``grille`` la constante allumée (« version ») et éteinte
+    (« éteinte ») ; refusées si la constante change les cas types ou leurs
+    poids, une même simulation ne pouvant servir les deux pesées."""
+    grilles = {"version": construire(grille, parametres, constante, True),
+               "eteinte": construire(grille, parametres, constante, False)}
+    if ([v.cas for v in grilles["eteinte"]] != [v.cas for v in grilles["version"]]
+            or [v.retraites for v in grilles["eteinte"]]
+            != [v.retraites for v in grilles["version"]]):
+        raise ValueError(f"{constante} change les cas types ou leurs poids : une même "
+                         "simulation ne sert pas les deux pesées")
+    return grilles
+
+
+def etat_du_depot() -> dict:
+    """Le commit et l'arbre où la mesure tourne, et si des fichiers suivis y
+    sont modifiés : de quoi la refaire sur le même dépôt."""
+    import subprocess
+
+    def git(*arguments: str) -> str:
+        return subprocess.run(["git", *arguments], cwd=RACINE, capture_output=True,
+                              text=True, check=True).stdout.strip()
+
+    return {"commit": git("rev-parse", "HEAD"), "arbre": git("rev-parse", "HEAD^{tree}"),
+            "modifie": bool(git("status", "--porcelain", "--untracked-files=no"))}
+
+
 def cohortes_brutes(tetes: G.GrilleEnTetes, annee: int) -> list[M.Cohorte]:
     """Les cohortes de la grille en ``annee`` (``controle_eacr.cohortes``), sans
     les parts des générations, que chaque pesée leur donne."""
@@ -280,44 +499,68 @@ def mesurer(grille: str = "population", constante: str = "SURCOTE_SELON_LA_GENER
     debut = time.time()
     parametres = parametres if parametres is not None else Parametres()
     racine = parametres.racine_donnees
-    grilles = {"version": construire(grille, parametres, constante, True),
-               "eteinte": construire(grille, parametres, constante, False)}
+    grilles = les_deux_grilles(grille, parametres, constante)
     version = grilles["version"]
-    if ([v.cas for v in grilles["eteinte"]] != [v.cas for v in version]
-            or [v.retraites for v in grilles["eteinte"]] != [v.retraites for v in version]):
-        raise ValueError(f"{constante} change les cas types ou leurs poids : une même "
-                         "simulation ne sert pas les deux pesées")
     tetes = G.en_tetes(parametres, version, processus, alleges=True)
     par_code = {v.cas.code: v for v in version}
+
+    def du_regime_general(c: M.Cohorte) -> bool:
+        return par_code[c.code].groupe == REGIME_GENERAL
 
     def gardee(annee: int, c: M.Cohorte) -> bool:
         if annee in (ANNEE_DU_STOCK, M.ANNEE_EACR):
             return True
-        return c.nouvelle and par_code[c.code].cas.affiliation in FONCTIONNAIRES_CIVILS
+        return c.nouvelle and (par_code[c.code].cas.affiliation in FONCTIONNAIRES_CIVILS
+                               or (annee in ANNEES_DE_LA_DECOTE and du_regime_general(c)))
 
-    annees = sorted({ANNEE_DU_STOCK, M.ANNEE_EACR, *ANNEES_DES_LIQUIDANTS})
+    annees = sorted({ANNEE_DU_STOCK, M.ANNEE_EACR, *ANNEES_DES_LIQUIDANTS,
+                     *ANNEES_DE_LA_DECOTE})
     brutes = {annee: [c for c in cohortes_brutes(tetes, annee) if gardee(annee, c)]
               for annee in annees}
     cas_par_code = {cas.code: cas for cas in tetes.cas_types}
-    couples = {(cas_par_code[c.code], c.generation)
-               for annee, lot in brutes.items() for c in lot if c.nouvelle
-               and (par_code[c.code].cas.affiliation in FONCTIONNAIRES_CIVILS
-                    or (annee == M.ANNEE_EACR and par_code[c.code].groupe == REGIME_GENERAL))}
+    liquidants = {(cas_par_code[c.code], c.generation)
+                  for annee, lot in brutes.items() for c in lot if c.nouvelle
+                  and (par_code[c.code].cas.affiliation in FONCTIONNAIRES_CIVILS
+                       or (annee == M.ANNEE_EACR and du_regime_general(c)))}
+    # Les stocks à la condition (relecture R-I-bis, point 3) : les départs
+    # depuis 2004 du stock de 2020, et de ceux de 2024 du régime général et des
+    # fonctionnaires civils ; et tous les couples des générations comptées.
+    stocks = {(cas_par_code[c.code], c.generation)
+              for annee in (ANNEE_DU_STOCK, M.ANNEE_EACR) for c in brutes[annee]
+              if annee_de_depart(c, annee) >= G.ANNEE_DE_LA_SURCOTE
+              and (annee == ANNEE_DU_STOCK or du_regime_general(c)
+                   or par_code[c.code].cas.affiliation in FONCTIONNAIRES_CIVILS)}
+    generations = {(cas_par_code[p.code], p.generation) for p in tetes.pensionnes
+                   if p.generation in GENERATIONS_COMPTEES}
+    couples = liquidants | stocks | generations
     conditions = {(code, generation): (age, condition) for code, generation, age, condition
                   in G._par_morceaux(G._conditions, parametres, couples, processus)}
     decotes = G.proratisations(
-        parametres, {(par_code[c.code].cas, c.generation) for c in brutes[M.ANNEE_EACR]
-                     if par_code[c.code].groupe == REGIME_GENERAL}, processus)
+        parametres, {(par_code[c.code].cas, c.generation)
+                     for annee in ANNEES_DE_LA_DECOTE for c in brutes[annee]
+                     if du_regime_general(c)
+                     and (c.nouvelle or (annee == M.ANNEE_EACR and c.age in AGES_DU_STOCK))},
+        processus)
     temoin = json.loads(E.TEMOIN.read_text(encoding="utf-8"))
     publies = G.departs_publies(racine)
     source = G.eir(racine)
     residence = G.ResidenceRetraites(racine, source.millesime)
     distributions = {sexe: G.DistributionPensions(racine, sexe, source.millesime, "france")
                      for sexe in G.SEXES}
-    resultat: dict = {"grille": grille, "constante": constante, "cas_types": len(version),
+    cible = G.decotes_des_generations(racine)
+    resultat: dict = {"grille": grille, "constante": constante, "depot": etat_du_depot(),
+                      "cas_types": len(version),
                       "couples": len(tetes.pensionnes), "echecs": dict(tetes.echecs),
-                      "conditions": {"couples": len(couples), "lues": len(conditions)},
-                      "sources": sources(temoin), "pesees": {}}
+                      "conditions": {"couples": len(couples), "lues": len(conditions),
+                                     "liquidants": len(liquidants), "stocks": len(stocks),
+                                     "generations": len(generations)},
+                      "decotes": {"couples": len(decotes)},
+                      "cible_decote": {sexe: {str(generation): G._par_generation(
+                          paires, generation, None) for generation in GENERATIONS_COMPTEES}
+                          for sexe, paires in cible.items()},
+                      "sources": {**sources(temoin),
+                                  "generations": sources_des_generations()},
+                      "pesees": {}}
     for nom, variantes in grilles.items():
         pesee = replace(tetes, parts={v.cas.code: v.parts_des_generations for v in variantes
                                       if v.parts_des_generations})
@@ -332,6 +575,8 @@ def mesurer(grille: str = "population", constante: str = "SURCOTE_SELON_LA_GENER
         mesure["regime_general"]["liquidants_2024_par_age"] = M.parts(
             M.grille_par_age(du_regime_general))
         mesure["departs"] = G.departs(parametres, pesee, publies, processus)
+        mesure["generations"] = parts_par_generation(
+            lignes_des_generations(pesee, par_code, conditions))
         mesure["distribution_2020"] = G.confronter(pesee.pensions(source.millesime), residence,
                                                    distributions)
         resultat["pesees"][nom] = mesure
@@ -361,6 +606,9 @@ def _ligne(intitule: str, source: float | None, eteinte, version) -> str:
 def imprimer(resultat: dict) -> None:
     eteinte, version = resultat["pesees"]["eteinte"], resultat["pesees"]["version"]
     sources_ = resultat["sources"]
+    depot = resultat["depot"]
+    print(f"Dépôt : commit {depot['commit']}, arbre {depot['arbre']}"
+          f"{', fichiers suivis modifiés' if depot['modifie'] else ''}.")
     print(f"Grille « {resultat['grille']} », {resultat['cas_types']} cas types, "
           f"{resultat['couples']} couples, échecs {resultat['echecs']} ; constante "
           f"{resultat['constante']} ; {resultat['secondes']} s.")
@@ -403,6 +651,13 @@ def imprimer(resultat: dict) -> None:
                      e["liquidants_moyenne"], v["liquidants_moyenne"]))
         print(_ligne(f"{intitule}, retraités de 2024", sources_["etat"]["retraites_2024"]
                      if nom == "etat" else None, e["retraites_2024"], v["retraites_2024"]))
+        print(_ligne(f"{intitule}, retraités de 2024, à la condition",
+                     sources_["etat"]["retraites_2024"] if nom == "etat" else None,
+                     e["retraites_2024_condition"]["surcote"],
+                     v["retraites_2024_condition"]["surcote"]))
+        print(_ligne(f"{intitule}, retraités de 2024, conditions inconnues", None,
+                     e["retraites_2024_condition"]["inconnues"],
+                     v["retraites_2024_condition"]["inconnues"]))
     e, v = eteinte["regime_general"], version["regime_general"]
     for compte in ("condition", "drapeau", "inconnues"):
         print(_ligne(f"régime général, liquidants de 2024, {compte}",
@@ -410,9 +665,19 @@ def imprimer(resultat: dict) -> None:
                      e["liquidants_2024"][compte], v["liquidants_2024"][compte]))
     print(_ligne("régime général, retraités de 2024", sources_["cnav"]["retraites_2024"],
                  e["retraites_2024"], v["retraites_2024"]))
+    print(_ligne("régime général, retraités de 2024, à la condition",
+                 sources_["cnav"]["retraites_2024"], e["retraites_2024_condition"]["surcote"],
+                 v["retraites_2024_condition"]["surcote"]))
+    print(_ligne("régime général, retraités de 2024, conditions inconnues", None,
+                 e["retraites_2024_condition"]["inconnues"],
+                 v["retraites_2024_condition"]["inconnues"]))
     print(_ligne("régime général, liquidants de 2024, décote",
                  sources_["cnav"]["decote_liquidants_2024"], e["decote_liquidants_2024"],
                  v["decote_liquidants_2024"]))
+    print(_ligne("régime général, liquidants de 2024 de 67 ans",
+                 sources_["cnav"]["liquidants_2024_a_67_ans"],
+                 e["liquidants_2024_par_age"].get("67", 0.0),
+                 v["liquidants_2024_par_age"].get("67", 0.0)))
     print(_ligne("régime général, liquidants de 2024 de 68 ans et plus",
                  sources_["cnav"]["liquidants_2024_de_68_ans_et_plus"],
                  e["liquidants_2024_par_age"].get("68_plus", 0.0),
@@ -432,6 +697,13 @@ def imprimer(resultat: dict) -> None:
                                "fonctionnaires civils parmi les surcotés")):
             print(_ligne(f"retraités de {ANNEE_DU_STOCK}, {sexe}, {intitule}", None,
                          e[cle], v[cle]))
+        for cle, intitule in (("surcote", "surcote"),
+                              (f"{debut}_{fin}", f"de {debut} à {fin} ans"),
+                              ("fonctionnaires_parmi_surcotes",
+                               "fonctionnaires civils parmi les surcotés"),
+                              ("inconnues", "conditions inconnues")):
+            print(_ligne(f"retraités de {ANNEE_DU_STOCK}, {sexe}, {intitule}, à la condition",
+                         None, e["condition"][cle], v["condition"][cle]))
     publie = sources_["eacr_tous_regimes"]
     e, v = eteinte["liquidants_2024"], version["liquidants_2024"]
     for cle, intitule in (("62", "à 62 ans"), ("67", "à 67 ans"),
@@ -441,6 +713,7 @@ def imprimer(resultat: dict) -> None:
                      v["par_age"].get(cle)))
     print(f"| âge moyen des liquidants de 2024 | {_virgule(publie['age_moyen'], 2)} | "
           f"{_virgule(e['age_moyen'], 2)} | {_virgule(v['age_moyen'], 2)} |")
+    imprimer_la_decote(resultat)
     for sexe in ("F", "H"):
         e = eteinte["distribution_2020"].get(sexe)
         v = version["distribution_2020"].get(sexe)
@@ -451,6 +724,59 @@ def imprimer(resultat: dict) -> None:
         print(f"| écart de Kolmogorov, {sexe}, points, à la borne | — | "
               f"{_virgule(100 * e['kolmogorov'], 1)} à {e['borne_kolmogorov']:.0f} | "
               f"{_virgule(100 * v['kolmogorov'], 1)} à {v['borne_kolmogorov']:.0f} |")
+
+
+def imprimer_la_decote(resultat: dict) -> None:
+    """La décote des générations nées depuis 1960 : les liquidants du régime
+    général de chaque année et son stock de 2024 âge par âge, contre la table H
+    de la Cnav ; les départs de chaque génération comptée, contre la fiche 17
+    de la DREES et la cible de la population."""
+    eteinte, version = resultat["pesees"]["eteinte"], resultat["pesees"]["version"]
+    cnav = resultat["sources"]["cnav"]
+    print()
+    print("La décote : le régime général contre la table H de la Cnav (flux de chaque année, "
+          "stock de 2024 à chaque âge, la génération 2024 moins l'âge).")
+    print()
+    print("| | source | éteinte | version |")
+    print("|---|---|---|---|")
+    e, v = eteinte["regime_general"], version["regime_general"]
+    for annee in map(str, ANNEES_DE_LA_DECOTE):
+        for sexe in SEXES_ET_ENSEMBLE:
+            if annee not in v["decote_liquidants"]:
+                continue
+            print(_ligne(f"régime général, liquidants de {annee}, décote, {sexe}",
+                         cnav["decote_liquidants"][annee][sexe],
+                         e["decote_liquidants"][annee][sexe],
+                         v["decote_liquidants"][annee][sexe]))
+    for age in map(str, AGES_DU_STOCK):
+        for sexe in SEXES_ET_ENSEMBLE:
+            print(_ligne(f"régime général, stock de 2024 à {age} ans (née en "
+                         f"{M.ANNEE_EACR - int(age)}), décote, {sexe}",
+                         cnav["stock_2024_par_age"][age][sexe],
+                         e["stock_2024_par_age"][age][sexe],
+                         v["stock_2024_par_age"][age][sexe]))
+    publiees = resultat["sources"]["generations"]
+    print()
+    print(f"Les départs de chaque génération de la grille pris à {AGE_DES_GENERATIONS} ans, "
+          "par classe ; la source, la fiche 17 de la DREES (graphiques 4 et 5) ; la cible, "
+          "la décote que la population prête à la génération (sexe par sexe).")
+    print()
+    print("| | source | cible | éteinte | version |")
+    print("|---|---|---|---|---|")
+    for generation in map(str, GENERATIONS_COMPTEES):
+        for champ, regime in (("tous", "tous_regimes"), ("regime_general", "regime_general")):
+            for sexe in SEXES_ET_ENSEMBLE:
+                for classe in ("decote", "surcote"):
+                    if sexe not in version["generations"].get(generation, {}).get(champ, {}):
+                        continue
+                    source = (publiees.get(classe, {}).get(regime, {}).get(generation)
+                              if sexe == "ensemble" else None)
+                    cible = (resultat["cible_decote"].get(sexe, {}).get(generation)
+                             if classe == "decote" and champ == "tous" else None)
+                    valeurs = [p["generations"][generation][champ][sexe].get(classe, 0.0)
+                               for p in (eteinte, version)]
+                    print(f"| {generation}, {champ}, {sexe}, {classe} | {_pc(source)} | "
+                          f"{_pc(cible)} | {_pc(valeurs[0])} | {_pc(valeurs[1])} |")
 
 
 def main(argv: list[str] | None = None) -> int:

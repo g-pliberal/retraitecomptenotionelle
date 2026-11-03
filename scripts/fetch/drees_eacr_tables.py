@@ -23,6 +23,10 @@ CE QU'ON EN GARDE, de la version du 26 mai 2026 (« 62 EACR diffusée ») :
   comptée dans le taux plein ; elle manque à l'Agirc-Arrco, qui n'en sert
   pas, et aux militaires. Le SRE écrit « surcote » en minuscule, et ne
   donne pas la ligne « Ensemble », que la somme refait ;
+* ``H-Conditions_liq``, de la Cnav seule, âge par âge, en flux et en stock
+  (action 138, étape 14) : le stock de 2024 à un âge est une génération, celle
+  que la DREES lit à 67 ans (panorama de 2026, fiche 17, graphique 4) ; plus
+  jeune, la part de ses retraités déjà partis ;
 * ``B-Liquidants`` (premier classeur) — les liquidants de chaque caisse par
   âge, l'année la plus récente, tous sexes, toutes durées, tous motifs (le
   stock par âge, que la feuille porte aussi, est celui de la table C) ;
@@ -142,6 +146,44 @@ def conditions_liquidation(contenu: bytes) -> dict:
             "series": series}
 
 
+#: La caisse dont la table H se garde aussi âge par âge : la Cnav.
+CAISSE_PAR_AGE = "0015"
+
+
+def conditions_par_age(contenu: bytes, caisse: str = CAISSE_PAR_AGE) -> dict:
+    """La table H d'une caisse, âge par âge, tous motifs de départ réunis :
+    ``{flux|stock: {sexe: {année: {âge: {condition: effectif}}}}}``. L'âge est
+    celui que la feuille porte, avec ses restes (« plus de 70 » au flux, « plus
+    de 95 » au stock) et sa ligne « Ensemble ». Le stock d'une année à un âge
+    est la génération de l'année moins l'âge : la DREES lit ainsi la part des
+    retraités d'une génération partis avec une décote, à 67 ans (panorama de
+    2026, fiche 17, graphique 4) ; à un âge plus jeune, la part parmi ceux de
+    la génération déjà partis."""
+    retenues: dict[tuple, tuple] = {}
+    for cellule in _feuille(contenu, FEUILLE_H):
+        if str(cellule.get("CC")) != caisse or cellule.get("Type_depart") != "Ensemble":
+            continue
+        if cellule.get("Taux") not in TAUX or cellule.get("Sexe") not in SEXES:
+            continue
+        effectif = cellule.get("effectifs")
+        if not isinstance(effectif, float) or effectif <= 0:
+            continue
+        annee = int(cellule["Annee"])
+        if annee < DEPUIS:
+            continue
+        cle = (CHAMPS_FS[cellule["Champ_FluxStock"]], SEXES[cellule["Sexe"]], annee,
+               str(cellule["Age"]), TAUX[cellule["Taux"]])
+        _retenir(retenues, cle, str(cellule.get("Source") or ""), effectif)
+    series: dict = {}
+    sources: set[str] = set()
+    for (champ, sexe, annee, age, taux), ((_, source), effectif) in sorted(retenues.items()):
+        (series.setdefault(champ, {}).setdefault(sexe, {}).setdefault(str(annee), {})
+         .setdefault(age, {}))[taux] = effectif
+        sources.add(source)
+    return {"feuille": FEUILLE_H, "caisse": caisse, "sources": sorted(sources),
+            "series": series}
+
+
 def liquidants_par_age(contenu: bytes) -> dict:
     """La table B, l'année la plus récente : ``{caisse: {âge: effectif}}``, en flux."""
     retenues: dict[tuple, tuple] = {}
@@ -214,6 +256,7 @@ def main(argv: list[str] | None = None) -> int:
         "fichiers": [titre_1, titre_2],
         "lu_le": date.today().isoformat(),
         "conditions_liquidation": conditions_liquidation(second),
+        "conditions_par_age": conditions_par_age(second),
         "liquidants_par_age": liquidants_par_age(premier),
         "droits_directs_par_age": droits_directs_par_age(premier),
     }

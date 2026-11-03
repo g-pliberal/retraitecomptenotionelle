@@ -3279,9 +3279,11 @@ def test_la_mesure_de_la_surcote_compte_les_jumelles_et_les_conditions():
         {"surcote": 7 / 15, "carriere_longue": 5 / 15})
     assert parts["regime_general"]["retraites_2024"] == pytest.approx(3 / 25)
     assert parts["regime_general"]["decote_liquidants_2024"] == pytest.approx(5 / 15)
-    assert parts["retraites_2020"]["H"] == pytest.approx(
+    au_drapeau = {sexe: {cle: valeur for cle, valeur in parts["retraites_2020"][sexe].items()
+                         if cle != "condition"} for sexe in ("F", "H")}
+    assert au_drapeau["H"] == pytest.approx(
         {"surcote": 3 / 10, "70_74": 3 / 6, "fonctionnaires_parmi_surcotes": 1 / 3})
-    assert parts["retraites_2020"]["F"] == pytest.approx(
+    assert au_drapeau["F"] == pytest.approx(
         {"surcote": 5 / 10, "70_74": 0.0, "fonctionnaires_parmi_surcotes": 0.0})
 
 
@@ -3318,6 +3320,201 @@ def test_la_mesure_de_la_surcote_se_refait_sur_un_cas_court(tmp_path):
     assert sources["etat"]["retraites_2024"] == pytest.approx(370_626 / 1_641_380)
     assert version["departs"]["1955"]["ensemble"]["conditions"]["surcote"][1] == (
         pytest.approx(14.3 / 99.1))
+    # La table B : 60 530 des 648 346 liquidants de la Cnav de 2024 ont 67 ans
+    # (relecture R-I-bis, point 5). La fiche 17 de la DREES, graphique 4 : le
+    # régime général décote 12,8 % de la génération 1955, 13,1 % de 1957.
+    assert sources["cnav"]["liquidants_2024_a_67_ans"] == pytest.approx(60_530 / 648_346)
+    assert sources["generations"]["decote"]["regime_general"]["1955"] == pytest.approx(0.128)
+    assert sources["generations"]["decote"]["regime_general"]["1957"] == pytest.approx(0.131)
+    assert set(version["generations"]) == {"1955", "1960", "1965"}
+    import subprocess
+
+    def git(*arguments: str) -> str:
+        return subprocess.run(["git", *arguments], cwd=S.RACINE, capture_output=True,
+                              text=True, check=True).stdout.strip()
+
+    assert mesure["depot"]["commit"] == git("rev-parse", "HEAD")
+    assert mesure["depot"]["arbre"] == git("rev-parse", "HEAD^{tree}")
+    assert isinstance(mesure["depot"]["modifie"], bool)
+
+
+def test_la_mesure_de_la_surcote_lit_ses_sources_annee_par_annee():
+    """Relecture R-I-bis, point 1 : trois colonnes des sources n'étaient
+    tenues par aucun test. Posées à la main, au témoin de l'EACR (table H) :
+    les liquidants civils de l'État partis avec une surcote, 19 278 / 52 693
+    en 2020, 20 992 / 54 735 en 2021, 20 893 / 54 666 en 2022, 20 824 /
+    51 981 en 2023, 17 547 / 45 078 en 2024, rien en 2025 ; ceux de la Cnav
+    partis en 2024 avec une décote, 86 776 / 648 346 — non au taux plein,
+    439 202. La décote d'après 1960 : les liquidants de la Cnav de chaque
+    année partis avec une décote, 80 830 / 630 255 en 2020, 87 041 / 661 875
+    en 2021, 95 078 / 693 238 en 2022, 94 724 / 692 416 en 2023 ; par sexe,
+    47 458 / 330 762 des femmes et 33 372 / 299 493 des hommes en 2020,
+    50 887 / 350 150 et 36 154 / 311 725 en 2021, 46 637 / 339 640 et
+    40 139 / 308 706 en 2024 ; en 2022 et en 2023, les deux sexes ne
+    redonnent pas l'ensemble (343 013 + 327 327 = 670 340, non 693 238 ;
+    265 596 + 203 090 = 468 686, non 692 416) : aucune part par sexe. Son
+    stock de 2024, âge par âge : à 64 ans, la génération 1960, 69 611 /
+    551 996, 40 845 / 285 736 des femmes, 28 766 / 266 260 des hommes ; à
+    67 ans, la génération 1957, 85 676 / 653 763."""
+    import json
+
+    S = _mesure_de_la_surcote()
+    sources = S.sources(json.loads(S.E.TEMOIN.read_text(encoding="utf-8")))
+    assert sources["etat"]["liquidants"] == {
+        "2020": pytest.approx(19_278 / 52_693), "2021": pytest.approx(20_992 / 54_735),
+        "2022": pytest.approx(20_893 / 54_666), "2023": pytest.approx(20_824 / 51_981),
+        "2024": pytest.approx(17_547 / 45_078), "2025": None}
+    cnav = sources["cnav"]
+    assert cnav["decote_liquidants_2024"] == pytest.approx(86_776 / 648_346)
+    assert cnav["decote_liquidants"] == {
+        "2020": pytest.approx({"ensemble": 80_830 / 630_255, "F": 47_458 / 330_762,
+                               "H": 33_372 / 299_493}),
+        "2021": pytest.approx({"ensemble": 87_041 / 661_875, "F": 50_887 / 350_150,
+                               "H": 36_154 / 311_725}),
+        "2022": {"ensemble": pytest.approx(95_078 / 693_238), "F": None, "H": None},
+        "2023": {"ensemble": pytest.approx(94_724 / 692_416), "F": None, "H": None},
+        "2024": pytest.approx({"ensemble": 86_776 / 648_346, "F": 46_637 / 339_640,
+                               "H": 40_139 / 308_706})}
+    assert cnav["stock_2024_par_age"]["64"] == pytest.approx(
+        {"ensemble": 69_611 / 551_996, "F": 40_845 / 285_736, "H": 28_766 / 266_260})
+    assert cnav["stock_2024_par_age"]["67"]["ensemble"] == pytest.approx(85_676 / 653_763)
+    assert sorted(cnav["stock_2024_par_age"], key=int) == [str(a) for a in range(60, 68)]
+
+
+def test_la_mesure_de_la_surcote_construit_la_version_la_constante_allumee(monkeypatch):
+    """Relecture R-I-bis, point 1 : sur la grille de la page, qui n'a pas de
+    jumelle, rien ne distingue les deux pesées, et les permuter ne se voyait
+    pas. Ici, chaque grille porte la valeur de la constante sous laquelle elle
+    s'est construite : « version », allumée ; « éteinte », éteinte."""
+    S = _mesure_de_la_surcote()
+    premiere = G.reference()[0]
+
+    def reference():
+        return [replace(premiere, parts_des_generations=(
+            (1900, 1.0 if G.SURCOTE_SELON_LA_GENERATION else 0.5),))]
+
+    monkeypatch.setattr(G, "reference", reference)
+    grilles = S.les_deux_grilles("reference", Parametres(), "SURCOTE_SELON_LA_GENERATION")
+    assert grilles["version"][0].parts_des_generations == ((1900, 1.0),)
+    assert grilles["eteinte"][0].parts_des_generations == ((1900, 0.5),)
+
+
+def test_la_mesure_compte_les_stocks_a_la_condition_et_la_decote_d_apres_1960():
+    """Relecture R-I-bis, point 3, et la décote des générations nées depuis
+    1960 (décision 17 du propriétaire). Les stocks se comptent aussi à la
+    condition du départ, parmi ceux dont elle se lit ; un départ d'avant 2004,
+    que la loi ne pouvait surcoter, n'est pas surcoté, sans qu'on la lise, et
+    même si elle se lisait « surcote » (les deux nés en 1940, partis en 2000).
+    Posé à la main. En 2024, le régime général : 4 + 2 + 3 + 1 + 5 + 2 + 6 =
+    23 retraités ; la condition se lit pour tous sauf les 5 de 1955, une
+    jumelle surcotée (2) sur 18, 5 inconnus sur 23 ; au drapeau, 2 sur 23.
+    L'État : la jumelle née en 1950, partie en 2011 (1950 + 61), surcotée,
+    l'agent né en 1940, parti en 2000 (1940 + 60), non : 2 sur 5. En 2020,
+    les hommes : 2 + 4 + 3 + 1 = 10, connus ; surcotés, le salarié né en 1945,
+    parti en 2005, et l'agent de l'État né en 1949, 4 + 1 = 5 ; la jumelle née
+    en 1948 est partie au taux plein ; de 70 à 74 ans, 1 sur 2 + 1 = 3 ; un
+    fonctionnaire sur les 5 surcotés. Les femmes : 5 connues, 5 surcotées, 5
+    inconnues sur 10 ; à 70-74 ans, aucune connue. La décote des liquidants du
+    régime général : en 2022, 3 sur 3 + 1, les hommes 3 sur 3, les femmes 0
+    sur 1 ; en 2024, 2 sur 2 + 6, les hommes 2 sur 2, les femmes 0 sur 6 ;
+    aucun en 2020. Son stock de 2024 par âge : à 64 ans, 4 décotés sur
+    4 + 2 + 3, les hommes 4 sur 6, les femmes 0 sur 3 ; à 63 ans, 1 sur 1 ; à
+    62 ans, 2 sur 2 + 6."""
+    from retraite_notionnelle.controle_eacr import Cohorte
+
+    S = _mesure_de_la_surcote()
+    cas = {v.cas.code: v for v in G.reference()}
+    legaux = ((1940, 60.0), (1955, 62.0))
+
+    def jumelle(v: G.Variante, attente: float, **changements) -> G.Variante:
+        return replace(v, surcote=attente, cas=G.elargi(
+            v.cas, code=f"{v.cas.code}~surcote{attente:.2f}", attente=attente,
+            legaux=legaux, **changements))
+
+    femme = replace(cas["salaire_moyen"], cas=G.elargi(cas["salaire_moyen"].cas,
+                                                        code="femme", sexe="F"))
+    variantes = [cas["fonctionnaire_sedentaire"], cas["salaire_moyen"], cas["cadre"], femme,
+                 jumelle(cas["fonctionnaire_sedentaire"], 1.0, depuis_la_surcote=True),
+                 jumelle(cas["salaire_moyen"], 0.5), jumelle(femme, 0.5)]
+    par_code = {v.cas.code: v for v in variantes}
+    etat, etat_s = "fonctionnaire_sedentaire", "fonctionnaire_sedentaire~surcote1.00"
+    rg, rg_s, cadre = "salaire_moyen", "salaire_moyen~surcote0.50", "cadre"
+    femme_s = "femme~surcote0.50"
+    lots = {
+        2024: [Cohorte(rg, 1960, 64, 62, 4.0, 1500.0, False),
+               Cohorte(rg_s, 1960, 64, 63, 2.0, 1550.0, False),
+               Cohorte("femme", 1960, 64, 62, 3.0, 1200.0, False),
+               Cohorte(rg, 1960, 63, 62, 1.0, 1500.0, False),
+               Cohorte(rg, 1955, 69, 62, 5.0, 1400.0, False),
+               Cohorte(cadre, 1965, 62, 62, 2.0, 2500.0, True),
+               Cohorte("femme", 1960, 62, 62, 6.0, 1200.0, True),
+               Cohorte(etat_s, 1950, 74, 61, 2.0, 2100.0, False),
+               Cohorte(etat, 1940, 84, 60, 3.0, 1900.0, False)],
+        2022: [Cohorte(rg, 1960, 62, 62, 3.0, 1500.0, True),
+               Cohorte("femme", 1960, 62, 62, 1.0, 1200.0, True)],
+        2020: [Cohorte(rg_s, 1950, 72, 61, 2.0, 1400.0, False),
+               Cohorte(rg, 1945, 75, 60, 4.0, 1300.0, False),
+               Cohorte(rg, 1940, 80, 60, 3.0, 1250.0, False),
+               Cohorte(etat_s, 1950, 71, 61, 1.0, 2000.0, False),
+               Cohorte("femme", 1950, 70, 60, 5.0, 1000.0, False),
+               Cohorte(femme_s, 1955, 65, 63, 5.0, 1100.0, False)],
+    }
+    conditions = {(rg, 1960): (62.0, "taux_plein_autre"), (rg_s, 1960): (63.0, "surcote"),
+                  ("femme", 1960): (62.0, "decote"), (cadre, 1965): (62.0, "decote"),
+                  (etat_s, 1950): (61.0, "surcote"), (rg_s, 1950): (61.0, "taux_plein_autre"),
+                  (rg, 1945): (60.0, "surcote"), (femme_s, 1955): (63.0, "surcote"),
+                  (etat, 1940): (60.0, "surcote"), (rg, 1940): (60.0, "surcote")}
+    decotes = {(rg, 1960): (1.0, False, 40.0, True), (cadre, 1965): (1.0, False, 40.0, True),
+               ("femme", 1960): (1.0, False, 40.0, False)}
+
+    parts = S.parts_de_la_pesee(lots, par_code, conditions, decotes)
+    regime = parts["regime_general"]
+    assert regime["retraites_2024_condition"] == pytest.approx(
+        {"surcote": 2 / 18, "inconnues": 5 / 23})
+    assert regime["retraites_2024"] == pytest.approx(2 / 23)
+    assert parts["etat"]["retraites_2024_condition"] == pytest.approx(
+        {"surcote": 2 / 5, "inconnues": 0.0})
+    hommes, femmes = parts["retraites_2020"]["H"], parts["retraites_2020"]["F"]
+    assert hommes["condition"] == pytest.approx(
+        {"surcote": 5 / 10, "70_74": 1 / 3, "fonctionnaires_parmi_surcotes": 1 / 5,
+         "inconnues": 0.0})
+    assert femmes["condition"] == {"surcote": pytest.approx(1.0), "70_74": None,
+                                   "fonctionnaires_parmi_surcotes": pytest.approx(0.0),
+                                   "inconnues": pytest.approx(5 / 10)}
+    assert regime["decote_liquidants"] == {
+        "2020": {"ensemble": None, "F": None, "H": None},
+        "2022": pytest.approx({"ensemble": 3 / 4, "F": 0.0, "H": 1.0}),
+        "2024": pytest.approx({"ensemble": 2 / 8, "F": 0.0, "H": 1.0})}
+    assert regime["stock_2024_par_age"]["64"] == pytest.approx(
+        {"ensemble": 4 / 9, "F": 0.0, "H": 4 / 6})
+    assert regime["stock_2024_par_age"]["63"] == {"ensemble": pytest.approx(1.0), "F": None,
+                                                  "H": pytest.approx(1.0)}
+    assert regime["stock_2024_par_age"]["62"] == pytest.approx(
+        {"ensemble": 2 / 8, "F": 0.0, "H": 1.0})
+
+
+def test_la_mesure_compte_les_departs_de_chaque_generation_par_classe():
+    """La part de chaque classe de départ dans une génération de la grille,
+    tous régimes et au seul régime général, sexe par sexe, sur des lignes
+    posées à la main ``(génération, sexe, régime général, poids, classe)`` :
+    la génération 1960, 3 + 1 + 2 + 2 = 8 têtes, dont 3 + 2 = 5 décotées et 2
+    surcotées ; ses femmes, 3 sur 4 décotées ; ses hommes, 2 et 2 sur 4 ; au
+    régime général, 3 + 2 + 2 = 7, dont 5 décotées ; la génération 1965, un
+    homme hors du régime général, en carrière longue."""
+    S = _mesure_de_la_surcote()
+    lignes = [(1960, "F", True, 3.0, "decote"), (1960, "F", False, 1.0, "taux_plein_autre"),
+              (1960, "H", True, 2.0, "surcote"), (1960, "H", True, 2.0, "decote"),
+              (1965, "H", False, 4.0, "carriere_longue")]
+    parts = S.parts_par_generation(lignes)
+    assert parts["1960"]["tous"]["ensemble"] == pytest.approx(
+        {"decote": 5 / 8, "surcote": 2 / 8, "taux_plein_autre": 1 / 8})
+    assert parts["1960"]["tous"]["F"] == pytest.approx(
+        {"decote": 3 / 4, "taux_plein_autre": 1 / 4})
+    assert parts["1960"]["tous"]["H"] == pytest.approx({"decote": 0.5, "surcote": 0.5})
+    assert parts["1960"]["regime_general"]["ensemble"] == pytest.approx(
+        {"decote": 5 / 7, "surcote": 2 / 7})
+    assert parts["1965"]["tous"]["H"] == pytest.approx({"carriere_longue": 1.0})
+    assert "1965" not in parts or parts["1965"]["regime_general"] == {}
 
 
 # -- la grille élargie au portage (action 161, étape 7) ----------------------------
