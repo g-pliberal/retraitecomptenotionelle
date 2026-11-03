@@ -99,7 +99,14 @@ periodes:
       génération de 2018 et de 2025
       (`duree_requise_table: [banque_de_france_2023, banque_de_france_2014]`).
       La fiche lisait la durée de la génération : 160 trimestres à un agent né
-      en 1948, qui a soixante ans en 2008 et en doit 153. L'âge d'annulation
+      en 1948, qui a soixante ans en 2008 et en doit 153.
+      L'AGENT QUI PART AVANT SOIXANTE ANS, au titre d'une carrière longue,
+      doit, du 26 juin 2014 au 31 décembre 2024, la durée des agents qui les
+      atteignent l'année où sa liquidation peut intervenir (article 31-1 du
+      règlement, relu le 2 novembre 2026, abrogé au 1er janvier 2025) : la
+      table de 2018 se lit pour lui à leur génération (âge de lecture de
+      `banque_de_france_2014`), 167 trimestres et non 168 à l'agent né en
+      janvier 1961 qui réunit les conditions en janvier 2020. L'âge d'annulation
       de la décote reste celui de la fonction publique, non relu.
       LE RÈGLEMENT VAUT À L'ANNÉE D'EFFET. Il entre en vigueur au printemps
       2007 (son article 69 compte encore « jusqu'au 31 mars 2007 ») ; la fiche

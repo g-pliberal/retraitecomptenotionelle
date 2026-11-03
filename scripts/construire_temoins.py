@@ -1868,6 +1868,22 @@ def _cas() -> list[dict]:
         cas_statut(nom, statut, naissance)
         assert cas[-1][0] == nom, f"{nom} : aucun âge d'entrée admissible"
         cas[-1][1]["liquidation"] = liquidation
+    # La CRPCEN et la Comédie-Française, pour les pensions de 2017 et après,
+    # demandent la durée en vigueur aux soixante ans de l'assuré (III de
+    # l'article 85 du décret n° 90-1215, VI de l'article 12 du décret
+    # n° 68-960). Le clerc né en mars 1957 ouvre son droit à soixante ans et
+    # quatre mois, en juillet 2017, après la marche du calendrier de 2008 que
+    # ses soixante ans précèdent : 164 trimestres, et non 165 ; le sociétaire
+    # né en janvier 1958, en septembre 2018 : 165, et non 166.
+    for nom, statut, date, liquidation in (
+        ("crpcen_generation_1957_apres_soixante_ans", "clerc_de_notaire",
+         "1957-03-15", "2017-08"),
+        ("comedie_francaise_generation_1958_apres_soixante_ans",
+         "personnel_comedie_francaise", "1958-01-15", "2018-10"),
+    ):
+        cas_statut(nom, statut, int(date[:4]), date)
+        assert cas[-1][0] == nom, f"{nom} : aucun âge d'entrée admissible"
+        cas[-1][1]["liquidation"] = liquidation
 
     # LA RÉVERSION (le domaine de la réversion, docs/architecture.md, § 11) :
     # l'assuré déclare son conjoint et son décès, après son départ, et le

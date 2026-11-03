@@ -1131,7 +1131,8 @@ reformes:
         (LEGIARTI000029134341) — sans renvoi à l'une ni à l'autre (index LEGI
         relu le 13 octobre 2026). La fiche lit donc les tables du régime
         (`age_table: comedie_francaise_2011`, `duree_requise_table:
-        [comedie_francaise_2014]`), non la table commune suspendue.
+        [comedie_francaise_2014, comedie_francaise_calendrier_a_60]`), non la
+        table commune suspendue.
       ieg: >-
         La durée requise des agents actifs est celle du I bis de l'article 45
         de l'annexe 3, et non celle de L. 161-17-3 ; sa dernière

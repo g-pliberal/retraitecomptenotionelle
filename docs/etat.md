@@ -34,15 +34,15 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 - Découpées en versions : **162 sur 257**, soit 629 versions, dont 106 supposées ; le partage des versions se contrôle sur chacune.
 - Réformes du calendrier : 126, dont 10 déclarées non appliquées.
 
-**La loi, rédaction par rédaction** (`data/reference/textes/`, § 6.6) : 16 318 rédactions d'articles, de 224 textes, lues le 2026-11-02 (index LEGI du dépôt : Freemium_legi_global_20250713-140000.tar.gz, incréments appliqués jusqu'au 20261102-213929). C'est le dénominateur de l'avancement : ce que les fiches ont lu, contre ce que la loi a écrit.
+**La loi, rédaction par rédaction** (`data/reference/textes/`, § 6.6) : 16 332 rédactions d'articles, de 224 textes, lues le 2026-11-02 (index LEGI du dépôt : Freemium_legi_global_20250713-140000.tar.gz, incréments appliqués jusqu'au 20261102-213929). C'est le dénominateur de l'avancement : ce que les fiches ont lu, contre ce que la loi a écrit.
 
 | Statut | Rédactions |
 |---|---|
 | rattachées à une version | 1 581 |
 | sans effet | 59 |
-| à rattacher | 592 |
-| à examiner | 4 651 |
-| sans statut | 9 435 |
+| à rattacher | 597 |
+| à examiner | 4 665 |
+| sans statut | 9 430 |
 
 **La personne** (§ 5) : une chronologie de faits datés, dans un réseau de personnes — aujourd'hui l'assuré, ses enfants et son conjoint —, que le relevé et le parcours déclarent (`src/retraite_notionnelle/chronologie.py`, et son jumeau). La carrière que le moteur liquide en est la vue. Ce que la saisie ne dit pas est présumé : 32 présomptions au vocabulaire, dont 3 posent leur fait dans la chronologie ; les autres s'appliquent dans le code, jusqu'à l'étape qui posera le leur.
 
@@ -90,7 +90,7 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 | `compter_les_durees` | `droit/compter.py` | les trimestres de chaque compte, par régime et par année ; ceux des enfants | `apprentissage`, `bonification_cinquieme_militaires`, `bonification_cinquieme_police_penitentiaire`, `bonification_cinquieme_sapeurs_pompiers`, `cnavpl_majoration_duree_assurance`, `conge_supplementaire_naissance`, `enfants_crpcen`, `enfants_fonction_publique`, `enfants_ieg`, `enfants_ratp`, `enfants_sncf`, `fin_indemnisation_chomage`, `majoration_duree_assurance_enfants`, `majoration_duree_elus_locaux`, `majoration_duree_hospitaliers_actifs`, `majoration_duree_sapeurs_pompiers_volontaires`, `priorite_majorations_enfants`, `service_civique`, `services_et_duree_fonction_publique`, `sportifs_haut_niveau`, `stages_formation_professionnelle`, `volontariat_civil_et_international` |
 | `acquerir_les_droits` | `droit/acquerir.py` | les points et les cotisations, la durée plafonnée, les points gratuits | `agirc_arrco_valeur_achat`, `assiette_minimale_agricole`, `assiette_minimale_independants`, `asv_autres_professions_de_sante`, `asv_medecins_ajustement`, `asv_medecins_points`, `chomage_retraite_complementaire`, `cotisation_par_classes_liberales`, `cultes_retraite_complementaire_taux_specifiques`, `droits_apres_la_premiere_pension`, `exoneration_independants_outre_mer`, `financement_chomage_complementaire`, `garantie_minimale_points_agirc`, `igrante_points`, `ipacte_points`, `ircantec_valeurs_point`, `micro_social_abattement`, `organic_conjoints_de_commercants`, `points_au_prorata_des_cotisations`, `points_invalidite_independants`, `rafp_assiette_plafond`, `rafp_compte_epargne_temps`, `rafp_cotisation_volontaire_outre_mer`, `rafp_gipa_hors_plafond`, `ravgdt_allocation_viagere`, `rci_seuil_premiere_tranche`, `rco_points_gratuits`, `rco_points_gratuits_66`, `retraite_proportionnelle_msa`, `services_passes_outre_mer` |
 
-**La liquidation** (§ 7.3, 7.4 et 7.7) : `liquider(demande, état, contexte)`, une fonction pure (`src/retraite_notionnelle/droit/liquidation.py`, et son jumeau), enchaîne l'acquisition et trois étapes, et mesure par des liquidations d'essai ce qu'apporte chaque avantage. L'échéancier (`echeancier.py`) l'appelle au départ, applique à l'échéance les deux étapes qui ne liquident rien, et inscrit tout à son journal (`journal.py`) ; le pilote (`pilote.py`) date les départs des cas types sans rien liquider. Les 915 témoins font chacun de 1 à 12 appels de `liquider`, liquidations d'essai comprises, et au plus 6 par départ ; aucun ne dépasse les 6 par départ que le nombre déclaré accorde (§ 7.8).
+**La liquidation** (§ 7.3, 7.4 et 7.7) : `liquider(demande, état, contexte)`, une fonction pure (`src/retraite_notionnelle/droit/liquidation.py`, et son jumeau), enchaîne l'acquisition et trois étapes, et mesure par des liquidations d'essai ce qu'apporte chaque avantage. L'échéancier (`echeancier.py`) l'appelle au départ, applique à l'échéance les deux étapes qui ne liquident rien, et inscrit tout à son journal (`journal.py`) ; le pilote (`pilote.py`) date les départs des cas types sans rien liquider. Les 917 témoins font chacun de 1 à 12 appels de `liquider`, liquidations d'essai comprises, et au plus 6 par départ ; aucun ne dépasse les 6 par départ que le nombre déclaré accorde (§ 7.8).
 
 | Étape | Module | Ce qu'elle écrit | Fiches qui disent l'appliquer |
 |---|---|---|---|
@@ -393,7 +393,7 @@ Et 36 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
   | `approximations` | 27 |
   | `regimes` | 1 |
 
-- **Les textes** : 592 rédactions à rattacher à une version de la fiche qui les cite, 4 651 à examiner, et 9 435 sans statut, que le cliquet tient à 9 435 au plus. Les textes qui en ont le plus : `css` 4 876, `decret_46_2769` 938, `rural` 852, `cpcmr` 568, `decret_90_1215` 321 (`python scripts/textes.py`).
+- **Les textes** : 597 rédactions à rattacher à une version de la fiche qui les cite, 4 665 à examiner, et 9 430 sans statut, que le cliquet tient à 9 430 au plus. Les textes qui en ont le plus : `css` 4 876, `decret_46_2769` 938, `rural` 852, `cpcmr` 568, `decret_90_1215` 319 (`python scripts/textes.py`).
 - **Les relectures prévues les plus proches** : 2026-11-30 (`majoration_dix_pour_cent`) ; 2026-12-31 (`age_legal_par_generation`) ; 2026-12-31 (`agirc_arrco_valeur_achat`) ; 2026-12-31 (`carriere_longue`) ; 2026-12-31 (`certification_legi_perimee`).
 - **Les régimes hors champ** : 23, chacun avec sa raison dans l'inventaire.
 

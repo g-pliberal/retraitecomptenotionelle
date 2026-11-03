@@ -514,7 +514,7 @@ periodes:
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
     age_table: crpcen_2011
-    duree_requise_table: [crpcen_2014]
+    duree_requise_table: [crpcen_2014, crpcen_calendrier_a_60]
     duree_requise_calendrier: regimes_speciaux_2008
     taux_plein: 0.75
     salaire_reference: 10_meilleures_annees
@@ -553,7 +553,16 @@ periodes:
       2018 (`duree_requise_calendrier: regimes_speciaux_2008`), puis la
       table par génération de 2014 à compter du 1er juillet 2019
       (`duree_requise_table: [crpcen_2014]`). La fiche lisait la table
-      commune de L. 161-17-3. Depuis le 1er
+      commune de L. 161-17-3.
+      POUR LES PENSIONS DE 2017 À 2024, LA DURÉE SE LIT À SOIXANTE ANS
+      (article 85, III, LEGIARTI000029134265, abrogé au 1er janvier 2025, lu
+      le 2 novembre 2026) : celle en vigueur quand le clerc les atteint, le
+      calendrier au mois de ses soixante ans (`crpcen_calendrier_a_60`) — 164
+      trimestres, et non 165, au clerc né de mars à juin 1957, qui ouvre son
+      droit après soixante ans et après la marche de juillet 2017 ; 165 et non
+      166 de janvier à juin 1958 — et, s'il part avant, au titre d'une
+      carrière longue, celle de la génération qui les atteint le mois où il
+      réunit les conditions (âge de lecture de `crpcen_2014`). Depuis le 1er
       janvier 2025 (LEGIARTI000047910068), l'âge est celui de
       l'article L. 161-17-2 pour les assurés nés à compter de 1970, et se
       lit à la génération.
@@ -565,7 +574,7 @@ periodes:
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
     age_table: crpcen_2011
-    duree_requise_table: [crpcen_2014]
+    duree_requise_table: [crpcen_2014, crpcen_calendrier_a_60]
     duree_requise_calendrier: regimes_speciaux_2008
     taux_plein: 0.75
     salaire_reference: 10_meilleures_annees
@@ -604,7 +613,16 @@ periodes:
       2018 (`duree_requise_calendrier: regimes_speciaux_2008`), puis la
       table par génération de 2014 à compter du 1er juillet 2019
       (`duree_requise_table: [crpcen_2014]`). La fiche lisait la table
-      commune de L. 161-17-3. Depuis le 1er
+      commune de L. 161-17-3.
+      POUR LES PENSIONS DE 2017 À 2024, LA DURÉE SE LIT À SOIXANTE ANS
+      (article 85, III, LEGIARTI000029134265, abrogé au 1er janvier 2025, lu
+      le 2 novembre 2026) : celle en vigueur quand le clerc les atteint, le
+      calendrier au mois de ses soixante ans (`crpcen_calendrier_a_60`) — 164
+      trimestres, et non 165, au clerc né de mars à juin 1957, qui ouvre son
+      droit après soixante ans et après la marche de juillet 2017 ; 165 et non
+      166 de janvier à juin 1958 — et, s'il part avant, au titre d'une
+      carrière longue, celle de la génération qui les atteint le mois où il
+      réunit les conditions (âge de lecture de `crpcen_2014`). Depuis le 1er
       janvier 2025 (LEGIARTI000047910068), l'âge est celui de
       l'article L. 161-17-2 pour les assurés nés à compter de 1970, et se
       lit à la génération.
@@ -616,7 +634,7 @@ periodes:
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
     age_table: crpcen_2011
-    duree_requise_table: [crpcen_2014]
+    duree_requise_table: [crpcen_2014, crpcen_calendrier_a_60]
     duree_requise_calendrier: regimes_speciaux_2008
     taux_plein: 0.75
     salaire_reference: 10_meilleures_annees
@@ -641,7 +659,7 @@ periodes:
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
     age_table: crpcen_2011
-    duree_requise_table: [crpcen_2014]
+    duree_requise_table: [crpcen_2014, crpcen_calendrier_a_60]
     duree_requise_calendrier: regimes_speciaux_2008
     taux_plein: 0.75
     salaire_reference: 10_meilleures_annees
@@ -680,7 +698,16 @@ periodes:
       2018 (`duree_requise_calendrier: regimes_speciaux_2008`), puis la
       table par génération de 2014 à compter du 1er juillet 2019
       (`duree_requise_table: [crpcen_2014]`). La fiche lisait la table
-      commune de L. 161-17-3. Depuis le 1er
+      commune de L. 161-17-3.
+      POUR LES PENSIONS DE 2017 À 2024, LA DURÉE SE LIT À SOIXANTE ANS
+      (article 85, III, LEGIARTI000029134265, abrogé au 1er janvier 2025, lu
+      le 2 novembre 2026) : celle en vigueur quand le clerc les atteint, le
+      calendrier au mois de ses soixante ans (`crpcen_calendrier_a_60`) — 164
+      trimestres, et non 165, au clerc né de mars à juin 1957, qui ouvre son
+      droit après soixante ans et après la marche de juillet 2017 ; 165 et non
+      166 de janvier à juin 1958 — et, s'il part avant, au titre d'une
+      carrière longue, celle de la génération qui les atteint le mois où il
+      réunit les conditions (âge de lecture de `crpcen_2014`). Depuis le 1er
       janvier 2025 (LEGIARTI000047910068), l'âge est celui de
       l'article L. 161-17-2 pour les assurés nés à compter de 1970, et se
       lit à la génération.
@@ -692,7 +719,7 @@ periodes:
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
     age_table: crpcen_2011
-    duree_requise_table: [crpcen_2014]
+    duree_requise_table: [crpcen_2014, crpcen_calendrier_a_60]
     duree_requise_calendrier: regimes_speciaux_2008
     taux_plein: 0.75
     salaire_reference: 10_meilleures_annees
@@ -731,7 +758,16 @@ periodes:
       2018 (`duree_requise_calendrier: regimes_speciaux_2008`), puis la
       table par génération de 2014 à compter du 1er juillet 2019
       (`duree_requise_table: [crpcen_2014]`). La fiche lisait la table
-      commune de L. 161-17-3. Depuis le 1er
+      commune de L. 161-17-3.
+      POUR LES PENSIONS DE 2017 À 2024, LA DURÉE SE LIT À SOIXANTE ANS
+      (article 85, III, LEGIARTI000029134265, abrogé au 1er janvier 2025, lu
+      le 2 novembre 2026) : celle en vigueur quand le clerc les atteint, le
+      calendrier au mois de ses soixante ans (`crpcen_calendrier_a_60`) — 164
+      trimestres, et non 165, au clerc né de mars à juin 1957, qui ouvre son
+      droit après soixante ans et après la marche de juillet 2017 ; 165 et non
+      166 de janvier à juin 1958 — et, s'il part avant, au titre d'une
+      carrière longue, celle de la génération qui les atteint le mois où il
+      réunit les conditions (âge de lecture de `crpcen_2014`). Depuis le 1er
       janvier 2025 (LEGIARTI000047910068), l'âge est celui de
       l'article L. 161-17-2 pour les assurés nés à compter de 1970, et se
       lit à la génération.
@@ -743,7 +779,7 @@ periodes:
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
     age_table: crpcen_2011
-    duree_requise_table: [crpcen_2014]
+    duree_requise_table: [crpcen_2014, crpcen_calendrier_a_60]
     duree_requise_calendrier: regimes_speciaux_2008
     taux_plein: 0.75
     salaire_reference: 10_meilleures_annees
@@ -782,7 +818,16 @@ periodes:
       2018 (`duree_requise_calendrier: regimes_speciaux_2008`), puis la
       table par génération de 2014 à compter du 1er juillet 2019
       (`duree_requise_table: [crpcen_2014]`). La fiche lisait la table
-      commune de L. 161-17-3. Depuis le 1er
+      commune de L. 161-17-3.
+      POUR LES PENSIONS DE 2017 À 2024, LA DURÉE SE LIT À SOIXANTE ANS
+      (article 85, III, LEGIARTI000029134265, abrogé au 1er janvier 2025, lu
+      le 2 novembre 2026) : celle en vigueur quand le clerc les atteint, le
+      calendrier au mois de ses soixante ans (`crpcen_calendrier_a_60`) — 164
+      trimestres, et non 165, au clerc né de mars à juin 1957, qui ouvre son
+      droit après soixante ans et après la marche de juillet 2017 ; 165 et non
+      166 de janvier à juin 1958 — et, s'il part avant, au titre d'une
+      carrière longue, celle de la génération qui les atteint le mois où il
+      réunit les conditions (âge de lecture de `crpcen_2014`). Depuis le 1er
       janvier 2025 (LEGIARTI000047910068), l'âge est celui de
       l'article L. 161-17-2 pour les assurés nés à compter de 1970, et se
       lit à la génération.
@@ -794,7 +839,7 @@ periodes:
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
     age_table: crpcen_2011
-    duree_requise_table: [crpcen_2014]
+    duree_requise_table: [crpcen_2014, crpcen_calendrier_a_60]
     duree_requise_calendrier: regimes_speciaux_2008
     taux_plein: 0.75
     salaire_reference: 10_meilleures_annees
@@ -833,7 +878,16 @@ periodes:
       2018 (`duree_requise_calendrier: regimes_speciaux_2008`), puis la
       table par génération de 2014 à compter du 1er juillet 2019
       (`duree_requise_table: [crpcen_2014]`). La fiche lisait la table
-      commune de L. 161-17-3. Depuis le 1er
+      commune de L. 161-17-3.
+      POUR LES PENSIONS DE 2017 À 2024, LA DURÉE SE LIT À SOIXANTE ANS
+      (article 85, III, LEGIARTI000029134265, abrogé au 1er janvier 2025, lu
+      le 2 novembre 2026) : celle en vigueur quand le clerc les atteint, le
+      calendrier au mois de ses soixante ans (`crpcen_calendrier_a_60`) — 164
+      trimestres, et non 165, au clerc né de mars à juin 1957, qui ouvre son
+      droit après soixante ans et après la marche de juillet 2017 ; 165 et non
+      166 de janvier à juin 1958 — et, s'il part avant, au titre d'une
+      carrière longue, celle de la génération qui les atteint le mois où il
+      réunit les conditions (âge de lecture de `crpcen_2014`). Depuis le 1er
       janvier 2025 (LEGIARTI000047910068), l'âge est celui de
       l'article L. 161-17-2 pour les assurés nés à compter de 1970, et se
       lit à la génération.
@@ -847,7 +901,7 @@ periodes:
     age_taux_plein_a_l_ouverture: decote_regimes_speciaux
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
-    duree_requise_table: [crpcen_2023, crpcen_2014]
+    duree_requise_table: [crpcen_2023, crpcen_2014, crpcen_calendrier_a_60]
     duree_requise_calendrier: regimes_speciaux_2008
     taux_plein: 0.75
     salaire_reference: 10_meilleures_annees
@@ -888,3 +942,7 @@ periodes:
       conditions depuis 2025 (169 trimestres pour 1963, 172 dès 1966), celle
       de 2014 et le calendrier de 2008 pour qui les a réunies avant (I bis
       de l'article 85-2).
+      La fiche lit cette durée « applicable avant » comme le III de l'article
+      85, abrogé en 2025, la lisait, à soixante ans (`crpcen_calendrier_a_60`,
+      âge de lecture de `crpcen_2014`) — lecture du dépôt, comme aux IEG ; la
+      table de 2023 se lit à la génération du clerc.

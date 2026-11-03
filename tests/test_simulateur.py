@@ -9165,14 +9165,18 @@ def test_la_comedie_francaise_lit_l_age_et_la_duree_de_son_decret(simulateur):
     relevé de quatre mois par génération entre les deux (article 51, I, A) ;
     la décote s'annule cinq ans au-dessus (article 12, II, 1°). La durée se
     lit au calendrier de 2008, à la date où les conditions sont réunies,
-    puis, à compter du 1er juillet 2019, à la génération (article 12, V).
+    puis, à compter du 1er juillet 2019, à la génération (article 12, V) ;
+    pour les pensions de 2017 et après, c'est celle en vigueur quand
+    l'assurée atteint soixante ans (article 12, VI) : 165 trimestres, et non
+    166, à la sociétaire née en janvier 1958, qui les a en janvier 2018 et
+    dont le droit s'ouvre en septembre, après la marche de juillet.
     La fiche donnait soixante-deux ans à tous dès 2012 et lisait la table
     commune de la durée.
     """
     scenario = simulateur.scenario_actuel
     # (naissance, âge de départ) : âge d'ouverture, de référence, durée.
     attendus = {(1955, 60.0): (60.0, 65.0, 162),
-                (1958, 61.0): (60.0 + 8 / 12, 65.0 + 8 / 12, 166),
+                (1958, 61.0): (60.0 + 8 / 12, 65.0 + 8 / 12, 165),
                 (1961, 62.0): (61.0 + 8 / 12, 66.0 + 8 / 12, 168),
                 (1975, 62.0): (62.0, 67.0, 172)}
     for (naissance, age), (ouverture, reference, duree) in attendus.items():

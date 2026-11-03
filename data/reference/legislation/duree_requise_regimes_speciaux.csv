@@ -122,9 +122,38 @@
 #       les conditions avant 2025. La fiche lisait la table commune de L.
 #       161-17-3 : 169 trimestres, et non 168, à une clerc née en novembre 1961
 #       dont le droit s'ouvre en juillet 2023, comme la caisse l'écrit.
+# ET, POUR LES PENSIONS DE 2017 À 2024, LA CRPCEN LIT SA DURÉE À SOIXANTE ANS.
+# Le III de l'article 85 (LEGIARTI000029134265, en vigueur « pour les pensions
+# prenant effet à compter du 1er janvier 2017 », abrogé au 1er janvier 2025,
+# LEGIARTI000047909839), lu le 2 novembre 2026, écrit la règle de l'article
+# 9-1 des IEG : la durée « en vigueur lorsque les assurés atteignent l'âge de
+# soixante ans » et, « par dérogation », à qui remplit les conditions avant
+# cet âge, « celui exigé des assurés atteignant l'âge de soixante ans l'année
+# à compter de laquelle la liquidation peut intervenir ». Le fichier le porte
+# deux fois :
+#   `crpcen_2014` prend l'âge de lecture, soixante ans : le clerc qui part
+#       avant, au titre d'une carrière longue, doit la durée de la génération
+#       qui les atteint le mois où il réunit les conditions — 167 trimestres,
+#       et non 168, au clerc né en juillet 1961 qui les réunit en juillet
+#       2020 ;
+#   `crpcen_calendrier_a_60` porte le calendrier de 2008 au mois des
+#       soixante ans, génération par génération : 164 trimestres pour qui les
+#       a de juillet 2016 à juin 2017, 165 jusqu'en juin 2018, 166 ensuite.
+#       Ce sont les marches du calendrier, déplacées de soixante ans : elles
+#       n'ont pas d'autre source que lui et l'article qui le fait lire ainsi.
+#       Elle répond aux conditions réunies depuis le 1er janvier 2017, quand
+#       la table de 2014 ne répond pas encore, ou pas à cette génération, et
+#       les fiches ne la nomment qu'à leurs périodes de 2017 et après. Le
+#       clerc né de mars à juin 1957, ou de janvier à juin 1958, qui ouvre son
+#       droit après soixante ans et après une marche que ses soixante ans
+#       précèdent, doit 164 ou 165 trimestres ; le calendrier lu au mois où
+#       son droit s'ouvre lui en demandait un de plus.
+# La table de 2023 se lit à la génération de l'assuré : l'article est abrogé
+# quand elle commence.
 #
 # LA COLONNE `age_de_lecture` SERT AUX TABLES DE 2014 DES IEG, DE LA SNCF ET DE
-# LA RATP, À LA COMÉDIE-FRANÇAISE ET À L'OPÉRA PLUS BAS, ET À `ratp_avant_60`.
+# LA RATP, À CELLES DE LA CRPCEN PLUS HAUT, À LA COMÉDIE-FRANÇAISE, À L'OPÉRA
+# ET À LA BANQUE DE FRANCE PLUS BAS, ET À `ratp_avant_60`.
 # Les articles 12-1 du décret n° 2008-639 (SNCF, à cinquante-cinq ans,
 # LEGIARTI000029149846 puis LEGIARTI000048240219) et 23-1 du décret n° 2008-637
 # (RATP, à soixante ans, LEGIARTI000029132058 puis LEGIARTI000050710691), pour
@@ -231,6 +260,15 @@
 #       de 2008 répond, que les rédactions de 2008 à 2016 écrivent déjà. La fiche
 #       lisait la table commune de L. 161-17-3 : 166 trimestres au lieu de 162 à
 #       une sociétaire née en mars 1955 partie à soixante ans.
+#   `comedie_francaise_calendrier_a_60` — le même VI, relu le 2 novembre 2026 :
+#       la durée « en vigueur lorsque les assurés atteignent l'âge de soixante
+#       ans » est celle du calendrier de 2008 pour qui les a eus avant le
+#       1er juillet 2019. Les lignes de `crpcen_calendrier_a_60`, pour les
+#       conditions réunies depuis le 1er janvier 2017, l'article valant pour
+#       les pensions qui prennent effet depuis cette date. La sociétaire née de
+#       mars à juin 1957, ou de janvier à juin 1958, qui ouvre son droit après
+#       une marche du calendrier que ses soixante ans précèdent, doit 164 ou
+#       165 trimestres, et non 165 ou 166.
 #
 # L'OPÉRA NATIONAL DE PARIS A LA MÊME, au V de l'article 14 du décret n° 68-382,
 # lue le 14 octobre 2026 (LEGIARTI000029135692, version du 26 juin 2014, puis
@@ -255,6 +293,17 @@
 #       trimestres des nés de 1958 à 1960, 168 pour 1961-1963, 169 pour
 #       1964-1966, 170 pour 1967-1969, 171 pour 1970-1972, 172 à compter de
 #       1973. La fiche lisait la table commune : 169 au lieu de 168 pour 1962.
+#       Son âge de lecture, soixante ans, est celui de l'article 31-1 du
+#       règlement (LEGIARTI000029138467 à LEGIARTI000047909413, du 26 juin
+#       2014 au 31 décembre 2024 ; depuis 2012, par renvoi au VI de l'article 5
+#       de la loi du 21 août 2003), lu le 2 novembre 2026 : l'agent qui part
+#       avant soixante ans, au titre d'une carrière longue, doit la durée des
+#       agents qui les atteignent le mois où il réunit les conditions — 167
+#       trimestres, et non 168, à l'agent né en janvier 1961 qui les réunit
+#       en janvier 2020. Qui ouvre son droit après soixante ans n'y doit rien
+#       de plus : le calendrier de 2007 reste à 166 trimestres de juillet 2014
+#       à la table, et ses soixante ans tombent sur la même marche que
+#       l'ouverture de son droit.
 #   `banque_de_france_2023` — IV, rédaction du décret n° 2023-693
 #       (LEGIARTI000047909725), « A compter du 1er janvier 2025 » : 169 pour
 #       1963, 170 pour 1964, 171 pour 1965 ; son VI garde l'ancienne durée à qui
@@ -265,7 +314,9 @@
 #       lettre, le III, que le décret n'abroge pas, leur donnerait encore 169 à
 #       171, moins qu'aux nés de 1965 : ce que la Banque applique reste à
 #       confirmer (fiabilité moyenne). Les deux tables répondent à la date où
-#       l'agent réunit les conditions, avant elle le calendrier.
+#       l'agent réunit les conditions, avant elle le calendrier. L'article
+#       31-1 est abrogé au 1er janvier 2025 (LEGIARTI000047909725) : la table
+#       de 2023 se lit à la génération de l'agent.
 #
 # LES NON-SALARIÉS AGRICOLES, au code rural, lu le 14 octobre 2026 :
 #   `msa_non_salaries_2005` — R. 732-39 (LEGIARTI000006597424, puis
@@ -339,12 +390,15 @@ crpcen_2023,2025-01,1963,169,0,haute,,
 crpcen_2023,2025-01,1964,170,0,haute,,
 crpcen_2023,2025-01,1965,171,0,haute,,
 crpcen_2023,2025-01,1966,172,0,haute,,
-crpcen_2014,2019-07,1959.5,167,0,haute,,
-crpcen_2014,2019-07,1961,168,0,haute,,
-crpcen_2014,2019-07,1964,169,0,haute,,
-crpcen_2014,2019-07,1967,170,0,haute,,
-crpcen_2014,2019-07,1970,171,0,haute,,
-crpcen_2014,2019-07,1973,172,0,haute,,
+crpcen_2014,2019-07,1959.5,167,0,haute,60,
+crpcen_2014,2019-07,1961,168,0,haute,60,
+crpcen_2014,2019-07,1964,169,0,haute,60,
+crpcen_2014,2019-07,1967,170,0,haute,60,
+crpcen_2014,2019-07,1970,171,0,haute,60,
+crpcen_2014,2019-07,1973,172,0,haute,60,
+crpcen_calendrier_a_60,2017-01,1956.5,164,0,haute,60,
+crpcen_calendrier_a_60,2017-01,1957.5,165,0,haute,60,
+crpcen_calendrier_a_60,2017-01,1958.5,166,0,haute,60,
 spm_2015,1900-01,1900,150,0,haute,,
 spm_2015,1900-01,1956,152,0,haute,,
 spm_2015,1900-01,1957,154,0,haute,,
@@ -410,18 +464,21 @@ comedie_francaise_2014,2019-07,1964,169,0,haute,60,
 comedie_francaise_2014,2019-07,1967,170,0,haute,60,
 comedie_francaise_2014,2019-07,1970,171,0,haute,60,
 comedie_francaise_2014,2019-07,1973,172,0,haute,60,
+comedie_francaise_calendrier_a_60,2017-01,1956.5,164,0,haute,60,
+comedie_francaise_calendrier_a_60,2017-01,1957.5,165,0,haute,60,
+comedie_francaise_calendrier_a_60,2017-01,1958.5,166,0,haute,60,
 opera_de_paris_2014,2019-07,1959.5,167,0,haute,60,
 opera_de_paris_2014,2019-07,1961,168,0,haute,60,
 opera_de_paris_2014,2019-07,1964,169,0,haute,60,
 opera_de_paris_2014,2019-07,1967,170,0,haute,60,
 opera_de_paris_2014,2019-07,1970,171,0,haute,60,
 opera_de_paris_2014,2019-07,1973,172,0,haute,60,
-banque_de_france_2014,2018-01,1958,167,0,haute,,
-banque_de_france_2014,2018-01,1961,168,0,haute,,
-banque_de_france_2014,2018-01,1964,169,0,haute,,
-banque_de_france_2014,2018-01,1967,170,0,haute,,
-banque_de_france_2014,2018-01,1970,171,0,haute,,
-banque_de_france_2014,2018-01,1973,172,0,haute,,
+banque_de_france_2014,2018-01,1958,167,0,haute,60,
+banque_de_france_2014,2018-01,1961,168,0,haute,60,
+banque_de_france_2014,2018-01,1964,169,0,haute,60,
+banque_de_france_2014,2018-01,1967,170,0,haute,60,
+banque_de_france_2014,2018-01,1970,171,0,haute,60,
+banque_de_france_2014,2018-01,1973,172,0,haute,60,
 banque_de_france_2023,2025-01,1958,167,0,haute,,
 banque_de_france_2023,2025-01,1961,168,0,haute,,
 banque_de_france_2023,2025-01,1963,169,0,haute,,

@@ -127,7 +127,7 @@ periodes:
     duree_requise_trimestres: 172
     duree_requise_par_generation: duree_requise_par_generation
     age_table: comedie_francaise_2011
-    duree_requise_table: [comedie_francaise_2014]
+    duree_requise_table: [comedie_francaise_2014, comedie_francaise_calendrier_a_60]
     duree_requise_calendrier: regimes_speciaux_2008
     taux_plein: 0.75
     salaire_reference: derniers_6_mois
@@ -167,6 +167,14 @@ periodes:
       par génération : 167 trimestres des nés du 1er juillet 1959 à 1960,
       jusqu'à 172 à compter de 1973 (article 12, V, rédaction du décret
       n° 2014-666, LEGIARTI000029134341), lue à soixante ans (son VI) :
-      `duree_requise_table: [comedie_francaise_2014]`. La fiche lisait la
+      `comedie_francaise_2014`. La fiche lisait la
       table commune, que la suspension de 2026 abaisse : le décret n'y
       renvoie pas.
+      ET LE CALENDRIER AUSSI SE LIT À SOIXANTE ANS, pour les pensions de 2017
+      et après (VI de l'article 12, relu le 2 novembre 2026) : la durée est
+      celle « en vigueur lorsque les assurés atteignent l'âge de soixante ans
+      », et l'assuré né de mars à juin 1957, ou de janvier à juin 1958, qui
+      ouvre son droit après soixante ans et après une marche du calendrier que
+      ses soixante ans précèdent, doit 164 ou 165 trimestres, et non 165 ou
+      166 : `duree_requise_table: [comedie_francaise_2014,
+      comedie_francaise_calendrier_a_60]`.

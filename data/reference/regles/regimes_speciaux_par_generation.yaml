@@ -1,14 +1,17 @@
 schema_version: 1
 id: regimes_speciaux_par_generation
 intitule: >-
-  SNCF, RATP, IEG, CRPCEN : les âges d'ouverture et de référence se lisent à la GÉNÉRATION,
-  pour tous les agents ; la durée requise au mois où l'agent réunit les conditions
-  — calendrier de 2008 (150 avant juillet 2008, 151 à 166 jusqu'en juillet 2018),
-  table de 2014 à compter du 1er juillet 2019, table de 2023 à compter du 1er janvier
-  2025. Aux IEG, du 1er janvier 2017 au 31 décembre 2024, l'agent qui peut liquider
-  avant soixante ans doit la durée exigée des agents qui atteignent soixante ans
+  SNCF, RATP, IEG, CRPCEN, Comédie-Française, Banque de France : les âges d'ouverture et
+  de référence se lisent à la GÉNÉRATION, pour tous les agents ; la durée requise au mois
+  où l'agent réunit les conditions — calendrier de 2008 (150 avant juillet 2008, 151 à 166
+  jusqu'en juillet 2018 ; celui de 2007 à la Banque de France), table de 2014 à compter du
+  1er juillet 2019 (du 1er janvier 2018 à la Banque), table de 2023 à compter du 1er
+  janvier 2025, sauf à la Comédie-Française, que la réforme de 2023 n'a pas touchée. Aux
+  IEG et à la CRPCEN pour les pensions de 2017 à 2024, à la Comédie-Française depuis 2017,
+  à la Banque de France de 2014 à 2024, la durée est celle en vigueur quand l'agent
+  atteint soixante ans ; s'il peut liquider plus tôt, celle des agents qui les atteignent
   l'année où sa liquidation peut intervenir.
-regimes: [crpcen, ieg, ratp, sncf]
+regimes: [banque_de_france, comedie_francaise, crpcen, ieg, ratp, sncf]
 etat: conforme
 effet: >-
   Les trois fiches portaient un âge par année de liquidation, celui de la seule
@@ -42,9 +45,27 @@ effet: >-
   née en 1966 ouvre son droit à soixante-trois ans, et non à soixante-trois ans et
   trois mois ; née en novembre 1961, en juillet 2023 et non en novembre, avec 168
   trimestres et non 169 : c'est l'exemple de Maria que la caisse publie.
+  La CRPCEN, la Comédie-Française et la Banque de France suivent, le 2 novembre 2026
+  (action 130) : le III de l'article 85 du décret n° 90-1215, le VI de l'article 12 du
+  décret n° 68-960 et l'article 31-1 du règlement de la Banque écrivent la règle de
+  l'article 9-1 des IEG. Qui ouvre son droit après soixante ans doit la durée en vigueur
+  quand il les atteint ; le moteur lisait le calendrier de 2008 au mois où le droit
+  s'ouvre, un trimestre de trop au clerc et au sociétaire nés de mars à juin 1957 (165 au
+  lieu de 164) ou de janvier à juin 1958 (166 au lieu de 165), dont les soixante ans
+  précèdent une marche que l'ouverture suit. Il lit désormais, pour les pensions de 2017
+  et après, ce calendrier au mois des soixante ans (`crpcen_calendrier_a_60`,
+  `comedie_francaise_calendrier_a_60`). Rien ne change à la Banque de France, dont le
+  calendrier de 2007 reste à 166 trimestres de juillet 2014 à sa table de 2018. Et qui
+  part avant soixante ans, au titre d'une carrière longue, à la CRPCEN de juillet 2019 à
+  2024 ou à la Banque de France de 2018 à 2024, doit la durée de la génération qui les
+  atteint le mois où il réunit les conditions : leurs tables de 2014 prennent l'âge de
+  lecture, soixante ans ; le moteur opposait la durée de sa propre génération, un
+  trimestre de trop au clerc né en juillet 1961 qui réunit les conditions en juillet 2020
+  (168 au lieu de 167). Aucune caisse ne publie ces durées-là : la règle est lue dans les
+  textes, et la fiche le déclare (`a_relire`).
 sources:
-  lu_le: 2026-09-27
-  prochaine_relecture: 2027-03-31
+  lu_le: 2026-11-02
+  prochaine_relecture: 2027-05-03
   a_relire:
   - >-
     Dix autres fiches portent encore un âge par année : voir l'action 121 de la
@@ -53,6 +74,22 @@ sources:
     Lire ce que la CNIEG applique après 2024, quand l'article 9-1 est abrogé et que sa
     table prolonge la lecture par période jusqu'en 2032 ; et si la SNCF et la RATP
     portent une règle semblable.
+  - >-
+    La CRPCEN, la caisse de retraites de la Comédie-Française et la Banque de France ne
+    publient ni la durée des générations 1957 et 1958, ni celle de qui part avant soixante
+    ans : la page « La décote » de la CRPCEN écrit « Avant 1961 », « Entre 155 et 167 ».
+    La lecture à soixante ans du III de l'article 85, du VI de l'article 12 et de
+    l'article 31-1 n'est confrontée à aucune valeur de caisse : la leur demander. La
+    lecture, par le dépôt, de la durée « applicable avant » que la CRPCEN et la Banque
+    gardent depuis 2025 à qui a réuni les conditions plus tôt : à soixante ans, comme
+    leurs articles abrogés, et comme aux IEG.
+  - >-
+    Le moteur date les conditions d'un départ anticipé au mois de sa liquidation
+    (`mois_ouverture_des_droits`), et non au premier mois où la carrière longue le permet
+    : à qui part plus tard, il lit la durée d'une génération plus jeune que celle que le
+    texte vise, et, à qui a réuni les conditions avant 2025 et part après, la table de
+    2023 au lieu de celle de 2014. Une règle du moteur, pour toutes les caisses : à
+    mesurer.
   lectures:
   - type: legifrance
     reference: >-
@@ -102,6 +139,37 @@ sources:
       « Article 9-1 (Abrogé) » dans celle du 1er janvier 2025 (LEGIARTI000047909955). Lu
       dans l'index LEGI du dépôt
     date: 2026-09-27
+  - type: legifrance
+    reference: >-
+      décret n° 90-1215 (CRPCEN), article 85, III, rédaction du 1er janvier 2017
+      (LEGIARTI000029134265), qui « entre en vigueur pour les pensions prenant effet à
+      compter du 1er janvier 2017 » (décret n° 2014-662, article 4) : « Le nombre de
+      trimestres nécessaires pour obtenir le pourcentage maximum de la pension est celui
+      qui est en vigueur lorsque les assurés atteignent l'âge de soixante ans. Par
+      dérogation à l'alinéa précédent, le nombre de trimestres nécessaires pour obtenir le
+      pourcentage maximum de la pension pour les assurés qui remplissent les conditions de
+      liquidation d'une pension avant l'âge de soixante ans est celui exigé des assurés
+      atteignant l'âge de soixante ans l'année à compter de laquelle la liquidation peut
+      intervenir. » « III.- (Abrogé) » dans la rédaction du 1er janvier 2025
+      (LEGIARTI000047909839). Décret n° 68-960 (Comédie-Française), article 12, VI,
+      rédaction du décret n° 2014-666 « pour les pensions prenant effet à compter du 1er
+      janvier 2017 » (LEGIARTI000029134341), en vigueur : les mêmes mots, pour « la durée
+      des services et des bonifications ». Règlement de la Banque de France (décret n°
+      2007-262), article 31-1 : « Le VI de l'article 5 de la loi du 21 août 2003 [...] est
+      applicable » dans les rédactions de 2012 à 2014 (LEGIARTI000025882187,
+      LEGIARTI000028435924), les mots de la CRPCEN du 26 juin 2014 (LEGIARTI000029138467)
+      au 31 décembre 2024 (LEGIARTI000047909413), « Article 31-1 (Abrogé) » dans la
+      rédaction du 1er janvier 2025 (LEGIARTI000047909725). Lu dans l'index LEGI du dépôt,
+      à jour de l'incrément du 2 novembre 2026
+    date: 2026-11-02
+  - type: autre
+    reference: >-
+      CRPCEN, « La décote », mise à jour le 16 janvier 2026, relue le 2 novembre 2026 :
+      trimestres requis, « Avant 1961 », « Entre 155 et 167 » ; « 1961, 1962 », 168 ;
+      1963, 169 ; 1964, 170 ; 1965, 171 ; 172 « si vous êtes né à partir de 1966 ». Rien
+      génération par génération avant 1960
+    url: https://www.crpcen.fr/affilies/la-decote
+    date: 2026-11-02
   - type: autre
     reference: >-
       CNIEG, circulaire n° 2024/15, « La décote », § 3.1 : la durée est déterminée « en
@@ -135,6 +203,13 @@ textes_a_rattacher:
     (LEGIARTI000029150204, LEGIARTI000034764555, LEGIARTI000036755043,
     LEGIARTI000038189976, LEGIARTI000042597001, LEGIARTI000047908882), abrogé par la
     rédaction du 1er janvier 2025 (LEGIARTI000047909955)
+- reference: >-
+    décret n° 90-1215 (CRPCEN), article 85, rédactions du 1er janvier 2017
+    (LEGIARTI000029134265) et du 1er janvier 2025 (LEGIARTI000047909839) ; décret n°
+    68-960 (Comédie-Française), article 12 (LEGIARTI000029134341) ; décret n° 2007-262
+    (Banque de France), règlement annexé, article 31-1 (LEGIARTI000025882187,
+    LEGIARTI000028435924, LEGIARTI000029138467, LEGIARTI000047909413,
+    LEGIARTI000047909725)
 exemples:
 - cnieg_2024_15_monsieur_a
 - crpcen_decote_maria
@@ -153,9 +228,14 @@ code:
     (`depuis`), le 1er juillet 2019 pour celles de 2014, le 1er janvier 2025 pour celles
     de 2023 ; puis le calendrier de 2008 (`duree_requise_calendrier`,
     `legislation/duree_requise_calendriers.csv`) ; puis la table commune
-    (`duree_requise`). La table `ieg_2014` porte un âge de lecture, soixante ans
-    (`age_de_lecture`) : l'agent qui réunit les conditions avant cet âge la lit à la
-    génération qui l'atteint ce mois-là.
+    (`duree_requise`). Les tables de 2014 des IEG, de la CRPCEN, de la Comédie-Française
+    et de la Banque de France portent un âge de lecture, soixante ans (`age_de_lecture`) :
+    l'agent qui réunit les conditions avant cet âge les lit à la génération qui l'atteint
+    ce mois-là. Et les périodes de 2017 et après de la CRPCEN et de la Comédie-Française
+    nomment après elles le calendrier de 2008 au mois des soixante ans, par génération
+    (`crpcen_calendrier_a_60`, `comedie_francaise_calendrier_a_60`), qui répond à qui
+    réunit les conditions après soixante ans, avant le 1er juillet 2019 ou en deçà de la
+    première génération de la table.
   python: >-
     droit/ouvrir.py : age_ouverture_commun, age_taux_plein, duree_requise, duree_propre,
     mois_ouverture_des_droits ; scenarios/actuel.py : AgesRegimes, AgesRegimes.ages,
@@ -167,12 +247,14 @@ code:
     AgesRegimes.ages, DureesRequisesRegimes, DureesRequisesRegimes.ligne,
     CalendriersDureeRequise, CalendriersDureeRequise.trimestres
   parametres: >-
-    regimes/crpcen.yaml, regimes/ieg.yaml, regimes/ratp.yaml, regimes/sncf.yaml :
+    regimes/banque_de_france.yaml, regimes/comedie_francaise.yaml, regimes/crpcen.yaml,
+    regimes/ieg.yaml, regimes/ratp.yaml, regimes/sncf.yaml :
     age_table, duree_requise_table, duree_requise_calendrier ;
     legislation/ages_regimes.csv : table, generation, age_ouverture, age_taux_plein ;
     legislation/duree_requise_regimes_speciaux.csv : table, depuis, generation,
     trimestres, age_de_lecture ; legislation/duree_requise_calendriers.csv : calendrier,
     depuis, trimestres
   tests: [tests/test_simulateur.py, tests/test_oracle.py, tests/test_limite_age.py,
+    tests/test_duree_lue_a_soixante_ans.py,
     tests/test_minimum_pension_sncf.py, tests/test_cycle_de_vie_script.py,
     tests/js/moteur.test.js, tests/temoins/simulations.json]
