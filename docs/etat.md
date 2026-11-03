@@ -38,11 +38,11 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 
 | Statut | Rédactions |
 |---|---|
-| rattachées à une version | 1 672 |
+| rattachées à une version | 1 673 |
 | sans effet | 66 |
-| à rattacher | 595 |
-| à examiner | 4 700 |
-| sans statut | 9 355 |
+| à rattacher | 601 |
+| à examiner | 4 698 |
+| sans statut | 9 350 |
 
 **La personne** (§ 5) : une chronologie de faits datés, dans un réseau de personnes — aujourd'hui l'assuré, ses enfants et son conjoint —, que le relevé et le parcours déclarent (`src/retraite_notionnelle/chronologie.py`, et son jumeau). La carrière que le moteur liquide en est la vue. Ce que la saisie ne dit pas est présumé : 32 présomptions au vocabulaire, dont 3 posent leur fait dans la chronologie ; les autres s'appliquent dans le code, jusqu'à l'étape qui posera le leur.
 
@@ -115,7 +115,7 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 
 **Ce qui est hors de la page Coût.** La réversion, par exemple, pèse 10,4 % de la masse des prestations en 2024 (COR) : le modèle en calcule une pour une personne (scénario 1), mais la page Coût n'en connaît que cette part publiée, qu'elle ne calcule pas.
 
-**La feuille de route** compte 184 actions : 137 fait, 23 en cours, 20 à faire, 2 archivée, 2 abandonnée. Les closes sont dans son archive, `docs/archives/feuille_de_route.md` ; ce qui reste à faire est ailleurs, dispersé.
+**La feuille de route** compte 185 actions : 137 fait, 24 en cours, 20 à faire, 2 archivée, 2 abandonnée. Les closes sont dans son archive, `docs/archives/feuille_de_route.md` ; ce qui reste à faire est ailleurs, dispersé.
 
 ## 2. Ce qui ne va pas encore
 
@@ -359,7 +359,7 @@ Et 36 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
 
 ## 3. Ce qui reste à faire, et par quoi commencer
 
-- **Les 23 actions en cours** de la feuille de route :
+- **Les 24 actions en cours** de la feuille de route :
   - 47. La garantie vieillesse est une avance : la reprise sur succession, sa règle et son chiffrage
   - 89. Dépouiller les 260 sources officielles remises le 22 septembre 2026
   - 129. Le taux de l'État ramené à sa part « retraite seule » : un réglage, puis le défaut
@@ -383,6 +383,7 @@ Et 36 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
   - 176. Le portail statistique de la Cnav, exploité en entier : chaque série, recueil et étude à sa place dans le dépôt
   - 177. Les écarts que les barèmes de la Cnav ont trouvés au modèle : chacun corrigé dans les deux moteurs, ou sa limite dite
   - 178. Le panorama « Les retraités et les retraites » de la DREES, édition 2026, exploité en entier : chaque fiche à sa place dans le dépôt
+  - 184. L'histoire d'un article de loi, lue dans l'index de la DILA : ce que le dépôt lexifina/global-law fait mieux, repris, et ce qu'il fait mal, écarté
 - **Les sources à exploiter** : 8 à explorer sur 332 (125 explorées, 198 épuisées). 0 d'entre elles visent un régime partiel, et pourraient le compléter :
   - et 5 sources sans régime désigné.
 - **Les autres modèles** (§ 3.4) : 70 au registre (`data/reference/referents.yaml`) : 32 au code ouvert, 1 sur demande, 13 documenté(s) sans leur code, 24 non public(s). 28 ont déjà été confrontés au dépôt ou lui donnent des valeurs (Barèmes IPP, OpenFisca-France, OpenFisca-France-Pension, Destinie 2, Ines, TRAJECTOiRE, ANCETRE, legiretraite (paquet R), EDIFIS, Maquette globale de projection du COR, Maquette simplifiée du secrétariat général du COR, PRISME (Projection des Retraites, Simulations, Modélisation et Évaluations), Saphir, modele-ti, modele-social, modele-as, Catala (catala-examples), ir-catala, EUROMOD (France), Retraites 2027, Simulateur de dépense publique, volet retraites, « Quand pourrai-je partir à la retraite ? », Simulateur de SUD éducation, devcrafting/retraites, calcul-verification-pension-retraite, Simulateur de cas types de Nos Retraites, Les modèles de pension de l'OCDE, Ageing Report et ses fiches pays) ; le registre compte 242 écarts, dont 210 chez eux. Aucun n'est plus à confronter au scénario 1 en premier : tous ceux dont le code est ouvert et qui ne dépendent d'aucune autre source du registre l'ont été.
@@ -402,7 +403,7 @@ Et 36 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
   | `approximations` | 25 |
   | `regimes` | 1 |
 
-- **Les textes** : 595 rédactions à rattacher à une version de la fiche qui les cite, 4 700 à examiner, et 9 355 sans statut, que le cliquet tient à 9 355 au plus. Les textes qui en ont le plus : `css` 4 820, `decret_46_2769` 938, `rural` 852, `cpcmr` 568, `decret_90_1215` 319 (`python scripts/textes.py`).
+- **Les textes** : 601 rédactions à rattacher à une version de la fiche qui les cite, 4 698 à examiner, et 9 350 sans statut, que le cliquet tient à 9 350 au plus. Les textes qui en ont le plus : `css` 4 818, `decret_46_2769` 938, `rural` 852, `cpcmr` 567, `decret_90_1215` 319 (`python scripts/textes.py`).
 - **Les relectures prévues les plus proches** : 2026-11-30 (`majoration_dix_pour_cent`) ; 2026-12-31 (`age_legal_par_generation`) ; 2026-12-31 (`agirc_arrco_valeur_achat`) ; 2026-12-31 (`carriere_longue`) ; 2026-12-31 (`certification_legi_perimee`).
 - **Les régimes hors champ** : 23, chacun avec sa raison dans l'inventaire.
 
