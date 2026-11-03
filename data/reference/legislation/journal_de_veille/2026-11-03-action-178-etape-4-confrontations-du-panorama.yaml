@@ -1,0 +1,30 @@
+date: "2026-11-03"
+session: "action 178, étape 4 : les fiches du panorama de la DREES, édition 2026, confrontées au modèle"
+consulte: >-
+  Aucune règle du scénario 1 n'est touchée : l'étape confronte, sans rien
+  corriger. Le PDF du panorama et les classeurs de ses fiches 4, 6, 7, 9, 11,
+  13, 18 et 28 à 32, rapportés de la release par `source_locale.py` et lus
+  cellule par cellule ; le tableau 1 de la fiche 29, la législation des
+  produits de retraite supplémentaire fin 2024 ; l'encadré 2 de la fiche 28,
+  le non-recours au minimum vieillesse des personnes seules en 2016. Côté
+  dépôt : les coefficients de revalorisation, les valeurs du point Arrco et
+  Agirc et les prix, que la fiche 4 éprouve sur les cas types 1 et 2 du COR ;
+  la fiche du pilier capitalisé de la proposition
+  (`capitalisation_obligatoire.yaml`).
+trouve: >-
+  Les séries de revalorisation du dépôt redonnent l'érosion des pensions par
+  génération de TRAJECTOiRE (fiche 4, graphique 4) à trois dixièmes de point.
+  Le PER laisse sortir en capital ses compartiments 1 et 2, en rente seule le
+  compartiment 3 ; le pilier de la proposition sert tout en rente, et sa fiche
+  ne dit pas le régime fiscal de ses versements ni de ses rentes. Le
+  non-recours au minimum vieillesse baisse avec le montant attendu, de 77 %
+  sous 100 euros à 22 % entre 500 et 600 euros : le recours de 50 % que la
+  garantie retient vaut pour les têtes, 62 % pour les euros. La lecture du
+  graphique 3 de la fiche 4 inverse le brut et le net, que le texte et le
+  classeur donnent dans l'autre sens.
+reste: >-
+  L'étape 5 : les tableaux de législation des fiches 14, 24 et 26, l'encadré 1
+  de la fiche 2 et la revalorisation de la fiche 4, et les trois erreurs du
+  modèle que l'étape 4 consigne (le recours de la garantie en euros, la
+  complétude de la grille, les nouveaux retraités de la grille), dont deux
+  touchent au coût, à la file C cette nuit.
