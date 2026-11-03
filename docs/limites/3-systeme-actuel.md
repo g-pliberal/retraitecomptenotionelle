@@ -98,7 +98,18 @@ l'Institut des politiques publiques (PENSIPP). Écarts connus :
   fraction selon ses règles, et le régime spécial ne peut servir moins. Le
   modèle liquide chaque régime sur ses seules règles, sans cette garantie
   (base de législation de la Cnav, exposés « Fraction de retraite pour le
-  régime spécial »).
+  régime spécial »). Il ne sert pas non plus la validation, par un régime
+  spécial, des services de non-titulaire de l'agent titularisé tardivement :
+  à la demande de l'employeur, avant la retraite, la caisse annule les
+  cotisations vieillesse que le régime général a reçues pour ces périodes et
+  les reverse au régime spécial, qui les compte en services, avec les
+  trimestres de maladie et de maternité de ces années, et ceux du chômage
+  quand il valide le chômage (D. 173-13 et D. 173-19 ; exposé « Annulation au
+  profit d'un régime spécial », circulaire Cnav 2020/3) : le modèle laisse ces
+  années au régime général et à la complémentaire du non-titulaire. Et
+  l'activité accessoire de l'agent d'un régime spécial d'avant le 19 juillet
+  2015, qui ne lui ouvrait aucun droit au régime général, lui en ouvre (fiche
+  `un_statut_par_annee`).
 - **assiettes forfaitaires des salariés** — le modèle porte au compte le
   salaire que la saisie déclare, aux taux de droit commun, faute d'un statut
   qui distingue ceux que la caisse traite autrement, et dont la base de
