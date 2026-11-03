@@ -1,15 +1,15 @@
 # Étape 14, première partie : les pensions de 2020, simulées contre publiées
 
 **Reprise, au 3 novembre 2026.** Fait : chaque grille contre l'EIR en 2020 ; la population, du 16 au
-25 octobre, de la décote aux natures, puis selon la génération, et des carrières qui peuvent
-décoter ; le pilote des carrières inactives ; le 28, les hommes selon le rang, l'ASPA, les invalides
-et les inaptes, la décote entre les deux âges, celle des résidents, la surcote des statutaires, les
-limites ; au modèle, la descente, le militaire au mois ; le 3 novembre, le taux plein des femmes
-entre les deux âges, les agents décotés, la surcote du salariat selon la génération, et sa mesure
-refaite au dépôt. Reste, une session par point : les artisans, les saisonniers agricoles ; les
-femmes âgées ; la durée des femmes ; la décote d'après 1960 ; les départs après 67 ans. Au
-propriétaire : 152, 157, le CASD, l'incitation, le militaire, la sonde au mois, le recours de la
-page, les hommes entre les deux âges, la surcote d'après 1953. Détail : `…-r-i.md`.
+25 octobre, de la décote aux natures, selon la génération ; le pilote des carrières inactives ; le 28,
+les hommes selon le rang, l'ASPA, les invalides et les inaptes, la décote entre les deux âges, celle des
+résidents, la surcote des statutaires, les limites ; au modèle, la descente, le militaire au mois ; le
+3 novembre, le taux plein des femmes entre les deux âges, les agents décotés, la surcote du salariat, sa
+mesure au dépôt, les écarts de R-I-bis et la décote d'après 1960, mesurée (sortie sous `docs/mesures/138/`).
+Reste, une session par point : les artisans, les saisonniers agricoles ; les femmes âgées ; la durée des
+femmes ; les départs après 67 ans. Au propriétaire : 152, 157, le CASD, l'incitation, le militaire, la
+sonde au mois, le recours de la page, les hommes entre les deux âges, la surcote d'après 1953, la décote
+d'après 1960 (cible par génération, par groupe, fonctionnaires). Détail : `…-ecarts-de-r-i-bis.md`.
 
 **Le 7 octobre 2026, la demande.** Le propriétaire : « 138.14 ». L'étape :
 « Ce qui demande une population ou des microdonnées, avec l'action 136 (étape

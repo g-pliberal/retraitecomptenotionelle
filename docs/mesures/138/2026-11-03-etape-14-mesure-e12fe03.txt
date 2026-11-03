@@ -1,0 +1,300 @@
+Dépôt : commit e12fe03a91eb14595f5d52387b030929453304c1, arbre adb1ff2f8caa67b29cd3c759576175b93a1dca4e.
+Grille « population », 19408 cas types, 542749 couples, échecs {'liquidation antérieure à la répartition': 17038, 'aucun régime actif sur la période': 3045} ; constante SURCOTE_SELON_LA_GENERATION ; 6334.1 s.
+
+Les départs, en part des départs déjà pris à l'âge où l'enquête voit sa génération ; la génération 1955 de la grille jugée sur les nés en 1953 de l'EIR.
+
+| | EIR | éteinte | version |
+|---|---|---|---|
+| ensemble, 1955, surcote | 14,43 | 15,99 | 14,06 |
+| F, 1955, surcote | 14,31 | 17,44 | 14,76 |
+| H, 1955, surcote | 14,65 | 14,40 | 13,29 |
+| ensemble, 1955, age_legal | 31,20 | 37,30 | 38,40 |
+| ensemble, 1955, entre | 26,60 | 28,12 | 26,77 |
+| F, 1955, age_legal | 37,50 | 48,68 | 50,78 |
+| F, 1955, entre | 26,70 | 25,65 | 23,18 |
+| ensemble, 1950, surcote | 11,78 | 15,79 | 11,28 |
+| F, 1950, surcote | 11,24 | 17,00 | 11,58 |
+| H, 1950, surcote | 12,30 | 14,48 | 10,96 |
+| ensemble, 1950, age_legal | 40,00 | 41,24 | 43,88 |
+| ensemble, 1950, entre | 23,80 | 29,35 | 26,68 |
+| F, 1950, age_legal | 44,40 | 50,37 | 54,40 |
+| F, 1950, entre | 22,40 | 24,95 | 21,09 |
+
+Les fonctionnaires civils, le régime général et les retraités : la source est l'EACR (tables H, B et C), « — » où le script n'en lit pas.
+
+| | source | éteinte | version |
+|---|---|---|---|
+| État, liquidants de 2020, à la condition | 36,59 | 41,80 | 37,24 |
+| État, liquidants de 2020, au drapeau | — | 41,80 | 37,24 |
+| État, liquidants de 2021, à la condition | 38,35 | 44,80 | 42,40 |
+| État, liquidants de 2021, au drapeau | — | 44,80 | 42,40 |
+| État, liquidants de 2022, à la condition | 38,22 | 42,61 | 41,85 |
+| État, liquidants de 2022, au drapeau | — | 42,61 | 41,85 |
+| État, liquidants de 2023, à la condition | 40,06 | 30,43 | 31,94 |
+| État, liquidants de 2023, au drapeau | — | 30,43 | 31,94 |
+| État, liquidants de 2024, à la condition | 38,93 | 50,25 | 50,64 |
+| État, liquidants de 2024, au drapeau | — | 50,25 | 50,64 |
+| État, liquidants de 2025, à la condition | — | 43,17 | 45,28 |
+| État, liquidants de 2025, au drapeau | — | 43,17 | 45,28 |
+| État, liquidants, moyenne de 2020 à 2025 | — | 42,18 | 41,56 |
+| État, retraités de 2024 | 22,58 | 30,30 | 23,52 |
+| État, retraités de 2024, à la condition | 22,58 | 29,22 | 23,03 |
+| État, retraités de 2024, conditions inconnues | — | 0,00 | 0,00 |
+| CNRACL, liquidants de 2020, à la condition | — | 23,83 | 19,92 |
+| CNRACL, liquidants de 2020, au drapeau | — | 23,83 | 19,92 |
+| CNRACL, liquidants de 2021, à la condition | — | 25,27 | 21,89 |
+| CNRACL, liquidants de 2021, au drapeau | — | 25,27 | 21,89 |
+| CNRACL, liquidants de 2022, à la condition | — | 26,06 | 23,75 |
+| CNRACL, liquidants de 2022, au drapeau | — | 26,06 | 23,75 |
+| CNRACL, liquidants de 2023, à la condition | — | 17,77 | 17,95 |
+| CNRACL, liquidants de 2023, au drapeau | — | 17,77 | 17,95 |
+| CNRACL, liquidants de 2024, à la condition | — | 28,68 | 28,91 |
+| CNRACL, liquidants de 2024, au drapeau | — | 28,68 | 28,91 |
+| CNRACL, liquidants de 2025, à la condition | — | 24,94 | 26,47 |
+| CNRACL, liquidants de 2025, au drapeau | — | 24,94 | 26,47 |
+| CNRACL, liquidants, moyenne de 2020 à 2025 | — | 24,43 | 23,15 |
+| CNRACL, retraités de 2024 | — | 17,41 | 13,09 |
+| CNRACL, retraités de 2024, à la condition | — | 16,94 | 12,91 |
+| CNRACL, retraités de 2024, conditions inconnues | — | 0,00 | 0,00 |
+| régime général, liquidants de 2024, condition | 18,87 | 13,28 | 10,91 |
+| régime général, liquidants de 2024, drapeau | 18,87 | 13,92 | 11,49 |
+| régime général, liquidants de 2024, inconnues | — | 0,00 | 0,00 |
+| régime général, retraités de 2024 | 11,25 | 9,32 | 7,81 |
+| régime général, retraités de 2024, à la condition | 11,25 | 8,48 | 7,07 |
+| régime général, retraités de 2024, conditions inconnues | — | 0,00 | 0,00 |
+| régime général, liquidants de 2024, décote | 13,38 | 17,12 | 17,15 |
+| régime général, liquidants de 2024 de 67 ans | 9,34 | 6,82 | 6,58 |
+| régime général, liquidants de 2024 de 68 ans et plus | 7,36 | 0,00 | 0,00 |
+| régime général, liquidants de 2024, drapeau, surcote | — | 13,28 | 10,91 |
+| régime général, liquidants de 2024, drapeau, taux_plein_age | — | 0,09 | 0,08 |
+| régime général, liquidants de 2024, drapeau, taux_plein_autre | — | 0,55 | 0,50 |
+| régime général, liquidants de 2024, sans_drapeau, carriere_longue | — | 18,16 | 18,93 |
+| régime général, liquidants de 2024, sans_drapeau, decote | — | 17,12 | 17,15 |
+| régime général, liquidants de 2024, sans_drapeau, surcote | — | 0,00 | 0,00 |
+| régime général, liquidants de 2024, sans_drapeau, taux_plein_age | — | 4,23 | 4,25 |
+| régime général, liquidants de 2024, sans_drapeau, taux_plein_autre | — | 46,58 | 48,18 |
+| retraités de 2020, F, surcote | — | 10,21 | 7,74 |
+| retraités de 2020, F, de 70 à 74 ans | — | 16,99 | 11,80 |
+| retraités de 2020, F, fonctionnaires civils parmi les surcotés | — | 45,86 | 42,59 |
+| retraités de 2020, F, surcote, à la condition | — | 9,63 | 7,33 |
+| retraités de 2020, F, de 70 à 74 ans, à la condition | — | 16,42 | 11,35 |
+| retraités de 2020, F, fonctionnaires civils parmi les surcotés, à la condition | — | 46,12 | 43,56 |
+| retraités de 2020, F, conditions inconnues, à la condition | — | 0,00 | 0,00 |
+| retraités de 2020, H, surcote | — | 9,13 | 7,39 |
+| retraités de 2020, H, de 70 à 74 ans | — | 16,73 | 12,55 |
+| retraités de 2020, H, fonctionnaires civils parmi les surcotés | — | 31,98 | 27,43 |
+| retraités de 2020, H, surcote, à la condition | — | 7,78 | 6,27 |
+| retraités de 2020, H, de 70 à 74 ans, à la condition | — | 14,60 | 10,85 |
+| retraités de 2020, H, fonctionnaires civils parmi les surcotés, à la condition | — | 36,20 | 31,57 |
+| retraités de 2020, H, conditions inconnues, à la condition | — | 0,00 | 0,00 |
+| liquidants de 2024 partis à 62 ans | 25,97 | 56,96 | 58,42 |
+| liquidants de 2024 partis à 67 ans | 10,56 | 7,57 | 7,39 |
+| liquidants de 2024 partis à 68 ans et plus | 7,29 | 0,00 | 0,00 |
+| âge moyen des liquidants de 2024 | 63,60 | 62,68 | 62,63 |
+
+La décote : le régime général contre la table H de la Cnav (flux de chaque année, stock de 2024 à chaque âge, la génération 2024 moins l'âge).
+
+| | source | éteinte | version |
+|---|---|---|---|
+| régime général, liquidants de 2020, décote, ensemble | 12,82 | 15,11 | 14,93 |
+| régime général, liquidants de 2020, décote, F | 14,35 | 16,15 | 15,92 |
+| régime général, liquidants de 2020, décote, H | 11,14 | 13,88 | 13,75 |
+| régime général, liquidants de 2021, décote, ensemble | 13,15 | 16,81 | 16,63 |
+| régime général, liquidants de 2021, décote, F | 14,53 | 18,55 | 18,31 |
+| régime général, liquidants de 2021, décote, H | 11,60 | 14,90 | 14,78 |
+| régime général, liquidants de 2022, décote, ensemble | 13,72 | 20,08 | 20,05 |
+| régime général, liquidants de 2022, décote, F | — | 20,40 | 20,37 |
+| régime général, liquidants de 2022, décote, H | — | 19,67 | 19,64 |
+| régime général, liquidants de 2023, décote, ensemble | 13,68 | 14,67 | 14,55 |
+| régime général, liquidants de 2023, décote, F | — | 17,47 | 17,31 |
+| régime général, liquidants de 2023, décote, H | — | 12,05 | 11,96 |
+| régime général, liquidants de 2024, décote, ensemble | 13,38 | 17,12 | 17,15 |
+| régime général, liquidants de 2024, décote, F | 13,73 | 17,25 | 17,27 |
+| régime général, liquidants de 2024, décote, H | 13,00 | 16,94 | 16,99 |
+| régime général, liquidants de 2024 de 60 ans, décote, ensemble | 0,01 | — | — |
+| régime général, liquidants de 2024 de 60 ans, décote, F | 0,03 | — | — |
+| régime général, liquidants de 2024 de 60 ans, décote, H | 0,00 | — | — |
+| régime général, liquidants de 2024 de 61 ans, décote, ensemble | 6,42 | 0,00 | 0,00 |
+| régime général, liquidants de 2024 de 61 ans, décote, F | 7,02 | 0,00 | 0,00 |
+| régime général, liquidants de 2024 de 61 ans, décote, H | 6,03 | 0,00 | 0,00 |
+| régime général, liquidants de 2024 de 62 ans, décote, ensemble | 9,37 | 13,13 | 12,74 |
+| régime général, liquidants de 2024 de 62 ans, décote, F | 9,40 | 14,34 | 13,74 |
+| régime général, liquidants de 2024 de 62 ans, décote, H | 9,32 | 11,41 | 11,26 |
+| régime général, liquidants de 2024 de 63 ans, décote, ensemble | 20,79 | 43,52 | 49,30 |
+| régime général, liquidants de 2024 de 63 ans, décote, F | 19,68 | 42,78 | 51,46 |
+| régime général, liquidants de 2024 de 63 ans, décote, H | 22,36 | 44,41 | 47,02 |
+| régime général, liquidants de 2024 de 64 ans, décote, ensemble | 22,15 | 0,00 | 0,00 |
+| régime général, liquidants de 2024 de 64 ans, décote, F | 22,74 | 0,00 | 0,00 |
+| régime général, liquidants de 2024 de 64 ans, décote, H | 21,50 | 0,00 | 0,00 |
+| régime général, liquidants de 2024 de 65 ans, décote, ensemble | 34,54 | 36,04 | 38,96 |
+| régime général, liquidants de 2024 de 65 ans, décote, F | 36,23 | 43,50 | 50,56 |
+| régime général, liquidants de 2024 de 65 ans, décote, H | 32,81 | 31,00 | 32,00 |
+| régime général, liquidants de 2024 de 66 ans, décote, ensemble | 31,39 | 0,00 | 0,00 |
+| régime général, liquidants de 2024 de 66 ans, décote, F | 31,82 | 0,00 | 0,00 |
+| régime général, liquidants de 2024 de 66 ans, décote, H | 30,95 | 0,00 | 0,00 |
+| régime général, liquidants de 2024 de 67 ans, décote, ensemble | 3,25 | 0,00 | 0,00 |
+| régime général, liquidants de 2024 de 67 ans, décote, F | 2,61 | 0,00 | 0,00 |
+| régime général, liquidants de 2024 de 67 ans, décote, H | 4,25 | 0,00 | 0,00 |
+| régime général, stock de 2024 à 60 ans (née en 1964), décote, ensemble | 0,01 | — | — |
+| régime général, stock de 2024 à 60 ans (née en 1964), décote, F | 0,02 | — | — |
+| régime général, stock de 2024 à 60 ans (née en 1964), décote, H | 0,00 | — | — |
+| régime général, stock de 2024 à 61 ans (née en 1963), décote, ensemble | 4,29 | 0,00 | 0,00 |
+| régime général, stock de 2024 à 61 ans (née en 1963), décote, F | 5,41 | 0,00 | 0,00 |
+| régime général, stock de 2024 à 61 ans (née en 1963), décote, H | 3,73 | 0,00 | 0,00 |
+| régime général, stock de 2024 à 62 ans (née en 1962), décote, ensemble | 6,26 | 10,50 | 10,18 |
+| régime général, stock de 2024 à 62 ans (née en 1962), décote, F | 7,33 | 12,76 | 12,18 |
+| régime général, stock de 2024 à 62 ans (née en 1962), décote, H | 5,32 | 7,98 | 7,86 |
+| régime général, stock de 2024 à 63 ans (née en 1961), décote, ensemble | 11,97 | 14,00 | 13,67 |
+| régime général, stock de 2024 à 63 ans (née en 1961), décote, F | 13,18 | 16,47 | 15,93 |
+| régime général, stock de 2024 à 63 ans (née en 1961), décote, H | 10,68 | 11,36 | 11,21 |
+| régime général, stock de 2024 à 64 ans (née en 1960), décote, ensemble | 12,61 | 13,62 | 13,36 |
+| régime général, stock de 2024 à 64 ans (née en 1960), décote, F | 14,29 | 15,63 | 15,21 |
+| régime général, stock de 2024 à 64 ans (née en 1960), décote, H | 10,80 | 11,34 | 11,23 |
+| régime général, stock de 2024 à 65 ans (née en 1959), décote, ensemble | 14,23 | 16,70 | 16,62 |
+| régime général, stock de 2024 à 65 ans (née en 1959), décote, F | 16,14 | 18,79 | 18,67 |
+| régime général, stock de 2024 à 65 ans (née en 1959), décote, H | 12,19 | 14,51 | 14,47 |
+| régime général, stock de 2024 à 66 ans (née en 1958), décote, ensemble | 15,10 | 15,99 | 15,93 |
+| régime général, stock de 2024 à 66 ans (née en 1958), décote, F | 17,09 | 18,46 | 18,36 |
+| régime général, stock de 2024 à 66 ans (née en 1958), décote, H | 12,98 | 13,40 | 13,38 |
+| régime général, stock de 2024 à 67 ans (née en 1957), décote, ensemble | 13,11 | 16,12 | 16,12 |
+| régime général, stock de 2024 à 67 ans (née en 1957), décote, F | 14,82 | 17,00 | 17,00 |
+| régime général, stock de 2024 à 67 ans (née en 1957), décote, H | 11,20 | 15,15 | 15,15 |
+
+Les départs de chaque génération de la grille pris à 67 ans, par classe ; la source, la fiche 17 de la DREES (graphiques 4 et 5) ; la cible, la décote que la population prête à la génération (sexe par sexe).
+
+| | source | cible | éteinte | version |
+|---|---|---|---|---|
+| 1955, tous, ensemble, decote | — | — | 11,28 | 11,28 |
+| 1955, tous, ensemble, surcote | — | — | 15,99 | 14,06 |
+| 1955, tous, F, decote | — | 12,42 | 12,40 | 12,40 |
+| 1955, tous, F, surcote | — | — | 17,44 | 14,76 |
+| 1955, tous, H, decote | — | 9,21 | 10,04 | 10,04 |
+| 1955, tous, H, surcote | — | — | 14,40 | 13,29 |
+| 1955, regime_general, ensemble, decote | 12,80 | — | 14,69 | 14,69 |
+| 1955, regime_general, ensemble, surcote | 13,60 | — | 12,66 | 11,85 |
+| 1955, regime_general, F, decote | — | — | 16,22 | 16,22 |
+| 1955, regime_general, F, surcote | — | — | 13,15 | 11,64 |
+| 1955, regime_general, H, decote | — | — | 13,02 | 13,02 |
+| 1955, regime_general, H, surcote | — | — | 12,12 | 12,07 |
+| 1960, tous, ensemble, decote | — | — | 12,42 | 12,42 |
+| 1960, tous, ensemble, surcote | — | — | 15,98 | 14,46 |
+| 1960, tous, F, decote | — | 13,73 | 13,10 | 13,10 |
+| 1960, tous, F, surcote | — | — | 17,48 | 15,22 |
+| 1960, tous, H, decote | — | 13,00 | 11,66 | 11,66 |
+| 1960, tous, H, surcote | — | — | 14,32 | 13,63 |
+| 1960, regime_general, ensemble, decote | — | — | 16,02 | 16,02 |
+| 1960, regime_general, ensemble, surcote | — | — | 12,59 | 10,29 |
+| 1960, regime_general, F, decote | — | — | 17,17 | 17,17 |
+| 1960, regime_general, F, surcote | — | — | 13,12 | 9,75 |
+| 1960, regime_general, H, decote | — | — | 14,76 | 14,76 |
+| 1960, regime_general, H, surcote | — | — | 12,01 | 10,89 |
+| 1965, tous, ensemble, decote | — | — | 10,77 | 10,74 |
+| 1965, tous, ensemble, surcote | — | — | 13,96 | 12,91 |
+| 1965, tous, F, decote | — | 13,73 | 12,62 | 12,59 |
+| 1965, tous, F, surcote | — | — | 15,22 | 14,01 |
+| 1965, tous, H, decote | — | 13,00 | 8,68 | 8,65 |
+| 1965, tous, H, surcote | — | — | 12,55 | 11,68 |
+| 1965, regime_general, ensemble, decote | — | — | 13,77 | 13,73 |
+| 1965, regime_general, ensemble, surcote | — | — | 9,83 | 8,41 |
+| 1965, regime_general, F, decote | — | — | 16,62 | 16,56 |
+| 1965, regime_general, F, surcote | — | — | 9,94 | 8,29 |
+| 1965, regime_general, H, decote | — | — | 10,63 | 10,60 |
+| 1965, regime_general, H, surcote | — | — | 9,71 | 8,53 |
+
+Chaque groupe de la population en 2024, à la condition du départ, contre la caisse de la table H qui le juge (« — » sans caisse) : ses liquidants, son stock à chaque âge (la génération 2024 moins l'âge).
+
+| groupe, champ | source | éteinte | version |
+|---|---|---|---|
+| cnracl, liquidants de 2024 | — | 0,00 | 0,00 |
+| cnracl, stock de 2024 à 60 ans | — | — | — |
+| cnracl, stock de 2024 à 61 ans | — | 0,00 | 0,00 |
+| cnracl, stock de 2024 à 62 ans | — | 0,00 | 0,00 |
+| cnracl, stock de 2024 à 63 ans | — | 0,00 | 0,00 |
+| cnracl, stock de 2024 à 64 ans | — | 0,00 | 0,00 |
+| cnracl, stock de 2024 à 65 ans | — | 0,00 | 0,00 |
+| cnracl, stock de 2024 à 66 ans | — | 0,00 | 0,00 |
+| cnracl, stock de 2024 à 67 ans | — | 0,00 | 0,00 |
+| fonction_publique_etat_civile, liquidants de 2024 | 18,39 | 0,00 | 0,00 |
+| fonction_publique_etat_civile, stock de 2024 à 60 ans | 33,15 | 0,00 | 0,00 |
+| fonction_publique_etat_civile, stock de 2024 à 61 ans | 24,74 | 0,00 | 0,00 |
+| fonction_publique_etat_civile, stock de 2024 à 62 ans | 20,96 | 0,00 | 0,00 |
+| fonction_publique_etat_civile, stock de 2024 à 63 ans | 22,18 | 0,00 | 0,00 |
+| fonction_publique_etat_civile, stock de 2024 à 64 ans | 19,20 | 0,00 | 0,00 |
+| fonction_publique_etat_civile, stock de 2024 à 65 ans | 18,45 | 0,00 | 0,00 |
+| fonction_publique_etat_civile, stock de 2024 à 66 ans | 18,13 | 0,00 | 0,00 |
+| fonction_publique_etat_civile, stock de 2024 à 67 ans | 16,00 | 0,00 | 0,00 |
+| fonction_publique_etat_militaire, liquidants de 2024 | 11,47 | 0,00 | 0,00 |
+| fonction_publique_etat_militaire, stock de 2024 à 60 ans | 2,21 | 0,00 | 0,00 |
+| fonction_publique_etat_militaire, stock de 2024 à 61 ans | 1,74 | 0,00 | 0,00 |
+| fonction_publique_etat_militaire, stock de 2024 à 62 ans | 2,04 | 0,00 | 0,00 |
+| fonction_publique_etat_militaire, stock de 2024 à 63 ans | 1,34 | 0,00 | 0,00 |
+| fonction_publique_etat_militaire, stock de 2024 à 64 ans | 0,92 | 0,00 | 0,00 |
+| fonction_publique_etat_militaire, stock de 2024 à 65 ans | 0,58 | 0,00 | 0,00 |
+| fonction_publique_etat_militaire, stock de 2024 à 66 ans | 0,26 | 0,00 | 0,00 |
+| fonction_publique_etat_militaire, stock de 2024 à 67 ans | 0,19 | 0,00 | 0,00 |
+| msa_non_salaries, liquidants de 2024 | 5,00 | 15,12 | 15,18 |
+| msa_non_salaries, stock de 2024 à 60 ans | 0,10 | — | — |
+| msa_non_salaries, stock de 2024 à 61 ans | 0,04 | — | — |
+| msa_non_salaries, stock de 2024 à 62 ans | 2,22 | 10,60 | 10,28 |
+| msa_non_salaries, stock de 2024 à 63 ans | 5,49 | 12,48 | 12,16 |
+| msa_non_salaries, stock de 2024 à 64 ans | 6,12 | 12,48 | 12,22 |
+| msa_non_salaries, stock de 2024 à 65 ans | 6,93 | 15,80 | 15,71 |
+| msa_non_salaries, stock de 2024 à 66 ans | 7,51 | 15,21 | 15,14 |
+| msa_non_salaries, stock de 2024 à 67 ans | 6,57 | 14,49 | 14,49 |
+| professions_liberales, liquidants de 2024 | — | 19,17 | 19,16 |
+| professions_liberales, stock de 2024 à 60 ans | — | — | — |
+| professions_liberales, stock de 2024 à 61 ans | — | — | — |
+| professions_liberales, stock de 2024 à 62 ans | — | 44,25 | 44,25 |
+| professions_liberales, stock de 2024 à 63 ans | — | 53,76 | 53,76 |
+| professions_liberales, stock de 2024 à 64 ans | — | 35,53 | 35,09 |
+| professions_liberales, stock de 2024 à 65 ans | — | 43,20 | 43,08 |
+| professions_liberales, stock de 2024 à 66 ans | — | 41,87 | 41,77 |
+| professions_liberales, stock de 2024 à 67 ans | — | 18,90 | 18,90 |
+| regime_general, liquidants de 2024 | 13,38 | 17,12 | 17,15 |
+| regime_general, stock de 2024 à 60 ans | 0,01 | — | — |
+| regime_general, stock de 2024 à 61 ans | 4,29 | 0,00 | 0,00 |
+| regime_general, stock de 2024 à 62 ans | 6,26 | 10,50 | 10,18 |
+| regime_general, stock de 2024 à 63 ans | 11,97 | 14,00 | 13,67 |
+| regime_general, stock de 2024 à 64 ans | 12,61 | 13,62 | 13,36 |
+| regime_general, stock de 2024 à 65 ans | 14,23 | 16,70 | 16,62 |
+| regime_general, stock de 2024 à 66 ans | 15,10 | 15,99 | 15,93 |
+| regime_general, stock de 2024 à 67 ans | 13,11 | 16,12 | 16,12 |
+| regimes_speciaux, liquidants de 2024 | — | 77,92 | 77,92 |
+| regimes_speciaux, stock de 2024 à 60 ans | — | 24,47 | 24,47 |
+| regimes_speciaux, stock de 2024 à 61 ans | — | 14,69 | 14,69 |
+| regimes_speciaux, stock de 2024 à 62 ans | — | 7,62 | 7,62 |
+| regimes_speciaux, stock de 2024 à 63 ans | — | 7,62 | 7,62 |
+| regimes_speciaux, stock de 2024 à 64 ans | — | 7,62 | 7,62 |
+| regimes_speciaux, stock de 2024 à 65 ans | — | 7,62 | 7,62 |
+| regimes_speciaux, stock de 2024 à 66 ans | — | 7,62 | 7,62 |
+| regimes_speciaux, stock de 2024 à 67 ans | — | 0,00 | 0,00 |
+
+Chaque groupe de la population dans les départs de la génération pris à 67 ans (version) : son poids, sa décote, sa surcote.
+
+| génération, groupe | poids | décote | surcote |
+|---|---|---|---|
+| 1955, regime_general | 68,34 | 14,69 | 11,85 |
+| 1955, fonction_publique_etat_civile | 9,94 | 0,00 | 34,06 |
+| 1955, cnracl | 9,49 | 0,00 | 19,24 |
+| 1955, msa_non_salaries | 5,08 | 13,26 | 12,65 |
+| 1955, professions_liberales | 3,26 | 17,29 | 3,41 |
+| 1955, regimes_speciaux | 2,67 | 0,00 | 0,00 |
+| 1955, fonction_publique_etat_militaire | 1,23 | 0,00 | 0,00 |
+| 1960, regime_general | 68,42 | 16,02 | 10,29 |
+| 1960, cnracl | 10,54 | 0,00 | 24,89 |
+| 1960, fonction_publique_etat_civile | 9,69 | 0,00 | 43,80 |
+| 1960, msa_non_salaries | 4,09 | 14,44 | 11,03 |
+| 1960, professions_liberales | 3,55 | 18,92 | 2,94 |
+| 1960, regimes_speciaux | 2,48 | 7,83 | 0,00 |
+| 1960, fonction_publique_etat_militaire | 1,24 | 0,00 | 0,00 |
+| 1965, regime_general | 68,67 | 13,73 | 8,41 |
+| 1965, cnracl | 11,65 | 0,00 | 24,33 |
+| 1965, fonction_publique_etat_civile | 9,27 | 0,00 | 42,58 |
+| 1965, msa_non_salaries | 3,45 | 12,43 | 9,29 |
+| 1965, professions_liberales | 3,41 | 15,95 | 1,17 |
+| 1965, regimes_speciaux | 2,31 | 14,72 | 0,00 |
+| 1965, fonction_publique_etat_militaire | 1,25 | 0,00 | 0,00 |
+| pension moyenne de 2020, F, € par mois | 1177 | 1349 | 1345 |
+| écart de Kolmogorov, F, points, à la borne | — | -15,4 à 1200 | -15,4 à 900 |
+| pension moyenne de 2020, H, € par mois | 1957 | 1835 | 1830 |
+| écart de Kolmogorov, H, points, à la borne | — | 4,5 à 1800 | 4,7 à 1800 |

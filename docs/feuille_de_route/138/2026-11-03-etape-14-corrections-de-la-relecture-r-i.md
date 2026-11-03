@@ -376,3 +376,5 @@ deux tests de la mesure et les deux de la version, réussis.
    mesure.json`, près de trois heures sur quatre cœurs sans mémoire des
    calculs, au-delà des deux heures d'une tâche de fond ; dans un conteneur
    qui garde la simulation, une demi-heure.
+
+*Renvoi du 3 novembre 2026* : le calcul des départs après 67 ans tient à une hypothèse, les départs qu'ils remplacent ; la phrase au propriétaire, corrigée, est dans `2026-11-03-etape-14-decote-depuis-1960-et-ecarts-de-r-i-bis.md` (relecture R-I-bis, point 2).
