@@ -1,0 +1,42 @@
+date: "2026-11-03"
+session: "action 130, file E : la carte des fiches, les coefficients d'anticipation de l'Agirc-Arrco lus au droit (neuvième lot)"
+consulte: >-
+  python scripts/veille_droit.py ; les index LEGI et JORF du dépôt, récupérés et à jour de
+  l'incrément du 2 novembre 2026 (20261102-213929), et du 3 novembre pour le JORF
+  (20261103-002311) ; python scripts/textes.py --inscrire, aucune rédaction nouvelle. Hors
+  du Journal officiel, dans les copies de la caisse : l'accord national interprofessionnel
+  du 17 novembre 2017, version applicable au 1er janvier 2019, articles 84, 85, 94, 99 à
+  102 ; l'avenant n° 15 du 16 mars 2023 et la circulaire 2023-03-DRJ ; la convention du 14
+  mars 1947 (annexe I, articles 6, 8 et 9 ; annexe V) et l'accord du 8 décembre 1961
+  (annexe A, articles 18 et 19 ; annexe E), mis à jour au 1er janvier 2018 ; le recueil
+  « Accords nationaux des partenaires sociaux » : accord Arrco du 25 avril 1996 (article
+  10), accords du 10 février 2001, du 13 novembre 2003, du 16 juillet 2008, du 23 mars
+  2009, du 25 novembre 2010, du 18 mars 2011, du 13 mars 2013 et du 30 octobre 2015 ; la
+  copie de l'accord du 13 novembre 2003 ; la circulaire 2020-02-DRJ, fiches 3 et 4. Au
+  Journal officiel : les avis d'extension des avenants n° 65 et A-208 (2002), A-220, n° 76
+  et A-221 (2003) ; les arrêtés du 29 juin 2004, du 27 juin 2011 et du 11 juillet 2023 ;
+  L. 351-8 et L. 161-17-2 du code de la sécurité sociale, rédactions de 2011.
+trouve: >-
+  La règle de la baisse pour départ anticipé de l'Agirc-Arrco change neuf fois depuis
+  1976 : le protocole du 14 juin 1976, la structure financière du 1er avril 1983, l'accord
+  du 23 décembre 1996 (1er janvier 1997), le régime unique de l'Arrco (1er janvier 1999),
+  l'accord du 13 novembre 2003 (1er janvier 2004, prorogé jusqu'au 30 juin 2011), l'accord
+  du 18 mars 2011 (1er juillet 2011), l'accord du 30 octobre 2015 pour la tranche C (1er
+  janvier 2016), le régime unifié (1er janvier 2019) et l'avenant n° 15, « en vigueur à la
+  date de sa signature », le 16 mars 2023, qui ouvre la table des trimestres manquants
+  avant l'âge légal. La table des âges et celle des trimestres manquants sont, ligne pour
+  ligne, celles du moteur ; l'âge de 2011 à 2018, celui que la caisse servait et non celui
+  que l'accord fige. La caisse compte la durée « tous régimes de base confondus ». Le
+  modèle exonère plus que le droit avant 2004 (la structure financière ne visait que les
+  salariés en activité et les chômeurs), et de 2011 à 2018 pour deux catégories ; il ne
+  connaît pas les mineurs de fond. La circulaire 2020-02-DRJ calcule les deux majorations
+  pour enfants « sans tenir compte des coefficients d'anticipation », ce que le texte de
+  l'accord ne dit pas. La fiche est coupée en dix versions, sans changer ce que le moteur
+  lit ; le cliquet des textes ne bouge pas ; la carte passe de 89 fiches à lire au droit à
+  88, de 527 manques à 523.
+reste: >-
+  L'ordre de la majoration pour enfants et du coefficient, à décider par le propriétaire.
+  Le texte et la date d'effet des avenants du 4 juin 2002 ; ce que l'Agirc exonérait de
+  2004 à 2011, et la table des trimestres manquants de 1983 à 2011, dans les rédactions
+  d'alors des annexes ; les accords de 1983, 1990 et 1993. Les mineurs de fond et les
+  catégories de 2011 à 2018, pour une étape du modèle si le propriétaire le veut.
