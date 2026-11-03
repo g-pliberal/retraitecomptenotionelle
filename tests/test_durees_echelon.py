@@ -481,6 +481,45 @@ def test_avant_le_1er_echelon_n_est_pas_une_ligne():
         (groupe, f"{e}-provisoire", 24) for e in (4, 3, 2, 1)]
 
 
+#: Décret n° 2016-2003 du 30 décembre 2016, emplois de directeur départemental et de
+#: directeur départemental adjoint des services d'incendie et de secours, article 13,
+#: en vigueur depuis le 17 avril 2022 (LEGIARTI000045657613), en entier : chaque
+#: emploi est nommé avant l'en-tête de son tableau, « ÉCHELONS DURÉE ».
+SDIS = (
+    "La durée du temps passé dans chacun des échelons afférents aux catégories de service "
+    "d'incendie et de secours et aux emplois en relevant sont fixées en application du "
+    "tableau suivant : Directeur départemental des services d'incendie et de secours de "
+    "catégorie A : ÉCHELONS DURÉE 7e échelon - 6e échelon 3 ans 5e échelon 3 ans 4e échelon 3"
+    " ans 3e échelon 2 ans 6 mois 2e échelon 2 ans 1er échelon 1 an 6 mois Directeur "
+    "départemental des services d'incendie et de secours de catégorie B : ÉCHELONS DURÉE 7e "
+    "échelon - 6e échelon 3 ans 5e échelon 3 ans 4e échelon 3 ans 3e échelon 2 ans 6 mois 2e "
+    "échelon 2 ans 1er échelon 1 an 6 mois Directeur départemental des services d'incendie et"
+    " de secours de catégorie C : ÉCHELONS DURÉE 8e échelon - 7e échelon 3 ans 6e échelon 3 "
+    "ans 5e échelon 3 ans 4e échelon 2 ans 6 mois 3e échelon 2 ans 2e échelon 1 an 6 mois 1er"
+    " échelon 1 an 6 mois Directeur départemental adjoint des services d'incendie et de "
+    "secours de catégorie A : ÉCHELONS DURÉE 8e échelon - 7e échelon 3 ans 6e échelon 3 ans "
+    "5e échelon 3 ans 4e échelon 2 ans 6 mois 3e échelon 2 ans 2e échelon 1 an 6 mois 1er "
+    "échelon 1 an 6 mois Directeur départemental adjoint des services d'incendie et de "
+    "secours de catégorie B : ÉCHELONS DURÉE 7e échelon - 6e échelon 3 ans 5e échelon 3 ans "
+    "4e échelon 2 ans 6 mois 3e échelon 2 ans 2e échelon 1 an 6 mois 1er échelon 1 an 6 mois "
+    "Directeur départemental adjoint des services d'incendie et de secours de catégorie C : "
+    "ÉCHELONS DURÉE 8e échelon - 7e échelon 3 ans 6e échelon 3 ans 5e échelon 3 ans 4e "
+    "échelon 2 ans 6 mois 3e échelon 2 ans 2e échelon 1 an 6 mois 1er échelon 1 an 6 mois"
+)
+
+
+def test_l_emploi_nomme_avant_l_en_tete_est_le_groupe():
+    tableaux = [dur.lire_tableau(e) for e in dur.tableaux(SDIS)]
+    emploi = "Directeur départemental{} des services d'incendie et de secours de catégorie {}"
+    assert [{l.groupe for l in t.lignes} for t in tableaux] == [
+        {emploi.format(adjoint, c)} for adjoint in ("", " adjoint") for c in "ABC"]
+    assert all(t.entete == "ÉCHELONS DURÉE" and not t.refus for t in tableaux)
+    durees = [[l.duree for l in t.lignes] for t in tableaux]
+    assert durees[0] == [None, 36, 36, 36, 30, 24, 18]
+    assert durees[2] == [None, 36, 36, 36, 30, 24, 18, 18]
+    assert durees[4] == [None, 36, 36, 30, 24, 18, 18]
+
+
 # ---------------------------------------------------------------------------
 # Les fichiers du dépôt, recoupés aux articles du LEGI lus à la main
 # ---------------------------------------------------------------------------

@@ -28,7 +28,8 @@ et autant de durées que de colonnes ; le libellé écrit entre deux lignes, le
 grade, qui devient le groupe des lignes suivantes ; la case « Spécial » qui
 finit ce libellé est l'échelon spécial du grade, et l'échelon que nomme un
 libellé (« Avant le 1er échelon de la classe supérieure ») n'est pas une ligne.
-Une durée se compte en mois.
+Le grade écrit avant l'en-tête (« … de catégorie A : ÉCHELONS DURÉE ») est le
+groupe du tableau. Une durée se compte en mois.
 
 CE QUI EST REFUSÉ, plutôt que lu de travers, et consigné dans
 ``non_lus.csv`` : une ligne qui n'a pas autant de durées que de colonnes (hors
@@ -377,6 +378,30 @@ SPECIAL = re.compile(r"(?:^|\s)sp[ée]cial$", re.IGNORECASE)
 NOMME_UN_ECHELON = re.compile(r"\b(?:avant|apr[èe]s)\s+l[e'’]\s*$", re.IGNORECASE)
 
 
+#: Le grade écrit avant l'en-tête : « Directeur départemental … de catégorie A :
+#: ÉCHELONS DURÉE ».
+GRADE_AVANT_L_EN_TETE = re.compile(r"^(?P<grade>[^:]+?)\s*:\s*(?=(?:grades?|[ée]chelons?)\b)",
+                                   re.IGNORECASE)
+_PAS_UN_GRADE = re.compile(r"^(?:grades?|emplois?|[ée]chelons?|classes?)\b", re.IGNORECASE)
+_FIN_DE_LIGNE = re.compile(rf"(?:{DUREE}|{VIDE})", re.IGNORECASE)
+
+
+def _grade_avant_l_entete(entete: str, intro: str) -> tuple[str, str]:
+    """Le grade nommé avant l'en-tête, et l'en-tête sans lui : écrit devant lui
+    (« … de catégorie A : ÉCHELONS DURÉE »), ou, quand le tableau précédent de
+    l'article finit sa phrase d'annonce, après la dernière durée de ce tableau
+    (« … 1er échelon 1 an 6 mois Directeur … de catégorie B : »)."""
+    trouve = GRADE_AVANT_L_EN_TETE.match(entete)
+    if trouve and not _PAS_UN_GRADE.match(trouve["grade"]):
+        return _propre(trouve["grade"]), _propre(entete[trouve.end():])
+    fins = list(_FIN_DE_LIGNE.finditer(intro))
+    if fins and _UN_ECHELON.search(intro[:fins[-1].start()]):
+        grade = _propre(intro[fins[-1].end():])
+        if grade and not PROSE.search(grade) and not LIBELLE_SUSPECT.search(grade):
+            return grade, entete
+    return "", entete
+
+
 def _special(libelle: str, brut: str) -> tuple[str, list | None]:
     """Le grade, sans la case « Spécial » qui finit son libellé, et les cases de
     l'échelon spécial (un tiret, ou rien) ; None si le libellé n'en finit pas."""
@@ -437,6 +462,8 @@ def lire_tableau(extrait: Extrait) -> Tableau:
                 libre = (libre + " " + texte) if libre else texte
                 continue
             entete, groupe = _entete_et_groupe(libre)
+            if not groupe:
+                groupe, entete = _grade_avant_l_entete(entete, extrait.intro)
             groupe, special = _special(groupe, libre)
             libre = ""
             if LIBELLE_SUSPECT.search(groupe):

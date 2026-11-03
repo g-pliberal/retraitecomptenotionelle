@@ -527,10 +527,10 @@ LEGITEXT000006061466,LEGIARTI000006508434,13,4,2000-05-21,2006-02-03,un libellé
 LEGITEXT000006061466,LEGIARTI000006508434,13,5,2000-05-21,2006-02-03,aucun échelon
 LEGITEXT000006061466,LEGIARTI000006508434,13,6,2000-05-21,2006-02-03,un libellé porte une durée ou un échelon : « 1 ans 6 mois . GRADE : Ingénieur de 2e classe »
 LEGITEXT000006061466,LEGIARTI000006508435,13,1,2006-02-03,2009-02-01,le 1e échelon de « Ingénieur en chef » a 1 case(s) pour 2 colonne(s)
-LEGITEXT000006061533,LEGIARTI000006563934,21,2,2007-02-28,2014-11-01,le 1e échelon de «  » a 2 case(s) pour 1 colonne(s)
+LEGITEXT000006061533,LEGIARTI000006563934,21,2,2007-02-28,2014-11-01,le 1e échelon de « Ingénieurs en chef » a 2 case(s) pour 1 colonne(s)
 LEGITEXT000006061533,LEGIARTI000006563934,21,3,2007-02-28,2014-11-01,"une durée hors de sa ligne, après « Graveur général des monnaies »"
 LEGITEXT000006061533,LEGIARTI000006563934,21,4,2007-02-28,2014-11-01,"une durée hors de sa ligne, après « Chef de fabrication adjoint »"
-LEGITEXT000006061533,LEGIARTI000006563934,21,5,2007-02-28,2014-11-01,le 1e échelon de «  » a 0 case(s) pour 1 colonne(s)
+LEGITEXT000006061533,LEGIARTI000006563934,21,5,2007-02-28,2014-11-01,le 1e échelon de « Chef d'atelier principal » a 0 case(s) pour 1 colonne(s)
 LEGITEXT000006061533,LEGIARTI000006563934,21,6,2007-02-28,2014-11-01,un libellé porte une durée ou un échelon : « 6e et »
 LEGITEXT000006061538,LEGIARTI000034303973,3,,2017-04-01,,durées écrites en phrases
 LEGITEXT000006061538,LEGIARTI000006563882,4,,2000-01-01,2017-04-01,durées écrites en phrases
@@ -1219,7 +1219,7 @@ LEGITEXT000006079776,LEGIARTI000006375774,14,1,1993-08-08,2005-11-01,tableau des
 LEGITEXT000006079777,LEGIARTI000006375799,16,1,1992-08-30,1995-08-01,tableau dessiné en caractères
 LEGITEXT000006079779,LEGIARTI000006374631,14,1,1992-08-30,2013-06-13,aucun échelon
 LEGITEXT000006079779,LEGIARTI000006374631,14,2,1992-08-30,2013-06-13,l'en-tête n'a qu'une colonne quand la phrase nomme les durées maximale et minimale
-LEGITEXT000006079779,LEGIARTI000006374631,14,3,1992-08-30,2013-06-13,le 9e échelon de «  » a 2 case(s) pour 1 colonne(s)
+LEGITEXT000006079779,LEGIARTI000006374631,14,3,1992-08-30,2013-06-13,le 9e échelon de « Assistant socio-éducatif » a 2 case(s) pour 1 colonne(s)
 LEGITEXT000006079782,LEGIARTI000006375280,14,1,1992-08-30,1993-03-28,tableau dessiné en caractères
 LEGITEXT000006079782,LEGIARTI000006375281,14,1,1993-03-28,1993-12-30,tableau dessiné en caractères
 LEGITEXT000006079782,LEGIARTI000006375282,14,1,1993-12-30,1994-12-29,tableau dessiné en caractères
@@ -1284,8 +1284,8 @@ LEGITEXT000006080653,LEGIARTI000006712596,13,8,1992-01-01,2001-01-01,un libellé
 LEGITEXT000006080653,LEGIARTI000006712596,13,9,1992-01-01,2001-01-01,un libellé porte une durée ou un échelon : « 1 an 6 mois Grades et échelons : Pharmacien inspec »
 LEGITEXT000006080653,LEGIARTI000006712597,13,1,2001-01-01,2017-01-01,aucun échelon
 LEGITEXT000006080653,LEGIARTI000006712597,13,2,2001-01-01,2017-01-01,l'en-tête n'a qu'une colonne quand la phrase nomme les durées minimale et moyenne
-LEGITEXT000006080653,LEGIARTI000006712597,13,3,2001-01-01,2017-01-01,le 6e échelon de «  » a 2 case(s) pour 1 colonne(s)
-LEGITEXT000006080653,LEGIARTI000006712597,13,4,2001-01-01,2017-01-01,le 8e échelon de «  » a 2 case(s) pour 1 colonne(s)
+LEGITEXT000006080653,LEGIARTI000006712597,13,3,2001-01-01,2017-01-01,le 6e échelon de « Pharmacien inspecteur en chef de santé publique » a 2 case(s) pour 1 colonne(s)
+LEGITEXT000006080653,LEGIARTI000006712597,13,4,2001-01-01,2017-01-01,le 8e échelon de « Pharmacien inspecteur de santé publique » a 2 case(s) pour 1 colonne(s)
 LEGITEXT000006080653,LEGIARTI000006712609,23,1,1992-01-01,2001-01-01,l'en-tête n'a qu'une colonne quand la phrase nomme les durées minimale et moyenne
 LEGITEXT000006080653,LEGIARTI000006712609,23,10,1992-01-01,2001-01-01,le grade «  » ne descend pas au 1er échelon
 LEGITEXT000006080653,LEGIARTI000006712609,23,11,1992-01-01,2001-01-01,un libellé porte une durée ou un échelon : « 1 an 6 mois »
@@ -1475,7 +1475,7 @@ LEGITEXT000027911239,LEGIARTI000044636828,22,1,2021-12-25,,"une durée hors de s
 LEGITEXT000028116346,LEGIARTI000028116363,3,,1962-12-01,,durées écrites en phrases
 LEGITEXT000028131148,LEGIARTI000028131366,2,,1964-01-01,,durées écrites en phrases
 LEGITEXT000028273390,LEGIARTI000028192607,16,1,1958-08-30,1962-01-01,le 1e échelon de « Directeur départemental » a 4 case(s) pour 2 colonne(s)
-LEGITEXT000028273390,LEGIARTI000028192607,16,2,1958-08-30,1962-01-01,le 4e échelon de «  » a 0 case(s) pour 1 colonne(s)
+LEGITEXT000028273390,LEGIARTI000028192607,16,2,1958-08-30,1962-01-01,le 4e échelon de « Inspecteur principal » a 0 case(s) pour 1 colonne(s)
 LEGITEXT000028273390,LEGIARTI000028218801,16,,1962-01-01,1969-01-01,durées écrites en phrases
 LEGITEXT000028273390,LEGIARTI000028218923,16,,1969-01-01,1976-01-01,durées écrites en phrases
 LEGITEXT000028273390,LEGIARTI000028219901,16,,1976-01-01,1991-01-01,durées écrites en phrases
@@ -1527,15 +1527,15 @@ LEGITEXT000032208419,LEGIARTI000032293309,17,1,1978-01-01,1991-01-01,le 1e éche
 LEGITEXT000032208419,LEGIARTI000032293981,17,1,1991-01-01,1992-07-01,le 1e échelon de « Chef d'établissement de classe exceptionnelle » a 4 case(s) pour 2 colonne(s)
 LEGITEXT000032208419,LEGIARTI000032362904,17,1,1992-07-01,2016-02-29,le 2e échelon de « Chef d'établissement de classe exceptionnelle » a 0 case(s) pour 2 colonne(s)
 LEGITEXT000032451565,LEGIARTI000032365811,15,1,1958-08-30,1962-01-01,le 2e échelon de « Inspecteur central » a 0 case(s) pour 2 colonne(s)
-LEGITEXT000032451565,LEGIARTI000032365811,15,2,1958-08-30,1962-01-01,le 5e échelon de «  » a 0 case(s) pour 1 colonne(s)
+LEGITEXT000032451565,LEGIARTI000032365811,15,2,1958-08-30,1962-01-01,le 5e échelon de « Inspecteur » a 0 case(s) pour 1 colonne(s)
 LEGITEXT000032451565,LEGIARTI000032369277,15,1,1962-01-01,1969-01-01,le 2e échelon de « Inspecteur central » a 0 case(s) pour 2 colonne(s)
-LEGITEXT000032451565,LEGIARTI000032369277,15,2,1962-01-01,1969-01-01,le 5e échelon de «  » a 0 case(s) pour 1 colonne(s)
+LEGITEXT000032451565,LEGIARTI000032369277,15,2,1962-01-01,1969-01-01,le 5e échelon de « Inspecteur » a 0 case(s) pour 1 colonne(s)
 LEGITEXT000032451565,LEGIARTI000032371291,15,1,1969-01-01,1991-01-01,le 3e échelon de « Inspecteur central » a 0 case(s) pour 2 colonne(s)
-LEGITEXT000032451565,LEGIARTI000032371291,15,2,1969-01-01,1991-01-01,le 5e échelon de «  » a 0 case(s) pour 1 colonne(s)
+LEGITEXT000032451565,LEGIARTI000032371291,15,2,1969-01-01,1991-01-01,le 5e échelon de « Inspecteur » a 0 case(s) pour 1 colonne(s)
 LEGITEXT000032458921,LEGIARTI000032488388,14,1,1977-01-01,1992-07-01,aucun échelon
 LEGITEXT000032458921,LEGIARTI000032488388,14,2,1977-01-01,1992-07-01,l'en-tête n'a qu'une colonne quand la phrase nomme les durées minimale et moyenne
-LEGITEXT000032458921,LEGIARTI000032488388,14,3,1977-01-01,1992-07-01,le 1e échelon de «  » a 0 case(s) pour 1 colonne(s)
-LEGITEXT000032458921,LEGIARTI000032488388,14,4,1977-01-01,1992-07-01,le 1e échelon de «  » a 0 case(s) pour 1 colonne(s)
+LEGITEXT000032458921,LEGIARTI000032488388,14,3,1977-01-01,1992-07-01,le 1e échelon de « Technicien supérieur » a 0 case(s) pour 1 colonne(s)
+LEGITEXT000032458921,LEGIARTI000032488388,14,4,1977-01-01,1992-07-01,le 1e échelon de « Chef technicien » a 0 case(s) pour 1 colonne(s)
 LEGITEXT000032458921,LEGIARTI000032518763,14,1,1992-07-01,2016-02-29,le 11e échelon de « Technicien des installations » a 0 case(s) pour 2 colonne(s)
 LEGITEXT000032942950,LEGIARTI000032942956,1,,2016-07-29,,durées écrites en phrases
 LEGITEXT000033115074,LEGIARTI000033122911,10 bis,,1991-01-01,1992-07-01,durées renvoyées à un autre texte
