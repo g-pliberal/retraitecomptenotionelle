@@ -1,0 +1,38 @@
+date: "2026-11-03"
+session: "action 131, file R-K de la vague 6 : relecture indépendante de la cotisation agricole de 1952, à moitié (commits 79cbb6f, 737ea2f et 9386b3d, file K)"
+consulte: >-
+  python scripts/veille_droit.py ; docs/veille_droit.md ; la base de la Cnav, rien de neuf.
+  Les index LEGI (à jour au 2 novembre 2026) et JORF (au 3 novembre 2026) de la DILA,
+  récupérés dans la session : le décret n° 52-1166 du 18 octobre 1952, la liste des
+  rédactions de ses articles 1er à 30, 44 et 46 ; lus, dans leur rédaction du 19 octobre
+  1952, les articles 5, 10, 11, 12, 14, 15, 16, 17, 19, 21, 22, 23, 24, 44, 45
+  (LEGIARTI000019272803) et 46 ; les rédactions de 1953 des articles 8 et 9
+  (LEGIARTI000006763709, LEGIARTI000006763710), de 1965 des articles 18 et 20 ; le décret n° 99-875,
+  article 2 (LEGIARTI000006779656) ; le décret n° 55-753, article 18
+  (LEGIARTI000006763581) ; la loi n° 52-401, article 19 (LEGIARTI000006319216) ; D. 732-77
+  (LEGIARTI000006597491) ; au JORF, les notices de la loi n° 52-799
+  (JORFTEXT000000512405, et l'article sans texte JORFARTI000001681101), du décret
+  n° 52-1166 (JORFTEXT000000327336) et de l'arrêté du 23 juillet 1953 (JORFTEXT000000435389),
+  et les textes de 1952 à 1954 sur l'allocation de vieillesse agricole.
+trouve: >-
+  La règle est conforme : l'article 45 est cité mot pour mot et appliqué comme il le dit,
+  chaque autre citation est exacte, les valeurs des tests se refont (4,25 €, 8,50 €,
+  77,81 €), le test rougit pour la raison attendue quand 1952 reprend 8,5 %, les deux
+  effets se refont au centime (13,144 0 € et 12,518 1 €), les deux moteurs les rendent,
+  tests verts sous PRESOMPTIONS_DECALEES=1 aussi, le paquet de main est à jour. Le coût
+  passé se refait au million près, en euros constants de 2026 (−2 563 M€ au scénario 2,
+  −2 412 aux scénarios 4 et 6, +732 à la garantie), isolé dans un worktree où 1952
+  reprend 8,5 %, et ne doit rien au commit M4. Deux écarts moyens : le taux annuel de
+  8,5 % d'avant 2003, dont la moitié est prise, n'a aucune source dans le dépôt
+  (antérieur à K) ; la moyenne P de D. 732-77 compte 1952 pour une année quand la période
+  du texte s'ouvre le 1er juillet 1952, ce qui fait perdre ses 5 % au chef dont P, sur
+  20,5 années, va de 15,00 à 15,37. Cinq faibles : le renvoi du taux à la période de 1974
+  à 1985 ; l'unité du coût et son mécanisme, non dits ; docs/chiffrage_plf.csv périmé par
+  le changement ; la fiche absente de la sortie de veille_droit.py ; la borne de
+  l'arrondi de l'article 23.
+reste: >-
+  Au propriétaire : compter 1952 pour 0,5 dans P, ou en déclarer la bande d'effet ; la
+  source du taux de 8,5 % d'avant 2003, avec la loi n° 52-799, articles 19 à 21, et
+  l'arrêté du 23 juillet 1953 au fac-similé. À la session du coût : pourquoi la masse du
+  scénario 1 de la grille baisse cinq fois moins que celle du compte, à l'inverse du
+  témoin. Le détail : note 2026-11-03-relecture-cotisation-de-1952.md de l'action 131.
