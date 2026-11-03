@@ -11,7 +11,9 @@
 # cette limite n'est comptée que pour moitié. » L'indice 100 est le plus bas
 # de la hiérarchie générale : « Les indices minimum et maximum de la
 # hiérarchie générale sont respectivement égaux à 100 et à 800 » (décret
-# n° 48-1108 du 10 juillet 1948, article 1er, LEGIARTI000006561748).
+# n° 48-1108 du 10 juillet 1948, article 1er, LEGIARTI000006561748, rédaction
+# en vigueur jusqu'au 25 avril 2008 ; depuis le 1er juillet 2008, l'article 7
+# nomme lui-même « l'indice 100 ou l'indice brut 100 »).
 #
 # Ce traitement, l'article 7 du décret n° 85-1148 du 24 octobre 1985 le dit,
 # pour tous ces textes : « Pour l'application des dispositions législatives et
@@ -36,7 +38,17 @@
 # 1er juillet 2001 (n° 2001-559), du 1er juillet 2005 (n° 2005-726), lus dans
 # l'index JORF du dépôt. En mai et juin 2001, le premier alinéa dit encore
 # 164 : le décret n° 2001-370 ne le touche pas, et le n° 2001-559, qui y
-# remplace « l'indice majoré 169 », vise un mot qu'il ne porte pas.
+# remplace « l'indice majoré 169 », vise un mot qu'il ne porte pas. La date du
+# 7 février 1986 est celle de la base LEGI : le texte qui modifie l'article ce
+# jour-là n'est dans aucun index du dépôt.
+#
+# LA LETTRE DE L'ARTICLE 7, ET NON LE BARÈME A. Le barème A du décret
+# n° 82-1105 (`grilles/bareme/indices.csv`) donne l'indice majoré de l'indice
+# brut 100 : 152 dès le 1er janvier 1985, le décret n° 86-166 l'ayant remplacé
+# « à compter du 1er janvier 1985 », quand l'article 7 dit 150 jusqu'au
+# 7 février 1986 ; 169 en mai et juin 2001, quand l'article 7 dit 164. R. 11,
+# 3° vise le traitement de l'indice 100, que l'article 7 constitue : la série
+# suit l'article, et la fiche `marins_salaire_de_reference` déclare l'écart.
 #
 # AVANT LE 5 NOVEMBRE 1985, RIEN N'EST LU : les décrets de rémunération qui
 # précèdent (n° 68-566, n° 70-393, n° 74-652 et leurs modifications) ne sont,

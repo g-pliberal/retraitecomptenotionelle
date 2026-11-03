@@ -27,7 +27,9 @@ trouve: >-
   1er juillet 2008, « se référant au traitement de l'indice 100 ou de l'indice brut 100 »,
   201, 203 dès le 1er juillet 2009, 208 dès le 1er janvier 2024. Le plafond vaut donc
   8 × 208 × 59,0734 = 98 298,14 € en 2026, et non 47 258,72 € ; aucune catégorie ne l'a
-  atteint de 1985 à 2026, la vingtième restant sous 79 % de lui. La règle est écrite dans
+  atteint de 2008 à 2026, sur les grilles publiées, la vingtième restant sous 79 % de lui ;
+  de 1985 à 2007, sur la seule grille que le modèle estime (relecture R-M1 : les montants
+  réels de 1995 et de 2006 la montrent plus basse, de 14,5 % et de 2,2 %). La règle est écrite dans
   les deux moteurs, la série dans legislation/indice_100_fonction_publique.csv ; rien de
   ce que le modèle calcule de 1985 à 2026 ne bouge ; en projection, sous le point gardé à
   sa valeur de 2027, la vingtième catégorie passe le plafond en 2037. En mai et juin 2001,

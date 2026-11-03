@@ -156,3 +156,42 @@ la grille du modèle tant que le traitement de l'indice 100 valait au moins
 celui de l'indice majoré 103, et il valait celui de l'indice majoré 150 en
 1985. À savoir aussi : en projection, l'abattement mord dès 2037, sous le
 point gardé à sa valeur de 2027 ; c'est le droit constant.
+
+## Après la relecture R-M1, le même jour
+
+La relecture indépendante (`130/2026-11-03-relecture-abattement-des-marins.md`)
+juge conforme le point décisif — l'indice 100 de R. 11, 3° est l'indice brut 100
+de l'article 7 du décret n° 85-1148 —, et relève ce que cette note dit de trop :
+
+- **« Aucune catégorie de 1985 à 2026 »** n'est prouvé que de 2008 à 2026, sur
+  les grilles publiées. De 1985 à 2007, les arrêtés ne sont pas lus, et les
+  79 % ne valent que pour la grille que le modèle estime. Relus ici, les deux
+  seuls montants réels que l'index garde la montrent trop basse : la
+  13e catégorie du 1er janvier 1995, « 14 733,03 » F par mois (arrêté du
+  31 janvier 1995, JORFARTI000002373607), soit 14 733,03 × 12 / 6,55957 =
+  26 952,43 € par an, quand le modèle prend 23 530,15 € (le réel 14,5 % plus
+  haut) ; la 10e catégorie de 2006, « 25 243,83 » € (rectificatif du 21 janvier
+  2006, JORFARTI000001490715), quand le modèle prend 24 709,23 € (2,2 % plus
+  haut). Sur la grille du modèle, la vingtième reste sous 75,1 % du plafond de
+  1985 à 2007 (2005) : il faudrait une grille réelle plus haute d'un tiers pour
+  que le plafond morde. Très probable, non démontré : la fiche, le journal et le
+  témoin le disent désormais ainsi.
+- **Le paquet n'était pas dans le commit**, contre ce que dit « Ce que l'étape
+  laisse » : au rebasage, `pousser.sh` a gardé le `moteur/donnees.json` de
+  `main` (fichier `-merge`), qu'un autre envoi avait touché ; le paquet de
+  `main` porte la série depuis 144a622 (file M2). Les témoins, eux, sont passés.
+- **Le choix de la lettre de l'article 7 contre le barème A** (décembre 1985 à
+  février 1986 : 150 contre 152 ; mai et juin 2001 : 164 contre 169) est
+  déclaré dans la fiche, avec son effet (616,87 €, 644,63 € et 2 048,06 € de
+  plafond en moins, au point du modèle), et tenu par
+  `test_la_serie_ne_s_ecarte_du_bareme_a_que_la_ou_la_fiche_le_declare`.
+- **L'arrondi du barème B** : le traitement de l'indice majoré 208 y est de
+  12 287,27 € (JORFARTI000047749261, relu), et le plafond de 2026 de
+  98 298,16 €, quand le modèle prend 8 × 208 × 59,0734 = 98 298,14 € ; déclaré,
+  sans effet.
+- **La limite** est écrite dans `docs/limites/4-regimes-incomplets.md`, à la
+  ligne des marins ; la rédaction de 1948 citée dit sa fin, le 25 avril 2008.
+
+Ce que la relecture mesure en passant reste hors de cette étape : la grille
+estimée d'avant 2008 (le réel 14,5 % plus haut en 1995) est une approximation de la fiche, dont
+l'effet est désormais mesuré sur ces deux montants.

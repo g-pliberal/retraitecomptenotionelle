@@ -63,7 +63,7 @@ versions:
   - {id: LEGIARTI000006791988, article: "même code, R. 12", en_vigueur: 1968-03-31, publie_le: 1968-03-31}
   - {id: LEGIARTI000006791907, article: "même code, L. 14", en_vigueur: 1968-03-31, publie_le: 1968-03-31}
   - {id: LEGIARTI000006791949, article: "même code, L. 42", en_vigueur: 1968-03-31, publie_le: 1968-03-31}
-  - {id: LEGIARTI000006561748, article: "décret n° 48-1108 du 10 juillet 1948, article 1er : « Les indices minimum et maximum de la hiérarchie générale sont respectivement égaux à 100 et à 800 »", en_vigueur: 1948-07-11}
+  - {id: LEGIARTI000006561748, article: "décret n° 48-1108 du 10 juillet 1948, article 1er, rédaction en vigueur jusqu'au 25 avril 2008 : « Les indices minimum et maximum de la hiérarchie générale sont respectivement égaux à 100 et à 800 »", en_vigueur: 1948-07-11}
   - {id: LEGIARTI000006454537, article: "décret n° 85-1148 du 24 octobre 1985, article 7, rédaction d'origine : « Pour l'application des dispositions législatives et réglementaires se référant au traitement de l'indice 100 prévu par le décret du 10 juillet 1948 susvisé, ce traitement est constitué par le traitement afférent à l'indice majoré 150 (indice brut 100) »", en_vigueur: 1985-11-05}
   nee_de: LEGIARTI000006791987
   bornes:
@@ -201,17 +201,42 @@ approximations:
     (`grilles/bareme/indices.csv`) donne l'indice majoré 150 à l'indice brut 100 en 1983 et
     1984 — une lecture du barème, pas de l'article qui fixait le traitement de l'indice 100
 - version: [code_de_1968, contrats_simultanes]
-  textes: décret n° 85-1148, article 3 ; R. 11, 3°
+  textes: décret n° 85-1148, articles 3 et 5 ; R. 11, 3°
   ecart: >-
     le traitement de l'indice 100 se prend au point du 1er janvier de l'année
     (`legislation/point_indice_fonction_publique.csv`), et non au point du jour : un
     relèvement en cours d'année, comme celui du 1er juillet 2023, ne relève le plafond
     qu'au 1er janvier suivant ; au-delà de 2027, dernière valeur de la série, le point reste
-    le dernier connu, faute de décret qui le relève
+    le dernier connu, faute de décret qui le relève. Le traitement est l'indice fois le
+    point, sans l'arrondi au centime du barème B (article 5 : « Les traitements et soldes
+    annuels correspondant aux indices majorés figurent au barème B ») : 208 × 59,0734 =
+    12 287,2672 €, quand le barème B du décret n° 2023-519 (JORFARTI000047749261) écrit
+    12 287,27 € ; le plafond de 2026 vaut 98 298,14 € au lieu de 98 298,16 €
   effet: >-
-    nul de 1985 à 2026 : aucun forfait n'approche le plafond, la vingtième catégorie restant
-    sous 79 % de lui ; en projection, sous le point gardé et la grille portée par le salaire
-    moyen, la vingtième catégorie le passe en 2037
+    nul de 2008 à 2026, prouvé sur les grilles publiées, que le dépôt lit : aucun forfait
+    n'approche le plafond, la vingtième catégorie restant sous 79 % de lui ; de 1985 à 2007,
+    les arrêtés ne sont pas lus (approximation des arrêtés annuels, ci-dessous) : sur la
+    grille que le modèle estime, la vingtième catégorie reste sous 75,1 % du plafond (2005),
+    et il faudrait que la grille réelle fût plus haute d'un tiers pour qu'il morde — très
+    probable, non démontré ; le plafond du modèle est plus bas que celui du droit après un
+    relèvement du point en cours d'année. En projection, sous le point gardé et la grille
+    portée par le salaire moyen, la vingtième catégorie le passe en 2037
+- version: [code_de_1968, contrats_simultanes]
+  textes: décret n° 85-1148, article 7 ; décret n° 82-1105, barème A
+  ecart: >-
+    la série suit la lettre de l'article 7, que R. 11, 3° vise, et non le barème A du décret
+    n° 82-1105 que le dépôt tient (`grilles/bareme/indices.csv`), qui donne l'indice majoré
+    de l'indice brut 100 : de 152 dès le 1er janvier 1985, le décret n° 86-166 ayant remplacé
+    le barème « à compter du 1er janvier 1985 », quand l'article 7 dit 150 jusqu'au 7 février
+    1986 ; de 169 en mai et juin 2001, quand le premier alinéa de l'article 7, que le décret
+    n° 2001-370 ne touche pas (JORFARTI000002487322), dit encore 164. La date du 7 février
+    1986 est celle de la base LEGI : le texte qui modifie l'article 7 ce jour-là n'est dans
+    aucun index du dépôt
+  effet: >-
+    le plafond de la série est plus bas que celui du barème de 8 × 2 × 38,5544 = 616,87 € en
+    1985 et de 8 × 2 × 40,2892 = 644,63 € en 1986, de décembre 1985 à février 1986, et de
+    8 × 5 × 51,2015 = 2 048,06 € en mai et juin 2001, au point du modèle ; aucune catégorie
+    n'en approche
 - version: [loi_du_12_avril_1941, code_de_1968, contrats_simultanes]
   textes: R. 12
   ecart: >-
@@ -230,7 +255,14 @@ approximations:
     avant 2008, les montants des arrêtés ne sont pas lus (décrets de 1956 à 1961, arrêtés
     de 1991 à 2006 : visas et titres seuls dans l'index) : la grille de 2008 est ramenée
     par le salaire moyen, de fiabilité estimée
-  effet: non mesuré
+  effet: >-
+    mesuré sur les deux seuls montants que l'index garde, la grille estimée est trop basse :
+    la 13e catégorie du 1er janvier 1995, « 14 733,03 » F par mois (arrêté du 31 janvier
+    1995, JORFARTI000002373607), 26 952,43 € par an, quand le modèle prend 23 530,15 € — le
+    réel 14,5 % plus haut ; la 10e catégorie de 2006, « 25 243,83 » € (rectificatif du
+    21 janvier 2006, JORFARTI000001490715), quand le modèle prend 24 709,23 € — 2,2 % plus
+    haut ; ailleurs non mesuré, et la convention du forfait le plus proche du revenu en
+    amortit l'effet sur la pension
 effet: >-
   Le modèle prend la catégorie de la DERNIÈRE année, rangée par le revenu, et compte
   les services au trimestre ; la caisse prend la catégorie moyenne de trente-six
@@ -241,8 +273,10 @@ effet: >-
   traitement de l'indice 100, est appliqué depuis le 3 novembre 2026 : ce traitement est
   celui de l'indice brut 100, l'indice majoré 208 depuis 2024 (article 7 du décret
   n° 85-1148), et non de l'indice majoré 100 ; le plafond, 98 298,14 € en 2026, aucune
-  catégorie ne l'a atteint de 1985 à 2026, et rien de ce que le modèle calcule pour ces
-  années ne bouge ; en projection, la vingtième catégorie le passe en 2037.
+  catégorie ne l'a atteint de 2008 à 2026, sur les grilles publiées ; de 1985 à 2007, rien
+  de ce que le modèle calcule n'est abattu, mais sur une grille qu'il estime, et que les
+  montants de 1995 et de 2006 montrent trop basse ; en projection, la vingtième catégorie
+  le passe en 2037.
 sources:
   lu_le: 2026-11-03
   prochaine_relecture: 2027-11-03
@@ -323,7 +357,11 @@ historique:
   décret n° 85-1148 constitue de celui d'un indice majoré — 150 en 1985, 208 depuis 2024 —,
   et non de l'indice majoré 100, que l'approximation du 2 novembre avait pris sans source :
   le plafond vaut 98 298,14 € en 2026, et non 47 258,72 €. Aucune catégorie ne l'a atteint
-  de 1985 à 2026 ; avant le 5 novembre 1985, le traitement n'est pas lu, et déclaré.
+  de 2008 à 2026, sur les grilles publiées ; de 1985 à 2007, sur la seule grille que le
+  modèle estime ; avant le 5 novembre 1985, le traitement n'est pas lu, et déclaré. Après
+  la relecture R-M1 du même jour : l'affirmation restreinte ainsi, le choix de l'article 7
+  contre le barème A et l'arrondi du barème B déclarés, l'écart de la grille estimée
+  mesuré en 1995 et en 2006.
 code:
   moteur: >-
     La période des marins liquide le dernier salaire (`salaire_reference`) :

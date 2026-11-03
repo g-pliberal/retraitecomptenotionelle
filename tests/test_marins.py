@@ -225,6 +225,41 @@ def _indice_au(jour: str) -> int | None:
     return connus[-1] if connus else None
 
 
+#: Les mois où la série, qui suit la lettre de l'article 7, s'écarte du barème A
+#: du décret n° 82-1105 que le dépôt tient (`grilles/bareme/indices.csv`) pour
+#: l'indice brut 100 — mois : (série, barème). De décembre 1985 à février 1986,
+#: le barème que le décret n° 86-166 remplace « à compter du 1er janvier 1985 »
+#: donne déjà 152, quand l'article 7 dit 150 jusqu'au 7 février 1986 ; en mai et
+#: juin 2001, le barème donne 169, quand le premier alinéa de l'article 7, que le
+#: décret n° 2001-370 ne touche pas, dit encore 164.
+ECARTS_AU_BAREME_A = {
+    "1985-12-01": (150, 152), "1986-01-01": (150, 152), "1986-02-01": (150, 152),
+    "2001-05-01": (164, 169), "2001-06-01": (164, 169),
+}
+
+
+def test_la_serie_ne_s_ecarte_du_bareme_a_que_la_ou_la_fiche_le_declare():
+    """Au premier de chaque mois, de décembre 1985 à décembre 2026, l'indice de
+    la série est celui que le barème A donne à l'indice brut 100, sauf aux mois
+    de `ECARTS_AU_BAREME_A` ; et la fiche déclare ce choix de la lettre de
+    l'article 7 contre le barème."""
+    bareme = [(l["debut"], l["fin"] or "9999-12-31", int(l["indice_majore"]))
+              for l in _lignes("grilles/bareme/indices.csv") if l["indice_brut"] == "100"]
+    ecarts = {}
+    for annee in range(1985, 2027):
+        for mois in range(1, 13):
+            jour = f"{annee}-{mois:02d}-01"
+            if jour < "1985-12-01":
+                continue
+            lu = next(indice for debut, fin, indice in bareme if debut <= jour <= fin)
+            if _indice_au(jour) != lu:
+                ecarts[jour] = (_indice_au(jour), lu)
+    assert ecarts == ECARTS_AU_BAREME_A
+    fiche = carte.fiches()["marins_salaire_de_reference"]
+    assert any("barème A" in str(a.get("ecart")) and "2001-370" in str(a.get("ecart"))
+               for a in fiche.get("approximations") or [])
+
+
 def test_aucune_categorie_n_a_atteint_le_plafond_de_r_11_de_2008_a_2026():
     """R. 11, 3° : « Lorsque le salaire ainsi défini excède huit fois le montant
     du traitement brut correspondant à l'indice 100 dans la fonction publique,
