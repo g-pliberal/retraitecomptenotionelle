@@ -704,6 +704,50 @@ def test_un_calcul_ecrit_hors_du_modele_se_garde_sous_son_code(
     assert memoire_isolee._code_hors_du_modele(memoire_isolee.nom) == ()
 
 
+def test_une_moitie_python_se_garde_sous_le_paquet_que_le_pont_lit(
+        monkeypatch, memoire_isolee, tmp_path):
+    """La moitié Python d'une confrontation bâtit souvent ses carrières par le
+    pont ouvert, sur le paquet du dépôt (``moteur/donnees.json``), que
+    l'empreinte de la mémoire ne lit pas : ``moitie_python`` en porte
+    l'empreinte dans sa clé. Le paquet refait, elle se refait ; rendu tel
+    qu'il était, elle se relit ; récrit pendant son calcul, elle ne se garde
+    pas (feuille de route, action 135)."""
+    import outils_portage
+    from outils_portage import moitie_python
+
+    paquet = tmp_path / "donnees.json"
+    paquet.write_bytes(b'{"version": 1}')
+    monkeypatch.setattr(outils_portage, "PAQUET", paquet)
+    monkeypatch.setattr(memoire_isolee, "empreinte", lambda: "e1")
+    faits = []
+
+    def calcul(x):
+        faits.append(x)
+        return [x]
+
+    assert moitie_python(calcul, 1) == [1]
+    monkeypatch.setattr(memoire_isolee, "_EN_MEMOIRE", {})     # un autre processus
+    assert moitie_python(calcul, 1) == [1]
+    assert faits == [1]
+    paquet.write_bytes(b'{"version": 2}')                      # la fabrique le refait
+    moitie_python(calcul, 1)
+    assert faits == [1, 1]
+    paquet.write_bytes(b'{"version": 1}')                      # rendu tel qu'il était
+    moitie_python(calcul, 1)
+    assert faits == [1, 1]
+
+    def recrit(x):
+        paquet.write_bytes(b'{"version": 3}')                  # récrit pendant le calcul
+        faits.append(x)
+        return [x]
+
+    paquet.write_bytes(b'{"version": 1}')
+    assert moitie_python(recrit, 2) == [2]
+    paquet.write_bytes(b'{"version": 1}')
+    moitie_python(recrit, 2)
+    assert faits == [1, 1, 2, 2]
+
+
 def test_aucun_calcul_garde_ne_lit_ce_que_l_empreinte_ignore():
     """L'empreinte de la mémoire ignore ce qu'aucun calcul gardé ne lit
     (``memoire.HORS_DU_MODELE``) : deux simulations par statut, le coût agrégé

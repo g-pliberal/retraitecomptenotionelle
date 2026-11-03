@@ -1,0 +1,14 @@
+date: "2026-11-03"
+session: "action 135 : le paquet du dépôt dans la clé de moitie_python"
+consulte: >-
+  Aucune source de droit : la session ne touche à aucune règle du scénario 1,
+  seulement à la mémoire des calculs (memoire.py) et à l'outillage des tests
+  (tests/outils_portage.py, tests/test_outillage.py).
+trouve: >-
+  Aucune règle n'a changé. La moitié Python d'une confrontation porte dans sa
+  clé l'empreinte du paquet du dépôt, sur lequel le pont gardé ouvert lui bâtit
+  ses carrières : le paquet refait, elle se refait ; récrit pendant son calcul,
+  elle ne se garde pas.
+reste: >-
+  actions/cache sur GitHub, le modèle et l'effort des sessions, que le
+  propriétaire décide ; la part de l'éclaireur, à relever ; les leviers 4 et 5.

@@ -27,7 +27,11 @@ de ces fichiers bouge, et tout se refait ; un calcul pendant lequel l'un d'eux
 a bougé ne se garde pas. Un calcul écrit hors du modèle, dans un script ou un
 test, porte en plus dans sa clé son propre code et celui qu'il importe à côté
 de lui (:func:`_code_hors_du_modele`) : une retouche de ``scripts/`` ne refait
-que les calculs des scripts qu'elle touche. Il se relit d'abord du processus,
+que les calculs des scripts qu'elle touche. Un calcul qui lit un fichier hors
+des sources — la moitié Python d'une confrontation, le paquet du dépôt, sur
+lequel le pont gardé ouvert calcule (``tests/outils_portage.py``) — porte de
+même dans sa clé l'empreinte de son contenu (``fichiers_lus``), et ne se garde
+pas si l'un d'eux a bougé pendant qu'il se faisait. Il se relit d'abord du processus,
 puis de ``.cache/calculs/<empreinte>/``, que git ignore, dans le dépôt
 principal, que tous ses worktrees partagent (:func:`dossier_commun`) ; les
 seize empreintes les plus récentes y restent. Un calcul ne se fait
@@ -381,6 +385,21 @@ def _code_hors_du_modele(calcul) -> tuple | None:
     return tuple(sorted((_relatif(f), somme) for f, somme in vus.items()))
 
 
+def _empreintes_des_fichiers(fichiers) -> tuple[tuple[str, str], ...]:
+    """Chacun de ces fichiers, lus hors des sources, et l'empreinte de son
+    contenu, « - » s'il ne se lit pas : deux centièmes de seconde pour les six
+    mégaoctets du paquet du dépôt."""
+    empreintes = []
+    for fichier in fichiers:
+        fichier = Path(fichier).resolve()
+        try:
+            somme = hashlib.sha256(fichier.read_bytes()).hexdigest()[:16]
+        except OSError:
+            somme = "-"
+        empreintes.append((_relatif(fichier), somme))
+    return tuple(empreintes)
+
+
 def nom(cle: tuple) -> str:
     """Le nom de fichier d'une clé : son genre, lisible, et l'empreinte de sa
     représentation, qui doit être complète — des valeurs simples, des
@@ -422,15 +441,17 @@ def _garder(empreinte_: str | None, nom_: str, donnees: bytes) -> None:
         print(f"memoire : {nom_} non gardé ({souci})", file=sys.stderr)
 
 
-def memoriser(cle: tuple, calcul: Callable[[], T]) -> T:
+def memoriser(cle: tuple, calcul: Callable[[], T], fichiers_lus: tuple = ()) -> T:
     """``calcul()``, fait une fois : relu du processus, puis du disque, tant que
     les sources ne bougent pas.
 
     ``cle`` dit tout ce dont le calcul dépend hors des sources, en commençant
     par son genre (``("cout", parametres, …)``) ; deux calculs qui ne font pas
     la même chose ne partagent jamais une clé. Un calcul écrit hors du modèle y
-    ajoute son code (:func:`_code_hors_du_modele`). Un objet que pickle ne sait
-    pas écrire se rend sans se garder.
+    ajoute son code (:func:`_code_hors_du_modele`), et l'empreinte des
+    ``fichiers_lus`` hors des sources (:func:`_empreintes_des_fichiers`) : si
+    l'un d'eux bouge pendant le calcul, celui-ci se rend sans se garder. Un
+    objet que pickle ne sait pas écrire se rend de même.
     """
     code = _code_hors_du_modele(calcul) if _active() else None
     if code is None:
@@ -439,6 +460,9 @@ def memoriser(cle: tuple, calcul: Callable[[], T]) -> T:
         return calcul()
     if code:
         cle = (*cle, ("code", code))
+    lus = _empreintes_des_fichiers(fichiers_lus)
+    if lus:
+        cle = (*cle, ("fichiers_lus", lus))
     nom_ = nom(cle)
     if nom_ in _EN_MEMOIRE:
         return pickle.loads(_EN_MEMOIRE[nom_])
@@ -455,6 +479,8 @@ def memoriser(cle: tuple, calcul: Callable[[], T]) -> T:
             return objet
         with instantane():
             objet = calcul()
+        if _empreintes_des_fichiers(fichiers_lus) != lus:
+            return objet         # un fichier lu a bougé pendant le calcul
         try:
             donnees = pickle.dumps(objet, protocol=pickle.HIGHEST_PROTOCOL)
         except Exception:        # noqa: BLE001 — un objet qui ne s'écrit pas
