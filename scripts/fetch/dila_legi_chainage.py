@@ -60,8 +60,10 @@ l'IGN, nommés par « le décret du 20 janvier 1967 », rattachés aux
 géomètres-cadastreurs) ; le libellé du tableau, où l'aplatissement colle
 le grade d'origine et le grade d'accueil, se coupe en deux libellés de grades
 de ce corps (ou des corps qu'il absorbe), en vigueur la veille et le jour du
-reclassement, une seule coupe possible ; les échelons d'origine et d'accueil
-sont parmi ceux de leurs grilles. Ailleurs, les grilles ne sont qu'au LEGI,
+reclassement, une seule coupe possible ; chaque échelon d'origine et d'accueil
+est dans sa grille, à sa place et de sa nature (``rang_dans_la_grille`` : le
+spécial ou l'exceptionnel est l'exceptionnel de la grille, à son rang, que
+``rangs_grille`` écrit). Ailleurs, les grilles ne sont qu'au LEGI,
 dont les libellés ne se coupent pas sans deviner : déclaré.
 
 CE QU'IL ÉCRIT, sous ``data/reference/grilles/chainage/`` : ``durees.csv``,
@@ -425,8 +427,34 @@ class Depot:
     def rangs_noyau(self, grille: str, debut: str, fin: str) -> set[int]:
         return self._renumeroter(grille, lambda e: intersection(debut, fin, e["debut"], e["fin"]))
 
-    def rangs_noyau_au(self, grille: str, jour: str) -> set[int]:
-        return self._renumeroter(grille, lambda e: en_vigueur(e, jour))
+    def natures_noyau_au(self, grille: str, jour: str) -> list[str]:
+        """La nature de chaque échelon de la grille ce jour-là, dans l'ordre du
+        rang, élève, stagiaire et provisoires mis à part : la n-ième est celle
+        de l'échelon n (vide : ordinaire ; « exceptionnel »)."""
+        par_rang = {int(e["rang"]): e["nature"] for e in self.noyau_echelons[grille]
+                    if e["nature"] not in ("stagiaire", "eleve", "provisoire")
+                    and e["rang"] not in ("", "0") and en_vigueur(e, jour)}
+        return [par_rang[r] for r in sorted(par_rang)]
+
+
+#: Les échelons qu'un tableau de reclassement ne numérote pas : le lecteur les
+#: range au-dessus du plus haut échelon écrit de leur côté du tableau.
+NON_NUMEROTES = ("special", "exceptionnel")
+
+
+def rang_dans_la_grille(echelon: str, rang: int, natures: list[str]) -> int | None:
+    """Le rang, dans une grille du noyau (``Depot.natures_noyau_au``), de
+    l'échelon qu'un tableau écrit : un échelon numéroté garde son numéro, si la
+    grille l'a et qu'il n'y est pas l'exceptionnel ; le spécial ou l'exceptionnel
+    est l'unique échelon exceptionnel de la grille (le noyau n'a pas de nature
+    « spécial »), à son rang, non à celui que le lecteur lui donne : la colonne
+    d'accueil des majors de police (n° 2004-1439, art. 23-1) n'écrit pas le
+    4e échelon que la grille a (n° 2010-564, art. 5 ; relecture R-B3-bis).
+    None : l'échelon n'est pas dans la grille."""
+    if echelon in NON_NUMEROTES:
+        places = [i for i, nature in enumerate(natures, 1) if nature == "exceptionnel"]
+        return places[0] if len(places) == 1 else None
+    return rang if 1 <= rang <= len(natures) and natures[rang - 1] != "exceptionnel" else None
 
 
 # ---------------------------------------------------------------------------
@@ -802,14 +830,29 @@ def chainer_reclassements(depot: Depot) -> list[dict]:
                      + " ; ".join(f"{c[0]} → {c[3]}" for c in sorted(coupes)))
             continue
         ((go, grille_o, corps_o, ga, grille_a, corps_a),) = coupes
-        origine = {int(l["rang_origine"]) for l in lignes if l["rang_origine"] != "0"}
-        nouveau = {int(l["rang_nouveau"]) for l in lignes if l["rang_nouveau"] != "0"}
-        rangs_o = depot.rangs_noyau_au(grille_o, veille(jour))
-        rangs_a = depot.rangs_noyau_au(grille_a, jour)
-        if not origine <= rangs_o or not nouveau <= rangs_a:
-            declarer(f"les échelons ne sont pas ceux des grilles : origine {sorted(origine)} "
-                     f"contre {sorted(rangs_o)} ({grille_o}), accueil {sorted(nouveau)} contre "
-                     f"{sorted(rangs_a)} ({grille_a})")
+        # Chaque échelon du tableau, à sa place dans sa grille, par sa nature et
+        # non le seul nombre des rangs (relecture R-B3-bis, partie 1).
+        cotes = (("origine", "origine", "rang_origine", grille_o,
+                  depot.natures_noyau_au(grille_o, veille(jour))),
+                 ("accueil", "nouveau", "rang_nouveau", grille_a,
+                  depot.natures_noyau_au(grille_a, jour)))
+        absents, places = [], {}
+        for l in sorted(lignes, key=lambda l: int(l["ligne"])):
+            for cote, colonne, colonne_rang, grille, natures in cotes:
+                if l[colonne_rang] == "0":
+                    continue
+                place = rang_dans_la_grille(l[colonne], int(l[colonne_rang]), natures)
+                if place is None:
+                    n = natures.count("exceptionnel")
+                    absents.append(f"{cote} « {l[colonne]} » (rang {l[colonne_rang]}) : la grille "
+                                   f"{grille} a {len(natures)} échelons hors élève, stagiaire et "
+                                   "provisoires, " + (f"dont {n} exceptionnel" + "s" * (n > 1)
+                                                      if n else "aucun exceptionnel"))
+                elif l[colonne] in NON_NUMEROTES:
+                    places[(cote, l[colonne])] = place
+        if absents:
+            declarer("les échelons ne sont pas ceux des grilles : "
+                     + " ; ".join(dict.fromkeys(absents)))
             continue
         citations = []
         for c in dict.fromkeys((corps_o, corps_a)):
@@ -822,6 +865,9 @@ def chainer_reclassements(depot: Depot) -> list[dict]:
         sortie.append({**base, "statut": "rattache", "corps": corps_a,
                        "grade_origine": go, "grille_origine": grille_o,
                        "grade_accueil": ga, "grille_accueil": grille_a,
+                       "rangs_grille": " ; ".join(f"{cote} {nom} {place}" for (cote, nom), place
+                                                  in sorted(places.items(),
+                                                            key=lambda p: p[0][0] != "origine")),
                        "preuve": " ; ".join(citations) + f" ; grade {go} ({grille_o}) le "
                                  f"{veille(jour)}, {ga} ({grille_a}) le {jour}", "raison": ""})
     return sortie
@@ -908,7 +954,7 @@ COLONNES = {
                "raison"),
     "reclassements": ("texte", "article", "tableau", "groupe", "date", "date_lue", "statut",
                       "corps", "grade_origine", "grille_origine", "grade_accueil",
-                      "grille_accueil", "preuve", "raison"),
+                      "grille_accueil", "rangs_grille", "preuve", "raison"),
     "a_lire_au_jorf": ("versant", "texte", "numero", "titre", "cas", "articles", "detail"),
 }
 ENTETES = {
@@ -925,7 +971,12 @@ ENTETES = {
     "reclassements": "Chaque groupe de chaque tableau de reclassement (de reclassements/), "
                      "rattaché aux grilles d'origine et d'accueil du Noyau RH, ou déclaré. "
                      "date : celle du reclassement ; date_lue : effet (lue par le lecteur), "
-                     "phrase (la date qui ouvre la phrase) ; corps, grades et grilles du noyau.",
+                     "phrase (la date qui ouvre la phrase) ; corps, grades et grilles du noyau. "
+                     "rangs_grille : le rang, dans sa grille (élève, stagiaire et provisoires "
+                     "mis à part), de chaque échelon du groupe que le tableau ne numérote pas "
+                     "(« accueil exceptionnel 5 ») ; il l'emporte sur le rang de "
+                     "reclassements/lignes.csv, que le lecteur donne au-dessus du plus haut "
+                     "échelon écrit de son côté du tableau.",
     "a_lire_au_jorf": "Les textes dont un tableau de durées ou de reclassement est abîmé au "
                       "LEGI (cas abime : dessiné en caractères, en fiches, non reproduit, ou "
                       "perdu par la consolidation), ou dont le premier tableau de durées lu vaut "

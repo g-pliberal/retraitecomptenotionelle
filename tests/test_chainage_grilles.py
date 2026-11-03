@@ -363,6 +363,50 @@ def test_un_reclassement_de_l_etat_se_rattache_aux_grilles_du_noyau(reclassement
     assert (ligne["grade_accueil"], ligne["grille_accueil"]) == ("02780", "02783")
 
 
+def test_l_echelon_exceptionnel_se_range_a_sa_place_dans_la_grille():
+    # Relecture R-B3-bis, partie 1. Le noyau ordonne les échelons sans les
+    # numéroter ; le n-ième, élève, stagiaire et provisoires mis à part, est
+    # l'échelon n. Un échelon numéroté garde son numéro, s'il n'est pas
+    # l'exceptionnel de la grille ; le spécial ou l'exceptionnel du tableau est
+    # l'unique échelon exceptionnel de la grille (le noyau n'a pas de nature
+    # « spécial »), à son rang, quel que soit celui que le lecteur lui donne.
+    # Grille 02777 le 2011-07-01 : 581, 598, 616, 620, puis 631 exceptionnel.
+    natures = ["", "", "", "", "exceptionnel"]
+    place = chainage.rang_dans_la_grille
+    assert place("exceptionnel", 4, natures) == 5
+    assert place("special", 4, natures) == 5
+    assert place("4", 4, natures) == 4
+    assert place("5", 5, natures) is None
+    assert place("6", 6, natures) is None
+    assert place("exceptionnel", 4, ["", "", ""]) is None
+    assert place("exceptionnel", 2, ["", "exceptionnel", "exceptionnel"]) is None
+
+
+def test_l_echelon_exceptionnel_des_majors_de_police_est_le_cinquieme_a_l_accueil(
+        reclassements):
+    # Relecture R-B3-bis, partie 1. Décret n° 2004-1439, art. 23-1
+    # (LEGIARTI000023734900) : « Major de police Major de police Echelon
+    # exceptionnel Echelon exceptionnel Ancienneté acquise 3e échelon 3e échelon
+    # […] » ; la colonne d'accueil n'écrit pas de 4e échelon, et le lecteur des
+    # reclassements range l'exceptionnel au-dessus du plus haut écrit, au 4.
+    # Décret n° 2010-564, art. 5, la veille (LEGIARTI000023402803, du 2011-01-01
+    # au 2011-07-01) : « Major de police Echelon exceptionnel (1) 3e échelon
+    # 2e échelon 1er échelon 630 615 597 579 » : l'exceptionnel est le 4e ; le
+    # jour (LEGIARTI000023750120, du 2011-07-01 au 2012-01-01) : « Major de police
+    # Echelon exceptionnel (1) 4e échelon 3e échelon 2e échelon 1er échelon
+    # 631 620 616 598 581 » : il est le 5e, le 4e est l'indice brut 620. Pour les
+    # gardiens de la paix, la veille : « Gardien de la paix Exceptionnel (4)
+    # 11e échelon […] 1er échelon » : l'exceptionnel est le 12e.
+    par_groupe = {r["groupe"]: r for r in reclassements
+                  if r["article"] == "LEGIARTI000023734900"}
+    majors = par_groupe["Major de police Major de police"]
+    assert majors["statut"] == "rattache"
+    assert majors["rangs_grille"] == "origine exceptionnel 4 ; accueil exceptionnel 5"
+    assert par_groupe["Gardien de la paix Gardien de la paix"]["rangs_grille"] == (
+        "origine exceptionnel 12")
+    assert par_groupe["Brigadier-chef de police Brigadier-chef de police"]["rangs_grille"] == ""
+
+
 #: Les visas du décret n° 2016-581 (LEGITEXT000032523056) qui portent un statut
 #: de géomètres, lus dans l'index LEGI du dépôt (incrément 20261102-213929).
 VISAS_2016_581 = [
