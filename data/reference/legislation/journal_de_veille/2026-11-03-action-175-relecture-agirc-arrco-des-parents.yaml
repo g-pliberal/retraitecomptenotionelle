@@ -1,0 +1,40 @@
+date: "2026-11-03"
+session: "action 175, file R-M3b : relecture indépendante de l'Agirc-Arrco des parents de trois enfants nés de juillet 1951 à 1955 (commit 16663e5, file M3)"
+consulte: >-
+  python scripts/veille_droit.py ; docs/veille_droit.md ; la base de la Cnav, rien de neuf.
+  L'index LEGI de la DILA, récupéré dans la session (à jour au 2 novembre 2026) : la loi
+  n° 2010-1330, article 20 (LEGIARTI000023023835) et son nota de l'article 118, II ; L.
+  351-8 dans sa rédaction du 1er juillet 2011 (LEGIARTI000023030950). Hors du Journal
+  officiel, téléchargés le jour, d'empreintes identiques à celles des fiches : le recueil
+  des accords de l'Agirc-Arrco (sha256 0186b6b1…), accords du 9 février 1994, article 2,
+  du 18 mars 2011, articles 1er et 3, et du 30 octobre 2015, article 12 ; la convention du
+  14 mars 1947 et l'accord du 8 décembre 1961, mis à jour au 1er janvier 2018 (sha256
+  38966c27…, 5af24910…), annexe I, article 6, annexe V, annexe A, article 18, annexe E ;
+  l'accord du 17 novembre 2017 applicable au 1er janvier 2019 (sha256 b8af8df7…), articles
+  84, 98, 102 et 109 ; la circulaire Agirc-Arrco 2020-02-DRJ (sha256 52477988…), fiches 3,
+  4 et 6 ; le guide des salariés n° 9 de mars 2017 (sha256 9dfcdaf5…) ; le document n° 7
+  du COR du 25 mai 2011 (sha256 952c1af1…) ; la circulaire 2025-15-DT (sha256 2e34ce29…).
+  Le site reglementation.agirc-arrco.fr, dont le certificat ne se vérifie toujours pas.
+trouve: >-
+  La règle est conforme : chaque condition (génération, trois enfants, interruption, taux
+  plein du régime général à 65 ans) et chaque borne (1er juillet 2011 au 31 décembre 2018,
+  puis depuis 2019) sont dans les textes ; chaque citation est exacte ; chaque valeur des
+  tests se refait au centime (0,95, 0,93, 0,92, 0,91, 0,96, 0,979101) ; les deux moteurs
+  la rendent, tests verts, sous PRESOMPTIONS_DECALEES=1 aussi ; le paquet se refait à
+  l'octet. Un écart moyen : la circulaire 2020-02-DRJ, fiche 6, I.1.2.2, 1., tranche ce que
+  la fiche majoration_enfants_agirc_arrco dit non tranché — « Les majorations sont
+  calculées sur les droits de base du participant décédé, sans tenir compte d'un éventuel
+  coefficient d'anticipation dont les droits directs ont pu être affectés » ; le modèle
+  reverse depuis 2019 la majoration d'une pension de l'Agirc de 2012 à 2018 coefficient
+  compris. Six faibles : l'article 102 ne dit pas que la tranche C d'avant 2016 garde son
+  coefficient (l'annexe I, article 6, § 3 a, et la circulaire, fiche 4, III.1, le disent) ;
+  cinq témoins sont parents de trois enfants nés en 1954 ou 1955, tous fonctionnaires sans
+  Agirc-Arrco ; l'effet en euros ne compte que la ligne de l'Arrco (273,40 € en 2020, non
+  257,15) ; « 5 à 8 % » pour 8,70 % ; deux pages (149, non 148 ; 16, non 15) ; l'Arrco des
+  cultes exclu du seul motif nouveau.
+reste: >-
+  À la file du modèle : citer la fiche 6 de la circulaire 2020-02-DRJ à la fiche
+  majoration_enfants_agirc_arrco et servir la majoration reversée sans le coefficient pour
+  un décès depuis 2019, le test d'abord ; reprendre les six remarques faibles (note
+  2026-11-03-relecture-agirc-arrco-des-parents-de-trois-enfants.md de l'action 175). Le
+  point non tranché de l'âge avant 65 ans reste à faire trancher par la caisse.
