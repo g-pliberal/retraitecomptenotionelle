@@ -639,6 +639,12 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         **{f"grilles_etat_{colonne}": "grilles/etat/echelons.csv"
            for colonne in ("rang", "indice", "duree_min", "duree_moy", "duree_max")},
         "grilles_etat_indice_majore": "grilles/etat/indices.csv",
+        # Celles de la territoriale et de l'hospitalière, lues au LEGI : le rang
+        # et l'indice des mêmes échelons, et ceux dont la colonne est présumée,
+        # au niveau `estimee` (action 158, étape 2).
+        **{f"grilles_{versant}_{serie}": f"grilles/{versant}/echelons.csv"
+           for versant in ("territoriale", "hospitaliere")
+           for serie in ("rang", "indice", "rang_presume", "indice_presume")},
         "quotients_mortalite": "mortalite/quotients_periode.csv",
         "quotients_mortalite_anciens": "mortalite/quotients_periode.csv",
         # Les quotients que l'INSEE projette, que le modèle lit au lieu de sa

@@ -738,3 +738,58 @@ def test_l_extraction_ecrit_les_textes_les_grilles_les_echelons_et_les_refus(ind
     with (tmp_path / "grilles" / "territoriale" / "echelons.csv").open(encoding="utf-8") as flux:
         entete = [l for l in flux if l.startswith("#")]
     assert any("source_id: dila_legi_grilles" in l for l in entete)
+
+
+def _lire_csv(chemin: Path) -> list[dict[str, str]]:
+    with chemin.open(encoding="utf-8") as flux:
+        return list(csv.DictReader(l for l in flux if not l.lstrip().startswith("#")))
+
+
+def _charger_verifier():
+    chemin = RACINE / "scripts" / "verifier_donnees.py"
+    specification = importlib.util.spec_from_file_location("verifier_donnees", chemin)
+    module = importlib.util.module_from_spec(specification)
+    sys.modules["verifier_donnees"] = module
+    specification.loader.exec_module(module)
+    return module
+
+
+def test_verifier_donnees_certifie_le_rang_et_l_indice_des_echelons(index, tmp_path, monkeypatch):
+    """La certification relit le fichier brut du récupérateur : le rang et
+    l'indice de chaque période lue passent ``certifiee``, ceux d'une période
+    dont la colonne est présumée ``estimee`` ; aucune ligne ne bouge."""
+    import dataclasses
+    import json
+
+    verifier = _charger_verifier()
+    monkeypatch.setattr(verifier, "BRUT", tmp_path)
+    extrait = grilles.extraire(index)
+    # Une période présumée, pour que les quatre séries aient à dire.
+    presumee = dict(extrait["territoriale"]["echelons"][0], lecture="presumee",
+                    debut="2016-01-01", fin="2016-12-31")
+    extrait["territoriale"]["echelons"].append(presumee)
+    (tmp_path / "dila_legi_grilles.json").write_text(
+        json.dumps(grilles.brut(extrait, source="essai")), encoding="utf-8")
+    dossier = tmp_path / "grilles"
+    grilles.ecrire_reference(extrait, dossier)
+    chemin = dossier / "territoriale" / "echelons.csv"
+    ordre = [grilles._cle_echelon(l) for l in _lire_csv(chemin)]
+
+    certifications = [c for c in verifier.CERTIFICATIONS
+                      if c.nom.startswith(("grilles_territoriale_", "grilles_hospitaliere_"))]
+    assert sorted(c.nom for c in certifications) == sorted(
+        f"grilles_{versant}_{serie}" for versant in ("territoriale", "hospitaliere")
+        for serie in ("rang", "indice", "rang_presume", "indice_presume"))
+    for certification in certifications:
+        versant = certification.chemin.parent.name
+        assert certification.chemin == RACINE / "data" / "reference" / "grilles" / versant / \
+            "echelons.csv"
+        messages, trace = dataclasses.replace(
+            certification, chemin=dossier / versant / "echelons.csv").confronter(appliquer=True)
+        assert messages[0].startswith(("OK", "RIEN")), messages
+        if trace:
+            assert trace["corrigees"] == trace["ajoutees"] == 0, messages
+    certifie = _lire_csv(chemin)
+    assert {(l["lecture"], l["fiabilite"]) for l in certifie} == {
+        ("", "certifiee"), ("presumee", "estimee")}
+    assert [grilles._cle_echelon(l) for l in certifie] == ordre

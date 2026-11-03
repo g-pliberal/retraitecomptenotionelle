@@ -859,6 +859,94 @@
    "valeurs": 33169,
    "verifiee_le": "2026-11-02"
   },
+  "grilles_hospitaliere_indice": {
+   "ajoutees": 0,
+   "colonne": "indice",
+   "corrigees": 0,
+   "empreinte": "8543350bd1b094fc",
+   "identiques": 3025,
+   "niveau": "certifiee",
+   "source": "DILA, base LEGI, textes d'échelonnement indiciaire, par l'index du dépôt",
+   "valeurs": 3025,
+   "verifiee_le": "2026-11-03"
+  },
+  "grilles_hospitaliere_indice_presume": {
+   "ajoutees": 0,
+   "colonne": "indice",
+   "corrigees": 0,
+   "empreinte": "c99bc43326b6fb12",
+   "identiques": 8,
+   "niveau": "estimee",
+   "source": "DILA, base LEGI, textes d'échelonnement indiciaire, par l'index du dépôt",
+   "valeurs": 8,
+   "verifiee_le": "2026-11-03"
+  },
+  "grilles_hospitaliere_rang": {
+   "ajoutees": 0,
+   "colonne": "rang",
+   "corrigees": 0,
+   "empreinte": "8aed3807fa95913a",
+   "identiques": 3069,
+   "niveau": "certifiee",
+   "source": "DILA, base LEGI, textes d'échelonnement indiciaire, par l'index du dépôt",
+   "valeurs": 3069,
+   "verifiee_le": "2026-11-03"
+  },
+  "grilles_hospitaliere_rang_presume": {
+   "ajoutees": 0,
+   "colonne": "rang",
+   "corrigees": 0,
+   "empreinte": "e0126ffab023fabb",
+   "identiques": 8,
+   "niveau": "estimee",
+   "source": "DILA, base LEGI, textes d'échelonnement indiciaire, par l'index du dépôt",
+   "valeurs": 8,
+   "verifiee_le": "2026-11-03"
+  },
+  "grilles_territoriale_indice": {
+   "ajoutees": 0,
+   "colonne": "indice",
+   "corrigees": 0,
+   "empreinte": "c76529fa15196358",
+   "identiques": 4493,
+   "niveau": "certifiee",
+   "source": "DILA, base LEGI, textes d'échelonnement indiciaire, par l'index du dépôt",
+   "valeurs": 4493,
+   "verifiee_le": "2026-11-03"
+  },
+  "grilles_territoriale_indice_presume": {
+   "ajoutees": 0,
+   "colonne": "indice",
+   "corrigees": 0,
+   "empreinte": "24ca0ac3874dd2b0",
+   "identiques": 1,
+   "niveau": "estimee",
+   "source": "DILA, base LEGI, textes d'échelonnement indiciaire, par l'index du dépôt",
+   "valeurs": 1,
+   "verifiee_le": "2026-11-03"
+  },
+  "grilles_territoriale_rang": {
+   "ajoutees": 0,
+   "colonne": "rang",
+   "corrigees": 0,
+   "empreinte": "eba961d3d658f016",
+   "identiques": 4557,
+   "niveau": "certifiee",
+   "source": "DILA, base LEGI, textes d'échelonnement indiciaire, par l'index du dépôt",
+   "valeurs": 4557,
+   "verifiee_le": "2026-11-03"
+  },
+  "grilles_territoriale_rang_presume": {
+   "ajoutees": 0,
+   "colonne": "rang",
+   "corrigees": 0,
+   "empreinte": "c4de6bbd7bf169ff",
+   "identiques": 1,
+   "niveau": "estimee",
+   "source": "DILA, base LEGI, textes d'échelonnement indiciaire, par l'index du dépôt",
+   "valeurs": 1,
+   "verifiee_le": "2026-11-03"
+  },
   "heures_salariees": {
    "ajoutees": 200,
    "colonne": "heures",
