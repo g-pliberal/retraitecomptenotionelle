@@ -355,6 +355,67 @@ def test_une_condition_de_grade_n_est_pas_une_duree():
     assert {l.groupe for l in tableau.lignes} == {"Lieutenant-colonel Echelle de solde n° 2"}
 
 
+#: Décret n° 72-583 du 4 juillet 1972, statut particulier des adjoints
+#: d'enseignement, article 6, en vigueur depuis le 29 octobre 2021
+#: (LEGIARTI000044268513), en entier : le tableau, complet, est suivi d'un « II.- »
+#: en phrases qui nomme le 6e et le 8e échelon.
+ADJOINTS_D_ENSEIGNEMENT = (
+    "I.-La durée du temps passé dans chacun des échelons du corps des adjoints d'enseignement"
+    " est fixée, sous réserve des dispositions du II, ainsi qu'il suit : ÉCHELON DURÉE 11e "
+    "échelon - 10e échelon 4 ans 6 mois 9e échelon 3 ans 6 mois 8e échelon 3 ans 6 mois 7e "
+    "échelon 3 ans 6e échelon 3 ans 5e échelon 3 ans 4e échelon 2 ans 3e échelon 1 an 2e "
+    "échelon 1 an 1er échelon 1 an II.-Les anciennetés détenues dans les 6e et 8e échelons de"
+    " la classe normale peuvent être bonifiées de 9 mois. Le recteur d'académie établit, pour"
+    " chaque année scolaire, d'une part, la liste des adjoints d'enseignement qui sont dans "
+    "la deuxième année du 6e échelon de la classe normale et, d'autre part, la liste des "
+    "adjoints d'enseignement qui justifient d'une ancienneté dans le 8e échelon de la classe "
+    "normale comprise en 18 et 30 mois. Le recteur d'académie attribue les bonifications "
+    "d'ancienneté à hauteur de 30 % de l'effectif des adjoints d'enseignement inscrits sur "
+    "chacune de ces deux listes. Pour chaque liste, lorsque le nombre de bonifications "
+    "attribuées n'est pas un entier, la décimale est ajoutée au nombre calculé au titre de "
+    "l'année suivante. Le nombre de bonifications attribuées au cours de ces deux années ne "
+    "peut dépasser 30 % de l'effectif des adjoints d'enseignement inscrits sur la liste au "
+    "cours de cette même période."
+)
+
+
+#: Décret n° 72-580 du 4 juillet 1972, statut particulier des professeurs agrégés,
+#: article 13, du 29 octobre 2021 au 2 septembre 2024 (LEGIARTI000044268441),
+#: jusqu'à la deuxième phrase du II : une phrase, puis le « II.- ».
+AGREGES = (
+    "I.-La durée du temps passé dans chacun des échelons des grades du corps des professeurs "
+    "agrégés est fixée, sous réserve des dispositions du II, ainsi qu'il suit : GRADES "
+    "ÉCHELONS DURÉE Agrégé de classe exceptionnelle 3e échelon - 2e échelon 3 ans 1er échelon"
+    " 2 ans 6 mois Agrégé hors classe 4e échelon - 3e échelon 3 ans 2e échelon 2 ans 1er "
+    "échelon 2 ans Agrégé de classe normale 11e échelon ― 10e échelon 4 ans 9e échelon 4 ans "
+    "8e échelon 3 ans 6 mois 7e échelon 3 ans 6e échelon 3 ans 5e échelon 2 ans 6 mois 4e "
+    "échelon 2 ans 3e échelon 2 ans 2e échelon 1 an 1er échelon 1 an Le ministre prononce les"
+    " promotions des professeurs agrégés. II.-Les anciennetés détenues dans les 6e et 8e "
+    "échelons de la classe normale peuvent être bonifiées d'un an. Le ministre établit pour "
+    "chaque année scolaire, dans chaque discipline, d'une part, la liste des professeurs "
+    "agrégés qui sont dans la deuxième année du 6e échelon de la classe normale, d'autre "
+    "part, la liste des professeurs agrégés qui justifient d'une ancienneté dans le 8e "
+    "échelon de la classe normale comprise entre 18 et 30 mois."
+)
+
+
+def test_le_tableau_s_arrete_au_paragraphe_qui_le_suit():
+    tableau = _un_tableau(ADJOINTS_D_ENSEIGNEMENT)
+    assert not tableau.refus
+    durees = _durees(tableau, "duree")
+    assert [durees[("", str(e))] for e in range(11, 0, -1)] == [
+        None, 54, 42, 42, 36, 36, 36, 24, 12, 12, 12]
+    tableau = _un_tableau(AGREGES)
+    assert not tableau.refus
+    durees = _durees(tableau, "duree")
+    assert len(tableau.lignes) == 3 + 4 + 11
+    assert [durees[("Agrégé de classe exceptionnelle", str(e))] for e in (3, 2, 1)] == [
+        None, 36, 30]
+    assert [durees[("Agrégé hors classe", str(e))] for e in (4, 3, 2, 1)] == [None, 36, 24, 24]
+    assert [durees[("Agrégé de classe normale", str(e))] for e in range(11, 0, -1)] == [
+        None, 48, 48, 42, 36, 36, 30, 24, 24, 12, 12]
+
+
 # ---------------------------------------------------------------------------
 # Les fichiers du dépôt, recoupés aux articles du LEGI lus à la main
 # ---------------------------------------------------------------------------

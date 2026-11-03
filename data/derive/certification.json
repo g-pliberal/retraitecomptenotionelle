@@ -632,11 +632,11 @@
    "ajoutees": 0,
    "colonne": "duree",
    "corrigees": 0,
-   "empreinte": "57f0ed1d3b2ce0c2",
-   "identiques": 8354,
+   "empreinte": "931d5fc69aa1483c",
+   "identiques": 8587,
    "niveau": "certifiee",
    "source": "DILA, base LEGI, tableaux de durées d'échelon des statuts, par l'index du dépôt",
-   "valeurs": 8354,
+   "valeurs": 8587,
    "verifiee_le": "2026-11-03"
   },
   "durees_echelon_duree_maximale": {
@@ -676,11 +676,11 @@
    "ajoutees": 0,
    "colonne": "rang",
    "corrigees": 0,
-   "empreinte": "9e30ecc3c1dc70a9",
-   "identiques": 14167,
+   "empreinte": "42cf0437200bf331",
+   "identiques": 14435,
    "niveau": "certifiee",
    "source": "DILA, base LEGI, tableaux de durées d'échelon des statuts, par l'index du dépôt",
-   "valeurs": 14167,
+   "valeurs": 14435,
    "verifiee_le": "2026-11-03"
   },
   "durees_validees_actifs": {

@@ -165,7 +165,6 @@ LEGITEXT000005622215,LEGIARTI000006483371,11,,2000-09-01,2013-12-20,durées renv
 LEGITEXT000005622215,LEGIARTI000006483386,17,,1996-12-11,2000-09-01,durées écrites en phrases
 LEGITEXT000005622215,LEGIARTI000006483387,17,,2000-09-01,2007-05-03,durées écrites en phrases
 LEGITEXT000005622310,LEGIARTI000006483070,14,1,1995-01-01,2017-09-01,durées écrites d'un échelon au suivant ou à l'accès d'un échelon : elles se liraient décalées d'un échelon
-LEGITEXT000005622310,LEGIARTI000042571613,14,1,2017-09-01,2021-01-01,un échelon manque dans « II.-Les anciennetés détenues dans les »
 LEGITEXT000005622310,LEGIARTI000042571828,14,1,2021-01-01,,un échelon manque dans « Professeur technique hors classe »
 LEGITEXT000005622310,LEGIARTI000006483071,15,1,1995-01-01,1996-08-01,un libellé porte une durée ou un échelon : « 2 ans 6 mois Du 2e au »
 LEGITEXT000005622310,LEGIARTI000006483071,15,2,1995-01-01,1996-08-01,un libellé porte une durée ou un échelon : « 2 ans 6 mois Du 3e au »
@@ -590,20 +589,12 @@ LEGITEXT000006061896,LEGIARTI000006564139,10,,1972-12-27,,durées écrites en ph
 LEGITEXT000006061938,LEGIARTI000006508207,20,1,1993-08-01,,"une durée hors de sa ligne, après « DUREE : Moyenne »"
 LEGITEXT000006061938,LEGIARTI000006508209,22,,1972-05-10,,durées écrites en phrases
 LEGITEXT000006061958,LEGIARTI000006510222,11,1,1999-02-20,1999-11-17,un libellé porte une durée ou un échelon : « Un an pour les quatre premiers échelons de la 2e c »
-LEGITEXT000006061961,LEGIARTI000034779104,13,1,2017-09-01,2019-06-17,un échelon manque dans « Le ministre prononce les promotions des professeurs agrégés. »
-LEGITEXT000006061961,LEGIARTI000038669076,13,1,2019-06-17,2021-10-29,un échelon manque dans « Le ministre prononce les promotions des professeurs agrégés. »
-LEGITEXT000006061961,LEGIARTI000044268441,13,1,2021-10-29,2024-09-02,un échelon manque dans « Le ministre prononce les promotions des professeurs agrégés. »
-LEGITEXT000006061961,LEGIARTI000049918898,13,1,2024-09-02,,un échelon manque dans « L'autorité compétente prononce les promotions des professeur »
 LEGITEXT000006061962,LEGIARTI000006453856,32,1,1992-09-01,2012-05-09,durées écrites d'un échelon au suivant ou à l'accès d'un échelon : elles se liraient décalées d'un échelon
 LEGITEXT000006061962,LEGIARTI000026329351,32,1,2012-08-30,2017-09-01,durées écrites d'un échelon au suivant ou à l'accès d'un échelon : elles se liraient décalées d'un échelon
 LEGITEXT000006061963,LEGIARTI000006510729,11,1,1972-07-07,2021-10-29,durées écrites d'un échelon au suivant ou à l'accès d'un échelon : elles se liraient décalées d'un échelon
 LEGITEXT000006061963,LEGIARTI000044268495,11,1,2021-10-29,,durées écrites d'un échelon au suivant ou à l'accès d'un échelon : elles se liraient décalées d'un échelon
 LEGITEXT000006061964,LEGIARTI000006436045,6,1,1972-07-07,2012-05-09,durées écrites d'un échelon au suivant ou à l'accès d'un échelon : elles se liraient décalées d'un échelon
 LEGITEXT000006061964,LEGIARTI000026329376,6,1,2012-08-30,2017-09-01,durées écrites d'un échelon au suivant ou à l'accès d'un échelon : elles se liraient décalées d'un échelon
-LEGITEXT000006061964,LEGIARTI000034779361,6,1,2017-09-01,2019-06-17,un échelon manque dans « II.-Les anciennetés détenues dans les »
-LEGITEXT000006061964,LEGIARTI000038669106,6,1,2019-06-17,2020-01-01,un échelon manque dans « II.-Les anciennetés détenues dans les »
-LEGITEXT000006061964,LEGIARTI000041436438,6,1,2020-01-01,2021-10-29,un échelon manque dans « II.-Les anciennetés détenues dans les »
-LEGITEXT000006061964,LEGIARTI000044268513,6,1,2021-10-29,,un échelon manque dans « II.-Les anciennetés détenues dans les »
 LEGITEXT000006061979,LEGIARTI000006454974,14 bis,,1977-09-02,1993-08-01,durées écrites en phrases
 LEGITEXT000006061979,LEGIARTI000006454964,9,,1977-09-02,1990-01-01,durées écrites en phrases
 LEGITEXT000006061979,LEGIARTI000006454965,9,,1990-01-01,1993-08-01,durées écrites en phrases
@@ -1075,10 +1066,6 @@ LEGITEXT000006068000,LEGIARTI000006699168,21,8,1994-01-01,2002-01-01,un libellé
 LEGITEXT000006068000,LEGIARTI000006699168,21,9,1994-01-01,2002-01-01,un libellé porte une durée ou un échelon : « 2 ans »
 LEGITEXT000006070951,LEGIARTI000006456279,40,,1988-04-28,2006-01-07,durées écrites en phrases
 LEGITEXT000006071349,LEGIARTI000006563361,2,,1994-08-01,2005-05-31,durées écrites en phrases
-LEGITEXT000006075308,LEGIARTI000034798803,18,1,2017-09-01,2021-01-01,une phrase coupe le tableau
-LEGITEXT000006075308,LEGIARTI000034809942,18,1,2021-01-01,2021-10-29,une phrase coupe le tableau
-LEGITEXT000006075308,LEGIARTI000044270202,18,1,2021-10-29,2023-09-01,une phrase coupe le tableau
-LEGITEXT000006075308,LEGIARTI000048031531,18,1,2023-09-01,,une phrase coupe le tableau
 LEGITEXT000006075308,LEGIARTI000006457983,19,1,1989-09-01,1996-09-01,durées écrites d'un échelon au suivant ou à l'accès d'un échelon : elles se liraient décalées d'un échelon
 LEGITEXT000006075308,LEGIARTI000006457983,19,2,1989-09-01,1996-09-01,un libellé porte une durée ou un échelon : « 2 ans 6 mois Du 2erau »
 LEGITEXT000006075308,LEGIARTI000006457984,19,1,1996-09-01,2003-12-31,tableau dessiné en caractères
@@ -1112,13 +1099,6 @@ LEGITEXT000006075829,LEGIARTI000006458440,12,1,1990-01-01,2002-04-28,une durée 
 LEGITEXT000006075852,LEGIARTI000006458529,23,1,2007-08-22,2013-09-01,"une durée hors de sa ligne, après « de stage »"
 LEGITEXT000006075857,LEGIARTI000006458562,5,,1990-01-01,2013-09-01,durées écrites en phrases
 LEGITEXT000006076091,LEGIARTI000006458817,42 bis,,2001-10-01,2004-01-01,durées renvoyées à un autre texte
-LEGITEXT000006076298,LEGIARTI000034947965,24,1,2017-09-01,2019-06-17,"un échelon manque dans « Le recteur prononce, pour chaque année scolaire, les promoti »"
-LEGITEXT000006076298,LEGIARTI000038669173,24,1,2019-06-17,2020-01-01,"un échelon manque dans « Le recteur prononce, pour chaque année scolaire, les promoti »"
-LEGITEXT000006076298,LEGIARTI000041436265,24,1,2020-01-01,2021-01-01,"un échelon manque dans « Le recteur d'académie prononce, pour chaque année scolaire,  »"
-LEGITEXT000006076298,LEGIARTI000034948501,24,1,2021-01-01,2021-10-29,"un échelon manque dans « Le recteur d'académie prononce, pour chaque année scolaire,  »"
-LEGITEXT000006076298,LEGIARTI000044268708,24,1,2021-10-29,2023-08-06,"un échelon manque dans « Le recteur d'académie prononce, pour chaque année scolaire,  »"
-LEGITEXT000006076298,LEGIARTI000047941733,24,1,2023-08-06,2023-08-16,"un échelon manque dans « Le recteur d'académie prononce, pour chaque année scolaire,  »"
-LEGITEXT000006076298,LEGIARTI000047971090,24,1,2023-08-16,,"un échelon manque dans « Le recteur d'académie prononce, pour chaque année scolaire,  »"
 LEGITEXT000006076328,LEGIARTI000006459421,16,1,1990-08-01,2008-01-01,une durée minimale au-dessus d'une autre au 5e échelon
 LEGITEXT000006076330,LEGIARTI000006459491,12,1,2005-10-01,2008-01-01,l'en-tête n'a qu'une colonne quand la phrase nomme les durées minimale et moyenne
 LEGITEXT000006076330,LEGIARTI000006459491,12,2,2005-10-01,2008-01-01,un libellé porte une durée ou un échelon : « 3 ans »
@@ -1221,11 +1201,8 @@ LEGITEXT000006079139,LEGIARTI000006713468,6,,1991-08-01,2004-11-03,durées écri
 LEGITEXT000006079142,LEGIARTI000006713510,10,1,2005-10-02,2006-08-04,tableau dessiné en caractères
 LEGITEXT000006079142,LEGIARTI000006713520,14,1,1996-09-28,2005-10-02,tableau dessiné en caractères
 LEGITEXT000006079306,LEGIARTI000006468399,22,1,1998-04-03,2005-12-21,tableau dessiné en caractères
-LEGITEXT000006079662,LEGIARTI000034749579,31-6,1,2017-09-01,2021-10-29,une phrase coupe le tableau
-LEGITEXT000006079662,LEGIARTI000044270249,31-6,1,2021-10-29,2023-09-01,une phrase coupe le tableau
 LEGITEXT000006079662,LEGIARTI000006469012,32,1,1992-08-11,1996-09-01,durées écrites d'un échelon au suivant ou à l'accès d'un échelon : elles se liraient décalées d'un échelon
 LEGITEXT000006079662,LEGIARTI000006469013,32,1,1996-08-01,2021-01-01,durées écrites d'un échelon au suivant ou à l'accès d'un échelon : elles se liraient décalées d'un échelon
-LEGITEXT000006079662,LEGIARTI000048031577,32,1,2023-09-01,,une phrase coupe le tableau
 LEGITEXT000006079769,LEGIARTI000006375502,14,1,1992-08-30,1993-08-08,tableau dessiné en caractères
 LEGITEXT000006079769,LEGIARTI000006375503,14,1,1993-08-08,2005-11-01,tableau dessiné en caractères
 LEGITEXT000006079769,LEGIARTI000006375504,14,1,2005-11-01,2007-01-01,tableau dessiné en caractères
@@ -1357,9 +1334,6 @@ LEGITEXT000006081874,LEGIARTI000006713138,11,,1993-03-28,2014-02-07,durées écr
 LEGITEXT000006081875,LEGIARTI000006713173,11,,1993-03-28,2007-08-07,durées écrites en phrases
 LEGITEXT000006081876,LEGIARTI000006713215,10,1,1997-08-01,2007-08-07,tableau dessiné en caractères
 LEGITEXT000006081878,LEGIARTI000006713296,9,,1993-03-28,2006-02-26,durées écrites en phrases
-LEGITEXT000006082000,LEGIARTI000041912415,17,1,2017-09-01,2021-01-01,un échelon manque dans « II.-Les anciennetés détenues dans les »
-LEGITEXT000006082000,LEGIARTI000041912896,17,1,2021-01-01,2021-10-29,un échelon manque dans « II.-Les anciennetés détenues dans les »
-LEGITEXT000006082000,LEGIARTI000044268231,17,1,2021-10-29,2024-12-29,un échelon manque dans « II.-Les anciennetés détenues dans les »
 LEGITEXT000006082039,LEGIARTI000006472924,20,1,1993-09-01,2001-11-01,durées écrites d'un échelon au suivant ou à l'accès d'un échelon : elles se liraient décalées d'un échelon
 LEGITEXT000006082442,LEGIARTI000006471302,12,,1993-07-31,1994-08-01,durées écrites en phrases
 LEGITEXT000006082442,LEGIARTI000006471303,12,,1995-05-07,1995-09-01,durées écrites en phrases
@@ -1519,8 +1493,6 @@ LEGITEXT000028566940,LEGIARTI000032572212,14,,2017-01-01,2019-02-01,durées écr
 LEGITEXT000028932084,LEGIARTI000028932270,7,1,1979-05-18,,"une durée hors de sa ligne, après « an »"
 LEGITEXT000028941778,LEGIARTI000028941815,12,,2015-01-01,2018-09-30,durées écrites en phrases
 LEGITEXT000028941778,LEGIARTI000028941799,4,,2015-01-01,2025-09-01,durées écrites en phrases
-LEGITEXT000029012415,LEGIARTI000034743786,10-7,1,2017-09-01,2021-10-29,un échelon manque dans « II.-L'ancienneté détenue dans les »
-LEGITEXT000029012415,LEGIARTI000044270182,10-7,1,2021-10-29,2026-01-01,un échelon manque dans « II.-L'ancienneté détenue dans les »
 LEGITEXT000029054589,LEGIARTI000029054876,3,1,1962-04-08,1999-01-01,durées écrites d'un échelon au suivant ou à l'accès d'un échelon : elles se liraient décalées d'un échelon
 LEGITEXT000029054589,LEGIARTI000029061240,3,1,1999-01-01,,durées écrites d'un échelon au suivant ou à l'accès d'un échelon : elles se liraient décalées d'un échelon
 LEGITEXT000029054589,LEGIARTI000029054878,4,1,1962-04-08,1963-10-01,une phrase coupe le tableau

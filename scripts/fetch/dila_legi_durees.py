@@ -37,7 +37,8 @@ maximale ; un en-tête d'une seule colonne quand la phrase en nomme deux ; les
 durées écrites d'échelon à échelon (« du 1er au 2e échelon : 2 ans ») ou à
 l'accès à l'échelon (« pour accéder au 3e échelon »), qui se liraient décalées
 d'un échelon ; un tableau dessiné en caractères ; une phrase qui coupe le
-tableau. Les durées écrites en phrases, et celles qu'un article renvoie à un
+tableau. Le paragraphe qui suit le tableau (« II.-Les anciennetés détenues dans
+les 6e et 8e échelons… ») l'arrête, même quand il nomme des échelons. Les durées écrites en phrases, et celles qu'un article renvoie à un
 autre texte (« sont fixées à l'article 4 du décret du 20 septembre 1973 »), ne
 sont pas lues : elles y sont consignées aussi. Une version que le LEGI date
 d'une fin antérieure ou égale à son début n'a jamais été en vigueur : elle
@@ -189,6 +190,9 @@ PROSE = re.compile(
     r"\b(?:sont|est|peut|peuvent|fix[ée]e?s?|pr[ée]vue?s?|conform[ée]ment|lorsque|ainsi|qui"
     r"|dont|comporte\w*|comprend\w*|b[ée]n[ée]ficie\w*|application|d[ée]cret|article|arr[êe]t[ée]|loi|susvis[ée]e?s?)\b",
     re.IGNORECASE)
+#: Le paragraphe qui suit le tableau (« II.-Les anciennetés détenues dans les 6e et
+#: 8e échelons… ») : le tableau s'arrête là, même si la phrase nomme des échelons.
+PARAGRAPHE = re.compile(r"(?:^\s*|[.;:]\s+)[IVX]{1,4}\s*\.?\s*(?:bis\s*|ter\s*)?[-–—]")
 CARACTERES = re.compile(r":-{4,}|-{6,}|: \d{3} :")
 #: Un grade ne porte ni durée ni numéro d'échelon : c'est une case mal lue.
 LIBELLE_SUSPECT = re.compile(rf"\d\s*(?:ans?|mois)\b|\b(?:ans?|mois)\b|\b\d{{1,2}}\s*{_SUFFIXE}\s*,"
@@ -390,7 +394,7 @@ def lire_tableau(extrait: Extrait) -> Tableau:
     lignes: list[Ligne] = []
     courante: Ligne | None = None
     groupe, entete, libre = "", None, ""
-    coupe = None
+    coupe = paragraphe = None
     for genre, texte, debut, trouve in elements:
         if genre == "libre" or (genre == "vide" and (courante is None or libre)):
             if _bruit(texte):
@@ -398,6 +402,9 @@ def lire_tableau(extrait: Extrait) -> Tableau:
             if courante is not None and courante.condition and not PROSE.search(texte):
                 courante.condition = _propre(courante.condition + " " + texte)
                 continue
+            if entete is not None and PARAGRAPHE.search(texte):
+                paragraphe = debut
+                break
             if entete is not None and PROSE.search(texte):
                 coupe = debut
                 break
@@ -456,7 +463,7 @@ def lire_tableau(extrait: Extrait) -> Tableau:
     if entete is None:
         tableau.refus = "aucun échelon"
         return tableau
-    corps_lu = corps[:coupe] if coupe is not None else corps
+    corps_lu = corps[:next((c for c in (coupe, paragraphe) if c is not None), len(corps))]
     if D_ECHELON_A_ECHELON.search(corps_lu):
         tableau.refus = ("durées écrites d'un échelon au suivant ou à l'accès d'un échelon : "
                          "elles se liraient décalées d'un échelon")
