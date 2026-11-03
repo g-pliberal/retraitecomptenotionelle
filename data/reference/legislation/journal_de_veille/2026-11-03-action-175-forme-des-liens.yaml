@@ -1,0 +1,23 @@
+date: "2026-11-03"
+session: "action 175 : la forme des liens de la base de législation de la Cnav, vérifiée"
+consulte: >-
+  python scripts/veille_droit.py (rien de neuf à la base depuis le registre). La base de
+  législation de la Cnav, par son API et l'en-tête des récupérateurs du dépôt, de 5 h 44 à
+  6 h 08 UTC le 3 novembre 2026 : ses sept collections, trois fois /expose et /liste,
+  quelques références et fenêtres une à une, les dernières circulaires ; et
+  python scripts/fetch/cnav_legislation.py, inchangé, relu sur elle. Le relevé que la
+  session de l'étape 4 avait fait, à 5 h 03, de la base téléchargée à 5 h 01.
+trouve: >-
+  La base lie par les routes de son site, comme le 29 octobre : le récupérateur refait le
+  registre à l'octet près. Les chemins du site SharePoint de la caisse
+  (/sites/N_GDLC_Campus…/SitePages/…), qu'avait vus l'étape 4, étaient l'état de la base
+  pendant son import de nuit, à 5 h 01 : le même import, récrit avant 5 h 44 dans les
+  routes du site. Cet état diffère de la base par plus que ses liens — d'autres formes,
+  des avis pas encore réimportés —, et le récupérateur n'en a rien appris. L'API sert
+  aussi à 258 exposés un champ voirAussi, qu'aucun script ne lit, et dont le registre ne
+  perd rien.
+reste: >-
+  La question au propriétaire : le récupérateur doit-il refuser de relire la base pendant
+  son import de nuit (avis : oui) ? D'ici là, ne pas relancer
+  python scripts/fetch/cnav_legislation.py entre 5 h et 6 h UTC. L'étape 6 de l'action,
+  dans une session neuve.
