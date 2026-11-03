@@ -98,7 +98,15 @@ l'Institut des politiques publiques (PENSIPP). Écarts connus :
   maison, sur le Smic horaire de chaque heure de 1987 à 2012 et sur des
   forfaits avant ; l'artiste du spectacle, à des taux réduits, et sur un
   salaire forfaitaire par jour s'il est occasionnel ou acteur de complément ;
-  le journaliste, à des taux réduits depuis 1991.
+  le journaliste, à des taux réduits depuis 1991. Les mêmes barèmes en
+  portent d'autres : des assiettes forfaitaires pour le personnel hôtelier
+  rémunéré au pourboire, les concierges et employés d'immeuble de 1951 à
+  1983, les assistants maternels avant 1991, les dockers, les personnels des
+  centres de vacances, les formateurs occasionnels, le stagiaire aide familial
+  étranger et le stagiaire de la formation professionnelle continue, dont la
+  fiche `stages_formation_professionnelle` lit l'assiette dans la saisie ; des
+  taux réduits pour les professions médicales à temps partiel depuis 1991, et
+  pour les collaborateurs occasionnels du service public de 2008 à 2015.
 - **indépendants des DOM** — le modèle exonère de toute cotisation l'artisan,
   le commerçant et le gérant d'un débit de tabac dont la ligne porte un
   département d'outre-mer et dont le revenu de l'année ne dépasse pas le
@@ -185,6 +193,31 @@ l'Institut des politiques publiques (PENSIPP). Écarts connus :
   sur trois carrières types (feuille de route, action 177, étape 5) : moins
   d'un centième de la retraite de base quand ces années comptent parmi les
   meilleures, rien sinon ; l'année du départ n'est pas mesurée.
+- **rachats et versements** — le modèle ne pratique ni les rachats ni les
+  versements pour la retraite (fiche `rachats_et_versements`, pas encore
+  modélisée), dont la base de législation de la Cnav publie les barèmes : le
+  versement pour la retraite des années d'études et des années incomplètes
+  depuis 2004, à taux réduit pour l'assistant maternel et l'apprenti ; celui
+  des stages d'études en entreprise ; le rachat des périodes d'activité hors
+  de France, d'affiliation tardive, de détention ou de rapatriement ; les
+  cotisations arriérées que l'assuré verse quand son employeur ne les a pas
+  versées. La saisie n'a pas de quoi les dire, et aucun trimestre ainsi
+  acquis n'entre au compte.
+- **aidants** — le modèle sert l'assurance vieillesse des parents au foyer
+  pendant l'interruption pour enfant (fiche `avpf`), non l'affiliation de
+  l'aidant d'un proche handicapé ou en perte d'autonomie, que l'assurance
+  vieillesse des aidants porte depuis le 1er septembre 2023 : le bénéficiaire
+  de l'allocation journalière de présence parentale ou du congé de proche
+  aidant, la personne qui a la charge d'un enfant ou d'un adulte handicapé, le
+  travailleur indépendant qui cesse son activité pour l'aider. Un salaire
+  porté au compte sur une assiette forfaitaire du Smic, que la base de
+  législation de la Cnav publie, et que la saisie n'a pas de quoi dire.
+- **Algérie** — le modèle ne sert pas la validation gratuite, au régime
+  général, des périodes d'activité salariée en Algérie d'avant le 1er juillet
+  1962 (loi n° 64-1330), sur un salaire forfaitaire annuel que la base de
+  législation de la Cnav publie de 1938 à 1962 : la fiche
+  `totalisation_des_periodes_etrangeres` les renvoie aux périodes assimilées,
+  qui ne les portent pas.
 
 Un écart de quelques pour cent avec la pension réelle est attendu.
 

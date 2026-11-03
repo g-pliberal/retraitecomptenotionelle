@@ -1,5 +1,5 @@
 """Les barèmes du modèle dans la base de législation de la Cnav (action 175,
-étape 2) : chacun confronté à la série du dépôt qu'il double.
+étapes 2 et 3) : chacun confronté à la série du dépôt qu'il double.
 
 Le registre de la base (`data/reference/legislation/cnav/`) dit chaque barème
 `recoupe` par l'un de ces tests, à la version qu'il date (`modifie_le`). Les
@@ -1459,3 +1459,82 @@ def test_l_independant_des_dom_cotise_aux_taux_et_aux_assiettes_de_la_metropole(
         serie = _arrondi(_assiette_minimale_de_la_serie(annee, smic, plafond))
         regle = _arrondi(200 * smic[annee]) if annee <= 2012 else serie
         assert _arrondi(regle / 2) == publiee != serie, annee
+
+
+# -- les barèmes du modèle que l'étape 3 a trouvés hors de la liste de la 2 ------
+
+#: « Majoration pour le départ en retraite après l'âge du taux plein »
+#: (`mda_depart_retraite_apres_age_taux_plein_bar.aspx`, version du 7 janvier
+#: 2026) : le coefficient qui majore la durée, en millièmes, pour un à soixante
+#: trimestres d'ajournement — de trois mois à quinze ans.
+MAJORATION_APRES_TAUX_PLEIN = (
+    1025, 1050, 1075, 1100, 1125, 1150, 1175, 1200, 1225, 1250,
+    1275, 1300, 1325, 1350, 1375, 1400, 1425, 1450, 1475, 1500,
+    1525, 1550, 1575, 1600, 1625, 1650, 1675, 1700, 1725, 1750,
+    1775, 1800, 1825, 1850, 1875, 1900, 1925, 1950, 1975, 2000,
+    2025, 2050, 2075, 2100, 2125, 2150, 2175, 2200, 2225, 2250,
+    2275, 2300, 2325, 2350, 2375, 2400, 2425, 2450, 2475, 2500,
+)
+
+
+def test_la_duree_majoree_apres_l_age_du_taux_plein_suit_le_bareme_de_la_caisse():
+    """Le moteur majore la durée du régime de qui liquide après l'âge du taux
+    plein sans la durée (R. 351-7, fiche `majoration_duree_apres_65_ans`) du
+    coefficient que la caisse publie pour chaque trimestre d'ajournement,
+    arrondie au trimestre supérieur : l'assuré né le 1er octobre 1938, qui
+    liquide à soixante-cinq ans, plus trois mois par trimestre et un mois, avec
+    quarante, quarante et un ou cinquante-neuf trimestres, sous la limite."""
+    from types import SimpleNamespace
+
+    from retraite_notionnelle.carriere import Carriere
+    from retraite_notionnelle.droit import liquider
+    from retraite_notionnelle.simulateur import Simulateur
+
+    simulateur = Simulateur()
+    scenario = simulateur.scenario_actuel
+    periode = simulateur.catalogue["regime_general"].periode(2004)
+    assert len(MAJORATION_APRES_TAUX_PLEIN) == 60
+    for ajournement, milliemes in enumerate(MAJORATION_APRES_TAUX_PLEIN, start=1):
+        assert milliemes == 1000 + 25 * ajournement, ajournement
+        carriere = Carriere(annee_naissance=1938, sexe="H", mois_naissance=10,
+                            jour_naissance=1, age_liquidation=65 + (3 * ajournement + 1) / 12)
+        for trimestres in (40, 41, 59):
+            majores = liquider.duree_majoree_apres_taux_plein(
+                scenario, periode, carriere,
+                SimpleNamespace(trimestres_par_regime={"regime_general": trimestres}),
+                ("regime_general",), trimestres, 160, 65.0)
+            assert majores == min(-(-trimestres * milliemes // 1000), 160), (
+                ajournement, trimestres)
+
+
+#: La ligne du 1er janvier 2026 des « Taux des prélèvements sur les retraites »
+#: (`prelevement_retraite_taux_prelevement_retraite_bar.aspx`, version du
+#: 5 janvier 2026), en pour cent ; et, en métropole, le revenu fiscal de
+#: référence d'une part au-delà duquel la CRDS et la Casa sont dues en 2026, et
+#: sa majoration par demi-part (`prelevement_retraite_seuil_revenu_assujettissement_crds_bar.aspx`,
+#: `prelevement_retraite_seuil_revenu_assujettissement_casa_bar.aspx`, versions
+#: du 23 décembre 2025).
+PRELEVEMENTS_2026 = {"taux plein": 8.30, "taux médian": 6.60, "taux réduit": 3.80,
+                     "crds": 0.50, "casa": 0.30}
+SEUILS_2026 = {"crds": (13048, 3484), "casa": (17057, 4555)}
+
+
+def test_les_prelevements_de_2026_sont_ceux_de_la_caisse():
+    """Le site nette la pension au barème de 2026
+    (`prelevements_remuneration.yaml`, § 5 ante ter des limites) : les trois
+    taux de la CSG, la CRDS et la Casa sont ceux de la caisse ; la CRDS est due
+    au-delà du seuil de l'exonération de la CSG, la Casa au-delà de celui du
+    taux réduit, chacun majoré par demi-part de ce que la caisse publie."""
+    import yaml
+
+    pensions = yaml.safe_load((LEGISLATION / "prelevements_remuneration.yaml").read_text(
+        encoding="utf-8"))["pensions"]
+    tranches = {tranche["libelle"]: tranche for tranche in pensions["bareme_csg"]}
+    for libelle in ("taux plein", "taux médian", "taux réduit"):
+        assert tranches[libelle]["taux"] * 100 == pytest.approx(PRELEVEMENTS_2026[libelle])
+    assert pensions["csg_taux_plein"] * 100 == pytest.approx(PRELEVEMENTS_2026["taux plein"])
+    assert pensions["crds"] * 100 == pytest.approx(PRELEVEMENTS_2026["crds"])
+    assert pensions["casa"] * 100 == pytest.approx(PRELEVEMENTS_2026["casa"])
+    for prelevement, tranche in (("crds", "exonéré"), ("casa", "taux réduit")):
+        assert (tranches[tranche]["revenu_fiscal_maximum"],
+                tranches[tranche]["majoration_demi_part"]) == SEUILS_2026[prelevement]
