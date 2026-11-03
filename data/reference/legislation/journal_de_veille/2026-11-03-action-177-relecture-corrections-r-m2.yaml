@@ -1,0 +1,39 @@
+date: "2026-11-03"
+session: "action 177, file R-M2-bis : relecture indépendante des corrections de la relecture R-M2 (commits cc55cdd et 06e2e9a, file M2-bis)"
+consulte: >-
+  `python scripts/veille_droit.py` : la base de la Cnav, rien de changé. Les index LEGI et
+  JORF de la DILA, récupérés et mis à jour (LEGI à jour au 2 novembre 2026, JORF au
+  3 novembre, aucun incrément depuis). Dans LEGI, à leur version en vigueur et mot à mot :
+  D. 635-10-2 (LEGIARTI000006738041, LEGIARTI000025263590), D. 633-19-1
+  (LEGIARTI000006737949), D. 633-19-2 (LEGIARTI000006737951 à LEGIARTI000041966711),
+  D. 633-19-6 (LEGIARTI000006737955, LEGIARTI000025629836), D. 633-19-7
+  (LEGIARTI000006737957), D. 633-4 et D. 633-6 (2008), L. 633-10 (LEGIARTI000006743702,
+  LEGIARTI000025013919), L. 131-6 (LEGIARTI000006740120, LEGIARTI000006740121,
+  LEGIARTI000020169101, LEGIARTI000020675442), L. 131-6-1 (LEGIARTI000006740124),
+  L. 131-6-2 (LEGIARTI000025013725), L. 742-9 (LEGIARTI000006744141), D. 635-2
+  (LEGIARTI000020032159), D. 635-7 (LEGIARTI000006738025, LEGIARTI000017869802,
+  LEGIARTI000025091410, LEGIARTI000025629857), D. 635-10 (LEGIARTI000006738028,
+  LEGIARTI000020032165, LEGIARTI000025091405, LEGIARTI000025629850), D. 633-2
+  (LEGIARTI000006737877 à LEGIARTI000006737879, LEGIARTI000025629830). Dans le JORF : le
+  décret n° 2006-1580, articles 4 et 8 à 11 ; le décret n° 2007-1900, article 1er
+  (JORFARTI000017765872) ; les arrêtés des plafonds de 2007 et de 2008
+  (JORFARTI000001856457, JORFARTI000001910321). La table « ARTISANS : RCO - revenu de
+  référence » de la caisse (sha256 fbce0850…c0b91a9) et la série salref_rc_com de l'IPP
+  (sha256 35cbc1b5…e703b6a1b), téléchargées le jour ; les 633 exposés de la base de la
+  Cnav, par /api/v1/expose (sha256 4a7a66c5…dc8421cb828).
+trouve: >-
+  Conforme : le conjoint collaborateur à l'option cotise au RCO et au NRCO, de 2007 à
+  2012, sur la fraction du revenu du chef de l'avant-dernière année (L. 633-10,
+  D. 633-19-1, L. 131-6, L. 131-6-2 en 2012 ; D. 635-10-2 ne régularise pas la
+  complémentaire, et sa rédaction de 2013 ôte cette phrase, d'où la borne de 2012).
+  Les 48 fragments de citation de la fiche assiette_rco_independants, exacts ; les quinze
+  valeurs des tests et le témoin conjoint_collaborateur_au_tiers (−21,3551 points,
+  −0,19 %), refaits à la main ; les deux moteurs verts, le Python sous les présomptions
+  décalées ; le paquet inchangé. Trois écarts faibles, de documentation : deux empreintes
+  de commit mortes (8f5447b, e24714d) ; « la correction ne touche que les années d'avant
+  2009 » dans tests/test_cout.py, quand les forfaits valent jusqu'en 2011 et que la grille
+  du coût en sert ; le témoin de page simuler_conjoint_collaborateur, bougé, non dit.
+reste: >-
+  Les trois retouches de documentation ; un exemple de la caisse, ou une circulaire du
+  RSI, pour la complémentaire du conjoint collaborateur à l'option, qu'aucun exposé de la
+  base de la Cnav ne traite.
