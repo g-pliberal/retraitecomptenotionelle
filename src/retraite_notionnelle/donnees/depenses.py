@@ -207,7 +207,8 @@ class DepensesRetraite:
         }
         # Ce que les prélèvements sociaux prennent à la masse versée : la
         # pension moyenne brute et la nette de la DREES, toutes pensions
-        # comprises, de 2008 à 2022 (action 138, étape 3).
+        # comprises : de 2008 à 2022, le tableau 2.1-a (action 138, étape 3) ;
+        # 2023 et 2024, le panorama de 2026, fiche 5 (action 178, étape 2).
         self.pensions_brutes_nettes: dict[str, SerieAnnuelle] = {
             indicateur: charger_serie_annuelle(
                 macro / "pensions_brutes_nettes.csv", "valeur",
@@ -307,7 +308,7 @@ class DepensesRetraite:
 
     def annee_du_taux_effectif(self, annee: int) -> int:
         """L'année publiée dont le taux effectif vaut pour ``annee`` : elle-même
-        de 2008 à 2022, la plus proche hors de là — la dernière pour la
+        de 2008 à 2024, la plus proche hors de là — la dernière pour la
         projection, comme l'Ageing Report tient constante la part de la dépense
         qu'il compte reprise en impôts, la première avant."""
         brute = self.pensions_brutes_nettes["brute_totale"]
@@ -317,9 +318,9 @@ class DepensesRetraite:
         """La part de la masse des pensions que la CSG, la CRDS, la Casa et la
         cotisation maladie des complémentaires prélèvent VRAIMENT : un moins la
         pension moyenne nette sur la brute, toutes pensions comprises, celles
-        de :meth:`annee_du_taux_effectif`. 6,8 % en 2022, quand le taux plein en
-        prendrait 9,1 % : les petites pensions sont exonérées ou au taux
-        réduit, et les retraités de l'étranger ne paient rien
+        de :meth:`annee_du_taux_effectif`. 6,8 % en 2022, 6,9 % en 2024, quand
+        le taux plein en prendrait 9,1 % : les petites pensions sont exonérées
+        ou au taux réduit, et les retraités de l'étranger ne paient rien
         (:mod:`..depense_nette`)."""
         reperee = self.annee_du_taux_effectif(annee)
         montants = {indicateur: serie(reperee)

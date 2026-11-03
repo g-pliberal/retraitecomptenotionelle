@@ -1436,6 +1436,7 @@ institutions:
         statut_integration: certifie
         cible: >-
           data/reference/macro/age_conjoncturel_depart.csv,
+          data/reference/macro/pensions_brutes_nettes.csv,
           data/reference/macro/cumul_emploi_retraite.csv,
           data/reference/macro/pensions_invalidite.csv,
           data/reference/macro/pensions_invalidite_age.csv,

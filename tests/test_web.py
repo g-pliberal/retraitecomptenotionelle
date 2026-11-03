@@ -5099,22 +5099,24 @@ def test_l_annee_des_schemas_se_choisit_et_garde_celle_de_la_cascade(contexte):
     assert f'<a href="./#cascade=2030&flux={bascule}">2030</a>' in corps
 
 
-#: La pension moyenne de 2022, toutes pensions comprises, en euros par mois,
+#: La pension moyenne de 2024, toutes pensions comprises, en euros par mois,
 #: brute et nette de la CSG, de la CRDS, de la CASA et de la cotisation maladie
-#: des complémentaires : le tableau 2.1-a de la DREES, édition fin 2022, le
-#: dernier publié (action 138, étape 3). Le reste, 117 € sur 1 719, est ce que
-#: ces prélèvements prennent vraiment à la masse des pensions.
-PENSION_MOYENNE_DREES_2022 = (1719, 1602)
+#: des complémentaires : le panorama « Les retraités et les retraites » de la
+#: DREES, édition 2026, fiche 5, feuille « F05_Tableau 1 compl_bis », cellules
+#: O28 et R28, la dernière année publiée (actions 138, étape 3, et 178, étape
+#: 2). Le reste, 128 € sur 1 855, est ce que ces prélèvements prennent
+#: vraiment à la masse des pensions.
+PENSION_MOYENNE_DREES_2024 = (1855, 1727)
 
 
 def test_le_bilan_de_la_bascule_montre_la_depense_nette_a_cote_de_la_brute(contexte):
     """Le tableau poste par poste, bilan de l'année de bascule, dit sous la
     dépense ce qu'il en reste une fois payés les prélèvements sociaux des
     retraités : la même dépense, au taux que la DREES mesure sur toutes les
-    pensions en 2022, la dernière année publiée, que le bilan tient ensuite.
+    pensions en 2024, la dernière année publiée, que le bilan tient ensuite.
     Les deux systèmes paient le même taux, l'hypothèse du site pour la pension
     nette d'une personne (action 138, étape 3)."""
-    brute, nette = PENSION_MOYENNE_DREES_2022
+    brute, nette = PENSION_MOYENNE_DREES_2024
     bascule = contexte.base.annee_bascule
     ligne = site().contexte.cout().solde.annee(bascule)
     pib = pages._pib_de_conversion(site().contexte.comptes(), bascule)
@@ -5141,13 +5143,14 @@ def test_la_masse_nette_des_sources_est_au_taux_de_l_annee(contexte):
     """« Et en BRUT, des deux côtés » chiffrait la masse nette au taux plein,
     9,1 %, « au plus » : une borne, et dans le mauvais sens, le taux plein
     donnant la plus petite des nettes. La page dit celle du bilan, au taux que
-    la DREES mesure, exonérations et taux réduits compris : 117 € de
-    prélèvements sur 1 719 € de pension moyenne en 2022, la dernière année
-    publiée (action 138, étape 3)."""
-    brute, nette = PENSION_MOYENNE_DREES_2022
+    la DREES mesure, exonérations et taux réduits compris : 128 € de
+    prélèvements sur 1 855 € de pension moyenne en 2024, la dernière année
+    publiée, celle aussi de la masse (actions 138, étape 3, et 178, étape
+    2)."""
+    brute, nette = PENSION_MOYENNE_DREES_2024
     depenses = contexte.depenses()
     annee = min(depenses.pensions_droits["direct"].derniere_annee, depenses.derniere_annee)
-    assert annee > 2022, "le témoin suppose une masse postérieure au dernier taux publié"
+    assert annee == 2024, "le témoin suppose la masse de l'année du dernier taux publié"
     masse = sum(depenses.pensions_droit(c, annee) for c in ("direct", "derive"))
     part = masse / depenses.pib(annee)
     corps = rendre("/cout", {})[1]
@@ -5157,7 +5160,8 @@ def test_la_masse_nette_des_sources_est_au_taux_de_l_annee(contexte):
     texte = html.unescape(re.sub(r"[ \t\n]+", " ", re.sub(r"<[^>]+>", "", paragraphe)))
     assert f"{g.pourcentage(part * nette / brute, False, 2)} du PIB en {annee}" in texte
     assert f"{g.pourcentage(part, False, 2)} en brut" in texte
-    assert f"{g.pourcentage(1 - nette / brute, False, 1)}" in texte and "2022" in texte
+    assert f"{g.pourcentage(1 - nette / brute, False, 1)}" in texte
+    assert f"ce que la DREES mesure en {annee}, et que" in texte
     assert "au plus" not in texte.lower()
 
 

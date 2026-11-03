@@ -1475,6 +1475,17 @@
    "valeurs": 60,
    "verifiee_le": "2026-10-24"
   },
+  "pensions_brutes_nettes_panorama": {
+   "ajoutees": 8,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "d62ae985f83013e8",
+   "identiques": 0,
+   "niveau": "certifiee",
+   "source": "DREES, panorama « Les retraités et les retraites » 2026, fiche 5",
+   "valeurs": 8,
+   "verifiee_le": "2026-11-03"
+  },
   "pensions_droits": {
    "ajoutees": 0,
    "colonne": "montant_meur",

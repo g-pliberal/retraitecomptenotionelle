@@ -751,6 +751,9 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         # rapport est le taux que les prélèvements sociaux prennent à la masse
         # des pensions : la dépense nette de la page Coût (action 138, étape 3).
         "pensions_brutes_nettes": "macro/pensions_brutes_nettes.csv",
+        # 2023 et 2024, du panorama de 2026 (fiche 5), en appoint du tableau
+        # 2.1-a, qui s'arrête à 2022 (action 178, étape 2).
+        "pensions_brutes_nettes_panorama": "macro/pensions_brutes_nettes.csv",
         "age_conjoncturel_depart": "macro/age_conjoncturel_depart.csv",
         # Le panorama de la DREES de 2026 : l'âge conjoncturel de 2023 et 2024,
         # en appoint, le cumul, la retraite progressive et l'invalidité
@@ -885,6 +888,9 @@ def test_journal_de_certification_decrit_les_series_certifiees():
                # Le panorama de 2026 n'a plus rien à dire de l'âge conjoncturel
                # quand le portail porte 2023 et 2024.
                "age_conjoncturel_depart_panorama",
+               # De même de la pension moyenne quand le tableau 2.1-a porte
+               # 2023 et 2024.
+               "pensions_brutes_nettes_panorama",
                # Aucun tableau des militaires ne laisse sa colonne présumée
                # (action 158, étape des militaires).
                "grilles_militaires_rang_presume", "grilles_militaires_indice_presume"}

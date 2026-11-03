@@ -5,7 +5,11 @@
 #   certifiee : tableau 2.1-a du classeur « Les effectifs de
 #             retraités, montants des pensions et âges de départ à la
 #             retraite », fin 2022, diffusé par la DREES et
-#             recontrôlé par scripts/verifier_donnees.py.
+#             recontrôlé par scripts/verifier_donnees.py ; 2023 et
+#             2024, que ce tableau n'a pas encore, du panorama « Les
+#             retraités et les retraites » de 2026 (fiche 5, tableau
+#             1 complémentaire bis, même champ, lu par
+#             scripts/fetch/drees_panorama_classeurs.py), en appoint.
 #
 # `indicateur` : brute_directe et nette_directe, la pension de droit
 # direct, majoration pour trois enfants comprise ; brute_totale et
@@ -17,12 +21,12 @@
 # À QUOI CETTE SÉRIE SERT
 # ------------------------
 # À dire ce que les prélèvements sociaux prennent VRAIMENT à la masse
-# des pensions, un moins la nette sur la brute : 6,8 % en 2022, et
-# non les 9,1 % du taux plein, parce que les petites pensions sont
-# exonérées ou au taux réduit et que les retraités de l'étranger ne
-# paient rien (src/retraite_notionnelle/depense_nette.py). La page
-# Coût en tire la dépense nette de chaque système, au taux de son
-# année, puis au dernier publié (DepensesRetraite.taux_effectif).
+# des pensions, un moins la nette sur la brute : 6,8 % en 2022, 6,9 %
+# en 2024, et non les 9,1 % du taux plein, parce que les petites
+# pensions sont exonérées ou au taux réduit et que les retraités de
+# l'étranger ne paient rien (src/retraite_notionnelle/depense_nette.py).
+# La page Coût en tire la dépense nette de chaque système, au taux de
+# son année, puis au dernier publié (DepensesRetraite.taux_effectif).
 #
 # Ne pas modifier les valeurs certifiées à la main : elles seraient
 # écrasées au prochain scripts/verifier_donnees.py --appliquer.
@@ -87,3 +91,11 @@ annee,indicateur,valeur,fiabilite
 2022,brute_totale,1719,certifiee
 2022,nette_directe,1457,certifiee
 2022,nette_totale,1602,certifiee
+2023,brute_directe,1608,certifiee
+2023,brute_totale,1764,certifiee
+2023,nette_directe,1495,certifiee
+2023,nette_totale,1643,certifiee
+2024,brute_directe,1693,certifiee
+2024,brute_totale,1855,certifiee
+2024,nette_directe,1573,certifiee
+2024,nette_totale,1727,certifiee

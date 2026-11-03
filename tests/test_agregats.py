@@ -217,7 +217,8 @@ def test_la_table_porte_le_taux_effectif_et_la_depense_nette(table, cout, montre
         for scenario in montres:
             assert figee.depense_nette(scenario) == calculee.depense_nette(scenario), (
                 figee.annee, scenario)
-    assert table.cout.solde.annee(2070).annee_taux_effectif == 2022
+    # La dernière année publiée : 2024, le panorama de 2026 (action 178, étape 2).
+    assert table.cout.solde.annee(2070).annee_taux_effectif == 2024
 
 
 def test_le_passe_et_l_avenir_figes_sont_ceux_que_le_modele_calcule(table, cout, montres):

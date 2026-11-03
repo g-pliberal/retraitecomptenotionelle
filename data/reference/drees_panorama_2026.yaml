@@ -142,22 +142,23 @@ fiches:
     titre: "Le niveau des pensions"
     page: 54
     sources: ["EACR", "EIR", "ANCETRE", "Insee"]
-    statut: a_tirer
-    au_depot: [drees_pension_nette, drees_eir_distribution, drees_eir_caracteristiques, drees_eacr_tables]
+    statut: a_confronter
+    au_depot: [drees_pension_nette, drees_eir_distribution, drees_eir_caracteristiques, drees_eacr_tables, drees_panorama_retraites_2026_classeurs]
     a_tirer: >-
-      Le tableau 1 (1 752 euros bruts et 1 626 nets fin 2024) est celui
-      des retraités résidant en France ; `pensions_brutes_nettes.csv`
-      porte ceux qui résident en France ou à l'étranger, que la feuille
-      « F05_Tableau 1 compl_bis » du classeur redonne de 2008 à 2022 à
-      l'euro près, et prolonge : 1 608 et 1 693 euros bruts de droit
-      direct en 2023 et 2024, 1 495 et 1 573 nets ; 1 764 et 1 855 bruts
-      toutes pensions, 1 643 et 1 727 nets. Les porter déplace le taux
-      effectif de la page Coût (action 138, étape 3, que le propriétaire
-      mène) : à son accord, constaté à l'étape 2. Recoupé : la pension
+      Porté à l'étape 2, sur l'accord du propriétaire du 3 novembre 2026 :
+      la pension moyenne de 2023 et 2024, brute et nette, de droit direct
+      et totale, de la feuille « F05_Tableau 1 compl_bis » (cellules I, L,
+      O et R des lignes 27 et 28), certifiée dans
+      `pensions_brutes_nettes.csv` en appoint du tableau 2.1-a, qui
+      s'arrête à 2022 ; la feuille, sur le même champ (résidents en France
+      ou à l'étranger), en redonne 2008 à 2022 à l'euro près. Le tableau 1
+      imprimé (1 752 euros bruts et 1 626 nets fin 2024) ne compte que les
+      résidents en France. Le taux effectif de la page Coût passe de 6,8 %
+      (2022) à 6,9 % (2024, 1 − 1 727 / 1 855). Recoupé : la pension
       moyenne hors majoration de 2024, 1 647 euros, celle de la table C.
-      Puis, par régime (tableaux 2 et 4), la confrontation à la grille de
+      Reste, par régime (tableaux 2 et 4), la confrontation à la grille de
       la page Coût (étape 4).
-    etape: 2
+    etape: 4
   "06":
     titre: "Les écarts de pensions de droit direct entre générations"
     page: 65

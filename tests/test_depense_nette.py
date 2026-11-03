@@ -226,13 +226,17 @@ def test_le_fichier_certifie_redonne_le_tableau_de_la_drees(drees):
     récupérateur a lus dans le tableau 2.1-a le 14 octobre 2026 et que le
     témoin garde, certifiés le 24 sur le classeur relu : en 2022, 1 719 €
     bruts et 1 602 € nets par mois, toutes pensions comprises, 1 565 € et
-    1 457 € de droit direct ; en 2008, 1 343 € et 1 260 €."""
+    1 457 € de droit direct ; en 2008, 1 343 € et 1 260 €. Après 2022, que le
+    tableau n'a pas, ceux du panorama de 2026 (fiche 5), en appoint :
+    ``test_drees_panorama_2024.py`` les tient, chacun à sa cellule."""
     lu = _certifie()
     assert {fiabilite for _valeur, fiabilite in lu.values()} == {"certifiee"}
     attendu = {(annee, indicateur): valeur
                for annee, valeurs in drees["montants"].items()
                for indicateur, valeur in valeurs.items()}
-    assert {cle: valeur for cle, (valeur, _fiabilite) in lu.items()} == attendu
+    assert {cle: valeur for cle, (valeur, _fiabilite) in lu.items()
+            if cle[0] <= 2022} == attendu
+    assert {annee for annee, _indicateur in lu} == set(range(2008, 2025))
     assert lu[(2022, "brute_totale")][0] == 1719.0
     assert lu[(2022, "nette_totale")][0] == 1602.0
     assert lu[(2022, "brute_directe")][0] == 1565.0
@@ -248,18 +252,23 @@ def test_le_modele_lit_le_taux_effectif_dans_le_fichier_certifie(drees):
     """``DepensesRetraite`` lit les montants certifiés : le taux de chaque
     année publiée est un moins la nette sur la brute, toutes pensions
     comprises — 1 − 1 602 / 1 719 en 2022, 6,8 % ; 1 − 1 260 / 1 343 en 2008,
-    6,2 %. Hors de 2008-2022, celui de l'année publiée la plus proche : 2022
-    pour la projection, comme l'Ageing Report tient sa part constante, 2008
-    avant."""
+    6,2 %. Le panorama de 2026 porte 2023 et 2024 (fiche 5, feuille
+    « F05_Tableau 1 compl_bis », cellules O27 et R27, O28 et R28) :
+    1 − 1 643 / 1 764, 6,86 %, et 1 − 1 727 / 1 855, 6,90 %. Hors de
+    2008-2024, celui de l'année publiée la plus proche : 2024 pour la
+    projection, comme l'Ageing Report tient sa part constante, 2008 avant."""
     depenses = DepensesRetraite(RACINE / "data")
     assert depenses.taux_effectif(2022) == pytest.approx(1.0 - 1602.0 / 1719.0, abs=1e-15)
     assert depenses.taux_effectif(2008) == pytest.approx(1.0 - 1260.0 / 1343.0, abs=1e-15)
+    assert depenses.taux_effectif(2023) == pytest.approx(1.0 - 1643.0 / 1764.0, abs=1e-15)
+    assert depenses.taux_effectif(2024) == pytest.approx(1.0 - 1727.0 / 1855.0, abs=1e-15)
     effectifs = taux_effectifs(drees["montants"])
     for annee in range(2008, 2023):
         assert depenses.taux_effectif(annee) == effectifs[annee], annee
         assert depenses.annee_du_taux_effectif(annee) == annee
-    assert depenses.taux_effectif(2070) == effectifs[2022]
-    assert depenses.annee_du_taux_effectif(2023) == depenses.annee_du_taux_effectif(2070) == 2022
+    assert depenses.annee_du_taux_effectif(2023) == 2023
+    assert depenses.taux_effectif(2070) == depenses.taux_effectif(2024)
+    assert depenses.annee_du_taux_effectif(2024) == depenses.annee_du_taux_effectif(2070) == 2024
     assert depenses.taux_effectif(2002) == effectifs[2008]
     assert depenses.annee_du_taux_effectif(2002) == 2008
 

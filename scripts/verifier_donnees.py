@@ -2630,7 +2630,8 @@ def source_pensions_residence() -> dict[tuple, float]:
 
 def source_pensions_brutes_nettes() -> dict[tuple, float]:
     """La pension moyenne brute et la nette de tous les retraités, de 2008 à
-    2022.
+    2022 ; les années qui suivent, du panorama de 2026, en appoint
+    (``source_pensions_brutes_nettes_panorama``).
 
     Le tableau 2.1-a des « Effectifs de retraités, montants des pensions et
     âges de départ à la retraite », fin 2022, que
@@ -2894,6 +2895,35 @@ def source_age_conjoncturel_panorama() -> dict[tuple, float]:
         derniere = DERNIERE_ANNEE_AGE_CONJONCTUREL_PORTAIL
     return {(annee, sexe): age for annee, sexes in panorama.items() if int(annee) > derniere
             for sexe, age in sexes.items()}
+
+
+#: La dernière année du tableau 2.1-a quand il a été lu, le 24 octobre 2026
+#: (fin 2022) : le panorama prend le relais après elle si le tableau n'est
+#: pas là.
+DERNIERE_ANNEE_PENSIONS_BRUTES_NETTES_DREES = 2022
+
+
+def source_pensions_brutes_nettes_panorama() -> dict[tuple, float]:
+    """La pension moyenne brute et la nette des années que le tableau 2.1-a
+    n'a pas encore.
+
+    Le panorama de 2026 (fiche 5, tableau 1 complémentaire bis), sur le même
+    champ — les retraités résidant en France ou à l'étranger —, redonne le
+    tableau à l'euro près de 2008 à 2022 et chiffre 2023 et 2024. Il ne prend
+    le relais qu'APRÈS la dernière année du tableau : une année n'a jamais
+    deux sources. Source d'appoint : quand le tableau aura ces années, elle
+    n'aura plus rien à dire (action 178, étape 2, décision du propriétaire du
+    3 novembre 2026).
+
+    Clé (annee, indicateur).
+    """
+    panorama = _serie_panorama("pensions_moyennes")
+    try:
+        derniere = max(int(annee) for annee, _ in source_pensions_brutes_nettes())
+    except SourceAbsente:
+        derniere = DERNIERE_ANNEE_PENSIONS_BRUTES_NETTES_DREES
+    return {(annee, indicateur): valeur for annee, valeurs in panorama.items()
+            if int(annee) > derniere for indicateur, valeur in valeurs.items()}
 
 
 def source_cumul_emploi_retraite() -> dict[tuple, float]:
@@ -8094,7 +8124,11 @@ CERTIFICATIONS = (
             "#   certifiee : tableau 2.1-a du classeur « Les effectifs de",
             "#             retraités, montants des pensions et âges de départ à la",
             "#             retraite », fin 2022, diffusé par la DREES et",
-            "#             recontrôlé par scripts/verifier_donnees.py.",
+            "#             recontrôlé par scripts/verifier_donnees.py ; 2023 et",
+            "#             2024, que ce tableau n'a pas encore, du panorama « Les",
+            "#             retraités et les retraites » de 2026 (fiche 5, tableau",
+            "#             1 complémentaire bis, même champ, lu par",
+            "#             scripts/fetch/drees_panorama_classeurs.py), en appoint.",
             "#",
             "# `indicateur` : brute_directe et nette_directe, la pension de droit",
             "# direct, majoration pour trois enfants comprise ; brute_totale et",
@@ -8106,16 +8140,28 @@ CERTIFICATIONS = (
             "# À QUOI CETTE SÉRIE SERT",
             "# ------------------------",
             "# À dire ce que les prélèvements sociaux prennent VRAIMENT à la masse",
-            "# des pensions, un moins la nette sur la brute : 6,8 % en 2022, et",
-            "# non les 9,1 % du taux plein, parce que les petites pensions sont",
-            "# exonérées ou au taux réduit et que les retraités de l'étranger ne",
-            "# paient rien (src/retraite_notionnelle/depense_nette.py). La page",
-            "# Coût en tire la dépense nette de chaque système, au taux de son",
-            "# année, puis au dernier publié (DepensesRetraite.taux_effectif).",
+            "# des pensions, un moins la nette sur la brute : 6,8 % en 2022, 6,9 %",
+            "# en 2024, et non les 9,1 % du taux plein, parce que les petites",
+            "# pensions sont exonérées ou au taux réduit et que les retraités de",
+            "# l'étranger ne paient rien (src/retraite_notionnelle/depense_nette.py).",
+            "# La page Coût en tire la dépense nette de chaque système, au taux de",
+            "# son année, puis au dernier publié (DepensesRetraite.taux_effectif).",
             "#",
             "# Ne pas modifier les valeurs certifiées à la main : elles seraient",
             "# écrasées au prochain scripts/verifier_donnees.py --appliquer.",
         ),
+    ),
+    Certification(
+        nom="pensions_brutes_nettes_panorama",
+        chemin=REFERENCE / "macro" / "pensions_brutes_nettes.csv",
+        cles=("annee", "indicateur"),
+        colonne="valeur",
+        source=source_pensions_brutes_nettes_panorama,
+        origine="DREES, panorama « Les retraités et les retraites » 2026, fiche 5",
+        decimales=0,
+        tolerance=0.5,
+        unite=" €",
+        complementaire=True,
     ),
     Certification(
         nom="quintiles_eqcc",

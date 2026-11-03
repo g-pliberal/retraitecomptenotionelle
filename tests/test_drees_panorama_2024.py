@@ -514,9 +514,67 @@ def test_la_pension_moyenne_du_depot_est_celle_du_panorama_jusqu_en_2022():
     des seuls résidents en France). Fin 2022, 1 565 euros bruts de droit
     direct, 1 457 nets, 1 719 et 1 602 toutes pensions : les montants que le
     dépôt certifie du tableau 2.1-a, comme ceux de 2008 à 2021. Le panorama
-    chiffre aussi 2023 et 2024, que le fichier n'a pas : les y porter attend
-    le propriétaire (note de l'étape 2)."""
+    chiffre aussi 2023 et 2024, que le tableau 2.1-a n'a pas : le test
+    suivant."""
     lignes = _lire(MACRO / "pensions_brutes_nettes.csv")
     valeurs = {(int(l["annee"]), l["indicateur"]): float(l["valeur"]) for l in lignes}
     assert {indicateur: v for (annee, indicateur), v in valeurs.items() if annee == 2022} == {
         "brute_directe": 1565, "nette_directe": 1457, "brute_totale": 1719, "nette_totale": 1602}
+
+
+#: Fiche 5, feuille « F05_Tableau 1 compl_bis » du classeur, la ligne de
+#: l'ensemble des retraités résidant en France ou à l'étranger, en euros
+#: courants par mois : la colonne I, droit direct majoration comprise, brute ;
+#: L, sa nette ; O, la pension totale, brute ; R, sa nette. La ligne 27 est
+#: 2023, la ligne 28, 2024 (lues le 3 novembre 2026, à l'empreinte du
+#: manifeste).
+PENSIONS_MOYENNES_2023_2024 = {
+    (2023, "brute_directe"): 1608, (2023, "nette_directe"): 1495,  # I27, L27
+    (2023, "brute_totale"): 1764, (2023, "nette_totale"): 1643,    # O27, R27
+    (2024, "brute_directe"): 1693, (2024, "nette_directe"): 1573,  # I28, L28
+    (2024, "brute_totale"): 1855, (2024, "nette_totale"): 1727,    # O28, R28
+}
+
+
+def test_la_pension_moyenne_de_2023_et_2024_vient_du_panorama():
+    """Le tableau 2.1-a de la DREES s'arrête à 2022 ; le panorama de 2026, qui
+    en redonne 2008 à 2022 à l'euro près sur le même champ (le test
+    précédent), porte 2023 et 2024 : en appoint, au même niveau, comme l'âge
+    conjoncturel. Le tableau 1 imprimé (page 55) dit 1 752 et 1 626 euros fin
+    2024 : ceux des seuls résidents en France, qui ne sont pas le champ du
+    fichier (décision du propriétaire du 3 novembre 2026, action 178,
+    étape 2)."""
+    lignes = _lire(MACRO / "pensions_brutes_nettes.csv")
+    valeurs = {(int(l["annee"]), l["indicateur"]): float(l["valeur"]) for l in lignes}
+    assert {cle: v for cle, v in valeurs.items() if cle[0] >= 2023} == (
+        PENSIONS_MOYENNES_2023_2024)
+    assert {l["fiabilite"] for l in lignes} == {"certifiee"}
+
+
+def test_le_panorama_ne_prend_le_relais_du_tableau_2_1_a_qu_apres_sa_derniere_annee(monkeypatch):
+    """La pension moyenne a deux sources, le tableau 2.1-a et le panorama :
+    une année n'en a jamais deux. Le panorama ne donne que les années qui
+    suivent la dernière du tableau — 2022 s'il n'est pas là —, et plus rien
+    quand le tableau les a."""
+    verificateur = _verificateur()
+    indicateurs = ("brute_directe", "nette_directe", "brute_totale", "nette_totale")
+    panorama = {"pensions_moyennes": {str(a): dict.fromkeys(indicateurs, 1500.0)
+                                      for a in range(2004, 2025)}}
+    monkeypatch.setattr(verificateur, "_panorama_2026", lambda: panorama)
+
+    def tableau(derniere):
+        return lambda: {(str(a), i): 1400.0 for a in range(2008, derniere + 1)
+                        for i in indicateurs}
+
+    monkeypatch.setattr(verificateur, "source_pensions_brutes_nettes", tableau(2022))
+    assert sorted(verificateur.source_pensions_brutes_nettes_panorama()) == sorted(
+        (a, i) for a in ("2023", "2024") for i in indicateurs)
+    monkeypatch.setattr(verificateur, "source_pensions_brutes_nettes", tableau(2024))
+    assert verificateur.source_pensions_brutes_nettes_panorama() == {}
+
+    def absent():
+        raise verificateur.SourceAbsente("le tableau 2.1-a")
+
+    monkeypatch.setattr(verificateur, "source_pensions_brutes_nettes", absent)
+    assert {a for a, _ in verificateur.source_pensions_brutes_nettes_panorama()} == {
+        "2023", "2024"}
