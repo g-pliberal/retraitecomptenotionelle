@@ -787,6 +787,24 @@ def _cas() -> list[dict]:
         "releve": lignes_releve(2013, 2025, "independant_mayotte", 1000, progression=1.0,
                                 trimestres=None),
     }))
+    # LES ANNÉES OUTRE-MER (action 177, étape 7) : né en 1940, à La Réunion de
+    # 1960 à 1995 au plancher de la saisie, un dixième du salaire moyen, dont
+    # les trimestres se valident jusqu'en 1995 au seuil de La Réunion, plus bas
+    # que celui de la métropole (R. 753-21, R. 351-9) ; l'artisane de La Réunion
+    # née en 1955, à 15 000 € par an de 1985 à 2014 puis à 300 € en 2015, que
+    # l'exonération sous 390 € prive cette année-là de toute cotisation et de
+    # tout droit (L. 756-3, D. 756-7).
+    cas.append(("outre_mer_reunion_au_plancher", {
+        "naissance": "1940-03-15", "debut": "1960-01", "liquidation": "2002-04",
+        "salaire": "0.1", "outre_mer": "1960:1995:reunion",
+    }))
+    cas.append(("outre_mer_artisane_exoneree", {
+        "naissance": "1955-01-01", "sexe": "F", "statut": "artisan", "debut": "1985-01",
+        "liquidation": "2017-01",
+        "releve": lignes_releve(1985, 2014, "artisan", 15000, progression=1.0,
+                                trimestres=None) + ",2015:artisan:300",
+        "outre_mer": "1985:2015:reunion",
+    }))
     # LA LODEOM (action 138, étape 18) : le salarié de La Réunion, dont
     # l'employeur applique le barème d'innovation et de croissance, cotise
     # partout le même brut ; seule sa fiche de paie, que la page montre, change.

@@ -2208,9 +2208,11 @@ function aideDeLOutreMer(paquet) {
   return `Les années travaillées ${lieux.slice(0, -1).join(", ")} ou ${lieux.at(-1)}. `
     + "Jusqu'en 1995, le salaire minimum y était plus bas qu'en métropole : un "
     + `trimestre s'y validait sur un plus petit salaire.${exoneration} Toute `
-    + "activité de ces années le porte, celles d'un relevé comprises : nommez-les "
-    + "jusqu'à votre départ si vous y travaillez encore. Mayotte se dit par le "
-    + "statut de la période, salarié ou travailleur indépendant de Mayotte.";
+    + "activité de ces années le porte, celles d'un relevé comprises : nommez "
+    + "l'année où vous y êtes arrivé et celle où vous en êtes parti, même "
+    + "entamées, et les années jusqu'à votre départ si vous y travaillez encore. "
+    + "Mayotte se dit par le statut de la période, salarié ou travailleur "
+    + "indépendant de Mayotte.";
 }
 
 /** Le bloc `lodeom` du salarié du privé, au paquet. */

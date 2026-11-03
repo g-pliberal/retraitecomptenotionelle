@@ -330,3 +330,39 @@ def _options_de_modelisation(corps: str) -> str:
         if profondeur == 0:
             return corps[debut:debut + balise.end()]
     raise AssertionError("les options de modélisation ne se ferment pas")
+
+
+# -- les témoins --------------------------------------------------------------------
+
+def _temoin_et_metropole(nom: str) -> tuple[dict, dict]:
+    """Le témoin de simulation ``nom`` (``construire_temoins.py``), et le
+    résultat de la même requête sans ses années outre-mer, que le portage
+    simule comme le site."""
+    from retraite_notionnelle import pont
+
+    temoins = json.loads((RACINE / "tests" / "temoins" / "simulations.json")
+                         .read_text(encoding="utf-8"))
+    temoin = temoins[nom]
+    assert temoin["requete"]["outre_mer"]
+    metropole = {cle: valeur for cle, valeur in temoin["requete"].items() if cle != "outre_mer"}
+    resultats, refus = pont.simulations([{"cle": "metropole", "requete": metropole}])
+    assert not refus
+    return temoin["resultat"], resultats["metropole"]["resultat"]
+
+
+def test_le_temoin_de_la_reunion_au_plancher_valide_plus_de_trimestres():
+    """À La Réunion de 1960 à 1995 au plancher de la saisie, le témoin du
+    parcours valide plus de trimestres qu'en métropole, où le seuil est plus
+    haut jusqu'en 1995 (R. 753-21, R. 351-9)."""
+    outre_mer, metropole = _temoin_et_metropole("outre_mer_reunion_au_plancher")
+    assert outre_mer["assure"]["trimestres_actuels"] > metropole["assure"]["trimestres_actuels"]
+
+
+def test_le_temoin_de_l_artisane_exoneree_perd_ses_trimestres_de_2015():
+    """L'artisane de La Réunion à 300 € en 2015 ne cotise pas cette année-là
+    (L. 756-3, D. 756-7) : deux trimestres de moins qu'en métropole, où
+    l'assiette minimale, 7,70 % du plafond de 38 040 €, soit 2 929,08 €, en
+    vaut deux au seuil de 150 heures à 9,61 €, 1 441,50 € (D. 633-2, R. 351-9)."""
+    outre_mer, metropole = _temoin_et_metropole("outre_mer_artisane_exoneree")
+    assert (outre_mer["assure"]["trimestres_actuels"]
+            == metropole["assure"]["trimestres_actuels"] - 2)
