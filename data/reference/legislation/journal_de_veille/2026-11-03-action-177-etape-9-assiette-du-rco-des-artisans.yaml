@@ -1,0 +1,52 @@
+date: "2026-11-03"
+session: "action 177, étape 9 : l'assiette du RCO des artisans, lue au droit"
+consulte: >-
+  `python scripts/veille_droit.py` : trois fiches à relire, aucune de l'étape. Les index
+  LEGI (à jour au 2 novembre 2026, aucun incrément depuis) et JORF (un incrément du
+  3 novembre) récupérés et mis à jour ; `python scripts/textes.py --inscrire` : aucune
+  rédaction nouvelle. Dans l'index LEGI : le décret n° 78-351, articles 3, 4, 5, 6 et 7
+  dans leur rédaction de 1978 (LEGIARTI000006766103, LEGIARTI000006766104,
+  LEGIARTI000006766105, LEGIARTI000006766107, LEGIARTI000006766109) ; D. 635-4, ses cinq
+  rédactions de 1985 à 2020 (LEGIARTI000006738335 à LEGIARTI000006738339) ; D. 635-6,
+  D. 635-7 et D. 635-8 de 1985 (LEGIARTI000006738071, LEGIARTI000006738024,
+  LEGIARTI000006738078) ; D. 635-2 de 2004 à 2016 (LEGIARTI000006738016,
+  LEGIARTI000006738017, LEGIARTI000020032159, LEGIARTI000025629861, LEGIARTI000025263548,
+  LEGIARTI000030034575, LEGIARTI000031799392) ; D. 635-3 de 2004 ; D. 635-7 de 2004 à 2013
+  (LEGIARTI000006738025, LEGIARTI000017869802, LEGIARTI000025091410,
+  LEGIARTI000025629857) ; D. 635-10 de 2004 ; L. 131-6 au 1er janvier 2009
+  (LEGIARTI000020169101). Dans l'index JORF : la notice du décret n° 78-351, le décret
+  n° 2008-1427 du 22 décembre 2008 (JORFARTI000019996956, JORFARTI000019996958), l'article 3
+  du décret n° 2011-2038, les arrêtés approuvant le règlement du RCO et ses modifications
+  de 1984 à 2011, dont les annexes du 31 décembre 2007, du 23 avril 2009
+  (JORFARTI000020676129), du 7 juillet 2009 (JORFARTI000021059798) et du 7 juin 2011. Dans la base de la Cnav, par son API : l'exposé « Points
+  cotisés artisans avant 2013 » (version du 24 octobre 2025), les exemples « Régime
+  complémentaire obligatoire - Dispense après le 01/01/2009 » et « Calcul du quotient
+  RCO - périodes à retenir ou à exclure ».
+trouve: >-
+  De 1979 aux revenus de 2008, la cotisation annuelle du RCO des artisans est assise
+  « sur les revenus professionnels non-salariés de l'avant-dernière année civile »,
+  sans ajustement, dans la limite de trois plafonds de l'année où elle est due (quatre
+  depuis 1997), au moins sur le revenu minimum du régime de base ; l'année de début
+  d'exercice et la suivante, sur « le tiers » puis « la moitié » du plafond de la
+  sécurité sociale (décret n° 78-351, article 3 ; D. 635-4 ; D. 635-2 et D. 635-7
+  depuis 2004, jusqu'au 1er janvier 2012 pour les forfaits) ; les points de l'exercice
+  sont ses cotisations divisées par le revenu de référence (article 6). Depuis les
+  revenus de 2009, la cotisation est provisionnelle et régularisée sur le revenu de
+  l'année (décret n° 2008-1427), sans disposition de passage. D. 635-2 vaut aussi pour
+  le NRCO des commerçants de 2004 à 2008. Le modèle tire les points de l'exercice du
+  revenu de l'année : mesuré au moteur Python, la règle ôterait de 5 à 11 % au RCO, de
+  1 à 3 % à la pension, sur quatre carrières ; 2,7 % au NRCO d'un commerçant de 1995 à
+  2012. Deux écarts de plus : la cotisation additionnelle de 0,10 % de 1985 à 1996
+  n'achète pas de points (D. 635-6 et D. 635-7, LEGIARTI000006738071,
+  LEGIARTI000006738024 ; « pas génératrice de droit », dit la caisse), quand le modèle
+  les compte à 4,50 % (−1,06 % du RCO d'une carrière une fois corrigé) ; la
+  complémentaire a un minimum jusqu'en 2015 — le revenu minimum du régime de base,
+  5,25 % du plafond en 2015, rien depuis 2016 (D. 635-2, LEGIARTI000030034575,
+  LEGIARTI000031799392) —, quand le modèle n'en oppose aucun. L'article 5 du décret
+  n° 78-351, le taux de 4,40 %, est lisible dans l'index LEGI.
+reste: >-
+  La question au propriétaire : la règle dans les deux moteurs, ou la limite
+  (`docs/feuille_de_route/177/2026-11-03-etape-9-assiette-du-rco-des-artisans.md`). Le
+  règlement du RCO approuvé le 15 décembre 1978, que l'index n'a pas, ses modifications
+  de 1984 à 1999 n'y étant qu'en notices ou en courtes annexes, sans rien sur l'assiette.
+  L'exposé de la Cnav reste `a_lire` au registre, que la file H tient.
