@@ -819,6 +819,42 @@ QUART_2014_99 = (
     "durée moyenne réduite du quart. Cette durée ne peut être inférieure à un an.")
 
 
+#: Décret n° 91-45 du 14 janvier 1991, article 32, du 7 août 2007 au 30 juin 2011
+#: (LEGIARTI000006710496), en entier ; son second alinéa, mot pour mot, est la règle
+#: du tableau de moyenne seule des agents chefs, à l'article 6 (LEGIARTI000006710407,
+#: du 25 juin 2007 au 30 juin 2011). Au JORF, le décret n° 2007-1185 du 3 août 2007
+#: écrit l'un (art. 3, JORFARTI000001115574) et l'autre (art. 10, JORFARTI000001693140).
+QUART_91_45 = (
+    "Les durées moyennes et minimales du temps passé dans les échelons des grades du corps "
+    "des agents chefs sont égales respectivement à l'ancienneté moyenne et à l'ancienneté "
+    "moyenne réduite du quart.")
+ARTICLE_32_91_45 = (
+    "Les durées moyenne et minimale du temps passé dans les échelles prévues dans le décret "
+    "n° 2006-227 du 24 février 2006 modifié sont fixées dans les conditions précisées par "
+    "ledit décret. " + QUART_91_45)
+#: Décret n° 91-936 du 19 septembre 1991, AP-HP, article 29, du 7 avril 2008 au
+#: 26 janvier 2012 (LEGIARTI000018616899), en entier : la règle du tableau de moyenne
+#: seule des agents-chefs, à l'article 6 (LEGIARTI000018616795, mêmes dates). Au JORF,
+#: le décret n° 2008-319 du 4 avril 2008, art. 2 (JORFARTI000018571736) et art. 6, 5°
+#: (JORFARTI000018571778).
+QUART_91_936 = QUART_91_45.replace("agents chefs", "agents-chefs")
+
+
+def test_la_regle_ecrite_dans_un_autre_article_se_cite_mot_pour_mot():
+    assert dur.regle_de_l_anciennete(ARTICLE_32_91_45) == QUART_91_45
+    assert dur.regle_de_l_anciennete(QUART_91_936) == QUART_91_936
+    assert dur.regle_de_l_anciennete(QUART_2014_99) == ""
+
+
+def test_la_regle_ecrite_dans_un_autre_article_est_consignee_avec_la_moyenne(tableaux_lus):
+    """Pour les deux seuls tableaux de moyenne seule dont le décret l'écrit
+    ailleurs : la règle, mot pour mot, et l'article qui l'écrit."""
+    ailleurs = {t["article"]: (t["regle_du_quart"], t["regle_du_quart_article"])
+                for t in tableaux_lus if t["regle_du_quart_article"]}
+    assert ailleurs == {"LEGIARTI000006710407": (QUART_91_45, "LEGIARTI000006710496"),
+                        "LEGIARTI000018616795": (QUART_91_936, "LEGIARTI000018616899")}
+
+
 def test_la_regle_du_quart_se_cite_mot_pour_mot():
     article = ("… 2e échelon 2 ans 1er échelon 1 an II. - " + QUART_2014_99)
     assert dur.regle_du_quart(article) == QUART_2014_99
@@ -834,7 +870,7 @@ def test_la_regle_du_quart_est_consignee_avec_la_moyenne(tableaux_lus):
     assert regles["LEGIARTI000031083656"] == QUART_2014_99.replace("réduite", "minorée")
     assert regles["LEGIARTI000006481280"] == ""
     moyenne_seule = [t for t in tableaux_lus if t["colonnes"] == "moyenne"]
-    assert (len(moyenne_seule), sum(bool(t["regle_du_quart"]) for t in moyenne_seule)) == (36, 10)
+    assert (len(moyenne_seule), sum(bool(t["regle_du_quart"]) for t in moyenne_seule)) == (36, 12)
 
 
 def test_les_administrateurs_generaux_recoupes_au_noyau_rh_a_leur_grade(lignes):

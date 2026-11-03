@@ -70,7 +70,9 @@ que le LEGI met en vigueur ensemble gardent leurs dates, et chacun de leurs
 tableaux nomme l'autre (``chevauche``) : le rattachement choisit. La règle qu'un
 article écrit avec sa durée moyenne (« La durée maximale … est égale à la durée
 moyenne majorée du quart ») se consigne mot pour mot (``regle_du_quart``) : aucune
-durée n'en est déduite.
+durée n'en est déduite. Celle qu'un autre article du décret écrit (« l'ancienneté
+moyenne réduite du quart »), pour les deux tableaux où on l'a trouvée
+(``REGLE_AILLEURS``), aussi, avec cet article (``regle_du_quart_article``).
 """
 
 from __future__ import annotations
@@ -728,6 +730,30 @@ def regle_du_quart(contenu: str) -> str:
     return re.sub(r"\s+", " ", contenu[debuts[-1].start():un_an.end() if un_an else fin]).strip()
 
 
+#: Les tableaux de moyenne seule dont le décret écrit la règle du quart dans un
+#: autre article, sous une autre forme (« égales respectivement à l'ancienneté
+#: moyenne et à l'ancienneté moyenne réduite du quart ») : la version du tableau,
+#: et celle de l'article qui écrit la règle. Relevés par la relecture R-B2-bis,
+#: rouverts au LEGI et au JORF (note du 3 novembre 2026, retouches de R-B2-bis) :
+#: décret n° 91-45, art. 6 et 32 (décret n° 2007-1185, art. 3 et 10) ; décret
+#: n° 91-936, art. 6 et 29 (décret n° 2008-319, art. 2 et 6).
+REGLE_AILLEURS = {
+    "LEGIARTI000006710407": "LEGIARTI000006710496",
+    "LEGIARTI000018616795": "LEGIARTI000018616899",
+}
+_ANCIENNETE_REDUITE = re.compile(
+    r"Les\s+dur[ée]es\s+moyennes?\s+et\s+minimales?\s+du\s+temps\s+pass[ée][^.]*?"
+    r"anciennet[ée]\s+moyenne\s+r[ée]duite\s+du\s+quart\.", re.IGNORECASE)
+
+
+def regle_de_l_anciennete(contenu: str) -> str:
+    """La règle qu'un article écrit pour les durées moyenne et minimale à partir de
+    l'ancienneté moyenne (« … égales respectivement à l'ancienneté moyenne et à
+    l'ancienneté moyenne réduite du quart. »), mot pour mot ; rien sinon."""
+    trouve = _ANCIENNETE_REDUITE.search(contenu)
+    return re.sub(r"\s+", " ", trouve.group(0)).strip() if trouve else ""
+
+
 def _en_prose(contenu: str) -> str:
     """Le motif d'un article qui fixe des durées sans tableau lisible, ou rien."""
     motif = _durees_d_echelon()
@@ -764,6 +790,10 @@ def extraire(chemin_index: Path | str | None = None) -> dict:
         if titre in titres and titre not in infos:
             infos[titre] = {"texte": ident, "debut": debut, "fin": fin, "nature": nature,
                             "visas": visas or ""}
+    regles_ailleurs = {}
+    for tableau, article in REGLE_AILLEURS.items():
+        (contenu,) = db.execute("SELECT texte FROM doc WHERE id = ?", (article,)).fetchone()
+        regles_ailleurs[tableau] = (regle_de_l_anciennete(contenu or ""), article)
     db.close()
 
     lus: dict[tuple, dict] = {}
@@ -802,8 +832,10 @@ def extraire(chemin_index: Path | str | None = None) -> dict:
                                 "motif": tableau.refus})
                 continue
             cle = (texte, numero, rang)
-            regle = regle_du_quart(contenu)
-            contenu_lu = (tableau.colonnes, regle, [
+            regle, article_de_la_regle = regle_du_quart(contenu), ""
+            if not regle and ident in regles_ailleurs:
+                regle, article_de_la_regle = regles_ailleurs[ident]
+            contenu_lu = (tableau.colonnes, regle, article_de_la_regle, [
                 (l.groupe, l.echelon, l.duree, l.duree_moyenne, l.duree_minimale,
                  l.duree_maximale, l.condition) for l in tableau.lignes])
             avant = lus.get(cle)
@@ -817,6 +849,7 @@ def extraire(chemin_index: Path | str | None = None) -> dict:
             lus[cle] = {"texte": texte, "article": ident, "numero": numero, "tableau": str(rang),
                         "debut": debut, "fin": fin, "intro": extrait.intro, "tableau_lu": tableau,
                         "contenu": contenu_lu, "versions": [ident], "regle": regle,
+                        "article_de_la_regle": article_de_la_regle,
                         "corrections": [correction] if correction else []}
 
     sortie: dict = {"source": source, "textes": [], "tableaux": [], "lignes": [],
@@ -832,7 +865,8 @@ def extraire(chemin_index: Path | str | None = None) -> dict:
             "tableau": lu["tableau"], "debut": lu["debut"], "fin": _fin(lu["fin"]),
             "correction": " ; ".join(lu["corrections"]),
             "versions": " ".join(lu["versions"]), "colonnes": " ".join(tableau.colonnes),
-            "regle_du_quart": lu["regle"], "lignes": str(len(tableau.lignes)),
+            "regle_du_quart": lu["regle"], "regle_du_quart_article": lu["article_de_la_regle"],
+            "lignes": str(len(tableau.lignes)),
             "intro": lu["intro"], "entete": tableau.entete})
         for n, (ligne, rang) in enumerate(zip(tableau.lignes, _rangs(tableau.lignes)), 1):
             sortie["lignes"].append({
@@ -902,8 +936,8 @@ COLONNES = {
     "textes": ("texte", "versant", "numero", "nature", "signature", "debut", "fin", "titre",
                "tableaux_lus", "non_lus"),
     "tableaux": ("texte", "article", "numero", "tableau", "debut", "fin", "correction",
-                 "versions", "chevauche", "colonnes", "regle_du_quart", "lignes", "intro",
-                 "entete"),
+                 "versions", "chevauche", "colonnes", "regle_du_quart",
+                 "regle_du_quart_article", "lignes", "intro", "entete"),
     "lignes": ("texte", "article", "tableau", "ligne", "groupe", "echelon", "rang", "duree",
                "duree_moyenne", "duree_minimale", "duree_maximale", "condition"),
     "non_lus": ("texte", "article", "numero", "tableau", "debut", "fin", "motif"),
@@ -925,7 +959,9 @@ ENTETES = {
                 "colonnes dans l'ordre de l'en-tête (unique, moyenne, minimale, maximale), la "
                 "règle que l'article écrit pour les durées maximale et minimale à partir de la "
                 "moyenne (regle_du_quart : « majorée du quart », « réduite du quart », mot pour "
-                "mot ; aucune durée n'en est déduite), la phrase qui l'annonce et son en-tête.",
+                "mot ; aucune durée n'en est déduite), la version de l'article qui l'écrit "
+                "quand ce n'est pas celui du tableau (regle_du_quart_article ; vide : le même "
+                "article), la phrase qui l'annonce et son en-tête.",
     "lignes": "Chaque ligne d'un tableau : groupe (le grade, le libellé écrit avant elle), "
               "l'échelon, son rang (le numéro ; le spécial au-dessus du plus haut de son grade, "
               "l'exceptionnel au-dessus encore), les durées en mois que le tableau écrit (duree : "
