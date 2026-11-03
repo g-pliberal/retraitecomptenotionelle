@@ -231,8 +231,19 @@ approximations:
     artisans et aux commerçants (décrets n° 74-432 et 74-433, puis D. 634-4) aux mêmes
     dates, que leurs textes ne sont pas lus.
   effet: non mesuré
+- ecart: >-
+    La réduction de la durée requise des appelés d'Afrique du Nord (L. 351-7-1, R. 351-45,
+    IV, loi n° 95-5 du 3 janvier 1995) n'est pas servie : un trimestre de moins pour les
+    dix-huit premiers mois de services militaires actifs en Afrique du Nord, du 1er janvier
+    1952 au 2 juillet 1962, puis un par quatre-vingt-dix jours, aux nés de 1934 à 1942
+    dont la pension a pris effet du 1er janvier 1994 au 1er janvier 2003. La saisie ne
+    porte pas ces services, et le modèle leur oppose la durée de leur génération.
+  effet: >-
+    non mesuré ; les pensions de 1994 à 2002 des appelés d'Afrique du Nord partis avant
+    soixante-cinq ans sans leur durée, décotées des trimestres que la réduction leur
+    rendait
 sources:
-  lu_le: 2026-10-08
+  lu_le: 2026-11-03
   prochaine_relecture: 2027-04-30
   a_relire:
   - >-
@@ -240,6 +251,23 @@ sources:
     garde que les notices et la rédaction de 1975, et les décrets n° 74-427, 74-432 et
     74-433 du 15 mai 1974, aux salariés agricoles, aux artisans et aux commerçants.
   lectures:
+  - type: legifrance
+    reference: >-
+      R. 351-45 CSS, rédaction du 10 mai 1995 (LEGIARTI000006749450), index LEGI à jour au
+      2 novembre 2026 : « IV. - En application de l'article L. 351-7-1, les durées
+      d'assurance et de périodes reconnues équivalentes mentionnées aux II et III
+      ci-dessus sont réduites [...] lorsque la pension est liquidée au profit d'un
+      assuré ayant, au cours des périodes définies au D de l'article R. 224 du code des
+      pensions militaires d'invalidité et des victimes de la guerre, accompli des
+      services militaires actifs en Afrique du Nord au titre des obligations légales » ;
+      la diffusion d'instructions ministérielles Cnav n° 9/95 du 7 juillet 1995
+      (D_IM_995_07071995, loi n° 95-5 du 3 janvier 1995, décrets n° 95-643 et 95-644
+      du 9 mai 1995) et l'exposé de la base de législation de la Cnav « Durée
+      d'assurance pour le taux plein » (version du 15 septembre 2026), « Avant le
+      01/02/2003 » : les nés du 1er janvier 1934 au 31 décembre 1942, les pensions
+      prenant effet du 1er janvier 1994 au 1er janvier 2003, un trimestre pour les
+      dix-huit premiers mois, puis un par quatre-vingt-dix jours, arrondi au supérieur
+    date: 2026-11-03
   - type: jorf
     reference: >-
       loi n° 73-1051 du 21 novembre 1973 (JORFTEXT000000322528) ; décret n° 74-54 du 23
