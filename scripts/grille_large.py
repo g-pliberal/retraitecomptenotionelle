@@ -296,7 +296,13 @@ natures selon leur rang, à la pente de leur génération
 2020 remonte au haut de leurs rangs, celle des nés en 1950 et en 1953 descend
 avec eux, comme celle des femmes ; la part de chaque nature y suit désormais
 la masse de sa classe dans leur génération, 1,52 fois celle de l'échantillon à
-la classe p10 en 1950, 0,80 fois aux classes p50 à p99.
+la classe p10 en 1950, 0,80 fois aux classes p50 à p99. La trente-septième
+(le 3 novembre 2026) prend la surcote du salariat sans celle des statutaires,
+et l'une et l'autre selon la génération (:data:`SURCOTE_SELON_LA_GENERATION`) :
+les fonctionnaires civils surcotent, génération par génération, la part de
+leur catégorie que suit celle de leur caisse l'année où ils atteignent l'âge
+légal, et le salariat ce qui leur manque pour que tous les retraités du sexe
+surcotent la part que l'EIR mesure aux résidents de leur génération.
 
 CE QUE LA MESURE N'EST PAS
 ---------------------------
@@ -305,9 +311,9 @@ ni du sexe ni de la durée —, chaque déclinaison garde l'âge d'entrée et le
 profil de son cas type, et les parts sont celles des retraités de 2020,
 appliquées à toutes les générations ; seules les carrières incomplètes des
 femmes changent de durée avec la leur, et la part des départs avec décote, ou
-pour invalidité et inaptitude, avec la sienne. La dispersion des salaires est celle d'une
-coupe de l'année à temps complet, plus large que celle d'un salaire de
-carrière ; les dix années de salariat d'un polypensionné et les deux enfants
+pour invalidité et inaptitude, ou avec une surcote, avec la sienne. La
+dispersion des salaires est celle d'une coupe de l'année à temps complet, plus
+large que celle d'un salaire de carrière ; les dix années de salariat d'un polypensionné et les deux enfants
 d'une femme sont des conventions, que l'EIR ne chiffre pas. Ce que la mesure
 dit : de combien la page bouge quand la grille cesse de n'avoir que treize
 carrières, et si cet écart justifie une population tirée des distributions
@@ -1252,6 +1258,64 @@ SURCOTE_DU_TRIMESTRE = 0.0125
 #: ans, assez pour le super-actif, qui a le taux plein à 55 ans et ne surcote
 #: pas avant 62.
 TRIMESTRES_DE_RECHERCHE = 40
+
+#: La trente-septième version (action 138, étape 14, le 3 novembre 2026) : la
+#: surcote du salariat, sans les statutaires, et selon la génération. La part
+#: du salariat et des non-salariés qui surcote (:data:`DEPARTS_AVEC_SURCOTE`)
+#: se prenait à l'EIR, statutaires compris, et comptait une seconde fois leur
+#: surcote, désormais la leur (:data:`SURCOTE_DES_STATUTAIRES`) : les femmes de
+#: la génération 1955 surcotaient pour 17,4 %, quand l'EIR en voit 14,3 % des
+#: nées en 1953 ; et l'une et l'autre part valaient à toutes les générations.
+#: Sous cette constante, chaque année de naissance donne au poids des jumelles
+#: qui surcotent, et de leurs sœurs, la part de sa génération
+#: (``Variante.parts_des_generations``) : au fonctionnaire civil, celle de sa
+#: catégorie en 2025, fois ce que la part de tous les départs de sa caisse qui
+#: surcotent est à celle de 2025, l'année où sa génération atteint son âge
+#: légal (:func:`surcotes_des_fonctionnaires_selon_la_generation`) — à l'État,
+#: 14 % en 2004, 26 % en 2010, 35 % en 2025 ; au salariat et aux non-salariés,
+#: ce qui manque aux fonctionnaires civils pour que tous les retraités du sexe
+#: surcotent la part que l'EIR mesure aux résidents de leur génération
+#: (:func:`surcotes_des_generations`), rapporté aux carrières qui peuvent
+#: surcoter (:func:`parts_du_salariat_qui_surcote`), comme la trentième version
+#: prend la décote sans les agents. Les jumelles et leurs poids restent ceux de
+#: la dix-neuvième et de la trente-troisième versions : la même simulation sert
+#: la population avec et sans cette constante. Trois conventions : l'année où
+#: la génération atteint son âge légal, celle de :data:`ANNEE_DE_LA_SURCOTE`,
+#: date la part de sa caisse ; la part de chaque catégorie suit celle de tous
+#: les départs de sa caisse, que le jaune publie seule chaque année ; l'EIR ne
+#: voyant que les nés en 1950 et en 1953, les générations d'avant 1950 prennent
+#: la part de 1950, celles d'après 1953 la part de 1953, et leurs attentes
+#: restent celles des nés en 1953.
+SURCOTE_SELON_LA_GENERATION = True
+
+#: La part des départs de chaque année qui surcotent, à tous les départs des
+#: civils de l'État (tableau 103 du jaune pensions annexé au PLF 2027) et de la
+#: CNRACL (tableau 105), recopiée de ``macro/caracteristiques_fonction_publique.csv``,
+#: qu'aucun calcul ne lit : paires ``(année, part)`` triées, de 2004, où naît la
+#: surcote, à 2025. Le jaune ne publie pas les années 2005 à 2010 de l'État, ni
+#: 2005 à 2012 de la CNRACL.
+SURCOTES_DU_JAUNE_PAR_ANNEE = {
+    "fpe_civils": ((2004, 0.14), (2011, 0.28), (2012, 0.36), (2013, 0.31), (2014, 0.31),
+                   (2015, 0.31), (2016, 0.3), (2017, 0.28), (2018, 0.31), (2019, 0.32),
+                   (2020, 0.34), (2021, 0.36), (2022, 0.36), (2023, 0.38), (2024, 0.36),
+                   (2025, 0.35)),
+    "cnracl_total": ((2004, 0.08), (2013, 0.19), (2014, 0.19), (2015, 0.2), (2016, 0.19),
+                     (2017, 0.17), (2018, 0.18), (2019, 0.18), (2020, 0.19), (2021, 0.21),
+                     (2022, 0.22), (2023, 0.24), (2024, 0.24), (2025, 0.215)),
+}
+
+#: La caisse de :data:`SURCOTES_DU_JAUNE_PAR_ANNEE` de chaque catégorie de
+#: fonctionnaire civil de la population.
+CAISSES_DU_JAUNE = {
+    "fonctionnaire_etat": "fpe_civils",
+    "fonctionnaire_etat_actif": "fpe_civils",
+    "fonctionnaire_etat_super_actif": "fpe_civils",
+    "fonctionnaire_territorial_hospitalier": "cnracl_total",
+    "fonctionnaire_territorial_hospitalier_actif": "cnracl_total",
+}
+
+#: L'année des départs pour ancienneté que :data:`SURCOTES_DU_JAUNE` décrit.
+ANNEE_DU_JAUNE = 2025
 
 #: La dix-septième version (action 138, étape 14, le 16 octobre 2026) : les
 #: retraités de l'Ircantec sont, pour la plupart, des salariés du privé passés
@@ -3281,7 +3345,8 @@ def population(effectifs, source: CaracteristiquesRetraites,
     if ASSIMILEES_SELON_LE_RANG:
         variantes = assimilees_selon_le_rang(variantes, donnees.quintiles)
     if DEPARTS_AVEC_SURCOTE:
-        variantes = departs_avec_surcote(variantes, departs_publies(racine), racine)
+        variantes = departs_avec_surcote(variantes, departs_publies(racine), racine,
+                                         effectifs, source)
     if SURCOTE_DES_STATUTAIRES:
         variantes = departs_des_fonctionnaires_avec_surcote(variantes, racine)
     if ENTREE_AU_PREMIER_TRIMESTRE:
@@ -4227,27 +4292,197 @@ def ages_legaux(racine: Path) -> tuple[tuple[int, float], ...]:
                  if (lu := lus.age(generation)) is not None)
 
 
-def departs_avec_surcote(variantes: list[Variante], publies: dict,
-                         racine: Path) -> list[Variante]:
+def naissances_simulees() -> tuple[int, ...]:
+    """Les années de naissance dont chaque génération simulée de la grille est
+    la cohorte (``cout.generations``, ``cout._DEMI_TRANCHE``), triées."""
+    return tuple(naissance for generation in C.generations()
+                 for naissance in range(generation - C._DEMI_TRANCHE,
+                                        generation + C._DEMI_TRANCHE + 1))
+
+
+def aux_naissances(paires: tuple[tuple[int, float], ...], defaut: float) -> list[float]:
+    """La valeur de paires ``(génération, valeur)`` triées à chaque année de
+    :func:`naissances_simulees`, comme :func:`_par_generation` la lit, en une
+    passe ; ``defaut`` partout sans paires."""
+    naissances = naissances_simulees()
+    if not paires:
+        return [defaut] * len(naissances)
+    sortie, rang, valeur = [], 0, paires[0][1]
+    for naissance in naissances:
+        while rang < len(paires) and paires[rang][0] <= naissance:
+            valeur = paires[rang][1]
+            rang += 1
+        sortie.append(valeur)
+    return sortie
+
+
+def parts_multipliees(v: Variante, facteurs: list[float]) -> tuple[tuple[int, float], ...]:
+    """Ce que chaque année de naissance donne au poids de ``v``
+    (:attr:`Variante.parts_des_generations`), fois son facteur dans
+    ``facteurs``, alignés sur :func:`naissances_simulees`, en paires
+    ``(naissance, part)`` triées."""
+    return _en_paires([(naissance, part * facteur) for naissance, part, facteur
+                       in zip(naissances_simulees(), aux_naissances(v.parts_des_generations, 1.0),
+                              facteurs)])
+
+
+def surcote_du_jaune_en(caisse: str, annee: float) -> float:
+    """La part des départs de ``annee`` qui surcotent à cette caisse du jaune
+    (:data:`SURCOTES_DU_JAUNE_PAR_ANNEE`), en droite ligne entre deux années
+    publiées ; celle de la première avant elle, celle de la dernière après."""
+    paires = SURCOTES_DU_JAUNE_PAR_ANNEE[caisse]
+    if annee <= paires[0][0]:
+        return paires[0][1]
+    for (debut, part), (fin, suivante) in zip(paires, paires[1:]):
+        if annee <= fin:
+            return part + (suivante - part) * (annee - debut) / (fin - debut)
+    return paires[-1][1]
+
+
+def surcotes_des_fonctionnaires_selon_la_generation(
+        racine: Path) -> dict[str, tuple[tuple[int, float], ...]]:
+    """La part de chaque catégorie de fonctionnaire civil qui surcote, année de
+    naissance par année de naissance (:data:`SURCOTE_SELON_LA_GENERATION`) :
+    celle des départs pour ancienneté de 2025 (:func:`surcotes_des_fonctionnaires`),
+    fois ce que la part de tous les départs de sa caisse qui surcotent est à
+    celle de 2025, l'année où la génération atteint son âge légal
+    (:func:`surcote_du_jaune_en`) ; une au plus. Par affiliation, paires
+    ``(naissance, part)`` triées, des années de naissance dont l'âge légal se
+    lit (``scenarios.actuel.AgesOuverture``)."""
+    from retraite_notionnelle.scenarios.actuel import AgesOuverture
+
+    lus = AgesOuverture(racine)
+    annees = [(naissance, naissance + lu[0]) for naissance in naissances_simulees()
+              if (lu := lus.age(naissance)) is not None]
+    sortie = {}
+    for affiliation, (part, _) in surcotes_des_fonctionnaires().items():
+        caisse = CAISSES_DU_JAUNE[affiliation]
+        reference = surcote_du_jaune_en(caisse, ANNEE_DU_JAUNE)
+        sortie[affiliation] = _en_paires([
+            (naissance, min(1.0, part * surcote_du_jaune_en(caisse, annee) / reference))
+            for naissance, annee in annees])
+    return sortie
+
+
+def surcotes_des_generations(racine: Path) -> dict[str, tuple[tuple[int, float], ...]]:
+    """La part des départs avec surcote de chaque génération parmi tous ses
+    retraités, sexe par sexe, en paires ``(génération, part)`` triées
+    (:data:`SURCOTE_SELON_LA_GENERATION`) : celle que l'EIR mesure aux
+    résidents en France nés en 1950 et en 1953 (``departs_generations.csv``),
+    en droite ligne entre eux ; celle des nés en 1950 avant eux, celle des nés
+    en 1953 après."""
+    publies = departs_publies(racine)
+    premiere, derniere = min(ENQUETES_DES_DEPARTS), GENERATION_DES_SURCOTES
+    sortie = {}
+    for sexe in ("F", "H"):
+        de_la_premiere, de_la_derniere = (
+            publies[(generation, "residence", "france", sexe, "condition_surcote")] / 100.0
+            for generation in (premiere, derniere))
+        sortie[sexe] = tuple(
+            (generation, de_la_premiere + (de_la_derniere - de_la_premiere)
+             * (generation - premiere) / (derniere - premiere))
+            for generation in range(premiere, derniere + 1))
+    return sortie
+
+
+def surcote_au_statut(v: Variante, surcotes: dict[str, tuple[float, float]]) -> bool:
+    """Vrai pour une carrière que :data:`SURCOTE_DES_STATUTAIRES` décline : d'une
+    catégorie de fonctionnaire civil qui surcote (``surcotes``,
+    :func:`surcotes_des_fonctionnaires`), qui part au taux plein, ni décotée,
+    ni déjà déclinée."""
+    return (bool(surcotes.get(v.cas.affiliation, (0.0, 0.0))[0])
+            and v.cas.regle_liquidation == "taux_plein" and not v.decote and not v.surcote)
+
+
+def parts_du_salariat_qui_surcote(variantes: list[Variante], effectifs,
+                                  source: CaracteristiquesRetraites,
+                                  racine: Path) -> dict[str, tuple[tuple[int, float], ...]]:
+    """La part des carrières qui peuvent surcoter (:func:`peut_surcoter`) de
+    chaque sexe qui part avec une surcote, année de naissance par année de
+    naissance (:data:`SURCOTE_SELON_LA_GENERATION`), paires ``(naissance,
+    part)`` triées : ce qui manque aux fonctionnaires civils qui surcotent
+    (:func:`surcotes_des_fonctionnaires_selon_la_generation`, sous
+    :data:`SURCOTE_DES_STATUTAIRES`) pour que tous les retraités du sexe
+    surcotent la part de leur génération (:func:`surcotes_des_generations`),
+    divisé par le poids des carrières qui le peuvent ; entre zéro et un.
+    Chaque carrière pèse son poids de retraitée l'année de l'enquête, fois ce
+    que l'année de naissance lui en donne."""
+    poids = poids_retraites(variantes, effectifs, source.millesime)
+    cibles = surcotes_des_generations(racine)
+    surcotes = surcotes_des_fonctionnaires() if SURCOTE_DES_STATUTAIRES else {}
+    statutaires = {affiliation: aux_naissances(paires, 0.0) for affiliation, paires
+                   in (surcotes_des_fonctionnaires_selon_la_generation(racine).items()
+                       if surcotes else ())}
+    naissances = naissances_simulees()
+    sortie = {}
+    for sexe in ("F", "H"):
+        tous = [0.0] * len(naissances)
+        eligibles = [0.0] * len(naissances)
+        fonctionnaires = [0.0] * len(naissances)
+        for v, p in zip(variantes, poids):
+            if v.cas.sexe != sexe or not p:
+                continue
+            parts = [p * part for part in aux_naissances(v.parts_des_generations, 1.0)]
+            for rang, part in enumerate(parts):
+                tous[rang] += part
+            if peut_surcoter(v):
+                for rang, part in enumerate(parts):
+                    eligibles[rang] += part
+            elif surcote_au_statut(v, surcotes):
+                for rang, (part, siennes) in enumerate(zip(parts,
+                                                           statutaires[v.cas.affiliation])):
+                    fonctionnaires[rang] += part * siennes
+        valeurs = [(naissance, min(1.0, max(0.0, (cible * tous[rang] - fonctionnaires[rang])
+                                            / eligibles[rang]))
+                    if eligibles[rang] > 0.0 else 0.0)
+                   for rang, (naissance, cible)
+                   in enumerate(zip(naissances, aux_naissances(cibles[sexe], 0.0)))]
+        sortie[sexe] = _en_paires(valeurs)
+    return sortie
+
+
+def jumelles_selon_la_generation(v: Variante, base: float, parts: list[float]
+                                 ) -> tuple[tuple[tuple[int, float], ...],
+                                            tuple[tuple[int, float], ...]]:
+    """Ce que chaque année de naissance donne au poids de la sœur au taux plein
+    et des jumelles qui surcotent d'une carrière déclinée à la part ``base``,
+    pour qu'elles en pèsent ``parts``, alignées sur :func:`naissances_simulees`
+    (:data:`SURCOTE_SELON_LA_GENERATION`) : ``(sœur, jumelles)``."""
+    return (parts_multipliees(v, [(1.0 - part) / (1.0 - base) for part in parts]),
+            parts_multipliees(v, [part / base for part in parts]))
+
+
+def departs_avec_surcote(variantes: list[Variante], publies: dict, racine: Path,
+                         effectifs=None, source: CaracteristiquesRetraites | None = None
+                         ) -> list[Variante]:
     """Chaque carrière qui peut surcoter (:func:`peut_surcoter`) se décline :
     la part de son sexe (:func:`parts_avec_surcote`) attend après l'âge légal,
     répartie comme les départs avec surcote des nés en 1953
     (:func:`attentes_des_surcotes`), le reste part au taux plein ; les autres
-    variantes telles quelles."""
+    variantes telles quelles. Sous :data:`SURCOTE_SELON_LA_GENERATION`, chaque
+    année de naissance donne à la sœur et aux jumelles le poids qui leur fait
+    peser la part de sa génération (:func:`parts_du_salariat_qui_surcote`,
+    sur les poids de ``effectifs`` l'année de ``source``)."""
     parts = parts_avec_surcote(publies)
     attentes = attentes_des_surcotes(publies, racine)
     legaux = ages_legaux(racine)
+    selon = ({sexe: aux_naissances(paires, 0.0) for sexe, paires
+              in parts_du_salariat_qui_surcote(variantes, effectifs, source, racine).items()}
+             if SURCOTE_SELON_LA_GENERATION else None)
     sortie = []
     for v in variantes:
         part = parts[v.cas.sexe]
         if not peut_surcoter(v) or not part:
             sortie.append(v)
             continue
-        sortie.append(v.fois(1.0 - part))
+        soeur = jumelles = v.parts_des_generations
+        if selon is not None:
+            soeur, jumelles = jumelles_selon_la_generation(v, part, selon[v.cas.sexe])
+        sortie.append(v.fois(1.0 - part, parts_des_generations=soeur))
         for attente, poids in attentes[v.cas.sexe]:
-            sortie.append(v.fois(part * poids, surcote=attente, cas=elargi(
-                v.cas, code=f"{v.cas.code}~surcote{attente:.2f}", attente=attente,
-                legaux=legaux)))
+            sortie.append(v.fois(part * poids, surcote=attente, parts_des_generations=jumelles,
+                                 cas=elargi(v.cas, code=f"{v.cas.code}~surcote{attente:.2f}",
+                                            attente=attente, legaux=legaux)))
     return sortie
 
 
@@ -4335,17 +4570,26 @@ def departs_des_fonctionnaires_avec_surcote(variantes: list[Variante],
     modèle lui sert une surcote, autant que la surcote moyenne de sa
     catégorie, si sa génération atteint son âge légal depuis que la surcote
     existe (:data:`ANNEE_DE_LA_SURCOTE`) ; le reste part au taux plein ; les
-    autres variantes telles quelles."""
+    autres variantes telles quelles. Sous :data:`SURCOTE_SELON_LA_GENERATION`,
+    chaque année de naissance donne à la sœur et à la jumelle le poids qui leur
+    fait peser la part de sa génération
+    (:func:`surcotes_des_fonctionnaires_selon_la_generation`)."""
     surcotes = surcotes_des_fonctionnaires()
     legaux = ages_legaux(racine)
+    selon = ({affiliation: aux_naissances(paires, 0.0) for affiliation, paires
+              in surcotes_des_fonctionnaires_selon_la_generation(racine).items()}
+             if SURCOTE_SELON_LA_GENERATION else None)
     sortie = []
     for v in variantes:
-        part, attente = surcotes.get(v.cas.affiliation, (0.0, 0.0))
-        if not part or v.cas.regle_liquidation != "taux_plein" or v.decote or v.surcote:
+        if not surcote_au_statut(v, surcotes):
             sortie.append(v)
             continue
-        sortie.append(v.fois(1.0 - part))
-        sortie.append(v.fois(part, surcote=attente, cas=elargi(
+        part, attente = surcotes[v.cas.affiliation]
+        soeur = jumelle = v.parts_des_generations
+        if selon is not None:
+            soeur, jumelle = jumelles_selon_la_generation(v, part, selon[v.cas.affiliation])
+        sortie.append(v.fois(1.0 - part, parts_des_generations=soeur))
+        sortie.append(v.fois(part, surcote=attente, parts_des_generations=jumelle, cas=elargi(
             v.cas, code=f"{v.cas.code}~surcote{attente:.2f}", attente=attente,
             legaux=legaux, depuis_la_surcote=True)))
     return sortie

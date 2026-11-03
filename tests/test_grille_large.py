@@ -2116,8 +2116,11 @@ def test_la_part_des_departs_avec_decote_suit_la_generation(simulateur, source, 
     toutes les générations. La version seule, rapportée à toutes les carrières
     incomplètes : la trentième, qui la rapporte à celles qui peuvent décoter,
     a son test ; et sans la décote des seuls résidents
-    (``DECOTE_DES_RESIDENTS``), qui a le sien."""
+    (``DECOTE_DES_RESIDENTS``), qui a le sien, ni la surcote selon la
+    génération (``SURCOTE_SELON_LA_GENERATION``), qui donne aussi des parts
+    aux carrières complètes qui surcotent, et a le sien."""
     monkeypatch.setattr(G, "DECOTE_DES_RESIDENTS", False)
+    monkeypatch.setattr(G, "SURCOTE_SELON_LA_GENERATION", False)
     racine = parametres.racine_donnees
     residents = G.quintiles_eqcc(racine, residents=True)
     attendues = _decotes_attendues(racine, (1925, 1949, 1950, 1952, 1953, 1955, 1958, 1960,
@@ -3077,6 +3080,114 @@ def test_un_fonctionnaire_civil_qui_surcote_part_avec_la_surcote_moyenne_de_sa_c
         22 + 167 / 4 + surcotes["fonctionnaire_etat"][1])
     assert G.debut_de_la_surcote(projection, sedentaire, 1960, 65.0) == pytest.approx(
         22 + 167 / 4)
+
+
+def test_la_surcote_des_fonctionnaires_suit_l_annee_ou_leur_generation_atteint_l_age_legal(
+        parametres):
+    """Le jaune pensions annexé au PLF 2027 dit, de 2004 à 2025, la part des
+    départs de chaque année qui surcotent, que le dépôt certifie : aux civils
+    de l'État, 14 % en 2004, où naît la surcote, 28 % en 2011, 36 % en 2012,
+    35 % en 2025 (tableau 103) ; à la CNRACL, 8 % en 2004, 19 % en 2013,
+    21,5 % en 2025 (tableau 105). Sous ``SURCOTE_SELON_LA_GENERATION``, la
+    part de chaque catégorie qui surcote, celle des départs pour ancienneté de
+    2025, suit, année de naissance par année de naissance, ce que la part de
+    sa caisse est à celle de 2025 l'année où la génération atteint son âge
+    légal, en droite ligne entre deux années publiées, celle de 2025 après
+    elle. Né en 1950, à 60 ans en 2010 (L. 161-17-2) : 26 % à l'État, six
+    septièmes du chemin de 2004 à 2011, 15,3 % à la CNRACL, six neuvièmes de
+    celui de 2004 à 2013 ; le sédentaire de l'État surcote pour 48,5 % fois
+    26/35. Né en 1953, à 61 ans et 2 mois, en 2014 : 31 % à l'État. Né en
+    1960, à 62 ans en 2022 : 36 % et 22 %. Né en 1975, après 2025 : la part
+    de 2025."""
+    racine = parametres.racine_donnees
+    lues: dict[str, list[tuple[int, float]]] = {}
+    with (racine / "reference" / "macro" / "caracteristiques_fonction_publique.csv").open(
+            encoding="utf-8") as fichier:
+        for ligne in csv.DictReader(l for l in fichier if not l.startswith("#")):
+            if ((ligne["tableau"], ligne["population"]) in (("103", "fpe_civils"),
+                                                            ("105", "cnracl_total"))
+                    and ligne["indicateur"] == "part_surcote"):
+                lues.setdefault(ligne["population"], []).append(
+                    (int(ligne["modalite"]), float(ligne["valeur"])))
+    assert G.SURCOTES_DU_JAUNE_PAR_ANNEE == {caisse: tuple(sorted(paires))
+                                             for caisse, paires in lues.items()}
+    assert G.surcote_du_jaune_en("fpe_civils", 2004) == 0.14
+    assert G.surcote_du_jaune_en("fpe_civils", 2010) == pytest.approx(0.14 + 0.14 * 6 / 7)
+    assert G.surcote_du_jaune_en("cnracl_total", 2010) == pytest.approx(0.08 + 0.11 * 6 / 9)
+    assert G.surcote_du_jaune_en("fpe_civils", 2037) == 0.35
+    surcotes = G.surcotes_des_fonctionnaires()
+    selon = G.surcotes_des_fonctionnaires_selon_la_generation(racine)
+    assert set(selon) == set(surcotes)
+    etat = {1950: 0.26 / 0.35, 1953: 0.31 / 0.35, 1960: 0.36 / 0.35, 1975: 1.0}
+    cnracl = {1950: (0.08 + 0.11 * 6 / 9) / 0.215, 1960: 0.22 / 0.215, 1975: 1.0}
+    for affiliation, rapports in (("fonctionnaire_etat", etat),
+                                  ("fonctionnaire_etat_actif", etat),
+                                  ("fonctionnaire_etat_super_actif", etat),
+                                  ("fonctionnaire_territorial_hospitalier", cnracl),
+                                  ("fonctionnaire_territorial_hospitalier_actif", cnracl)):
+        for naissance, rapport in rapports.items():
+            assert G._par_generation(selon[affiliation], naissance, 0.0) == pytest.approx(
+                surcotes[affiliation][0] * rapport), (affiliation, naissance)
+    assert G._par_generation(selon["fonctionnaire_etat"], 1950, 0.0) == pytest.approx(
+        15_956 / 32_913 * 26 / 35, abs=5e-4)
+
+
+def test_la_surcote_du_salariat_se_prend_sans_celle_des_statutaires(
+        simulateur, source, parametres, population, monkeypatch):
+    """Sous ``SURCOTE_SELON_LA_GENERATION``, tous les retraités de chaque sexe
+    surcotent, année de naissance par année de naissance, la part que l'EIR
+    mesure aux résidents de leur génération — nés en 1950 : 11,2 % des
+    femmes, 12,2 % des hommes ; nés en 1953 : 14,2 et 14,4 % —, en droite
+    ligne entre elles, celle de 1950 avant, celle de 1953 après : les
+    fonctionnaires civils la part du jaune selon leur génération, le salariat
+    et les non-salariés ce qui leur manque, leur part prise sans celle des
+    statutaires, comme la décote sans les agents. Prise avec, comme la
+    dix-neuvième version la prend à l'EIR, elle comptait deux fois la leur :
+    les femmes nées en 1955 du salariat surcotent moins que les 21,7 % de
+    leurs carrières complètes que l'EIR voit surcoter. Chaque carrière garde
+    son poids, et les cas types sont ceux de la version éteinte, que la même
+    simulation sert."""
+    assert G.SURCOTE_SELON_LA_GENERATION and G.SURCOTE_DES_STATUTAIRES
+    publies = G.departs_publies(parametres.racine_donnees)
+    de_l_eir = {"F": (11.2, 14.2), "H": (12.2, 14.4)}
+    for sexe, (de_1950, de_1953) in de_l_eir.items():
+        assert publies[(1950, "residence", "france", sexe, "condition_surcote")] == de_1950
+        assert publies[(1953, "residence", "france", sexe, "condition_surcote")] == de_1953
+    attendues = {sexe: {1946: de_1950 / 100, 1950: de_1950 / 100,
+                        1952: (de_1950 + (de_1953 - de_1950) * 2 / 3) / 100,
+                        1953: de_1953 / 100, 1955: de_1953 / 100, 1960: de_1953 / 100,
+                        1970: de_1953 / 100}
+                 for sexe, (de_1950, de_1953) in de_l_eir.items()}
+    selon = G.surcotes_des_fonctionnaires_selon_la_generation(parametres.racine_donnees)
+    base = G.parts_avec_surcote(publies)
+    poids = _poids(population, simulateur.effectifs, source.millesime)
+    for sexe, parts in attendues.items():
+        du_sexe = [v for v in population if v.cas.sexe == sexe]
+        for naissance, attendue in parts.items():
+            def masse(garder) -> float:
+                return sum(poids[v.cas.code] * v.part_de_la_generation(naissance)
+                           for v in du_sexe if garder(v))
+
+            tous = masse(lambda v: True)
+            assert tous == pytest.approx(sum(poids[v.cas.code] for v in du_sexe), rel=1e-9)
+            assert masse(lambda v: v.surcote) / tous == pytest.approx(attendue, rel=1e-6), (
+                sexe, naissance)
+            for affiliation, paires in selon.items():
+                siens = masse(lambda v: v.cas.affiliation == affiliation)
+                avec = masse(lambda v: v.cas.affiliation == affiliation and v.surcote)
+                assert avec / siens == pytest.approx(
+                    G._par_generation(paires, naissance, 0.0), rel=1e-9), (
+                    sexe, naissance, affiliation)
+            salariat = masse(lambda v: v.groupe in G.GROUPES_INTERROMPUS
+                             and (v.surcote or G.peut_surcoter(v)))
+            du_salariat = masse(lambda v: v.groupe in G.GROUPES_INTERROMPUS and v.surcote)
+            assert 0.0 < du_salariat / salariat < 1.0, (sexe, naissance)
+            if (sexe, naissance) == ("F", 1955):
+                assert du_salariat / salariat < base["F"] == pytest.approx(0.142 * 87.4 / 57.3)
+    monkeypatch.setattr(G, "SURCOTE_SELON_LA_GENERATION", False)
+    sans = G.grille("population", simulateur.effectifs, source, ())
+    assert [v.cas for v in sans] == [v.cas for v in population]
+    assert [v.retraites for v in sans] == [v.retraites for v in population]
 
 
 # -- la grille élargie au portage (action 161, étape 7) ----------------------------
