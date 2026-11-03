@@ -764,6 +764,8 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         "retraites_generations": "macro/retraites_generations.csv",
         "retraites_generations_ancetre": "macro/retraites_generations.csv",
         "reversion_beneficiaires": "macro/reversion_beneficiaires.csv",
+        "durees_validees_actifs": "macro/durees_validees_actifs.csv",
+        "fins_de_carriere": "macro/fins_de_carriere.csv",
         "age_depart_csp": "macro/age_depart_csp.csv",
         "structure_financement_regimes": "regimes/structure_financement.csv",
         "cotisants_regimes": "regimes/cotisants.csv",

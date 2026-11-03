@@ -1444,7 +1444,9 @@ institutions:
           data/reference/macro/cumul_emploi_retraite_profil.csv,
           data/reference/macro/rapport_emploi_retraites.csv,
           data/reference/macro/retraites_generations.csv,
-          data/reference/macro/reversion_beneficiaires.csv
+          data/reference/macro/reversion_beneficiaires.csv,
+          data/reference/macro/durees_validees_actifs.csv,
+          data/reference/macro/fins_de_carriere.csv
         recuperation: scripts/fetch/drees_panorama_classeurs.py
         contenu:
           vue_d_ensemble.xlsx:

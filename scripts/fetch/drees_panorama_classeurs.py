@@ -30,8 +30,16 @@ Puis les séries des graphiques et des tableaux que le PDF ne chiffre pas
 tableau 1 et graphique 1) ; ``cumul_profil`` (fiche 23) ;
 ``rapport_emploi_retraites`` (fiche 1, graphique 1) ; ``retraites_generations``
 (fiches 1, 16 et 17 : polypension, âge et taux de liquidation par génération) ;
-``reversion`` (fiche 3, graphiques 2 et 4). Les séries à plusieurs clés
-s'écrivent en listes, chaque élément ses clés puis sa valeur.
+``reversion`` (fiche 3, graphiques 2 et 4). Enfin, l'échantillon
+interrégimes de cotisants de 2021 (étape 3) : ``durees_validees`` (fiche 12,
+graphiques 1 à 5 : les trimestres validés à 30 ans et le début de carrière, le
+rythme de validation par tranche d'âge, la nature des trimestres, le chômage
+validé, les validations de l'année par âge) et ``fins_de_carriere`` (fiche 21,
+graphiques 1 et 2, tableaux 1 à 3 : la situation à 59 ans et de 50 à 67 ans,
+l'année qui précède la liquidation, les trajectoires et les transitions). Les
+séries à plusieurs clés s'écrivent en listes, chaque élément ses clés puis sa
+valeur ; une grandeur que deux figures donnent y est une fois, à la valeur
+qu'elles disent toutes deux.
 
 Une feuille se lit par ses libellés : la colonne d'une grandeur est celle dont
 l'en-tête la nomme, la ligne d'un régime celle qui porte son nom, et un
@@ -879,6 +887,379 @@ def lire_reversion(femmes: dict, generations: dict) -> dict[tuple, float]:
     return lu
 
 
+# ---------------------------------------------------------------------------
+# L'échantillon interrégimes de cotisants de 2021 : fiches 12 et 21 (étape 3)
+# ---------------------------------------------------------------------------
+
+def reunir(*series: dict) -> dict:
+    """Les clés de plusieurs figures en une série : une grandeur que deux
+    figures donnent doit y avoir la même valeur, sinon la lecture s'arrête."""
+    reunies: dict = {}
+    for serie in series:
+        for cle, valeur in serie.items():
+            if cle in reunies and reunies[cle] != valeur:
+                raise FeuilleIllisible(f"{cle} : {reunies[cle]} et {valeur}, deux figures "
+                                       "se contredisent")
+            reunies[cle] = valeur
+    return reunies
+
+
+def _titre(grille: dict, debut: str) -> str:
+    """Le titre qui commence par ``debut``, l'apostrophe courbe redressée."""
+    for valeur in grille.values():
+        if isinstance(valeur, str) and _simple(valeur).startswith(debut):
+            return _simple(valeur)
+    raise FeuilleIllisible(f"aucun titre « {debut} »")
+
+
+def _generation_nommee(grille: dict, debut: str) -> str:
+    """La génération que le titre nomme, après « née en » ou « nées en »."""
+    trouve = re.search(r"\bnée?s? en ((?:19|20)\d\d)\b", _titre(grille, debut))
+    if not trouve:
+        raise FeuilleIllisible(f"le titre « {debut} » ne nomme plus de génération")
+    return trouve.group(1)
+
+
+def _age_ans(valeur) -> str | None:
+    """« 25 ans » : "25" ; un nombre seul n'en est pas un."""
+    trouve = re.fullmatch(r"(\d+) ans", _simple(valeur)) if isinstance(valeur, str) else None
+    return trouve.group(1) if trouve else None
+
+
+def _sexe_du_bloc(marques: dict[int, str], ligne: int) -> str:
+    """Le sexe de l'étiquette la plus proche au-dessus de ``ligne``, ou sur elle."""
+    au_dessus = [marque for marque in marques if marque <= ligne]
+    if not au_dessus:
+        raise FeuilleIllisible(f"la ligne {ligne} n'a pas de sexe au-dessus d'elle")
+    return marques[max(au_dessus)]
+
+
+def _marques_de_sexe(grille: dict, colonne: int = 1) -> dict[int, str]:
+    """Les lignes dont la case de ``colonne`` n'est qu'un sexe."""
+    return {l: SEXES[_texte(v)] for (l, c), v in grille.items()
+            if c == colonne and isinstance(v, str) and _texte(v) in SEXES}
+
+
+def _colonnes_par_grandeur_et_sexe(grille: dict, grandeurs: dict[int, tuple],
+                                   premiere: int) -> dict[int, tuple]:
+    """Des grandeurs côte à côte, chacune sur ses colonnes de sexe : une
+    colonne est de la grandeur dont l'en-tête est à sa gauche, au plus près,
+    et du sexe que nomme son propre en-tête. Chaque grandeur a ses trois
+    sexes."""
+    debuts = sorted(grandeurs)
+    colonnes = {}
+    for (ligne, colonne), valeur in grille.items():
+        if ligne < premiere and colonne >= debuts[0] and isinstance(valeur, str):
+            sexe = _cle(valeur, SEXES_EN_TETE)
+            if sexe:
+                colonnes[colonne] = (*grandeurs[max(d for d in debuts if d <= colonne)], sexe)
+    for grandeur in grandeurs.values():
+        sexes = sorted(cle[-1] for cle in colonnes.values() if cle[:-1] == grandeur)
+        if sexes != sorted(SEXES.values()):
+            raise FeuilleIllisible(f"{grandeur} : les sexes {sexes}")
+    return colonnes
+
+
+def lire_debut_de_carriere(grille: dict) -> dict[tuple, float]:
+    """Fiche 12, graphique 1 : par génération et par sexe, les trimestres
+    validés à 30 ans, qui vont aux cumuls, l'âge de la première année
+    complète validée et la part des affiliés qui n'en ont validé aucune."""
+    _verifier_titre(grille, "Graphique 1. Nombre moyen de trimestres validés à 30 ans")
+    lignes = _lignes(grille)
+    grandeurs = {
+        _premiere_colonne(grille, "Nombre moyen de trimestres validés à 30 ans"):
+            ("cumul", "30", "trimestres"),
+        _premiere_colonne(grille, "Âge moyen de première validation d'une année complète"):
+            ("debut_de_carriere", "ensemble", "age_premiere_annee_complete"),
+        _premiere_colonne(grille, "Part d'affiliés n'ayant pas validé d'année complète"):
+            ("debut_de_carriere", "ensemble", "part_sans_annee_complete_pct"),
+    }
+    colonnes = _colonnes_par_grandeur_et_sexe(grille, grandeurs, min(lignes, default=0))
+    return {(generation, champ, groupe, "toutes", sexe, indicateur): valeur
+            for (generation, (champ, groupe, indicateur, sexe)), valeur
+            in _cases(grille, lignes, colonnes).items()}
+
+
+#: Fiche 12, graphique 2 : « À 49 ans » est un cumul, les autres des rythmes.
+TRANCHES_RYTHME = (
+    ("Entre 20 et 24 ans", ("rythme", "20_24")), ("Entre 25 et 29 ans", ("rythme", "25_29")),
+    ("Entre 30 et 34 ans", ("rythme", "30_34")), ("Entre 35 et 39 ans", ("rythme", "35_39")),
+    ("Entre 40 et 44 ans", ("rythme", "40_44")), ("Entre 45 et 49 ans", ("rythme", "45_49")),
+    ("Entre 50 et 54 ans", ("rythme", "50_54")), ("Entre 55 et 59 ans", ("rythme", "55_59")),
+    ("Entre 40 et 49 ans", ("rythme", "40_49")), ("Entre 30 et 49 ans", ("rythme", "30_49")),
+    ("Entre 50 et 59 ans", ("rythme", "50_59")), ("À 49 ans", ("cumul", "49")),
+)
+
+
+def lire_rythme_validation(grille: dict) -> dict[tuple, float]:
+    """Fiche 12, graphique 2 : les trimestres validés par tranche d'âge et leur
+    cumul à 49 ans, par génération, dans le bloc de chaque sexe, qui a sa
+    colonne de générations ; l'étiquette du sexe peut être décalée dans son
+    bloc. L'écart entre les femmes et les hommes, qui suit, ne se lit pas."""
+    _verifier_titre(grille, "Graphique 2. Rythmes moyens de validation des trimestres")
+    ecart = _premiere_colonne(grille, "Écart entre les femmes et les hommes")
+    blocs = sorted({c for (_, c), v in grille.items() if c < ecart and annee(v)})
+    lu = {}
+    for rang, debut in enumerate(blocs):
+        fin = blocs[rang + 1] if rang + 1 < len(blocs) else ecart
+        lignes = {l: str(annee(v)) for (l, c), v in grille.items() if c == debut and annee(v)}
+        premiere = min(lignes)
+        sexes = {cle for (l, c), v in grille.items()
+                 if l < premiere and debut <= c < fin and (cle := _cle(v, SEXES_EN_TETE))}
+        if len(sexes) != 1:
+            raise FeuilleIllisible(f"fiche 12, graphique 2 : le bloc de la colonne {debut} "
+                                   f"a pour sexes {sorted(sexes)}")
+        sexe = sexes.pop()
+        colonnes = _exiger(_entetes(grille, TRANCHES_RYTHME, premiere, apres=debut, avant=fin),
+                           {cle for _, cle in TRANCHES_RYTHME}, "fiche 12, graphique 2")
+        for (generation, (champ, groupe)), valeur in _cases(grille, lignes, colonnes).items():
+            lu[(generation, champ, groupe, "toutes", sexe, "trimestres")] = valeur
+    if {cle[4] for cle in lu} != {"F", "H"}:
+        raise FeuilleIllisible("fiche 12, graphique 2 : il faut un bloc par sexe")
+    return lu
+
+
+NATURES_COMPOSITION = (
+    ("Trimestres cotisés", "cotises"), ("Trimestres d'AVPF", "avpf"),
+    ("Trimestres de maladie", "maladie"), ("Trimestres de chômage", "chomage"),
+    ("Trimestres de service national", "service_national"), ("Autres trimestres", "autres"),
+    ("Nombre moyen de trimestres validés", "toutes"),
+)
+
+
+def lire_composition_trimestres(grille: dict) -> dict[tuple, float]:
+    """Fiche 12, graphique 3 : pour la génération que le titre nomme, par sexe
+    et par âge, la part de chaque nature dans les trimestres validés, et
+    leur nombre moyen, qui va aux cumuls."""
+    titre = "Graphique 3. Composition des trimestres validés"
+    _verifier_titre(grille, titre)
+    generation = _generation_nommee(grille, titre)
+    marques = _marques_de_sexe(grille)
+    lignes = {l: (age, _sexe_du_bloc(marques, l))
+              for (l, c), v in grille.items() if c == 2 and (age := _age_ans(v))}
+    colonnes = _exiger(_entetes(grille, NATURES_COMPOSITION, min(lignes, default=0), apres=2),
+                       {cle for _, cle in NATURES_COMPOSITION}, "fiche 12, graphique 3")
+    lu = {}
+    for ((age, sexe), nature), valeur in _cases(grille, lignes, colonnes).items():
+        if nature == "toutes":
+            lu[(generation, "cumul", age, "toutes", sexe, "trimestres")] = valeur
+        else:
+            lu[(generation, "composition", age, nature, sexe, "part_pct")] = valeur
+    return lu
+
+
+def lire_chomage_cumule(grille: dict) -> dict[tuple, float]:
+    """Fiche 12, graphique 4 : les trimestres validés au titre du chômage, de
+    la préretraite, de la reconversion et de la formation, cumulés à chaque
+    âge, par génération, les deux sexes ensemble."""
+    _verifier_titre(grille, "Graphique 4. Durée moyenne validée au titre du chômage")
+    lignes = _lignes(grille)
+    premiere = min(lignes, default=0)
+    colonnes = {c: age for (l, c), v in grille.items()
+                if l < premiere and c > 1 and (age := _age_ans(v))}
+    return {(generation, "cumul", age, "chomage", "ensemble", "trimestres"): valeur
+            for (generation, age), valeur in _cases(grille, lignes, colonnes).items()}
+
+
+NATURES_ANNEE = (
+    ("Trimestres cotisés au titre de l'emploi", "cotises"), ("AVPF", "avpf"),
+    ("Chômage, formation", "chomage"), ("Maladie, maternité", "maladie"),
+)
+
+
+def lire_validations_de_l_annee(grille: dict) -> dict[tuple, float]:
+    """Fiche 12, graphique 5 : les trimestres validés de chaque nature au cours
+    de l'année civile de chaque âge, par sexe, l'une des deux années que le
+    titre nomme. L'échantillon ne suit que des générations paires : un âge
+    est celui qu'avait, l'une de ces deux années, la génération paire."""
+    titre = "Graphique 5. Nombre moyen et nature des trimestres validés selon"
+    annees = [int(a) for a in re.findall(r"\b((?:19|20)\d\d)\b", _titre(grille, titre))]
+    if len(annees) != 2 or annees[1] != annees[0] + 1:
+        raise FeuilleIllisible(f"fiche 12, graphique 5 : le titre nomme les années {annees}")
+    debuts = _marques_de_sexe_en_colonnes(grille)
+    bornes = sorted(debuts)
+    lu = {}
+    for rang, debut in enumerate(bornes):
+        fin = bornes[rang + 1] if rang + 1 < len(bornes) else 10 ** 6
+        lignes = {l: str(age) for (l, c), v in grille.items()
+                  if c == debut and (age := _age(v)) is not None}
+        colonnes = _exiger(_entetes(grille, NATURES_ANNEE, min(lignes, default=0), apres=debut,
+                                    avant=fin),
+                           {cle for _, cle in NATURES_ANNEE}, "fiche 12, graphique 5")
+        for (age, nature), valeur in _cases(grille, lignes, colonnes).items():
+            generation = next(a - int(age) for a in annees if (a - int(age)) % 2 == 0)
+            lu[(str(generation), "validations_de_l_annee", age, nature, debuts[debut],
+                "trimestres")] = valeur
+    return lu
+
+
+def _marques_de_sexe_en_colonnes(grille: dict) -> dict[int, str]:
+    """Les colonnes qu'ouvre l'étiquette « Femmes » ou « Hommes »."""
+    debuts = {c: SEXES[_texte(v)] for (_, c), v in grille.items()
+              if isinstance(v, str) and _texte(v) in ("Femmes", "Hommes")}
+    if sorted(debuts.values()) != ["F", "H"]:
+        raise FeuilleIllisible(f"il faut un bloc par sexe, non {sorted(debuts.values())}")
+    return debuts
+
+
+#: Fiche 21 : la situation principale sur le marché du travail.
+SITUATIONS_FIN_DE_CARRIERE = (
+    ("Absence", "absence"), ("AVPF", "avpf"), ("Chômage", "chomage"), ("En emploi", "emploi"),
+    ("Maladie ou invalidité", "maladie_invalidite"), ("Préretraite", "preretraite"),
+    ("Retraite", "retraite"), ("Cumul emploi-retraite", "cumul_emploi_retraite"),
+)
+
+
+def _situations_par_sexe(grille: dict, cle_de_ligne) -> dict[tuple, float]:
+    """Les blocs « Femmes », « Hommes » et « Ensemble » de la fiche 21, chacun
+    ouvert par son étiquette, en première colonne, puis par son en-tête de
+    situations ; une ligne par génération ou par âge, que ``cle_de_ligne``
+    lit dans la première colonne. {(clé de ligne, situation, sexe): part}."""
+    marques = _marques_de_sexe(grille)
+    entetes: dict[int, dict[int, str]] = {}
+    for (l, c), v in grille.items():
+        if c > 1 and (cle := _cle(v, SITUATIONS_FIN_DE_CARRIERE)):
+            entetes.setdefault(l, {})[c] = cle
+    attendues = {cle for _, cle in SITUATIONS_FIN_DE_CARRIERE}
+    lu = {}
+    for (l, c), v in sorted(grille.items()):
+        if c != 1 or (cle := cle_de_ligne(v)) is None:
+            continue
+        au_dessus = [h for h in entetes if h < l]
+        if not au_dessus:
+            raise FeuilleIllisible(f"fiche 21 : la ligne {l} n'a pas d'en-tête")
+        colonnes = _exiger(entetes[max(au_dessus)], attendues, "fiche 21")
+        sexe = _sexe_du_bloc(marques, l)
+        for (_, situation), valeur in _cases(grille, {l: cle}, colonnes).items():
+            lu[(cle, situation, sexe)] = valeur
+    if {sexe for *_, sexe in lu} != set(SEXES.values()):
+        raise FeuilleIllisible("fiche 21 : il manque le bloc d'un sexe")
+    return lu
+
+
+def lire_situation_a_un_age(grille: dict) -> dict[tuple, float]:
+    """Fiche 21, graphique 1 : la situation principale à l'âge que le titre
+    nomme, par génération et par sexe."""
+    titre = "Graphique 1. Situation principale d"
+    trouve = re.search(r"\bà (\d+) ans\b", _titre(grille, titre))
+    if not trouve:
+        raise FeuilleIllisible("fiche 21, graphique 1 : le titre ne nomme plus d'âge")
+    lu = _situations_par_sexe(grille, lambda v: str(annee(v)) if annee(v) else None)
+    return {(generation, "situation_par_age", trouve.group(1), situation, sexe, "part_pct"): valeur
+            for (generation, situation, sexe), valeur in lu.items()}
+
+
+def lire_situations_successives(grille: dict) -> dict[tuple, float]:
+    """Fiche 21, graphique 2 : la situation principale à chaque âge, de la
+    génération que le titre nomme, par sexe."""
+    generation = _generation_nommee(grille, "Graphique 2. Situations principales successives")
+    lu = _situations_par_sexe(grille, lambda v: None if _age(v) is None else str(_age(v)))
+    return {(generation, "situation_par_age", age, situation, sexe, "part_pct"): valeur
+            for (age, situation, sexe), valeur in lu.items()}
+
+
+GROUPES_LIQUIDATION = (
+    ("Départ avant", "depart_avant_aod"), ("Départ à partir de", "depart_a_l_aad_ou_apres"),
+    ("Départ à", "depart_a_l_aod"), ("Départ après", "depart_entre_aod_et_aad"),
+    ("Ayant travaillé après 50 ans", "travail_apres_50_ans"),
+    ("N'ayant pas travaillé après 50 ans", "sans_travail_apres_50_ans"),
+)
+
+
+def lire_situation_avant_liquidation(grille: dict) -> dict[tuple, float]:
+    """Fiche 21, tableau 1 : la situation principale de l'année qui précède la
+    liquidation, par génération et par sexe, puis, dans la dernière, selon
+    l'âge de départ et le travail après 50 ans, les deux sexes ensemble. Une
+    génération couvre ses lignes depuis celle de ses femmes jusqu'à celle des
+    femmes de la suivante ; son étiquette est sur l'une d'elles."""
+    _verifier_titre(grille, "Tableau 1. Situation principale d")
+    lignes = {}
+    for (l, c), v in grille.items():
+        if c == 2 and isinstance(v, str):
+            if _texte(v) in SEXES:
+                lignes[l] = ("ensemble", SEXES[_texte(v)])
+            elif groupe := _cle(v, GROUPES_LIQUIDATION):
+                lignes[l] = (groupe, "ensemble")
+    etiquettes = {l: trouve.group(1) for (l, c), v in grille.items()
+                  if c == 1 and isinstance(v, str)
+                  and (trouve := re.fullmatch(r"Génération ((?:19|20)\d\d)", _texte(v)))}
+    debuts = sorted(l for l, cle in lignes.items() if cle == ("ensemble", "F"))
+    if not debuts:
+        raise FeuilleIllisible("fiche 21, tableau 1 : aucune ligne de femmes")
+    colonnes = _exiger(_entetes(grille, SITUATIONS_FIN_DE_CARRIERE, min(lignes), apres=2),
+                       {"emploi", "preretraite", "maladie_invalidite", "chomage", "absence"},
+                       "fiche 21, tableau 1")
+    lu = {}
+    for rang, debut in enumerate(debuts):
+        fin = debuts[rang + 1] if rang + 1 < len(debuts) else 10 ** 6
+        generations = {g for l, g in etiquettes.items() if debut <= l < fin}
+        if len(generations) != 1:
+            raise FeuilleIllisible(f"fiche 21, tableau 1 : les lignes depuis la {debut} ont "
+                                   f"pour générations {sorted(generations)}")
+        generation = generations.pop()
+        bloc = {l: cle for l, cle in lignes.items() if debut <= l < fin}
+        for ((groupe, sexe), situation), valeur in _cases(grille, bloc, colonnes).items():
+            lu[(generation, "situation_avant_liquidation", groupe, situation, sexe,
+                "part_pct")] = valeur
+    return lu
+
+
+TRAJECTOIRES = (
+    ("Trajectoires sans années de non-emploi", "sans_non_emploi"),
+    ("Trajectoires avec années de non-emploi", "avec_non_emploi"),
+    ("Trajectoires avec une seule période de non-emploi", "une_periode_non_emploi"),
+    ("Emploi, puis chômage, puis retraite", "emploi_chomage_retraite"),
+    ("Emploi, puis maladie ou invalidité, puis retraite", "emploi_maladie_retraite"),
+    ("Emploi, puis absence, puis retraite", "emploi_absence_retraite"),
+    ("Autres trajectoires", "autres_avec_non_emploi"),
+    ("Trajectoires sans départ à la retraite", "sans_depart_a_67_ans"),
+    ("Personnes continûment en emploi", "emploi_continu_sans_depart"),
+)
+
+
+def lire_trajectoires(grille: dict) -> dict[tuple, float]:
+    """Fiche 21, tableau 2 : la part de chaque trajectoire à partir de 50 ans,
+    par sexe, dans la génération que le titre nomme ; la ligne « Ensemble »,
+    qui fait 100, ne se lit pas."""
+    titre = "Tableau 2. Trajectoires les plus fréquentes"
+    generation = _generation_nommee(grille, titre)
+    lignes = _lignes(grille, TRAJECTOIRES)
+    colonnes = _exiger(_entetes(grille, SEXES_EN_TETE, min(lignes, default=0)),
+                       set(SEXES.values()), "fiche 21, tableau 2")
+    return {(generation, "trajectoire", "ensemble", trajectoire, sexe, "part_pct"): valeur
+            for (trajectoire, sexe), valeur in _cases(grille, lignes, colonnes).items()}
+
+
+GROUPES_TRANSITIONS = (
+    ("Y compris transitions entre retraite et cumul", "avec_cumul"),
+    ("Hors transitions entre retraite et cumul", "hors_cumul"),
+)
+
+
+def lire_transitions(grille: dict) -> dict[tuple, float]:
+    """Fiche 21, tableau 3 : la répartition par nombre de transitions entre 50
+    et 67 ans, et leur nombre moyen, y compris ou hors celles entre retraite et
+    cumul, par sexe ; la ligne « Ensemble », qui somme les parts, ne se lit
+    pas."""
+    generation = _generation_nommee(grille, "Tableau 3. Nombre de transitions")
+    lignes = {}
+    for (l, c), v in grille.items():
+        if c != 1:
+            continue
+        plus = re.fullmatch(r"(\d+) ou plus", _simple(v))
+        if isinstance(v, (int, float)) and _age(v) is not None:
+            lignes[l] = (str(_age(v)), "part_pct")
+        elif plus:
+            lignes[l] = (f"{plus.group(1)}_plus", "part_pct")
+        elif _simple(v).startswith("Nombre moyen de transitions"):
+            lignes[l] = ("ensemble", "nombre_moyen")
+    groupes = {_premiere_colonne(grille, libelle): (cle,) for libelle, cle in GROUPES_TRANSITIONS}
+    colonnes = _colonnes_par_grandeur_et_sexe(grille, groupes, min(lignes, default=0))
+    return {(generation, "transitions", groupe, modalite, sexe, indicateur): valeur
+            for ((modalite, indicateur), (groupe, sexe)), valeur
+            in _cases(grille, lignes, colonnes).items()}
+
+
 def _jeu() -> dict:
     import yaml
 
@@ -903,9 +1284,11 @@ def lire(chemin: Path, jeu: dict) -> dict:
     with zipfile.ZipFile(chemin) as archive:
         f01 = _classeur(archive, jeu, "fiche_01.xlsx")
         f03 = _classeur(archive, jeu, "fiche_03.xlsx")
+        f12 = _classeur(archive, jeu, "fiche_12.xlsx")
         f15 = _classeur(archive, jeu, "fiche_15.xlsx")
         f16 = _classeur(archive, jeu, "fiche_16.xlsx")
         f17 = _classeur(archive, jeu, "fiche_17.xlsx")
+        f21 = _classeur(archive, jeu, "fiche_21.xlsx")
         f22 = _classeur(archive, jeu, "fiche_22.xlsx")
         f23 = _classeur(archive, jeu, "fiche_23.xlsx")
         f25 = _classeur(archive, jeu, "fiche_25.xlsx")
@@ -941,6 +1324,20 @@ def lire(chemin: Path, jeu: dict) -> dict:
         }.items())],
         "reversion": [[*cle, valeur] for cle, valeur in sorted(
             lire_reversion(f03["F03_Graphique 2"], f03["F03_Graphique 4"]).items())],
+        "durees_validees": [[*cle, valeur] for cle, valeur in sorted(reunir(
+            lire_debut_de_carriere(f12["F12_Graphique 1"]),
+            lire_rythme_validation(f12["F12_Graphique 2"]),
+            lire_composition_trimestres(f12["F12_Graphique 3"]),
+            lire_chomage_cumule(f12["F12_Graphique 4"]),
+            lire_validations_de_l_annee(f12["F12_Graphique 5"]),
+        ).items())],
+        "fins_de_carriere": [[*cle, valeur] for cle, valeur in sorted(reunir(
+            lire_situation_a_un_age(f21["F21_Graphique 1"]),
+            lire_situations_successives(f21["F21_Graphique 2"]),
+            lire_situation_avant_liquidation(f21["F21_Tableau 1"]),
+            lire_trajectoires(f21["F21_Tableau 2"]),
+            lire_transitions(f21["F21_Tableau 3"]),
+        ).items())],
     }
 
 

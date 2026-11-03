@@ -628,6 +628,17 @@
    "valeurs": 5,
    "verifiee_le": "2026-09-14"
   },
+  "durees_validees_actifs": {
+   "ajoutees": 1134,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "67c0667beedc61a4",
+   "identiques": 0,
+   "niveau": "certifiee",
+   "source": "DREES, panorama « Les retraités et les retraites » 2026, fiche 12 (EIC 2021)",
+   "valeurs": 1134,
+   "verifiee_le": "2026-11-03"
+  },
   "effectifs_retraites": {
    "ajoutees": 0,
    "colonne": "effectifs",
@@ -858,6 +869,17 @@
    "source": "INSEE BDM (e0, e60) et OCDE DSD_HEALTH_STAT@DF_LE (e65)",
    "valeurs": 450,
    "verifiee_le": "2026-09-13"
+  },
+  "fins_de_carriere": {
+   "ajoutees": 759,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "1f0e8f6d1457dc48",
+   "identiques": 0,
+   "niveau": "certifiee",
+   "source": "DREES, panorama « Les retraités et les retraites » 2026, fiche 21 (EIC 2021)",
+   "valeurs": 759,
+   "verifiee_le": "2026-11-03"
   },
   "grilles_etat_duree_max": {
    "ajoutees": 0,
