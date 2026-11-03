@@ -779,6 +779,34 @@ def test_la_regle_du_quart_est_consignee_avec_la_moyenne(tableaux_lus):
     assert (len(moyenne_seule), sum(bool(t["regle_du_quart"]) for t in moyenne_seule)) == (36, 10)
 
 
+def test_les_administrateurs_generaux_recoupes_au_noyau_rh_a_leur_grade(lignes):
+    """N° 2021-1550, art. 9, du 1er janvier 2022 au 1er janvier 2023
+    (LEGIARTI000044396371) : « Administrateur général 6e échelon - 5e échelon 4 ans
+    4e échelon 3 ans 3e échelon 3 ans 2e échelon 3 ans 1er échelon 3 ans ». Au Noyau
+    RH, le grade de ce corps est 05041, « Administrateur général de l'Etat », du
+    1er janvier 2022 au 1er janvier 2023, grille 03742 ; le grade 02979,
+    « Administrateur général » des administrateurs civils, fini le 31 décembre 2021,
+    ne cite ce décret que comme son texte abrogateur."""
+    etat = RACINE / "data" / "reference" / "grilles" / "etat"
+
+    def noyau(nom):
+        with (etat / f"{nom}.csv").open(encoding="utf-8") as flux:
+            return list(csv.DictReader(l for l in flux if not l.startswith("#")))
+    (grade,) = [g for g in noyau("grades") if g["grade"] == "05041"]
+    assert (grade["libelle"], grade["debut"], grade["grille"]) == (
+        "Administrateur général de l'Etat", "2022-01-01", "03742")
+    assert "7257:origine" in grade["textes"].split()
+    (texte,) = [t for t in noyau("textes") if t["texte"] == "7257"]
+    assert texte["numero"] == "2021-1550"
+    au_noyau = {int(e["rang"]): int(e["duree_moy"]) for e in noyau("echelons")
+                if e["grille"] == "03742" and e["debut"] == "2022-01-01"}
+    au_depot = {int(l["rang"]): int(l["duree"]) for l in lignes
+                if l["article"] == "LEGIARTI000044396371" and l["groupe"] == "Administrateur général"
+                and l["duree"]}
+    assert au_depot == {5: 48, 4: 36, 3: 36, 2: 36, 1: 36}
+    assert {r: au_noyau[r] for r in au_depot} == au_depot
+
+
 def test_chaque_ligne_est_certifiee_et_datee(lignes, tableaux_lus):
     assert lignes and all(l["fiabilite"] == "certifiee" for l in lignes)
     assert all(t["debut"] and t["article"].startswith("LEGIARTI") for t in tableaux_lus)
