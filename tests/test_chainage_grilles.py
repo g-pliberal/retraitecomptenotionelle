@@ -138,13 +138,37 @@ def test_une_duree_de_l_etat_se_rattache_au_corps_du_noyau(durees):
     assert "90-680" in ligne["preuve"]
 
 
+def test_la_preuve_article_cite_les_versions_en_vigueur_sur_la_periode(durees):
+    # Relecture R-B3, point 1 c. Arrêté LEGITEXT000031320442 (greffiers des
+    # services judiciaires), art. 3 : LEGIARTI000048278636 du 2023-11-01 au
+    # 2024-03-01, puis LEGIARTI000049196634 depuis le 2024-03-01, chacune « régi par
+    # le décret n° 2015-1275 du 13 octobre 2015 susvisé est fixé ainsi qu'il suit ».
+    # Le rattachement de « Greffier » depuis le 2024-03-01 cite la seconde, non la
+    # première.
+    (ligne,) = [d for d in durees if d["texte_grille"] == "LEGITEXT000031320442"
+                and d["groupe"] == "Greffier" and d["debut"] == "2024-03-01"
+                and d["statut"] == "rattache"]
+    assert "LEGIARTI000049196634" in ligne["preuve"]
+    assert "LEGIARTI000048278636" not in ligne["preuve"]
+    # LEGITEXT000026383946 (professeurs techniques de l'enseignement maritime),
+    # art. 5 : LEGIARTI000041912445 du 2017-01-01 au 2025-03-20, puis
+    # LEGIARTI000051351757 depuis le 2025-03-20, chacune « régis par le décret du
+    # 29 mars 1993 susvisé » : le rattachement ouvert depuis le 2024-12-29 cite les deux.
+    (ligne,) = [d for d in durees if d["texte_grille"] == "LEGITEXT000026383946"
+                and d["groupe"] == "Professeur technique de classe normale"
+                and d["debut"] == "2024-12-29" and d["statut"] == "rattache"]
+    assert "LEGIARTI000041912445" in ligne["preuve"]
+    assert "LEGIARTI000051351757" in ligne["preuve"]
+
+
 def test_un_texte_commun_a_plusieurs_corps_ne_rattache_pas_sur_le_seul_libelle(durees):
     # Décret n° 95-370 (agriculture), art. 25 (LEGIARTI000034773631) : « Ingénieur
     # de recherche hors classe : Echelon spécial 4e échelon - 3e échelon 3 ans
     # […] ». Le décret n° 2017-171 (LEGITEXT000034028389) vise le n° 95-370 parmi
-    # d'autres statuts, mais son art. 116 fixe la grille du même nom pour « le
-    # corps des ingénieurs de recherche régi par le décret du 31 décembre 1985 » :
-    # un autre corps, et quatre échelons, non cinq.
+    # d'autres statuts, mais son art. 116 (LEGIARTI000034028850) fixe la grille du
+    # même nom pour un autre corps : « L'échelonnement indiciaire applicable au
+    # corps des ingénieurs de recherche régi par le décret du 31 décembre 1985
+    # susvisé est fixé ainsi qu'il suit », et quatre échelons, non cinq.
     lignes = _lignes_de(durees, "LEGIARTI000034773631", "Ingénieur de recherche hors classe")
     assert lignes
     assert not [d for d in lignes if d["statut"] == "rattache"

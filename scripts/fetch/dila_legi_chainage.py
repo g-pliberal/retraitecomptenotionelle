@@ -227,6 +227,24 @@ class Index:
     def visas(self, texte: str) -> list[str]:
         return [FIN_DE_VISA.split(v)[0].strip(" ,") for v in VISA.findall(self.texte(texte))]
 
+    def versions_sur(self, article: str, debut: str, fin: str) -> list[str]:
+        """Les versions de l'article (même texte, même numéro d'article, comme
+        les relie le lecteur des grilles) en vigueur sur [debut, fin) : la fin
+        d'une version au LEGI est le début de la suivante ; une version datée
+        d'une fin antérieure ou égale à son début n'a jamais été en vigueur."""
+        if not hasattr(self, "_versions"):
+            self._versions: dict[tuple, list[tuple[str, str, str]]] = collections.defaultdict(list)
+            self._article: dict[str, tuple] = {}
+            for ident, d, f, num, titre in self.db.execute(
+                    "SELECT id, date, fin, num, titre FROM doc "
+                    "WHERE id >= 'LEGIARTI' AND id < 'LEGIARTJ'"):
+                self._article[ident] = (titre, num)
+                if d and f and d < f:
+                    self._versions[(titre, num)].append((ident, d, f))
+        cle = self._article.get(article)
+        return sorted(i for i, d, f in self._versions.get(cle, [])
+                      if d < (fin or OUVERT) and f > debut)
+
     def notices_du_decret(self, numero: str, iso: str) -> list[tuple[str, str]]:
         """Les notices LEGITEXT dont le titre est celui de ce décret : « Décret
         n° 67-91 du 20 janvier 1967 […] » (le LEGI en garde parfois deux, avant
@@ -424,7 +442,10 @@ def _candidats_legi(depot: Depot, tableau: dict, groupe: str, rangs: set[int]):
                                 + _fmt(grille["debut"], lendemain(grille["fin"]))))
                 continue
             debut, fin = periode
-            articles = depot.articles_legi(versant, e, grille["grille"], debut, fin)
+            # Chaque version de l'article en vigueur sur la période, non la seule
+            # que le fichier des échelons nomme (relecture R-B3, point 1 c).
+            articles = {v for a in depot.articles_legi(versant, e, grille["grille"], debut, fin)
+                        for v in depot.index.versions_sur(a, debut, fin)}
             par_article = {a: nomme(depot.index.texte(a), numero, signature) for a in articles}
             if articles and all(par_article.values()) and not (
                     "date" in par_article.values() and len(meme_date) > 1):
