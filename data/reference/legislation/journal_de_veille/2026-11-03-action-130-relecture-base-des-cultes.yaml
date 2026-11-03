@@ -1,0 +1,49 @@
+date: "2026-11-03"
+session: "action 130, file R-M5 : relecture indépendante de la base forfaitaire des cultes au SMIC de chaque mois (commits 2af6a11, e4d9994 et cd8db07 de la session M5)"
+consulte: >-
+  python scripts/veille_droit.py ; docs/veille_droit.md ; les index LEGI (à jour au
+  2 novembre 2026, 20261102-213929) et JORF (à jour au 3 novembre 2026, 20261103-002311) de la
+  DILA, récupérés. Dans LEGI, rédaction par rédaction (--diff, --le) : R. 721-29
+  (LEGIARTI000006752924, 6752925, 6752926), R. 721-30 (LEGIARTI000006752064, 6752065,
+  6752066), R. 382-89 (LEGIARTI000006749795), R. 382-90 (LEGIARTI000006749796). Dans JORF :
+  les décrets n° 98-490 (JORFARTI000001421256) et n° 2004-181 (JORFTEXT000000613613, art. 1er
+  JORFARTI000002456069, art. 2) ; l'article 66 de la loi n° 2001-1246 (JORFARTI000001620575) ;
+  l'article 32 de la loi n° 2000-37 (JORFARTI000001248766) ; le décret n° 2004-182 ; le décret
+  n° 2002-784 (JORFTEXT000000226374, JORFARTI000001824475) ; les vingt et un textes des
+  relèvements du SMIC de 1998 à 2026 que cite smic_horaire_releves.csv, plus l'article 1er de
+  l'arrêté du 29 novembre 2011 (JORFARTI000024874230) et l'article 3 du décret n° 2001-554
+  (JORFARTI000002428309) ; la liste de tous les textes de relèvement du SMIC de 1998 à 2026 ;
+  les décrets de janvier n° 2015-1688, 2017-1719, 2018-1173, 2019-1387, 2020-1598, 2021-1741,
+  2022-1608, 2023-1216 et 2025-1228 ; les décrets n° 90-498, 94-690 et 2001-584 ; des
+  recherches de 2001 à 2006 sur la garantie mensuelle de rémunération, « ministres des
+  cultes », « CAVIMAC » et « 169 fois ». Hors des index : les circulaires de la CAVIMAC
+  n° 2024/01 et n° 2025/01 (PDF de cavimac.fr) ; le guide d'Actes 6 « Le culte et la
+  législation », juin 2008 ; l'exposé « Cultes » de la base de la Cnav, par son API (modifié le
+  24 octobre 2025). Les essais : tests/js/cultes-smic-du-mois.test.js et moteur.test.js,
+  tests/test_cultes_smic_du_mois.py, test_cultes.py, test_cultes_au_droit.py,
+  test_contributions_equilibre.py et test_simulateur.py -k culte, avec et sans
+  PRESOMPTIONS_DECALEES ; le paquet refait hors commit sur 6db5939.
+trouve: >-
+  Conforme sur chaque point décisif : les quatre articles disent la base « par mois » (169 fois
+  le SMIC jusqu'au 26 février 2004, puis le SMIC horaire « en vigueur » fois le nombre légal
+  d'heures du mois), citations exactes ; les vingt et un relèvements exacts, date et montant, la
+  liste complète ; les six années des tests refaites au centime (12 511,97 ; 15 206,10 ;
+  15 664,13 ; 17 599,40 ; 19 743,97 ; 21 272,77 €) ; les deux moteurs verts, avec et sans
+  présomptions décalées ; l'Arrco des cultes à la même assiette aux mêmes dates dans les
+  circulaires de 2024 et 2025, et dans le guide de 2008, qui montre la base suivre le
+  relèvement du 1er mai 2008 (1 309 €) ; quinze témoins, de +0,11 à +4,08 € au scénario 1,
+  +5,08 € et +0,95 % aux comptes notionnels, chiffre pour chiffre ; le témoin
+  statut_ministre_du_culte_1955 refait en ordre de grandeur (≈ 4,1 € par mois) ; aucun texte du
+  JORF de 2002 à 2005 ne tranche la garantie mensuelle de rémunération, déclarée ; le paquet ne
+  change, sur le dernier main, que de deux lignes étrangères aux cultes (durées d'échelon,
+  action 158). Six écarts faibles, sans effet sur un chiffre : la rédaction de 1998 ne dit pas
+  « en vigueur », lecture non déclarée ; l'identifiant cité pour le relèvement de 2011 ne
+  porte pas sa date ; pas de décret de janvier en 2025 ; l'en-tête du tableau de la circulaire
+  n° 2025/01 (« à compter du 1er janvier 2025 ») non relevé ; la borne de 11 % de la garantie
+  non écrite dans l'article 32 ; la citation des forfaits agricoles mot pour mot dans deux
+  décrets sur trois.
+reste: >-
+  Retouches de la fiche cultes_salaire_annuel_moyen et de la note de M5, sans chiffre qui
+  bouge, détaillées dans 2026-11-03-relecture-base-des-cultes-au-smic-du-mois.md (action 130) ;
+  l'acte de l'Arrco qui fixe l'assiette des cultes, non lu ; une circulaire de la CAVIMAC de
+  2002 à 2005, pour la garantie.
