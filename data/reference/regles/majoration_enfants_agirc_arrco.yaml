@@ -5,7 +5,9 @@ intitule: >-
   des points : 10 à 30 % pour l'Arrco d'avant 1999 si le règlement de la caisse
   la prévoyait, 5 % pour l'Arrco de 1999 à 2011, 8 à 24 % pour l'Agirc d'avant 2012,
   10 % depuis ; plafond en euros sur l'ensemble, 1 000 € par régime au 1er janvier
-  2012 pour les allocations de 2012 à 2018, celui du régime unifié depuis.
+  2012 pour les allocations de 2012 à 2018, celui du régime unifié depuis, opposé aux
+  participants nés à compter du 2 août 1951.
+domaine: enfants
 regimes:
 - agirc
 - agirc_arrco
@@ -14,40 +16,510 @@ regimes:
 - arrco_cultes
 - arrco_tranche_2
 - arrco_tranche_2_entreprises_nouvelles
-etat: conforme
-effet: >-
-  Parents de trois enfants salariés du privé avant 2019. Le modèle servait 10 %
-  à tous les points ; les points Arrco de 1999 à 2011 n'en valent que 5, ceux de
-  l'Agirc d'avant 2012 de 8 à 24 % selon le nombre d'enfants. Une non-cadre née
-  en 1962 et entrée à 22 ans voit sa pension Arrco majorée de 7,9 % pour trois enfants,
-  et non de 10. La table est `majoration_enfants_points.csv` ; l'exemple de la caisse
-  est rejoué par `test_la_majoration_agirc_arrco_suit_la_periode_d_acquisition`,
-  hors la ligne de la Capaves. Le plafond de 2012 à 2018 est de 1 000 € au titre de
-  l'Arrco et 1 000 € au titre de l'Agirc, revalorisés comme le point : le modèle servait
-  le plafond unifié de 2025, commun aux deux et double, et l'opposait dès 1999 ; un
-  non-cadre né en 1952, parti en 2018 au salaire de 100 000 € avec trois enfants, perd
-  73,53 € par an de majoration (1 031,15 € au lieu de 1 104,68).
+etape: completer_tous_regimes
+face: droit
+etat: approchee
+lit:
+- >-
+  le nombre d'enfants nés ou élevés que la personne déclare, trois au moins, à la date
+  d'effet de la pension
+- >-
+  les points de chaque régime de la complémentaire, chacun avec l'année où il a été
+  acquis et le régime qui l'a inscrit (droit/acquerir.py)
+- >-
+  l'allocation de chaque régime, coefficient d'anticipation compris (droit/liquider.py)
+- >-
+  la date d'effet de la pension et l'année de naissance de l'assuré, qui décident du
+  plafond, et la valeur de service du point, qui le revalorise
+ecrit:
+- >-
+  la majoration pour enfants nés ou élevés de chaque régime de la complémentaire, bornée
+  par son plafond, que la majoration pour enfants à charge remplace quand elle est plus
+  forte (fiche majoration_enfants_a_charge_agirc_arrco), que la revalorisation sert à
+  chaque échéance et que la réversion reprend
+dates_qui_decident:
+- liquidation.date_effet
+- periode.debut
+# Les versions forment un partage des deux dates (§ 4.1) : la date d'effet de
+# la pension choisit l'accord, et son plafond ; l'année d'acquisition du point,
+# son taux. Chaque paramètre porte le nom de ce qui le porte au dépôt
+# (tests/test_agirc_arrco_au_droit.py) : `bareme`, la colonne de
+# `legislation/majoration_enfants_points.csv`, une ligne par groupe de régimes,
+# le taux pour 0 à 7 enfants et plus ; `plafond_majoration_enfants` et
+# `plafond_majoration_annee`, les champs des périodes de la date d'effet ;
+# `plafond_nes_a_compter_du`, la génération que le portage retient.
+versions:
+- id: reglements_d_avant_le_regime_unique
+  statut: supposee
+  hypothese: >-
+    avant le 1er janvier 1999, chaque régime membre de l'Arrco majorait selon son
+    règlement, que le dépôt ne lit pas ; l'accord du 25 avril 1996 en garde les
+    majorations pour les droits d'avant 1999 (article 2), et les accords de 2011 et de
+    2017 les servent au barème de 10 à 30 %, « lorsqu'une majoration pour enfant né ou
+    élevé est prévue par un règlement » (article 94, 1). Le modèle présume toutes les
+    caisses à ce barème, et l'Agirc à celui de l'article 6 bis de l'annexe I de 1947,
+    8 à 24 %, dont la rédaction d'alors n'est pas lue ; aucun plafond
+  fiabilite: moyenne
+  bornes:
+    liquidation.date_effet: [null, 1999-01-01]
+  contenu:
+    droit: >-
+      la majoration du règlement de chaque caisse de l'Arrco, et celle de l'Agirc, sur
+      tous les points de la pension, sans plafond
+    parametres:
+      bareme:
+      - regimes: [arrco, arrco_tranche_2, arrco_tranche_2_entreprises_nouvelles]
+        taux: [0, 0, 0, 0.10, 0.15, 0.20, 0.25, 0.30]
+      - regimes: [agirc, agirc_entreprises_nouvelles]
+        taux: [0, 0, 0, 0.08, 0.12, 0.16, 0.20, 0.24]
+  exemples: aucun trouvé
+- id: regime_unique_points_d_avant_1999
+  statut: lue
+  textes:
+  - reference: >-
+      accord du 25 avril 1996 relatif aux régimes complémentaires des salariés Arrco, dans
+      le recueil de la caisse « Accords nationaux des partenaires sociaux » (hors JORF)
+    article: articles 1er et 2
+    en_vigueur: 1999-01-01
+    citation: >-
+      « Il est institué, à compter du 1er janvier 1999, un régime unique de retraite
+      complémentaire » ; « Les droits non encore liquidés seront affectés, à la date de la
+      conversion, des majorations prévues dans les règlements des régimes concernés en
+      vigueur le 31 décembre 1998, lorsque les conditions d'application de ces
+      majorations seront remplies à ladite date. »
+    lu_le: 2026-11-03
+    empreinte: sha256:0186b6b165ad2a5f5f561deb969c6a35c661dc2e1fedbfcdcaa24801f51104c1
+  - reference: >-
+      accord du 18 mars 2011 relatif aux retraites complémentaires Agirc-Arrco-AGFF, dans
+      le même recueil (hors JORF)
+    article: article 7, 1
+    en_vigueur: 2012-01-01
+    citation: >-
+      « Les droits inscrits aux comptes des participants pour les périodes antérieures au
+      1er janvier 2012 feront l'objet, lors de la liquidation, de l'application des
+      majorations pour enfants telles que prévues par l'article 6 bis de l'annexe I à la
+      Convention collective nationale de retraite et de prévoyance des cadres du 14 mars
+      1947 dans sa rédaction en vigueur à la veille du présent accord »
+    lu_le: 2026-11-03
+    empreinte: sha256:0186b6b165ad2a5f5f561deb969c6a35c661dc2e1fedbfcdcaa24801f51104c1
+  bornes:
+    liquidation.date_effet: [1999-01-01, 2012-01-01]
+    periode.debut: [null, 1999-01-01]
+  contenu:
+    droit: >-
+      les points de l'Arrco d'avant 1999 gardent la majoration du règlement de leur caisse,
+      si ses conditions sont remplies au 31 décembre 1998 ; ceux de l'Agirc, celle de
+      l'article 6 bis de l'annexe I, 8 % pour trois enfants à 24 % pour sept et plus,
+      qu'atteste l'accord de 2011 en la gardant aux droits d'avant 2012 ; aucun plafond
+    parametres:
+      bareme:
+      - regimes: [arrco, arrco_tranche_2, arrco_tranche_2_entreprises_nouvelles]
+        taux: [0, 0, 0, 0.10, 0.15, 0.20, 0.25, 0.30]
+      - regimes: [agirc, agirc_entreprises_nouvelles]
+        taux: [0, 0, 0, 0.08, 0.12, 0.16, 0.20, 0.24]
+  exemples: aucun trouvé
+- id: regime_unique_points_depuis_1999
+  statut: lue
+  textes:
+  - reference: >-
+      accord du 25 avril 1996 relatif aux régimes complémentaires des salariés Arrco, dans
+      le recueil de la caisse (hors JORF)
+    article: article 11
+    en_vigueur: 1999-01-01
+    citation: >-
+      « Les participants ayant élevé au moins trois enfants pendant 9 ans avant l'âge de
+      16 ans, bénéficient d'une majoration de leur allocation égale à 5 %. Cette
+      disposition s'applique aux allocations liquidées au titre de la seule partie de
+      carrière postérieure au 31 décembre 1998. »
+    lu_le: 2026-11-03
+    empreinte: sha256:0186b6b165ad2a5f5f561deb969c6a35c661dc2e1fedbfcdcaa24801f51104c1
+  bornes:
+    liquidation.date_effet: [1999-01-01, 2012-01-01]
+    periode.debut: [1999-01-01, null]
+  contenu:
+    droit: >-
+      5 % sur les points de l'Arrco acquis depuis 1999, pour trois enfants élevés pendant
+      neuf ans avant leurs seize ans ; les points de l'Agirc gardent le barème de l'article
+      6 bis de l'annexe I, 8 à 24 % ; aucun plafond
+    parametres:
+      bareme:
+      - regimes: [arrco, arrco_tranche_2, arrco_tranche_2_entreprises_nouvelles, arrco_cultes]
+        taux: [0, 0, 0, 0.05]
+      - regimes: [agirc, agirc_entreprises_nouvelles]
+        taux: [0, 0, 0, 0.08, 0.12, 0.16, 0.20, 0.24]
+  exemples: aucun trouvé
+- id: accord_de_2011_points_d_avant_1999
+  statut: lue
+  textes:
+  - reference: >-
+      accord du 18 mars 2011 relatif aux retraites complémentaires Agirc-Arrco-AGFF, dans
+      le recueil de la caisse (hors JORF)
+    article: article 7, 1 et 2
+    en_vigueur: 2012-01-01
+    citation: >-
+      « Les participants au régime ARRCO qui ont eu ou justifient avoir élevé au moins
+      trois enfants de moins de 16 ans pendant 9 ans, bénéficient d'une majoration de leur
+      allocation égale à 10%. Cette disposition s'applique aux allocations liquidées au
+      titre de la seule partie de carrière postérieure au 31 décembre 2011 » ; « L'ensemble
+      des majorations pour enfants nés ou élevés servies par l'ARRCO sera plafonné à 1000
+      euros par an pour toute liquidation d'allocation prenant effet à compter du 1er
+      janvier 2012. Ce plafond sera proratisé en fonction de la durée pendant laquelle le
+      participant aura relevé du régime ARRCO. » ; l'Agirc, au 1, dans les mêmes termes
+    lu_le: 2026-11-03
+    empreinte: sha256:0186b6b165ad2a5f5f561deb969c6a35c661dc2e1fedbfcdcaa24801f51104c1
+  - reference: >-
+      accord national interprofessionnel du 8 décembre 1961, « Mise à jour au 1 janvier
+      2018 », copie de la caisse (hors JORF)
+    article: >-
+      annexe A, article 17, « Majorations familiales afférentes aux allocations de retraite
+      prenant effet à compter du 1er janvier 2012 », 2)
+    en_vigueur: 2012-01-01
+    citation: >-
+      « pour les périodes antérieures au 1er janvier 1999, majorations pour enfants nés ou
+      élevés telles que prévues le cas échéant par les règlements des régimes ARRCO
+      antérieurs au régime unique », « pour les périodes entre le 1er janvier 1999 et le 31
+      décembre 2011, majoration pour enfants élevés, égale à 5 % », « pour les périodes à
+      compter du 1er janvier 2012, majoration pour enfants nés ou élevés, égale à 10 % » ;
+      « L'ensemble des majorations prévues au point 2 est plafonné à 1000 euros par an
+      (montant revalorisé en fonction de la valeur du point), pour toute liquidation
+      prenant effet à compter du 1er janvier 2012 (sauf pour les participants nés avant le
+      2 août 1951). »
+    lu_le: 2026-11-03
+    empreinte: sha256:5af24910e87017e7f50ce4db12f5329edf3bb286e1c69749de19a559419d9e03
+  - reference: >-
+      convention collective nationale du 14 mars 1947, « Mise à jour au 1 janvier 2018 »,
+      copie de la caisse (hors JORF)
+    article: annexe I, article 6 bis, 2), « Dispositions applicables aux liquidations d'allocations prenant effet à compter du 1er janvier 2012 »
+    en_vigueur: 2012-01-01
+    citation: >-
+      « pour les périodes antérieures au 1er janvier 2012, majoration pour enfants nés ou
+      élevés, égale à : 8 % pour 3 enfants, 12 % pour 4 enfants, 16 % pour 5 enfants, 20 %
+      pour 6 enfants, 24 % pour 7 enfants ou plus », « pour les périodes à compter du 1er
+      janvier 2012 [...] égale à 10 % » ; le plafond dans les mêmes termes que l'annexe A
+    lu_le: 2026-11-03
+    empreinte: sha256:38966c272726dd11abbcc5ffa18ffb67d2731caa86ca4ce3aa94d0169568ce78
+  - reference: >-
+      Agirc-Arrco, « Majorations pour enfants », guide des salariés n° 9, mars 2017, diffusé
+      par Carcept Prev (hors JORF)
+    article: « Plafonnement des majorations pour enfants nés ou élevés » et « Points de vue »
+    en_vigueur: 2012-01-01
+    citation: >-
+      « Au 1er novembre 2016, le plafonnement annuel est fixé à 1 031,15 € pour le régime
+      Arrco et à 1 028,12 € pour le régime Agirc » ; « Le plafonnement s'applique aux
+      retraites prenant effet à compter du 1er janvier 2012 à l'exception de celles des
+      salariés nés avant le 2 août 1951 » ; « le régime Arrco ne tient pas compte du
+      coefficient de minoration pour le calcul des majorations pour enfants ; le régime
+      Agirc en tient compte »
+    lu_le: 2026-11-03
+    empreinte: sha256:9dfcdaf5c2d655737ce3509a28fbebe7143322006f62a3abfe23f361972743b2
+  bornes:
+    liquidation.date_effet: [2012-01-01, 2019-01-01]
+    periode.debut: [null, 1999-01-01]
+  contenu:
+    droit: >-
+      les points de l'Arrco d'avant 1999 prennent la majoration du règlement de leur
+      caisse, s'il en prévoyait une ; ceux de l'Agirc, 8 à 24 % ; l'ensemble des
+      majorations de chaque régime est plafonné à 1 000 € par an au 1er janvier 2012,
+      revalorisé comme son point, sauf pour les participants nés avant le 2 août 1951
+    conditions: >-
+      trois enfants au moins, eus ou élevés pendant neuf ans avant leurs seize ans,
+      appréciés à la date d'effet (annexe A, article 17, 2) ; l'accord exigeait, pour les
+      droits d'avant 2012, que les conditions soient remplies le 31 décembre 2011
+    parametres:
+      bareme:
+      - regimes: [arrco, arrco_tranche_2, arrco_tranche_2_entreprises_nouvelles]
+        taux: [0, 0, 0, 0.10, 0.15, 0.20, 0.25, 0.30]
+      - regimes: [agirc, agirc_entreprises_nouvelles]
+        taux: [0, 0, 0, 0.08, 0.12, 0.16, 0.20, 0.24]
+      plafond_majoration_enfants: 1000.0
+      plafond_majoration_annee: 2011
+      plafond_nes_a_compter_du: 1951-08-02
+  exemples: aucun trouvé
+- id: accord_de_2011_points_de_1999_a_2011
+  statut: lue
+  textes:
+  - reference: >-
+      accord du 18 mars 2011 relatif aux retraites complémentaires Agirc-Arrco-AGFF, dans
+      le recueil de la caisse (hors JORF)
+    article: article 7, 1 et 2
+    en_vigueur: 2012-01-01
+  - reference: accord national interprofessionnel du 8 décembre 1961, copie de la caisse (hors JORF)
+    article: annexe A, article 17, 2), rédaction applicable aux allocations prenant effet depuis le 1er janvier 2012
+    en_vigueur: 2012-01-01
+  - reference: convention collective nationale du 14 mars 1947, copie de la caisse (hors JORF)
+    article: annexe I, article 6 bis, 2), même rédaction
+    en_vigueur: 2012-01-01
+  bornes:
+    liquidation.date_effet: [2012-01-01, 2019-01-01]
+    periode.debut: [1999-01-01, 2012-01-01]
+  contenu:
+    droit: >-
+      5 % sur les points de l'Arrco de 1999 à 2011, 8 à 24 % sur ceux de l'Agirc ; le même
+      plafond
+    parametres:
+      bareme:
+      - regimes: [arrco, arrco_tranche_2, arrco_tranche_2_entreprises_nouvelles, arrco_cultes]
+        taux: [0, 0, 0, 0.05]
+      - regimes: [agirc, agirc_entreprises_nouvelles]
+        taux: [0, 0, 0, 0.08, 0.12, 0.16, 0.20, 0.24]
+      plafond_majoration_enfants: 1000.0
+      plafond_majoration_annee: 2011
+      plafond_nes_a_compter_du: 1951-08-02
+  exemples: aucun trouvé
+- id: accord_de_2011_points_depuis_2012
+  statut: lue
+  textes:
+  - reference: >-
+      accord du 18 mars 2011 relatif aux retraites complémentaires Agirc-Arrco-AGFF, dans
+      le recueil de la caisse (hors JORF)
+    article: article 7, 1 et 2
+    en_vigueur: 2012-01-01
+  - reference: accord national interprofessionnel du 8 décembre 1961, copie de la caisse (hors JORF)
+    article: annexe A, article 17, 2), rédaction applicable aux allocations prenant effet depuis le 1er janvier 2012
+    en_vigueur: 2012-01-01
+  - reference: convention collective nationale du 14 mars 1947, copie de la caisse (hors JORF)
+    article: annexe I, article 6 bis, 2), même rédaction
+    en_vigueur: 2012-01-01
+  bornes:
+    liquidation.date_effet: [2012-01-01, 2019-01-01]
+    periode.debut: [2012-01-01, null]
+  contenu:
+    droit: >-
+      10 % sur les points de l'Arrco et de l'Agirc acquis depuis 2012 ; le même plafond
+    parametres:
+      bareme:
+      - regimes: [arrco, arrco_tranche_2, arrco_tranche_2_entreprises_nouvelles, arrco_cultes,
+          agirc, agirc_entreprises_nouvelles]
+        taux: [0, 0, 0, 0.10]
+      plafond_majoration_enfants: 1000.0
+      plafond_majoration_annee: 2011
+      plafond_nes_a_compter_du: 1951-08-02
+  exemples: aucun trouvé
+- id: regime_unifie_points_d_avant_1999
+  statut: lue
+  textes:
+  - id: KALITEXT000036731682
+    reference: >-
+      accord national interprofessionnel du 17 novembre 2017 instituant le régime
+      Agirc-Arrco de retraite complémentaire, version « applicable au 1er janvier 2019 »,
+      copie de la fédération (hors JORF)
+    article: article 94, « Majorations pour enfants nés ou élevés »
+    en_vigueur: 2019-01-01
+    citation: >-
+      « 1. Pour les périodes antérieures au 1er janvier 1999, lorsqu'une majoration pour
+      enfant né ou élevé est prévue par un règlement d'un ancien régime ARRCO [...], la
+      majoration de ces droits est égale à : 10 % pour 3 enfants, 15 % pour 4, 20% pour
+      5, 25% pour 6, 30 % pour 7 » ; « 2. Pour les points inscrits entre 1999 et 2011 au
+      titre de l'ancien régime ARRCO, la majoration est égale à 5% » ; « 3. Pour les
+      points inscrits au titre de l'ancien régime AGIRC et relatifs à des périodes
+      antérieures à 2012 », 8 à 24 % ; « 4. Pour la part de l'allocation correspondant
+      aux périodes à compter de 2012, la majoration est égale à 10% » ; « La majoration
+      pour enfants nés ou élevés est plafonnée au montant du cumul des plafonds en vigueur
+      à l'Agirc et à l'Arrco applicables à l'entrée en vigueur du présent accord. Ce
+      montant est revalorisé en fonction de l'évolution de la valeur du point. Le plafond
+      de la majoration pour enfants nés ou élevés n'est pas appliqué aux participants nés
+      avant le 2 août 1951. »
+    lu_le: 2026-11-03
+    empreinte: sha256:b8af8df7372e4f897c1ca0c4fd9bf4baaa5b706ec4737b8e51b593c5a2a4fccb
+  - id: JORFARTI000036847923
+    article: arrêté du 24 avril 2018 portant extension et élargissement de l'accord, article 1er
+    en_vigueur: 2018-04-28
+    publie_le: 2018-04-28
+    citation: >-
+      « Sont étendues, conformément aux dispositions de l'article L. 911-3 du code de la
+      sécurité sociale, les stipulations de l'accord national interprofessionnel du 17
+      novembre 2017 instituant le régime AGIRC-ARRCO de retraite complémentaire »
+  - reference: >-
+      circulaire Agirc-Arrco 2025-15-DT, « Paramètres du régime 2025-2026 » (hors JORF)
+    article: circulaire
+    en_vigueur: 2026-01-01
+    citation: >-
+      « Le montant du plafond des majorations pour enfants nés ou élevés reste fixé à
+      2 367,48 € »
+    lu_le: 2026-10-05
+    empreinte: sha256:2e34ce291edcfa5e9d21bf0b80e7c30d8889f7342ee8b5dae4463801ad04b288
+  nee_de: KALITEXT000036731682
+  bornes:
+    liquidation.date_effet: [2019-01-01, null]
+    periode.debut: [null, 1999-01-01]
+  contenu:
+    droit: >-
+      les points de l'Arrco d'avant 1999 prennent 10 à 30 % si le règlement de leur caisse
+      prévoyait une majoration, sauf ceux de la Camarca, que son ancien règlement majore,
+      et ceux qu'aucun compte ne portait avant la liquidation, que 5 % majorent ; ceux de
+      l'Agirc, 8 à 24 % ; l'ensemble est plafonné au cumul des deux plafonds de 2018,
+      2 071,58 € au 1er janvier 2019, revalorisé comme le point du régime unifié, 2 367,48 €
+      depuis le 1er novembre 2024, sauf pour les participants nés avant le 2 août 1951
+    parametres:
+      bareme:
+      - regimes: [arrco, arrco_tranche_2, arrco_tranche_2_entreprises_nouvelles]
+        taux: [0, 0, 0, 0.10, 0.15, 0.20, 0.25, 0.30]
+      - regimes: [agirc, agirc_entreprises_nouvelles]
+        taux: [0, 0, 0, 0.08, 0.12, 0.16, 0.20, 0.24]
+      plafond_majoration_enfants: 2367.48
+      plafond_majoration_annee: 2025
+      plafond_nes_a_compter_du: 1951-08-02
+  exemples: aucun trouvé
+- id: regime_unifie_points_de_1999_a_2011
+  statut: lue
+  textes:
+  - id: KALITEXT000036731682
+    reference: >-
+      accord national interprofessionnel du 17 novembre 2017 instituant le régime
+      Agirc-Arrco de retraite complémentaire (hors JORF)
+    article: article 94, « Majorations pour enfants nés ou élevés »
+    en_vigueur: 2019-01-01
+  - id: JORFARTI000036847923
+    article: arrêté du 24 avril 2018 portant extension et élargissement de l'accord, article 1er
+    en_vigueur: 2018-04-28
+    publie_le: 2018-04-28
+  nee_de: KALITEXT000036731682
+  bornes:
+    liquidation.date_effet: [2019-01-01, null]
+    periode.debut: [1999-01-01, 2012-01-01]
+  contenu:
+    droit: 5 % sur les points de l'Arrco de 1999 à 2011, 8 à 24 % sur ceux de l'Agirc ; le même plafond
+    parametres:
+      bareme:
+      - regimes: [arrco, arrco_tranche_2, arrco_tranche_2_entreprises_nouvelles, arrco_cultes]
+        taux: [0, 0, 0, 0.05]
+      - regimes: [agirc, agirc_entreprises_nouvelles]
+        taux: [0, 0, 0, 0.08, 0.12, 0.16, 0.20, 0.24]
+      plafond_majoration_enfants: 2367.48
+      plafond_majoration_annee: 2025
+      plafond_nes_a_compter_du: 1951-08-02
+  exemples: aucun trouvé
+- id: regime_unifie_points_depuis_2012
+  statut: lue
+  textes:
+  - id: KALITEXT000036731682
+    reference: >-
+      accord national interprofessionnel du 17 novembre 2017 instituant le régime
+      Agirc-Arrco de retraite complémentaire (hors JORF)
+    article: article 94, « Majorations pour enfants nés ou élevés »
+    en_vigueur: 2019-01-01
+  - id: JORFARTI000036847923
+    article: arrêté du 24 avril 2018 portant extension et élargissement de l'accord, article 1er
+    en_vigueur: 2018-04-28
+    publie_le: 2018-04-28
+  nee_de: KALITEXT000036731682
+  bornes:
+    liquidation.date_effet: [2019-01-01, null]
+    periode.debut: [2012-01-01, null]
+  contenu:
+    droit: >-
+      10 % sur les points acquis depuis 2012, à l'Arrco, à l'Agirc puis au régime unifié ;
+      le même plafond
+    parametres:
+      bareme:
+      - regimes: [arrco, arrco_tranche_2, arrco_tranche_2_entreprises_nouvelles, arrco_cultes,
+          agirc, agirc_entreprises_nouvelles, agirc_arrco]
+        taux: [0, 0, 0, 0.10]
+      plafond_majoration_enfants: 2367.48
+      plafond_majoration_annee: 2025
+      plafond_nes_a_compter_du: 1951-08-02
+  exemples: aucun trouvé
+approximations:
+- version: [reglements_d_avant_le_regime_unique, regime_unique_points_d_avant_1999,
+    accord_de_2011_points_d_avant_1999, regime_unifie_points_d_avant_1999]
+  textes: >-
+    accord du 25 avril 1996, article 2 ; annexe A de l'accord du 8 décembre 1961,
+    article 17, 2), et sa note ; accord du 17 novembre 2017, article 94, 1
+  ecart: >-
+    Le modèle ne connaît pas la caisse de l'Arrco d'avant 1999 : il présume que son
+    règlement prévoyait la majoration, au barème de l'accord, 10 % pour trois enfants à
+    30 % pour sept. Les caisses qui n'en servaient pas n'en doivent aucune, la Camarca
+    des salariés agricoles servait 2,5 % par enfant, et les droits qu'aucun compte ne
+    portait avant la liquidation ne prennent que 5 %.
+  effet: >-
+    surestime la majoration des points d'avant 1999 d'une caisse qui n'en servait pas :
+    dans l'exemple du guide n° 9 de mars 2017, 2 000 points de 1988 à 1998 d'une caisse
+    sans majoration, 250,26 € par an de trop pour 338,11 € dus ; non mesuré sur la
+    population, faute de savoir quelles caisses la servaient
+- version: [accord_de_2011_points_d_avant_1999, accord_de_2011_points_de_1999_a_2011,
+    accord_de_2011_points_depuis_2012, regime_unifie_points_d_avant_1999,
+    regime_unifie_points_de_1999_a_2011, regime_unifie_points_depuis_2012]
+  textes: >-
+    circulaire Agirc-Arrco n° 2020-02-DRJ, fiche 4, II.2.1 ; guide des salariés n° 9 de
+    l'Agirc-Arrco, mars 2017
+  ecart: >-
+    Le modèle calcule la majoration sur l'allocation, coefficient d'anticipation compris.
+    Depuis 2019, la caisse la calcule « sur les droits de base du participant sans tenir
+    compte des coefficients d'anticipation éventuellement appliqués » ; de 2012 à 2018,
+    « le régime Arrco ne tient pas compte du coefficient de minoration pour le calcul des
+    majorations pour enfants ; le régime Agirc en tient compte ».
+  effet: >-
+    sous-estime la majoration de qui part sous un coefficient d'anticipation, de la part
+    que le coefficient retire : 1 % à 22 % sur vingt trimestres, jusqu'à 57 % dix ans
+    avant l'âge du taux plein ; aucun écart à l'Agirc de 2012 à 2018, ni sous le plafond
+    quand la majoration le passe de toute façon
+- version: [accord_de_2011_points_d_avant_1999, accord_de_2011_points_de_1999_a_2011,
+    accord_de_2011_points_depuis_2012, regime_unifie_points_d_avant_1999,
+    regime_unifie_points_de_1999_a_2011, regime_unifie_points_depuis_2012]
+  textes: >-
+    annexe A de l'accord du 8 décembre 1961, article 17, 2), et annexe I de la convention
+    du 14 mars 1947, article 6 bis, 2), rédactions de 2012 ; accord du 17 novembre 2017,
+    article 94
+  ecart: >-
+    Le plafond ne s'oppose pas « aux participants nés avant le 2 août 1951 » ; le modèle,
+    qui ne connaît que l'année de naissance, ne l'oppose qu'aux générations nées depuis
+    1952 (completer.js : plafondMajoration).
+  effet: >-
+    non mesuré ; les assurés nés du 2 août au 31 décembre 1951 dont la majoration passe
+    le plafond la reçoivent entière : familles de cinq enfants et plus, ou de trois à haut
+    salaire, sur cinq mois d'une génération
+- version: [accord_de_2011_points_d_avant_1999, accord_de_2011_points_de_1999_a_2011,
+    accord_de_2011_points_depuis_2012, regime_unifie_points_d_avant_1999,
+    regime_unifie_points_de_1999_a_2011, regime_unifie_points_depuis_2012]
+  textes: guide des salariés n° 9 de l'Agirc-Arrco, mars 2017 ; circulaire 2025-15-DT
+  ecart: >-
+    La caisse revalorise le plafond d'année en année, arrondi au centime ; le modèle d'un
+    coup, du point de l'année du plafond à celui de la date d'effet : un centime d'écart,
+    1 028,11 € au lieu de 1 028,12 € à l'Agirc au 1er novembre 2016, 2 071,59 € au lieu
+    de 2 071,58 € au 1er janvier 2019.
+  effet: un centime par an au plus, sur les seules majorations que le plafond borne
+- version: [regime_unique_points_d_avant_1999]
+  textes: accord du 25 avril 1996, article 2
+  ecart: >-
+    Les droits d'avant 1999 ne prennent la majoration du règlement de leur caisse que
+    « lorsque les conditions d'application de ces majorations seront remplies » au
+    31 décembre 1998 ; le modèle compte les enfants à la date d'effet.
+  effet: >-
+    non mesuré ; les parents d'un troisième enfant né après 1998, partis de 1999 à 2011,
+    reçoivent au modèle la majoration de leurs points d'avant 1999
 sources:
-  lu_le: 2026-10-16
+  lu_le: 2026-11-03
   prochaine_relecture: 2027-06-30
+  lectures_divergentes:
+  - >-
+    La proratisation du plafond de 2012 à 2018 : l'accord du 18 mars 2011 (article 7)
+    veut le plafond « proratisé en fonction de la durée pendant laquelle le participant
+    aura relevé du régime » ; ni l'article 17 de l'annexe A ni l'article 6 bis de l'annexe
+    I, qui le codifient, ni le guide n° 9 de mars 2017, qui oppose le plafond entier de
+    1 028,12 € à un cadre de l'Agirc depuis 1980, ne le proratisent, ni le modèle.
+  - >-
+    La date des conditions des droits d'avant 2012 : remplies le 31 décembre 2011 selon
+    l'accord du 18 mars 2011 (article 7), « appréciée à la date d'effet de la retraite »
+    selon les annexes de 2012 ; le modèle suit les annexes.
   a_relire:
   - >-
-    Le modèle ne connaît pas la caisse Arrco d'avant 1999, et présume que son règlement
-    prévoyait la majoration, au barème de l'accord : la Capaves de l'exemple n'en
-    servait pas, la Camarca des salariés agricoles servait 2,5 % par enfant. La
-    majoration pour enfants à charge (article 95, 5 % par enfant) a sa fiche,
-    majoration_enfants_a_charge_agirc_arrco, depuis le 8 octobre 2026.
+    Les règlements des caisses de l'Arrco d'avant 1999, et ceux de la Camarca ; les
+    rédactions d'avant 2012 de l'article 6 bis de l'annexe I de 1947 — depuis quand
+    l'Agirc sert-elle 8 à 24 % ? — et de l'article 17 de l'annexe A de 1961 : la copie du
+    Medef, que lisait la fiche des coefficients d'anticipation, ne se sert plus
+    (accords.medef.com, « Site introuvable », le 3 novembre 2026).
   - >-
-    La circulaire Agirc-Arrco n° 2020-02-DRJ (fiche 4, II.2.1) calcule la majoration
-    « sur les droits de base du participant sans tenir compte des coefficients
-    d'anticipation éventuellement appliqués » : le modèle la calcule sur l'allocation,
-    coefficient compris, et la sous-estime sous un coefficient d'anticipation (relevé le
-    8 octobre 2026, à l'étape 17 de l'action 138).
+    Les exemples de la caisse ne sont pas au registre des exemples officiels
+    (tests/temoins/exemples_officiels.yaml) : Justine, dépliant de mars 2025, que rejoue
+    test_simulateur.py ; les deux du guide n° 9 de mars 2017, à l'Arrco 338,11 € et à
+    l'Agirc 1 305,60 € ramenés au plafond de 1 028,12 €, que test_agirc_arrco_au_droit.py
+    refait sur les données. Les y inscrire, ce que les versions diraient alors.
   - >-
-    Le plafond ne s'oppose, au modèle comme chez OpenFisca, qu'aux participants nés à
-    compter du 2 août 1951 ; les deux pages lues le 16 octobre 2026 (Legisocial, COR) ne
-    donnent pour champ que les allocations prenant effet depuis le 1er janvier 2012. Lire
-    l'accord du 18 mars 2011 sur Légifrance (KALI) et la circulaire du 7 juillet 2011.
+    Avant 2012, la caisse calculait-elle la majoration avant ou après le coefficient
+    d'anticipation ? Le guide de 2017 ne le dit que de 2012 à 2018.
+  - >-
+    La circulaire Agirc-Arrco du 7 juillet 2011 (point 3.3.1), qui dirait la
+    proratisation et la génération du 2 août 1951 : non retrouvée.
   lectures:
   - type: legifrance
     reference: >-
@@ -77,9 +549,32 @@ sources:
       nés ou élevés, fixé à 1000 euros par an et par régime »
     url: https://www.cor-retraites.fr/sites/default/files/2019-06/doc-1530.pdf
     date: 2011-05-19
-textes_a_rattacher:
-- reference: accord du 18 mars 2011 relatif aux retraites complémentaires Agirc et Arrco
-- reference: accord national interprofessionnel du 17 novembre 2017, article 94
+  - type: autre
+    reference: >-
+      Accord national interprofessionnel du 17 novembre 2017, version « applicable au 1er
+      janvier 2019 » jointe à la circulaire 2018-09-DC, articles 93, 94 et 96, relus le 3
+      novembre 2026
+    url: https://www.agirc-arrco.fr/storage/2024/09/201809dc_ANI_du_17_novembre_2017.pdf
+    date: 2018-12-19
+  - type: autre
+    reference: >-
+      Recueil de la caisse « Accords nationaux des partenaires sociaux » : accord Arrco du
+      25 avril 1996, articles 1er, 2, 11 à 13 ; accord du 18 mars 2011, articles 7 et 8
+    url: https://www.agirc-arrco.fr/storage/2021/11/liste_accords_paritaires_Agirc_Arrco.pdf
+    date: 2026-11-03
+  - type: autre
+    reference: >-
+      Accord du 8 décembre 1961, annexe A, article 17, et convention du 14 mars 1947,
+      annexe I, article 6 bis, « Mise à jour au 1 janvier 2018 »
+    url: https://www.agirc-arrco.fr/storage/2021/11/Accord_8dec1961-1.pdf
+    date: 2018-01-01
+  - type: autre
+    reference: >-
+      Agirc-Arrco, guide des salariés n° 9, « Majorations pour enfants », mars 2017 : le
+      plafond au 1er novembre 2016, son champ, l'assiette de chaque régime, et deux
+      exemples à effet du 1er avril 2017
+    url: https://www.carcept-prev.fr/sites/carcept/files/media/documents/2018/05/Majorations-pour-enfants.pdf
+    date: 2017-03-01
 referents:
   openfisca_france_pension:
     equivalent: >-
@@ -114,6 +609,8 @@ code:
     MajorationsEnfantsPoints, MajorationsEnfantsPoints.taux ;
     moteur/js/droit/completer.js : completer, plafondMajoration, regimeDuPlafond
   parametres: >-
+    contenu.parametres de chaque version : bareme, plafond_majoration_enfants,
+    plafond_majoration_annee, plafond_nes_a_compter_du ;
     legislation/majoration_enfants_points.csv : regimes, acquis_debut, acquis_fin,
     bareme, fiabilite ; regimes/agirc.yaml, regimes/agirc_arrco.yaml,
     regimes/agirc_entreprises_nouvelles.yaml, regimes/arrco.yaml,
@@ -121,6 +618,7 @@ code:
     regimes/arrco_tranche_2_entreprises_nouvelles.yaml : plafond_majoration_enfants,
     plafond_majoration_annee, plafond_majoration_regime
   tests:
+  - tests/test_agirc_arrco_au_droit.py
   - tests/test_destinie.py
   - tests/test_droit.py
   - tests/test_oracle_points_enfants_arrco.py
@@ -135,3 +633,21 @@ code:
     enfants_carriere_incomplete, taux_plein_mere_ouvriere et
     reversion_deces_avant_le_depart —, six sans le plafond,
     departs_prive_puis_categorie_active_trois_enfants avec eux
+historique:
+- >-
+  2026-11-03 — lue au droit (action 130, file E) : les textes à rattacher, l'accord du 18
+  mars 2011 et l'article 94 de l'accord de 2017, coupés en neuf versions sur la date
+  d'effet et l'année d'acquisition ; la question du plafond des générations d'avant le 2
+  août 1951, ouverte le 16 octobre, tranchée par l'article 94 et les annexes de 2012.
+effet: >-
+  Parents de trois enfants salariés du privé avant 2019. Le modèle servait 10 %
+  à tous les points ; les points Arrco de 1999 à 2011 n'en valent que 5, ceux de
+  l'Agirc d'avant 2012 de 8 à 24 % selon le nombre d'enfants. Une non-cadre née
+  en 1962 et entrée à 22 ans voit sa pension Arrco majorée de 7,9 % pour trois enfants,
+  et non de 10. La table est `majoration_enfants_points.csv` ; l'exemple de la caisse
+  est rejoué par `test_la_majoration_agirc_arrco_suit_la_periode_d_acquisition`,
+  hors la ligne de la Capaves. Le plafond de 2012 à 2018 est de 1 000 € au titre de
+  l'Arrco et 1 000 € au titre de l'Agirc, revalorisés comme le point : le modèle servait
+  le plafond unifié de 2025, commun aux deux et double, et l'opposait dès 1999 ; un
+  non-cadre né en 1952, parti en 2018 au salaire de 100 000 € avec trois enfants, perd
+  73,53 € par an de majoration (1 031,15 € au lieu de 1 104,68).
