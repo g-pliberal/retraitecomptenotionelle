@@ -1,0 +1,46 @@
+date: "2026-11-03"
+session: "action 177, file R-M2 : relecture indépendante de l'assiette du RCO des artisans et du NRCO des commerçants (commits f716130, f63fec0, 93906ff, 1aa23ce, 4209a8a, 5cda81f, c48cd2c et 144a622)"
+consulte: >-
+  Les index LEGI et JORF de la DILA, récupérés et mis à jour (LEGI à jour au 2 novembre
+  2026, aucun incrément depuis ; JORF, l'incrément du 3 novembre appliqué). Dans LEGI : le
+  décret n° 78-351, articles 1er à 12, rédactions de 1978 et de 1985 (LEGIARTI000006766100 à
+  LEGIARTI000006766114) ; le décret n° 73-76, articles 2, 6, 9, 11 à 14, 16 et 18 ;
+  D. 635-1 à D. 635-10-2 de 1985 à 2016, dont toutes les rédactions de D. 635-2, D. 635-4,
+  D. 635-7 et D. 635-10 ; D. 633-2, D. 633-9, D. 633-19 à D. 633-19-7 ; R. 242-16 de 2002 à
+  2012 ; L. 131-6 (2003, 2007, 2009), L. 131-6-2 (2011), L. 635-1 (1985, 2004, 2005). Dans le
+  JORF : les décrets n° 79-1136, 80-1080, 81-1164, 82-543 (plafonds), 84-1064 (notice),
+  97-166 (articles 1er à 3), 2004-848 (articles 1er et 2), 2005-272, 2007-1900 (article 1er),
+  2008-1427 (articles 1er à 3 et visas), 2011-2038 (articles 1er à 4 et notice) ; les
+  arrêtés du 23 avril et du 7 juillet 2009 (JORFARTI000020676129, JORFARTI000021059798). La
+  base de législation de la Cnav, par son API, empreintes calculées : les exposés « Points
+  cotisés artisans avant 2013 », « Points cotisés commerçants avant 2013 », « Evolution des
+  régimes complémentaires » (24 octobre 2025) et « Rachat aide familial » (14 octobre 2026) ;
+  l'exemple « Régime complémentaire obligatoire - Dispense après le 01/01/2009 » (2 juin
+  2023) ; la table « ARTISANS : RCO - revenu de référence » de l'ex-RSI (PDF, sha256
+  fbce0850…). La série salref_rc_com de l'IPP (baremes.ipp.eu).
+trouve: >-
+  Conformes : les 33 citations de la fiche assiette_rco_independants, mot pour mot ; les
+  bornes de 1979 (article 12), 2004 (L. 635-1, D. 635-10), des cotisations de 2008 (décret
+  n° 2008-1427, II), du forfait au tiers puis à la moitié du plafond de la sécurité sociale
+  jusqu'au 1er janvier 2012 (décret n° 2011-2038, articles 3 et 4) et du 0,10 % de 1985 à
+  1996 (décrets n° 84-1064 et 97-166) ; l'absence d'ajustement (décret n° 73-76, article 9,
+  hors des articles que l'article 5, IV, rend applicables). Sept valeurs refaites à la main
+  depuis les textes et la table de la caisse, rendues par les deux moteurs ; tests de la
+  session, lot rapide et garde des présomptions verts. La marge de tests/test_cout.py :
+  tout le déplacement vient de la correction (+0,30 et +0,39 point, mesurés avec et sans ses
+  quatre commits), la tolérance arrondie au point comme le fichier le fait depuis le
+  5 octobre. Quatre écarts mineurs : le conjoint collaborateur aux options 2° à 5°, dont la
+  complémentaire reste, sans régularisation, sur la fraction du revenu du chef de
+  l'avant-dernière année de 2007 à 2012 (D. 635-10-2, D. 633-19-1, D. 633-19-6, L. 131-6),
+  ni servi ni déclaré ; le forfait de l'artisan de 2009 à 2011, définitif ou régularisé, laissé hors de
+  la limite publiée ; le commentaire de la marge, qui ne dit ni pourquoi l'écart monte ni
+  pourquoi les non-salariés bougent ; l'effet, que la fiche dit tout en baisse quand le
+  forfait élève de 18 % le RCO du témoin dispense_rsa_releve_artisane (+5,8 % de pension
+  aux scénarios 3 et 5).
+reste: >-
+  Déclarer ou servir le conjoint collaborateur à une fraction du revenu du chef ; porter
+  l'incertitude du forfait de 2009 à 2011 dans la limite et la fiche ; compléter le
+  commentaire de tests/test_cout.py et l'effet de la fiche ; préciser la date du revenu
+  minimum (5 avril 2012). Vu en chemin, hors de cette relecture : le revenu de référence du
+  NRCO de 2008 (14,648 ou 14,809 €), le coefficient de conversion du RCO que la caisse écrit
+  0,2278 puis 0,2778. Note : 2026-11-03-relecture-assiette-du-rco.md de l'action 177.
