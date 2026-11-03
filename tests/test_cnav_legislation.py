@@ -155,6 +155,93 @@ def test_les_liens_d_un_contenu_disent_ce_qu_ils_visent():
     ]
 
 
+#: Des liens tels que la base les servait pendant son import de nuit, le
+#: 3 novembre 2026 à 5 h 01, par les chemins du site SharePoint de la caisse :
+#: les quatre que cite `docs/feuille_de_route/175/2026-11-03-forme-des-liens.md`
+#: (« Ce que l'étape 4 avait vu », lignes 26 à 29), et la forme qu'en donne pour
+#: un exposé la note de l'étape 4 (`2026-11-03-etape-4-cotisations-salaires.md`,
+#: ligne 87), sur un exposé du registre.
+LIENS_DE_L_IMPORT = (
+    "/sites/N_GDLC_Campus_Ref/SitePages/CR_CN_6096_28061996.aspx",
+    "/sites/N_GDLC_Campus_Ref/RefReg/textes/circulaire_cnav_2016_41_17102016.pdf",
+    "/sites/N_GDLC_Campus_Bar/SitePages/aspa_ressource_exclue_list.aspx",
+    "/sites/N_GDLC_Campus_Com/SitePages/ex_polygamie.aspx",
+    "/sites/N_GDLC_Campus/SitePages/retraite_personnelle_taux_taux_retraite_ex.aspx",
+)
+#: Des liens de la base ordinaire : ses routes, ses PDF, et les six chemins du
+#: site SharePoint qu'elle sert hors de l'import, anciens et sans objet de la
+#: base (la même note, « Ce qui a été vérifié », lignes 10 à 13) — cinq vers le
+#: dossier `RefReg/textes`,
+#: un vers une page de `N_I_GDLC_Campus_Bar` —, tels que servis le 3 novembre
+#: 2026 à 16 h UTC.
+LIENS_ORDINAIRES = (
+    "#/references-reglementaires?file_leaf_ref=circulaire_cnav_2014_039_12062014.aspx#1",
+    "/Pdf/circulaire_cnav_2024_28_14102024.pdf",
+    "#/bareme?file_leaf_ref=periode_guerre_validation_periode_list.aspx#a",
+    "#/expose?file_leaf_ref=retraite_personnelle_taux_taux_retraite_ex.aspx",
+    "#/infosupp/ex_delai.aspx",
+    "/%3af%3a/r/sites/N_GDLC_Campus_Ref/RefReg/textes?csf=1&amp;web=1&amp;e=7VduC2",
+    "/sites/N_I_GDLC_Campus_Bar/SitePages/"
+    "Ressources-exclues-pour-la-retraite-de-r%c3%a9version.aspx",
+)
+
+
+class _Poursuivie(Exception):
+    """La lecture a dépassé les trois collections : elle n'a pas refusé."""
+
+
+def _lire_la_base_figee(module, monkeypatch, tmp_path, lien):
+    """Lance le récupérateur sur une réponse figée, sans réseau : chaque
+    collection sert un objet qui porte ``lien`` ; toute route au-delà des
+    trois collections lève `_Poursuivie` ; toute écriture fait échouer."""
+    routes = []
+
+    def obtenir(route, essais=4):
+        routes.append(route)
+        if route not in ("/baremes", "/expose", "/liste"):
+            raise _Poursuivie(route)
+        return [{"fileLeafRef": "x_ex.aspx", "file_leaf_ref": "x_list.aspx",
+                 "contenu": f'<p><a href="{lien}">x</a></p>'}]
+
+    def ecrire(*arguments, **options):
+        raise AssertionError("le récupérateur a écrit")
+
+    monkeypatch.setattr(module, "_obtenir", obtenir)
+    monkeypatch.setattr(module, "BRUT", tmp_path / "brut")
+    for nom in ("_garder", "ecrire_registre", "ecrire_citations"):
+        monkeypatch.setattr(module, nom, ecrire)
+    return routes, module.main([])
+
+
+@pytest.mark.parametrize("lien", LIENS_DE_L_IMPORT)
+def test_une_base_en_plein_import_de_nuit_ne_se_relit_pas(lien, monkeypatch, capsys, tmp_path):
+    """Pendant son import de nuit, vu le 3 novembre 2026 de 5 h à 5 h 44 UTC,
+    la base lie par les chemins du site SharePoint de la caisse, que `liens`
+    ne lit pas : le registre perdrait les thèmes et les références neuves. Le
+    récupérateur refuse alors de la relire (décision du propriétaire, note
+    `2026-11-03-refus-pendant-l-import-de-nuit.md`) : il le dit, sort en
+    erreur, et n'écrit rien."""
+    module = _module("cnav_legislation")
+    routes, code = _lire_la_base_figee(module, monkeypatch, tmp_path, lien)
+    assert code != 0
+    erreur = capsys.readouterr().err
+    assert "SharePoint" in erreur and "import de nuit" in erreur
+    assert "plus tard" in erreur and "hors de 5 h–6 h UTC" in erreur
+    assert lien in erreur
+    assert routes == ["/baremes", "/expose", "/liste"]
+    assert not (tmp_path / "brut").exists()
+
+
+@pytest.mark.parametrize("lien", LIENS_ORDINAIRES)
+def test_une_base_qui_lie_par_les_routes_du_site_se_relit(lien, monkeypatch, tmp_path):
+    """Sur la base ordinaire, le récupérateur va au-delà des trois
+    collections, comme avant : ni ses routes ni ses six chemins anciens du site
+    SharePoint ne le font refuser."""
+    module = _module("cnav_legislation")
+    with pytest.raises(_Poursuivie):
+        _lire_la_base_figee(module, monkeypatch, tmp_path, lien)
+
+
 def test_un_bareme_prend_le_theme_de_son_menu_ou_du_bareme_qui_le_lie():
     """Le menu des barèmes n'en nomme que les pages d'accueil ; une page
     d'accueil lie ses éditions, qui prennent son thème. Un barème qu'aucun menu

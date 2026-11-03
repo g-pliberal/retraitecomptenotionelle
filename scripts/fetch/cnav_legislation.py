@@ -40,6 +40,12 @@ registre ne la porte pas, ou sans titre, ou si un objet qui la lie est neuf ou
 que sa date de modification dit changé ; ce que les autres citent, le registre
 le garde (``citations.csv``). ``--tout`` les redemande toutes.
 
+PENDANT L'IMPORT DE NUIT. Le 3 novembre 2026, de 5 h à 5 h 44 UTC, la base
+liait par les chemins du site SharePoint de la caisse, et non par ses routes
+(``docs/feuille_de_route/175/2026-11-03-forme-des-liens.md``) : une base à
+moitié importée, que ``liens`` ne lit pas. Le script refuse alors de la relire,
+le dit, et sort en erreur sans rien écrire (``_IMPORT``).
+
 CE QU'IL ÉCRIT. Les réponses, dans ``data/brut/cnav_legislation/``, que git
 ignore : elles ne se versionnent pas. Le registre, dans
 ``data/reference/legislation/cnav/``, un fichier par genre — ``baremes.csv``,
@@ -163,6 +169,18 @@ _ROUTE = re.compile(r"#/(bareme|expose|references-reglementaires)\?file_leaf_ref
 _FENETRE = re.compile(r"#/infosupp/([^?#]+)")
 _DOCUMENT = re.compile(r"Bareme/Pages/doc_communs/([^?#]+)")
 _PDF = re.compile(r"/Pdf/([^?#]+)")
+#: Les chemins du site SharePoint de la caisse par lesquels la base lie pendant
+#: son import de nuit, vu le 3 novembre 2026 de 5 h à 5 h 44 UTC, et non ses
+#: routes : une page sous ``SitePages/`` de ``N_GDLC_Campus`` (exposés),
+#: ``_Bar`` (barèmes, listes), ``_Com`` (fenêtres) ou ``_Ref`` (références), un
+#: fichier sous ``N_GDLC_Campus_Ref/RefReg/textes/`` (PDF) —
+#: ``docs/feuille_de_route/175/2026-11-03-forme-des-liens.md``, « Ce que
+#: l'étape 4 avait vu », lignes 18 à 29. Les six chemins anciens que la base
+#: ordinaire sert aussi n'en sont pas : le dossier ``RefReg/textes`` sans
+#: fichier, ``N_I_GDLC_Campus_Bar`` (« Ce qui a été vérifié », lignes 10 à 13).
+#: Le choix : ``2026-11-03-refus-pendant-l-import-de-nuit.md``.
+_IMPORT = re.compile(r"/sites/N_GDLC_Campus(?:_Bar|_Com|_Ref)?/SitePages/[^/?#]+"
+                     r"|/sites/N_GDLC_Campus_Ref/RefReg/textes/[^/?#]+")
 #: Le script de valeurs qu'une page jointe charge, le dossier `depuis` lequel
 #: elle ouvre les pages qu'il déclare, et ces pages.
 _SCRIPT_DE_VALEURS = re.compile(r'src="([^"]*js/declare/[^"]+\.js)"', re.I)
@@ -291,6 +309,13 @@ def liens(contenu: str, document: str = "") -> list[tuple[str, str]]:
         if cible[1] and cible not in vus:
             vus.append(cible)
     return vus
+
+
+def liens_de_l_import(contenu: str) -> list[str]:
+    """Les liens d'un contenu qui suivent les chemins du site SharePoint de la
+    caisse, signe de l'import de nuit de la base (``_IMPORT``)."""
+    return [adresse for adresse in map(html.unescape, _LIEN.findall(contenu))
+            if _IMPORT.search(adresse)]
 
 
 def script_de_valeurs(contenu: str) -> str | None:
@@ -746,6 +771,15 @@ def main(argv: list[str] | None = None) -> int:
 
     collections = {"baremes": _obtenir("/baremes"), "exposes": _obtenir("/expose"),
                    "listes": _obtenir("/liste")}
+    pendant_l_import = [adresse for fiches in collections.values() for fiche in fiches
+                        for adresse in liens_de_l_import(fiche.get("contenu") or "")]
+    if pendant_l_import:
+        print(f"La base lie encore par les chemins du site SharePoint de la caisse "
+              f"({len(pendant_l_import)} liens, dont {_resumer(pendant_l_import)}) : son import "
+              f"de nuit est en cours, vu de 5 h à 5 h 44 UTC le 3 novembre 2026. La lecture "
+              f"s'arrête là : rien n'est écrit, le registre reste tel quel. Relancer plus "
+              f"tard, hors de 5 h–6 h UTC.", file=sys.stderr)
+        return 1
     collections_fenetres = {cle: _obtenir(f"/{cle}") for cle in NATURES}
     avis = {str(fiche["id"]): fiche for fiche in _obtenir("/mises-a-jour")}
     menu_baremes = _obtenir("/menu/menuBareme")
