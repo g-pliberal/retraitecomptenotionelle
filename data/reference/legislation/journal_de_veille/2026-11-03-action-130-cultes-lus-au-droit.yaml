@@ -1,0 +1,44 @@
+date: "2026-11-03"
+session: "action 130, file E : la carte des fiches, les cultes lus au droit (septième lot)"
+consulte: >-
+  python scripts/veille_droit.py ; les index LEGI et JORF du dépôt, récupérés et à jour de
+  l'incrément du 2 novembre 2026 (20261102-213929), et du 3 novembre pour le JORF
+  (20261103-002311) ; python scripts/textes.py --inscrire, aucune rédaction nouvelle. Dans
+  LEGI, le code de la sécurité sociale : L. 721-3 et L. 721-6 de 1985 à 2005, L. 382-25
+  et L. 382-27 dans toutes leurs rédactions, R. 721-29, R. 721-30 et R. 721-39-2 de 1998 à
+  2006, R. 382-89, R. 382-90, R. 382-119 à R. 382-122, R. 351-29-1 et R. 173-4-3, L. 921-1
+  dans ses huit rédactions (LEGIARTI000006745499 à LEGIARTI000006745504,
+  LEGIARTI000022267857, LEGIARTI000047452643), L. 351-1-5 et L. 358-1, D. 742-3 ; le décret
+  n° 79-607 du 3 juillet 1979, articles 24 et 39 à 41 ; les décrets qui relèvent le SMIC
+  de 1998 à 2012. Au Journal officiel, par l'index JORF : la loi n° 97-1164 du 19 décembre
+  1997, article 19 ; le décret n° 98-490 du 17 juin 1998, ses vingt et un articles et son
+  résumé ; la loi n° 2000-37 du 19 janvier 2000, article 32, et les arrêtés qui revalorisent
+  sa garantie de 2000 à 2004 ; le décret n° 2002-784 du 3 mai 2002 et son résumé ; le décret
+  n° 2004-181 du 23 février 2004 ; la loi n° 2005-1579 du 19 décembre 2005, article 75 ;
+  l'arrêté du 24 avril 2018 qui étend l'accord Agirc-Arrco du 17 novembre 2017.
+trouve: >-
+  La base forfaitaire des cultes, qui fait le salaire annuel moyen depuis 1998
+  (R. 721-39-2, puis R. 382-121), change trois fois : 169 SMIC horaires par mois de 1998
+  à 2001 (décret n° 98-490) ; « du 1er janvier 2002 jusqu'au 30 juin 2005 », la durée
+  légale « augmentée de la valeur de la garantie mensuelle de rémunération la plus élevée
+  », écrite rétroactivement par le décret du 23 février 2004 — la rédaction de 2002 et de
+  2003 disait encore 169 heures — ; la durée légale seule ensuite. Deux écarts du modèle,
+  déclarés : il compte la base de l'année au SMIC du 1er janvier, quand elle suit chaque
+  mois le SMIC en vigueur, relevé chaque 1er juillet de 1998 à 2009 (jusqu'à 2,9 % de la
+  base, en 2004) ; il ne compte pas la garantie de 2002 à 2005 (jusqu'à 11 % de la base de
+  ces années, la garantie de l'article 32 ne passant pas cent soixante-neuf heures). La
+  complémentaire des cultes naît le 20 décembre 2005 (L. 921-1, loi n° 2005-1579, article
+  75, VII), la caisse cotisant « à compter du 1er janvier 2006 » ; ses rédactions de 2006,
+  2010 et 2023 gardent la phrase des cultes mot pour mot. Le barème des contributions
+  d'équilibre ne fait pas verser l'AGFF au ministre du culte de 2006 à 2018, quand le seul
+  guide lu la lui fait verser : aucun effet sur la pension. R. 173-4-3 ne partage pas le
+  nombre d'années du salaire annuel moyen avec la CAVIMAC, ce que le modèle fait déjà. Le
+  cliquet des textes descend de 9 411 à 9 389 ; la carte, de 91 fiches à lire au droit à
+  89, de 539 manques à 527.
+reste: >-
+  Les deux écarts de la base forfaitaire, pour une étape du modèle, à décider par le
+  propriétaire. Ce que la caisse appliquait de 2002 au 30 juin 2005 (la base relevée
+  jusqu'à la garantie, ou la garantie ajoutée), et au premier semestre 1998, avant le
+  décret du 17 juin : une circulaire de la caisse. Le taux de la complémentaire de 2006 à
+  2018, lu pour les cultes au seul 1er mai 2008. L'AGFF des cultes, dans le barème des
+  contributions d'équilibre, d'une autre zone.

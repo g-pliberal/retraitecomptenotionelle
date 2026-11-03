@@ -2809,12 +2809,12 @@ fabriqués.
 sixième, les périodes assimilées manquantes, a ses étapes 1 à 6 faites
 (`130/2026-10-17-sixieme-domaine-etape-6.md`). Au propriétaire, README muet :
 sa septième étape, la décision de la proposition, la retraite progressive, le
-cumul et la seconde pension, l'abattement des marins (R. 11, 3°), les deux
-erreurs de l'Ircantec d'avant 1983. La carte mûrit : RAFP, CNAVPL, IEG, SNCF,
-RATP, marins et Ircantec lus au droit ; restent 91 fiches, 539 manques. La file
-E seule récrit ce bloc ; la file G corrige en même temps la surcote de la SNCF
-et de la RATP, et écrit sa note sous `130/` sans y toucher. Par quoi commencer :
-un lot dans `LUES_AU_DROIT`. Détail : `130/2026-11-03-carte-des-fiches-ircantec-lue-au-droit.md`.
+cumul et la seconde pension, l'abattement des marins (R. 11, 3°), l'Ircantec
+d'avant 1983, la base forfaitaire des cultes. Lus au droit : RAFP, CNAVPL, IEG,
+SNCF, RATP, marins, Ircantec, cultes ; restent 89 fiches, 527 manques. La file
+E seule récrit ce bloc ; la file G (surcote de la SNCF et de la RATP) écrit sa
+note sous `130/` sans y toucher. Par quoi commencer : un lot dans
+`LUES_AU_DROIT`. Détail : `130/2026-11-03-carte-des-fiches-cultes-lus-au-droit.md`.
 
 Le dépôt devenait de plus en plus lourd à faire avancer. Une modification du
 moteur du scénario 1 touchait vingt fichiers en médiane, dont sept ou huit de
