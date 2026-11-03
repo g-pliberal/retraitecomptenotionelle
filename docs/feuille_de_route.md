@@ -3501,10 +3501,14 @@ les fiches, reste aux tests (`univers.controler`).
   cotisation, par les périodes des régimes. Quand elles diront leur face, ou
   seront coupées en deux, une couche en gardera la cotisation par sélecteur.
 - **La variante prospective de la proposition**
-  (`scripts/proposition_prospective.py`) remplace encore une méthode le temps
-  d'un calcul. Le moteur ne sert ni le pilier ni la garantie sur un compte
-  ouvert à la bascule : servis là, elle deviendrait un univers de plus, que
-  la comparaison et la page Coût apprendraient à montrer.
+  (`scripts/proposition_prospective.py`) ne remplace plus de méthode le temps
+  d'un calcul, depuis le 2 novembre 2026 (action 161, sous-étape 3 ; sa note,
+  `161/2026-11-02-la-proposition-prospective-en-univers.md`) : les deux
+  moteurs servent le pilier capitalisé, puis la garantie vieillesse, sur un
+  compte ouvert à la bascule, et la variante est un univers en données
+  (`data/reference/variantes/notionnel_liberal_prospectif.yaml`), que le
+  portage calcule. Reste qu'elle n'est pas un scénario du site et n'entre pas
+  au paquet : la comparaison et la page Coût ne la montrent pas.
 - **Le pilote et les pages lisent encore les univers par leur identifiant** :
   la page Coût range la proposition, sa recette et sa garantie sous
   `notionnel_liberal`, et le portage garde sa liste des univers prospectifs,
