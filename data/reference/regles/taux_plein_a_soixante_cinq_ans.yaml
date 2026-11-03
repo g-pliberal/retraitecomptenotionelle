@@ -9,30 +9,323 @@ intitule: >-
   enfants né du 1er juillet 1951 au 31 décembre 1955 qui a cessé ou réduit son activité
   pour en élever un (même article 20). Le bénéficiaire de l'allocation des travailleurs
   de l'amiante a sa fiche (inaptitude_invalidite_penibilite_amiante).
+domaine: decote_surcote
 regimes: [msa_salaries, regime_general, rsi]
-etat: pas_encore_modelisee
+etape: liquider_chaque_regime
+face: droit
+etat: approchee
+lit:
+- l'année et le mois de naissance de l'assuré
+- le nombre de ses enfants, et la naissance de chacun que la saisie déclare, au mois ou à
+  l'année ; une naissance présumée n'est pas lue
+- les trimestres que valide chaque année civile de la carrière, ligne par ligne, et la
+  nature de la ligne — l'emploi, le chômage, la maladie, la maternité, l'invalidité,
+  l'accident du travail, le service militaire — et l'AVPF qu'elle porte
+- liquidation.date_effet
+ecrit:
+- l'âge du 1° de L. 351-8 de l'assuré au régime général, chez les salariés agricoles et
+  chez les artisans et les commerçants (ouvrir.age_taux_plein) — celui où la décote
+  s'annule, d'où se comptent la décote (R. 351-27, I, 2°) et la majoration de durée
+  (R. 351-7), et que le minimum contributif demande —, soixante-cinq ans au parent de trois
+  enfants qui remplit les conditions
+dates_qui_decident:
+- liquidation.date_effet
+# Les versions forment un partage de la date d'effet de la pension (§ 4.1). Le
+# moteur (droit/categories.py, `age_du_parent_de_trois_enfants`, et son jumeau)
+# lit : `existe` ; `age`, l'âge que la dérogation fixe ; `regimes`, ceux où elle
+# vaut ; `parents_de_trois_enfants`, les conditions du parent de trois enfants —
+# `nes_du` et `nes_au`, l'année et le mois de naissance qui bornent ses
+# générations ; `enfants`, ceux qu'il doit avoir eus ou élevés ;
+# `apres_au_plus`, les trimestres au plus de l'année de la naissance et des deux
+# suivantes, ou des trois suivantes pour l'enfant né au second semestre ;
+# `avant_au_moins`, les trimestres au moins des deux années qui précèdent ;
+# `activite_au_moins`, les trimestres d'activité avant la naissance.
+versions:
+- id: avant_la_loi_du_9_novembre_2010
+  statut: lue
+  textes:
+  - id: JORFARTI000023022348
+    article: loi n° 2010-1330 du 9 novembre 2010, article 118, II
+    publie_le: 2010-11-10
+    citation: >-
+      « Les articles 18 à 40, 79, 83 et 84 sont applicables aux pensions prenant effet à
+      compter du 1er juillet 2011. »
+  bornes:
+    liquidation.date_effet: [null, 2011-07-01]
+  contenu:
+    droit: >-
+      aucune dérogation : l'article 20 de la loi n° 2010-1330 ne vaut que pour les pensions
+      prenant effet à compter du 1er juillet 2011
+    parametres:
+      existe: false
+  exemples: aucun trouvé
+- id: loi_du_9_novembre_2010
+  statut: lue
+  textes:
+  - id: LEGIARTI000023023835
+    article: loi n° 2010-1330 du 9 novembre 2010, article 20, IV
+    en_vigueur: 2010-11-11
+    citation: >-
+      « IV. ― Par dérogation aux dispositions de l'article L. 351-8 du code de la sécurité
+      sociale, l'âge mentionné au 1° dudit article est fixé à soixante-cinq ans pour les
+      assurés nés entre le 1er juillet 1951 et le 31 décembre 1955 inclus lorsqu'ils
+      remplissent les conditions suivantes : 1° Avoir eu ou élevé, dans les conditions
+      prévues au deuxième alinéa de l'article L. 351-12 du code de la sécurité sociale, au
+      moins trois enfants ; 2° Avoir interrompu ou réduit leur activité professionnelle,
+      dans des conditions et un délai déterminés suivant la naissance ou l'adoption d'au
+      moins un de ces enfants, pour se consacrer à l'éducation de cet ou de ces enfants ;
+      3° Avoir validé, avant cette interruption ou réduction de leur activité
+      professionnelle, un nombre de trimestres minimum à raison de l'exercice d'une
+      activité professionnelle, dans un régime de retraite légalement obligatoire d'un
+      Etat membre de l'Union européenne ou partie à l'accord sur l'Espace économique
+      européen ou de la Confédération suisse. Le présent article est applicable dans tous
+      les régimes obligatoires de retraite auxquels s'appliquent les dispositions de
+      l'article L. 351-8 du code de la sécurité sociale ou des dispositions ayant le même
+      effet. »
+  - id: JORFARTI000023022348
+    article: loi n° 2010-1330 du 9 novembre 2010, article 118, II
+    publie_le: 2010-11-10
+    citation: >-
+      « Les articles 18 à 40, 79, 83 et 84 sont applicables aux pensions prenant effet à
+      compter du 1er juillet 2011. »
+  - id: LEGIARTI000024111672
+    article: décret n° 2011-620 du 31 mai 2011, article 2, seule rédaction de l'index LEGI
+    en_vigueur: 2011-06-03
+    citation: >-
+      « Pour l'application du IV des articles 20 et 21 de la loi du 9 novembre 2010
+      susvisée : 1° Sont considérés comme remplissant la condition de réduction ou
+      interruption d'activité les assurés ayant validé au plus huit trimestres au titre de
+      l'année civile de la naissance ou de l'adoption de l'enfant et des deux années
+      civiles suivantes ou, si l'enfant est né ou a été adopté au cours d'un second
+      semestre, au titre des trois années civiles suivant celle de cette naissance ou
+      adoption et ayant validé au titre des deux années précédant l'année de la naissance
+      ou de l'adoption, un nombre de trimestres égal ou supérieur à huit. Pour apprécier la
+      durée d'assurance validée au titre de l'année civile de la naissance ou de
+      l'adoption de l'enfant et des années civiles suivantes, il n'est pas tenu compte des
+      trimestres validés en application de l'article L. 381-1 ou des périodes mentionnées
+      aux 3° et 5° de l'article R. 351-12. Pour apprécier la durée d'assurance validée au
+      titre des deux années civiles précédant celle de la naissance ou de l'adoption de
+      l'enfant, sont pris en compte les trimestres validés en contrepartie de cotisations
+      à la charge de l'assuré ou au titre de périodes d'arrêt maladie, de maternité, de
+      chômage, de formation ou de rééducation professionnelle ; 2° Le nombre minimum de
+      trimestres que l'assuré doit avoir validé à raison de l'exercice d'une activité
+      professionnelle, préalablement à cette interruption ou réduction d'activité
+      professionnelle, est fixé à huit trimestres. »
+  - id: LEGIARTI000006742643
+    article: L. 351-12 du code de la sécurité sociale, rédaction du 27 décembre 1998 au 1er
+      septembre 2023
+    en_vigueur: 1998-12-27
+    citation: >-
+      « La pension prévue aux articles L. 351-1 et L. 351-8 est assortie d'une majoration
+      pour tout assuré de l'un ou l'autre sexe ayant eu un nombre minimum d'enfants.
+      Ouvrent également droit à cette majoration les enfants élevés dans les conditions
+      prévues au deuxième alinéa de l'article L. 342-4. »
+  - id: LEGIARTI000031828370
+    article: R. 351-12 du code de la sécurité sociale, rédaction du 1er janvier 2016 au 13
+      mai 2021 ; ses 3° et 5° sont les mêmes du 3 juin 2011 au 1er septembre 2023
+      (LEGIARTI000024113005, LEGIARTI000024438787, LEGIARTI000026560090,
+      LEGIARTI000029012986, LEGIARTI000031285238, LEGIARTI000043495410)
+    en_vigueur: 2016-01-01
+    citation: >-
+      « 3°) chaque trimestre civil comportant une échéance du paiement des arrérages de la
+      pension d'invalidité » ; « 5°) pour les bénéficiaires de la législation sur les
+      accidents du travail, les dispositions des 1° ou 3° ci-dessus sont applicables selon
+      que l'assuré a perçu des indemnités journalières au titre de l'incapacité temporaire
+      ou une rente pour une incapacité permanente au moins égale à 66 % »
+  - id: LEGIARTI000024113020
+    article: R. 351-27 du code de la sécurité sociale, rédaction du 3 juin 2011 au 1er
+      septembre 2023, I, 2°
+    en_vigueur: 2011-06-03
+    citation: >-
+      « un coefficient de minoration qui est fonction soit du nombre de trimestres
+      correspondant à la durée séparant l'âge auquel leur pension prend effet de leur
+      soixante-cinquième anniversaire, s'ils remplissent les conditions prévues au 1° bis
+      ou 1° ter de l'article L. 351-8 ou au III ou IV de l'article 20 de la loi n°
+      2010-1330 du 9 novembre 2010 portant réforme des retraites ou, dans le cas
+      contraire, de l'âge prévu au 1° de l'article L. 351-8, soit du nombre de trimestres
+      supplémentaires qui leur serait nécessaire, à la date d'effet de leur pension, pour
+      relever de la première phrase du 1° ci-dessus ; le nombre de trimestres
+      correspondant est éventuellement arrondi au chiffre immédiatement supérieur. Le plus
+      petit de ces deux nombres est pris en considération. »
+  - id: LEGIARTI000024113035
+    article: R. 351-7 du code de la sécurité sociale, rédaction du 3 juin 2011 au 1er
+      septembre 2023
+    en_vigueur: 2011-06-03
+    citation: >-
+      « une majoration de sa durée d'assurance dans le régime général de sécurité sociale
+      égale à 2,5 % pour chaque trimestre accompli postérieurement à l'âge fixé au 1° de
+      l'article L. 351-8 ou à l'âge de soixante-cinq ans s'il remplit les conditions
+      prévues au 1° bis ou 1° ter de ce même article L. 351-8 ou au III ou IV de l'article
+      20 de la loi n° 2010-1330 du 9 novembre 2010 portant réforme des retraites »
+  - reference: >-
+      circulaire Cnav n° 2014-64 du 23 décembre 2014, « Age taux plein – Mesure dérogatoire
+      – Parents de trois enfants – Assurés nés entre le 1er juillet 1951 et le 31 décembre
+      1955 », base de législation de la Cnav (hors JORF),
+      https://legislation.lassuranceretraite.fr/Pdf/circulaire_cnav_2014_64_23122014.pdf
+    article: points 2.1, 2.2.2, 2.2.3, 2.3.1, 2.3.2 et 4
+    publie_le: 2014-12-23
+    citation: >-
+      « Les règles habituelles permettant de majorer la pension de 10 % sont mises en
+      œuvre pour déterminer si l'assuré remplit cette condition » ; « Cette durée est
+      recherchée avant la date de la naissance ou la date de l'adoption de l'enfant » ;
+      « Il convient de limiter le décompte au dernier jour du trimestre civil précédant la
+      date de la naissance ou d'adoption » ; exemple 2, « Date de naissance enfant :
+      novembre 1975 », « année 1972 : 1 trimestre », « année 1973 : 0 trimestre », « année
+      1974 : 4 trimestres », « année 1975 : 4 trimestres cotisés/1 PA maladie », « Trimestres
+      retenus au titre de l'année 1975 : 3 » ; « Pour apprécier cette durée, sont
+      exclusivement retenues : les périodes de salariat ayant donné lieu à cotisations à
+      l'assurance vieillesse obligatoire ou volontaire du régime général [...] les périodes
+      d'assurance obligatoire ou volontaire relevant d'autres régimes de base obligatoires
+      français » ; « Enfant né en novembre 1975 [...] au maximum 8 trimestres au titre des
+      années 1976, 1977, 1978 ; et 8 trimestres au titre des années 1973, 1974 » ; après
+      la naissance, « Sont expressément exclus : les trimestres validés au titre de
+      l'assurance vieillesse des parents au foyer ; les périodes pendant lesquelles
+      l'assuré a perçu une pension d'invalidité ; les périodes d'indemnisation au titre de
+      la législation sur les accidents du travail » ; avant, « Sont retenues : les
+      périodes ayant donné lieu à cotisations à charge de l'assuré ; les versements pour
+      la retraite [...] ; les périodes assimilées maladie, maternité, chômage, rééducation
+      professionnelle et les congés de formation » ; avant soixante-cinq ans, « le taux
+      minoré est déterminé [...] compte tenu [...] du nombre de trimestres correspondant à
+      la durée séparant l'âge atteint à la date d'effet de sa pension, de son 65e
+      anniversaire »
+    lu_le: 2026-11-03
+    empreinte: sha256:f6717a0f61473e4ea56976868f97b2dbb8068ba22d57befbaf2c0e120cdcaccb
+  - reference: >-
+      base de législation de la Cnav, exposé « Taux plein à 65 ans »
+      (retraite_personnelle_taux_taux_plein_65_ans_ex.aspx), version du 18 septembre 2026,
+      contenu servi par l'API le 3 novembre 2026 (hors JORF)
+    article: « Assuré qui a eu ou élevé 3 enfants »
+    publie_le: 2026-09-18
+    citation: >-
+      « il doit totaliser 8 trimestres avant la naissance ou l'adoption de l'enfant. La
+      période de référence commence l'année de la 1 re activité qui valide 1 trimestre et
+      finit le dernier jour du trimestre civil avant la naissance ou l'adoption » ; « Les
+      périodes de résidence et les périodes assimilées sont exclues » ; « 8 trimestres au
+      titre des 2 années civiles qui précèdent la naissance ou l'adoption de l'enfant ; et
+      au maximum 8 trimestres pour l'année de naissance ou d'adoption et les 2 années
+      civiles suivantes. Si l'enfant est né au second semestre, les 8 trimestres maximum
+      doivent être validés au titre des 3 années civiles qui suivent la naissance ou
+      l'adoption »
+    lu_le: 2026-11-03
+    empreinte: sha256:bb4093e933487066ab5a116e0fe5d3529148b554ebc54c3c625871de5a897034
+  nee_de: LEGIARTI000023023835
+  bornes:
+    liquidation.date_effet: [2011-07-01, 2026-01-01]
+  contenu:
+    droit: >-
+      l'âge du 1° de L. 351-8 est soixante-cinq ans pour l'assuré né du 1er juillet 1951 au
+      31 décembre 1955 qui a eu ou élevé trois enfants, a validé au plus huit trimestres
+      l'année de la naissance de l'un d'eux et les deux suivantes — les trois suivantes
+      s'il est né au second semestre —, sans compter l'AVPF, l'invalidité ni l'accident du
+      travail, huit au moins les deux années qui la précèdent, cotisés ou au titre de la
+      maladie, de la maternité, du chômage, de la formation, et huit trimestres d'activité
+      avant elle, jusqu'au dernier jour du trimestre civil qui la précède. La décote
+      s'annule à soixante-cinq ans, et se compte jusqu'à son soixante-cinquième
+      anniversaire (R. 351-27) ; la majoration de durée court après lui (R. 351-7)
+    beneficiaire: >-
+      le parent de trois enfants né du 1er juillet 1951 au 31 décembre 1955, qui a cessé ou
+      réduit son activité après la naissance de l'un d'eux
+    parametres:
+      existe: true
+      age: 65
+      regimes: [regime_general, msa_salaries, rsi]
+      parents_de_trois_enfants:
+        nes_du: [1951, 7]
+        nes_au: [1955, 12]
+        enfants: 3
+        apres_au_plus: 8
+        avant_au_moins: 8
+        activite_au_moins: 8
+  exemples: aucun trouvé
+- id: loi_du_28_fevrier_2025
+  statut: lue
+  textes:
+  - id: JORFARTI000051269910
+    article: loi n° 2025-199 du 28 février 2025, article 87, IV et VIII, A
+    publie_le: 2025-02-28
+    citation: >-
+      « IV.-Les III et IV de l'article 20 et les III à VI de l'article 21 de la loi n°
+      2010-1330 du 9 novembre 2010 portant réforme des retraites sont abrogés » ; « les IV
+      à VII s'appliquent aux pensions prenant effet à compter du 1er janvier 2026 »
+  nee_de: JORFARTI000051269910
+  bornes:
+    liquidation.date_effet: [2026-01-01, null]
+  contenu:
+    droit: >-
+      le IV de l'article 20 est abrogé ; l'aidant familial (1° bis) et le parent d'un
+      enfant handicapé ou aidant (6°) gardent le taux plein à soixante-cinq ans, que le
+      modèle ne sert pas (approximations)
+    parametres:
+      existe: false
+  exemples: aucun trouvé
+approximations:
+- version: [loi_du_9_novembre_2010]
+  ecart: >-
+    Le modèle lit les enfants eus ou élevés dans leur nombre, comme la majoration de 10 % :
+    les neuf ans d'éducation avant leur seizième anniversaire (R. 342-2), pour l'enfant
+    qui n'est pas né de l'assuré, sont présumés.
+  effet: non mesuré
+- version: [loi_du_9_novembre_2010]
+  ecart: >-
+    Seule une naissance que la saisie déclare date la fenêtre : la naissance présumée aux
+    trente ans de l'assuré (présomption naissance_des_enfants) ne dit rien de
+    l'interruption qui la suit, et n'ouvre pas le droit. Dite à l'année seule, une naissance
+    l'ouvre quand les conditions tiennent quel que soit son mois : les deux fenêtres, de
+    l'année de la naissance et de la suivante, et l'activité des seules années qui la
+    précèdent. L'adoption n'est pas saisie : l'enfant adopté compte à sa naissance.
+  effet: >-
+    non mesuré ; le parent qui ne dit pas les naissances de ses enfants, ou les dit à
+    l'année quand le semestre décide, est décoté jusqu'à l'âge de sa génération
+- version: [loi_du_9_novembre_2010]
+  ecart: >-
+    Les périodes accomplies dans un autre État de l'Union européenne, de l'Espace
+    économique européen ou en Suisse, que le 3° du IV et la circulaire n° 2014-64 (point
+    5) comptent, ne sont pas lues ; ni les rachats et versements pour la retraite, ni les
+    périodes de formation et de rééducation professionnelle, que la saisie ne porte pas.
+  effet: non mesuré
+- version: [loi_du_9_novembre_2010]
+  ecart: >-
+    Les autres régimes où vaut le même âge ne le servent pas : les non-salariés agricoles
+    (loi n° 2010-1330, article 21, IV), les professions libérales (R. 643-7) et les
+    avocats (R. 723-38), que le décret n° 2011-620, article 4, 14° et 16°, y étend. Ni
+    l'Ircantec, qui sert sans coefficient l'agent qui a ce taux plein à soixante-cinq ans
+    (arrêté du 30 décembre 1970, article 16, I, 3°, d) : le modèle l'abat jusqu'à l'âge
+    de sa génération. L'Agirc-Arrco garde l'âge de sa génération : ni l'accord du 18 mars
+    2011 ni celui du 17 novembre 2017, tels que la fiche coefficients_anticipation_agirc_arrco
+    les cite, ne nomment ces parents.
+  effet: non mesuré
+- version: [loi_du_9_novembre_2010, loi_du_28_fevrier_2025]
+  ecart: >-
+    Les autres taux pleins à soixante-cinq ans de la fiche ne sont pas servis : l'aidant
+    familial (L. 351-8, 1° bis) ; le parent d'un enfant handicapé ou qui l'aide (article
+    20, III, de la loi n° 2010-1330, puis L. 351-8, 6°, depuis le 1er janvier 2026). Ils
+    tiennent à des faits que la saisie ne porte pas : trente mois d'interruption pour
+    aider une personne handicapée ; un trimestre de majoration pour enfant handicapé
+    (L. 351-4-1) ; trente mois d'aide à son enfant bénéficiaire de la prestation de
+    compensation.
+  effet: non mesuré
 effet: >-
-  Les assurés de ces catégories partis entre soixante-cinq ans et l'âge du taux plein de
-  leur génération (de soixante-cinq ans et quatre mois à soixante-sept ans) sans la durée
-  requise : le modèle les décote. Non mesuré.
+  Les parents de trois enfants nés de juillet 1951 à décembre 1955 qui ont cessé ou réduit
+  leur activité après une naissance, et que la saisie dit nés au mois, partis de la fin de
+  2011 à 2022 sans la durée requise : leur décote ne se compte plus que jusqu'à soixante-cinq
+  ans, et s'annule à soixante-cinq ans au lieu de soixante-cinq ans et quatre mois à
+  soixante-sept ans. Les autres catégories de la fiche restent décotées. Non mesuré.
 sources:
   lu_le: 2026-11-03
   prochaine_relecture: 2027-06-30
   a_relire:
   - >-
-    Le parent de trois enfants se lit sur ce que la saisie déclare : la carrière, année
-    par année, et les naissances. La condition, telle que la caisse l'applique (exposé
-    « Taux plein à 65 ans ») : huit trimestres d'activité avant la naissance ou
-    l'adoption, huit dans les deux années civiles qui la précèdent, et au plus huit dans
-    l'année de la naissance et les deux suivantes, trois si l'enfant est né au second
-    semestre. À modéliser d'abord, dans les deux moteurs, pour les pensions prenant
-    effet de 2016 à 2022 : lire avant le décret d'application de l'article 20 de la loi
-    n° 2010-1330, et la circulaire Cnav qui l'applique.
-  - >-
     Les autres catégories tiennent à un fait que la saisie ne porte pas : trente mois
     d'interruption pour aider une personne handicapée, comme aidant familial ou tierce
     personne ; un trimestre de majoration pour enfant handicapé (L. 351-4-1) ; trente
     mois d'aide à son enfant bénéficiaire de la prestation de compensation.
+  - >-
+    Aux sessions des complémentaires et des autres régimes de base : l'Ircantec, qui
+    nomme ces parents (arrêté du 30 décembre 1970, article 16, I, 3°, d), à faire suivre
+    le taux plein du régime général à soixante-cinq ans ; l'Agirc-Arrco, à relire dans
+    l'accord du 18 mars 2011 et l'accord du 17 novembre 2017 ; les non-salariés agricoles
+    (article 21, IV), les libéraux (R. 643-7) et les avocats (R. 723-38), dont les
+    rédactions de 2016 à 2022 restent à lire.
   lectures:
   - type: legifrance
     reference: >-
@@ -49,6 +342,34 @@ sources:
       durée et dans des conditions fixées par décret, ont apporté une aide effective à
       leur enfant bénéficiaire de l'élément de la prestation [de compensation] »
     date: 2026-11-03
+  - type: legifrance
+    reference: >-
+      index LEGI à jour au 2 novembre 2026 : la loi n° 2010-1330, article 20
+      (LEGIARTI000023023835, seule rédaction, du 11 novembre 2010 au 28 février 2025) et
+      article 21 (LEGIARTI000028498869, IV : « l'âge mentionné auxdits articles est fixé à
+      soixante-cinq ans pour les assurés nés entre le 1er juillet 1951 et le 31 décembre
+      1955 inclus qui remplissent les conditions prévues aux 1° à 3° du IV de l'article
+      20 ») ; le décret n° 2011-620, article 2 (LEGIARTI000024111672, seule rédaction) ;
+      L. 351-12 (LEGIARTI000006742643) ; R. 351-12, ses sept rédactions du 3 juin 2011 au
+      1er septembre 2023 ; R. 351-27 (LEGIARTI000024113020), son II : « 1,25 % pour l'assuré
+      né après 1952 » ; R. 351-7 (LEGIARTI000024113035) ; L. 161-17-2
+      (LEGIARTI000025014605) ; l'arrêté du 30 décembre 1970, article 16
+      (LEGIARTI000037845437, du 21 décembre 2018 au 14 septembre 2023)
+    date: 2026-11-03
+  - type: jorf
+    reference: >-
+      index JORF à jour au 3 novembre 2026 : la loi n° 2010-1330, article 118
+      (JORFARTI000023022348) ; le décret n° 2011-620 du 31 mai 2011 (JORFTEXT000024110091),
+      ses articles 1er à 11, dont l'article 4, 5°, 7°, 14° et 16°, qui écrivent la même
+      règle dans R. 351-7, R. 351-27, R. 643-7 et R. 723-38 ; la loi n° 2025-199, article
+      87 (JORFARTI000051269910)
+    date: 2026-11-03
+  - type: circulaire_cnav
+    reference: >-
+      circulaire Cnav n° 2014-64 du 23 décembre 2014, « Parents de trois enfants », servie
+      en PDF par la base de législation de la Cnav, points 1 à 4
+    date: 2014-12-23
+    url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_cnav_2014_64_23122014.pdf
   - type: circulaire_cnav
     reference: >-
       base de législation de la Cnav, exposé « Taux plein à 65 ans »
@@ -61,10 +382,18 @@ sources:
       diminution d'activité du parent de trois enfants, l'interruption de trente mois
       de l'aidant
     date: 2026-09-18
+  - type: circulaire_cnav
+    reference: >-
+      base de législation de la Cnav, exposé « Taux de la retraite personnelle »
+      (retraite_personnelle_taux_taux_retraite_ex.aspx, version du 29 juillet 2026,
+      empreinte du contenu sha256:68f5253e9b848f77ce335e2eb633fb77d9f750e8eeb2a4532c21c9498fb4b467) :
+      « Retraite à taux plein à », « du 01/07/1951 au 31/12/1951 65 ans et 4 mois », « 1952
+      65 ans et 9 mois », « 1953 66 ans et 2 mois », « 1954 66 ans et 7 mois », « à partir
+      de 1955 67 ans »
+    date: 2026-07-29
 textes_a_rattacher:
 - reference: L. 351-8 CSS, 1° bis et 6°
-- reference: loi n° 2010-1330 du 9 novembre 2010, article 20
-- reference: loi n° 2025-199 du 28 février 2025, article 87
+- reference: loi n° 2010-1330 du 9 novembre 2010, article 20, III
 - id: LEGIARTI000051289852
   article: L. 351-8 CSS
   en_vigueur: 2025-02-28
@@ -73,9 +402,42 @@ textes_a_rattacher:
     pour enfant handicapé ou qui a aidé son enfant bénéficiaire de la prestation de
     compensation, pour les pensions prenant effet à compter du 1er janvier 2026 (loi
     n° 2025-199, article 87, VIII, C)
+code:
+  moteur: >-
+    L'âge du 1° de L. 351-8 que lit tout le moteur (`ouvrir.age_taux_plein`) est, dans les
+    régimes de la version, l'âge qu'elle fixe quand l'assuré en remplit les conditions
+    (`categories.age_du_parent_de_trois_enfants`) : sa génération, ses enfants, et, pour
+    l'un d'eux dont la saisie déclare la naissance, les trimestres que la carrière valide
+    année par année (`Carriere.trimestres_par_annee`) — dans la fenêtre qui suit la
+    naissance, hors AVPF, invalidité et accident du travail ; les deux années qui la
+    précèdent, l'emploi, la maladie, la maternité et le chômage ; l'emploi seul avant
+    elle, et, l'année de la naissance, les trimestres civils écoulés avant le sien
+    (`categories._remplit_pour_l_enfant`). La décote, la majoration de durée et le
+    minimum contributif lisent cet âge sans autre changement.
+  python: >-
+    droit/categories.py : age_du_parent_de_trois_enfants, _remplit_pour_l_enfant,
+    FICHE_DES_SOIXANTE_CINQ_ANS ; droit/ouvrir.py : age_taux_plein ; carriere.py :
+    Carriere.trimestres_par_annee
+  javascript: >-
+    moteur/js/droit/categories.js : ageDuParentDeTroisEnfants, remplitPourLEnfant,
+    FICHE_DES_SOIXANTE_CINQ_ANS ; moteur/js/droit/ouvrir.js : ageTauxPlein ;
+    moteur/js/carriere.js : trimestresParAnnee
+  parametres: >-
+    contenu.parametres de chaque version : existe, age, regimes, parents_de_trois_enfants ;
+    regimes/regime_general.yaml, regimes/msa_salaries.yaml, regimes/rsi.yaml :
+    age_taux_plein_par_generation
+  tests:
+  - >-
+    tests/test_taux_plein_a_soixante_cinq_ans.py, qui date la fiche, rend l'âge de
+    dix-sept carrières dans les deux moteurs et sert la pension de bout en bout
 historique:
 - >-
   2026-11-03 — née de l'étape 4 de l'action 175 (la base de législation de la Cnav, thème
   « Retraite personnelle de base ») : ces taux pleins n'avaient pas de fiche depuis que
   la fiche inaptitude_invalidite_penibilite_amiante a rendu, le 30 septembre 2026, son
   texte à rattacher « L. 351-8 1° bis et 6° ».
+- >-
+  2026-11-03 — le parent de trois enfants né de juillet 1951 à 1955 est servi dans les
+  deux moteurs, sur décision du propriétaire du même jour (action 175, note
+  2026-11-03-taux-plein-parents-de-trois-enfants.md) : la fiche passe de
+  pas_encore_modelisee à approchee.

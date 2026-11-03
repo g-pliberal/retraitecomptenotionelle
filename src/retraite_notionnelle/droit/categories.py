@@ -30,6 +30,15 @@ services de guerre, le travail manuel —, la saisie les déclare
 :mod:`.liquider` en tire le taux plein du régime, celui que le minimum
 contributif demande et celui que les complémentaires suivent.
 
+Et ``taux_plein_a_soixante_cinq_ans`` : l'âge du 1° de L. 351-8, que « Par
+dérogation aux dispositions de l'article L. 351-8 » le IV de l'article 20 de
+la loi n° 2010-1330 « fixé à soixante-cinq ans pour les assurés nés entre le
+1er juillet 1951 et le 31 décembre 1955 inclus » qui ont eu ou élevé trois
+enfants, cessé ou réduit leur activité après la naissance de l'un d'eux, et
+travaillé avant elle (décret n° 2011-620, article 2) :
+:func:`age_du_parent_de_trois_enfants`, que :func:`.ouvrir.age_taux_plein`
+lit.
+
 Son jumeau est ``moteur/js/droit/categories.js``.
 """
 
@@ -37,6 +46,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from .. import chronologie as chrono
+from ..somme import somme_ordonnee
 from .commun import date_d_effet
 
 if TYPE_CHECKING:
@@ -144,6 +155,96 @@ def remplit(moteur: ScenarioActuel, nom: str, regle: dict, carriere: Carriere,
         return False
     return (_duree(durees, regle) >= int(regle["trimestres"])
             and _age_atteint(moteur, carriere, regle, age_liquidation))
+
+
+#: La fiche de l'âge de soixante-cinq ans du parent de trois enfants.
+FICHE_DES_SOIXANTE_CINQ_ANS = "taux_plein_a_soixante_cinq_ans"
+
+#: Ce que le décret n° 2011-620, article 2, 1°, écarte des années qui suivent
+#: la naissance : la pension d'invalidité et l'accident du travail (R. 351-12,
+#: 3° et 5°) ; l'AVPF (L. 381-1) se reconnaît au salaire que la ligne porte.
+_ECARTEES_APRES = frozenset({"invalidite", "accident_travail"})
+
+#: Ce qu'il compte dans les deux années qui la précèdent : « les trimestres
+#: validés en contrepartie de cotisations à la charge de l'assuré ou au titre
+#: de périodes d'arrêt maladie, de maternité, de chômage ».
+_RETENUES_AVANT = frozenset({"emploi", "maladie", "maternite", "chomage_indemnise",
+                             "chomage_solidarite", "chomage_non_indemnise",
+                             "preretraite_fne"})
+
+
+def _remplit_pour_l_enfant(carriere: Carriere, parents: dict, naissance: dict) -> bool:
+    """L'assuré remplit-il, pour l'enfant né à ``naissance`` (un fait déclaré de
+    la chronologie), les deux conditions du décret n° 2011-620, article 2 ?
+
+    « au plus huit trimestres au titre de l'année civile de la naissance [...] et
+    des deux années civiles suivantes ou, si l'enfant est né [...] au cours d'un
+    second semestre, au titre des trois années civiles suivant celle de cette
+    naissance », sans l'AVPF, l'invalidité ni l'accident du travail ; « au titre
+    des deux années précédant l'année de la naissance [...], un nombre de
+    trimestres égal ou supérieur à huit », cotisés ou de maladie, de maternité,
+    de chômage ; et « huit trimestres » d'activité avant elle, que la caisse
+    compte jusqu'au « dernier jour du trimestre civil précédant la date de la
+    naissance » (circulaire Cnav n° 2014-64, point 2.2.2) : l'emploi seul, et,
+    l'année de la naissance, les trimestres civils écoulés avant le sien. Dite à
+    l'année seule, la naissance n'ouvre le droit que si les conditions tiennent
+    quel que soit son mois : les deux fenêtres, et l'activité des seules années
+    qui la précèdent.
+    """
+    annee = chrono.annee_de(naissance["debut"])
+    au_mois = ((naissance.get("attributs") or {}).get("precision") or "jour") != "annee"
+    mois = chrono.mois_de(naissance["debut"]).mois if au_mois else 1
+
+    def par_annee(garder) -> dict[int, int]:
+        return carriere.trimestres_par_annee([l for l in carriere.lignes if garder(l)])
+
+    def somme(table: dict[int, int], debut: int, nombre: int) -> int:
+        return somme_ordonnee(table.get(debut + rang, 0) for rang in range(nombre))
+
+    avant = par_annee(lambda ligne: ligne.type_periode in _RETENUES_AVANT
+                      and not ligne.revenu_avpf > 0)
+    if somme(avant, annee - 2, 2) < int(parents["avant_au_moins"]):
+        return False
+    apres = par_annee(lambda ligne: ligne.type_periode not in _ECARTEES_APRES
+                      and not ligne.revenu_avpf > 0)
+    debuts = [annee if mois <= 6 else annee + 1] if au_mois else [annee, annee + 1]
+    if any(somme(apres, debut, 3) > int(parents["apres_au_plus"]) for debut in debuts):
+        return False
+    activite = par_annee(lambda ligne: ligne.type_periode == "emploi")
+    anterieure = min(activite.get(annee, 0), (mois - 1) // 3)
+    anterieure += somme_ordonnee(trimestres for an, trimestres in activite.items() if an < annee)
+    return anterieure >= int(parents["activite_au_moins"])
+
+
+def age_du_parent_de_trois_enfants(moteur: ScenarioActuel, regime: str,
+                                   carriere: Carriere) -> float | None:
+    """L'âge du 1° de L. 351-8 que la fiche ``taux_plein_a_soixante_cinq_ans``
+    fixe à l'assuré dans ``regime``, à la date d'effet de sa pension, quand il
+    remplit les conditions du parent de trois enfants — né dans les générations
+    de la version, ayant eu ou élevé ses enfants, comptés comme pour la
+    majoration de 10 % (circulaire Cnav n° 2014-64, point 2.1), et, pour l'un
+    d'eux dont la saisie déclare la naissance, :func:`_remplit_pour_l_enfant`
+    — ; ``None`` sinon. Une naissance présumée ne dit rien de l'interruption
+    qui la suit."""
+    date = date_d_effet(carriere)
+    if date is None:
+        return None
+    regle = moteur.fiches_datees.regle(FICHE_DES_SOIXANTE_CINQ_ANS, date)
+    parents = (regle or {}).get("parents_de_trois_enfants")
+    if not regle or not regle.get("existe") or parents is None or regime not in regle["regimes"]:
+        return None
+    rang = carriere.annee_naissance * 12 + carriere.mois_naissance
+    annee_du, mois_du = parents["nes_du"]
+    annee_au, mois_au = parents["nes_au"]
+    if (rang < annee_du * 12 + mois_du or rang > annee_au * 12 + mois_au
+            or carriere.nombre_enfants < int(parents["enfants"])):
+        return None
+    for enfant in chrono.enfants(carriere.chronologie, carriere.personne):
+        naissance = chrono.naissance(carriere.chronologie, enfant)
+        if (naissance is not None and naissance.get("origine") == "declare"
+                and _remplit_pour_l_enfant(carriere, parents, naissance)):
+            return float(regle["age"])
+    return None
 
 
 def taux_plein_par_categorie(moteur: ScenarioActuel, regime: str, carriere: Carriere,

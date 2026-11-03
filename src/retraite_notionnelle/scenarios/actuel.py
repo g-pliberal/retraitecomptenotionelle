@@ -1234,7 +1234,9 @@ class FichesDatees:
     des pensions au jour, que ``compter.decompte_des_services`` lit, et le
     maximum des pensions du régime général, que ``liquider.pension_maximale``
     lit, et les taux pleins par catégorie de L. 351-8, que
-    ``categories.taux_plein_par_categorie`` lit, et la majoration de
+    ``categories.taux_plein_par_categorie`` lit, et l'âge de soixante-cinq ans
+    du parent de trois enfants, que ``categories.age_du_parent_de_trois_enfants``
+    lit, et la majoration de
     l'Agirc-Arrco pour enfants à charge, que
     ``completer.majoration_pour_enfants_a_charge`` lit, et la majoration pour
     conjoint à charge, que ``completer.majoration_pour_conjoint_a_charge`` lit,
@@ -1265,6 +1267,7 @@ class FichesDatees:
             "pension_maximale_regime_general",
             "taux_plein_anciens_deportes_internes", "taux_plein_meres_de_famille_ouvrieres",
             "taux_plein_travailleurs_manuels", "taux_plein_anciens_combattants_prisonniers",
+            "taux_plein_a_soixante_cinq_ans",
             "majoration_enfants_a_charge_agirc_arrco", "majoration_conjoint_a_charge",
             "coefficients_anticipation_agirc_arrco",
             "majorations_forfaitaires_1972_1982",

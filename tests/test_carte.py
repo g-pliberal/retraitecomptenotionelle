@@ -259,6 +259,7 @@ LUES_AU_DROIT = frozenset("""
     coefficient_anticipation_ircantec surcote_ircantec
     cultes_salaire_annuel_moyen cultes_retraite_complementaire
     majoration_enfants_agirc_arrco coefficients_anticipation_agirc_arrco
+    taux_plein_a_soixante_cinq_ans
 """.split())
 
 

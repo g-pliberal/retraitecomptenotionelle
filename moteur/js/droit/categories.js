@@ -4,10 +4,15 @@
  * (décret n° 45-0179, article 70-2, a), l'ancien combattant ou prisonnier de
  * guerre (5° ; D. 351-2), que les fiches `taux_plein_*` datent.
  *
+ * Et l'âge du 1° de L. 351-8 que le IV de l'article 20 de la loi n° 2010-1330
+ * fixe à soixante-cinq ans au parent de trois enfants né du 1er juillet 1951
+ * au 31 décembre 1955 (fiche `taux_plein_a_soixante_cinq_ans`).
+ *
  * Jumeau de `src/retraite_notionnelle/droit/categories.py`, fonction pour
  * fonction.
  */
 
+import * as chrono from "../chronologie.js";
 import { dateDEffet } from "./commun.js";
 
 /** Les fiches des catégories, dans l'ordre où le moteur les essaie. */
@@ -108,6 +113,106 @@ export function remplit(moteur, nom, regle, carriere, durees, ageLiquidation) {
   return durees.cumulPlafonne("assurance", regle.regimes_de_la_duree)
       >= Math.trunc(Number(regle.trimestres))
     && ageAtteint(moteur, carriere, regle, ageLiquidation);
+}
+
+/** La fiche de l'âge de soixante-cinq ans du parent de trois enfants. */
+export const FICHE_DES_SOIXANTE_CINQ_ANS = "taux_plein_a_soixante_cinq_ans";
+
+/**
+ * Ce que le décret n° 2011-620, article 2, 1°, écarte des années qui suivent
+ * la naissance : la pension d'invalidité et l'accident du travail (R. 351-12,
+ * 3° et 5°) ; l'AVPF (L. 381-1) se reconnaît au salaire que la ligne porte.
+ */
+const ECARTEES_APRES = new Set(["invalidite", "accident_travail"]);
+
+/**
+ * Ce qu'il compte dans les deux années qui la précèdent : « les trimestres
+ * validés en contrepartie de cotisations à la charge de l'assuré ou au titre
+ * de périodes d'arrêt maladie, de maternité, de chômage ».
+ */
+const RETENUES_AVANT = new Set([
+  "emploi", "maladie", "maternite", "chomage_indemnise", "chomage_solidarite",
+  "chomage_non_indemnise", "preretraite_fne",
+]);
+
+/**
+ * L'assuré remplit-il, pour l'enfant né à `naissance` (un fait déclaré de la
+ * chronologie), les deux conditions du décret n° 2011-620, article 2 ? Au plus
+ * `apres_au_plus` trimestres l'année de la naissance et les deux suivantes, ou
+ * les trois suivantes pour l'enfant né au second semestre ; au moins
+ * `avant_au_moins` les deux années qui la précèdent ; et `activite_au_moins`
+ * trimestres d'emploi avant elle, ceux de son année comptés jusqu'au dernier
+ * jour du trimestre civil qui la précède (circulaire Cnav n° 2014-64, point
+ * 2.2.2). Dite à l'année seule, la naissance n'en ouvre le droit que si les
+ * conditions tiennent quel que soit son mois. Voir `_remplit_pour_l_enfant` du
+ * Python.
+ */
+function remplitPourLEnfant(carriere, parents, naissance) {
+  const annee = chrono.anneeDe(naissance.debut);
+  const auMois = (naissance.attributs?.precision || "jour") !== "annee";
+  const mois = auMois ? chrono.moisDe(naissance.debut).mois : 1;
+  const parAnnee = (garder) => carriere.trimestresParAnnee(carriere.lignes.filter(garder));
+  const somme = (table, debut, nombre) => {
+    let total = 0;
+    for (let rang = 0; rang < nombre; rang += 1) {
+      total += table.get(debut + rang) ?? 0;
+    }
+    return total;
+  };
+  const avant = parAnnee((ligne) => RETENUES_AVANT.has(ligne.type_periode)
+    && !(ligne.revenu_avpf > 0));
+  if (somme(avant, annee - 2, 2) < Number(parents.avant_au_moins)) {
+    return false;
+  }
+  const apres = parAnnee((ligne) => !ECARTEES_APRES.has(ligne.type_periode)
+    && !(ligne.revenu_avpf > 0));
+  const debuts = auMois ? [mois <= 6 ? annee : annee + 1] : [annee, annee + 1];
+  if (debuts.some((debut) => somme(apres, debut, 3) > Number(parents.apres_au_plus))) {
+    return false;
+  }
+  const activite = parAnnee((ligne) => ligne.type_periode === "emploi");
+  let anterieure = Math.min(activite.get(annee) ?? 0, Math.floor((mois - 1) / 3));
+  for (const [an, trimestres] of activite) {
+    if (an < annee) {
+      anterieure += trimestres;
+    }
+  }
+  return anterieure >= Number(parents.activite_au_moins);
+}
+
+/**
+ * L'âge du 1° de L. 351-8 que la fiche `taux_plein_a_soixante_cinq_ans` fixe
+ * à l'assuré dans `regime`, à la date d'effet de sa pension, quand il remplit
+ * les conditions du parent de trois enfants — né dans les générations de la
+ * version, ayant eu ou élevé ses enfants, et, pour l'un d'eux dont la
+ * naissance est déclarée, {@link remplitPourLEnfant} — ; `null` sinon. Voir
+ * `age_du_parent_de_trois_enfants` du Python.
+ */
+export function ageDuParentDeTroisEnfants(moteur, regime, carriere) {
+  const date = dateDEffet(carriere);
+  if (date === null) {
+    return null;
+  }
+  const regle = moteur.fichesDatees.regle(FICHE_DES_SOIXANTE_CINQ_ANS, date);
+  const parents = regle?.parents_de_trois_enfants ?? null;
+  if (!regle || !regle.existe || parents === null || !regle.regimes.includes(regime)) {
+    return null;
+  }
+  const rang = carriere.annee_naissance * 12 + carriere.mois_naissance;
+  const [anneeDu, moisDu] = parents.nes_du;
+  const [anneeAu, moisAu] = parents.nes_au;
+  if (rang < anneeDu * 12 + moisDu || rang > anneeAu * 12 + moisAu
+      || carriere.nombre_enfants < Math.trunc(Number(parents.enfants))) {
+    return null;
+  }
+  for (const enfant of chrono.enfants(carriere.chronologie, carriere.personne)) {
+    const naissance = chrono.naissance(carriere.chronologie, enfant);
+    if (naissance !== null && naissance.origine === "declare"
+        && remplitPourLEnfant(carriere, parents, naissance)) {
+      return Number(regle.age);
+    }
+  }
+  return null;
 }
 
 /**

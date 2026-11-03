@@ -22,6 +22,7 @@ import {
   DUREE_UNIQUE_2003, DUREE_UNIQUE_2003_EFFET, GENERATION_DECEMBRE_1942,
 } from "../regimes.js";
 import { Fiabilite, fiabiliteDepuisTexte, nomFiabilite } from "../serie.js";
+import * as categories from "./categories.js";
 import { dateDEffet, ligneCotisee, periodeDeLiquidation } from "./commun.js";
 import * as compter from "./compter.js";
 import * as coordonner from "./coordonner.js";
@@ -1313,6 +1314,10 @@ export function indemnisationBornee(moteur, carriere) {
  * la période en vigueur l'année où l'assuré réunit les conditions — aux IEG,
  * l'âge d'ouverture majoré de cinq ans, et non soixante-deux ans, à qui a
  * ouvert son droit avant le 1er janvier 2025, comme la CNIEG l'applique.
+ *
+ * Et le parent de trois enfants né du 1er juillet 1951 au 31 décembre 1955
+ * qui en remplit les conditions a l'âge de soixante-cinq ans, là où vaut
+ * L. 351-8 (`categories.ageDuParentDeTroisEnfants`).
  */
 export function ageTauxPlein(moteur, periodeLiquidation, carriere) {
   let periode = periodeLiquidation;
@@ -1336,7 +1341,8 @@ export function ageTauxPlein(moteur, periodeLiquidation, carriere) {
   if (periode.age_taux_plein_par_generation) {
     const parGeneration = moteur.agesAnnulationDecote.age(carriere.generation);
     if (parGeneration !== null) {
-      return parGeneration[0];
+      const parent = categories.ageDuParentDeTroisEnfants(moteur, periode.regime, carriere);
+      return parent === null ? parGeneration[0] : Math.min(parent, parGeneration[0]);
     }
   }
   return periode.age_taux_plein;

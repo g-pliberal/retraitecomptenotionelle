@@ -31,7 +31,7 @@ from typing import TYPE_CHECKING
 
 from ..calendrier import MOIS_PAR_AN, DateMois, en_mois, trimestres_civils
 from ..donnees.chargement import Fiabilite, charger_chomage_complementaires
-from . import compter, coordonner, etranger, invalidite
+from . import categories, compter, coordonner, etranger, invalidite
 from .commun import date_d_effet, ligne_cotisee, periode_de_liquidation
 from ..somme import somme_ordonnee
 
@@ -1545,6 +1545,11 @@ def age_taux_plein(moteur, periode: PeriodeRegime, carriere: Carriere) -> float:
     cinquante-six ans et quatre mois en mai 2021, voit sa décote s'annuler à
     soixante ans et quatre mois, et non à soixante et un ans : parti à
     soixante ans en janvier 2025, il perd deux trimestres, non quatre.
+
+    Et le parent de trois enfants né du 1er juillet 1951 au 31 décembre 1955
+    qui en remplit les conditions a l'âge de soixante-cinq ans, là où vaut
+    L. 351-8 (:func:`.categories.age_du_parent_de_trois_enfants`) : la décote
+    s'annule à cet âge, et se compte jusqu'à lui (R. 351-27, I, 2°).
     """
     if periode.age_taux_plein_a_l_ouverture:
         ouverture = DateMois.depuis_rang(
@@ -1562,7 +1567,8 @@ def age_taux_plein(moteur, periode: PeriodeRegime, carriere: Carriere) -> float:
     if periode.age_taux_plein_par_generation:
         par_generation = moteur.ages_annulation_decote.age(carriere.generation)
         if par_generation is not None:
-            return par_generation[0]
+            parent = categories.age_du_parent_de_trois_enfants(moteur, periode.regime, carriere)
+            return par_generation[0] if parent is None else min(parent, par_generation[0])
     return periode.age_taux_plein
 
 
