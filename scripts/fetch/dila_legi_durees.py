@@ -25,8 +25,10 @@ par « : ») ; ``lire_tableau`` relit ce qui la suit : l'en-tête, qui dit les
 colonnes et leur ordre (« DURÉES Minimale Maximale », « MAXIMALE MINIMALE »,
 « DURÉE Moyenne Minimale », « DURÉE ») ; puis les lignes, chacune un échelon
 et autant de durées que de colonnes ; le libellé écrit entre deux lignes, le
-grade, qui devient le groupe des lignes suivantes. Une durée se compte en
-mois.
+grade, qui devient le groupe des lignes suivantes ; la case « Spécial » qui
+finit ce libellé est l'échelon spécial du grade, et l'échelon que nomme un
+libellé (« Avant le 1er échelon de la classe supérieure ») n'est pas une ligne.
+Une durée se compte en mois.
 
 CE QUI EST REFUSÉ, plutôt que lu de travers, et consigné dans
 ``non_lus.csv`` : une ligne qui n'a pas autant de durées que de colonnes (hors
@@ -368,6 +370,22 @@ def _groupe(libelle: str, precedent: str) -> str:
     return libelle
 
 
+#: La case de l'échelon spécial, écrite « Spécial » au bout du libellé du grade
+#: (« Attaché hors classe Spécial 7e ― 6e 3 ans »).
+SPECIAL = re.compile(r"(?:^|\s)sp[ée]cial$", re.IGNORECASE)
+#: Un échelon nommé dans un libellé : « Avant le 1er échelon de la classe supérieure ».
+NOMME_UN_ECHELON = re.compile(r"\b(?:avant|apr[èe]s)\s+l[e'’]\s*$", re.IGNORECASE)
+
+
+def _special(libelle: str, brut: str) -> tuple[str, list | None]:
+    """Le grade, sans la case « Spécial » qui finit son libellé, et les cases de
+    l'échelon spécial (un tiret, ou rien) ; None si le libellé n'en finit pas."""
+    trouve = SPECIAL.search(libelle)
+    if not trouve:
+        return libelle, None
+    return libelle[:trouve.start()].strip(), [None] if re.search(r"[-–—―/]\s*$", brut) else []
+
+
 def lire_tableau(extrait: Extrait) -> Tableau:
     """Les lignes d'un tableau de durées aplati : le grade, l'échelon et ses
     durées, en mois, dans l'ordre des colonnes que l'en-tête écrit."""
@@ -410,15 +428,22 @@ def lire_tableau(extrait: Extrait) -> Tableau:
                 break
             libre = (libre + " " + texte) if libre else texte
             continue
+        if genre == "ech" and libre and NOMME_UN_ECHELON.search(libre):
+            # « Avant le 1er échelon de la classe supérieure » : un libellé.
+            libre = libre + " " + texte
+            continue
         if entete is None:
             if genre != "ech":
                 libre = (libre + " " + texte) if libre else texte
                 continue
             entete, groupe = _entete_et_groupe(libre)
+            groupe, special = _special(groupe, libre)
             libre = ""
             if LIBELLE_SUSPECT.search(groupe):
                 tableau.refus = f"un libellé porte une durée ou un échelon : « {groupe[:50]} »"
                 return tableau
+            if special is not None:
+                lignes.append(Ligne(groupe, "special", cases=special, bloc=len(lignes)))
         if genre == "ech":
             if libre:
                 libelle = _propre(libre)
@@ -434,8 +459,10 @@ def lire_tableau(extrait: Extrait) -> Tableau:
                 if LIBELLE_SUSPECT.search(libre):
                     tableau.refus = f"un libellé porte une durée ou un échelon : « {_propre(libre)[:50]} »"
                     return tableau
-                groupe = _groupe(_propre(libre), groupe)
+                groupe, special = _special(_groupe(_propre(libre), groupe), libre)
                 libre = ""
+                if special is not None:
+                    lignes.append(Ligne(groupe, "special", cases=special, bloc=len(lignes)))
             cases: list = []
             echelons = ([str(int(n)) for n in _NUMEROS.findall(trouve.group("liste"))]
                         if trouve.groupdict().get("liste") else [_echelon(trouve)])

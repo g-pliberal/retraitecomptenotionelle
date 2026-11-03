@@ -1431,9 +1431,9 @@ LEGITEXT000024555873,LEGIARTI000034044811,2,,2017-01-01,2017-12-31,durées renvo
 LEGITEXT000024555873,LEGIARTI000036437405,2,,2017-12-31,2022-05-01,durées renvoyées à un autre texte
 LEGITEXT000024555873,LEGIARTI000045542893,2,,2022-05-01,,durées renvoyées à un autre texte
 LEGITEXT000024556026,LEGIARTI000034044967,2,,2017-01-01,,durées renvoyées à un autre texte
-LEGITEXT000024684372,LEGIARTI000032841740,18,1,2017-01-01,2021-01-01,le grade « Attaché hors classe Spécial » ne descend pas au 1er échelon
-LEGITEXT000024684372,LEGIARTI000032842049,18,1,2021-01-01,2026-05-22,le grade « Attaché hors classe Spécial » ne descend pas au 1er échelon
-LEGITEXT000024684372,LEGIARTI000054119462,18,1,2026-05-22,,le grade « Attaché hors classe Spécial » ne descend pas au 1er échelon
+LEGITEXT000024684372,LEGIARTI000032841740,18,1,2017-01-01,2021-01-01,le grade « Attaché hors classe » ne descend pas au 1er échelon
+LEGITEXT000024684372,LEGIARTI000032842049,18,1,2021-01-01,2026-05-22,le grade « Attaché hors classe » ne descend pas au 1er échelon
+LEGITEXT000024684372,LEGIARTI000054119462,18,1,2026-05-22,,le grade « Attaché hors classe » ne descend pas au 1er échelon
 LEGITEXT000024876070,LEGIARTI000024876089,4,1,2011-12-01,2016-03-01,"une durée hors de sa ligne, après « et 10e échelons »"
 LEGITEXT000024876170,LEGIARTI000024876207,11,1,2011-12-01,2016-03-01,"une durée hors de sa ligne, après « 9e, 8e, 7e, 6e, 5e, 4e échelons »"
 LEGITEXT000024876515,LEGIARTI000024876534,4,1,2011-12-01,2016-03-01,"une durée hors de sa ligne, après « et 8e échelons »"
@@ -1526,7 +1526,6 @@ LEGITEXT000032208419,LEGIARTI000032286697,17,1,1973-07-01,1978-01-01,le 3e éche
 LEGITEXT000032208419,LEGIARTI000032293309,17,1,1978-01-01,1991-01-01,le 1e échelon de « Receveur ou chef de centre de classe exceptionnell » a 4 case(s) pour 2 colonne(s)
 LEGITEXT000032208419,LEGIARTI000032293981,17,1,1991-01-01,1992-07-01,le 1e échelon de « Chef d'établissement de classe exceptionnelle » a 4 case(s) pour 2 colonne(s)
 LEGITEXT000032208419,LEGIARTI000032362904,17,1,1992-07-01,2016-02-29,le 2e échelon de « Chef d'établissement de classe exceptionnelle » a 0 case(s) pour 2 colonne(s)
-LEGITEXT000032276794,LEGIARTI000032276890,25,1,2016-04-01,2016-05-15,l'en-tête change d'ordre au milieu du tableau
 LEGITEXT000032451565,LEGIARTI000032365811,15,1,1958-08-30,1962-01-01,le 2e échelon de « Inspecteur central » a 0 case(s) pour 2 colonne(s)
 LEGITEXT000032451565,LEGIARTI000032365811,15,2,1958-08-30,1962-01-01,le 5e échelon de «  » a 0 case(s) pour 1 colonne(s)
 LEGITEXT000032451565,LEGIARTI000032369277,15,1,1962-01-01,1969-01-01,le 2e échelon de « Inspecteur central » a 0 case(s) pour 2 colonne(s)

@@ -416,6 +416,71 @@ def test_le_tableau_s_arrete_au_paragraphe_qui_le_suit():
         None, 48, 48, 42, 36, 36, 30, 24, 24, 12, 12]
 
 
+#: Décret n° 90-680 du 1er août 1990, statut particulier des professeurs des écoles,
+#: article 24, du 1er septembre 2017 au 1er janvier 2021 (LEGIARTI000034947965),
+#: jusqu'à la phrase qui suit le tableau : la case « Spécial » est l'échelon spécial
+#: de la classe exceptionnelle, au-dessus du 4e.
+PROFESSEURS_DES_ECOLES = (
+    "I.-La durée du temps passé dans chacun des échelons des grades du corps des professeurs "
+    "des écoles est fixée, sous réserve des dispositions du II, comme suit : GRADES ÉCHELONS "
+    "DURÉE Professeur des écoles de classe exceptionnelle Spécial ― 4e échelon ― 3e échelon 2"
+    " ans 6 mois 2e échelon 2 ans 1er échelon 2 ans Professeur des écoles hors classe 6e "
+    "échelon - 5e échelon 3 ans 4e échelon 2 ans 6 mois 3e échelon 2 ans 6 mois 2e échelon 2 "
+    "ans 1er échelon 2 ans Professeur des écoles de classe normale 11e échelon ― 10e échelon "
+    "4 ans 9e échelon 4 ans 8e échelon 3 ans 6 mois 7e échelon 3 ans 6e échelon 3 ans 5e "
+    "échelon 2 ans 6 mois 4e échelon 2 ans 3e échelon 2 ans 2e échelon 1 an 1er échelon 1 an "
+    "Le recteur prononce, pour chaque année scolaire, les promotions des professeurs des "
+    "écoles."
+)
+
+#: Décret n° 68-503 du 30 mai 1968, professeurs de chaires supérieures, article 4,
+#: du 1er septembre 2018 au 6 août 2023 (LEGIARTI000038669047), depuis la phrase qui
+#: dit « six échelons et un échelon spécial » : « Spécial » juste après l'en-tête.
+CHAIRES_SUPERIEURES = (
+    "Le corps des professeurs de chaires supérieures comporte six échelons et un échelon "
+    "spécial. La durée du temps passé dans chacun des échelons est fixée ainsi qu'il suit : "
+    "ÉCHELONS DURÉE Spécial - 6e échelon - 5e échelon 4 ans 6 mois 4e échelon 2 ans 3e "
+    "échelon 2 ans 2e échelon 2ans 1er échelon 2 ans"
+)
+
+#: Décret n° 2014-923 du 18 août 2014, cadre d'emplois des puéricultrices
+#: territoriales, article 25, en vigueur depuis le 1er janvier 2017
+#: (LEGIARTI000037468710), en entier : « Avant le 1er échelon de la classe
+#: supérieure » nomme les quatre échelons provisoires, il n'est pas une ligne.
+PUERICULTRICES = (
+    "Afin de permettre l'intégration des puéricultrices territoriales dans le présent cadre "
+    "d'emplois, sont créés quatre échelons provisoires avant le 1er échelon de la classe "
+    "supérieure du même grade. La durée du temps passé dans ces échelons est fixée ainsi "
+    "qu'il suit : ÉCHELONS PROVISOIRES dans le grade de puéricultrice DURÉE Avant le 1er "
+    "échelon de la classe supérieure 4e échelon provisoire 2 ans 3e échelon provisoire 2 ans "
+    "2e échelon provisoire 2 ans 1er échelon provisoire 2 ans"
+)
+
+
+def test_la_case_special_est_l_echelon_special():
+    tableau = _un_tableau(PROFESSEURS_DES_ECOLES)
+    assert not tableau.refus
+    ce = "Professeur des écoles de classe exceptionnelle"
+    assert {l.groupe for l in tableau.lignes} == {
+        ce, "Professeur des écoles hors classe", "Professeur des écoles de classe normale"}
+    durees = _durees(tableau, "duree")
+    assert [durees[(ce, e)] for e in ("special", "4", "3", "2", "1")] == [None, None, 30, 24, 24]
+    assert len(tableau.lignes) == 5 + 6 + 11
+    tableau = _un_tableau(CHAIRES_SUPERIEURES)
+    assert not tableau.refus
+    durees = _durees(tableau, "duree")
+    assert [durees[("", e)] for e in ("special", "6", "5", "4", "3", "2", "1")] == [
+        None, None, 54, 24, 24, 24, 24]
+
+
+def test_avant_le_1er_echelon_n_est_pas_une_ligne():
+    tableau = _un_tableau(PUERICULTRICES)
+    assert not tableau.refus
+    groupe = "Avant le 1er échelon de la classe supérieure"
+    assert [(l.groupe, l.echelon, l.duree) for l in tableau.lignes] == [
+        (groupe, f"{e}-provisoire", 24) for e in (4, 3, 2, 1)]
+
+
 # ---------------------------------------------------------------------------
 # Les fichiers du dépôt, recoupés aux articles du LEGI lus à la main
 # ---------------------------------------------------------------------------
@@ -569,6 +634,18 @@ def test_la_version_en_vigueur_a_ces_dates_est_lue(lignes, tableaux_lus):
     (medecins,) = [t for t in tableaux_lus if "LEGIARTI000037468701" in t["versions"].split()]
     assert (medecins["article"], medecins["debut"]) == ("LEGIARTI000037468701", "2017-01-01")
     assert _ligne(lignes, "LEGIARTI000037468701", "Médecin hors classe", "4")["duree"] == "36"
+
+
+def test_aucun_libelle_ne_garde_la_case_d_un_echelon(lignes):
+    """Décret n° 2011-1317, article 18, du 20 octobre 2011 au 2 octobre 2013
+    (LEGIARTI000024684456) : « Attaché hors classe Spécial 7e ― 6e 3 ans » ; le
+    grade est « Attaché hors classe », et son échelon spécial une ligne."""
+    assert not [l["groupe"] for l in lignes
+                if l["groupe"].lower().endswith(("spécial", "special")) or l["groupe"] == "Avant le"]
+    attache = [l for l in lignes if l["article"] == "LEGIARTI000024684456"
+               and l["groupe"] == "Attaché hors classe"]
+    assert [(l["echelon"], l["rang"], l["duree"]) for l in attache][:3] == [
+        ("special", "8", ""), ("7", "7", ""), ("6", "6", "36")]
 
 
 def test_chaque_ligne_est_certifiee_et_datee(lignes, tableaux_lus):
