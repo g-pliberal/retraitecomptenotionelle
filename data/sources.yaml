@@ -3805,6 +3805,40 @@ institutions:
           (action 158, étape 2). L'édition de février 2026, sur data.gouv.fr
           (jeu 5995685388ee383c90cb6091), est archivée depuis le 8 juillet 2026.
 
+  epicycle:
+    nom: Épicycle
+    role: >-
+      Organisation inscrite sur data.gouv.fr ; y transcrit le barème des
+      indices de la fonction publique, version par version.
+    jeux:
+      - id: epicycle_bareme_indices
+        titre: >-
+          Correspondances entre indices bruts et indices majorés de la fonction
+          publique en fonction du temps : une colonne par version du barème A
+          du décret n° 82-1105 et de ceux qui l'ont précédé, de 1972 à 2024
+        url: https://www.data.gouv.fr/datasets/61c26e0a8b4b58472b8d0907
+        acces: fichier
+        statut_integration: certifie
+        recuperation: scripts/fetch/epicycle_bareme.py
+        cible: data/reference/grilles/bareme/indices.csv
+        millesime: "fichier du 14 novembre 2023, SHA-1 3dd42a37267cce9afc91e884022cc4c62d715af1"
+        licence: CC BY-SA, que data/reference/grilles/bareme/indices.csv garde
+        note: >-
+          Le LEGI ne reproduit les tableaux du barème qu'à partir du 1er juillet
+          2007 ; avant, les décrets renvoient au Journal officiel imprimé, que
+          la session ne lit pas. Les treize colonnes d'Épicycle de 2007 à 2024
+          sont les tableaux du LEGI, 11 484 couples sans un écart ; avant, elles
+          redonnent les 86 couples « indice majoré X (indice brut Y) » que les
+          articles 7 à 10 bis du décret n° 85-1148 et le n° 91-1191 écrivent
+          pour les barèmes de 1983 à 2008. Le récupérateur date chaque version par son texte (la
+          colonne « 1979-09-01 » est le barème du n° 82-1105, au 1er janvier
+          1983 ; le n° 89-64, et non le n° 88-1067, fait celui du 1er février
+          1989), déduit celui du 1er juillet 1999 (n° 99-491), que la source
+          omet, de celui du 1er décembre 1999 moins son point uniforme, et
+          corrige huit valeurs recopiées de l'indice brut suivant (1983, 1989,
+          1990, 2004). Transcription tierce : niveau `haute`, et `estimee` pour
+          les valeurs corrigées (action 158).
+
   direction_budget:
     nom: Direction du Budget
     role: Compte d'affectation spéciale « Pensions », programmes budgétaires.

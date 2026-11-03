@@ -648,6 +648,10 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         **{f"grilles_{versant}_{serie}": f"grilles/{versant}/echelons.csv"
            for versant in ("territoriale", "hospitaliere", "militaires")
            for serie in ("rang", "indice", "rang_presume", "indice_presume")},
+        # Le barème du décret n° 82-1105 depuis 1983, transcrit par Épicycle :
+        # `haute`, et ses valeurs corrigées, `estimee` (action 158).
+        "bareme_indices": "grilles/bareme/indices.csv",
+        "bareme_indices_corriges": "grilles/bareme/indices.csv",
         "quotients_mortalite": "mortalite/quotients_periode.csv",
         "quotients_mortalite_anciens": "mortalite/quotients_periode.csv",
         # Les quotients que l'INSEE projette, que le modèle lit au lieu de sa

@@ -188,6 +188,28 @@
    "valeurs": 22,
    "verifiee_le": "2026-10-16"
   },
+  "bareme_indices": {
+   "ajoutees": 0,
+   "colonne": "indice_majore",
+   "corrigees": 0,
+   "empreinte": "20d9e48e642943ef",
+   "identiques": 12115,
+   "niveau": "haute",
+   "source": "Épicycle, data.gouv.fr, correspondances des indices bruts et majorés",
+   "valeurs": 12115,
+   "verifiee_le": "2026-11-03"
+  },
+  "bareme_indices_corriges": {
+   "ajoutees": 0,
+   "colonne": "indice_majore",
+   "corrigees": 0,
+   "empreinte": "7ea2c13e3f31e5ec",
+   "identiques": 7,
+   "niveau": "estimee",
+   "source": "Épicycle, data.gouv.fr, correspondances des indices bruts et majorés",
+   "valeurs": 7,
+   "verifiee_le": "2026-11-03"
+  },
   "bonifications_jaune_effectifs": {
    "ajoutees": 0,
    "colonne": "valeur",

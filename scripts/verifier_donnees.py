@@ -3841,6 +3841,18 @@ def source_grilles_legi(versant: str, serie: str) -> Callable[[], dict[tuple, fl
     return source
 
 
+def source_bareme_indices(serie: str) -> Callable[[], dict[tuple, float]]:
+    """L'indice majoré de chaque indice brut, version par version du barème du
+    décret n° 82-1105 depuis 1983, transcrit par Épicycle (action 158) : chaque
+    période sous sa clé « indice brut|début » ; à part, les valeurs que le
+    récupérateur corrige (``indice_majore_corrige``)."""
+    def source() -> dict[tuple, float]:
+        valeurs = _lire_json("epicycle_bareme.json",
+                             "scripts/fetch/epicycle_bareme.py")[serie]
+        return {tuple(cle.split("|")): float(valeur) for cle, valeur in sorted(valeurs.items())}
+    return source
+
+
 def source_smic() -> dict[tuple, float]:
     """SMIC horaire en vigueur au 1er janvier — décrets de relèvement, base LEGI.
 
@@ -9904,6 +9916,22 @@ CERTIFICATIONS = (
         complementaire=serie.endswith("_presume"),
     ) for versant in ("territoriale", "hospitaliere", "militaires")
       for serie in ("rang", "indice", "rang_presume", "indice_presume")),
+    # Le barème du décret n° 82-1105 depuis 1983 (action 158) : la transcription
+    # d'Épicycle, tierce, au niveau ``haute`` — la version de juillet 1999,
+    # qu'elle omet et que les décrets déduisent, comprise ; les huit valeurs
+    # qu'elle recopie de l'indice brut suivant, corrigées, au niveau ``estimee``.
+    *(Certification(
+        nom=f"bareme_indices{suffixe}",
+        chemin=REFERENCE / "grilles" / "bareme" / "indices.csv",
+        cles=("indice_brut", "debut"),
+        colonne="indice_majore",
+        source=source_bareme_indices(f"indice_majore{suffixe.removesuffix('s')}"),
+        origine="Épicycle, data.gouv.fr, correspondances des indices bruts et majorés",
+        decimales=0,
+        tolerance=0.5,
+        niveau="estimee" if suffixe else "haute",
+        complementaire=bool(suffixe),
+    ) for suffixe in ("", "_corriges")),
     Certification(
         nom="esperances_projetees",
         chemin=REFERENCE / "mortalite" / "esperances_vie.csv",
