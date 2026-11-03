@@ -2,14 +2,13 @@
 
 **Le 3 novembre 2026 : la mesure de la trente-septième version se refait
 désormais au dépôt, par `scripts/mesurer_surcote.py` (3ddae71), une commande et
-deux tests ; la relancer a dépassé les deux heures permises aux tâches de fond :
-la simulation de la population est faite, les pesées non, et ses chiffres
-restent à écrire. Les départs après 67 ans n'expliquent pas l'essentiel de
-l'écart à la Cnav : au seul taux que l'EIR donne, 1,7 point sur 7,4 à 8,0, et
-6,5 points au plus si tous surcotaient. Les 10,9 % de la file I et les 11,49 %
-de R-I comptent différemment ses liquidants du régime général, à la condition
-de leur départ et au drapeau des jumelles ; le bon chiffre est celui de la
-condition, qu'aucune mesure du dépôt n'a encore refait. Trois points de R-I
+deux tests ; menée au bout, en deux passages, elle redonne les chiffres de la
+file I au dixième, à quelques écarts près. Les liquidants du régime général de
+2024 surcotent pour 10,91 % à la condition de leur départ, le bon chiffre, et
+pour 11,49 % au drapeau des jumelles : l'écart, 0,58 point, est celui des
+jumelles qui partent sans surcote. Les départs après 67 ans n'expliquent pas
+l'essentiel de l'écart à la Cnav (18,87 %) : au seul taux que l'EIR donne, 1,74
+point sur 7,96, et 6,56 au plus si tous surcotaient. Trois points de R-I
 déclarés au code (bd1c251) ; aucun paramètre ne change.**
 
 Demande : la cinquième vague, lancée le 3 novembre 2026 par la session
@@ -84,15 +83,99 @@ sont ceux que `scripts/verifier_donnees.py` recontrôle.
   quand la limite de deux heures des tâches de fond l'a arrêtée, à 17 h 34,
   avant toute pesée. La simulation a donc pris près de deux heures et quart
   sur quatre cœurs, chauffe comprise, la suite rapide et
-  `test_grille_large.py` tournant à côté une demi-heure ; il restait les
-  poids (14 minutes à la file I) et les pesées (4 à 8 minutes chacune). Ses
-  chiffres ne sont donc pas écrits ici : ceux de la trente-septième version
-  restent ceux de la note de la file I, que R-I a refaits au dixième par un
-  pilote à lui (sa note, point 2), hors du dépôt l'un et l'autre. Relancée
-  dans ce conteneur, sur le même modèle, la mesure reprendrait la simulation
-  gardée ; sur `main`, où d'autres files ont changé depuis des données que
+  `test_grille_large.py` tournant à côté une demi-heure. Aucune pesée n'est
+  sortie de ce passage.
+- *Le passage mené au bout.* À la demande de la session d'orchestration, la
+  même commande, sur le même worktree de 8c93f72, relancée à 17 h 57 dans ce
+  conteneur : elle a repris les 233 morceaux gardés sans en refaire aucun,
+  et fini à 18 h 30, en 32 min 24 s (« 1941,4 s » à son impression), sans
+  autre calcul à côté. 19 408 cas types, 542 749 couples, 20 083 échecs
+  (17 038 liquidations antérieures à la répartition, 3 045 carrières sans
+  régime actif) ; 17 090 couples de liquidants dont la condition se lit,
+  tous lus. Sur `main`, où d'autres files ont changé depuis des données que
   le modèle lit (`data/reference/regles/retraite_proportionnelle_msa.yaml`,
-  le paquet), elle la referait.
+  le paquet), la commande referait la simulation, et ses chiffres pourraient
+  bouger de ce que ces changements y déplacent.
+
+Ses deux tableaux, tels que le script les imprime (en pour cent ; la
+génération 1955 de la grille jugée sur les nés en 1953 de l'EIR, sa génération
+1950 sur les nés en 1950 ; chaque génération à l'âge où l'enquête voit la
+sienne ; la colonne de l'EIR parmi les conditions connues) :
+
+| | EIR | éteinte | version |
+|---|---|---|---|
+| ensemble, 1955, surcote | 14,43 | 15,99 | 14,06 |
+| femmes, 1955, surcote | 14,31 | 17,44 | 14,76 |
+| hommes, 1955, surcote | 14,65 | 14,40 | 13,29 |
+| ensemble, 1955, à l'âge légal | 31,20 | 37,30 | 38,40 |
+| ensemble, 1955, entre les deux âges | 26,60 | 28,12 | 26,77 |
+| femmes, 1955, à l'âge légal | 37,50 | 48,68 | 50,78 |
+| femmes, 1955, entre les deux âges | 26,70 | 25,65 | 23,18 |
+| ensemble, 1950, surcote | 11,78 | 15,79 | 11,28 |
+| femmes, 1950, surcote | 11,24 | 17,00 | 11,58 |
+| hommes, 1950, surcote | 12,30 | 14,48 | 10,96 |
+| ensemble, 1950, à l'âge légal | 40,00 | 41,24 | 43,88 |
+| ensemble, 1950, entre les deux âges | 23,80 | 29,35 | 26,68 |
+| femmes, 1950, à l'âge légal | 44,40 | 50,37 | 54,40 |
+| femmes, 1950, entre les deux âges | 22,40 | 24,95 | 21,09 |
+
+La source du second est la table H de l'EACR (État, caisse 0012 ; Cnav, 0015),
+sa table B (Cnav) et sa table C (tous régimes) ; « — » où le script n'en lit
+pas. Les liquidants de l'État et de la CNRACL se comptent à la condition de
+leur départ, et au drapeau pour les mêmes valeurs à chaque année ; les stocks,
+au drapeau.
+
+| | source | éteinte | version |
+|---|---|---|---|
+| État, liquidants de 2020 | 36,59 | 41,80 | 37,24 |
+| État, liquidants de 2021 | 38,35 | 44,80 | 42,40 |
+| État, liquidants de 2022 | 38,22 | 42,61 | 41,85 |
+| État, liquidants de 2023 | 40,06 | 30,43 | 31,94 |
+| État, liquidants de 2024 | 38,93 | 50,25 | 50,64 |
+| État, liquidants de 2025 | — | 43,17 | 45,28 |
+| État, liquidants, moyenne de 2020 à 2025 | — | 42,18 | 41,56 |
+| État, retraités de 2024 | 22,58 | 30,30 | 23,52 |
+| CNRACL, liquidants, moyenne de 2020 à 2025 | — | 24,43 | 23,15 |
+| CNRACL, retraités de 2024 | — | 17,41 | 13,09 |
+| régime général, liquidants de 2024, à la condition | 18,87 | 13,28 | 10,91 |
+| régime général, liquidants de 2024, au drapeau | 18,87 | 13,92 | 11,49 |
+| régime général, retraités de 2024 | 11,25 | 9,32 | 7,81 |
+| régime général, liquidants de 2024, décote | 13,38 | 17,12 | 17,15 |
+| régime général, liquidants de 2024 de 68 ans et plus | 7,36 | 0,00 | 0,00 |
+| retraitées de 2020, surcote | — | 10,21 | 7,74 |
+| retraitées de 2020 de 70 à 74 ans | — | 16,99 | 11,80 |
+| retraités de 2020, surcote | — | 9,13 | 7,39 |
+| retraités de 2020 de 70 à 74 ans | — | 16,73 | 12,55 |
+| fonctionnaires civils parmi les retraitées surcotées | — | 45,86 | 42,59 |
+| fonctionnaires civils parmi les retraités surcotés | — | 31,98 | 27,43 |
+| liquidants de 2024 partis à 62 ans | 25,97 | 56,96 | 58,42 |
+| liquidants de 2024 partis à 67 ans | 10,56 | 7,57 | 7,39 |
+| liquidants de 2024 partis à 68 ans et plus | 7,29 | 0,00 | 0,00 |
+| âge moyen des liquidants de 2024 | 63,60 | 62,68 | 62,63 |
+| pension moyenne des femmes en 2020, € par mois | 1 177 | 1 349 | 1 345 |
+| pension moyenne des hommes en 2020 | 1 957 | 1 835 | 1 830 |
+| écart de Kolmogorov des femmes, points, à la borne | — | −15,4 à 1 200 € | −15,4 à 900 € |
+| écart de Kolmogorov des hommes | — | +4,5 à 1 800 € | +4,7 à 1 800 € |
+
+Les sources du stock de 2020, que le script ne lit pas, sont celles de la note
+de la file I, que R-I a recomptées (`conditions_selon_l_age_residents.csv`) :
+7,8 et 9,4 % des retraitées et des retraités résidents partis avec une
+surcote, 13,5 et 16,2 % à 70-74 ans, 32,4 et 24,7 % de fonctionnaires civils
+parmi eux.
+
+*Ce que la mesure dit de la note de la file I.* Ses chiffres se retrouvent au
+dixième, sauf : les cinq arrondis que R-I relève (hommes de 1950, 10,96 et non
+10,9 ; 1950 à l'âge légal, 43,88 et non 43,8 ; entre les deux âges, éteinte,
+28,12 en 1955 et 29,35 en 1950, pour 28,2 et 29,4 ; à 62 ans, éteinte, 56,96
+pour 56,9) ; l'État en 2024, 23,52 et 30,30 % au lieu de 23,4 et 30,1, les
+chiffres de R-I ; les hommes en 2020, 1 830 et 1 835 € au lieu de 1 829 et
+1 833, et leur écart de Kolmogorov, +4,7 et +4,5 points au lieu de +4,5 et
++4,3. La file I a simulé sur a229ec1, R-I sur 9689bd99, cette mesure sur le
+modèle de 490cb7a : la cause de ces écarts n'est pas établie. Rien n'en
+change ce que la note de la file I tire de ses chiffres. La mesure en ajoute
+trois : les femmes de 1950 partent à leur âge légal pour 54,40 % (EIR 44,40) ;
+la CNRACL a 13,09 % de retraités surcotés en 2024 ; et le croisement du régime
+général, ci-dessous.
 
 ## Le régime général de 2024 : 10,9 % ou 11,49 %
 
@@ -115,15 +198,17 @@ sans surcote, et le drapeau la compte quand même. La jumelle du fonctionnaire
 sert une surcote : elle surcote dès que le modèle lui en sert une. Et
 `condition_au_depart` range d'abord le départ en carrière longue et avec
 décote, et compte une surcote à toute carrière qui part après l'âge légal et
-après son taux plein, jumelle ou non. Le bon chiffre est celui de la
-condition : la table H compte les pensions liquidées avec une surcote, non
-les départs qui l'attendaient. Mais il n'est pas refait : les 10,9 % sont ceux
-du pilote de la file I, et le passage arrêté du script n'a pas donné le sien,
-ni le croisement (`croisement_2024`) qui dirait combien de jumelles partent
-sans surcote et combien de carrières surcotent sans être jumelles. Que l'écart
-de 0,6 point tienne tout entier à cette façon de compter, et non aussi au
-champ — la note de la file I ne dit pas quelles carrières elle range au
-régime général —, reste à établir par la mesure.
+après son taux plein, jumelle ou non. La mesure le montre (`croisement_2024`,
+en part des liquidants du régime général de 2024, version) : les jumelles qui
+surcotent au drapeau partent avec une surcote pour 10,91 points, au taux plein
+pour 0,50 point, au taux plein par l'âge pour 0,08 point, soit 11,49 ; aucune
+autre carrière ne part avec une surcote (0,00). La version éteinte de même :
+13,28 + 0,55 + 0,09 = 13,92. L'écart de 0,58 point (0,64 sans la version) tient
+donc tout entier à la façon de compter, et non au champ : compté à la
+condition sur le groupe `regime_general`, le chiffre est celui de la file I,
+10,91 et 13,28 % pour 10,9 et 13,3. Le bon chiffre est celui de la condition,
+**10,91 %** : la table H compte les pensions liquidées avec une surcote, non les
+départs qui l'attendaient.
 
 ## Les départs après 67 ans : ce qu'ils expliquent de l'écart à la Cnav
 
@@ -147,11 +232,11 @@ points ». Refait dans les sources :
   des hommes). L'enquête voit cette génération en 2020, à 67 ans : ses
   « 67 ans et plus » sont des départs à 67 ans, aucun plus tard. C'est le seul
   taux de surcote des départs tardifs que les sources ouvertes donnent.
-- *Le modèle* : m = 10,9 % de ses liquidants du régime général de 2024
-  surcotent selon la note de la file I (à la condition), 11,49 % selon R-I (au
-  drapeau) ; il n'a de départ qu'à 67 ans et moins (les attentes des nés en
-  1953 s'arrêtent à « 67 ans et plus », pris pour 67 ans), convention déclarée
-  par la file I, que le passage arrêté du script n'a pas mesurée âge par âge.
+- *Le modèle*, mesuré ci-dessus : m = 10,91 % de ses liquidants du régime
+  général de 2024 partent avec une surcote, à la condition de leur départ ; il
+  n'en a aucun de 68 ans et plus (0,00 %), et 6,58 % à 67 ans, quand la Cnav
+  en a 9,34 % (les attentes des nés en 1953 s'arrêtent à « 67 ans et plus »,
+  pris pour 67 ans, convention déclarée par la file I).
 
 Le calcul, posé à la main. Si la population faisait partir après 67 ans la
 même part de ses liquidants que la Cnav, a, au taux s, sans rien changer au
@@ -162,27 +247,30 @@ qui surcotent déjà pour m. Les 2,5 points de R-I sont a × s = 7,362 % × 34,6
 = 2,55 points : la part des liquidants de la Cnav qui auraient 68 ans et plus
 et surcoteraient, non ce qu'ils retranchent de l'écart.
 
-| | m = 10,9 % (file I) | m = 11,49 % (R-I) |
-|---|---|---|
-| écart à la Cnav, R − m | 18,874 − 10,9 = 7,97 points | 18,874 − 11,49 = 7,38 points |
-| expliqué au taux de l'EIR, a × (34,6 − m) | 0,07362 × 23,70 = 1,74 point, 21,9 % | 0,07362 × 23,11 = 1,70 point, 23,0 % |
-| reste sans explication | 6,23 points | 5,68 points |
-| borne, tous surcotent, a × (100 − m) | 0,07362 × 89,10 = 6,56 points | 0,07362 × 88,51 = 6,52 points |
-| reste, même alors | 1,41 point | 0,87 point |
+| | m = 10,91 % |
+|---|---|
+| écart à la Cnav, R − m | 18,874 − 10,911 = 7,96 points |
+| expliqué au taux de l'EIR, a × (34,6 − m) | 0,07362 × 23,69 = 1,74 point, 21,9 % de l'écart |
+| reste sans explication | 7,96 − 1,74 = 6,22 points |
+| borne, tous surcotent, a × (100 − m) | 0,07362 × 89,09 = 6,56 points |
+| reste, même alors | 7,96 − 6,56 = 1,40 point |
+
+Au drapeau (m = 11,49 %), le compte de R-I, ce serait 0,07362 × 23,11 = 1,70
+point sur 7,38.
 
 Vu de la Cnav : si ses liquidants de 68 ans et plus surcotent pour 34,6 %,
 ceux de 67 ans et moins surcotent pour (122 368 − 0,346 × 47 732) / (648 346
 − 47 732) = 105 852,7 / 600 614 = 17,62 % ; pour 20,37 % si aucun des plus
 âgés ne surcote, 12,43 % si tous surcotent. Le modèle, qui n'a que des départs
-de 67 ans et moins, en est à 10,9 ou 11,5 % : à âges comparables, l'écart
-reste de 6,1 à 6,7 points au taux de l'EIR.
+de 67 ans et moins, en est à 10,91 % : à âges comparables, l'écart reste de
+17,62 − 10,91 = 6,71 points au taux de l'EIR.
 
 **Ce que la phrase au propriétaire aurait dû dire** : les nouveaux retraités du
 privé de 2024 surcotent pour 11 % dans le modèle, 19 % à la Cnav ; l'absence de
-départ après 67 ans en explique environ 1,7 point sur 7,4 à 8, au seul taux que
-l'enquête donne pour les départs tardifs, et 6,5 points au plus si tous ces
-départs surcotaient ; le reste, 5,7 à 6,2 points, les sources ouvertes ne
-disent pas d'où il vient.
+départ après 67 ans en explique environ 1,7 point sur 8, au seul taux que
+l'enquête donne pour les départs tardifs, et 6,6 points au plus si tous ces
+départs surcotaient ; le reste, 6,2 points, les sources ouvertes ne disent pas
+d'où il vient.
 
 ## La génération 1955, jugée sur les nés en 1953
 
@@ -196,10 +284,10 @@ celui-là : celui de la grille, jugé sur l'enquête des nés en 1953, que perso
 n'a menée sur les nés en 1955. Le script l'imprime en tête de son premier
 tableau. La phrase de la file I au propriétaire, « les nés en 1950 et en 1955
 retrouvent les chiffres de l'enquête (11 % et 14 %) », se dit juste ainsi : la
-génération 1950 de la grille surcote pour 11,3 % de ses départs (11,28 %
-refaits par R-I), quand l'EIR en voit 11,78 % des nés en 1950 (11,7 / 99,3,
+génération 1950 de la grille surcote pour 11,28 % de ses départs (mesure de
+ce jour, comme R-I ; 11,3 à la file I), quand l'EIR en voit 11,78 % des nés en 1950 (11,7 / 99,3,
 parmi les conditions connues) ; la génération 1955 de la grille, jugée sur les
-nés en 1953, pour 14,0 % (14,06 %), quand l'EIR en voit 14,43 % des nés en 1953
+nés en 1953, pour 14,06 % (14,0 à la file I), quand l'EIR en voit 14,43 % des nés en 1953
 (14,3 / 99,1).
 
 ## Trois points déclarés
@@ -243,10 +331,10 @@ nés en 1953, pour 14,0 % (14,06 %), quand l'EIR en voit 14,43 % des nés en 195
    flux), qui compte tous les liquidants civils de l'État : 19 278 / 52 693 =
    36,59 % en 2020 ; 20 992 / 54 735 = 38,35 % en 2021 ; 20 893 / 54 666 =
    38,22 % en 2022 ; 20 824 / 51 981 = 40,06 % en 2023 ; 17 547 / 45 078 =
-   38,93 % en 2024 ; 38,43 % en moyenne. Le modèle, selon la note de la file I
-   (2024 seul refait par R-I, 50,64 %) : 37,2, 42,4, 41,9, 31,9 et 50,6 % de
-   2020 à 2024, 40,8 % en moyenne ; 2,4 points de plus que la table H en
-   moyenne, 11,7 en 2024. L'accord de 41,6 à 42,7 que la note y voyait tenait
+   38,93 % en 2024 ; 38,43 % en moyenne. Le modèle, mesuré ci-dessus : 37,24,
+   42,40, 41,85, 31,94 et 50,64 % de 2020 à 2024, 40,81 % en moyenne ; 2,4
+   points de plus que la table H en moyenne, 11,7 en 2024 ; et 23,52 % de
+   surcotés parmi les retraités civils de 2024, pour 22,58 % à la table H. L'accord de 41,6 à 42,7 que la note y voyait tenait
    au champ. C'est la table H que le script met en regard ; déclaré dans son
    en-tête (bd1c251).
 
@@ -265,30 +353,26 @@ deux tests de la mesure et les deux de la version, réussis.
   l'EIR ne voit aucun départ des nés en 1953 après 67 ans, et la table H ne
   dit pas la surcote par âge. Le calcul ci-dessus prend 34,6 %, le taux des
   départs à 67 ans, et donne la borne de 100 %.
-- D'où viennent les 5,7 à 6,2 points qui restent. Trois pistes, aucune
-  établie : les générations nées après 1953, que la version fait surcoter
+- D'où viennent les 6,2 points qui restent. Deux pistes, aucune établie : les générations nées après 1953, que la version fait surcoter
   comme les nés en 1953, quand la part des liquidants de la Cnav qui surcotent
   monte d'année en année (table H : 16,56 % en 2021, 17,02 en 2022, 18,55 en
   2023, 18,87 en 2024 ; 2020 n'a pas de surcote au témoin), sans que la table
   dise la génération ; le champ, la Cnav comptant tous ses liquidants,
-  polypensionnés compris, la population son seul groupe du régime général ;
-  la façon de compter, au drapeau ou à la condition.
-- Si l'écart de 10,9 à 11,49 % tient tout entier à la façon de compter : le
-  code le rend vraisemblable, aucune mesure du dépôt ne l'a encore montré.
+  polypensionnés compris, la population son seul groupe du régime général.
+- La cause des petits écarts de la mesure à la note de la file I (l'État en
+  2024, les hommes de 2020) : trois arbres différents, aucun calcul de la
+  différence.
 - La date à laquelle la table B compte l'âge : le témoin ne la dit pas.
 
 **Ce qui reste**, de ce point :
 
-1. *Lancer la mesure jusqu'au bout* — `python scripts/mesurer_surcote.py
-   --processus 4 --json mesure.json`, près de trois heures sur quatre cœurs
-   sans mémoire des calculs —, puis écrire, dans une note neuve, ses deux
-   tableaux, le chiffre des liquidants du régime général de 2024 à la
-   condition et son croisement avec le drapeau, et la part de ces liquidants
-   à 68 ans et plus dans le modèle. Il faut une session qui puisse attendre
-   au-delà des deux heures d'une tâche de fond, ou le découpage de la mesure
-   en étapes gardées.
-2. *Les départs après 67 ans* et *la surcote des générations nées après
+1. *Les départs après 67 ans* et *la surcote des générations nées après
    1953*, ceux de la note de la file I (« Ce qui reste », points 1 et 2) :
-   le premier explique 1,7 point de l'écart, non l'essentiel ; la file I
+   le premier explique 1,74 point de l'écart, non l'essentiel ; la file I
    conseillait de trancher le second, au propriétaire, après le premier, « qui
-   en explique une part » : une part de 1,7 point sur 7,4 à 8.
+   en explique une part » : une part de 1,74 point sur 7,96.
+2. *La mesure sur `main`*, quand une session voudra des chiffres sur le
+   dernier modèle : `python scripts/mesurer_surcote.py --processus 4 --json
+   mesure.json`, près de trois heures sur quatre cœurs sans mémoire des
+   calculs, au-delà des deux heures d'une tâche de fond ; dans un conteneur
+   qui garde la simulation, une demi-heure.
