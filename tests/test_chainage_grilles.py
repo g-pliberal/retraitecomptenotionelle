@@ -715,6 +715,20 @@ def test_un_article_de_durees_que_le_lecteur_n_a_pas_lu_ne_se_dit_pas_absent_du_
     assert ligne["cas"] == "non_lu"
     assert "LEGIARTI000006370660" in ligne["detail"]
     assert "échelons dans le désordre" in ligne["detail"]
+    # Le nombre d'articles dit est celui des articles, non des relevés de
+    # `durees/non_lus.csv` (relecture R-B3-bis, partie 3) : n° 86-492, art. 19-2
+    # (LEGIARTI000006505183, du 1997-05-31 au 1998-09-04), un seul article, que
+    # le lecteur relève quatre fois, une par tableau : « ECHELONS : Du 1er au
+    # 2e échelon DUREE D'ECHELON : 3 ans ECHELONS : Du 2e au 3e échelon […] ».
+    import re
+    for a in a_lire:
+        if a["cas"] == "non_lu":
+            (n,) = re.findall(r"le LEGI porte (\d+) article", a["detail"])
+            assert int(n) == len(a["articles"].split()), (a["numero"], n, a["articles"])
+    (ligne,) = [a for a in a_lire if a["texte"] == "LEGITEXT000006065551"]
+    assert ligne["articles"] == "LEGIARTI000006505183"
+    assert "le LEGI porte 1 article de durées" in ligne["detail"]
+    assert "4 relevés" in ligne["detail"]
     # Aucun cas `manque` n'a d'article de durées non lu avant son premier tableau lu.
     premier = {}
     for t in _lire(GRILLES / "durees" / "tableaux.csv"):

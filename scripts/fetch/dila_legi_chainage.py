@@ -1019,13 +1019,19 @@ def a_lire_au_jorf(depot: Depot) -> list[dict]:
             vus = list(dict.fromkeys(
                 f"art. {n['numero']}, {n['article']}, {_fmt(n['debut'], n['fin'] or OUVERT)}, "
                 f"« {n['motif']} »" for n in avant))
+            # Les articles, non les relevés (article, motif) : un article de
+            # quatre tableaux est relevé quatre fois (relecture R-B3-bis, partie 3).
+            nombre = len({n["article"] for n in avant})
+            pluriel = "s" * (nombre > 1)
             lignes.append({"versant": t["versant"], "texte": texte, "numero": t["numero"],
                            "titre": t["titre"], "cas": "non_lu",
                            "articles": " ".join(sorted({n["article"] for n in avant})),
-                           "detail": f"{ecart} ; avant, le LEGI porte {len(vus)} article(s) de "
-                                     "durées que le lecteur n'a pas lus (durees/non_lus.csv) : "
-                                     + " ; ".join(vus[:3])
-                                     + (f" ; et {len(vus) - 3} autres" if len(vus) > 3 else "")})
+                           "detail": f"{ecart} ; avant, le LEGI porte {nombre} article{pluriel} "
+                                     f"de durées que le lecteur n'a pas lu{pluriel} "
+                                     f"(durees/non_lus.csv, {len(vus)} relevé"
+                                     + "s" * (len(vus) > 1) + ") : " + " ; ".join(vus[:3])
+                                     + (f" ; et {len(vus) - 3} autres relevés"
+                                        if len(vus) > 3 else "")})
         else:
             lignes.append({"versant": t["versant"], "texte": texte, "numero": t["numero"],
                            "titre": t["titre"], "cas": "manque",
