@@ -6924,15 +6924,15 @@ de `contribution_etat`.
 ### 161. Un seul exemplaire du code : les doublons entre le Python et le JavaScript retirés une paire à la fois, chaque retrait relu — `en cours`
 
 **Reprise, au 3 novembre 2026.** Le JavaScript fait foi (note de décision
-0005), et le Python garde ce que dit la note 0006. En cours : le coût sous un
-modèle modifié. Faits : le relevé, le plan, le jumeau à part, les données
-d'ailleurs, « sans la suspension », la proposition prospective en univers, le
-stock à l'âge légal, puis le régime unique par barème, une règle du compte
-sous un paramètre facultatif, l'étude par le portage, sa sortie à l'octet :
-plus aucune étude n'ouvre `pont.par_le_jumeau()`. Suivent, une par session :
-ce levier réservé aux confrontations, qu'un test tienne ; puis les retraits.
-Détail : `2026-11-02-le-cout-sous-un-modele-modifie.md` (le plan),
-`2026-11-03-le-regime-unique-par-bareme.md`.
+0005), et le Python garde ce que dit la note 0006. Fait : le coût sous un
+modèle modifié, ses six sous-étapes ; aucune étude ne remplace plus une
+fonction du moteur, et `pont.par_le_jumeau()` ne s'ouvre plus que dans les
+confrontations, déclarées une à une (`CONFRONTATIONS_DU_JUMEAU`), ce qu'un
+test tient. Suivent, une par session : les retraits, une paire à la fois,
+dans l'ordre de la carte (`python scripts/jumeaux.py`), chacun ôtant les
+confrontations de sa paire ; le levier part avec la dernière. Détail :
+`2026-11-02-le-cout-sous-un-modele-modifie.md` (le plan),
+`2026-11-03-le-levier-aux-seules-confrontations.md`.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur

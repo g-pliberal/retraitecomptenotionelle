@@ -1,0 +1,13 @@
+date: "2026-11-03"
+session: "action 161, le coût sous un modèle modifié : le levier du jumeau réservé aux confrontations, qu'un test tient"
+consulte: >-
+  Aucune source de droit : la session ne touche à aucune règle du scénario 1,
+  ni à aucun calcul. Elle lit l'arbre syntaxique du code du dépôt, pour
+  relever qui ouvre pont.par_le_jumeau().
+trouve: >-
+  Aucune règle du droit n'a changé. Le levier qui fait calculer le jumeau
+  Python ne s'ouvre plus que dans les confrontations, déclarées une à une
+  dans tests/test_pont.py, ce que test_seules_les_confrontations_ouvrent_le_jumeau
+  tient.
+reste: >-
+  Rien pour la veille.
