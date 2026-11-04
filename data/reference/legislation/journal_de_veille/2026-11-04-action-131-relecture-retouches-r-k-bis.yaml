@@ -1,0 +1,33 @@
+date: "2026-11-04"
+session: "action 131, file R-K-ter de la vague 6 : relecture indépendante des retouches de la relecture R-K-bis, le taux de 17,37 % du compte de 2003 à 2025 (commits 3b06c54 et a0835b3, file K-ter)"
+consulte: >-
+  python scripts/veille_droit.py ; docs/veille_droit.md. Les index LEGI (à jour au 2 novembre
+  2026) et JORF (au 3 novembre 2026) de la DILA, récupérés dans la session : D. 731-121,
+  D. 731-122, D. 731-124 et D. 731-125, toutes leurs rédactions de 2005 à 2026
+  (dila_cherche.py --num, --diff, --texte de chaque identifiant) ; L. 731-42 (rédactions du 1er
+  janvier 2004, du 11 novembre 2010 et du 28 décembre 2023) ; les décrets n° 2003-1033 (articles
+  12 à 19), 2004-1064 (articles 12 à 16), 2011-2039 (articles 1 et 3), 2012-847 (articles 12 et
+  13), 2013-1223 (article 2 et notice), 2013-1290 (articles 2 et 9), 2014-1531 (articles 5 et 13),
+  2024-688 (articles 5 et 6) ; le décret n° 87-664 (articles 1 à 3) ; l'article 1123 de l'ancien
+  code rural, rédaction du 20 janvier 1991 ; le décret n° 86-1084, article 2 ; D. 732-77 ; D. 633-3
+  du code de la sécurité sociale (rédaction du 7 juillet 2024). Recherche plein texte de 17,37
+  dans les deux index ; l'historique git entier (git fetch --unshallow, git log -S).
+trouve: >-
+  Conforme. Les taux de D. 731-121, D. 731-122 et D. 731-124 de 2003 à 2025 sont ceux de K-ter,
+  année par année : 12,93 % en 2003, 17,11 % de 2017 à 2025, jusqu'à 16,21 % avec la
+  complémentaire ; l'écart au 17,37 % va de 0,26 à 4,44 points. Le décret n° 2024-688, article 6,
+  applique l'article 5 (les 2,36 % de D. 731-124) aux agricoles au titre des périodes courant à
+  compter du 1er janvier 2026 : le maximum de 2003 à 2025 est 17,11 %, non 17,23 %. Les 120
+  citations de la fiche sont exactes, mot pour mot (la 120e joint deux phrases exactes). Aucun
+  texte de l'index ne fixe 17,37 %. Deux écarts faibles : « sans source ni note » est un peu fort
+  (le régime portait la source msa_parametres, la page d'accueil de la MSA, et une note qui cite
+  le taux sans le justifier) ; D. 732-77 aplatit l'ordre des deux formules de P, que le décret
+  n° 86-1084, article 2 (« Dans le premier cas… »), lève. Une observation : le 17,37 % court aussi
+  de 2026 à 2027 et depuis 2028, sans la phrase de K-ter ; D. 731-121 renvoie depuis 2026 à
+  D. 633-3 du code de la sécurité sociale (17,15 % sous le plafond, 0,72 % sur la totalité, à
+  relire).
+reste: >-
+  Au propriétaire : la question de K-ter ne change pas. À la session suivante de l'action 131 :
+  resserrer « sans source ni note » ; citer le décret n° 86-1084, article 2, avec D. 732-77 ;
+  lire les taux de 2026 (D. 633-3, décret n° 2025-1417). Le détail : note
+  2026-11-04-relecture-retouches-r-k-bis.md de l'action 131.
