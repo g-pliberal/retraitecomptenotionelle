@@ -13,7 +13,8 @@ intitule: >-
   l'allocation des travailleurs de l'amiante a sa fiche
   (inaptitude_invalidite_penibilite_amiante).
 domaine: decote_surcote
-regimes: [cnracl, fonction_publique_etat, fspoeie, msa_salaries, regime_general, rsi]
+regimes: [cancava_avant_1973, cavimac, cnracl, fonction_publique_etat, fspoeie, msa_salaries,
+  organic_avant_1973, regime_general, rsi]
 etape: liquider_chaque_regime
 face: droit
 etat: approchee
@@ -23,14 +24,18 @@ lit:
   l'année ; une naissance présumée n'est pas lue
 - les trimestres que valide chaque année civile de la carrière, ligne par ligne, et la
   nature de la ligne — l'emploi, le chômage, la maladie, la maternité, l'invalidité,
-  l'accident du travail, le service militaire — et l'AVPF qu'elle porte
+  l'accident du travail, le service militaire — et l'AVPF qu'elle porte ; si l'emploi est
+  cotisé, ce que l'activité cultuelle d'avant 1979 n'est pas (droit/commun.py,
+  ligne_cotisee)
 - le motif de chaque année d'interruption que la saisie déclare — élever un enfant —, le
   statut de chaque ligne, le classement de l'emploi, sédentaire ou
   actif, et la pension militaire (droit/ouvrir.py, derogation_active, droit_militaire)
 - liquidation.date_effet
 ecrit:
-- l'âge du 1° de L. 351-8 de l'assuré au régime général, chez les salariés agricoles et
-  chez les artisans et les commerçants (ouvrir.age_taux_plein) — celui où la décote
+- l'âge du 1° de L. 351-8 de l'assuré au régime général, chez les salariés agricoles,
+  chez les artisans et les commerçants et à la CAVIMAC, et celui d'où se compte la
+  minoration des points d'avant 1973 des artisans et des commerçants
+  (ouvrir.age_taux_plein) — celui où la décote
   s'annule, d'où se comptent la décote (R. 351-27, I, 2°) et la majoration de durée
   (R. 351-7), et que le minimum contributif demande —, soixante-cinq ans au parent de trois
   enfants qui remplit les conditions
@@ -241,6 +246,36 @@ versions:
     citation: >-
       « 5° Au congé pour maternité, ou pour adoption, avec traitement, d'une durée égale à
       celle prévue par la législation sur la sécurité sociale »
+  - id: LEGIARTI000006366816
+    article: loi n° 84-53 du 26 janvier 1984 (fonctionnaires territoriaux, à la CNRACL),
+      article 57, 5°, rédaction du 27 janvier 1984 au 23 novembre 1985, que R. 13, 1°, a,
+      nomme ; la même phrase dans chacune de celles que l'index LEGI porte du 27 juillet
+      2005 au 27 novembre 2020, numérotée « 5° a) » dès le 22 avril 2016 ; l'index ne
+      porte pas celles d'entre-temps
+    en_vigueur: 1984-01-27
+    citation: >-
+      « 5° Au congé pour maternité, ou pour adoption, avec traitement, d'une durée égale à
+      celle prévue par la législation sur la sécurité sociale »
+  - id: LEGIARTI000006695883
+    article: loi n° 86-33 du 9 janvier 1986 (fonctionnaires hospitaliers, à la CNRACL),
+      article 41, 5°, rédaction du 11 janvier 1986 au 31 juillet 1987, que R. 13, 1°, a,
+      nomme ; la même phrase dans chacune de celles que l'index LEGI porte du 27 juillet
+      2005 au 27 novembre 2020 ; l'index ne porte pas celles d'entre-temps
+    en_vigueur: 1986-01-11
+    citation: >-
+      « 5° Au congé pour maternité ou pour adoption, avec traitement, d'une durée égale à
+      celle prévue par la législation sur la sécurité sociale »
+  - id: LEGIARTI000006769789
+    article: décret n° 72-154 du 24 février 1972 (ouvriers de l'État), article 4, rédaction
+      du 20 décembre 1976 au 16 décembre 1987 ; puis LEGIARTI000006769790, du 16 décembre
+      1987 au 27 novembre 2004
+    en_vigueur: 1976-12-20
+    citation: >-
+      « En cas de maternité ou d'adoption, le personnel féminin bénéficie d'un congé à plein
+      salaire d'une durée égale à celle prévue par la législation sur la sécurité
+      sociale » ; puis « En cas de maternité, les ouvrières bénéficient d'un congé à plein
+      salaire d'une durée égale à celle prévue par la législation sur la sécurité
+      sociale »
   - id: LEGIARTI000006742541
     article: code de la sécurité sociale, L. 331-3, rédaction du 21 décembre 1985 au 26
       juillet 1994, que R. 13, 1°, a, nomme
@@ -277,7 +312,9 @@ versions:
       de la période de repos »
   - id: LEGIARTI000006742550
     article: code de la sécurité sociale, L. 331-4, rédaction en vigueur depuis le 22
-      décembre 2006 ; les vingt-six semaines dès la rédaction du 26 juillet 1994
+      décembre 2006 ; les vingt-six semaines dès la rédaction du 21 décembre 1985
+      (LEGIARTI000006742546, « la période d'indemnisation de vingt-six ou de vingt-huit
+      semaines n'est pas réduite de ce fait »)
     en_vigueur: 2006-12-22
     citation: >-
       « La période d'indemnisation prévue au premier alinéa de l'article L. 331-3 est
@@ -291,10 +328,22 @@ versions:
     citation: >-
       « L'indemnité journalière de repos peut également être attribuée sur prescription
       médicale pendant une période supplémentaire n'excédant pas deux semaines »
+  - id: LEGIARTI000006646773
+    article: code du travail, L. 122-26, rédaction du 23 novembre 1973 au 1er octobre 1978,
+      le congé de maternité de la salariée, celle de la naissance d'avril 1978 du cas du
+      test ; le statut des fonctionnaires de l'État d'alors n'est pas dans l'index du
+      dépôt
+    en_vigueur: 1973-11-23
+    citation: >-
+      « La femme a le droit de suspendre le contrat de travail pendant une période qui
+      commence six semaines avant la date présumée de l'accouchement et se termine huit
+      semaines après la date de celui-ci » ; « sans pouvoir excéder huit semaines avant la
+      date présumée de l'accouchement et douze semaines après la date de celui-ci » ;
+      « l'accomplissement des quatorze semaines de suspension du contrat auxquelles la
+      salariée a droit »
   - id: LEGIARTI000006646774
     article: code du travail, L. 122-26, rédaction du 1er octobre 1978 au 3 janvier 1984, le
-      congé de maternité de la salariée ; le statut des fonctionnaires d'alors n'est pas
-      dans l'index du dépôt
+      congé de maternité de la salariée
     en_vigueur: 1978-10-01
     citation: >-
       « La femme a le droit de suspendre le contrat de travail pendant une période qui
@@ -474,6 +523,86 @@ versions:
       l'adoption »
     lu_le: 2026-11-03
     empreinte: sha256:bb4093e933487066ab5a116e0fe5d3529148b554ebc54c3c625871de5a897034
+  - id: LEGIARTI000019959668
+    article: L. 382-27 du code de la sécurité sociale, rédaction du 19 décembre 2008 au 1er
+      septembre 2023 ; la même phrase dans celles du 1er septembre 2023
+      (LEGIARTI000047453094) et du 28 décembre 2023 (LEGIARTI000048697351), qui ajoutent
+      L. 351-1-5, puis L. 358-1 à L. 358-7, à la liste
+    en_vigueur: 2008-12-19
+    citation: >-
+      « Les personnes qui exercent ou qui ont exercé des activités mentionnées à l'article
+      L. 382-15 reçoivent une pension de vieillesse dans les conditions définies aux
+      articles L. 351-1 à L. 351-1-3, au premier alinéa de l'article L. 351-2, aux 4°, 5° et
+      6° de l'article L. 351-3, aux articles L. 351-4, L. 351-4-1, L. 351-6, L. 351-8 à
+      L. 351-13, L. 353-1 à L. 353-5 et L. 355-1 à L. 355-3. Les prestations afférentes aux
+      périodes d'assurance antérieures au 1er janvier 1998 sont indiquées dans les
+      conditions législatives et réglementaires en vigueur au 31 décembre 1997 sous réserve
+      d'adaptation par décret. »
+  - id: LEGIARTI000006742803
+    article: L. 382-25 du code de la sécurité sociale, rédaction du 20 décembre 2005 au 14
+      juin 2018
+    en_vigueur: 2005-12-20
+    citation: >-
+      « I.-Les charges résultant des dispositions de la présente sous-section sont
+      couvertes par : 1° Des cotisations à la charge des assurés, assises sur une base
+      forfaitaire ; 2° Des cotisations à la charge des associations, des congrégations ou
+      collectivités religieuses dont relèvent les assurés, assises sur une base
+      forfaitaire »
+  - id: LEGIARTI000023397816
+    article: décret n° 2006-1325 du 31 octobre 2006, article 2, rédaction pour les pensions
+      prenant effet à compter du 1er juillet 2011, la seule depuis dans l'index LEGI
+    en_vigueur: 2011-07-01
+    citation: >-
+      « I. - L'âge fixé au premier alinéa de l'article D. 721-6 du code de la sécurité
+      sociale, dans sa rédaction en vigueur au 31 décembre 1997 est celui résultant des
+      dispositions de l'article L. 161-17-2 du code de la sécurité sociale pour les assurés
+      qui justifient [...] d'une durée au moins égale à la durée fixée au 1° de l'article
+      R. 351-27 » ; « II. - Pour les assurés qui ne remplissent pas les conditions fixées
+      au I du présent article, la pension de vieillesse mentionnée à l'article D. 721-6 du
+      code de la sécurité sociale dans sa rédaction en vigueur au 31 décembre 1997 peut
+      également être allouée à partir de l'âge mentionné au I. Il lui est alors appliqué
+      le coefficient de minoration fixé au 2° du I et au II de l'article R. 351-27 du code
+      de la sécurité sociale. » ; « V. - Pour les assurés nés postérieurement au 31
+      décembre 1938 et qui soit remplissent les conditions prévues à l'article D. 721-6
+      du code de la sécurité sociale, dans sa rédaction en vigueur au 31 décembre 1997,
+      soit justifient de la durée d'assurance visée au I du présent article, la pension
+      [...] est, lors de sa liquidation, assortie d'une majoration » ; « e) 100 % de
+      l'écart pour les assurés nés après 1942. La majoration est attribuée au prorata du
+      nombre de trimestres cotisés par l'assuré entre le 1er janvier 1979 et le 31
+      décembre 1997, rapporté au nombre de trimestres nécessaires pour atteindre la durée
+      maximale fixée à l'article R. 351-6 »
+  - id: LEGIARTI000006738898
+    article: D. 721-6 du code de la sécurité sociale, rédaction du 21 décembre 1985 au 26
+      février 2004, celle du 31 décembre 1997
+    en_vigueur: 1985-12-21
+    citation: >-
+      « L'âge à partir duquel est allouée la pension de vieillesse prévue à la présente
+      sous-section est fixé à soixante-cinq ans. »
+  - id: LEGIARTI000006739120
+    article: D. 721-11 du code de la sécurité sociale, rédaction du 13 novembre 1988 au 21
+      juin 1998, celle du 31 décembre 1997
+    en_vigueur: 1988-11-13
+    citation: >-
+      « Sous réserve qu'à la date d'entrée en jouissance de la pension l'assuré soit à jour
+      de ses cotisations personnelles, sont prises en compte pour l'ouverture du droit et
+      le calcul de la pension, les périodes d'exercice d'activités mentionnées à l'article
+      L. 721-1 accomplies antérieurement au 1er janvier 1979 en qualité de ministre d'un
+      culte ou de membre d'une congrégation ou collectivité religieuse »
+  - id: LEGIARTI000026474703
+    article: décret n° 73-937 du 2 octobre 1973, article 3, rédaction du 7 octobre 2012 au
+      1er septembre 2023 ; la même phrase dans celle du 1er septembre 2023
+      (LEGIARTI000047634732), qui écrit « 2° » au lieu de « 1° ter » ; celle du 19 février
+      2004 au 7 octobre 2012 (LEGIARTI000006765819) comptait la minoration jusqu'au
+      « soixante-cinquième anniversaire » de tous
+    en_vigueur: 2012-10-07
+    citation: >-
+      « II-Pour les assurés ne pouvant bénéficier des dispositions ci-dessus, il est
+      appliqué un coefficient de minoration qui est fonction soit du nombre de trimestres
+      manquant à la date d'effet de leur pension par rapport à la limite prévue au I, soit
+      de leur soixante-cinquième anniversaire s'ils remplissent les conditions prévues aux
+      1° bis ou 1° ter de l'article L. 351-8 ou aux III ou IV de l'article 20 de la loi
+      n° 2010-1330 du 9 novembre 2010 portant réforme des retraites ou, dans le cas
+      contraire, de l'âge prévu au 1° de l'article L. 351-8 »
   nee_de: LEGIARTI000023023835
   bornes:
     liquidation.date_effet: [2011-07-01, 2026-01-01]
@@ -502,7 +631,15 @@ versions:
       jusqu'à lui (L. 14, I, 1°), et le minimum garanti s'ouvre à lui (L. 17). La borne ne
       change rien aux générations de 1951 à 1953, dont le tableau annule la décote avant
       soixante-cinq ans ; elle vaut pour celles de 1954 (65 ans et 4 ou 7 mois) et de 1955
-      (66 ans et 3 mois)
+      (66 ans et 3 mois). Aux cultes, le même âge (L. 382-27) : la fraction d'après 1997 au
+      taux plein à soixante-cinq ans, décotée avant jusqu'à son soixante-cinquième
+      anniversaire ; celle d'avant 1998 allouée à soixante-cinq ans (D. 721-6 du code de
+      1985), avec la majoration du V, et, avant, minorée du coefficient de R. 351-27, I, 2°,
+      et II (décret n° 2006-1325, article 2) ; les années cultuelles d'avant 1979, prises en
+      compte sans cotisation (D. 721-11), ne comptent pas parmi les huit trimestres des
+      deux années d'avant la naissance. Aux points d'avant 1973 des artisans et des
+      commerçants, la minoration se compte jusqu'au soixante-cinquième anniversaire
+      (décret n° 73-937, article 3, II)
     beneficiaire: >-
       le parent de trois enfants né du 1er juillet 1951 au 31 décembre 1955, qui a cessé ou
       réduit son activité après la naissance de l'un d'eux ; le fonctionnaire sédentaire
@@ -510,7 +647,8 @@ versions:
     parametres:
       existe: true
       age: 65
-      regimes: [regime_general, msa_salaries, rsi]
+      regimes: [regime_general, msa_salaries, rsi, cavimac, cancava_avant_1973,
+        organic_avant_1973]
       parents_de_trois_enfants:
         nes_du: [1951, 7]
         nes_au: [1955, 12]
@@ -692,10 +830,13 @@ approximations:
     1° et 2° (LEGIARTI000023449727), L. 18, II (LEGIARTI000006362714) et III
     (LEGIARTI000025076852) ; décret n° 2003-1306, article 65-3 (LEGIARTI000024113270), et
     décret n° 2004-1056, article 50-3 (LEGIARTI000024113274) ; le congé de maternité : loi
-    n° 84-16, article 34, 5° (LEGIARTI000006450574), code de la sécurité sociale, L. 331-3
+    n° 84-16, article 34, 5° (LEGIARTI000006450574), loi n° 84-53, article 57, 5°
+    (LEGIARTI000006366816), loi n° 86-33, article 41, 5° (LEGIARTI000006695883), décret
+    n° 72-154, article 4 (LEGIARTI000006769789, LEGIARTI000006769790), code de la sécurité
+    sociale, L. 331-3
     (LEGIARTI000006742541, LEGIARTI000006742545), L. 331-4 (LEGIARTI000006742546,
     LEGIARTI000006742550), L. 331-5 (LEGIARTI000006742553), code du travail, L. 122-26
-    (LEGIARTI000006646774) ; l'assurance vieillesse des parents au foyer : code de la
+    (LEGIARTI000006646773, LEGIARTI000006646774) ; l'assurance vieillesse des parents au foyer : code de la
     sécurité sociale, L. 381-1 (LEGIARTI000006742941)
   ecart: >-
     Aux fonctionnaires : depuis le 3 novembre 2026, le modèle borne à soixante-cinq ans
@@ -712,8 +853,12 @@ approximations:
     « congé de maternité » ne compte pas : le congé de maternité est un congé de R. 13,
     1°, a, mais il dure seize semaines, vingt-six à partir du troisième enfant, de
     dix-huit à quarante-six pour des naissances multiples (L. 331-3 et L. 331-4 du code
-    de la sécurité sociale, auxquels renvoie, pour le fonctionnaire de l'État, l'article
-    34, 5°, de la loi n° 84-16 ; seize en 1978, au code du travail, L. 122-26), deux de
+    de la sécurité sociale, auxquels renvoient, « d'une durée égale à celle prévue par la
+    législation sur la sécurité sociale », l'article 34, 5°, de la loi n° 84-16 pour le
+    fonctionnaire de l'État, l'article 57, 5°, de la loi n° 84-53 et l'article 41, 5°, de
+    la loi n° 86-33 pour celui de la CNRACL, l'article 4 du décret n° 72-154 pour
+    l'ouvrier de l'État ; pour la salariée, au code du travail, L. 122-26, quatorze
+    semaines jusqu'au 30 septembre 1978, seize dès le 1er octobre 1978), deux de
     plus pour un état pathologique (L. 331-5), et, depuis le 20 décembre 2005, les jours
     qui séparent une naissance très prématurée du début du congé ; la saisie n'en dit ni
     la durée, ni le nombre des enfants nés, ni ce qui l'a suivi, et un relevé range
@@ -758,56 +903,49 @@ approximations:
     soixante-cinq ans.
 - version: [loi_du_9_novembre_2010]
   textes: >-
-    L. 382-27 du code de la sécurité sociale (LEGIARTI000019959668, du 19 décembre 2008 au
-    1er septembre 2023) ; loi n° 2010-1330, article 20, IV (LEGIARTI000023023835) ; décret
-    n° 2006-1325, article 2 (LEGIARTI000023397816, pour les pensions prenant effet à
-    compter du 1er juillet 2011) ; R. 351-27, I, 2° (LEGIARTI000024113020)
+    L. 382-27 du code de la sécurité sociale (LEGIARTI000019959668) ; L. 382-15
+    (LEGIARTI000006742793) ; L. 382-25, I, 1° (LEGIARTI000006742803) ; D. 721-11 du code de
+    1985 (LEGIARTI000006739120) ; loi n° 2010-1330, article 20, IV (LEGIARTI000023023835) ;
+    décret n° 2011-620, article 2 (LEGIARTI000024111672)
   ecart: >-
-    Le modèle lit la pension de la CAVIMAC à l'âge de la génération, ses deux fractions
-    décotées jusqu'à lui (regimes/cavimac.yaml, fiche cultes_fractions_de_pension). Les
-    ministres des cultes et les membres des congrégations « reçoivent une pension de
-    vieillesse dans les conditions définies aux articles L. 351-1 à L. 351-1-3, [...]
-    L. 351-8 à L. 351-13 » (L. 382-27), et le IV de l'article 20 « est applicable dans
-    tous les régimes obligatoires de retraite auxquels s'appliquent les dispositions de
-    l'article L. 351-8 » : l'âge du 1° de L. 351-8 y est soixante-cinq ans pour ces
-    parents. La fraction des périodes d'avant 1998, qui, sans la durée, « peut également
-    être allouée à partir de l'âge mentionné au I », prend alors « le coefficient de
-    minoration fixé au 2° du I et au II de l'article R. 351-27 » (décret n° 2006-1325,
-    article 2, II), que R. 351-27 compte jusqu'à « leur soixante-cinquième anniversaire,
-    s'ils remplissent les conditions prévues au 1° bis ou 1° ter de l'article L. 351-8 ou
-    au III ou IV de l'article 20 ».
+    Depuis le 3 novembre 2026, le modèle sert le même âge à la CAVIMAC, dont les ministres
+    des cultes « reçoivent une pension de vieillesse dans les conditions définies aux
+    articles [...] L. 351-8 à L. 351-13 » (L. 382-27) : ses deux fractions au taux plein à
+    soixante-cinq ans, celle d'avant 1998 avec la majoration du V du décret n° 2006-1325,
+    article 2 (et du V bis pour les années d'avant 1979), et, avant soixante-cinq ans,
+    décotées jusqu'au soixante-cinquième anniversaire (R. 351-27, I, 2°, et le II du même
+    article 2). Les deux années qui précèdent la naissance n'y comptent l'emploi que
+    cotisé : l'activité cultuelle d'avant 1979, que la CAVIMAC prend en compte sans
+    cotisation (D. 721-11), n'en est pas, quand celle de 1979 et après est cotisée « à la
+    charge des assurés » (L. 382-25, I, 1°). CE QUE LES TEXTES NE TRANCHENT PAS :
+    l'activité cultuelle est-elle l'« activité professionnelle » que le 2° et le 3° du IV
+    demandent, interrompue après la naissance et validée avant elle ? Le code n'en dit
+    que des « activités mentionnées à l'article L. 382-15 » ; le décret n° 2011-620 et la
+    circulaire Cnav n° 2014-64 ne nomment pas les cultes ; la CAVIMAC ne publie rien de
+    la mesure (sa page « Demander ma retraite de base » et son triptyque « retraite » de
+    2024, lus le 3 novembre 2026). Le modèle compte l'activité cultuelle comme l'emploi,
+    celle d'avant 1979 comprise pour l'activité d'avant la naissance.
   effet: >-
-    le parent de la CAVIMAC parti de soixante-cinq ans à l'âge de sa génération. Une
-    ministre du culte née le 15 mars 1953, au culte depuis 1979, sans activité de 1982 à
-    1999, trois enfants nés en avril 1982, juin 1984 et juin 1986, partie à soixante-cinq
-    ans le 1er avril 2018, à 5 trimestres de 66 ans et 2 mois : le modèle sert la
-    fraction d'après 1997 au taux de 50 % × (1 − 5 × 1,25 %) = 46,875 %, et celle d'avant
-    1998 sous la décote 1 − 5 × 1,25 % = 0,9375 ; le droit les sert sans décote : 6,25 %
-    de sa pension de la CAVIMAC.
+    non mesuré ; si l'activité cultuelle n'était pas une activité professionnelle, la
+    ministre du culte de 1979 à 1981, puis de 2000 à 2018, enfants d'avril 1982, juin 1984
+    et juin 1986, partie à soixante-cinq ans le 1er avril 2018, que le modèle sert au taux
+    plein (avant 1998, 7 615,94 × 11 / 165 = 507,73 €), serait décotée de 5 trimestres :
+    46,875 % au lieu de 50 % après 1997, et, avant 1998, 4 635,65 × 11 / 165 × 0,9375 =
+    289,73 €
 - version: [loi_du_9_novembre_2010]
   textes: >-
     décret n° 73-937 du 2 octobre 1973, article 3 (LEGIARTI000026474703, du 7 octobre
     2012 au 1er septembre 2023 ; LEGIARTI000006765819, du 19 février 2004 au 7 octobre
     2012)
   ecart: >-
-    Le modèle compte depuis 2013 la minoration des points d'avant 1973 des artisans et des
-    commerçants jusqu'à l'âge de la génération (regimes/cancava_avant_1973.yaml et
-    regimes/organic_avant_1973.yaml : l'âge d'annulation de la décote du régime général).
-    Le décret n° 73-937, article 3, II, la compte pourtant « de leur soixante-cinquième
-    anniversaire s'ils remplissent les conditions prévues aux 1° bis ou 1° ter de
-    l'article L. 351-8 ou aux III ou IV de l'article 20 de la loi n° 2010-1330 du 9
-    novembre 2010 portant réforme des retraites ou, dans le cas contraire, de l'âge prévu
-    au 1° de l'article L. 351-8 », à « 1,25 % pour l'assuré né après 1952 ». Du 1er
-    juillet 2011 au 7 octobre 2012, la rédaction du 19 février 2004 la comptait jusqu'au
-    « soixante-cinquième anniversaire » de tous, ce que le modèle sert jusqu'en 2012.
-  effet: >-
-    le parent artisan ou commerçant qui a des points d'avant 1973, parti de soixante-cinq
-    ans à l'âge de sa génération. Une artisane née le 15 mars 1953, au travail dès
-    dix-huit ans, sans activité de 1976 à 1999, trois enfants nés en avril 1976, juin 1978
-    et juin 1980, partie à soixante-cinq ans le 1er avril 2018, à 5 trimestres de 66 ans
-    et 2 mois : le modèle sert ses points d'avant 1973 sous le coefficient 1 − 5 × 1,25 %
-    = 0,9375, et ceux d'une commerçante de même ; le droit les sert entiers : 6,25 % de
-    cette part de sa pension.
+    Le modèle lit à l'année les règles des points d'avant 1973 des artisans et des
+    commerçants (regimes/cancava_avant_1973.yaml et regimes/organic_avant_1973.yaml) :
+    jusqu'au 31 décembre 2012, il compte leur minoration jusqu'au soixante-cinquième
+    anniversaire de tous, comme la rédaction du 19 février 2004 ; depuis 2013, jusqu'à
+    l'âge de la génération, ou, depuis le 3 novembre 2026, jusqu'au soixante-cinquième
+    anniversaire de ces parents, comme celle du 7 octobre 2012. Du 7 octobre au 31
+    décembre 2012, il garde la première pour qui n'est pas parent de trois enfants.
+  effet: non mesuré ; les pensions prenant effet du 7 octobre au 31 décembre 2012
 - version: [loi_du_9_novembre_2010]
   textes: >-
     arrêté du 9 février 2012 portant approbation du règlement du régime complémentaire
@@ -847,9 +985,14 @@ effet: >-
   coefficient dès soixante-cinq ans, sauf la tranche C d'avant 2016 : de 5,26 % à 8,70 %
   de plus à leur complémentaire, 175,30 € à 274,66 € par an dans les cas posés à la main
   (note 2026-11-03-corrections-de-la-relecture-r-m3b.md, action 175). L'Ircantec et le
-  RCI, la CAVIMAC et les points d'avant 1973, où vaut le même âge, les abattent encore
-  jusqu'à l'âge de leur génération : les approximations le chiffrent sur des exemples :
-  5 % au RCI, 6,25 % de la pension de la ministre du culte et des points d'avant 1973.
+  RCI, où vaut le même âge, les abattent encore jusqu'à l'âge de leur génération :
+  l'approximation du RCI le chiffre sur un exemple, 5 %. Depuis le 3 novembre 2026, la
+  CAVIMAC sert ses deux fractions au taux plein dès soixante-cinq ans, celle d'avant 1998
+  majorée jusqu'au minimum de L. 351-10 au prorata de ses trimestres cotisés de 1979 à
+  1997, et les points d'avant 1973 des artisans et des commerçants ne sont plus minorés
+  à soixante-cinq ans : 6,25 % de plus à cette part pour la génération de 1953, et, à la
+  ministre du culte des cas posés à la main, 1 477,03 € au lieu de 842,85 € pour sa
+  fraction d'avant 1998 (note 2026-11-03-taux-plein-parents-de-trois-enfants-cavimac.md).
   Depuis le 3 novembre 2026, le fonctionnaire sédentaire de l'État, de la CNRACL et
   l'ouvrier de l'État nés en 1954 et en 1955 qui ont interrompu leur activité au moins un
   an pour élever un enfant, et le disent, ont l'âge d'annulation de leur décote borné à
@@ -875,15 +1018,19 @@ sources:
     qu'elle sert aux points de l'Arrco des cultes, que les textes lus ne tranchent pas,
     la circulaire 2020-02-DRJ non plus : une circulaire de la caisse qui nomme ces
     parents, ou sa réponse écrite.
-    À la file du régime général : servir le même âge à la CAVIMAC et aux points d'avant
-    1973 ; puis aux non-salariés agricoles (article 21, IV), aux libéraux (R. 643-7) et
-    aux avocats (R. 723-38, puis R. 653-2), dont les rédactions de 2016 à 2022 restent à
-    lire. Aux fonctionnaires, la réduction d'activité de R. 26 ter, I, 2°, demande le
+    À la file du régime général : servir le même âge aux non-salariés agricoles (article
+    21, IV), aux libéraux (R. 643-7) et aux avocats (R. 723-38, puis R. 653-2), dont les
+    rédactions de 2016 à 2022 restent à lire. Aux fonctionnaires, la réduction d'activité de R. 26 ter, I, 2°, demande le
     motif du temps partiel saisi — un temps partiel pris pour élever un enfant, de R. 13,
     2° —, que la saisie ne porte pas. L'année d'interruption de R. 26 ter, I, 1°, se lirait
     au mois si la carrière portait la durée de chaque période sans emploi, que la saisie
     borne au mois et que le modèle range à l'année (plus de la moitié de ses mois) ; le
     congé de maternité compterait alors sa durée avec le congé parental qui le suit.
+  - >-
+    Aux cultes : une circulaire, une page ou une réponse écrite de la CAVIMAC qui dise si
+    elle compte l'activité cultuelle comme l'activité professionnelle du 2° et du 3° du
+    IV, celle d'avant 1979 comprise, et un exemple chiffré de la pension qu'elle sert à
+    ces parents.
   - >-
     Une circulaire ou une note du Service des retraites de l'État ou de la CNRACL qui
     dise comment elles ont appliqué l'article 28, III, et R. 26 ter : leurs pages sur la
@@ -1083,7 +1230,63 @@ sources:
       (LEGIARTI000028498863, LEGIARTI000037200740) ; L. 18 (LEGIARTI000025076852, son
       III) ; L. 351-12 du code de la sécurité sociale (LEGIARTI000006742643, son deuxième
       alinéa) ; L. 381-1 (LEGIARTI000006742941). Le statut des fonctionnaires d'avant 1984
-      n'est pas dans l'index : la durée de leur congé de maternité n'est pas lue
+      n'est pas dans l'index : la durée de leur congé de maternité n'est pas lue. Relu
+      le 3 novembre 2026 par la file M4, sur la relecture R-M4-bis : la loi n° 84-53,
+      article 57 (LEGIARTI000006366816, puis ses rédactions du 27 juillet 2005 au 27
+      novembre 2020), la loi n° 86-33, article 41 (LEGIARTI000006695883, puis les
+      mêmes), le décret n° 72-154, article 4 (LEGIARTI000006769789,
+      LEGIARTI000006769790), chacun « d'une durée égale à celle prévue par la législation
+      sur la sécurité sociale » ; L. 122-26 du code du travail (LEGIARTI000006646773 :
+      « quatorze semaines de suspension » jusqu'au 30 septembre 1978) ; L. 331-4
+      (LEGIARTI000006742546 : « vingt-six ou de vingt-huit semaines » dès 1985)
+    date: 2026-11-03
+  - type: legifrance
+    reference: >-
+      index LEGI à jour au 3 novembre 2026, relu le 3 novembre 2026 par la file M4 de la
+      sixième vague (la CAVIMAC et les points d'avant 1973) : L. 382-27
+      (LEGIARTI000006742805, LEGIARTI000019959668, LEGIARTI000047453094,
+      LEGIARTI000048697351), L. 382-15 (LEGIARTI000006742793, LEGIARTI000031686004),
+      L. 382-25 (LEGIARTI000006742803), L. 382-26 (LEGIARTI000006742804), R. 382-57
+      (LEGIARTI000006749760), R. 382-89 et R. 382-90 (LEGIARTI000006749795,
+      LEGIARTI000006749796), R. 382-121 (LEGIARTI000006749831), D. 382-30 à D. 382-33
+      (LEGIARTI000006736699, LEGIARTI000006736700, LEGIARTI000023397714,
+      LEGIARTI000023395860, LEGIARTI000030100650) ; le décret n° 2006-1325, article 2
+      (LEGIARTI000006256155, LEGIARTI000021763033, LEGIARTI000023397816) ; D. 721-6
+      (LEGIARTI000006738898), D. 721-7 (LEGIARTI000006738455), D. 721-11
+      (LEGIARTI000006739120) du code de 1985 ; R. 351-27 (LEGIARTI000024113020) ; R. 351-6
+      (LEGIARTI000006749349) et le décret n° 2010-1734, article 9 (LEGIARTI000023383430 :
+      « 165 trimestres pour les assurés nés en 1953 et 1954 ») ; le décret n° 73-937,
+      article 3 (LEGIARTI000006765819, LEGIARTI000026474703, LEGIARTI000047634732). Aucun
+      article des cultes ne renvoie à R. 351-27 pour la fraction d'après 1997 : il
+      s'applique « pour l'application du deuxième alinéa de l'article L. 351-1 et de
+      l'article L. 351-8 », que L. 382-27 rend applicables, comme R. 382-121 le suppose de
+      R. 351-29 ; le décret n° 2011-620 (JORFTEXT000024110091) ne touche à aucun texte des
+      cultes, et sa notice ne les nomme pas parmi les « publics concernés »
+    date: 2026-11-03
+  - type: autre
+    reference: >-
+      CAVIMAC, « Demander ma retraite de base », lue le 3 novembre 2026, sha256
+      a5f43cfa6e6b21bb42f0e65db25ff397d214c3dbfbadb9e6f197db17785306f6 : « on calcule le
+      nombre de trimestres entre la date d'effet de la pension et l'âge du taux plein » ;
+      « si vous totalisez au moins 120 trimestres cotisés tous régimes, votre pension sera
+      portée au niveau du minimum contributif majoré » ; rien des parents de trois enfants
+    url: https://www.cavimac.fr/assurance-retraite/assurance-retraite/demander-ma-retraite-de-base-0
+    date: 2026-11-03
+  - type: autre
+    reference: >-
+      CAVIMAC, triptyque « retraite » de 2024, téléchargé le 3 novembre 2026, sha256
+      868aa09c038057ebcaffde8f5b3f9a854717b15c216b6f195cfa327ab0df4f91 : « L'âge auquel la
+      retraite peut être attribuée à taux plein, quel que soit le nombre de trimestres,
+      varie de 65 à 67 ans » ; rien des parents de trois enfants
+    url: https://www.cavimac.fr/sites/default/files/medias/documents/Triptyque%20retraite_2024.pdf
+    date: 2026-11-03
+  - type: circulaire_cnav
+    reference: >-
+      base de législation de la Cnav, barème « Montant minimum de la retraite
+      personnelle » (retraite_personnelle_montant_minimum_bar.aspx), lu le 3 novembre 2026
+      par son API : « 01/10/2017 7 615,94 € 634,66 € 8 322,13 € 693,51 € Circulaire Cnav
+      2017/32 du 26/09/2017 », le minimum et le minimum majoré, par an et par mois
+    url: https://legislation.lassuranceretraite.fr/api/v1/baremes/baremesByFileLeafRef/retraite_personnelle_montant_minimum_bar.aspx
     date: 2026-11-03
 textes_a_rattacher:
 - reference: L. 351-8 CSS, 1° bis et 6°
@@ -1104,10 +1307,13 @@ code:
     l'un d'eux dont la saisie déclare la naissance, les trimestres que la carrière valide
     année par année (`Carriere.trimestres_par_annee`) — dans la fenêtre qui suit la
     naissance, hors AVPF, invalidité et accident du travail ; les deux années qui la
-    précèdent, l'emploi, la maladie, la maternité et le chômage ; l'emploi seul avant
+    précèdent, l'emploi cotisé (`commun.ligne_cotisee`), la maladie, la maternité et le
+    chômage ; l'emploi seul avant
     elle, et, l'année de la naissance, les trimestres civils écoulés avant le sien
     (`categories._remplit_pour_l_enfant`). La décote, la majoration de durée et le
-    minimum contributif lisent cet âge sans autre changement. Aux fonctionnaires, l'âge
+    minimum contributif lisent cet âge sans autre changement ; aux cultes, les deux
+    fractions (`liquider.liquider_chaque_regime`, `cultes.fraction_d_avant_1998`) le lisent
+    aussi, par le taux plein. Aux fonctionnaires, l'âge
     d'annulation que rend la décote en table de la fonction publique
     (`liquider.decote_opposable`), la limite d'âge moins les trimestres de l'article 66,
     III, est borné à l'âge de la version pour le sédentaire — ni catégorie active dont il a
@@ -1121,19 +1327,22 @@ code:
   python: >-
     droit/categories.py : age_du_parent_de_trois_enfants, _remplit_pour_l_enfant,
     age_du_fonctionnaire_parent_de_trois_enfants, _remplit_pour_l_enfant_fonctionnaire,
-    _regle_du_parent, FICHE_DES_SOIXANTE_CINQ_ANS ; droit/liquider.py : decote_opposable,
+    _regle_du_parent, FICHE_DES_SOIXANTE_CINQ_ANS ; droit/commun.py : ligne_cotisee ;
+    droit/liquider.py : decote_opposable,
     _age_du_parent_sedentaire ; droit/ouvrir.py : age_taux_plein ; carriere.py :
     Carriere.trimestres_par_annee
   javascript: >-
     moteur/js/droit/categories.js : ageDuParentDeTroisEnfants, remplitPourLEnfant,
     ageDuFonctionnaireParentDeTroisEnfants, remplitPourLEnfantFonctionnaire, regleDuParent,
-    FICHE_DES_SOIXANTE_CINQ_ANS ; moteur/js/droit/liquider.js : decoteOpposable,
+    FICHE_DES_SOIXANTE_CINQ_ANS ; moteur/js/droit/commun.js : ligneCotisee ;
+    moteur/js/droit/liquider.js : decoteOpposable,
     ageDuParentSedentaire ; moteur/js/droit/ouvrir.js : ageTauxPlein ;
     moteur/js/carriere.js : trimestresParAnnee
   parametres: >-
     contenu.parametres de chaque version : existe, age, regimes, parents_de_trois_enfants,
     fonctionnaires ;
-    regimes/regime_general.yaml, regimes/msa_salaries.yaml, regimes/rsi.yaml :
+    regimes/regime_general.yaml, regimes/msa_salaries.yaml, regimes/rsi.yaml,
+    regimes/cavimac.yaml, regimes/cancava_avant_1973.yaml, regimes/organic_avant_1973.yaml :
     age_taux_plein_par_generation
   tests:
   - >-
@@ -1142,7 +1351,9 @@ code:
     l'Agirc-Arrco sans coefficient (SANS_ABATTEMENT, NON_TRANCHE, la tranche C), et, aux
     fonctionnaires, l'âge d'annulation de dix-sept carrières (CAS_FONCTIONNAIRES), les
     trois régimes et la catégorie active, la pension de bout en bout (BOUT_EN_BOUT) et le
-    minimum garanti à soixante-cinq ans
+    minimum garanti à soixante-cinq ans ; aux cultes, la pension de bout en bout
+    (CULTES_DE_BOUT_EN_BOUT), les années d'avant 1979 et l'activité cultuelle
+    (NON_TRANCHE_CULTES) ; les points d'avant 1973 (AVANT_1973)
 historique:
 - >-
   2026-11-03 — née de l'étape 4 de l'action 175 (la base de législation de la Cnav, thème
@@ -1177,3 +1388,14 @@ historique:
   au moins un an pour élever l'un d'eux, est borné à soixante-cinq ans dans les deux
   moteurs (loi n° 2010-1330, article 28, III ; R. 26 ter) ; l'écart déclaré ne garde que
   ce que la saisie ne porte pas.
+- >-
+  2026-11-03 — la CAVIMAC et les points d'avant 1973 (file M4 de la sixième vague,
+  décision 14 du propriétaire ; note
+  2026-11-03-taux-plein-parents-de-trois-enfants-cavimac.md) : le même âge à la pension
+  des cultes (L. 382-27), ses deux fractions au taux plein à soixante-cinq ans, et aux
+  points d'avant 1973 des artisans et des commerçants (décret n° 73-937, article 3, II),
+  dans les deux moteurs ; l'emploi des deux années d'avant la naissance compté cotisé
+  seulement, ce que l'activité cultuelle d'avant 1979 n'est pas (D. 721-11) ; ce que les
+  textes ne tranchent pas de l'activité cultuelle, déclaré. Les deux écarts faibles de
+  la relecture R-M4-bis : le congé de maternité de 1978, quatorze semaines, et le renvoi
+  des statuts de la CNRACL et des ouvriers de l'État à la sécurité sociale.

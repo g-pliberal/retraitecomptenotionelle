@@ -48,7 +48,7 @@ from typing import TYPE_CHECKING
 
 from .. import chronologie as chrono
 from ..somme import somme_ordonnee
-from .commun import date_d_effet
+from .commun import date_d_effet, ligne_cotisee
 
 if TYPE_CHECKING:
     from ..carriere import Carriere
@@ -167,13 +167,17 @@ _ECARTEES_APRES = frozenset({"invalidite", "accident_travail"})
 
 #: Ce qu'il compte dans les deux années qui la précèdent : « les trimestres
 #: validés en contrepartie de cotisations à la charge de l'assuré ou au titre
-#: de périodes d'arrêt maladie, de maternité, de chômage ».
+#: de périodes d'arrêt maladie, de maternité, de chômage ». L'emploi n'y entre
+#: que cotisé (:func:`.commun.ligne_cotisee`) : l'activité cultuelle d'avant
+#: 1979, que la CAVIMAC prend en compte sans cotisation (D. 721-11 du code de
+#: 1985), n'en est pas.
 _RETENUES_AVANT = frozenset({"emploi", "maladie", "maternite", "chomage_indemnise",
                              "chomage_solidarite", "chomage_non_indemnise",
                              "preretraite_fne"})
 
 
-def _remplit_pour_l_enfant(carriere: Carriere, parents: dict, naissance: dict) -> bool:
+def _remplit_pour_l_enfant(moteur: ScenarioActuel, carriere: Carriere, parents: dict,
+                           naissance: dict) -> bool:
     """L'assuré remplit-il, pour l'enfant né à ``naissance`` (un fait déclaré de
     la chronologie), les deux conditions du décret n° 2011-620, article 2 ?
 
@@ -202,7 +206,9 @@ def _remplit_pour_l_enfant(carriere: Carriere, parents: dict, naissance: dict) -
         return somme_ordonnee(table.get(debut + rang, 0) for rang in range(nombre))
 
     avant = par_annee(lambda ligne: ligne.type_periode in _RETENUES_AVANT
-                      and not ligne.revenu_avpf > 0)
+                      and not ligne.revenu_avpf > 0
+                      and (ligne.type_periode != "emploi"
+                           or ligne_cotisee(moteur, carriere, ligne)))
     if somme(avant, annee - 2, 2) < int(parents["avant_au_moins"]):
         return False
     apres = par_annee(lambda ligne: ligne.type_periode not in _ECARTEES_APRES
@@ -231,7 +237,8 @@ def age_du_parent_de_trois_enfants(moteur: ScenarioActuel, regime: str,
         return None
     parents = regle["parents_de_trois_enfants"]
     return (float(regle["age"]) if _pour_un_enfant_declare(
-        carriere, lambda naissance: _remplit_pour_l_enfant(carriere, parents, naissance))
+        carriere, lambda naissance: _remplit_pour_l_enfant(moteur, carriere, parents,
+                                                           naissance))
         else None)
 
 

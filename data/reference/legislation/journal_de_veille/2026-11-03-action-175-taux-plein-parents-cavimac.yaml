@@ -1,0 +1,53 @@
+date: "2026-11-03"
+session: "action 175, file M4 de la vague 6 : le taux plein à 65 ans des parents de trois enfants nés de juillet 1951 à 1955 à la CAVIMAC et aux points d'avant 1973, et les deux écarts faibles de la relecture R-M4-bis"
+consulte: >-
+  python scripts/veille_droit.py (rien de neuf à la base de la Cnav) ; docs/veille_droit.md ;
+  les notes de l'action 175 sur ces parents et la relecture R-M4-bis ; l'index LEGI récupéré
+  et mis à jour (incrément LEGI_20261103-214151), l'index JORF à jour au 3 novembre 2026 :
+  L. 382-27 (LEGIARTI000006742805, LEGIARTI000019959668, LEGIARTI000047453094,
+  LEGIARTI000048697351), L. 382-15, L. 382-25, L. 382-26, R. 382-57, R. 382-89, R. 382-90,
+  R. 382-121, D. 382-30 à D. 382-33 ; le décret n° 2006-1325, article 2 (ses trois
+  rédactions) ; D. 721-6, D. 721-7 et D. 721-11 du code de 1985 ; R. 351-27
+  (LEGIARTI000024113020), R. 351-6 et le décret n° 2010-1734, article 9 ; le décret
+  n° 73-937, article 3 (LEGIARTI000006765819, LEGIARTI000026474703, LEGIARTI000047634732) ;
+  le décret n° 2011-620 (JORFTEXT000024110091, articles 1er à 11) ; pour la relecture
+  R-M4-bis, L. 122-26 du code du travail (LEGIARTI000006646773, LEGIARTI000006646774),
+  L. 331-4 (LEGIARTI000006742546), la loi n° 84-53, article 57, la loi n° 86-33, article
+  41, et le décret n° 72-154, article 4, dans leurs rédactions de l'index. Téléchargés le
+  jour : la page « Demander ma retraite de base » de la CAVIMAC (sha256 a5f43cfa…06f6), sa
+  page des publications et son triptyque « retraite » de 2024 (sha256 868aa09c…4f91), son
+  guide de 2024 ; la circulaire Cnav n° 2014-64 (sha256 f6717a0f…caccb, celle de la fiche) ;
+  le barème de la Cnav « Montant minimum de la retraite personnelle », par son API.
+trouve: >-
+  Les ministres des cultes reçoivent leur pension « dans les conditions définies aux
+  articles [...] L. 351-8 à L. 351-13 » (L. 382-27, toutes ses rédactions depuis 2008), et
+  le IV de l'article 20 vaut « dans tous les régimes obligatoires de retraite auxquels
+  s'appliquent les dispositions de l'article L. 351-8 » : soixante-cinq ans à la CAVIMAC.
+  La fraction d'avant 1998 : D. 721-6 de 1985 l'alloue à soixante-cinq ans, le décret
+  n° 2006-1325, article 2, II, la minore avant du coefficient de R. 351-27, compté jusqu'au
+  soixante-cinquième anniversaire de ces parents, et son V la majore, à qui remplit les
+  conditions de D. 721-6, de l'écart au minimum de L. 351-10 au prorata des trimestres
+  cotisés de 1979 à 1997. Les années cultuelles d'avant 1979 sont prises en compte sans
+  cotisation (D. 721-11) : elles ne sont pas des « trimestres validés en contrepartie de
+  cotisations à la charge de l'assuré » des deux années qui précèdent la naissance
+  (décret n° 2011-620, article 2) ; celles de 1979 et après le sont (L. 382-25, I, 1°).
+  Les points d'avant 1973 : la minoration se compte jusqu'au soixante-cinquième
+  anniversaire de qui remplit le IV (décret n° 73-937, article 3, II, depuis le 7 octobre
+  2012). Le modèle les sert ainsi dans les deux moteurs : trois régimes de plus à la
+  version de 2011 de la fiche taux_plein_a_soixante_cinq_ans, et l'emploi des deux
+  années d'avant compté cotisé seulement. La CAVIMAC ne publie rien de la mesure ; le
+  décret n° 2011-620 ne nomme pas les cultes. Le minimum au 1er octobre 2017 : 7 615,94 €
+  par an, 8 322,13 € majoré (circulaire Cnav 2017/32). En avril 1978, le congé de
+  maternité de la salariée était de quatorze semaines (L. 122-26, rédaction de 1973) ; les
+  statuts de la CNRACL et des ouvriers de l'État le fixent « d'une durée égale à celle
+  prévue par la législation sur la sécurité sociale ».
+reste: >-
+  Ce que les textes ne tranchent pas : l'activité cultuelle est-elle l'« activité
+  professionnelle » du 2° et du 3° du IV ? Le modèle la compte comme l'emploi, déclaré ;
+  une réponse écrite de la CAVIMAC, ou une circulaire, le dirait. À la file des cultes :
+  la fraction d'avant 1998 des générations nées depuis 1951 parties à soixante-cinq ans
+  sans la durée, que D. 721-6 alloue à soixante-cinq ans et que le modèle décote jusqu'à
+  l'âge de leur génération (approximation déjà déclarée de la fiche
+  cultes_fractions_de_pension), et le minimum majoré du V. À la file des complémentaires :
+  l'Arrco des cultes, le RCI, l'Ircantec. À la file du régime général : les non-salariés
+  agricoles, les libéraux, les avocats.

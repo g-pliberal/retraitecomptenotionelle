@@ -13,7 +13,7 @@
  */
 
 import * as chrono from "../chronologie.js";
-import { dateDEffet } from "./commun.js";
+import { dateDEffet, ligneCotisee } from "./commun.js";
 
 /** Les fiches des catégories, dans l'ordre où le moteur les essaie. */
 export const FICHE_DES_DEPORTES = "taux_plein_anciens_deportes_internes";
@@ -128,7 +128,10 @@ const ECARTEES_APRES = new Set(["invalidite", "accident_travail"]);
 /**
  * Ce qu'il compte dans les deux années qui la précèdent : « les trimestres
  * validés en contrepartie de cotisations à la charge de l'assuré ou au titre
- * de périodes d'arrêt maladie, de maternité, de chômage ».
+ * de périodes d'arrêt maladie, de maternité, de chômage ». L'emploi n'y entre
+ * que cotisé (`commun.ligneCotisee`) : l'activité cultuelle d'avant 1979, que
+ * la CAVIMAC prend en compte sans cotisation (D. 721-11 du code de 1985), n'en
+ * est pas.
  */
 const RETENUES_AVANT = new Set([
   "emploi", "maladie", "maternite", "chomage_indemnise", "chomage_solidarite",
@@ -147,7 +150,7 @@ const RETENUES_AVANT = new Set([
  * conditions tiennent quel que soit son mois. Voir `_remplit_pour_l_enfant` du
  * Python.
  */
-function remplitPourLEnfant(carriere, parents, naissance) {
+function remplitPourLEnfant(moteur, carriere, parents, naissance) {
   const annee = chrono.anneeDe(naissance.debut);
   const auMois = (naissance.attributs?.precision || "jour") !== "annee";
   const mois = auMois ? chrono.moisDe(naissance.debut).mois : 1;
@@ -160,7 +163,8 @@ function remplitPourLEnfant(carriere, parents, naissance) {
     return total;
   };
   const avant = parAnnee((ligne) => RETENUES_AVANT.has(ligne.type_periode)
-    && !(ligne.revenu_avpf > 0));
+    && !(ligne.revenu_avpf > 0)
+    && (ligne.type_periode !== "emploi" || ligneCotisee(moteur, carriere, ligne)));
   if (somme(avant, annee - 2, 2) < Number(parents.avant_au_moins)) {
     return false;
   }
@@ -194,7 +198,7 @@ export function ageDuParentDeTroisEnfants(moteur, regime, carriere) {
     return null;
   }
   return pourUnEnfantDeclare(carriere, (naissance) => remplitPourLEnfant(
-    carriere, regle.parents_de_trois_enfants, naissance)) ? Number(regle.age) : null;
+    moteur, carriere, regle.parents_de_trois_enfants, naissance)) ? Number(regle.age) : null;
 }
 
 /**

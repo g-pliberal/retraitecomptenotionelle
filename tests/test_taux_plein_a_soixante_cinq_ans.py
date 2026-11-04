@@ -162,7 +162,15 @@ def test_la_fiche_date_l_age_du_parent_de_trois_enfants():
     nom = categories.FICHE_DES_SOIXANTE_CINQ_ANS
     assert not fiches.regle(nom, "2011-06-01")["existe"]
     regle = fiches.regle(nom, "2011-07-01")
-    assert regle["age"] == 65 and regle["regimes"] == ["regime_general", "msa_salaries", "rsi"]
+    # « applicable dans tous les régimes obligatoires de retraite auxquels
+    # s'appliquent les dispositions de l'article L. 351-8 » : les cultes
+    # (L. 382-27), et les points d'avant 1973 des artisans et des commerçants,
+    # que le décret n° 73-937, article 3, II, minore jusqu'au soixante-cinquième
+    # anniversaire de qui remplit « les conditions prévues [...] aux III ou IV
+    # de l'article 20 ».
+    assert regle["age"] == 65 and regle["regimes"] == [
+        "regime_general", "msa_salaries", "rsi", "cavimac", "cancava_avant_1973",
+        "organic_avant_1973"]
     assert regle["parents_de_trois_enfants"] == {
         "nes_du": [1951, 7], "nes_au": [1955, 12], "enfants": 3,
         "apres_au_plus": 8, "avant_au_moins": 8, "activite_au_moins": 8}
@@ -197,24 +205,39 @@ def test_l_age_du_taux_plein_du_parent_de_trois_enfants():
     assert obtenus == {cle: pytest.approx(age, abs=0.005) for cle, age in attendus.items()}
 
 
+#: Les régimes où vaut le même âge, et le texte qui l'y porte.
+ALIGNES = {
+    # Les salariés agricoles, les artisans et les commerçants : la note
+    # docs/feuille_de_route/175/2026-11-03-taux-plein-parents-de-trois-enfants.md.
+    "msa_salaries": DEROGATION, "rsi": DEROGATION,
+    # L. 382-27 (LEGIARTI000019959668) : « une pension de vieillesse dans les
+    # conditions définies aux articles [...] L. 351-8 à L. 351-13 ».
+    "cavimac": DEROGATION,
+    # Décret n° 73-937, article 3, II (LEGIARTI000026474703, puis
+    # LEGIARTI000047634732) : la minoration se compte « de leur
+    # soixante-cinquième anniversaire s'ils remplissent les conditions prévues
+    # [...] aux III ou IV de l'article 20 de la loi n° 2010-1330 ».
+    "cancava_avant_1973": DEROGATION, "organic_avant_1973": DEROGATION,
+}
+
+
 def test_les_regimes_alignes_suivent():
-    """Le même âge aux salariés agricoles et aux artisans et commerçants, à qui
+    """Le même âge aux salariés agricoles, aux artisans et commerçants, aux
+    cultes et aux points d'avant 1973 des artisans et des commerçants, à qui
     s'applique L. 351-8 (« Le présent article est applicable dans tous les
     régimes obligatoires de retraite auxquels s'appliquent les dispositions de
-    l'article L. 351-8 »). Les complémentaires et les autres régimes où vaut le
-    même âge, que le modèle ne sert pas encore : ``ENCORE_A_L_AGE_DE_LA_GENERATION``
-    et ``ECARTS_DECLARES``."""
+    l'article L. 351-8 »). Les complémentaires que le modèle ne sert pas encore :
+    ``ENCORE_A_L_AGE_DE_LA_GENERATION``."""
     from outils_pont import droit_et_refait
 
     carriere = _carriere("interrompue trois ans", sans=(1980, 1981, 1982))
     annee = carriere.annee_liquidation
     appels = {regime: ("liquider.decote_opposable", pont.MOTEUR,
                        pont.Periode(regime, annee), carriere, annee)
-              for regime in ("msa_salaries", "rsi")}
+              for regime in ALIGNES}
     lus, refus = droit_et_refait(appels)
     assert refus == {}, refus
-    assert {regime: lu[1] for regime, lu in lus.items()} == {
-        "msa_salaries": DEROGATION, "rsi": DEROGATION}
+    assert {regime: lu[1] for regime, lu in lus.items()} == ALIGNES
 
 
 #: Une assurée née le 15 mars 1953, au travail dès dix-huit ans, sans activité
@@ -270,22 +293,190 @@ MINISTRE_DU_CULTE = {"statut": "ministre_du_culte", "debut": "26",
                      "interruptions": "1982:1999:sans_activite",
                      "naissances": "1982-04, 1984-06, 1986-06"}
 
-#: Ailleurs, la même règle est écrite, et le modèle ne la sert pas encore : il y
-#: lit l'âge de la génération. Chaque cas est un ÉCART DÉCLARÉ — la fiche le
-#: porte dans ses approximations, avec sa source et son effet — et ce que le
-#: modèle en sert encore, au mot près de son détail ; le droit le sert chaque
-#: fois sans abattement, ou au taux plein. La carrière est celle de ``REQUETE``,
-#: partie à 65 ans, sauf ce que le cas change. Quand le calcul viendra, chaque
-#: ligne passera à la valeur du droit. Les calculs, posés à la main, sont dans la
-#: note docs/feuille_de_route/175/2026-11-03-correction-taux-plein-parents-de-trois-enfants.md.
-ECARTS_DECLARES = {
-    # Les fonctionnaires, écart déclaré jusqu'au 3 novembre 2026, sont servis :
-    # ``CAS_FONCTIONNAIRES`` et ``BOUT_EN_BOUT``.
-    # L. 382-27 : 50 % × (1 − 5 × 1,25 %) = 46,875 % au lieu de 50 % ; la
-    # fraction d'avant 1998 (décret n° 2006-1325, article 2, II) : 0,9375.
-    "CAVIMAC, 2018": (MINISTRE_DU_CULTE, "cavimac", "taux 46.875%"),
-    "CAVIMAC, avant 1998": (MINISTRE_DU_CULTE, "cavimac", "décote 0.9375"),
+#: LA PENSION DES CULTES. Les ministres des cultes « reçoivent une pension de
+#: vieillesse dans les conditions définies aux articles [...] L. 351-8 à
+#: L. 351-13 » (L. 382-27, LEGIARTI000019959668), et le IV de l'article 20 y
+#: vaut. Ses deux fractions (décret n° 2006-1325, article 2, LEGIARTI000023397816,
+#: pour les pensions prenant effet à compter du 1er juillet 2011) :
+#:
+#: * celle d'après 1997, au taux de L. 351-1 et R. 351-27, que le I, 2°, minore
+#:   jusqu'au « soixante-cinquième anniversaire » de ces parents ;
+#: * celle d'avant 1998, la pension de D. 721-6 du code de 1985 (« fixé à
+#:   soixante-cinq ans », LEGIARTI000006738898) : le maximum de pension « réduit
+#:   au prorata du rapport entre sa durée d'assurance et cette durée maximale »
+#:   de R. 351-6 (III), 165 trimestres pour la génération 1953 (décret
+#:   n° 2010-1734, article 9) ; avant l'âge, « le coefficient de minoration fixé
+#:   au 2° du I et au II de l'article R. 351-27 » (II) ; et, à qui remplit « les
+#:   conditions prévues à l'article D. 721-6 », une majoration de « 100 % de
+#:   l'écart pour les assurés nés après 1942 » entre le maximum et le minimum de
+#:   L. 351-10, « au prorata du nombre de trimestres cotisés par l'assuré entre le
+#:   1er janvier 1979 et le 31 décembre 1997 », rapporté à la même durée (V). Le
+#:   minimum, 7 615,94 € par an depuis le 1er octobre 2017 (barème de la Cnav
+#:   « Montant minimum de la retraite personnelle », lu le 3 novembre 2026),
+#:   majoré à 8 322,13 € pour qui totalise « au moins 120 trimestres cotisés tous
+#:   régimes », comme la caisse l'écrit (fiche ``cultes_fractions_de_pension``).
+#:   Le maximum se retranche de la majoration : la fraction vaut le minimum au
+#:   prorata, quel que soit le maximum de l'année.
+#:
+#: La carrière ne laisse au droit rien à trancher sur l'activité : née le 15
+#: mars 1953, salariée de 1971 à 1975, sans activité de 1976 à 1979, ministre du
+#: culte de 1980 à 1987 et de 2005 à 2017 ; enfants d'avril 1976, juin 1978 et
+#: juin 1980 ; partie à 65 ans, effet le 1er avril 2018. L'enfant de 1976 ouvre
+#: le droit par son salariat : 8 trimestres cotisés en 1974 et 1975, aucun de
+#: 1976 à 1978, 20 d'activité avant. Elle valide 20 + 32 + 52 = 104 trimestres,
+#: 32 cotisés de 1979 à 1997, 104 cotisés en tout, moins de 120.
+CULTES_DE_BOUT_EN_BOUT = {
+    # Trois enfants : le taux plein à 65 ans, aux deux régimes ; avant 1998,
+    # 7 615,94 × 32 / 165 = 1 477,03 €, sans décote.
+    "trois enfants": (("1976-04", "1978-06", "1980-06"), "taux 50.000%", "1,477.03", False),
+    # LE CAS TÉMOIN, deux enfants : 5 trimestres jusqu'à 66 ans et 2 mois (13
+    # mois et 14 jours, au trimestre supérieur), moins que ceux qui lui manquent
+    # pour la durée ; 50 % × (1 − 5 × 1,25 %) = 46,875 %. Sa fraction d'avant 1998
+    # sous « décote 0.9375 », sans majoration, est la lecture du modèle, que la
+    # caisse décrit (« une décote qui sera appliquée sur le taux retenu pour le
+    # calcul de ces deux fractions ») et que la fiche ``cultes_fractions_de_pension``
+    # déclare : D. 721-6 du code de 1985 alloue cette fraction à soixante-cinq ans.
+    "deux enfants": (("1976-04", "1978-06"), "taux 46.875%", None, True),
 }
+
+
+def _ministre_du_culte(cle: str, naissances: tuple, cultes=(), salariat=(),
+                       ) -> Carriere:
+    """Née le 15 mars 1953, partie à 65 ans : salariée les années ``salariat``,
+    ministre du culte les années ``cultes``, sans activité les autres."""
+    lignes = [_emploi(an) if an in salariat else AnneeCarriere(
+        annee=an, revenu=20_000.0, trimestres_valides=4, affiliation="ministre_du_culte")
+        for an in range(1971, 2018) if an in salariat or an in cultes]
+    return Carriere(annee_naissance=1953, mois_naissance=3, jour_naissance=15, sexe="F",
+                    age_liquidation=65.0, nombre_enfants=len(naissances),
+                    naissances_enfants=naissances, identifiant=cle, lignes=lignes)
+
+
+def _avant_1998(detail: str) -> str:
+    """La fraction d'avant 1998 que le détail de la pension des cultes écrit."""
+    return detail[detail.index("avant 1998"):]
+
+
+def test_la_pension_des_cultes_de_bout_en_bout():
+    """La pension de la ministre du culte, dans les deux moteurs
+    (``droit_et_refait``) : ses deux fractions au taux plein à soixante-cinq ans,
+    celle d'avant 1998 majorée jusqu'au minimum ; le parent de deux enfants
+    garde la décote."""
+    import re
+
+    from outils_pont import droit_et_refait
+
+    cultes = (*range(1980, 1988), *range(2005, 2018))
+    appels = {cle: ("scenario_actuel.calculer", pont.MOTEUR, _ministre_du_culte(
+        cle, naissances, cultes=cultes, salariat=range(1971, 1976)))
+        for cle, (naissances, _, _, _) in CULTES_DE_BOUT_EN_BOUT.items()}
+    lus, refus = droit_et_refait(appels)
+    assert refus == {}, refus
+    for cle, (_, taux, avant_1998, decote) in CULTES_DE_BOUT_EN_BOUT.items():
+        pensions = {p["regime"]: p["detail"] for p in lus[cle]["pensions_par_regime"]}
+        assert taux in pensions["regime_general"] and taux in pensions["cavimac"], pensions
+        fraction = _avant_1998(pensions["cavimac"])
+        assert ("décote 0.9375" in fraction) is decote, fraction
+        if avant_1998 is not None:
+            assert re.search(r"\+ [\d,.]+ € pour 32 trimestres cotisés de 1979 à 1997 "
+                             r"\(minimum contributif\) = " + re.escape(avant_1998) + " €",
+                             fraction), fraction
+
+
+def test_les_annees_cultuelles_d_avant_1979_ne_sont_pas_cotisees():
+    """Les deux années qui précèdent la naissance ne comptent que « les trimestres
+    validés en contrepartie de cotisations à la charge de l'assuré » ou de la
+    maladie, de la maternité, du chômage, de la formation (décret n° 2011-620,
+    article 2, 1°). L'activité cultuelle d'avant 1979, la CAVIMAC la prend en
+    compte sans qu'aucune cotisation l'ait portée (D. 721-11 du code de 1985,
+    LEGIARTI000006739120 : « sont prises en compte pour l'ouverture du droit et
+    le calcul de la pension, les périodes d'exercice d'activités [...]
+    accomplies antérieurement au 1er janvier 1979 »), quand les cotisations de
+    1979 et après sont, pour leur part, « à la charge des assurés » (L. 382-25,
+    I, 1°, LEGIARTI000006742803). Ministre du culte de 1973, sans activité
+    ensuite jusqu'en 1999 ; enfants d'avril 1980, juin 1984 et juin 1986 : pour
+    celui de 1980, 1978 ne compte pas, 1979 donne 4 trimestres, moins de 8 ; pour
+    les deux autres, aucun trimestre les deux années d'avant : l'âge de la
+    génération, 66 ans et 2 mois. Le témoin, au culte jusqu'en 1980, enfants
+    d'avril 1981, juin 1984 et juin 1986 : 1979 et 1980, 8 trimestres cotisés ;
+    1981 à 1983, aucun ; 8 cotisés d'activité avant, l'activité cultuelle
+    comptée comme l'emploi (``NON_TRANCHE_CULTES``) : 65 ans, aux deux régimes."""
+    from outils_pont import droit_et_refait
+
+    cas = {
+        "enfant de 1980": (_ministre_du_culte(
+            "enfant de 1980", ("1980-04", "1984-06", "1986-06"),
+            cultes=(*range(1973, 1980), *range(2000, 2018))), AGE_DE_1953),
+        "enfant de 1981": (_ministre_du_culte(
+            "enfant de 1981", ("1981-04", "1984-06", "1986-06"),
+            cultes=(*range(1973, 1981), *range(2000, 2018))), DEROGATION),
+    }
+    appels = {f"{cle}|{regime}": ("liquider.decote_opposable", pont.MOTEUR,
+                                  pont.Periode(regime, carriere.annee_liquidation),
+                                  carriere, carriere.annee_liquidation)
+              for cle, (carriere, _) in cas.items() for regime in ("cavimac", "regime_general")}
+    lus, refus = droit_et_refait(appels)
+    assert refus == {}, refus
+    assert {cle: lu[1] for cle, lu in lus.items()} == {
+        f"{cle}|{regime}": pytest.approx(age, abs=0.005)
+        for cle, (_, age) in cas.items() for regime in ("cavimac", "regime_general")}
+
+
+#: LES POINTS D'AVANT 1973 DES ARTISANS ET DES COMMERÇANTS (décret n° 73-937,
+#: article 3, II, LEGIARTI000026474703, du 7 octobre 2012 au 1er septembre
+#: 2023) : un coefficient de minoration « fonction soit du nombre de trimestres
+#: manquant à la date d'effet de leur pension par rapport à la limite prévue au
+#: I, soit de leur soixante-cinquième anniversaire s'ils remplissent les
+#: conditions prévues [...] aux III ou IV de l'article 20 [...] ou, dans le cas
+#: contraire, de l'âge prévu au 1° de l'article L. 351-8 », « Le plus petit de
+#: ces deux nombres », « 1,25 % pour l'assuré né après 1952 ». L'assurée de
+#: ``REQUETE``, artisane ou commerçante dès dix-huit ans, partie à 65 ans le 1er
+#: avril 2018 : 0 trimestre jusqu'à son soixante-cinquième anniversaire, aucun
+#: coefficient ; le cas témoin, deux enfants, 5 trimestres jusqu'à 66 ans et 2
+#: mois, moins que ceux qui lui manquent pour la durée : 1 − 5 × 1,25 % = 0,9375.
+AVANT_1973 = {
+    "artisane": ({"statut": "artisan"}, {"cancava_avant_1973": None}),
+    "commerçante": ({"statut": "commercant"}, {"organic_avant_1973": None}),
+    "artisane, deux enfants": ({"statut": "artisan", "enfants": "2",
+                                "naissances": "1976-04, 1978-06"},
+                               {"cancava_avant_1973": 0.9375}),
+}
+
+
+def test_les_points_d_avant_1973_sans_minoration():
+    """Les points d'avant 1973, de la requête à la pension, dans les deux
+    moteurs (``servi_et_refait``)."""
+    assert _coefficients_servis(AVANT_1973) == {
+        cle: attendus for cle, (_, attendus) in AVANT_1973.items()}
+
+
+#: CE QUE LES TEXTES NE TRANCHENT PAS : l'activité cultuelle est-elle l'«
+#: activité professionnelle » du 2° et du 3° du IV (« Avoir validé [...] un
+#: nombre de trimestres minimum à raison de l'exercice d'une activité
+#: professionnelle ») ? Le code n'en dit que des « activités mentionnées à
+#: l'article L. 382-15 » (L. 382-27), le décret n° 2011-620 et la circulaire
+#: Cnav n° 2014-64 ne nomment pas les cultes, la CAVIMAC ne publie rien de la
+#: mesure. Le modèle la compte comme l'emploi, déclaré à la fiche : la ministre
+#: du culte de 1979 de la saisie (``MINISTRE_DU_CULTE``), ses 11 trimestres
+#: cultuels de 1979 à 1981 pour activité, a le taux plein à 65 ans ; avant 1998,
+#: 7 615,94 × 11 / 165 = 507,73 € (le maximum, 4 635,65 € × 11/165 = 309,04 €,
+#: et 198,69 € de majoration).
+NON_TRANCHE_CULTES = {"taux": "taux 50.000%", "avant 1998": "= 507.73 €"}
+
+
+def test_l_activite_cultuelle_compte_comme_l_emploi():
+    """Le point que les textes ne tranchent pas, dans les deux moteurs
+    (``servi_et_refait``), déclaré à la fiche."""
+    from outils_pont import servi_et_refait
+
+    servis, refus = servi_et_refait([{"cle": "ministre", "requete": {
+        **REQUETE, "liquidation": "65", **MINISTRE_DU_CULTE}}])
+    assert refus == {}, refus
+    detail = next(p["detail"] for p in servis["ministre"]["actuel"]["pensions_par_regime"]
+                  if p["regime"] == "cavimac")
+    assert NON_TRANCHE_CULTES["taux"] in detail, detail
+    fraction = _avant_1998(detail)
+    assert NON_TRANCHE_CULTES["avant 1998"] in fraction and "décote" not in fraction, detail
 
 #: Les régimes où le moteur lit encore l'âge de la génération, celui d'où se
 #: comptent leur décote ou leur coefficient : pour l'assurée « interrompue
@@ -294,13 +485,12 @@ ECARTS_DECLARES = {
 #: ans (``test_l_agirc_arrco_sert_ces_parents_sans_abattement``) : l'âge d'où elle
 #: compte leur coefficient avant soixante-cinq ans, et celui des points de la
 #: tranche C d'avant 2016, les textes lus ne le tranchent pas, et le modèle garde
-#: celui de la génération (``NON_TRANCHE``). Les points d'avant 1973 des artisans et des commerçants (décret
-#: n° 73-937, article 3, II : 0,9375 au lieu de 1), le RCI (règlement, article
-#: 12 : 0,95 au lieu de 1) s'y tiennent, par l'âge, à l'abri du paquet : leur
-#: pension de bout en bout passe par le RCO des artisans, que le paquet de main
-#: peut servir en retard sur le jumeau.
-ENCORE_A_L_AGE_DE_LA_GENERATION = ("arrco", "cavimac", "cancava_avant_1973",
-                                   "organic_avant_1973", "rci")
+#: celui de la génération (``NON_TRANCHE``). Le RCI (règlement, article 12 :
+#: 0,95 au lieu de 1) s'y tient, par l'âge, à l'abri du paquet : sa pension de
+#: bout en bout passe par le RCO des artisans, que le paquet de main peut servir
+#: en retard sur le jumeau. La CAVIMAC et les points d'avant 1973, écarts
+#: déclarés jusqu'au 3 novembre 2026, sont servis : ``ALIGNES``.
+ENCORE_A_L_AGE_DE_LA_GENERATION = ("arrco", "rci")
 
 #: Ce que la fiche doit dire de chaque écart, dans une approximation de la
 #: version de 2011 : le régime, ses textes, mot pour mot, et la valeur que le
@@ -314,8 +504,8 @@ DECLARATIONS = {
                        # l'AVPF d'un relevé ; l'année d'une période saisie au
                        # mois ; les neuf ans de L. 18, III.
                        "L. 331-3", "L. 381-1", "plus de la moitié", "L. 18, III"),
-    "CAVIMAC": ("L. 382-27", "décret n° 2006-1325, article 2, II", "46,875 %", "0,9375"),
-    "avant 1973": ("décret n° 73-937", "article 3, II", "0,9375"),
+    # Ce que les textes ne tranchent pas aux cultes.
+    "CAVIMAC": ("L. 382-27", "L. 382-15", "activité professionnelle", "D. 721-11"),
     "RCI": ("article 12", "sans aucun abattement", "0,95"),
 }
 
@@ -338,29 +528,11 @@ def test_ailleurs_le_moteur_lit_encore_l_age_de_la_generation():
         for regime in ENCORE_A_L_AGE_DE_LA_GENERATION}
 
 
-def test_ailleurs_le_modele_sert_encore_l_age_de_la_generation():
-    """Ce que le modèle sert encore où la même règle est écrite, dans les deux
-    moteurs (``servi_et_refait``) : chaque fois un écart déclaré, en attendant
-    le calcul."""
-    from outils_pont import servi_et_refait
-
-    cas = [{"cle": cle, "requete": {**REQUETE, "liquidation": "65", **champs}}
-           for cle, (champs, _, _) in ECARTS_DECLARES.items()]
-    servis, refus = servi_et_refait(cas)
-    assert refus == {}, refus
-    details = {cle: [p["detail"] for p in servis[cle]["actuel"]["pensions_par_regime"]
-                     if p["regime"] == regime]
-               for cle, (_, regime, _) in ECARTS_DECLARES.items()}
-    assert {cle: any(attendu in detail for detail in details[cle])
-            for cle, (_, _, attendu) in ECARTS_DECLARES.items()} == {
-        cle: True for cle in ECARTS_DECLARES}, details
-
-
 def test_la_fiche_declare_chaque_ecart():
     """Chaque écart a son approximation dans la version de 2011 : le régime, ses
-    textes cités, la valeur que le modèle sert encore. L'Agirc-Arrco n'y est
-    plus donnée pour garder l'âge de la génération : ses deux accords servent
-    ces parents sans abattement."""
+    textes cités, la valeur que le modèle sert encore, ou ce que les textes ne
+    tranchent pas. L'Agirc-Arrco n'y est plus donnée pour garder l'âge de la
+    génération : ses deux accords servent ces parents sans abattement."""
     from retraite_notionnelle.noyau import carte
 
     fiche = carte.fiches()[categories.FICHE_DES_SOIXANTE_CINQ_ANS]
@@ -517,8 +689,11 @@ def test_la_tranche_c_d_avant_2016_garde_son_coefficient():
 #: prouve pas une d'interruption, le congé durant seize semaines, vingt-six à
 #: partir du troisième enfant, trente-quatre ou quarante-six pour des naissances
 #: multiples (code de la sécurité sociale, L. 331-3, LEGIARTI000006742545, et
-#: L. 331-4, LEGIARTI000006742550 ; en 1978, seize semaines au code du travail,
-#: L. 122-26, LEGIARTI000006646774) — ; « au
+#: L. 331-4, LEGIARTI000006742550, auxquels renvoient les statuts des trois
+#: régimes, « d'une durée égale à celle prévue par la législation sur la
+#: sécurité sociale » ; pour la salariée, au code du travail, L. 122-26,
+#: quatorze semaines jusqu'au 30 septembre 1978, LEGIARTI000006646773, seize dès
+#: le 1er octobre, LEGIARTI000006646774) — ; « au
 #: titre des deux années précédant l'année de la naissance [...], d'une durée
 #: d'assurance, telle que définie à l'article L. 14, égale ou supérieure à huit
 #: trimestres » ; et huit trimestres de durée d'assurance « à raison de
@@ -590,8 +765,10 @@ CAS_FONCTIONNAIRES = {
     # Une année suffit : 1980, dans la fenêtre 1978-1980.
     "un an, 1980": ({"conges": {1980: "education_enfant"}}, DEROGATION),
     # Le congé de maternité est un congé de R. 13, 1°, a, mais R. 26 ter veut
-    # « une durée d'au moins une année » : seize semaines en 1978 (L. 122-26),
-    # seize à quarante-six depuis (L. 331-3 et L. 331-4) ; l'année que la saisie
+    # « une durée d'au moins une année » : en avril 1978, quatorze semaines
+    # pour la salariée (L. 122-26, rédaction de 1973), seize dès le 1er octobre
+    # 1978 ; au code de la sécurité sociale, de seize à quarante-six depuis
+    # (L. 331-3 et L. 331-4) ; l'année que la saisie
     # dit « congé de maternité » n'en prouve pas une.
     "un an de maternité, 1978": ({"conges": {1978: "maternite"}}, AGE_FP_DE_1955),
     # Le congé de maternité suivi d'un congé parental ou d'une disponibilité :
