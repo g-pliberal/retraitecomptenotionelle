@@ -164,6 +164,7 @@ export function ouvrir(moteur, releve, regimes = null) {
   // 160, une durée que plus aucune génération ne doit, et c'est elle que
   // l'abattement du régime en points opposait.
   for (const calculs of [["annuites"], ["points", "mixte"]]) {
+    const candidates = [];
     for (const code of codes) {
       if ((groupes.get(code) ?? [code])[0] !== code) {
         continue;
@@ -183,6 +184,13 @@ export function ouvrir(moteur, releve, regimes = null) {
       if (periode.age_table && periode.type_calcul !== "annuites") {
         continue;
       }
+      candidates.push([code, periode]);
+    }
+    // Ni une complémentaire en points sans table d'âges : la CARPV et la CAVEC
+    // se demandent à soixante ans, la base des libéraux à l'âge de
+    // L. 161-17-2 (L. 643-3, I). Voir le Python.
+    const retenues = calculs.includes("points") ? basesDAbord(moteur, candidates) : candidates;
+    for (const [code, periode] of retenues) {
       requisReference = Math.max(requisReference, dureeRequise(moteur, periode, carriere)[0]);
       opposants.push(code);
       const ageRegime = ageOuverture(moteur, periode, carriere);
@@ -982,7 +990,7 @@ export function periodesParcourues(moteur, carriere) {
 export function ageOuvertureDroit(moteur, carriereSaisie) {
   const carriere = coordonner.retablir(moteur, carriereSaisie);
   const { annuites, autres: enPoints } = periodesParcourues(moteur, carriere);
-  const autres = sansAgesPropres(enPoints);
+  const autres = sansAgesPropres(moteur, enPoints);
   const retenues = annuites.length > 0 ? annuites : autres;
   if (retenues.length === 0) {
     return null;
@@ -1095,15 +1103,30 @@ export function periodesOpposantUneDuree(periodes) {
  * `calculer` l'écarte déjà. Si rien d'autre ne reste, on la garde. Voir le
  * modèle Python.
  */
-export function sansAgesPropres(periodes) {
-  const communes = periodes.filter(([, periode]) => !periode.age_table);
-  return communes.length > 0 ? communes : periodes;
+export function sansAgesPropres(moteur, periodes) {
+  const retenues = basesDAbord(moteur, periodes);
+  const communes = retenues.filter(([, periode]) => !periode.age_table);
+  return communes.length > 0 ? communes : retenues;
+}
+
+/** Les étages des régimes qui servent la pension de base. */
+const ETAGES_DE_BASE = new Set(["base", "integre"]);
+
+/**
+ * Parmi des périodes en points, celles des régimes de base, s'il en reste :
+ * une complémentaire ne dit pas quand le droit de la base s'ouvre, même sans
+ * table d'âges. Voir `bases_d_abord` (ouvrir.py).
+ */
+export function basesDAbord(moteur, periodes) {
+  const bases = periodes.filter(
+    ([code]) => ETAGES_DE_BASE.has(moteur.catalogue.obtenir(code).etage));
+  return bases.length > 0 ? bases : periodes;
 }
 
 export function ageTauxPleinDroit(moteur, carriereSaisie) {
   const carriere = coordonner.retablir(moteur, carriereSaisie);
   const { annuites, autres: enPoints } = periodesParcourues(moteur, carriere);
-  const autres = sansAgesPropres(enPoints);
+  const autres = sansAgesPropres(moteur, enPoints);
   const retenues = annuites.length > 0 ? annuites : autres;
   if (retenues.length === 0) {
     return null;
@@ -1180,7 +1203,7 @@ export function ageTauxPleinDroit(moteur, carriereSaisie) {
 export function ageAnnulationDroit(moteur, carriereSaisie) {
   const carriere = coordonner.retablir(moteur, carriereSaisie);
   const { annuites, autres } = periodesParcourues(moteur, carriere);
-  const retenues = annuites.length > 0 ? annuites : sansAgesPropres(autres);
+  const retenues = annuites.length > 0 ? annuites : sansAgesPropres(moteur, autres);
   if (retenues.length === 0) {
     return null;
   }
@@ -1199,7 +1222,7 @@ export function finIndemnisation(moteur, carriereSaisie) {
   const chomage = chomageComplementaires(moteur.macro.paquet);
   const carriere = coordonner.retablir(moteur, carriereSaisie);
   const { annuites, autres: enPoints } = periodesParcourues(moteur, carriere);
-  const autres = sansAgesPropres(enPoints);
+  const autres = sansAgesPropres(moteur, enPoints);
   const retenues = annuites.length > 0 ? annuites : autres;
   if (retenues.length === 0) {
     return null;

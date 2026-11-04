@@ -40,6 +40,12 @@ export const ETAGES_DES_UNITES = new Set(["base", "integre"]);
 /** Le RAFP, que l'article 6 du décret n° 2004-569 n'ouvre qu'à l'âge légal. */
 export const RAFP = "rafp";
 
+/**
+ * Les complémentaires que leurs statuts font demander à leur âge, sans la
+ * base : elles forment une unité à elles. Voir `SANS_LEUR_BASE` (departs.py).
+ */
+export const SANS_LEUR_BASE = new Set(["carpv_complementaire", "cavec_complementaire"]);
+
 /** Ce qui date un départ, par rapport au départ déclaré. */
 export const MOTIF_DEPART = "depart";
 export const MOTIF_OUVERTURE = "ouverture";
@@ -200,7 +206,7 @@ function ouvertureDe(moteur, carriere, unite) {
   }
   const annuites = periodes.filter(([, p]) => p.type_calcul === "annuites");
   const autres = periodes.filter(([, p]) => p.type_calcul !== "annuites");
-  const retenues = annuites.length > 0 ? annuites : ouvrirLeDroit.sansAgesPropres(autres);
+  const retenues = annuites.length > 0 ? annuites : ouvrirLeDroit.sansAgesPropres(moteur, autres);
   if (retenues.length === 0) {
     return carriere.dateLiquidation;
   }
@@ -391,7 +397,10 @@ export function departsEtDemandes(moteur, carriereSaisie) {
   if (bases.length === 0) {
     return [unique, examiner(demandees, new Map(), new Set(), null)];
   }
-  const unites = unitesDe(moteur, carriere, bases, routes);
+  // La CARPV et la CAVEC se demandent à leur âge, sans la base : chacune est
+  // une unité, que sa date sépare de la base quand elle s'ouvre avant elle.
+  const unites = [...unitesDe(moteur, carriere, bases, routes),
+    ...codes.filter((code) => SANS_LEUR_BASE.has(code)).map((code) => new Set([code]))];
   const uniteDe = new Map();
   unites.forEach((unite, i) => {
     for (const code of unite) {

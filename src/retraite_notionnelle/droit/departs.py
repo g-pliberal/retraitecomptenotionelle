@@ -81,6 +81,17 @@ ETAGES_DES_UNITES = frozenset({"base", "integre"})
 #: Le RAFP, que l'article 6 du décret n° 2004-569 n'ouvre qu'à l'âge légal.
 RAFP = "rafp"
 
+#: Les complémentaires que leurs statuts font demander à leur âge, sans la
+#: base : chacune forme une unité à elle. La CARPV, « dès leur soixantième
+#: anniversaire », sous la seule condition d'« avoir versé les cotisations
+#: exigibles de l'ensemble des régimes appelés par la CARPV » (statuts de
+#: 2021, articles 33 et 34 ; règlement de 2026, articles 1er et 2) ; la
+#: CAVEC, « entre 60 et 65 ans, avec application d'un abattement définitif de
+#: 1,25 % par trimestre manquant » (statuts de 2008, article 3.13 ; de 2018,
+#: partie 2, article 12 ; règlement de 2026, article 1.1.3). Ni leurs textes,
+#: ni L. 643-3, ni L. 644-1 ne les lient à la liquidation de la base.
+SANS_LEUR_BASE = frozenset({"carpv_complementaire", "cavec_complementaire"})
+
 #: Ce qui date un départ, par rapport au départ déclaré.
 MOTIF_DEPART = "depart"
 MOTIF_OUVERTURE = "ouverture"
@@ -238,7 +249,7 @@ def _ouverture(moteur: ScenarioActuel, carriere: Carriere,
                     moteur.catalogue[code], carriere.date_liquidation)) is not None]
     annuites = [(c, p) for c, p in periodes if p.type_calcul == "annuites"]
     autres = [(c, p) for c, p in periodes if p.type_calcul != "annuites"]
-    retenues = annuites or ouvrir.sans_ages_propres(autres)
+    retenues = annuites or ouvrir.sans_ages_propres(moteur, autres)
     if not retenues:
         return carriere.date_liquidation
     age = min(ouvrir.age_ouverture(moteur, periode, carriere) for _, periode in retenues)
@@ -401,7 +412,10 @@ def departs_et_demandes(moteur: ScenarioActuel, carriere: Carriere
              if moteur.catalogue[code].etage in ETAGES_DES_UNITES]
     if not bases:
         return unique, _examiner(demandees, {}, set(), None)
-    unites = _unites(moteur, carriere, bases, routage)
+    # La CARPV et la CAVEC se demandent à leur âge, sans la base : chacune est
+    # une unité, que sa date sépare de la base quand elle s'ouvre avant elle.
+    unites = [*_unites(moteur, carriere, bases, routage),
+              *(frozenset({code}) for code in codes if code in SANS_LEUR_BASE)]
     unite_de = {code: i for i, unite in enumerate(unites) for code in unite}
 
     # Chaque complémentaire suit les unités dont elle partage les années.

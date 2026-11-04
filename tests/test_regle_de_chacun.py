@@ -110,11 +110,6 @@ A_L_ANNEE_D_EFFET = {
         "loi n° 86-19 du 6 janvier 1986, article 11 (LEGIARTI000006757038) : "
         "soixante ans pour les pensions « prenant effet postérieurement au "
         "1er janvier 1986 », soixante-cinq avant (lu le 14 octobre 2026)")),
-    ("cnavpl", "age"): (2004, 2004, (
-        "loi n° 2003-775, article 96, I (LEGIARTI000006758646) : le régime en "
-        "points des professions libérales « entre en vigueur le 1er janvier "
-        "2004 » ; L. 643-3 ouvre la pension à l'âge de L. 351-1, au lieu de "
-        "l'allocation à soixante-cinq ans (lu le 14 octobre 2026)")),
     ("cnbf", "age"): (2004, 2004, (
         "loi n° 2003-775, article 97, II (JORFARTI000002429604) : L. 723-10-1, "
         "l'âge de L. 351-1 et la durée du taux plein, « entrent en vigueur le "

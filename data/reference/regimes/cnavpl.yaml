@@ -44,7 +44,7 @@ periodes:
   - debut: 1949
     fin: 2003
     type_calcul: points
-    age_ouverture: 65
+    age_ouverture: 60
     age_taux_plein: 65
     duree_requise_trimestres: null
     taux_plein: 1.0
@@ -52,7 +52,8 @@ periodes:
     assiette: plafonnee_5_pass
     taux_cotisation_retraite: 0.085
     points_par_trimestre_valide: 100
-    decote_par_trimestre: null
+    decote_par_trimestre: 0.0125
+    decote_annulee_par_la_duree: cnavpl_allocation_avant_2004
     surcote_par_trimestre: null
     avantages_non_contributifs: [minimum_vieillesse, reversion]
     notes: >-
@@ -74,6 +75,15 @@ periodes:
       40 000 € de pension de base, quand le régime en servait 3 809 € en
       moyenne en 2003 — quarante ans de cotisations ne pouvant dépasser
       16 000 points, soit 10 500 € au point de 2025.
+      L'ÂGE : l'allocation se demande « sans pouvoir être antérieure au
+      soixante-cinquième anniversaire » (R. 643-6, LEGIARTI000006751828),
+      mais « à partir de l'âge de soixante ans » avec les « coefficients
+      d'anticipation » de 0,75 à soixante ans à 0,95 à soixante-quatre
+      (R. 643-7, LEGIARTI000006751830), du 21 décembre 1985 au
+      31 décembre 2003 : la fiche cnavpl_allocation_avant_2004, lue le
+      3 novembre 2026. Elle disait soixante-cinq ans sans anticipation ;
+      les complémentaires, ouvertes à soixante ans, ouvraient la base avec
+      elles, sans coefficient.
       CE QUI RESTE CONVENTIONNEL EST LA COTISATION, non la pension. La
       cotisation de base était forfaitaire jusqu'en 1992 ; le 1er janvier
       1993 (loi n° 91-73 du 18 janvier 1991), « une fraction de la

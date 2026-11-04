@@ -27,8 +27,25 @@ population: >-
   de 60 ans avec coefficient d'anticipation » (guide de l'assurance
   vieillesse des professions libérales, CNAVPL, 2025, p. 93), que le guide
   ne chiffre pas : la fiche présume 1,25 % par trimestre, celui des
-  auxiliaires médicaux. Le règlement de la section approuvé par l'arrêté
-  du 10 juillet 2026 n'est pas lu.
+  auxiliaires médicaux. Les textes, lus le 3 novembre 2026, ne disent pas
+  soixante ans : « Le biologiste remplissant les conditions pour prétendre
+  au versement de la prestation supplémentaire de vieillesse peut demander
+  à en bénéficier à partir de l'âge fixé à l'article L. 161-17-2 du code de
+  la sécurité sociale. A titre transitoire, pour les biologistes nés avant
+  le 1er janvier 1956, l'âge d'ouverture du droit à la prestation
+  supplémentaire de vieillesse est fixé selon le calendrier figurant à
+  l'article D. 161-2-1-9 » (statuts de la CAVP, article 14, arrêté du
+  23 juin 2011, JORFARTI000024270214, publié le 29 juin 2011, sans date
+  d'effet : le 30 juin 2011) ; « Le biologiste médical peut demander à
+  bénéficier de la prestation du présent régime à partir de l'âge fixé à
+  l'article L. 161-17-2 du code de la sécurité sociale » (règlement
+  approuvé par l'arrêté du 10 juillet 2026, III, article 1er,
+  JORFARTI000054436087). L'âge s'ouvre donc à la génération depuis la
+  période de 2009 : liquidée avant le 30 juin 2011, une prestation ne
+  pouvait l'être que par un assuré né avant le 1er juillet 1951, à qui
+  la table rend soixante ans. Les statuts d'avant 2011, au seul Bulletin
+  officiel, ne sont pas lus : les soixante ans d'avant 2009 restent ceux
+  du guide.
 hors_repartition: false
 inventaire:
   section: non_salaries
@@ -118,6 +135,7 @@ periodes:
     fin: 2012
     type_calcul: points
     age_ouverture: 60
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
     duree_requise_trimestres: null
     taux_plein: 1.0
@@ -143,6 +161,7 @@ periodes:
     fin: 2014
     type_calcul: points
     age_ouverture: 60
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
     duree_requise_trimestres: null
     taux_plein: 1.0
@@ -170,6 +189,7 @@ periodes:
     fin: 2021
     type_calcul: points
     age_ouverture: 60
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
     duree_requise_trimestres: null
     taux_plein: 1.0
@@ -197,6 +217,7 @@ periodes:
     fin: 2024
     type_calcul: points
     age_ouverture: 60
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
     duree_requise_trimestres: null
     taux_plein: 1.0
@@ -225,6 +246,7 @@ periodes:
     fin: null
     type_calcul: points
     age_ouverture: 60
+    age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
     duree_requise_trimestres: null
     taux_plein: 1.0

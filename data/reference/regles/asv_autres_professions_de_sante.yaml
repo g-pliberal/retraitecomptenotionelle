@@ -174,9 +174,18 @@ approximations:
     les âges et la minoration, lus au guide de la CNAVPL de 2025, sont présumés à toutes
     les années : pour l'auxiliaire médical, le taux plein à soixante-cinq ans et le départ
     dès soixante, au coefficient de 0,75 à 0,95 ; pour le directeur de laboratoire, le
-    taux plein à soixante-sept ans et le départ dès soixante, au coefficient de
-    l'auxiliaire, que le guide ne chiffre pas ; pour le chirurgien-dentiste et la
-    sage-femme, le taux plein à soixante-sept ans et 1,25 % par trimestre manquant
+    taux plein à soixante-sept ans et 1,25 % par trimestre manquant, que le guide ne
+    chiffre pas ; pour le chirurgien-dentiste et la sage-femme, le taux plein à
+    soixante-sept ans et 1,25 % par trimestre manquant. Le départ du directeur de
+    laboratoire, que le guide dit possible dès soixante ans, se lit depuis le
+    30 juin 2011 aux statuts de la CAVP, article 14 (arrêté du 23 juin 2011,
+    JORFARTI000024270214) : « à partir de l'âge fixé à l'article L. 161-17-2 », et au
+    règlement de 2026, article 1er (arrêté du 10 juillet 2026, III,
+    JORFARTI000054436087) ; le modèle l'ouvre à l'âge de la génération depuis le
+    3 novembre 2026. Les mêmes textes minorent « dans la limite de vingt trimestres »
+    jusqu'à « l'âge fixé à l'article L. 351-8 (1°) », soixante-cinq ans aux générations
+    nées avant le 1er juillet 1951 : le modèle compte jusqu'à soixante-sept ans à toute
+    génération
   effet: non mesuré
 - version: [forfaits_en_euros, quatre_forfaits]
   ecart: >-

@@ -1,0 +1,166 @@
+schema_version: 1
+id: cnavpl_allocation_avant_2004
+intitule: >-
+  L'allocation de vieillesse des professions libérales, jusqu'au 31 décembre 2003 : à 65
+  ans, ou dès 60 ans, à la cessation de l'activité, affectée des coefficients
+  d'anticipation de R. 643-7 — 0,75 à 60 ans, 0,80 à 61, 0,85 à 62, 0,90 à 63, 0,95 à 64
+  —, que la durée n'annule pas.
+domaine: decote_surcote
+regimes: [cnavpl]
+etape: liquider_chaque_regime
+face: droit
+etat: approchee
+lit:
+- l'âge de l'assuré à l'entrée en jouissance de l'allocation
+- la date d'effet de l'allocation, avant le 1er janvier 2004
+ecrit:
+- >-
+  l'âge d'ouverture de la base (60 ans) et le coefficient d'anticipation de
+  l'allocation, que `abattement_points` rend à `liquider_chaque_regime`
+dates_qui_decident:
+- liquidation.date_effet
+versions:
+- id: avant_le_code
+  statut: supposee
+  hypothese: >-
+    avant le 21 décembre 1985, l'allocation relève des décrets que le code de 1985
+    reprend, que l'index LEGI du dépôt ne porte pas : la fiche présume la règle du code
+  fiabilite: >-
+    faible : rien n'est lu avant la codification de 1985, ni la date à laquelle
+    l'anticipation dès soixante ans est née
+  bornes:
+    liquidation.date_effet: [null, 1985-12-21]
+  contenu:
+    parametres:
+      age_ouverture: 60
+      age_taux_plein: 65
+      decote_par_trimestre: 0.0125
+    droit: celui de la version code_de_1985, présumé
+  exemples: aucun trouvé
+- id: code_de_1985
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006751830, article: "R. 643-7 CSS", en_vigueur: 1985-12-21}
+  - {id: LEGIARTI000006751828, article: "R. 643-6 CSS", en_vigueur: 1985-12-21}
+  - {id: LEGIARTI000006743793, article: "L. 643-5 CSS", en_vigueur: 1985-12-21}
+  - {id: LEGIARTI000006743786, article: "L. 643-2 CSS", en_vigueur: 1985-12-21}
+  nee_de: LEGIARTI000006751830
+  bornes:
+    liquidation.date_effet: [1985-12-21, 2004-01-01]
+  contenu:
+    droit: >-
+      « L'allocation est liquidée sur demande de l'intéressé. L'entrée en jouissance de
+      l'allocation est fixée au premier jour du trimestre civil qui suit cette demande
+      sans pouvoir être antérieure au soixante-cinquième anniversaire, ou au soixantième
+      au profit des personnes mentionnées au deuxième alinéa de l'article L. 643-2 »
+      (R. 643-6) ; « Les assurés peuvent recevoir à partir de l'âge de soixante ans et
+      dans les conditions fixées à l'article L. 643-5 une allocation de vieillesse
+      calculée conformément aux articles R. 643-10 à R. 643-15 et affectée des
+      coefficients d'anticipation déterminés comme suit : 1°) 0,75 si l'allocation est
+      attribuée lorsque l'assuré est âgé de soixante ans ; 2°) 0,80 si l'allocation est
+      attribuée lorsque l'assuré est âgé de soixante et un ans ; 3°) 0,85 si
+      l'allocation est attribuée lorsque l'assuré est âgé de soixante-deux ans ; 4°)
+      0,90 si l'allocation est attribuée lorsque l'assuré est âgé de soixante-trois ans
+      ; 5°) 0,95 si l'allocation est attribuée lorsque l'assuré est âgé de
+      soixante-quatre ans » (R. 643-7) ; « Un décret en Conseil d'Etat fixe l'âge à
+      partir duquel l'allocation de vieillesse peut être attribuée avec application de
+      coefficients d'anticipation fixés par décret et sous réserve de la cessation de
+      l'activité professionnelle libérale au titre de laquelle l'allocation est
+      demandée » (L. 643-5)
+    parametres:
+      age_ouverture: 60
+      age_taux_plein: 65
+      decote_par_trimestre: 0.0125
+    conditions: >-
+      la cessation de l'activité libérale (L. 643-5), que le départ déclaré représente ;
+      les coefficients ne dépendent que de l'âge, aucune durée ne les annule
+  exemples: aucun trouvé
+- id: pension_en_points
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006743789, article: "L. 643-3 CSS", en_vigueur: 2004-01-01}
+  nee_de: LEGIARTI000006743789
+  bornes:
+    liquidation.date_effet: [2004-01-01, null]
+  contenu:
+    droit: >-
+      l'allocation cède la place à la pension en points : « La liquidation de la
+      pension prévue à l'article L. 643-1 peut être demandée à partir de l'âge prévu au
+      premier alinéa de l'article L. 351-1 » (L. 643-3, I) ; son coefficient est celui de
+      la fiche bareme_minoration_regimes_en_points
+    parametres:
+      age_ouverture: age_legal_de_la_generation
+  exemples: aucun trouvé
+approximations:
+- version: [avant_le_code, code_de_1985]
+  textes: R. 643-7 CSS, LEGIARTI000006751830
+  ecart: >-
+    R. 643-7 compte l'âge en années révolues — « lorsque l'assuré est âgé de soixante
+    ans » : 0,75 jusqu'à la veille de ses soixante et un ans ; le modèle compte 1,25 %
+    par trimestre manquant avant soixante-cinq ans, arrondi au trimestre supérieur, ce
+    qui rend le même coefficient à chaque âge entier et un coefficient plus haut entre
+    deux : à 60 ans et 6 mois, 18 trimestres, 0,775, quand le texte dit 0,75
+  effet: >-
+    au plus trois trimestres, 3,75 % de l'allocation, pour un départ entre deux âges
+    entiers ; rien à un âge entier
+- version: [avant_le_code, code_de_1985]
+  textes: R. 643-6 CSS ; L. 643-2 CSS, deuxième alinéa
+  ecart: >-
+    l'inapte, le grand invalide, l'ancien déporté ou interné ont l'allocation à
+    soixante ans sans coefficient (R. 643-6, L. 643-2) ; les anciens prisonniers de
+    guerre, de soixante-cinq à soixante ans selon la captivité (R. 643-9) : le modèle
+    ne les sert pas ici, la fiche `inaptitude_au_travail` ne nommant pas la CNAVPL
+  effet: non mesuré
+- version: [avant_le_code, code_de_1985]
+  textes: R. 643-6 CSS
+  ecart: >-
+    l'entrée en jouissance est « fixée au premier jour du trimestre civil qui suit
+    cette demande » ; le modèle la date au premier jour du mois qui suit l'âge
+  effet: au plus deux mois d'allocation
+textes_sans_effet: []
+effet: >-
+  Tout libéral parti de 60 à 64 ans avant 2004 : le modèle le disait non ouvert à la
+  base, qu'il n'ouvrait qu'à 65 ans, et la lui servait pourtant sans coefficient quand
+  une complémentaire ouverte à 60 ans ouvrait la liquidation ; il la sert désormais dès
+  60 ans, au coefficient de R. 643-7.
+sources:
+  lu_le: 2026-11-03
+  prochaine_relecture: 2027-11-03
+  a_relire:
+  - >-
+    Lue le 3 novembre 2026 (file L de la vague 6, action 130), quand la base des
+    libéraux cessa de s'ouvrir à l'âge de ses complémentaires : elle ne s'ouvrait avant
+    2004 qu'à 65 ans dans la fiche du régime. Lire les décrets d'avant la codification
+    de 1985, au Journal officiel, pour dater l'anticipation dès soixante ans.
+  lectures:
+  - type: legifrance
+    reference: >-
+      R. 643-6 CSS (LEGIARTI000006751828) et R. 643-7 CSS (LEGIARTI000006751830), en
+      vigueur du 21 décembre 1985 au 1er janvier 2004, lus dans l'index LEGI du dépôt
+    date: 2026-11-03
+  - type: legifrance
+    reference: >-
+      L. 643-2 CSS (LEGIARTI000006743786) et L. 643-5 CSS (LEGIARTI000006743793), même
+      période ; R. 643-9 CSS (LEGIARTI000006751835), les anciens prisonniers de guerre
+    date: 2026-11-03
+code:
+  interrupteurs:
+    decote_annulee_par_la_duree: false
+  moteur: >-
+    `decote_annulee_par_la_duree: false` : la durée d'assurance n'annule pas le
+    coefficient d'anticipation, que seul l'âge efface, à soixante-cinq ans.
+  python: >-
+    droit/liquider.py : abattement_points, abattement_regime_de_base, decote_opposable,
+    trimestres_de_decote ; droit/ouvrir.py : age_ouverture, age_taux_plein
+  javascript: >-
+    moteur/js/droit/liquider.js : abattementPoints, abattementRegimeDeBase,
+    decoteOpposable, trimestresDeDecote ; moteur/js/droit/ouvrir.js : ageOuverture,
+    ageTauxPlein
+  parametres: >-
+    contenu.parametres de chaque version : age_ouverture, age_taux_plein,
+    decote_par_trimestre ; regimes/cnavpl.yaml : age_ouverture, age_taux_plein,
+    decote_par_trimestre
+  tests: [tests/test_ouverture_des_liberaux.py]
+historique:
+- >-
+  2026-11-03 — née, lue : l'allocation d'avant 2004 dès soixante ans, minorée (R. 643-7).

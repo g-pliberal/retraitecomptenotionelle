@@ -256,6 +256,7 @@ def ouvrir(moteur: ScenarioActuel, releve: Releve,
     # ailleurs : elles n'opposent pas la durée du régime de base, et ne
     # sont jamais seules sur une carrière.
     for calculs in (("annuites",), ("points", "mixte")):
+        candidates: list[tuple[str, PeriodeRegime]] = []
         for code in codes:
             if groupes.get(code, (code,))[0] != code:
                 continue
@@ -272,6 +273,16 @@ def ouvrir(moteur: ScenarioActuel, releve: Releve,
             # a les siens — la SNCF, la RATP, les IEG — le dit, lui.
             if periode.age_table and periode.type_calcul != "annuites":
                 continue
+            candidates.append((code, periode))
+        # Ni une complémentaire en points sans table d'âges. La CARPV et la
+        # CAVEC se demandent dès soixante ans (statuts de 2021, article 34 ;
+        # de 2018, partie 2, article 12), la base des libéraux « à partir de
+        # l'âge prévu au premier alinéa de l'article L. 351-1 » (L. 643-3,
+        # I) : le plus bas des deux ouvrait la base à soixante ans au
+        # vétérinaire et à l'expert-comptable de toute génération (relecture
+        # R-E-bis). Chacune se demande à son âge (:mod:`.departs`).
+        retenues = bases_d_abord(moteur, candidates) if "points" in calculs else candidates
+        for code, periode in retenues:
             requis_reference = max(
                 requis_reference, duree_requise(moteur, periode, carriere)[0]
             )
@@ -1134,7 +1145,7 @@ def age_ouverture_droit(moteur, carriere: Carriere) -> float | None:
     """
     carriere = coordonner.retablir(moteur, carriere)
     annuites, autres = periodes_parcourues(moteur, carriere)
-    autres = sans_ages_propres(autres)
+    autres = sans_ages_propres(moteur, autres)
     retenues = annuites or autres
     if not retenues:
         return None
@@ -1151,9 +1162,10 @@ def age_ouverture_droit(moteur, carriere: Carriere) -> float | None:
 
 
 def sans_ages_propres(
-        periodes: list[tuple[str, PeriodeRegime]],
+        moteur, periodes: list[tuple[str, PeriodeRegime]],
 ) -> list[tuple[str, PeriodeRegime]]:
-    """Les périodes en points, moins les complémentaires qui ont leurs âges.
+    """Les périodes en points, moins les complémentaires qui ont leurs âges,
+    et moins les complémentaires quand leur base est là (:func:`bases_d_abord`).
 
     Une complémentaire qui a SES âges — la CAVOM, la CARPIMKO et la CAVP
     ouvraient la leur à soixante ans aux générations d'avant 1956 et la
@@ -1164,9 +1176,31 @@ def sans_ages_propres(
     ans à un officier ministériel né en 1955 que le calcul refusait à cet
     âge. Si rien d'autre ne reste, on la garde.
     """
-    communes = [(code, periode) for code, periode in periodes
+    retenues = bases_d_abord(moteur, periodes)
+    communes = [(code, periode) for code, periode in retenues
                 if not periode.age_table]
-    return communes or periodes
+    return communes or retenues
+
+
+#: Les étages des régimes qui servent la pension de base.
+ETAGES_DE_BASE = frozenset({"base", "integre"})
+
+
+def bases_d_abord(moteur, periodes: list[tuple[str, PeriodeRegime]],
+                  ) -> list[tuple[str, PeriodeRegime]]:
+    """Parmi des périodes en points, celles des régimes de base, s'il en reste.
+
+    Une complémentaire ne dit pas quand le droit de la base s'ouvre, même
+    sans table d'âges : la CARPV, la CAVEC et les prestations des
+    biologistes ouvraient à soixante ans, et le plus bas des âges ouvrait
+    avec elles la base des libéraux, que L. 643-3, I, n'ouvre qu'à l'âge de
+    L. 161-17-2 (relecture R-E-bis). Si aucune base n'est là, les
+    complémentaires répondent : c'est la demande d'une complémentaire seule,
+    que :mod:`.departs` date à part.
+    """
+    bases = [(code, periode) for code, periode in periodes
+             if moteur.catalogue[code].etage in ETAGES_DE_BASE]
+    return bases or periodes
 
 
 def age_carriere_longue(moteur, carriere: Carriere,
@@ -1304,7 +1338,7 @@ def age_taux_plein_droit(moteur, carriere: Carriere) -> float | None:
     """
     carriere = coordonner.retablir(moteur, carriere)
     annuites, autres = periodes_parcourues(moteur, carriere)
-    autres = sans_ages_propres(autres)
+    autres = sans_ages_propres(moteur, autres)
     retenues = annuites or autres
     if not retenues:
         return None
@@ -1361,7 +1395,7 @@ def age_annulation_droit(moteur, carriere: Carriere) -> float | None:
     """
     carriere = coordonner.retablir(moteur, carriere)
     annuites, autres = periodes_parcourues(moteur, carriere)
-    retenues = annuites or sans_ages_propres(autres)
+    retenues = annuites or sans_ages_propres(moteur, autres)
     if not retenues:
         return None
     return min(age_taux_plein(moteur, periode, carriere) for _, periode in retenues)
@@ -1385,7 +1419,7 @@ def fin_indemnisation(moteur, carriere: Carriere) -> DateMois | None:
     chomage = charger_chomage_complementaires(moteur.macro.racine)
     carriere = coordonner.retablir(moteur, carriere)
     annuites, autres = periodes_parcourues(moteur, carriere)
-    autres = sans_ages_propres(autres)
+    autres = sans_ages_propres(moteur, autres)
     retenues = annuites or autres
     if not retenues:
         return None
