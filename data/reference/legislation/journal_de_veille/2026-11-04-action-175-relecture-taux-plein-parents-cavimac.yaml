@@ -1,0 +1,39 @@
+date: "2026-11-04"
+session: "action 175, file R-M4c : relecture indépendante du taux plein à 65 ans des parents de trois enfants à la CAVIMAC et aux points d'avant 1973 (commits 8eef32f et a45e7e5, file M4)"
+consulte: >-
+  python scripts/veille_droit.py ; docs/veille_droit.md. L'index de la DILA récupéré dans
+  la session (LEGI à jour au 3 novembre 2026 après l'incrément LEGI_20261103-214151, JORF
+  au 3 novembre) : L. 382-27 (LEGIARTI000019959668 et ses rédactions) ; loi n° 2010-1330,
+  article 20 (LEGIARTI000023023835) ; R. 351-27 (LEGIARTI000024113020) ; R. 351-6
+  (LEGIARTI000006749349) ; décret n° 2010-1734, article 9 (LEGIARTI000023383430) ; décret
+  n° 2006-1325, article 2 (LEGIARTI000023397816) ; D. 721-6 (LEGIARTI000006738898),
+  D. 721-11 (LEGIARTI000006739120), L. 721-3 (LEGIARTI000006744302 à
+  LEGIARTI000006744305) et L. 721-6 (LEGIARTI000006744307) du code de 1985 ; L. 382-25
+  (LEGIARTI000006742803) ; décret n° 73-937, article 3 (LEGIARTI000006765819,
+  LEGIARTI000026474703) ; décret n° 2011-620, article 2 (LEGIARTI000024111672) et sa
+  notice (JORFTEXT000024110091) ; D. 161-2-1-9 (LEGIARTI000025089933) ; L. 351-8
+  (LEGIARTI000028498855) ; décret n° 72-154, article 4 (LEGIARTI000006769789,
+  LEGIARTI000006769790). Les 68 fragments cités entre « » dans la fiche
+  taux_plein_a_soixante_cinq_ans, cherchés par script dans le texte de l'index : aucun
+  absent. Le barème « Montant minimum de la retraite personnelle » de la Cnav, relu par
+  son API : 7 615,94 € du 1er octobre 2017 au 31 décembre 2018.
+trouve: >-
+  Conforme, avec trois écarts faibles, sans effet sur aucune valeur servie. Le IV de
+  l'article 20 vaut « dans tous les régimes obligatoires de retraite auxquels s'appliquent
+  les dispositions de l'article L. 351-8 », et L. 382-27 les applique aux cultes ; le
+  décret n° 73-937, article 3, II, nomme « les III ou IV de l'article 20 ». La correction
+  des deux années d'avant la naissance suit le décret n° 2011-620 (« en contrepartie de
+  cotisations à la charge de l'assuré ») et ne déplace que les cultes d'avant 1979.
+  1 477,03 € ; 46,875 % ; 66 ans et 2 mois ; 65 ans ; 507,73 € ; 0,9375 se refont à la
+  main ; les deux moteurs les rendent, sous PRESOMPTIONS_DECALEES=1 aussi ; le paquet se
+  refait à l'octet. Les écarts de R-M4-bis sont corrigés. Écart 1 : D. 721-11 ne dit pas
+  « sans cotisation », et les cotisations de 1979 à 1997 se prouvent par L. 721-3 du code
+  de 1985, non par la seule rédaction de 2005 de L. 382-25. Écart 2 : l'effet chiffré du
+  point non tranché (289,73 €) est la valeur du modèle, non celle du texte, qui alloue à
+  65 ans la fraction d'avant 1998 (D. 721-6). Écart 3 : la note de M4 cite « le III ou
+  IV » de R. 351-27, dont le texte porte « au III ou IV ».
+reste: >-
+  À une file du modèle : les écarts 1 et 2, dans la fiche (note
+  2026-11-04-relecture-taux-plein-parents-cavimac.md de l'action 175). À la file des
+  cultes : la fraction d'avant 1998 à 65 ans hors des parents, et le minimum majoré du V
+  du décret n° 2006-1325, article 2, que M4 lui laisse.
