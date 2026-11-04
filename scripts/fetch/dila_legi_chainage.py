@@ -167,7 +167,8 @@ def _date_en_lettres_souple(iso: str) -> str:
     facultatifs."""
     annee, mois, jour = (int(x) for x in iso.split("-"))
     nom = _MOIS.split("|")[mois - 1]
-    return rf"{r'1(?:\s*er)?' if jour == 1 else jour}\s+{nom}\s+{annee}"
+    premier = r"1(?:\s*er)?"  # hors de la f-string : Python 3.11 y refuse la barre oblique
+    return rf"{premier if jour == 1 else jour}\s+{nom}\s+{annee}"
 
 
 def decrets_de_la_date(visas: list[str], iso: str) -> set[str]:
