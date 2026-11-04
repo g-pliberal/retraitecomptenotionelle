@@ -1,0 +1,30 @@
+date: "2026-11-04"
+session: "action 131, file K-ter de la vague 6 : les retouches de la relecture R-K-bis (commit cd360d1) — le taux de 17,37 % du compte de 2003 à 2025 et quatre écarts faibles"
+consulte: >-
+  python scripts/veille_droit.py ; docs/veille_droit.md ; la base de la Cnav, rien de neuf.
+  Les index LEGI (à jour au 2 novembre 2026) et JORF (au 3 novembre 2026) de la DILA,
+  récupérés dans la session, lus les 3 et 4 novembre : D. 731-121, D. 731-122, D. 731-124
+  et D. 731-125 du code rural, toutes leurs rédactions de l'index (2005 à 2026) ; le décret
+  n° 2004-1064, articles 12 à 17 ; au JORF, le décret n° 2012-847, articles 12 à 14, le
+  décret n° 2013-1223 (notice, article 2), le décret n° 2013-1290 (articles 2 et 5 à 9),
+  le décret n° 2014-1531 (article 5), le décret n° 2024-688 (notice, articles 5 et 6) ; le
+  décret n° 87-664, articles 1er à 3 ; l'article 1123 de l'ancien code rural, rédaction du
+  20 janvier 1991 ; D. 732-77 (LEGIARTI000006597491).
+trouve: >-
+  Le 17,37 % n'est fixé par aucun texte lu, et aucune somme ne le donne : sous le plafond,
+  D. 731-121, D. 731-122 et D. 731-124 (le décret annuel en 2003 et 2004) prélèvent 12,93 %
+  en 2003, 12,98 % en 2004, 13,03 % en 2005, 13,23 % de 2006 à 2011, 13,31 % en 2012,
+  13,48 % en 2013, 16,61 % en 2014, 16,81 % en 2015, 17,01 % en 2016, 17,11 % de 2017 à
+  2025 ; avec la complémentaire de D. 731-125, de 15,71 % à 16,21 % jusqu'en 2013, que le
+  décret n° 2013-1223 fond dans les autres le 1er janvier 2014, « le taux global des
+  cotisations sociales dues n'étant pas modifié ». Les 2,36 % de D. 731-124 du 7 juillet
+  2024 ne valent que depuis 2026 (décret n° 2024-688, article 6) : la somme la plus haute
+  de 2003 à 2025 est 17,11 %, non les 17,23 % de R-K-bis. Le décret n° 87-664 majore de
+  4 % les montants du a de 1987. La reconstitution de 1990 passe de −9,6 à −9,7 % au commit
+  79cbb6f de K. L'écart de taux de la moyenne P va jusqu'à 12,78 points (1952, 1971 et
+  1972 au plafond, départ en 1989 : 6,672 % au lieu de 19,452 %).
+reste: >-
+  Au propriétaire : le taux de 17,37 % du compte de 2003 à 2025, en plus des questions de
+  K-bis. Les taux depuis 2026 (D. 633-3 du code de la sécurité sociale, où renvoie
+  D. 731-121) : non lus. Le détail : note 2026-11-04-retouches-de-la-relecture-r-k-bis.md
+  de l'action 131.

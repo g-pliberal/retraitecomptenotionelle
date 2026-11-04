@@ -18,7 +18,7 @@ lit:
 - >-
   le revenu de l'année, borné au plafond, et le taux de la période de la fiche du régime
   (regimes/msa_non_salaries.yaml, taux_cotisation_retraite) : 8,5 % de 1953 à 2002, 4,25 %
-  en 1952 (fiche cotisation_agricole_de_1952)
+  en 1952 (fiche cotisation_agricole_de_1952), 17,37 % depuis 2003
 ecrit:
 - >-
   la cotisation de l'année au régime des non-salariés agricoles, que le scénario 1 change
@@ -174,6 +174,17 @@ versions:
       tranches de revenu cadastral ou les tranches de rémunération, au montant fixé dans
       les tableaux ci-dessous »
     lu_le: 2026-11-03
+  - id: LEGIARTI000006770506
+    article: >-
+      décret n° 87-664 du 13 août 1987 portant majoration exceptionnelle pour 1987 des
+      cotisations d'assurance maladie, invalidité et maternité ainsi que des cotisations
+      d'assurance vieillesse du régime de protection sociale des personnes non-salariées des
+      professions agricoles, article 2
+    en_vigueur: 1987-08-14
+    citation: >-
+      « Le montant des cotisations mentionnées à l'article 1123 (1°, a) du code rural, fixé
+      par l'article 10 du décret du 31 juillet 1987 susvisé, est majoré de 4 p. 100. »
+    lu_le: 2026-11-03
   - id: LEGIARTI000006772790
     article: décret n° 88-688 du 7 mai 1988, article 9
     en_vigueur: 1988-05-08
@@ -213,7 +224,9 @@ versions:
       deux cotisations, aucune en taux du revenu professionnel. Celle du a de l'article
       1123, due pour chaque membre non salarié d'au moins dix-huit ans, est un montant en
       francs par tranche de revenu cadastral de l'exploitation, que fixe le décret de
-      chaque année (de 340 F à 860 F en 1983, jusqu'à 2 010 F en 1989). Celle du b, à la
+      chaque année (de 340 F à 860 F en 1983, jusqu'à 2 010 F en 1989) ; ceux de 1987,
+      que fixe l'article 10 du décret n° 87-612, le décret n° 87-664 les majore de 4 %
+      (article 2). Celle du b, à la
       charge de l'exploitation, est la cotisation cadastrale de l'article 1125, dont
       l'article 1123 dit que « le montant global est fixé chaque année dans le budget
       annexe des prestations sociales agricoles » ; les décrets n'en fixent que le plafond
@@ -406,6 +419,19 @@ versions:
 - id: trois_taux_de_1993_a_2002
   statut: lue
   textes:
+  - id: LEGIARTI000006581060
+    article: >-
+      code rural (ancien), article 1123, rédaction du 20 janvier 1991
+    en_vigueur: 1991-01-20
+    citation: >-
+      « a) Une cotisation due pour chaque personne non salariée âgée d'au moins dix-huit
+      ans, à l'exception des chefs d'exploitation ou d'entreprise mentionnés à l'article
+      1121-1 ; b) Une cotisation due pour chaque chef d'exploitation ou d'entreprise. Cette
+      cotisation est calculée dans les conditions prévues à l'article 1125 ; c) Une
+      cotisation à la charge de chaque chef d'exploitation ou d'entreprise, calculée sur la
+      totalité des revenus professionnels ou sur l'assiette forfaitaire définis à l'article
+      1003-12. »
+    lu_le: 2026-11-03
   - id: LEGIARTI000006581061
     article: >-
       code rural (ancien), article 1123, rédaction du 1er janvier 1994
@@ -430,20 +456,6 @@ versions:
       pourcentage des revenus professionnels du chef d'exploitation ou d'entreprise ou de
       l'assiette forfaitaire, tels qu'ils sont définis aux articles L. 731-14 à L. 731-22
       »
-    lu_le: 2026-11-03
-  - id: LEGIARTI000006581061
-    article: >-
-      code rural (ancien), article 1123, rédaction du 1er janvier 1994
-    en_vigueur: 1994-01-01
-    citation: >-
-      « a) Une cotisation due pour chaque personne non salariée âgée d'au moins dix-huit
-      ans, à l'exception des chefs d'exploitation ou d'entreprise mentionnés à l'article
-      1121-1 ; b) Une cotisation due pour chaque chef d'exploitation ou d'entreprise et
-      une cotisation due pour chaque aide familial majeur au sens du 2° de l'article
-      1106-1. Cette cotisation est calculée dans les conditions prévues à l'article 1125 ;
-      c) Une cotisation à la charge de chaque chef d'exploitation ou d'entreprise,
-      calculée sur la totalité des revenus professionnels ou sur l'assiette forfaitaire
-      définis à l'article 1003-12. »
     lu_le: 2026-11-03
   - id: LEGIARTI000006777137
     article: décret n° 93-1153 du 8 octobre 1993, article 12
@@ -938,15 +950,491 @@ versions:
       l'assiette forfaitaire, tels qu'ils sont définis aux articles L. 731-14 à L. 731-22
       »
     lu_le: 2026-11-03
+  - id: LEGIARTI000006781454
+    article: >-
+      décret n° 2004-1064 du 6 octobre 2004 relatif au financement du régime de protection
+      sociale des personnes non salariées des professions agricoles pour 2004, article 12
+    en_vigueur: 2004-10-08
+    citation: >-
+      « Pour la cotisation mentionnée au 1° de l'article L. 731-42 du code rural, le taux
+      est fixé à 3,2 % des revenus professionnels du chef d'exploitation ou d'entreprise
+      agricole ou de l'assiette forfaitaire, tels qu'ils sont définis aux articles L. 731-14
+      à L. 731-21 du code rural, dans la limite du plafond prévu à l'article L. 241-3 du
+      code de la sécurité sociale. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006781455
+    article: >-
+      décret n° 2004-1064, article 13
+    en_vigueur: 2004-10-08
+    citation: >-
+      « La cotisation prévue au a du 2° de l'article L. 731-42 du code rural au titre du
+      chef d'exploitation ou d'entreprise agricole est calculée sur les revenus
+      professionnels ou l'assiette forfaitaire définis aux articles L. 731-14 à L. 731-21 du
+      code rural auxquels est appliqué un taux de 8,44 % dans la limite du plafond prévu à
+      l'article L. 241-3 du code de la sécurité sociale. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006781457
+    article: >-
+      décret n° 2004-1064, article 15
+    en_vigueur: 2004-10-08
+    citation: >-
+      « Le montant de la cotisation prévue au 3° de l'article L. 731-42 du code rural est
+      égal à la somme des deux éléments suivants : 1. La moitié du produit obtenu en
+      appliquant à la totalité des revenus professionnels ou de l'assiette forfaitaire
+      définis aux articles L. 731-14 à L. 731-21 du code rural un taux de 1,29 % ; 2. La
+      moitié du produit obtenu en appliquant à la totalité des revenus professionnels ou de
+      l'assiette forfaitaire définis aux articles L. 731-14 à L. 731-21 du code rural un
+      taux de 1,39 %. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006781458
+    article: >-
+      décret n° 2004-1064, article 16
+    en_vigueur: 2004-10-08
+    citation: >-
+      « Les taux des cotisations mentionnées aux 2° (a) et 3° de l'article L. 731-42 du code
+      rural dues pour la couverture des dépenses complémentaires afférentes à l'assurance
+      vieillesse agricole des chefs d'exploitation ou d'entreprise agricole, assises sur les
+      revenus professionnels ou l'assiette forfaitaire définis aux articles L. 731-14 à L.
+      731-21 du même code, sont fixés par arrêté préfectoral, sur proposition du comité
+      départemental des prestations sociales agricoles, dans la limite de plus ou moins 5 %
+      d'un taux moyen de 2,53 % sur la partie plafonnée des revenus professionnels ou de
+      l'assiette forfaitaire et de 0,25 % sur la totalité desdits revenus ou assiette
+      forfaitaire. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006597337
+    article: >-
+      code rural, D. 731-121, rédaction du 22 avril 2005
+    en_vigueur: 2005-04-22
+    citation: >-
+      « Pour l'année 2004, pour la cotisation mentionnée au 1° de l'article L. 731-42, le
+      taux est fixé à 3,2 % des revenus professionnels du chef d'exploitation ou
+      d'entreprise agricole ou de l'assiette forfaitaire, tels qu'ils sont définis aux
+      articles L. 731-14 à L. 731-21, dans la limite du plafond prévu à l'article L. 241-3
+      du code de la sécurité sociale. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006597341
+    article: >-
+      code rural, D. 731-122, rédaction du 22 avril 2005
+    en_vigueur: 2005-04-22
+    citation: >-
+      « Pour l'année 2004, la cotisation prévue au a du 2° de l'article L. 731-42 au titre
+      du chef d'exploitation ou d'entreprise agricole est calculée sur les revenus
+      professionnels ou l'assiette forfaitaire définis aux articles L. 731-14 à L. 731-21
+      auxquels est appliqué un taux de 8,44 % dans la limite du plafond prévu à l'article L.
+      241-3 du code de la sécurité sociale. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006597349
+    article: >-
+      code rural, D. 731-124, rédaction du 22 avril 2005
+    en_vigueur: 2005-04-22
+    citation: >-
+      « Pour l'année 2004, le montant de la cotisation prévue au 3° de l'article L. 731-42
+      est égal à la somme des deux éléments suivants : 1° La moitié du produit obtenu en
+      appliquant à la totalité des revenus professionnels ou de l'assiette forfaitaire
+      définis aux articles L. 731-14 à L. 731-21 un taux de 1,29 % ; 2° La moitié du produit
+      obtenu en appliquant à la totalité des revenus professionnels ou de l'assiette
+      forfaitaire définis aux articles L. 731-14 à L. 731-21 un taux de 1,39 %. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006597353
+    article: >-
+      code rural, D. 731-125, rédaction du 22 avril 2005
+    en_vigueur: 2005-04-22
+    citation: >-
+      « Pour l'année 2004, les taux des cotisations mentionnées aux 2° a) et 3° de l'article
+      L. 731-42 dues pour la couverture des dépenses complémentaires afférentes à
+      l'assurance vieillesse agricole des chefs d'exploitation ou d'entreprise agricole,
+      assises sur les revenus professionnels ou l'assiette forfaitaire définis aux articles
+      L. 731-14 à L. 731-21, sont fixés par arrêté préfectoral, sur proposition du comité
+      départemental des prestations sociales agricoles, dans la limite de plus ou moins 5 %
+      d'un taux moyen de 2,53 % sur la partie plafonnée des revenus professionnels ou de
+      l'assiette forfaitaire et de 0,25 % sur la totalité de ces revenus ou assiette
+      forfaitaire. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006597338
+    article: >-
+      code rural, D. 731-121, rédaction du 27 août 2005
+    en_vigueur: 2005-08-27
+    citation: >-
+      « Pour l'année 2005, pour la cotisation mentionnée au 1° de l'article L. 731-42, le
+      taux est fixé à 3,2 % des revenus professionnels du chef d'exploitation ou
+      d'entreprise agricole ou de l'assiette forfaitaire, tels qu'ils sont définis aux
+      articles L. 731-14 à L. 731-21, dans la limite du plafond prévu à l'article L. 241-3
+      du code de la sécurité sociale. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006597342
+    article: >-
+      code rural, D. 731-122, rédaction du 27 août 2005
+    en_vigueur: 2005-08-27
+    citation: >-
+      « Pour l'année 2005, la cotisation prévue au a du 2° de l'article L. 731-42 au titre
+      du chef d'exploitation ou d'entreprise agricole est calculée sur les revenus
+      professionnels ou l'assiette forfaitaire définis aux articles L. 731-14 à L. 731-21
+      auxquels est appliqué un taux de 8,44 % dans la limite du plafond prévu à l'article L.
+      241-3 du code de la sécurité sociale. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006597350
+    article: >-
+      code rural, D. 731-124, rédaction du 27 août 2005
+    en_vigueur: 2005-08-27
+    citation: >-
+      « Pour l'année 2005, pour la cotisation prévue au 3° de l'article L. 731-42, le taux
+      est fixé à 1,39 % de la totalité des revenus professionnels ou de l'assiette
+      forfaitaire définis aux articles L. 731-14 à L. 731-21. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006597354
+    article: >-
+      code rural, D. 731-125, rédaction du 27 août 2005
+    en_vigueur: 2005-08-27
+    citation: >-
+      « Pour l'année 2005, les taux des cotisations mentionnées aux 2° a) et 3° de l'article
+      L. 731-42 dues pour la couverture des dépenses complémentaires afférentes à
+      l'assurance vieillesse agricole des chefs d'exploitation ou d'entreprise agricole,
+      assises sur les revenus professionnels ou l'assiette forfaitaire définis aux articles
+      L. 731-14 à L. 731-21, sont fixés par arrêté préfectoral, sur proposition du comité
+      départemental des prestations sociales agricoles, dans la limite de plus ou moins 5 %
+      d'un taux moyen de 2,53 % sur la partie plafonnée des revenus professionnels ou de
+      l'assiette forfaitaire et de 0,25 % sur la totalité de ces revenus ou assiette
+      forfaitaire. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006597339
+    article: >-
+      code rural, D. 731-121, rédaction du 19 octobre 2006
+    en_vigueur: 2006-10-19
+    citation: >-
+      « Pour l'année 2006, pour la cotisation mentionnée au 1° de l'article L. 731-42, le
+      taux est fixé à 3,2 % des revenus professionnels du chef d'exploitation ou
+      d'entreprise agricole ou de l'assiette forfaitaire, tels qu'ils sont définis aux
+      articles L. 731-14 à L. 731-21, dans la limite du plafond prévu à l'article L. 241-3
+      du code de la sécurité sociale. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006597343
+    article: >-
+      code rural, D. 731-122, rédaction du 19 octobre 2006
+    en_vigueur: 2006-10-19
+    citation: >-
+      « Pour l'année 2006, la cotisation prévue au a du 2° de l'article L. 731-42 au titre
+      du chef d'exploitation ou d'entreprise agricole est calculée sur les revenus
+      professionnels ou l'assiette forfaitaire définis aux articles L. 731-14 à L. 731-21
+      auxquels est appliqué un taux de 8,64 % dans la limite du plafond prévu à l'article L.
+      241-3 du code de la sécurité sociale. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006597351
+    article: >-
+      code rural, D. 731-124, rédaction du 19 octobre 2006
+    en_vigueur: 2006-10-19
+    citation: >-
+      « Pour l'année 2006, pour la cotisation prévue au 3° de l'article L. 731-42, le taux
+      est fixé à 1,39 % de la totalité des revenus professionnels ou de l'assiette
+      forfaitaire définis aux articles L. 731-14 à L. 731-21. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006597355
+    article: >-
+      code rural, D. 731-125, rédaction du 19 octobre 2006
+    en_vigueur: 2006-10-19
+    citation: >-
+      « Pour l'année 2006, les taux des cotisations mentionnées aux 2° a) et 3° de l'article
+      L. 731-42 dues pour la couverture des dépenses complémentaires afférentes à
+      l'assurance vieillesse agricole des chefs d'exploitation ou d'entreprise agricole,
+      assises sur les revenus professionnels ou l'assiette forfaitaire définis aux articles
+      L. 731-14 à L. 731-21, sont fixés par arrêté préfectoral, sur proposition du comité
+      départemental des prestations sociales agricoles, dans la limite de plus ou moins 5 %
+      d'un taux moyen de 2,53 % sur la partie plafonnée des revenus professionnels ou de
+      l'assiette forfaitaire et de 0,25 % sur la totalité de ces revenus ou assiette
+      forfaitaire. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006597340
+    article: >-
+      code rural, D. 731-121, rédaction du 20 octobre 2007
+    en_vigueur: 2007-10-20
+    citation: >-
+      « Pour l'année 2007, pour la cotisation mentionnée au 1° de l'article L. 731-42, le
+      taux est fixé à 3,2 % des revenus professionnels du chef d'exploitation ou
+      d'entreprise agricole ou de l'assiette forfaitaire, tels qu'ils sont définis aux
+      articles L. 731-14 à L. 731-21, dans la limite du plafond prévu à l'article L. 241-3
+      du code de la sécurité sociale. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006597344
+    article: >-
+      code rural, D. 731-122, rédaction du 20 octobre 2007
+    en_vigueur: 2007-10-20
+    citation: >-
+      « Pour l'année 2007, la cotisation prévue au a du 2° de l'article L. 731-42 au titre
+      du chef d'exploitation ou d'entreprise agricole est calculée sur les revenus
+      professionnels ou l'assiette forfaitaire définis aux articles L. 731-14 à L. 731-21
+      auxquels est appliqué un taux de 8,64 % dans la limite du plafond prévu à l'article L.
+      241-3 du code de la sécurité sociale. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006597352
+    article: >-
+      code rural, D. 731-124, rédaction du 20 octobre 2007
+    en_vigueur: 2007-10-20
+    citation: >-
+      « Pour l'année 2007, pour la cotisation prévue au 3° de l'article L. 731-42, le taux
+      est fixé à 1,39 % de la totalité des revenus professionnels ou de l'assiette
+      forfaitaire définis aux articles L. 731-14 à L. 731-21. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000006597356
+    article: >-
+      code rural, D. 731-125, rédaction du 20 octobre 2007
+    en_vigueur: 2007-10-20
+    citation: >-
+      « Pour l'année 2007, les taux des cotisations mentionnées aux 2° a) et 3° de l'article
+      L. 731-42 dues pour la couverture des dépenses complémentaires afférentes à
+      l'assurance vieillesse agricole des chefs d'exploitation ou d'entreprise agricole,
+      assises sur les revenus professionnels ou l'assiette forfaitaire définis aux articles
+      L. 731-14 à L. 731-21, sont fixés par arrêté préfectoral, sur proposition du comité
+      départemental des prestations sociales agricoles, dans la limite de plus ou moins 5 %
+      d'un taux moyen de 2,53 % sur la partie plafonnée des revenus professionnels ou de
+      l'assiette forfaitaire et de 0,25 % sur la totalité de ces revenus ou assiette
+      forfaitaire. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000019506734
+    article: >-
+      code rural, D. 731-121, rédaction du 22 septembre 2008
+    en_vigueur: 2008-09-22
+    citation: >-
+      « Pour la cotisation mentionnée au 1° de l'article L. 731-42, le taux est fixé à 3, 2
+      % des revenus professionnels du chef d'exploitation ou d'entreprise agricole ou de
+      l'assiette forfaitaire, tels qu'ils sont définis aux articles L. 731-14 à L. 731-21,
+      dans la limite du plafond prévu à l'article L. 241-3 du code de la sécurité sociale. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000019506729
+    article: >-
+      code rural, D. 731-122, rédaction du 22 septembre 2008
+    en_vigueur: 2008-09-22
+    citation: >-
+      « La cotisation prévue au a du 2° de l'article L. 731-42 au titre du chef
+      d'exploitation ou d'entreprise agricole est calculée sur les revenus professionnels ou
+      l'assiette forfaitaire définis aux articles L. 731-14 à L. 731-21 auxquels est
+      appliqué un taux de 8, 64 % dans la limite du plafond prévu à l'article L. 241-3 du
+      code de la sécurité sociale. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000019506719
+    article: >-
+      code rural, D. 731-124, rédaction du 22 septembre 2008
+    en_vigueur: 2008-09-22
+    citation: >-
+      « Pour la cotisation prévue au 3° de l'article L. 731-42, le taux est fixé à 1, 39 %
+      de la totalité des revenus professionnels ou de l'assiette forfaitaire définis aux
+      articles L. 731-14 à L. 731-21. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000019506715
+    article: >-
+      code rural, D. 731-125, rédaction du 22 septembre 2008
+    en_vigueur: 2008-09-22
+    citation: >-
+      « Les taux des cotisations mentionnées aux 2° a) et 3° de l'article L. 731-42 dues
+      pour la couverture des dépenses complémentaires afférentes à l'assurance vieillesse
+      agricole des chefs d'exploitation ou d'entreprise agricole, assises sur les revenus
+      professionnels ou l'assiette forfaitaire définis aux articles L. 731-14 à L. 731-21,
+      sont fixés par arrêté préfectoral, sur proposition du comité départemental des
+      prestations sociales agricoles, dans la limite de plus ou moins 5 % d'un taux moyen de
+      2, 53 % sur la partie plafonnée des revenus professionnels ou de l'assiette
+      forfaitaire et de 0, 25 % sur la totalité de ces revenus ou assiette forfaitaire. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000021149863
+    article: >-
+      code rural, D. 731-125, rédaction du 15 octobre 2009
+    en_vigueur: 2009-10-15
+    citation: >-
+      « Les taux des cotisations mentionnées aux 2° a) et 3° de l'article L. 731-42 dues
+      pour la couverture des dépenses complémentaires afférentes à l'assurance vieillesse
+      agricole des chefs d'exploitation ou d'entreprise agricole, assises sur les revenus
+      professionnels ou l'assiette forfaitaire définis aux articles L. 731-14 à L. 731-21,
+      sont fixés à 2,53 % sur la partie plafonnée des revenus professionnels ou de
+      l'assiette forfaitaire et à 0,25 % sur la totalité de ces revenus ou assiette
+      forfaitaire. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000025095727
+    article: >-
+      code rural, D. 731-122, rédaction du 1er janvier 2012
+    en_vigueur: 2012-01-01
+    citation: >-
+      « Décret n° 2011-2039 du 29 décembre 2011 art 3 1° : Les taux prévus à l'article 1er
+      du présent décret s'appliquent aux cotisations dues par les personnes non salariées
+      agricoles au titre de l'année 2012. La cotisation prévue au a du 2° de l'article L.
+      731-42 au titre du chef d'exploitation ou d'entreprise agricole est calculée sur les
+      revenus professionnels ou l'assiette forfaitaire définis aux articles L. 731-14 à L.
+      731-21 auxquels est appliqué un taux de 8,67 % dans la limite du plafond prévu à
+      l'article L. 241-3 du code de la sécurité sociale. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000025095716
+    article: >-
+      code rural, D. 731-124, rédaction du 1er janvier 2012
+    en_vigueur: 2012-01-01
+    citation: >-
+      « Décret n° 2011-2039 du 29 décembre 2011 art 3 1° : Les taux prévus à l'article 1er
+      du présent décret s'appliquent aux cotisations dues par les personnes non salariées
+      agricoles au titre de l'année 2012. Pour la cotisation prévue au 3° de l'article L.
+      731-42, le taux est fixé à 1,41 % de la totalité des revenus professionnels ou de
+      l'assiette forfaitaire définis aux articles L. 731-14 à L. 731-21. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000025095712
+    article: >-
+      code rural, D. 731-125, rédaction du 1er janvier 2012
+    en_vigueur: 2012-01-01
+    citation: >-
+      « Décret n° 2011-2039 du 29 décembre 2011 art 3 1° : Les taux prévus à l'article 1er
+      du présent décret s'appliquent aux cotisations dues par les personnes non salariées
+      agricoles au titre de l'année 2012. Les taux des cotisations mentionnées aux 2° a) et
+      3° de l'article L. 731-42 dues pour la couverture des dépenses complémentaires
+      afférentes à l'assurance vieillesse agricole des chefs d'exploitation ou d'entreprise
+      agricole, assises sur les revenus professionnels ou l'assiette forfaitaire définis aux
+      articles L. 731-14 à L. 731-21, sont fixés à 2,50 % sur la partie plafonnée des
+      revenus professionnels ou de l'assiette forfaitaire et à 0,23 % sur la totalité de ces
+      revenus ou assiette forfaitaire. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000026140087
+    article: >-
+      code rural, D. 731-121, rédaction du 4 juillet 2012
+    en_vigueur: 2012-07-04
+    citation: >-
+      « Le taux de la cotisation mentionnée au 1° de l'article L. 731-42 est fixé à : a)
+      3,21 % pour l'année 2012 ; b) 3,26 % pour l'année 2013 ; c) 3,28 % pour l'année 2014 ;
+      d) 3,30 % pour l'année 2015 ; e) 3,32 % à compter de l'année 2016. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000026140079
+    article: >-
+      code rural, D. 731-122, rédaction du 4 juillet 2012
+    en_vigueur: 2012-07-04
+    citation: >-
+      « Le taux de la cotisation mentionnée au a du 2° de l'article L. 731-42 est fixé à :
+      a) 8,69 % pour l'année 2012 ; b) 8,81 % pour l'année 2013 ; c) 8,89 % pour l'année
+      2014 ; d) 8,97 % pour l'année 2015 ; e) 9,05 % à compter de l'année 2016. »
+    lu_le: 2026-11-03
+  - id: JORFTEXT000028388007
+    article: >-
+      décret n° 2013-1223 du 23 décembre 2013 relatif au financement de la gestion
+      administrative, de l'action sanitaire et sociale et du contrôle médical des régimes de
+      protection sociale agricole, notice
+    publie_le: 2013-12-27
+    citation: >-
+      « Entrée en vigueur : le texte entre en vigueur le 1er janvier 2014. » ; « Enfin, le
+      décret supprime toute référence aux notions de cotisations techniques et de
+      cotisations complémentaires qui ne sont plus pertinentes à la suite de la réforme, le
+      taux global des cotisations sociales dues n'étant pas modifié. »
+    lu_le: 2026-11-03
+  - id: JORFARTI000028388031
+    article: >-
+      décret n° 2013-1223, article 2
+    publie_le: 2013-12-27
+    citation: >-
+      « 13° A l'article D. 731-122, les taux : « 8,69 % », « 8,81 % », « 8,89 % », « 8,97 %
+      » et « 9,05 % » sont remplacés respectivement par les taux : « 11,19 % », « 11,31 % »,
+      « 11,39 % », « 11,47 % » et « 11,55 % » ; 14° A l'article D. 731-124, le taux : « 1,41
+      % » est remplacé par le taux : « 1,64 % » »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000028393435
+    article: >-
+      code rural, D. 731-122, rédaction du 1er janvier 2014
+    en_vigueur: 2014-01-01
+    citation: >-
+      « Le taux de la cotisation mentionnée au a du 2° de l'article L. 731-42 est fixé à :
+      a) 11,19 % pour l'année 2012 ; b) 11,31 % pour l'année 2013 ; c) 11,39 % pour l'année
+      2014 ; d) 11,47 % pour l'année 2015 ; e) 11,55 % à compter de l'année 2016. »
+    lu_le: 2026-11-03
+  - id: JORFARTI000028408321
+    article: >-
+      décret n° 2013-1290 du 27 décembre 2013 modifiant les taux des cotisations d'assurance
+      vieillesse de divers régimes de sécurité sociale et des cotisations d'allocations
+      familiales, article 9
+    publie_le: 2013-12-31
+    citation: >-
+      « Le présent décret s'applique aux cotisations de sécurité sociale dues au titre des
+      périodes courant à compter du 1er janvier 2014. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000028435889
+    article: >-
+      code rural, D. 731-124, rédaction du 1er janvier 2014
+    en_vigueur: 2014-01-01
+    citation: >-
+      « Le taux de la cotisation mentionnée au 3° de l'article L. 731-42, appliqué à la
+      totalité des revenus professionnels ou de l'assiette forfaitaire définis aux articles
+      L. 731-14 à L. 731-21, est fixé à 1,94 %. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000029924569
+    article: >-
+      code rural, D. 731-124, rédaction du 1er janvier 2015
+    en_vigueur: 2015-01-01
+    citation: >-
+      « Conformément au décret n° 2014-1531 du 17 décembre 2014 article 13 II, ces
+      dispositions s'appliquent aux cotisations de sécurité sociale dues au titre des
+      périodes courant à compter du 1er janvier 2015. Le taux de la cotisation mentionnée au
+      3° de l'article L. 731-42, appliqué à la totalité des revenus professionnels ou de
+      l'assiette forfaitaire définis aux articles L. 731-14 à L. 731-22, est fixé à : a)
+      2,04 % pour l'année 2015 ; b) 2,14 % pour l'année 2016 ; c) 2,24 % à compter de
+      l'année 2017. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000049904742
+    article: >-
+      code rural, D. 731-124, rédaction du 7 juillet 2024
+    en_vigueur: 2024-07-07
+    citation: >-
+      « Conformément au décret n° 2014-1531 du 17 décembre 2014 article 13 II, ces
+      dispositions s'appliquent aux cotisations de sécurité sociale dues au titre des
+      périodes courant à compter du 1er janvier 2015. Le taux de la cotisation mentionnée au
+      3° de l'article L. 731-42, appliqué à la totalité de l'assiette déterminée en
+      application des articles L. 731-15, L. 731-16 et L. 731-22, est fixé à 2,36 %. »
+    lu_le: 2026-11-03
+  - id: JORFARTI000049888606
+    article: >-
+      décret n° 2024-688 du 5 juillet 2024, article 6
+    publie_le: 2024-07-06
+    citation: >-
+      « Les dispositions des articles 1er, 2 et 5 s'appliquent au calcul des cotisations et
+      des contributions dues par les travailleurs indépendants agricoles au titre des
+      périodes courant à compter du 1er janvier 2026. »
+    lu_le: 2026-11-03
+  - id: LEGIARTI000053296666
+    article: >-
+      code rural, D. 731-121, rédaction du 1er janvier 2026
+    en_vigueur: 2026-01-01
+    citation: >-
+      « Conformément au I de l’article 5 du décret n° 2025-1417 du 30 décembre 2025, ces
+      dispositions, dans leur rédaction résultant de l’article 4 du décret précité, entrent
+      en vigueur le 1 er janvier 2026 et s'appliquent aux cotisations dues au titre des
+      périodes courant à compter de cette date. Se reporter aux modalités d'application
+      prévues par le II de l'article 5 du décret n° 2025-1417 du 30 décembre 2025. Les taux
+      applicables à la cotisation prévue au 1° de l'article L. 731-42 sont égaux à ceux
+      fixés respectivement au I de l'article D. 633-3 du code de la sécurité sociale pour la
+      part calculée sur l'assiette retenue dans la limite du plafond mentionné au premier
+      alinéa de l'article L. 241-3 du même code et au II du même article pour la part
+      calculée sur la totalité de l'assiette. »
+    lu_le: 2026-11-03
   bornes:
     revenu.annee: [2003-01-01, null]
   contenu:
     droit: >-
-      en 2003, les taux de 2002 : 3,2 % au 1° de L. 731-42, 8,44 % au a du 2°, bornés au
-      plafond, 1,29 % au 3°, sur la totalité des revenus, et la cotisation complémentaire
-      autour de 2,53 % et 0,25 % ; depuis 2004, la cotisation du 1° et celle du 2°, « en
-      pourcentage des revenus professionnels », dont cette fiche ne lit pas les taux : la
-      fiche du régime porte la cotisation de ces années
+      trois cotisations nationales sur les revenus professionnels du chef : celle du 1° de
+      L. 731-42 et celle du a du 2°, bornées au plafond, celle du 3°, sur leur totalité.
+      Leurs taux sont ceux du décret annuel en 2003 (n° 2003-1033) et en 2004 (n°
+      2004-1064), puis de D. 731-121, D. 731-122 et D. 731-124, chacun « Pour l'année »
+      qu'il nomme jusqu'en 2007, puis sans année depuis le 22 septembre 2008, puis par
+      année depuis 2012 : en 2003, 3,2 %, 8,44 % et 1,29 % ; en 2004, 3,2 %, 8,44 % et,
+      au 3°, la moitié de 1,29 % et la moitié de 1,39 %, soit 1,34 % ; en 2005, 3,2 %, 8,44
+      % et 1,39 % ; de 2006 à 2011, 3,2 %, 8,64 % et 1,39 % ; en 2012, 3,21 % et 8,69 % «
+      pour l'année 2012 » (rédactions du 4 juillet 2012, qui remplacent les 3,2 % et les
+      8,67 % du début de l'année) et 1,41 % ; en 2013, 3,26 %, 8,81 % et 1,41 % ; en 2014,
+      3,28 %, 11,39 % et 1,94 % ; en 2015, 3,30 %, 11,47 % et 2,04 % ; en 2016, 3,32 %,
+      11,55 % et 2,14 % ; de 2017 à 2025, 3,32 %, 11,55 % et 2,24 %. S'y ajoute jusqu'en
+      2013 la cotisation complémentaire (D. 731-125 depuis 2005) : de 2003 à 2011, autour
+      d'un taux moyen de 2,53 % de la partie plafonnée et de 0,25 % de la totalité, fixée
+      par arrêté préfectoral à plus ou moins 5 % de ces taux jusqu'à la rédaction du 15
+      octobre 2009, à ces taux depuis ; 2,50 % et 0,23 % en 2012 et 2013. Depuis le 1er
+      janvier 2014, le décret n° 2013-1223 la fond dans les autres, « le taux global des
+      cotisations sociales dues n'étant pas modifié » : D. 731-122 y gagne 2,50 points à
+      chaque année qu'il nomme (11,19 % pour 2012, 11,31 % pour 2013, 8,69 + 2,50 et 8,81 +
+      2,50), D. 731-124 0,23 point (1,41 → 1,64 %), que le décret n° 2013-1290 porte à 1,94
+      % le même jour ; l'index n'a plus de rédaction de D. 731-125. Sommes des trois taux,
+      pour un revenu sous le plafond : 12,93 % en 2003, 12,98 % en 2004, 13,03 % en 2005,
+      13,23 % de 2006 à 2011, 13,31 % en 2012, 13,48 % en 2013, 16,61 % en 2014, 16,81 %
+      en 2015, 17,01 % en 2016, 17,11 % de 2017 à 2025 ; avec la complémentaire, à son
+      taux moyen, 15,71 % en 2003, 15,76 % en 2004, 15,81 % en 2005, 16,01 % de 2006 à
+      2011, 16,04 % en 2012 et 16,21 % en 2013. Les 2,36 % de la rédaction de D. 731-124
+      du 7 juillet 2024 ne valent que depuis 2026 (décret n° 2024-688, article 6) ; depuis
+      2026, D. 731-121 renvoie aux taux de D. 633-3 du code de la sécurité sociale, que
+      cette fiche ne lit pas, et l'index n'a de D. 731-122 et D. 731-124 aucune rédaction
+      depuis le 1er janvier 2026
   exemples: aucun trouvé
 approximations:
 - version: avant_1983
@@ -991,15 +1479,26 @@ approximations:
     R. 732-71 et non du taux : rien n'y bouge
 - version: depuis_2003
   ecart: >-
-    le modèle prélève 17,37 % du revenu borné au plafond dès 2003 (période de 2003 de la
-    fiche du régime), quand le décret n° 2003-1033 fixe pour 2003 les taux de 2002 : 3,2 %
-    et 8,44 % bornés au plafond, 1,29 % sur la totalité du revenu, et la complémentaire
-    autour de 2,53 % et 0,25 % ; d'où vient 17,37 %, cette lecture ne le dit pas
+    LE TAUX DE 17,37 % N'A AUCUNE SOURCE. Le modèle prélève 17,37 % du revenu borné au
+    plafond chaque année depuis 2003 (périodes de 2003 à 2025 de la fiche du régime), un
+    taux qu'aucun texte lu ne fixe et qu'aucune somme des taux lus ne donne : pour un
+    revenu sous le plafond, les trois cotisations nationales en prélèvent de 12,93 % (2003)
+    à 17,11 % (2017 à 2025), et, la complémentaire comprise jusqu'en 2013, de 15,71 % à
+    16,21 % (version depuis_2003). Écart au 17,37 %, en points de revenu : 4,44 en 2003,
+    4,39 en 2004, 4,34 en 2005, 4,14 de 2006 à 2011, 4,06 en 2012, 3,89 en 2013, 0,76 en
+    2014, 0,56 en 2015, 0,36 en 2016, 0,26 de 2017 à 2025 ; la complémentaire au taux
+    moyen comprise, 1,66 en 2003, 1,61 en 2004, 1,56 en 2005, 1,36 de 2006 à 2011, 1,33
+    en 2012, 1,16 en 2013. Au-dessus du plafond, le modèle ne prélève rien, quand le 3° (et
+    la complémentaire, 0,25 % puis 0,23 %, jusqu'en 2013) porte sur la totalité du revenu.
+    Seule la somme 3,32 + 11,55 + 2,50 tombe sur 17,37, où 2,50 % est la complémentaire
+    de 2012 et 2013 (D. 731-125), que les 11,55 % de D. 731-122 comprennent depuis 2014
+    (9,05 + 2,50) : elle la compterait deux fois, une coïncidence possible, pas une source
   effet: >-
-    non mesuré : en 2003, pour un revenu sous le plafond, le compte des scénarios 2 à 6
-    reçoit 17,37 %, quand les trois cotisations nationales en prélèvent 12,93 % (3,2 +
-    8,44 + 1,29), 15,71 % avec la complémentaire au taux moyen ; les années suivantes ne
-    sont pas lues ici
+    non mesuré sur le coût. Sous le plafond, le compte des scénarios 2 à 6 reçoit de 0,26
+    à 4,44 points de revenu de plus que les trois cotisations nationales n'en prélèvent :
+    17,37 / 12,93 = 1,343 fois en 2003, 17,37 / 17,11 = 1,015 fois de 2017 à 2025. Au
+    scénario 1, les points de ces années viennent du barème de R. 732-71, que le taux ne
+    touche pas : rien n'y bouge. Depuis 2026, non lu ici
 sources:
   lu_le: 2026-11-03
   prochaine_relecture: 2027-03-31
@@ -1018,6 +1517,16 @@ sources:
     LEGIARTI000006781106 ; complémentaire à 2,53 % et 0,25 %, LEGIARTI000006781107), quand
     le modèle passe de 8,5 % en 2002 à 17,37 % en 2003 (période de 2003 de la fiche du
     régime), un taux que cette lecture ne retrouve pas.
+  - >-
+    QUESTION AU PROPRIÉTAIRE (relecture R-K-bis, 3 novembre 2026 ; lu ici le même jour).
+    Le taux de 17,37 % que le modèle porte au compte de 2003 à 2025 n'est écrit dans aucun
+    texte lu, et aucune somme des taux de D. 731-121, D. 731-122 et D. 731-124 ne le donne
+    : de 12,93 % en 2003 à 17,11 % de 2017 à 2025, de 15,71 % à 16,21 % avec la
+    complémentaire jusqu'en 2013 (version depuis_2003, approximation depuis_2003). Il
+    naît, avec les 8,5 % d'avant, sans source ni note, le 8 septembre 2026. Faut-il porter
+    au compte, année par année, la somme des taux lus, et comment prélever le 3°, sur la
+    totalité du revenu, que le modèle ne sait pas prélever d'un seul taux borné au
+    plafond ?
   - >-
     À lire au fac-similé du Journal officiel : la loi n° 52-799 du 10 juillet 1952,
     articles 19 à 21 (Journal officiel du 11 juillet 1952), l'arrêté du 23 juillet 1953 «
@@ -1040,6 +1549,17 @@ sources:
       (JORFTEXT000000519366), sans leur texte. Lu dans les index LEGI (à jour au 2
       novembre 2026) et JORF (au 3 novembre 2026) du dépôt
     date: 2026-11-03
+  - type: legifrance
+    reference: >-
+      le décret n° 87-664 du 13 août 1987, articles 1er à 3 ; code rural, D. 731-121,
+      D. 731-122, D. 731-124 et D. 731-125, toutes leurs rédactions de l'index, du 22 avril
+      2005 au 1er janvier 2026 ; le décret n° 2004-1064 du 6 octobre 2004, articles 12 à
+      16 ; au Journal officiel, le décret n° 2012-847, articles 12 à 14, le décret n°
+      2013-1223, notice et article 2, le décret n° 2013-1290, articles 2 et 5 à 9, le
+      décret n° 2014-1531, article 5, et le décret n° 2024-688, notice et articles 5 et 6.
+      Lu dans les index LEGI (à jour au 2 novembre 2026) et JORF (au 3 novembre 2026) du
+      dépôt, pour la relecture R-K-bis
+    date: 2026-11-03
 textes_sans_effet:
 - id: LEGIARTI000006581058
   motif: >-
@@ -1057,6 +1577,11 @@ textes_sans_effet:
     L. 731-42 du 22 juin 2000 au 1er janvier 2001 codifie l'article 1123 : les mêmes trois
     cotisations, dont la première « en pourcentage des revenus professionnels du chef
     d'exploitation ou d'entreprise », leurs taux restant ceux du décret annuel
+- id: LEGIARTI000028393428
+  motif: >-
+    D. 731-124 dans la rédaction du décret n° 2013-1223 (1,64 %), jamais en vigueur : le
+    décret n° 2013-1290 la remplace le même jour, le 1er janvier 2014, par celle qui fixe
+    1,94 % (LEGIARTI000028435889)
 code:
   python: >-
     droit/acquerir.py : acquerir ; moteur/compte.py : ConstructeurCompte.cotisation_annuelle
@@ -1072,6 +1597,13 @@ historique:
   qu'emploie le modèle de 1953 à 2002 n'avait aucune source dans le dépôt ; les textes de
   chaque année sont lus, et ne le donnent pas. Le modèle n'est pas changé : la question
   est posée au propriétaire.
+- >-
+  2026-11-04 — action 131 (file K-ter), sur la relecture R-K-bis : le taux de 17,37 % du
+  compte de 2003 à 2025 est déclaré sans source, avec, année par année, les taux de
+  D. 731-121, D. 731-122, D. 731-124 et D. 731-125 lus à leurs rédactions et l'écart au
+  17,37 % ; le décret n° 87-664 (1987) est cité ; 1993 l'est sous la rédaction de 1991 de
+  l'article 1123, et la citation en double de celle de 1994 est ôtée. Aucun taux du
+  modèle n'est changé.
 effet: >-
   Les chefs d'exploitation et les membres de leur famille qui ont cotisé avant 2003. Au
   scénario 1, avant 1990, le rendement tire leurs points d'une cotisation que le modèle
@@ -1079,4 +1611,6 @@ effet: >-
   barème de R. 732-71 les tire de l'assiette : rien. Aux scénarios 2 à 6, le compte reçoit
   ces 8,5 %, quand les textes de 1993 à 2002 prélèvent 12,935 % du revenu sous le plafond
   en 1996 aux trois cotisations nationales, 15,715 % avec la complémentaire au taux moyen
-  : effet sur le coût non mesuré.
+  : effet sur le coût non mesuré. De 2003 à 2025, le compte reçoit 17,37 % du revenu
+  borné au plafond, sans texte, de 0,26 à 4,44 points de plus que les trois cotisations
+  nationales sous le plafond (approximation depuis_2003) : effet sur le coût non mesuré.
