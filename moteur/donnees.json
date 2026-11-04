@@ -174485,7 +174485,7 @@ null
 "periodes":[
 {
 "abattement_points":"decote_du_regime_de_base",
-"age_ouverture":65.0,
+"age_ouverture":60.0,
 "age_ouverture_par_generation":false,
 "age_surcote_regimes_speciaux":false,
 "age_table":null,
@@ -174509,10 +174509,10 @@ null
 "cotisation_forfaitaire_euros":null,
 "cotisation_par_classes":false,
 "debut":1949,
-"decote_annulee_par_la_duree":true,
+"decote_annulee_par_la_duree":false,
 "decote_par_generation":false,
 "decote_par_la_duree_seule":false,
-"decote_par_trimestre":null,
+"decote_par_trimestre":0.0125,
 "decote_trimestres_maximum":20,
 "duree_maximum_avant_age":null,
 "duree_maximum_avant_age_trimestres":null,
@@ -174523,7 +174523,7 @@ null
 "duree_requise_trimestres":null,
 "ecretement_salaire_reference":null,
 "fin":2003,
-"notes":"LE DROIT D'AVANT 2004 N'EST PAS PROPORTIONNEL AU REVENU, et la fiche le faisait croire. Le régime servait une ALLOCATION VIEILLESSE, la même pour le notaire et pour le kinésithérapeute : la moitié de l'AVTS à l'origine, son montant entier depuis le décret n° 62-439 du 14 avril 1962, puis, le 1er janvier 1983, « 1/15e d'AVTS par année cotisée », la condition de quinze années d'activité ayant été supprimée (les périodes au-delà de quinze ans comptent depuis le 1er juillet 1978). La réforme du 21 août 2003 a converti ce droit en points, et la règle de conversion est publiée : « les trimestres validés avant le 1er janvier 2004 sont convertis en points à raison de cent points par trimestre » (D. 643-1, cité par le recueil statistique de la CNAVPL). C'est `points_par_trimestre_valide`, et le revenu n'y entre que par les trimestres qu'il valide. Le moteur portait auparavant 8,5 % du revenu ENTIER, sans plafond, au rendement de 8 % : trente ans de carrière à 200 000 € y ouvraient 40 000 € de pension de base, quand le régime en servait 3 809 € en moyenne en 2003 — quarante ans de cotisations ne pouvant dépasser 16 000 points, soit 10 500 € au point de 2025. CE QUI RESTE CONVENTIONNEL EST LA COTISATION, non la pension. La cotisation de base était forfaitaire jusqu'en 1992 ; le 1er janvier 1993 (loi n° 91-73 du 18 janvier 1991), « une fraction de la cotisation du régime de base est devenue proportionnelle aux revenus, dans la limite de 5 fois le plafond de la sécurité sociale ». Faute de la série des forfaits, le compte notionnel prélève ici 8,5 % du revenu BORNÉ À CINQ PLAFONDS — le plafond que le régime s'est lui-même donné en 1993. C'est une convention, et elle est nommée : elle ne touche que le scénario notionnel, la pension du système actuel ne dépendant plus, pour ces années, que des trimestres.",
+"notes":"LE DROIT D'AVANT 2004 N'EST PAS PROPORTIONNEL AU REVENU, et la fiche le faisait croire. Le régime servait une ALLOCATION VIEILLESSE, la même pour le notaire et pour le kinésithérapeute : la moitié de l'AVTS à l'origine, son montant entier depuis le décret n° 62-439 du 14 avril 1962, puis, le 1er janvier 1983, « 1/15e d'AVTS par année cotisée », la condition de quinze années d'activité ayant été supprimée (les périodes au-delà de quinze ans comptent depuis le 1er juillet 1978). La réforme du 21 août 2003 a converti ce droit en points, et la règle de conversion est publiée : « les trimestres validés avant le 1er janvier 2004 sont convertis en points à raison de cent points par trimestre » (D. 643-1, cité par le recueil statistique de la CNAVPL). C'est `points_par_trimestre_valide`, et le revenu n'y entre que par les trimestres qu'il valide. Le moteur portait auparavant 8,5 % du revenu ENTIER, sans plafond, au rendement de 8 % : trente ans de carrière à 200 000 € y ouvraient 40 000 € de pension de base, quand le régime en servait 3 809 € en moyenne en 2003 — quarante ans de cotisations ne pouvant dépasser 16 000 points, soit 10 500 € au point de 2025. L'ÂGE : l'allocation se demande « sans pouvoir être antérieure au soixante-cinquième anniversaire » (R. 643-6, LEGIARTI000006751828), mais « à partir de l'âge de soixante ans » avec les « coefficients d'anticipation » de 0,75 à soixante ans à 0,95 à soixante-quatre (R. 643-7, LEGIARTI000006751830), du 21 décembre 1985 au 31 décembre 2003 : la fiche cnavpl_allocation_avant_2004, lue le 3 novembre 2026. Elle disait soixante-cinq ans sans anticipation ; les complémentaires, ouvertes à soixante ans, ouvraient la base avec elles, sans coefficient. CE QUI RESTE CONVENTIONNEL EST LA COTISATION, non la pension. La cotisation de base était forfaitaire jusqu'en 1992 ; le 1er janvier 1993 (loi n° 91-73 du 18 janvier 1991), « une fraction de la cotisation du régime de base est devenue proportionnelle aux revenus, dans la limite de 5 fois le plafond de la sécurité sociale ». Faute de la série des forfaits, le compte notionnel prélève ici 8,5 % du revenu BORNÉ À CINQ PLAFONDS — le plafond que le régime s'est lui-même donné en 1993. C'est une convention, et elle est nommée : elle ne touche que le scénario notionnel, la pension du système actuel ne dépendant plus, pour ces années, que des trimestres.",
 "part_au_dela_du_plafond":null,
 "part_salariale":1.0,
 "part_salariale_deplafonnee":0.0,
@@ -204708,7 +204708,7 @@ null
 {
 "abattement_points":"decote_du_regime_de_base",
 "age_ouverture":60.0,
-"age_ouverture_par_generation":false,
+"age_ouverture_par_generation":true,
 "age_surcote_regimes_speciaux":false,
 "age_table":null,
 "age_taux_plein":67.0,
@@ -204792,7 +204792,7 @@ null
 {
 "abattement_points":"decote_du_regime_de_base",
 "age_ouverture":60.0,
-"age_ouverture_par_generation":false,
+"age_ouverture_par_generation":true,
 "age_surcote_regimes_speciaux":false,
 "age_table":null,
 "age_taux_plein":67.0,
@@ -204876,7 +204876,7 @@ null
 {
 "abattement_points":"decote_du_regime_de_base",
 "age_ouverture":60.0,
-"age_ouverture_par_generation":false,
+"age_ouverture_par_generation":true,
 "age_surcote_regimes_speciaux":false,
 "age_table":null,
 "age_taux_plein":67.0,
@@ -204960,7 +204960,7 @@ null
 {
 "abattement_points":"decote_du_regime_de_base",
 "age_ouverture":60.0,
-"age_ouverture_par_generation":false,
+"age_ouverture_par_generation":true,
 "age_surcote_regimes_speciaux":false,
 "age_table":null,
 "age_taux_plein":67.0,
@@ -205044,7 +205044,7 @@ null
 {
 "abattement_points":"decote_du_regime_de_base",
 "age_ouverture":60.0,
-"age_ouverture_par_generation":false,
+"age_ouverture_par_generation":true,
 "age_surcote_regimes_speciaux":false,
 "age_table":null,
 "age_taux_plein":67.0,
@@ -205126,7 +205126,7 @@ null
 "valeur_point_euros":0.3927
 }
 ],
-"population":"Pharmaciens biologistes libéraux, directeurs de laboratoire privé d'analyses médicales conventionnés, affiliés à la CAVP ; le biologiste médecin relève de la CARMF. Obligatoire depuis le 1er juillet 1981 (décret n° 81-1046), réformé par le décret n° 2007-597 du 24 avril 2007 : un forfait qui ouvre 262 points par an, et depuis 2008 une cotisation d'ajustement sur le revenu, dans la limite de cinq plafonds, qui en ouvre cinquante au plafond, au prorata en deçà. L'assurance maladie paie les deux tiers du forfait et la moitié de l'ajustement ; la fiche porte la part du biologiste, et les fractions `part_assurance_maladie_*` celle des caisses, que le compte notionnel reçoit comme une part patronale. ÂGES : « être âgé de 67 ans », et « La retraite peut être prise à partir de 60 ans avec coefficient d'anticipation » (guide de l'assurance vieillesse des professions libérales, CNAVPL, 2025, p. 93), que le guide ne chiffre pas : la fiche présume 1,25 % par trimestre, celui des auxiliaires médicaux. Le règlement de la section approuvé par l'arrêté du 10 juillet 2026 n'est pas lu.",
+"population":"Pharmaciens biologistes libéraux, directeurs de laboratoire privé d'analyses médicales conventionnés, affiliés à la CAVP ; le biologiste médecin relève de la CARMF. Obligatoire depuis le 1er juillet 1981 (décret n° 81-1046), réformé par le décret n° 2007-597 du 24 avril 2007 : un forfait qui ouvre 262 points par an, et depuis 2008 une cotisation d'ajustement sur le revenu, dans la limite de cinq plafonds, qui en ouvre cinquante au plafond, au prorata en deçà. L'assurance maladie paie les deux tiers du forfait et la moitié de l'ajustement ; la fiche porte la part du biologiste, et les fractions `part_assurance_maladie_*` celle des caisses, que le compte notionnel reçoit comme une part patronale. ÂGES : « être âgé de 67 ans », et « La retraite peut être prise à partir de 60 ans avec coefficient d'anticipation » (guide de l'assurance vieillesse des professions libérales, CNAVPL, 2025, p. 93), que le guide ne chiffre pas : la fiche présume 1,25 % par trimestre, celui des auxiliaires médicaux. Les textes, lus le 3 novembre 2026, ne disent pas soixante ans : « Le biologiste remplissant les conditions pour prétendre au versement de la prestation supplémentaire de vieillesse peut demander à en bénéficier à partir de l'âge fixé à l'article L. 161-17-2 du code de la sécurité sociale. A titre transitoire, pour les biologistes nés avant le 1er janvier 1956, l'âge d'ouverture du droit à la prestation supplémentaire de vieillesse est fixé selon le calendrier figurant à l'article D. 161-2-1-9 » (statuts de la CAVP, article 14, arrêté du 23 juin 2011, JORFARTI000024270214, publié le 29 juin 2011, sans date d'effet : le 30 juin 2011) ; « Le biologiste médical peut demander à bénéficier de la prestation du présent régime à partir de l'âge fixé à l'article L. 161-17-2 du code de la sécurité sociale » (règlement approuvé par l'arrêté du 10 juillet 2026, III, article 1er, JORFARTI000054436087). L'âge s'ouvre donc à la génération depuis la période de 2009 : liquidée avant le 30 juin 2011, une prestation ne pouvait l'être que par un assuré né avant le 1er juillet 1951, à qui la table rend soixante ans. Les statuts d'avant 2011, au seul Bulletin officiel, ne sont pas lus : les soixante ans d'avant 2009 restent ceux du guide.",
 "source_id":"legifrance_textes",
 "succede_a":[]
 },
