@@ -1,0 +1,36 @@
+date: "2026-11-04"
+session: "action 130, file R-M3c : relecture indépendante de la majoration pour enfants de l'Agirc de 1994 à 1996 au pourcentage de service de l'accord du 9 février 1994 (commits 18a4dc3 et cad144a)"
+consulte: >-
+  python scripts/veille_droit.py ; docs/veille_droit.md ; la base de la Cnav, rien de neuf.
+  L'index JORF du dépôt, récupéré par dila_index.py jorf --recuperer (à jour au 3 novembre
+  2026) : les arrêtés du 8 novembre 1994 d'extension de l'accord du 9 février 1994
+  (JORFTEXT000000715119) et de l'avenant A-159 « conclu le 1er mars 1994 »
+  (JORFTEXT000000349883), et leurs notas (fascicules Conventions collectives 94-5 et
+  94-18). Hors du Journal officiel, téléchargés le 3 novembre 2026, d'empreintes identiques
+  à celles de la note de M3 : le recueil des accords de la caisse (accord du 9 février 1994
+  en entier ; accord du 18 mars 2011) ; la convention du 14 mars 1947 mise à jour au 1er
+  janvier 2018 (annexe I, article 6 bis) ; Cass. soc., 23 novembre 1999, n° 97-18.980, sa
+  rectification du 16 décembre 1999 et le n° 97-20.249 (Juricaf) ; le document n° 7 du COR
+  du 25 mai 2011 ; les questions écrites n° 40542 (JO AN du 24 janvier 2000, page 424) et
+  n° 42356 (JO AN du 22 juin 2004, page 4644) ; les circulaires 2020-02-DRJ et 2024-5-DRJ ;
+  la compilation des valeurs de point de novembre 2026. CA Lyon, 18 novembre 2004, R.G.
+  03/03980 (Légifrance, JURITEXT000006944863), lue par l'outil de lecture du web, l'outil
+  en ligne de commande étant refusé (403).
+trouve: >-
+  Conforme. Les citations de M3 sont exactes, aux pages dites ; le pourcentage tient à
+  l'année où la majoration est servie (« à compter du 1er janvier » 1995, 1996 et 1997 ;
+  CA Lyon) ; le 1er mars 1994 est la date de l'avenant A-159 (arrêté d'extension, Cass.
+  1999) ; les valeurs de la note se refont au centime, sur les valeurs de point de la
+  compilation (2,3030 F en 1994 et 1995, 2,3375 F en 1996, 2,3492 F en 1997) ; les deux
+  moteurs servent aussi 15 et 30 % pour quatre et sept enfants, affectés du pourcentage ;
+  aucun témoin n'est un cadre de trois enfants parti avant 1998. Quatre écarts faibles :
+  l'arrêt de 1999 (« quel que soit leur mode d'acquisition ») cité pour l'année
+  d'acquisition ; le barème de 10 à 30 %, que rien ne date avant 1994, servi sans borne
+  basse ; l'intitulé de la fiche, ambigu ; le titre du § 6 de la note de M3, « déclaré à
+  la fiche », pour un point resté dans la note. Hors du périmètre : l'article 5 de l'accord
+  (contribution de solidarité de 0,7 % en 1995 et 1 % en 1996, sur la revalorisation).
+reste: >-
+  L'article 6 bis de 1994 et d'avant (Bulletin officiel, fascicule Conventions collectives
+  n° 94-18), qui diraient le barème de 10 à 30 % et depuis quand ; ce que la caisse a servi
+  de 1995 à l'arrêt du 23 novembre 1999 aux retraités d'avant mars 1994 ; si le modèle doit
+  la contribution de solidarité de 1995 et 1996.
