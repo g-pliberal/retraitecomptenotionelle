@@ -26992,7 +26992,7 @@ null
 "existe":true,
 "fonctionnaires":{"activite_au_moins":8,"avant_au_moins":8,"interruption_au_moins_annees":1,"interruptions":["education_enfant"],"regimes":["fonction_publique_etat","cnracl","fspoeie"]},
 "parents_de_trois_enfants":{"activite_au_moins":8,"apres_au_plus":8,"avant_au_moins":8,"enfants":3,"nes_au":[1955,12],"nes_du":[1951,7]},
-"regimes":["regime_general","msa_salaries","rsi"]
+"regimes":["regime_general","msa_salaries","rsi","cavimac","cancava_avant_1973","organic_avant_1973"]
 },
 "texte":"LEGIARTI000023023835"
 },
