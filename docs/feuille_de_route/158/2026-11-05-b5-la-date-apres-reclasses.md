@@ -171,3 +171,5 @@ colonne `effet` a été refaite seule. À comprendre avant toute relance du lect
 Les 97 versions hors du motif (durées d'échelon, point 5 de
 `2026-11-03-retouches-de-la-relecture-r-b2-bis.md`) : non entamées, une étape à elles.
 Le reste du bloc « Reprise » est inchangé.
+
+*Relu le 5 novembre 2026 (R-B5, `2026-11-05-relecture-r-b5.md`) : les 36 dates sont exactes ; deux écarts à cette note : « nommés au » (n° 98-268, art. 17) et « placés au » (n° 2001-325, art. 14) sont datés par un autre article du même décret, et le candidat du lecteur relancé n'est pas une divergence (rien ne sort, 90 tableaux s'ajoutent).*
