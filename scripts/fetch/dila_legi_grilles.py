@@ -906,12 +906,16 @@ def _fin(jour: str) -> str:
 #: recherche » (I), puis « Au 1er septembre 2017, le tableau » (II). La version du
 #: n° 2017-171 vaut donc, pour les seuls directeurs de recherche, jusqu'au
 #: 1er septembre 2017, non jusqu'au 1er janvier 2018 que le LEGI lui donne.
+#: L'article 1er du décret n° 87-1104 (les secrétaires de mairie) : le décret
+#: n° 96-101 en remplace le tableau (art. 3), avec effet au 1er août 1995 (art. 39,
+#: II), et le LEGI garde l'ancienne version jusqu'à sa publication, le 8 février 1996.
 DATES_CORRIGEES = {
     "LEGIARTI000029415839": ("2014-09-01", "2014-11-01"),
     "LEGIARTI000029672106": ("2014-11-01", "2015-01-01"),
     "LEGIARTI000034034492": ("2017-01-01", "2017-01-01"),
     "LEGIARTI000031948241": ("2016-02-01", "2017-01-01"),
     "LEGIARTI000034034477": ("2017-01-01", "2017-09-01"),
+    "LEGIARTI000006370685": ("1987-12-31", "1995-08-01"),
 }
 #: Les rubriques d'une version qui ne valent à aucune date (``cle_groupe``),
 #: ôtées de son tableau. Article 4 du décret n° 2012-1058 : dans la version du

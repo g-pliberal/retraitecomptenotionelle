@@ -1011,7 +1011,7 @@
    "niveau": "estimee",
    "source": "DILA, base LEGI, textes d'échelonnement indiciaire, par l'index du dépôt",
    "valeurs": 4,
-   "verifiee_le": "2026-11-03"
+   "verifiee_le": "2026-11-05"
   },
   "grilles_etat_legi_rang": {
    "ajoutees": 0,
@@ -1033,7 +1033,7 @@
    "niveau": "estimee",
    "source": "DILA, base LEGI, textes d'échelonnement indiciaire, par l'index du dépôt",
    "valeurs": 7,
-   "verifiee_le": "2026-11-03"
+   "verifiee_le": "2026-11-05"
   },
   "grilles_etat_rang": {
    "ajoutees": 0,

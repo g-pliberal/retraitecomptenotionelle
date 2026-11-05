@@ -973,6 +973,21 @@ def _grille(versant: str, texte: str, grille: str, le: str) -> list[tuple[str, s
             for l in sorted(lignes, key=lambda l: int(l["rang"]))]
 
 
+def test_les_secretaires_de_mairie_changent_de_grille_au_1er_aout_1995():
+    """Décret n° 87-1104, article 1er : le décret n° 96-101 du 6 février 1996 remplace
+    son tableau (art. 3), et « prennent effet au 1er août 1995 » ses articles 2 (I à
+    XII), 3, 17, 18, 37 et 38 (art. 39, II), lus à Légifrance le 5 novembre 2026. Le
+    LEGI garde pourtant l'ancienne version jusqu'au 8 février 1996, sa date de
+    publication : ses trois échelons provisoires, 274, 301 et 328, y survivaient six
+    mois à côté de la grille à douze échelons."""
+    texte, grille = "LEGITEXT000006065788", "secretaires-de-mairie"
+    assert [(e, i) for e, i, _ in _grille("etat_legi", texte, grille, "1995-07-31")
+            if "provisoire" in e] == [
+        ("1-provisoire", "274"), ("2-provisoire", "301"), ("3-provisoire", "328")]
+    assert [i for _, i, _ in _grille("etat_legi", texte, grille, "1995-08-01")] == [
+        "374", "410", "435", "461", "481", "504", "535", "566", "597", "628", "660", "695"]
+
+
 def test_la_grille_du_chef_de_projet_sric_de_2016_cesse_au_1er_janvier_2017():
     """Décret n° 2008-836, article 14-1-1 (le chef de projet en systèmes et réseaux
     d'information et de communication) : le LEGI garde la version du décret n° 2016-82

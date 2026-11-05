@@ -1,0 +1,15 @@
+date: "2026-11-05"
+session: "action 158 : le décret n° 96-101 lu à Légifrance depuis le poste du propriétaire, la grille des secrétaires de mairie"
+consulte: >-
+  `python scripts/veille_droit.py` ; l'index LEGI, repris de la release (à jour au 2
+  novembre 2026) ; le décret n° 96-101 du 6 février 1996, JORFTEXT000000191345, en entier,
+  dans le navigateur intégré de l'application.
+trouve: >-
+  L'art. 3 remplace le tableau de l'art. 1er du n° 87-1104 et l'art. 39, II, lui donne
+  effet au 1er août 1995 : l'ancienne version cesse à cette date, non au 8 février 1996
+  que le LEGI lui donne. Les trois échelons provisoires de 1987 finissent le 31 juillet
+  1995. Légifrance sert le texte d'après 1990 au navigateur, sans addition ; seuls ses
+  tableaux renvoient au papier.
+reste: >-
+  Le tableau de reclassement de l'art. 37, au fac-similé du JO n° 33 du 8 février 1996,
+  p. 2070 à 2077.

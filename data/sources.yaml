@@ -1127,13 +1127,17 @@ institutions:
           Le même fichier, servi à une autre date : la rédaction de Challenges
           l'a repris dans `ChallengesRedac/simulateurRetraite` (commit
           `3130716`, 9 janvier 2023), sous ce nom et, identique, sous celui de
-          `donneesCor2021.json`, que rien d'autre ne date. Toutes ses séries
-          y changent : en 2070, au scénario 1, 22,95 millions de retraités au
-          lieu de 24,33 en 2019. L'archive du web, qui dirait quand le COR l'a
-          servi et garde peut-être les millésimes suivants, refuse la session
-          (le 2 novembre 2026, web.archive.org coupe la connexion et
-          archive.org répond 429) : ils sont à rapporter d'un poste. Il
-          n'alimente aucune valeur ; le fichier reste dans data/brut/.
+          `donneesCor2021.json`. Toutes ses séries y changent : en 2070, au
+          scénario 1, 22,95 millions de retraités au lieu de 24,33 en 2019.
+          L'archive du web, lue d'un poste le 5 novembre 2026, n'a de ce
+          fichier qu'une capture, du 3 octobre 2022, identique à l'octet
+          (même empreinte) : le COR le servait ce jour-là. Le code du
+          simulateur le rattachait en juillet 2021 au rapport de novembre
+          2020, et sa documentation est du 15 janvier 2021. Le millésime
+          suivant, que le code rattache en mars 2025 au rapport de juin 2024,
+          n'y est pas, ni le `data/fileProjection.json` de la version de
+          2026 : seul le COR peut le donner. Il n'alimente aucune valeur ; le
+          fichier reste dans data/brut/.
       - id: cor_age_depart_generations
         titre: >-
           L'âge moyen de départ à la retraite par génération, de 1906 à 2000
@@ -4684,17 +4688,20 @@ institutions:
           L'article 1er du décret n° 87-1104 (les secrétaires de mairie), que
           le LEGI date aussi en vigueur ensemble (LEGIARTI000006370685
           jusqu'au 8 février 1996, LEGIARTI000006370686 dès le 1er août
-          1995) : NON TRANCHÉ. La seconde version est celle du décret n° 96-101
-          du 6 février 1996, publié le 8 février (JORFTEXT000000191345) ; ni
-          l'index JORF ni l'index LEGI du dépôt n'en ont l'article qui
-          modifie le n° 87-1104 ni celui qui dit son entrée en vigueur. Le
-          LEGI n'en garde que le texte (LEGITEXT000005620312) et l'article 38,
-          daté du 1er août 1995 ; le JORF, le texte et sept articles, relus le
-          5 novembre 2026 (action 158, B-ter) : les art. 1er (n° 87-1099),
-          2 (n° 87-1103, le statut des secrétaires de mairie,
-          JORFARTI000001790554), 10 (n° 90-126), 25 (n° 95-27), 27 (n° 95-29),
-          33 (n° 86-68) et 38 (les moniteurs-éducateurs). Aucun ne vise le
-          n° 87-1104 ni ne dit de date d'effet ; les tableaux, l'index les
+          1995) : TRANCHÉ le 5 novembre 2026, au texte du décret n° 96-101 du
+          6 février 1996, publié le 8 février (JORFTEXT000000191345), lu à
+          Légifrance dans le navigateur du poste. Son art. 3 remplace le
+          tableau de cet article ; ses art. 2 (I à XII), 3, 17, 18, 37 et 38
+          « prennent effet au 1er août 1995 » (art. 39, II). `DATES_CORRIGEES`
+          clôt donc la première version à cette date, et les trois échelons
+          provisoires de 1987 (274, 301, 328) au 31 juillet 1995. Les index
+          n'avaient de ce décret ni l'art. 3 ni l'art. 39 : le LEGI n'en garde
+          que le texte (LEGITEXT000005620312) et l'article 38 ; le JORF, le
+          texte et sept articles, relus le 5 novembre 2026 (action 158,
+          B-ter) : les art. 1er (n° 87-1099), 2 (n° 87-1103, le statut des
+          secrétaires de mairie, JORFARTI000001790554), 10 (n° 90-126),
+          25 (n° 95-27), 27 (n° 95-29), 33 (n° 86-68) et 38 (les
+          moniteurs-éducateurs). Les tableaux, Légifrance comme l'index les
           renvoie au papier (« JO no 0033 du 08/02/96 Page 2070 a 2077 »).
           L'art. 2 récrit le statut : « catégorie B » devient « catégorie A »
           (I), « huit échelons » devient « douze échelons » (IX), les
@@ -4704,16 +4711,9 @@ institutions:
           CNRACL : « les assimilations […] sont effectuées […] à compter de
           la date de publication du décret no 96-101 du 6 février 1996 ».
           Le résumé que la fiche du texte porte au JORF (« CLASSE EN
-          CATEGORIE A,A COMPTER DU 01-08-1995 ») n'est pas le texte.
-          Légifrance a refusé la lecture (403) le 5 novembre 2026. À lire au
-          JO n° 33 du 8 février 1996, p. 2070 à 2077 : l'article du
-          n° 96-101 qui paraît récrire (son visa cite le n° 87-1104 ; le LEGI
-          date du 1er août 1995 la version à douze échelons) l'art. 1er du
-          n° 87-1104, son art. 37 et
-          l'article qui dit son entrée en vigueur. Les grilles gardent
-          d'ici là les trois échelons provisoires de 1987 (274, 301, 328)
-          jusqu'au 7 février 1996, à côté de la grille à douze échelons du
-          1er août 1995.
+          CATEGORIE A,A COMPTER DU 01-08-1995 ») n'est pas le texte, mais il
+          dit juste. Reste au JO n° 33 du 8 février 1996, p. 2070 à 2077, au
+          fac-similé : le tableau de reclassement de l'art. 37.
 
       - id: dila_legi_reclassements
         titre: >-
