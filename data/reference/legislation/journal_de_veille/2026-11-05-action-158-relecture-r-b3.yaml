@@ -1,0 +1,28 @@
+date: "2026-11-05"
+session: "action 158, vague 9, R-B3 : relecture indépendante de B-ter (9cb387b : le n° 96-101 ; l'échelon spécial du chef de projet SRIC, n° 2008-836, art. 14-1-1 ; le directeur de recherche de 2e classe, n° 2012-1058, art. 4)"
+consulte: >-
+  python scripts/veille_droit.py ; docs/veille_droit.md. L'index JORF du dépôt (incrément
+  20261103-002311) : n° 96-101, son texte (JORFTEXT000000191345) et ses sept articles
+  (JORFARTI000001400977, 001790554, 001984923, 002305421, 001790557, 001153864, 001598161) ;
+  n° 2016-82, art. 1er et 3 ; n° 2017-171, art. 8, 36 et 126 ; n° 2017-1381, son texte, art. 2
+  et 7 ; n° 2018-917, son texte et ses art. 1er (I et II) et 2. L'index LEGI (incrément
+  20261102-213929) : n° 87-1104, art. 1er (LEGIARTI000006370685, 006370686) ; n° 96-101
+  (LEGITEXT000005620312, LEGIARTI000006377880) ; n° 2008-836, art. 14-1-1 (cinq versions) ;
+  n° 2012-1058, art. 4 (cinq versions) ; n° 65-773, art. 16 et 16 bis (LEGIARTI000006368217,
+  006368218) ; les versions d'articles qui écrivent « ES » devant une lettre hors échelle (22).
+trouve: >-
+  Conforme : le n° 96-101 n'a que sept articles à l'index JORF, aucun ne vise le n° 87-1104 ni
+  ne date l'effet ; ses citations (art. 2, I, IX, XII, XIII) sont exactes ; la grille du chef
+  de projet SRIC (9 échelons, 656 à 1021, puis l'échelon spécial à HEA dès le 1er janvier
+  2017) est celle du JORF et du LEGI, et seules ses lignes bougent ; 962 → 963 et un 7e échelon
+  à HEB, au 1er septembre 2017 (n° 2018-917, II), sont exacts. Écarts mineurs : « récrit »
+  (n° 96-101, art. 1er du n° 87-1104) est une inférence dont le visa de JORFTEXT000000191345 est
+  la seule source ; la déclaration du directeur de recherche de 2e classe ne chiffre que 2017
+  (en 2018, le II est de 5 à 6 points sous la colonne du n° 2017-171 : 969 → 963, et 1027 →
+  1021 au 1er échelon de la 1re classe).
+reste: >-
+  Lire au JO n° 33 du 8 février 1996 (p. 2070 à 2077) l'article du n° 96-101 qui récrit
+  l'art. 1er du n° 87-1104, son art. 37 et son entrée en vigueur (question au propriétaire).
+  Lire le n° 2026-928 du 5 octobre 2026 (art. 10 : le 1er novembre 2026), que la version
+  LEGIARTI000054954874 de l'art. 14-1-1 du n° 2008-836 cite pour l'emploi de « conseiller
+  numérique des administrations de l'Etat ».
