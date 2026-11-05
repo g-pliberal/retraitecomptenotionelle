@@ -344,11 +344,13 @@ approximations:
   ecart: >-
     Le modèle ne compte pas les points de la CAVOM : il sert les cotisations
     revalorisées multipliées par le rendement, ce qui revient à des points non
-    arrondis ; le règlement les arrête au centième, par excès.
+    arrondis ; le règlement les arrête au centième, par excès : le modèle sert donc un
+    peu moins que le texte.
   effet: >-
-    moins d'un centième de point par cotisation depuis le 1er juillet 2026 : à la
-    valeur de service de 2026 que porte `cavom_complementaire.yaml`, 3,3745 €, 0,01 ×
-    3,3745 = 0,03 € de pension par an au plus
+    moins d'un centième de point par cotisation annuelle depuis le 1er juillet 2026 : à
+    la valeur de service de 2026 que porte `cavom_complementaire.yaml`, 3,3745 €, 0,01 ×
+    3,3745 = 0,0337 €, soit 0,034 € de pension par an au plus pour chaque cotisation,
+    qui s'additionnent d'une année à l'autre ; le modèle en sert moins (relecture R-E4)
 - version: [decret_2015_1875, decret_2019_373, decret_2026_418]
   textes: >-
     décret n° 79-265, article 2, II ; les décrets de chaque année, « taux de cotisation

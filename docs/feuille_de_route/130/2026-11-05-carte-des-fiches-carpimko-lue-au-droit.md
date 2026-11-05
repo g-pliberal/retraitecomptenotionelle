@@ -163,3 +163,8 @@ Daté du 5 novembre 2026 : la CARPIMKO lue au droit, 80 fiches et 464 manques ; 
 erreurs du modèle au propriétaire ; les statuts de la CARPIMKO de 1996 à 2015 parmi ceux
 du seul Bulletin officiel ; les points de la CARPIMKO parmi les candidats ; la suite, la
 CAVP.
+
+Renvoi du 5 novembre 2026 : la relecture R-E4 (`2026-11-05-relecture-r-e4.md`) borne
+l'erreur (1) au 4 juin 1987 (arrêté du 20 mai 1987, que ce relevé avait manqué), fait de
+l'erreur (2) un point non tranché, et ajoute deux points ; ils sont repris dans
+`2026-11-05-e3-bis-corrections-de-r-e4.md`.

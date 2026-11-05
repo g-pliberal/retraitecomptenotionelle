@@ -1,18 +1,20 @@
 schema_version: 1
 id: carpimko_ages_2015
 intitule: >-
-  Régime complémentaire de la CARPIMKO : de 1984 à 1996, pension à 65 ans, ou dès 60
-  ans « affectée des coefficients de minoration » de 0,75 à 0,95 selon l'âge seul ;
+  Régime complémentaire de la CARPIMKO : de 1984 au 4 juin 1987, pension à 65 ans, ou
+  dès 60 ans « affectée des coefficients de minoration » de 0,75 à 0,95 selon l'âge
+  seul ;
   depuis le 3 octobre 2015, taux plein à 65 ans pour les générations 1955 et
   antérieures, quatre mois de plus par génération jusqu'à 67 ans, âge minimal de 60 à
   62 ans du même pas, et avant le taux plein un abattement de 1,25 % par trimestre
   manquant au régime de base, dans la limite des trimestres qui séparent de l'âge du
-  taux plein — jusqu'au 9 janvier 2024, 4 % par année d'anticipation plus 0,25 % par
-  trimestre manquant pour les générations 1955 et antérieures, que la durée n'annule
-  pas — ; une majoration de 1,25 % par trimestre civil entier d'ajournement, vingt au
-  plus ; depuis le 10 janvier 2024, 10 % pour trois enfants ; la pension au premier
-  jour du trimestre civil qui suit la demande ; de 1996 à 2015, des statuts que le
-  Journal officiel ne publie pas, la règle du modèle présumée.
+  taux plein — jusqu'au 9 janvier 2024, pour les générations 1955 et antérieures en
+  départ anticipé, 4 % par année d'anticipation plus 0,25 % par trimestre manquant, le
+  texte ne tranchant pas si leur durée les met au taux plein dès 60 ans — ; une
+  majoration de 1,25 % par trimestre civil entier d'ajournement, vingt au plus ; depuis
+  le 10 janvier 2024, 10 % pour trois enfants ; la pension au premier jour du trimestre
+  civil qui suit la demande ; de juin 1987 à 2015, des statuts que le Journal officiel ne
+  publie pas, la règle du modèle présumée.
 domaine: decote_surcote
 regimes: [carpimko_complementaire]
 etape: liquider_chaque_regime
@@ -77,10 +79,11 @@ versions:
 - id: statuts_de_1984
   statut: lue
   hypothese: >-
-    la fin de la version est supposée : l'arrêté du 20 novembre 1996 modifie les statuts
-    au seul Bulletin officiel, sans que le Journal officiel nomme les articles ; aucun
-    autre arrêté de 1984 à 1996 ne touche les articles 10 à 12 (celui du 24 janvier
-    1989, JORFTEXT000000666704, ne modifie que l'article 13, la réversion)
+    la fin de la version est supposée : l'arrêté du 20 mai 1987 (JORFTEXT000000844323),
+    publié le 4 juin 1987, approuve des modifications du régime complémentaire, dont
+    l'index n'a que le titre ; son entrée en vigueur est prise au lendemain. Le seul
+    autre arrêté de 1984 à 1987 qui nomme la section, celui du 5 juin 1985
+    (JORFTEXT000000292638), vise les prestations supplémentaires
   textes:
   - id: JORFTEXT000000315359
     article: arrêté du 22 février 1984 approuvant les statuts
@@ -119,7 +122,7 @@ versions:
       soixante-trois ans ; 0,95 si la liquidation intervient à soixante-quatre ans. »
   nee_de: JORFTEXT000000315359
   bornes:
-    liquidation.date_effet: [1984-01-01, 1996-12-01]
+    liquidation.date_effet: [1984-01-01, 1987-06-05]
   contenu:
     parametres:
       age_table: null
@@ -131,9 +134,48 @@ versions:
       l'âge seul, aucune durée n'y entrant ; aucune majoration ; la pension au premier
       jour du trimestre civil qui suit la demande. Le modèle ouvre à l'âge de L. 161-17-2
       et minore jusqu'à l'âge d'annulation de la décote de la génération, 60 et 65 ans
-      pour celles qui liquident avant 1996, de 1,25 % par trimestre, cinq points par
+      pour celles qui liquident avant 1987, de 1,25 % par trimestre, cinq points par
       année ; la durée y annule la minoration (voir les approximations)
     conditions: avoir versé toutes les cotisations dues
+  exemples: aucun trouvé
+- id: statuts_de_1987
+  statut: supposee
+  hypothese: >-
+    les pensions qui prennent effet du 5 juin 1987 au 30 novembre 1996 relèvent des
+    statuts de 1984 modifiés par l'arrêté du 20 mai 1987, dont l'index JORF n'a que le
+    titre, ni article ni annexe : rien ne dit s'il laisse les articles 10 à 12. Ceux du 24
+    janvier 1989 (article 13) et du 16 décembre 1991 (article 22, « APPLICABLES A COMPTER
+    DU 01-01-1992 », au Bulletin officiel no 91-50) ne les touchent pas. La fiche présume
+    la règle du modèle : ouverture à l'âge de L. 161-17-2, minoration de 1,25 % par
+    trimestre manquant à la durée du régime de base, dans la limite des trimestres qui
+    séparent de l'âge d'annulation de la décote de la génération, aucune majoration
+  fiabilite: >-
+    faible : l'âge, le coefficient et la place de la durée, que nul texte lu ne dit pour
+    ces neuf années ; si l'arrêté de 1987 laisse l'article 12, la minoration à l'âge seul
+    de 1984 vaut jusqu'en 1996
+  textes:
+  - id: JORFTEXT000000844323
+    article: arrêté du 20 mai 1987, titre
+    en_vigueur: 1987-06-05
+    publie_le: 1987-06-04
+    citation: >-
+      « Arrêté du 20 mai 1987 PORTANT APPROBATION DES MODIFICATIONS APPORTEES AUX REGIMES
+      COMPLEMENTAIRES D'ASSURANCE VIEILLESSE ET D'INVALIDITE-DECES DE LA SECTION
+      PROFESSIONNELLE DES AUXILIAIRES MEDICAUX ET AU REGIME DES PRESTATIONS
+      SUPPLEMENTAIRES DE VIEILLESSE DES AUXILIAIRES MEDICAUX CONVENTIONNES »
+  nee_de: JORFTEXT000000844323
+  bornes:
+    liquidation.date_effet: [1987-06-05, 1996-12-01]
+  contenu:
+    parametres:
+      age_table: null
+      decote_par_trimestre: 0.0125
+      surcote_par_trimestre: null
+    droit: >-
+      présumé : la règle du modèle, celle du régime de base, ouverture à l'âge de L.
+      161-17-2, 1,25 % par trimestre manquant à la durée dans la limite des trimestres
+      qui séparent de l'âge d'annulation de la décote, aucune majoration
+    conditions: aucune lue
   exemples: aucun trouvé
 - id: statuts_de_1996
   statut: supposee
@@ -244,10 +286,12 @@ versions:
       au grand invalide, à l'ancien déporté ou interné, à l'ancien combattant ou
       prisonnier de guerre ; avant, 1,25 % par trimestre manquant à la durée de la base,
       dans la limite des trimestres qui séparent de l'âge du taux plein, le trimestre
-      incomplet compté entier ; pour les générations 1955 et antérieures, 4 % par année
-      d'anticipation plus 0,25 % par trimestre manquant, dans la limite des trimestres
-      qui séparent de 65 ans ; au-delà de l'âge sans abattement, 1,25 % par trimestre
-      civil entier d'ajournement, vingt au plus
+      incomplet compté entier ; pour les générations 1955 et antérieures, en cas de
+      départ anticipé, 4 % par année d'anticipation plus 0,25 % par trimestre manquant,
+      dans la limite des trimestres qui séparent de 65 ans, le texte ne tranchant pas si
+      leur durée les met au taux plein dès 60 ans (voir les approximations) ; au-delà de
+      l'âge sans abattement, 1,25 % par trimestre civil entier d'ajournement, vingt au
+      plus
     conditions: aucune autre
   exemples: aucun trouvé
 - id: statuts_de_2019
@@ -419,13 +463,17 @@ approximations:
   ecart: >-
     Erreur du modèle, déclarée, non corrigée : les statuts minorent par l'âge seul, «
     0,75 si la liquidation intervient à soixante ans » ; le modèle annule la minoration
-    quand la durée du régime de base est atteinte. Né le 10 mars 1930, entré à vingt
-    ans, l'auxiliaire médical part à 60 ans le 1er avril 1990 avec sa durée : le modèle
-    sert 465,78 € par an, sans coefficient ; les statuts, 0,75 × 465,78 = 349,33 €.
+    quand la durée du régime de base est atteinte. Né le 10 mars 1925, entré à vingt
+    ans, l'auxiliaire médical part à 60 ans le 1er avril 1985 avec sa durée : le modèle
+    sert 114,27 € par an, sans coefficient ; les statuts, 0,75 × 114,27 = 85,71 €.
+    L'erreur n'est prouvée que jusqu'au 4 juin 1987 : le cas d'une pension prise en
+    1990 tombe sous l'arrêté du 20 mai 1987, dont le texte n'est pas lu (version
+    `statuts_de_1987`, supposée).
   effet: >-
-    116,44 € par an de trop dans le cas posé, jusqu'à 25 points de la pension pour une
-    pension prise de 60 à 64 ans de 1984 à 1996 avec la durée ; sans la durée, le
-    modèle rend le coefficient du texte aux âges entiers (entré à 26 ans, 0,75)
+    28,57 € par an de trop dans le cas posé, jusqu'à 25 points de la pension prise de
+    60 à 64 ans avec la durée, du 1er janvier 1984 au 4 juin 1987 ; sans la durée, le
+    modèle rend le coefficient du texte aux âges entiers (entré à 26 ans, 0,75,
+    85,71 €)
 - version: [statuts_de_1984]
   textes: statuts de 1984, article 12
   ecart: >-
@@ -451,23 +499,61 @@ approximations:
     69,59 € par an de moins que le règlement, aux valeurs de 2026 ; jusqu'à deux mois
     selon le mois de naissance
 - version: [statuts_de_2015, statuts_de_2019]
-  textes: statuts, article 12 quater, 2°, rédaction de l'arrêté du 31 juillet 2015
+  textes: >-
+    statuts, articles 11, 12 et 12 quater, rédaction de l'arrêté du 31 juillet 2015
   ecart: >-
-    Erreur du modèle, déclarée, non corrigée : du 3 octobre 2015 au 9 janvier 2024, les
-    générations 1955 et antérieures perdent « 4 % par année d'anticipation » avant 65
-    ans, que la durée n'annule pas, « plus 0,25 % par trimestre manquant » ; leur
-    pension n'est sans abattement qu'à 65 ans, d'où l'ajournement se compte. Le modèle
-    leur applique 1,25 % par trimestre manquant à la durée, nul quand elle est atteinte,
-    et les majore depuis l'âge où elle l'est. Né le 10 décembre 1954, entré à vingt ans,
-    l'auxiliaire médical part à 62 ans le 1er janvier 2017 avec sa durée : douze
-    trimestres le séparent de 65 ans (2 ans, 11 mois et 9 jours, le trimestre incomplet
-    compté entier), trois années, 12 %, aucun trimestre manquant, 0,88 ; le modèle le
-    majore de trois trimestres, 1,0375, 5 681,23 € par an ; les statuts, 5 681,23 /
-    1,0375 × 0,88 = 4 818,78 €. Entré à 26 ans, 21 trimestres manquants, 12 % + 0,25 %
-    × 12 = 15 % : le modèle rend 0,85, comme les statuts.
+    Le texte ne tranche pas, du 3 octobre 2015 au 9 janvier 2024, si les générations
+    1955 et antérieures qui ont leur durée sont au taux plein avant 65 ans. Première
+    lecture, celle du modèle : l'article 11 sert à taux plein « A partir de 62 ans et
+    avant 67 ans au profit : « a) Des assurés nés à compter du 1er janvier 1961 liquidant
+    leur pension du régime de base sans abattement », et l'article 12 quater, 1°, « Par
+    dérogation aux dispositions de l'article 11 », fixe pour la « GÉNÉRATION 1955 ET
+    ANTÉRIEURE » l'« Age prévu à l'article 11.2 (a) 60 ans » ; le 2° déroge à l'article
+    12, non à l'article 11, et ne vise que les abattements « en cas de départ anticipé
+    », que l'article 12 fait dépendre de « la durée d'assurance lorsque l'assuré ne
+    justifie pas de la durée prévue dans le régime de base ». Seconde lecture : l'article
+    11.2 (a) ne nomme que les nés depuis 1961, et le 2° frappe toute liquidation avant 65
+    ans de « 4 % par année d'anticipation », la durée n'y entrant que pour les « 0,25 %
+    par trimestre manquant ». Né le 10 décembre 1954, entré à vingt ans, l'auxiliaire
+    médical part à 62 ans le 1er janvier 2017 avec sa durée ; le modèle le majore de
+    trois trimestres, 1,0375, 5 681,23 € par an, 5 475,89 € sans coefficient. Première
+    lecture : taux plein, la majoration comptée de l'âge légal de sa base (voir
+    l'approximation suivante), 1,0125, 5 544,34 €. Seconde lecture : douze trimestres
+    jusqu'à 65 ans (2 ans, 11 mois et 9 jours, le trimestre incomplet compté entier),
+    trois années, 12 %, 0,88, 4 818,78 €. Entré à 26 ans, 21 trimestres manquants, 12 %
+    + 0,25 % × 12 = 15 %, 0,85 : le modèle et les deux lectures s'accordent. Jusqu'à un
+    exemple de la caisse — une pension d'un assuré né avant 1956, prise de 2016 à 2023
+    avec sa durée —, le modèle garde la première lecture.
   effet: >-
-    862,45 € par an de trop dans le cas posé ; jusqu'à 20 points d'abattement manquants
-    à 60 ans, et la majoration de trop, pour qui a sa durée avant 65 ans
+    136,90 € par an de trop dans la première lecture, 862,45 € dans la seconde, dans le
+    cas posé ; la seconde ôterait jusqu'à 20 points de la pension prise à 60 ans avec la
+    durée
+- version: [statuts_de_2015, statuts_de_2019, statuts_de_2024, reglement_de_2026]
+  textes: >-
+    statuts, article 11, 2°, a, et article 12 ter, rédaction de 2015 ; article 11, 2),
+    rédaction de 2024 ; règlement de 2026, articles 3, 4 et 5
+  ecart: >-
+    Erreur du modèle, déclarée, non corrigée, pour les générations 1955 et antérieures
+    de 2015 à 2024 : la majoration court « au-delà de l'âge auquel elle aurait pu être
+    liquidée sans abattement » (article 12 ter) ; le taux plein avant l'âge de la table y
+    suppose de liquider la base « sans abattement » (article 11, 2°, a), ce qui ne se
+    peut qu'à l'âge légal de la base (L. 643-3, I, et D. 161-2-1-9, 5° : « Soixante et
+    un ans et sept mois pour les assurés nés en 1954 »). Le modèle la fait courir de
+    l'âge où la durée est atteinte, cherché depuis l'âge minimal de la caisse
+    (`age_ouverture_commun`). Né le 10 décembre 1954, entré à vingt ans, durée atteinte
+    avant 61 ans et 7 mois, le 10 juillet 2016 : un seul trimestre civil entier
+    d'ajournement avant le 1er janvier 2017, octobre à décembre, 1,0125 ; le modèle en
+    compte trois, d'avril à décembre, 1,0375 ; 5 681,23 / 1,0375 × 1,0125 = 5 544,34 €. La
+    seconde lecture de l'approximation précédente ne majore pas du tout avant 65 ans.
+    Pour les générations 1956 à 1960 de 2015 à 2024, et pour toutes depuis 2024, le texte
+    ne tranche pas : l'abattement, « 1,25 % par trimestre manquant pour pouvoir liquider
+    la retraite de base à taux plein » (article 12 quater, 1°, de 2015 ; article 4 du
+    règlement), est nul dès la durée atteinte, quand le taux plein avant l'âge de la
+    table (article 11, 2°, a ; article 3, 2) du règlement) demande les conditions de la
+    base.
+  effet: >-
+    136,90 € par an de trop dans le cas posé ; non mesuré pour les générations
+    suivantes
 - version: [statuts_de_2015, statuts_de_2019]
   textes: statuts, article 12 quater, 2°, rédaction de l'arrêté du 31 juillet 2015
   ecart: >-
@@ -477,6 +563,23 @@ approximations:
     lectures se rejoignent quand les trimestres d'anticipation font des années
     entières, comme dans le cas posé.
   effet: jusqu'à trois points de la pension ; non mesuré
+- version: [statuts_de_2015, statuts_de_2019, statuts_de_2024, reglement_de_2026]
+  textes: >-
+    statuts, articles 12 et 12 ter, rédaction de 2015 ; règlement de 2026, articles 4
+    et 5
+  ecart: >-
+    Le texte ne tranche pas l'âge d'où la majoration se compte : la première phrase de
+    l'article 12 ter (article 5 du règlement) la fait courir « au-delà de l'âge auquel
+    elle aurait pu être liquidée sans abattement », la seconde « par trimestre civil
+    entier d'ajournement postérieur à l'âge du taux plein », quand l'article 12 (article
+    4) borne l'abattement à « l'âge du taux plein sans condition ». L'âge où l'assuré
+    atteint le taux plein, que le modèle lit et que la première phrase soutient, ou
+    celui de la table. Né le 10 novembre 1959, entré à vingt ans, à 67 ans : le modèle
+    sert 1,25, vingt trimestres, 7 022,19 € par an ; compté de 66 ans et 4 mois, le 10
+    mars 2026, deux trimestres civils entiers jusqu'au 1er décembre 2026, 1,025, 7 022,19
+    / 1,25 × 1,025 = 5 758,20 €.
+  effet: >-
+    1 263,99 € par an de plus que la lecture de la table, dans le cas posé
 - version: [statuts_de_2015]
   textes: statuts, article 12 quater, 1°, rédaction de l'arrêté du 31 juillet 2015
   ecart: >-
@@ -545,6 +648,12 @@ textes_sans_effet:
   motif: >-
     « AUXILIAIRES MEDICAUX,ANNEXE NO 2: REGIME COMPLEMENTAIRE D'ASSURANCE VIEILLESSE
     (ART. 13) » : l'article 13, la réversion, seul
+- id: JORFTEXT000000685179
+  article: arrêté du 16 décembre 1991, titre et notice
+  publie_le: 1991-12-27
+  motif: >-
+    « DES REGIMES COMPLEMENTAIRES D'ASSURANCE VIEILLESSE (ART. 22) » : l'article 22
+    seul, au Bulletin officiel no 91-50, non les articles 10 à 12
 - id: JORFARTI000032036777
   article: arrêté du 3 février 2016, annexe
   publie_le: 2016-02-12
@@ -583,20 +692,25 @@ effet: >-
   La fiche lisait 67 ans dès la génération 1955 ; la table `carpimko_2016` arrête
   la décote et fait partir la majoration à l'âge que l'article 12 quater écrit,
   depuis 2016. Trois enfants majorent la pension depuis 2024. Lue au droit le 5
-  novembre 2026 (action 130) : sept versions, avant 1984, les statuts de 1984 lus dans
-  LEGI, ceux de 1996 à 2015 présumés, faute du Bulletin officiel no 96-52, puis 2015,
-  2019, 2024 et le règlement de 2026 ; trois erreurs du modèle déclarées, non
-  corrigées : de 1984 à 1996, la durée annule une minoration que les statuts font de
-  l'âge seul (116,44 € par an dans le cas posé) ; de 2015 à 2024, les générations 1955
-  et antérieures sans leurs 4 % par année, et majorées (862,45 €) ; la date d'effet au
-  mois, non au trimestre civil (475,50 €).
+  novembre 2026 (action 130) : avant 1984, les statuts de 1984 lus dans LEGI, puis
+  2015, 2019, 2024 et le règlement de 2026. Retouchée le même jour après la relecture
+  R-E4 : huit versions, les statuts de 1984 lus jusqu'au 4 juin 1987 seulement, ceux de
+  1987 à 2015 présumés, faute du texte de l'arrêté du 20 mai 1987 et du Bulletin
+  officiel no 96-52. Erreurs du modèle déclarées, non corrigées : de 1984 à juin 1987,
+  la durée annule une minoration que les statuts font de l'âge seul (28,57 € par an
+  dans le cas posé) ; de 2015 à 2024, la majoration des générations 1955 et
+  antérieures comptée avant l'âge légal de leur base (136,90 €) ; la date d'effet au
+  mois, non au trimestre civil (475,50 €). Non tranchés : les 4 % par année des mêmes
+  générations quand elles ont leur durée (136,90 € ou 862,45 € par an), l'âge d'où la
+  majoration se compte (1 263,99 €).
 sources:
   lu_le: 2026-11-05
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
-    Les statuts de 1996 à 2015 : l'arrêté du 20 novembre 1996, au Bulletin officiel no
-    96-52 du ministère du travail et des affaires sociales, hors de l'index ; à demander
+    Les statuts de 1987 à 2015 : le texte de l'arrêté du 20 mai 1987, dont l'index n'a
+    que le titre, et celui du 20 novembre 1996, au Bulletin officiel no 96-52 du
+    ministère du travail et des affaires sociales, hors de l'index ; à demander
     à la CARPIMKO, ou à lire en bibliothèque. Les régimes de 1956 (décrets n° 56-97 et n°
     56-129) et leurs statuts, pour les pensions d'avant 1984.
   lectures:
@@ -618,9 +732,18 @@ sources:
       1984, 24 janvier 1989, 20 novembre 1996 (mention et nota), 31 juillet 2015, 3
       février 2016, 13 juillet 2017, 20 août 2018, 23 mai 2019, 18 juin 2020, 20 juin
       2022, 27 décembre 2023, 14 novembre 2025, 10 juillet 2026 (annexe, III) ; ceux de
-      1985 à 1998 qui nomment la section, lus à leur titre, aucun ne touchant les
-      articles 10 à 12 du régime complémentaire ; dans l'index JORF du dépôt, à jour du
-      5 novembre 2026.
+      1985 à 1998 qui nomment la section, lus à leur titre ; ce relevé avait manqué ceux
+      du 20 mai 1987 et du 16 décembre 1991, relus ensuite ; dans l'index JORF du dépôt, à
+      jour du 5 novembre 2026.
+    date: 2026-11-05
+  - type: jorf
+    reference: >-
+      Relus après la relecture R-E4 : les arrêtés du 20 mai 1987 (JORFTEXT000000844323 et,
+      pour d'autres sections, JORFTEXT000000662545) et du 16 décembre 1991
+      (JORFTEXT000000685179), à leur titre ; l'annexe de l'arrêté du 31 juillet 2015
+      (JORFARTI000031255547) ; dans l'index JORF du dépôt, à jour du 5 novembre 2026.
+      Le code de la sécurité sociale, L. 643-3 (LEGIARTI000028498667) et D. 161-2-1-9
+      (LEGIARTI000025089933), dans l'index LEGI, à jour du 4 novembre 2026.
     date: 2026-11-05
   - type: autre
     reference: >-
