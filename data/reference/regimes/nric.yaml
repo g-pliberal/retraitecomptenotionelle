@@ -41,6 +41,8 @@ periodes:
     avantages_non_contributifs: [reversion]
     assiette: plafonnee_3_pass
     assiette_annee_de_revenu: {commercant: 2, gerant_debit_tabac: 2}
+    # Le commerçant qui commence, 18 puis 27 bases mensuelles, définitives jusqu'en 2008 : fiche `assiette_rco_independants`.
+    assiette_de_debut_en_bases_mensuelles: {commercant: [18, 27], gerant_debit_tabac: [18, 27]}
     # Les points de la pension d'invalidité : fiche `points_invalidite_independants`.
     points_invalidite: {par: mois, proportionnels: false, forfait: 2}
     taux_cotisation_retraite: 0.0400
@@ -71,6 +73,8 @@ periodes:
     assiette: plafonnee_3_pass
     # Le conjoint à l'option, sur l'avant-dernière année, de 2007 à 2012 : fiche `assiette_rco_independants`.
     assiette_annee_de_revenu: {commercant: 2, conjoint_collaborateur_commercant: 2, gerant_debit_tabac: 2}
+    # Le commerçant qui commence, 18 puis 27 bases mensuelles, définitives jusqu'en 2008 : fiche `assiette_rco_independants`.
+    assiette_de_debut_en_bases_mensuelles: {commercant: [18, 27], gerant_debit_tabac: [18, 27]}
     # Les points de la pension d'invalidité : fiche `points_invalidite_independants`.
     points_invalidite: {par: mois, proportionnels: false, forfait: 2}
     taux_cotisation_retraite: 0.0650

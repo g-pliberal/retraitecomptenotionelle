@@ -655,11 +655,8 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
                 # bornes. Le RCO des commerçants, de sa création en 2004 aux
                 # cotisations de 2008, suit la même règle (D. 635-2, rédaction
                 # du 24 août 2004). L'exercice ouvert depuis moins de deux ans,
-                # l'avant-dernière année n'en est pas : l'artisan cotise sur
-                # ses forfaits, le commerçant sur les « revenus forfaitaires
-                # mentionnés au sixième alinéa de l'article L. 131-6 »
-                # (D. 635-10), que L. 131-6 dit provisionnels et régularisés :
-                # le modèle garde le revenu de l'année.
+                # l'avant-dernière année n'en est pas : l'un et l'autre
+                # cotisent sur leurs forfaits (LE DÉBUT D'EXERCICE, plus bas).
                 # LE CONJOINT COLLABORATEUR cotise sur « le revenu retenu [...]
                 # pour le calcul de sa cotisation d'assurance vieillesse de
                 # base », qui « ne fait toutefois pas l'objet de la
@@ -693,13 +690,32 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
                 # de début d'exercice, sur un revenu correspondant au tiers du
                 # plafond », « pour l'année suivante, sur un revenu
                 # correspondant à la moitié dudit plafond » (décret n° 78-351,
-                # article 3, II ; D. 635-4 ; D. 635-7), jusqu'à ce que le
-                # décret n° 2011-2038 les supprime en 2012. L'exercice commence
-                # l'année qu'aucune ligne de la même affiliation ne précède
-                # l'année d'avant : le texte ne dit pas la reprise, que
-                # R. 242-16 ne tient pour un début d'activité que passée
-                # l'année qui suit la cessation. Le forfait se prend à
-                # proportion des mois de l'année, comme les bornes.
+                # article 3, II ; D. 635-4 ; D. 635-7). Le commerçant qui
+                # commence, de 2004 à 2008, « sur les revenus forfaitaires
+                # mentionnés au sixième alinéa de l'article L. 131-6 »
+                # (D. 635-10) : « dix-huit fois la valeur de la base mensuelle
+                # de calcul des prestations familiales en vigueur au
+                # 1er octobre de l'année précédente », puis cette base
+                # « majorée de 50 % », vingt-sept fois depuis 2008 (R. 242-16).
+                # Jusqu'aux cotisations de 2008, la complémentaire est
+                # définitive (D. 635-2) : « pour le calcul définitif, la
+                # cotisation invalidité-décès et la cotisation de retraite
+                # complémentaire restent celles qui ont été établies au moment
+                # de l'appel provisionnel » (circulaire DSS/5 B/5 C
+                # n° 2007-431 du 5 décembre 2007, note 2). Depuis les
+                # revenus de 2009, elle est « calculée suivant les modalités
+                # prévues au cinquième alinéa de l'article L. 131-6 »
+                # (D. 635-2) : sur le revenu de l'avant-dernière année « ou
+                # des revenus forfaitaires », puis régularisée « lorsque le
+                # revenu professionnel est définitivement connu » ; le forfait
+                # n'est plus qu'un acompte, et les périodes de 2009 à 2011 ne
+                # le portent pas, jusqu'à ce que le décret n° 2011-2038 le
+                # supprime en 2012. L'exercice commence l'année qu'aucune
+                # ligne de la même affiliation ne précède l'année d'avant : le
+                # texte ne dit pas la reprise, que R. 242-16 ne tient pour un
+                # début d'activité que passée l'année qui suit la cessation.
+                # Le forfait se prend à proportion des mois de l'année, comme
+                # les bornes.
                 diviseurs = dict(periode.assiette_de_debut).get(ligne.affiliation)
                 forfait_de_debut = False
                 if diviseurs and ligne.cotise:
@@ -708,6 +724,17 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
                     if rang < len(diviseurs):
                         base = (moteur.macro.plafond_securite_sociale(ligne.annee)
                                 / diviseurs[rang] * part)
+                        forfait_de_debut = True
+                multiples = dict(periode.assiette_de_debut_en_bases_mensuelles).get(
+                    ligne.affiliation)
+                if multiples and ligne.cotise:
+                    rang = annees_deja_exercees(carriere, ligne.affiliation, ligne.annee,
+                                                len(multiples))
+                    if rang < len(multiples):
+                        base = (multiples[rang]
+                                * moteur.macro.base_mensuelle_prestations_familiales(
+                                    ligne.annee - 1)
+                                * part)
                         forfait_de_debut = True
                 # L'assiette de la CAVAMAC est faite des commissions
                 # versées par les compagnies, celle de la CPRN des produits
@@ -733,8 +760,11 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
                 # début : l'article 3 du décret n° 78-351 et D. 635-4 le
                 # posent pour les assurés « autres que ceux visés aux II et
                 # III », celui qui commence et l'aide familial ; de 2004 à
-                # 2011, D. 635-2 le pose « sous réserve » de D. 635-7, qui
-                # porte le forfait, sans dire s'il s'y oppose.
+                # 2008, D. 635-2 le pose « sous réserve » de D. 635-7 et de
+                # D. 635-10, qui portent les forfaits, sans dire s'il s'y
+                # oppose. Depuis 2009, le forfait régularisé, la cotisation de
+                # celui qui commence est sur son revenu, et le minimum la
+                # borne comme les autres.
                 if not forfait_de_debut:
                     base = max(base, assiette_minimale(moteur, (code,), ligne))
                 plafond = base if borne_haute is None else borne_haute

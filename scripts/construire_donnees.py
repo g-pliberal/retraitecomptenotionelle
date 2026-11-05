@@ -135,7 +135,7 @@ CALIBRATIONS = DONNEES / "derive" / "calibrations_mortalite.json"
 #: qu'un site en cache ne lise pas un paquet qu'il ne comprend pas : le site
 #: attend la sienne (``VERSION_PAQUET``, ``moteur/js/contexte.js``), et redemande
 #: au serveur un paquet qui n'a pas celle-là, depuis le 11 octobre 2026.
-VERSION = 40
+VERSION = 41
 
 
 def _serie(serie: SerieAnnuelle) -> dict:
@@ -202,6 +202,13 @@ def _series() -> dict:
         "taux_retenue_avant_1946": charger_serie_annuelle(
             DONNEES / "reference" / "legislation" / "taux_retenue_avant_1946.csv",
             "valeur", nom="taux_retenue_avant_1946"),
+        # La base mensuelle des prestations familiales au 1er octobre, de 2003
+        # à 2007 : le forfait du commerçant qui commence, à sa complémentaire
+        # jusqu'en 2008 (D. 635-10 ; R. 242-16 ; action 177).
+        "base_mensuelle_prestations_familiales": charger_serie_annuelle(
+            DONNEES / "reference" / "legislation"
+            / "base_mensuelle_prestations_familiales.csv",
+            "valeur", nom="base_mensuelle_prestations_familiales"),
         # Le même seuil outre-mer, de 1948 à 1995, une série par colonne du
         # barème de la Cnav (R. 753-21, puis le SMIC du département).
         **{f"salaire_validant_outre_mer_{colonne}": charger_serie_annuelle(
@@ -847,6 +854,12 @@ def _regimes() -> list[dict]:
                     **({"assiette_de_debut": {statut: list(diviseurs) for statut, diviseurs
                                               in p.assiette_de_debut}}
                        if p.assiette_de_debut else {}),
+                    # Celles du NRCO des commerçants de 2004 à 2008 : absent,
+                    # aucun forfait en bases mensuelles.
+                    **({"assiette_de_debut_en_bases_mensuelles": {
+                           statut: list(multiples) for statut, multiples
+                           in p.assiette_de_debut_en_bases_mensuelles}}
+                       if p.assiette_de_debut_en_bases_mensuelles else {}),
                     # La fiche datée du salaire annuel moyen, aux seules
                     # périodes qui y renvoient : absente, la moyenne annuelle.
                     **({"regles_du_salaire_annuel_moyen": p.regles_du_salaire_annuel_moyen}

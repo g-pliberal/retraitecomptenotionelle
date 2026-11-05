@@ -583,6 +583,20 @@ class DonneesMacro:
                 for colonne in sorted(set(DEPARTEMENTS_D_OUTRE_MER.values()))}
 
     @cached_property
+    def base_mensuelle_prestations_familiales(self) -> SerieAnnuelle:
+        """La base mensuelle de calcul des prestations familiales au 1er octobre,
+        de 2003 à 2007 : dix-huit puis vingt-sept fois celle de l'année
+        précédente font le forfait du commerçant qui commence, à sa
+        complémentaire jusqu'en 2008 (D. 635-10 ; R. 242-16 ;
+        ``legislation/base_mensuelle_prestations_familiales.csv``)."""
+        return charger_serie_annuelle(
+            self.racine / "reference" / "legislation"
+            / "base_mensuelle_prestations_familiales.csv",
+            colonne_valeur="valeur",
+            nom="base_mensuelle_prestations_familiales",
+        )
+
+    @cached_property
     def plafond_assujettissement_avant_1947(self) -> SerieAnnuelle:
         """Le plafond d'assujettissement aux assurances sociales de 1930 à 1946, en
         euros : le salarié payé au-delà n'était pas assuré, ne subissait aucune

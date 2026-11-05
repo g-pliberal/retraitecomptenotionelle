@@ -563,8 +563,10 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
           base = revenuDeLAnnee(carriere, ligne.affiliation, ligne.annee - decalage) * part;
         }
         // LE DÉBUT D'EXERCICE : l'artisan qui commence cotise au RCO sur un
-        // tiers, puis sur la moitié du plafond, jusqu'en 2011 : voir
-        // acquerir.py.
+        // tiers, puis sur la moitié du plafond, jusqu'en 2008 ; le commerçant
+        // au NRCO, sur dix-huit puis vingt-sept bases mensuelles des
+        // prestations familiales, de 2004 à 2008 ; depuis 2009, le forfait
+        // est régularisé : voir acquerir.py.
         const diviseurs = periode.assiette_de_debut?.[ligne.affiliation];
         let forfaitDeDebut = false;
         if (diviseurs && ligne.cotise) {
@@ -572,6 +574,17 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
             diviseurs.length);
           if (rang < diviseurs.length) {
             base = passPlein / diviseurs[rang] * part;
+            forfaitDeDebut = true;
+          }
+        }
+        const multiples = periode.assiette_de_debut_en_bases_mensuelles?.[ligne.affiliation];
+        if (multiples && ligne.cotise) {
+          const rang = anneesDejaExercees(carriere, ligne.affiliation, ligne.annee,
+            multiples.length);
+          if (rang < multiples.length) {
+            base = multiples[rang]
+              * moteur.macro.base_mensuelle_prestations_familiales.valeur(ligne.annee - 1)
+              * part;
             forfaitDeDebut = true;
           }
         }

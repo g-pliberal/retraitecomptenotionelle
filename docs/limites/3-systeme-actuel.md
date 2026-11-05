@@ -250,28 +250,28 @@ l'Institut des politiques publiques (PENSIPP). Écarts connus :
   `assiette_rco_independants` lit au droit : jusqu'aux cotisations de 2008, le
   RCO des artisans et le NRCO des commerçants assis sur le revenu de
   l'avant-dernière année, sans ajustement ; l'artisan qui commence au tiers
-  puis à la moitié du plafond, jusqu'en 2011 ; la cotisation additionnelle de
+  puis à la moitié du plafond, et, depuis le 5 novembre 2026, le commerçant qui
+  commence sur dix-huit puis vingt-sept fois la base mensuelle des prestations
+  familiales (D. 635-10, R. 242-16), forfaits définitifs jusqu'aux cotisations
+  de 2008, puis régularisés sur le revenu de l'année de 2009 à 2011 (D. 635-2,
+  L. 131-6) ; la cotisation additionnelle de
   1985 à 1996 sans points ; le conjoint collaborateur sur l'assiette de sa
   cotisation de base, sans régularisation (D. 635-10-2) — au forfait, le tiers
   du plafond de l'année ; à l'option, de 2007 à 2012, la fraction du revenu du
   chef de l'avant-dernière année, que le modèle lit sur la ligne du conjoint
   de cette année-là, et, quand elle manque ou est au forfait (ses deux
   premières années, le passage du forfait à l'option), le revenu de l'année.
-  Il tient pour définitif le forfait de l'artisan qui commence de 2009 à 2011,
-  que D. 635-7 assied sur un tiers puis la moitié du plafond, quand D. 635-2
-  calcule depuis 2009 toute la cotisation à titre provisionnel, puis la
-  régularise sur le revenu de l'année (L. 131-6) : aucun texte lu ne dit si ce
-  forfait l'était. Il sert, depuis le 5 novembre 2026, le minimum de la
+  Il sert, depuis le 5 novembre 2026, le minimum de la
   cotisation, le revenu minimum du régime de base jusqu'en 2011, puis une part
   du plafond dès quatre-vingt-dix jours d'affiliation jusqu'en 2015, RCI compris
-  (D. 635-4, D. 635-2), mais ne l'oppose pas au forfait de l'artisan qui
+  (D. 635-4, D. 635-2), mais ne l'oppose pas au forfait définitif de celui qui
   commence, que le texte n'y soumet pas jusqu'en 2004 et dont il ne dit rien
-  ensuite, ni ne garde l'ancien minimum à qui cesse en 2012 (décret
-  n° 2012-443, article 10, II). Il ne sert pas le forfait du commerçant qui
-  commence, dix-huit puis vingt-sept fois la base mensuelle des allocations
-  familiales (D. 635-10, R. 242-16), dont aucun texte lu ne dit s'il était
-  régularisé : il garde le revenu de ses deux premières années ; ni
-  l'assiette inférieure accordée sur demande motivée. Il tient pour un début
+  de 2004 à 2008, ni ne garde l'ancien minimum à qui cesse en 2012 (décret
+  n° 2012-443, article 10, II). La deuxième année du commerçant qui commence,
+  il prend la base mensuelle du 1er octobre de la première, quand le texte se
+  lit aussi de celle d'avant le début : moins d'un point du NRCO. Il ne sert
+  ni l'acompte sur le revenu estimé, ni l'assiette inférieure accordée sur
+  demande motivée. Il tient pour un début
   d'exercice la reprise après une année sans activité, ce que le texte ne dit
   pas et que R. 242-16 dit des cotisations de début d'activité, et prend le
   forfait et le revenu de l'avant-dernière année à proportion des mois de

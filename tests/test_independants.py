@@ -1254,10 +1254,18 @@ def test_les_deux_premieres_annees_de_l_artisan_cotisent_au_forfait(points_des_d
     complémentaire de l'aide familial, que le même article assied « sur un
     revenu égal au tiers du plafond visé au premier alinéa du I », « sur le
     tiers du plafond de la sécurité sociale » (exposé « Rachat aide familial »
-    de la Cnav). L'artisan installé en 1980 cotise à 4,40 % sur 9 165 / 3 € en
+    de la Cnav). Depuis les revenus de 2009, la cotisation « est calculée
+    suivant les modalités prévues au cinquième alinéa de l'article L. 131-6 »
+    (D. 635-2, LEGIARTI000020032159) : « à titre provisionnel, en pourcentage
+    du revenu professionnel de l'avant-dernière année ou des revenus
+    forfaitaires. Lorsque le revenu professionnel est définitivement connu, les
+    cotisations font l'objet d'une régularisation » (L. 131-6,
+    LEGIARTI000020169101) ; le forfait n'est plus que l'acompte, et les points
+    suivent la cotisation régularisée (circulaire RSI n° 2008/031, § 3.1.2).
+    L'artisan installé en 1980 cotise à 4,40 % sur 9 165 / 3 € en
     1980, sur 10 482 / 2 € en 1981, puis sur son revenu de 1980 en 1982 ; celui
-    de 2008, sur 33 276 / 3 € à 7 % en 2008 et sur 34 308 / 2 € à 7,1 % en
-    2009 ; celui de 2011, sur 35 352 / 3 € à 7,2 % en 2011, puis sur son revenu
+    de 2008, sur 33 276 / 3 € à 7 % en 2008, puis sur ses 31 000 € de 2009 à
+    7,1 % ; celui de 2011, sur ses 30 000 € de 2011 à 7,2 %, puis sur son revenu
     de 2012 — des points du RCO, que le RCI reprendra à la liquidation. Celui
     qui reprend en 1998, après
     quatorze ans sans activité, commence un nouvel exercice — ce que le texte
@@ -1284,8 +1292,8 @@ def test_les_deux_premieres_annees_de_l_artisan_cotisent_au_forfait(points_des_d
          1981: 10482 / 2 * 0.044 / 1.137270,
          1982: 10000.0 * 0.044 / 1.282096},
         {2008: 33276 / 3 * 0.07 / 4.207,
-         2009: 34308 / 2 * 0.071 / 4.5},
-        {2011: 35352 / 3 * 0.072 / 4.79053,
+         2009: 31000.0 * 0.071 / 4.5},
+        {2011: 30000.0 * 0.072 / 4.79053,
          2012: 32000.0 * 0.072 / 4.89113},
         {1998: 25776 / 3 * 0.053 / 2.878237,
          1999: 26471 / 2 * 0.057 / 3.103862,
@@ -1308,11 +1316,9 @@ def test_le_nrco_des_commercants_cotise_sur_l_avant_derniere_annee(points_des_de
     2004, la moyenne des 3,5 % et 4,5 % des deux semestres, puis 6,5 %,
     LEGIARTI000006738027, LEGIARTI000006738028), jusqu'aux revenus de 2009,
     régularisés sur le revenu de l'année (décret n° 2008-1427). Celui qui
-    commence cotise sur « les revenus forfaitaires mentionnés au sixième alinéa
-    de l'article L. 131-6 » (D. 635-10), que L. 131-6 dit calculées « à titre
-    provisionnel » puis régularisées « lorsque le revenu professionnel est
-    définitivement connu » : le modèle garde le revenu de ses deux premières
-    années, et l'avant-dernière ensuite. Le conjoint collaborateur cotise sur
+    commence en 2005 cotise sur ses forfaits (voir
+    `test_le_commercant_qui_commence_cotise_sur_dix_huit_puis_vingt_sept_bmaf`),
+    puis sur l'avant-dernière année. Le conjoint collaborateur cotise sur
     l'assiette de sa cotisation de base (D. 635-10-2), un tiers du plafond.
     Dans les deux moteurs."""
     cas = [
@@ -1331,13 +1337,64 @@ def test_le_nrco_des_commercants_cotise_sur_l_avant_derniere_annee(points_des_de
          2007: 19000.0 * 0.065 / 14.648,
          2008: 20000.0 * 0.065 / 14.809,
          2009: 23000.0 * 0.065 / 15.3},
-        {2005: 12000.0 * 0.065 / 14.112,
-         2006: 13000.0 * 0.065 / 14.389,
+        {2005: 18 * 353.59 * 0.065 / 14.112,
+         2006: 27 * 361.37 * 0.065 / 14.389,
          2007: 12000.0 * 0.065 / 14.648,
          2008: 13000.0 * 0.065 / 14.809,
          2009: 16000.0 * 0.065 / 15.3},
         {2007: 32184 / 3 * 0.065 / 14.648,
          2008: 33276 / 3 * 0.065 / 14.809},
+    ]
+    for moteur, carrieres in points_des_deux_moteurs(cas).items():
+        for credits, attendu in zip(carrieres, attendus):
+            for annee, points in attendu.items():
+                assert credits.get(("nric", annee)) == pytest.approx(
+                    points, rel=1e-12), (moteur, annee)
+
+
+def test_le_commercant_qui_commence_cotise_sur_dix_huit_puis_vingt_sept_bmaf(
+        points_des_deux_moteurs):
+    """« Pour les assurés commençant l'exercice de leur activité, la cotisation
+    annuelle est calculée sur les revenus forfaitaires mentionnés au sixième
+    alinéa de l'article L. 131-6 » (D. 635-10, LEGIARTI000006738027,
+    LEGIARTI000006738028) : la première année civile, « une base forfaitaire
+    égale à dix-huit fois la valeur de la base mensuelle de calcul des
+    prestations familiales en vigueur au 1er octobre de l'année précédente », la
+    deuxième, cette base « majorée de 50 % », vingt-sept fois depuis 2008
+    (R. 242-16, LEGIARTI000006748778, LEGIARTI000006748779). Jusqu'aux
+    cotisations de 2008, la complémentaire est définitive (D. 635-2,
+    LEGIARTI000006738016) : « pour le calcul définitif, la cotisation
+    invalidité-décès et la cotisation de retraite complémentaire restent celles
+    qui ont été établies au moment de l'appel provisionnel » (circulaire
+    DSS/5 B/5 C n° 2007-431 du 5 décembre 2007, note 2, que reproduit la
+    circulaire RSI n° 2008/017) ; « pour le groupe professionnel des
+    commerçants, tous les risques, y compris régime complémentaire et
+    invalidité-décès sont calculés sur la base de 18 puis 27 BMPF » (circulaire
+    RSI n° 2007/013). La base mensuelle, au 1er octobre, celle du 1er janvier :
+    347,68 € en 2003, 353,59 € en 2004, 361,37 € en 2005, 367,87 € en 2006,
+    374,12 € en 2007 (décrets n° 2002-1567, 2003-1251, 2004-1458, 2005-1769,
+    2006-1754). Depuis les revenus de 2009, la cotisation est régularisée sur le
+    revenu de l'année (D. 635-2, LEGIARTI000020032159 ; L. 131-6, cinquième
+    alinéa, LEGIARTI000020169101), le forfait comme le reste. Le gérant de débit
+    de tabac, au même régime, de même. Dans les deux moteurs."""
+    cas = [
+        {"naissance": 1950, "age": 62.0, "releve": _releve("commercant", {
+            2004: 10000.0, 2005: 11000.0, 2006: 12000.0})},
+        {"naissance": 1950, "age": 62.0, "releve": _releve("gerant_debit_tabac", {
+            2007: 20000.0, 2008: 21000.0, 2009: 22000.0})},
+        {"naissance": 1950, "age": 62.0, "releve": _releve("commercant", {
+            2008: 15000.0, 2009: 16000.0, 2010: 17000.0})},
+    ]
+    attendus = [
+        {2004: 18 * 347.68 * 0.04 / 13.89,
+         2005: 27 * 353.59 * 0.065 / 14.112,
+         2006: 10000.0 * 0.065 / 14.389},
+        {2007: 18 * 367.87 * 0.065 / 14.648,
+         2008: 27 * 374.12 * 0.065 / 14.809,
+         2009: 22000.0 * 0.065 / 15.3},
+        {2008: 18 * 374.12 * 0.065 / 14.809,
+         2009: 16000.0 * 0.065 / 15.3,
+         2010: 17000.0 * 0.065 / 15.483},
     ]
     for moteur, carrieres in points_des_deux_moteurs(cas).items():
         for credits, attendu in zip(carrieres, attendus):
@@ -1391,7 +1448,9 @@ def test_le_minimum_de_la_cotisation_complementaire_jusqu_en_2015(points_des_deu
     plus rien depuis 2016 (LEGIARTI000031799392). L'artisan à 100 € par an
     depuis 1977 a au RCO, en 1980, les points de 200 × 1,971166 € (2 586 F), en
     1984, de 200 × 3,472789 € (4 556 F) ; le commerçant à 500 € par an depuis
-    2004 a au NRCO ceux de 200 × 7,61 € en 2005, 8,27 € en 2007, 8,86 € en
+    2004, dont les deux premières années sont au forfait (voir
+    `test_le_commercant_qui_commence_cotise_sur_dix_huit_puis_vingt_sept_bmaf`),
+    a au NRCO ceux de 200 × 8,03 € en 2006, 8,27 € en 2007, 8,86 € en
     2010, 9,00 € en 2011 ; l'artisan à 1 000 € par an depuis 2012, ceux de
     5,25 % de 36 372 € au RCO en 2012, de 37 032 €, 37 548 € et 38 040 € au RCI
     de 2013 à 2015, et ceux de ses 1 000 € en 2016. Taux et revenus de
@@ -1407,7 +1466,7 @@ def test_le_minimum_de_la_cotisation_complementaire_jusqu_en_2015(points_des_deu
     attendus = [
         {("rco_artisans", 1980): 200 * 1.971166 * 0.044 / 1.003115,
          ("rco_artisans", 1984): 200 * 3.472789 * 0.044 / 1.544309},
-        {("nric", 2005): 200 * 7.61 * 0.065 / 14.112,
+        {("nric", 2006): 200 * 8.03 * 0.065 / 14.389,
          ("nric", 2007): 200 * 8.27 * 0.065 / 14.648,
          ("nric", 2010): 200 * 8.86 * 0.065 / 15.483,
          ("nric", 2011): 200 * 9.00 * 0.065 / 15.808},

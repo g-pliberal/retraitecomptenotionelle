@@ -1139,13 +1139,30 @@ champs_periode:
       sociale de l'exercice : les premières années civiles d'un exercice, la
       cotisation est assise sur ce plafond divisé par le premier diviseur la
       première année, par le second la suivante, quel que soit le revenu —
-      l'artisan au RCO de 1979 à 2011, « au tiers du plafond », puis « à la
+      l'artisan au RCO de 1979 à 2008, « au tiers du plafond », puis « à la
       moitié dudit plafond » (décret n° 78-351, article 3, II ; D. 635-4 ;
-      D. 635-7, jusqu'au décret n° 2011-2038). Un exercice commence l'année
+      D. 635-7), forfait définitif jusqu'aux cotisations de 2008. Un exercice commence l'année
       qu'aucune ligne cotisée de la même affiliation ne précède l'année
       d'avant, comme R. 242-16 le dit des débuts d'activité ; le forfait se
       prend à proportion des mois de l'année, comme les bornes. `null` :
-      aucun forfait.
+      aucun forfait. Depuis les revenus de 2009, le forfait n'est plus qu'un
+      acompte, régularisé sur le revenu de l'année (D. 635-2, L. 131-6) : les
+      périodes de 2009 à 2011 ne le portent pas.
+    defaut: null
+
+  assiette_de_debut_en_bases_mensuelles:
+    description: >-
+      Une table, du statut aux multiples de la base mensuelle de calcul des
+      prestations familiales en vigueur au 1er octobre de l'année précédente
+      (`legislation/base_mensuelle_prestations_familiales.csv`) : les
+      premières années civiles d'une activité, la cotisation est assise sur
+      le premier multiple la première année, sur le second la suivante, quel
+      que soit le revenu — le commerçant au NRCO de 2004 à 2008, sur « les
+      revenus forfaitaires mentionnés au sixième alinéa de l'article
+      L. 131-6 » (D. 635-10), dix-huit puis vingt-sept fois (R. 242-16),
+      définitifs jusqu'aux cotisations de 2008. L'activité commence comme
+      pour `assiette_de_debut`, et le forfait se prend de même à proportion
+      des mois de l'année. `null` : aucun forfait.
     defaut: null
 
   assiette_plancher:

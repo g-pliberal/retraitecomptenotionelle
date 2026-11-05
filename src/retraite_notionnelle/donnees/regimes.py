@@ -853,10 +853,18 @@ class PeriodeRegime:
     assiette_annee_de_revenu: tuple[tuple[str, int], ...] = ()
     #: LE FORFAIT DU DÉBUT D'EXERCICE, statut par statut : les diviseurs du
     #: plafond de l'année, ``(("artisan", (3, 2)),)`` — l'artisan au RCO de
-    #: 1979 à 2011, « au tiers du plafond », puis « à la moitié dudit
-    #: plafond » (décret n° 78-351, article 3, II ; D. 635-4 ; D. 635-7).
-    #: Vide : aucun forfait. Voir ``acquerir``.
+    #: 1979 à 2008, « au tiers du plafond », puis « à la moitié dudit
+    #: plafond » (décret n° 78-351, article 3, II ; D. 635-4 ; D. 635-7) ;
+    #: de 2009 à 2011, régularisé, il n'est plus qu'un acompte. Vide : aucun
+    #: forfait. Voir ``acquerir``.
     assiette_de_debut: tuple[tuple[str, tuple[int, ...]], ...] = ()
+    #: LE FORFAIT DU DÉBUT D'ACTIVITÉ EN BASES MENSUELLES, statut par statut :
+    #: les multiples de la base mensuelle de calcul des prestations familiales
+    #: au 1er octobre de l'année précédente, ``(("commercant", (18, 27)),)``
+    #: — le commerçant au NRCO de 2004 à 2008, sur « les revenus forfaitaires
+    #: mentionnés au sixième alinéa de l'article L. 131-6 » (D. 635-10 ;
+    #: R. 242-16). Vide : aucun forfait. Voir ``acquerir``.
+    assiette_de_debut_en_bases_mensuelles: tuple[tuple[str, tuple[int, ...]], ...] = ()
     notes: str = ""
 
     def prise_en_charge(self, forfait: float, proportionnelle: float) -> float:
@@ -2334,6 +2342,9 @@ class CatalogueRegimes:
                 assiette_de_debut=tuple(sorted(
                     (str(statut), tuple(int(d) for d in diviseurs)) for statut, diviseurs
                     in (p.get("assiette_de_debut") or {}).items())),
+                assiette_de_debut_en_bases_mensuelles=tuple(sorted(
+                    (str(statut), tuple(int(m) for m in multiples)) for statut, multiples
+                    in (p.get("assiette_de_debut_en_bases_mensuelles") or {}).items())),
                 points_par_trimestre_valide=(
                     None if p.get("points_par_trimestre_valide") is None
                     else float(p["points_par_trimestre_valide"])

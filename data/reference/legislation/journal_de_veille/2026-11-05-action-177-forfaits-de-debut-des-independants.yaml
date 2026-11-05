@@ -1,0 +1,47 @@
+date: "2026-11-05"
+session: "action 177, file D3 : les forfaits de début des indépendants, le commerçant de 2004 à 2008 et le forfait régularisé de 2009 à 2011, lus au droit et écrits dans les deux moteurs"
+consulte: >-
+  `python scripts/veille_droit.py` : aucune fiche des artisans ni des commerçants à
+  relire. Les index LEGI (deux incréments, à jour au 4 novembre 2026) et JORF (à jour au
+  3 novembre) récupérés et mis à jour. Relus dans l'index LEGI, version par version :
+  D. 635-10, ses six rédactions de 1985 à 2013 (`--diff`) ; D. 635-2, de 2004 à 2012 ;
+  D. 635-7, en vigueur en 2010 (LEGIARTI000017869802) ; L. 131-6, en vigueur en 2004 et
+  en 2010 (LEGIARTI000006740118, LEGIARTI000020675442) ; R. 242-16, de 1985 à 2017 ;
+  D. 633-6, de 1985 à 2012. Dans l'index JORF : le décret n° 2008-1427 (en-tête,
+  articles 1er et 2) ; le décret n° 2004-848, article 1er ; le décret n° 2011-2038, son
+  intitulé et ses articles 1er à 3 ; les décrets de revalorisation de la base mensuelle
+  des prestations familiales de 2002 à 2007 (n° 2002-1567, 2003-1251, 2004-1458,
+  2005-1769, 2006-1754, 2007-1755) ; les arrêtés du 17 décembre 2004 et du 19 décembre
+  2008 sur le règlement du NRCO. Dans la base de législation de la Cnav : les exposés
+  « Points cotisés artisans avant 2013 » et « Points cotisés commerçants avant 2013 »
+  (24 octobre 2025), lus par son API ; les circulaires RSI n° 2007/013 (sha256
+  05ce2821…8e6e3e70), 2008/017 (sha256 61efc134…582a3f82), qui reproduit la circulaire
+  DSS/5 B/5 C n° 2007-431, et 2008/031 (sha256 a7212c2d…bf00c034), téléchargées le jour ;
+  les soixante-huit circulaires du RSI de 2006 à 2012 qu'elle sert, cherchées par mots.
+trouve: >-
+  Le commerçant qui commence, de 2004 à 2008, cotise à sa complémentaire sur dix-huit
+  puis vingt-sept fois la base mensuelle des prestations familiales du 1er octobre de
+  l'année précédente (D. 635-10, L. 131-6, R. 242-16), et ce forfait est définitif : la
+  complémentaire n'est pas régularisée avant 2009 (D. 635-2) ; « pour le calcul
+  définitif, la cotisation invalidité-décès et la cotisation de retraite complémentaire
+  restent celles qui ont été établies au moment de l'appel provisionnel » (circulaire
+  DSS n° 2007-431, note 2) ; « 18 BMAF » puis « 27 BMAF » (circulaire RSI n° 2008/017),
+  « y compris régime complémentaire » (n° 2007/013). Base mensuelle : 347,68 € en 2003,
+  353,59 € en 2004, 361,37 € en 2005, 367,87 € en 2006, 374,12 € en 2007, au 1er janvier,
+  seule valeur de l'année. Depuis les revenus de 2009, D. 635-2 calcule la cotisation
+  « suivant les modalités prévues au cinquième alinéa de l'article L. 131-6 » : à titre
+  provisionnel sur l'avant-dernière année « ou des revenus forfaitaires », puis
+  régularisée ; le forfait de l'artisan (D. 635-7) comme celui du commerçant n'est plus
+  qu'un acompte, la caisse voulant la régularisation « dans les mêmes conditions que
+  celle applicable au régime légal de base » et ses points sur la cotisation
+  régularisée (circulaire RSI n° 2008/031, § 3.1.2). Écrit dans les deux moteurs, test
+  d'abord ; le minimum, de 2009 à 2011, borne la cotisation régularisée de celui qui
+  commence. Deux témoins sur 931 bougent (+1,20 % et +0,47 % au scénario 1). Fiche
+  `assiette_rco_independants` mise à jour ; série neuve
+  `legislation/base_mensuelle_prestations_familiales.csv` ; paquet en version 41.
+reste: >-
+  Déclaré, non tranché : la base mensuelle de la deuxième année (celle du 1er octobre
+  de la première, que le modèle prend, ou celle d'avant le début), moins d'un point ;
+  le minimum face au forfait définitif de 2004 à 2008 ; l'acompte sur le revenu estimé.
+  À chercher : un barème de la caisse des forfaits de début du commerçant de 2005 à
+  2008, et un exemple chiffré de la régularisation de 2009 à 2011.

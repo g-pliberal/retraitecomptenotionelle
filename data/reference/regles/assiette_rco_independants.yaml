@@ -7,7 +7,11 @@ intitule: >-
   plafonds, quatre depuis 1997 (trois pour les commerçants), de l'année où la cotisation
   est due ; depuis les revenus de 2009, sur celui de l'année, après régularisation.
   L'artisan qui commence cotise l'année de son début sur un tiers du plafond, la
-  suivante sur la moitié, jusqu'en 2011. Hors de ce forfait, la cotisation ne peut être
+  suivante sur la moitié, et le commerçant, de 2004 à 2008, sur dix-huit puis vingt-sept
+  fois la base mensuelle des prestations familiales du 1er octobre de l'année
+  précédente, définitifs jusqu'aux cotisations de 2008 ; de 2009 à 2011, ces forfaits ne
+  sont plus qu'un acompte, régularisé sur le revenu de l'année. Hors du forfait
+  définitif, la cotisation ne peut être
   inférieure à celle de 200 heures du Smic du 1er janvier jusqu'en 2011, puis, dès
   quatre-vingt-dix jours d'affiliation, de 5,25 % du plafond, au RCI encore, jusqu'en
   2015. Les points de l'exercice sont sa cotisation,
@@ -29,6 +33,9 @@ lit:
   lignes à l'option deux ans plus tôt
 - la part de l'année que la ligne couvre, au mois
 - le plafond annuel de la sécurité sociale de l'année de la cotisation
+- >-
+  la base mensuelle de calcul des prestations familiales au 1er octobre de l'année
+  précédente, pour le commerçant qui commence de 2004 à 2008
 - >-
   l'assiette minimale du régime de base que porte la ligne, et la part de l'année
   qu'elle couvre, pour le minimum de la complémentaire jusqu'en 2015
@@ -429,6 +436,88 @@ versions:
       provisionnels de cotisations sociales dus au titre d'une année civile peut être
       calculé sur la base des revenus de cette année estimés par l'assuré sur demande de
       celui-ci à l'organisme de recouvrement.
+  - id: LEGIARTI000006748778
+    article: "code de la sécurité sociale, R. 242-16"
+    en_vigueur: 2002-04-26
+    lu_le: 2026-11-05
+    citation: >-
+      L'employeur ou le travailleur indépendant est, au titre de la première année
+      civile au cours de laquelle il exerce son activité professionnelle, redevable
+      d'une cotisation calculée, à titre provisionnel, sur une base forfaitaire égale à
+      dix-huit fois la valeur de la base mensuelle de calcul des prestations familiales
+      en vigueur au 1er octobre de l'année précédente. Cette cotisation est due à
+      compter de la date à laquelle l'employeur ou le travailleur indépendant a débuté
+      son activité. Au titre de la deuxième année civile d'exercice de son activité
+      professionnelle, l'employeur ou le travailleur indépendant est redevable d'une
+      cotisation calculée, à titre provisionnel, sur la base forfaitaire mentionnée au
+      premier alinéa du présent article, majorée de 50 %.
+  - id: LEGIARTI000006748779
+    article: "code de la sécurité sociale, R. 242-16"
+    en_vigueur: 2008-01-01
+    lu_le: 2026-11-05
+    citation: >-
+      Au titre de la deuxième année civile d'exercice de son activité professionnelle,
+      l'employeur ou le travailleur indépendant est redevable d'une cotisation
+      calculée, à titre provisionnel, sur une base forfaitaire égale à vingt-sept fois
+      la valeur de la base mensuelle mentionnée au premier alinéa.
+  - id: LEGIARTI000006737897
+    article: "code de la sécurité sociale, D. 633-6"
+    en_vigueur: 2004-05-08
+    lu_le: 2026-11-05
+    citation: >-
+      Pour les assurés commençant à exercer une activité professionnelle non salariée
+      les assujettissant soit au régime d'assurance vieillesse des professions
+      artisanales, soit au régime d'assurance vieillesse des professions industrielles
+      et commerciales, la cotisation provisionnelle dont ils sont redevables au titre de
+      l'année ou de la fraction d'année de début d'exercice est calculée sur la base du
+      revenu mentionné au premier alinéa de l'article R. 242-16 et la cotisation
+      provisionnelle dont ils sont redevables au titre de l'année civile suivante sur
+      la base de celui mentionné au deuxième alinéa dudit article.
+  - id: JORFARTI000002250315
+    article: "décret n° 2002-1567 du 23 décembre 2002, article 1er"
+    en_vigueur: 2003-01-01
+    publie_le: 2002-12-29
+    lu_le: 2026-11-05
+    citation: >-
+      En application de l'article L. 551-1 du code de la sécurité sociale, la base
+      mensuelle de calcul des prestations familiales est fixée à 347,68 EUR à compter du
+      1er janvier 2003.
+  - id: JORFARTI000001067893
+    article: "décret n° 2003-1251 du 23 décembre 2003, article 1er"
+    en_vigueur: 2004-01-01
+    publie_le: 2003-12-26
+    lu_le: 2026-11-05
+    citation: >-
+      En application de l'article L. 551-1 du code de la sécurité sociale, la base
+      mensuelle de calcul des prestations familiales est fixée à 353,59 EUR à compter du
+      1er janvier 2004.
+  - id: JORFARTI000001724700
+    article: "décret n° 2004-1458 du 23 décembre 2004, article 1er"
+    en_vigueur: 2005-01-01
+    publie_le: 2004-12-30
+    lu_le: 2026-11-05
+    citation: >-
+      En application de l'article L. 551-1 du code de la sécurité sociale, la base
+      mensuelle de calcul des allocations familiales est fixée à 361,37 EUR à compter du
+      1er janvier 2005.
+  - id: JORFARTI000001683087
+    article: "décret n° 2005-1769 du 30 décembre 2005, article 1er"
+    en_vigueur: 2006-01-01
+    publie_le: 2005-12-31
+    lu_le: 2026-11-05
+    citation: >-
+      En application de l'article L. 551-1 du code de la sécurité sociale, la base
+      mensuelle de calcul des prestations familiales est fixée à 367,87 à compter du 1er
+      janvier 2006.
+  - id: JORFARTI000001883075
+    article: "décret n° 2006-1754 du 23 décembre 2006, article 1er"
+    en_vigueur: 2007-01-01
+    publie_le: 2006-12-30
+    lu_le: 2026-11-05
+    citation: >-
+      En application de l'article L. 551-1 du code de la sécurité sociale, la base
+      mensuelle de calcul des prestations familiales est fixée à 374,12 EUR à compter du
+      1er janvier 2007.
   nee_de: LEGIARTI000006738016
   bornes:
     revenu.annee: [2004-01-01, 2009-01-01]
@@ -437,14 +526,20 @@ versions:
       annees_de_decalage: 2
       annees_de_decalage_du_conjoint_a_l_option: 2
       diviseurs_du_plafond_au_debut: [3, 2]
+      multiples_de_la_base_mensuelle_au_debut: [18, 27]
       plafonds_de_l_assiette: 4
       plafonds_de_l_assiette_des_commercants: 3
     droit: >-
       l'artisan, et le commerçant, à son régime complémentaire obligatoire depuis 2004
       (D. 635-10, son taux « pour l'année 2004 »), cotisent sur le revenu de
       l'avant-dernière année ; l'artisan qui commence, sur un
-      tiers puis la moitié du plafond de la sécurité sociale ; le commerçant qui
-      commence, sur les revenus forfaitaires de L. 131-6 ; le conjoint collaborateur,
+      tiers puis la moitié du plafond de la sécurité sociale ; le commerçant, ou le
+      gérant de débit de tabac, qui commence, sur les revenus forfaitaires de L. 131-6,
+      dix-huit fois la base mensuelle de calcul des prestations familiales du 1er
+      octobre de l'année précédente la première année civile, vingt-sept fois la
+      deuxième (R. 242-16), à proportion des mois de la première ; ces forfaits sont
+      définitifs, la complémentaire n'étant pas régularisée avant 2009 (D. 635-2 ;
+      circulaire DSS/5 B/5 C n° 2007-431, note 2) ; le conjoint collaborateur,
       depuis son affiliation de 2007, sur l'assiette de sa cotisation de base, sans
       régularisation : au forfait, le tiers du plafond de l'année ; à l'option, une
       fraction du revenu du chef, sur cette fraction du revenu de l'avant-dernière
@@ -511,18 +606,28 @@ versions:
   contenu:
     parametres:
       annees_de_decalage_du_conjoint_a_l_option: 2
-      diviseurs_du_plafond_au_debut: [3, 2]
       plafonds_de_l_assiette: 4
       plafonds_de_l_assiette_des_commercants: 3
     droit: >-
-      la cotisation est provisionnelle, puis régularisée sur le revenu de l'année ;
-      l'artisan qui commence cotise encore sur un tiers puis la moitié du plafond, que
-      D. 635-7 assied sans les dire provisionnels ; le conjoint collaborateur à
-      l'option reste sur la fraction du revenu du chef de l'avant-dernière année, que
-      D. 635-10-2 (LEGIARTI000006738041, jusqu'au 1er janvier 2013) ne régularise pas
+      la cotisation est provisionnelle, puis régularisée sur le revenu de l'année :
+      D. 635-2 la calcule « suivant les modalités prévues au cinquième alinéa de
+      l'article L. 131-6 », « à titre provisionnel, en pourcentage du revenu
+      professionnel de l'avant-dernière année ou des revenus forfaitaires », puis
+      régularisée « lorsque le revenu professionnel est définitivement connu ». Les
+      forfaits de celui qui commence — l'artisan, un tiers puis la moitié du plafond
+      (D. 635-7), le commerçant, les revenus forfaitaires de L. 131-6 (D. 635-10) — n'en
+      sont que l'acompte, régularisé comme le reste : la caisse des artisans voulait
+      une régularisation « dans les mêmes conditions que celle applicable au régime
+      légal de base », qui régularise ces forfaits, et la prise en compte de son
+      montant « pour la détermination des points cotisés » (circulaire RSI n° 2008/031,
+      § 3.1.2). Le conjoint collaborateur à l'option reste sur la fraction du revenu du
+      chef de l'avant-dernière année, que D. 635-10-2 (LEGIARTI000006738041, jusqu'au
+      1er janvier 2013) ne régularise pas
     conditions: >-
       le revenu minimum de D. 633-2 reste le minimum de la cotisation (D. 635-2), que le
-      modèle oppose : 200 heures du Smic du 1er janvier (D. 633-2, LEGIARTI000006737879)
+      modèle oppose, à celui qui commence comme aux autres, sa cotisation régularisée
+      n'ayant plus de forfait : 200 heures du Smic du 1er janvier (D. 633-2,
+      LEGIARTI000006737879)
   exemples: aucun trouvé
 - id: sans_forfait_2012
   statut: lue
@@ -714,19 +819,24 @@ versions:
     conditions: aucune
   exemples: aucun trouvé
 approximations:
-- version: [avant_derniere_annee_des_deux_regimes_2004, regularisation_2009]
+- version: [avant_derniere_annee_des_deux_regimes_2004]
   ecart: >-
-    le modèle n'oppose pas le minimum de la cotisation au forfait de l'artisan qui
-    commence : de 1979 à 2004, le texte ne l'y oppose pas, la phrase étant au I de
-    l'article 3 du décret n° 78-351 et au premier alinéa de D. 635-4, qui visent les
-    assurés « autres que ceux visés aux II et III » ; de 2004 à 2011, D. 635-2 la pose
-    « sous réserve des dispositions des articles D. 635-7 et D. 635-10 »
-    (LEGIARTI000006738016), qui portent le forfait, sans dire si elle s'y oppose
+    le modèle n'oppose pas le minimum de la cotisation au forfait de celui qui
+    commence : de 1979 à 2004, le texte ne l'oppose pas à celui de l'artisan, la
+    phrase étant au I de l'article 3 du décret n° 78-351 et au premier alinéa de
+    D. 635-4, qui visent les assurés « autres que ceux visés aux II et III » ; de 2004
+    à 2008, D. 635-2 la pose « sous réserve des dispositions des articles D. 635-7 et
+    D. 635-10 » (LEGIARTI000006738016), qui portent les forfaits de l'artisan et du
+    commerçant, sans dire si elle s'y oppose. Depuis les revenus de 2009, la question
+    tombe : le forfait n'est plus qu'un acompte, et la cotisation régularisée sur le
+    revenu de l'année a le minimum de tous (version `regularisation_2009`)
   effet: >-
     non mesuré ; seulement quand le forfait, que le modèle prend à proportion des mois
-    de l'exercice, passe sous le minimum : l'artisan qui commence en fin d'année, ses
-    deux derniers mois environ (en 2010, un tiers de 34 620 € sur deux mois, 1 923,33 €,
-    passe 200 heures de 8,86 €, 1 772 € ; sur un mois, non)
+    de l'exercice, passe sous le minimum : l'artisan qui commence en décembre (en 2008,
+    un tiers de 33 276 € sur un mois, 924,33 €, sous 200 heures de 8,44 €, 1 688 € ; sur
+    deux mois, 1 848,67 €, non) ; le commerçant qui commence en novembre ou en décembre
+    de 2004 à 2008, ou en octobre 2008 (dix-huit fois 374,12 € sur trois mois,
+    1 683,54 €, sous 1 688 €)
 - version: [sans_forfait_2012]
   ecart: >-
     l'artisan ou le commerçant qui cesse en 2012, sans reprendre avant le 1er janvier
@@ -747,41 +857,33 @@ approximations:
     R. 242-16 (LEGIARTI000006748778) ne tient pour un début qu'au-delà de l'année qui
     suit la cessation ; il prend le forfait et le revenu de l'avant-dernière année à
     proportion des mois de l'exercice, comme ses bornes, quand le texte ne dit pas de
-    prorata pour « l'année ou la fraction d'année de début d'exercice » ; il ne sert ni
+    prorata pour « l'année ou la fraction d'année de début d'exercice » de l'artisan
+    (celui du commerçant, R. 242-16 le dit dû « à compter de la date à laquelle
+    l'employeur ou le travailleur indépendant a débuté son activité ») ; il ne sert ni
     l'assiette inférieure « sur demande motivée » (article 4, II), ni l'arrondi de la
     cotisation à deux francs puis à l'euro
   effet: >-
     non mesuré ; l'artisan qui reprend une activité, ou dont l'activité commence ou finit
     en cours d'année
-- version: [avant_derniere_annee_des_deux_regimes_2004, regularisation_2009]
+- version: [avant_derniere_annee_des_deux_regimes_2004]
   ecart: >-
-    le commerçant qui commence cotise sur « les revenus forfaitaires mentionnés au
-    sixième alinéa de l'article L. 131-6 » (D. 635-10), dix-huit puis vingt-sept fois la
-    base mensuelle des allocations familiales (R. 242-16), que L. 131-6 dit calculées « à
-    titre provisionnel » puis régularisées, sans que D. 635-2 régularise d'autre
-    cotisation complémentaire avant 2009 : le modèle garde le revenu de ses deux
-    premières années, ce que donnerait la régularisation, et n'a pas la base mensuelle
+    la deuxième année du commerçant qui commence, le modèle prend la base mensuelle
+    des prestations familiales du 1er octobre de la première, l'année qui précède
+    celle de la cotisation ; le texte se lit aussi de la base de la première année :
+    L. 131-6 dit la deuxième « vingt-sept fois cette valeur », celle « en vigueur au
+    1er octobre de l'année précédente » de la première (LEGIARTI000006740118), et
+    R. 242-16, « la base forfaitaire mentionnée au premier alinéa du présent article,
+    majorée de 50 % » (LEGIARTI000006748778), puis « vingt-sept fois la valeur de la
+    base mensuelle mentionnée au premier alinéa » (LEGIARTI000006748779). Aucun
+    barème de la caisse lu ne le chiffre. Le modèle ne sert pas non plus l'acompte
+    sur le revenu estimé que l'assuré peut demander (L. 131-6, LEGIARTI000006740118 ;
+    circulaire DSS/5 B/5 C n° 2007-431, annexe II, 1, c), que la complémentaire,
+    définitive, garderait
   effet: >-
-    non mesuré ; le commerçant qui commence de 2004 à 2011, au revenu éloigné du forfait
-- version: [regularisation_2009]
-  ecart: >-
-    le modèle tient pour définitif le forfait de l'artisan qui commence, de 2009 à
-    2011 : D. 635-7 (LEGIARTI000017869802) assied sa cotisation « 1° Pour l'année ou la
-    fraction d'année de début d'exercice, sur un revenu correspondant au tiers du
-    plafond mentionné à l'article L. 241-3 ; 2° Pour l'année suivante, sur un revenu
-    correspondant à la moitié dudit plafond », quand D. 635-2 (LEGIARTI000020032159)
-    calcule toute la cotisation « suivant les modalités prévues au cinquième alinéa de
-    l'article L. 131-6 », qui la dit « calculée[s], à titre provisionnel, en pourcentage
-    du revenu professionnel de l'avant-dernière année ou des revenus forfaitaires »,
-    puis régularisée « Lorsque le revenu professionnel est définitivement connu »
-    (L. 131-6, LEGIARTI000020169101). Les deux lectures se tiennent : un forfait
-    définitif, règle propre à la complémentaire ; ou une base provisionnelle,
-    régularisée sur le revenu de l'année, comme le modèle traite celle du commerçant
-    qui commence. Aucun texte lu ne tranche, ni la caisse
-  effet: >-
-    non mesuré ; l'artisan qui commence de 2009 à 2011, ses deux premières années : si
-    le forfait était régularisé, ses points suivraient son revenu de l'année, plus haut
-    ou plus bas qu'un tiers puis la moitié du plafond
+    non mesuré ; la seule deuxième année, de 2005 à 2008 : vingt-sept fois la hausse
+    de la base mensuelle sur un an, 159,57 € d'assiette en 2005, 210,06 € en 2006,
+    175,50 € en 2007, 168,75 € en 2008, moins d'un point du NRCO (en 2006,
+    210,06 × 6,5 % / 14,389 = 0,95 point)
 - version: [avant_derniere_annee_des_deux_regimes_2004, regularisation_2009, sans_forfait_2012]
   ecart: >-
     le conjoint collaborateur à l'option cotise sur la fraction du revenu du chef de
@@ -819,25 +921,34 @@ effet: >-
   le conjoint collaborateur à l'option remis sur l'avant-dernière année de 2007 à 2012 :
   `conjoint_collaborateur_au_tiers`, conjointe de commerçant au tiers du revenu du chef
   depuis 1998, perd 21,35 points du NRCO (399,39 au lieu de 420,74) et 0,19 % de sa
-  pension.
+  pension. Le 5 novembre 2026, le forfait de début lu au droit (action 177, file D3) :
+  l'artisan qui commence de 2009 à 2011 cotise sur son revenu, et le commerçant qui
+  commence de 2004 à 2008 sur dix-huit puis vingt-sept bases mensuelles ; deux témoins
+  sur 931 bougent, deux artisans installés en 2010 et en mai 2011, au revenu bien
+  au-dessus du forfait : `metiers_prive_puis_independant`, 2 437,35 points du RCO au
+  lieu de 1 257,17, sa pension du scénario 1 de 46 148,69 à 46 702,03 € (+1,20 %),
+  +1,32 % aux scénarios 3 et 5 ; `metier_change_en_cours_d_annee`, 1 346,42 points au
+  lieu de 886,01, de 46 841,53 à 47 061,17 € (+0,47 %), +0,53 % aux scénarios 3 et 5.
+  Les pages du coût bougent d'un milliard d'euros au plus, sur des totaux de plusieurs
+  milliers (7 300 Md € devient 7 299 Md €).
 sources:
   lu_le: 2026-11-05
   prochaine_relecture: 2027-11-05
   a_relire:
   - >-
     Un exemple de la caisse du minimum de la cotisation complémentaire, jusqu'en 2015 :
-    aucun lu ; et si le RSI opposait le minimum au forfait de l'artisan qui commence,
-    de 2004 à 2011.
+    aucun lu ; et si le RSI opposait le minimum au forfait de l'artisan ou du
+    commerçant qui commence, de 2004 à 2008.
+  - >-
+    Un barème de la caisse des forfaits de début du commerçant de 2005 à 2008, qui dise
+    de quelle année est la base mensuelle de la deuxième année ; et un exemple chiffré
+    de la régularisation de la complémentaire de celui qui commence de 2009 à 2011.
   - >-
     Le règlement du RCO des artisans, approuvé le 15 décembre 1978, que l'index ne porte
     pas : la reprise d'activité, l'assiette inférieure sur demande motivée de
     l'article 4, II. Les annexes du 7 juillet 2009 (JORFARTI000021059798) et du 23 avril
     2009 (JORFARTI000020676129) ne touchent qu'à la cotisation à défaut de déclaration
     et aux cotisations arriérées.
-  - >-
-    Si le forfait de l'artisan qui commence de 2009 à 2011 (D. 635-7) était définitif,
-    comme sa rédaction le laisse lire, ou régularisé comme la cotisation que D. 635-2
-    calcule depuis 2009 ; et si celui du commerçant, de 2004 à 2011, l'était.
   - >-
     Un exemple de la caisse, ou une circulaire du RSI, de la complémentaire du conjoint
     collaborateur à l'option de 2007 à 2012 : aucun des 633 exposés de la base de la
@@ -895,6 +1006,57 @@ sources:
       (JORFTEXT000025055789, JORFARTI000025055794 à JORFARTI000025055807), index du JORF à
       jour du 3 novembre 2026
     date: 2026-11-03
+  - type: legifrance
+    reference: >-
+      les forfaits de début, version par version, dans l'index LEGI à jour du 4 novembre
+      2026 : D. 635-10, ses six rédactions de 1985 à 2013, mot à mot par `--diff`
+      (LEGIARTI000006738026 à LEGIARTI000006738028, LEGIARTI000020032165,
+      LEGIARTI000025091405, LEGIARTI000025629850) ; D. 635-2, de 2004 à 2012
+      (LEGIARTI000006738016, LEGIARTI000006738017, LEGIARTI000020032159) ; D. 635-7, en
+      vigueur en 2010 (LEGIARTI000017869802) ; L. 131-6, en vigueur en 2004 et en 2010
+      (LEGIARTI000006740118, LEGIARTI000020675442) ; R. 242-16, de 1985 à 2017
+      (LEGIARTI000006748776 à LEGIARTI000006748779, LEGIARTI000026892119) ; D. 633-6, de
+      1985 à 2012 (LEGIARTI000006737893 à LEGIARTI000006737899)
+    date: 2026-11-05
+  - type: jorf
+    reference: >-
+      dans l'index du JORF à jour du 3 novembre 2026 : décret n° 2008-1427, son en-tête,
+      ses articles 1er et 2 (JORFTEXT000019996954, JORFARTI000019996956,
+      JORFARTI000019996958) ; décret n° 2004-848, article 1er (JORFARTI000001334654), où
+      D. 635-10 renvoie au « quatrième alinéa » de L. 131-6, que LEGI lit « sixième » ;
+      décret n° 2011-2038, article 2 (JORFARTI000025055797) ; les décrets de
+      revalorisation de la base mensuelle des prestations familiales, seuls à la fixer
+      de 2002 à 2008 (n° 2002-1567, 2003-1251, 2004-1458, 2005-1769, 2006-1754,
+      2007-1755 ; JORFARTI000002250315, JORFARTI000001067893, JORFARTI000001724700,
+      JORFARTI000001683087, JORFARTI000001883075, JORFARTI000017649602) ; l'arrêté du
+      19 décembre 2008 sur le règlement du NRCO (JORFARTI000019996998), qui ne touche
+      qu'aux arrérages et à la revalorisation ; celui du 17 décembre 2004
+      (JORFTEXT000000810229), dont le règlement annexé n'est pas au Journal officiel
+    date: 2026-11-05
+  - type: autre
+    reference: >-
+      base de législation de la Cnav, circulaires du RSI téléchargées le 5 novembre
+      2026 : n° 2008/017 du 22 février 2008 (sha256 61efc134…582a3f82), son tableau du
+      « Calcul des cotisations provisionnelles », « Situation des débuts d'activité »
+      (« Retraite complémentaire et invalidité-décès » : « 1/3 PSS » pour l'artisan,
+      « 18 BMAF » pour le commerçant la première année ; « 1/2 PSS » et « 27 BMAF » la
+      deuxième), et, reproduite en annexe, la circulaire DSS/5 B/5 C n° 2007-431 du
+      5 décembre 2007, sa note 2 : « Il est rappelé que pour
+      le calcul définitif, la cotisation invalidité-décès et la cotisation de retraite
+      complémentaire restent celles qui ont été établies au moment de l'appel
+      provisionnel » ; n° 2007/013 du 23 janvier 2007 (sha256 05ce2821…8e6e3e70) :
+      « Pour le groupe professionnel des commerçants, tous les risques, y compris
+      régime complémentaire et invalidité-décès sont calculés sur la base de 18 puis
+      27 BMPF » ; n° 2008/031 du 6 mai 2008 (sha256 a7212c2d…bf00c034), § 3.1.2 :
+      « s'agissant des régimes complémentaires RCO et NRCO, le principe d'une
+      cotisation définitive est toujours prévu à l'article D. 635-2 », la
+      régularisation voulue « dans les mêmes conditions que celle applicable au régime
+      légal de base », « applicable à compter de 2010 sur les revenu 2009 », et son
+      montant « devra être prise en compte pour la détermination des points cotisés ».
+      Les soixante-huit circulaires du RSI de 2006 à 2012 que la base sert, cherchées
+      par mots : aucune autre ne traite de la complémentaire de celui qui commence
+    url: https://legislation.lassuranceretraite.fr/
+    date: 2026-11-05
   - type: autre
     reference: >-
       base de législation de la Cnav, exposés « Points cotisés artisans avant 2013 »
@@ -914,7 +1076,11 @@ code:
     du statut aux diviseurs du plafond : l'exercice ouvert depuis deux ans cotise sur le
     revenu des lignes de la même affiliation deux ans plus tôt (`revenu_de_l_annee`), à
     proportion de ses mois ; l'artisan, ses deux premières années, sur le plafond divisé
-    par 3 puis par 2 (`annees_deja_exercees`), avant les bornes de l'exercice ; les
+    par 3 puis par 2 (`annees_deja_exercees`), avant les bornes de l'exercice, jusqu'en
+    2008 ; le commerçant, de 2004 à 2008, sur 18 puis 27 fois la base mensuelle des
+    prestations familiales de l'année précédente
+    (`assiette_de_debut_en_bases_mensuelles`, `base_mensuelle_prestations_familiales`
+    de la macro) ; les
     points de 1985 à 1996, au taux de calcul de 4,40 % (`taux_calcul_points`). Le
     conjoint collaborateur à l'option, de 2007 à 2012, sur le revenu de ses lignes à
     l'option deux ans plus tôt (`revenu_a_l_option`), même après une année
@@ -925,18 +1091,23 @@ code:
   python: >-
     droit/acquerir.py : acquerir, assiette_minimale, revenu_de_l_annee,
     revenu_a_l_option, annees_deja_exercees ; donnees/chargement.py :
-    assiette_minimale ; carriere.py : AnneeCarriere, _ligne_annuelle
+    assiette_minimale ; donnees/macro.py : base_mensuelle_prestations_familiales ;
+    carriere.py : AnneeCarriere, _ligne_annuelle
   javascript: >-
     moteur/js/droit/acquerir.js : acquerir, assietteMinimale, revenuDeLAnnee,
-    revenuALOption, anneesDejaExercees ; moteur/js/carriere.js : AnneeCarriere,
+    revenuALOption, anneesDejaExercees ; moteur/js/macro.js : DonneesMacro ;
+    moteur/js/carriere.js : AnneeCarriere,
     ligneAnnuelle, assietteMinimale, montantAssietteMinimale
   parametres: >-
     contenu.parametres de chaque version : annees_de_decalage,
-    annees_de_decalage_du_conjoint_a_l_option, diviseurs_du_plafond_au_debut, plafonds_de_l_assiette,
+    annees_de_decalage_du_conjoint_a_l_option, diviseurs_du_plafond_au_debut,
+    multiples_de_la_base_mensuelle_au_debut, plafonds_de_l_assiette,
     plafonds_de_l_assiette_des_commercants, taux_des_points, taux_additionnel ;
     regimes/rco_artisans.yaml, regimes/nric.yaml : assiette_annee_de_revenu,
     assiette, taux_cotisation_retraite ; regimes/rco_artisans.yaml : assiette_de_debut,
-    taux_calcul_points ; legislation/assiette_minimale_independants.csv : regimes,
+    taux_calcul_points ; regimes/nric.yaml : assiette_de_debut_en_bases_mensuelles ;
+    legislation/base_mensuelle_prestations_familiales.csv : valeur ;
+    legislation/assiette_minimale_independants.csv : regimes,
     heures_smic, part_pass, jours_minimum
   tests: [tests/test_independants.py, tests/temoins/simulations.json]
 historique:
@@ -962,3 +1133,12 @@ historique:
   RCI aussi, que la fiche suit désormais jusqu'en 2015 (versions rci_2013, rci_2015,
   rci_2016). Restent approchés le forfait de début de 2004 à 2011 et la cessation de
   2012 (`177/2026-11-05-minimum-de-la-cotisation-complementaire.md`).
+- >-
+  2026-11-05 — les forfaits de début, lus au droit et écrits dans les deux moteurs
+  (action 177, file D3) : le commerçant qui commence, de 2004 à 2008, sur dix-huit puis
+  vingt-sept fois la base mensuelle des prestations familiales, définitifs (D. 635-10,
+  R. 242-16, D. 635-2 ; circulaire DSS/5 B/5 C n° 2007-431) ; de 2009 à 2011, le
+  forfait de l'artisan comme celui du commerçant régularisé sur le revenu de l'année
+  (D. 635-2, L. 131-6 ; circulaire RSI n° 2008/031), que le minimum borne alors ;
+  déclarée, la base mensuelle de la deuxième année
+  (`177/2026-11-05-forfaits-de-debut-des-independants.md`).

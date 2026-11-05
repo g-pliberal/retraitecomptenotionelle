@@ -301,7 +301,6 @@ periodes:
     avantages_non_contributifs: [reversion]
     assiette: plafonnee
     assiette_annee_de_revenu: {conjoint_collaborateur_artisan: 2}
-    assiette_de_debut: {artisan: [3, 2]}
     # Les points de la pension d'invalidité : fiche `points_invalidite_independants`.
     points_invalidite: {par: trimestre, proportionnels: true, forfait: 16}
     taux_cotisation_retraite: 0.0710
@@ -324,7 +323,6 @@ periodes:
     avantages_non_contributifs: [reversion]
     assiette: tranche_1_4_pass
     assiette_annee_de_revenu: {conjoint_collaborateur_artisan: 2}
-    assiette_de_debut: {artisan: [3, 2]}
     taux_cotisation_retraite: 0.0750
     notes: >-
       Même dérogation (article 1er, IV) : seconde tranche, 7,5 % au titre de 2009.
@@ -345,7 +343,6 @@ periodes:
     avantages_non_contributifs: [reversion]
     assiette: plafonnee
     assiette_annee_de_revenu: {conjoint_collaborateur_artisan: 2}
-    assiette_de_debut: {artisan: [3, 2]}
     # Les points de la pension d'invalidité : fiche `points_invalidite_independants`.
     points_invalidite: {par: trimestre, proportionnels: true, forfait: 16}
     taux_cotisation_retraite: 0.0720
@@ -368,7 +365,6 @@ periodes:
     avantages_non_contributifs: [reversion]
     assiette: tranche_1_4_pass
     assiette_annee_de_revenu: {conjoint_collaborateur_artisan: 2}
-    assiette_de_debut: {artisan: [3, 2]}
     taux_cotisation_retraite: 0.0760
     notes: >-
       D. 635-7, même état : seconde tranche, 7,6 % au-delà du plafond et jusqu'à quatre fois celui-ci.

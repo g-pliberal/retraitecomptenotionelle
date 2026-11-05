@@ -1,0 +1,38 @@
+# Base mensuelle de calcul des prestations familiales au 1er octobre, 2003-2007, en euros
+# -------------------------------------------------------------------------------------
+# source_id: jorf_base_mensuelle_prestations_familiales
+#
+# LA RÈGLE. Le commerçant qui commence cotise à sa complémentaire obligatoire
+# (le NRCO, de 2004 à 2011) sur « les revenus forfaitaires mentionnés au
+# sixième alinéa de l'article L. 131-6 » (D. 635-10, LEGIARTI000006738027,
+# LEGIARTI000006738028) : la première année civile, « une base forfaitaire
+# égale à dix-huit fois la valeur de la base mensuelle de calcul des
+# prestations familiales en vigueur au 1er octobre de l'année précédente », la
+# deuxième, cette base « majorée de 50 % », vingt-sept fois depuis 2008
+# (R. 242-16, LEGIARTI000006748778, LEGIARTI000006748779). Jusqu'aux
+# cotisations de 2008, ce forfait est définitif (fiche
+# `assiette_rco_independants`) ; depuis 2009, il n'est plus qu'un acompte,
+# régularisé sur le revenu de l'année. La table ne sert donc que les
+# cotisations de 2004 à 2008 : la valeur au 1er octobre de 2003 à 2007. Le
+# modèle la lit dans `donnees/macro.py` (`base_mensuelle_prestations_familiales`)
+# et son portage dans `moteur/js/macro.js`.
+#
+# D'OÙ VIENNENT CES MONTANTS. Des décrets de revalorisation, lus dans l'index
+# du JORF de la DILA le 5 novembre 2026 : « En application de l'article
+# L. 551-1 du code de la sécurité sociale, la base mensuelle de calcul des
+# prestations familiales est fixée à 347,68 EUR à compter du 1er janvier
+# 2003 » (décret n° 2002-1567, article 1er, JORFARTI000002250315) ; 353,59 EUR
+# au 1er janvier 2004 (décret n° 2003-1251, JORFARTI000001067893) ; 361,37 EUR
+# au 1er janvier 2005 (décret n° 2004-1458, JORFARTI000001724700) ; 367,87 au
+# 1er janvier 2006 (décret n° 2005-1769, JORFARTI000001683087) ; 374,12 EUR au
+# 1er janvier 2007 (décret n° 2006-1754, JORFARTI000001883075). L'index ne
+# porte, de 2002 à 2008, aucun autre texte qui la fixe : la valeur du
+# 1er octobre de chaque année est celle de son 1er janvier.
+#
+# fiabilite: haute — lue au texte du décret, saisie à la main.
+annee,valeur,fiabilite
+2003,347.68,haute
+2004,353.59,haute
+2005,361.37,haute
+2006,367.87,haute
+2007,374.12,haute

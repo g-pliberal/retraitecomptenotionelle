@@ -5290,6 +5290,24 @@ institutions:
           deux. Pas de récupérateur : la chaîne est un constat d'existence,
           non une série à rafraîchir.
 
+      - id: jorf_base_mensuelle_prestations_familiales
+        titre: >-
+          Base mensuelle de calcul des prestations familiales au 1er octobre,
+          2003-2007, décrets de revalorisation
+        url: https://echanges.dila.gouv.fr/OPENDATA/JORF/
+        acces: api
+        statut_integration: saisi
+        cible: data/reference/legislation/base_mensuelle_prestations_familiales.csv
+        note: >-
+          Les décrets n° 2002-1567, 2003-1251, 2004-1458, 2005-1769 et
+          2006-1754, lus dans l'index du JORF le 5 novembre 2026 : la base
+          mensuelle au 1er janvier de 2003 à 2007, la seule de chaque année,
+          donc celle du 1er octobre. Dix-huit puis vingt-sept fois sa valeur
+          font le forfait du commerçant qui commence, définitif à sa
+          complémentaire jusqu'aux cotisations de 2008 (D. 635-10, R. 242-16 ;
+          action 177). Saisie à la main, au niveau `haute` ; aucun
+          récupérateur ne la relit.
+
       - id: jorf_salaires_forfaitaires_marins
         titre: Salaires forfaitaires des marins par catégorie, arrêtés annuels, 2008-2026
         url: https://echanges.dila.gouv.fr/OPENDATA/JORF/

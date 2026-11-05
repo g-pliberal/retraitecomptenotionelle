@@ -7765,15 +7765,16 @@ avec son test. Le modèle et le site gardent PyYAML seul.
 
 ### 177. Les écarts que les barèmes de la Cnav ont trouvés au modèle : chacun corrigé dans les deux moteurs, ou sa limite dite — `en cours`
 
-**Reprise, au 5 novembre 2026.** Les étapes 1 à 9 sont faites ; la complémentaire
-des artisans et des commerçants, RCI compris, a son minimum jusqu'en 2015, écrit
-dans les deux moteurs (`177/2026-11-05-minimum-de-la-cotisation-complementaire.md`).
-Restent déclarés le forfait du commerçant qui commence et celui de l'artisan de
-2009 à 2011 (`177/2026-11-03-corrections-de-la-relecture-r-m2.md`) : par quoi
-commencer. Question au propriétaire : le salarié de Mayotte (plafond de la caisse
-depuis 2012, ses deux parts : articles 28-2 et 4), à autoriser avant d'y toucher.
-La file du site tient l'assurance maladie du micro-entrepreneur (étape 6). Test
-rouge d'abord ; sur Opus.
+**Reprise, au 5 novembre 2026.** Les étapes 1 à 9 sont faites, et les forfaits de
+début lus au droit, écrits dans les deux moteurs : le commerçant qui commence, de
+2004 à 2008, sur 18 puis 27 bases mensuelles des prestations familiales,
+définitives ; de 2009 à 2011, le forfait de l'artisan comme du commerçant
+régularisé sur le revenu de l'année (`177/2026-11-05-forfaits-de-debut-des-independants.md`).
+Par quoi commencer : sa relecture. Questions au propriétaire, à autoriser avant d'y
+toucher : le salarié de Mayotte (plafond de la caisse depuis 2012, articles 28-2 et
+4) ; la cessation de 2012 (décret n° 2012-443, article 10, II). La file du site
+tient l'assurance maladie du micro-entrepreneur (étape 6). Test rouge d'abord ; sur
+Opus.
 
 **D'où elle vient.** Le 31 octobre 2026, l'étape 2 de l'action 175 — les
 barèmes de la base de législation de la Cnav confrontés, un à un, aux séries

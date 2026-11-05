@@ -172,6 +172,14 @@ export class DonneesMacro {
         ? serie("plafond_assujettissement_avant_1947") : null;
     this.taux_retenue_avant_1946 = "taux_retenue_avant_1946" in paquet.series
       ? serie("taux_retenue_avant_1946") : null;
+    /**
+     * La base mensuelle de calcul des prestations familiales au 1er octobre, de
+     * 2003 à 2007 : le forfait du commerçant qui commence, à sa complémentaire
+     * jusqu'en 2008 (D. 635-10 ; R. 242-16). Voir le Python.
+     */
+    this.base_mensuelle_prestations_familiales =
+      "base_mensuelle_prestations_familiales" in paquet.series
+        ? serie("base_mensuelle_prestations_familiales") : null;
     this.statutsAssuresSociaux = new Set(Object.entries(paquet.affiliations ?? {})
       .filter(([, profil]) => (profil.periodes ?? [])
         .some((periode) => (periode.regimes ?? []).includes("assurances_sociales")))
