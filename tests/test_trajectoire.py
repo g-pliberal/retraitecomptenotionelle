@@ -507,7 +507,8 @@ ECARTS.update(_ecarts(LOI_2025, "trimestres_requis", {"cor_9_1970": -2.0}, 1e-6)
 ECARTS.update(_ecarts(LOI_2025, "taux", {c: 0.0125 for c in (
     "cor_5_1964", "cor_5_primes_constantes_1964", "cor_6_1964", "cor_11_1964")}, 1e-6))
 ECARTS.update(_ecarts(SUPER_ACTIFS, "age_ouverture",
-                      {"cor_8_1963": 1.17, "cor_8_1964": 1.58, "cor_8_1970": 0.75}, 1e-6))
+                      {"cor_8_1963": 1 + 2 / 12, "cor_8_1964": 1 + 7 / 12,
+                       "cor_8_1970": 9 / 12}, 1e-6))
 ECARTS.update(_ecarts(SUPER_ACTIFS, "taux", {"cor_8_1960": -0.0125}, 1e-6))
 ECARTS.update(_ecarts(DUREE_ACTIFS, "trimestres_requis", {
     "cor_8_1955": -8.0, "cor_8_1960": -4.0, "cor_8_1963": -2.0, "cor_8_1964": -1.0,

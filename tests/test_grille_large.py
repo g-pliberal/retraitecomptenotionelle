@@ -798,7 +798,7 @@ def test_la_carriere_pleine_d_une_femme_du_haut_part_en_carriere_longue(
                                               source, ())}
     assert avant[f"{G.GABARIT}~f~40_plus~p95"].assimilees == 5
     assert G.condition_au_depart(projection, avant[f"{G.GABARIT}~f~40_plus~p95"].cas,
-                                 1953) == (pytest.approx(61.17), "taux_plein_autre")
+                                 1953) == (pytest.approx(61 + 2 / 12), "taux_plein_autre")
 
 
 def test_les_natures_assimilees_se_lisent_generation_par_generation(parametres):
@@ -2450,7 +2450,7 @@ def test_l_attente_des_departs_avec_decote_se_lit_dans_l_eir(parametres):
     ne comptent pas."""
     publies = G.departs_publies(parametres.racine_donnees)
     lues = G.attentes_des_decotes(publies, parametres.racine_donnees)
-    legal, annulation = 61.17, 66.17
+    legal, annulation = 61 + 2 / 12, 66 + 2 / 12
     for sexe, a_l_age_legal, par_age in (
             ("F", 37.5 * 15.4, {61: 42.1 * 14.8, 62: 8.9 * 19.6, 63: 5.0 * 20.6,
                                 64: 5.7 * 20.3, 65: 2.9 * 27.6, 66: 14.9 * 1.9}),
@@ -2842,7 +2842,8 @@ def test_la_part_et_l_attente_des_departs_avec_surcote_se_lisent_dans_l_eir(para
     lues = G.attentes_des_surcotes(publies, parametres.racine_donnees)["F"]
     femmes = {61: 42.1 * 1.5, 62: 8.9 * 46.8, 63: 5.0 * 53.3, 64: 5.7 * 51.7,
               65: 2.9 * 39.8, 66: 14.9 * 15.8, 67: 0.8 * 29.1}
-    attentes = {age: (61.17 + 62.0) / 2 - 61.17 if age == 61 else age + 0.5 - 61.17
+    legal = 61 + 2 / 12
+    attentes = {age: (legal + 62.0) / 2 - legal if age == 61 else age + 0.5 - legal
                 for age in femmes}
     total = sum(femmes.values())
     groupes = [(61, 62), (63, 64, 65), (66, 67)]
