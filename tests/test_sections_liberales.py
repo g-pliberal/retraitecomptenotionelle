@@ -259,6 +259,12 @@ def test_chaque_version_lue_commence_quand_son_texte_entre_en_vigueur(fiche):
 #: La CAVOM, relevée le 5 novembre 2026 : l'arrêté du 12 décembre 2024 met
 #: l'annexe en vigueur « au 1er janvier 2025 » (article 2) ; ceux du
 #: 30 décembre 2015 et du 10 juillet 2026 ne fixent pas de date.
+#: La CPRN, relevée le 5 novembre 2026 : l'arrêté du 28 décembre 2004, publié
+#: le 4 février 2005, « prend effet le 1er janvier 2005 » et n'est au Journal
+#: officiel que par sa mention ; celui du 16 décembre 2013 « prend effet au
+#: 1er janvier 2014 » (article 2) ; celui du 29 novembre 2023 entre en vigueur
+#: « le 1er janvier 2024 » (article 2) ; ceux du 31 mai 2017 et du 10 juillet
+#: 2026 ne fixent pas de date.
 NAISSANCES_AU_JOURNAL_OFFICIEL = {
     "cavec_minoration_age_seul": {
         "JORFARTI000018197778": ("2008-03-01", "2008-03-02"),
@@ -306,6 +312,13 @@ NAISSANCES_AU_JOURNAL_OFFICIEL = {
         "JORFARTI000024270214": ("2011-06-29", "2011-06-30"),
         "JORFARTI000048880592": ("2024-01-09", "2024-01-10"),
         "JORFARTI000054436087": ("2026-07-17", "2026-07-18"),
+    },
+    "cprn_ages_decote_enfants": {
+        "JORFARTI000001075201": ("2005-02-04", "2005-01-01"),
+        "JORFARTI000028387445": ("2013-12-27", "2014-01-01"),
+        "JORFARTI000034975971": ("2017-06-21", "2017-06-22"),
+        "JORFARTI000048679350": ("2023-12-28", "2024-01-01"),
+        "JORFARTI000054435995": ("2026-07-17", "2026-07-18"),
     },
 }
 

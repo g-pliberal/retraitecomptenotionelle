@@ -197,6 +197,70 @@ def test_la_cprn_majore_de_dix_pour_cent_pour_trois_enfants_depuis_2024(simulate
                 if a.code == "majoration_enfants"]
 
 
+def test_chaque_version_de_la_cprn_est_portee_par_le_modele(simulateur):
+    """Lue au droit le 5 novembre 2026 (action 130) : statuts récrits par
+    l'arrêté du 16 décembre 2013 (articles 14 à 16), statuts de l'arrêté du
+    31 mai 2017 (articles 18, 19, 21 et 23), récrits par celui du 29 novembre
+    2023 (articles 18, 21 et 23), règlement de 2026 (articles 4, 5, 7 et 9) ;
+    avant 2014, des statuts que le Journal officiel ne publie pas. Chaque
+    premier du mois de 1949 à 2040, la période qui liquide une pension prenant
+    effet ce jour porte les paramètres que chaque version lit. Les écarts que
+    ces paramètres ne disent pas — l'âge d'avant 2014, le passage de 2024, le
+    trimestre entamé, les 30 % par enfant à charge — sont déclarés dans la
+    fiche."""
+    from test_sections_sante import _chaque_version_est_portee
+
+    _chaque_version_est_portee(simulateur, "cprn_complementaire",
+                               "cprn_ages_decote_enfants", "liquidation.date_effet",
+                               set(), 1949)
+
+
+#: Ce que les statuts de la CPRN servent, lu au texte, joué dans les deux
+#: moteurs sur la requête du formulaire (notaire, entré à 22 ans, deux salaires
+#: moyens) : (naissance, âge demandé) → (date d'effet de la CPRN, servie à part
+#: de la base, ou None, et le coefficient que dit le détail).
+CPRN_AU_TEXTE = {
+    # Statuts de 2017, articles 18 et 21 : né le 10 mars 1954, l'âge de
+    # L. 161-17-2, 61 ans et 7 mois (D. 161-2-1-9, 5°), « différé de
+    # vingt-quatre mois » : 63 ans et 7 mois le 10 octobre 2017, la pension le
+    # 1er novembre 2017 ; le taux plein à 68 ans et 7 mois, le 10 octobre 2022 ;
+    # 20 trimestres × 1,25 % = 25 %.
+    ("1954-03-10", "62"): ("2017-11-01", "coefficient d'anticipation 0.7500"),
+    # Statuts de 2014, article 16 : né le 10 mars 1950, le taux plein à 65 ans ;
+    # parti à 67 ans le 1er avril 2017, 8 trimestres × 0,5 % = 4 %.
+    ("1950-03-10", "67"): (None, "coefficient de majoration 1.0400"),
+    # Statuts de 2024, article 23 : né le 10 mars 1957, le taux plein à 67 ans
+    # (1° de L. 351-8) ; parti à 68 ans le 1er avril 2025, 4 trimestres × 1 % =
+    # 4 %.
+    ("1957-03-10", "68"): (None, "coefficient de majoration 1.0400"),
+}
+
+
+def test_la_cprn_sert_ses_ages_et_ses_coefficients_dans_les_deux_moteurs():
+    from outils_pont import servi_et_refait
+
+    requete = {
+        "age_reference": "fixe_apres_bascule", "bascule": "2026",
+        "conversion_acquis": "reference", "debut": "22", "emploi": "cor_2026",
+        "enfants": "0", "euros": "2026", "indexation": "triple_lock_inverse",
+        "primes": "0", "profil": "plat", "projection": "cor_reference",
+        "salaire": "2", "sexe": "H", "stock": "prix", "table": "unisexe",
+        "statut": "notaire",
+    }
+    cas = [{"cle": "|".join(cle),
+            "requete": {**requete, "naissance": cle[0], "liquidation": cle[1]}}
+           for cle in CPRN_AU_TEXTE]
+    servis, refus = servi_et_refait(cas)
+    assert refus == {}, refus
+    for cle, (date_effet, coefficient) in CPRN_AU_TEXTE.items():
+        actuel = servis["|".join(cle)]["actuel"]
+        (cprn,) = [p for p in actuel["pensions_par_regime"]
+                   if p["regime"] == "cprn_complementaire"]
+        assert coefficient in cprn["detail"], (cle, cprn["detail"])
+        ouvertures = [d["date_effet"] for d in actuel["departs"] if d["motif"] == "ouverture"]
+        assert ouvertures == ([date_effet] if date_effet else []), (cle, actuel["departs"])
+
+
 # -- la CNBF -------------------------------------------------------------------
 
 

@@ -1,39 +1,590 @@
 schema_version: 1
 id: cprn_ages_decote_enfants
 intitule: >-
-  Régime complémentaire de la CPRN. De 2014 à 2023 : ouverture à 60 ans et taux
-  plein à 65 pour les nés avant 1954, puis à l'âge de L. 161-17-2 « différé de vingt-quatre
-  mois » et à ce même âge « augmenté de cinq ans » — 64 et 69 ans pour les générations
-  1955 et suivantes. Depuis 2024 : l'âge de L. 161-17-2 et celui du 1° de L. 351-8.
-  Dans les deux cas, une décote de 1,25 % par trimestre séparant l'âge de l'affilié
-  de l'âge du taux plein, que la durée n'annule pas ; depuis 2024, une majoration
-  de 10 % pour trois enfants dans les conditions de L. 351-12.
+  Régime complémentaire de la CPRN, section C. Avant 2014, des statuts que le Journal
+  officiel ne publie pas, non lus. Du 1er janvier 2014 au 31 décembre 2023 : ouverture
+  à 60 ans et taux plein à 65 pour les nés avant 1954, puis à l'âge de L. 161-17-2 «
+  différé de vingt-quatre mois » et à ce même âge « augmenté de cinq ans » — 64 et 69
+  ans pour les générations 1955 et suivantes. Depuis 2024 : l'âge de L. 161-17-2 et
+  celui du 1° de L. 351-8. Dans les deux cas, une décote de 1,25 % par trimestre
+  séparant l'âge de l'affilié de l'âge du taux plein, que la durée n'annule pas ; la
+  pension au premier jour du mois civil qui suit la fin d'exercice ou la date souhaitée
+  ; 30 % des droits par enfant à charge de moins de vingt et un ans ; depuis 2024, une
+  majoration de 10 % pour trois enfants dans les conditions de L. 351-12.
+domaine: decote_surcote
 regimes: [cprn_complementaire]
-etat: transcrite
+etape: liquider_chaque_regime
+face: droit
+etat: approchee
+lit:
+- >-
+  l'âge du notaire à la date d'effet de sa pension, dont le droit « est fixé au premier
+  jour du mois civil qui suit la date de fin d'exercice ou la date souhaitée par
+  l'affilié », et sa génération, qui donne l'âge d'ouverture et l'âge du taux plein —
+  de 2014 à 2023, 60 et 65 ans pour les nés avant 1954, puis l'âge de L. 161-17-2 «
+  différé de vingt-quatre mois » et ce même âge « augmenté de cinq ans » ; depuis 2024,
+  l'âge de L. 161-17-2 et celui du 1° de L. 351-8
+- >-
+  l'invalidité reconnue par le médecin expert de la caisse, qui ouvre la retraite sans
+  coefficient de minoration
+- >-
+  le nombre d'enfants, trois au moins ouvrant 10 % depuis 2024, et les enfants à charge
+  de moins de vingt et un ans, 30 % des droits chacun
+- la date d'effet de la pension, qui choisit la rédaction des statuts ou du règlement
+ecrit:
+- >-
+  le coefficient qui minore ou majore les points de la section C, que
+  `abattement_regime_de_base` et la majoration de `surcote_par_age_seul` rendent à
+  `liquider_chaque_regime`, et l'âge d'ouverture et du taux plein, que la table
+  `cprn_2014` de `ages_regimes.csv` rend de 2014 à 2023 ; la majoration de 10 % pour
+  trois enfants depuis 2024
+dates_qui_decident:
+- liquidation.date_effet
+versions:
+- id: reglement_d_avant_2005
+  statut: supposee
+  hypothese: >-
+    les pensions qui prennent effet avant le 1er janvier 2005 relèvent des statuts
+    approuvés par l'arrêté du 29 octobre 1948, puis du règlement approuvé par l'arrêté
+    du 24 avril 1962 (« PORTANT APPROBATION DU NOUVEAU REGLEMENT DE LA SECTION
+    PROFESSIONNELLE DES NOTAIRES RELATIF AU REGIME D'ASSURANCE VIEILLESSE
+    COMPLEMENTAIRE », JORFTEXT000000804758), que l'arrêté du 28 décembre 2004 abroge, et
+    de leurs modifications. L'index JORF n'en porte que les titres, ni article ni annexe,
+    et de quelques-uns un court résumé : l'arrêté du 21 avril 1954 (« ART. 19 »,
+    JORFTEXT000000475360), du 21 avril 1966 (« ART. 10 BIS », JORFTEXT000000485481), du 10
+    octobre 1967 (JORFTEXT000000480805), du 15 juin 1971 (JORFTEXT000000638038), du 18
+    février 1975 (JORFTEXT000000308317), du 1er septembre 1983 (« ART. 9-BIS,16,16-BIS,20,39,41
+    ET 47 », JORFTEXT000000468711), du 20 juin 1985 (« ART. 8,9,20,43 ET 52 »,
+    JORFTEXT000000491023), du 8 décembre 1987 (JORFTEXT000000340498), du 16 décembre 1996
+    (« ART. 2,8,9-BIS,10,12,16,16-BIS,17,18,57,ANNEXES N0S 1 ET 2 »,
+    JORFTEXT000000368550). Trois ne sont qu'au Bulletin officiel : celui du 9 juin 1980 («
+    ART. 18 (AL. 1 ET 3) », JORFTEXT000000314300), celui du 19 avril 1983 (« ART. 2 ET
+    2-BIS DES STATUTS », JORFTEXT000000652420) et celui du 12 septembre 1990 (« art. 18,
+    23, 29 et 59 », Bulletin officiel 90-42, JORFTEXT000000533318). Aucun ne se lit. Le
+    modèle sert la règle du régime de base : 1,25 % par trimestre manquant jusqu'à l'âge
+    d'annulation de la décote de la génération, que la durée annule, à l'âge d'ouverture
+    de la base, sans majoration ni bonification pour enfants
+  fiabilite: >-
+    faible : l'âge, le coefficient, la place de la durée et les majorations, que nul
+    texte lu ne date avant le 1er janvier 2005
+  bornes:
+    liquidation.date_effet: [null, 2005-01-01]
+  contenu:
+    parametres:
+      age_table: null
+      decote_par_trimestre: 0.0125
+      decote_annulee_par_la_duree: true
+      surcote_par_trimestre: null
+      surcote_age_maximum: null
+    droit: >-
+      présumé : la règle du modèle, celle du régime de base, 1,25 % par trimestre
+      manquant à la durée dans la limite des trimestres qui séparent de l'âge
+      d'annulation de la décote, aucune majoration
+    conditions: aucune lue
+  exemples: aucun trouvé
+- id: statuts_de_2005
+  statut: supposee
+  hypothese: >-
+    les pensions qui prennent effet du 1er janvier 2005 au 31 décembre 2013 relèvent des
+    statuts approuvés par l'arrêté du 28 décembre 2004, « publié intégralement au
+    Bulletin officiel n° 2005/01 », que l'index JORF ne porte pas. Trois de leurs
+    phrases se lisent ailleurs : l'article 20 récrit par l'arrêté du 27 février 2008, la
+    majoration de 30 % par enfant à charge ; et deux que l'arrêté du 16 décembre 2013
+    remplace, au premier alinéa de l'article 14, « La demande ne peut être antérieure ni
+    au soixante-cinquième anniversaire du notaire, ni à la fin de son exercice », et
+    l'article 15, dont le premier alinéa, avant les neuf qu'il insère, devient le
+    dixième, celui de l'inapte. Le reste ne se lit pas, ni rien qui dise si ces phrases
+    datent de 2005. Le modèle sert la règle du régime de base, à l'âge d'ouverture de la
+    base
+  fiabilite: >-
+    faible : l'âge d'ouverture, que l'article 14 en vigueur le 31 décembre 2013 met à
+    65 ans, sans qu'aucun texte lu ne dise s'il l'était depuis 2005 ni qu'aucun autre
+    article ne l'avance ; le coefficient et la place de la durée, non lus
+  textes:
+  - id: JORFARTI000001075201
+    article: arrêté du 28 décembre 2004, mention au Journal officiel
+    en_vigueur: 2005-01-01
+    publie_le: 2005-02-04
+    citation: >-
+      « sont approuvés les nouveaux statuts du régime d'assurance vieillesse
+      complémentaire de la section professionnelle des notaires. L'arrêté du 24 avril
+      1962 portant approbation du nouveau règlement de la section professionnelle des
+      notaires au régime d'assurance vieillesse complémentaire est abrogé. Le présent
+      arrêté prend effet le 1er janvier 2005. Nota. - L'arrêté du 28 décembre 2004 sera
+      publié intégralement au Bulletin officiel n° 2005/01 »
+  - id: JORFARTI000018229446
+    article: arrêté du 27 février 2008, article 1er (article 20 des statuts)
+    en_vigueur: 2008-03-09
+    publie_le: 2008-03-08
+    citation: >-
+      « L'article 20 des statuts annexés à l'arrêté du 28 décembre 2004 susvisé est rédigé
+      comme suit : « 1. Le notaire retraité ayant des enfants à charge, âgés de moins de
+      vingt et un ans ou inaptes à assurer seuls leur existence, perçoit pour chacun
+      d'entre eux une majoration de 30 % des droits qu'il a acquis à la fin de son
+      exercice professionnel. » : l'arrêté ne fixe pas de date, et entre en vigueur le
+      lendemain de sa publication
+  - id: JORFARTI000028387445
+    article: >-
+      annexe de l'arrêté du 16 décembre 2013, articles 14 et 15 des statuts, les mots
+      qu'elle remplace
+    publie_le: 2013-12-27
+    citation: >-
+      « L'article 14 est ainsi modifié : ― au premier alinéa, les mots : « cette demande.
+      La demande ne peut être antérieure ni au soixante-cinquième anniversaire du notaire,
+      ni à la fin de son exercice » sont remplacés par les mots [...] L'article 15 est
+      ainsi modifié : ― avant le premier alinéa, sont insérés neuf alinéas [...] le
+      dixième alinéa est ainsi rédigé : « Toutefois, le conseil d'administration peut
+      accorder à celui que des infirmités ou une maladie grave ont contraint de cesser ses
+      fonctions et rendent inapte à exercer régulièrement toute activité professionnelle,
+      la jouissance »
+  nee_de: JORFARTI000001075201
+  bornes:
+    liquidation.date_effet: [2005-01-01, 2014-01-01]
+  contenu:
+    parametres:
+      age_table: null
+      decote_par_trimestre: 0.0125
+      decote_annulee_par_la_duree: true
+      surcote_par_trimestre: null
+      surcote_age_maximum: null
+    droit: >-
+      présumé : la règle du modèle, celle du régime de base, à l'âge d'ouverture de la
+      base ; non tranché, la demande pas avant le soixante-cinquième anniversaire, sauf
+      l'inapte, au moins le 31 décembre 2013 ; 30 % des droits par enfant à charge depuis
+      le 9 mars 2008, non modélisé
+    conditions: >-
+      la fin de l'exercice ; l'inaptitude reconnue par le conseil d'administration
+  exemples: aucun trouvé
+- id: statuts_de_2014
+  statut: lue
+  textes:
+  - id: JORFARTI000028387445
+    article: >-
+      annexe de l'arrêté du 16 décembre 2013, articles 14, 15 et 16 des statuts
+    en_vigueur: 2014-01-01
+    publie_le: 2013-12-27
+    citation: >-
+      « L'article 14 est ainsi modifié : ― au premier alinéa, les mots : « cette demande.
+      La demande ne peut être antérieure ni au soixante-cinquième anniversaire du notaire,
+      ni à la fin de son exercice » sont remplacés par les mots : « la fin d'exercice,
+      sous réserve que le dossier de demande de retraite soit parvenu à la caisse dans les
+      trois mois suivant cette date. A défaut, l'entrée en jouissance sera fixée au 1er
+      jour du mois civil qui suit la réception du dossier de demande de retraite » [...]
+      L'article 15 est ainsi modifié : ― avant le premier alinéa, sont insérés neuf
+      alinéas ainsi rédigés : « L'âge du bénéfice de la pension à la retraite est fixé
+      comme suit : « Pour les affiliés nés avant le 1er janvier 1954 : « ― l'âge légal
+      d'ouverture des droits est fixé à 60 ans ; « ― l'âge légal du départ à taux plein
+      est fixé à 65 ans. « Pour les affiliés nés à compter du 1er janvier 1954 : « ―
+      l'âge légal d'ouverture des droits est celui visé à l'article L. 161-17-2 du code
+      de la sécurité sociale différé de vingt-quatre mois ; « ― l'âge légal du départ à
+      taux plein est celui visé à l'article L. 161-17-2 du code de la sécurité sociale
+      différé de vingt-quatre mois et augmenté de cinq ans. « Si la demande de retraite
+      intervient avant l'âge du taux plein, il est appliqué un coefficient de minoration
+      sur la pension déterminé en fonction de l'âge atteint à la date de liquidation. «
+      Ce coefficient de minoration est fixé à 1,25 % par trimestre séparant l'âge de
+      l'affilié à la date de liquidation de l'âge du taux plein. » [...] le dixième alinéa
+      est ainsi rédigé : « Toutefois, le conseil d'administration peut accorder à celui
+      que des infirmités ou une maladie grave ont contraint de cesser ses fonctions et
+      rendent inapte à exercer régulièrement toute activité professionnelle, la
+      jouissance, à partir de l'âge légal mentionné ci-dessus minoré de dix ans, des
+      retraites auxquelles il pourrait prétendre, sans l'application du coefficient de
+      minoration. [...] L'article 16 est ainsi rédigé : « Si la demande de retraite
+      intervient après l'âge du taux plein, un coefficient de majoration est appliqué à la
+      pension des notaires ayant continué à exercer et à cotiser dans les conditions de
+      l'article 15. « Le coefficient de majoration est fixé à 0,5 % par trimestre au-delà
+      de l'âge du taux plein, jusqu'à l'âge de 70 ans. »
+  - id: JORFARTI000028387441
+    article: arrêté du 16 décembre 2013, article 2
+    en_vigueur: 2014-01-01
+    publie_le: 2013-12-27
+    citation: « Le présent arrêté prend effet au 1er janvier 2014. »
+  nee_de: JORFARTI000028387445
+  bornes:
+    liquidation.date_effet: [2014-01-01, 2017-06-22]
+  contenu:
+    parametres:
+      age_table: cprn_2014
+      decote_par_trimestre: 0.0125
+      decote_annulee_par_la_duree: false
+      surcote_par_trimestre: 0.005
+      surcote_age_maximum: 70
+    droit: >-
+      ouverture à 60 ans et taux plein à 65 ans pour les nés avant 1954 ; depuis, l'âge
+      de L. 161-17-2 « différé de vingt-quatre mois » et ce même âge « augmenté de cinq
+      ans » ; 1,25 % par trimestre séparant l'âge de la liquidation de l'âge du taux
+      plein, la durée n'y entrant pas ; 0,5 % par trimestre au-delà, jusqu'à 70 ans ;
+      l'inapte sans coefficient dix ans avant l'âge légal ; l'entrée en jouissance après
+      la fin d'exercice, au mois civil faute du dossier dans les trois mois
+    conditions: >-
+      la fin de l'exercice ; l'inaptitude accordée par le conseil d'administration
+  exemples: aucun trouvé
+- id: statuts_de_2017
+  statut: lue
+  textes:
+  - id: JORFARTI000034975971
+    article: >-
+      annexe de l'arrêté du 31 mai 2017, statuts du régime d'assurance vieillesse
+      complémentaire, articles 18, 19, 21 et 23
+    en_vigueur: 2017-06-22
+    publie_le: 2017-06-21
+    citation: >-
+      « Le droit aux allocations ne peut être reconnu qu'aux notaires ayant acquitté
+      l'intégralité de leurs cotisations. « L'âge de l'ouverture du droit à pension de
+      retraite est fixé comme suit : « Pour les affiliés nés avant le 1er janvier 1954 :
+      « - l'âge légal d'ouverture des droits est fixé à 60 ans ; « - l'âge légal du
+      départ à taux plein est fixé à 65 ans. « Pour les affiliés nés à compter du 1er
+      janvier 1954 : «- l'âge légal d'ouverture des droits est celui visé à l'article L.
+      161-17-2 du code de la sécurité sociale différé de vingt-quatre mois ; «- l'âge
+      légal du départ à taux plein est celui visé à l'article L. 161-17-2 du code de la
+      sécurité sociale différé de vingt-quatre mois et augmenté de cinq ans. [...] « Le
+      droit à l'allocation est fixé au premier jour du mois civil qui suit la date de fin
+      d'exercice ou la date souhaitée par l'affilié, sous réserve que le dossier de
+      demande de retraite comprenant l'ensemble des pièces justificatives soit parvenu à
+      la caisse de retraite dans les trois mois. [...] « 1. - Si la demande de retraite
+      intervient avant l'âge requis pour bénéficier d'une allocation au taux plein, il est
+      appliqué une décote sur la pension déterminé en fonction de l'âge atteint à la date
+      de la liquidation. « La décote est fixée à 1,25% par trimestre séparant l'âge de
+      l'affilié à la date de liquidation de l'âge requis pour bénéficier d'une allocation
+      au taux plein. « 2. - A partir de l'âge légal si l'affilié est reconnu invalide par
+      le médecin expert de la caisse, il pourra bénéficier d'une retraite sans
+      application de coefficient de minoration. [...] « 1. - Si la demande de retraite
+      intervient après l'âge du taux plein défini à l'article 18, une surcote est
+      appliquée à la pension des notaires ayant continué à exercer et à cotiser dans les
+      conditions définies par les présents statuts. « La surcote est fixée à 0,5 % par
+      trimestre au-delà de l'âge du taux plein, jusqu'à l'âge de 70 ans. « 2. - Le
+      notaire retraité ayant des enfants reconnus fiscalement à charge, âgés de moins de
+      vingt et un ans ou inaptes à assurer seuls leur existence, perçoit pour chacun
+      d'entre eux une majoration de 30 % des droits acquis à la fin de son exercice
+      professionnel. »
+  - id: JORFARTI000034975968
+    article: arrêté du 31 mai 2017, article 1er
+    en_vigueur: 2017-06-22
+    publie_le: 2017-06-21
+    citation: >-
+      « Sont approuvés, tels qu'ils sont annexés au présent arrêté, les statuts du régime
+      invalidité-décès des notaires et les modifications apportées aux statuts de la
+      section professionnelle des notaires, aux statuts du régime d'assurance vieillesse
+      complémentaire des notaires » : ni cet article ni l'article 2 ne fixent de date ;
+      l'arrêté entre en vigueur le lendemain de sa publication
+  nee_de: JORFARTI000034975971
+  bornes:
+    liquidation.date_effet: [2017-06-22, 2024-01-01]
+  contenu:
+    parametres:
+      age_table: cprn_2014
+      decote_par_trimestre: 0.0125
+      decote_annulee_par_la_duree: false
+      surcote_par_trimestre: 0.005
+      surcote_age_maximum: 70
+    droit: >-
+      les âges, la décote et la surcote des statuts de 2014, récrits mot pour mot ; la
+      pension au premier jour du mois civil qui suit la fin d'exercice ou la date
+      souhaitée ; l'invalide sans coefficient « à partir de l'âge légal » ; 30 % des
+      droits par enfant reconnu fiscalement à charge de moins de vingt et un ans
+    conditions: >-
+      l'intégralité des cotisations acquittée ; l'invalidité reconnue par le médecin
+      expert de la caisse
+  exemples: aucun trouvé
+- id: statuts_de_2024
+  statut: lue
+  textes:
+  - id: JORFARTI000048679350
+    article: >-
+      annexe de l'arrêté du 29 novembre 2023, I, 3° à 5° (articles 18, 21 et 23 des
+      statuts)
+    en_vigueur: 2024-01-01
+    publie_le: 2023-12-28
+    citation: >-
+      « 3° L'article 18 est remplacé par les dispositions suivantes : « Art. 18. - Le
+      droit aux allocations ne peut être reconnu qu'aux notaires ayant acquitté
+      l'intégralité de leurs cotisations. « L'âge de l'ouverture du droit à pension de
+      retraite est celui mentionné à l'article L. 161-17-2 du code de la sécurité
+      sociale. « La retraite est attribuée à taux plein à compter de l'âge mentionné au 1°
+      de l'article L. 351-8 du code de la sécurité sociale. » ; 4° L'article 21 est ainsi
+      modifié : a) Au premier alinéa, le mot : « déterminé » est remplacé par le mot : «
+      déterminée » ; b) Au troisième alinéa, les mots : « l'âge légal » sont remplacés
+      par les mots : « l'âge mentionné au IV de l'article L. 643-3 du code de la sécurité
+      sociale » [...] 5° L'article 23 est ainsi modifié : a) Au deuxième alinéa, le
+      pourcentage : « 0,5 % » est remplacé par le pourcentage : « 1 % » et les mots : «
+      70 ans » sont remplacés par les mots : « fin d'activité » ; b) L'article est
+      complété par un alinéa ainsi rédigé : « 3. - La pension de retraite est assortie
+      d'une majoration de 10 % pour tout affilié ayant eu un nombre minimum de 3 enfants
+      dans les conditions définies à l'article L. 351-12 du code de la sécurité sociale.
+      »
+  - id: JORFARTI000048679346
+    article: arrêté du 29 novembre 2023, article 2
+    en_vigueur: 2024-01-01
+    publie_le: 2023-12-28
+    citation: « Les dispositions du présent arrêté entrent en vigueur le 1er janvier 2024. »
+  nee_de: JORFARTI000048679350
+  bornes:
+    liquidation.date_effet: [2024-01-01, 2026-07-18]
+  contenu:
+    parametres:
+      age_table: null
+      decote_par_trimestre: 0.0125
+      decote_annulee_par_la_duree: false
+      surcote_par_trimestre: 0.01
+      surcote_age_maximum: null
+    droit: >-
+      ouverture à l'âge de L. 161-17-2, taux plein à celui du 1° de L. 351-8 ; 1,25 %
+      par trimestre séparant l'âge de la liquidation de l'âge du taux plein, la durée n'y
+      entrant pas ; 1 % par trimestre au-delà, jusqu'à la fin d'activité ; l'invalide
+      sans coefficient à l'âge du IV de L. 643-3 ; 30 % par enfant à charge ; 10 % pour
+      trois enfants ; la pension au mois civil, comme en 2017
+    conditions: >-
+      l'intégralité des cotisations acquittée ; l'invalidité reconnue par le médecin
+      expert de la caisse
+  exemples: aucun trouvé
+- id: reglement_de_2026
+  statut: lue
+  textes:
+  - id: JORFARTI000054435995
+    article: >-
+      annexe de l'arrêté du 10 juillet 2026, règlement du régime d'assurance vieillesse
+      complémentaire, articles 4, 5, 7 et 9
+    en_vigueur: 2026-07-18
+    publie_le: 2026-07-17
+    citation: >-
+      « L'âge de l'ouverture du droit à pension de retraite est celui mentionné à
+      l'article L. 161-17-2 du code de la sécurité sociale. « La retraite est attribuée à
+      taux plein à compter de l'âge mentionné au 1° de l'article L. 351-8 du code de la
+      sécurité sociale. [...] « Le droit à l'allocation est fixé au premier jour du mois
+      civil qui suit la date de fin d'exercice ou la date souhaitée par l'affilié [...] «
+      1° Si la demande de retraite intervient avant l'âge requis pour bénéficier d'une
+      allocation au taux plein, il est appliqué une décote sur la pension déterminée en
+      fonction de l'âge atteint à la date de la liquidation. « La décote est fixée à 1,25
+      % par trimestre séparant l'âge de l'affilié à la date de liquidation de l'âge requis
+      pour bénéficier d'une allocation au taux plein ; [...] « La surcote est fixée à 1 %
+      par trimestre au-delà de l'âge du taux plein, jusqu'à l'âge de fin d'activité ; « 2°
+      Le notaire retraité ayant des enfants reconnus à charge, âgés de moins de vingt et
+      un ans ou inaptes à assurer seuls leur existence, perçoit pour chacun d'entre eux une
+      majoration de 30 % des droits contributifs acquis à la fin de son exercice
+      professionnel, à l'exclusion de toute majoration, surcote ou accessoire de pension.
+      [...] « 3° La pension de retraite est assortie d'une majoration de 10 % pour tout
+      affilié ayant eu un nombre minimum de 3 enfants dans les conditions définies à
+      l'article L. 351-12 du code de la sécurité sociale. »
+  - id: JORFARTI000054435992
+    article: arrêté du 10 juillet 2026, article 1er
+    en_vigueur: 2026-07-18
+    publie_le: 2026-07-17
+    citation: >-
+      « Sont approuvés, tels qu'ils sont annexés au présent arrêté, les règlements des
+      régimes d'assurance vieillesse complémentaire et d'assurance invalidité-décès de la
+      section professionnelle des notaires. » : l'arrêté ne fixe pas de date, et entre en
+      vigueur le lendemain de sa publication ; du 1er au 17 juillet 2026, entre le décret
+      n° 2026-418 qui renvoie au règlement (article 2, 6°) et le règlement, la fiche tient
+      les statuts pour en vigueur
+  - id: JORFARTI000054153399
+    article: décret n° 2026-418 du 29 mai 2026, article 2, 6° (article 4 du décret n° 49-578)
+    en_vigueur: 2026-07-01
+    publie_le: 2026-05-31
+    citation: >-
+      « Les conditions d'attribution et de service des prestations du présent régime sont
+      précisées par un règlement de la section professionnelle des notaires, approuvé par
+      arrêté du ministre chargé de la sécurité sociale »
+  nee_de: JORFARTI000054435995
+  bornes:
+    liquidation.date_effet: [2026-07-18, null]
+  contenu:
+    parametres:
+      age_table: null
+      decote_par_trimestre: 0.0125
+      decote_annulee_par_la_duree: false
+      surcote_par_trimestre: 0.01
+      surcote_age_maximum: null
+    droit: >-
+      la règle des statuts de 2024, reprise ; les 30 % par enfant à charge portés sur les
+      seuls droits contributifs
+    conditions: >-
+      l'intégralité des cotisations et majorations acquittée ; l'invalidité reconnue par
+      le médecin expert de la caisse
+  exemples: aucun trouvé
+approximations:
+- version: [reglement_d_avant_2005, statuts_de_2005]
+  textes: >-
+    statuts de 1948, règlement de 1962 et leurs modifications, dont l'index JORF n'a que
+    les titres ; les arrêtés du 9 juin 1980, du 19 avril 1983 et du 12 septembre 1990, au
+    seul Bulletin officiel (no 90-42) ; statuts de 2005, au seul Bulletin officiel (no
+    2005/01) ; l'article 14 que cite l'arrêté du 16 décembre 2013
+  ecart: >-
+    Avant le 1er janvier 2014, le modèle sert la complémentaire à l'âge d'ouverture de
+    la base, sous la décote du régime de base, que la durée annule. Le texte ne tranche
+    pas, faute d'être lu (question 22 du propriétaire). Première lecture, celle du modèle
+    : rien de ce qui se lit ne ferme la complémentaire avant 65 ans ni n'en fixe le
+    coefficient. Seconde lecture : l'article 14 en vigueur le 31 décembre 2013 dit « La
+    demande ne peut être antérieure ni au soixante-cinquième anniversaire du notaire, ni
+    à la fin de son exercice », et le premier alinéa de l'article 15, le seul que
+    l'arrêté de 2013 laisse voir, n'excepte que l'inapte ; la complémentaire ne s'ouvre
+    alors qu'à 65 ans, sans coefficient. Elle n'est pas tenable pour la première tant que
+    les statuts ne sont pas lus : un autre article, ou le troisième alinéa de l'article
+    14, peut avancer l'âge ; et rien ne dit que la phrase date de 2005. Le même texte
+    décide du passage de 2014 pour qui a cessé d'exercer avant. Déjà déclaré dans
+    `liquidation_regime_par_regime`, non doublé : ici, chiffré
+  effet: >-
+    né le 10 mars 1948, entré à 22 ans, parti à 60 ans le 1er avril 2008 : le modèle sert
+    la CPRN dès ce jour, 6 979,83 € par an (8 trimestres manquant à la durée, 0,90) ; la
+    seconde lecture ne la sert qu'au 1er avril 2013, à 65 ans, sans coefficient : 5 ×
+    6 979,83 = 34 899,15 € servis avant, puis 6 979,83 / 0,90 = 7 755,37 € par an, 775,54
+    € de plus, aux valeurs de 2008. Essai du 5 novembre 2026, dans les deux moteurs,
+    requête du formulaire
+- version: [statuts_de_2017, statuts_de_2024]
+  textes: >-
+    statuts de 2017, articles 18 et 19 ; arrêté du 29 novembre 2023, annexe, I, 3°
+    (article 18), et article 2
+  ecart: >-
+    Erreur du modèle, déclarée, non corrigée, celle de `liquidation_regime_par_regime`
+    (le passage de 2024), prouvée et chiffrée ici : le modèle lit l'âge de la CPRN dans
+    les règles en vigueur au départ déclaré. Le notaire qui cesse d'exercer en 2023 à
+    l'âge de L. 161-17-2 attend « l'âge [...] différé de vingt-quatre mois » des statuts
+    de 2017 ; mais depuis le 1er janvier 2024, « L'âge de l'ouverture du droit à pension
+    de retraite est celui mentionné à l'article L. 161-17-2 », sans réserve pour qui a
+    cessé avant, et le droit « est fixé au premier jour du mois civil qui suit la date de
+    fin d'exercice ou la date souhaitée par l'affilié ». La lecture contraire — les
+    statuts du jour de la cessation garderaient leur âge — n'est pas tenable : l'arrêté
+    entre en vigueur le 1er janvier 2024 sans disposition transitoire, et la pension
+    prend effet sous la rédaction de sa date d'effet
+  effet: >-
+    né le 10 mars 1961, entré à 22 ans, parti à 62 ans le 1er avril 2023 : le modèle sert
+    la CPRN le 1er avril 2025, à 64 ans, 14 679,08 € par an de 2025 (12 trimestres
+    jusqu'à 67 ans, 0,85) ; les statuts la lui ouvrent le 1er janvier 2024, à 62 ans, 9
+    mois et 22 jours, 17 trimestres compté le trimestre entamé, 0,7875 : 14 679,08 / 0,85
+    × 0,7875 = 13 599,74 € par an aux valeurs de 2025, 16 999,67 € sur les quinze mois
+    que le modèle ne sert pas ; puis 1 079,34 € par an de trop (16 trimestres, 0,80 :
+    13 815,60 €, 17 269,51 € et 863,48 €). Essai du 5 novembre 2026, dans les deux
+    moteurs, requête du formulaire
+- version: [statuts_de_2014, statuts_de_2017, statuts_de_2024, reglement_de_2026]
+  textes: >-
+    statuts de 2014, article 15 ; de 2017, article 21 ; règlement de 2026, article 7
+  ecart: >-
+    Le texte ne tranche pas le trimestre entamé : « 1,25 % par trimestre séparant l'âge
+    de l'affilié à la date de liquidation de l'âge du taux plein ». Le modèle compte le
+    trimestre entamé
+  effet: >-
+    au plus 1,25 point de la pension : né le 10 septembre 1953, entré à 22 ans, parti à
+    61 ans le 1er octobre 2014, 3 ans, 11 mois et 9 jours avant 65 ans : le modèle compte
+    16 trimestres, 0,80, 8 395,62 € par an ; 15 trimestres entiers, 0,8125, 8 395,62 /
+    0,80 × 0,8125 = 8 526,80 €, 131,18 € par an de plus. Essai du 5 novembre 2026, dans
+    les deux moteurs, requête du formulaire
+- version: [statuts_de_2005, statuts_de_2014, statuts_de_2017, statuts_de_2024, reglement_de_2026]
+  textes: >-
+    statuts de 2005, article 20 récrit par l'arrêté du 27 février 2008 ; de 2014, article
+    19 ; de 2017, article 23, 2 ; règlement de 2026, article 9, 2°
+  ecart: >-
+    Non modélisé : 30 % des droits par enfant à charge de moins de vingt et un ans, ou
+    inapte, tant qu'il l'est ; le formulaire ne dit pas l'âge des enfants au départ. Le
+    texte ne tranche pas si les droits sont pris avant ou après la décote ; depuis le 18
+    juillet 2026, les seuls « droits contributifs », « à l'exclusion de toute majoration,
+    surcote ou accessoire de pension »
+  effet: >-
+    né le 10 mars 1961, entré à 22 ans, parti à 64 ans le 1er avril 2025 : le modèle sert
+    15 449,40 € par an (0,85) ; un enfant à charge y ajoute 30 % de 15 449,40 / 0,85 =
+    18 175,76 €, 5 452,73 € par an, ou 30 % de la pension, 4 634,82 €, jusqu'à ses vingt
+    et un ans. Essai du 5 novembre 2026, dans les deux moteurs, requête du formulaire
+- version: [statuts_de_2014]
+  textes: statuts de 2014, article 14, premier et cinquième alinéas
+  ecart: >-
+    Le début de la phrase de l'entrée en jouissance, celle des statuts de 2005, n'est pas
+    lu ; l'arrêté de 2013 en remplace la fin par « la fin d'exercice », et en donne
+    l'issue « au 1er jour du mois civil qui suit la réception du dossier », et le
+    cinquième alinéa compte au mois les conditions de liquidation. Le modèle sert la
+    pension le premier du mois qui suit l'âge, comme les statuts de 2017 et le règlement
+    de 2026 : la CPRN ne partage pas l'erreur du trimestre civil de la CAVOM, de la
+    CARPIMKO et de la CAVP
+  effet: non mesuré du 1er janvier 2014 au 21 juin 2017 ; aucun écart depuis
+- version: [statuts_de_2005, statuts_de_2014, statuts_de_2017, statuts_de_2024, reglement_de_2026]
+  textes: >-
+    statuts de 2014, article 15, dixième alinéa ; de 2017, article 21, 2 ; arrêté du 29
+    novembre 2023, annexe, I, 4° ; règlement de 2026, article 7, 2°
+  ecart: >-
+    Renvoyé, non doublé : l'inapte des libéraux, que le modèle sert à l'âge légal
+    (question 11 du propriétaire, `130/2026-11-03-decisions-du-proprietaire.md`) ; ici,
+    « à partir de l'âge légal mentionné ci-dessus minoré de dix ans » (2014), « à partir
+    de l'âge légal » (2017), à « l'âge mentionné au IV de l'article L. 643-3 » (2024). La
+    carrière longue, qu'aucun texte de la CPRN ne nomme, et que le modèle lui ouvre avec
+    la base : `liquidation_regime_par_regime`
+  effet: renvoyé
+textes_sans_effet:
+- id: JORFARTI000001097379
+  article: décret n° 2004-1142 du 20 octobre 2004, article 2
+  publie_le: 2004-10-28
+  motif: >-
+    l'article 2 du décret n° 49-578, les sections C et B et la cotisation de 4,5 % des
+    produits de l'office ; ni l'âge ni la minoration
+- id: JORFARTI000028323767
+  article: décret n° 2013-1157 du 13 décembre 2013, article 1er
+  publie_le: 2013-12-15
+  motif: >-
+    l'article 2 du décret n° 49-578, les huit classes de la section B et le taux de la
+    section C ; ni l'âge ni la minoration
+- id: JORFARTI000028323769
+  article: décret n° 2013-1157 du 13 décembre 2013, article 2
+  publie_le: 2013-12-15
+  motif: >-
+    la période transitoire des classes de la section B pour les notaires qui ont prêté
+    serment avant 2014, et le taux de 4,5 % de la section C
+- id: LEGIARTI000023388636
+  article: code de la sécurité sociale, D. 161-2-1-9, rédaction du 1er juillet 2011
+  publie_le: 2010-12-31
+  motif: >-
+    « Soixante et un ans et quatre mois pour les assurés nés en 1954 » : la rédaction
+    que celle du 31 décembre 2011 (LEGIARTI000025089933) remplace avant le 1er janvier
+    2014, où les statuts renvoient pour la première fois à L. 161-17-2
+reformes:
+- cprn_report_2014
+- cprn_report_2024
 effet: >-
-  La fiche lisait les âges du régime général et laissait la durée annuler la décote
-  : un notaire parti à l'âge légal avec sa durée ne perdait rien de sa section C,
-  là où les statuts lui retirent 1,25 % par trimestre jusqu'au taux plein — 15 %
-  à 64 ans depuis 2024, 25 % à 64 ans de 2014 à 2023 pour les générations d'après
-  1954, qui n'avaient le taux plein qu'à 69 ans. Depuis le 23 septembre 2026 : `age_table:
-  cprn_2014`, `decote_annulee_par_la_duree: false` et `majoration_enfants` ; tenu
-  par tests/test_sections_juridiques.py. Les périodes d'avant 2014 gardent la règle
-  d'avant, faute d'une version des statuts antérieure dans l'index.
+  La fiche lisait les âges du régime général et laissait la durée annuler la décote :
+  un notaire parti à l'âge légal avec sa durée ne perdait rien de sa section C, là où
+  les statuts lui retirent 1,25 % par trimestre jusqu'au taux plein — 15 % à 64 ans
+  depuis 2024, 25 % à 64 ans de 2014 à 2023 pour les générations d'après 1954, qui
+  n'avaient le taux plein qu'à 69 ans. Depuis le 23 septembre 2026 : `age_table:
+  cprn_2014`, `decote_annulee_par_la_duree: false` et `majoration_enfants` ; tenu par
+  tests/test_sections_juridiques.py. Lue au droit le 5 novembre 2026 (action 130) : six
+  versions, le règlement et les statuts d'avant 2014 non lus, les statuts de 2014, de
+  2017 et de 2024, le règlement de 2026 ; les âges, la décote, la surcote et les dix
+  pour cent de trois enfants rendus par le modèle ; une erreur déclarée, le passage de
+  2024 ; deux points non tranchés, l'âge d'avant 2014 et le trimestre entamé ; les 30 %
+  par enfant à charge non modélisés ; la date d'effet au mois civil, comme le modèle.
 sources:
-  lu_le: 2026-09-23
+  lu_le: 2026-11-05
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
-    La majoration de 30 % par enfant à charge de moins de vingt et un ans n'est
-    pas portée ; les statuts d'avant 2014 restent à trouver.
+    Lire les statuts d'avant le 1er janvier 2014 : ceux de 2005 (Bulletin officiel no
+    2005/01), le règlement de 1962 et ses modifications, dont les arrêtés du 9 juin 1980,
+    du 19 avril 1983 et du 12 septembre 1990 (Bulletin officiel no 90-42) ; ou les
+    demander à la CPRN. Trouver un exemple de la caisse : une pension liquidée en 2024
+    par un notaire qui a cessé d'exercer en 2023 avant 64 ans, une décote d'un trimestre
+    entamé, la majoration d'un enfant à charge.
   lectures:
   - type: jorf
     reference: >-
-      Les quatre arrêtés lus dans l'index JORF du dépôt : âges « différés de vingt-quatre
-      mois » de 2014 à 2023, « 1,25 % par trimestre séparant l'âge de l'affilié
-      à la date de liquidation de l'âge du taux plein » dans chacune des rédactions,
-      majoration de 10 % pour trois enfants depuis 2024.
-    date: 2026-09-23
+      Arrêté du 28 décembre 2004, mention (JORFARTI000001075201) ; arrêté du 27 février
+      2008, article 1er (JORFARTI000018229446) ; arrêté du 16 décembre 2013, articles 1er
+      et 2 et annexe (JORFARTI000028387440, JORFARTI000028387441, JORFARTI000028387445) ;
+      arrêté du 31 mai 2017, article 1er et annexe, articles 18 à 23 du régime
+      complémentaire (JORFARTI000034975968, JORFARTI000034975971) ; arrêté du 29 novembre
+      2023, articles 1er et 2 et annexe (JORFARTI000048679345, JORFARTI000048679346,
+      JORFARTI000048679350) ; arrêté du 10 juillet 2026, articles 1er et 2 et annexe,
+      articles 4 à 10 (JORFARTI000054435992, JORFARTI000054435993, JORFARTI000054435995)
+      ; décret n° 2026-418, article 2 et notice ; décrets n° 2004-1142 et 2013-1157 ; les
+      titres et résumés des arrêtés de 1954 à 1996 ; lus dans l'index JORF du dépôt, à
+      jour du 5 novembre 2026, les textes relevés par « notaires » dans leur titre, avec
+      « statuts », « vieillesse », « retraite » ou « complémentaire », et par « CPRN », «
+      section professionnelle des notaires » et « retraite des notaires » dans leur
+      corps, sans borne.
+    date: 2026-11-05
+  - type: legifrance
+    reference: >-
+      Code de la sécurité sociale, L. 161-17-2 dans ses rédactions du 23 décembre 2011
+      (LEGIARTI000025014605) et du 1er septembre 2023 (LEGIARTI000047452768), D.
+      161-2-1-9 du 31 décembre 2011 (LEGIARTI000025089933 : « Soixante et un ans et sept
+      mois pour les assurés nés en 1954 »), L. 351-8 du 1er septembre 2023
+      (LEGIARTI000047452736 : « l'âge prévu au premier alinéa de l'article L. 161-17-2
+      augmenté de trois années ») et du 28 février 2025 (LEGIARTI000051289852) ; lus dans
+      l'index LEGI du dépôt, à jour du 5 novembre 2026.
+    date: 2026-11-05
   - type: autre
     reference: >-
       CPRN, statuts en vigueur (PDF de 2024, articles 18, 21 et 23) et page « L'âge
@@ -42,20 +593,6 @@ sources:
     url: >-
       https://cprn.fr/je-suis-affilie/je-suis-actif/preparer-sa-retraite-en-toute-serenite/lage-de-depart-a-la-retraite/
     date: 2026-09-23
-textes_a_rattacher:
-- reference: >-
-    statuts de la CPRN, articles 15 et 16, rédaction de l'arrêté du 16 décembre
-    2013 (JORFTEXT000028387437), en vigueur au 1er janvier 2014, reprise par l'arrêté
-    du 31 mai 2017 (JORFARTI000034975971)
-- reference: >-
-    statuts, articles 18 et 23, rédaction de l'arrêté du 29 novembre 2023 (JORFTEXT000048679340),
-    en vigueur au 1er janvier 2024
-- reference: >-
-    règlement du régime complémentaire, articles 4, 7 et 9, approuvé par l'arrêté
-    du 10 juillet 2026 (JORFARTI000054435995)
-reformes:
-- cprn_report_2014
-- cprn_report_2024
 code:
   interrupteurs:
     decote_annulee_par_la_duree: false
@@ -73,7 +610,9 @@ code:
     ageTauxPlein ; moteur/js/regimes.js : AgesRegimes ; moteur/js/droit/completer.js :
     completer, tauxMajorationEnfants
   parametres: >-
+    contenu.parametres de chaque version : age_table, decote_par_trimestre,
+    decote_annulee_par_la_duree, surcote_par_trimestre, surcote_age_maximum ;
     regimes/cprn_complementaire.yaml : age_table, age_ouverture, age_taux_plein,
-    decote_par_trimestre, avantages_non_contributifs ; legislation/ages_regimes.csv :
-    cprn_2014
-  tests: [tests/test_sections_juridiques.py]
+    decote_par_trimestre, surcote_par_trimestre, surcote_age_maximum,
+    avantages_non_contributifs ; legislation/ages_regimes.csv : cprn_2014
+  tests: [tests/test_sections_juridiques.py, tests/test_sections_liberales.py]
