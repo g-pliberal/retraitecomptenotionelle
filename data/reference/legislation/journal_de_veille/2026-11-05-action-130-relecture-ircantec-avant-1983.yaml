@@ -1,0 +1,34 @@
+date: "2026-11-05"
+session: "action 130, file R-M3d : relecture indépendante de l'Ircantec d'avant 1983 (commits e27cdce, 6b05a20 et cd8e64b, file M3)"
+consulte: >-
+  python scripts/veille_droit.py ; docs/veille_droit.md. L'index de la DILA récupéré dans
+  la session (LEGI à jour au 2 novembre 2026, 20261102-213929 ; JORF au 3 novembre,
+  20261103-002311). Dans LEGI : l'arrêté du 30 décembre 1970, article 16, ses douze
+  rédactions listées, et lues mot pour mot celles du 9 février 1971 au 2 octobre 1990
+  (LEGIARTI000006381606 à LEGIARTI000006381610) ; l'ordonnance n° 82-270 du 26 mars 1982,
+  article 9 (LEGIARTI000006275868) ; le décret n° 78-319 du 8 mars 1978, article 1er
+  (LEGIARTI000006762125) ; le décret n° 82-629, article 5 (LEGIARTI000006763444). Dans
+  JORF : les analyses des arrêtés du 26 juillet 1983 (JORFTEXT000000837384), du 27 janvier
+  1983 (JORFTEXT000000654120) et du 24 décembre 1982 (JORFTEXT000000842703) ; les titres
+  des textes de l'IPACTE et de l'IGRANTE jusqu'en 1970, vingt-six, dont les instructions des
+  10 et 15 novembre 1960 (JORFTEXT000000519147, JORFTEXT000000519148) et les statuts de
+  l'IGRANTE du 31 août 1961 (JORFTEXT000000803388), sans texte dans l'index.
+trouve: >-
+  Les citations de M3 sont exactes, la table « 55 ans 0,43 […] 64 ans 0,96 » est celle des
+  quatre rédactions de 1971 à 1978, les huit valeurs de ses tests et sept cas neufs se
+  refont à la main et les deux moteurs les rendent ; la date qui décide est la date
+  d'effet. Mais avant le 1er avril 1983, deux exonérations tiennent à la durée : le 6° a),
+  « A compter du 1er juillet 1982 », pour les agents de soixante-trois ans et
+  cent cinquante trimestres (ordonnance n° 82-270, article 9, alinéa 2 ; « AUX AGENTS NON
+  TITULAIRES AYANT AU MOINS 63 ANS », analyse de l'arrêté du 26 juillet 1983), et le 5° de
+  1978, pour la femme pensionnée au titre de la loi n° 77-774, celle des « trente-sept ans
+  et demi d'assurance » ; le modèle abat les deux, ce que la fiche déclarait, et M3 leur a
+  retiré l'exonération que les points de l'IPACTE et de l'IGRANTE recevaient par accident.
+  L'arrêté du 27 janvier 1983 a écrit ces exonérations dans l'article 16 (« MODIFICATION DE
+  L'ART. 16 (AL. 2) ») ; LEGI n'en a pas la rédaction.
+reste: >-
+  Le texte intégral de l'arrêté du 27 janvier 1983 et son rectificatif du 12 mars 1983 ; les
+  articles L. 351-16 et L. 351-17 du code du travail de 1982, qui disent qui sont les
+  « personnels » de l'article 9 de l'ordonnance, absents de l'index ; le calendrier de la loi
+  du 12 juillet 1977 ; les textes de l'IPACTE et de l'IGRANTE d'avant 1971, dont l'index n'a
+  que les titres. Le régime général du modèle, aux mêmes dates, à relire par sa zone.
