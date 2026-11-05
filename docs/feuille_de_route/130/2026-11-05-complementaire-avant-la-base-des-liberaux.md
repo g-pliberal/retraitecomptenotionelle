@@ -207,3 +207,6 @@ jusqu'à 65 ans, le trimestre entamé compté).
   la CARPIMKO et la CPRN se demandent à leur âge, sans la base, avant elle ou après ; la
   CAVP à l'âge de la base (`130/2026-11-05-complementaire-avant-la-base-des-liberaux.md`) ;
   restent leurs statuts d'avant 2016, 2015 et 2014, au seul Bulletin officiel. »
+
+Renvoi du 5 novembre 2026 : le test du site du notaire libéral, oublié ici, récrit, et les
+écarts de la relecture R-N2 déclarés ; voir `2026-11-05-n-bis.md`.

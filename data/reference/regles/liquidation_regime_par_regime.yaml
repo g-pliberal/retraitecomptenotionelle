@@ -326,6 +326,39 @@ approximations:
     après le 1er janvier 2024 ; né en mars 1960, trois mois après. Erreur du modèle,
     non corrigée : elle tient à la façon dont `departs` date chaque unité, commune à
     tous les régimes
+- ecart: >-
+    en carrière longue, la complémentaire de la CAVP et celle de la CARPIMKO sont servies
+    avec la base, à l'âge que la durée lui ouvre, quand leurs statuts ne l'ouvraient pas
+    avant 2024. La CAVP : l'article 15 de 2011 (arrêté du 23 juin 2011,
+    JORFARTI000024270214) n'a que l'âge de L. 161-17-2 et l'inaptitude ; « L'affilié qui
+    bénéficie d'une liquidation anticipée au régime de base, dans les conditions prévues
+    aux II, III et IV de l'article L. 643-3 en bénéficie dans les mêmes conditions et
+    modalités au régime complémentaire fonctionnant par répartition » n'y entre que par
+    l'arrêté du 19 décembre 2023 (JORFARTI000048880592, publié le 9 janvier 2024, sans
+    date : le 10 janvier). La CARPIMKO : ses articles 11, 12 et 12 quater de 2015
+    (JORFARTI000031255547) n'en disent rien ; « 4) Dès l'âge prévu au III de l'article
+    L. 643-3 du code de la sécurité sociale pour les affiliés qui bénéficient de ce départ
+    anticipé au titre du régime de base » n'entre à l'article 11 que par l'arrêté du
+    27 décembre 2023 (JORFARTI000048880643, le 10 janvier 2024). Le défaut précède le
+    5 novembre 2026 : la complémentaire suivait déjà la base
+  effet: >-
+    mesuré dans les deux moteurs le 5 novembre 2026 (relecture R-N2, refaite par N-bis) :
+    né le 10 mars 1957, entré à dix-huit ans, parti à soixante ans le 1er avril 2017, le
+    pharmacien reçoit en un seul départ, motif `carriere_longue`, sa CAVP à 0,75, quand
+    elle ne s'ouvre qu'à soixante-deux ans ; l'auxiliaire médical, sa CARPIMKO sans
+    abattement, quand elle ne s'ouvre qu'à soixante ans et huit mois. Erreur du modèle,
+    non corrigée : candidat, que la session d'orchestration porte au propriétaire
+- ecart: >-
+    la CARPIMKO ne dit plus, depuis 2024, l'âge minimal des nés après le 31 août 1961 :
+    l'arrêté du 27 décembre 2023 supprime les deux premiers alinéas de l'article 12 (« Le
+    bénéfice de la retraite peut être accordé par anticipation à partir de 62 ans et
+    avant 67 ans pour les assurés nés à compter du 1er janvier 1961 ») ; l'article 3 du
+    règlement de 2026 ouvre le taux plein « à partir de l'âge prévu à l'article
+    L. 161-17-2 » à qui a la durée de la base, et l'article 4 minore « dans la limite du
+    nombre de trimestres les séparant de l'âge du taux plein sans condition ». Le modèle
+    lit l'âge de L. 161-17-2 (table `carpimko_2016`, âge vide pour 1961) ; le texte ne le
+    tranche pas
+  effet: non mesuré
 - version: [chaque_regime_a_sa_date]
   textes: >-
     code de la sécurité sociale, L. 643-3, IV (LEGIARTI000047453031 ; LEGIARTI000053280388),
@@ -395,7 +428,20 @@ sources:
     CRPNPAC avant 2012, lu le 5 novembre 2026 (relecture R-N) : cinquante ans et, par
     anticipation, quarante-cinq (R. 426-15-1 de 1984 et de 1995), que le modèle refuse
     (fiche crpn_pension_des_navigants). Les notes 130/2026-11-05-relecture-de-n-crpnpac.md
-    et 130/2026-11-05-retouches-de-la-relecture-r-n.md disent le détail.
+    et 130/2026-11-05-retouches-de-la-relecture-r-n.md disent le détail. Instruites le
+    5 novembre 2026 (file N de la vague 9) : la CAVOM, la CARPIMKO et la CPRN se
+    servent à leur âge, sans la base ; la CAVP s'ouvre à l'âge de la base, sauf en
+    carrière longue avant 2024 (approximations ; notes
+    130/2026-11-05-complementaire-avant-la-base-des-liberaux.md et 130/2026-11-05-n-bis.md).
+    Reste présumée suivre sa base, sans lecture de ses statuts sur ce point : la
+    CARCDSF.
+  - >-
+    Le 5 novembre 2026 (file N-bis, action 130) : les statuts de la CAVOM d'avant le
+    1er janvier 2016, de la CARPIMKO d'avant le 3 octobre 2015 (arrêté du 20 novembre
+    1996) et de la CPRN d'avant le 1er janvier 2014 (Bulletin officiel n° 2005/01),
+    publiés au seul Bulletin officiel, ou auprès des caisses, pour lever les présomptions
+    de la CAVOM servie dès 60 ans et de la CARPIMKO et de la CPRN servies à l'âge de la
+    base (approximations).
   - >-
     Le 5 novembre 2026 (file L-bis, action 130) : les statuts de la CARPV d'avant le
     1er janvier 2022, au Bulletin officiel (n° 99/33 pour l'arrêté du 5 juillet 1999 ;
@@ -500,6 +546,22 @@ sources:
       JORFARTI000024270214, règlement JORFARTI000054436087), et les articles des
       arrêtés qui datent leur effet : chacune de ces complémentaires à son âge, sans
       condition de la base (contenu.complementaires)
+    date: 2026-11-05
+  - type: jorf
+    reference: >-
+      Lus le 5 novembre 2026 (file N-bis), relevés par la relecture R-N2 : pour la CAVOM,
+      l'arrêté du 26 décembre 2018 (JORFARTI000037883374), statuts généraux, et celui du
+      28 août 2020 (JORFARTI000042311285), qui insère à l'article 14 « , sous réserve des
+      dérogations prévues à l'article 15, » et récrit l'article 15, le cumul : « sous
+      réserve que la pension du régime de base soit liquidée », une condition du cumul
+      d'une activité, non de la liquidation de qui cesse toute activité ; pour la
+      CARPIMKO, l'arrêté du 23 mai 2019 (JORFARTI000038529117 : article 12, « b. A partir
+      de cinquante-cinq ans, sans abattement, pour les affiliés qui remplissent les
+      conditions pour bénéficier de la retraite anticipée des assurés handicapés dans le
+      régime de base ») et celui du 14 novembre 2025 (JORFARTI000052604992, les
+      cotisations et les points) ; pour la CAVP, l'arrêté du 19 décembre 2023
+      (JORFARTI000048880592), qui récrit l'article 15 sans changer l'âge et y ajoute la
+      liquidation anticipée (approximations). Aucun ne lie la complémentaire à la base
     date: 2026-11-05
 code:
   python: >-

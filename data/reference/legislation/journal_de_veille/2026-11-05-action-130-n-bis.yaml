@@ -1,0 +1,24 @@
+date: "2026-11-05"
+session: "action 130, file N-bis de la vague 9 : le test du site du notaire libéral, et les écarts de la relecture R-N2"
+consulte: >-
+  La relecture R-N2 (`130/2026-11-05-relecture-de-n-complementaire-avant-la-base.md`). Au
+  JORF : la CPRN, statuts de 2017, article 22 (JORFARTI000034975971), arrêté du 29 novembre
+  2023 (JORFARTI000048679350), règlement de 2026, article 8 (JORFARTI000054435995) ; le
+  plafond de 2025 (arrêté du 19 décembre 2024, JORFARTI000050854396) ; la CAVOM, arrêtés
+  du 26 décembre 2018 (JORFARTI000037883374) et du 28 août 2020 (JORFARTI000042311285) ; la
+  CARPIMKO, arrêtés du 23 mai 2019 (JORFARTI000038529117) et du 14 novembre 2025
+  (JORFARTI000052604992) ; la CAVP, arrêté du 23 juin 2011, article 15 jusqu'à sa fin
+  (JORFARTI000024270214), et arrêté du 19 décembre 2023 (JORFARTI000048880590,
+  JORFARTI000048880592). Dans LEGI : L. 643-6 (LEGIARTI000047453657), D. 643-10
+  (LEGIARTI000030060076), D. 161-2-1-9 (LEGIARTI000047634502).
+trouve: >-
+  L'incompatibilité de la CPRN avec l'exercice libéral (article 22 de 2017) est en vigueur
+  en 2025, et le seuil du libéral vaut 3 925 euros par mois : le test du site part d'un
+  notaire né en 1962. La CAVP n'ouvre la carrière longue qu'au 10 janvier 2024, la
+  CARPIMKO aussi ; le modèle la leur sert avant, avec la base. Aucun des arrêtés relus ne
+  lie la complémentaire à la base.
+reste: >-
+  La carrière longue de la CAVP et de la CARPIMKO avant 2024, candidat pour le
+  propriétaire ; le commentaire du témoin cumul_notaire_cprn_2022 dans
+  scripts/construire_temoins.py ; les statuts du Bulletin officiel de la CAVOM, de la
+  CARPIMKO et de la CPRN.

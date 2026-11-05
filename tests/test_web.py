@@ -5433,10 +5433,10 @@ _CUMUL_ARTISAN_CARRIERE_LONGUE_2028 = {
     "liquidation": "60", "emploi_retraite": "2029-02", "emploi_retraite_fin": "2032-02",
     "emploi_retraite_salaire": "0.6",
 }
-_CUMUL_NOTAIRE_CPRN_2022 = {
-    "profil": "ascendant", "naissance": "1960", "debut": "26", "metier2_debut": "30",
-    "metier2_statut": "notaire", "liquidation": "62.25", "emploi_retraite": "2022-08",
-    "emploi_retraite_fin": "2024-02", "emploi_retraite_statut": "notaire",
+_CUMUL_NOTAIRE_CPRN_2025 = {
+    "profil": "ascendant", "naissance": "1962", "debut": "26", "metier2_debut": "30",
+    "metier2_statut": "notaire", "liquidation": "62.5", "emploi_retraite": "2025-01",
+    "emploi_retraite_fin": "2026-07", "emploi_retraite_statut": "notaire",
     "emploi_retraite_salaire": "0.3",
 }
 _CUMUL_CONTRACTUELLE_IRCANTEC_2020 = {
@@ -5576,16 +5576,30 @@ def test_la_complementaire_est_servie_entiere_quand_la_base_absorbe_la_reduction
 
 
 def test_la_complementaire_du_notaire_liberal_ne_lui_est_pas_servie(page):
-    """Les statuts de la CPRN (2017) : la pension complémentaire « est
-    incompatible avec l'exercice de la profession de notaire libéral ». Sous le
-    seuil du libéral, le plafond, 3 428 € en 2022, la base du notaire lui est
-    servie entière, sa complémentaire de 367,18 € par mois ne l'est pas (note du
-    24 octobre, « la classe du cumul »). La page disait, par sa phrase par
-    défaut, sa pension « servie entière », la règle « pas encore lue »."""
-    note, _ = _note_du_cumul(page, _CUMUL_NOTAIRE_CPRN_2022)
+    """Les statuts de la CPRN, article 22 (arrêté du 31 mai 2017,
+    JORFARTI000034975971), que l'arrêté du 29 novembre 2023 ne touche pas :
+    « Le droit aux allocations est compatible avec l'exercice de la profession
+    de notaire salarié [...] Il est incompatible avec l'exercice de la
+    profession de notaire libéral. » Sous le seuil du libéral, « égal,
+    annuellement, au plafond prévu à l'article L. 241-3 » (D. 643-10,
+    LEGIARTI000030060076), « valeur mensuelle : 3 925 euros » en 2025 (arrêté
+    du 19 décembre 2024, JORFARTI000050854396), la base du notaire lui est
+    servie entière, sa complémentaire ne l'est pas (note du 24 octobre, « la
+    classe du cumul »). La page disait, par sa phrase par défaut, sa pension
+    « servie entière », la règle « pas encore lue ».
+
+    Le notaire est né en 1962 et part à 62 ans et 6 mois, l'âge de L. 161-17-2
+    (« 8° Soixante-deux ans et six mois pour les assurés nés en 1962 »,
+    D. 161-2-1-9) : la CPRN s'ouvre avec la base, « L'âge de l'ouverture du
+    droit à pension de retraite est celui mentionné à l'article L. 161-17-2 »
+    (statuts, article 18, depuis le 1er janvier 2024). Né en 1960 et parti en
+    2022, il ne l'aurait pas eue pendant son activité : l'âge de 2014 à 2023
+    est celui de L. 161-17-2 « différé de vingt-quatre mois » (note
+    ``130/2026-11-05-n-bis.md``)."""
+    note, _ = _note_du_cumul(page, _CUMUL_NOTAIRE_CPRN_2025)
     assert "n'a pas encore lu la règle" not in note
     assert ("Le droit en vigueur : vos revenus restent sous le seuil de votre régime, "
-            f"{_euros_du_cumul(3428)} par mois en 2022 : votre pension est servie entière ; "
+            f"{_euros_du_cumul(3925)} par mois en 2025 : votre pension est servie entière ; "
             "votre retraite complémentaire ne vous est pas servie : les statuts de votre "
             "caisse la disent incompatible avec l'exercice libéral du notariat.") in note
 
