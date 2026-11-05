@@ -1,0 +1,371 @@
+Dépôt : commit 205cc97fbdf1204c32a7f791a2fb2edcf8e78049, arbre 23dcd4121fe9f84030c6900b604df89b698bc5fd.
+Action 138, étape 14 : les départs tardifs — après l'âge d'annulation de la
+décote et après 67 ans —, la population contre l'EIR et le Panorama 2026
+(docs/feuille_de_route/138/2026-11-05-etape-14-departs-tardifs.md).
+Toutes les variantes de la population, cinq générations, les deux sexes,
+simulées au portage ; quatre processus, un cœur chacun, 147 à 280 s ; puis la
+génération 1953 seule, pour l'âge de ses surcotes. Les cellules des deux
+classeurs de l'EIR, lues par le lecteur de la mesure du 5 novembre
+(2026-11-05-etape-14-taux-plein-par-l-age.txt, lire_eir.py) ; le Panorama,
+lu par pdftotext -layout.
+
+Les scripts, lancés depuis la racine du dépôt :
+    python pilote_tardifs.py 1950 2016
+    python pilote_tardifs.py 1953 2020
+    python pilote_tardifs.py 1955 2022
+    python pilote_tardifs.py 1960 2027 1965 2032
+    python pilote_surcotes_1953.py 1953 2020
+
+----- pilote_tardifs.py -----
+"""Les départs tardifs de la population, génération par génération.
+
+    python pilote_tardifs.py 1953 2020 [1955 2022 ...]
+
+Chaque couple : une génération, simulée au portage, et l'année dont elle prend
+les poids de retraités (``grille_large.poids_retraites``), multipliés par la
+part que la génération donne à chaque variante (``part_de_la_generation``).
+Tous les départs, sans restriction d'âge ni recalage de la page. Pour chaque
+sexe : la part des départs après l'âge d'annulation de la décote (la place
+``apres_annulation`` de ``position_du_depart``), à 67 ans révolus (67,00 à
+moins de 68), à 68 ans et plus, et, pour chacune, leur âge exact, leur
+condition (``condition_au_depart``) et les variantes qui y partent."""
+import collections, subprocess, sys, time
+sys.path.insert(0, "scripts")
+import grille_large as G
+from retraite_notionnelle.config import Parametres
+from retraite_notionnelle.simulateur import Simulateur
+from retraite_notionnelle.scenarios.actuel import AgesAnnulationDecote, AgesOuverture
+
+t0 = time.time()
+print("commit", subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip())
+p = Parametres(); racine = p.racine_donnees
+effectifs = Simulateur(p).effectifs
+variantes = G.grille("population", effectifs, G.eir(racine), ())
+print(f"population : {len(variantes)} variantes ; {time.time()-t0:.0f} s")
+simulateur = Simulateur(p).pour_la_projection()
+args = [int(a) for a in sys.argv[1:]]
+for gen, annee in zip(args[::2], args[1::2]):
+    poids = G.poids_retraites(variantes, effectifs, annee)
+    tous = [(v, w * v.part_de_la_generation(gen)) for v, w in zip(variantes, poids) if w > 0]
+    tous = [(v, w) for v, w in tous if w > 0]
+    lectures = [G._lectures_de_la_condition(v.cas, gen) for v, _ in tous]
+    departs = G.Departs(simulateur, [a for ages, _ in lectures for a in ages],
+                        [d for _, siens in lectures for d in siens], du_jour=True)
+    legal = AgesOuverture(racine).age(gen)[0]; annulation = AgesAnnulationDecote(racine).age(gen)[0]
+    print(f"\n== génération {gen}, poids de {annee} ; âge légal {legal:.2f}, d'annulation {annulation:.2f}")
+    for sexe in ("F", "H"):
+        total = 0.0
+        revolus = collections.Counter()
+        tranches = {"apres_annulation": collections.Counter(), "67": collections.Counter(), "68_plus": collections.Counter()}
+        conditions = {k: collections.Counter() for k in tranches}
+        qui = {k: collections.Counter() for k in tranches}
+        for v, w in tous:
+            if v.cas.sexe != sexe:
+                continue
+            try:
+                age, condition = G.condition_au_depart(simulateur, v.cas, gen, departs)
+            except (ValueError, KeyError):
+                continue
+            total += w
+            revolus[G.age_du_depart(age)] += w
+            cles = []
+            if G.position_du_depart(age, legal, annulation) == "apres_annulation":
+                cles.append("apres_annulation")
+            if 67.0 - 1e-9 <= age < 68.0 - 1e-9:
+                cles.append("67")
+            if age >= 68.0 - 1e-9:
+                cles.append("68_plus")
+            for k in cles:
+                tranches[k][round(age, 2)] += w
+                conditions[k][condition + (" (inapte)" if v.inapte else "")] += w
+                qui[k][f"{v.groupe} {v.tranche}"] += w
+        print(f"  {sexe} : âges révolus : " + " ; ".join(f"{k} {100 * w / total:.2f}" for k, w in sorted(revolus.items())))
+        for k in tranches:
+            s = sum(tranches[k].values())
+            print(f"    {k} : {100 * s / total:.2f} % des départs")
+            if s:
+                print("      âge exact : " + " ; ".join(f"{a} {100 * w / total:.2f}" for a, w in sorted(tranches[k].items())))
+                print("      condition : " + " ; ".join(f"{c} {100 * w / total:.2f}" for c, w in sorted(conditions[k].items())))
+                print("      qui : " + " ; ".join(f"{c} {100 * w / total:.2f}" for c, w in sorted(qui[k].items()) if 100 * w / total >= 0.005))
+    sys.stdout.flush()
+print(f"\ndurée : {time.time()-t0:.0f} s")
+----- pilote_surcotes_1953.py -----
+"""Les départs avec surcote de la population : leur âge exact et l'attente des
+variantes, à une génération. python pilote_surcotes_1953.py 1953 2020"""
+import collections, sys
+sys.path.insert(0, "scripts")
+import grille_large as G
+from retraite_notionnelle.config import Parametres
+from retraite_notionnelle.simulateur import Simulateur
+
+p = Parametres(); effectifs = Simulateur(p).effectifs
+variantes = G.grille("population", effectifs, G.eir(p.racine_donnees), ())
+simulateur = Simulateur(p).pour_la_projection()
+gen, annee = int(sys.argv[1]), int(sys.argv[2])
+poids = G.poids_retraites(variantes, effectifs, annee)
+tous = [(v, w * v.part_de_la_generation(gen)) for v, w in zip(variantes, poids) if w > 0]
+tous = [(v, w) for v, w in tous if w > 0]
+lectures = [G._lectures_de_la_condition(v.cas, gen) for v, _ in tous]
+departs = G.Departs(simulateur, [a for ages, _ in lectures for a in ages],
+                    [d for _, siens in lectures for d in siens], du_jour=True)
+for sexe in ("F", "H"):
+    total = 0.0; par_age = collections.Counter(); par_attente = collections.Counter()
+    for v, w in tous:
+        if v.cas.sexe != sexe:
+            continue
+        try:
+            age, condition = G.condition_au_depart(simulateur, v.cas, gen, departs)
+        except (ValueError, KeyError):
+            continue
+        total += w
+        att = round(getattr(v.cas, "attente", 0.0) or 0.0, 2)
+        if att >= 5.0:
+            par_attente[(att, round(age, 2), condition)] += w
+        if condition == "surcote":
+            par_age[round(age, 2)] += w
+    print(f"{gen} {sexe} : surcotes par âge exact : " + " ; ".join(f"{a} {100*w/total:.2f}" for a, w in sorted(par_age.items())))
+    print(f"{gen} {sexe} : variantes d'attente de 5 ans et plus (attente, âge, condition) : " + " ; ".join(f"{k} {100*w/total:.2f}" for k, w in sorted(par_attente.items())))
+----- sortie, python pilote_tardifs.py 1950 … -----
+commit 205cc97fbdf1204c32a7f791a2fb2edcf8e78049
+population : 20648 variantes ; 21 s
+
+== génération 1950, poids de 2016 ; âge légal 60.00, d'annulation 65.00
+  F : âges révolus : 60 58.08 ; 61 5.51 ; 62 4.09 ; 63 7.10 ; 64 0.00 ; 65 17.68 ; avant_60 7.53
+    apres_annulation : 1.20 % des départs
+      âge exact : 65.42 1.20
+      condition : surcote 1.20
+      qui : msa_non_salaries 30_40 0.05 ; msa_non_salaries 40_plus 0.03 ; regime_general 30_40 0.68 ; regime_general 40_plus 0.44
+    67 : 0.00 % des départs
+    68_plus : 0.00 % des départs
+  H : âges révolus : 60 29.22 ; 61 11.97 ; 62 7.37 ; 63 6.63 ; 64 8.69 ; 65 9.70 ; avant_60 26.42
+    apres_annulation : 1.69 % des départs
+      âge exact : 65.45 1.69
+      condition : surcote 1.69
+      qui : msa_non_salaries 30_40 0.01 ; msa_non_salaries 40_plus 0.10 ; professions_liberales 40_plus 0.03 ; regime_general 30_40 0.13 ; regime_general 40_plus 1.40
+    67 : 0.00 % des départs
+    68_plus : 0.00 % des départs
+
+durée : 147 s
+----- sortie, python pilote_tardifs.py 1953 … -----
+commit 205cc97fbdf1204c32a7f791a2fb2edcf8e78049
+population : 20648 variantes ; 21 s
+
+== génération 1953, poids de 2020 ; âge légal 61.17, d'annulation 66.17
+  F : âges révolus : 60 9.04 ; 61 58.63 ; 62 1.53 ; 63 12.90 ; 64 1.68 ; 65 1.53 ; 66 12.25 ; avant_60 2.45
+    apres_annulation : 0.00 % des départs
+    67 : 0.00 % des départs
+    68_plus : 0.00 % des départs
+  H : âges révolus : 60 25.87 ; 61 29.85 ; 62 1.36 ; 63 14.55 ; 64 1.21 ; 65 11.57 ; 66 4.99 ; avant_60 10.60
+    apres_annulation : 0.00 % des départs
+    67 : 0.00 % des départs
+    68_plus : 0.00 % des départs
+
+durée : 155 s
+----- sortie, python pilote_tardifs.py 1955 … -----
+commit 205cc97fbdf1204c32a7f791a2fb2edcf8e78049
+population : 20648 variantes ; 21 s
+
+== génération 1955, poids de 2022 ; âge légal 62.00, d'annulation 67.00
+  F : âges révolus : 60 9.57 ; 61 5.11 ; 62 48.83 ; 63 7.27 ; 64 8.36 ; 65 9.44 ; 66 0.04 ; 67_plus 8.99 ; avant_60 2.39
+    apres_annulation : 1.66 % des départs
+      âge exact : 67.42 1.66
+      condition : surcote 1.66
+      qui : msa_non_salaries 30_40 0.05 ; msa_non_salaries 40_plus 0.03 ; professions_liberales 40_plus 0.01 ; regime_general 30_40 0.96 ; regime_general 40_plus 0.61
+    67 : 8.99 % des départs
+      âge exact : 67.0 7.33 ; 67.42 1.66
+      condition : surcote 1.66 ; taux_plein_age 6.90 ; taux_plein_autre 0.43
+      qui : msa_non_salaries 10_20 0.25 ; msa_non_salaries 20_30 0.18 ; msa_non_salaries 30_40 0.05 ; msa_non_salaries 40_plus 0.03 ; msa_non_salaries moins_10 0.17 ; professions_liberales 10_20 0.04 ; professions_liberales 30_40 0.01 ; professions_liberales 40_plus 0.01 ; professions_liberales moins_10 0.03 ; regime_general 10_20 3.32 ; regime_general 20_30 0.53 ; regime_general 30_40 1.37 ; regime_general 40_plus 0.70 ; regime_general moins_10 2.30
+    68_plus : 0.00 % des départs
+  H : âges révolus : 60 24.89 ; 61 4.62 ; 62 22.32 ; 63 12.73 ; 64 0.45 ; 65 19.11 ; 66 0.02 ; 67_plus 5.55 ; avant_60 10.31
+    apres_annulation : 2.07 % des départs
+      âge exact : 67.45 2.07
+      condition : surcote 2.07
+      qui : msa_non_salaries 30_40 0.01 ; msa_non_salaries 40_plus 0.10 ; professions_liberales 40_plus 0.05 ; regime_general 30_40 0.05 ; regime_general 40_plus 1.86
+    67 : 5.55 % des départs
+      âge exact : 67.0 3.49 ; 67.45 2.07
+      condition : surcote 2.07 ; taux_plein_age 3.01 ; taux_plein_autre 0.48
+      qui : msa_non_salaries 10_20 0.03 ; msa_non_salaries 30_40 0.21 ; msa_non_salaries 40_plus 0.10 ; msa_non_salaries moins_10 0.01 ; professions_liberales 10_20 0.01 ; professions_liberales 30_40 0.06 ; professions_liberales 40_plus 1.35 ; regime_general 10_20 0.24 ; regime_general 20_30 0.01 ; regime_general 30_40 1.48 ; regime_general 40_plus 1.93 ; regime_general moins_10 0.10
+    68_plus : 0.00 % des départs
+
+durée : 160 s
+----- sortie, python pilote_tardifs.py 1960 … -----
+commit 205cc97fbdf1204c32a7f791a2fb2edcf8e78049
+population : 20648 variantes ; 21 s
+
+== génération 1960, poids de 2027 ; âge légal 62.00, d'annulation 67.00
+  F : âges révolus : 60 7.25 ; 61 8.00 ; 62 48.97 ; 63 10.27 ; 64 6.39 ; 65 8.97 ; 66 0.04 ; 67_plus 8.11 ; avant_60 2.00
+    apres_annulation : 1.38 % des départs
+      âge exact : 67.42 1.38
+      condition : surcote 1.38
+      qui : msa_non_salaries 30_40 0.04 ; msa_non_salaries 40_plus 0.02 ; professions_liberales 40_plus 0.01 ; regime_general 30_40 0.80 ; regime_general 40_plus 0.51
+    67 : 8.11 % des départs
+      âge exact : 67.0 6.73 ; 67.42 1.38
+      condition : surcote 1.38 ; taux_plein_age 6.38 ; taux_plein_autre 0.35
+      qui : msa_non_salaries 10_20 0.19 ; msa_non_salaries 20_30 0.14 ; msa_non_salaries 30_40 0.04 ; msa_non_salaries 40_plus 0.02 ; msa_non_salaries moins_10 0.13 ; professions_liberales 10_20 0.04 ; professions_liberales 20_30 0.01 ; professions_liberales 30_40 0.01 ; professions_liberales 40_plus 0.01 ; professions_liberales moins_10 0.03 ; regime_general 10_20 3.09 ; regime_general 20_30 0.43 ; regime_general 30_40 1.22 ; regime_general 40_plus 0.60 ; regime_general moins_10 2.14
+    68_plus : 0.00 % des départs
+  H : âges révolus : 60 16.63 ; 61 8.65 ; 62 29.46 ; 63 12.24 ; 64 0.06 ; 65 20.08 ; 66 0.96 ; 67_plus 4.26 ; avant_60 7.65
+    apres_annulation : 1.86 % des départs
+      âge exact : 67.45 1.86
+      condition : surcote 1.86
+      qui : msa_non_salaries 40_plus 0.08 ; professions_liberales 40_plus 0.05 ; regime_general 30_40 0.02 ; regime_general 40_plus 1.71
+    67 : 4.26 % des départs
+      âge exact : 67.0 2.40 ; 67.45 1.86
+      condition : surcote 1.86 ; taux_plein_age 1.95 ; taux_plein_autre 0.44
+      qui : msa_non_salaries 10_20 0.02 ; msa_non_salaries 30_40 0.13 ; msa_non_salaries 40_plus 0.08 ; msa_non_salaries moins_10 0.01 ; professions_liberales 10_20 0.01 ; professions_liberales 30_40 0.04 ; professions_liberales 40_plus 1.50 ; regime_general 10_20 0.09 ; regime_general 20_30 0.01 ; regime_general 30_40 0.55 ; regime_general 40_plus 1.78 ; regime_general moins_10 0.04
+    68_plus : 0.00 % des départs
+
+== génération 1965, poids de 2032 ; âge légal 62.75, d'annulation 67.00
+  F : âges révolus : 61 0.39 ; 62 59.53 ; 63 11.82 ; 64 5.90 ; 65 9.34 ; 66 0.08 ; 67_plus 11.25 ; avant_60 1.69
+    apres_annulation : 1.41 % des départs
+      âge exact : 68.17 1.41
+      condition : surcote 1.41
+      qui : msa_non_salaries 30_40 0.03 ; msa_non_salaries 40_plus 0.02 ; professions_liberales 30_40 0.01 ; professions_liberales 40_plus 0.01 ; regime_general 30_40 0.77 ; regime_general 40_plus 0.58
+    67 : 9.85 % des départs
+      âge exact : 67.0 9.85
+      condition : taux_plein_age 9.54 ; taux_plein_autre 0.31
+      qui : msa_non_salaries 10_20 0.20 ; msa_non_salaries 20_30 0.13 ; msa_non_salaries moins_10 0.14 ; professions_liberales 10_20 0.06 ; professions_liberales 20_30 0.01 ; professions_liberales 30_40 0.02 ; professions_liberales moins_10 0.04 ; regime_general 10_20 4.81 ; regime_general 20_30 0.66 ; regime_general 30_40 0.35 ; regime_general 40_plus 0.09 ; regime_general moins_10 3.34
+    68_plus : 1.41 % des départs
+      âge exact : 68.17 1.41
+      condition : surcote 1.41
+      qui : msa_non_salaries 30_40 0.03 ; msa_non_salaries 40_plus 0.02 ; professions_liberales 30_40 0.01 ; professions_liberales 40_plus 0.01 ; regime_general 30_40 0.77 ; regime_general 40_plus 0.58
+  H : âges révolus : 61 1.91 ; 62 42.50 ; 63 13.25 ; 64 7.59 ; 65 9.23 ; 66 9.76 ; 67_plus 8.39 ; avant_60 7.37
+    apres_annulation : 1.89 % des départs
+      âge exact : 68.2 1.89
+      condition : surcote 1.89
+      qui : msa_non_salaries 30_40 0.01 ; msa_non_salaries 40_plus 0.06 ; professions_liberales 40_plus 0.05 ; regime_general 30_40 0.09 ; regime_general 40_plus 1.68
+    67 : 6.50 % des départs
+      âge exact : 67.0 6.50
+      condition : taux_plein_age 6.02 ; taux_plein_autre 0.48
+      qui : msa_non_salaries 10_20 0.03 ; msa_non_salaries 30_40 0.19 ; msa_non_salaries moins_10 0.01 ; professions_liberales 10_20 0.02 ; professions_liberales 30_40 0.11 ; professions_liberales 40_plus 1.47 ; professions_liberales moins_10 0.01 ; regime_general 10_20 0.49 ; regime_general 20_30 0.03 ; regime_general 30_40 2.88 ; regime_general 40_plus 1.06 ; regime_general moins_10 0.19
+    68_plus : 1.89 % des départs
+      âge exact : 68.2 1.89
+      condition : surcote 1.89
+      qui : msa_non_salaries 30_40 0.01 ; msa_non_salaries 40_plus 0.06 ; professions_liberales 40_plus 0.05 ; regime_general 30_40 0.09 ; regime_general 40_plus 1.68
+
+durée : 280 s
+----- sortie, python pilote_surcotes_1953.py 1953 2020 -----
+1953 F : surcotes par âge exact : 62.93 0.21 ; 63.11 3.95 ; 63.19 0.35 ; 63.38 3.43 ; 63.39 1.63 ; 63.65 0.06 ; 65.42 1.52
+1953 F : variantes d'attente de 5 ans et plus (attente, âge, condition) : (5.42, 65.42, 'surcote') 1.52 ; (5.42, 66.17, 'taux_plein_age') 0.02 ; (5.42, 66.17, 'taux_plein_autre') 0.02
+1953 H : surcotes par âge exact : 63.15 4.34 ; 63.65 0.05 ; 63.68 0.10 ; 63.94 0.31 ; 65.38 3.00 ; 65.39 0.81 ; 65.45 1.84
+1953 H : variantes d'attente de 5 ans et plus (attente, âge, condition) : (5.45, 65.45, 'surcote') 1.84 ; (5.45, 66.17, 'taux_plein_age') 0.12 ; (5.45, 66.17, 'taux_plein_autre') 0.01
+----- cellules de l'EIR (colonne B ôtée) -----
+Jeu 3013_donnees-statistiques-sur-les-caracteristiques-des-retraites de la DREES, pièces jointes
+caracteristiques_des_retraites_nes_en_1950_eir_2016_xlsx et …_nes_en_1953_eir_2020_xlsx, prises par curl le 5 novembre 2026.
+== 1950_eir_2016.xlsx, SHA-256 59f76598591d20cb4704659a65ba30ce687ca8cb0a733198a3182c6bbaef61a8, 194522 octets
+-- ÂgeLiq
+1 A1='sexe' | C1='Intitulé' | D1="Départ avant l'âge légal d'ouverture des droits à la retraite" | E1="Départ à l'âge légal d'ouverture des droits à la retraite" | F1="Départ entre l'âge légal d'ouverture des droits à la retraite et l'âge d'annulation de la décote" | G1="Départ à l'âge d'annulation de la décote" | H1="Départ après l'âge d'annulation de la décote" | I1='Ensemble'
+6 A6='Femme' | C6="Part parmi l'ensemble des retraités (en %)" | D6=13.0 | E6=44.4 | F6=22.4 | G6=15.3 | H6=4.9 | I6=100.0
+7 A7='Homme' | C7="Part parmi l'ensemble des retraités (en %)" | D7=27.6 | E7=35.3 | F7=25.4 | G7=7.3 | H7=4.4 | I7=100.0
+279 A279='Femme' | C279='Part de départ avec surcote (en %)' | E279=0.1 | F279=38.5 | G279=7.5 | H279=27.8 | I279=11.2
+280 A280='Homme' | C280='Part de départ avec surcote (en %)' | D280=0.0 | E280=0.2 | F280=36.3 | G280=16.8 | H280=38.5 | I280=12.2
+291 A291='Femme' | C291="Part de départ au taux plein par l'âge (en %)" | D291=10.4 | E291=0.7 | F291=2.1 | G291=88.5 | H291=64.4 | I291=18.8
+292 A292='Homme' | C292="Part de départ au taux plein par l'âge (en %)" | D292=6.6 | E292=0.3 | F292=1.3 | G292=72.9 | H292=51.8 | I292=9.8
+294 A294='Femme' | C294='Part de départ au taux plein par la durée (hors surcote et carrière longue, en %)' | D294=12.5 | E294=57.8 | F294=28.8 | G294=2.2 | H294=5.2 | I294=34.4
+295 A295='Homme' | C295='Part de départ au taux plein par la durée (hors surcote et carrière longue, en %)' | D295=6.9 | E295=62.5 | F295=38.9 | G295=7.6 | H295=8.5 | I295=34.8
+-- ÂgeLiq_Détails
+1 A1='sexe' | C1='Intitulé' | D1='Avant 60 ans' | E1='60 ans' | F1='61 ans' | G1='62 ans' | H1='63 ans' | I1='64 ans' | J1='65 ans' | K1='66 ans' | L1='Ensemble'
+6 A6='Femme' | C6="Part parmi l'ensemble des retraités (en %)" | D6=13.0 | E6=50.5 | F6=6.5 | G6=3.8 | H6=3.1 | I6=5.0 | J6=16.2 | K6=1.9 | L6=100.0
+7 A7='Homme' | C7="Part parmi l'ensemble des retraités (en %)" | D7=27.6 | E7=41.3 | F7=7.1 | G7=4.8 | H7=3.8 | I7=5.4 | J7=8.3 | K7=1.7 | L7=100.0
+279 A279='Femme' | C279='Part de départ avec surcote (en %)' | E279=1.7 | F279=45.9 | G279=47.6 | H279=48.8 | I279=42.6 | J279=7.8 | K279=30.8 | L279=11.2
+280 A280='Homme' | C280='Part de départ avec surcote (en %)' | D280=0.0 | E280=1.7 | F280=40.5 | G280=44.8 | H280=46.5 | I280=47.3 | J280=17.8 | K280=39.7 | L280=12.2
+291 A291='Femme' | C291="Part de départ au taux plein par l'âge (en %)" | D291=10.4 | E291=0.8 | F291=1.5 | G291=1.9 | H291=3.6 | I291=26.7 | J291=88.7 | K291=58.0 | L291=18.8
+292 A292='Homme' | C292="Part de départ au taux plein par l'âge (en %)" | D292=6.6 | E292=0.3 | F292=0.8 | G292=0.7 | H292=3.7 | I292=13.8 | J292=73.1 | K292=47.6 | L292=9.8
+== 1953_eir_2020.xlsx, SHA-256 d5e8b8776768e31a3a8a0490bf749fc6615d12a8d25716e57a658dd16f94c5e0, 195574 octets
+-- ÂgeLiq
+1 A1='sexe' | C1='Intitulé' | D1="Départ avant l'âge légal d'ouverture des droits à la retraite" | E1="Départ à l'âge légal d'ouverture des droits à la retraite" | F1="Départ entre l'âge légal d'ouverture des droits à la retraite et l'âge d'annulation de la décote" | G1="Départ à l'âge d'annulation de la décote" | H1="Départ après l'âge d'annulation de la décote" | I1='Ensemble'
+6 A6='Femme' | C6="Part parmi l'ensemble des retraités (en %)" | D6=21.7 | E6=37.5 | F6=26.7 | G6=10.8 | H6=3.3 | I6=100.0
+7 A7='Homme' | C7="Part parmi l'ensemble des retraités (en %)" | D7=40.8 | E7=24.4 | F7=26.4 | G7=5.5 | H7=2.8 | I7=100.0
+282 A282='Femme' | C282='Part de départ avec surcote (en %)' | D282=0.1 | E282=0.3 | F282=45.5 | G282=9.8 | H282=25.1 | I282=14.2
+283 A283='Homme' | C283='Part de départ avec surcote (en %)' | D283=0.1 | E283=0.3 | F283=46.9 | G283=19.5 | H283=33.4 | I283=14.5
+294 A294='Femme' | C294="Part de départ au taux plein par l'âge (en %)" | D294=1.8 | E294=0.0 | F294=0.9 | G294=86.3 | H294=67.0 | I294=12.2
+295 A295='Homme' | C295="Part de départ au taux plein par l'âge (en %)" | D295=3.7 | E295=0.0 | F295=0.7 | G295=74.5 | H295=57.7 | I295=7.4
+297 A297='Femme' | C297='Part de départ au taux plein par la durée (hors surcote et carrière longue, en %)' | D297=17.4 | E297=52.4 | F297=15.1 | G297=2.5 | H297=6.5 | I297=27.9
+298 A298='Homme' | C298='Part de départ au taux plein par la durée (hors surcote et carrière longue, en %)' | D298=7.3 | E298=47.5 | F298=21.7 | G298=4.3 | H298=8.1 | I298=20.8
+-- ÂgeLiq_Détails
+1 A1='sexe' | C1='Intitulé' | D1='Avant 60 ans' | E1='60 ans' | F1='61 ans' | G1='62 ans' | H1='63 ans' | I1='64 ans' | J1='65 ans' | K1='66 ans' | L1='67 ans et plus' | M1='Ensemble'
+6 A6='Femme' | C6="Part parmi l'ensemble des retraités (en %)" | D6=10.2 | E6=9.4 | F6=42.1 | G6=8.9 | H6=5.0 | I6=5.7 | J6=2.9 | K6=14.9 | L6=0.8 | M6=100.0
+7 A7='Homme' | C7="Part parmi l'ensemble des retraités (en %)" | D7=20.2 | E7=17.5 | F7=29.7 | G7=8.2 | H7=5.2 | I7=6.1 | J7=3.1 | K7=9.1 | L7=0.8 | M7=100.0
+282 A282='Femme' | C282='Part de départ avec surcote (en %)' | E282=0.1 | F282=1.5 | G282=46.8 | H282=53.3 | I282=51.7 | J282=39.8 | K282=15.8 | L282=29.1 | M282=14.2
+283 A283='Homme' | C283='Part de départ avec surcote (en %)' | E283=0.0 | F283=1.6 | G283=45.2 | H283=53.7 | I283=52.9 | J283=46.9 | K283=27.5 | L283=40.6 | M283=14.5
+294 A294='Femme' | C294="Part de départ au taux plein par l'âge (en %)" | D294=3.2 | E294=0.6 | F294=0.1 | G294=0.1 | H294=0.1 | I294=1.0 | J294=2.6 | K294=74.8 | L294=61.1 | M294=12.2
+295 A295='Homme' | C295="Part de départ au taux plein par l'âge (en %)" | D295=7.3 | E295=0.2 | F295=0.0 | G295=0.1 | H295=0.2 | I295=0.9 | J295=1.8 | K295=59.1 | L295=49.8 | M295=7.4
+----- Panorama 2026, fiche 16 (pdftotext -layout) -----
+« Les retraités et les retraites, édition 2026 », DREES, pris au miroir du manifeste (drees_panorama_retraites_2026),
+SHA-256 9eb36a06639af0f4298d281b41acbde4236e47fc73e40c673f153ad86735e9be, 9983866 octets.
+Tableau 1, page 150 :
+     Tableau 1 Répartition des retraités nés en 1953, selon l’âge à la première liquidation
+                                                                                                                           En %
+                                             Femmes                                  Hommes
+                             résidant         résidant                   résidant     résidant                  Ensemble
+                                                           Ensemble                                Ensemble
+                            en France       à l’étranger                en France   à l’étranger
+     Moins de 55 ans              2                1           2             3            2             3             3
+     55 ans                       3               0            3             5             1            5             4
+     56-59 ans                    6                1           6             14           2            14            10
+     60 ans                      12               2            11            21           5            20            16
+     61 ans                      45              29           44             31          31            31            38
+     62 ans                       7               8            7             6            9             6             6
+     63-65 ans                   12              25           12             12          30            13            13
+     66 ans                      13              33           13             7           18             8             11
+     67 ans ou plus                1               1            1             1           2              1             1
+     Ensemble                   100             100          100           100          100           100           100
+     Âge moyen à la
+                               61,6            63,6          61,7          60,8        62,9          60,9          61,3
+     première liquidation
+
+     Note > Âge atteint à la première liquidation d’une pension de base. Le tableau 1 et le graphique 3 ne sont pas
+     directement comparables, du fait de la différence de concept d’âge : âge au moment de la liquidation dans
+Encadré 2, page 152 :
+        Encadré 2 Les départs à la retraite après 67 ans
+
+       Les résultats présentés dans cette fiche à partir des données de l’échantillon interrégimes de retrai-
+       tés (EIR) 2020 (tableaux 1 et 2, graphique 5) sont calculés en considérant les retraités nés en 1953,
+       observés à l’âge de 67 ans. Il s’agit de la plus jeune génération dont on considère qu’elle a liquidé la
+       quasi-totalité de ses droits au 31 décembre 2020. Les assurés qui liquideront leurs droits directs de
+       retraite après cet âge ne sont donc, par construction, pas retenus pour le calcul de l’âge moyen de
+       départ à la retraite (voir fiche 15) et de la proportion de départs après 67 ans. Ces deux indicateurs
+       sont donc susceptibles d’être légèrement sous-estimés.
+       Si les premières liquidations d’un droit direct de retraite après 67 ans sont relativement rares, elles
+       ne sont pour autant pas inexistantes (afin de bénéficier d’une surcote plus importante ou d’une
+       majoration de durée d’assurance, par exemple). Sur la base des générations nées en 1950 (per-
+       sonnes âgées de 70 ans en 2020) et en 1946 (personnes âgées de 74 ans en 2020), les départs à la
+       retraite entre 68 et 70 ans représentent environ 1 % des départs, et ceux qui ont lieu entre 71 et
+       74 ans environ 0,2 %. La proportion des départs à 67 ans ou après est, en particulier, très élevée
+       parmi les professions libérales (11 % de départs entre 67 et 70 ans). En prenant en compte ces
+       départs à la retraite après 67 ans, l’âge moyen de départ à la retraite pourrait ainsi être plus élevé
+       de 1 à 11 mois selon le régime.
+Tableau 2, page 153, entier, et sa note :
+ Tableau 2 Âge de départ à la retraite et répartition des retraités nés en 1953,
+selon le régime principal
+
+                       Âge moyen
+                                                    Répartition par âge (en années) à la liquidation
+                     à la liquidation                                                                             Part
+                                                            dans le régime principal (en %)
+                 dans le régime principal                                                                        parmi
+                                Après                                                                              les
+                            neutralisation Moins                                                          67    retraités
+                 Ensemble                           55    56-59    60      61     62     63-65    66
+                             des départs de 55                                                          ou plus (en %)
+                             avant l’AOD
+Régime             62,0         62,3         0,0    0,1    8,3    16,5    44,2    6,2    12,0    11,7     1,1     72,9
+général
+MSA salariés       62,2         62,7         0,0    0,1    9,6    22,2    31,3     5,4   13,9    15,9     1,7      2,4
+FPE civils         60,0         62,2         8,1   12,8   13,3    10,6    21,3    11,7   15,9     5,5    0,8        9,1
+FPE militaires     48,6         61,2        70,9    9,3    18,1    0,0     0,4     0,0    0,0     0,0     1,3       1,1
+CNRACL             59,8         62,0         6,0   13,0   15,2     17,2   17,7    12,9   12,9     4,2    0,8        7,4
+Régimes            56,5         61,3        11,8   44,8   20,8     11,6    5,6     1,5    3,4     0,5     0,1      2,6
+spéciaux
+MSA non-           62,1         62,3         0,0    0,0    2,8     17,1   45,5     9,5    17,8    5,8     1,6      2,3
+salariés
+Professions        64,4         64,5         0,0    0,0    0,3     0,7    16,7    8,3    42,2    28,2    3,7        1,4
+libérales
+Ensemble           61,4         62,3         2,4    3,5    9,5    15,6    37,9     7,1   12,6    10,3     1,1      100
+
+AOD : âge d’ouverture des droits (61 ans et 2 mois pour la génération née en 1953).
+Note > Âge atteint à la liquidation de la pension dans le régime pour lequel la durée validée est la plus importante,
+qui n’est pas nécessairement celui correspondant à la première liquidation. Les polypensionnés sont ici classés
+selon leur régime de base principal, c’est-à-dire celui représentant plus de la moitié de la carrière. Les âges moyens
+et les proportions de départs à la retraite à 67 ans ou plus sont légèrement sous-estimés du fait de la non-prise
+en compte des départs après 67 ans, non observés dans l’EIR 2020 (encadré 2). Pour les invalides de la FPE civils, l’âge
+de liquidation est celui de l’AOD et non celui de la liquidation de la pension d’invalidité (voir fiche 24 et annexe 3).
