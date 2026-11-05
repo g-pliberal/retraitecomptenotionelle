@@ -4558,6 +4558,46 @@ institutions:
           échelles 2 à 5 de la catégorie C au 1er avril 1998, que le noyau n'a
           pas, à celles de la territoriale. Avant 1990, ni le LEGI ni le JORF
           de la DILA ne reproduisent les tableaux.
+          Les ingénieurs des études et de l'exploitation de l'aviation civile
+          (IEEAC) en 2017, relus le 5 novembre 2026 (action 158, relecture R-B,
+          puis R-B-bis) : leur grille de 2017 est celle du décret n° 2018-610
+          du 12 juillet 2018, publié le 14 juillet 2018. Son article 1er
+          « remplace » l'article 2 du décret n° 2009-1322
+          (JORFARTI000037193171), son article 2 dit : « Le présent décret
+          entre en vigueur le 1er janvier 2017. » (JORFARTI000037193174), et il
+          n'a que trois articles, dont aucun ne garde la rédaction remplacée.
+          Celle-ci, écrite par le décret n° 2017-171 du 10 février 2017, publié
+          le 12 février (art. 39, JORFARTI000034026752 ; en vigueur le 1er
+          janvier 2017 par l'art. 126, JORFARTI000034026585), que le LEGI garde
+          en vigueur jusqu'au 1er janvier 2018 (LEGIARTI000034034492), ne vaut
+          donc à aucune date : ses lignes sont ôtées des grilles
+          (`DATES_CORRIGEES`, scripts/fetch/dila_legi_grilles.py). Le Noyau RH,
+          dont la grille 03500 ne cite pas le n° 2017-171, date du 1er janvier
+          2017 les mêmes indices que le n° 2018-610 (434, 483, 508, 525, 565,
+          610, 649, 686, 727, 744, 774 pour la classe normale et le stagiaire).
+          Échelon pour échelon, aucun indice du n° 2018-610 au 1er janvier 2017
+          n'est inférieur à celui du n° 2017-171 (de 0 à 43 points de plus),
+          le 1er échelon de classe normale du n° 2017-171 (421) ayant pour
+          pendant le « 1er » de l'ingénieur stagiaire du n° 2018-610 (434), ce
+          que le texte ne dit pas.
+          CE QUE CES TEXTES NE TRANCHENT PAS : les 128 documents que l'index
+          JORF du 3 novembre 2026 garde du n° 2017-171 (le texte et 127
+          articles) et les 4 du n° 2018-610 ne contiennent ni « pension » ni
+          « rétroactif ». Un IEEAC dont la pension a pris effet du 1er janvier
+          2017 à la publication du n° 2018-610, le 14 juillet 2018, a pu être
+          liquidé sur les indices du n° 2017-171, appliqués alors ; que cette
+          pension ait été révisée sur ceux du n° 2018-610, aucun texte lu ne le
+          dit, pas plus que la paie versée de février 2017 à juillet 2018 ni
+          son rappel. Les deux décrets entrent en vigueur avant leur
+          publication (de six semaines le premier, de plus de dix-huit mois le
+          second) : c'est ce qu'ils écrivent ; que cette rétroactivité soit
+          régulière, ils ne le disent pas, et la jurisprudence n'a pas été
+          ouverte. Les dispositions du code des pensions civiles et militaires
+          de retraite sur la révision d'une pension ne l'ont pas été non plus.
+          Le scénario 1 étant le droit tel que la caisse l'applique, l'étape
+          qui pré-remplira la carrière d'un IEEAC de ces années le dira, sans
+          affirmer qu'une pension liquidée alors l'a été sur la grille du
+          n° 2018-610.
 
       - id: dila_legi_reclassements
         titre: >-

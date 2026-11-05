@@ -1,0 +1,28 @@
+date: "2026-11-05"
+session: "action 158, file B-bis : les deux écarts mineurs de la relecture R-B — la preuve de la hors classe des IEEAC, la révision des pensions d'IEEAC de 2017 à juillet 2018"
+consulte: >-
+  python scripts/veille_droit.py ; docs/veille_droit.md. L'index LEGI du dépôt (incrément
+  20261102-213929) : décret n° 2009-1322, article 2, ses versions (LEGIARTI000034034492,
+  LEGIARTI000037196211, LEGIARTI000036489719) ; texte des deux premières, au motif « 1971 ».
+  L'index JORF (incrément 20261103-002311) : décret n° 2018-610, notice, articles 1er à 3
+  (JORFARTI000037193171, JORFARTI000037193174, JORFARTI000037193176) ; décret n° 2017-171,
+  articles 39 et 126 (JORFARTI000034026752, JORFARTI000034026585) ; recherche de « pension »,
+  « rétroactif » et « retraite » dans les 128 documents du n° 2017-171 et les 4 du n° 2018-610,
+  table `doc` lue directement ; code des pensions civiles et militaires de retraite, art. L. 16
+  au 2018-07-14 (la revalorisation, sans rapport). Le Noyau RH : grille 03500 au 2017-01-01,
+  textes 5150, 5946 et 5947.
+trouve: >-
+  Les deux versions de l'article 2 du n° 2009-1322 que le LEGI date en vigueur en 2017 nomment
+  le statut par sa date : « régis par le décret du 8 novembre 1971 susvisé ». La seconde
+  (LEGIARTI000037196211) est celle du n° 2018-610 ; la première (LEGIARTI000034034492), celle
+  du n° 2017-171, ne vaut à aucune date. La preuve de la ligne de chaînage de la hors classe
+  des IEEAC cite les deux parce que `versions_sur` lit les dates du LEGI, non `DATES_CORRIGEES` :
+  la corriger change le comportement du chaînage, ce qui est hors de la tâche (candidat). Ni
+  le n° 2017-171 ni le n° 2018-610 ne contiennent « pension » ni « rétroactif » ; les deux
+  entrent en vigueur le 1er janvier 2017, publiés le 12 février 2017 et le 14 juillet 2018.
+  Déclaré dans la fiche de dila_legi_grilles (data/sources.yaml).
+reste: >-
+  Le chaînage lisant `DATES_CORRIGEES` (candidat, test d'abord). La régularité de la
+  rétroactivité du n° 2018-610, ses suites sur les pensions liquidées avant le 14 juillet 2018,
+  et les dispositions du code des pensions civiles et militaires sur la révision d'une pension :
+  non ouvertes, ce que la déclaration dit.
