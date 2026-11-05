@@ -461,7 +461,7 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
         abattement = abattementPoints(
           moteur, periode, carriere, trimestres, requisReference, ageLiquidation,
           anneeLiquidation, trimestresParRegime.get(code) ?? 0, parLeHandicap,
-          parCategorie,
+          parCategorie, durees,
         );
         // LA TRANCHE C D'AVANT 2016 GARDE LE COEFFICIENT POUR ÂGE, même au
         // taux plein : voir le Python. Le coefficient affiché est celui de la
@@ -3118,6 +3118,58 @@ export function coefficientParAnneeDAge(bareme, age) {
 }
 
 /**
+ * La version `bareme` de l'article 16 exonère-t-elle l'assuré par l'âge et la
+ * durée qu'elle nomme ? L'agent non titulaire, encore agent à la liquidation
+ * (`agentALaLiquidation`), d'au moins l'âge et la durée d'assurance tous
+ * régimes de `exoneration_des_agents_de_soixante_trois_ans` (6° a) ; la femme
+ * de l'âge que `exoneration_des_femmes_de_1977` exige l'année d'effet de sa
+ * pension, qui a la durée dans les régimes qu'elle nomme (5°). Voir
+ * `liquider.exonere_par_l_age_et_la_duree`.
+ */
+export function exonereParLAgeEtLaDuree(moteur, bareme, carriere, trimestres, ageLiquidation,
+  anneeLiquidation, durees) {
+  const agents = bareme.exoneration_des_agents_de_soixante_trois_ans ?? null;
+  if (agents !== null && ageLiquidation + 1e-9 >= Number(agents.age)
+      && trimestres >= Math.trunc(Number(agents.trimestres))
+      && agentALaLiquidation(moteur, carriere, anneeLiquidation)) {
+    return true;
+  }
+  const femmes = bareme.exoneration_des_femmes_de_1977 ?? null;
+  if (femmes === null || carriere.sexe !== "F" || durees === null) {
+    return false;
+  }
+  const annee = Number(dateDEffet(carriere).slice(0, 4));
+  let age = null;
+  for (const [desLAnnee, exige] of femmes.ages) {
+    if (annee >= Number(desLAnnee)) {
+      age = Number(exige);
+    }
+  }
+  return age !== null && ageLiquidation + 1e-9 >= age
+    && durees.cumulPlafonne("assurance", femmes.regimes_de_la_duree)
+      >= Math.trunc(Number(femmes.trimestres));
+}
+
+/**
+ * L'assuré est-il encore agent de l'Ircantec à la liquidation : la dernière
+ * ligne de sa carrière, jusqu'à l'année de la liquidation, est-elle un emploi
+ * affilié à l'Ircantec ? Voir `liquider.agent_a_la_liquidation`.
+ */
+export function agentALaLiquidation(moteur, carriere, anneeLiquidation) {
+  let derniere = null;
+  for (const ligne of carriere.lignes) {
+    if (ligne.annee <= anneeLiquidation && (derniere === null || ligne.annee > derniere.annee)) {
+      derniere = ligne;
+    }
+  }
+  return derniere !== null && derniere.type_periode === "emploi"
+    && [...moteur.affiliations.regimes(
+      derniere.affiliation, derniere.annee,
+      moteur.affiliations.dateEntree(carriere, derniere.affiliation, derniere.annee),
+    )].includes("ircantec");
+}
+
+/**
  * La version `regle` exonère-t-elle la pension de ce régime pour l'un de ses
  * motifs — la catégorie de L. 351-8 au taux plein du régime général, ou
  * l'inaptitude ? Dans les seuls régimes que l'exonération nomme, dans tous
@@ -3190,7 +3242,7 @@ export function coefficientConvention1947(ageLiquidation) {
 }
 
 export function abattementPoints(moteur, periode, carriere, trimestres, requis, ageLiquidation,
-  anneeLiquidation, trimestresRegime = 0, handicap = false, categorie = null) {
+  anneeLiquidation, trimestresRegime = 0, handicap = false, categorie = null, durees = null) {
   // L'Ircantec a le même barème que l'Agirc-Arrco, et son texte l'écrit :
   // article 16 de l'arrêté du 30 décembre 1970, mêmes marches et mêmes deux
   // lectures. Voir le docstring du modèle Python. `trimestresRegime` est la
@@ -3198,7 +3250,8 @@ export function abattementPoints(moteur, periode, carriere, trimestres, requis, 
   // `handicap` : la liquidation ouverte par le départ anticipé des assurés
   // handicapés, que ces complémentaires servent sans coefficient.
   // `categorie` : la fiche du taux plein par catégorie de L. 351-8 que
-  // l'assuré a au régime général, `null` sans elle.
+  // l'assuré a au régime général, `null` sans elle. `durees` : les durées de
+  // l'assuré, dont l'Ircantec lit celle du régime général (5° de 1978).
   if (carriere.au_deces) {
     // La pension que l'assuré eût obtenue à son décès : la réversion d'une
     // complémentaire porte sur les points acquis, sans coefficient. Voir
@@ -3245,7 +3298,13 @@ export function abattementPoints(moteur, periode, carriere, trimestres, requis, 
     // Le départ anticipé des assurés handicapés, au taux plein du régime
     // général : l'Agirc-Arrco le suit (article 84, 3), l'Ircantec l'exempte
     // (article 16, 1°, b).
-    if (inapte || handicap || (!parAgeSeul && trimestres >= requis)) {
+    // L'âge et la durée, avant le 6° c) : l'agent de soixante-trois ans et de
+    // cent cinquante trimestres dès le 1er juillet 1982 (6° a), la femme de la
+    // loi du 12 juillet 1977 dès le 30 septembre 1978 (5°), que la version de
+    // la date d'effet nomme (`exonereParLAgeEtLaDuree`).
+    const exonere = bareme !== null && exonereParLAgeEtLaDuree(
+      moteur, bareme, carriere, trimestres, ageLiquidation, anneeLiquidation, durees);
+    if (inapte || handicap || exonere || (!parAgeSeul && trimestres >= requis)) {
       abattement = 1.0;
     } else {
       // Jusqu'au 31 août 1983, l'Ircantec n'a qu'un coefficient par année

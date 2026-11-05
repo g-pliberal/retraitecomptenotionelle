@@ -1,0 +1,38 @@
+date: "2026-11-05"
+session: "action 130, file M3-bis : les écarts de la relecture R-M3d (l'Ircantec, l'IPACTE et l'IGRANTE d'avant 1983)"
+consulte: >-
+  python scripts/veille_droit.py ; docs/veille_droit.md ; les index LEGI et JORF du dépôt,
+  récupérés, à jour des incréments du 2 novembre 2026 (LEGI, 20261102-213929) et du
+  3 novembre (JORF, 20261103-002311). Dans LEGI : l'article 16 de l'arrêté du 30 décembre
+  1970, rédactions du 30 septembre 1978, du 31 août 1983, du 2 octobre 1990 et du
+  1er janvier 2004 (LEGIARTI000006381609 à 612), leurs 5° et 6° ; l'ordonnance n° 82-270 du
+  26 mars 1982, article 9 (LEGIARTI000006275868) et rapport au Président de la République
+  (LEGIARTI000006759661) ; le décret n° 45-0179 du 29 décembre 1945, article 70-2,
+  rédactions du 16 mars 1978 et du 23 juillet 1982 (LEGIARTI000006760658 et 659) ; le
+  décret n° 78-319 du 8 mars 1978, article 1er (LEGIARTI000006762125). Dans JORF : les
+  analyses de la loi n° 77-774 du 12 juillet 1977 (JORFTEXT000000522844), de l'arrêté du
+  27 janvier 1983 (JORFTEXT000000654120) et de celui du 26 juillet 1983
+  (JORFTEXT000000837384) ; les articles du décret n° 82-628 du 21 juillet 1982
+  (JORFTEXT000000699275), sans texte dans l'index.
+trouve: >-
+  Avant le 1er avril 1983, l'article 16 exonère à l'âge et à la durée : dès le
+  30 septembre 1978, « Aux femmes qui bénéficient d'une pension de vieillesse du régime
+  général de sécurité sociale attribuée dans les conditions fixées par la loi n° 77-774 du
+  12 juillet 1977 » (5°) — trente-sept ans et demi d'assurance « dans le régime général ou
+  dans ce régime et celui des salariés agricoles », soixante-trois ans pour la pension qui
+  prend effet en 1978, soixante ans après (article 70-2, c)) ; « A compter du 1er juillet
+  1982 », l'agent non titulaire « âgé d'au moins soixante-trois ans et justifiant d'une
+  durée d'assurance de 150 trimestres » (6° a, article 9 de l'ordonnance), tous régimes
+  (le rapport). L'arrêté du 27 janvier 1983 a écrit le premier ces exonérations dans
+  l'article (« A COMPTER DU 01-07-1982 », et le taux plein « A COMPTER DU 01-04-1983 »). Les
+  deux moteurs les servent désormais aux trois régimes, lues dans la version de la fiche
+  coefficient_anticipation_ircantec de la date d'effet. La citation « désormais par
+  trimestre » de la note de M3 est de l'analyse du Journal officiel, non de LEGI.
+reste: >-
+  Le texte de la loi n° 77-774, les articles L. 351-16 et L. 351-17 du code du travail de
+  1982, le décret n° 82-628 et le texte de l'arrêté du 27 janvier 1983 avec son
+  rectificatif du 12 mars ne sont pas dans l'index : à lire au Journal officiel, sur
+  papier. Le 6° a), écrit dans l'article jusqu'au 1er janvier 2004, n'est servi qu'au
+  31 mars 1983 (déclaré) ; le 6° b), l'ancien agent demandeur d'emploi au 1er février
+  1982, n'est pas servi (déclaré). Le régime général du modèle ne sert ni le taux plein de
+  l'article 9 de l'ordonnance ni celui de la loi de 1977 : à la zone du régime général.

@@ -51,7 +51,7 @@ periodes:
     avantages_non_contributifs: [reversion]
     notes: >-
       UNE FICHE FERMÉE SE LIQUIDE SOUS LE DROIT DE LA DATE D'EFFET.
-      L'abattement d'anticipation ne s'applique « à l'âge seul » que jusqu'au 1er avril 1983, où l'article 16 de l'arrêté du 30 décembre 1970 (6° c) et II) exonère qui a le taux plein au régime général ; les points de ce régime, que l'Ircantec reprend en 1971, se liquident avant comme après.
+      Jusqu'au 1er avril 1983, la durée du taux plein, seule, n'exonère pas de l'abattement d'anticipation : l'article 16 de l'arrêté du 30 décembre 1970 n'exonère avant cette date, à l'âge et à la durée, que la femme de la loi du 12 juillet 1977, dès le 30 septembre 1978 (5°), et l'agent de soixante-trois ans et de cent cinquante trimestres, dès le 1er juillet 1982 (6° a), que le moteur lit dans la version de la date d'effet de la fiche coefficient_anticipation_ircantec (5 novembre 2026) ; à compter de cette date, il exonère qui a le taux plein au régime général (6° c) et II). Les points de ce régime, que l'Ircantec reprend en 1971, se liquident avant comme après.
       `duree_requise_par_generation` dit la durée que la période lit depuis cette date ; le moteur ne la lit qu'à compter d'elle, et la table par année d'âge jusqu'au 31 août 1983, dans la version de la fiche coefficient_anticipation_ircantec qui vaut à la date d'effet de la pension (5 novembre 2026).
       Sans elle, un assuré au taux plein voyait cette ligne-là abattue de 4 à 22 % après le 1er avril 1983.
       TAUX LUS DANS LE TEXTE : « les taux de cotisation à la charge des

@@ -982,7 +982,7 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
                     periode, carriere, trimestres, requis_reference,
                     age_liquidation, annee_liquidation,
                     trimestres_par_regime.get(code, 0),
-                    handicap=par_le_handicap, categorie=par_categorie,
+                    handicap=par_le_handicap, categorie=par_categorie, durees=durees,
                 )
                 # LA TRANCHE C D'AVANT 2016 GARDE LE COEFFICIENT POUR ÂGE.
                 # L'exonération au taux plein ne vaut que « sur les tranches
@@ -3970,7 +3970,8 @@ def abattement_points(moteur, periode: PeriodeRegime, carriere: Carriere,
                        age_liquidation: float,
                        annee_liquidation: int,
                        trimestres_regime: int = 0,
-                       handicap: bool = False, categorie: str | None = None) -> float:
+                       handicap: bool = False, categorie: str | None = None,
+                       durees=None) -> float:
     """Coefficient d'un régime en points : abattu avant le taux plein,
     majoré après.
 
@@ -3984,6 +3985,8 @@ def abattement_points(moteur, periode: PeriodeRegime, carriere: Carriere,
     indépendants le suivent sans coefficient. ``categorie`` est la fiche du
     taux plein par catégorie de L. 351-8 que l'assuré a au régime général
     (:func:`~.categories.taux_plein_par_categorie`), ``None`` sans elle.
+    ``durees`` sont les durées de l'assuré, dont l'Ircantec lit celle du
+    régime général (5° de l'article 16, de 1978 à 1983).
 
     « Avant le taux plein » est une condition de DURÉE autant que d'âge :
     une complémentaire est servie sans abattement dès que l'assuré a le
@@ -4073,7 +4076,14 @@ def abattement_points(moteur, periode: PeriodeRegime, carriere: Carriere,
         # anciens agents handicapés admis à faire liquider leur retraite au
         # régime général en application de l'article L. 351-1-3 » (arrêté du
         # 30 décembre 1970, article 16).
-        if inapte or handicap or (not par_age_seul and trimestres >= requis):
+        # L'ÂGE ET LA DURÉE, AVANT LE 6° c) : l'agent de soixante-trois ans et
+        # de cent cinquante trimestres dès le 1er juillet 1982 (6° a), la
+        # femme de la loi du 12 juillet 1977 dès le 30 septembre 1978 (5°),
+        # que la version de la date d'effet nomme
+        # (:func:`exonere_par_l_age_et_la_duree`).
+        exonere = bareme is not None and exonere_par_l_age_et_la_duree(
+            moteur, bareme, carriere, trimestres, age_liquidation, annee_liquidation, durees)
+        if inapte or handicap or exonere or (not par_age_seul and trimestres >= requis):
             abattement = 1.0
         else:
             # Jusqu'au 31 août 1983, l'Ircantec n'a qu'un coefficient par
@@ -4171,6 +4181,60 @@ def coefficient_par_annee_d_age(bareme: dict, age: float) -> float:
     if rang >= len(table):
         return 1.0
     return table[max(0, rang)]
+
+
+def exonere_par_l_age_et_la_duree(moteur, bareme: dict, carriere: Carriere, trimestres: int,
+                                  age_liquidation: float, annee_liquidation: int,
+                                  durees) -> bool:
+    """La version ``bareme`` de l'article 16 de l'arrêté du 30 décembre 1970
+    exonère-t-elle l'assuré par l'âge et la durée qu'elle nomme ?
+
+    « 6° a) A compter du 1er juillet 1982 aux agents visés aux articles
+    L. 351-16 et L. 351-17 du code du travail remplissant les conditions
+    fixées par l'article 9, alinéa 2, de l'ordonnance du 26 mars 1982 » —
+    « âgés d'au moins soixante-trois ans et justifiant d'une durée d'assurance
+    de 150 trimestres » : l'agent encore agent à la liquidation
+    (:func:`agent_a_la_liquidation`), d'au moins l'âge et la durée d'assurance
+    tous régimes de ``exoneration_des_agents_de_soixante_trois_ans``.
+    « 5° Aux femmes qui bénéficient d'une pension de vieillesse du régime
+    général de sécurité sociale attribuée dans les conditions fixées par la loi
+    n° 77-774 du 12 juillet 1977 » : la femme de l'âge que
+    ``exoneration_des_femmes_de_1977`` exige l'année d'effet de sa pension —
+    soixante-trois ans en 1978, soixante ensuite —, qui a la durée dans les
+    régimes qu'elle nomme (décret du 29 décembre 1945, article 70-2, c))."""
+    agents = bareme.get("exoneration_des_agents_de_soixante_trois_ans")
+    if (agents is not None and age_liquidation + 1e-9 >= float(agents["age"])
+            and trimestres >= int(agents["trimestres"])
+            and agent_a_la_liquidation(moteur, carriere, annee_liquidation)):
+        return True
+    femmes = bareme.get("exoneration_des_femmes_de_1977")
+    if femmes is None or carriere.sexe != "F" or durees is None:
+        return False
+    annee = int(date_d_effet(carriere)[:4])
+    age = None
+    for des_l_annee, exige in femmes["ages"]:
+        if annee >= int(des_l_annee):
+            age = float(exige)
+    return (age is not None and age_liquidation + 1e-9 >= age
+            and durees.cumul_plafonne("assurance", tuple(femmes["regimes_de_la_duree"]))
+            >= int(femmes["trimestres"]))
+
+
+def agent_a_la_liquidation(moteur, carriere: Carriere, annee_liquidation: int) -> bool:
+    """L'assuré est-il encore agent de l'Ircantec à la liquidation : la
+    dernière ligne de sa carrière, jusqu'à l'année de la liquidation, est-elle
+    un emploi affilié à l'Ircantec ? Le 6° a) nomme les « agents », le 6° b)
+    les « anciens agents », à d'autres conditions."""
+    derniere = None
+    for ligne in carriere.lignes:
+        if ligne.annee <= annee_liquidation and (derniere is None
+                                                 or ligne.annee > derniere.annee):
+            derniere = ligne
+    return (derniere is not None and derniere.type_periode == "emploi"
+            and "ircantec" in moteur.affiliations.regimes(
+                derniere.affiliation, derniere.annee,
+                moteur.affiliations.date_entree(carriere, derniere.affiliation,
+                                                derniere.annee)))
 
 
 def exonere_par_motif(moteur, regle: dict, periode: PeriodeRegime, carriere: Carriere,

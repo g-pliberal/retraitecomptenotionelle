@@ -60,8 +60,11 @@ DU_PORTAGE = {
 #: porter : la table par année d'âge, jusqu'au 31 août 1983, et, là où elle
 #: sert, l'absence des paliers de l'escalier qui la remplace ; l'absence de
 #: durée, jusqu'au 1er avril 1983, qui abat à l'âge seul quelle que soit la
-#: période — celle de l'IPACTE et de l'IGRANTE porte la durée.
-DE_LA_VERSION = {"coefficients_par_annee_d_age"}
+#: période — celle de l'IPACTE et de l'IGRANTE porte la durée ; l'âge et la
+#: durée qui exonèrent, avant le 1er avril 1983, l'agent de soixante-trois ans
+#: (6° a) et la femme de la loi du 12 juillet 1977 (5°).
+DE_LA_VERSION = {"coefficients_par_annee_d_age", "exoneration_des_agents_de_soixante_trois_ans",
+                 "exoneration_des_femmes_de_1977"}
 #: Le paramètre qu'un test à lui confronte au dépôt : la durée que la seconde
 #: table lit de 1983 à 2003.
 A_PART = {"duree_de_la_seconde_table_trimestres"}
@@ -435,12 +438,137 @@ EXONERATION_A_LA_DUREE = [
 
 
 def test_la_duree_n_exonere_qu_a_compter_du_1er_avril_1983():
-    """Avant le 1er avril 1983, la durée d'assurance n'exonère pas : les deux
-    moteurs lisent dans la version de la date d'effet que le coefficient se
-    lit à l'âge seul, pour les points de l'Ircantec comme pour ceux de
-    l'IPACTE et de l'IGRANTE, dès 1951."""
+    """Avant le 1er avril 1983, la durée du taux plein, seule, n'exonère pas
+    l'homme de soixante et un ans : les deux moteurs lisent dans la version de
+    la date d'effet que le coefficient se lit à l'âge, pour les points de
+    l'Ircantec comme pour ceux de l'IPACTE et de l'IGRANTE, dès 1951. L'âge et
+    la durée exonèrent pourtant, avant cette date, l'agent de soixante-trois
+    ans dès le 1er juillet 1982 (6° a) et la femme de la loi du 12 juillet
+    1977 dès le 30 septembre 1978 (5°), que les deux tests suivants
+    rejouent."""
     portage, jumeau = _deux_moteurs(json.dumps([retouche for retouche, _ in
                                                 EXONERATION_A_LA_DUREE]))
     attendus = [attendu for _, attendu in EXONERATION_A_LA_DUREE]
+    assert portage == attendus
+    assert jumeau == attendus
+
+
+#: Une carrière dont la durée ne se discute pas : salarié du privé dès dix-huit
+#: ans, payé 0,8 plafond, aux assurances sociales jusqu'en 1944 puis au régime
+#: général, agent contractuel de l'État depuis janvier 1951, payé deux
+#: plafonds : des points de l'IPACTE, de l'IGRANTE et de l'Ircantec, et quatre
+#: trimestres par année pleine, aux assurances sociales puis au régime général.
+PRIVE_PUIS_AGENT = {"debut": "18", "statut": "salarie_prive_non_cadre", "salaire": "0.8",
+                    "metier2_debut": "1951-01", "metier2_statut": "contractuel_public",
+                    "metier2_salaire": "2"}
+
+#: Le 6° a) de l'article 16 (LEGIARTI000006381610) : le coefficient n'est pas
+#: applicable « A compter du 1er juillet 1982 aux agents visés aux articles
+#: L. 351-16 et L. 351-17 du code du travail remplissant les conditions fixées
+#: par l'article 9, alinéa 2, de l'ordonnance du 26 mars 1982 », qui les dit
+#: « âgés d'au moins soixante-trois ans et justifiant d'une durée d'assurance de
+#: 150 trimestres » (LEGIARTI000006275868). La retouche de la requête, et ce
+#: que servent les trois régimes — la ligne de la table lue à la main, ``None``
+#: sans coefficient. Né en 1919, au travail dès février 1937, l'agent a au
+#: moins 7 × 4 + 37 × 4 = 176 trimestres de 1938 à 1981, plus de cent
+#: cinquante.
+AGENTS_DE_SOIXANTE_TROIS_ANS = [
+    # Soixante-trois ans et quatre mois en juin 1982, avant le 1er juillet : la
+    # ligne de soixante-trois ans.
+    ({**PRIVE_PUIS_AGENT, "naissance": "1919-01-15", "liquidation": "63",
+      "liquidation_mois": "4"}, _attendus("1982-06-01", 0.92)),
+    # Le mois suivant, le 1er juillet 1982 : aucun coefficient.
+    ({**PRIVE_PUIS_AGENT, "naissance": "1919-01-15", "liquidation": "63",
+      "liquidation_mois": "5"}, _attendus("1982-07-01", None)),
+    # Soixante-trois ans et six mois en août 1982 : aucun coefficient, quand la
+    # ligne de soixante-trois ans donnerait 0,92.
+    ({**PRIVE_PUIS_AGENT, "naissance": "1919-01-15", "liquidation": "63",
+      "liquidation_mois": "6"}, _attendus("1982-08-01", None)),
+    # Soixante-quatre ans et un mois en mars 1983 : aucun coefficient, quand la
+    # ligne de soixante-quatre ans donnerait 0,96.
+    ({**PRIVE_PUIS_AGENT, "naissance": "1919-01-15", "liquidation": "64",
+      "liquidation_mois": "1"}, _attendus("1983-03-01", None)),
+    # Agent depuis ses trente ans, en février 1949, et rien avant : au plus
+    # 4 + 32 × 4 + 4 = 136 trimestres en juillet 1982, moins de cent
+    # cinquante. La ligne de soixante-trois ans.
+    ({"naissance": "1919-01-15", "liquidation": "63", "liquidation_mois": "6"},
+     _attendus("1982-08-01", 0.92)),
+    # Né en 1920, soixante-deux ans et six mois en août 1982 : l'âge manque, la
+    # ligne de soixante-deux ans.
+    ({**PRIVE_PUIS_AGENT, "naissance": "1920-01-15", "liquidation": "62",
+      "liquidation_mois": "6"}, _attendus("1982-08-01", 0.88)),
+    # Revenu au privé en 1975 : un ancien agent, que le 6° a) ne nomme pas ; le
+    # 6° b), qui le nomme, demande l'inscription comme demandeur d'emploi au
+    # 1er février 1982 (article 9, alinéa 3). La ligne de soixante-trois ans.
+    ({**PRIVE_PUIS_AGENT, "naissance": "1919-01-15", "liquidation": "63",
+      "liquidation_mois": "6", "metier3_debut": "1975-01",
+      "metier3_statut": "salarie_prive_non_cadre"}, _attendus("1982-08-01", 0.92)),
+]
+
+
+def test_l_agent_de_soixante_trois_ans_et_cent_cinquante_trimestres_des_juillet_1982():
+    """Du 1er juillet 1982 au 31 mars 1983, avant la durée du 6° c), l'agent
+    non titulaire de soixante-trois ans qui a cent cinquante trimestres n'a
+    pas de coefficient (6° a), aux trois régimes, dans les deux moteurs ;
+    l'ancien agent, l'agent plus jeune ou à la durée courte gardent la
+    table."""
+    portage, jumeau = _deux_moteurs(json.dumps([retouche for retouche, _ in
+                                                AGENTS_DE_SOIXANTE_TROIS_ANS]))
+    attendus = [attendu for _, attendu in AGENTS_DE_SOIXANTE_TROIS_ANS]
+    assert portage == attendus
+    assert jumeau == attendus
+
+
+#: Le 5° de l'article 16, rédaction du 30 septembre 1978 (LEGIARTI000006381609) :
+#: le coefficient n'est pas applicable « Aux femmes qui bénéficient d'une
+#: pension de vieillesse du régime général de sécurité sociale attribuée dans
+#: les conditions fixées par la loi n° 77-774 du 12 juillet 1977 » ; celles que
+#: le décret du 29 décembre 1945, article 70-2, c), dit (LEGIARTI000006760658) :
+#: « trente-sept ans et demi d'assurance dans le régime général ou dans ce
+#: régime et celui des salariés agricoles », soixante-trois ans pour la pension
+#: qui prend effet en 1978, soixante ans après.
+FEMMES_DE_LA_LOI_DE_1977 = [
+    # Née en 1920, au travail dès février 1938, partie à soixante ans en février
+    # 1980 : 6 × 4 + 35 × 4 = 164 trimestres de 1939 à 1979, aux assurances
+    # sociales puis au régime général ; aucun coefficient, quand la ligne de
+    # soixante ans donnerait 0,78.
+    ({**PRIVE_PUIS_AGENT, "naissance": "1920-01-15", "sexe": "F"},
+     _attendus("1980-02-01", None)),
+    # Un homme, le même jour : la ligne de soixante ans.
+    ({**PRIVE_PUIS_AGENT, "naissance": "1920-01-15"}, _attendus("1980-02-01", 0.78)),
+    # Au travail à vingt-cinq ans, en février 1945 : au plus 4 + 34 × 4 + 4 =
+    # 144 trimestres en janvier 1980, moins de cent cinquante. La ligne de
+    # soixante ans.
+    ({**PRIVE_PUIS_AGENT, "naissance": "1920-01-15", "debut": "25", "sexe": "F"},
+     _attendus("1980-02-01", 0.78)),
+    # Née en 1915, au travail dès février 1933, soixante-trois ans et huit mois
+    # en octobre 1978 : 11 × 4 + 33 × 4 = 176 trimestres de 1934 à 1977 ; aucun
+    # coefficient, quand la ligne de soixante-trois ans donnerait 0,92.
+    ({**PRIVE_PUIS_AGENT, "naissance": "1915-01-15", "sexe": "F", "liquidation": "63",
+      "liquidation_mois": "8"}, _attendus("1978-10-01", None)),
+    # Le mois d'avant, en septembre 1978, avant la rédaction du 30 septembre :
+    # la ligne de soixante-trois ans.
+    ({**PRIVE_PUIS_AGENT, "naissance": "1915-01-15", "sexe": "F", "liquidation": "63",
+      "liquidation_mois": "7"}, _attendus("1978-09-01", 0.92)),
+    # Née en 1918, soixante ans et huit mois en octobre 1978 : la loi demande
+    # soixante-trois ans en 1978, la ligne de soixante ans.
+    ({**PRIVE_PUIS_AGENT, "naissance": "1918-01-15", "sexe": "F",
+      "liquidation_mois": "8"}, _attendus("1978-10-01", 0.78)),
+    # Née en 1922, au travail dès février 1940, soixante et un ans et un mois en
+    # mars 1983 : 4 × 4 + 38 × 4 = 168 trimestres de 1941 à 1982 ; aucun coefficient,
+    # quand la ligne de soixante et un ans donnerait 0,83.
+    ({**PRIVE_PUIS_AGENT, "naissance": "1922-01-15", "sexe": "F", "liquidation": "61",
+      "liquidation_mois": "1"}, _attendus("1983-03-01", None)),
+]
+
+
+def test_la_femme_de_la_loi_de_1977_du_30_septembre_1978_au_1er_avril_1983():
+    """Du 30 septembre 1978 au 31 mars 1983, la femme de trente-sept ans et
+    demi d'assurance au régime général, de soixante-trois ans en 1978, de
+    soixante ans ensuite, n'a pas de coefficient (5°), aux trois régimes, dans
+    les deux moteurs ; l'homme, ou la femme sans la durée, garde la table."""
+    portage, jumeau = _deux_moteurs(json.dumps([retouche for retouche, _ in
+                                                FEMMES_DE_LA_LOI_DE_1977]))
+    attendus = [attendu for _, attendu in FEMMES_DE_LA_LOI_DE_1977]
     assert portage == attendus
     assert jumeau == attendus

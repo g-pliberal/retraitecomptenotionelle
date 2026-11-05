@@ -85,3 +85,5 @@ laisse »). Un commit par erreur, test et code ensemble, dans les deux moteurs.
 - **La même classe ailleurs** : les coefficients de l'Agirc et de l'Arrco de
   1955 au 31 mars 1983, que le modèle lit au trimestre, sont à relire de même
   — par année d'âge ou par trimestre —, ce que cette étape n'a pas fait.
+
+*Renvoi, le 5 novembre 2026 : deux affirmations de cette note, sur la durée qui n'exonérerait pas avant le 1er avril 1983 et sur la source des mots « désormais par trimestre », sont corrigées dans `2026-11-05-corrections-de-la-relecture-r-m3d.md`.*
