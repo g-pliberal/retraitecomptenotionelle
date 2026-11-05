@@ -6,10 +6,10 @@ modèle, la descente, le militaire au mois ; le 3 novembre, le taux plein des fe
 salariat, sa mesure au dépôt, les écarts de R-I-bis, la décote d'après 1960, relue par R-I-ter, retouchée le 5. Le 5 aussi : la durée des femmes,
 le calage tient ; la carrière longue des femmes de 1953, la cause est dans la population ; les inaptes, trente-huitième version ; le taux plein
 par l'âge, mesuré, rien ne change (l'EIR à un demi-point près, sauf les hommes de 1953, 4,5 % pour 5,8) ; les départs tardifs, mesurés, rien ne
-change (aucun à 68 ans et plus, environ 1,2 % au Panorama, sans règle). Reste, une session par point : les artisans (une source), les saisonniers
-agricoles ; les femmes âgées. Au propriétaire : 152, 157, le CASD, l'incitation, le militaire, la sonde au mois, le recours de la page, les hommes entre
+change (aucun à 68 ans et plus, environ 1,2 % au Panorama, sans règle) ; les saisonniers agricoles, mesurés au champ de la Lura, rien ne change
+(nulle source ne dit qui sont les carrières courtes). Reste, une session par point : les artisans (une source) ; les femmes âgées. Au propriétaire : 152, 157, le CASD, l'incitation, le militaire, la sonde au mois, le recours de la page, les hommes entre
 les deux âges, la surcote d'après 1953, la décote d'après 1960, la carrière complète, le juge de 1955, les natures des carrières de trente à quarante ans,
-la carrière longue des fonctionnaires de 1953, les départs tardifs. Détail : `…-carriere-longue-des-femmes.md`, `…-inaptes.md`, `…-taux-plein-par-l-age.md`, `…-departs-tardifs.md`.
+la carrière longue des fonctionnaires de 1953, les départs tardifs. Détail : `…-carriere-longue-des-femmes.md`, `…-inaptes.md`, `…-taux-plein-par-l-age.md`, `…-departs-tardifs.md`, `…-saisonniers-agricoles.md`.
 
 **Le 5 novembre 2026 : les femmes nées en 1953 de la population partent en
 carrière longue pour 6,6 % de leurs départs, quand l'EIR de 2020 en compte

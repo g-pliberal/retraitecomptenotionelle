@@ -1899,6 +1899,9 @@ sources:
       avant. Le graphique 9, les trimestres des partis de 2014, n'en imprime
       pas les valeurs. Tout y précède la liquidation unique de 2017 : rien n'y
       dit la carrière des liquidants que l'EACR compte de 2019 à 2024.
+      Relu le 5 novembre 2026 (douze pages, empreinte
+      sha256:7e57b40155d33bf13241184bba10add64033b2fe2b155dd6b96354146348b703),
+      contre la population : docs/feuille_de_route/138/2026-11-05-etape-14-saisonniers-agricoles.md.
 
   - id: msa_liquidation_unique_2021
     url: https://statistiques.msa.fr/wp-content/uploads/2023/01/Etude-Lura-2021.pdf
@@ -1923,7 +1926,11 @@ sources:
       9,8 % des femmes, et 652 et 613 € en moyenne. Hors Lura, chez les nés à
       partir de 1953 : 31,3 % ont moins de 16 trimestres au régime, 24,6 %
       plus de 155, 16,3 % sont monopensionnés. Ni leurs salaires, ni leur
-      part au minimum.
+      part au minimum. Relue le 5 novembre 2026 (dix-huit pages, empreinte
+      sha256:3475c325172301e597c3e92dae7f844d782bf710fd2d5995188fefb31ba7f493) :
+      de leurs salaires, elle ne donne que l'écart du salaire annuel moyen des
+      femmes à celui des hommes, « inférieur de 11,3 % » (p. 13) ; mesurée
+      contre la population : docs/feuille_de_route/138/2026-11-05-etape-14-saisonniers-agricoles.md.
 
   - id: drees_er_1283_mda_enfants
     url: https://drees.solidarites-sante.gouv.fr/publications-communique-de-presse/etudes-et-resultats/retraite-parmi-les-femmes-beneficiant-de
