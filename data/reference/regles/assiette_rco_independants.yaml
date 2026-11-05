@@ -72,6 +72,13 @@ versions:
 - id: avant_derniere_annee_1979
   statut: lue
   textes:
+  - id: LEGIARTI000006766114
+    article: "décret n° 78-351 du 14 mars 1978, article 12"
+    en_vigueur: 1978-03-19
+    lu_le: 2026-11-05
+    citation: >-
+      Le présent décret entrera en vigueur : Pour l'obligation de cotiser, le 1er
+      janvier 1979 ; Pour l'entrée en jouissance des prestations, le 1er avril 1979.
   - id: LEGIARTI000006766103
     article: "décret n° 78-351 du 14 mars 1978, article 3"
     en_vigueur: 1978-03-19
@@ -676,6 +683,17 @@ versions:
       au titre de laquelle la cotisation est due, ladite cotisation ne peut être calculée
       sur une assiette inférieure à celle mentionnée au dernier alinéa de l'article
       D. 633-2.
+  - id: LEGIARTI000025628404
+    article: "décret n° 2012-443 du 3 avril 2012, article 10"
+    en_vigueur: 2012-04-05
+    lu_le: 2026-11-05
+    citation: >-
+      II. ― Les cotisations définitives dues au titre de l'année 2012 par les
+      travailleurs indépendants non agricoles qui cessent leur activité au cours de
+      cette même année demeurent régies par les dispositions du code de la sécurité
+      sociale qui leur sont applicables dans leur rédaction antérieure à la date de
+      publication du présent décret, sauf si ces personnes reprennent leur activité
+      avant le 1er janvier 2013.
   nee_de: JORFARTI000025055800
   bornes:
     revenu.annee: [2012-01-01, 2013-01-01]
@@ -780,6 +798,13 @@ versions:
       de la sécurité sociale servant à leur calcul est fixé à hauteur de la plus petite
       valeur, arrondie au demi-dixième immédiatement supérieur, à compter de laquelle
       ces assiettes sont au moins égales à ce montant.
+  - id: LEGIARTI000029982292
+    article: "décret n° 2014-1637 du 26 décembre 2014, article 31"
+    en_vigueur: 2015-01-01
+    lu_le: 2026-11-05
+    citation: >-
+      I. - Le présent décret s'applique aux cotisations et aux contributions de sécurité
+      sociale dues au titre des périodes courant à compter du 1er janvier 2015.
   nee_de: LEGIARTI000030034575
   bornes:
     revenu.annee: [2015-01-01, 2016-01-01]
@@ -809,6 +834,13 @@ versions:
       de base. Les dispositions de l'article D. 633-9 sont applicables au paiement de la
       cotisation provisionnelle du régime complémentaire obligatoire d'assurance
       vieillesse.
+  - id: LEGIARTI000031791772
+    article: "décret n° 2015-1856 du 30 décembre 2015, article 10"
+    en_vigueur: 2016-01-01
+    lu_le: 2026-11-05
+    citation: >-
+      I. - Le présent décret s'applique aux cotisations et aux contributions de sécurité
+      sociale dues au titre de la période courant à compter du 1er janvier 2016.
   nee_de: LEGIARTI000031799392
   bornes:
     revenu.annee: [2016-01-01, null]
@@ -832,11 +864,15 @@ approximations:
     revenu de l'année a le minimum de tous (version `regularisation_2009`)
   effet: >-
     non mesuré ; seulement quand le forfait, que le modèle prend à proportion des mois
-    de l'exercice, passe sous le minimum : l'artisan qui commence en décembre (en 2008,
-    un tiers de 33 276 € sur un mois, 924,33 €, sous 200 heures de 8,44 €, 1 688 € ; sur
-    deux mois, 1 848,67 €, non) ; le commerçant qui commence en novembre ou en décembre
-    de 2004 à 2008, ou en octobre 2008 (dix-huit fois 374,12 € sur trois mois,
-    1 683,54 €, sous 1 688 €)
+    de l'exercice, passe sous le minimum, 200 heures du Smic du 1er janvier (1 438 € en
+    2004, 1 688 € en 2008), ce qu'il fait sous un seuil, en mois, de 2004 à 2008 :
+    l'artisan, la première année, sous 1,74 à 1,86 mois, s'il commence en décembre (en
+    2008, un tiers de 33 276 € sur un mois, 924,33 € ; sur deux, 1 848,67 €, au-dessus),
+    la seconde, à la moitié du plafond, sous 1,16 à 1,24 mois, s'il cesse en janvier ;
+    le commerçant, la première année, sous 2,76 à 3,01 mois, s'il commence en novembre
+    ou en décembre, ou en octobre 2008 (dix-huit fois 374,12 € sur trois mois,
+    1 683,54 €), la seconde, sous 1,91 à 2,01 mois, s'il cesse en janvier, ou en février
+    2008 (vingt-sept fois 374,12 € sur deux mois, 1 683,54 €)
 - version: [sans_forfait_2012]
   ecart: >-
     l'artisan ou le commerçant qui cesse en 2012, sans reprendre avant le 1er janvier
@@ -849,6 +885,34 @@ approximations:
     non mesuré ; l'indépendant qui cesse en 2012 sous 1 909,53 € : 65,53 € d'assiette de
     trop au RCO ou au NRCO, ou, affilié moins de quatre-vingt-dix jours, une assiette
     minimale de 1 844 € qui lui manque
+- version: [rci_2013, rci_2015, rci_2016]
+  ecart: >-
+    le modèle n'exonère pas l'invalide : depuis 2013, D. 635-2 dit que « l'assuré
+    titulaire d'une pension d'invalidité dans les régimes institués par l'article
+    L. 635-5 est exonéré du paiement de toute cotisation d'assurance vieillesse
+    complémentaire » (LEGIARTI000025263548, LEGIARTI000030034575, LEGIARTI000031799392,
+    LEGIARTI000034721550), « dans le régime institués par l'article L. 632-1 » depuis le
+    25 mai 2020 (LEGIARTI000041966510) ; aucune dispense du modèle ne le porte pour
+    l'artisan ou le commerçant (`dispenses_assiette_minimale.yaml` : `pensionne` ne vise
+    que le libéral). Relevé par la relecture R-D2, déclaré, non corrigé (candidat)
+  effet: >-
+    non mesuré ; l'artisan ou le commerçant invalide qui garde une activité depuis
+    2013 : le modèle lui donne les points du RCI de son revenu, et le minimum jusqu'en
+    2015, que sa cotisation exonérée ne lui achète pas
+- version: [avant_derniere_annee_1979, cotisation_additionnelle_1985, quatre_plafonds_1997,
+    avant_derniere_annee_des_deux_regimes_2004, regularisation_2009, sans_forfait_2012,
+    rci_2013, rci_2015]
+  ecart: >-
+    le modèle n'oppose pas le minimum de la cotisation à l'année cotisée au revenu nul :
+    celui de la base, que celui de la complémentaire suit, tombe quand le revenu déclaré
+    est nul (`carriere.py`, `cotise and revenu > 0 and not micro` ; `carriere.js`, de
+    même) ; ni le décret n° 78-351 (article 3, I), ni D. 635-4, ni D. 635-2 n'en
+    exceptent cette année. Relevé par la relecture R-D2, déclaré, non corrigé
+    (candidat)
+  effet: >-
+    non mesuré ; l'artisan ou le commerçant cotisant qui déclare un revenu nul, de 1979
+    à 2015 : les points du minimum lui manquent, 200 heures du Smic jusqu'en 2011, 5,25 %
+    du plafond de 2012 à 2015
 - version: [avant_derniere_annee_1979, cotisation_additionnelle_1985, quatre_plafonds_1997,
     avant_derniere_annee_des_deux_regimes_2004, regularisation_2009]
   ecart: >-
@@ -1142,3 +1206,9 @@ historique:
   (D. 635-2, L. 131-6 ; circulaire RSI n° 2008/031), que le minimum borne alors ;
   déclarée, la base mensuelle de la deuxième année
   (`177/2026-11-05-forfaits-de-debut-des-independants.md`).
+- >-
+  2026-11-05 — retouches de la relecture R-D2 (action 177, file D3) : l'effet du forfait
+  de début face au minimum borné au mois, la seconde année comprise ; les articles qui
+  fixent l'effet des bornes de 1979, 2012, 2015 et 2016 cités ; déclarés, l'invalide
+  exonéré de complémentaire depuis 2013 et le minimum au revenu nul
+  (`177/2026-11-05-retouches-de-la-relecture-r-d2.md`).

@@ -271,7 +271,10 @@ l'Institut des politiques publiques (PENSIPP). Écarts connus :
   il prend la base mensuelle du 1er octobre de la première, quand le texte se
   lit aussi de celle d'avant le début : moins d'un point du NRCO. Il ne sert
   ni l'acompte sur le revenu estimé, ni l'assiette inférieure accordée sur
-  demande motivée. Il tient pour un début
+  demande motivée. Il n'exonère pas de la complémentaire l'artisan ou le
+  commerçant titulaire d'une pension d'invalidité, comme D. 635-2 le fait
+  depuis 2013, et n'oppose pas le minimum à l'année cotisée au revenu nul, que
+  le texte n'en excepte pas. Il tient pour un début
   d'exercice la reprise après une année sans activité, ce que le texte ne dit
   pas et que R. 242-16 dit des cotisations de début d'activité, et prend le
   forfait et le revenu de l'avant-dernière année à proportion des mois de

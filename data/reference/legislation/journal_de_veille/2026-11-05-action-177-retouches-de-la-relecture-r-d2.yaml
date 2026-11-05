@@ -1,0 +1,22 @@
+date: "2026-11-05"
+session: "action 177, file D3 : les retouches de la relecture R-D2 (l'effet du forfait de début au mois, les bornes prouvées, deux candidats déclarés)"
+consulte: >-
+  Dans l'index LEGI à jour du 4 novembre 2026 : le décret n° 78-351, article 12
+  (LEGIARTI000006766114) ; le décret n° 2012-443, article 10 (LEGIARTI000025628404) ; le
+  décret n° 2014-1637, articles 15 et 31 (LEGIARTI000029982306, LEGIARTI000029982292) ;
+  le décret n° 2015-1856, articles 1er et 10 (LEGIARTI000031791754,
+  LEGIARTI000031791772) ; D. 635-2, en vigueur en 2012, 2014, 2015, 2016, 2018, 2021 et
+  2026 (`--le`, motif « invalidit »). Dans le dépôt : `dispenses_assiette_minimale.yaml`,
+  `carriere.py`, `carriere.js`, les tables du plafond, du Smic et de la base mensuelle.
+trouve: >-
+  Les seuils, en mois, sous lesquels le forfait de début passe sous le minimum, de 2004
+  à 2008 : l'artisan, de 1,74 à 1,86 la première année, de 1,16 à 1,24 la seconde ; le
+  commerçant, de 2,76 à 3,01, puis de 1,91 à 2,01 ; écrits dans l'effet de la fiche
+  `assiette_rco_independants`. Les articles qui fixent l'effet des bornes de 1979, 2012,
+  2015 et 2016, cités mot pour mot dans ses versions. Depuis 2013, D. 635-2 exonère de
+  toute cotisation complémentaire l'assuré titulaire d'une pension d'invalidité, ce que
+  le modèle ne sert pas ; le minimum tombe au revenu nul, ce que le texte n'excepte pas :
+  deux candidats, déclarés à la fiche et aux limites. La cessation de 2012, à la base,
+  inscrite au bloc « Reprise » comme question au propriétaire.
+reste: >-
+  Les deux candidats et la cessation de 2012, à la décision du propriétaire.
