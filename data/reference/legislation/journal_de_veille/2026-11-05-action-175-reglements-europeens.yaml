@@ -1,0 +1,36 @@
+date: "2026-11-05"
+session: "action 175, étape 6, vague 10, G7 : les 496 références de règlements européens que la base de la Cnav cite sans thème, rapprochées des textes de l'Office des publications de l'Union"
+consulte: >-
+  Les 496 références du registre sans thème dont le titre dit un règlement, relues par l'API
+  de la base le 5 novembre 2026 vers 21 h 20 UTC (/reference/referencesByFileLeafRef/),
+  toutes servies, et leurs 33 PDF (/Pdf/<nom>). Le dépôt de l'Office des publications de
+  l'Union, le 5 novembre 2026 : publications.europa.eu/resource/celex/<CELEX>, en XHTML ou
+  en PDF, langue française, et son point SPARQL (publications.europa.eu/webapi/rdf/sparql)
+  pour le titre, la date et les versions consolidées de chaque acte. Actes : 31971R1408,
+  31972R0574, 32004R0883, 32009R0987 et leurs versions consolidées (01971R1408 de
+  2000-01-01 à 2010-05-01, 01972R0574 de 1997-10-04 à 2010-05-01, 02004R0883 de
+  2010-05-01 à 2019-07-31, 02009R0987 de 2011-01-11 à 2018-01-01), 01998R2866 de 2009,
+  2011 et 2014, la décision A1 (32010D0424(01)) et les 26 autres règlements que la base
+  sert. Ni l'index de la DILA, ni Légifrance, ni les PDF du CLEISS que lient les annexes
+  des règlements n° 883/2004 et 987/2009.
+trouve: >-
+  Les 30 règlements et la décision A1 se rapprochent par leur numéro : le titre et la date
+  que l'Office porte sous leur CELEX disent le même numéro et le même jour, sauf la date
+  que l'API donne au règlement n° 1135/2007 (10 février 2007, pour le 10 juillet). Des 423
+  pages d'articles et d'annexes à texte des quatre grands règlements, 387 portent le texte
+  d'une version de l'Office à 97 % au moins, 377 celui de la dernière version consolidée
+  (1408/71 du 7 juillet 2008, 574/72 du 2 mars 2009, 883/2004 du 31 juillet 2019,
+  987/2009 du 1er janvier 2018), dix une rédaction antérieure ; 25 pages d'annexes ne
+  servent qu'un intitulé et un lien. La base sert l'article 41 du n° 987/2009 sans son
+  paragraphe 2, une annexe VIII du n° 1408/71 qui nomme l'Islande, le Liechtenstein et la
+  Norvège, et un règlement n° 2866/98 qui ne suit aucune version. Le registre range 490 des
+  496 (77 limite, 413 hors_modele) ; note
+  docs/feuille_de_route/175/2026-11-05-etape-6-reglements-europeens.md.
+reste: >-
+  Six à lire, nommés dans la note, dont quatre candidats pour la session du modèle :
+  l'article 57 du n° 883/2004 (les périodes de moins d'une année), l'article 58 du
+  n° 883/2004 et l'article 50 du n° 1408/71 (le complément jusqu'à la prestation
+  minimale), l'article 44 du n° 987/2009 (les périodes d'éducation d'enfants) ; et
+  l'article 9 bis du n° 1408/71 et l'article 5 du n° 883/2004, règles générales dont
+  l'effet sur la retraite n'a pas été lu. Les autres natures de l'étape 6 : circulaires,
+  autres textes, textes nommés sans être servis, accords.

@@ -1,16 +1,5 @@
 # Étape 6, articles de code : les 642 références sans thème, rapprochées de l'index LEGI
 
-**Reprise, au 5 novembre 2026.** Deux natures de l'étape sont rangées : les décrets,
-arrêtés et lois sans thème (note du 3 novembre), puis les 642 articles de code (cette
-note) : 527 rangés, 115 à lire, nommés ici. Restent, une session par nature, comptées le
-3 novembre : les 496 articles de règlements européens ; les 2 228 circulaires, lettres,
-instructions et notes, par période ; les 96 autres textes, dont « NPCN articles 653 à
-664 » et le livre des procédures fiscales, dont le titre ne dit pas un code ; les 74 que
-la base nomme sans les servir ; les 107 accords, avec le thème des accords de l'étape 4.
-Commencer par les règlements européens, avec la méthode des deux notes : la base relue
-par l'API, un texte rapproché de l'index par son identifiant Légifrance, puis par son
-numéro, jamais par sa seule date.
-
 **Le 5 novembre 2026, ce qui est fait.**
 
 - *La lecture* : les 642 références sans thème dont le titre commence par « Code », toutes
