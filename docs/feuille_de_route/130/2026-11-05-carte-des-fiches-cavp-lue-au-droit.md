@@ -153,3 +153,5 @@ texte, posée à la main.
 Daté du 5 novembre 2026 : la CAVP lue au droit, 79 fiches et 457 manques ; ses deux erreurs
 du modèle et ses deux non-tranchés au propriétaire ; la suite, la caisse suivante de la
 carte.
+
+Renvoi du 5 novembre 2026 : la relecture R-E5 (`2026-11-05-relecture-r-e5.md`) trouve ce relevé conforme et ajoute un non-tranché, la majoration des nés jusqu'au 30 juin 1951 de 2011 à 2026, et deux arrêtés à nommer ; ils sont repris dans `2026-11-05-e4-bis-corrections-de-r-e5.md`.

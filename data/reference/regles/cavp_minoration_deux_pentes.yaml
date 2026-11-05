@@ -46,14 +46,21 @@ versions:
     les pensions qui prennent effet avant le 7 juin 2009 relèvent des statuts approuvés
     par les arrêtés du 29 décembre 1948 et du 1er juin 1950, que l'article 2 de l'arrêté
     du 11 mai 2009 abroge (JORFARTI000020694602), et de leurs modifications. L'index
-    JORF n'en porte que les titres, ni article ni annexe : l'arrêté du 14 septembre 1957
+    JORF n'en porte que les titres, ni article ni annexe, et de quelques-uns un court
+    résumé (« MODIFICATION DES ART. 16, 2, 6 BIS ET 10 DES STATUTS », 6 juillet 1977,
+    JORFTEXT000000664820 ; « ENTREE EN VIGUEUR: 01-01-1989 », 30 décembre 1988,
+    JORFTEXT000000498997) : l'arrêté du 17 septembre 1956 (« APPROBATION DE DISPOSITIONS
+    STATUTAIRES COMPLETANT LE REGLEMENT DE LA SECTION PROFESSIONNELLE DES PHARMACIENS »,
+    JORFTEXT000000281088), celui du 14 septembre 1957
     (« ART. 3, ET 20 A 24 », JORFTEXT000000285277), celui du 18 février 1976 (« ART. 1ER,
     3, 7, 9, 10, 24 ET 25 », JORFTEXT000000854013), celui du 20 juillet 1979 (« ART. 6,
     10-BIS, 11, 11-BIS, 24 », JORFTEXT000000858658), celui du 27 juillet 1981 (« ART.
     4,11,22BIS ET 22TER », JORFTEXT000000489822), ceux de 1960, 1961, 1963, 1964, 1968,
-    1977, du 24 janvier 1978, de 1984, 1986, 1988 et 1989 ; celui du 31 août 1990 (« art. 27 ») est « PUBLIE AU BULLETIN
-    OFFICIEL DU MINISTERE DE LA SOLIDARITE 90-40 » (JORFTEXT000000533978). Aucun ne se
-    lit. Le modèle sert la règle du régime de base : 1,25 % par trimestre manquant
+    1977, du 24 janvier 1978, de 1984, 1986 et 1988. Deux ne sont qu'au Bulletin
+    officiel : celui du 6 avril 1989, « L'ARRETE SERA PUBLIE INTEGRALEMENT AU BULLETIN
+    OFFICIEL [...] N0 8920 » (JORFTEXT000000318409), et celui du 31 août 1990 (« art.
+    27 »), « PUBLIE AU BULLETIN OFFICIEL DU MINISTERE DE LA SOLIDARITE 90-40 »
+    (JORFTEXT000000533978). Aucun ne se lit. Le modèle sert la règle du régime de base : 1,25 % par trimestre manquant
     jusqu'à l'âge d'annulation de la décote de la génération, que la durée annule, sans
     majoration ni bonification pour enfants
   fiabilite: >-
@@ -154,7 +161,10 @@ versions:
       majorée lorsqu'elle est liquidée au-delà de l'âge permettant d'obtenir une
       retraite à taux plein et jusqu'à cet âge augmenté de 3 ans pour les affiliés nés à
       compter du 1er janvier 1956. Cette majoration est égale à 0,5 % par trimestre.
-      [...] Article 15 : Cet article est remplacé par les dispositions suivantes : «
+      De façon transitoire : ― les affiliés nés jusqu'au 31 décembre 1952 peuvent
+      bénéficier d'une majoration de leur pension de retraite dans les mêmes conditions,
+      mais uniquement jusqu'à l'âge permettant d'obtenir une retraite entière augmenté
+      d'un an [...] Article 15 : Cet article est remplacé par les dispositions suivantes : «
       Article 15 L'affilié remplissant les conditions pour prétendre au versement de la
       pension de retraite du régime complémentaire peut demander à en bénéficier dès
       l'âge d'ouverture du droit à pension de retraite tel qu'il est fixé à l'article L.
@@ -207,8 +217,9 @@ versions:
       retraite entière à 65 ans jusqu'à la génération 1952, à 66 ans de 1953 à 1955, à
       l'âge du 1° de L. 351-8 depuis 1956 ; 1,25 % par trimestre manquant jusqu'à 65 ans,
       0,5 % de 65 ans à cet âge, le tableau annexé l'écrivant pour les nés jusqu'en 1955 ;
-      majoration de 0,5 % par trimestre au-delà, aucune pour les nés jusqu'au 30 juin
-      1951, jusqu'à 66 ans pour les nés du 1er juillet 1951 à 1952, jusqu'à 68 ans de
+      majoration de 0,5 % par trimestre au-delà, pour les nés jusqu'au 30 juin 1951
+      aucune selon le tableau, jusqu'à 66 ans selon l'article 12 (non tranché), jusqu'à
+      66 ans pour les nés du 1er juillet 1951 à 1952, jusqu'à 68 ans de
       1953 à 1955, trois ans depuis 1956 ; le montant majoré de 4 % depuis 1956, de 2 %
       de 1953 à 1955 ; l'inapte sans coefficient dès l'âge d'ouverture
     conditions: >-
@@ -293,7 +304,9 @@ versions:
       de retraite est majorée lorsqu'elle est liquidée au-delà de l'âge du taux plein
       fixé à l'article 8 du présent règlement et jusqu'à cet âge augmenté de trois ans
       pour les affiliés nés à compter du 1 er janvier 1956. « Cette majoration est égale
-      à 0,5 % par trimestre. [...] « L'entrée en jouissance de la retraite de droits
+      à 0,5 % par trimestre. « De façon transitoire : « - les affiliés nés avant le 30
+      juin 1951 inclus ne bénéficient pas d'une majoration de leur pension de retraite
+      pour un départ après 65 ans [...] « L'entrée en jouissance de la retraite de droits
       propres est fixée au premier jour du trimestre civil qui suit cette demande. [...]
       « La pension de retraite prévue au présent chapitre est augmentée d'une
       bonification de 10 % pour tout affilié ayant eu au moins trois enfants. »
@@ -343,8 +356,8 @@ approximations:
 - version: [statuts_d_avant_2009]
   textes: >-
     statuts approuvés par l'arrêté du 1er juin 1950 et leurs modifications, dont l'index
-    JORF n'a que les titres ; l'arrêté du 31 août 1990, au seul Bulletin officiel (no
-    90-40)
+    JORF n'a que les titres ; les arrêtés du 6 avril 1989 et du 31 août 1990, au seul
+    Bulletin officiel (no 8920, no 90-40)
   ecart: >-
     Avant le 7 juin 2009, le modèle sert la décote du régime de base, que la durée
     annule, jusqu'à l'âge d'annulation de la génération, sans majoration ni bonification
@@ -361,11 +374,37 @@ approximations:
   ecart: >-
     Le modèle ne sert les deux pentes et la majoration qu'à partir du 1er janvier 2012,
     la période de 2009 courant jusqu'au 31 décembre 2011 ; les statuts les servent dès le
-    30 juin 2011 (`CAVP_HORS_DU_MODELE`). Aucune pension n'en est changée : la seconde
-    pente ne touche que les nés depuis 1953, qui n'avaient pas en 2011 l'âge d'ouverture
-    de D. 161-2-1-9 ; la majoration, que les nés depuis le 1er juillet 1951, qui
-    n'avaient pas soixante-cinq ans.
-  effet: aucun
+    30 juin 2011 (`CAVP_HORS_DU_MODELE`). Dans la lecture du tableau, aucune pension
+    n'en est changée : la seconde pente ne touche que les nés depuis 1953, qui
+    n'avaient pas en 2011 l'âge d'ouverture de D. 161-2-1-9 ; la majoration, que les
+    nés depuis le 1er juillet 1951, qui n'avaient pas soixante-cinq ans. Dans celle de
+    l'article 12, les nés jusqu'en 1946 partis de 65 à 66 ans du 30 juin au 31 décembre
+    2011 perdent leur majoration (le point non tranché suivant).
+  effet: aucun dans la lecture du tableau ; voir le point suivant
+- version: [statuts_de_2011, statuts_de_2024]
+  textes: >-
+    statuts de 2011, article 12, et tableau annexé à l'article 15, dans la même annexe
+    (JORFARTI000024270214) ; règlement de 2026, article 12
+  ecart: >-
+    Le texte ne tranche pas, du 30 juin 2011 au 17 juillet 2026, la majoration des nés
+    jusqu'au 30 juin 1951. L'article 12 la leur donne : « De façon transitoire : ― les
+    affiliés nés jusqu'au 31 décembre 1952 peuvent bénéficier d'une majoration de leur
+    pension de retraite dans les mêmes conditions, mais uniquement jusqu'à l'âge
+    permettant d'obtenir une retraite entière augmenté d'un an », soit 66 ans. Le
+    tableau la leur refuse : « 1. Pour les assurés nés avant le 30 juin 1951 inclus [...]
+    Pas de majoration de pension pour un départ après 65 ans ». Pour le tableau, texte
+    spécial, que le règlement de 2026 reprend (« les affiliés nés avant le 30 juin 1951
+    inclus ne bénéficient pas d'une majoration de leur pension de retraite pour un
+    départ après 65 ans ») et que le modèle suit ; pour l'article 12, l'article qui
+    crée la majoration, quand le tableau n'est annexé qu'à celui des « coefficients
+    d'anticipation ». Aucune des deux lectures n'est exclue. Depuis le 18 juillet 2026,
+    le règlement tranche pour le tableau.
+  effet: >-
+    né le 10 mars 1950, entré à 21 ans, parti à 66 ans le 1er avril 2016 : le modèle et
+    le tableau, 12 330,55 € par an, sans majoration ; l'article 12, quatre trimestres
+    entiers au-delà de 65 ans (du 10 mars 2015 au 1er avril 2016, douze mois et 22
+    jours), 4 × 0,5 % = 2 %, 12 330,55 × 1,02 = 12 577,16 €, 246,61 € par an de plus.
+    Essai du 5 novembre 2026, dans les deux moteurs, requête du formulaire
 - version: [statuts_de_2011, statuts_de_2024, reglement_de_2026]
   textes: >-
     statuts de 2011, article 12 (« majoré de 4 % », « majoré de 2 % ») ; règlement de
@@ -535,7 +574,9 @@ effet: >-
   ligne pour ligne —, l'article 15 récrit le 10 janvier 2024, le règlement de 2026.
   Deux erreurs déclarées, la carrière longue depuis 2024 et la date d'effet au
   trimestre civil ; deux points non tranchés, la valeur de service par génération et le
-  trimestre entamé.
+  trimestre entamé. Retouchée le même jour, après la relecture R-E5 : un troisième
+  non-tranché, la majoration des nés jusqu'au 30 juin 1951 de 2011 à 2026, et les
+  arrêtés de 1956 et de 1989 nommés.
 sources:
   lu_le: 2026-11-05
   prochaine_relecture: 2027-03-31
@@ -544,8 +585,11 @@ sources:
     Lire les statuts d'avant le 7 juin 2009 : l'arrêté du 1er juin 1950 et ses
     modifications, dont celles de 1976, 1979 et 1981 qui touchent les articles 10 et
     11, et l'arrêté du 31 août 1990 (Bulletin officiel no 90-40) ; ou les demander à la
-    CAVP. Trouver un exemple de la caisse : la valeur de service servie à un pharmacien
-    né avant 1953, et une pension de carrière longue liquidée depuis 2024.
+    CAVP ; l'article 10 que touche aussi l'arrêté du 6 juillet 1977, et celui du 6 avril
+    1989 (Bulletin officiel no 8920). Trouver un exemple de la caisse : la valeur de
+    service servie à un pharmacien né avant 1953, la majoration d'un pharmacien né
+    avant juillet 1951 parti après 65 ans de 2011 à 2026, et une pension de carrière
+    longue liquidée depuis 2024.
   lectures:
   - type: jorf
     reference: >-
@@ -560,6 +604,14 @@ sources:
       dans l'index JORF du dépôt, à jour du 5 novembre 2026, les textes qui touchent la
       section relevés par leur titre et par « CAVP » ou « assurance vieillesse des
       pharmaciens » dans leur corps, sans borne.
+    date: 2026-11-05
+  - type: jorf
+    reference: >-
+      Relus après la relecture R-E5 : arrêté du 23 juin 2011, annexe, article 12 et
+      tableau annexé à l'article 15 (JORFARTI000024270214) ; règlement de 2026, article
+      12 (JORFARTI000054436087) ; les titres et résumés des arrêtés du 17 septembre 1956,
+      du 6 juillet 1977, du 30 décembre 1988 et du 6 avril 1989 ; lus dans l'index JORF
+      du dépôt, à jour du 5 novembre 2026.
     date: 2026-11-05
   - type: legifrance
     reference: >-

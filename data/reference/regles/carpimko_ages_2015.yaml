@@ -525,8 +525,9 @@ approximations:
     exemple de la caisse — une pension d'un assuré né avant 1956, prise de 2016 à 2023
     avec sa durée —, le modèle garde la première lecture.
   effet: >-
-    136,90 € par an de trop dans la première lecture, 862,45 € dans la seconde, dans le
-    cas posé ; la seconde ôterait jusqu'à 20 points de la pension prise à 60 ans avec la
+    136,90 € par an de trop au moins dans la première lecture (205,35 € si la majoration
+    se compte de l'âge de la table : l'approximation suivante), 862,45 € dans la
+    seconde, dans le cas posé ; la seconde ôterait jusqu'à 20 points de la pension prise à 60 ans avec la
     durée
 - version: [statuts_de_2015, statuts_de_2019, statuts_de_2024, reglement_de_2026]
   textes: >-
@@ -552,7 +553,12 @@ approximations:
     table (article 11, 2°, a ; article 3, 2) du règlement) demande les conditions de la
     base.
   effet: >-
-    136,90 € par an de trop dans le cas posé ; non mesuré pour les générations
+    136,90 € par an de trop au moins dans le cas posé, la majoration comptée de l'âge où
+    la pension aurait pu être liquidée sans abattement ; comptée de l'âge du taux plein
+    de la table, « Age prévu à l'article 11.1 », 65 ans pour la génération 1955 et
+    antérieure (l'approximation sur l'âge d'où la majoration se compte), elle est nulle
+    à 62 ans : 5 681,23 / 1,0375 = 5 475,89 €, 205,35 € par an de trop (essai du 5
+    novembre 2026, refait dans les deux moteurs) ; non mesuré pour les générations
     suivantes
 - version: [statuts_de_2015, statuts_de_2019]
   textes: statuts, article 12 quater, 2°, rédaction de l'arrêté du 31 juillet 2015
@@ -577,9 +583,18 @@ approximations:
     celui de la table. Né le 10 novembre 1959, entré à vingt ans, à 67 ans : le modèle
     sert 1,25, vingt trimestres, 7 022,19 € par an ; compté de 66 ans et 4 mois, le 10
     mars 2026, deux trimestres civils entiers jusqu'au 1er décembre 2026, 1,025, 7 022,19
-    / 1,25 × 1,025 = 5 758,20 €.
+    / 1,25 × 1,025 = 5 758,20 €. Depuis le 10 janvier 2024, la table nomme elle-même sa
+    ligne : « Âge du taux plein 65 ans 65 ans 4 mois 65 ans 8 mois 66 ans 66 ans 4 mois
+    66 ans 8 mois 67 ans » (statuts, article 12 quater, rédaction de l'arrêté du 27
+    décembre 2023, annexe, 6°, JORFARTI000048880643), « Age du taux plein » au règlement
+    (article 6, JORFARTI000054435915), là où celle de 2015 disait « Age prévu à
+    l'article 11.1 » : la seconde phrase de l'article 5 en reçoit un appui. Le point
+    reste non tranché : la première phrase garde le sien, et l'article 4 dit « l'âge du
+    taux plein sans condition » quand il veut l'âge de la table, ce qui laisse à « l'âge
+    du taux plein » seul le sens de l'âge où l'assuré l'atteint.
   effet: >-
-    1 263,99 € par an de plus que la lecture de la table, dans le cas posé
+    1 263,99 € par an de plus que la lecture de la table, dans le cas posé (refait le 5
+    novembre 2026 dans les deux moteurs : 7 022,19 € servis, 1,25)
 - version: [statuts_de_2015]
   textes: statuts, article 12 quater, 1°, rédaction de l'arrêté du 31 juillet 2015
   ecart: >-
@@ -714,6 +729,13 @@ sources:
     à la CARPIMKO, ou à lire en bibliothèque. Les régimes de 1956 (décrets n° 56-97 et n°
     56-129) et leurs statuts, pour les pensions d'avant 1984.
   lectures:
+  - type: jorf
+    reference: >-
+      Relus après la relecture R-E5 : arrêté du 27 décembre 2023, annexe, 6°, l'article
+      12 quater et sa ligne « Âge du taux plein » (JORFARTI000048880643) ; règlement de
+      2026, articles 4 à 6 (JORFARTI000054435915) ; statuts de 2015, article 12 quater
+      (JORFARTI000031255547) ; lus dans l'index JORF du dépôt, à jour du 5 novembre 2026.
+    date: 2026-11-05
   - type: jorf
     reference: >-
       Les trois textes lus dans l'index JORF du dépôt ; les statuts antérieurs,

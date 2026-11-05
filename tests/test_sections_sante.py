@@ -165,8 +165,10 @@ def test_la_carcdsf_majore_apres_son_age(simulateur):
     # (JORFARTI000024270214) : nés avant le 30 juin 1951 inclus, « 62 ―
     # 15,00 % » ; nés de 1953 à 1955, « 62 ― 17,00 % », et la majoration,
     # « 68 4,00 % » ; les nés avant juillet 1951, « Pas de majoration de
-    # pension pour un départ après 65 ans » ; depuis 1956, « jusqu'à cet âge
-    # augmenté de 3 ans », douze trimestres à 0,5 %.
+    # pension pour un départ après 65 ans » — l'article 12 de 2011 leur donne
+    # une majoration jusqu'à 66 ans, non tranché de 2011 à 2026, le règlement
+    # de 2026 suivant le tableau ; depuis 1956, « jusqu'à cet âge augmenté de
+    # 3 ans », douze trimestres à 0,5 %.
     (1950, 62.0, 0.85),
     (1955, 62.0, 0.83),
     (1954, 68.0, 1.04),
@@ -275,9 +277,10 @@ def test_chaque_version_de_la_carpimko_est_portee_par_le_modele(
 #: déclare : la période de 2009 sert la règle des statuts du 11 mai 2009 dès
 #: le 1er janvier 2009, quand ils n'entrent en vigueur que le 7 juin ; celle
 #: de 2012, les deux pentes et la majoration de l'arrêté du 23 juin 2011, en
-#: vigueur le 30 juin 2011 — sans effet sur aucune pension de 2011, nul né
-#: après le 30 juin 1951 n'ayant alors soixante-cinq ans, ni né après 1952
-#: l'âge d'ouverture.
+#: vigueur le 30 juin 2011 — sans effet sur aucune pension de 2011 dans la
+#: lecture du tableau annexé, nul né après le 30 juin 1951 n'ayant alors
+#: soixante-cinq ans, ni né après 1952 l'âge d'ouverture ; l'article 12 majore
+#: aussi les nés jusqu'au 30 juin 1951, ce que la fiche déclare non tranché.
 CAVP_HORS_DU_MODELE = {("statuts_d_avant_2009", "2009-01-01", "2009-06-07"),
                        ("statuts_de_2011", "2011-06-30", "2012-01-01")}
 
