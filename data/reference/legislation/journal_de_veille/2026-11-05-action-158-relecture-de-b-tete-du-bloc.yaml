@@ -1,0 +1,22 @@
+date: "2026-11-05"
+session: "action 158, file R-B : relecture de B (bf56434, ee16afd) — le rang de rangs_grille, le n° 91-783, l'article 2 du n° 2009-1322 en 2017"
+consulte: >-
+  python scripts/veille_droit.py ; docs/veille_droit.md. L'index LEGI du dépôt (incrément
+  20261102-213929) : décret n° 2009-1322, article 2, ses six versions ; décret n° 91-783,
+  ses 23 articles (36 versions) ; décret n° 71-917, article 17, ses versions. L'index JORF
+  (incrément 20261103-002311) : décret n° 2017-171, articles 39 et 126 ; décret
+  n° 2017-1737, article 17 ; décret n° 2018-610, notice, articles 1er à 3 ; décret
+  n° 2018-609, articles 1er à 12 et notice ; loi n° 2015-1785, article 148 ; décret
+  n° 91-783 au JO du 20 août 1991. Le Noyau RH : grille 02777 au 2011-07-01, grille 03500
+  au 2017-01-01, textes 641, 645, 5946 et 5947.
+trouve: >-
+  Les trois points de B sont justes à la source, ses citations mot pour mot. Le n° 2018-610
+  remplace l'article 2 du n° 2009-1322 dès le 1er janvier 2017 ; ni lui ni le n° 2018-609
+  ne gardent d'effet de la version du n° 2017-171, et aucun de ses indices n'est plus bas
+  que celui du n° 2017-171 (de 0 à +43 points). L'article 148 de la loi n° 2015-1785, visé,
+  est l'abattement sur les indemnités, non une autorisation de rétroagir.
+reste: >-
+  La preuve de la ligne de chaînage de la hors classe des IEEAC cite encore
+  LEGIARTI000034034492 (le chaînage ne lit pas DATES_CORRIGEES). Les pensions d'IEEAC prises
+  entre le 1er janvier 2017 et le 14 juillet 2018, liquidées sous le n° 2017-171 : leur
+  révision n'est dans aucun texte lu, à déclarer avant le pré-remplissage des carrières.
