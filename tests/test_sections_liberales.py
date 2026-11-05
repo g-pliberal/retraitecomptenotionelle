@@ -186,8 +186,14 @@ def test_chaque_pension_minoree_porte_les_ages_et_le_taux_de_sa_version(
     mots, liquidation dès l'âge de L. 161-17-2, 5 % par tranche de douze mois ;
     puis « 67 ans » (arrêté du 4 août 2023, 6°) et, au 1er janvier 2024,
     « 1,25 % par trimestre manquant » (7°, c ; article 5 du règlement de
-    2026). Chaque premier du mois que couvre une version, de la création du
-    régime à 2040, la période qui liquide une pension prenant effet ce jour
+    2026). Statuts de la CAVOM (articles 14 et 23 en 2016, arrêté du
+    30 décembre 2015 ; article 14 récrit au 1er janvier 2025, arrêté du
+    12 décembre 2024, 4° ; article 1er, I, du règlement de 2026) : liquidation
+    dès 60 ans et taux plein à 65 ans jusqu'à la génération 1955, six mois de
+    plus par génération jusqu'à 62 et 67 ans, puis l'ouverture portée à 64 ans
+    pour la génération 1968 ; de 0,75 à 0,95 selon l'âge, puis « 5 % par année
+    manquante », « non susceptible de fractionnement ». Chaque premier du
+    mois que couvre une version, de la création du régime à 2040, la période qui liquide une pension prenant effet ce jour
     porte chacun des paramètres que la version lit — l'âge d'ouverture, l'âge
     du taux plein, ou leur table par génération, le barème, le taux —, et la
     durée n'y annule pas la minoration."""

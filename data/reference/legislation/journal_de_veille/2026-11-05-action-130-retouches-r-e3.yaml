@@ -1,0 +1,31 @@
+date: "2026-11-05"
+session: "action 130, file E2 : les retouches de la relecture R-E3 (la CAVOM lue au droit), et le bloc « Reprise » de l'action"
+consulte: >-
+  python scripts/veille_droit.py ; docs/veille_droit.md ; les index JORF et LEGI du dépôt,
+  récupérés (dila_index.py --recuperer : JORF à jour du 3 novembre 2026, LEGI du 2
+  novembre). Dans JORF : l'arrêté du 28 août 2020, annexe, II, G et H (JORFARTI000042311285) ;
+  l'arrêté du 21 décembre 2016, annexe, 14°, 18° et 19° (JORFARTI000033702977) ; l'arrêté du
+  30 décembre 2015, annexe, 9° (JORFARTI000031740853) ; les arrêtés qui approuvent des statuts
+  de la section, de 1969 à 2002, cherchés aux « officiers ministériels » (les titres) ; le
+  décret n° 2026-418, article 22 (JORFARTI000054153714) ; le décret n° 2019-1484, article 1er
+  (JORFARTI000039684598) ; le décret n° 2018-1033, article 2 (JORFARTI000037646713). Dans
+  LEGI : le décret n° 79-265, article 2, rédactions de 2019 (LEGIARTI000038427708, son III)
+  et de 2026 (LEGIARTI000054168585, et sa note de l'article 30) ; L. 131-6-2, ses versions et
+  celle de la loi n° 2023-1250 (LEGIARTI000048683699). La relecture R-E3 et la note de E.
+trouve: >-
+  L'arrêté de 2020 réserve aussi, à la condition de cessation, « les dérogations prévues à
+  l'article 15 », le cumul activité-retraite que son H récrit. L'arrêté de 2016 abroge, par
+  son 18°, les articles 18, 20, 21 et 22 des statuts, sans en donner la rédaction, et fait de
+  l'âge de la réversion celui « prévu à l'article 14 » (19°). Le décret n° 2026-418 fait
+  calculer la cotisation « selon les modalités fixées aux deuxième et troisième alinéas de
+  l'article L. 131-6-2 » (provisionnelle sur l'avant-dernière année, puis régularisée),
+  abroge le III de l'article 2 et reprend les points à un article 4-2, « arrêté à la
+  deuxième décimale par excès ». Le taux de 2019 est récrit par le décret n° 2019-1484,
+  article 1er, au même taux, 12,50 %. Deux non-tranchés déclarés : l'âge de l'inapte né
+  avant 1959, de 2016 à 2024 ; l'âge qui compte pour le coefficient, celui de la demande ou
+  celui de l'effet. Aucune règle ni valeur du modèle ne change.
+reste: >-
+  Le contenu des articles 18, 20, 21 et 22 des statuts abrogés en 2016, au Bulletin
+  officiel. Les statuts d'avant 2016 et le taux de 2026, comme la note de E le laisse. Ce
+  que la CAVOM fait de l'âge de la demande et de l'inapte né avant 1959 : un exemple de la
+  caisse.

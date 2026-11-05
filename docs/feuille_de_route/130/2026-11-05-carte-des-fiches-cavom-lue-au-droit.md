@@ -169,3 +169,5 @@ proposait reprise en substance, relue conforme par R-N2 (10eb393), et la répara
 N-bis (0ba2aea), publiée quand ce bloc s'écrit ; la CAVAMAC, la CARCDSF puis la CAVOM lues
 au droit, 82 fiches et 478 manques ; les erreurs du modèle déclarées, qui attendent le
 propriétaire.
+
+Renvoi du 5 novembre 2026 : les dix écarts faibles de la relecture R-E3 — l'âge de l'inapte né avant 1959 et l'âge de la demande, déclarés non tranchés ; la condition de l'erreur (3), complétée pour l'assuré né le 1er ; cinq imprécisions de lecture ; le bloc et une docstring — sont repris dans `2026-11-05-retouches-de-la-relecture-r-e3.md`.

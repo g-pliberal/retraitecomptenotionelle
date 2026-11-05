@@ -107,7 +107,7 @@ periodes:
       n° 2015-1875, LEGIARTI000031875318). LE PLAFOND MONTE PAR MARCHES :
       « par dérogation », la cotisation est appelée « dans la limite d'un
       plafond égal à » quatre plafonds de la Sécurité sociale en 2016,
-      cinq en 2017, six en 2018, sept en 2019 (article 1er, II, du même
+      cinq en 2017, six en 2018, sept en 2019 (article 3, II, du même
       décret), huit ensuite. L'ASSIETTE A UN MINIMUM, « le quart de ce
       plafond » jusqu'en 2018, 19 % depuis le 1er janvier 2019 (décret
       n° 2019-373, LEGIARTI000038427708) : la cotisation y est due, et les
@@ -169,7 +169,7 @@ periodes:
     avantages_non_contributifs: [reversion]
     notes: >-
       2017 : même régime, plafond de cinq plafonds de la Sécurité sociale
-      (décret n° 2015-1875, article 1er, II) et assiette minimale de
+      (décret n° 2015-1875, article 3, II) et assiette minimale de
       25 % du plafond. Voir la période de 2016.
   - debut: 2018
     fin: 2018
@@ -192,7 +192,7 @@ periodes:
     avantages_non_contributifs: [reversion]
     notes: >-
       2018 : même régime, plafond de six plafonds de la Sécurité sociale
-      (décret n° 2015-1875, article 1er, II) et assiette minimale de
+      (décret n° 2015-1875, article 3, II) et assiette minimale de
       25 % du plafond. Voir la période de 2016.
   - debut: 2019
     fin: 2019
@@ -215,7 +215,7 @@ periodes:
     avantages_non_contributifs: [reversion]
     notes: >-
       2019 : même régime, plafond de sept plafonds de la Sécurité sociale
-      (décret n° 2015-1875, article 1er, II) et assiette minimale de 19 %
+      (décret n° 2015-1875, article 3, II) et assiette minimale de 19 %
       du plafond depuis le 1er janvier 2019 (décret n° 2019-373). Voir la
       période de 2016.
   - debut: 2020

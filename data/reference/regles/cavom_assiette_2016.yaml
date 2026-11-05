@@ -151,11 +151,25 @@ versions:
       « sans que le montant retenu pour le calcul de la cotisation ne puisse être
       inférieur à 19 % de ce plafond. »
   - id: JORFARTI000037646713
-    article: décret n° 2018-1033 du 26 novembre 2018, article 2 (l'année 2019)
+    article: >-
+      décret n° 2018-1033 du 26 novembre 2018, article 2 (l'année 2019), dans sa
+      rédaction d'origine, que le décret n° 2019-1484 remplace, au même taux
     publie_le: 2018-11-27
     citation: >-
       « 2° Section professionnelle des officiers ministériels, officiers publics et des
       compagnies judiciaires : -taux de cotisation : 12,50 % ; »
+  - id: JORFARTI000039684598
+    article: >-
+      décret n° 2019-1484 du 27 décembre 2019, article 1er, qui remplace l'article 2 du
+      décret n° 2018-1033 (l'année 2019)
+    publie_le: 2019-12-29
+    citation: >-
+      « L'article 2 du décret du 26 novembre 2018 susvisé est remplacé par les
+      dispositions suivantes : « Art. 2.-Pour l'année 2019, le montant annuel des
+      cotisations des régimes d'assurance vieillesse complémentaire des personnes non
+      salariées ressortissant des sections professionnelles suivantes est fixé [...] « 2°
+      Section professionnelle des officiers ministériels, officiers publics et des
+      compagnies judiciaires : «-taux de cotisation : 12,50 % ; »
   - id: JORFARTI000052565553
     article: >-
       décret n° 2025-1076 du 10 novembre 2025, article 12 (l'année 2025), comme les
@@ -193,7 +207,51 @@ versions:
       janvier de l'année au cours de laquelle la cotisation est appelée, sans que le
       montant retenu pour le calcul de la cotisation ne puisse être inférieur à 19 % de
       ce plafond. Le montant minimum prévu au premier alinéa s'applique pour le calcul de
-      la cotisation des deux premières années d'activité. »
+      la cotisation des deux premières années d'activité. La cotisation est calculée
+      selon les modalités fixées aux deuxième et troisième alinéas de l'article L.
+      131-6-2 du code de la sécurité sociale. A la demande de l'affilié, les cotisations
+      peuvent également être calculées sur un revenu estimé dans les conditions prévues
+      au quatrième alinéa de l'article L. 131-6-2 du code de la sécurité sociale. La
+      régularisation des cotisations assises sur un revenu estimé est effectuée même en
+      cas de cessation d'activité ou de liquidation. » ; la note de LEGI : «
+      Conformément à l'article 30 du décret n° 2026-418 du 29 mai 2026, ces
+      dispositions, dans leur rédaction issue dudit décret, entrent en vigueur le 1er
+      juillet 2026. »
+  - id: JORFARTI000054153714
+    article: décret n° 2026-418 du 29 mai 2026, article 22, 1° et 5°
+    en_vigueur: 2026-07-01
+    publie_le: 2026-05-31
+    citation: >-
+      « Le décret du 27 mars 1979 susvisé est ainsi modifié : 1° A l'article 2 : a)
+      Après le premier alinéa du I, sont insérés trois alinéas ainsi rédigés : [...] ;
+      b) Le III est abrogé ; [...] 5° Après l'article 4, sont insérés des articles 4-1
+      et 4-2 ainsi rédigés : [...] « Art. 4-2. - Il est attribué à chaque affilié un
+      nombre de points de retraite, arrêté à la deuxième décimale par excès,
+      correspondant à la division du montant de la cotisation effectivement acquittée
+      par la valeur d'achat du point de retraite. » : le III abrogé disait « La
+      cotisation porte attribution d'un nombre de point égal à son montant divisé par
+      le prix d'achat du point fixé par décret sur proposition du conseil
+      d'administration » (LEGIARTI000038427708)
+  - id: LEGIARTI000048683699
+    article: >-
+      code de la sécurité sociale, article L. 131-6-2, rédaction de la loi n° 2023-1250,
+      appliquée aux cotisations des périodes courant depuis le 1er janvier 2025
+    en_vigueur: 2023-12-28
+    citation: >-
+      « Elles sont calculées, à titre provisionnel, sur la base de l'assiette de
+      cotisations prévue à l'article L. 131-6 pour l'avant-dernière année. Pour les deux
+      premières années d'activité, les cotisations provisionnelles sont calculées sur la
+      base d'une assiette forfaitaire fixée par décret après consultation des conseils
+      d'administration des organismes de sécurité sociale concernés. Lorsque les éléments
+      énumérés au I de l'article L. 131-6 et à l'article L. 136-3 sont définitivement
+      connus pour la dernière année écoulée, les cotisations provisionnelles, à
+      l'exception de celles dues au titre de la première année d'activité, sont
+      recalculées [...] les cotisations font l'objet d'une régularisation sur la base de
+      l'assiette résultant de ces éléments [...] Par dérogation au deuxième alinéa, sur
+      demande du cotisant, les cotisations provisionnelles peuvent être calculées sur la
+      base de l'assiette de cotisations estimée pour l'année en cours. » : l'index
+      aplatit les alinéas ; le quatrième, celui du revenu estimé, que l'article 2 nomme,
+      renvoie au deuxième, celui des cotisations provisionnelles
   nee_de: LEGIARTI000054168585
   bornes:
     revenu.annee: [2026-07-01, null]
@@ -202,8 +260,13 @@ versions:
       assiette_minimale_pass: 0.19
       taux_cotisation_retraite: 0.125
     droit: >-
-      la règle de 2019, huit plafonds et 19 % du plafond au moins, le minimum dit aussi
-      des deux premières années d'activité ; le taux de 12,5 %, que le modèle garde
+      la règle de 2019, huit plafonds et 19 % du plafond au moins ; la cotisation
+      calculée à titre provisionnel sur le revenu de l'avant-dernière année, puis
+      régularisée sur le revenu de l'année (L. 131-6-2, deuxième et troisième alinéas),
+      ou, à la demande de l'affilié, sur un revenu estimé ; le minimum dit « pour le
+      calcul de la cotisation des deux premières années d'activité » ; le III, les
+      points de la cotisation, abrogé, repris à l'article 4-2, « arrêté à la deuxième
+      décimale par excès » ; le taux de 12,5 %, que le modèle garde
     conditions: aucune
   exemples: aucun trouvé
 approximations:
@@ -250,6 +313,42 @@ approximations:
     médicaux (JORFARTI000052565558) : l'index ne porte pas de taux de 2026 pour la
     CAVOM. Le modèle garde 12,5 %, que la page de la CAVOM donne pour 2026.
   effet: non mesuré
+- version: [decret_2026_418]
+  textes: >-
+    décret n° 79-265, article 2, I, deuxième alinéa, rédaction du 1er juillet 2026, « Le
+    montant minimum prévu au premier alinéa s'applique pour le calcul de la cotisation
+    des deux premières années d'activité »
+  ecart: >-
+    Le texte ne tranche pas entre deux lectures : le minimum s'applique aussi aux deux
+    premières années d'activité, ou il est l'assiette forfaitaire des cotisations
+    provisionnelles de ces deux années (L. 131-6-2, deuxième alinéa, auquel l'alinéa
+    suivant renvoie), régularisées ensuite sur le revenu. Dans l'une et l'autre, le
+    premier alinéa borne l'assiette de toute année au moins à 19 % du plafond : la
+    cotisation définitive, que le modèle sert, est la même.
+  effet: aucun sur la cotisation définitive
+- version: [decret_2026_418]
+  textes: >-
+    décret n° 79-265, article 2, I, troisième et quatrième alinéas, rédaction du 1er
+    juillet 2026 ; L. 131-6-2, deuxième à quatrième alinéas
+  ecart: >-
+    Le modèle ne porte pas la cotisation provisionnelle, assise sur le revenu de
+    l'avant-dernière année ou sur un revenu estimé, ni sa régularisation : il sert
+    d'emblée la cotisation définitive, assise sur le revenu de l'année.
+  effet: >-
+    aucun sur la cotisation définitive et les points qu'elle achète ; le calendrier des
+    versements n'est pas modélisé
+- version: [decret_2026_418]
+  textes: >-
+    décret n° 79-265, article 4-2, rédaction du décret n° 2026-418, « un nombre de
+    points de retraite, arrêté à la deuxième décimale par excès »
+  ecart: >-
+    Le modèle ne compte pas les points de la CAVOM : il sert les cotisations
+    revalorisées multipliées par le rendement, ce qui revient à des points non
+    arrondis ; le règlement les arrête au centième, par excès.
+  effet: >-
+    moins d'un centième de point par cotisation depuis le 1er juillet 2026 : à la
+    valeur de service de 2026 que porte `cavom_complementaire.yaml`, 3,3745 €, 0,01 ×
+    3,3745 = 0,03 € de pension par an au plus
 - version: [decret_2015_1875, decret_2019_373, decret_2026_418]
   textes: >-
     décret n° 79-265, article 2, II ; les décrets de chaque année, « taux de cotisation
@@ -278,7 +377,10 @@ effet: >-
   130) : quatre versions, les classes d'avant 2016 présumées, le décret n° 2015-1875,
   dont la dérogation est à l'article 3, II, et non au 1er, celui de 2019, celui de
   2026 ; le taux de 12,50 % lu de 2016 à 2025, non trouvé pour 2026 ; le modèle porte
-  les plafonds et les minimums de chaque année.
+  les plafonds et les minimums de chaque année. Retouchée le même jour, après la
+  relecture R-E3 : le taux de 2019 lu aussi dans sa rédaction du décret n° 2019-1484 ;
+  du décret n° 2026-418, le renvoi à L. 131-6-2, le III abrogé et repris à l'article
+  4-2, et les deux lectures du minimum des deux premières années, dits.
 sources:
   lu_le: 2026-11-05
   prochaine_relecture: 2027-03-31
@@ -300,6 +402,15 @@ sources:
       décret n° 2019-373, articles 3 et 4 (JORFARTI000038424592, JORFARTI000038424594) ;
       le taux de 12,50 % aux décrets de chaque année, de 2016 à 2025 ; lus dans l'index
       JORF du dépôt, à jour du 5 novembre 2026.
+    date: 2026-11-05
+  - type: jorf
+    reference: >-
+      Relus après la relecture R-E3 : décret n° 2019-1484, article 1er
+      (JORFARTI000039684598) ; décret n° 2026-418, article 22 (JORFARTI000054153714),
+      dans l'index JORF du dépôt, à jour du 3 novembre 2026 ; code de la sécurité
+      sociale, article L. 131-6-2 (LEGIARTI000048683699), et l'article 2 du décret n°
+      79-265 du 1er juillet 2026 (LEGIARTI000054168585), dans l'index LEGI, à jour du 2
+      novembre 2026.
     date: 2026-11-05
   - type: autre
     reference: >-

@@ -118,7 +118,11 @@ versions:
       ressortissant de la caisse » sont insérés les mots : « , sous réserve des
       dérogations prévues à l'article 15, » ; 2° Au cinquième alinéa, les mots : « aux
       articles 27 à 33 des statuts » sont remplacés par les mots : « dans les statuts en
-      vigueur » ; » : le renvoi de l'inaptitude change de mots, non de règle
+      vigueur » ; » : le 2° change les mots du renvoi de l'inaptitude, non sa règle ; le
+      1° réserve, à la condition de cessation de toute activité, « les dérogations
+      prévues à l'article 15 », que le H du même arrêté récrit (« H. - L'article 15 est
+      remplacé par les dispositions suivantes : « Article 15 « Cumul activité-retraite
+      ») : ni la cessation ni le cumul ne sont modélisés (approximations)
   nee_de: JORFARTI000031740853
   bornes:
     liquidation.date_effet: [2016-01-01, 2025-01-01]
@@ -138,7 +142,9 @@ versions:
     conditions: >-
       sans coefficient dès 62 ans, l'inapte reconnu « dans les conditions prévues aux
       articles 27 à 33 des statuts de la CNAVPL », puis « dans les statuts en vigueur »
-      (article 14, I, 1°)
+      (article 14, I, 1°) ; pour les générations nées avant 1959, dont l'article 23
+      avance l'âge d'ouverture, le texte ne dit pas si l'inapte l'est dès cet âge
+      (approximations)
   exemples: aucun trouvé
 - id: statuts_de_2025
   statut: lue
@@ -277,6 +283,51 @@ approximations:
     2021 à 62 ans, le modèle sert 0,75 (13 564,47 € par an), le texte 1 (18 085,97 €) ;
     né le 10 mars 1957, le 1er avril 2019, 0,80 au lieu de 1 ; né le 10 mars 1955, le
     1er avril 2017, 0,85 au lieu de 1
+- version: [statuts_de_2016]
+  textes: >-
+    statuts de 2016, article 14, I, 1°, « À partir de 62 ans « En cas d'inaptitude au
+    travail », et article 23, « Pour les générations antérieures, les âges d'ouverture
+    des droits à retraite et de bénéfice du taux plein évoluent selon le tableau
+    ci-dessous »
+  ecart: >-
+    Le texte ne tranche pas : pour les générations nées avant 1959, l'article 23 avance
+    l'âge d'ouverture (60 ans jusqu'à la génération 1955, puis six mois de plus par
+    génération) ; il ne dit pas si l'inapte, que le 1° sert sans coefficient « À partir
+    de 62 ans », l'est aussi dès l'âge d'ouverture de sa génération. Le modèle lui oppose
+    le coefficient avant 62 ans comme après (l'approximation précédente) : né le 10 mars
+    1955, inapte, liquidé le 1er avril 2016 à 61 ans, quatre années avant 65 ans, 0,80,
+    12 830,11 € par an (essai du 5 novembre 2026, case de l'inaptitude cochée, dans les
+    deux moteurs) ; si l'âge de l'inapte suit la table, le texte sert 1 :
+    12 830,11 / 0,80 = 16 037,64 €, 3 207,53 € de plus par an ; s'il reste 62 ans, 0,80.
+  effet: >-
+    de 2016 à 2024, l'inapte né avant 1959 liquidé entre l'âge d'ouverture de sa
+    génération et 62 ans : 20 points de la pension dans le cas essayé, si l'âge suit la
+    table ; non mesuré dans la population
+- version: [statuts_de_2016, statuts_de_2025, reglement_de_2026]
+  textes: >-
+    statuts de 2016, article 14, I, 1°, « 0,75 si la retraite est attribuée lorsque
+    l'affilié est âgé de 62 ans » ; statuts de 2025, article 14, 3°, et règlement de
+    2026, article 1er, I, 3°, « 5 % par année manquante entre l'âge auquel est demandée
+    la liquidation de la retraite, qui ne peut être inférieur à l'âge fixé au 1°, et
+    l'âge prévu au 2° »
+  ecart: >-
+    Le texte ne tranche pas quel âge compte : depuis 2025, « l'âge auquel est demandée
+    la liquidation » peut être l'âge de la demande, qui précède la date d'effet, au
+    premier jour du trimestre civil qui suit (II), ou l'âge auquel l'affilié demande que
+    sa retraite soit liquidée, celui de la date d'effet ; en 2016, l'âge où la retraite
+    « est attribuée », celui de la décision ou celui de l'effet. Le modèle compte l'âge
+    à la date d'effet. Né le 10 février 1960, parti à 65 ans : le modèle sert la CAVOM
+    dès le 1er mars 2025, 0,90, 20 317,08 € par an (essai du 5 novembre 2026, dans les
+    deux moteurs). Au texte, l'affilié qui la demande le 15 janvier 2025, à 64 ans, 11
+    mois et 5 jours, la reçoit au plus tôt le 1er avril 2025, à 65 ans, 1 mois et 22
+    jours : à
+    l'âge de l'effet, 1 an, 10 mois et 9 jours avant 67 ans, deux années, 0,90 ; à
+    l'âge de la demande, 2 ans et 26 jours avant 67 ans, trois années si l'année entamée
+    compte entière, comme le modèle la compte, 0,85, deux sinon, 0,90.
+  effet: >-
+    jusqu'à 5 points de la pension quand la demande précède un anniversaire que la date
+    d'effet suit : 20 317,08 / 0,90 × 0,05 = 1 128,73 € par an dans le cas essayé ;
+    non mesuré dans la population
 - version: [statuts_de_2025, reglement_de_2026]
   textes: statuts de 2025, article 14, 1°, a ; règlement de 2026, article 1er, I, 1°, a
   ecart: >-
@@ -297,13 +348,20 @@ approximations:
     Le modèle fait prendre effet la pension au premier jour du mois qui suit l'âge
     (fiche date_effet_mois_suivant), quand la retraite de la CAVOM « prend effet au plus
     tôt au premier jour du trimestre civil qui suit » la demande, la cessation
-    d'activité et le paiement des cotisations : sa pension commence un ou deux mois
-    trop tôt quand l'âge tombe au premier ou au deuxième mois d'un trimestre civil.
+    d'activité et le paiement des cotisations : sa pension commence deux mois trop tôt
+    quand le modèle la fait prendre effet au deuxième mois d'un trimestre civil, un
+    mois quand c'est au troisième — l'âge atteint au premier ou au deuxième mois d'un
+    trimestre civil, ou, pour l'assuré né le 1er d'un mois, que le modèle sert dès le
+    jour de son anniversaire, au deuxième ou au troisième.
   effet: >-
     un ou deux mois de pension : né le 10 mai 1959, à 62 ans le 10 mai 2021, le modèle
     sert la CAVOM dès le 1er juin 2021 (13 580,64 € par an, 0,75), le texte au 1er
     juillet 2021, au même coefficient : un mois de trop, 1 131,72 € (essai du 5
-    novembre 2026, dans les deux moteurs)
+    novembre 2026, dans les deux moteurs) ; né le 1er mai 1959, dès le 1er mai 2021
+    (13 546,16 € par an), le texte au 1er juillet : deux mois, 13 546,16 × 2 / 12 =
+    2 257,69 € ; né le 1er mars 1959, dès le 1er mars (13 529,99 € par an), le texte
+    au 1er avril : un mois, 1 127,50 € ; né le 1er avril 1959, dès le 1er avril, comme
+    le texte (essais du 5 novembre 2026, dans les deux moteurs)
 - version: [statuts_de_2016]
   textes: statuts de 2016, article 23, « Les taux de décote sont ajustés en conséquence »
   ecart: >-
@@ -331,7 +389,9 @@ approximations:
   ecart: >-
     La condition de cessation de toute activité ressortissant de la caisse et de
     paiement des cotisations exigibles n'est pas modélisée : le modèle liquide à la date
-    demandée.
+    demandée. Depuis le 7 septembre 2020, la cessation s'entend « sous réserve des
+    dérogations prévues à l'article 15 », le cumul activité-retraite (arrêté du 28 août
+    2020, annexe, II, G et H), que le modèle ne porte pas non plus.
   effet: non mesuré
 textes_sans_effet:
 - id: JORFARTI000029830483
@@ -343,7 +403,10 @@ textes_sans_effet:
   publie_le: 2016-12-28
   motif: >-
     les articles 1er à 13, 16 et 24 à 26 (gouvernance, cotisations, réversion, conjoint
-    collaborateur) : ni l'article 14 ni l'article 23
+    collaborateur ; le 19° fait de l'âge de la réversion, à l'article 24, celui « prévu
+    à l'article 14 des présents statuts ») et le 18°, « Les articles 18, 20, 21 et 22
+    sont abrogés », sans en donner la rédaction, que la fiche ne lit pas : ni l'article
+    14 ni l'article 23
 - id: JORFARTI000054435966
   article: arrêté du 10 juillet 2026, article 1er
   publie_le: 2026-07-17
@@ -360,7 +423,10 @@ effet: >-
   en vigueur le 1er janvier 2016 (arrêté du 30 décembre 2015), présumés avant,
   l'article 14 récrit le 1er janvier 2025, le règlement de 2026 ; ni l'inapte de 2016
   à 2024, ni l'ouverture de l'inapte à 62 ans depuis 2025, ni la date d'effet au
-  trimestre civil ne sont servis.
+  trimestre civil ne sont servis. Retouchée le même jour, après la relecture R-E3 :
+  deux non-tranchés déclarés (l'âge de l'inapte né avant 1959, l'âge de la demande ou
+  de l'effet), la condition de la date d'effet complétée pour l'assuré né le 1er, le
+  cumul de 2020 et le 18° de 2016 dits.
 sources:
   lu_le: 2026-11-05
   prochaine_relecture: 2027-03-31
@@ -379,6 +445,14 @@ sources:
       article 2 et annexe, II, 4° et 6° (JORFARTI000050823053, JORFARTI000050823056) ;
       arrêté du 10 juillet 2026, annexe I, article 1er (JORFARTI000054435969) ; les
       notices de 1996 et de 2001 ; lus dans l'index JORF du dépôt, à jour du 5 novembre
+      2026.
+    date: 2026-11-05
+  - type: jorf
+    reference: >-
+      Relus après la relecture R-E3 : arrêté du 28 août 2020, annexe, II, G et H
+      (JORFARTI000042311285) ; arrêté du 21 décembre 2016, annexe, 18° et 19°
+      (JORFARTI000033702977) ; arrêté du 30 décembre 2015, annexe, 9°
+      (JORFARTI000031740853) ; lus dans l'index JORF du dépôt, à jour du 3 novembre
       2026.
     date: 2026-11-05
   - type: legifrance
