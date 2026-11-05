@@ -1,0 +1,37 @@
+date: "2026-11-05"
+session: "action 130, file R-L-ter : relecture indépendante des corrections de la relecture R-L-bis (commit f6012e5, file L-ter)"
+consulte: >-
+  python scripts/veille_droit.py ; docs/veille_droit.md. L'index de la DILA récupéré dans
+  la session (LEGI à jour au 2 novembre 2026, JORF au 3 novembre) : L. 351-8
+  (LEGIARTI000028498855, LEGIARTI000006742633, LEGIARTI000006742632) ; D. 161-2-1-9
+  (LEGIARTI000025089933) ; L. 161-17-2 (LEGIARTI000025014605) ; L. 351-1
+  (LEGIARTI000023035688) ; R. 351-27, cinq rédactions (LEGIARTI000006749434,
+  LEGIARTI000006749435, LEGIARTI000006749436, LEGIARTI000020082993,
+  LEGIARTI000024113020) ; R. 643-7 (LEGIARTI000024113055) ; décret n° 81-1046,
+  article 2 (LEGIARTI000006768391) ; décret n° 2011-2103, articles 2, 4, 6 et 8
+  (LEGIARTI000025100416, LEGIARTI000025100420, LEGIARTI000025100424,
+  LEGIARTI000025100429) ; décret n° 68-960, article 51 (LEGIARTI000029134323) ; décrets
+  n° 2008-637, article 51-1, et n° 2008-639, article 37-1 (LEGIARTI000023732424,
+  LEGIARTI000029137528, LEGIARTI000029165223) ; D. 351-1-1 (LEGIARTI000023397567,
+  LEGIARTI000054059621). Au JORF : statuts de la CAVP de 2011 (JORFARTI000024270214),
+  arrêté du 11 mai 2009 (JORFARTI000020694605). L'accord national interprofessionnel du
+  17 novembre 2017, article 84, version applicable au 1er janvier 2019, PDF de
+  l'Agirc-Arrco (une recherche sur le web pour le trouver).
+trouve: >-
+  Conforme : citations exactes ; les âges hors du mois des neuf tables et des deux fiches,
+  reconvertis en ans et en mois, sont ceux des textes ; au_mois passe dans les deux
+  moteurs (24 tests verts, sous PRESOMPTIONS_DECALEES=1 aussi) ; les treize témoins qui
+  bougent bougent pour lui seul, dont la Comédie-Française de 1958, qui s'ouvre à
+  60 ans 8 mois (décret n° 68-960, article 51, I, A, 3°). L'arrêté de 2011 approuve des
+  « modifications apportées » aux statuts des biologistes : des statuts existaient avant,
+  hors du Journal officiel. Trois écarts faibles : la période 1981-2007 de l'ASV des
+  biologistes cite R. 351-27, qui ne naît qu'en décembre 1985 ; le relevé de ce qui bouge
+  omet les leviers (2,3e-5), les migrations (1,8e-5) et des départs anticipés des régimes
+  spéciaux et des catégories classées (0,1 % au plus) ; ages_reference.csv écrit 61,17,
+  66,17, 61,42 et 66,42 au-dessus du mois, sans effet au réglage par défaut, un écart
+  d'un ou deux jours sous les variantes à cliquet avec une bascule de 2013 à 2015.
+reste: >-
+  À la file du modèle : l'âge du taux plein des biologistes de 1981 à 1985, à lire dans
+  l'ancien code ou à déclarer ; ages_reference.csv au mois, hors du scénario 1. Les
+  statuts des biologistes d'avant 2011, à demander à la CAVP (note
+  2026-11-05-relecture-corrections-r-l-bis.md de l'action 130).
