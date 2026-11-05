@@ -1331,6 +1331,610 @@
     "valeur": 54.05
    }
   },
+  "16_tableau_1": {
+   "femmes_en_france": {
+    "moins_de_55": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 1",
+     "cellule": "C6",
+     "valeur": 2.0
+    },
+    "55_ans": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 1",
+     "cellule": "C7",
+     "valeur": 3.0
+    },
+    "56_59": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 1",
+     "cellule": "C8",
+     "valeur": 6.0
+    },
+    "60_ans": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 1",
+     "cellule": "C9",
+     "valeur": 12.0
+    },
+    "61_ans": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 1",
+     "cellule": "C10",
+     "valeur": 45.0
+    },
+    "62_ans": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 1",
+     "cellule": "C11",
+     "valeur": 7.0
+    },
+    "63_65": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 1",
+     "cellule": "C12",
+     "valeur": 12.0
+    },
+    "66_ans": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 1",
+     "cellule": "C13",
+     "valeur": 13.0
+    },
+    "67_ou_plus": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 1",
+     "cellule": "C14",
+     "valeur": 1.0
+    },
+    "ensemble": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 1",
+     "cellule": "C15",
+     "valeur": 100.0
+    },
+    "age_moyen": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 1",
+     "cellule": "C16",
+     "valeur": 61.6
+    }
+   },
+   "hommes_en_france": {
+    "moins_de_55": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 1",
+     "cellule": "F6",
+     "valeur": 3.0
+    },
+    "55_ans": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 1",
+     "cellule": "F7",
+     "valeur": 5.0
+    },
+    "56_59": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 1",
+     "cellule": "F8",
+     "valeur": 14.0
+    },
+    "60_ans": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 1",
+     "cellule": "F9",
+     "valeur": 21.0
+    },
+    "61_ans": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 1",
+     "cellule": "F10",
+     "valeur": 31.0
+    },
+    "62_ans": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 1",
+     "cellule": "F11",
+     "valeur": 6.0
+    },
+    "63_65": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 1",
+     "cellule": "F12",
+     "valeur": 12.0
+    },
+    "66_ans": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 1",
+     "cellule": "F13",
+     "valeur": 7.0
+    },
+    "67_ou_plus": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 1",
+     "cellule": "F14",
+     "valeur": 1.0
+    },
+    "ensemble": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 1",
+     "cellule": "F15",
+     "valeur": 100.0
+    },
+    "age_moyen": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 1",
+     "cellule": "F16",
+     "valeur": 60.8
+    }
+   },
+   "ensemble": {
+    "moins_de_55": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 1",
+     "cellule": "I6",
+     "valeur": 3.0
+    },
+    "55_ans": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 1",
+     "cellule": "I7",
+     "valeur": 4.0
+    },
+    "56_59": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 1",
+     "cellule": "I8",
+     "valeur": 10.0
+    },
+    "60_ans": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 1",
+     "cellule": "I9",
+     "valeur": 16.0
+    },
+    "61_ans": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 1",
+     "cellule": "I10",
+     "valeur": 38.0
+    },
+    "62_ans": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 1",
+     "cellule": "I11",
+     "valeur": 6.0
+    },
+    "63_65": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 1",
+     "cellule": "I12",
+     "valeur": 13.0
+    },
+    "66_ans": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 1",
+     "cellule": "I13",
+     "valeur": 11.0
+    },
+    "67_ou_plus": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 1",
+     "cellule": "I14",
+     "valeur": 1.0
+    },
+    "ensemble": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 1",
+     "cellule": "I15",
+     "valeur": 100.0
+    },
+    "age_moyen": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 1",
+     "cellule": "I16",
+     "valeur": 61.3
+    }
+   }
+  },
+  "16_tableau_2": {
+   "regime_general": {
+    "age_moyen": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 2",
+     "cellule": "C6",
+     "valeur": 62.0
+    },
+    "apres_neutralisation": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 2",
+     "cellule": "D6",
+     "valeur": 62.3
+    },
+    "moins_de_55": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 2",
+     "cellule": "E6",
+     "valeur": "0,0"
+    },
+    "55_ans": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 2",
+     "cellule": "F6",
+     "valeur": 0.1
+    },
+    "56_59": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 2",
+     "cellule": "G6",
+     "valeur": 8.3
+    },
+    "67_ou_plus": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 2",
+     "cellule": "M6",
+     "valeur": 1.1
+    },
+    "part": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 2",
+     "cellule": "N6",
+     "valeur": 72.9
+    }
+   },
+   "msa_salaries": {
+    "age_moyen": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 2",
+     "cellule": "C7",
+     "valeur": 62.2
+    },
+    "apres_neutralisation": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 2",
+     "cellule": "D7",
+     "valeur": 62.7
+    },
+    "moins_de_55": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 2",
+     "cellule": "E7",
+     "valeur": "0,0"
+    },
+    "55_ans": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 2",
+     "cellule": "F7",
+     "valeur": 0.1
+    },
+    "56_59": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 2",
+     "cellule": "G7",
+     "valeur": 9.6
+    },
+    "67_ou_plus": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 2",
+     "cellule": "M7",
+     "valeur": 1.7
+    },
+    "part": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 2",
+     "cellule": "N7",
+     "valeur": 2.4
+    }
+   },
+   "fpe_civils": {
+    "age_moyen": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 2",
+     "cellule": "C8",
+     "valeur": "60,0"
+    },
+    "apres_neutralisation": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 2",
+     "cellule": "D8",
+     "valeur": 62.2
+    },
+    "moins_de_55": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 2",
+     "cellule": "E8",
+     "valeur": 8.1
+    },
+    "55_ans": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 2",
+     "cellule": "F8",
+     "valeur": 12.8
+    },
+    "56_59": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 2",
+     "cellule": "G8",
+     "valeur": 13.3
+    },
+    "67_ou_plus": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 2",
+     "cellule": "M8",
+     "valeur": 0.8
+    },
+    "part": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 2",
+     "cellule": "N8",
+     "valeur": 9.1
+    }
+   },
+   "fpe_militaires": {
+    "age_moyen": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 2",
+     "cellule": "C9",
+     "valeur": 48.6
+    },
+    "apres_neutralisation": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 2",
+     "cellule": "D9",
+     "valeur": 61.2
+    },
+    "moins_de_55": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 2",
+     "cellule": "E9",
+     "valeur": 70.9
+    },
+    "55_ans": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 2",
+     "cellule": "F9",
+     "valeur": 9.3
+    },
+    "56_59": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 2",
+     "cellule": "G9",
+     "valeur": 18.1
+    },
+    "67_ou_plus": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 2",
+     "cellule": "M9",
+     "valeur": 1.3
+    },
+    "part": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 2",
+     "cellule": "N9",
+     "valeur": 1.1
+    }
+   },
+   "cnracl": {
+    "age_moyen": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 2",
+     "cellule": "C10",
+     "valeur": 59.8
+    },
+    "apres_neutralisation": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 2",
+     "cellule": "D10",
+     "valeur": "62,0"
+    },
+    "moins_de_55": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 2",
+     "cellule": "E10",
+     "valeur": "6,0"
+    },
+    "55_ans": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 2",
+     "cellule": "F10",
+     "valeur": "13,0"
+    },
+    "56_59": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 2",
+     "cellule": "G10",
+     "valeur": 15.2
+    },
+    "67_ou_plus": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 2",
+     "cellule": "M10",
+     "valeur": 0.8
+    },
+    "part": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 2",
+     "cellule": "N10",
+     "valeur": 7.4
+    }
+   },
+   "regimes_speciaux": {
+    "age_moyen": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 2",
+     "cellule": "C11",
+     "valeur": 56.5
+    },
+    "apres_neutralisation": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 2",
+     "cellule": "D11",
+     "valeur": 61.3
+    },
+    "moins_de_55": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 2",
+     "cellule": "E11",
+     "valeur": 11.8
+    },
+    "55_ans": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 2",
+     "cellule": "F11",
+     "valeur": 44.8
+    },
+    "56_59": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 2",
+     "cellule": "G11",
+     "valeur": 20.8
+    },
+    "67_ou_plus": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 2",
+     "cellule": "M11",
+     "valeur": 0.1
+    },
+    "part": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 2",
+     "cellule": "N11",
+     "valeur": 2.6
+    }
+   },
+   "msa_non_salaries": {
+    "age_moyen": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 2",
+     "cellule": "C12",
+     "valeur": 62.1
+    },
+    "apres_neutralisation": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 2",
+     "cellule": "D12",
+     "valeur": 62.3
+    },
+    "moins_de_55": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 2",
+     "cellule": "E12",
+     "valeur": "0,0"
+    },
+    "55_ans": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 2",
+     "cellule": "F12",
+     "valeur": "0,0"
+    },
+    "56_59": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 2",
+     "cellule": "G12",
+     "valeur": 2.8
+    },
+    "67_ou_plus": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 2",
+     "cellule": "M12",
+     "valeur": 1.6
+    },
+    "part": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 2",
+     "cellule": "N12",
+     "valeur": 2.3
+    }
+   },
+   "professions_liberales": {
+    "age_moyen": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 2",
+     "cellule": "C13",
+     "valeur": 64.4
+    },
+    "apres_neutralisation": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 2",
+     "cellule": "D13",
+     "valeur": 64.5
+    },
+    "moins_de_55": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 2",
+     "cellule": "E13",
+     "valeur": "0,0"
+    },
+    "55_ans": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 2",
+     "cellule": "F13",
+     "valeur": "0,0"
+    },
+    "56_59": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 2",
+     "cellule": "G13",
+     "valeur": 0.3
+    },
+    "67_ou_plus": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 2",
+     "cellule": "M13",
+     "valeur": 3.7
+    },
+    "part": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 2",
+     "cellule": "N13",
+     "valeur": 1.4
+    }
+   },
+   "ensemble": {
+    "age_moyen": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 2",
+     "cellule": "C14",
+     "valeur": 61.4
+    },
+    "apres_neutralisation": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 2",
+     "cellule": "D14",
+     "valeur": 62.3
+    },
+    "moins_de_55": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 2",
+     "cellule": "E14",
+     "valeur": 2.4
+    },
+    "55_ans": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 2",
+     "cellule": "F14",
+     "valeur": 3.5
+    },
+    "56_59": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 2",
+     "cellule": "G14",
+     "valeur": 9.5
+    },
+    "67_ou_plus": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 2",
+     "cellule": "M14",
+     "valeur": 1.1
+    },
+    "part": {
+     "classeur": "fiche_16.xlsx",
+     "feuille": "F16_Tableau 2",
+     "cellule": "N14",
+     "valeur": 100.0
+    }
+   }
+  },
   "18_graphique_3": {
    "regime_general_2024": {
     "classeur": "fiche_18.xlsx",
@@ -1351,6 +1955,60 @@
     "feuille": "F18_Graphique 1",
     "cellule": "E25",
     "valeur": 35.5
+   }
+  },
+  "27_graphique_1": {
+   "2024": {
+    "allocataires_milliers": {
+     "classeur": "fiche_27.xlsx",
+     "feuille": "F27_Graphique 1",
+     "cellule": "C70",
+     "valeur": 754.0
+    },
+    "part_60_ans_ou_plus": {
+     "classeur": "fiche_27.xlsx",
+     "feuille": "F27_Graphique 1",
+     "cellule": "D70",
+     "valeur": 3.9
+    },
+    "part_65_ans_ou_plus": {
+     "classeur": "fiche_27.xlsx",
+     "feuille": "F27_Graphique 1",
+     "cellule": "E70",
+     "valeur": 4.6
+    }
+   }
+  },
+  "27_tableau_1": {
+   "premier_etage": {
+    "classeur": "fiche_27.xlsx",
+    "feuille": "F27_Tableau 1",
+    "cellule": "D24",
+    "valeur": 93280.0
+   },
+   "asv": {
+    "classeur": "fiche_27.xlsx",
+    "feuille": "F27_Tableau 1",
+    "cellule": "E24",
+    "valeur": 101990.0
+   },
+   "aspa": {
+    "classeur": "fiche_27.xlsx",
+    "feuille": "F27_Tableau 1",
+    "cellule": "F24",
+    "valeur": 652470.0
+   },
+   "asv_et_aspa": {
+    "classeur": "fiche_27.xlsx",
+    "feuille": "F27_Tableau 1",
+    "cellule": "G24",
+    "valeur": 754460.0
+   },
+   "asi": {
+    "classeur": "fiche_27.xlsx",
+    "feuille": "F27_Tableau 1",
+    "cellule": "J24",
+    "valeur": 66940.0
    }
   },
   "29_tableau_1": {
@@ -3631,6 +4289,34 @@
   }
  },
  "citations": {
+  "16_encadre_2": {
+   "page": 152,
+   "textes": [
+    "Si les premières liquidations d’un droit direct de retraite après 67 ans sont relativement rares, elles ne sont pour autant pas inexistantes",
+    "Sur la base des générations nées en 1950 (personnes âgées de 70 ans en 2020) et en 1946 (personnes âgées de 74 ans en 2020), les départs à la retraite entre 68 et 70 ans représentent environ 1 % des départs, et ceux qui ont lieu entre 71 et 74 ans environ 0,2 %",
+    "La proportion des départs à 67 ans ou après est, en particulier, très élevée parmi les professions libérales (11 % de départs entre 67 et 70 ans)",
+    "l’âge moyen de départ à la retraite pourrait ainsi être plus élevé de 1 à 11 mois selon le régime"
+   ]
+  },
+  "16_tableau_2": {
+   "page": 153,
+   "textes": [
+    "AOD : âge d’ouverture des droits (61 ans et 2 mois pour la génération née en 1953)",
+    "La neutralisation des départs avant l’AOD consiste à fixer à l’AOD (61 ans et 2 mois pour cette génération) les âges de départ qui sont inférieurs"
+   ]
+  },
+  "27_texte": {
+   "page": "226 à 230",
+   "textes": [
+    "Fin 2024, 754 460 personnes perçoivent l’allocation supplémentaire du minimum vieillesse (ASV) ou l’allocation de solidarité aux personnes âgées",
+    "En 2024, 70 660 personnes entrent dans le dispositif",
+    "atteignent 4,6 milliards d’euros",
+    "les dépenses relatives au minimum vieillesse s’élèvent à 4,8 milliards d’euros en 2024",
+    "466 euros mensuels d’ASV",
+    "527 euros d’Aspa (contre 499 euros en 2023)",
+    "Parmi les personnes âgées de 65 ans ou plus résidant en France, 4,6 % sont titulaires d’une allocation du minimum vieillesse"
+   ]
+  },
   "28_encadre_2": {
    "page": 233,
    "textes": [

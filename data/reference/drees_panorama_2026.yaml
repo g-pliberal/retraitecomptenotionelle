@@ -415,7 +415,7 @@ fiches:
     titre: "La diversité des âges de départ à la retraite"
     page: 145
     sources: ["EACR", "EIR 2020", "ANCETRE", "Insee"]
-    statut: au_depot
+    statut: confronte
     au_depot: [drees_eacr_tables, drees_panorama_retraites_2026_classeurs]
     a_tirer: >-
       Recoupée à l'étape 2 (`tests/test_drees_panorama_2024.py`) : la
@@ -427,10 +427,31 @@ fiches:
       et leur âge moyen, 61,3 ans (tableau 1), les générations 1930 à 1952
       (graphique 5), et les nés en 1953 par régime principal, leur âge et leur
       répartition (tableau 2), à `retraites_generations.csv`, aux référents.
-      Les départs après 67 ans (encadré 2) ne sont chiffrés que dans le PDF :
-      ils restent, pour la clôture, avec les compléments du graphique 3 et du
-      tableau 2.
+      Les départs après 67 ans (encadré 2), chiffrés dans le seul PDF, sont
+      cités au témoin des confrontations ; le tableau 1, le tableau 2 et
+      l'encadré 2 sont confrontés à la grille (5 novembre 2026). Restent,
+      pour la clôture, les compléments du graphique 3 et du tableau 2.
     etape: 7
+    confrontation: >-
+      Les cas types de la grille nés en 1953 partent à 61,83 ans en moyenne,
+      pour 61,3 au tableau 1 (EIR 2020) : leurs hommes à 61,93, pour 60,8 ;
+      leurs femmes, un seul cas type, à 61,0, pour 61,6. 5,5 % des hommes de
+      la grille partent avant 60 ans, pour 22 %, et personne à 67 ans ou plus,
+      pour 1 %. Au tableau 2, le fonctionnaire de la grille part à l'âge des
+      agents sédentaires : 62,29 ans à la CNRACL, pour 59,8, et 62,57 une fois
+      neutralisés les départs avant l'âge d'ouverture, pour 62,0 ; à l'État
+      civil, 61,97 pour 60,0, et 62,61 neutralisé pour 62,2. La grille ne
+      compte pas les départs d'avant 60 ans des fonctionnaires, 34,2 % de
+      ceux de l'État civil, 7,95 % dans la grille. L'encadré 2 (« environ 1 %
+      » des départs à 68-70 ans, « environ 0,2 % » à 71-74 ans) n'a pas son
+      pendant : la grille ne fait partir personne à 68 ans ou plus, ni la
+      population (mesure de l'action 138, du 5 novembre 2026). L'écart se
+      déclare, il ne se corrige pas : la grille du coût est laissée (décision
+      11).
+    confronte_par:
+      - test_la_grille_fait_partir_ses_nes_en_1953_a_trop_peu_d_ages_et_trop_tard
+      - test_la_grille_part_a_l_age_des_agents_apres_neutralisation_et_non_a_celui_de_la_fonction_publique
+      - test_la_grille_ne_fait_partir_personne_apres_67_ans_quand_l_eir_et_le_panorama_en_comptent
   "17":
     titre: "Les taux de liquidation des pensions"
     page: 154
@@ -629,7 +650,7 @@ fiches:
     titre: "Les allocataires du minimum vieillesse et les allocations versées"
     page: 226
     sources: ["EACR 2024", "Enquête sur les allocations du minimum vieillesse", "Caisse des dépôts", "FSV"]
-    statut: au_depot
+    statut: confronte
     au_depot: [insee_allocataires_minimum_vieillesse, drees_panorama_retraites_2026_classeurs]
     a_tirer: >-
       Les 754 460 allocataires de l'ASV ou de l'Aspa fin 2024, que le classeur
@@ -639,10 +660,29 @@ fiches:
       versement et par territoire, l'ASI comprise (tableau 1), à
       `minimum_vieillesse_regimes.csv`, et ceux de 1960 à 2024, avec leur part
       parmi les 60 et les 65 ans ou plus (graphique 1), à
-      `minimum_vieillesse_effectifs.csv`. Restent, pour la clôture, les 70 660
-      nouveaux allocataires et les dépenses, que le PDF chiffre et que le
-      classeur ne porte pas : le jeu `drees_minimum_vieillesse` du vivier.
+      `minimum_vieillesse_effectifs.csv`. Les dépenses (4,6 milliards
+      d'euros d'ASV et d'Aspa en 2024, 4,8 avec le premier étage) et les
+      montants moyens (466 et 527 euros par mois), que le PDF chiffre et que
+      le classeur ne porte pas, sont cités au témoin des confrontations et
+      confrontés à la garantie de la page (5 novembre 2026). Restent, pour la
+      clôture, les 70 660 nouveaux allocataires : le jeu
+      `drees_minimum_vieillesse` du vivier.
     etape: 7
+    confrontation: >-
+      La garantie vieillesse de la page, qui remplace l'ASPA, compte en 2024
+      2,80 millions de bénéficiaires (un recours de 50 % de 5,60 millions
+      d'ayants droit) pour 754 460 allocataires de l'ASV ou de l'Aspa fin
+      2024, soit 3,71 fois ; elle coûte 14,3 milliards d'euros de 2026 pour
+      4,6 milliards de dépenses d'ASV et d'Aspa en 2024, soit 3,11 fois ; son
+      complément moyen, 426 euros par mois, est au-dessous de celui de l'Aspa,
+      527. Ce n'est pas une erreur du modèle : la garantie n'est pas l'Aspa
+      (800 euros par personne sur la seule pension, quand l'Aspa a son
+      plafond, d'une personne seule ou d'un couple), et la fiche ne chiffre
+      aucune garantie.
+      Si la page compte ce coût brut de l'ASPA et de l'ASV que la garantie
+      remplace, la source ne le dit pas : question au propriétaire.
+    confronte_par:
+      - test_la_garantie_de_la_page_sert_quatre_fois_les_allocataires_et_coute_trois_fois_leurs_allocations
   "28":
     titre: "Le profil des allocataires du minimum vieillesse"
     page: 231

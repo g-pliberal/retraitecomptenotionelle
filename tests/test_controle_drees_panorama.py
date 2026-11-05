@@ -847,6 +847,182 @@ def test_la_grille_fait_partir_ses_fonctionnaires_trop_tard(grille, temoin):
         "valeurs"]["15_graphique_5"]["1950"]["femmes"]["valeur"]
 
 
+# --- Fiche 16 : la diversité des âges de départ ------------------------------
+
+
+def _nombre(noeud) -> float:
+    """La valeur d'une cellule du témoin. Quelques cellules du classeur de la
+    fiche 16 sont du texte à virgule (« 60,0 », « 62,0 »), que le témoin garde
+    telles quelles, au bit près : le test les lit en nombres."""
+    valeur = noeud["valeur"]
+    return float(valeur.replace(",", ".")) if isinstance(valeur, str) else float(valeur)
+
+
+def _part(lot: list, garder) -> float:
+    """La part des têtes du lot qui passent ``garder``, en %."""
+    return 100 * sum(c.tetes for c in lot if garder(c)) / sum(c.tetes for c in lot)
+
+
+def test_la_grille_fait_partir_ses_nes_en_1953_a_trop_peu_d_ages_et_trop_tard(grille, temoin):
+    """Tableau 1 de la fiche 16 (EIR 2020, « Âge atteint à la première
+    liquidation d'une pension de base », retraités nés en 1953 résidant en
+    France) : les femmes partent à 61,6 ans en moyenne, les hommes à 60,8,
+    les deux sexes et les résidents à l'étranger compris à 61,3 ; avant 60
+    ans, 11 % des femmes (2 + 3 + 6) et 22 % des hommes (3 + 5 + 14) ; à 61
+    ans, 45 % des femmes ; à 66 ans ou plus, 14 % des femmes (13 + 1) et 8 %
+    des hommes (7 + 1).
+
+    ÉCART DÉCLARÉ, mesuré le 5 novembre 2026. Les cas types de la grille nés
+    en 1953, pesés de leurs têtes de 2024, ne laissent à leurs femmes qu'un
+    cas type, la carrière interrompue, qui part à 61 ans : 100 % à 61 ans,
+    moyenne de 61,0, 0,6 an de moins que la publiée. Leurs hommes partent à
+    61,93 ans, 1,13 an de plus que les 60,8 publiés, et l'ensemble à 61,83
+    ans, 0,53 an de plus que les 61,3 : la grille fait partir ses carrières
+    plus tard parce qu'elle ne les fait presque pas partir avant 60 ans, 5,5
+    % des hommes (le militaire 1,66 %, l'agent de la SNCF 1,40 %, celui des
+    IEG 1,46 % et le fonctionnaire super-actif 1,02 % : 5,54 %) quand l'EIR
+    en compte 22 %, et presque pas après 65 ans : le seul libéral, à 66 ans,
+    2,48 % des hommes, quand l'EIR en compte 8 %. Les bornes sont celles de la mesure, à quelques
+    centièmes d'an près : les valeurs publiées sont arrondies à 0,1 an et
+    à l'entier de point, la grille compte des âges entiers."""
+    cas_types = {cas.code: cas for cas in GRILLE_DU_COUT}
+    nes = _nes_en(grille, 1953)
+    femmes = [c for c in nes if cas_types[c.code].sexe == "F"]
+    hommes = [c for c in nes if cas_types[c.code].sexe == "H"]
+    publie = temoin["valeurs"]["16_tableau_1"]
+
+    def age(c) -> int:
+        return c.age_liquidation
+
+    def somme(colonne: str, *lignes: str) -> float:
+        return sum(publie[colonne][ligne]["valeur"] for ligne in lignes)
+
+    assert len({c.code for c in femmes}) == 1
+    assert _part(femmes, lambda c: age(c) == 61) == 100.0
+    assert _moyenne_des_tetes(femmes, age) < publie["femmes_en_france"]["age_moyen"]["valeur"]
+    assert publie["femmes_en_france"]["61_ans"]["valeur"] < 50
+    ecart_hommes = _moyenne_des_tetes(hommes, age) - publie["hommes_en_france"]["age_moyen"]["valeur"]
+    assert 1.0 < ecart_hommes < 1.3
+    ecart = _moyenne_des_tetes(nes, age) - publie["ensemble"]["age_moyen"]["valeur"]
+    assert 0.4 < ecart < 0.7
+
+    avant_60 = ("moins_de_55", "55_ans", "56_59")
+    assert somme("femmes_en_france", *avant_60) == 11 and somme("hommes_en_france", *avant_60) == 22
+    assert _part(femmes, lambda c: age(c) < 60) == 0.0
+    assert _part(hommes, lambda c: age(c) < 60) < somme("hommes_en_france", *avant_60) / 3
+
+    apres_65 = ("66_ans", "67_ou_plus")
+    assert somme("femmes_en_france", *apres_65) == 14 and somme("hommes_en_france", *apres_65) == 8
+    assert _part(femmes, lambda c: age(c) >= 66) == 0.0
+    assert _part(hommes, lambda c: age(c) >= 66) < somme("hommes_en_france", *apres_65) / 2
+
+
+def test_la_grille_part_a_l_age_des_agents_apres_neutralisation_et_non_a_celui_de_la_fonction_publique(
+        grille, temoin):
+    """Tableau 2 de la fiche 16 (EIR 2020, nés en 1953 résidant en France) :
+    l'âge moyen de liquidation dans le régime principal est de 62,0 ans au
+    régime général, 60,0 aux fonctionnaires civils de l'État, 59,8 à la
+    CNRACL, 61,4 tous régimes ; « après neutralisation des départs avant
+    l'AOD », qui fixe à l'âge d'ouverture des droits (61 ans et 2 mois pour
+    cette génération) les âges inférieurs, 62,3, 62,2, 62,0 et 62,3.
+
+    ÉCART DÉCLARÉ, mesuré le 5 novembre 2026. Les cas types de la grille nés
+    en 1953 partent, au régime général, à 62,31 ans (0,31 de plus), à la
+    CNRACL à 62,29 (2,49 de plus) et à l'État civil à 61,97 (1,97 de plus),
+    à 61,83 tous régimes (0,43 de plus). Neutralisés comme la DREES les
+    neutralise — chaque âge inférieur à 61 ans et 2 mois fixé à 61,17, qui est
+    l'âge d'ouverture que le dépôt donne aux nés en 1953 —, ils partent à
+    62,55 (0,25 de plus), 62,57 (0,57) et 62,61 (0,41), 62,52 tous régimes
+    (0,22). Le fonctionnaire de la grille part donc à l'âge de ses collègues
+    sédentaires, 63 ans, ou, actif, à 60 ans quand sa catégorie pouvait partir
+    à 55 : la grille ne compte pas les départs que la fonction publique
+    publie avant l'AOD, 8,1 % + 12,8 % + 13,3 % des fonctionnaires civils
+    avant 60 ans (tableau 2, colonnes « moins de 55 », « 55 » et « 56-59 »)."""
+    from retraite_notionnelle.controle_ancetre import REGIME_PRINCIPAL
+    from retraite_notionnelle.scenarios.actuel import AgesOuverture
+
+    cas_types = {cas.code: cas for cas in GRILLE_DU_COUT}
+    nes = _nes_en(grille, 1953)
+    ouverture = AgesOuverture(Parametres().racine_donnees).age(1953)[0]
+    assert ouverture == pytest.approx(61 + 2 / 12)
+    assert any("61 ans et 2 mois pour la génération née en 1953" in phrase
+               for phrase in temoin["citations"]["16_tableau_2"]["textes"])
+
+    def brut(c) -> float:
+        return c.age_liquidation
+
+    def neutralise(c) -> float:
+        return max(c.age_liquidation, ouverture)
+
+    publie = temoin["valeurs"]["16_tableau_2"]
+    regimes = {"regime_general": "regime_general", "fpe_civils": "fpe_civils", "cnracl": "cnracl"}
+    ecarts = {}
+    for cle, regime in regimes.items():
+        lot = [c for c in nes if REGIME_PRINCIPAL[cas_types[c.code].caisses[0]] == regime]
+        ecarts[cle] = (
+            _moyenne_des_tetes(lot, brut) - _nombre(publie[cle]["age_moyen"]),
+            _moyenne_des_tetes(lot, neutralise) - _nombre(publie[cle]["apres_neutralisation"]))
+    ensemble = (_moyenne_des_tetes(nes, brut) - _nombre(publie["ensemble"]["age_moyen"]),
+                _moyenne_des_tetes(nes, neutralise)
+                - _nombre(publie["ensemble"]["apres_neutralisation"]))
+    # Au régime général, la grille part un peu plus tard ; neutralisée, un peu plus tard encore.
+    assert 0.2 < ecarts["regime_general"][0] < 0.45 and 0.1 < ecarts["regime_general"][1] < 0.4
+    # Aux deux fonctions publiques, l'écart brut est de deux ans ; neutralisé, il tombe sous
+    # une demi-année et un peu plus.
+    for cle in ("fpe_civils", "cnracl"):
+        assert ecarts[cle][0] > 1.5, cle
+        assert 0.0 < ecarts[cle][1] < 0.7, cle
+    assert 0.3 < ensemble[0] < 0.6 and 0.1 < ensemble[1] < 0.35
+    # Ce que la grille ne compte pas : les départs de la fonction publique avant 60 ans.
+    avant_60 = sum(_nombre(publie["fpe_civils"][cle]) for cle in ("moins_de_55", "55_ans", "56_59"))
+    assert avant_60 == pytest.approx(8.1 + 12.8 + 13.3)
+    fpe = [c for c in nes if REGIME_PRINCIPAL[cas_types[c.code].caisses[0]] == "fpe_civils"]
+    assert {c.code for c in fpe if c.age_liquidation < 60} == {"fonctionnaire_sedentaire~super_actif"}
+    assert _part(fpe, lambda c: c.age_liquidation < 60) < avant_60 / 2
+
+
+def test_la_grille_ne_fait_partir_personne_apres_67_ans_quand_l_eir_et_le_panorama_en_comptent(
+        grille, temoin):
+    """Encadré 2 de la fiche 16 : le panorama compte les départs après 67 ans,
+    que l'EIR 2020 ne voit pas (il observe les nés en 1953 à 67 ans) ; sur les
+    générations 1950 et 1946, « les départs à la retraite entre 68 et 70 ans
+    représentent environ 1 % des départs, et ceux qui ont lieu entre 71 et 74
+    ans environ 0,2 % » ; chez les professions libérales, 11 % de départs
+    entre 67 et 70 ans. Au tableau 1, 1 % des femmes et 1 % des hommes nés en
+    1953 partent à 67 ans ou plus ; au tableau 2, 3,7 % des professions
+    libérales.
+
+    ÉCART DÉCLARÉ, mesuré le 5 novembre 2026. Les cas types de la grille nés
+    en 1946 et 1950 partent tous à 65 ans ou avant (le plus tardif, le
+    libéral, à 65 ans) : 0 % à 68 ans ou plus, pour environ 1 +
+    0,2 = 1,2 %. Nés en 1953, aucun à 67 ans ou plus (le libéral part à 66
+    ans). La population de l'étape 14 de l'action 138 ne fait pas mieux : 0 %
+    à 68 ans ou plus des générations 1950 à 1960 (mesure du 5 novembre 2026,
+    ``docs/mesures/138/2026-11-05-etape-14-departs-tardifs.txt``, non rejouée :
+    elle demande la simulation de toute la population). Le panorama donne un
+    ordre de grandeur, « environ », les deux sexes ensemble, et ne dit ni qui
+    part, ni à quel âge à l'intérieur de ses tranches : aucune règle ne s'en
+    tire, et rien ne se corrige."""
+    encadre = " ".join(" ".join(temoin["citations"]["16_encadre_2"]["textes"]).split())
+    assert "entre 68 et 70 ans représentent environ 1 % des départs" in encadre
+    assert "entre 71 et 74 ans environ 0,2 %" in encadre
+    assert "professions libérales (11 % de départs entre 67 et 70 ans)" in encadre
+    publie = 1.0 + 0.2
+    for annee in (1946, 1950):
+        nes = _nes_en(grille, annee)
+        assert max(c.age_liquidation for c in nes) == 65, annee
+        assert _part(nes, lambda c: c.age_liquidation >= 68) == 0.0 < publie, annee
+    liberaux = [c for c in _nes_en(grille, 1950) if c.code == "profession_liberale"]
+    assert liberaux and all(c.age_liquidation < 67 for c in liberaux)
+    nes_1953 = _nes_en(grille, 1953)
+    assert max(c.age_liquidation for c in nes_1953) == 66
+    publie_1953 = temoin["valeurs"]["16_tableau_1"]
+    assert publie_1953["femmes_en_france"]["67_ou_plus"]["valeur"] == 1
+    assert publie_1953["hommes_en_france"]["67_ou_plus"]["valeur"] == 1
+    assert _part(nes_1953, lambda c: c.age_liquidation >= 67) == 0.0
+    assert temoin["valeurs"]["16_tableau_2"]["professions_liberales"]["67_ou_plus"]["valeur"] == 3.7
+
+
 # --- Fiche 18 : les départs anticipés ----------------------------------------
 
 
@@ -1002,6 +1178,60 @@ def test_la_grille_passe_de_l_emploi_a_la_retraite_sans_chomage(grille, temoin):
     assert trajectoires["une_periode_intercalee"]["ensemble"]["valeur"] > 0
     assert max(c.age_liquidation for c in nes) <= 67
     assert trajectoires["sans_depart_a_67_ans"]["ensemble"]["valeur"] > 0
+
+
+# --- Fiche 27 : les allocataires du minimum vieillesse et leurs allocations --
+
+
+def test_la_garantie_de_la_page_sert_quatre_fois_les_allocataires_et_coute_trois_fois_leurs_allocations(
+        temoin):
+    """Fiche 27 (tableau 1, graphique 1, texte) : fin 2024, 754 460 personnes
+    perçoivent l'ASV ou l'Aspa (101 990 + 652 470), soit 754 000 au graphique
+    1 ; en moyenne 466 euros mensuels d'ASV et 527 d'Aspa ; les dépenses d'ASV
+    et d'Aspa atteignent 4,6 milliards d'euros, 4,8 avec les allocations de
+    premier étage.
+
+    ÉCART DÉCLARÉ, mesuré le 5 novembre 2026. La page Coût chiffre, en 2024,
+    la garantie vieillesse du scénario 6, qui « remplace l'ASPA » et que
+    ``garantie.py`` dit coûter « aujourd'hui » : 2,80 millions de bénéficiaires
+    (5,60 millions d'ayants droit, un recours de 50 %) et 14,3 milliards
+    d'euros de 2026. C'est 2 800 133 / 754 460 = 3,71 fois les allocataires, et
+    14,3 / 4,6 = 3,11 fois les dépenses (3,08 à 3,14 selon l'arrondi de la
+    publiée) ; le complément moyen, 14 307 M€ / 2 800 133 / 12 = 426 euros par
+    mois, est au-dessous de celui de l'Aspa, 527. Ce n'est pas un écart du
+    modèle à corriger : la garantie n'est pas l'Aspa — 800 euros par personne
+    et 250 de plus à qui vit seul, sur la seule pension, quand l'Aspa a son
+    plafond, d'une personne seule ou d'un couple —, et la fiche ne chiffre
+    aucune garantie. C'est un ordre de grandeur que la source tranche : l'Aspa et
+    l'ASV servent aujourd'hui 4,6 milliards, et la garantie, trois fois cela
+    (euros de 2026 d'un côté, courants de 2024 de l'autre : trois pour cent
+    d'écart de prix au plus, sans effet sur le rang). Si la page compte ce
+    chiffre brut de l'ASPA et de l'ASV qu'elle remplace, la source ne le dit
+    pas ; la question est au propriétaire (note de l'étape 5)."""
+    import mesures_prose
+
+    tableau = temoin["valeurs"]["27_tableau_1"]
+    allocataires = tableau["asv_et_aspa"]["valeur"]
+    assert allocataires == 754_460
+    assert tableau["asv"]["valeur"] + tableau["aspa"]["valeur"] == allocataires
+    assert abs(temoin["valeurs"]["27_graphique_1"]["2024"]["allocataires_milliers"]["valeur"]
+               * 1000 - allocataires) <= 500
+
+    texte = " ".join(" ".join(temoin["citations"]["27_texte"]["textes"]).split())
+    assert "754 460 personnes perçoivent" in texte
+    depenses = float(re.search(r"atteignent (\d+,\d) milliards d’euros", texte).group(1).replace(
+        ",", ".")) * 1e9
+    moyenne_aspa = int(re.search(r"(\d+) euros d’Aspa", texte).group(1))
+    assert (depenses, moyenne_aspa) == (4.6e9, 527)
+
+    beneficiaires = mesures_prose.mesurer("garantie?annee=2024&quoi=beneficiaires") * 1e6
+    ayants_droit = mesures_prose.mesurer("garantie?annee=2024&quoi=ayants_droit") * 1e6
+    cout = mesures_prose.mesurer("cout_annee?scenario=garantie&annee=2024") * 1e9
+    assert ayants_droit * Parametres().taux_recours_garantie == pytest.approx(beneficiaires)
+    assert 3.5 < beneficiaires / allocataires < 3.9
+    assert 2.9 < cout / depenses < 3.3
+    assert 400 < cout / beneficiaires / 12 < 450
+    assert cout / beneficiaires / 12 < moyenne_aspa
 
 
 # --- Fiche 28 : le recours au minimum vieillesse -----------------------------
@@ -1634,5 +1864,21 @@ def test_chaque_fiche_de_l_etape_5_nomme_ses_confrontations():
     for numero, ligne in etape_5.items():
         assert ligne["statut"] == "confronte", numero
         assert len(" ".join(str(ligne["confrontation"]).split())) > 40, numero
+        for nom in ligne["confronte_par"]:
+            assert nom.startswith("test_") and callable(getattr(module, nom, None)), (numero, nom)
+
+
+def test_les_fiches_16_et_27_nomment_leurs_confrontations():
+    """Au suivi, les fiches 16 (tableaux 1 et 2, encadré 2) et 27 (tableau 1,
+    graphique 1, dépenses) sont confrontées au dépôt, et nomment les tests de
+    ce module qui les confrontent ; chacun existe. Les compléments de leurs
+    classeurs restent pour la clôture (étape 7)."""
+    suivi = yaml.safe_load(SUIVI.read_text(encoding="utf-8"))["fiches"]
+    module = sys.modules[__name__]
+    for numero in ("16", "27"):
+        ligne = suivi[numero]
+        assert ligne["statut"] == "confronte", numero
+        assert len(" ".join(str(ligne["confrontation"]).split())) > 40, numero
+        assert ligne["confronte_par"], numero
         for nom in ligne["confronte_par"]:
             assert nom.startswith("test_") and callable(getattr(module, nom, None)), (numero, nom)
