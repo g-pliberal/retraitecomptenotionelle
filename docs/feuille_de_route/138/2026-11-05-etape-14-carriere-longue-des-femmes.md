@@ -4,12 +4,12 @@
 rang, ASPA, invalides, décote entre les deux âges et des résidents, surcote des statutaires, limites) ; le pilote des carrières inactives ; au
 modèle, la descente, le militaire au mois ; le 3 novembre, le taux plein des femmes entre les deux âges, les agents décotés, la surcote du
 salariat, sa mesure au dépôt, les écarts de R-I-bis, la décote d'après 1960, relue par R-I-ter, retouchée le 5. Le 5 aussi : la durée des femmes,
-le calage tient ; la carrière longue des femmes de 1953, la cause est dans la population ; les inaptes, trente-huitième version, trois sur dix
-attendent après l'âge de leur taux plein, comme les nés en 1953 de l'EIR. Reste, une session par point : les artisans (une source), les
-saisonniers agricoles ; les femmes âgées ; les départs après 67 ans ; le taux plein par l'âge. Au propriétaire : 152, 157, le CASD, l'incitation,
-le militaire, la sonde au mois, le recours de la page, les hommes entre les deux âges, la surcote d'après 1953, la décote d'après 1960, la carrière
-complète, le juge de 1955, les natures des carrières de trente à quarante ans, la carrière longue des fonctionnaires de 1953. Détail :
-`…-calage-de-la-duree-des-femmes.md`, `…-carriere-longue-des-femmes.md`, `…-inaptes.md`.
+le calage tient ; la carrière longue des femmes de 1953, la cause est dans la population ; les inaptes, trente-huitième version ; le taux plein
+par l'âge, mesuré, rien ne change (l'EIR à un demi-point près, sauf les hommes de 1953, 4,5 % pour 5,8). Reste, une session par point : les
+artisans (une source), les saisonniers agricoles ; les femmes âgées ; les départs après 67 ans, avec ceux d'après l'âge du taux plein. Au
+propriétaire : 152, 157, le CASD, l'incitation, le militaire, la sonde au mois, le recours de la page, les hommes entre les deux âges, la surcote
+d'après 1953, la décote d'après 1960, la carrière complète, le juge de 1955, les natures des carrières de trente à quarante ans, la carrière longue
+des fonctionnaires de 1953. Détail : `…-carriere-longue-des-femmes.md`, `…-inaptes.md`, `…-taux-plein-par-l-age.md`.
 
 **Le 5 novembre 2026 : les femmes nées en 1953 de la population partent en
 carrière longue pour 6,6 % de leurs départs, quand l'EIR de 2020 en compte

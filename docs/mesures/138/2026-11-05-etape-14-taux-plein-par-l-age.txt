@@ -1,0 +1,254 @@
+Dépôt : commit 85599c69b5c1216c4e6ffb6234062c9009db4fb0, arbre 8e68e64fbebe1ed8a32cad58ab163aad90bc813d.
+Action 138, étape 14 : le taux plein par l'âge, la population contre l'EIR
+(docs/feuille_de_route/138/2026-11-05-etape-14-taux-plein-par-l-age.md).
+Toutes les variantes de la population, cinq générations, les deux sexes,
+simulées au portage ; quatre processus, un cœur chacun, 158 à 294 s.
+Puis les cellules des deux classeurs de l'EIR, lues par un lecteur écrit pour
+l'occasion sur scripts/fetch/lecture_xlsx.py.
+
+Les scripts, lancés depuis la racine du dépôt :
+    python pilote_age.py 1950 2016
+    python pilote_age.py 1953 2020
+    python pilote_age.py 1955 2022
+    python pilote_age.py 1960 2027 1965 2032
+    python -I lire_eir.py <classeur> <feuille> <lignes>
+
+----- pilote_age.py -----
+"""Les départs au taux plein par l'âge de la population, génération par génération.
+
+    python pilote_age.py 1953 2020 [1955 2022 ...]
+
+Chaque couple : une génération, simulée au portage, et l'année dont elle prend
+les poids de retraités (``grille_large.poids_retraites``), multipliés par la
+part que la génération donne à chaque variante (``part_de_la_generation``).
+Tous les départs, sans restriction d'âge ni recalage de la page. Pour chaque
+sexe : la part des départs au taux plein par l'âge (``condition_au_depart``),
+hors des jumelles inaptes, et leur âge ; la part des départs à l'âge
+d'annulation de la décote et après lui, et la part du taux plein par l'âge
+dans chacune ; les variantes qui y partent, par groupe et tranche."""
+import collections, subprocess, sys, time
+sys.path.insert(0, "scripts")
+import grille_large as G
+from retraite_notionnelle.config import Parametres
+from retraite_notionnelle.simulateur import Simulateur
+from retraite_notionnelle.scenarios.actuel import AgesAnnulationDecote, AgesOuverture
+
+t0 = time.time()
+print("commit", subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip())
+p = Parametres(); racine = p.racine_donnees
+effectifs = Simulateur(p).effectifs
+variantes = G.grille("population", effectifs, G.eir(racine), ())
+print(f"population : {len(variantes)} variantes ; {time.time()-t0:.0f} s")
+simulateur = Simulateur(p).pour_la_projection()
+args = [int(a) for a in sys.argv[1:]]
+for gen, annee in zip(args[::2], args[1::2]):
+    poids = G.poids_retraites(variantes, effectifs, annee)
+    tous = [(v, w * v.part_de_la_generation(gen)) for v, w in zip(variantes, poids) if w > 0]
+    tous = [(v, w) for v, w in tous if w > 0]
+    lectures = [G._lectures_de_la_condition(v.cas, gen) for v, _ in tous]
+    departs = G.Departs(simulateur, [a for ages, _ in lectures for a in ages],
+                        [d for _, siens in lectures for d in siens], du_jour=True)
+    legal = AgesOuverture(racine).age(gen)[0]; annulation = AgesAnnulationDecote(racine).age(gen)[0]
+    print(f"\n== génération {gen}, poids de {annee} ; âge légal {legal:.2f}, d'annulation {annulation:.2f}")
+    for sexe in ("F", "H"):
+        total = tpa = somme_ages = 0.0
+        places, conditions_aux_places = collections.Counter(), collections.Counter()
+        ages, ages_exacts, qui = collections.Counter(), collections.Counter(), collections.Counter()
+        inaptes_tpa = 0.0
+        for v, w in tous:
+            if v.cas.sexe != sexe:
+                continue
+            try:
+                age, condition = G.condition_au_depart(simulateur, v.cas, gen, departs)
+            except (ValueError, KeyError):
+                continue
+            total += w
+            place = G.position_du_depart(age, legal, annulation)
+            places[place] += w
+            conditions_aux_places[(place, condition + (" (inapte)" if v.inapte else ""))] += w
+            if condition != "taux_plein_age":
+                continue
+            if v.inapte:
+                inaptes_tpa += w
+                continue
+            tpa += w; somme_ages += w * age
+            ages[G.age_du_depart(age)] += w
+            ages_exacts[round(age, 2)] += w
+            qui[f"{v.groupe} {v.tranche}"] += w
+        print(f"  {sexe} : taux plein par l'âge, hors jumelles inaptes, {100 * tpa / total:.2f} % des départs ;"
+              f" âge moyen {somme_ages / tpa if tpa else float('nan'):.2f} ; jumelles inaptes au taux plein par l'âge {100 * inaptes_tpa / total:.2f} %")
+        print("    places : " + " ; ".join(f"{k} {100 * w / total:.2f}" for k, w in sorted(places.items())))
+        for (place, condition), w in sorted(conditions_aux_places.items()):
+            if place in ("age_annulation", "apres_annulation"):
+                print(f"    à la place {place}, {condition} : {100 * w / total:.2f} % des départs, {100 * w / places[place]:.1f} % de la place")
+        for nom, compte in (("âge révolu", ages), ("âge exact", ages_exacts), ("qui", qui)):
+            print(f"    {nom} : " + " ; ".join(f"{k} {100 * w / tpa:.1f}" for k, w in sorted(compte.items()) if 100 * w / tpa >= 0.05))
+    sys.stdout.flush()
+print(f"\ndurée : {time.time()-t0:.0f} s")
+----- lire_eir.py -----
+"""Imprime des lignes de feuilles d'un classeur, cellule par cellule : python -I lire_eir.py <xlsx> <feuille> <ligne,ligne,...>"""
+import sys
+sys.path.insert(0, "/home/user/retraitecomptenotionelle/scripts/fetch")
+import lecture_xlsx as L
+chemin, feuille, lignes = sys.argv[1], sys.argv[2], [int(x) for x in sys.argv[3].split(",")]
+donnees = open(chemin, "rb").read()
+if feuille == "?":
+    print(L.noms_des_feuilles(donnees)); sys.exit()
+g = L.feuilles(donnees, (feuille,))[feuille]
+def lettre(c):
+    s = ""; c += 1
+    while c: c, r = divmod(c - 1, 26); s = chr(65 + r) + s
+    return s
+for n in lignes:
+    r = n - 1
+    cells = sorted((c, v) for (rr, c), v in g.items() if rr == r)
+    print(n, " | ".join(f"{lettre(c)}{n}={v!r}" for c, v in cells))
+----- sortie, python pilote_age.py 1950 2016 -----
+commit 85599c69b5c1216c4e6ffb6234062c9009db4fb0
+population : 20648 variantes ; 22 s
+
+== génération 1950, poids de 2016 ; âge légal 60.00, d'annulation 65.00
+  F : taux plein par l'âge, hors jumelles inaptes, 15.15 % des départs ; âge moyen 65.00 ; jumelles inaptes au taux plein par l'âge 0.00 %
+    places : age_annulation 16.48 ; age_legal 52.67 ; apres_annulation 1.20 ; avant_age_legal 7.53 ; entre 22.12
+    à la place age_annulation, taux_plein_age : 15.15 % des départs, 91.9 % de la place
+    à la place age_annulation, taux_plein_autre : 1.33 % des départs, 8.1 % de la place
+    à la place apres_annulation, surcote : 1.20 % des départs, 100.0 % de la place
+    âge révolu : 65 100.0
+    âge exact : 65.0 100.0
+    qui : msa_non_salaries 10_20 1.4 ; msa_non_salaries 20_30 1.6 ; msa_non_salaries moins_10 1.0 ; professions_liberales 10_20 0.3 ; professions_liberales 20_30 0.3 ; professions_liberales 30_40 0.1 ; professions_liberales moins_10 0.2 ; regime_general 10_20 31.9 ; regime_general 20_30 38.3 ; regime_general 30_40 2.2 ; regime_general 40_plus 0.6 ; regime_general moins_10 22.2
+  H : taux plein par l'âge, hors jumelles inaptes, 7.30 % des départs ; âge moyen 65.00 ; jumelles inaptes au taux plein par l'âge 0.00 %
+    places : age_annulation 8.01 ; age_legal 29.12 ; apres_annulation 1.69 ; avant_age_legal 26.42 ; entre 34.76
+    à la place age_annulation, taux_plein_age : 7.30 % des départs, 91.2 % de la place
+    à la place age_annulation, taux_plein_autre : 0.70 % des départs, 8.8 % de la place
+    à la place apres_annulation, surcote : 1.69 % des départs, 100.0 % de la place
+    âge révolu : 65 100.0
+    âge exact : 65.0 100.0
+    qui : msa_non_salaries 10_20 0.5 ; msa_non_salaries 30_40 2.8 ; msa_non_salaries moins_10 0.2 ; professions_liberales 10_20 0.2 ; professions_liberales 30_40 1.3 ; professions_liberales 40_plus 14.0 ; professions_liberales moins_10 0.1 ; regime_general 10_20 10.8 ; regime_general 20_30 0.6 ; regime_general 30_40 64.3 ; regime_general 40_plus 0.8 ; regime_general moins_10 4.3
+
+durée : 158 s
+----- sortie, python pilote_age.py 1953 2020 -----
+commit 85599c69b5c1216c4e6ffb6234062c9009db4fb0
+population : 20648 variantes ; 22 s
+
+== génération 1953, poids de 2020 ; âge légal 61.17, d'annulation 66.17
+  F : taux plein par l'âge, hors jumelles inaptes, 11.10 % des départs ; âge moyen 66.17 ; jumelles inaptes au taux plein par l'âge 0.00 %
+    places : age_annulation 12.25 ; age_legal 58.58 ; avant_age_legal 11.49 ; entre 17.69
+    à la place age_annulation, taux_plein_age : 11.10 % des départs, 90.6 % de la place
+    à la place age_annulation, taux_plein_autre : 1.15 % des départs, 9.4 % de la place
+    âge révolu : 66 100.0
+    âge exact : 66.17 100.0
+    qui : msa_non_salaries 10_20 1.1 ; msa_non_salaries 20_30 1.3 ; msa_non_salaries moins_10 0.8 ; professions_liberales 10_20 0.3 ; professions_liberales 20_30 0.3 ; professions_liberales 30_40 0.1 ; professions_liberales moins_10 0.2 ; regime_general 10_20 31.4 ; regime_general 20_30 37.6 ; regime_general 30_40 4.4 ; regime_general 40_plus 0.9 ; regime_general moins_10 21.8
+  H : taux plein par l'âge, hors jumelles inaptes, 4.47 % des départs ; âge moyen 66.17 ; jumelles inaptes au taux plein par l'âge 0.00 %
+    places : age_annulation 4.99 ; age_legal 29.83 ; avant_age_legal 36.49 ; entre 28.69
+    à la place age_annulation, taux_plein_age : 4.47 % des départs, 89.6 % de la place
+    à la place age_annulation, taux_plein_autre : 0.52 % des départs, 10.4 % de la place
+    âge révolu : 66 100.0
+    âge exact : 66.17 100.0
+    qui : msa_non_salaries 10_20 0.3 ; msa_non_salaries 30_40 2.1 ; msa_non_salaries moins_10 0.1 ; professions_liberales 10_20 0.2 ; professions_liberales 30_40 1.1 ; professions_liberales 40_plus 22.4 ; professions_liberales moins_10 0.1 ; regime_general 10_20 9.5 ; regime_general 20_30 0.6 ; regime_general 30_40 58.3 ; regime_general 40_plus 1.4 ; regime_general moins_10 3.8
+
+durée : 163 s
+----- sortie, python pilote_age.py 1955 2022 -----
+commit 85599c69b5c1216c4e6ffb6234062c9009db4fb0
+population : 20648 variantes ; 22 s
+
+== génération 1955, poids de 2022 ; âge légal 62.00, d'annulation 67.00
+  F : taux plein par l'âge, hors jumelles inaptes, 6.90 % des départs ; âge moyen 67.00 ; jumelles inaptes au taux plein par l'âge 0.00 %
+    places : age_annulation 7.33 ; age_legal 48.78 ; apres_annulation 1.66 ; avant_age_legal 17.06 ; entre 25.17
+    à la place age_annulation, taux_plein_age : 6.90 % des départs, 94.1 % de la place
+    à la place age_annulation, taux_plein_autre : 0.43 % des départs, 5.9 % de la place
+    à la place apres_annulation, surcote : 1.66 % des départs, 100.0 % de la place
+    âge révolu : 67_plus 100.0
+    âge exact : 67.0 100.0
+    qui : msa_non_salaries 10_20 1.5 ; msa_non_salaries 20_30 0.2 ; msa_non_salaries moins_10 1.1 ; professions_liberales 10_20 0.4 ; professions_liberales 30_40 0.1 ; professions_liberales moins_10 0.3 ; regime_general 10_20 48.1 ; regime_general 20_30 7.6 ; regime_general 30_40 6.0 ; regime_general 40_plus 1.3 ; regime_general moins_10 33.4
+  H : taux plein par l'âge, hors jumelles inaptes, 3.01 % des départs ; âge moyen 67.00 ; jumelles inaptes au taux plein par l'âge 0.00 %
+    places : age_annulation 3.49 ; age_legal 22.09 ; apres_annulation 2.07 ; avant_age_legal 39.82 ; entre 32.53
+    à la place age_annulation, taux_plein_age : 3.01 % des départs, 86.3 % de la place
+    à la place age_annulation, taux_plein_autre : 0.48 % des départs, 13.7 % de la place
+    à la place apres_annulation, surcote : 2.07 % des départs, 100.0 % de la place
+    âge révolu : 67_plus 100.0
+    âge exact : 67.0 100.0
+    qui : msa_non_salaries 10_20 0.3 ; msa_non_salaries 30_40 1.5 ; msa_non_salaries moins_10 0.1 ; professions_liberales 10_20 0.2 ; professions_liberales 30_40 1.0 ; professions_liberales 40_plus 35.4 ; professions_liberales moins_10 0.1 ; regime_general 10_20 8.0 ; regime_general 20_30 0.5 ; regime_general 30_40 47.6 ; regime_general 40_plus 2.1 ; regime_general moins_10 3.2
+
+durée : 171 s
+----- sortie, python pilote_age.py 1960 2027 1965 2032 -----
+commit 85599c69b5c1216c4e6ffb6234062c9009db4fb0
+population : 20648 variantes ; 22 s
+
+== génération 1960, poids de 2027 ; âge légal 62.00, d'annulation 67.00
+  F : taux plein par l'âge, hors jumelles inaptes, 6.38 % des départs ; âge moyen 67.00 ; jumelles inaptes au taux plein par l'âge 0.00 %
+    places : age_annulation 6.73 ; age_legal 48.97 ; apres_annulation 1.38 ; avant_age_legal 17.25 ; entre 25.67
+    à la place age_annulation, taux_plein_age : 6.38 % des départs, 94.8 % de la place
+    à la place age_annulation, taux_plein_autre : 0.35 % des départs, 5.2 % de la place
+    à la place apres_annulation, surcote : 1.38 % des départs, 100.0 % de la place
+    âge révolu : 67_plus 100.0
+    âge exact : 67.0 100.0
+    qui : msa_non_salaries 10_20 1.3 ; msa_non_salaries 20_30 0.1 ; msa_non_salaries moins_10 0.9 ; professions_liberales 10_20 0.5 ; professions_liberales 20_30 0.1 ; professions_liberales 30_40 0.1 ; professions_liberales moins_10 0.3 ; regime_general 10_20 48.4 ; regime_general 20_30 6.7 ; regime_general 30_40 6.6 ; regime_general 40_plus 1.4 ; regime_general moins_10 33.6
+  H : taux plein par l'âge, hors jumelles inaptes, 1.95 % des départs ; âge moyen 67.00 ; jumelles inaptes au taux plein par l'âge 0.00 %
+    places : age_annulation 2.40 ; age_legal 28.89 ; apres_annulation 1.86 ; avant_age_legal 32.94 ; entre 33.92
+    à la place age_annulation, taux_plein_age : 1.95 % des départs, 81.5 % de la place
+    à la place age_annulation, taux_plein_autre : 0.44 % des départs, 18.5 % de la place
+    à la place apres_annulation, surcote : 1.86 % des départs, 100.0 % de la place
+    âge révolu : 67_plus 100.0
+    âge exact : 67.0 100.0
+    qui : msa_non_salaries 10_20 0.1 ; msa_non_salaries 30_40 0.7 ; professions_liberales 10_20 0.1 ; professions_liberales 30_40 0.6 ; professions_liberales 40_plus 60.8 ; regime_general 10_20 4.6 ; regime_general 20_30 0.3 ; regime_general 30_40 27.5 ; regime_general 40_plus 3.3 ; regime_general moins_10 1.9
+
+== génération 1965, poids de 2032 ; âge légal 62.75, d'annulation 67.00
+  F : taux plein par l'âge, hors jumelles inaptes, 9.54 % des départs ; âge moyen 67.00 ; jumelles inaptes au taux plein par l'âge 0.00 %
+    places : age_annulation 9.85 ; age_legal 45.08 ; apres_annulation 1.41 ; avant_age_legal 16.52 ; entre 27.14
+    à la place age_annulation, taux_plein_age : 9.54 % des départs, 96.9 % de la place
+    à la place age_annulation, taux_plein_autre : 0.31 % des départs, 3.1 % de la place
+    à la place apres_annulation, surcote : 1.41 % des départs, 100.0 % de la place
+    âge révolu : 67_plus 100.0
+    âge exact : 67.0 100.0
+    qui : msa_non_salaries 10_20 1.1 ; msa_non_salaries 20_30 0.1 ; msa_non_salaries moins_10 0.8 ; professions_liberales 10_20 0.5 ; professions_liberales 20_30 0.1 ; professions_liberales 30_40 0.1 ; professions_liberales moins_10 0.3 ; regime_general 10_20 50.4 ; regime_general 20_30 7.0 ; regime_general 30_40 3.7 ; regime_general 40_plus 1.0 ; regime_general moins_10 35.0
+  H : taux plein par l'âge, hors jumelles inaptes, 6.02 % des départs ; âge moyen 67.00 ; jumelles inaptes au taux plein par l'âge 0.00 %
+    places : age_annulation 6.50 ; age_legal 19.27 ; apres_annulation 1.89 ; avant_age_legal 32.50 ; entre 39.83
+    à la place age_annulation, taux_plein_age : 6.02 % des départs, 92.6 % de la place
+    à la place age_annulation, taux_plein_autre : 0.48 % des départs, 7.4 % de la place
+    à la place apres_annulation, surcote : 1.89 % des départs, 100.0 % de la place
+    âge révolu : 67_plus 100.0
+    âge exact : 67.0 100.0
+    qui : msa_non_salaries 10_20 0.2 ; msa_non_salaries 30_40 1.1 ; msa_non_salaries moins_10 0.1 ; professions_liberales 10_20 0.2 ; professions_liberales 30_40 1.1 ; professions_liberales 40_plus 20.0 ; professions_liberales moins_10 0.1 ; regime_general 10_20 8.1 ; regime_general 20_30 0.5 ; regime_general 30_40 47.9 ; regime_general 40_plus 17.6 ; regime_general moins_10 3.2
+
+durée : 294 s
+----- cellules de l'EIR (colonne B ôtée) -----
+Classeurs pris le 5 novembre 2026 au jeu 3013_donnees-statistiques-sur-les-caracteristiques-des-retraites de la DREES
+(…/attachments/caracteristiques_des_retraites_nes_en_1953_eir_2020_xlsx, par curl ; …_1950_eir_2016_xlsx, par la lecture web, curl coupé).
+== 1953_eir_2020.xlsx, SHA-256 d5e8b8776768e31a3a8a0490bf749fc6615d12a8d25716e57a658dd16f94c5e0, 195574 octets
+-- ÂgeLiq
+1 A1='sexe' | D1="Départ avant l'âge légal d'ouverture des droits à la retraite" | E1="Départ à l'âge légal d'ouverture des droits à la retraite" | F1="Départ entre l'âge légal d'ouverture des droits à la retraite et l'âge d'annulation de la décote" | G1="Départ à l'âge d'annulation de la décote" | H1="Départ après l'âge d'annulation de la décote" | I1='Ensemble'
+6 A6='Femme' | C6="Part parmi l'ensemble des retraités (en %)" | D6=21.7 | E6=37.5 | F6=26.7 | G6=10.8 | H6=3.3 | I6=100.0
+7 A7='Homme' | C7="Part parmi l'ensemble des retraités (en %)" | D7=40.8 | E7=24.4 | F7=26.4 | G7=5.5 | H7=2.8 | I7=100.0
+293 A293='Ensemble' | C293="Part de départ au taux plein par l'âge (en %)" | D293=3.0 | E293=0.0 | F293=0.8 | G293=82.5 | H293=62.9 | I293=9.9
+294 A294='Femme' | C294="Part de départ au taux plein par l'âge (en %)" | D294=1.8 | E294=0.0 | F294=0.9 | G294=86.3 | H294=67.0 | I294=12.2
+295 A295='Homme' | C295="Part de départ au taux plein par l'âge (en %)" | D295=3.7 | E295=0.0 | F295=0.7 | G295=74.5 | H295=57.7 | I295=7.4
+-- ÂgeLiq_Détails
+1 A1='sexe' | D1='Avant 60 ans' | E1='60 ans' | F1='61 ans' | G1='62 ans' | H1='63 ans' | I1='64 ans' | J1='65 ans' | K1='66 ans' | L1='67 ans et plus' | M1='Ensemble'
+6 A6='Femme' | C6="Part parmi l'ensemble des retraités (en %)" | D6=10.2 | E6=9.4 | F6=42.1 | G6=8.9 | H6=5.0 | I6=5.7 | J6=2.9 | K6=14.9 | L6=0.8 | M6=100.0
+7 A7='Homme' | C7="Part parmi l'ensemble des retraités (en %)" | D7=20.2 | E7=17.5 | F7=29.7 | G7=8.2 | H7=5.2 | I7=6.1 | J7=3.1 | K7=9.1 | L7=0.8 | M7=100.0
+293 A293='Ensemble' | C293="Part de départ au taux plein par l'âge (en %)" | D293=5.9 | E293=0.3 | F293=0.1 | G293=0.1 | H293=0.1 | I293=1.0 | J293=2.2 | K293=69.1 | L293=55.8 | M293=9.9
+294 A294='Femme' | C294="Part de départ au taux plein par l'âge (en %)" | D294=3.2 | E294=0.6 | F294=0.1 | G294=0.1 | H294=0.1 | I294=1.0 | J294=2.6 | K294=74.8 | L294=61.1 | M294=12.2
+295 A295='Homme' | C295="Part de départ au taux plein par l'âge (en %)" | D295=7.3 | E295=0.2 | F295=0.0 | G295=0.1 | H295=0.2 | I295=0.9 | J295=1.8 | K295=59.1 | L295=49.8 | M295=7.4
+-- CondLiquidation
+1 A1='sexe' | D1='Carrière longue' | E1='Décote' | F1='Décote non applicable' | G1='Surcote' | H1='Taux plein invalidité' | I1='Taux plein inaptitude' | J1='Taux plein autres motifs' | K1='Taux plein par âge' | L1='Taux plein par la durée (hors surcote et RACL)' | M1='Ensemble'
+6 A6='Femme' | C6="Part parmi l'ensemble des retraités (en %)" | D6=12.9 | E6=12.4 | F6=2.4 | G6=14.2 | H6=8.2 | I6=7.9 | J6=1.1 | K6=12.2 | L6=27.9 | M6=100.0
+7 A7='Homme' | C7="Part parmi l'ensemble des retraités (en %)" | D7=28.3 | E7=8.6 | F7=4.2 | G7=14.5 | H7=7.5 | I7=6.0 | J7=1.7 | K7=7.4 | L7=20.8 | M7=100.0
+== 1950_eir_2016.xlsx, SHA-256 59f76598591d20cb4704659a65ba30ce687ca8cb0a733198a3182c6bbaef61a8, 194522 octets
+-- ÂgeLiq
+1 A1='sexe' | D1="Départ avant l'âge légal d'ouverture des droits à la retraite" | E1="Départ à l'âge légal d'ouverture des droits à la retraite" | F1="Départ entre l'âge légal d'ouverture des droits à la retraite et l'âge d'annulation de la décote" | G1="Départ à l'âge d'annulation de la décote" | H1="Départ après l'âge d'annulation de la décote" | I1='Ensemble'
+6 A6='Femme' | C6="Part parmi l'ensemble des retraités (en %)" | D6=13.0 | E6=44.4 | F6=22.4 | G6=15.3 | H6=4.9 | I6=100.0
+7 A7='Homme' | C7="Part parmi l'ensemble des retraités (en %)" | D7=27.6 | E7=35.3 | F7=25.4 | G7=7.3 | H7=4.4 | I7=100.0
+290 A290='Ensemble' | C290="Part de départ au taux plein par l'âge (en %)" | D290=7.8 | E290=0.5 | F290=1.7 | G290=83.6 | H290=58.6 | I290=14.4
+291 A291='Femme' | C291="Part de départ au taux plein par l'âge (en %)" | D291=10.4 | E291=0.7 | F291=2.1 | G291=88.5 | H291=64.4 | I291=18.8
+292 A292='Homme' | C292="Part de départ au taux plein par l'âge (en %)" | D292=6.6 | E292=0.3 | F292=1.3 | G292=72.9 | H292=51.8 | I292=9.8
+-- ÂgeLiq_Détails
+1 A1='sexe' | D1='Avant 60 ans' | E1='60 ans' | F1='61 ans' | G1='62 ans' | H1='63 ans' | I1='64 ans' | J1='65 ans' | K1='66 ans' | L1='Ensemble'
+6 A6='Femme' | C6="Part parmi l'ensemble des retraités (en %)" | D6=13.0 | E6=50.5 | F6=6.5 | G6=3.8 | H6=3.1 | I6=5.0 | J6=16.2 | K6=1.9 | L6=100.0
+7 A7='Homme' | C7="Part parmi l'ensemble des retraités (en %)" | D7=27.6 | E7=41.3 | F7=7.1 | G7=4.8 | H7=3.8 | I7=5.4 | J7=8.3 | K7=1.7 | L7=100.0
+290 A290='Ensemble' | C290="Part de départ au taux plein par l'âge (en %)" | D290=7.8 | E290=0.6 | F290=1.2 | G290=1.3 | H290=3.7 | I290=20.2 | J290=83.6 | K290=53.1 | L290=14.4
+291 A291='Femme' | C291="Part de départ au taux plein par l'âge (en %)" | D291=10.4 | E291=0.8 | F291=1.5 | G291=1.9 | H291=3.6 | I291=26.7 | J291=88.7 | K291=58.0 | L291=18.8
+292 A292='Homme' | C292="Part de départ au taux plein par l'âge (en %)" | D292=6.6 | E292=0.3 | F292=0.8 | G292=0.7 | H292=3.7 | I292=13.8 | J292=73.1 | K292=47.6 | L292=9.8
+-- CondLiquidation
+1 A1='sexe' | D1='Carrière longue' | E1='Décote' | F1='Décote non applicable' | G1='Surcote' | H1='Taux plein invalidité' | I1='Taux plein inaptitude' | J1='Taux plein autres motifs' | K1='Taux plein par âge' | L1='Taux plein par la durée (hors surcote et RACL)' | M1='Ensemble'
+6 A6='Femme' | C6="Part parmi l'ensemble des retraités (en %)" | D6=5.1 | E6=7.9 | F6=4.7 | G6=11.2 | H6=7.1 | I6=8.9 | J6=1.5 | K6=18.8 | L6=34.4 | M6=100.0
+7 A7='Homme' | C7="Part parmi l'ensemble des retraités (en %)" | D7=18.2 | E7=5.6 | F7=5.4 | G7=12.2 | H7=6.6 | I7=6.4 | J7=0.2 | K7=9.8 | L7=34.8 | M7=100.0
