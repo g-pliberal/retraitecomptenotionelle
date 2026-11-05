@@ -1,0 +1,41 @@
+date: "2026-11-05"
+session: "action 130, file R-N2 de la vague 9 : relecture de N, la complémentaire de la CAVOM, de la CARPIMKO, de la CPRN et de la CAVP avant la base"
+consulte: >-
+  `python scripts/veille_droit.py` : rien de neuf sur le sujet. Les index JORF (à jour au 3
+  novembre 2026) et LEGI (au 2 novembre) récupérés par `dila_index.py --recuperer`. Au JORF,
+  rouverts : la CAVOM, arrêtés du 30 décembre 2015 (JORFARTI000031740850, annexe
+  JORFARTI000031740853), du 21 décembre 2016 (JORFARTI000033702977), du 26 décembre 2018
+  (JORFARTI000037883374), du 28 août 2020 (JORFARTI000042311285), du 12 décembre 2024
+  (JORFARTI000050823053, annexe JORFARTI000050823056) et règlement de 2026
+  (JORFARTI000054435969) ; la CARPIMKO, arrêtés du 31 juillet 2015 (JORFARTI000031255544,
+  annexe JORFARTI000031255547), de 2016 à 2022 (JORFARTI000032036777, JORFARTI000035268191,
+  JORFARTI000037345682, JORFARTI000038529117, JORFARTI000042101474, JORFARTI000045964268), du
+  27 décembre 2023 (JORFARTI000048880643), du 14 novembre 2025 (JORFARTI000052604992) et
+  règlement de 2026 (JORFARTI000054435915) ; la CPRN, arrêtés du 16 décembre 2013
+  (JORFARTI000028387441, annexe JORFARTI000028387445), du 31 mai 2017
+  (JORFARTI000034975971), du 29 novembre 2023 (JORFARTI000048679346, annexe
+  JORFARTI000048679350) et règlement de 2026 (JORFARTI000054435995) ; la CAVP, arrêtés du
+  11 mai 2009 (JORFARTI000020694605), du 23 juin 2011 (JORFARTI000024270214), du 3 octobre
+  2019 (JORFARTI000039357715), du 19 décembre 2023 (JORFARTI000048880592) et règlement de
+  2026 (JORFARTI000054436087). Dans LEGI : L. 161-17-2 (LEGIARTI000025014605,
+  LEGIARTI000053280889), D. 161-2-1-9 (LEGIARTI000025089933, LEGIARTI000047634502).
+trouve: >-
+  Les citations de N sont exactes et ses âges conformes : aucun des statuts lus ne lie la
+  liquidation de la complémentaire à celle de la base. Arrêtés que N ne cite pas, sans effet
+  sur l'âge : la CAVOM de 2018 et de 2020 (ce dernier réserve le cumul d'une activité à la
+  base liquidée, non la liquidation) ; la CARPIMKO de 2016 à 2022 et de 2025 (en 2019, la
+  retraite anticipée des handicapés à cinquante-cinq ans) ; la CAVP de 2019 et du 19
+  décembre 2023. Ce dernier ajoute à l'article 15 de la CAVP : « L'affilié qui bénéficie
+  d'une liquidation anticipée au régime de base, dans les conditions prévues aux II, III et
+  IV de l'article L. 643-3 en bénéficie dans les mêmes conditions et modalités au régime
+  complémentaire » ; l'article 15 de 2011, lu en entier, ne l'avait pas. De même, la
+  CARPIMKO n'ouvre l'âge de la carrière longue que depuis 2024 (arrêté du 27 décembre
+  2023, article 11, 4).
+reste: >-
+  La carrière longue de la CAVP de juillet 2011 à 2023, et de la CARPIMKO de 2015 à 2023 :
+  le modèle les sert à l'âge que la carrière longue ouvre à la base, sans texte qui le
+  fonde ni déclaration (défaut candidat, note
+  130/2026-11-05-relecture-de-n-complementaire-avant-la-base.md, point 5). L'article 12 bis
+  des statuts de la CARPIMKO d'avant 2015, au seul Bulletin officiel, non lu. Les statuts
+  de la CAVOM d'avant 2016, de la CARPIMKO d'avant le 3 octobre 2015 et de la CPRN d'avant
+  2014, au seul Bulletin officiel, comme N les laisse.
