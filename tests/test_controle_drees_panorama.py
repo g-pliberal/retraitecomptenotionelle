@@ -167,19 +167,19 @@ def test_chaque_citation_du_temoin_est_dans_le_pdf(fichier):
 
 def test_chaque_fiche_de_l_etape_4_nomme_ses_confrontations():
     """Au suivi, chaque fiche que l'étape 4 a confrontée nomme les tests de ce
-    module qui la confrontent ; chacun existe. Les fiches 5, 8 et 15, que
-    l'étape 2 lui a renvoyées le 3 novembre 2026, attendent leur
-    confrontation — la 5 par régime (tableaux 2 et 4), une fois ses montants
-    de 2023 et 2024 portés au dépôt ; la fiche 21, que l'étape 3 lui a
-    renvoyée le même jour, est confrontée à la grille depuis."""
+    module qui la confrontent ; chacun existe. Des fiches 5, 8 et 15, que
+    l'étape 2 lui a renvoyées le 3 novembre 2026, la 15 attend sa
+    confrontation ; la 5, par régime (tableaux 2 et 4), et la 8 sont
+    confrontées depuis le 5 novembre (étape 5) ; la fiche 21, que l'étape 3
+    lui a renvoyée le 3 novembre, est confrontée à la grille depuis."""
     suivi = yaml.safe_load(SUIVI.read_text(encoding="utf-8"))["fiches"]
     etape_4 = {numero: ligne for numero, ligne in suivi.items()
                if ligne.get("etape") == 4 and ligne["statut"] == "confronte"}
-    assert sorted(etape_4) == ["04", "06", "07", "09", "11", "13", "18", "21", "28", "29",
-                               "30", "31", "32"]
+    assert sorted(etape_4) == ["04", "05", "06", "07", "08", "09", "11", "13", "18", "21",
+                               "28", "29", "30", "31", "32"]
     attendent = sorted(numero for numero, ligne in suivi.items()
                        if ligne.get("etape") == 4 and ligne["statut"] != "confronte")
-    assert attendent == ["05", "08", "15"]
+    assert attendent == ["15"]
     assert {suivi[numero]["statut"] for numero in attendent} == {"a_confronter"}
     module = sys.modules[__name__]
     for numero, ligne in etape_4.items():
@@ -280,6 +280,151 @@ def test_le_pouvoir_d_achat_des_liquidants_de_2000_baisse_un_peu_plus_au_modele(
             assert -1.3 < refait - publie[str(annee)]["valeur"] < -0.1, (cas, annee)
 
 
+# --- Fiche 5 : le niveau des pensions, par régime -----------------------------
+
+
+@pytest.fixture(scope="module")
+def stock(simulateur) -> dict:
+    """La grille de la page Coût, comme ``controle_eacr.controle`` la prend :
+    ses pensionnés, ses poids, sa revalorisation, sa population ; et le
+    passage de ses euros constants aux euros de chaque année."""
+    from retraite_notionnelle import cout, memoire
+    from retraite_notionnelle.donnees.population import Population
+
+    parametres = Parametres()
+    pensionnes, _ = memoire.memoriser_pour(
+        parametres, ("grille_du_cout", parametres, GRILLE_DU_COUT, "droit"),
+        lambda: cout._pensionnes(simulateur, GRILLE_DU_COUT, "droit"))
+    return {
+        "pensionnes": pensionnes,
+        "poids": memoire.cout(parametres).poids,
+        "revalorisation": cout.RevalorisationServie(
+            simulateur.pour_la_projection(),
+            min(p.annee_liquidation for p in pensionnes) - cout._DEMI_TRANCHE, cout.HORIZON),
+        "population": Population(parametres.racine_donnees, parametres.hypothese_esperance_vie),
+        "en_euros_de": lambda annee: simulateur.macro.coefficient_prix(
+            parametres.annee_euros_constants, annee),
+    }
+
+
+def _servie_par_regime(stock: dict, annee: int, garder=lambda cas: True,
+                       regimes: tuple[str, ...] | None = None) -> dict[str, float]:
+    """La pension mensuelle moyenne que chaque régime sert aux têtes de la
+    grille qu'il paie, en ``annee``, en euros de 2024 : la masse et les têtes
+    de ``cout._masses_regimes``, les cas types que ``garder`` retient, pesés
+    comme la page les pèse ; ``regimes`` en réunit plusieurs sous la clé
+    ``"reunis"``, chacun à ses têtes."""
+    from retraite_notionnelle import cout
+
+    poids = {cas.code: stock["poids"].get(cas.code, 0.0) for cas in GRILLE_DU_COUT if garder(cas)}
+    masses, tetes = cout._masses_regimes(stock["pensionnes"], stock["population"], annee, poids,
+                                         stock["revalorisation"],
+                                         poids_alignement=stock["poids"])
+    if regimes is not None:
+        masses = {"reunis": sum(masses.get(r, 0.0) for r in regimes)}
+        tetes = {"reunis": sum(tetes.get(r, 0.0) for r in regimes)}
+    return {regime: masses[regime] / tetes[regime] / 12 * stock["en_euros_de"](2024)
+            for regime in masses if tetes[regime] > 0}
+
+
+def _moyenne_de_la_grille(stock: dict, annee: int) -> float:
+    """La pension mensuelle moyenne, tous régimes, des têtes de la grille en
+    ``annee`` (``controle_eacr.cohortes``), en euros de 2024."""
+    lot = controle_eacr.cohortes(stock["pensionnes"], stock["poids"], stock["population"],
+                                 stock["revalorisation"], stock["en_euros_de"](2024), annee=annee)
+    return sum(c.tetes * c.pension for c in lot) / sum(c.tetes for c in lot)
+
+
+#: Chaque ligne du tableau 2 de la fiche 5, sous le régime de tête où le coût
+#: range ses pensions (``RevalorisationServie.regime_de_tete``), et le rapport
+#: de la pension de la grille à la publiée, mesuré le 5 novembre 2026.
+TABLEAU_2_DE_LA_FICHE_5 = {
+    "regime_general": (("regime_general",), 1.21),
+    "agirc_arrco": (("agirc_arrco",), 1.57),
+    "msa_non_salaries_base": (("msa_non_salaries",), 1.66),
+    "msa_non_salaries_complementaire": (("msa_rco",), 1.53),
+    "fpe_civils": (("fonction_publique_etat",), 0.95),
+    "ircantec": (("ircantec",), 1.48),
+    "cnracl": (("cnracl",), 0.76),
+    "regimes_speciaux": (("sncf", "ieg"), 1.27),
+}
+
+
+def test_la_grille_sert_trop_a_chaque_regime_sauf_aux_fonctionnaires(stock, temoin):
+    """Tableau 2 de la fiche 5 : la pension brute moyenne de droit direct, hors
+    majoration pour enfants, que chaque régime sert à ses retraités de 2024,
+    résidant en France ou à l'étranger (EACR, Ancetre) — 777 euros au régime
+    général, 542 à l'Agirc-Arrco, 1 647 tous régimes —, son évolution en euros
+    constants depuis 2023, 2020 et 2014, et l'écart entre femmes et hommes.
+
+    ÉCART DÉCLARÉ. La grille sert à chaque régime de 21 à 66 % de plus, sauf à
+    l'État civil (−5 %) et à la CNRACL (−24 %), dont les cas types sont des
+    carrières modestes de leur régime (``test_controle_ancetre.py``) ; tous
+    régimes, 16 % de plus. Elle compte des têtes de
+    caisse à carrière complète, quand le régime moyenne aussi les petites
+    pensions de ses polypensionnés et des carrières courtes (fiches 11 et 13).
+    Au régime général, sa seule femme touche la moitié de plus que ses hommes,
+    parmi lesquels les fonctionnaires et les contractuels n'y ont qu'une
+    petite pension, quand la DREES mesure 27 % de moins ; à l'Agirc-Arrco,
+    l'écart se retrouve. L'évolution de sa pension moyenne tous régimes suit
+    celle de la DREES à un point près en dix ans, ses prix étant la moyenne
+    annuelle, et ceux de la DREES, le glissement de décembre. Elle n'a ni
+    salarié agricole ni avocat ; ce que la ligne des professions libérales
+    compte de complémentaire, la source ne le dit pas : la publiée passe la
+    base de la grille et reste sous sa base et sa complémentaire."""
+    publie = temoin["valeurs"]["05_tableau_2"]
+    civils = _servie_par_regime(
+        stock, 2024, lambda cas: cas.caisses == ("fonction_publique_etat_civile",))
+    servie = _servie_par_regime(stock, 2024)
+    for ligne, (regimes, rapport) in TABLEAU_2_DE_LA_FICHE_5.items():
+        if ligne == "fpe_civils":
+            pension = civils[regimes[0]]
+        elif len(regimes) == 1:
+            pension = servie[regimes[0]]
+        else:
+            pension = _servie_par_regime(stock, 2024, regimes=regimes)["reunis"]
+        assert abs(pension / publie[ligne]["pension"]["valeur"] - rapport) < 0.08, (ligne, pension)
+    moyenne = {annee: _moyenne_de_la_grille(stock, annee) for annee in (2014, 2020, 2023, 2024)}
+    assert abs(moyenne[2024] / publie["ensemble"]["pension"]["valeur"] - 1.16) < 0.08
+    for depuis, borne in ((2023, 0.5), (2020, 0.6)):
+        evolution = 100 * (moyenne[2024] / moyenne[depuis] - 1)
+        cle = f"evolution_{depuis}_2024"
+        assert abs(evolution - publie["ensemble"][cle]["valeur"]) < borne, (depuis, evolution)
+    assert 0.5 < 100 * (moyenne[2024] / moyenne[2014] - 1) - publie["ensemble"][
+        "evolution_2014_2024"]["valeur"] < 1.6
+    femmes = _servie_par_regime(stock, 2024, lambda cas: cas.sexe == "F")
+    hommes = _servie_par_regime(stock, 2024, lambda cas: cas.sexe == "H")
+    assert femmes["regime_general"] / hommes["regime_general"] > 1.3
+    assert publie["regime_general"]["ecart_femmes_hommes"]["valeur"] < -20
+    assert abs(100 * (femmes["agirc_arrco"] / hommes["agirc_arrco"] - 1)
+               - publie["agirc_arrco"]["ecart_femmes_hommes"]["valeur"]) < 8
+    assert not any("msa_salaries" in p.parts_regimes for p in stock["pensionnes"])
+    liberales = publie["professions_liberales"]["pension"]["valeur"]
+    assert servie["cnavpl"] < liberales < servie["cnavpl"] + servie["cipav_complementaire"]
+
+
+def test_le_tableau_4_de_la_fiche_5_est_le_tableau_3_2_du_cor(temoin):
+    """Tableau 4 de la fiche 5 : la pension brute moyenne de droit direct, tous
+    régimes, selon le régime principal, fin 2024, de tous les retraités et de
+    ceux à carrière complète (EACR, Ancetre). Ses quatre-vingt-dix valeurs sont
+    celles du tableau 3.2 du rapport du COR de juin 2026, que
+    ``tests/test_controle_ancetre.py`` confronte à la grille depuis le 16
+    octobre 2026 : l'ensemble à moins d'un dixième des carrières complètes, et
+    chaque régime qu'un seul cas type représente de 10 à 45 % dessous. Rien de
+    neuf à confronter : le panorama en est la source, et les deux se
+    recoupent."""
+    cor = json.loads((RACINE / "tests" / "temoins" / "cor_pension_regime_principal_2026.json")
+                     .read_text(encoding="utf-8"))["pensions"]
+    publie = temoin["valeurs"]["05_tableau_4"]
+    assert set(publie) == set(cor)
+    valeurs = [(ligne, champ, sexe, cellule["valeur"])
+               for ligne, champs in publie.items() for champ, sexes in champs.items()
+               for sexe, cellule in sexes.items()]
+    assert len(valeurs) == 90
+    for ligne, champ, sexe, valeur in valeurs:
+        assert cor[ligne][champ][sexe] == valeur, (ligne, champ, sexe)
+
+
 # --- Fiche 6 : les écarts de pension entre générations ----------------------
 
 
@@ -351,6 +496,159 @@ def test_la_grille_sert_trop_a_ses_nouveaux_retraites_de_2024(grille, temoin):
     pension_h = (moyenne * tetes - pension_f * leurs_tetes) / (tetes - leurs_tetes)
     assert abs(pension_f / pension_h - 1) < abs(_publie(temoin, "07_tableau_1",
                                                         "ecart_femmes_hommes")) / 100 / 2
+
+
+# --- Fiche 8 : les bénéficiaires d'un minimum de pension ---------------------
+
+
+#: Les avantages du droit qui portent une pension à un minimum, au sens de
+#: l'encadré 1 de la fiche 8 : le minimum contributif, le minimum garanti, la
+#: pension majorée de référence et le complément différentiel des exploitants,
+#: le minimum de la SNCF. Chacun n'est inscrit que s'il relève la pension
+#: (``droit/completer.py``).
+MINIMA_DE_PENSION = frozenset({"minimum_contributif", "minimum_garanti",
+                               "pension_majoree_reference", "complement_differentiel_rco",
+                               "minimum_pension_sncf"})
+
+
+@pytest.fixture(scope="module")
+def au_minimum(simulateur):
+    """Si la pension d'un cas type de la grille, à une génération de la grille,
+    est portée à un minimum, au scénario 1 de la page
+    (``Simulateur.pour_la_projection``), comme ``scripts/part_minimum_contributif.py``
+    le lit."""
+    projection = simulateur.pour_la_projection()
+    cas_types = {cas.code: cas for cas in GRILLE_DU_COUT}
+    lus: dict[tuple[str, int], bool] = {}
+
+    def lire(code: str, generation: int) -> bool:
+        if (code, generation) not in lus:
+            depart = projection.echeancier(
+                cas_types[code].construire(projection, generation)).au_depart
+            lus[(code, generation)] = any(avantage.code in MINIMA_DE_PENSION
+                                          for avantage in depart.avantages_appliques)
+        return lus[(code, generation)]
+    return lire
+
+
+def _part_au_minimum(lot, au_minimum) -> float:
+    tetes = sum(c.tetes for c in lot)
+    return 100 * sum(c.tetes for c in lot if au_minimum(c.code, c.generation)) / tetes
+
+
+def _regime_principal(code: str) -> str:
+    from retraite_notionnelle.controle_ancetre import REGIME_PRINCIPAL
+
+    return REGIME_PRINCIPAL[next(cas for cas in GRILLE_DU_COUT if cas.code == code).caisses[0]]
+
+
+def test_la_grille_porte_au_minimum_trop_de_nouveaux_retraites_et_aucun_fonctionnaire(
+        grille, au_minimum, temoin):
+    """Graphique 1 de la fiche 8 : la part des nouveaux retraités de 2024 dont
+    la pension est portée à un minimum — 17,4 % au régime général, 23,5 % à la
+    CNRACL, 4,5 % à l'État civil, 6,8 % chez les militaires, 18,4 % à la MSA
+    non-salariés.
+
+    ÉCART DÉCLARÉ. Parmi les nouveaux retraités de 2024 de la grille, ceux du
+    régime général (Cnav, artisans, contractuels) sont au minimum contributif
+    pour 24 % d'entre eux, un tiers de trop : le salarié au Smic et l'inapte,
+    hommes l'un et l'autre. Aucun fonctionnaire n'y touche le minimum garanti,
+    et l'exploitant agricole, seul de son régime, a toujours le sien. Les
+    mêmes cas types, que ``scripts/part_minimum_contributif.py --grille
+    reference`` pèse aux personnes de 2020, en portent 10,8 % au minimum en
+    2024 : la part dépend des poids, faute de population
+    (``docs/limites/5-bis-cout-agrege.md``)."""
+    publie = temoin["valeurs"]["08_graphique_1"]
+    nouveaux = [c for c in grille if c.nouvelle]
+    assert {c.code for c in nouveaux if au_minimum(c.code, c.generation)} == {
+        "smic_carriere_complete", "smic_carriere_complete~inapte", "exploitant_agricole"}
+    general = [c for c in nouveaux if _regime_principal(c.code) == "regime_general"]
+    assert 1.25 < _part_au_minimum(general, au_minimum) / publie["regime_general"]["2024"][
+        "valeur"] < 1.55
+    for regime in ("cnracl", "fpe_civils", "fpe_militaires"):
+        lot = [c for c in nouveaux if _regime_principal(c.code) == regime]
+        assert lot and _part_au_minimum(lot, au_minimum) == 0.0, regime
+        assert publie[regime]["2024"]["valeur"] > 4, regime
+    exploitants = [c for c in nouveaux if _regime_principal(c.code) == "msa_non_salaries"]
+    assert _part_au_minimum(exploitants, au_minimum) == 100.0
+    assert publie["msa_non_salaries"]["2024"]["valeur"] < 20
+
+
+@pytest.fixture(scope="module")
+def nes_en_1953(stock) -> list:
+    """Les cohortes de la grille nées en 1953, vivantes fin 2020, comme
+    ``controle_eacr.cohortes`` les compte, leur pension en euros de 2020."""
+    lot = controle_eacr.cohortes(stock["pensionnes"], stock["poids"], stock["population"],
+                                 stock["revalorisation"], stock["en_euros_de"](2020), annee=2020)
+    return [c for c in lot if 2020 - c.age == 1953]
+
+
+def test_la_grille_met_au_minimum_ses_hommes_nes_en_1953_et_aucune_femme(
+        nes_en_1953, au_minimum, temoin):
+    """Tableaux 1 et 2 de la fiche 8 : parmi les retraités nés en 1953,
+    résidant en France fin 2020 (EIR 2020), 21 % perçoivent un minimum dans
+    leur régime principal, 30 % des femmes et 11 % des hommes ; 25 % au régime
+    général, 22 % à la CNRACL, 27 % à la MSA non-salariés, 6 % à l'État civil,
+    10 % chez les militaires.
+
+    ÉCART DÉCLARÉ. La grille en met 29 % au minimum, tous dans le régime de
+    leur seule caisse : aucune femme, sa seule femme, à carrière interrompue,
+    n'y touchant pas ; un tiers de ses hommes, trois fois la part publiée. Au
+    régime général, la part est la bonne à deux points près ; à la CNRACL, les
+    trois quarts, la variante sédentaire de son fonctionnaire actif ayant le
+    minimum garanti ; à la MSA non-salariés, tous ; à l'État et dans les
+    régimes spéciaux, aucun."""
+    publie = temoin["valeurs"]["08_tableau_1"]["toutes_carrieres"]
+    assert 1.25 < _part_au_minimum(nes_en_1953, au_minimum) / publie["ensemble"][
+        "regime_principal"]["valeur"] < 1.5
+    sexe = {cas.code: cas.sexe for cas in GRILLE_DU_COUT}
+    femmes = [c for c in nes_en_1953 if sexe[c.code] == "F"]
+    hommes = [c for c in nes_en_1953 if sexe[c.code] == "H"]
+    assert _part_au_minimum(femmes, au_minimum) == 0.0
+    assert publie["femmes"]["regime_principal"]["valeur"] > 25
+    assert 2.6 < _part_au_minimum(hommes, au_minimum) / publie["hommes"][
+        "regime_principal"]["valeur"] < 3.4
+    par_regime = temoin["valeurs"]["08_tableau_2"]
+    parts = {regime: _part_au_minimum([c for c in nes_en_1953
+                                       if _regime_principal(c.code) == regime], au_minimum)
+             for regime in ("regime_general", "cnracl", "msa_non_salaries", "fpe_civils",
+                            "fpe_militaires", "regimes_speciaux")}
+    assert abs(parts["regime_general"] - par_regime["regime_general"]["ensemble"]["valeur"]) < 4
+    assert parts["cnracl"] > 3 * par_regime["cnracl"]["ensemble"]["valeur"]
+    assert parts["msa_non_salaries"] == 100.0
+    for regime in ("fpe_civils", "fpe_militaires", "regimes_speciaux"):
+        assert parts[regime] == 0.0 < par_regime[regime]["ensemble"]["valeur"], regime
+
+
+def test_les_beneficiaires_du_minimum_de_la_grille_touchent_trop(nes_en_1953, au_minimum, temoin):
+    """Tableaux 3 et 4 de la fiche 8 : les retraités nés en 1953 qui
+    perçoivent un minimum dans leur régime principal touchent 750 euros bruts
+    de droit direct par mois fin 2020, ceux qui n'en perçoivent aucun 1 830 ;
+    les premiers ont liquidé à 62,6 ans en moyenne, et 36 % sont partis pour
+    inaptitude ou invalidité.
+
+    ÉCART DÉCLARÉ. Ceux de la grille touchent 1 044 euros, deux cinquièmes de
+    plus, les autres 2 137, un sixième de plus ; ils ont liquidé à 61,3 ans,
+    leurs cas types partant au premier âge du taux plein, et 15 % seulement
+    pour inaptitude — l'inapte au Smic, la grille n'ayant pas d'invalide au
+    minimum."""
+    publie = temoin["valeurs"]
+    beneficiaires = [c for c in nes_en_1953 if au_minimum(c.code, c.generation)]
+    autres = [c for c in nes_en_1953 if not au_minimum(c.code, c.generation)]
+
+    def moyenne(lot, valeur):
+        return sum(c.tetes * valeur(c) for c in lot) / sum(c.tetes for c in lot)
+
+    tableau_4 = publie["08_tableau_4"]["pension_de_droit_direct"]
+    assert 1.3 < moyenne(beneficiaires, lambda c: c.pension) / tableau_4[
+        "regime_principal"]["valeur"] < 1.5
+    assert 1.1 < moyenne(autres, lambda c: c.pension) / tableau_4["aucun_minimum"]["valeur"] < 1.25
+    tableau_3 = publie["08_tableau_3"]
+    assert 0.9 < tableau_3["age_de_liquidation"]["regime_principal"]["valeur"] - moyenne(
+        beneficiaires, lambda c: c.age_liquidation) < 1.7
+    inaptes = sum(c.tetes for c in beneficiaires if c.code == "smic_carriere_complete~inapte")
+    assert 100 * inaptes / sum(c.tetes for c in beneficiaires) < tableau_3[
+        "inaptitude_ou_invalidite"]["regime_principal"]["valeur"] / 2
 
 
 # --- Fiche 9 : le patrimoine des retraités ----------------------------------

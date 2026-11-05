@@ -1,0 +1,24 @@
+date: "2026-11-05"
+session: "action 178, étape 5 : les fiches 5 (tableaux 2 et 4, par régime) et 8 du panorama de la DREES, édition 2026, confrontées à la grille de la page Coût"
+consulte: >-
+  Aucune règle du scénario 1 n'est touchée : l'étape lit des statistiques et
+  les confronte au modèle. Le PDF du panorama (miroir de l'UNSA, empreinte
+  9eb36a06…) par pdftotext, dont l'annexe 3 (« Notion de carrière complète »,
+  pages 299 et 300), et les classeurs des fiches 5, 8 et 11 de l'archive de la
+  release documents-apportes (empreinte ec7503f8…) ; en regard, le tableau 3.2
+  du COR que le dépôt lit, la grille de la page Coût (cout._masses_regimes,
+  controle_eacr.cohortes) et les avantages que le droit lui applique.
+trouve: >-
+  La grille sert à chaque régime de 21 à 66 % de plus que le tableau 2, sauf à
+  l'État civil et à la CNRACL ; le tableau 4 est le tableau 3.2 du COR. Elle
+  porte au minimum trop de nouveaux retraités du régime général, aucun
+  fonctionnaire, tous ses exploitants, aucune femme ; le coût ne sert pas au
+  stock la majoration exceptionnelle de 2023 (803 M€ en 2024 selon l'encadré
+  2), que l'échéancier d'une carrière sert. La DREES définit la carrière
+  complète par la somme des coefficients de proratisation, le tableau 4 de la
+  fiche 5 par la durée d'assurance ; le chiffre de 58,7 % n'est pas dans le
+  panorama.
+reste: >-
+  Au propriétaire : la majoration exceptionnelle au coût ; la grille ou la
+  population pour les minima. À l'étape 5, les trois erreurs du coût de la
+  note des règles ; les fiches 12, 15 et 21 à d'autres sessions.

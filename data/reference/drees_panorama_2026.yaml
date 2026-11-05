@@ -142,7 +142,7 @@ fiches:
     titre: "Le niveau des pensions"
     page: 54
     sources: ["EACR", "EIR", "ANCETRE", "Insee"]
-    statut: a_confronter
+    statut: confronte
     au_depot: [drees_pension_nette, drees_eir_distribution, drees_eir_caracteristiques, drees_eacr_tables, drees_panorama_retraites_2026_classeurs]
     a_tirer: >-
       Porté à l'étape 2, sur l'accord du propriétaire du 3 novembre 2026 :
@@ -156,9 +156,22 @@ fiches:
       résidents en France. Le taux effectif de la page Coût passe de 6,8 %
       (2022) à 6,9 % (2024, 1 − 1 727 / 1 855). Recoupé : la pension
       moyenne hors majoration de 2024, 1 647 euros, celle de la table C.
-      Reste, par régime (tableaux 2 et 4), la confrontation à la grille de
-      la page Coût (étape 4).
+      Par régime (tableaux 2 et 4), confrontée à la grille de la page Coût
+      le 5 novembre 2026, à l'étape 5 (ci-dessous).
     etape: 4
+    confrontation: >-
+      La grille sert à chaque régime de 21 à 66 % de plus que le tableau 2
+      (938 euros au régime général pour 777, 853 à l'Agirc-Arrco pour
+      542), sauf à l'État civil (−5 %) et à la CNRACL (−24 %) : elle
+      compte des têtes de caisse à carrière complète, sans les petites
+      pensions des polypensionnés ; tous régimes, 16 % de plus, et son
+      évolution suit celle de la DREES à un point près en dix ans. Au
+      régime général, sa seule femme y touche plus que ses hommes. Le
+      tableau 4 est, valeur pour valeur, le tableau 3.2 du COR que
+      `test_controle_ancetre.py` confronte déjà. Écarts déclarés.
+    confronte_par:
+      - test_la_grille_sert_trop_a_chaque_regime_sauf_aux_fonctionnaires
+      - test_le_tableau_4_de_la_fiche_5_est_le_tableau_3_2_du_cor
   "06":
     titre: "Les écarts de pensions de droit direct entre générations"
     page: 65
@@ -203,7 +216,7 @@ fiches:
     titre: "Les bénéficiaires d’un minimum de pension"
     page: 78
     sources: ["EACR", "EIR 2020"]
-    statut: a_confronter
+    statut: confronte
     au_depot: [drees_eacr]
     a_tirer: >-
       Recoupée à l'étape 2 (`tests/test_drees_panorama_2024.py`) : la part des nouveaux retraités
@@ -215,10 +228,23 @@ fiches:
       de l'édition 2018 que cite `scripts/part_minimum_contributif.py` : la
       SSI est au régime général dans l'EIR 2020, et rien n'y distingue plus
       les artisans ni les commerçants ; le graphique 1 donne ceux du RSI
-      jusqu'en 2012 (39,3 % et 47,1 % en 2011). Restent ces parts,
-      confrontées au minimum contributif du modèle, et l'encadré 2, la
-      majoration exceptionnelle de 2023, à l'étape 5.
+      jusqu'en 2012 (39,3 % et 47,1 % en 2011). Ces parts, et l'encadré 2,
+      la majoration exceptionnelle de 2023, confrontées au modèle le 5
+      novembre 2026, à l'étape 5 (ci-dessous).
     etape: 4
+    confrontation: >-
+      La grille porte au minimum 24 % de ses nouveaux retraités de 2024 du
+      régime général, pour 17,4 % ; aucun fonctionnaire, quand la CNRACL
+      en compte 23,5 % ; tous ses exploitants, pour 18,4 %. Des nés en
+      1953, 29 % au minimum de leur régime principal pour 21 %, aucune
+      femme pour 30 %, un tiers des hommes pour 11 % ; ses bénéficiaires
+      touchent 1 044 euros pour 750. Le coût ne leur sert pas la
+      majoration exceptionnelle de 2023, que l'échéancier d'une carrière
+      sert. Écarts déclarés : la grille n'est pas une population.
+    confronte_par:
+      - test_la_grille_porte_au_minimum_trop_de_nouveaux_retraites_et_aucun_fonctionnaire
+      - test_la_grille_met_au_minimum_ses_hommes_nes_en_1953_et_aucune_femme
+      - test_les_beneficiaires_du_minimum_de_la_grille_touchent_trop
   "09":
     titre: "Le niveau de vie des retraités"
     page: 88

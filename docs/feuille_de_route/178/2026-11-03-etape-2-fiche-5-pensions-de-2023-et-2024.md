@@ -1,16 +1,5 @@
 # Étape 2, la fiche 5 : la pension moyenne brute et nette de 2023 et 2024, et le taux effectif de la page Coût
 
-**Reprise, au 3 novembre 2026.** L'étape 2 est faite, la fiche 5 comprise
-(cette note) ; rien n'y reste. Ce qu'elle laisse ailleurs : les
-confrontations des fiches 5 (par régime, tableaux 2 et 4), 8 et 15, que
-l'étape 4, close, n'a pas vues ; le reste aux étapes 5 et 6, fiche par fiche
-(`data/reference/drees_panorama_2026.yaml`) ; à la session de l'action 138,
-étape 3, une ligne dans sa note du taux effectif (point 2 de son « Ce qui
-reste ») : selon la mesure de la DREES, +0,05 point en 2023, le taux de 2022
-n'était pas bas d'un demi-point ; l'écart d'environ 0,4 point avec la CSG de
-la CCSS, citée et non relue, reste ouvert. Au propriétaire, rien. Détail :
-plus bas, « Ce que la source ne tranche pas ».
-
 **La demande.** Vague 5 du 3 novembre 2026 : le propriétaire a dit oui à la
 question de l'étape 2 — porter à `pensions_brutes_nettes.csv` les montants de
 2023 et 2024 de la fiche 5 du panorama de la DREES, édition 2026, et ajouter à

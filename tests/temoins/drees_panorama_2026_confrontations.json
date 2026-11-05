@@ -1396,6 +1396,1926 @@
     "cellule": "R6",
     "valeur": 1820.0
    }
+  },
+  "05_tableau_2": {
+   "regime_general": {
+    "pension": {
+     "classeur": "fiche_05.xlsx",
+     "feuille": "F05_Tableau 2",
+     "cellule": "C5",
+     "valeur": 777.0
+    },
+    "evolution_2023_2024": {
+     "classeur": "fiche_05.xlsx",
+     "feuille": "F05_Tableau 2",
+     "cellule": "D5",
+     "valeur": 4.4
+    },
+    "evolution_2020_2024": {
+     "classeur": "fiche_05.xlsx",
+     "feuille": "F05_Tableau 2",
+     "cellule": "E5",
+     "valeur": 1.2
+    },
+    "evolution_2014_2024": {
+     "classeur": "fiche_05.xlsx",
+     "feuille": "F05_Tableau 2",
+     "cellule": "F5",
+     "valeur": 2.8
+    },
+    "ecart_femmes_hommes": {
+     "classeur": "fiche_05.xlsx",
+     "feuille": "F05_Tableau 2",
+     "cellule": "G5",
+     "valeur": -27.0
+    }
+   },
+   "agirc_arrco": {
+    "pension": {
+     "classeur": "fiche_05.xlsx",
+     "feuille": "F05_Tableau 2",
+     "cellule": "C6",
+     "valeur": 542.0
+    },
+    "evolution_2023_2024": {
+     "classeur": "fiche_05.xlsx",
+     "feuille": "F05_Tableau 2",
+     "cellule": "D6",
+     "valeur": 1.1
+    },
+    "evolution_2020_2024": {
+     "classeur": "fiche_05.xlsx",
+     "feuille": "F05_Tableau 2",
+     "cellule": "E6",
+     "valeur": 0.2
+    },
+    "evolution_2014_2024": {
+     "classeur": "fiche_05.xlsx",
+     "feuille": "F05_Tableau 2",
+     "cellule": "F6",
+     "valeur": -2.9
+    },
+    "ecart_femmes_hommes": {
+     "classeur": "fiche_05.xlsx",
+     "feuille": "F05_Tableau 2",
+     "cellule": "G6",
+     "valeur": -52.0
+    }
+   },
+   "msa_salaries": {
+    "pension": {
+     "classeur": "fiche_05.xlsx",
+     "feuille": "F05_Tableau 2",
+     "cellule": "C7",
+     "valeur": 301.0
+    },
+    "evolution_2023_2024": {
+     "classeur": "fiche_05.xlsx",
+     "feuille": "F05_Tableau 2",
+     "cellule": "D7",
+     "valeur": 9.1
+    },
+    "evolution_2020_2024": {
+     "classeur": "fiche_05.xlsx",
+     "feuille": "F05_Tableau 2",
+     "cellule": "E7",
+     "valeur": 18.1
+    },
+    "evolution_2014_2024": {
+     "classeur": "fiche_05.xlsx",
+     "feuille": "F05_Tableau 2",
+     "cellule": "F7",
+     "valeur": 31.9
+    },
+    "ecart_femmes_hommes": {
+     "classeur": "fiche_05.xlsx",
+     "feuille": "F05_Tableau 2",
+     "cellule": "G7",
+     "valeur": -13.0
+    }
+   },
+   "msa_non_salaries_base": {
+    "pension": {
+     "classeur": "fiche_05.xlsx",
+     "feuille": "F05_Tableau 2",
+     "cellule": "C8",
+     "valeur": 438.0
+    },
+    "evolution_2023_2024": {
+     "classeur": "fiche_05.xlsx",
+     "feuille": "F05_Tableau 2",
+     "cellule": "D8",
+     "valeur": 4.1
+    },
+    "evolution_2020_2024": {
+     "classeur": "fiche_05.xlsx",
+     "feuille": "F05_Tableau 2",
+     "cellule": "E8",
+     "valeur": 1.6
+    },
+    "evolution_2014_2024": {
+     "classeur": "fiche_05.xlsx",
+     "feuille": "F05_Tableau 2",
+     "cellule": "F8",
+     "valeur": -0.3
+    },
+    "ecart_femmes_hommes": {
+     "classeur": "fiche_05.xlsx",
+     "feuille": "F05_Tableau 2",
+     "cellule": "G8",
+     "valeur": -29.0
+    }
+   },
+   "msa_non_salaries_complementaire": {
+    "pension": {
+     "classeur": "fiche_05.xlsx",
+     "feuille": "F05_Tableau 2",
+     "cellule": "C9",
+     "valeur": 137.0
+    },
+    "evolution_2023_2024": {
+     "classeur": "fiche_05.xlsx",
+     "feuille": "F05_Tableau 2",
+     "cellule": "D9",
+     "valeur": 2.2
+    },
+    "evolution_2020_2024": {
+     "classeur": "fiche_05.xlsx",
+     "feuille": "F05_Tableau 2",
+     "cellule": "E9",
+     "valeur": 41.5
+    },
+    "evolution_2014_2024": {
+     "classeur": "fiche_05.xlsx",
+     "feuille": "F05_Tableau 2",
+     "cellule": "F9",
+     "valeur": 71.6
+    },
+    "ecart_femmes_hommes": {
+     "classeur": "fiche_05.xlsx",
+     "feuille": "F05_Tableau 2",
+     "cellule": "G9",
+     "valeur": -60.0
+    }
+   },
+   "fpe_civils": {
+    "pension": {
+     "classeur": "fiche_05.xlsx",
+     "feuille": "F05_Tableau 2",
+     "cellule": "C10",
+     "valeur": 2342.0
+    },
+    "evolution_2023_2024": {
+     "classeur": "fiche_05.xlsx",
+     "feuille": "F05_Tableau 2",
+     "cellule": "D10",
+     "valeur": 4.0
+    },
+    "evolution_2020_2024": {
+     "classeur": "fiche_05.xlsx",
+     "feuille": "F05_Tableau 2",
+     "cellule": "E10",
+     "valeur": -1.2
+    },
+    "evolution_2014_2024": {
+     "classeur": "fiche_05.xlsx",
+     "feuille": "F05_Tableau 2",
+     "cellule": "F10",
+     "valeur": -3.4
+    },
+    "ecart_femmes_hommes": {
+     "classeur": "fiche_05.xlsx",
+     "feuille": "F05_Tableau 2",
+     "cellule": "G10",
+     "valeur": -13.0
+    }
+   },
+   "ircantec": {
+    "pension": {
+     "classeur": "fiche_05.xlsx",
+     "feuille": "F05_Tableau 2",
+     "cellule": "C11",
+     "valeur": 149.0
+    },
+    "evolution_2023_2024": {
+     "classeur": "fiche_05.xlsx",
+     "feuille": "F05_Tableau 2",
+     "cellule": "D11",
+     "valeur": 5.0
+    },
+    "evolution_2020_2024": {
+     "classeur": "fiche_05.xlsx",
+     "feuille": "F05_Tableau 2",
+     "cellule": "E11",
+     "valeur": 2.9
+    },
+    "evolution_2014_2024": {
+     "classeur": "fiche_05.xlsx",
+     "feuille": "F05_Tableau 2",
+     "cellule": "F11",
+     "valeur": 12.6
+    },
+    "ecart_femmes_hommes": {
+     "classeur": "fiche_05.xlsx",
+     "feuille": "F05_Tableau 2",
+     "cellule": "G11",
+     "valeur": -37.0
+    }
+   },
+   "cnracl": {
+    "pension": {
+     "classeur": "fiche_05.xlsx",
+     "feuille": "F05_Tableau 2",
+     "cellule": "C12",
+     "valeur": 1470.0
+    },
+    "evolution_2023_2024": {
+     "classeur": "fiche_05.xlsx",
+     "feuille": "F05_Tableau 2",
+     "cellule": "D12",
+     "valeur": 3.6
+    },
+    "evolution_2020_2024": {
+     "classeur": "fiche_05.xlsx",
+     "feuille": "F05_Tableau 2",
+     "cellule": "E12",
+     "valeur": -2.3
+    },
+    "evolution_2014_2024": {
+     "classeur": "fiche_05.xlsx",
+     "feuille": "F05_Tableau 2",
+     "cellule": "F12",
+     "valeur": -4.4
+    },
+    "ecart_femmes_hommes": {
+     "classeur": "fiche_05.xlsx",
+     "feuille": "F05_Tableau 2",
+     "cellule": "G12",
+     "valeur": -9.0
+    }
+   },
+   "regimes_speciaux": {
+    "pension": {
+     "classeur": "fiche_05.xlsx",
+     "feuille": "F05_Tableau 2",
+     "cellule": "C13",
+     "valeur": 1888.0
+    },
+    "evolution_2023_2024": {
+     "classeur": "fiche_05.xlsx",
+     "feuille": "F05_Tableau 2",
+     "cellule": "D13",
+     "valeur": 4.6
+    },
+    "evolution_2020_2024": {
+     "classeur": "fiche_05.xlsx",
+     "feuille": "F05_Tableau 2",
+     "cellule": "E13",
+     "valeur": 1.4
+    },
+    "evolution_2014_2024": {
+     "classeur": "fiche_05.xlsx",
+     "feuille": "F05_Tableau 2",
+     "cellule": "F13",
+     "valeur": 9.6
+    },
+    "ecart_femmes_hommes": {
+     "classeur": "fiche_05.xlsx",
+     "feuille": "F05_Tableau 2",
+     "cellule": "G13",
+     "valeur": -25.0
+    }
+   },
+   "professions_liberales": {
+    "pension": {
+     "classeur": "fiche_05.xlsx",
+     "feuille": "F05_Tableau 2",
+     "cellule": "C14",
+     "valeur": 1369.0
+    },
+    "evolution_2023_2024": {
+     "classeur": "fiche_05.xlsx",
+     "feuille": "F05_Tableau 2",
+     "cellule": "D14",
+     "valeur": 0.8
+    },
+    "evolution_2020_2024": {
+     "classeur": "fiche_05.xlsx",
+     "feuille": "F05_Tableau 2",
+     "cellule": "E14",
+     "valeur": -6.9
+    },
+    "evolution_2014_2024": {
+     "classeur": "fiche_05.xlsx",
+     "feuille": "F05_Tableau 2",
+     "cellule": "F14",
+     "valeur": -8.3
+    },
+    "ecart_femmes_hommes": {
+     "classeur": "fiche_05.xlsx",
+     "feuille": "F05_Tableau 2",
+     "cellule": "G14",
+     "valeur": -40.0
+    }
+   },
+   "ensemble": {
+    "pension": {
+     "classeur": "fiche_05.xlsx",
+     "feuille": "F05_Tableau 2",
+     "cellule": "C15",
+     "valeur": 1647.0
+    },
+    "evolution_2023_2024": {
+     "classeur": "fiche_05.xlsx",
+     "feuille": "F05_Tableau 2",
+     "cellule": "D15",
+     "valeur": 3.9
+    },
+    "evolution_2020_2024": {
+     "classeur": "fiche_05.xlsx",
+     "feuille": "F05_Tableau 2",
+     "cellule": "E15",
+     "valeur": 1.1
+    },
+    "evolution_2014_2024": {
+     "classeur": "fiche_05.xlsx",
+     "feuille": "F05_Tableau 2",
+     "cellule": "F15",
+     "valeur": 3.7
+    },
+    "ecart_femmes_hommes": {
+     "classeur": "fiche_05.xlsx",
+     "feuille": "F05_Tableau 2",
+     "cellule": "G15",
+     "valeur": -35.0
+    }
+   }
+  },
+  "05_tableau_4": {
+   "ensemble": {
+    "tous": {
+     "femmes": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "C6",
+      "valeur": 1380.0
+     },
+     "hommes": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "D6",
+      "valeur": 2190.0
+     },
+     "ensemble": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "E6",
+      "valeur": 1750.0
+     }
+    },
+    "carriere_complete": {
+     "femmes": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "F6",
+      "valeur": 1770.0
+     },
+     "hommes": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "G6",
+      "valeur": 2390.0
+     },
+     "ensemble": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "H6",
+      "valeur": 2100.0
+     }
+    }
+   },
+   "regime_de_base": {
+    "tous": {
+     "femmes": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "C7",
+      "valeur": 1390.0
+     },
+     "hommes": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "D7",
+      "valeur": 2200.0
+     },
+     "ensemble": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "E7",
+      "valeur": 1760.0
+     }
+    },
+    "carriere_complete": {
+     "femmes": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "F7",
+      "valeur": 1770.0
+     },
+     "hommes": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "G7",
+      "valeur": 2390.0
+     },
+     "ensemble": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "H7",
+      "valeur": 2100.0
+     }
+    }
+   },
+   "regime_general": {
+    "tous": {
+     "femmes": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "C8",
+      "valeur": 1200.0
+     },
+     "hommes": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "D8",
+      "valeur": 2120.0
+     },
+     "ensemble": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "E8",
+      "valeur": 1610.0
+     }
+    },
+    "carriere_complete": {
+     "femmes": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "F8",
+      "valeur": 1650.0
+     },
+     "hommes": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "G8",
+      "valeur": 2350.0
+     },
+     "ensemble": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "H8",
+      "valeur": 2020.0
+     }
+    }
+   },
+   "autre_salarie": {
+    "tous": {
+     "femmes": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "C9",
+      "valeur": 2060.0
+     },
+     "hommes": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "D9",
+      "valeur": 2500.0
+     },
+     "ensemble": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "E9",
+      "valeur": 2270.0
+     }
+    },
+    "carriere_complete": {
+     "femmes": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "F9",
+      "valeur": 2280.0
+     },
+     "hommes": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "G9",
+      "valeur": 2680.0
+     },
+     "ensemble": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "H9",
+      "valeur": 2490.0
+     }
+    }
+   },
+   "fpe_civils": {
+    "tous": {
+     "femmes": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "C10",
+      "valeur": 2390.0
+     },
+     "hommes": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "D10",
+      "valeur": 2820.0
+     },
+     "ensemble": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "E10",
+      "valeur": 2570.0
+     }
+    },
+    "carriere_complete": {
+     "femmes": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "F10",
+      "valeur": 2580.0
+     },
+     "hommes": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "G10",
+      "valeur": 2960.0
+     },
+     "ensemble": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "H10",
+      "valeur": 2750.0
+     }
+    }
+   },
+   "fpe_militaires": {
+    "tous": {
+     "femmes": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "C11",
+      "valeur": 1580.0
+     },
+     "hommes": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "D11",
+      "valeur": 2330.0
+     },
+     "ensemble": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "E11",
+      "valeur": 2260.0
+     }
+    },
+    "carriere_complete": {
+     "femmes": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "F11",
+      "valeur": 2370.0
+     },
+     "hommes": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "G11",
+      "valeur": 2940.0
+     },
+     "ensemble": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "H11",
+      "valeur": 2920.0
+     }
+    }
+   },
+   "cnracl": {
+    "tous": {
+     "femmes": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "C12",
+      "valeur": 1790.0
+     },
+     "hommes": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "D12",
+      "valeur": 2050.0
+     },
+     "ensemble": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "E12",
+      "valeur": 1860.0
+     }
+    },
+    "carriere_complete": {
+     "femmes": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "F12",
+      "valeur": 1960.0
+     },
+     "hommes": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "G12",
+      "valeur": 2090.0
+     },
+     "ensemble": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "H12",
+      "valeur": 2010.0
+     }
+    }
+   },
+   "msa_salaries": {
+    "tous": {
+     "femmes": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "C13",
+      "valeur": 1430.0
+     },
+     "hommes": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "D13",
+      "valeur": 1920.0
+     },
+     "ensemble": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "E13",
+      "valeur": 1720.0
+     }
+    },
+    "carriere_complete": {
+     "femmes": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "F13",
+      "valeur": 1860.0
+     },
+     "hommes": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "G13",
+      "valeur": 2190.0
+     },
+     "ensemble": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "H13",
+      "valeur": 2070.0
+     }
+    }
+   },
+   "regimes_speciaux": {
+    "tous": {
+     "femmes": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "C14",
+      "valeur": 2370.0
+     },
+     "hommes": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "D14",
+      "valeur": 2840.0
+     },
+     "ensemble": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "E14",
+      "valeur": 2740.0
+     }
+    },
+    "carriere_complete": {
+     "femmes": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "F14",
+      "valeur": 2780.0
+     },
+     "hommes": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "G14",
+      "valeur": 3010.0
+     },
+     "ensemble": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "H14",
+      "valeur": 2970.0
+     }
+    }
+   },
+   "autre_non_salarie": {
+    "tous": {
+     "femmes": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "C15",
+      "valeur": 1070.0
+     },
+     "hommes": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "D15",
+      "valeur": 1750.0
+     },
+     "ensemble": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "E15",
+      "valeur": 1420.0
+     }
+    },
+    "carriere_complete": {
+     "femmes": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "F15",
+      "valeur": 1160.0
+     },
+     "hommes": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "G15",
+      "valeur": 1670.0
+     },
+     "ensemble": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "H15",
+      "valeur": 1430.0
+     }
+    }
+   },
+   "msa_non_salaries": {
+    "tous": {
+     "femmes": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "C16",
+      "valeur": 820.0
+     },
+     "hommes": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "D16",
+      "valeur": 1130.0
+     },
+     "ensemble": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "E16",
+      "valeur": 970.0
+     }
+    },
+    "carriere_complete": {
+     "femmes": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "F16",
+      "valeur": 920.0
+     },
+     "hommes": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "G16",
+      "valeur": 1160.0
+     },
+     "ensemble": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "H16",
+      "valeur": 1040.0
+     }
+    }
+   },
+   "professions_liberales": {
+    "tous": {
+     "femmes": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "C17",
+      "valeur": 2160.0
+     },
+     "hommes": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "D17",
+      "valeur": 3260.0
+     },
+     "ensemble": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "E17",
+      "valeur": 2840.0
+     }
+    },
+    "carriere_complete": {
+     "femmes": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "F17",
+      "valeur": 2540.0
+     },
+     "hommes": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "G17",
+      "valeur": 3680.0
+     },
+     "ensemble": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "H17",
+      "valeur": 3220.0
+     }
+    }
+   },
+   "aucun_principal": {
+    "tous": {
+     "femmes": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "C18",
+      "valeur": 1640.0
+     },
+     "hommes": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "D18",
+      "valeur": 2550.0
+     },
+     "ensemble": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "E18",
+      "valeur": 2200.0
+     }
+    },
+    "carriere_complete": {
+     "femmes": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "F18",
+      "valeur": 1910.0
+     },
+     "hommes": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "G18",
+      "valeur": 2760.0
+     },
+     "ensemble": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "H18",
+      "valeur": 2450.0
+     }
+    }
+   },
+   "monopensionnes": {
+    "tous": {
+     "femmes": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "C19",
+      "valeur": 1310.0
+     },
+     "hommes": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "D19",
+      "valeur": 2150.0
+     },
+     "ensemble": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "E19",
+      "valeur": 1680.0
+     }
+    },
+    "carriere_complete": {
+     "femmes": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "F19",
+      "valeur": 1750.0
+     },
+     "hommes": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "G19",
+      "valeur": 2390.0
+     },
+     "ensemble": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "H19",
+      "valeur": 2080.0
+     }
+    }
+   },
+   "polypensionnes": {
+    "tous": {
+     "femmes": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "C20",
+      "valeur": 1630.0
+     },
+     "hommes": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "D20",
+      "valeur": 2310.0
+     },
+     "ensemble": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "E20",
+      "valeur": 1970.0
+     }
+    },
+    "carriere_complete": {
+     "femmes": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "F20",
+      "valeur": 1830.0
+     },
+     "hommes": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "G20",
+      "valeur": 2400.0
+     },
+     "ensemble": {
+      "classeur": "fiche_05.xlsx",
+      "feuille": "F05_Tableau 4",
+      "cellule": "H20",
+      "valeur": 2140.0
+     }
+    }
+   }
+  },
+  "08_graphique_1": {
+   "regime_general": {
+    "2012": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Graphique 1",
+     "cellule": "C9",
+     "valeur": 27.6
+    },
+    "2013": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Graphique 1",
+     "cellule": "C10",
+     "valeur": 25.3
+    },
+    "2014": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Graphique 1",
+     "cellule": "C11",
+     "valeur": 25.3
+    },
+    "2015": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Graphique 1",
+     "cellule": "C12",
+     "valeur": 25.2
+    },
+    "2016": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Graphique 1",
+     "cellule": "C13",
+     "valeur": 22.3
+    },
+    "2017": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Graphique 1",
+     "cellule": "C14",
+     "valeur": 21.1
+    },
+    "2018": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Graphique 1",
+     "cellule": "C15",
+     "valeur": 22.0
+    },
+    "2019": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Graphique 1",
+     "cellule": "C16",
+     "valeur": 20.9
+    },
+    "2020": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Graphique 1",
+     "cellule": "C17",
+     "valeur": 17.8
+    },
+    "2021": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Graphique 1",
+     "cellule": "C18",
+     "valeur": 17.5
+    },
+    "2022": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Graphique 1",
+     "cellule": "C19",
+     "valeur": 18.3
+    },
+    "2023": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Graphique 1",
+     "cellule": "C20",
+     "valeur": 17.9
+    },
+    "2024": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Graphique 1",
+     "cellule": "C21",
+     "valeur": 17.4
+    }
+   },
+   "msa_salaries": {
+    "2024": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Graphique 1",
+     "cellule": "D21",
+     "valeur": 35.6
+    }
+   },
+   "fpe_civils": {
+    "2024": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Graphique 1",
+     "cellule": "G21",
+     "valeur": 4.5
+    }
+   },
+   "fpe_militaires": {
+    "2024": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Graphique 1",
+     "cellule": "H21",
+     "valeur": 6.8
+    }
+   },
+   "cnracl": {
+    "2024": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Graphique 1",
+     "cellule": "I21",
+     "valeur": 23.5
+    }
+   },
+   "msa_non_salaries": {
+    "2024": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Graphique 1",
+     "cellule": "J21",
+     "valeur": 18.4
+    }
+   }
+  },
+  "08_tableau_1": {
+   "toutes_carrieres": {
+    "femmes": {
+     "au_moins_un_regime": {
+      "classeur": "fiche_08.xlsx",
+      "feuille": "F08_Tableau 1",
+      "cellule": "C6",
+      "valeur": 34.0
+     },
+     "regime_principal": {
+      "classeur": "fiche_08.xlsx",
+      "feuille": "F08_Tableau 1",
+      "cellule": "D6",
+      "valeur": 30.0
+     },
+     "non_principal": {
+      "classeur": "fiche_08.xlsx",
+      "feuille": "F08_Tableau 1",
+      "cellule": "E6",
+      "valeur": 4.0
+     },
+     "aucun": {
+      "classeur": "fiche_08.xlsx",
+      "feuille": "F08_Tableau 1",
+      "cellule": "F6",
+      "valeur": 66.0
+     }
+    },
+    "hommes": {
+     "au_moins_un_regime": {
+      "classeur": "fiche_08.xlsx",
+      "feuille": "F08_Tableau 1",
+      "cellule": "C7",
+      "valeur": 15.0
+     },
+     "regime_principal": {
+      "classeur": "fiche_08.xlsx",
+      "feuille": "F08_Tableau 1",
+      "cellule": "D7",
+      "valeur": 11.0
+     },
+     "non_principal": {
+      "classeur": "fiche_08.xlsx",
+      "feuille": "F08_Tableau 1",
+      "cellule": "E7",
+      "valeur": 4.0
+     },
+     "aucun": {
+      "classeur": "fiche_08.xlsx",
+      "feuille": "F08_Tableau 1",
+      "cellule": "F7",
+      "valeur": 85.0
+     }
+    },
+    "ensemble": {
+     "au_moins_un_regime": {
+      "classeur": "fiche_08.xlsx",
+      "feuille": "F08_Tableau 1",
+      "cellule": "C8",
+      "valeur": 25.0
+     },
+     "regime_principal": {
+      "classeur": "fiche_08.xlsx",
+      "feuille": "F08_Tableau 1",
+      "cellule": "D8",
+      "valeur": 21.0
+     },
+     "non_principal": {
+      "classeur": "fiche_08.xlsx",
+      "feuille": "F08_Tableau 1",
+      "cellule": "E8",
+      "valeur": 4.0
+     },
+     "aucun": {
+      "classeur": "fiche_08.xlsx",
+      "feuille": "F08_Tableau 1",
+      "cellule": "F8",
+      "valeur": 75.0
+     }
+    }
+   },
+   "carrieres_completes": {
+    "femmes": {
+     "au_moins_un_regime": {
+      "classeur": "fiche_08.xlsx",
+      "feuille": "F08_Tableau 1",
+      "cellule": "C10",
+      "valeur": 28.0
+     },
+     "regime_principal": {
+      "classeur": "fiche_08.xlsx",
+      "feuille": "F08_Tableau 1",
+      "cellule": "D10",
+      "valeur": 23.0
+     },
+     "non_principal": {
+      "classeur": "fiche_08.xlsx",
+      "feuille": "F08_Tableau 1",
+      "cellule": "E10",
+      "valeur": 5.0
+     },
+     "aucun": {
+      "classeur": "fiche_08.xlsx",
+      "feuille": "F08_Tableau 1",
+      "cellule": "F10",
+      "valeur": 72.0
+     }
+    },
+    "hommes": {
+     "au_moins_un_regime": {
+      "classeur": "fiche_08.xlsx",
+      "feuille": "F08_Tableau 1",
+      "cellule": "C11",
+      "valeur": 10.0
+     },
+     "regime_principal": {
+      "classeur": "fiche_08.xlsx",
+      "feuille": "F08_Tableau 1",
+      "cellule": "D11",
+      "valeur": 6.0
+     },
+     "non_principal": {
+      "classeur": "fiche_08.xlsx",
+      "feuille": "F08_Tableau 1",
+      "cellule": "E11",
+      "valeur": 4.0
+     },
+     "aucun": {
+      "classeur": "fiche_08.xlsx",
+      "feuille": "F08_Tableau 1",
+      "cellule": "F11",
+      "valeur": 90.0
+     }
+    },
+    "ensemble": {
+     "au_moins_un_regime": {
+      "classeur": "fiche_08.xlsx",
+      "feuille": "F08_Tableau 1",
+      "cellule": "C12",
+      "valeur": 18.0
+     },
+     "regime_principal": {
+      "classeur": "fiche_08.xlsx",
+      "feuille": "F08_Tableau 1",
+      "cellule": "D12",
+      "valeur": 14.0
+     },
+     "non_principal": {
+      "classeur": "fiche_08.xlsx",
+      "feuille": "F08_Tableau 1",
+      "cellule": "E12",
+      "valeur": 4.0
+     },
+     "aucun": {
+      "classeur": "fiche_08.xlsx",
+      "feuille": "F08_Tableau 1",
+      "cellule": "F12",
+      "valeur": 82.0
+     }
+    }
+   },
+   "monopensionnes_carriere_complete": {
+    "femmes": {
+     "au_moins_un_regime": {
+      "classeur": "fiche_08.xlsx",
+      "feuille": "F08_Tableau 1",
+      "cellule": "C14",
+      "valeur": 24.0
+     },
+     "regime_principal": {
+      "classeur": "fiche_08.xlsx",
+      "feuille": "F08_Tableau 1",
+      "cellule": "D14",
+      "valeur": 24.0
+     },
+     "aucun": {
+      "classeur": "fiche_08.xlsx",
+      "feuille": "F08_Tableau 1",
+      "cellule": "F14",
+      "valeur": 76.0
+     }
+    },
+    "hommes": {
+     "au_moins_un_regime": {
+      "classeur": "fiche_08.xlsx",
+      "feuille": "F08_Tableau 1",
+      "cellule": "C15",
+      "valeur": 4.0
+     },
+     "regime_principal": {
+      "classeur": "fiche_08.xlsx",
+      "feuille": "F08_Tableau 1",
+      "cellule": "D15",
+      "valeur": 4.0
+     },
+     "aucun": {
+      "classeur": "fiche_08.xlsx",
+      "feuille": "F08_Tableau 1",
+      "cellule": "F15",
+      "valeur": 96.0
+     }
+    },
+    "ensemble": {
+     "au_moins_un_regime": {
+      "classeur": "fiche_08.xlsx",
+      "feuille": "F08_Tableau 1",
+      "cellule": "C16",
+      "valeur": 14.0
+     },
+     "regime_principal": {
+      "classeur": "fiche_08.xlsx",
+      "feuille": "F08_Tableau 1",
+      "cellule": "D16",
+      "valeur": 14.0
+     },
+     "aucun": {
+      "classeur": "fiche_08.xlsx",
+      "feuille": "F08_Tableau 1",
+      "cellule": "F16",
+      "valeur": 86.0
+     }
+    }
+   }
+  },
+  "08_tableau_2": {
+   "anciens_salaries": {
+    "femmes": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 2",
+     "cellule": "C6",
+     "valeur": 31.0
+    },
+    "hommes": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 2",
+     "cellule": "D6",
+     "valeur": 11.0
+    },
+    "ensemble": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 2",
+     "cellule": "E6",
+     "valeur": 22.0
+    }
+   },
+   "regime_general": {
+    "femmes": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 2",
+     "cellule": "C7",
+     "valeur": 35.0
+    },
+    "hommes": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 2",
+     "cellule": "D7",
+     "valeur": 12.0
+    },
+    "ensemble": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 2",
+     "cellule": "E7",
+     "valeur": 25.0
+    }
+   },
+   "fpe_civils": {
+    "femmes": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 2",
+     "cellule": "C8",
+     "valeur": 7.0
+    },
+    "hommes": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 2",
+     "cellule": "D8",
+     "valeur": 5.0
+    },
+    "ensemble": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 2",
+     "cellule": "E8",
+     "valeur": 6.0
+    }
+   },
+   "fpe_militaires": {
+    "femmes": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 2",
+     "cellule": "C9",
+     "valeur": 25.0
+    },
+    "hommes": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 2",
+     "cellule": "D9",
+     "valeur": 8.0
+    },
+    "ensemble": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 2",
+     "cellule": "E9",
+     "valeur": 10.0
+    }
+   },
+   "msa_salaries": {
+    "femmes": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 2",
+     "cellule": "C10",
+     "valeur": 24.0
+    },
+    "hommes": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 2",
+     "cellule": "D10",
+     "valeur": 17.0
+    },
+    "ensemble": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 2",
+     "cellule": "E10",
+     "valeur": 20.0
+    }
+   },
+   "cnracl": {
+    "femmes": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 2",
+     "cellule": "C11",
+     "valeur": 23.0
+    },
+    "hommes": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 2",
+     "cellule": "D11",
+     "valeur": 20.0
+    },
+    "ensemble": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 2",
+     "cellule": "E11",
+     "valeur": 22.0
+    }
+   },
+   "regimes_speciaux": {
+    "femmes": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 2",
+     "cellule": "C12",
+     "valeur": 2.0
+    },
+    "hommes": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 2",
+     "cellule": "D12",
+     "valeur": 1.0
+    },
+    "ensemble": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 2",
+     "cellule": "E12",
+     "valeur": 1.0
+    }
+   },
+   "anciens_non_salaries": {
+    "femmes": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 2",
+     "cellule": "C13",
+     "valeur": 24.0
+    },
+    "hommes": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 2",
+     "cellule": "D13",
+     "valeur": 13.0
+    },
+    "ensemble": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 2",
+     "cellule": "E13",
+     "valeur": 17.0
+    }
+   },
+   "msa_non_salaries": {
+    "femmes": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 2",
+     "cellule": "C14",
+     "valeur": 40.0
+    },
+    "hommes": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 2",
+     "cellule": "D14",
+     "valeur": 20.0
+    },
+    "ensemble": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 2",
+     "cellule": "E14",
+     "valeur": 27.0
+    }
+   },
+   "ensemble": {
+    "femmes": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 2",
+     "cellule": "C15",
+     "valeur": 30.0
+    },
+    "hommes": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 2",
+     "cellule": "D15",
+     "valeur": 11.0
+    },
+    "ensemble": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 2",
+     "cellule": "E15",
+     "valeur": 21.0
+    }
+   }
+  },
+  "08_tableau_3": {
+   "nes_a_l_etranger": {
+    "regime_principal": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 3",
+     "cellule": "E7",
+     "valeur": 20.0
+    },
+    "non_principal": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 3",
+     "cellule": "H7",
+     "valeur": 11.0
+    },
+    "aucun_minimum": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 3",
+     "cellule": "K7",
+     "valeur": 15.0
+    }
+   },
+   "carriere_complete": {
+    "regime_principal": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 3",
+     "cellule": "E8",
+     "valeur": 42.0
+    },
+    "non_principal": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 3",
+     "cellule": "H8",
+     "valeur": 77.0
+    },
+    "aucun_minimum": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 3",
+     "cellule": "K8",
+     "valeur": 71.0
+    }
+   },
+   "inaptitude_ou_invalidite": {
+    "regime_principal": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 3",
+     "cellule": "E9",
+     "valeur": 36.0
+    },
+    "non_principal": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 3",
+     "cellule": "H9",
+     "valeur": 18.0
+    },
+    "aucun_minimum": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 3",
+     "cellule": "K9",
+     "valeur": 8.0
+    }
+   },
+   "a_l_annulation_de_la_decote_ou_apres": {
+    "regime_principal": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 3",
+     "cellule": "E10",
+     "valeur": 25.0
+    },
+    "non_principal": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 3",
+     "cellule": "H10",
+     "valeur": 6.0
+    },
+    "aucun_minimum": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 3",
+     "cellule": "K10",
+     "valeur": 8.0
+    }
+   },
+   "polypensionnes": {
+    "regime_principal": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 3",
+     "cellule": "E11",
+     "valeur": 29.0
+    },
+    "non_principal": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 3",
+     "cellule": "H11",
+     "valeur": 100.0
+    },
+    "aucun_minimum": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 3",
+     "cellule": "K11",
+     "valeur": 33.0
+    }
+   },
+   "age_de_liquidation": {
+    "regime_principal": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 3",
+     "cellule": "E12",
+     "valeur": 62.6
+    },
+    "non_principal": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 3",
+     "cellule": "H12",
+     "valeur": 61.0
+    },
+    "aucun_minimum": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 3",
+     "cellule": "K12",
+     "valeur": 61.6
+    }
+   },
+   "proratisation": {
+    "regime_principal": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 3",
+     "cellule": "E13",
+     "valeur": 0.8
+    },
+    "non_principal": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 3",
+     "cellule": "H13",
+     "valeur": 1.0
+    },
+    "aucun_minimum": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 3",
+     "cellule": "K13",
+     "valeur": 1.0
+    }
+   },
+   "duree_validee": {
+    "regime_principal": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 3",
+     "cellule": "E14",
+     "valeur": 139.0
+    },
+    "non_principal": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 3",
+     "cellule": "H14",
+     "valeur": 169.0
+    },
+    "aucun_minimum": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 3",
+     "cellule": "K14",
+     "valeur": 166.0
+    }
+   },
+   "duree_validee_hors_mda": {
+    "regime_principal": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 3",
+     "cellule": "E15",
+     "valeur": 125.0
+    },
+    "non_principal": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 3",
+     "cellule": "H15",
+     "valeur": 160.0
+    },
+    "aucun_minimum": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 3",
+     "cellule": "K15",
+     "valeur": 159.0
+    }
+   },
+   "duree_cotisee": {
+    "regime_principal": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 3",
+     "cellule": "E16",
+     "valeur": 99.0
+    },
+    "non_principal": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 3",
+     "cellule": "H16",
+     "valeur": 146.0
+    },
+    "aucun_minimum": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 3",
+     "cellule": "K16",
+     "valeur": 151.0
+    }
+   },
+   "part_non_cotisee": {
+    "regime_principal": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 3",
+     "cellule": "E17",
+     "valeur": 29.0
+    },
+    "non_principal": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 3",
+     "cellule": "H17",
+     "valeur": 13.0
+    },
+    "aucun_minimum": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 3",
+     "cellule": "K17",
+     "valeur": 9.0
+    }
+   }
+  },
+  "08_tableau_4": {
+   "pension_de_droit_direct": {
+    "regime_principal": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 4 ",
+     "cellule": "E7",
+     "valeur": 750.0
+    },
+    "non_principal": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 4 ",
+     "cellule": "H7",
+     "valeur": 1350.0
+    },
+    "aucun_minimum": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 4 ",
+     "cellule": "K7",
+     "valeur": 1830.0
+    }
+   },
+   "majorations_du_minimum": {
+    "regime_principal": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 4 ",
+     "cellule": "E8",
+     "valeur": 140.0
+    },
+    "non_principal": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 4 ",
+     "cellule": "H8",
+     "valeur": 90.0
+    },
+    "aucun_minimum": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 4 ",
+     "cellule": "K8",
+     "valeur": 0.0
+    }
+   },
+   "equivalent_carriere_complete": {
+    "regime_principal": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 4 ",
+     "cellule": "E9",
+     "valeur": 980.0
+    },
+    "non_principal": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 4 ",
+     "cellule": "H9",
+     "valeur": 1350.0
+    },
+    "aucun_minimum": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 4 ",
+     "cellule": "K9",
+     "valeur": 1890.0
+    }
+   },
+   "pension_totale": {
+    "regime_principal": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 4 ",
+     "cellule": "E10",
+     "valeur": 840.0
+    },
+    "non_principal": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 4 ",
+     "cellule": "H10",
+     "valeur": 1410.0
+    },
+    "aucun_minimum": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 4 ",
+     "cellule": "K10",
+     "valeur": 1880.0
+    }
+   },
+   "part_du_minimum": {
+    "regime_principal": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 4 ",
+     "cellule": "E12",
+     "valeur": 25.0
+    },
+    "non_principal": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 4 ",
+     "cellule": "H12",
+     "valeur": 8.0
+    },
+    "aucun_minimum": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau 4 ",
+     "cellule": "K12",
+     "valeur": 0.0
+    }
+   }
+  },
+  "08_encadre_2": {
+   "au_minimum_contributif": {
+    "effectifs": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau encadré 2",
+     "cellule": "C30",
+     "valeur": 788666.0
+    },
+    "majoration": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau encadré 2",
+     "cellule": "D30",
+     "valeur": 55.63692338708654
+    },
+    "pension": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau encadré 2",
+     "cellule": "E30",
+     "valeur": 730.8706937917955
+    }
+   },
+   "sans_minimum_contributif": {
+    "effectifs": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau encadré 2",
+     "cellule": "F30",
+     "valeur": 503942.0
+    },
+    "majoration": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau encadré 2",
+     "cellule": "G30",
+     "valeur": 45.78525145750899
+    },
+    "pension": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau encadré 2",
+     "cellule": "H30",
+     "valeur": 853.5273838060731
+    }
+   },
+   "liquidants_de_2023_au_minimum": {
+    "effectifs": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau encadré 2",
+     "cellule": "C29",
+     "valeur": 20281.0
+    },
+    "majoration": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau encadré 2",
+     "cellule": "D29",
+     "valeur": 63.71804841970317
+    },
+    "pension": {
+     "classeur": "fiche_08.xlsx",
+     "feuille": "F08_Tableau encadré 2",
+     "cellule": "E29",
+     "valeur": 727.5152891869237
+    }
+   }
   }
  },
  "citations": {
@@ -1418,6 +3338,25 @@
     "la pension brute tous régimes du cas type d’ancien salarié non-cadre diminue de 3,7 % en euros constants",
     "Sa pension brute baisse de 5,3 % en euros constants et sa pension nette de 7,7 %",
     "a vu le pouvoir d’achat de sa pension de retraite brute diminuer de 4,4 % au total entre fin 2000 et fin 2025, et le pouvoir d’achat de sa pension nette diminuer de 3,7 %"
+   ]
+  },
+  "05_tableau_4": {
+   "page": 60,
+   "textes": [
+    "La carrière est considérée comme complète si la durée d’assurance tous régimes est au moins égale à la durée requise pour le taux plein (dans un des régimes d’affiliation au moins)."
+   ]
+  },
+  "annexe_3_carriere_complete": {
+   "page": 300,
+   "textes": [
+    "un retraité est considéré comme bénéficiant d’une carrière complète si sa durée d’assurance tous régimes est supérieure ou égale au nombre de trimestres requis dans au moins un des régimes de base.",
+    "si la somme des coefficients de proratisation dans les régimes de base est supérieure ou égale à 100 %. Cette définition est celle retenue dans l’ouvrage."
+   ]
+  },
+  "08_encadre_2": {
+   "page": 82,
+   "textes": [
+    "La majoration exceptionnelle a bénéficié à 20 281 retraités de la CNAV ayant liquidé leurs droits en 2023"
    ]
   }
  }
