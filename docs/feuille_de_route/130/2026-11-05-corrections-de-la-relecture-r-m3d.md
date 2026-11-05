@@ -203,3 +203,5 @@ trente-sept ans et demi d'assurance (l'article 70-2, c), cité ci-dessus).
 Non corrigé ici : c'est à la zone du régime général de le lire, les articles
 L. 351-16 et L. 351-17 du code du travail de 1982 et le texte de la loi de
 1977 d'abord, que l'index n'a pas.
+
+Renvoi du 5 novembre 2026 : l'ordre des deux passages du rapport, et la source de la durée du 6° a) (décret n° 82-628, article 13), dans `2026-11-05-corrections-de-la-relecture-r-m3-bis.md`.

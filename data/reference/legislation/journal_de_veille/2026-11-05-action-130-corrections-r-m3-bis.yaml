@@ -1,0 +1,35 @@
+date: "2026-11-05"
+session: "action 130, file M3-ter : les écarts de la relecture R-M3-bis (le 6° a) de l'article 16 de l'Ircantec après le 31 mars 1983)"
+consulte: >-
+  python scripts/veille_droit.py ; docs/veille_droit.md ; les index LEGI et JORF du dépôt,
+  récupérés de la release, à jour des incréments du 2 novembre 2026 (LEGI,
+  20261102-213929) et du 3 novembre (JORF, 20261103-002311). Dans LEGI : l'article 16 de
+  l'arrêté du 30 décembre 1970, rédactions du 31 août 1983, du 2 octobre 1990 et du
+  1er janvier 2004 (LEGIARTI000006381610 à 612), leur 6° ; l'ordonnance n° 82-270,
+  article 9 (LEGIARTI000006275868) et rapport au Président de la République
+  (LEGIARTI000006759661) ; le décret n° 82-628 du 21 juillet 1982, articles 13 à 15
+  (LEGIARTI000006763435 à 437) ; R. 351-45 du code de la sécurité sociale, rédaction du
+  10 mai 1995 (LEGIARTI000006749450). Dans JORF, de 1983 à 2004, une circulaire ou une
+  instruction de l'Ircantec sur le 6° a) : « ircantec AND (circulaire OR instruction) »,
+  « ircantec AND coefficient AND (reduction OR abattement OR anticipation) »,
+  « "non titulaires" AND "63 ans" », « "article 9" AND "26 mars 1982" AND ircantec ».
+trouve: >-
+  Aucune circulaire ni instruction de l'Ircantec sur le 6° a), ni dans l'index ni dans le
+  dépôt. Le 6° a) est écrit, mot pour mot et sans terme, dans les rédactions de l'article 16
+  du 31 août 1983 et du 2 octobre 1990, jusqu'au 1er janvier 2004, où il devient la
+  carrière longue (L. 351-1-1) ; l'article 9 ne borne que sa troisième phrase (le 6° b),
+  « jusqu'au 1er avril 1983 ». Les deux moteurs le servent désormais jusqu'au 31 décembre
+  2003 ; la lecture du rapport au Président de la République, qui l'aurait borné au
+  31 mars 1983, est déclarée écartée. L'article 13 du décret n° 82-628 dit les régimes de
+  la durée du 6° a), « dans le régime général ou dans ce régime et un ou plusieurs autres
+  régimes de base obligatoires » : celle que le modèle compte, 150 trimestres de
+  l'article 9. L'article 14 ajoute au 6° b) le chômage constaté à l'entrée en jouissance.
+  R. 351-45, I : 160 trimestres pour toute pension qui prend effet après le 31 décembre
+  2002.
+reste: >-
+  Une circulaire de l'Ircantec de 1983 à 2003 et les articles L. 351-16 et L. 351-17 du
+  code du travail, absents de l'index, trancheraient la lecture du rapport : à lire au
+  Journal officiel ou aux archives de la caisse. Le 6° b) n'est pas servi (déclaré).
+  L'agent privé d'emploi qu'indemnisent L. 351-16 et L. 351-17 est abattu (déclaré). Le
+  régime général du modèle ne sert pas le taux plein de l'article 9 de l'ordonnance : à
+  la zone du régime général, avec l'article 13 du décret n° 82-628.

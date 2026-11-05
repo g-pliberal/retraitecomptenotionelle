@@ -4076,11 +4076,11 @@ def abattement_points(moteur, periode: PeriodeRegime, carriere: Carriere,
         # anciens agents handicapés admis à faire liquider leur retraite au
         # régime général en application de l'article L. 351-1-3 » (arrêté du
         # 30 décembre 1970, article 16).
-        # L'ÂGE ET LA DURÉE, AVANT LE 6° c) : l'agent de soixante-trois ans et
-        # de cent cinquante trimestres dès le 1er juillet 1982 (6° a), la
-        # femme de la loi du 12 juillet 1977 dès le 30 septembre 1978 (5°),
-        # que la version de la date d'effet nomme
-        # (:func:`exonere_par_l_age_et_la_duree`).
+        # L'ÂGE ET LA DURÉE : l'agent de soixante-trois ans et de cent
+        # cinquante trimestres du 1er juillet 1982 au 31 décembre 2003 (6° a,
+        # sans terme jusqu'à la rédaction de 2004), la femme de la loi du
+        # 12 juillet 1977 du 30 septembre 1978 au 31 mars 1983 (5°), que la
+        # version de la date d'effet nomme (:func:`exonere_par_l_age_et_la_duree`).
         exonere = bareme is not None and exonere_par_l_age_et_la_duree(
             moteur, bareme, carriere, trimestres, age_liquidation, annee_liquidation, durees)
         if inapte or handicap or exonere or (not par_age_seul and trimestres >= requis):

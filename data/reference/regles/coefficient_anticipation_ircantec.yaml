@@ -25,11 +25,11 @@ lit:
   le départ anticipé pour carrière longue ou pour handicap, et les autres motifs que
   l'article énumère, rédaction par rédaction
 - >-
-  avant le 1er avril 1983, l'âge et la durée que l'article nomme : du 30 septembre 1978,
-  le sexe de l'assurée et sa durée d'assurance au régime général, aux assurances sociales
-  et chez les salariés agricoles (5°) ; du 1er juillet 1982, la durée tous régimes de
-  l'agent, et s'il est encore agent à la liquidation — la dernière ligne de sa carrière
-  est un emploi à l'Ircantec (6° a)
+  l'âge et la durée que l'article nomme : du 30 septembre 1978 au 31 mars 1983, le sexe
+  de l'assurée et sa durée d'assurance au régime général, aux assurances sociales et chez
+  les salariés agricoles (5°) ; du 1er juillet 1982 au 31 décembre 2003, la durée tous
+  régimes de l'agent (décret n° 82-628, article 13), et s'il est encore agent à la
+  liquidation — la dernière ligne de sa carrière est un emploi à l'Ircantec (6° a)
 - la date d'effet de la pension, qui choisit la rédaction de l'article 16
 ecrit:
 - >-
@@ -206,7 +206,9 @@ versions:
   - {id: JORFTEXT000000837384, article: "arrêté du 26 juillet 1983 : le coefficient « n'est plus applicable, à compter du 01-07-1982 » aux bénéficiaires de l'ordonnance n° 82-270 du 26 mars 1982 (analyse du Journal officiel)", en_vigueur: 1983-08-31, publie_le: 1983-08-31}
   - {id: LEGIARTI000006381609, article: "arrêté du 30 décembre 1970, article 16, rédaction de 1978, sa table et son 5°", en_vigueur: 1978-09-30}
   - {id: LEGIARTI000006275868, article: "ordonnance n° 82-270 du 26 mars 1982, article 9, que le 6° a) et b) nomme ; LEGI l'imprime en un seul paragraphe, de trois phrases", en_vigueur: 1982-07-01, citation: "Les dispositions de la présente ordonnance entreront en vigueur le 1er avril 1983. Toutefois, les personnels visés aux articles L. 351-16 et L. 351-17 du code du travail, âgés d'au moins soixante-trois ans et justifiant d'une durée d'assurance de 150 trimestres, bénéficient, dès le 1er juillet 1982, du taux plein défini à l'article 1er de la présente ordonnance. En outre, à compter du 1er juillet 1982 et jusqu'au 1er avril 1983, les assurés, âgés d'au moins soixante ans et inscrits comme demandeur d'emploi à la date du 1er février 1982, peuvent bénéficier des dispositions de l'article L. 332 b du code de la sécurité sociale sans avoir à satisfaire aux conditions posées par l'article L. 333, dès lors qu'ils justifient, dans le régime général ou dans ce régime et un ou plusieurs autres régimes obligatoires de base, d'une durée d'assurance au moins égale à quarante trimestres."}
-  - {id: LEGIARTI000006759661, article: "ordonnance n° 82-270 du 26 mars 1982, rapport au Président de la République : qui sont les « personnels », et la durée", en_vigueur: 1983-04-01, citation: "elle entrera en vigueur, selon des modalités spécifiques, dès le 1er juillet 1982 pour les agents non titulaires de l'Etat, des collectivités locales, des établissements et entreprises publiques qui n'ont pas accès actuellement au dispositif de la garantie de ressources […] une durée d'assurance d'au moins 150 trimestres obtenue en totalisant les périodes cotisées et assimilées dans un ou plusieurs régimes de base quels qu'ils soient"}
+  - {id: LEGIARTI000006763435, article: "décret n° 82-628 du 21 juillet 1982, article 13 : la durée du 6° a), tous régimes de base", en_vigueur: 1982-07-23, citation: "La durée d'assurance dont doivent justifier les personnels visés à l'article 9, deuxième alinéa, de l'ordonnance du 26 mars 1982 susvisée pour bénéficier, dès le 1er juillet 1982, du taux plein peut avoir été accomplie dans le régime général ou dans ce régime et un ou plusieurs autres régimes de base obligatoires."}
+  - {id: LEGIARTI000006759661, article: "ordonnance n° 82-270 du 26 mars 1982, rapport au Président de la République : la durée de la réforme, puis qui sont les « personnels »", en_vigueur: 1983-04-01, citation: "une durée d'assurance d'au moins 150 trimestres obtenue en totalisant les périodes cotisées et assimilées dans un ou plusieurs régimes de base quels qu'ils soient […] elle entrera en vigueur, selon des modalités spécifiques, dès le 1er juillet 1982 pour les agents non titulaires de l'Etat, des collectivités locales, des établissements et entreprises publiques qui n'ont pas accès actuellement au dispositif de la garantie de ressources"}
+  - {id: LEGIARTI000006763436, article: "décret n° 82-628 du 21 juillet 1982, article 14 : qui est l'assuré du 6° b)", en_vigueur: 1982-07-23, citation: "Les dispositions du troisième alinéa de l'article 9 de l'ordonnance n° 82-270 du 26 mars 1982 s'appliquent aux assurés qui sont en situation de chômage constaté à la date d'entrée en jouissance de leur pension et qui étaient inscrits comme demandeur d'emploi à la date du 1er février 1982."}
   - {id: JORFTEXT000000654120, article: "arrêté du 27 janvier 1983, qui écrit ces exonérations dans l'article 16 (analyse du Journal officiel ; son texte, et le rectificatif du 12 mars 1983, ne sont pas dans l'index)", en_vigueur: 1983-02-05, publie_le: 1983-02-05, citation: "RECT. JO DU 12-03-1983 P756 MODIFICATION DE L'ART. 16 (AL. 2) DE L'ARRETE DU 30-12-1970. […] EST LIQUIDEE,SANS COEFFICIENT DE REDUCTION AVANT 65 ANS,AU BENEFICE DES ASSURES AYANT 63 ANS ET 150 TRIMESTRES D'ASSURANCE ET DES ASSURES DEMANDEURS D'EMPLOI A LA DATE DU 01-02-1982 AYANT 40 TRIMESTRES D'ASSURANCE (A COMPTER DU 01-07-1982),AU BENEFICE DES ASSURES TITULAIRES,AU TITRE DU REGIME GENERAL (OU AGRICOLE) DE SECURITE SOCIALE,D'UNE PENSION A TAUX PLEIN (A COMPTER DU 01-04-1983) ET ENFIN AUX AGENTS EN CESSATION ANTICIPEE D'ACTIVITE."}
   - {id: LEGIARTI000006760658, article: "décret n° 45-0179 du 29 décembre 1945, article 70-2, c), la femme de la loi du 12 juillet 1977 (version femmes_de_la_loi_de_1977)", en_vigueur: 1978-03-16}
   nee_de: LEGIARTI000006381610
@@ -235,9 +237,12 @@ versions:
       150 trimestres » (6° a), les « agents non titulaires de l'Etat, des collectivités
       locales, des établissements et entreprises publiques » du rapport au Président de la
       République, et les anciens agents de son article 9, troisième phrase, inscrits comme
-      demandeurs d'emploi au 1er février 1982 (6° b). Le moteur sert le 6° a) depuis le
-      5 novembre 2026 (`exoneration_des_agents_de_soixante_trois_ans`), sur la durée
-      d'assurance tous régimes, à l'agent dont la dernière ligne de carrière est un emploi
+      demandeurs d'emploi au 1er février 1982 (6° b), « en situation de chômage constaté à
+      la date d'entrée en jouissance de leur pension » (décret n° 82-628, article 14). Le
+      moteur sert le 6° a) depuis le 5 novembre 2026 (`exoneration_des_agents_de_soixante_trois_ans`),
+      sur la durée d'assurance tous régimes de base, que l'article 13 du décret n° 82-628
+      admet (« dans le régime général ou dans ce régime et un ou plusieurs autres régimes
+      de base obligatoires »), à l'agent dont la dernière ligne de carrière est un emploi
       à l'Ircantec ; ni le 6° b), ni la cessation anticipée d'activité (approximations)
   exemples: aucun trouvé
 - id: structure_financiere_1983
@@ -260,7 +265,7 @@ versions:
       paliers_d_anticipation: null
       duree_requise_par_generation: duree_requise_par_generation
       duree_de_la_seconde_table_trimestres: 150
-      exoneration_des_agents_de_soixante_trois_ans: null
+      exoneration_des_agents_de_soixante_trois_ans: {age: 63, trimestres: 150}
       exoneration_des_femmes_de_1977: null
     droit: >-
       la table de 1970, et la seconde table, « A compter du 1er avril 1983 » : « les agents
@@ -275,13 +280,21 @@ versions:
       coefficient d'abattement correspondant à l'âge de l'intéressé » (II)
     conditions: >-
       les exonérations de 1982, et, à compter du 1er avril 1983, qui a la durée du taux plein
-      du régime général (6° c)
+      du régime général (6° c). Le 6° a) n'a pas de terme : l'analyse de l'arrêté du
+      27 janvier 1983 ne lui en donne pas (« A COMPTER DU 01-07-1982 »), l'article 9 de
+      l'ordonnance non plus, qui ne borne que sa troisième phrase, le 6° b) (« à compter du
+      1er juillet 1982 et jusqu'au 1er avril 1983 »), et la rédaction du 31 août 1983 le
+      garde. Le moteur le sert depuis le 5 novembre 2026 (relecture R-M3-bis), aux mêmes
+      conditions que de juillet 1982 à mars 1983 ; il ne compte que tant que la durée de
+      la génération passe cent cinquante trimestres
   exemples: aucun trouvé
 - id: escalier_au_trimestre_1983
   statut: lue
   textes:
   - {id: LEGIARTI000006381610, article: "arrêté du 30 décembre 1970, article 16, rédaction de l'arrêté du 26 juillet 1983", en_vigueur: 1983-08-31}
   - {id: JORFTEXT000000837384, article: "arrêté du 26 juillet 1983 : les coefficients de réduction « variant selon l'âge de liquidation et fixés désormais par trimestre » (analyse du Journal officiel)", en_vigueur: 1983-08-31, publie_le: 1983-08-31}
+  - {id: LEGIARTI000006381611, article: "arrêté du 30 décembre 1970, article 16, rédaction du 2 octobre 1990, en vigueur jusqu'au 1er janvier 2004 : le 6° a), mot pour mot celui de 1983", en_vigueur: 1990-10-02, citation: "6° a) A compter du 1er juillet 1982 aux agents visés aux articles L. 351-16 et L. 351-17 du code du travail remplissant les conditions fixées par l'article 9, alinéa 2, de l'ordonnance du 26 mars 1982 susvisée"}
+  - {id: LEGIARTI000006763435, article: "décret n° 82-628 du 21 juillet 1982, article 13 : la durée du 6° a), tous régimes de base (version ordonnance_du_26_mars_1982)", en_vigueur: 1982-07-23}
   nee_de: LEGIARTI000006381610
   bornes:
     liquidation.date_effet: [1983-08-31, 2004-01-01]
@@ -295,7 +308,7 @@ versions:
       paliers_d_anticipation: [[12, 0.01], [20, 0.0125], [40, 0.0175]]
       duree_requise_par_generation: duree_requise_par_generation
       duree_de_la_seconde_table_trimestres: 150
-      exoneration_des_agents_de_soixante_trois_ans: null
+      exoneration_des_agents_de_soixante_trois_ans: {age: 63, trimestres: 150}
       exoneration_des_femmes_de_1977: null
     droit: >-
       « A cinquante-cinq ans, les points effectivement inscrits au compte de l'intéressé
@@ -320,7 +333,10 @@ versions:
       admis en cessation anticipée d'activité au titre des ordonnances n° 82-108 du
       30 janvier 1982 et n° 82-297 du 31 mars 1982 » ; le travailleur manuel et la femme de
       la loi de 1977 en sortent, que le taux plein du 6° c) couvre à soixante ans. La
-      rédaction du 2 octobre 1990 n'y ajoute que la retraite progressive (§ 3)
+      rédaction du 2 octobre 1990 n'y ajoute que la retraite progressive (§ 3). Le 6° a),
+      sans terme, s'y lit jusqu'au 31 décembre 2003 : le moteur le sert depuis le
+      5 novembre 2026 (relecture R-M3-bis), à l'agent de soixante-trois ans et de cent
+      cinquante trimestres tous régimes à qui manque la durée de sa génération
   exemples: aucun trouvé
 - id: retraite_anticipee_2004
   statut: lue
@@ -581,7 +597,9 @@ approximations:
     article 16 : le licenciement dans l'intérêt du service, de 1971 au 1er juillet 2011 ;
     les anciens agents de l'article 9, alinéa 3, de l'ordonnance du 26 mars 1982 (6° b) —
     « âgés d'au moins soixante ans et inscrits comme demandeur d'emploi à la date du
-    1er février 1982 », « à compter du 1er juillet 1982 et jusqu'au 1er avril 1983 » —, et
+    1er février 1982 », « à compter du 1er juillet 1982 et jusqu'au 1er avril 1983 », et
+    « en situation de chômage constaté à la date d'entrée en jouissance de leur pension »
+    (décret n° 82-628, article 14) —, et
     la cessation anticipée d'activité, depuis le 1er juillet 1982
   ecart: >-
     le modèle ne connaît ni l'agent licencié dans l'intérêt du service entre soixante-trois
@@ -593,10 +611,13 @@ approximations:
   effet: >-
     jusqu'à 22 points de coefficient de moins ; non mesuré. L'ancien agent du 6° b) : de
     soixante à soixante-quatre ans, de juillet 1982 à mars 1983, 0,78 à 0,96 au lieu de un
-- version: [ordonnance_du_26_mars_1982]
+- version: [ordonnance_du_26_mars_1982, structure_financiere_1983, escalier_au_trimestre_1983]
   textes: >-
-    article 16, 6° a), rédaction du 31 août 1983 : « aux agents visés aux articles
-    L. 351-16 et L. 351-17 du code du travail » ; le 6° b), « aux anciens agents »
+    article 16, 6° a), rédactions du 31 août 1983 et du 2 octobre 1990 : « aux agents visés
+    aux articles L. 351-16 et L. 351-17 du code du travail » ; le 6° b), « aux anciens
+    agents » ; décret n° 82-628, article 15 (LEGIARTI000006763437) : « Les allocations aux
+    travailleurs privés d'emploi visées aux articles L. 322-4, L. 351-5, L. 351-6,
+    L. 351-6-1, L. 351-6-2, L. 351-16 et L. 351-17 du code du travail »
   ecart: >-
     les articles L. 351-16 et L. 351-17 du code du travail de 1982 ne sont pas dans l'index
     LEGI : que ces « personnels » soient les agents non titulaires repose sur le rapport au
@@ -606,30 +627,43 @@ approximations:
     du 26 juillet 1983 (« AUX AGENTS NON TITULAIRES AYANT AU MOINS 63 ANS »). Le modèle tient
     pour agent celui dont la dernière ligne de carrière, jusqu'à l'année de la liquidation,
     est un emploi à l'Ircantec ; il ne connaît ni le mois où l'agent a quitté son emploi,
-    ni son accès à la garantie de ressources, que le rapport exclut
+    ni son accès à la garantie de ressources, que le rapport exclut. L'article 15 du
+    décret n° 82-628 dit que les articles L. 351-16 et L. 351-17 servent des allocations
+    aux travailleurs privés d'emploi : les « personnels » qu'ils visent pourraient
+    comprendre l'agent qui a perdu son emploi et qu'ils indemnisent, que le modèle, sans
+    dernière ligne d'emploi à l'Ircantec, abat ; le texte ne le tranche pas
   effet: >-
-    l'agent qui a quitté son emploi dans l'année de la liquidation, ou celui qui avait accès
-    à la garantie de ressources : un sans coefficient où le texte en mettrait un, ou
-    l'inverse ; non mesuré
+    l'agent qui a quitté son emploi dans l'année de la liquidation, celui qui avait accès
+    à la garantie de ressources, ou l'agent privé d'emploi qu'indemnisent ces articles : un
+    sans coefficient où le texte en mettrait un, ou l'inverse ; non mesuré
 - version: [structure_financiere_1983, escalier_au_trimestre_1983]
   textes: >-
     article 16, 6° a), rédactions du 31 août 1983 et du 2 octobre 1990 (LEGIARTI000006381610
     et 611), que celle du 1er janvier 2004 n'a plus : « A compter du 1er juillet 1982 aux
     agents […] remplissant les conditions fixées par l'article 9, alinéa 2, de l'ordonnance
-    du 26 mars 1982 »
+    du 26 mars 1982 » ; ordonnance n° 82-270, article 9 (LEGIARTI000006275868), et son
+    rapport au Président de la République (LEGIARTI000006759661)
   ecart: >-
-    le texte ne tranche pas si le 6° a) vaut encore après le 1er avril 1983 : l'ordonnance
-    le présente comme son entrée en vigueur anticipée pour ces agents (« elle entrera en
-    vigueur, selon des modalités spécifiques, dès le 1er juillet 1982 », rapport au
-    Président de la République), et le 6° c) le contient tant que la durée requise est de
-    cent cinquante trimestres, jusqu'à la génération 1933 ; mais l'article le garde écrit
-    jusqu'au 1er janvier 2004. Le modèle ne le sert qu'au 31 mars 1983 ; après, il lit le
-    6° c) seul
+    aucun texte normatif lu ne borne le 6° a) : l'article le garde, sans terme, jusqu'au
+    1er janvier 2004 ; l'article 9 de l'ordonnance borne sa troisième phrase (« à compter
+    du 1er juillet 1982 et jusqu'au 1er avril 1983 »), non la deuxième ; l'article 13 du
+    décret n° 82-628 est sans terme. Le modèle sert donc la lettre, jusqu'au 31 décembre
+    2003. Lecture écartée : celle qui fait du 6° a) la seule entrée en vigueur anticipée
+    de l'ordonnance pour ces agents, sans objet après le 1er avril 1983, que seul le rapport
+    au Président de la République fonde (« elle entrera en vigueur, selon des modalités
+    spécifiques, dès le 1er juillet 1982 ») ; un rapport n'est pas une norme. Ce qui
+    trancherait, et que ni l'index de la DILA (JORF, LEGI) ni le dépôt n'ont : une
+    circulaire ou une instruction de l'Ircantec de 1983 à 2003 sur le 6° a), et les
+    articles L. 351-16 et L. 351-17 du code du travail, s'ils cessaient de viser ces agents
   effet: >-
-    les agents des générations 1934 à 1940, de soixante-trois ou soixante-quatre ans, qui
-    liquident de 1997 à 2003 avec cent cinquante trimestres sans la durée de leur
-    génération : jusqu'à huit points de coefficient de plus que la lettre de l'article, si
-    la caisse la lisait ; non mesuré, la pratique de la caisse reste à lire
+    si la caisse lisait le rapport : les agents des générations 1934 à 1940, de
+    soixante-trois ou soixante-quatre ans, qui liquident de 1997 à 2003 avec cent cinquante
+    trimestres au moins, sans la durée de leur génération (R. 351-45 : 151 à 157
+    trimestres, 160 pour la pension qui prend effet après le 31 décembre 2002), auraient
+    jusqu'à huit points de coefficient de moins que le modèle ne leur en sert — 0,99 à
+    soixante-trois ans en février 1999, à un trimestre de la durée de 1936, et 0,97 à
+    soixante-quatre ans en février 2002, à trois de celle de 1938, au lieu de un ; non
+    mesuré en masse
 - version: [femmes_de_la_loi_de_1977, ordonnance_du_26_mars_1982]
   textes: >-
     article 16, 5°, rédaction du 30 septembre 1978 : « Aux femmes qui bénéficient d'une
@@ -638,8 +672,9 @@ approximations:
     1945, article 70-2, c)
   ecart: >-
     le texte de la loi du 12 juillet 1977, qui modifie L. 332, n'est pas dans l'index, ni
-    celui du décret n° 82-628 du 21 juillet 1982, après lequel LEGI n'a plus l'article 70-2,
-    c) : le modèle lit les conditions de cet article, en vigueur du 16 mars 1978, jusqu'au
+    l'article du décret n° 82-628 du 21 juillet 1982 qui récrit l'article 70-2 — LEGI n'a
+    de ce décret que ses articles 8, 9 et 13 à 16 (LEGIARTI000006763432 à 438), et de
+    l'article 70-2 que sa rédaction du 23 juillet 1982, sans le c) : le modèle lit les conditions de cet article, en vigueur du 16 mars 1978, jusqu'au
     1er avril 1983, où l'ordonnance du 26 mars 1982 entre en vigueur (son article 9, « Les
     dispositions de la présente ordonnance entreront en vigueur le 1er avril 1983 ») ; il
     compte la durée « dans le régime général » avec les assurances sociales d'avant 1945
@@ -683,7 +718,9 @@ effet: >-
   de l'IGRANTE comme sur ceux de l'Ircantec, ce que le même fichier rejoue ; avant, il
   exonère, à l'âge et à la durée que l'article nomme, la femme de la loi du 12 juillet
   1977, dès le 30 septembre 1978 (5°), et l'agent de soixante-trois ans et de cent
-  cinquante trimestres, dès le 1er juillet 1982 (6° a), que le même fichier rejoue. Reste :
+  cinquante trimestres, dès le 1er juillet 1982 (6° a), que le même fichier rejoue ; le
+  6° a), qui n'a pas de terme, jusqu'au 31 décembre 2003, depuis la relecture R-M3-bis,
+  ce que le même fichier rejoue aussi. Reste :
   il ne sert pas l'anticipation avant l'âge légal.
 sources:
   lu_le: 2026-11-05
@@ -776,6 +813,18 @@ sources:
       (JORFTEXT000000837384) : index LEGI à jour du 2 novembre 2026, JORF du 3 novembre,
       pour servir le 5° et le 6° a) avant le 1er avril 1983 (relecture R-M3d)
     date: 2026-11-05
+  - type: legifrance
+    reference: >-
+      arrêté du 30 décembre 1970, article 16, rédactions du 31 août 1983, du 2 octobre 1990
+      et du 1er janvier 2004 (LEGIARTI000006381610 à 612), leur 6° a) ; ordonnance n° 82-270,
+      article 9 (LEGIARTI000006275868) et rapport au Président de la République
+      (LEGIARTI000006759661) ; décret n° 82-628 du 21 juillet 1982, articles 13 à 15
+      (LEGIARTI000006763435 à 437) ; code de la sécurité sociale, R. 351-45, rédaction du
+      10 mai 1995 (LEGIARTI000006749450) ; au Journal officiel, de 1983 à 2004, aucune
+      circulaire ni instruction de l'Ircantec sur le 6° a) : index LEGI à jour du
+      2 novembre 2026, JORF du 3 novembre, pour servir le 6° a) jusqu'au 31 décembre 2003
+      (relecture R-M3-bis)
+    date: 2026-11-05
 textes_sans_effet:
 - id: LEGIARTI000006381611
   article: arrêté du 30 décembre 1970, article 16
@@ -807,11 +856,11 @@ code:
     0,43 dix ans avant ; la seconde table, sur la durée manquante, quand la période porte
     `duree_requise_par_generation`, dont la durée exonère aussi, et que la version de la
     date d'effet la lit, à compter du 1er avril 1983 : avant, `bareme_ircantec` rend une
-    version sans durée, qui abat à l'âge quelle que soit la période, sauf l'âge et la
-    durée qu'elle nomme (`exoneration_des_femmes_de_1977`, 5° ;
-    `exoneration_des_agents_de_soixante_trois_ans`, 6° a), que
-    `exonere_par_l_age_et_la_duree` lit, l'agent encore en fonction par
-    `agent_a_la_liquidation`.
+    version sans durée, qui abat à l'âge quelle que soit la période. L'âge et la durée
+    que la version nomme exonèrent, que `exonere_par_l_age_et_la_duree` lit
+    (`exoneration_des_femmes_de_1977`, 5°, jusqu'au 31 mars 1983 ;
+    `exoneration_des_agents_de_soixante_trois_ans`, 6° a), jusqu'au 31 décembre 2003),
+    l'agent encore en fonction par `agent_a_la_liquidation`.
   python: >-
     droit/liquider.py : liquider_chaque_regime, abattement_points, bareme_ircantec,
     exonere_par_l_age_et_la_duree, agent_a_la_liquidation, coefficient_par_annee_d_age, coefficient_pour_age, _coefficient_anticipation, _PALIERS_ANTICIPATION,

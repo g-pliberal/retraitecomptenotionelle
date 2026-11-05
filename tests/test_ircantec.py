@@ -61,8 +61,8 @@ DU_PORTAGE = {
 #: sert, l'absence des paliers de l'escalier qui la remplace ; l'absence de
 #: durée, jusqu'au 1er avril 1983, qui abat à l'âge seul quelle que soit la
 #: période — celle de l'IPACTE et de l'IGRANTE porte la durée ; l'âge et la
-#: durée qui exonèrent, avant le 1er avril 1983, l'agent de soixante-trois ans
-#: (6° a) et la femme de la loi du 12 juillet 1977 (5°).
+#: durée qui exonèrent l'agent de soixante-trois ans, jusqu'au 31 décembre 2003
+#: (6° a), et la femme de la loi du 12 juillet 1977, jusqu'au 31 mars 1983 (5°).
 DE_LA_VERSION = {"coefficients_par_annee_d_age", "exoneration_des_agents_de_soixante_trois_ans",
                  "exoneration_des_femmes_de_1977"}
 #: Le paramètre qu'un test à lui confronte au dépôt : la durée que la seconde
@@ -515,6 +515,57 @@ def test_l_agent_de_soixante_trois_ans_et_cent_cinquante_trimestres_des_juillet_
     portage, jumeau = _deux_moteurs(json.dumps([retouche for retouche, _ in
                                                 AGENTS_DE_SOIXANTE_TROIS_ANS]))
     attendus = [attendu for _, attendu in AGENTS_DE_SOIXANTE_TROIS_ANS]
+    assert portage == attendus
+    assert jumeau == attendus
+
+
+#: Le 6° a) reste écrit, mot pour mot, dans les rédactions du 31 août 1983 et
+#: du 2 octobre 1990 (LEGIARTI000006381610 et 611), sans terme, jusqu'à celle du
+#: 1er janvier 2004 (LEGIARTI000006381612), qui le récrit : « a) Aux agents et
+#: anciens agents admis à faire liquider leur retraite au régime général en
+#: application de l'article L. 351-1-1 ». La durée, « dans le régime général ou
+#: dans ce régime et un ou plusieurs autres régimes de base obligatoires »
+#: (décret n° 82-628, article 13, LEGIARTI000006763435). Agent contractuel
+#: depuis février de ses vingt-cinq ou vingt-six ans, payé deux plafonds :
+#: quatre trimestres l'année de son entrée, quatre par année pleine ensuite,
+#: au régime général ; la durée de sa génération, R. 351-45 (LEGIARTI000006749450),
+#: 153 trimestres pour l'assuré né en 1936, 155 pour 1938, 160 pour la pension
+#: qui prend effet après le 31 décembre 2002.
+AGENTS_DE_SOIXANTE_TROIS_ANS_JUSQU_EN_2003 = [
+    # Né en 1936, agent depuis février 1961, soixante-trois ans en février 1999 :
+    # 4 + 37 × 4 = 152 trimestres de 1961 à 1998, cent cinquante au moins ;
+    # aucun coefficient, quand la seconde table donnerait 0,88 + 11 × 0,01 =
+    # 0,99, à l'âge de 65 − 1/4 ans.
+    ({"naissance": "1936-01-15", "debut": "25", "liquidation": "63"},
+     _attendus("1999-02-01", None)),
+    # Né en 1938, agent depuis février 1964, soixante-quatre ans en février 2002 :
+    # 4 + 37 × 4 = 152 trimestres de 1964 à 2001 ; aucun coefficient, quand la
+    # seconde table donnerait 0,88 + 9 × 0,01 = 0,97, à l'âge de 65 − 3/4 ans.
+    ({"naissance": "1938-01-15", "debut": "26", "liquidation": "64"},
+     _attendus("2002-02-01", None)),
+    # Né en 1940, agent depuis février 1966, soixante-trois ans et dix mois en
+    # décembre 2003 : 4 + 36 × 4 = 148 trimestres de 1966 à 2002, et au moins
+    # trois des onze mois de 2003 ; aucun coefficient.
+    ({"naissance": "1940-01-15", "debut": "26", "liquidation": "63",
+      "liquidation_mois": "10"}, _attendus("2003-12-01", None)),
+    # Le mois suivant, le 1er janvier 2004, la rédaction qui n'a plus ce 6° a) :
+    # 4 + 37 × 4 = 152 trimestres, huit de moins que 160 ; la seconde table, à
+    # l'âge de 65 − 8/4 = 63 ans, 0,88 + 4 × 0,01 = 0,92, et l'âge, soixante-trois
+    # ans et onze mois, sept trimestres écoulés depuis soixante-deux ans,
+    # 0,88 + 7 × 0,01 = 0,95, que le total ne peut passer en dessous.
+    ({"naissance": "1940-01-15", "debut": "26", "liquidation": "63",
+      "liquidation_mois": "11"}, _attendus("2004-01-01", 0.95)),
+]
+
+
+def test_le_6_a_sert_l_agent_de_soixante_trois_ans_jusqu_au_1er_janvier_2004():
+    """Du 1er avril 1983 au 31 décembre 2003, l'article 16 garde le 6° a), et
+    l'agent de soixante-trois ans qui a cent cinquante trimestres, mais pas la
+    durée de sa génération, n'a pas de coefficient, aux trois régimes, dans
+    les deux moteurs ; dès le 1er janvier 2004, la seconde table et l'âge."""
+    portage, jumeau = _deux_moteurs(json.dumps(
+        [retouche for retouche, _ in AGENTS_DE_SOIXANTE_TROIS_ANS_JUSQU_EN_2003]))
+    attendus = [attendu for _, attendu in AGENTS_DE_SOIXANTE_TROIS_ANS_JUSQU_EN_2003]
     assert portage == attendus
     assert jumeau == attendus
 

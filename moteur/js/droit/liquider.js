@@ -3298,10 +3298,11 @@ export function abattementPoints(moteur, periode, carriere, trimestres, requis, 
     // Le départ anticipé des assurés handicapés, au taux plein du régime
     // général : l'Agirc-Arrco le suit (article 84, 3), l'Ircantec l'exempte
     // (article 16, 1°, b).
-    // L'âge et la durée, avant le 6° c) : l'agent de soixante-trois ans et de
-    // cent cinquante trimestres dès le 1er juillet 1982 (6° a), la femme de la
-    // loi du 12 juillet 1977 dès le 30 septembre 1978 (5°), que la version de
-    // la date d'effet nomme (`exonereParLAgeEtLaDuree`).
+    // L'âge et la durée : l'agent de soixante-trois ans et de cent cinquante
+    // trimestres du 1er juillet 1982 au 31 décembre 2003 (6° a, sans terme
+    // jusqu'à la rédaction de 2004), la femme de la loi du 12 juillet 1977 du
+    // 30 septembre 1978 au 31 mars 1983 (5°), que la version de la date d'effet
+    // nomme (`exonereParLAgeEtLaDuree`).
     const exonere = bareme !== null && exonereParLAgeEtLaDuree(
       moteur, bareme, carriere, trimestres, ageLiquidation, anneeLiquidation, durees);
     if (inapte || handicap || exonere || (!parAgeSeul && trimestres >= requis)) {
