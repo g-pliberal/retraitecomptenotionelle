@@ -1,0 +1,20 @@
+date: "2026-11-05"
+session: "action 131, vague 7 : retouches de la relecture R-K-ter (commit d9d2096) — « sans source ni note », D. 732-77 et le décret n° 86-1084, le 17,37 % après 2025"
+consulte: >-
+  python scripts/veille_droit.py ; docs/veille_droit.md. L'index de la DILA récupéré dans
+  la session (LEGI à jour au 4 novembre 2026 après l'incrément LEGI_20261104-214059) :
+  code rural, D. 731-121 depuis le 1er janvier 2026 (LEGIARTI000053296666) ; code de la
+  sécurité sociale, D. 633-3 depuis le 7 juillet 2024 (LEGIARTI000049904636) ; D. 732-77
+  (LEGIARTI000006597491) ; décret n° 86-1084, article 2 (LEGIARTI000006769405). Le régime
+  msa_non_salaries relu au commit bdaecdbc (8 septembre 2026) et `data/sources.yaml`
+  (msa_parametres).
+trouve: >-
+  Le 17,37 % n'a aucun texte qui le fixe ni note qui le justifie, mais le régime portait la
+  source msa_parametres. La formule « T p. 100 = 3,19 P - 57,23 » est celle du « premier
+  cas » du 2° de l'article 2 du décret n° 86-1084 : D. 732-77 la codifie sous le 1°. Depuis
+  2026, D. 731-121 renvoie à D. 633-3 (17,15 % sous le plafond, 0,72 % sur la totalité) : ni
+  17,15 % ni 17,87 % ne sont 17,37 %, que le modèle porte encore. Aucun taux ne change.
+reste: >-
+  Le décret n° 2025-1417 (articles 4 et 5) et L. 731-42 en 2026, non relus ; les notes des
+  périodes de 2026 et après de msa_non_salaries.yaml, qui ne disent rien du 17,37 % ; la
+  question au propriétaire de K-ter, qui vaut aussi après 2025.

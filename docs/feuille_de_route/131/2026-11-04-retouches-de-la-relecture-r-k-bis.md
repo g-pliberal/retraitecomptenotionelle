@@ -155,3 +155,7 @@ le paquet, dont les notes de la fiche du régime font partie.
   2025 (§ 1), dont la fiche pose la question.
 - Les taux depuis 2026 (D. 633-3 du code de la sécurité sociale, où renvoie D. 731-121) : non
   lus ici.
+
+*Renvoi du 5 novembre 2026 : au § 5, la formule « T % = 3,19 x P - 57,23 » est celle du
+« premier cas » du 2° de l'article 2 du décret n° 86-1084 (LEGIARTI000006769405), que D. 732-77
+codifie en la plaçant sous le 1° ; voir `2026-11-05-retouches-de-la-relecture-r-k-ter.md`.*

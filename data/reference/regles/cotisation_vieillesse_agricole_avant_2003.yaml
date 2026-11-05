@@ -1479,7 +1479,9 @@ approximations:
     R. 732-71 et non du taux : rien n'y bouge
 - version: depuis_2003
   ecart: >-
-    LE TAUX DE 17,37 % N'A AUCUNE SOURCE. Le modèle prélève 17,37 % du revenu borné au
+    LE TAUX DE 17,37 % N'A AUCUNE SOURCE (aucun texte, aucune page précise : le régime porte
+    la source générale msa_parametres, la page d'accueil de la MSA, et ses notes ne le
+    justifient pas). Le modèle prélève 17,37 % du revenu borné au
     plafond chaque année depuis 2003 (périodes de 2003 à 2025 de la fiche du régime), un
     taux qu'aucun texte lu ne fixe et qu'aucune somme des taux lus ne donne : pour un
     revenu sous le plafond, les trois cotisations nationales en prélèvent de 12,93 % (2003)
@@ -1498,7 +1500,18 @@ approximations:
     à 4,44 points de revenu de plus que les trois cotisations nationales n'en prélèvent :
     17,37 / 12,93 = 1,343 fois en 2003, 17,37 / 17,11 = 1,015 fois de 2017 à 2025. Au
     scénario 1, les points de ces années viennent du barème de R. 732-71, que le taux ne
-    touche pas : rien n'y bouge. Depuis 2026, non lu ici
+    touche pas : rien n'y bouge. Le 17,37 % court aussi après 2025 : les périodes de 2026 à
+    2027 et de 2028 sans fin du régime le portent encore, sans la note ci-dessus. Lu le 5
+    novembre 2026 : D. 731-121 depuis le 1er janvier 2026 (LEGIARTI000053296666) dit que
+    « les taux applicables à la cotisation prévue au 1° de l'article L. 731-42 sont égaux à
+    ceux fixés respectivement au I de l'article D. 633-3 du code de la sécurité sociale pour
+    la part calculée sur l'assiette retenue dans la limite du plafond [...] et au II du même
+    article pour la part calculée sur la totalité de l'assiette », et D. 633-3, depuis le 7
+    juillet 2024 (LEGIARTI000049904636), fixe « 17,15 % » au I et « 0,72 % » au II : ni
+    17,15 % ni 17,87 % (17,15 + 0,72) ne sont 17,37 %. Ce que cette lecture ne tranche
+    pas : la structure de L. 731-42 en 2026 et le décret n° 2025-1417 du 30 décembre 2025,
+    dont D. 731-121 dit qu'il la fonde, ne sont pas relus ; c'est une piste, non une
+    lecture
 sources:
   lu_le: 2026-11-03
   prochaine_relecture: 2027-03-31
@@ -1523,10 +1536,14 @@ sources:
     texte lu, et aucune somme des taux de D. 731-121, D. 731-122 et D. 731-124 ne le donne
     : de 12,93 % en 2003 à 17,11 % de 2017 à 2025, de 15,71 % à 16,21 % avec la
     complémentaire jusqu'en 2013 (version depuis_2003, approximation depuis_2003). Il
-    naît, avec les 8,5 % d'avant, sans source ni note, le 8 septembre 2026. Faut-il porter
-    au compte, année par année, la somme des taux lus, et comment prélever le 3°, sur la
-    totalité du revenu, que le modèle ne sait pas prélever d'un seul taux borné au
-    plafond ?
+    naît, avec les 8,5 % d'avant, le 8 septembre 2026 (commit bdaecdbc), sans texte qui le
+    fixe ni note qui le justifie : le régime msa_non_salaries portait déjà la source
+    msa_parametres (« Paramètres des régimes agricoles (RCO, points, AVA) », la page
+    d'accueil de la MSA, fiabilité « moyenne ») et, à sa période de 2003, une note qui dit
+    seulement que « le taux de 17,37 % qui figure ici n'a jamais compris les 4 % de la RCO ».
+    Faut-il porter au compte, année par année, la somme des taux lus, et comment prélever
+    le 3°, sur la totalité du revenu, que le modèle ne sait pas prélever d'un seul taux
+    borné au plafond ?
   - >-
     À lire au fac-similé du Journal officiel : la loi n° 52-799 du 10 juillet 1952,
     articles 19 à 21 (Journal officiel du 11 juillet 1952), l'arrêté du 23 juillet 1953 «
@@ -1560,6 +1577,19 @@ sources:
       Lu dans les index LEGI (à jour au 2 novembre 2026) et JORF (au 3 novembre 2026) du
       dépôt, pour la relecture R-K-bis
     date: 2026-11-03
+  - type: legifrance
+    reference: >-
+      index LEGI à jour au 4 novembre 2026, relu le 5 novembre 2026 (retouches de la
+      relecture R-K-ter, vague 7) : code rural, D. 731-121 depuis le 1er janvier 2026
+      (LEGIARTI000053296666) ; code de la sécurité sociale, D. 633-3 depuis le 7 juillet 2024
+      (LEGIARTI000049904636 : « I.-Le taux des cotisations assises sur l'assiette de
+      cotisations dans la limite du plafond est fixé à 17,15 %. II.-Le taux des cotisations
+      assises sur la totalité de l'assiette de cotisations est fixé à 0,72 %. ») ; D. 732-77
+      (LEGIARTI000006597491, du 22 avril 2005 au 1er janvier 2026) et le décret n° 86-1084,
+      article 2 (LEGIARTI000006769405, du 8 octobre 1986 au 22 avril 2005). Le régime
+      msa_non_salaries, relu au commit bdaecdbc du 8 septembre 2026 : source msa_parametres,
+      fiabilité moyenne
+    date: 2026-11-05
 textes_sans_effet:
 - id: LEGIARTI000006581058
   motif: >-
@@ -1604,6 +1634,12 @@ historique:
   17,37 % ; le décret n° 87-664 (1987) est cité ; 1993 l'est sous la rédaction de 1991 de
   l'article 1123, et la citation en double de celle de 1994 est ôtée. Aucun taux du
   modèle n'est changé.
+- >-
+  2026-11-05 — action 131 (file K-ter, relecture R-K-ter ; note
+  2026-11-05-retouches-de-la-relecture-r-k-ter.md) : « sans source ni note » est resserré
+  — le 17,37 % n'a aucun texte qui le fixe ni note qui le justifie, mais le régime portait
+  la source msa_parametres ; le 17,37 % court aussi après 2025, avec D. 731-121 et D. 633-3
+  lus. Aucun taux du modèle n'est changé.
 effet: >-
   Les chefs d'exploitation et les membres de leur famille qui ont cotisé avant 2003. Au
   scénario 1, avant 1990, le rendement tire leurs points d'une cotisation que le modèle
