@@ -450,17 +450,22 @@ versions:
       (III) suit celle du régime de base
   exemples: [ircantec_minoration_duree_63_ans, ircantec_minoration_age_avant_l_age_legal]
 approximations:
-- version: [ipacte_et_igrante, arrete_de_1970, anciens_combattants_1976, travailleurs_manuels_1977,
-    femmes_de_la_loi_de_1977, ordonnance_du_26_mars_1982, structure_financiere_1983]
-  textes: article 16, I, rédactions du 9 février 1971 au 31 août 1983, la table par année d'âge
+- version: [structure_financiere_1983]
+  textes: >-
+    article 16, II, rédaction du 31 août 1983 : « A compter du 1er avril 1983 […] le total
+    des points de retraite est affecté des coefficients de réduction prévus au paragraphe
+    Ier, en assimilant à l'âge de soixante-cinq ans l'âge auquel l'intéressé aurait
+    effectivement compté trentre-sept années et demie d'assurance »
   ecart: >-
-    le modèle lit dès 1951 l'escalier au trimestre que l'arrêté du 26 juillet 1983 crée :
-    entre deux anniversaires, il relève le coefficient à chaque trimestre, quand la table
-    garde celui de l'âge révolu — 0,8175 à soixante ans et neuf mois, pour 0,78 ; à chaque
-    anniversaire, les deux donnent le même
+    le texte ne tranche pas quel « paragraphe Ier » vaut du 1er avril au 30 août 1983 : le
+    II est publié le 31 août avec l'escalier, et rétroagit au 1er avril, quand la table
+    par année d'âge est encore en vigueur. Le modèle lit la table, celle de la date
+    d'effet, à l'âge assimilé révolu — soixante-cinq ans moins les trimestres manquants :
+    0,92 à cinq trimestres manquants, quand l'escalier donnerait 0,95
   effet: >-
-    jusqu'à 3,75 points de coefficient de plus de soixante à soixante-deux ans, trois de
-    soixante-deux à soixante-cinq, aux pensions prises avant le 31 août 1983 ; non mesuré
+    les pensions prises du 1er avril au 30 août 1983 avec cent trente à cent quarante-neuf
+    trimestres : jusqu'à 3,75 points de coefficient de moins que l'escalier, si la caisse
+    l'y lisait ; non mesuré, la pratique de la caisse reste à lire
 - version: [ipacte_et_igrante, arrete_de_1970, anciens_combattants_1976, travailleurs_manuels_1977,
     femmes_de_la_loi_de_1977, ordonnance_du_26_mars_1982, structure_financiere_1983,
     escalier_au_trimestre_1983, retraite_anticipee_2004, ages_de_2010,
@@ -569,8 +574,9 @@ effet: >-
   des âges fixes, 1 à soixante-sept ans, 0,88 à soixante-quatre, 0,78 à soixante-deux,
   0,43 à cinquante-sept, ce que la rédaction du 14 septembre 2023 écrit ; le modèle ancre
   l'escalier sur l'âge du taux plein, et rend les mêmes. Lue au droit le 3 novembre 2026,
-  rédaction par rédaction depuis 1971 : le modèle sert l'escalier au trimestre dès 1951,
-  quand la table de 1970 ne comptait que les années d'âge ; il exonère à la durée les
+  rédaction par rédaction depuis 1971 ; depuis le 5 novembre 2026, le moteur lit la table
+  par année d'âge dans la version de la date d'effet, jusqu'au 31 août 1983, et
+  tests/test_ircantec.py la rejoue dans les deux moteurs. Restent : il exonère à la durée les
   points de l'IPACTE et de l'IGRANTE dès 1951, quand l'article ne le fait que depuis le
   1er avril 1983 ; il ne sert pas l'anticipation avant l'âge légal.
 sources:
@@ -642,6 +648,15 @@ sources:
       1er juillet 1982 et du 1er avril 1983), du 29 mars 2018, du 18 décembre 2018 et du
       11 septembre 2023
     date: 2026-11-03
+  - type: legifrance
+    reference: >-
+      arrêté du 30 décembre 1970, article 16, rédactions du 9 février 1971, du 3 janvier
+      1976, du 26 juillet 1977, du 30 septembre 1978 et du 31 août 1983
+      (LEGIARTI000006381606 à LEGIARTI000006381610), relues dans l'index LEGI du dépôt à
+      jour de l'incrément du 2 novembre 2026, avec l'analyse de l'arrêté du 26 juillet
+      1983 (JORFTEXT000000837384), pour faire lire au moteur la table par année d'âge et la
+      date de l'exonération à la durée
+    date: 2026-11-05
 textes_sans_effet:
 - id: LEGIARTI000006381611
   article: arrêté du 30 décembre 1970, article 16
@@ -664,19 +679,22 @@ code:
   moteur: >-
     `abattement_points: ircantec` applique l'escalier de l'article 16 de l'arrêté du 30
     décembre 1970, qui est le MÊME que celui de l'Agirc-Arrco, aux mêmes marches, et se lit
-    de la même façon : `coefficient_pour_age` le lit aux trimestres qui séparent la
+    de la même façon. Jusqu'au 31 août 1983, la version de la date d'effet, que
+    `bareme_ircantec` lit, porte la table par année d'âge : `coefficient_par_annee_d_age`
+    en rend la ligne de l'âge révolu, et, pour la seconde table, celle de l'âge assimilé à
+    soixante-cinq ans. Depuis, `coefficient_pour_age` lit l'escalier aux trimestres qui séparent la
     liquidation de l'âge du taux plein de la période (`age_taux_plein`, ou
     `age_taux_plein_par_generation` depuis 2011), arrondis au supérieur, au plancher de
     0,43 dix ans avant ; la seconde table, sur la durée manquante, quand la période porte
     `duree_requise_par_generation`, dont la durée exonère aussi.
   python: >-
-    droit/liquider.py : liquider_chaque_regime, abattement_points, coefficient_pour_age,
-    _coefficient_anticipation, _PALIERS_ANTICIPATION,
+    droit/liquider.py : liquider_chaque_regime, abattement_points, bareme_ircantec,
+    coefficient_par_annee_d_age, coefficient_pour_age, _coefficient_anticipation, _PALIERS_ANTICIPATION,
     _COEFFICIENT_ANTICIPATION_PLANCHER ; droit/ouvrir.py : age_taux_plein ;
     droit/invalidite.py : taux_plein_de_l_inapte
   javascript: >-
-    moteur/js/droit/liquider.js : liquiderChaqueRegime, abattementPoints,
-    coefficientPourAge, coefficientAnticipation, PALIERS_ANTICIPATION,
+    moteur/js/droit/liquider.js : liquiderChaqueRegime, abattementPoints, baremeIrcantec,
+    coefficientParAnneeDAge, coefficientPourAge, coefficientAnticipation, PALIERS_ANTICIPATION,
     COEFFICIENT_ANTICIPATION_PLANCHER ; moteur/js/droit/ouvrir.js : ageTauxPlein ;
     moteur/js/droit/invalidite.js : tauxPleinDeLInapte
   parametres: >-

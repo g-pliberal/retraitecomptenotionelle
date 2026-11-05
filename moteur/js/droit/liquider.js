@@ -3083,6 +3083,40 @@ export function exonerationsAgircArrco(moteur, periode, carriere) {
   return moteur.fichesDatees.regle(FICHE_DES_COEFFICIENTS_AGIRC_ARRCO, date);
 }
 
+/** La fiche dont les versions disent le barème de l'article 16 de l'arrêté du
+ * 30 décembre 1970, que l'Ircantec applique aussi aux points de l'IPACTE et de
+ * l'IGRANTE. */
+export const FICHE_DES_COEFFICIENTS_IRCANTEC = "coefficient_anticipation_ircantec";
+
+/**
+ * Le barème de l'Ircantec d'une pension qui prend effet à la date de la
+ * carrière : les paramètres de la version de la fiche qui vaut à cette date,
+ * `null` pour un autre barème ou sans date d'effet. Voir
+ * `liquider.bareme_ircantec`.
+ */
+export function baremeIrcantec(moteur, periode, carriere) {
+  const date = dateDEffet(carriere);
+  if (periode.abattement_points !== "ircantec" || date === null) {
+    return null;
+  }
+  return moteur.fichesDatees.regle(FICHE_DES_COEFFICIENTS_IRCANTEC, date);
+}
+
+/**
+ * Le coefficient de la table par année d'âge du barème `bareme`, à `age` : la
+ * ligne de l'âge révolu, la première avant elle, un dès l'âge normal (article
+ * 16 de l'arrêté du 30 décembre 1970, jusqu'au 31 août 1983). Voir
+ * `liquider.coefficient_par_annee_d_age`.
+ */
+export function coefficientParAnneeDAge(bareme, age) {
+  const table = bareme.coefficients_par_annee_d_age;
+  const rang = Math.floor(age + 1e-9) - (bareme.age_taux_plein - table.length);
+  if (rang >= table.length) {
+    return 1.0;
+  }
+  return table[Math.max(0, rang)];
+}
+
 /**
  * La version `regle` exonère-t-elle la pension de ce régime pour l'un de ses
  * motifs — la catégorie de L. 351-8 au taux plein du régime général, ou
@@ -3207,9 +3241,18 @@ export function abattementPoints(moteur, periode, carriere, trimestres, requis, 
     if (inapte || handicap || (!parAgeSeul && trimestres >= requis)) {
       abattement = 1.0;
     } else {
-      const parDuree = parAgeSeul
-        ? null : coefficientAnticipation(requis - trimestres, 20);
-      const parAge = coefficientPourAge(moteur, periode, carriere, ageLiquidation);
+      // Jusqu'au 31 août 1983, l'Ircantec n'a qu'un coefficient par année
+      // d'âge, que la seconde table lit aussi, à l'âge assimilé à soixante-cinq
+      // ans : celui de l'agent, moins les trimestres qui lui manquent.
+      const bareme = baremeIrcantec(moteur, periode, carriere);
+      const table = bareme !== null && bareme.coefficients_par_annee_d_age;
+      const manquants = requis - trimestres;
+      const parDuree = parAgeSeul ? null
+        : table ? (manquants > 20 ? null
+          : coefficientParAnneeDAge(bareme, bareme.age_taux_plein - manquants / 4))
+          : coefficientAnticipation(manquants, 20);
+      const parAge = table ? coefficientParAnneeDAge(bareme, ageLiquidation)
+        : coefficientPourAge(moteur, periode, carriere, ageLiquidation);
       const candidats = [parDuree, parAge].filter((c) => c !== null);
       abattement = candidats.length ? Math.max(...candidats) : 1.0;
     }

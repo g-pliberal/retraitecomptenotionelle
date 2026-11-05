@@ -37,7 +37,8 @@ from retraite_notionnelle.noyau import carte
 ANTICIPATION, SURCOTE = "coefficient_anticipation_ircantec", "surcote_ircantec"
 LOT = (ANTICIPATION, SURCOTE)
 REFERENCE = RACINE_DONNEES / "reference"
-PORTAGE = Path(__file__).resolve().parents[1] / "moteur" / "js" / "droit" / "liquider.js"
+RACINE = Path(__file__).resolve().parents[1]
+PORTAGE = RACINE / "moteur" / "js" / "droit" / "liquider.js"
 #: La création de l'IPACTE, et la dernière année que les confrontations
 #: parcourent.
 DEBUT, HORIZON = 1951, 2050
@@ -45,17 +46,20 @@ MOIS = ("janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août
         "septembre", "octobre", "novembre", "décembre")
 
 #: Les paramètres que sert le portage, et non une période : le nom de sa
-#: constante, ou rien, quand il ne sert pas ce que le paramètre dit — une
-#: table par année d'âge, un trimestre de quatre-vingt-dix jours : il compte
-#: au trimestre, en mois.
+#: constante, ou rien, quand il ne sert pas ce que le paramètre dit — un
+#: trimestre de quatre-vingt-dix jours : il compte au trimestre, en mois.
 DU_PORTAGE = {
     "coefficient_plancher": "COEFFICIENT_ANTICIPATION_PLANCHER",
     "paliers_d_anticipation": "PALIERS_ANTICIPATION",
     "majoration_par_trimestre_ecoule": "SURCOTE_IRCANTEC_AGE",
     "majoration_par_trimestre_cotise": "SURCOTE_IRCANTEC_DUREE",
-    "coefficients_par_annee_d_age": None,
     "trimestre_en_jours": None,
 }
+#: Ce que le moteur lit dans la version même, à la date d'effet de la pension
+#: (`baremeIrcantec`, dans le portage), et qu'aucune période n'a donc à
+#: porter : la table par année d'âge, jusqu'au 31 août 1983, et, là où elle
+#: sert, l'absence des paliers de l'escalier qui la remplace.
+DE_LA_VERSION = {"coefficients_par_annee_d_age"}
 #: Le paramètre qu'un test à lui confronte au dépôt : la durée que la seconde
 #: table lit de 1983 à 2003.
 A_PART = {"duree_de_la_seconde_table_trimestres"}
@@ -76,9 +80,7 @@ FERMES = ("ipacte", "igrante")
 #: porte autrement (tous, ou le portage, sans eux), et l'article que cite
 #: l'approximation qui le déclare. Le modèle liquide l'Ircantec avec la
 #: pension de base, jamais avant l'âge d'ouverture de sa période, quand
-#: l'article ouvre l'anticipation dix ans avant l'âge du taux plein ; il lit
-#: l'escalier au trimestre, que l'arrêté du 26 juillet 1983 crée, quand les
-#: rédactions d'avant ne lisaient qu'une table par année d'âge ; il exonère
+#: l'article ouvre l'anticipation dix ans avant l'âge du taux plein ; il exonère
 #: dès 1951 qui a la durée, dans la période unique de l'IPACTE et de
 #: l'IGRANTE, quand l'article ne le fait qu'« à compter du 1er avril 1983 » ;
 #: il y garde soixante-cinq ans après le 1er juillet 2011 ; il compte en mois
@@ -86,9 +88,6 @@ FERMES = ("ipacte", "igrante")
 ECARTS_DECLARES = [
     *[(ANTICIPATION, version, "anticipation_maximale_annees", None, "article 16, I")
       for version in COUVRANTES],
-    *[(ANTICIPATION, version, champ, None, "article 16, I")
-      for version in AVANT_1983
-      for champ in ("coefficients_par_annee_d_age", "paliers_d_anticipation")],
     *[(ANTICIPATION, version, "duree_requise_par_generation", FERMES, "6° c)")
       for version in ("ipacte_et_igrante", "arrete_de_1970", "femmes_de_la_loi_de_1977")],
     *[(ANTICIPATION, version, "age_taux_plein_par_generation", FERMES, "L. 351-8")
@@ -157,6 +156,16 @@ def _portes(version: dict, champ: str, code: str | None) -> set:
             for periode in _periodes(code, annee)}
 
 
+def _lu_dans_la_version(nom: str, version: dict, champ: str) -> bool:
+    """Le moteur lit-il ce paramètre dans la version même (:data:`DE_LA_VERSION`) ?
+    Les paliers aussi, là où la version n'en a pas et lit la table."""
+    parametres = version["contenu"]["parametres"]
+    return nom == ANTICIPATION and (
+        champ in DE_LA_VERSION
+        or (champ == "paliers_d_anticipation" and parametres[champ] is None
+            and parametres.get("coefficients_par_annee_d_age") is not None))
+
+
 def _declare(nom: str, version: str, champ: str, code: str | None) -> bool:
     return any((n, v, c) == (nom, version, champ) and (regimes is None or code in regimes)
                for n, v, c, regimes, _ in ECARTS_DECLARES)
@@ -196,7 +205,7 @@ def test_les_periodes_et_le_portage_portent_ce_que_chaque_version_lit():
         regimes = carte.fiches()[nom]["regimes"]
         for version in _versions(nom):
             for champ, lu in (version["contenu"].get("parametres") or {}).items():
-                if champ in A_PART:
+                if champ in A_PART or _lu_dans_la_version(nom, version, champ):
                     continue
                 for code in [None] if champ in DU_PORTAGE else regimes:
                     portes = _portes(version, champ, code)
@@ -239,8 +248,9 @@ def test_la_table_de_1970_est_l_escalier_aux_annees_revolues():
     """« AGES COEFFICIENTS : 55 ans 0,43 […] 64 ans 0,96 » : la table de
     l'arrêté du 30 décembre 1970, que les rédactions suivent jusqu'au 31 août
     1983, est l'escalier du portage à chaque anniversaire ; entre deux, elle
-    garde le coefficient de l'âge révolu, que le portage relève à chaque
-    trimestre, jusqu'à 5,25 points de plus — l'écart que la fiche déclare."""
+    garde le coefficient de l'âge révolu, que l'escalier relève à chaque
+    trimestre, jusqu'à 5,25 points de plus. Le moteur la lit dans la fiche
+    jusqu'à cette date (:data:`DE_LA_VERSION`)."""
     table = _version(ANTICIPATION, "arrete_de_1970")["contenu"]["parametres"][
         "coefficients_par_annee_d_age"]
     assert len(table) == 10
@@ -297,3 +307,105 @@ def test_la_seconde_table_de_1983_lit_trente_sept_ans_et_demi():
                 if set(_annees_entieres(*_bornes(version))) & ecarts}
     assert any(touchees <= set(a.get("version") or []) and "1994" in str(a.get("ecart"))
                for a in fiche.get("approximations") or []), touchees
+
+
+# -- le coefficient servi, dans les deux moteurs --------------------------------
+
+#: Un agent contractuel de l'État, né le 15 janvier 1922, payé deux plafonds :
+#: des points de l'IPACTE au-dessus du plafond de 1951 à 1970, de l'IGRANTE
+#: au-dessous de 1960 à 1970, de l'Ircantec ensuite. Ses âges se comptent de
+#: février (R. 351-37) : soixante ans en février 1982.
+REQUETE = {
+    "age_reference": "fixe_apres_bascule", "bascule": "2026",
+    "conversion_acquis": "reference", "debut": "30", "emploi": "cor_2026",
+    "enfants": "0", "euros": "2026", "indexation": "triple_lock_inverse",
+    "interruptions": "", "liquidation": "60", "naissance": "1922-01-15", "primes": "0",
+    "profil": "plat", "projection": "cor_reference", "salaire": "2", "sexe": "H",
+    "statut": "contractuel_public", "stock": "prix", "table": "unisexe",
+}
+#: Les trois régimes dont l'article 16 affecte les points.
+EN_POINTS = ("igrante", "ipacte", "ircantec")
+
+
+def _servis(sortie: dict) -> dict:
+    """La date d'effet, et le coefficient d'anticipation que la formule de
+    chacun des trois régimes affiche, ``None`` sans coefficient."""
+    liquidation = sortie["liquidations"][0]
+    servis = {"date": liquidation["ouverture"]["date_effet"]}
+    for pension in liquidation["pensions"]["regimes"]:
+        if pension["regime"] in EN_POINTS:
+            trouve = re.search(r"coefficient d'anticipation ([0-9.]+)", pension["detail"])
+            servis[pension["regime"]] = float(trouve.group(1)) if trouve else None
+    return servis
+
+
+@functools.cache
+def _deux_moteurs(cas: str) -> tuple[list[dict], list[dict]]:
+    """Ce que servent le portage, qui fait foi, puis son jumeau Python, pour
+    chaque requête de ``cas`` (JSON, une liste de retouches de la requête)."""
+    import shutil
+    import subprocess
+    import tempfile
+
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    from test_liquidation import _python
+
+    requetes = [{**REQUETE, **retouche} for retouche in json.loads(cas)]
+    with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
+                                     delete=False) as fichier:
+        json.dump(requetes, fichier)
+        chemin = fichier.name
+    try:
+        execution = subprocess.run(
+            ["node", str(RACINE / "tests" / "js" / "comparer-liquidation.mjs"), chemin],
+            cwd=RACINE, capture_output=True, text=True,
+            encoding="utf-8", check=False)
+    finally:
+        Path(chemin).unlink()
+    assert execution.returncode == 0, execution.stderr[-2000:]
+    return ([_servis(sortie) for sortie in json.loads(execution.stdout)],
+            [_servis(sortie) for sortie in _python(requetes)])
+
+
+def _attendus(date: str, coefficient: float | None) -> dict:
+    return {"date": date, **{code: coefficient for code in EN_POINTS}}
+
+
+#: La table par année d'âge, jusqu'au 31 août 1983 : la retouche de la
+#: requête, la date d'effet, et le coefficient lu à la main dans l'article 16
+#: (« 60 ans 0,78 […] 61 ans 0,83 […] 63 ans 0,92 […] 64 ans 0,96 »), là où
+#: l'escalier au trimestre de l'arrêté du 26 juillet 1983 donnerait 0,8175,
+#: 0,95 et 0,95 ; puis l'escalier, dès sa publication.
+TABLE_PAR_ANNEE_D_AGE = [
+    # Soixante ans et neuf mois en novembre 1982 : la ligne de soixante ans,
+    # 0,78 ; l'escalier en eût donné 0,78 + 3 × 0,0125 = 0,8175.
+    ({"liquidation_mois": "9"}, "1982-11-01", 0.78),
+    # Né en 1919, soixante-trois ans et onze mois en janvier 1983 : la ligne
+    # de soixante-trois ans, 0,92 ; l'escalier, 0,88 + 7 × 0,01 = 0,95.
+    ({"naissance": "1919-01-15", "liquidation": "63", "liquidation_mois": "11"},
+     "1983-01-01", 0.92),
+    # Né en 1922, au travail à vingt-cinq ans, parti à soixante et un ans et
+    # trois mois en mai 1983 avec cent quarante-cinq trimestres : la seconde
+    # table, ouverte le 1er avril 1983 (II), assimile à soixante-cinq ans l'âge
+    # où il aurait les cent cinquante, cinq trimestres plus tard : il est
+    # « âgé » de 65 − 5/4 = 63,75 ans, la ligne de soixante-trois ans, 0,92,
+    # meilleure que celle de son âge, soixante et un ans, 0,83. L'escalier lui
+    # eût donné 1 − 5 × 0,01 = 0,95.
+    ({"debut": "25", "liquidation": "61", "liquidation_mois": "3"}, "1983-05-01", 0.92),
+    # Né en 1923, soixante ans et neuf mois en novembre 1983, après la
+    # publication de l'arrêté du 26 juillet 1983 : l'escalier, 0,8175.
+    ({"naissance": "1923-01-15", "liquidation_mois": "9"}, "1983-11-01", 0.8175),
+]
+
+
+def test_avant_le_31_aout_1983_la_table_par_annee_d_age():
+    """De 1971 au 31 août 1983, l'article 16 ne donne qu'un coefficient par
+    année d'âge, et les deux moteurs le servent aux points des trois régimes,
+    à l'âge révolu ; l'escalier au trimestre, dès la publication de l'arrêté
+    qui le crée (« fixés désormais par trimestre »)."""
+    cas = json.dumps([retouche for retouche, _, _ in TABLE_PAR_ANNEE_D_AGE])
+    portage, jumeau = _deux_moteurs(cas)
+    attendus = [_attendus(date, coefficient) for _, date, coefficient in TABLE_PAR_ANNEE_D_AGE]
+    assert portage == attendus
+    assert jumeau == attendus

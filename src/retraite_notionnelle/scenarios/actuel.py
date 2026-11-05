@@ -1253,7 +1253,8 @@ class FichesDatees:
     1975, que ``revalorisation.majorations_forfaitaires`` lit, et les primes que
     la loi assujettit à la retenue pour pension, que ``primes.prime_de_la_pension``
     lit, et ce qui exonère des coefficients d'anticipation de l'Agirc et de
-    l'Arrco, que ``liquider.abattement_points`` lit,
+    l'Arrco, que ``liquider.abattement_points`` lit, et le barème de
+    l'Ircantec, que ``liquider.bareme_ircantec`` lit,
     et les plans de revalorisation des retraites agricoles de 1997 à 2008,
     que ``completer.majoration_retraite_proportionnelle`` lit, et la limite
     d'âge des agents publics et ses exceptions, que ``limite_age.radiation``
@@ -1279,7 +1280,7 @@ class FichesDatees:
             "taux_plein_a_soixante_cinq_ans",
             "majoration_enfants_a_charge_agirc_arrco", "majoration_enfants_agirc_arrco",
             "majoration_conjoint_a_charge",
-            "coefficients_anticipation_agirc_arrco",
+            "coefficients_anticipation_agirc_arrco", "coefficient_anticipation_ircantec",
             "majorations_forfaitaires_1972_1982",
             "indemnite_sujetions_speciales_police",
             "prime_speciale_sujetion_aides_soignants",

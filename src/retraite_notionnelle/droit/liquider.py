@@ -4069,11 +4069,22 @@ def abattement_points(moteur, periode: PeriodeRegime, carriere: Carriere,
         if inapte or handicap or (not par_age_seul and trimestres >= requis):
             abattement = 1.0
         else:
-            par_duree = (
-                None if par_age_seul
-                else _coefficient_anticipation(requis - trimestres, 20)
-            )
-            par_age = coefficient_pour_age(moteur, periode, carriere, age_liquidation)
+            # Jusqu'au 31 août 1983, l'Ircantec n'a qu'un coefficient par
+            # année d'âge, que la seconde table lit aussi, à l'âge assimilé à
+            # soixante-cinq ans : celui de l'agent, moins les trimestres qui
+            # lui manquent (article 16, II, « à compter du 1er avril 1983 »).
+            bareme = bareme_ircantec(moteur, periode, carriere)
+            table = bareme is not None and bareme["coefficients_par_annee_d_age"]
+            manquants = requis - trimestres
+            if par_age_seul:
+                par_duree = None
+            elif table:
+                par_duree = (None if manquants > 20 else coefficient_par_annee_d_age(
+                    bareme, bareme["age_taux_plein"] - manquants / 4))
+            else:
+                par_duree = _coefficient_anticipation(manquants, 20)
+            par_age = (coefficient_par_annee_d_age(bareme, age_liquidation) if table
+                       else coefficient_pour_age(moteur, periode, carriere, age_liquidation))
             candidats = [c for c in (par_duree, par_age) if c is not None]
             abattement = max(candidats) if candidats else 1.0
     elif periode.abattement_points in _ABATTEMENTS_IRCEC:
@@ -4121,6 +4132,39 @@ def exonerations_agirc_arrco(moteur, periode: PeriodeRegime,
     if periode.abattement_points != "agirc_arrco" or date is None:
         return None
     return moteur.fiches_datees.regle(FICHE_DES_COEFFICIENTS_AGIRC_ARRCO, date)
+
+
+#: La fiche dont les versions disent le barème de l'article 16 de l'arrêté du
+#: 30 décembre 1970, que l'Ircantec applique aussi aux points de l'IPACTE et
+#: de l'IGRANTE.
+FICHE_DES_COEFFICIENTS_IRCANTEC = "coefficient_anticipation_ircantec"
+
+
+def bareme_ircantec(moteur, periode: PeriodeRegime, carriere: Carriere) -> dict | None:
+    """Le barème de l'Ircantec d'une pension qui prend effet à la date de la
+    carrière : les paramètres de la version de la fiche
+    ``coefficient_anticipation_ircantec`` qui vaut à cette date — la table par
+    année d'âge (``coefficients_par_annee_d_age``), que l'article 16 donne
+    seule jusqu'au 31 août 1983 —, ``None`` pour un autre barème ou sans date
+    d'effet."""
+    date = date_d_effet(carriere)
+    if periode.abattement_points != "ircantec" or date is None:
+        return None
+    return moteur.fiches_datees.regle(FICHE_DES_COEFFICIENTS_IRCANTEC, date)
+
+
+def coefficient_par_annee_d_age(bareme: dict, age: float) -> float:
+    """Le coefficient de la table par année d'âge du barème ``bareme``, à
+    ``age`` : la ligne de l'âge révolu, la première avant elle, un dès l'âge
+    normal. « 55 ans 0,43 60 ans 0,78 […] 64 ans 0,96 » (article 16 de
+    l'arrêté du 30 décembre 1970, de 1971 au 31 août 1983) : une ligne par
+    année d'âge, que l'arrêté du 26 juillet 1983 remplace par des coefficients
+    « fixés désormais par trimestre »."""
+    table = bareme["coefficients_par_annee_d_age"]
+    rang = math.floor(age + 1e-9) - (bareme["age_taux_plein"] - len(table))
+    if rang >= len(table):
+        return 1.0
+    return table[max(0, rang)]
 
 
 def exonere_par_motif(moteur, regle: dict, periode: PeriodeRegime, carriere: Carriere,

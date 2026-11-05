@@ -49,9 +49,14 @@ periodes:
     avantages_non_contributifs: [majoration_enfants, reversion]
     taux_majoration_enfants: [0.0, 0.0, 0.0, 0.10, 0.15, 0.20, 0.25, 0.30]
     notes: >-
-      L'ANTICIPATION SUIT L'ARRÊTÉ, ET C'EST UN ESCALIER. L'article 16 de
-      l'arrêté du 30 décembre 1970 (LEGIARTI000006381606, état courant
-      LEGIARTI000048065521) donne le coefficient 0,43 dix ans avant l'âge
+      L'ANTICIPATION SUIT L'ARRÊTÉ : UNE TABLE PAR ANNÉE D'ÂGE JUSQU'AU 31
+      AOÛT 1983, UN ESCALIER DEPUIS. De 1971 à cette date, l'article 16 de
+      l'arrêté du 30 décembre 1970 (LEGIARTI000006381606 à
+      LEGIARTI000006381609) ne donne qu'un coefficient par âge révolu, « 55
+      ans 0,43 60 ans 0,78 […] 64 ans 0,96 », que le moteur lit, à la date
+      d'effet de la pension, dans la fiche coefficient_anticipation_ircantec
+      (5 novembre 2026). Depuis (LEGIARTI000006381610, état courant
+      LEGIARTI000048065521), il donne le coefficient 0,43 dix ans avant l'âge
       normal, « majoré de 0,017 5 par trimestre » jusqu'à cinq ans avant,
       de 0,012 5 par trimestre sur les deux années suivantes et de 0,01 sur
       les trois dernières ; son paragraphe 2 applique le même barème à la
