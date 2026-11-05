@@ -1269,7 +1269,8 @@ def test_les_deux_premieres_annees_de_l_artisan_cotisent_au_forfait(points_des_d
     de 2012 — des points du RCO, que le RCI reprendra à la liquidation. Celui
     qui reprend en 1998, après
     quatorze ans sans activité, commence un nouvel exercice — ce que le texte
-    ne dit pas, et que R. 242-16 (LEGIARTI000006748778) dit des cotisations de
+    ne dit pas, et que R. 242-16 (LEGIARTI000006748778), règle des allocations
+    familiales que D. 633-6 reprend pour la base, dit des cotisations de
     début d'activité de 2002 à 2008 : « Ne sont assimilées à un début
     d'activité ni la modification des conditions d'exercice [...], ni la
     reprise d'activité intervenue soit dans l'année au cours de laquelle est
@@ -1357,11 +1358,15 @@ def test_le_commercant_qui_commence_cotise_sur_dix_huit_puis_vingt_sept_bmaf(
     """« Pour les assurés commençant l'exercice de leur activité, la cotisation
     annuelle est calculée sur les revenus forfaitaires mentionnés au sixième
     alinéa de l'article L. 131-6 » (D. 635-10, LEGIARTI000006738027,
-    LEGIARTI000006738028) : la première année civile, « une base forfaitaire
-    égale à dix-huit fois la valeur de la base mensuelle de calcul des
-    prestations familiales en vigueur au 1er octobre de l'année précédente », la
-    deuxième, cette base « majorée de 50 % », vingt-sept fois depuis 2008
-    (R. 242-16, LEGIARTI000006748778, LEGIARTI000006748779). Jusqu'aux
+    LEGIARTI000006738028) : L. 131-6 (LEGIARTI000006740118) en fait un plafond,
+    la première année civile, « une base forfaitaire qui ne peut excéder
+    dix-huit fois la valeur de la base mensuelle de calcul des prestations
+    familiales en vigueur au 1er octobre de l'année précédente », la deuxième,
+    « vingt-sept fois cette valeur », que la caisse fait forfait (circulaire RSI
+    n° 2007/013, ci-dessous). R. 242-16 (LEGIARTI000006748778,
+    LEGIARTI000006748779), la règle des allocations familiales que D. 633-6
+    reprend pour la base, dit « égale à dix-huit fois », puis cette base
+    « majorée de 50 % », vingt-sept fois depuis 2008. Jusqu'aux
     cotisations de 2008, la complémentaire est définitive (D. 635-2,
     LEGIARTI000006738016) : « pour le calcul définitif, la cotisation
     invalidité-décès et la cotisation de retraite complémentaire restent celles

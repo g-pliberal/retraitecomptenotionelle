@@ -175,7 +175,9 @@ export class DonneesMacro {
     /**
      * La base mensuelle de calcul des prestations familiales au 1er octobre, de
      * 2003 à 2007 : le forfait du commerçant qui commence, à sa complémentaire
-     * jusqu'en 2008 (D. 635-10 ; R. 242-16). Voir le Python.
+     * jusqu'en 2008 : le plafond de L. 131-6 (D. 635-10), que la caisse fait
+     * forfait ; R. 242-16, règle des allocations familiales reprise pour la
+     * base par D. 633-6, pose les mêmes multiples. Voir le Python.
      */
     this.base_mensuelle_prestations_familiales =
       "base_mensuelle_prestations_familiales" in paquet.series

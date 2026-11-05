@@ -5,11 +5,15 @@
 # LA RÈGLE. Le commerçant qui commence cotise à sa complémentaire obligatoire
 # (le NRCO, de 2004 à 2011) sur « les revenus forfaitaires mentionnés au
 # sixième alinéa de l'article L. 131-6 » (D. 635-10, LEGIARTI000006738027,
-# LEGIARTI000006738028) : la première année civile, « une base forfaitaire
-# égale à dix-huit fois la valeur de la base mensuelle de calcul des
-# prestations familiales en vigueur au 1er octobre de l'année précédente », la
-# deuxième, cette base « majorée de 50 % », vingt-sept fois depuis 2008
-# (R. 242-16, LEGIARTI000006748778, LEGIARTI000006748779). Jusqu'aux
+# LEGIARTI000006738028) : L. 131-6 (LEGIARTI000006740118) en fait un plafond,
+# la première année civile, « une base forfaitaire qui ne peut excéder
+# dix-huit fois la valeur de la base mensuelle de calcul des prestations
+# familiales en vigueur au 1er octobre de l'année précédente », la deuxième,
+# « vingt-sept fois cette valeur », que la caisse fait forfait (circulaire RSI
+# n° 2007/013, § 2.2). R. 242-16 (LEGIARTI000006748778,
+# LEGIARTI000006748779), la règle des allocations familiales que D. 633-6
+# reprend pour la base, dit « égale à dix-huit fois », puis cette base
+# « majorée de 50 % », vingt-sept fois depuis 2008. Jusqu'aux
 # cotisations de 2008, ce forfait est définitif (fiche
 # `assiette_rco_independants`) ; depuis 2009, il n'est plus qu'un acompte,
 # régularisé sur le revenu de l'année. La table ne sert donc que les

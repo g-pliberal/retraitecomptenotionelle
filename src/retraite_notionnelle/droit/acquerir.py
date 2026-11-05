@@ -693,10 +693,14 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
                 # article 3, II ; D. 635-4 ; D. 635-7). Le commerçant qui
                 # commence, de 2004 à 2008, « sur les revenus forfaitaires
                 # mentionnés au sixième alinéa de l'article L. 131-6 »
-                # (D. 635-10) : « dix-huit fois la valeur de la base mensuelle
-                # de calcul des prestations familiales en vigueur au
-                # 1er octobre de l'année précédente », puis cette base
-                # « majorée de 50 % », vingt-sept fois depuis 2008 (R. 242-16).
+                # (D. 635-10) : un plafond, « dix-huit fois la valeur de la
+                # base mensuelle de calcul des prestations familiales en
+                # vigueur au 1er octobre de l'année précédente », puis
+                # « vingt-sept fois cette valeur » (L. 131-6), que la caisse
+                # fait forfait (circulaire RSI n° 2007/013, § 2.2). R. 242-16,
+                # la règle des allocations familiales, que D. 633-6 reprend
+                # pour la base, dit « égale à », puis la base « majorée de
+                # 50 % », vingt-sept fois depuis 2008.
                 # Jusqu'aux cotisations de 2008, la complémentaire est
                 # définitive (D. 635-2) : « pour le calcul définitif, la
                 # cotisation invalidité-décès et la cotisation de retraite
@@ -712,8 +716,10 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
                 # le portent pas, jusqu'à ce que le décret n° 2011-2038 le
                 # supprime en 2012. L'exercice commence l'année qu'aucune
                 # ligne de la même affiliation ne précède l'année d'avant : le
-                # texte ne dit pas la reprise, que R. 242-16 ne tient pour un
-                # début d'activité que passée l'année qui suit la cessation.
+                # texte de la complémentaire ne dit pas la reprise, que
+                # R. 242-16 (allocations familiales, reprise pour la base par
+                # D. 633-6) ne tient pour un début d'activité que passée
+                # l'année qui suit la cessation.
                 # Le forfait se prend à proportion des mois de l'année, comme
                 # les bornes.
                 diviseurs = dict(periode.assiette_de_debut).get(ligne.affiliation)

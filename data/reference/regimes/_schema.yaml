@@ -1143,7 +1143,8 @@ champs_periode:
       moitié dudit plafond » (décret n° 78-351, article 3, II ; D. 635-4 ;
       D. 635-7), forfait définitif jusqu'aux cotisations de 2008. Un exercice commence l'année
       qu'aucune ligne cotisée de la même affiliation ne précède l'année
-      d'avant, comme R. 242-16 le dit des débuts d'activité ; le forfait se
+      d'avant, comme R. 242-16 (allocations familiales, reprise pour la base
+      par D. 633-6) le dit des débuts d'activité ; le forfait se
       prend à proportion des mois de l'année, comme les bornes. `null` :
       aucun forfait. Depuis les revenus de 2009, le forfait n'est plus qu'un
       acompte, régularisé sur le revenu de l'année (D. 635-2, L. 131-6) : les
@@ -1159,8 +1160,10 @@ champs_periode:
       le premier multiple la première année, sur le second la suivante, quel
       que soit le revenu — le commerçant au NRCO de 2004 à 2008, sur « les
       revenus forfaitaires mentionnés au sixième alinéa de l'article
-      L. 131-6 » (D. 635-10), dix-huit puis vingt-sept fois (R. 242-16),
-      définitifs jusqu'aux cotisations de 2008. L'activité commence comme
+      L. 131-6 » (D. 635-10), dix-huit puis vingt-sept fois, un plafond de
+      L. 131-6 que la caisse fait forfait (R. 242-16, règle des allocations
+      familiales reprise pour la base par D. 633-6, pose les mêmes
+      multiples), définitifs jusqu'aux cotisations de 2008. L'activité commence comme
       pour `assiette_de_debut`, et le forfait se prend de même à proportion
       des mois de l'année. `null` : aucun forfait.
     defaut: null

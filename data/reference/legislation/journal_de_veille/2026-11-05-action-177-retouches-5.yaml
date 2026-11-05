@@ -1,0 +1,27 @@
+date: "2026-11-05"
+session: "action 177, « Retouches 5 » : les commentaires qui citaient R. 242-16 pour le forfait du commerçant, et la régularisation de 2009 à 2011 (suite des relectures R-D3 et de Retouches 4)"
+consulte: >-
+  Dans l'index LEGI à jour du 2 novembre 2026 : R. 242-16, ses rédactions du 26 avril 2002 et
+  du 1er janvier 2008 (LEGIARTI000006748778, LEGIARTI000006748779, `--texte`, `--diff`) ;
+  D. 633-6, ses trois rédactions de 2004 à 2012 (LEGIARTI000006737897, LEGIARTI000006737898,
+  LEGIARTI000006737899) ; L. 131-6 (LEGIARTI000006740118, LEGIARTI000006740121,
+  LEGIARTI000020169101, LEGIARTI000020675442, LEGIARTI000025013718) ; L. 131-6-2
+  (LEGIARTI000025013725) ; D. 635-10 (LEGIARTI000006738027, LEGIARTI000006738028,
+  LEGIARTI000020032165) ; R. 133-20 et R. 133-30 (LEGIARTI000006747002,
+  LEGIARTI000006747012). Base de législation de la Cnav : la circulaire RSI n° 2007/013 du 23
+  janvier 2007, § 2.2 (PDF rouvert, sha256 05ce28211da8c4ed6e2b5b48316a5a55aad773c369475ab2f233162a8e6e3e70).
+trouve: >-
+  La régularisation du forfait de début de la base vieillesse, de 2009 à 2011, est dite par
+  L. 131-6 (« Lorsque le revenu professionnel est définitivement connu, les cotisations font
+  l'objet d'une régularisation », aux rédactions du 1er janvier 2009 et du 29 mai 2009), non
+  par R. 242-16, dont la rédaction du 1er janvier 2008 a perdu l'alinéa de régularisation,
+  ni par D. 633-6, qui ne pose que la base provisionnelle. Depuis le 23 décembre 2011, le
+  texte est à L. 131-6-2. R. 242-16 est la règle des allocations familiales, reprise pour la
+  base par D. 633-6 ; le forfait de la complémentaire du commerçant est le plafond de L. 131-6
+  (D. 635-10), que la caisse fait forfait (circulaire RSI n° 2007/013, § 2.2 : « calculés sur la
+  base de 18 puis 27 BMPF »). Les commentaires du code, des tests et des données le disent
+  maintenant ainsi ; aucune valeur ne change.
+reste: >-
+  Une circulaire ou un exemple de la caisse sur le forfait de début de l'artisan de 2009 à
+  2011, déjà déclaré aux retouches 4. Le « cinquième alinéa de L. 131-6 » que le commentaire
+  d'`acquerir.py` tire de D. 635-2 n'a pas été rouvert ici.

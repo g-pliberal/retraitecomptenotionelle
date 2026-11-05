@@ -217,3 +217,6 @@ avant 2013 » et « Points cotisés commerçants avant 2013 » (24 octobre 2025)
 
 *Renvoi, le 5 novembre 2026* : les écarts de la relecture R-D3 sont repris dans
 `2026-11-05-retouches-de-la-relecture-r-d3.md`.
+
+*Renvoi, le 5 novembre 2026 (Retouches 5)* : la régularisation des forfaits de 2009 à 2011 est à L. 131-6, non
+à R. 242-16 ni à D. 633-6, citation à l'appui : `2026-11-05-retouches-5.md`.

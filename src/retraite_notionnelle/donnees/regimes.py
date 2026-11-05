@@ -862,8 +862,11 @@ class PeriodeRegime:
     #: les multiples de la base mensuelle de calcul des prestations familiales
     #: au 1er octobre de l'année précédente, ``(("commercant", (18, 27)),)``
     #: — le commerçant au NRCO de 2004 à 2008, sur « les revenus forfaitaires
-    #: mentionnés au sixième alinéa de l'article L. 131-6 » (D. 635-10 ;
-    #: R. 242-16). Vide : aucun forfait. Voir ``acquerir``.
+    #: mentionnés au sixième alinéa de l'article L. 131-6 » (D. 635-10), dont
+    #: la caisse fait forfait le plafond (circulaire RSI n° 2007/013, § 2.2) ;
+    #: R. 242-16, règle des allocations familiales reprise pour la base par
+    #: D. 633-6, pose les mêmes multiples. Vide : aucun forfait. Voir
+    #: ``acquerir``.
     assiette_de_debut_en_bases_mensuelles: tuple[tuple[str, tuple[int, ...]], ...] = ()
     notes: str = ""
 

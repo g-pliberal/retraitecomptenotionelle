@@ -204,7 +204,9 @@ def _series() -> dict:
             "valeur", nom="taux_retenue_avant_1946"),
         # La base mensuelle des prestations familiales au 1er octobre, de 2003
         # à 2007 : le forfait du commerçant qui commence, à sa complémentaire
-        # jusqu'en 2008 (D. 635-10 ; R. 242-16 ; action 177).
+        # jusqu'en 2008 : le plafond de L. 131-6 (D. 635-10), que la caisse
+        # fait forfait ; R. 242-16, règle des allocations familiales reprise
+        # pour la base par D. 633-6, pose les mêmes multiples (action 177).
         "base_mensuelle_prestations_familiales": charger_serie_annuelle(
             DONNEES / "reference" / "legislation"
             / "base_mensuelle_prestations_familiales.csv",
