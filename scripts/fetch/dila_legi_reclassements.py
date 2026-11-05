@@ -157,11 +157,18 @@ PROMOTION = re.compile(r"\bpromu|\bavancement\b", re.IGNORECASE)
 _DATE = (r"(?P<jour>1\s*er|\d{1,2})\s+(?P<mois>janvier|f[ée]vrier|mars|avril|mai|juin|juillet"
          r"|ao[ûu]t|septembre|octobre|novembre|d[ée]cembre)\s+(?P<annee>\d{4})")
 #: La date du reclassement : « A compter du 1er janvier 2017 », « sont, au
-#: 1er août 1993, intégrés » ; non la date d'un texte cité.
+#: 1er août 1993, intégrés », « sont reclassés, au 1er janvier 2017, conformément
+#: au tableau », « reclassés avec effet au », « Avec une date d'effet au », « reclassés
+#: dans le grade de dessinateur projeteur en chef au 1er août 1996 » (action 158, B5) ;
+#: non la date d'un texte cité, ni celle d'une nomination ou d'une position (« nommés
+#: au », « placés au »).
 EFFETS = (
-    re.compile(rf"(?:[àa]\s+compter\s+du|[àa]\s+partir\s+du|[àa]\s+la\s+date\s+du)\s+{_DATE}",
-               re.IGNORECASE),
+    re.compile(rf"(?:[àa]\s+compter\s+du|[àa]\s+partir\s+du|[àa]\s+la\s+date\s+du"
+               rf"|avec\s+(?:une\s+date\s+d['’]\s*)?effet\s+au)\s+{_DATE}", re.IGNORECASE),
     re.compile(rf"\bau\s+{_DATE}\s*,?\s*(?=(?:\w+\s+)?(?:reclass|int[ée]gr))", re.IGNORECASE),
+    re.compile(rf"\b(?:reclass|int[ée]gr)\w*\s*,?\s+au\s+{_DATE}", re.IGNORECASE),
+    re.compile(rf"\breclass\w*\s+dans\s+le\s+grade\s+d[e'’]\s*[^,:;()]{{1,80}}?\s+au\s+{_DATE}",
+               re.IGNORECASE),
 )
 
 

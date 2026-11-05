@@ -236,6 +236,51 @@ def test_seul_le_reclassement_d_une_grille_a_la_suivante_est_retenu():
      "suivant :", "2017-01-01"),
     # La date d'un texte cité n'est pas celle du reclassement.
     (ECHELLE_4_EN_C2.split(" SITUATION")[0], ""),
+    # Action 158, B5 : la date qui suit le verbe. Décret n° 2017-194, art. 117
+    # (LEGIARTI000034054901, en vigueur depuis le 2017-02-18), mot pour mot :
+    ("Les ingénieurs des travaux publics de l'Etat ainsi que les fonctionnaires détachés dans "
+     "ce corps sont reclassés, au 1er janvier 2017, conformément au tableau de correspondance "
+     "suivant :", "2017-01-01"),
+    # Décret n° 98-416, art. 4 (LEGIARTI000006507125, depuis le 1996-09-01), sans virgule :
+    ("Les professeurs des écoles nationales d'art hors classe sont reclassés au 1er septembre "
+     "1996 conformément au tableau de correspondance ci-après :", "1996-09-01"),
+    # Décret n° 95-720, art. 15 (LEGIARTI000006479055, depuis le 1995-08-01) : les dates
+    # des textes cités précèdent celle du reclassement, qui suit le verbe.
+    ("Les fonctionnaires titulaires des grades de greffier et de premier greffier, régis par "
+     "le décret du 30 avril 1992 susvisé et placés dans l'une des positions prévues à "
+     "l'article 32 de la loi du 11 janvier 1984 susvisée, sont reclassés, au 1er août 1995, "
+     "dans le troisième grade conformément au tableau de correspondance ci-après :",
+     "1995-08-01"),
+    # Décret n° 2017-297, art. 13 (LEGIARTI000034158145, depuis le 2017-03-10) :
+    ("Les ingénieurs des systèmes d'information et de communication ainsi que les "
+     "fonctionnaires détachés dans le corps des ingénieurs des systèmes d'information et de "
+     "communication sont nommés et reclassés, au 1er janvier 2017, conformément au tableau "
+     "de correspondance suivant :", "2017-01-01"),
+    # « intégrés dans » n'est pas suivi d'une date : celle qui compte suit « reclassés ».
+    # Décret n° 2018-282, art. 4 (LEGIARTI000036821740, depuis le 2018-04-21) :
+    ("Les inspecteurs des affaires maritimes intégrés dans le corps des ingénieurs des travaux "
+     "publics de l'Etat sont reclassés, au 1er janvier 2017, conformément au tableau de "
+     "correspondance suivant :", "2017-01-01"),
+    # Décret n° 2017-182, art. 3 (LEGIARTI000034036681, depuis le 2017-02-16) :
+    ("Les fonctionnaires relevant du troisième grade mentionné au même article sont reclassés "
+     "avec effet au 1er janvier 2017 dans leur grade conformément au tableau de correspondance "
+     "suivant :", "2017-01-01"),
+    # Décret n° 2010-1139, art. 31 (LEGIARTI000022869523, du 2010-12-01 au 2017-01-01) :
+    ("Avec une date d'effet au 1er juillet 2012, les personnels mentionnés au I qui auront "
+     "accepté la proposition d'intégration prévue au II sont reclassés conformément aux "
+     "tableaux de correspondance suivants :", "2012-07-01"),
+    # Décret n° 96-980, art. 10 (LEGIARTI000006483170, depuis le 1995-08-01) : la date
+    # suit le grade d'accueil, et le reclassement vient un an après l'entrée en vigueur.
+    ("Les titulaires du grade provisoire de chef dessinateur prévu à l'article 9 ci-dessus, "
+     "placés dans une situation prévue à l'article 32 de la loi du 11 janvier 1984 susvisée, "
+     "sont reclassés dans le grade de dessinateur projeteur en chef au 1er août 1996, "
+     "conformément au tableau de correspondance ci-après :", "1996-08-01"),
+    # Ne datent pas le reclassement, et restent sans date : « nommés au » (n° 98-268,
+    # art. 17, LEGIARTI000006506606), « placés au » (n° 2001-325, art. 14,
+    # LEGIARTI000006567682) — voir la note de B5.
+    ("Les bibliothécaires de 1re et de 2e classes, placés au 1er janvier 1997 dans l'une des "
+     "positions prévues à l'article 32 de la loi du 11 janvier 1984 susvisée, sont reclassés "
+     "dans le grade de bibliothécaire conformément au tableau", ""),
 ])
 def test_la_date_du_reclassement_est_celle_que_la_phrase_ecrit(intro, attendu):
     assert rec.date_effet(intro) == attendu
@@ -301,6 +346,67 @@ def test_un_reclassement_publie_avant_son_effet_prend_la_date_que_le_texte_ecrit
     texte, = [t for t in _lire("textes") if t["texte"] == tableau["texte"]]
     assert (texte["versant"], texte["numero"]) == ("hospitaliere", "2016-634")
     assert (tableau["debut"], tableau["effet"]) == ("2016-05-22", "2017-01-01")
+
+
+#: Action 158, B5 : les 30 tableaux dont la phrase écrit la date après le verbe
+#: (« sont reclassés, au 1er janvier 2017, conformément au tableau »), chaque article
+#: lu en vigueur à l'index LEGI ; la phrase de chacun est citée dans
+#: docs/feuille_de_route/158/2026-11-05-b5-la-date-apres-reclasses.md.
+DATES_APRES_LE_VERBE = {
+    ("LEGIARTI000006479000", "1"): "1993-08-01",  # n° 95-691, art. 6
+    ("LEGIARTI000006479055", "1"): "1995-08-01",  # n° 95-720, art. 15
+    ("LEGIARTI000006484915", "1"): "1995-01-01",  # n° 97-571, art. 3
+    ("LEGIARTI000006506641", "1"): "1996-08-01",  # n° 98-280, art. 4
+    ("LEGIARTI000006507125", "1"): "1996-09-01",  # n° 98-416, art. 4
+    ("LEGIARTI000033667099", "1"): "2017-01-01",  # n° 2016-1798, art. 27
+    ("LEGIARTI000033708276", "1"): "2017-01-01",  # n° 2016-1881, art. 25
+    ("LEGIARTI000033711235", "1"): "2017-01-01",  # n° 2016-1880, art. 11
+    ("LEGIARTI000034054785", "1"): "2017-01-01",  # n° 2017-194, art. 23
+    ("LEGIARTI000034054815", "1"): "2017-01-01",  # n° 2017-194, art. 46
+    ("LEGIARTI000034054841", "1"): "2017-01-01",  # n° 2017-194, art. 68
+    ("LEGIARTI000034054901", "1"): "2017-01-01",  # n° 2017-194, art. 117
+    ("LEGIARTI000034054935", "1"): "2017-01-01",  # n° 2017-194, art. 144
+    ("LEGIARTI000034158145", "1"): "2017-01-01",  # n° 2017-297, art. 13
+    ("LEGIARTI000034167768", "1"): "2017-01-01",  # n° 2017-310, art. 16
+    ("LEGIARTI000034302299", "1"): "2017-01-01",  # n° 2017-418, art. 18
+    ("LEGIARTI000034460214", "1"): "2017-01-01",  # n° 2017-593, art. 6
+    ("LEGIARTI000034460216", "1"): "2017-01-01",  # n° 2017-593, art. 7
+    ("LEGIARTI000035590914", "1"): "2017-09-01",  # n° 2017-1350, art. 15
+    ("LEGIARTI000035591052", "1"): "2017-09-01",  # n° 2017-1351, art. 14
+    ("LEGIARTI000035591460", "1"): "2017-09-01",  # n° 2017-1352, art. 15
+    ("LEGIARTI000035603897", "1"): "2017-01-01",  # n° 2017-1376, art. 20
+    ("LEGIARTI000035646727", "1"): "2017-01-01",  # n° 2017-1404, art. 20
+    ("LEGIARTI000035646835", "1"): "2017-01-01",  # n° 2017-1405, art. 16
+    ("LEGIARTI000036729702", "1"): "2017-01-01",  # n° 2018-188, art. 13
+    ("LEGIARTI000036821740", "1"): "2017-01-01",  # n° 2018-282, art. 4
+    ("LEGIARTI000036821740", "2"): "2017-01-01",  # n° 2018-282, art. 4
+    ("LEGIARTI000037214195", "1"): "2017-01-01",  # n° 2018-619, art. 19
+    ("LEGIARTI000042506911", "1"): "2017-01-01",  # n° 2020-1362, art. 9
+    ("LEGIARTI000042559783", "1"): "2017-09-01",  # n° 2020-1435, art. 9
+    # « reclassés avec effet au », « Avec une date d'effet au », « reclassés dans le
+    # grade de … au » :
+    ("LEGIARTI000034036681", "1"): "2017-01-01",  # n° 2017-182, art. 3, I
+    ("LEGIARTI000034036681", "3"): "2017-01-01",  # n° 2017-182, art. 3
+    ("LEGIARTI000022913217", "1"): "2010-12-01",  # n° 88-1077, art. 50-1
+    ("LEGIARTI000022869520", "1"): "2010-12-01",  # n° 2010-1139, art. 30
+    ("LEGIARTI000022869523", "1"): "2012-07-01",  # n° 2010-1139, art. 31
+    ("LEGIARTI000006483170", "1"): "1996-08-01",  # n° 96-980, art. 10
+}
+
+
+def test_la_date_qui_suit_le_verbe_est_la_date_du_reclassement():
+    """Action 158, B5. Ces 36 tableaux restaient datés de l'entrée en vigueur de leur
+    article : le lecteur ne lisait la date qu'avant « reclassés ». Vingt-deux la
+    précèdent (reclassement rétroactif : le n° 2020-1362, en vigueur le 2020-11-09,
+    reclasse au 1er janvier 2017), dix la redisent, quatre la suivent (n° 2016-1880,
+    n° 2010-1139 deux fois, n° 96-980 : un an après)."""
+    tableaux = {(t["article"], t["tableau"]): t for t in _lire("tableaux")}
+    assert {cle: tableaux[cle]["effet"] for cle in DATES_APRES_LE_VERBE} == DATES_APRES_LE_VERBE
+    # Aucun autre tableau sans date n'écrit la sienne juste après le verbe.
+    import re
+    apres = re.compile(r"(?:reclass|int[ée]gr)\w*\s*,?\s+(?:avec\s+effet\s+)?(?:au|[àa]\s+compter\s+du)\s+"
+                       + rec._DATE, re.IGNORECASE)
+    assert [cle for cle, t in tableaux.items() if not t["effet"] and apres.search(t["intro"])] == []
 
 
 def test_chaque_ligne_lue_est_certifiee_et_chaque_refus_motive():

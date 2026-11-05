@@ -99,7 +99,9 @@ def test_aucune_phrase_restee_sans_date_ne_s_ouvre_sur_une_date(reclassements):
     # texte cité (n° 95-720, LEGIARTI000006479055 : « régis par le décret du
     # 30 avril 1992 susvisé […] sont reclassés, au 1er août 1995, »). Ce sont des
     # dates d'effet que les lecteurs ne lisent pas, non des dates qui ouvrent la
-    # phrase.
+    # phrase. Action 158, B5 : le lecteur lit désormais la date qui suit le verbe
+    # (tests/test_reclassements.py, DATES_APRES_LE_VERBE) ; 25 de ces tableaux de
+    # l'État sont datés, et passent à l'étape suivante : 183 → 158.
     import re
     tableaux = {(t["texte"], t["article"], t["tableau"]): t
                 for t in _lire(GRILLES / "reclassements" / "tableaux.csv")}
@@ -108,7 +110,7 @@ def test_aucune_phrase_restee_sans_date_ne_s_ouvre_sur_une_date(reclassements):
                  if r["statut"] == "declare" and not r["date"]}
     assert len({(r["texte"], r["article"], r["tableau"]) for r in reclassements
                 if r["raison"].startswith("la phrase qui annonce le tableau n'écrit pas la "
-                                          "date")}) == 183
+                                          "date")}) == 158
     for cle in sans_date:
         intro = tableaux[cle]["intro"]
         trouve = date.search(intro)

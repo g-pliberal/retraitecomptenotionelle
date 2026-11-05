@@ -1,0 +1,27 @@
+date: "2026-11-05"
+session: "action 158, vague 11, B5 : les dates d'effet que le lecteur des reclassements ne lisait pas, écrites après « reclassés »"
+consulte: >-
+  python scripts/veille_droit.py ; docs/veille_droit.md. L'index LEGI du dépôt (dump
+  Freemium_legi_global_20250713-140000, incréments jusqu'au 20261102-213929), par
+  dila_cherche.py legi --texte, à la version que porte la donnée : les 36 articles des
+  tableaux datés ici (n° 95-691, art. 6 ; 95-720, art. 15 ; 97-571, art. 3 ; 98-280, art. 4 ;
+  98-416, art. 4 ; 2016-1798, art. 27 ; 2016-1880, art. 11 ; 2016-1881, art. 25 ; 2017-194,
+  art. 23, 46, 68, 117, 144 ; 2017-297, art. 13 ; 2017-310, art. 16 ; 2017-418, art. 18 ;
+  2017-593, art. 6 et 7 ; 2017-1350, art. 15 ; 2017-1351, art. 14 ; 2017-1352, art. 15 ;
+  2017-1376, art. 20 ; 2017-1404, art. 20 ; 2017-1405, art. 16 ; 2018-188, art. 13 ;
+  2018-282, art. 4 ; 2018-619, art. 19 ; 2020-1362, art. 9 ; 2020-1435, art. 9 ; 2017-182,
+  art. 3 ; 88-1077, art. 50-1 ; 2010-1139, art. 30 et 31 ; 96-980, art. 10) ; et ceux qui
+  ne datent pas le reclassement (n° 97-1029, art. 4 ; 98-268, art. 17 ; 2001-325, art. 14 ;
+  arrêté du 18 avril 1989, art. 4).
+trouve: >-
+  36 tableaux de reclassement écrivent leur date d'effet après le verbe (« sont reclassés,
+  au 1er janvier 2017, conformément au tableau », « reclassés avec effet au », « Avec une
+  date d'effet au », « reclassés dans le grade de … au 1er août 1996 ») ; le lecteur les
+  datait de l'entrée en vigueur de l'article, dont 22 après le reclassement (rétroactif)
+  et 4 avant. Lues et entrées ; le chaînage ne rattache aucun groupe de plus. « nommés au »
+  (deux tableaux) : point non tranché ; « placés au » et l'arrêté de 1989 datent une
+  position ou un classement, non le reclassement.
+reste: >-
+  Les deux tableaux « nommés au » (n° 97-1029, art. 4 ; n° 98-268, art. 17). Candidat : le
+  lecteur relancé sur l'index publié écrit 540 tableaux, non 450 ; la donnée ne se refait
+  pas de l'index tel qu'il est. Les 97 versions hors du motif (durées d'échelon).
