@@ -1,0 +1,31 @@
+date: "2026-11-05"
+session: "action 130, file R-E4 de la vague 10 : relecture de E3 (la CARPIMKO, 0284e76) et des chiffres de E2 (la CAVOM, 0e2a786)"
+consulte: >-
+  Les index JORF (à jour au 3 novembre 2026) et LEGI (au 2 novembre) récupérés par
+  `dila_index.py --recuperer`. Au JORF : les arrêtés de la CARPIMKO du 31 juillet 2015
+  (JORFARTI000031255547), du 23 mai 2019 (038529117), du 27 décembre 2023 (048880643), du 10
+  juillet 2026 (054435915), du 20 novembre 1996 (002184842, 001794714), et ceux de 1984 à 1996
+  qui nomment la section (JORFTEXT000000315359, 000292638, 000844323, 000475761, 000500969,
+  000498997, 000666704, 000685640, 000685179, 000480553, 000372435) ; le décret n° 2015-1875,
+  article 3 (JORFARTI000031740735) ; le décret n° 2026-418, article 22 (JORFARTI000054153714).
+  Dans LEGI : les statuts de 1984, articles 10 à 13 (LEGIARTI000006782879 à 006782882) ; le
+  décret n° 84-143, article 2 (LEGIARTI000052567938) ; le décret n° 79-265, article 2
+  (LEGIARTI000038427708, 054168585) ; L. 161-17-2 et D. 161-2-1-9 au 1er juillet 2016.
+trouve: >-
+  Les citations de E3 et de E2 sont exactes, leurs dates justes, leurs montants refaits à la
+  main et rendus par les deux moteurs. Mais l'arrêté du 20 mai 1987 (JORFTEXT000000844323)
+  modifie le régime complémentaire d'assurance vieillesse de la CARPIMKO, texte absent de
+  l'index : les statuts de 1984 ne sont lus que jusqu'à lui, et l'erreur (1) n'est prouvée que
+  de 1984 à 1987 (28,57 € par an en 1985, non 116,44 € en 1990). L'erreur (2) n'est pas
+  prouvée : l'article 11, 2°, a), des statuts de 2015, que le tableau de l'article 12 quater,
+  1°, applique à 60 ans aux générations 1955 et antérieures, sert à taux plein qui liquide sa
+  base sans abattement ; seule la majoration, comptée avant l'âge légal de la base (61 ans et
+  7 mois en 1954, D. 161-2-1-9, 5°), reste fausse dans les deux lectures (136,90 € par an dans
+  la lecture de l'article 11). L'erreur (3) est prouvée. La référence « article 3, II » de E2
+  est juste.
+reste: >-
+  Le texte de l'arrêté du 20 mai 1987 et celui du 20 novembre 1996, au seul Bulletin officiel ;
+  un exemple de la CARPIMKO pour un assuré né avant 1956 liquidé de 2016 à 2023 avec sa durée.
+  À reprendre par la file E : l'erreur (2) en point non tranché, la borne de la version de
+  1984, la majoration avant l'âge légal de la base, « l'âge du taux plein » de l'article 12
+  ter, l'arrondi des points de la CAVOM (note `130/2026-11-05-relecture-r-e4.md`).
