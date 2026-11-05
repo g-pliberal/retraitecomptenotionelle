@@ -254,3 +254,40 @@ def test_le_biologiste_est_minore_jusqu_a_l_age_de_l_351_8():
                        if p["regime"] == "asv_directeurs_laboratoire")
         lus[naissance] = float(COEFFICIENT.search(pension["detail"]).group(1))
     assert lus == {naissance: attendu for naissance, (_, attendu) in BIOLOGISTES.items()}
+
+
+#: Avant les statuts de 2011, l'âge du 1° de L. 351-8 : « l'âge prévu au 1° de
+#: l'article L. 351-8 est fixé à soixante-cinq ans » (R. 351-27, toutes ses
+#: rédactions du 21 décembre 1985 au 3 juin 2011 : LEGIARTI000006749434,
+#: LEGIARTI000006749435, LEGIARTI000006749436, LEGIARTI000020082993) ; L. 351-8
+#: visait alors « un âge déterminé » (LEGIARTI000006742633, du 22 août 2003 au
+#: 1er juillet 2011). Les statuts d'avant 2011 ne sont pas publiés au Journal
+#: officiel : la fiche présume qu'ils renvoyaient au même âge que ceux de 2011,
+#: et le coefficient de 1,25 % par trimestre. Né le 10 février, parti au
+#: 1er mars :
+#: - en 1943, à 62 ans (2005) : 65 − 62 = 3 ans, 12 trimestres, 0,85 ;
+#: - en 1941, à 64 ans (2005) : 1 an, 4 trimestres, 0,95 ;
+#: - en 1940, à 65 ans (2005) : aucun trimestre, 1 ;
+#: - en 1946, à 62 ans (2008) : 12 trimestres, 0,85.
+#: Le modèle comptait jusqu'à 67 ans, l'âge du guide de 2025, et prenait la
+#: durée quand elle lui manquait de moins : 17, 9, 5 et 17 trimestres, 0,7875,
+#: 0,8875, 0,9375 et 0,7875 (relecture R-L-bis, écart 2). À 65 ans, l'âge en
+#: oppose moins que la durée dans les quatre cas : elle ne les décide plus.
+BIOLOGISTES_AVANT_2009 = {"1943-02-10": ("62", 0.85), "1941-02-10": ("64", 0.95),
+                          "1940-02-10": ("65", 1.0), "1946-02-10": ("62", 0.85)}
+
+
+def test_avant_2009_le_biologiste_est_minore_jusqu_a_soixante_cinq_ans():
+    cas = [{"cle": naissance, "requete": {**REQUETE, "statut": "biologiste_liberal",
+                                          "naissance": naissance, "liquidation": age}}
+           for naissance, (age, _) in BIOLOGISTES_AVANT_2009.items()]
+    servis, refus = servi_et_refait(cas)
+    assert refus == {}, refus
+    lus = {}
+    for naissance, servi in servis.items():
+        pension = next(p for p in servi["actuel"]["pensions_par_regime"]
+                       if p["regime"] == "asv_directeurs_laboratoire")
+        lu = COEFFICIENT.search(pension["detail"])
+        lus[naissance] = float(lu.group(1)) if lu else 1.0
+    assert lus == {naissance: attendu
+                   for naissance, (_, attendu) in BIOLOGISTES_AVANT_2009.items()}

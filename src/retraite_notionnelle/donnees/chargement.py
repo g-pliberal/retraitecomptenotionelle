@@ -357,6 +357,19 @@ def charger_serie_annuelle(
     return serie
 
 
+def au_mois(annees: float) -> float:
+    """Un âge ou une durée en années, ramené au mois entier le plus proche.
+
+    Les textes écrivent leurs âges en ans et en mois — « Soixante et un ans et
+    deux mois pour les assurés nés en 1953 » (D. 161-2-1-9) —, les tables du
+    dépôt au centième : 61,17, qui dépasse 61 ans 2 mois (61,1667). L'assuré
+    parti à cet âge pile se voyait refuser l'ouverture, et celui parti à
+    66 ans 2 mois, l'âge du 1° de L. 351-8, gardait un trimestre de décote
+    (relecture R-L-bis, action 130). Lu au mois, l'âge est celui du texte.
+    """
+    return round(annees * 12) / 12
+
+
 #: Tables indexées sur la GÉNÉRATION et non sur l'année, mémorisées sur la même
 #: signature de fichier que les séries annuelles. Elles ne peuvent pas passer par
 #: ``charger_serie_annuelle`` : leur clé s'écrit en années décimales — 1961,667
@@ -386,8 +399,10 @@ def charger_table_par_generation(
     with chemin.open(encoding="utf-8") as flux:
         lignes = (l for l in flux if not l.lstrip().startswith("#"))
         for ligne in csv.DictReader(lignes):
+            valeur = float(ligne[colonne])
             table[float(ligne["generation"])] = (
-                float(ligne[colonne]),
+                # Une colonne ``age`` porte un âge, que les textes écrivent au mois.
+                au_mois(valeur) if colonne == "age" else valeur,
                 Fiabilite.depuis_texte(ligne["fiabilite"]),
             )
     resultat = (table, tuple(sorted(table)))

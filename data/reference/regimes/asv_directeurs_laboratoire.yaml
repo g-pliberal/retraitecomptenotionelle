@@ -48,7 +48,16 @@ population: >-
   du guide. La minoration court jusqu'à « l'âge fixé à l'article L. 351-8
   (1°) » (même article 14), lu à la génération depuis la période de 2009
   (`age_taux_plein_par_generation`, fiche asv_autres_professions_de_sante) ;
-  avant, les soixante-sept ans du guide.
+  avant, soixante-cinq ans : « l'âge prévu au 1° de l'article L. 351-8 est
+  fixé à soixante-cinq ans » (R. 351-27, toutes ses rédactions du
+  21 décembre 1985 au 3 juin 2011, dont LEGIARTI000006749436), quand
+  L. 351-8 visait « un âge déterminé » (LEGIARTI000006742633). Les
+  soixante-sept ans du guide de 2025 sont l'âge du même 1° depuis la loi
+  n° 2010-1330 ; aucun texte ne les opposait avant. Que les statuts d'avant
+  2011 aient renvoyé à cet article, comme ceux de 2011, est présumé : le
+  décret n° 81-1046 laisse « le montant, les modalités de calcul et
+  d'attribution » au règlement (article 2, LEGIARTI000006768391), qui n'est
+  pas au Journal officiel (relecture R-L-bis, 5 novembre 2026).
 hors_repartition: false
 inventaire:
   section: non_salaries
@@ -77,7 +86,7 @@ periodes:
     fin: 2007
     type_calcul: points
     age_ouverture: 60
-    age_taux_plein: 67
+    age_taux_plein: 65
     duree_requise_trimestres: null
     taux_plein: 1.0
     salaire_reference: carriere_entiere
@@ -110,7 +119,7 @@ periodes:
     fin: 2008
     type_calcul: points
     age_ouverture: 60
-    age_taux_plein: 67
+    age_taux_plein: 65
     duree_requise_trimestres: null
     taux_plein: 1.0
     salaire_reference: carriere_entiere

@@ -3016,7 +3016,8 @@ def test_l_age_d_annulation_de_la_decote_suit_la_generation(simulateur):
 
     table = AgesAnnulationDecote(simulateur.parametres.racine_donnees)
     assert table.age(1940)[0] == pytest.approx(65.0)
-    assert table.age(1953)[0] == pytest.approx(66.17)
+    # 66 ans et 2 mois (D. 161-2-1-9, 4°, et L. 351-8, 1°), au mois près.
+    assert table.age(1953)[0] == pytest.approx(66 + 2 / 12, abs=1e-12)
     assert table.age(1960)[0] == pytest.approx(67.0)
 
     # Une carrière courte liquidée à 65 ans : la génération 1945 y est au taux
@@ -4490,7 +4491,7 @@ def test_la_decote_des_regimes_speciaux_se_lit_au_mois_et_borne_la_duree(simulat
     coefficient, age_annulation, _ = liquider.decote_opposable(
         scenario, periode, carriere, carriere.annee_liquidation)
     assert coefficient == pytest.approx(0.01)
-    assert age_annulation == pytest.approx(55.33 - 7 / 4)
+    assert age_annulation == pytest.approx(55 + 4 / 12 - 7 / 4, abs=1e-12)
 
     for age, borne in ((57.0, 19), (58.0, 15)):
         carriere = agent("agent_ieg", 1967, 7, 22, age)
@@ -4686,9 +4687,10 @@ def test_l_agent_des_ieg_qui_ouvre_son_droit_avant_2025_garde_les_regles_d_avant
     # trimestres de 2021, et non soixante-deux ans.
     carriere = agent(1965, 1, 60.0)
     periode = simulateur.catalogue["ieg"].periode(2025)
-    assert ouvrir.age_taux_plein(scenario, periode, carriere) == pytest.approx(61.33)
+    assert ouvrir.age_taux_plein(scenario, periode, carriere) == pytest.approx(
+        61 + 4 / 12, abs=1e-12)
     _, age_annulation, _ = liquider.decote_opposable(scenario, periode, carriere, 2025)
-    assert age_annulation == pytest.approx(60.33)
+    assert age_annulation == pytest.approx(60 + 4 / 12, abs=1e-12)
     # Né en janvier 1968, droit ouvert en avril 2025 : soixante-deux ans.
     carriere = agent(1968, 1, 59.0)
     periode = simulateur.catalogue["ieg"].periode(2027)
@@ -7440,7 +7442,7 @@ def test_les_generations_coupees_en_cours_d_annee_sont_lues_au_mois(simulateur):
     # Loi du 9 novembre 2010 : 60 ans avant le 1er juillet 1951, 60 ans et
     # quatre mois à compter.
     assert opposables(1951, 6)[0] == pytest.approx(60.0)
-    assert opposables(1951, 8)[0] == pytest.approx(60.33)
+    assert opposables(1951, 8)[0] == pytest.approx(60 + 4 / 12, abs=1e-12)
     # Loi du 14 avril 2023 : 62 ans et 168 trimestres avant le 1er septembre
     # 1961, 62 ans et trois mois et 169 trimestres à compter.
     assert opposables(1961, 8) == (pytest.approx(62.0), 168)
@@ -8039,7 +8041,7 @@ def test_les_ages_classes_suivent_les_deux_montees_en_charge(simulateur):
 
     assert age(1950) == pytest.approx(55.0)
     assert age(1956, 3) == pytest.approx(55.0)
-    assert age(1956, 9) == pytest.approx(55.33)
+    assert age(1956, 9) == pytest.approx(55 + 4 / 12, abs=1e-12)
     assert age(1957) == pytest.approx(55.75)
     assert age(1960) == pytest.approx(57.0)
     assert age(1966, 3) == pytest.approx(57.0)

@@ -1,0 +1,29 @@
+date: "2026-11-05"
+session: "action 130, file L-ter : corrections des deux écarts de la relecture R-L-bis"
+consulte: >-
+  python scripts/veille_droit.py. L'index de la DILA récupéré dans la session (LEGI à jour
+  au 2 novembre 2026, JORF au 3 novembre) : L. 351-8 (LEGIARTI000028498855,
+  LEGIARTI000006742633), D. 161-2-1-9 (LEGIARTI000025089933), L. 161-17-2
+  (LEGIARTI000025014605), L. 351-1 (LEGIARTI000023035688), R. 351-27 à sa date d'effet et
+  dans ses rédactions de 1985 à 2011 (LEGIARTI000024113020, LEGIARTI000006749434,
+  LEGIARTI000006749435, LEGIARTI000006749436, LEGIARTI000020082993), R. 643-7
+  (LEGIARTI000024113055), le décret n° 81-1046, article 2 (LEGIARTI000006768391). Au
+  JORF : statuts de la CAVP de 2011 (JORFARTI000024270214), arrêté du 11 mai 2009
+  (JORFARTI000020694605), et une recherche des statuts des prestations des biologistes
+  d'avant 2011. Sur le site de l'Agirc-Arrco : l'accord du 17 novembre 2017, version
+  « Applicable au 1 janvier 2019 », article 84.
+trouve: >-
+  Les textes écrivent leurs âges en ans et en mois, les tables du dépôt au centième : 66,17
+  et 61,17 dépassent 66 ans 2 mois et 61 ans 2 mois. Né en 1953, l'assuré parti à 66 ans
+  et 2 mois gardait un trimestre de minoration (régime général, CNAVPL, ASV des
+  biologistes, Agirc-Arrco) ; parti à 61 ans et 2 mois, l'âge légal, le droit lui était
+  refusé ; le sociétaire de la Comédie-Française né en janvier 1958, de même à 60 ans et
+  8 mois. Corrigé au chargement, pour toutes les tables d'âges et les fiches de régime.
+  Avant 2011, R. 351-27 fixait à soixante-cinq ans l'âge du 1° de L. 351-8 : l'ASV des
+  biologistes d'avant 2009 est minorée jusqu'à cet âge, et non jusqu'aux soixante-sept ans
+  du guide de 2025. Aucun statut des prestations des biologistes d'avant 2011 n'est au
+  Journal officiel : le renvoi au 1° de L. 351-8 est présumé.
+reste: >-
+  L'âge de référence de la proposition (ages_reference.csv), écrit lui aussi au centième ;
+  la durée qui efface la minoration des biologistes ; les statuts d'avant 2011, à demander
+  à la CAVP (note 2026-11-05-corrections-de-la-relecture-r-l-bis.md de l'action 130).

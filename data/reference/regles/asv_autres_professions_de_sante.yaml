@@ -193,7 +193,12 @@ approximations:
     soixante-sept ans depuis 1955. Le modèle les lit à la génération depuis le
     5 novembre 2026 (age_annulation_decote), aux périodes de 2009 et d'après, comme
     l'âge d'ouverture : de 2009 au 29 juin 2011, la règle de 2011 est présumée ; avant
-    2009, soixante-sept ans, du guide. Ce que le texte ne tranche pas : l'arrondi des
+    2009, soixante-cinq ans, l'âge que « l'âge prévu au 1° de l'article L. 351-8 est
+    fixé à soixante-cinq ans » donnait à ce 1° jusqu'en 2011 (R. 351-27, rédactions du
+    21 décembre 1985 au 3 juin 2011, dont LEGIARTI000006749436), présumé lui aussi,
+    les statuts d'avant 2011 n'étant pas au Journal officiel ; les soixante-sept ans du
+    guide de 2025 n'existent que depuis la loi n° 2010-1330. Ce que le texte ne
+    tranche pas : l'arrondi des
     trimestres manquants, que le modèle porte au trimestre supérieur ; les soixante-cinq
     ans du parent de trois enfants des générations de juillet 1951 à 1955 (loi
     n° 2010-1330, article 20, IV), que le modèle ne lui donne pas. Et le modèle
@@ -204,8 +209,12 @@ approximations:
     jusqu'au 5 novembre 2026, le biologiste né avant 1955 était minoré jusqu'à
     soixante-sept ans : né le 10 février 1950, parti à 62 ans, 0,7625 au lieu de 0,85 ;
     né en 1952 ou en 1953, parti à 63 ans, 0,80 au lieu de 0,8625 et de 0,8375
-    (tests/test_ouverture_des_liberaux.py). La durée qui efface la minoration : non
-    mesurée
+    (tests/test_ouverture_des_liberaux.py). Le même jusqu'au 5 novembre 2026, parti
+    avant 2009, l'était jusqu'à soixante-sept ans et non soixante-cinq : né le
+    10 février 1943, parti à 62 ans en 2005, 0,7875 au lieu de 0,85 ; né en 1940, parti
+    à 65 ans, 0,9375 au lieu de 1. Né en 1953 et parti à 66 ans et 2 mois, il gardait
+    0,9875 au lieu de 1 (tests/test_ages_au_mois.py). La durée qui efface la
+    minoration : non mesurée
 - version: [forfaits_en_euros, quatre_forfaits]
   ecart: >-
     les points d'ajustement ne sont pas arrondis, au dixième supérieur pour l'auxiliaire

@@ -10,7 +10,7 @@ from functools import cached_property
 from pathlib import Path
 
 from ..somme import somme_ordonnee
-from .chargement import Fiabilite, charger_yaml, une_fois_par_instantane
+from .chargement import Fiabilite, au_mois, charger_yaml, une_fois_par_instantane
 
 #: Familles de régimes reconnues.
 FAMILLES = {
@@ -2076,8 +2076,9 @@ class CatalogueRegimes:
                 debut=int(p["debut"]),
                 fin=None if p.get("fin") is None else int(p["fin"]),
                 type_calcul=p["type_calcul"],
-                age_ouverture=float(p["age_ouverture"]),
-                age_taux_plein=float(p["age_taux_plein"]),
+                # Au mois : la CRPCEN écrit 65,33 pour 65 ans et 4 mois.
+                age_ouverture=au_mois(float(p["age_ouverture"])),
+                age_taux_plein=au_mois(float(p["age_taux_plein"])),
                 duree_requise_trimestres=(
                     None if p.get("duree_requise_trimestres") is None
                     else int(p["duree_requise_trimestres"])

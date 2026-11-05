@@ -25,6 +25,18 @@ sources:
   - type: service_public
     reference: fiche F19666
     date: 2026-01-01
+  - type: legifrance
+    reference: >-
+      L. 351-8, 1°, LEGIARTI000028498855 (« applicable aux pensions prenant effet à
+      compter du 1er février 2014 », jusqu'au 1er septembre 2023) : « Les assurés qui
+      atteignent l'âge prévu à l'article L. 161-17-2 augmenté de cinq années » ;
+      D. 161-2-1-9, LEGIARTI000025089933 (du 31 décembre 2011 au 1er septembre 2023) :
+      « 2° Soixante ans et quatre mois pour les assurés nés entre le 1er juillet 1951 et
+      le 31 décembre 1951 inclus ; 3° Soixante ans et neuf mois pour les assurés nés en
+      1952 ; 4° Soixante et un ans et deux mois pour les assurés nés en 1953 ;
+      5° Soixante et un ans et sept mois pour les assurés nés en 1954 ». Les âges sont
+      en ans et en mois ; la table les écrit au centième. Lus dans l'index LEGI du dépôt
+    date: 2026-11-05
 textes_a_rattacher:
 - reference: L. 351-8 1° CSS
 exemples:
@@ -41,13 +53,22 @@ code:
     à l'ANNÉE DE NAISSANCE, et la valeur de la période (`age_taux_plein`) ne sert que
     de repli. La loi du 9 novembre 2010 fait passer cet âge de 65 à 67 ans pour les seules
     générations 1951-1955 : opposer 67 ans dès 2011, comme le faisait la fiche du régime,
-    l'appliquait à des générations que la loi n'a jamais visées.
+    l'appliquait à des générations que la loi n'a jamais visées. La table écrit ses
+    âges au centième, 66,17 pour 66 ans et 2 mois (66,1667) : le chargeur les ramène
+    au mois entier (`au_mois`), comme tout âge des tables de la législation et des
+    fiches de régime. Jusqu'au 5 novembre 2026, l'assuré né en 1953 parti à 66 ans et
+    2 mois pile gardait un trimestre de décote : 49,375 % au régime général, 0,99 à
+    l'Agirc-Arrco, 0,9875 à la CNAVPL et à l'ASV des biologistes ; et parti à 61 ans
+    et 2 mois, l'âge de D. 161-2-1-9, 4°, le droit lui était refusé (relecture
+    R-L-bis, action 130).
   python: >-
-    droit/ouvrir.py : age_taux_plein ; scenarios/actuel.py : AgesAnnulationDecote
+    droit/ouvrir.py : age_taux_plein ; scenarios/actuel.py : AgesAnnulationDecote ;
+    donnees/chargement.py : au_mois
   javascript: >-
     moteur/js/droit/ouvrir.js : ageTauxPlein ; moteur/js/regimes.js :
     AgesAnnulationDecote
   parametres: >-
     legislation/age_annulation_decote.csv : generation, age
-  tests: [tests/test_simulateur.py, tests/test_donnees.py, tests/test_oracle.py,
+  tests: [tests/test_ages_au_mois.py, tests/test_simulateur.py, tests/test_donnees.py,
+    tests/test_oracle.py,
     tests/js/moteur.test.js, tests/temoins/simulations.json]

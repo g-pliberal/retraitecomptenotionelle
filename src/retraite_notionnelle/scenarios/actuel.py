@@ -73,6 +73,7 @@ from ..carriere import Affiliations, Carriere
 from ..config import Parametres
 from ..donnees.chargement import (
     Fiabilite,
+    au_mois,
     charger_accords_internationaux,
     charger_table_par_generation,
     charger_yaml,
@@ -697,7 +698,7 @@ class CalendriersDureeRequise:
 def _age_ou_rien(texte: str | None) -> float | None:
     """Un âge de ``ages_regimes.csv``, ou ``None`` quand la case est vide."""
     texte = (texte or "").strip()
-    return float(texte) if texte else None
+    return au_mois(float(texte)) if texte else None
 
 
 class AgesRegimes:
@@ -742,7 +743,7 @@ class AgesRegimes:
                     )
                     borne = (ligne.get("age_surcote_maximum") or "").strip()
                     self._surcotes.setdefault(ligne["table"], {})[generation] = (
-                        float(borne) if borne else None
+                        au_mois(float(borne)) if borne else None
                     )
         self._generations = {cle: tuple(sorted(valeurs))
                              for cle, valeurs in self._table.items()}
@@ -1067,9 +1068,9 @@ class AgesCategorieActive:
                 self._table.setdefault(ligne["classement"], {})[
                     float(ligne["generation"])
                 ] = DerogationActive(
-                    age_ouverture=float(ligne["age_ouverture"]),
-                    age_annulation=float(ligne["age_annulation"]),
-                    services_requis=float(ligne["services_requis_annees"]),
+                    age_ouverture=au_mois(float(ligne["age_ouverture"])),
+                    age_annulation=au_mois(float(ligne["age_annulation"])),
+                    services_requis=au_mois(float(ligne["services_requis_annees"])),
                     duree_requise=(
                         int(ligne["duree_requise_trimestres"])
                         if ligne.get("duree_requise_trimestres", "").strip()
@@ -1126,7 +1127,7 @@ class DureesServicesMilitaires:
             for ligne in csv.DictReader(lignes):
                 self._table.setdefault(ligne[self.CLE], {})[
                     float(ligne["annee_atteinte"])
-                ] = (float(ligne["annees_requises"]),
+                ] = (au_mois(float(ligne["annees_requises"])),
                      Fiabilite.depuis_texte(ligne["fiabilite"]))
         self._annees = {categorie: sorted(valeurs)
                         for categorie, valeurs in self._table.items()}
@@ -2210,7 +2211,7 @@ class CarriereLongue:
                     float(ligne["generation_fin"]),
                     int(ligne["age_debut_maximum"]),
                     int(ligne["trimestres_debut"]),
-                    float(ligne["age_depart"]),
+                    au_mois(float(ligne["age_depart"])),
                     int(ligne["trimestres_supplementaires"]),
                     int(assurance) if assurance else None,
                     Fiabilite.depuis_texte(ligne["fiabilite"]),
