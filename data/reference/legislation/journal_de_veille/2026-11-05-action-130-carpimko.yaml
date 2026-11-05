@@ -1,0 +1,41 @@
+date: "2026-11-05"
+session: "action 130, file E (E3, vague 10) : la CARPIMKO lue au droit (ses âges, son abattement, sa date d'effet, son assiette de 2026), et le bloc « Reprise » de l'action"
+consulte: >-
+  python scripts/veille_droit.py ; docs/veille_droit.md ; les index JORF et LEGI du dépôt,
+  récupérés et mis à jour au 5 novembre (JORF, quatre incréments) et au 4 novembre 2026
+  (LEGI, deux incréments). Dans LEGI : le décret n° 84-143, articles 1er, 2 (rédactions de
+  1984, 2012, du 14 novembre 2025 et du 1er juillet 2026), 5 (1984 et 2026), 6 et 7 ; les
+  statuts approuvés par l'arrêté du 22 février 1984, articles 10 à 13, dans leur seule
+  version. Dans JORF : les arrêtés qui nomment la section des auxiliaires médicaux de
+  1984 à 2026, lus à leur titre ; en entier, ceux du 22 février 1984, du 24 janvier 1989
+  (titre), du 20 novembre 1996 (mention et nota), du 31 juillet 2015 (articles 1er et 2,
+  annexe), du 3 février 2016, du 13 juillet 2017, du 20 août 2018, du 23 mai 2019 (annexe,
+  article 2), du 18 juin 2020, du 20 juin 2022, du 27 décembre 2023 (articles 1er et 2,
+  annexe), du 14 novembre 2025 (article 2, annexe) et du 10 juillet 2026 (annexe, III,
+  articles 1er à 14) ; le décret n° 2025-1076, articles 7, 12, 14 et 15. Les notes de la
+  CAVOM du 5 novembre (lot et retouches de R-E3), pour la méthode.
+trouve: >-
+  Les statuts de 1984, lus dans LEGI : pension à 65 ans, dès 60 ans « affectée des
+  coefficients de minoration » de 0,75 à 0,95 selon l'âge seul, aucune durée n'y
+  entrant, et « au premier jour du trimestre civil qui suit la demande » ; aucun arrêté
+  publié au Journal officiel ne touche les articles 10 à 12 avant celui du 20 novembre
+  1996, que seul le Bulletin officiel no 96-52 publie. Depuis le 3 octobre 2015 : la table
+  des générations, 1,25 % par trimestre manquant à la durée de la base dans la limite des
+  trimestres qui séparent du taux plein, et pour les générations 1955 et antérieures, « 4
+  % par année d'anticipation » plus 0,25 % par trimestre manquant, que la durée n'annule
+  pas ; 1,25 % par trimestre civil entier d'ajournement, vingt au plus. Le 31 mai 2019, les
+  assurés handicapés (dès 55 ans sans abattement) ; le 10 janvier 2024, le taux plein à
+  l'âge du 1° de L. 351-8, les 4 % abrogés, la carrière longue, 10 % pour trois enfants ;
+  le 18 juillet 2026, le règlement, mot pour mot, et sa date d'effet au trimestre civil.
+  L'assiette de 2026 : 8,7 % entre un demi-plafond et trois plafonds, le décret n° 84-143
+  disant l'assiette « comprise entre un minimum et un maximum » ; le coût d'acquisition du
+  point, que ce décret fait fixer chaque année par décret, n'est dans aucun texte lu. Trois
+  erreurs du modèle, déclarées, non corrigées : de 1984 à 1996, la durée annule une
+  minoration que les statuts font de l'âge seul (116,44 € par an dans le cas posé) ; de
+  2015 à 2024, les générations 1955 et antérieures sans leurs 4 % par année, et majorées
+  (862,45 €) ; la date d'effet au mois, non au trimestre civil (475,50 €, un mois).
+reste: >-
+  Les statuts de 1996 à 2015, au seul Bulletin officiel no 96-52 ; les régimes de 1956
+  (décrets n° 56-97 et n° 56-129) ; le coût d'acquisition du point de 2026 et le décret de
+  2027 ; l'assuré handicapé, non joué ; les points de 1956 à 2025, que le modèle ne compte
+  pas.

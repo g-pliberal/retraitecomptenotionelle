@@ -1,36 +1,627 @@
 schema_version: 1
 id: carpimko_ages_2015
 intitule: >-
-  Régime complémentaire de la CARPIMKO depuis l'arrêté du 31 juillet 2015 : taux
-  plein à 65 ans pour les générations 1955 et antérieures, quatre mois de plus par
-  génération jusqu'à 67 ans en 1961, âge minimal de 60 à 62 ans du même pas ; taux
-  plein avant cet âge avec la durée du régime de base ; abattement de 1,25 % par
-  trimestre manquant au régime de base dans la limite des trimestres qui séparent
-  de l'âge du taux plein (jusqu'en 2023 : 4 % par année d'anticipation plus 0,25
-  % par trimestre manquant pour les générations 1955 et antérieures). Majoration
-  de 10 % pour trois enfants depuis 2024.
+  Régime complémentaire de la CARPIMKO : de 1984 à 1996, pension à 65 ans, ou dès 60
+  ans « affectée des coefficients de minoration » de 0,75 à 0,95 selon l'âge seul ;
+  depuis le 3 octobre 2015, taux plein à 65 ans pour les générations 1955 et
+  antérieures, quatre mois de plus par génération jusqu'à 67 ans, âge minimal de 60 à
+  62 ans du même pas, et avant le taux plein un abattement de 1,25 % par trimestre
+  manquant au régime de base, dans la limite des trimestres qui séparent de l'âge du
+  taux plein — jusqu'au 9 janvier 2024, 4 % par année d'anticipation plus 0,25 % par
+  trimestre manquant pour les générations 1955 et antérieures, que la durée n'annule
+  pas — ; une majoration de 1,25 % par trimestre civil entier d'ajournement, vingt au
+  plus ; depuis le 10 janvier 2024, 10 % pour trois enfants ; la pension au premier
+  jour du trimestre civil qui suit la demande ; de 1996 à 2015, des statuts que le
+  Journal officiel ne publie pas, la règle du modèle présumée.
+domaine: decote_surcote
 regimes: [carpimko_complementaire]
+etape: liquider_chaque_regime
+face: droit
 etat: approchee
+lit:
+- >-
+  l'âge de l'auxiliaire médical à la date d'effet de sa pension, « fixée au premier jour
+  du trimestre civil qui suit la demande » (statuts de 1984, article 11 ; règlement de
+  2026, article 7), et, depuis le 3 octobre 2015, sa génération, qui donne l'âge
+  minimal et l'âge du taux plein (article 12 quater, puis article 6 du règlement)
+- >-
+  depuis le 3 octobre 2015, sa durée d'assurance au régime de base et les trimestres
+  qui lui manquent pour y liquider à taux plein, qui réduisent ou annulent
+  l'abattement ; les statuts de 1984 ne la lisent pas
+- >-
+  l'inaptitude au travail, la qualité de grand invalide, d'ancien déporté ou interné,
+  d'ancien combattant ou prisonnier de guerre, le handicap (depuis le 31 mai 2019) et
+  le départ anticipé au régime de base (depuis le 10 janvier 2024), qui ouvrent le taux
+  plein plus tôt
+- la date d'effet de la pension, qui choisit la rédaction des statuts ou du règlement
+ecrit:
+- >-
+  le coefficient qui minore ou majore la pension complémentaire, que
+  `liquider_chaque_regime` applique aux cotisations revalorisées, et, depuis 2016,
+  l'âge minimal et l'âge du taux plein, que la table `carpimko_2016` de
+  `ages_regimes.csv` rend à l'ouverture
+dates_qui_decident:
+- liquidation.date_effet
+versions:
+- id: avant_le_regime
+  statut: lue
+  textes:
+  - id: LEGIARTI000006766330
+    article: décret n° 84-143 du 22 février 1984, article 1er
+    en_vigueur: 1984-01-01
+    citation: >-
+      « A compter du 1er janvier 1984, il est institué un régime d'assurance vieillesse
+      complémentaire obligatoire commun à toutes les personnes affiliées à la section
+      professionnelle des auxiliaires médicaux »
+  - id: LEGIARTI000006766341
+    article: décret n° 84-143 du 22 février 1984, article 6
+    en_vigueur: 1984-01-01
+    citation: >-
+      « Le régime institué par le présent décret se substitue au régime d'assurance
+      vieillesse complémentaire des infirmiers et pédicures institué par le décret n°
+      56-97 du 21 janvier 1956 et au régime d'assurance vieillesse complémentaire des
+      masseurs-kinésithérapeutes, pédicures, orthophonistes et orthoptistes institué par
+      le décret n° 56-129 du 24 janvier 1956, dont il reprend les éléments actifs et
+      passifs. »
+  bornes:
+    liquidation.date_effet: [null, 1984-01-01]
+  contenu:
+    parametres: {}
+    droit: aucune pension de la CARPIMKO, qui naît le 1er janvier 1984
+    raison: >-
+      une pension qui prend effet avant 1984 relève des régimes des décrets n° 56-97 et
+      n° 56-129, abrogés par l'article 7 du décret n° 84-143, dont les statuts ne sont
+      pas lus ; le modèle n'a pas de période de `carpimko_complementaire` avant 1984 et
+      n'en sert rien
+  exemples: aucun trouvé
+- id: statuts_de_1984
+  statut: lue
+  hypothese: >-
+    la fin de la version est supposée : l'arrêté du 20 novembre 1996 modifie les statuts
+    au seul Bulletin officiel, sans que le Journal officiel nomme les articles ; aucun
+    autre arrêté de 1984 à 1996 ne touche les articles 10 à 12 (celui du 24 janvier
+    1989, JORFTEXT000000666704, ne modifie que l'article 13, la réversion)
+  textes:
+  - id: JORFTEXT000000315359
+    article: arrêté du 22 février 1984 approuvant les statuts
+    en_vigueur: 1984-01-01
+    publie_le: 1984-02-29
+    citation: >-
+      « EN ANNEXE PUBLICATION DES STATUTS. » ; LEGI date leurs articles du 1er janvier
+      1984, le jour où l'article 1er du décret n° 84-143 institue le régime
+  - id: LEGIARTI000006782879
+    article: statuts de 1984, article 10
+    en_vigueur: 1984-01-01
+    citation: >-
+      « Pour bénéficier de la retraite complémentaire, les affiliés doivent remplir les
+      conditions suivantes : 1° Etre âgés de soixante-cinq ans ou de soixante ans en cas
+      d'inaptitude au travail, ou s'ils ont la qualité d'ancien déporté ou interné dans
+      le cadre des dispositions légales ; 2° Avoir versé les cotisations exigibles. »
+  - id: LEGIARTI000006782880
+    article: statuts de 1984, article 11
+    en_vigueur: 1984-01-01
+    citation: >-
+      « La date d'entrée en jouissance de la retraite est fixée au premier jour du
+      trimestre civil qui suit la demande, sans pouvoir être antérieure au
+      soixante-cinquième anniversaire ou soixantième en cas d'inaptitude au travail. Les
+      dispositions de la loi du 21 novembre 1973 concernant les anciens prisonniers de
+      guerre et les anciens combattants [...] sont applicables au présent régime
+      complémentaire. »
+  - id: LEGIARTI000006782881
+    article: statuts de 1984, article 12
+    en_vigueur: 1984-01-01
+    citation: >-
+      « Le bénéfice de la retraite peut être accordé par anticipation si l'adhérent a
+      versé toutes les cotisations dues. Dans ce cas, la retraite est affectée des
+      coefficients de minoration suivants : 0,75 si la liquidation intervient à soixante
+      ans ; 0,80 si la liquidation intervient à soixante et un ans ; 0,85 si la
+      liquidation intervient à soixante-deux ans ; 0,90 si la liquidation intervient à
+      soixante-trois ans ; 0,95 si la liquidation intervient à soixante-quatre ans. »
+  nee_de: JORFTEXT000000315359
+  bornes:
+    liquidation.date_effet: [1984-01-01, 1996-12-01]
+  contenu:
+    parametres:
+      age_table: null
+      decote_par_trimestre: 0.0125
+      surcote_par_trimestre: null
+    droit: >-
+      la pension à 65 ans, dès 60 ans pour l'inapte et l'ancien déporté ou interné ;
+      avant 65 ans, 0,75 à 60 ans, 0,80 à 61, 0,85 à 62, 0,90 à 63, 0,95 à 64, selon
+      l'âge seul, aucune durée n'y entrant ; aucune majoration ; la pension au premier
+      jour du trimestre civil qui suit la demande. Le modèle ouvre à l'âge de L. 161-17-2
+      et minore jusqu'à l'âge d'annulation de la décote de la génération, 60 et 65 ans
+      pour celles qui liquident avant 1996, de 1,25 % par trimestre, cinq points par
+      année ; la durée y annule la minoration (voir les approximations)
+    conditions: avoir versé toutes les cotisations dues
+  exemples: aucun trouvé
+- id: statuts_de_1996
+  statut: supposee
+  hypothese: >-
+    les pensions qui prennent effet du 1er décembre 1996 au 2 octobre 2015 relèvent des
+    statuts de 1984 modifiés par l'arrêté du 20 novembre 1996, publié au Journal officiel
+    du 30 novembre 1996 par une mention, sans les articles qu'il change, « intégralement
+    au Bulletin officiel no 96-52 » (JORFARTI000001794714), que l'index n'a pas ; LEGI
+    garde le texte de 1984, ses articles datés du 1er janvier 1984 au 1er janvier 2999,
+    ni l'arrêté de 1989 ni celui de 2015 n'y étant reportés. L'entrée en vigueur est
+    supposée au lendemain de la mention. La fiche présume la règle du modèle : ouverture
+    à l'âge de L. 161-17-2, minoration de 1,25 % par trimestre manquant à la durée du
+    régime de base, dans la limite des trimestres qui séparent de l'âge d'annulation de
+    la décote de la génération, aucune majoration
+  fiabilite: >-
+    faible : l'âge, le coefficient et la place de la durée, que nul texte lu ne dit
+    pour ces dix-neuf années
+  textes:
+  - id: JORFARTI000002184842
+    article: arrêté du 20 novembre 1996, mention au Journal officiel
+    en_vigueur: 1996-12-01
+    publie_le: 1996-11-30
+    citation: >-
+      « Par arrêté du ministre du travail et des affaires sociales et du ministre
+      délégué au budget, porte-parole du Gouvernement, en date du 20 novembre 1996, sont
+      approuvées les modifications apportées aux statuts du régime d'assurance
+      vieillesse complémentaire de la section professionnelle des auxiliaires
+      médicaux. »
+  - id: JORFARTI000001794714
+    article: arrêté du 20 novembre 1996, nota
+    publie_le: 1996-11-30
+    citation: >-
+      « Nota. - L'arrêté du 20 novembre 1996 sera publié intégralement au Bulletin
+      officiel no 96-52 du ministère du travail et des affaires sociales »
+  nee_de: JORFARTI000002184842
+  bornes:
+    liquidation.date_effet: [1996-12-01, 2015-10-03]
+  contenu:
+    parametres:
+      age_table: null
+      decote_par_trimestre: 0.0125
+      surcote_par_trimestre: null
+    droit: >-
+      présumé : la règle du modèle, celle du régime de base, ouverture à l'âge de L.
+      161-17-2, 1,25 % par trimestre manquant à la durée dans la limite des trimestres
+      qui séparent de l'âge d'annulation de la décote, aucune majoration
+    conditions: aucune lue
+  exemples: aucun trouvé
+- id: statuts_de_2015
+  statut: lue
+  textes:
+  - id: JORFARTI000031255547
+    article: >-
+      arrêté du 31 juillet 2015, annexe, 2° à 4° : statuts, articles 11, 12, 12 ter et 12
+      quater
+    en_vigueur: 2015-10-03
+    publie_le: 2015-10-02
+    citation: >-
+      « Article 11 « La retraite est attribuée à taux plein : « 1° A 67 ans pour les
+      assurés nés à compter du 1er janvier 1961 ; « 2° A partir de 62 ans et avant 67
+      ans au profit : « a) Des assurés nés à compter du 1er janvier 1961 liquidant leur
+      pension du régime de base sans abattement ; « b) Des personnes reconnues inaptes
+      au travail ; [...] « Pour les assurés nés antérieurement au 1er janvier 1961, les
+      conditions de liquidation figurent à l'article 12 quater 1. » ; [...] « Pour les
+      assurés nés à compter du 1er janvier 1956, cet abattement est de 1,25 % par
+      trimestre manquant pour pouvoir liquider la retraite de base à taux plein, dans la
+      limite du nombre de trimestres les séparant de l'âge du taux plein sans
+      condition. « Tout trimestre incomplet par rapport à l'âge de liquidation est
+      considéré comme un trimestre d'anticipation. [...] « Article 12 ter « Lorsque la
+      liquidation de la retraite est ajournée au-delà de l'âge auquel elle aurait pu
+      être liquidée sans abattement, les assurés peuvent bénéficier d'une majoration de
+      leur pension. « Cette majoration est égale à 1,25 % par trimestre civil entier
+      d'ajournement postérieur à l'âge du taux plein dans la limite de vingt trimestres.
+      « Article 12 quater « 1° Par dérogation aux dispositions de l'article 11, les
+      conditions de liquidation des assurés des générations 1960 et antérieures sont
+      les suivantes : GÉNÉRATION 1955 ET ANTÉRIEURE 1956 1957 1958 1959 1960 Age prévu à
+      l'article 11.1 65 ans 65 ans 4 mois 65 ans 8 mois 66 ans 66 ans 4 mois 66 ans 8
+      mois Age prévu à l'article 11.2 (a) 60 ans 60 ans 4 mois 60 ans 8 mois 61 ans 61
+      ans 4 mois 61 ans 8 mois « Pour les générations 1956 à 1960, le bénéfice de la
+      retraite peut être accordé par anticipation à partir de l'âge prévu à l'article
+      11.1 et avant l'âge prévu à l'article 11.2 (a). [...] « 2° Par dérogation aux
+      dispositions de l'article 12, les abattements qui sont appliqués en cas de départ
+      anticipé des assurés des générations 1955 et antérieures sont les suivants : « - 4
+      % par année d'anticipation, plus « - 0,25 % par trimestre manquant pour pouvoir
+      liquider la retraite de base à taux plein, dans la limite du nombre de trimestres
+      séparant l'assuré de ses 65 ans. « Tout trimestre incomplet est considéré comme un
+      trimestre entier d'anticipation. »
+  - id: JORFARTI000031255544
+    article: arrêté du 31 juillet 2015, article 1er
+    publie_le: 2015-10-02
+    citation: >-
+      « Sont approuvées, telles qu'elles sont annexées au présent arrêté, les
+      modifications apportées aux statuts de la section professionnelle des auxiliaires
+      médicaux. »
+  nee_de: JORFARTI000031255547
+  bornes:
+    liquidation.date_effet: [2015-10-03, 2019-05-31]
+  contenu:
+    parametres:
+      age_table: carpimko_2016
+      decote_par_trimestre: 0.0125
+      surcote_par_trimestre: 0.0125
+      surcote_trimestres_maximum: 20
+    droit: >-
+      taux plein à l'âge de la table, 65 ans pour les générations 1955 et antérieures à
+      67 ans pour celles nées depuis 1961, ou dès l'âge minimal de la table — 62 ans
+      depuis 1961 — à qui liquide sa base sans abattement, et, dès 62 ans, à l'inapte,
+      au grand invalide, à l'ancien déporté ou interné, à l'ancien combattant ou
+      prisonnier de guerre ; avant, 1,25 % par trimestre manquant à la durée de la base,
+      dans la limite des trimestres qui séparent de l'âge du taux plein, le trimestre
+      incomplet compté entier ; pour les générations 1955 et antérieures, 4 % par année
+      d'anticipation plus 0,25 % par trimestre manquant, dans la limite des trimestres
+      qui séparent de 65 ans ; au-delà de l'âge sans abattement, 1,25 % par trimestre
+      civil entier d'ajournement, vingt au plus
+    conditions: aucune autre
+  exemples: aucun trouvé
+- id: statuts_de_2019
+  statut: lue
+  textes:
+  - id: JORFARTI000038529117
+    article: arrêté du 23 mai 2019, annexe, II, 3° et 4° (statuts, articles 11 et 12)
+    en_vigueur: 2019-05-31
+    publie_le: 2019-05-30
+    citation: >-
+      « 3° L'article 11 est ainsi modifié : a) Au sixième alinéa, les références : « L.
+      36 et L. 37 » sont remplacées par les références : « L. 132-1 et L. 132-2 » ; b)
+      Avant le dernier alinéa, il est ajouté un alinéa ainsi rédigé : « e. des assurés
+      handicapés qui remplissent les conditions pour bénéficier de la retraite des
+      assurés handicapés dans le régime de base » ; 4° L'article 12 est ainsi modifié :
+      a) Au début du deuxième alinéa, est insérée la référence : « a. » ; b) Il est
+      complété par un b ainsi rédigé : « b. A partir de cinquante-cinq ans, sans
+      abattement, pour les affiliés qui remplissent les conditions pour bénéficier de la
+      retraite anticipée des assurés handicapés dans le régime de base »
+  - id: JORFARTI000038529113
+    article: arrêté du 23 mai 2019, article 2
+    publie_le: 2019-05-30
+    citation: >-
+      « Les dispositions prévues au 1° du II et au 2° du III de l'annexe au présent
+      arrêté sont applicables aux cotisations dues au titre des périodes courant à
+      compter du 1er janvier 2020. » : les 3° et 4° du II, sans date, entrent en vigueur
+      au lendemain de la publication
+  nee_de: JORFARTI000038529117
+  bornes:
+    liquidation.date_effet: [2019-05-31, 2024-01-10]
+  contenu:
+    parametres:
+      age_table: carpimko_2016
+      decote_par_trimestre: 0.0125
+      surcote_par_trimestre: 0.0125
+      surcote_trimestres_maximum: 20
+    droit: >-
+      la règle de 2015, et deux voies de plus : le taux plein dès 62 ans à l'assuré
+      handicapé qui remplit les conditions de la retraite des assurés handicapés de la
+      base (article 11, e), et la pension « A partir de cinquante-cinq ans, sans
+      abattement » à qui remplit celles de la retraite anticipée des assurés handicapés
+      (article 12, b)
+    conditions: aucune autre
+  exemples: aucun trouvé
+- id: statuts_de_2024
+  statut: lue
+  textes:
+  - id: JORFARTI000048880643
+    article: >-
+      arrêté du 27 décembre 2023, annexe, 2°, 3°, 5° et 6° (statuts, articles 11, 12, 12
+      ter et 12 quater)
+    en_vigueur: 2024-01-10
+    publie_le: 2024-01-09
+    citation: >-
+      « 2° L'article 11 est ainsi modifié : a) Au deuxième alinéa, les mots : « 67 ans
+      pour les assurés nés à compter du 1er janvier 1961 » sont remplacés par les mots :
+      « l'âge prévu au 1° de l'article L. 351-8 du code de la sécurité sociale » ; b)
+      Les troisième à neuvième alinéas sont remplacés par huit alinéas ainsi rédigés : «
+      2) A partir de l'âge prévu à l'article L. 161-17-2 du même code et avant l'âge
+      mentionné au 1 au profit des assurés remplissant les conditions leur permettant de
+      liquider leur pension du régime de base sans abattement ; « 3) A partir de l'âge
+      prévu au IV de l'article L. 643-3 du code de la sécurité sociale aux profit : « a)
+      Des personnes reconnues inaptes au travail ; [...] « d) Des assurés handicapés qui
+      remplissent les conditions pour bénéficier de la retraite des assurés handicapés
+      dans le régime de base. « 4) Dès l'âge prévu au III de l'article L. 643-3 du code
+      de la sécurité sociale pour les affiliés qui bénéficient de ce départ anticipé au
+      titre du régime de base. « Pour les assurés nés antérieurement au 1er septembre
+      1961, les conditions de liquidation figurent à l'article 12 quater. » ; 3°
+      L'article 12 est ainsi modifié : a) Les deux premiers alinéas sont supprimés ; b)
+      Au troisième alinéa, les mots : « ce cas » sont remplacés par les mots : « le cas
+      où un assuré liquide sa retraite avant le bénéfice du taux plein » ; c) Au
+      quatrième alinéa, les mots : « Pour les assurés nés à compter du 1er janvier 1956,
+      » sont supprimés ; d) La dernière phase du cinquième alinéa est supprimée ; e) Le
+      b est abrogé ; [...] 5° L'article 12 ter est complété par un alinéa ainsi rédigé :
+      « Le montant de la pension des assurés ayant eu au moins trois enfants est majoré
+      de 10 % dans les mêmes conditions que pour le régime de base, prévues aux articles
+      L. 643-1-1 et L. 351-12 du code de la sécurité sociale. » ; 6° L'article 12 quater
+      est remplacé par les dispositions suivantes : « Art. 12 quater. - Par dérogation
+      aux dispositions de l'article 11, les conditions de liquidation des assurés nés
+      avant le 1er septembre 1961 sont les suivantes : « Génération 1955 et antérieures
+      1956 1957 1958 1959 1960 1961 (nés jusqu'au 31 août) Âge du taux plein 65 ans 65
+      ans 4 mois 65 ans 8 mois 66 ans 66 ans 4 mois 66 ans 8 mois 67 ans Âge minimal pour
+      liquider sa retraite 60 ans 60 ans 4 mois 60 ans 8 mois 61 ans 61 ans 4 mois 61
+      ans 8 mois 62 ans »
+  nee_de: JORFARTI000048880643
+  bornes:
+    liquidation.date_effet: [2024-01-10, 2026-07-18]
+  contenu:
+    parametres:
+      age_table: carpimko_2016
+      decote_par_trimestre: 0.0125
+      surcote_par_trimestre: 0.0125
+      surcote_trimestres_maximum: 20
+    droit: >-
+      taux plein à l'âge du 1° de L. 351-8, à celui de la table pour les nés avant le
+      1er septembre 1961 ; dès l'âge de L. 161-17-2 à qui liquide sa base sans
+      abattement ; dès l'âge du IV de L. 643-3 à l'inapte, au grand invalide, à l'ancien
+      déporté ou interné, à l'ancien combattant ou prisonnier de guerre, à l'assuré
+      handicapé ; dès l'âge du III de L. 643-3 à qui part en carrière longue à la base ;
+      1,25 % par trimestre manquant à toutes les générations, les 4 % par année des
+      générations 1955 et antérieures abrogés avec l'ancien 12 quater, 2° ; la
+      majoration de 2015 ; 10 % pour trois enfants
+    conditions: aucune autre
+  exemples: aucun trouvé
+- id: reglement_de_2026
+  statut: lue
+  textes:
+  - id: JORFARTI000054435915
+    article: >-
+      arrêté du 10 juillet 2026, annexe, III : règlement du régime, articles 2 à 7
+    en_vigueur: 2026-07-18
+    publie_le: 2026-07-17
+    citation: >-
+      « Article 3 « Conditions d'attribution « La retraite est attribuée à taux plein : «
+      1) A l'âge prévu au 1° de l'article L. 351-8 du code de la sécurité sociale ; « 2)
+      A partir de l'âge prévu à l'article L. 161-17-2 du même code et avant l'âge
+      mentionné au 1 au profit des assurés remplissant les conditions leur permettant de
+      liquider leur pension du régime de base sans abattement ; [...] « Article 4 «
+      Décote « Dans le cas où un assuré liquide sa retraite avant le bénéfice du taux
+      plein, un abattement est appliqué sur la pension de retraite, qui est fonction de
+      l'âge auquel est demandée la liquidation et de la durée d'assurance lorsque
+      l'assuré ne justifie pas de la durée prévue dans le régime de base. « Cet
+      abattement est de 1,25 % par trimestre manquant pour pouvoir liquider la retraite
+      de base à taux plein, dans la limite du nombre de trimestres les séparant de l'âge
+      du taux plein sans condition. [...] « Article 5 « Surcote « Lorsque la liquidation
+      de la retraite est ajournée au-delà de l'âge auquel elle aurait pu être liquidée
+      sans abattement, les assurés peuvent bénéficier d'une majoration de leur pension.
+      « Cette majoration est égale à 1,25 % par trimestre civil entier d'ajournement
+      postérieur à l'âge du taux plein dans la limite de vingt trimestres. [...] «
+      Article 6 « Conditions d'âge « Par dérogation aux dispositions de l'article 3, les
+      conditions de liquidation des assurés nés avant le 1 er septembre 1961 sont les
+      suivantes : [...] « Article 7 « Date d'effet de la retraite « La date d'entrée en
+      jouissance de la retraite est fixée au premier jour du trimestre civil qui suit la
+      demande, sans pouvoir être antérieure à l'âge terme fixé par les dispositions
+      précédentes. »
+  - id: LEGIARTI000054168670
+    article: décret n° 84-143, article 5, rédaction du 1er juillet 2026
+    en_vigueur: 2026-07-01
+    citation: >-
+      « Les conditions d'attribution et de service des prestations du présent régime
+      sont précisées par un règlement de la section professionnelle mentionnée à
+      l'article 1 er , approuvé par arrêté du ministre chargé de la sécurité sociale
+      après avis de la Caisse nationale d'assurance vieillesse des professions
+      libérales. »
+  nee_de: JORFARTI000054435915
+  bornes:
+    liquidation.date_effet: [2026-07-18, null]
+  contenu:
+    parametres:
+      age_table: carpimko_2016
+      decote_par_trimestre: 0.0125
+      surcote_par_trimestre: 0.0125
+      surcote_trimestres_maximum: 20
+    droit: >-
+      la règle de 2024, mot pour mot (articles 3 à 6) ; la pension au premier jour du
+      trimestre civil qui suit la demande, « sans pouvoir être antérieure à l'âge terme »
+      (article 7)
+    conditions: avoir versé toutes les cotisations exigibles (article 2)
+  exemples: aucun trouvé
+approximations:
+- version: [avant_le_regime]
+  textes: décret n° 84-143, articles 1er, 6 et 7
+  ecart: >-
+    Le modèle ne sert rien d'une pension qui prend effet avant 1984, au titre des
+    régimes de 1956 que la CARPIMKO remplace : leurs statuts ne sont pas lus.
+  effet: non mesuré
+- version: [statuts_de_1984]
+  textes: statuts de 1984, article 12
+  ecart: >-
+    Erreur du modèle, déclarée, non corrigée : les statuts minorent par l'âge seul, «
+    0,75 si la liquidation intervient à soixante ans » ; le modèle annule la minoration
+    quand la durée du régime de base est atteinte. Né le 10 mars 1930, entré à vingt
+    ans, l'auxiliaire médical part à 60 ans le 1er avril 1990 avec sa durée : le modèle
+    sert 465,78 € par an, sans coefficient ; les statuts, 0,75 × 465,78 = 349,33 €.
+  effet: >-
+    116,44 € par an de trop dans le cas posé, jusqu'à 25 points de la pension pour une
+    pension prise de 60 à 64 ans de 1984 à 1996 avec la durée ; sans la durée, le
+    modèle rend le coefficient du texte aux âges entiers (entré à 26 ans, 0,75)
+- version: [statuts_de_1984]
+  textes: statuts de 1984, article 12
+  ecart: >-
+    Le texte ne tranche pas l'âge entamé : « 0,75 si la liquidation intervient à
+    soixante ans », puis 0,80 à soixante et un ans, sans dire si l'âge se compte en
+    années révolues ; le modèle compte 1,25 % par trimestre, 0,775 à 60 ans et 6 mois
+    sans la durée, quand les années révolues donneraient 0,75.
+  effet: moins de cinq points de la pension ; non mesuré
+- version: [statuts_de_1984, reglement_de_2026]
+  textes: statuts de 1984, article 11 ; règlement de 2026, article 7
+  ecart: >-
+    Erreur du modèle, déclarée, non corrigée, la même que pour la CAVOM : la pension
+    prend effet « au premier jour du trimestre civil qui suit la demande » ; le modèle
+    la sert le premier du mois qui suit l'âge, avec la base (`date_effet_mois_suivant`).
+    Né le 10 novembre 1959, l'auxiliaire médical demande sa pension à 67 ans, en
+    novembre 2026 : le modèle la sert dès le 1er décembre 2026, majorée de deux
+    trimestres civils entiers (avril à septembre 2026), 1,025, 5 706,01 € par an ; le
+    règlement, le 1er janvier 2027, majorée de trois, octobre à décembre 2026 compris,
+    5 706,01 / 1,025 × 1,0375 = 5 775,59 €. De 1996 à 2026, l'article qui la date
+    n'est pas lu.
+  effet: >-
+    un mois de pension servi trop tôt, 5 706,01 / 12 = 475,50 € dans le cas posé, puis
+    69,59 € par an de moins que le règlement, aux valeurs de 2026 ; jusqu'à deux mois
+    selon le mois de naissance
+- version: [statuts_de_2015, statuts_de_2019]
+  textes: statuts, article 12 quater, 2°, rédaction de l'arrêté du 31 juillet 2015
+  ecart: >-
+    Erreur du modèle, déclarée, non corrigée : du 3 octobre 2015 au 9 janvier 2024, les
+    générations 1955 et antérieures perdent « 4 % par année d'anticipation » avant 65
+    ans, que la durée n'annule pas, « plus 0,25 % par trimestre manquant » ; leur
+    pension n'est sans abattement qu'à 65 ans, d'où l'ajournement se compte. Le modèle
+    leur applique 1,25 % par trimestre manquant à la durée, nul quand elle est atteinte,
+    et les majore depuis l'âge où elle l'est. Né le 10 décembre 1954, entré à vingt ans,
+    l'auxiliaire médical part à 62 ans le 1er janvier 2017 avec sa durée : douze
+    trimestres le séparent de 65 ans (2 ans, 11 mois et 9 jours, le trimestre incomplet
+    compté entier), trois années, 12 %, aucun trimestre manquant, 0,88 ; le modèle le
+    majore de trois trimestres, 1,0375, 5 681,23 € par an ; les statuts, 5 681,23 /
+    1,0375 × 0,88 = 4 818,78 €. Entré à 26 ans, 21 trimestres manquants, 12 % + 0,25 %
+    × 12 = 15 % : le modèle rend 0,85, comme les statuts.
+  effet: >-
+    862,45 € par an de trop dans le cas posé ; jusqu'à 20 points d'abattement manquants
+    à 60 ans, et la majoration de trop, pour qui a sa durée avant 65 ans
+- version: [statuts_de_2015, statuts_de_2019]
+  textes: statuts, article 12 quater, 2°, rédaction de l'arrêté du 31 juillet 2015
+  ecart: >-
+    Le texte ne tranche pas comment se compte l'année d'anticipation : « 4 % par année
+    d'anticipation », et « Tout trimestre incomplet est considéré comme un trimestre
+    entier d'anticipation » ; 1 % par trimestre, ou 4 % par année entamée. Les deux
+    lectures se rejoignent quand les trimestres d'anticipation font des années
+    entières, comme dans le cas posé.
+  effet: jusqu'à trois points de la pension ; non mesuré
+- version: [statuts_de_2015]
+  textes: statuts, article 12 quater, 1°, rédaction de l'arrêté du 31 juillet 2015
+  ecart: >-
+    Le texte inverse ses renvois : l'anticipation, « à partir de l'âge prévu à l'article
+    11.1 et avant l'âge prévu à l'article 11.2 (a) », quand son tableau met à l'article
+    11.1 l'âge du taux plein (65 ans à 66 ans et 8 mois) et à l'article 11.2 (a) l'âge
+    minimal (60 ans à 61 ans et 8 mois) ; il ne se lit que dans l'autre sens, celui de
+    la table `carpimko_2016` et de la rédaction de 2024.
+  effet: aucun
+- version: [statuts_de_2015]
+  textes: arrêté du 31 juillet 2015, publié le 2 octobre 2015
+  ecart: >-
+    Du 3 octobre au 31 décembre 2015, le modèle sert la complémentaire à l'âge de la
+    base, la table `carpimko_2016` n'entrant qu'au 1er janvier 2016 : déclaré dans
+    `liquidation_regime_par_regime` (la complémentaire de la CAVOM, de la CARPIMKO et de
+    la CPRN servie à son âge), non repris ici.
+  effet: voir `liquidation_regime_par_regime`
+- version: [statuts_de_2015, statuts_de_2019]
+  textes: statuts, articles 11 et 12, rédactions de 2015 et 2019
+  ecart: >-
+    En carrière longue, la CARPIMKO est servie avant 2024 avec la base, à l'âge que la
+    durée lui ouvre, quand ses statuts ne l'ouvrent pas : déclaré dans
+    `liquidation_regime_par_regime` (relecture R-N2, N-bis 0ba2aea), non repris ici.
+  effet: voir `liquidation_regime_par_regime`
+- version: [statuts_de_2015, statuts_de_2019, statuts_de_2024, reglement_de_2026]
+  textes: >-
+    statuts, article 11, 2°, b, rédaction de 2015 ; article 11, 3), a, rédaction de
+    2024 ; règlement de 2026, article 3, 3), a
+  ecart: >-
+    L'inapte au taux plein dès 62 ans (2015), puis dès l'âge du IV de L. 643-3 (2024) :
+    le modèle refuse la liquidation de l'inapte libéral avant l'âge de L. 161-17-2,
+    déclaré dans `130/2026-11-05-retouches-de-la-relecture-r-e2.md`, B2, non repris
+    ici. Pour les nés avant 1961, les statuts de 2015 renvoient « les conditions de
+    liquidation » à l'article 12 quater, sans dire si l'inapte y garde 62 ans : le
+    texte ne le tranche pas.
+  effet: voir la note R-E2 ; non mesuré pour les nés avant 1961
+- version: [statuts_de_2019, statuts_de_2024, reglement_de_2026]
+  textes: >-
+    statuts, article 11, e, et article 12, b, rédaction de 2019 ; article 11, 3), d, et
+    4), rédaction de 2024 ; règlement de 2026, article 3
+  ecart: >-
+    L'assuré handicapé : « A partir de cinquante-cinq ans, sans abattement » de 2019 à
+    2024 (article 12, b), puis au taux plein dès l'âge du IV de L. 643-3 ; le départ
+    anticipé de la base (III de L. 643-3) depuis 2024. Le modèle n'a pas été joué sur
+    ces cas.
+  effet: non mesuré
+- version: [statuts_de_2024]
+  textes: arrêté du 27 décembre 2023, annexe, 5°, en vigueur le 10 janvier 2024
+  ecart: >-
+    La majoration de 10 % pour trois enfants entre aux statuts le 10 janvier 2024 ; le
+    modèle la porte dès la période de 2024, aux pensions qui prennent effet le 1er
+    janvier 2024. Le texte ne dit pas si elle majore aussi les pensions déjà servies.
+  effet: >-
+    10 % de la pension prise le 1er janvier 2024 par l'assuré de trois enfants, si
+    elle ne s'étend pas aux pensions servies ; non mesuré
+- version: [statuts_de_2024, reglement_de_2026]
+  textes: statuts, article 12, rédaction de 2024 ; règlement de 2026, articles 3 et 4
+  ecart: >-
+    L'âge minimal des nés après le 31 août 1961, que le texte ne dit plus depuis 2024 :
+    déclaré dans `liquidation_regime_par_regime`, non tranché, non repris ici.
+  effet: voir `liquidation_regime_par_regime`
+textes_sans_effet:
+- id: JORFTEXT000000666704
+  article: arrêté du 24 janvier 1989, annexe no 2
+  publie_le: 1989-02-02
+  motif: >-
+    « AUXILIAIRES MEDICAUX,ANNEXE NO 2: REGIME COMPLEMENTAIRE D'ASSURANCE VIEILLESSE
+    (ART. 13) » : l'article 13, la réversion, seul
+- id: JORFARTI000032036777
+  article: arrêté du 3 février 2016, annexe
+  publie_le: 2016-02-12
+  motif: >-
+    les statuts généraux, articles 3 et 4 : le conseil d'administration, les élections
+- id: JORFARTI000035268191
+  article: arrêté du 13 juillet 2017, annexe
+  publie_le: 2017-07-25
+  motif: >-
+    les statuts généraux, articles 10 et 11 : les candidatures
+- id: JORFARTI000037345682
+  article: arrêté du 20 août 2018, annexe
+  publie_le: 2018-08-29
+  motif: >-
+    les statuts généraux, articles 16, 20 et 22 : le conseil d'administration
+- id: JORFARTI000042101474
+  article: arrêté du 18 juin 2020, annexe
+  publie_le: 2020-07-10
+  motif: >-
+    les statuts généraux, article 13 : le vote
+- id: JORFARTI000045964268
+  article: arrêté du 20 juin 2022, annexe
+  publie_le: 2022-06-26
+  motif: >-
+    les statuts généraux, articles 3, 5, 7, 8 et 10 : le conseil, les élections
+- id: JORFARTI000052604992
+  article: arrêté du 14 novembre 2025, annexe
+  publie_le: 2025-11-20
+  motif: >-
+    les articles 6 à 9, 20 et 21 des statuts : la cotisation, que lit
+    `carpimko_assiette_2026`, aucun âge ni coefficient
+reformes:
+- carpimko_report_2015
+- carpimko_2024
 effet: >-
   La fiche lisait 67 ans dès la génération 1955 ; la table `carpimko_2016` arrête
   la décote et fait partir la majoration à l'âge que l'article 12 quater écrit,
-  depuis 2016. Trois enfants majorent la pension depuis 2024. Approximations : l'abattement
-  des générations 1955 et antérieures de 2016 à 2023 (4 % par année plus 0,25 %
-  par trimestre) n'est pas porté, et la fiche leur applique 1,25 % par trimestre
-  depuis 65 ans ; les statuts d'avant 2015 ne sont pas lus.
+  depuis 2016. Trois enfants majorent la pension depuis 2024. Lue au droit le 5
+  novembre 2026 (action 130) : sept versions, avant 1984, les statuts de 1984 lus dans
+  LEGI, ceux de 1996 à 2015 présumés, faute du Bulletin officiel no 96-52, puis 2015,
+  2019, 2024 et le règlement de 2026 ; trois erreurs du modèle déclarées, non
+  corrigées : de 1984 à 1996, la durée annule une minoration que les statuts font de
+  l'âge seul (116,44 € par an dans le cas posé) ; de 2015 à 2024, les générations 1955
+  et antérieures sans leurs 4 % par année, et majorées (862,45 €) ; la date d'effet au
+  mois, non au trimestre civil (475,50 €).
 sources:
-  lu_le: 2026-09-23
+  lu_le: 2026-11-05
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
-    Porter l'abattement des générations 1955 et antérieures si un témoin ou un cas
-    type l'exige ; lire les statuts d'avant 2015.
+    Les statuts de 1996 à 2015 : l'arrêté du 20 novembre 1996, au Bulletin officiel no
+    96-52 du ministère du travail et des affaires sociales, hors de l'index ; à demander
+    à la CARPIMKO, ou à lire en bibliothèque. Les régimes de 1956 (décrets n° 56-97 et n°
+    56-129) et leurs statuts, pour les pensions d'avant 1984.
   lectures:
   - type: jorf
     reference: >-
       Les trois textes lus dans l'index JORF du dépôt ; les statuts antérieurs,
       publiés au Bulletin officiel (arrêté du 20 novembre 1996), n'y sont pas.
     date: 2026-09-23
+  - type: legifrance
+    reference: >-
+      Décret n° 84-143, articles 1er, 5 (rédaction du 1er juillet 2026), 6 et 7 ; les
+      statuts approuvés par l'arrêté du 22 février 1984, articles 10 à 13
+      (LEGIARTI000006782879 à LEGIARTI000006782882), dans leur seule version de LEGI ;
+      lus dans l'index LEGI du dépôt, à jour du 4 novembre 2026.
+    date: 2026-11-05
+  - type: jorf
+    reference: >-
+      Les arrêtés qui approuvent les statuts de la CARPIMKO, de 1984 à 2026 : 22 février
+      1984, 24 janvier 1989, 20 novembre 1996 (mention et nota), 31 juillet 2015, 3
+      février 2016, 13 juillet 2017, 20 août 2018, 23 mai 2019, 18 juin 2020, 20 juin
+      2022, 27 décembre 2023, 14 novembre 2025, 10 juillet 2026 (annexe, III) ; ceux de
+      1985 à 1998 qui nomment la section, lus à leur titre, aucun ne touchant les
+      articles 10 à 12 du régime complémentaire ; dans l'index JORF du dépôt, à jour du
+      5 novembre 2026.
+    date: 2026-11-05
   - type: autre
     reference: >-
       CARPIMKO, page « Age de ma retraite » : 62 à 64 ans, taux plein à 67 ans ou
@@ -39,17 +630,6 @@ sources:
     url: >-
       https://www.carpimko.com/je-prepare-ma-retraite/mes-regimes-de-retraite/age-de-ma-retraite
     date: 2026-09-23
-textes_a_rattacher:
-- reference: >-
-    statuts, articles 11, 12, 12 ter et 12 quater, dans la rédaction de l'arrêté
-    du 31 juillet 2015 (JORFTEXT000031255542)
-- reference: arrêté du 27 décembre 2023 (JORFTEXT000048880637)
-- reference: >-
-    règlement du régime, articles 3 à 6, approuvé par l'arrêté du 10 juillet 2026
-    (JORFTEXT000054435904)
-reformes:
-- carpimko_report_2015
-- carpimko_2024
 code:
   moteur: >-
     Depuis 2016, les périodes de `carpimko_complementaire` nomment la table
@@ -61,10 +641,11 @@ code:
     trimestre, sur le moindre des trimestres manquants à la durée requise et de ceux qui
     séparent de cet âge (`decote_opposable`) ; la surcote se compte de cet âge, ou de
     celui où la durée est atteinte, cherché depuis l'âge minimal (`surcote_points`,
-    `age_de_la_duree_atteinte`, `age_ouverture_commun`). La pension ne s'ouvre qu'avec
-    celle du régime de base, que la complémentaire suit (`ouvrir`). Ni l'abattement des
-    générations 1955 et antérieures de 2016 à 2023, ni les statuts d'avant 2015 : voir
-    `effet`.
+    `age_de_la_duree_atteinte`, `age_ouverture_commun`). De 1984 à 2015, les périodes
+    lisent l'âge légal et l'âge d'annulation de la décote de la génération, la même
+    décote, sans surcote ; avant 1984, aucune période. La pension prend effet avec
+    celle du régime de base, le premier du mois qui suit l'âge. Les écarts au texte :
+    voir `approximations`.
   python: >-
     scenarios/actuel.py : AgesRegimes, AgesRegimes.ages ; droit/ouvrir.py : ouvrir,
     age_taux_plein, age_ouverture_commun ; droit/liquider.py : decote_opposable,
@@ -74,12 +655,19 @@ code:
     ouvrir, ageTauxPlein, ageOuvertureCommun ; moteur/js/droit/liquider.js :
     decoteOpposable, trimestresDeDecote, surcotePoints, ageDeLaDureeAtteinte
   parametres: >-
+    contenu.parametres de chaque version : age_table, decote_par_trimestre,
+    surcote_par_trimestre, surcote_trimestres_maximum ;
     regimes/carpimko_complementaire.yaml : age_table, decote_par_trimestre,
-    surcote_par_trimestre, surcote_points, surcote_depuis_la_duree ;
+    surcote_par_trimestre, surcote_points, surcote_depuis_la_duree,
+    surcote_trimestres_maximum ;
     legislation/ages_regimes.csv : carpimko_2016, generation, age_ouverture,
     age_taux_plein
   tests:
   - tests/test_sections_sante.py
+  - >-
+    tests/test_sections_sante.py, test_chaque_version_de_la_carpimko_est_portee_par_le_modele,
+    qui lit les paramètres de chaque version chaque premier du mois ;
+    tests/test_sections_liberales.py, test_chaque_version_nait_d_un_texte_a_sa_date_du_journal_officiel
   - >-
     tests/test_simulateur.py ; aucun témoin ne change sans la table, et aucun test ne
     confronte le portage à une carrière qu'elle change

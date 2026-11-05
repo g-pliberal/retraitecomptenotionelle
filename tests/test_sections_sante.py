@@ -232,6 +232,52 @@ def test_la_carpimko_majore_depuis_son_age(simulateur):
     assert _coefficient(pensions["carpimko_complementaire"].detail) == pytest.approx(1.0125)
 
 
+#: Ce que le modèle ne porte pas d'une version lue de la CARPIMKO, et que sa
+#: fiche déclare : les statuts du 31 juillet 2015 entrent en vigueur le
+#: 3 octobre 2015, la table `carpimko_2016` le 1er janvier 2016
+#: (`liquidation_regime_par_regime`, l'âge de la complémentaire sans la base).
+CARPIMKO_HORS_DU_MODELE = {("statuts_de_2015", "2015-10-03", "2016-01-01")}
+
+
+@pytest.mark.parametrize("fiche,date_qui_decide", [
+    ("carpimko_ages_2015", "liquidation.date_effet"),
+    ("carpimko_assiette_2026", "revenu.annee"),
+])
+def test_chaque_version_de_la_carpimko_est_portee_par_le_modele(
+        simulateur, fiche, date_qui_decide):
+    """Lues au droit le 5 novembre 2026 (action 130) : statuts de 1984
+    (articles 10 à 12, LEGI), de 2015, de 2019 et de 2024, règlement de 2026,
+    pour les âges ; décret n° 84-143, article 2, rédaction du décret
+    n° 2025-1076, pour l'assiette. Chaque premier du mois de 1984 à 2040 que
+    couvre une version, la période qui liquide une pension prenant effet ce
+    jour — ou, pour l'assiette, la période de l'année du revenu — porte chacun
+    des paramètres que la version lit, hors de ce que la fiche déclare
+    (`CARPIMKO_HORS_DU_MODELE`). Les écarts au texte que ces paramètres ne
+    disent pas — la durée qui annule l'abattement, l'âge seul de 1984, les
+    4 % par année des générations 1955 et antérieures de 2015 à 2024, le
+    trimestre civil de la date d'effet — sont déclarés dans les fiches."""
+    from datetime import date
+
+    from retraite_notionnelle.noyau import carte
+
+    caisse = simulateur.catalogue["carpimko_complementaire"]
+    versions = carte.fiches()[fiche].get("versions") or []
+    assert versions
+    for version in versions:
+        lus = (version.get("contenu") or {}).get("parametres") or {}
+        debut, fin = version["bornes"][date_qui_decide]
+        jour = max(debut or date(1984, 1, 1), date(1984, 1, 1))
+        while jour < (fin or date(2041, 1, 1)):
+            hors = any(v == version["id"] and date.fromisoformat(d) <= jour < date.fromisoformat(f)
+                       for v, d, f in CARPIMKO_HORS_DU_MODELE)
+            if lus and not hors:
+                periode = (caisse.periode_a_l_effet(jour.isoformat())
+                           if date_qui_decide == "liquidation.date_effet"
+                           else caisse.periode(jour.year))
+                assert {cle: getattr(periode, cle) for cle in lus} == lus, (version["id"], jour)
+            jour = date(jour.year + jour.month // 12, jour.month % 12 + 1, 1)
+
+
 # -- trois enfants ---------------------------------------------------------------
 
 

@@ -1,23 +1,245 @@
 schema_version: 1
 id: carpimko_assiette_2026
 intitule: >-
-  Complémentaire de la CARPIMKO depuis 2026 : 8,7 % du revenu entier, assiette relevée
-  à un demi-plafond et coupée à trois ; points au coût d'acquisition, 391 € en 2026
-  pour une valeur de service de 21,48 €.
+  Complémentaire de la CARPIMKO depuis 2026 : une seule cotisation, proportionnelle,
+  « assise sur les revenus d'activité retenus pour le calcul de la cotisation du régime
+  de base », dont l'assiette « est comprise entre un minimum et un maximum », 8,7 %
+  entre un demi-plafond et trois plafonds de la Sécurité sociale en 2026 ; des points au
+  coût d'acquisition, que nul texte lu ne fixe, 391 € en 2026 selon la caisse pour une
+  valeur de service de 21,48 € ; avant 2026, une cotisation forfaitaire et une
+  proportionnelle, hors de cette fiche.
+domaine: cotisations
 regimes: [carpimko_complementaire]
+etape: acquerir_les_droits
+face: droit
 etat: approchee
+lit:
+- >-
+  l'année du revenu, qui choisit la rédaction de l'article 2 du décret n° 84-143 et le
+  décret qui fixe le taux et les limites de l'assiette, et le plafond de la Sécurité
+  sociale de cette année
+- >-
+  les revenus d'activité retenus pour le calcul de la cotisation du régime de base,
+  ceux de l'article L. 131-6
+- >-
+  la part de l'année où l'auxiliaire médical exerce, que le modèle prend pour
+  proratiser le minimum, et le RSA, la prime d'activité ou l'activité saisonnière, qui
+  l'en dispensent au modèle
+ecrit:
+- >-
+  la cotisation proportionnelle de l'année, 8,7 % de l'assiette bornée entre un
+  demi-plafond et trois plafonds, que `liquider_chaque_regime` sert au rendement de
+  l'année de liquidation et que le compte notionnel porte
+  (`ConstructeurCompte._cotisation_ligne`)
+dates_qui_decident:
+- revenu.annee
+versions:
+- id: cotisations_d_avant_2026
+  statut: lue
+  textes:
+  - id: LEGIARTI000026885148
+    article: décret n° 84-143, article 2, rédaction du 30 décembre 2012 au 14 novembre 2025
+    en_vigueur: 2012-12-30
+    citation: >-
+      « Le régime d'assurance vieillesse complémentaire institué par le présent décret
+      comporte deux cotisations : a) Une cotisation forfaitaire portant attribution de 8
+      points de retraite ; b) Une cotisation proportionnelle assise sur les revenus
+      d'activité retenus pour le calcul de la cotisation du régime de base ; l'assiette
+      de cette cotisation est comprise entre un minimum et un maximum. Le versement de
+      la cotisation proportionnelle porte attribution, annuellement, d'un nombre de
+      points supplémentaires, obtenu en divisant le montant de cette cotisation par le
+      coût d'acquisition d'un point de retraite, attribué au titre de la cotisation
+      forfaitaire, dans la limite de 22 points. »
+  - id: JORFARTI000052565553
+    article: décret n° 2025-1076 du 10 novembre 2025, article 12 (l'année 2025)
+    publie_le: 2025-11-13
+    citation: >-
+      « 5° Section professionnelle des auxiliaires médicaux : - cotisation forfaitaire :
+      2 312 euros ; - taux de la cotisation proportionnelle : 3 % ; - limites de
+      l'assiette de la cotisation proportionnelle : - seuil : 25 246 euros ; - plafond :
+      237 179 euros ; »
+  bornes:
+    revenu.annee: [null, 2026-01-01]
+  contenu:
+    parametres: {}
+    droit: aucun
+    raison: >-
+      avant 2026, la cotisation est forfaitaire et proportionnelle : le forfait, le
+      taux, le seuil et le plafond de chaque année, aux décrets annuels, que portent les
+      périodes de `carpimko_complementaire.yaml` (`cotisation_forfaitaire_euros`,
+      `taux_cotisation_retraite`, `borne_basse_euros`, `borne_haute_euros`) ; cette
+      fiche ne les lit pas
+  exemples: aucun trouvé
+- id: decret_2025_1076
+  statut: lue
+  textes:
+  - id: JORFARTI000052565540
+    article: décret n° 2025-1076 du 10 novembre 2025, article 7, 1° (article 2 du décret n° 84-143)
+    en_vigueur: 2026-01-01
+    publie_le: 2025-11-13
+    citation: >-
+      « Le décret du 22 février 1984 susvisé est ainsi modifié : 1° A l'article 2 : a)
+      Au premier alinéa, les mots : « deux cotisations : » sont remplacés par les mots :
+      « une cotisation proportionnelle assise sur les revenus d'activité retenus pour le
+      calcul de la cotisation du régime de base. L'assiette de cette cotisation est
+      comprise entre un minimum et un maximum. » ; b) Les deuxième et troisième alinéas
+      sont supprimés ; [...] d) Au cinquième alinéa, devenu le troisième, les mots : «
+      Le montant de la cotisation forfaitaire, le taux de la cotisation proportionnelle
+      et les limites de l'assiette de la cotisation proportionnelle » sont remplacés par
+      les mots : « Le taux, le coût d'acquisition du point et les limites de l'assiette
+      de la cotisation proportionnelle »
+  - id: JORFARTI000052565558
+    article: décret n° 2025-1076 du 10 novembre 2025, article 14, 3° (l'année 2026)
+    en_vigueur: 2026-01-01
+    publie_le: 2025-11-13
+    citation: >-
+      « Pour l'année 2026, les cotisations aux régimes d'assurance vieillesse
+      complémentaire des personnes non salariées affiliées aux sections
+      professionnelles de l'organisation autonome d'assurance vieillesse des
+      professions libérales sont déterminées selon les modalités suivantes : [...] 3°
+      Section professionnelle des auxiliaires médicaux : - taux de la cotisation
+      proportionnelle : 8,7 % ; - limites de l'assiette de la cotisation
+      proportionnelle : - seuil : 50 % du plafond annuel de la sécurité sociale pour
+      2026 ; - plafond : 3 fois le plafond annuel de la sécurité sociale pour 2026. »
+  - id: JORFARTI000052565559
+    article: décret n° 2025-1076 du 10 novembre 2025, article 15, II
+    publie_le: 2025-11-13
+    citation: >-
+      « II. - Le 1° de l'article 2, à l'exception de ses deux derniers alinéas, le 1° de
+      l'article 9 et les articles 3 à 5, 7, 8 et 14, à l'exception des 2° des articles
+      3, à 5 et 7, s'appliquent aux cotisations et aux prestations dues au titre des
+      périodes courant à compter du 1 er janvier 2026. »
+  - id: LEGIARTI000052567938
+    article: décret n° 84-143, article 2, rédaction du 14 novembre 2025 au 1er juillet 2026
+    en_vigueur: 2025-11-14
+    citation: >-
+      « Le régime d'assurance vieillesse complémentaire institué par le présent décret
+      comporte une cotisation proportionnelle assise sur les revenus d'activité retenus
+      pour le calcul de la cotisation du régime de base. L'assiette de cette cotisation
+      est comprise entre un minimum et un maximum. Le versement de la cotisation
+      proportionnelle porte attribution, annuellement, d'un nombre de points obtenu en
+      divisant le montant de cette cotisation par le coût d'acquisition d'un point de
+      retraite. Le taux, le coût d'acquisition du point et les limites de l'assiette de
+      la cotisation proportionnelle sont fixés chaque année par décret, sur proposition
+      du conseil d'administration de la section professionnelle des auxiliaires
+      médicaux. » ; la note de LEGI : « Conformément au II de l'article 15 du décret n°
+      2025-1076 du 10 novembre 2025, ces dispositions, dans leur rédaction issue de
+      l'article 7 dudit décret, s'appliquent aux cotisations et aux prestations dues au
+      titre des périodes courant à compter du 1er janvier 2026. »
+  - id: LEGIARTI000054168663
+    article: >-
+      décret n° 84-143, article 2, rédaction du décret n° 2026-418, en vigueur le 1er
+      juillet 2026
+    en_vigueur: 2026-07-01
+    citation: >-
+      « Ces revenus sont déterminés et doivent être déclarés avant la date fixée chaque
+      année selon les modalités prévues pour le régime de base. A défaut de la
+      déclaration par l'affilié de ses revenus non-salariés dans les délais, il est
+      procédé, d'office, à l'appel d'une cotisation calculée en fonction du revenu
+      maximum susvisé. »
+  - id: JORFARTI000052604992
+    article: >-
+      arrêté du 14 novembre 2025, annexe, 2° : statuts, article 7
+    en_vigueur: 2026-01-01
+    publie_le: 2025-11-20
+    citation: >-
+      « Art. 7. - Les ressortissants actifs de la Carpimko sont redevables, à titre
+      obligatoire, d'une cotisation proportionnelle assise sur les revenus d'activité
+      retenus pour le calcul de la cotisation du régime de base. « L'assiette de cette
+      cotisation est comprise entre un minimum et un maximum. [...] « Le versement de la
+      cotisation porte attribution, annuellement, d'un nombre de points obtenu en
+      divisant le montant de cette cotisation par le coût d'acquisition d'un point de
+      retraite. »
+  - id: JORFARTI000052604989
+    article: arrêté du 14 novembre 2025, article 2
+    publie_le: 2025-11-20
+    citation: >-
+      « Les dispositions annexées au présent arrêté entrent en vigueur au 1 er janvier
+      2026. »
+  nee_de: JORFARTI000052565540
+  bornes:
+    revenu.annee: [2026-01-01, null]
+  contenu:
+    parametres:
+      assiette: plafonnee_3_pass
+      assiette_minimale_pass: 0.5
+      taux_cotisation_retraite: 0.087
+    droit: >-
+      8,7 % des revenus d'activité de la base, l'assiette comprise entre le seuil, un
+      demi-plafond, son minimum, et le plafond, trois plafonds de l'année : le décret n°
+      84-143 dit « un minimum et un maximum », le décret de l'année les nomme « seuil »
+      et « plafond » ; les points, la cotisation divisée par le coût d'acquisition du
+      point
+    conditions: aucune
+  exemples: aucun trouvé
+approximations:
+- version: [cotisations_d_avant_2026]
+  textes: >-
+    décret n° 84-143, article 2, rédaction de 2012 ; règlement de 2026, article 1er
+    (JORFARTI000054435915)
+  ecart: >-
+    Le modèle ne compte pas les points de la CARPIMKO : ni les « 8 points au titre de
+    la cotisation forfaitaire » et les « 22 points maximum au titre de la cotisation
+    proportionnelle » de 1996 à 2025, ni les points de 1956 à 1995 que le règlement de
+    2026 énumère, son régime ne commençant qu'en 1984 ; il sert les cotisations
+    revalorisées au rendement. Hors de cette fiche, que la cotisation de 2026 ouvre.
+  effet: non mesuré
+- version: [decret_2025_1076]
+  textes: >-
+    décret n° 84-143, article 2, rédaction de 2026 ; décret n° 2025-1076, article 14,
+    3°
+  ecart: >-
+    Le coût d'acquisition du point, que l'article 2 fait fixer « chaque année par
+    décret », n'est pas à l'article 14, qui ne donne que le taux et les limites de
+    l'assiette ; l'index JORF n'a pas d'autre texte qui le fixe pour 2026. Le modèle ne
+    compte pas de points : il sert les cotisations revalorisées au rendement de
+    l'année de liquidation, 5,49 % depuis 2026, 21,48 € de service pour 391 €
+    d'acquisition, lus sur la calculette de la caisse.
+  effet: non mesuré
+- version: [decret_2025_1076]
+  textes: décret n° 2025-1076, article 14, « Pour l'année 2026 »
+  ecart: >-
+    Le taux et les limites ne sont fixés que pour 2026 ; le modèle les reconduit aux
+    années suivantes, faute du décret de chacune.
+  effet: non mesuré
+- version: [decret_2025_1076]
+  textes: décret n° 84-143, article 2 ; statuts, article 7, rédaction de 2026
+  ecart: >-
+    Les textes lus ne disent rien de l'année entamée ; le modèle proratise le minimum
+    aux mois d'exercice, et dispense du minimum l'année que le RSA, la prime d'activité
+    ou l'activité saisonnière dispense (`dispense_les_complementaires`), sans texte de
+    la CARPIMKO lu ici.
+  effet: non mesuré
+- version: [decret_2025_1076]
+  textes: décret n° 84-143, article 2, rédaction du 1er juillet 2026
+  ecart: >-
+    Faute de déclaration des revenus dans les délais, la cotisation est appelée
+    d'office sur le revenu maximum ; le modèle suppose les revenus déclarés.
+  effet: aucun sur un revenu déclaré
+textes_sans_effet:
+- id: LEGIARTI000006766332
+  article: décret n° 84-143, article 2, rédaction de 1984
+  motif: >-
+    les cinq classes de cotisation de 1984 à 1996, hors de cette fiche, que la version
+    d'avant 2026 laisse aux périodes du régime
+reformes: []
 effet: >-
   La fiche retranchait un demi-plafond de tout revenu et reconduisait le rendement
   de 2025, 7,36 % : un tiers de points de trop au-dessus d'un demi-plafond, aucun
   en dessous. Le coût du point n'est publié ni au Journal officiel ni sur le site
-  : il est lu sur la calculette, d'où l'état.
+  : il est lu sur la calculette, d'où l'état. Lue au droit le 5 novembre 2026 (action
+  130) : deux versions, avant 2026, laissée aux périodes du régime, et la cotisation
+  proportionnelle du décret n° 2025-1076 ; le minimum lu comme le « seuil » de
+  l'assiette, que le décret n° 84-143 dit « comprise entre un minimum et un maximum » ;
+  le modèle porte le taux et les limites de 2026, et les reconduit.
 sources:
-  lu_le: 2026-09-22
+  lu_le: 2026-11-05
   prochaine_relecture: 2027-01-31
   a_relire:
   - >-
-    Remplacer 391 € par la valeur publiée dès qu'un texte ou un barème de la caisse
-    la donne.
+    Le coût d'acquisition du point de 2026, que l'article 2 du décret n° 84-143 fait
+    fixer par décret, et le décret de 2027 : remplacer 391 € et reconduire le taux dès
+    qu'un texte les donne.
   lectures:
   - type: jorf
     reference: >-
@@ -25,6 +247,21 @@ sources:
       entre un minimum et un maximum » ; article 14 : 8,7 %, seuil 50 % et plafond
       trois fois le plafond annuel
     date: 2026-09-22
+  - type: jorf
+    reference: >-
+      Décret n° 2025-1076, articles 7, 12, 14 et 15 (JORFARTI000052565540,
+      JORFARTI000052565553, JORFARTI000052565558, JORFARTI000052565559) ; arrêté du 14
+      novembre 2025, article 2 et annexe (JORFARTI000052604989, JORFARTI000052604992) ;
+      règlement de 2026, article 1er (JORFARTI000054435915) ; dans l'index JORF du
+      dépôt, à jour du 5 novembre 2026.
+    date: 2026-11-05
+  - type: legifrance
+    reference: >-
+      Article 2 du décret n° 84-143 dans ses rédactions de 1984 (LEGIARTI000006766332),
+      de 2012 (LEGIARTI000026885148), du 14 novembre 2025 (LEGIARTI000052567938) et du
+      1er juillet 2026 (LEGIARTI000054168663), dans l'index LEGI du dépôt, à jour du 4
+      novembre 2026.
+    date: 2026-11-05
   - type: autre
     reference: >-
       CARPIMKO, page « selon mes revenus » : « entre 2 091 € et 12 544 € pour 2026
@@ -33,10 +270,6 @@ sources:
     url: >-
       https://www.carpimko.com/je-suis-en-activite/cotisations/selon-mes-revenus
     date: 2026-09-22
-textes_a_rattacher:
-- reference: >-
-    décret n° 2025-1076, articles 7 et 14 (JORFARTI000052565540, JORFARTI000052565558)
-- reference: arrêté du 14 novembre 2025 approuvant les statuts (JORFARTI000052604992)
 code:
   moteur: >-
     La période de 2026 de `carpimko_complementaire` cotise 8,7 %
@@ -63,11 +296,16 @@ code:
     moteur/js/droit/liquider.js : liquiderChaqueRegime ; moteur/js/compte.js :
     ConstructeurCompte._cotisationLigne
   parametres: >-
+    contenu.parametres de chaque version : assiette, assiette_minimale_pass,
+    taux_cotisation_retraite ;
     regimes/carpimko_complementaire.yaml : assiette, assiette_minimale_pass,
     taux_cotisation_retraite ; regimes/rendements_points.csv : carpimko_complementaire,
     rendement
   tests:
   - tests/test_independants.py
+  - >-
+    tests/test_sections_sante.py, test_chaque_version_de_la_carpimko_est_portee_par_le_modele,
+    qui lit le taux et les limites de la version de 2026 chaque année de 2026 à 2040
   - >-
     tests/test_cumul_activites.py et tests/test_fiche_des_liberaux.py, qui confrontent
     les deux moteurs sur des carrières qui la portent

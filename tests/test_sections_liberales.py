@@ -244,6 +244,13 @@ def test_chaque_version_lue_commence_quand_son_texte_entre_en_vigueur(fiche):
 #: 2023, le 6° de son annexe (l'article 15) « le 1er septembre 2023 », les a, c
 #: et d du 7° (l'article 16) « le 1er janvier 2024 » (article 2, 1° et 2°) ;
 #: celui du 10 juillet 2026 ne fixe pas de date.
+#: La CARPIMKO, relevée le 5 novembre 2026 : l'arrêté du 22 février 1984, publié
+#: le 29, approuve des statuts que LEGI date du 1er janvier 1984, le jour où
+#: l'article 1er du décret n° 84-143 institue le régime ; celui du 20 novembre
+#: 1996 n'est au Journal officiel que par une mention, le texte au Bulletin
+#: officiel, d'où une entrée en vigueur supposée au lendemain ; ceux du
+#: 31 juillet 2015, du 23 mai 2019 (pour ses âges), du 27 décembre 2023 et du
+#: 10 juillet 2026 ne fixent pas de date.
 #: La CARCDSF, relevée le 5 novembre 2026 : l'arrêté du 13 avril 2011 met ses
 #: statuts en vigueur « à compter du 1er juillet 2011 » (article 3) ; ceux du
 #: 1er octobre 2007, du 9 juillet 2012, du 22 décembre 2017, du 27 décembre
@@ -257,6 +264,14 @@ NAISSANCES_AU_JOURNAL_OFFICIEL = {
         "JORFARTI000037363871": ("2018-09-04", "2018-09-05"),
         "JORFARTI000038689131": ("2019-06-27", "2019-06-28"),
         "LEGIARTI000054437585": ("2026-07-17", "2026-07-18"),
+    },
+    "carpimko_ages_2015": {
+        "JORFTEXT000000315359": ("1984-02-29", "1984-01-01"),
+        "JORFARTI000002184842": ("1996-11-30", "1996-12-01"),
+        "JORFARTI000031255547": ("2015-10-02", "2015-10-03"),
+        "JORFARTI000038529117": ("2019-05-30", "2019-05-31"),
+        "JORFARTI000048880643": ("2024-01-09", "2024-01-10"),
+        "JORFARTI000054435915": ("2026-07-17", "2026-07-18"),
     },
     "carcdsf_minoration_age_seul": {
         "JORFARTI000001859980": ("2007-10-10", "2007-10-11"),
