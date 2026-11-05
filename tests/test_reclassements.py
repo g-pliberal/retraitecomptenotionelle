@@ -275,9 +275,9 @@ def test_seul_le_reclassement_d_une_grille_a_la_suivante_est_retenu():
      "placés dans une situation prévue à l'article 32 de la loi du 11 janvier 1984 susvisée, "
      "sont reclassés dans le grade de dessinateur projeteur en chef au 1er août 1996, "
      "conformément au tableau de correspondance ci-après :", "1996-08-01"),
-    # Ne datent pas le reclassement, et restent sans date : « nommés au » (n° 98-268,
-    # art. 17, LEGIARTI000006506606), « placés au » (n° 2001-325, art. 14,
-    # LEGIARTI000006567682) — voir la note de B5.
+    # La phrase ne date pas le reclassement : « nommés au » (n° 98-268, art. 17,
+    # LEGIARTI000006506606), « placés au » (n° 2001-325, art. 14, LEGIARTI000006567682).
+    # Un autre article de leur décret le date (B5-bis, DATES_D_UN_AUTRE_ARTICLE).
     ("Les bibliothécaires de 1re et de 2e classes, placés au 1er janvier 1997 dans l'une des "
      "positions prévues à l'article 32 de la loi du 11 janvier 1984 susvisée, sont reclassés "
      "dans le grade de bibliothécaire conformément au tableau", ""),
@@ -407,6 +407,42 @@ def test_la_date_qui_suit_le_verbe_est_la_date_du_reclassement():
     apres = re.compile(r"(?:reclass|int[ée]gr)\w*\s*,?\s+(?:avec\s+effet\s+)?(?:au|[àa]\s+compter\s+du)\s+"
                        + rec._DATE, re.IGNORECASE)
     assert [cle for cle, t in tableaux.items() if not t["effet"] and apres.search(t["intro"])] == []
+
+
+#: Action 158, B5-bis : les tableaux dont la phrase n'écrit pas la date, et qu'un autre
+#: article du même décret date ; chacun lu à l'index LEGI, à la version qui couvre celle
+#: du tableau (la citation dans dila_legi_reclassements.DATES_D_UN_AUTRE_ARTICLE et dans
+#: docs/feuille_de_route/158/2026-11-05-b5-bis-corrections-de-r-b5.md).
+DATES_D_UN_AUTRE_ARTICLE = {
+    # n° 98-268, art. 28 : « Les articles 17, 18, 21 et 22 du présent décret prennent
+    # effet au 1er août 1995. »
+    ("LEGIARTI000006506606", "1"): "1995-08-01",  # n° 98-268, art. 17
+    # n° 2001-325, art. 17 : « Les dispositions des articles 1er, 4, 5, 6 du I de
+    # l'article 7, des articles 8, 9, 10, 11, 14 et 15 du présent décret prennent effet
+    # au 1er janvier 1997. »
+    ("LEGIARTI000006567682", "1"): "1997-01-01",  # n° 2001-325, art. 14
+    # n° 2017-1367, art. 28 : « […] et les articles 23 à 25 entrent en vigueur le
+    # 1er janvier 2017. »
+    ("LEGIARTI000035601659", "1"): "2017-01-01",  # n° 2017-1367, art. 23
+    # n° 2017-1494, art. 15 : « […] et les dispositions du I de l'article 13 entrent en
+    # vigueur le 1er janvier 2017. » Le tableau est dans le I.
+    ("LEGIARTI000035900888", "1"): "2017-01-01",  # n° 2017-1494, art. 13
+}
+
+
+def test_un_tableau_que_date_un_autre_article_de_son_decret_prend_cette_date():
+    """Action 158, B5-bis (relecture R-B5). Ces quatre tableaux étaient datés de
+    l'entrée en vigueur de leur version (2003-06-21, 2001-04-15, 2017-09-23,
+    2017-10-28) ; le décret les fait prendre effet plus tôt. Deux restent sans date,
+    déclarés : le n° 98-268, art. 20, échelonne l'accès au grade (« au 1er août 1994,
+    au 1er août 1995, au 1er août 1996 et au 1er janvier 1997 ») ; l'art. 8 du n° 98-896,
+    récrit par le n° 2002-378, qui ne dit pas quand sa rédaction prend effet."""
+    tableaux = {(t["article"], t["tableau"]): t for t in _lire("tableaux")}
+    assert ({cle: tableaux[cle]["effet"] for cle in DATES_D_UN_AUTRE_ARTICLE}
+            == DATES_D_UN_AUTRE_ARTICLE)
+    assert tableaux[("LEGIARTI000006506612", "1")]["effet"] == ""  # n° 98-268, art. 20
+    assert tableaux[("LEGIARTI000006508629", "1")]["effet"] == ""  # n° 98-896, art. 8
+    assert set(rec.DATES_D_UN_AUTRE_ARTICLE) == {article for article, _ in DATES_D_UN_AUTRE_ARTICLE}
 
 
 def test_chaque_ligne_lue_est_certifiee_et_chaque_refus_motive():

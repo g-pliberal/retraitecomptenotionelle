@@ -7117,13 +7117,13 @@ l'inviterait aussi à relire le dépôt.
 **Reprise, au 5 novembre 2026.** Périmètre : les trois versants et les militaires. Entrés et certifiés :
 grilles, barème depuis 1983, reclassements (450 tableaux), durées d'échelon (778). Chaînage (étape 3) : 555
 des 1 675 grades de durées et 13 des 862 groupes de reclassement rattachés (vague 10, relue R-B4, conforme).
-Le n° 96-101 lu : son art. 3 récrit l'art. 1er du n° 87-1104, au 1er août 1995 (art. 39, II). B5 : 36 dates d'effet
-écrites après le verbe (« sont reclassés, au 1er janvier 2017 ») lues et entrées, sans rattachement de plus. Reste :
-au JO n° 33 du 8 février 1996 (p. 2070 à 2077), le tableau de son art. 37, au fac-similé ; rattacher plus, mot pour
-mot : l'annexe du n° 94-1016 et de l'arrêté du 24 novembre 2006 (cinq grades), ses jours de 1994-2006 ; « nommés
-au » (deux tableaux, non tranché) ; le lecteur relancé ne refait pas la donnée (540 tableaux, candidat) ; les 97
-versions hors du motif ; les refus, au JORF ; le minimum de traitement ; quatre candidats (« ES » dans neuf noms de
-grille, les provisoires 301, 328, 342 du n° 87-1103). Détail : `2026-11-05-b5-la-date-apres-reclasses.md`.
+Le n° 96-101 lu : son art. 3 récrit l'art. 1er du n° 87-1104, au 1er août 1995. Dates d'effet : 36 écrites après
+le verbe (B5, relu R-B5), 4 données par un autre article du décret et « A la même date » (B5-bis). Reste : au JO
+n° 33 du 8 février 1996, le tableau de l'art. 37 du n° 96-101, au fac-similé ; les dates d'effet non lues (plus
+de cent relatives au décret, les décrets qui datent un chapitre, le n° 98-268 art. 20 à plusieurs dates, le
+n° 98-896 art. 8 non tranché, au JORF) ; 90 tableaux de plus dans l'index publié ; l'annexe du n° 94-1016 et de
+l'arrêté du 24 novembre 2006 ; les 97 versions hors du motif ; les refus, au JORF ; le minimum de traitement ;
+quatre candidats (« ES », 301, 328, 342). Détail : `2026-11-05-b5-bis-corrections-de-r-b5.md`.
 
 
 **D'où elle vient.** La demande du propriétaire, le 12 octobre 2026 : aller

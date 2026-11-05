@@ -101,7 +101,9 @@ def test_aucune_phrase_restee_sans_date_ne_s_ouvre_sur_une_date(reclassements):
     # dates d'effet que les lecteurs ne lisent pas, non des dates qui ouvrent la
     # phrase. Action 158, B5 : le lecteur lit désormais la date qui suit le verbe
     # (tests/test_reclassements.py, DATES_APRES_LE_VERBE) ; 25 de ces tableaux de
-    # l'État sont datés, et passent à l'étape suivante : 183 → 158.
+    # l'État sont datés, et passent à l'étape suivante : 183 → 158. B5-bis : trois de
+    # plus, que date un autre article de leur décret (n° 2001-325, 2017-1367,
+    # 2017-1494 ; test_reclassements.py, DATES_D_UN_AUTRE_ARTICLE) : 158 → 155.
     import re
     tableaux = {(t["texte"], t["article"], t["tableau"]): t
                 for t in _lire(GRILLES / "reclassements" / "tableaux.csv")}
@@ -110,11 +112,24 @@ def test_aucune_phrase_restee_sans_date_ne_s_ouvre_sur_une_date(reclassements):
                  if r["statut"] == "declare" and not r["date"]}
     assert len({(r["texte"], r["article"], r["tableau"]) for r in reclassements
                 if r["raison"].startswith("la phrase qui annonce le tableau n'écrit pas la "
-                                          "date")}) == 158
+                                          "date")}) == 155
     for cle in sans_date:
         intro = tableaux[cle]["intro"]
         trouve = date.search(intro)
         assert not trouve or len(intro[:trouve.start()].split()) >= 5, intro
+
+
+def test_a_la_meme_date_prend_la_date_du_tableau_precedent(reclassements):
+    # Action 158, B5-bis (relecture R-B5). Décret n° 2017-903, art. 12, deux versions :
+    # LEGIARTI000034702202 (du 2018-02-01), « Au 1er février 2018, les conseillers
+    # supérieurs socio-éducatifs sont reclassés […] », puis « A la même date, les
+    # conseillers socio-éducatifs sont reclassés selon le tableau de correspondance
+    # ci-après » ; LEGIARTI000036440010 (du 2017-12-24), de même « Au 1er février 2019 ».
+    dates = {(r["article"], r["tableau"]): (r["date"], r["date_lue"]) for r in reclassements}
+    assert dates[("LEGIARTI000034702202", "1")] == ("2018-02-01", "phrase")
+    assert dates[("LEGIARTI000034702202", "2")] == ("2018-02-01", "meme_date")
+    assert dates[("LEGIARTI000036440010", "1")] == ("2019-02-01", "phrase")
+    assert dates[("LEGIARTI000036440010", "2")] == ("2019-02-01", "meme_date")
 
 
 # ---------------------------------------------------------------------------

@@ -61,7 +61,8 @@ ne se rattachent pas sur leur recouvrement : le chaînage ne choisit pas.
 
 CE QUI PROUVE UN RATTACHEMENT D'UN RECLASSEMENT. À l'État seulement, par le
 Noyau RH : la date du reclassement est celle que le lecteur a lue (``effet``),
-ou celle qui ouvre la phrase (« Au 1er juillet 2011, les membres […] ») ; le
+ou celle qui ouvre la phrase (« Au 1er juillet 2011, les membres […] »), ou,
+« A la même date », celle du tableau qui précède dans l'article ; le
 corps est l'un de ceux que le noyau rattache, la veille ou le jour, au statut
 que la phrase nomme (``statuts_de_la_phrase``) : par son numéro, par sa date
 quand les visas la résolvent en un seul décret identifié au LEGI, ou au Noyau
@@ -1200,6 +1201,21 @@ def _corps_du_reclassement(depot: Depot, nommes: dict[str, str],
     return corps
 
 
+#: « A la même date, les conseillers socio-éducatifs sont reclassés » : la date du
+#: tableau qui précède, dans le même article (action 158, B5-bis).
+MEME_DATE = re.compile(r"^\s*[àa]\s+la\s+m[êe]me\s+date\b", re.IGNORECASE)
+
+
+def date_du_tableau(tableau: dict) -> tuple[str, str]:
+    """La date d'un reclassement et où elle est lue : celle du lecteur (``effet``),
+    sinon celle qui ouvre la phrase, sinon rien."""
+    if tableau["effet"]:
+        return tableau["effet"], "effet"
+    if date_de_la_phrase(tableau["intro"]):
+        return date_de_la_phrase(tableau["intro"]), "phrase"
+    return "", ""
+
+
 def chainer_reclassements(depot: Depot) -> list[dict]:
     groupes: dict[tuple, list[dict]] = collections.defaultdict(list)
     for ligne in depot.reclassements_lignes:
@@ -1209,9 +1225,11 @@ def chainer_reclassements(depot: Depot) -> list[dict]:
     for cle, lignes in groupes.items():
         tableau = tableaux[cle[:3]]
         versant = depot.reclassements_textes[cle[0]]["versant"]
-        jour, lue = tableau["effet"], "effet" if tableau["effet"] else ""
-        if not jour and date_de_la_phrase(tableau["intro"]):
-            jour, lue = date_de_la_phrase(tableau["intro"]), "phrase"
+        jour, lue = date_du_tableau(tableau)
+        if not jour and MEME_DATE.match(tableau["intro"]):
+            precedent = tableaux.get((cle[0], cle[1], str(int(cle[2]) - 1)))
+            if precedent and date_du_tableau(precedent)[0]:
+                jour, lue = date_du_tableau(precedent)[0], "meme_date"
         base = {"texte": cle[0], "article": cle[1], "tableau": cle[2], "groupe": cle[3],
                 "date": jour, "date_lue": lue}
 
@@ -1419,7 +1437,8 @@ ENTETES = {
     "reclassements": "Chaque groupe de chaque tableau de reclassement (de reclassements/), "
                      "rattaché aux grilles d'origine et d'accueil du Noyau RH, ou déclaré. "
                      "date : celle du reclassement ; date_lue : effet (lue par le lecteur), "
-                     "phrase (la date qui ouvre la phrase) ; corps, grades et grilles du noyau. "
+                     "phrase (la date qui ouvre la phrase), meme_date (« A la même date » : celle "
+                     "du tableau qui précède dans l'article) ; corps, grades et grilles du noyau. "
                      "rangs_grille : le rang, dans sa grille (élève, stagiaire et provisoires "
                      "mis à part), de chaque échelon du groupe que le tableau ne numérote pas "
                      "(« accueil exceptionnel 5 ») ; il l'emporte sur le rang de "

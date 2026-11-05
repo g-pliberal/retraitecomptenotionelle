@@ -49,7 +49,8 @@ d'accueil, que ``scripts/verifier_donnees.py`` confronte aux fichiers.
 
 CE QUE LA DONNÉE DIT, ET NE DIT PAS. Un tableau vaut à la date de son
 reclassement : celle que la phrase écrit (« sont, au 1er août 1993,
-intégrés »), sinon l'entrée en vigueur de l'article (``debut``) ; les versions
+intégrés »), sinon celle qu'un autre article du décret lui donne, lue à la main
+(``DATES_D_UN_AUTRE_ARTICLE``), sinon l'entrée en vigueur de l'article (``debut``) ; les versions
 suivantes d'un article qui redisent le même tableau ne font pas un second
 reclassement. L'ancienneté conservée se garde « dans la limite de la durée de
 l'échelon » : l'appliquer demande les durées d'échelon, que les statuts
@@ -170,6 +171,33 @@ EFFETS = (
     re.compile(rf"\breclass\w*\s+dans\s+le\s+grade\s+d[e'’]\s*[^,:;()]{{1,80}}?\s+au\s+{_DATE}",
                re.IGNORECASE),
 )
+
+
+#: Le tableau dont la phrase n'écrit pas la date, qu'un autre article du même décret
+#: date (action 158, B5-bis, relecture R-B5) : l'article du tableau (LEGIARTI) → la
+#: date, l'article qui la donne, à la version qui couvre celle du tableau, et ses mots.
+DATES_D_UN_AUTRE_ARTICLE = {
+    "LEGIARTI000006506606": ("1995-08-01", "LEGIARTI000006506628",  # n° 98-268, art. 17
+                             "Les articles 17, 18, 21 et 22 du présent décret prennent effet "
+                             "au 1er août 1995."),
+    "LEGIARTI000006567682": ("1997-01-01", "LEGIARTI000006567685",  # n° 2001-325, art. 14
+                             "Les dispositions des articles 1er, 4, 5, 6 du I de l'article 7, "
+                             "des articles 8, 9, 10, 11, 14 et 15 du présent décret prennent "
+                             "effet au 1er janvier 1997."),
+    "LEGIARTI000035601659": ("2017-01-01", "LEGIARTI000035601611",  # n° 2017-1367, art. 23
+                             "Le chapitre Ier, à l'exception du troisième alinéa de l'article 2, "
+                             "et les articles 23 à 25 entrent en vigueur le 1er janvier 2017."),
+    "LEGIARTI000035900888": ("2017-01-01", "LEGIARTI000035900898",  # n° 2017-1494, art. 13
+                             "Les dispositions du chapitre II, à l'exception de celles des "
+                             "articles 4, 5 et 7, et les dispositions du I de l'article 13 "
+                             "entrent en vigueur le 1er janvier 2017."),
+}
+
+
+def effet_du_tableau(article: str, intro: str) -> str:
+    """La date du reclassement : celle que la phrase écrit, sinon celle qu'un autre
+    article du décret donne au tableau, sinon rien (l'entrée en vigueur de l'article)."""
+    return date_effet(intro) or DATES_D_UN_AUTRE_ARTICLE.get(article, ("",))[0]
 
 
 def _sans_accents(texte: str) -> str:
@@ -478,7 +506,7 @@ def extraire(chemin_index: Path | str | None = None) -> dict:
             if avant:
                 cle = (texte, numero, rang, debut)
             lus[cle] = {"texte": texte, "article": ident, "numero": numero, "tableau": str(rang),
-                        "debut": debut, "fin": fin, "effet": date_effet(extrait.intro),
+                        "debut": debut, "fin": fin, "effet": effet_du_tableau(ident, extrait.intro),
                         "intro": extrait.intro, "entete": tableau.entete,
                         "lignes": tableau.lignes, "contenu": contenu_lu}
 
@@ -534,8 +562,9 @@ ENTETES = {
               "versant (« plusieurs » : un texte des deux versants), numéro, nature, date de "
               "signature, vigueur ; les tableaux lus et non lus.",
     "tableaux": "Chaque tableau de reclassement : l'article et sa version (fin incluse ; vide : "
-                "en vigueur), son rang dans l'article, effet (la date que la phrase écrit ; "
-                "vide : l'entrée en vigueur de l'article, debut), la phrase qui l'annonce et "
+                "en vigueur), son rang dans l'article, effet (la date que la phrase écrit, ou "
+                "qu'un autre article du décret donne ; vide : l'entrée en vigueur de "
+                "l'article, debut), la phrase qui l'annonce et "
                 "son en-tête.",
     "lignes": "Chaque ligne d'un tableau : groupe (le libellé écrit avant elle : grade "
               "d'origine puis grade d'accueil, que le texte aplati colle), l'échelon d'origine, "
