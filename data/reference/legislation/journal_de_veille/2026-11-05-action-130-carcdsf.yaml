@@ -1,0 +1,46 @@
+date: "2026-11-05"
+session: "action 130, file E : la minoration de la CARCDSF lue au droit, et le bloc « Reprise » de l'action"
+consulte: >-
+  python scripts/veille_droit.py ; docs/veille_droit.md ; les index JORF et LEGI du dépôt,
+  récupérés et mis à jour au 5 novembre (JORF, quatre incréments) et au 4 novembre 2026
+  (LEGI, deux incréments). Dans JORF : les textes de la CARCDSF de 1962 à 2026, cherchés aux
+  « chirurgiens-dentistes » et aux « sages-femmes » ; en entier, les statuts de 2007
+  (annexe, articles 18 à 23, 39 et 48, et les articles 1er à 3 de leur arrêté), l'arrêté du
+  28 décembre 2010, les statuts de 2011 (annexe, articles 17 à 23, 32, 41 et le renvoi au
+  tableau, et les articles 1er à 4 de leur arrêté), les arrêtés du 9 juillet 2012, du 30
+  juillet 2013, du 22 décembre 2017, du 27 décembre 2023, du 10 juillet 2026 (le
+  règlement, articles 1er à 25) et du 21 septembre 2026, le décret n° 2026-418 (articles 5
+  et 30) ; les notices de 1962 à 1997. Dans LEGI : L. 161-17-2 au 23 décembre 2011, au 1er
+  septembre 2023 et au 31 décembre 2025 ; L. 351-8 au 1er septembre 2023 et au 28 février
+  2025 ; L. 643-3 et L. 643-4 au 1er septembre 2023, L. 643-3 au 31 décembre 2025 ; D.
+  643-14 ; D. 351-1-14 au 1er septembre 2023 et au 1er janvier 2026. Les notes de l'action
+  130 du 5 novembre (CAVAMAC, R-E, retouches, CRPNPAC), pour la méthode et le bloc.
+trouve: >-
+  La CARCDSF liquide, du 11 octobre 2007 au 30 juin 2011, au taux plein à 65 ans, dès 60
+  ans avec 25 % de minoration au cours de la 61e année et cinq points de moins par année
+  (statuts de 2007, article 20) ; du 1er juillet 2011, au taux plein à l'âge de L. 161-17-2
+  majoré de cinq ans, dès cet âge-là, 5 % par année d'anticipation pour les nés avant
+  juillet 1951, un tableau publié en image pour les suivants jusqu'en 1954 (1955 jusqu'au
+  21 juillet 2012), 1,50 % par trimestre manquant depuis, et majore de 1 % par trimestre
+  civil entier d'exercice libéral, 20 % au plus (statuts de 2011, article 19 ; arrêté du 9
+  juillet 2012) ; du 25 décembre 2017, les âges écrits génération par génération et le
+  parent d'un enfant handicapé sans minoration (article 35) ; du 10 janvier 2024, taux plein
+  à l'âge du 1° de L. 351-8, 67 ans, 1,25 % par trimestre manquant, 15 % au plus, la
+  majoration à 1 % avant 2024 et à 1,25 % depuis, l'inapte et les assurés du 2° de L.
+  643-4 à l'âge du IV de L. 643-3 ; depuis le 18 juillet 2026, le règlement, de même règle.
+  Majoration de 10 % pour trois enfants, et taux plein avancé d'une année par enfant pour
+  l'affiliée, à toutes les dates lues. Réversion : 60 %, à 65 ans ou 60 ans pour l'inapte.
+  Le modèle sert la minoration lue de 2008 à 2023 et depuis 2024 ; il ne sert ni les
+  catégories sans minoration, ni la réversion, compte la majoration au temps et non par
+  trimestre civil d'exercice libéral, et à 1,25 % ceux d'avant 2024, et sert les statuts de
+  2007 et de 2011 hors de leurs dates : écarts déclarés dans la fiche, non corrigés, pour
+  le propriétaire.
+reste: >-
+  Le règlement de 1955 et ses modifications, dont celle du 21 mars 1997 au seul Bulletin
+  officiel (no 97-20), et les statuts de la CARSAF des sages-femmes d'avant 2009. Le
+  tableau des nés de juillet 1951 à 1954, publié en image (JO n° 98 du 27 avril 2011,
+  texte 14 ; JO n° 168 du 21 juillet 2012, texte 3). Ce que la caisse a servi aux pensions
+  du 1er janvier 2024, que l'arrêté du 27 décembre 2023, publié le 9 janvier, ne couvre
+  pas. Le code civil, article 1er, que l'index ne porte pas : l'entrée en vigueur au
+  lendemain de la publication suit la règle des fiches de la CAVEC et de la CARPV. Le
+  décret n° 50-28 consolidé après 2009, absent de LEGI.

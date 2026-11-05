@@ -263,6 +263,7 @@ LUES_AU_DROIT = frozenset("""
     assiette_rco_independants
     cavec_minoration_age_seul carpv_minoration_age_seul
     cavamac_minoration_age_seul
+    carcdsf_minoration_age_seul
 """.split())
 
 

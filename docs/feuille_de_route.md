@@ -3291,16 +3291,16 @@ fabriqués.
 
 ### 130. L'architecture du dépôt : décidée, les phases 0 à 8 faites, les domaines à ouvrir — `en cours`
 
-**Reprise, au 5 novembre 2026.** Fait : phases 0 à 8, cinq domaines clos, le sixième aux étapes 1 à 6. Vague 6, relues
-conformes : la majoration de l'Agirc-Arrco reversée sans coefficient (action 175, 5cf7bbc, 9367bc6), celle de l'Agirc de
-1994 à 1996 (18a4dc3, 996649f), la base des libéraux ouverte à l'âge légal (5f19af8, R-L 1dfa59a, un écart moyen). Le 5,
-relues conformes : L-bis (9fcd8a1, a175868), la CARPV d'avant 2022 présumée, les biologistes minorés jusqu'à l'âge de
-L. 351-8 ; L-ter (f6012e5, ca0ba01), les âges lus au mois ; l'Ircantec d'avant 1983, décision 9 (e27cdce, 6b05a20, cc627e8 ;
-R-M3-bis 87e0ce8 : un écart moyen, le 6° a) après avril 1983). Restent : la CRPNPAC, ouverte à 50 ans, qui ouvre au modèle
-le régime général du navigant (parti à 55 ans, il le touche), et les statuts de la CAVOM, CARPIMKO, CAVP, CARCDSF et CPRN ;
-défauts candidats non lancés : l'Agirc-Arrco de 1955 à 1983 par âge ou trimestre, les biologistes et la durée, le taux plein
-de l'ordonnance n° 82-270 et de la loi de 1977, `ages_reference.csv` au centième ; au propriétaire, `130/2026-11-03-decisions-du-proprietaire.md`.
-Lue au droit, la CAVAMAC : restent 85 fiches, 498 manques ; ses écarts à une file du modèle, puis la CARCDSF. File E seule. Détail : `130/2026-11-05-carte-des-fiches-cavamac-lue-au-droit.md`.
+**Reprise, au 5 novembre 2026.** Fait : phases 0 à 8, cinq domaines clos, le sixième aux étapes 1 à 6 ; vagues 6 et 7 relues conformes
+(Agirc-Arrco 5cf7bbc, Agirc 18a4dc3, base des libéraux 5f19af8, L-bis 9fcd8a1, L-ter f6012e5, Ircantec d'avant 1983 cc627e8). Le 5 :
+la CRPNPAC (file N, 1464c06) se sert à son âge, le régime général et l'Agirc-Arrco du navigant à l'âge de L. 161-17-2, non plus
+avant ; relecture R-N en cours ; défaut candidat, ses vingt annuités (`130/2026-11-05-crpnpac-et-regime-general.md`). Retouches de
+R-E, R-M3-ter, R-L-ter et R-D-bis faites (7e44534). Lues au droit, la CAVAMAC (75b31ac) puis la CARCDSF : restent 84 fiches, 491
+manques. Au propriétaire, des erreurs du modèle déclarées dans les fiches, non corrigées : pour la CARCDSF, l'inapte et les
+catégories sans minoration (jusqu'à 30 points), la réversion, la majoration comptée au temps et non à l'exercice libéral, les
+statuts de 2007 et de 2011 servis hors de leurs dates (`130/2026-11-05-carte-des-fiches-carcdsf-lue-au-droit.md`) ; pour la CAVAMAC,
+cinq ; et `130/2026-11-03-decisions-du-proprietaire.md`. Restent les statuts de la CAVOM, CARPIMKO, CAVP et CPRN ; défauts candidats
+non lancés : l'Agirc-Arrco de 1955 à 1983, les biologistes et la durée, le taux plein de 1977 et de 1982, `ages_reference.csv`.
 
 Le dépôt devenait de plus en plus lourd à faire avancer. Une modification du
 moteur du scénario 1 touchait vingt fichiers en médiane, dont sept ou huit de

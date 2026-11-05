@@ -237,12 +237,24 @@ def test_chaque_version_lue_commence_quand_son_texte_entre_en_vigueur(fiche):
 #: 2023, le 6° de son annexe (l'article 15) « le 1er septembre 2023 », les a, c
 #: et d du 7° (l'article 16) « le 1er janvier 2024 » (article 2, 1° et 2°) ;
 #: celui du 10 juillet 2026 ne fixe pas de date.
+#: La CARCDSF, relevée le 5 novembre 2026 : l'arrêté du 13 avril 2011 met ses
+#: statuts en vigueur « à compter du 1er juillet 2011 » (article 3) ; ceux du
+#: 1er octobre 2007, du 9 juillet 2012, du 22 décembre 2017, du 27 décembre
+#: 2023 et du 10 juillet 2026 ne fixent pas de date.
 NAISSANCES_AU_JOURNAL_OFFICIEL = {
     "cavec_minoration_age_seul": {
         "JORFARTI000018197778": ("2008-03-01", "2008-03-02"),
         "JORFARTI000037363871": ("2018-09-04", "2018-09-05"),
         "JORFARTI000038689131": ("2019-06-27", "2019-06-28"),
         "LEGIARTI000054437585": ("2026-07-17", "2026-07-18"),
+    },
+    "carcdsf_minoration_age_seul": {
+        "JORFARTI000001859980": ("2007-10-10", "2007-10-11"),
+        "JORFARTI000023909792": ("2011-04-27", "2011-07-01"),
+        "JORFARTI000026208364": ("2012-07-21", "2012-07-22"),
+        "JORFARTI000036251928": ("2017-12-24", "2017-12-25"),
+        "JORFARTI000048880707": ("2024-01-09", "2024-01-10"),
+        "JORFARTI000054435749": ("2026-07-17", "2026-07-18"),
     },
     "cavamac_minoration_age_seul": {
         "JORFARTI000024270173": ("2011-06-29", "2011-07-01"),
