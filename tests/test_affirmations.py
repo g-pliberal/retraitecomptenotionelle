@@ -2907,13 +2907,13 @@ def _(m: Modele):
     Il affirmait « Les montants sont bruts » alors que le défaut était le NET
     depuis la bascule, et rien ne tenait la phrase : elle était fausse en bas
     de chaque page, y compris celles qu'on projette. Ce contrôle exige les
-    deux modes, le brut par défaut — celui de l'estimation officielle,
-    depuis le 4 octobre 2026 —, et une conversion qui fasse bien descendre
-    un brut vers un net.
+    deux modes, le net par défaut et en tête — ce que la personne touche,
+    depuis le 5 novembre 2026, le brut de l'estimation officielle restant à
+    un clic —, et une conversion qui fasse bien descendre un brut vers un net.
     """
     saisie = module("saisie")
-    assert [code for code, _ in saisie.MODES_MONTANT] == ["brut", "net"]
-    assert saisie.DEFAUTS["montants"] == "brut"
+    assert [code for code, _ in saisie.MODES_MONTANT] == ["net", "brut"]
+    assert saisie.DEFAUTS["montants"] == "net"
     assert saisie.Saisie({"montants": "net"}).en_net
     assert not saisie.Saisie({"montants": "brut"}).en_net
     pensions = charger_prelevements(m.contexte.base.racine_donnees).pensions

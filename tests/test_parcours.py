@@ -69,7 +69,7 @@ PAGES_DES_SECTIONS = {
 HORS_PAGE: dict[str, dict[str, str]] = {
     "/": {},
     "/simuler": {
-        "3 500 €": "la saisie de l'exemple, tapée par le présentateur",
+        "2 800 €": "la saisie de l'exemple, que la page pose",
         "1 443 €": "la saisie de la carrière au SMIC",
         "3 000 €": "la saisie de la carrière du fonctionnaire",
         "2 751 €": "la saisie de la carrière née en 2000",
@@ -177,7 +177,7 @@ def test_aucun_tableau_de_carriere_ne_s_ecrit_a_la_main():
 ECRITS_A_LA_MAIN = {
     "125 %": "le zoom du navigateur, un réglage de salle",
     "150 %": "le zoom du navigateur, un réglage de salle",
-    "3 500 €": "la saisie de l'exemple, tapée par le présentateur",
+    "2 800 €": "la saisie de l'exemple, que la page pose",
     "1 443 €": "la saisie de la carrière au SMIC",
     "3 000 €": "la saisie de la carrière du fonctionnaire",
     "2 751 €": "la saisie de la carrière née en 2000",
@@ -219,11 +219,9 @@ def _saisie_par_defaut() -> dict[str, str]:
 
 
 def _rendue(chemin: str) -> str:
-    # Le parcours décrit l'exemple en net — « 3 500 € net par mois » —, le
-    # défaut de son temps ; le brut l'est depuis le 4 octobre 2026. La page se
-    # rend dans le mode qu'il décrit.
-    parametres = ({**_saisie_par_defaut(), "montants": "net"} if chemin == "/simuler"
-                  else {})
+    # L'exemple que le parcours décrit est celui que la page pose, en net, le
+    # défaut depuis le 5 novembre 2026 : « 2 800 € net par mois ».
+    parametres = _saisie_par_defaut() if chemin == "/simuler" else {}
     return _prose(rendre(chemin, parametres)[1])
 
 
@@ -339,12 +337,12 @@ def test_le_parcours_rejoue_ses_carrieres(parcours):
 def test_le_parcours_rejoue_l_exemple_du_simulateur(parcours):
     """Le tableau de l'exemple, celui que la page ouvre déjà rempli, n'a pas
     d'adresse au-dessus de lui : il se confronte à la page rendue comme le
-    parcours la décrit, en net. Aucun test ne le lisait, et il datait du
+    parcours la décrit, en net, le défaut. Aucun test ne le lisait, et il datait du
     20 septembre (action 163)."""
     lignes = LIGNE_TABLEAU.findall(_sections(parcours)["### 2. Simuler — six minutes, c'est le cœur"])
     assert len(lignes) == 4, "le parcours ne donne plus les quatre lignes de l'exemple"
     _confronter("l'exemple", lignes,
-                _lignes_rendues("/simuler", {**_saisie_par_defaut(), "montants": "net"}))
+                _lignes_rendues("/simuler", _saisie_par_defaut()))
 
 
 def _confronter(qui: str, lignes: list[tuple], rendues: dict) -> None:

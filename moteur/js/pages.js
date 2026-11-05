@@ -6820,61 +6820,71 @@ function eurosSigne(montant, centimes = true) {
  * qu'elle a dit —, et l'hypothèse des cinq systèmes notionnels, qui gardent ce
  * taux (`prelevements_remuneration.yaml`). En BRUT, c'est le rappel qu'un brut n'est pas ce qu'on
  * touche.
+ *
+ * Le net est le défaut depuis le 5 novembre 2026 : sa note se lit sur chaque
+ * page de résultats. Le taux reste en clair, d'un coup d'œil ; ce qui le fixe
+ * s'ouvre sous un point d'interrogation, comme tout ce qui explique.
  */
 function noteDuMode(montants) {
-  if (montants.net) {
-    const autres = " Les autres systèmes gardent ce taux : le simulateur suppose "
-      + "que la réforme ne change pas vos prélèvements.";
-    if (montants.nonResident) {
-      const motifs = {
-        france_competente: "la France seule vous sert une pension",
-        residence_competente: "l'État où vous résidez vous sert une pension, et c'est "
-          + "lui qui prend en charge vos soins",
-        quinze_ans: "votre pension française rémunère au moins quinze années d'assurance",
-        moins_de_quinze_ans: "votre pension française rémunère moins de quinze années "
-          + "d'assurance",
-      };
-      const sansCsg = "Vous résidez hors de France : ni CSG, ni CRDS, ni contribution "
-        + "de solidarité.";
-      if (!montants.couvert) {
-        return `La pension n'est pas prélevée. ${sansCsg} Vous ne relevez pas non plus `
-          + `de l'assurance maladie française : ${motifs[montants.motifCouverture]}.`
-          + autres;
-      }
-      return `La pension est nette de ${g.pourcentage(montants.tauxPension, false, 1)}. `
-        + `${sansCsg} Mais vous relevez de l'assurance maladie française, parce que `
-        + `${motifs[montants.motifCouverture]} : une cotisation de `
-        + `${g.pourcentage(montants.tauxRegimeGeneral, false, 1)} sur la retraite de `
-        + `base du régime général et de ${g.pourcentage(montants.tauxMaladie, false, 1)} `
-        + "sur la complémentaire." + autres;
-    }
-    if (montants.aspa) {
-      return "La pension n'est pas prélevée : allocataire de l'ASPA, vous êtes "
-        + "exonéré de CSG, de CRDS, de contribution de solidarité et de "
-        + "cotisation maladie, et l'ASPA ne l'est jamais." + autres;
-    }
-    let revenu = "";
-    if (montants.revenuFiscal !== null) {
-      revenu = montants.revenuPresume
-        ? ", présumé fait de vos seules pensions, abattues de 10 % : "
-          + `${g.euros(montants.revenuFiscal)}. Vous pouvez dire le vôtre dans `
-          + "les options de modélisation"
-        : `, celui que vous avez dit : ${g.euros(montants.revenuFiscal)}`;
-    }
-    const assise = `Ce taux se lit sur le revenu fiscal de référence de votre foyer${revenu}.`;
-    if (montants.tauxPension === 0) {
-      return `La pension n'est pas prélevée : votre foyer est exonéré. ${assise}${autres}`;
-    }
-    const prelevements = montants.tranche === "taux réduit"
-      ? "la CSG au taux réduit et la CRDS"
-      : `la CSG au ${montants.tranche}, la CRDS, la contribution de solidarité et `
-        + "1 % de cotisation maladie sur la part complémentaire de votre pension "
-        + "du système actuel";
-    return `La pension est nette de ${g.pourcentage(montants.tauxPension, false, 1)} : `
-      + `${prelevements}. ${assise}${autres}`;
+  if (!montants.net) {
+    return "Le brut n'est pas ce qui arrive sur le compte : il reste à en "
+      + "retirer les cotisations pour un salaire, la CSG pour une pension.";
   }
-  return "Le brut n'est pas ce qui arrive sur le compte : il reste à en "
-    + "retirer les cotisations pour un salaire, la CSG pour une pension.";
+  const [taux, detail] = tauxEtDetailDuNet(montants);
+  return `${taux}${g.bulle("Ce que le net retire", detail)}`;
+}
+
+/** La note du net en deux temps : le taux, en clair, puis ce qui le fixe. */
+function tauxEtDetailDuNet(montants) {
+  const autres = " Les autres systèmes gardent ce taux : le simulateur suppose "
+    + "que la réforme ne change pas vos prélèvements.";
+  const nette = `La pension est nette de ${g.pourcentage(montants.tauxPension, false, 1)}.`;
+  const sansPrelevement = "La pension n'est pas prélevée.";
+  if (montants.nonResident) {
+    const motifs = {
+      france_competente: "la France seule vous sert une pension",
+      residence_competente: "l'État où vous résidez vous sert une pension, et c'est "
+        + "lui qui prend en charge vos soins",
+      quinze_ans: "votre pension française rémunère au moins quinze années d'assurance",
+      moins_de_quinze_ans: "votre pension française rémunère moins de quinze années "
+        + "d'assurance",
+    };
+    const sansCsg = "Vous résidez hors de France : ni CSG, ni CRDS, ni contribution "
+      + "de solidarité.";
+    if (!montants.couvert) {
+      return [sansPrelevement, `${sansCsg} Vous ne relevez pas non plus `
+        + `de l'assurance maladie française : ${motifs[montants.motifCouverture]}.`
+        + autres];
+    }
+    return [nette, `${sansCsg} Mais vous relevez de l'assurance maladie française, `
+      + `parce que ${motifs[montants.motifCouverture]} : une cotisation de `
+      + `${g.pourcentage(montants.tauxRegimeGeneral, false, 1)} sur la retraite de `
+      + `base du régime général et de ${g.pourcentage(montants.tauxMaladie, false, 1)} `
+      + "sur la complémentaire." + autres];
+  }
+  if (montants.aspa) {
+    return [sansPrelevement, "Allocataire de l'ASPA, vous êtes exonéré de CSG, de "
+      + "CRDS, de contribution de solidarité et de cotisation maladie, et l'ASPA ne "
+      + "l'est jamais." + autres];
+  }
+  let revenu = "";
+  if (montants.revenuFiscal !== null) {
+    revenu = montants.revenuPresume
+      ? ", présumé fait de vos seules pensions, abattues de 10 % : "
+        + `${g.euros(montants.revenuFiscal)}. Vous pouvez dire le vôtre dans `
+        + "les options de modélisation"
+      : `, celui que vous avez dit : ${g.euros(montants.revenuFiscal)}`;
+  }
+  const assise = `Ce taux se lit sur le revenu fiscal de référence de votre foyer${revenu}.`;
+  if (montants.tauxPension === 0) {
+    return ["La pension n'est pas prélevée : votre foyer est exonéré.", `${assise}${autres}`];
+  }
+  const prelevements = montants.tranche === "taux réduit"
+    ? "la CSG au taux réduit et la CRDS"
+    : `la CSG au ${montants.tranche}, la CRDS, la contribution de solidarité et `
+      + "1 % de cotisation maladie sur la part complémentaire de votre pension "
+      + "du système actuel";
+  return [nette, `Elle retire ${prelevements}. ${assise}${autres}`];
 }
 
 /**
@@ -6919,11 +6929,11 @@ function basculeMontants(saisie, echelle, tauxPension) {
   // désigner une section — `montants=brut#resultats` n'est pas un mode.
   const cible = g.lienAvecRequete("/simuler", echapper(saisie.requete(
     remplacementsMontants(saisie, echelle, tauxPension))));
-  // L'état courant n'a pas d'adresse : c'est celle où l'on est déjà. Le brut
-  // d'abord, comme l'estimation officielle et comme le défaut.
+  // L'état courant n'a pas d'adresse : c'est celle où l'on est déjà. Le net
+  // d'abord, comme le défaut.
   const branches = versLeNet
-    ? [["brut", "#"], ["net avant impôt", cible]]
-    : [["brut", cible], ["net avant impôt", "#"]];
+    ? [["net avant impôt", cible], ["brut", "#"]]
+    : [["net avant impôt", "#"], ["brut", cible]];
   return g.bascule("Montants", branches,
     saisie.enNet ? "net avant impôt" : "brut");
 }

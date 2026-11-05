@@ -895,8 +895,11 @@ def test_le_systeme_actuel_dit_sa_base_et_ses_complementaires(nom, champs, libel
      {"naissance": "1909-03-15", "debut": "1945-03", "liquidation": "1969-04",
       "salaire": "0.12", "interruptions": "1960:1969:invalidite"}, 258.01,
      ["retraite de base", "retraite complémentaire", "minimum vieillesse"]),
+    # En brut : la ligne se compare à « Votre pension, de votre départ à
+    # aujourd'hui », brute dans les deux modes.
     ("au minimum contributif, majorée en septembre 2023",
-     {"naissance": "1955", "liquidation": "67", "unite_revenu": "moyen", "salaire": "0.3"},
+     {"naissance": "1955", "liquidation": "67", "unite_revenu": "moyen", "salaire": "0.3",
+      "montants": "brut"},
      None, ["retraite de base", "retraite complémentaire"]),
 ])
 def test_la_composition_du_systeme_actuel_dit_ce_que_chaque_regime_sert(nom, champs, base,
@@ -1123,7 +1126,7 @@ def test_la_majoration_pour_enfant_servie_apres_la_date_d_effet_se_dit():
     l'âge légal » (R. 353-1-1), soixante-quatre ans : février 2039."""
     champs = {"naissance": "1960", "sexe": "H", "liquidation": "62", "enfants": "1",
               "naissances": "2031-02", "conjoint": "1975", "deces": "2030-06",
-              "montants": "brut"}
+              "montants": "brut", "unite_revenu": "euros_mois", "salaire": "3500"}
     carte = _bloc(rendre("/simuler", champs)[1], 'id="resultats-reversion"',
                   "Dans les systèmes 2, 3 et 4")
     cellules = next(c for c in _cellules(carte) if c[0].startswith("Régime général"))
@@ -1585,9 +1588,9 @@ def test_le_salaire_net_des_cartes_est_celui_de_la_fiche_de_paie():
     comme un salaire —, et avec lui le recoupement qu'il permettait. Le salaire
     net en offre un autre, et meilleur : il est écrit une fois en tête de
     chaque carte, et une seconde fois dans la fiche de paie repliée. Deux
-    chemins de calcul, deux rendus, un seul nombre attendu. En net, demandé :
-    le brut est le défaut depuis le 4 octobre 2026, et la carte dit alors le
-    salaire brut.
+    chemins de calcul, deux rendus, un seul nombre attendu. En net, le défaut
+    depuis le 5 novembre 2026, demandé ici pour qu'il ne dépende pas du défaut ;
+    en brut, la carte dit le salaire brut.
     """
     corps = rendre("/simuler", {**SIMULATION_TEMOIN, "montants": "net"})[1]
     blocs = re.findall(r'<div class="scenario">(.*?)<div class="barre', corps, re.S)
@@ -5932,7 +5935,7 @@ def test_la_garantie_vieillesse_que_l_impot_finance_se_dit_sous_les_etages(page)
     laisser deux taux de remplacement se contredire. Rien de tel quand les deux
     coïncident."""
     requete = {"naissance": "1985-01-01", "debut": "2010-01", "unite_revenu": "euros_mois",
-               "salaire": "1100"}
+               "salaire": "1100", "montants": "brut"}
     comparaison, simulateur, systemes = _autour_du_depart_du_portage(requete)
     bloc, ((_, rangees), _) = _depliant_autour_du_depart(page("/simuler", **requete))
     carte = comparaison.taux_remplacement_total("notionnel_liberal")

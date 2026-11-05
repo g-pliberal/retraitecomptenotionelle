@@ -202,14 +202,16 @@ def _hors_depliants(corps: str) -> str:
 #: de résultats : salarié du privé, départ après la bascule, indexation par
 #: défaut. C'est la simulation sur laquelle se mesure la discipline de cette
 #: page, que le budget de lecture ci-dessus ne voit pas — il rend « /simuler »
-#: sans paramètres, donc sans résultats.
+#: sans paramètres, donc sans résultats. Le salaire est celui du formulaire
+#: vierge, 2 800 € nets, le salarié moyen ; il était de 3 500 € bruts tant que
+#: le brut était le défaut, du 4 octobre au 5 novembre 2026.
 SIMULATION_TEMOIN = {
     "naissance": "1975-01-01",
     "debut": "1996-01-01",
     "liquidation": "2039-01-01",
     "statut": "salarie_prive_non_cadre",
     "unite_revenu": "euros_mois",
-    "salaire": "3500",
+    "salaire": "2800",
 }
 
 

@@ -647,10 +647,12 @@ def test_la_bascule_d_unite_convertit_les_montants():
     aurait refusé la saisie au lieu de la traduire. Le lien, lui, porte les
     montants déjà convertis.
     """
-    suite, libelle = _lien_de_bascule({"naissance": "1975", "montants": "brut"})
+    suite, libelle = _lien_de_bascule({"naissance": "1975"})
     assert libelle == "× salaire moyen"
     assert suite["unite_revenu"] == "moyen"
-    # 3 500 € par mois, à l'échelle d'un salaire moyen de 3 475 € : environ 1.
+    # 2 800 € nets par mois, le défaut, en brut à l'échelle d'un salaire moyen
+    # de 3 475 € bruts : environ 1. Le salaire qui s'offre au lecteur est celui
+    # du salarié moyen.
     assert float(suite["salaire"]) == pytest.approx(1.0, abs=0.05)
     # Et la page qui suit ce lien calcule, au lieu de refuser.
     corps = rendre("/simuler", suite)[1]
@@ -1661,7 +1663,7 @@ def test_la_proposition_se_compare_a_taux_egal_cotise(contexte):
 # portage, la seule (action 161, étape 6) ; la Cipav route la période vers les
 # régimes du libéral.
 _MICRO = {"statut": "micro_entrepreneur", "naissance": "1975", "debut": "2009-01",
-          "unite_revenu": "euros_mois", "salaire": "3000"}
+          "unite_revenu": "euros_mois", "salaire": "3000", "montants": "brut"}
 
 
 @pytest.mark.parametrize("micro,statut,part", [

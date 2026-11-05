@@ -42,9 +42,9 @@ ECRANS = [(320, 640), (390, 800), (768, 1024), (1024, 768), (1440, 900)]
 #: Une carrière entière, telle que le simulateur la met dans l'adresse quand
 #: on calcule le formulaire tel qu'il s'ouvre.
 REQUETE = (
-    "unite_revenu=euros_mois&montants=brut&situation=actif"
+    "unite_revenu=euros_mois&montants=net&situation=actif"
     "&saisie_par=revenu&naissance=2000-01-01&liquidation=2064-01-01"
-    "&debut=2021-01-01&statut=salarie_prive_non_cadre&salaire=3500"
+    "&debut=2021-01-01&statut=salarie_prive_non_cadre&salaire=2800"
     "&emploi_retraite_employeur=autre&sexe=H&profil=auto&primes=0&enfants=0"
     "&indexation=masse_salariale&lissage=1&table=unisexe&population=niveau_de_vie"
     "&rattachement=salaire&part_cotisation=salariale&contribution_etat=retraite_seule"

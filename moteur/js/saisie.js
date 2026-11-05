@@ -203,8 +203,11 @@ export const UNITES_REVENU = [
 
 // Ce que porte le champ tant que rien n'a été saisi, dans chaque unité. Un
 // nombre rond proche du salaire moyen plutôt que le salaire moyen exact : le
-// champ est fait pour être remplacé, et « 3 500 » se relit mieux que « 3 475 ».
-export const SALAIRE_DEFAUT = { euros_mois: 3500.0, moyen: 1.0 };
+// champ est fait pour être remplacé, et « 2 800 » se relit mieux que « 2 771 ».
+// Les euros sont NETS, comme les montants par défaut (`MODES_MONTANT`) : ceux
+// d'un salaire moyen de 3 475 € bruts. Le 3 500 de l'ancien défaut, lu en
+// net, décrivait un salarié payé un quart de plus que la moyenne.
+export const SALAIRE_DEFAUT = { euros_mois: 2800.0, moyen: 1.0 };
 
 /**
  * Où l'on en est de sa vie, et c'est la PREMIÈRE question du formulaire.
@@ -250,7 +253,7 @@ export const SAISIE_DE_LA_SITUATION = { actif: "revenu", retraite: "pension" };
 export const SAISIES = [["revenu", ""], ["pension", ""]];
 
 /**
- * Pension mensuelle proposée par défaut, en euros BRUTS, comme les montants par
+ * Pension mensuelle proposée par défaut, en euros NETS, comme les montants par
  * défaut. Voisine de la pension moyenne de droit direct des retraités de droit
  * français, pour que le formulaire s'ouvre sur un cas qui ressemble à celui de
  * qui le lit.
@@ -278,16 +281,17 @@ export const NIVEAU_MAXIMAL = 10.0;
 // Les deux façons de lire tout montant du simulateur — ce qu'on saisit comme
 // ce qu'on affiche. Un seul réglage pour les deux : lire un salaire net et une
 // pension brute sur la même page compare deux grandeurs différentes, et c'est
-// exactement ce que le site faisait avant cette bascule. Le défaut est le BRUT,
-// depuis le 4 octobre 2026 : c'est la langue de l'estimation officielle (« Mon
-// estimation retraite », sur info-retraite.fr), celle des chiffres que chacun
-// connaît déjà, et le propriétaire l'a voulu « en tête » pour qu'on puisse les
-// comparer. Le net avant impôt reste à un clic. Les capitaux, les assiettes et
-// les tableaux de détail sont bruts par nature et ne bougent pas : on ne
-// « nette » pas un capital notionnel.
+// exactement ce que le site faisait avant cette bascule. Le défaut est le NET
+// avant impôt, depuis le 5 novembre 2026, à la demande du propriétaire : ce que
+// la personne touche. Il avait été le brut du 4 octobre, la langue de
+// l'estimation officielle (« Mon estimation retraite », sur info-retraite.fr),
+// qui reste à un clic, et que le bloc « Comme votre estimation officielle »
+// donne en brut dans les deux modes. Les capitaux, les assiettes et les
+// tableaux de détail sont bruts par nature et ne bougent pas : on ne « nette »
+// pas un capital notionnel.
 export const MODES_MONTANT = [
-  ["brut", "brut — avant CSG et cotisations"],
   ["net", "net avant impôt — après CSG"],
+  ["brut", "brut — avant CSG et cotisations"],
 ];
 
 // Durée mensuelle de référence du SMIC : 35 heures par semaine pendant 52
@@ -677,7 +681,7 @@ export const DEFAUTS = Object.freeze({
   //: ce que le métier paie maintenant, et le modèle suit ensuite le salaire
   //: moyen d'une année à l'autre.
   unite_revenu: "euros_mois",
-  montants: "brut",
+  montants: "net",
   //: Les totaux bruts mensuels de « Mon estimation retraite », recopiés pour
   //: être comparés (`CHAMPS_ESTIMATION`) ; `null` quand rien ne l'est.
   estimation_legal: null,

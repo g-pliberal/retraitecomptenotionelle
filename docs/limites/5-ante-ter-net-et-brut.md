@@ -1,7 +1,7 @@
 # 5 ante ter. Le net et le brut : ce que la bascule suppose
 
-Le simulateur se lit entièrement en brut ou entièrement en net, saisie comprise,
-en brut par défaut. Quatre réserves, dont la première commande tout le reste.
+Le simulateur se lit entièrement en net ou entièrement en brut, saisie comprise,
+en net par défaut. Quatre réserves, dont la première commande tout le reste.
 
 **1. Le taux de CSG d'une pension suit le revenu fiscal du foyer, présumé
 quand il n'est pas dit.** L'article L. 136-8 le fait dépendre du revenu fiscal de référence du
@@ -192,10 +192,11 @@ statuts que le modèle ne sait pas décrire — exploitant agricole, élu,
 collectivités d'outre-mer — font exception : leur montant est lu tel quel, et le
 formulaire l'affiche plutôt que de le taire.
 
-**Et le format de l'estimation officielle.** Le brut est le défaut depuis le
-4 octobre 2026 : c'est la langue de « Mon estimation retraite », celle des
-chiffres que chacun connaît déjà. Sous les quatre montants, la page montre le
-système 1 comme cette estimation le chiffre — le brut de chaque étage aux âges
+**Et le format de l'estimation officielle.** Le net est le défaut depuis le
+5 novembre 2026 ; le brut, la langue de « Mon estimation retraite », celle des
+chiffres que chacun connaît déjà, reste à un clic. Sous les quatre montants,
+dans les deux modes, la page montre le système 1 comme cette estimation le
+chiffre — le brut de chaque étage aux âges
 de sa synthèse, au plus tôt, au taux plein et au taux plein automatique, le net
 en second — et l'écart au total que le lecteur recopie de la sienne. Trois
 réserves. Le net y est celui de la bascule, avec les réserves 1 et 2 : le net

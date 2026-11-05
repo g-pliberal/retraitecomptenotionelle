@@ -729,7 +729,7 @@ def test_les_resultats_s_ouvrent_sur_le_resume_la_cle_puis_les_montants():
     montrait dix nombres et rien qui dise lesquels comparer.
 
     En net, demandé : la note de la CSG, que la page ne porte qu'en net, se lit
-    sous les barres, et le brut est le défaut depuis le 4 octobre 2026."""
+    sous les barres ; le net est le défaut depuis le 5 novembre 2026."""
     corps = rendre("/simuler", {**SIMULATION_TEMOIN, "montants": "net"})[1]
     visible = _hors_depliants(corps)
     resultats = visible.index('id="resultats"')
@@ -763,7 +763,10 @@ def test_les_resultats_s_ouvrent_sur_le_resume_la_cle_puis_les_montants():
     # deux fois plus longue.
     carte = " ".join(visible[premier:reperes].split())
     assert "n'est pas une prévision" in carte
-    assert "le revenu fiscal de référence de votre foyer" in carte
+    # Le taux que le net retire, en clair ; ce qui le fixe, sous son point
+    # d'interrogation, depuis que le net est le défaut (5 novembre 2026).
+    assert "La pension est nette de" in carte
+    assert "le revenu fiscal de référence de votre foyer" in corps
     paragraphe = cle[:cle.index("</p>")]
     assert len(re.sub(r"<[^>]+>", " ", paragraphe).split()) < 90, (
         "la clé de lecture s'allonge de nouveau")
@@ -799,8 +802,8 @@ def test_le_resume_des_resultats_redit_les_chiffres_des_barres():
     étalons et non choix, n'y figurent pas.
 
     En net, demandé : le salaire que les barres affichent est alors le salaire
-    net dont le résumé parle. Le brut, défaut depuis le 4 octobre 2026, est tenu
-    à la fin, sur les pensions.
+    net dont le résumé parle. Le brut, défaut du 4 octobre au 5 novembre 2026,
+    est tenu à la fin, sur les pensions.
     """
     corps = rendre("/simuler", {**SIMULATION_TEMOIN, "montants": "net"})[1]
     bref = re.search(r'<section class="en-bref".*?</section>', corps, re.S).group(0)
@@ -852,8 +855,8 @@ def test_le_resume_des_resultats_redit_les_chiffres_des_barres():
     # à la route.
     assert 'data-vers="resultats-financement"' in bref
     assert 'id="resultats-financement"' in corps
-    # En brut, le défaut : les mêmes pensions que les barres, dites brutes.
-    en_brut = rendre("/simuler", SIMULATION_TEMOIN)[1]
+    # En brut, l'autre mode : les mêmes pensions que les barres, dites brutes.
+    en_brut = rendre("/simuler", {**SIMULATION_TEMOIN, "montants": "brut"})[1]
     bref = re.search(r'<section class="en-bref".*?</section>', en_brut, re.S).group(0)
     texte = re.sub(r"[ \t\n]+", " ", re.sub(r"<[^>]+>", " ", bref))
     blocs = en_brut.split('<div class="scenario">')[1:]
@@ -872,9 +875,9 @@ def test_le_resume_elide_le_mois_d_un_depart_a_venir():
         section = re.search(r'<section class="en-bref".*?</section>', corps, re.S).group(0)
         return html.unescape(re.sub(r"[ \t\n]+", " ", re.sub(r"<[^>]+>", " ", section)))
 
-    assert "bruts par mois, à partir d'août 2039, à 64 ans et 7 mois." in bref("2039-08-01")
-    assert "bruts par mois, à partir d'octobre 2039, à 64 ans et 9 mois." in bref("2039-10-01")
-    assert "bruts par mois, à partir de janvier 2039, à 64 ans." in bref("2039-01-01")
+    assert "nets par mois, à partir d'août 2039, à 64 ans et 7 mois." in bref("2039-08-01")
+    assert "nets par mois, à partir d'octobre 2039, à 64 ans et 9 mois." in bref("2039-10-01")
+    assert "nets par mois, à partir de janvier 2039, à 64 ans." in bref("2039-01-01")
     for liquidation, celle in (("2026-10-01", "celle d'octobre 2026."),
                                ("2026-03-01", "celle de mars 2026.")):
         corps = rendre("/simuler", {**SIMULATION_TEMOIN, "naissance": "1962-01-01",
@@ -889,7 +892,7 @@ def test_le_resume_dit_au_retraite_que_sa_pension_serait_recalculee():
     sans ligne de salaire.
 
     La pension qu'il y lit est celle qu'il touche AUJOURD'HUI, et c'est celle
-    qu'il a saisie : 1 600 € bruts en 2026, et non 1 600 € en avril 2017. Le
+    qu'il a saisie : 1 600 € nets en 2026, et non 1 600 € en avril 2017. Le
     résumé disait « votre retraite était de », et donnait la pension du
     départ ramenée par les prix — ce que personne n'a jamais touché."""
     corps = rendre("/simuler", {
@@ -899,7 +902,7 @@ def test_le_resume_dit_au_retraite_que_sa_pension_serait_recalculee():
         "pension": "1600"})[1]
     bref = re.search(r'<section class="en-bref".*?</section>', corps, re.S).group(0)
     texte = re.sub(r"[ \t\n]+", " ", re.sub(r"<[^>]+>", " ", bref))
-    assert "votre retraite est aujourd'hui de 1\u202f600\u202f€ bruts par mois" in texte
+    assert "votre retraite est aujourd'hui de 1\u202f600\u202f€ nets par mois" in texte
     assert "celle de votre départ, en avril 2017, revalorisée depuis" in texte
     assert "elle serait recalculée sur ce qui a été cotisé" in texte
     assert "Pendant que vous travaillez" not in texte
@@ -1239,12 +1242,12 @@ def test_un_scenario_n_affiche_que_les_euros_de_l_annee_de_reference():
         # exige qu'aucune ne s'écarte des autres.
         unites = re.findall(r'<span class="unite">([^<]*)</span>', entete)
         assert unites
-        assert set(unites) == {"€ brut/mois"}
+        assert set(unites) == {"€ net/mois"}
         # Le second chiffre, s'il est là, dit de quoi il parle : sans son
         # étiquette, deux nombres se toucheraient sans que rien ne les sépare.
         if 'class="chiffre salaire"' in entete:
             assert ">salaire</span>" in entete
-            assert "€ brut/mois" in entete
+            assert "€ net/mois" in entete
         # Le troisième, de même : il dit ce que les comptes financent de la
         # pension promise, et il ne paraît que là où ils en financent moins
         # qu'elle. Sans son étiquette, il se lirait comme un montant de plus.
@@ -1253,7 +1256,7 @@ def test_un_scenario_n_affiche_que_les_euros_de_l_annee_de_reference():
     assert "Deux fois le même montant" not in corps
     assert "grand chiffre" not in corps
     assert f"en euros de {depart}" not in corps.split('<div class="carte">')[0]
-    assert ("en brut tous les trois, par mois, en euros d'aujourd'hui"
+    assert ("en net tous les trois, par mois, en euros d'aujourd'hui"
             in " ".join(corps.split()))
 
 
@@ -2115,6 +2118,15 @@ def test_la_complementaire_paie_sa_cotisation_maladie_sur_la_page():
     assert "1 % de cotisation maladie" in corps
     assert "présumé fait de vos seules pensions" in corps
     assert "ne change pas vos prélèvements" in corps
+    # Le taux se lit d'un coup d'œil ; ce qui le fixe s'ouvre sous un point
+    # d'interrogation : le net est le défaut depuis le 5 novembre 2026, et sa
+    # note entière dépassait le budget de mots des résultats.
+    detail = re.search(r'La pension est nette de [^<]*<span class="mot">.*?'
+                       r'<span class="bulle"[^>]*hidden>(.*?)</span></span>', corps, re.S)
+    assert detail, "le détail du net n'est plus sous un point d'interrogation"
+    for morceau in ("1 % de cotisation maladie", "présumé fait de vos seules pensions",
+                    "ne change pas vos prélèvements"):
+        assert morceau in detail.group(1), morceau
 
 
 def test_le_mode_des_montants_voyage_dans_l_adresse():
@@ -2126,7 +2138,7 @@ def test_le_mode_des_montants_voyage_dans_l_adresse():
     """
     saisie = saisie_du_portage({"naissance": "1975", "montants": "net"})
     assert "montants=net" in saisie.requete()
-    assert "montants=brut" in saisie_du_portage({"naissance": "1975"}).requete()
+    assert "montants=net" in saisie_du_portage({"naissance": "1975"}).requete()
     # Et le formulaire le renvoie quand on le soumet, par un champ caché.
     corps = rendre("/simuler", {"naissance": "1975", "montants": "net"})[1]
     assert '<input type="hidden" name="montants" value="net">' in corps
@@ -2199,6 +2211,8 @@ def test_la_bascule_ecrit_ses_deux_etats_et_dit_lequel_s_applique():
             # l'on est déjà.
             assert bloc.count("<a href=") == 1
             assert 'role="group"' in bloc and 'aria-label="Montants"' in bloc
+            # Le net d'abord, comme le défaut.
+            assert bloc.index(libelles["net"]) < bloc.index(">brut<")
 
 
 def test_l_aide_du_champ_ne_promet_pas_une_conversion_qui_n_aura_pas_lieu():

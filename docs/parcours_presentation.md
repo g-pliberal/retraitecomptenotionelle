@@ -100,7 +100,7 @@ C'est l'accueil. Descendre lentement, sans rien cliquer.
 
 Onglet **Simuler**. L'exemple est déjà rempli, celui d'un jeune actif : né
 en janvier 2000, premier emploi en janvier 2021 comme salarié du privé non
-cadre, 3 500 € net par mois, départ en janvier 2064 à 64 ans. **Cliquer
+cadre, 2 800 € net par mois, départ en janvier 2064 à 64 ans. **Cliquer
 « Calculer les quatre systèmes »** sans rien changer.
 
 Quatre lignes apparaissent, une par système. Chaque ligne a deux chiffres :
@@ -109,17 +109,17 @@ tout en euros d'aujourd'hui, par mois. Ce que l'exemple donne :
 
 | Système | Pension nette par mois | Écart au système actuel |
 |---|---|---|
-| 1. Système de répartition actuel | <!--chiffre:mesure(simulateur?systeme=1&montants=net)-->3 119<!--/--> € | référence |
-| 2. Ce que vous avez cotisé, part salariale seule | <!--chiffre:mesure(simulateur?systeme=2&montants=net)-->807<!--/--> € | <!--chiffre:mesure(simulateur?systeme=2&quoi=ecart&montants=net)-->-74,1<!--/--> % |
-| 3. Ce que vous avez cotisé, part salariale + patronale | <!--chiffre:mesure(simulateur?systeme=3&montants=net)-->1 994<!--/--> € | <!--chiffre:mesure(simulateur?systeme=3&quoi=ecart&montants=net)-->-36,1<!--/--> % |
-| 4. La proposition du Parti libéral français | <!--chiffre:mesure(simulateur?systeme=4&montants=net)-->2 442<!--/--> € | <!--chiffre:mesure(simulateur?systeme=4&quoi=ecart&montants=net)-->-21,7<!--/--> % |
+| 1. Système de répartition actuel | <!--chiffre:mesure(simulateur?systeme=1&montants=net)-->2 723<!--/--> € | référence |
+| 2. Ce que vous avez cotisé, part salariale seule | <!--chiffre:mesure(simulateur?systeme=2&montants=net)-->661<!--/--> € | <!--chiffre:mesure(simulateur?systeme=2&quoi=ecart&montants=net)-->-75,7<!--/--> % |
+| 3. Ce que vous avez cotisé, part salariale + patronale | <!--chiffre:mesure(simulateur?systeme=3&montants=net)-->1 634<!--/--> € | <!--chiffre:mesure(simulateur?systeme=3&quoi=ecart&montants=net)-->-40,0<!--/--> % |
+| 4. La proposition du Parti libéral français | <!--chiffre:mesure(simulateur?systeme=4&montants=net)-->2 003<!--/--> € | <!--chiffre:mesure(simulateur?systeme=4&quoi=ecart&montants=net)-->-26,4<!--/--> % |
 
 Comment les lire, et c'est la chose la plus importante de la présentation :
 
 - **Le système 1 est la référence** : le droit en vigueur, minima et
   majorations compris, recalculé règle par règle sur cette carrière. Sa ligne
   porte un troisième chiffre, et il vaut d'être lu à voix haute :
-  **financé, <!--chiffre:mesure(simulateur?systeme=1&quoi=finance&montants=net)-->2 661<!--/--> €**, soit <!--chiffre:mesure(simulateur?systeme=1&quoi=financee&montants=net)-->85<!--/--> % de ce qu'il
+  **financé, <!--chiffre:mesure(simulateur?systeme=1&quoi=finance&montants=net)-->2 323<!--/--> €**, soit <!--chiffre:mesure(simulateur?systeme=1&quoi=financee&montants=net)-->85<!--/--> % de ce qu'il
   promet. Le reste attend des cotisations que personne n'a versées. La barre
   sous la ligne le montre, et la page Pourquoi changer le chiffre.
 - **Les systèmes 2 et 3 ne sont pas des propositions.** Ce sont des
@@ -144,8 +144,8 @@ Comment les lire, et c'est la chose la plus importante de la présentation :
 
 Puis, sous les quatre lignes, le bloc **« Et pendant que vous cotisez »** :
 une réforme change aussi la fiche de paie. Sur l'exemple, le salaire net
-mensuel passe de <!--chiffre:mesure(simulateur?systeme=1&quoi=salaire&montants=net)-->2 980<!--/--> € à <!--chiffre:mesure(simulateur?systeme=4&quoi=salaire&montants=net)-->3 203<!--/--> €, soit **<!--chiffre:mesure(simulateur?systeme=4&quoi=gain&montants=net)-->+223<!--/--> € par mois** à coût du
-travail inchangé pour l'employeur, et <!--chiffre:mesure(simulateur?quoi=gain_cumule&montants=net)-->+147 805<!--/--> € sur les <!--chiffre:mesure(simulateur?quoi=annees&montants=net)-->38<!--/--> années qui
+mensuel passe de <!--chiffre:mesure(simulateur?systeme=1&quoi=salaire&montants=net)-->2 383<!--/--> € à <!--chiffre:mesure(simulateur?systeme=4&quoi=salaire&montants=net)-->2 554<!--/--> €, soit **<!--chiffre:mesure(simulateur?systeme=4&quoi=gain&montants=net)-->+171<!--/--> € par mois** à coût du
+travail inchangé pour l'employeur, et <!--chiffre:mesure(simulateur?quoi=gain_cumule&montants=net)-->+114 720<!--/--> € sur les <!--chiffre:mesure(simulateur?quoi=annees&montants=net)-->38<!--/--> années qui
 restent avant le départ. C'est le net plein : la proposition prélève <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal+taux_capitalisation_obligatoire)-->23<!--/--> %
 pour la retraite et rien d'autre, quand le droit en vigueur en prélève <!--chiffre:mesure(fiche?exemple=salaire_moyen&quoi=total)-->28<!--/-->.
 Celui qui verse en plus les <!--chiffre:mesure(parametre?nom=taux_capitalisation_volontaire)-->5<!--/--> % volontaires retrouve l'effort d'aujourd'hui,
@@ -418,7 +418,7 @@ vérifiez plutôt que de nous croire.
 ## Ce qu'il vaut mieux ne pas faire en salle
 
 - Taper un salaire sans vérifier l'unité : le champ est en euros nets par
-  mois, mais un sélecteur « Unité » permet « × salaire moyen ». Un 3 500
+  mois, mais un sélecteur « Unité » permet « × salaire moyen ». Un 2 800
   saisi dans la mauvaise unité est refusé, avec un message clair.
 - Ouvrir « Options de modélisation » : neuf règles d'indexation, tables de
   mortalité, projection du COR. C'est juste, et c'est trop pour vingt
