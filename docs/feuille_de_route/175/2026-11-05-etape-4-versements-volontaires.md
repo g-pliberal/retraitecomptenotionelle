@@ -1,15 +1,5 @@
 # Étape 4, thème « Carrière : versements volontaires » : les exposés et leurs références
 
-**Reprise, au 5 novembre 2026.** Trois thèmes de l'étape sont rangés : « Retraite
-personnelle de base », « Carrière : cotisations-salaires », puis « Carrière : versements
-volontaires » — ses 49 exposés, et les 12 fenêtres, 1 liste, 151 références et 5 avis
-qu'ils lient (cette note). Suivant, dans l'ordre de l'étape : « Carrière : périodes
-assimilées » (25 exposés), sous la convention de la note du premier thème. La base se
-relit par `cnav_legislation.py` sans mise en garde, hors de 5 h–6 h UTC. Restent à lire
-avec leur thème : les listes d'accords, de périodes de guerre, de l'Union et de l'Espace
-économique européens. Aux sessions du modèle : les deux candidats de cette note,
-l'activité accessoire d'avant 2015 (`un_statut_par_annee`), l'AVPF du père (`avpf`).
-
 **Le 5 novembre 2026, ce qui est fait.**
 
 - *La mise en garde de l'import de nuit ne tient plus.* La base relue ce jour de 18 h 16 à

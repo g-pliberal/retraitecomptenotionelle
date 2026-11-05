@@ -342,6 +342,50 @@ l'Institut des politiques publiques (PENSIPP). Écarts connus :
   législation de la Cnav publie de 1938 à 1962 : la fiche
   `totalisation_des_periodes_etrangeres` les renvoie aux périodes assimilées,
   qui ne les portent pas.
+- **périodes assimilées** — le modèle valide sans cotisation les années que la
+  saisie déclare sans emploi pour un motif — chômage indemnisé, de solidarité
+  ou non indemnisé, préretraite du Fonds national de l'emploi, arrêt maladie,
+  accident du travail, congé de maternité, invalidité, service militaire —,
+  quatre trimestres par année au plus
+  (`legislation/periodes_non_travaillees.csv`), le chômage non indemnisé dans
+  ses limites (fiche `chomage_non_indemnise`) ; et, comptés au jour, les stages
+  de la formation professionnelle continue, l'inscription sur la liste des
+  sportifs de haut niveau et le congé supplémentaire de naissance (leurs
+  fiches). La caisse compte au jour : un trimestre par cinquante jours de
+  chômage, par soixante jours d'indemnités de maladie ou d'accident du
+  travail, par quatre-vingt-dix jours de service national, de guerre ou de
+  rééducation professionnelle, par trimestre civil de trois mensualités d'une
+  pension d'invalidité ou d'une rente d'incapacité permanente des deux tiers
+  au moins ; une année entière en vaut quatre ici comme là, une année partagée
+  se lit à l'année. Le congé de maternité fait exception : la caisse n'en
+  valide que le trimestre de l'accouchement, puis, pour les naissances depuis
+  2014, un trimestre par quatre-vingt-dix jours d'indemnités (R. 351-12, 2°),
+  quand le modèle donne quatre trimestres à l'année déclarée. Il ne sert pas :
+  l'activité partielle depuis mars 2020, un trimestre par deux cent vingt
+  heures indemnisées ; l'allocation de préparation à la retraite des anciens
+  combattants d'Afrique du Nord ; les périodes de guerre — mobilisation,
+  captivité, résistance, déportation, travail obligatoire et les autres
+  situations que la base énumère — ; la détention, l'internement ou
+  l'assignation à résidence liés aux évènements d'Afrique du Nord, et la
+  détention des otages de l'invasion du Koweït ; l'affiliation des rapatriés
+  au régime particulier de leur retour ; l'indemnité de soins aux
+  tuberculeux, trente-six trimestres au plus ; les situations validées comme
+  le chômage — cessation anticipée d'activité, congés de conversion, de
+  mobilité et de reclassement, allocation de congé-solidarité d'outre-mer,
+  stage d'un programme d'insertion locale, détention provisoire, intempéries
+  du bâtiment, inondations de 1955 et 1956 —, l'allocation des travailleurs
+  indépendants, et l'Accre d'avant 2007 de qui restait affilié au régime
+  général ; la
+  validation gratuite des années 2020 et 2021 que la loi n° 2021-1754
+  (article 107) donne à l'indépendant, à l'artiste-auteur et au mandataire
+  social que la crise sanitaire a privés de revenus ; ni les volontariats
+  (`ecarts-au-droit-positif.md`). La saisie n'a pas de quoi les dire. Le
+  régime qui valide la période n'est pas celui que désignent les règles de
+  compétence de la caisse — premier régime d'affiliation après le service ou
+  la guerre, régime spécial d'abord, dernier régime salarié avant le
+  chômage — : l'année d'interruption reste au métier qui l'occupe le plus
+  (`carriere.py`, `_lignes_du_parcours`), et la saisie ne déclare une période
+  sans emploi qu'après un premier métier.
 
 Un écart de quelques pour cent avec la pension réelle est attendu.
 

@@ -1,0 +1,41 @@
+date: "2026-11-05"
+session: "action 175, étape 4 : le thème « Carrière : périodes assimilées » de la base de la Cnav"
+consulte: >-
+  python scripts/veille_droit.py --sans-cnav. La base de législation de la Cnav, relue par
+  python scripts/fetch/cnav_legislation.py le 5 novembre 2026 de 20 h 48 à 20 h 57 UTC
+  (import de la nuit à 5 h 00), sans refus et sans rien changer au registre. Par son API :
+  les 25 exposés du thème « Carrière > Périodes assimilées », à la version que le registre
+  date, les 9 fenêtres, la liste des situations validables en temps de guerre et ses 56
+  tableaux, les 243 références qu'ils lient, les 6 avis de mise à jour qui touchent ces
+  références. L'index LEGI de la DILA, à jour au 2 novembre 2026, et JORF, au 3 : les 59
+  identifiants Légifrance des 101 liens des exposés ; R. 351-12 (rédactions de 2001, 2004,
+  2021, 2023 et du 1er novembre 2026), les décrets n° 2001-496 et 2001-500, le décret
+  n° 2023-799 (article 7), l'article 23 de la loi n° 2025-1403. Le jumeau Python du modèle,
+  sur quatre carrières posées à la main.
+trouve: >-
+  Le registre range tout le thème : 25 exposés limite, 9 fenêtres, 58 listes de guerre,
+  243 références, 6 avis. La limite « périodes assimilées » (docs/limites/3-systeme-actuel.md)
+  dit ce que le modèle valide à l'année, ce que la caisse compte au jour, et ce qu'il ne
+  sert pas : l'activité partielle, l'allocation de préparation à la retraite, les périodes
+  de guerre, la détention liée à l'Afrique du Nord, les otages du Koweït, les rapatriés,
+  l'indemnité de soins aux tuberculeux (trente-six trimestres au plus), les situations
+  validées comme le chômage, la validation gratuite de 2020 et 2021 de la crise sanitaire,
+  la compétence entre régimes. Un lien faux de la base : « Décret 2001/496 du 11/06/2001 »
+  mène au décret n° 2001-500, quand c'est le n° 2001-496 qui ajoute le h du 4° de
+  R. 351-12 (allocation de congé-solidarité). Trois écarts candidats, aucun corrigé : le
+  modèle valide quatre trimestres à l'année de congé de maternité, la caisse celui de
+  l'accouchement (R. 351-12, 2°) ; il donne le plafond de trente-deux trimestres aux
+  périodes de sportif de haut niveau d'avant 2023 dès que la pension prend effet après le
+  1er septembre 2023, quand le décret n° 2023-799 (article 7, II) ne le donne qu'aux
+  périodes d'après le 1er janvier 2023 (son propre test : 32 trimestres là où le décret en
+  permet 24) ; il traite le chômage non indemnisé qui suit un chômage indemnisé en première
+  période, sans les cinq ans du chômeur de cinquante-cinq ans, quand la caisse lui applique
+  la limite d'un an ou de cinq ans (4 trimestres au lieu de 16 pour le salarié né en 1942
+  en fin de droits à cinquante-cinq ans).
+reste: >-
+  L'étape 4 au thème suivant, « Carrière : majorations de durée d'assurance » (13 exposés).
+  Aux sessions du modèle : les trois candidats, après lecture de la circulaire Cnav 2023/20
+  (sportifs) et des circulaires Cnav 2020/25 et 2010/54 (chômage non indemnisé), que cette
+  session n'a pas lues. Les listes des pays de l'Union et de l'Espace économique européens,
+  avec leur thème. Les textes absents de l'index : décrets n° 2021-626 et 56-930, lois
+  n° 2000-1207, 2022-172 et 55-141, les secteurs S1 et S1 bis de la crise sanitaire.
