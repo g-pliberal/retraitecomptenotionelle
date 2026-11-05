@@ -884,8 +884,10 @@ approximations:
     la seconde, à la moitié du plafond, sous 1,16 à 1,24 mois, s'il cesse en janvier ;
     le commerçant, la première année, sous 2,76 à 3,01 mois, s'il commence en novembre
     ou en décembre, ou en octobre 2008 (dix-huit fois 374,12 € sur trois mois,
-    1 683,54 €), la seconde, sous 1,91 à 2,01 mois, s'il cesse en janvier, ou en février
-    2008 (vingt-sept fois 374,12 € sur deux mois, 1 683,54 €)
+    1 683,54 €), la seconde, sous 1,84 à 2,01 mois, s'il cesse en janvier (en 2004, pour
+    qui a commencé en 2003, 27 × 347,68 € / 12 = 782,28 € sous 1 438 €, soit 1,84 mois ;
+    sur deux, 1 564,56 €, au-dessus), ou en février 2008 (vingt-sept fois 374,12 € sur
+    deux mois, 1 683,54 €)
 - version: [regularisation_2009]
   ecart: >-
     le modèle tient le forfait de l'artisan qui commence, de 2009 à 2011, pour un acompte
@@ -1338,3 +1340,8 @@ historique:
   forfait ; le tableau de la circulaire n° 2008/017, celui du plafonnement des
   micro-entreprises ; le rectificatif du 28 août 2004 cité
   (`177/2026-11-05-retouches-de-la-relecture-r-d3.md`).
+- >-
+  2026-11-05 — la deuxième année du commerçant en 2004 (action 177, file D3), relevée par
+  la relecture des retouches de R-D2 : le seuil de qui a commencé en 2003, 27 × 347,68 € /
+  12 = 782,28 € sous 1 438 €, soit 1,84 mois, dit à l'effet de l'approximation du minimum
+  et du forfait de début (`177/2026-11-05-retouches-de-la-relecture-r-d3.md`, ajout daté).

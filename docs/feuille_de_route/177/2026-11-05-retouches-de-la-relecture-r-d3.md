@@ -214,3 +214,11 @@ au-dessus). Je ne la retouche pas : elle n'est pas dans la liste de cette tâche
   n° 2007/013, 2008/017, 2008/031, 2009/017, 2009/035, 2009/044.
 - **Dépôt** : `plafond_securite_sociale.csv`, `smic_horaire.csv`,
   `base_mensuelle_prestations_familiales.csv` ; la fiche `assiette_rco_independants`.
+
+*Ajout, le 5 novembre 2026, à la demande de l'orchestration* : la case de 2004 du commerçant
+que le § 3 laisse à la relecture des retouches de R-D2 est corrigée dans la fiche
+`assiette_rco_independants`. Calcul refait à la main : 200 × 7,19 = 1 438 € ; 27 × 347,68 / 12
+= 782,28 € le mois ; 1 438 / 782,28 = 1,838, soit 1,84 mois ; deux mois, 1 564,56 €, au-dessus.
+L'effet dit maintenant « sous 1,84 à 2,01 mois », et la ligne de 2004 y est écrite. Les points
+que le modèle sert alors au NRCO, 27 × 347,68 × 4 % / 13,89 = 27,0334, sont ceux que la
+relecture a obtenus du moteur ; aucune valeur ne bouge.
