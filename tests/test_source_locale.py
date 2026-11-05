@@ -11,6 +11,7 @@ avant de sortir.
 from __future__ import annotations
 
 import importlib.util
+import re
 import sys
 from pathlib import Path
 
@@ -109,6 +110,30 @@ def test_un_document_retire_par_son_producteur_se_lit_dans_ses_copies():
         assert "soumise à l'accord" in jeu["rediffusion"]["texte"], ident
         assert not module.a_publier([jeu]), ident
     assert jeux["cor_simulateur_2019"]["fichier_local"] != jeux["cor_simulateur_2021"]["fichier_local"]
+
+
+def test_les_extraits_du_jo_se_recuperent_par_la_release():
+    """Le JO numérisé ne s'ouvre qu'à un navigateur, addition résolue à la main,
+    parce qu'il porte des données nominatives. Une session du cloud doit pouvoir
+    relire ce qu'une fiche en cite, sans que le dépôt republie un numéro entier :
+    la release ne sert que les pages des textes lus, ou leur colonne quand le
+    reste de la page nomme des particuliers. Le manifeste dit de chacune son texte
+    et son empreinte."""
+    module = _module()
+    jeu = _jeux()["jo_fac_similes_extraits"]
+    assert jeu["blocage"] == "refus"
+    assert jeu["fichier_local"] == "jo_fac_similes_extraits.zip"
+    assert jeu["miroir"] == module.url_publiee(jeu["fichier_local"])
+    assert re.fullmatch(r"[0-9a-f]{64}", jeu["sha256"])
+    assert module.rediffusion(jeu) == "libre"
+    assert not module.a_publier([jeu])
+    assert "nominatives" in jeu["rediffusion"]["note"]
+    assert len(jeu["contenu"]) >= 4
+    for nom, extrait in jeu["contenu"].items():
+        assert re.fullmatch(r"JORF_\d{8}_\d+_p\d+\.pdf", nom), nom
+        assert re.fullmatch(r"[0-9a-f]{64}", extrait["sha256"]), nom
+        assert extrait["document"].startswith(
+            "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT"), nom
 
 
 def test_la_liste_des_sources_bloquees_s_imprime(capsys):

@@ -4215,6 +4215,65 @@ institutions:
       1971, 1982, 1993, 2003, 2010, 2014, 2023…). Source primaire des
       paramètres législatifs historiques.
     jeux:
+      - id: jo_fac_similes_extraits
+        titre: >-
+          Le Journal officiel numérisé, en extraits : les pages des textes
+          d'avant 1990 que l'index ne garde qu'en notice, lues au fac-similé
+        url: https://www.legifrance.gouv.fr/
+        acces: document
+        blocage: refus
+        fichier_local: jo_fac_similes_extraits.zip
+        miroir: https://github.com/g-pliberal/retraitecomptenotionelle/releases/download/documents-apportes/jo_fac_similes_extraits.zip
+        sha256: d6d3c42eebabb77dfe3565c3ad1e292ed6da157034894cb664566bb93e6fe0f5
+        rediffusion:
+          statut: libre
+          licence: licence ouverte Etalab 2.0
+          texte: >-
+            « Sauf mention contraire, tous les contenus de ce site sont sous
+            licence etalab-2.0 » ; et « Les données de Légifrance sont mises à
+            disposition pour une réutilisation gratuite ». La licence réserve
+            le cadre légal des données à caractère personnel.
+          lu_dans: >-
+            le pied de page de legifrance.gouv.fr, ses mentions légales et sa
+            page « Open data et API », lus dans le navigateur du poste
+          lu_le: "2026-11-05"
+          mention: >-
+            Journal officiel de la République française, Lois et décrets,
+            version papier numérisée, servie par Légifrance
+            (https://www.legifrance.gouv.fr) : pages reproduites telles
+            quelles, ou réduites à leur colonne ; licence ouverte Etalab 2.0.
+          note: >-
+            Légifrance protège ces numéros par une addition à résoudre, parce
+            qu'ils portent des données nominatives : le dépôt n'en republie
+            aucun en entier. Chaque extrait est la page d'un texte lu, sans
+            particulier nommé, et, quand le reste de la page en nomme, la
+            seule colonne du texte, rastérisée pour que le reste ne demeure
+            pas caché dans le fichier (p. 2236 de 1948). Les numéros entiers
+            restent sur le poste, dans data/brut/jo/.
+        contenu:
+          JORF_19480303_55_p2236.pdf:
+            document: https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000000499844
+            sha256: 7aac3cc6a6ce940e33ec89dc38cbc83068425b9552f83b8518bbac1b65e86cde
+          JORF_19490225_49_p2019.pdf:
+            document: https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000000521124
+            sha256: 6f4342ce688b619915b0275f1458c9fde627bf69381f00eede3ca827ea204775
+          JORF_19650424_96_p3200.pdf:
+            document: https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000000852134
+            sha256: 83bbd7bb770fbb217ba49e777499c9e7110ad8a3fe1365b90dfb0285dd350b79
+          JORF_19700419_92_p3751.pdf:
+            document: https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000000506328
+            sha256: b78cd45231d1ca55673098828db855a774535b5aba4eb34f86efcb71fb395a37
+        millesime: 5 novembre 2026
+        statut_integration: saisi
+        cible: data/reference/regles/
+        note: >-
+          Légifrance répond 403 à curl, d'un poste comme d'une session (mesuré
+          le 5 novembre 2026), et ne s'ouvre qu'à un navigateur ; ses numéros
+          d'avant 1990 demandent en plus une addition, que le propriétaire
+          résout à chaque numéro. Une session du cloud n'y a donc pas accès :
+          cette archive lui rend les pages que les fiches citent. Elle grandit
+          à chaque lecture, par la même recette : `contenu` et `sha256` se
+          refont, l'asset se redépose (action 138, note du 5 novembre 2026).
       - id: legifrance_textes
         titre: Textes fondateurs et réformes des retraites
         url: https://www.legifrance.gouv.fr/
