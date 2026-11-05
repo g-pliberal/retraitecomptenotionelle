@@ -1,0 +1,35 @@
+date: "2026-11-05"
+session: "action 130, file R-L-bis : relecture indépendante des corrections de la relecture R-L (commit 9fcd8a1, file L-bis)"
+consulte: >-
+  python scripts/veille_droit.py ; docs/veille_droit.md. L'index de la DILA récupéré dans
+  la session (LEGI à jour au 2 novembre 2026, JORF au 3 novembre) : L. 351-8, cinq de ses
+  rédactions (LEGIARTI000006742633, LEGIARTI000023030950, LEGIARTI000028498855,
+  LEGIARTI000047452736, LEGIARTI000051289852), et la loi n° 2010-1330, article 20, IV, et
+  article 118, II, à son --le ; R. 351-27 (LEGIARTI000006749436) ; L. 161-17-2
+  (LEGIARTI000025014605) ; D. 161-2-1-9 (LEGIARTI000023388636, LEGIARTI000025089933). Au
+  JORF : statuts de la CAVP de 2011 (JORFARTI000024270214) et règlement de 2026
+  (JORFARTI000054436087) ; statuts de la CARPV de 2021 (JORFARTI000044220745,
+  JORFARTI000044220741), leurs modifications de 2011, 2014 et 2015 (JORFARTI000023448554,
+  JORFARTI000028939421, JORFARTI000030285511, JORFARTI000031549970), les avis de 1999 et
+  de 2006 (JORFARTI000001562289, JORFARTI000001368893, JORFARTI000001494755), le
+  règlement de 2026 (JORFARTI000054436031). Deux recherches sur le web, pour le Bulletin
+  officiel n° 99/33 et celui de 2006 : rien.
+trouve: >-
+  Conforme : citations exactes, trois valeurs du test justes, présomption de la CARPV
+  d'avant 2022 déclarée et la plus prudente (un indice la soutient : l'arrêté du
+  11 janvier 2011 garde « la retraite à 60 ans » à l'inapte). Trente cas des générations
+  1951 à 1955 refaits à la main ; les deux moteurs les rendent, sous
+  PRESOMPTIONS_DECALEES=1 aussi, sauf un. Écart moyen : la table age_annulation_decote
+  écrit 66,17 pour 66 ans et 2 mois ; né en 1953 et parti à 66 ans et 2 mois, l'assuré
+  garde un trimestre de minoration (ASV des biologistes 0,9875, régime général 49,375 %,
+  Agirc-Arrco 0,99), défaut d'avant le commit, qu'il étend aux biologistes. Écart faible,
+  hors du commit : avant 2009, l'ASV des biologistes est minorée jusqu'à 67 ans, quand
+  R. 351-27 fixait à 65 ans l'âge du 1° de L. 351-8. Mesuré : la durée efface à tort
+  13 trimestres (0,8375 → 1) au biologiste né en 1953, entré à 20 ans, parti à 63 ans.
+reste: >-
+  À la file du modèle : l'âge de la table au mois près (66,1667), le test d'abord, dans
+  les deux moteurs et pour tous les régimes qui la lisent ; la minoration des biologistes
+  avant 2009 ; la durée qui efface leur minoration. Les statuts de la CARPV de 1999 à 2021
+  (Bulletin officiel n° 99/33, et celui du ministère de la santé de 2006) et de la CAVP
+  d'avant 2011, à demander aux caisses (note 2026-11-05-relecture-corrections-r-l.md de
+  l'action 130).
