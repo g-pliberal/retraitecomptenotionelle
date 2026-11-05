@@ -178,3 +178,7 @@ Les 931 témoins de simulation et les 85 rendus de page, refaits par
 et `data/derive/agregats.json`, refaits : inchangés ; le coût ne bouge pas. Aucune page.
 Le cliquet des rédactions sans statut (`data/reference/textes/perimetre.yaml`) passe de
 9 324 à 9 323, comme `tests/test_textes.py` le demande.
+
+*Renvoi, le 5 novembre 2026* : rebasés à la publication, les commits fbf109d et 4052d87 que
+cette note et son entrée du journal de veille citent sont, sur `main`, 62fe670 et 9dce08d ;
+celui de cette note est f16bdf0.
