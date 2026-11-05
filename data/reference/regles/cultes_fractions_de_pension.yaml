@@ -74,8 +74,19 @@ versions:
       validées par un autre régime obligatoire d'assurance vieillesse de base »
     lu_le: 2026-10-03
   - id: LEGIARTI000006766268
-    reference: décret n° 79-607 du 3 juillet 1979, art. 42, la même règle dès 1979
-    lu_le: 2026-10-03
+    reference: >-
+      décret n° 79-607 du 3 juillet 1979, art. 42, du 1er janvier 1979 au 21 décembre
+      1985, la même règle dès 1979, qui ne dit pas plus que D. 721-11 « sans
+      cotisation »
+    citation: >-
+      « Sous réserve qu'à la date d'entrée en jouissance de la pension l'assuré soit à
+      jour de ses cotisations personnelles, sont prises en compte pour l'ouverture du
+      droit et le calcul de la pension, les périodes d'exercice d'activités mentionnées à
+      l'article 1er de la loi du 2 janvier 1978 susvisée accomplies antérieurement au 1er
+      janvier 1979 en qualité de ministre d'un culte ou de membre d'une congrégation ou
+      collectivité religieuse [...] lorsque ces périodes ne sont pas validées par un
+      autre régime obligatoire d'assurance vieillesse de base »
+    lu_le: 2026-11-05
   - id: LEGIARTI000006766248
     reference: décret n° 79-607 du 3 juillet 1979, art. 24, du 1er janvier 1979 au 21 décembre 1985
     citation: >-
@@ -179,6 +190,45 @@ versions:
       attribuée au prorata du nombre de trimestres cotisés par l'assuré entre le 1er
       janvier 1979 et le 31 décembre 1997 »
     lu_le: 2026-10-03
+  - id: LEGIARTI000006742926
+    reference: >-
+      code de la sécurité sociale, L. 351-10, rédaction du 1er janvier 2004 au 19
+      décembre 2008, auquel le V renvoie
+    citation: >-
+      « Ce montant minimum est majoré au titre des périodes ayant donné lieu à
+      cotisations à la charge de l'assuré. »
+    lu_le: 2026-11-05
+  - id: LEGIARTI000019959492
+    reference: >-
+      L. 351-10, rédaction du 19 décembre 2008, « applicables aux pensions prenant effet
+      à compter du 1er avril 2009 » (loi n° 2008-1330, articles 81, II, et 89, III)
+    citation: >-
+      « Ce montant minimum est majoré au titre des périodes ayant donné lieu à
+      cotisations à la charge de l'assuré lorsque la durée d'assurance ayant donné lieu
+      à cotisations à la charge de l'assuré, accomplie tant dans le régime général que
+      dans un ou plusieurs autres régimes obligatoires, est au moins égale à une limite
+      fixée par décret. »
+    lu_le: 2026-11-05
+  - id: LEGIARTI000020090096
+    reference: code de la sécurité sociale, D. 351-2-2, du 1er avril 2009 au 1er septembre 2023
+    citation: >-
+      « La durée d'assurance minimale ayant donné lieu à cotisations à la charge de
+      l'assuré prévue à la deuxième phrase du premier alinéa de l'article L. 351-10 est
+      fixée à 120 trimestres. »
+    lu_le: 2026-11-05
+  - id: LEGIARTI000017870194
+    reference: code de la sécurité sociale, D. 351-2-1, du 31 décembre 2007 au 1er avril 2009
+    citation: >-
+      « Ce montant minimum est majoré au titre des périodes ayant donné lieu à
+      cotisations à la charge de l'assuré, de façon à atteindre 7 603,41 euros par an au
+      1er janvier 2008 »
+    lu_le: 2026-11-05
+  - id: LEGIARTI000006749349
+    reference: code de la sécurité sociale, R. 351-6, du 27 avril 2007 au 1er janvier 2026
+    citation: >-
+      « Pour les pensions prenant effet après le 31 décembre 2003, la durée maximum
+      d'assurance est fixée à : 150 trimestres pour les assurés nés avant 1944 »
+    lu_le: 2026-11-05
   bornes:
     liquidation.date_effet: [2006-11-01, 2010-02-01]
   contenu:
@@ -190,6 +240,10 @@ versions:
       comprise (IV) ; au taux plein, une majoration de la fraction de l'écart de la
       génération entre le minimum contributif majoré et le maximum, au prorata des
       trimestres cotisés de 1979 à 1997 (V)
+    minimum_majore: >-
+      celui de L. 351-10, que le V nomme : sans condition de durée cotisée pour les
+      pensions prenant effet jusqu'au 31 mars 2009, à cent vingt trimestres cotisés tous
+      régimes depuis (D. 351-2-2), comme la caisse l'écrit
     fraction_depuis_1998: les règles du régime général (L. 382-27)
     revalorisation: >-
       le maximum par les coefficients de L. 161-23-1 (VIII)
@@ -212,7 +266,21 @@ versions:
     reference: >-
       la même, rédaction issue du décret n° 2010-1734, pour les pensions prenant effet à
       compter du 1er juillet 2011 : l'âge de L. 161-17-2 au lieu de soixante ans (I)
-    lu_le: 2026-10-03
+    citation: >-
+      « I. - L'âge fixé au premier alinéa de l'article D. 721-6 du code de la sécurité
+      sociale, dans sa rédaction en vigueur au 31 décembre 1997 est celui résultant des
+      dispositions de l'article L. 161-17-2 du code de la sécurité sociale pour les
+      assurés qui justifient [...] d'une durée au moins égale à la durée fixée au 1° de
+      l'article R. 351-27 [...]. II. - Pour les assurés qui ne remplissent pas les
+      conditions fixées au I du présent article, la pension de vieillesse mentionnée à
+      l'article D. 721-6 [...] peut également être allouée à partir de l'âge mentionné au
+      I. Il lui est alors appliqué le coefficient de minoration fixé au 2° du I et au II
+      de l'article R. 351-27 » ; « V. - Pour les assurés nés postérieurement au 31
+      décembre 1938 et qui soit remplissent les conditions prévues à l'article D. 721-6
+      du code de la sécurité sociale, dans sa rédaction en vigueur au 31 décembre 1997,
+      soit justifient de la durée d'assurance visée au I du présent article, la pension
+      [...] est, lors de sa liquidation, assortie d'une majoration. »
+    lu_le: 2026-11-05
   bornes:
     liquidation.date_effet: [2010-02-01, null]
   contenu:
@@ -241,14 +309,49 @@ approximations:
     période à l'année et ne liquide pas une fraction sans l'autre, garde soixante-cinq ans
     toute l'année, et pour la fraction d'après 1997 de 1998 à 2005.
   effet: non mesuré
+- version: [decret_de_2010]
+  ecart: >-
+    L'ÂGE DU TAUX PLEIN DE LA FRACTION D'AVANT 1998. Le modèle lui donne celui de la
+    pension entière, celui du régime général : la durée requise, ou l'âge d'annulation
+    de la décote de la génération ; avant, la fraction est décotée jusqu'à cet âge, sans
+    majoration. C'est ce que la caisse publie : « L'âge d'obtention du taux plein dépend
+    de l'année de naissance. L'âge auquel la retraite peut être attribuée à taux plein,
+    quel que soit le nombre de trimestres, varie de 65 à 67 ans » (son triptyque « Votre
+    assurance retraite », 2024) ; « Si vous bénéficiez d'une pension calculée à taux
+    minoré, les fractions de pension avant 1979 et de 1979 à 1997 seront portées au
+    niveau du montant maximum de la pension « Cavimac » et vous aurez de plus une
+    décote », ses trimestres comptés « entre la date d'effet de la pension et l'âge du
+    taux plein » (sa page « Demander ma retraite de base ») — deux pièces lues le 5
+    novembre 2026, qui ne nomment pas D. 721-6. La lettre du décret n° 2006-1325,
+    article 2, dit autre chose : le I ne remplace l'âge de D. 721-6 de 1997, « fixé à
+    soixante-cinq ans », par celui de L. 161-17-2 que pour qui a la durée ; le II
+    alloue « également » la pension à l'autre dès cet âge, avec le coefficient de
+    minoration de R. 351-27 ; le V majore celle de qui « remplissent les conditions
+    prévues à l'article D. 721-6 [...] dans sa rédaction en vigueur au 31 décembre
+    1997 ». À soixante-cinq ans, la fraction serait servie sans décote, et majorée. Le
+    scénario 1 suit la caisse, qui publie la règle ; aucune circulaire, aucun exemple
+    chiffré de la caisse ne tranche le cas lui-même. Les deux lectures ne diffèrent que
+    pour qui part entre soixante-cinq ans et l'âge d'annulation de sa génération, quand
+    il passe soixante-cinq ans, sans la durée requise ni la mesure des parents de trois
+    enfants (fiche taux_plein_a_soixante_cinq_ans).
+  effet: >-
+    la ministre du culte de 1979 à 1981, puis de 2000 à 2018, née le 15 mars 1953,
+    partie à soixante-cinq ans le 1er avril 2018 sans la mesure des parents : avant
+    1998, 4 635,65 × 11 / 165 × 0,9375 = 289,73 € par an, comme la caisse le décrit et
+    comme le modèle le sert ; à la lettre du décret, sans décote et majorée jusqu'au
+    minimum, non majoré sous cent vingt trimestres cotisés comme la caisse l'écrit,
+    7 615,94 × 11 / 165 = 507,73 €, 218,00 € de plus.
 - version: [decret_de_2006, decret_de_2010]
   ecart: >-
-    Le taux plein qui ouvre les majorations est celui du régime général — la durée
-    requise, ou l'âge d'annulation de la décote —, que décrit la caisse ; le décret garde
-    soixante-cinq ans (D. 721-6 de 1997) pour la fraction d'avant 1998, ce qui ne change
-    rien pour les générations nées avant 1951. Le minimum contributif majoré des
-    trimestres de 1979 à 1997 suppose cent vingt trimestres cotisés tous régimes, comme
-    la caisse l'écrit. Les deux majorations ne sont pas écrêtées (L. 173-2), faute de
+    Le minimum contributif majoré des trimestres de 1979 à 1997 suppose, pour les
+    pensions prenant effet depuis le 1er avril 2009, cent vingt trimestres cotisés tous
+    régimes : la caisse l'écrit (« si vous totalisez au moins 120 trimestres cotisés
+    tous régimes, votre pension sera portée au niveau du minimum contributif majoré »),
+    et L. 351-10 ne majore son minimum, depuis cette date, qu'à cette durée (D. 351-2-2) ;
+    le V nomme « le montant du minimum de pension majoré [...] fixé en application des
+    dispositions de l'article L. 351-10 », sans dire lui-même que la condition le suit.
+    Jusqu'au 31 mars 2009, L. 351-10 ne pose aucune durée cotisée, ni le modèle depuis
+    le 5 novembre 2026. Les deux majorations ne sont pas écrêtées (L. 173-2), faute de
     texte qui le dise. Quand les trimestres d'avant 1998 passent la durée maximale, les
     trimestres cotisés de 1979 à 1997 passent avant ceux d'avant 1979, et les deux
     ensemble ne la dépassent pas : le décret ne dit pas comment se partagent ses deux
@@ -262,7 +365,7 @@ approximations:
     maximum et le minimum contributif de l'année de la date d'effet.
   effet: non mesuré
 sources:
-  lu_le: 2026-10-14
+  lu_le: 2026-11-05
   prochaine_relecture: 2027-10-01
   lectures:
   - type: legifrance
@@ -306,6 +409,43 @@ sources:
       d'assurance de 150 trimestres, à 3 839,26 euros par an »
     url: https://www.assemblee-nationale.fr/dyn/12/questions/QANR5L12QE11394
     date: 2003-03-24
+  - type: legifrance
+    reference: >-
+      le décret n° 2006-1325, article 2, dans sa rédaction du 1er juillet 2011
+      (LEGIARTI000023397816) et dans celle de 2006 (LEGIARTI000006256155, son V) ;
+      D. 721-6 du code de 1985 en vigueur au 31 décembre 1997 (LEGIARTI000006738898) ;
+      R. 351-27 du 3 juin 2011 au 1er septembre 2023 (LEGIARTI000024113020) ; L. 351-10
+      (LEGIARTI000006742926, LEGIARTI000019959492), D. 351-2-1 (LEGIARTI000017870194),
+      D. 351-2-2 (LEGIARTI000020090096) et R. 351-6 (LEGIARTI000006749349) ; le décret
+      n° 79-607, article 42 (LEGIARTI000006766268) ; index LEGI à jour au 4 novembre 2026
+    date: 2026-11-05
+  - type: autre
+    reference: >-
+      CAVIMAC, « Demander ma retraite de base », relue : « Une fraction de pension pour les
+      périodes d'activité cultuelle réalisées avant 1979 correspondant à des trimestres
+      validés à titre gratuit » ; la décote, « le nombre de trimestres entre la date
+      d'effet de la pension et l'âge du taux plein » ; le taux minoré des deux fractions
+      d'avant 1998, et les 120 trimestres du minimum majoré
+    url: >-
+      https://www.cavimac.fr/assurance-retraite/assurance-retraite/demander-ma-retraite-de-base-0
+    date: 2026-11-05
+  - type: autre
+    reference: >-
+      CAVIMAC, triptyque « Votre assurance retraite. Les démarches à effectuer » (2024) :
+      « Les trimestres sont validés à titre gratuit avant 1979 » ; « L'âge d'obtention du
+      taux plein dépend de l'année de naissance. L'âge auquel la retraite peut être
+      attribuée à taux plein, quel que soit le nombre de trimestres, varie de 65 à 67
+      ans »
+    url: >-
+      https://www.cavimac.fr/sites/default/files/medias/documents/Triptyque%20retraite_2024.pdf
+    date: 2026-11-05
+  - type: autre
+    reference: >-
+      réponse du Gouvernement à la question orale n° 122 de M. Auguste Cazalet (JO Sénat
+      du 16 janvier 2008, p. 207) : « les années antérieures à 1979, qui n'ont donné lieu
+      à aucune cotisation et ont été validées gratuitement »
+    url: https://www.senat.fr/questions/base/2007/qSEQ07120122S.html
+    date: 2008-01-16
   a_relire:
   - >-
     L'arrêté du 22 décembre 1981, maximum de pension et cotisations de 1982, à lire sur le
@@ -323,7 +463,9 @@ code:
     porte le minimum contributif. Celle d'avant 1998 est le maximum de l'année au prorata
     des trimestres d'avant 1998 — cent cinquante jusqu'au 31 octobre 2006, la durée de
     R. 351-6 ensuite —, décotée comme l'autre quand le taux n'est pas plein, surcotée et
-    majorée jusqu'au minimum contributif quand il l'est.
+    majorée jusqu'au minimum contributif quand il l'est : le majoré pour les trimestres
+    cotisés de 1979 à 1997, au seuil de cotisés que la fiche minimum_contributif porte
+    à la date d'effet, aucun jusqu'au 31 mars 2009, cent vingt ensuite.
     completer laisse la fraction d'avant 1998 hors du minimum contributif. Les comptes
     notionnels portent les deux cotisations forfaitaires de 1979 à 1997
     (CotisationsDesCultes, que ConstructeurCompte lit) au lieu du forfait du SMIC aux

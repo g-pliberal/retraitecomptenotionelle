@@ -43,7 +43,9 @@
 # `services_passes_outre_mer`).
 # Depuis le 3 octobre 2026, une période peut aussi précéder la création du
 # régime de BASE du statut : les années d'activité cultuelle d'avant 1979, que
-# la CAVIMAC valide gratuitement (D. 721-11 du code de 1985). Le scénario 1 en
+# D. 721-11 du code de 1985 prend en compte et dont la CAVIMAC dit les
+# trimestres « validés à titre gratuit » (sa page « Demander ma retraite de
+# base »). Le scénario 1 en
 # compte les trimestres dans la durée du régime, et l'année ne compte pas
 # parmi les trimestres cotisés quand tous ses régimes la valident ainsi
 # (`Affiliations.validee_sans_cotisation`, fiche `cultes_fractions_de_pension`).
@@ -1288,8 +1290,12 @@ affiliations:
       Avant 1979, aucune cotisation : la loi du 2 janvier 1978 crée le régime
       et ses cotisations commencent au 1er janvier 1979. Les années d'activité
       cultuelle antérieures ne sont pas perdues pour autant : la CAVIMAC les
-      valide gratuitement et en sert une fraction de pension (sa page sur la
-      retraite de base, la réponse ministérielle au Sénat du 16 janvier 2008).
+      valide gratuitement et en sert une fraction de pension : « des trimestres
+      validés à titre gratuit » (sa page « Demander ma retraite de base », lue
+      le 5 novembre 2026) ; « les années antérieures à 1979, qui n'ont donné
+      lieu à aucune cotisation et ont été validées gratuitement » (réponse du
+      Gouvernement à la question orale n° 122, JO Sénat du 16 janvier 2008,
+      p. 207).
       Le modèle ne les comptait pas, et sous-estimait donc la pension des
       générations entrées avant 1979 ; le statut disait jusqu'au 23 septembre
       2026 que c'était « le droit lui-même ». Depuis le 3 octobre 2026, la
@@ -1297,8 +1303,10 @@ affiliations:
       prises en compte pour l'ouverture du droit et le calcul de la pension,
       les périodes d'exercice d'activités [...] accomplies antérieurement au
       1er janvier 1979 » (D. 721-11 du code de 1985, décret n° 79-607, art.
-      42). Elles comptent dans la durée du régime, jamais parmi les trimestres
-      cotisés, et le compte notionnel n'en porte rien (fiche
+      42, qui ne disent pas qu'elles le sont sans cotisation : la caisse et la
+      réponse au Sénat le disent). Elles comptent dans la durée du régime,
+      jamais parmi les trimestres cotisés, et le compte notionnel n'en porte
+      rien (fiche
       `cultes_fractions_de_pension`). Le statut n'est PAS marqué `sans_employeur` :
       la congrégation joue le rôle d'employeur et l'article R. 382-90 met à sa
       charge la part patronale du régime général, que les scénarios 4 et 5

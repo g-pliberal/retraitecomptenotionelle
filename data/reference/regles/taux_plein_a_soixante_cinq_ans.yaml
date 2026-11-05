@@ -972,9 +972,10 @@ approximations:
     1998 à tout assuré, et le V du décret n° 2006-1325, article 2, la majore, que la
     mesure des parents s'applique ou non ; par le texte, elle resterait à 507,73 €, et
     seule la fraction d'après 1997 passerait à 46,875 %. L'écart de 289,73 à 507,73 € tient
-    à l'écart déjà déclaré dans cultes_fractions_de_pension (« le décret garde
-    soixante-cinq ans (D. 721-6 de 1997) pour la fraction d'avant 1998 »), que la file des
-    cultes doit mesurer et trancher
+    à l'âge du taux plein de la fraction d'avant 1998, que cultes_fractions_de_pension
+    déclare depuis le 5 novembre 2026 : la caisse publie l'âge du taux plein de la
+    génération (« varie de 65 à 67 ans ») et la décote des fractions d'avant 1998 à taux
+    minoré, que le modèle suit ; la lettre du décret servirait 507,73 €
 - version: [loi_du_9_novembre_2010]
   textes: >-
     décret n° 73-937 du 2 octobre 1973, article 3 (LEGIARTI000026474703, du 7 octobre
