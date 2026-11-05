@@ -37,6 +37,7 @@ from typing import TYPE_CHECKING
 
 from ..donnees.chargement import Fiabilite
 from ..somme import somme_ordonnee
+from .commun import date_d_effet
 
 if TYPE_CHECKING:
     from ..carriere import Carriere
@@ -67,12 +68,6 @@ DECRET_DE_2010 = (2010, 2)
 #: Le V : la part de l'écart que reçoivent les générations de la montée en
 #: charge ; rien avant 1939, l'écart entier après 1942.
 PART_DE_L_ECART = {1939: 0.2, 1940: 0.4, 1941: 0.6, 1942: 0.8}
-
-#: « si vous totalisez au moins 120 trimestres cotisés tous régimes, votre
-#: pension sera portée au niveau du minimum contributif majoré » : la page de
-#: la caisse, qui porte sinon les trimestres de 1979 à 1997 au minimum
-#: contributif. C'est la condition du régime général (L. 351-10).
-TRIMESTRES_COTISES_DU_MINIMUM_MAJORE = 120
 
 
 @dataclass(frozen=True)
@@ -205,7 +200,16 @@ def fraction_d_avant_1998(moteur: ScenarioActuel, carriere: Carriere,
     # sous celle d'une carrière entière au minimum majoré.
     cotises = min(duree.cotises_de_1979_a_1997, proratisation)
     part = part_de_l_ecart(carriere.annee_naissance)
-    majore_ouvert = trimestres_cotises >= TRIMESTRES_COTISES_DU_MINIMUM_MAJORE
+    # LE MINIMUM MAJORÉ du V est celui de L. 351-10 : sans condition pour les
+    # pensions prenant effet avant le 1er avril 2009, à 120 trimestres cotisés
+    # tous régimes depuis (D. 351-2-2 ; loi n° 2008-1330, article 81, II), ce
+    # que la page de la caisse écrit : « si vous totalisez au moins 120
+    # trimestres cotisés tous régimes, votre pension sera portée au niveau du
+    # minimum contributif majoré », au minimum contributif sinon. La fiche
+    # ``minimum_contributif`` porte le seuil de chaque date d'effet.
+    seuil = moteur.minimum_contributif.regle(date_d_effet(carriere))[
+        "seuil_trimestres_cotises"]
+    majore_ouvert = seuil is None or trimestres_cotises >= seuil
     niveau = majore if majore_ouvert else minimum
     if part > 0 and cotises > 0 and niveau > maximum:
         majoration = part * (niveau - maximum) * cotises / proratisation

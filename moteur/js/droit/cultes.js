@@ -13,6 +13,7 @@
  */
 
 import { formatFixe, formatPourcentage } from "../format.js";
+import { dateDEffet } from "./commun.js";
 
 /** L'alignement : les périodes d'avant gardent les règles de 1997. */
 export const ALIGNEMENT = 1998;
@@ -30,9 +31,6 @@ export const DECRET_DE_2010 = [2010, 2];
 
 /** Le V : la part de l'écart des générations de la montée en charge. */
 export const PART_DE_L_ECART = Object.freeze({ 1939: 0.2, 1940: 0.4, 1941: 0.6, 1942: 0.8 });
-
-/** La condition du minimum contributif majoré, que la caisse écrit. */
-export const TRIMESTRES_COTISES_DU_MINIMUM_MAJORE = 120;
 
 /** [année, mois] < [année, mois] */
 function avant(date, borne) {
@@ -134,7 +132,12 @@ export function fractionDAvant1998(moteur, carriere, duree, proratisation, tauxP
   // cotisés de 1979 à 1997 d'abord, ceux d'avant 1979 dans ce qui reste.
   const cotises = Math.min(duree.cotisesDe1979A1997, proratisation);
   const part = partDeLEcart(carriere.annee_naissance);
-  const majoreOuvert = trimestresCotises >= TRIMESTRES_COTISES_DU_MINIMUM_MAJORE;
+  // Le minimum majoré du V est celui de L. 351-10 : sans condition avant le
+  // 1er avril 2009, à 120 trimestres cotisés tous régimes depuis (D. 351-2-2),
+  // comme la caisse l'écrit ; la fiche `minimum_contributif` porte le seuil.
+  const seuil = moteur.minimumContributif.regle(dateDEffet(carriere))
+    .seuil_trimestres_cotises;
+  const majoreOuvert = seuil === null || seuil === undefined || trimestresCotises >= seuil;
   const niveau = majoreOuvert ? majore : minimum;
   if (part > 0 && cotises > 0 && niveau > maximum) {
     const majoration = part * (niveau - maximum) * cotises / proratisation;

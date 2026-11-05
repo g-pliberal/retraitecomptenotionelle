@@ -251,3 +251,38 @@ def test_le_minimum_contributif_ne_releve_que_la_fraction_d_apres_1997(simulateu
     plancher = majore * depuis_1998 / duree
     assert apres < plancher
     assert pension.montant == pytest.approx(avant + plancher, abs=0.02)
+
+
+def test_avant_avril_2009_le_minimum_majore_du_v_ne_demande_pas_120_trimestres():
+    """Le V du décret n° 2006-1325, article 2 (LEGIARTI000006256155, du 1er
+    novembre 2006 au 30 janvier 2010), porte les trimestres cotisés de 1979 à
+    1997 au « montant du minimum de pension majoré au titre des périodes ayant
+    donné lieu à cotisations à la charge de l'assuré, fixé en application des
+    dispositions de l'article L. 351-10 », « 100 % de l'écart pour les assurés
+    nés après 1942 ». L. 351-10 ne soumet cette majoration à « une limite fixée
+    par décret », 120 trimestres cotisés (D. 351-2-2), qu'aux pensions prenant
+    effet à compter du 1er avril 2009 (loi n° 2008-1330, article 81, II) ; avant
+    (LEGIARTI000006742926), « Ce montant minimum est majoré au titre des
+    périodes ayant donné lieu à cotisations à la charge de l'assuré », sans
+    condition. Né le 15 janvier 1943, ministre du culte de quarante-cinq à
+    soixante-cinq ans, pension au 1er février 2008 : 40 trimestres cotisés de
+    1979 à 1997, 80 en tout ; 150 trimestres de durée maximale (R. 351-6, II,
+    « nés avant 1944 ») ; le minimum majoré, « 7 603,41 euros par an au 1er
+    janvier 2008 » (D. 351-2-1, LEGIARTI000017870194). La fraction d'avant 1998
+    vaut 7 603,41 × 40 / 150 = 2 027,58 €, et non 6 958,21 × 40 / 150 =
+    1 855,52 €, le minimum seul. Dans les deux moteurs (``droit_et_refait``)."""
+    from outils_pont import droit_et_refait
+
+    from retraite_notionnelle import pont
+
+    carriere = Simulateur(Parametres()).carriere_simple(
+        annee_naissance=1943, sexe="H", affiliation="ministre_du_culte",
+        mois_naissance=1, jour_naissance=15, age_debut=45, age_liquidation=65,
+        niveau_salaire=1.0, profil_carriere="plat")
+    lus, refus = droit_et_refait(
+        {"1943": ("scenario_actuel.calculer", pont.MOTEUR, carriere)})
+    assert refus == {}, refus
+    detail = next(p["detail"] for p in lus["1943"]["pensions_par_regime"]
+                  if p["regime"] == "cavimac")
+    assert ("40 trimestres cotisés de 1979 à 1997 (minimum contributif majoré) "
+            "= 2,027.58 €") in detail, detail
