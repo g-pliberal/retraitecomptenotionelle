@@ -19,7 +19,7 @@ scripts/setup_ui_tools.sh --essai    # en plus, ouvre et ferme un Chromium pour 
 
 | Outil | Version | Dans Git | Hors Git, obtenu au premier usage |
 |---|---|---|---|
-| Impeccable | 4.3.1 (compétence), moteur 0.1.5 | `.claude/skills/impeccable/` (SKILL.md, références, lanceur `scripts/impeccable`, `scripts/VERSION`), les quatre agents `.claude/agents/impeccable-*.md`, le hook dans `.claude/settings.json` | le moteur natif (<!--chiffre:tenu(test_les_chiffres_de_l_outillage_sont_ceux_des_versions_figees)-->16<!--/--> Mo), dans `~/.impeccable/bin/0.1.5/` |
+| Impeccable | 4.3.1 (compétence), moteur 0.1.5 | `.claude/skills/impeccable/` (SKILL.md, références, lanceur `scripts/impeccable`, `scripts/VERSION`), les quatre agents `.claude/agents/impeccable-*.md`, `.impeccable/config.json` | le moteur natif (<!--chiffre:tenu(test_les_chiffres_de_l_outillage_sont_ceux_des_versions_figees)-->16<!--/--> Mo), dans `~/.impeccable/bin/0.1.5/` |
 | Web Interface Guidelines | 1.0.0 (compétence), règles figées au commit `e3d624b` | `.claude/skills/web-design-guidelines/` (SKILL.md, `guidelines.md`, `guidelines.provenance.yaml`) | rien |
 | Playwright CLI | `@playwright/cli` 0.1.20 | `.claude/skills/playwright-cli/` (SKILL.md livré par ce paquet), `.playwright/cli.config.json` | le paquet npm global, et le Chromium qu'il attend |
 | Unslop | `skills/unslop` figé au commit `a6f121e` | `.claude/skills/unslop/` (SKILL.md, références, scripts, `LICENSE`, `provenance.yaml`) | rien pour la compétence ; Playwright et ffmpeg pour ses seuls scripts facultatifs |
@@ -66,20 +66,16 @@ réglages locaux.
 
 ## Impeccable
 
-Le hook du détecteur (un passage court après chaque `Edit`/`Write` sur un
-fichier d'interface, un passage complet au `Stop`) est dans
-`.claude/settings.json`, commité, et n'appelle que
-`"${CLAUDE_PROJECT_DIR}/.claude/skills/impeccable/scripts/impeccable" hook` :
-aucun chemin absolu, rien de propre à une machine. C'est exactement ce que
-`impeccable hooks on` écrit dans `.claude/settings.local.json`, déplacé dans le
-fichier partagé comme la compétence le prévoit ; ne pas relancer `hooks on`,
-qui recréerait le doublon local. Sans `.impeccable/config.json`, le hook tourne
-avec ses valeurs par défaut (activé, cinq constats, <!--chiffre:tenu(test_les_chiffres_de_l_outillage_sont_ceux_des_versions_figees)-->8 000<!--/--> caractères) ;
-`/impeccable hooks off|ignore-value|…` crée ce fichier, qui peut être commité.
-Le hook écrit `.impeccable/hook.cache.json` à l'usage, ignoré.
+Le détecteur ne tourne qu'à la demande : `/impeccable` (`critique`, `audit`…),
+ou `.claude/skills/impeccable/scripts/impeccable detect <fichiers>`. Son hook,
+qui passait après chaque `Edit`/`Write` et à chaque fin de tour, dans toutes
+les sessions, est retiré de `.claude/settings.json`, et éteint
+(`hook.enabled: false`) dans `.impeccable/config.json`, décision du
+propriétaire (feuille de route, action 135, note du 5 novembre 2026). Ne pas
+lancer `/impeccable hooks on`, qui le réinstallerait. Le détecteur lu sans
+hook garde les exceptions de `.impeccable/config.json` (`detector`).
 
-`impeccable.cmd` couvre Windows sans `sh` ; le hook commité appelle le lanceur
-POSIX, comme sur les machines Cloud.
+`impeccable.cmd` couvre Windows sans `sh` ; ailleurs, le lanceur POSIX.
 
 Trois des agents `.claude/agents/impeccable-*.md` déclarent `model: sonnet`,
 quand le paquet livre `model: inherit`, le modèle de la session : Sonnet

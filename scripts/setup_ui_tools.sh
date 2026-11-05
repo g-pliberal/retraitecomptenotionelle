@@ -70,10 +70,10 @@ else
     fi
   fi
 fi
-if grep -qF 'scripts/impeccable\" hook' "$racine/.claude/settings.json" 2>/dev/null; then
-  ok "hook du détecteur porté par .claude/settings.json (PostToolUse et Stop)"
+if grep -qF 'impeccable' "$racine/.claude/settings.json" 2>/dev/null; then
+  manque "un hook Impeccable dans .claude/settings.json, retiré le 5 novembre 2026 : le détecteur ne tourne qu'à la demande"
 else
-  manque "hook absent de .claude/settings.json"
+  ok "aucun hook : le détecteur ne tourne qu'à la demande (/impeccable, impeccable detect)"
 fi
 
 # --- Playwright CLI -----------------------------------------------------------

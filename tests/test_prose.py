@@ -910,20 +910,17 @@ MESURES_HORS_DEPOT = (
      "196 289 395 octets : l'archive linux64 de Chrome for Testing "
      "154.0.8037.0, la révision 1244 que playwright-core 1.64.0-alpha-2026-09-14 "
      "attend, lue sur cdn.playwright.dev le 23 septembre 2026"),
-    ("(activé, cinq constats, 8 000 caractères)", "moteur", "0.1.5",
-     "`impeccable hooks status` sans configuration, le 23 septembre 2026"),
 )
 
 
 def test_les_chiffres_de_l_outillage_sont_ceux_des_versions_figees():
-    """Trois chiffres du document décrivent des logiciels que le dépôt n'a pas.
+    """Deux chiffres du document décrivent des logiciels que le dépôt n'a pas.
 
     Le poids du moteur d'Impeccable, celui du Chromium que le CLI Playwright
-    télécharge, le plafond de caractères du hook : `verifier_prose.py` ne peut
-    en recalculer aucun depuis un clone, et ils sont restés trois jours dans
-    des sections que personne ne déclarait. Ils ne sont pourtant pas des
-    souvenirs, puisqu'ils décrivent une VERSION, et qu'une version publiée ne
-    change plus. Ce test lie chacun à la sienne : il échoue dès que le dépôt
+    télécharge : `verifier_prose.py` ne peut en recalculer aucun depuis un
+    clone, et ils sont restés trois jours dans des sections que personne ne
+    déclarait. Ils ne sont pourtant pas des souvenirs, puisqu'ils décrivent une
+    VERSION, et qu'une version publiée ne change plus. Ce test lie chacun à la sienne : il échoue dès que le dépôt
     en fige une autre, et c'est le moment de remesurer — puis d'écrire ici le
     nouveau chiffre et la nouvelle version. Le document les ancre sur lui.
     """

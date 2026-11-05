@@ -1,6 +1,11 @@
 {
   "hook": {
-    "quiet": true
+    "quiet": true,
+    "enabled": false,
+    "limits": {
+      "maxFindings": 5,
+      "maxChars": 8000
+    }
   },
   "detector": {
     "ignoreRules": [],

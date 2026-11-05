@@ -29,3 +29,20 @@ def test_l_effort_se_regle_par_modele_et_non_par_la_variable():
 def test_l_eclaireur_et_explore_declarent_leur_effort():
     for agent in ("eclaireur", "Explore"):
         assert _entete(agent).get("effort") == "high", agent
+
+
+def test_le_detecteur_d_impeccable_ne_tourne_qu_a_la_demande():
+    """Décision du propriétaire, le 5 novembre 2026 (action 135) : plus de hook
+    Impeccable. Il tournait après chaque `Edit`/`Write` et à chaque fin de tour,
+    dans toutes les sessions, et ne relevait que des choix voulus, des
+    questions de goût ou un faux contraste « noir sur noir » qu'il demandait de
+    trier après chaque retouche d'`index.html`. La compétence reste, à la
+    demande ; son hook est éteint dans `.impeccable/config.json`, pour qu'une
+    réinstallation par `/impeccable doctor` ne le rallume pas."""
+    commandes = [crochet["command"]
+                 for blocs in REGLAGES["hooks"].values()
+                 for bloc in blocs
+                 for crochet in bloc["hooks"]]
+    assert not [c for c in commandes if "impeccable" in c], commandes
+    config = json.loads((RACINE / ".impeccable" / "config.json").read_text(encoding="utf-8"))
+    assert config["hook"]["enabled"] is False

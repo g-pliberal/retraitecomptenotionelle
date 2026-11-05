@@ -419,8 +419,8 @@ fichiers:
   docs/archives/veille_droit.md:
     defaut: recit
   # Un fichier qui décrit des logiciels installés HORS du dépôt : le moteur
-  # d'Impeccable, le Chromium du CLI Playwright, les réglages du hook. Ses
-  # trois tailles sont restées `a_declarer` jusqu'au 23 septembre 2026, faute
+  # d'Impeccable, le Chromium du CLI Playwright, et jusqu'au 5 novembre 2026
+  # les réglages du hook, retiré depuis. Ses trois tailles sont restées `a_declarer` jusqu'au 23 septembre 2026, faute
   # qu'une sonde les atteigne depuis un clone ; elles sont désormais liées à la
   # version figée sur laquelle chacune a été lue (voir plus bas).
   docs/outillage_interface.md:
