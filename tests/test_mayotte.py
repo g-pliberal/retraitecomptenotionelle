@@ -270,3 +270,175 @@ def test_depuis_2026_l_assiette_minimale_de_mayotte_veut_quatre_vingt_dix_jours(
     assert regle_2026.montant(48_060.0, 9.33, 59 / 365) == 0.0
     assert regle_2026.montant(48_060.0, 9.33, 92 / 365) == pytest.approx(4198.50)
     assert regle_2025.montant(47_100.0, 8.98, 59 / 365) == pytest.approx(4041.0)
+
+
+#: Le taux de la cotisation d'assurance vieillesse de base de l'indépendant de
+#: Mayotte, « pour chaque année civile de 2019 à 2036, conformément au tableau
+#: suivant » (décret n° 2011-2085, article 4-2, I, LEGIARTI000038680068, créé
+#: par le décret n° 2019-632 pour « les périodes courant à compter du
+#: 1er janvier 2019 », puis LEGIARTI000053297541 au 1er janvier 2026, qui garde
+#: le tableau), assise sur le revenu « dans la limite du plafond » : aucune part
+#: sur la totalité du revenu.
+TAUX_DE_L_INDEPENDANT = {2019: 0.0585, 2020: 0.0655, 2021: 0.0725, 2022: 0.0795,
+                         2023: 0.0865, 2024: 0.0935, 2025: 0.1005, 2026: 0.1075}
+
+
+def test_l_independant_de_mayotte_cotise_au_taux_de_l_article_4_2(simulateur):
+    """Chaque année depuis 2019, la période de la caisse porte le taux propre de
+    l'assuré sans employeur à côté de ceux du salarié, qu'il ne remplace pas ;
+    en 2018, aucun texte lu ne lui en donne un."""
+    regime = simulateur.catalogue["cssm_mayotte"]
+    for annee, taux in TAUX_DE_L_INDEPENDANT.items():
+        (periode,) = [p for p in regime.periodes_actives(annee) if p.assiette == "plafonnee"]
+        assert periode.taux_du_cotisant(True) == pytest.approx((taux, 0.0)), annee
+        assert periode.taux_du_cotisant(False) == (
+            periode.taux_cotisation_retraite, periode.taux_cotisation_deplafonnee)
+    (avant,) = [p for p in regime.periodes_actives(2018) if p.assiette == "plafonnee"]
+    assert avant.taux_du_cotisant(True) == avant.taux_du_cotisant(False)
+
+
+@pytest.fixture
+def compte_en_deux_moteurs(simulateur):
+    """Ce que le compte du droit en vigueur porte à chaque régime une année de
+    la carrière, au centime, en Python, une fois vérifié que le JavaScript
+    porte la même chose. Une fixture, pour la garde des présomptions."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    script = """
+import { readFileSync } from "node:fs";
+import { AnneeCarriere, Carriere } from "./moteur/js/carriere.js";
+import { Contexte } from "./moteur/js/contexte.js";
+const contexte = new Contexte(JSON.parse(readFileSync("moteur/donnees.json", "utf8")));
+const simulateur = contexte.simulateur();
+const [naissance, lignes, annee] = JSON.parse(process.argv[1]);
+const carriere = new Carriere({
+  ...naissance, lignes: lignes.map((ligne) => new AnneeCarriere(ligne)) });
+process.stdout.write(JSON.stringify(
+  simulateur.constructeurEmployeur.cotisationAnnuelle(carriere, annee).par_regime));
+"""
+
+    def compte(naissance: dict, lignes: list[dict], annee: int) -> dict[str, float]:
+        carriere = Carriere(**naissance, lignes=[AnneeCarriere(**l) for l in lignes])
+        obtenu = {code: round(montant, 2) for code, montant in
+                  simulateur.constructeur_employeur.cotisation_annuelle(
+                      carriere, annee).par_regime}
+        execution = subprocess.run(
+            ["node", "--input-type=module", "-e", script,
+             json.dumps([naissance, lignes, annee])],
+            cwd=RACINE, capture_output=True, text=True, encoding="utf-8", check=False)
+        assert execution.returncode == 0, execution.stderr[-2000:]
+        assert {code: round(montant, 2)
+                for code, montant in json.loads(execution.stdout)} == obtenu
+        return obtenu
+
+    return compte
+
+
+def test_le_compte_porte_ce_que_l_independant_de_mayotte_a_verse(compte_en_deux_moteurs):
+    """L'artisane de Mayotte à 10 000 € par an, sous le plafond de la caisse
+    (23 208 € en 2020, 31 728 € en 2024) et au-dessus de son assiette
+    minimale : son compte reçoit 5,85 % de 10 000 €, 585 €, en 2019, et
+    9,35 %, 935 €, en 2024 — non les 15,45 % et 2,30 % du salarié et de son
+    employeur au régime général, 1 775 € en 2019. Dans les deux moteurs."""
+    naissance = dict(annee_naissance=1965, sexe="F", jour_naissance=15, age_liquidation=64.0)
+    lignes = [dict(annee=annee, revenu=10_000.0, affiliation=INDEPENDANT,
+                   trimestres_valides=4) for annee in range(2019, 2025)]
+    assert compte_en_deux_moteurs(naissance, lignes, 2019) == {"cssm_mayotte": 585.0}
+    assert compte_en_deux_moteurs(naissance, lignes, 2024) == {"cssm_mayotte": 935.0}
+
+
+def test_la_fiche_de_paie_de_l_independant_de_mayotte_preleve_son_taux(simulateur):
+    """10 000 € de revenu en 2019 : 585 € de vieillesse de base, à la seule
+    charge de l'assuré."""
+    from retraite_notionnelle.config import RACINE_DONNEES
+    from retraite_notionnelle.remuneration import (
+        ConstructeurFiche, bloc_droit_en_vigueur, charger_prelevements, smic_annuel)
+
+    bloc = bloc_droit_en_vigueur(simulateur.catalogue, simulateur.affiliations,
+                                 INDEPENDANT, 2019)
+    profil = charger_prelevements(RACINE_DONNEES).profil("independant")
+    fiche = ConstructeurFiche(profil).fiche(
+        2019, 10_000.0, simulateur.macro.plafond_securite_sociale(2019),
+        smic_annuel(simulateur.macro, 2019), bloc)
+    retraite = {ligne.code: (ligne.salarie, ligne.employeur)
+                for ligne in fiche.lignes if ligne.retraite}
+    assert retraite == {"cssm_mayotte": (pytest.approx(585.0), 0.0)}
+
+
+#: Les deux rédactions de l'article 4-2, I, telles que l'index LEGI les porte,
+#: raccourcies de ce que le lecteur ne lit pas : la note d'application, le
+#: tableau de la vieillesse, et le II, que le lecteur ne doit pas prendre.
+REDACTIONS_4_2 = [
+    ("LEGIARTI000038680068", "2019-06-25",
+     "Conformément aux dispositions de l'article 2 du décret n° 2019-632 du 24 juin "
+     "2019, ces dispositions s'appliquent aux cotisations de sécurité sociale dues au "
+     "titre des périodes courant à compter du 1er janvier 2019. I.-La cotisation "
+     "annuelle d'assurance vieillesse de base due par les travailleurs indépendants, "
+     "mentionnée au 1° du I de l'article 28-2 de l'ordonnance du 20 décembre 1996 "
+     "susvisée, est assise sur le revenu d'activité, tel que défini au II de "
+     "l'article 28-1 de la même ordonnance, dans la limite du plafond prévu au I de "
+     "l'article 28-1 de l'ordonnance du 20 décembre 1996 susvisée. Le taux de cette "
+     "cotisation est fixé, pour chaque année civile de 2019 à 2036, conformément au "
+     "tableau suivant : Année Cotisation au régime d'assurance vieillesse obligatoire "
+     "de base 2019 5,85 % 2020 6,55 % 2021 7,25 % 2022 7,95 % 2023 8,65 % 2024 9,35 % "
+     "2025 10,05 % 2026 10,75 % 2027 11,45 % 2028 12,15 % 2029 12,85 % 2030 13,55 % "
+     "2031 14,25 % 2032 14,95 % 2033 15,65 % 2034 16,35 % 2035 17,05 % 2036 17,75 % "
+     "II.-La cotisation d'assurance maladie-maternité due par les travailleurs "
+     "indépendants [...] Année Cotisation d'assurance maladie-maternité 2019 2,10 % "
+     "2020 2,40 %"),
+    ("LEGIARTI000053297541", "2026-01-01",
+     "I.-La cotisation annuelle d'assurance vieillesse de base due par les travailleurs "
+     "indépendants [...] dans la limite du plafond prévu au I de l'article 28-1 de "
+     "l'ordonnance du 20 décembre 1996 susvisée. [...] L'assiette minimale s'applique "
+     "aux travailleurs indépendants dont la durée d'affiliation est au moins égale à "
+     "quatre-vingt-dix jours au cours de l'année considérée. Le taux de cette "
+     "cotisation est fixé, pour chaque année civile de 2019 à 2036, conformément au "
+     "tableau suivant : Année Cotisation au régime d'assurance vieillesse obligatoire "
+     "de base 2019 5,85 % 2020 6,55 % 2021 7,25 % 2022 7,95 % 2023 8,65 % 2024 9,35 % "
+     "2025 10,05 % 2026 10,75 % 2027 11,45 % 2028 12,15 % 2029 12,85 % 2030 13,55 % "
+     "2031 14,25 % 2032 14,95 % 2033 15,65 % 2034 16,35 % 2035 17,05 % 2036 17,75 % "
+     "II.-La cotisation d'assurance maladie-maternité [...] 2019 2,10 %"),
+]
+
+
+def _recuperateur():
+    import importlib.util
+
+    nom = "dila_legi_taux_mayotte"
+    chemin = RACINE / "scripts" / "fetch" / f"{nom}.py"
+    specification = importlib.util.spec_from_file_location(nom, chemin)
+    module = importlib.util.module_from_spec(specification)
+    sys.modules[nom] = module
+    specification.loader.exec_module(module)
+    return module
+
+
+def test_le_taux_se_lit_dans_les_redactions_de_l_article_4_2():
+    """Le récupérateur lit le tableau du I, et lui seul, date la première
+    rédaction au 1er janvier 2019, la date d'application qu'elle écrit, et rend
+    chaque année depuis 2019 le taux que la table certifie, sans part sur la
+    totalité."""
+    recuperateur = _recuperateur()
+    redactions = [recuperateur.lire_redaction(*r) for r in REDACTIONS_4_2]
+    assert [r["application"] for r in redactions] == ["2019-01-01", "2026-01-01"]
+    assert redactions[0]["plafonne"][2036] == 0.1775
+    serie = recuperateur.series(redactions)
+    lues = {int(a): (t["plafonne"], t["deplafonne"], t["article"]) for a, t in serie.items()}
+    assert min(lues) == 2019
+    for annee, taux in TAUX_DE_L_INDEPENDANT.items():
+        article = "LEGIARTI000053297541" if annee >= 2026 else "LEGIARTI000038680068"
+        assert lues[annee] == (taux, 0.0, article), annee
+
+
+def test_une_redaction_de_l_article_4_2_illisible_arrete_le_recuperateur():
+    """Rien n'est écrit plutôt qu'un taux deviné : ni un tableau absent, ni une
+    cotisation sur la totalité du revenu, que le lecteur ne sait pas lire."""
+    recuperateur = _recuperateur()
+    with pytest.raises(ValueError, match="tableau"):
+        recuperateur.lire_redaction("LEGIARTI000000000000", "2030-01-01",
+                                    "I.-Le taux est fixé à 18 %. II.-Rien.")
+    with pytest.raises(ValueError, match="plafond"):
+        recuperateur.lire_redaction(
+            "LEGIARTI000000000000", "2030-01-01",
+            "I.-La cotisation est assise sur la totalité du revenu. Année Cotisation "
+            "2030 18,00 % II.-Rien.")

@@ -4871,6 +4871,30 @@ institutions:
           années 2014 à 2017, celles du RSI, restent à la transcription
           d'OpenFisca.
 
+      - id: dila_legi_taux_mayotte
+        titre: >-
+          Taux propre de l'indépendant de Mayotte à la vieillesse de base, lu
+          dans l'article 4-2 du décret n° 2011-2085 du 30 décembre 2011
+        url: https://echanges.dila.gouv.fr/OPENDATA/
+        acces: api
+        statut_integration: certifie
+        cible: data/reference/regimes/taux_cotisation_annuels.csv
+        recuperation: scripts/fetch/dila_legi_taux_mayotte.py
+        note: >-
+          Depuis 2019, l'artisan et le commerçant de Mayotte cotisent à la
+          caisse de sécurité sociale de Mayotte au taux que le I de l'article
+          4-2, créé par le décret n° 2019-632 pour les périodes courant à
+          compter du 1er janvier 2019, fixe « pour chaque année civile de 2019
+          à 2036 » : 5,85 % en 2019, 10,75 % en 2026, 17,75 % en 2036, « dans
+          la limite du plafond », rien sur la totalité. Le dépôt lui prêtait la
+          série du régime général jusqu'au 5 novembre 2026 (action 177). Le
+          récupérateur lit les deux rédactions de l'article, celle du 25 juin
+          2019 et celle du 1er janvier 2026, qui garde le tableau, dans l'index
+          LEGI du dépôt. Seize valeurs certifiées, les mesures
+          taux_plafonne_non_salarie et taux_deplafonne_non_salarie de
+          cssm_mayotte de 2019 à 2026 ; de 2012 à 2018, aucun texte lu ne lui
+          donne un taux propre.
+
       - id: dila_legi_decote_fonction_publique
         titre: Décote de la fonction publique, montée en charge 2006-2019
         url: https://echanges.dila.gouv.fr/OPENDATA/LEGI/

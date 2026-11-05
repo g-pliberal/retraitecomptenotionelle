@@ -2223,6 +2223,17 @@
    "valeurs": 368,
    "verifiee_le": "2026-09-15"
   },
+  "taux_cotisation_mayotte": {
+   "ajoutees": 16,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "153bb30d7e5a640a",
+   "identiques": 0,
+   "niveau": "certifiee",
+   "source": "DILA, base LEGI, décret n° 2011-2085 du 30 décembre 2011, article 4-2",
+   "valeurs": 16,
+   "verifiee_le": "2026-11-05"
+  },
   "taux_cotisation_non_salaries": {
    "ajoutees": 0,
    "colonne": "valeur",

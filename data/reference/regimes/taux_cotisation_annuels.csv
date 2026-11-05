@@ -32,7 +32,11 @@
 # compte d'un assuré sans employeur les lisent, les cultes, Mayotte et
 # Saint-Pierre-et-Miquelon n'en héritent pas. Les cultes
 # (R. 382-89 et R. 382-90), Mayotte et Saint-Pierre-et-Miquelon suivent la
-# série du régime général, dont leurs fiches recopiaient les moyennes.
+# série du régime général, dont leurs fiches recopiaient les moyennes. Sauf
+# l'indépendant de Mayotte depuis 2019 : les deux mesures `_non_salarie` de
+# cssm_mayotte portent son taux propre, sous le plafond seulement (décret
+# n° 2011-2085, article 4-2), certifié sur les rédactions que lit
+# scripts/fetch/dila_legi_taux_mayotte.py.
 #
 # TROIS SOURCES, dans cet ordre, chacune ne touchant que ce que la
 # précédente ne couvre pas :
@@ -571,35 +575,51 @@ cssm_mayotte,2018,taux_plafonne,0.154500,haute
 cssm_mayotte,2019,part_salariale,0.446602,haute
 cssm_mayotte,2019,part_salariale_deplafonnee,0.173913,haute
 cssm_mayotte,2019,taux_deplafonne,0.023000,haute
+cssm_mayotte,2019,taux_deplafonne_non_salarie,0.000000,certifiee
 cssm_mayotte,2019,taux_plafonne,0.154500,haute
+cssm_mayotte,2019,taux_plafonne_non_salarie,0.058500,certifiee
 cssm_mayotte,2020,part_salariale,0.446602,haute
 cssm_mayotte,2020,part_salariale_deplafonnee,0.173913,haute
 cssm_mayotte,2020,taux_deplafonne,0.023000,haute
+cssm_mayotte,2020,taux_deplafonne_non_salarie,0.000000,certifiee
 cssm_mayotte,2020,taux_plafonne,0.154500,haute
+cssm_mayotte,2020,taux_plafonne_non_salarie,0.065500,certifiee
 cssm_mayotte,2021,part_salariale,0.446602,haute
 cssm_mayotte,2021,part_salariale_deplafonnee,0.173913,haute
 cssm_mayotte,2021,taux_deplafonne,0.023000,haute
+cssm_mayotte,2021,taux_deplafonne_non_salarie,0.000000,certifiee
 cssm_mayotte,2021,taux_plafonne,0.154500,haute
+cssm_mayotte,2021,taux_plafonne_non_salarie,0.072500,certifiee
 cssm_mayotte,2022,part_salariale,0.446602,haute
 cssm_mayotte,2022,part_salariale_deplafonnee,0.173913,haute
 cssm_mayotte,2022,taux_deplafonne,0.023000,haute
+cssm_mayotte,2022,taux_deplafonne_non_salarie,0.000000,certifiee
 cssm_mayotte,2022,taux_plafonne,0.154500,haute
+cssm_mayotte,2022,taux_plafonne_non_salarie,0.079500,certifiee
 cssm_mayotte,2023,part_salariale,0.446602,haute
 cssm_mayotte,2023,part_salariale_deplafonnee,0.173913,haute
 cssm_mayotte,2023,taux_deplafonne,0.023000,haute
+cssm_mayotte,2023,taux_deplafonne_non_salarie,0.000000,certifiee
 cssm_mayotte,2023,taux_plafonne,0.154500,haute
+cssm_mayotte,2023,taux_plafonne_non_salarie,0.086500,certifiee
 cssm_mayotte,2024,part_salariale,0.446602,haute
 cssm_mayotte,2024,part_salariale_deplafonnee,0.165289,haute
 cssm_mayotte,2024,taux_deplafonne,0.024200,haute
+cssm_mayotte,2024,taux_deplafonne_non_salarie,0.000000,certifiee
 cssm_mayotte,2024,taux_plafonne,0.154500,haute
+cssm_mayotte,2024,taux_plafonne_non_salarie,0.093500,certifiee
 cssm_mayotte,2025,part_salariale,0.446602,haute
 cssm_mayotte,2025,part_salariale_deplafonnee,0.165289,haute
 cssm_mayotte,2025,taux_deplafonne,0.024200,haute
+cssm_mayotte,2025,taux_deplafonne_non_salarie,0.000000,certifiee
 cssm_mayotte,2025,taux_plafonne,0.154500,haute
+cssm_mayotte,2025,taux_plafonne_non_salarie,0.100500,certifiee
 cssm_mayotte,2026,part_salariale,0.446602,haute
 cssm_mayotte,2026,part_salariale_deplafonnee,0.159363,haute
 cssm_mayotte,2026,taux_deplafonne,0.025100,haute
+cssm_mayotte,2026,taux_deplafonne_non_salarie,0.000000,certifiee
 cssm_mayotte,2026,taux_plafonne,0.154500,haute
+cssm_mayotte,2026,taux_plafonne_non_salarie,0.107500,certifiee
 msa_salaries,1945,part_salariale,0.500000,estimee
 msa_salaries,1945,taux_plafonne,0.048571,estimee
 msa_salaries,1946,part_salariale,0.500000,estimee

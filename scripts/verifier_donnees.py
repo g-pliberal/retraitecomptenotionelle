@@ -1011,7 +1011,10 @@ PREMIERE_ANNEE_NON_SALARIES_AU_REGIME_GENERAL = 2018
 #: Régimes qui n'ont pas de barème propre et portent celui du régime général :
 #: les cultes, dont la cotisation est celle du droit commun sur une assiette
 #: forfaitaire, et les caisses de Mayotte et de Saint-Pierre-et-Miquelon, dont
-#: les taux sont fixés localement et ne sont pas dans l'index. Ils suivent la
+#: les taux sont fixés localement — à Mayotte, ceux de l'article 4 du décret
+#: n° 2011-2085, une part salariale et une part patronale, que le dépôt ne lit
+#: pas encore ; le taux propre de l'indépendant, depuis 2019, a sa source
+#: (`source_taux_cotisation_mayotte`). Ils suivent la
 #: série que le dépôt tient pour le régime général — celle qu'il a certifiée
 #: depuis 1982 comprise —, et non une transcription qui s'en écarterait ; la
 #: SUBSTITUTION reste une décision de modélisation, d'où le niveau `haute`.
@@ -1148,6 +1151,26 @@ def source_taux_cotisation_non_salaries() -> dict[tuple, float]:
             continue
         valeurs[("regime_general", annee, "taux_plafonne_non_salarie")] = taux["plafonne"]
         valeurs[("regime_general", annee, "taux_deplafonne_non_salarie")] = taux["deplafonne"]
+    return valeurs
+
+
+def source_taux_cotisation_mayotte() -> dict[tuple, float]:
+    """Le taux propre de l'indépendant de Mayotte, lu dans les rédactions de
+    l'article 4-2 du décret n° 2011-2085.
+
+    Depuis 2019, l'artisan et le commerçant de Mayotte cotisent à la vieillesse
+    de base de la caisse de Mayotte à leur taux, que le I de l'article fixe
+    « pour chaque année civile de 2019 à 2036 » — 5,85 % en 2019, 10,75 % en
+    2026 —, « dans la limite du plafond » : rien sur la totalité. Le
+    récupérateur date chaque taux au 1er janvier, ou à la date d'application
+    que la rédaction écrit. De 2012 à 2018, aucun texte lu ne lui donne un taux
+    propre : il garde la série alignée, celle du régime général.
+    """
+    charge = _lire_json("dila_taux_mayotte.json", "scripts/fetch/dila_legi_taux_mayotte.py")
+    valeurs: dict[tuple, float] = {}
+    for annee, taux in sorted(charge["series"].items()):
+        valeurs[("cssm_mayotte", annee, "taux_plafonne_non_salarie")] = taux["plafonne"]
+        valeurs[("cssm_mayotte", annee, "taux_deplafonne_non_salarie")] = taux["deplafonne"]
     return valeurs
 
 
@@ -10965,6 +10988,18 @@ CERTIFICATIONS = (
         colonne="valeur",
         source=source_taux_cotisation_non_salaries,
         origine="DILA, base LEGI, code de la sécurité sociale D. 633-3",
+        decimales=6,
+        tolerance=5e-7,
+    ),
+    # Le taux propre de l'indépendant de Mayotte, depuis 2019 : les deux mêmes
+    # mesures, à la caisse de Mayotte (action 177).
+    Certification(
+        nom="taux_cotisation_mayotte",
+        chemin=REFERENCE / "regimes" / "taux_cotisation_annuels.csv",
+        cles=("regime", "annee", "mesure"),
+        colonne="valeur",
+        source=source_taux_cotisation_mayotte,
+        origine="DILA, base LEGI, décret n° 2011-2085 du 30 décembre 2011, article 4-2",
         decimales=6,
         tolerance=5e-7,
     ),

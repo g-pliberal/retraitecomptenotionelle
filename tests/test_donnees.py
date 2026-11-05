@@ -855,6 +855,7 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         "taux_cotisation_avant_1967": "regimes/taux_cotisation_annuels.csv",
         "taux_cotisation_journal_officiel": "regimes/taux_cotisation_annuels.csv",
         "taux_cotisation_non_salaries": "regimes/taux_cotisation_annuels.csv",
+        "taux_cotisation_mayotte": "regimes/taux_cotisation_annuels.csv",
         "taux_cotisation_alignes": "regimes/taux_cotisation_annuels.csv",
         "salaires_forfaitaires_marins": "regimes/salaires_forfaitaires.csv",
         "employeur_public_texte":
@@ -1603,7 +1604,13 @@ def test_les_taux_du_journal_officiel_sont_certifies_et_dates_au_1er_janvier(cat
               for regime in ("regime_general", "msa_salaries")}
     assert (min(annees["regime_general"]), max(annees["regime_general"])) == (1982, 2026)
     assert (min(annees["msa_salaries"]), max(annees["msa_salaries"])) == (1980, 2026)
-    assert not [a for r, a, _ in certifiees if r not in ("regime_general", "msa_salaries")]
+    # Ailleurs, le seul taux propre de l'indépendant de Mayotte, depuis 2019
+    # (décret n° 2011-2085, article 4-2, `test_mayotte.py`).
+    assert sorted({(r, m) for r, a, m in certifiees
+                   if r not in ("regime_general", "msa_salaries")}) == [
+        ("cssm_mayotte", "taux_deplafonne_non_salarie"),
+        ("cssm_mayotte", "taux_plafonne_non_salarie")]
+    assert min(a for r, a, _ in certifiees if r == "cssm_mayotte") == 2019
 
     # LA DATE. La hausse du 30 juillet 1986 ne commande que 1987.
     assert certifiees[("regime_general", 1986, "taux_plafonne")] == pytest.approx(0.139)
