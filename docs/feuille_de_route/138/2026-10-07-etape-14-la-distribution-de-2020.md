@@ -1,15 +1,15 @@
 # Étape 14, première partie : les pensions de 2020, simulées contre publiées
 
-**Reprise, au 3 novembre 2026.** Fait : chaque grille contre l'EIR en 2020 ; la population, du 16 au
-25 octobre, de la décote aux natures, selon la génération ; le pilote des carrières inactives ; le 28,
-les hommes selon le rang, l'ASPA, les invalides et les inaptes, la décote entre les deux âges, celle des
-résidents, la surcote des statutaires, les limites ; au modèle, la descente, le militaire au mois ; le
-3 novembre, le taux plein des femmes entre les deux âges, les agents décotés, la surcote du salariat, sa
-mesure au dépôt, les écarts de R-I-bis et la décote d'après 1960, mesurée (sortie sous `docs/mesures/138/`).
-Reste, une session par point : les artisans, les saisonniers agricoles ; les femmes âgées ; la durée des
-femmes ; les départs après 67 ans. Au propriétaire : 152, 157, le CASD, l'incitation, le militaire, la
-sonde au mois, le recours de la page, les hommes entre les deux âges, la surcote d'après 1953, la décote
-d'après 1960 (cible par génération, par groupe, fonctionnaires). Détail : `…-ecarts-de-r-i-bis.md`.
+**Reprise, au 5 novembre 2026.** Fait : chaque grille contre l'EIR en 2020 ; la population, du 16 au 28 octobre (décote, natures, hommes selon le
+rang, ASPA, invalides, décote entre les deux âges et des résidents, surcote des statutaires, limites) ; le pilote des carrières inactives ; au
+modèle, la descente, le militaire au mois ; le 3 novembre, le taux plein des femmes entre les deux âges, les agents décotés, la surcote du
+salariat, sa mesure au dépôt, les écarts de R-I-bis, la décote d'après 1960 (sortie sous `docs/mesures/138/`), relue conforme par R-I-ter (3
+écarts faibles), retouchée le 5 : le « total » du résumé est une fourchette construite, 11,6 à 12,8 %, non publiée ; le modèle rend 11,66 % des
+hommes de 1960 pour 13,00 de cible, 10,04 pour 9,21 en 1955, sans cause établie ; l'État civil de 1957 : 17 % au texte du panorama (p. 156), 15,8
+au graphique 4, 16,00 à la table H. Reste, une session par point : les artisans, les saisonniers agricoles ; les femmes âgées ; la durée des
+femmes ; les départs après 67 ans. Au propriétaire : 152, 157, le CASD, l'incitation, le militaire, la sonde au mois, le recours de la page, les
+hommes entre les deux âges, la surcote d'après 1953, la décote d'après 1960 (cible par génération, par groupe, fonctionnaires). Détail :
+`…-ecarts-de-r-i-bis.md`, `…-retouches-de-la-relecture-r-i-ter.md`.
 
 **Le 7 octobre 2026, la demande.** Le propriétaire : « 138.14 ». L'étape :
 « Ce qui demande une population ou des microdonnées, avec l'action 136 (étape

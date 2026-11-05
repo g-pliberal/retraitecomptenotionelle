@@ -418,3 +418,8 @@ journal de veille.
    1,7 à 2,5 points de l'écart à la Cnav ; le reste, non expliqué.
 3. Les autres points de l'étape, une session chacun : les artisans, les
    saisonniers agricoles ; les femmes âgées ; la durée des femmes.
+
+*Renvoi du 5 novembre 2026 : le « total » du résumé est une fourchette construite
+(11,6 à 12,8 %), non un chiffre publié ; l'écart du modèle à sa cible en 1955 et
+1960 et le 17 % du texte du panorama pour l'État civil sont dits dans
+`2026-11-05-retouches-de-la-relecture-r-i-ter.md`.*
