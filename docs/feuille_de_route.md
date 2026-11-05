@@ -7117,13 +7117,13 @@ l'inviterait aussi à relire le dépôt.
 **Reprise, au 5 novembre 2026.** Périmètre : les trois versants et les militaires. Entrés et certifiés :
 grilles, barème depuis 1983, reclassements (450 tableaux), durées d'échelon (778). Chaînage (étape 3) relu
 trois fois (R-B3, R-B3-bis, R-B3-ter), conforme à la troisième : 511 des 1 675 grades de durées et 13 des
-862 groupes de reclassement rattachés ; la suite rouge sous Python 3.11, réparée par B3-quater. Reste, test
-d'abord : dire dans l'en-tête de `reclassements.csv` que `rangs_grille` est la place du jour, non le rang du
-Noyau RH (6, non 5, grille 02777) ; récrire les deux commentaires sur le n° 91-783, qui n'a aucun article
-énumérant ses corps ; trancher les deux versions de l'art. 2 du n° 2009-1322 en vigueur ensemble en 2017
-(IEEAC) ; rattacher plus sans deviner (sommet d'échelon non écrit, autres décrets communs, n° 60-403 par
-numéro et date, date qui ouvre la phrase) ; les dates d'effet que les lecteurs ne lisent pas ; les 97
-versions hors du motif ; les refus, au JORF ; le minimum de traitement. Détail : note du 5 novembre.
+862 groupes de reclassement rattachés. Faits le 5 novembre : l'en-tête de `rangs_grille`, les commentaires
+du n° 91-783, et l'art. 2 du n° 2009-1322 en 2017, qui est celui du n° 2018-610 (la version du n° 2017-171
+ôtée des grilles des IEEAC). Reste, test d'abord : les autres articles que le LEGI date en vigueur ensemble
+(n° 2008-836, 2012-1058, 87-1104), à lire au JORF ; rattacher plus sans deviner (sommet d'échelon non écrit,
+autres décrets communs, n° 60-403 par numéro et date, date qui ouvre la phrase) ; les dates d'effet que les
+lecteurs ne lisent pas ; les 97 versions hors du motif ; les refus, au JORF ; le minimum de traitement.
+Détail : `2026-11-05-tete-du-bloc-rangs-91-783-et-2009-1322.md`, et la note des retouches de R-B3-ter.
 
 
 **D'où elle vient.** La demande du propriétaire, le 12 octobre 2026 : aller

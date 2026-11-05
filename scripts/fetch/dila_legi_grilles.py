@@ -37,7 +37,8 @@ puis « Echelle de solde n° 3 », toujours de l'adjudant), l'échelon unique,
 particulier ou provisoire, les échelons exceptionnels numérotés ; ces règles ne
 lisent que leurs textes (``lire_tableau(..., militaire=True)``). Les échelons
 d'avant 2009, comptés en années de services, sont refusés. ``DATES_CORRIGEES``
-rend au décret n° 2014-1257 la date que le LEGI a perdue.
+rend au décret n° 2014-1257 la date que le LEGI a perdue, et ôte la version de
+l'article 2 du n° 2009-1322 que le n° 2018-610 remplace du jour où elle naît.
 
 L'ÉTAT, AVANT LE NOYAU RH. Le Noyau RH du CISIRH (``cisirh_grilles.py``) ne
 date les grilles de l'État que depuis 1989-1990 pour les enseignants, 2005 à
@@ -888,9 +889,16 @@ def _fin(jour: str) -> str:
 #: retirée à la version de l'article 2 du décret n° 2009-21 qu'il écrit, et clos
 #: avant son début celle que le décret n° 2014-988 écrit au 1er septembre 2014 ;
 #: le Noyau RH de l'État date de ce jour les indices de cette dernière.
+#: L'article 2 du décret n° 2009-1322 (les IEEAC) : le décret n° 2017-171 le récrit
+#: au 1er janvier 2017 (art. 39 et 126) ; le décret n° 2018-610 du 12 juillet 2018
+#: le « remplace » (art. 1er) et « entre en vigueur le 1er janvier 2017 » (art. 2).
+#: Le LEGI garde la version du premier en vigueur jusqu'au 1er janvier 2018, à côté
+#: de celle du second : remplacée du jour même où elle entrait en vigueur, elle ne
+#: vaut à aucune date ; le Noyau RH date du 1er janvier 2017 les indices du second.
 DATES_CORRIGEES = {
     "LEGIARTI000029415839": ("2014-09-01", "2014-11-01"),
     "LEGIARTI000029672106": ("2014-11-01", "2015-01-01"),
+    "LEGIARTI000034034492": ("2017-01-01", "2017-01-01"),
 }
 
 

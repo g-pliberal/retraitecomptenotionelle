@@ -249,8 +249,10 @@ def test_deux_corps_qui_citent_le_statut_et_ont_les_memes_grades_ne_se_rattachen
     # communes applicables aux corps d'assistants de service social ») : origine
     # des corps 00671 (« Assistants de service social du MAE ») et 00873
     # (« Assistants de service social »), qui ont les grades du tableau aux mêmes
-    # dates. L'article qui énumère les corps de ce décret n'est pas lu ici
-    # (`COMMUNS`) : aucun rattachement, la raison le dit.
+    # dates. Le décret n'a pas d'article qui énumère ses corps : son article 1er
+    # les désigne par leur catégorie (B), et son tableau (art. 15) ne dit pas
+    # « régis par le présent décret » ; la règle du n° 2012-762 (`COMMUNS`) ne s'y
+    # applique pas : aucun rattachement, la raison le dit.
     statuts = {t["texte"]: t["numero"] for t in _lire(GRILLES / "durees" / "textes.csv")}
     lignes = [d for d in durees if statuts[d["texte"]] == "91-783"
               and d["groupe"] in ("Assistant de service social principal", "Assistant de service social")]
@@ -593,6 +595,22 @@ def test_l_echelon_exceptionnel_des_majors_de_police_est_le_cinquieme_a_l_accuei
     assert par_groupe["Gardien de la paix Gardien de la paix"]["rangs_grille"] == (
         "origine exceptionnel 12")
     assert par_groupe["Brigadier-chef de police Brigadier-chef de police"]["rangs_grille"] == ""
+
+
+def test_l_entete_dit_que_rangs_grille_n_est_pas_le_rang_du_noyau():
+    # Relecture R-B3-ter. Au Noyau RH (etat/echelons.csv), la grille 02777, du
+    # 2011-07-01 au 2011-12-31, a les rangs 1 (581), 2 (598), 3 (616), 4 (620) et
+    # 6 (631, « exceptionnel ») : l'exceptionnel y est le cinquième échelon, que
+    # rangs_grille dit « accueil exceptionnel 5 ». L'en-tête le dit.
+    noyau = sorted(int(e["rang"]) for e in _lire(GRILLES / "etat" / "echelons.csv")
+                   if e["grille"] == "02777" and e["debut"] <= "2011-07-01" <= (e["fin"] or "9"))
+    assert noyau == [1, 2, 3, 4, 6]
+    with (CHAINAGE / "reclassements.csv").open(encoding="utf-8") as flux:
+        entete = flux.readline()
+    assert entete == f"# {chainage.ENTETES['reclassements']}\n"
+    assert ("la place de l'échelon parmi ceux de la grille le jour du reclassement, non la "
+            "colonne rang du Noyau RH") in entete
+    assert "02777" in entete
 
 
 #: Les visas du décret n° 2016-581 (LEGITEXT000032523056) qui portent un statut

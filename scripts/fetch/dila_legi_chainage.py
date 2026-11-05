@@ -443,10 +443,12 @@ class Depot:
     def periodes_noyau(self, grille: str, debut: str, fin: str):
         """Au noyau, le rang ordonne les échelons sans les numéroter : la
         grille 00422 des gardiens de la paix met au rang 1 un échelon
-        provisoire, au 2 l'élève, au 3 le stagiaire, au 4 le 1er échelon. Les
-        échelons d'élève, de stagiaire et provisoires mis à part, le n-ième
-        rang est donc l'échelon n : ce qui se compare est leur nombre, morceau
-        par morceau de [debut, fin), comme ``periodes_legi``."""
+        provisoire, au 2 l'élève, au 3 le stagiaire, au 4 le 1er échelon ; et
+        il peut sauter un numéro : le 2011-07-01, la grille 02777 a les rangs
+        1 à 4, puis 6 pour l'exceptionnel, son cinquième échelon. Les échelons
+        d'élève, de stagiaire et provisoires mis à part, le n-ième rang est
+        donc l'échelon n : ce qui se compare est leur nombre, morceau par
+        morceau de [debut, fin), comme ``periodes_legi``."""
         return periodes([e for e in self.noyau_echelons[grille]
                          if e["nature"] not in ("stagiaire", "eleve", "provisoire")
                          and e["rang"] not in ("", "0")], debut, fin,
@@ -599,9 +601,14 @@ def _candidats_legi(depot: Depot, tableau: dict, groupe: str, rangs: set[int]):
 #: a été lu au LEGI : (article, citation mot pour mot). Le tableau de durées d'un
 #: tel décret qui vaut pour « les corps […] régis par le présent décret » se
 #: rattache au grade de chacun des corps du noyau qui ont ce décret pour texte
-#: d'origine (relecture R-B3-bis, partie 3). Les autres décrets communs (le
-#: n° 91-783, les assistants de service social) ne sont pas lus : leurs grades
-#: restent déclarés, un seul corps au noyau.
+#: d'origine (relecture R-B3-bis, partie 3). Le n° 91-783 (les assistants de
+#: service social) n'a pas d'article qui énumère ses corps : son article 1er les
+#: désigne par leur catégorie (« Les corps d'assistants de service social des
+#: administrations de l'Etat, classés dans la catégorie B […] », LEGIARTI000006461848
+#: et LEGIARTI000006461849), et son tableau de durées (art. 15, LEGIARTI000006461873)
+#: ne dit pas « régis par le présent décret ». La règle du n° 2012-762 ne s'y
+#: applique pas telle quelle : ses grades restent déclarés, et la session qui le
+#: rattachera écrira la sienne.
 COMMUNS = {
     "2012-762": (
         "LEGIARTI000025855207",
@@ -1149,7 +1156,10 @@ ENTETES = {
                      "mis à part), de chaque échelon du groupe que le tableau ne numérote pas "
                      "(« accueil exceptionnel 5 ») ; il l'emporte sur le rang de "
                      "reclassements/lignes.csv, que le lecteur donne au-dessus du plus haut "
-                     "échelon écrit de son côté du tableau.",
+                     "échelon écrit de son côté du tableau. Ce rang est la place de l'échelon "
+                     "parmi ceux de la grille le jour du reclassement, non la colonne rang du "
+                     "Noyau RH, qui peut sauter un numéro : le 2011-07-01, la grille 02777 a "
+                     "les rangs 1 à 4, puis 6 pour l'exceptionnel, son cinquième échelon.",
     "a_lire_au_jorf": "Les textes dont un tableau de durées ou de reclassement est abîmé au "
                       "LEGI (cas abime : dessiné en caractères, en fiches, non reproduit, ou "
                       "perdu par la consolidation), ou dont le premier tableau de durées lu vaut "

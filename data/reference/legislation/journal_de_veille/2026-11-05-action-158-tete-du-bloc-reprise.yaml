@@ -1,0 +1,24 @@
+date: "2026-11-05"
+session: "action 158, file B : la tête du bloc « Reprise » — le rang de rangs_grille, le n° 91-783, l'article 2 du n° 2009-1322 en 2017"
+consulte: >-
+  python scripts/veille_droit.py ; docs/veille_droit.md. L'index LEGI du dépôt (incrément
+  20261102-213929) : décret n° 91-783, ses 23 articles, dont l'article 1er
+  (LEGIARTI000006461848, LEGIARTI000006461849), les articles 9, 16 et 17, et l'article 15
+  (LEGIARTI000006461873) ; décret n° 2009-1322, article 2, ses six versions. L'index JORF
+  (incrément 20261103-002311) : décret n° 2017-171, articles 39 et 126 ; décret
+  n° 2017-1737, article 17 ; décret n° 2018-610, notice, articles 1er et 2. Le Noyau RH :
+  grille 02777 au 2011-07-01, grille 03500 en 2017, texte 5946.
+trouve: >-
+  Le décret n° 2018-610 du 12 juillet 2018 remplace l'article 2 du n° 2009-1322 (art. 1er)
+  et « entre en vigueur le 1er janvier 2017 » (art. 2) : la version du n° 2017-171, entrée
+  en vigueur le même jour (art. 39 et 126), ne vaut à aucune date ; le LEGI la garde
+  jusqu'au 2018-01-01. La grille des IEEAC de 2017 en tirait quatre lignes (421 ; 971,
+  1021, HEA), ôtées par DATES_CORRIGEES ; le Noyau RH applique déjà le n° 2018-610. Le
+  n° 91-783 n'énumère ses corps dans aucun article. Le rang 6 de l'exceptionnel de la grille
+  02777 au noyau est son cinquième échelon, ce que l'en-tête de reclassements.csv dit
+  désormais.
+reste: >-
+  Les autres articles que le LEGI date en vigueur ensemble (n° 2008-836, art. 14-1-1 ;
+  n° 2012-1058, art. 4 ; n° 87-1104, art. 1er), à lire au JORF. Ce que le n° 2018-610 ne
+  tranche pas : si le « 1er » de l'ingénieur stagiaire (434) est le 1er échelon de la
+  classe normale, comme le Noyau RH et le tableau de durées du statut le comptent.

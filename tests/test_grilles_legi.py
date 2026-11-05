@@ -943,3 +943,23 @@ def test_le_point_de_la_federation_est_celui_du_depot():
     chemin = RACINE / "data" / "reference" / "legislation" / "point_indice_fonction_publique.csv"
     point = {int(l["annee"]): float(l["valeur"]) for l in _lire_csv(chemin)}
     assert round(point[2022] / 12, 4) == 4.6860
+
+
+def test_la_grille_de_2017_des_ieeac_est_celle_du_decret_2018_610():
+    """Décret n° 2009-1322, article 2 : le LEGI garde en vigueur ensemble, du
+    2017-01-01 au 2018-01-01, la version que le décret n° 2017-171 écrit (art. 39,
+    « en vigueur le 1er janvier 2017 », art. 126) et celle du décret n° 2018-610 du
+    12 juillet 2018, qui « remplace » l'article (art. 1er) et « entre en vigueur le
+    1er janvier 2017 » (art. 2). En 2017, la classe normale est celle du n° 2018-610,
+    colonne « Au 1er janvier 2017 » : 2e 483, 3e 508, 4e 525, 5e 565, 6e 610, 7e 649,
+    8e 686, 9e 727, 10e 744, 11e 774 ; son « 1er » (434) est au grade d'ingénieur
+    stagiaire. Rien ne reste du n° 2017-171 : ni le 1er échelon à 421, ni sa hors
+    classe (971, 1021, HEA). Le Noyau RH porte les mêmes indices (grille 03500)."""
+    lignes = _lire_csv(GRILLES / "etat_legi" / "echelons.csv")
+    assert not [l for l in lignes if l["article"] == "LEGIARTI000034034492"]
+    normale = sorted((int(l["rang"]), int(l["indice"]), l["article"])
+                     for l in _en_vigueur(lignes, "2017-06-30")
+                     if l["texte"] == "LEGITEXT000021214923" and l["grille"] ==
+                     "ingenieur-des-etudes-et-de-l-exploitation-de-l-aviation-civile-de-classe-normale")
+    assert normale == [(rang, indice, "LEGIARTI000037196211") for rang, indice in
+                       zip(range(2, 12), (483, 508, 525, 565, 610, 649, 686, 727, 744, 774))]

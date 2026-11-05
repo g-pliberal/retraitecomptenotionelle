@@ -995,12 +995,12 @@
    "ajoutees": 0,
    "colonne": "indice",
    "corrigees": 0,
-   "empreinte": "5d6baa54cd81e047",
-   "identiques": 19946,
+   "empreinte": "f3a2d333e709217e",
+   "identiques": 19943,
    "niveau": "certifiee",
    "source": "DILA, base LEGI, textes d'échelonnement indiciaire, par l'index du dépôt",
-   "valeurs": 19946,
-   "verifiee_le": "2026-11-03"
+   "valeurs": 19943,
+   "verifiee_le": "2026-11-05"
   },
   "grilles_etat_legi_indice_presume": {
    "ajoutees": 0,
@@ -1017,12 +1017,12 @@
    "ajoutees": 0,
    "colonne": "rang",
    "corrigees": 0,
-   "empreinte": "f4ea29e07515373a",
-   "identiques": 21071,
+   "empreinte": "40355acc80591ffe",
+   "identiques": 21067,
    "niveau": "certifiee",
    "source": "DILA, base LEGI, textes d'échelonnement indiciaire, par l'index du dépôt",
-   "valeurs": 21071,
-   "verifiee_le": "2026-11-03"
+   "valeurs": 21067,
+   "verifiee_le": "2026-11-05"
   },
   "grilles_etat_legi_rang_presume": {
    "ajoutees": 0,
