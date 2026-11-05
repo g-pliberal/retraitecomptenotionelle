@@ -165,11 +165,12 @@ def test_la_cavec_majore_pour_trois_enfants_depuis_juillet_2025(simulateur):
 
 
 #: Les minorations à l'âge seul lues au droit le 3 novembre 2026 (action 130),
-#: la CAVAMAC le 5, et le régime que chacune minore.
+#: la CAVAMAC et la CAVOM le 5, et le régime que chacune minore.
 MINORATIONS_LUES_AU_DROIT = {
     "cavec_minoration_age_seul": "cavec_complementaire",
     "carpv_minoration_age_seul": "carpv_complementaire",
     "cavamac_minoration_age_seul": "cavamac_complementaire",
+    "cavom_ages_minoration": "cavom_complementaire",
 }
 
 
@@ -241,6 +242,9 @@ def test_chaque_version_lue_commence_quand_son_texte_entre_en_vigueur(fiche):
 #: statuts en vigueur « à compter du 1er juillet 2011 » (article 3) ; ceux du
 #: 1er octobre 2007, du 9 juillet 2012, du 22 décembre 2017, du 27 décembre
 #: 2023 et du 10 juillet 2026 ne fixent pas de date.
+#: La CAVOM, relevée le 5 novembre 2026 : l'arrêté du 12 décembre 2024 met
+#: l'annexe en vigueur « au 1er janvier 2025 » (article 2) ; ceux du
+#: 30 décembre 2015 et du 10 juillet 2026 ne fixent pas de date.
 NAISSANCES_AU_JOURNAL_OFFICIEL = {
     "cavec_minoration_age_seul": {
         "JORFARTI000018197778": ("2008-03-01", "2008-03-02"),
@@ -261,6 +265,11 @@ NAISSANCES_AU_JOURNAL_OFFICIEL = {
         "JORFARTI000047977908": ("2023-08-18", "2023-09-01"),
         "JORFARTI000047977903": ("2023-08-18", "2024-01-01"),
         "JORFARTI000054436046": ("2026-07-17", "2026-07-18"),
+    },
+    "cavom_ages_minoration": {
+        "JORFARTI000031740853": ("2015-12-31", "2016-01-01"),
+        "JORFARTI000050823056": ("2024-12-24", "2025-01-01"),
+        "JORFARTI000054435969": ("2026-07-17", "2026-07-18"),
     },
     "carpv_minoration_age_seul": {
         "JORFARTI000023448554": ("2011-01-19", "2011-01-20"),

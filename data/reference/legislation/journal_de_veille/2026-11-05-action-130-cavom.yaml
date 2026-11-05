@@ -1,0 +1,39 @@
+date: "2026-11-05"
+session: "action 130, file E : la CAVOM lue au droit (ses âges, sa minoration, son assiette), et le bloc « Reprise » de l'action"
+consulte: >-
+  python scripts/veille_droit.py ; docs/veille_droit.md ; les index JORF et LEGI du dépôt,
+  récupérés et mis à jour au 5 novembre (JORF, quatre incréments) et au 4 novembre 2026
+  (LEGI, deux incréments). Dans JORF : les textes de la CAVOM de 1950 à 2026, cherchés aux
+  « officiers ministériels » ; en entier, les arrêtés du 7 octobre 2014, du 30 décembre 2015
+  (annexe et article 1er), du 21 décembre 2016, du 28 août 2020 (annexe, II), du 12 décembre
+  2024 (articles 1er et 2, annexe, II) et du 10 juillet 2026 (articles 1er et 2, annexe I,
+  article 1er) ; le décret n° 2015-1875 (articles 1er et 3), le décret n° 2019-373 (articles
+  3 et 4), les décrets annuels du taux de 2016 à 2026 (n° 2015-1802, 2017-730, 2018-1033,
+  2019-1484, 2020-1738, 2021-945, 2022-1633, 2023-1351, 2024-1214, 2025-1076, articles 12 à
+  14) ; les notices de 1996, 1997, 2001 et 2003. Dans LEGI : le décret n° 79-265, article 2
+  (rédactions de 2013, 2016, 2019 et 2026) et article 5 (2026) ; L. 643-4 au 1er janvier
+  2025. Les notes de l'action 130 du 5 novembre (CAVAMAC, CARCDSF, la complémentaire avant
+  la base de la file N, N-bis), pour la méthode et le bloc.
+trouve: >-
+  La CAVOM liquide, depuis le 1er janvier 2016 (statuts récrits par l'arrêté du 30 décembre
+  2015, articles 14 et 23), dès 60 ans et au taux plein à 65 ans jusqu'à la génération 1955,
+  six mois de plus par génération jusqu'à 62 et 67 ans depuis 1959, avec 0,75 à 0,95 selon
+  l'âge atteint en années, « non susceptibles de fractionnement », et l'inapte sans
+  coefficient dès 62 ans ; depuis le 1er janvier 2025 (arrêté du 12 décembre 2024), 5 % par
+  année manquante jusqu'à l'âge du taux plein, l'ouverture repoussée à 64 ans pour la
+  génération 1968, et l'inapte ouvert à 62 ans avec le coefficient ; depuis le 18 juillet
+  2026, le règlement, mot pour mot. La pension prend effet au premier jour du trimestre
+  civil qui suit la demande, la cessation et le paiement des cotisations. La cotisation :
+  12,50 % de 2016 à 2025, quatre à sept plafonds de 2016 à 2019 (décret n° 2015-1875,
+  article 3, II, et non 1er, II), huit depuis, au moins le quart du plafond puis 19 % depuis
+  2019. Le modèle sert la minoration et l'assiette lues ; il ne sert pas l'inapte de 2016 à
+  2024, n'ouvre pas l'inapte à 62 ans depuis 2025, et fait prendre effet la pension au mois
+  et non au trimestre civil : écarts déclarés dans la fiche, non corrigés, pour le
+  propriétaire.
+reste: >-
+  Les statuts d'avant 2016, au seul Bulletin officiel : l'arrêté du 11 avril 1979, l'article
+  14 dans les rédactions de 1996 (no 96-36) et de 2001 (no 2001/29), l'article 9 de 2003 (no
+  2003-14), et les bornes de revenu des classes. Le taux de cotisation de 2026, que l'index ne
+  porte pas pour la CAVOM. Le code civil, article 1er, que l'index ne porte pas : l'entrée en
+  vigueur au lendemain de la publication suit la règle des fiches de la CAVEC, de la CARPV,
+  de la CAVAMAC et de la CARCDSF.

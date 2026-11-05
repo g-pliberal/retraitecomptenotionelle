@@ -1,33 +1,392 @@
 schema_version: 1
 id: cavom_ages_minoration
 intitule: >-
-  Régime complémentaire de la CAVOM : ouverture à 60 ans et taux plein à 65 ans
-  pour les nés avant 1956, six mois de plus par génération jusqu'à 62 et 67 ans
-  pour la génération 1959, puis ouverture à 62 ans et 6 mois, 63 ans, 63 ans et
-  6 mois et 64 ans pour les générations 1965 à 1968 ; avant l'âge du taux plein,
-  un coefficient d'anticipation de 5 % par année manquante, « non susceptible de
-  fractionnement », que la durée d'assurance n'annule pas ; aucune surcote.
+  Régime complémentaire de la CAVOM : depuis le 1er janvier 2016, ouverture à 60 ans
+  et taux plein à 65 ans pour les nés avant 1956, six mois de plus par génération
+  jusqu'à 62 et 67 ans pour la génération 1959, puis, depuis le 1er janvier 2025,
+  ouverture à 62 ans et 6 mois, 63 ans, 63 ans et 6 mois et 64 ans pour les
+  générations 1965 à 1968 ; avant l'âge du taux plein, un coefficient d'anticipation
+  de 5 % par année manquante, « non susceptible de fractionnement », que la durée
+  d'assurance n'annule pas ; aucune surcote ; l'inapte sans coefficient dès 62 ans
+  jusqu'au 31 décembre 2024, ouvert à 62 ans avec le coefficient depuis ; la pension
+  au premier jour d'un trimestre civil ; avant 2016, la même règle présumée.
+domaine: decote_surcote
 regimes: [cavom_complementaire]
+etape: liquider_chaque_regime
+face: droit
 etat: approchee
+lit:
+- >-
+  l'âge de l'officier ministériel à la date d'effet de sa pension, qui prend effet « au
+  plus tôt au premier jour du trimestre civil qui suit » la demande, la cessation
+  d'activité et le paiement des cotisations, et sa génération, qui donne l'âge
+  d'ouverture et l'âge du taux plein
+- >-
+  l'inaptitude au travail : de 2016 à 2024, reconnue « dans les conditions prévues aux
+  articles 27 à 33 des statuts de la CNAVPL », puis, depuis le 7 septembre 2020, « dans
+  les statuts en vigueur », elle ouvre la pension sans coefficient dès 62 ans ; depuis
+  le 1er janvier 2025, l'affilié du a du 2° de L. 643-4 ouvre ses droits à 62 ans, avec
+  le coefficient
+- la date d'effet de la pension, qui choisit la rédaction des statuts ou du règlement
+ecrit:
+- >-
+  le coefficient d'anticipation qui réduit les points de la pension complémentaire, de
+  0,75 à cinq ans du taux plein à un, que `abattement_points` rend à
+  `liquider_chaque_regime`, et l'âge d'ouverture et l'âge du taux plein, que la table
+  `cavom` de `ages_regimes.csv` rend à l'ouverture
+dates_qui_decident:
+- liquidation.date_effet
+versions:
+- id: statuts_d_avant_2016
+  statut: supposee
+  hypothese: >-
+    les pensions qui prennent effet avant le 1er janvier 2016 relèvent des statuts
+    approuvés par l'arrêté du 11 avril 1979, que l'arrêté du 30 décembre 2015 vise
+    (JORFTEXT000031740849) et que l'index JORF du dépôt n'a pas, et de leurs
+    modifications, publiées au seul Bulletin officiel : l'arrêté du 8 août 1996 approuve
+    celles des « (art. 14, 16, 17, 27 et 28) » (JORFARTI000001603584), « publié
+    intégralement au Bulletin officiel no 96-36 » (JORFARTI000001405558) ; celui du 6
+    juin 2001 celles des « (art. 14 et 16 bis) » (JORFARTI000001451960), « publié
+    intégralement au Bulletin officiel no 2001/29 » (JORFARTI000001066668). L'article 14
+    est, en 2016, celui de la liquidation, de l'âge et des coefficients : sa rédaction
+    d'avant n'est pas lue. La fiche présume la règle de 2016 aux générations nées avant
+    1956, « Jusqu'à 1955 60 ans 65 ans » (article 23 de 2016), dont les mots « Les taux
+    de décote sont ajustés en conséquence » disent qu'une décote existait déjà
+  fiabilite: >-
+    faible : l'âge d'ouverture, l'âge du taux plein et le coefficient, que nul texte lu
+    ne date avant le 1er janvier 2016
+  bornes:
+    liquidation.date_effet: [null, 2016-01-01]
+  contenu:
+    parametres:
+      abattement_points: cavom
+      age_table: cavom
+      surcote_par_trimestre: null
+    droit: celui de la version statuts_de_2016, présumé
+  exemples: aucun trouvé
+- id: statuts_de_2016
+  statut: lue
+  textes:
+  - id: JORFARTI000031740853
+    article: >-
+      statuts du régime d'assurance vieillesse complémentaire, annexe de l'arrêté du 30
+      décembre 2015, 5° (article 14) et 8° (article 23)
+    en_vigueur: 2016-01-01
+    publie_le: 2015-12-31
+    citation: >-
+      « 5° L'article 14 est remplacé par les dispositions suivantes : « I. - Liquidation
+      de la retraite « La retraite est liquidée sur demande expresse de l'affilié formée
+      par lettre recommandée. « La liquidation de la retraite, conditionnée à la
+      cessation de toute activité professionnelle ressortissant de la caisse et au
+      paiement à la caisse de toutes les cotisations et majorations exigibles, peut
+      intervenir : « 1° À partir de 62 ans « En cas d'inaptitude au travail reconnue dans
+      les conditions prévues aux articles 27 à 33 des statuts de la CNAVPL ; « Ou avec
+      application des coefficients d'anticipation suivants : « 0,75 si la retraite est
+      attribuée lorsque l'affilié est âgé de 62 ans ; « 0,80 si la retraite est attribuée
+      lorsque l'affilié est âgé de 63 ans ; « 0,85 si la retraite est attribuée lorsque
+      l'affilié est âgé de 64 ans ; « 0,90 si la retraite est attribuée lorsque l'affilié
+      est âgé de 65 ans ; « 0,95 si la retraite est attribuée lorsque l'affilié est âgé
+      de 66 ans ; « Ces coefficients, appliqués au nombre de points, n'étant pas
+      susceptibles de fractionnement ; « 2° À partir de 67 ans sans application de
+      coefficients d'anticipation. « II. - Prise d'effet et paiement de la retraite « La
+      retraite prend effet au plus tôt au premier jour du trimestre civil qui suit le
+      dernier des faits ci-après : « - la demande prévue au I ci-dessus ; « - la
+      justification de la cessation d'activité ; « - le paiement des cotisations et
+      majorations exigibles restant dues à la caisse. [...] 8° L'article 23 est remplacé
+      par les dispositions suivantes : « Les âges de liquidation de la retraite de 62 ans
+      et 67 ans s'appliquent aux adhérents nés à compter du 1er janvier 1959. Pour les
+      générations antérieures, les âges d'ouverture des droits à retraite et de bénéfice
+      du taux plein évoluent selon le tableau ci-dessous : GÉNÉRATION ÂGE D'OUVERTURE DES
+      DROITS ÂGE DU TAUX PLEIN Jusqu'à 1955 60 ans 65 ans 1956 60 ans et 6 mois 65 ans et
+      6 mois 1957 61 ans 66 ans 1958 61 ans et 6 mois 66 ans et 6 mois 1959 et suivantes
+      62 ans 67 ans « Les taux de décote sont ajustés en conséquence. »
+  - id: JORFARTI000031740850
+    article: arrêté du 30 décembre 2015, article 1er
+    en_vigueur: 2016-01-01
+    publie_le: 2015-12-31
+    citation: >-
+      « Sont approuvées, telles qu'elles sont annexées au présent arrêté, les
+      modifications apportées aux statuts de la section professionnelle des officiers
+      ministériels, des officiers publics et des compagnies judiciaires. » : l'arrêté ne
+      fixe pas de date, et entre en vigueur le lendemain de sa publication
+  - id: JORFARTI000042311285
+    article: annexe de l'arrêté du 28 août 2020, II, G (article 14)
+    en_vigueur: 2020-09-07
+    publie_le: 2020-09-06
+    citation: >-
+      « G. - L'article 14 est ainsi modifié : 1° Au troisième alinéa, après les mots : «
+      ressortissant de la caisse » sont insérés les mots : « , sous réserve des
+      dérogations prévues à l'article 15, » ; 2° Au cinquième alinéa, les mots : « aux
+      articles 27 à 33 des statuts » sont remplacés par les mots : « dans les statuts en
+      vigueur » ; » : le renvoi de l'inaptitude change de mots, non de règle
+  nee_de: JORFARTI000031740853
+  bornes:
+    liquidation.date_effet: [2016-01-01, 2025-01-01]
+  contenu:
+    parametres:
+      abattement_points: cavom
+      age_table: cavom
+      surcote_par_trimestre: null
+    droit: >-
+      ouverture et taux plein à 60 et 65 ans jusqu'à la génération 1955, puis six mois
+      de plus par génération jusqu'à 62 et 67 ans depuis celle de 1959 ; avant l'âge du
+      taux plein, de 0,75 à 0,95 selon l'âge atteint en années, « non susceptibles de
+      fractionnement », 0,75 à 62 ans et 6 mois ; « ajustés en conséquence » pour les
+      générations d'avant 1959 ; aucune majoration au-delà ; la durée d'assurance
+      n'entre nulle part ; la pension au premier jour du trimestre civil qui suit la
+      demande, la cessation et le paiement des cotisations
+    conditions: >-
+      sans coefficient dès 62 ans, l'inapte reconnu « dans les conditions prévues aux
+      articles 27 à 33 des statuts de la CNAVPL », puis « dans les statuts en vigueur »
+      (article 14, I, 1°)
+  exemples: aucun trouvé
+- id: statuts_de_2025
+  statut: lue
+  textes:
+  - id: JORFARTI000050823056
+    article: >-
+      annexe de l'arrêté du 12 décembre 2024, II, 4°, a (article 14) et 6° (article 23)
+    en_vigueur: 2025-01-01
+    publie_le: 2024-12-24
+    citation: >-
+      « 4° L'article 14 est ainsi modifié : a) Les troisième à treizième alinéas sont
+      remplacés par les dispositions suivantes : « La liquidation de la retraite est
+      conditionnée à la cessation de toute activité professionnelle ressortissant de la
+      caisse et au paiement à la caisse de toutes les cotisations et majorations
+      exigibles. « 1° L'âge d'ouverture des droits à pensions est fixé à : « a) 62 ans
+      pour les affiliés relevant du a du 2° de l'article L. 643-4 du code de la sécurité
+      sociale ; « b) 64 ans à compter de la génération 1968. « Pour les affiliés nés
+      avant le 1er janvier 1968, cet âge est fixé à : « - 60 ans pour les affiliés nés
+      avant le 1er janvier 1956 ; « - 60 ans et 6 mois pour les affiliés nés en 1956 ;
+      « - 61 ans pour les affiliés nés en 1957 ; « - 61 ans et 6 mois pour les affiliés
+      nés en 1958 ; « - 62 ans pour les affiliés nés entre le 1er janvier 1959 et le 31
+      décembre 1964 inclus ; « - 62 ans et 6 mois ans pour les affiliés nés en 1965 ; «
+      - 63 ans pour les affiliés nés en 1966 ; « - 63 ans et 6 mois pour les affiliés
+      nés en 1967 ; « 2° Sont liquidées sans application de coefficients
+      d'anticipation, les pensions de retraite des affiliés ayant atteint l'âge de 67
+      ans à compter de la génération 1959. « Pour les affiliés nés avant le 1er janvier
+      1959, cet âge est fixé à : « - 65 ans pour les affiliés nés avant le 1er janvier
+      1956 ; « - 65 ans et 6 mois pour les affiliés nés en 1956 ; « - 66 ans pour les
+      affiliés nés en 1957 ; « - 66 ans et 6 mois pour les affiliés nés en 1958. « 3° En
+      cas de liquidation avant l'âge fixé au 2°, un coefficient d'anticipation est
+      appliqué à la pension de retraite. Ce coefficient est fixé à 5 % par année
+      manquante entre l'âge auquel est demandée la liquidation de la retraite, qui ne
+      peut être inférieur à l'âge fixé au 1°, et l'âge prévu au 2°. « Ce coefficient
+      n'est pas susceptible de fractionnement. » ; [...] 6° L'article 23 est abrogé. »
+  - id: JORFARTI000050823053
+    article: arrêté du 12 décembre 2024, article 2
+    en_vigueur: 2025-01-01
+    publie_le: 2024-12-24
+    citation: >-
+      « Les dispositions annexées au présent arrêté entrent en vigueur au 1er janvier
+      2025. »
+  - id: LEGIARTI000047453026
+    article: >-
+      code de la sécurité sociale, article L. 643-4, rédaction des pensions prenant
+      effet depuis le 1er septembre 2023
+    en_vigueur: 2023-09-01
+    citation: >-
+      « 2° Des assurés ayant atteint l'âge prévu au IV de l'article L. 643-3 et relevant
+      de l'une des catégories suivantes : a) Reconnus inaptes au travail dans les
+      conditions prévues à l'article L. 643-5 » : le a du 2° que l'article 14 nomme est
+      l'inapte
+  nee_de: JORFARTI000050823056
+  bornes:
+    liquidation.date_effet: [2025-01-01, 2026-07-18]
+  contenu:
+    parametres:
+      abattement_points: cavom
+      age_table: cavom
+      surcote_par_trimestre: null
+    droit: >-
+      la table de 2016, prolongée : ouverture à 62 ans et 6 mois, 63 ans, 63 ans et 6
+      mois pour les générations 1965 à 1967, à 64 ans depuis 1968, taux plein à 67 ans
+      depuis 1959 ; 5 % par année manquante entre l'âge de la liquidation et celui du
+      taux plein, « non susceptible de fractionnement » ; aucune majoration ; la durée
+      d'assurance n'entre nulle part ; la date d'effet de 2016, inchangée
+    conditions: >-
+      l'inapte du a du 2° de L. 643-4 ouvre ses droits à 62 ans (1°, a), avec le
+      coefficient jusqu'à l'âge du 2° : aucune catégorie n'est plus servie sans
+      coefficient
+  exemples: aucun trouvé
+- id: reglement_de_2026
+  statut: lue
+  textes:
+  - id: JORFARTI000054435969
+    article: >-
+      règlement du régime d'assurance vieillesse complémentaire, annexe I de l'arrêté du
+      10 juillet 2026, article 1er, I et II
+    en_vigueur: 2026-07-18
+    publie_le: 2026-07-17
+    citation: >-
+      « 1° L'âge d'ouverture des droits à pensions est fixé à : « a) 62 ans pour les
+      affiliés relevant du a du 2° de l'article L. 643-4 du code de la sécurité sociale ;
+      « b) 64 ans à compter de la génération 1968. [...] « 2° Sont liquidées sans
+      application de coefficients d'anticipation, les pensions de retraite des affiliés
+      ayant atteint l'âge de 67 ans à compter de la génération 1959. [...] « 3° En cas
+      de liquidation avant l'âge fixé au 2°, un coefficient d'anticipation est appliqué
+      à la pension de retraite. Ce coefficient est fixé à 5 % par année manquante entre
+      l'âge auquel est demandée la liquidation de la retraite, qui ne peut être inférieur
+      à l'âge fixé au 1°, et l'âge prévu au 2°. « Ce coefficient n'est pas susceptible
+      de fractionnement. « II. - Prise d'effet et paiement de la retraite « La retraite
+      prend effet au plus tôt au premier jour du trimestre civil qui suit le dernier des
+      faits ci-après : »
+  - id: LEGIARTI000054168600
+    article: >-
+      décret n° 79-265 du 27 mars 1979, article 5, rédaction du décret n° 2026-418
+    en_vigueur: 2026-07-01
+    citation: >-
+      « Les conditions d'attribution et de service des prestations du présent régime
+      sont précisées par un règlement de la section professionnelle des officiers
+      ministériels, officiers publics et des compagnies judiciaires, approuvé par arrêté
+      du ministre chargé de la sécurité sociale, après avis de la Caisse nationale
+      d'assurance vieillesse des professions libérales. »
+  nee_de: JORFARTI000054435969
+  bornes:
+    liquidation.date_effet: [2026-07-18, null]
+  contenu:
+    parametres:
+      abattement_points: cavom
+      age_table: cavom
+      surcote_par_trimestre: null
+    droit: celui des statuts de 2025, mot pour mot
+    conditions: celles des statuts de 2025
+  exemples: aucun trouvé
+approximations:
+- version: [statuts_d_avant_2016]
+  textes: >-
+    statuts de 1979, article 14 dans ses rédactions de 1996 et de 2001, au seul Bulletin
+    officiel (no 96-36, no 2001/29)
+  ecart: >-
+    Le modèle sert avant le 1er janvier 2016 la table et le coefficient de 2016 aux
+    générations nées avant 1956 (ouverture à 60 ans, taux plein à 65 ans, 5 % par année
+    manquante), que nul texte lu ne date ; ce que les statuts d'alors disaient n'est pas
+    lu.
+  effet: >-
+    non mesuré ; né le 10 mars 1955, liquidé le 1er avril 2015 à 60 ans, le modèle sert
+    0,75 (essai du 5 novembre 2026, dans les deux moteurs)
+- version: [statuts_de_2016]
+  textes: statuts de 2016, article 14, I, 1°, deuxième alinéa
+  ecart: >-
+    Le modèle n'exempte pas l'inapte : il lui oppose le coefficient jusqu'à l'âge du
+    taux plein, quand les statuts lui servent la pension sans coefficient dès 62 ans
+    (essai du 5 novembre 2026, requête du formulaire, case de l'inaptitude cochée, dans
+    les deux moteurs). La même classe que la CAVEC, la CARPV, la CAVAMAC et la CARCDSF.
+  effet: >-
+    jusqu'à 25 points de la pension : inapte né le 10 mars 1959, liquidé le 1er avril
+    2021 à 62 ans, le modèle sert 0,75 (13 564,47 € par an), le texte 1 (18 085,97 €) ;
+    né le 10 mars 1957, le 1er avril 2019, 0,80 au lieu de 1 ; né le 10 mars 1955, le
+    1er avril 2017, 0,85 au lieu de 1
+- version: [statuts_de_2025, reglement_de_2026]
+  textes: statuts de 2025, article 14, 1°, a ; règlement de 2026, article 1er, I, 1°, a
+  ecart: >-
+    Le modèle n'ouvre pas la pension de l'inapte à 62 ans quand son âge d'ouverture,
+    pour sa génération, est plus tardif (générations 1965 à 1967, puis 64 ans depuis
+    1968) : il refuse la liquidation (`non_ouverte`) et attend l'âge de la table.
+  effet: >-
+    inapte né le 10 mars 1965 : le texte ouvre la pension le 1er avril 2027 à 62 ans,
+    avec le coefficient de cinq années manquantes, 0,75 ; le modèle refuse à 62 ans et
+    sert 0,75 dès le 1er octobre 2027, à 62 ans et 6 mois : six mois de pension, 8 317,99
+    € (16 635,98 € par an, que le modèle calcule à cette date), ne sont pas servis
+    (essai du 5 novembre 2026, dans les deux moteurs) ; jusqu'à deux ans pour la
+    génération 1968, ouverte à 64 ans, non essayé
+- version: [statuts_de_2016, statuts_de_2025, reglement_de_2026]
+  textes: >-
+    statuts de 2016 et de 2025, article 14, II ; règlement de 2026, article 1er, II
+  ecart: >-
+    Le modèle fait prendre effet la pension au premier jour du mois qui suit l'âge
+    (fiche date_effet_mois_suivant), quand la retraite de la CAVOM « prend effet au plus
+    tôt au premier jour du trimestre civil qui suit » la demande, la cessation
+    d'activité et le paiement des cotisations : sa pension commence un ou deux mois
+    trop tôt quand l'âge tombe au premier ou au deuxième mois d'un trimestre civil.
+  effet: >-
+    un ou deux mois de pension : né le 10 mai 1959, à 62 ans le 10 mai 2021, le modèle
+    sert la CAVOM dès le 1er juin 2021 (13 580,64 € par an, 0,75), le texte au 1er
+    juillet 2021, au même coefficient : un mois de trop, 1 131,72 € (essai du 5
+    novembre 2026, dans les deux moteurs)
+- version: [statuts_de_2016]
+  textes: statuts de 2016, article 23, « Les taux de décote sont ajustés en conséquence »
+  ecart: >-
+    Pour les générations 1956 à 1958, le texte ne dit pas comment les coefficients de
+    l'article 14, écrits pour 62 à 66 ans, sont « ajustés » à leurs âges ; le modèle
+    leur oppose 5 % par année manquante jusqu'à l'âge du taux plein de la table,
+    l'année entamée comptée entière : né le 10 mars 1956, liquidé le 1er avril 2017 à
+    61 ans, 4,5 années avant 65 ans et 6 mois, 0,75. Le texte ne tranche pas.
+  effet: non mesuré
+- version: [statuts_de_2025, reglement_de_2026]
+  textes: >-
+    statuts de 2025, article 14, 3° ; règlement de 2026, article 1er, I, 3°, « Ce
+    coefficient n'est pas susceptible de fractionnement »
+  ecart: >-
+    Le texte ne dit pas si l'année manquante entamée compte entière ou ne compte pas ;
+    le modèle la compte entière, comme les statuts de 2016, qui donnaient le
+    coefficient à l'âge atteint en années (0,75 à 62 ans et 6 mois), et comme l'IRCEC
+    l'écrit pour la même règle. Né le 10 mars 1965, à 62 ans et 6 mois, 4,5 années
+    manquantes : le modèle sert 0,75 ; le texte, 0,75 ou 0,80.
+  effet: >-
+    jusqu'à 5 points de la pension, quand l'âge n'est pas un nombre entier d'années
+    avant le taux plein ; non mesuré dans la population
+- version: [statuts_de_2016, statuts_de_2025, reglement_de_2026]
+  textes: article 14, I, de chaque rédaction ; règlement de 2026, article 1er, I
+  ecart: >-
+    La condition de cessation de toute activité ressortissant de la caisse et de
+    paiement des cotisations exigibles n'est pas modélisée : le modèle liquide à la date
+    demandée.
+  effet: non mesuré
+textes_sans_effet:
+- id: JORFARTI000029830483
+  article: arrêté du 7 octobre 2014, annexe
+  publie_le: 2014-12-03
+  motif: l'article 5 (les six classes de cotisation et leurs points) et l'article 6
+- id: JORFARTI000033702977
+  article: arrêté du 21 décembre 2016, annexe
+  publie_le: 2016-12-28
+  motif: >-
+    les articles 1er à 13, 16 et 24 à 26 (gouvernance, cotisations, réversion, conjoint
+    collaborateur) : ni l'article 14 ni l'article 23
+- id: JORFARTI000054435966
+  article: arrêté du 10 juillet 2026, article 1er
+  publie_le: 2026-07-17
+  motif: l'approbation du règlement, sans date d'entrée en vigueur
+reformes:
+- cavom_ages_2025
 effet: >-
   La fiche lisait les tables du régime général et la décote du régime de base, que
   la durée annule : un officier ministériel parti à l'âge légal avec sa durée ne
   perdait rien de sa complémentaire, là où le règlement lui retire 5 % par année
   jusqu'à 67 ans — 15 % à 64 ans. Depuis le 23 septembre 2026, `age_table: cavom`
   et `abattement_points: cavom`, dans les deux moteurs ; tenu par tests/test_sections_juridiques.py.
-  Approximations : l'année entamée est comptée entière, comme l'IRCEC l'écrit pour
-  la même règle, le texte ne le disant pas ; les versions des statuts antérieures
-  à 2024 ne sont pas dans l'index, et la même table et le même coefficient y sont
-  supposés — la table de 2024 porte elle-même les générations nées avant 1956.
+  Lue au droit le 5 novembre 2026 (action 130) : quatre versions, les statuts de 2016
+  en vigueur le 1er janvier 2016 (arrêté du 30 décembre 2015), présumés avant,
+  l'article 14 récrit le 1er janvier 2025, le règlement de 2026 ; ni l'inapte de 2016
+  à 2024, ni l'ouverture de l'inapte à 62 ans depuis 2025, ni la date d'effet au
+  trimestre civil ne sont servis.
 sources:
-  lu_le: 2026-09-23
+  lu_le: 2026-11-05
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
-    Retrouver une version des statuts antérieure à 2016 (arrêtés d'approbation hors
-    index) pour dater la minoration et les âges d'avant la réforme de 2016 ; vérifier
-    l'arrondi à l'année sur un exemple de la caisse.
+    Lire les statuts d'avant 2016 au Bulletin officiel : l'arrêté du 11 avril 1979 qui
+    les approuve, l'article 14 dans les rédactions de 1996 (no 96-36) et de 2001 (no
+    2001/29), et l'arrêté du 27 février 2003 (article 9, no 2003-14) ; ou les demander
+    à la CAVOM. Vérifier l'arrondi à l'année d'un âge non entier depuis 2025 sur un
+    exemple de la caisse.
   lectures:
+  - type: jorf
+    reference: >-
+      Arrêté du 30 décembre 2015, annexe, 5° et 8° (JORFARTI000031740853) ; arrêté du
+      28 août 2020, annexe, II, G (JORFARTI000042311285) ; arrêté du 12 décembre 2024,
+      article 2 et annexe, II, 4° et 6° (JORFARTI000050823053, JORFARTI000050823056) ;
+      arrêté du 10 juillet 2026, annexe I, article 1er (JORFARTI000054435969) ; les
+      notices de 1996 et de 2001 ; lus dans l'index JORF du dépôt, à jour du 5 novembre
+      2026.
+    date: 2026-11-05
+  - type: legifrance
+    reference: >-
+      Code de la sécurité sociale, article L. 643-4 (LEGIARTI000047453026) ; décret n°
+      79-265, article 5 (LEGIARTI000054168600), lus dans l'index LEGI du dépôt, à jour
+      du 4 novembre 2026.
+    date: 2026-11-05
   - type: jorf
     reference: >-
       Arrêté du 12 décembre 2024, annexe, II, 4° (JORFARTI000050823056), et arrêté
@@ -42,15 +401,6 @@ sources:
       et prévoyance 2026.
     url: https://www.cavom.net/vos-droits/votre-retraite/
     date: 2026-09-23
-textes_a_rattacher:
-- reference: >-
-    statuts du régime complémentaire de la CAVOM, article 14, rédaction de l'arrêté
-    du 12 décembre 2024 (JORFTEXT000050823047), en vigueur au 1er janvier 2025
-- reference: >-
-    règlement du régime complémentaire de la CAVOM, article 1er, I, approuvé par
-    l'arrêté du 10 juillet 2026 (JORFTEXT000054435960)
-reformes:
-- cavom_ages_2025
 code:
   interrupteurs:
     abattement_points: cavom
@@ -74,6 +424,7 @@ code:
     surcotePoints ; moteur/js/droit/ouvrir.js : ageOuverture, ageTauxPlein ;
     moteur/js/regimes.js : AgesRegimes
   parametres: >-
-    regimes/cavom_complementaire.yaml : age_table, age_ouverture, age_taux_plein ;
-    legislation/ages_regimes.csv : cavom
-  tests: [tests/test_sections_juridiques.py]
+    contenu.parametres de chaque version : abattement_points, age_table,
+    surcote_par_trimestre ; regimes/cavom_complementaire.yaml : age_ouverture,
+    age_taux_plein ; legislation/ages_regimes.csv : cavom
+  tests: [tests/test_sections_juridiques.py, tests/test_sections_liberales.py]

@@ -3,32 +3,304 @@ id: cavom_assiette_2016
 intitule: >-
   Depuis 2016, la cotisation au régime complémentaire de la CAVOM est de 12,5 %
   du revenu professionnel dans la limite de huit plafonds de la Sécurité sociale,
-  que le décret n° 2015-1875 fait appeler « dans la limite d'un plafond égal à »
-  quatre plafonds en 2016, cinq en 2017, six en 2018 et sept en 2019 ; l'assiette
-  ne peut être inférieure au quart du plafond, puis à 19 % depuis le 1er janvier
-  2019.
+  que le décret n° 2015-1875 (article 3, II) fait appeler « dans la limite d'un
+  plafond égal à » quatre plafonds en 2016, cinq en 2017, six en 2018 et sept en
+  2019 ; l'assiette ne peut être inférieure au quart du plafond, puis à 19 % depuis
+  le 1er janvier 2019 ; avant 2016, des classes de cotisation, que le modèle remplace
+  par la règle de 2016.
+domaine: cotisations
 regimes: [cavom_complementaire]
+etape: acquerir_les_droits
+face: droit
 etat: transcrite
+lit:
+- >-
+  l'année du revenu professionnel, qui choisit la rédaction de l'article 2 du décret
+  n° 79-265 et le plafond de la Sécurité sociale du 1er janvier de cette année
+- le revenu professionnel de l'année, défini à l'article L. 131-6
+- la part de l'année où l'officier ministériel exerce, qui proratise la cotisation
+ecrit:
+- >-
+  la cotisation de l'année au régime complémentaire, 12,5 % de l'assiette bornée
+  entre le minimum et le plafond, que `acquerir` change en points au scénario 1 et
+  que le compte notionnel porte (`ConstructeurCompte._cotisation_ligne`)
+dates_qui_decident:
+- revenu.annee
+versions:
+- id: classes_d_avant_2016
+  statut: supposee
+  hypothese: >-
+    de 1979 à 2015, la cotisation est celle d'une classe : « Le régime d'assurance
+    vieillesse complémentaire institué par l'article 1er comporte six classes de
+    cotisations : - la classe spéciale portant attribution de 18 points de retraite
+    [...] La cotisation due par chaque assujetti est celle de la classe à laquelle
+    correspond, dans les conditions fixées par les statuts prévus à l'article 5 du
+    présent décret, son revenu d'activité » (décret n° 79-265, article 2, rédaction du
+    1er janvier 2013, LEGIARTI000026892955) ; les bornes de revenu des classes sont aux
+    statuts, hors de l'index, et le montant de la classe spéciale au décret de chaque
+    année. Le modèle y projette la règle de 2016, 12,5 % jusqu'à huit plafonds, au
+    niveau `estimee`, sans minimum
+  fiabilite: >-
+    faible : la cotisation et les points de chaque année, que les classes donnaient et
+    que le modèle ne reconstitue pas
+  bornes:
+    revenu.annee: [null, 2016-01-01]
+  contenu:
+    parametres:
+      assiette: plafonnee_8_pass
+      taux_cotisation_retraite: 0.125
+    droit: 12,5 % du revenu jusqu'à huit plafonds, la règle de 2016, présumée
+    conditions: aucune
+  exemples: aucun trouvé
+- id: decret_2015_1875
+  statut: lue
+  textes:
+  - id: JORFARTI000031740733
+    article: décret n° 2015-1875 du 30 décembre 2015, article 1er (article 2 du décret n° 79-265)
+    en_vigueur: 2016-01-01
+    publie_le: 2015-12-31
+    citation: >-
+      « Art. 2.-I.-La cotisation est fixée en pourcentage du revenu professionnel tel
+      que défini à l'article L. 131-6 du code de la sécurité sociale, dans la limite d'un
+      plafond égal à 8 fois le plafond prévu à l'article L. 241-3 du même code en
+      vigueur le 1er janvier de l'année au cours de laquelle la cotisation est appelée,
+      sans que le montant retenu pour le calcul de la cotisation ne puisse être inférieur
+      au quart de ce plafond. « Le taux de cotisation est fixé par décret sur proposition
+      du conseil d'administration. »
+  - id: JORFARTI000031740735
+    article: décret n° 2015-1875 du 30 décembre 2015, article 3
+    en_vigueur: 2016-01-01
+    publie_le: 2015-12-31
+    citation: >-
+      « I. - Le présent décret entre en vigueur le 1er janvier 2016. II. - Par dérogation
+      aux dispositions de l'article 2 du décret du 27 mars 1979 susvisé dans sa rédaction
+      issue de l'article 1er du présent décret, la cotisation mentionnée au I et au II de
+      cet article est appelée, pour les années 2016 à 2019, dans la limite d'un plafond
+      égal à : - 4 fois le plafond prévu à l'article L. 241-3 du code de la sécurité
+      sociale en vigueur au 1er janvier 2016 pour les cotisations appelées en 2016 ; - 5
+      fois le plafond prévu à l'article L. 241-3 du code de la sécurité sociale en vigueur
+      au 1er janvier 2017 pour les cotisations appelées en 2017 ; - 6 fois le plafond
+      prévu à l'article L. 241-3 du code de la sécurité sociale en vigueur au 1er janvier
+      2018 pour les cotisations appelées en 2018 ; - 7 fois le plafond prévu à l'article
+      L. 241-3 du code de la sécurité sociale en vigueur au 1er janvier 2019 pour les
+      cotisations appelées en 2019. »
+  - id: LEGIARTI000031875318
+    article: décret n° 79-265, article 2, rédaction du 1er janvier 2016 au 1er janvier 2019
+    en_vigueur: 2016-01-01
+    citation: >-
+      « I. - La cotisation est fixée en pourcentage du revenu professionnel tel que défini
+      à l'article L. 131-6 du code de la sécurité sociale, dans la limite d'un plafond égal
+      à 8 fois le plafond prévu à l'article L. 241-3 du même code en vigueur le 1er
+      janvier de l'année au cours de laquelle la cotisation est appelée, sans que le
+      montant retenu pour le calcul de la cotisation ne puisse être inférieur au quart de
+      ce plafond. »
+  - id: JORFARTI000031733606
+    article: décret n° 2015-1802 du 29 décembre 2015, article 2 (l'année 2016)
+    publie_le: 2015-12-30
+    citation: >-
+      « 2° Section professionnelle des officiers ministériels, officiers publics et des
+      compagnies judiciaires : - taux de cotisation : 12,50 % ; »
+  - id: JORFARTI000034579624
+    article: décret n° 2017-730 du 3 mai 2017, article 1er (l'année 2017)
+    publie_le: 2017-05-05
+    citation: >-
+      « 2° Section professionnelle des officiers ministériels, officiers publics et des
+      compagnies judiciaires : - taux de cotisation : 12,50 % ; »
+  - id: JORFARTI000037646709
+    article: >-
+      décret n° 2018-1033 du 26 novembre 2018, article 1er, qui récrit l'article 2 du
+      décret n° 2017-730 (l'année 2018)
+    publie_le: 2018-11-27
+    citation: >-
+      « 2° Section professionnelle des officiers ministériels, officiers publics et des
+      compagnies judiciaires : -taux de cotisation : 12,50 % ; »
+  nee_de: JORFARTI000031740735
+  bornes:
+    revenu.annee: [2016-01-01, 2019-01-01]
+  contenu:
+    parametres:
+      assiette_minimale_pass: 0.25
+      taux_cotisation_retraite: 0.125
+    droit: >-
+      12,5 % du revenu professionnel, dans la limite de quatre plafonds en 2016, cinq en
+      2017 et six en 2018 (`plafonnee_4_pass` à `plafonnee_6_pass`), l'assiette au moins
+      égale au quart du plafond de l'année
+    conditions: aucune
+  exemples: aucun trouvé
+- id: decret_2019_373
+  statut: lue
+  textes:
+  - id: JORFARTI000038424592
+    article: décret n° 2019-373 du 26 avril 2019, article 3
+    en_vigueur: 2019-01-01
+    publie_le: 2019-04-28
+    citation: >-
+      « Au premier alinéa des I et II de l'article 2 du décret du 27 mars 1979 susvisé,
+      les mots : « au quart » sont remplacés par les mots : « à 19 % ». »
+  - id: JORFARTI000038424594
+    article: décret n° 2019-373 du 26 avril 2019, article 4
+    en_vigueur: 2019-01-01
+    publie_le: 2019-04-28
+    citation: >-
+      « Le présent décret est applicable pour les cotisations dues au titre des périodes
+      courant à compter du 1er janvier 2019. »
+  - id: LEGIARTI000038427708
+    article: décret n° 79-265, article 2, rédaction du 1er janvier 2019 au 1er juillet 2026
+    en_vigueur: 2019-01-01
+    citation: >-
+      « sans que le montant retenu pour le calcul de la cotisation ne puisse être
+      inférieur à 19 % de ce plafond. »
+  - id: JORFARTI000037646713
+    article: décret n° 2018-1033 du 26 novembre 2018, article 2 (l'année 2019)
+    publie_le: 2018-11-27
+    citation: >-
+      « 2° Section professionnelle des officiers ministériels, officiers publics et des
+      compagnies judiciaires : -taux de cotisation : 12,50 % ; »
+  - id: JORFARTI000052565553
+    article: >-
+      décret n° 2025-1076 du 10 novembre 2025, article 12 (l'année 2025), comme les
+      décrets de 2020 (n° 2020-1738, article 4), 2021 (n° 2021-945, article 4), 2022
+      (n° 2022-1633, article 7), 2023 (n° 2023-1351, article 6) et 2024 (n° 2024-1214,
+      article 6)
+    publie_le: 2025-11-13
+    citation: >-
+      « 2° Section professionnelle des officiers ministériels, officiers publics et des
+      compagnies judiciaires : - taux de cotisation : 12,50 % ; »
+  nee_de: JORFARTI000038424592
+  bornes:
+    revenu.annee: [2019-01-01, 2026-07-01]
+  contenu:
+    parametres:
+      assiette_minimale_pass: 0.19
+      taux_cotisation_retraite: 0.125
+    droit: >-
+      12,5 % du revenu professionnel, dans la limite de sept plafonds en 2019, huit
+      depuis 2020, l'assiette au moins égale à 19 % du plafond de l'année
+    conditions: aucune
+  exemples: aucun trouvé
+- id: decret_2026_418
+  statut: lue
+  textes:
+  - id: LEGIARTI000054168585
+    article: >-
+      décret n° 79-265, article 2, rédaction du décret n° 2026-418, en vigueur le 1er
+      juillet 2026
+    en_vigueur: 2026-07-01
+    citation: >-
+      « I. - La cotisation est fixée en pourcentage du revenu professionnel tel que défini
+      à l'article L. 131-6 du code de la sécurité sociale, dans la limite d'un plafond égal
+      à 8 fois le plafond prévu à l'article L. 241-3 du même code en vigueur le 1er
+      janvier de l'année au cours de laquelle la cotisation est appelée, sans que le
+      montant retenu pour le calcul de la cotisation ne puisse être inférieur à 19 % de
+      ce plafond. Le montant minimum prévu au premier alinéa s'applique pour le calcul de
+      la cotisation des deux premières années d'activité. »
+  nee_de: LEGIARTI000054168585
+  bornes:
+    revenu.annee: [2026-07-01, null]
+  contenu:
+    parametres:
+      assiette_minimale_pass: 0.19
+      taux_cotisation_retraite: 0.125
+    droit: >-
+      la règle de 2019, huit plafonds et 19 % du plafond au moins, le minimum dit aussi
+      des deux premières années d'activité ; le taux de 12,5 %, que le modèle garde
+    conditions: aucune
+  exemples: aucun trouvé
+approximations:
+- version: [classes_d_avant_2016]
+  textes: décret n° 79-265, article 2, rédactions de 1980, 1987 et 2013 ; les statuts
+  ecart: >-
+    Le modèle remplace les classes de 1979 à 2015 par 12,5 % du revenu jusqu'à huit
+    plafonds, la règle de 2016, sans minimum : les bornes des classes sont aux statuts,
+    hors de l'index, et la cotisation de chaque année n'est pas reconstituée.
+  effet: non mesuré
+- version: [decret_2015_1875]
+  textes: décret n° 2015-1875, article 3, II, « pour les cotisations appelées en 2016 »
+  ecart: >-
+    Le décret borne les cotisations « appelées » chaque année, quand la cotisation de
+    l'année est d'abord appelée à titre provisionnel, puis régularisée sur le revenu
+    définitif (statuts, article 5, rédaction de l'arrêté du 28 août 2020 : « Cette
+    cotisation est dans un premier temps fixée à titre provisionnel en pourcentage du
+    revenu d'activité de l'avant-dernière année ») ; le modèle borne la cotisation de chaque
+    année de revenu par le plafond de cette année. Le texte ne dit pas quel plafond
+    borne la régularisation de la cotisation de 2016 appelée en 2017.
+  effet: non mesuré
+- version: [decret_2015_1875, decret_2019_373, decret_2026_418]
+  textes: >-
+    statuts, article 9, V, rédaction de l'arrêté du 21 décembre 2016 (annexe, 12°,
+    JORFARTI000033702977), publié le 28 décembre 2016
+  ecart: >-
+    « Lorsqu'un affilié débute son activité en cours d'année, la cotisation est due et
+    exigible à compter du premier jour du trimestre civil suivant », et cesse d'être due
+    « à compter du premier jour du trimestre civil qui suit sa cessation », « prorata
+    temporis » ; le modèle proratise la cotisation, et le minimum par le plafond, aux
+    mois de l'année où l'officier ministériel exerce (`acquerir` : « Le plafond est déjà
+    proratisé sur les mois de l'année »), et non par trimestres civils entiers.
+  effet: >-
+    au plus un trimestre de cotisation, et des points qu'elle achète, l'année du début
+    et celle de la fin ; non mesuré
+- version: [decret_2026_418]
+  textes: décret n° 79-265, article 2, I, rédaction du 1er juillet 2026
+  ecart: >-
+    Le taux de 2026 n'est pas trouvé à l'index JORF du dépôt : le décret n° 2025-1076
+    fixe celui de 2025 (12,50 %), et sa notice annonce, pour les libéraux, « les
+    modifications des taux de cotisation de retraite complémentaire issus de la réforme
+    de l'assiette » au 1er janvier 2026, et son article 14, « Pour l'année 2026 », ne
+    nomme que les médecins, les chirurgiens-dentistes et sages-femmes et les auxiliaires
+    médicaux (JORFARTI000052565558) : l'index ne porte pas de taux de 2026 pour la
+    CAVOM. Le modèle garde 12,5 %, que la page de la CAVOM donne pour 2026.
+  effet: non mesuré
+- version: [decret_2015_1875, decret_2019_373, decret_2026_418]
+  textes: >-
+    décret n° 79-265, article 2, II ; les décrets de chaque année, « taux de cotisation
+    des affiliés relevant de l'article L. 642-4-1 du code de la sécurité sociale : 7,50
+    % »
+  ecart: >-
+    L'officier ministériel salarié (deuxième alinéa de L. 642-4-1) cotise sur sa
+    rémunération de L. 242-1, au taux de 7,50 %, pris en charge à 60 % par l'employeur ;
+    le modèle ne le distingue pas de l'officier ministériel libéral.
+  effet: non mesuré
+textes_sans_effet:
+- id: JORFARTI000029830483
+  article: arrêté du 7 octobre 2014, annexe
+  publie_le: 2014-12-03
+  motif: >-
+    les points des six classes (article 5 des statuts), sans les bornes de revenu : la
+    cotisation d'avant 2016 n'en est pas reconstituée
+reformes:
+- cavom_2016
 effet: >-
   La fiche portait huit plafonds dès 2016 et aucune assiette minimale : elle surestimait
   le complémentaire des revenus supérieurs à quatre plafonds de 2016 à 2019, et
   ne servait rien aux revenus nuls ou très bas que le décret fait cotiser. Coupée
   en 2016, 2017, 2018, 2019 et 2020 le 23 septembre 2026 ; champs `assiette_minimale_pass`,
-  `plafonnee_6_pass` et `plafonnee_7_pass`.
+  `plafonnee_6_pass` et `plafonnee_7_pass`. Lue au droit le 5 novembre 2026 (action
+  130) : quatre versions, les classes d'avant 2016 présumées, le décret n° 2015-1875,
+  dont la dérogation est à l'article 3, II, et non au 1er, celui de 2019, celui de
+  2026 ; le taux de 12,50 % lu de 2016 à 2025, non trouvé pour 2026 ; le modèle porte
+  les plafonds et les minimums de chaque année.
 sources:
-  lu_le: 2026-09-23
+  lu_le: 2026-11-05
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
-    Rien de plus sur l'assiette ; les classes d'avant 2016 restent hors de portée,
-    faute des bornes de revenu des statuts.
+    Le taux de 2026, au décret qui l'aurait fixé, hors de l'index ; les bornes de
+    revenu des classes d'avant 2016, aux statuts, au Bulletin officiel.
   lectures:
   - type: legifrance
     reference: >-
-      Article 2 du décret n° 79-265 dans ses trois rédactions depuis 2016, lues
-      dans l'index LEGI du dépôt, avec la dérogation de l'article 1er, II, du décret
-      n° 2015-1875 que chacune reproduit.
-    date: 2026-09-23
+      Article 2 du décret n° 79-265 dans ses rédactions du 1er janvier 2013
+      (LEGIARTI000026892955), du 1er janvier 2016 (LEGIARTI000031875318), du 1er janvier
+      2019 (LEGIARTI000038427708) et du 1er juillet 2026 (LEGIARTI000054168585), lues
+      dans l'index LEGI du dépôt, à jour du 4 novembre 2026.
+    date: 2026-11-05
+  - type: jorf
+    reference: >-
+      Décret n° 2015-1875, articles 1er et 3 (JORFARTI000031740733, JORFARTI000031740735) ;
+      décret n° 2019-373, articles 3 et 4 (JORFARTI000038424592, JORFARTI000038424594) ;
+      le taux de 12,50 % aux décrets de chaque année, de 2016 à 2025 ; lus dans l'index
+      JORF du dépôt, à jour du 5 novembre 2026.
+    date: 2026-11-05
   - type: autre
     reference: >-
       CAVOM, page « Vous êtes professionnel libéral » et tableau des paramètres
@@ -36,15 +308,6 @@ sources:
       PASS, 9 131 €, soit 1 141 €.
     url: https://www.cavom.net/vos-cotisations/vous-etes-professionnel-liberal/
     date: 2026-09-23
-textes_a_rattacher:
-- reference: >-
-    décret n° 79-265 du 27 mars 1979, article 2, rédactions du 1er janvier 2016
-    (LEGIARTI000031875318), du 1er janvier 2019 (LEGIARTI000038427708) et du 1er
-    juillet 2026 (LEGIARTI000054168585)
-- reference: >-
-    décret n° 2015-1875 du 30 décembre 2015, article 1er, II (JORFTEXT000031740732)
-reformes:
-- cavom_2016
 code:
   moteur: >-
     Les périodes de `cavom_complementaire` cotisent 12,5 % (`taux_cotisation_retraite`)
@@ -67,8 +330,9 @@ code:
     dispenseLesComplementaires ; moteur/js/droit/acquerir.js : acquerir ;
     moteur/js/compte.js : ConstructeurCompte._cotisationLigne
   parametres: >-
-    regimes/cavom_complementaire.yaml : assiette, assiette_minimale_pass,
-    taux_cotisation_retraite
+    contenu.parametres de chaque version : assiette, assiette_minimale_pass,
+    taux_cotisation_retraite ; regimes/cavom_complementaire.yaml : assiette,
+    assiette_minimale_pass, taux_cotisation_retraite
   tests:
   - >-
     tests/test_sections_juridiques.py, test_le_plafond_de_la_cavom_monte_par_marches,

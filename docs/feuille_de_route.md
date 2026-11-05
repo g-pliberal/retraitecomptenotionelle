@@ -3292,15 +3292,15 @@ fabriqués.
 ### 130. L'architecture du dépôt : décidée, les phases 0 à 8 faites, les domaines à ouvrir — `en cours`
 
 **Reprise, au 5 novembre 2026.** Fait : phases 0 à 8, cinq domaines clos, le sixième aux étapes 1 à 6 ; vagues 6 et 7 relues conformes
-(Agirc-Arrco 5cf7bbc, Agirc 18a4dc3, base des libéraux 5f19af8, L-bis 9fcd8a1, L-ter f6012e5, Ircantec d'avant 1983 cc627e8). Le 5 :
-la CRPNPAC (file N, 1464c06) se sert à son âge, le régime général et l'Agirc-Arrco du navigant à l'âge de L. 161-17-2, non plus
-avant, relue conforme (R-N, 329db34) ; défaut candidat, ses vingt annuités (`130/2026-11-05-crpnpac-et-regime-general.md`). Retouches de
-R-E, R-M3-ter, R-L-ter et R-D-bis faites (7e44534). Lues au droit, la CAVAMAC (75b31ac) puis la CARCDSF : restent 84 fiches, 491
-manques. Au propriétaire, des erreurs du modèle déclarées dans les fiches, non corrigées : pour la CARCDSF, l'inapte et les
-catégories sans minoration (jusqu'à 30 points), la réversion, la majoration comptée au temps et non à l'exercice libéral, les
-statuts de 2007 et de 2011 servis hors de leurs dates (`130/2026-11-05-carte-des-fiches-carcdsf-lue-au-droit.md`) ; pour la CAVAMAC,
-cinq ; et `130/2026-11-03-decisions-du-proprietaire.md`. Restent les statuts de la CAVOM, CARPIMKO, CAVP et CPRN ; défauts candidats
-non lancés : l'Agirc-Arrco de 1955 à 1983, les biologistes et la durée, le taux plein de 1977 et de 1982, `ages_reference.csv`.
+(Agirc-Arrco 5cf7bbc, Agirc 18a4dc3, base des libéraux 5f19af8, L-bis 9fcd8a1, L-ter f6012e5, Ircantec d'avant 1983 cc627e8). Le 5 : la
+CRPNPAC à son âge (N, 1464c06, relue R-N 329db34 ; défaut candidat, ses vingt annuités) ; la CAVOM, la CARPIMKO et la CPRN se demandent à
+leur âge, sans la base, avant elle ou après, la CAVP à l'âge de la base (N, ddc92fc, relue conforme R-N2 10eb393 ; test du site récrit,
+N-bis 0ba2aea). Lues au droit, la CAVAMAC (75b31ac), la CARCDSF puis la CAVOM, ses âges, sa minoration, son assiette : restent 82 fiches,
+478 manques. Au propriétaire, des erreurs du modèle déclarées, non corrigées : pour la CAVOM, l'inapte minoré de 2016 à 2024 (jusqu'à 25
+points), non ouvert à 62 ans depuis 2025, la pension au mois et non au trimestre civil (`130/2026-11-05-carte-des-fiches-cavom-lue-au-droit.md`) ;
+pour la CARCDSF, sept (`…-carcdsf-lue-au-droit.md`, `…-retouches-de-la-relecture-r-e2.md`) ; la CAVAMAC, cinq ; `…-11-03-decisions-du-proprietaire.md`.
+Restent les statuts de la CARPIMKO, CAVP et CPRN, et ceux d'avant 2016 au seul Bulletin officiel ; défauts candidats non lancés : l'Agirc-Arrco
+de 1955 à 1983, les biologistes et la durée, le taux plein de 1977 et de 1982, `ages_reference.csv`.
 
 Le dépôt devenait de plus en plus lourd à faire avancer. Une modification du
 moteur du scénario 1 touchait vingt fichiers en médiane, dont sept ou huit de
