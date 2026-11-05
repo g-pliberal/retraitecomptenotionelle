@@ -4893,7 +4893,12 @@ institutions:
           LEGI du dépôt. Seize valeurs certifiées, les mesures
           taux_plafonne_non_salarie et taux_deplafonne_non_salarie de
           cssm_mayotte de 2019 à 2026 ; de 2012 à 2018, aucun texte lu ne lui
-          donne un taux propre.
+          donne un taux propre : depuis la relecture R-D (5 novembre 2026), le
+          récupérateur lit aussi l'article 4, dont la somme des parts salariale
+          et patronale de la vieillesse de base — 13,90 % en 2012, 14,56 % en
+          2018, rédaction du 21 octobre 2012 — est versée au niveau `estimee`
+          (taux_cotisation_mayotte_presume) : la valeur est lue, son
+          attribution à l'indépendant présumée.
 
       - id: dila_legi_decote_fonction_publique
         titre: Décote de la fonction publique, montée en charge 2006-2019

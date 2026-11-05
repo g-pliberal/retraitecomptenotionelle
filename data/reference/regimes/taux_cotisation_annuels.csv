@@ -36,7 +36,10 @@
 # l'indépendant de Mayotte depuis 2019 : les deux mesures `_non_salarie` de
 # cssm_mayotte portent son taux propre, sous le plafond seulement (décret
 # n° 2011-2085, article 4-2), certifié sur les rédactions que lit
-# scripts/fetch/dila_legi_taux_mayotte.py.
+# scripts/fetch/dila_legi_taux_mayotte.py ; de 2012 à 2018, au niveau
+# `estimee`, la somme présumée des parts salariale et patronale que
+# l'article 4 du même décret fixe aux cotisations de l'article 28-2 de
+# l'ordonnance n° 96-1122, lue par le même récupérateur.
 #
 # TROIS SOURCES, dans cet ordre, chacune ne touchant que ce que la
 # précédente ne couvre pas :
@@ -547,31 +550,45 @@ cssm_mayotte,2011,taux_plafonne,0.149500,haute
 cssm_mayotte,2012,part_salariale,0.444816,haute
 cssm_mayotte,2012,part_salariale_deplafonnee,0.058824,haute
 cssm_mayotte,2012,taux_deplafonne,0.017000,haute
+cssm_mayotte,2012,taux_deplafonne_non_salarie,0.000000,estimee
 cssm_mayotte,2012,taux_plafonne,0.149500,haute
+cssm_mayotte,2012,taux_plafonne_non_salarie,0.139000,estimee
 cssm_mayotte,2013,part_salariale,0.445545,haute
 cssm_mayotte,2013,part_salariale_deplafonnee,0.058824,haute
 cssm_mayotte,2013,taux_deplafonne,0.017000,haute
+cssm_mayotte,2013,taux_deplafonne_non_salarie,0.000000,estimee
 cssm_mayotte,2013,taux_plafonne,0.151500,haute
+cssm_mayotte,2013,taux_plafonne_non_salarie,0.140100,estimee
 cssm_mayotte,2014,part_salariale,0.445902,haute
 cssm_mayotte,2014,part_salariale_deplafonnee,0.125000,haute
 cssm_mayotte,2014,taux_deplafonne,0.020000,haute
+cssm_mayotte,2014,taux_deplafonne_non_salarie,0.000000,estimee
 cssm_mayotte,2014,taux_plafonne,0.152500,haute
+cssm_mayotte,2014,taux_plafonne_non_salarie,0.141200,estimee
 cssm_mayotte,2015,part_salariale,0.446254,haute
 cssm_mayotte,2015,part_salariale_deplafonnee,0.142857,haute
 cssm_mayotte,2015,taux_deplafonne,0.021000,haute
+cssm_mayotte,2015,taux_deplafonne_non_salarie,0.000000,estimee
 cssm_mayotte,2015,taux_plafonne,0.153500,haute
+cssm_mayotte,2015,taux_plafonne_non_salarie,0.142300,estimee
 cssm_mayotte,2016,part_salariale,0.446602,haute
 cssm_mayotte,2016,part_salariale_deplafonnee,0.159091,haute
 cssm_mayotte,2016,taux_deplafonne,0.022000,haute
+cssm_mayotte,2016,taux_deplafonne_non_salarie,0.000000,estimee
 cssm_mayotte,2016,taux_plafonne,0.154500,haute
+cssm_mayotte,2016,taux_plafonne_non_salarie,0.143400,estimee
 cssm_mayotte,2017,part_salariale,0.446602,haute
 cssm_mayotte,2017,part_salariale_deplafonnee,0.173913,haute
 cssm_mayotte,2017,taux_deplafonne,0.023000,haute
+cssm_mayotte,2017,taux_deplafonne_non_salarie,0.000000,estimee
 cssm_mayotte,2017,taux_plafonne,0.154500,haute
+cssm_mayotte,2017,taux_plafonne_non_salarie,0.144500,estimee
 cssm_mayotte,2018,part_salariale,0.446602,haute
 cssm_mayotte,2018,part_salariale_deplafonnee,0.173913,haute
 cssm_mayotte,2018,taux_deplafonne,0.023000,haute
+cssm_mayotte,2018,taux_deplafonne_non_salarie,0.000000,estimee
 cssm_mayotte,2018,taux_plafonne,0.154500,haute
+cssm_mayotte,2018,taux_plafonne_non_salarie,0.145600,estimee
 cssm_mayotte,2019,part_salariale,0.446602,haute
 cssm_mayotte,2019,part_salariale_deplafonnee,0.173913,haute
 cssm_mayotte,2019,taux_deplafonne,0.023000,haute

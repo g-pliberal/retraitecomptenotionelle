@@ -281,20 +281,44 @@ def test_depuis_2026_l_assiette_minimale_de_mayotte_veut_quatre_vingt_dix_jours(
 #: sur la totalité du revenu.
 TAUX_DE_L_INDEPENDANT = {2019: 0.0585, 2020: 0.0655, 2021: 0.0725, 2022: 0.0795,
                          2023: 0.0865, 2024: 0.0935, 2025: 0.1005, 2026: 0.1075}
+#: Ce que l'indépendant de Mayotte doit de 2012 à 2018, PRÉSUMÉ : aucun texte lu
+#: ne lui donne un taux propre, et l'article 4 du décret n° 2011-2085 fixe le taux
+#: des cotisations de l'article 28-2 — les siennes comprises — par une part
+#: salariale et une part patronale. Leur somme, dans la rédaction du 21 octobre
+#: 2012 (LEGIARTI000026514552), en vigueur à la fin de chacune de ces années :
+#: 4,00 % + 9,90 % = 13,90 % en 2012, 4,66 % + 9,90 % = 14,56 % en 2018.
+TAUX_PRESUME = {2012: 0.1390, 2013: 0.1401, 2014: 0.1412, 2015: 0.1423,
+                2016: 0.1434, 2017: 0.1445, 2018: 0.1456}
 
 
 def test_l_independant_de_mayotte_cotise_au_taux_de_l_article_4_2(simulateur):
-    """Chaque année depuis 2019, la période de la caisse porte le taux propre de
-    l'assuré sans employeur à côté de ceux du salarié, qu'il ne remplace pas ;
-    en 2018, aucun texte lu ne lui en donne un."""
+    """Chaque année depuis 2012, la période de la caisse porte le taux propre de
+    l'assuré sans employeur à côté de ceux du salarié, qu'il ne remplace pas :
+    celui de l'article 4-2 depuis 2019, la somme présumée des deux parts de
+    l'article 4 de 2012 à 2018, rien sur la totalité du revenu (article 28-2)."""
     regime = simulateur.catalogue["cssm_mayotte"]
-    for annee, taux in TAUX_DE_L_INDEPENDANT.items():
+    for annee, taux in {**TAUX_PRESUME, **TAUX_DE_L_INDEPENDANT}.items():
         (periode,) = [p for p in regime.periodes_actives(annee) if p.assiette == "plafonnee"]
         assert periode.taux_du_cotisant(True) == pytest.approx((taux, 0.0)), annee
         assert periode.taux_du_cotisant(False) == (
             periode.taux_cotisation_retraite, periode.taux_cotisation_deplafonnee)
-    (avant,) = [p for p in regime.periodes_actives(2018) if p.assiette == "plafonnee"]
-    assert avant.taux_du_cotisant(True) == avant.taux_du_cotisant(False)
+
+
+def test_le_taux_de_l_independant_de_2012_a_2018_est_une_presomption():
+    """La table dit ce qu'elle présume : les deux mesures de l'indépendant de
+    Mayotte sont `estimee` de 2012 à 2018, `certifiee` depuis 2019."""
+    import csv
+
+    chemin = RACINE / "data" / "reference" / "regimes" / "taux_cotisation_annuels.csv"
+    lignes = csv.DictReader(l for l in chemin.read_text(encoding="utf-8").splitlines()
+                            if not l.startswith("#"))
+    fiabilites = {(int(l["annee"]), l["mesure"]): l["fiabilite"] for l in lignes
+                  if l["regime"] == "cssm_mayotte" and l["mesure"].endswith("_non_salarie")}
+    for annee in range(2012, 2027):
+        attendue = "estimee" if annee < 2019 else "certifiee"
+        for mesure in ("taux_plafonne_non_salarie", "taux_deplafonne_non_salarie"):
+            assert fiabilites[(annee, mesure)] == attendue, (annee, mesure)
+    assert min(a for a, _ in fiabilites) == 2012
 
 
 @pytest.fixture
@@ -360,6 +384,21 @@ def test_l_independant_de_mayotte_cotise_sous_le_plafond_de_sa_caisse(
               for annee, revenu in ((2020, 30_000.0), (2024, 50_000.0))]
     assert compte_en_deux_moteurs(naissance, lignes, 2020) == {"cssm_mayotte": 1520.12}
     assert compte_en_deux_moteurs(naissance, lignes, 2024) == {"cssm_mayotte": 2966.57}
+
+
+def test_de_2012_a_2018_l_independant_de_mayotte_cotise_a_la_somme_des_deux_parts(
+        compte_en_deux_moteurs):
+    """La présomption la plus prudente que les textes permettent : le taux de
+    l'article 4, parts salariale et patronale réunies, sous le plafond de la
+    caisse, rien au-dessus (article 28-2). 10 000 € en 2012 : 10 000 × 13,90 % =
+    1 390 €, non 10 000 × 14,95 % + 10 000 × 1,70 % = 1 665 € ; 30 000 € en 2018 :
+    20 328 × 14,56 % = 2 959,76 €, non 20 328 × 15,45 % + 30 000 × 2,30 % =
+    3 830,68 €. Dans les deux moteurs."""
+    naissance = dict(annee_naissance=1965, sexe="F", jour_naissance=15, age_liquidation=64.0)
+    lignes = [dict(annee=annee, revenu=revenu, affiliation=INDEPENDANT, trimestres_valides=4)
+              for annee, revenu in ((2012, 10_000.0), (2018, 30_000.0))]
+    assert compte_en_deux_moteurs(naissance, lignes, 2012) == {"cssm_mayotte": 1390.0}
+    assert compte_en_deux_moteurs(naissance, lignes, 2018) == {"cssm_mayotte": 2959.76}
 
 
 def test_la_fiche_de_paie_de_l_independant_de_mayotte_preleve_son_taux(simulateur):
@@ -484,6 +523,73 @@ def test_le_taux_se_lit_dans_les_redactions_de_l_article_4_2():
     for annee, taux in TAUX_DE_L_INDEPENDANT.items():
         article = "LEGIARTI000053297541" if annee >= 2026 else "LEGIARTI000038680068"
         assert lues[annee] == (taux, 0.0, article), annee
+
+
+#: Les deux rédactions de l'article 4 qui couvrent 2012 à 2018, telles que
+#: l'index LEGI les porte, raccourcies au tableau de 2012 à 2019.
+REDACTIONS_4 = [
+    ("LEGIARTI000025097520", "2012-01-01",
+     "Le taux des cotisations mentionnées aux articles 28-2, 28-4, 28-5 de "
+     "l'ordonnance du 20 décembre 1996 susvisée, le taux de la contribution prévue à "
+     "l'article 28-3 [...] sont fixés pour la période allant du 1er janvier 2012 au "
+     "1er janvier 2036 conformément au tableau suivant : ANNÉE civile COTISATION AU "
+     "RÉGIME d'assurance vieillesse obligatoire de base COTISATION d'assurance "
+     "maladie-maternité, invalidité et décès CONTRIBUTION d'assurance "
+     "maladie-maternité, invalidité et décès COTISATION d'allocations familiales TAUX T "
+     "Salariale Patronale Salariale Patronale Salariale Patronale Applicable aux "
+     "entreprises de 1 à 19 salariés Applicable aux entreprises de plus de 19 salariés "
+     "2012 4,11 % 9,90 % 0,00 % 3,00 % 2,00 % 5,40 % 18,3 % 16,9 % "
+     "2013 4,22 % 9,90 % 0,00 % 3,00 % 2,00 % 5,40 % 18,3 % 16,9 % "
+     "2014 4,33 % 9,90 % 0,00 % 3,00 % 2,00 % 5,40 % 18,3 % 16,9 % "
+     "2015 4,44 % 9,90 % 0,00 % 3,00 % 2,00 % 5,40 % 18,3 % 16,9 % "
+     "2016 4,55 % 9,90 % 0,00 % 3,00 % 2,00 % 5,40 % 18,3 % 16,9 % "
+     "2017 4,66 % 9,90 % 0,00 % 3,00 % 2,00 % 5,40 % 18,3 % 16,9 % "
+     "2018 4,77 % 9,90 % 0,00 % 3,00 % 2,00 % 5,40 % 18,3 % 16,9 % "
+     "2019 4,88 % 9,90 % 0,35 % 3,00 % 2,00 % 5,40 % 18,3 % 16,9 %"),
+    ("LEGIARTI000026514552", "2012-10-21",
+     "Le taux des cotisations mentionnées aux articles 28-2, 28-4, 28-5 de "
+     "l'ordonnance du 20 décembre 1996 susvisée [...] conformément au tableau "
+     "suivant : ANNÉE civile COTISATION au régime d'assurance vieillesse obligatoire "
+     "de base COTISATION d'assurance maladie-maternité, invalidité et décès "
+     "CONTRIBUTION d'assurance maladie-maternité, invalidité et décès COTISATION "
+     "d'allocations familiales TAUX T Salariale Patronale Salariale Patronale "
+     "Salariale Patronale Applicable aux entreprises de 1 à 19 salariés Applicable aux "
+     "entreprises de plus de 19 salariés "
+     "2012 4,00 % 9,90 % 0,00 % 2,00 % 2,00 % 5,40 % 17,30 % 16,01 % "
+     "2013 4,11 % 9,90 % 0,00 % 3,00 % 2,00 % 5,40 % 18,30 % 16,93 % "
+     "2014 4,22 % 9,90 % 0,00 % 3,00 % 2,00 % 5,40 % 18,30 % 16,93 % "
+     "2015 4,33 % 9,90 % 0,00 % 3,00 % 2,00 % 5,40 % 18,30 % 16,93 % "
+     "2016 4,44 % 9,90 % 0,00 % 3,00 % 2,00 % 5,40 % 18,30 % 16,93 % "
+     "2017 4,55 % 9,90 % 0,00 % 3,00 % 2,00 % 5,40 % 18,30 % 16,93 % "
+     "2018 4,66 % 9,90 % 0,00 % 3,00 % 2,00 % 5,40 % 18,30 % 16,93 % "
+     "2019 4,77 % 9,90 % 0,35 % 3,00 % 2,00 % 5,40 % 18,30 % 16,93 %"),
+]
+
+
+def test_le_taux_presume_se_lit_dans_les_redactions_de_l_article_4():
+    """De 2012 à 2018, le récupérateur lit les deux premières colonnes du
+    tableau de l'article 4, la vieillesse de base, salariale et patronale, dans
+    la rédaction en vigueur le 31 décembre de l'année : celle du 21 octobre 2012
+    pour 2012 aussi, qui y écrit 4,00 % quand celle du 1er janvier écrivait
+    4,11 %."""
+    recuperateur = _recuperateur()
+    redactions = [recuperateur.lire_article_4(*r) for r in REDACTIONS_4]
+    assert redactions[0]["parts"][2012] == (0.0411, 0.099)
+    serie = recuperateur.presumees(redactions)
+    lues = {int(a): (t["plafonne"], t["deplafonne"], t["article"]) for a, t in serie.items()}
+    assert lues == {annee: (taux, 0.0, "LEGIARTI000026514552")
+                    for annee, taux in TAUX_PRESUME.items()}
+
+
+def test_une_redaction_de_l_article_4_illisible_arrete_le_recuperateur():
+    """Un tableau qui n'ouvre pas sur la vieillesse de base, ses deux parts,
+    n'est pas lu."""
+    recuperateur = _recuperateur()
+    with pytest.raises(ValueError, match="vieillesse"):
+        recuperateur.lire_article_4(
+            "LEGIARTI000000000000", "2012-01-01",
+            "conformément au tableau suivant : ANNÉE civile COTISATION d'assurance "
+            "maladie Salariale Patronale 2012 0,00 % 3,00 %")
 
 
 def test_une_redaction_de_l_article_4_2_illisible_arrete_le_recuperateur():

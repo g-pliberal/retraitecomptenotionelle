@@ -6,7 +6,9 @@ intitule: >-
   n° 2011-2085, article 4-2) : 5,85 % en 2019, 0,70 point de plus chaque année,
   10,75 % en 2026, sous le plafond de la caisse de Mayotte seulement, et non sous
   celui de la Sécurité sociale ; de 2012 à 2018, aucun texte lu ne leur donne un
-  taux propre.
+  taux propre, et le modèle présume la somme des parts salariale et patronale de
+  l'article 4 du même décret, 13,90 % en 2012 à 14,56 % en 2018, sous le même
+  plafond.
 domaine: cotisations
 regimes: [cssm_mayotte]
 etape: foyer_et_net
@@ -17,8 +19,8 @@ lit:
   (legislation/affiliations.yaml, sans_employeur)
 - >-
   le taux de l'année, dans regimes/taux_cotisation_annuels.csv — les mesures
-  taux_plafonne_non_salarie et taux_deplafonne_non_salarie de cssm_mayotte depuis
-  2019, la série alignée sur celle du régime général avant
+  taux_plafonne_non_salarie et taux_deplafonne_non_salarie de cssm_mayotte,
+  certifiées depuis 2019, estimées (présumées) de 2012 à 2018
 - >-
   le plafond de cotisations de la caisse de Mayotte de l'année, dans
   legislation/mayotte_smig_et_plafond.csv (DonneesMacro.plafond_de_cotisations) :
@@ -32,13 +34,23 @@ versions:
 - id: avant_le_taux_propre
   statut: supposee
   hypothese: >-
-    de 2012 à 2018, l'indépendant de Mayotte paie, seul, la série du régime général,
-    celle du salarié et de son employeur, que la caisse de Mayotte porte faute d'un
-    barème lu (taux_cotisation_alignes) ; l'article 4 du décret n° 2011-2085 fixe le
-    taux des cotisations de l'article 28-2 de l'ordonnance n° 96-1122 — qui comprend
-    celles « des travailleurs indépendants agricoles et non agricoles » — par une
-    part salariale et une part patronale, 4,00 % et 9,90 % en 2012, sans dire laquelle,
-    ou leur somme, l'indépendant doit : le texte ne le tranche pas
+    PRÉSOMPTION. De 2012 à 2018, l'indépendant de Mayotte paie, seul, la somme des deux
+    parts que l'article 4 du décret n° 2011-2085 fixe à la vieillesse de base de
+    Mayotte, dans sa rédaction en vigueur le 31 décembre de l'année (celle du
+    21 octobre 2012) : 4,00 % + 9,90 % = 13,90 % en 2012, 14,01 % en 2013, 14,12 % en
+    2014, 14,23 % en 2015, 14,34 % en 2016, 14,45 % en 2017, 4,66 % + 9,90 % = 14,56 %
+    en 2018 ; sous le plafond de la caisse de Mayotte, rien sur la totalité. Ce que les
+    textes disent : l'article 28-2 de l'ordonnance n° 96-1122 fait devoir les
+    cotisations du régime de base « par les travailleurs indépendants agricoles et non
+    agricoles », « dans la limite du plafond prévu au deuxième alinéa du I de
+    l'article 28-1 » ; l'article 4 fixe « le taux des cotisations mentionnées aux
+    articles 28-2 » par une part salariale et une part patronale, sans nommer
+    l'indépendant. Ce qu'ils ne tranchent pas : laquelle des deux parts, ou leur
+    somme, l'indépendant doit. La somme est la lecture la plus prudente qu'ils
+    permettent : elle prend le taux que l'article 4 fixe à la cotisation que
+    l'article 28-2 met à la charge de l'indépendant, seul débiteur faute d'employeur,
+    sans le partage entre deux débiteurs qu'aucun texte ne lui applique, ni rien
+    au-delà de ce taux et de ce plafond
   fiabilite: faible, aucun texte lu ne donnant le taux de l'indépendant
   textes:
   - id: LEGIARTI000025018560
@@ -52,6 +64,17 @@ versions:
       la protection sanitaire et sociale à Mayotte et par tout assuré, ainsi que par les
       travailleurs indépendants agricoles et non agricoles. »
     lu_le: 2026-11-05
+  - id: LEGIARTI000025097520
+    article: décret n° 2011-2085, article 4
+    en_vigueur: 2012-01-01
+    citation: >-
+      « Le taux des cotisations mentionnées aux articles 28-2, 28-4, 28-5 de
+      l'ordonnance du 20 décembre 1996 susvisée […] sont fixés pour la période allant
+      du 1er janvier 2012 au 1er janvier 2036 conformément au tableau suivant : ANNÉE
+      civile COTISATION AU RÉGIME d'assurance vieillesse obligatoire de base […]
+      Salariale Patronale […] 2012 4,11 % 9,90 % » ; en vigueur jusqu'au 21 octobre
+      2012
+    lu_le: 2026-11-05
   - id: LEGIARTI000026514552
     article: décret n° 2011-2085, article 4
     en_vigueur: 2012-10-21
@@ -60,7 +83,10 @@ versions:
       l'ordonnance du 20 décembre 1996 susvisée […] sont fixés pour la période allant
       du 1er janvier 2012 au 1er janvier 2036 conformément au tableau suivant : ANNÉE
       civile COTISATION au régime d'assurance vieillesse obligatoire de base […]
-      Salariale Patronale […] 2012 4,00 % 9,90 % »
+      Salariale Patronale […] 2012 4,00 % 9,90 % […] 2013 4,11 % 9,90 % […] 2014
+      4,22 % 9,90 % […] 2015 4,33 % 9,90 % […] 2016 4,44 % 9,90 % […] 2017 4,55 % 9,90 %
+      […] 2018 4,66 % 9,90 % » ; aucune note n'en fait remonter l'effet avant le
+      21 octobre 2012
     lu_le: 2026-11-05
   - id: LEGIARTI000025018554
     article: ordonnance n° 96-1122, article 28-1, I
@@ -78,9 +104,10 @@ versions:
     revenu.annee: [null, 2019-01-01]
   contenu:
     droit: >-
-      la série du régime général, faute d'un taux propre lu : 15,45 % sous le plafond
-      de la caisse de Mayotte (20 328 € en 2018), que l'article 28-2 désigne, et 2,30 %
-      sur la totalité en 2018
+      présumé, sous le plafond de la caisse de Mayotte (13 860 € en 2012, 20 328 € en
+      2018), que l'article 28-2 désigne : 13,90 % en 2012, 14,01 % en 2013, 14,12 % en
+      2014, 14,23 % en 2015, 14,34 % en 2016, 14,45 % en 2017, 14,56 % en 2018 ; rien sur
+      la totalité du revenu
 - id: taux_de_l_article_4_2
   statut: lue
   textes:
@@ -132,15 +159,19 @@ versions:
 approximations:
 - version: avant_le_taux_propre
   ecart: >-
-    De 2012 à 2018, l'indépendant de Mayotte paie au modèle la série du régime
-    général, 15,45 % sous le plafond et 2,30 % sur la totalité en 2018, quand
-    l'article 4 du décret n° 2011-2085 fixe à la vieillesse de base de Mayotte une part
-    salariale de 4,00 % à 4,66 % et une part patronale de 9,90 %, sans dire ce que
-    doit l'indépendant ; l'article 28-2 de l'ordonnance n° 96-1122 n'appelle aucune
-    cotisation sur la totalité du revenu.
+    De 2012 à 2018, le modèle présume que l'indépendant de Mayotte doit la somme des
+    deux parts de l'article 4 du décret n° 2011-2085, de 13,90 % à 14,56 %, quand
+    aucun texte lu ne le nomme : il peut n'avoir dû que la part salariale, de 4,00 % à
+    4,66 %, ou la seule patronale, 9,90 %, ou rien avant l'article 4-2, qui fixe son
+    taux à partir de 2019 à 5,85 %. La présomption est le plus haut de ces taux, et
+    aucun ne la dépasse. En 2012, la rédaction du 1er janvier écrivait 4,11 % de part
+    salariale, en vigueur du 1er juillet, date de l'affiliation, au 21 octobre : le
+    modèle prend les 4,00 % de la rédaction du 21 octobre, 0,11 point de moins sur ces
+    mois.
   effet: >-
-    le compte notionnel de l'indépendant de Mayotte, de 2012 à 2018 ; ni ses trimestres,
-    validés sur le revenu, ni sa pension de base, que le taux ne change pas
+    le compte notionnel de l'indépendant de Mayotte, de 2012 à 2018, et sa fiche de
+    paie ; ni ses trimestres, validés sur le revenu, ni sa pension de base, que le
+    taux ne change pas
 - version: taux_de_l_article_4_2
   ecart: >-
     La série s'arrête à l'année en cours, comme celle du régime général : de 2027 à
@@ -153,7 +184,8 @@ sources:
   a_relire:
   - >-
     Ce que doit l'indépendant de Mayotte de 2012 à 2018 : une circulaire de la caisse
-    de sécurité sociale de Mayotte, ou un barème de la Cnav de ces années, le dirait.
+    de sécurité sociale de Mayotte, ou un barème de la Cnav de ces années, le dirait,
+    et lèverait la présomption.
   lectures:
   - type: legifrance
     reference: >-
@@ -183,8 +215,9 @@ code:
     regimes/taux_cotisation_annuels.csv porte les mesures taux_plafonne_non_salarie et
     taux_deplafonne_non_salarie de cssm_mayotte, certifiées sur l'article 4-2 par
     scripts/fetch/dila_legi_taux_mayotte.py et scripts/verifier_donnees.py
-    (taux_cotisation_mayotte) ; la période de la caisse les sert à l'assuré sans
-    employeur, la série alignée au salarié. L'assuré sans employeur de la caisse de
+    (taux_cotisation_mayotte), et de 2012 à 2018 au niveau estimee sur l'article 4
+    (taux_cotisation_mayotte_presume) ; la période de la caisse les sert à l'assuré
+    sans employeur, la série alignée au salarié. L'assuré sans employeur de la caisse de
     Mayotte cotise sous le plafond de celle-ci (mayotte_smig_et_plafond.csv, relu par
     scripts/fetch/cnav_mayotte.py au barème « Salaire plafond - Mayotte » de la Cnav).
 historique:
@@ -199,9 +232,17 @@ historique:
   la bornent au plafond « créé à Mayotte » (article 28-1, I) : 30 000 € en 2020
   donnaient 1 965 € au lieu de 23 208 × 6,55 % = 1 520,12 €. Les deux moteurs prennent
   le plafond de la caisse pour l'assuré sans employeur, depuis 2012.
+- >-
+  2026-11-05 — action 177, relecture R-D : de 2012 à 2018, la présomption prêtait à
+  l'indépendant la série du régime général, 14,95 % à 15,45 % sous le plafond et 1,70 %
+  à 2,30 % sur la totalité, plus que toute lecture de l'article 4 et sur une assiette
+  que l'article 28-2 exclut ; elle est la somme des deux parts de l'article 4, de
+  13,90 % à 14,56 %, sous le plafond de la caisse, rien au-dessus.
 effet: >-
   L'artisane de Mayotte à 10 000 € par an cotise 585 € en 2019, au lieu de 1 775 €,
   et 935 € en 2024 ; à 30 000 € en 2020, 1 520,12 € au lieu de 1 965 €. Son compte
-  notionnel baisse d'autant, sa pension de base ne bouge pas. Le témoin né en 1965
-  reçoit 19 353,01 € de 2019 à 2026 au lieu de 29 034,54 €. Aucune pension du
+  notionnel baisse d'autant, sa pension de base ne bouge pas. En 2012, 10 000 €
+  donnent 1 390 € au lieu de 1 665 € ; en 2018, 30 000 € donnent 20 328 × 14,56 % =
+  2 959,76 €. Le témoin né en 1965 reçoit 16 911,01 € de 2012 à 2018 au lieu de
+  44 903,58 €, et 19 353,01 € de 2019 à 2026 au lieu de 29 034,54 €. Aucune pension du
   scénario 1 ne bouge.

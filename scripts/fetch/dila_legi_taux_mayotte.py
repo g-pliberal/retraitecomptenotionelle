@@ -28,9 +28,27 @@ dans la rédaction entrée en vigueur le 25 juin 2019 —, sa date d'entrée en
 vigueur sinon. La série s'arrête à l'année en cours,
 comme celle de D. 633-3 : le tableau de 2027 à 2036 reste au texte.
 
+DE 2012 À 2018, UNE PRÉSOMPTION (action 177, relecture R-D). Aucun texte lu
+ne donne à l'indépendant de Mayotte un taux propre avant l'article 4-2.
+L'article 28-2 de l'ordonnance n° 96-1122 lui fait devoir, depuis 2012, les
+cotisations du régime de base « dans la limite du plafond », rien sur la
+totalité ; l'article 4 du décret n° 2011-2085 en fixe le taux par une part
+salariale et une part patronale, sans nommer l'indépendant. Le récupérateur
+lit les deux premières colonnes de son tableau — « COTISATION au régime
+d'assurance vieillesse obligatoire de base », « Salariale Patronale » — et
+rend leur somme, dans la rédaction en vigueur le 31 décembre de l'année : la
+cotisation de l'indépendant est annuelle, sur le revenu de l'année, et la
+rédaction du 21 octobre 2012, qui écrit 4,00 % pour 2012, l'emporte sur celle
+du 1er janvier, qui écrivait 4,11 %. Un tableau qui n'ouvre pas sur la
+vieillesse de base, ou sans ses deux parts, arrête le récupérateur.
+``scripts/verifier_donnees.py`` les verse au niveau ``estimee``
+(``taux_cotisation_mayotte_presume``) : la valeur est lue, son attribution à
+l'indépendant est présumée.
+
 Sortie : ``data/brut/dila_taux_mayotte.json``, que
 ``scripts/verifier_donnees.py`` confronte aux mesures ``taux_plafonne_non_salarie``
-et ``taux_deplafonne_non_salarie`` de ``cssm_mayotte``.
+et ``taux_deplafonne_non_salarie`` de ``cssm_mayotte`` : ``series`` depuis 2019,
+``presumees`` de 2012 à 2018.
 """
 
 from __future__ import annotations
@@ -48,6 +66,10 @@ from dila_index import chemin_index, meta  # noqa: E402
 RACINE = Path(__file__).resolve().parents[2]
 SORTIE = RACINE / "data" / "brut" / "dila_taux_mayotte.json"
 ARTICLE = "4-2"
+#: L'article qui fixe le taux des cotisations de l'article 28-2, et les années
+#: où il tient lieu de taux à l'indépendant, faute de l'article 4-2.
+ARTICLE_DES_PARTS = "4"
+ANNEES_PRESUMEES = range(2012, 2019)
 TEXTE = "Décret n° 2011-2085 du 30 décembre 2011"
 #: La première année du tableau, et la dernière qu'il faut dater.
 PREMIERE_ANNEE = 2019
@@ -58,6 +80,10 @@ ALINEA_I = re.compile(r"(?<![IVX])I\s*\.\s*-")
 ALINEA_II = re.compile(r"(?<![IVX])II\s*\.\s*-")
 TABLEAU = re.compile(r"\bAnnée Cotisation\b")
 LIGNE = re.compile(r"\b(\d{4}) (\d+,\d+) %")
+TABLEAU_DES_PARTS = re.compile(
+    r"ANNÉE civile COTISATION au régime d'assurance vieillesse obligatoire de base\b",
+    re.IGNORECASE)
+DEUX_PARTS = re.compile(r"\b(\d{4}) (\d+,\d+) % (\d+,\d+) %")
 
 
 def _taux(texte: str) -> float:
@@ -85,6 +111,44 @@ def lire_redaction(ident: str, debut: str, texte: str) -> dict:
     if not plafonne:
         raise ValueError(f"{ident} : un tableau vide au I")
     return {"id": ident, "debut": debut, "application": debut_effet, "plafonne": plafonne}
+
+
+def lire_article_4(ident: str, debut: str, texte: str) -> dict:
+    """Une rédaction de l'article 4 : pour chaque année de son tableau, les
+    parts salariale et patronale de la vieillesse de base, ses deux premières
+    colonnes."""
+    texte = texte.replace("’", "'")
+    tableau = TABLEAU_DES_PARTS.search(texte)
+    if tableau is None:
+        raise ValueError(f"{ident} : le tableau n'ouvre pas sur la vieillesse de base "
+                         f"« {texte[:160]} »")
+    if "Salariale Patronale" not in texte[tableau.end():]:
+        raise ValueError(f"{ident} : la vieillesse de base sans ses deux parts")
+    parts = {int(a): (_taux(s), _taux(p))
+             for a, s, p in DEUX_PARTS.findall(texte[tableau.end():])}
+    if not parts:
+        raise ValueError(f"{ident} : un tableau vide")
+    return {"id": ident, "debut": debut, "parts": parts}
+
+
+def presumees(redactions: list[dict]) -> dict[str, dict]:
+    """De 2012 à 2018, la somme des deux parts de la vieillesse de base, dans
+    la rédaction de l'article 4 en vigueur le 31 décembre de l'année ; rien sur
+    la totalité du revenu."""
+    sortie: dict[str, dict] = {}
+    for annee in ANNEES_PRESUMEES:
+        jour = f"{annee}-12-31"
+        candidates = [r for r in redactions if r["debut"] <= jour]
+        if not candidates:
+            raise ValueError(f"{annee} : aucune rédaction de l'article 4 au 31 décembre")
+        redaction = max(candidates, key=lambda r: r["debut"])
+        if annee not in redaction["parts"]:
+            raise ValueError(f"{annee} : absente du tableau de {redaction['id']}")
+        salariale, patronale = redaction["parts"][annee]
+        sortie[str(annee)] = {"plafonne": round(salariale + patronale, 6), "deplafonne": 0.0,
+                              "salariale": salariale, "patronale": patronale,
+                              "article": redaction["id"]}
+    return sortie
 
 
 def series(redactions: list[dict]) -> dict[str, dict]:
@@ -119,6 +183,16 @@ def main() -> int:
         print(f"article {ARTICLE} du {TEXTE} absent de l'index", file=sys.stderr)
         return 1
     redactions = [lire_redaction(ident, debut, texte) for ident, debut, _, texte in lignes]
+    # Les rédactions de l'article 4 en vigueur avant 2019, les seules qui
+    # couvrent les années présumées.
+    lignes_4 = db.execute(
+        "SELECT id, date, texte FROM doc WHERE replace(num, ' ', '') = ?"
+        " AND titre LIKE ? AND date < ? ORDER BY date",
+        (ARTICLE_DES_PARTS, f"{TEXTE}%", f"{ANNEES_PRESUMEES.stop}-01-01")).fetchall()
+    if not lignes_4:
+        print(f"article {ARTICLE_DES_PARTS} du {TEXTE} absent de l'index", file=sys.stderr)
+        return 1
+    parts = [lire_article_4(ident, debut, texte) for ident, debut, texte in lignes_4]
     donnees = {
         "source": f"DILA, base LEGI, {TEXTE}, article 4-2",
         "index": f"{meta(db, 'dump')}, incréments appliqués jusqu'au "
@@ -127,11 +201,13 @@ def main() -> int:
         "redactions": [{"id": r["id"], "debut": r["debut"], "application": r["application"]}
                        for r in redactions],
         "series": series(redactions),
+        "redactions_article_4": [{"id": r["id"], "debut": r["debut"]} for r in parts],
+        "presumees": presumees(parts),
     }
     SORTIE.parent.mkdir(parents=True, exist_ok=True)
     SORTIE.write_text(json.dumps(donnees, ensure_ascii=False, indent=1) + "\n",
                       encoding="utf-8")
-    for annee, taux in donnees["series"].items():
+    for annee, taux in {**donnees["presumees"], **donnees["series"]}.items():
         print(f"{annee}  {taux['plafonne']:.4f}  {taux['deplafonne']:.4f}  {taux['article']}")
     return 0
 

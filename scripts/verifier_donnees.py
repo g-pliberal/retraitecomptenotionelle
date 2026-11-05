@@ -1012,9 +1012,12 @@ PREMIERE_ANNEE_NON_SALARIES_AU_REGIME_GENERAL = 2018
 #: les cultes, dont la cotisation est celle du droit commun sur une assiette
 #: forfaitaire, et les caisses de Mayotte et de Saint-Pierre-et-Miquelon, dont
 #: les taux sont fixés localement — à Mayotte, ceux de l'article 4 du décret
-#: n° 2011-2085, une part salariale et une part patronale, que le dépôt ne lit
-#: pas encore ; le taux propre de l'indépendant, depuis 2019, a sa source
-#: (`source_taux_cotisation_mayotte`). Ils suivent la
+#: n° 2011-2085, une part salariale et une part patronale, que le dépôt ne lit,
+#: depuis le 5 novembre 2026, que pour présumer le taux de l'indépendant de 2012
+#: à 2018 (`source_taux_cotisation_mayotte_presume`) : le salarié et son
+#: employeur gardent la série du régime général ; le taux propre de
+#: l'indépendant, depuis 2019, a sa source (`source_taux_cotisation_mayotte`).
+#: Ils suivent la
 #: série que le dépôt tient pour le régime général — celle qu'il a certifiée
 #: depuis 1982 comprise —, et non une transcription qui s'en écarterait ; la
 #: SUBSTITUTION reste une décision de modélisation, d'où le niveau `haute`.
@@ -1164,11 +1167,32 @@ def source_taux_cotisation_mayotte() -> dict[tuple, float]:
     2026 —, « dans la limite du plafond » : rien sur la totalité. Le
     récupérateur date chaque taux au 1er janvier, ou à la date d'application
     que la rédaction écrit. De 2012 à 2018, aucun texte lu ne lui donne un taux
-    propre : il garde la série alignée, celle du régime général.
+    propre : :func:`source_taux_cotisation_mayotte_presume` le présume.
     """
     charge = _lire_json("dila_taux_mayotte.json", "scripts/fetch/dila_legi_taux_mayotte.py")
     valeurs: dict[tuple, float] = {}
     for annee, taux in sorted(charge["series"].items()):
+        valeurs[("cssm_mayotte", annee, "taux_plafonne_non_salarie")] = taux["plafonne"]
+        valeurs[("cssm_mayotte", annee, "taux_deplafonne_non_salarie")] = taux["deplafonne"]
+    return valeurs
+
+
+def source_taux_cotisation_mayotte_presume() -> dict[tuple, float]:
+    """Le taux de l'indépendant de Mayotte de 2012 à 2018, PRÉSUMÉ.
+
+    L'article 28-2 de l'ordonnance n° 96-1122 lui fait devoir, depuis 2012, les
+    cotisations du régime de base « dans la limite du plafond » ; l'article 4 du
+    décret n° 2011-2085 en fixe le taux par une part salariale et une part
+    patronale, sans nommer l'indépendant. La présomption la plus prudente que
+    ces textes permettent : leur somme — 4,00 % + 9,90 % = 13,90 % en 2012,
+    4,66 % + 9,90 % = 14,56 % en 2018 —, rien sur la totalité. Les valeurs sont
+    lues dans l'index LEGI par ``scripts/fetch/dila_legi_taux_mayotte.py`` ;
+    leur attribution à l'indépendant est présumée, d'où le niveau ``estimee``
+    (action 177, relecture R-D).
+    """
+    charge = _lire_json("dila_taux_mayotte.json", "scripts/fetch/dila_legi_taux_mayotte.py")
+    valeurs: dict[tuple, float] = {}
+    for annee, taux in sorted(charge.get("presumees", {}).items()):
         valeurs[("cssm_mayotte", annee, "taux_plafonne_non_salarie")] = taux["plafonne"]
         valeurs[("cssm_mayotte", annee, "taux_deplafonne_non_salarie")] = taux["deplafonne"]
     return valeurs
@@ -11002,6 +11026,20 @@ CERTIFICATIONS = (
         origine="DILA, base LEGI, décret n° 2011-2085 du 30 décembre 2011, article 4-2",
         decimales=6,
         tolerance=5e-7,
+    ),
+    # De 2012 à 2018, présumé : la somme des deux parts de l'article 4, lue,
+    # attribuée à l'indépendant faute d'un texte qui le nomme (action 177).
+    Certification(
+        nom="taux_cotisation_mayotte_presume",
+        chemin=REFERENCE / "regimes" / "taux_cotisation_annuels.csv",
+        cles=("regime", "annee", "mesure"),
+        colonne="valeur",
+        source=source_taux_cotisation_mayotte_presume,
+        origine="DILA, base LEGI, décret n° 2011-2085 du 30 décembre 2011, article 4 ; "
+                "attribution à l'indépendant présumée",
+        decimales=6,
+        tolerance=5e-7,
+        niveau="estimee",
     ),
     Certification(
         nom="taux_cotisation_annuels",

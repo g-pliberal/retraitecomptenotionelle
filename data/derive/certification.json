@@ -1,5 +1,5 @@
 {
- "dernier_passage_le": "2026-11-03",
+ "dernier_passage_le": "2026-11-05",
  "series": {
   "age_annulation_decote_openfisca": {
    "ajoutees": 0,
@@ -890,7 +890,7 @@
    "niveau": "haute",
    "source": "dérivée des quotients INED de Vallin et Meslé",
    "valeurs": 28,
-   "verifiee_le": "2026-10-31"
+   "verifiee_le": "2026-11-05"
   },
   "esperances_projetees": {
    "ajoutees": 0,
@@ -2188,7 +2188,7 @@
    "niveau": "haute",
    "source": "la série du régime général du dépôt, que les cultes, Mayotte et Saint-Pierre-et-Miquelon portent faute d'un barème propre",
    "valeurs": 512,
-   "verifiee_le": "2026-10-31"
+   "verifiee_le": "2026-11-05"
   },
   "taux_cotisation_annuels": {
    "ajoutees": 0,
@@ -2224,14 +2224,25 @@
    "verifiee_le": "2026-09-15"
   },
   "taux_cotisation_mayotte": {
-   "ajoutees": 16,
+   "ajoutees": 0,
    "colonne": "valeur",
    "corrigees": 0,
    "empreinte": "153bb30d7e5a640a",
-   "identiques": 0,
+   "identiques": 16,
    "niveau": "certifiee",
    "source": "DILA, base LEGI, décret n° 2011-2085 du 30 décembre 2011, article 4-2",
    "valeurs": 16,
+   "verifiee_le": "2026-11-05"
+  },
+  "taux_cotisation_mayotte_presume": {
+   "ajoutees": 14,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "ada27764016639f6",
+   "identiques": 0,
+   "niveau": "estimee",
+   "source": "DILA, base LEGI, décret n° 2011-2085 du 30 décembre 2011, article 4 ; attribution à l'indépendant présumée",
+   "valeurs": 14,
    "verifiee_le": "2026-11-05"
   },
   "taux_cotisation_non_salaries": {
@@ -2375,7 +2386,7 @@
    "niveau": "haute",
    "source": "OpenFisca-France, barème IPP de la cotisation forfaitaire annuelle de la garantie minimale de points (gmp_cot_f_a), transcrit le 2 octobre 2026",
    "valeurs": 29,
-   "verifiee_le": "2026-10-31"
+   "verifiee_le": "2026-11-05"
   },
   "valeurs_point_independants": {
    "ajoutees": 0,
@@ -2408,7 +2419,7 @@
    "niveau": "haute",
    "source": "Ircantec, page « Valeur du point » et paramètres annuels, 2022-2026, lus le 23 septembre 2026",
    "valeurs": 23,
-   "verifiee_le": "2026-10-31"
+   "verifiee_le": "2026-11-05"
   },
   "valeurs_point_msa": {
    "ajoutees": 1,
