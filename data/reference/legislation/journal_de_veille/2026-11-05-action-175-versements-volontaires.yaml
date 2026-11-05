@@ -1,0 +1,35 @@
+date: "2026-11-05"
+session: "action 175, étape 4 : le thème « Carrière : versements volontaires » de la base de la Cnav"
+consulte: >-
+  python scripts/veille_droit.py --sans-cnav. La base de législation de la Cnav, relue par
+  python scripts/fetch/cnav_legislation.py le 5 novembre 2026 de 18 h 16 à 18 h 25 UTC
+  (import de la nuit à 5 h 00), sans refus : aucun lien ne suit les chemins de son import de
+  nuit, et cnav_legislation.liens en lit 9 629. Par son API : les 49 exposés du thème
+  « Carrière > Versements volontaires de cotisations », à la version que le registre date,
+  les fenêtres, la liste et les 194 références qu'ils lient, les 5 avis de mise à jour qui
+  touchent ces références. L'index LEGI de la DILA, à jour au 2 novembre 2026, et JORF, au
+  3 : les 150 identifiants Légifrance des 179 liens des exposés ; D. 173-16 (rédactions de
+  1985 et de 2012), la notice du décret n° 2012-598, l'article 29 de la loi n° 2003-775,
+  D. 634-2-1 et D. 634-5, R. 742-8 et le décret n° 73-848 par leur numéro.
+trouve: >-
+  La mise en garde de l'étape 4 sur la forme des liens ne tient plus : l'état passager de
+  l'import du 3 novembre, que le récupérateur refuse depuis de relire. Le registre range tout
+  le thème : 49 exposés (34 limite, 15 hors_modele), 12 fenêtres, une liste, 151 références,
+  5 avis. La limite « rachats et versements » nomme désormais l'assurance volontaire, les
+  rachats de l'assistance à un invalide, de l'indemnité de soins aux tuberculeux, des
+  organisations internationales et du travailleur indépendant, le versement des élus locaux
+  et des sportifs de haut niveau, les cotisations arriérées de l'artiste-auteur et du
+  vétérinaire sous mandat sanitaire. Un lien faux de la base : « Loi 2003-775 du 21 août 2003
+  art.29 » mène à la loi n° 2010-1330. Deux écarts candidats, aucun corrigé : la caisse valide
+  quatre trimestres par année d'artisan ou de commerçant d'avant 1973, quelle que soit la
+  classe de cotisations, quand le modèle les compte au revenu (l'artisan déclarant 100 € en
+  1965 : 2 trimestres au lieu de 4) ; et, avant le 30 avril 2012, elle ne rétablissait pas les
+  services du fonctionnaire parti sans droit accomplis hors de France avant 1989, que le
+  modèle rétablit.
+reste: >-
+  L'étape 4 au thème suivant, « Carrière : périodes assimilées », dont l'indemnité de soins
+  aux tuberculeux (36 trimestres validés gratuitement). Aux sessions du modèle : les deux
+  candidats, après lecture des décrets d'application de la loi n° 72-554 pour le premier ; la
+  liste des accords de sécurité sociale et les trois listes des règlements européens, avec
+  leur thème. Le texte qui fonde la validation de quatre trimestres d'avant 1973, que l'index
+  n'a pas donné.

@@ -299,11 +299,23 @@ l'Institut des politiques publiques (PENSIPP). Écarts connus :
   versements pour la retraite (fiche `rachats_et_versements`, pas encore
   modélisée), dont la base de législation de la Cnav publie les barèmes : le
   versement pour la retraite des années d'études et des années incomplètes
-  depuis 2004, à taux réduit pour l'assistant maternel et l'apprenti ; celui
-  des stages d'études en entreprise ; le rachat des périodes d'activité hors
-  de France, d'affiliation tardive, de détention ou de rapatriement ; les
-  cotisations arriérées que l'assuré verse quand son employeur ne les a pas
-  versées. La saisie n'a pas de quoi les dire, et aucun trimestre ainsi
+  depuis 2004, à taux réduit pour l'assistant maternel et l'apprenti, et,
+  depuis la loi n° 2023-270, des mandats d'élu local et des années de
+  sportif de haut niveau ; celui des stages d'études en entreprise ; le
+  rachat des périodes d'activité hors de France, d'affiliation tardive, de
+  détention, de rapatriement, d'assistance bénévole à un proche invalide, de
+  perception de l'indemnité de soins aux tuberculeux et de service dans une
+  organisation internationale ; ceux du travailleur indépendant — les années
+  incomplètes (rachat « Madelin »), le conjoint collaborateur, l'aide
+  familial, l'ex-régime social des indépendants, et le professionnel libéral
+  qu'aucun régime de base n'affiliait de 1985 à 2017 ; les cotisations
+  arriérées que l'assuré verse quand son employeur ne les a pas versées, dont
+  celles de l'artiste-auteur depuis 1976 et du vétérinaire sous mandat
+  sanitaire avant 1990. Ni l'assurance volontaire vieillesse que l'assuré
+  choisit — l'expatrié, la tierce personne d'un proche invalide, le parent
+  chargé de famille qu'aucun régime n'assure, le bénéficiaire de l'indemnité
+  de soins aux tuberculeux — (`regimes/caisse_francais_etranger.yaml`).
+  La saisie n'a pas de quoi les dire, et aucun trimestre ainsi
   acquis n'entre au compte.
 - **aidants** — le modèle sert l'assurance vieillesse des parents au foyer
   pendant l'interruption pour enfant (fiche `avpf`), non l'affiliation de

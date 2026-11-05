@@ -1,16 +1,5 @@
 # Étape 4, thème « Carrière : cotisations-salaires » : les exposés et leurs références
 
-**Reprise, au 3 novembre 2026.** Deux thèmes de l'étape sont rangés : « Retraite
-personnelle de base », puis « Carrière : cotisations-salaires » — ses 65 exposés, et les 9
-fenêtres, 237 références et 15 avis qu'ils lient. Suivant, dans l'ordre de l'étape :
-« Carrière : versements volontaires » (49 exposés), sous la convention de la note du
-premier thème. Avant toute relecture par `cnav_legislation.py` : depuis l'import du
-3 novembre à 5 h, la base sert ses liens sous une forme que `liens` ne lit pas (cette
-note), à porter au récupérateur, le test d'abord. Restent à lire avec leur thème : les
-listes d'accords et de périodes de guerre, et celle des pays de l'Espace économique
-européen. Aux sessions du modèle : l'activité accessoire d'avant 2015 (`un_statut_par_annee`),
-l'AVPF du père (`avpf`), et ce que la note du premier thème leur laisse.
-
 **Le 3 novembre 2026, ce qui est fait.**
 
 - *La lecture* : les 65 exposés du thème, relus par l'API à la version que le registre
