@@ -252,9 +252,24 @@ l'Institut des politiques publiques (PENSIPP). Écarts connus :
   l'avant-dernière année, sans ajustement ; l'artisan qui commence au tiers
   puis à la moitié du plafond, et, depuis le 5 novembre 2026, le commerçant qui
   commence sur dix-huit puis vingt-sept fois la base mensuelle des prestations
-  familiales (D. 635-10, R. 242-16), forfaits définitifs jusqu'aux cotisations
-  de 2008, puis régularisés sur le revenu de l'année de 2009 à 2011 (D. 635-2,
-  L. 131-6) ; la cotisation additionnelle de
+  familiales (D. 635-10, L. 131-6, qui n'en fait qu'un plafond que la caisse
+  prend pour forfait ; R. 242-16 est la règle des allocations familiales, que
+  D. 633-6 étend à la base, non à la complémentaire), forfaits définitifs
+  jusqu'aux cotisations de 2008, puis régularisés sur le revenu de l'année de
+  2009 à 2011 (D. 635-2, L. 131-6). Pour l'artisan, c'est une lecture, solide et
+  non certaine : D. 635-7, en une seule rédaction du 1er janvier 2008 au 1er
+  janvier 2012 (LEGIARTI000017869802), dit toujours « Pour les assurés
+  commençant l'exercice d'une profession artisanale ou assimilée, la cotisation
+  annuelle est assise : 1° Pour l'année ou la fraction d'année de début
+  d'exercice, sur un revenu correspondant au tiers du plafond mentionné à
+  l'article L. 241-3 ; 2° Pour l'année suivante, sur un revenu correspondant à la
+  moitié dudit plafond », sans la dire provisionnelle, comme L. 131-6 le dit du
+  forfait du commerçant ; D. 635-2 calcule toute la cotisation « suivant les
+  modalités prévues au cinquième alinéa de l'article L. 131-6 », mais sa réserve,
+  « Sous réserve des dispositions des articles D. 635-7 et D. 635-10 », est déjà
+  dans sa rédaction de 2008, où le forfait est définitif ; aucun texte ni
+  document de la caisse lu ne dit le forfait de l'artisan régularisé (fiche
+  `assiette_rco_independants`, approximations) ; la cotisation additionnelle de
   1985 à 1996 sans points ; le conjoint collaborateur sur l'assiette de sa
   cotisation de base, sans régularisation (D. 635-10-2) — au forfait, le tiers
   du plafond de l'année ; à l'option, de 2007 à 2012, la fraction du revenu du
@@ -276,7 +291,8 @@ l'Institut des politiques publiques (PENSIPP). Écarts connus :
   depuis 2013, et n'oppose pas le minimum à l'année cotisée au revenu nul, que
   le texte n'en excepte pas. Il tient pour un début
   d'exercice la reprise après une année sans activité, ce que le texte ne dit
-  pas et que R. 242-16 dit des cotisations de début d'activité, et prend le
+  pas et que R. 242-16 dit des cotisations d'allocations familiales et de base
+  de début d'activité, et prend le
   forfait et le revenu de l'avant-dernière année à proportion des mois de
   l'exercice. Non mesuré.
 - **rachats et versements** — le modèle ne pratique ni les rachats ni les

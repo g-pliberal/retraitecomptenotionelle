@@ -1,0 +1,38 @@
+date: "2026-11-05"
+session: "actions 177 et 175, « Retouches 4 » : les écarts des relectures R-D3 (forfaits de début des indépendants) et R-M4/cultes (la fraction d'avant 1998), corrigés dans les fiches et les limites"
+consulte: >-
+  Dans l'index LEGI à jour du 2 novembre 2026 : D. 635-7, en vigueur le 1er juin 2009 et le
+  1er juin 2011 (LEGIARTI000017869802, une seule rédaction du 1er janvier 2008 au 1er
+  janvier 2012) ; D. 635-2, toutes ses rédactions (`--diff`) ; D. 635-10
+  (LEGIARTI000020032165) ; L. 131-6 (LEGIARTI000006740118, LEGIARTI000020169101,
+  LEGIARTI000020675442) ; R. 242-16, toutes ses rédactions (`--diff`) ; D. 633-6
+  (LEGIARTI000006737897) ; D. 612-6 (LEGIARTI000006738291) ; le décret n° 2000-841
+  (LEGITEXT000005629904) et la recherche des articles du code de la sécurité sociale qui
+  citent « 242-16 » ; le décret n° 2006-1325, article 2, I et II, aux rédactions du 30
+  janvier 2010 et du 1er juillet 2011 (LEGIARTI000021763033, LEGIARTI000023397816) ; D.
+  721-11 (LEGIARTI000006739120) et le décret n° 79-607, article 42 (LEGIARTI000006766268).
+  Dans l'index du JORF à jour du 3 novembre 2026 : le décret n° 2004-848, article 1er
+  (JORFARTI000001334654) et son rectificatif du 28 août 2004 (JORFARTI000002107853) ; le
+  décret n° 2011-2038, notice (JORFTEXT000025055789). Base de législation de la Cnav,
+  circulaires du RSI n° 2007/013, 2008/017, 2008/031, 2009/017, 2009/035 et 2009/044
+  (empreintes dans la note). La page « Demander ma retraite de base » de la CAVIMAC et son
+  triptyque de 2024.
+trouve: >-
+  Le forfait de début de l'artisan, de 2009 à 2011, n'est dit régularisé ni par D. 635-7
+  (« assise »), qui n'a qu'une rédaction de 2008 à 2011, ni par la circulaire n° 2008/031
+  (qui ne l'écrit qu'au conditionnel et sans nommer le forfait de début) ni par aucune des
+  autres circulaires lues : une lecture solide, non certaine, rendue aux approximations de la
+  fiche `assiette_rco_independants` et aux limites. R. 242-16 est la règle de la cotisation
+  d'allocations familiales, que D. 633-6 étend à la base vieillesse : aucun article D. 635-x de
+  la complémentaire ne la cite ; le forfait du commerçant tient à L. 131-6 (un plafond) et à
+  la circulaire n° 2007/013. Le tableau de la circulaire n° 2008/017 est celui du
+  plafonnement des micro-entreprises. Le rectificatif du 28 août 2004 corrige « quatrième »
+  en « sixième » à D. 635-10. Les pièces de la CAVIMAC ne chiffrent pas l'âge du taux plein de
+  la fraction d'avant 1998 ; la fiche `cultes_fractions_de_pension` ne dit plus que la caisse
+  le publie. 172,05 € est l'écart exact des deux minima de 2008 ; D. 721-11 et l'article 42 ne
+  disent pas la même chose mot pour mot.
+reste: >-
+  L'âge du taux plein de la fraction d'avant 1998 des cultes, au propriétaire ; une circulaire
+  ou un exemple de la caisse sur le forfait de début de l'artisan de 2009 à 2011 ; les
+  commentaires du code et des données qui citent R. 242-16 pour le forfait du commerçant,
+  à une session qui y travaille.

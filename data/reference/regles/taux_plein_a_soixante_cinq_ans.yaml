@@ -973,9 +973,11 @@ approximations:
     mesure des parents s'applique ou non ; par le texte, elle resterait à 507,73 €, et
     seule la fraction d'après 1997 passerait à 46,875 %. L'écart de 289,73 à 507,73 € tient
     à l'âge du taux plein de la fraction d'avant 1998, que cultes_fractions_de_pension
-    déclare depuis le 5 novembre 2026 : la caisse publie l'âge du taux plein de la
-    génération (« varie de 65 à 67 ans ») et la décote des fractions d'avant 1998 à taux
-    minoré, que le modèle suit ; la lettre du décret servirait 507,73 €
+    déclare depuis le 5 novembre 2026 : les pièces d'information de la caisse disent
+    l'âge du taux plein de « la retraite » (« varie de 65 à 67 ans ») et la décote des
+    fractions d'avant 1998 d'une pension « à taux minoré », sans chiffrer l'âge de la
+    fraction elle-même ; le modèle en tire sa lecture, que la lettre du décret
+    contredit : elle servirait 507,73 €
 - version: [loi_du_9_novembre_2010]
   textes: >-
     décret n° 73-937 du 2 octobre 1973, article 3 (LEGIARTI000026474703, du 7 octobre

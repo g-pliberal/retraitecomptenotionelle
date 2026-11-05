@@ -214,3 +214,6 @@ base mensuelle de 2002 à 2007, les arrêtés du 17 décembre 2004 et du 19 déc
 n° 2007/013, 2008/017, 2008/031, et les soixante-huit circulaires du RSI de 2006 à
 2012 qu'elle sert, cherchées par mots ; les exposés « Points cotisés artisans
 avant 2013 » et « Points cotisés commerçants avant 2013 » (24 octobre 2025).
+
+*Renvoi, le 5 novembre 2026* : les écarts de la relecture R-D3 sont repris dans
+`2026-11-05-retouches-de-la-relecture-r-d3.md`.

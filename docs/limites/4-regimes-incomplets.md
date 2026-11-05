@@ -160,8 +160,11 @@ gratuitement, comprises —, à soixante-cinq ans jusqu'en 2006, puis portée au
 minimum contributif au taux plein et décotée sinon. Restent approchés : 2006,
 où la fraction d'après 1997 s'ouvre à l'âge légal dix mois avant l'autre, et
 que le modèle laisse toute l'année à soixante-cinq ans ; le taux plein du
-régime général pour les majorations, que le décret n° 2006-1325 laisse à
-soixante-cinq ans ; le maximum de 1982, estimé. Cela ne touche que le
+régime général pour la fraction d'avant 1998 et ses majorations, que le décret
+n° 2006-1325 laisse à soixante-cinq ans à qui n'a pas la durée : le modèle suit
+ce que les pages d'information de la CAVIMAC laissent lire, qui ne chiffrent
+pas l'âge de cette fraction, et la question reste au propriétaire (fiche
+`cultes_fractions_de_pension`) ; le maximum de 1982, estimé. Cela ne touche que le
 scénario 1 ; les comptes notionnels, eux, ne lisent que des cotisations —
 celles de 1979 à 1997, les deux montants par assuré que des arrêtés fixaient
 chaque année, la sienne et la solidarité de sa collectivité

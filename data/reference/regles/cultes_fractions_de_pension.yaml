@@ -314,31 +314,46 @@ approximations:
     L'ÂGE DU TAUX PLEIN DE LA FRACTION D'AVANT 1998. Le modèle lui donne celui de la
     pension entière, celui du régime général : la durée requise, ou l'âge d'annulation
     de la décote de la génération ; avant, la fraction est décotée jusqu'à cet âge, sans
-    majoration. C'est ce que la caisse publie : « L'âge d'obtention du taux plein dépend
-    de l'année de naissance. L'âge auquel la retraite peut être attribuée à taux plein,
-    quel que soit le nombre de trimestres, varie de 65 à 67 ans » (son triptyque « Votre
-    assurance retraite », 2024) ; « Si vous bénéficiez d'une pension calculée à taux
-    minoré, les fractions de pension avant 1979 et de 1979 à 1997 seront portées au
-    niveau du montant maximum de la pension « Cavimac » et vous aurez de plus une
-    décote », ses trimestres comptés « entre la date d'effet de la pension et l'âge du
-    taux plein » (sa page « Demander ma retraite de base ») — deux pièces lues le 5
-    novembre 2026, qui ne nomment pas D. 721-6. La lettre du décret n° 2006-1325,
-    article 2, dit autre chose : le I ne remplace l'âge de D. 721-6 de 1997, « fixé à
-    soixante-cinq ans », par celui de L. 161-17-2 que pour qui a la durée ; le II
-    alloue « également » la pension à l'autre dès cet âge, avec le coefficient de
+    majoration. C'est une lecture de deux pièces d'information de la caisse, qui ne
+    disent pas cet âge pour la fraction. Sa page « Demander ma retraite de base » lie la
+    décote des fractions d'avant 1979 et de 1979 à 1997 à « une pension calculée à taux
+    minoré » (« Si vous bénéficiez d'une pension calculée à taux minoré, les fractions de
+    pension avant 1979 et de 1979 à 1997 seront portées au niveau du montant maximum de
+    la pension « Cavimac » et vous aurez de plus une décote »), et compte les trimestres
+    « entre la date d'effet de la pension et l'âge du taux plein » : un seul âge, qu'elle
+    ne chiffre jamais. Son triptyque « Votre assurance retraite » dit : « L'âge
+    d'obtention du taux plein dépend de l'année de naissance. L'âge auquel la retraite
+    peut être attribuée à taux plein, quel que soit le nombre de trimestres, varie de 65
+    à 67 ans », de « la retraite » en général, dans un paragraphe qui ne distingue pas
+    les fractions. Ni l'une ni l'autre ne nomme D. 721-6 ni le décret n° 2006-1325 ; la
+    page, lue le 5 novembre 2026, cite la loi du 30 décembre 2025 et les montants du 1er
+    janvier 2026, le triptyque est de mars 2024 : aucune ne dit comment la caisse
+    appliquait la règle en 2018, année du cas ci-dessous. La lettre du décret
+    n° 2006-1325, article 2, dit autre chose : le I ne remplace l'âge de D. 721-6 de
+    1997, « fixé à soixante-cinq ans », par celui de L. 161-17-2 que pour qui a la durée ;
+    le II alloue « également » la pension à l'autre dès cet âge, avec le coefficient de
     minoration de R. 351-27 ; le V majore celle de qui « remplissent les conditions
     prévues à l'article D. 721-6 [...] dans sa rédaction en vigueur au 31 décembre
-    1997 ». À soixante-cinq ans, la fraction serait servie sans décote, et majorée. Le
-    scénario 1 suit la caisse, qui publie la règle ; aucune circulaire, aucun exemple
-    chiffré de la caisse ne tranche le cas lui-même. Les deux lectures ne diffèrent que
-    pour qui part entre soixante-cinq ans et l'âge d'annulation de sa génération, quand
-    il passe soixante-cinq ans, sans la durée requise ni la mesure des parents de trois
-    enfants (fiche taux_plein_a_soixante_cinq_ans).
+    1997 ». À soixante-cinq ans, la fraction serait servie sans décote, et majorée. La
+    récriture du I en 2011 pèse pour cette lettre, sans la trancher seule : du 30 janvier
+    2010 au 1er juillet 2011 (LEGIARTI000021763033, décret n° 2010-103), il disait l'âge
+    de D. 721-6 « également abaissé à soixante ans au profit des assurés qui justifient
+    [...] d'une durée au moins égale à la durée fixée au 1° de l'article R. 351-27 », et le
+    II ouvrait la pension aux autres « à partir de l'âge de soixante ans » ; depuis le 1er
+    juillet 2011 (LEGIARTI000023397816, décret n° 2010-1734, article 11), « abaissé à
+    soixante ans » est remplacé par l'âge de L. 161-17-2, le II renvoie à « l'âge
+    mentionné au I », sans toucher aux soixante-cinq ans de D. 721-6 pour qui n'a pas la
+    durée. Le scénario 1 sert la lecture des pièces de la caisse, non la
+    lettre ; aucune circulaire, aucun exemple chiffré, aucune notification de la caisse
+    ne dit le cas lui-même, et la question reste posée au propriétaire. Les deux lectures
+    ne diffèrent que pour qui part entre soixante-cinq ans et l'âge d'annulation de sa
+    génération, quand il passe soixante-cinq ans, sans la durée requise ni la mesure des
+    parents de trois enfants (fiche taux_plein_a_soixante_cinq_ans).
   effet: >-
     la ministre du culte de 1979 à 1981, puis de 2000 à 2018, née le 15 mars 1953,
     partie à soixante-cinq ans le 1er avril 2018 sans la mesure des parents : avant
-    1998, 4 635,65 × 11 / 165 × 0,9375 = 289,73 € par an, comme la caisse le décrit et
-    comme le modèle le sert ; à la lettre du décret, sans décote et majorée jusqu'au
+    1998, 4 635,65 × 11 / 165 × 0,9375 = 289,73 € par an, comme le modèle le sert, selon
+    la lecture des pièces de la caisse ; à la lettre du décret, sans décote et majorée jusqu'au
     minimum, non majoré sous cent vingt trimestres cotisés comme la caisse l'écrit,
     7 615,94 × 11 / 165 = 507,73 €, 218,00 € de plus.
 - version: [decret_de_2006, decret_de_2010]
@@ -450,9 +465,11 @@ sources:
   - >-
     L'arrêté du 22 décembre 1981, maximum de pension et cotisations de 1982, à lire sur le
     fac-similé du Journal officiel, et celui du 8 janvier 1980, la cotisation de
-    solidarité de 1979 ; une circulaire de la CAVIMAC sur le décret n° 2006-1325, qui
-    dirait l'âge du taux plein de la fraction d'avant 1998, l'écrêtement des majorations
-    et le partage de leurs prorata.
+    solidarité de 1979 ; une circulaire de la CAVIMAC sur le décret n° 2006-1325, la
+    notification d'un ministre du culte parti entre soixante-cinq ans et l'âge de sa
+    génération, ou une réponse écrite de la caisse, qui diraient l'âge du taux plein de
+    la fraction d'avant 1998 ; la caisse sur l'écrêtement des majorations et le partage de
+    leurs prorata.
 code:
   interrupteurs:
     fractions_des_cultes: true

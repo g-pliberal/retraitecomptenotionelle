@@ -182,3 +182,6 @@ Le cliquet des rédactions sans statut (`data/reference/textes/perimetre.yaml`) 
 *Renvoi, le 5 novembre 2026* : rebasés à la publication, les commits fbf109d et 4052d87 que
 cette note et son entrée du journal de veille citent sont, sur `main`, 62fe670 et 9dce08d ;
 celui de cette note est f16bdf0.
+
+*Renvoi, le 5 novembre 2026* : les écarts de la relecture R-M4/cultes sont repris dans
+`2026-11-05-retouches-de-la-relecture-r-m4-cultes.md`.
