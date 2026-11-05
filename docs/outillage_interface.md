@@ -1,9 +1,9 @@
 # Outillage d'audit d'interface — ce qu'une machine neuve reçoit, et ce qu'elle doit encore faire
 
-Le dépôt embarque trois outils de revue d'interface comme compétences Claude
+Le dépôt embarque quatre outils de revue d'interface comme compétences Claude
 Code, dans `.claude/skills/`. Ce fichier dit où chacun vit, ce qu'un clone frais
 contient déjà, ce qu'il faut encore installer, et comment on change une version
-figée. Un quatrième, Lighthouse, n'est pas une compétence : un script le lance
+figée. Un cinquième, Lighthouse, n'est pas une compétence : un script le lance
 (action 174). Rien ici ne touche au modèle, aux données ni au site : c'est de
 l'outillage, et il ne doit rien coûter à ceux qui ne s'en servent pas.
 
@@ -22,6 +22,7 @@ scripts/setup_ui_tools.sh --essai    # en plus, ouvre et ferme un Chromium pour 
 | Impeccable | 4.3.1 (compétence), moteur 0.1.5 | `.claude/skills/impeccable/` (SKILL.md, références, lanceur `scripts/impeccable`, `scripts/VERSION`), les quatre agents `.claude/agents/impeccable-*.md`, le hook dans `.claude/settings.json` | le moteur natif (<!--chiffre:tenu(test_les_chiffres_de_l_outillage_sont_ceux_des_versions_figees)-->16<!--/--> Mo), dans `~/.impeccable/bin/0.1.5/` |
 | Web Interface Guidelines | 1.0.0 (compétence), règles figées au commit `e3d624b` | `.claude/skills/web-design-guidelines/` (SKILL.md, `guidelines.md`, `guidelines.provenance.yaml`) | rien |
 | Playwright CLI | `@playwright/cli` 0.1.20 | `.claude/skills/playwright-cli/` (SKILL.md livré par ce paquet), `.playwright/cli.config.json` | le paquet npm global, et le Chromium qu'il attend |
+| Unslop | `skills/unslop` figé au commit `a6f121e` | `.claude/skills/unslop/` (SKILL.md, références, scripts, `LICENSE`, `provenance.yaml`) | rien pour la compétence ; Playwright et ffmpeg pour ses seuls scripts facultatifs |
 | Lighthouse | 13.5.0 | `scripts/notes_lighthouse.py`, qui le lance et résume ses rapports | le paquet npm, que `npx` garde dans son cache |
 
 Ce qui n'est **pas** dans Git, et ne doit pas y entrer : le binaire du moteur
@@ -142,3 +143,36 @@ Pour rafraîchir les règles, volontairement et jamais au détour d'un audit :
 depuis `vercel-labs/agent-skills` ; la SKILL.md locale s'en écarte à dessein
 (elle lit la copie figée). Un `npx skills update` écraserait ce choix : ne pas
 le lancer sans refaire ensuite l'édition décrite ci-dessus.
+
+## Unslop : copie figée
+
+`/unslop` reprend un écran qui « fait IA » — dégradés violets, lueurs, emoji
+en guise d'icônes, textes qui crient, espacements au hasard — pour en faire
+une interface dessinée : il en dresse l'audit, propose une direction en cinq
+lignes et attend qu'on la valide, puis corrige l'écran passe par passe
+(espacement, couleur, icônes, textes, typographie, mise en page, détails,
+visuels, mouvement). Ses règles d'écriture visent l'anglais ; sur nos pages en
+français, ses passes visuelles valent telles quelles, mais ce qu'il dit des
+textes (mots interdits, casse) se lit avec la typographie française.
+
+Le dossier `.claude/skills/unslop/` est la copie conforme, octet pour octet,
+de `skills/unslop` du dépôt `heydamir/unslop` au commit inscrit dans
+`provenance.yaml`, plus le `LICENSE` du même commit : la licence CC BY 4.0
+exige de garder le crédit de Damir Sokolovsky (@heydamir) et le lien vers son
+dépôt. `provenance.yaml` porte la somme SHA-256 de chaque fichier, que
+`tests/test_prose.py::test_unslop_est_la_copie_conforme_de_sa_provenance`
+recalcule. Ses deux scripts sont facultatifs : `snapshot.mjs` enregistre une
+page en ligne, `story.mjs` filme l'écran qui se corrige ; ils cherchent le
+paquet `playwright` (le second aussi `ffmpeg`), et rien de cela n'entre dans
+le dépôt.
+
+Pour rafraîchir la copie, volontairement :
+
+1. Cloner le dépôt amont hors du dépôt, et choisir le commit.
+2. Remplacer `.claude/skills/unslop/` par `skills/unslop` de ce commit, et y
+   recopier le `LICENSE` de sa racine.
+3. Récrire `provenance.yaml` : le commit, sa date, la date de lecture, et la
+   somme de chaque fichier (`sha256sum`).
+4. Mettre à jour le commit court dans le tableau ci-dessus, lancer le test,
+   puis lire le diff de `SKILL.md` : c'est lui qui dit ce que les passes
+   suivantes feront autrement.

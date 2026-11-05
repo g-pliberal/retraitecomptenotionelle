@@ -945,6 +945,49 @@ def test_les_chiffres_de_l_outillage_sont_ceux_des_versions_figees():
         assert phrase in doc, f"docs/outillage_interface.md ne dit plus « {phrase} »"
 
 
+def test_unslop_est_la_copie_conforme_de_sa_provenance():
+    """La compétence unslop est une copie figée, octet pour octet, de
+    `skills/unslop` du dépôt `heydamir/unslop` au commit que nomme
+    `provenance.yaml`, plus la licence CC BY 4.0 du même commit, qui exige d'en
+    garder le crédit.
+
+    Comme les règles des Web Interface Guidelines, elle ne se rafraîchit que
+    volontairement : un fichier retouché, ajouté ou perdu se voit ici, et
+    `docs/outillage_interface.md` doit dire le commit que le dépôt porte.
+    """
+    import hashlib
+    import yaml
+
+    dossier = RACINE / ".claude" / "skills" / "unslop"
+    provenance = yaml.safe_load((dossier / "provenance.yaml").read_text(encoding="utf-8"))
+    attendus = provenance["fichiers"]
+    presents = {
+        chemin.relative_to(dossier).as_posix()
+        for chemin in dossier.rglob("*")
+        if chemin.is_file() and chemin.name != "provenance.yaml"
+    }
+    assert presents == set(attendus), (
+        "la copie d'unslop n'a plus les fichiers de sa provenance — en trop : "
+        f"{sorted(presents - set(attendus))} ; manquants : "
+        f"{sorted(set(attendus) - presents)}"
+    )
+    differents = sorted(
+        chemin for chemin, somme in attendus.items()
+        if hashlib.sha256((dossier / chemin).read_bytes()).hexdigest() != somme
+    )
+    assert differents == [], (
+        f"ces fichiers d'unslop ne sont plus ceux du commit amont : {differents}"
+        " — pour rafraîchir la copie, suivre docs/outillage_interface.md"
+    )
+    assert "Damir Sokolovsky" in (dossier / "SKILL.md").read_text(encoding="utf-8")
+
+    doc = (RACINE / "docs" / "outillage_interface.md").read_text(encoding="utf-8")
+    court = provenance["upstream_commit"][:7]
+    assert f"`{court}`" in doc, (
+        f"docs/outillage_interface.md ne dit pas le commit d'unslop figé ({court})"
+    )
+
+
 def test_aucun_paragraphe_n_est_repete_a_la_suite():
     """Une résolution de conflit qui garde les deux côtés laisse deux fois le
     même paragraphe, et rien ne le voit : les chiffres ancrés de chaque copie
