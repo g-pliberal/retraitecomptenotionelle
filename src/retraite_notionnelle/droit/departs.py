@@ -92,8 +92,15 @@ RAFP = "rafp"
 #: CAVEC, « entre 60 et 65 ans, avec application d'un abattement définitif de
 #: 1,25 % par trimestre manquant » (statuts de 2008, article 3.13 ; de 2018,
 #: partie 2, article 12 ; règlement de 2026, article 1.1.3). Ni leurs textes,
-#: ni L. 643-3, ni L. 644-1 ne les lient à la liquidation de la base.
-SANS_LEUR_BASE = frozenset({"carpv_complementaire", "cavec_complementaire"})
+#: ni L. 643-3, ni L. 644-1 ne les lient à la liquidation de la base. La
+#: CRPNPAC, ses deux tranches : « Une pension de retraite est servie à
+#: l'affilié [...] dès lors qu'il réunit cumulativement à la date d'effet de
+#: la pension les conditions suivantes : 1° Avoir atteint l'âge de cinquante
+#: ans ; 2° Justifier de vingt annuités » (code de l'aviation civile,
+#: R. 426-11, I, rédaction de 2012), sans rien demander du régime général,
+#: qui attend l'âge de L. 161-17-2 (L. 351-1).
+SANS_LEUR_BASE = frozenset({"carpv_complementaire", "cavec_complementaire",
+                            "crpnpac", "crpnpac_tranche_2"})
 
 #: Ce qui date un départ, par rapport au départ déclaré.
 MOTIF_DEPART = "depart"
@@ -415,8 +422,9 @@ def departs_et_demandes(moteur: ScenarioActuel, carriere: Carriere
              if moteur.catalogue[code].etage in ETAGES_DES_UNITES]
     if not bases:
         return unique, _examiner(demandees, {}, set(), None)
-    # La CARPV et la CAVEC se demandent à leur âge, sans la base : chacune est
-    # une unité, que sa date sépare de la base quand elle s'ouvre avant elle.
+    # La CARPV, la CAVEC et la CRPNPAC se demandent à leur âge, sans la base :
+    # chacune est une unité, que sa date sépare de la base quand elle s'ouvre
+    # avant elle.
     unites = [*_unites(moteur, carriere, bases, routage),
               *(frozenset({code}) for code in codes if code in SANS_LEUR_BASE)]
     unite_de = {code: i for i, unite in enumerate(unites) for code in unite}

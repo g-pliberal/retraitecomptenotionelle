@@ -42,9 +42,12 @@ export const RAFP = "rafp";
 
 /**
  * Les complémentaires que leurs statuts font demander à leur âge, sans la
- * base : elles forment une unité à elles. Voir `SANS_LEUR_BASE` (departs.py).
+ * base : elles forment une unité à elles. La CRPNPAC, ses deux tranches,
+ * « dès lors qu'il réunit [...] 1° Avoir atteint l'âge de cinquante ans »
+ * (R. 426-11 du code de l'aviation civile). Voir `SANS_LEUR_BASE` (departs.py).
  */
-export const SANS_LEUR_BASE = new Set(["carpv_complementaire", "cavec_complementaire"]);
+export const SANS_LEUR_BASE = new Set(["carpv_complementaire", "cavec_complementaire",
+  "crpnpac", "crpnpac_tranche_2"]);
 
 /** Ce qui date un départ, par rapport au départ déclaré. */
 export const MOTIF_DEPART = "depart";
@@ -397,8 +400,9 @@ export function departsEtDemandes(moteur, carriereSaisie) {
   if (bases.length === 0) {
     return [unique, examiner(demandees, new Map(), new Set(), null)];
   }
-  // La CARPV et la CAVEC se demandent à leur âge, sans la base : chacune est
-  // une unité, que sa date sépare de la base quand elle s'ouvre avant elle.
+  // La CARPV, la CAVEC et la CRPNPAC se demandent à leur âge, sans la base :
+  // chacune est une unité, que sa date sépare de la base quand elle s'ouvre
+  // avant elle.
   const unites = [...unitesDe(moteur, carriere, bases, routes),
     ...codes.filter((code) => SANS_LEUR_BASE.has(code)).map((code) => new Set([code]))];
   const uniteDe = new Map();
