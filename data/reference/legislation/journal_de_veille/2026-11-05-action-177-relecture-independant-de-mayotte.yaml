@@ -1,0 +1,23 @@
+date: "2026-11-05"
+session: "action 177, file R-D : relecture indépendante du taux propre de l'indépendant de Mayotte (commits bbb85b0, 9b62adc, d8124ff, file D)"
+consulte: >-
+  python scripts/veille_droit.py ; docs/veille_droit.md. L'index LEGI de la DILA récupéré
+  dans la session et mis à jour au 4 novembre 2026 : décret n° 2011-2085, article 4-2
+  (LEGIARTI000038680068, LEGIARTI000053297541) et article 4 (LEGIARTI000025097520,
+  LEGIARTI000026514552, LEGIARTI000053469930) ; ordonnance n° 96-1122, article 28-2
+  (LEGIARTI000025018560, LEGIARTI000046455192) et article 28-1 (LEGIARTI000031324363).
+trouve: >-
+  Conforme : citations exactes, seize valeurs justes et datées, certification refaite
+  (16 identiques), les deux moteurs au centime, les cinq témoins bougent pour le taux seul
+  (688,40 € refaits à la main). Écart grave : l'article 4-2 borne l'assiette au plafond de
+  la caisse de Mayotte (article 28-1, I), les deux moteurs au plafond de la Sécurité
+  sociale ; 30 000 € en 2020 donnent 1 965,00 € au lieu de 1 520,12 €, et le témoin né en
+  1965 cotise 29 035 € de 2019 à 2026 au lieu de 19 353 €. Écart moyen : de 2012 à 2018,
+  la série alignée, déclarée, dépasse toute lecture de l'article 4 et garde une part sur
+  la totalité que l'article 28-2 exclut. Faible : l'article 4 de janvier 2012 donne 4,11 %
+  pour 2012, non 4,00 %.
+reste: >-
+  À la file du modèle : la cotisation de cssm_mayotte bornée au plafond de la caisse, le
+  test d'abord, au-dessus de ce plafond, dans les deux moteurs, et le salarié de Mayotte
+  avec lui (article 28-2, depuis 2012) ; la présomption de 2012 à 2018 revue (note
+  2026-11-05-relecture-independant-de-mayotte.md de l'action 177).
