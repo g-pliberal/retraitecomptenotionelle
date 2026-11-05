@@ -5,8 +5,8 @@ intitule: >-
   ans : 67 ans depuis la génération 1955, inchangé par la suspension.
 regimes: [agirc, agirc_arrco, agirc_entreprises_nouvelles, arrco, arrco_cultes,
   arrco_tranche_2, arrco_tranche_2_entreprises_nouvelles, asv_chirurgiens_dentistes,
-  asv_conventionnes, asv_sages_femmes, banque_de_france, cancava, cancava_avant_1973,
-  carcdsf_complementaire, carmf_complementaire, carpimko_complementaire,
+  asv_conventionnes, asv_directeurs_laboratoire, asv_sages_femmes, banque_de_france,
+  cancava, cancava_avant_1973, carcdsf_complementaire, carmf_complementaire, carpimko_complementaire,
   cavamac_complementaire, cavimac, cavom_complementaire, cavp_complementaire,
   cese_membres, cipav_complementaire, cnavpl, cnbf, cnbf_complementaire, cnracl,
   cprn_complementaire, enseignants_prive_additionnel, fonction_publique_etat, fspoeie,

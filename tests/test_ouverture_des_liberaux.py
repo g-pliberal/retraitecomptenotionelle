@@ -214,3 +214,43 @@ def test_l_allocation_d_avant_2004_s_ouvre_a_soixante_ans_minoree(avant_2004, ag
     pension = next(p for p in actuel["pensions_par_regime"] if p["regime"] == "cnavpl")
     lu = COEFFICIENT.search(pension["detail"])
     assert (float(lu.group(1)) if lu else 1.0) == pytest.approx(attendu, abs=1e-9), pension
+
+
+# -- le coefficient des biologistes, jusqu'à l'âge de L. 351-8, 1° ----------------
+
+#: « La prestation supplémentaire de vieillesse est alors réduite par
+#: application d'un coefficient d'anticipation qui est fonction du nombre de
+#: trimestres manquants, à la date d'effet des droits, pour atteindre l'âge
+#: fixé à l'article L. 351-8 (1°) du code de la sécurité sociale. Ce
+#: coefficient est égal à 1,25% par trimestre manquant dans la limite de vingt
+#: trimestres » (statuts de la CAVP, article 14, arrêté du 23 juin 2011,
+#: JORFARTI000024270214 ; même phrase au règlement de 2026, III, article 1er,
+#: JORFARTI000054436087). L. 351-8, 1° : « l'âge prévu à l'article L. 161-17-2
+#: augmenté de cinq années » (LEGIARTI000023030950, pensions du 1er juillet 2011
+#: au 31 janvier 2014 ; LEGIARTI000028498855, jusqu'au 31 août 2023) ; cet âge,
+#: « 1° Soixante ans pour les assurés nés avant le 1er juillet 1951 ; [...]
+#: 3° Soixante ans et neuf mois pour les assurés nés en 1952 ; 4° Soixante et
+#: un ans et deux mois pour les assurés nés en 1953 » (D. 161-2-1-9,
+#: LEGIARTI000025089933). Le biologiste né le 10 février part au 1er mars :
+#: - en 1950, à 62 ans (2012) : 65 − 62 = 3 ans, 12 trimestres, 0,85 ;
+#: - en 1952, à 63 ans (2015) : 65 ans 9 mois − 63 = 2 ans 9 mois, 11, 0,8625 ;
+#: - en 1953, à 63 ans (2016) : 66 ans 2 mois − 63 = 3 ans 2 mois, 12,67,
+#:   13 au trimestre supérieur, 0,8375.
+#: Le modèle comptait jusqu'à 67 ans : 20, 16 et 16 trimestres (relecture R-L,
+#: note ``docs/feuille_de_route/130/2026-11-04-relecture-ouverture-de-la-base-des-liberaux.md``).
+BIOLOGISTES = {"1950-02-10": ("62", 0.85), "1952-02-10": ("63", 0.8625),
+               "1953-02-10": ("63", 0.8375)}
+
+
+def test_le_biologiste_est_minore_jusqu_a_l_age_de_l_351_8():
+    cas = [{"cle": naissance, "requete": {**REQUETE, "statut": "biologiste_liberal",
+                                          "naissance": naissance, "liquidation": age}}
+           for naissance, (age, _) in BIOLOGISTES.items()]
+    servis, refus = servi_et_refait(cas)
+    assert refus == {}, refus
+    lus = {}
+    for naissance, servi in servis.items():
+        pension = next(p for p in servi["actuel"]["pensions_par_regime"]
+                       if p["regime"] == "asv_directeurs_laboratoire")
+        lus[naissance] = float(COEFFICIENT.search(pension["detail"]).group(1))
+    assert lus == {naissance: attendu for naissance, (_, attendu) in BIOLOGISTES.items()}

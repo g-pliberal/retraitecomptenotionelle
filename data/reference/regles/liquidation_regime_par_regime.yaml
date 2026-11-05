@@ -78,7 +78,11 @@ versions:
       se demandent à leur âge, dès soixante ans, sans la base : « les adhérents
       remplissant les conditions de l'article 33 peuvent demander à bénéficier de leur
       pension de retraite complémentaire dès leur soixantième anniversaire » (CARPV,
-      statuts de 2021, article 34 ; règlement de 2026, article 2) ; « entre 60 et 65
+      statuts approuvés par l'arrêté du 18 octobre 2021, article 34, en vigueur le
+      1er janvier 2022 : « Les modifications des statuts prévues par le présent arrêté
+      entrent en vigueur le 1er janvier 2022 », article 2, JORFARTI000044220741 ;
+      règlement de 2026, article 2 ; avant 2022, présumé : voir les approximations) ;
+      « entre 60 et 65
       ans, avec application d'un abattement définitif de 1,25 % par trimestre
       manquant » (CAVEC, statuts de 2008, article 3.13 ; de 2018, partie 2, article
       12 ; règlement de 2026, article 1.1.3) ; ni ces textes, ni L. 643-3, ni L. 644-1
@@ -130,6 +134,29 @@ approximations:
     qu'après y est ramenée par les prix. La réversion ouverte avant qu'une pension ne
     commence lit celle-ci à son montant du départ déclaré
   effet: non mesuré
+- ecart: >-
+    la complémentaire de la CARPV est présumée se demander sans la base avant le
+    1er janvier 2022, comme les statuts de 2021 le disent depuis. Avant, les statuts ne
+    sont publiés en entier qu'au Bulletin officiel — l'arrêté du 5 juillet 1999 en
+    approuve les « art. 3 à 40 du titre II » (JORFARTI000001562289 : « sera publié
+    intégralement au Bulletin officiel no 99/33 », JORFARTI000001368893), celui du
+    28 août 2006 les « art. 21, 23 et 24 du titre II » (JORFARTI000001494755) —, non
+    lus. Les modifications que le Journal officiel publie, lues le 5 novembre 2026, ne
+    disent pas si la complémentaire se liquide sans la base : l'arrêté du 11 janvier
+    2011 (JORFARTI000023448554) ne récrit de l'article 21 que l'alinéa de l'inapte, et
+    ne demande d'avoir « liquidé ses pensions de vieillesse personnelles auprès de la
+    totalité des régimes légaux ou rendus légalement obligatoires, de base et
+    complémentaires » qu'à qui veut cumuler entièrement sa retraite et une activité
+    (article 23, c) ; ceux du 16 avril 2014 (JORFARTI000028939421), du 18 février 2015
+    (JORFARTI000030285511) et du 2 novembre 2015 (JORFARTI000031549970) ne parlent ni
+    de la base, ni de la liquidation de la retraite. Rien de ce qui est lu ne contredit
+    la présomption ; rien ne la fonde
+  effet: >-
+    trois cas de tests/test_ouverture_des_liberaux.py en dépendent — le vétérinaire né
+    le 10 février 1955 (CARPV au 1er mars 2015), le 10 février 1961 (1er mars 2021) et
+    le 10 octobre 1961 (1er novembre 2021) —, et tout vétérinaire parti avant 2022
+    avant l'âge de sa base : si la complémentaire attendait la base, elle lui serait
+    servie à cet âge, sous un coefficient plus haut
 presomptions:
   depart_de_chaque_regime: >-
     la date d'effet de chaque pension que l'assuré ne dit pas
@@ -147,6 +174,11 @@ sources:
     légal. La CRPNPAC, complémentaire en annuités ouverte à cinquante ans, ouvre encore
     le régime général du personnel navigant (né en 1964, parti à 55 ans, servi) : à
     instruire au code de l'aviation civile.
+  - >-
+    Le 5 novembre 2026 (file L-bis, action 130) : les statuts de la CARPV d'avant le
+    1er janvier 2022, au Bulletin officiel (n° 99/33 pour l'arrêté du 5 juillet 1999 ;
+    celui du ministère de la santé de 2006 pour l'arrêté du 28 août 2006), ou auprès de
+    la caisse, pour lever la présomption de la CARPV demandée sans la base.
   - >-
     Ouverte le 29 septembre 2026, avec le domaine des départs multiples et de la vie
     après le départ (docs/architecture.md, § 11), à la demande du propriétaire. Aucun

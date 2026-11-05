@@ -84,8 +84,11 @@ RAFP = "rafp"
 #: Les complémentaires que leurs statuts font demander à leur âge, sans la
 #: base : chacune forme une unité à elle. La CARPV, « dès leur soixantième
 #: anniversaire », sous la seule condition d'« avoir versé les cotisations
-#: exigibles de l'ensemble des régimes appelés par la CARPV » (statuts de
-#: 2021, articles 33 et 34 ; règlement de 2026, articles 1er et 2) ; la
+#: exigibles de l'ensemble des régimes appelés par la CARPV » (statuts
+#: approuvés le 18 octobre 2021, articles 33 et 34, en vigueur le 1er janvier
+#: 2022 ; règlement de 2026, articles 1er et 2) — avant 2022, la séparation
+#: est présumée, les statuts n'étant publiés qu'au Bulletin officiel (fiche
+#: liquidation_regime_par_regime, approximations) ; la
 #: CAVEC, « entre 60 et 65 ans, avec application d'un abattement définitif de
 #: 1,25 % par trimestre manquant » (statuts de 2008, article 3.13 ; de 2018,
 #: partie 2, article 12 ; règlement de 2026, article 1.1.3). Ni leurs textes,

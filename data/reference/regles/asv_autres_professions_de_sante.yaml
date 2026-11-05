@@ -183,10 +183,29 @@ approximations:
     règlement de 2026, article 1er (arrêté du 10 juillet 2026, III,
     JORFARTI000054436087) ; le modèle l'ouvre à l'âge de la génération depuis le
     3 novembre 2026. Les mêmes textes minorent « dans la limite de vingt trimestres »
-    jusqu'à « l'âge fixé à l'article L. 351-8 (1°) », soixante-cinq ans aux générations
-    nées avant le 1er juillet 1951 : le modèle compte jusqu'à soixante-sept ans à toute
-    génération
-  effet: non mesuré
+    jusqu'à « l'âge fixé à l'article L. 351-8 (1°) », « l'âge prévu à l'article
+    L. 161-17-2 augmenté de cinq années » (L. 351-8, LEGIARTI000023030950 puis
+    LEGIARTI000028498855, jusqu'au 31 août 2023 ; de trois années depuis,
+    LEGIARTI000047452736) : soixante-cinq ans aux générations nées avant le
+    1er juillet 1951, soixante-cinq ans et quatre mois à celles du second semestre de
+    1951, soixante-cinq ans et neuf mois en 1952, soixante-six ans et deux mois en 1953,
+    soixante-six ans et sept mois en 1954 (D. 161-2-1-9, 1° à 5°, LEGIARTI000025089933),
+    soixante-sept ans depuis 1955. Le modèle les lit à la génération depuis le
+    5 novembre 2026 (age_annulation_decote), aux périodes de 2009 et d'après, comme
+    l'âge d'ouverture : de 2009 au 29 juin 2011, la règle de 2011 est présumée ; avant
+    2009, soixante-sept ans, du guide. Ce que le texte ne tranche pas : l'arrondi des
+    trimestres manquants, que le modèle porte au trimestre supérieur ; les soixante-cinq
+    ans du parent de trois enfants des générations de juillet 1951 à 1955 (loi
+    n° 2010-1330, article 20, IV), que le modèle ne lui donne pas. Et le modèle
+    efface la minoration quand la durée d'assurance est atteinte
+    (decote_annulee_par_la_duree, valeur par défaut), quand les deux textes ne comptent
+    que les trimestres « pour atteindre l'âge » : à une file du modèle
+  effet: >-
+    jusqu'au 5 novembre 2026, le biologiste né avant 1955 était minoré jusqu'à
+    soixante-sept ans : né le 10 février 1950, parti à 62 ans, 0,7625 au lieu de 0,85 ;
+    né en 1952 ou en 1953, parti à 63 ans, 0,80 au lieu de 0,8625 et de 0,8375
+    (tests/test_ouverture_des_liberaux.py). La durée qui efface la minoration : non
+    mesurée
 - version: [forfaits_en_euros, quatre_forfaits]
   ecart: >-
     les points d'ajustement ne sont pas arrondis, au dixième supérieur pour l'auxiliaire

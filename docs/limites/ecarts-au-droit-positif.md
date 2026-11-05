@@ -267,7 +267,12 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   le régime qui n'ouvre pas encore sa pension au départ attend son âge — le
   régime général de l'aide-soignante partie de l'hôpital à cinquante-sept
   ans —, la pension militaire est servie dès la sortie de l'armée, le RAFP
-  attend l'âge légal. Chaque départ voit servies les pensions des précédents,
+  attend l'âge légal, la complémentaire de la CARPV et celle de la CAVEC se
+  demandent dès soixante ans sans la base des libéraux. À la CARPV, avant le
+  1er janvier 2022, c'est une présomption : ses statuts d'alors ne sont publiés
+  qu'au Bulletin officiel, et les modifications que le Journal officiel en
+  donne ne disent pas si la complémentaire attend la base (fiche
+  `liquidation_regime_par_regime`). Chaque départ voit servies les pensions des précédents,
   sur lesquelles son minimum contributif s'écrête. La date à laquelle
   l'assuré demande chaque pension est présumée quand il ne la dit pas
   (`depart_de_chaque_regime`) ; depuis le 30 septembre 2026, il la dit, régime

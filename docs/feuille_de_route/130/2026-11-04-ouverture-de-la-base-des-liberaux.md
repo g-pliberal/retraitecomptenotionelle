@@ -117,3 +117,6 @@ l'âge légal et non plus à 60 ans, et l'allocation d'avant 2004 est minorée.
   libéraux s'ouvre à l'âge légal, la CARPV et la CAVEC à 60 ans à part, l'allocation
   d'avant 2004 dès 60 ans minorée (`130/2026-11-04-ouverture-de-la-base-des-liberaux.md`) ;
   reste la CRPNPAC, qui ouvre le régime général du personnel navigant à 50 ans. »
+
+Renvoi du 5 novembre 2026 : le cliquet des textes descend à 9 334, non à 9 344 ;
+voir `2026-11-05-corrections-de-la-relecture-r-l.md`.

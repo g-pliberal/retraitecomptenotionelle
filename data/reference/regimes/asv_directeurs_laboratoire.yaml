@@ -45,7 +45,10 @@ population: >-
   pouvait l'être que par un assuré né avant le 1er juillet 1951, à qui
   la table rend soixante ans. Les statuts d'avant 2011, au seul Bulletin
   officiel, ne sont pas lus : les soixante ans d'avant 2009 restent ceux
-  du guide.
+  du guide. La minoration court jusqu'à « l'âge fixé à l'article L. 351-8
+  (1°) » (même article 14), lu à la génération depuis la période de 2009
+  (`age_taux_plein_par_generation`, fiche asv_autres_professions_de_sante) ;
+  avant, les soixante-sept ans du guide.
 hors_repartition: false
 inventaire:
   section: non_salaries
@@ -137,6 +140,7 @@ periodes:
     age_ouverture: 60
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: null
     taux_plein: 1.0
     salaire_reference: carriere_entiere
@@ -163,6 +167,7 @@ periodes:
     age_ouverture: 60
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: null
     taux_plein: 1.0
     salaire_reference: carriere_entiere
@@ -191,6 +196,7 @@ periodes:
     age_ouverture: 60
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: null
     taux_plein: 1.0
     salaire_reference: carriere_entiere
@@ -219,6 +225,7 @@ periodes:
     age_ouverture: 60
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: null
     taux_plein: 1.0
     salaire_reference: carriere_entiere
@@ -248,6 +255,7 @@ periodes:
     age_ouverture: 60
     age_ouverture_par_generation: age_legal_par_generation
     age_taux_plein: 67
+    age_taux_plein_par_generation: age_annulation_decote
     duree_requise_trimestres: null
     taux_plein: 1.0
     salaire_reference: carriere_entiere
