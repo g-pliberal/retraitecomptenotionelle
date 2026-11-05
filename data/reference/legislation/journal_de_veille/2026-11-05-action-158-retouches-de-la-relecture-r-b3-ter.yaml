@@ -1,0 +1,24 @@
+date: "2026-11-05"
+session: "action 158, vague 7 : retouches de la relecture R-B3-ter (commit a8ef9d3) — le rang de rangs_grille, le n° 91-783, la grille de 2017 des IEEAC"
+consulte: >-
+  python scripts/veille_droit.py ; docs/veille_droit.md. L'index de la DILA récupéré dans
+  la session (LEGI à jour au 4 novembre 2026 après l'incrément LEGI_20261104-214059) :
+  décret n° 91-783, article 1 (LEGIARTI000006461848 du 1992-02-08 au 2007-05-03,
+  LEGIARTI000006461849 du 2007-05-03 au 2012-10-01) et article 15 (LEGIARTI000006461873) ;
+  décret n° 2009-1322, article 2 (LEGIARTI000034034492 du 2017-01-01 au 2018-01-01,
+  LEGIARTI000037196211 du 2017-01-01 au 2025-07-01). Le Noyau RH, grille 02777 au
+  2011-07-01 (rangs 1 à 4, puis 6) ; `etat_legi/echelons.csv`, grille des IEEAC de classe
+  normale en 2017.
+trouve: >-
+  Le rang de `rangs_grille` est la place de l'échelon dans la grille le jour du
+  reclassement, non la colonne `rang` du Noyau RH (6, non 5, pour l'exceptionnel de la
+  grille 02777). Le n° 91-783 n'a pas d'article qui énumère ses corps : son article 1 les
+  désigne par leur catégorie, son article 15 ne dit pas « régis par le présent décret ». Les
+  deux versions de l'article 2 du n° 2009-1322, en vigueur ensemble en 2017, disent des
+  indices différents pour la même année (767 et 774 au 11e échelon) : la grille du dépôt en
+  mêle les deux ; laquelle s'applique, les textes ne le disent pas. Aucune règle, aucune
+  valeur ne change.
+reste: >-
+  À une session de code, test d'abord : l'en-tête de `reclassements.csv` et la docstring de
+  `periodes_noyau` ; les deux commentaires sur le n° 91-783. Au lecteur des grilles, avec
+  le JORF : les deux versions de l'article 2 du n° 2009-1322 en 2017.
