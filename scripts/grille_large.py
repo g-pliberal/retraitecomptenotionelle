@@ -1075,6 +1075,23 @@ INVALIDES_ET_INAPTES = True
 #: Les conditions de départ de l'EIR que :data:`INVALIDES_ET_INAPTES` réunit.
 CONDITIONS_DES_INAPTES = ("invalidite", "inaptitude")
 
+#: La trente-huitième version (action 138, étape 14, le 5 novembre 2026) : les
+#: invalides et les inaptes ne partent pas tous à l'âge légal. La jumelle
+#: inapte (:data:`INVALIDES_ET_INAPTES`) y partait toujours, quand l'EIR range
+#: entre l'âge légal et l'âge d'annulation de la décote 34,5 % des femmes et
+#: 37,2 % des hommes nés en 1953 partis pour inaptitude, 12,4 et 8,8 % de ceux
+#: partis pour invalidité. Elle se décline en trois, comme la jumelle qui
+#: décote (:data:`DECOTE_ENTRE_LES_DEUX_AGES`) : la part des invalides et des
+#: inaptes des nés en 1953 que l'EIR range à l'âge légal y part, sept sur dix ;
+#: le reste attend, en deux attentes, un an et un mois, puis trois ans et
+#: quatre mois environ (:func:`attentes_des_inaptes`). Trois conventions : chaque
+#: condition pèse ses départs sans carrière complète, la part de celles-ci
+#: étant la même à tout âge ; l'attente se compte de l'âge où l'inaptitude
+#: ouvre le taux plein, que le pilote fixe, à toute génération, sans échelle —
+#: de lui à l'âge d'annulation de la décote, il y a cinq ans à chacune ;
+#: l'inapte qui attend ne valide rien de plus, et ne surcote pas.
+INAPTES_ENTRE_LES_DEUX_AGES = True
+
 #: La génération de l'EIR dont les invalides et les inaptes donnent leur poids
 #: aux jumelles inaptes, celui que la page et la pesée des groupes du COR
 #: voient (:func:`parts_des_inaptes`) : les nés en 1953, que l'enquête de 2020
@@ -1540,11 +1557,16 @@ class CasTypeLarge(CasType):
         génération atteint son âge légal depuis que la surcote existe
         (:data:`ANNEE_DE_LA_SURCOTE`) ; sous :attr:`depuis_la_surcote`,
         :attr:`attente` années après le premier âge où le modèle lui sert une
-        surcote (:func:`debut_de_la_surcote`), s'il lui en sert une."""
+        surcote (:func:`debut_de_la_surcote`), s'il lui en sert une ; un inapte
+        qui attend (:data:`INAPTES_ENTRE_LES_DEUX_AGES`), :attr:`attente`
+        années après l'âge que le pilote fixe, celui où l'inaptitude lui ouvre
+        le taux plein."""
         age = super().age_liquidation_pour(simulateur, generation, variante)
         attente = self._attente_du_depart(generation)
         if attente is None or variante == "absolu":
             return age
+        if "apres_le_taux_plein" in attente:
+            return age + attente["apres_le_taux_plein"]
         if self.depuis_la_surcote:
             debut = _debut_de_la_surcote_en_python(simulateur, self, generation, age)
             return age if debut is None else max(age, debut + self.attente)
@@ -1559,10 +1581,14 @@ class CasTypeLarge(CasType):
         l'attente, comptée du premier âge où le modèle lui sert une surcote,
         cherché sur :data:`TRIMESTRES_DE_RECHERCHE` trimestres
         (:func:`debut_de_la_surcote`) ; sinon le plancher que l'âge légal de sa
-        génération et l'attente, à son échelle, lui posent. Le portage la lit
-        telle quelle (:meth:`pour_le_portage`)."""
+        génération et l'attente, à son échelle, lui posent ; pour un inapte,
+        l'attente, comptée de l'âge que le pilote fixe, à toute génération
+        (:data:`INAPTES_ENTRE_LES_DEUX_AGES`). Le portage la lit telle quelle
+        (:meth:`pour_le_portage`)."""
         if not self.attente:
             return None
+        if self.inaptitude:
+            return {"apres_le_taux_plein": self.attente}
         legal = _par_generation(self.legaux, generation, 0.0)
         if self.regle_liquidation == "taux_plein" and generation + legal < ANNEE_DE_LA_SURCOTE:
             return None
@@ -3347,9 +3373,12 @@ def population(effectifs, source: CaracteristiquesRetraites,
         inaptes = inaptes_des_generations(racine) if INVALIDES_ET_INAPTES else None
         avances = (avances_par_l_inaptitude(variantes, racine)
                    if inaptes and ouvertures is not None else None)
+        attentes_inaptes = (attentes_des_inaptes(departs_publies(racine), racine)
+                            if inaptes and INAPTES_ENTRE_LES_DEUX_AGES else None)
         variantes = departs_avec_decote(variantes, effectifs, source, donnees.quintiles,
                                         decotes, ouvertures, attentes, ages_legaux(racine),
-                                        inaptes, avances, echelles_des_attentes(racine))
+                                        inaptes, avances, echelles_des_attentes(racine),
+                                        attentes_inaptes)
         if DECOTE_DES_AGENTS and ouvertures is not None:
             variantes = agents_a_leur_taux_plein(variantes, ouvertures,
                                                  decote_des_agents(racine))
@@ -3990,6 +4019,35 @@ def attentes_des_decotes(publies: dict, racine: Path) -> dict[str, list[tuple[fl
     pesant leur part. Nul ne décote à l'âge d'annulation ni après lui ; les
     départs avec décote d'avant l'âge légal, des statuts qui ouvrent plus tôt,
     ne comptent pas."""
+    return _attentes_apres_l_age_legal(publies, racine, lambda sexe: {"decote": 1.0})
+
+
+def attentes_des_inaptes(publies: dict, racine: Path) -> dict[str, list[tuple[float, float]]]:
+    """Les départs des invalides et des inaptes sans carrière complète des nés
+    en 1953 (``GENERATION_DES_DECOTES``), sexe par sexe, en trois attentes
+    après l'âge légal de la génération, ``(attente, part)`` triés
+    (:data:`INAPTES_ENTRE_LES_DEUX_AGES`), comme ceux avec décote
+    (:func:`attentes_des_decotes`) : chaque place et chaque âge pèsent les
+    départs de chacune des :data:`CONDITIONS_DES_INAPTES`, fois la part de
+    ses retraités sans carrière complète (``departs_generations.csv``)."""
+    generation = GENERATION_DES_DECOTES
+
+    def sans_carriere_complete(sexe: str) -> dict[str, float]:
+        return {condition: 1.0 - publies[(generation, "condition", condition, sexe,
+                                          "carriere_complete")] / 100.0
+                for condition in CONDITIONS_DES_INAPTES}
+
+    return _attentes_apres_l_age_legal(publies, racine, sans_carriere_complete)
+
+
+def _attentes_apres_l_age_legal(publies: dict, racine: Path, conditions
+                                ) -> dict[str, list[tuple[float, float]]]:
+    """Les départs des nés en 1953 (``GENERATION_DES_DECOTES``) que
+    ``conditions(sexe)`` nomme, chacune ``{condition: poids}``, sexe par sexe,
+    en trois attentes après l'âge légal de la génération, ``(attente, part)``
+    triés : ceux de l'âge légal même ; ceux des :data:`PREMIERES_ANNEES`
+    premières années ; les autres, jusqu'à l'âge d'annulation de la décote
+    (:func:`attentes_des_decotes`)."""
     from retraite_notionnelle.scenarios.actuel import AgesAnnulationDecote, AgesOuverture
 
     generation = GENERATION_DES_DECOTES
@@ -3997,9 +4055,13 @@ def attentes_des_decotes(publies: dict, racine: Path) -> dict[str, list[tuple[fl
     annulation = AgesAnnulationDecote(racine).age(generation)[0]
     sortie = {}
     for sexe in ("F", "H"):
+        poids = conditions(sexe)
+
         def decotes(tableau: str, colonne: str) -> float:
-            return (publies[(generation, tableau, colonne, sexe, "part")]
-                    * publies[(generation, tableau, colonne, sexe, "condition_decote")])
+            return somme_ordonnee(
+                poids[condition] * publies[(generation, tableau, colonne, sexe, "part")]
+                * publies[(generation, tableau, colonne, sexe, f"condition_{condition}")]
+                for condition in poids)
 
         a_l_age_legal = decotes("position", "age_legal")
         groupes = {0: [0.0, a_l_age_legal]}
@@ -4064,7 +4126,8 @@ def departs_avec_decote(variantes: list[Variante], effectifs,
                         legaux: tuple[tuple[int, float], ...] = (),
                         inaptes: dict[str, tuple[tuple[int, float], ...]] | None = None,
                         avances: dict[str, frozenset[int]] | None = None,
-                        echelles: tuple[tuple[int, float], ...] = ()
+                        echelles: tuple[tuple[int, float], ...] = (),
+                        attentes_inaptes: dict[str, list[tuple[float, float]]] | None = None
                         ) -> list[Variante]:
     """Chaque carrière incomplète en deux : la part de son sexe
     (:func:`parts_avec_decote`) part à l'ouverture du droit, avec une décote,
@@ -4083,7 +4146,9 @@ def departs_avec_decote(variantes: list[Variante], effectifs,
     sexe que pèse l'inapte (:func:`parts_des_inaptes`), prise sur la jumelle du
     taux plein, part au taux plein dès l'âge légal, reconnue inapte au travail,
     rapportée sous ``avances`` aux carrières dont l'inaptitude avance le départ
-    (:func:`avances_par_l_inaptitude`)."""
+    (:func:`avances_par_l_inaptitude`) ; sous ``attentes_inaptes``
+    (:func:`attentes_des_inaptes`), elle se décline comme celle qui décote,
+    chaque attente comptée de l'âge où l'inaptitude ouvre le taux plein."""
     parts = parts_avec_decote(variantes, effectifs, source, quintiles)
     parts_inaptes = (parts_des_inaptes(variantes, effectifs, source, inaptes, parts)
                      if inaptes else {})
@@ -4106,9 +4171,13 @@ def departs_avec_decote(variantes: list[Variante], effectifs,
             sortie.append(v.fois(part * poids, decote=True, parts_des_generations=decotee,
                                  cas=sienne))
         if inapte:
-            sortie.append(v.fois(inapte, inapte=True, parts_des_generations=de_l_inapte,
-                                 cas=replace(v.cas, code=f"{v.cas.code}~inapte",
-                                             inaptitude=True)))
+            cas = replace(v.cas, code=f"{v.cas.code}~inapte", inaptitude=True)
+            for attente, poids in (attentes_inaptes[v.cas.sexe] if attentes_inaptes
+                                   else ((0.0, 1.0),)):
+                sienne = (elargi(cas, code=f"{cas.code}{attente:.2f}", attente=attente)
+                          if attente else cas)
+                sortie.append(v.fois(inapte * poids, inapte=True,
+                                     parts_des_generations=de_l_inapte, cas=sienne))
     return sortie
 
 
@@ -5779,7 +5848,9 @@ def condition_au_depart(simulateur: Simulateur, cas: CasType, generation: int,
     :data:`CLASSES_DE_CONDITIONS` de son départ : en carrière longue quand le
     droit l'ouvre par elle ; avec une décote (:func:`avec_decote`) ; avec une
     surcote quand il part après l'âge légal de sa génération et après l'âge de
-    son taux plein ; au taux plein par l'âge quand il part à l'âge
+    son taux plein, sauf l'inapte, qui n'a pas la durée requise que la
+    surcote demande (:data:`INAPTES_ENTRE_LES_DEUX_AGES`) ; au taux plein par
+    l'âge quand il part à l'âge
     d'annulation de la décote, ou après lui, sans la durée requise ; au taux
     plein, autrement. Les générations que la mesure lit partent après 2004 :
     la loi leur sert la surcote de tout trimestre qui passe l'un et l'autre."""
@@ -5796,7 +5867,8 @@ def condition_au_depart(simulateur: Simulateur, cas: CasType, generation: int,
         return age, "decote"
     legal = AgesOuverture(racine).age(generation)[0]
     annulation = AgesAnnulationDecote(racine).age(generation)[0]
-    if cas.regle_liquidation != "services" and age > legal + TOLERANCE_DE_PLACE:
+    if (cas.regle_liquidation != "services" and not cas.inaptitude
+            and age > legal + TOLERANCE_DE_PLACE):
         if age > departs.age(au_taux_plein(cas), generation) + 1e-6:
             return age, "surcote"
     if (age >= annulation - TOLERANCE_DE_PLACE

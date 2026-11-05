@@ -547,8 +547,9 @@ function debutDeLaSurcote(simulateur, construire, plein, recherche) {
  * décrivent, puis, hors de la variante « absolu », l'attente d'un cas type de
  * la grille élargie (`CasTypeLarge.age_liquidation_pour` de
  * `scripts/grille_large.py`, étape 7) : le plancher que l'âge légal de sa
- * génération et l'attente lui posent, ou l'attente qui court du premier âge
- * où le modèle sert une surcote à sa carrière (`debutDeLaSurcote`). Avec
+ * génération et l'attente lui posent, l'attente qui court du premier âge
+ * où le modèle sert une surcote à sa carrière (`debutDeLaSurcote`), ou celle
+ * d'un inapte, qui court de l'âge que le pilote fixe. Avec
  * l'âge, `attendu`, quand l'attente le fixe — le Python le tient alors pour
  * un flottant (`castypes.age_lu`) —, et la carrière que le pilote date.
  */
@@ -564,6 +565,8 @@ function ageDuCas(simulateur, cas, primes, variante) {
     const debut = debutDeLaSurcote(simulateur,
       carriereFinale(simulateur, cas.entree ?? null, batir, primes), age, attente.recherche);
     depart = debut === null ? age : Math.max(age, debut + attente.depuis_la_surcote);
+  } else if (Object.hasOwn(attente, "apres_le_taux_plein")) {
+    depart = age + attente.apres_le_taux_plein;
   } else {
     depart = Math.max(age, attente.plancher);
   }

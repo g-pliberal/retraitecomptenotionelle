@@ -366,7 +366,8 @@ pour 12,2, à la dernière mesure, du 17 octobre. Elle a de plus des départs
 choisis, avec une surcote, au salariat et chez les non-salariés, puis chez les
 fonctionnaires civils, à la part et à la surcote moyenne que le jaune pensions
 trouve à leur catégorie ; des invalides et des inaptes, au taux plein dès
-l'âge légal ; des carrières pleines du salariat privé qui entrent, cinquième
+l'âge où l'inaptitude l'ouvre, une part d'entre eux partant plus tard, comme
+ceux de l'EIR nés en 1953 ; des carrières pleines du salariat privé qui entrent, cinquième
 par cinquième, à l'âge où leur génération cotise son premier trimestre, que le
 service national précède chez certains hommes, et dont les périodes assimilées
 ont la nature et la part que l'échantillon interrégimes de cotisants publie,
@@ -428,7 +429,7 @@ maternité, la durée des carrières pleines et le calage de celle des femmes, l
 part des générations 1946 à 1953 au minimum, la fragmentation selon la
 génération, la décote selon le rang, la carrière longue selon le rang, les
 attentes de la décote et de la surcote, la mortalité des invalides et des
-inaptes, et ceux d'entre eux qui partent entre les deux âges.
+inaptes, et leurs attentes selon la génération.
 
 **Ce qui revient au propriétaire, le 28 octobre 2026.** La page ne lit pas la
 population : aucune version de la population ne déplace un chiffre de la page,

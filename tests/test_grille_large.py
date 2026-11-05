@@ -2388,7 +2388,7 @@ def test_les_invalides_et_les_inaptes_partent_au_taux_plein_des_l_age_legal(
     variantes = G.grille("population", simulateur.effectifs, source, ())
     poids = _poids(variantes, simulateur.effectifs, source.millesime)
     inaptes = [v for v in variantes if v.inapte]
-    assert {v.cas.code.replace("~inapte", "", 1) for v in inaptes} == {
+    assert {re.sub(r"~inapte[0-9.]*", "", v.cas.code, count=1) for v in inaptes} == {
         v.cas.code for v in variantes if G.incomplete(v) and v.cas.regle_liquidation
         == "taux_plein" and not (v.decote or v.inapte or v.surcote or v.complete)}
     assert all(v.cas.inaptitude and v.cas.regle_liquidation == "taux_plein"
@@ -2414,6 +2414,126 @@ def test_les_invalides_et_les_inaptes_partent_au_taux_plein_des_l_age_legal(
                                                rel=1e-9), (sexe, n)
                 assert pesees / toutes == pytest.approx(INAPTES_DE_L_EIR[sexe][1953],
                                                         rel=1e-6), (sexe, n)
+
+
+def test_l_attente_des_invalides_et_des_inaptes_se_lit_dans_l_eir(parametres):
+    """Les invalides et les inaptes des nés en 1953 ne partent pas tous à
+    leur âge légal, 61 ans et 2 mois : l'EIR range entre lui et l'âge
+    d'annulation de la décote, 66 ans et 2 mois, 34,5 % des femmes et 37,2 %
+    des hommes partis pour inaptitude, 12,4 et 8,8 % de ceux partis pour
+    invalidité (« ÂgeLiq », lignes 285, 286, 291 et 292). En trois attentes,
+    comme les départs avec décote (``attentes_des_decotes``) : l'âge légal
+    même, puis 61 et 62 ans, puis de 63 ans à l'âge d'annulation, chaque âge
+    attendant jusqu'à son milieu. Chaque âge pèse la part de la génération qui
+    y part, fois celle de ses départs pour invalidité et pour inaptitude,
+    chacune fois la part de ses retraités sans carrière complète
+    (« CondLiquidation », ligne 18 ou 19) — l'inapte de la population n'a pas
+    de carrière complète. Nées en 1953, 37,5 % des femmes partent à l'âge
+    légal, dont 17,9 % pour invalidité, à 67,6 % à carrière complète, et
+    13,7 % pour inaptitude, à 14,7 % ; 42,1 % à 61 ans, dont 16,1 et 13,0 %,
+    l'âge légal compris, qui n'en est pas ; 14,9 % à 66 ans, dont 0,6 et
+    0,9 %. Sept sur dix partent à l'âge légal, chez les femmes comme chez
+    les hommes ; ceux d'avant lui, des statuts ou des handicaps qui ouvrent
+    plus tôt, ne comptent pas."""
+    publies = G.departs_publies(parametres.racine_donnees)
+    lues = G.attentes_des_inaptes(publies, parametres.racine_donnees)
+    legal, annulation = 61 + 2 / 12, 66 + 2 / 12
+    for sexe, sans, a_l_age_legal, parts, invalidite, inaptitude in (
+            ("F", (1 - 0.676, 1 - 0.147), (37.5, 17.9, 13.7),
+             {61: 42.1, 62: 8.9, 63: 5.0, 64: 5.7, 65: 2.9, 66: 14.9},
+             {61: 16.1, 62: 8.6, 63: 1.7, 64: 1.3, 65: 1.1, 66: 0.6},
+             {61: 13.0, 62: 9.7, 63: 10.6, 64: 10.7, 65: 9.2, 66: 0.9}),
+            ("H", (1 - 0.653, 1 - 0.171), (24.4, 25.6, 15.2),
+             {61: 29.7, 62: 8.2, 63: 5.2, 64: 6.1, 65: 3.1, 66: 9.1},
+             {61: 21.2, 62: 6.3, 63: 0.8, 64: 0.7, 65: 0.6, 66: 0.5},
+             {61: 13.3, 62: 8.7, 63: 7.8, 64: 8.6, 65: 6.5, 66: 1.8})):
+        au_legal = a_l_age_legal[0] * (sans[0] * a_l_age_legal[1]
+                                       + sans[1] * a_l_age_legal[2])
+        par_age = {age: parts[age] * (sans[0] * invalidite[age] + sans[1] * inaptitude[age])
+                   for age in parts}
+        par_age[61] -= au_legal
+        attentes = {age: ((legal + 62.0) / 2 if age == 61 else (66.0 + annulation) / 2
+                          if age == 66 else age + 0.5) - legal for age in par_age}
+        total = au_legal + sum(par_age.values())
+        attendues = [(0.0, au_legal / total)] + [
+            (sum(par_age[a] * attentes[a] for a in ages) / sum(par_age[a] for a in ages),
+             sum(par_age[a] for a in ages) / total)
+            for ages in ((61, 62), (63, 64, 65, 66))]
+        assert [attente for attente, _ in lues[sexe]] == pytest.approx(
+            [attente for attente, _ in attendues]), sexe
+        assert [part for _, part in lues[sexe]] == pytest.approx(
+            [part for _, part in attendues]), sexe
+    assert [round(a, 2) for a, _ in lues["F"]] == [0.0, 1.12, 3.32]
+    assert [round(a, 2) for a, _ in lues["H"]] == [0.0, 1.13, 3.39]
+    assert lues["F"][0][1] == pytest.approx(0.709, abs=1e-3)
+    assert lues["H"][0][1] == pytest.approx(0.713, abs=1e-3)
+
+
+def test_les_invalides_et_les_inaptes_attendent_comme_ceux_des_nes_en_1953(
+        simulateur, source, parametres):
+    """Sous ``INAPTES_ENTRE_LES_DEUX_AGES``, la jumelle inapte de chaque
+    carrière incomplète se décline comme les invalides et les inaptes des nés
+    en 1953 (``attentes_des_inaptes``) : la part de son poids qu'ils prennent
+    à l'âge légal y part, sous son code ; le reste attend, en deux attentes.
+    Les trois pèsent ensemble ce que pesait la jumelle, chacune de la part de
+    sa génération."""
+    assert G.INAPTES_ENTRE_LES_DEUX_AGES
+    attentes = G.attentes_des_inaptes(G.departs_publies(parametres.racine_donnees),
+                                      parametres.racine_donnees)
+    variantes = G.grille("population", simulateur.effectifs, source, ())
+    poids = _poids(variantes, simulateur.effectifs, source.millesime)
+    jumelles = {v.cas.code: v for v in variantes if v.inapte}
+    attendantes: dict[str, set[float]] = {}
+    for v in jumelles.values():
+        assert v.cas.inaptitude and v.cas.regle_liquidation == "taux_plein"
+        if not v.cas.attente:
+            continue
+        immobile = jumelles[v.cas.code.replace(f"~inapte{v.cas.attente:.2f}", "~inapte")]
+        assert immobile.cas.attente == 0.0
+        assert v.parts_des_generations == immobile.parts_des_generations
+        parts = dict(attentes[v.cas.sexe])
+        assert poids[v.cas.code] / poids[immobile.cas.code] == pytest.approx(
+            parts[v.cas.attente] / parts[0.0])
+        attendantes.setdefault(immobile.cas.code, set()).add(v.cas.attente)
+    assert attendantes
+    assert {code for code, v in jumelles.items() if not v.cas.attente} == set(attendantes)
+    for code, siennes in attendantes.items():
+        assert siennes == {a for a, _ in attentes[jumelles[code].cas.sexe] if a}, code
+
+
+def test_un_inapte_qui_attend_part_apres_l_age_de_son_taux_plein(simulateur, source,
+                                                                  parametres):
+    """L'inapte qui attend part autant d'années après l'âge où l'inaptitude
+    lui ouvre le taux plein, et non après l'âge légal : né en 1955, l'homme
+    d'une carrière de vingt-cinq années, inapte, a le taux plein à 62 ans,
+    son âge légal (L. 351-8, 2°, D. 161-2-1-9) ; ses jumelles qui attendent
+    partent un an et deux mois, puis trois ans et cinq mois plus tard, au
+    taux plein encore, sans rien valider, ses 100 trimestres, et sans
+    surcote, qui demande la durée requise (L. 351-1-2). Né en 1965, il a le
+    taux plein à 62 ans (L. 351-1-5, D. 351-1-14), quand son âge légal est
+    de 62 ans et 9 mois : il attend de 62 ans. Né en 1940, de 60 ans, avant
+    que la surcote existe : l'inapte attend à toute génération."""
+    variantes = G.grille("population", simulateur.effectifs, source, ())
+    projection = simulateur.pour_la_projection()
+    attentes = G.attentes_des_inaptes(G.departs_publies(parametres.racine_donnees),
+                                      parametres.racine_donnees)["H"]
+    par_code = {v.cas.code: v for v in variantes}
+    code = f"{G.GABARIT}~h~20_30~inapte~p50"
+    for attente, _ in attentes:
+        jumelle = par_code[code.replace("~inapte", f"~inapte{attente:.2f}") if attente
+                           else code]
+        assert jumelle.cas.attente == attente
+        assert G.condition_au_depart(projection, jumelle.cas, 1955) == (
+            pytest.approx(62.0 + attente), "taux_plein_autre")
+        depart = projection.echeancier(jumelle.cas.construire(projection, 1955)).au_depart
+        assert depart.trimestres_valides == 100
+        assert depart.taux_liquidation == pytest.approx(0.5)
+        assert all(pension.surcote == 0.0 for pension in depart.pensions_par_regime)
+        assert jumelle.cas.age_liquidation_pour(projection, 1965) == pytest.approx(
+            62.0 + attente)
+        assert jumelle.cas.age_liquidation_pour(projection, 1940) == pytest.approx(
+            60.0 + attente)
+    assert [round(a, 2) for a, _ in attentes] == [0.0, 1.13, 3.39]
 
 
 def test_les_departs_avec_decote_se_comptent_quintile_par_quintile(parametres):

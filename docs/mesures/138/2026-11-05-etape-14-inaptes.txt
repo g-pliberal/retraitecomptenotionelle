@@ -1,0 +1,202 @@
+Dépôt : avant, commit b80f490e600b35448af5cadc63db7a0623848312, arbre 7d512139ec36cbb5222ebbdfa084ffece8d45cca ;
+après, le même commit et les changements de scripts/grille_large.py et de
+src/retraite_notionnelle/pont.mjs que publie le commit de cette mesure (la
+trente-huitième version, INAPTES_ENTRE_LES_DEUX_AGES).
+Action 138, étape 14 : les inaptes de la population partent-ils tous à l'âge légal ?
+(docs/feuille_de_route/138/2026-11-05-etape-14-inaptes.md).
+Les jumelles inaptes de la population (invalides et inaptes sans carrière
+complète, INVALIDES_ET_INAPTES), cinq générations, les deux sexes, simulées
+au portage ; 995 s avant, 997 s après, un cœur chacune, les deux en même temps.
+
+Le script, lancé depuis la racine du dépôt, avant puis après :
+    python pilote_inaptes.py 1950 2016 1953 2020 1955 2022 1960 2027 1965 2032
+
+----- pilote_inaptes.py -----
+"""Les départs des jumelles inaptes de la population, génération par génération.
+
+    python pilote_inaptes.py 1950 2016 1953 2020 1955 2022 1960 2027 1965 2032
+
+Chaque couple : une génération, simulée au portage, et l'année dont elle prend
+les poids de retraités (``grille_large.poids_retraites``), multipliés par la
+part que la génération donne à chaque variante (``part_de_la_generation``).
+Tous les départs, sans restriction d'âge ni recalage de la page."""
+import collections, subprocess, sys, time
+sys.path.insert(0, "scripts")
+import grille_large as G
+from retraite_notionnelle.config import Parametres
+from retraite_notionnelle.simulateur import Simulateur
+from retraite_notionnelle.scenarios.actuel import AgesAnnulationDecote, AgesOuverture
+
+t0 = time.time()
+print("commit", subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip())
+p = Parametres(); racine = p.racine_donnees
+effectifs = Simulateur(p).effectifs
+variantes = G.grille("population", effectifs, G.eir(racine), ())
+print(f"population : {len(variantes)} variantes, dont {sum(1 for v in variantes if v.inapte)} inaptes ; {time.time()-t0:.0f} s")
+simulateur = Simulateur(p).pour_la_projection()
+args = [int(a) for a in sys.argv[1:]]
+for gen, annee in zip(args[::2], args[1::2]):
+    try:
+        poids = G.poids_retraites(variantes, effectifs, annee)
+    except Exception as e:
+        print(f"\n== génération {gen} : poids de {annee} illisibles ({e!r})"); continue
+    tous = [(v, w * v.part_de_la_generation(gen)) for v, w in zip(variantes, poids) if w > 0]
+    tous = [(v, w) for v, w in tous if w > 0]
+    lectures = [G._lectures_de_la_condition(v.cas, gen) for v, _ in tous]
+    departs = G.Departs(simulateur, [a for ages, _ in lectures for a in ages],
+                        [d for _, siens in lectures for d in siens], du_jour=True)
+    legal = AgesOuverture(racine).age(gen)[0]; annulation = AgesAnnulationDecote(racine).age(gen)[0]
+    print(f"\n== génération {gen}, poids de {annee} ; âge légal {legal:.2f}, d'annulation {annulation:.2f}")
+    for sexe in ("F", "H"):
+        total = inaptes = somme_ages = 0.0
+        places, ages, conditions = collections.Counter(), collections.Counter(), collections.Counter()
+        ages_exacts = collections.Counter()
+        for v, w in tous:
+            if v.cas.sexe != sexe:
+                continue
+            try:
+                age, condition = G.condition_au_depart(simulateur, v.cas, gen, departs)
+            except (ValueError, KeyError):
+                continue
+            total += w
+            if not v.inapte:
+                continue
+            inaptes += w; somme_ages += w * age
+            places[G.position_du_depart(age, legal, annulation)] += w
+            ages[G.age_du_depart(age)] += w
+            ages_exacts[round(age, 2)] += w
+            conditions[condition] += w
+        print(f"  {sexe} : jumelles inaptes {100 * inaptes / total:.2f} % des départs ; âge moyen {somme_ages / inaptes:.2f}")
+        for nom, compte in (("place", places), ("âge révolu", ages), ("âge exact", ages_exacts), ("condition", conditions)):
+            print(f"    {nom} : " + " ; ".join(f"{k} {100 * w / inaptes:.1f}" for k, w in sorted(compte.items())))
+print(f"\ndurée : {time.time()-t0:.0f} s")
+----- sortie, avant -----
+commit b80f490e600b35448af5cadc63db7a0623848312
+population : 19408 variantes, dont 620 inaptes ; 28 s
+
+== génération 1950, poids de 2016 ; âge légal 60.00, d'annulation 65.00
+  F : jumelles inaptes 10.17 % des départs ; âge moyen 60.00
+    place : age_legal 100.0
+    âge révolu : 60 100.0
+    âge exact : 60.0 100.0
+    condition : taux_plein_autre 100.0
+  H : jumelles inaptes 7.65 % des départs ; âge moyen 60.00
+    place : age_legal 100.0
+    âge révolu : 60 100.0
+    âge exact : 60.0 100.0
+    condition : taux_plein_autre 100.0
+
+== génération 1953, poids de 2020 ; âge légal 61.17, d'annulation 66.17
+  F : jumelles inaptes 9.40 % des départs ; âge moyen 61.17
+    place : age_legal 100.0
+    âge révolu : 61 100.0
+    âge exact : 61.17 100.0
+    condition : taux_plein_autre 100.0
+  H : jumelles inaptes 7.58 % des départs ; âge moyen 61.17
+    place : age_legal 100.0
+    âge révolu : 61 100.0
+    âge exact : 61.17 100.0
+    condition : taux_plein_autre 100.0
+
+== génération 1955, poids de 2022 ; âge légal 62.00, d'annulation 67.00
+  F : jumelles inaptes 9.39 % des départs ; âge moyen 62.00
+    place : age_legal 100.0
+    âge révolu : 62 100.0
+    âge exact : 62.0 100.0
+    condition : taux_plein_autre 100.0
+  H : jumelles inaptes 7.60 % des départs ; âge moyen 62.00
+    place : age_legal 100.0
+    âge révolu : 62 100.0
+    âge exact : 62.0 100.0
+    condition : taux_plein_autre 100.0
+
+== génération 1960, poids de 2027 ; âge légal 62.00, d'annulation 67.00
+  F : jumelles inaptes 9.38 % des départs ; âge moyen 62.00
+    place : age_legal 100.0
+    âge révolu : 62 100.0
+    âge exact : 62.0 100.0
+    condition : taux_plein_autre 100.0
+  H : jumelles inaptes 7.66 % des départs ; âge moyen 62.00
+    place : age_legal 100.0
+    âge révolu : 62 100.0
+    âge exact : 62.0 100.0
+    condition : taux_plein_autre 100.0
+
+== génération 1965, poids de 2032 ; âge légal 62.75, d'annulation 67.00
+  F : jumelles inaptes 9.36 % des départs ; âge moyen 62.00
+    place : avant_age_legal 100.0
+    âge révolu : 62 100.0
+    âge exact : 62.0 100.0
+    condition : taux_plein_autre 100.0
+  H : jumelles inaptes 7.72 % des départs ; âge moyen 62.00
+    place : avant_age_legal 100.0
+    âge révolu : 62 100.0
+    âge exact : 62.0 100.0
+    condition : taux_plein_autre 100.0
+
+durée : 995 s
+----- sortie, après -----
+commit b80f490e600b35448af5cadc63db7a0623848312
+population : 20648 variantes, dont 1860 inaptes ; 8 s
+
+== génération 1950, poids de 2016 ; âge légal 60.00, d'annulation 65.00
+  F : jumelles inaptes 10.17 % des départs ; âge moyen 60.66
+    place : age_legal 70.9 ; entre 29.1
+    âge révolu : 60 70.9 ; 61 14.0 ; 63 15.2
+    âge exact : 60.0 70.9 ; 61.12 14.0 ; 63.32 15.2
+    condition : taux_plein_autre 100.0
+  H : jumelles inaptes 7.65 % des départs ; âge moyen 60.67
+    place : age_legal 71.3 ; entre 28.7
+    âge révolu : 60 71.3 ; 61 13.4 ; 63 15.3
+    âge exact : 60.0 71.3 ; 61.13 13.4 ; 63.39 15.3
+    condition : taux_plein_autre 100.0
+
+== génération 1953, poids de 2020 ; âge légal 61.17, d'annulation 66.17
+  F : jumelles inaptes 9.40 % des départs ; âge moyen 61.83
+    place : age_legal 70.9 ; entre 29.1
+    âge révolu : 61 70.9 ; 62 14.0 ; 64 15.2
+    âge exact : 61.17 70.9 ; 62.28 14.0 ; 64.49 15.2
+    condition : taux_plein_autre 100.0
+  H : jumelles inaptes 7.58 % des départs ; âge moyen 61.84
+    place : age_legal 71.3 ; entre 28.7
+    âge révolu : 61 71.3 ; 62 13.4 ; 64 15.3
+    âge exact : 61.17 71.3 ; 62.3 13.4 ; 64.56 15.3
+    condition : taux_plein_autre 100.0
+
+== génération 1955, poids de 2022 ; âge légal 62.00, d'annulation 67.00
+  F : jumelles inaptes 9.39 % des départs ; âge moyen 62.66
+    place : age_legal 70.9 ; entre 29.1
+    âge révolu : 62 70.9 ; 63 14.0 ; 65 15.2
+    âge exact : 62.0 70.9 ; 63.12 14.0 ; 65.32 15.2
+    condition : taux_plein_autre 100.0
+  H : jumelles inaptes 7.60 % des départs ; âge moyen 62.67
+    place : age_legal 71.3 ; entre 28.7
+    âge révolu : 62 71.3 ; 63 13.4 ; 65 15.3
+    âge exact : 62.0 71.3 ; 63.13 13.4 ; 65.39 15.3
+    condition : taux_plein_autre 100.0
+
+== génération 1960, poids de 2027 ; âge légal 62.00, d'annulation 67.00
+  F : jumelles inaptes 9.38 % des départs ; âge moyen 62.66
+    place : age_legal 70.9 ; entre 29.1
+    âge révolu : 62 70.9 ; 63 14.0 ; 65 15.2
+    âge exact : 62.0 70.9 ; 63.12 14.0 ; 65.32 15.2
+    condition : taux_plein_autre 100.0
+  H : jumelles inaptes 7.66 % des départs ; âge moyen 62.67
+    place : age_legal 71.3 ; entre 28.7
+    âge révolu : 62 71.3 ; 63 13.4 ; 65 15.3
+    âge exact : 62.0 71.3 ; 63.13 13.4 ; 65.39 15.3
+    condition : taux_plein_autre 100.0
+
+== génération 1965, poids de 2032 ; âge légal 62.75, d'annulation 67.00
+  F : jumelles inaptes 9.36 % des départs ; âge moyen 62.66
+    place : avant_age_legal 70.9 ; entre 29.1
+    âge révolu : 62 70.9 ; 63 14.0 ; 65 15.2
+    âge exact : 62.0 70.9 ; 63.12 14.0 ; 65.32 15.2
+    condition : taux_plein_autre 100.0
+  H : jumelles inaptes 7.72 % des départs ; âge moyen 62.67
+    place : avant_age_legal 71.3 ; entre 28.7
+    âge révolu : 62 71.3 ; 63 13.4 ; 65 15.3
+    âge exact : 62.0 71.3 ; 63.13 13.4 ; 65.39 15.3
+    condition : taux_plein_autre 100.0
+
+durée : 997 s
