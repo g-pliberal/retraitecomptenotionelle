@@ -1,0 +1,132 @@
+Dépôt : commit 319ee4b4aef1f2644444cc8543f374a6c6228a65, arbre fe79998476e28198700f4d6857a8817626ee6e01.
+Action 138, étape 14 : le calage de la durée des femmes revu contre l'EIR de 2020
+(docs/feuille_de_route/138/2026-11-05-etape-14-calage-de-la-duree-des-femmes.md).
+Les femmes de la population simulées au portage, deux générations ; 3 min 47 s, un cœur.
+
+Le script, lancé depuis la racine du dépôt :
+    python pilote.py 1953 2020 1955 2022
+
+----- pilote.py -----
+"""Les durées et les départs des femmes de la population, génération par génération.
+
+    python pilote.py 1953 2020 1955 2022
+
+Chaque couple : une génération, simulée au portage, et l'année dont elle prend
+les poids de retraitées (``grille_large.poids_retraites``), multipliés par la
+part que la génération donne à chaque variante (``part_de_la_generation``).
+Tous les départs, sans restriction d'âge ni recalage de la page."""
+import collections, re, subprocess, sys
+sys.path.insert(0, "scripts")
+import grille_large as G
+from retraite_notionnelle.config import Parametres
+from retraite_notionnelle.simulateur import Simulateur
+from retraite_notionnelle.scenarios.actuel import AgesAnnulationDecote, AgesOuverture
+
+print("commit", subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip())
+p = Parametres(); racine = p.racine_donnees
+effectifs = Simulateur(p).effectifs
+variantes = G.grille("population", effectifs, G.eir(racine), ())
+simulateur = Simulateur(p).pour_la_projection()
+args = [int(a) for a in sys.argv[1:]]
+for gen, annee in zip(args[::2], args[1::2]):
+    femmes = [(v, w * v.part_de_la_generation(gen))
+              for v, w in zip(variantes, G.poids_retraites(variantes, effectifs, annee))
+              if v.cas.sexe == "F" and w > 0]
+    lectures = [G._lectures_de_la_condition(v.cas, gen) for v, _ in femmes]
+    departs = G.Departs(simulateur, [a for ages, _ in lectures for a in ages],
+                        [d for _, siens in lectures for d in siens], du_jour=True)
+    legal = AgesOuverture(racine).age(gen)[0]; annulation = AgesAnnulationDecote(racine).age(gen)[0]
+    places, conditions, durees = collections.Counter(), collections.Counter(), collections.Counter()
+    au_legal = collections.Counter()
+    total = somme = 0.0
+    for v, w in femmes:
+        if w <= 0.0:
+            continue
+        try:
+            age, condition = G.condition_au_depart(simulateur, v.cas, gen, departs)
+            actuel = departs.au_depart(v.cas, gen)
+        except (ValueError, KeyError):
+            continue
+        tv, tr = actuel.trimestres_valides, actuel.trimestres_requis
+        inapte = re.search(r"~(inapte|invalide)", v.cas.code) is not None
+        places[G.position_du_depart(age, legal, annulation)] += w
+        conditions[condition + (" (jumelle inapte)" if inapte else "")] += w
+        a = tv / 4.0
+        durees["1 moins de 10" if a < 10 else "2 10 à 20" if a < 20 else "3 20 à 30" if a < 30
+               else "4 30 à 40" if a < 40 else "5 40 et plus, sous la durée requise" if tv < tr
+               else "6 la durée requise et plus"] += w
+        if G.position_du_depart(age, legal, annulation) == "age_legal":
+            au_legal[("condition", condition + (" (jumelle inapte)" if inapte else ""))] += w
+            au_legal[("durée", "la durée requise et plus" if tv >= tr else "sous la durée requise")] += w
+            if condition == "taux_plein_autre" and not inapte:
+                au_legal[("taux plein, autrement, hors jumelles inaptes", f"{v.groupe} {v.tranche}")] += w
+        total += w; somme += w * tv
+    print(f"\n== génération {gen}, poids de {annee} ; âge légal {legal}, d'annulation {annulation}")
+    print(f"trimestres validés au départ, majorations comprises, en moyenne : {somme / total:.1f}")
+    for nom, compte in (("place", places), ("condition", conditions), ("durée validée, en années", durees)):
+        for cle, w in sorted(compte.items()):
+            print(f"  {nom} | {cle} | {100 * w / total:.1f}")
+    for (nom, cle), w in sorted(au_legal.items()):
+        if 100 * w / total >= 0.5:
+            print(f"  à l'âge légal, {nom} | {cle} | {100 * w / total:.1f}")
+----- sortie -----
+commit 319ee4b4aef1f2644444cc8543f374a6c6228a65
+
+== génération 1953, poids de 2020 ; âge légal 61.17, d'annulation 66.17
+trimestres validés au départ, majorations comprises, en moyenne : 155.5
+  place | age_annulation | 12.3
+  place | age_legal | 61.3
+  place | avant_age_legal | 11.5
+  place | entre | 14.9
+  condition | carriere_longue | 6.6
+  condition | decote | 11.9
+  condition | surcote | 11.2
+  condition | taux_plein_age | 11.1
+  condition | taux_plein_autre | 49.9
+  condition | taux_plein_autre (jumelle inapte) | 9.4
+  durée validée, en années | 2 10 à 20 | 7.9
+  durée validée, en années | 3 20 à 30 | 11.3
+  durée validée, en années | 4 30 à 40 | 15.2
+  durée validée, en années | 5 40 et plus, sous la durée requise | 0.2
+  durée validée, en années | 6 la durée requise et plus | 65.4
+  à l'âge légal, condition | decote | 8.4
+  à l'âge légal, condition | taux_plein_autre | 43.5
+  à l'âge légal, condition | taux_plein_autre (jumelle inapte) | 9.4
+  à l'âge légal, durée | la durée requise et plus | 43.7
+  à l'âge légal, durée | sous la durée requise | 17.6
+  à l'âge légal, taux plein, autrement, hors jumelles inaptes | cnracl None | 5.1
+  à l'âge légal, taux plein, autrement, hors jumelles inaptes | fonction_publique_etat_civile None | 4.6
+  à l'âge légal, taux plein, autrement, hors jumelles inaptes | msa_non_salaries 30_40 | 0.8
+  à l'âge légal, taux plein, autrement, hors jumelles inaptes | msa_non_salaries 40_plus | 0.9
+  à l'âge légal, taux plein, autrement, hors jumelles inaptes | regime_general 30_40 | 21.5
+  à l'âge légal, taux plein, autrement, hors jumelles inaptes | regime_general 40_plus | 10.5
+
+== génération 1955, poids de 2022 ; âge légal 62.0, d'annulation 67.0
+trimestres validés au départ, majorations comprises, en moyenne : 162.1
+  place | age_annulation | 7.3
+  place | age_legal | 51.5
+  place | apres_annulation | 1.7
+  place | avant_age_legal | 17.1
+  place | entre | 22.4
+  condition | carriere_longue | 12.1
+  condition | decote | 12.4
+  condition | surcote | 14.1
+  condition | taux_plein_age | 6.9
+  condition | taux_plein_autre | 45.1
+  condition | taux_plein_autre (jumelle inapte) | 9.4
+  durée validée, en années | 2 10 à 20 | 7.8
+  durée validée, en années | 3 20 à 30 | 11.1
+  durée validée, en années | 4 30 à 40 | 11.6
+  durée validée, en années | 5 40 et plus, sous la durée requise | 2.9
+  durée validée, en années | 6 la durée requise et plus | 66.6
+  à l'âge légal, condition | decote | 6.4
+  à l'âge légal, condition | taux_plein_autre | 35.8
+  à l'âge légal, condition | taux_plein_autre (jumelle inapte) | 9.4
+  à l'âge légal, durée | la durée requise et plus | 35.9
+  à l'âge légal, durée | sous la durée requise | 15.6
+  à l'âge légal, taux plein, autrement, hors jumelles inaptes | cnracl None | 5.5
+  à l'âge légal, taux plein, autrement, hors jumelles inaptes | fonction_publique_etat_civile None | 4.9
+  à l'âge légal, taux plein, autrement, hors jumelles inaptes | msa_non_salaries 30_40 | 1.2
+  à l'âge légal, taux plein, autrement, hors jumelles inaptes | msa_non_salaries 40_plus | 0.8
+  à l'âge légal, taux plein, autrement, hors jumelles inaptes | regime_general 30_40 | 14.4
+  à l'âge légal, taux plein, autrement, hors jumelles inaptes | regime_general 40_plus | 9.0

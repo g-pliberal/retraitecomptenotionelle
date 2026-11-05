@@ -239,3 +239,5 @@ celui-ci :
 4. *Les invalides et les inaptes entre les deux âges*, que la trente-deuxième
    version fait partir à l'âge légal (note de la trente et unième version,
    point 2).
+
+*Renvoi du 5 novembre 2026* : le point 3, revu contre le classeur des retraités nés en 1953 (EIR de 2020) : le calage de la durée des femmes tient, et l'excès de l'âge légal n'est pas dans la durée ; voir `2026-11-05-etape-14-calage-de-la-duree-des-femmes.md`.
