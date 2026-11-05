@@ -28,7 +28,7 @@ from ..donnees.chargement import (Fiabilite, charger_chomage_complementaires,
                                   charger_cotisation_micro,
                                   dispense_les_complementaires, forfait_micro)
 from ..donnees.primes import charger_primes_soumises
-from ..donnees.macro import DonneesMacro
+from ..donnees.macro import REGIME_DE_MAYOTTE, DonneesMacro
 from ..donnees.regimes import (CatalogueRegimes, ClassesCotisation,
                               ContributionsEmployeurPubliques, CotisationsDesCultes,
                               PartRetraiteSeuleEtat, SalairesForfaitaires)
@@ -552,17 +552,24 @@ class ConstructeurCompte:
                 plafond = min(plafond, plafond_global * pass_annuel)
         return max(0.0, min(revenu, plafond) - plancher)
 
-    def _bornes_proratisees(self, periode, annee: int, fraction: float
-                            ) -> tuple[float, float | None]:
+    def _bornes_proratisees(self, periode, annee: int, fraction: float,
+                            mahorais: bool = False) -> tuple[float, float | None]:
         """Bornes d'assiette d'une période, ramenées aux mois travaillés.
 
         Les deux formes de bornes s'y plient : celles exprimées en plafonds de
         la Sécurité sociale, et celles que la fiche fixe en euros — les unes
         comme les autres sont des bornes ANNUELLES, et une année incomplète ne
         les atteint qu'à proportion.
+
+        ``mahorais`` : le plafond est celui de la caisse de Mayotte, et non
+        celui de la Sécurité sociale. L'indépendant de Mayotte cotise « dans la
+        limite du plafond prévu au deuxième alinéa du I de l'article 28-1 » de
+        l'ordonnance n° 96-1122 (article 28-2, depuis 2012 ; décret
+        n° 2011-2085, article 4-2, depuis 2019), le plafond « créé à Mayotte »
+        (action 177).
         """
         basse, haute = periode.bornes_assiette_en_euros(
-            self.macro.plafond_securite_sociale(annee), annee
+            self.macro.plafond_de_cotisations(annee, mayotte=mahorais), annee
         )
         if fraction >= 1.0:
             return basse, haute
@@ -823,7 +830,7 @@ class ConstructeurCompte:
             )
             for periode in regime.periodes_actives(annee):
                 borne_basse, borne_haute = self._bornes_proratisees(
-                    periode, annee, part
+                    periode, annee, part, sans_employeur and code == REGIME_DE_MAYOTTE
                 )
 
                 # Traitement seul ou primes seules, celles du RAFP dans la

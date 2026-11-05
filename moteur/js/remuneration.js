@@ -53,6 +53,7 @@ import { indemniteCsg } from "./indemnite_csg.js";
 import { salaireMoyenAnnuel } from "./carriere.js";
 import { pointsCsgRendus } from "./restitution.js";
 import { Fiabilite } from "./serie.js";
+import { REGIME_DE_MAYOTTE } from "./macro.js";
 import { FAMILLE_PAR_DEFAUT, familleDeLaFiche } from "./prelevements-historiques.js";
 import { pow } from "./libm.js";
 
@@ -1082,7 +1083,15 @@ export function blocDroitEnVigueur(catalogue, affiliations, statut, annee,
       const [basse, haute] = periode.bornesAssietteEnPass();
       // Les bornes en euros, qui priment : le plafond propre du RCI de
       // l'année, les tranches que la CNBF et la CARPIMKO fixent en euros.
-      const [basEuros, hautEuros] = periode.bornesEnEuros(annee);
+      let [basEuros, hautEuros] = periode.bornesEnEuros(annee);
+      // L'indépendant de Mayotte cotise sous le plafond de sa caisse, et non
+      // sous celui de la Sécurité sociale (ordonnance n° 96-1122, art. 28-2 ;
+      // décret n° 2011-2085, art. 4-2), comme le compte le lui porte.
+      if (sansEmployeur && code === REGIME_DE_MAYOTTE) {
+        const plafond = exigeLaMacro(macro, code, periode).plafondDeCotisations(annee, true);
+        basEuros ??= basse * plafond;
+        hautEuros ??= haute === null ? null : haute * plafond;
+      }
       // L'assiette qui n'est pas le revenu, que le facteur reconstitue avant
       // les bornes, comme au compte.
       const facteur = periode.assiette_facteur_revenu ?? 1;

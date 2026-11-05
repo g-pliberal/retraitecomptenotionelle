@@ -21,6 +21,7 @@ import {
   CotisationsDesCultes, SalairesForfaitaires, ValeursPoint,
 } from "./regimes.js";
 import { Fiabilite } from "./serie.js";
+import { REGIME_DE_MAYOTTE } from "./macro.js";
 import { primesSoumises } from "./primes.js";
 import { assietteDuCollaborateur } from "./droit/acquerir.js";
 
@@ -428,10 +429,16 @@ export class ConstructeurCompte {
    * sociale, et celles que la fiche fixe en euros — les unes comme les autres
    * sont des bornes ANNUELLES, et une année incomplète ne les atteint qu'à
    * proportion.
+   *
+   * `mahorais` : le plafond est celui de la caisse de Mayotte, et non celui
+   * de la Sécurité sociale. L'indépendant de Mayotte cotise « dans la limite
+   * du plafond prévu au deuxième alinéa du I de l'article 28-1 » de
+   * l'ordonnance n° 96-1122 (article 28-2, depuis 2012 ; décret n° 2011-2085,
+   * article 4-2, depuis 2019), le plafond « créé à Mayotte » (action 177).
    */
-  _bornesProratisees(periode, annee, fraction) {
+  _bornesProratisees(periode, annee, fraction, mahorais = false) {
     const [basse, haute] = periode.bornesAssietteEnEuros(
-      this.macro.plafond_securite_sociale.valeur(annee), annee,
+      this.macro.plafondDeCotisations(annee, mahorais), annee,
     );
     if (fraction >= 1.0) {
       return [basse, haute];
@@ -678,7 +685,7 @@ export class ConstructeurCompte {
       );
       for (const periode of regime.periodesActives(annee)) {
         const [borneBasse, borneHaute] = this._bornesProratisees(
-          periode, annee, part,
+          periode, annee, part, sansEmployeur && code === REGIME_DE_MAYOTTE,
         );
 
         // Traitement seul ou primes seules, celles du RAFP dans la limite de

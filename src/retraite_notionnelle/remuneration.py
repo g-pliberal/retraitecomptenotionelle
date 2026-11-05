@@ -245,6 +245,7 @@ from pathlib import Path
 from .calendrier import DateMois
 from .donnees.chargement import Fiabilite, charger_yaml
 from .donnees.indemnite_csg import charger_indemnite_csg
+from .donnees.macro import REGIME_DE_MAYOTTE
 from .donnees.prelevements_historiques import FAMILLE_PAR_DEFAUT, famille_de_la_fiche
 from .donnees.primes import charger_primes_soumises
 from .donnees.regimes import (ContributionsEmployeurPubliques, PartRetraiteSeuleEtat,
@@ -1736,6 +1737,17 @@ def bloc_droit_en_vigueur(catalogue, affiliations, statut: str, annee: int,
             # Les bornes en euros, qui priment : le plafond propre du RCI de
             # l'année, les tranches que la CNBF et la CARPIMKO fixent en euros.
             basse_euros, haute_euros = periode.bornes_en_euros(annee)
+            # L'indépendant de Mayotte cotise sous le plafond de sa caisse, et
+            # non sous celui de la Sécurité sociale (ordonnance n° 96-1122,
+            # art. 28-2 ; décret n° 2011-2085, art. 4-2), comme le compte le
+            # lui porte.
+            if sans_employeur and code == REGIME_DE_MAYOTTE:
+                plafond = _exige_la_macro(macro, code, periode).plafond_de_cotisations(
+                    annee, mayotte=True)
+                if basse_euros is None:
+                    basse_euros = basse * plafond
+                if haute_euros is None and haute is not None:
+                    haute_euros = haute * plafond
             # L'assiette qui n'est pas le revenu, que le facteur reconstitue
             # avant les bornes, comme au compte.
             facteur = (1.0 if periode.assiette_facteur_revenu is None

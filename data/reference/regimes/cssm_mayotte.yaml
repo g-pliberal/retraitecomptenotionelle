@@ -45,9 +45,10 @@ inventaire:
     que depuis 2005 : celui de la Sécurité sociale tient lieu avant, quand
     le décret n° 2003-589 (article 21) le fixe à 825 € par mois dès 2003 et
     que des arrêtés préfectoraux le fixaient de 1987 à 2002 (décret
-    n° 87-175, articles 9 et 21). Les cotisations restent assises sur le
-    plafond et aux taux du régime général, quand la caisse a les siens, en
-    convergence jusqu'en 2036.
+    n° 87-175, articles 9 et 21). Les cotisations du salarié restent assises
+    sur le plafond et aux taux du régime général, quand la caisse a les
+    siens, en convergence jusqu'en 2036, et que l'article 28-2 de
+    l'ordonnance n° 96-1122 les borne, depuis 2012, au plafond de la caisse.
     Salaire de référence sur vingt-cinq ans dès 2003, quand le
     décret n° 2003-589 (article 7) en compte seize à vingt-quatre pour les
     générations 1956 à 1964 liquidant de 2018 à 2027. De 1987 à 2002, la
@@ -68,7 +69,7 @@ inventaire:
     taux de la métropole, quand le décret n° 2011-2085 donne 10,75 % à
     Mayotte). Leur cotisation est, depuis 2019, au taux que leur donne
     l'article 4-2 du décret n° 2011-2085, de 5,85 % en 2019 à 10,75 % en
-    2026, sous le plafond seulement (fiche
+    2026, sous le plafond de la caisse seulement (fiche
     cotisation_vieillesse_independants_mayotte) ; de 2012 à 2018, au taux
     du régime général, aucun texte lu ne disant le leur ;
     la neutralisation des années d'assimilées (décret n° 2003-589,

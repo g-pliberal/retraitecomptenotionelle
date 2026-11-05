@@ -347,6 +347,21 @@ def test_le_compte_porte_ce_que_l_independant_de_mayotte_a_verse(compte_en_deux_
     assert compte_en_deux_moteurs(naissance, lignes, 2024) == {"cssm_mayotte": 935.0}
 
 
+def test_l_independant_de_mayotte_cotise_sous_le_plafond_de_sa_caisse(
+        compte_en_deux_moteurs):
+    """L'article 4-2 assied la cotisation « dans la limite du plafond prévu au I
+    de l'article 28-1 » de l'ordonnance n° 96-1122, le plafond de cotisations
+    « créé à Mayotte », et non celui de la Sécurité sociale. 30 000 € en 2020 :
+    23 208 € × 6,55 % = 1 520,12 €, non 30 000 € × 6,55 % = 1 965 € ;
+    50 000 € en 2024 : 31 728 € × 9,35 % = 2 966,57 €, non 46 368 € × 9,35 %
+    = 4 335,41 €. Dans les deux moteurs."""
+    naissance = dict(annee_naissance=1965, sexe="F", jour_naissance=15, age_liquidation=64.0)
+    lignes = [dict(annee=annee, revenu=revenu, affiliation=INDEPENDANT, trimestres_valides=4)
+              for annee, revenu in ((2020, 30_000.0), (2024, 50_000.0))]
+    assert compte_en_deux_moteurs(naissance, lignes, 2020) == {"cssm_mayotte": 1520.12}
+    assert compte_en_deux_moteurs(naissance, lignes, 2024) == {"cssm_mayotte": 2966.57}
+
+
 def test_la_fiche_de_paie_de_l_independant_de_mayotte_preleve_son_taux(simulateur):
     """10 000 € de revenu en 2019 : 585 € de vieillesse de base, à la seule
     charge de l'assuré."""
@@ -355,7 +370,7 @@ def test_la_fiche_de_paie_de_l_independant_de_mayotte_preleve_son_taux(simulateu
         ConstructeurFiche, bloc_droit_en_vigueur, charger_prelevements, smic_annuel)
 
     bloc = bloc_droit_en_vigueur(simulateur.catalogue, simulateur.affiliations,
-                                 INDEPENDANT, 2019)
+                                 INDEPENDANT, 2019, macro=simulateur.macro)
     profil = charger_prelevements(RACINE_DONNEES).profil("independant")
     fiche = ConstructeurFiche(profil).fiche(
         2019, 10_000.0, simulateur.macro.plafond_securite_sociale(2019),
@@ -363,6 +378,47 @@ def test_la_fiche_de_paie_de_l_independant_de_mayotte_preleve_son_taux(simulateu
     retraite = {ligne.code: (ligne.salarie, ligne.employeur)
                 for ligne in fiche.lignes if ligne.retraite}
     assert retraite == {"cssm_mayotte": (pytest.approx(585.0), 0.0)}
+
+
+def test_la_fiche_de_paie_de_l_independant_de_mayotte_s_arrete_au_plafond_de_sa_caisse(
+        simulateur):
+    """30 000 € de revenu en 2020, au-dessus du plafond de la caisse (23 208 €)
+    et sous celui de la Sécurité sociale (41 136 €) : 23 208 € × 6,55 % =
+    1 520,12 €, à la seule charge de l'assuré, dans les deux moteurs."""
+    from retraite_notionnelle.config import RACINE_DONNEES
+    from retraite_notionnelle.remuneration import (
+        ConstructeurFiche, bloc_droit_en_vigueur, charger_prelevements, smic_annuel)
+
+    macro = simulateur.macro
+    bloc = bloc_droit_en_vigueur(simulateur.catalogue, simulateur.affiliations,
+                                 INDEPENDANT, 2020, macro=macro)
+    profil = charger_prelevements(RACINE_DONNEES).profil("independant")
+    fiche = ConstructeurFiche(profil).fiche(
+        2020, 30_000.0, macro.plafond_securite_sociale(2020), smic_annuel(macro, 2020), bloc)
+    retraite = {ligne.code: (round(ligne.salarie, 2), ligne.employeur)
+                for ligne in fiche.lignes if ligne.retraite}
+    assert retraite == {"cssm_mayotte": (1520.12, 0.0)}
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    script = """
+import { readFileSync } from "node:fs";
+import { Contexte } from "./moteur/js/contexte.js";
+import { ConstructeurFiche, blocDroitEnVigueur, smicAnnuel } from "./moteur/js/remuneration.js";
+const contexte = new Contexte(JSON.parse(readFileSync("moteur/donnees.json", "utf8")));
+const simulateur = contexte.simulateur();
+const macro = simulateur.macro;
+const bloc = blocDroitEnVigueur(simulateur.catalogue, simulateur.affiliations,
+  "independant_mayotte", 2020, 0.0, macro);
+const profil = simulateur.baremePrelevements.profil("independant");
+const fiche = new ConstructeurFiche(profil).fiche(
+  2020, 30000, macro.plafond_securite_sociale.valeur(2020), smicAnnuel(macro, 2020), bloc);
+process.stdout.write(JSON.stringify(fiche.lignes.filter((l) => l.retraite)
+  .map((l) => [l.code, Math.round(l.salarie * 100) / 100, l.employeur])));
+"""
+    execution = subprocess.run(["node", "--input-type=module", "-e", script], cwd=RACINE,
+                               capture_output=True, text=True, encoding="utf-8", check=False)
+    assert execution.returncode == 0, execution.stderr[-2000:]
+    assert json.loads(execution.stdout) == [["cssm_mayotte", 1520.12, 0.0]]
 
 
 #: Les deux rédactions de l'article 4-2, I, telles que l'index LEGI les porte,

@@ -224,29 +224,30 @@ inventaire:
       borne le salaire annuel moyen, ne l'est que depuis 2005 : celui de la Sécurité
       sociale tient lieu avant, quand le décret n° 2003-589 (article 21) le fixe à 825
       € par mois dès 2003 et que des arrêtés préfectoraux le fixaient de 1987 à 2002
-      (décret n° 87-175, articles 9 et 21). Les cotisations restent assises sur le plafond
-      et aux taux du régime général, quand la caisse a les siens, en convergence jusqu'en
-      2036. Salaire de référence sur vingt-cinq ans dès 2003, quand le décret n° 2003-589
-      (article 7) en compte seize à vingt-quatre pour les générations 1956 à 1964 liquidant
-      de 2018 à 2027. De 1987 à 2002, la formule du régime général tient lieu de celle
-      du décret n° 87-175, qui est pourtant dans l'index : 1,5 % par année des cinq
-      meilleures années, 150 trimestres au plus, sans minoration (articles 8, 9 et 11).
-      Au 1er janvier 2028, l'ordonnance n° 2026-647 fond le régime dans le code de la
-      sécurité sociale (L. 759-22), ce que la fiche ne porte pas (fiche mayotte_pension_de_base).
-      Les non-salariés de Mayotte, affiliés à la même caisse depuis le 1er juillet 2012
-      avec une pension calculée selon les mêmes règles (ordonnance n° 2002-411, article
-      23-4), y vont par le statut `independant_mayotte`, 2012 comptée entière ; leurs
-      trimestres se valident au revenu cotisé, comme ceux du salarié (décret n° 2003-589,
-      article 8). Le barème de la caisse « Revenu validant un trimestre - Travailleurs
-      indépendants » le redonne en 2025 (135 € de cotisations, 10,05 % de 1 347 €),
-      pas en 2026 (250 €, 17,87 % de 1 399,50 € : le taux de la métropole, quand le
-      décret n° 2011-2085 donne 10,75 % à Mayotte). Leur cotisation est, depuis 2019,
-      au taux que leur donne l'article 4-2 du décret n° 2011-2085, de 5,85 % en 2019
-      à 10,75 % en 2026, sous le plafond seulement (fiche cotisation_vieillesse_independants_mayotte)
-      ; de 2012 à 2018, au taux du régime général, aucun texte lu ne disant le leur
-      ; la neutralisation des années d'assimilées (décret n° 2003-589, article 32) n'est
-      pas portée, ni leur cumul emploi-retraite au plafond de la caisse (article 34)
-      : action 177, étape 8.
+      (décret n° 87-175, articles 9 et 21). Les cotisations du salarié restent assises
+      sur le plafond et aux taux du régime général, quand la caisse a les siens, en
+      convergence jusqu'en 2036, et que l'article 28-2 de l'ordonnance n° 96-1122 les
+      borne, depuis 2012, au plafond de la caisse. Salaire de référence sur vingt-cinq
+      ans dès 2003, quand le décret n° 2003-589 (article 7) en compte seize à vingt-quatre
+      pour les générations 1956 à 1964 liquidant de 2018 à 2027. De 1987 à 2002, la
+      formule du régime général tient lieu de celle du décret n° 87-175, qui est pourtant
+      dans l'index : 1,5 % par année des cinq meilleures années, 150 trimestres au plus,
+      sans minoration (articles 8, 9 et 11). Au 1er janvier 2028, l'ordonnance n° 2026-647
+      fond le régime dans le code de la sécurité sociale (L. 759-22), ce que la fiche
+      ne porte pas (fiche mayotte_pension_de_base). Les non-salariés de Mayotte, affiliés
+      à la même caisse depuis le 1er juillet 2012 avec une pension calculée selon les
+      mêmes règles (ordonnance n° 2002-411, article 23-4), y vont par le statut `independant_mayotte`,
+      2012 comptée entière ; leurs trimestres se valident au revenu cotisé, comme ceux
+      du salarié (décret n° 2003-589, article 8). Le barème de la caisse « Revenu validant
+      un trimestre - Travailleurs indépendants » le redonne en 2025 (135 € de cotisations,
+      10,05 % de 1 347 €), pas en 2026 (250 €, 17,87 % de 1 399,50 € : le taux de la
+      métropole, quand le décret n° 2011-2085 donne 10,75 % à Mayotte). Leur cotisation
+      est, depuis 2019, au taux que leur donne l'article 4-2 du décret n° 2011-2085,
+      de 5,85 % en 2019 à 10,75 % en 2026, sous le plafond de la caisse seulement (fiche
+      cotisation_vieillesse_independants_mayotte) ; de 2012 à 2018, au taux du régime
+      général, aucun texte lu ne disant le leur ; la neutralisation des années d'assimilées
+      (décret n° 2003-589, article 32) n'est pas portée, ni leur cumul emploi-retraite
+      au plafond de la caisse (article 34) : action 177, étape 8.
 
   - code: cps_saint_pierre_et_miquelon
     nom: >-

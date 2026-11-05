@@ -4,8 +4,9 @@ intitule: >-
   L'artisan et le commerçant de Mayotte cotisent à la vieillesse de base de la
   caisse de sécurité sociale de Mayotte à leur taux propre depuis 2019 (décret
   n° 2011-2085, article 4-2) : 5,85 % en 2019, 0,70 point de plus chaque année,
-  10,75 % en 2026, sous le plafond seulement ; de 2012 à 2018, aucun texte lu ne
-  leur donne un taux propre.
+  10,75 % en 2026, sous le plafond de la caisse de Mayotte seulement, et non sous
+  celui de la Sécurité sociale ; de 2012 à 2018, aucun texte lu ne leur donne un
+  taux propre.
 domaine: cotisations
 regimes: [cssm_mayotte]
 etape: foyer_et_net
@@ -18,6 +19,10 @@ lit:
   le taux de l'année, dans regimes/taux_cotisation_annuels.csv — les mesures
   taux_plafonne_non_salarie et taux_deplafonne_non_salarie de cssm_mayotte depuis
   2019, la série alignée sur celle du régime général avant
+- >-
+  le plafond de cotisations de la caisse de Mayotte de l'année, dans
+  legislation/mayotte_smig_et_plafond.csv (DonneesMacro.plafond_de_cotisations) :
+  13 860 € en 2012, 23 208 € en 2020, 31 728 € en 2024, 36 264 € en 2026
 ecrit:
 - la cotisation de vieillesse de base que la fiche de paie du droit en vigueur
   prélève, et celle que le compte notionnel porte
@@ -57,12 +62,25 @@ versions:
       civile COTISATION au régime d'assurance vieillesse obligatoire de base […]
       Salariale Patronale […] 2012 4,00 % 9,90 % »
     lu_le: 2026-11-05
+  - id: LEGIARTI000025018554
+    article: ordonnance n° 96-1122, article 28-1, I
+    en_vigueur: 2012-01-01
+    citation: >-
+      « Il est créé un plafond de cotisations de sécurité sociale à Mayotte. Il est
+      fixé à intervalles qui ne peuvent être inférieurs au semestre ni supérieurs à
+      l'année, dans des conditions prévues par décret. Son montant, calculé selon des
+      règles prévues par décret, est arrêté par le ministre chargé de la sécurité
+      sociale. » ; les mêmes phrases dans les rédactions du 1er janvier 2015
+      (LEGIARTI000025023101), du 16 octobre 2015 (LEGIARTI000031324363) et du
+      28 février 2025 (LEGIARTI000051284545)
+    lu_le: 2026-11-05
   bornes:
     revenu.annee: [null, 2019-01-01]
   contenu:
     droit: >-
       la série du régime général, faute d'un taux propre lu : 15,45 % sous le plafond
-      et 2,30 % sur la totalité en 2018
+      de la caisse de Mayotte (20 328 € en 2018), que l'article 28-2 désigne, et 2,30 %
+      sur la totalité en 2018
 - id: taux_de_l_article_4_2
   statut: lue
   textes:
@@ -93,11 +111,22 @@ versions:
       quatre-vingt-dix jours d'affiliation de l'assiette minimale (fiche
       assiette_minimale_independants)
     lu_le: 2026-11-05
+  - id: LEGIARTI000031324363
+    article: ordonnance n° 96-1122, article 28-1, I
+    en_vigueur: 2015-10-16
+    citation: >-
+      « Il est créé un plafond de cotisations de sécurité sociale à Mayotte. […] Son
+      montant, calculé selon des règles prévues par décret, est arrêté par le ministre
+      chargé de la sécurité sociale. » ; la même phrase dans la rédaction du
+      28 février 2025 (LEGIARTI000051284545) : le plafond du I de l'article 28-1 est
+      celui de la caisse de Mayotte, et non celui de la Sécurité sociale
+    lu_le: 2026-11-05
   bornes:
     revenu.annee: [2019-01-01, null]
   contenu:
     droit: >-
-      sous le plafond, 5,85 % en 2019, 6,55 % en 2020, 7,25 % en 2021, 7,95 % en 2022,
+      sous le plafond de la caisse de Mayotte (21 768 € en 2019, 23 208 € en 2020,
+      31 728 € en 2024, 36 264 € en 2026), 5,85 % en 2019, 6,55 % en 2020, 7,25 % en 2021, 7,95 % en 2022,
       8,65 % en 2023, 9,35 % en 2024, 10,05 % en 2025, 10,75 % en 2026 ; rien sur la
       totalité du revenu
 approximations:
@@ -139,10 +168,13 @@ sources:
 code:
   python: >-
     donnees/regimes.py : PeriodeRegime.taux_du_cotisant, charger_taux_annuels ;
-    moteur/compte.py : ConstructeurCompte ; remuneration.py : bloc_droit_en_vigueur
+    donnees/macro.py : DonneesMacro.plafond_de_cotisations ; moteur/compte.py :
+    ConstructeurCompte._bornes_proratisees ; remuneration.py : bloc_droit_en_vigueur
   javascript: >-
-    moteur/js/regimes.js : PeriodeRegime.tauxDuCotisant ; moteur/js/compte.js :
-    ConstructeurCompte ; moteur/js/remuneration.js : blocDroitEnVigueur
+    moteur/js/regimes.js : PeriodeRegime.tauxDuCotisant ; moteur/js/macro.js :
+    DonneesMacro.plafondDeCotisations ; moteur/js/compte.js :
+    ConstructeurCompte._bornesProratisees ; moteur/js/remuneration.js :
+    blocDroitEnVigueur
   parametres: >-
     regimes/taux_cotisation_annuels.csv : cssm_mayotte, taux_plafonne_non_salarie,
     taux_deplafonne_non_salarie
@@ -152,16 +184,24 @@ code:
     taux_deplafonne_non_salarie de cssm_mayotte, certifiées sur l'article 4-2 par
     scripts/fetch/dila_legi_taux_mayotte.py et scripts/verifier_donnees.py
     (taux_cotisation_mayotte) ; la période de la caisse les sert à l'assuré sans
-    employeur, la série alignée au salarié.
+    employeur, la série alignée au salarié. L'assuré sans employeur de la caisse de
+    Mayotte cotise sous le plafond de celle-ci (mayotte_smig_et_plafond.csv, relu par
+    scripts/fetch/cnav_mayotte.py au barème « Salaire plafond - Mayotte » de la Cnav).
 historique:
 - >-
   2026-11-05 — action 177 : depuis 2019, la fiche de paie et le compte prêtaient à
   l'indépendant de Mayotte la série du régime général, celle du salarié et de son
   employeur (15,45 % et 2,30 % en 2019) ; il prend le taux de l'article 4-2, que
   l'étape 8 avait trouvé sans l'écrire.
+- >-
+  2026-11-05 — action 177, relecture R-D : la fiche de paie et le compte bornaient la
+  cotisation au plafond de la Sécurité sociale, quand l'article 28-2 et l'article 4-2
+  la bornent au plafond « créé à Mayotte » (article 28-1, I) : 30 000 € en 2020
+  donnaient 1 965 € au lieu de 23 208 × 6,55 % = 1 520,12 €. Les deux moteurs prennent
+  le plafond de la caisse pour l'assuré sans employeur, depuis 2012.
 effet: >-
   L'artisane de Mayotte à 10 000 € par an cotise 585 € en 2019, au lieu de 1 775 €,
-  et 935 € en 2024 ; son compte notionnel baisse d'autant, sa pension de base ne bouge
-  pas. Aux témoins, les cinq indépendants de Mayotte perdent de 0,84 % (né en 1955) à
-  21,38 % (né en 1965) de leur pension notionnelle aux scénarios 2 et 4 ; aucune
-  pension du scénario 1 ne bouge.
+  et 935 € en 2024 ; à 30 000 € en 2020, 1 520,12 € au lieu de 1 965 €. Son compte
+  notionnel baisse d'autant, sa pension de base ne bouge pas. Le témoin né en 1965
+  reçoit 19 353,01 € de 2019 à 2026 au lieu de 29 034,54 €. Aucune pension du
+  scénario 1 ne bouge.
