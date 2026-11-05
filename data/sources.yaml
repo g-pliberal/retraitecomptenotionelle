@@ -4579,7 +4579,17 @@ institutions:
           n'est inférieur à celui du n° 2017-171 (de 0 à 43 points de plus),
           le 1er échelon de classe normale du n° 2017-171 (421) ayant pour
           pendant le « 1er » de l'ingénieur stagiaire du n° 2018-610 (434), ce
-          que le texte ne dit pas.
+          que le texte ne dit pas. Relu au JORF le 5 novembre 2026 (action
+          158, chaînage corrigé) : la phrase est juste, et vaut jusqu'au
+          31 décembre 2018. La colonne « A compter du 1er janvier 2018 » du
+          n° 2017-171, plus haute de 1 à 7 points que le n° 2018-610 à six
+          échelons (1027 contre 1022 aux 2e de la hors classe et 9e de
+          l'ingénieur principal, 490 contre 483 au 2e de la classe normale),
+          n'a jamais valu : le décret n° 2017-1737 du 21 décembre 2017, publié
+          le 23 décembre, « en vigueur le 1er janvier 2018 » (sa notice),
+          écrit à l'article 2 du n° 2009-1322 : « les mots : « A compter du
+          1er janvier 2018 » sont remplacés par les mots : « A compter du 1er
+          janvier 2019 » » (art. 17, JORFARTI000036250727).
           CE QUE CES TEXTES NE TRANCHENT PAS : les 128 documents que l'index
           JORF du 3 novembre 2026 garde du n° 2017-171 (le texte et 127
           articles) et les 4 du n° 2018-610 ne contiennent ni « pension » ni
@@ -4598,6 +4608,73 @@ institutions:
           qui pré-remplira la carrière d'un IEEAC de ces années le dira, sans
           affirmer qu'une pension liquidée alors l'a été sur la grille du
           n° 2018-610.
+          Deux autres articles que le LEGI date en vigueur ensemble, lus au
+          JORF le 5 novembre 2026 (action 158, chaînage corrigé et trois
+          articles). L'article 14-1-1 du décret n° 2008-836 (le chef de projet
+          en systèmes et réseaux d'information et de communication) : le
+          décret n° 2016-82 l'insère (art. 1er, JORFARTI000031942010), « Le
+          présent décret entre en vigueur le 1er février 2016. » (art. 3) ; le
+          décret n° 2017-171, publié le 12 février 2017, en remplace le tableau
+          (art. 8, JORFARTI000034026698 : « Le tableau figurant à l'article
+          14-1-1 du même décret est remplacé par le tableau suivant »), en
+          vigueur le 1er janvier 2017 (art. 126) ; le décret n° 2017-1381 n'en
+          change qu'une ligne, « 10 HEA HEA » devenant « ES HEA HEA » (art. 2,
+          JORFARTI000035600863), et « Les dispositions du présent décret
+          entrent en vigueur le 1er janvier 2017. » (art. 7). La version du
+          n° 2016-82 (LEGIARTI000031948241), que le LEGI garde jusqu'au
+          13 février 2017, vaut du 1er février 2016 au 31 décembre 2016 ; dès
+          le 1er janvier 2017, celle du n° 2017-1381 (LEGIARTI000035602721).
+          `DATES_CORRIGEES` la clôt au 1er janvier 2017 : six semaines de la
+          grille de 2016 (650 à 1015) ôtées. L'article 4 du décret
+          n° 2012-1058 (les chargés et directeurs de recherche du
+          développement durable) : le n° 2017-171 le remplace (art. 36,
+          JORFARTI000034026745), en vigueur le 1er janvier 2017 ; le décret
+          n° 2018-917 du 25 octobre 2018, publié le 27 octobre, écrit (art. 1er,
+          JORFARTI000037532992) : « I.-Au 1er janvier 2017, la rubrique
+          relative aux chargés de recherche du tableau figurant à l'article 4
+          du décret du 17 septembre 2012 susvisé est remplacée par le tableau
+          suivant » (1re classe : 574 à 1021 ; 2e classe : 544 à 690), puis
+          « II.-Au 1er septembre 2017, le tableau figurant à l'article 4 du
+          décret du 17 septembre 2012 susvisé est remplacé par les tableaux
+          suivants ». Du 1er janvier au 31 août 2017 valent donc les
+          directeurs de recherche du n° 2017-171, colonne « A compter du 1er
+          janvier 2017 », et les chargés de recherche du I ; dès le
+          1er septembre 2017, les tableaux du II. Le LEGI en tient deux
+          versions ensemble : LEGIARTI000034034477 (le n° 2017-171, jusqu'au
+          1er janvier 2018), dont la rubrique des chargés de recherche (567…,
+          539…) ne vaut à aucune date, et LEGIARTI000037538214 (le I, du
+          1er janvier au 1er septembre 2017), dont la rubrique du directeur de
+          recherche de 2e classe est celle du II (un 7e échelon, un 4e à 963),
+          quand aucun texte lu ne touche avant le 1er septembre 2017 à celle du
+          n° 2017-171 (6 échelons, un 4e à 962). Corrigé : la première se clôt
+          au 1er septembre 2017 (`DATES_CORRIGEES`), et ces deux rubriques sont
+          ôtées (`RUBRIQUES_ECARTEES`, scripts/fetch/dila_legi_grilles.py) ;
+          tests/test_grilles_legi.py en recoupe les indices au JORF.
+          CE QUE CES TEXTES NE TRANCHENT PAS : le n° 2017-171 prend effet six
+          semaines avant sa publication, le n° 2018-917 près de vingt-deux
+          mois avant ; ni ces deux décrets ni les n° 2016-82 et 2017-1381 (les
+          documents que l'index JORF en garde) ne contiennent « pension » ni
+          « rétroactif ». Une pension de chef de projet SRIC liquidée en
+          janvier ou en février 2017, ou de chargé de recherche du
+          développement durable liquidée du 1er janvier 2017 au 27 octobre
+          2018, a pu l'être sur la grille appliquée alors ; qu'elle ait été
+          révisée, aucun texte lu ne le dit. Les indices du I du n° 2018-917
+          sont de 0 à 7 points au-dessus de ceux du n° 2017-171 au 1er janvier
+          2017. Le reclassement des chargés de recherche dans les grades du II
+          au 1er septembre 2017 relève de leur statut (décret n° 2014-1324),
+          non lu ici.
+          L'article 1er du décret n° 87-1104 (les secrétaires de mairie), que
+          le LEGI date aussi en vigueur ensemble (LEGIARTI000006370685
+          jusqu'au 8 février 1996, LEGIARTI000006370686 dès le 1er août
+          1995) : NON TRANCHÉ. La seconde version est celle du décret n° 96-101
+          du 6 février 1996, publié le 8 février (JORFTEXT000000191345) ; ni
+          l'index JORF ni l'index LEGI du dépôt n'en ont l'article qui
+          modifie le n° 87-1104 ni celui qui dit son entrée en vigueur (le
+          JORF n'en garde que les visas et la signature, le LEGI que l'article
+          38, daté du 1er août 1995), et Légifrance a refusé la lecture (403)
+          le 5 novembre 2026. Les grilles gardent donc les trois échelons
+          provisoires de 1987 (274, 301, 328) jusqu'au 7 février 1996, à côté
+          de la grille à douze échelons du 1er août 1995 : à lire au JORF.
 
       - id: dila_legi_reclassements
         titre: >-
@@ -4686,7 +4763,13 @@ institutions:
           que les visas résolvent en un seul décret identifié ; le noyau se lit
           par ses corps et par ses grades, chaque citation datée ; le lien
           article lit chaque version de la période ; a_lire_au_jorf.csv
-          distingue les articles de durées non lus (cas non_lu).
+          distingue les articles de durées non lus (cas non_lu). Depuis le
+          5 novembre 2026 (relecture R-B, point 3.4) : les versions de la
+          période se lisent aux dates que corrige le lecteur des grilles
+          (`DATES_CORRIGEES`) ; la preuve de la hors classe des IEEAC (n° 71-917,
+          art. 17) ne cite plus la version de l'art. 2 du n° 2009-1322 que le
+          n° 2017-171 écrit (LEGIARTI000034034492), qui ne vaut à aucune date,
+          mais la seule du n° 2018-610 (LEGIARTI000037196211).
 
       - id: dila_legi_duree_requise
         titre: Durée d'assurance requise, générations 1953-1957

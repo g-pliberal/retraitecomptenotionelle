@@ -963,3 +963,72 @@ def test_la_grille_de_2017_des_ieeac_est_celle_du_decret_2018_610():
                      "ingenieur-des-etudes-et-de-l-exploitation-de-l-aviation-civile-de-classe-normale")
     assert normale == [(rang, indice, "LEGIARTI000037196211") for rang, indice in
                        zip(range(2, 12), (483, 508, 525, 565, 610, 649, 686, 727, 744, 774))]
+
+
+def _grille(versant: str, texte: str, grille: str, le: str) -> list[tuple[str, str, str]]:
+    """(échelon, indice ou lettre, article) d'une grille à une date, triés par rang."""
+    lignes = [l for l in _en_vigueur(_lire_csv(GRILLES / versant / "echelons.csv"), le)
+              if l["texte"] == texte and l["grille"] == grille]
+    return [(l["echelon"], l["indice"] or l["hors_echelle"], l["article"])
+            for l in sorted(lignes, key=lambda l: int(l["rang"]))]
+
+
+def test_la_grille_du_chef_de_projet_sric_de_2016_cesse_au_1er_janvier_2017():
+    """Décret n° 2008-836, article 14-1-1 (le chef de projet en systèmes et réseaux
+    d'information et de communication) : le LEGI garde la version du décret n° 2016-82
+    (art. 1er, JORFARTI000031942010 ; « Le présent décret entre en vigueur le 1er février
+    2016. », art. 3) en vigueur jusqu'au 2017-02-13, à côté de celle qui vaut dès le
+    2017-01-01 : le tableau que le décret n° 2017-171 « remplace » (art. 8,
+    JORFARTI000034026698 ; en vigueur le 1er janvier 2017, art. 126), dont le décret
+    n° 2017-1381 change la seule ligne « 10 HEA HEA » en « ES HEA HEA » (art. 2,
+    JORFARTI000035600863 ; « Les dispositions du présent décret entrent en vigueur le 1er
+    janvier 2017. », art. 7). La grille du n° 2016-82 vaut jusqu'au 31 décembre 2016 ;
+    le 15 janvier 2017, celle du n° 2017-171, colonne « A compter du 1er janvier 2017 »."""
+    texte = "LEGITEXT000019373379"
+    ancienne = ("fonctionnaires-detaches-sur-l-emploi-de-chef-de-projet-en-systemes-et-reseaux-"
+                "d-information-et-de-communication-des-administrations-de-l-etat")
+    assert [i for _, i, _ in _grille("etat_legi", texte, ancienne, "2016-12-31")] == [
+        "650", "700", "750", "800", "850", "901", "946", "985", "1015", "A"]
+    assert _grille("etat_legi", texte, ancienne, "2017-01-01") == []
+    nouvelle = ("chef-de-projet-en-systemes-et-reseaux-d-information-et-de-communication-des-"
+                "administrations-de-l-etat-es-hea-hea")
+    assert [i for _, i, _ in _grille("etat_legi", texte, nouvelle, "2017-01-15")] == [
+        "656", "705", "755", "805", "855", "906", "951", "990", "1021"]
+
+
+#: Décret n° 2012-1058, article 4 (chargés et directeurs de recherche du
+#: développement durable), lu au JORF le 5 novembre 2026 : le décret n° 2017-171
+#: le remplace (art. 36, JORFARTI000034026745), en vigueur le 1er janvier 2017
+#: (art. 126) ; le décret n° 2018-917 du 25 octobre 2018 (art. 1er,
+#: JORFARTI000037532992) : « I.-Au 1er janvier 2017, la rubrique relative aux chargés
+#: de recherche du tableau figurant à l'article 4 […] est remplacée par le tableau
+#: suivant » ; « II.-Au 1er septembre 2017, le tableau figurant à l'article 4 […] est
+#: remplacé par les tableaux suivants ».
+DD = "LEGITEXT000026383946"
+
+
+def test_les_chercheurs_du_developpement_durable_en_2017_suivent_le_decret_2018_917():
+    """Du 1er janvier au 31 août 2017 : les chargés de recherche, au tableau du I du
+    n° 2018-917 (1re classe : 574, 612, 690, 767, 833, 894, 933, 978, 1021 ; 2e classe :
+    544, 554, 592, 629, 664, 690), non à celui du n° 2017-171 (567… ; 539…), qui ne vaut
+    à aucune date ; le directeur de recherche de 2e classe, à la colonne « A compter du
+    1er janvier 2017 » du n° 2017-171 (807, 857, 906, 962, 1021, HEA), sans le 7e échelon
+    ni le 963 que le LEGI tient du II (LEGIARTI000037538214). Dès le 1er septembre 2017,
+    le tableau du II seul : ni chargé de recherche de 1re ou de 2e classe, et le directeur
+    de recherche de 2e classe a son 7e échelon (HEB) et un 4e à 963."""
+    le = "2017-06-30"
+    premiere = "charges-de-recherche-charge-de-recherche-de-1re-classe"
+    seconde = "charge-de-recherche-de-2e-classe"
+    assert [i for _, i, _ in _grille("etat_legi", DD, premiere, le)] == [
+        "574", "612", "690", "767", "833", "894", "933", "978", "1021"]
+    assert [i for _, i, _ in _grille("etat_legi", DD, seconde, le)] == [
+        "544", "554", "592", "629", "664", "690"]
+    dr2 = "directeur-de-recherche-de-2e-classe"
+    assert [(e, i) for e, i, _ in _grille("etat_legi", DD, dr2, le)] == [
+        ("1", "807"), ("2", "857"), ("3", "906"), ("4", "962"), ("5", "1021"), ("6", "A")]
+    for grille in (premiere, seconde,
+                   "directeurs-de-recherche-directeur-de-recherche-de-classe-exceptionnelle"):
+        assert _grille("etat_legi", DD, grille, "2017-09-01") == []
+    assert [(e, i) for e, i, _ in _grille("etat_legi", DD, dr2, "2017-09-01")] == [
+        ("1", "807"), ("2", "857"), ("3", "906"), ("4", "963"), ("5", "1021"), ("6", "A"),
+        ("7", "B")]

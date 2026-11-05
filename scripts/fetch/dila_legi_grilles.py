@@ -895,10 +895,36 @@ def _fin(jour: str) -> str:
 #: Le LEGI garde la version du premier en vigueur jusqu'au 1er janvier 2018, à côté
 #: de celle du second : remplacée du jour même où elle entrait en vigueur, elle ne
 #: vaut à aucune date ; le Noyau RH date du 1er janvier 2017 les indices du second.
+#: L'article 14-1-1 du décret n° 2008-836 (le chef de projet SRIC) : le décret
+#: n° 2016-82 l'écrit, en vigueur le 1er février 2016 (art. 1er et 3) ; le décret
+#: n° 2017-171 en « remplace » le tableau (art. 8), en vigueur le 1er janvier 2017
+#: (art. 126), et le décret n° 2017-1381 n'en change qu'une ligne, au même jour
+#: (art. 2 et 7). Le LEGI garde la version du n° 2016-82 jusqu'au 13 février 2017.
+#: L'article 4 du décret n° 2012-1058 (les chercheurs du développement durable) :
+#: le n° 2017-171 le remplace au 1er janvier 2017 (art. 36) ; le décret n° 2018-917
+#: (art. 1er) en remplace « Au 1er janvier 2017, la rubrique relative aux chargés de
+#: recherche » (I), puis « Au 1er septembre 2017, le tableau » (II). La version du
+#: n° 2017-171 vaut donc, pour les seuls directeurs de recherche, jusqu'au
+#: 1er septembre 2017, non jusqu'au 1er janvier 2018 que le LEGI lui donne.
 DATES_CORRIGEES = {
     "LEGIARTI000029415839": ("2014-09-01", "2014-11-01"),
     "LEGIARTI000029672106": ("2014-11-01", "2015-01-01"),
     "LEGIARTI000034034492": ("2017-01-01", "2017-01-01"),
+    "LEGIARTI000031948241": ("2016-02-01", "2017-01-01"),
+    "LEGIARTI000034034477": ("2017-01-01", "2017-09-01"),
+}
+#: Les rubriques d'une version qui ne valent à aucune date (``cle_groupe``),
+#: ôtées de son tableau. Article 4 du décret n° 2012-1058 : dans la version du
+#: n° 2017-171, les chargés de recherche, que le I du n° 2018-917 remplace du jour
+#: où elle entre en vigueur ; dans celle que le LEGI date du 1er janvier au
+#: 1er septembre 2017 (le I du n° 2018-917), le directeur de recherche de
+#: 2e classe, que le LEGI y écrit tel que le II le fixe au 1er septembre 2017
+#: (un 7e échelon, un 4e à 963), quand aucun texte ne touche avant ce jour à la
+#: rubrique des directeurs de recherche du n° 2017-171.
+RUBRIQUES_ECARTEES = {
+    "LEGIARTI000034034477": {"charges-de-recherche-charge-de-recherche-de-1re-classe",
+                             "charge-de-recherche-de-2e-classe"},
+    "LEGIARTI000037538214": {"directeur-de-recherche-de-2e-classe"},
 }
 
 
@@ -924,6 +950,9 @@ def extraire(chemin_index: Path | str | None = None) -> dict:
             continue
         debut, fin = DATES_CORRIGEES.get(ident, (debut, fin))
         tableau = lire_tableau(contenu, militaire=textes[titre]["versant"] == "militaires")
+        ecartees = RUBRIQUES_ECARTEES.get(ident, set())
+        tableau.cellules = [c for c in tableau.cellules if cle_groupe(c.groupe) not in ecartees]
+        tableau.groupes = [g for g in tableau.groupes if cle_groupe(g) not in ecartees]
         if tableau.refus:
             non_lus[titre].append({"texte": textes[titre]["texte"], "article": ident,
                                    "numero": article, "debut": debut, "fin": _fin(fin),

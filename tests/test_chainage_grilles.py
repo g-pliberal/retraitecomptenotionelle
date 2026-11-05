@@ -161,6 +161,49 @@ def test_la_preuve_article_cite_les_versions_en_vigueur_sur_la_periode(durees):
     assert "LEGIARTI000051351757" in ligne["preuve"]
 
 
+#: L'article 2 du décret n° 2009-1322 (les IEEAC), deux versions au LEGI
+#: (incrément 20261102-213929) : celle du décret n° 2017-171, art. 39
+#: (JORFARTI000034026752), datée du 2017-01-01 au 2018-01-01 ; celle du décret
+#: n° 2018-610, dont l'art. 1er (JORFARTI000037193171) « remplace » l'article et
+#: l'art. 2 (JORFARTI000037193174) dit : « Le présent décret entre en vigueur le
+#: 1er janvier 2017. », datée du 2017-01-01 au 2025-07-01. La première ne vaut à
+#: aucune date (``DATES_CORRIGEES``, dila_legi_grilles.py) ; lu au JORF le
+#: 5 novembre 2026.
+IEEAC_2017_171 = "LEGIARTI000034034492"
+IEEAC_2018_610 = "LEGIARTI000037196211"
+
+
+def test_le_chainage_lit_les_dates_corrigees_des_grilles(tmp_path):
+    import dila_index
+
+    chemin = tmp_path / "legi.sqlite"
+    db = dila_index.ouvrir(chemin)
+    titre = ("Décret n° 2009-1322 du 27 octobre 2009 fixant l'échelonnement indiciaire "
+             "applicable à certains corps et emplois relevant de la direction générale de "
+             "l'aviation civile")
+    db.executemany("INSERT INTO doc VALUES (?,?,?,?,?,?,?)", [
+        (IEEAC_2017_171, "2017-01-01", "2018-01-01", "Article DECRET", "2", titre, "…"),
+        (IEEAC_2018_610, "2017-01-01", "2025-07-01", "Article DECRET", "2", titre, "…")])
+    db.commit()
+    db.close()
+    index = chainage.Index(chemin)
+    assert index.versions_sur(IEEAC_2018_610, "2017-01-01", "2025-07-01") == [IEEAC_2018_610]
+    assert index.versions_sur(IEEAC_2018_610, "2017-01-01", "2018-01-01") == [IEEAC_2018_610]
+
+
+def test_la_preuve_de_la_hors_classe_des_ieeac_ne_cite_pas_le_2017_171(durees):
+    # Relecture R-B, point 3.4 ; B-bis, point 1. N° 71-917, art. 17
+    # (LEGIARTI000037197020), hors classe, rattachée du 2017-01-01 au 2025-07-01 à la
+    # grille du LEGI : la version de l'art. 2 du n° 2009-1322 qui vaut sur la période
+    # est celle du n° 2018-610, seule.
+    (ligne,) = [d for d in durees if d["article"] == "LEGIARTI000037197020"
+                and d["source"] == "etat_legi" and d["statut"] == "rattache"
+                and d["groupe"].endswith("hors classe")]
+    assert (ligne["debut"], ligne["fin"]) == ("2017-01-01", "2025-07-01")
+    assert IEEAC_2018_610 in ligne["preuve"]
+    assert IEEAC_2017_171 not in ligne["preuve"]
+
+
 def test_la_preuve_dit_pourquoi_la_grille_du_meme_nom_est_ecartee(durees):
     # Relecture R-B3, point 1 c. Décret n° 2021-1264 (LEGITEXT000044130353) : son
     # art. 1 (LEGIARTI000044130360) fixe une « Classe supérieure » de dix échelons

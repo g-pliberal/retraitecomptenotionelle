@@ -1,0 +1,42 @@
+date: "2026-11-05"
+session: "action 158, vague 9, B : le chaînage lit les dates corrigées des grilles ; les trois articles que le LEGI date en vigueur ensemble (n° 2008-836, art. 14-1-1 ; n° 2012-1058, art. 4 ; n° 87-1104, art. 1er)"
+consulte: >-
+  python scripts/veille_droit.py ; docs/veille_droit.md. L'index LEGI du dépôt (incrément
+  20261102-213929) : n° 2009-1322, art. 2 (LEGIARTI000034034492, LEGIARTI000037196211) ;
+  n° 2008-836, art. 14-1-1, ses cinq versions (LEGIARTI000031948241, 035602721, 034034377,
+  036489603, 054954874) ; n° 2012-1058, art. 4, ses cinq versions (LEGIARTI000026384005,
+  034034477, 037538214, 037538231, 036489841) ; n° 87-1104, art. 1er (LEGIARTI000006370685,
+  006370686, 033621190, 036490443) ; n° 96-101, ce que l'index en garde (LEGITEXT000005620312,
+  LEGIARTI000006377880). L'index JORF (incrément 20261103-002311) : n° 2017-171, art. 8, 36,
+  39 et 126 (JORFARTI000034026698, 034026745, 034026752, 034026585) ; n° 2018-610, art. 1er
+  et 2 (JORFARTI000037193171, 037193174) ; n° 2017-1737, art. 17 et 31 (JORFARTI000036250727,
+  036250775), art. 80 et sa notice ; n° 2016-82, ses quatre articles et sa notice
+  (JORFTEXT000031942003) ; n° 2017-1381, ses huit articles et sa notice (JORFTEXT000035600844) ;
+  n° 2018-917, ses deux articles et sa notice (JORFTEXT000037532985) ; n° 2017-853, 2017-561 et
+  2017-195, pour s'assurer qu'ils ne touchent pas l'art. 4 du n° 2012-1058 ; n° 96-101
+  (JORFTEXT000000191345), visas et signature seuls ; recherche de « pension » et
+  « rétroactif » dans les n° 2016-82, 2017-171, 2017-1381 et 2018-917. Légifrance, page du
+  n° 96-101 : refusée (403), en ligne de commande comme en navigateur sans tête.
+trouve: >-
+  1. Le chaînage (`versions_sur`) lit désormais `DATES_CORRIGEES` : la preuve de la hors classe
+  des IEEAC ne cite plus que LEGIARTI000037196211 (le n° 2018-610). La phrase de B-bis sur les
+  indices de 2017 est juste, et vaut jusqu'au 31 décembre 2018 : la colonne « 1er janvier
+  2018 » du n° 2017-171 n'a jamais valu, le n° 2017-1737 (art. 17) la reportant au 1er janvier
+  2019. 2. Art. 14-1-1 du n° 2008-836 : la version du n° 2016-82 vaut du 1er février 2016 au
+  31 décembre 2016, celle du n° 2017-1381 (le tableau du n° 2017-171, « 10 » devenu « ES ») dès
+  le 1er janvier 2017 ; le LEGI gardait la première jusqu'au 13 février 2017 (corrigé). Art. 4
+  du n° 2012-1058 : du 1er janvier au 31 août 2017, les directeurs de recherche du n° 2017-171
+  et les chargés de recherche du I du n° 2018-917 ; dès le 1er septembre 2017, le II. Le LEGI
+  gardait la rubrique des chargés de recherche du n° 2017-171, qui ne vaut à aucune date, et
+  écrivait au 1er janvier 2017 le directeur de recherche de 2e classe du II (corrigé). Art. 1er
+  du n° 87-1104 : non tranché, le texte qui écrit la seconde version (n° 96-101) manque. Ce
+  que les textes ne tranchent pas (rétroactivité, pensions liquidées) : déclaré dans la fiche
+  de dila_legi_grilles (data/sources.yaml).
+reste: >-
+  Le n° 96-101 du 6 février 1996 à lire au JORF (son article sur le n° 87-1104 et sa date
+  d'entrée en vigueur), le propriétaire ou un poste qui ouvre Légifrance. La régularité des
+  rétroactivités (n° 2017-171, 2018-917) et la révision des pensions liquidées entre l'effet et
+  la publication : non ouvertes. Candidats hors de la tâche : l'échelon spécial du chef de
+  projet SRIC, perdu dans le libellé de sa grille depuis 2017 ; les grilles des directeurs de
+  recherche du développement durable closes au 31 décembre 2019 ; le n° 87-1104, territorial,
+  rangé à l'État.

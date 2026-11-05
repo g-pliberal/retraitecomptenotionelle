@@ -266,14 +266,20 @@ class Index:
         """Les versions de l'article (même texte, même numéro d'article, comme
         les relie le lecteur des grilles) en vigueur sur [debut, fin) : la fin
         d'une version au LEGI est le début de la suivante ; une version datée
-        d'une fin antérieure ou égale à son début n'a jamais été en vigueur."""
+        d'une fin antérieure ou égale à son début n'a jamais été en vigueur.
+        Les dates sont celles que le lecteur des grilles corrige
+        (``DATES_CORRIGEES``) : une version qui ne vaut à aucune date n'est
+        pas comptée (relecture R-B, point 3.4)."""
         if not hasattr(self, "_versions"):
+            from dila_legi_grilles import DATES_CORRIGEES
+
             self._versions: dict[tuple, list[tuple[str, str, str]]] = collections.defaultdict(list)
             self._article: dict[str, tuple] = {}
             for ident, d, f, num, titre in self.db.execute(
                     "SELECT id, date, fin, num, titre FROM doc "
                     "WHERE id >= 'LEGIARTI' AND id < 'LEGIARTJ'"):
                 self._article[ident] = (titre, num)
+                d, f = DATES_CORRIGEES.get(ident, (d, f))
                 if d and f and d < f:
                     self._versions[(titre, num)].append((ident, d, f))
         cle = self._article.get(article)
