@@ -1,0 +1,32 @@
+date: "2026-11-05"
+session: "action 130, file R-M3-ter : relecture de M3-ter (le 6° a) de l'article 16 de l'Ircantec servi jusqu'au 31 décembre 2003, commit a28adbd)"
+consulte: >-
+  python scripts/veille_droit.py ; docs/veille_droit.md ; les index LEGI et JORF du dépôt,
+  récupérés de la release, à jour des incréments du 2 novembre 2026 (LEGI,
+  20261102-213929) et du 3 novembre (JORF, 20261103-002311). Dans LEGI : la liste des
+  rédactions de l'article 16 de l'arrêté du 30 décembre 1970, et le 6° de ses rédactions
+  du 31 août 1983, du 2 octobre 1990 et du 1er janvier 2004 (LEGIARTI000006381610 à 612),
+  et son § 2 de 1990 ; l'ordonnance n° 82-270, article 9 (LEGIARTI000006275868) et
+  rapport au Président de la République (LEGIARTI000006759661) ; le décret n° 82-628,
+  articles 8, 9 et 13 à 16 (LEGIARTI000006763432, 433, 435 à 438) ; R. 351-45, la liste de
+  ses rédactions et celle du 10 mai 1995 (LEGIARTI000006749450) ; L. 351-16 et L. 351-17. Dans
+  JORF : l'arrêté du 26 décembre 2003 (JORFTEXT000000246821), ses articles 3 et 7 ; les
+  quatre requêtes de M3-ter, de 1983 à 2004, et une cinquième, « "agents non titulaires"
+  AND ("taux plein" OR "coefficient de reduction" OR "coefficients de reduction") ».
+trouve: >-
+  Les citations de M3-ter sont exactes. Le terme du 31 décembre 2003 est la date d'effet
+  de la nouvelle rédaction, non sa date de publication. L'arrêté du 26 décembre 2003
+  (JO du 30 décembre 2003) récrit le 6° a) par son article 3, III (JORFARTI000002450292),
+  et son article 7 (JORFARTI000001472523) dit : « Les dispositions du présent arrêté
+  entrent en vigueur le 1er janvier 2004 ». Mais la fiche ne le cite pas (écart faible).
+  Aucune circulaire de l'Ircantec sur le 6° a), de 1983 à 2004 ; la circulaire du
+  2 juillet 2003 (JORFARTI000001860584) traite du chômage des agents publics, non de ce
+  coefficient. L. 351-16 et L. 351-17 du code du travail : absents de l'index. Le décret
+  n° 82-628 : LEGIARTI000006763434, dans la plage « 432 à 438 » que la fiche écrit,
+  n'est pas dans l'index, qui est filtré par thème.
+reste: >-
+  À la file qui tient la fiche coefficient_anticipation_ircantec : citer l'arrêté du
+  26 décembre 2003 (articles 3, III et 7) ; écrire « l'index LEGI du dépôt » et « 432,
+  433, 435 à 438 » ; joindre l'article 9 de l'ordonnance et l'article 13 du décret aux
+  textes de structure_financiere_1983. Une circulaire de l'Ircantec de 1983 à 2003, et
+  L. 351-16 et L. 351-17 du code du travail, restent à lire hors de l'index.
