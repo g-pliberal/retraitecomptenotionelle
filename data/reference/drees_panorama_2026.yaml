@@ -669,20 +669,25 @@ fiches:
       `drees_minimum_vieillesse` du vivier.
     etape: 7
     confrontation: >-
-      La garantie vieillesse de la page, qui remplace l'ASPA, compte en 2024
-      2,80 millions de bénéficiaires (un recours de 50 % de 5,60 millions
-      d'ayants droit) pour 754 460 allocataires de l'ASV ou de l'Aspa fin
-      2024, soit 3,71 fois ; elle coûte 14,3 milliards d'euros de 2026 pour
-      4,6 milliards de dépenses d'ASV et d'Aspa en 2024, soit 3,11 fois ; son
-      complément moyen, 426 euros par mois, est au-dessous de celui de l'Aspa,
-      527. Ce n'est pas une erreur du modèle : la garantie n'est pas l'Aspa
-      (800 euros par personne sur la seule pension, quand l'Aspa a son
-      plafond, d'une personne seule ou d'un couple), et la fiche ne chiffre
-      aucune garantie.
-      Si la page compte ce coût brut de l'ASPA et de l'ASV que la garantie
-      remplace, la source ne le dit pas : question au propriétaire.
+      La garantie vieillesse de la page, qui remplace l'ASPA, est calculée en
+      2024 sur les pensions du système 4 (la distribution de l'EIR déplacée
+      du facteur 0,7365), non sur les pensions servies (facteur 1) : 2,80
+      millions de bénéficiaires (un recours de 50 % de 5,60 millions d'ayants
+      droit), 13,93 milliards d'euros courants de 2024 (14,31 constants de
+      2026). C'est 3,71 fois les 754 460 allocataires de l'ASV ou de l'Aspa
+      fin 2024, 3,12 fois les 897 810 personnes avec leurs conjoints, et 3,03
+      fois leurs 4,6 milliards de dépenses (courants de 2024, par
+      inférence) ; à pensions servies, le même barème aux deux planchers de
+      la page donne de 1,85 à 2,83 fois les allocataires et de 1,27 à 2,38
+      fois les dépenses (estimation : 2,4 et 2,0). Ce n'est pas une erreur
+      du modèle : la garantie n'est pas l'Aspa (800 euros par personne sur la
+      seule pension, quand l'Aspa a son plafond, d'une personne seule ou d'un
+      couple), et la fiche ne chiffre aucune garantie. Le coût de la garantie
+      est brut des minima qu'elle remplace ; la page ne les déduit que dans
+      un tableau à part : 13,93 − 7,50 (quatre minima) = 6,43 milliards
+      (relecture R-J3, 5 novembre 2026).
     confronte_par:
-      - test_la_garantie_de_la_page_sert_quatre_fois_les_allocataires_et_coute_trois_fois_leurs_allocations
+      - test_la_garantie_de_la_page_sert_plus_de_monde_et_coute_plus_que_l_aspa_et_l_asv
   "28":
     titre: "Le profil des allocataires du minimum vieillesse"
     page: 231
