@@ -1,0 +1,28 @@
+date: "2026-11-05"
+session: "action 177, file R-D-bis : relecture indépendante des corrections de la relecture R-D (commits 43cfa28, 5940f86, 18af62f, ca2cb5f, file D-bis)"
+consulte: >-
+  python scripts/veille_droit.py ; docs/veille_droit.md. Index LEGI de la DILA récupéré
+  dans la session, à jour au 4 novembre 2026 : ordonnance n° 96-1122, art. 28-1
+  (LEGIARTI000025018554, LEGIARTI000031324363) et 28-2 (LEGIARTI000025018560) ; décret
+  n° 2011-2085, art. 4 (LEGIARTI000025097520, LEGIARTI000026514552, LEGIARTI000053469930)
+  et 4-2 (LEGIARTI000038680068) ; décret n° 2003-589, art. 21 (LEGIARTI000023019089,
+  LEGIARTI000026514398) ; décret n° 2015-1679, art. 1er (LEGIARTI000031634572) ;
+  ordonnance n° 2002-411, art. 23-1 (LEGIARTI000025021004). Index JORF, à jour au
+  3 novembre 2026 : décret n° 2010-1326 (JORFARTI000023009112) et les arrêtés du plafond
+  de la Sécurité sociale de 2011 à 2026, article 1er.
+trouve: >-
+  Conforme : citations exactes ; plafond de la caisse recalculé par la règle du décret
+  n° 2003-589 (1 070 € par mois en 2011, plus l'évolution du plafond national et 5,1
+  points), à moins d'un euro par mois de la Cnav, sauf 2024 (1,39 €) ; dix valeurs à la
+  main rendues au centime par les deux moteurs, au compte et sur la fiche de paie,
+  présomptions décalées comprises ; 14 valeurs présumées certifiées identiques. La baisse
+  de 63,40 % du témoin né en 1955 se refait au centime (46 467,01 € puis 17 017,13 € de
+  cotisations) : 77 % par le plafond de la caisse, 38 % à 51 % du plafond national de 2012
+  à 2018, 19 % par la part sur la totalité ôtée, 4 % par le taux présumé ; elle suit de
+  l'article 28-2. Quatre écarts faibles : arrêté du plafond non lu ni déclaré ; deux
+  empreintes de la note récrites au rebasage ; un chiffre de la note propre au droit en
+  vigueur ; cotisation forfaitaire minimale de l'article 28-2, II, non déclarée.
+reste: >-
+  Aucun arrêté ministériel du plafond de Mayotte dans l'index JORF : le lire à la caisse ou
+  en circulaire, ou le déclarer dans la fiche ; dire, ou écrire, la cotisation forfaitaire
+  minimale de 2012 à 2018 (note 2026-11-05-relecture-de-d-bis.md de l'action 177).
