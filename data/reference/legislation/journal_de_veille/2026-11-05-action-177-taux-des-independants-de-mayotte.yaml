@@ -1,0 +1,28 @@
+date: "2026-11-05"
+session: "action 177, file D : le taux propre de l'indépendant de Mayotte, de l'article 4-2 à la série des taux"
+consulte: >-
+  `python scripts/veille_droit.py` : la base de la Cnav sans barème changé ; deux exposés
+  à date changée et une circulaire ministérielle n° 2026/140 hors du sujet. L'index LEGI
+  récupéré et mis à jour (à jour au 4 novembre 2026). Dans l'index LEGI : le décret
+  n° 2011-2085, article 4-2, ses deux rédactions (LEGIARTI000038680068, du 25 juin 2019,
+  applicable aux périodes depuis le 1er janvier 2019 ; LEGIARTI000053297541, du
+  1er janvier 2026), et article 4, ses trois rédactions (LEGIARTI000025097520,
+  LEGIARTI000026514552, LEGIARTI000053469930) ; l'ordonnance n° 96-1122, article 28-2,
+  ses deux rédactions (LEGIARTI000025018560, LEGIARTI000046455192). La décision 4 du
+  propriétaire (`130/2026-11-03-decisions-du-proprietaire.md`) et la note de l'étape 8.
+trouve: >-
+  Le taux de la cotisation de vieillesse de base de l'indépendant de Mayotte est fixé
+  « pour chaque année civile de 2019 à 2036 » par le tableau du I de l'article 4-2 :
+  5,85 % en 2019, 0,70 point de plus chaque année, 10,75 % en 2026, 17,75 % en 2036,
+  assis « dans la limite du plafond » ; la rédaction de 2026 garde le tableau. L'article
+  28-2 de l'ordonnance n'appelle rien sur la totalité du revenu. Le modèle les écrit
+  depuis 2019, certifiés (seize valeurs), dans les deux moteurs ; la décision 4, 150 €
+  par trimestre en 2026, était déjà écrite.
+reste: >-
+  Ce que devait l'indépendant de Mayotte de 2012 à 2018 : l'article 4 fixe une part
+  salariale et une part patronale aux cotisations de l'article 28-2, qui comprennent
+  celles des indépendants, sans dire laquelle il doit (fiche
+  `cotisation_vieillesse_independants_mayotte`, version `supposee`). Le salarié de
+  Mayotte, qui paie la série du régime général quand l'article 4 lui donne ses taux. Le
+  tableau de 2027 à 2036, hors de la série. Le minimum de la cotisation des
+  indépendants jusqu'en 2015 (D. 633-2, D. 612-6), à lire.
