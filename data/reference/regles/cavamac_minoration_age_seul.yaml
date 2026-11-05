@@ -191,6 +191,35 @@ versions:
       politique ; d) Personnes mentionnées au 5° de l'article L. 351-8. 3° Des
       travailleurs handicapés admis à demander la liquidation de leur pension de
       retraite dans les conditions prévues au III de l'article L. 643-3 »
+  - id: LEGIARTI000047453031
+    article: >-
+      code de la sécurité sociale, article L. 643-3, IV, rédaction du 1er septembre 2023
+      (pensions prenant effet à compter de cette date)
+    en_vigueur: 2023-09-01
+    citation: >-
+      « IV.-La condition d'âge prévue au premier alinéa du I du présent article est
+      abaissée, dans des conditions fixées par décret, pour les assurés relevant des 2°
+      et 3° de l'article L. 643-4. »
+  - id: LEGIARTI000047634694
+    article: >-
+      code de la sécurité sociale, article D. 643-14, rédaction du 1er septembre 2023
+    en_vigueur: 2023-09-01
+    citation: >-
+      « L'âge prévu au IV de l'article L. 643-3 est celui prévu à l'article D.
+      351-1-14. » ; « Conformément à l'article 9 du décret n° 2023-436 du 3 juin 2023,
+      ces dispositions s'appliquent aux pensions prenant effet à compter du 1er
+      septembre 2023. »
+  - id: LEGIARTI000047634688
+    article: >-
+      code de la sécurité sociale, article D. 351-1-14, rédaction du 1er septembre 2023
+      au 1er janvier 2026
+    en_vigueur: 2023-09-01
+    citation: >-
+      « L'âge prévu au premier alinéa de l'article L. 351-1 est abaissé, en application
+      de l'article L. 351-1-5, à soixante-deux ans pour les assurés reconnus inaptes au
+      travail dans les conditions prévues à l'article L. 351-7 et pour les assurés dont
+      l'incapacité permanente est supérieure ou égale au pourcentage prévu pour
+      l'application de l'article L. 821-2. »
   nee_de: JORFARTI000047977908
   bornes:
     liquidation.date_effet: [2023-09-01, 2024-01-01]
@@ -209,7 +238,10 @@ versions:
       sans minoration, dès l'âge du IV de L. 643-3, les assurés des 2° et 3° de L.
       643-4 — l'inapte, le grand invalide, l'ancien déporté ou interné, l'ancien
       prisonnier de guerre du 5° de L. 351-8, le travailleur handicapé — ; dès l'âge de
-      L. 161-17-2, l'invalide professionnel à 66 % au moins
+      L. 161-17-2, l'invalide professionnel à 66 % au moins. L'âge du IV de L. 643-3
+      est celui de D. 351-1-14 (D. 643-14) : soixante-deux ans pour l'inapte et pour
+      l'incapacité permanente au taux de L. 821-2 ; D. 351-1-14 ne nomme aucun âge pour
+      les autres catégories du 2° (voir les approximations)
   exemples: aucun trouvé
 - id: statuts_de_2024
   statut: lue
@@ -273,7 +305,7 @@ versions:
       liquidée au plus tôt à partir de l'âge prévu à l'article L. 161-17-2 du code de
       la sécurité sociale avec application d'un coefficient de minoration au nombre de
       points de retraite acquis au compte de l'adhérent de 1,25 % par trimestre manquant
-      pour atteindre l'âge mentionné » ; « A compter de l'âge de 64 ans, les assurés
+      pour atteindre l'âge mentionné […] » ; « A compter de l'âge de 64 ans, les assurés
       mentionnés au quatrième et cinquième alinéa n'entrent plus dans le champ de la
       dérogation. Ils se voient appliquer le régime de droit commun de minoration prévu
       au deuxième alinéa, soit un coefficient de minoration de 1,25 % par trimestre
@@ -289,6 +321,17 @@ versions:
       sont précisées par un règlement de la section professionnelle des agents généraux
       d'assurance, approuvé par arrêté du ministre chargé de la sécurité sociale après
       avis de la Caisse nationale d'assurance vieillesse des professions libérales. »
+  - id: LEGIARTI000053355951
+    article: >-
+      code de la sécurité sociale, article D. 351-1-14, rédaction du 1er janvier 2026
+      (pensions prenant effet à compter de cette date)
+    en_vigueur: 2026-01-01
+    citation: >-
+      « L'âge prévu au premier alinéa de l'article L. 351-1 est abaissé, en application
+      de l'article L. 351-1-5, à soixante-deux ans pour les assurés reconnus inaptes au
+      travail dans les conditions prévues à l'article L. 351-7 et pour les assurés dont
+      l'incapacité permanente est supérieure ou égale au pourcentage prévu pour
+      l'application de l'article L. 821-2. »
   nee_de: JORFARTI000054436046
   bornes:
     liquidation.date_effet: [2026-07-18, null]
@@ -328,7 +371,12 @@ approximations:
   effet: >-
     non mesuré dans la population ; pour l'agent né en février 1945, au taux plein à 65
     ans, qui liquide en novembre 2011 à 66 ans et 9 mois, une année pleine différée,
-    soit 5 % de ses points : le modèle sert le coefficient 1, le texte 1,05
+    soit 5 % de ses points : le modèle sert le coefficient 1, le texte 1,05 ; l'écart
+    va jusqu'à 25 points, plafond de l'article 16 : l'agent né en février 1940, au taux
+    plein à 65 ans, qui liquide en novembre 2011 à 71 ans et 9 mois, six années pleines
+    différées, 25 % de ses points au plus, le modèle sert 1, le texte 1,25, et le modèle
+    ne sert 1,25 qu'à partir de janvier 2012 (essai du 5 novembre 2026, et rejoué le
+    5 novembre dans le moteur Python)
 - version: [statuts_de_2011, statuts_de_septembre_2023, statuts_de_2024, reglement_de_2026]
   textes: >-
     statuts de 2011, article 15, a à e ; arrêté du 4 août 2023, annexe, 6°, b ;
@@ -342,13 +390,35 @@ approximations:
     `inaptitude_au_travail` et du handicap, où la CAVAMAC n'est pas. Les statuts et le
     règlement les servent sans minoration dès l'âge de L. 161-17-2 jusqu'au 31 août
     2023, dès l'âge du IV de L. 643-3 depuis, sauf l'invalide professionnel, toujours
-    à l'âge de L. 161-17-2. Ce que le texte ne tranche pas : l'âge du IV de L. 643-3,
-    que fixe un décret non lu ici.
+    à l'âge de L. 161-17-2. L'âge du IV de L. 643-3 est à l'index du dépôt, quand la
+    fiche le disait fixé par un décret non lu : L. 643-3, IV (LEGIARTI000047453031, pensions
+    prenant effet depuis le 1er septembre 2023) dit que la condition d'âge « est
+    abaissée, dans des conditions fixées par décret, pour les assurés relevant des 2°
+    et 3° de l'article L. 643-4 » ; D. 643-14 (LEGIARTI000047634694, même date) : « L'âge
+    prévu au IV de l'article L. 643-3 est celui prévu à l'article D. 351-1-14 » ; D.
+    351-1-14 (LEGIARTI000047634688 du 1er septembre 2023 au 1er janvier 2026, puis
+    LEGIARTI000053355951) : l'âge de L. 351-1 « est abaissé, en application de l'article
+    L. 351-1-5, à soixante-deux ans pour les assurés reconnus inaptes au travail dans
+    les conditions prévues à l'article L. 351-7 et pour les assurés dont l'incapacité
+    permanente est supérieure ou égale au pourcentage prévu pour l'application de
+    l'article L. 821-2 ». La rédaction de L. 643-3 du 31 décembre 2025
+    (LEGIARTI000053280388, pensions prenant effet à compter du 1er septembre 2026) garde
+    le IV mot pour mot ; le reste de cette rédaction n'est pas lu ici. Ce que le texte
+    ne tranche pas : l'âge du grand invalide, de l'ancien déporté ou interné et de la
+    personne du 5° de L. 351-8, que D. 351-1-14 ne nomme pas ; et si l'inapte de L. 643-5
+    (L. 643-4, 2°, a) est celui que D. 351-1-14 nomme « dans les conditions prévues à
+    l'article L. 351-7 » : L. 643-5 n'est pas lu ici. Le modèle
+    ne sert pas cet âge de soixante-deux ans : il refuse l'inapte avant l'âge légal de
+    sa génération, motif `non_ouverte` (le né en 1965 parti à 62 ans, âge légal opposé
+    62,75 ans, le né en 1966, 63,25 ans : relecture R-E, 5 novembre 2026), puis le
+    minore. L'écart est posé au propriétaire, non corrigé.
   effet: >-
     non mesuré dans la population ; pour l'inapte, toute la minoration de son âge :
     l'agent né en 1955 qui part à 62 ans en 2017 perd 5 tranches de douze mois × 5 % =
     25 % de ses points au modèle (coefficient 0,75, essai du 5 novembre 2026), rien au
-    texte
+    texte ; depuis le 1er septembre 2023, le modèle refuse de plus la pension de
+    l'inapte entre soixante-deux ans et l'âge légal quand celui-ci le dépasse (les
+    générations 1965 et 1966 à 62 ans, motif `non_ouverte`), là où le texte l'ouvre
 - version: [statuts_de_septembre_2023]
   textes: arrêté du 4 août 2023, annexe, 6°, a
   ecart: >-
@@ -375,6 +445,26 @@ approximations:
     non mesuré dans la population ; l'agent né en 1964 au travail depuis ses 18 ans
     reçoit au modèle 0,75 à 62 ans (20 trimestres × 1,25 % = 25 %) et 0,80 à 63 ans (16
     × 1,25 % = 20 %), au texte 0,85 aux deux âges (essai du 5 novembre 2026)
+- version: [statuts_de_2011, statuts_de_septembre_2023, statuts_de_2024, reglement_de_2026]
+  textes: statuts de 2011, article 20 ; règlement de 2026, article 9
+  ecart: >-
+    Les deux textes disent la même phrase, mot pour mot : « La date d'effet de la pension
+    de retraite complémentaire est fixée, au plus tôt, au premier jour du trimestre civil
+    qui suit la demande écrite de l'adhérent et à la condition qu'il ait adressé à la
+    caisse l'ensemble des pièces justificatives dans les trois mois suivants sa demande.
+    A défaut, cette date d'effet pourra être modifiée par la caisse. » Le modèle ne sert
+    pas ce trimestre : la fiche `date_effet_mois_suivant` nomme `cavamac_complementaire`
+    et fait partir la pension le premier jour du mois qui suit l'âge atteint. Il liquide
+    ainsi l'agent né en février 1945 au 1er novembre 2011, et d'autres au 1er novembre
+    2023 ou au 1er février 2026, des jours que le texte ne nomme pas. Ce que le texte ne
+    tranche pas : « au plus tôt » fixe un plancher, et il ne dit pas si la caisse fixe
+    d'autres jours que le premier d'un trimestre civil ; la demande, dont la date
+    décide, n'est pas une donnée du modèle. La phrase est relue en 2011 et en 2026 ;
+    entre les deux, ce point n'est pas relu.
+  effet: >-
+    non mesuré dans la population ; la pension que le modèle fait partir le 1er novembre
+    2023 se compare au 1er octobre 2023 ou au 1er janvier 2024, premiers jours de
+    trimestre civil : un ou deux mois d'écart sur la date d'effet, selon la demande
 - version: [statuts_d_avant_2011, statuts_de_2011, statuts_de_septembre_2023, statuts_de_2024, reglement_de_2026]
   textes: >-
     statuts de 2011, articles 22 et 23 ; règlement de 2026, articles 11 et 12 ; avant
@@ -441,8 +531,10 @@ sources:
     1983 qui modifie les statuts du régime complémentaire (JORFTEXT000000494188), dont
     l'index n'a que le titre.
   - >-
-    Lire le décret qui fixe l'âge du IV de L. 643-3, où le règlement sert l'inapte
-    sans minoration depuis le 1er septembre 2023.
+    Poser au propriétaire l'écart de l'inapte (soixante-deux ans, D. 643-14 et D.
+    351-1-14, lus le 5 novembre 2026) et dire si le modèle l'ouvre à cet âge, avant
+    l'âge légal de sa génération ; lire ce que D. 351-1-14 laisse des autres catégories
+    du 2° de L. 643-4.
   lectures:
   - type: jorf
     reference: >-
@@ -458,7 +550,9 @@ sources:
       Index LEGI du dépôt, à jour du 4 novembre 2026 : décret n° 67-1169, article 4,
       ses trois rédactions ; L. 351-8, 1°, rédactions du 1er juillet 2011, du 22
       janvier 2014 et du 1er septembre 2023 ; L. 643-3 et L. 643-4, rédactions du 1er
-      septembre 2023.
+      septembre 2023 ; L. 643-3, IV, de la rédaction du 31 décembre 2025 ; D. 643-14,
+      rédaction du 1er septembre 2023 ; D. 351-1-14, rédactions du 1er septembre 2023
+      et du 1er janvier 2026.
     date: 2026-11-05
   - type: autre
     reference: >-

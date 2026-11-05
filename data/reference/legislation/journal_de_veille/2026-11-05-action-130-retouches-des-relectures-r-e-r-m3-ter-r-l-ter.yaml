@@ -1,0 +1,35 @@
+date: "2026-11-05"
+session: "actions 130 et 177, « Retouches 2 » : retouches des relectures R-E (CAVAMAC), R-M3-ter (Ircantec), R-L-ter (directeurs de laboratoire) et R-D-bis (indépendant de Mayotte)"
+consulte: >-
+  python scripts/veille_droit.py ; docs/veille_droit.md. Index LEGI de la DILA, à jour au 4
+  novembre 2026 : code de la sécurité sociale, L. 643-3 (LEGIARTI000047453031,
+  LEGIARTI000053280388), L. 643-4 (LEGIARTI000047453026), D. 643-14 (LEGIARTI000047634694),
+  D. 351-1-14 (LEGIARTI000047634688, LEGIARTI000053355951), R. 351-27 (LEGIARTI000006749434,
+  LEGIARTI000006749436), L. 351-8 (LEGIARTI000006742632) ; décret n° 82-628, articles 8, 9 et 13
+  à 16 (LEGIARTI000006763432 à 438, le 434 absent) ; ordonnance n° 82-270, article 9
+  (LEGIARTI000006275868) ; décret n° 81-1046, article 2 (LEGIARTI000006768391) ; ordonnance n°
+  96-1122, articles 28-1, 28-2 (LEGIARTI000025018560, LEGIARTI000046455192) ; décret n° 2003-589,
+  article 21 (LEGIARTI000026514398) ; décret n° 2015-1679, article 1er (LEGIARTI000031634572) ;
+  décret n° 2011-2085, article 4-2 (LEGIARTI000038680068). Index JORF, à jour au 5 novembre 2026 :
+  arrêté du 26 décembre 2003, articles 3, III et 7 (JORFARTI000002450292, JORFARTI000001472523) ;
+  statuts de la CAVAMAC de 2011, article 20, et règlement de 2026, articles 5 et 9
+  (JORFARTI000024270173, JORFARTI000054436046) ; arrêtés du 24 novembre 1981 et du 28 novembre
+  1985 (JORFTEXT000000293163, JORFTEXT000000871231, titres seuls) ; recherches de l'arrêté du
+  plafond de Mayotte et des textes de 1981 à 1985 sur l'âge du taux plein.
+trouve: >-
+  CAVAMAC : l'âge du IV de L. 643-3 est celui de D. 351-1-14, soixante-deux ans pour l'inapte et
+  pour l'incapacité permanente au taux de L. 821-2 (D. 643-14) ; le modèle refuse l'inapte avant
+  l'âge légal (non_ouverte pour les générations 1965 et 1966 à 62 ans) : déclaré, posé au
+  propriétaire ; la majoration de 2011 va jusqu'à 25 points ; la date d'effet trimestrielle (« au
+  plus tôt ») n'est pas servie. Ircantec : le terme du 31 décembre 2003 vient de l'article 7 de
+  l'arrêté du 26 décembre 2003 (entrée en vigueur le 1er janvier 2004), dont l'article 3, III
+  récrit le 6° a). Directeurs de laboratoire : aucun texte lu avant le 21 décembre 1985, les
+  soixante-cinq ans de 1981 à 1985 sont présumés. Mayotte : l'arrêté du plafond de la caisse n'est
+  pas à l'index, la règle des décrets redonne le barème à moins d'un euro par mois sauf 2024
+  (1,39 €) mais vise d'autres plafonds ; la cotisation forfaitaire minimale de l'article 28-2, II,
+  n'a aucun décret à l'index.
+reste: >-
+  Au propriétaire, l'âge de l'inapte de la CAVAMAC ; lire L. 643-5, le III de L. 643-3 et le reste
+  de la rédaction de L. 643-3 du 31 décembre 2025 ; lire l'arrêté du plafond de Mayotte et le
+  décret du montant minimum de l'article 28-2, II (notes 2026-11-05-retouches-des-relectures-r-e-r-m3-ter-r-l-ter.md,
+  action 130, et 2026-11-05-retouches-de-la-relecture-r-d-bis.md, action 177).

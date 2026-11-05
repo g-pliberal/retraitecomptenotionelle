@@ -128,3 +128,7 @@ relu ici dans sa rédaction de 2012, le borne depuis le 1er janvier 2012 au
 plafond de la caisse, et à la série du régime général, quand l'article 4 lui
 donne ses deux parts. Hors de la zone de cette file ; inscrit au bloc
 « Reprise ».
+
+*Renvoi du 5 novembre 2026 : les empreintes 337c5d9 et bc608e4 ci-dessus, récrites au rebasage,
+sont 43cfa28 et 5940f86 sur `main` ; le chiffre « 19 353,01 € de 2019 à 2026 » ne vaut que pour
+le droit en vigueur ; voir `2026-11-05-retouches-de-la-relecture-r-d-bis.md`.*

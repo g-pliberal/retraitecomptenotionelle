@@ -252,6 +252,8 @@ versions:
   - {id: JORFTEXT000000837384, article: "arrêté du 26 juillet 1983 : « et à compter du 01-04-1983, aux agents susceptibles de bénéficier à 60 ans d'une pension à taux plein au titre du régime général ou de celui des assurances sociales agricoles » (analyse du Journal officiel)", en_vigueur: 1983-08-31, publie_le: 1983-08-31}
   - {id: JORFTEXT000000654120, article: "arrêté du 27 janvier 1983, qui écrit le premier l'exonération au taux plein dans l'article 16 : « AU BENEFICE DES ASSURES TITULAIRES,AU TITRE DU REGIME GENERAL (OU AGRICOLE) DE SECURITE SOCIALE,D'UNE PENSION A TAUX PLEIN (A COMPTER DU 01-04-1983) » (analyse du Journal officiel ; le II n'y est pas)", en_vigueur: 1983-02-05, publie_le: 1983-02-05}
   - {id: LEGIARTI000006381609, article: "arrêté du 30 décembre 1970, article 16, rédaction de 1978, sa table", en_vigueur: 1978-09-30}
+  - {id: LEGIARTI000006275868, article: "ordonnance n° 82-270 du 26 mars 1982, article 9, deuxième phrase : le 6° a), sans terme (version ordonnance_du_26_mars_1982)", en_vigueur: 1982-07-01, citation: "Toutefois, les personnels visés aux articles L. 351-16 et L. 351-17 du code du travail, âgés d'au moins soixante-trois ans et justifiant d'une durée d'assurance de 150 trimestres, bénéficient, dès le 1er juillet 1982, du taux plein défini à l'article 1er de la présente ordonnance."}
+  - {id: LEGIARTI000006763435, article: "décret n° 82-628 du 21 juillet 1982, article 13 : la durée du 6° a), tous régimes de base (version ordonnance_du_26_mars_1982)", en_vigueur: 1982-07-23, citation: "La durée d'assurance dont doivent justifier les personnels visés à l'article 9, deuxième alinéa, de l'ordonnance du 26 mars 1982 susvisée pour bénéficier, dès le 1er juillet 1982, du taux plein peut avoir été accomplie dans le régime général ou dans ce régime et un ou plusieurs autres régimes de base obligatoires."}
   nee_de: LEGIARTI000006381610
   bornes:
     liquidation.date_effet: [1983-04-01, 1983-08-31]
@@ -295,6 +297,8 @@ versions:
   - {id: JORFTEXT000000837384, article: "arrêté du 26 juillet 1983 : les coefficients de réduction « variant selon l'âge de liquidation et fixés désormais par trimestre » (analyse du Journal officiel)", en_vigueur: 1983-08-31, publie_le: 1983-08-31}
   - {id: LEGIARTI000006381611, article: "arrêté du 30 décembre 1970, article 16, rédaction du 2 octobre 1990, en vigueur jusqu'au 1er janvier 2004 : le 6° a), mot pour mot celui de 1983", en_vigueur: 1990-10-02, citation: "6° a) A compter du 1er juillet 1982 aux agents visés aux articles L. 351-16 et L. 351-17 du code du travail remplissant les conditions fixées par l'article 9, alinéa 2, de l'ordonnance du 26 mars 1982 susvisée"}
   - {id: LEGIARTI000006763435, article: "décret n° 82-628 du 21 juillet 1982, article 13 : la durée du 6° a), tous régimes de base (version ordonnance_du_26_mars_1982)", en_vigueur: 1982-07-23}
+  - {id: JORFARTI000002450292, article: "arrêté du 26 décembre 2003 (JORFTEXT000000246821), publié au Journal officiel du 30 décembre 2003, article 3, III : il récrit le a du 6° du paragraphe 1 de l'article 16 de l'arrêté du 30 décembre 1970", en_vigueur: 2004-01-01, publie_le: 2003-12-30, citation: "III. - Le a du 6° du paragraphe 1 est rédigé ainsi qu'il suit : « a) Aux agents et anciens agents admis à faire liquider leur retraite au régime général en application de l'article L. 351-1-1 du code de la sécurité sociale ; »"}
+  - {id: JORFARTI000001472523, article: "arrêté du 26 décembre 2003, article 7 : l'entrée en vigueur de l'arrêté, donc le terme du 6° a) de 1982 au 31 décembre 2003", en_vigueur: 2004-01-01, publie_le: 2003-12-30, citation: "Les dispositions du présent arrêté entrent en vigueur le 1er janvier 2004."}
   nee_de: LEGIARTI000006381610
   bornes:
     liquidation.date_effet: [1983-08-31, 2004-01-01]
@@ -334,14 +338,17 @@ versions:
       30 janvier 1982 et n° 82-297 du 31 mars 1982 » ; le travailleur manuel et la femme de
       la loi de 1977 en sortent, que le taux plein du 6° c) couvre à soixante ans. La
       rédaction du 2 octobre 1990 n'y ajoute que la retraite progressive (§ 3). Le 6° a),
-      sans terme, s'y lit jusqu'au 31 décembre 2003 : le moteur le sert depuis le
-      5 novembre 2026 (relecture R-M3-bis), à l'agent de soixante-trois ans et de cent
+      sans terme, s'y lit jusqu'au 31 décembre 2003, que l'arrêté du 26 décembre 2003
+      fixe (article 3, III, qui le récrit, et article 7, en vigueur le 1er janvier 2004) :
+      le moteur le sert depuis le 5 novembre 2026 (relecture R-M3-bis), à l'agent de soixante-trois ans et de cent
       cinquante trimestres tous régimes à qui manque la durée de sa génération
   exemples: aucun trouvé
 - id: retraite_anticipee_2004
   statut: lue
   textes:
   - {id: LEGIARTI000006381612, article: "arrêté du 30 décembre 1970, article 16, rédaction du 1er janvier 2004", en_vigueur: 2004-01-01}
+  - {id: JORFARTI000002450292, article: "arrêté du 26 décembre 2003 (JORFTEXT000000246821), publié au Journal officiel du 30 décembre 2003, article 3, III : il récrit le a du 6° du paragraphe 1 de l'article 16 de l'arrêté du 30 décembre 1970", en_vigueur: 2004-01-01, publie_le: 2003-12-30, citation: "III. - Le a du 6° du paragraphe 1 est rédigé ainsi qu'il suit : « a) Aux agents et anciens agents admis à faire liquider leur retraite au régime général en application de l'article L. 351-1-1 du code de la sécurité sociale ; »"}
+  - {id: JORFARTI000001472523, article: "arrêté du 26 décembre 2003, article 7 : l'entrée en vigueur de l'arrêté, donc le terme du 6° a) de 1982 au 31 décembre 2003", en_vigueur: 2004-01-01, publie_le: 2003-12-30, citation: "Les dispositions du présent arrêté entrent en vigueur le 1er janvier 2004."}
   nee_de: LEGIARTI000006381612
   bornes:
     liquidation.date_effet: [2004-01-01, 2011-07-01]
@@ -672,8 +679,9 @@ approximations:
     1945, article 70-2, c)
   ecart: >-
     le texte de la loi du 12 juillet 1977, qui modifie L. 332, n'est pas dans l'index, ni
-    l'article du décret n° 82-628 du 21 juillet 1982 qui récrit l'article 70-2 — LEGI n'a
-    de ce décret que ses articles 8, 9 et 13 à 16 (LEGIARTI000006763432 à 438), et de
+    l'article du décret n° 82-628 du 21 juillet 1982 qui récrit l'article 70-2 — l'index
+    LEGI du dépôt, filtré par thème, n'a de ce décret que ses articles 8, 9 et 13 à 16
+    (LEGIARTI000006763432, 433, 435 à 438 ; le 434, que cette plage couvre, n'y est pas), et de
     l'article 70-2 que sa rédaction du 23 juillet 1982, sans le c) : le modèle lit les conditions de cet article, en vigueur du 16 mars 1978, jusqu'au
     1er avril 1983, où l'ordonnance du 26 mars 1982 entre en vigueur (son article 9, « Les
     dispositions de la présente ordonnance entreront en vigueur le 1er avril 1983 ») ; il
@@ -824,6 +832,15 @@ sources:
       circulaire ni instruction de l'Ircantec sur le 6° a) : index LEGI à jour du
       2 novembre 2026, JORF du 3 novembre, pour servir le 6° a) jusqu'au 31 décembre 2003
       (relecture R-M3-bis)
+    date: 2026-11-05
+  - type: jorf
+    reference: >-
+      Arrêté du 26 décembre 2003 relatif aux modalités de fonctionnement du régime de
+      retraites complémentaire des agents non titulaires de l'Etat et des collectivités
+      publiques (JORFTEXT000000246821, Journal officiel du 30 décembre 2003), articles
+      3, III (JORFARTI000002450292) et 7 (JORFARTI000001472523) : la source du terme du
+      6° a), lue dans l'index JORF du dépôt, à jour du 5 novembre 2026 (relecture
+      R-M3-ter)
     date: 2026-11-05
 textes_sans_effet:
 - id: LEGIARTI000006381611

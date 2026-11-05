@@ -57,7 +57,19 @@ population: >-
   2011 aient renvoyé à cet article, comme ceux de 2011, est présumé : le
   décret n° 81-1046 laisse « le montant, les modalités de calcul et
   d'attribution » au règlement (article 2, LEGIARTI000006768391), qui n'est
-  pas au Journal officiel (relecture R-L-bis, 5 novembre 2026).
+  pas au Journal officiel (relecture R-L-bis, 5 novembre 2026). Du 1er juillet
+  1981 au 20 décembre 1985, les soixante-cinq ans n'ont pas de texte : R. 351-27 ne
+  commence que le 21 décembre 1985 (LEGIARTI000006749434, première rédaction, même
+  phrase), et l'ancien code, d'avant cette codification, n'est pas à l'index LEGI
+  du dépôt, qui s'ouvre à cette date (L. 267 et L. 682, que cite le décret n° 81-1046,
+  n'y sont pas) ; deux recherches au JORF de 1981 à 1985 (« taux plein » « soixante-cinq
+  ans » « salaire annuel de base », et les prestations supplémentaires de vieillesse
+  des laboratoires) ne rendent aucun décret sur l'âge ; les arrêtés du 24 novembre
+  1981 (JORFTEXT000000293163) et du 28 novembre 1985 (JORFTEXT000000871231), qui
+  approuvent les statuts de la section, n'ont que leur titre à l'index, et l'article 2
+  du décret n° 81-1046, lu en entier, renvoie le montant et les modalités au
+  règlement sans nommer d'âge. Les soixante-cinq ans de cette période sont donc
+  présumés sans texte, le 5 novembre 2026 (relecture R-L-ter).
 hors_repartition: false
 inventaire:
   section: non_salaries
@@ -103,7 +115,9 @@ periodes:
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     notes: >-
-      PRÉSOMPTION, AVANT LE DÉCRET DE 2007. Le régime est rendu obligatoire
+      PRÉSOMPTION, AVANT LE DÉCRET DE 2007 ; DE 1981 AU 20 DÉCEMBRE 1985, l'âge
+      du taux plein, 65 ans, est présumé sans texte (voir la description du
+      régime). Le régime est rendu obligatoire
       au 1er juillet 1981 (décret n° 81-1046), ses cotisations et ses
       prestations exprimées en lettres clés, que l'index ne chiffre pas.
       La fiche présume la règle de 2008 sans ajustement — « Le nombre de

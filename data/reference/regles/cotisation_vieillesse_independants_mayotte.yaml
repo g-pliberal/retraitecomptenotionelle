@@ -62,7 +62,10 @@ versions:
       alinéa du I de l'article 28-1, qui sont dues par tout employeur de personnes
       mentionnées à l'article 5 de l'ordonnance n° 2002-411 du 27 mars 2002 relative à
       la protection sanitaire et sociale à Mayotte et par tout assuré, ainsi que par les
-      travailleurs indépendants agricoles et non agricoles. »
+      travailleurs indépendants agricoles et non agricoles. » ; II : « Lorsque
+      l'application des dispositions qui précèdent conduit à un montant de cotisations
+      inférieur à un montant minimum fixé par décret, l'assuré est soumis au versement
+      d'une cotisation forfaitaire minimale égale à ce même montant. »
     lu_le: 2026-11-05
   - id: LEGIARTI000025097520
     article: décret n° 2011-2085, article 4
@@ -172,6 +175,50 @@ approximations:
     le compte notionnel de l'indépendant de Mayotte, de 2012 à 2018, et sa fiche de
     paie ; ni ses trimestres, validés sur le revenu, ni sa pension de base, que le
     taux ne change pas
+- version: avant_le_taux_propre
+  ecart: >-
+    Le modèle ne porte pas la cotisation forfaitaire minimale de l'article 28-2, II, de
+    2012 à 2018 : « Lorsque l'application des dispositions qui précèdent conduit à un
+    montant de cotisations inférieur à un montant minimum fixé par décret, l'assuré est
+    soumis au versement d'une cotisation forfaitaire minimale égale à ce même montant »
+    (LEGIARTI000025018560, du 1er janvier 2012 au 1er décembre 2024 ; la même phrase dans
+    la rédaction du 1er décembre 2024, LEGIARTI000046455192). Aucun décret qui fixe ce
+    montant n'est à l'index LEGI du dépôt : trois recherches du 5 novembre 2026, dans les textes
+    dont le titre nomme Mayotte (« montant minimum », « cotisation forfaitaire minimale »,
+    « cotisation minimale »), ne rendent que des articles d'ordonnance (28-2 de
+    l'ordonnance n° 96-1122, 23-3 de l'ordonnance n° 2002-411). Le
+    modèle cotise le taux du revenu, sans plancher, et le montant minimum, que le texte
+    ne chiffre pas, n'est pas servi. Depuis 2019, l'article 4-2 fixe une autre garantie :
+    « Elle ne peut être calculée sur une assiette inférieure à 450 fois le salaire horaire
+    minimum interprofessionnel de croissance applicable à Mayotte » (LEGIARTI000038680068)
+  effet: >-
+    non mesuré ; les petits revenus seuls, ceux dont la cotisation au taux du revenu
+    resterait sous le minimum, que le texte ne chiffre pas (relecture R-D-bis)
+- version: [avant_le_taux_propre, taux_de_l_article_4_2]
+  ecart: >-
+    Le plafond de la caisse de Mayotte, de 13 860 € en 2012 à 36 264 € en 2026, vient du
+    barème « Salaire plafond - Mayotte » de la Cnav (`mayotte_smig_et_plafond.csv`), qui
+    transcrit le texte sans le citer : l'arrêté que l'article 28-1, I, annonce (« Son
+    montant, calculé selon des règles prévues par décret, est arrêté par le ministre
+    chargé de la sécurité sociale ») n'a été ni lu ni trouvé à l'index du JORF, dont les
+    arrêtés de 2011 à 2026 ne rendent à la recherche du 5 novembre 2026 aucun plafond de
+    Mayotte ; les arrêtés annuels du plafond de la Sécurité sociale ne nomment pas
+    Mayotte. Deux décrets disent une règle de calcul : décret n° 2003-589, article 21
+    (LEGIARTI000026514398, depuis le 21 octobre 2012), « fixé à 1 070 euros par mois pour
+    les rémunérations ou gains versés à compter du 1er janvier 2011. Ce montant est
+    revalorisé chaque année conformément au taux d'évolution du plafond en vigueur en
+    métropole au 1er janvier de chaque année, majoré de cinq points et un dixième » ;
+    décret n° 2015-1679, article 1er (LEGIARTI000031634572), la même phrase, « 5 points
+    et un dixième ». Mais ils visent « Le plafond mentionné au II de l'article 19 de
+    l'ordonnance du 27 mars 2002 » et « Le plafond mentionné au I de l'article 28-6 de
+    l'ordonnance du 20 décembre 1996 », non le plafond de l'article 28-1 : ce que le
+    texte ne tranche pas, que ce soit le même. Appliquée aux plafonds mensuels de la
+    Sécurité sociale du dépôt, d'une année sur le montant mensuel de l'année d'avant, la
+    règle redonne le barème à moins d'un euro par mois, sauf en 2024 : 2 645,39 € par la
+    règle, 2 644 € au barème (relecture R-D-bis, refaite le 5 novembre 2026)
+  effet: >-
+    au plus 16,68 € d'assiette en 2024, soit 1,56 € de cotisation à 9,35 % ; ailleurs, moins
+    d'un euro par mois d'assiette
 - version: taux_de_l_article_4_2
   ecart: >-
     La série s'arrête à l'année en cours, comme celle du régime général : de 2027 à
@@ -186,6 +233,11 @@ sources:
     Ce que doit l'indépendant de Mayotte de 2012 à 2018 : une circulaire de la caisse
     de sécurité sociale de Mayotte, ou un barème de la Cnav de ces années, le dirait,
     et lèverait la présomption.
+  - >-
+    Lire l'arrêté du plafond de cotisations de Mayotte de chaque année (une publication
+    locale ou une circulaire de la caisse de sécurité sociale de Mayotte), et le décret
+    qui fixe le montant minimum de la cotisation forfaitaire minimale de l'article 28-2,
+    II, de 2012 à 2018.
   lectures:
   - type: legifrance
     reference: >-
