@@ -130,7 +130,8 @@ const ECARTEES_APRES = new Set(["invalidite", "accident_travail"]);
  * validés en contrepartie de cotisations à la charge de l'assuré ou au titre
  * de périodes d'arrêt maladie, de maternité, de chômage ». L'emploi n'y entre
  * que cotisé (`commun.ligneCotisee`) : l'activité cultuelle d'avant 1979, que
- * la CAVIMAC prend en compte sans cotisation (D. 721-11 du code de 1985), n'en
+ * D. 721-11 du code de 1985 prend en compte, dont la CAVIMAC dit les trimestres
+ * « validés à titre gratuit » (sa page « Demander ma retraite de base »), n'en
  * est pas.
  */
 const RETENUES_AVANT = new Set([

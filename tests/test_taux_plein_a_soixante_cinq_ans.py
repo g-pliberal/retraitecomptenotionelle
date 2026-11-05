@@ -387,14 +387,18 @@ def test_les_annees_cultuelles_d_avant_1979_ne_sont_pas_cotisees():
     """Les deux années qui précèdent la naissance ne comptent que « les trimestres
     validés en contrepartie de cotisations à la charge de l'assuré » ou de la
     maladie, de la maternité, du chômage, de la formation (décret n° 2011-620,
-    article 2, 1°). L'activité cultuelle d'avant 1979, la CAVIMAC la prend en
-    compte sans qu'aucune cotisation l'ait portée (D. 721-11 du code de 1985,
-    LEGIARTI000006739120 : « sont prises en compte pour l'ouverture du droit et
-    le calcul de la pension, les périodes d'exercice d'activités [...]
-    accomplies antérieurement au 1er janvier 1979 »), quand les cotisations de
-    1979 et après sont, pour leur part, « à la charge des assurés » (L. 382-25,
-    I, 1°, LEGIARTI000006742803). Ministre du culte de 1973, sans activité
-    ensuite jusqu'en 1999 ; enfants d'avril 1980, juin 1984 et juin 1986 : pour
+    article 2, 1°). L'activité cultuelle d'avant 1979, D. 721-11 du code de 1985
+    la prend en compte (LEGIARTI000006739120 : « sont prises en compte pour
+    l'ouverture du droit et le calcul de la pension, les périodes d'exercice
+    d'activités [...] accomplies antérieurement au 1er janvier 1979 »), et la
+    CAVIMAC en dit les trimestres « validés à titre gratuit » (sa page
+    « Demander ma retraite de base », lue le 5 novembre 2026) ; le Gouvernement, des « années
+    antérieures à 1979, qui n'ont donné lieu à aucune cotisation et ont été
+    validées gratuitement » (JO Sénat du 16 janvier 2008, p. 207, question
+    orale n° 122) ; les cotisations de 1979 et après sont, pour leur part, « à
+    la charge des assurés » (L. 382-25, I, 1°, LEGIARTI000006742803).
+    Ministre du culte de 1973, sans activité ensuite jusqu'en 1999 ; enfants
+    d'avril 1980, juin 1984 et juin 1986 : pour
     celui de 1980, 1978 ne compte pas, 1979 donne 4 trimestres, moins de 8 ; pour
     les deux autres, aucun trimestre les deux années d'avant : l'âge de la
     génération, 66 ans et 2 mois. Le témoin, au culte jusqu'en 1980, enfants

@@ -169,8 +169,10 @@ _ECARTEES_APRES = frozenset({"invalidite", "accident_travail"})
 #: validés en contrepartie de cotisations à la charge de l'assuré ou au titre
 #: de périodes d'arrêt maladie, de maternité, de chômage ». L'emploi n'y entre
 #: que cotisé (:func:`.commun.ligne_cotisee`) : l'activité cultuelle d'avant
-#: 1979, que la CAVIMAC prend en compte sans cotisation (D. 721-11 du code de
-#: 1985), n'en est pas.
+#: 1979, que D. 721-11 du code de 1985 prend en compte (« sont prises en compte
+#: pour l'ouverture du droit et le calcul de la pension »), dont la CAVIMAC
+#: dit les trimestres « validés à titre gratuit » (sa page « Demander ma
+#: retraite de base »), n'en est pas.
 _RETENUES_AVANT = frozenset({"emploi", "maladie", "maternite", "chomage_indemnise",
                              "chomage_solidarite", "chomage_non_indemnise",
                              "preretraite_fne"})

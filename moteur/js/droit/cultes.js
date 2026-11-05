@@ -18,7 +18,11 @@ import { dateDEffet } from "./commun.js";
 /** L'alignement : les périodes d'avant gardent les règles de 1997. */
 export const ALIGNEMENT = 1998;
 
-/** La création du régime : les années d'avant sont validées gratuitement. */
+/**
+ * La création du régime : les années d'avant, D. 721-11 du code de 1985 les
+ * prend en compte, et la caisse en dit les trimestres « validés à titre
+ * gratuit » (sa page « Demander ma retraite de base »).
+ */
 export const CREATION = 1979;
 
 /** D. 721-7 du code de 1985 : le maximum à cent cinquante trimestres, rien sous huit. */

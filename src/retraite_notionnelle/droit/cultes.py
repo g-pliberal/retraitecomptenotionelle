@@ -10,8 +10,13 @@ conditions législatives et réglementaires en vigueur au 31 décembre 1997 »
 fonction de la durée d'assurance » (L. 721-6 de 1985), égale au maximum de
 l'année au prorata de cent cinquante trimestres (D. 721-7), sur des
 trimestres qui comprennent les années d'activité cultuelle d'avant la
-création du régime, validées gratuitement (D. 721-11 ; décret n° 79-607,
-art. 42). Le modèle appliquait les règles de 1998 à toute la carrière, et ne
+création du régime : D. 721-11 (décret n° 79-607, art. 42, dès 1979) les
+prend en compte (« sont prises en compte pour l'ouverture du droit et le
+calcul de la pension »), sans dire qu'elles le sont sans cotisation ; la
+caisse en dit les trimestres « validés à titre gratuit » (sa page « Demander
+ma retraite de base »), et le Gouvernement, des années « qui n'ont donné lieu
+à aucune cotisation et ont été validées gratuitement » (JO Sénat du 16
+janvier 2008, p. 207). Le modèle appliquait les règles de 1998 à toute la carrière, et ne
 comptait pas les années d'avant 1979.
 
 Le décret n° 2006-1325 (art. 2) adapte cette fraction aux pensions prenant
@@ -48,8 +53,9 @@ if TYPE_CHECKING:
 #: gardent les règles du 31 décembre 1997 (L. 721-6 de 1998, L. 382-27).
 ALIGNEMENT = 1998
 
-#: La création du régime : les années d'activité d'avant sont validées
-#: gratuitement (D. 721-11 du code de 1985).
+#: La création du régime : les années d'activité d'avant, D. 721-11 du code de
+#: 1985 les prend en compte, et la caisse en dit les trimestres « validés à
+#: titre gratuit » (sa page « Demander ma retraite de base »).
 CREATION = 1979
 
 #: D. 721-7 du code de 1985 : le maximum s'acquiert à cent cinquante
