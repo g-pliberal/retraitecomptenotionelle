@@ -1,0 +1,37 @@
+date: "2026-11-05"
+session: "action 130, file R-M3-bis : relecture indépendante des corrections de la relecture R-M3d (commit cc627e8, l'Ircantec, l'IPACTE et l'IGRANTE d'avant 1983)"
+consulte: >-
+  python scripts/veille_droit.py ; docs/veille_droit.md ; les index LEGI et JORF du dépôt,
+  récupérés, à jour des incréments du 2 novembre 2026 (LEGI, 20261102-213929) et du
+  3 novembre (JORF, 20261103-002311). Dans LEGI : l'article 16 de l'arrêté du 30 décembre
+  1970, rédactions LEGIARTI000006381609 à 612 ; l'ordonnance n° 82-270, article 9
+  (LEGIARTI000006275868) et rapport (LEGIARTI000006759661) ; le décret n° 45-0179,
+  article 70-2 (LEGIARTI000006760658 et 659) ; le décret n° 78-319, article 1er
+  (LEGIARTI000006762125) ; le décret n° 82-628 du 21 juillet 1982, articles 8, 9 et 13 à 16
+  (LEGITEXT000006063841, LEGIARTI000006763432, 433, 435 à 438) ; la loi n° 77-774
+  (LEGITEXT000006068610, articles 1er et 2, LEGIARTI000006758755 et 6273117). Dans JORF :
+  les analyses JORFTEXT000000522844, 654120, 837384 et 699275, et celles de 1983 sur
+  l'Ircantec.
+trouve: >-
+  Les citations de la fiche coefficient_anticipation_ircantec sont exactes. Une seule a ses
+  deux morceaux, joints par « […] », dans l'ordre inverse du texte : celle du rapport. Les
+  quatorze valeurs se refont à la main, et les deux moteurs les rendent, aussi sous
+  PRESOMPTIONS_DECALEES=1. Onze cas neufs confirment les bornes : 1978 à 63 ans, 1979 à 60,
+  et le relais du 6° c) le 1er avril 1983. Le décret n° 82-628 est dans LEGI, et son
+  article 13 dit la durée tous régimes du 6° a) : « peut avoir été accomplie dans le régime
+  général ou dans ce régime et un ou plusieurs autres régimes de base obligatoires ». La
+  note, la fiche et le journal de M3-bis le disaient absent de l'index. Le 6° a) reste écrit
+  sans terme de 1983 à 2003 (…610, …611), comme l'article 9 et l'article 13, quand le
+  troisième alinéa de l'article 9 est borné au 1er avril 1983. Seul le rapport, qui n'est
+  pas normatif, en fait une anticipation. Le modèle lui sert un coefficient : 0,99 à
+  l'agent de 1936 à 63 ans en 1999, 0,97 à celui de 1938 à 64 ans en 2002. La lettre n'en
+  met pas.
+reste: >-
+  Le 6° a) après le 1er avril 1983 : la lettre le sert, et le modèle suit le rapport. Ce
+  choix de lecture revient à qui tient le scénario 1. La déclaration, « le texte ne tranche
+  pas », est à récrire. Deux pièces trancheraient, absentes de l'index : les articles
+  L. 351-16 et L. 351-17 du code du travail après 1984, et la pratique de l'Ircantec de
+  1994 à 2003. L'article 13 du décret n° 82-628 est à citer. Ses articles 14 et 15 sont à
+  verser aux déclarations du 6° b) et de la qualité d'agent. La note des fiches de
+  l'IPACTE et de l'IGRANTE oublie le 6° b). Note :
+  docs/feuille_de_route/130/2026-11-05-relecture-corrections-r-m3d.md.
