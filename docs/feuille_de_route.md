@@ -7116,14 +7116,14 @@ l'inviterait aussi à relire le dépôt.
 
 **Reprise, au 5 novembre 2026.** Périmètre : les trois versants et les militaires. Entrés et certifiés :
 grilles, barème depuis 1983, reclassements (450 tableaux), durées d'échelon (778). Chaînage (étape 3) relu
-trois fois, conforme : 511 des 1 675 grades de durées et 13 des 862 groupes de reclassement rattachés ; il
-lit les dates corrigées des grilles. Faits le 5 novembre : l'en-tête de `rangs_grille`, le n° 91-783 ; lus au
-JORF et corrigés : l'art. 2 du n° 2009-1322 (IEEAC), l'art. 14-1-1 du n° 2008-836, l'art. 4 du n° 2012-1058. Reste, test
-d'abord : l'art. 1er du n° 87-1104, dont le texte qui l'a récrit (n° 96-101) manque aux index et que
-Légifrance refuse (question au propriétaire) ; rattacher plus sans deviner (sommet d'échelon non écrit, autres
-décrets communs, n° 60-403 par numéro et date, date qui ouvre la phrase) ; les dates d'effet que les lecteurs
-ne lisent pas ; les 97 versions hors du motif ; les refus, au JORF ; le minimum de traitement ; trois
-candidats. Détail : `2026-11-05-chainage-corrige-et-trois-articles.md`.
+trois fois, conforme : 511 des 1 675 grades de durées et 13 des 862 groupes de reclassement rattachés. Lus au
+JORF et corrigés le 5 novembre : l'art. 2 du n° 2009-1322, l'art. 14-1-1 du n° 2008-836 (son échelon spécial
+compris), l'art. 4 du n° 2012-1058. Reste, test d'abord : l'art. 1er du n° 87-1104, que le n° 96-101 récrit ;
+l'index JORF garde de ce décret sept articles, dont aucun ne vise le n° 87-1104 ni ne date son effet : lire au
+JO n° 33 du 8 février 1996 (p. 2070 à 2077) l'article qui le récrit, l'art. 37 et l'entrée en vigueur
+(question au propriétaire) ; rattacher plus sans deviner ; les dates d'effet non lues ; les 97 versions hors du
+motif ; les refus, au JORF ; le minimum de traitement ; quatre candidats (dont « ES » dans neuf noms de grille,
+les provisoires 301, 328, 342 du n° 87-1103). Détail : `2026-11-05-b-ter.md`.
 
 
 **D'où elle vient.** La demande du propriétaire, le 12 octobre 2026 : aller

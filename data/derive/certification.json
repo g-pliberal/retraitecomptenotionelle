@@ -995,7 +995,7 @@
    "ajoutees": 0,
    "colonne": "indice",
    "corrigees": 0,
-   "empreinte": "d593a282778575be",
+   "empreinte": "8f36e5c3af9342c6",
    "identiques": 19943,
    "niveau": "certifiee",
    "source": "DILA, base LEGI, textes d'échelonnement indiciaire, par l'index du dépôt",
@@ -1017,11 +1017,11 @@
    "ajoutees": 0,
    "colonne": "rang",
    "corrigees": 0,
-   "empreinte": "01d5e224349d9e0a",
-   "identiques": 21067,
+   "empreinte": "10c2e3b228699399",
+   "identiques": 21068,
    "niveau": "certifiee",
    "source": "DILA, base LEGI, textes d'échelonnement indiciaire, par l'index du dépôt",
-   "valeurs": 21067,
+   "valeurs": 21068,
    "verifiee_le": "2026-11-05"
   },
   "grilles_etat_legi_rang_presume": {

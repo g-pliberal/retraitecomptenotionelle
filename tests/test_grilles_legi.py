@@ -983,7 +983,10 @@ def test_la_grille_du_chef_de_projet_sric_de_2016_cesse_au_1er_janvier_2017():
     n° 2017-1381 change la seule ligne « 10 HEA HEA » en « ES HEA HEA » (art. 2,
     JORFARTI000035600863 ; « Les dispositions du présent décret entrent en vigueur le 1er
     janvier 2017. », art. 7). La grille du n° 2016-82 vaut jusqu'au 31 décembre 2016 ;
-    le 15 janvier 2017, celle du n° 2017-171, colonne « A compter du 1er janvier 2017 »."""
+    le 15 janvier 2017, celle du n° 2017-171, colonne « A compter du 1er janvier 2017 »,
+    avec la ligne « ES HEA HEA » du n° 2017-1381 : neuf échelons, 656 à 1021, puis
+    l'échelon spécial, à HEA, que le n° 2016-82 écrit « Echelon spécial HEA » ; « ES »
+    n'est pas un bout du nom de la grille."""
     texte = "LEGITEXT000019373379"
     ancienne = ("fonctionnaires-detaches-sur-l-emploi-de-chef-de-projet-en-systemes-et-reseaux-"
                 "d-information-et-de-communication-des-administrations-de-l-etat")
@@ -991,9 +994,11 @@ def test_la_grille_du_chef_de_projet_sric_de_2016_cesse_au_1er_janvier_2017():
         "650", "700", "750", "800", "850", "901", "946", "985", "1015", "A"]
     assert _grille("etat_legi", texte, ancienne, "2017-01-01") == []
     nouvelle = ("chef-de-projet-en-systemes-et-reseaux-d-information-et-de-communication-des-"
-                "administrations-de-l-etat-es-hea-hea")
-    assert [i for _, i, _ in _grille("etat_legi", texte, nouvelle, "2017-01-15")] == [
-        "656", "705", "755", "805", "855", "906", "951", "990", "1021"]
+                "administrations-de-l-etat")
+    assert [(e, i) for e, i, _ in _grille("etat_legi", texte, nouvelle, "2017-01-15")] == [
+        ("1", "656"), ("2", "705"), ("3", "755"), ("4", "805"), ("5", "855"), ("6", "906"),
+        ("7", "951"), ("8", "990"), ("9", "1021"), ("special", "A")]
+    assert _grille("etat_legi", texte, nouvelle + "-es-hea-hea", "2017-01-15") == []
 
 
 #: Décret n° 2012-1058, article 4 (chargés et directeurs de recherche du

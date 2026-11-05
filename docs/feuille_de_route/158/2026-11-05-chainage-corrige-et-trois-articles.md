@@ -139,3 +139,8 @@ périodes (21074) de l'État au LEGI ne change pas.
   des tableaux des chargés de recherche.
 - Le n° 87-1104 (un cadre d'emplois de la territoriale, que vise le n° 96-101 « relatif à
   la fonction publique territoriale ») est rangé dans `etat_legi`.
+
+*Renvoi, le 5 novembre 2026.* « L'index JORF n'en garde que les visas et la signature »
+est faux, pour le n° 96-101 : il en garde sept articles, dont aucun ne vise le n° 87-1104
+(relecture R-B2, puis `2026-11-05-b-ter.md`, qui corrige aussi la grille de 2017 du chef de
+projet SRIC, son échelon spécial rendu).

@@ -926,6 +926,13 @@ RUBRIQUES_ECARTEES = {
                              "charge-de-recherche-de-2e-classe"},
     "LEGIARTI000037538214": {"directeur-de-recherche-de-2e-classe"},
 }
+#: Les versions où « ES », devant une lettre hors échelle, est l'échelon spécial,
+#: que l'analyseur prendrait pour la fin du nom de la grille. Article 14-1-1 du
+#: décret n° 2008-836 (le chef de projet SRIC) : le décret n° 2017-1381 y remplace
+#: la ligne « 10 HEA HEA » par « ES HEA HEA » (art. 2), et le n° 2016-82 écrivait
+#: pour le même emploi « Echelon spécial HEA » (art. 1er). Les autres « ES » du LEGI
+#: ne sont pas relus : ils restent dans le nom de leur grille.
+ES_ECHELON_SPECIAL = {"LEGIARTI000035602721", "LEGIARTI000036489603", "LEGIARTI000054954874"}
 
 
 def extraire(chemin_index: Path | str | None = None) -> dict:
@@ -949,6 +956,8 @@ def extraire(chemin_index: Path | str | None = None) -> dict:
         if titre not in textes or debut >= EN_VIGUEUR or not _ressemble_a_un_tableau(contenu):
             continue
         debut, fin = DATES_CORRIGEES.get(ident, (debut, fin))
+        if ident in ES_ECHELON_SPECIAL:
+            contenu = re.sub(r"(?<![\w'])ES(?=\s+HE[A-G])", "Echelon spécial", contenu)
         tableau = lire_tableau(contenu, militaire=textes[titre]["versant"] == "militaires")
         ecartees = RUBRIQUES_ECARTEES.get(ident, set())
         tableau.cellules = [c for c in tableau.cellules if cle_groupe(c.groupe) not in ecartees]

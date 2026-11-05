@@ -1,0 +1,27 @@
+date: "2026-11-05"
+session: "action 158, vague 9, B-ter : les écarts de la relecture R-B2 (le n° 96-101 ; l'échelon spécial du chef de projet SRIC, n° 2008-836, art. 14-1-1 ; le directeur de recherche de 2e classe, n° 2012-1058, art. 4)"
+consulte: >-
+  python scripts/veille_droit.py ; docs/veille_droit.md. L'index JORF du dépôt (incrément
+  20261103-002311) : n° 96-101, son texte (JORFTEXT000000191345) et ses sept articles
+  (art. 1er, 2, 10, 25, 27, 33, 38) ;
+  n° 2016-82, art. 1er ; n° 2017-171, art. 8 et 36 ; n° 2017-1381, son texte, art. 2 et 7 ;
+  n° 2018-917, art. 1er (I et II). L'index LEGI (incrément 20261102-213929) : n° 87-1104,
+  art. 1er (LEGIARTI000006370685, 006370686) ; n° 96-101 (LEGITEXT000005620312,
+  LEGIARTI000006377880) ; n° 2008-836, art. 14-1-1 (LEGIARTI000034034377, 035602721,
+  036489603, 054954874) ; les versions d'articles qui écrivent « ES » devant une lettre hors
+  échelle (22).
+trouve: >-
+  Des sept articles du n° 96-101 que l'index JORF garde, aucun ne vise le n° 87-1104 ni ne
+  date l'effet du décret ; l'art. 2 récrit le statut des secrétaires de mairie et fait
+  partir de la publication du décret les assimilations de la péréquation CNRACL (art. 28-1
+  du n° 87-1103) ; les tableaux sont renvoyés au JO papier. La phrase « le JORF n'en garde
+  que les visas et la signature » corrigée dans la fiche et le bloc « Reprise ». La ligne
+  « ES HEA HEA » du n° 2017-1381 est l'échelon spécial du chef de projet SRIC (le n° 2016-82
+  l'écrit « Echelon spécial HEA ») : la grille a, dès le 1er janvier 2017, neuf échelons et
+  l'échelon spécial à HEA. Le II du n° 2018-917 change, au 1er septembre 2017, la grille du
+  directeur de recherche de 2e classe (962 → 963, un 7e échelon à HEB) : déclaré à la fiche.
+reste: >-
+  Lire au JO n° 33 du 8 février 1996 (p. 2070 à 2077) l'article du n° 96-101 qui récrit
+  l'art. 1er du n° 87-1104, son art. 37 et son entrée en vigueur (question au propriétaire).
+  Candidats : « ES » dans le nom de neuf autres grilles de l'État ; les échelons provisoires
+  301, 328, 342 de l'art. 25-1 du n° 87-1103.

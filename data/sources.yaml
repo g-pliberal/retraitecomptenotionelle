@@ -4625,7 +4625,16 @@ institutions:
           13 février 2017, vaut du 1er février 2016 au 31 décembre 2016 ; dès
           le 1er janvier 2017, celle du n° 2017-1381 (LEGIARTI000035602721).
           `DATES_CORRIGEES` la clôt au 1er janvier 2017 : six semaines de la
-          grille de 2016 (650 à 1015) ôtées. L'article 4 du décret
+          grille de 2016 (650 à 1015) ôtées. La ligne « ES HEA HEA » du
+          n° 2017-1381 est l'échelon spécial, que le n° 2016-82 écrivait
+          « Echelon spécial HEA » : `ES_ECHELON_SPECIAL` le fait lire tel aux
+          trois versions de l'article qui la portent (LEGIARTI000035602721,
+          036489603 et 054954874), et la grille a, dès le 1er janvier 2017,
+          neuf échelons et l'échelon spécial à HEA (5 novembre 2026, B-ter).
+          Les autres « ES » que le LEGI écrit devant une lettre hors échelle
+          (neuf grilles, dont les administrateurs généraux et les
+          inspecteurs de l'éducation nationale hors classe) restent dans le
+          nom de leur grille, non relus. L'article 4 du décret
           n° 2012-1058 (les chargés et directeurs de recherche du
           développement durable) : le n° 2017-171 le remplace (art. 36,
           JORFARTI000034026745), en vigueur le 1er janvier 2017 ; le décret
@@ -4655,10 +4664,14 @@ institutions:
           mois avant ; ni ces deux décrets ni les n° 2016-82 et 2017-1381 (les
           documents que l'index JORF en garde) ne contiennent « pension » ni
           « rétroactif ». Une pension de chef de projet SRIC liquidée en
-          janvier ou en février 2017, ou de chargé de recherche du
+          janvier ou en février 2017, de chargé de recherche du
           développement durable liquidée du 1er janvier 2017 au 27 octobre
-          2018, a pu l'être sur la grille appliquée alors ; qu'elle ait été
-          révisée, aucun texte lu ne le dit. Les indices du I du n° 2018-917
+          2018, ou de directeur de recherche de 2e classe du développement
+          durable liquidée du 1er septembre 2017 au 27 octobre 2018 (le II du
+          n° 2018-917 lui donne, « Au 1er septembre 2017 », un 4e échelon à
+          963 au lieu de 962 et un 7e échelon à HEB), a pu l'être sur la
+          grille appliquée alors ; qu'elle ait été révisée, aucun texte lu ne
+          le dit. Les indices du I du n° 2018-917
           sont de 0 à 7 points au-dessus de ceux du n° 2017-171 au 1er janvier
           2017. Le reclassement des chargés de recherche dans les grades du II
           au 1er septembre 2017 relève de leur statut (décret n° 2014-1324),
@@ -4669,12 +4682,31 @@ institutions:
           1995) : NON TRANCHÉ. La seconde version est celle du décret n° 96-101
           du 6 février 1996, publié le 8 février (JORFTEXT000000191345) ; ni
           l'index JORF ni l'index LEGI du dépôt n'en ont l'article qui
-          modifie le n° 87-1104 ni celui qui dit son entrée en vigueur (le
-          JORF n'en garde que les visas et la signature, le LEGI que l'article
-          38, daté du 1er août 1995), et Légifrance a refusé la lecture (403)
-          le 5 novembre 2026. Les grilles gardent donc les trois échelons
-          provisoires de 1987 (274, 301, 328) jusqu'au 7 février 1996, à côté
-          de la grille à douze échelons du 1er août 1995 : à lire au JORF.
+          modifie le n° 87-1104 ni celui qui dit son entrée en vigueur. Le
+          LEGI n'en garde que le texte (LEGITEXT000005620312) et l'article 38,
+          daté du 1er août 1995 ; le JORF, le texte et sept articles, relus le
+          5 novembre 2026 (action 158, B-ter) : les art. 1er (n° 87-1099),
+          2 (n° 87-1103, le statut des secrétaires de mairie,
+          JORFARTI000001790554), 10 (n° 90-126), 25 (n° 95-27), 27 (n° 95-29),
+          33 (n° 86-68) et 38 (les moniteurs-éducateurs). Aucun ne vise le
+          n° 87-1104 ni ne dit de date d'effet ; les tableaux, l'index les
+          renvoie au papier (« JO no 0033 du 08/02/96 Page 2070 a 2077 »).
+          L'art. 2 récrit le statut : « catégorie B » devient « catégorie A »
+          (I), « huit échelons » devient « douze échelons » (IX), les
+          échelons provisoires 301, 328 et 342 sont créés à l'art. 25-1, leur
+          reclassement renvoyant à « l'article 37 du décret no 96-101 » (XII),
+          et, à l'art. 28-1 (XIII), pour la péréquation des pensions de la
+          CNRACL : « les assimilations […] sont effectuées […] à compter de
+          la date de publication du décret no 96-101 du 6 février 1996 ».
+          Le résumé que la fiche du texte porte au JORF (« CLASSE EN
+          CATEGORIE A,A COMPTER DU 01-08-1995 ») n'est pas le texte.
+          Légifrance a refusé la lecture (403) le 5 novembre 2026. À lire au
+          JO n° 33 du 8 février 1996, p. 2070 à 2077 : l'article du
+          n° 96-101 qui récrit l'art. 1er du n° 87-1104, son art. 37 et
+          l'article qui dit son entrée en vigueur. Les grilles gardent
+          d'ici là les trois échelons provisoires de 1987 (274, 301, 328)
+          jusqu'au 7 février 1996, à côté de la grille à douze échelons du
+          1er août 1995.
 
       - id: dila_legi_reclassements
         titre: >-
