@@ -3291,16 +3291,16 @@ fabriqués.
 
 ### 130. L'architecture du dépôt : décidée, les phases 0 à 8 faites, les domaines à ouvrir — `en cours`
 
-**Reprise, au 5 novembre 2026.** Fait : phases 0 à 8, cinq domaines clos, le sixième aux étapes 1 à 6 ; vagues 6 et 7 relues conformes (Agirc-Arrco 5cf7bbc,
-Agirc 18a4dc3, base des libéraux 5f19af8, L-bis 9fcd8a1, L-ter f6012e5, Ircantec d'avant 1983 cc627e8) ; les retouches de R-E, R-M3-ter, R-L-ter et R-D-bis (7e44534).
-Le 5 : la CRPNPAC à son âge (N 1464c06, R-N 329db34, b47aaf9 ; au propriétaire, le refus avant 50 ans, les vingt annuités et leur barème de 2012 à 2019) ; la CAVOM,
-la CARPIMKO et la CPRN à leur âge, sans la base, la CAVP à celui de la base (N ddc92fc, R-N2 10eb393, N-bis 0ba2aea : la CAVP et la CARPIMKO servies avant 2024 à la
-carrière longue de la base). Lues au droit : la CAVAMAC (75b31ac), la CARCDSF, la CAVOM (ee71f57, R-E3 ace82ea, E2 0e2a786), la CARPIMKO (E3 0284e76, R-E4 c411f0a,
-corrigée par E3-bis, `130/2026-11-05-e3-bis-corrections-de-r-e4.md`) ; restent 80 fiches, 464 manques, la CAVP d'abord. Au propriétaire, erreurs déclarées, non
-corrigées : la CARPIMKO, trois (de 1984 à juin 1987, la durée annule la minoration de l'âge seul ; de 2015 à 2024, la majoration des nés avant 1956 comptée avant l'âge
-légal de leur base ; la pension au mois, non au trimestre civil) et trois non-tranchés ; la CAVOM, trois et deux ; la CARCDSF, sept ; la CAVAMAC, cinq ;
-`…-11-03-decisions-du-proprietaire.md`. Au seul Bulletin officiel : les statuts de la CARPIMKO de 1987 à 2015, de la CAVP, de la CPRN, de la CAVOM d'avant 2016 ; candidats non lancés :
-l'Agirc-Arrco de 1955 à 1983, les biologistes et la durée, le taux plein de 1977 et 1982, `ages_reference.csv`, les points de la CARPIMKO de 1956 à 2025.
+**Reprise, au 5 novembre 2026.** Fait : phases 0 à 8, cinq domaines clos, le sixième aux étapes 1 à 6 ; vagues 6 et 7 relues conformes (Agirc-Arrco 5cf7bbc, Agirc 18a4dc3, base des
+libéraux 5f19af8, L-bis 9fcd8a1, L-ter f6012e5, Ircantec d'avant 1983 cc627e8) ; les retouches de R-E, R-M3-ter, R-L-ter et R-D-bis (7e44534). Le 5 : la CRPNPAC à son âge (N 1464c06,
+R-N 329db34, b47aaf9 ; au propriétaire, le refus avant 50 ans, les vingt annuités et leur barème de 2012 à 2019) ; la CAVOM, la CARPIMKO et la CPRN à leur âge, sans la base, la CAVP à
+celui de la base (N ddc92fc, R-N2 10eb393, N-bis 0ba2aea : la CAVP et la CARPIMKO servies avant 2024 à la carrière longue de la base). Lues au droit : la CAVAMAC (75b31ac), la CARCDSF,
+la CAVOM (ee71f57, R-E3 ace82ea, E2 0e2a786), la CARPIMKO (E3 0284e76, R-E4 c411f0a, corrigée par E3-bis), la CAVP (E4, `130/2026-11-05-carte-des-fiches-cavp-lue-au-droit.md`) ;
+restent 79 fiches, 457 manques, la caisse suivante d'abord. Au propriétaire, erreurs déclarées, non corrigées : la CAVP, deux (la carrière longue depuis 2024 aux deux pentes ; la
+pension au mois) et deux non-tranchés ; la CARPIMKO, trois (de 1984 à juin 1987, la durée annule la minoration de l'âge seul ; de 2015 à 2024, la majoration des nés avant 1956 comptée
+avant l'âge légal de leur base ; la pension au mois) et trois non-tranchés ; la CAVOM, trois et deux ; la CARCDSF, sept ; la CAVAMAC, cinq ; `…-11-03-decisions-du-proprietaire.md`. Au
+seul Bulletin officiel : les statuts de la CARPIMKO de 1987 à 2015, de la CAVP d'avant juin 2009, de la CPRN, de la CAVOM d'avant 2016 ; candidats non lancés : l'Agirc-Arrco de 1955 à
+1983, les biologistes et la durée, le taux plein de 1977 et 1982, `ages_reference.csv`, les points de la CARPIMKO de 1956 à 2025.
 
 Le dépôt devenait de plus en plus lourd à faire avancer. Une modification du
 moteur du scénario 1 touchait vingt fichiers en médiane, dont sept ou huit de

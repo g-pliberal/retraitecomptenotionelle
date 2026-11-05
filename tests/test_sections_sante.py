@@ -161,6 +161,17 @@ def test_la_carcdsf_majore_apres_son_age(simulateur):
     # Avant 2012, 65 ans pour tous et 1,25 % par trimestre.
     (1945, 64.0, 0.95),
     (1975, 67.0, 1.0),
+    # Le tableau annexé à l'article 15 par l'arrêté du 23 juin 2011
+    # (JORFARTI000024270214) : nés avant le 30 juin 1951 inclus, « 62 ―
+    # 15,00 % » ; nés de 1953 à 1955, « 62 ― 17,00 % », et la majoration,
+    # « 68 4,00 % » ; les nés avant juillet 1951, « Pas de majoration de
+    # pension pour un départ après 65 ans » ; depuis 1956, « jusqu'à cet âge
+    # augmenté de 3 ans », douze trimestres à 0,5 %.
+    (1950, 62.0, 0.85),
+    (1955, 62.0, 0.83),
+    (1954, 68.0, 1.04),
+    (1950, 67.0, 1.0),
+    (1960, 70.0, 1.06),
 ])
 def test_la_cavp_minore_a_deux_pentes(simulateur, naissance, liquidation,
                                       coefficient):
@@ -256,20 +267,58 @@ def test_chaque_version_de_la_carpimko_est_portee_par_le_modele(
     disent pas — la durée qui annule l'abattement, l'âge seul de 1984, les
     4 % par année des générations 1955 et antérieures de 2015 à 2024, le
     trimestre civil de la date d'effet — sont déclarés dans les fiches."""
+    _chaque_version_est_portee(simulateur, "carpimko_complementaire", fiche,
+                               date_qui_decide, CARPIMKO_HORS_DU_MODELE, 1984)
+
+
+#: Ce que le modèle ne porte pas d'une version de la CAVP, et que sa fiche
+#: déclare : la période de 2009 sert la règle des statuts du 11 mai 2009 dès
+#: le 1er janvier 2009, quand ils n'entrent en vigueur que le 7 juin ; celle
+#: de 2012, les deux pentes et la majoration de l'arrêté du 23 juin 2011, en
+#: vigueur le 30 juin 2011 — sans effet sur aucune pension de 2011, nul né
+#: après le 30 juin 1951 n'ayant alors soixante-cinq ans, ni né après 1952
+#: l'âge d'ouverture.
+CAVP_HORS_DU_MODELE = {("statuts_d_avant_2009", "2009-01-01", "2009-06-07"),
+                       ("statuts_de_2011", "2011-06-30", "2012-01-01")}
+
+
+def test_chaque_version_de_la_cavp_est_portee_par_le_modele(simulateur):
+    """Lue au droit le 5 novembre 2026 (action 130) : statuts du 11 mai 2009,
+    articles 12, 14, 15 et 17 ; leurs articles 12 et 15 récrits par l'arrêté du
+    23 juin 2011, son annexe à l'article 15 comprise ; l'article 15 récrit par
+    l'arrêté du 19 décembre 2023 ; règlement de 2026, articles 8, 12, 14 et 15.
+    Chaque premier du mois de 1949 à 2040, la période qui liquide une pension
+    prenant effet ce jour porte les paramètres que chaque version lit, hors de
+    ce que la fiche déclare (`CAVP_HORS_DU_MODELE`). Les écarts que ces
+    paramètres ne disent pas — la carrière longue depuis 2024, la date d'effet
+    au trimestre civil, la valeur de service par génération — sont déclarés
+    dans la fiche."""
+    _chaque_version_est_portee(simulateur, "cavp_complementaire",
+                               "cavp_minoration_deux_pentes", "liquidation.date_effet",
+                               CAVP_HORS_DU_MODELE, 1949)
+
+
+def _chaque_version_est_portee(simulateur, regime, fiche, date_qui_decide, hors_du_modele,
+                               depuis):
+    """Chaque premier du mois depuis ``depuis`` jusqu'en 2040 que couvre une
+    version de la fiche, la période du régime qui liquide une pension prenant
+    effet ce jour — ou, sur l'année du revenu, la période de cette année —
+    porte chacun des paramètres que la version lit, hors de ``hors_du_modele``
+    (version, premier jour, jour de fin exclu)."""
     from datetime import date
 
     from retraite_notionnelle.noyau import carte
 
-    caisse = simulateur.catalogue["carpimko_complementaire"]
+    caisse = simulateur.catalogue[regime]
     versions = carte.fiches()[fiche].get("versions") or []
     assert versions
     for version in versions:
         lus = (version.get("contenu") or {}).get("parametres") or {}
         debut, fin = version["bornes"][date_qui_decide]
-        jour = max(debut or date(1984, 1, 1), date(1984, 1, 1))
+        jour = max(debut or date(depuis, 1, 1), date(depuis, 1, 1))
         while jour < (fin or date(2041, 1, 1)):
             hors = any(v == version["id"] and date.fromisoformat(d) <= jour < date.fromisoformat(f)
-                       for v, d, f in CARPIMKO_HORS_DU_MODELE)
+                       for v, d, f in hors_du_modele)
             if lus and not hors:
                 periode = (caisse.periode_a_l_effet(jour.isoformat())
                            if date_qui_decide == "liquidation.date_effet"

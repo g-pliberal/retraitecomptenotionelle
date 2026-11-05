@@ -1,36 +1,573 @@
 schema_version: 1
 id: cavp_minoration_deux_pentes
 intitule: >-
-  Volet par répartition de la complémentaire de la CAVP : jusqu'en 2011, retraite
-  entière à 65 ans et anticipation de 1,25 % par trimestre à l'âge seul ; depuis
-  l'arrêté du 23 juin 2011, retraite entière à l'âge du 1° de L. 351-8 pour les
-  nés depuis 1956 (65 ans jusqu'en 1952, 66 ans de 1953 à 1955) et minoration de
-  1,25 % par trimestre jusqu'à 65 ans puis de 0,5 % de 65 ans à cet âge, que la
-  durée n'annule pas. Bonification d'un dixième pour trois enfants.
+  Volet par répartition de la complémentaire de la CAVP : du 7 juin 2009 au 29 juin
+  2011, retraite entière à 65 ans et minoration de 1,25 % par trimestre manquant
+  pour l'atteindre, à l'âge seul ; depuis le 30 juin 2011, retraite entière à l'âge
+  du 1° de L. 351-8 pour les nés depuis 1956 (65 ans jusqu'en 1952, 66 ans de 1953
+  à 1955), minoration de 1,25 % par trimestre jusqu'à 65 ans puis de 0,5 % de 65 ans
+  à cet âge — un tableau annexé l'écrit pour les nés jusqu'en 1955 —, que la durée
+  n'annule pas, et majoration de 0,5 % par trimestre au-delà ; depuis le 10 janvier
+  2024, la carrière longue minorée de 1,25 % par trimestre jusqu'à 65 ans seulement ;
+  la pension au premier jour du trimestre civil qui suit la demande ; bonification
+  d'un dixième pour trois enfants. Avant le 7 juin 2009, statuts non lus.
+domaine: decote_surcote
 regimes: [cavp_complementaire]
+etape: liquider_chaque_regime
+face: droit
 etat: approchee
+lit:
+- >-
+  l'âge du pharmacien à la date d'effet de sa pension, dont l'entrée en jouissance
+  « est fixée au premier jour du trimestre civil qui suit cette demande », et sa
+  génération, qui donne l'âge de la retraite entière — 65 ans jusqu'en 1952, 66 ans
+  de 1953 à 1955, l'âge du 1° de L. 351-8 depuis 1956 —, la valeur de service et,
+  pour les nés jusqu'en 1955, la ligne du tableau annexé en 2011
+- >-
+  depuis le 10 janvier 2024, la liquidation anticipée du régime de base « dans les
+  conditions prévues aux II, III et IV de l'article L. 643-3 » — carrière longue,
+  handicap, inaptitude —, que la complémentaire suit, la carrière longue minorée
+  jusqu'à 65 ans seulement ; de 2009 à 2024, l'inaptitude reconnue par la commission
+  de la caisse, sans coefficient dès 60 ans puis dès l'âge d'ouverture
+- le nombre d'enfants, trois au moins ouvrant la bonification
+- la date d'effet de la pension, qui choisit la rédaction des statuts ou du règlement
+ecrit:
+- >-
+  le coefficient qui minore ou majore les points de la pension complémentaire, que
+  `abattement_regime_de_base` et la majoration de `surcote_par_age_seul` rendent à
+  `liquider_chaque_regime`, et l'âge de la retraite entière, que la table `cavp` de
+  `ages_regimes.csv` rend à l'ouverture ; la bonification de 10 % pour trois enfants
+dates_qui_decident:
+- liquidation.date_effet
+versions:
+- id: statuts_d_avant_2009
+  statut: supposee
+  hypothese: >-
+    les pensions qui prennent effet avant le 7 juin 2009 relèvent des statuts approuvés
+    par les arrêtés du 29 décembre 1948 et du 1er juin 1950, que l'article 2 de l'arrêté
+    du 11 mai 2009 abroge (JORFARTI000020694602), et de leurs modifications. L'index
+    JORF n'en porte que les titres, ni article ni annexe : l'arrêté du 14 septembre 1957
+    (« ART. 3, ET 20 A 24 », JORFTEXT000000285277), celui du 18 février 1976 (« ART. 1ER,
+    3, 7, 9, 10, 24 ET 25 », JORFTEXT000000854013), celui du 20 juillet 1979 (« ART. 6,
+    10-BIS, 11, 11-BIS, 24 », JORFTEXT000000858658), celui du 27 juillet 1981 (« ART.
+    4,11,22BIS ET 22TER », JORFTEXT000000489822), ceux de 1960, 1961, 1963, 1964, 1968,
+    1977, du 24 janvier 1978, de 1984, 1986, 1988 et 1989 ; celui du 31 août 1990 (« art. 27 ») est « PUBLIE AU BULLETIN
+    OFFICIEL DU MINISTERE DE LA SOLIDARITE 90-40 » (JORFTEXT000000533978). Aucun ne se
+    lit. Le modèle sert la règle du régime de base : 1,25 % par trimestre manquant
+    jusqu'à l'âge d'annulation de la décote de la génération, que la durée annule, sans
+    majoration ni bonification pour enfants
+  fiabilite: >-
+    faible : l'âge, le coefficient, la place de la durée et la bonification, que nul
+    texte lu ne date avant le 7 juin 2009
+  bornes:
+    liquidation.date_effet: [null, 2009-06-07]
+  contenu:
+    parametres:
+      age_table: null
+      decote_par_trimestre: 0.0125
+      decote_annulee_par_la_duree: true
+      surcote_par_trimestre: null
+    droit: >-
+      présumé : la règle du modèle, celle du régime de base, 1,25 % par trimestre
+      manquant à la durée dans la limite des trimestres qui séparent de l'âge
+      d'annulation de la décote, aucune majoration
+    conditions: aucune lue
+  exemples: aucun trouvé
+- id: statuts_de_2009
+  statut: lue
+  textes:
+  - id: JORFARTI000020694605
+    article: >-
+      statuts du régime complémentaire d'assurance vieillesse des pharmaciens, partie
+      III de l'annexe de l'arrêté du 11 mai 2009, articles 12, 14, 15 et 17
+    en_vigueur: 2009-06-07
+    publie_le: 2009-06-06
+    citation: >-
+      « Le droit à la retraite définie à l'article 11 est acquis à l'âge de 65 ans à
+      tout pharmacien qui a validé le nombre de trimestres de cotisations correspondant
+      à la durée d'assurance prévue au deuxième alinéa de l'article L. 643-3 du code de
+      la sécurité sociale et qui a cessé toute activité pharmaceutique non salariée.
+      [...] La retraite est liquidée sur demande de l'affilié. L'entrée en jouissance de
+      la retraite de droits propres est fixée au premier jour du trimestre civil qui
+      suit cette demande. [...] L'affilié remplissant les conditions pour prétendre au
+      versement de la pension de retraite du régime complémentaire peut demander à en
+      bénéficier dès l'âge de 60 ans. La pension de retraite est alors réduite par
+      application d'un coefficient d'anticipation qui est fonction du nombre de
+      trimestres manquants, à la date d'effet des droits, pour atteindre l'âge de 65
+      ans. Ce coefficient est égal à 1, 25 % par trimestre manquant dans la limite de 20
+      trimestres. Ce coefficient est déterminé définitivement lors de la liquidation des
+      droits de l'affilié. Toutefois, le pharmacien reconnu inapte à l'exercice de sa
+      profession conformément à l'article 16 des présents statuts peut bénéficier d'une
+      retraite sans coefficient d'anticipation à partir de l'âge de 60 ans. [...] La
+      retraite prévue au présent titre est augmentée d'une bonification d'un dixième
+      pour tout allocataire ayant eu au moins trois enfants. »
+  - id: JORFARTI000020694601
+    article: arrêté du 11 mai 2009, article 1er
+    en_vigueur: 2009-06-07
+    publie_le: 2009-06-06
+    citation: >-
+      « Sont approuvés, tels qu'ils sont annexés au présent arrêté, les statuts
+      généraux, les statuts du régime d'assurance vieillesse de base ainsi que les
+      statuts du régime d'assurance vieillesse complémentaire de la section
+      professionnelle des pharmaciens. » : ni cet article ni l'article 3 ne fixent de
+      date ; l'arrêté entre en vigueur le lendemain de sa publication
+  nee_de: JORFARTI000020694605
+  bornes:
+    liquidation.date_effet: [2009-06-07, 2011-06-30]
+  contenu:
+    parametres:
+      age_table: cavp
+      decote_par_trimestre: 0.0125
+      decote_annulee_par_la_duree: false
+      decote_palier_age: null
+      surcote_par_trimestre: null
+    droit: >-
+      retraite entière à 65 ans ; dès 60 ans, 1,25 % par trimestre manquant pour
+      atteindre 65 ans, vingt au plus, à l'âge seul ; aucune majoration ; l'inapte sans
+      coefficient dès 60 ans ; un dixième de plus pour trois enfants ; la pension au
+      premier jour du trimestre civil qui suit la demande
+    conditions: >-
+      la cessation de toute activité pharmaceutique non salariée ; l'inaptitude
+      reconnue par la commission d'inaptitude de la caisse (article 16)
+  exemples: aucun trouvé
+- id: statuts_de_2011
+  statut: lue
+  textes:
+  - id: JORFARTI000024270214
+    article: >-
+      annexe de l'arrêté du 23 juin 2011, statuts du régime complémentaire, articles 12
+      et 15, et tableau annexé à l'article 15
+    en_vigueur: 2011-06-30
+    publie_le: 2011-06-29
+    citation: >-
+      « Pour les affiliés nés à compter du 1er janvier 1956, le droit à la retraite
+      définie à l'article 11 est acquis à l'âge permettant d'obtenir une pension de
+      retraite à taux plein tel qu'il est fixé à l'article L. 351-8 (1°) du code de la
+      sécurité sociale [...] Pour les affiliés nés à compter du 1er janvier 1956, le
+      montant de la retraite définie à l'article 11 est majoré de 4 %. » 2. Il est
+      inséré un second alinéa ainsi rédigé : « De façon transitoire, le droit à la
+      retraite définie à l'article 11 est acquis dans les mêmes conditions qu'à
+      l'alinéa précédent sauf pour la condition d'âge, qui s'établit à 65 ans pour les
+      affiliés nés jusqu'au 31 décembre 1952 et à 66 ans pour les affiliés nés en 1953,
+      1954 et 1955. Le montant de la retraite définie à l'article 11 est majoré de 2 %
+      pour les affiliés nés en 1953, 1954 et 1955. » [...] La pension de retraite est
+      majorée lorsqu'elle est liquidée au-delà de l'âge permettant d'obtenir une
+      retraite à taux plein et jusqu'à cet âge augmenté de 3 ans pour les affiliés nés à
+      compter du 1er janvier 1956. Cette majoration est égale à 0,5 % par trimestre.
+      [...] Article 15 : Cet article est remplacé par les dispositions suivantes : «
+      Article 15 L'affilié remplissant les conditions pour prétendre au versement de la
+      pension de retraite du régime complémentaire peut demander à en bénéficier dès
+      l'âge d'ouverture du droit à pension de retraite tel qu'il est fixé à l'article L.
+      161-17-2 du code de la sécurité sociale. A titre transitoire, pour les affiliés
+      nés avant le 1er janvier 1956, l'âge d'ouverture du droit à pension de retraite
+      est fixé selon le calendrier figurant à l'article D. 161-2-1-9 du code de la
+      sécurité sociale. La pension de retraite est réduite par application d'un
+      coefficient d'anticipation qui est fonction du nombre de trimestres manquants, à
+      la date d'effet des droits, pour atteindre l'âge permettant d'obtenir une pension
+      de retraite à taux plein tel qu'il est fixé à l'article L. 351-8 (1°) du code de
+      la sécurité sociale. Pour les affiliés nés à compter du 1er janvier 1956, ce
+      coefficient est égal à : 1,25 % par trimestre manquant pour un âge de départ à la
+      retraite compris entre l'âge d'ouverture du droit à pension de retraite et 65 ans
+      ; 0,5 % par trimestre manquant pour un âge de départ à la retraite compris entre
+      65 ans et l'âge permettant d'obtenir une pension de retraite à taux plein. Pour
+      les affiliés nés jusqu'au 31 décembre 1955, les coefficients d'anticipation
+      figurent dans un tableau en annexe des présents statuts. [...] 1. Pour les assurés
+      nés avant le 30 juin 1951 inclus, les coefficients sont fixés ainsi qu'il suit :
+      ÂGE DE DÉPART COEFFICIENT 60 ― 25,00 % [...] 62 ― 15,00 % [...] 65 0,00 % Pas de
+      majoration de pension pour un départ après 65 ans. 2. Pour les assurés nés entre
+      le 1er juillet 1951 et le 31 décembre 1952 inclus, [...] 66 2,00 % Pas de
+      majoration de pension pour un départ après 66 ans. 3. Pour les assurés nés entre
+      le 1er janvier 1953 et le 31 décembre 1955 inclus, les coefficients sont fixés
+      ainsi qu'il suit : ÂGE DE DÉPART COEFFICIENT 61 ― 22,00 % [...] 62 ― 17,00 % [...]
+      64 ― 7,00 % [...] 65 ― 2,00 % [...] 66 0,00 % [...] 68 4,00 % Pas de majoration
+      de pension pour un départ après 68 ans. »
+  - id: JORFARTI000024270209
+    article: arrêté du 23 juin 2011, article 3
+    en_vigueur: 2011-06-30
+    publie_le: 2011-06-29
+    citation: >-
+      « Sont approuvées, telles qu'elles sont annexées au présent arrêté, les
+      modifications apportées aux statuts du régime d'assurance vieillesse
+      complémentaire des pharmaciens. » : l'arrêté ne fixe pas de date, et entre en
+      vigueur le lendemain de sa publication
+  nee_de: JORFARTI000024270214
+  bornes:
+    liquidation.date_effet: [2011-06-30, 2024-01-10]
+  contenu:
+    parametres:
+      age_table: cavp
+      decote_par_trimestre: 0.0125
+      decote_annulee_par_la_duree: false
+      decote_palier_age: 65
+      decote_par_trimestre_apres_palier: 0.005
+      surcote_par_trimestre: 0.005
+      surcote_trimestres_maximum: 12
+    droit: >-
+      ouverture à l'âge de L. 161-17-2 (de D. 161-2-1-9 pour les nés avant 1956) ;
+      retraite entière à 65 ans jusqu'à la génération 1952, à 66 ans de 1953 à 1955, à
+      l'âge du 1° de L. 351-8 depuis 1956 ; 1,25 % par trimestre manquant jusqu'à 65 ans,
+      0,5 % de 65 ans à cet âge, le tableau annexé l'écrivant pour les nés jusqu'en 1955 ;
+      majoration de 0,5 % par trimestre au-delà, aucune pour les nés jusqu'au 30 juin
+      1951, jusqu'à 66 ans pour les nés du 1er juillet 1951 à 1952, jusqu'à 68 ans de
+      1953 à 1955, trois ans depuis 1956 ; le montant majoré de 4 % depuis 1956, de 2 %
+      de 1953 à 1955 ; l'inapte sans coefficient dès l'âge d'ouverture
+    conditions: >-
+      la cessation de toute activité pharmaceutique non salariée, jusqu'au 9 janvier
+      2024 ; l'inaptitude reconnue par la commission de la caisse
+  exemples: aucun trouvé
+- id: statuts_de_2024
+  statut: lue
+  textes:
+  - id: JORFARTI000048880592
+    article: annexe de l'arrêté du 19 décembre 2023, II, 2° (article 12) et 6° (article 15)
+    en_vigueur: 2024-01-10
+    publie_le: 2024-01-09
+    citation: >-
+      « 2° L'article 12 est ainsi modifié : a) Au premier alinéa, les mots : « et qui a
+      cessé toute activité pharmaceutique non salariée » sont supprimés ; [...] 6°
+      L'article 15 est ainsi modifié : a) Au premier alinéa les mots : « remplissant les
+      conditions pour prétendre au versement de la pension de retraite du régime
+      complémentaire » sont supprimés et les mots : « en bénéficier » sont remplacés par
+      les mots : « bénéficier de sa pension de retraite du régime complémentaire » ; b)
+      Les quatre derniers alinéas sont remplacés par deux alinéas ainsi rédigés : «
+      L'affilié qui bénéficie d'une liquidation anticipée au régime de base, dans les
+      conditions prévues aux II, III et IV de l'article L. 643-3 en bénéficie dans les
+      mêmes conditions et modalités au régime complémentaire fonctionnant par
+      répartition. « Par dérogation, en cas de liquidation anticipée dans les conditions
+      prévues au II de l'article L. 643-3, sa pension de retraite complémentaire est
+      affectée d'un coefficient de minoration égal à - 1,25 % par trimestre manquant
+      jusqu'à l'âge de 65 ans. »
+  - id: JORFARTI000048880590
+    article: arrêté du 19 décembre 2023, article 2
+    en_vigueur: 2024-01-10
+    publie_le: 2024-01-09
+    citation: >-
+      « Le présent arrêté sera publié au Journal officiel de la République française. » :
+      l'arrêté ne fixe pas de date, et entre en vigueur le lendemain de sa publication
+  nee_de: JORFARTI000048880592
+  bornes:
+    liquidation.date_effet: [2024-01-10, 2026-07-18]
+  contenu:
+    parametres:
+      age_table: cavp
+      decote_par_trimestre: 0.0125
+      decote_annulee_par_la_duree: false
+      decote_palier_age: 65
+      decote_par_trimestre_apres_palier: 0.005
+      surcote_par_trimestre: 0.005
+      surcote_trimestres_maximum: 12
+    droit: >-
+      celui des statuts de 2011, l'inapte et la carrière longue exceptés : qui liquide
+      sa base par anticipation au titre des II, III ou IV de L. 643-3 liquide sa
+      complémentaire « dans les mêmes conditions et modalités » ; la carrière longue, II,
+      minorée de 1,25 % par trimestre manquant jusqu'à 65 ans
+    conditions: celles des statuts de 2011, sans la cessation d'activité
+  exemples: aucun trouvé
+- id: reglement_de_2026
+  statut: lue
+  textes:
+  - id: JORFARTI000054436087
+    article: annexe I de l'arrêté du 10 juillet 2026, règlement, articles 8, 12, 14 et 15
+    en_vigueur: 2026-07-18
+    publie_le: 2026-07-17
+    citation: >-
+      « Le conseil d'administration de la caisse d'assurance vieillesse des pharmaciens
+      détermine chaque année la valeur de service d'un trimestre de retraite applicable
+      à l'âge du taux plein fixé au 1° de l'article L. 351-8 du code de la sécurité
+      sociale. « A titre transitoire : « - pour les générations nées en 1953, 1954 et
+      1955, cet âge est fixé à 66 ans et la valeur de service du trimestre de retraite
+      est multipliée par le quotient de 0,96 sur 0,98 ; « - pour les générations nées
+      avant le 1 er janvier 1953, cet âge est fixé à 65 ans et la valeur de service du
+      trimestre de retraite est multipliée par 0,96. [...] « L'affilié peut demander à
+      bénéficier de sa pension de retraite du régime complémentaire dès l'âge
+      d'ouverture du droit à pension de retraite tel qu'il est fixé à l'article L.
+      161-17-2 du code de la sécurité sociale. « La pension de retraite est réduite par
+      application d'un coefficient de minoration déterminé en fonction de l'âge de
+      l'affilié à la date d'effet des droits. « Ce coefficient est égal à : « - 1,25 %
+      par trimestre d'anticipation entre l'âge d'ouverture des droits et 65 ans ; « -
+      0,5 % par trimestre d'anticipation entre 65 ans et l'âge fixé au 1° de l'article
+      L. 351-8 du code de la sécurité sociale. [...] « Par dérogation, en cas de
+      liquidation anticipée dans les conditions prévues au II de l'article L. 643-3, la
+      pension de retraite complémentaire est affectée d'un coefficient de minoration
+      égal à - 1,25 % par trimestre d'anticipation jusqu'à l'âge de 65 ans. « La pension
+      de retraite est majorée lorsqu'elle est liquidée au-delà de l'âge du taux plein
+      fixé à l'article 8 du présent règlement et jusqu'à cet âge augmenté de trois ans
+      pour les affiliés nés à compter du 1 er janvier 1956. « Cette majoration est égale
+      à 0,5 % par trimestre. [...] « L'entrée en jouissance de la retraite de droits
+      propres est fixée au premier jour du trimestre civil qui suit cette demande. [...]
+      « La pension de retraite prévue au présent chapitre est augmentée d'une
+      bonification de 10 % pour tout affilié ayant eu au moins trois enfants. »
+  - id: JORFARTI000054153444
+    article: décret n° 2026-418, article 4, 6° (article 4 du décret n° 49-580)
+    en_vigueur: 2026-07-01
+    publie_le: 2026-05-31
+    citation: >-
+      « 6° Le premier alinéa de l'article 4 est remplacé par les dispositions suivantes
+      : « Les conditions d'attribution et de service des prestations du présent régime,
+      ainsi que les modalités particulières de la fraction du régime gérée en
+      capitalisation, sont précisées par un règlement de la section professionnelle des
+      pharmaciens, approuvé par arrêté du ministre chargé de la sécurité sociale » ;
+      l'article 30 : « Le présent décret entre en vigueur le 1 er juillet 2026. »
+      (JORFARTI000054153813)
+  - id: JORFARTI000054436084
+    article: arrêté du 10 juillet 2026, article 1er
+    en_vigueur: 2026-07-18
+    publie_le: 2026-07-17
+    citation: >-
+      « Sont approuvés, tels qu'ils sont annexés au présent arrêté, les règlements des
+      régimes d'assurance vieillesse complémentaire, d'assurance invalidité-décès et de
+      prestations complémentaires de vieillesse de la section professionnelle des
+      pharmaciens. » : l'arrêté ne fixe pas de date, et entre en vigueur le lendemain de
+      sa publication ; du 1er au 17 juillet 2026, la fiche tient les statuts pour en
+      vigueur
+  nee_de: JORFARTI000054436087
+  bornes:
+    liquidation.date_effet: [2026-07-18, null]
+  contenu:
+    parametres:
+      age_table: cavp
+      decote_par_trimestre: 0.0125
+      decote_annulee_par_la_duree: false
+      decote_palier_age: 65
+      decote_par_trimestre_apres_palier: 0.005
+      surcote_par_trimestre: 0.005
+      surcote_trimestres_maximum: 12
+    droit: >-
+      celui des statuts de 2024, mot pour mot pour la minoration, la carrière longue et
+      la majoration (article 12), la date d'effet (article 14) et les enfants (article
+      15, « 10 % ») ; la valeur de service fixée pour l'âge du 1° de L. 351-8, multipliée
+      par 0,96 pour les nés avant 1953 et par 0,96/0,98 de 1953 à 1955 (article 8)
+    conditions: celles des statuts de 2024
+  exemples: aucun trouvé
+approximations:
+- version: [statuts_d_avant_2009]
+  textes: >-
+    statuts approuvés par l'arrêté du 1er juin 1950 et leurs modifications, dont l'index
+    JORF n'a que les titres ; l'arrêté du 31 août 1990, au seul Bulletin officiel (no
+    90-40)
+  ecart: >-
+    Avant le 7 juin 2009, le modèle sert la décote du régime de base, que la durée
+    annule, jusqu'à l'âge d'annulation de la génération, sans majoration ni bonification
+    pour enfants ; ce que les statuts d'alors disaient n'est pas lu. Du 1er janvier au 6
+    juin 2009, il sert déjà la règle des statuts du 11 mai 2009, à l'âge seul, avec la
+    bonification pour enfants (`CAVP_HORS_DU_MODELE`, tests/test_sections_sante.py).
+  effet: >-
+    non mesuré ; né le 10 mars 1940, parti à 64 ans le 1er avril 2004, entré à 21 ans,
+    durée atteinte, le modèle sert 1 (10 160,24 € par an), entré à 30 ans, 0,95 (7 677,91
+    €) ; né le 10 mars 1945, parti à 64 ans le 1er avril 2009, entré à 21 ans, 0,95 (10
+    434,11 €) ; essai du 5 novembre 2026, dans les deux moteurs, requête du formulaire
+- version: [statuts_de_2011]
+  textes: arrêté du 23 juin 2011, annexe, articles 12 et 15
+  ecart: >-
+    Le modèle ne sert les deux pentes et la majoration qu'à partir du 1er janvier 2012,
+    la période de 2009 courant jusqu'au 31 décembre 2011 ; les statuts les servent dès le
+    30 juin 2011 (`CAVP_HORS_DU_MODELE`). Aucune pension n'en est changée : la seconde
+    pente ne touche que les nés depuis 1953, qui n'avaient pas en 2011 l'âge d'ouverture
+    de D. 161-2-1-9 ; la majoration, que les nés depuis le 1er juillet 1951, qui
+    n'avaient pas soixante-cinq ans.
+  effet: aucun
+- version: [statuts_de_2011, statuts_de_2024, reglement_de_2026]
+  textes: >-
+    statuts de 2011, article 12 (« majoré de 4 % », « majoré de 2 % ») ; règlement de
+    2026, article 8 (« multipliée par 0,96 », « par le quotient de 0,96 sur 0,98 »)
+  ecart: >-
+    Le texte ne tranche pas, pour le modèle, quelle génération il sert mal. Les textes
+    donnent trois valeurs de service : depuis le 30 juin 2011, celle des nés depuis 1956
+    vaut 1,04 fois la retraite entière de l'article 11, celle des nés de 1953 à 1955,
+    1,02 fois ; depuis le 18 juillet 2026, celle des nés avant 1953 vaut 0,96 fois celle
+    des nés depuis 1956, celle des nés de 1953 à 1955, 0,96/0,98 fois. Le modèle en sert
+    une seule, le rendement de 4,66 % calé sur l'annuité du mémento de 2024, 320,75 €,
+    puis 4,29 % sur celle de 2026, 328,80 €, dont aucun texte lu ne dit la génération.
+    Si c'est la valeur des nés depuis 1956, ce que l'article 8 de 2026 dit de la valeur
+    qu'il fait fixer, le modèle sert trop aux nés jusqu'en 1955 ; si c'est la retraite
+    entière de l'article 11, il sert trop peu aux nés depuis 1953 de 2011 à 2026. Les
+    deux textes ne disent pas non plus le même rapport : 1/1,04 = 0,9615 en 2011, 0,96
+    en 2026, pour les nés avant 1953.
+  effet: >-
+    dans la première lecture, né le 10 mars 1950, parti à 65 ans le 1er avril 2015 :
+    12 040,82 € par an servis, 12 040,82 / 1,04 = 11 577,71 € aux statuts de 2011,
+    463,11 € par an de trop, et 12 040,82 × 0,96 = 11 559,19 € au règlement de 2026,
+    481,63 € ; né le 10 mars 1954, parti à 66 ans le 1er avril 2020 : 12 890,56 €
+    servis, × 1,02 / 1,04 = 12 642,67 €, 247,90 € de trop, × 0,96 / 0,98 = 12 627,49 €,
+    263,07 €. Dans la seconde, né le 10 mars 1956, parti à 67 ans le 1er avril 2023 :
+    14 772,97 € servis, × 1,04 = 15 363,89 €, 590,92 € par an de moins. Essai du 5
+    novembre 2026, dans les deux moteurs, requête du formulaire, entré à 21 ans
+- version: [statuts_de_2011, statuts_de_2024, reglement_de_2026]
+  textes: >-
+    statuts de 2011, article 15 et son tableau ; règlement de 2026, article 12
+  ecart: >-
+    Le texte ne tranche pas le trimestre entamé : le coefficient est « fonction du
+    nombre de trimestres manquants » (2011) ou « déterminé en fonction de l'âge de
+    l'affilié » (2026), et le tableau ne donne que des âges en trimestres entiers, «
+    60,25 ― 23,75 % » ; l'assuré né au second semestre de 1951 s'ouvre à 60 ans et 4
+    mois, entre deux lignes. Le modèle compte au trimestre supérieur les trimestres
+    qui précèdent 65 ans.
+  effet: au plus 1,25 point de la pension ; non mesuré
+- version: [statuts_de_2024, reglement_de_2026]
+  textes: >-
+    arrêté du 19 décembre 2023, annexe, II, 6° (article 15) ; règlement de 2026,
+    article 12, septième alinéa
+  ecart: >-
+    Erreur du modèle, déclarée, non corrigée : depuis le 10 janvier 2024, la carrière
+    longue « est affectée d'un coefficient de minoration égal à - 1,25 % par trimestre
+    manquant jusqu'à l'âge de 65 ans » ; le modèle lui sert les deux pentes, 0,5 % par
+    trimestre de 65 ans à l'âge du 1° de L. 351-8 en plus, dans la limite de vingt
+    trimestres que l'article 15 de 2009 posait et que celui de 2011, qui le remplace,
+    n'a plus. La lecture contraire — la dérogation ne ferait que compter la première
+    pente depuis l'âge du départ, la seconde restant due — n'est pas tenable : la
+    dérogation fixe le coefficient « égal à » 1,25 % par trimestre « jusqu'à l'âge de 65
+    ans », là où la règle générale le compte « pour atteindre l'âge permettant d'obtenir
+    une pension de retraite à taux plein ». À soixante ans, les deux s'accordent.
+  effet: >-
+    né le 10 mars 1965, entré à 19 ans, parti en carrière longue à 62 ans le 1er avril
+    2027 : le modèle sert 0,81 (12 × 1,25 % + 8 × 0,5 % = 19 %), 11 035,07 € par an ; le
+    texte 0,85 (12 × 1,25 %), 11 035,07 / 0,81 × 0,85 = 11 580,01 €, 544,94 € par an de
+    moins ; né le 10 mars 1966, entré à 20 ans, à 63 ans le 1er avril 2029 : 0,86 au
+    lieu de 0,90, 12 175,81 € au lieu de 12 742,13 €, 566,32 € de moins ; né le 10 mars
+    1966, entré à 15 ans, à 58 ans le 1er avril 2024 : 0,75 au lieu de 0,65 (28 × 1,25
+    %), 10 580,06 € au lieu de 10 580,06 / 0,75 × 0,65 = 9 169,39 €, 1 410,68 € par an
+    de trop ; né le 10 mars 1964, entré à 17 ans, à 60 ans le 1er avril 2024 : 0,75
+    dans le modèle et le texte. Essai du 5 novembre 2026, dans les deux moteurs,
+    requête du formulaire, motif `carriere_longue`
+- version: [statuts_de_2009, statuts_de_2011, statuts_de_2024, reglement_de_2026]
+  textes: statuts de 2009, article 14 ; règlement de 2026, article 14
+  ecart: >-
+    Erreur du modèle, déclarée, non corrigée, la même que pour la CAVOM et la CARPIMKO :
+    l'entrée en jouissance « est fixée au premier jour du trimestre civil qui suit cette
+    demande », phrase qu'aucun texte ne touche de 2009 à 2026 (2011 ajoute à l'article
+    le paiement mensuel, 2016 en change le dernier alinéa, la fin du versement, 2025 en
+    supprime le quatrième, qui n'est pas celui de l'entrée en jouissance, qu'on compte
+    à part ou non la première phrase de l'article) et que le règlement reprend ; le modèle
+    sert la pension le premier du mois qui suit l'âge, avec la base
+    (`date_effet_mois_suivant`). Le texte ne tranche pas si un trimestre entamé
+    au-delà de l'âge du taux plein majore.
+  effet: >-
+    né le 10 mai 1960, entré à 21 ans, le pharmacien demande sa pension à 67 ans, en mai
+    2027 : le modèle la sert dès le 1er juin 2027, 14 548,91 € par an ; le règlement, le
+    1er juillet 2027 : un mois servi trop tôt, 14 548,91 / 12 = 1 212,41 €, sans
+    majoration dans aucun des deux (un mois et 21 jours au-delà de 67 ans). Essai du 5
+    novembre 2026, dans les deux moteurs, requête du formulaire
+- version: [statuts_de_2009, statuts_de_2011, statuts_de_2024]
+  textes: >-
+    statuts de 2009 et de 2011, article 15 (l'inapte) ; arrêté du 19 décembre 2023,
+    annexe, II, 6° (III et IV de L. 643-3)
+  ecart: >-
+    Renvoyé, non doublé : l'inapte des libéraux, que le modèle sert à l'âge légal
+    (question 11 du propriétaire, `130/2026-11-03-decisions-du-proprietaire.md` ;
+    `130/2026-11-05-retouches-de-la-relecture-r-e2.md`, B2) ; ici, « sans coefficient
+    d'anticipation à partir de l'âge de 60 ans » (2009), « à partir de l'âge d'ouverture
+    du droit à pension » (2011), « dans les mêmes conditions et modalités » que la base
+    (2024). La carrière longue servie avant 2024, que l'article 15 de 2011 n'ouvrait
+    pas : `liquidation_regime_par_regime` (R-N2, N-bis).
+  effet: renvoyé
+- version: [statuts_de_2009, statuts_de_2011]
+  textes: statuts de 2009 et de 2011, article 12, premier alinéa
+  ecart: >-
+    La condition de cessation de toute activité pharmaceutique non salariée, supprimée
+    le 10 janvier 2024, n'est pas modélisée : le modèle liquide à la date demandée.
+  effet: non mesuré
+textes_sans_effet:
+- id: JORFARTI000002079662
+  article: arrêté du 27 mars 2007, annexe
+  publie_le: 2007-05-06
+  motif: l'article 29, la rente du conjoint survivant dans le volet en capitalisation
+- id: JORFARTI000026475319
+  article: arrêté du 24 septembre 2012, annexe
+  publie_le: 2012-10-10
+  motif: >-
+    les statuts du régime invalidité-décès et des prestations complémentaires des
+    directeurs de laboratoire, non ceux du régime complémentaire
+- id: JORFARTI000030711362
+  article: arrêté du 4 juin 2015, annexe
+  publie_le: 2015-06-12
+  motif: >-
+    les articles 3, 4, 4 bis, 4 ter, 6 et 22 à 36 (cotisations, classes, capitalisation,
+    réversion), non les articles 12, 14, 15 et 17
+- id: JORFARTI000033538003
+  article: arrêté du 30 novembre 2016, annexe, I
+  publie_le: 2016-12-06
+  motif: >-
+    le dernier alinéa de l'article 14, la fin du versement, « dernier jour du mois » du
+    décès, et les articles 18, 18 bis, 27, 30 et 31
+- id: JORFARTI000035176693
+  article: arrêté du 5 juillet 2017, annexe
+  publie_le: 2017-07-13
+  motif: les statuts généraux de la section
+- id: JORFARTI000039357715
+  article: arrêté du 3 octobre 2019, annexe 1
+  publie_le: 2019-11-10
+  motif: les articles 4 et 4 bis, le revenu des classes de cotisation, et les statuts généraux
+- id: JORFARTI000039357732
+  article: arrêté du 3 octobre 2019, annexe 2
+  publie_le: 2019-11-10
+  motif: l'article 4, les classes de cotisation de 2020
+- id: JORFARTI000047826140
+  article: arrêté du 19 juin 2023, annexe
+  publie_le: 2023-07-14
+  motif: les statuts généraux de la section
+- id: JORFARTI000051568256
+  article: arrêté du 5 mai 2025, annexe, III
+  publie_le: 2025-05-07
+  motif: >-
+    les articles 1er à 9 bis, 18 à 21, 29 et 36 ; à l'article 14, « Le quatrième alinéa
+    est supprimé » et « A compter du 1er janvier 2013, la » ôté du cinquième, le
+    paiement mensuel ; l'article 16, la définition de l'inaptitude, abrogé : ni l'âge,
+    ni le coefficient, ni l'entrée en jouissance
+- id: JORFARTI000054888291
+  article: arrêté du 21 septembre 2026, article 2
+  publie_le: 2026-09-24
+  motif: >-
+    « à l'article 16, les trois occurrences du mot : « premier » sont remplacées par le
+    mot : « deuxième » » : l'article 16 du règlement du régime complémentaire, la
+    réversion, qui renvoie trois fois à la durée « visée au premier alinéa de l'article
+    9 », dite au deuxième ; ni la minoration ni son âge
+reformes:
+- cavp_statuts_2009
+- cavp_report_2011
 effet: >-
   La fiche lisait la décote du régime de base, que la durée annule : un pharmacien
   parti à 64 ans avec sa durée ne perdait rien de sa complémentaire, là où la caisse
   lui retire 9 %. Depuis le 23 septembre 2026, table `cavp`, `decote_annulee_par_la_duree:
-  false` et `decote_palier_age: 65`, dans les deux moteurs. Approximations : les
-  nés jusqu'en 1955 reçoivent les deux pentes depuis leur propre âge, leur tableau
-  n'étant pas lu ; la valeur de service n'est pas affectée de 0,96 ou de 0,96/0,98
-  pour ces générations ; le départ anticipé pour carrière longue, minoré « jusqu'à
-  l'âge de 65 ans » seulement depuis 2024, reçoit les deux pentes dans la limite
-  de vingt trimestres ; les statuts d'avant 2009 ne sont pas lus.
+  false` et `decote_palier_age: 65`, dans les deux moteurs. Lue au droit le 5 novembre
+  2026 (action 130) : cinq versions, les statuts d'avant le 7 juin 2009 non lus, ceux
+  du 11 mai 2009, leurs articles 12 et 15 récrits le 30 juin 2011 — le tableau des nés
+  jusqu'en 1955, que la fiche disait absent de l'index, y est, et le modèle le rend
+  ligne pour ligne —, l'article 15 récrit le 10 janvier 2024, le règlement de 2026.
+  Deux erreurs déclarées, la carrière longue depuis 2024 et la date d'effet au
+  trimestre civil ; deux points non tranchés, la valeur de service par génération et le
+  trimestre entamé.
 sources:
-  lu_le: 2026-09-23
+  lu_le: 2026-11-05
   prochaine_relecture: 2027-03-31
   a_relire:
-  - Lire l'annexe des statuts de 2011 et les statuts d'avant 2009.
+  - >-
+    Lire les statuts d'avant le 7 juin 2009 : l'arrêté du 1er juin 1950 et ses
+    modifications, dont celles de 1976, 1979 et 1981 qui touchent les articles 10 et
+    11, et l'arrêté du 31 août 1990 (Bulletin officiel no 90-40) ; ou les demander à la
+    CAVP. Trouver un exemple de la caisse : la valeur de service servie à un pharmacien
+    né avant 1953, et une pension de carrière longue liquidée depuis 2024.
   lectures:
   - type: jorf
     reference: >-
-      Les trois textes lus dans l'index JORF du dépôt ; le tableau des coefficients
-      des nés jusqu'en 1955, « en annexe des présents statuts » de 2011, n'y figure
-      pas.
-    date: 2026-09-23
+      Arrêté du 11 mai 2009, articles 1er et 2 et annexe, partie III, articles 12 à 17
+      (JORFARTI000020694601, JORFARTI000020694602, JORFARTI000020694605) ; arrêté du 23
+      juin 2011, articles 3 et 6 et annexe, le tableau de l'article 15 compris
+      (JORFARTI000024270209, JORFARTI000024270214) ; arrêté du 19 décembre 2023, annexe,
+      II (JORFARTI000048880592) ; arrêté du 10 juillet 2026, article 1er et annexe I,
+      articles 8 à 16 (JORFARTI000054436084, JORFARTI000054436087) ; décret n° 2026-418,
+      articles 4 et 30 ; les arrêtés sans effet de 2007, 2012, 2015, 2016, 2017, 2019,
+      2023, 2025 et du 21 septembre 2026 ; les titres des arrêtés de 1956 à 1990 ; lus
+      dans l'index JORF du dépôt, à jour du 5 novembre 2026, les textes qui touchent la
+      section relevés par leur titre et par « CAVP » ou « assurance vieillesse des
+      pharmaciens » dans leur corps, sans borne.
+    date: 2026-11-05
+  - type: legifrance
+    reference: >-
+      Décret n° 49-580, article 4, rédaction du 1er janvier 2009 (LEGIARTI000020081472),
+      « établi par les statuts de la section professionnelle des pharmaciens », lu dans
+      l'index LEGI du dépôt, à jour du 4 novembre 2026, qui n'a pas la rédaction de
+      2026.
+    date: 2026-11-05
   - type: autre
     reference: >-
       CAVP, pages « Comment votre retraite de pharmacien libéral est-elle calculée
@@ -40,33 +577,13 @@ sources:
     url: >-
       https://www.cavp.fr/pr%C3%A9parer-votre-retraite/comment-votre-retraite-est-elle-calcul%C3%A9e
     date: 2026-09-23
-textes_a_rattacher:
-- reference: >-
-    statuts du régime complémentaire, articles 12, 15 et 17, approuvés par l'arrêté
-    du 11 mai 2009 (JORFTEXT000020694598)
-- reference: >-
-    statuts, articles 12 et 15, dans la rédaction de l'arrêté du 23 juin 2011 (JORFTEXT000024270202)
-- reference: >-
-    règlement du régime, articles 8, 12 et 15, approuvé par l'arrêté du 10 juillet
-    2026 (JORFTEXT000054436076)
-reformes:
-- cavp_statuts_2009
-- cavp_report_2011
-textes_a_relire:
-- id: JORFTEXT000054888282
-  article: '2'
-  publie_le: 2026-09-24
-  question: >-
-    L'arrêté du 21 septembre 2026 remplace, à l'article 16 d'un règlement de la
-    CAVP annexé à l'arrêté du 10 juillet 2026, les trois « premier » par
-    « deuxième » : lire lequel des trois règlements, et si l'article touche la
-    minoration ou son âge.
 code:
   interrupteurs:
     decote_annulee_par_la_duree: false
   moteur: >-
     `decote_annulee_par_la_duree: false` : la durée d'assurance n'annule pas la minoration,
-    que seul l'âge efface.
+    que seul l'âge efface. `decote_palier_age: 65` et `decote_par_trimestre_apres_palier:
+    0.005` : 1,25 % par trimestre jusqu'à 65 ans, 0,5 % au-delà.
   python: >-
     droit/liquider.py : abattement_points, abattement_regime_de_base, decote_opposable,
     trimestres_de_decote ; droit/ouvrir.py : age_taux_plein ; scenarios/actuel.py :
@@ -77,7 +594,10 @@ code:
     moteur/js/regimes.js : AgesRegimes ; moteur/js/droit/completer.js : completer,
     tauxMajorationEnfants
   parametres: >-
-    regimes/cavp_complementaire.yaml : age_table, age_taux_plein, decote_par_trimestre,
-    decote_palier_age, decote_par_trimestre_apres_palier, avantages_non_contributifs ;
+    contenu.parametres de chaque version : age_table, decote_par_trimestre,
+    decote_annulee_par_la_duree, decote_palier_age, decote_par_trimestre_apres_palier,
+    surcote_par_trimestre, surcote_trimestres_maximum ; regimes/cavp_complementaire.yaml :
+    age_table, age_taux_plein, decote_par_trimestre, decote_palier_age,
+    decote_par_trimestre_apres_palier, avantages_non_contributifs ;
     legislation/ages_regimes.csv : cavp
-  tests: [tests/test_sections_sante.py, tests/js/moteur.test.js]
+  tests: [tests/test_sections_sante.py, tests/test_sections_liberales.py, tests/js/moteur.test.js]

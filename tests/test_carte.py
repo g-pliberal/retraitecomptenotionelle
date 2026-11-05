@@ -266,6 +266,7 @@ LUES_AU_DROIT = frozenset("""
     carcdsf_minoration_age_seul
     cavom_ages_minoration cavom_assiette_2016
     carpimko_ages_2015 carpimko_assiette_2026
+    cavp_minoration_deux_pentes
 """.split())
 
 
