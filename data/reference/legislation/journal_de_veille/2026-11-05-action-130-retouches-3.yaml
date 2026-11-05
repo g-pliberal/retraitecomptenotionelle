@@ -1,0 +1,39 @@
+date: "2026-11-05"
+session: "action 130, Retouches 3 : les écarts des relectures R-N (la CRPNPAC) et R-E2 (la CARCDSF), repris dans les fiches"
+consulte: >-
+  python scripts/veille_droit.py ; docs/veille_droit.md ; les index du dépôt, récupérés : JORF à
+  jour du 3 novembre 2026, LEGI à jour de l'incrément du 2 novembre 2026 (20261102-213929).
+  Code de l'aviation civile : R. 426-15-1 (LEGIARTI000006845221 de 1984, LEGIARTI000006845222
+  de 1995), R. 426-18 (LEGIARTI000006845236, LEGIARTI000006845237), R. 426-11
+  (LEGIARTI000006845205, LEGIARTI000024795153, LEGIARTI000044496243), R. 426-11-1
+  (LEGIARTI000006845207), R. 426-15-4 (LEGIARTI000006845227), R. 426-16-1
+  (LEGIARTI000036880164) ; le décret n° 2011-1500, article 26 (LEGIARTI000024779267), en entier ;
+  code des transports, R. 6527-21 (LEGIARTI000048325100). Code de la sécurité sociale : D. 351-1-1
+  (LEGIARTI000026139949, LEGIARTI000047634571, LEGIARTI000053356023, LEGIARTI000054059621),
+  L. 643-3 (LEGIARTI000047453031, LEGIARTI000053280388), L. 643-4 (LEGIARTI000047453026),
+  D. 643-14 (LEGIARTI000047634694), D. 351-1-14 (LEGIARTI000047634688, LEGIARTI000053355951),
+  L. 643-5 (LEGIARTI000006743795, LEGIARTI000006743794), L. 351-7 (LEGIARTI000006742675),
+  L. 351-1-5 (LEGIARTI000047449233). JORF : l'arrêté du 1er octobre 2007, article 2
+  (JORFARTI000002267801) ; l'arrêté du 28 décembre 2010, articles 2 et 3 (JORFARTI000023336803,
+  JORFARTI000023336805).
+trouve: >-
+  Textes neufs lus : L. 643-5 et L. 351-7, qui définissent l'inaptitude en des termes différents,
+  quand D. 351-1-14 nomme l'inapte de L. 351-7 et L. 643-4, 2°, a, celui de L. 643-5 : aucun décret
+  lu ne fixe d'âge propre à l'inapte de L. 643-5, et D. 643-14 ne renvoie qu'à D. 351-1-14 ; la
+  lecture « 62 ans » est la seule qui donne un âge au IV de L. 643-3, mais le texte ne la dit pas en
+  toutes lettres (fiche liquidation_regime_par_regime, approximations). L'article 2 de l'arrêté du
+  1er octobre 2007 abroge le règlement de 1955 « à l'exception de l'article 18 », resté en vigueur
+  jusqu'à l'arrêté du 28 décembre 2010 ; son texte n'est pas à l'index. Le décret n° 2011-1500,
+  article 26, I : 16 annuités en 2012, 16,5, 17 en 2014, 17,5, 18, 18,5, 19, 19,5 en 2019 (le II et le
+  IV lus aussi). R. 426-15-1 de 1984 et de 1995 : la CRPNPAC dès 45 ans, que le modèle refuse. Une
+  inexactitude de la relecture R-N, relevée au passage : elle dit qu'aucun témoin n'a de navigant ;
+  tests/temoins/simulations.json porte sept témoins statut_personnel_navigant*, partis à 64 ans,
+  qui ne passent pas par le chemin corrigé (la CRPNPAC servie avant le régime général).
+reste: >-
+  Au propriétaire : le refus de la CRPNPAC avant 50 ans (1984 à 2011, sous les coefficients de
+  R. 426-18, et selon la valeur N du fonds de 1995 à 2011), les vingt annuités et leur barème de
+  2012 à 2019, la pension du 1er janvier 2024 de la CARCDSF (septième erreur), le refus de l'inapte
+  libéral par la base de la CNAVPL. À instruire : l'article 26, IV, du décret n° 2011-1500 (la limite
+  de la première tranche de 3,55 à 3,95 plafonds, de 2012 à 2020) face à la fiche de régime.
+  Notes : docs/feuille_de_route/130/2026-11-05-retouches-de-la-relecture-r-n.md et
+  docs/feuille_de_route/130/2026-11-05-retouches-de-la-relecture-r-e2.md.

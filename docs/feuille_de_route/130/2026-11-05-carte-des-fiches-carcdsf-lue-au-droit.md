@@ -185,3 +185,5 @@ qui ne sert plus le régime général du navigant avant l'âge de L. 161-17-2, s
 R-N en cours, le texte qu'elle proposait pour le bloc repris en substance ; les retouches
 de R-E, R-M3-ter, R-L-ter et R-D-bis (7e44534) ; la CAVAMAC puis la CARCDSF lues au droit,
 84 fiches et 491 manques ; les erreurs du modèle déclarées, qui attendent le propriétaire.
+
+Renvoi du 5 novembre 2026 : la pension du 1er janvier 2024 (septième erreur), le refus de l'inapte libéral par la base de la CNAVPL, le renvoi aux « écarts 1, 2 et 6 » et quatre écarts faibles sont repris dans `2026-11-05-retouches-de-la-relecture-r-e2.md`.

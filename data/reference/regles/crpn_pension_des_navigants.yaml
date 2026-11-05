@@ -308,6 +308,80 @@ approximations:
     la réserve N descend sous sept ans, ni la pension proportionnelle et son
     coefficient actuariel, ni le seuil d'heures de vol qui fait l'annuité.
   effet: non mesuré ; les navigants partis avant 2012
+- version: [vingt_cinq_annuites, valeur_n_du_fonds]
+  textes: >-
+    code de l'aviation civile, R. 426-15-1 (LEGIARTI000006845221, du 1er juillet 1984 au
+    1er juillet 1995 ; LEGIARTI000006845222, du 1er juillet 1995 au 1er janvier 2012),
+    R. 426-18 (LEGIARTI000006845236 ; LEGIARTI000006845237), R. 426-11-1
+    (LEGIARTI000006845207)
+  ecart: >-
+    De 1984 à 2011, la CRPNPAC s'ouvrait par anticipation dès quarante-cinq ans, et le
+    modèle refuse ces départs : la fiche de régime ouvre la caisse à cinquante ans à toute
+    date (`age_ouverture: 50`), et la saisie rend `non_ouverte` pour tout départ plus
+    précoce (essai du 5 novembre 2026, dans les deux moteurs). Rédaction de 1984,
+    R. 426-15-1 : « L'entrée en jouissance de la pension prévue à l'article R. 426-11 ne
+    peut être antérieure à la date à laquelle l'intéressé a atteint l'âge de cinquante
+    ans. Toutefois, l'entrée en jouissance prend effet immédiatement lorsque la cessation
+    d'activité est postérieure à l'âge de quarante-cinq ans accomplis, pour l'affilié qui
+    compte vingt-cinq annuités valables pour la retraite et qui demande la liquidation
+    anticipée de sa pension, sous réserve des réductions prévues à l'article R. 425-18. »
+    (le texte écrit « R. 425-18 » ; R. 426-18, qui renvoie au « deuxième alinéa de
+    l'article R. 426-15-1 », donne les coefficients : « 45 ans / 0,65 46 ans / 0,73 47 ans
+    / 0,81 48 ans / 0,88 49 ans / 0,95 »). Rédaction de 1995, R. 426-15-1 : « Le droit à
+    pension peut être ouvert par anticipation : a) Pour les pensions à taux plein,
+    postérieurement au quarante-cinquième anniversaire, avec application des
+    coefficients de minoration prévus à l'article R. 426-18 ; b) Pour les pensions
+    proportionnelles, à l'exception de celles visées à l'article R. 426-11-3,
+    postérieurement au cinquantième anniversaire, si l'intéressé ne justifie pas du nombre
+    de jours validés nécessaires à l'ouverture du droit à pension proportionnelle
+    conformément aux dispositions du deuxième alinéa de l'article R. 426-11-2, avec
+    application des coefficients actuariels d'anticipation prévus à l'article R. 426-18-1
+    », et R. 426-18, de la même date : « Dans le cas de jouissance anticipée avant l'âge de
+    cinquante ans, à l'exception des situations visées à l'article R. 426-15-2, de la
+    pension mentionnée au a de l'article R. 426-15-1, la pension annuelle calculée
+    conformément aux prescriptions du présent chapitre est affectée des coefficients de
+    minoration suivants » (mêmes coefficients, de 0,65 à quarante-cinq ans à 0,95 à
+    quarante-neuf). R. 426-11-1, de 1995 à 2011, ne fixe pas l'âge où la caisse s'ouvre :
+    il fixe le droit « à pension à taux plein », à cinquante ans et « un nombre
+    d'annuités au moins égal à : 25, lorsque N est supérieur ou égal à 7 ; (32 - N),
+    lorsque N est supérieur à 2 et inférieur à 7 ; 30, lorsque N est inférieur ou égal à 2
+    ». Le texte de 1995 ne dit pas en toutes lettres que les pensions « à taux plein » du
+    a) sont celles de R. 426-11-1 : c'est la lecture qui s'impose, et elle lie
+    l'anticipation de 1995 à la valeur N du fonds, que le modèle ne porte pas.
+  effet: >-
+    non mesuré en euros ; né le 10 février 1957, entré à vingt ans, parti à 48 ans en mars
+    2005 : refusé (`non_ouverte`) ; le texte de 1995 lui ouvre la CRPNPAC au coefficient
+    0,88 s'il a les annuités de R. 426-11-1, 28 ici, c'est-à-dire si N est d'au moins 4.
+    Né le 10 février 1940, entré à vingt ans, parti à 47 ans en mars 1987 : refusé ; le
+    texte de 1984 la lui ouvre au coefficient 0,81 s'il compte vingt-cinq annuités
+    valables, 27 années de services ici, si chacune fait une annuité entière (R. 426-12)
+- version: [decote_age_et_duree, trente_annuites_duree_seule]
+  textes: >-
+    code de l'aviation civile, R. 426-11, I (LEGIARTI000024795153 ; LEGIARTI000044496243) ;
+    décret n° 2011-1500 du 10 novembre 2011, article 26, I (LEGIARTI000024779267, du
+    1er janvier 2012 au 16 décembre 2021) ; code des transports, R. 6527-21
+    (LEGIARTI000048325100)
+  ecart: >-
+    Le modèle n'oppose pas la condition de vingt annuités : « 2° Justifier de vingt
+    annuités acquises au titre des services valables pour la retraite tels qu'ils sont
+    définis à l'article R. 426-13. Cette condition n'est pas requise lorsque l'assuré a
+    atteint l'âge prévu à l'article R. 426-12 » (R. 426-11, I, rédactions de 2012 et de
+    2021 ; R. 6527-21, depuis le 1er novembre 2023, pose les mêmes conditions, 1° et 2°, en
+    renvoyant à R. 6527-28 et à R. 6527-23). De 2012 à 2019, cette condition est abaissée
+    par le décret n° 2011-1500, article 26, I : « Par dérogation aux dispositions du I de
+    l'article R. 426-11 du code de l'aviation civile, la condition d'annuité prévue au 2°
+    est fixée comme suit pour les pensions prenant effet entre le 1er janvier 2012 et le
+    31 décembre 2019 : 1° Du 1er janvier 2012 au 31 décembre 2012, à 16 annuités ; […] 3°
+    Du 1er janvier 2014 au 31 décembre 2014, à 17 annuités ; […] 8° Du 1er janvier 2019 au
+    31 décembre 2019, à 19,5 annuités » (les items omis : 16,5 annuités en 2013, 17,5 en
+    2015, 18 en 2016, 18,5 en 2017, 19 en 2018). La fiche de régime l'avait déjà dit en
+    manque (`crpnpac.yaml` : « les conditions de 2012 à 2021, qui montent à l'année
+    d'effet [...], ne sont pas portées »)
+  effet: >-
+    non mesuré ; né le 10 février 1964, entré à quarante ans, parti à cinquante-cinq ans :
+    quinze annuités, et la CRPNPAC servie le 1er mars 2019 (essai du 5 novembre 2026, dans
+    les deux moteurs), quand le texte demande 19,5 annuités à une pension de 2019, et
+    n'exempte que l'affilié qui a atteint l'âge de R. 426-12
 - version: [decote_age_et_duree, trente_annuites_duree_seule]
   ecart: >-
     Le taux d'appel de 2024 et de 2025 est écrit : « A compter de l'exercice 2024, le
@@ -349,6 +423,17 @@ sources:
       D. 6527-10 à D. 6527-73, toutes leurs rédactions depuis le 1er novembre 2023 ;
       décret n° 2011-1500, article 26 : index LEGI du dépôt, à jour au 13 octobre 2026
     date: 2026-10-14
+  - type: legifrance
+    reference: >-
+      Rouverts le 5 novembre 2026 (action 130, Retouches 3), index LEGI du dépôt à jour au 2
+      novembre 2026, pour la relecture R-N : R. 426-15-1, rédactions de 1984
+      (LEGIARTI000006845221) et de 1995 (LEGIARTI000006845222) ; R. 426-18
+      (LEGIARTI000006845236, LEGIARTI000006845237) ; R. 426-11 (LEGIARTI000006845205,
+      LEGIARTI000024795153, LEGIARTI000044496243) ; R. 426-11-1 (LEGIARTI000006845207) ;
+      décret n° 2011-1500, article 26, I (LEGIARTI000024779267) ; R. 6527-21
+      (LEGIARTI000048325100) : l'anticipation dès quarante-cinq ans de 1984 à 2011, et
+      le barème des vingt annuités de 2012 à 2019, que le modèle ne sert pas
+    date: 2026-11-05
 reformes: [navigants_2012, navigants_2022]
 code:
   moteur: >-

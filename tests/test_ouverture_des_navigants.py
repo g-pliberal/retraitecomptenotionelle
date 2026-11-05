@@ -7,10 +7,12 @@ l'âge de cinquante ans ; 2° Justifier de vingt annuités acquises au titre des
 services valables pour la retraite » (code de l'aviation civile, R. 426-11, I,
 LEGIARTI000024795153, du 1er janvier 2012 au 16 décembre 2021). Rien n'y
 demande que le régime général soit liquidé ; R. 426-16-1 (LEGIARTI000036880164,
-depuis le 7 mai 2018) majore même la pension « pour la période de jouissance
-comprise entre l'âge [...] d'ouverture du droit à pension, et ce au plus tôt
+du 7 mai 2018 au 1er novembre 2023) majore même la pension : « Pour la période
+de jouissance comprise entre l'âge auquel l'affilié aura atteint le nombre
+d'annuités nécessaires pour l'ouverture du droit à pension, et ce au plus tôt
 à l'âge mentionné au 1° du A du II de l'article R. 426-11, et l'âge mentionné
-à l'article L. 161-17-2 du code de la sécurité sociale ».
+à l'article L. 161-17-2 du code de la sécurité sociale, la pension mensuelle
+est assortie d'une majoration ».
 
 Le régime général : « L'assurance vieillesse garantit une pension de retraite à
 l'assuré qui en demande la liquidation à partir de l'âge mentionné à l'article

@@ -141,3 +141,5 @@ la citation et la lecture du jour.
   L. 161-17-2 (`130/2026-11-05-crpnpac-et-regime-general.md`) ; restent les statuts de
   la CAVOM, de la CARPIMKO, de la CAVP, de la CARCDSF et de la CPRN, et le défaut
   candidat des vingt annuités de la CRPNPAC. »
+
+Renvoi du 5 novembre 2026 : l'âge de la CRPNPAC avant 2012, la citation de R. 426-16-1, R. 6527-21, le décret n° 2011-1500, R. 426-15-4, D. 351-1-1 et les témoins du navigant sont repris dans `2026-11-05-retouches-de-la-relecture-r-n.md`.

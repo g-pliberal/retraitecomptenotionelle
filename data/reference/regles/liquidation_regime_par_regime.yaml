@@ -56,6 +56,21 @@ versions:
   - {id: LEGIARTI000044496243, article: "code de l'aviation civile, R. 426-11", en_vigueur: 2021-12-16}
   - {id: LEGIARTI000048325100, article: "code des transports, R. 6527-21", en_vigueur: 2023-11-01}
   - {id: LEGIARTI000036880164, article: "code de l'aviation civile, R. 426-16-1", en_vigueur: 2018-05-07}
+  - {id: LEGIARTI000006845221, article: "code de l'aviation civile, R. 426-15-1", en_vigueur: 1984-07-01}
+  - {id: LEGIARTI000006845222, article: "code de l'aviation civile, R. 426-15-1", en_vigueur: 1995-07-01}
+  - {id: LEGIARTI000006845227, article: "code de l'aviation civile, R. 426-15-4", en_vigueur: 1995-07-01}
+  - {id: LEGIARTI000024779267, article: "décret n° 2011-1500 du 10 novembre 2011, article 26", en_vigueur: 2012-01-01}
+  - {id: LEGIARTI000047634571, article: "D. 351-1-1 CSS", en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000053356023, article: "D. 351-1-1 CSS", en_vigueur: 2026-01-01}
+  - {id: LEGIARTI000054059621, article: "D. 351-1-1 CSS", en_vigueur: 2026-09-01}
+  - {id: LEGIARTI000047453031, article: "L. 643-3 CSS, IV", en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000053280388, article: "L. 643-3 CSS, IV", en_vigueur: 2025-12-31}
+  - {id: LEGIARTI000047453026, article: "L. 643-4 CSS, 2° et 3°", en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000047634694, article: "D. 643-14 CSS", en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000047634688, article: "D. 351-1-14 CSS", en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000053355951, article: "D. 351-1-14 CSS", en_vigueur: 2026-01-01}
+  - {id: LEGIARTI000006743795, article: "L. 643-5 CSS", en_vigueur: 2005-08-03}
+  - {id: LEGIARTI000006742675, article: "L. 351-7 CSS", en_vigueur: 1985-12-21}
   - {id: LEGIARTI000023035688, article: "L. 351-1 CSS", en_vigueur: 2010-11-11}
   - {id: LEGIARTI000025014605, article: "L. 161-17-2 CSS", en_vigueur: 2011-12-23}
   bornes:
@@ -101,13 +116,28 @@ versions:
       lors qu'il réunit cumulativement à la date d'effet de la pension les conditions
       suivantes : 1° Avoir atteint l'âge de cinquante ans ; 2° Justifier de vingt
       annuités » (code de l'aviation civile, R. 426-11, I, rédactions de 2012 et de
-      2021 ; R. 6527-21 du code des transports depuis le 1er novembre 2023) ; de 1995
-      à 2011, « Avoir atteint l'âge de cinquante ans » (R. 426-11-1). Aucune de ces
+      2021) ; R. 6527-21 du code des transports, depuis le 1er novembre 2023, pose les
+      mêmes conditions, 1° et 2°, mais d'autres mots : « dans les conditions prévues par
+      les articles R. 6527-22, R. 6527-27, R. 6527-49 et R. 6527-50 », et R. 6527-28 et
+      R. 6527-23 là où R. 426-11 dit R. 426-13 et R. 426-12. Avant 2012, R. 426-11-1
+      (de 1995 à 2011) fixe non l'âge où la caisse s'ouvre, mais le droit « à pension à
+      taux plein » (« Le droit à pension à taux plein d'un affilié est ouvert aux
+      conditions suivantes : Avoir atteint l'âge de cinquante ans ; [...] ») ; l'âge de
+      la caisse est dans R. 426-15-1 : cinquante ans, et dès quarante-cinq ans par
+      anticipation, de 1984 à 2011, que le modèle refuse (fiche
+      crpn_pension_des_navigants, approximations). La date d'effet est celle de la
+      demande : « l'entrée en jouissance d'une pension pour laquelle un droit est ouvert
+      prend effet le premier jour du mois suivant la réception de la demande » (R. 426-15-4,
+      LEGIARTI000006845227, du 1er juillet 1995 au 1er novembre 2023) ; le modèle date
+      la pension du premier jour du mois qui suit l'âge (fiche date_effet_mois_suivant),
+      la demande étant présumée faite le mois de l'âge. Aucune de ces
       rédactions, ni celles de R. 426-11 de 1984, 1995 et 2010, ne nomme le régime
-      général ; R. 426-16-1 (rédaction du 7 mai 2018) majore même la pension « pour la
-      période de jouissance comprise entre l'âge [...] d'ouverture du droit à pension,
+      général ; R. 426-16-1 (rédaction du 7 mai 2018 au 1er novembre 2023) majore même
+      la pension : « Pour la période de jouissance comprise entre l'âge auquel l'affilié
+      aura atteint le nombre d'annuités nécessaires pour l'ouverture du droit à pension,
       et ce au plus tôt à l'âge mentionné au 1° du A du II de l'article R. 426-11, et
-      l'âge mentionné à l'article L. 161-17-2 du code de la sécurité sociale ». Le
+      l'âge mentionné à l'article L. 161-17-2 du code de la sécurité sociale, la pension
+      mensuelle est assortie d'une majoration ». Le
       régime général du navigant attend cet âge : « L'assurance vieillesse garantit
       une pension de retraite à l'assuré qui en demande la liquidation à partir de
       l'âge mentionné à l'article L. 161-17-2 » (L. 351-1), « soixante-deux ans pour
@@ -181,6 +211,50 @@ approximations:
     le 10 octobre 1961 (1er novembre 2021) —, et tout vétérinaire parti avant 2022
     avant l'âge de sa base : si la complémentaire attendait la base, elle lui serait
     servie à cet âge, sous un coefficient plus haut
+- version: [chaque_regime_a_sa_date]
+  textes: >-
+    code de la sécurité sociale, L. 643-3, IV (LEGIARTI000047453031 ; LEGIARTI000053280388),
+    L. 643-4, 2° (LEGIARTI000047453026), D. 643-14 (LEGIARTI000047634694), D. 351-1-14
+    (LEGIARTI000047634688 ; LEGIARTI000053355951), L. 643-5 (LEGIARTI000006743795),
+    L. 351-7 (LEGIARTI000006742675)
+  ecart: >-
+    Le modèle refuse la liquidation de l'inapte des professions libérales à soixante-deux
+    ans, base de la CNAVPL comprise, quand le texte, lu avec D. 643-14, ouvre sa pension de
+    base à cet âge (aucune autre fiche ne le déclare pour la base : inaptitude_au_travail
+    ne dit des professions libérales que leur décote gardée). Pour les pensions prenant effet depuis le 1er septembre 2023,
+    L. 643-4 liquide sans coefficient de réduction « les pensions de retraite : [...] 2°
+    Des assurés ayant atteint l'âge prévu au IV de l'article L. 643-3 et relevant de l'une
+    des catégories suivantes : a) Reconnus inaptes au travail dans les conditions prévues
+    à l'article L. 643-5 », et L. 643-3, IV (inchangé mot pour mot dans la rédaction du 31
+    décembre 2025) abaisse l'âge : « IV.-La condition d'âge prévue au premier alinéa du I
+    du présent article est abaissée, dans des conditions fixées par décret, pour les
+    assurés relevant des 2° et 3° de l'article L. 643-4. » Le décret : « L'âge prévu au IV
+    de l'article L. 643-3 est celui prévu à l'article D. 351-1-14 » (D. 643-14), et D.
+    351-1-14 : « L'âge prévu au premier alinéa de l'article L. 351-1 est abaissé, en
+    application de l'article L. 351-1-5, à soixante-deux ans pour les assurés reconnus
+    inaptes au travail dans les conditions prévues à l'article L. 351-7 et pour les assurés
+    dont l'incapacité permanente est supérieure ou égale au pourcentage prévu pour
+    l'application de l'article L. 821-2 » (mêmes mots dans les deux rédactions, du 1er
+    septembre 2023 et du 1er janvier 2026). Ce que le texte ne dit pas en toutes lettres :
+    D. 351-1-14 nomme l'inapte de L. 351-7, quand L. 643-4, 2°, a, nomme celui de L. 643-5,
+    deux définitions en d'autres termes (L. 351-7 : « Peut être reconnu inapte au travail,
+    l'assuré qui n'est pas en mesure de poursuivre l'exercice de son emploi sans nuire
+    gravement à sa santé [...] » ; L. 643-5 : « L'inaptitude au travail s'apprécie en
+    déterminant si, à la date de la demande ou à une date postérieure, le requérant,
+    compte tenu de son âge, de son état de santé, de ses capacités physiques et mentales,
+    de ses aptitudes ou de sa formation professionnelle, n'est plus en mesure d'exercer
+    [...] »). Lue ainsi, avec D. 643-14, la seule lecture qui donne un âge au IV pour
+    l'inapte du 2°, a, la base s'ouvre à soixante-deux ans ; aucun autre texte lu n'en
+    donne un à l'inapte de L. 643-5. La relecture R-E2 n'y voit pas de doute ; ce que le
+    texte dit en toutes lettres s'arrête à D. 351-1-14
+  effet: >-
+    non mesuré dans la population ; l'inapte de la CARCDSF né en 1965 est refusé à 62 ans
+    (`non_ouverte`, âge opposé 62,75), le salarié inapte né la même année partant, lui, à
+    62 ans au motif `inaptitude` (essais de la file E, relus par R-E2 le 5 novembre 2026,
+    dans les deux moteurs) : la liquidation entière est refusée, la pension de base de la
+    CNAVPL avec la complémentaire ; le refus tient à l'ouverture, commune à toute la
+    personne (fiche carcdsf_minoration_age_seul). Erreur du modèle, posée au propriétaire,
+    non corrigée
 presomptions:
   depart_de_chaque_regime: >-
     la date d'effet de chaque pension que l'assuré ne dit pas
@@ -200,8 +274,13 @@ sources:
     instruire au code de l'aviation civile. Instruite le 5 novembre 2026 (file N) : la
     CRPNPAC se sert à son âge, le régime général et l'Agirc-Arrco à l'âge de
     L. 161-17-2 (note 130/2026-11-05-crpnpac-et-regime-general.md). Restent : la
-    condition de vingt annuités de R. 426-11, I, 2°, que le modèle n'oppose pas ;
-    l'article qui fixait l'âge avant 1995, non relu sur ce point.
+    condition de vingt annuités de R. 426-11, I, 2°, que le modèle n'oppose pas, abaissée
+    de 2012 à 2019 par le décret n° 2011-1500, article 26, I (« à 17 annuités » en 2014,
+    « à 19,5 annuités » en 2019 : fiche crpn_pension_des_navigants) ; et l'âge de la
+    CRPNPAC avant 2012, lu le 5 novembre 2026 (relecture R-N) : cinquante ans et, par
+    anticipation, quarante-cinq (R. 426-15-1 de 1984 et de 1995), que le modèle refuse
+    (fiche crpn_pension_des_navigants). Les notes 130/2026-11-05-relecture-de-n-crpnpac.md
+    et 130/2026-11-05-retouches-de-la-relecture-r-n.md disent le détail.
   - >-
     Le 5 novembre 2026 (file L-bis, action 130) : les statuts de la CARPV d'avant le
     1er janvier 2022, au Bulletin officiel (n° 99/33 pour l'arrêté du 5 juillet 1999 ;
@@ -270,6 +349,30 @@ sources:
       l'âge de seize ans »), L. 351-1-3 (LEGIARTI000028498841 : « une incapacité
       permanente d'au moins 50 % »), dans l'index LEGI du dépôt, à jour au 2 novembre
       2026 : la CRPNPAC s'ouvre à cinquante ans sans condition sur le régime général
+    date: 2026-11-05
+  - type: legifrance
+    reference: >-
+      Rouverts le 5 novembre 2026 (action 130, Retouches 3), index LEGI du dépôt à jour au 2
+      novembre 2026, pour la relecture R-N : R. 426-16-1, rédaction du 7 mai 2018
+      (LEGIARTI000036880164, jusqu'au 1er novembre 2023) citée à la lettre ; R. 6527-21
+      (LEGIARTI000048325100) ; R. 426-15-1 (LEGIARTI000006845221, LEGIARTI000006845222) ;
+      R. 426-15-4 (LEGIARTI000006845227) ; décret n° 2011-1500, article 26, I
+      (LEGIARTI000024779267) ; D. 351-1-1, ses rédactions depuis 2023 : du 1er septembre
+      2023 (LEGIARTI000047634571, pensions prenant effet à compter de cette date), du 1er
+      janvier 2026 (LEGIARTI000053356023, décret n° 2025-1410), du 1er septembre 2026
+      (LEGIARTI000054059621, décret n° 2026-345), qui disent toutes, au I, « 4° A
+      soixante-trois ans pour les assurés qui ont débuté leur activité avant l'âge de
+      vingt-et-un ans » : le navigant entré à vingt-deux ans n'a la carrière longue à
+      aucune date
+    date: 2026-11-05
+  - type: legifrance
+    reference: >-
+      Rouverts le 5 novembre 2026 (action 130, Retouches 3), index LEGI du dépôt à jour au 2
+      novembre 2026, pour la relecture R-E2 : L. 643-3, IV (LEGIARTI000047453031 ;
+      LEGIARTI000053280388), L. 643-4, 2° (LEGIARTI000047453026), D. 643-14
+      (LEGIARTI000047634694), D. 351-1-14 (LEGIARTI000047634688 ; LEGIARTI000053355951),
+      L. 643-5 (LEGIARTI000006743795), L. 351-7 (LEGIARTI000006742675) : l'inapte des
+      professions libérales à soixante-deux ans (approximations)
     date: 2026-11-05
 code:
   python: >-

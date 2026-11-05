@@ -59,8 +59,10 @@ versions:
     approuvé par l'arrêté du 6 janvier 1955, que l'arrêté du 1er octobre 2007 abroge
     (article 2, JORFARTI000002267801 : « L'arrêté du 6 janvier 1955 portant approbation
     du règlement de la section professionnelle des chirurgiens-dentistes relatif au
-    régime d'assurance vieillesse complémentaire des chirurgiens-dentistes est abrogé
-    […] »), et
+    régime d'assurance vieillesse complémentaire des chirurgiens-dentistes est abrogé à
+    l'exception de l'article 18 des statuts relatifs au régime d'assurance vieillesse
+    complémentaire » : cet article 18 reste en vigueur avec les statuts de 2007, jusqu'à
+    l'arrêté du 28 décembre 2010, voir les approximations), et
     de ses modifications, dont l'index JORF du dépôt n'a que des notices : celle du 29
     juin 1984, « L'ART. 15 DES STATUTS EST MODIFIE. » (JORFTEXT000000496869) ;
     celle du 27 février 1985, dont les modifications « PRENNENT EFFET A COMPTER DU
@@ -686,6 +688,23 @@ approximations:
     annule, sans la majoration de 10 % pour trois enfants ni l'anticipation des mères ;
     ce que le règlement d'alors disait n'est pas lu.
   effet: non mesuré
+- version: [statuts_d_avant_octobre_2007, statuts_de_2007]
+  textes: >-
+    arrêté du 1er octobre 2007, article 2 (JORFARTI000002267801) ; arrêté du 28 décembre
+    2010, articles 2 et 3 (JORFARTI000023336803 ; JORFARTI000023336805)
+  ecart: >-
+    L'arrêté du 1er octobre 2007 abroge le règlement de 1955 « à l'exception de l'article
+    18 des statuts relatifs au régime d'assurance vieillesse complémentaire » : cet article
+    18 est resté en vigueur avec les statuts de 2007 jusqu'à l'arrêté du 28 décembre 2010,
+    « L'article 18 mentionné à l'article 2 de l'arrêté du 1er octobre 2007 est abrogé »
+    (article 2, publié le 1er janvier 2011). Son texte n'est pas à l'index : ce qu'il
+    disait n'est pas lu, et le modèle ne le porte pas. Le même arrêté insère, à l'article
+    3, un titre VII « Retraite libérale et activité professionnelle » (articles 57 et 58,
+    sur le cumul), ce qui laisse penser que l'article 18 portait le cumul, sans l'établir
+    (relecture R-E2 du 5 novembre 2026)
+  effet: >-
+    non mesuré ; sans effet probable sur la minoration par l'âge, non établi : l'article
+    18 de 1955, de la section des chirurgiens-dentistes, reste à lire au Bulletin officiel
 - version: [statuts_de_2007]
   textes: statuts de 2007, articles 20 et 23 ; arrêté du 1er octobre 2007, publié le 10 octobre
   ecart: >-
@@ -721,8 +740,9 @@ approximations:
   ecart: >-
     Le modèle ne sert pas sans minoration les catégories que chaque texte nomme. De 2007 à
     2023, l'inapte et l'ancien déporté sont minorés comme l'assuré valide ; depuis 2024,
-    l'inapte est refusé avant l'âge légal de sa génération (motif `non_ouverte`), puis
-    minoré ; le parent d'un enfant handicapé, nommé depuis le 25 décembre 2017, n'a pas de
+    l'inapte est refusé avant l'âge légal de sa génération (motif `non_ouverte`, qui frappe
+    toute la liquidation, la base de la CNAVPL avec elle : fiche
+    liquidation_regime_par_regime), puis minoré ; le parent d'un enfant handicapé, nommé depuis le 25 décembre 2017, n'a pas de
     saisie au modèle, qui ne connaît pas l'allocation d'éducation de l'enfant handicapé ;
     l'ancien prisonnier ou combattant de 2007 et le grand invalide de guerre ne sont pas
     essayés (essai du 5 novembre 2026, dans les deux moteurs).
@@ -741,15 +761,21 @@ approximations:
     (`surcote_points: par_age_seul`), quand le texte la compte « par trimestre civil
     entier d'exercice libéral suivant le dernier jour du trimestre civil incluant l'âge »,
     aux affiliés « qui poursuivent leur activité libérale » : le trimestre civil où tombe l'âge
-    compte au modèle quand l'âge tombe le premier jour d'un trimestre civil, et les
-    trimestres sans exercice libéral y comptent (essai du 5 novembre 2026, dans les deux
-    moteurs).
+    compte au modèle quand l'âge tombe le premier jour d'un trimestre civil, et aussi,
+    selon le mois de l'effet, quand il tombe en cours de trimestre (le modèle prend le
+    quotient entier des mois écoulés depuis l'âge, le texte les trimestres civils pleins
+    qui suivent celui de l'âge) ; et les trimestres sans exercice libéral y comptent
+    (essai du 5 novembre 2026, dans les deux moteurs ; relecture R-E2).
   effet: >-
     né le 1er janvier 1948, taux plein à 65 ans le 1er janvier 2013, liquidé le 1er
     janvier 2015 : le texte, sept trimestres civils entiers (avril 2013 à décembre 2014),
     1,07 ; le modèle, 1,08. Le même, sans activité de 2010 à 2014 : le texte, 1 ; le
     modèle, 1,08, et jusqu'à 20 points (25 depuis 2024). Né le 1er janvier 1958, liquidé
-    le 1er janvier 2028 : le texte, onze trimestres à 1,25 %, 1,1375 ; le modèle, 1,15
+    le 1er janvier 2028 : le texte, onze trimestres à 1,25 %, 1,1375 ; le modèle, 1,15.
+    Né le 1er janvier 1953, taux plein à 66 ans et 2 mois, le 1er mars 2019, âge qui tombe
+    en cours de trimestre : liquidé le 1er mars 2022, le texte, onze trimestres civils
+    entiers (avril 2019 à décembre 2021), 1,11 ; le modèle, 1,12 ; le 1er décembre 2021,
+    le texte 1,10 et le modèle 1,11 ; le 1er février 2022, 1,11 des deux côtés
 - version: [statuts_de_2024, reglement_de_2026]
   textes: statuts de 2024, article 35, I, a et c ; règlement de 2026, article 3, I, a et c ; L. 351-8, 1°
   ecart: >-
@@ -762,7 +788,11 @@ approximations:
     né le 1er janvier 1955, liquidé le 1er janvier 2025 à 70 ans : le texte, sept
     trimestres à 1 % (avril 2022 à décembre 2023) et quatre à 1,25 %, 1,12 ; le modèle,
     1,15. Né le 1er janvier 1953, liquidé le 1er avril 2024 : le texte, quinze trimestres
-    à 1 % (avril 2020 à décembre 2023) et un à 1,25 %, 1,1625 ; le modèle, 1,25
+    à 1 % (avril 2020 à décembre 2023) et un à 1,25 %, 1,1625 ; le modèle, 1,25. Les 3
+    points du premier cas et les 8,75 du second comprennent le trimestre de l'âge que le
+    modèle compte à tort, qui est l'écart précédent : 1 à 1,25 point sur 3, 1,25 sur 8,75,
+    selon l'ordre du partage ; le reste est le taux, et pour le né de 1953 l'âge du départ
+    de la majoration, 3,75 points chacun (relecture R-E2)
 - version: [statuts_de_2011, statuts_de_2011_modifies_en_2012, statuts_de_2017]
   textes: statuts de 2011, article 19, I, b, et son tableau ; arrêté du 9 juillet 2012, annexe
   ecart: >-
@@ -775,20 +805,28 @@ approximations:
   effet: >-
     non mesuré pour le tableau ; pour les nés avant juillet 1951, nul à l'année ronde (né
     le 1er janvier 1951, liquidé le 1er janvier 2014 : 0,90, le texte et le modèle) ;
-    au-delà, 2,5 points au plus (né le 1er janvier 1947, liquidé le 1er juillet 2011 : le
-    modèle, 0,975 ; le texte, 0,975 ou 0,95 si l'année entamée compte)
+    au-delà, 3,75 points au plus (né le 1er janvier 1947, liquidé le 1er juillet 2011 : le
+    modèle, 0,975 ; le texte, 0,975 ou 0,95 si l'année entamée compte, 2,5 points ; liquidé
+    le 1er décembre 2011, un mois avant 65 ans : le modèle, 0,9875, un trimestre entamé ;
+    le texte, 0,95 si l'année entamée compte, 0,9958 au prorata, 3,75 points)
 - version: [statuts_de_2017]
   textes: arrêté du 27 décembre 2023, publié le 9 janvier 2024 ; statuts de 2017, article 35
   ecart: >-
-    Le modèle liquide toute l'année 2024 par la règle de 2024, quand les statuts de 2017
-    restent en vigueur jusqu'au 9 janvier : une pension qui prend effet le 1er janvier 2024
-    reçoit la minoration de 2024, 15 % au plus, et non celle de 2017, 1,50 % par trimestre
-    pour les nés depuis 1955, sans limite. Ce que la caisse a servi à ces pensions n'est
-    pas lu (essai du 5 novembre 2026, dans les deux moteurs).
+    Septième erreur du modèle, après les six de la note du lot
+    (130/2026-11-05-carte-des-fiches-carcdsf-lue-au-droit.md) : il liquide toute l'année
+    2024 par la règle de 2024, quand les statuts de 2017 restent en vigueur jusqu'au 9
+    janvier, par les bornes mêmes de la fiche : une pension qui prend effet le 1er janvier 2024 reçoit
+    la minoration de 2024, 15 % au plus, et non celle de 2017, 1,50 % par trimestre pour
+    les nés depuis 1955, sans limite. Aucune des deux annexes ne porte de date
+    d'application, et le texte tranche : ce qui reste ouvert, c'est le compte du trimestre
+    entamé, et ce que la caisse a servi à ces pensions, qui n'est pas lu (essai du 5
+    novembre 2026, dans les deux moteurs ; relecture R-E2 du même jour)
   effet: >-
     né le 1er septembre 1961, liquidé le 1er janvier 2024 à 62 ans et 4 mois, 56 mois
     avant 67 ans : le modèle, 0,85 ; les statuts de 2017, 18 trimestres entiers, 0,73, ou
-    19 si le trimestre entamé compte, 0,715
+    19 si le trimestre entamé compte, 0,715 : 12 à 13,5 points de trop. Sous
+    `PRESOMPTIONS_DECALEES=1`, à jour présumé, l'effet passe au 1er décembre 2023 et le
+    modèle sert alors 0,715 (relecture R-E2, non rejouée dans la retouche du 5 novembre)
 - version: [statuts_de_2007, statuts_de_2011, statuts_de_2011_modifies_en_2012, statuts_de_2017, statuts_de_2024, reglement_de_2026]
   textes: >-
     statuts de 2007, articles 39 et 48 ; de 2011, articles 32 et 41 (51 depuis 2017) ;
@@ -818,8 +856,9 @@ textes_sans_effet:
   article: arrêté du 28 décembre 2010, articles 1er à 3
   publie_le: 2011-01-01
   motif: >-
-    l'intitulé de l'arrêté de 2007, l'abrogation de l'article 18 du règlement de 1955, le
-    titre VII, la retraite et l'activité libérale
+    l'intitulé de l'arrêté de 2007, l'abrogation de l'article 18 du règlement de 1955
+    (dont le texte n'est pas à l'index : sans effet probable sur la minoration, non établi,
+    voir les approximations), le titre VII, la retraite et l'activité libérale
 - id: JORFARTI000027825580
   article: arrêté du 30 juillet 2013, annexe
   publie_le: 2013-08-10
@@ -847,7 +886,8 @@ effet: >-
   avant, ceux de 2011 le 1er juillet 2011, leurs bornes le 22 juillet 2012, les âges
   écrits le 25 décembre 2017, l'article 35 récrit le 10 janvier 2024, le règlement le
   18 juillet 2026 ; ni l'inapte et les catégories sans minoration, ni la réversion ne
-  sont servis, ni les statuts de 2007 avant 2008, ni ceux de 2011 au premier semestre ;
+  sont servis, ni les statuts de 2007 avant 2008, ni ceux de 2011 au premier semestre,
+  ni ceux de 2017 du 1er au 9 janvier 2024 ;
   la majoration se compte au temps, non à l'exercice libéral par trimestre civil, et à
   1,25 % les trimestres d'avant 2024.
 sources:
@@ -862,12 +902,13 @@ sources:
     Retrouver le tableau des nés du 1er juillet 1951 à 1954, publié en image (JO n° 98 du
     27 avril 2011, texte 14 ; JO n° 168 du 21 juillet 2012, texte 3).
   - >-
-    Poser au propriétaire les écarts de la fiche, et ce que le texte ne tranche pas : la
-    pension du 1er janvier 2024 ; l'inapte à 62 ans depuis 2024, que l'article 3, II, du
-    règlement ouvre « à l'âge prévu au IV de l'article L. 643-3 » quand l'article 1er
-    demande l'âge de L. 161-17-2 ; si les deux plafonds de la majoration (20 et 25 %) se
-    cumulent ; si les statuts de 2011 comptent les trimestres d'exercice antérieurs au 1er
-    juillet 2011.
+    Poser au propriétaire les écarts de la fiche, dont la pension du 1er janvier 2024,
+    septième erreur, et ce que le texte ne tranche pas : l'inapte à 62 ans depuis 2024,
+    que l'article 3, II, du règlement ouvre « à l'âge prévu au IV de l'article L. 643-3 »
+    quand l'article 1er demande l'âge de L. 161-17-2, dont le refus frappe aussi la base
+    de la CNAVPL (fiche liquidation_regime_par_regime) ; si les deux plafonds de la
+    majoration (20 et 25 %) se cumulent ; si les statuts de 2011 comptent les trimestres
+    d'exercice antérieurs au 1er juillet 2011.
   lectures:
   - type: jorf
     reference: >-
@@ -885,6 +926,16 @@ sources:
       septembre 2023 et du 31 décembre 2025 ; L. 643-4, rédaction du 1er septembre 2023 ;
       D. 643-14 ; D. 351-1-14, rédactions du 1er septembre 2023 et du 1er janvier 2026. Le
       décret n° 50-28 n'y est que jusqu'en 2009, et le code civil n'y est pas.
+    date: 2026-11-05
+  - type: jorf
+    reference: >-
+      Rouverts le 5 novembre 2026 (action 130, Retouches 3), index JORF du dépôt à jour du 3
+      novembre 2026, pour la relecture R-E2 : l'arrêté du 1er octobre 2007, article 2
+      (JORFARTI000002267801), cité en entier : « est abrogé à l'exception de l'article 18
+      des statuts relatifs au régime d'assurance vieillesse complémentaire » ; l'arrêté du
+      28 décembre 2010, article 2 (JORFARTI000023336803), qui abroge cet article 18, et
+      son article 3 (JORFARTI000023336805), qui insère le titre VII ; le texte de l'article
+      18 n'est pas à l'index
     date: 2026-11-05
   - type: autre
     reference: >-
