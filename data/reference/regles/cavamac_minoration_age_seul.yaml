@@ -1,15 +1,424 @@
 schema_version: 1
 id: cavamac_minoration_age_seul
 intitule: >-
-  Régime complémentaire de la CAVAMAC : jusqu'en 2023, taux plein à l'âge de L.
-  161-17-2 augmenté de cinq ans, liquidation dès l'âge légal avec une minoration
-  de 5 % par tranche de douze mois d'anticipation, que la durée d'assurance n'annule
-  pas, et majoration de 5 % par année pleine différée dans la limite de 25 % ; depuis
-  le 1er janvier 2024, taux plein à 67 ans, minoration de 1,25 % par trimestre manquant
-  pour l'atteindre, et majoration de 5 % par année pleine COTISÉE au-delà, hors
-  cumul emploi-retraite.
+  Régime complémentaire de la CAVAMAC : du 1er juillet 2011 au 31 décembre 2023, taux
+  plein à l'âge de L. 161-17-2 augmenté de cinq ans, puis à 67 ans dès le 1er
+  septembre 2023, liquidation dès l'âge de L. 161-17-2 avec une minoration de 5 % par
+  tranche de douze mois d'anticipation, que la durée d'assurance n'annule pas, et
+  majoration de 5 % par année pleine différée dans la limite de 25 % ; depuis le 1er
+  janvier 2024, taux plein à 67 ans, minoration de 1,25 % par trimestre manquant pour
+  l'atteindre, et majoration de 5 % par année pleine COTISÉE au-delà, hors cumul
+  emploi-retraite ; avant le 1er juillet 2011, la règle de 2011 présumée.
+domaine: decote_surcote
 regimes: [cavamac_complementaire]
+etape: liquider_chaque_regime
+face: droit
 etat: approchee
+lit:
+- >-
+  l'âge de l'agent général à la date d'effet de sa pension, « au premier jour du
+  trimestre civil qui suit la demande écrite », et sa génération, qui donne l'âge de
+  l'article L. 161-17-2 et, jusqu'au 31 août 2023, l'âge du taux plein, cinq ans plus
+  tard
+- >-
+  les catégories servies sans minoration dès l'âge légal : de 2011 à 2023, l'inapte
+  reconnu par la commission d'inaptitude, l'ancien déporté ou interné, l'ancien
+  prisonnier de guerre ou combattant du décret n° 74-436, le grand invalide, l'invalide
+  professionnel à 66 % au moins ; depuis le 1er septembre 2023, les assurés des 2° et
+  3° de L. 643-4 et l'invalide professionnel à 66 % au moins
+- >-
+  depuis 2024, le départ anticipé pour longue carrière de L. 351-1-1, à 62 ou 63 ans
+- la date d'effet de la pension, qui choisit la rédaction des statuts ou du règlement
+ecrit:
+- >-
+  le coefficient de minoration qui réduit les points de la pension complémentaire, de
+  0,75 à cinq ans du taux plein à un, que `abattement_points` rend à
+  `liquider_chaque_regime`, et la majoration au-delà, que rend `surcote_points`
+dates_qui_decident:
+- liquidation.date_effet
+versions:
+- id: statuts_d_avant_2011
+  statut: supposee
+  hypothese: >-
+    les pensions qui prennent effet avant le 1er juillet 2011 relèvent des statuts
+    approuvés par l'arrêté du 22 décembre 1967 (JORFTEXT000000660274), dont l'index
+    JORF du dépôt n'a que le titre, et de leurs modifications, publiées au seul Bulletin
+    officiel : celle du 12 janvier 1990 touche « (art. 12 et 15) », et « L'arrêté du
+    12 janvier 1990 sera publié intégralement au Bulletin officiel no 90-05 »
+    (JORFTEXT000000342796) ; celle du 11
+    août 1998 « (art. 1er à 10, 12, 13, 15, 15 bis, 16, 19 bis et 20 à 23) »
+    (JORFARTI000001232209), « au Bulletin officiel no 98-38 » (JORFARTI000001901194).
+    Les articles 15 et 16 sont, en 2011, ceux du taux plein et de la minoration : leur
+    rédaction d'avant n'est pas lue. Celle du 17 décembre 2007 ne touche que les
+    articles 1er, 3, 4 et 5 (textes sans effet). La fiche présume la règle de 2011
+  fiabilite: >-
+    faible : l'âge du taux plein, l'âge d'ouverture et le barème, que nul texte lu ne
+    date avant le 1er juillet 2011
+  bornes:
+    liquidation.date_effet: [null, 2011-07-01]
+  contenu:
+    parametres:
+      abattement_points: cavom
+      age_ouverture_par_generation: true
+      age_taux_plein_par_generation: true
+    droit: celui de la version statuts_de_2011, présumé
+  exemples: aucun trouvé
+- id: statuts_de_2011
+  statut: lue
+  textes:
+  - id: JORFARTI000024270173
+    article: >-
+      statuts du régime d'assurance vieillesse complémentaire, annexe de l'arrêté du 23
+      juin 2011, articles 15 et 16
+    en_vigueur: 2011-07-01
+    publie_le: 2011-06-29
+    citation: >-
+      « Sous réserve du respect des conditions mentionnées à l'article 13 des présents
+      statuts, la pension de retraite complémentaire est liquidée à taux plein à tout
+      adhérent qui atteint l'âge prévu à l'article L. 161-17-2 du code de la sécurité
+      sociale augmenté de cinq années. La pension de retraite complémentaire est
+      liquidée à taux plein sans application d'un coefficient de minoration au plus
+      tôt à partir de l'âge prévu à l'article L. 161-17-2 du code de la sécurité
+      sociale : a) Pour les adhérents reconnus atteints d'inaptitude au travail par la
+      commission d'inaptitude selon la procédure prévue par les statuts de la Caisse
+      nationale d'assurance vieillesse des professions libérales ; b) Pour les anciens
+      déportés et internés, titulaires de la carte de déporté ou interné de la
+      Résistance, ou de la carte de déporté ou interné politique ; c) Pour les
+      personnes, anciens prisonniers de guerre et anciens combattants, visées par le
+      décret n° 74-436 du 15 mai 1974, aux âges et conditions de durée de captivité ou
+      services fixés par ledit décret pour les régimes d'allocation vieillesse. d) Pour
+      les grands invalides mentionnés aux articles L. 36 et L. 37 du code des pensions
+      militaires d'invalidité et des victimes de la guerre. e) Pour les adhérents
+      reconnus atteints d'une invalidité professionnelle d'un taux supérieur ou égal à
+      66 % par le régime d'assurance invalidité des agents généraux d'assurance
+      institué par le décret n° 2003-1273 du 26 décembre 2003. » (article 15) ; « Une
+      majoration de 5 % du nombre de points de retraite acquis au compte de l'adhérent
+      est appliquée pour chaque année pleine différée au-delà de l'âge mentionné à
+      l'article 15 des présents statuts, dans la limite maximum de 25 %. Sous réserve
+      du respect des conditions mentionnées à l'article 13, la pension de retraite
+      complémentaire peut être liquidée au plus tôt à partir de l'âge prévu à l'article
+      L. 161-17-2 du code de la sécurité sociale avec application d'un coefficient de
+      minoration au nombre de points de retraite acquis au compte de l'adhérent. Le
+      coefficient de minoration mentionné à l'alinéa précédent est de : ― 5 % lorsque
+      la liquidation de la pension de retraite complémentaire intervient dans les douze
+      mois précédant l'âge requis pour l'obtention d'une pension de retraite
+      complémentaire à taux plein. ― 10 % lorsque la liquidation de la pension de
+      retraite complémentaire intervient entre le 13e et le 24e mois précédant l'âge
+      requis pour l'obtention d'une pension de retraite complémentaire à taux plein. ―
+      15 % lorsque la liquidation de la pension de retraite complémentaire intervient
+      entre le 25e et le 36e mois précédant l'âge requis pour l'obtention d'une pension
+      de retraite complémentaire à taux plein. ― 20 % lorsque la liquidation de la
+      pension de retraite complémentaire intervient entre le 37e et le 48e mois
+      précédant l'âge requis pour l'obtention d'une pension de retraite complémentaire
+      à taux plein. ― 25 % lorsque la liquidation de la pension de retraite
+      complémentaire intervient entre le 49e et le 60e mois précédant l'âge requis pour
+      l'obtention d'une pension de retraite complémentaire à taux plein. » (article 16)
+  - id: JORFARTI000024270156
+    article: arrêté du 23 juin 2011, article 2
+    en_vigueur: 2011-07-01
+    publie_le: 2011-06-29
+    citation: « Les dispositions du présent arrêté entrent en vigueur le 1er juillet 2011. »
+  - id: LEGIARTI000023030950
+    article: >-
+      code de la sécurité sociale, article L. 351-8, 1°, rédaction du 1er juillet 2011
+      au 21 janvier 2014, et de même LEGIARTI000028498855 jusqu'au 31 août 2023
+    en_vigueur: 2011-07-01
+    citation: >-
+      « 1° Les assurés qui atteignent l'âge prévu à l'article L. 161-17-2 augmenté de
+      cinq années » : les mots mêmes de l'article 15, d'où la table du 1° de L. 351-8
+      que le modèle lit à la génération
+  nee_de: JORFARTI000024270173
+  bornes:
+    liquidation.date_effet: [2011-07-01, 2023-09-01]
+  contenu:
+    parametres:
+      abattement_points: cavom
+      age_ouverture_par_generation: true
+      age_taux_plein_par_generation: true
+    droit: >-
+      taux plein à l'âge de L. 161-17-2 augmenté de cinq ans, 65 ans pour les
+      générations d'avant juillet 1951, 67 ans depuis celle de 1955 ; liquidation dès
+      l'âge de L. 161-17-2 ; 5 % de minoration par tranche de douze mois, le mois
+      entamé compté, 25 % au plus ; au-delà du taux plein, 5 % par année pleine
+      différée, 25 % au plus ; la durée d'assurance n'entre nulle part
+    conditions: >-
+      sans minoration dès l'âge de L. 161-17-2, l'inapte, l'ancien déporté ou interné,
+      l'ancien prisonnier ou combattant du décret n° 74-436, le grand invalide et
+      l'invalide professionnel à 66 % au moins (article 15, a à e)
+  exemples: aucun trouvé
+- id: statuts_de_septembre_2023
+  statut: lue
+  textes:
+  - id: JORFARTI000047977908
+    article: annexe de l'arrêté du 4 août 2023, 6° (article 15) et 7°, b (article 16)
+    en_vigueur: 2023-09-01
+    publie_le: 2023-08-18
+    citation: >-
+      « 6° L'article 15 est ainsi modifié : a) Au premier alinéa, les mots : « prévu à
+      l'article L. 161-17-2 du code de la sécurité sociale augmenté de cinq années »
+      sont remplacés par les mots : « de 67 ans » ; b) Les deuxième à sixième alinéas
+      sont remplacés par les dispositions suivantes : « Sont liquidées à partir de
+      l'âge prévu au IV de l'article L. 643-3 et sans application d'un coefficient de
+      minoration les pensions de retraite complémentaire des assurés mentionnés aux 2°
+      et 3° de l'article L. 643-4 du code de la sécurité sociale. « Sont liquidées à
+      partir de l'âge prévu à l'article L. 161-17-2 du code de la sécurité sociale et
+      sans application d'un coefficient de minoration les pensions de retraite
+      complémentaire des adhérents reconnus atteints d'une invalidité professionnelle
+      d'un taux supérieur ou égal à 66 % par le régime d'assurance invalidité-décès des
+      agents généraux d'assurance institué par le décret n° 2003-1273 du 26 décembre
+      2003. » » ; « b) Le premier alinéa est complété par la phrase suivante : « Cette
+      majoration ne s'applique pas aux années de cotisations versées dans le cadre du
+      dispositif prévu à l'article 14 des présents statuts. » »
+  - id: JORFARTI000047977903
+    article: arrêté du 4 août 2023, article 2
+    en_vigueur: 2023-09-01
+    publie_le: 2023-08-18
+    citation: >-
+      « 1° Les dispositions prévues aux 5°, 6°, b du 7° et 8° de l'annexe au présent
+      arrêté entrent en vigueur le 1er septembre 2023 ; 2° Les dispositions prévues aux
+      a, c et d du 7° de l'annexe au présent arrêté entrent en vigueur le 1er janvier
+      2024. »
+  - id: LEGIARTI000047453026
+    article: code de la sécurité sociale, article L. 643-4, 2° et 3°, rédaction du 1er septembre 2023
+    en_vigueur: 2023-09-01
+    citation: >-
+      « 2° Des assurés ayant atteint l'âge prévu au IV de l'article L. 643-3 et
+      relevant de l'une des catégories suivantes : a) Reconnus inaptes au travail dans
+      les conditions prévues à l'article L. 643-5 ; b) Grands invalides mentionnés aux
+      articles L. 36 et L. 37 du code des pensions militaires d'invalidité et des
+      victimes de la guerre ; c) Anciens déportés et internés titulaires de la carte de
+      déporté ou interné de la Résistance ou de la carte de déporté ou interné
+      politique ; d) Personnes mentionnées au 5° de l'article L. 351-8. 3° Des
+      travailleurs handicapés admis à demander la liquidation de leur pension de
+      retraite dans les conditions prévues au III de l'article L. 643-3 »
+  nee_de: JORFARTI000047977908
+  bornes:
+    liquidation.date_effet: [2023-09-01, 2024-01-01]
+  contenu:
+    parametres:
+      abattement_points: cavom
+      age_ouverture_par_generation: true
+      age_taux_plein_par_generation: true
+    droit: >-
+      taux plein « de 67 ans » ; le barème de 2011 demeure jusqu'au 31 décembre, 5 %
+      par tranche de douze mois avant 67 ans ; la majoration par année pleine différée
+      demeure, hors des années de cumul emploi-retraite. Le modèle lit 67 ans dans la
+      table du 1° de L. 351-8, qui le donne à toute génération que la minoration peut
+      atteindre (voir les approximations)
+    conditions: >-
+      sans minoration, dès l'âge du IV de L. 643-3, les assurés des 2° et 3° de L.
+      643-4 — l'inapte, le grand invalide, l'ancien déporté ou interné, l'ancien
+      prisonnier de guerre du 5° de L. 351-8, le travailleur handicapé — ; dès l'âge de
+      L. 161-17-2, l'invalide professionnel à 66 % au moins
+  exemples: aucun trouvé
+- id: statuts_de_2024
+  statut: lue
+  textes:
+  - id: JORFARTI000047977903
+    article: arrêté du 4 août 2023, article 2, 2°
+    en_vigueur: 2024-01-01
+    publie_le: 2023-08-18
+    citation: >-
+      « 2° Les dispositions prévues aux a, c et d du 7° de l'annexe au présent arrêté
+      entrent en vigueur le 1er janvier 2024. »
+  - id: JORFARTI000047977908
+    article: annexe de l'arrêté du 4 août 2023, 7°, a, c et d (article 16)
+    en_vigueur: 2024-01-01
+    publie_le: 2023-08-18
+    citation: >-
+      « a) Au premier alinéa, le mot : « différée » est remplacée par les mots :
+      « cotisée dans le présent régime » ; » ; « c) Au deuxième alinéa, après les mots
+      : « au compte de l'adhérent », sont insérés les mots : « de 1,25 % par trimestre
+      manquant pour atteindre l'âge mentionné au premier alinéa de l'article 15. » ; d)
+      Les troisième à huitième alinéas sont remplacés par les dispositions suivantes :
+      « Par dérogation au deuxième alinéa et sous réserve que l'assuré réponde aux
+      conditions pour bénéficier du dispositif prévu à l'article L. 351-1-1 du code de
+      la sécurité sociale, la retraite complémentaire peut être liquidée au plus tôt :
+      « - à 62 ans pour les assurés ayant commencé leur activité avant l'âge de 20 ans ;
+      « - à 63 ans pour les assurés ayant commencé leur activité avant l'âge de 21 ans.
+      « Avec, dans les deux cas, l'application d'un coefficient de minoration de 15 %. »
+  nee_de: JORFARTI000047977903
+  bornes:
+    liquidation.date_effet: [2024-01-01, 2026-07-18]
+  contenu:
+    parametres:
+      abattement_points: decote_du_regime_de_base
+      age_ouverture_par_generation: true
+      age_taux_plein: 67
+      age_taux_plein_par_generation: false
+      decote_par_trimestre: 0.0125
+    droit: >-
+      taux plein à 67 ans ; liquidation dès l'âge de L. 161-17-2 avec 1,25 % de
+      minoration par trimestre manquant pour atteindre 67 ans, 25 % à 62 ans ; 5 % de
+      majoration par année pleine cotisée au-delà, 25 % au plus, hors des années de
+      cumul emploi-retraite ; la durée d'assurance n'entre nulle part
+    conditions: >-
+      celles de la version statuts_de_septembre_2023 ; et, sous les conditions de L.
+      351-1-1, la longue carrière liquidée à 62 ou 63 ans à 15 % de minoration
+  exemples: [cavamac_rco_decote_cinq_trimestres]
+- id: reglement_de_2026
+  statut: lue
+  textes:
+  - id: JORFARTI000054436046
+    article: >-
+      règlement du régime d'assurance vieillesse complémentaire, annexe I de l'arrêté
+      du 10 juillet 2026, articles 4 et 5
+    en_vigueur: 2026-07-18
+    publie_le: 2026-07-17
+    citation: >-
+      « Sous réserve du respect des conditions mentionnées à l'article 2, la pension de
+      retraite complémentaire est liquidée à taux plein à tout adhérent qui atteint
+      l'âge de 67 ans. » (article 4) ; « Sous réserve du respect des conditions
+      mentionnées à l'article 2, la pension de retraite complémentaire peut être
+      liquidée au plus tôt à partir de l'âge prévu à l'article L. 161-17-2 du code de
+      la sécurité sociale avec application d'un coefficient de minoration au nombre de
+      points de retraite acquis au compte de l'adhérent de 1,25 % par trimestre manquant
+      pour atteindre l'âge mentionné » ; « A compter de l'âge de 64 ans, les assurés
+      mentionnés au quatrième et cinquième alinéa n'entrent plus dans le champ de la
+      dérogation. Ils se voient appliquer le régime de droit commun de minoration prévu
+      au deuxième alinéa, soit un coefficient de minoration de 1,25 % par trimestre
+      manquant pour atteindre l'âge mentionné au premier alinéa de l'article 4. »
+      (article 5)
+  - id: LEGIARTI000054168357
+    article: >-
+      décret n° 67-1169 du 22 décembre 1967, article 4, dans la rédaction du décret n°
+      2026-418, en vigueur le 1er juillet 2026
+    en_vigueur: 2026-07-01
+    citation: >-
+      « Les conditions d'attribution et de service des prestations du présent régime
+      sont précisées par un règlement de la section professionnelle des agents généraux
+      d'assurance, approuvé par arrêté du ministre chargé de la sécurité sociale après
+      avis de la Caisse nationale d'assurance vieillesse des professions libérales. »
+  nee_de: JORFARTI000054436046
+  bornes:
+    liquidation.date_effet: [2026-07-18, null]
+  contenu:
+    parametres:
+      abattement_points: decote_du_regime_de_base
+      age_ouverture_par_generation: true
+      age_taux_plein: 67
+      age_taux_plein_par_generation: false
+      decote_par_trimestre: 0.0125
+    droit: >-
+      la règle de 2024, que le règlement reprend des statuts ; la longue carrière n'y
+      garde ses 15 % que jusqu'à 64 ans, puis prend le droit commun
+    conditions: >-
+      celles de 2024 (article 4) ; du 1er au 17 juillet 2026, le décret renvoie à un
+      règlement que l'arrêté, qui ne fixe pas de date, n'approuve qu'au 18 : la fiche
+      garde les statuts jusque-là, de même règle (ce que le texte ne tranche pas)
+  exemples: aucun trouvé
+approximations:
+- version: [statuts_d_avant_2011]
+  textes: >-
+    statuts de 1967, articles 15 et 16 dans leurs rédactions de 1990 et de 1998, au
+    seul Bulletin officiel
+  ecart: >-
+    Le modèle sert avant le 1er juillet 2011 la minoration de 2011, que nul texte lu ne
+    date ; il n'y sert en revanche aucune majoration (les périodes de 1968 à 2011 n'ont
+    pas de `surcote_par_trimestre`) : la présomption ne porte que sur la minoration.
+    Ce que les statuts d'alors disaient de l'une et de l'autre n'est pas lu.
+  effet: non mesuré
+- version: [statuts_de_2011]
+  textes: statuts de 2011, article 16, premier alinéa ; arrêté du 23 juin 2011, article 2
+  ecart: >-
+    Le modèle ne sert pas la majoration de 5 % par année pleine différée aux pensions
+    qui prennent effet du 1er juillet au 31 décembre 2011 : il les liquide par la
+    période de 2004 à 2011, qui n'en porte pas, quand les statuts de 2011 sont en
+    vigueur depuis le 1er juillet (essai du 5 novembre 2026, détail du moteur Python).
+  effet: >-
+    non mesuré dans la population ; pour l'agent né en février 1945, au taux plein à 65
+    ans, qui liquide en novembre 2011 à 66 ans et 9 mois, une année pleine différée,
+    soit 5 % de ses points : le modèle sert le coefficient 1, le texte 1,05
+- version: [statuts_de_2011, statuts_de_septembre_2023, statuts_de_2024, reglement_de_2026]
+  textes: >-
+    statuts de 2011, article 15, a à e ; arrêté du 4 août 2023, annexe, 6°, b ;
+    règlement de 2026, article 4
+  ecart: >-
+    Le modèle minore comme les autres l'inapte, l'ancien déporté ou interné, l'ancien
+    prisonnier ou combattant, le grand invalide, le travailleur handicapé et
+    l'invalide professionnel à 66 % : jusqu'en 2023, `abattement_ircec` ne lit pour la
+    CAVAMAC que l'âge ; depuis 2024, `abattement_regime_de_base` n'exonère l'inapte et
+    le travailleur handicapé que dans les régimes que nomment les fiches
+    `inaptitude_au_travail` et du handicap, où la CAVAMAC n'est pas. Les statuts et le
+    règlement les servent sans minoration dès l'âge de L. 161-17-2 jusqu'au 31 août
+    2023, dès l'âge du IV de L. 643-3 depuis, sauf l'invalide professionnel, toujours
+    à l'âge de L. 161-17-2. Ce que le texte ne tranche pas : l'âge du IV de L. 643-3,
+    que fixe un décret non lu ici.
+  effet: >-
+    non mesuré dans la population ; pour l'inapte, toute la minoration de son âge :
+    l'agent né en 1955 qui part à 62 ans en 2017 perd 5 tranches de douze mois × 5 % =
+    25 % de ses points au modèle (coefficient 0,75, essai du 5 novembre 2026), rien au
+    texte
+- version: [statuts_de_septembre_2023]
+  textes: arrêté du 4 août 2023, annexe, 6°, a
+  ecart: >-
+    Le texte fixe le taux plein « de 67 ans » pour tous ; le modèle le lit, jusqu'au 31
+    décembre 2023, dans la table du 1° de L. 351-8 (67 ans depuis la génération 1955,
+    de 65 ans et 4 mois à 66 ans et 7 mois pour celles de juillet 1951 à 1954). La
+    minoration n'en change pas : nul n'est minoré qui n'a pas 67 ans au taux plein
+    (les générations d'avant 1955 ont toutes plus de 68 ans le 1er septembre 2023).
+    La majoration se compte, pour elles, depuis un âge trop bas.
+  effet: >-
+    non mesuré dans la population ; l'agent né en février 1954 qui liquide en novembre
+    2023 à 69 ans et 9 mois a deux années pleines au-delà de 67 ans, 10 % ; le modèle
+    en compte trois depuis 66 ans et 7 mois, et sert 1,15 au lieu de 1,10 (essai du 5
+    novembre 2026)
+- version: [statuts_de_2024, reglement_de_2026]
+  textes: >-
+    arrêté du 4 août 2023, annexe, 7°, d ; règlement de 2026, article 5, troisième à
+    sixième alinéas
+  ecart: >-
+    Le modèle ne porte pas la longue carrière à 15 % de minoration à 62 ou 63 ans : il
+    lui oppose 1,25 % par trimestre manquant jusqu'à 67 ans. Depuis le 18 juillet
+    2026, le règlement lui rend le droit commun à 64 ans.
+  effet: >-
+    non mesuré dans la population ; l'agent né en 1964 au travail depuis ses 18 ans
+    reçoit au modèle 0,75 à 62 ans (20 trimestres × 1,25 % = 25 %) et 0,80 à 63 ans (16
+    × 1,25 % = 20 %), au texte 0,85 aux deux âges (essai du 5 novembre 2026)
+- version: [statuts_d_avant_2011, statuts_de_2011, statuts_de_septembre_2023, statuts_de_2024, reglement_de_2026]
+  textes: >-
+    statuts de 2011, articles 22 et 23 ; règlement de 2026, articles 11 et 12 ; avant
+    2011, nul texte lu de la réversion
+  ecart: >-
+    Le modèle ne sert aucune réversion de la CAVAMAC : aucune fiche de réversion ne
+    nomme `cavamac_complementaire`, et la ligne vaut zéro, motif `non_portee`, comme
+    pour la CAVEC et la CARPV (relecture R-E). Les statuts de 2011 et le règlement de
+    2026 servent au conjoint survivant âgé d'au moins 65 ans, marié deux ans au moins
+    ou dont un enfant est issu de l'union, de l'adhérent titulaire d'au moins 1 500
+    points, « soixante pour cent (60 %) des points de retraite acquis par l'adhérent
+    décédé » ; son montant « n'est pas minoré par le coefficient de minoration »
+    mais « bénéficie du coefficient de prorogation ».
+  effet: non mesuré ; pour le conjoint survivant, toute la réversion
+textes_sans_effet:
+- id: JORFARTI000017890649
+  article: arrêté du 17 décembre 2007, annexe
+  publie_le: 2008-01-18
+  motif: les articles 1er, 3, 4 et 5 des statuts, les adhérents, l'assiette, le taux et le paiement
+- id: JORFARTI000026475499
+  article: arrêté du 28 septembre 2012, annexe
+  publie_le: 2012-10-10
+  motif: l'article 19, la majoration pour enfant handicapé ; et l'invalidité-décès
+- id: JORFARTI000028814573
+  article: arrêté du 28 mars 2014, annexe, II
+  publie_le: 2014-04-02
+  motif: les articles 20, 24 et 25, le paiement mensuel et la date d'effet de la réversion
+- id: JORFARTI000032511119
+  article: arrêté du 4 mai 2016, annexe, II
+  publie_le: 2016-05-11
+  motif: les articles 1er, 5 bis et 14, le conjoint collaborateur volontaire et le cumul
+- id: JORFARTI000036100364
+  article: arrêté du 20 novembre 2017, annexe
+  publie_le: 2017-11-28
+  motif: l'article 26, la valeur du point
+- id: JORFARTI000051895020
+  article: arrêté du 8 juillet 2025, annexe, I
+  publie_le: 2025-07-16
+  motif: l'article 24, le paiement de la réversion jusqu'à la fin du mois du décès
+exemples:
+- cavamac_rco_decote_cinq_trimestres
+reformes:
+- cavamac_statuts_2011
+- cavamac_2024
 effet: >-
   La fiche opposait la décote du régime de base, que la durée annule : un agent
   général parti à l'âge légal avec sa durée ne perdait rien de sa complémentaire,
@@ -17,25 +426,40 @@ effet: >-
   cavom` jusqu'en 2023, `decote_annulee_par_la_duree: false` partout, la surcote
   par années pleines, et `surcote_trimestres_cotises` depuis 2024, qui ne compte
   que les trimestres cotisés au-delà de 67 ans ; tenu par tests/test_sections_liberales.py.
-  Approximation : la règle de 2011 est supposée la même avant, faute des statuts
-  publiés ; la liquidation dès 62 ou 63 ans des carrières longues, à 15 % de minoration,
-  n'est pas portée — le modèle leur oppose la minoration ordinaire.
+  Lue au droit le 5 novembre 2026 (action 130) : cinq versions, les statuts de 2011
+  en vigueur le 1er juillet 2011, présumés avant, l'article 15 récrit le 1er septembre
+  2023, l'article 16 le 1er janvier 2024, le règlement de 2026 ; ni l'inapte et les
+  catégories sans minoration, ni la longue carrière à 15 %, ni la réversion ne sont
+  servis, ni la majoration du second semestre 2011.
 sources:
-  lu_le: 2026-09-23
+  lu_le: 2026-11-05
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
-    Lire les statuts d'avant 2011 au Bulletin officiel, s'ils sont numérisés ; lire
-    le règlement de la section, que le décret n° 2026-418 appelle, quand un arrêté
-    l'aura approuvé.
+    Lire les statuts d'avant 2011 au Bulletin officiel — les articles 12 et 15 de 1990
+    (no 90-05), les articles 1er à 23 de 1998 (no 98-38) —, et l'arrêté du 2 novembre
+    1983 qui modifie les statuts du régime complémentaire (JORFTEXT000000494188), dont
+    l'index n'a que le titre.
+  - >-
+    Lire le décret qui fixe l'âge du IV de L. 643-3, où le règlement sert l'inapte
+    sans minoration depuis le 1er septembre 2023.
   lectures:
   - type: jorf
     reference: >-
-      Les deux arrêtés et l'article 13 du décret n° 2026-418, lus en entier dans
-      l'index JORF du dépôt. Les statuts de 1967 et leurs modifications jusqu'en
-      2007 n'ont été publiés qu'au Bulletin officiel : le Journal officiel n'en
-      porte que des titres, ou des articles sans rapport avec l'âge.
-    date: 2026-09-23
+      Index JORF du dépôt, à jour du 5 novembre 2026 : les statuts de 2011 et leur
+      arrêté ; les arrêtés du 17 décembre 2007, du 28 septembre 2012, du 28 mars 2014,
+      du 4 mai 2016, du 20 novembre 2017, du 4 août 2023, du 8 juillet 2025 et du 10
+      juillet 2026, lus en entier ; ceux du 20 octobre 2020 et du 19 octobre 2021, qui
+      ne touchent qu'aux statuts généraux ; les notices de 1967 à 1998, qui ne donnent
+      que des titres et des numéros d'articles.
+    date: 2026-11-05
+  - type: legifrance
+    reference: >-
+      Index LEGI du dépôt, à jour du 4 novembre 2026 : décret n° 67-1169, article 4,
+      ses trois rédactions ; L. 351-8, 1°, rédactions du 1er juillet 2011, du 22
+      janvier 2014 et du 1er septembre 2023 ; L. 643-3 et L. 643-4, rédactions du 1er
+      septembre 2023.
+    date: 2026-11-05
   - type: autre
     reference: >-
       CAVAMAC, « Mode de calcul de vos retraites RBL & RCO — Décotes & surcotes
@@ -50,22 +474,6 @@ sources:
     url: >-
       https://www.cavamac.fr/documents/calcul-des-decotes-surcotes-rbl-rco-quelques-exemples/
     date: 2026-09-23
-textes_a_rattacher:
-- reference: >-
-    statuts du régime complémentaire, articles 15 et 16, approuvés par l'arrêté
-    du 23 juin 2011 (JORFARTI000024270156, annexe JORFARTI000024270173)
-- reference: >-
-    statuts, articles 15 et 16, dans la rédaction de l'arrêté du 4 août 2023 (annexe
-    JORFARTI000047977908 ; dates d'effet à l'article 2, JORFARTI000047977903)
-- reference: >-
-    décret du 22 décembre 1967, dans la rédaction de l'article 13 du décret n° 2026-418
-    (JORFARTI000054153565), qui renvoie les conditions de service à un règlement
-    de la section
-exemples:
-- cavamac_rco_decote_cinq_trimestres
-reformes:
-- cavamac_statuts_2011
-- cavamac_2024
 code:
   interrupteurs:
     abattement_points: cavom
@@ -91,6 +499,8 @@ code:
     abattementRegimeDeBase, decoteOpposable, trimestresDeDecote, surcotePoints ;
     moteur/js/droit/ouvrir.js : ageTauxPlein
   parametres: >-
-    regimes/cavamac_complementaire.yaml : age_taux_plein, decote_par_trimestre,
-    surcote_par_trimestre, surcote_pas_trimestres, surcote_trimestres_maximum
+    contenu.parametres de chaque version : abattement_points, age_ouverture_par_generation,
+    age_taux_plein, age_taux_plein_par_generation, decote_par_trimestre ;
+    regimes/cavamac_complementaire.yaml : surcote_par_trimestre, surcote_pas_trimestres,
+    surcote_trimestres_maximum, surcote_trimestres_cotises
   tests: [tests/test_sections_liberales.py]

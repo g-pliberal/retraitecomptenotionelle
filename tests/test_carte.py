@@ -262,6 +262,7 @@ LUES_AU_DROIT = frozenset("""
     taux_plein_a_soixante_cinq_ans
     assiette_rco_independants
     cavec_minoration_age_seul carpv_minoration_age_seul
+    cavamac_minoration_age_seul
 """.split())
 
 

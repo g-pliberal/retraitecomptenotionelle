@@ -3291,16 +3291,16 @@ fabriqués.
 
 ### 130. L'architecture du dépôt : décidée, les phases 0 à 8 faites, les domaines à ouvrir — `en cours`
 
-**Reprise, au 3 novembre 2026.** Fait : phases 0 à 8, cinq domaines clos ; le sixième, les
-périodes assimilées manquantes, a ses étapes 1 à 6 faites (`130/2026-10-17-sixieme-domaine-etape-6.md`) ;
-l'abattement des marins (R. 11, 3°) ; relues conformes, la base des cultes (R-M5) et la majoration
-de l'Agirc-Arrco avant le coefficient (R-M3). L'Ircantec d'avant 1983 (décision 9) attend la file M3.
-Au propriétaire, README muet : la décision de la proposition, septième étape du sixième domaine, et la
-retraite progressive, le cumul et la seconde pension ; le reste de ce qui l'attend, avec ses 17 décisions,
-dans `130/2026-11-03-decisions-du-proprietaire.md`. Lus au droit : RAFP, CNAVPL, IEG, SNCF, RATP, marins,
-Ircantec, cultes, Agirc-Arrco, CAVEC et CARPV, corrigées d'après R-E, et deux fiches d'autres actions ;
-restent 85 fiches, 503 manques. La file E seule récrit ce bloc, la file G note sous `130/`. Ensuite : la
-CAVAMAC (`cavamac_minoration_age_seul`) ou la CARCDSF. Détail : `130/2026-11-03-corrections-de-la-relecture-r-e.md`.
+**Reprise, au 5 novembre 2026.** Fait : phases 0 à 8, cinq domaines clos, le sixième aux étapes 1 à 6. Vague 6, relues
+conformes : la majoration de l'Agirc-Arrco reversée sans coefficient (action 175, 5cf7bbc, 9367bc6), celle de l'Agirc de
+1994 à 1996 (18a4dc3, 996649f), la base des libéraux ouverte à l'âge légal (5f19af8, R-L 1dfa59a, un écart moyen). Le 5,
+relues conformes : L-bis (9fcd8a1, a175868), la CARPV d'avant 2022 présumée, les biologistes minorés jusqu'à l'âge de
+L. 351-8 ; L-ter (f6012e5, ca0ba01), les âges lus au mois ; l'Ircantec d'avant 1983, décision 9 (e27cdce, 6b05a20, cc627e8 ;
+R-M3-bis 87e0ce8 : un écart moyen, le 6° a) après avril 1983). Restent : la CRPNPAC, ouverte à 50 ans, qui ouvre au modèle
+le régime général du navigant (parti à 55 ans, il le touche), et les statuts de la CAVOM, CARPIMKO, CAVP, CARCDSF et CPRN ;
+défauts candidats non lancés : l'Agirc-Arrco de 1955 à 1983 par âge ou trimestre, les biologistes et la durée, le taux plein
+de l'ordonnance n° 82-270 et de la loi de 1977, `ages_reference.csv` au centième ; au propriétaire, `130/2026-11-03-decisions-du-proprietaire.md`.
+Lue au droit, la CAVAMAC : restent 85 fiches, 498 manques ; ses écarts à une file du modèle, puis la CARCDSF. File E seule. Détail : `130/2026-11-05-carte-des-fiches-cavamac-lue-au-droit.md`.
 
 Le dépôt devenait de plus en plus lourd à faire avancer. Une modification du
 moteur du scénario 1 touchait vingt fichiers en médiane, dont sept ou huit de

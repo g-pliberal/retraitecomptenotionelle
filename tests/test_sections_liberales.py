@@ -165,10 +165,11 @@ def test_la_cavec_majore_pour_trois_enfants_depuis_juillet_2025(simulateur):
 
 
 #: Les minorations à l'âge seul lues au droit le 3 novembre 2026 (action 130),
-#: et le régime que chacune minore.
+#: la CAVAMAC le 5, et le régime que chacune minore.
 MINORATIONS_LUES_AU_DROIT = {
     "cavec_minoration_age_seul": "cavec_complementaire",
     "carpv_minoration_age_seul": "carpv_complementaire",
+    "cavamac_minoration_age_seul": "cavamac_complementaire",
 }
 
 
@@ -178,11 +179,17 @@ def test_chaque_pension_minoree_porte_les_ages_et_le_taux_de_sa_version(
     """Statuts de la CAVEC (article 3.13 en 2008, article 12 en 2018, article
     1.1.3 du règlement de 2026) et de la CARPV (article 34 en 2021, article 2
     du règlement de 2026) : taux plein à 65 ans, liquidation dès 60 ans,
-    1,25 % par trimestre manquant, aucune durée n'y entrant. Chaque premier du
-    mois que couvre une version, de la création du régime à 2040, la période
-    qui liquide une pension prenant effet ce jour porte l'âge d'ouverture,
-    l'âge du taux plein et le taux que la version lit, et la durée n'y annule
-    pas la minoration."""
+    1,25 % par trimestre manquant, aucune durée n'y entrant. Statuts de la
+    CAVAMAC (articles 15 et 16 en 2011) : taux plein à l'âge de L. 161-17-2
+    « augmenté de cinq années », celui du 1° de L. 351-8 qui dit les mêmes
+    mots, liquidation dès l'âge de L. 161-17-2, 5 % par tranche de douze mois ;
+    puis « 67 ans » (arrêté du 4 août 2023, 6°) et, au 1er janvier 2024,
+    « 1,25 % par trimestre manquant » (7°, c ; article 5 du règlement de
+    2026). Chaque premier du mois que couvre une version, de la création du
+    régime à 2040, la période qui liquide une pension prenant effet ce jour
+    porte chacun des paramètres que la version lit — l'âge d'ouverture, l'âge
+    du taux plein, ou leur table par génération, le barème, le taux —, et la
+    durée n'y annule pas la minoration."""
     from datetime import date
 
     from retraite_notionnelle.noyau import carte
@@ -196,10 +203,7 @@ def test_chaque_pension_minoree_porte_les_ages_et_le_taux_de_sa_version(
         jour = debut or date(caisse.creation, 1, 1)
         while jour < (fin or date(2041, 1, 1)):
             periode = caisse.periode_a_l_effet(jour.isoformat())
-            assert (periode.age_ouverture, periode.age_taux_plein,
-                    periode.decote_par_trimestre) == (
-                lus["age_ouverture"], lus["age_taux_plein"],
-                lus["decote_par_trimestre"]), (version["id"], jour)
+            assert {cle: getattr(periode, cle) for cle in lus} == lus, (version["id"], jour)
             assert periode.decote_annulee_par_la_duree is False, (version["id"], jour)
             jour = date(jour.year + jour.month // 12, jour.month % 12 + 1, 1)
 
@@ -228,12 +232,23 @@ def test_chaque_version_lue_commence_quand_son_texte_entre_en_vigueur(fiche):
 #: en vigueur le 1er janvier 2022 ») ; les autres entrent en vigueur le
 #: lendemain de leur publication. La CARPV : l'alinéa de l'inapte de 2011, la
 #: renumérotation de 2014, l'alinéa récrit le 2 novembre 2015.
+#: La CAVAMAC, relevée le 5 novembre 2026 : l'arrêté du 23 juin 2011 met ses
+#: statuts en vigueur « le 1er juillet 2011 » (article 2) ; celui du 4 août
+#: 2023, le 6° de son annexe (l'article 15) « le 1er septembre 2023 », les a, c
+#: et d du 7° (l'article 16) « le 1er janvier 2024 » (article 2, 1° et 2°) ;
+#: celui du 10 juillet 2026 ne fixe pas de date.
 NAISSANCES_AU_JOURNAL_OFFICIEL = {
     "cavec_minoration_age_seul": {
         "JORFARTI000018197778": ("2008-03-01", "2008-03-02"),
         "JORFARTI000037363871": ("2018-09-04", "2018-09-05"),
         "JORFARTI000038689131": ("2019-06-27", "2019-06-28"),
         "LEGIARTI000054437585": ("2026-07-17", "2026-07-18"),
+    },
+    "cavamac_minoration_age_seul": {
+        "JORFARTI000024270173": ("2011-06-29", "2011-07-01"),
+        "JORFARTI000047977908": ("2023-08-18", "2023-09-01"),
+        "JORFARTI000047977903": ("2023-08-18", "2024-01-01"),
+        "JORFARTI000054436046": ("2026-07-17", "2026-07-18"),
     },
     "carpv_minoration_age_seul": {
         "JORFARTI000023448554": ("2011-01-19", "2011-01-20"),

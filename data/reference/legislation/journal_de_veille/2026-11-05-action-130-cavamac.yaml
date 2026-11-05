@@ -1,0 +1,36 @@
+date: "2026-11-05"
+session: "action 130, file E, vague 7 : le bloc « Reprise » de l'action, et la minoration de la CAVAMAC lue au droit"
+consulte: >-
+  python scripts/veille_droit.py ; docs/veille_droit.md ; les index JORF et LEGI du dépôt,
+  récupérés et mis à jour, au 5 novembre (JORF, quatre incréments) et au 4 novembre 2026
+  (LEGI, deux incréments). Dans JORF : les textes de la CAVAMAC de 1967 à 2026, cherchés à
+  « CAVAMAC » et aux « agents généraux » ; en entier, les statuts de 2011 (annexe
+  JORFARTI000024270173, articles 13 à 27, et l'article 2 de leur arrêté), les annexes des
+  arrêtés du 17 décembre 2007, du 28 septembre 2012, du 28 mars 2014, du 4 mai 2016, du 20
+  novembre 2017, du 20 octobre 2020, du 19 octobre 2021, du 4 août 2023 (et son article
+  2), du 8 juillet 2025 (et son article 2) et du 10 juillet 2026 (le règlement, articles 1er
+  à 16) ; les notices des textes de 1967 à 1998. Dans LEGI : le décret n° 67-1169, article 4,
+  ses trois rédactions ; L. 351-8, 1°, au 1er juillet 2011, au 22 janvier 2014 et au 1er
+  septembre 2023 ; L. 643-3 et L. 643-4 au 1er septembre 2023 ; L. 161-17-2 au 1er janvier
+  2012. Les notes de l'action 130 et de l'action 175 du 3 au 5 novembre, pour le bloc.
+trouve: >-
+  La CAVAMAC liquide, du 1er juillet 2011 au 31 décembre 2023, au taux plein à l'âge de L.
+  161-17-2 augmenté de cinq ans — 67 ans dès le 1er septembre 2023 —, dès l'âge de L.
+  161-17-2 avec 5 % de minoration par tranche de douze mois, sans durée, et majore de 5 %
+  par année pleine différée (statuts de 2011, articles 15 et 16) ; depuis le 1er janvier
+  2024, 1,25 % par trimestre manquant pour atteindre 67 ans, la majoration par année pleine
+  cotisée, la longue carrière à 62 ou 63 ans à 15 % (arrêté du 4 août 2023, article 2 et
+  annexe, 6° et 7°) ; depuis le 18 juillet 2026, le règlement, de même règle, la longue
+  carrière au droit commun dès 64 ans (articles 4 et 5). Sans minoration : l'inapte et
+  quatre autres catégories de 2011 à 2023, les assurés des 2° et 3° de L. 643-4 et
+  l'invalide professionnel depuis. Réversion : 60 % des points, sans la minoration, avec la
+  prorogation. Le modèle ne sert ni les catégories sans minoration, ni la majoration du
+  second semestre 2011, ni la longue carrière à 15 %, ni la réversion, et compte de
+  septembre à décembre 2023 la majoration depuis l'âge de la table de L. 351-8 : cinq
+  écarts, déclarés dans la fiche, pour une file du modèle.
+reste: >-
+  Les statuts d'avant 2011 : l'arrêté du 22 décembre 1967, ceux du 12 janvier 1990 (articles
+  12 et 15, Bulletin officiel no 90-05), du 11 août 1998 (articles 1er à 23, no 98-38) et du
+  2 novembre 1983, dont l'index n'a que le titre ou la notice (au propriétaire). Le décret
+  qui fixe l'âge du IV de L. 643-3. La majoration hors des années de cumul, non vérifiée au
+  moteur. La fiche suivante : la CARCDSF.
