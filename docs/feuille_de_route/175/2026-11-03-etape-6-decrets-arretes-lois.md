@@ -1,15 +1,5 @@
 # Étape 6, décrets, arrêtés et lois : les références sans thème, confrontées à la liste des textes et à l'index LEGI
 
-**Reprise, au 3 novembre 2026.** Une nature de l'étape est rangée, les décrets, arrêtés et
-lois sans thème : 1 013 des 1 020, sept à lire, nommés ici. Restent, une session par
-nature : les 642 articles de code, que la liste de contrôle des textes tient déjà pour
-les chapitres de la retraite ; les 496 articles de règlements européens ; les 2 228
-circulaires, lettres, instructions et notes, par période ; les 96 autres textes ; les
-74 que la base nomme sans les servir ; les 107 accords, avec le thème des accords de
-l'étape 4. Commencer par les articles de code, avec la méthode de cette note : la base
-relue par l'API, un texte rapproché de l'index par son identifiant Légifrance, puis
-par son numéro, jamais par sa seule date.
-
 **Le 3 novembre 2026, ce qui est fait.**
 
 - *La lecture* : les 1 020 références sans thème dont le titre dit un décret, un arrêté,

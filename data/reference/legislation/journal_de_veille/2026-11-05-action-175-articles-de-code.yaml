@@ -1,0 +1,33 @@
+date: "2026-11-05"
+session: "action 175, étape 6, vague 9, G6 : les 642 articles de code que la base de la Cnav cite sans thème, rapprochés de l'index LEGI"
+consulte: >-
+  python scripts/veille_droit.py (la base de la Cnav : rien de neuf depuis le registre) ;
+  docs/veille_droit.md. Les 642 références du registre sans thème dont le titre commence par
+  « Code », relues par l'API de la base le 5 novembre 2026 vers 18 h 50 UTC
+  (/reference/referencesByFileLeafRef/), toutes servies. L'index LEGI récupéré de la release
+  index-dila et mis à jour au 4 novembre 2026 (incrément LEGI_20261104-214059) : chaque
+  identifiant LEGIARTI que la base lie, puis chaque numéro, et la version en vigueur au jour
+  que le lien vise (« vig » : le 5 novembre 2026). Légifrance, que le conteneur ne joint pas
+  (403).
+trouve: >-
+  516 se rapprochent par leur identifiant, 15 par leur numéro, 111 pas : l'index ne garde que
+  les textes du champ social, et n'a ni le code civil, ni le code de procédure civile, hors de
+  quelques articles. 345 sont à la liste de contrôle des textes (319 dans ses chapitres, 22
+  cités par une fiche, 4 plages) ; 73 sont liés « en vigueur » ou à une date où aucune
+  version ne les tient. Liens faux : L. 488 du code des pensions militaires, lié à L. 481 ;
+  le second lien de D. 161-2-11, qui vise D. 161-2-10 ; le libellé « décret 2010/778 » de
+  D. 173-24 et D. 173-25, pour le décret n° 2010-1778, que le lien vise bien ; le texte
+  LEGITEXT000006071570 que lie l'article 383 du code de procédure civile, non tranché.
+  Aucune règle que le modèle contredise ; deux silences, que ni fiche ni limite ne déclare :
+  R. 161-16 (les périodes d'allocation de préparation à la retraite, assimilées, un trimestre
+  par 90 jours) et L. 311-8 (la rente inscrite au 1er janvier 1941 de qui quitte la France,
+  abrogé en 1998). Le registre range 527 des 642 (416 limite, 111 hors_modele) ; note
+  docs/feuille_de_route/175/2026-11-05-etape-6-articles-de-code.md.
+reste: >-
+  115 à lire, nommés dans la note : 111 que l'index ne porte pas (code civil 43, code de
+  procédure civile 59, code général des impôts 4, code de procédure pénale 2, code pénal,
+  code du service national, L. 337 ancien), à lire sur Légifrance ; l'article 1496 du code
+  général des impôts et l'article 146 du code de la famille et de l'aide sociale, dont la
+  version visée manque à l'index ; R. 161-16 et L. 311-8, à déclarer ou à servir par la
+  session du modèle. Les autres natures de l'étape 6 : règlements européens, circulaires,
+  autres textes, textes nommés sans être servis, accords.
