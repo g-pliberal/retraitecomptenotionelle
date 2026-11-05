@@ -1,0 +1,28 @@
+date: "2026-11-05"
+session: "action 130, file R-E5 de la vague 10 : relecture de E4 (la CAVP, c7fbb26) et des deux montants neufs de E3-bis (la CARPIMKO, b1f28db)"
+consulte: >-
+  Les index JORF et LEGI récupérés et mis à jour au 5 novembre 2026. Au JORF, sans borne :
+  tous les documents qui nomment les pharmaciens au titre, ou la section, la CAVP ou
+  l'assurance vieillesse des pharmaciens au corps (1 103) ; les arrêtés du 11 mai 2009
+  (JORFARTI000020694601, 020694602, 020694605), du 23 juin 2011 (024270207 à 024270214), du 19
+  décembre 2023 (048880590, 048880592), du 10 juillet 2026 (054436084, 054436087), et les dix
+  textes sans effet de la fiche ; le décret n° 2026-418, articles 4 et 30 (054153444,
+  054153813) ; les titres et résumés de 1956 à 1990 ; pour la CARPIMKO, les statuts de 2015
+  (031255547), de 2024 (048880643) et le règlement de 2026 (054435915). Dans LEGI : L. 643-3 au
+  10 janvier 2024 et au 10 juillet 2016 ; D. 161-2-1-9 au 10 juillet 2016 ; l'article 4 du
+  décret n° 49-580.
+trouve: >-
+  La liste des arrêtés de la CAVP depuis 2007 est complète (treize), les citations, dates,
+  versions et montants de E4 exacts dans les deux moteurs, ses deux erreurs prouvées et ses
+  deux non-tranchés fondés. Non déclaré : l'article 12 des statuts de 2011 accorde une
+  majoration jusqu'à 66 ans aux nés jusqu'au 31 décembre 1952, quand le tableau annexé la
+  refuse aux nés jusqu'au 30 juin 1951, ce que le règlement de 2026 reprend ; 246,61 € par an
+  dans un cas de 2016. Les deux montants de E3-bis sont exacts (136,90 €, 1 263,99 €) ; 136,90 €
+  est un minimum (205,35 € si la majoration se compte de l'âge de la table) ; depuis le 10
+  janvier 2024, la table des statuts puis du règlement de la CARPIMKO nomme sa ligne « Âge du
+  taux plein », texte que la fiche ne cite pas au point de l'article 12 ter.
+reste: >-
+  À la file E : déclarer la contradiction de 2011 dans `cavp_minoration_deux_pentes` ; nommer
+  l'arrêté du 17 septembre 1956 et le Bulletin officiel no 89-20 ; dire 136,90 € un minimum
+  et citer la ligne « Âge du taux plein » dans `carpimko_ages_2015` (note
+  `130/2026-11-05-relecture-r-e5.md`).
