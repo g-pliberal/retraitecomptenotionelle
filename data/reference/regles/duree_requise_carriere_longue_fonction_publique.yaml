@@ -30,32 +30,13 @@ effet: >-
   à 160 trimestres cotisés et 160 d'assurance, partait à 59 ans en 2005 (action 138,
   étape 21).
 sources:
-  lu_le: 2026-10-24
+  lu_le: 2026-11-05
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
     Les autres départs avant soixante ans que la CNRACL range sous la même règle
     — invalidité, handicap, parents de trois enfants, conjoint ou enfant invalide
     — ne sont pas modélisés.
-  - >-
-    La date de la demande. D. 16-1, que la base date du 1er janvier 2011
-    (LEGIARTI000023383582), n'est pris qu'en application du L. 25 bis que récrit
-    l'article 43 de la loi n° 2010-1330, et cet article « entre en vigueur le 1er juillet
-    2011 et est applicable aux demandes de pension déposées à compter de cette date »
-    (article 118, III) : jusque-là, l'État et la CNRACL gardaient les portes datées de la
-    rédaction de 2008 de L. 25 bis et de l'article 57 de la loi n° 2004-1370, comme le
-    modèle, et la table a raison de n'appliquer D. 16-1 qu'en juillet 2011
-    (tests/test_simulateur.py, le né de mai 1952 parti à 59 ans en juin 2011). Mais elle
-    le lit à la date d'effet de la pension, que la demande précède : une pension prise à
-    compter de juillet 2011 sur une demande déposée avant garde, à la lettre, l'ancien
-    L. 25 bis. Le fonctionnaire né en juin 1952 entré avant dix-sept ans, qui demande en
-    juin sa pension de juillet 2011, part à 59 ans au texte, à 59 ans et 4 mois au
-    modèle ; à la CNRACL de même, quoique le décret n° 2010-1740 dise « pensions
-    liquidées à compter du 1er juillet 2011 » (article 16, III). Ni les bulletins du SRE
-    de 2010 à 2012 ni ses rapports d'activité ne disent comment il l'appliquait ; ses
-    pages de 2011 (pensions.bercy.gouv.fr), que l'archive du web garde, sont refusées au
-    réseau de la session : au propriétaire, depuis un poste. Puis, si le SRE lisait la
-    demande, la présumer, une présomption nouvelle (action 138, étape 21).
   lectures:
   - type: legifrance
     reference: >-
@@ -121,6 +102,21 @@ sources:
       le 1er juillet 2011 ; lus le 24 octobre 2026
     date: 2010-12-31
     url: https://retraitesdeletat.gouv.fr/files/files/Publications/Bulletins%20d'information/bo491.pdf
+  - type: autre
+    reference: >-
+      Service des retraites de l'État, « Réforme 2010 – dispositif des carrières
+      longues », actualité du 7 avril 2011 de pensions.bercy.gouv.fr, lue le 5 novembre
+      2026 à l'archive du web, qui la garde d'août 2011 à mai 2012 : les articles 43 et
+      118 de la loi n° 2010-1330 et le décret n° 2010-1748 valent pour toute demande de
+      retraite anticipée qui prend effet à compter du 1er juillet 2011, « quelle que soit
+      la date de dépôt de cette demande ». La caisse lisait donc la date d'effet, non
+      celle de la demande que dit l'article 118, III : comme la table, sans présomption
+      de la date de la demande. Le décret n° 2010-1740, pour la CNRACL, dit de même
+      « pensions liquidées à compter du 1er juillet 2011 » (article 16, III). Le
+      fonctionnaire né en juin 1952 entré avant dix-sept ans, qui demande en juin sa
+      pension de juillet 2011, part à 59 ans et 4 mois, aux deux (tests/test_simulateur.py)
+    date: 2011-04-07
+    url: https://web.archive.org/web/20110827043047/http://www.pensions.bercy.gouv.fr/actualite/r%C3%A9forme-2010-%E2%80%93-dispositif-des-carri%C3%A8res-longues
 textes_a_rattacher:
 - reference: >-
     loi n° 2023-270 du 14 avril 2023, article 10, XXIV, C (LEGIARTI000053280920)

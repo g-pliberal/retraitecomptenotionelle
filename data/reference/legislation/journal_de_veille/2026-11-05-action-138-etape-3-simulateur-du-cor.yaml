@@ -1,0 +1,13 @@
+date: "2026-11-05"
+session: "action 138, étape 3 : le simulateur du COR à l'archive du web, depuis le poste du propriétaire"
+consulte: >-
+  Aucune règle du scénario 1 n'est touchée. À l'archive du web : l'index de
+  www.cor-retraites.fr/simulateur/ de 2019 à 2026, ses pages, js/script.js de juillet
+  2021 et mars 2025, les fichiers _nuxt/ de mars 2026, la documentation technique et la
+  FAQ ; sur le site du COR, data/fileProjection.json et fileProjection.json.
+trouve: >-
+  Une seule capture du fichier de données, du 3 octobre 2022, identique à l'octet à
+  cor_simulateur_2021. Le code de juillet 2021 renvoie au rapport de novembre 2020, celui
+  de mars 2025 au rapport de juin 2024, dont le fichier n'est pas gardé.
+reste: >-
+  Le millésime de juin 2024, à demander au COR ; la version rouverte.

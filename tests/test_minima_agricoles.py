@@ -222,6 +222,19 @@ def test_le_smic_net_agricole_se_refait_des_taux_salariaux():
     assert certifiees == {annee for annee, (*_, producteur) in publies.items() if producteur}
 
 
+def test_le_montant_de_2015_que_la_fdsea_ecrit_est_celui_du_calcul():
+    """« à 73 % du SMIC net en 2015 ( soit 820,92 € ) » : la FDSEA de
+    Lot-et-Garonne, page du 23 décembre 2015, lue à l'archive du web le
+    5 novembre 2026. Le calcul le redonne à l'arrondi, sans que le fichier,
+    à quatre décimales, puisse l'écrire : 7,4146 € donnent 820,91 €, 7,4147 €
+    820,93 €. La ligne garde le calcul, au niveau d'une page qui le reprend."""
+    module = _smic_net_agricole()
+    assert round(0.73 * module.HEURES_PAR_MOIS * module.calcule(2015), 2) == 820.92
+    assert module.mensuel(0.73, 7.4146) == 820.91
+    assert module.mensuel(0.73, 7.4147) == 820.93
+    assert module.fichier()[2015] == (7.4146, "moyenne")
+
+
 def test_les_montants_mensuels_que_la_msa_publie_sortent_des_tables(simulateur):
     """Ce que la MSA et le ministère écrivent par mois, au centime inférieur :
     681,20 € et 541,30 € de PMR au 1er avril 2013, sous un plafond de

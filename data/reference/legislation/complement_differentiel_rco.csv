@@ -56,8 +56,16 @@
 # `scripts/fetch/msa_smic_net_agricole.py` refait chaque année de ces taux et
 # du SMIC brut (macro/smic_horaire.csv), et redonne au centime chaque montant
 # publié, sauf 2024, à trois centimes ; `--verifier` relit chaque montant à
-# sa source. Le 820,92 € de 2015 (73 %) qu'une page de la FDSEA de
-# Lot-et-Garonne aurait écrit, que le calcul redonne, n'a pas pu être relu.
+# sa source.
+#
+# 2015, À LA FDSEA DE LOT-ET-GARONNE : « à 73 % du SMIC net en 2015 ( soit
+# 820,92 € ) », page du 23 décembre 2015, lue le 5 novembre 2026 à l'archive
+# du web. Une page qui le reprend, comme 2024 et 2025 : la ligne reste
+# `moyenne`, et le montant hors de `PUBLIES`, que le test tient à la MSA et aux
+# rapports. Le calcul le redonne à l'arrondi, 820,9193 €, et non au centime
+# inférieur des autres années ; aucun SMIC net à quatre décimales ne l'écrit
+# (7,4146 € donnent 820,91 €, 7,4147 € 820,93 €). Pour 2016, 2017 et 2019,
+# l'archive ne garde de la MSA que des pourcentages.
 #
 # LES NIVEAUX : `certifiee` quand la MSA, qui produit la donnée, publie le
 # montant et que le script le relit (2021, 2022, 2023, 2026) ; `haute` quand un

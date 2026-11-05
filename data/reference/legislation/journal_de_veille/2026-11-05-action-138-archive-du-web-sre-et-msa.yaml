@@ -1,0 +1,19 @@
+date: "2026-11-05"
+session: "action 138, étapes 21 et 8 : les pages de 2011 du SRE et les montants de la garantie de la MSA, lus à l'archive du web depuis le poste du propriétaire"
+consulte: >-
+  `python scripts/veille_droit.py` : rien de neuf à la base de la Cnav, aucune fiche à
+  relire de ces étapes. À l'archive du web, le poste l'atteignant : pensions.bercy.gouv.fr
+  de décembre 2010 à juin 2012 ; fdsea47.fr ; msa.fr et ses sites régionaux de 2015 à
+  2020 (calcul du montant, non-salariés, versement du complément RCO, guides, bilans) ;
+  agriculture.gouv.fr ; les panoramas de la DREES de 2018, 2019 et 2020.
+trouve: >-
+  Le SRE, le 7 avril 2011, applique les articles 43 et 118 de la loi n° 2010-1330 et le
+  décret n° 2010-1748 à toute demande qui prend effet à compter du 1er juillet 2011,
+  quelle que soit la date de son dépôt : il lit la date d'effet, comme la table ; la
+  question de la date de la demande est close, sans présomption. La FDSEA de
+  Lot-et-Garonne écrit 820,92 € à 73 % pour 2015, que le calcul redonne à l'arrondi ; la
+  ligne reste moyenne et sa valeur, 7,4146 €. La MSA n'écrit que des pourcentages pour
+  2016, 2017 et 2019, dans tout ce que l'archive garde.
+reste: >-
+  Rien pour ces deux points : la fin de l'étape 8 reste la fiche
+  complement_differentiel_rco.

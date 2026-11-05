@@ -8754,6 +8754,26 @@ def test_jusqu_en_juin_2011_les_fonctionnaires_gardaient_les_portes_de_l_ancien_
         "carriere_longue", "carriere_longue"]
 
 
+def test_des_juillet_2011_la_date_d_effet_decide_quelle_que_soit_la_demande(simulateur):
+    """L'article 118, III, de la loi n° 2010-1330 parle des demandes déposées à
+    compter du 1er juillet 2011. Le SRE l'a lu autrement, le 7 avril 2011 : la
+    réforme vaut pour toute demande qui prend effet à compter de cette date,
+    « quelle que soit la date de dépôt de cette demande » (actualité de
+    pensions.bercy.gouv.fr, lue à l'archive du web) ; le décret n° 2010-1740
+    dit de même, pour la CNRACL, « pensions liquidées à compter du 1er juillet
+    2011 ». Le né en juin 1952, entré à quinze ans et neuf mois, qui aurait
+    demandé en juin sa pension de juillet 2011, n'a donc plus la porte de
+    cinquante-neuf ans de l'ancien L. 25 bis : D. 16-1, III, 3°, lui ouvre
+    cinquante-neuf ans et quatre mois. Le modèle, qui n'a pas de date de
+    demande, n'a pas à en présumer une. Dans les deux régimes."""
+    actuel = simulateur.scenario_actuel
+    for affiliation in ("fonctionnaire_etat", "fonctionnaire_territorial_hospitalier"):
+        construite = _entre_tot(1952, 6, 15.75, 59.0, affiliation=affiliation)
+        carriere = Carriere.depuis_chronologie(construite, simulateur.macro)
+        assert str(carriere.date_liquidation) == "juillet 2011"
+        assert ouvrir.age_ouverture_droit(actuel, carriere) == pytest.approx(59 + 4 / 12)
+
+
 # --- Les périodes que le droit RÉPUTE cotisées (D. 351-1-2) ----------------
 
 def _carriere_hachee(simulateur, interruptions: dict[int, str],

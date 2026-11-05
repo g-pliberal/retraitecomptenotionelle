@@ -1,15 +1,15 @@
 # Étape 3, première partie : la part des reportés en emploi, lue dans les évaluations de 2010
 
-**Reprise, au 2 novembre 2026.** Fait : les reportés en emploi (7 octobre) ;
+**Reprise, au 5 novembre 2026.** Fait : les reportés en emploi (7 octobre) ;
 l'Ageing Report (13) ; les leviers du COR, la CSG effective (14) ; Ancetre,
 l'EACR, la CNRACL, l'État (16) ; l'AWG (17) ; les cohortes (18, 19) ; la page
 Coût, l'entrée, la décote (19, 23) ; le 24, l'âge de chaque génération, le
 militaire, les caisses, les naissances, le taux effectif ; le 28, la dépense
 nette et la phrase des poids ; le 2 novembre, le geste de l'âge confronté au
-simulateur du COR, retrouvé dans ses copies. Rien ne reste au site. Au
-propriétaire : les cohortes nées toute l'année, ou la grille ; la forme des
-départs ; l'entrée selon la génération ; l'Ircantec ; les poids ; l'officier ;
-le dernier millésime du simulateur. Détail : notes des 24 et 28 oct., 2 nov.
+simulateur du COR, retrouvé dans ses copies, et, le 5, ce que l'archive du web
+en garde. Rien ne reste au site. Au propriétaire : les cohortes nées toute
+l'année, ou la grille ; la forme des départs ; l'entrée selon la génération ;
+l'Ircantec ; les poids ; l'officier. Détail : notes des 24 et 28 oct., 2 et 5 nov.
 
 **Le 7 octobre 2026, la demande.** Le propriétaire : « 138.3 ». L'étape est
 vaste — sept chantiers, vingt-neuf points du registre — ; cette session en
