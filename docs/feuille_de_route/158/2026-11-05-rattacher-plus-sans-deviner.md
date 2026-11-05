@@ -186,3 +186,7 @@ ne change rien) : `test_aucune_phrase_restee_sans_date_ne_s_ouvre_sur_une_date`.
 *Pour les autres files.* Rien pour le site ni pour le paquet : ni le modèle ni son portage ne
 lisent `grilles/`. Fichier partagé touché : `data/sources.yaml` (une phrase à l'entrée
 `dila_legi_chainage`).
+
+*Renvoi, le 5 novembre 2026.* La relecture R-B4 (`2026-11-05-relecture-r-b4.md`) relève trois
+écarts faibles, repris dans `2026-11-05-b-bis-preuves-de-r-b4.md`, dont une erreur de cette
+note : le corps 00653 ne cite pas le texte 166 ; deux de ses grades seulement le citent.

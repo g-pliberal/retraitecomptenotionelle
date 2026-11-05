@@ -47,7 +47,9 @@ commun à divers corps, vise tous deux. Il faut, à la fois :
   (``Depot.sommet_non_ecrit``, preuve « sommet non écrit ») : le tableau écrit
   les échelons 1 à n, sa phrase dit le temps passé dans chaque échelon, son
   n-ième rang porte une durée, le temps à y passer avant le suivant ; la grille
-  a les échelons 1 à n + 1, le dernier ordinaire, numéroté n + 1 au LEGI.
+  a les échelons 1 à n + 1, le dernier ordinaire, numéroté n + 1 au LEGI. La
+  preuve cite l'article du statut qui compte n + 1 échelons (``COMPTES``), à
+  ses versions de la période, ou dit qu'il n'y en a pas à l'index.
 - *Une seule grille à la fois* pour un grade d'un tableau, et un seul corps
   au noyau, sauf le décret commun dont l'article qui désigne ses corps est lu
   (``COMMUNS``) : son tableau vaut pour chacun d'eux, une ligne par corps.
@@ -489,13 +491,41 @@ class Depot:
         """L'échelon du rang ``rang`` de la grille du LEGI sur [debut, fin), s'il
         est l'échelon numéroté ``rang`` à toutes ses versions (non le spécial,
         que le lecteur range au-dessus du plus haut) : « le 10e échelon (indice
-        brut 901, LEGIARTI…) », ou rien."""
+        brut 901, LEGIARTI…) », ou rien. Chaque version de l'article en vigueur
+        sur la période est citée, non la seule que nomme le fichier des
+        échelons, qui garde la première d'une suite de versions inchangées
+        (relecture R-B4, écart 1.b : le n° 2009-209)."""
         hauts = [e for e in self.echelons[(versant, texte, grille)]
                  if e["rang"] == str(rang) and intersection(debut, fin, e["debut"], e["fin"])]
         if not hauts or any(e["echelon"] != str(rang) for e in hauts):
             return ""
+        versions = {v for e in hauts
+                    for v in self.index.versions_sur(e["article"], *intersection(
+                        debut, fin, e["debut"], e["fin"]))}
         return (f"le {rang}e échelon (" + ", ".join(sorted({_indice(e) for e in hauts}))
-                + ", " + ", ".join(sorted({e["article"] for e in hauts})) + ")")
+                + ", " + ", ".join(sorted(versions)) + ")")
+
+    def compte_du_statut(self, tableau: dict, groupe: str, nombre: int, debut: str,
+                         fin: str) -> str:
+        """L'article du statut qui compte les échelons du grade, s'il en compte
+        ``nombre`` et que chacune de ses versions en vigueur sur [debut, fin)
+        le dit, sans jour sans version (``COMPTES``) : « le statut compte ses
+        échelons, LEGIARTI… : « … » » ; sinon, qu'aucun ne le fait au relevé
+        de l'index (relecture R-B4, écart 1.a)."""
+        entree = COMPTES.get((tableau["article"], groupe))
+        if entree:
+            article, compte, citation = entree
+            ouvert = "2999-01-01"
+            fin_ = ouvert if not fin or fin >= ouvert else fin
+            versions = self.index.versions_datees(article, debut, fin_)
+            if (compte == nombre and versions and versions[0][1] <= debut
+                    and versions[-1][2] >= fin_
+                    and all(a[2] == b[1] for a, b in zip(versions, versions[1:]))
+                    and all(citation in self.index.texte(i) for i, _, _ in versions)):
+                return (f"le statut compte ses échelons, {', '.join(i for i, _, _ in versions)} : "
+                        f"« {citation} »")
+        return ("aucun article du statut ne compte ses échelons, au relevé de l'index du "
+                "5 novembre 2026")
 
     def sommet_noyau(self, grille: str, debut: str, fin: str) -> str:
         """Le plus haut échelon de la grille du noyau sur [debut, fin), s'il est
@@ -568,6 +598,91 @@ TEMPS_DANS_L_ECHELON = re.compile(
     r"|acc[ée]der\s+[àa]\s+l.[ée]chelon", re.IGNORECASE)
 DUREES = (("duree", "durée"), ("duree_moyenne", "moyenne"), ("duree_minimale", "minimale"),
           ("duree_maximale", "maximale"))
+
+#: L'article du statut qui compte les échelons d'un grade dont le tableau de
+#: durées n'écrit pas le sommet : (article du tableau, grade) → (une version de
+#: l'article, le nombre d'échelons, la citation mot pour mot). Relevé dans
+#: l'index LEGI (incrément 20261102-213929) le 5 novembre 2026, pour les 45
+#: grades que le sommet rattache (relecture R-B4, écart 1.a) ; neuf n'en ont
+#: aucun : n° 2013-1146 (son art. 2 nomme deux grades sans compter leurs
+#: échelons), n° 83-1033 (conseillers), n° 2011-1676 (l'index n'a que ses
+#: art. 4, 10, 11, 13 et 16), n° 72-420 (son art. 2 ne dit rien des échelons).
+#: ``Depot.compte_du_statut`` relit la citation dans chaque version en vigueur
+#: sur la période rattachée.
+COMPTES = {
+    ('LEGIARTI000006476438', 'Classe exceptionnelle'): ('LEGIARTI000006476418', 7,
+        "La classe exceptionnelle ou le grade assimilé comprend sept échelons pour les corps mentionnés à l'annexe I du présent décret"),  # n° 94-1016
+    ('LEGIARTI000032578323', 'Cadre de santé'): ('LEGIARTI000027246561', 8,
+        "Ce cadre d'emplois comprend un grade de cadre de santé comptant 8 échelons"),  # n° 2003-676
+    ('LEGIARTI000023593821', 'Directeur du travail'): ('LEGIARTI000023593810', 6,
+        'Le grade de directeur du travail qui comprend six échelons'),  # n° 2003-770
+    ('LEGIARTI000029572482', 'Ingénieur'): ('LEGIARTI000029572468', 8,
+        "Le grade d'ingénieur comprend huit échelons"),  # n° 68-270
+    ('LEGIARTI000029572482', 'Ingénieur en chef'): ('LEGIARTI000029572468', 4,
+        "Le grade d'ingénieur en chef comprend quatre échelons"),  # n° 68-270
+    ('LEGIARTI000029572482', 'Chef de fabrication'): ('LEGIARTI000029572468', 3,
+        'Le grade de chef de fabrication comprend trois échelons'),  # n° 68-270
+    ('LEGIARTI000029572482', 'Chef de fabrication adjoint'): ('LEGIARTI000029572468', 11,
+        'Le grade de chef de fabrication adjoint comprend onze échelons'),  # n° 68-270
+    ('LEGIARTI000029572482', 'Chef mécanicien'): ('LEGIARTI000029572468', 13,
+        'Le grade de chef mécanicien comprend treize échelons'),  # n° 68-270
+    ('LEGIARTI000029572482', "Chef d'atelier principal"): ('LEGIARTI000029572468', 13,
+        "Le grade de chef d'atelier principal comprend treize échelons"),  # n° 68-270
+    ('LEGIARTI000029572482', "Chef d'atelier"): ('LEGIARTI000029572468', 13,
+        "Le grade de chef d'atelier comprend treize échelons"),  # n° 68-270
+    ('LEGIARTI000029572482', 'Maître graveur'): ('LEGIARTI000029572468', 6,
+        'Le grade de maître graveur comprend six échelons'),  # n° 68-270
+    ('LEGIARTI000029572482', 'Graveur'): ('LEGIARTI000029572468', 11,
+        'Le grade de graveur comprend onze échelons'),  # n° 68-270
+    ('LEGIARTI000029572482', 'Adjoint technique mécanicien'): ('LEGIARTI000029572468', 13,
+        "Le grade d'adjoint technique mécanicien comprend treize échelons"),  # n° 68-270
+    ('LEGIARTI000019149271', "Ingénieur d'études et de fabrications"): ('LEGIARTI000019149265', 11,
+        "un grade d'ingénieur d'études et de fabrications qui comporte onze échelons"),  # n° 89-750
+    ('LEGIARTI000019149271', "Ingénieur divisionnaire d'études et de fabrications"): ('LEGIARTI000019149265', 8,
+        "un grade d'ingénieur divisionnaire d'études et de fabrications qui comporte huit échelons"),  # n° 89-750
+    ('LEGIARTI000006459943', 'Ingénieur'): ('LEGIARTI000006459927', 10,
+        "le grade d'ingénieur, qui comporte dix échelons"),  # n° 90-973
+    ('LEGIARTI000006459943', 'Ingénieur en chef'): ('LEGIARTI000006459927', 5,
+        "le grade d'ingénieur en chef, qui comporte cinq échelons"),  # n° 90-973
+    ('LEGIARTI000006459943', 'Ingénieur général'): ('LEGIARTI000006459927', 3,
+        "le grade d'ingénieur général, qui comporte trois échelons"),  # n° 90-973
+    ('LEGIARTI000006459992', "Ingénieur d'études principal"): ('LEGIARTI000006459973', 8,
+        "le grade d'ingénieur d'études principal, qui comporte huit échelons"),  # n° 90-975
+    ('LEGIARTI000032172691', 'Infirmier ou infirmière'): ('LEGIARTI000032172681', 15,
+        "le grade d'infirmier ou infirmière doté de quinze échelons"),  # n° 91-13
+    ('LEGIARTI000006460868', 'Réviseur'): ('LEGIARTI000006460848', 12,
+        'Le grade de réviseur des travaux de bâtiment comporte douze échelons'),  # n° 91-105
+    ('LEGIARTI000006460868', 'Réviseur en chef'): ('LEGIARTI000006460848', 5,
+        'Le grade de réviseur en chef comporte cinq échelons'),  # n° 91-105
+    ('LEGIARTI000006461873', 'Assistant de service social'): ('LEGIARTI000006461852', 10,
+        "le grade d'assistant de service social qui comporte dix échelons"),  # n° 91-783
+    ('LEGIARTI000006461873', 'Assistant de service social principal'): ('LEGIARTI000006461852', 7,
+        "le grade d'assistant de service social principal, qui comporte sept échelons"),  # n° 91-783
+    ('LEGIARTI000006468212', '2e catégorie'): ('LEGIARTI000006468212', 4,
+        'Les emplois de chacune de ces deux catégories comprennent quatre échelons'),  # n° 92-413
+    ('LEGIARTI000020289530', 'Administrateur des finances publiques'): ('LEGIARTI000045656098', 5,
+        "Les grades d'administrateur des finances publiques et d'administrateur général des finances publiques de classe normale comprennent chacun cinq échelons"),  # n° 2009-208
+    ('LEGIARTI000020289530', 'Administrateur général des finances publiques de classe normale'): ('LEGIARTI000045656098', 5,
+        "Les grades d'administrateur des finances publiques et d'administrateur général des finances publiques de classe normale comprennent chacun cinq échelons"),  # n° 2009-208
+    ('LEGIARTI000020289530', 'Administrateur général des finances publiques de 1re classe'): ('LEGIARTI000045656098', 3,
+        "Le grade d'administrateur général des finances publiques de 1re classe comprend trois échelons"),  # n° 2009-208
+    ('LEGIARTI000024875136', 'Infirmier ou infirmière'): ('LEGIARTI000024875131', 14,
+        "le grade d'infirmier ou infirmière doté de quatorze échelons"),  # n° 2011-1678
+    ('LEGIARTI000042563210', 'Contrôleur divisionnaire'): ('LEGIARTI000024875248', 10,
+        'le grade unique de contrôleur divisionnaire doté de dix échelons'),  # n° 2011-1672
+    ('LEGIARTI000024876144', 'Technicien des installations'): ('LEGIARTI000024876132', 14,
+        'le grade de technicien des installations doté de quatorze échelons'),  # n° 2011-1673
+    ('LEGIARTI000042563216', 'Technicien des installations'): ('LEGIARTI000042563214', 14,
+        'le grade de technicien des installations doté de quatorze échelons'),  # n° 2011-1673
+    ('LEGIARTI000042563216', 'Chef technicien des installations'): ('LEGIARTI000042563214', 9,
+        'le grade de chef technicien doté de neuf échelons'),  # n° 2011-1673
+    ('LEGIARTI000043384245', 'Directeur départemental adjoint'): ('LEGIARTI000051204165', 4,
+        'Le grade de directeur départemental adjoint comprend quatre échelons'),  # n° 58-778
+    ('LEGIARTI000032192685', 'Dessinateur-projeteur'): ('LEGIARTI000032192685', 15,
+        'le grade de dessinateur-projeteur doté de quinze échelons'),  # n° 56-448
+    ('LEGIARTI000032192685', 'Chef dessinateur'): ('LEGIARTI000032192685', 8,
+        'le grade de chef dessinateur doté de huit échelons'),  # n° 56-448
+}
 
 
 def rang_dans_la_grille(echelon: str, rang: int, natures: list[str]) -> int | None:
@@ -683,7 +798,8 @@ def _candidats_legi(depot: Depot, tableau: dict, groupe: str, rangs: set[int]):
                     continue
                 preuve = (preuve_article(versions(d, f)) if lien == "article"
                           else f"{visa} ; seul décret statutaire que vise {e}")
-                preuve += f" ; {sommet}" if sommet else ""
+                preuve += (f" ; {sommet} ; " + depot.compte_du_statut(
+                    tableau, groupe, len(rangs) + 1, d, f)) if sommet else ""
                 prouves.append({"source": versant, "texte_grille": e, "grille": grille["grille"],
                                 "libelle_grille": grille["libelle"], "corps": "", "grade": "",
                                 "debut": d, "fin": f, "lien": lien, "preuve": preuve})
@@ -865,7 +981,9 @@ def _candidats_noyau(depot: Depot, tableau: dict, groupe: str, rangs: set[int]):
                                     "grade": grade["grade"], "debut": d, "fin": f, "lien": "noyau",
                                     "preuve": (f"{commun} ; " if commun else "")
                                               + depot.preuve_du_noyau(ici)
-                                              + (f" ; {sommet}" if sommet else "")})
+                                              + ((f" ; {sommet} ; " + depot.compte_du_statut(
+                                                  tableau, groupe, len(rangs) + 1, d, f))
+                                                 if sommet else "")})
     return prouves, raisons, trous
 
 

@@ -708,9 +708,115 @@ def test_un_tableau_dont_le_dernier_rang_n_a_pas_de_duree_n_a_pas_de_sommet_non_
          "indice": str(400 + r), "hors_echelle": "", "article": "LEGIARTI1"} for r in range(1, 6)]
         + [{"echelon": "special", "rang": "6", "debut": "2016-03-01", "fin": "",
             "indice": "", "hors_echelle": "A", "article": "LEGIARTI1"}]}
+
+    class Index:
+        @staticmethod
+        def versions_sur(article, debut, fin):
+            return [article, "LEGIARTI2"]
+
+    depot.index = Index()
     assert depot.sommet_legi("v", "E", "g", 6, "2016-03-01", "") == ""
     assert depot.sommet_legi("v", "E", "g", 5, "2016-03-01", "") == (
-        "le 5e échelon (indice brut 405, LEGIARTI1)")
+        "le 5e échelon (indice brut 405, LEGIARTI1, LEGIARTI2)")
+
+
+#: Les nombres que les statuts écrivent en lettres.
+_EN_LETTRES = {"trois": 3, "quatre": 4, "cinq": 5, "six": 6, "sept": 7, "huit": 8, "neuf": 9, "dix": 10,
+               "onze": 11, "douze": 12, "treize": 13, "quatorze": 14, "quinze": 15, "8": 8}
+
+
+def test_la_preuve_du_sommet_cite_l_article_du_statut_qui_compte_ses_echelons(durees):
+    # Relecture R-B4, écart 1.a ; action 158, vague 10, B-bis. Chaque article,
+    # rouvert dans l'index LEGI (incrément 20261102-213929), à ses versions en
+    # vigueur sur la période rattachée :
+    # - n° 68-270, art. 6, LEGIARTI000029572468 (depuis 2014-11-01) : « Le grade
+    #   d'ingénieur comprend huit échelons » ; le tableau, art. 21
+    #   (LEGIARTI000029572482) : « Ingénieur […] 7e échelon 3 ans ».
+    # - n° 2009-208, art. 5, LEGIARTI000020289510 (2009-02-22 → 2023-01-01) et
+    #   LEGIARTI000045656098 (depuis) : « Les grades d'administrateur des finances
+    #   publiques et d'administrateur général des finances publiques de classe
+    #   normale comprennent chacun cinq échelons » ; « Le grade d'administrateur
+    #   général des finances publiques de 1re classe comprend trois échelons ».
+    # - n° 2011-1673, art. 2, LEGIARTI000024876132 (2011-12-01 → 2020-12-01) :
+    #   « le grade de technicien des installations doté de quatorze échelons » ;
+    #   LEGIARTI000042563214 (depuis 2020-12-01) : « […] doté de quatorze
+    #   échelons et le grade de chef technicien doté de neuf échelons ».
+    # - n° 91-783, art. 3, LEGIARTI000006461851 (1991-08-20 → 2007-05-03) et
+    #   LEGIARTI000006461852 (2007-05-03 → 2012-10-01) : « le grade d'assistant de
+    #   service social qui comporte dix échelons ».
+    # Neuf groupes n'en ont aucun à l'index : n° 2013-1146 (art. 2,
+    # LEGIARTI000028321239 : « Le corps des officiers de port adjoints comprend
+    # deux grades ainsi dénommés », sans nombre d'échelons ; deux tableaux) ;
+    # n° 83-1033 (deux grades) ; n° 2011-1676 (l'index n'en a que les art. 4, 10,
+    # 11, 13 et 16 ; trois groupes) ; n° 72-420 (son art. 2 en vigueur ne dit rien
+    # des échelons ; deux grades).
+    import re
+    rangs: dict[tuple, set[int]] = {}
+    for l in _lire(GRILLES / "durees" / "lignes.csv"):
+        if l["rang"] != "0":
+            rangs.setdefault((l["article"], l["groupe"]), set()).add(int(l["rang"]))
+    sommets = [d for d in durees if d["statut"] == "rattache" and "sommet non écrit" in d["preuve"]]
+    cites, sans = set(), set()
+    for d in sommets:
+        trouve = re.search(r"le statut compte ses échelons, (LEGIARTI\d+(?:, LEGIARTI\d+)*) : "
+                           r"« ([^»]*) »", d["preuve"])
+        if trouve:
+            cites.add((d["article"], d["groupe"]))
+            (nombre,) = [n for mot, n in _EN_LETTRES.items()
+                         if re.search(rf"\b{mot}\s+[ée]chelons", trouve.group(2))]
+            assert nombre == max(rangs[(d["article"], d["groupe"])]) + 1, d["preuve"]
+        else:
+            assert "aucun article du statut ne compte ses échelons" in d["preuve"], d["preuve"]
+            sans.add((d["article"], d["groupe"]))
+    assert len(cites) == 36 and len(sans) == 9
+    assert {a for a, _ in sans} == {"LEGIARTI000028321250", "LEGIARTI000035923294",
+                                     "LEGIARTI000006508084", "LEGIARTI000024876390",
+                                     "LEGIARTI000042563225", "LEGIARTI000032519240"}
+
+    def preuve(article, groupe, source=""):
+        (ligne,) = [d for d in sommets if d["article"] == article and d["groupe"] == groupe
+                    and (not source or d["source"] == source)][:1]
+        return ligne["preuve"]
+
+    assert ("le statut compte ses échelons, LEGIARTI000029572468 : « Le grade d'ingénieur "
+            "comprend huit échelons »") in preuve("LEGIARTI000029572482", "Ingénieur")
+    assert ("le statut compte ses échelons, LEGIARTI000020289510, LEGIARTI000045656098 : « Les "
+            "grades d'administrateur des finances publiques et d'administrateur général des "
+            "finances publiques de classe normale comprennent chacun cinq échelons »") in preuve(
+        "LEGIARTI000020289530", "Administrateur des finances publiques", "etat_legi")
+    assert ("LEGIARTI000020289510, LEGIARTI000045656098 : « Le grade d'administrateur général "
+            "des finances publiques de 1re classe comprend trois échelons »") in preuve(
+        "LEGIARTI000020289530", "Administrateur général des finances publiques de 1re classe")
+    assert ("LEGIARTI000024876132 : « le grade de technicien des installations doté de quatorze "
+            "échelons »") in preuve("LEGIARTI000024876144", "Technicien des installations")
+    assert ("LEGIARTI000042563214 : « le grade de chef technicien doté de neuf échelons »"
+            ) in preuve("LEGIARTI000042563216", "Chef technicien des installations")
+    # Le n° 91-783 se rattache par morceaux, aux dates de son art. 1er : chacun
+    # cite la version de l'art. 3 en vigueur sur lui.
+    for version in ("LEGIARTI000006461851", "LEGIARTI000006461852"):
+        assert (f"le statut compte ses échelons, {version} : « le grade d'assistant de service "
+                "social qui comporte dix échelons »") in preuve("LEGIARTI000006461873",
+                                                              "Assistant de service social")
+
+
+def test_le_sommet_d_une_grille_du_legi_cite_chaque_version_de_la_periode(durees):
+    # Relecture R-B4, écart 1.b. La grille des administrateurs des finances
+    # publiques, décret n° 2009-209, art. 1er : LEGIARTI000020289113
+    # (2009-02-22 → 2017-01-01) : « Administrateur des finances publiques
+    # 5e échelon HEB […] Administrateur général des finances publiques de classe
+    # normale 5e échelon HED […] de 1re classe 3e échelon HEE » ;
+    # LEGIARTI000034034531 (2017-01-01 → 2018-01-01) et LEGIARTI000036489650
+    # (depuis) : « 5 HEB HEB », « 5 HED HED », « 3 HEE HEE ». Le fichier des
+    # échelons garde la première version ; la preuve cite les trois.
+    for groupe, sommet in (("Administrateur des finances publiques", "le 5e échelon (hors échelle B"),
+                           ("Administrateur général des finances publiques de classe normale",
+                            "le 5e échelon (hors échelle D"),
+                           ("Administrateur général des finances publiques de 1re classe",
+                            "le 3e échelon (hors échelle E")):
+        (ligne,) = [d for d in _lignes_de(durees, "LEGIARTI000020289530", groupe)
+                    if d["statut"] == "rattache" and d["source"] == "etat_legi"]
+        assert (f"{sommet}, LEGIARTI000020289113, LEGIARTI000034034531, LEGIARTI000036489650)"
+                in ligne["preuve"]), ligne["preuve"]
 
 
 def test_les_versions_qui_se_chevauchent_ne_se_rattachent_pas_sur_leur_recouvrement(durees):
@@ -938,8 +1044,10 @@ def test_le_noyau_identifie_par_son_numero_et_sa_date_un_decret_sans_nor(reclass
     # statutaires applicables aux chargés d'enseignement de l'éducation physique
     # et sportive. », sans NOR : le titre d'un décret de ce numéro et de cette
     # date l'identifie. Le statut identifié, les corps qui le citent la veille et
-    # le jour sont le 00448 (corps, « 166:origine ») et le 00653 (ses grades,
-    # « 166:origine ») ; leurs grades s'écrivent « Chargé d'enseignement de
+    # le jour sont le 00448 (corps, « 166:origine ») et le 00653, qui ne le cite
+    # pas lui-même (« 5414:origine ») mais par deux de ses grades, 01477 et 01478
+    # (« 166:origine ») ; 01476 ne cite que les textes 5329, 5330 et 5414. Leurs
+    # grades s'écrivent « Chargé d'enseignement de
     # l'éducation physique et sportive classe normale » (01072) et « Chargé
     # d'enseignement EPS enseignement privé classe normale » (01476), non
     # « Chargé d'enseignement d'éducation physique et sportive de classe

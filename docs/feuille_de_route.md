@@ -7116,14 +7116,14 @@ l'inviterait aussi à relire le dépôt.
 
 **Reprise, au 5 novembre 2026.** Périmètre : les trois versants et les militaires. Entrés et certifiés :
 grilles, barème depuis 1983, reclassements (450 tableaux), durées d'échelon (778). Chaînage (étape 3) : 555
-des 1 675 grades de durées et 13 des 862 groupes de reclassement rattachés (vague 10, à relire : le sommet non
-écrit, le n° 91-783, le n° 60-403 identifié ; un rattachement faux du n° 94-1016 ôté). Reste, test d'abord :
+des 1 675 grades de durées et 13 des 862 groupes de reclassement rattachés (vague 10, relue R-B4, conforme ; ses
+preuves citent le compte des échelons du statut, B-bis ; un rattachement faux du n° 94-1016 ôté). Reste :
 l'art. 1er du n° 87-1104, que le n° 96-101 paraît récrire : lire au JO n° 33 du 8 février 1996 (p. 2070 à 2077)
 l'article qui le récrirait, l'art. 37 et l'entrée en vigueur (question au propriétaire) ; rattacher plus, mot
-pour mot : l'annexe que nomment le tableau du n° 94-1016 et l'arrêté du 24 novembre 2006 (cinq grades) ; les
+pour mot : l'annexe du n° 94-1016 et de l'arrêté du 24 novembre 2006 (cinq grades), ses jours de 1994-2006 ; les
 dates d'effet non lues (dont 26 reclassements datés après « reclassés ») ; les 97 versions hors du motif ; les
 refus, au JORF ; le minimum de traitement ; quatre candidats (dont « ES » dans neuf noms de grille, les
-provisoires 301, 328, 342 du n° 87-1103). Détail : `2026-11-05-rattacher-plus-sans-deviner.md`, `2026-11-05-b-ter.md`.
+provisoires 301, 328, 342 du n° 87-1103). Détail : `2026-11-05-b-bis-preuves-de-r-b4.md`, `2026-11-05-b-ter.md`.
 
 
 **D'où elle vient.** La demande du propriétaire, le 12 octobre 2026 : aller
