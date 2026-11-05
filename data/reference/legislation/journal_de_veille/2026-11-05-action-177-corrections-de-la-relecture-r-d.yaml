@@ -1,0 +1,28 @@
+date: "2026-11-05"
+session: "action 177, file D-bis : les écarts de la relecture R-D, le plafond de la caisse de Mayotte et la présomption de 2012 à 2018"
+consulte: >-
+  `python scripts/veille_droit.py` : rien de neuf sur le sujet. L'index LEGI récupéré et
+  mis à jour (à jour au 4 novembre 2026). Dans l'index : l'ordonnance n° 96-1122, article
+  28-1, ses quatre rédactions (LEGIARTI000025018554, LEGIARTI000025023101,
+  LEGIARTI000031324363, LEGIARTI000051284545), article 28-2 (LEGIARTI000025018560) ; le
+  décret n° 2011-2085, article 4, ses trois rédactions (LEGIARTI000025097520,
+  LEGIARTI000026514552, LEGIARTI000053469930, avec `--diff`), et article 4-2
+  (LEGIARTI000038680068, LEGIARTI000053297541) ; le décret n° 2012-1168, sans note qui
+  fasse remonter l'effet de la rédaction du 21 octobre 2012 de l'article 4. Le barème
+  « Salaire plafond - Mayotte » de la Cnav, par `scripts/fetch/cnav_mayotte.py` relancé :
+  la série du dépôt inchangée.
+trouve: >-
+  Le plafond de l'article 28-1, I, est un plafond « créé à Mayotte », arrêté par le
+  ministre, dans toutes ses rédactions depuis 2012 : c'est lui, et non le plafond de la
+  Sécurité sociale, qui borne la cotisation de l'indépendant (article 28-2 depuis 2012,
+  article 4-2 depuis 2019). L'article 4 fixe à la vieillesse de base une part salariale
+  (4,00 % à 4,66 % de 2012 à 2018 dans la rédaction du 21 octobre 2012 ; 4,11 % pour 2012
+  dans celle du 1er janvier) et une part patronale de 9,90 %, sans nommer l'indépendant.
+  Les deux moteurs bornent désormais au plafond de la caisse ; de 2012 à 2018, le modèle
+  présume la somme des deux parts, 13,90 % à 14,56 %, au niveau `estimee`.
+reste: >-
+  Ce que l'indépendant devait vraiment de 2012 à 2018 (une circulaire de la caisse ou un
+  barème de la Cnav de ces années). Le salarié de Mayotte, qui cotise encore sous le
+  plafond de la Sécurité sociale et à la série du régime général, quand les articles
+  28-2 et 4 lui donnent le plafond de la caisse et ses deux parts. Le minimum de la
+  cotisation des indépendants jusqu'en 2015 (D. 633-2, D. 612-6), à lire.

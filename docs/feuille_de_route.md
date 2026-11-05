@@ -7766,15 +7766,15 @@ avec son test. Le modèle et le site gardent PyYAML seul.
 ### 177. Les écarts que les barèmes de la Cnav ont trouvés au modèle : chacun corrigé dans les deux moteurs, ou sa limite dite — `en cours`
 
 **Reprise, au 5 novembre 2026.** Les étapes 1 à 9 sont faites, la 9 relue et
-corrigée ; le taux propre de l'indépendant de Mayotte depuis 2019 (article 4-2)
-est écrit, 2012 à 2018 déclarés (`177/2026-11-05-taux-des-independants-de-mayotte.md`).
-Restent déclarés le forfait du commerçant qui commence et celui de l'artisan de
-2009 à 2011 (`177/2026-11-03-corrections-de-la-relecture-r-m2.md`). Par quoi
-commencer : le minimum de la cotisation jusqu'en 2015, à lire d'abord (D. 633-2,
-D. 612-6), écrit dans les deux moteurs ou sa raison dite. La file du site tient
-l'assurance maladie du micro-entrepreneur, « à rendre plus propre » (étape 6),
-sans toucher à ce bloc. Un écart par commit, le test vu rouge d'abord ; sur Opus,
-après `veille_droit.py`.
+corrigée ; l'indépendant de Mayotte cotise sous le plafond de sa caisse, au taux
+de l'article 4-2 depuis 2019, à la somme présumée des parts de l'article 4 de 2012
+à 2018 (`177/2026-11-05-corrections-de-la-relecture-r-d.md`). Restent déclarés le
+forfait du commerçant qui commence et celui de l'artisan de 2009 à 2011
+(`177/2026-11-03-corrections-de-la-relecture-r-m2.md`). Par quoi commencer : le
+minimum de la cotisation jusqu'en 2015, à lire d'abord (D. 633-2, D. 612-6), écrit
+dans les deux moteurs ou sa raison dite ; puis le salarié de Mayotte (plafond de la
+caisse depuis 2012, ses deux parts : articles 28-2 et 4). La file du site tient
+l'assurance maladie du micro-entrepreneur (étape 6). Test rouge d'abord ; sur Opus.
 
 **D'où elle vient.** Le 31 octobre 2026, l'étape 2 de l'action 175 — les
 barèmes de la base de législation de la Cnav confrontés, un à un, aux séries
