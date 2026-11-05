@@ -112,7 +112,9 @@ periodes:
       (LEGIARTI000006381610), le coefficient n'est pas appliqué à qui
       liquide sa pension du régime général au taux plein — le 6° c) de
       l'article, « à compter du 1er avril 1983 » : c'est ce que dit
-      `duree_requise_par_generation` aux périodes postérieures, la lecture
+      `duree_requise_par_generation` aux périodes postérieures, que le moteur
+      ne lit qu'à compter de ce jour, quand la version de la fiche
+      coefficient_anticipation_ircantec à la date d'effet la lit, la lecture
       par la durée s'ajoutant alors à celle par l'âge, comme le veut le
       paragraphe 2. Le décret n° 2008-996
       du 23 septembre 2008 n'a pas touché aux âges (LEGIARTI000019511923

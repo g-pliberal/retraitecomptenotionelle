@@ -50,10 +50,10 @@ periodes:
     surcote_par_trimestre: null
     avantages_non_contributifs: [reversion]
     notes: >-
-      UNE FICHE FERMÉE SE LIQUIDE SOUS LE DROIT D'APRÈS SA FERMETURE.
-      L'abattement d'anticipation ne s'applique « à l'âge seul » que jusqu'à l'ASF de 1983, qui exonère qui a le taux plein au régime de base ; le moteur lit cette règle dans la période du régime à l'ANNÉE DE LIQUIDATION, et la dernière période d'un régime fermé avant 1983 est forcément antérieure — alors qu'aucune de ses pensions n'a été liquidée avant.
-      `duree_requise_par_generation` le dit : cette fiche est liquidée sous le droit commun, exonération comprise.
-      Sans lui, un assuré au taux plein voyait cette ligne-là abattue de 4 à 22 %.
+      UNE FICHE FERMÉE SE LIQUIDE SOUS LE DROIT DE LA DATE D'EFFET.
+      L'abattement d'anticipation ne s'applique « à l'âge seul » que jusqu'au 1er avril 1983, où l'article 16 de l'arrêté du 30 décembre 1970 (6° c) et II) exonère qui a le taux plein au régime général ; les points de ce régime, que l'Ircantec reprend en 1971, se liquident avant comme après.
+      `duree_requise_par_generation` dit la durée que la période lit depuis cette date ; le moteur ne la lit qu'à compter d'elle, et la table par année d'âge jusqu'au 31 août 1983, dans la version de la fiche coefficient_anticipation_ircantec qui vaut à la date d'effet de la pension (5 novembre 2026).
+      Sans elle, un assuré au taux plein voyait cette ligne-là abattue de 4 à 22 % après le 1er avril 1983.
       TAUX LUS DANS LE TEXTE : « les taux de cotisation à la charge des
       bénéficiaires et des services employeurs sont respectivement fixés à
       1,40 p. 100 et 2,10 p. 100 » — 3,5 % en tout, 40 % à la charge de

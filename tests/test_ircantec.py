@@ -58,20 +58,19 @@ DU_PORTAGE = {
 #: Ce que le moteur lit dans la version même, à la date d'effet de la pension
 #: (`baremeIrcantec`, dans le portage), et qu'aucune période n'a donc à
 #: porter : la table par année d'âge, jusqu'au 31 août 1983, et, là où elle
-#: sert, l'absence des paliers de l'escalier qui la remplace.
+#: sert, l'absence des paliers de l'escalier qui la remplace ; l'absence de
+#: durée, jusqu'au 1er avril 1983, qui abat à l'âge seul quelle que soit la
+#: période — celle de l'IPACTE et de l'IGRANTE porte la durée.
 DE_LA_VERSION = {"coefficients_par_annee_d_age"}
 #: Le paramètre qu'un test à lui confronte au dépôt : la durée que la seconde
 #: table lit de 1983 à 2003.
 A_PART = {"duree_de_la_seconde_table_trimestres"}
 
-#: Les versions du coefficient qui couvrent une année entière, celles d'avant
-#: le 1er avril 1983 parmi elles, et celles d'après le 1er juillet 2011.
+#: Les versions du coefficient qui couvrent une année entière, et celles
+#: d'après le 1er juillet 2011.
 COUVRANTES = ("ipacte_et_igrante", "arrete_de_1970", "femmes_de_la_loi_de_1977",
               "escalier_au_trimestre_1983", "retraite_anticipee_2004", "ages_de_2010",
               "compte_de_prevention_2018", "ancres_fixes_2023")
-AVANT_1983 = ("ipacte_et_igrante", "arrete_de_1970", "anciens_combattants_1976",
-              "travailleurs_manuels_1977", "femmes_de_la_loi_de_1977",
-              "ordonnance_du_26_mars_1982", "structure_financiere_1983")
 DEPUIS_2011 = ("ages_de_2010", "compte_de_prevention_2018", "ancres_fixes_2023")
 FERMES = ("ipacte", "igrante")
 
@@ -80,16 +79,13 @@ FERMES = ("ipacte", "igrante")
 #: porte autrement (tous, ou le portage, sans eux), et l'article que cite
 #: l'approximation qui le déclare. Le modèle liquide l'Ircantec avec la
 #: pension de base, jamais avant l'âge d'ouverture de sa période, quand
-#: l'article ouvre l'anticipation dix ans avant l'âge du taux plein ; il exonère
-#: dès 1951 qui a la durée, dans la période unique de l'IPACTE et de
-#: l'IGRANTE, quand l'article ne le fait qu'« à compter du 1er avril 1983 » ;
-#: il y garde soixante-cinq ans après le 1er juillet 2011 ; il compte en mois
+#: l'article ouvre l'anticipation dix ans avant l'âge du taux plein ; il garde
+#: soixante-cinq ans aux points de l'IPACTE et de l'IGRANTE après le
+#: 1er juillet 2011 ; il compte en mois
 #: le trimestre de la surcote, de quatre-vingt-dix jours depuis 2023.
 ECARTS_DECLARES = [
     *[(ANTICIPATION, version, "anticipation_maximale_annees", None, "article 16, I")
       for version in COUVRANTES],
-    *[(ANTICIPATION, version, "duree_requise_par_generation", FERMES, "6° c)")
-      for version in ("ipacte_et_igrante", "arrete_de_1970", "femmes_de_la_loi_de_1977")],
     *[(ANTICIPATION, version, "age_taux_plein_par_generation", FERMES, "L. 351-8")
       for version in DEPUIS_2011],
     (SURCOTE, "precisions_de_2023", "trimestre_en_jours", None, "IV, 3°"),
@@ -158,12 +154,14 @@ def _portes(version: dict, champ: str, code: str | None) -> set:
 
 def _lu_dans_la_version(nom: str, version: dict, champ: str) -> bool:
     """Le moteur lit-il ce paramètre dans la version même (:data:`DE_LA_VERSION`) ?
-    Les paliers aussi, là où la version n'en a pas et lit la table."""
+    Les paliers aussi, là où la version n'en a pas et lit la table ; la durée,
+    là où la version n'en a pas."""
     parametres = version["contenu"]["parametres"]
     return nom == ANTICIPATION and (
         champ in DE_LA_VERSION
         or (champ == "paliers_d_anticipation" and parametres[champ] is None
-            and parametres.get("coefficients_par_annee_d_age") is not None))
+            and parametres.get("coefficients_par_annee_d_age") is not None)
+        or (champ == "duree_requise_par_generation" and parametres[champ] is None))
 
 
 def _declare(nom: str, version: str, champ: str, code: str | None) -> bool:
@@ -407,5 +405,42 @@ def test_avant_le_31_aout_1983_la_table_par_annee_d_age():
     cas = json.dumps([retouche for retouche, _, _ in TABLE_PAR_ANNEE_D_AGE])
     portage, jumeau = _deux_moteurs(cas)
     attendus = [_attendus(date, coefficient) for _, date, coefficient in TABLE_PAR_ANNEE_D_AGE]
+    assert portage == attendus
+    assert jumeau == attendus
+
+
+#: L'exonération de qui a la durée du taux plein du régime général : la
+#: retouche de la requête, et ce que servent les trois régimes — le
+#: coefficient lu à la main dans la table de l'article 16, ``None`` sans
+#: coefficient. Au travail dès dix-huit ans, l'agent né en 1922 a plus de cent
+#: cinquante trimestres à soixante ans ; le 6° c) ne l'exonère qu'« à compter
+#: du 1er avril 1983 », et l'IPACTE et l'IGRANTE, dont les fiches portent la
+#: durée du régime général sur leur seule période, avec l'Ircantec.
+EXONERATION_A_LA_DUREE = [
+    # Soixante ans et neuf mois en novembre 1982 : la ligne de soixante ans.
+    ({"debut": "18", "liquidation_mois": "9"}, _attendus("1982-11-01", 0.78)),
+    # Soixante et un ans et un mois en mars 1983 : la ligne de soixante et un
+    # ans, le 6° c) n'est pas encore en vigueur.
+    ({"debut": "18", "liquidation": "61", "liquidation_mois": "1"},
+     _attendus("1983-03-01", 0.83)),
+    # Le mois suivant, en avril 1983 : aucun coefficient.
+    ({"debut": "18", "liquidation": "61", "liquidation_mois": "2"},
+     _attendus("1983-04-01", None)),
+    # Né en 1905, parti à soixante-deux ans en février 1967, avant l'Ircantec :
+    # la ligne de soixante-deux ans, 0,88, de la table que la version
+    # ipacte_et_igrante présume, sur ses points de l'IPACTE et de l'IGRANTE.
+    ({"naissance": "1905-01-15", "debut": "18", "liquidation": "62"},
+     {"date": "1967-02-01", "igrante": 0.88, "ipacte": 0.88}),
+]
+
+
+def test_la_duree_n_exonere_qu_a_compter_du_1er_avril_1983():
+    """Avant le 1er avril 1983, la durée d'assurance n'exonère pas : les deux
+    moteurs lisent dans la version de la date d'effet que le coefficient se
+    lit à l'âge seul, pour les points de l'Ircantec comme pour ceux de
+    l'IPACTE et de l'IGRANTE, dès 1951."""
+    portage, jumeau = _deux_moteurs(json.dumps([retouche for retouche, _ in
+                                                EXONERATION_A_LA_DUREE]))
+    attendus = [attendu for _, attendu in EXONERATION_A_LA_DUREE]
     assert portage == attendus
     assert jumeau == attendus

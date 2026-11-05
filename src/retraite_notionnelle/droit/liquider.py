@@ -4029,12 +4029,19 @@ def abattement_points(moteur, periode: PeriodeRegime, carriere: Carriere,
         # pension de l'Agirc ou de l'Arrco qui prend effet avant le 1er avril
         # 1983 aussi, quelle que soit sa période : celle de 1983, ou la seule
         # d'une fiche fermée plus tôt, comme l'UNIRS (:func:`exonerations_agirc_arrco`).
+        # Une pension de l'Ircantec, de l'IPACTE ou de l'IGRANTE de même, dont
+        # la version de la date d'effet ne lit pas la durée : l'article 16 ne
+        # l'exonère et n'ouvre sa seconde table qu'« à compter du 1er avril
+        # 1983 » (6° c) et II ; :func:`bareme_ircantec`).
         par_age_seul = (
             periode.duree_requise_trimestres is None
             and not periode.duree_requise_par_generation
         )
         regle = exonerations_agirc_arrco(moteur, periode, carriere)
         if regle is not None and not regle["exoneration_au_taux_plein"]:
+            par_age_seul = True
+        bareme = bareme_ircantec(moteur, periode, carriere)
+        if bareme is not None and not bareme["duree_requise_par_generation"]:
             par_age_seul = True
         # L'INAPTE A LE TAUX PLEIN AU RÉGIME GÉNÉRAL, et la complémentaire le
         # suit : « sans coefficient » pour qui a obtenu la pension du régime
@@ -4073,7 +4080,6 @@ def abattement_points(moteur, periode: PeriodeRegime, carriere: Carriere,
             # année d'âge, que la seconde table lit aussi, à l'âge assimilé à
             # soixante-cinq ans : celui de l'agent, moins les trimestres qui
             # lui manquent (article 16, II, « à compter du 1er avril 1983 »).
-            bareme = bareme_ircantec(moteur, periode, carriere)
             table = bareme is not None and bareme["coefficients_par_annee_d_age"]
             manquants = requis - trimestres
             if par_age_seul:

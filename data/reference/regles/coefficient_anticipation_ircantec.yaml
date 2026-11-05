@@ -482,19 +482,6 @@ approximations:
     mesuré par l'exemple ircantec_minoration_age_avant_l_age_legal, en écart connu : 0,7625
     publiés à soixante et un ans et neuf mois, 0,9 rendus par le modèle, qui attend l'âge
     légal
-- version: [ipacte_et_igrante, arrete_de_1970, anciens_combattants_1976, travailleurs_manuels_1977,
-    femmes_de_la_loi_de_1977, ordonnance_du_26_mars_1982]
-  textes: article 16, 6° c) et II, « A compter du 1er avril 1983 »
-  ecart: >-
-    la période unique de l'IPACTE et celle de l'IGRANTE, que le moteur lit pour toute
-    liquidation de leurs points, portent la durée requise du régime général : il en
-    exonère dès 1951 qui a la durée, et y lit la seconde table, quand l'article ne le fait
-    qu'à compter du 1er avril 1983 ; la période de l'Ircantec de 1971 à 1982 abat à l'âge
-    seul, comme le texte
-  effet: >-
-    jusqu'à 22 points de coefficient de plus (0,78 à soixante ans) sur les points de
-    l'IPACTE et de l'IGRANTE liquidés avant le 1er avril 1983 par qui a cent cinquante
-    trimestres ; non mesuré
 - version: [ages_de_2010, handicapes_a_l_age_legal_2018, compte_de_prevention_2018, ancres_fixes_2023]
   textes: article 16, I, rédaction du 1er juillet 2011, l'âge prévu au 1° de L. 351-8
   ecart: >-
@@ -576,9 +563,10 @@ effet: >-
   l'escalier sur l'âge du taux plein, et rend les mêmes. Lue au droit le 3 novembre 2026,
   rédaction par rédaction depuis 1971 ; depuis le 5 novembre 2026, le moteur lit la table
   par année d'âge dans la version de la date d'effet, jusqu'au 31 août 1983, et
-  tests/test_ircantec.py la rejoue dans les deux moteurs. Restent : il exonère à la durée les
-  points de l'IPACTE et de l'IGRANTE dès 1951, quand l'article ne le fait que depuis le
-  1er avril 1983 ; il ne sert pas l'anticipation avant l'âge légal.
+  tests/test_ircantec.py la rejoue dans les deux moteurs ; il n'exonère à la durée, et
+  n'ouvre la seconde table, qu'à compter du 1er avril 1983, sur les points de l'IPACTE et
+  de l'IGRANTE comme sur ceux de l'Ircantec, ce que le même fichier rejoue. Reste : il ne
+  sert pas l'anticipation avant l'âge légal.
 sources:
   lu_le: 2026-11-03
   prochaine_relecture: 2027-03-31
@@ -686,7 +674,9 @@ code:
     liquidation de l'âge du taux plein de la période (`age_taux_plein`, ou
     `age_taux_plein_par_generation` depuis 2011), arrondis au supérieur, au plancher de
     0,43 dix ans avant ; la seconde table, sur la durée manquante, quand la période porte
-    `duree_requise_par_generation`, dont la durée exonère aussi.
+    `duree_requise_par_generation`, dont la durée exonère aussi, et que la version de la
+    date d'effet la lit, à compter du 1er avril 1983 : avant, `bareme_ircantec` rend une
+    version sans durée, qui abat à l'âge seul quelle que soit la période.
   python: >-
     droit/liquider.py : liquider_chaque_regime, abattement_points, bareme_ircantec,
     coefficient_par_annee_d_age, coefficient_pour_age, _coefficient_anticipation, _PALIERS_ANTICIPATION,

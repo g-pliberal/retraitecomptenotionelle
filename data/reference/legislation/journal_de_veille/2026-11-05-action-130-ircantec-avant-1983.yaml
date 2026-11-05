@@ -1,0 +1,31 @@
+date: "2026-11-05"
+session: "action 130, file M3 : l'Ircantec, l'IPACTE et l'IGRANTE d'avant 1983 (décision 9 du propriétaire)"
+consulte: >-
+  python scripts/veille_droit.py ; docs/veille_droit.md ; les index LEGI et JORF du dépôt,
+  récupérés, à jour des incréments du 2 novembre 2026 (LEGI, 20261102-213929) et du
+  3 novembre (JORF, 20261103-002311). Dans LEGI : l'article 16 de l'arrêté du 30 décembre
+  1970 relatif aux modalités de fonctionnement de l'Ircantec, ses douze rédactions listées,
+  et relues mot pour mot celles du 9 février 1971 (LEGIARTI000006381606), du 3 janvier 1976
+  (LEGIARTI000006381607), du 26 juillet 1977 (LEGIARTI000006381608), du 30 septembre 1978
+  (LEGIARTI000006381609) et du 31 août 1983 (LEGIARTI000006381610). Dans JORF : l'analyse
+  de l'arrêté du 26 juillet 1983 (JORFTEXT000000837384).
+trouve: >-
+  Jusqu'au 31 août 1983, l'article ne donne qu'un coefficient par année d'âge, « AGES
+  COEFFICIENTS […] 55 ans 0,43 60 ans 0,78 […] 61 ans 0,83 […] 62 ans 0,88 […] 63 ans
+  0,92 […] 64 ans 0,96 », le même dans les quatre rédactions de 1971 à 1978 ; l'arrêté du
+  26 juillet 1983, publié le 31 août, les fixe « désormais par trimestre » (son analyse) :
+  0,43 à cinquante-cinq ans, « majoré de 0,017 5 par trimestre écoulé », 0,78 à soixante
+  ans majoré de 0,012 5, 0,88 à soixante-deux ans majoré de 0,01. La durée d'assurance
+  n'exonère qu'« A compter du 1er avril 1983 » (6° c), et la seconde table ne s'ouvre qu'à
+  la même date (II). Les deux moteurs servaient l'escalier dès 1951 et exonéraient à la
+  durée les points de l'IPACTE et de l'IGRANTE dès 1951, ceux de l'Ircantec dès le
+  1er janvier 1983 : ils lisent désormais la table et la date de l'exonération dans la
+  version de la fiche coefficient_anticipation_ircantec qui vaut à la date d'effet.
+reste: >-
+  Le II, publié le 31 août 1983 avec l'escalier et rétroactif au 1er avril, renvoie aux
+  « coefficients de réduction prévus au paragraphe Ier » : le texte ne dit pas lequel vaut
+  d'avril à août 1983 ; le modèle lit la table, déclaré dans la fiche. Les pensions de
+  l'IPACTE et de l'IGRANTE d'avant 1971 restent présumées sous la table de 1970 : les
+  arrêtés du 12 décembre 1951 et du 17 février 1960 ne sont pas dans l'index LEGI. Les
+  coefficients de l'Agirc et de l'Arrco de 1955 à 1983, que le modèle lit au trimestre,
+  sont à relire de même, par année d'âge ou par trimestre.

@@ -3212,12 +3212,19 @@ export function abattementPoints(moteur, periode, carriere, trimestres, requis, 
     // requise — ni en dur, ni lue à la génération — abat toute anticipation
     // avant l'âge du taux plein, et la table par durée ne s'y consulte pas ;
     // une pension de l'Agirc ou de l'Arrco qui prend effet avant cette date
-    // aussi, quelle que soit sa période (`exonerationsAgircArrco`).
+    // aussi, quelle que soit sa période (`exonerationsAgircArrco`), et une
+    // pension de l'Ircantec, de l'IPACTE ou de l'IGRANTE, dont la version de
+    // la date d'effet ne lit pas la durée (`baremeIrcantec`, article 16, 6° c)
+    // et II, « à compter du 1er avril 1983 »).
     let parAgeSeul = (periode.duree_requise_trimestres === null
       || periode.duree_requise_trimestres === undefined)
       && !periode.duree_requise_par_generation;
     const regle = exonerationsAgircArrco(moteur, periode, carriere);
     if (regle !== null && !regle.exoneration_au_taux_plein) {
+      parAgeSeul = true;
+    }
+    const bareme = baremeIrcantec(moteur, periode, carriere);
+    if (bareme !== null && !bareme.duree_requise_par_generation) {
       parAgeSeul = true;
     }
     // L'inapte a le taux plein au régime général, et la complémentaire le
@@ -3244,7 +3251,6 @@ export function abattementPoints(moteur, periode, carriere, trimestres, requis, 
       // Jusqu'au 31 août 1983, l'Ircantec n'a qu'un coefficient par année
       // d'âge, que la seconde table lit aussi, à l'âge assimilé à soixante-cinq
       // ans : celui de l'agent, moins les trimestres qui lui manquent.
-      const bareme = baremeIrcantec(moteur, periode, carriere);
       const table = bareme !== null && bareme.coefficients_par_annee_d_age;
       const manquants = requis - trimestres;
       const parDuree = parAgeSeul ? null
