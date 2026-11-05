@@ -250,6 +250,35 @@ d) **La cotisation forfaitaire minimale de 2012 à 2018 n'est déclarée nulle p
    - Effet : les petits revenus seuls, comme le témoin à 1 000 € par an.
    - L'écart est antérieur à D-bis, dont il touche pourtant la présomption.
 
+## 7. Complément, à la demande de l'orchestration : le passage de certification de 5940f86
+
+Le commit 5940f86 a lancé `verifier_donnees.py --appliquer`. J'ai confronté, entrée par
+entrée, `data/derive/certification.json` avant et après ce commit (`5940f86^`, puis
+`5940f86`). Voici ce qui change :
+
+- **`dernier_passage_le`** passe du 3 au 5 novembre ; rien d'autre ne bouge hors des
+  séries.
+- **Les deux traces de la file D.**
+  - `taux_cotisation_mayotte` : 16 valeurs « identiques » au lieu de 16 « ajoutées » ; son
+    empreinte (153bb30d7e5a640a) ne change pas.
+  - `taux_cotisation_mayotte_presume` naît : 14 valeurs ajoutées, au niveau `estimee`.
+- **Quatre séries d'autres files, dont seule la date bouge.** Pour chacune, `verifiee_le`
+  passe du 31 octobre au 5 novembre. L'empreinte, le nombre de valeurs, le niveau, la
+  source et les compteurs restent identiques :
+
+| Série | Empreinte | Valeurs |
+|---|---|---|
+| `esperance_65_derivee` | eb9ed5da75656a7a | 28 |
+| `taux_cotisation_alignes` | 788c0e4df2673be1 | 512 |
+| `valeurs_point_gmp` | 3afedd6c509965db | 29 |
+| `valeurs_point_ircantec_publiees` | 7341e6669d5f7a9d | 23 |
+
+Les données de ces quatre séries ne bougent pas non plus. Dans
+`taux_cotisation_annuels.csv`, le commit n'ajoute que quatorze lignes,
+`taux_plafonne_non_salarie` et `taux_deplafonne_non_salarie` de `cssm_mayotte`, de 2012 à
+2018. Il ne change ni n'ôte aucune ligne de la série alignée. Aucun autre fichier de ces
+séries n'est dans le commit. Conforme.
+
 **Sources** :
 
 - index LEGI de la DILA, à jour au 4 novembre 2026 :
