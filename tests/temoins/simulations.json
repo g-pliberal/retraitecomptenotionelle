@@ -11504,7 +11504,7 @@
    },
    "scenarios": {
     "actuel": {
-     "age_ouverture_opposable": 61.166667,
+     "age_ouverture_opposable": 61.166666666666664,
      "avantages_appliques": [],
      "liquidation_ouverte": true,
      "minimum_applique": false,
@@ -12334,11 +12334,11 @@
    },
    "scenarios": {
     "actuel": {
-     "age_ouverture_opposable": 60.666667,
+     "age_ouverture_opposable": 60.666666666666664,
      "avantages_appliques": [],
-     "liquidation_ouverte": false,
+     "liquidation_ouverte": true,
      "minimum_applique": false,
-     "motif_ouverture": "non_ouverte",
+     "motif_ouverture": "age_legal",
      "par_regime": [
       {
        "detail": "SR 40,145.09 € × taux 69.938% × 159/165",
@@ -17045,7 +17045,7 @@
    },
    "scenarios": {
     "actuel": {
-     "age_ouverture_opposable": 60.333333,
+     "age_ouverture_opposable": 60.333333333333336,
      "avantages_appliques": [],
      "liquidation_ouverte": true,
      "minimum_applique": false,
@@ -25001,7 +25001,7 @@
    },
    "scenarios": {
     "actuel": {
-     "age_ouverture_opposable": 61.58,
+     "age_ouverture_opposable": 61.583333333333336,
      "avantages_appliques": [],
      "cumul": {
       "affiliation": "medecin_liberal",
@@ -25591,7 +25591,7 @@
    },
    "scenarios": {
     "actuel": {
-     "age_ouverture_opposable": 61.58,
+     "age_ouverture_opposable": 61.583333333333336,
      "avantages_appliques": [],
      "cumul": {
       "affiliation": "medecin_liberal",
@@ -65582,7 +65582,7 @@
    },
    "scenarios": {
     "actuel": {
-     "age_ouverture_opposable": 60.33,
+     "age_ouverture_opposable": 60.333333333333336,
      "avantages_appliques": [],
      "liquidation_ouverte": true,
      "minimum_applique": false,
@@ -70275,7 +70275,7 @@
    },
    "scenarios": {
     "actuel": {
-     "age_ouverture_opposable": 56.33,
+     "age_ouverture_opposable": 56.333333333333336,
      "avantages_appliques": [],
      "liquidation_ouverte": true,
      "minimum_applique": false,
@@ -128560,7 +128560,7 @@
    },
    "scenarios": {
     "actuel": {
-     "age_ouverture_opposable": 51.33,
+     "age_ouverture_opposable": 51.333333333333336,
      "avantages_appliques": [],
      "liquidation_ouverte": true,
      "minimum_applique": false,
@@ -142681,7 +142681,7 @@
    },
    "scenarios": {
     "actuel": {
-     "age_ouverture_opposable": 60.666667,
+     "age_ouverture_opposable": 60.666666666666664,
      "avantages_appliques": [],
      "liquidation_ouverte": true,
      "minimum_applique": false,
@@ -169193,7 +169193,7 @@
    },
    "scenarios": {
     "actuel": {
-     "age_ouverture_opposable": 51.33,
+     "age_ouverture_opposable": 51.333333333333336,
      "avantages_appliques": [],
      "liquidation_ouverte": true,
      "minimum_applique": false,
@@ -180117,7 +180117,7 @@
    },
    "scenarios": {
     "actuel": {
-     "age_ouverture_opposable": 56.33,
+     "age_ouverture_opposable": 56.333333333333336,
      "avantages_appliques": [],
      "liquidation_ouverte": true,
      "minimum_applique": false,
@@ -185789,7 +185789,7 @@
    },
    "scenarios": {
     "actuel": {
-     "age_ouverture_opposable": 50.67,
+     "age_ouverture_opposable": 50.666666666666664,
      "avantages_appliques": [],
      "liquidation_ouverte": true,
      "minimum_applique": false,
@@ -190372,7 +190372,7 @@
    },
    "scenarios": {
     "actuel": {
-     "age_ouverture_opposable": 50.67,
+     "age_ouverture_opposable": 50.666666666666664,
      "avantages_appliques": [],
      "liquidation_ouverte": true,
      "minimum_applique": false,
