@@ -7118,9 +7118,9 @@ l'inviterait aussi à relire le dépôt.
 grilles, barème depuis 1983, reclassements (450 tableaux), durées d'échelon (778). Chaînage (étape 3) relu
 trois fois, conforme : 511 des 1 675 grades de durées et 13 des 862 groupes de reclassement rattachés. Lus au
 JORF et corrigés le 5 novembre : l'art. 2 du n° 2009-1322, l'art. 14-1-1 du n° 2008-836 (son échelon spécial
-compris), l'art. 4 du n° 2012-1058. Reste, test d'abord : l'art. 1er du n° 87-1104, que le n° 96-101 récrit ;
+compris), l'art. 4 du n° 2012-1058. Reste, test d'abord : l'art. 1er du n° 87-1104, que le n° 96-101 paraît récrire (seul son visa le cite) ;
 l'index JORF garde de ce décret sept articles, dont aucun ne vise le n° 87-1104 ni ne date son effet : lire au
-JO n° 33 du 8 février 1996 (p. 2070 à 2077) l'article qui le récrit, l'art. 37 et l'entrée en vigueur
+JO n° 33 du 8 février 1996 (p. 2070 à 2077) l'article qui le récrirait, l'art. 37 et l'entrée en vigueur
 (question au propriétaire) ; rattacher plus sans deviner ; les dates d'effet non lues ; les 97 versions hors du
 motif ; les refus, au JORF ; le minimum de traitement ; quatre candidats (dont « ES » dans neuf noms de grille,
 les provisoires 301, 328, 342 du n° 87-1103). Détail : `2026-11-05-b-ter.md`.

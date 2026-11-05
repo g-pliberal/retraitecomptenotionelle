@@ -228,3 +228,5 @@ une source publiée la fonde.
    la génération 1953, au même script.
 2. *Au propriétaire* : une source qui dise la part des fonctionnaires nées
    en 1953 parties en carrière longue, ou leur âge de début d'activité.
+
+Renvoi du 5 novembre 2026 : la ligne 272 de « Naissance-Résidence » est la ligne 273 (la ligne « Femme »), dans `2026-11-05-retouches-6.md`.

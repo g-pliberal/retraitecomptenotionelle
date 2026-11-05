@@ -941,13 +941,17 @@ def test_la_grille_passe_de_l_emploi_a_la_retraite_sans_chomage(grille, temoin):
     seule période de non-emploi entre l'emploi et la retraite, et 4,81 % ne
     sont pas partis à 67 ans.
 
-    ÉCART DÉCLARÉ, mesuré le 5 novembre 2026. Les cas types de la grille nés
-    en 1954, pesés de leurs têtes de 2024 : à 59 ans, 86,1 % en emploi, et sa
-    seule femme l'est ; aucun au chômage ; 4,4 % absents, l'inapte, sans
-    activité depuis ses quarante-neuf ans ; 4,6 % en invalidité,
-    l'ex-invalide, depuis ses quarante-six ans ; 4,9 % retraités, le
-    militaire, l'agent de conduite de la SNCF, l'agent des IEG et le
-    fonctionnaire super-actif. De 50 ans à leur départ, 90,8 % passent de
+    ÉCART DÉCLARÉ, mesuré le 5 novembre 2026, dans le champ de la source (« hors
+    absents et retraités dès 50 ans », B40 de « F21_Graphique 1 », comme B18 de
+    « F21_Tableau 2 ») : les cas types de la grille nés en 1954, sauf le militaire
+    (48 ans) et l'agent de conduite de la SNCF (50 ans), qui ont liquidé à 50
+    ans ou avant, pesés de leurs têtes de 2024 (724 164) : à 59 ans, 88,5 % en
+    emploi, et sa seule femme l'est ; aucun au chômage ; 4,5 % absents,
+    l'inapte, sans activité depuis ses quarante-neuf ans ; 4,7 % en invalidité,
+    l'ex-invalide, depuis ses quarante-six ans ; 2,3 % retraités, l'agent des
+    IEG et le fonctionnaire super-actif. Avec le militaire et l'agent de la SNCF
+    (744 485 têtes), 86,1 % en emploi, 4,4 % absents, 4,6 % en invalidité et
+    4,9 % retraités. De 50 ans à leur départ, 90,8 % passent de
     l'emploi à la retraite sans année de non-emploi, 95,1 % si l'inapte est
     de ceux que le champ dit absents dès 50 ans (la source ne le tranche
     pas) ; aucun par une période de non-emploi intercalée, l'inapte et
@@ -958,6 +962,8 @@ def test_la_grille_passe_de_l_emploi_a_la_retraite_sans_chomage(grille, temoin):
     n'asserte que le sens de l'écart."""
     cas_types = {cas.code: cas for cas in GRILLE_DU_COUT}
     nes = _nes_en(grille, 1954)
+    #: Le champ des deux sources de la fiche : hors absents et retraités dès 50 ans.
+    champ = [c for c in nes if c.age_liquidation > 50]
 
     def situation_a_59_ans(cohorte) -> str:
         if cohorte.age_liquidation <= 59:
@@ -967,17 +973,16 @@ def test_la_grille_passe_de_l_emploi_a_la_retraite_sans_chomage(grille, temoin):
 
     publie = temoin["valeurs"]["21_graphique_1"]["1954"]
     for groupe, sexe in (("ensemble", None), ("femmes", "F"), ("hommes", "H")):
-        lot = [c for c in nes if sexe is None or cas_types[c.code].sexe == sexe]
+        lot = [c for c in champ if sexe is None or cas_types[c.code].sexe == sexe]
         assert 100 * _moyenne_des_tetes(lot, lambda c: situation_a_59_ans(c) == "emploi") > publie[
             groupe]["emploi"]["valeur"], groupe
-    parts = {situation: 100 * _moyenne_des_tetes(nes, lambda c: situation_a_59_ans(c) == situation)
+    parts = {situation: 100 * _moyenne_des_tetes(champ, lambda c: situation_a_59_ans(c) == situation)
              for situation in ("chomage", "absence", "maladie_invalidite", "retraite")}
     assert parts["chomage"] == 0.0 < publie["ensemble"]["chomage"]["valeur"]
     for situation in ("absence", "maladie_invalidite", "retraite"):
         assert 0.0 < parts[situation] < publie["ensemble"][situation]["valeur"], situation
 
     trajectoires = temoin["valeurs"]["21_tableau_2"]
-    champ = [c for c in nes if c.age_liquidation > 50]
 
     def directe(cohorte) -> bool:
         return all(_interruption(cohorte.code, age) is None

@@ -194,3 +194,5 @@ de « Ce qui reste » de la trente-deuxième version
 4. Les points 1, 3 et 4 de la trente-deuxième version : la mortalité des
    inaptes, les générations hors de l'enquête, les exploitants et les
    libéraux.
+
+Renvoi du 5 novembre 2026 : les 17,6 et 25,1 % entre les deux âges valent 17,7 et 25,2 (17,69 et 25,17, remesurés), dans `2026-11-05-retouches-6.md`.

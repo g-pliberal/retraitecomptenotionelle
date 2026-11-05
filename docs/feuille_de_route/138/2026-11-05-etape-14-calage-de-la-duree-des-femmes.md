@@ -192,3 +192,5 @@ contre la source publiée qui fait foi.
    la carrière longue des femmes de 1953 de la population, 6,6 % pour 13,2,
    hors de la grille ; les invalides et les inaptes entre les deux âges
    (point 4 de la trente-cinquième version).
+
+Renvoi du 5 novembre 2026 : les numéros de ligne de la feuille « Naissance-Résidence » et de « CondLiquidation » de cette note se lisent un de plus (17 est 18, 185 est 186…, 296 est 297 ; 221 à 236 est 222 à 237), leurs valeurs étant justes, dans `2026-11-05-retouches-6.md`.
