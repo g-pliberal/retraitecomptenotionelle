@@ -8,8 +8,8 @@ dépliant, les revenus de 1960 à 1980 et la taxe complémentaire ; le 19,
 l'exonération au minimum garanti (art. 5, 2°), 1971 et 1993 à 2010 ; le 23,
 1960 et la loi de 1959, lus aux débats. Reste : au propriétaire, l'impôt dans
 les cartes de résultats, l'effet retour dans le solde, trois décisions sur le
-bénéfice, la décote et le taux de la taxe de 1961, depuis un poste ; la
-doctrine de 1961 à 1970 et de 1972 à 1992. Détail : `…-salaire-minimum-de-1960.md`.
+bénéfice ; au fac-similé, la décote et le taux de la taxe de 1961 ; la
+doctrine de 1961 à 1970 et de 1972 à 1992. Détail : `…-la-decote-et-gallica.md`.
 
 **La demande.** Le propriétaire, le 10 octobre 2026 : l'impôt sur le revenu
 d'un foyer, de son barème à son montant, chaque année ; les barèmes de l'IPP

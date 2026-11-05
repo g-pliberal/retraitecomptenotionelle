@@ -2291,9 +2291,9 @@ les modèles publics, mon-entreprise, les API publiques, l'abattement du RCI,
 les comptes notionnels étrangers, le COR, l'IPP, les parcours d'Union Retraite,
 les neuf modèles du registre et F33841, avec F23369. Attendent le propriétaire :
 le lot de `scripts/simulateurs.py` (RAFP, Ircantec, artistes-auteurs), un compte
-PISTE, Gallica, les règlements du RCO (1978) et du NRIC (2004). Restent
-`a_explorer` six lignes : le simulateur du COR, fermé, et cinq qui attendent le
-propriétaire. Détail : `89/2026-10-23-f33841-et-f23369.md`.
+PISTE, les règlements du RCO (1978) et du NRIC (2004). Gallica lue le 5 novembre :
+le JO s'y arrête en 1948. Restent `a_explorer` le simulateur du COR, fermé, et ce
+qui attend le propriétaire. Détail : `89/2026-10-23-f33841-et-f23369.md`.
 
 **Demande.** Huit lots d'adresses, remis le même jour : « explorer chaque lien
 assez profondément et en tirer le maximum possible pour notre site. Il ne faut

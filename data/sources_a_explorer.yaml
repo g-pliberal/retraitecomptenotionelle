@@ -7115,15 +7115,21 @@ sources:
       ark et la page d'un texte daté, que les fiches citent aujourd'hui à la
       main (neuf liens vers Gallica), retrouvés par une requête plutôt qu'en
       feuilletant.
-    statut: a_explorer
+    statut: explore
+    explore_le: "2026-11-05"
     note: >-
       Mesuré le 5 octobre 2026 : l'interface SRU de la BnF répond en XML,
       sans compte (420 notices au titre « Journal officiel »).
       Resondé le 16 octobre 2026 : `/SRU` répond 403 et
       `/services/OAIRecord` sert la page « Attention Required » de
-      Cloudflare, avec l'en-tête du dépôt comme sans. Ce qui répondait
-      le 5 octobre ne répond plus à une session ; la ligne attend une
-      lecture dans le navigateur, ou que le pare-feu s'ouvre.
+      Cloudflare, avec l'en-tête du dépôt comme sans. Lu le 5 novembre
+      2026 dans le navigateur du poste, sans contrôle : `/SRU` et
+      `/services/Issues` répondent. Le Journal officiel, Lois et décrets, y
+      va de 1881 à 1940, plus un numéro de 1948 (7 469 numéros, ark
+      cb328020951) ; ses débats à l'Assemblée, de 1880 à 1940 ; le Bulletin
+      officiel des contributions directes, de 1935 à 1946 (ark cb344804440).
+      Gallica sert donc les textes d'avant-guerre, mais ne remplace pas le
+      fac-similé de Légifrance pour les textes d'après 1948.
 
   - id: cnavpl_wordpress
     url: https://www.cnavpl.fr/wp-json/wp/v2
