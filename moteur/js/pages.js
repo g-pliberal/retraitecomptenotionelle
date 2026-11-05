@@ -16054,7 +16054,7 @@ function programme(contexte) {
   const tete = g.affiche(
     "Notre programme pour les retraites",
     'La seule retraite qui vous rend <span class="cle-texte">vraiment</span> '
-    + "ce que vous avez cotisé.",
+    + "ce que vous avez cotisé",
     '<strong class="cle-texte">Un compte à votre nom, en euros.</strong> '
     + "Pas de trimestres, pas de barèmes, pas de surprise.",
   );
@@ -16074,7 +16074,10 @@ function programme(contexte) {
   // dépliant « Comment une pension serait calculée » : la réponse sur les
   // trimestres y renvoie, et le script de la page y pose le focus — d'où
   // `tabindex="-1"`, qu'un bloc sans lien ni champ n'a pas de naissance.
-  return `
+  //
+  // Le texte se compose à la française au rendu (`g.typographier`) : il
+  // s'écrit ici avec des espaces ordinaires.
+  return g.typographier(`
 ${tete}
 
 ${simulateurCourt(contexte)}
@@ -16089,7 +16092,7 @@ ${engagements(contexte)}
     <p class="discret">Rien n'y est placé : les cotisations de l'année paient
     les pensions de l'année. C'est toujours la ${g.terme("répartition")}.</p>
   </div>
-  <div class="encadre">
+  <div class="creme">
     <h2 class="serif" style="margin-top:0">Le plancher regarde chacun, pas le
     couple</h2>
     <p>Aujourd'hui, le minimum vieillesse (l'ASPA) regarde le couple :</p>
@@ -16107,11 +16110,11 @@ ${programmeQuestions(contexte)}
 <div class="creme">
 <p class="surtitre">Vérifiez plutôt que de nous croire</p>
 <h2 class="serif" style="margin:0">Tout est chiffré, sur des données publiques
-et un modèle ouvert.</h2>
+et un modèle ouvert</h2>
 <p class="actions"><a class="bouton" href="${g.lien("/simuler")}">Simuler ma
 retraite</a><a href="${g.lien("/cout")}">Ce que ça coûte, et qui paie</a></p>
 </div>
-`;
+`);
 }
 
 /**
@@ -16475,7 +16478,7 @@ function programmeJustice(contexte) {
   sait trancher.</li>
   <li><strong>Une carrière hachée n'est plus punie deux fois.</strong>
   Aujourd'hui, une interruption fait perdre des trimestres, donc le taux plein,
-  donc une décote qui s'applique à <em>toute</em> la pension. Avec un compte,
+  donc une décote qui s'applique à toute la pension. Avec un compte,
   elle fait perdre les cotisations de ces années-là, et rien de plus.</li>
   <li><strong>La solidarité devient visible.</strong> Ce que la collectivité
   ajoute ne se cache plus dans un barème : c'est une allocation votée, chiffrée
@@ -16573,7 +16576,7 @@ function engagements(contexte) {
   const cartes = [
     [seul,
       "par mois au minimum, seul.<br>"
-      + `<strong class="cle-texte">${couple}</strong> pour un couple.`,
+      + `<strong class="cle-texte euros">${couple}</strong> pour un couple.`,
       `<strong class="cle-texte">${g.euros(garantie)} par personne</strong>, `
       + `plus <strong class="cle-texte">${g.euros(isolement)} d'allocation `
       + "d'isolement</strong>. Payés par l'impôt, dès "
@@ -16682,7 +16685,7 @@ export function simulateurCourt(contexte, vers = "/simuler") {
   <div class="grille">${champs}
     <div class="action"><button type="submit">Calculer →</button></div>
   </div>
-  <p class="discret" style="margin:0.9rem 0 0">Quatre montants côte à côte :
+  <p class="discret" style="margin:1rem 0 0">Quatre montants côte à côte :
   les règles d'aujourd'hui, et les nôtres. Tout se calcule dans votre
   navigateur, rien n'est envoyé.</p>
 </form>`;

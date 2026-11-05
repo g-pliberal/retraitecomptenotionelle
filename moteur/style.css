@@ -171,6 +171,20 @@
      courant, lui, reste borné par `.chapeau` et par `p` (voir plus bas) — une
      ligne de 80 rem ne se lit pas. */
   --largeur: 80rem;
+  /* L'ÉCHELLE DES TAILLES (5 novembre 2026) : huit pas, et rien entre eux.
+     La hiérarchie vient de la taille et de la couleur, plus des capitales ni
+     de la graisse — 400 pour le texte, 500 pour ce qui se désigne, 600 pour
+     l'insistance. L'accueil en comptait vingt-deux, dont 14,4 et 15,6 points.
+     Les quatre derniers sont fluides, et touchent leur plafond au large. */
+  --t-meta: 0.8125rem;
+  --t-petit: 0.9375rem;
+  --t-texte: 1.0625rem;
+  --t-lead: 1.25rem;
+  --t-serif: clamp(1.375rem, 2.4vw, 1.75rem);
+  --t-intertitre: clamp(1.75rem, 4vw, 2.5rem);
+  --t-chiffre: clamp(2.5rem, 6vw, 3.75rem);
+  --t-titre: clamp(2.75rem, 6.5vw, 5.5rem);
+  --serif: "Instrument Serif", Georgia, "Times New Roman", serif;
 }
 * { box-sizing: border-box; }
 body {
@@ -183,14 +197,19 @@ body {
      taille de police du navigateur, sur laquelle comptent ceux qui l'ont
      agrandie une fois pour toutes. 1,0625rem vaut les 17px d'origine quand la
      préférence n'a pas été touchée. */
-  font-size: 1.0625rem;
+  font-size: var(--t-texte);
   line-height: 1.6;
+  /* Pas de gras dessiné par le navigateur : le serif n'a qu'une graisse, et
+     l'insistance s'y dit par la couleur. */
+  font-synthesis-weight: none;
   /* La page ne déborde jamais latéralement, quoi qu'on y mette : une carte de
      1200 px à publier, un tableau de huit colonnes. Ce sont leurs cadres qui
      défilent, pas le document. */
   overflow-x: hidden;
 }
 main { max-width: var(--largeur); margin: 0 auto; padding: 0 var(--marge); }
+strong, b { font-weight: 600; }
+th { font-weight: 500; }
 /* Lien d'évitement : premier élément parcouru au clavier, invisible tant qu'il
    n'a pas le focus. Sans lui, atteindre le contenu depuis la barre d'adresse
    impose de traverser les huit onglets de l'en-tête à chaque page (WCAG 2.4.1).
@@ -200,7 +219,7 @@ main { max-width: var(--largeur); margin: 0 auto; padding: 0 var(--marge); }
   position: absolute; left: 0.5rem; top: -4rem; z-index: 30;
   background: var(--or); color: var(--fond);
   border: 1px solid var(--or); border-radius: 0 0 4px 4px;
-  padding: 0.5rem 0.9rem; font-size: 0.92rem; font-weight: 700;
+  padding: 0.5rem 1rem; font-size: var(--t-petit); font-weight: 500;
   text-decoration: none; transition: top 0.15s;
 }
 .evitement:focus { top: 0; }
@@ -230,14 +249,13 @@ header.bandeau .interieur {
   display: flex; flex-wrap: wrap; gap: 0 1.5rem;
   align-items: stretch; justify-content: space-between;
 }
-/* Le nom du site, en capitales serrées, précédé du carré d'or : c'est la
+/* Le nom du site, en casse normale, précédé du carré d'or : c'est la
    marque de l'affiche, et elle tient en douze pixels de côté. Le carré est
    décoratif — il est dessiné par le style, pas écrit dans le HTML, et aucune
    synthèse vocale n'a à l'annoncer. Il a la hauteur de la rangée, comme les
    onglets, pour que la rangée n'ait qu'une hauteur : celle de la barre. */
 header.bandeau .nom {
-  font-size: 0.8125rem; margin: 0; font-weight: 800;
-  letter-spacing: 0.14em; text-transform: uppercase; line-height: 1.3;
+  font-size: var(--t-texte); margin: 0; font-weight: 500; line-height: 1.3;
   display: flex; align-items: center; min-height: 3.5rem; min-width: 0;
 }
 header.bandeau .nom a {
@@ -267,7 +285,7 @@ body.plf-embedded footer .retour-site { display: none; }
    bandeau : l'onglet courant s'y accroche, comme l'onglet d'un classeur. */
 header.bandeau nav {
   display: flex; flex-wrap: wrap; gap: 0; margin-bottom: -1px;
-  margin-right: -0.55rem;
+  margin-right: -0.5rem;
 }
 nav .groupe { display: contents; }
 /* L'étiquette de groupe : lue par les synthèses vocales, invisible à l'œil.
@@ -291,16 +309,11 @@ nav .liens { display: contents; }
    jamais seule au bout d'une ligne, séparée de ses pages. */
 nav .groupe.secondaire { display: flex; flex-wrap: wrap; align-items: stretch; }
 nav .groupe.secondaire .etiquette {
-  position: static; width: auto; height: auto; margin: 0 0 0 0.55rem;
+  position: static; width: auto; height: auto; margin: 0 0 0 0.5rem;
   overflow: visible; clip-path: none; white-space: nowrap;
   display: inline-flex; align-items: center;
-  padding: 0 0.3rem 0 0.9rem; border-left: 1px solid var(--trait-champ);
-  font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.12em;
-  text-transform: uppercase; color: var(--texte-doux);
-}
-header.bandeau nav .groupe.secondaire a {
-  font-size: 0.8125rem; font-weight: 600; letter-spacing: 0;
-  text-transform: none;
+  padding: 0 0.25rem 0 1rem; border-left: 1px solid var(--trait-champ);
+  font-size: var(--t-meta); font-weight: 500; color: var(--texte-tres-doux);
 }
 /* Le bouton qui replie le groupe sur un téléphone. Il n'existe pas au-delà :
    l'étiquette y est un texte, et les liens restent sous les yeux. */
@@ -317,21 +330,20 @@ nav .deplier { display: none; }
   nav .groupe.secondaire { display: contents; }
   nav .groupe.secondaire .etiquette { display: none; }
   nav .deplier {
-    display: inline-flex; align-items: center; gap: 0.3rem;
-    min-height: 2.75rem; margin: 0; padding: 0 0.4rem;
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    min-height: 2.75rem; margin: 0; padding: 0 0.5rem;
     background: none; border: 0; border-bottom: 2px solid transparent;
-    font: inherit; font-size: 0.6875rem; font-weight: 700;
-    letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap;
-    color: var(--texte-doux); cursor: pointer;
+    font: inherit; font-size: var(--t-petit); font-weight: 500;
+    white-space: nowrap; color: var(--texte-doux); cursor: pointer;
   }
   nav .deplier:hover { color: var(--bandeau-texte); }
-  nav .deplier .icone { color: var(--or); transition: transform 0.15s; }
+  nav .deplier .icone { transition: transform 0.15s; }
   nav .deplier[aria-expanded="true"] .icone { transform: rotate(180deg); }
   nav .deplier[aria-expanded="false"] + .liens { display: none; }
 }
 /* Un onglet. Toute la hauteur de la barre — 56 px, bien plus que les 44 de la
-   cible tactile (WCAG 2.5.8) —, capitales serrées, et un filet sous chacun :
-   c'est ce filet qui prend l'or sur l'onglet courant. L'ACTIF NE SE SIGNALE
+   cible tactile (WCAG 2.5.8) —, en casse normale, et un filet sous chacun :
+   c'est ce filet qui prend l'or sur l'onglet courant, son texte le crème. L'ACTIF NE SE SIGNALE
    PAS QUE PAR LA COULEUR — un fond d'or seul ne se voit ni en niveaux de
    gris, ni pour une vision basse, et ne s'annonce pas ; il porte donc un
    soulignement de 2 px ET `aria-current="page"`. Les règles sont ancrées
@@ -339,10 +351,9 @@ nav .deplier { display: none; }
    et un `nav a` nu lui donnait la hauteur des onglets. */
 header.bandeau nav a {
   color: var(--texte-doux); text-decoration: none;
-  font-size: 0.8125rem; font-weight: 700; letter-spacing: 0.06em;
-  text-transform: uppercase; white-space: nowrap;
+  font-size: var(--t-petit); font-weight: 500; white-space: nowrap;
   display: inline-flex; align-items: center; min-height: 3.5rem;
-  padding: 0 0.55rem;
+  padding: 0 0.5rem;
   border-bottom: 2px solid transparent;
   transition: color 0.15s, border-color 0.15s;
 }
@@ -350,7 +361,7 @@ header.bandeau nav a:hover {
   color: var(--bandeau-texte); border-bottom-color: var(--trait-champ);
 }
 header.bandeau nav a[aria-current="page"] {
-  color: var(--or); border-bottom-color: var(--or);
+  color: var(--texte); border-bottom-color: var(--or);
 }
 /* Sous 78 rem — le nom, les neuf onglets et leur jour font 1 168 px —, la
    rangée unique ne tient plus : le nom prend sa propre rangée, plus basse,
@@ -358,7 +369,7 @@ header.bandeau nav a[aria-current="page"] {
    44 px : la barre reste collée sans manger l'écran. */
 @media (max-width: 78rem) {
   header.bandeau .nom { flex: 1 1 100%; min-height: 2.75rem; padding-top: 0.25rem; }
-  header.bandeau nav { width: 100%; margin-left: -0.55rem; }
+  header.bandeau nav { width: 100%; margin-left: -0.5rem; }
   header.bandeau nav a { min-height: 2.75rem; }
 }
 /* Les liens du groupe « Pour vérifier », une fois ouvert sur un téléphone,
@@ -366,65 +377,86 @@ header.bandeau nav a[aria-current="page"] {
 @media (max-width: 48rem) {
   header.bandeau nav .groupe.secondaire a { min-height: 2.25rem; }
 }
+/* LE MENU DU TÉLÉPHONE. Même replié, le groupe « Pour vérifier » laissait au
+   bandeau collé trois rangées, 170 points avant le titre (5 novembre 2026) :
+   sous 48 rem, la navigation entière se replie derrière « Menu », à droite du
+   nom, et le bandeau tient en une rangée. Ouverte, elle se lit en colonne, un
+   lien par ligne. Au-delà, le bouton n'existe pas. */
+header.bandeau .menu { display: none; }
+@media (max-width: 48rem) {
+  header.bandeau .menu {
+    display: inline-flex; align-items: center; gap: 0.5rem; align-self: center;
+    min-height: 2.75rem; margin: 0 -0.5rem 0 0; padding: 0 0.5rem;
+    background: none; border: 0; color: var(--texte);
+    font: inherit; font-size: var(--t-petit); font-weight: 500;
+  }
+  header.bandeau .menu .icone { transition: transform 0.15s; }
+  header.bandeau .menu[aria-expanded="true"] .icone { transform: rotate(180deg); }
+  header.bandeau .menu[aria-expanded="false"] + nav { display: none; }
+  header.bandeau .interieur { column-gap: 1rem; }
+  header.bandeau .nom { flex: 1 1 0%; min-height: 3.5rem; padding-top: 0; }
+  header.bandeau .menu { flex: none; }
+  header.bandeau nav { flex-direction: column; align-items: flex-start; padding-bottom: 0.5rem; }
+}
 
-/* Les titres de l'affiche. Le premier de chaque page est massif, en capitales,
-   très serré : c'est lui qu'on retient. Il est fluide — de 36 px sur un
-   téléphone à 76 px au large — parce qu'une taille fixe de 76 px coupe
-   « Programme » en trois sur 320 points. */
+/* Les titres. Le premier de chaque page est en serif, en casse de phrase, au
+   plus grand pas de l'échelle : c'est sa taille qui le fait retenir, et non
+   plus des capitales noires serrées (5 novembre 2026). Il est fluide — de
+   44 points sur un téléphone à 88 au large. Les intertitres ont le même
+   dessin, un seul : le serif, deux pas plus bas. */
 h1, h2, h3, h4 { text-wrap: balance; }
 h1 {
-  margin: 0;
-  font-size: clamp(2.25rem, 5.5vw, 4.75rem); line-height: 0.95;
-  font-weight: 900; letter-spacing: -0.04em; text-transform: uppercase;
-}
-/* L'accueil crie un peu plus fort que les autres pages : c'est la seule qui
-   soit lue par quelqu'un qui n'a pas demandé à lire. */
-.affiche h1 {
-  font-size: clamp(2.5rem, 7vw, 6.0625rem); line-height: 0.92;
-  letter-spacing: -0.045em;
+  margin: 0; font-family: var(--serif);
+  font-size: var(--t-titre); line-height: 1.02;
+  font-weight: 400; letter-spacing: -0.01em;
 }
 h2 {
-  font-size: clamp(1.75rem, 4vw, 2.5rem); line-height: 1;
-  margin: 3rem 0 1rem; font-weight: 900;
-  letter-spacing: -0.03em; text-transform: uppercase;
+  font-family: var(--serif); font-size: var(--t-intertitre); line-height: 1.1;
+  margin: 3rem 0 1rem; font-weight: 400;
 }
-h3 { font-size: 1.25rem; margin: 2rem 0 0.5rem; font-weight: 700;
-     letter-spacing: -0.01em; }
-h4 { letter-spacing: -0.01em; }
-/* Le titre en serif : celui d'un encadré, d'une carte crème, d'un bloc qui
-   parle plutôt qu'il n'assène. Il coexiste avec les capitales sans les
-   concurrencer, parce qu'il ne joue pas dans la même famille. */
+h3 { font-size: var(--t-lead); margin: 2rem 0 0.5rem; font-weight: 500; }
+h4 { font-weight: 500; }
+/* Le titre en serif, quel que soit son niveau : celui d'un encadré, d'une
+   carte crème, d'un bloc qui parle plutôt qu'il n'assène. */
 .serif {
-  font-family: "Instrument Serif", Georgia, "Times New Roman", serif;
+  font-family: var(--serif);
   font-weight: 400; text-transform: none; letter-spacing: 0;
-  line-height: 1.05;
+  line-height: 1.1;
 }
-p { margin: 0.7rem 0; max-width: 46rem; }
-a { color: var(--accent); }
-a:hover { opacity: 0.85; }
-/* Le sur-titre d'une page : trois mots en or, en capitales espacées, au-dessus
-   du titre. Il dit où l'on est, ce que le titre ne dit plus depuis qu'il est
-   une phrase et non un intitulé. */
+p { margin: 0.75rem 0; max-width: 46rem; }
+/* Un lien est du texte souligné, en crème : l'or est réservé à ce qui compte
+   — un chiffre, le mot du titre —, et un lien sur deux en était. Le filet
+   prend l'or au survol. */
+a {
+  color: var(--texte); text-decoration-color: var(--trait-champ);
+  text-underline-offset: 0.2em; transition: text-decoration-color 0.15s;
+}
+a:hover { text-decoration-color: var(--or); }
+/* Le sur-titre d'une page : trois mots en casse normale, au-dessus du titre.
+   Il dit où l'on est, ce que le titre ne dit plus depuis qu'il est une
+   phrase et non un intitulé. Il ne prend plus l'or, ni les capitales. */
 .surtitre {
-  margin: 0 0 1rem; font-size: 0.975rem; font-weight: 700;
-  letter-spacing: 0.14em; text-transform: uppercase; color: var(--or);
-  line-height: 1;
+  margin: 0 0 1rem; font-size: var(--t-texte); font-weight: 500;
+  color: var(--texte-doux); line-height: 1.3;
 }
 /* Le chapeau : la phrase sous le titre, en serif, plus grande que le texte
-   courant. C'est la seule chose que lira celui qui ne lit que deux lignes. */
+   courant. C'est la seule chose que lira celui qui ne lit que deux lignes.
+   Ce qu'il souligne y passe en crème plein : ni or, ni gras. */
 .chapeau {
-  font-family: "Instrument Serif", Georgia, "Times New Roman", serif;
-  font-size: clamp(1.1875rem, 2vw, 1.625rem); line-height: 1.45;
+  font-family: var(--serif);
+  font-size: var(--t-serif); line-height: 1.35;
   color: var(--texte-doux); max-width: 51rem; margin: 1.5rem 0 0;
 }
-/* L'affiche elle-même : le bloc de tête d'une page. Sur l'accueil, il tient
-   tout le premier écran. */
+.chapeau strong, .chapeau .cle-texte { color: var(--texte); font-weight: inherit; }
+/* L'affiche elle-même : le bloc de tête d'une page. */
 .affiche { padding: 3rem 0 2.5rem; }
-.affiche .chapeau { font-size: clamp(1.25rem, 2.4vw, 1.875rem); }
 /* Ce qui, dans une phrase, porte le message. En or ET en demi-gras : l'or seul
    disparaît pour une vision basse ou un daltonisme fort, et l'emphase avec
    lui. Deux signaux valent mieux qu'un, et le gras ne coûte rien à personne. */
 .cle-texte, strong.cle-texte { color: var(--or); font-weight: 600; }
+/* Dans un titre, le mot en or garde la graisse du titre : le serif n'en a
+   qu'une. */
+h1 .cle-texte, h2 .cle-texte { font-weight: inherit; }
 
 .carte {
   background: var(--fond-carte); border: 1px solid var(--trait);
@@ -432,7 +464,7 @@ a:hover { opacity: 0.85; }
 }
 .note {
   border-left: 3px solid var(--or); background: var(--fond-carte);
-  padding: 0.85rem 1.1rem; margin: 1.5rem 0; font-size: 0.95rem;
+  padding: 0.75rem 1rem; margin: 1.5rem 0; font-size: var(--t-petit);
   border-radius: 0 4px 4px 0;
 }
 .note.avertissement {
@@ -470,15 +502,15 @@ a:hover { opacity: 0.85; }
   padding: 1rem 1.25rem; margin: 1.5rem 0; border-radius: 0 4px 4px 0;
   font-size: 1.125rem; line-height: 1.55; max-width: 46rem;
 }
-.en-bref .surtitre { margin: 0 0 0.75rem; font-size: 0.875rem; }
+.en-bref .surtitre { margin: 0 0 0.75rem; font-size: var(--t-petit); }
 .en-bref p { margin: 0.6rem 0 0; }
-.en-bref p.discret { margin-top: 0.9rem; font-size: 0.9rem; }
+.en-bref p.discret { margin-top: 1rem; font-size: var(--t-petit); }
 /* L'entrée de l'accueil : deux lignes qui disent que le site est un
    simulateur, et le bouton qui l'ouvre. */
 .note.entree { font-size: 1rem; margin: 1.2rem 0; }
 .note.entree p { margin: 0; }
-.note.entree .actions { margin-top: 0.7rem; }
-.discret { color: var(--texte-tres-doux); font-size: 0.9rem; }
+.note.entree .actions { margin-top: 0.75rem; }
+.discret { color: var(--texte-tres-doux); font-size: var(--t-petit); }
 /* -- le panneau crème -------------------------------------------------------
 
    Tout ce qu'on remplit ou qu'on emporte est posé sur du crème : le
@@ -505,24 +537,21 @@ a:hover { opacity: 0.85; }
   outline: 3px solid var(--sur-creme); outline-offset: 2px;
 }
 .creme button, .creme a.bouton {
-  background: var(--sur-creme); color: var(--or); border-color: var(--sur-creme);
+  background: var(--sur-creme); color: var(--creme); border-color: var(--sur-creme);
 }
 .creme table th, .creme table td { border-bottom-color: var(--creme-trait); }
-.creme thead th { color: var(--sur-creme-doux); }
+.creme thead th { color: var(--sur-creme-doux); border-bottom-color: var(--sur-creme); }
 
 /* Le bandeau du simulateur, sur l'accueil : le formulaire court, en crème,
    juste sous le titre. C'est la preuve mise à hauteur de la promesse — on la
    voit sans défiler, ce qui était tout le reproche fait à l'ancienne page. */
 .simulateur-court .tete {
   display: flex; justify-content: space-between; align-items: baseline;
-  gap: 1.5rem; flex-wrap: wrap; margin-bottom: 1.125rem;
+  gap: 1.5rem; flex-wrap: wrap; margin-bottom: 1.25rem;
 }
-.simulateur-court .tete h2 {
-  margin: 0; font-size: clamp(1.5rem, 3vw, 2.125rem);
-}
+.simulateur-court .tete h2 { margin: 0; }
 .simulateur-court .tete .etiquette {
-  font-size: 0.75rem; font-weight: 700; letter-spacing: 0.14em;
-  text-transform: uppercase; color: var(--sur-creme-accent);
+  font-size: var(--t-petit); font-weight: 500; color: var(--sur-creme-accent);
 }
 /* Les champs et le bouton sur une seule rangée tant qu'ils tiennent. Le bouton
    ne se coupe jamais : c'est la seule chose de la rangée qu'on vient chercher. */
@@ -540,64 +569,62 @@ a:hover { opacity: 0.85; }
 
 /* -- les engagements --------------------------------------------------------
 
-   Les quatre chiffres du programme, en section à part : fond d'un ton
-   au-dessus, filet d'or en tête, numérotés 01 à 04. La numérotation les fait
-   lire comme une liste d'engagements et non comme quatre statistiques
-   orphelines, ce qu'elles étaient tant qu'elles n'avaient ni titre ni rang.
+   Les quatre chiffres du programme, posés comme les lignes d'un relevé de
+   compte : le rang, le chiffre dans sa colonne, aligné à droite comme une
+   somme, la promesse, puis le détail, et un filet entre chaque ligne. Ils
+   étaient quatre cartes identiques, deux par deux, chacune avec son long
+   paragraphe : une grille de gabarit (5 novembre 2026). En lignes, ils se
+   lisent dans l'ordre, et aucune ne reste seule sur sa rangée — la correction
+   demandée deux fois quand il y en avait trois de front.
 
-   DEUX PAR LIGNE, ET JAMAIS TROIS. Deux colonnes fixes : trois ne peuvent
-   pas tenir, quelle que soit la largeur de l'écran. C'est une correction
-   demandée deux fois — à trois colonnes, la quatrième carte tombait seule sur
-   sa ligne, et « on avait le cul entre deux chaises ». Le passage à une
-   colonne se fait sous 48 rem, dans la même requête que le retrait et le
-   filet des cartes paires : la grille se repliait d'elle-même par `auto-fit`
-   dès 40 rem, quand le filet, lui, n'était retiré qu'à 34 rem — entre les
-   deux, une carte sur deux restait en retrait de 24 points. */
+   L'or n'y marque plus que les chiffres : ce que la promesse et le détail
+   soulignent passe en crème plein, sur un texte adouci. Sous 64 rem, le
+   détail passe sous la promesse ; sous 48 rem, la ligne s'empile. */
 .engagements {
-  margin: 2.5rem 0 0; background: var(--fond-carte);
-  border-top: 4px solid var(--or);
-}
-.engagements .grille {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0; padding: 0.5rem clamp(1.25rem, 4vw, 2rem) 2.25rem;
-  /* Le filet de séparation est porté par les cartes, et non par le fond du
-     conteneur : un fond qui sert de trait laisse un rectangle vert vide dès
-     qu'une rangée est incomplète, et c'est exactement ce qu'on a vu. Ce qui
-     dépasse au bord est coupé. */
-  overflow: hidden;
+  margin: 2.5rem 0 0;
+  border-top: 1px solid var(--trait-champ); border-bottom: 1px solid var(--trait-champ);
 }
 .engagements .engagement {
-  padding: 1.75rem 1.5rem 0 0; display: grid; gap: 1rem; align-content: start;
+  display: grid; align-items: baseline;
+  grid-template-columns: 2.5rem minmax(0, 22rem) minmax(0, 1fr) minmax(0, 1.25fr);
+  gap: 0.5rem 2rem; padding: 1.5rem 0;
 }
-/* La deuxième colonne porte son filet à GAUCHE : à droite, il pendrait dans le
-   vide au bord du bloc. */
-.engagements .engagement:nth-child(even) {
-  padding: 1.75rem 1.5rem 0; box-shadow: -1px 0 0 var(--trait);
-}
+.engagements .engagement + .engagement { border-top: 1px solid var(--trait); }
 .engagements .rang {
-  font-size: 0.9375rem; font-weight: 700; letter-spacing: 0.16em;
-  color: var(--texte-doux); line-height: 1;
+  font-size: var(--t-petit); line-height: 1; color: var(--texte-tres-doux);
 }
-/* Le chiffre. Fluide, et sans `nowrap` : « 1 compte » ne doit pas pouvoir
-   franchir sa colonne, et un chiffre coupé vaut mieux qu'une page qui déborde. */
 .engagements .chiffre {
-  font-size: clamp(2.375rem, 8vw, 3.75rem); line-height: 0.9;
-  font-weight: 900; letter-spacing: -0.05em; color: var(--or);
+  font-size: var(--t-chiffre); line-height: 1; font-weight: 500;
+  letter-spacing: -0.04em; color: var(--or); text-align: right;
+  font-variant-numeric: tabular-nums;
 }
-/* La promesse, en serif, en crème plein contraste, séparée par un filet. C'est
-   elle qui porte le message, et c'est elle qui se perdait quand les cartes
-   n'avaient que deux niveaux. */
+/* Un montant dans une phrase en serif se compose comme les autres, dans le
+   caractère des chiffres : l'espace fine du serif ne se voyait pas, et
+   « 1 600 € » s'y lisait « 1600€ ». */
+.engagements .promesse .euros {
+  font-family: "Public Sans", system-ui, sans-serif; font-size: var(--t-lead);
+  font-variant-numeric: tabular-nums;
+}
 .engagements .promesse {
-  font-family: "Instrument Serif", Georgia, "Times New Roman", serif;
-  font-size: 1.5625rem; line-height: 1.25; color: var(--texte);
-  border-top: 1px solid var(--trait); padding-top: 1rem;
+  font-family: var(--serif); font-size: var(--t-serif); line-height: 1.25;
+  color: var(--texte-doux);
 }
-/* Le détail technique : 18 px et non 15, et une teinte éclaircie. « C'est
-   illisible pour certaines personnes » — le petit texte du programme est
-   précisément celui qu'on lit en plein jour sur un téléphone. */
 .engagements .detail {
-  font-size: 1.125rem; line-height: 1.6; color: var(--texte-doux);
+  font-size: var(--t-texte); line-height: 1.6; color: var(--texte-doux);
+}
+.engagements :is(.promesse, .detail) .cle-texte { color: var(--texte); font-weight: 500; }
+.engagements .promesse .cle-texte { font-weight: inherit; }
+@media (min-width: 64.0625rem) {
+  .engagements .chiffre { white-space: nowrap; }
+}
+@media (max-width: 64rem) {
+  .engagements .engagement { grid-template-columns: 2.5rem minmax(0, 15rem) minmax(0, 1fr); }
+  .engagements .detail { grid-column: 3; }
+}
+@media (max-width: 48rem) {
+  .engagements .engagement { grid-template-columns: 2rem minmax(0, 1fr); gap: 0.75rem; }
+  .engagements .chiffre { text-align: left; }
+  .engagements :is(.promesse, .detail) { grid-column: 2; }
 }
 
 /* -- les trois gestes -------------------------------------------------------
@@ -608,19 +635,20 @@ a:hover { opacity: 0.85; }
    face, alors qu'ils pèsent autant. */
 ol.gestes {
   margin: 0; padding: 0; list-style: none; display: grid; gap: 0;
-  font-size: 1.5rem; line-height: 1.45; color: var(--texte-doux);
+  font-size: var(--t-lead); line-height: 1.5; color: var(--texte-doux);
   border-top: 1px solid var(--trait);
 }
 ol.gestes > li {
-  display: grid; grid-template-columns: 4rem 1fr; gap: 1.125rem;
-  padding: 0.8rem 0; border-bottom: 1px solid var(--trait);
+  display: grid; grid-template-columns: 3rem 1fr; gap: 1rem;
+  padding: 1rem 0; border-bottom: 1px solid var(--trait);
   align-items: baseline;
 }
+/* Le rang, en serif et adouci : l'or est aux quatre chiffres du programme. */
 ol.gestes > li > .rang {
-  font-size: 3.125rem; line-height: 0.85; font-weight: 900;
-  letter-spacing: -0.05em; color: var(--or);
+  font-family: var(--serif); font-size: var(--t-intertitre); line-height: 1;
+  color: var(--texte-tres-doux);
 }
-ol.gestes > li strong { color: var(--texte); font-weight: 700; }
+ol.gestes > li strong { color: var(--texte); font-weight: 500; }
 
 /* L'encadré d'or : un bloc qui se détache sans changer de fond. Il porte ce
    qui mérite d'être lu à part — le tableau du plancher, un repère, une mise en
@@ -634,7 +662,7 @@ ol.gestes > li strong { color: var(--texte); font-weight: 700; }
 /* Dans une paire, c'est l'écart de la grille qui sépare l'encadré de sa
    voisine : sa marge s'y ajoutait, et faisait sur un téléphone, où les deux
    colonnes s'empilent, cinquante-six points de vide entre elles. */
-.paire > .encadre { margin: 0; }
+.paire > .encadre, .paire > .creme { margin: 0; }
 /* Deux colonnes de même poids, qui se mettent l'une sous l'autre quand la
    place manque. C'est la mise en page de l'accueil sous les engagements, et
    celle de la Trajectoire sous son graphique. */
@@ -677,25 +705,25 @@ form .grille > .action > button { grid-row: 2; }
    espacées à 12 px, si joli que ce fût : les capitales et le corps réduit sont
    deux handicaps qui se cumulent, notamment pour les dyslexiques. */
 label {
-  display: block; font-size: 0.9375rem; font-weight: 600; line-height: 1.2;
-  color: var(--texte); margin-bottom: 0.4rem;
+  display: block; font-size: var(--t-petit); font-weight: 500; line-height: 1.2;
+  color: var(--texte); margin-bottom: 0.5rem;
 }
 /* Pas d'`opacity` ici : elle ferait tomber l'aide sous le plancher de 4,5:1
    des textes courants (WCAG 1.4.3). La couleur pleine et la taille suffisent à
    la distinguer du libellé. */
 label .aide {
-  display: block; font-size: 0.875rem; font-weight: 400;
+  display: block; font-size: var(--t-petit); font-weight: 400;
   color: var(--texte-doux);
 }
 /* Ce qu'une date saisie vaut en âge, sous le champ qui la porte : « soit
    64 ans et 7 mois ». Le calendrier a remplacé les champs d'âge ; cette ligne
    rend l'âge qu'ils disaient, et la page le recalcule à chaque frappe. */
 .calcul {
-  display: block; font-size: 0.875rem; color: var(--texte-doux);
-  margin-top: 0.3rem;
+  display: block; font-size: var(--t-petit); color: var(--texte-doux);
+  margin-top: 0.25rem;
 }
 input, select, textarea {
-  width: 100%; padding: 0.7rem 0.75rem; font: inherit; font-size: 1rem;
+  width: 100%; padding: 0.75rem; font: inherit; font-size: var(--t-texte);
   color: var(--texte); background: var(--fond); border: 2px solid var(--trait-champ);
   border-radius: 0;
 }
@@ -724,17 +752,17 @@ textarea {
 input:focus, select:focus, textarea:focus {
   outline: 3px solid var(--or); outline-offset: 2px;
 }
-/* Le bouton de l'affiche : or plein, vert profond dessus, capitales, carré.
-   Rien d'arrondi — une affiche n'arrondit pas ses angles. */
+/* Le bouton de l'affiche : or plein, vert profond dessus, carré, en casse
+   normale (5 novembre 2026). Rien d'arrondi — une affiche n'arrondit pas ses
+   angles. Sur le crème, il passe au vert, et son texte au crème. */
 button {
-  font: inherit; font-size: 1rem; font-weight: 900;
-  letter-spacing: 0.02em; text-transform: uppercase;
+  font: inherit; font-size: var(--t-texte); font-weight: 500;
   padding: 1rem 1.5rem; min-height: 3rem; cursor: pointer;
   color: var(--fond); background: var(--or);
   border: 2px solid var(--or); border-radius: 0;
 }
 button:hover { opacity: 0.88; }
-.actions { display: flex; flex-wrap: wrap; gap: 0.75rem 1.4rem; align-items: center;
+.actions { display: flex; flex-wrap: wrap; gap: 0.75rem 1.5rem; align-items: center;
            margin: 1.5rem 0 0; }
 /* Un lien qui a le poids d'un bouton : il ouvre le simulateur, c'est-à-dire
    la seule chose que la page Coût invite à faire. Il reste un lien — il mène à
@@ -745,8 +773,7 @@ a.bouton {
   text-decoration: none;
   color: var(--fond); background: var(--or);
   border: 2px solid var(--or); border-radius: 0;
-  padding: 0.85rem 1.5rem; font-size: 1rem; font-weight: 900;
-  letter-spacing: 0.02em; text-transform: uppercase;
+  padding: 0.75rem 1.5rem; font-size: var(--t-texte); font-weight: 500;
 }
 a.bouton:hover { opacity: 0.88; }
 p.discret > a:only-child, p.actions > a:not(.bouton) {
@@ -756,7 +783,7 @@ p.discret > a:only-child, p.actions > a:not(.bouton) {
    ce qu'on peut faire, et non ce qu'on est venu faire. */
 button.second, a.bouton.second {
   background: transparent; color: var(--texte); border-color: var(--trait-champ);
-  font-weight: 700; text-transform: none; letter-spacing: 0;
+  font-weight: 500;
 }
 button.second:hover, a.bouton.second:hover { border-color: var(--or); opacity: 1; }
 /* Le bas du formulaire : « Calculer », et « Réinitialiser » dès qu'il y a
@@ -804,13 +831,13 @@ details { margin-top: 1.25rem; }
    marqueur natif n'a ni la même forme ni la même taille d'un moteur à l'autre,
    et ne suit aucune de nos grilles. Il est donc masqué partout, une fois. */
 summary {
-  cursor: pointer; color: var(--texte-doux); font-size: 0.95rem;
-  display: flex; align-items: center; gap: 0.45rem; list-style: none;
+  cursor: pointer; color: var(--texte-doux); font-size: var(--t-petit);
+  display: flex; align-items: center; gap: 0.5rem; list-style: none;
   min-height: 2.75rem;
 }
 summary::-webkit-details-marker { display: none; }
 summary::marker { content: ""; }
-summary > .icone { color: var(--or); transition: transform 0.15s; }
+summary > .icone { color: var(--texte-doux); transition: transform 0.15s; }
 details[open] > summary > .icone { transform: rotate(180deg); }
 summary:hover { color: var(--texte); }
 details > .grille { margin-top: 1rem; }
@@ -856,11 +883,11 @@ details > .grille { margin-top: 1rem; }
 details.section { margin: 0; border-top: 1px solid var(--trait); }
 details.section:last-of-type { border-bottom: 1px solid var(--trait); }
 details.section > summary {
-  color: var(--texte); font-size: 1.0625rem; font-weight: 700;
-  padding: 0.85rem 0.2rem; gap: 0.6rem;
+  color: var(--texte); font-size: var(--t-texte); font-weight: 500;
+  padding: 0.75rem 0.25rem; gap: 0.5rem;
 }
 details.section > summary:hover { color: var(--or); }
-details.section > .dedans { padding: 0 0 1.2rem 1.65rem; }
+details.section > .dedans { padding: 0 0 1.25rem 1.75rem; }
 details.section > .dedans > :first-child { margin-top: 0; }
 /* L'intertitre d'une section repliée : un `<h3>` quand la section se pose sous
    un `<h2>` (action 174), dessiné comme le `<h4>` qu'il était. Le sélecteur
@@ -868,7 +895,7 @@ details.section > .dedans > :first-child { margin-top: 0; }
    section. */
 details.section > .dedans > h4,
 .dedans > h3.intertitre {
-  font-size: 1rem; font-weight: 700; margin: 1.5rem 0 0.4rem;
+  font-size: var(--t-texte); font-weight: 500; margin: 1.5rem 0 0.5rem;
 }
 /* Un tableau plus large que l'écran défile horizontalement. La zone qui défile
    doit pouvoir recevoir le focus, sinon elle est inatteignable au clavier chez
@@ -899,15 +926,20 @@ details.section > .dedans > h4,
 /* Le voile prend la couleur de ce qui porte le tableau. Peint dans le vert de
    la page, il faisait sur chaque carte une bande d'un ton plus sombre au bord
    droit, même quand rien ne défilait. */
-.carte, .note, .plan, .erreur, .cadre-carte, .engagements, section.cle {
+.carte, .note, .plan, .erreur, .cadre-carte, section.cle {
   --fond-defilant: var(--fond-carte);
 }
 .creme { --fond-defilant: var(--creme); }
-table { border-collapse: collapse; width: 100%; font-size: 1rem; }
+/* Des chiffres de relevé, dans un tableau comme dans les quatre chiffres de
+   l'accueil : chacun de la même chasse, si bien qu'un montant s'aligne sur
+   celui du dessus (5 novembre 2026). */
+table { border-collapse: collapse; width: 100%; font-size: var(--t-texte);
+        font-variant-numeric: tabular-nums; }
+.creme caption { color: var(--sur-creme-doux); }
 /* Le titre du tableau, énoncé par les synthèses vocales avant son contenu et
    lu à l'écran comme l'intitulé de la grille. */
 caption {
-  caption-side: top; text-align: left; font-size: 0.9rem;
+  caption-side: top; text-align: left; font-size: var(--t-petit);
   color: var(--texte-doux); padding: 0 0 0.5rem;
 }
 /* Une `<caption>` est large comme son tableau : quand il déborde de l'écran,
@@ -919,17 +951,18 @@ caption {
 caption > span {
   display: block; position: sticky; left: 0; width: 100cqw; box-sizing: border-box;
 }
-tbody th { font-weight: 700; }
+tbody th { font-weight: 500; }
 /* Une ligne « dont » ventile celle du dessus : elle se lit en retrait et en
    maigre, comme dans le tableau du COR qu'elle imite, et une ligne « pour
    mémoire » de même — elle n'entre dans aucun total. */
 tbody th .dont { font-weight: 400; color: var(--texte-doux); padding-left: 1.2rem; display: inline-block; }
-th, td { text-align: right; padding: 0.7rem 0.6rem; border-bottom: 1px solid var(--trait); }
+th, td { text-align: right; padding: 0.75rem 0.5rem; border-bottom: 1px solid var(--trait); }
 th:first-child, td:first-child { text-align: left; }
+/* L'en-tête d'un tableau : en casse normale et adouci, sur un filet plein,
+   comme celui d'un relevé. Il était en capitales espacées, sur un filet d'or. */
 thead th {
-  font-size: 0.875rem; color: var(--texte-doux); font-weight: 700;
-  letter-spacing: 0.1em; text-transform: uppercase;
-  border-bottom: 2px solid var(--or);
+  font-size: var(--t-petit); color: var(--texte-doux); font-weight: 500;
+  border-bottom: 1px solid var(--texte-tres-doux);
 }
 /* `:is(th, td)`, et non `td` seul : l'en-tête de rangée gardait son filet, et
    chaque tableau finissait par un trait orphelin sous sa première cellule. */
@@ -1002,16 +1035,16 @@ tbody tr[hidden] { display: none; }
 table[data-plie], table[data-plie] > :is(thead, tbody) { display: block; min-width: 0; }
 table[data-pli="rangee"][data-plie] tr:not([hidden]) {
   display: grid; grid-template-columns: repeat(var(--colonnes), minmax(0, 1fr));
-  column-gap: 0.75rem; padding: 0.45rem 0; border-bottom: 1px solid var(--trait);
+  column-gap: 0.75rem; padding: 0.5rem 0; border-bottom: 1px solid var(--trait);
 }
-table[data-pli="rangee"][data-plie] thead tr { border-bottom: 2px solid var(--or); }
+table[data-pli="rangee"][data-plie] thead tr { border-bottom: 1px solid var(--texte-tres-doux); }
 table[data-pli="rangee"][data-plie] tbody tr:last-child { border-bottom: 0; }
 table[data-pli="rangee"][data-plie] :is(th, td) {
   padding: 0.1rem 0; border: 0; min-width: 0; overflow-wrap: anywhere;
 }
 table[data-pli="rangee"][data-plie] tr > :first-child { grid-column: 1 / -1; }
 table[data-pli="rangee"][data-plie] thead tr > :first-child:empty { display: none; }
-table[data-pli="rangee"][data-plie] thead th { letter-spacing: 0.04em; font-size: 0.75rem; }
+table[data-pli="rangee"][data-plie] thead th { font-size: var(--t-meta); }
 /* EN FICHE, au-delà de trois colonnes, ou dès qu'une case porte une phrase :
    chaque valeur sous le nom de sa colonne, deux par ligne, et une phrase sur
    toute la largeur. L'en-tête du tableau, redit sous chaque case, n'est plus
@@ -1024,9 +1057,9 @@ table[data-pli="fiche"][data-plie] thead:not(:has(.tri)) {
   clip-path: inset(50%); white-space: nowrap;
 }
 table[data-pli="fiche"][data-plie] thead tr {
-  display: flex; flex-wrap: wrap; gap: 0 1rem; border-bottom: 2px solid var(--or);
+  display: flex; flex-wrap: wrap; gap: 0 1rem; border-bottom: 1px solid var(--texte-tres-doux);
 }
-table[data-pli="fiche"][data-plie] thead th { border: 0; padding: 0.3rem 0; min-width: 0; }
+table[data-pli="fiche"][data-plie] thead th { border: 0; padding: 0.25rem 0; min-width: 0; }
 /* Deux par ligne au moins : la colonne de 8,5 rem n'en laissait tenir qu'une à
    320 points, et une fiche de trois valeurs et plus les mettait l'une sous
    l'autre (action 173, étape 8). La colonne ne demande jamais plus de la
@@ -1542,7 +1575,7 @@ section.cle > .donnees-graphique { margin-bottom: 0.6rem; }
      sans cela un mot du glossaire se serait vu d'abord comme un bouton, et
      seulement ensuite comme un mot. Seul le pointillé le signale. */
   font: inherit; color: inherit; background: none; border: none;
-  border-bottom: 1px dotted var(--or); border-radius: 0;
+  border-bottom: 1px dotted var(--trait-champ); border-radius: 0;
   padding: 0; margin: 0; min-height: 0; cursor: help;
   text-transform: inherit; letter-spacing: inherit;
   /* Un bouton centre son texte : posé sur deux lignes dans une case étroite,
@@ -1560,12 +1593,12 @@ section.cle > .donnees-graphique { margin-bottom: 0.6rem; }
 .mot > .terme:hover, .mot > .terme[aria-expanded="true"] { color: var(--or); }
 .mot > .terme[aria-expanded="true"] { border-bottom-style: solid; }
 .mot > .bulle {
-  display: block; position: absolute; left: 0; top: calc(100% + 0.4rem);
+  display: block; position: absolute; left: 0; top: calc(100% + 0.5rem);
   z-index: 25; width: max(14rem, min(22rem, 70vw));
   background: var(--fond-carte); color: var(--texte);
-  border: 2px solid var(--or); border-radius: 0;
-  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.45);
-  padding: 0.7rem 0.9rem; font-size: 0.9375rem; line-height: 1.45;
+  border: 1px solid var(--trait-champ); border-radius: 0;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  padding: 0.75rem 1rem; font-size: var(--t-petit); line-height: 1.45;
   /* Le texte de la bulle est un texte courant, quelle que soit la phrase qui
      porte le mot : sans cela une définition posée dans un chapeau en héritait
      la couleur, la taille et les capitales. */
@@ -1899,8 +1932,8 @@ ul.legende li { display: flex; align-items: baseline; gap: 0.45rem; }
 dl.gloses { margin: 0.8rem 0 0; font-size: 0.95rem; }
 dl.gloses dt { font-weight: 700; margin-top: 0.7rem; }
 dl.gloses dd { margin: 0.15rem 0 0; padding: 0; color: var(--texte-doux); }
-ul.serree { margin: 0.5rem 0; padding-left: 1.2rem; max-width: 46rem; }
-ul.serree li { margin: 0.3rem 0; }
+ul.serree { margin: 0.5rem 0; padding-left: 1.25rem; max-width: 46rem; }
+ul.serree li { margin: 0.25rem 0; }
 
 /* -- les cartes à publier ---------------------------------------------------
 
@@ -2025,9 +2058,8 @@ footer {
   width: calc(100% - 2 * var(--marge)); max-width: calc(var(--largeur) - 2 * var(--marge));
   margin: 3rem auto 0; padding: 1.5rem 0 2rem;
   border-top: 1px solid var(--trait);
-  font-size: 0.9rem; color: var(--texte-tres-doux);
+  font-size: var(--t-petit); color: var(--texte-tres-doux);
 }
-footer a { color: var(--or); }
 .erreur {
   border-left: 3px solid var(--manque); background: var(--fond-carte);
   padding: 0.85rem 1.1rem; margin: 1.5rem 0;
@@ -2075,15 +2107,6 @@ body.calcul-en-cours::after {
    ici que les choses qui doivent CHANGER DE FORME — une rangée qui passe en
    colonne, une bande de lecture qui ne peut plus tenir cinq cellules de front. */
 @media (max-width: 48rem) {
-  /* Les engagements passent à une colonne, et leurs filets verticaux
-     deviennent horizontaux : un filet à gauche ne sépare plus rien quand
-     tout est empilé. */
-  .engagements .grille { grid-template-columns: 1fr; }
-  .engagements .engagement,
-  .engagements .engagement:nth-child(even) {
-    padding: 1.5rem 0 0; box-shadow: none; border-top: 1px solid var(--trait);
-  }
-  .engagements .engagement:first-child { border-top: 0; }
 }
 @media (max-width: 34rem) {
   body { font-size: 1rem; }
@@ -2092,12 +2115,6 @@ body.calcul-en-cours::after {
      qu'on vient chercher. */
   header.bandeau { position: static; }
   header.bandeau nav { margin-left: -0.5rem; margin-right: -0.5rem; }
-  /* Les onglets et le bouton « Pour vérifier » un peu plus serrés : mesuré
-     au navigateur le 23 septembre 2026, c'est ce qui fait tenir la barre en
-     deux rangées dès 390 points — trois à 360 —, quand elle en prenait
-     quatre. */
-  header.bandeau nav a { padding: 0 0.35rem; font-size: 0.75rem; letter-spacing: 0.04em; }
-  nav .deplier { padding: 0 0.35rem; letter-spacing: 0.06em; gap: 0.2rem; }
   /* Une carte rend au texte la largeur de ses marges : à 320 points, ses
      vingt-deux points de chaque côté ne laissaient aux quatre systèmes du
      simulateur que 114 points par colonne. */
@@ -2142,9 +2159,7 @@ body.calcul-en-cours::after {
     padding: 1rem 0; box-shadow: none; border-top: 1px solid var(--trait);
   }
   .fiches.reperes .fiche:first-child { border-top: 0; }
-  ol.gestes { font-size: 1.25rem; }
-  ol.gestes > li { grid-template-columns: 3rem 1fr; gap: 0.875rem; }
-  ol.gestes > li > .rang { font-size: 2.5rem; }
+  ol.gestes > li { grid-template-columns: 2.5rem 1fr; gap: 0.75rem; }
   .paire { gap: 1.75rem; margin: 2.25rem 0; }
   /* Quarante-huit points au-dessus de chaque titre de section, sur un écran
      qui en montre six cents : trente-six suffisent à marquer la rupture. */
@@ -2261,11 +2276,11 @@ body.calcul-en-cours::after {
     display: none;
   }
   body { background: #fff; color: #000; font-size: 11pt; overflow-x: visible; }
-  /* Les capitales massives de l'affiche redeviennent des titres : à 76 px sur
-     du papier, un titre mange le tiers de la première page. */
+  /* Les titres de l'affiche redeviennent des titres : à 88 px sur du
+     papier, un titre mange le tiers de la première page. */
   h1 { font-size: 20pt; }
   h2 { font-size: 15pt; }
-  .chapeau, .affiche .chapeau { font-size: 12pt; }
+  .chapeau { font-size: 12pt; }
   .defilant { overflow: visible; background: none; }
   .carte, .note, table, .graphique, .cascade, .sankey, .scenario, section.cle,
   .encadre {

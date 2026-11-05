@@ -264,6 +264,44 @@ def test_aucune_page_ne_laisse_de_grand_vide():
     assert not fautes, f"{len(fautes)} vides :\n" + "\n".join(fautes[:60])
 
 
+#: Les tailles de police que l'accueil emploie au large, en points : le texte
+#: et ses deux voisins, le chapeau, l'intertitre, les chiffres et le titre.
+TAILLES_ACCUEIL = 9
+
+
+def test_l_accueil_se_compose_sur_une_seule_echelle():
+    """L'accueil retouché le 5 novembre 2026 (compétence unslop) : la
+    hiérarchie vient de la taille et de la couleur, plus des capitales ni de la
+    graisse. Il comptait 32 libellés en capitales espacées, cinq graisses, de
+    400 à 900, 22 tailles, dont des fractionnaires (14,4 et 15,6 points), un
+    italique d'insistance, et des centaines de marges hors de la grille de
+    4 points — 9,6, 11,2, 13,6 dans les cases et les lignes de questions.
+
+    Aucune capitale par le style, aucun italique, aucune graisse au-delà de
+    600, à toute largeur ; au large, une échelle courte de tailles entières, et
+    chaque marge, retrait ou écart sur la grille de 4 points.
+    """
+    fautes = []
+    accueil = [visite for visite in mesures() if visite["route"] == "./"]
+    assert accueil, "l'accueil n'a pas été visité"
+    for visite in accueil:
+        for etat in ("replie", "deplie"):
+            ou = _ou(visite, "fermés" if etat == "replie" else "ouverts")
+            typo = visite[etat]["typographie"]
+            fautes += [f"{ou} : en capitales, {nom}" for nom in typo["capitales"]]
+            fautes += [f"{ou} : en italique, {nom}" for nom in typo["italiques"]]
+            lourdes = sorted(g for g in typo["graisses"] if int(g) > 600)
+            if lourdes:
+                fautes.append(f"{ou} : graisses {lourdes}")
+            if visite["largeur"] != 1440:
+                continue
+            tailles = sorted(float(t) for t in typo["tailles"])
+            if len(tailles) > TAILLES_ACCUEIL or any(t != round(t) for t in tailles):
+                fautes.append(f"{ou} : {len(tailles)} tailles, {tailles}")
+            fautes += [f"{ou} : hors grille, {cote}" for cote in typo["horsGrille"]]
+    assert not fautes, f"{len(fautes)} écarts :\n" + "\n".join(fautes[:80])
+
+
 def test_aucune_page_ne_leve_d_erreur_a_aucune_largeur():
     """Redessiner un graphique à la largeur de l'écran passe par le script :
     une exception y laisserait la page à moitié rendue."""

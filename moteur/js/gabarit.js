@@ -436,26 +436,32 @@ export function navigation(cheminActif = "/") {
  * « navigation » tout court ne dit pas laquelle on parcourt.
  */
 export function entete(cheminActif = "/") {
+  // Sur un téléphone, la navigation entière se replie derrière « Menu » : même
+  // repliée, la seconde voix laissait au bandeau collé trois rangées avant le
+  // titre (5 novembre 2026). Fermé sur chaque page ; au-delà de l'écran
+  // étroit, le bouton n'est pas affiché.
   return `<a class="evitement" href="#contenu">Aller au contenu</a>
 <header class="bandeau"><div class="interieur">
   <p class="nom"><a href="${adresseDepuis(cheminActif, "/", OPTIONS)}">${icone("trending-up")}<span>${NOM_DU_SITE}</span></a></p>
-  <nav aria-label="Navigation principale">${navigation(cheminActif)}</nav>
+  <button type="button" class="menu" aria-expanded="false" aria-controls="navigation">Menu${icone("chevron-down")}</button>
+  <nav id="navigation" aria-label="Navigation principale">${navigation(cheminActif)}</nav>
 </div></header>`;
 }
 
 /**
- * Le bloc de tête d'une page : sur-titre, titre massif, chapeau.
+ * Le bloc de tête d'une page : sur-titre, grand titre, chapeau.
  *
  * C'est l'unité qui fait de chaque page une affiche, et elle est la même
  * partout pour que les huit se reconnaissent comme un seul site.
  *
- * - le SUR-TITRE, deux ou trois mots en or et en capitales, dit où l'on est.
- *   Le titre ne le dit plus : c'est devenu une phrase, et une phrase ne se
- *   repère pas dans une barre d'onglets ;
+ * - le SUR-TITRE, deux ou trois mots adoucis, dit où l'on est. Le titre ne
+ *   le dit plus : c'est devenu une phrase, et une phrase ne se repère pas
+ *   dans une barre d'onglets ;
  * - le TITRE est le `<h1>` de la page — le seul, depuis que le nom du site a
- *   cédé la place. Il est mis en capitales PAR LE STYLE, jamais dans le texte :
- *   certaines synthèses vocales épellent lettre à lettre un mot écrit en
- *   majuscules, et le titre d'une page n'a pas à s'entendre « P.R.O.G. » ;
+ *   cédé la place. Il est en serif et en casse de phrase depuis le
+ *   5 novembre 2026 : c'est sa taille qui le hiérarchise, non plus des
+ *   capitales. Jamais de capitales écrites dans le texte : certaines synthèses
+ *   vocales épellent lettre à lettre un mot écrit en majuscules ;
  * - le CHAPEAU, en serif, est la seule chose que lira celui qui ne lit que
  *   deux lignes.
  *
@@ -481,7 +487,7 @@ export function affiche(surtitre, titre, chapeau) {
  * moins qu'une.
  */
 export function pied() {
-  return `<footer>
+  return typographier(`<footer>
   <p><strong>Ce simulateur n'a aucune valeur officielle.</strong> Il n'émane
   d'aucune caisse et ne vaut ni relevé de carrière, ni estimation de vos droits.
   Seule votre caisse fait foi
@@ -494,7 +500,7 @@ export function pied() {
   Les séries d'avant 1950 et les paramètres de régime restent saisis à la main :
   <a href="${DEPOT}/blob/main/docs/limites.md">lire les limites</a> avant de citer un chiffre.</p>
   <p class="retour-site">Un outil du <a href="${SITE_PARENT}" target="_top">Parti libéral français</a>.</p>
-</footer>`;
+</footer>`);
 }
 
 // -- fragments ---------------------------------------------------------------
@@ -554,6 +560,31 @@ export function milliards(millions, signe = false) {
 const GROUPES = /\d{1,3}(?:,\d{3})+(?:\.\d+)?/g;
 const DECIMAL = /\d+\.\d+/g;
 const AVANT_POURCENT = /(\d)%/g;
+
+/** Ce que la typographie française ne touche pas : le code, et ce qui s'exécute. */
+const HORS_TYPOGRAPHIE = /(<(script|style|pre|code|textarea)\b[\s\S]*?<\/\2>|<[^>]*>)/;
+
+/**
+ * Compose le texte d'une page à la française : une espace fine insécable
+ * avant « ? », « ! », « ; » et « % », une espace insécable avant « : » et à
+ * l'intérieur des guillemets. Le texte des pages s'écrit avec des espaces
+ * ordinaires, et « ? » partait seul au début de la ligne suivante
+ * (5 novembre 2026). Seul le texte change : ni les balises et leurs
+ * attributs, ni le code, le JSON et les scripts.
+ */
+export function typographier(html) {
+  return html.split(HORS_TYPOGRAPHIE).map((morceau, rang) => {
+    // `split` rend, pour chaque balise trouvée, la balise puis le nom de
+    // l'élément qu'elle ouvre : un morceau sur trois seulement est du texte.
+    if (rang % 3 !== 0) { return rang % 3 === 1 ? morceau : ""; }
+    return morceau
+      .replace(/[ \t\n]+([?!;])/g, `${FINE}$1`)
+      .replace(/(\d)[ \t\n]+%/g, `$1${FINE}%`)
+      .replace(/[ \t\n]+:/g, " :")
+      .replace(/«[ \t\n]+/g, "« ")
+      .replace(/[ \t\n]+»/g, " »");
+  }).join("");
+}
 
 /**
  * Convertit les nombres à l'anglaise produits par le moteur.

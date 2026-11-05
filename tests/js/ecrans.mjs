@@ -543,7 +543,39 @@ const MESURER = (ecran) => `(() => {
     }
   }
 
+  // La typographie de chaque texte montré (5 novembre 2026) : ce qui est mis
+  // en capitales par le style, en italique, la graisse et la taille de la
+  // police, et les marges, retraits et écarts qui tombent hors de la grille
+  // de 4 points. Un pas de 2 points au plus est un ajustement, pas un écart :
+  // le filet d'un onglet posé sur celui du bandeau, un texte hors écran.
+  const typographie = { capitales: [], italiques: [], graisses: {}, tailles: {}, horsGrille: [] };
+  const COTES = ["paddingTop", "paddingRight", "paddingBottom", "paddingLeft", "marginTop",
+    "marginRight", "marginBottom", "marginLeft", "rowGap", "columnGap"];
+  for (const el of tous) {
+    if (el.closest("svg") || !montre(el)) continue;
+    const style = getComputedStyle(el);
+    if ([...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim())) {
+      if (style.textTransform === "uppercase") typographie.capitales.push(nommer(el));
+      if (style.fontStyle === "italic") typographie.italiques.push(nommer(el));
+      typographie.graisses[style.fontWeight] = (typographie.graisses[style.fontWeight] || 0) + 1;
+      const taille = String(Math.round(parseFloat(style.fontSize) * 100) / 100);
+      typographie.tailles[taille] = (typographie.tailles[taille] || 0) + 1;
+    }
+    for (const cote of COTES) {
+      const valeur = parseFloat(style[cote]);
+      if (!valeur || Math.abs(valeur) <= 2) continue;
+      if (Math.abs(valeur / 4 - Math.round(valeur / 4)) > 0.01) {
+        typographie.horsGrille.push(cote + " " + Math.round(valeur * 10) / 10 + " : " + nommer(el));
+      }
+    }
+  }
+  typographie.capitales = typographie.capitales.slice(0, 40);
+  typographie.italiques = typographie.italiques.slice(0, 40);
+  typographie.nombreHorsGrille = typographie.horsGrille.length;
+  typographie.horsGrille = [...new Set(typographie.horsGrille)].slice(0, 40);
+
   return {
+    typographie,
     contrastes: contrastes.slice(0, 40), nombreContrastes: contrastes.length,
     vides: vides.slice(0, 12),
     deborde: document_.scrollWidth > largeur + 1 ? document_.scrollWidth : 0,

@@ -128,17 +128,16 @@ body {{
   font-family: "Public Sans", sans-serif;
 }}
 .nom {{
-  margin: 0; display: flex; align-items: center; gap: 14px;
-  font-size: 21px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+  margin: 0; display: flex; align-items: center; gap: 16px;
+  font-size: 24px; font-weight: 500;
 }}
-.nom::before {{ content: ""; width: 17px; height: 17px; background: {c["or"]}; }}
+.nom::before {{ content: ""; width: 16px; height: 16px; background: {c["or"]}; }}
 .surtitre {{
-  margin: 0 0 22px; color: {c["or"]};
-  font-size: 23px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+  margin: 0 0 20px; color: {c["texte-doux"]}; font-size: 24px; font-weight: 500;
 }}
 h1 {{
-  margin: 0; font-size: 96px; line-height: 0.92; font-weight: 900;
-  letter-spacing: -0.045em; text-transform: uppercase; text-wrap: balance;
+  margin: 0; font-family: "Instrument Serif", serif; font-size: 104px;
+  line-height: 1.02; font-weight: 400; letter-spacing: -0.01em; text-wrap: balance;
 }}
 .cle-texte {{ color: {c["or"]}; }}
 .signature {{

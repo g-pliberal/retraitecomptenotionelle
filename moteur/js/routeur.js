@@ -1717,6 +1717,15 @@ document.addEventListener("click", (evenement) => {
   bouton.setAttribute("aria-expanded", String(ouvrir));
 });
 
+// Le menu du bandeau sur un téléphone : `<button class="menu" aria-expanded>`,
+// juste avant la navigation qu'il replie. Même écoute déléguée, même geste.
+document.addEventListener("click", (evenement) => {
+  const menu = evenement.target.closest?.("header.bandeau button.menu");
+  if (!menu) { return; }
+  const ouvrir = menu.getAttribute("aria-expanded") !== "true";
+  menu.setAttribute("aria-expanded", String(ouvrir));
+});
+
 // -- les mots du glossaire ---------------------------------------------------
 //
 // Un mot de spécialiste porte sa définition, et elle s'ouvre sur place. Le

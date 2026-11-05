@@ -1046,7 +1046,9 @@ def test_toute_section_visee_par_une_adresse_existe():
                     f"absente de {route}")
 
 
-#: Les questions de l'accueil, dans l'ordre où elles s'y posent.
+#: Les questions de l'accueil, dans l'ordre où elles s'y posent. La page les
+#: compose à la française (`g.typographier`) : une espace insécable avant
+#: « ? » et « : ».
 QUESTIONS_DE_L_ELECTEUR = (
     "Ma retraite va-t-elle baisser ?",
     "Je suis déjà à la retraite : qu'est-ce qui change pour moi ?",
@@ -1097,9 +1099,11 @@ def test_l_accueil_range_chaque_sujet_sous_une_seule_question():
         r'<details class="section"(?: id="[^"]+")?><summary>.*?<span>(.*?)</span>'
         r"</summary>(.*?)</details>", corps, re.S)
     # Une seule liste, faite de questions.
-    assert [titre for titre, _ in depliants] == list(QUESTIONS_DE_L_ELECTEUR)
+    assert [titre for titre, _ in depliants] == [
+        g.typographier(question) for question in QUESTIONS_DE_L_ELECTEUR]
     reponses = dict(depliants)
     for question, developpement in DEVELOPPEMENTS_DES_QUESTIONS.items():
+        question, developpement = g.typographier(question), g.typographier(developpement)
         assert developpement in reponses[question], (question, developpement)
         # La réponse courte vient d'abord, le développement ensuite.
         assert reponses[question].index("<p>") < reponses[question].index(
@@ -1119,15 +1123,15 @@ def test_l_accueil_repond_aux_questions_de_l_electeur(contexte):
     """
     corps = rendre("/", {})[1]
     texte = html.unescape(corps)
-    rangs = [texte.index(f"<span>{question}</span></summary>")
-             for question in QUESTIONS_DE_L_ELECTEUR]
+    questions = [g.typographier(question) for question in QUESTIONS_DE_L_ELECTEUR]
+    rangs = [texte.index(f"<span>{question}</span></summary>") for question in questions]
     assert rangs == sorted(rangs), "les questions ne sont plus dans l'ordre"
     assert texte.index("Le système actuel et notre programme") < rangs[0]
     assert rangs[-1] < texte.index("Vérifiez plutôt que de nous croire")
     # Repliées : aucune réponse ne se lit sans avoir ouvert sa question.
     visible = html.unescape(_hors_depliants(corps))
     assert "<h2>Vos questions</h2>" in visible
-    for question in QUESTIONS_DE_L_ELECTEUR:
+    for question in questions:
         assert question not in visible
     # La réponse à la première question ne se dérobe pas.
     assert ("Le plus souvent, elle sera plus basse que ce que le système "
@@ -1440,6 +1444,53 @@ def test_sur_un_telephone_le_groupe_pour_verifier_se_replie():
     assert 'bouton.setAttribute("aria-expanded", String(ouvrir));' in script
 
 
+def test_l_accueil_suit_la_typographie_francaise():
+    """Une espace insécable avant les deux-points, le point-virgule, les
+    points d'interrogation et d'exclamation, le signe pour cent, et à
+    l'intérieur des guillemets : sans elle, « ? » ou « : » partait seul au
+    début de la ligne suivante. Le 5 novembre 2026, l'accueil en portait une
+    centaine d'ordinaires, des questions aux réponses. Le texte se compose
+    au rendu (`g.typographier`), et le code, le JSON et les scripts n'en sont
+    pas touchés.
+    """
+    _, corps = rendre("/", {})
+    assert "<h2" in corps
+    texte = re.sub(r"<(script|style|pre|code|textarea)\b.*?</\1>", "", corps, flags=re.S)
+    texte = html.unescape(re.sub(r"<[^>]+>", "", texte))
+    fautes = re.findall(r".{0,30}(?:[ \t\n][?!;:]|\d[ \t\n]%|«[ \t\n]|[ \t\n]»).{0,10}", texte)
+    assert not fautes, f"{len(fautes)} espaces ordinaires : {fautes[:20]}"
+    assert g.typographier('<p>Et si je meurs ? 18 % : « oui »</p><code>a :b</code>') == (
+        "<p>Et si je meurs ? 18 % : « oui »</p><code>a :b</code>")
+
+
+def test_sur_un_telephone_le_bandeau_se_replie_derriere_un_seul_bouton():
+    """Même replié, le groupe « Pour vérifier » laissait au bandeau collé trois
+    rangées sur un téléphone, 170 points avant le titre (5 novembre 2026).
+    Sous 48 rem, la navigation entière se replie derrière un bouton « Menu »,
+    à droite du nom du site : le bandeau tient en une rangée. Le bouton porte
+    son état et désigne ce qu'il ouvre ; il est fermé sur chaque page, et
+    n'existe pas au-delà, où les onglets restent sous les yeux.
+    """
+    for chemin in ("/", "/cout", "/methode"):
+        entete = g.entete(chemin)
+        boutons = re.findall(r'<button type="button" class="menu"[^>]*>', entete)
+        assert len(boutons) == 1, f"{chemin} : {len(boutons)} boutons de menu"
+        assert 'aria-expanded="false"' in boutons[0], chemin
+        cible = re.search(r'aria-controls="([^"]+)"', boutons[0]).group(1)
+        assert re.search(rf'</button>\s*<nav id="{cible}" aria-label="Navigation principale">',
+                         entete), chemin
+
+    style = FEUILLE_DE_STYLE
+    assert "header.bandeau .menu { display: none; }" in style
+    etroit = style.split("@media (max-width: 48rem) {\n  header.bandeau .menu {")
+    assert len(etroit) == 2, "le menu n'est plus réservé à l'écran étroit"
+    assert 'header.bandeau .menu[aria-expanded="false"] + nav { display: none; }' in etroit[1]
+
+    script = page_et_routeur()
+    assert 'closest?.("header.bandeau button.menu")' in script
+    assert 'menu.setAttribute("aria-expanded", String(ouvrir));' in script
+
+
 def test_les_pages_complementaires_se_renvoient_l_une_a_l_autre():
     """Programme, Méthode et Cas types se renvoient dans les deux sens.
 
@@ -1734,7 +1785,7 @@ def test_le_programme_casse_ses_triades_et_porte_une_voix():
     assert "Pourquoi ce site." not in _hors_depliants(corps)
     fiables = re.search(
         r'<details class="section" id="tout-verifier"><summary>.*?'
-        r"Ces chiffres sont-ils fiables \?.*?</details>", corps, re.S)
+        r"Ces chiffres sont-ils fiables\u202f\?.*?</details>", corps, re.S)
     assert fiables and "Pourquoi ce site." in fiables.group(0)
     # Et l'engagement, lui, reste sous les yeux.
     visible = _hors_depliants(corps)
