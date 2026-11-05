@@ -1372,3 +1372,76 @@ def test_la_cotisation_additionnelle_de_1985_a_1996_n_achete_pas_de_points(
         for annee, points in attendus.items():
             assert credits.get(("rco_artisans", annee)) == pytest.approx(
                 points, rel=1e-12), (moteur, annee)
+
+
+# --- Le minimum de la cotisation complémentaire, jusqu'en 2015 (action 177) -------
+
+
+def test_le_minimum_de_la_cotisation_complementaire_jusqu_en_2015(points_des_deux_moteurs):
+    """« Toutefois, le montant de cette cotisation ne peut être inférieur à
+    celui qui serait dû au titre d'un revenu égal au revenu minimum prévu à
+    l'article 2 du décret du 22 janvier 1973 », 200 heures du Smic du
+    1er janvier (décret n° 78-351, article 3, I, LEGIARTI000006766103), puis
+    « prévu à l'article D. 633-2 » (D. 635-4, de 1985 à 2004 ; D. 635-2, de 2004
+    au 5 avril 2012, LEGIARTI000006738016 à LEGIARTI000020032159) ; puis, dès
+    quatre-vingt-dix jours d'affiliation, une assiette au moins égale à « celle
+    mentionnée au dernier alinéa de l'article D. 633-2 », 5,25 % du plafond
+    (LEGIARTI000025629861, LEGIARTI000025263548) ; en 2015, « 5,25 % de la
+    valeur du plafond » (LEGIARTI000030034575), quand la base en prend 7,70 % ;
+    plus rien depuis 2016 (LEGIARTI000031799392). L'artisan à 100 € par an
+    depuis 1977 a au RCO, en 1980, les points de 200 × 1,971166 € (2 586 F), en
+    1984, de 200 × 3,472789 € (4 556 F) ; le commerçant à 500 € par an depuis
+    2004 a au NRCO ceux de 200 × 7,61 € en 2005, 8,27 € en 2007, 8,86 € en
+    2010, 9,00 € en 2011 ; l'artisan à 1 000 € par an depuis 2012, ceux de
+    5,25 % de 36 372 € au RCO en 2012, de 37 032 €, 37 548 € et 38 040 € au RCI
+    de 2013 à 2015, et ceux de ses 1 000 € en 2016. Taux et revenus de
+    référence : ceux des tests qui précèdent. Dans les deux moteurs."""
+    cas = [
+        {"naissance": 1940, "age": 65.0, "releve": _releve(
+            "artisan", {annee: 100.0 for annee in range(1977, 1985)})},
+        {"naissance": 1950, "age": 62.0, "releve": _releve(
+            "commercant", {annee: 500.0 for annee in range(2004, 2012)})},
+        {"naissance": 1955, "age": 67.0, "releve": _releve(
+            "artisan", {annee: 1000.0 for annee in range(2012, 2017)})},
+    ]
+    attendus = [
+        {("rco_artisans", 1980): 200 * 1.971166 * 0.044 / 1.003115,
+         ("rco_artisans", 1984): 200 * 3.472789 * 0.044 / 1.544309},
+        {("nric", 2005): 200 * 7.61 * 0.065 / 14.112,
+         ("nric", 2007): 200 * 8.27 * 0.065 / 14.648,
+         ("nric", 2010): 200 * 8.86 * 0.065 / 15.483,
+         ("nric", 2011): 200 * 9.00 * 0.065 / 15.808},
+        {("rco_artisans", 2012): 0.0525 * 36372 * 0.072 / 4.891130,
+         ("rci", 2013): 0.0525 * 37032 * 0.07 / 17.309,
+         ("rci", 2014): 0.0525 * 37548 * 0.07 / 17.309,
+         ("rci", 2015): 0.0525 * 38040 * 0.07 / 17.324,
+         ("rci", 2016): 1000.0 * 0.07 / 17.324},
+    ]
+    for moteur, carrieres in points_des_deux_moteurs(cas).items():
+        for credits, attendu in zip(carrieres, attendus):
+            for cle, points in attendu.items():
+                assert credits.get(cle) == pytest.approx(points, rel=1e-12), (moteur, cle)
+
+
+def test_le_minimum_de_la_complementaire_de_2015_veut_quatre_vingt_dix_jours(simulateur):
+    """En 2015, la cotisation complémentaire de l'indépendant affilié au moins
+    quatre-vingt-dix jours dans l'année « ne peut être calculée sur une assiette
+    inférieure à 5,25 % de la valeur du plafond mentionné au premier alinéa de
+    l'article L. 241-3 », plafond « déterminé conformément au premier alinéa de
+    l'article D. 612-6 » (D. 635-2, LEGIARTI000030034575) : sa valeur annuelle
+    « en vigueur au 1er janvier », sans la réduction « au prorata de la durée
+    d'affiliation » du second alinéa (LEGIARTI000025629812). Deux mois
+    d'affiliation n'en portent pas ; trois en portent une entière, 5,25 % de
+    38 040 €, 1 997,10 €. La base, elle, en a une de 7,70 %, 2 929,08 €."""
+    from retraite_notionnelle.donnees.chargement import (
+        assiette_minimale, charger_assiettes_minimales)
+
+    table = charger_assiettes_minimales(simulateur.macro.racine)
+    complementaire = assiette_minimale(table, "artisan", 2015, {"rci"})
+    base = assiette_minimale(table, "artisan", 2015)
+    assert complementaire is not None and base is not None
+    assert "rci" not in base.regimes
+    assert complementaire.montant(38_040.0, 9.61, 59 / 365) == 0.0
+    assert complementaire.montant(38_040.0, 9.61, 92 / 365) == pytest.approx(1997.10)
+    assert base.montant(38_040.0, 9.61, 92 / 365) == pytest.approx(2929.08)
+    assert assiette_minimale(table, "artisan", 2016, {"rci"}) is None

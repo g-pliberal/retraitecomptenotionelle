@@ -688,11 +688,15 @@ def charger_assiettes_minimales(racine: Path) -> tuple[AssietteMinimale, ...]:
 
 
 def assiette_minimale(table: tuple[AssietteMinimale, ...], statut: str,
-                      annee: int) -> AssietteMinimale | None:
-    """La règle d'assiette minimale que ce statut subit cette année-là."""
+                      annee: int, codes=None) -> AssietteMinimale | None:
+    """La règle d'assiette minimale que ce statut subit cette année-là : la
+    première de la table, celle du régime de base ; avec ``codes``, la première
+    qui nomme l'un de ces régimes — celle de la complémentaire des artisans et
+    des commerçants, jusqu'en 2015, vient après celle de la base."""
     for regle in table:
         if (statut in regle.statuts and regle.debut <= annee
-                and (regle.fin is None or annee <= regle.fin)):
+                and (regle.fin is None or annee <= regle.fin)
+                and (codes is None or not regle.regimes.isdisjoint(codes))):
             return regle
     return None
 

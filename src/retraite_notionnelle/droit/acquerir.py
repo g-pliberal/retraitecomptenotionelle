@@ -102,16 +102,34 @@ def assiette_minimale(moteur: ScenarioActuel, codes, ligne) -> float:
     """L'assiette minimale que la ligne oppose à l'un de ces régimes.
 
     Celle du régime de BASE d'un indépendant (D. 633-2, D. 642-4), portée
-    par la ligne ; nulle pour tout autre régime — la complémentaire des
-    artisans et commerçants n'a pas de minimum.
+    par la ligne. Jusqu'en 2015, celle de la COMPLÉMENTAIRE des artisans et
+    des commerçants : « le montant de cette cotisation ne peut être inférieur
+    à celui qui serait dû au titre d'un revenu égal au revenu minimum » de la
+    base (décret n° 78-351, article 3, I ; D. 635-4 ; D. 635-2 jusqu'au
+    5 avril 2012), puis, dès quatre-vingt-dix jours d'affiliation, une
+    assiette au moins égale à la sienne (D. 635-2, de 2012 à 2014), et
+    5,25 % du plafond en 2015, quand la base en prend 7,70 %. Elle tombe avec
+    celle de la base, sous les mêmes conditions — l'année cotisée, le revenu
+    déclaré, hors du micro-entrepreneur, qui cotise sur son chiffre
+    d'affaires « par dérogation » (L. 133-6-8) —, et se lit de la même
+    table, sur la même part de l'année. Nulle pour tout autre régime.
     """
     if ligne.assiette_minimale_base <= 0:
         return 0.0
-    regle = _assiette_minimale_de(charger_assiettes_minimales(moteur.macro.racine),
-                                  ligne.affiliation, ligne.annee)
-    if regle is None or regle.regimes.isdisjoint(codes):
+    table = charger_assiettes_minimales(moteur.macro.racine)
+    regle = _assiette_minimale_de(table, ligne.affiliation, ligne.annee)
+    if regle is None:
         return 0.0
-    return ligne.assiette_minimale_base
+    if not regle.regimes.isdisjoint(codes):
+        return ligne.assiette_minimale_base
+    complementaire = _assiette_minimale_de(table, ligne.affiliation, ligne.annee, codes)
+    if complementaire is None:
+        return 0.0
+    return complementaire.montant(
+        moteur.macro.plafond_securite_sociale(ligne.annee),
+        moteur.macro.smic_horaire_de(ligne.annee,
+                                     ligne.affiliation in moteur.macro.statuts_de_mayotte),
+        ligne.fraction_annee)
 
 
 def points_msa(moteur: ScenarioActuel, periode: PeriodeRegime, annee: int,
@@ -683,12 +701,14 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
                 # l'année qui suit la cessation. Le forfait se prend à
                 # proportion des mois de l'année, comme les bornes.
                 diviseurs = dict(periode.assiette_de_debut).get(ligne.affiliation)
+                forfait_de_debut = False
                 if diviseurs and ligne.cotise:
                     rang = annees_deja_exercees(carriere, ligne.affiliation, ligne.annee,
                                                 len(diviseurs))
                     if rang < len(diviseurs):
                         base = (moteur.macro.plafond_securite_sociale(ligne.annee)
                                 / diviseurs[rang] * part)
+                        forfait_de_debut = True
                 # L'assiette de la CAVAMAC est faite des commissions
                 # versées par les compagnies, celle de la CPRN des produits
                 # de l'office : le facteur les reconstitue depuis le
@@ -707,8 +727,16 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
                         base = forfait_grille[0] * part
                 # L'assiette minimale du régime de base d'un libéral :
                 # 450 SMIC horaires depuis 2023 (D. 642-4), qui ouvrent
-                # les points que ce montant ouvrirait.
-                base = max(base, assiette_minimale(moteur, (code,), ligne))
+                # les points que ce montant ouvrirait. Le minimum de la
+                # complémentaire des artisans et des commerçants, jusqu'en
+                # 2015 (`assiette_minimale`), ne s'oppose pas au forfait de
+                # début : l'article 3 du décret n° 78-351 et D. 635-4 le
+                # posent pour les assurés « autres que ceux visés aux II et
+                # III », celui qui commence et l'aide familial ; de 2004 à
+                # 2011, D. 635-2 le pose « sous réserve » de D. 635-7, qui
+                # porte le forfait, sans dire s'il s'y oppose.
+                if not forfait_de_debut:
+                    base = max(base, assiette_minimale(moteur, (code,), ligne))
                 plafond = base if borne_haute is None else borne_haute
                 assiette = max(0.0, min(base, plafond) - borne_basse)
                 repere = periode.repere_assiette(

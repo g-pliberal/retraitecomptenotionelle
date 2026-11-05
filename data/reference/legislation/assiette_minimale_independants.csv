@@ -66,10 +66,43 @@
 # l'autre rédaction ne la réduit au prorata. Avant 2019, aucun texte lu ne fixe
 # de minimum.
 #
+# La COMPLÉMENTAIRE des artisans et des commerçants a eu le sien jusqu'en
+# 2015 (action 177, fiche `assiette_rco_independants`) : les quatre dernières
+# lignes, qui ne nomment que ses régimes, et que la base ne lit pas — elle prend
+# la première ligne de son statut et de son année, qui nomme les siens.
+#   Le RCO des artisans, de 1979 à 2003 : « Toutefois, le montant de cette
+#   cotisation ne peut être inférieur à celui qui serait dû au titre d'un revenu
+#   égal au revenu minimum prévu à l'article 2 du décret du 22 janvier 1973 »
+#   (décret n° 78-351, article 3, I, LEGIARTI000006766103, jusqu'au 21 décembre
+#   1985), « prévu à l'article D. 633-2 » ensuite (D. 635-4, LEGIARTI000006738335
+#   à LEGIARTI000006738338, jusqu'au 24 août 2004). La phrase est au I, qui vise
+#   les assurés « autres que ceux visés aux II et III » : ni le forfait de début
+#   d'exercice ni l'aide familial n'y sont soumis.
+#   Le RCO des artisans et le NRCO des commerçants, de 2004 à 2011 : la même
+#   phrase (D. 635-2, LEGIARTI000006738016, LEGIARTI000006738017,
+#   LEGIARTI000020032159, jusqu'au 5 avril 2012).
+#   Les mêmes, puis le RCI, de 2012 à 2014 : « Pour les travailleurs
+#   indépendants dont la durée d'affiliation est au moins égale à
+#   quatre-vingt-dix jours au cours de l'année au titre de laquelle la
+#   cotisation est due, ladite cotisation ne peut être calculée sur une assiette
+#   inférieure à celle mentionnée au dernier alinéa de l'article D. 633-2 »
+#   (D. 635-2, LEGIARTI000025629861, LEGIARTI000025263548) : 5,25 % du plafond
+#   « sans application du deuxième alinéa de l'article D. 612-6 », son prorata.
+#   Le RCI en 2015 : « 5,25 % de la valeur du plafond mentionné au premier
+#   alinéa de l'article L. 241-3 », plafond « déterminé conformément au premier
+#   alinéa de l'article D. 612-6 » (D. 635-2, LEGIARTI000030034575), sa valeur
+#   annuelle « en vigueur au 1er janvier » (LEGIARTI000025629812), quand la base
+#   en prend 7,70 %. Depuis 2016, plus rien (LEGIARTI000031799392).
+#   Le décret n° 2012-443, article 4, V, relève ces 5,25 % s'ils passent sous
+#   200 heures du Smic du 1er janvier (LEGIARTI000025628392, LEGIARTI000030034758) :
+#   ils ne l'ont pas fait (1 909,53 € contre 1 844 € en 2012, 1 997,10 € contre
+#   1 922 € en 2015).
+#
 # Colonnes : `statuts` et `regimes` séparés par des espaces — les statuts du
-# simulateur qui le subissent, et les régimes de base auxquels il s'applique
-# (un artisan cotise au régime général depuis 2018, mais sa complémentaire, le
-# RCI, n'a pas de minimum). Le montant : `heures_smic` fois le Smic horaire du
+# simulateur qui le subissent, et les régimes auxquels il s'applique : de base,
+# et, sur les quatre dernières lignes, la complémentaire (un artisan cotise au
+# régime général depuis 2018, et son RCI n'a plus de minimum depuis 2016). Le
+# montant : `heures_smic` fois le Smic horaire du
 # 1er janvier, OU `part_pass` du plafond de l'année, OU `euros`, quand le texte
 # le fixe en euros.
 # `proratise` : le minimum suit-il la part de l'année couverte ? `jours_minimum`
@@ -89,3 +122,7 @@ profession_liberale liberal_non_reglemente auxiliaire_medical pharmacien expert_
 profession_liberale liberal_non_reglemente auxiliaire_medical pharmacien expert_comptable agent_general_assurance notaire veterinaire officier_ministeriel chirurgien_dentiste_ou_sage_femme medecin_liberal medecin_liberal_secteur_2 sage_femme biologiste_liberal,cnavpl regime_general,2023,,450,,,non,90,haute
 independant_mayotte,cssm_mayotte,2019,2025,450,,,non,0,haute
 independant_mayotte,cssm_mayotte,2026,,450,,,non,90,haute
+artisan,rco_artisans,1979,2003,200,,,non,0,haute
+artisan commercant gerant_debit_tabac,rco_artisans nric,2004,2011,200,,,non,0,haute
+artisan commercant gerant_debit_tabac,rco_artisans nric rci,2012,2014,,0.0525,,non,90,haute
+artisan commercant gerant_debit_tabac,rci,2015,2015,,0.0525,,non,90,haute

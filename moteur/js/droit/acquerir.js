@@ -13,7 +13,7 @@
 import { DateMois } from "../calendrier.js";
 import {
   assietteMinimale as assietteMinimaleDe, chomageComplementaires, CONJOINTS_COLLABORATEURS,
-  dispenseLesComplementaires, forfaitMicro, salaireMoyenAnnuel,
+  dispenseLesComplementaires, forfaitMicro, montantAssietteMinimale, salaireMoyenAnnuel,
 } from "../carriere.js";
 import { nomFiabilite, Fiabilite } from "../serie.js";
 import { primesSoumises } from "../primes.js";
@@ -82,17 +82,31 @@ export function anneesDejaExercees(carriere, affiliation, annee, maximum) {
 
 /**
  * L'assiette minimale que la ligne oppose à l'un de ces régimes : celle du
- * régime de BASE d'un indépendant (D. 633-2, D. 642-4), nulle ailleurs.
+ * régime de BASE d'un indépendant (D. 633-2, D. 642-4) ; jusqu'en 2015, celle
+ * de la COMPLÉMENTAIRE des artisans et des commerçants, qui tombe avec celle de
+ * la base, sous les mêmes conditions (D. 635-4, D. 635-2 : voir acquerir.py) ;
+ * nulle ailleurs.
  */
 export function assietteMinimale(moteur, codes, ligne) {
   if (!(ligne.assiette_minimale_base > 0)) {
     return 0.0;
   }
-  const regle = assietteMinimaleDe(moteur.macro.paquet, ligne.affiliation, ligne.annee);
-  if (regle === null || !codes.some((c) => regle[1].includes(c))) {
+  const paquet = moteur.macro.paquet;
+  const regle = assietteMinimaleDe(paquet, ligne.affiliation, ligne.annee);
+  if (regle === null) {
     return 0.0;
   }
-  return ligne.assiette_minimale_base;
+  if (codes.some((c) => regle[1].includes(c))) {
+    return ligne.assiette_minimale_base;
+  }
+  const complementaire = assietteMinimaleDe(paquet, ligne.affiliation, ligne.annee, codes);
+  if (complementaire === null) {
+    return 0.0;
+  }
+  return montantAssietteMinimale(complementaire,
+    moteur.macro.plafond_securite_sociale.valeur(ligne.annee),
+    moteur.macro.smicHoraireDe(ligne.annee, moteur.macro.statutsDeMayotte.has(ligne.affiliation)),
+    ligne.fraction_annee);
 }
 
 /** Points de retraite proportionnelle agricole d'une année (R. 732-71).
@@ -552,11 +566,13 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
         // tiers, puis sur la moitié du plafond, jusqu'en 2011 : voir
         // acquerir.py.
         const diviseurs = periode.assiette_de_debut?.[ligne.affiliation];
+        let forfaitDeDebut = false;
         if (diviseurs && ligne.cotise) {
           const rang = anneesDejaExercees(carriere, ligne.affiliation, ligne.annee,
             diviseurs.length);
           if (rang < diviseurs.length) {
             base = passPlein / diviseurs[rang] * part;
+            forfaitDeDebut = true;
           }
         }
         // Commissions de la CAVAMAC, produits de l'office de la CPRN : le
@@ -577,8 +593,12 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
           }
         }
         // L'assiette minimale du régime de base d'un libéral : 450 SMIC
-        // horaires depuis 2023 (D. 642-4), qui ouvrent leurs points.
-        base = Math.max(base, assietteMinimale(moteur, [code], ligne));
+        // horaires depuis 2023 (D. 642-4), qui ouvrent leurs points ; le
+        // minimum de la complémentaire des artisans et des commerçants,
+        // jusqu'en 2015, hors du forfait de début : voir acquerir.py.
+        if (!forfaitDeDebut) {
+          base = Math.max(base, assietteMinimale(moteur, [code], ligne));
+        }
         const plafond = borneHaute === null ? base : borneHaute;
         let assiette = Math.max(0.0, Math.min(base, plafond) - borneBasse);
         const repere = periode.repereAssiette(

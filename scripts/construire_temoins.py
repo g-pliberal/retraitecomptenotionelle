@@ -773,6 +773,15 @@ def _cas() -> list[dict]:
         "releve": lignes_releve(1990, 2025, "artisan", 3000, progression=1.0, trimestres=None),
         "dispenses": "2010:2027:rsa",
     }))
+    # Le minimum de la cotisation complémentaire, jusqu'en 2015 (action 177) :
+    # un artisan à 300 € par an de 1979 à 2016 cotise au RCO sur 200 heures du
+    # Smic, hors de ses deux forfaits de début, puis au RCI sur 5,25 % du
+    # plafond, et sur ses 300 € en 2016.
+    cas.append(("minimum_complementaire_artisan", {
+        "naissance": "1955-06-10", "sexe": "M", "statut": "artisan", "debut": "1979-01",
+        "liquidation": "2017-07",
+        "releve": lignes_releve(1979, 2016, "artisan", 300, progression=1.0, trimestres=None),
+    }))
     cas.append(("dispense_saisonniere_cumulee", {
         "naissance": "1970-05-20", "sexe": "F", "debut": "1992-09", "liquidation": "2034-06",
         "salaire": "0.9", "metier2_debut": "2015-06", "metier2_statut": "commercant",

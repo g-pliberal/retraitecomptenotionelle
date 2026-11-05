@@ -7,13 +7,16 @@ intitule: >-
   plafonds, quatre depuis 1997 (trois pour les commerçants), de l'année où la cotisation
   est due ; depuis les revenus de 2009, sur celui de l'année, après régularisation.
   L'artisan qui commence cotise l'année de son début sur un tiers du plafond, la
-  suivante sur la moitié, jusqu'en 2011. Les points de l'exercice sont sa cotisation,
+  suivante sur la moitié, jusqu'en 2011. Hors de ce forfait, la cotisation ne peut être
+  inférieure à celle de 200 heures du Smic du 1er janvier jusqu'en 2011, puis, dès
+  quatre-vingt-dix jours d'affiliation, de 5,25 % du plafond, au RCI encore, jusqu'en
+  2015. Les points de l'exercice sont sa cotisation,
   divisée par le revenu de référence, sans la cotisation additionnelle de 0,10 % due de
   1985 à 1996. Le conjoint collaborateur cotise sur l'assiette de sa cotisation de base,
   sans régularisation : au forfait, le tiers du plafond de l'année ; à l'option, de 2007
   à 2012, la fraction du revenu du chef de l'avant-dernière année.
 domaine: cotisations
-regimes: [rco_artisans, nric]
+regimes: [rco_artisans, nric, rci]
 etape: acquerir_les_droits
 face: droit
 etat: approchee
@@ -26,9 +29,15 @@ lit:
   lignes à l'option deux ans plus tôt
 - la part de l'année que la ligne couvre, au mois
 - le plafond annuel de la sécurité sociale de l'année de la cotisation
+- >-
+  l'assiette minimale du régime de base que porte la ligne, et la part de l'année
+  qu'elle couvre, pour le minimum de la complémentaire jusqu'en 2015
 ecrit:
 - >-
   les points de l'exercice au RCO des artisans et au NRCO des commerçants (`acquerir`)
+- >-
+  jusqu'en 2015, ceux du minimum de la cotisation, au RCO, au NRCO et au RCI
+  (`assiette_minimale`)
 dates_qui_decident:
 - revenu.annee
 versions:
@@ -118,7 +127,9 @@ versions:
       (D. 635-7, « au tiers du plafond mentionné à l'article L. 241-3 ») ; « Toutefois,
       le montant de cette cotisation ne peut être inférieur à celui qui serait dû au
       titre d'un revenu égal au revenu minimum prévu à l'article 2 du décret du 22
-      janvier 1973 » (article 3, I), que le modèle n'oppose pas ; le règlement peut,
+      janvier 1973 » (article 3, I), 200 heures du Smic du 1er janvier, que le modèle
+      oppose depuis le 5 novembre 2026, hors du forfait de début (le II) et de l'aide
+      familial (le III), que le I ne vise pas ; le règlement peut,
       « sur demande motivée », asseoir la cotisation « sur un revenu inférieur »
       (article 4, II, LEGIARTI000006766104)
   exemples: aucun trouvé
@@ -510,7 +521,8 @@ versions:
       l'option reste sur la fraction du revenu du chef de l'avant-dernière année, que
       D. 635-10-2 (LEGIARTI000006738041, jusqu'au 1er janvier 2013) ne régularise pas
     conditions: >-
-      le revenu minimum de D. 633-2 reste le minimum de la cotisation (D. 635-2)
+      le revenu minimum de D. 633-2 reste le minimum de la cotisation (D. 635-2), que le
+      modèle oppose : 200 heures du Smic du 1er janvier (D. 633-2, LEGIARTI000006737879)
   exemples: aucun trouvé
 - id: sans_forfait_2012
   statut: lue
@@ -576,7 +588,13 @@ versions:
     conditions: >-
       depuis le 5 avril 2012, dès quatre-vingt-dix jours d'affiliation dans l'année, la
       cotisation « ne peut être calculée sur une assiette inférieure » à celle du régime
-      de base (D. 635-2, LEGIARTI000025629861)
+      de base (D. 635-2, LEGIARTI000025629861), 5,25 % du plafond annuel du 1er janvier
+      « sans application du deuxième alinéa de l'article D. 612-6 », son prorata
+      (D. 633-2, LEGIARTI000025629830) : 1 909,53 € en 2012, au-dessus des 200 heures du
+      Smic, 1 844 €, que l'article 4, V, du décret n° 2012-443 (LEGIARTI000025628392) leur
+      oppose ; l'article 5 de ce décret modifie D. 635-2 (LEGIARTI000025628394), et son
+      article 10, II, garde l'ancien droit à qui cesse en 2012 sans reprendre avant 2013
+      (LEGIARTI000025628404)
   exemples: aucun trouvé
 - id: rci_2013
   statut: lue
@@ -584,37 +602,143 @@ versions:
   - id: LEGIARTI000025263548
     article: "code de la sécurité sociale, D. 635-2"
     en_vigueur: 2013-01-01
-    lu_le: 2026-11-03
+    lu_le: 2026-11-05
     citation: >-
       La cotisation annuelle au régime complémentaire obligatoire d'assurance vieillesse
       est calculée suivant les modalités prévues aux premier, deuxième et troisième
-      alinéas de l'article L. 131-6-2.
+      alinéas de l'article L. 131-6-2. [...] Pour les travailleurs indépendants dont la
+      durée d'affiliation est au moins égale à quatre-vingt-dix jours au cours de l'année
+      au titre de laquelle la cotisation est due, ladite cotisation ne peut être calculée
+      sur une assiette inférieure à celle mentionnée au dernier alinéa de l'article
+      D. 633-2.
+  - id: LEGIARTI000028435877
+    article: "code de la sécurité sociale, D. 633-2"
+    en_vigueur: 2014-01-01
+    lu_le: 2026-11-05
+    citation: >-
+      La cotisation annuelle ne peut être calculée sur une assiette inférieure à 5,25 %
+      de la valeur du plafond déterminée conformément au premier alinéa du présent
+      article et sans application du deuxième alinéa de l'article D. 612-6. Le présent
+      alinéa s'applique aux travailleurs indépendants dont la durée d'affiliation est au
+      moins égale à quatre-vingt-dix jours au cours de cette même année.
   nee_de: LEGIARTI000025263548
   bornes:
-    revenu.annee: [2013-01-01, null]
+    revenu.annee: [2013-01-01, 2015-01-01]
   contenu:
     parametres: {}
     droit: >-
       le RCO des artisans et le NRCO des commerçants sont fondus dans le RCI, dont la
       cotisation est provisionnelle, puis régularisée sur le revenu de l'année : hors de
-      cette fiche
+      cette fiche, sauf son minimum
+    conditions: >-
+      dès quatre-vingt-dix jours d'affiliation dans l'année, une assiette au moins égale
+      à celle du régime de base, 5,25 % du plafond annuel du 1er janvier, sans prorata
+      (D. 633-2, LEGIARTI000025629830 en 2013, LEGIARTI000028435877 en 2014 ; D. 612-6,
+      LEGIARTI000025629812)
+  exemples: aucun trouvé
+- id: rci_2015
+  statut: lue
+  textes:
+  - id: LEGIARTI000030034575
+    article: "code de la sécurité sociale, D. 635-2"
+    en_vigueur: 2015-01-01
+    lu_le: 2026-11-05
+    citation: >-
+      Pour les travailleurs indépendants dont la durée d'affiliation est au moins égale à
+      quatre-vingt-dix jours au cours de l'année au titre de laquelle la cotisation est
+      due, ladite cotisation ne peut être calculée sur une assiette inférieure à 5,25 %
+      de la valeur du plafond mentionné au premier alinéa de l'article L. 241-3. La
+      valeur de ce plafond est déterminée conformément au premier alinéa de l'article
+      D. 612-6.
+  - id: LEGIARTI000025629812
+    article: "code de la sécurité sociale, D. 612-6"
+    en_vigueur: 2012-04-05
+    lu_le: 2026-11-05
+    citation: >-
+      La valeur du plafond de la sécurité sociale mentionné à la présente section est la
+      valeur annuelle de ce plafond, tel que prévu à l'article L. 241-3, en vigueur au
+      1er janvier de l'année au titre de laquelle la cotisation annuelle est due. En cas
+      de période d'affiliation inférieure à une année, cette valeur est réduite au
+      prorata de la durée d'affiliation.
+  - id: LEGIARTI000030034758
+    article: "décret n° 2012-443 du 3 avril 2012, article 4"
+    en_vigueur: 2015-01-01
+    lu_le: 2026-11-05
+    citation: >-
+      V. ― Lorsque les assiettes minimales de cotisation mentionnées aux articles
+      D. 633-2, D. 635-2 et D. 642-4 du code de la sécurité sociale deviennent
+      inférieures à un montant égal, pour les assiettes minimales mentionnées à ces
+      articles D. 633-2 et D. 642-4, à 300 fois la valeur du salaire minimum de
+      croissance en vigueur le 1er janvier de l'année au titre de laquelle les
+      cotisations sont dues et, pour l'assiette minimale mentionnée à cet article
+      D. 635-2, à 200 fois cette valeur, le pourcentage de la valeur annuelle du plafond
+      de la sécurité sociale servant à leur calcul est fixé à hauteur de la plus petite
+      valeur, arrondie au demi-dixième immédiatement supérieur, à compter de laquelle
+      ces assiettes sont au moins égales à ce montant.
+  nee_de: LEGIARTI000030034575
+  bornes:
+    revenu.annee: [2015-01-01, 2016-01-01]
+  contenu:
+    parametres: {}
+    droit: >-
+      le RCI, hors de cette fiche, sauf son minimum
+    conditions: >-
+      dès quatre-vingt-dix jours d'affiliation dans l'année, une assiette d'au moins
+      5,25 % du plafond annuel du 1er janvier, sans le prorata du second alinéa de
+      D. 612-6, quand celle du régime de base passe à 7,70 % (D. 633-2,
+      LEGIARTI000030034546) ; 5,25 % de 38 040 €, 1 997,10 €, passent les 200 heures du
+      Smic de 9,61 €, 1 922 €, que l'article 4, V, du décret n° 2012-443 leur oppose
+  exemples: aucun trouvé
+- id: rci_2016
+  statut: lue
+  textes:
+  - id: LEGIARTI000031799392
+    article: "code de la sécurité sociale, D. 635-2"
+    en_vigueur: 2016-01-01
+    lu_le: 2026-11-05
+    citation: >-
+      La cotisation annuelle au régime complémentaire obligatoire d'assurance vieillesse
+      est calculée suivant les modalités prévues aux premier, deuxième et troisième
+      alinéas de l'article L. 131-6-2. Elle est recouvrée dans les conditions prévues aux
+      articles R. 133-26 et R. 133-27 et sous les garanties de la cotisation vieillesse
+      de base. Les dispositions de l'article D. 633-9 sont applicables au paiement de la
+      cotisation provisionnelle du régime complémentaire obligatoire d'assurance
+      vieillesse.
+  nee_de: LEGIARTI000031799392
+  bornes:
+    revenu.annee: [2016-01-01, null]
+  contenu:
+    parametres: {}
+    droit: >-
+      le RCI, hors de cette fiche : la phrase du minimum est supprimée
     conditions: aucune
   exemples: aucun trouvé
 approximations:
-- version: [avant_derniere_annee_1979, cotisation_additionnelle_1985, quatre_plafonds_1997,
-    avant_derniere_annee_des_deux_regimes_2004, regularisation_2009, sans_forfait_2012]
+- version: [avant_derniere_annee_des_deux_regimes_2004, regularisation_2009]
   ecart: >-
-    le modèle n'oppose pas le minimum de la cotisation, « celui qui serait dû au titre
-    d'un revenu égal au revenu minimum » du régime de base (décret n° 78-351, article 3,
-    I ; D. 635-4 ; D. 635-2 jusqu'au 5 avril 2012), puis l'assiette du régime de base dès
-    quatre-vingt-dix jours d'affiliation (D. 635-2, LEGIARTI000025629861) : ses
-    modalités — l'année incomplète, les rédactions de D. 633-2 — restent à lire
+    le modèle n'oppose pas le minimum de la cotisation au forfait de l'artisan qui
+    commence : de 1979 à 2004, le texte ne l'y oppose pas, la phrase étant au I de
+    l'article 3 du décret n° 78-351 et au premier alinéa de D. 635-4, qui visent les
+    assurés « autres que ceux visés aux II et III » ; de 2004 à 2011, D. 635-2 la pose
+    « sous réserve des dispositions des articles D. 635-7 et D. 635-10 »
+    (LEGIARTI000006738016), qui portent le forfait, sans dire si elle s'y oppose
   effet: >-
-    non mesuré ; l'artisan ou le commerçant dont le revenu de l'avant-dernière année
-    est sous le revenu minimum du régime de base, deux cents heures de Smic jusqu'au
-    5 avril 2012 (D. 633-2, LEGIARTI000006737877 à LEGIARTI000006737879 : « 200 fois le
-    montant horaire du salaire minimum de croissance en vigueur le 1er janvier de
-    l'année considérée »)
+    non mesuré ; seulement quand le forfait, que le modèle prend à proportion des mois
+    de l'exercice, passe sous le minimum : l'artisan qui commence en fin d'année, ses
+    deux derniers mois environ (en 2010, un tiers de 34 620 € sur deux mois, 1 923,33 €,
+    passe 200 heures de 8,86 €, 1 772 € ; sur un mois, non)
+- version: [sans_forfait_2012]
+  ecart: >-
+    l'artisan ou le commerçant qui cesse en 2012, sans reprendre avant le 1er janvier
+    2013, garde pour ses cotisations définitives de 2012 le droit d'avant le décret
+    n° 2012-443 (article 10, II, LEGIARTI000025628404) : le minimum de 200 heures du
+    Smic du 1er janvier, 1 844 €, sans condition de durée (D. 635-2,
+    LEGIARTI000020032159). Le modèle lui oppose 5,25 % du plafond, 1 909,53 €, et les
+    quatre-vingt-dix jours, comme à son régime de base
+  effet: >-
+    non mesuré ; l'indépendant qui cesse en 2012 sous 1 909,53 € : 65,53 € d'assiette de
+    trop au RCO ou au NRCO, ou, affilié moins de quatre-vingt-dix jours, une assiette
+    minimale de 1 844 € qui lui manque
 - version: [avant_derniere_annee_1979, cotisation_additionnelle_1985, quatre_plafonds_1997,
     avant_derniere_annee_des_deux_regimes_2004, regularisation_2009]
   ecart: >-
@@ -675,7 +799,12 @@ approximations:
     non mesuré ; les conjoints à l'option de 2007 à 2012, dans ces seuls cas : l'écart
     est la croissance du revenu du chef sur deux ans
 effet: >-
-  Les artisans de 1979 à 2012 et les commerçants de 2004 à 2012. Jusqu'au 3 novembre 2026,
+  Les artisans de 1979 à 2012 et les commerçants de 2004 à 2012. Le 5 novembre 2026, le
+  minimum de la cotisation : l'artisan, le commerçant ou le gérant de débit de tabac
+  dont le revenu retenu est sous 200 heures du Smic jusqu'en 2011, sous 5,25 % du
+  plafond de 2012 à 2015, cotise et acquiert ses points sur ce minimum ; aucun des 930
+  témoins ne bouge, et le témoin `minimum_complementaire_artisan`, à 300 € par an de
+  1979 à 2016, le couvre. Jusqu'au 3 novembre 2026,
   le modèle tirait les points de chaque exercice du revenu de l'année, et la cotisation
   additionnelle de 1985 à 1996 en achetait : de 5 à 11 % de RCO en trop, de 1 à 3 % de la
   pension, selon la carrière (`177/2026-11-03-etape-9-assiette-du-rco-des-artisans.md`).
@@ -692,16 +821,13 @@ effet: >-
   depuis 1998, perd 21,35 points du NRCO (399,39 au lieu de 420,74) et 0,19 % de sa
   pension.
 sources:
-  lu_le: 2026-11-03
-  prochaine_relecture: 2027-11-03
+  lu_le: 2026-11-05
+  prochaine_relecture: 2027-11-05
   a_relire:
   - >-
-    Le minimum de la cotisation : les rédactions de D. 633-2 de 1985 à 2012, son prorata
-    sur une année incomplète, la condition de quatre-vingt-dix jours et l'assiette du
-    régime de base de 2012 à 2014 (D. 635-2, LEGIARTI000025629861, LEGIARTI000025263548),
-    les 5,25 % du plafond de 2015 « déterminé conformément au premier alinéa de
-    l'article D. 612-6 » (LEGIARTI000030034575), le micro-entrepreneur ; plus rien
-    depuis 2016 (LEGIARTI000031799392).
+    Un exemple de la caisse du minimum de la cotisation complémentaire, jusqu'en 2015 :
+    aucun lu ; et si le RSI opposait le minimum au forfait de l'artisan qui commence,
+    de 2004 à 2011.
   - >-
     Le règlement du RCO des artisans, approuvé le 15 décembre 1978, que l'index ne porte
     pas : la reprise d'activité, l'assiette inférieure sur demande motivée de
@@ -717,6 +843,21 @@ sources:
     collaborateur à l'option de 2007 à 2012 : aucun des 633 exposés de la base de la
     Cnav lus le 3 novembre 2026 ne la traite.
   lectures:
+  - type: legifrance
+    reference: >-
+      le minimum de la cotisation, dans l'index LEGI à jour du 4 novembre 2026 : décret
+      n° 78-351, article 3 (LEGIARTI000006766103) ; D. 635-4, ses quatre rédactions de
+      1985 à 2004 (LEGIARTI000006738335 à LEGIARTI000006738338) ; D. 635-2, ses
+      rédactions de 2004 à 2016 (LEGIARTI000006738016, LEGIARTI000006738017,
+      LEGIARTI000020032159, LEGIARTI000025629861, LEGIARTI000025263548,
+      LEGIARTI000030034575, LEGIARTI000031799392), mot à mot par `--diff` ; D. 633-2, de
+      2006 à 2016 (LEGIARTI000006737879, LEGIARTI000025629830, LEGIARTI000028435877,
+      LEGIARTI000030034546) ; D. 612-6 (LEGIARTI000025629812) ; D. 635-7 et D. 635-10, de
+      1985 à 2013, sans autre minimum ; décret n° 2012-443, articles 4, 5 et 10
+      (LEGIARTI000025628392, LEGIARTI000030034758, LEGIARTI000025628394,
+      LEGIARTI000025628404) ; L. 133-6-8 (LEGIARTI000020541426, LEGIARTI000025013770,
+      LEGIARTI000026798337), le micro-entrepreneur, qui cotise « par dérogation »
+    date: 2026-11-05
   - type: legifrance
     reference: >-
       décret n° 78-351, articles 3 à 6, rédactions de 1978 et du 1er janvier 1985
@@ -778,20 +919,25 @@ code:
     conjoint collaborateur à l'option, de 2007 à 2012, sur le revenu de ses lignes à
     l'option deux ans plus tôt (`revenu_a_l_option`), même après une année
     d'interruption ; au forfait (`forfait_conjoint`, que pose la ligne), sur celui de
-    l'année.
+    l'année. Le minimum, jusqu'en 2015, hors du forfait de début : `assiette_minimale`,
+    qui lit les quatre dernières lignes de la série de l'assiette minimale, celles des
+    régimes complémentaires, tant que la ligne porte une assiette minimale de base.
   python: >-
-    droit/acquerir.py : acquerir, revenu_de_l_annee, revenu_a_l_option,
-    annees_deja_exercees ; carriere.py : AnneeCarriere, _ligne_annuelle
+    droit/acquerir.py : acquerir, assiette_minimale, revenu_de_l_annee,
+    revenu_a_l_option, annees_deja_exercees ; donnees/chargement.py :
+    assiette_minimale ; carriere.py : AnneeCarriere, _ligne_annuelle
   javascript: >-
-    moteur/js/droit/acquerir.js : acquerir, revenuDeLAnnee, revenuALOption,
-    anneesDejaExercees ; moteur/js/carriere.js : AnneeCarriere, ligneAnnuelle
+    moteur/js/droit/acquerir.js : acquerir, assietteMinimale, revenuDeLAnnee,
+    revenuALOption, anneesDejaExercees ; moteur/js/carriere.js : AnneeCarriere,
+    ligneAnnuelle, assietteMinimale, montantAssietteMinimale
   parametres: >-
     contenu.parametres de chaque version : annees_de_decalage,
     annees_de_decalage_du_conjoint_a_l_option, diviseurs_du_plafond_au_debut, plafonds_de_l_assiette,
     plafonds_de_l_assiette_des_commercants, taux_des_points, taux_additionnel ;
     regimes/rco_artisans.yaml, regimes/nric.yaml : assiette_annee_de_revenu,
     assiette, taux_cotisation_retraite ; regimes/rco_artisans.yaml : assiette_de_debut,
-    taux_calcul_points
+    taux_calcul_points ; legislation/assiette_minimale_independants.csv : regimes,
+    heures_smic, part_pass, jours_minimum
   tests: [tests/test_independants.py, tests/temoins/simulations.json]
 historique:
 - >-
@@ -809,3 +955,10 @@ historique:
   le doute sur le forfait de l'artisan qui commence de 2009 à 2011 ; l'effet du forfait
   qui relève l'artisane à très bas revenu, écrit ; le revenu minimum daté du 5 avril
   2012, et non de 2011.
+- >-
+  2026-11-05 — le minimum de la cotisation, écrit dans les deux moteurs (action 177,
+  file D) : 200 heures du Smic du 1er janvier de 1979 à 2011, hors du forfait de début,
+  puis 5,25 % du plafond, dès quatre-vingt-dix jours d'affiliation, de 2012 à 2015, au
+  RCI aussi, que la fiche suit désormais jusqu'en 2015 (versions rci_2013, rci_2015,
+  rci_2016). Restent approchés le forfait de début de 2004 à 2011 et la cessation de
+  2012 (`177/2026-11-05-minimum-de-la-cotisation-complementaire.md`).

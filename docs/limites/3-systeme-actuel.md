@@ -261,10 +261,13 @@ l'Institut des politiques publiques (PENSIPP). Écarts connus :
   que D. 635-7 assied sur un tiers puis la moitié du plafond, quand D. 635-2
   calcule depuis 2009 toute la cotisation à titre provisionnel, puis la
   régularise sur le revenu de l'année (L. 131-6) : aucun texte lu ne dit si ce
-  forfait l'était. Il ne sert pas le minimum de la cotisation, le
-  revenu minimum du régime de base jusqu'en 2012, puis l'assiette de ce
-  régime dès quatre-vingt-dix jours d'affiliation jusqu'en 2015 (D. 635-2),
-  dont les modalités restent à lire ; ni le forfait du commerçant qui
+  forfait l'était. Il sert, depuis le 5 novembre 2026, le minimum de la
+  cotisation, le revenu minimum du régime de base jusqu'en 2011, puis une part
+  du plafond dès quatre-vingt-dix jours d'affiliation jusqu'en 2015, RCI compris
+  (D. 635-4, D. 635-2), mais ne l'oppose pas au forfait de l'artisan qui
+  commence, que le texte n'y soumet pas jusqu'en 2004 et dont il ne dit rien
+  ensuite, ni ne garde l'ancien minimum à qui cesse en 2012 (décret
+  n° 2012-443, article 10, II). Il ne sert pas le forfait du commerçant qui
   commence, dix-huit puis vingt-sept fois la base mensuelle des allocations
   familiales (D. 635-10, R. 242-16), dont aucun texte lu ne dit s'il était
   régularisé : il garde le revenu de ses deux premières années ; ni

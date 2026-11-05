@@ -14897,7 +14897,11 @@ false,
 null
 ],
 [["independant_mayotte"],["cssm_mayotte"],2019,2025,450.0,null,false,0,null],
-[["independant_mayotte"],["cssm_mayotte"],2026,null,450.0,null,false,90,null]
+[["independant_mayotte"],["cssm_mayotte"],2026,null,450.0,null,false,90,null],
+[["artisan"],["rco_artisans"],1979,2003,200.0,null,false,0,null],
+[["artisan","commercant","gerant_debit_tabac"],["nric","rco_artisans"],2004,2011,200.0,null,false,0,null],
+[["artisan","commercant","gerant_debit_tabac"],["nric","rci","rco_artisans"],2012,2014,null,0.0525,false,90,null],
+[["artisan","commercant","gerant_debit_tabac"],["rci"],2015,2015,null,0.0525,false,90,null]
 ],
 "avantages":{
 "avantages":[

@@ -415,12 +415,16 @@ export function chomageComplementaires(paquet) {
 
 /**
  * La règle d'assiette minimale que ce statut subit cette année-là, lue dans
- * `legislation/assiette_minimale_independants.csv`, ou `null`.
+ * `legislation/assiette_minimale_independants.csv`, ou `null` : la première de
+ * la table, celle du régime de base ; avec `codes`, la première qui nomme l'un
+ * de ces régimes — celle de la complémentaire des artisans et des commerçants,
+ * jusqu'en 2015, vient après celle de la base.
  */
-export function assietteMinimale(paquet, statut, annee) {
+export function assietteMinimale(paquet, statut, annee, codes = null) {
   for (const regle of paquet.assiette_minimale_independants ?? []) {
-    const [statuts, , debut, fin] = regle;
-    if (statuts.includes(statut) && debut <= annee && (fin === null || annee <= fin)) {
+    const [statuts, regimes, debut, fin] = regle;
+    if (statuts.includes(statut) && debut <= annee && (fin === null || annee <= fin)
+        && (codes === null || codes.some((c) => regimes.includes(c)))) {
       return regle;
     }
   }
@@ -479,7 +483,7 @@ export function dispenseLesComplementaires(paquet, motif) {
  * le texte le fixe ainsi (4 758 € en 2022, décret n° 2022-1438), sinon en
  * heures du Smic ou en part du plafond. Portage de `AssietteMinimale.montant`.
  */
-function montantAssietteMinimale(regle, pass, smicHoraire, part) {
+export function montantAssietteMinimale(regle, pass, smicHoraire, part) {
   const [, , , , heuresSmic, partPass, proratise, joursMinimum, euros = null] = regle;
   if (part * 365 + 1e-6 < joursMinimum) {
     return 0.0;
