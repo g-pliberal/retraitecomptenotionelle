@@ -1,16 +1,5 @@
 # Étape 14, première partie : les pensions de 2020, simulées contre publiées
 
-**Reprise, au 5 novembre 2026.** Fait : chaque grille contre l'EIR en 2020 ; la population, du 16 au 28 octobre (décote, natures, hommes selon le
-rang, ASPA, invalides, décote entre les deux âges et des résidents, surcote des statutaires, limites) ; le pilote des carrières inactives ; au
-modèle, la descente, le militaire au mois ; le 3 novembre, le taux plein des femmes entre les deux âges, les agents décotés, la surcote du
-salariat, sa mesure au dépôt, les écarts de R-I-bis, la décote d'après 1960 (sortie sous `docs/mesures/138/`), relue par R-I-ter, retouchée le 5
-(le « total » du résumé, une fourchette construite, 11,6 à 12,8 % ; 11,66 % des hommes de 1960 pour 13,00, sans cause établie ; l'État civil de
-1957). Le 5 aussi, la durée des femmes revue contre l'EIR de 2020 : le calage tient, sans changement ; l'excès de l'âge légal est dans les
-conditions de départ, non dans la durée. Reste, une session par point : les artisans, les saisonniers agricoles ; les femmes âgées ; les départs
-après 67 ans ; la place des départs des femmes qui ont leur durée. Au propriétaire : 152, 157, le CASD, l'incitation, le militaire, la sonde au mois,
-le recours de la page, les hommes entre les deux âges, la surcote d'après 1953, la décote d'après 1960, la carrière complète, le juge de 1955.
-Détail : `…-ecarts-de-r-i-bis.md`, `…-retouches-de-la-relecture-r-i-ter.md`, `…-calage-de-la-duree-des-femmes.md`.
-
 **Le 7 octobre 2026, la demande.** Le propriétaire : « 138.14 ». L'étape :
 « Ce qui demande une population ou des microdonnées, avec l'action 136 (étape
 6) : une population simulée, des départs choisis, la validation sur des

@@ -1,0 +1,436 @@
+Dépôt : commit 8a5adc644a9948de6753b9df24144cd35fc51ede, arbre a1e9636c2e5fc2dc078ce5ecfb9f89630c8fc7a9.
+Action 138, étape 14 : la carrière longue des femmes nées en 1953 de la population, décomposée
+(docs/feuille_de_route/138/2026-11-05-etape-14-carriere-longue-des-femmes.md).
+
+Trois scripts, lancés depuis la racine du dépôt :
+1. La mesure du même jour refaite telle quelle, le script de
+   docs/mesures/138/2026-11-05-etape-14-duree-des-femmes.txt, inchangé :
+       python pilote.py 1953 2020 1955 2022
+   Sa sortie de la génération 1953 est ci-dessous : chaque ligne y est celle
+   de la mesure du 5 novembre (commit 319ee4b), à l'identique, l'en-tête près,
+   qui y imprimait les deux âges arrondis (61.17, 66.17) ; celle de 1955 aussi.
+2. La décomposition, génération 1953 seule ; 1 min 36 s, un cœur :
+       python pilote_cl4.py 1953 2020
+3. Les femmes du salariat privé des tranches 30_40 et 40_plus, et deux
+   carrières, année par année :
+       python exemple.py
+
+----- 1. sortie de pilote.py, génération 1953 -----
+commit 8a5adc644a9948de6753b9df24144cd35fc51ede
+
+== génération 1953, poids de 2020 ; âge légal 61.166666666666664, d'annulation 66.16666666666667
+trimestres validés au départ, majorations comprises, en moyenne : 155.5
+  place | age_annulation | 12.3
+  place | age_legal | 61.3
+  place | avant_age_legal | 11.5
+  place | entre | 14.9
+  condition | carriere_longue | 6.6
+  condition | decote | 11.9
+  condition | surcote | 11.2
+  condition | taux_plein_age | 11.1
+  condition | taux_plein_autre | 49.9
+  condition | taux_plein_autre (jumelle inapte) | 9.4
+  durée validée, en années | 2 10 à 20 | 7.9
+  durée validée, en années | 3 20 à 30 | 11.3
+  durée validée, en années | 4 30 à 40 | 15.2
+  durée validée, en années | 5 40 et plus, sous la durée requise | 0.2
+  durée validée, en années | 6 la durée requise et plus | 65.4
+  à l'âge légal, condition | decote | 8.4
+  à l'âge légal, condition | taux_plein_autre | 43.5
+  à l'âge légal, condition | taux_plein_autre (jumelle inapte) | 9.4
+  à l'âge légal, durée | la durée requise et plus | 43.7
+  à l'âge légal, durée | sous la durée requise | 17.6
+  à l'âge légal, taux plein, autrement, hors jumelles inaptes | cnracl None | 5.1
+  à l'âge légal, taux plein, autrement, hors jumelles inaptes | fonction_publique_etat_civile None | 4.6
+  à l'âge légal, taux plein, autrement, hors jumelles inaptes | msa_non_salaries 30_40 | 0.8
+  à l'âge légal, taux plein, autrement, hors jumelles inaptes | msa_non_salaries 40_plus | 0.9
+  à l'âge légal, taux plein, autrement, hors jumelles inaptes | regime_general 30_40 | 21.5
+  à l'âge légal, taux plein, autrement, hors jumelles inaptes | regime_general 40_plus | 10.5
+----- 2. pilote_cl4.py -----
+"""La carrière longue des femmes de la population, génération 1953 (poids de 2020).
+
+    python pilote_cl4.py 1953 2020
+
+La mesure de 2026-11-05-etape-14-duree-des-femmes (pilote.py) refaite telle
+quelle, puis, pour chaque femme qui ne part pas en carrière longue, sa
+carrière rebâtie au moteur Python à 60 ans et à l'âge qui précède l'âge
+légal, et les deux conditions de D. 351-1-1 lues dessus : l'entrée précoce
+(cinq trimestres validés à la fin de l'année des 16, 17 et 20 ans,
+CarriereLongue._entree_precoce), la durée cotisée et réputée cotisée
+(cotisés + CarriereLongue._reputes_assimiles) contre la durée requise."""
+import collections, re, subprocess, sys
+sys.path.insert(0, "scripts")
+import grille_large as G
+from retraite_notionnelle.config import Parametres
+from retraite_notionnelle.simulateur import Simulateur
+from retraite_notionnelle.scenarios.actuel import AgesAnnulationDecote, AgesOuverture
+from retraite_notionnelle.droit.commun import ligne_cotisee
+
+print("commit", subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip())
+p = Parametres(); racine = p.racine_donnees
+effectifs = Simulateur(p).effectifs
+variantes = G.grille("population", effectifs, G.eir(racine), ())
+simulateur = Simulateur(p).pour_la_projection()
+moteur = simulateur.scenario_actuel
+cl = moteur.carriere_longue
+args = [int(a) for a in sys.argv[1:]]
+
+
+def lire(cas, gen, age):
+    c = cas.carriere_a(simulateur, gen, age)
+    an = c.annee_liquidation
+    cotises = c.trimestres_cumules(l for l in c.lignes if ligne_cotisee(moteur, c, l) and l.annee <= an)
+    valides = c.trimestres_cumules(l for l in c.lignes if l.annee <= an)
+    reputes = cl._reputes_assimiles(c)
+    natures = collections.Counter()
+    for l in c.lignes:
+        if l.annee <= an and not ligne_cotisee(moteur, c, l) and l.trimestres_valides > 0:
+            natures[l.type_periode] += c.trimestres_retenus(l)
+    premiere = min((l.annee for l in c.lignes if l.trimestres_valides > 0), default=None)
+    entree = {m: cl._entree_precoce(c, an, m, 5) for m in (16, 17, 20)}
+    return dict(cotises=cotises, valides=valides, reputes=reputes, natures=natures,
+                debut=None if premiere is None else premiere - c.annee_naissance,
+                entree=entree)
+
+
+for gen, annee in zip(args[::2], args[1::2]):
+    femmes = [(v, w * v.part_de_la_generation(gen))
+              for v, w in zip(variantes, G.poids_retraites(variantes, effectifs, annee))
+              if v.cas.sexe == "F" and w > 0]
+    lectures = [G._lectures_de_la_condition(v.cas, gen) for v, _ in femmes]
+    departs = G.Departs(simulateur, [a for ages, _ in lectures for a in ages],
+                        [d for _, siens in lectures for d in siens], du_jour=True)
+    legal = AgesOuverture(racine).age(gen)[0]; annulation = AgesAnnulationDecote(racine).age(gen)[0]
+    places, conditions = collections.Counter(), collections.Counter()
+    dec = collections.Counter()
+    debuts_cl, debuts = collections.Counter(), collections.Counter()
+    manques = collections.Counter()
+    total = 0.0
+    erreurs = 0
+    for v, w in femmes:
+        if w <= 0.0:
+            continue
+        try:
+            age, condition = G.condition_au_depart(simulateur, v.cas, gen, departs)
+            actuel = departs.au_depart(v.cas, gen)
+        except (ValueError, KeyError):
+            continue
+        total += w
+        place = G.position_du_depart(age, legal, annulation)
+        places[place] += w
+        conditions[condition] += w
+        groupe = f"{v.groupe} {v.tranche}"
+        if condition == "carriere_longue":
+            dec[("1 carrière longue", groupe)] += w
+            continue
+        try:
+            a60 = lire(v.cas, gen, 60.0)
+            avant = lire(v.cas, gen, round(legal - 1 / 12, 4))
+        except Exception as e:  # noqa: BLE001
+            erreurs += 1
+            dec[("9 carrière non rebâtie", type(e).__name__)] += w
+            continue
+        requis = actuel.trimestres_requis
+        debuts[(place, a60["debut"])] += w
+        if not a60["entree"][20]:
+            dec[("2 entrée après 20 ans", groupe)] += w
+            dec[("2 entrée après 20 ans, place", place)] += w
+            continue
+        a_60 = a60["cotises"] + a60["reputes"]
+        a_avant = avant["cotises"] + avant["reputes"]
+        if a_60 >= requis:
+            dec[("3 ouverte à 60 ans, non prise", groupe)] += w
+            dec[("3 ouverte à 60 ans, non prise, place/condition", f"{place} {condition}")] += w
+            if place == "age_legal":
+                print("  non prise à l'âge légal :", v.cas.code, round(age, 3), a60["cotises"], a60["reputes"], requis, round(w, 1))
+            continue
+        if a_avant >= requis:
+            dec[("4 ouverte avant l'âge légal, non prise", groupe)] += w
+            dec[("4 ouverte avant l'âge légal, non prise, place/condition", f"{place} {condition}")] += w
+            if place == "age_legal":
+                print("  4, non prise à l'âge légal :", v.cas.code, round(age, 3), avant["cotises"], avant["reputes"], requis, round(w, 1))
+            continue
+        manque = requis - a_avant
+        dec[("5 entrée avant 20 ans, durée cotisée courte", groupe)] += w
+        dec[("5 entrée avant 20 ans, durée cotisée courte, place", place)] += w
+        tranche = ("1 à 4" if manque <= 4 else "5 à 8" if manque <= 8 else "9 à 20"
+                   if manque <= 20 else "21 et plus")
+        dec[("5 manque, en trimestres, à l'âge qui précède l'âge légal", tranche)] += w
+        # Ce que la carrière valide sans le coter ni le réputer : ses natures.
+        assim = avant["valides"] - avant["cotises"]
+        for nature, t in avant["natures"].items():
+            manques[nature] += w * t
+        manques["réputés"] += w * avant["reputes"]
+        manques["assimilés validés"] += w * assim
+        manques["poids"] += w
+        chom = avant["natures"].get("chomage_indemnise", 0)
+        # Sans son chômage non réputé : le chômage réputé est déjà dans reputes.
+        if chom - min(chom, avant["reputes"]) >= manque:
+            dec[("5 dont le manque tient au seul chômage", groupe)] += w
+        if assim - avant["reputes"] >= manque:
+            dec[("5 dont le manque tient aux assimilés non réputés", groupe)] += w
+    print(f"\n== génération {gen}, poids de {annee} ; âge légal {legal}, d'annulation {annulation}")
+    print(f"carrières non rebâties : {erreurs}")
+    for cle, w in sorted(places.items()):
+        print(f"  place | {cle} | {100 * w / total:.1f}")
+    for cle, w in sorted(conditions.items()):
+        print(f"  condition | {cle} | {100 * w / total:.1f}")
+    for (nom, cle), w in sorted(dec.items()):
+        if 100 * w / total >= 0.1:
+            print(f"  décomposition | {nom} | {cle} | {100 * w / total:.2f}")
+    for (place, debut), w in sorted(debuts.items(), key=lambda kv: (kv[0][0], kv[0][1] or 0)):
+        if 100 * w / total >= 0.2:
+            print(f"  âge du premier trimestre validé, hors carrière longue | {place} | {debut} | {100 * w / total:.2f}")
+    if manques["poids"]:
+        n = manques.pop("poids")
+        for nature, t in sorted(manques.items()):
+            print(f"  durée courte, trimestres moyens | {nature} | {t / n:.2f}")
+----- 2. sortie de pilote_cl4.py -----
+commit 8a5adc644a9948de6753b9df24144cd35fc51ede
+  4, non prise à l'âge légal : salarie_prive~f~40_plus~p75~surcote1.21 61.213 164 2 165 26714.8
+  4, non prise à l'âge légal : salarie_prive~f~40_plus~p75~partiel~surcote1.21 61.213 164 2 165 9102.5
+  non prise à l'âge légal : salarie_prive~f~40_plus~p90~surcote1.21 61.213 164 2 165 12659.4
+  non prise à l'âge légal : salarie_prive~f~40_plus~p90~partiel~surcote1.21 61.213 164 2 165 4313.4
+  non prise à l'âge légal : salarie_prive~f~40_plus~p95~surcote1.21 61.213 168 2 165 5258.9
+  non prise à l'âge légal : salarie_prive~f~40_plus~p95~partiel~surcote1.21 61.213 168 2 165 1791.9
+  non prise à l'âge légal : salarie_prive~f~40_plus~p99~surcote1.21 61.213 168 2 165 3506.0
+  non prise à l'âge légal : salarie_prive~f~40_plus~p99~partiel~surcote1.21 61.213 168 2 165 1194.6
+  4, non prise à l'âge légal : salarie_prive~f~30_40~p95~surcote1.21 61.213 164 2 165 900.3
+  4, non prise à l'âge légal : salarie_prive~f~30_40~p95~partiel~surcote1.21 61.213 164 2 165 306.8
+  4, non prise à l'âge légal : salarie_prive~f~30_40~p99~surcote1.21 61.213 164 2 165 600.2
+  4, non prise à l'âge légal : salarie_prive~f~30_40~p99~partiel~surcote1.21 61.213 164 2 165 204.5
+  4, non prise à l'âge légal : salarie_prive~f~30_40~complete~p95~surcote1.21 61.213 164 2 165 8243.1
+  4, non prise à l'âge légal : salarie_prive~f~30_40~complete~p95~partiel~surcote1.21 61.213 164 2 165 2808.7
+  4, non prise à l'âge légal : salarie_prive~f~30_40~complete~p99~surcote1.21 61.213 164 2 165 5495.4
+  4, non prise à l'âge légal : salarie_prive~f~30_40~complete~p99~partiel~surcote1.21 61.213 164 2 165 1872.5
+== génération 1953, poids de 2020 ; âge légal 61.166666666666664, d'annulation 66.16666666666667
+carrières non rebâties : 0
+  place | age_annulation | 12.3
+  place | age_legal | 61.3
+  place | avant_age_legal | 11.5
+  place | entre | 14.9
+  condition | carriere_longue | 6.6
+  condition | decote | 11.9
+  condition | surcote | 11.2
+  condition | taux_plein_age | 11.1
+  condition | taux_plein_autre | 59.3
+  décomposition | 1 carrière longue | regime_general 30_40 | 2.03
+  décomposition | 1 carrière longue | regime_general 40_plus | 4.54
+  décomposition | 2 entrée après 20 ans | cnracl None | 8.41
+  décomposition | 2 entrée après 20 ans | fonction_publique_etat_civile None | 10.16
+  décomposition | 2 entrée après 20 ans | fonction_publique_etat_militaire None | 0.40
+  décomposition | 2 entrée après 20 ans | msa_non_salaries 10_20 | 0.62
+  décomposition | 2 entrée après 20 ans | msa_non_salaries 20_30 | 0.74
+  décomposition | 2 entrée après 20 ans | msa_non_salaries 30_40 | 1.62
+  décomposition | 2 entrée après 20 ans | msa_non_salaries 40_plus | 1.03
+  décomposition | 2 entrée après 20 ans | msa_non_salaries moins_10 | 0.43
+  décomposition | 2 entrée après 20 ans | professions_liberales 10_20 | 0.10
+  décomposition | 2 entrée après 20 ans | professions_liberales 20_30 | 0.12
+  décomposition | 2 entrée après 20 ans | professions_liberales 30_40 | 0.27
+  décomposition | 2 entrée après 20 ans | professions_liberales 40_plus | 0.17
+  décomposition | 2 entrée après 20 ans | regime_general 10_20 | 10.39
+  décomposition | 2 entrée après 20 ans | regime_general 20_30 | 12.45
+  décomposition | 2 entrée après 20 ans | regime_general 30_40 | 5.95
+  décomposition | 2 entrée après 20 ans | regime_general 40_plus | 3.42
+  décomposition | 2 entrée après 20 ans | regime_general moins_10 | 7.21
+  décomposition | 2 entrée après 20 ans | regimes_speciaux None | 1.29
+  décomposition | 2 entrée après 20 ans, place | age_annulation | 12.10
+  décomposition | 2 entrée après 20 ans, place | age_legal | 37.89
+  décomposition | 2 entrée après 20 ans, place | avant_age_legal | 4.92
+  décomposition | 2 entrée après 20 ans, place | entre | 9.94
+  décomposition | 3 ouverte à 60 ans, non prise | regime_general 40_plus | 0.78
+  décomposition | 3 ouverte à 60 ans, non prise, place/condition | age_legal taux_plein_autre | 0.27
+  décomposition | 3 ouverte à 60 ans, non prise, place/condition | entre surcote | 0.52
+  décomposition | 4 ouverte avant l'âge légal, non prise | regime_general 30_40 | 0.56
+  décomposition | 4 ouverte avant l'âge légal, non prise | regime_general 40_plus | 0.98
+  décomposition | 4 ouverte avant l'âge légal, non prise, place/condition | age_legal taux_plein_autre | 0.52
+  décomposition | 4 ouverte avant l'âge légal, non prise, place/condition | entre surcote | 1.01
+  décomposition | 5 dont le manque tient au seul chômage | regime_general 30_40 | 18.62
+  décomposition | 5 dont le manque tient au seul chômage | regime_general 40_plus | 2.04
+  décomposition | 5 dont le manque tient aux assimilés non réputés | regime_general 30_40 | 18.62
+  décomposition | 5 dont le manque tient aux assimilés non réputés | regime_general 40_plus | 7.28
+  décomposition | 5 entrée avant 20 ans, durée cotisée courte | regime_general 30_40 | 18.70
+  décomposition | 5 entrée avant 20 ans, durée cotisée courte | regime_general 40_plus | 7.56
+  décomposition | 5 entrée avant 20 ans, durée cotisée courte, place | age_annulation | 0.15
+  décomposition | 5 entrée avant 20 ans, durée cotisée courte, place | age_legal | 22.64
+  décomposition | 5 entrée avant 20 ans, durée cotisée courte, place | entre | 3.48
+  décomposition | 5 manque, en trimestres, à l'âge qui précède l'âge légal | 1 à 4 | 3.44
+  décomposition | 5 manque, en trimestres, à l'âge qui précède l'âge légal | 21 et plus | 14.33
+  décomposition | 5 manque, en trimestres, à l'âge qui précède l'âge légal | 5 à 8 | 5.93
+  décomposition | 5 manque, en trimestres, à l'âge qui précède l'âge légal | 9 à 20 | 2.57
+  âge du premier trimestre validé, hors carrière longue | age_annulation | 19 | 0.26
+  âge du premier trimestre validé, hors carrière longue | age_annulation | 20 | 1.27
+  âge du premier trimestre validé, hors carrière longue | age_annulation | 21 | 7.73
+  âge du premier trimestre validé, hors carrière longue | age_annulation | 22 | 2.33
+  âge du premier trimestre validé, hors carrière longue | age_annulation | 24 | 0.38
+  âge du premier trimestre validé, hors carrière longue | age_legal | 17 | 3.64
+  âge du premier trimestre validé, hors carrière longue | age_legal | 18 | 1.83
+  âge du premier trimestre validé, hors carrière longue | age_legal | 19 | 18.42
+  âge du premier trimestre validé, hors carrière longue | age_legal | 20 | 2.35
+  âge du premier trimestre validé, hors carrière longue | age_legal | 21 | 19.30
+  âge du premier trimestre validé, hors carrière longue | age_legal | 22 | 13.54
+  âge du premier trimestre validé, hors carrière longue | age_legal | 24 | 1.81
+  âge du premier trimestre validé, hors carrière longue | age_legal | 27 | 0.25
+  âge du premier trimestre validé, hors carrière longue | avant_age_legal | 20 | 0.72
+  âge du premier trimestre validé, hors carrière longue | avant_age_legal | 21 | 0.98
+  âge du premier trimestre validé, hors carrière longue | avant_age_legal | 22 | 3.23
+  âge du premier trimestre validé, hors carrière longue | entre | 17 | 1.98
+  âge du premier trimestre validé, hors carrière longue | entre | 19 | 3.09
+  âge du premier trimestre validé, hors carrière longue | entre | 20 | 0.38
+  âge du premier trimestre validé, hors carrière longue | entre | 21 | 2.45
+  âge du premier trimestre validé, hors carrière longue | entre | 22 | 6.42
+  âge du premier trimestre validé, hors carrière longue | entre | 24 | 0.27
+  âge du premier trimestre validé, hors carrière longue | entre | 27 | 0.31
+  durée courte, trimestres moyens | assimilés validés | 25.81
+  durée courte, trimestres moyens | chomage_indemnise | 20.12
+  durée courte, trimestres moyens | education_enfant | 4.74
+  durée courte, trimestres moyens | maladie | 0.95
+  durée courte, trimestres moyens | réputés | 2.10
+----- 3. exemple.py -----
+"""Les femmes de 1953 du salariat privé entrées avant 20 ans qui manquent la
+carrière longue : la répartition de leurs années assimilées, et une carrière
+type, année par année."""
+import collections, sys
+sys.path.insert(0, "scripts")
+import grille_large as G
+from retraite_notionnelle.config import Parametres
+from retraite_notionnelle.simulateur import Simulateur
+from retraite_notionnelle.droit.commun import ligne_cotisee
+p = Parametres(); racine = p.racine_donnees
+effectifs = Simulateur(p).effectifs
+variantes = G.grille("population", effectifs, G.eir(racine), ())
+sim = Simulateur(p).pour_la_projection(); moteur = sim.scenario_actuel; cl = moteur.carriere_longue
+gen = 1953
+femmes = [(v, w * v.part_de_la_generation(gen)) for v, w in zip(variantes, G.poids_retraites(variantes, effectifs, 2020))
+          if v.cas.sexe == "F" and w > 0 and v.groupe == "regime_general" and v.tranche in ("30_40", "40_plus")]
+tot = sum(w for _, w in femmes)
+dist = collections.Counter(); par_tranche = collections.Counter()
+exemples = []
+for v, w in femmes:
+    c = v.cas.carriere_a(sim, gen, 61.0)
+    an = c.annee_liquidation
+    cot = c.trimestres_cumules(l for l in c.lignes if ligne_cotisee(moteur, c, l) and l.annee <= an)
+    val = c.trimestres_cumules(l for l in c.lignes if l.annee <= an)
+    assim = val - cot
+    e20 = cl._entree_precoce(c, an, 20, 5)
+    cle = (v.tranche, e20, "0" if assim == 0 else "1-8" if assim <= 8 else "9-16" if assim <= 16 else "17-24" if assim <= 24 else "25+")
+    dist[cle] += w; par_tranche[v.tranche] += w
+    exemples.append((w, v, c, cot, val))
+print("femmes du salariat privé, tranches 30_40 et 40_plus, 1953, part de toutes ces femmes :")
+for k, w in sorted(dist.items()):
+    print(" ", k, f"{100*w/tot:.1f}")
+print({k: round(100*w/tot, 1) for k, w in par_tranche.items()})
+exemples.sort(key=lambda e: -e[0])
+for w, v, c, cot, val in [e for e in exemples if e[1].tranche == "30_40"][:1] + [e for e in exemples if e[1].tranche == "40_plus"][:1]:
+    print("\n", v.cas.code, "poids", round(w, 5), "cotisés", cot, "validés", val, "enfants", v.cas.nombre_enfants)
+    for l in c.lignes:
+        print(f"   {l.annee} {l.annee - c.annee_naissance} {l.type_periode} tv={l.trimestres_valides} cot={int(ligne_cotisee(moteur, c, l))} nat={l.reputes_cotises_nature}")
+----- 3. sortie de exemple.py -----
+femmes du salariat privé, tranches 30_40 et 40_plus, 1953, part de toutes ces femmes :
+  ('30_40', False, '1-8') 3.0
+  ('30_40', False, '25+') 7.6
+  ('30_40', False, '9-16') 2.8
+  ('30_40', True, '1-8') 12.3
+  ('30_40', True, '25+') 23.9
+  ('30_40', True, '9-16') 11.6
+  ('40_plus', False, '0') 1.9
+  ('40_plus', False, '1-8') 0.4
+  ('40_plus', False, '17-24') 0.6
+  ('40_plus', False, '25+') 3.1
+  ('40_plus', False, '9-16') 1.6
+  ('40_plus', True, '0') 7.8
+  ('40_plus', True, '1-8') 1.9
+  ('40_plus', True, '17-24') 2.3
+  ('40_plus', True, '25+') 12.3
+  ('40_plus', True, '9-16') 6.9
+{'40_plus': 38.8, '30_40': 61.2}
+ salarie_prive~f~30_40~complete~p50 poids 222862.08321 cotisés 136 validés 168 enfants 2
+   1972 19 emploi tv=4 cot=1 nat=
+   1973 20 emploi tv=4 cot=1 nat=
+   1974 21 emploi tv=4 cot=1 nat=
+   1975 22 emploi tv=4 cot=1 nat=
+   1976 23 emploi tv=4 cot=1 nat=
+   1977 24 emploi tv=4 cot=1 nat=
+   1978 25 emploi tv=4 cot=1 nat=
+   1979 26 emploi tv=4 cot=1 nat=
+   1980 27 emploi tv=4 cot=1 nat=
+   1981 28 emploi tv=4 cot=1 nat=
+   1982 29 emploi tv=4 cot=1 nat=
+   1983 30 emploi tv=4 cot=1 nat=
+   1984 31 emploi tv=4 cot=1 nat=
+   1985 32 emploi tv=4 cot=1 nat=
+   1986 33 emploi tv=4 cot=1 nat=
+   1987 34 emploi tv=4 cot=1 nat=
+   1988 35 emploi tv=4 cot=1 nat=
+   1989 36 chomage_indemnise tv=4 cot=0 nat=chomage
+   1990 37 chomage_indemnise tv=4 cot=0 nat=chomage
+   1991 38 chomage_indemnise tv=4 cot=0 nat=chomage
+   1992 39 chomage_indemnise tv=4 cot=0 nat=chomage
+   1993 40 chomage_indemnise tv=4 cot=0 nat=chomage
+   1994 41 chomage_indemnise tv=4 cot=0 nat=chomage
+   1995 42 chomage_indemnise tv=4 cot=0 nat=chomage
+   1996 43 chomage_indemnise tv=4 cot=0 nat=chomage
+   1997 44 emploi tv=4 cot=1 nat=
+   1998 45 emploi tv=4 cot=1 nat=
+   1999 46 emploi tv=4 cot=1 nat=
+   2000 47 emploi tv=4 cot=1 nat=
+   2001 48 emploi tv=4 cot=1 nat=
+   2002 49 emploi tv=4 cot=1 nat=
+   2003 50 emploi tv=4 cot=1 nat=
+   2004 51 emploi tv=4 cot=1 nat=
+   2005 52 emploi tv=4 cot=1 nat=
+   2006 53 emploi tv=4 cot=1 nat=
+   2007 54 emploi tv=4 cot=1 nat=
+   2008 55 emploi tv=4 cot=1 nat=
+   2009 56 emploi tv=4 cot=1 nat=
+   2010 57 emploi tv=4 cot=1 nat=
+   2011 58 emploi tv=4 cot=1 nat=
+   2012 59 emploi tv=4 cot=1 nat=
+   2013 60 emploi tv=4 cot=1 nat=
+   2014 61 inactivite tv=0 cot=0 nat=
+ salarie_prive~f~40_plus~p75~surcote3.11 poids 37683.20756 cotisés 164 validés 176 enfants 2
+   1970 17 emploi tv=4 cot=1 nat=
+   1971 18 emploi tv=4 cot=1 nat=
+   1972 19 emploi tv=4 cot=1 nat=
+   1973 20 emploi tv=4 cot=1 nat=
+   1974 21 emploi tv=4 cot=1 nat=
+   1975 22 emploi tv=4 cot=1 nat=
+   1976 23 emploi tv=4 cot=1 nat=
+   1977 24 emploi tv=4 cot=1 nat=
+   1978 25 emploi tv=4 cot=1 nat=
+   1979 26 emploi tv=4 cot=1 nat=
+   1980 27 emploi tv=4 cot=1 nat=
+   1981 28 emploi tv=4 cot=1 nat=
+   1982 29 emploi tv=4 cot=1 nat=
+   1983 30 emploi tv=4 cot=1 nat=
+   1984 31 emploi tv=4 cot=1 nat=
+   1985 32 emploi tv=4 cot=1 nat=
+   1986 33 emploi tv=4 cot=1 nat=
+   1987 34 emploi tv=4 cot=1 nat=
+   1988 35 emploi tv=4 cot=1 nat=
+   1989 36 emploi tv=4 cot=1 nat=
+   1990 37 chomage_indemnise tv=4 cot=0 nat=chomage
+   1991 38 chomage_indemnise tv=4 cot=0 nat=chomage
+   1992 39 chomage_indemnise tv=4 cot=0 nat=chomage
+   1993 40 emploi tv=4 cot=1 nat=
+   1994 41 emploi tv=4 cot=1 nat=
+   1995 42 emploi tv=4 cot=1 nat=
+   1996 43 emploi tv=4 cot=1 nat=
+   1997 44 emploi tv=4 cot=1 nat=
+   1998 45 emploi tv=4 cot=1 nat=
+   1999 46 emploi tv=4 cot=1 nat=
+   2000 47 emploi tv=4 cot=1 nat=
+   2001 48 emploi tv=4 cot=1 nat=
+   2002 49 emploi tv=4 cot=1 nat=
+   2003 50 emploi tv=4 cot=1 nat=
+   2004 51 emploi tv=4 cot=1 nat=
+   2005 52 emploi tv=4 cot=1 nat=
+   2006 53 emploi tv=4 cot=1 nat=
+   2007 54 emploi tv=4 cot=1 nat=
+   2008 55 emploi tv=4 cot=1 nat=
+   2009 56 emploi tv=4 cot=1 nat=
+   2010 57 emploi tv=4 cot=1 nat=
+   2011 58 emploi tv=4 cot=1 nat=
+   2012 59 emploi tv=4 cot=1 nat=
+   2013 60 emploi tv=4 cot=1 nat=
+   2014 61 emploi tv=0 cot=1 nat=
