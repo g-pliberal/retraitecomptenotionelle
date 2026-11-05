@@ -1,0 +1,31 @@
+date: "2026-11-05"
+session: "action 175, vague 7 : retouches de la relecture R-M4c (commit beec286) — D. 721-11 ne dit pas « sans cotisation », l'effet chiffré du point non tranché, « au III ou IV »"
+consulte: >-
+  python scripts/veille_droit.py ; docs/veille_droit.md. L'index de la DILA récupéré dans
+  la session (LEGI à jour au 4 novembre 2026 après l'incrément LEGI_20261104-214059) :
+  L. 721-3 du code de la sécurité sociale (LEGIARTI000006744302, du 21 décembre 1985 au
+  23 juillet 1993 ; LEGIARTI000006744303, du 23 juillet 1993 au 23 décembre 1997 : « 1°)
+  par des cotisations forfaitaires à la charge des assurés » ; aucune rédaction d'avant le
+  21 décembre 1985 à l'index) ; L. 721-6 (LEGIARTI000006744307, du 21 décembre 1985 au 23
+  décembre 1997 : « les conditions dans lesquelles les périodes d'activité antérieures à la
+  création du régime seront prises en compte pour le calcul de la pension ») ; D. 721-11
+  (LEGIARTI000006739120, du 13 novembre 1988 au 21 juin 1998) ; R. 351-27
+  (LEGIARTI000024113020, « au III ou IV de l'article 20 »). Les citations ajoutées à la
+  fiche taux_plein_a_soixante_cinq_ans, cherchées par script dans le texte de l'index :
+  aucune absente.
+trouve: >-
+  D. 721-11 prend en compte les périodes d'avant le 1er janvier 1979 « sous réserve »
+  que l'assuré soit à jour de ses cotisations personnelles ; il ne dit pas « sans
+  cotisation », et aucun texte lu ne dit que ces années n'ont pas été cotisées : c'est la
+  lecture du modèle, déclarée comme telle. L. 721-3 prouve les cotisations forfaitaires
+  des assurés de 1985 à 1997 (non de 1979 à 1985, que l'index ne couvre pas). L'effet
+  chiffré du point non tranché : 289,73 € au modèle, 507,73 € au texte de D. 721-6 pour la
+  fraction d'avant 1998. R. 351-27 écrit « au III ou IV », non « le III ou IV ». Aucune
+  règle, aucune valeur ne change.
+reste: >-
+  À la file des cultes : la fraction d'avant 1998 à 65 ans hors des parents (289,73 ou
+  507,73 €) ; la preuve de « validées gratuitement » pour les années d'avant 1979
+  (affiliations.yaml cite la page de la CAVIMAC, la réponse ministérielle du 16 janvier
+  2008 et le décret n° 79-607, art. 42, non relus ici) ; les commentaires de
+  droit/categories.py et droit/cultes.py et la docstring d'un test qui disent encore
+  « sans cotisation (D. 721-11) ».

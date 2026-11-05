@@ -548,6 +548,28 @@ versions:
       forfaitaire ; 2° Des cotisations à la charge des associations, des congrégations ou
       collectivités religieuses dont relèvent les assurés, assises sur une base
       forfaitaire »
+  - id: LEGIARTI000006744302
+    article: L. 721-3 du code de la sécurité sociale, rédaction du 21 décembre 1985 au 23
+      juillet 1993
+    en_vigueur: 1985-12-21
+    citation: >-
+      « Le financement de la pension de vieillesse instituée par le présent chapitre est
+      intégralement assuré : 1°) par des cotisations forfaitaires à la charge des assurés »
+  - id: LEGIARTI000006744303
+    article: L. 721-3 du code de la sécurité sociale, rédaction du 23 juillet 1993 au 23
+      décembre 1997, celle du 31 décembre 1997 (le même 1° ; un 5° s'y ajoute)
+    en_vigueur: 1993-07-23
+    citation: >-
+      « Le financement de la pension de vieillesse instituée par le présent chapitre est
+      intégralement assuré : 1°) par des cotisations forfaitaires à la charge des assurés »
+  - id: LEGIARTI000006744307
+    article: L. 721-6 du code de la sécurité sociale, rédaction du 21 décembre 1985 au 23
+      décembre 1997
+    en_vigueur: 1985-12-21
+    citation: >-
+      « Un décret fixera le mode de calcul de la pension et les conditions dans lesquelles
+      les périodes d'activité antérieures à la création du régime seront prises en compte
+      pour le calcul de la pension. »
   - id: LEGIARTI000023397816
     article: décret n° 2006-1325 du 31 octobre 2006, article 2, rédaction pour les pensions
       prenant effet à compter du 1er juillet 2011, la seule depuis dans l'index LEGI
@@ -636,10 +658,11 @@ versions:
       anniversaire ; celle d'avant 1998 allouée à soixante-cinq ans (D. 721-6 du code de
       1985), avec la majoration du V, et, avant, minorée du coefficient de R. 351-27, I, 2°,
       et II (décret n° 2006-1325, article 2) ; les années cultuelles d'avant 1979, prises en
-      compte sans cotisation (D. 721-11), ne comptent pas parmi les huit trimestres des
-      deux années d'avant la naissance. Aux points d'avant 1973 des artisans et des
-      commerçants, la minoration se compte jusqu'au soixante-cinquième anniversaire
-      (décret n° 73-937, article 3, II)
+      compte (D. 721-11), que le modèle tient pour non cotisées sans qu'aucun texte lu
+      (D. 721-11, L. 721-3, L. 721-6 du code de 1985) l'écrive, ne comptent pas parmi les
+      huit trimestres des deux années d'avant la naissance. Aux points d'avant 1973 des
+      artisans et des commerçants, la minoration se compte jusqu'au soixante-cinquième
+      anniversaire (décret n° 73-937, article 3, II)
     beneficiaire: >-
       le parent de trois enfants né du 1er juillet 1951 au 31 décembre 1955, qui a cessé ou
       réduit son activité après la naissance de l'un d'eux ; le fonctionnaire sédentaire
@@ -905,8 +928,9 @@ approximations:
   textes: >-
     L. 382-27 du code de la sécurité sociale (LEGIARTI000019959668) ; L. 382-15
     (LEGIARTI000006742793) ; L. 382-25, I, 1° (LEGIARTI000006742803) ; D. 721-11 du code de
-    1985 (LEGIARTI000006739120) ; loi n° 2010-1330, article 20, IV (LEGIARTI000023023835) ;
-    décret n° 2011-620, article 2 (LEGIARTI000024111672)
+    1985 (LEGIARTI000006739120) ; L. 721-3 (LEGIARTI000006744302, LEGIARTI000006744303) et
+    L. 721-6 (LEGIARTI000006744307) du code de 1985 ; loi n° 2010-1330, article 20, IV
+    (LEGIARTI000023023835) ; décret n° 2011-620, article 2 (LEGIARTI000024111672)
   ecart: >-
     Depuis le 3 novembre 2026, le modèle sert le même âge à la CAVIMAC, dont les ministres
     des cultes « reçoivent une pension de vieillesse dans les conditions définies aux
@@ -915,9 +939,20 @@ approximations:
     article 2 (et du V bis pour les années d'avant 1979), et, avant soixante-cinq ans,
     décotées jusqu'au soixante-cinquième anniversaire (R. 351-27, I, 2°, et le II du même
     article 2). Les deux années qui précèdent la naissance n'y comptent l'emploi que
-    cotisé : l'activité cultuelle d'avant 1979, que la CAVIMAC prend en compte sans
-    cotisation (D. 721-11), n'en est pas, quand celle de 1979 et après est cotisée « à la
-    charge des assurés » (L. 382-25, I, 1°). CE QUE LES TEXTES NE TRANCHENT PAS :
+    cotisé : l'activité cultuelle d'avant 1979, que la CAVIMAC prend en compte (D. 721-11 :
+    « sont prises en compte pour l'ouverture du droit et le calcul de la pension » les
+    périodes « accomplies antérieurement au 1er janvier 1979 », « sous réserve » que
+    l'assuré soit à jour de ses cotisations personnelles), n'en est pas pour le modèle, qui
+    la tient pour non cotisée. D. 721-11 ne dit pas « sans cotisation », et aucun texte lu
+    ne dit que ces années n'ont pas été cotisées : L. 721-6 du code de 1985 renvoie à un
+    décret « les conditions dans lesquelles les périodes d'activité antérieures à la
+    création du régime seront prises en compte pour le calcul de la pension », et L. 721-3
+    finance le régime « par des cotisations forfaitaires à la charge des assurés »
+    (rédactions du 21 décembre 1985 et du 23 juillet 1993, la seconde en vigueur au 31
+    décembre 1997), puis L. 382-25, I, 1° (« à la charge des assurés », depuis le 20
+    décembre 2005). Aucune rédaction de L. 721-3 d'avant le 21 décembre 1985, qui
+    couvrirait 1979 à 1985, n'est à l'index : cette part ne repose que sur la date de
+    D. 721-11. CE QUE LES TEXTES NE TRANCHENT PAS :
     l'activité cultuelle est-elle l'« activité professionnelle » que le 2° et le 3° du IV
     demandent, interrompue après la naissance et validée avant elle ? Le code n'en dit
     que des « activités mentionnées à l'article L. 382-15 » ; le décret n° 2011-620 et la
@@ -930,8 +965,16 @@ approximations:
     ministre du culte de 1979 à 1981, puis de 2000 à 2018, enfants d'avril 1982, juin 1984
     et juin 1986, partie à soixante-cinq ans le 1er avril 2018, que le modèle sert au taux
     plein (avant 1998, 7 615,94 × 11 / 165 = 507,73 €), serait décotée de 5 trimestres :
-    46,875 % au lieu de 50 % après 1997, et, avant 1998, 4 635,65 × 11 / 165 × 0,9375 =
-    289,73 €
+    46,875 % au lieu de 50 % après 1997. Pour la fraction d'avant 1998, le modèle la
+    servirait à 4 635,65 × 11 / 165 × 0,9375 = 289,73 € au lieu de 507,73 € ; mais ce
+    289,73 € est ce que le modèle servirait, non ce que le texte donnerait, et non l'effet
+    du seul point non tranché : à soixante-cinq ans, D. 721-6 alloue la fraction d'avant
+    1998 à tout assuré, et le V du décret n° 2006-1325, article 2, la majore, que la
+    mesure des parents s'applique ou non ; par le texte, elle resterait à 507,73 €, et
+    seule la fraction d'après 1997 passerait à 46,875 %. L'écart de 289,73 à 507,73 € tient
+    à l'écart déjà déclaré dans cultes_fractions_de_pension (« le décret garde
+    soixante-cinq ans (D. 721-6 de 1997) pour la fraction d'avant 1998 »), que la file des
+    cultes doit mesurer et trancher
 - version: [loi_du_9_novembre_2010]
   textes: >-
     décret n° 73-937 du 2 octobre 1973, article 3 (LEGIARTI000026474703, du 7 octobre
@@ -1288,6 +1331,22 @@ sources:
       2017/32 du 26/09/2017 », le minimum et le minimum majoré, par an et par mois
     url: https://legislation.lassuranceretraite.fr/api/v1/baremes/baremesByFileLeafRef/retraite_personnelle_montant_minimum_bar.aspx
     date: 2026-11-03
+  - type: legifrance
+    reference: >-
+      index LEGI à jour au 4 novembre 2026, relu le 5 novembre 2026 (retouches de la
+      relecture R-M4c, vague 7) : L. 721-3 du code de la sécurité sociale
+      (LEGIARTI000006744302 du 21 décembre 1985 au 23 juillet 1993, LEGIARTI000006744303 du
+      23 juillet 1993 au 23 décembre 1997 : « 1°) par des cotisations forfaitaires à la
+      charge des assurés » ; aucune rédaction d'avant le 21 décembre 1985 à l'index) ;
+      L. 721-6 (LEGIARTI000006744307, du 21 décembre 1985 au 23 décembre 1997 : « les
+      périodes d'activité antérieures à la création du régime seront prises en compte pour
+      le calcul de la pension ») ; D. 721-11 (LEGIARTI000006739120, du 13 novembre 1988 au
+      21 juin 1998 : « Sous réserve qu'à la date d'entrée en jouissance de la pension
+      l'assuré soit à jour de ses cotisations personnelles, sont prises en compte pour
+      l'ouverture du droit et le calcul de la pension, les périodes d'exercice d'activités
+      [...] accomplies antérieurement au 1er janvier 1979 » ; le texte ne dit pas « sans
+      cotisation »)
+    date: 2026-11-05
 textes_a_rattacher:
 - reference: L. 351-8 CSS, 1° bis et 6°
 - reference: loi n° 2010-1330 du 9 novembre 2010, article 20, III
@@ -1399,3 +1458,10 @@ historique:
   textes ne tranchent pas de l'activité cultuelle, déclaré. Les deux écarts faibles de
   la relecture R-M4-bis : le congé de maternité de 1978, quatorze semaines, et le renvoi
   des statuts de la CNRACL et des ouvriers de l'État à la sécurité sociale.
+- >-
+  2026-11-05 — les retouches de la relecture R-M4c (vague 7 ; note
+  2026-11-05-retouches-de-la-relecture-r-m4c.md) : D. 721-11 ne dit pas « sans
+  cotisation » — la fiche le dit, et cite L. 721-3 et L. 721-6 du code de 1985 avec
+  L. 382-25 ; l'effet chiffré du point non tranché, 289,73 € au modèle contre 507,73 € au
+  texte de D. 721-6, distingue ce que le modèle servirait de ce que le texte donnerait.
+  Aucune valeur, aucune règle ne change.

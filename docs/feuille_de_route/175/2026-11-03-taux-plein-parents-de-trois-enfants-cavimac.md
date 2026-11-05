@@ -140,3 +140,7 @@ plus bas.
   RCI et l'Ircantec, à la file des complémentaires ; les non-salariés agricoles, les
   libéraux et les avocats, à la file du régime général.
 - Une réponse de la CAVIMAC sur l'activité cultuelle, et un exemple chiffré.
+
+*Renvoi du 5 novembre 2026 : le tableau des textes cite R. 351-27 par « le III ou IV de
+l'article 20 » ; le texte porte « au III ou IV ». Voir
+`2026-11-05-retouches-de-la-relecture-r-m4c.md`.*
