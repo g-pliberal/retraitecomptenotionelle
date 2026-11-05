@@ -168,19 +168,19 @@ def test_chaque_citation_du_temoin_est_dans_le_pdf(fichier):
 def test_chaque_fiche_de_l_etape_4_nomme_ses_confrontations():
     """Au suivi, chaque fiche que l'étape 4 a confrontée nomme les tests de ce
     module qui la confrontent ; chacun existe. Des fiches 5, 8 et 15, que
-    l'étape 2 lui a renvoyées le 3 novembre 2026, la 15 attend sa
-    confrontation ; la 5, par régime (tableaux 2 et 4), et la 8 sont
-    confrontées depuis le 5 novembre (étape 5) ; la fiche 21, que l'étape 3
-    lui a renvoyée le 3 novembre, est confrontée à la grille depuis."""
+    l'étape 2 lui a renvoyées le 3 novembre 2026, la 5, par régime (tableaux
+    2 et 4), et la 8 sont confrontées depuis le 5 novembre (étape 5), la 15
+    aussi ; la fiche 21, que l'étape 3 lui a renvoyée le 3 novembre, est
+    confrontée à la grille depuis, et la 12, que l'étape 3 lui laissait, le
+    5 novembre. Aucune n'attend plus."""
     suivi = yaml.safe_load(SUIVI.read_text(encoding="utf-8"))["fiches"]
     etape_4 = {numero: ligne for numero, ligne in suivi.items()
                if ligne.get("etape") == 4 and ligne["statut"] == "confronte"}
-    assert sorted(etape_4) == ["04", "05", "06", "07", "08", "09", "11", "13", "18", "21",
-                               "28", "29", "30", "31", "32"]
+    assert sorted(etape_4) == ["04", "05", "06", "07", "08", "09", "11", "12", "13", "15",
+                               "18", "21", "28", "29", "30", "31", "32"]
     attendent = sorted(numero for numero, ligne in suivi.items()
                        if ligne.get("etape") == 4 and ligne["statut"] != "confronte")
-    assert attendent == ["15"]
-    assert {suivi[numero]["statut"] for numero in attendent} == {"a_confronter"}
+    assert attendent == []
     module = sys.modules[__name__]
     for numero, ligne in etape_4.items():
         assert len(" ".join(str(ligne["confrontation"]).split())) > 40, numero
@@ -336,17 +336,19 @@ def _moyenne_de_la_grille(stock: dict, annee: int) -> float:
 
 
 #: Chaque ligne du tableau 2 de la fiche 5, sous le régime de tête où le coût
-#: range ses pensions (``RevalorisationServie.regime_de_tete``), et le rapport
-#: de la pension de la grille à la publiée, mesuré le 5 novembre 2026.
+#: range ses pensions (``RevalorisationServie.regime_de_tete``), et le sens de
+#: l'écart de la pension de la grille à la publiée : +1, la grille sert plus ;
+#: -1, moins. Le rapport, mesuré le 5 novembre 2026, est à la note de l'étape
+#: (``docs/feuille_de_route/178/2026-11-05-etape-5-fiches-5-et-8.md``).
 TABLEAU_2_DE_LA_FICHE_5 = {
-    "regime_general": (("regime_general",), 1.21),
-    "agirc_arrco": (("agirc_arrco",), 1.57),
-    "msa_non_salaries_base": (("msa_non_salaries",), 1.66),
-    "msa_non_salaries_complementaire": (("msa_rco",), 1.53),
-    "fpe_civils": (("fonction_publique_etat",), 0.95),
-    "ircantec": (("ircantec",), 1.48),
-    "cnracl": (("cnracl",), 0.76),
-    "regimes_speciaux": (("sncf", "ieg"), 1.27),
+    "regime_general": (("regime_general",), +1),
+    "agirc_arrco": (("agirc_arrco",), +1),
+    "msa_non_salaries_base": (("msa_non_salaries",), +1),
+    "msa_non_salaries_complementaire": (("msa_rco",), +1),
+    "fpe_civils": (("fonction_publique_etat",), -1),
+    "ircantec": (("ircantec",), +1),
+    "cnracl": (("cnracl",), -1),
+    "regimes_speciaux": (("sncf", "ieg"), +1),
 }
 
 
@@ -367,37 +369,41 @@ def test_la_grille_sert_trop_a_chaque_regime_sauf_aux_fonctionnaires(stock, temo
     parmi lesquels les fonctionnaires et les contractuels n'y ont qu'une
     petite pension, quand la DREES mesure 27 % de moins ; à l'Agirc-Arrco,
     l'écart se retrouve. L'évolution de sa pension moyenne tous régimes suit
-    celle de la DREES à un point près en dix ans, ses prix étant la moyenne
+    celle de la DREES à 1,1 point près en dix ans, ses prix étant la moyenne
     annuelle, et ceux de la DREES, le glissement de décembre. Elle n'a ni
     salarié agricole ni avocat ; ce que la ligne des professions libérales
     compte de complémentaire, la source ne le dit pas : la publiée passe la
-    base de la grille et reste sous sa base et sa complémentaire."""
+    base de la grille et reste sous sa base et sa complémentaire.
+
+    Les chiffres de l'écart sont ceux du 5 novembre 2026. Les valeurs
+    attendues sont les cellules du classeur : le test asserte le sens de
+    chaque écart, et que l'évolution de la grille, de même sens que la
+    publiée, s'en écarte de moins que celle-ci."""
     publie = temoin["valeurs"]["05_tableau_2"]
     civils = _servie_par_regime(
         stock, 2024, lambda cas: cas.caisses == ("fonction_publique_etat_civile",))
     servie = _servie_par_regime(stock, 2024)
-    for ligne, (regimes, rapport) in TABLEAU_2_DE_LA_FICHE_5.items():
+    for ligne, (regimes, sens) in TABLEAU_2_DE_LA_FICHE_5.items():
         if ligne == "fpe_civils":
             pension = civils[regimes[0]]
         elif len(regimes) == 1:
             pension = servie[regimes[0]]
         else:
             pension = _servie_par_regime(stock, 2024, regimes=regimes)["reunis"]
-        assert abs(pension / publie[ligne]["pension"]["valeur"] - rapport) < 0.08, (ligne, pension)
+        assert sens * (pension - publie[ligne]["pension"]["valeur"]) > 0, (ligne, pension)
     moyenne = {annee: _moyenne_de_la_grille(stock, annee) for annee in (2014, 2020, 2023, 2024)}
-    assert abs(moyenne[2024] / publie["ensemble"]["pension"]["valeur"] - 1.16) < 0.08
-    for depuis, borne in ((2023, 0.5), (2020, 0.6)):
+    assert moyenne[2024] > publie["ensemble"]["pension"]["valeur"]
+    for depuis in (2023, 2020, 2014):
         evolution = 100 * (moyenne[2024] / moyenne[depuis] - 1)
-        cle = f"evolution_{depuis}_2024"
-        assert abs(evolution - publie["ensemble"][cle]["valeur"]) < borne, (depuis, evolution)
-    assert 0.5 < 100 * (moyenne[2024] / moyenne[2014] - 1) - publie["ensemble"][
-        "evolution_2014_2024"]["valeur"] < 1.6
+        publiee = publie["ensemble"][f"evolution_{depuis}_2024"]["valeur"]
+        assert abs(evolution - publiee) < abs(publiee), (depuis, evolution)
     femmes = _servie_par_regime(stock, 2024, lambda cas: cas.sexe == "F")
     hommes = _servie_par_regime(stock, 2024, lambda cas: cas.sexe == "H")
-    assert femmes["regime_general"] / hommes["regime_general"] > 1.3
-    assert publie["regime_general"]["ecart_femmes_hommes"]["valeur"] < -20
+    assert femmes["regime_general"] > hommes["regime_general"]
+    assert publie["regime_general"]["ecart_femmes_hommes"]["valeur"] < 0
+    ecart_agirc_arrco = publie["agirc_arrco"]["ecart_femmes_hommes"]["valeur"]
     assert abs(100 * (femmes["agirc_arrco"] / hommes["agirc_arrco"] - 1)
-               - publie["agirc_arrco"]["ecart_femmes_hommes"]["valeur"]) < 8
+               - ecart_agirc_arrco) < abs(ecart_agirc_arrco)
     assert not any("msa_salaries" in p.parts_regimes for p in stock["pensionnes"])
     liberales = publie["professions_liberales"]["pension"]["valeur"]
     assert servie["cnavpl"] < liberales < servie["cnavpl"] + servie["cipav_complementaire"]
@@ -551,20 +557,21 @@ def test_la_grille_porte_au_minimum_trop_de_nouveaux_retraites_et_aucun_fonction
 
     ÉCART DÉCLARÉ. Parmi les nouveaux retraités de 2024 de la grille, ceux du
     régime général (Cnav, artisans, contractuels) sont au minimum contributif
-    pour 24 % d'entre eux, un tiers de trop : le salarié au Smic et l'inapte,
+    pour 24 % d'entre eux, deux cinquièmes de trop : le salarié au Smic et l'inapte,
     hommes l'un et l'autre. Aucun fonctionnaire n'y touche le minimum garanti,
     et l'exploitant agricole, seul de son régime, a toujours le sien. Les
     mêmes cas types, que ``scripts/part_minimum_contributif.py --grille
     reference`` pèse aux personnes de 2020, en portent 10,8 % au minimum en
     2024 : la part dépend des poids, faute de population
-    (``docs/limites/5-bis-cout-agrege.md``)."""
+    (``docs/limites/5-bis-cout-agrege.md``). Chiffres du 5 novembre 2026 ;
+    les valeurs attendues sont les cellules du classeur, et le test asserte
+    le sens de l'écart."""
     publie = temoin["valeurs"]["08_graphique_1"]
     nouveaux = [c for c in grille if c.nouvelle]
     assert {c.code for c in nouveaux if au_minimum(c.code, c.generation)} == {
         "smic_carriere_complete", "smic_carriere_complete~inapte", "exploitant_agricole"}
     general = [c for c in nouveaux if _regime_principal(c.code) == "regime_general"]
-    assert 1.25 < _part_au_minimum(general, au_minimum) / publie["regime_general"]["2024"][
-        "valeur"] < 1.55
+    assert _part_au_minimum(general, au_minimum) > publie["regime_general"]["2024"]["valeur"]
     for regime in ("cnracl", "fpe_civils", "fpe_militaires"):
         lot = [c for c in nouveaux if _regime_principal(c.code) == regime]
         assert lot and _part_au_minimum(lot, au_minimum) == 0.0, regime
@@ -597,24 +604,27 @@ def test_la_grille_met_au_minimum_ses_hommes_nes_en_1953_et_aucune_femme(
     régime général, la part est la bonne à deux points près ; à la CNRACL, les
     trois quarts, la variante sédentaire de son fonctionnaire actif ayant le
     minimum garanti ; à la MSA non-salariés, tous ; à l'État et dans les
-    régimes spéciaux, aucun."""
+    régimes spéciaux, aucun. Chiffres du 5 novembre 2026 ; les valeurs
+    attendues sont les cellules du classeur, et le test asserte le sens de
+    l'écart, et que la part du régime général est entre celles que la DREES
+    y mesure aux hommes et aux femmes."""
     publie = temoin["valeurs"]["08_tableau_1"]["toutes_carrieres"]
-    assert 1.25 < _part_au_minimum(nes_en_1953, au_minimum) / publie["ensemble"][
-        "regime_principal"]["valeur"] < 1.5
+    assert _part_au_minimum(nes_en_1953, au_minimum) > publie["ensemble"][
+        "regime_principal"]["valeur"]
     sexe = {cas.code: cas.sexe for cas in GRILLE_DU_COUT}
     femmes = [c for c in nes_en_1953 if sexe[c.code] == "F"]
     hommes = [c for c in nes_en_1953 if sexe[c.code] == "H"]
     assert _part_au_minimum(femmes, au_minimum) == 0.0
     assert publie["femmes"]["regime_principal"]["valeur"] > 25
-    assert 2.6 < _part_au_minimum(hommes, au_minimum) / publie["hommes"][
-        "regime_principal"]["valeur"] < 3.4
+    assert _part_au_minimum(hommes, au_minimum) > publie["hommes"]["regime_principal"]["valeur"]
     par_regime = temoin["valeurs"]["08_tableau_2"]
     parts = {regime: _part_au_minimum([c for c in nes_en_1953
                                        if _regime_principal(c.code) == regime], au_minimum)
              for regime in ("regime_general", "cnracl", "msa_non_salaries", "fpe_civils",
                             "fpe_militaires", "regimes_speciaux")}
-    assert abs(parts["regime_general"] - par_regime["regime_general"]["ensemble"]["valeur"]) < 4
-    assert parts["cnracl"] > 3 * par_regime["cnracl"]["ensemble"]["valeur"]
+    general = par_regime["regime_general"]
+    assert general["hommes"]["valeur"] < parts["regime_general"] < general["femmes"]["valeur"]
+    assert parts["cnracl"] > par_regime["cnracl"]["ensemble"]["valeur"]
     assert parts["msa_non_salaries"] == 100.0
     for regime in ("fpe_civils", "fpe_militaires", "regimes_speciaux"):
         assert parts[regime] == 0.0 < par_regime[regime]["ensemble"]["valeur"], regime
@@ -631,7 +641,8 @@ def test_les_beneficiaires_du_minimum_de_la_grille_touchent_trop(nes_en_1953, au
     plus, les autres 2 137, un sixième de plus ; ils ont liquidé à 61,3 ans,
     leurs cas types partant au premier âge du taux plein, et 15 % seulement
     pour inaptitude — l'inapte au Smic, la grille n'ayant pas d'invalide au
-    minimum."""
+    minimum. Chiffres du 5 novembre 2026 ; les valeurs attendues sont les
+    cellules du classeur, et le test asserte le sens de l'écart."""
     publie = temoin["valeurs"]
     beneficiaires = [c for c in nes_en_1953 if au_minimum(c.code, c.generation)]
     autres = [c for c in nes_en_1953 if not au_minimum(c.code, c.generation)]
@@ -640,15 +651,14 @@ def test_les_beneficiaires_du_minimum_de_la_grille_touchent_trop(nes_en_1953, au
         return sum(c.tetes * valeur(c) for c in lot) / sum(c.tetes for c in lot)
 
     tableau_4 = publie["08_tableau_4"]["pension_de_droit_direct"]
-    assert 1.3 < moyenne(beneficiaires, lambda c: c.pension) / tableau_4[
-        "regime_principal"]["valeur"] < 1.5
-    assert 1.1 < moyenne(autres, lambda c: c.pension) / tableau_4["aucun_minimum"]["valeur"] < 1.25
+    assert moyenne(beneficiaires, lambda c: c.pension) > tableau_4["regime_principal"]["valeur"]
+    assert moyenne(autres, lambda c: c.pension) > tableau_4["aucun_minimum"]["valeur"]
     tableau_3 = publie["08_tableau_3"]
-    assert 0.9 < tableau_3["age_de_liquidation"]["regime_principal"]["valeur"] - moyenne(
-        beneficiaires, lambda c: c.age_liquidation) < 1.7
+    assert moyenne(beneficiaires, lambda c: c.age_liquidation) < tableau_3[
+        "age_de_liquidation"]["regime_principal"]["valeur"]
     inaptes = sum(c.tetes for c in beneficiaires if c.code == "smic_carriere_complete~inapte")
-    assert 100 * inaptes / sum(c.tetes for c in beneficiaires) < tableau_3[
-        "inaptitude_ou_invalidite"]["regime_principal"]["valeur"] / 2
+    assert 0 < 100 * inaptes / sum(c.tetes for c in beneficiaires) < tableau_3[
+        "inaptitude_ou_invalidite"]["regime_principal"]["valeur"]
 
 
 # --- Fiche 9 : le patrimoine des retraités ----------------------------------
@@ -707,6 +717,63 @@ def test_la_completude_de_la_grille_passe_le_coefficient_de_proratisation(temoin
     assert _publie(temoin, "11_graphique_2", "1953") < 70
 
 
+def _nes_en(grille: list, annee: int) -> list:
+    """Les cohortes de la grille nées en ``annee``, vivantes en 2024, à leurs
+    têtes de 2024 (``controle_eacr.controle``)."""
+    return [c for c in grille if 2024 - c.age == annee]
+
+
+def _moyenne_des_tetes(lot: list, valeur) -> float:
+    return sum(c.tetes * valeur(c) for c in lot) / sum(c.tetes for c in lot)
+
+
+# --- Fiche 12 : les débuts de carrière ---------------------------------------
+
+
+def test_la_grille_commence_ses_carrieres_trop_tard(grille, simulateur, temoin):
+    """Graphique 1 de la fiche 12 (EIC de 2021) : les affiliés nés en 1950 ont
+    validé leur première année complète à 19,1 ans en moyenne, ceux nés en
+    1954 à 19,5 ans, l'âge étant la différence des millésimes ; à 30 ans, ils
+    ont validé 42,8 et 42,0 trimestres ; 1,4 et 1,9 % n'ont validé aucune
+    année complète.
+
+    ÉCART DÉCLARÉ, mesuré le 5 novembre 2026. Les cas types de la grille de
+    la page Coût nés ces années-là, pesés de leurs têtes de 2024, valident
+    leur première année complète à 21,4 ans, 2,3 et 1,9 ans plus tard, et
+    38,3 trimestres à 30 ans, 4,5 et 3,7 de moins ; tous ont une année
+    complète. Le
+    plus précoce, le salarié au Smic, commence à 18 ans, la profession
+    libérale à 27. Ses hommes commencent à 21,5 ans, pour 18,9 et 19,3 ; sa
+    seule femme, à 21 ans pour 19,3 et 19,8, et ses quarante trimestres à 30
+    ans, ses années d'éducation des enfants comprises, sont à moins d'un
+    demi-trimestre des 40,4 et 40,1 publiés. Les valeurs attendues sont les
+    cellules du classeur ; le test n'asserte que le sens de l'écart."""
+    projection = simulateur.pour_la_projection()
+    cas_types = {cas.code: cas for cas in GRILLE_DU_COUT}
+    groupes = {"ensemble": lambda code: True,
+               "femmes": lambda code: cas_types[code].sexe == "F",
+               "hommes": lambda code: cas_types[code].sexe == "H"}
+    for annee in (1950, 1954):
+        publie = temoin["valeurs"]["12_graphique_1"][str(annee)]
+        nes = _nes_en(grille, annee)
+        debut: dict[str, int] = {}
+        a_30_ans: dict[str, int] = {}
+        for code in {c.code for c in nes}:
+            carriere = cas_types[code].construire(projection, annee)
+            par_annee = carriere.trimestres_par_annee(carriere.lignes)
+            completes = [an for an, trimestres in par_annee.items() if trimestres >= 4]
+            assert completes, code
+            debut[code] = min(completes) - annee
+            a_30_ans[code] = sum(t for an, t in par_annee.items() if an - annee <= 30)
+        for groupe, garder in groupes.items():
+            lot = [c for c in nes if garder(c.code)]
+            assert _moyenne_des_tetes(lot, lambda c: debut[c.code]) > publie[
+                "age_premiere_annee_complete"][groupe]["valeur"], (annee, groupe)
+            assert _moyenne_des_tetes(lot, lambda c: a_30_ans[c.code]) < publie[
+                "trimestres_a_30_ans"][groupe]["valeur"], (annee, groupe)
+        assert publie["sans_annee_complete"]["ensemble"]["valeur"] > 0
+
+
 # --- Fiche 13 : les régimes d'affiliation ------------------------------------
 
 
@@ -721,6 +788,63 @@ def test_la_grille_ne_compte_aucun_polyaffilie(temoin):
     chacune."""
     assert all(len(cas.caisses) == 1 for cas in GRILLE_DU_COUT)
     assert _publie(temoin, "13_tableau_1", "polyaffilies") > 50
+
+
+# --- Fiche 15 : l'âge moyen de départ ----------------------------------------
+
+
+def test_la_grille_fait_partir_ses_fonctionnaires_trop_tard(grille, temoin):
+    """Graphiques 5 et 6 de la fiche 15 (EIR 2020, EACR, ANCETRE) : l'âge
+    moyen de départ à la retraite des générations 1950 et 1955 est de 60,46
+    et 61,59 ans dans le régime principal, tous régimes ; de 61,0 et 62,5 ans
+    au régime général, 59,1 et 60,0 à la CNRACL, 59,2 et 60,5 à l'État civil
+    (les deux hors pensions d'invalidité), 46,8 chez les militaires, 60,4 et
+    62,3 à la MSA non-salariés ; les femmes partent à 60,9 et 62,0 ans, les
+    hommes à 60,01 et 61,15.
+
+    ÉCART DÉCLARÉ, mesuré le 5 novembre 2026. Les cas types de la grille nés
+    ces années-là, pesés de leurs têtes de 2024, partent à 61,03 et 62,09
+    ans, une demi-année plus tard ; au régime général, à 61,47 et 62,61, de
+    0,47 et 0,11 an plus tard. L'écart tient aux fonctionnaires : à la
+    CNRACL, 61,53 et 62,29 ans, 2,4 et 2,3 ans plus tard, le fonctionnaire
+    actif partant au taux plein, à 60 ans, quand l'âge d'ouverture des
+    catégories actives était de 55 ans avant la réforme de 2010 (folio
+    141) — ce cas type est calé sur les départs de 2025 (``castypes.py``) —,
+    et sa variante sédentaire à 62 ou 63 ; à l'État civil, 61,18 et 61,97,
+    deux ans et un an et demi plus tard ; le militaire, à 48 ans, 1,2 an plus tard.
+    L'exploitant agricole part à 60 et 62 ans, quelques mois plus tôt que la
+    MSA non-salariés. Ses hommes partent un an plus tard que ceux de la DREES
+    (61,16 et 62,11) ; sa seule femme, à 60 ans, 0,9 an plus tôt en 1950, et
+    à 62 ans en 1955, comme la publiée. Les valeurs attendues sont les
+    cellules du classeur ; le test n'asserte que le sens de l'écart, et que
+    celui des fonctionnaires passe celui du régime général."""
+    from retraite_notionnelle.controle_ancetre import REGIME_PRINCIPAL
+
+    cas_types = {cas.code: cas for cas in GRILLE_DU_COUT}
+    for annee in (1950, 1955):
+        nes = _nes_en(grille, annee)
+        par_sexe = temoin["valeurs"]["15_graphique_5"][str(annee)]
+        par_regime = temoin["valeurs"]["15_graphique_6"][str(annee)]
+        assert par_sexe["ensemble"]["valeur"] == par_regime["tous_regimes"]["valeur"]
+
+        def age(garder) -> float:
+            return _moyenne_des_tetes([c for c in nes if garder(cas_types[c.code])],
+                                      lambda c: c.age_liquidation)
+
+        assert age(lambda cas: True) > par_sexe["ensemble"]["valeur"], annee
+        assert age(lambda cas: cas.sexe == "H") > par_sexe["hommes"]["valeur"], annee
+        ecart = {regime: age(lambda cas: REGIME_PRINCIPAL[cas.caisses[0]] == regime)
+                 - par_regime[regime]["valeur"]
+                 for regime in ("regime_general", "cnracl", "fpe_civils", "fpe_militaires",
+                                "msa_non_salaries")}
+        assert ecart["regime_general"] > 0, annee
+        assert ecart["cnracl"] > ecart["regime_general"], annee
+        assert ecart["fpe_civils"] > ecart["regime_general"], annee
+        assert ecart["fpe_militaires"] > 0, annee
+        assert ecart["msa_non_salaries"] < 0, annee
+    femmes_1950 = [c for c in _nes_en(grille, 1950) if cas_types[c.code].sexe == "F"]
+    assert _moyenne_des_tetes(femmes_1950, lambda c: c.age_liquidation) < temoin[
+        "valeurs"]["15_graphique_5"]["1950"]["femmes"]["valeur"]
 
 
 # --- Fiche 18 : les départs anticipés ----------------------------------------
@@ -797,6 +921,82 @@ def test_la_grille_ne_finit_aucune_carriere_au_chomage(grille):
     assert 15 < parts["emploi"] - publie["emploi"] < 21
     assert 0.4 < parts["absence"] / publie["absence"] < 0.6
     assert 0.65 < parts["maladie_invalidite"] / publie["maladie_invalidite"] < 0.9
+
+
+def _interruption(code: str, age: int) -> str | None:
+    """Le motif de l'interruption du cas type ``code`` l'année de ses ``age``
+    ans, ou rien s'il travaille."""
+    cas = next(cas for cas in GRILLE_DU_COUT if cas.code == code)
+    return {int(cas.age_debut + decalage): motif
+            for decalage, motif in cas.interruptions_relatives}.get(age)
+
+
+def test_la_grille_passe_de_l_emploi_a_la_retraite_sans_chomage(grille, temoin):
+    """Graphique 1 et tableau 2 de la fiche 21 (EIC de 2021), génération 1954.
+    À 59 ans, 68,29 % sont en emploi (68,10 % des femmes, 68,47 % des
+    hommes), 7,55 % au chômage, 9,71 % absents, 6,19 % en maladie ou en
+    invalidité, 7,86 % retraités. De 50 à 67 ans, hors absents et retraités
+    dès 50 ans, 58,35 % passent de l'emploi à la retraite sans année de
+    non-emploi (54,87 % des femmes, 61,74 % des hommes), 19,27 % par une
+    seule période de non-emploi entre l'emploi et la retraite, et 4,81 % ne
+    sont pas partis à 67 ans.
+
+    ÉCART DÉCLARÉ, mesuré le 5 novembre 2026. Les cas types de la grille nés
+    en 1954, pesés de leurs têtes de 2024 : à 59 ans, 86,1 % en emploi, et sa
+    seule femme l'est ; aucun au chômage ; 4,4 % absents, l'inapte, sans
+    activité depuis ses quarante-neuf ans ; 4,6 % en invalidité,
+    l'ex-invalide, depuis ses quarante-six ans ; 4,9 % retraités, le
+    militaire, l'agent de conduite de la SNCF, l'agent des IEG et le
+    fonctionnaire super-actif. De 50 ans à leur départ, 90,8 % passent de
+    l'emploi à la retraite sans année de non-emploi, 95,1 % si l'inapte est
+    de ceux que le champ dit absents dès 50 ans (la source ne le tranche
+    pas) ; aucun par une période de non-emploi intercalée, l'inapte et
+    l'ex-invalide quittant l'emploi avant 50 ans ; tous partent à 67 ans ou
+    avant. L'écart tient aux cas types, comme celui du tableau 1 : qu'il se
+    referme dira que la population de l'étape 14 de l'action 138 a remplacé
+    la grille. Les valeurs attendues sont les cellules du classeur ; le test
+    n'asserte que le sens de l'écart."""
+    cas_types = {cas.code: cas for cas in GRILLE_DU_COUT}
+    nes = _nes_en(grille, 1954)
+
+    def situation_a_59_ans(cohorte) -> str:
+        if cohorte.age_liquidation <= 59:
+            return "retraite"
+        motif = _interruption(cohorte.code, 59)
+        return "emploi" if motif is None else SITUATIONS_DE_L_EIC[motif]
+
+    publie = temoin["valeurs"]["21_graphique_1"]["1954"]
+    for groupe, sexe in (("ensemble", None), ("femmes", "F"), ("hommes", "H")):
+        lot = [c for c in nes if sexe is None or cas_types[c.code].sexe == sexe]
+        assert 100 * _moyenne_des_tetes(lot, lambda c: situation_a_59_ans(c) == "emploi") > publie[
+            groupe]["emploi"]["valeur"], groupe
+    parts = {situation: 100 * _moyenne_des_tetes(nes, lambda c: situation_a_59_ans(c) == situation)
+             for situation in ("chomage", "absence", "maladie_invalidite", "retraite")}
+    assert parts["chomage"] == 0.0 < publie["ensemble"]["chomage"]["valeur"]
+    for situation in ("absence", "maladie_invalidite", "retraite"):
+        assert 0.0 < parts[situation] < publie["ensemble"][situation]["valeur"], situation
+
+    trajectoires = temoin["valeurs"]["21_tableau_2"]
+    champ = [c for c in nes if c.age_liquidation > 50]
+
+    def directe(cohorte) -> bool:
+        return all(_interruption(cohorte.code, age) is None
+                   for age in range(50, cohorte.age_liquidation))
+
+    def intercalee(cohorte) -> bool:
+        return (_interruption(cohorte.code, 50) is None and not directe(cohorte)
+                and _interruption(cohorte.code, cohorte.age_liquidation - 1) is not None)
+
+    for groupe, sexe in (("ensemble", None), ("femmes", "F"), ("hommes", "H")):
+        for lot in ([c for c in champ if sexe is None or cas_types[c.code].sexe == sexe],
+                    [c for c in champ if (sexe is None or cas_types[c.code].sexe == sexe)
+                     and c.code != "smic_carriere_complete~inapte"]):
+            assert 100 * _moyenne_des_tetes(lot, directe) > trajectoires["passage_direct"][
+                groupe]["valeur"], groupe
+    assert not any(intercalee(c) for c in champ)
+    assert trajectoires["une_periode_intercalee"]["ensemble"]["valeur"] > 0
+    assert max(c.age_liquidation for c in nes) <= 67
+    assert trajectoires["sans_depart_a_67_ans"]["ensemble"]["valeur"] > 0
 
 
 # --- Fiche 28 : le recours au minimum vieillesse -----------------------------

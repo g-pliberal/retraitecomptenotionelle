@@ -165,7 +165,7 @@ fiches:
       542), sauf à l'État civil (−5 %) et à la CNRACL (−24 %) : elle
       compte des têtes de caisse à carrière complète, sans les petites
       pensions des polypensionnés ; tous régimes, 16 % de plus, et son
-      évolution suit celle de la DREES à un point près en dix ans. Au
+      évolution suit celle de la DREES à 1,1 point près en dix ans. Au
       régime général, sa seule femme y touche plus que ses hommes. Le
       tableau 4 est, valeur pour valeur, le tableau 3.2 du COR que
       `test_controle_ancetre.py` confronte déjà. Écarts déclarés.
@@ -307,7 +307,7 @@ fiches:
     titre: "Les durées d’assurance validées par les actifs pour leur retraite"
     page: 113
     sources: ["EIC 2021", "EIC 2013"]
-    statut: au_depot
+    statut: confronte
     au_depot: [drees_eic_droits_valides, drees_eic_natures_assimilees, drees_eic_duree_validee,
                drees_panorama_retraites_2026_classeurs]
     a_tirer: >-
@@ -323,10 +323,19 @@ fiches:
       refait le 9 octobre 2026, porte toujours l'EIC de 2013, ses données
       du 26 novembre 2020 : il ne donne de plus que la génération 1942, que
       le classeur redonne. Reste, pour la clôture, les feuilles de l'édition
-      précédente, de l'EIC de 2017 (« Graphique 1 (2) » à « 5 (2) ») ; la
-      confrontation des débuts de carrière du modèle au graphique 1 revient
-      à la file des confrontations.
-    etape: 7
+      précédente, de l'EIC de 2017 (« Graphique 1 (2) » à « 5 (2) »). Les
+      débuts de carrière (graphique 1), confrontés à la grille de la page
+      Coût le 5 novembre 2026, à l'étape 5 (ci-dessous).
+    etape: 4
+    confrontation: >-
+      Les cas types de la grille nés en 1950 et 1954 valident leur première
+      année complète à 21,4 ans, pour 19,1 et 19,5, et 38,3 trimestres à
+      30 ans, pour 42,8 et 42,0 : leurs carrières commencent deux ans trop
+      tard, celle du salarié au Smic à 18 ans, la plus précoce. Tous ont
+      une année complète, quand 1,4 et 1,9 % des affiliés n'en ont aucune.
+      Écart déclaré : la grille n'est pas une population.
+    confronte_par:
+      - test_la_grille_commence_ses_carrieres_trop_tard
   "13":
     titre: "Les régimes d’affiliation des assurés"
     page: 122
@@ -379,18 +388,29 @@ fiches:
     titre: "L’âge moyen de départ à la retraite et son évolution"
     page: 138
     sources: ["EIR 2020", "EACR", "ANCETRE", "Insee"]
-    statut: a_confronter
+    statut: confronte
     au_depot: [drees_age_conjoncturel, drees_eir_generations, drees_panorama_retraites_2026_classeurs]
     a_tirer: >-
       Porté à l'étape 2 : l'âge conjoncturel de départ de 2023 et 2024
       (graphique 1), 62,95 ans fin 2024, « 62 ans et 11 mois », certifié
       dans `age_conjoncturel_depart.csv` en appoint du jeu du portail, qui
       s'arrête à 2022 ; le panorama révise de quelques centièmes des
-      années anciennes, qu'il ne touche pas. Restent l'âge conjoncturel par
-      régime (graphique 2), l'âge moyen par génération (graphiques 5 et 6)
-      et l'espérance de durée de retraite (graphique 7), confrontés aux
-      départs du modèle.
+      années anciennes, qu'il ne touche pas. L'âge moyen par génération
+      (graphiques 5 et 6), confronté aux départs de la grille de la page
+      Coût le 5 novembre 2026, à l'étape 5 (ci-dessous). Restent, sans
+      confrontation : l'âge conjoncturel par régime (graphique 2), qui se
+      calcule sur des taux de départ par âge que la grille n'a pas, et
+      l'espérance de durée de retraite (graphique 7).
     etape: 4
+    confrontation: >-
+      Les cas types de la grille nés en 1950 et 1955 partent à 61,03 et
+      62,09 ans, pour 60,46 et 61,59 dans le régime principal : une
+      demi-année trop tard, de 0,5 et 0,1 an au régime général, de 2,4 et
+      2,3 ans à la CNRACL, de deux ans et un an et demi à l'État civil, le
+      fonctionnaire actif partant à 60 ans ; l'exploitant part quelques
+      mois trop tôt. Écart déclaré : la grille n'est pas une population.
+    confronte_par:
+      - test_la_grille_fait_partir_ses_fonctionnaires_trop_tard
   "16":
     titre: "La diversité des âges de départ à la retraite"
     page: 145
@@ -486,20 +506,26 @@ fiches:
       travail après 50 ans (tableau 1) ; les trajectoires, les situations
       de 50 à 67 ans et les transitions de la génération 1954 (tableaux 2
       et 3, graphique 2). Confronté à l'étape 4 aux fins de carrière de la
-      grille ; reste à confronter les carrières inactives de la population
-      de l'étape 14 de l'action 138 quand elle remplacera la grille ; et,
-      pour la clôture, l'encadré 2, de l'enquête Emploi : la part des
-      53-69 ans ni en emploi ni en retraite, de 2005 à 2024, et la
-      composition de leur revenu en 2023.
+      grille (tableau 1), puis le 5 novembre 2026, à l'étape 5 (graphique
+      1, à 59 ans, et tableau 2, les trajectoires) ; reste à confronter
+      les carrières inactives de la population de l'étape 14 de l'action
+      138 quand elle remplacera la grille ; et, pour la clôture,
+      l'encadré 2, de l'enquête Emploi : la part des 53-69 ans ni en
+      emploi ni en retraite, de 2005 à 2024, et la composition de leur
+      revenu en 2023.
     etape: 4
     confrontation: >-
       L'année qui précède leur liquidation, 88,7 % des nouveaux retraités
       de 2024 de la grille sont en emploi, quand 70,9 % des liquidants de
       la génération 1954 le sont ; aucun cas type ne finit au chômage,
       quand 10,4 % d'entre eux y sont : écart déclaré, celui des cas types
-      de la grille.
+      de la grille. À 59 ans, les cas types nés en 1954 sont en emploi pour
+      86,1 %, pour 68,29 %, aucun au chômage, pour 7,55 % ; 90,8 % passent
+      de l'emploi à la retraite sans année de non-emploi, pour 58,35 %, et
+      aucun par une période de non-emploi intercalée, pour 19,27 %.
     confronte_par:
       - test_la_grille_ne_finit_aucune_carriere_au_chomage
+      - test_la_grille_passe_de_l_emploi_a_la_retraite_sans_chomage
   "22":
     titre: "Les dispositifs de cumul d’une activité avec la retraite"
     page: 193

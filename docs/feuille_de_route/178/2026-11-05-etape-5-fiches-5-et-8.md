@@ -1,15 +1,5 @@
 # Étape 5, les fiches 5 et 8 : la pension par régime et les minima de pension, confrontés à la grille
 
-**Reprise, au 5 novembre 2026.** Fait (cette note) : les fiches 5, par
-régime (tableaux 2 et 4), et 8, confrontées à la grille de la page Coût,
-chacune par un test du niveau `controle`, les 283 valeurs au témoin de
-l'étape 4 ; au suivi, les deux fiches passent à `confronte`. Reste à l'étape
-5 : les trois erreurs du coût de la note des règles (3 novembre) ; deux
-candidats de plus pour le propriétaire, plus bas « Au propriétaire » ; les
-fiches 12, 15 et 21 et le solde du suivi, que l'orchestration confie à
-d'autres sessions. Par quoi commencer : la note des règles. Détail : plus
-bas.
-
 **La demande.** File J, le 5 novembre 2026 : confronter au modèle les fiches
 5 (par régime : tableaux 2 et 4) et 8 du panorama de la DREES, édition 2026,
 et elles seules ; chercher dans le PDF la définition de la « carrière
@@ -242,3 +232,8 @@ pas les fiches 5 et 8, le suivi les disait `a_confronter`), puis vert : dans
 `test_les_beneficiaires_du_minimum_de_la_grille_touchent_trop`, et
 `test_chaque_fiche_de_l_etape_4_nomme_ses_confrontations`, qui n'attend plus
 que la fiche 15.
+
+*Le 5 novembre 2026* : les écarts que la relecture R-J relève ici — le
+58,7 % « introuvable », la feuille « compl » de la fiche 11, les 552 626
+têtes, le « tiers de trop », les bornes des tests — sont déclarés dans
+`2026-11-05-etape-5-fiches-12-15-21.md`.

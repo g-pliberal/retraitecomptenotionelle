@@ -3316,6 +3316,318 @@
      "valeur": 727.5152891869237
     }
    }
+  },
+  "12_graphique_1": {
+   "1950": {
+    "trimestres_a_30_ans": {
+     "femmes": {
+      "classeur": "fiche_12.xlsx",
+      "feuille": "F12_Graphique 1",
+      "cellule": "C9",
+      "valeur": 40.4
+     },
+     "hommes": {
+      "classeur": "fiche_12.xlsx",
+      "feuille": "F12_Graphique 1",
+      "cellule": "D9",
+      "valeur": 45.2
+     },
+     "ensemble": {
+      "classeur": "fiche_12.xlsx",
+      "feuille": "F12_Graphique 1",
+      "cellule": "E9",
+      "valeur": 42.8
+     }
+    },
+    "age_premiere_annee_complete": {
+     "femmes": {
+      "classeur": "fiche_12.xlsx",
+      "feuille": "F12_Graphique 1",
+      "cellule": "F9",
+      "valeur": 19.3
+     },
+     "hommes": {
+      "classeur": "fiche_12.xlsx",
+      "feuille": "F12_Graphique 1",
+      "cellule": "G9",
+      "valeur": 18.9
+     },
+     "ensemble": {
+      "classeur": "fiche_12.xlsx",
+      "feuille": "F12_Graphique 1",
+      "cellule": "H9",
+      "valeur": 19.1
+     }
+    },
+    "sans_annee_complete": {
+     "ensemble": {
+      "classeur": "fiche_12.xlsx",
+      "feuille": "F12_Graphique 1",
+      "cellule": "K9",
+      "valeur": 1.4
+     }
+    }
+   },
+   "1954": {
+    "trimestres_a_30_ans": {
+     "femmes": {
+      "classeur": "fiche_12.xlsx",
+      "feuille": "F12_Graphique 1",
+      "cellule": "C10",
+      "valeur": 40.1
+     },
+     "hommes": {
+      "classeur": "fiche_12.xlsx",
+      "feuille": "F12_Graphique 1",
+      "cellule": "D10",
+      "valeur": 44.0
+     },
+     "ensemble": {
+      "classeur": "fiche_12.xlsx",
+      "feuille": "F12_Graphique 1",
+      "cellule": "E10",
+      "valeur": 42.0
+     }
+    },
+    "age_premiere_annee_complete": {
+     "femmes": {
+      "classeur": "fiche_12.xlsx",
+      "feuille": "F12_Graphique 1",
+      "cellule": "F10",
+      "valeur": 19.8
+     },
+     "hommes": {
+      "classeur": "fiche_12.xlsx",
+      "feuille": "F12_Graphique 1",
+      "cellule": "G10",
+      "valeur": 19.3
+     },
+     "ensemble": {
+      "classeur": "fiche_12.xlsx",
+      "feuille": "F12_Graphique 1",
+      "cellule": "H10",
+      "valeur": 19.5
+     }
+    },
+    "sans_annee_complete": {
+     "ensemble": {
+      "classeur": "fiche_12.xlsx",
+      "feuille": "F12_Graphique 1",
+      "cellule": "K10",
+      "valeur": 1.9
+     }
+    }
+   }
+  },
+  "15_graphique_5": {
+   "1950": {
+    "femmes": {
+     "classeur": "fiche_15.xlsx",
+     "feuille": "F15_Graphique 5",
+     "cellule": "C29",
+     "valeur": 60.9
+    },
+    "hommes": {
+     "classeur": "fiche_15.xlsx",
+     "feuille": "F15_Graphique 5",
+     "cellule": "D29",
+     "valeur": 60.01
+    },
+    "ensemble": {
+     "classeur": "fiche_15.xlsx",
+     "feuille": "F15_Graphique 5",
+     "cellule": "E29",
+     "valeur": 60.46
+    }
+   },
+   "1955": {
+    "femmes": {
+     "classeur": "fiche_15.xlsx",
+     "feuille": "F15_Graphique 5",
+     "cellule": "C34",
+     "valeur": 62.0
+    },
+    "hommes": {
+     "classeur": "fiche_15.xlsx",
+     "feuille": "F15_Graphique 5",
+     "cellule": "D34",
+     "valeur": 61.15
+    },
+    "ensemble": {
+     "classeur": "fiche_15.xlsx",
+     "feuille": "F15_Graphique 5",
+     "cellule": "E34",
+     "valeur": 61.59
+    }
+   }
+  },
+  "15_graphique_6": {
+   "1950": {
+    "regime_general": {
+     "classeur": "fiche_15.xlsx",
+     "feuille": "F15_Graphique 6",
+     "cellule": "M6",
+     "valeur": 61.0
+    },
+    "msa_non_salaries": {
+     "classeur": "fiche_15.xlsx",
+     "feuille": "F15_Graphique 6",
+     "cellule": "M8",
+     "valeur": 60.4
+    },
+    "fpe_civils": {
+     "classeur": "fiche_15.xlsx",
+     "feuille": "F15_Graphique 6",
+     "cellule": "M10",
+     "valeur": 59.2
+    },
+    "fpe_militaires": {
+     "classeur": "fiche_15.xlsx",
+     "feuille": "F15_Graphique 6",
+     "cellule": "M11",
+     "valeur": 46.8
+    },
+    "cnracl": {
+     "classeur": "fiche_15.xlsx",
+     "feuille": "F15_Graphique 6",
+     "cellule": "M12",
+     "valeur": 59.1
+    },
+    "tous_regimes": {
+     "classeur": "fiche_15.xlsx",
+     "feuille": "F15_Graphique 6",
+     "cellule": "M13",
+     "valeur": 60.46
+    }
+   },
+   "1955": {
+    "regime_general": {
+     "classeur": "fiche_15.xlsx",
+     "feuille": "F15_Graphique 6",
+     "cellule": "R6",
+     "valeur": 62.5
+    },
+    "msa_non_salaries": {
+     "classeur": "fiche_15.xlsx",
+     "feuille": "F15_Graphique 6",
+     "cellule": "R8",
+     "valeur": 62.3
+    },
+    "fpe_civils": {
+     "classeur": "fiche_15.xlsx",
+     "feuille": "F15_Graphique 6",
+     "cellule": "R10",
+     "valeur": 60.5
+    },
+    "fpe_militaires": {
+     "classeur": "fiche_15.xlsx",
+     "feuille": "F15_Graphique 6",
+     "cellule": "R11",
+     "valeur": 46.8
+    },
+    "cnracl": {
+     "classeur": "fiche_15.xlsx",
+     "feuille": "F15_Graphique 6",
+     "cellule": "R12",
+     "valeur": 60.0
+    },
+    "tous_regimes": {
+     "classeur": "fiche_15.xlsx",
+     "feuille": "F15_Graphique 6",
+     "cellule": "R13",
+     "valeur": 61.59
+    }
+   }
+  },
+  "21_graphique_1": {
+   "1954": {
+    "ensemble": {
+     "absence": {
+      "classeur": "fiche_21.xlsx",
+      "feuille": "F21_Graphique 1",
+      "cellule": "C34",
+      "valeur": 9.71
+     },
+     "chomage": {
+      "classeur": "fiche_21.xlsx",
+      "feuille": "F21_Graphique 1",
+      "cellule": "E34",
+      "valeur": 7.55
+     },
+     "emploi": {
+      "classeur": "fiche_21.xlsx",
+      "feuille": "F21_Graphique 1",
+      "cellule": "F34",
+      "valeur": 68.29
+     },
+     "maladie_invalidite": {
+      "classeur": "fiche_21.xlsx",
+      "feuille": "F21_Graphique 1",
+      "cellule": "G34",
+      "valeur": 6.19
+     },
+     "retraite": {
+      "classeur": "fiche_21.xlsx",
+      "feuille": "F21_Graphique 1",
+      "cellule": "I34",
+      "valeur": 7.86
+     }
+    },
+    "femmes": {
+     "emploi": {
+      "classeur": "fiche_21.xlsx",
+      "feuille": "F21_Graphique 1",
+      "cellule": "F10",
+      "valeur": 68.1
+     }
+    },
+    "hommes": {
+     "emploi": {
+      "classeur": "fiche_21.xlsx",
+      "feuille": "F21_Graphique 1",
+      "cellule": "F22",
+      "valeur": 68.47
+     }
+    }
+   }
+  },
+  "21_tableau_2": {
+   "passage_direct": {
+    "femmes": {
+     "classeur": "fiche_21.xlsx",
+     "feuille": "F21_Tableau 2",
+     "cellule": "C5",
+     "valeur": 54.87
+    },
+    "hommes": {
+     "classeur": "fiche_21.xlsx",
+     "feuille": "F21_Tableau 2",
+     "cellule": "D5",
+     "valeur": 61.74
+    },
+    "ensemble": {
+     "classeur": "fiche_21.xlsx",
+     "feuille": "F21_Tableau 2",
+     "cellule": "E5",
+     "valeur": 58.35
+    }
+   },
+   "une_periode_intercalee": {
+    "ensemble": {
+     "classeur": "fiche_21.xlsx",
+     "feuille": "F21_Tableau 2",
+     "cellule": "E8",
+     "valeur": 19.27
+    }
+   },
+   "sans_depart_a_67_ans": {
+    "ensemble": {
+     "classeur": "fiche_21.xlsx",
+     "feuille": "F21_Tableau 2",
+     "cellule": "E14",
+     "valeur": 4.81
+    }
+   }
   }
  },
  "citations": {
