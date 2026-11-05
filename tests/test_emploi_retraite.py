@@ -616,9 +616,12 @@ def test_le_notaire_liberal_n_a_pas_droit_a_sa_complementaire(simulateur):
     """Statuts de la CPRN, depuis 2017 : « Le droit aux allocations est
     compatible avec l'exercice de la profession de notaire salarié [...] Il est
     incompatible avec l'exercice de la profession de notaire libéral » — sous
-    le seuil de la base aussi."""
-    resultat, _ = _cumul(simulateur, 1960, 62.25,
-                         _emploi(62.5, 64, affiliation="notaire", niveau=0.3),
+    le seuil de la base aussi. Née en 1962, partie à l'âge de L. 161-17-2 :
+    la CPRN s'ouvre avec la base depuis 2024 (statuts, article 18) ; née en
+    1960 et partie en 2022, elle ne l'aurait pas au départ, l'âge de 2014 à
+    2023 étant celui de L. 161-17-2 « différé de vingt-quatre mois »."""
+    resultat, _ = _cumul(simulateur, 1962, 62.5,
+                         _emploi(63, 65, affiliation="notaire", niveau=0.3),
                          _liberale("notaire"))
     servies = _servies(resultat, "cprn_complementaire")
     assert servies

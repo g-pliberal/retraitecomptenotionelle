@@ -1,0 +1,49 @@
+date: "2026-11-05"
+session: "action 130, file N de la vague 9 : la complémentaire de la CAVOM, de la CARPIMKO, de la CAVP et de la CPRN, avant la base ou après"
+consulte: >-
+  `python scripts/veille_droit.py` : la base de la Cnav sans barème changé ; deux exposés à
+  date changée, l'avis de mise à jour 357 et la circulaire ministérielle n° 2026/140, hors du
+  sujet. Les index JORF (à jour au 3 novembre 2026) et LEGI (au 2 novembre) récupérés. Au
+  JORF : la CAVOM, arrêtés du 7 octobre 2014 (JORFARTI000029830483), du 30 décembre 2015
+  (JORFARTI000031740850, JORFARTI000031740851, annexe JORFARTI000031740853), du 21 décembre
+  2016 (JORFARTI000033702977), du 12 décembre 2024 (JORFARTI000050823052,
+  JORFARTI000050823053, annexe JORFARTI000050823056) et règlement de 2026
+  (JORFARTI000054435969) ; la CARPIMKO, arrêtés du 31 juillet 2015 (JORFARTI000031255544,
+  JORFARTI000031255545, annexe JORFARTI000031255547), du 27 décembre 2023
+  (JORFTEXT000048880637, JORFARTI000048880640, JORFARTI000048880641, annexe
+  JORFARTI000048880643) et règlement de 2026 (JORFARTI000054435912, JORFARTI000054435913,
+  annexe JORFARTI000054435915) ; la CAVP, arrêtés du 11 mai 2009 (JORFARTI000020694601 à
+  JORFARTI000020694603, annexe JORFARTI000020694605), du 23 juin 2011
+  (JORFARTI000024270214), règlement de 2026 (JORFARTI000054436087) et arrêté du 21
+  septembre 2026 (JORFARTI000054888289, JORFARTI000054888291, JORFARTI000054888293) ; la
+  CPRN, arrêtés du 28 décembre 2004 (JORFARTI000001075201, une notice), du 16 décembre 2013
+  (JORFARTI000028387440, JORFARTI000028387441, annexe JORFARTI000028387445), du 31 mai 2017
+  (JORFARTI000034975968, annexe JORFARTI000034975971), du 29 novembre 2023
+  (JORFARTI000048679345, JORFARTI000048679346, annexe JORFARTI000048679350) et règlement de
+  2026 (JORFARTI000054435995). Dans LEGI : L. 161-17-2 (LEGIARTI000025014605,
+  LEGIARTI000051289659, LEGIARTI000053280889), D. 161-2-1-9 (LEGIARTI000025089933,
+  LEGIARTI000047634502).
+trouve: >-
+  Aucun des statuts lus ne demande que la base soit liquidée. La CAVOM se liquide dès 60 ans
+  pour les nés jusqu'en 1955, 60 ans et 6 mois, 61 ans, 61 ans et 6 mois pour 1956 à 1958,
+  62 ans de 1959 à 1964 (statuts de 2016, articles 14 et 23), puis 62 ans et 6 mois, 63 ans,
+  63 ans et 6 mois pour 1965 à 1967, 64 ans depuis 1968 (article 14, depuis le 1er janvier
+  2025). La CARPIMKO, dès 60 ans jusqu'en 1955, puis 60 ans et 4 mois à 61 ans et 8 mois de
+  1956 à 1960, 62 ans en 1961 jusqu'au 31 août (article 12 quater depuis le 3 octobre 2015 ;
+  règlement de 2026, articles 2 et 6). La CPRN, de 2014 à 2023, dès 60 ans avant 1954, puis
+  à l'âge de L. 161-17-2 « différé de vingt-quatre mois » ; depuis 2024, à l'âge de
+  L. 161-17-2. La CAVP, dès 60 ans en 2009, à l'âge de L. 161-17-2 et de D. 161-2-1-9
+  depuis le 30 juin 2011 : l'âge de la base. Le modèle refusait tout départ avant l'âge de
+  la base, et servait la CPRN avec elle, à 62 ans au lieu de 64 pour un notaire né en
+  1956 : la CAVOM, la CARPIMKO et la CPRN entrent dans SANS_LEUR_BASE, dans les deux
+  moteurs (fiche liquidation_regime_par_regime). L'arrêté du 21 septembre 2026 ne touche,
+  de la CAVP, que l'article 16 de son règlement, la réversion du conjoint survivant.
+reste: >-
+  La CAVOM avant 2016, la CARPIMKO avant le 3 octobre 2015 et la CPRN avant 2014 : leurs
+  statuts ne sont publiés qu'au Bulletin officiel (la CPRN au no 2005/01 ; la CARPIMKO,
+  arrêté du 20 novembre 1996), non lus ; l'arrêté du 16 décembre 2013 cite l'ancien article
+  14 de la CPRN : « La demande ne peut être antérieure ni au soixante-cinquième anniversaire
+  du notaire, ni à la fin de son exercice », sans l'article 15 qu'il récrit. Les
+  bibliothèques de la Direction de la sécurité sociale ou les caisses elles-mêmes les
+  garderaient. La carrière longue de la CAVOM et de la CPRN, que leurs statuts ne
+  nomment pas.

@@ -261,7 +261,7 @@ Il est traité de front : **le JavaScript de `moteur/js/` fait foi**, et
 Le moteur Python, qui garde ses jumeaux jusqu'à leur retrait, refait chaque
 simulation et doit la retrouver au bit près (`tests/test_pont.py`) ;
 `node --test` rejoue les simulations côté JavaScript et les compare valeur par valeur —
-<!--chiffre:portage(valeurs)-->174 899<!--/--> nombres,
+<!--chiffre:portage(valeurs)-->174 905<!--/--> nombres,
 dont <!--chiffre:portage(identiques)-->100,0<!--/--> % identiques
 au bit près, l'écart relatif maximal étant de <!--chiffre:portage(pire)-->0,0<!--/--> · 10⁻¹⁵ (un *ulp*, la précision d'un flottant, vaut 2 · 10⁻¹⁶). Les
 deux moteurs ne diffèrent plus d'un *ulp* : le JavaScript calcule

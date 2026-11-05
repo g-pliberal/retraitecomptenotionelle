@@ -98,8 +98,19 @@ RAFP = "rafp"
 #: la pension les conditions suivantes : 1° Avoir atteint l'âge de cinquante
 #: ans ; 2° Justifier de vingt annuités » (code de l'aviation civile,
 #: R. 426-11, I, rédaction de 2012), sans rien demander du régime général,
-#: qui attend l'âge de L. 161-17-2 (L. 351-1).
+#: qui attend l'âge de L. 161-17-2 (L. 351-1). La CAVOM, « 1° À partir de 62
+#: ans » et, « pour les générations antérieures », dès 60 ans (statuts,
+#: articles 14 et 23, arrêté du 30 décembre 2015 ; article 14, arrêté du
+#: 12 décembre 2024) ; la CARPIMKO, « l'âge prévu par les dispositions des
+#: articles 3, 4 et 6 » (règlement de 2026, article 2), dès 60 ans pour les
+#: générations 1955 et antérieures (article 12 quater des statuts depuis
+#: l'arrêté du 31 juillet 2015) ; la CPRN, 60 ans pour les nés avant 1954, et
+#: « l'article L. 161-17-2 [...] différé de vingt-quatre mois » après (statuts,
+#: article 15, arrêté du 16 décembre 2013, en vigueur de 2014 à 2023) : chacune
+#: à son âge, avant la base ou après.
 SANS_LEUR_BASE = frozenset({"carpv_complementaire", "cavec_complementaire",
+                            "cavom_complementaire", "carpimko_complementaire",
+                            "cprn_complementaire",
                             "crpnpac", "crpnpac_tranche_2"})
 
 #: Ce qui date un départ, par rapport au départ déclaré.
@@ -422,9 +433,9 @@ def departs_et_demandes(moteur: ScenarioActuel, carriere: Carriere
              if moteur.catalogue[code].etage in ETAGES_DES_UNITES]
     if not bases:
         return unique, _examiner(demandees, {}, set(), None)
-    # La CARPV, la CAVEC et la CRPNPAC se demandent à leur âge, sans la base :
-    # chacune est une unité, que sa date sépare de la base quand elle s'ouvre
-    # avant elle.
+    # La CARPV, la CAVEC, la CAVOM, la CARPIMKO, la CPRN et la CRPNPAC se
+    # demandent à leur âge, sans la base : chacune est une unité, que sa date
+    # sépare de la base quand elle s'ouvre avant elle ou après.
     unites = [*_unites(moteur, carriere, bases, routage),
               *(frozenset({code}) for code in codes if code in SANS_LEUR_BASE)]
     unite_de = {code: i for i, unite in enumerate(unites) for code in unite}

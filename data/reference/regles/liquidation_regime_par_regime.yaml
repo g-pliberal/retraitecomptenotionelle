@@ -73,6 +73,34 @@ versions:
   - {id: LEGIARTI000006742675, article: "L. 351-7 CSS", en_vigueur: 1985-12-21}
   - {id: LEGIARTI000023035688, article: "L. 351-1 CSS", en_vigueur: 2010-11-11}
   - {id: LEGIARTI000025014605, article: "L. 161-17-2 CSS", en_vigueur: 2011-12-23}
+  - {id: LEGIARTI000025089933, article: "D. 161-2-1-9 CSS", en_vigueur: 2011-12-31}
+  - {id: LEGIARTI000047634502, article: "D. 161-2-1-9 CSS", en_vigueur: 2023-09-01}
+  - {id: JORFARTI000031740853, article: "statuts de la CAVOM, articles 14 et 23 (arrêté du 30 décembre 2015, annexe)",
+     en_vigueur: 2016-01-01}
+  - {id: JORFARTI000050823056, article: "statuts de la CAVOM, article 14 (arrêté du 12 décembre 2024, annexe, II, 4°)",
+     en_vigueur: 2025-01-01}
+  - {id: JORFARTI000054435969, article: "règlement de la CAVOM, article 1er, I (arrêté du 10 juillet 2026, annexe I)",
+     en_vigueur: 2026-07-18}
+  - {id: JORFARTI000031255547, article: "statuts de la CARPIMKO, articles 11, 12 et 12 quater (arrêté du 31 juillet 2015, annexe)",
+     en_vigueur: 2015-10-03}
+  - {id: JORFARTI000048880643, article: "statuts de la CARPIMKO, articles 11, 12 et 12 quater (arrêté du 27 décembre 2023, annexe)",
+     en_vigueur: 2024-01-10}
+  - {id: JORFARTI000054435915, article: "règlement de la CARPIMKO, articles 2, 3 et 6 (arrêté du 10 juillet 2026, annexe, III)",
+     en_vigueur: 2026-07-18}
+  - {id: JORFARTI000028387445, article: "statuts de la CPRN, articles 14 et 15 (arrêté du 16 décembre 2013, annexe)",
+     en_vigueur: 2014-01-01}
+  - {id: JORFARTI000034975971, article: "statuts de la CPRN, article 18 (arrêté du 31 mai 2017, annexe)",
+     en_vigueur: 2017-06-22}
+  - {id: JORFARTI000048679350, article: "statuts de la CPRN, article 18 (arrêté du 29 novembre 2023, annexe)",
+     en_vigueur: 2024-01-01}
+  - {id: JORFARTI000054435995, article: "règlement de la CPRN, article 4 (arrêté du 10 juillet 2026, annexe)",
+     en_vigueur: 2026-07-18}
+  - {id: JORFARTI000020694605, article: "statuts de la CAVP, partie III, article 15 (arrêté du 11 mai 2009, annexe)",
+     en_vigueur: 2009-06-07}
+  - {id: JORFARTI000024270214, article: "statuts de la CAVP, article 15 (arrêté du 23 juin 2011, annexe)",
+     en_vigueur: 2011-06-30}
+  - {id: JORFARTI000054436087, article: "règlement de la CAVP, article 12 (arrêté du 10 juillet 2026, annexe)",
+     en_vigueur: 2026-07-18}
   bornes:
     liquidation.date_effet: [null, null]
   contenu:
@@ -109,8 +137,57 @@ versions:
       manquant » (CAVEC, statuts de 2008, article 3.13 ; de 2018, partie 2, article
       12 ; règlement de 2026, article 1.1.3) ; ni ces textes, ni L. 643-3, ni L. 644-1
       ne les lient à la liquidation de la base, qui s'ouvre « à partir de l'âge prévu
-      au premier alinéa de l'article L. 351-1 » (L. 643-3, I). Chacune forme alors une
-      unité à elle (departs.py, SANS_LEUR_BASE). La CRPNPAC, complémentaire du
+      au premier alinéa de l'article L. 351-1 » (L. 643-3, I). La CAVOM, la CARPIMKO
+      et la CPRN ont chacune leur âge, que leurs statuts ne lient pas non plus à la
+      base. La CAVOM : « La liquidation de la retraite, conditionnée à la cessation de
+      toute activité professionnelle ressortissant de la caisse et au paiement à la
+      caisse de toutes les cotisations et majorations exigibles, peut intervenir : 1° À
+      partir de 62 ans » ; « Pour les générations antérieures, les âges d'ouverture des
+      droits à retraite et de bénéfice du taux plein évoluent selon le tableau
+      ci-dessous : GÉNÉRATION ÂGE D'OUVERTURE DES DROITS ÂGE DU TAUX PLEIN Jusqu'à
+      1955 60 ans 65 ans 1956 60 ans et 6 mois 65 ans et 6 mois 1957 61 ans 66 ans 1958
+      61 ans et 6 mois 66 ans et 6 mois 1959 et suivantes 62 ans 67 ans » (statuts,
+      articles 14 et 23, arrêté du 30 décembre 2015, publié le 31, sans date : le 1er
+      janvier 2016) ; « 1° L'âge d'ouverture des droits à pensions est fixé à : a) 62
+      ans pour les affiliés relevant du a du 2° de l'article L. 643-4 du code de la
+      sécurité sociale ; b) 64 ans à compter de la génération 1968. Pour les affiliés
+      nés avant le 1er janvier 1968, cet âge est fixé à : - 60 ans pour les affiliés
+      nés avant le 1er janvier 1956 ; [...] - 62 ans pour les affiliés nés entre le 1er
+      janvier 1959 et le 31 décembre 1964 inclus ; - 62 ans et 6 mois ans pour les
+      affiliés nés en 1965 ; - 63 ans pour les affiliés nés en 1966 ; - 63 ans et 6
+      mois pour les affiliés nés en 1967 » (article 14, arrêté du 12 décembre 2024,
+      « entrent en vigueur au 1er janvier 2025 » ; règlement de 2026, article 1er, I,
+      mot pour mot). La CARPIMKO : « Par dérogation aux dispositions de l'article 11,
+      les conditions de liquidation des assurés des générations 1960 et antérieures
+      sont les suivantes : GÉNÉRATION 1955 ET ANTÉRIEURE 1956 1957 1958 1959 1960 [...]
+      Age prévu à l'article 11.2 (a) 60 ans 60 ans 4 mois 60 ans 8 mois 61 ans 61 ans 4
+      mois 61 ans 8 mois » (statuts, article 12 quater, arrêté du 31 juillet 2015,
+      publié le 2 octobre, sans date : le 3 octobre 2015) ; « Âge minimal pour liquider
+      sa retraite 60 ans 60 ans 4 mois 60 ans 8 mois 61 ans 61 ans 4 mois 61 ans 8 mois
+      62 ans », jusqu'aux nés le 31 août 1961 (arrêté du 27 décembre 2023, publié le
+      9 janvier 2024 ; règlement de 2026, article 6) ; « Pour bénéficier de la retraite
+      complémentaire, les affiliés doivent avoir versé toutes les cotisations exigibles
+      et avoir l'âge prévu par les dispositions des articles 3, 4 et 6 » (règlement de
+      2026, article 2). La CPRN, de 2014 à 2023 : « Pour les affiliés nés avant le 1er
+      janvier 1954 : ― l'âge légal d'ouverture des droits est fixé à 60 ans [...] Pour
+      les affiliés nés à compter du 1er janvier 1954 : ― l'âge légal d'ouverture des
+      droits est celui visé à l'article L. 161-17-2 du code de la sécurité sociale
+      différé de vingt-quatre mois » (statuts, article 15, arrêté du 16 décembre 2013,
+      « Le présent arrêté prend effet au 1er janvier 2014 » ; article 18 des statuts de
+      2017, mêmes mots) ; depuis le 1er janvier 2024 : « L'âge de l'ouverture du droit
+      à pension de retraite est celui mentionné à l'article L. 161-17-2 du code de la
+      sécurité sociale » (statuts, article 18, arrêté du 29 novembre 2023 ; règlement
+      de 2026, article 4), l'âge de la base. Chacune se demande à son âge, avant la
+      base ou après. La CAVP, elle, s'ouvre à l'âge de la base : « dès l'âge de 60
+      ans » (statuts approuvés par l'arrêté du 11 mai 2009, partie III, article 15),
+      quand la base s'ouvrait aussi à soixante ans, puis « dès l'âge d'ouverture du
+      droit à pension de retraite tel qu'il est fixé à l'article L. 161-17-2 du code de
+      la sécurité sociale. A titre transitoire, pour les affiliés nés avant le 1er
+      janvier 1956, l'âge d'ouverture du droit à pension de retraite est fixé selon le
+      calendrier figurant à l'article D. 161-2-1-9 du code de la sécurité sociale »
+      (article 15, arrêté du 23 juin 2011 ; règlement de 2026, article 12) ; elle suit
+      sa base. La CARPV, la CAVEC, la CAVOM, la CARPIMKO et la CPRN forment chacune
+      une unité à elle (departs.py, SANS_LEUR_BASE). La CRPNPAC, complémentaire du
       personnel navigant, aussi, ses deux tranches : « Une pension de retraite est
       servie à l'affilié qui demande la liquidation de ses droits à pension [...] dès
       lors qu'il réunit cumulativement à la date d'effet de la pension les conditions
@@ -211,6 +288,44 @@ approximations:
     le 10 octobre 1961 (1er novembre 2021) —, et tout vétérinaire parti avant 2022
     avant l'âge de sa base : si la complémentaire attendait la base, elle lui serait
     servie à cet âge, sous un coefficient plus haut
+- ecart: >-
+    la complémentaire de la CAVOM, de la CARPIMKO et de la CPRN est servie à son âge,
+    sans la base, à toute date ; les statuts lus le 5 novembre 2026 ne le fondent
+    qu'à partir de leur entrée en vigueur. La CAVOM, avant le 1er janvier 2016 : le
+    modèle lui garde ses 60 ans (table `cavom`), sans texte lu ; l'arrêté du 7 octobre
+    2014 (JORFARTI000029830483) ne parle ni de liquidation ni d'âge, et ceux d'avant
+    n'ont à l'index qu'un titre ou une notice. La CARPIMKO, du 3 octobre au 31
+    décembre 2015 : le modèle ne prend sa table (`carpimko_2016`) qu'au 1er janvier
+    2016, et la sert avant à l'âge de la base ; les statuts d'avant, publiés au
+    Bulletin officiel (arrêté du 20 novembre 1996), ne sont pas lus. La CPRN, avant
+    le 1er janvier 2014 : servie à l'âge de la base, sans texte lu ; les statuts de
+    2005 ne sont publiés qu'au Bulletin officiel no 2005/01 (JORFARTI000001075201), et
+    l'arrêté du 16 décembre 2013 en cite l'article 14 : « La demande ne peut être
+    antérieure ni au soixante-cinquième anniversaire du notaire, ni à la fin de son
+    exercice », sans l'article 15 qu'il récrit. Ni la CAVOM ni la CPRN ne disent
+    rien de la carrière longue : le modèle leur ouvre l'âge que la durée ouvre à la
+    base, comme avant ; la CARPIMKO l'ouvre depuis 2024 « pour les affiliés qui
+    bénéficient de ce départ anticipé au titre du régime de base » (règlement de
+    2026, article 3, 4)
+  effet: >-
+    non mesuré ; l'officier ministériel né avant 1956 parti avant 2016 avant l'âge de
+    sa base touche sa complémentaire dès 60 ans ; le notaire né en 1953 parti en 2013
+    entre 60 ans et 61 ans et 2 mois n'a rien avant l'âge de sa base, quand les
+    statuts de 2005 lui fermaient peut-être la complémentaire jusqu'à 65 ans
+- ecart: >-
+    l'âge où s'ouvre une unité que sa date sépare du départ déclaré se lit dans les
+    règles en vigueur au départ déclaré, non dans celles qui le suivent. La CPRN
+    l'ouvre de 2014 à 2023 à l'âge de L. 161-17-2 « différé de vingt-quatre mois »
+    (statuts, article 15, arrêté du 16 décembre 2013), et depuis le 1er janvier 2024
+    à l'âge de L. 161-17-2 (statuts, article 18, arrêté du 29 novembre 2023) : un
+    notaire né en 1960 ou 1961, parti en 2022 ou 2023, peut la demander dès le
+    1er janvier 2024 ; le modèle la lui sert à 64 ans
+  effet: >-
+    mesuré dans les deux moteurs le 5 novembre 2026 : né le 10 mars 1961, parti à 62
+    ans le 1er avril 2023, le notaire reçoit sa CPRN le 1er avril 2025, quinze mois
+    après le 1er janvier 2024 ; né en mars 1960, trois mois après. Erreur du modèle,
+    non corrigée : elle tient à la façon dont `departs` date chaque unité, commune à
+    tous les régimes
 - version: [chaque_regime_a_sa_date]
   textes: >-
     code de la sécurité sociale, L. 643-3, IV (LEGIARTI000047453031 ; LEGIARTI000053280388),
@@ -374,6 +489,18 @@ sources:
       L. 643-5 (LEGIARTI000006743795), L. 351-7 (LEGIARTI000006742675) : l'inapte des
       professions libérales à soixante-deux ans (approximations)
     date: 2026-11-05
+  - type: jorf
+    reference: >-
+      Lus le 5 novembre 2026 (action 130, file N de la vague 9), index JORF du dépôt à
+      jour au 3 novembre 2026 : les statuts de la CAVOM (JORFARTI000031740853,
+      JORFARTI000050823056, règlement JORFARTI000054435969), de la CARPIMKO
+      (JORFARTI000031255547, JORFARTI000048880643, règlement JORFARTI000054435915), de
+      la CPRN (JORFARTI000028387445, JORFARTI000034975971, JORFARTI000048679350,
+      règlement JORFARTI000054435995) et de la CAVP (JORFARTI000020694605,
+      JORFARTI000024270214, règlement JORFARTI000054436087), et les articles des
+      arrêtés qui datent leur effet : chacune de ces complémentaires à son âge, sans
+      condition de la base (contenu.complementaires)
+    date: 2026-11-05
 code:
   python: >-
     droit/departs.py : departs, departs_et_demandes, DemandeExaminee,
@@ -394,7 +521,8 @@ code:
   parametres: >-
     contenu.parametres de chaque version : depart_tous_regimes
   tests: >-
-    tests/test_departs.py ; tests/test_ouverture_des_navigants.py ; les témoins departs_*, demande_* et metiers_militaire_* des
+    tests/test_departs.py ; tests/test_ouverture_des_navigants.py ;
+    tests/test_complementaires_liberales_a_leur_age.py ; les témoins departs_*, demande_* et metiers_militaire_* des
     simulations, et simuler_demande_de_pension des pages ;
     tests/test_liquidation.py, qui compare les journaux des deux moteurs
   moteur: >-

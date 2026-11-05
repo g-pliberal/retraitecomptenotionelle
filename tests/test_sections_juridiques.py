@@ -122,16 +122,26 @@ def test_l_annee_entamee_compte_entiere(simulateur):
     assert _coefficient(pensions["cavom_complementaire"].detail) == pytest.approx(0.85)
 
 
-def test_la_complementaire_ne_decide_pas_de_l_ouverture_du_droit(simulateur):
-    """Un officier ministériel né en 1955 ne liquide pas à soixante ans.
+def test_la_complementaire_ne_decide_pas_de_l_ouverture_de_la_base(simulateur):
+    """Un officier ministériel né le 10 mars 1957, parti à soixante et un ans.
 
-    Sa complémentaire s'ouvre à soixante ans, son régime de base à
-    soixante-deux : c'est le second qui dit quand le droit s'ouvre, et le
-    modèle, qui liquide tous les régimes à la même date, le suit.
+    Sa complémentaire s'ouvre à cet âge, sans condition de la base (statuts de
+    la CAVOM, article 23, depuis le 1er janvier 2016 : « 1957 61 ans 66
+    ans »), son régime de base à soixante-deux (L. 161-17-2) : la CAVOM le
+    1er avril 2018, la base le 1er avril 2019. Jusqu'au 5 novembre 2026, le
+    modèle refusait tout départ avant l'âge de la base (note
+    ``130/2026-11-05-complementaire-avant-la-base-des-liberaux.md``).
     """
-    resultat, _ = _calculer(simulateur, "officier_ministeriel", 1955, 22.0, 60.0)
-    assert not resultat.liquidation_ouverte
-    assert resultat.age_ouverture_opposable == pytest.approx(62.0)
+    carriere = Carriere.depuis_parcours(
+        annee_naissance=1957, sexe="H", jour_naissance=10, mois_naissance=3,
+        metiers=[Metier(affiliation="officier_ministeriel", age_debut=22.0,
+                        niveau_salaire=1.5)],
+        age_liquidation=61.0, macro=simulateur.macro)
+    resultat = simulateur.scenario_actuel.calculer(carriere)
+    assert resultat.liquidation_ouverte
+    assert [(d.date_effet, d.regimes, d.motif) for d in resultat.departs] == [
+        ("2018-04-01", ("cavom_complementaire",), "depart"),
+        ("2019-04-01", ("cnavpl",), "ouverture")]
 
 
 def test_le_plafond_de_la_cavom_monte_par_marches(simulateur):
