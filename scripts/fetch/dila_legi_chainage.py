@@ -43,8 +43,13 @@ commun à divers corps, vise tous deux. Il faut, à la fois :
   Au noyau, dont le rang ordonne sans numéroter (``Depot.periodes_noyau``),
   c'est leur nombre, élève, stagiaire et échelons provisoires mis à part. Les
   jours où une grille rattachée ailleurs n'a pas ces échelons sont déclarés.
+  Le sommet que le tableau n'écrit pas ne fait pas d'écart
+  (``Depot.sommet_non_ecrit``, preuve « sommet non écrit ») : le tableau écrit
+  les échelons 1 à n, sa phrase dit le temps passé dans chaque échelon, son
+  n-ième rang porte une durée, le temps à y passer avant le suivant ; la grille
+  a les échelons 1 à n + 1, le dernier ordinaire, numéroté n + 1 au LEGI.
 - *Une seule grille à la fois* pour un grade d'un tableau, et un seul corps
-  au noyau, sauf le décret commun dont l'article qui énumère ses corps est lu
+  au noyau, sauf le décret commun dont l'article qui désigne ses corps est lu
   (``COMMUNS``) : son tableau vaut pour chacun d'eux, une ligne par corps.
 
 Ce qui manque à l'une de ces conditions est déclaré, avec la plus avancée des
@@ -57,8 +62,9 @@ Noyau RH : la date du reclassement est celle que le lecteur a lue (``effet``),
 ou celle qui ouvre la phrase (« Au 1er juillet 2011, les membres […] ») ; le
 corps est l'un de ceux que le noyau rattache, la veille ou le jour, au statut
 que la phrase nomme (``statuts_de_la_phrase``) : par son numéro, par sa date
-quand les visas la résolvent en un seul décret identifié au LEGI ou par son
-NOR, ou le texte du tableau quand il est lui-même ce statut ; jamais tous les
+quand les visas la résolvent en un seul décret identifié au LEGI, ou au Noyau
+RH par son NOR ou, sans NOR, par son numéro et sa date sous le titre d'un
+décret, ou le texte du tableau quand il est lui-même ce statut ; jamais tous les
 corps d'un décret qui en modifie plusieurs (relecture R-B3 : les géomètres de
 l'IGN, nommés par « le décret du 20 janvier 1967 », rattachés aux
 géomètres-cadastreurs) ; le libellé du tableau, où l'aplatissement colle
@@ -239,6 +245,12 @@ def periodes(echelons: list[dict], debut: str, fin_exclue: str, rangs_de) -> lis
 # Les données
 # ---------------------------------------------------------------------------
 
+def _indice(echelon: dict) -> str:
+    """« indice brut 612 », ou « hors échelle A »."""
+    return (f"indice brut {echelon['indice']}" if echelon["indice"]
+            else f"hors échelle {echelon['hors_echelle']}")
+
+
 def lire(chemin: Path) -> list[dict]:
     with chemin.open(encoding="utf-8") as flux:
         return list(csv.DictReader(l for l in flux if not l.startswith("#")))
@@ -284,6 +296,14 @@ class Index:
                     self._versions[(titre, num)].append((ident, d, f))
         cle = self._article.get(article)
         return sorted(i for i, d, f in self._versions.get(cle, [])
+                      if d < (fin or OUVERT) and f > debut)
+
+    def versions_datees(self, article: str, debut: str, fin: str) -> list[tuple[str, str, str]]:
+        """Les versions de ``versions_sur``, avec leurs dates : [(identifiant,
+        début, fin exclue)], dans l'ordre."""
+        self.versions_sur(article, debut, fin)
+        cle = self._article.get(article)
+        return sorted((i, d, f) for i, d, f in self._versions.get(cle, [])
                       if d < (fin or OUVERT) and f > debut)
 
     def notices_du_decret(self, numero: str, iso: str) -> list[tuple[str, str]]:
@@ -335,6 +355,10 @@ class Depot:
         self.durees_textes = {t["texte"]: t for t in lire(GRILLES / "durees" / "textes.csv")}
         self.durees_tableaux = lire(GRILLES / "durees" / "tableaux.csv")
         self.durees_lignes = lire(GRILLES / "durees" / "lignes.csv")
+        self.lignes_du_groupe: dict[tuple, list[dict]] = collections.defaultdict(list)
+        for ligne in self.durees_lignes:
+            self.lignes_du_groupe[(ligne["texte"], ligne["article"], ligne["tableau"],
+                                   ligne["groupe"])].append(ligne)
         self.reclassements_textes = {t["texte"]: t for t in
                                      lire(GRILLES / "reclassements" / "textes.csv")}
         self.reclassements_tableaux = lire(GRILLES / "reclassements" / "tableaux.csv")
@@ -460,6 +484,67 @@ class Depot:
                          and e["rang"] not in ("", "0")], debut, fin,
                         lambda en_vigueur: set(range(1, len({e["rang"] for e in en_vigueur}) + 1)))
 
+    def sommet_legi(self, versant: str, texte: str, grille: str, rang: int, debut: str,
+                    fin: str) -> str:
+        """L'échelon du rang ``rang`` de la grille du LEGI sur [debut, fin), s'il
+        est l'échelon numéroté ``rang`` à toutes ses versions (non le spécial,
+        que le lecteur range au-dessus du plus haut) : « le 10e échelon (indice
+        brut 901, LEGIARTI…) », ou rien."""
+        hauts = [e for e in self.echelons[(versant, texte, grille)]
+                 if e["rang"] == str(rang) and intersection(debut, fin, e["debut"], e["fin"])]
+        if not hauts or any(e["echelon"] != str(rang) for e in hauts):
+            return ""
+        return (f"le {rang}e échelon (" + ", ".join(sorted({_indice(e) for e in hauts}))
+                + ", " + ", ".join(sorted({e["article"] for e in hauts})) + ")")
+
+    def sommet_noyau(self, grille: str, debut: str, fin: str) -> str:
+        """Le plus haut échelon de la grille du noyau sur [debut, fin), s'il est
+        ordinaire à chaque date (non l'exceptionnel ni le fonctionnel) :
+        « son 10e échelon, le plus haut (indice brut 901) », ou rien."""
+        jours = {debut} | {j for e in self.noyau_echelons[grille]
+                           for j in (e["debut"], lendemain(e["fin"]) if e["fin"] else OUVERT)
+                           if debut < j < (fin or OUVERT)}
+        indices = set()
+        for jour in sorted(jours):
+            natures = self.natures_noyau_au(grille, jour)
+            if not natures or natures[-1]:
+                return ""
+            ordinaires = [e for e in self.noyau_echelons[grille]
+                          if e["nature"] not in ("stagiaire", "eleve", "provisoire")
+                          and e["rang"] not in ("", "0") and en_vigueur(e, jour)]
+            haut = max(ordinaires, key=lambda e: int(e["rang"]))
+            indices.add(_indice(haut))
+            rang = len(natures)
+        return f"son {rang}e échelon, le plus haut ({', '.join(sorted(indices))})"
+
+    def sommet_non_ecrit(self, tableau: dict, groupe: str, rangs: set[int],
+                         rangs_grille: set[int], sommet) -> str:
+        """La preuve que la grille n'a, de plus que le tableau, que le sommet que
+        celui-ci n'écrit pas, ou rien : le tableau écrit les échelons 1 à n, sa
+        phrase dit le temps passé dans chaque échelon, et son n-ième rang porte
+        une durée, le temps à y passer avant l'échelon suivant ; la grille a les
+        échelons 1 à n + 1, le dernier ordinaire (``sommet(n + 1)``, sa
+        description, ou rien). Relecture R-B3 : « Ingénieur 9e échelon 3 ans »
+        (n° 90-973), la grille « 10e échelon 901 »."""
+        n = len(rangs)
+        if rangs != set(range(1, n + 1)) or rangs_grille != set(range(1, n + 2)):
+            return ""
+        if not TEMPS_DANS_L_ECHELON.search(tableau["intro"]):
+            return ""
+        derniers = [l for l in self.lignes_du_groupe[(tableau["texte"], tableau["article"],
+                                                      tableau["tableau"], groupe)]
+                    if l["rang"] == str(n)]
+        durees = [f"{nom} {l[c]} mois" for l in derniers for c, nom in DUREES if l[c]]
+        if not derniers or not all(any(l[c] for c, _ in DUREES) for l in derniers):
+            return ""
+        haut = sommet(n + 1)
+        if not haut:
+            return ""
+        return (f"sommet non écrit : « {tableau['intro'].rstrip(' :')} » ; le dernier rang du "
+                f"tableau, l'échelon {derniers[0]['echelon']}, porte une durée ("
+                + ", ".join(dict.fromkeys(durees)) + "), le temps à y passer avant l'échelon "
+                f"suivant ; la grille a, au-dessus, {haut}")
+
     def natures_noyau_au(self, grille: str, jour: str) -> list[str]:
         """La nature de chaque échelon de la grille ce jour-là, dans l'ordre du
         rang, élève, stagiaire et provisoires mis à part : la n-ième est celle
@@ -473,6 +558,16 @@ class Depot:
 #: Les échelons qu'un tableau de reclassement ne numérote pas : le lecteur les
 #: range au-dessus du plus haut échelon écrit de leur côté du tableau.
 NON_NUMEROTES = ("special", "exceptionnel")
+
+#: La phrase d'un tableau de durées qui dit le temps passé dans chaque
+#: échelon : « La durée du temps passé dans chacun des échelons […] », « à
+#: chaque échelon », « pour accéder à l'échelon immédiatement supérieur »,
+#: « conditions d'ancienneté d'échelon […] avancement d'échelon ».
+TEMPS_DANS_L_ECHELON = re.compile(
+    r"(?:dans|[àa])\s+(?:chacun\s+des|chaque)\s+[ée]chelons?\b|avancement\s+d.[ée]chelon"
+    r"|acc[ée]der\s+[àa]\s+l.[ée]chelon", re.IGNORECASE)
+DUREES = (("duree", "durée"), ("duree_moyenne", "moyenne"), ("duree_minimale", "minimale"),
+          ("duree_maximale", "maximale"))
 
 
 def rang_dans_la_grille(echelon: str, rang: int, natures: list[str]) -> int | None:
@@ -573,7 +668,10 @@ def _candidats_legi(depot: Depot, tableau: dict, groupe: str, rangs: set[int]):
             # Les échelons, date par date (relecture R-B3-bis, partie 2).
             morceaux = depot.periodes_legi(versant, e, grille["grille"], debut, fin)
             for d, f, rangs_grille in morceaux:
-                if rangs_grille != rangs:
+                sommet = "" if rangs_grille == rangs else depot.sommet_non_ecrit(
+                    tableau, groupe, rangs, rangs_grille,
+                    lambda rang: depot.sommet_legi(versant, e, grille["grille"], rang, d, f))
+                if rangs_grille != rangs and not sommet:
                     raison = _echelons_differents(rangs, f"la grille {nom}", rangs_grille,
                                                   _fmt(d, f) if len(morceaux) > 1 else "")
                     raisons.append(("echelons", raison))
@@ -585,6 +683,7 @@ def _candidats_legi(depot: Depot, tableau: dict, groupe: str, rangs: set[int]):
                     continue
                 preuve = (preuve_article(versions(d, f)) if lien == "article"
                           else f"{visa} ; seul décret statutaire que vise {e}")
+                preuve += f" ; {sommet}" if sommet else ""
                 prouves.append({"source": versant, "texte_grille": e, "grille": grille["grille"],
                                 "libelle_grille": grille["libelle"], "corps": "", "grade": "",
                                 "debut": d, "fin": f, "lien": lien, "preuve": preuve})
@@ -603,18 +702,25 @@ def _candidats_legi(depot: Depot, tableau: dict, groupe: str, rangs: set[int]):
     return prouves, raisons, trous
 
 
-#: Les décrets communs à plusieurs corps dont l'article qui énumère les corps
-#: a été lu au LEGI : (article, citation mot pour mot). Le tableau de durées d'un
-#: tel décret qui vaut pour « les corps […] régis par le présent décret » se
-#: rattache au grade de chacun des corps du noyau qui ont ce décret pour texte
-#: d'origine (relecture R-B3-bis, partie 3). Le n° 91-783 (les assistants de
-#: service social) n'a pas d'article qui énumère ses corps : son article 1er les
-#: désigne par leur catégorie (« Les corps d'assistants de service social des
-#: administrations de l'Etat, classés dans la catégorie B […] », LEGIARTI000006461848
-#: et LEGIARTI000006461849), et son tableau de durées (art. 15, LEGIARTI000006461873)
-#: ne dit pas « régis par le présent décret ». La règle du n° 2012-762 ne s'y
-#: applique pas telle quelle : ses grades restent déclarés, et la session qui le
-#: rattachera écrira la sienne.
+#: Les décrets communs à plusieurs corps dont l'article qui désigne les corps
+#: a été lu au LEGI : (article, citation mot pour mot, la phrase du tableau doit
+#: dire « régis par le présent décret »). Le tableau de durées d'un tel décret
+#: se rattache au grade de chacun des corps du noyau qui ont ce décret pour texte
+#: d'origine, les jours où chaque version de l'article porte la citation
+#: (relecture R-B3-bis, partie 3).
+#:
+#: Le n° 2012-762 énumère ses corps (art. 1er), et son tableau (art. 14) vaut
+#: pour « les corps d'infirmiers régis par le présent décret ».
+#:
+#: Le n° 91-783 (les assistants de service social) désigne ses corps par leur
+#: nom et leur catégorie, et les soumet à toutes ses dispositions : son
+#: article 1er, LEGIARTI000006461848 (du 1992-02-08 au 2007-05-03) et
+#: LEGIARTI000006461849 (du 2007-05-03 au 2012-10-01), « Les corps d'assistants
+#: de service social des administrations de l'Etat, classés dans la catégorie B
+#: […], sont soumis aux dispositions communes du présent décret » ; son tableau
+#: (art. 15, LEGIARTI000006461873, du 1991-08-20 au 2012-10-01) est l'une de ces
+#: dispositions, et sa phrase n'a pas à nommer les corps. Le LEGI n'a aucune
+#: version de l'article 1er avant le 1992-02-08 : ces jours-là sont déclarés.
 COMMUNS = {
     "2012-762": (
         "LEGIARTI000025855207",
@@ -622,31 +728,43 @@ COMMUNS = {
         "susvisée et sont régis par le présent décret les corps ci-dessous énumérés : 1° Le "
         "corps des infirmiers de l'Etat qui constitue un corps à vocation interministérielle "
         "relevant du ministre chargé de la santé ; 2° Le corps des infirmiers de la défense ; "
-        "3° Le corps des infirmiers de l'éducation nationale et de l'enseignement supérieur."),
+        "3° Le corps des infirmiers de l'éducation nationale et de l'enseignement supérieur.",
+        True),
+    "91-783": (
+        "LEGIARTI000006461849",
+        "Les corps d'assistants de service social des administrations de l'Etat, classés dans "
+        "la catégorie B prévue à l'article 29 de la loi du 11 janvier 1984 susvisée, sont "
+        "soumis aux dispositions communes du présent décret",
+        False),
 }
 
 
-def _decret_commun(depot: Depot, tableau: dict, numero: str, corps: set[str]) -> str:
+def _decret_commun(depot: Depot, tableau: dict, numero: str,
+                   corps: set[str]) -> tuple[str, list[tuple[str, str]]]:
     """La preuve qu'un tableau de durées vaut pour chacun de ces corps du noyau,
-    ou rien : le décret est dans ``COMMUNS``, l'article cité y est seul en
-    vigueur sur la période et porte la citation, la phrase du tableau dit les
-    corps « régis par le présent décret », et chaque corps a ce décret pour
-    texte d'origine au noyau."""
+    et les jours où elle vaut, [(début, fin exclue)], ou ("", []) : le décret
+    est dans ``COMMUNS``, chaque version de l'article cité en vigueur sur la
+    période porte la citation (les jours sans version ne sont pas prouvés), la
+    phrase du tableau dit, s'il le faut, les corps « régis par le présent
+    décret », et chaque corps a ce décret pour texte d'origine au noyau."""
     if numero not in COMMUNS:
-        return ""
-    article, citation = COMMUNS[numero]
-    if depot.index.versions_sur(article, tableau["debut"], tableau["fin"]) != [article] \
-            or citation not in depot.index.texte(article) \
-            or not PRESENT_DECRET.search(tableau["intro"]):
-        return ""
+        return "", []
+    article, citation, present_decret = COMMUNS[numero]
+    versions = depot.index.versions_datees(article, tableau["debut"], tableau["fin"])
+    if not versions or any(citation not in depot.index.texte(i) for i, _, _ in versions) \
+            or (present_decret and not PRESENT_DECRET.search(tableau["intro"])):
+        return "", []
     origines = {c for c in corps for v in depot.noyau_corps[c] for r in v["textes"].split()
                 if r.endswith(":origine")
                 and depot.noyau_textes.get(r.split(":")[0], {}).get("numero") == numero}
     if origines != corps:
-        return ""
-    return (f"décret commun à ses corps, n° {numero}, {article} : « {citation} » ; le tableau : "
-            f"« {tableau['intro'].rstrip(' :')} » ; les corps {', '.join(sorted(corps))} ont ce "
-            "décret pour texte d'origine au Noyau RH")
+        return "", []
+    # La fin d'une version en vigueur, au LEGI, est le 2999-01-01 : ouverte ici.
+    jours = [(max(d, tableau["debut"]), min(OUVERT if f >= "2999-01-01" else f,
+                                            tableau["fin"] or OUVERT)) for _, d, f in versions]
+    return ((f"décret commun à ses corps, n° {numero}, {', '.join(i for i, _, _ in versions)} : "
+             f"« {citation} » ; le tableau : « {tableau['intro'].rstrip(' :')} » ; les corps "
+             f"{', '.join(sorted(corps))} ont ce décret pour texte d'origine au Noyau RH"), jours)
 
 
 def _un_grade_a_la_fois(noyau: list[dict]) -> tuple[list[dict], list[tuple]]:
@@ -703,33 +821,51 @@ def _candidats_noyau(depot: Depot, tableau: dict, groupe: str, rangs: set[int]):
                             f"{numero} ({', '.join(sorted(corps_cites))}) ne porte ce libellé"))
         return prouves, raisons, trous
     corps_trouves = {t[0] for t in trouves}
-    commun = _decret_commun(depot, tableau, numero, corps_trouves) if len(corps_trouves) > 1 else ""
+    commun, jours_communs = (_decret_commun(depot, tableau, numero, corps_trouves)
+                             if len(corps_trouves) > 1 else ("", []))
     if len(corps_trouves) > 1 and not commun:
         raisons.append(("unicite", "plusieurs corps du Noyau RH ont ce grade aux mêmes dates : "
                         + ", ".join(sorted(corps_trouves))))
         return prouves, raisons, trous
-    for corps, ident, grade, periode in trouves:
-        morceaux = depot.citations_sur(numero, corps, *periode)
-        if not morceaux:
-            raisons.append(("periode", f"le grade {grade['grade']} du corps {corps} porte ce "
-                            f"libellé {_fmt(*periode)}, mais le Noyau RH n'y cite le n° {numero} "
-                            "ni pour le corps ni pour l'un de ses grades"))
-            continue
-        for debut, fin, citations in morceaux:
-            # Les échelons, date par date (relecture R-B3-bis, partie 2).
-            for d, f, rangs_grille in depot.periodes_noyau(grade["grille"], debut, fin):
-                if rangs_grille != rangs:
-                    raison = _echelons_differents(rangs, f"la grille {grade['grille']} du noyau",
-                                                  rangs_grille, _fmt(d, f))
-                    raisons.append(("echelons", raison))
-                    trous.append((d, f, raison, ("etat", "", grade["grille"], corps)))
-                    continue
-                ici = [c for c in citations if intersection(d, f, c["debut"], c["fin"])]
-                prouves.append({"source": "etat", "texte_grille": "", "grille": grade["grille"],
-                                "libelle_grille": grade["libelle"], "corps": corps,
-                                "grade": grade["grade"], "debut": d, "fin": f, "lien": "noyau",
-                                "preuve": (f"{commun} ; " if commun else "")
-                                          + depot.preuve_du_noyau(ici)})
+    for corps, ident, grade, periode_du_grade in trouves:
+        periodes_du_corps = [periode_du_grade]
+        if commun:
+            # Les jours où aucune version de l'article qui désigne les corps
+            # n'est au LEGI ne sont pas prouvés : déclarés.
+            raison = (f"décret commun n° {numero} : le LEGI n'a, " + "{quand}, aucune version "
+                      f"de l'article qui désigne ses corps ({COMMUNS[numero][0]})")
+            for d, f, _ in _non_couverts([(*periode_du_grade, "")], jours_communs):
+                ici = raison.format(quand=_fmt(d, f))
+                raisons.append(("unicite", ici))
+                trous.append((d, f, ici, ("etat", "", grade["grille"], corps)))
+            periodes_du_corps = [p for p in (intersection(*periode_du_grade, d, veille(f))
+                                             for d, f in jours_communs) if p]
+        for periode in periodes_du_corps:
+            morceaux = depot.citations_sur(numero, corps, *periode)
+            if not morceaux:
+                raisons.append(("periode", f"le grade {grade['grade']} du corps {corps} porte ce "
+                                f"libellé {_fmt(*periode)}, mais le Noyau RH n'y cite le n° {numero} "
+                                "ni pour le corps ni pour l'un de ses grades"))
+                continue
+            for debut, fin, citations in morceaux:
+                # Les échelons, date par date (relecture R-B3-bis, partie 2).
+                for d, f, rangs_grille in depot.periodes_noyau(grade["grille"], debut, fin):
+                    sommet = "" if rangs_grille == rangs else depot.sommet_non_ecrit(
+                        tableau, groupe, rangs, rangs_grille,
+                        lambda _: depot.sommet_noyau(grade["grille"], d, f))
+                    if rangs_grille != rangs and not sommet:
+                        raison = _echelons_differents(rangs, f"la grille {grade['grille']} du noyau",
+                                                      rangs_grille, _fmt(d, f))
+                        raisons.append(("echelons", raison))
+                        trous.append((d, f, raison, ("etat", "", grade["grille"], corps)))
+                        continue
+                    ici = [c for c in citations if intersection(d, f, c["debut"], c["fin"])]
+                    prouves.append({"source": "etat", "texte_grille": "", "grille": grade["grille"],
+                                    "libelle_grille": grade["libelle"], "corps": corps,
+                                    "grade": grade["grade"], "debut": d, "fin": f, "lien": "noyau",
+                                    "preuve": (f"{commun} ; " if commun else "")
+                                              + depot.preuve_du_noyau(ici)
+                                              + (f" ; {sommet}" if sommet else "")})
     return prouves, raisons, trous
 
 
@@ -899,20 +1035,27 @@ def statuts_de_la_phrase(depot: Depot, tableau: dict) -> tuple[dict[str, str], s
         notices = depot.index.notices_du_decret(numero, iso)
         nor = sorted({t["nor"] for t in depot.noyau_textes.values()
                       if t["numero"] == numero and t["date"] == iso and t["nor"]})
-        if not notices and not nor:
-            # Le noyau peut porter le décret sans NOR (n° 60-403, texte 166) :
-            # la raison le dit, sans l'identifier par son numéro et sa date
-            # (relecture R-B3-bis, partie 2).
-            sans_nor = sorted((t["texte"] for t in depot.noyau_textes.values()
-                               if t["numero"] == numero and t["date"] == iso), key=int)
+        # Sans notice ni NOR, le noyau identifie le décret par son numéro et sa
+        # date quand un seul de ses textes les porte, sous le titre d'un décret
+        # de ce numéro et de cette date : le n° 60-403, texte 166, « Décret
+        # n° 60-403 du 22 avril 1960 […] », sans NOR (relecture R-B3-bis, partie 2).
+        titre_du_decret = re.compile(rf"^\s*D[ée]cret\s+n[°o]\s*{re.escape(numero)}\s+du\s+"
+                                     rf"{_date_en_lettres_souple(iso)}(?!\d)", re.IGNORECASE)
+        sans_nor = sorted((t for t in depot.noyau_textes.values()
+                           if t["numero"] == numero and t["date"] == iso and not t["nor"]),
+                          key=lambda t: int(t["texte"]))
+        par_titre = [t for t in sans_nor if titre_du_decret.match(t["titre"])]
+        if not notices and not nor and len(par_titre) != 1:
             return {}, (f"la phrase nomme le statut par sa date, « {trouve.group(0)} », que le "
                         f"visa résout en n° {numero}, décret "
                         + (f"qu'aucune notice du LEGI n'identifie, et que le Noyau RH porte sans "
-                           f"NOR (texte {', '.join(sans_nor)}) : le chaînage ne l'y identifie que "
-                           "par son NOR" if sans_nor
+                           f"NOR (texte {', '.join(t['texte'] for t in sans_nor)}), sous des "
+                           "titres qui ne l'identifient pas seuls" if sans_nor
                            else "que ni le LEGI ni le Noyau RH n'identifient"))
         identifie = (f"au LEGI {', '.join(i for i, _ in notices)}, « {notices[0][1]} »"
-                     if notices else f"au Noyau RH, NOR {', '.join(nor)}")
+                     if notices else f"au Noyau RH, NOR {', '.join(nor)}" if nor
+                     else f"au Noyau RH, sans NOR, par son numéro et sa date : le texte "
+                          f"{par_titre[0]['texte']}, « {par_titre[0]['titre']} »")
         nommes[numero] = (f"la phrase nomme « {trouve.group(0)} » ; le visa de "
                           f"{tableau['texte']} : « {visa} » ; n° {numero}, {identifie}")
     if not nommes or PRESENT_DECRET.search(intro):
@@ -1144,7 +1287,8 @@ ENTETES = {
               "durees/), rattaché à une grille du dépôt (statut rattache) ou déclaré, avec sa "
               "raison (declare). debut, fin : la période commune au tableau et à la grille (fin "
               "exclue ; vide : en vigueur), où la grille a, à chaque date, les échelons du "
-              "tableau ; les jours où une grille rattachée ne les a pas sont déclarés, en une "
+              "tableau, ou ceux-là et le sommet qu'il n'écrit pas (preuve : « sommet non "
+              "écrit ») ; les jours où une grille rattachée ne les a pas sont déclarés, en une "
               "ligne à eux. source : etat (le Noyau RH : corps, grade, grille), "
               "ou le dossier des grilles du LEGI (texte_grille, grille). lien : visa (le texte "
               "d'échelonnement ne vise que ce statut), article (chaque version de l'article de "

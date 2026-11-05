@@ -89,6 +89,32 @@ def test_la_date_qui_ouvre_la_phrase_du_reclassement():
         "Les membres du corps régi par le décret du 4 juillet 1972 sont reclassés") == ""
 
 
+def test_aucune_phrase_restee_sans_date_ne_s_ouvre_sur_une_date(reclassements):
+    # Action 158, vague 10, piste « la date qui ouvre la phrase ». Le chaînage lit
+    # déjà la date qui ouvre la phrase quand le lecteur ne l'a pas lue (52
+    # tableaux). Des 183 tableaux restés sans date, aucun ne s'ouvre sur une date :
+    # leur date, quand ils en écrivent une, suit le verbe (n° 2017-194,
+    # LEGIARTI000034054901 : « Les ingénieurs des travaux publics de l'Etat […]
+    # sont reclassés, au 1er janvier 2017, conformément au tableau »), ou date un
+    # texte cité (n° 95-720, LEGIARTI000006479055 : « régis par le décret du
+    # 30 avril 1992 susvisé […] sont reclassés, au 1er août 1995, »). Ce sont des
+    # dates d'effet que les lecteurs ne lisent pas, non des dates qui ouvrent la
+    # phrase.
+    import re
+    tableaux = {(t["texte"], t["article"], t["tableau"]): t
+                for t in _lire(GRILLES / "reclassements" / "tableaux.csv")}
+    date = re.compile(chainage._DATE, re.IGNORECASE)
+    sans_date = {(r["texte"], r["article"], r["tableau"]) for r in reclassements
+                 if r["statut"] == "declare" and not r["date"]}
+    assert len({(r["texte"], r["article"], r["tableau"]) for r in reclassements
+                if r["raison"].startswith("la phrase qui annonce le tableau n'écrit pas la "
+                                          "date")}) == 183
+    for cle in sans_date:
+        intro = tableaux[cle]["intro"]
+        trouve = date.search(intro)
+        assert not trouve or len(intro[:trouve.start()].split()) >= 5, intro
+
+
 # ---------------------------------------------------------------------------
 # Les durées
 # ---------------------------------------------------------------------------
@@ -287,20 +313,52 @@ def test_le_noyau_cite_un_statut_par_ses_corps_comme_par_ses_grades(durees, noya
             assert not noyau["numeros"].get(numero), (numero, sorted(noyau["numeros"][numero])[:3])
 
 
-def test_deux_corps_qui_citent_le_statut_et_ont_les_memes_grades_ne_se_rattachent_pas(durees):
-    # Décret n° 91-783 (texte 112 du noyau, « relatif aux dispositions statutaires
-    # communes applicables aux corps d'assistants de service social ») : origine
-    # des corps 00671 (« Assistants de service social du MAE ») et 00873
-    # (« Assistants de service social »), qui ont les grades du tableau aux mêmes
-    # dates. Le décret n'a pas d'article qui énumère ses corps : son article 1er
-    # les désigne par leur catégorie (B), et son tableau (art. 15) ne dit pas
-    # « régis par le présent décret » ; la règle du n° 2012-762 (`COMMUNS`) ne s'y
-    # applique pas : aucun rattachement, la raison le dit.
-    statuts = {t["texte"]: t["numero"] for t in _lire(GRILLES / "durees" / "textes.csv")}
-    lignes = [d for d in durees if statuts[d["texte"]] == "91-783"
-              and d["groupe"] in ("Assistant de service social principal", "Assistant de service social")]
-    assert lignes and not [d for d in lignes if d["statut"] == "rattache" and d["lien"] == "noyau"]
-    assert all("plusieurs corps du Noyau RH" in d["raison"] for d in lignes if d["statut"] == "declare")
+def test_le_decret_commun_des_assistants_de_service_social_rattache_chacun_de_ses_corps(durees):
+    # Action 158, vague 10, piste « les autres décrets communs ». Décret
+    # n° 91-783, « relatif aux dispositions statutaires communes applicables aux
+    # corps d'assistants de service social des administrations de l'Etat ». Son
+    # art. 1er, LEGIARTI000006461848 (du 1992-02-08 au 2007-05-03) et
+    # LEGIARTI000006461849 (du 2007-05-03 au 2012-10-01) : « Les corps
+    # d'assistants de service social des administrations de l'Etat, classés dans
+    # la catégorie B prévue à l'article 29 de la loi du 11 janvier 1984 susvisée,
+    # sont soumis aux dispositions communes du présent décret » ; le LEGI n'en a
+    # aucune version avant le 1992-02-08. Son tableau, art. 15
+    # (LEGIARTI000006461873, du 1991-08-20 au 2012-10-01) : « La durée moyenne et
+    # la durée minimale du temps passé dans chaque échelon sont fixées ainsi
+    # qu'il suit : […] Assistant de service social principal 6e échelon 4 ans
+    # 3 ans […] Assistant de service social 9e échelon 4 ans 3 ans […] » ; son
+    # art. 3 (LEGIARTI000006461851, puis LEGIARTI000006461852) : « le grade
+    # d'assistant de service social qui comporte dix échelons et le grade
+    # d'assistant de service social principal, qui comporte sept échelons ».
+    # Noyau RH : texte 112, n° 91-783 ; les corps 00671 (« Assistants de service
+    # social du MAE ») et 00873 (« Assistants de service social »), du 1991-08-01
+    # au 2012-09-30, « 112:origine » ; leurs grades 01523 et 02075 (« Assistant de
+    # service social principal », grille 00092 : sept échelons, 422 à 638) et
+    # 01522 et 02076 (« Assistant de service social », grille 00091 : dix
+    # échelons, 322 à 593), du 1991-08-01 au 2012-09-30. Rattachés du
+    # 1992-02-08 au 2012-10-01, à chacun des deux corps ; du 1991-08-20 au
+    # 1992-02-08, déclarés : l'article qui désigne les corps n'est pas lu.
+    lignes = [d for d in durees if d["article"] == "LEGIARTI000006461873"]
+    assert {(d["groupe"], d["corps"], d["grade"], d["grille"], d["debut"], d["fin"])
+            for d in lignes if d["statut"] == "rattache"} == {
+        ("Assistant de service social principal", "00671", "01523", "00092", "1992-02-08",
+         "2012-10-01"),
+        ("Assistant de service social principal", "00873", "02075", "00092", "1992-02-08",
+         "2012-10-01"),
+        ("Assistant de service social", "00671", "01522", "00091", "1992-02-08", "2012-10-01"),
+        ("Assistant de service social", "00873", "02076", "00091", "1992-02-08", "2012-10-01")}
+    for d in lignes:
+        if d["statut"] == "rattache":
+            assert d["lien"] == "noyau"
+            assert "LEGIARTI000006461848, LEGIARTI000006461849" in d["preuve"]
+            assert ("sont soumis aux dispositions communes du présent décret"
+                    in d["preuve"]), d["preuve"]
+            assert f"le corps {d['corps']} cite le texte 112" in d["preuve"]
+    assert {(d["groupe"], d["debut"], d["fin"]) for d in lignes if d["statut"] == "declare"} == {
+        ("Assistant de service social principal", "1991-08-20", "1992-02-08"),
+        ("Assistant de service social", "1991-08-20", "1992-02-08")}
+    assert all("aucune version de l'article qui désigne ses corps" in d["raison"]
+               for d in lignes if d["statut"] == "declare")
 
 
 def test_un_decret_commun_qui_enumere_ses_corps_rattache_le_grade_a_chacun(durees):
@@ -468,11 +526,15 @@ def test_les_echelons_de_la_grille_sont_ceux_du_tableau_a_chaque_date(durees):
         jours = {d["debut"]} | {j for e in echelons for j in (
             e["debut"], (datetime.date.fromisoformat(e["fin"]) + datetime.timedelta(days=1))
             .isoformat() if e["fin"] else "9999-12-31") if d["debut"] < j < fin}
+        attendus = set(tableau[(d["texte"], d["article"], d["tableau"], d["groupe"])])
+        if "sommet non écrit" in d["preuve"]:
+            # Le sommet que le tableau n'écrit pas : un échelon de plus, au-dessus.
+            attendus.add(max(attendus) + 1)
         for jour in sorted(jours):
             presents = {int(e["rang"]) for e in _echelons_en_vigueur(echelons, jour)}
             if d["source"] == "etat":
                 presents = set(range(1, len(presents) + 1))
-            if presents != tableau[(d["texte"], d["article"], d["tableau"], d["groupe"])]:
+            if presents != attendus:
                 ecarts.append((d["groupe"], d["grille"], d["debut"], d["fin"], jour))
     assert not ecarts, ecarts[:8]
 
@@ -553,6 +615,102 @@ def test_un_grade_se_rattache_les_jours_ou_sa_grille_a_ses_echelons(durees):
     for groupe, grille in (("Lieutenant-colonel", "lieutenants-colonels"),
                            ("Commandant", "commandants")):
         assert rattaches("LEGIARTI000033792407", groupe) == [(grille, "2017-01-01", "2021-01-01")]
+
+
+def test_le_sommet_que_le_tableau_n_ecrit_pas_se_rattache(durees):
+    # Relecture R-B3 ; action 158, vague 10, piste « le sommet d'échelon non
+    # écrit ». Un tableau qui écrit les échelons 1 à n, et une durée au n-ième,
+    # le temps à y passer avant l'échelon suivant, régit une grille de n + 1
+    # échelons, le dernier ordinaire.
+    #
+    # Décret n° 90-973, art. 12 (LEGIARTI000006459943, du 2000-10-06 au
+    # 2017-03-01) : « La durée moyenne et la durée minimale du temps passé dans
+    # chacun des échelons du corps des ingénieurs du génie sanitaire […]
+    # Ingénieur 9e échelon 3 ans 2 ans 6 mois […] 1er échelon 1 an 1 an » ; son
+    # art. 3 (LEGIARTI000006459927) : « le grade d'ingénieur, qui comporte dix
+    # échelons ». La grille, arrêté du 28 septembre 2000 (LEGITEXT000019669914),
+    # art. 1er (LEGIARTI000019669918, du 2000-10-07 au 2017-01-01) : « Ingénieur
+    # 10e échelon 901 9e échelon 852 […] 1er échelon 473 ».
+    (ligne,) = [d for d in _lignes_de(durees, "LEGIARTI000006459943", "Ingénieur")
+                if d["statut"] == "rattache"]
+    assert (ligne["texte_grille"], ligne["grille"], ligne["debut"], ligne["fin"]) == (
+        "LEGITEXT000019669914", "ingenieur", "2000-10-07", "2017-01-01")
+    assert "sommet non écrit" in ligne["preuve"]
+    assert "l'échelon 9, porte une durée (moyenne 36 mois, minimale 30 mois)" in ligne["preuve"]
+    assert "le 10e échelon (indice brut 901, LEGIARTI000019669918)" in ligne["preuve"]
+    # Décret n° 2003-770, art. 13 (LEGIARTI000023593821, du 2011-02-18 au
+    # 2016-05-09) : « Directeur du travail 5e échelon 3 ans 2 ans 3 mois […]
+    # 1er échelon 2 ans 1 an 6 mois Directeur adjoint du travail 8e échelon - -
+    # […] » ; son art. 2 (LEGIARTI000023593810, mêmes dates) : « Le grade de
+    # directeur du travail qui comprend six échelons ». Noyau RH : le grade 00560
+    # du corps 00234 (texte 142, n° 2003-770), grille 00568, du 2011-02-18 au
+    # 2016-12-31 : échelons 1 à 5 (801 à 1015), et le sixième, hors échelle A,
+    # ordinaire (échelon 06022).
+    (ligne,) = [d for d in _lignes_de(durees, "LEGIARTI000023593821", "Directeur du travail")
+                if d["statut"] == "rattache"]
+    assert (ligne["corps"], ligne["grade"], ligne["grille"], ligne["debut"], ligne["fin"]) == (
+        "00234", "00560", "00568", "2011-02-18", "2016-05-09")
+    assert "son 6e échelon, le plus haut (hors échelle A)" in ligne["preuve"]
+    # Décret n° 94-1016, art. 9 (LEGIARTI000006476438, depuis le 1994-11-26) :
+    # « […] des corps mentionnés à l'annexe I du présent décret […] Classe
+    # exceptionnelle 6e échelon 4 ans 3 ans […] 1er échelon 2 ans 1 an 6 mois » ;
+    # son art. 2 (LEGIARTI000006476418) : « La classe exceptionnelle ou le grade
+    # assimilé comprend sept échelons pour les corps mentionnés à l'annexe I du
+    # présent décret. Ce grade comprend huit échelons pour les corps mentionnés à
+    # l'annexe II ». La grille, arrêté du 24 novembre 2006 (LEGITEXT000019528374),
+    # art. 1er (LEGIARTI000019528377, depuis le 2006-11-26) : « […] des corps de
+    # la catégorie B figurant à l'annexe I du décret du 18 novembre 1994 […]
+    # Classe exceptionnelle 7e échelon 612 […] 1er échelon 425 ».
+    (ligne,) = [d for d in _lignes_de(durees, "LEGIARTI000006476438", "Classe exceptionnelle")
+                if d["statut"] == "rattache"]
+    assert (ligne["grille"], ligne["debut"], ligne["fin"]) == (
+        "classe-exceptionnelle-article-1", "2006-11-26", "")
+    assert "le 7e échelon (indice brut 612, LEGIARTI000019528377)" in ligne["preuve"]
+    # Son art. 10 (LEGIARTI000006476440), l'annexe II : « Classe exceptionnelle
+    # 7e échelon 4 ans 3 ans […] » ; huit échelons (art. 2), la grille de
+    # l'art. 2 de l'arrêté : « annexe II […] Classe exceptionnelle 8e échelon
+    # 612 […] ». La grille de l'annexe I, sept échelons, n'est pas la sienne : le
+    # chaînage l'y rattachait, sur le seul nombre des échelons. Les deux grilles
+    # ont désormais ce qu'il faut : il ne choisit pas.
+    lignes = _lignes_de(durees, "LEGIARTI000006476440", "Classe exceptionnelle")
+    assert not [d for d in lignes if d["grille"] == "classe-exceptionnelle-article-1"]
+    assert [d["statut"] for d in lignes] == ["declare"]
+
+
+def test_un_tableau_dont_le_dernier_rang_n_a_pas_de_duree_n_a_pas_de_sommet_non_ecrit():
+    # Le sommet est écrit quand le dernier rang n'a pas de durée : décret
+    # n° 2016-2008, art. 24 (LEGIARTI000033792407) : « Lieutenant-colonel
+    # 7e échelon - 6e échelon 3 ans et 3 mois […] » ; la grille du dépôt en a
+    # huit à compter du 2021-01-01 (test précédent) : un écart, non un sommet.
+    # Ni quand l'échelon de plus de la grille est le spécial, que le lecteur
+    # range au-dessus du plus haut (décret n° 2016-201, art. 24 : « Ingénieur
+    # hors classe Echelon spécial - - 5e échelon - - […] ») ; ni quand la phrase
+    # ne dit pas le temps passé dans chaque échelon.
+    depot = chainage.Depot.__new__(chainage.Depot)
+    tableau = {"texte": "T", "article": "A", "tableau": "1",
+               "intro": "La durée du temps passé dans chacun des échelons est fixée ainsi "
+                        "qu'il suit :"}
+    vide = {"duree": "", "duree_moyenne": "", "duree_minimale": "", "duree_maximale": ""}
+    depot.lignes_du_groupe = {("T", "A", "1", "G"): [
+        {**vide, "echelon": str(r), "rang": str(r), "duree": "36"} for r in range(1, 7)]
+        + [{**vide, "echelon": "7", "rang": "7"}]}
+    sept, huit = set(range(1, 8)), set(range(1, 9))
+    assert depot.sommet_non_ecrit(tableau, "G", sept, huit, lambda rang: "le 8e échelon") == ""
+    depot.lignes_du_groupe[("T", "A", "1", "G")][-1]["duree"] = "39"
+    assert depot.sommet_non_ecrit(tableau, "G", sept, huit, lambda rang: "le 8e échelon") != ""
+    assert depot.sommet_non_ecrit(tableau, "G", sept, huit, lambda rang: "") == ""
+    assert depot.sommet_non_ecrit({**tableau, "intro": "Le tableau suivant :"}, "G", sept, huit,
+                                  lambda rang: "le 8e échelon") == ""
+    assert depot.sommet_non_ecrit(tableau, "G", sept, set(range(1, 10)),
+                                  lambda rang: "le 8e échelon") == ""
+    depot.echelons = {("v", "E", "g"): [
+        {"echelon": str(r), "rang": str(r), "debut": "2016-03-01", "fin": "",
+         "indice": str(400 + r), "hors_echelle": "", "article": "LEGIARTI1"} for r in range(1, 6)]
+        + [{"echelon": "special", "rang": "6", "debut": "2016-03-01", "fin": "",
+            "indice": "", "hors_echelle": "A", "article": "LEGIARTI1"}]}
+    assert depot.sommet_legi("v", "E", "g", 6, "2016-03-01", "") == ""
+    assert depot.sommet_legi("v", "E", "g", 5, "2016-03-01", "") == (
+        "le 5e échelon (indice brut 405, LEGIARTI1)")
 
 
 def test_les_versions_qui_se_chevauchent_ne_se_rattachent_pas_sur_leur_recouvrement(durees):
@@ -767,15 +925,25 @@ def test_le_statut_nomme_par_sa_date_est_identifie_dans_la_preuve(reclassements)
     assert "texte 160" in ligne["preuve"]
 
 
-def test_la_raison_ne_dit_pas_inconnu_du_noyau_un_decret_qu_il_porte_sans_nor(reclassements):
-    # Relecture R-B3-bis, partie 2. Décret n° 2017-786, art. 12
-    # (LEGIARTI000034750817) : « régi par le décret du 22 avril 1960 susvisé » ;
-    # le visa : « Vu le décret n° 60-403 du 22 avril 1960 modifié relatif aux
-    # dispositions statutaires applicables aux chargés d'enseignement de
-    # l'éducation physique et sportive ». Aucune notice du LEGI ; mais le Noyau
-    # RH porte le texte 166, « Décret n° 60-403 du 22 avril 1960 relatif aux
-    # dispositions statutaires applicables aux chargés d'enseignement de
-    # l'éducation physique et sportive. », sans NOR.
+def test_le_noyau_identifie_par_son_numero_et_sa_date_un_decret_sans_nor(reclassements):
+    # Relecture R-B3-bis, partie 2 ; action 158, vague 10. Décret n° 2017-786,
+    # art. 12 (LEGIARTI000034750817, depuis le 2017-05-08) : « Au 1er septembre
+    # 2017, les fonctionnaires appartenant au corps des chargés d'enseignement
+    # d'éducation physique et sportive régi par le décret du 22 avril 1960 susvisé
+    # […] sont reclassés » ; le visa : « Vu le décret n° 60-403 du 22 avril 1960
+    # modifié relatif aux dispositions statutaires applicables aux chargés
+    # d'enseignement de l'éducation physique et sportive ». Aucune notice du
+    # LEGI ; le Noyau RH porte un seul texte de ce numéro et de cette date, le
+    # 166, « Décret n° 60-403 du 22 avril 1960 relatif aux dispositions
+    # statutaires applicables aux chargés d'enseignement de l'éducation physique
+    # et sportive. », sans NOR : le titre d'un décret de ce numéro et de cette
+    # date l'identifie. Le statut identifié, les corps qui le citent la veille et
+    # le jour sont le 00448 (corps, « 166:origine ») et le 00653 (ses grades,
+    # « 166:origine ») ; leurs grades s'écrivent « Chargé d'enseignement de
+    # l'éducation physique et sportive classe normale » (01072) et « Chargé
+    # d'enseignement EPS enseignement privé classe normale » (01476), non
+    # « Chargé d'enseignement d'éducation physique et sportive de classe
+    # normale » : le libellé ne se coupe pas, aucune équivalence ne se devine.
     textes = {(t["numero"], t["date"]) for t in _lire(GRILLES / "etat" / "textes.csv")}
     import re
     for r in reclassements:
@@ -786,8 +954,9 @@ def test_la_raison_ne_dit_pas_inconnu_du_noyau_un_decret_qu_il_porte_sans_nor(re
     assert len(lignes) == 3
     for r in lignes:
         assert r["statut"] == "declare"
-        assert "n° 60-403" in r["raison"] and "texte 166" in r["raison"], r["raison"]
-        assert "sans NOR" in r["raison"], r["raison"]
+        assert r["raison"] == ("le libellé ne se coupe pas en deux grades des corps 00448, 00653 "
+                               "du Noyau RH (n° 60-403), en vigueur la veille et le jour du "
+                               "2017-09-01"), r["raison"]
 
 
 def test_une_phrase_qui_ne_nomme_pas_le_statut_d_un_decret_modificatif_est_declaree(
