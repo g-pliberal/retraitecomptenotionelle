@@ -3294,7 +3294,7 @@ fabriqués.
 **Reprise, au 5 novembre 2026.** Fait : phases 0 à 8, cinq domaines clos, le sixième aux étapes 1 à 6 ; vagues 6 et 7 relues conformes
 (Agirc-Arrco 5cf7bbc, Agirc 18a4dc3, base des libéraux 5f19af8, L-bis 9fcd8a1, L-ter f6012e5, Ircantec d'avant 1983 cc627e8). Le 5 :
 la CRPNPAC (file N, 1464c06) se sert à son âge, le régime général et l'Agirc-Arrco du navigant à l'âge de L. 161-17-2, non plus
-avant ; relecture R-N en cours ; défaut candidat, ses vingt annuités (`130/2026-11-05-crpnpac-et-regime-general.md`). Retouches de
+avant, relue conforme (R-N, 329db34) ; défaut candidat, ses vingt annuités (`130/2026-11-05-crpnpac-et-regime-general.md`). Retouches de
 R-E, R-M3-ter, R-L-ter et R-D-bis faites (7e44534). Lues au droit, la CAVAMAC (75b31ac) puis la CARCDSF : restent 84 fiches, 491
 manques. Au propriétaire, des erreurs du modèle déclarées dans les fiches, non corrigées : pour la CARCDSF, l'inapte et les
 catégories sans minoration (jusqu'à 30 points), la réversion, la majoration comptée au temps et non à l'exercice libéral, les
