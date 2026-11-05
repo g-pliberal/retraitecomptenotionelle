@@ -73,3 +73,5 @@ requête du formulaire) ; chaque valeur du texte, posée à la main.
   erreurs, inchangées ; la CARPIMKO, ses trois erreurs et trois non-tranchés, le montant de
   l'erreur (2) dit au moins 136,90 €.
 - **Le paquet** ne lit pas les fiches : rien à refaire.
+
+Renvoi du 5 novembre 2026 : la relecture R-E6 (`2026-11-05-relecture-r-e6.md`) trouve ces chiffres exacts et confirme l'écart d'écriture d'un centime, avec un second : écrits sur 5 681,23, les intermédiaires valent 5 475,88 et 5 544,33.

@@ -1,0 +1,32 @@
+date: "2026-11-05"
+session: "action 130, file R-E6 de la vague 11 : relecture de E5 (la CPRN, 5f6196d) et des chiffres neufs d'E4-bis (la CAVP et la CARPIMKO, 0cf9e77)"
+consulte: >-
+  Les index JORF (au 3 novembre 2026) et LEGI (au 2 novembre) récupérés. Au JORF, sans borne :
+  les 282 documents qui nomment les notaires ou le notariat au titre, ou la section
+  professionnelle des notaires, la CPRN ou la retraite des notaires au corps ; les arrêtés du 28
+  décembre 2004, du 27 février 2008, du 16 décembre 2013, du 31 mai 2017, du 29 novembre 2023
+  (lu en entier) et du 10 juillet 2026 ; les arrêtés du 2 août 1963, du 20 novembre 1964, du 16
+  décembre 1996 (JORFARTI000002135074) et du 21 février 2001 (JORFARTI000002396641,
+  001924450) ; les décrets n° 83-519, 2001-179 et 2026-418 (articles 2 et 30). Pour la CAVP,
+  l'annexe du 23 juin 2011 (024270214), le règlement de 2026 (054436087), les arrêtés de 1956,
+  1977, 1988 et 1989 ; pour la CARPIMKO, les statuts de 2015 (031255547) et de 2024
+  (048880643), le règlement de 2026 (054435915). Dans LEGI : L. 161-17-2, L. 351-8 et D.
+  161-2-1-9, leurs versions et celles en vigueur aux dates des cas.
+trouve: >-
+  E5 conforme pour l'essentiel : citations, dates, versions et montants exacts dans les deux
+  moteurs ; l'erreur du passage de 2024 prouvée, l'arrêté de 2023 sans disposition
+  transitoire ; les non-tranchés fondés. Écarts faibles : trois arrêtés non nommés (1963, 1964,
+  2001), cinq textes au seul Bulletin officiel et non trois (1996, no 97-03 ; 2001) ; l'ancien
+  premier alinéa de l'article 15 et l'ancien article 16, que l'arrêté de 2013 récrit, ne se
+  lisent pas ; aucune modification des statuts de 2005 à 2013 hors l'article 20 ;
+  13 599,74 × 15 / 12 = 16 999,675 et 13 815,60 × 15 / 12 = 17 269,50 sur le papier. E4-bis :
+  246,61 €, 136,90 €, 205,35 €, 1 263,99 € exacts ; 5 681,23 / 1,0375 = 5 475,88 et non 5 475,89,
+  × 1,0125 = 5 544,33 et non 5 544,34, le montant servi non arrondi (5 681,234486) donnant les
+  valeurs écrites.
+reste: >-
+  À la file E : nommer les trois arrêtés et les cinq textes au Bulletin officiel dans
+  `cprn_ages_decote_enfants`, reprendre les deux phrases de l'âge d'avant 2014, les deux
+  égalités au centime, dire que les 1 079,34 € par an valent dans la règle du modèle ; dans
+  `carpimko_ages_2015`, 5 475,88 et 5 544,33 (note `130/2026-11-05-relecture-r-e6.md`). Les
+  statuts de la CPRN d'avant 2014 et les arrêtés de 1980, 1983, 1990, 1996 et 2001, au seul
+  Bulletin officiel.

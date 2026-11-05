@@ -138,3 +138,5 @@ salaires moyens, naissance le 10 du mois, entré à 22 ans) ; chaque valeur du t
 Daté du 5 novembre 2026 : la CPRN lue au droit, 78 fiches et 451 manques ; son erreur du
 modèle (le passage de 2024) et ses deux non-tranchés au propriétaire ; les quatre caisses
 du bloc lues, la suite, la caisse suivante de la carte.
+
+Renvoi du 5 novembre 2026 : la relecture R-E6 (`2026-11-05-relecture-r-e6.md`) trouve ce relevé conforme pour l'essentiel et relève trois écarts faibles : trois arrêtés à nommer (1963, 1964, 2001) et cinq textes au seul Bulletin officiel, deux phrases de l'âge d'avant 2014, deux égalités au centime (16 999,675 ; 17 269,50).
