@@ -1,0 +1,36 @@
+date: "2026-11-05"
+session: "action 130, file R-E3 de la vague 9 : relecture de E, la CAVOM lue au droit (ee71f57)"
+consulte: >-
+  Les index JORF (à jour au 5 novembre 2026) et LEGI (au 4 novembre) récupérés par
+  `dila_index.py --recuperer` puis `--mettre-a-jour`. Au JORF, rouverts : les arrêtés du 30
+  décembre 2015 (JORFARTI000031740850, 031740851, annexe 031740853), du 28 août 2020
+  (JORFARTI000042311282, 042311283, annexe 042311285), du 12 décembre 2024
+  (JORFARTI000050823052 à 050823054, annexe 050823056), du 10 juillet 2026
+  (JORFARTI000054435966, 054435967, annexe I 054435969 ; rectificatif 054642802), du 7 octobre
+  2014 (JORFARTI000029830483), du 21 décembre 2016 (JORFARTI000033702977), et, pour l'âge,
+  ceux de 1997 (JORFARTI000001510073, 001552149), 2010 (JORFTEXT000023032846), 2012
+  (JORFTEXT000026208373) et 2018 (JORFARTI000037883374) ; les notices de 1996 et de 2001
+  (JORFARTI000001603584, 001405558, 001451960, 001066668) ; le décret n° 2015-1875 (articles
+  1er et 3), le décret n° 2019-373 (articles 3 et 4), le décret n° 2026-418 (articles 22 et
+  30) ; les décrets du taux de 2016 à 2025 (n° 2015-1802, 2017-730, 2018-1033, 2019-1484,
+  2020-1738, 2021-945, 2022-1633, 2023-1351, 2024-1214, 2025-1076, dont l'article 14 et la
+  notice), et tout texte de l'index publié depuis le 14 novembre 2025 qui nomme les officiers
+  ministériels. Dans LEGI : L. 643-4 (LEGIARTI000047453026) ; le décret n° 79-265, article 2
+  (toutes ses versions, dont LEGIARTI000026892955, 031875318, 038427708, 054168585) et
+  article 5 (LEGIARTI000054168600).
+trouve: >-
+  Les citations de E sont exactes, ses dates et ses bornes justes ; les trois erreurs du
+  modèle (l'inapte de 2016 à 2024, l'inapte non ouvert à 62 ans depuis 2025, la pension au
+  mois et non au trimestre civil) sont réelles dans les deux moteurs, et leurs montants
+  exacts. La dérogation des plafonds de 2016 à 2019 est bien à l'article 3, II, du décret n°
+  2015-1875. Non dit par E : depuis 2025, le coefficient se compte depuis « l'âge auquel est
+  demandée la liquidation », non depuis la date d'effet ; le décret n° 2019-1484 récrit le
+  taux de 2019 (même 12,50 %) ; le décret n° 2026-418 abroge le III de l'article 2 et renvoie
+  le calcul à L. 131-6-2 ; l'arrêté du 21 décembre 2016 abroge aussi les articles 18, 20, 21
+  et 22 ; aucun arrêté de l'index d'avant 2016 ne touche l'âge ni le coefficient.
+reste: >-
+  Les statuts d'avant 2016, au seul Bulletin officiel ; le taux de 2026, hors de l'index ;
+  le texte de la question 11 du propriétaire, qui n'est dans aucune note du dépôt. À
+  déclarer dans la fiche `cavom_ages_minoration` : l'âge de l'inapte né avant 1959 de 2016 à
+  2024 et l'âge de la demande depuis 2025 (note
+  `130/2026-11-05-relecture-de-e-cavom.md`).
