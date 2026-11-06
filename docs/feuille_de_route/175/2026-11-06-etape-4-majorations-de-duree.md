@@ -3,13 +3,13 @@
 **Reprise, au 6 novembre 2026.** Cinq thèmes de l'étape sont rangés : « Retraite
 personnelle de base », « Carrière : cotisations-salaires », « Carrière : versements
 volontaires », « Carrière : périodes assimilées », puis « Carrière : majorations de durée
-d'assurance » — ses 13 exposés, et les 56 références, 5 fenêtres et 2 listes qu'ils lient
-(cette note). Suivant, dans l'ordre de l'étape : les quatre autres thèmes de « Carrière »
-(17 exposés), sous la convention de la note du premier thème. La base se relit par
-`cnav_legislation.py` sans mise en garde, hors de 5 h–6 h UTC. Restent à lire avec leur
-thème : les listes d'accords, de l'Union et de l'Espace économique européens. Aux sessions
-du modèle : les deux candidats de cette note, les trois et les deux des précédentes, l'AVPF
-du père ; l'activité accessoire d'avant 2015 est portée, ses deux candidats dans sa note.
+d'assurance » (cette note). Suivant : les quatre autres thèmes de « Carrière » (17 exposés),
+sous la convention de la note du premier thème. La base se relit par `cnav_legislation.py`
+hors de 5 h–6 h UTC. Restent à lire avec leur thème : les listes d'accords, de l'Union et de
+l'Espace économique européens. Aux sessions du modèle : les deux candidats de cette note, les
+trois et les deux des précédentes ; l'activité accessoire d'avant 2015 est portée (H6), ses
+deux candidats dans sa note, relue (R-H6), ses six écarts déclarés (H6-bis, sa note) ;
+suivante de la file H : H7, l'AVPF du père.
 
 **Le 6 novembre 2026, ce qui est fait.**
 

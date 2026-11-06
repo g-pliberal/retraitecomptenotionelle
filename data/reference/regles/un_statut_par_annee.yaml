@@ -33,10 +33,10 @@ versions:
   statut: supposee
   hypothese: >-
     la règle d'avant le décret n° 80-475 n'est pas lue : l'index JORF n'en porte que le
-    résumé, « A COMPTER DU 01-07-1980, LES TRAVAILLEURS AYANT EXERCE SIMULTANEMENT UNE
-    ACTIVITE RELEVANT D'UN REGIME SPECIAL, ET, A TITRE ACCESSOIRE OU REDUIT, UNE
-    ACTIVITE RELEVANT DU REGIME GENERAL, SONT DISPENSES DE LA COTISATION OUVRIERE
-    D'ASSURANCE VIEILLESSE DU REGIME GENERAL. EN CONTREPARTIE, ILS N'ONT PAS DROIT AUX
+    résumé, « A COMPTER DU 01-07-1980,LES TRAVAILLEURS AYANT EXERCE SIMULTANEMENT UNE
+    ACTIVITE RELEVANT D'UN REGIME SPECIAL,ET,A TITRE ACCESSOIRE OU REDUIT, UNE
+    ACTIVITE RELEVANT DU REGIME GENERAL,SONT DISPENSES DE LA COTISATION OUVRIERE
+    D'ASSURANCE VIEILLESSE DU REGIME GENERAL. EN CONTREPARTIE,ILS N'ONT PAS DROIT AUX
     PRESTATIONS DE CE REGIME » ; le texte est au fac-similé du JO du 29 juin 1980. Le
     modèle laisse à l'activité cumulée ses droits au régime général, jusqu'à l'année
     1980 entière
@@ -112,6 +112,22 @@ versions:
       décret n° 80-475) aux rémunérations versées avant le 19 juillet 2015 ; l'activité
       principale est la ligne en tête de l'année, exercée, et routée à un régime de
       R. 711-1 ; le militaire, que le 1° ne nomme pas, n'y est pas rangé
+    ce_qui_est_lu: >-
+      de 1986 à 2014, la règle est lue au texte : D. 171-2 et D. 171-4, dans leurs
+      rédactions en vigueur du 21 décembre 1985 au 18 juillet 2015. De 1981 à 1985, elle
+      ne tient qu'au résumé du décret n° 80-475 que porte l'index JORF
+      (JORFTEXT000000696623) : « A COMPTER DU 01-07-1980,LES TRAVAILLEURS AYANT EXERCE
+      SIMULTANEMENT UNE ACTIVITE RELEVANT D'UN REGIME SPECIAL,ET,A TITRE ACCESSOIRE OU
+      REDUIT, UNE ACTIVITE RELEVANT DU REGIME GENERAL,SONT DISPENSES DE LA COTISATION
+      OUVRIERE D'ASSURANCE VIEILLESSE DU REGIME GENERAL. EN CONTREPARTIE,ILS N'ONT PAS
+      DROIT AUX PRESTATIONS DE CE REGIME. » Ce champ ne renvoie ni à R. 711-1 ni à
+      l'article 61 du décret n° 46-1378 qui le précédait, et dit « OU REDUIT » : NON LU,
+      que la règle de ces cinq années vise les seuls régimes de R. 711-1, n'y compte que
+      l'activité accessoire, et en laisse le militaire. Le texte du décret est au
+      fac-similé du JO du 29 juin 1980, à lire (question 31 posée au propriétaire par la
+      session d'orchestration, le 6 novembre 2026 ; la file des fac-similés,
+      `docs/feuille_de_route/138/2026-11-05-la-file-des-fac-similes.md`, ne le porte pas
+      encore)
   exemples: aucun trouvé
 - id: affiliation_simultanee_depuis_2015
   statut: lue
@@ -232,13 +248,60 @@ sources:
     date: 2026-11-06
   - type: legifrance
     reference: >-
+      la compagnie générale des eaux, lue dans les index LEGI et JORF (session H6-bis) :
+      « 9° La Compagnie générale des eaux » à l'article 61 du décret n° 46-1378
+      (LEGIARTI000006761348, du 9 juin 1946 au 20 décembre 1985), puis « 9°) la compagnie
+      générale des eaux » à R. 711-1 (LEGIARTI000006752039, du 21 décembre 1985 au
+      16 mai 1991) ; loi n° 91-73 du 18 janvier 1991, article 17, I
+      (JORFARTI000001952341) : « A compter du 1er janvier 1991, les salariés et les anciens
+      salariés de la Compagnie générale des eaux et leurs ayants droit qui relevaient
+      antérieurement du régime spécial […] sont affiliés ou pris en charge par le régime
+      général de sécurité sociale pour l'ensemble des risques couverts par celui-ci. Il
+      est mis fin à compter de la même date au régime spécial de la Compagnie générale
+      des eaux » ; le décret n° 91-489 du 14 mai 1991 (JORFTEXT000000866470, JO du
+      17 mai 1991, résumé de l'index) « MODIFIE DONC ET ACTUALISE LA LISTE DES REGIMES
+      SPECIAUX DE LA SECURITE SOCIALE DRESSEE A L'ART. R711-1 DU CODE DE LA SECURITE
+      SOCIALE »
+    date: 2026-11-06
+  - type: legifrance
+    reference: >-
+      R. 711-24 CSS, LEGIARTI000006752270 (du 21 décembre 1985 au 5 mai 2017), lu dans
+      l'index LEGI : « Des décrets fixent la date d'immatriculation au régime général de
+      sécurité sociale des salariés mentionnés à l'article 23 du décret du 28 octobre
+      1935 qui ne relèvent pas d'une branche d'activité ou d'une entreprise soumise à une
+      organisation spéciale de sécurité sociale en application de l'article R. 711-1.
+      Jusqu'à cette date, les dispositions antérieurement en vigueur demeurent
+      applicables. » Le décret n° 97-1325 du 30 décembre 1997 portant approbation du
+      règlement du régime spécial d'assurance vieillesse et d'assurance maladie du
+      personnel de la chambre de commerce et d'industrie de Paris (LEGITEXT000005624982)
+      vise « le code de la sécurité sociale, notamment ses articles L. 711-1 et
+      R. 711-24 ». La RATP, visée sous R. 711-1 par les décrets n° 91-226 du 27 février
+      1991 (JORFTEXT000000172016, « notamment ses articles L. 711-1, R. 711-1 et
+      L. 711-12 »), n° 2004-174 du 23 février 2004 (LEGITEXT000005765413, « notamment ses
+      articles L. 711-1, R. 711-1 et R. 711-17 »), n° 2005-1635 et n° 2005-1639 du
+      26 décembre 2005 (JORFTEXT000000454090, JORFTEXT000000815795) et n° 2008-637 du
+      30 juin 2008 (JORFTEXT000019103570), tous trois « notamment ses articles L. 711-1 et
+      R. 711-1 » ; D. 412-79 CSS, à chacune de ses dix-sept rédactions, de
+      LEGIARTI000006736957 (21 décembre 1985) à LEGIARTI000049795072 (1er juillet 2024,
+      en vigueur), range à part « c. des chemins de fer d'intérêt général secondaire et
+      d'intérêt local et des tramways ; d. de la Régie autonome des transports parisiens »,
+      garde « f. de la compagnie générale des eaux », et nomme « i. des régimes spéciaux
+      mentionnés à l'article R. 711-24 »
+    date: 2026-11-06
+  - type: legifrance
+    reference: >-
       D. 171-11 CSS, LEGIARTI000006735491 (1985) et LEGIARTI000030910553 (19 juillet
-      2015, en vigueur), lues dans l'index LEGI : le fonctionnaire titulaire ou stagiaire
-      de l'État ou l'agent permanent des collectivités locales qui exerce « une activité
+      2015, en vigueur), lues dans l'index LEGI : « Les dispositions des articles
+      D. 171-3 à D. 171-9 [D. 171-10 jusqu'au 18 juillet 2015] ne sont pas applicables
+      aux fonctionnaires titulaires et stagiaires de l'Etat et aux agents permanents des
+      collectivités locales ne relevant pas, au titre de leur activité principale, des
+      dispositions du livre IV du présent code, lorsqu'ils exercent une activité
       accessoire au service de l'Etat, d'un département, d'une commune ou d'un
-      établissement public » ne doit aucune cotisation à ce titre, et « n'a droit qu'aux
-      prestations prévues par le régime dont il relève du fait de son activité
-      principale » ; le décret n° 2015-877 n'y change qu'un renvoi
+      établissement public. Dans ce cas, aucune cotisation n'est due, au titre de
+      l'activité accessoire par l'administration, la collectivité ou l'établissement
+      employeur, ni par l'intéressé. Ce dernier n'a droit qu'aux prestations prévues par
+      le régime dont il relève du fait de son activité principale. » ; le décret
+      n° 2015-877 n'y change que ce renvoi
     date: 2026-11-06
   - type: legifrance
     reference: >-
@@ -278,7 +341,14 @@ sources:
       des intéressés ne doit présenter aucun report de salaire » ; mais si la cotisation
       ouvrière a été précomptée à tort et que son remboursement est prescrit, « les droits
       potentiels à l'assurance vieillesse résultant des cotisations indûment versées
-      restent acquis à l'assuré » (L. 243-6)
+      restent acquis à l'assuré » (L. 243-6). Relue entière par l'API le 6 novembre 2026
+      (session H6-bis), elle range ce cas en « Situation n°1 », et poursuit : « Situation
+      n°2 Les reports ont été faits à tort à partir des salaires reportés sur les
+      déclarations annuelles de salaires parce qu'il n'a pas été détecté lors de la
+      préparation de ces supports qu'il s'agissait d'un cas d'exonération des cotisations
+      ouvrières motivé par le fait que l'activité principale de l'intéressé relevait d'un
+      régime spécial de sécurité sociale […]. S'il s'agit de la situation n° 2, le report
+      effectué à tort doit être annulé car il ne doit pas générer de droit à pension. »
     date: 2026-11-06
   - type: legifrance
     reference: >-
@@ -334,7 +404,15 @@ approximations:
     au plus six mois de l'activité accessoire, deux années : sur le cas du test, salarié
     du privé à 0,3 fois le salaire moyen toute l'année 2015, le régime général sert
     128,29 € par an sur quatre trimestres, dont les rémunérations de janvier à juin
-    n'ouvraient rien
+    n'ouvraient rien. À droit exact, si les rémunérations de janvier à juin sont versées
+    avant le 19 juillet 2015 et celles de juillet à décembre après, à mensualités égales
+    (hypothèse : la ligne ne dit pas ses mois) : la moitié du salaire de 2015,
+    11 739,30 / 1,049 / 2 = 5 595,95 € (1,049, coefficient des salaires de 2015 au
+    1er janvier 2022, `revalorisation_salaires.csv`), reste sous le seuil de quatre
+    trimestres, 4 × 150 × 9,61 = 5 766 € (R. 351-9 ; SMIC horaire de 2015,
+    `smic_horaire.csv`) : trois trimestres, et une pension de
+    5 869,65 × 45,625 % × 3/167 = 48,11 € par an (5 595,95 × 1,049 = 5 869,65). Le modèle, qui garde l'année entière,
+    sert 80,18 € de plus ; une lecture qui l'ôterait, 48,11 € de moins (session H6-bis)
 - ecart: >-
     QUI EST L'AGENT D'UN RÉGIME SPÉCIAL, lu dans R. 711-1 : le modèle range les régimes
     que ses dix numéros nomment (`REGIMES_DES_ORGANISATIONS_SPECIALES`), et non le
@@ -343,11 +421,40 @@ approximations:
     Strasbourg : R. 711-24, qui vise d'autres salariés, renvoie au décret du 28 octobre
     1935, non lu. La Cnav ne parle que du « fonctionnaire ». Deux lectures : le texte
     seul (le modèle) ; ou tout agent d'un régime spécial, comme le disait la note du
-    3 novembre.
+    3 novembre. LA COMPAGNIE GÉNÉRALE DES EAUX, que R. 711-1 nommait au 9° du
+    21 décembre 1985 au 16 mai 1991 (LEGIARTI000006752039), et avant lui l'article 61 du
+    décret n° 46-1378, n'est pas dans la constante : son régime spécial a pris fin le
+    1er janvier 1991 (loi n° 91-73, article 17, I), le décret n° 91-489 l'a ôtée de
+    R. 711-1 le 17 mai 1991, et aucun statut de la saisie ne la route
+    (`compagnie_generale_eaux`, sans statut à l'inventaire) : son salarié se simule en
+    salarié du privé, et la règle ne peut s'y appliquer. R. 711-24, que D. 171-2 vise
+    aussi, porte au moins la chambre de commerce et d'industrie de Paris : le décret
+    n° 97-1325 qui approuve le règlement de son régime spécial vise « le code de la
+    sécurité sociale, notamment ses articles L. 711-1 et R. 711-24 » ; la constante
+    l'omet, et aucun statut ne la route (`cci_paris`). LA RATP, POINT NON TRANCHÉ, deux
+    indices contraires : cinq décrets de son régime, de 1991 à 2008 (n° 91-226,
+    n° 2004-174, n° 2005-1635, n° 2005-1639, n° 2008-637), visent R. 711-1 ; mais un visa
+    n'est pas une disposition, R. 711-1 ne la nomme à aucun numéro, et D. 412-79, de
+    1985 à aujourd'hui, la range au « d. », à part du « c. des chemins de fer d'intérêt
+    général secondaire et d'intérêt local et des tramways » (le 7° de R. 711-1) et du
+    « i. des régimes spéciaux mentionnés à l'article R. 711-24 » — une liste qui garde
+    pourtant, à sa rédaction en vigueur, « f. de la compagnie générale des eaux »,
+    fermée en 1991.
   effet: >-
     pour le militaire, l'agent de la RATP… qui déclare une activité salariée cumulée de
     1981 à 2014, le modèle sert le régime général, que la seconde lecture lui ôte : sur le
-    cas du test, 606,65 € par an au militaire non officier (vingt trimestres)
+    cas du test, 606,65 € par an au militaire non officier (vingt trimestres). L'agent de
+    la RATP du même cas (né le 15 janvier 1960, entré en 1982, parti à 62 ans, salarié
+    du privé en plus de 2000 à 2004 à 0,3 fois le salaire moyen) reçoit du régime
+    général 10 130,98 × 45,625 % × 20/167 = 553,56 € par an (taux : 160 trimestres tous
+    régimes sur 167, sept manquants, moins que les vingt trimestres jusqu'à 67 ans :
+    50 − 7 × 0,625 = 45,625 %) ; la lecture qui range la RATP sous
+    R. 711-1 les lui ôte, et le modèle liquide alors l'Arrco de l'activité sans
+    coefficient d'anticipation (261,72 € au lieu de 261,72 × 0,93 = 243,40 €) : sa
+    pension passe de 34 015,90 € à 33 480,66 €, 535,24 € de moins par an (553,56 −
+    18,32 ; moteur Python, la constante élargie en mémoire, le code inchangé). La
+    compagnie générale des eaux et la CCI de Paris : sans effet, aucun statut ne les
+    route (session H6-bis)
 - ecart: >-
     « ACTIVITÉ SALARIÉE OU ASSIMILÉE RELEVANT DU RÉGIME GÉNÉRAL » : le modèle y range
     toute activité que le routage porte au régime général cette année-là, l'artiste-auteur
@@ -365,17 +472,31 @@ approximations:
     SNCF, 0,98 pour celui des IEG, au lieu de 0,93), non relu ; la cotisation salariale
     vieillesse que la fiche de paie de l'activité prélève, dont l'assuré était dispensé ;
     le compte notionnel, que la proposition tient à part. Un relevé fait foi : ce que la
-    caisse y a reporté reste au compte, comme la lettre Cnav du 25 janvier 1988 le dit
-    d'une cotisation précomptée à tort.
+    caisse y a reporté reste au compte. La lettre Cnav du 25 janvier 1988 ne le dit que
+    de sa « Situation n°1 », la cotisation ouvrière précomptée à tort, dont les droits
+    « restent acquis à l'assuré » ; de la « Situation n°2 », un report fait sans
+    précompte, faute d'avoir vu l'exonération, elle dit : « le report effectué à tort
+    doit être annulé car il ne doit pas générer de droit à pension ». Un relevé ne dit
+    pas laquelle : le modèle garde le report dans les deux.
   effet: >-
     l'Arrco de l'agent de la SNCF du cas du test passe de 243,40 € à 261,72 €, celle de
-    l'agent des IEG à 256,48 € ; le reste non mesuré
+    l'agent des IEG à 256,48 € ; le report d'une situation n° 2 qu'un relevé porte de
+    1981 à 2014, que la caisse annulerait : non mesuré ; le reste non mesuré
 - ecart: >-
-    DEUX RÈGLES VOISINES, NON PORTÉES : D. 171-11, en vigueur, ôte toute cotisation et
-    tout droit à l'activité accessoire du fonctionnaire de l'État ou de la collectivité
-    « au service de l'Etat, d'un département, d'une commune ou d'un établissement
-    public » — le contractuel du public cumulé : ni régime général depuis 2015, ni
-    Ircantec, à toute date ; R. 741-41 du code rural, en vigueur, dispense de même
+    DEUX RÈGLES VOISINES, NON PORTÉES : D. 171-11, en vigueur, écarte D. 171-3 à
+    D. 171-9 pour les « fonctionnaires titulaires et stagiaires de l'Etat et [les]
+    agents permanents des collectivités locales ne relevant pas, au titre de leur
+    activité principale, des dispositions du livre IV du présent code, lorsqu'ils
+    exercent une activité accessoire au service de l'Etat, d'un département, d'une
+    commune ou d'un établissement public » : « aucune cotisation n'est due, au titre de
+    l'activité accessoire par l'administration, la collectivité ou l'établissement
+    employeur, ni par l'intéressé. Ce dernier n'a droit qu'aux prestations prévues par
+    le régime dont il relève du fait de son activité principale. » Le contractuel du
+    public cumulé n'aurait donc pas de régime général, depuis 2015 aussi ; l'Ircantec,
+    régime complémentaire (décret n° 70-1277, non lu), n'y est pas nommée, et qu'il
+    n'en ait rien ne se lit pas dans D. 171-11 (corrigé par la session H6-bis : la
+    fiche lui faisait dire « ni Ircantec ») ; R. 741-41 du code rural, en vigueur,
+    dispense de même
     l'activité salariée agricole accessoire de l'agent d'un régime spécial, que le modèle
     fait valider à la MSA.
   effet: >-

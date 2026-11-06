@@ -1,0 +1,33 @@
+date: "2026-11-06"
+session: "action 175, vague 11, H6-bis : les six écarts de la relecture R-H6, déclarés dans la fiche un_statut_par_annee (l'activité accessoire de l'agent d'un régime spécial)"
+consulte: >-
+  Les index LEGI (à jour au 2 novembre 2026, 20261102-213929) et JORF (à jour au 3 novembre
+  2026, 20261103-002311) de la DILA, récupérés. Dans LEGI : R. 711-1 (LEGIARTI000006752039,
+  000006752040, 000048031379, `--diff`) ; l'article 61 du décret n° 46-1378
+  (LEGIARTI000006761348) ; R. 711-24 (LEGIARTI000006752270) ; D. 412-79, ses dix-sept
+  rédactions (LEGIARTI000006736957 à 000049795072) ; D. 171-11 (LEGIARTI000006735491,
+  000030910553) ; le décret n° 97-1325 (LEGITEXT000005624982) et le décret n° 2004-174
+  (LEGITEXT000005765413), leurs visas. Dans le JORF : l'article 17 de la loi n° 91-73
+  (JORFARTI000001952341), le résumé du décret n° 91-489 (JORFTEXT000000866470), le résumé du
+  décret n° 80-475 (JORFTEXT000000696623) ; « transports parisiens » avec « R. 711-1 » ou
+  « R. 711-24 », sans borne, et les visas des décrets n° 91-226, 2005-1635, 2005-1639 et
+  2008-637. Dans la base de la Cnav, par son API : la lettre du 25 janvier 1988, entière.
+  Les séries `revalorisation_salaires.csv` (2015 au 1er janvier 2022 : 1,049) et
+  `smic_horaire.csv` (2015 : 9,61).
+trouve: >-
+  Les six écarts de R-H6 tiennent, et sont déclarés dans la fiche, sans changer le code ni
+  une valeur servie : la compagnie générale des eaux, au 9° de R. 711-1 du 21 décembre 1985
+  au 16 mai 1991, régime fermé le 1er janvier 1991, non routable (aucun statut) ; de 1981 à
+  1985, la règle ne tient qu'au résumé du décret n° 80-475, dont le champ ne renvoie pas à
+  R. 711-1 et dit « OU REDUIT » (champ `ce_qui_est_lu` de la version) ; la CCI de Paris sous
+  R. 711-24 (décret n° 97-1325), non routable ; la RATP, non tranchée — cinq décrets de son
+  régime visent R. 711-1, D. 412-79 la range à part —, à 535,24 € par an sur le cas de H6
+  (553,56 € de régime général, moins 18,32 € d'Arrco) ; l'année 2015 à droit exact,
+  48,11 € au lieu de 128,29 € ; la situation n° 2 de la lettre de 1988 (report sans
+  précompte, annulé) ; D. 171-11 cité mot pour mot, sans « ni Ircantec ».
+reste: >-
+  Le fac-similé du JO du 29 juin 1980 (décret n° 80-475), que la file des fac-similés
+  (`docs/feuille_de_route/138/2026-11-05-la-file-des-fac-similes.md`) ne porte pas encore.
+  La RATP sous D. 171-2 : à trancher par une source de la caisse ou de la Cnav. L'article 23
+  du décret du 28 octobre 1935, que R. 711-24 vise, non lu. Note :
+  docs/feuille_de_route/175/2026-11-06-h6-bis-ecarts-de-r-h6.md.
