@@ -1,0 +1,33 @@
+date: "2026-11-06"
+session: "action 158, vague 11, B7 : les dates d'effet des 42 tableaux de reclassement de textes publiés depuis le 1er juin 2004, par la clause de chaque texte ou, à défaut, le lendemain de sa publication (code civil, art. 1er)"
+consulte: >-
+  Légifrance, lu par l'outil de lecture web : le code civil, art. 1er (LEGIARTI000006419280,
+  « En vigueur depuis le 01 juin 2004 », modifié par l'ordonnance n° 2004-164 du 20 février
+  2004, art. 1er) ; les pages au JORF du n° 2012-1139 (art. 68, JORFARTI000026477172, et 69), du
+  n° 2014-71 (art. 3, 8, 14, 15), du n° 2015-363 (art. 11, 13, 14 JORFARTI000030419590, 15), les
+  tables des matières des n° 2010-982 et 2010-989, le numéro du JO des n° 2011-489 et 2006-8.
+  L'index LEGI du dépôt (Freemium_legi_global_20250713-140000, à jour au 20261102-213929) et
+  l'index JORF (Freemium_jorf_global_20250713-140000, à jour au 20261103-002311) : les 34 textes
+  des 42 tableaux, du n° 2004-1439 au n° 2019-1160, tous leurs articles au JORF et au LEGI, leur
+  jour de publication (DATE_PUBLI) et leur notice ; le n° 2023-676 (JORFTEXT000047901570 ; art. 3,
+  6, 17, 21). En recoupement, le Noyau RH du dépôt (etat/textes.csv). Aucun fac-similé n'est lu.
+trouve: >-
+  L'art. 1er du code civil n'a qu'une version depuis le 1er juin 2004 : « à la date qu'ils fixent
+  ou, à défaut, le lendemain de leur publication » ; il est cité entier à l'en-tête de
+  tableaux.csv. 34 tableaux sont datés : 13 par une clause « entre en vigueur » (dont n° 2012-761
+  et 2012-762 au 1er juin 2012, non au 11 mai, et n° 2018-648 au 1er janvier 2017, un effet
+  antérieur à la publication), 1 par titre (n° 2010-982, titre II, 1er septembre 2010), 3 par une
+  clause « prend effet » (n° 2005-939, 2005-1304, 2011-215, point non tranché, lecture de B6-bis),
+  17 du lendemain du JO (13 décrets lus en entier sans clause ; n° 2007-835 au 14 mai 2007, non au
+  13). Sept restent sans date, les deux lectures citées : n° 2005-1132, art. 18, et n° 2006-8,
+  art. 32 et 33 (« à la date de publication » : le jour du JO ou le lendemain) ; n° 2010-989,
+  art. 26 (1er septembre 2010 ou 1er janvier 2011) ; n° 2010-302, art. 9 (une date par corps).
+  Le tableau du n° 2004-1439, art. 23, est mal découpé par le lecteur (la phrase du I, les lignes
+  du II, « Au 1er janvier 2024 ») : sans date. Le chaînage passe de 19 à 25 groupes rattachés
+  (n° 2012-229, 2013-875), les tableaux déclarés faute de date de 124 à 105.
+reste: >-
+  Les 25 tableaux d'avant le 1er juin 2004 (la règle de l'époque, décret du 5 novembre 1870,
+  art. 2, attend le propriétaire) ; le lecteur des reclassements, qui joint la phrase d'un
+  paragraphe au tableau du suivant (n° 2004-1439, art. 23) ; la date de chaque corps du
+  n° 2010-302 ; le début des versions au LEGI des textes de 2005 à 2007, qui est le jour du JO ;
+  les écarts du Noyau RH (n° 2011-489, 2006-8, 2012-761, 2010-982, 2010-989).

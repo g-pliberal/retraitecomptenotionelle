@@ -51,7 +51,9 @@ CE QUE LA DONNÉE DIT, ET NE DIT PAS. Un tableau vaut à la date de son
 reclassement : celle que la phrase écrit (« sont, au 1er août 1993,
 intégrés »), sinon celle qu'un autre article du décret lui donne, lue à la main
 (``DATES_D_UN_AUTRE_ARTICLE``), ou, quand elle le date de l'entrée en vigueur du
-décret, celle que le décret fixe (``ENTREES_EN_VIGUEUR``), sinon l'entrée en vigueur
+décret, celle que le décret fixe (``ENTREES_EN_VIGUEUR``, ``ENTREES_LUES_A_LEGIFRANCE``),
+ou, s'il n'en fixe pas, le lendemain de sa publication (``LENDEMAINS_DE_PUBLICATION``,
+code civil, art. 1er, depuis le 1er juin 2004), sinon l'entrée en vigueur
 de l'article (``debut``) ; les versions suivantes d'un article qui redisent le même
 tableau ne font pas un second reclassement. L'ancienneté conservée se garde « dans la limite de la durée de
 l'échelon » : l'appliquer demande les durées d'échelon, que les statuts
@@ -346,8 +348,186 @@ ENTREES_EN_VIGUEUR = {
             "publication."),
     "2025-1327": ("2026-01-01", "LEGIARTI000053186037", "JORFTEXT000053174358", "2025-12-27",
             "Le présent décret entre en vigueur le 1 er janvier 2026."),
+    # Action 158, B7 : les textes publiés depuis le 1er juin 2004, que leur clause date
+    # (docs/feuille_de_route/158/2026-11-06-b7-dates-d-apres-juin-2004.md).
+    # B7 : la clause est dans l'article d'exécution, « prendra effet » (tests :
+    # PRISES_D_EFFET).
+    "2005-939": ("2006-01-01", "LEGIARTI000006413799", "JORFTEXT000000813276", "2005-08-06",
+            "Le ministre d'Etat, ministre de l'intérieur et de l'aménagement du "
+            "territoire, le ministre de l'économie, des finances et de l'industrie, le "
+            "garde des sceaux, ministre de la justice, le ministre de la fonction "
+            "publique et le ministre délégué au budget et à la réforme de l'Etat, "
+            "porte-parole du Gouvernement, sont chargés, chacun en ce qui le concerne, "
+            "de l'exécution du présent décret, qui prendra effet au 1er janvier 2006 et"
+            " sera publié au Journal officiel de la République française."),
+    # B7 : le tableau (art. 36) ne date qu'une condition, « à la date de publication du
+    # présent décret » ; le décret « prendra effet au 1er novembre 2005 ».
+    "2005-1304": ("2005-11-01", "LEGIARTI000006414058", "JORFTEXT000000241288", "2005-10-22",
+            "Le ministre d'Etat, ministre de l'intérieur et de l'aménagement du "
+            "territoire, le ministre de l'économie, des finances et de l'industrie, le "
+            "ministre de la fonction publique et le ministre délégué au budget et à la "
+            "réforme de l'Etat, porte-parole du Gouvernement, sont chargés, chacun en "
+            "ce qui le concerne, de l'exécution du présent décret, qui prendra effet au"
+            " 1er novembre 2005 et sera publié au Journal officiel de la République "
+            "française."),
+    # B7 : le tableau (art. 33) dit « à la date d'entrée en vigueur du présent titre » ; il
+    # est au titre II (art. 31 à 38), que le II date.
+    "2010-982": ("2010-09-01", "LEGIARTI000022751503", "JORFTEXT000022747189", "2010-08-28",
+            "I. ― Les dispositions du titre Ier entrent en vigueur le 1er septembre "
+            "2011. II. - Les dispositions du titre II entrent en vigueur le 1er "
+            "septembre 2010."),
+    "2010-1719": ("2011-01-01", "LEGIARTI000023400748", "JORFTEXT000023333539", "2010-12-31",
+            "La ministre de l'économie, des finances et de l'industrie, le ministre du "
+            "budget, des comptes publics, de la fonction publique et de la réforme de "
+            "l'Etat, porte-parole du Gouvernement, et le secrétaire d'Etat auprès du "
+            "ministre du budget, des comptes publics, de la fonction publique, et de la"
+            " réforme de l'Etat, chargé de la fonction publique sont chargés, chacun en"
+            " ce qui le concerne, de l'exécution du présent décret, qui entrera en "
+            "vigueur au 1er janvier 2011 et sera publié au Journal officiel de la "
+            "République française."),
+    "2010-1720": ("2011-01-01", "LEGIARTI000023410103", "JORFTEXT000023333639", "2010-12-31",
+            "La ministre de l'économie, des finances et de l'industrie, le ministre du "
+            "budget, des comptes publics, de la fonction publique et de la réforme de "
+            "l'Etat, porte-parole du Gouvernement, et le secrétaire d'Etat auprès du "
+            "ministre du budget, des comptes publics, de la fonction publique et de la "
+            "réforme de l'Etat, chargé de la fonction publique, sont chargés, chacun en"
+            " ce qui le concerne, de l'exécution du présent décret, qui entrera en "
+            "vigueur au 1er janvier 2011 et sera publié au Journal officiel de la "
+            "République française."),
+    # B7 : « prennent effet », quand le tableau dit l'entrée en vigueur, comme le n° 2011-1140.
+    "2011-215": ("2011-03-01", "LEGIARTI000023632829", "JORFTEXT000023631790", "2011-02-27",
+            "Les dispositions du présent décret prennent effet le premier jour du mois "
+            "suivant celui de sa publication."),
+    "2012-761": ("2012-06-01", "LEGIARTI000025855104", "JORFTEXT000025838289", "2012-05-10",
+            "Le ministre de la défense et des anciens combattants, le garde des sceaux,"
+            " ministre de la justice et des libertés, le ministre du travail, de "
+            "l'emploi et de la santé, le ministre de l'éducation nationale, de la "
+            "jeunesse et de la vie associative, la ministre du budget, des comptes "
+            "publics et de la réforme de l'Etat, porte-parole du Gouvernement, et le "
+            "ministre de la fonction publique sont chargés, chacun en ce qui le "
+            "concerne, de l'exécution du présent décret, qui sera publié au Journal "
+            "officiel de la République française et entrera en vigueur le premier jour "
+            "du mois qui suit sa publication."),
+    "2012-762": ("2012-06-01", "LEGIARTI000025855239", "JORFTEXT000025838383", "2012-05-10",
+            "Le ministre de la défense et des anciens combattants, le garde des sceaux,"
+            " ministre de la justice et des libertés, le ministre du travail, de "
+            "l'emploi et de la santé, le ministre de l'éducation nationale, de la "
+            "jeunesse et de la vie associative, la ministre du budget, des comptes "
+            "publics et de la réforme de l'Etat, porte-parole du Gouvernement, et le "
+            "ministre de la fonction publique sont chargés, chacun en ce qui le "
+            "concerne, de l'exécution du présent décret, qui sera publié au Journal "
+            "officiel de la République française et entrera en vigueur le premier jour "
+            "du mois qui suit sa publication."),
+    "2012-1002": ("2012-09-01", "LEGIARTI000026327475", "JORFTEXT000026326536", "2012-08-30",
+            "Le ministre de l'économie et des finances, le ministre du redressement "
+            "productif, la ministre de la réforme de l'Etat, de la décentralisation et "
+            "de la fonction publique et le ministre délégué auprès du ministre de "
+            "l'économie et des finances, chargé du budget, sont chargés, chacun en ce "
+            "qui le concerne, de l'exécution du présent décret, qui sera publié au "
+            "Journal officiel de la République française et entrera en vigueur le "
+            "premier jour du mois suivant sa publication."),
+    "2013-176": ("2013-03-01", "LEGIARTI000027115996", "JORFTEXT000027114846", "2013-02-28",
+            "Les dispositions du présent décret entreront en vigueur le premier jour du"
+            " mois suivant sa publication au Journal officiel de la République "
+            "française."),
+    "2013-875": ("2013-10-01", "LEGIARTI000027998176", "JORFTEXT000027996887", "2013-09-29",
+            "Les dispositions du présent décret entreront en vigueur le premier jour du"
+            " mois suivant sa publication au Journal officiel de la République "
+            "française."),
+    "2013-974": ("2013-11-01", "LEGIARTI000028140167", "JORFTEXT000028138788", "2013-10-31",
+            "Le présent décret entrera en vigueur le premier jour du mois suivant sa "
+            "publication."),
+    # B7 : l'art. 12, que la clause réserve, fixe les échelons « A compter du 1er janvier
+    # 2020 » ; le tableau est à l'art. 21.
+    "2016-2008": ("2017-01-01", "LEGIARTI000033792417", "JORFTEXT000033759014", "2016-12-31",
+            "Sous réserve des dispositions de l'article 12,le présent décret entre en "
+            "vigueur le 1er janvier 2017."),
+    # B7 : le tableau est à l'art. 7, que la clause n'excepte pas.
+    "2018-648": ("2017-01-01", "LEGIARTI000037246485", "JORFTEXT000037245707", "2018-07-25",
+            "Les dispositions du présent décret entrent en vigueur le 1er janvier 2017,"
+            " à l'exception de celles des articles 1er, 5 et 6."),
 }
-#: L'article du tableau → le numéro de son décret dans ``ENTREES_EN_VIGUEUR``.
+
+#: La règle d'entrée en vigueur d'un texte publié au Journal officiel depuis le 1er juin
+#: 2004 : code civil, art. 1er, dans sa rédaction issue de l'ordonnance n° 2004-164 du 20
+#: février 2004, art. 1er (JORF du 21 février 2004), « En vigueur depuis le 01 juin 2004 »,
+#: lu à Légifrance le 6 novembre 2026 (LEGIARTI000006419280 ; aucun des deux index du dépôt
+#: ne l'a). Ses trois alinéas, mis bout à bout (action 158, B7).
+ARTICLE_1ER_DU_CODE_CIVIL = (
+    "Les lois et, lorsqu'ils sont publiés au Journal officiel de la République française, les "
+    "actes administratifs entrent en vigueur à la date qu'ils fixent ou, à défaut, le "
+    "lendemain de leur publication. Toutefois, l'entrée en vigueur de celles de leurs "
+    "dispositions dont l'exécution nécessite des mesures d'application est reportée à la date "
+    "d'entrée en vigueur de ces mesures. En cas d'urgence, entrent en vigueur dès leur "
+    "publication les lois dont le décret de promulgation le prescrit et les actes "
+    "administratifs pour lesquels le Gouvernement l'ordonne par une disposition spéciale. Les "
+    "dispositions du présent article ne sont pas applicables aux actes individuels.")
+
+#: La clause que ni l'index LEGI ni l'index JORF n'ont (filtre thématique), lue à
+#: Légifrance le 6 novembre 2026, page de l'article au JORF (action 158, B7) : le numéro →
+#: la date, l'article au JORF, le texte signé et le jour de sa publication (index JORF), les
+#: mots. La notice du texte signé, à l'index, donne la même date.
+ENTREES_LUES_A_LEGIFRANCE = {
+    "2012-1139": ("2012-11-01", "JORFARTI000026477172", "JORFTEXT000026477051", "2012-10-11",
+                  "Les dispositions du présent décret entrent en vigueur le premier jour du "
+                  "mois suivant celui de sa publication au Journal officiel de la République "
+                  "française."),  # art. 68
+    "2015-363": ("2015-04-01", "JORFARTI000030419590", "JORFTEXT000030419563", "2015-03-31",
+                 "Le présent décret entre en vigueur le premier jour du mois qui suit sa "
+                 "publication."),  # art. 14
+}
+
+#: Le décret qui ne fixe pas son entrée en vigueur, lu en entier (aucun article ne dit
+#: quand il s'applique), dont le tableau se date de cette entrée en vigueur : le lendemain de
+#: sa publication (``ARTICLE_1ER_DU_CODE_CIVIL``) (action 158, B7). Le numéro → la date, le
+#: texte signé et le jour de sa publication, lu au JORF (DATE_PUBLI).
+LENDEMAINS_DE_PUBLICATION = {
+    "2007-835": ("2007-05-14", "JORFTEXT000000793379", "2007-05-13"),
+    "2010-647": ("2010-06-14", "JORFTEXT000022337185", "2010-06-13"),
+    "2011-489": ("2011-05-06", "JORFTEXT000023947061", "2011-05-05"),
+    "2011-744": ("2011-06-30", "JORFTEXT000024269791", "2011-06-29"),
+    "2011-1139": ("2011-09-24", "JORFTEXT000024580227", "2011-09-23"),
+    "2012-78": ("2012-01-26", "JORFTEXT000025195530", "2012-01-25"),
+    "2012-229": ("2012-02-19", "JORFTEXT000025376677", "2012-02-18"),
+    "2013-489": ("2013-06-13", "JORFTEXT000027534080", "2013-06-12"),
+    "2013-1173": ("2013-12-20", "JORFTEXT000028339653", "2013-12-19"),
+    "2014-71": ("2014-02-01", "JORFTEXT000028539091", "2014-01-31"),
+    "2015-1792": ("2015-12-31", "JORFTEXT000031733312", "2015-12-30"),
+    "2016-1177": ("2016-09-01", "JORFTEXT000033076677", "2016-08-31"),
+    "2019-1160": ("2019-11-11", "JORFTEXT000039357806", "2019-11-10"),
+}
+
+#: Le tableau que le texte ne date pas d'une seule lecture : effet reste vide (l'entrée en
+#: vigueur de l'article, au LEGI) ; l'article → les deux lectures (action 158, B7).
+NON_TRANCHES = {
+    "LEGIARTI000006413884": "n° 2005-1132, art. 18 (« A compter de la date de publication du "
+                            "présent décret ») : le jour du JO, le 10 septembre 2005, ou le "
+                            "lendemain, le 11, son entrée en vigueur (il n'en fixe pas)",
+    "LEGIARTI000006414364": "n° 2006-8, art. 32 (« à la date de publication du présent "
+                            "décret ») : le 5 janvier 2006, jour du JO, ou le 6, son entrée en "
+                            "vigueur (il n'en fixe pas)",
+    "LEGIARTI000006414365": "n° 2006-8, art. 33 : comme l'art. 32",
+    "LEGIARTI000022755950": "n° 2010-989, art. 26 (« A la date d'entrée en vigueur du présent "
+                            "décret »), au chapitre III : le 1er septembre 2010 (chapitres Ier et "
+                            "III, art. 36) ou le 1er janvier 2011 (chapitre II)",
+    "LEGIARTI000022007850": "n° 2010-302, art. 9 : « la date d'entrée en vigueur du décret "
+                            "portant inscription de leur corps » à son annexe, une date par "
+                            "corps, qu'un autre décret fixe",
+}
+
+#: Le tableau que le lecteur a mal découpé, laissé sans date (action 158, B7) : la ligne du
+#: n° 2004-1439, art. 23 (version du 2023-08-01), joint la phrase du I (« A la date de
+#: l'entrée en vigueur du décret n° 2023-676 ») et le tableau du II (« Au 1er janvier 2024,
+#: les brigadiers-chefs de classe normale, les brigadiers-chefs de classe supérieure et les
+#: majors sont reclassés ») ; le tableau du I n'est pas lu. La date du I serait le 1er août
+#: 2023 (n° 2023-676, art. 21, LEGIARTI000047905418, JO du 29 juillet 2023), celle du II le
+#: 1er janvier 2024 : ni l'une ni l'autre ne s'écrit avant que le lecteur sépare les deux.
+A_RELIRE = {
+    "LEGIARTI000047908641": "n° 2004-1439, art. 23 : la phrase du I, le tableau du II",
+}
+
+#: L'article du tableau → le numéro de son décret dans ``ENTREES_EN_VIGUEUR``,
+#: ``ENTREES_LUES_A_LEGIFRANCE`` ou ``LENDEMAINS_DE_PUBLICATION``.
 DATES_DU_DECRET = {
     "LEGIARTI000006508227": "98-809",  # art. 10
     "LEGIARTI000024477660": "2011-964",  # art. 21
@@ -411,15 +591,50 @@ DATES_DU_DECRET = {
     "LEGIARTI000052461512": "2025-1003",  # art. 7
     "LEGIARTI000053185999": "2025-1327",  # art. 31
     "LEGIARTI000053186007": "2025-1327",  # art. 35
+    # Action 158, B7.
+    "LEGIARTI000006413791": "2005-939",  # art. 20
+    "LEGIARTI000006414050": "2005-1304",  # art. 36
+    "LEGIARTI000022751573": "2010-982",  # art. 33
+    "LEGIARTI000023400750": "2010-1719",  # art. 14
+    "LEGIARTI000023410135": "2010-1720",  # art. 14
+    "LEGIARTI000023632819": "2011-215",  # art. 13
+    "LEGIARTI000025855090": "2012-761",  # art. 10
+    "LEGIARTI000025855187": "2012-762",  # art. 22
+    "LEGIARTI000026327465": "2012-1002",  # art. 8
+    "LEGIARTI000027115984": "2013-176",  # art. 27
+    "LEGIARTI000027998167": "2013-875",  # art. 10
+    "LEGIARTI000028140216": "2013-974",  # art. 23
+    "LEGIARTI000033792401": "2016-2008",  # art. 21
+    "LEGIARTI000037246483": "2018-648",  # art. 7
+    "LEGIARTI000026477976": "2012-1139",  # art. 50
+    "LEGIARTI000030420449": "2015-363",  # art. 12
+    "LEGIARTI000006264680": "2007-835",  # art. 4
+    "LEGIARTI000022338220": "2010-647",  # art. 12
+    "LEGIARTI000023947863": "2011-489",  # art. 24
+    "LEGIARTI000024272771": "2011-744",  # art. 11
+    "LEGIARTI000024581275": "2011-1139",  # art. 18
+    "LEGIARTI000024581277": "2011-1139",  # art. 19
+    "LEGIARTI000025196191": "2012-78",  # art. 11
+    "LEGIARTI000025377504": "2012-229",  # art. 18
+    "LEGIARTI000027535136": "2013-489",  # art. 23
+    "LEGIARTI000028342387": "2013-1173",  # art. 17
+    "LEGIARTI000028540018": "2014-71",  # art. 12
+    "LEGIARTI000028540020": "2014-71",  # art. 13
+    "LEGIARTI000031826959": "2015-1792",  # art. 11
+    "LEGIARTI000033078337": "2016-1177",  # art. 22
+    "LEGIARTI000039363229": "2019-1160",  # art. 5
 }
 
 
 def effet_du_tableau(article: str, intro: str) -> str:
     """La date du reclassement : celle que la phrase écrit, sinon celle qu'un autre
-    article du décret donne au tableau, ou l'entrée en vigueur que le décret fixe, sinon
-    rien (l'entrée en vigueur de l'article)."""
+    article du décret donne au tableau, ou l'entrée en vigueur que le décret fixe, ou le
+    lendemain de sa publication s'il n'en fixe pas, sinon rien (l'entrée en vigueur de
+    l'article)."""
+    numero = DATES_DU_DECRET.get(article, "")
     return (date_effet(intro) or DATES_D_UN_AUTRE_ARTICLE.get(article, ("",))[0]
-            or ENTREES_EN_VIGUEUR.get(DATES_DU_DECRET.get(article, ""), ("",))[0])
+            or (ENTREES_EN_VIGUEUR.get(numero) or ENTREES_LUES_A_LEGIFRANCE.get(numero)
+                or LENDEMAINS_DE_PUBLICATION.get(numero) or ("",))[0])
 
 
 def _sans_accents(texte: str) -> str:
@@ -786,17 +1001,32 @@ ENTETES = {
     "tableaux": "Chaque tableau de reclassement : l'article et sa version (fin incluse ; vide : "
                 "en vigueur), son rang dans l'article, effet (la date que la phrase écrit, ou "
                 "qu'un autre article du décret donne, ou, quand la phrase dit l'entrée en "
-                "vigueur du décret, celle que le décret fixe ; vide : l'entrée en vigueur de "
-                "l'article, debut), la phrase qui l'annonce et "
-                "son en-tête. Trois effets précèdent la publication de leur décret, et le texte "
+                "vigueur du décret, celle que le décret fixe, ou, s'il n'en fixe pas et qu'il "
+                "est publié depuis le 1er juin 2004, le lendemain de sa publication ; vide : "
+                "l'entrée en vigueur de l'article, debut), la phrase qui l'annonce et "
+                "son en-tête. La règle, code civil, art. 1er, dans sa rédaction issue de "
+                "l'ordonnance n° 2004-164 du 20 février 2004, en vigueur depuis le 1er juin "
+                "2004 (LEGIARTI000006419280, lu à Légifrance) : « " + ARTICLE_1ER_DU_CODE_CIVIL
+                + " » Quatre effets précèdent la publication de leur décret, et le texte "
                 "les date ainsi : n° 98-809 (1er août 1995, JO du 12 septembre 1998), n° 98-896 "
                 "(1er août 1996, JO du 9 octobre 1998), n° 2017-180 (1er janvier 2017, JO du 15 "
-                "février 2017) ; la donnée date ce que le texte date, sans examiner la validité "
+                "février 2017), n° 2018-648 (1er janvier 2017, JO du 25 juillet 2018) ; la "
+                "donnée date ce que le texte date, sans examiner la validité "
                 "d'un effet antérieur à la publication. Pour le n° 98-896, art. 8, la donnée ne "
                 "porte que la date du tableau : l'élargissement du n° 2002-378 (JO du 21 mars "
                 "2002), qui ôte « en fonctions à la date du présent décret », n'est pas dans la "
                 "donnée ; pour l'agent que cette condition excluait, deux lectures, le 1er août "
-                "1996 ou l'entrée en vigueur du n° 2002-378, et le texte n'en écrit aucune.",
+                "1996 ou l'entrée en vigueur du n° 2002-378, et le texte n'en écrit aucune. "
+                "Sept tableaux, que le texte ne date pas d'une seule lecture, gardent effet "
+                "vide : n° 2005-1132, art. 18, et n° 2006-8, art. 32 et 33 (« à la date de "
+                "publication du présent décret » : le jour du JO, ou le lendemain, l'entrée en "
+                "vigueur de ces décrets, qui n'en fixent pas) ; n° 2010-989, art. 26 (« la date "
+                "d'entrée en vigueur du présent décret », dont les chapitres Ier et III entrent "
+                "en vigueur le 1er septembre 2010, le chapitre II le 1er janvier 2011) ; n° "
+                "2010-302, art. 9 (une date par corps, que fixe le décret qui l'inscrit à son "
+                "annexe). Le tableau du n° 2004-1439, art. 23 (version du 2023-08-01), joint "
+                "la phrase du I et le tableau du II (« Au 1er janvier 2024 ») : effet vide, à "
+                "relire.",
     "lignes": "Chaque ligne d'un tableau : groupe (le libellé écrit avant elle : grade "
               "d'origine puis grade d'accueil, que le texte aplati colle), l'échelon d'origine, "
               "la condition d'ancienneté qui le partage, l'échelon nouveau, l'ancienneté "

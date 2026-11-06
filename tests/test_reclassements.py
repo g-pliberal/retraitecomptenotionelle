@@ -661,6 +661,105 @@ DATES_DU_DECRET = {
     # janvier 2026. » JO du 27 décembre 2025 ; la date est écrite : 1er janvier 2026.
     ("LEGIARTI000053185999", "1"): "2026-01-01",  # art. 31
     ("LEGIARTI000053186007", "1"): "2026-01-01",  # art. 35
+    # Action 158, B7 : les tableaux de textes publiés depuis le 1er juin 2004
+    # (docs/feuille_de_route/158/2026-11-06-b7-dates-d-apres-juin-2004.md). La règle :
+    # code civil, art. 1er (rec.ARTICLE_1ER_DU_CODE_CIVIL) : « à la date qu'ils fixent
+    # ou, à défaut, le lendemain de leur publication ».
+    # — La date que le décret fixe, sa clause lue à l'index LEGI et au JORF :
+    # n° 2005-939, art. 28 : « […] de l'exécution du présent décret, qui prendra effet au
+    # 1er janvier 2006 […] » (JO du 6 août 2005) ; voir PRISES_D_EFFET.
+    ("LEGIARTI000006413791", "1"): "2006-01-01",  # art. 20
+    # n° 2005-1304, art. 43 : « […] qui prendra effet au 1er novembre 2005 […] » (JO du
+    # 22 octobre 2005) ; le tableau n'écrit pas la date du reclassement (« qui se
+    # trouvent, à la date de publication du présent décret, dans l'une des positions »).
+    ("LEGIARTI000006414050", "1"): "2005-11-01",  # art. 36
+    # n° 2010-982, art. 39 : « II. - Les dispositions du titre II entrent en vigueur le
+    # 1er septembre 2010. » ; l'art. 33 est au titre II (art. 31 à 38, Légifrance) et dit
+    # « à la date d'entrée en vigueur du présent titre ».
+    ("LEGIARTI000022751573", "1"): "2010-09-01",  # art. 33
+    # n° 2010-1719, art. 23, et n° 2010-1720, art. 27 : « […] de l'exécution du présent
+    # décret, qui entrera en vigueur au 1er janvier 2011 […] ».
+    ("LEGIARTI000023400750", "1"): "2011-01-01",  # n° 2010-1719, art. 14
+    ("LEGIARTI000023410135", "1"): "2011-01-01",  # n° 2010-1720, art. 14
+    # n° 2011-215, art. 21 : « Les dispositions du présent décret prennent effet le
+    # premier jour du mois suivant celui de sa publication. » JO du 27 février 2011 :
+    # le mois qui suit février est mars → 1er mars 2011 ; voir PRISES_D_EFFET.
+    ("LEGIARTI000023632819", "1"): "2011-03-01",  # art. 13
+    # n° 2012-761, art. 17, et n° 2012-762, art. 37 : « […] et entrera en vigueur le
+    # premier jour du mois qui suit sa publication. » JO du 10 mai 2012 → 1er juin 2012
+    # (le LEGI ouvre les deux versions le 2012-05-11).
+    ("LEGIARTI000025855090", "1"): "2012-06-01",  # n° 2012-761, art. 10
+    ("LEGIARTI000025855187", "1"): "2012-06-01",  # n° 2012-762, art. 22
+    # n° 2012-1002, art. 14 : « […] et entrera en vigueur le premier jour du mois suivant
+    # sa publication. » JO du 30 août 2012 → 1er septembre 2012.
+    ("LEGIARTI000026327465", "1"): "2012-09-01",  # art. 8
+    # n° 2013-176, art. 39, et n° 2013-875, art. 18 : « Les dispositions du présent décret
+    # entreront en vigueur le premier jour du mois suivant sa publication au Journal
+    # officiel de la République française. » JO du 28 février 2013 → 1er mars 2013 ; JO
+    # du 29 septembre 2013 → 1er octobre 2013.
+    ("LEGIARTI000027115984", "1"): "2013-03-01",  # n° 2013-176, art. 27
+    ("LEGIARTI000027998167", "1"): "2013-10-01",  # n° 2013-875, art. 10
+    # n° 2013-974, art. 32 : « Le présent décret entrera en vigueur le premier jour du mois
+    # suivant sa publication. » JO du 31 octobre 2013 → 1er novembre 2013.
+    ("LEGIARTI000028140216", "1"): "2013-11-01",  # art. 23
+    # n° 2016-2008, art. 29 : « Sous réserve des dispositions de l'article 12,le présent
+    # décret entre en vigueur le 1er janvier 2017. » ; l'art. 12 n'est pas l'art. 21.
+    ("LEGIARTI000033792401", "1"): "2017-01-01",  # art. 21
+    # n° 2018-648, art. 8 : « Les dispositions du présent décret entrent en vigueur le 1er
+    # janvier 2017, à l'exception de celles des articles 1er, 5 et 6. » ; l'art. 7 n'en est
+    # pas (JO du 25 juillet 2018 : un effet antérieur à la publication).
+    ("LEGIARTI000037246483", "1"): "2017-01-01",  # art. 7
+    # — La clause lue à Légifrance (article absent des deux index) :
+    # n° 2012-1139, art. 68 : « Les dispositions du présent décret entrent en vigueur le
+    # premier jour du mois suivant celui de sa publication au Journal officiel de la
+    # République française. » JO du 11 octobre 2012 → 1er novembre 2012.
+    ("LEGIARTI000026477976", "1"): "2012-11-01",  # art. 50
+    # n° 2015-363, art. 14 : « Le présent décret entre en vigueur le premier jour du mois
+    # qui suit sa publication. » JO du 31 mars 2015 → 1er avril 2015.
+    ("LEGIARTI000030420449", "1"): "2015-04-01",  # art. 12
+    ("LEGIARTI000030420449", "2"): "2015-04-01",
+    # — Aucune clause : le lendemain du JO (date lue au JORF, champ DATE_PUBLI).
+    ("LEGIARTI000006264680", "1"): "2007-05-14",  # n° 2007-835, art. 4 ; JO du 13 mai 2007
+    ("LEGIARTI000022338220", "1"): "2010-06-14",  # n° 2010-647, art. 12 ; JO du 13 juin 2010
+    ("LEGIARTI000023947863", "1"): "2011-05-06",  # n° 2011-489, art. 24 ; JO du 5 mai 2011
+    ("LEGIARTI000024272771", "1"): "2011-06-30",  # n° 2011-744, art. 11 ; JO du 29 juin 2011
+    ("LEGIARTI000024272771", "2"): "2011-06-30",
+    ("LEGIARTI000024581275", "1"): "2011-09-24",  # n° 2011-1139, art. 18 ; JO du 23 sept. 2011
+    ("LEGIARTI000024581277", "1"): "2011-09-24",  # n° 2011-1139, art. 19
+    ("LEGIARTI000025196191", "1"): "2012-01-26",  # n° 2012-78, art. 11 ; JO du 25 janv. 2012
+    ("LEGIARTI000025196191", "2"): "2012-01-26",
+    ("LEGIARTI000025377504", "1"): "2012-02-19",  # n° 2012-229, art. 18 ; JO du 18 févr. 2012
+    ("LEGIARTI000027535136", "1"): "2013-06-13",  # n° 2013-489, art. 23 ; JO du 12 juin 2013
+    ("LEGIARTI000028342387", "1"): "2013-12-20",  # n° 2013-1173, art. 17 ; JO du 19 déc. 2013
+    ("LEGIARTI000028540018", "1"): "2014-02-01",  # n° 2014-71, art. 12 ; JO du 31 janv. 2014
+    ("LEGIARTI000028540020", "1"): "2014-02-01",  # n° 2014-71, art. 13
+    ("LEGIARTI000031826959", "1"): "2015-12-31",  # n° 2015-1792, art. 11 ; JO du 30 déc. 2015
+    ("LEGIARTI000033078337", "1"): "2016-09-01",  # n° 2016-1177, art. 22 ; JO du 31 août 2016
+    ("LEGIARTI000039363229", "1"): "2019-11-11",  # n° 2019-1160, art. 5 ; JO du 10 nov. 2019
+}
+
+#: Action 158, B7 : les tableaux que le texte ne date pas d'une seule lecture ; effet
+#: reste vide, et la note de B7 cite les deux lectures. « A compter de la date de
+#: publication du présent décret » (n° 2005-1132, art. 18, JO du 10 septembre 2005) et « à
+#: la date de publication du présent décret » (n° 2006-8, art. 32 et 33, JO du 5 janvier
+#: 2006), quand aucun de ces décrets ne fixe son entrée en vigueur : le jour du JO, ou le
+#: lendemain. n° 2010-989, art. 26 (« A la date d'entrée en vigueur du présent décret »),
+#: au chapitre III, quand l'art. 36 date les chapitres Ier et III du 1er septembre 2010 et
+#: le chapitre II du 1er janvier 2011. n° 2010-302, art. 9 : « A la date d'entrée en
+#: vigueur du décret portant inscription de leur corps au sein de l'annexe du présent
+#: décret […] », une date par corps, qu'un autre décret fixe.
+#: B7 : la ligne de tableaux.csv du n° 2004-1439, art. 23 (version du 2023-08-01), joint la
+#: phrase du I (« A la date de l'entrée en vigueur du décret n° 2023-676 ») au tableau du II
+#: (« II.-Au 1er janvier 2024, les brigadiers-chefs de classe normale, les brigadiers-chefs
+#: de classe supérieure et les majors sont reclassés ») : effet reste vide, à relire.
+A_RELIRE = {("LEGIARTI000047908641", "1")}
+
+NON_TRANCHES = {
+    ("LEGIARTI000006413884", "1"), ("LEGIARTI000006413884", "2"),
+    ("LEGIARTI000006413884", "3"),                       # n° 2005-1132, art. 18
+    ("LEGIARTI000006414364", "1"), ("LEGIARTI000006414365", "1"),  # n° 2006-8, art. 32, 33
+    ("LEGIARTI000022755950", "1"),                       # n° 2010-989, art. 26
+    ("LEGIARTI000022007850", "1"),                       # n° 2010-302, art. 9
 }
 
 
@@ -677,11 +776,129 @@ def test_un_tableau_date_de_l_entree_en_vigueur_de_son_decret_prend_la_date_qu_i
     assert set(rec.DATES_DU_DECRET) == {article for article, _ in DATES_DU_DECRET}
 
 
+def test_un_tableau_que_le_texte_ne_date_pas_d_une_seule_lecture_reste_sans_effet():
+    """Action 158, B7 : les sept tableaux de NON_TRANCHES gardent effet vide, et le script
+    les nomme, avec leurs deux lectures."""
+    tableaux = {(t["article"], t["tableau"]): t for t in _lire("tableaux")}
+    assert {cle: tableaux[cle]["effet"] for cle in NON_TRANCHES} == dict.fromkeys(NON_TRANCHES, "")
+    assert set(rec.NON_TRANCHES) == {article for article, _ in NON_TRANCHES}
+    assert not set(rec.NON_TRANCHES) & set(rec.DATES_DU_DECRET)
+    # Le tableau mal découpé : la phrase dit le I, les lignes sont celles du II.
+    assert {cle: tableaux[cle]["effet"] for cle in A_RELIRE} == dict.fromkeys(A_RELIRE, "")
+    assert set(rec.A_RELIRE) == {article for article, _ in A_RELIRE}
+    assert not set(rec.A_RELIRE) & set(rec.DATES_DU_DECRET)
+    intro = tableaux[("LEGIARTI000047908641", "1")]["intro"]
+    assert intro.startswith("I.-A la date de l'entrée en vigueur du décret n° 2023-676")
+    assert ("II.-Au 1er janvier 2024, les brigadiers-chefs de classe normale, les "
+            "brigadiers-chefs de classe supérieure et les majors sont reclassés") in intro
+    groupes = {l["groupe"] for l in _lire("lignes") if l["article"] == "LEGIARTI000047908641"}
+    assert "Major de police Major de police" in groupes
+
+
+#: Code civil, art. 1er, dans sa rédaction issue de l'ordonnance n° 2004-164 du 20 février
+#: 2004, art. 1er (JORF du 21 février 2004), « En vigueur depuis le 01 juin 2004 » : lu à
+#: Légifrance le 6 novembre 2026 (LEGIARTI000006419280 ; l'article n'est dans aucun des deux
+#: index du dépôt, filtrés sur le champ social).
+ARTICLE_1ER = ("Les lois et, lorsqu'ils sont publiés au Journal officiel de la République "
+               "française, les actes administratifs entrent en vigueur à la date qu'ils fixent "
+               "ou, à défaut, le lendemain de leur publication. Toutefois, l'entrée en vigueur "
+               "de celles de leurs dispositions dont l'exécution nécessite des mesures "
+               "d'application est reportée à la date d'entrée en vigueur de ces mesures. "
+               "En cas d'urgence, entrent en vigueur dès leur publication les lois dont le "
+               "décret de promulgation le prescrit et les actes administratifs pour lesquels le "
+               "Gouvernement l'ordonne par une disposition spéciale. "
+               "Les dispositions du présent article ne sont pas applicables aux actes "
+               "individuels.")
+
+
+def test_l_entete_cite_l_article_1er_du_code_civil_et_les_tableaux_non_tranches():
+    """Action 158, B7 : la règle d'entrée en vigueur d'un texte publié depuis le 1er juin
+    2004, citée entière, une fois, à l'en-tête de tableaux.csv ; et les tableaux que le
+    texte ne date pas d'une seule lecture."""
+    assert rec.ARTICLE_1ER_DU_CODE_CIVIL == ARTICLE_1ER
+    chemin = RACINE / "data" / "reference" / "grilles" / "reclassements" / "tableaux.csv"
+    entete = chemin.read_text(encoding="utf-8").split("\n")[0]
+    assert entete.count(ARTICLE_1ER) == 1
+    for dit in ("code civil, art. 1er", "ordonnance n° 2004-164", "1er juin 2004",
+                "LEGIARTI000006419280", "n° 2005-1132, art. 18", "n° 2006-8, art. 32 et 33",
+                "n° 2010-989, art. 26", "n° 2010-302, art. 9", "effet vide",
+                "n° 2004-1439, art. 23 (version du 2023-08-01)", "à relire"):
+        assert dit in entete, dit
+
+
 #: Les décrets dont la clause dit « prend effet à compter du 1er jour du mois qui suit sa
 #: publication » quand leurs tableaux disent « la date d'entrée en vigueur du présent
 #: décret » : n° 2011-1140, art. 35 (LEGIARTI000024581626), art. 21 et 22 ; les art. 25 et 26
 #: disent « la date de publication du présent décret », deux dates que le décret distingue.
-PRISES_D_EFFET = {"2011-1140"}
+PRISES_D_EFFET = {"2011-1140",
+                  # B7 : n° 2011-215, art. 21 (« prennent effet le premier jour du mois
+                  # suivant celui de sa publication »), art. 13 ; n° 2005-939, art. 28
+                  # (« qui prendra effet au 1er janvier 2006 »), art. 20 ; n° 2005-1304,
+                  # art. 43 (« qui prendra effet au 1er novembre 2005 »), art. 36, dont la
+                  # phrase n'écrit pas la date du reclassement (SANS_DATE_ECRITE).
+                  "2011-215", "2005-939", "2005-1304"}
+
+#: Le tableau dont la phrase n'écrit pas la date du reclassement, seulement celle d'une
+#: condition (B7) : il vaut quand son décret s'applique, à la date que ce décret fixe.
+SANS_DATE_ECRITE = {"LEGIARTI000006414050": "qui se trouvent, à la date de publication du "
+                                            "présent décret, dans l'une des positions"}
+
+#: L'article d'un décret publié au JO que l'index n'a pas (filtre thématique), lu à
+#: Légifrance le 6 novembre 2026 (B7) : n° 2014-71, art. 3 (lu sur la page du texte au
+#: JORF, JORFTEXT000028539091), 8 (page de l'article, JORFARTI000028539120), 14
+#: (JORFARTI000028539137) et 15 (JORFARTI000028539142).
+LUS_A_LEGIFRANCE = {
+    ("2014-71", "3"): "A l'article 3-1 du décret n° 2006-227 du 24 février 2006 susvisé, les "
+                      "mots : « du troisième alinéa de l'article 1er, du II et du III de "
+                      "l'article 2 » sont remplacés par les mots : « du troisième alinéa du II "
+                      "de l'article 1er, du III de l'article 2 ».",
+    ("2014-71", "8"): "Les fonctionnaires inscrits sur un tableau d'avancement établi au titre "
+                      "de l'année 2014, promus dans l'un des grades d'avancement d'un corps régi "
+                      "par le décret n° 2006-227 du 24 février 2006 susvisé, postérieurement à la "
+                      "date d'entrée en vigueur du présent décret, sont classés dans le grade "
+                      "d'avancement en tenant compte de la situation qui aurait été la leur "
+                      "s'ils avaient poursuivi, jusqu'à la date de leur promotion, leur carrière "
+                      "et avaient été classés dans ce grade selon les dispositions applicables "
+                      "avant l'entrée en vigueur du présent décret, puis reclassés à la date de "
+                      "leur promotion dans les conditions fixées par les tableaux correspondant "
+                      "à leur grade, figurant sous l'un des articles 5, 6 ou 7 du présent "
+                      "décret.",
+    ("2014-71", "14"): "I. ― Les agents inscrits sur un tableau d'avancement établis au titre de "
+                       "l'année 2014, promus dans l'un des grades d'avancement d'un corps régi "
+                       "par le décret du 14 juin 2011 susvisé postérieurement à la date "
+                       "d'entrée en vigueur du présent décret, sont classés dans le grade "
+                       "d'avancement en tenant compte de la situation qui aurait été la leur "
+                       "s'ils n'avaient cessé de relever, jusqu'à la date de leur promotion, "
+                       "des dispositions du chapitre IV du décret du 14 juin 2011 précité, dans "
+                       "sa rédaction antérieure au présent décret, puis s'ils avaient été "
+                       "reclassés, à la date de leur promotion, en application des dispositions "
+                       "des articles 12 et 13 du présent décret. II. ― Les lauréats des examens "
+                       "professionnels d'accès aux grades d'avancement des corps régis par le "
+                       "décret du 14 juin 2011 susvisé, dont les arrêtés d'ouverture ont été "
+                       "publiés avant la date d'entrée en vigueur du présent décret, sont "
+                       "classés dans le grade d'avancement en tenant compte de la situation qui "
+                       "aurait été la leur s'ils n'avaient cessé de relever, jusqu'à la date de "
+                       "leur promotion, des dispositions du chapitre IV du décret du 14 juin "
+                       "2011 précité, dans sa rédaction antérieure au présent décret, puis s'ils "
+                       "avaient été reclassés, à la date de leur promotion, en application des "
+                       "dispositions des articles 12 et 13.",
+    ("2014-71", "15"): "Le ministre de l'économie et des finances, la ministre des affaires "
+                       "sociales et de la santé, la ministre de la réforme de l'Etat, de la "
+                       "décentralisation et de la fonction publique et le ministre délégué "
+                       "auprès du ministre de l'économie et des finances, chargé du budget, sont "
+                       "chargés, chacun en ce qui le concerne, de l'exécution du présent décret, "
+                       "qui sera publié au Journal officiel de la République française.",
+}
+
+#: Une clause qui dit quand un texte, ou une partie, s'applique : le verbe conjugué
+#: (non « la date d'entrée en vigueur »), après le texte ou ses dispositions ; l'effet
+#: rétroactif ; l'urgence (code civil, art. 1er, deuxième alinéa) (B7).
+CLAUSE = re.compile(
+    r"(?:pr[ée]sent\s+(?:d[ée]cret|titre|chapitre)|dispositions|articles?\s+\d)[^.]{0,160}?"
+    r"\b(?:entr(?:e|ent|era|eront)\s+en\s+vigueur|pren(?:d|nent|dra|dront)\s+effet"
+    r"|produi\w*\s+(?:leurs?\s+|ses\s+)?effets?"
+    r"|(?:sont|est|seront|sera)\s+applicables?\s+(?:[àa]\s+compter|[àa]\s+partir|au\b|le\b))"
+    r"|r[ée]troacti|\burgence\b", re.IGNORECASE)
 
 def test_l_entete_dit_les_effets_anterieurs_a_la_publication_et_l_elargissement_de_2002():
     """Relecture R-B7, écarts 4 et 6. Trois des dates que B6 donne précèdent la publication
@@ -693,14 +910,22 @@ def test_l_entete_dit_les_effets_anterieurs_a_la_publication_et_l_elargissement_
     n° 2002-378 (JO du 21 mars 2002, JORFTEXT000000586605) n'est pas dans la donnée."""
     anterieurs = {numero for numero, (jour, _, _, publication, _) in rec.ENTREES_EN_VIGUEUR.items()
                   if jour < publication}
-    assert anterieurs == {"98-809", "2017-180"}
+    # B7 : n° 2018-648, art. 8 (« entrent en vigueur le 1er janvier 2017, à l'exception de
+    # celles des articles 1er, 5 et 6 »), JO du 25 juillet 2018 (JORFTEXT000037245707).
+    assert anterieurs == {"98-809", "2017-180", "2018-648"}
+    assert all(jour > publication for jour, _, _, publication, _
+               in rec.ENTREES_LUES_A_LEGIFRANCE.values())
+    assert all(jour > publication for jour, _, publication
+               in rec.LENDEMAINS_DE_PUBLICATION.values())
     assert rec.DATES_D_UN_AUTRE_ARTICLE["LEGIARTI000006508629"][0] < "1998-10-09"
     chemin = RACINE / "data" / "reference" / "grilles" / "reclassements" / "tableaux.csv"
     entete = chemin.read_text(encoding="utf-8").split("\n")[0]
     assert entete == f"# {rec.ENTETES['tableaux']}"
-    for dit in ("précèdent la publication", "n° 98-809 (1er août 1995, JO du 12 septembre 1998)",
+    for dit in ("Quatre effets précèdent la publication",
+                "n° 98-809 (1er août 1995, JO du 12 septembre 1998)",
                 "n° 98-896 (1er août 1996, JO du 9 octobre 1998)",
                 "n° 2017-180 (1er janvier 2017, JO du 15 février 2017)",
+                "n° 2018-648 (1er janvier 2017, JO du 25 juillet 2018)",
                 "« en fonctions à la date du présent décret »",
                 "n° 2002-378 (JO du 21 mars 2002)", "pas dans la donnée"):
         assert dit in entete, dit
@@ -716,9 +941,11 @@ def _plat(texte: str) -> str:
 
 def _est_l_article(citation: str, texte: str, jorf: bool = False) -> bool:
     """La citation de la clause est l'article entier (espaces normalisés) ; au JORF, avec
-    « Art. 12. - » devant (relecture R-B7, écart 1)."""
+    « Art. 12. - » devant (relecture R-B7, écart 1), ou la formule de signature après
+    (« Fait le 30 décembre 2010. », n° 2010-1719 et 2010-1720, B7)."""
     devant = r"(?:Art\. \S+ - )?" if jorf else ""
-    return re.fullmatch(devant + re.escape(_plat(citation)), _plat(texte)) is not None
+    apres = r"(?: Fait le (?:1er|\d{1,2}) \w+ \d{4}\.)?" if jorf else ""
+    return re.fullmatch(devant + re.escape(_plat(citation)) + apres, _plat(texte)) is not None
 
 
 def _est_de_phrases_entieres(citation: str, texte: str) -> bool:
@@ -763,6 +990,13 @@ def test_la_garde_des_citations_refuse_une_citation_tronquee():
                    entier.replace("Les dispositions du ", "")):  # sans son début
         assert not _est_l_article(coupee, entier), coupee
         assert not _est_l_article(coupee, "Art. 12. - " + entier, jorf=True), coupee
+    # B7 : au JORF seulement, la formule de signature peut suivre l'article ; elle ne
+    # couvre pas une citation coupée.
+    signe = entier + " Fait le 30 décembre 2010."
+    assert _est_l_article(entier, signe, jorf=True)
+    assert not _est_l_article(entier, signe)
+    assert not _est_l_article(premiere, signe, jorf=True)
+    assert not _est_l_article(entier, entier + " Fait à Paris.", jorf=True)
     clause = "Le présent décret prend effet au 1er août 1995, à l'exception des articles 3 et 4."
     assert _est_l_article(clause, clause)
     assert _est_l_article(clause, "Art. 12. - " + clause, jorf=True)
@@ -820,28 +1054,168 @@ def test_chaque_date_lue_a_la_main_est_citee_mot_pour_mot_dans_son_texte():
             assert jour == date(p.year + (p.month == 12), p.month % 12 + 1, 1).isoformat(), numero
         else:
             assert jour in _dates_ecrites(citation), numero
+    def seule_clause(numero: str, titre: str, clause: str) -> list[str]:
+        """Les autres articles du décret, au LEGI et au JORF, qui disent quand il s'applique
+        (relecture R-B7, écart 2 ; B7 : le JORF aussi, et le verbe à tout temps). Au LEGI, les
+        versions ouvertes au plus tard à la date retenue : les suivantes viennent d'autres
+        décrets, dont le LEGI note la date (« Conformément à l'article 12 du décret n° 2023-527
+        du 29 juin 2023, ces dispositions entrent en vigueur le 1er juillet 2023 »)."""
+        jour, _, _, publication, citation = rec.ENTREES_EN_VIGUEUR[numero]
+        autres = [i for (i, t) in legi.execute(
+            "select id, texte from doc where nature like 'Article%' and titre = ? and date <= ?",
+            (titre, jour)) if i != clause and CLAUSE.search(_plat(t))]
+        autres += [i for (i, t) in jorf.execute(
+            "select id, texte from doc where nature like 'Article%' and date = ? and titre like ?",
+            (publication, f"%{numero} %"))
+            if not _est_l_article(citation, t, jorf=True) and CLAUSE.search(_plat(t))]
+        return autres
+
     for tableau, numero in rec.DATES_DU_DECRET.items():
         titre, texte = article(tableau)
+        if numero in rec.LENDEMAINS_DE_PUBLICATION or numero in rec.ENTREES_LUES_A_LEGIFRANCE:
+            # Le texte au JORF et l'absence de clause : test_un_decret_sans_clause_… et
+            # test_une_clause_lue_a_legifrance_… ; ici, la phrase du tableau.
+            assert re.match(rf"D[ée]cret n\s*°\s*{re.escape(numero)} du ", titre), tableau
+            assert "date d'entrée en vigueur du présent décret" in texte or (
+                "date de publication du présent décret" in texte
+                and "en fonctions à la date de publication du présent décret" in texte), tableau
+            continue
         citation = rec.ENTREES_EN_VIGUEUR[numero][4]
         assert titre == article(rec.ENTREES_EN_VIGUEUR[numero][1])[0], tableau
         if "date d'effet du présent décret" in texte:
             assert "prend effet" in citation, tableau
+        elif "date d'entrée en vigueur du présent titre" in texte:
+            # B7 : n° 2010-982, art. 33, au titre II (art. 31 à 38, table des matières du
+            # texte au JORF, Légifrance) ; la clause date chaque titre.
+            assert numero == "2010-982" and tableau == "LEGIARTI000022751573", tableau
+            assert ("Les dispositions du titre II entrent en vigueur le 1er septembre 2010."
+                    in citation), tableau
+        elif tableau in SANS_DATE_ECRITE:
+            # La phrase ne date qu'une condition ; la seule clause du décret le date (B7).
+            assert SANS_DATE_ECRITE[tableau] in texte, tableau
+            assert numero in PRISES_D_EFFET and re.search(r"pren\w* effet", citation), tableau
+            autres = seule_clause(numero, titre, rec.ENTREES_EN_VIGUEUR[numero][1])
+            assert not autres, (tableau, autres)
         else:
             assert "date d'entrée en vigueur du présent décret" in texte, tableau
             if numero in PRISES_D_EFFET:
                 # Le tableau dit l'entrée en vigueur, la clause « prend effet » : l'équivalence
                 # ne vaut que si cette clause est la seule du décret qui dise quand il
                 # s'applique (relecture R-B7, écart 2).
-                assert "prend effet" in citation, tableau
-                clause = rec.ENTREES_EN_VIGUEUR[numero][1]
-                autres = [i for (i, t) in legi.execute(
-                    "select id, texte from doc where nature like 'Article%' and titre = ?",
-                    (titre,)) if i != clause and re.search(
-                        r"entre(?:nt)? en vigueur|prend(?:nent)? effet|produi\w+ effet"
-                        r"|r[ée]troactiv", t, re.IGNORECASE)]
+                assert re.search(r"pren\w* effet", citation), tableau
+                autres = seule_clause(numero, titre, rec.ENTREES_EN_VIGUEUR[numero][1])
                 assert not autres, (tableau, autres)
             else:
                 assert "en vigueur" in citation, tableau
+
+
+#: Les décrets sans clause d'entrée en vigueur (B7) : le lendemain du JO (code civil,
+#: art. 1er). Le jour du JO est lu au JORF (DATE_PUBLI du texte signé) ; calcul à la main.
+LENDEMAINS = {
+    "2007-835": ("2007-05-14", "2007-05-13"), "2010-647": ("2010-06-14", "2010-06-13"),
+    "2011-489": ("2011-05-06", "2011-05-05"), "2011-744": ("2011-06-30", "2011-06-29"),
+    "2011-1139": ("2011-09-24", "2011-09-23"), "2012-78": ("2012-01-26", "2012-01-25"),
+    "2012-229": ("2012-02-19", "2012-02-18"), "2013-489": ("2013-06-13", "2013-06-12"),
+    "2013-1173": ("2013-12-20", "2013-12-19"), "2014-71": ("2014-02-01", "2014-01-31"),
+    "2015-1792": ("2015-12-31", "2015-12-30"), "2016-1177": ("2016-09-01", "2016-08-31"),
+    "2019-1160": ("2019-11-11", "2019-11-10"),
+}
+
+
+@pytest.mark.skipif(not (INDEX_LEGI.exists() and INDEX_JORF.exists()),
+                    reason="index DILA absent : python scripts/fetch/dila_index.py legi|jorf --recuperer")
+def test_un_decret_sans_clause_entre_en_vigueur_le_lendemain_de_sa_publication():
+    """Action 158, B7. Chaque décret de LENDEMAINS_DE_PUBLICATION est lu en entier : tous ses
+    articles, du 1er à celui qui le charge d'exécution, au JORF (à l'index, ou à Légifrance
+    pour ceux que l'index n'a pas, LUS_A_LEGIFRANCE), et ceux du LEGI ; aucun ne dit quand il
+    s'applique (CLAUSE). Il entre donc en vigueur le lendemain de sa publication."""
+    legi = sqlite3.connect(f"file:{INDEX_LEGI}?mode=ro", uri=True)
+    jorf = sqlite3.connect(f"file:{INDEX_JORF}?mode=ro", uri=True)
+    assert {n: (j, p) for n, (j, _, p) in rec.LENDEMAINS_DE_PUBLICATION.items()} == LENDEMAINS
+    for numero, (jour, jorftexte, publication) in rec.LENDEMAINS_DE_PUBLICATION.items():
+        p = date.fromisoformat(publication)
+        assert jour == date.fromordinal(p.toordinal() + 1).isoformat(), numero
+        signe = jorf.execute("select date, titre from doc where id = ?", (jorftexte,)).fetchone()
+        assert signe and signe[0] == publication, numero
+        assert re.match(rf"D[ée]cret n\s*°\s*{re.escape(numero)} du ", signe[1]), numero
+        articles = {(n or "").replace("er", ""): _plat(t) for n, t in jorf.execute(
+            "select num, texte from doc where nature like 'Article%' and date = ? and titre like ?",
+            (publication, f"%{numero} %"))}
+        articles.update({n: _plat(t) for (d, n), t in LUS_A_LEGIFRANCE.items() if d == numero})
+        dernier = max(int(n) for n in articles)
+        assert set(articles) == {str(k) for k in range(1, dernier + 1)}, numero
+        # « de l'exécution du présent, qui sera publié » : le n° 2013-489 au JORF
+        # (JORFARTI000027534187), où le mot « décret » manque.
+        assert re.search(r"chargés?,? chacun en ce qui le concerne,? de l'exécution du présent"
+                         r"(?: décret)?,", articles[str(dernier)]), numero
+        for n, texte in articles.items():
+            assert not CLAUSE.search(texte), (numero, n)
+        titres = {t for (t,) in legi.execute(
+            "select distinct titre from doc where nature like 'Article%' and id in "
+            f"({','.join('?' * len(rec.DATES_DU_DECRET))})", list(rec.DATES_DU_DECRET))
+            if re.match(rf"D[ée]cret n\s*°\s*{re.escape(numero)} du ", t)}
+        assert len(titres) == 1, numero
+        # Au LEGI, les versions ouvertes au plus tard le lendemain (voir seule_clause).
+        for i, texte in legi.execute("select id, texte from doc where nature like 'Article%' "
+                                     "and titre = ? and date <= ?", (titres.pop(), jour)):
+            assert not CLAUSE.search(_plat(texte)), (numero, i)
+
+
+def test_la_clause_reconnait_ce_qui_date_un_texte_et_non_le_reste():
+    """B7 : CLAUSE trouve chaque clause relevée (citations d'ENTREES_EN_VIGUEUR, de
+    DATES_D_UN_AUTRE_ARTICLE, d'ENTREES_LUES_A_LEGIFRANCE), et ne prend ni « la date d'entrée
+    en vigueur du présent décret », ni la titularisation qui « prend effet » (n° 2016-1177,
+    art. 7, JORFARTI000033076708), ni les concours auxquels un article est « applicable »."""
+    for _, _, _, _, citation in rec.ENTREES_EN_VIGUEUR.values():
+        assert CLAUSE.search(citation), citation
+    for _, _, citation in rec.DATES_D_UN_AUTRE_ARTICLE.values():
+        assert CLAUSE.search(citation), citation
+    for _, _, _, _, citation in rec.ENTREES_LUES_A_LEGIFRANCE.values():
+        assert CLAUSE.search(citation), citation
+    for neutre in ("A la date d'entrée en vigueur du présent décret, les techniciens sont "
+                   "reclassés conformément au tableau suivant :",
+                   "Toutefois, la titularisation prend effet à la date prévue de fin de stage "
+                   "compte non tenu de la prolongation de celui-ci.",
+                   "Les dispositions des articles 5 et 8 du décret du 11 novembre 2009 susvisé "
+                   "sont applicables aux concours mentionnés aux 1°, 2° et 3° du I."):
+        assert not CLAUSE.search(neutre), neutre
+
+
+#: Les clauses lues à Légifrance (B7), page de l'article au JORF, le 6 novembre 2026 : ni
+#: l'index LEGI ni l'index JORF ne les ont (filtre thématique).
+LUES_A_LEGIFRANCE_CLAUSES = {
+    "2012-1139": ("2012-11-01", "JORFARTI000026477172", "JORFTEXT000026477051", "2012-10-11",
+                  "Les dispositions du présent décret entrent en vigueur le premier jour du mois "
+                  "suivant celui de sa publication au Journal officiel de la République "
+                  "française."),
+    "2015-363": ("2015-04-01", "JORFARTI000030419590", "JORFTEXT000030419563", "2015-03-31",
+                 "Le présent décret entre en vigueur le premier jour du mois qui suit sa "
+                 "publication."),
+}
+
+
+@pytest.mark.skipif(not (INDEX_LEGI.exists() and INDEX_JORF.exists()),
+                    reason="index DILA absent : python scripts/fetch/dila_index.py legi|jorf --recuperer")
+def test_une_clause_lue_a_legifrance_est_absente_des_index_et_recoupee_par_la_notice():
+    """B7 : la clause des n° 2012-1139 (art. 68) et 2015-363 (art. 14), lue à Légifrance ; à
+    l'index, le texte signé (son jour de publication) et sa notice (« Entrée en vigueur : »),
+    qui donne la même date ; le premier jour du mois qui suit, calculé ici."""
+    legi = sqlite3.connect(f"file:{INDEX_LEGI}?mode=ro", uri=True)
+    jorf = sqlite3.connect(f"file:{INDEX_JORF}?mode=ro", uri=True)
+    assert rec.ENTREES_LUES_A_LEGIFRANCE == LUES_A_LEGIFRANCE_CLAUSES
+    notices = {"2012-1139": "Entrée en vigueur : le texte entre en vigueur le 1er novembre 2012.",
+               "2015-363": "Entrée en vigueur : le décret entre en vigueur le 1er avril 2015."}
+    for numero, (jour, jorfarti, jorftexte, publication, citation) in LUES_A_LEGIFRANCE_CLAUSES.items():
+        assert not jorf.execute("select 1 from doc where id = ?", (jorfarti,)).fetchone(), numero
+        assert not [t for (t,) in legi.execute(
+            "select texte from doc where titre like ? and nature like 'Article%'",
+            (f"Décret n° {numero} du%",)) if _plat(citation) in _plat(t)], numero
+        signe = jorf.execute("select date, titre, texte from doc where id = ?",
+                             (jorftexte,)).fetchone()
+        assert signe and signe[0] == publication and numero in signe[1], numero
+        assert notices[numero] in _plat(signe[2]), numero
+        p = date.fromisoformat(publication)
+        assert jour == date(p.year + (p.month == 12), p.month % 12 + 1, 1).isoformat(), numero
 
 
 def test_chaque_ligne_lue_est_certifiee_et_chaque_refus_motive():

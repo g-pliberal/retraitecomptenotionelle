@@ -7116,14 +7116,13 @@ l'inviterait aussi à relire le dépôt.
 
 **Reprise, au 6 novembre 2026.** Périmètre : les trois versants et les militaires. Entrés et certifiés : grilles,
 barème depuis 1983, reclassements (450 tableaux), durées d'échelon (778). Chaînage : 555 des 1 675 grades de durées,
-19 des 862 groupes de reclassement (dont trois du n° 2023-1336, même grille, preuve par les échelons du Noyau RH).
-Dates d'effet : 36 après le verbe, 5 d'un autre article, « A la même date », 64 tableaux (47 décrets, dont le
-n° 2011-1140, 1er octobre 2011) datés de l'entrée en vigueur du décret, trois avant leur publication (en-tête de
-`tableaux.csv`). Reste : 67 tableaux relatifs au décret, à partir du n° 71-917 (liste : note de B6, point 4) : 25
-d'avant juin 2004, 42 d'après, par lesquels commencer (clause entière au JORF, notice et Noyau RH en recoupement,
-n° 2011-215 compris) ; la règle d'avant juin 2004 (décret du 5 novembre 1870, art. 2, dans aucun index) attend le
-propriétaire ; les décrets qui datent un chapitre ; le n° 98-268 art. 20 ; 90 tableaux de l'index publié ; trois
-fac-similés ; quatre candidats. Détail : `2026-11-06-b6-bis-corrections-de-r-b7.md`.
+25 des 862 groupes de reclassement. Dates d'effet : 36 après le verbe, 5 d'un autre article, « A la même date »,
+98 tableaux (76 textes) datés de l'entrée en vigueur du décret, dont 17 du lendemain du JO (code civil, art. 1er,
+depuis le 1er juin 2004, cité à l'en-tête de `tableaux.csv`), quatre avant leur publication. Reste : 25 tableaux
+d'avant juin 2004, dont la règle (décret du 5 novembre 1870, art. 2, dans aucun index) attend le propriétaire ;
+7 points non tranchés et 1 tableau mal découpé (n° 2004-1439, art. 23 : la phrase du I, les lignes du II) ; le
+lecteur à corriger pour ce cas ; le n° 98-268 art. 20 ; 90 tableaux de l'index publié ; trois fac-similés ; les
+candidats de B7. Détail : `2026-11-06-b7-dates-d-apres-juin-2004.md`.
 
 
 **D'où elle vient.** La demande du propriétaire, le 12 octobre 2026 : aller
