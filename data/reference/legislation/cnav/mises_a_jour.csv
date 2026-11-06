@@ -26,7 +26,7 @@
 # Plusieurs renvois se séparent par « ; ».
 nom,titre,date_maj,theme,modifie_le,sort,renvoi,script
 1,Accord franco-canadien,2020-01-21,,2023-05-23T06:47:00Z,a_lire,,
-10,Accords internationaux,2015-08-05,,2023-05-23T06:47:00Z,a_lire,,
+10,Accords internationaux,2015-08-05,,2023-05-23T06:47:00Z,hors_modele,"un avis de mise à jour : il date ce qu'il change aux exposés et aux barèmes qu'il nomme, qui portent chacun leur sort, comme la circulaire qu'il cite",
 102,Majoration de durée d'assurance pour enfant,2014-06-03,,2023-05-23T06:48:00Z,hors_modele,"un avis de mise à jour : il date ce qu'il change aux exposés et aux barèmes qu'il nomme, qui portent chacun leur sort, comme la circulaire qu'il cite",
 107,Majoration pour enfants,2021-02-11,Paiement,2023-05-23T06:48:00Z,a_lire,,
 108,Modalités de paiement,2022-02-21,,2023-05-23T06:48:00Z,a_lire,,

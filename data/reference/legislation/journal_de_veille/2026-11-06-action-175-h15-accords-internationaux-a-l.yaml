@@ -1,0 +1,34 @@
+date: "2026-11-06"
+session: "action 175, étape 4 (H15) : la première moitié du sous-thème « Accords internationaux » (de « Anciens accords » à « Kosovo ») du thème « Accords internationaux et d'outre-mer » de la base de la Cnav"
+consulte: >-
+  python scripts/veille_droit.py (rien de changé dans ce sous-thème). La base de législation
+  de la Cnav, par son API, le 6 novembre 2026 à 14 h 42 UTC, par les fonctions de
+  scripts/fetch/cnav_legislation.py, sans écrire le registre par le script : les 109 exposés
+  de la moitié, à la version que le registre date, et « Allocation de veuvage - Canada » ; les
+  39 listes « Accords de sécurité sociale avec la France » et « Accord de sécurité sociale -
+  <pays> » de ses pays ; l'avis 10 ; les circulaires ministérielles 99/48 du 29 janvier 1999
+  et 2002/234 du 18 avril 2002. L'index LEGI de la DILA, à jour au 2 novembre 2026, et JORF, au
+  3 : les 54 cibles des 83 liens Légifrance des exposés ; le décret n° 2014-1013 et l'article 2
+  de l'accord avec le Brésil ; R. 711-1 du code de la sécurité sociale. Le tableau
+  legislation/accords_internationaux.yaml ; les fiches totalisation_des_periodes_etrangeres,
+  pension_proratisee, minimum_contributif_international et reversion ; le code de
+  droit/etranger.py, etranger.js et reversion.py.
+trouve: >-
+  Le registre range les 110 exposés (92 limite, 18 hors_modele), 39 listes, une fenêtre, un
+  avis et 192 références (168 limite, 24 hors_modele), et étend le renvoi de 29 ; une limite
+  neuve, « accords internationaux » (docs/limites/3-systeme-actuel.md). Les dates d'entrée en
+  vigueur des exposés sont celles du tableau, et celles que les décrets portent. Trois
+  candidats : la convention franco-yougoslave suspendue pour la Serbie, le Monténégro et le
+  Kosovo du 29 janvier 1999 au 17 avril 2002 (circulaire 99/48), que le tableau sert sans
+  interruption ; l'arrangement franco-andorran de 1970, absent du tableau ; la convention
+  franco-roumaine, qui ne comptait pas les périodes roumaines, servie en calcul séparé. Un
+  point non tranché : les fonctionnaires sous une convention qui vise les régimes spéciaux
+  (Brésil, décret n° 2014-1013 ; R. 711-1, 1°). Des listes de la base contredisent l'exposé
+  de leur pays (Gabon, Israël, Norvège, Suisse, Pologne, Espagne, Bénin) ; l'exposé du Brésil
+  date l'accord du 15 novembre 2011, le décret du 15 décembre. Note :
+  docs/feuille_de_route/175/2026-11-06-etape-4-accords-internationaux-a-l.md.
+reste: >-
+  La seconde moitié du sous-thème (75 exposés), ses listes ; les 20 listes de pays sans exposé ;
+  « Mayotte ». Les décrets de publication d'avant 1960, au fac-similé seul ; les conventions,
+  leurs arrangements et les circulaires liées, non relus en entier ; le minimum des conventions
+  que le tableau dit non_lu, non chiffré. Rien n'a été corrigé.

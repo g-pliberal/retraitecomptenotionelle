@@ -644,6 +644,27 @@ l'Institut des politiques publiques (PENSIPP). Écarts connus :
   un ou plusieurs autres régimes de retraite de base obligatoires » sans dire
   s'ils en sont. Exposés « Accords d'outre-mer » de la base de législation
   de la Cnav.
+- **accords internationaux** — le modèle applique à une période dans un État
+  lié à la France par une convention bilatérale l'accord que le tableau
+  `legislation/accords_internationaux.yaml` lui donne à la date d'effet,
+  selon son mode de calcul (fiches `totalisation_des_periodes_etrangeres`,
+  `pension_proratisee` et `minimum_contributif_international`). Il ne sert
+  pas ce que les conventions font des prestations qu'il ne sert pas hors
+  d'elles — l'allocation de veuvage proratisée, que sept conventions
+  ouvrent par l'assurance dans l'autre État, le complément différentiel de
+  la pension d'invalidité — ; ni le partage de la réversion entre les
+  épouses d'un polygame, ni son paiement à l'institution de l'autre État ;
+  ni le transfert au régime général des droits acquis en Côte-d'Ivoire ou
+  au Gabon (« recours au régime unique ») ; ni l'accord des bateliers
+  rhénans, que le tableau ne porte pas ; ni la révision, à son entrée en
+  vigueur, de la pension liquidée avant une convention ; ni l'accord
+  tripartite avec les Pays-Bas et la Pologne (1967-2004), ni la résidence
+  au Danemark ou en Norvège comptée pour période d'assurance. Il ne
+  distingue pas l'ex-RDA, où les règlements ne s'appliquent que depuis le
+  3 octobre 1990. Il ne connaît pas la nationalité, qui ouvre l'accord
+  intérimaire européen, et la plupart des conventions. Exposés « Accords
+  internationaux » de la base de législation de la Cnav, de « Anciens
+  accords » à « Kosovo ».
 
 Un écart de quelques pour cent avec la pension réelle est attendu.
 

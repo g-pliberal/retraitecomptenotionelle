@@ -1,16 +1,5 @@
 # Étape 4, thème « Accords internationaux et d'outre-mer », sous-thèmes « Règlements européens » et « Accords d'outre-mer » : les exposés et leurs références
 
-**Reprise, au 6 novembre 2026.** « Retraite personnelle de base », les huit thèmes de
-« Carrière », « Avantages liés au décès de l'assuré », « Allocation du minimum », « RCI »,
-« Anciennes prestations », « Régimes intégrés » et, d'« Accords internationaux et d'outre-mer »,
-les sous-thèmes « Règlements européens » et « Accords d'outre-mer » sont rangés, ces deux-là par
-cette note (H14). Suivant : le sous-thème « Accords internationaux » (184 exposés), avec les 77
-listes « Accord de sécurité sociale - <pays> » et ce qu'ils sont seuls à lier, sous la convention
-de la note du premier thème ; puis « Mayotte », avec les quatre exposés mahorais du décès. La base
-se relit par l'API hors de 5 h–6 h UTC. Aux sessions du modèle : le point non tranché de cette
-note ; ceux de H13 à H8, des majorations et des thèmes précédents ; l'activité accessoire (H6) ;
-l'AVPF du père (H7). Aux sessions des données : le candidat de H13.
-
 **Le 6 novembre 2026, ce qui est fait.**
 
 - *La relecture de la base.* Par l'API, le 6 novembre 2026 de 14 h 11 à 14 h 31 UTC, par
