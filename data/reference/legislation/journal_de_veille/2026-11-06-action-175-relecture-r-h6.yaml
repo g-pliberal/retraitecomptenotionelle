@@ -1,0 +1,37 @@
+date: "2026-11-06"
+session: "action 175, vague 11, R-H6 : relecture indépendante de H6 (dbf6104 : l'activité accessoire de l'agent d'un régime spécial, sans droit au régime général de 1981 à 2014)"
+consulte: >-
+  Les index LEGI (à jour au 2 novembre 2026, 20261102-213929) et JORF (à jour au 3 novembre
+  2026, 20261103-002311) de la DILA, récupérés. Dans LEGI : D. 171-2, D. 171-3, D. 171-4 et
+  D. 171-11 du code de la sécurité sociale, toutes leurs rédactions ; D. 171-5 à D. 171-10
+  (1985) ; R. 711-1 (LEGIARTI000006752039, 000006752040, 000048031379) et R. 711-24
+  (LEGIARTI000006752270, 000034623061) ; R. 351-9 (LEGIARTI000028751530) et R. 351-5 ;
+  R. 741-41 du code rural, ses trois rédactions ; les mentions de « R. 711-24 », dont le
+  décret n° 97-1325 (régime de la CCI de Paris) et D. 412-79 (LEGIARTI000006736962) ; le
+  décret n° 2004-174 (régime de sécurité sociale du personnel de la RATP, article 1 et
+  visas) ; l'article 3 du décret n° 70-1277 (1977-2008) ; R. 171-3 à R. 171-6, R. 161-1-1,
+  R. 172-10 à R. 172-12 (2015). Dans le JORF : le décret n° 2015-877 (notice et quatorze
+  articles), le décret n° 2015-875 (articles 1 et 2), l'article 9 de la loi n° 2014-1554, le
+  résumé du décret n° 80-475 ; toutes les mentions de « D. 171-2 », « D. 171-3 »,
+  « D. 171-4 », sans borne. Dans la base de la Cnav, par son API : la circulaire 2016/15
+  (PDF, lue entière), la liste /expose (« Taux des cotisations », « Annulation au profit
+  d'un régime spécial »), la lettre du 25 janvier 1988.
+trouve: >-
+  Le travail de H6 est conforme : D. 171-2 et D. 171-4 (1985-2015) privent de tout droit au
+  régime général l'activité accessoire de l'agent d'une branche de R. 711-1 ; le décret
+  n° 2015-877, en vigueur le 19 juillet 2015, n'a aucune disposition transitoire, et la
+  circulaire 2016/15 borne la fin aux « rémunérations versées à compter du 19 juillet
+  2015 ». Les citations sont au texte ; 553,56 €, 606,65 € et 128,29 € sont refaits à la
+  main, et rendus par les deux moteurs sous les deux jeux. Six écarts faibles, sans effet
+  sur une valeur servie : la compagnie générale des eaux (R. 711-1, 9°, de 1985 à 1991)
+  omise ; de 1981 à 1985, la règle ne tient qu'au résumé du décret n° 80-475, dont le champ
+  ne renvoie pas à R. 711-1 ; R. 711-24 vise au moins la CCI de Paris (décret n° 97-1325),
+  et la RATP a deux indices contraires (décret n° 2004-174, D. 412-79), à l'effet de
+  553,56 € non chiffré ; l'année 2015 serait de 48,11 € à droit exact, non chiffrée ; la
+  situation n° 2 de la lettre de 1988 non citée ; le candidat D. 171-11 dit « ni Ircantec »,
+  que son texte ne dit pas.
+reste: >-
+  Les six écarts, à déclarer dans la fiche `un_statut_par_annee` par une session « -bis »
+  (docs/feuille_de_route/175/2026-11-06-relecture-r-h6.md, § 6). Le fac-similé du JO du
+  29 juin 1980 (décret n° 80-475), pour la règle d'avant le 1er juillet 1980 et le champ de
+  1981 à 1985. L'article 23 du décret du 28 octobre 1935, que R. 711-24 vise, non lu.
