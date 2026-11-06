@@ -1,0 +1,30 @@
+date: "2026-11-06"
+session: "action 130, file R-E10 : relecture de E9 (l'erreur de la Cipav, le décret n° 2026-418, les écarts de R-E9 repris, 87b666c)"
+consulte: >-
+  Les index JORF (au 6 novembre 2026, incrément 20261106-002608) et LEGI (au 5 novembre,
+  20261105-214938) récupérés et mis à jour. Au JORF : le décret n° 2026-418, ses 31 articles
+  et le fragment de l'article 18 que l'index étiquette « art. 8 », l'article 20 lu en
+  entier, les articles 29 à 31 ; sans borne, `"79-262" OR CIPAV OR "architectes, agréés"`
+  depuis 2023, `"interprofessionnelle de prévoyance"` et le titre « interprofessionnelle »
+  depuis 2026, `"trente premières années"`, les rectificatifs ; l'arrêté du 20 mars 2023
+  (Cipav, 17°) ; au titre « agents généraux d'assurance » jusqu'en 2011, les textes de la
+  CAVAMAC (2001, 2003, 2007, décrets nos 92-1372, 97-1056, 2001-864, 2003-1255, statuts de
+  2011) et le règlement du 10 juillet 2026 ; l'arrêté du 4 juillet 2025 (CAVEC). Dans LEGI :
+  les articles 5-1, 5-2 et 5-3 du décret n° 79-262 (une version chacun, au 1er juillet
+  2026), L. 351-8 et L. 161-17-2 au 1er juillet 2027.
+trouve: >-
+  L'erreur de la Cipav confirmée : depuis le 1er juillet 2026, sans disposition
+  transitoire, la majoration pour report « s'applique uniquement aux points acquis au titre
+  des trente premières années de cotisation » ; le modèle majore tout ; 579,38 € par an de
+  trop pour un an de report, 3 994,94 € pour cinq, refaits au centime, les deux moteurs
+  sous les deux jeux ; la lecture contraire est intenable. L'article 5-3 conforme. Quatre
+  écarts faibles : le décompte d'une première année partielle non dit (549,19 € de trop au
+  moins) ; la règle d'avant juillet 2026, point non tranché, non chiffré (565,79 € au cas
+  d'une pension au 1er janvier 2026) ; l'article 25 du décret (complémentaire de la
+  CARPIMKO) et les articles 16, 18, 24 déjà cités par des fiches, rangés « à rapporter » ;
+  l'article 13 dit cité par nulle fiche, que `cavamac_minoration_age_seul` cite. Les quatre
+  reprises de R-E9 conformes.
+reste: >-
+  À une file -bis : les quatre écarts faibles (note `130/2026-11-06-relecture-r-e10.md`).
+  À la correction de la Cipav : l'erreur, son décompte et la règle d'avant le 1er juillet
+  2026 au fac-similé du Bulletin officiel (article 3.15 des statuts).
