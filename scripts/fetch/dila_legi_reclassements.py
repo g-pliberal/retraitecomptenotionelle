@@ -994,6 +994,55 @@ COLONNES = {
     "non_lus": ("texte", "article", "numero", "tableau", "debut", "fin", "motif"),
 }
 CLES_LIGNE = ("texte", "article", "tableau", "ligne")
+
+#: Les quatre décrets dont la seule clause de date dit « prend effet » (ou « prendra effet »)
+#: quand leurs tableaux disent l'entrée en vigueur : le numéro → l'article de la clause, le
+#: jour du JO, la date de la clause (la donnée) et l'autre lecture, le lendemain du JO, en
+#: toutes lettres (action 158, B7-bis ; relecture R-B8, écart faible 1). La clause entière est
+#: celle d'``ENTREES_EN_VIGUEUR``.
+LECTURES_DES_PRISES_D_EFFET = {
+    "2005-939": ("art. 28", "6 août 2005", "1er janvier 2006", "7 août 2005"),
+    "2005-1304": ("art. 43", "22 octobre 2005", "1er novembre 2005", "23 octobre 2005"),
+    "2011-215": ("art. 21", "27 février 2011", "1er mars 2011", "28 février 2011"),
+    "2011-1140": ("art. 35", "23 septembre 2011", "1er octobre 2011", "24 septembre 2011"),
+}
+
+#: Ce que le texte ne tranche pas et que la donnée écrit (action 158, B7-bis ; relecture
+#: R-B8, écarts moyen 1 et faibles 1 et 3), lu à l'index JORF le 6 novembre 2026 : l'article
+#: 1er (JORFARTI000002268791) et l'article 4 (JORFARTI000002102781) du n° 2007-835, entiers.
+LECTURES_NON_TRANCHEES = (
+    "Quatre décrets disent « prend effet » (ou « prendra effet »), non « entre en vigueur », "
+    "dans la seule clause qui les date, alors que leurs tableaux disent « A la date d'entrée "
+    "en vigueur du présent décret » (ou n'écrivent pas leur date, n° 2005-1304, art. 36) : la "
+    "donnée lit la date de la clause comme celle de l'entrée en vigueur (lecture 1, déduite de "
+    "ce que le décret n'a pas d'autre clause de date, non un mot du texte) ; la lecture 2 le "
+    "ferait entrer en vigueur le lendemain de sa publication (code civil, art. 1er) et ne le "
+    "ferait prendre effet qu'à la date de la clause : elle donne l'autre date, qu'aucune "
+    "source lue ne porte (LEGI, notice de l'index, Noyau RH) : "
+    + " ; ".join(
+        f"n° {numero}, {article} (JO du {jo}) : « {ENTREES_EN_VIGUEUR[numero][4]} » : le "
+        f"{retenue} (la donnée) ou le {autre}"
+        for numero, (article, jo, retenue, autre) in LECTURES_DES_PRISES_D_EFFET.items())
+    + ". Un tableau garde le lendemain du JO et l'autre lecture est écrite : n° 2007-835, "
+    "art. 4 (JO du 13 mai 2007). Le décret ne fixe pas son entrée en vigueur (ses cinq "
+    "articles lus, aucun ne dit « entre en vigueur »), mais date de sa publication "
+    "l'extinction du corps, à l'art. 1er, JORFARTI000002268791 : « L'article 1er du décret n° "
+    "93-658 du 26 mars 1993 susvisé est complété par un alinéa ainsi rédigé : « Le corps des "
+    "moniteurs d'atelier est placé en voie d'extinction à compter de la date de publication "
+    "du décret n° 2007-835 du 11 mai 2007. » » ; et son art. 4, JORFARTI000002102781 : « Les "
+    "moniteurs d'atelier en fonctions à la date de publication du présent décret sont "
+    "reclassés conformément au tableau ci-dessous : », annonce le tableau. "
+    "Deux lectures, que le texte ne tranche pas : (1) le 14 mai 2007 (la donnée), le lendemain "
+    "du JO, à défaut de date que le décret fixe pour son entrée en vigueur (code civil, art. "
+    "1er) ; (2) le 13 mai 2007, le jour du JO, que l'art. 1er prend pour début de l'extinction "
+    "du corps et que le reclassement de l'art. 4 prendrait pour pivot, et que le LEGI porte "
+    "(versions des art. 4 et 5 ouvertes ce jour) ; le LEGI ouvre aussi au jour du JO les "
+    "articles de décrets sans clause (n° 2005-1132, art. 18, le 10 septembre 2005) : ce début "
+    "ne prouve pas la lecture (2). Le n° 2012-1139 (JO du 11 octobre 2012) a sa clause "
+    "(art. 68) lue à Légifrance, qui vaut pour tout le décret, et sa notice à l'index dit le "
+    "1er novembre 2012 ; ses art. 16 à 20, 24, 25, 28, 34 à 42, 44 à 47, 52 à 62 et 64 à 66 "
+    "ne sont lus ni aux index, qui ne les ont pas, ni à Légifrance.")
+
 ENTETES = {
     "textes": "Les textes qui reclassent les agents d'une grille à la suivante, au LEGI : "
               "versant (« plusieurs » : un texte des deux versants), numéro, nature, date de "
@@ -1026,7 +1075,7 @@ ENTETES = {
                 "2010-302, art. 9 (une date par corps, que fixe le décret qui l'inscrit à son "
                 "annexe). Le tableau du n° 2004-1439, art. 23 (version du 2023-08-01), joint "
                 "la phrase du I et le tableau du II (« Au 1er janvier 2024 ») : effet vide, à "
-                "relire.",
+                "relire. " + LECTURES_NON_TRANCHEES,
     "lignes": "Chaque ligne d'un tableau : groupe (le libellé écrit avant elle : grade "
               "d'origine puis grade d'accueil, que le texte aplati colle), l'échelon d'origine, "
               "la condition d'ancienneté qui le partage, l'échelon nouveau, l'ancienneté "

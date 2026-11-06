@@ -15,7 +15,7 @@ import csv
 import re
 import sqlite3
 import sys
-from datetime import date
+from datetime import date, timedelta
 from pathlib import Path
 
 import pytest
@@ -931,6 +931,78 @@ def test_l_entete_dit_les_effets_anterieurs_a_la_publication_et_l_elargissement_
         assert dit in entete, dit
 
 
+#: Les quatre décrets dont la seule clause de date dit « prend effet » (B7, B6-bis) : l'article
+#: de la clause, le jour du JO (index JORF), la date de la clause, lue comme l'entrée en
+#: vigueur, et l'autre lecture, le lendemain du JO (code civil, art. 1er).
+LECTURES_DES_PRISES_D_EFFET = {
+    "2005-939": ("art. 28", "2005-08-06", "2006-01-01", "2005-08-07"),
+    "2005-1304": ("art. 43", "2005-10-22", "2005-11-01", "2005-10-23"),
+    "2011-215": ("art. 21", "2011-02-27", "2011-03-01", "2011-02-28"),
+    "2011-1140": ("art. 35", "2011-09-23", "2011-10-01", "2011-09-24"),
+}
+
+#: Le n° 2007-835 (JO du 13 mai 2007, JORFTEXT000000793379), au JORF : l'article 1er
+#: (JORFARTI000002268791), qui date l'extinction du corps de la publication du décret, et
+#: l'article 4 (JORFARTI000002102781), dont la phrase annonce le tableau.
+ARTICLES_DU_2007_835 = {
+    "1": ("L'article 1er du décret n° 93-658 du 26 mars 1993 susvisé est complété par un "
+          "alinéa ainsi rédigé : « Le corps des moniteurs d'atelier est placé en voie "
+          "d'extinction à compter de la date de publication du décret n° 2007-835 du 11 mai "
+          "2007. »"),
+    "4": ("Les moniteurs d'atelier en fonctions à la date de publication du présent décret "
+          "sont reclassés conformément au tableau ci-dessous :"),
+}
+
+#: Les articles du n° 2012-1139 (JO du 11 octobre 2012) que ni l'index LEGI ni l'index JORF
+#: n'ont et que ni B7 ni la relecture R-B8 n'ont lus à Légifrance.
+NON_LUS_DU_2012_1139 = (set(range(16, 21)) | {24, 25, 28} | set(range(34, 43))
+                        | set(range(44, 48)) | set(range(52, 63)) | set(range(64, 67)))
+
+MOIS_EN_TOUTES_LETTRES = ("janvier", "février", "mars", "avril", "mai", "juin", "juillet",
+                          "août", "septembre", "octobre", "novembre", "décembre")
+
+
+def _en_toutes_lettres(jour: str) -> str:
+    d = date.fromisoformat(jour)
+    return f"{'1er' if d.day == 1 else d.day} {MOIS_EN_TOUTES_LETTRES[d.month - 1]} {d.year}"
+
+
+def test_l_entete_declare_les_prises_d_effet_les_deux_lectures_du_2007_835_et_le_2012_1139():
+    """Action 158, B7-bis (relecture R-B8, écarts 1 et 2). L'en-tête de tableaux.csv dit :
+    (1) des quatre décrets dont la clause dit « prend effet », la date de la clause et la
+    clause entière, la date de la donnée et l'autre lecture, le lendemain du JO ; (2) du
+    n° 2007-835, art. 4, que le décret ne date pas mais date de sa publication l'extinction du
+    corps (art. 1er), les deux articles entiers et les deux dates, le 14 mai 2007 (la donnée)
+    et le 13 mai 2007 ; (3) du n° 2012-1139, les articles que personne n'a lus."""
+    assert set(LECTURES_DES_PRISES_D_EFFET) == PRISES_D_EFFET
+    chemin = RACINE / "data" / "reference" / "grilles" / "reclassements" / "tableaux.csv"
+    entete = chemin.read_text(encoding="utf-8").split("\n")[0]
+    assert entete == f"# {rec.ENTETES['tableaux']}"
+    for numero, (article, jo, retenue, autre) in LECTURES_DES_PRISES_D_EFFET.items():
+        assert rec.ENTREES_EN_VIGUEUR[numero][3] == jo, numero
+        assert rec.ENTREES_EN_VIGUEUR[numero][0] == retenue, numero
+        assert date.fromisoformat(autre) == date.fromisoformat(jo) + timedelta(days=1), numero
+        citation = rec.ENTREES_EN_VIGUEUR[numero][4]
+        assert (f"n° {numero}, {article} (JO du {_en_toutes_lettres(jo)}) : « {citation} » : "
+                f"le {_en_toutes_lettres(retenue)} (la donnée) ou le {_en_toutes_lettres(autre)}"
+                ) in entete, numero
+    for dit in ("Quatre décrets disent « prend effet »", "lecture 1", "lecture 2",
+                "qu'aucune source lue ne porte"):
+        assert dit in entete, dit
+    # Le n° 2007-835, art. 4 : la donnée garde le lendemain du JO, l'autre lecture est écrite.
+    tableaux = {(t["article"], t["tableau"]): t for t in _lire("tableaux")}
+    assert tableaux[("LEGIARTI000006264680", "1")]["effet"] == "2007-05-14"
+    for dit in ("n° 2007-835, art. 4 (JO du 13 mai 2007)",
+                f"JORFARTI000002268791 : « {ARTICLES_DU_2007_835['1']} »",
+                f"JORFARTI000002102781 : « {ARTICLES_DU_2007_835['4']} »",
+                "(1) le 14 mai 2007 (la donnée)", "(2) le 13 mai 2007",
+                "le texte ne tranche pas"):
+        assert dit in entete, dit
+    # Le n° 2012-1139 : la clause (art. 68) est lue à Légifrance, les autres articles non lus.
+    assert "n° 2012-1139 (JO du 11 octobre 2012)" in entete
+    assert "art. 16 à 20, 24, 25, 28, 34 à 42, 44 à 47, 52 à 62 et 64 à 66" in entete
+
+
 INDEX_LEGI = RACINE / "data" / "brut" / "dila" / "legi.sqlite"
 INDEX_JORF = RACINE / "data" / "brut" / "dila" / "jorf.sqlite"
 
@@ -1159,6 +1231,55 @@ def test_un_decret_sans_clause_entre_en_vigueur_le_lendemain_de_sa_publication()
         for i, texte in legi.execute("select id, texte from doc where nature like 'Article%' "
                                      "and titre = ? and date <= ?", (titres.pop(), jour)):
             assert not CLAUSE.search(_plat(texte)), (numero, i)
+
+
+@pytest.mark.skipif(not (INDEX_LEGI.exists() and INDEX_JORF.exists()),
+                    reason="index DILA absent : python scripts/fetch/dila_index.py legi|jorf --recuperer")
+def test_les_deux_lectures_du_2007_835_et_les_articles_non_lus_du_2012_1139_sont_ceux_des_index():
+    """Action 158, B7-bis (relecture R-B8, écarts 1 et 4). Le n° 2007-835 (JORFTEXT000000793379,
+    JO du 13 mai 2007) a cinq articles ; aucun ne fixe son entrée en vigueur, mais l'art. 1er
+    date l'extinction du corps « à compter de la date de publication du décret » : les deux
+    articles cités à l'en-tête sont ceux du JORF, entiers, et le LEGI porte la phrase de l'art. 1er
+    dans la version de l'art. 1er du n° 93-658 ouverte le 2007-05-13 ; il ouvre les art. 4 et 5 le
+    jour du JO, comme l'art. 18 du n° 2005-1132 le 2005-09-10, jour de son JO, un décret
+    sans clause : ce début ne prouve donc pas la lecture (2). Les articles du n° 2012-1139 que
+    l'en-tête dit non lus ne sont dans aucun des deux index."""
+    legi = sqlite3.connect(f"file:{INDEX_LEGI}?mode=ro", uri=True)
+    jorf = sqlite3.connect(f"file:{INDEX_JORF}?mode=ro", uri=True)
+    signe = jorf.execute("select date, titre from doc where id = ?",
+                         ("JORFTEXT000000793379",)).fetchone()
+    assert signe and signe[0] == "2007-05-13" and "2007-835" in signe[1]
+    articles = {(n or "").replace("er", ""): _plat(t) for n, t in jorf.execute(
+        "select num, texte from doc where nature like 'Article%' and date = '2007-05-13' "
+        "and titre like '%2007-835 %'")}
+    assert set(articles) == {"1", "2", "3", "4", "5"}
+    for numero, citation in ARTICLES_DU_2007_835.items():
+        assert _est_l_article(citation, articles[numero], jorf=True), numero
+    for numero in ("2", "3", "4", "5"):
+        assert not CLAUSE.search(articles[numero]), numero
+    # Le LEGI : la phrase de l'art. 1er du n° 93-658, version du 2007-05-13 ; les art. 4 et 5.
+    debut, texte = legi.execute("select date, texte from doc where id = 'LEGIARTI000006713282'"
+                                ).fetchone()
+    assert debut == "2007-05-13" and "du 26 mars 1993" in legi.execute(
+        "select titre from doc where id = 'LEGIARTI000006713282'").fetchone()[0]
+    assert ("Le corps des moniteurs d'atelier est placé en voie d'extinction à compter de la "
+            "date de publication du décret n° 2007-835 du 11 mai 2007.") in _plat(texte)
+    for ident in ("LEGIARTI000006264680", "LEGIARTI000006264681"):
+        assert legi.execute("select date from doc where id = ?", (ident,)).fetchone()[0] \
+            == "2007-05-13", ident
+    # Le n° 2005-1132, sans clause lui aussi : le LEGI ouvre l'art. 18 au jour de son JO.
+    jo, = jorf.execute("select date from doc where id like 'JORFTEXT%' and titre like "
+                       "'Décret n° 2005-1132 du %'").fetchone()
+    assert legi.execute("select date from doc where id = 'LEGIARTI000006413884'"
+                        ).fetchone()[0] == jo == "2005-09-10"
+    # Le n° 2012-1139 : aucun article non lu n'est à l'index.
+    presents = {int(n) for (n,) in jorf.execute(
+        "select num from doc where nature like 'Article%' and date = '2012-10-11' "
+        "and titre like '%2012-1139 %' and num glob '[0-9]*'")}
+    presents |= {int(n) for (n,) in legi.execute(
+        "select num from doc where nature like 'Article%' and (titre like '%n°2012-1139 %' "
+        "or titre like '%n° 2012-1139 %') and num glob '[0-9]*'")}
+    assert presents and not presents & (NON_LUS_DU_2012_1139 | {68}), presents
 
 
 def test_la_clause_reconnait_ce_qui_date_un_texte_et_non_le_reste():

@@ -7117,12 +7117,13 @@ l'inviterait aussi à relire le dépôt.
 **Reprise, au 6 novembre 2026.** Périmètre : les trois versants et les militaires. Entrés et certifiés : grilles,
 barème depuis 1983, reclassements (450 tableaux), durées d'échelon (778). Chaînage : 555 des 1 675 grades de durées,
 25 des 862 groupes de reclassement. Dates d'effet : 36 après le verbe, 5 d'un autre article, « A la même date »,
-98 tableaux (76 textes) datés de l'entrée en vigueur du décret, dont 17 du lendemain du JO (code civil, art. 1er,
-depuis le 1er juin 2004, cité à l'en-tête de `tableaux.csv`), quatre avant leur publication. Reste : 25 tableaux
-d'avant juin 2004, dont la règle (décret du 5 novembre 1870, art. 2, dans aucun index) attend le propriétaire ;
-7 points non tranchés et 1 tableau mal découpé (n° 2004-1439, art. 23 : la phrase du I, les lignes du II) ; le
-lecteur à corriger pour ce cas ; le n° 98-268 art. 20 ; 90 tableaux de l'index publié ; trois fac-similés ; les
-candidats de B7. Détail : `2026-11-06-b7-dates-d-apres-juin-2004.md`.
+98 tableaux (76 textes) datés de l'entrée en vigueur du décret, dont 17 du lendemain du JO (code civil, art. 1er, cité
+à l'en-tête de `tableaux.csv`), quatre avant leur publication. B7 et sa relecture R-B8 faits ; B7-bis a déclaré à
+l'en-tête les quatre « prend effet », le n° 2007-835 (14 ou 13 mai 2007) et le n° 2012-1139. Reste : 25 tableaux
+d'avant juin 2004 (question 29 : décret du 5 novembre 1870, art. 2, dans aucun index) ; les 7 points non tranchés de
+B7 et ceux déjà nommés ; le tableau mal découpé du n° 2004-1439, art. 23 et son lecteur ; le n° 98-268 art. 20 ; 90
+tableaux de l'index publié ; trois fac-similés ; les candidats de B7 et de B7-bis ; une copie PDF du code civil, art.
+1er (question au propriétaire). Détail : `2026-11-06-b7-bis-corrections-de-r-b8.md`.
 
 
 **D'où elle vient.** La demande du propriétaire, le 12 octobre 2026 : aller

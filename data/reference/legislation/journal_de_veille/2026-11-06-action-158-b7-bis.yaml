@@ -1,0 +1,31 @@
+date: "2026-11-06"
+session: "action 158, vague 11, B7-bis : les écarts de la relecture R-B8 (le n° 2007-835 et ses deux lectures, les quatre « prend effet » et le n° 2012-1139 déclarés à l'en-tête de tableaux.csv, le n° 2018-648, le paquet, l'article 1er du code civil)"
+consulte: >-
+  L'index LEGI du dépôt (dump Freemium_legi_global_20250713-140000, à jour au
+  20261102-213929) et l'index JORF (Freemium_jorf_global_20250713-140000, à jour au
+  20261103-002311), table doc : n° 2007-835 (JORFTEXT000000793379, ses cinq articles ;
+  LEGIARTI000006264680, 006264681 ; LEGIARTI000006713282, art. 1er du n° 93-658) ; n° 2005-1132
+  (LEGIARTI000006413884) ; les clauses et les tableaux des n° 2005-939, 2005-1304, 2011-215 et
+  2011-1140 (LEGIARTI000006413799, 006414058, 023632829, 024581626 et leurs tableaux) ; n° 2018-648,
+  art. 7 et 8 (JORFARTI000037245735, 037245737 ; LEGIARTI000037246483) ; le n° 2012-1139 (17
+  articles au JORF, 4 au LEGI ; JORFTEXT000026477051) ; tous les articles des 13 décrets sans clause,
+  relus avec un motif large. En recoupement, le Noyau RH du dépôt (etat/textes.csv, textes 295, 386,
+  926 et la ligne 5896). Légifrance : le code civil, art. 1er (LEGIARTI000006419280), répond 403 à
+  curl, par les deux adresses essayées ; aucune lecture directe. Aucun fac-similé n'est lu.
+trouve: >-
+  Le n° 2007-835 ne fixe pas son entrée en vigueur, mais son art. 1er date l'extinction du corps
+  des moniteurs d'atelier « à compter de la date de publication du décret » : le tableau de l'art. 4
+  est daté du 14 mai 2007 (lendemain du JO, code civil, art. 1er), le 13 mai 2007 est l'autre lecture,
+  que le texte ne tranche pas ; les deux sont écrites à l'en-tête de tableaux.csv. Aucun autre des
+  13 décrets sans clause ne date son entrée en vigueur. Les quatre décrets qui disent « prend effet »
+  (n° 2005-939, 2005-1304, 2011-215, 2011-1140) sont déclarés à l'en-tête, avec l'autre date
+  (le lendemain du JO). Le n° 2018-648 tient à son art. 8 et à son art. 7, II (« années précédant
+  l'année 2017 »), non à l'article 1er du code civil, qui ne dit rien de l'effet rétroactif.
+  Le n° 2012-1139 : 35 articles non lus, dits à l'en-tête. Le paquet ne lit aucun fichier de
+  reclassements.
+reste: >-
+  Les 25 tableaux d'avant le 1er juin 2004 (la règle de l'époque, décret du 5 novembre 1870,
+  art. 2, attend le propriétaire) ; une copie PDF de l'art. 1er du code civil
+  (LEGIARTI000006419280) à garder avec les preuves ; les 7 points non tranchés de B7 ; le
+  tableau mal découpé du n° 2004-1439, art. 23 ; le motif CLAUSE, qui ne voit pas « à compter de la
+  date de publication » (candidat).

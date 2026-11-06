@@ -374,3 +374,5 @@ lu le 6 novembre 2026 par l'outil de lecture web : code civil, art. 1er (LEGIART
 pages au JORF des n° 2012-1139 (art. 68, 69), 2014-71 (art. 3, 8, 14, 15), 2015-363 (art. 11, 13,
 14, 15), 2010-982 et 2010-989 (tables des matières), 2011-489 et 2006-8 (numéro du JO) ; Noyau
 RH, `etat/textes.csv`, en recoupement.
+
+*Corrigé le 6 novembre 2026 (B7-bis) : `2026-11-06-b7-bis-corrections-de-r-b8.md` (le n° 2007-835 : deux lectures ; les quatre « prend effet » et le n° 2012-1139 déclarés à l'en-tête de `tableaux.csv` ; le n° 2018-648 ; le paquet ne lit aucun fichier de reclassements ; l'article 1er du code civil non lu en direct).*
