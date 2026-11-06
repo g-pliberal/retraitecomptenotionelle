@@ -561,6 +561,40 @@ l'Institut des politiques publiques (PENSIPP). Écarts connus :
   étrangère, quand la caisse ne comptait que dans les ressources celle d'un
   État dont la convention n'avait pas de règle de non-cumul. Exposés
   « Anciennes prestations » de la base de législation de la Cnav.
+- **régimes intégrés** — cinq régimes fermés, repris par le régime général,
+  font servir par lui les droits acquis avant leur intégration : celui des
+  agents de change à la caisse des officiers ministériels, jusqu'au
+  31 décembre 1988 (loi n° 89-18, article 19 ; décret n° 89-640) ; celui du
+  Crédit foncier de France, jusqu'à la même date (décret n° 89-157) ; celui de
+  la Compagnie générale des eaux, jusqu'en 1990 (décret n° 91-408) ; celui de
+  la chambre de commerce et d'industrie de Roubaix, jusqu'en 1997 (décret
+  n° 98-183) ; celui de la chambre de commerce et d'industrie de Paris,
+  jusqu'en 2005 (décret n° 2006-1748). La caisse sert à leurs anciens agents
+  une rente garantie — la moitié d'un salaire forfaitaire pour cent cinquante
+  trimestres validés par le régime intégré, en cent-cinquantièmes au-dessous,
+  revalorisée comme les pensions, comparée seule au maximum, et au minimum
+  contributif sauf la rente différée de la chambre de Paris, payée avec la
+  pension du régime général —, une rente de réversion garantie, au taux et
+  aux conditions de la réversion du régime général, ressources comprises
+  depuis juillet 2004, sauf pour qui tenait déjà une réversion de la chambre
+  de Paris, une retraite de substitution garantie à l'ancien
+  invalide, la pension de vieillesse de veuve ou de veuf et l'allocation de
+  veuvage. Aucun statut ne porte ces agents, et le modèle ne sert aucune de
+  ces rentes (fiches `credit_foncier_transfert_1989`,
+  `compagnie_generale_eaux_transfert_1991`, `cci_roubaix_transfert_1998` et
+  `cci_paris_transfert_2006`, pas encore modélisées) : les années d'avant
+  l'intégration, saisies en salarié du privé, vont au régime général sur leur
+  salaire, ce que la loi ne fait que pour l'agent de la chambre de Paris qui
+  n'avait pas liquidé sa pension, rétabli dans les droits qu'il aurait eus
+  sous le régime général ; et la pension de qui l'avait liquidée avant
+  l'intégration n'est pas servie. L'agent de change, que le statut d'officier
+  ministériel ne nomme pas, saisi sous ce statut, a au modèle ses années
+  d'avant 1989 au régime de base des libéraux, quand la loi les a transférées
+  au régime général, en une rente de trente pour cent du salaire plafond moyen
+  de 1988 pour cent cinquante trimestres, ou, s'il exerce encore en 1989, au
+  régime des industriels et commerçants, qui lui en garantit une calculée de
+  même sur son propre plafond. Exposés « Régimes intégrés » de la base de
+  législation de la Cnav.
 
 Un écart de quelques pour cent avec la pension réelle est attendu.
 

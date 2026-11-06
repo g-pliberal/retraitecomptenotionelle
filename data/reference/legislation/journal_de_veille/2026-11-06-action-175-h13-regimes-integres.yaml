@@ -1,0 +1,35 @@
+date: "2026-11-06"
+session: "action 175, étape 4 (H13) : le thème « Régimes intégrés » de la base de la Cnav — l'agent de change, les chambres de commerce et d'industrie de Paris et de Roubaix, le Crédit foncier de France, la Compagnie générale des eaux"
+consulte: >-
+  python scripts/veille_droit.py. La base de législation de la Cnav, par son API, le
+  6 novembre 2026 de 13 h 42 à 13 h 57 UTC, par les fonctions de
+  scripts/fetch/cnav_legislation.py, sans écrire le registre par le script : les 29 exposés
+  du thème, à la version que le registre date ; les 8 références du thème encore à lire ; les
+  circulaires Cnav 34/98, 79/89, 83/91 et 49/91 ; les liens de chacun. L'index LEGI de la
+  DILA, à jour au 2 novembre 2026, et JORF, au 3 : les 15 cibles des 54 liens Légifrance des
+  exposés ; loi n° 89-18, articles 13 et 19 ; décret n° 89-640, articles 1er à 7 ; décret
+  n° 89-157, article 5 ; loi n° 91-73, article 17 ; décret n° 91-408, article 10 ; loi
+  n° 97-1164, article 20 ; décret n° 98-183, articles 2 et 5 ; décret n° 2006-1748, articles 2
+  et 5. Les fiches credit_foncier_transfert_1989, compagnie_generale_eaux_transfert_1991,
+  cci_roubaix_transfert_1998, cci_paris_transfert_2006 et reversion ; les régimes
+  credit_foncier, compagnie_generale_eaux, cci_roubaix et cci_paris ; les statuts de
+  legislation/affiliations.yaml ; la série macro/plafond_securite_sociale.csv.
+trouve: >-
+  Le registre range le thème : 29 exposés limite ; 8 références passent limite, 12 déjà
+  limite dont les renvois s'étendent. Une limite neuve dans docs/limites/3-systeme-actuel.md,
+  « régimes intégrés » : les rentes garanties des cinq régimes, que le modèle ne sert pas, et
+  l'agent de change, qu'aucun statut ne nomme. Les rentes des exposés sont celles des décrets
+  et des fiches ; l'exposé du Crédit foncier confirme le plafond de 1988 retenu, 120 360 F,
+  que sa fiche laissait à confirmer. Un candidat, aux sessions des données : le régime de la
+  chambre de Roubaix fermé aux recrues dès le 1er janvier 1967 (circulaire Cnav 34/98), quand
+  son régime porte fermeture 1997 et sa fiche une rente pour toute année d'avant 1998 ; le
+  personnel lyonnais de la compagnie au régime général dès 1971 (exposé, circulaire 49/91),
+  quand sa fiche lui donne une rente pour toute année d'avant 1991 — aucune pension calculée
+  ne bouge. Dans la base : une date fautive (« 34/98 du 02/06/1997 »), deux exposés de la
+  compagnie qui citent la circulaire d'un autre régime (34/98, 79/89), « 98,66 % » pour
+  98,67 %.
+reste: >-
+  L'étape 4 au thème « Accords internationaux et d'outre-mer » (223 exposés), avec les listes
+  d'accords et des règlements européens, puis « Mayotte ». Aux données : le candidat de la note
+  175/2026-11-06-etape-4-regimes-integres.md. Le texte de 1967 qui ferme le régime de la
+  chambre de Roubaix, absent de l'index du JORF.

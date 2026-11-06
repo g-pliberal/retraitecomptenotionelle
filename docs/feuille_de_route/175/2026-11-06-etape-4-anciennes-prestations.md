@@ -1,16 +1,5 @@
 # Étape 4, thème « Anciennes prestations » : les exposés et leurs références
 
-**Reprise, au 6 novembre 2026.** « Retraite personnelle de base », les huit thèmes de
-« Carrière », « Avantages liés au décès de l'assuré », « Allocation du minimum », « RCI » et
-« Anciennes prestations » sont rangés, ce dernier par cette note (H12). Suivant : « Régimes
-intégrés » (29 exposés), sous la convention de la note du premier thème. La base se relit par
-l'API hors de 5 h–6 h UTC. Restent à lire avec leur thème : les listes d'accords, de l'Union et
-de l'Espace économique européens, et 9 références que seule lie la liste des personnes qui
-relèvent des règlements ; les quatre exposés mahorais du décès, avec « Mayotte ». Aux sessions
-du modèle : le candidat et le point non tranché de cette note ; ceux de H11, de H10, de H9, de
-H8 ; ceux des notes des majorations et des thèmes précédents ; l'activité accessoire (H6) ;
-l'AVPF du père (H7).
-
 **Le 6 novembre 2026, ce qui est fait.**
 
 - *La relecture de la base.* Par l'API, le 6 novembre 2026 de 13 h 19 à 13 h 20 UTC, par
