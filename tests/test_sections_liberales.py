@@ -986,3 +986,36 @@ def test_chaque_article_du_decret_2026_418_est_rapporte_a_la_fiche_de_sa_regle()
         connus |= cles(yaml.safe_load(chemin.read_text(encoding="utf-8")))
     nommes = {nom for r in lectures for nom in re.findall(r"`(\w+)`", r)}
     assert sorted(nommes - connus) == []
+
+
+def test_la_table_du_decret_2026_418_garde_ses_32_documents():
+    """La table porte les 32 documents d'articles du décret, ni plus ni moins :
+    les articles 1 à 31, et la fin de l'article 18 juste après lui, chacun
+    sous un identifiant à lui, qui croît d'un document au suivant comme au
+    Journal officiel ; seuls les articles 29 à 31 ne modifient aucun texte.
+    Une ligne ôtée de la table la rougit (R-E12, 3 ; E12)."""
+    assert list(ARTICLES_DU_DECRET_2026_418) == (
+        [str(n) for n in range(1, 19)] + ["18, fin"] + [str(n) for n in range(19, 32)])
+    identifiants = [i for i, _, _ in ARTICLES_DU_DECRET_2026_418.values()]
+    assert identifiants == sorted(set(identifiants))
+    assert [n for n, (_, texte, _) in ARTICLES_DU_DECRET_2026_418.items()
+            if texte is None] == ["29", "30", "31"]
+
+
+def test_la_table_du_decret_2026_418_est_celle_de_l_index_jorf():
+    """L'index JORF récupéré, ses documents d'articles du décret n° 2026-418
+    sont ceux de la table, chacun sous son numéro ; la fin de l'article 18 y
+    est étiquetée « 8 » (relevé le 6 novembre 2026, E12)."""
+    import sqlite3
+
+    from retraite_notionnelle.config import RACINE_DONNEES
+
+    base = RACINE_DONNEES / "brut" / "dila" / "jorf.sqlite"
+    if not base.is_file():
+        pytest.skip("l'index JORF n'est pas récupéré (dila_index.py jorf --recuperer)")
+    with sqlite3.connect(base) as connexion:
+        documents = dict(connexion.execute(
+            "SELECT id, num FROM doc WHERE nature = 'Article DECRET' "
+            "AND titre LIKE 'Décret n° 2026-418 du 29 mai 2026 %'"))
+    assert documents == {i: "8" if n == "18, fin" else n
+                         for n, (i, _, _) in ARTICLES_DU_DECRET_2026_418.items()}

@@ -43,9 +43,332 @@ effet: >-
   les servait de 2000 à 2016 sans plafond, ne les sert plus depuis le 16 octobre 2026.
   Reste à lire la rédaction d'origine de l'article 32 des statuts de la CARMF, publiée au
   Bulletin officiel ; l'article 3.15 des statuts de la Cipav de 2006, au même Bulletin, se
-  relit depuis 2007 par différence (`sources.a_relire`).
+  relit par différence, sûr depuis 2008, non tranché en 2007, où l'arrêté du 3 octobre
+  2006 garde deux articles des statuts de 1979 (`sources.a_relire`).
+domaine: decote_surcote
+lit:
+- >-
+  la date d'effet de la pension de la complémentaire, qui choisit la version, et la
+  période de liquidation de chaque section (`periode_de_liquidation`)
+- >-
+  l'âge de l'assuré à cette date, et l'âge d'où le report se compte : 65 ans, ou l'âge du
+  taux plein de sa génération
+- >-
+  la durée d'affiliation à la section : à la Cipav, trente années, cent vingt trimestres
+  (`surcote_affiliation_minimale_trimestres`)
+- >-
+  les points de la section, ou ses cotisations revalorisées, que la majoration multiplie
+ecrit:
+- >-
+  le coefficient de majoration de la pension de chaque section (« coefficient de
+  majoration » du détail servi), que `liquider_chaque_regime` applique à ses points
+dates_qui_decident:
+- liquidation.date_effet
+versions:
+- id: cipav_avant_2007
+  statut: supposee
+  hypothese: >-
+    la Cipav ne majore pas pour report une pension qui prend effet avant le 1er janvier
+    2007, ce que le modèle sert : le décret n° 79-262 renvoie aux statuts, et ceux de
+    1979 ne sont qu'au Bulletin officiel ; les six autres sections de la fiche ne sont
+    pas encore écrites en versions (à leur lecture)
+  fiabilite: >-
+    faible : aucun texte lu ne dit ni la majoration, ni son absence (question 22)
+  textes:
+  - id: LEGIARTI000006767479
+    article: décret n° 79-262 du 21 mars 1979, article 5, du 1er janvier 1979 au 1er janvier 2004
+    en_vigueur: 1979-01-01
+    citation: >-
+      « Le régime d'assurance vieillesse complémentaire institué par le présent décret est
+      établi par les statuts de la section professionnelle mentionnée à l'article 1er
+      approuvés par arrêté du ministre chargé de la sécurité sociale et du ministre chargé
+      du budget. »
+  - id: LEGIARTI000006767480
+    article: décret n° 79-262, article 5, du 1er janvier 2004 au 1er juillet 2026
+    en_vigueur: 2004-01-01
+    citation: >-
+      « Le régime d'assurance vieillesse complémentaire institué par le présent décret est
+      établi par les statuts de la section professionnelle mentionnée à l'article 1er. »
+  bornes:
+    liquidation.date_effet: [null, 2007-01-01]
+  contenu:
+    parametres:
+      surcote_par_trimestre: {cipav_complementaire: 0.0}
+    droit: >-
+      aucune majoration pour report à la Cipav (supposée) ; les autres sections, à écrire
+  exemples: aucun trouvé
+- id: cipav_2007
+  statut: supposee
+  hypothese: >-
+    point non tranché (E12, après R-E12). Lecture A : l'article 3.15 des statuts de 2006
+    vaut dès le 1er janvier 2007, comme de 2008 à 2021. Lecture B : l'arrêté du 3 octobre
+    2006 laisse en vigueur jusqu'au 1er janvier 2008 les articles 16 et 17, alinéa 2, des
+    statuts de 1979, et approuve des « dispositions transitoires », au seul Bulletin
+    officiel : ils peuvent régler le report de 2007 ; le modèle, qui ne majore rien, suit
+    une lecture B où ils ne majorent pas
+  fiabilite: >-
+    faible : ni les statuts de 2006, ni leurs dispositions transitoires, ni ceux de 1979
+    ne sont lus (question 22)
+  nee_de: JORFARTI000002050100
+  textes:
+  - id: JORFARTI000002050100
+    article: arrêté du 3 octobre 2006, article unique
+    publie_le: 2006-10-13
+    citation: >-
+      « sont approuvées les modifications apportées aux statuts […] (art. 2.7 et 2.21 de
+      la seconde partie « règlement intérieur », troisième partie « Régime de retraite
+      complémentaire », ainsi que les dispositions transitoires). L'arrêté du 21 mars 1979
+      portant approbation des statuts de la section professionnelle des architectes,
+      agréés en architecture, ingénieurs, techniciens, experts et conseils et relatif au
+      régime d'assurance vieillesse complémentaire est abrogé à compter du 1er janvier
+      2007, à l'exception de l'article 16 et de l'article 17, alinéa 2, qui seront abrogés
+      le 1er janvier 2008. »
+  bornes:
+    liquidation.date_effet: [2007-01-01, 2008-01-01]
+  contenu:
+    droit: >-
+      non tranché à la Cipav : la majoration de 2008 à 2021 (lecture A), ou ce que les
+      articles 16 et 17, alinéa 2, de 1979 et les dispositions transitoires disent
+      (lecture B, non lue) ; les autres sections, à écrire
+  exemples: aucun trouvé
+- id: cipav_de_2008_a_2021
+  statut: supposee
+  hypothese: >-
+    l'article 3.15 des statuts de 2006, au seul Bulletin officiel, relu par différence :
+    son texte est celui des statuts au 1er janvier 2023, ôtées les deux seules
+    modifications que le Journal officiel publie (arrêtés du 16 décembre 2021, 19°, et
+    du 20 mars 2023, 17°) : « L'adhérent âgé de 65 ans et comptant un minimum de trente
+    années d'affiliation à la C•I•P•A•V, peut différer la date d'entrée en jouissance de
+    la pension de retraite complémentaire de 1 à 5 ans. Le compte de points qui est
+    alors établi est majoré de 5% par année entière de prorogation. Cette majoration
+    s'applique uniquement aux points acquis au titre des trente premières années de
+    cotisation à la C•I•P•A•V », avec les mots « , telles qu'elles sont définies à
+    l'article 3.6 », à une place que l'arrêté de 2023 ne montre pas ; dès le 1er janvier
+    2008, où tombent les deux articles de 1979 que l'arrêté de 2006 gardait
+  fiabilite: >-
+    haute pour le texte (R-E12 : aucun arrêté ne manque, aucun ne renumérote la
+    troisième partie) ; le décompte des trente années, renvoyé à l'article 3.6, non lu ;
+    les dispositions transitoires de 2006, non lues (question 22)
+  nee_de: JORFARTI000002050100
+  textes:
+  - id: JORFARTI000002050100
+    article: arrêté du 3 octobre 2006, article unique
+    publie_le: 2006-10-13
+    citation: >-
+      « est abrogé à compter du 1er janvier 2007, à l'exception de l'article 16 et de
+      l'article 17, alinéa 2, qui seront abrogés le 1er janvier 2008 »
+  - id: JORFARTI000044554134
+    article: arrêté du 16 décembre 2021, annexe, 19°, qui montre le premier alinéa d'avant 2022
+    publie_le: 2021-12-24
+    citation: >-
+      « Au premier alinéa de l'article 3.15, les mots : « âgé de 65 ans » sont remplacés
+      par les mots : « qui a atteint l'âge prévu au deuxième alinéa du 1° de l'article
+      3.13, » »
+  - id: JORFARTI000047334800
+    article: arrêté du 20 mars 2023, annexe, 17°, a), qui montre le dernier alinéa d'avant 2023
+    publie_le: 2023-03-24
+    citation: >-
+      « Au dernier alinéa, les mots : « , telles qu'elles sont définies à l'article 3.6 »
+      sont supprimés »
+  - reference: >-
+      « Statuts Cipav au 01/01/2023 », publiés par la caisse, article 3.15
+      (https://www.lacipav.fr/sites/default/files/2023-04/Statuts%20CIPAV_1janvier2023.pdf)
+    lu_le: 2026-11-06
+    empreinte: SHA-256 e5034d618178585fdae444ec690247ef83c7e94d7e9ca741682fb98562093790
+    citation: >-
+      « Le compte de points qui est alors établi est majoré de 5% par année entière de
+      prorogation. » ; « Cette majoration s'applique uniquement aux points acquis au titre
+      des trente premières années de cotisation à la C•I•P•A•V. »
+  bornes:
+    liquidation.date_effet: [2008-01-01, 2022-01-01]
+  contenu:
+    parametres:
+      surcote_par_trimestre: {cipav_complementaire: 0.0125}
+      surcote_pas_trimestres: {cipav_complementaire: 4}
+      surcote_trimestres_maximum: {cipav_complementaire: 20}
+      surcote_age_debut: {cipav_complementaire: 65}
+      surcote_affiliation_minimale_trimestres: {cipav_complementaire: 120}
+      points_majores:
+        cipav_complementaire: >-
+          ceux des trente premières années de cotisation à la Cipav, comptées selon
+          l'article 3.6 (non lu)
+    droit: >-
+      à la Cipav, 5 % par année entière de report au-delà de 65 ans, d'un à cinq ans,
+      avec trente années d'affiliation, sur les points des trente premières années ; les
+      autres sections, à écrire
+  exemples: aucun trouvé
+- id: cipav_2022
+  statut: lue
+  nee_de: JORFARTI000044554134
+  textes:
+  - id: JORFARTI000044554134
+    article: arrêté du 16 décembre 2021, annexe, 19°
+    publie_le: 2021-12-24
+    en_vigueur: 2022-01-01
+    citation: >-
+      « Au premier alinéa de l'article 3.15, les mots : « âgé de 65 ans » sont remplacés
+      par les mots : « qui a atteint l'âge prévu au deuxième alinéa du 1° de l'article
+      3.13, » »
+  - id: JORFARTI000044554130
+    article: arrêté du 16 décembre 2021, article 2
+    publie_le: 2021-12-24
+    citation: >-
+      « Les modifications apportées aux statuts de la section professionnelle mentionnée
+      au 11° de l'article R. 641-1 du code de la sécurité sociale entrent en vigueur le
+      1er janvier 2022. »
+  bornes:
+    liquidation.date_effet: [2022-01-01, 2023-01-01]
+  contenu:
+    parametres:
+      surcote_par_trimestre: {cipav_complementaire: 0.0125}
+      surcote_pas_trimestres: {cipav_complementaire: 4}
+      surcote_trimestres_maximum: {cipav_complementaire: 20}
+      surcote_age_debut:
+        cipav_complementaire: >-
+          l'âge du taux plein du 1° de L. 351-8, que l'article 3.13, 1°, nomme
+      surcote_affiliation_minimale_trimestres: {cipav_complementaire: 120}
+      points_majores:
+        cipav_complementaire: >-
+          ceux des trente premières années de cotisation à la Cipav, comptées selon
+          l'article 3.6 (non lu)
+    droit: >-
+      à la Cipav, la règle de 2008, comptée de l'âge du taux plein ; les autres
+      sections, à écrire
+  exemples: aucun trouvé
+- id: cipav_2023_a_juin_2026
+  statut: lue
+  nee_de: JORFARTI000047334800
+  textes:
+  - id: JORFARTI000047334800
+    article: arrêté du 20 mars 2023, annexe, 17°
+    publie_le: 2023-03-24
+    citation: >-
+      « 17° L'article 3.15 est ainsi modifié : a) Au dernier alinéa, les mots : « ,
+      telles qu'elles sont définies à l'article 3.6 » sont supprimés ; b) L'article est
+      complété par un alinéa ainsi rédigé : « Pour la détermination des trente années de
+      cotisation, les années au titre desquelles l'adhérent a obtenu une exonération ou
+      une réduction de cotisation sont prises en compte. » »
+  - id: JORFARTI000047334796
+    article: arrêté du 20 mars 2023, article 2
+    publie_le: 2023-03-24
+    citation: >-
+      « L'annexe au présent arrêté est applicable aux cotisations et aux prestations dues
+      au titre des périodes courant à compter du 1er janvier 2023. »
+  - reference: >-
+      « Statuts Cipav au 01/01/2023 », publiés par la caisse, article 3.15 et article
+      3.13, 1°
+      (https://www.lacipav.fr/sites/default/files/2023-04/Statuts%20CIPAV_1janvier2023.pdf)
+    lu_le: 2026-11-06
+    empreinte: SHA-256 e5034d618178585fdae444ec690247ef83c7e94d7e9ca741682fb98562093790
+    citation: >-
+      « L'adhérent qui a atteint l'âge prévu au deuxième alinéa du 1° de l'article 3.13
+      et comptant un minimum de trente années d'affiliation à la C•I•P•A•V, peut différer
+      la date d'entrée en jouissance de la pension de retraite complémentaire de 1 à 5
+      ans. » ; « A taux plein : - à partir de l'âge du taux plein prévu au 1° de l'article
+      L. 351-8 du code de la sécurité sociale »
+  bornes:
+    liquidation.date_effet: [2023-01-01, 2026-07-01]
+  contenu:
+    parametres:
+      surcote_par_trimestre: {cipav_complementaire: 0.0125}
+      surcote_pas_trimestres: {cipav_complementaire: 4}
+      surcote_trimestres_maximum: {cipav_complementaire: 20}
+      surcote_age_debut:
+        cipav_complementaire: >-
+          l'âge du taux plein du 1° de L. 351-8, que l'article 3.13, 1°, nomme
+      surcote_affiliation_minimale_trimestres: {cipav_complementaire: 120}
+      points_majores:
+        cipav_complementaire: >-
+          ceux des trente premières années de cotisation à la Cipav, années
+          d'exonération ou de réduction de cotisation comprises
+    droit: >-
+      à la Cipav, la règle de 2022, le décompte des trente années écrit ; les autres
+      sections, à écrire
+  exemples: aucun trouvé
+- id: cipav_depuis_juillet_2026
+  statut: lue
+  nee_de: JORFARTI000054153655
+  textes:
+  - id: JORFARTI000054153655
+    article: décret n° 2026-418 du 29 mai 2026, article 20, qui modifie le décret n° 79-262
+    publie_le: 2026-05-31
+    citation: >-
+      « II. - L'affilié qui a atteint l'âge prévu au a du 1° de l'article 5-1 et comptant
+      un minimum de trente années d'affiliation à la CIPAV, peut différer la date d'entrée
+      en jouissance de la pension de retraite complémentaire de 1 à 5 ans. »
+  - id: LEGIARTI000054168515
+    article: décret n° 79-262, article 5-2, II, en vigueur le 1er juillet 2026
+    en_vigueur: 2026-07-01
+    citation: >-
+      « Le compte de points qui est alors établi est majoré de 5% par année entière de
+      prorogation. Cette majoration s'applique uniquement aux points acquis au titre des
+      trente premières années de cotisation à la CIPAV. Pour la détermination des trente
+      années de cotisation, les années au titre desquelles l'affilié a obtenu une
+      exonération ou une réduction de cotisation sont prises en compte. »
+  - id: LEGIARTI000054168518
+    article: décret n° 79-262, article 5-1, 1°, a, en vigueur le 1er juillet 2026
+    en_vigueur: 2026-07-01
+    citation: >-
+      « 1° A taux plein : a) A partir de l'âge du taux plein prévu au 1° de l'article
+      L. 351-8 du code de la sécurité sociale »
+  bornes:
+    liquidation.date_effet: [2026-07-01, null]
+  contenu:
+    parametres:
+      surcote_par_trimestre: {cipav_complementaire: 0.0125}
+      surcote_pas_trimestres: {cipav_complementaire: 4}
+      surcote_trimestres_maximum: {cipav_complementaire: 20}
+      surcote_age_debut:
+        cipav_complementaire: l'âge du taux plein du 1° de L. 351-8 (article 5-1, 1°, a)
+      surcote_affiliation_minimale_trimestres: {cipav_complementaire: 120}
+      points_majores:
+        cipav_complementaire: >-
+          ceux des trente premières années de cotisation à la Cipav, années
+          d'exonération ou de réduction de cotisation comprises
+    droit: >-
+      à la Cipav, la règle de 2023, au décret ; les autres sections, à écrire
+  exemples: aucun trouvé
+approximations:
+- version: [cipav_de_2008_a_2021, cipav_2022, cipav_2023_a_juin_2026, cipav_depuis_juillet_2026]
+  regime: cipav_complementaire
+  textes: >-
+    statuts, article 3.15 (versions de 2008 à 2026) ; décret n° 79-262, article 5-2, II
+    (LEGIARTI000054168515)
+  ecart: >-
+    Erreur déclarée, non corrigée (candidat, au propriétaire) : depuis 2013, le modèle
+    majore tous les points de la Cipav, le texte ceux des trente premières années de
+    cotisation (`sources.a_relire`, cas posés et calculs).
+  effet: >-
+    au moins 152,05 € par an de trop pour un an de report, pension au 1er janvier 2016 ;
+    537,96 € au 1er janvier 2026 ; depuis le 1er juillet 2026, l'écart déclaré dans
+    `decret_2026_418_liberaux`
+- version: [cipav_de_2008_a_2021]
+  regime: cipav_complementaire
+  textes: statuts, article 3.15, relu par différence ; arrêté du 3 octobre 2006
+  ecart: >-
+    Erreur déclarée, non corrigée (candidat, au propriétaire), sous la réserve des
+    dispositions transitoires de 2006 : de 2008 à 2012, le modèle ne majore rien
+    (`surcote_par_trimestre: null` jusqu'en 2012), le texte majore.
+  effet: >-
+    au moins 215,43 € par an servis en moins pour un an de report, pension au 1er janvier
+    2012 (419,43 € sous les trois décomptes de la première année du régime)
+- version: [cipav_2007]
+  regime: cipav_complementaire
+  textes: arrêté du 3 octobre 2006 (JORFARTI000002050100)
+  ecart: >-
+    Point non tranché : le modèle ne majore rien en 2007 ; la lecture A majore, la
+    lecture B dépend de textes non lus.
+  effet: >-
+    pension au 1er janvier 2007, un an de report : 0 € (lecture B, si les textes de 1979
+    ne majorent rien) ; 136,19 € à 347,40 € par an servis en moins (lecture A, selon le
+    décompte des trente années)
+- version: [cipav_avant_2007]
+  regime: cipav_complementaire
+  textes: statuts de 1979, au seul Bulletin officiel
+  ecart: aucun connu ; la règle d'avant 2007 n'est pas lue (question 22).
+  effet: non mesuré
 sources:
-  lu_le: 2026-10-16
+  lu_le: 2026-11-06
   prochaine_relecture: 2026-12-31
   a_relire:
   - >-
@@ -57,47 +380,73 @@ sources:
     mois, comme le régime de base ; lire si la caisse le fait toujours, et depuis quand.
   - >-
     Cipav, l'article 3.15 relu au Journal officiel par différence (action 130, E11,
-    6 novembre 2026). Les statuts de 2006 sont au seul Bulletin officiel (arrêté du
-    3 octobre 2006, JORFARTI000002050100 : « L'arrêté, accompagné de son annexe, sera
-    publié intégralement au Bulletin officiel d'octobre 2006 » ; ceux de 1979 « abrogé
-    à compter du 1er janvier 2007 »). Mais tous les arrêtés qui modifient ensuite les
-    statuts sont publiés en entier au Journal officiel — 17 décembre 2007, 3 décembre
-    2010, 6 juillet 2012, 7 octobre 2014, 18 décembre 2015, 19 janvier 2016, 3 août
-    2017, 22 juin 2020, 16 mars 2021, 16 décembre 2021, 20 mars 2023, 27 décembre 2023,
-    4 et 17 septembre 2025 —, aucun ne renumérote la troisième partie (celui de 2017
-    renumérote la deuxième, articles 2.13 à 2.27), et seuls ceux du 16 décembre 2021
-    (19°, le premier alinéa, « âgé de 65 ans ») et du 20 mars 2023 (17°) touchent
-    l'article 3.15. Son texte du 1er janvier 2007 au 31 décembre 2021 est donc celui des
-    statuts au 1er janvier 2023, ces deux modifications ôtées : « L'adhérent âgé de 65
-    ans et comptant un minimum de trente années d'affiliation à la C•I•P•A•V, peut
-    différer la date d'entrée en jouissance de la pension de retraite complémentaire de
-    1 à 5 ans. Le compte de points qui est alors établi est majoré de 5% par année
-    entière de prorogation. Cette majoration s'applique uniquement aux points acquis au
-    titre des trente premières années de cotisation à la C•I•P•A•V », avec les mots
-    « , telles qu'elles sont définies à l'article 3.6 », à une place que l'arrêté de
-    2023 ne montre pas ; en 2022, le premier alinéa de 2023. L'article 3.6 n'est pas lu
-    dans ces rédactions : le décompte des trente années, avant 2023, reste ouvert.
-    DEUX ERREURS NEUVES, déclarées, non corrigées (candidats, au propriétaire). (1) DE
-    2013 À 2022, le modèle majore tous les points (périodes de `cipav_complementaire`
+    6 novembre 2026), la réserve de 2006 écrite (E12, après R-E12). L'arrêté du 3 octobre
+    2006 (JORFARTI000002050100) approuve « les modifications apportées aux statuts […]
+    (art. 2.7 et 2.21 de la seconde partie « règlement intérieur », troisième partie
+    « Régime de retraite complémentaire », ainsi que les dispositions transitoires) » ;
+    « L'arrêté du 21 mars 1979 portant approbation des statuts […] est abrogé à compter
+    du 1er janvier 2007, à l'exception de l'article 16 et de l'article 17, alinéa 2, qui
+    seront abrogés le 1er janvier 2008 » ; « L'arrêté, accompagné de son annexe, sera
+    publié intégralement au Bulletin officiel d'octobre 2006 ». Les statuts de 2006, leurs
+    dispositions transitoires et ceux de 1979 sont au seul Bulletin officiel (question
+    22). Tous les arrêtés qui modifient ensuite les statuts sont publiés en entier au
+    Journal officiel — 17 décembre 2007, 3 décembre 2010, 6 juillet 2012, 7 octobre 2014,
+    18 décembre 2015, 19 janvier 2016, 3 août 2017, 22 juin 2020, 16 mars 2021,
+    16 décembre 2021, 20 mars 2023, 27 décembre 2023, 4 et 17 septembre 2025 —, aucun ne
+    renumérote la troisième partie (celui de 2017 renumérote la deuxième, articles 2.13
+    à 2.27), et seuls ceux du 16 décembre 2021 (19°, le premier alinéa, « âgé de 65
+    ans ») et du 20 mars 2023 (17°) touchent l'article 3.15. Son texte de 2007 au
+    31 décembre 2021 est donc celui des statuts au 1er janvier 2023, ces deux
+    modifications ôtées : « L'adhérent âgé de 65 ans et comptant un minimum de trente
+    années d'affiliation à la C•I•P•A•V, peut différer la date d'entrée en jouissance de
+    la pension de retraite complémentaire de 1 à 5 ans. Le compte de points qui est
+    alors établi est majoré de 5% par année entière de prorogation. Cette majoration
+    s'applique uniquement aux points acquis au titre des trente premières années de
+    cotisation à la C•I•P•A•V », avec les mots « , telles qu'elles sont définies à
+    l'article 3.6 », à une place que l'arrêté de 2023 ne montre pas ; en 2022, le premier
+    alinéa de 2023. Qu'il s'applique dès le 1er janvier 2007 n'est pas prouvé : les
+    articles 16 et 17, alinéa 2, de 1979, en vigueur toute l'année 2007, et les
+    dispositions transitoires, non lus, peuvent régler le report de cette année-là, ou
+    les points acquis avant 2007. L'article 3.6 n'est pas lu dans ces rédactions : le
+    décompte des trente années, avant 2023, reste ouvert ; quatre décomptes sont chiffrés,
+    les trois de la première année du régime (de 1979 à 2008, de 1980 à 2009, de 1979 à
+    2009) et celui que nomme R-E12, depuis l'affiliation à la caisse (à 22 ans dans les
+    cas posés). Cas posés : libérale de la Cipav au double du salaire moyen depuis
+    22 ans, en euros de 2026, un an entier de report au-delà de 65 ans ; 0,05 × 0,062 =
+    0,0031. (1) DE 2013 À 2022, ERREUR DÉCLARÉE, non corrigée (candidat, au
+    propriétaire) : le modèle majore tous les points (périodes de `cipav_complementaire`
     depuis 2013), le texte ceux des trente premières années. Née le 10 mars 1949,
-    libérale de la Cipav au double du salaire moyen depuis 22 ans, en euros de 2026,
-    pension au 1er janvier 2016, un an entier de report au-delà de 65 ans : le modèle
-    sert 193 940,3125 × 0,062 × 1,05 = 12 625,51 €, dont 0,0031 × 193 940,3125 =
-    601,2150 € de majoration ; les cotisations revalorisées de la Cipav courent de 1979,
-    première année du régime (1 558,2124 €), à 2015 ; sur les trente premières années,
-    de 1979 à 2008, 0,0031 × 137 466,6071 = 426,1465 €, 175,07 € par an de trop ; de
-    1980 à 2009, 0,0031 × 143 335,1748 = 444,3390 €, 156,88 € ; de 1979 à 2009, 0,0031
-    × 144 893,3872 = 449,1695 €, 152,05 € : au moins 152,05 € par an sous les trois
-    décomptes de la première année. (2) DE 2007 À 2012, le modèle ne majore rien
+    pension au 1er janvier 2016 : le modèle sert 193 940,3125 × 0,062 × 1,05 =
+    12 625,51 €, dont 0,0031 × 193 940,3125 = 601,2150 € de majoration ; les cotisations
+    revalorisées de la Cipav courent de 1979, première année du régime (1 558,2124 €), à
+    2015 ; sur les trente premières années, de 1979 à 2008, 0,0031 × 137 466,6071 =
+    426,1465 €, 175,07 € par an de trop ; de 1980 à 2009, 0,0031 × 143 335,1748 =
+    444,3390 €, 156,88 € ; de 1979 à 2009, 0,0031 × 144 893,3872 = 449,1695 €, 152,05 € ;
+    depuis l'affiliation, en 1971, les trente années s'arrêtent en 2000 et l'écart
+    grossit : au moins 152,05 € par an. (2) DE 2008 À 2012, ERREUR DÉCLARÉE, non
+    corrigée (candidat, au propriétaire), sous une réserve : le modèle ne majore rien
     (périodes de 1979 à 2012, `surcote_par_trimestre: null`), le texte le fait. Née le
-    10 mars 1945, même carrière, pension au 1er janvier 2012, un an entier de report
-    au-delà de 65 ans : le modèle sert 157 922,1741 × 0,062 = 9 791,17 €, sans
-    majoration ; le texte ajoute 0,0031 fois les cotisations des trente premières
-    années, de 1979 à 2008, 135 298,4577 €, 419,43 € par an servis en moins ; de 1980 à
-    2009, 141 074,4652 €, 437,33 € ; de 1979 à 2009, 142 608,1012 €, 442,09 € : au moins
-    419,43 € par an. Avant 2007 : les statuts de 1979, au seul Bulletin officiel
-    (question 22). Depuis 2023 et depuis le 1er juillet 2026, l'erreur de (1) est
-    déclarée dans `decret_2026_418_liberaux` (`sources.a_relire`).
+    10 mars 1945, pension au 1er janvier 2012 : le modèle sert 157 922,1741 × 0,062 =
+    9 791,17 €, sans majoration ; le texte ajoute 0,0031 fois les cotisations des trente
+    premières années : de 1979 à 2008, 135 298,4577 €, 419,43 € par an servis en moins ;
+    de 1980 à 2009, 141 074,4652 €, 437,33 € ; de 1979 à 2009, 142 608,1012 €,
+    442,09 € ; depuis l'affiliation, en 1967, les trente années vont de 1967 à 1996, les
+    points de 1979 à 1996, 69 492,8927 €, 215,43 € : au moins 215,43 € par an, au moins
+    419,43 € sous les trois décomptes de la première année. La réserve : les
+    dispositions transitoires de 2006, non lues, peuvent borner les points majorés
+    (question 22). (3) EN 2007, POINT NON TRANCHÉ. Née le 10 mars 1940, libérale depuis
+    mars 1962, pension au 1er janvier 2007 (66 ans et 9 mois ; 65 ans le 10 mars 2005) :
+    le modèle sert 112 063,7981 × 0,062 = 6 947,96 €, sans majoration, les cotisations
+    de 1979 (1 410,1318 €) à 2006. Lecture A, l'article 3.15 de 2006 dès le 1er janvier
+    2007 : 0,0031 × 112 063,7981 = 347,40 € par an servis en moins (de 1979 à 2008, et de
+    1979 à 2009 : les 28 années) ; 0,0031 × 110 653,6663 = 343,03 € (de 1980 à 2009) ;
+    0,0031 × 43 931,5488 = 136,19 € (depuis l'affiliation, de 1962 à 1991 : les points
+    de 1979 à 1991). Lecture B, les articles 16 et 17, alinéa 2, des statuts de 1979, ou
+    les dispositions transitoires, règlent l'année 2007 : leur texte n'est pas lu ; s'ils
+    ne majorent rien, le modèle sert juste, 0 € d'écart. Avant 2007 : les statuts de
+    1979, au seul Bulletin officiel (question 22). Depuis 2023 et depuis le 1er juillet
+    2026, l'erreur de (1) est déclarée dans `decret_2026_418_liberaux`
+    (`sources.a_relire`).
   - >-
     CPRN : trancher la lecture divergente de la borne de 70 ans par ce que la caisse publie
     d'autre de la règle qu'elle applique, sans la solliciter (docs/architecture.md, § 3.5).
@@ -418,6 +767,25 @@ sources:
       2006 (arrêté du 3 octobre 2006, qui abroge au 1er janvier 2007 ceux de 1979 et « sera
       publié intégralement au Bulletin officiel d'octobre 2006 ») ne sont pas lus
     date: 2026-09-27
+  - type: jorf
+    reference: >-
+      Cipav, arrêté du 3 octobre 2006 (JORFARTI000002050100), relu en entier dans l'index
+      JORF à jour du 6 novembre 2026 : « sont approuvées les modifications apportées aux
+      statuts de la section professionnelle des architectes, agréés en architecture,
+      ingénieurs, techniciens, géomètres, experts et conseils, artistes auteurs ne relevant
+      pas de l'article L. 382-1, enseignants, professionnels du sport, du tourisme et des
+      relations publiques, et de toute profession libérale non rattachée à une autre
+      section (art. 2.7 et 2.21 de la seconde partie « règlement intérieur », troisième
+      partie « Régime de retraite complémentaire », ainsi que les dispositions
+      transitoires). L'arrêté du 21 mars 1979 portant approbation des statuts de la section
+      professionnelle des architectes, agréés en architecture, ingénieurs, techniciens,
+      experts et conseils et relatif au régime d'assurance vieillesse complémentaire est
+      abrogé à compter du 1er janvier 2007, à l'exception de l'article 16 et de l'article
+      17, alinéa 2, qui seront abrogés le 1er janvier 2008. » L'arrêté du 21 mars 1979
+      n'est pas dans l'index (« 21 mars 1979 », 106 documents : les décrets n° 79-262 et
+      79-263, aucun arrêté de statuts) ; « transitoires » avec « architectes » ou
+      « cipav », de 2006 à 2009 : ce seul arrêté (action 130, E12, après R-E12)
+    date: 2026-11-06
   - type: autre
     reference: >-
       Cipav, « Statuts Cipav au 01/01/2023 », publiés par la caisse, article 3.15 :
@@ -499,12 +867,6 @@ textes_a_rattacher:
     23 juin 2011 (JORFARTI000024270214) ; règlement, articles 8 et 12, approuvé par
     l'arrêté du 10 juillet 2026 (LEGIARTI000054890978)
 - reference: >-
-    Cipav : statuts, article 3.15, complété par l'arrêté du 20 mars 2023
-    (JORFARTI000047334800), sous l'article 5 du décret n° 79-262 (LEGIARTI000006767480) ;
-    puis décret n° 79-262, articles 5-1 et 5-2, II, dans la rédaction du décret
-    n° 2026-418, en vigueur le 1er juillet 2026 (LEGIARTI000054168518,
-    LEGIARTI000054168515)
-- reference: >-
     CPRN : statuts, article 16, dans la rédaction de l'arrêté du 16 décembre 2013
     (JORFARTI000028387445), puis article 23, dans celle des arrêtés du 31 mai 2017
     (JORFARTI000034975971) et du 29 novembre 2023 (JORFARTI000048679350) ; règlement,
@@ -550,6 +912,9 @@ code:
     surcote_age_maximum, surcote_affiliation_minimale_trimestres,
     surcote_trimestres_maximum, surcote_pas_trimestres, surcote_palier_age,
     surcote_par_trimestre_apres_palier, age_table, age_taux_plein ;
-    legislation/ages_regimes.csv : age_surcote_maximum
+    legislation/ages_regimes.csv : age_surcote_maximum ;
+    contenu.parametres de chaque version : surcote_par_trimestre, surcote_pas_trimestres,
+    surcote_trimestres_maximum, surcote_age_debut,
+    surcote_affiliation_minimale_trimestres, points_majores
   tests: [tests/test_simulateur.py, tests/test_sections_sante.py, tests/test_oracle.py,
     tests/js/moteur.test.js, tests/temoins/simulations.json]
