@@ -1,15 +1,5 @@
 # Étape 4, thème « Avantages liés au décès de l'assuré » : les exposés et leurs références
 
-**Reprise, au 6 novembre 2026.** « Retraite personnelle de base », les huit thèmes de
-« Carrière » et « Avantages liés au décès de l'assuré » sont rangés, ce dernier par cette note
-(H9). Suivant : « Allocation du minimum » (17 exposés), sous la convention de la note du
-premier thème ; les quatre exposés mahorais du décès vont avec « Mayotte ». La base se relit
-par l'API hors de 5 h–6 h UTC. Restent à lire avec leur thème : les listes d'accords, de
-l'Union et de l'Espace économique européens, et les deux des ressources exclues de l'ASPA.
-Aux sessions du modèle : le candidat de cette note, la durée de mariage de la réversion
-d'avant juillet 1980 ; celui de H8, le chômage non indemnisé d'avant 1980 ; ceux des notes
-des majorations et des thèmes précédents ; l'activité accessoire (H6) ; l'AVPF du père (H7).
-
 **Le 6 novembre 2026, ce qui est fait.**
 
 - *La relecture de la base.* Par l'API, le 6 novembre 2026 de 12 h 02 à 12 h 20 UTC, par

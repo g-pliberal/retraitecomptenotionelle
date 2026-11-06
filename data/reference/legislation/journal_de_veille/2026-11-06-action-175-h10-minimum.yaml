@@ -1,0 +1,37 @@
+date: "2026-11-06"
+session: "action 175, étape 4 (H10) : le thème « Allocation du minimum » de la base de la Cnav — allocation de solidarité aux personnes âgées (Aspa), allocation supplémentaire d'invalidité (ASI)"
+consulte: >-
+  python scripts/veille_droit.py. La base de législation de la Cnav, par son API, le
+  6 novembre 2026 de 12 h 30 à 12 h 31 UTC, par les fonctions de
+  scripts/fetch/cnav_legislation.py, sans relire le registre par le script : les 17 exposés
+  du thème, à la version que le registre date ; les 4 fenêtres, les 4 listes et les
+  références qu'ils lient ; les avis de mise à jour 4, 48, 172, 232, 306 et 328. L'index LEGI
+  de la DILA, à jour au 2 novembre 2026, et JORF, au 3 : les 85 cibles des 171 liens
+  Légifrance des exposés ; L. 815-1, R. 815-1, L. 351-8, L. 351-1-5, D. 351-1-14, L. 815-7,
+  R. 815-3 et L. 815-24 du code de la sécurité sociale, en leurs rédactions successives ;
+  l'article 37 de la loi n° 2014-40. Les fiches minimum_vieillesse,
+  residence_et_minimum_vieillesse, inaptitude_au_travail et versement_forfaitaire_unique, et
+  le code des deux moteurs (foyer, invalidite, echeancier, commun) ; le cas du versement
+  forfaitaire unique de tests/test_versements_uniques.py, calculé par le portage.
+trouve: >-
+  Le registre range le thème : 16 exposés limite et 1 hors_modele (la compétence de l'Aspa),
+  3 fenêtres limite et 1 hors_modele (« Foyer »), 4 listes limite (les ressources exclues de
+  l'Aspa et de l'ASI), 42 références (38 limite, 4 hors_modele), 71 dont les renvois
+  s'étendent, 6 avis hors_modele. Une limite neuve dans docs/limites/3-systeme-actuel.md,
+  « allocations du minimum ». Une approximation déclarée, à préciser : R. 815-1 abaisse
+  l'âge de l'Aspa à celui de L. 351-1-5, soixante-deux ans, pour les 2° à 5° de L. 351-8,
+  dont, depuis le 1er septembre 2023, la retraite anticipée de l'assuré handicapé (4° bis) et
+  la carrière longue (4° ter) ; les deux moteurs ne la servent qu'à soixante-cinq ans hors
+  de l'inapte, ce que la fiche minimum_vieillesse déclare en termes généraux, « dès l'âge de
+  leur taux plein », effet « léger » ; sur le cas posé, 210,26 € par mois de soixante-deux à
+  soixante-cinq ans. Un point non tranché : la pension versée en un versement forfaitaire
+  unique « ne donne pas droit à l'Aspa » (exposé), quand le modèle sert l'allocation (9 600 €
+  par an sur le cas calculé) ; le service de l'allocation ne prend que qui ne relève
+  « d'aucun régime de base » (L. 815-7). Dans la base : « art. R815-3 » mène deux fois à
+  R. 815-13 et « Css art. L815-7 » une fois à l'article 146 du code de la famille et de
+  l'aide sociale ; la circulaire Cnav 2007/15 datée trois fois du 15 février 2007.
+reste: >-
+  L'étape 4 au thème « RCI » (10 exposés). Au modèle : l'âge de l'Aspa des retraites
+  anticipées, et le versement forfaitaire unique. Laissées à lire avec leur thème : les
+  listes des accords et de l'Espace économique européen ; les 78 références du thème que
+  seuls lient des barèmes et des avis.

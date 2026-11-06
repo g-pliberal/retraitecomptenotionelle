@@ -473,6 +473,36 @@ l'Institut des politiques publiques (PENSIPP). Écarts connus :
   régime général met à la charge d'un régime spécial de D. 173-1 (voir
   « régimes spéciaux et régime général »). Exposés « Avantages liés au décès
   de l'assuré » de la base de législation de la Cnav.
+- **allocations du minimum** — le modèle sert l'allocation de solidarité aux
+  personnes âgées, différentielle, sous le barème d'une personne seule ou du
+  couple, et, avant 2007, les deux étages de l'allocation aux vieux
+  travailleurs salariés et de l'allocation supplémentaire (fiches
+  `minimum_vieillesse` et `residence_et_minimum_vieillesse` ; « Un ménage, un
+  patrimoine, des ressources », `ecarts-au-droit-positif.md`). Il ne sert pas
+  l'allocation supplémentaire d'invalidité, qui complète, sous condition de
+  ressources, l'avantage viager d'invalidité ou de vieillesse de l'assuré
+  invalide qui n'a pas l'âge de l'allocation de solidarité (L. 815-24), et
+  prend fin à cet âge, son titulaire étant présumé inapte ; ni, avant 2006,
+  les anciennes allocations du minimum autres que les deux étages —
+  l'allocation aux mères de famille, l'allocation spéciale, l'allocation
+  viagère aux rapatriés, le secours viager. De l'allocation de solidarité, il
+  ne lit pas l'âge abaissé à celui de L. 351-1-5 des titulaires d'une retraite
+  anticipée pour handicap ou pour carrière longue (L. 351-8, 4° bis et 4° ter,
+  et R. 815-1, pour les pensions prenant effet depuis le 1er septembre 2023),
+  qu'il ne sert qu'à soixante-cinq ans ; le plafond propre à la veuve de
+  guerre (R. 815-26) ; le plafond d'une personne seule des époux séparés de
+  corps, ou de fait avec des résidences distinctes ; ce que la caisse retient
+  des ressources hors des pensions — les revenus d'activité, abattus depuis
+  2015, les avantages en nature, les biens, censés rapporter trois pour cent
+  de leur valeur vénale, les biens donnés depuis moins de dix ans — et ce
+  qu'elle en exclut ; la subsidiarité, qui veut que l'allocataire et son
+  conjoint aient demandé toutes leurs pensions ; l'exclusion de l'allocataire
+  de l'aide à la vie familiale et sociale des anciens migrants ; les
+  versements exceptionnels de mars 2008, à tous, et de décembre 2009, en
+  Guadeloupe et en Martinique ; la récupération
+  sur la succession, que la loi n° 2019-1479 a supprimée pour l'allocation
+  supplémentaire d'invalidité des assurés décédés depuis 2020. Exposés
+  « Allocation du minimum » de la base de législation de la Cnav.
 
 Un écart de quelques pour cent avec la pension réelle est attendu.
 
