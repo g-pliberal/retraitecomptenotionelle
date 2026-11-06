@@ -1,15 +1,5 @@
 # Étape 7 : le solde du suivi du panorama de la DREES, treize fiches lues feuille à feuille et recoupées à ce que le dépôt porte
 
-**Reprise, au 6 novembre 2026.** Fait : les feuilles non lues des fiches 1, 3,
-10, 12, 15, 16, 17, 21, 23 et 28, lues à la source et recoupées par 29 tests
-neufs (`tests/test_drees_panorama_solde.py`, témoin
-`tests/temoins/drees_panorama_2026_solde.json`) ; les fiches 22, 25 et 27 n'en
-avaient plus ; chaque fiche porte son `solde` au suivi. Reste : le jeu
-`drees_minimum_vieillesse`, à ouvrir depuis le poste du propriétaire ; les trois
-erreurs du coût (note des règles, 3 novembre) et l'effet des écarts de J4, qui
-attendent le propriétaire ; les candidats de la section 5 ; la relecture R-J5.
-Par quoi commencer : la section 5, si le propriétaire veut l'un des candidats.
-
 **La demande.** Vague 12, tâche J5, le 6 novembre 2026 : solder le suivi
 `data/reference/drees_panorama_2026.yaml` — les neuf fiches rangées à l'étape 7
 (01, 03, 10, 16, 17, 22, 23, 25, 27), les feuilles des fiches 15, 16 et 28 que
@@ -221,3 +211,5 @@ attentes sont des écarts de la source, épinglés après les avoir mesurés (se
 elles bougent si la DREES publie un erratum. Lancés : les cinq fichiers de tests de la
 DREES, sous les deux jeux de présomptions ; `tests/test_controle_drees_panorama.py` ;
 `python -m pytest -m rapide`, sous les deux jeux ; la prose.
+
+*Renvoi du 6 novembre 2026 (J5-bis) : la relecture R-J5 (`2026-11-06-relecture-r-j5.md`) a trouvé trois écarts moyens et treize faibles dans cette note, repris aux sources dans `2026-11-06-j5-bis-corrections-de-r-j5.md` ; le bloc « Reprise » de cette note y est passé.*

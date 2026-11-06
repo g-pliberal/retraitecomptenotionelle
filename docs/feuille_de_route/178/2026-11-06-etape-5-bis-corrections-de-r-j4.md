@@ -1,15 +1,5 @@
 # Étape 5, J4-bis : les écarts de la relecture R-J4, repris aux sources (l'âge du graphique 7, les arrondis, les pointeurs, la CNRACL, le test de la garantie sous les présomptions décalées)
 
-**Reprise, au 6 novembre 2026.** Fait (cette note, qui reprend le bloc de
-`2026-11-06-etape-5-complements-16-27-15.md`) : les écarts de R-J4 corrigés
-aux sources — l'âge du graphique 7 déclaré hypothèse, ses citations mot pour
-mot, les arrondis, les deux pointeurs, la CNRACL dite inférence — et le test de
-la garantie de la page rendu indépendant du jour de naissance présumé. Reste à
-l'étape 5 : les trois erreurs du coût de la note des règles (3 novembre), qui
-attendent le propriétaire, avec l'effet sur le coût des écarts de J4, non
-mesuré ; les candidats « Au propriétaire » ; à la clôture (étape 7), fiche 21,
-fiche 12, jeu `drees_minimum_vieillesse`. Par quoi commencer : la note des règles.
-
 **La demande.** Vague 11, tâche J4-bis, le 6 novembre 2026 : reprendre, contre
 la source, les écarts de `2026-11-06-relecture-r-j4.md` (commit 2adae34) dans
 le travail de J4 (commit b0f2854), et le défaut du test de J-bis (commit

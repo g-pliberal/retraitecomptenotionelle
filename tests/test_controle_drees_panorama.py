@@ -1710,7 +1710,9 @@ def test_la_garantie_de_la_page_sert_plus_de_monde_et_coute_plus_que_l_aspa_et_l
     pension ; ``cout.py``, ``GarantieDistribution.chiffrer`` : rien n'est
     retranché). La page ne les déduit que dans le tableau « Ce que la garantie
     vieillesse remplace » (``pages.js``, ``remplaces``), qui retire quatre
-    minima, 4,94 + 1,56 + 0,01 + 0,35 + 0,64 = 7,50 milliards d'euros courants de
+    minima — le minimum vieillesse, le contributif, le garanti et celui des
+    exploitants agricoles, qui est deux lignes de la cascade, cinq lignes en tout —,
+    4,94 + 1,56 + 0,01 + 0,35 + 0,64 = 7,50 milliards d'euros courants de
     2024, de la garantie en euros courants de 2024 : 13,93 − 7,50 = 6,43.
 
     LES CHIFFRES DE CE DERNIER PARAGRAPHE DÉPENDENT D'UNE PRÉSOMPTION, le jour
@@ -1718,9 +1720,10 @@ def test_la_garantie_de_la_page_sert_plus_de_monde_et_coute_plus_que_l_aspa_et_l
     garde ``PRESOMPTIONS_DECALEES`` de ``tests/conftest.py`` le dit le 1er).
     Mesuré le 6 novembre 2026, chaque présomption décalée seule : ni la
     naissance des enfants (27 ans pour 30) ni le mariage (30 ans pour 27) ne
-    déplacent rien, le jour de naissance déplace trois des quatre minima, ceux
-    que la page « calcule sur la grille » ; le minimum vieillesse, « lu dans
-    les comptes », ne bouge pas. Millions d'euros courants de 2024, au 15 puis
+    déplacent rien, le jour de naissance déplace trois des quatre minima (le
+    contributif, le garanti et celui des exploitants agricoles, dont les deux
+    lignes bougent : quatre lignes sur cinq), ceux que la page « calcule sur la
+    grille » ; le minimum vieillesse, « lu dans les comptes », ne bouge pas. Millions d'euros courants de 2024, au 15 puis
     au 1er : minimum vieillesse 4 941,15 et 4 941,15 ; minimum contributif
     1 563,24 et 1 568,64 ; minimum garanti 6,66 et 6,68 ; pension majorée de
     référence 349,01 et 396,01 ; complément différentiel de la RCO 636,73 et

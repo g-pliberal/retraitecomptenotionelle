@@ -342,9 +342,12 @@ def test_les_caisses_du_tableau_2_complementaire_de_la_fiche_1_sont_celles_du_ca
     trois dernières (la CANSSM aurait dû croître de 30,7 % entre 2014 et 2020
     pour que 2014 et 2024 s'égalent, 1 / 0,765 = 1,307, quand elle perd 23,5 % de
     2020 à 2024 : un 0 de cellule non disponible, non une évolution nulle ; à ne pas
-    citer). Enfin le régime général : 13,2 % publiés contre 14,1 au cadrage pour
-    2014-2024, 0,9 point d'écart que le renvoi de la source (« intégration de la
-    SSI au régime général ») ne chiffre pas."""
+    citer ; l'argument chiffré ne vaut que pour la CANSSM, peu vraisemblable, non
+    prouvé ; la Banque de France, dont le cadrage commence en 2016, ne s'égalerait
+    qu'au prix d'une baisse de 8,5 % puis d'une hausse de 9,2 %, peu plausible, non
+    exclu, et l'Enim, dont il commence en 2020, n'est contredite par rien). Enfin le régime général : 13,2 % publiés contre 14,1
+    au cadrage pour 2014-2024, 0,9 point d'écart que l'annexe 3 explique par un
+    périmètre, non par une erreur (voir le test de l'annexe 3, plus bas)."""
     sans_2014 = {"agirc_arrco", "banque_de_france", "canssm", "enim"}
     caisses = [c for c in temoin["valeurs"]["01_tableau_2_compl"]]
     assert len(caisses) == 19
@@ -714,6 +717,13 @@ def test_le_bloc_ensemble_du_complement_du_graphique_3_differe_en_2023_et_le_dep
         ecarts[(annee, sexe)] = _bloc(temoin, "15_graphique_1")[lignes[sexe]][annee - 2004] - age
     assert max(abs(e) for e in ecarts.values()) == pytest.approx(0.10, abs=0.0011)
     assert ecarts[(2013, "F")] == pytest.approx(-0.10, abs=0.0011)
+    # 20 des 63 valeurs (21 années, 3 séries) s'écartent de plus de 0,005 an, toutes de
+    # 2004 à 2013 et pour les femmes et l'ensemble : la source ne dit pas laquelle des
+    # deux séries est révisée.
+    differentes = sorted(cle for cle, e in ecarts.items() if abs(e) > 0.005)
+    assert len(ecarts) == 63 and len(differentes) == 20
+    assert {annee for annee, _ in differentes} == set(range(2004, 2014))
+    assert {sexe for _, sexe in differentes} == {"F", "ensemble"}
     for sexe in lignes:
         for annee in (2023, 2024):
             if (annee, sexe) in ecarts:
@@ -740,7 +750,8 @@ def test_le_complement_du_graphique_3_de_la_fiche_17_encadre_l_ensemble_du_depot
     modalité, l'ensemble est compris entre les parts des deux sexes, à 0,1 point
     près, comme l'est une moyenne pondérée ; et pour chaque sexe la décote, le
     taux plein et la surcote font 100, à 0,35 point près (la source arrondit : 99,8
-    à 100,2 pour les hommes)."""
+    à 100,2 pour les hommes). Une cellule est vide à la source (J27, « autre motif »,
+    hommes de 1942) : 107 cellules se comparent sur 108."""
     ensemble = {(l["generation"], l["modalite"]): float(l["valeur"]) for l in _lire(MACRO / "retraites_generations.csv")
                 if l["champ"] == "taux_liquidation" and l["regime"] == "tous_regimes" and l["sexe"] == "ensemble"}
     vus = 0
@@ -754,7 +765,9 @@ def test_le_complement_du_graphique_3_de_la_fiche_17_encadre_l_ensemble_du_depot
             e = ensemble[(generation, modalite)]
             assert min(f, h) - 0.1 <= e <= max(f, h) + 0.1, (generation, modalite, f, h, e)
             vus += 1
-    assert vus >= 100
+    # 12 générations et 9 modalités, moins une cellule vide à la source : « autre motif »,
+    # hommes de 1942 (J27, « F17_ Graphique 3 compl »).
+    assert vus == 107 and "1942" not in temoin["valeurs"]["17_graphique_3_compl"]["H"]["taux_plein_autre_motif"]
     for sexe in ("F", "H"):
         for generation, cellule in temoin["valeurs"]["17_graphique_3_compl"][sexe]["decote"].items():
             somme = sum(temoin["valeurs"]["17_graphique_3_compl"][sexe][m][generation]["valeur"]
@@ -833,12 +846,15 @@ def test_le_graphique_5_complementaire_de_la_fiche_16_retrouve_le_tableau_1_de_l
     concordent ; six classes s'écartent d'un point : femmes, 60 ans (12 contre 11) et
     61 ans (45 contre 44), 66 ans ou plus (13 contre 13 + 1) ; hommes, 60 ans (21
     contre 20), 63 à 65 ans (8 + 4 contre 13), 66 ans ou plus (8 contre 8 + 1) :
-    deux millésimes du calcul, ou l'arrondi, que la source ne départage pas."""
+    deux millésimes du calcul, ou l'arrondi (les deux valeurs sont des entiers), que la
+    source ne départage pas. Six écarts sur seize comparaisons : huit classes
+    regroupées, deux sexes."""
     depot = {(l["modalite"], l["sexe"]): float(l["valeur"]) for l in _lire(MACRO / "retraites_generations.csv")
              if l["generation"] == "1953" and l["champ"] == "age_premiere_liquidation"
              and l["indicateur"] == "part_pct"}
     classes = ["moins_55", "55", "56_59", "60", "61", "62", "63_64", "65", "66_plus"]
     ecarts = {}
+    comparaisons = 0
     for sexe, cle in (("F", "femmes"), ("H", "hommes")):
         colonne = {c: _bloc(temoin, "16_graphique_5_compl", cle)[i][12] for i, c in enumerate(classes)}
         assert sum(colonne.values()) == pytest.approx(100, abs=1.001), sexe
@@ -848,11 +864,17 @@ def test_le_graphique_5_complementaire_de_la_fiche_16_retrouve_le_tableau_1_de_l
         attendu = {c: depot[(c, sexe)] for c in ("moins_55", "55", "56_59", "60", "61", "62", "63_65")}
         attendu["66_plus"] = depot[("66", sexe)] + depot[("67_plus", sexe)]
         for classe, valeur in regroupe.items():
+            comparaisons += 1
             assert abs(valeur - attendu[classe]) <= 1.0 + 1e-9, (sexe, classe)
             if valeur != attendu[classe]:
                 ecarts[(sexe, classe)] = valeur - attendu[classe]
     assert ecarts == {("F", "60"): 1.0, ("F", "61"): 1.0, ("F", "66_plus"): -1.0,
                       ("H", "60"): 1.0, ("H", "63_65"): -1.0, ("H", "66_plus"): -1.0}
+    # Six écarts d'un point sur seize comparaisons (huit classes regroupées, deux sexes),
+    # non « six classes sur neuf » : trois sur des classes regroupées (une somme d'entiers
+    # arrondis peut s'écarter d'un point), trois sur une classe seule (60 ans des deux
+    # sexes, 61 ans des femmes), que l'arrondi seul n'explique pas.
+    assert comparaisons == 16 and len(ecarts) == 6
 
 
 def test_les_trimestres_de_decote_et_de_surcote_de_la_fiche_17_sont_compatibles_avec_leur_ventilation(temoin):
@@ -983,10 +1005,188 @@ def test_le_cumul_par_sexe_encadre_le_regime_general_de_la_fiche_23(temoin):
     assert "ex-SSI depuis 2020" in temoin["citations"]["23_graphique_1"]["textes"][0]
 
 
+# --- Les écarts de la relecture R-J5, repris aux sources (J5-bis, 6 novembre 2026) ----
+
+
+def test_l_ecart_du_regime_general_de_la_fiche_1_est_celui_de_la_reconstitution_de_2014_de_l_annexe_3(temoin, effectifs):
+    """Fiche 1, tableau 2 complémentaire, « CNAV » (« F01_Tableau 2 compl », I8) :
+    +13,2 % de 2014 à 2024 publiés, +14,10 % au cadrage (14 744 736 ÷ 12 922 464).
+    L'annexe 3 (folio 299, « Création de la SSI et fusion avec le régime général »)
+    en donne le mécanisme : « les effectifs du régime général après intégration des
+    indépendants de l'ex-SSI sont estimés dans le passé à partir du modèle ANCETRE »,
+    quand la Cnav du cadrage, jusqu'en 2019, est celle d'avant l'intégration (code
+    0010, en-tête de ``effectifs_retraites.csv``). La base de 2014 de la DREES n'est
+    pas publiée : pour que 14 744 736 fasse de 13,15 à 13,25 % de plus, elle est de
+    13 019 634 à 13 031 141, soit de 97 à 109 mille personnes (0,75 à 0,84 %) de plus
+    que celle du cadrage. L'ordre de grandeur est compatible avec un régime général
+    reconstitué avec les ex-indépendants, ce que la source ne démontre pas. De 2020
+    à 2024, sur la même base, post-intégration, les deux concordent (4,92 pour 4,9)."""
+    e14, e20, e24 = (effectifs[(annee, "cnav")] for annee in (2014, 2020, 2024))
+    assert (e14, e24) == (12_922_464, 14_744_736)
+    assert 100 * (e24 / e14 - 1) == pytest.approx(14.10, abs=0.005)
+    cnav = temoin["valeurs"]["01_tableau_2_compl"]["cnav"]
+    assert cnav["evolution_2014_2024"]["valeur"] == pytest.approx(13.2)
+    assert cnav["evolution_2020_2024"]["valeur"] == pytest.approx(4.9)
+    assert 100 * (e24 / e20 - 1) == pytest.approx(4.92, abs=0.005)
+    bas, haut = e24 / 1.1325, e24 / 1.1315
+    assert (round(bas), round(haut)) == (13_019_634, 13_031_141)
+    assert round(bas - e14, -2) == 97_200 and round(haut - e14, -2) == 108_700
+    assert 100 * (bas / e14 - 1) == pytest.approx(0.75, abs=0.005)
+    assert 100 * (haut / e14 - 1) == pytest.approx(0.84, abs=0.005)
+    annexe = temoin["citations"]["01_annexe_3"]
+    assert annexe["page"] == 299
+    assert any("modèle ANCETRE" in texte for texte in annexe["textes"])
+    assert any("fin 2019" in texte for texte in annexe["textes"])
+
+
+def test_trois_des_quatre_feuilles_de_revisions_de_la_fiche_21_comparent_deux_generations(temoin):
+    """Fiche 21, les quatre feuilles « REVISIONS » autres que le graphique 1. La
+    valeur de 2025 plus la révision est celle de 2026 pour 43 cellules du tableau 1
+    (les 45 de D7:H15, hors deux « <1 » en texte), 48 du tableau 3, 432 du
+    graphique 2 (trois blocs de 18 âges et huit colonnes) et neuf du tableau 2 (trois
+    lignes comparables, de trois colonnes) : 0,98 + 0,74 = 1,72 ; 6,99 + 1,87 = 8,86 ;
+    2,77 + 1,48 = 4,25. Mais ce ne sont pas, pour trois d'entre elles, des
+    révisions d'une même donnée : le bloc de 2025 des tableaux 2 et 3 et du
+    graphique 2 est celui de la génération 1950 (titre en B2), la feuille de 2026
+    celui de la génération 1954, ce que la feuille « Synthese » dit en toutes lettres
+    (D3, E3, F3 : « 1954 dans Pano 2026, vs 1950 auparavant »), en imputant les écarts
+    au changement de génération (E4, F4). Le graphique 2 s'écarte jusqu'à 42,04 points
+    (femmes, 60 ans, retraite : S18), le recul de l'âge d'ouverture des droits entre
+    les générations 1950 et 1954. Seuls le tableau 1 (générations 1942, 1946 et 1950,
+    la première inchangée) et le graphique 1 comparent une même génération. Trois
+    défauts de la source : la colonne « Total » des révisions du tableau 1 (R7:R15) et
+    la ligne « Ensemble » de celles du tableau 2 (H16:J16) écrivent 100 là où une
+    révision vaut 0 ; les maxima de la feuille « Synthese » sont minorés, « jusqu'à
+    2,8 point » (C2) pour 2,91 (M11, hommes de 1946) et « jusqu'à 3 points » (F2) pour
+    3,93 (N9). Les cellules d'erreur (« #VALUE! » en N20 du tableau 1, « #REF! » en
+    H8:J8 du tableau 2) ne se lisent pas dans le témoin : relues à ``openpyxl``."""
+    rev = temoin["valeurs"]["21_revisions_entre_generations"]
+    synthese = temoin["valeurs"]["21_synthese"]
+    for cle in ("tableau_2", "graphique_2", "tableau_3"):
+        avant, apres = (rev["titres"][f"{cle}_edition_{an}"]["valeur"] for an in (2025, 2026))
+        assert "1950" in avant and "1954" not in avant, cle
+        assert "1954" in apres and "1950" not in apres, cle
+        assert synthese[f"generations_{cle}"]["valeur"] == "1954 dans Pano 2026, vs 1950 auparavant"
+    assert "changement de génération" in synthese["origine_tableau_3"]["valeur"]
+    assert "changement de génération" in synthese["origine_graphique_2"]["valeur"]
+    assert synthese["generations_tableau_1"]["valeur"] == "1946 et 1950"
+
+    def identites(bloc):
+        """(cellules numériques, cellules en texte, plus grande révision en valeur absolue)."""
+        comptees = textes = 0
+        plus_forte = (0.0, None)
+        for l, (avant, revision, apres) in enumerate(zip(
+                bloc["edition_2025"]["valeurs"], bloc["revisions"]["valeurs"], bloc["edition_2026"]["valeurs"])):
+            for c, trio in enumerate(zip(avant, revision, apres)):
+                if any(isinstance(valeur, str) for valeur in trio):
+                    textes += 1
+                    continue
+                assert trio[0] + trio[1] == pytest.approx(trio[2], abs=1e-9), (l, c, trio)
+                comptees += 1
+                if abs(trio[1]) > plus_forte[0]:
+                    plus_forte = (abs(trio[1]), (l, c))
+        return comptees, textes, plus_forte
+
+    comptees, textes, plus_forte = identites(rev["tableau_1"])
+    assert (comptees, textes) == (43, 2)
+    assert plus_forte == (pytest.approx(2.91), (4, 0))      # M11 : hommes de 1946, en emploi
+    assert rev["revision_la_plus_forte"]["tableau_1"]["valeur"] == pytest.approx(2.91)
+    assert "2,8" in temoin["valeurs"]["21_synthese"]["tableau_1"]["valeur"]
+    comptees, textes, plus_forte = identites(rev["tableau_3"])
+    assert (comptees, textes) == (48, 0)
+    assert plus_forte == (pytest.approx(3.93), (1, 3))      # N9 : femmes, hors cumul emploi-retraite
+    assert rev["revision_la_plus_forte"]["tableau_3"]["valeur"] == pytest.approx(-3.93)
+    assert synthese["revisions_tableau_3"]["valeur"] == "Révisions jusqu'à 3 points"
+    total = 0
+    for sexe, bloc in rev["graphique_2"].items():
+        comptees, textes, forte = identites(bloc)
+        assert (comptees, textes) == (144, 0), sexe
+        total += comptees
+    assert total == 432
+    assert max(abs(v) for ligne in rev["graphique_2"]["femmes"]["revisions"]["valeurs"]
+               for v in ligne) == pytest.approx(42.04)
+    lignes = rev["tableau_2"]
+    assert sum(identites(lignes[cle])[0] for cle in
+               ("emploi_continu", "emploi_chomage_retraite", "emploi_maladie_retraite")) == 9
+    for cle in ("emploi_continu", "emploi_chomage_retraite", "emploi_maladie_retraite"):
+        assert identites(lignes[cle])[1] == 0
+    assert lignes["emploi_continu"]["edition_2025"]["valeurs"][0][0] == pytest.approx(0.98)
+    assert lignes["emploi_continu"]["revisions"]["valeurs"][0][0] == pytest.approx(0.74)
+    assert lignes["emploi_chomage_retraite"]["edition_2026"]["valeurs"][0][0] == pytest.approx(8.86)
+    assert lignes["emploi_maladie_retraite"]["edition_2026"]["valeurs"][0][0] == pytest.approx(4.25)
+    # Les défauts de totaux : 100 là où une révision vaut 0.
+    totaux = temoin["valeurs"]["21_defauts_de_totaux"]
+    assert [ligne[0] for ligne in totaux["tableau_1_total"]["valeurs"]] == pytest.approx([100.0] * 9)
+    assert totaux["tableau_2_ensemble_revisions"]["valeurs"][0] == pytest.approx([100.0] * 3)
+    assert lignes["ensemble"]["edition_2025"]["valeurs"][0] == pytest.approx([100.0] * 3)
+
+
+def test_le_texte_du_folio_142_donne_61_ans_et_7_mois_pour_la_generation_1957_quand_le_graphique_5_donne_61_85(temoin):
+    """Fiche 15, folio 142 (le candidat nommé de J4-bis) : « Cet âge atteint ainsi 61
+    ans et 7 mois pour la génération 1957, soit 1 an et 1 mois de plus que pour la
+    génération 1950 ». Le graphique 5 (« F15_Graphique 5 », colonne E) donne 60,46
+    pour 1950 (E29), 61,59 pour 1955 (E34) et 61,85 pour 1957 (E36) : 61 ans et 7 mois,
+    c'est 61,583, la valeur de la génération 1955, et 1 an et 1 mois de plus que 1950
+    (61,583 - 60,46 = 1,12 an) en est cohérent ; la génération 1957 vaut 61 ans et 10
+    mois, 1 an et 5 mois de plus que 1950 (1,39 an). Une coquille du texte ou une autre
+    édition : la source ne dit pas laquelle ; le texte n'est pas à citer pour 1957."""
+    g5 = temoin["valeurs"]["15_graphique_5"]
+    f1950, f1955, f1957 = (g5[f"generation_{g}"]["valeur"] for g in (1950, 1955, 1957))
+    assert (f1950, f1955, f1957) == (60.46, 61.59, 61.85)
+    sept_mois = 61 + 7 / 12
+    assert f1955 == pytest.approx(sept_mois, abs=0.01)
+    assert abs(f1957 - sept_mois) > 0.25
+    assert sept_mois - f1950 == pytest.approx(1 + 1 / 12, abs=0.05)
+    assert (f1957 - f1950) * 12 == pytest.approx(16.7, abs=0.05)
+    assert "61 ans et 7 mois pour la génération 1957" in temoin["citations"]["15_folio_142"]["textes"][0]
+
+
+def test_les_tableaux_3_et_4_de_la_fiche_28_sont_de_fin_2020_et_l_annexe_3_date_la_ssi(temoin):
+    """Fiche 28 : les titres des tableaux 3 (type de pension) et 4 (carrière) disent
+    « fin 2020 » (B2 des deux feuilles ; source « Drees, EIR 2020 »), non 2024
+    comme les tableaux 1, 2 et 5. Fiche 23 : « F23_Graphique 1 » écrit que le
+    régime général intègre l'ex-SSI « depuis 2020 », « F23_Graphique 1 compl. » (B27)
+    « en 2021 », quand l'annexe 3 (folio 299) dit que la SSI « a disparu fin 2019 » et
+    qu'« à partir de 2020, seul le régime général total existe » : la date est de 2020,
+    le « 2021 » est celui d'une note de champ. Fiche 12 : « A DECIDER » (F7 de
+    « Synthese ») est une note de travail de l'édition précédente, non un défaut."""
+    dates = temoin["valeurs"]["28_dates"]
+    assert dates["titre_tableau_3"]["valeur"].endswith("selon le type de pension, fin 2020")
+    assert dates["titre_tableau_4"]["valeur"].endswith("non allocataires, fin 2020")
+    assert "en 2021" in temoin["valeurs"]["23_dates"]["complement"]["valeur"]
+    textes = temoin["citations"]["01_annexe_3"]["textes"]
+    assert any("disparu fin 2019" in texte for texte in textes)
+    assert any(texte.startswith("À partir de 2020") for texte in textes)
+    assert temoin["valeurs"]["12_a_decider"]["figure_5"]["valeur"] == "A DECIDER"
+
+
+def test_le_folio_37_imprime_les_evolutions_de_la_cnracl_et_de_l_ircantec_en_fractions_arrondies(temoin):
+    """Fiche 3, tableau 2 (folio 37, page 38 du fichier) : le PDF imprime pour la
+    CNRACL « 0,0 0,1 0,2 » et pour l'Ircantec « 0,0 -0,1 -0,2 » (évolutions 2023-2024,
+    2019-2024, 2014-2024), c'est-à-dire les fractions du classeur (0,016, 0,093, 0,23 ;
+    -0,01, -0,068, -0,155, format « 0.0 ») arrondies au dixième, quand le
+    complément en donne exactement le centuple en pour cent (1,6 ; 9,3 ; 23 ; -1 ;
+    -6,8 ; -15,5). Le défaut est imprimé, non seulement dans le classeur ; la
+    source ne dit pas laquelle des deux feuilles est la bonne."""
+    pdf = _depose("drees_panorama_retraites_2026")
+    if pdf is None or shutil.which("pdftotext") is None:
+        pytest.skip("PDF absent de data/brut/, ou pdftotext absent")
+    page = subprocess.run(["pdftotext", "-layout", "-f", "38", "-l", "38", str(pdf), "-"],
+                          capture_output=True, check=True, text=True).stdout
+    assert re.search(r"CNRACL\s+145\s+51\s+196\s+147\s+0,0\s+0,1\s+0,2\s+4\b", page)
+    assert re.search(r"Ircantec\s+206\s+43\s+250\s+209\s+0,0\s+-0,1\s+-0,2\s+6\b", page)
+    assert re.search(r"Régime général1\s+2 604\s+243\s+2 847\s+696\s+0,1\s+-0,6\s+-0,7\b", page)
+    for periode, brut, pour_cent in (("2023_2024", 0.016, 1.6), ("2019_2024", 0.093, 9.3), ("2014_2024", 0.23, 23.0)):
+        assert _v(temoin, "03_tableau_2", f"cnracl_{periode}") == brut
+        assert _v(temoin, "03_tableau_2_compl", f"cnracl_{periode}") == pour_cent
+        assert round(brut, 1) in (0.0, 0.1, 0.2)
+        assert 100 * brut == pytest.approx(pour_cent)
+
+
 # --- Le suivi ---------------------------------------------------------------
 
 
-FICHES_DU_SOLDE = ["01", "03", "10", "12", "15", "16", "17", "21", "22", "23", "25", "27", "28"]
+FICHES_DU_SOLDE =["01", "03", "10", "12", "15", "16", "17", "21", "22", "23", "25", "27", "28"]
 
 
 def test_les_fiches_du_solde_disent_leur_solde_au_suivi_et_nomment_leurs_recoupements():
@@ -1003,3 +1203,38 @@ def test_les_fiches_du_solde_disent_leur_solde_au_suivi_et_nomment_leurs_recoupe
             assert nom.startswith("test_") and callable(getattr(module, nom, None)), (numero, nom)
     recoupees = {n for n in FICHES_DU_SOLDE if suivi[n].get("recoupe_par")}
     assert recoupees == {"01", "03", "10", "12", "15", "16", "17", "21", "23", "28"}
+
+
+def test_le_suivi_dit_ce_que_les_sources_prouvent_et_laisse_non_tranche_ce_qu_elles_ne_disent_pas():
+    """Les mots du suivi tiennent à ce que les tests ci-dessus prouvent (J5-bis,
+    6 novembre 2026, d'après la relecture R-J5) : l'écart du régime général de la
+    fiche 1 est un périmètre que l'annexe 3 (folio 299) explique ; les révisions de
+    la fiche 21 des tableaux 2 et 3 et du graphique 2 sont entre deux générations ;
+    « aucune erreur du modèle » devient « aucune erreur établie » et nomme les trois
+    écarts non expliqués ; la date « fin 2020 » des tableaux 3 et 4 de la fiche 28 et
+    le défaut imprimé de la fiche 3 sont dits."""
+    suivi = yaml.safe_load(SUIVI.read_text(encoding="utf-8"))["fiches"]
+
+    def solde(numero: str) -> str:
+        return " ".join(str(suivi[numero]["solde"]).split())
+
+    assert "la note renvoie à la SSI" not in solde("01")
+    for mot in ("écart de périmètre", "annexe 3", "folio 299", "ANCETRE", "97 à 109 mille", "non démontré",
+                "CANSSM", "Banque de France", "Enim", "à ne pas citer"):
+        assert mot in solde("01"), ("01", mot)
+    for mot in ("folio 37", "0,0 0,1 0,2", "centuple"):
+        assert mot in solde("03"), ("03", mot)
+    assert "porte sur les CPS" in solde("10") and "non tranché" in solde("10")
+    assert "Aucune erreur du modèle" not in solde("15")
+    for mot in ("Aucune erreur établie", "trois écarts", "non expliqués", "20 valeurs sur 63",
+                "0,45", "2,13", "61 ans et 7 mois", "folio 142"):
+        assert mot in solde("15"), ("15", mot)
+    assert "six écarts d'un point sur seize comparaisons" in solde("16")
+    assert "107" in solde("17") and "J27" in solde("17")
+    assert "note de travail" in solde("12")
+    assert "annexe 3" in solde("23") and "2020" in solde("23")
+    assert "ne sont lues que par leurs en-têtes" not in solde("21")
+    for mot in ("génération 1950", "génération 1954", "43 cellules", "48", "432", "neuf cellules",
+                "#VALUE!", "#REF!", "Total", "2,91", "3,93", "à ne pas citer comme révision"):
+        assert mot in solde("21"), ("21", mot)
+    assert "fin 2020" in solde("28") and "EIR 2020" in solde("28")

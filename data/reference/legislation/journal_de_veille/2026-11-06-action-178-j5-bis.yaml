@@ -1,0 +1,36 @@
+date: "2026-11-06"
+session: "action 178, J5-bis : les écarts de la relecture R-J5 repris aux sources (le régime général de la fiche 1, les révisions de la fiche 21, « aucune erreur du dépôt », treize faibles)"
+consulte: >-
+  Aucune règle du scénario 1 n'est touchée. Le PDF du panorama de la DREES
+  (miroir de l'UNSA, empreinte 9eb36a06…735e9be) par pdftotext aux folios 37, 38,
+  142, 186, 188, 189 et 299 (annexe 3), et les classeurs des fiches 1, 3, 10,
+  12, 15, 16, 17, 21, 23 et 28 de l'archive de la release documents-apportes
+  (empreinte ec7503f8…aaf64911), par openpyxl, cellule par cellule ; en regard,
+  effectifs_retraites.csv, age_conjoncturel_depart.csv, retraites_generations.csv,
+  pib_courant.csv, population_par_age.csv, la table C de l'EACR
+  (tests/temoins/drees_eacr_tables_2026.json) et moteur/js/pages.js (la liste des
+  minima que la garantie remplace).
+trouve: >-
+  L'écart de 13,2 contre 14,1 du régime général de 2014 à 2024 (fiche 1) est un
+  périmètre : l'annexe 3 (folio 299) dit que les effectifs du régime général après
+  intégration de l'ex-SSI sont estimés dans le passé par le modèle ANCETRE, alors que
+  la Cnav du cadrage est celle d'avant l'intégration ; la base de 2014 n'est pas
+  publiée (97 à 109 mille personnes de plus que le cadrage, compatible, non démontré).
+  Trois des quatre feuilles de révisions de la fiche 21 (tableaux 2 et 3, graphique 2)
+  comparent la génération 1950 de 2025 à la génération 1954 de 2026, ce que la
+  feuille Synthese dit ; 2025 + révision = 2026 pour 43 cellules du tableau 1, 48 du
+  tableau 3, 432 du graphique 2 et 9 du tableau 2. « Aucune erreur du dépôt » devient
+  « aucune erreur établie, trois écarts non expliqués » (taux de retraités de 0,45 à
+  2,13 points, âge conjoncturel du portail sur 20 valeurs de 63 jusqu'à 0,10 an, six
+  écarts d'un point sur seize comparaisons à la fiche 16). Les tableaux 3 et 4 de la
+  fiche 28 sont de fin 2020 ; le folio 37 imprime des fractions pour les évolutions
+  de la CNRACL et de l'Ircantec ; le folio 142 écrit 61 ans et 7 mois pour la
+  génération 1957 quand le graphique 5 donne 61,85.
+reste: >-
+  Les trois erreurs du coût de l'étape 5 et l'effet des écarts de J4, qui attendent le
+  propriétaire ; le jeu drees_minimum_vieillesse du portail, à ouvrir depuis son
+  poste ; les candidats de la section 5 de la note de J5 (porter à data/reference/ le
+  sexe du taux de liquidation, le cumul par sexe, les flux, les trimestres de décote
+  et de surcote, les tableaux 3 et 4 de la fiche 28) ; la publication de l'INSEE de
+  2021 (note du graphique 7), toujours non lue ; la table C de l'EACR, lue au témoin
+  du dépôt et non à son classeur.
