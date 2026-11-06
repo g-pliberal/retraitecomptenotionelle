@@ -106,7 +106,11 @@ l'Institut des politiques publiques (PENSIPP). Écarts connus :
   trimestres de maladie et de maternité de ces années, et ceux du chômage
   quand il valide le chômage (D. 173-13 et D. 173-19 ; exposé « Annulation au
   profit d'un régime spécial », circulaire Cnav 2020/3) : le modèle laisse ces
-  années au régime général et à la complémentaire du non-titulaire. Et
+  années au régime général et à la complémentaire du non-titulaire. Ni, la
+  pension du régime général liquidée, le rachat que le régime spécial demande
+  des périodes qu'il valide aussi (D. 173-14) : la caisse lui verse la part
+  de la pension qui leur répond, multipliée par un coefficient qui dépend de
+  l'âge, et ne sert plus que le reste (exposés « Rachat de retraite »). Et
   l'activité accessoire de l'agent d'un régime spécial d'avant le 19 juillet
   2015, qui ne lui ouvrait aucun droit au régime général, lui en ouvre (fiche
   `un_statut_par_annee`).
@@ -341,7 +345,13 @@ l'Institut des politiques publiques (PENSIPP). Écarts connus :
   1962 (loi n° 64-1330), sur un salaire forfaitaire annuel que la base de
   législation de la Cnav publie de 1938 à 1962 : la fiche
   `totalisation_des_periodes_etrangeres` les renvoie aux périodes assimilées,
-  qui ne les portent pas.
+  qui ne les portent pas. Ni celle des périodes antérieures à l'affiliation
+  obligatoire de la catégorie au régime algérien, que ce régime aurait pu
+  valider (loi n° 85-1274, article 4), ni celle des services dans les forces
+  supplétives, ni les périodes assimilées que la caisse y reporte — service
+  national, guerre, invalidité, rente d'accident du travail d'au moins
+  soixante-six pour cent (exposés « Validation gratuite d'activité en
+  Algérie »).
 - **périodes assimilées** — le modèle valide sans cotisation les années que la
   saisie déclare sans emploi pour un motif — chômage indemnisé, de solidarité
   ou non indemnisé, préretraite du Fonds national de l'emploi, arrêt maladie,
@@ -412,6 +422,39 @@ l'Institut des politiques publiques (PENSIPP). Écarts connus :
   élus locaux (`ecarts-au-droit-positif.md`). La saisie n'a de quoi dire ni
   l'adoption, ni le congé parental, ni l'allocation, ni la charge de l'adulte,
   ni les points.
+- **allocations avant retraite** — le modèle ne sert aucune des allocations
+  qui précèdent la retraite : celles de l'assurance chômage et de solidarité,
+  l'allocation aux adultes handicapés, le revenu de solidarité active,
+  l'allocation des travailleurs de l'amiante, le revenu de remplacement des
+  cessations anticipées d'activité, l'avantage temporaire des maîtres du privé
+  (fiche `retrep_avantages_temporaires`, pas encore modélisée). Il lit la fin
+  de l'indemnisation du chômage, qui borne les trimestres assimilés (fiche
+  `fin_indemnisation_chomage`) ; la date d'effet est celle que la saisie
+  déclare : il n'oblige pas l'allocataire du revenu de solidarité active à
+  demander sa pension à l'âge du taux plein, ou, reconnu inapte, à l'âge de
+  L. 351-1-5 (L. 262-10 du code de l'action sociale et des familles), et ne
+  tient pas pour inapte le bénéficiaire de l'allocation aux adultes
+  handicapés (fiche `inaptitude_au_travail`). Il ne sert pas à l'allocataire
+  des travailleurs de l'amiante sa pension à taux plein dès soixante ans s'il
+  a la durée requise, et au plus tard à soixante-cinq ans, « par dérogation
+  aux dispositions de l'article L. 161-17-2 » (loi n° 98-1194, article 41 ;
+  fiche `inaptitude_invalidite_penibilite_amiante`, pas encore modélisée), ni
+  les trimestres de l'assurance volontaire à laquelle il est affilié pendant
+  l'allocation, que le fonds de l'amiante cotise. Le revenu minimum
+  d'insertion et le revenu de solidarité active ne valident aucun trimestre,
+  ici comme à la caisse (exposés « Allocations avant retraite »).
+- **validation sur présomption** — le modèle tient pour établi ce que la
+  saisie déclare, quand la caisse ne valide qu'au vu du relevé de carrière et
+  de pièces, et sur présomption ce qu'il ne porte pas : les trimestres de
+  salariat, huit au plus pour un même emploi, comptés comme cotisés, et le
+  chômage d'avant 1980 dont l'assuré n'a pas de justificatif, huit trimestres
+  au plus sur une attestation sur l'honneur (exposés « Périodes validées par
+  présomption », circulaire Cnav 2020/25). Le chômage involontaire d'avant
+  1980 est assimilé, indemnisé ou non : « des périodes antérieures au 1er
+  janvier 1980 durant lesquelles l'assuré était en situation de chômage
+  involontaire constaté » (R. 351-12, 4°, b) ; le modèle n'en valide aucun
+  trimestre quand la saisie le dit non indemnisé (fiche
+  `chomage_non_indemnise`, qui ne lit que le d du 4°).
 
 Un écart de quelques pour cent avec la pension réelle est attendu.
 

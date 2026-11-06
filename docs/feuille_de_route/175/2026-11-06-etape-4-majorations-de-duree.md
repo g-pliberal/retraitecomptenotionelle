@@ -1,16 +1,5 @@
 # Étape 4, thème « Carrière : majorations de durée d'assurance » : les exposés et leurs références
 
-**Reprise, au 6 novembre 2026.** Cinq thèmes de l'étape sont rangés : « Retraite
-personnelle de base », « Carrière : cotisations-salaires », « Carrière : versements
-volontaires », « Carrière : périodes assimilées », puis « Carrière : majorations de durée
-d'assurance » (cette note). Suivant : les quatre autres thèmes de « Carrière » (17 exposés),
-sous la convention de la note du premier thème. La base se relit par `cnav_legislation.py`
-hors de 5 h–6 h UTC. Restent à lire avec leur thème : les listes d'accords, de l'Union et de
-l'Espace économique européens. Aux sessions du modèle : les deux candidats de cette note, les
-trois et les deux des précédentes ; l'activité accessoire (H6, R-H6, H6-bis) ; l'AVPF du père,
-ouverte en 1985 (H7, sa note), dont le candidat 1, les trimestres d'une année d'éducation sans
-AVPF, est le plus lourd. R-H7 l'a dite juste, et ses huit écarts sont repris (H7-bis).
-
 **Le 6 novembre 2026, ce qui est fait.**
 
 - *La relecture de la base.* Relue de 0 h 13 à 0 h 21 UTC par
