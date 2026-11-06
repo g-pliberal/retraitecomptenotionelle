@@ -1,0 +1,52 @@
+date: "2026-11-06"
+session: "action 175, étape 6, vague 11, G16 : les 172 circulaires, lettres et instructions de 2000 et 2001 que la base de la Cnav cite sans thème"
+consulte: >-
+  Les 172 références sans thème et à lire de 2000 et 2001 dont le titre commence par
+  « Circulaire », « Lettre », « Instruction », « Note d'information » ou « Diffusion
+  d'instructions », relues par l'API de la base le 6 novembre 2026 à 14 h 01 UTC
+  (/reference/referencesByFileLeafRef/), toutes servies, 149 en page et 23 en PDF, pièces
+  de circulaires de 2001, lues par leur texte, et cinq scans en image ; toutes lues en
+  entier, par cinq agents de la session, un lot chacun, dont chaque citation a été
+  retrouvée mot pour mot dans le texte servi. Pour un point que la diffusion n° 2/2000
+  touche, les circulaires Cnav n° 61/98 et 23/2000, à thème, relues par l'API. Pour les
+  confronter : les fiches cumul_emploi_retraite_et_retraite_progressive, reversion,
+  cotisation_maladie_des_non_residents, csg_des_pensions_selon_le_revenu,
+  totalisation_des_periodes_etrangeres, minimum_vieillesse, majoration_conjoint_a_charge,
+  versement_forfaitaire_unique, retablissement_fonction_publique ; les séries
+  legislation/accords_internationaux.yaml, macro/plafond_securite_sociale.csv,
+  macro/smic_horaire.csv, regimes/taux_cotisation_annuels.csv,
+  legislation/validation_trimestres.csv, legislation/csg_pensions_seuils.csv,
+  legislation/revalorisation_pensions.csv, legislation/revalorisation_salaires_anciennes.csv,
+  legislation/minimum_contributif.csv, legislation/minimum_vieillesse_avant_2007.csv,
+  legislation/annees_salaire_reference.csv, legislation/duree_assurance_requise.csv,
+  legislation/duree_proratisation.csv, legislation/coefficient_minoration.csv,
+  legislation/age_annulation_decote.csv, legislation/age_ouverture_requis.csv ; la limite
+  docs/limites/3-systeme-actuel.md. Ni Légifrance, ni le Journal officiel, ni l'index de
+  la DILA.
+trouve: >-
+  Le registre range les 172 (85 limite, 87 hors_modele), sous une raison neuve pour 17
+  textes : l'action sociale des caisses. Conformes : le plafond de 2000, le taux
+  vieillesse de 16,35 %, le SMIC et le salaire qui valide un trimestre de 2000 à 2002, les
+  seuils de CSG de 2001 et 2002, la revalorisation du 1er janvier 2002 et les coefficients
+  des salaires, le minimum contributif de 2002, le seuil du versement forfaitaire unique,
+  la majoration pour enfant de la réversion. Deux écarts neufs, chiffrés :
+  la pension non suspendue des retraités repris par
+  leur ancien employeur pour le passage à l'euro et après l'explosion de Toulouse (lettres
+  ministérielles des 25 juin, 20 septembre et 4 décembre 2001), que la fiche suspend ; les
+  périodes d'aide familial du commerce et de l'artisanat d'avant le 1er avril 1983,
+  comptées pour le seul taux (R. 351-4, 3° ; circulaire RSI n° 2011/006), qu'aucune fiche
+  ne porte (−12 % sur un cas de 2012). Déjà déclaré par H15, que la circulaire Cnav
+  n° 23/2000 confirme : la Serbie, le Monténégro et le Kosovo hors de la convention
+  franco-yougoslave pour les pensions dès le 1er février 1999. Non tranché : le salaire annuel moyen de la
+  réversion de l'assuré mort sans avoir demandé sa pension, de 1994 à 2007, selon l'année
+  du décès ou la génération (circulaire Cnav n° 2000/55). Le premier écart de G15, la
+  Bosnie-Herzégovine hors de la convention en 1998, ne tient pas : la circulaire Cnav
+  n° 61/98 y applique par bienveillance les mesures transitoires, qui comptent les
+  périodes bosniennes comme le modèle. Note
+  docs/feuille_de_route/175/2026-11-06-etape-6-circulaires-2000-2001.md.
+reste: >-
+  Les 974 circulaires de 2002 à 2026, par période ; les autres natures de l'étape 6 ; les
+  textes que ceux-ci appliquent, à relire au Journal officiel, dont la circulaire
+  DSS/DAE/99/48, le point 6 de la circulaire DSS/DCI/92/66, les circulaires Cnav n° 18/94
+  et 2002/41 et les accords de succession avec les États de l'ex-Yougoslavie ; les cas des
+  écarts, à poser sur les moteurs.
