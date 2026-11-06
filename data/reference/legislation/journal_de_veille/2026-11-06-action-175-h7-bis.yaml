@@ -1,0 +1,29 @@
+date: "2026-11-06"
+session: "action 175, étape 4, file H, H7-bis : les huit écarts de la relecture R-H7, repris dans la fiche avpf"
+consulte: >-
+  python scripts/veille_droit.py (à la base de la Cnav, un exposé à relire hors du thème).
+  La base de législation de la Cnav, par son API : la lettre ministérielle du 13 février
+  1979 (LE_MIN_13021979.aspx) et le décret n° 73-88 d'origine (DEC_7388_26011973.aspx),
+  lus en entier ; sa recherche, pour « 82-1140 », « 80-1068 » et « 79-535 ». L'index LEGI
+  de la DILA, à jour au 2 novembre 2026 : le décret n° 79-535, ses six articles ; le
+  décret n° 73-88, articles 1er, 2 et 3, et le décret n° 78-269, articles 1er et 4,
+  toutes leurs rédactions ; le décret n° 85-830, son article de l'assurance vieillesse
+  et sa notice ; L. 381-1, rédaction du 21 décembre 1985. L'index JORF, à jour au
+  3 novembre 2026 : les notices des décrets n° 82-1140, n° 79-535, n° 73-88, n° 78-270
+  et n° 80-1068, toutes celles de 1973 à 1985 qui nomment le décret n° 73-88, et celles
+  de 1972 à 1986 qui nomment « L242 ».
+trouve: >-
+  La lettre ministérielle du 13 février 1979 ouvre l'AVPF au père qui a la charge d'une
+  épouse ou d'un enfant handicapé « à partir du 1er juillet 1979 », « dans l'attente d'une
+  modification législative » : la fiche la cite. L'article 1er d'origine du décret
+  n° 73-88 n'affilie que « Les mères de famille et les femmes », à compter du 1er juillet
+  1972 (article 5) : la version de 1972 passe de supposée à lue. Les décrets n° 82-1140
+  (l'assiette, non l'affilié) et n° 79-535 (outre-mer, « les mères et les femmes ») ne
+  nomment pas le père, et la Cnav ne sert ni l'un ni l'autre. La date qui décide est
+  l'année portée au compte, non le début de la période. Aucune règle, aucune valeur
+  servie ne change : la règle de H7 tient.
+reste: >-
+  Au fac-similé, la seule loi n° 85-17 du 4 janvier 1985, qui tranchera janvier à août
+  1985 (proposition à la file de l'action 138, que tient le propriétaire). Le numéro, au
+  Journal officiel, de l'article transitoire du décret n° 85-830. Le candidat 67 (une
+  année d'éducation sans AVPF valide quatre trimestres), à une session du modèle.

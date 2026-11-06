@@ -9,7 +9,7 @@ hors de 5 h–6 h UTC. Restent à lire avec leur thème : les listes d'accords, 
 l'Espace économique européens. Aux sessions du modèle : les deux candidats de cette note, les
 trois et les deux des précédentes ; l'activité accessoire (H6, R-H6, H6-bis) ; l'AVPF du père,
 ouverte en 1985 (H7, sa note), dont le candidat 1, les trimestres d'une année d'éducation sans
-AVPF, est le plus lourd. Suivante de la file H : la relecture R-H7.
+AVPF, est le plus lourd. R-H7 l'a dite juste, et ses huit écarts sont repris (H7-bis).
 
 **Le 6 novembre 2026, ce qui est fait.**
 

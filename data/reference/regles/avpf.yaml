@@ -20,11 +20,16 @@ lit:
 ecrit:
 - le salaire porté au compte du régime général pour l'année (revenu_avpf de la ligne)
 dates_qui_decident:
-- periode.debut
-# Les versions forment un partage du début de la période d'éducation. Le moteur ne
-# les lit pas : `ANNEE_CREATION_AVPF` et l'assiette datée de la Cnav ouvrent l'AVPF de
-# la mère en juillet 1972, `ANNEE_AVPF_DES_HOMMES` celle du père en 1985 (macro.py,
-# macro.js ; `_ligne_annuelle`, `ligneAnnuelle`).
+- revenu.annee
+# Les versions forment un partage de l'année portée au compte (`revenu.annee`), non du
+# début de la période d'éducation (relecture R-H7, écart 3) : un père au foyer de 1983
+# à 1987 a l'AVPF de 1985 à 1987, comme l'exposé de la Cnav le veut (« Depuis le
+# 01/01/1985 »). L'assiette est mensuelle : de l'année 1972, seuls comptent les mois
+# depuis juillet ; la borne de juillet 1979, celle du seul père qui a un handicapé à
+# charge, que le modèle ne sert pas, coupe aussi une année. Le moteur ne lit pas les
+# versions : l'assiette datée de la Cnav, sommée mois par mois, ouvre l'AVPF en juillet
+# 1972 (`ANNEE_CREATION_AVPF`), et `ANNEE_AVPF_DES_HOMMES` celle du père en 1985, par
+# l'année de la ligne (macro.py, macro.js ; `_ligne_annuelle`, `ligneAnnuelle`).
 versions:
 - id: avant_l_avpf
   statut: lue
@@ -35,22 +40,37 @@ versions:
       REFORME DE L'ALLOCATION DE LA MERE AU FOYER A COMPTER DU 01-07-1972 »
     publie_le: 1972-01-05
   bornes:
-    periode.debut: [null, 1972-07-01]
+    revenu.annee: [null, 1972-07-01]
   contenu:
     droit: aucune affiliation, ni de la mère ni du père
     parametres:
       existe: false
   exemples: aucun trouvé
 - id: meres_de_juillet_1972
-  statut: supposee
-  hypothese: >-
-    la caisse affilie « les femmes » « depuis le 01/07/1972 », « les hommes » « depuis
-    le 01/07/1979 » (exposé « Parent au foyer - AVPF » de la Cnav) ; l'article 1er
-    d'origine du décret n° 73-88 (JO du 28 janvier 1973), seul à dire qui est affilié
-    avant 1978, n'est pas dans l'index LEGI et ne se lit qu'au fac-similé
-  fiabilite: haute
+  statut: lue
+  textes:
+  - id: JORFTEXT000000693989
+    reference: >-
+      décret n° 73-88 du 26 janvier 1973, rédaction d'origine, dont l'index JORF ne garde
+      que la notice et l'index LEGI aucune rédaction avant 1978 ; lu dans la
+      transcription de la base de législation de la Cnav, par son API
+      (DEC_7388_26011973.aspx). Aucune notice de l'index JORF ne le modifie de 1973 à
+      1977 : la suivante est celle du décret n° 78-270 (JORFTEXT000000874152), d'où
+      vient la rédaction du 1er janvier 1978
+    article: articles 1er et 5
+    publie_le: 1973-01-28
+    lu_le: 2026-11-06
+    citation: >-
+      « Article 1er - Les mères de famille et les femmes bénéficiaires de la majoration
+      de l'allocation de salaire unique ou de la majoration de l'allocation de la mère au
+      foyer instituée par la loi n° 72-8 du 3 janvier 1972 sont affiliées
+      obligatoirement à l'assurance vieillesse du régime général de la sécurité
+      sociale, à la diligence de l'organisme ou du service chargé de la liquidation de
+      ladite majoration. » ; article 5 : « [...] qui sera publié au Journal officiel de
+      la République française et prendra effet à compter du 1er juillet 1972. »
+  nee_de: JORFTEXT000000693989
   bornes:
-    periode.debut: [1972-07-01, 1978-01-01]
+    revenu.annee: [1972-07-01, 1978-01-01]
   contenu:
     droit: la mère au foyer, et non le père
     parametres:
@@ -77,7 +97,7 @@ versions:
       ou assumant, au foyer familial, la charge d'un handicapé adulte »
   nee_de: LEGIARTI000006761985
   bornes:
-    periode.debut: [1978-01-01, 1979-07-01]
+    revenu.annee: [1978-01-01, 1979-07-01]
   contenu:
     droit: la mère et la femme au foyer, et non le père
     parametres:
@@ -87,6 +107,22 @@ versions:
 - id: hommes_ayant_la_charge_d_un_handicape
   statut: lue
   textes:
+  - reference: >-
+      lettre ministérielle du 13 février 1979, Bureau des prestations familiales, signée
+      Pierre Schopflin, sur le troisième alinéa de L. 242-2 ; lue par l'API de la base de
+      législation de la Cnav (LE_MIN_13021979.aspx). Une lettre, non un texte : elle agit
+      « dans l'attente d'une modification législative »
+    lu_le: 2026-11-06
+    citation: >-
+      « Aux termes de cet article, la possibilité d'un telle affiliation est réservée aux
+      femmes et mères de famille. Toutefois dans des cas extrêmement rares, des hommes
+      assument la charge d'une épouse ou d'un enfant handicapé. » ; « Dans ces
+      conditions et dans l'attente d'une modification législative sur ce point, je
+      souhaite que les Caisses d'Allocations Familiales procèdent à l'affiliation et
+      prennent en charge les cotisations de ces personnes à partir du 1er juillet 1979.
+      Une telle mesure ne serait pas rétroactive. » ; « l'assurance vieillesse
+      obligatoire ne peut bénéficier à plus d'une personne par foyer au titre du
+      troisième alinéa de l'article L 242-2. »
   - reference: circulaire Cnav 25/79 du 6 mars 1979, lue par l'API de la base de législation
     citation: >-
       « A compter du 1er juillet 1979 les Caisses d'Allocation Familiales sont
@@ -101,8 +137,31 @@ versions:
     citation: >-
       « Du 01/07/1979 au 31/12/1984, les hommes étaient affiliés uniquement s'ils
       assumaient la charge d'un enfant ou d'un adulte handicapé. »
+  - id: LEGIARTI000006760068
+    article: >-
+      décret n° 78-269, article 1er, en vigueur du 10 mars 1978 au 21 décembre 1985,
+      toute la période : le décret du troisième alinéa, qui ne nomme que des femmes
+    en_vigueur: 1978-03-10
+    citation: >-
+      « Pour l'application des dispositions de l'article L. 242-2 du code de la sécurité
+      sociale concernant les mères et les femmes ayant la charge d'un enfant handicapé
+      ou assumant, au foyer familial, la charge d'un handicapé adulte »
+  - id: JORFTEXT000000501301
+    reference: >-
+      décret n° 80-1068 du 23 décembre 1980, qui récrit l'article 1er du décret n° 73-88
+      après la rédaction du 1er janvier 1978 (LEGIARTI000006761985, en vigueur jusqu'au
+      1er janvier 1980, citée à la version précédente) : ni l'index LEGI ni la base de la
+      Cnav ne servent son texte, l'index JORF n'en garde que la notice, citée ici
+    publie_le: 1980-12-26
+    citation: >-
+      « Décret n°80-1068 du 23 décembre 1980 RELATIF A L'ASSURANCE VIEILLESSE DES MERES DE
+      FAMILLE ET DES FEMMES BENEFICIAIRES DU COMPLEMENT FAMILIAL » ; « L'ART. 1 DU DECRET
+      7388 DU 26-01-1973 MODIFIE EST ABROGE ET REMPLACE. »
   - id: LEGIARTI000006761986
-    article: décret n° 73-88, article 1er
+    article: >-
+      décret n° 73-88, article 1er, rédaction du 5 janvier 1985, POSTÉRIEURE à la période
+      (relecture R-H7, écart 4) : la première que l'index LEGI donne après celle de 1978,
+      citée parce qu'elle ne nomme encore que des femmes
     en_vigueur: 1985-01-05
     citation: >-
       « Sont affiliées obligatoirement à l'assurance vieillesse du régime général de la
@@ -111,7 +170,7 @@ versions:
       sécurité sociale les mères de famille, non visées au I ci-dessus, bénéficiaires du
       complément familial »
   bornes:
-    periode.debut: [1979-07-01, 1985-01-01]
+    revenu.annee: [1979-07-01, 1985-01-01]
   contenu:
     droit: >-
       la mère et la femme au foyer ; le père seulement s'il a la charge d'un enfant ou
@@ -137,7 +196,11 @@ versions:
       conjoints ou concubins n'exerçant pas d'activité professionnelle qui remplit les
       conditions posées ci-après »
   - id: LEGIARTI000006768734
-    article: décret n° 85-830, article 1er
+    article: >-
+      décret n° 85-830, l'article que LEGI numérote 1er (relecture R-H7, écart 7) : il
+      renvoie aux « articles 1er et 2 du présent décret », il n'est donc pas l'article
+      1er du Journal officiel, dont l'index JORF ne garde que la notice ; son numéro au
+      JO ne se lit pas
     en_vigueur: 1985-08-04
     citation: >-
       « A titre transitoire, est également affilié à l'assurance vieillesse du régime
@@ -154,9 +217,15 @@ versions:
       pas d'activité professionnelle, bénéficiaire du complément familial, de
       l'allocation au jeune enfant ou de l'allocation parentale d'éducation , est
       affilié obligatoirement à l'assurance vieillesse du régime général de sécurité
-      sociale »
+      sociale » ; et, pour le handicap, sans « isolée » (relecture R-H7, écart 7) : « En
+      outre, est affilié obligatoirement à l'assurance vieillesse du régime général de
+      sécurité sociale, pour autant que ses ressources ou celles du ménage ne dépassent
+      pas le plafond du complément familial et que cette affiliation ne soit pas acquise
+      à un autre titre, la personne et, pour un couple, l'un ou l'autre de ses membres :
+      1°) ayant la charge d'un enfant handicapé [...] ; 2°) ou assumant, au foyer
+      familial, la charge d'un handicapé adulte [...] »
   bornes:
-    periode.debut: [1985-01-01, null]
+    revenu.annee: [1985-01-01, null]
   contenu:
     droit: la mère ou le père au foyer
     parametres:
@@ -179,8 +248,18 @@ approximations:
     femmes isolées » et « les mères de famille », et le texte de la loi n° 85-17 du 4
     janvier 1985, qui pourrait avoir changé L. 242-2 dès janvier, ne se lit qu'au
     fac-similé. Sous la lecture du décret, le père d'une année 1985 entière perd sept
-    mois d'assiette, 7 × 614,210992 = 4 299,48 € portés au compte en moins (7 370,53 €
-    au lieu de 3 071,05 €), si son affiliation prend effet au 1er août
+    mois d'assiette, 7 × 614,210992 = 4 299,48 € portés au compte en moins (3 071,05 €
+    au lieu de 7 370,53 €), si son affiliation prend effet au 1er août. C'est un
+    plafond, non un cas général (relecture R-H7, écart 6) : il vaut pour le père d'un
+    enfant conçu avant le 1er janvier 1985, au complément familial que l'article
+    transitoire du décret n° 85-830 (LEGIARTI000006768734) lui ouvre ; pour
+    l'allocation au jeune enfant, l'article 2 du décret n° 73-88, dans sa rédaction du
+    4 août 1985 (LEGIARTI000006761989), fait courir l'immatriculation « à compter du
+    1er jour du mois civil au cours duquel est attribuée l'allocation au jeune enfant
+    sous condition de ressources, avec effet rétroactif à compter du premier jour du
+    mois civil suivant celui de la naissance » : si cette rétroactivité remonte avant
+    le 4 août 1985, ce que la rédaction ne dit pas, la perte d'un tel père serait
+    moindre
 sources:
   lu_le: 2026-11-06
   prochaine_relecture: 2027-01-31
@@ -192,15 +271,19 @@ sources:
     voir si la caisse s'en explique.
   - >-
     LE PÈRE n'a l'AVPF que depuis le 1er janvier 1985 dans les deux moteurs (action
-    175, H7 ; versions ci-dessus). Restent au fac-similé du Journal officiel : L. 242-2
-    de l'ancien code tel que la loi n° 72-8 le rédige (JO du 5 janvier 1972), l'article
-    1er d'origine du décret n° 73-88 (JO du 28 janvier 1973), celui du décret n°
-    80-1068 (JO du 26 décembre 1980), la loi qui « complète » L. 242-2 pour les hommes
-    après le 1er juillet 1979 (circulaire Cnav 25/79), introuvable dans les notices de
-    l'index JORF, et la loi n° 85-17 du 4 janvier 1985, qui dira si le père est affilié
-    dès janvier 1985 ou au 4 août 1985 (approximation non tranchée) ; la lettre
-    ministérielle du 13 février 1979, jointe à la circulaire 25/79, que l'API ne sert
-    pas. Ni la condition de ressources, ni le handicap à charge de 1979 à 1984, ni
+    175, H7 ; versions ci-dessus). Seule la loi n° 85-17 du 4 janvier 1985 (JO du 5
+    janvier) demande le fac-similé du Journal officiel : elle seule dira si le père est
+    affilié dès janvier 1985 ou au 4 août 1985 (approximation non tranchée), et LEGI
+    n'en a que quatre articles, la base de la Cnav rien (relecture R-H7, § 6). Le JO ne
+    ferait, pour le reste, que certifier ou compléter une citation, sans changer la
+    règle : L. 242-2 de l'ancien code tel que la loi n° 72-8 le rédige (JO du 5 janvier
+    1972) ; l'article 1er d'origine du décret n° 73-88 (JO du 28 janvier 1973), lu dans
+    la transcription de la Cnav ; celui du décret n° 80-1068 (JO du 26 décembre 1980),
+    que ni LEGI ni la base ne servent. La loi qui « complète » L. 242-2 pour les hommes
+    après le 1er juillet 1979 (circulaire Cnav 25/79), que la lettre ministérielle du
+    13 février 1979 attend « dans l'attente d'une modification législative », n'a pas
+    de notice à l'index JORF avant la loi n° 85-17. Ni la condition de ressources, ni
+    le handicap à charge de 1979 à 1984, ni
     l'assiette ramenée, pour le bénéficiaire de la prestation partagée d'éducation à
     taux partiel, à vingt ou à cinquante pour cent selon le taux servi, ne se saisissent
     (action 175, étape 4, « Carrière : cotisations-salaires »).
@@ -285,6 +368,41 @@ sources:
       PROFESSIONNELLE (ART. L242-2 DU CODE DE LA SECURITE SOCIALE) »), loi n° 85-17
       (JORFTEXT000000521299), décret n° 85-830 (JORFTEXT000000501925, « REMPLACE LES
       ART. 1 (I,II),2 (AL. 2) ET ABROGE L'ART. 1 (III) DU DECRET 7388 »)
+    date: 2026-11-06
+  - type: circulaire_cnav
+    reference: >-
+      base de législation de la Cnav, par son API : la lettre ministérielle du 13 février
+      1979 (LE_MIN_13021979.aspx) et le décret n° 73-88 du 26 janvier 1973 dans sa
+      rédaction d'origine (DEC_7388_26011973.aspx), lus en entier (relecture R-H7, écarts
+      1 et 2) ; sa recherche ne sert ni le décret n° 82-1140 ni le n° 80-1068, et pour «
+      79-535 », le seul décret n° 85-1354 du 17 décembre 1985
+    date: 2026-11-06
+  - type: legifrance
+    reference: >-
+      index LEGI au 2 novembre 2026 (relecture R-H7, écart 8) : décret n° 79-535 du 3
+      juillet 1979, outre-mer (LEGIARTI000006770602 à 006770607, du 1er juillet 1978 au 21
+      décembre 1985), article 1er : « concernant les mères et les femmes ayant la charge
+      d'un enfant handicapé ou assumant au foyer familial la charge d'un handicapé adulte
+      », aucun article ne nomme le père ; décret n° 73-88, article 3, et décret n°
+      78-269, article 4, rédactions du 30 décembre 1982, jour du JO du décret n° 82-1140
+      (LEGIARTI000006761991, LEGIARTI000006760072) : l'assiette, « au produit du montant
+      du salaire horaire minimum de croissance et des cinquante-deux douzièmes de la
+      durée hebdomadaire légale du travail », non l'affilié ; décret n° 73-88, article 2,
+      rédaction du 4 août 1985 (LEGIARTI000006761989)
+    date: 2026-11-06
+  - type: jorf
+    reference: >-
+      index JORF au 3 novembre 2026, notices seules (relecture R-H7, écart 8) : décret n°
+      82-1140 du 29 décembre 1982 (JORFTEXT000000884294, JO du 30 décembre), «
+      Remplacement de l'article 3 (2ème et 3ème alinéas) du décret n° 73-88 précité et de
+      l'article 4 du décret n° 78-269 susvisé » ; décret n° 79-535 du 3 juillet 1979
+      (JORFTEXT000000516653, JO du 5 juillet), « RELATIF A L'ASSURANCE VIEILLESSE DES
+      MERES DE FAMILLE ET DES FEMMES RESIDANT DANS LES DEPARTEMENTS D'OUTRE-MER, QUI ONT
+      LA CHARGE D'UN ENFANT HANDICAPE OU D'UN ADULTE HANDICAPE ». De 1973 à 1985, les
+      seules notices qui nomment le décret n° 73-88 sont la sienne et celles des décrets
+      n° 78-270, 80-1068, 82-1140 et 85-830 ; de 1979 à 1985, celles qui nomment « L242 »
+      sont la circulaire du 29 avril 1980, qui ne nomme que des femmes, et la loi n°
+      85-832, qui modifie L. 242-4
     date: 2026-11-06
 textes_a_rattacher:
 - reference: L. 381-1 CSS
