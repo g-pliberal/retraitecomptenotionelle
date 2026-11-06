@@ -1,0 +1,35 @@
+date: "2026-11-06"
+session: "action 175, étape 6, vague 11, G10 : les 43 circulaires et lettres d'avant 1973 que G8 et G9 laissaient à lire, puis les 27 de 1973 que la base de la Cnav cite sans thème"
+consulte: >-
+  Les 31 références de 1936 à 1959 et les 12 de 1960 à 1972 que les notes de G8 et G9
+  nomment à lire, et les 27 références sans thème et à lire de 1973 dont le titre commence
+  par « Circulaire », « Lettre », « Instruction », « Note d'information » ou « Diffusion
+  d'instructions », relues par l'API de la base le 6 novembre 2026 à 10 h 08 et 10 h 16 UTC
+  (/reference/referencesByFileLeafRef/), toutes servies, deux PDF sous /Pdf/
+  (lettre_Fnoss_1958_22091958.pdf, l'annexe de la circulaire n° 113 SS, lue en image) ;
+  les quinze textes qui les citent (citations.csv) ; le barème « Montant maximum de la
+  retraite personnelle » relu par l'API ce jour. Pour les confronter : les fiches
+  pension_maximale_regime_general, trimestres_avant_1972, reversion,
+  majoration_conjoint_a_charge, salaire_annuel_moyen, les séries
+  legislation/revalorisation_pensions.csv et macro/plafond_securite_sociale.csv, la limite
+  docs/limites/3-systeme-actuel.md, la fonction moyenne_selon_la_regle de
+  src/retraite_notionnelle/droit/liquider.py. Ni l'index de la DILA, ni Légifrance, ni le
+  Journal officiel.
+trouve: >-
+  Des 43, trois se rapprochent : LE_MIN_25081954 par le n° 21984 de son en-tête, celui de
+  sa jumelle ; LE_MIN_25101961 par la lettre du 20 octobre 1981, qui la lie sous le
+  n° 3225 AG ; l'annexe de la n° 113 SS par le modèle n° S. 2211 que nomme la circulaire.
+  Les 40 autres, lues en entier, sont rangées par ce qu'elles disent ; aucune ne reste à
+  lire. Des 27 de 1973, 19 se rapprochent par leur numéro ou leur identifiant, 8 sont lues
+  en entier. Le registre range les 70 (55 limite, 15 hors_modele). Conformes : le maximum
+  de 1949 à 1951 (105 600 et 129 600 F) et les coefficients 1,15 et 1,16 ; le plafond de
+  1956 (44 000 F par mois, 805 €) ; la validation de la première année de 1930 à 1945
+  (n° 25/73) ; les ressources du conjoint, retraites exceptées. Un candidat : la fiche du
+  maximum dit l'écart de l'année où le plafond change « de 1 à 4 % » au premier semestre,
+  le barème −11,6 % jusqu'au 28 février 1949 et −6,1 % jusqu'au 30 septembre 1951. Un
+  point non tranché : le salaire annuel moyen sans trimestre dans la période de référence
+  (n° 34/73). Note docs/feuille_de_route/175/2026-11-06-etape-6-circulaires-de-1973.md.
+reste: >-
+  Les 1 839 circulaires de 1974 à 2026, par période ; les autres natures de l'étape 6 ;
+  les lois et décrets que ces textes appliquent, à relire au Journal officiel ; le cas de
+  la circulaire n° 34/73, à poser sur les moteurs.
