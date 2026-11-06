@@ -397,3 +397,5 @@ plus à `27_texte`, relues au PDF. Il ne perd aucune ligne (vérifié : tout ce 
 portait, il le porte). Au suivi (`data/reference/drees_panorama_2026.yaml`), les
 fiches 15, 16 et 27 restent `confronte` et nomment leurs tests nouveaux ; leur
 « Restent » est remplacé.
+
+*Relecture du 6 novembre 2026 (R-J4) : chiffres conformes, un écart moyen de déclaration (point 5.1) et cinq faibles ; voir `2026-11-06-relecture-r-j4.md`.*
