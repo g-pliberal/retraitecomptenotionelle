@@ -1,0 +1,41 @@
+date: "2026-11-06"
+session: "action 175, étape 6, vague 11, G9 : les circulaires, lettres et instructions de 1960 à 1972 que la base de la Cnav cite sans thème, deuxième période de leur nature"
+consulte: >-
+  Les 146 références du registre sans thème et à lire dont le titre commence par
+  « Circulaire », « Lettre », « Instruction », « Note d'information » ou « Diffusion
+  d'instructions », datées de 1960 à 1972, relues par l'API de la base le 6 novembre 2026
+  à 9 h 03 UTC (/reference/referencesByFileLeafRef/), toutes servies, et le PDF de l'une
+  (/Pdf/circulaire_ministerielle_113SS_04121964_annexe_modele_vignette.pdf, lu en image).
+  Pour les confronter : les fiches reversion, salaire_annuel_moyen,
+  pension_maximale_regime_general, majoration_conjoint_a_charge,
+  taux_plein_anciens_deportes_internes, les séries legislation/minimum_vieillesse_avant_2007.csv,
+  macro/plafond_securite_sociale.csv, legislation/revalorisation_salaires_anciennes.csv,
+  macro/smic_horaire.csv, regimes/taux_cotisation_annuels.csv, le fichier daté du plafond
+  d'OpenFisca-France, la limite docs/limites/3-systeme-actuel.md, le code du salaire de
+  référence des deux moteurs (liquider.py, liquider.js), et la réversion des deux moteurs
+  sur deux cas posés à la main. Ni l'index de la DILA, ni Légifrance, ni le Journal
+  officiel.
+trouve: >-
+  134 se rapprochent par le numéro que porte l'en-tête de leur texte ; 12 n'ont pas de
+  numéro qui les rapproche. Le registre range les 134 (103 limite, 31 hors_modele). Le
+  plafond de 1960 et 1961, l'AVTS de 1960 et de 1962, les plafonds de ressources et la
+  majoration pour conjoint à charge de 1962, le SMIC annuel de 1971 sont ceux des séries
+  et des fiches. Cinq candidats : le salaire au-delà du plafond de l'assuré de plusieurs
+  employeurs, que deux lettres (n° 3142/AG de 1961, n° 7133/AG de 1966) retiennent au
+  salaire annuel moyen et que les deux moteurs écrêtent (point non tranché) ; la réversion
+  de l'assuré mort avant soixante ans, que les deux moteurs servent avant le 1er mars
+  1963, quand l'article L. 351-1 ne l'ouvre qu'à cette date (circulaire n° 43 SS du
+  27 mars 1963 ; erreur) ; la veuve remariée avant sa demande, que la lettre n° 6187 du
+  24 avril 1963 prive de la réversion et que les deux moteurs servent (erreur pour le
+  cas, bornes non tranchées) ; la majoration de 50 NF pour le conjoint à charge de moins
+  de soixante-cinq ans, avant le 1er avril 1962 (circulaire n° 60 SS ; manque) ; le taux
+  de la cotisation vieillesse d'avant octobre 1967, 9 % puis 7 % pour la coordination
+  (circulaire n° 72 SS), 6,4762 % estimé dans la série (point non tranché). La circulaire
+  Cnav n° 21/71 prolonge en nouveaux francs l'arrondi de la loi n° 50-147. Note
+  docs/feuille_de_route/175/2026-11-06-etape-6-circulaires-1960-1972.md.
+reste: >-
+  Les 12 références de la période que rien ne rapproche, nommées dans la note avec le
+  sort qu'elles prendraient, et les 31 de la première ; les 1 886 circulaires de 1973 à
+  2026, par période ; la loi de finances pour 1963, le décret n° 60-620, les décrets du
+  14 avril 1962 et le décret n° 67-803, à relire au Journal officiel ; les autres natures
+  de l'étape 6.
