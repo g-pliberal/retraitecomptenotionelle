@@ -50,9 +50,10 @@ d'accueil, que ``scripts/verifier_donnees.py`` confronte aux fichiers.
 CE QUE LA DONNÉE DIT, ET NE DIT PAS. Un tableau vaut à la date de son
 reclassement : celle que la phrase écrit (« sont, au 1er août 1993,
 intégrés »), sinon celle qu'un autre article du décret lui donne, lue à la main
-(``DATES_D_UN_AUTRE_ARTICLE``), sinon l'entrée en vigueur de l'article (``debut``) ; les versions
-suivantes d'un article qui redisent le même tableau ne font pas un second
-reclassement. L'ancienneté conservée se garde « dans la limite de la durée de
+(``DATES_D_UN_AUTRE_ARTICLE``), ou, quand elle le date de l'entrée en vigueur du
+décret, celle que le décret fixe (``ENTREES_EN_VIGUEUR``), sinon l'entrée en vigueur
+de l'article (``debut``) ; les versions suivantes d'un article qui redisent le même
+tableau ne font pas un second reclassement. L'ancienneté conservée se garde « dans la limite de la durée de
 l'échelon » : l'appliquer demande les durées d'échelon, que les statuts
 fixent et que le dépôt n'a pas encore. Les grilles d'origine et d'accueil ne
 sont nommées que par le libellé du tableau et la phrase qui l'annonce ;
@@ -191,13 +192,219 @@ DATES_D_UN_AUTRE_ARTICLE = {
                              "Les dispositions du chapitre II, à l'exception de celles des "
                              "articles 4, 5 et 7, et les dispositions du I de l'article 13 "
                              "entrent en vigueur le 1er janvier 2017."),
+    # n° 98-896, art. 8 : le n° 2002-378, art. 1er (JORFARTI000002416455), n'en ôte que
+    # « en fonctions à la date du présent décret », sans clause d'effet ; le tableau ne
+    # change pas (relecture R-B6, B6).
+    "LEGIARTI000006508629": ("1996-08-01", "LEGIARTI000006508631",
+                             "Les dispositions des articles 1er, 6, 7 et 8 du présent décret "
+                             "sont applicables à compter du 1er août 1996."),
+}
+
+#: Le décret qui fixe lui-même son entrée en vigueur, ou son effet, quand la phrase d'un
+#: de ses tableaux date le reclassement de cette entrée en vigueur (« A la date d'entrée
+#: en vigueur du présent décret », « à la date d'effet du présent décret ») (action 158,
+#: B6) : son numéro → la date, l'article qui la fixe (LEGIARTI, seule version), le texte
+#: au JORF et le jour de sa publication, dont part « le premier jour du mois suivant sa
+#: publication », et les mots de la clause, lus au LEGI et au JORF.
+ENTREES_EN_VIGUEUR = {
+    "98-809": ("1995-08-01", "LEGIARTI000006508229", "JORFTEXT000000194869", "1998-09-12",
+            "Le présent décret prend effet au 1er août 1995, à l'exception des articles 3 et "
+            "4."),
+    "2011-964": ("2011-09-01", "LEGIARTI000024477652", "JORFTEXT000024476275", "2011-08-18",
+            "Le présent décret entre en vigueur le premier jour du mois suivant sa "
+            "publication."),
+    "2011-1642": ("2011-12-01", "LEGIARTI000024847365", "JORFTEXT000024846671", "2011-11-25",
+            "Le présent décret entre en vigueur le premier jour du mois qui suit celui de sa "
+            "publication."),
+    "2011-1987": ("2012-01-01", "LEGIARTI000025072735", "JORFTEXT000025046328", "2011-12-29",
+            "Les dispositions du présent décret entrent en vigueur le 1er janvier 2012."),
+    "2011-1988": ("2012-01-01", "LEGIARTI000025073321", "JORFTEXT000025046447", "2011-12-29",
+            "Les dispositions du présent décret entrent en vigueur le 1er janvier 2012."),
+    "2012-230": ("2012-03-01", "LEGIARTI000025378144", "JORFTEXT000025376765", "2012-02-18",
+            "Les dispositions du présent décret entrent en vigueur le 1er mars 2012."),
+    "2012-379": ("2012-04-01", "LEGIARTI000025546343", "JORFTEXT000025545406", "2012-03-21",
+            "Le présent décret entre en vigueur le premier jour du mois suivant sa "
+            "publication au Journal officiel de la République française."),
+    "2012-924": ("2012-08-01", "LEGIARTI000026237262", "JORFTEXT000026236871", "2012-07-31",
+            "Le présent décret entre en vigueur le premier jour du mois qui suit celui de sa "
+            "publication."),
+    "2012-984": ("2012-09-01", "LEGIARTI000026311285", "JORFTEXT000026310499", "2012-08-24",
+            "Le présent décret entre en vigueur le premier jour du mois suivant sa "
+            "publication."),
+    "2012-1099": ("2012-10-01", "LEGIARTI000026428567", "JORFTEXT000026427069", "2012-09-30",
+            "Le présent décret entre en vigueur le 1er octobre 2012."),
+    "2012-1161": ("2012-11-01", "LEGIARTI000026508387", "JORFTEXT000026507710", "2012-10-19",
+            "Le présent décret entre en vigueur le premier jour du mois suivant celui de sa "
+            "publication au Journal officiel de la République française."),
+    "2012-1419": ("2013-01-01", "LEGIARTI000026797414", "JORFTEXT000026796060", "2012-12-20",
+            "Le présent décret entre en vigueur à compter du premier jour du mois qui suit sa "
+            "publication."),
+    "2012-1420": ("2013-01-01", "LEGIARTI000026796792", "JORFTEXT000026796099", "2012-12-20",
+            "Le présent décret entre en vigueur à compter du premier jour du mois qui suit sa "
+            "publication."),
+    "2013-830": ("2013-10-01", "LEGIARTI000027962726", "JORFTEXT000027962189", "2013-09-18",
+            "Les dispositions du présent décret entrent en vigueur le premier jour du mois "
+            "suivant sa publication."),
+    "2014-75": ("2014-02-01", "LEGIARTI000028540391", "JORFTEXT000028539339", "2014-01-31",
+            "Les dispositions du présent décret entrent en vigueur le premier jour du mois "
+            "suivant sa publication."),
+    "2014-76": ("2014-02-01", "LEGIARTI000028540771", "JORFTEXT000028539402", "2014-01-31",
+            "Le présent décret entre en vigueur le premier jour du mois suivant sa date de "
+            "publication."),
+    "2014-79": ("2014-02-01", "LEGIARTI000028540862", "JORFTEXT000028539499", "2014-01-31",
+            "Les dispositions du présent décret entrent en vigueur le premier jour du mois "
+            "suivant sa publication."),
+    "2014-81": ("2014-02-01", "LEGIARTI000028541522", "JORFTEXT000028539558", "2014-01-31",
+            "Les dispositions du présent décret entrent en vigueur le premier jour du mois "
+            "suivant sa date de publication."),
+    "2014-922": ("2014-09-01", "LEGIARTI000029384148", "JORFTEXT000029382044", "2014-08-21",
+            "Le présent décret entre en vigueur le premier jour du mois qui suit sa "
+            "publication."),
+    "2014-1164": ("2014-11-01", "LEGIARTI000029563614", "JORFTEXT000029562200", "2014-10-11",
+            "Le présent décret entre en vigueur le premier jour du mois suivant sa "
+            "publication au Journal officiel de la République française."),
+    "2015-303": ("2015-04-01", "LEGIARTI000030371580", "JORFTEXT000030370469", "2015-03-19",
+            "Le présent décret entre en vigueur le premier jour du mois qui suit sa "
+            "publication."),
+    "2015-1275": ("2015-11-01", "LEGIARTI000031317655", "JORFTEXT000031313295", "2015-10-15",
+            "Le présent décret entre en vigueur le premier jour du mois suivant sa "
+            "publication au Journal officiel de la République française."),
+    "2016-219": ("2016-03-01", "LEGIARTI000032128540", "JORFTEXT000032114422", "2016-02-28",
+            "Le présent décret entre en vigueur le premier jour du mois suivant celui de sa "
+            "publication."),
+    "2016-336": ("2016-04-01", "LEGIARTI000032276866", "JORFTEXT000032276187", "2016-03-22",
+            "Le présent décret entre en vigueur à compter du premier jour du mois qui suit "
+            "celui de sa publication."),
+    "2016-2002": ("2017-01-01", "LEGIARTI000033792205", "JORFTEXT000033758808", "2016-12-31",
+            "Le présent décret entre en vigueur le 1er janvier 2017."),
+    "2017-180": ("2017-01-01", "LEGIARTI000034036522", "JORFTEXT000034035533", "2017-02-15",
+            "Le présent décret entre en vigueur le 1er janvier 2017."),
+    "2017-233": ("2017-03-01", "LEGIARTI000034082772", "JORFTEXT000034080592", "2017-02-25",
+            "Le présent décret entre en vigueur le premier jour du mois qui suit celui de sa "
+            "publication."),
+    "2020-1174": ("2020-10-01", "LEGIARTI000042368622", "JORFTEXT000042365978", "2020-09-27",
+            "Le présent décret entre en vigueur le premier jour du mois qui suit celui de sa "
+            "publication."),
+    "2020-1175": ("2020-10-01", "LEGIARTI000042368942", "JORFTEXT000042366071", "2020-09-27",
+            "Le présent décret entre en vigueur le premier jour du mois qui suit celui de sa "
+            "publication."),
+    "2021-1818": ("2022-01-01", "LEGIARTI000044804898", "JORFTEXT000044571714", "2021-12-28",
+            "Les dispositions du présent décret entrent en vigueur le 1er janvier 2022."),
+    "2021-1826": ("2022-01-01", "LEGIARTI000044799842", "JORFTEXT000044572291", "2021-12-28",
+            "Les dispositions du présent décret entrent en vigueur le 1er janvier 2022."),
+    "2021-1834": ("2022-01-01", "LEGIARTI000044804034", "JORFTEXT000044572775", "2021-12-28",
+            "Les dispositions du présent décret entrent en vigueur le 1er janvier 2022."),
+    "2022-516": ("2022-05-01", "LEGIARTI000045540046", "JORFTEXT000045537923", "2022-04-10",
+            "Les dispositions du présent décret entrent en vigueur le premier jour du mois "
+            "suivant celui de sa publication."),
+    "2022-1093": ("2022-08-01", "LEGIARTI000046121303", "JORFTEXT000046114822", "2022-07-31",
+            "Le présent décret entre en vigueur le premier jour du mois suivant celui de sa "
+            "publication."),
+    "2022-1200": ("2022-09-01", "LEGIARTI000046243434", "JORFTEXT000046242148", "2022-09-01",
+            "Les dispositions du présent décret entrent en vigueur le 1er septembre 2022."),
+    "2022-1206": ("2022-09-01", "LEGIARTI000046243814", "JORFTEXT000046242594", "2022-09-01",
+            "Les dispositions du présent décret entrent en vigueur le 1er septembre 2022."),
+    "2022-1209": ("2022-09-01", "LEGIARTI000046243977", "JORFTEXT000046242908", "2022-09-01",
+            "Le présent décret entre en vigueur le 1er septembre 2022."),
+    "2023-527": ("2023-07-01", "LEGIARTI000047766737", "JORFTEXT000047752873", "2023-06-30",
+            "Le présent décret entre en vigueur le premier jour du mois qui suit celui de sa "
+            "publication."),
+    "2023-709": ("2023-09-01", "LEGIARTI000047917296", "JORFTEXT000047915341", "2023-08-02",
+            "Les dispositions du présent décret entrent en vigueur le 1er septembre 2023 à "
+            "l'exception de celles de l'article 11 qui s'appliquent aux procédures engagées à "
+            "compter du 1er janvier 2024."),
+    "2023-1092": ("2023-12-01", "LEGIARTI000048461730", "JORFTEXT000048460347", "2023-11-26",
+            "Le présent décret entre en vigueur le premier jour du mois suivant celui de sa "
+            "publication."),
+    "2023-1336": ("2024-01-01", "LEGIARTI000048842648", "JORFTEXT000048728435", "2023-12-30",
+            "Le présent décret entre en vigueur le premier jour du mois suivant celui de sa "
+            "publication."),
+    "2024-51": ("2024-02-01", "LEGIARTI000049063869", "JORFTEXT000049060184", "2024-01-31",
+            "Le présent décret entre en vigueur le premier jour du mois suivant celui de sa "
+            "publication."),
+    "2024-282": ("2024-04-01", "LEGIARTI000049350387", "JORFTEXT000049343100", "2024-03-30",
+            "Le présent décret entre en vigueur le premier jour du mois suivant celui de sa "
+            "publication."),
+    "2025-1002": ("2025-11-01", "LEGIARTI000052461403", "JORFTEXT000052456736", "2025-10-30",
+            "Le présent décret entre en vigueur le premier jour du mois qui suit celui de sa "
+            "publication."),
+    "2025-1003": ("2025-11-01", "LEGIARTI000052461514", "JORFTEXT000052456773", "2025-10-30",
+            "Le présent décret entre en vigueur le premier jour du mois qui suit celui de sa "
+            "publication."),
+    "2025-1327": ("2026-01-01", "LEGIARTI000053186037", "JORFTEXT000053174358", "2025-12-27",
+            "Le présent décret entre en vigueur le 1 er janvier 2026."),
+}
+#: L'article du tableau → le numéro de son décret dans ``ENTREES_EN_VIGUEUR``.
+DATES_DU_DECRET = {
+    "LEGIARTI000006508227": "98-809",  # art. 10
+    "LEGIARTI000024477660": "2011-964",  # art. 21
+    "LEGIARTI000024477662": "2011-964",  # art. 22
+    "LEGIARTI000024847333": "2011-1642",  # art. 18
+    "LEGIARTI000024847335": "2011-1642",  # art. 19
+    "LEGIARTI000025072785": "2011-1987",  # art. 24
+    "LEGIARTI000025073303": "2011-1988",  # art. 22
+    "LEGIARTI000025378134": "2012-230",  # art. 19
+    "LEGIARTI000025546325": "2012-379",  # art. 16
+    "LEGIARTI000026237250": "2012-924",  # art. 19
+    "LEGIARTI000026311271": "2012-984",  # art. 21
+    "LEGIARTI000026428541": "2012-1099",  # art. 16
+    "LEGIARTI000026508372": "2012-1161",  # art. 35
+    "LEGIARTI000026797412": "2012-1419",  # art. 6
+    "LEGIARTI000026796776": "2012-1420",  # art. 26
+    "LEGIARTI000027962708": "2013-830",  # art. 16
+    "LEGIARTI000028540405": "2014-75",  # art. 6
+    "LEGIARTI000028540761": "2014-76",  # art. 8
+    "LEGIARTI000028540763": "2014-76",  # art. 9
+    "LEGIARTI000028540765": "2014-76",  # art. 10
+    "LEGIARTI000028540767": "2014-76",  # art. 11
+    "LEGIARTI000028540858": "2014-79",  # art. 6
+    "LEGIARTI000028541518": "2014-81",  # art. 6
+    "LEGIARTI000029384142": "2014-922",  # art. 16
+    "LEGIARTI000029563606": "2014-1164",  # art. 10
+    "LEGIARTI000030371569": "2015-303",  # art. 24
+    "LEGIARTI000031317649": "2015-1275",  # art. 35
+    "LEGIARTI000032128528": "2016-219",  # art. 6
+    "LEGIARTI000032128530": "2016-219",  # art. 7
+    "LEGIARTI000032276852": "2016-336",  # art. 27
+    "LEGIARTI000033792187": "2016-2002",  # art. 23
+    "LEGIARTI000034036512": "2017-180",  # art. 20
+    "LEGIARTI000034082758": "2017-233",  # art. 17
+    "LEGIARTI000042368604": "2020-1174",  # art. 25
+    "LEGIARTI000042368924": "2020-1175",  # art. 25
+    "LEGIARTI000044804888": "2021-1818",  # art. 7
+    "LEGIARTI000044804890": "2021-1818",  # art. 8
+    "LEGIARTI000044804892": "2021-1818",  # art. 9
+    "LEGIARTI000044799836": "2021-1826",  # art. 6
+    "LEGIARTI000044804028": "2021-1834",  # art. 3
+    "LEGIARTI000045540040": "2022-516",  # art. 4
+    "LEGIARTI000046121299": "2022-1093",  # art. 9
+    "LEGIARTI000046243448": "2022-1200",  # art. 6
+    "LEGIARTI000046243452": "2022-1200",  # art. 8
+    "LEGIARTI000046243454": "2022-1200",  # art. 9
+    "LEGIARTI000046243822": "2022-1206",  # art. 4
+    "LEGIARTI000046243824": "2022-1206",  # art. 5
+    "LEGIARTI000046243826": "2022-1206",  # art. 6
+    "LEGIARTI000046243983": "2022-1209",  # art. 2
+    "LEGIARTI000047766733": "2023-527",  # art. 10
+    "LEGIARTI000047917292": "2023-709",  # art. 28
+    "LEGIARTI000048461728": "2023-1092",  # art. 3
+    "LEGIARTI000048842644": "2023-1336",  # art. 9
+    "LEGIARTI000049063861": "2024-51",  # art. 27
+    "LEGIARTI000049063907": "2024-51",  # art. 18
+    "LEGIARTI000049350385": "2024-282",  # art. 9
+    "LEGIARTI000052461401": "2025-1002",  # art. 11
+    "LEGIARTI000052461512": "2025-1003",  # art. 7
+    "LEGIARTI000053185999": "2025-1327",  # art. 31
+    "LEGIARTI000053186007": "2025-1327",  # art. 35
 }
 
 
 def effet_du_tableau(article: str, intro: str) -> str:
     """La date du reclassement : celle que la phrase écrit, sinon celle qu'un autre
-    article du décret donne au tableau, sinon rien (l'entrée en vigueur de l'article)."""
-    return date_effet(intro) or DATES_D_UN_AUTRE_ARTICLE.get(article, ("",))[0]
+    article du décret donne au tableau, ou l'entrée en vigueur que le décret fixe, sinon
+    rien (l'entrée en vigueur de l'article)."""
+    return (date_effet(intro) or DATES_D_UN_AUTRE_ARTICLE.get(article, ("",))[0]
+            or ENTREES_EN_VIGUEUR.get(DATES_DU_DECRET.get(article, ""), ("",))[0])
 
 
 def _sans_accents(texte: str) -> str:
@@ -563,7 +770,8 @@ ENTETES = {
               "signature, vigueur ; les tableaux lus et non lus.",
     "tableaux": "Chaque tableau de reclassement : l'article et sa version (fin incluse ; vide : "
                 "en vigueur), son rang dans l'article, effet (la date que la phrase écrit, ou "
-                "qu'un autre article du décret donne ; vide : l'entrée en vigueur de "
+                "qu'un autre article du décret donne, ou, quand la phrase dit l'entrée en "
+                "vigueur du décret, celle que le décret fixe ; vide : l'entrée en vigueur de "
                 "l'article, debut), la phrase qui l'annonce et "
                 "son en-tête.",
     "lignes": "Chaque ligne d'un tableau : groupe (le libellé écrit avant elle : grade "

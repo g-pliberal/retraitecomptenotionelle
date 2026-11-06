@@ -103,7 +103,9 @@ def test_aucune_phrase_restee_sans_date_ne_s_ouvre_sur_une_date(reclassements):
     # (tests/test_reclassements.py, DATES_APRES_LE_VERBE) ; 25 de ces tableaux de
     # l'État sont datés, et passent à l'étape suivante : 183 → 158. B5-bis : trois de
     # plus, que date un autre article de leur décret (n° 2001-325, 2017-1367,
-    # 2017-1494 ; test_reclassements.py, DATES_D_UN_AUTRE_ARTICLE) : 158 → 155.
+    # 2017-1494 ; test_reclassements.py, DATES_D_UN_AUTRE_ARTICLE) : 158 → 155. B6 :
+    # vingt-neuf de plus, datés de l'entrée en vigueur que leur décret fixe
+    # (test_reclassements.py, DATES_DU_DECRET) : 155 → 126.
     import re
     tableaux = {(t["texte"], t["article"], t["tableau"]): t
                 for t in _lire(GRILLES / "reclassements" / "tableaux.csv")}
@@ -112,7 +114,7 @@ def test_aucune_phrase_restee_sans_date_ne_s_ouvre_sur_une_date(reclassements):
                  if r["statut"] == "declare" and not r["date"]}
     assert len({(r["texte"], r["article"], r["tableau"]) for r in reclassements
                 if r["raison"].startswith("la phrase qui annonce le tableau n'écrit pas la "
-                                          "date")}) == 155
+                                          "date")}) == 126
     for cle in sans_date:
         intro = tableaux[cle]["intro"]
         trouve = date.search(intro)

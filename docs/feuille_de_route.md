@@ -7114,16 +7114,16 @@ l'inviterait aussi à relire le dépôt.
 
 ### 158. Les grilles indiciaires de la fonction publique : la carrière d'un fonctionnaire pré-remplie depuis son corps, plutôt que de mémoire — `en cours`
 
-**Reprise, au 5 novembre 2026.** Périmètre : les trois versants et les militaires. Entrés et certifiés :
-grilles, barème depuis 1983, reclassements (450 tableaux), durées d'échelon (778). Chaînage (étape 3) : 555
-des 1 675 grades de durées et 13 des 862 groupes de reclassement rattachés (vague 10, relue R-B4, conforme).
-Le n° 96-101 lu : son art. 3 récrit l'art. 1er du n° 87-1104, au 1er août 1995. Dates d'effet : 36 écrites après
-le verbe (B5, relu R-B5), 4 données par un autre article du décret et « A la même date » (B5-bis). Reste : au JO
-n° 33 du 8 février 1996, le tableau de l'art. 37 du n° 96-101, au fac-similé ; les dates d'effet non lues (plus
-de cent relatives au décret, les décrets qui datent un chapitre, le n° 98-268 art. 20 à plusieurs dates, le
-n° 98-896 art. 8 non tranché, au JORF) ; 90 tableaux de plus dans l'index publié ; l'annexe du n° 94-1016 et de
-l'arrêté du 24 novembre 2006 ; les 97 versions hors du motif ; les refus, au JORF ; le minimum de traitement ;
-quatre candidats (« ES », 301, 328, 342). Détail : `2026-11-05-b5-bis-corrections-de-r-b5.md`.
+**Reprise, au 6 novembre 2026.** Périmètre : les trois versants et les militaires. Entrés et certifiés : grilles,
+barème depuis 1983, reclassements (450 tableaux), durées d'échelon (778). Chaînage : 555 des 1 675 grades de durées,
+19 des 862 groupes de reclassement (six neufs de B6, dont trois du n° 2023-1336 à la même grille, candidat). Dates
+d'effet : 36 après le verbe, 5 d'un autre article (dont le n° 98-896 art. 8, 1er août 1996), « A la même date », 62
+tableaux (46 décrets) datés de l'entrée en vigueur que le décret fixe (B6, à relire : R-B7). Reste : 67 tableaux
+relatifs au décret, à partir du n° 71-917 (liste au point 4 de la note), et la question au propriétaire de la règle
+d'avant juin 2004 ; le n° 2011-1140, non tranché ; les décrets qui datent un chapitre ; le n° 98-268 art. 20 ; 90
+tableaux de l'index publié ; l'annexe du n° 94-1016 et de l'arrêté du 24 novembre 2006 ; les 97 versions hors du
+motif ; les refus et trois fac-similés ; le minimum de traitement ; quatre candidats (« ES », 301, 328, 342).
+Détail : `2026-11-06-b6-dates-relatives-au-decret.md`.
 
 
 **D'où elle vient.** La demande du propriétaire, le 12 octobre 2026 : aller
