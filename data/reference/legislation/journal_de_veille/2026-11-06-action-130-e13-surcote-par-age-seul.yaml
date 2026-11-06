@@ -1,0 +1,33 @@
+date: "2026-11-06"
+session: "action 130, file E13 : les écarts de R-E13 repris, et la CARMF, l'ASV et la CARPIMKO de surcote_par_age_seul écrites en versions"
+consulte: >-
+  Les index de la DILA récupérés : JORF au 3 novembre 2026, LEGI au 2 novembre. Au JORF,
+  sans borne de réponses : les arrêtés qui modifient les statuts de la Cipav de 1979 à
+  2006 (« architectes », « cipav », « interprofessionnelle de prévoyance »), dont ceux
+  du 5 mai 1981, du 4 mai 1982, du 17 juin 1985 et du 29 juillet 2003 ; l'arrêté du
+  16 décembre 2021, 18° (JORFARTI000044554134) ; les arrêtés des statuts de la CARMF et
+  de l'ASV de 2016 à 2026 (« section professionnelle des médecins », « carmf »), lus
+  aux articles 15 et 12, dont ceux du 30 novembre et du 1er décembre 2016, du 22 mars
+  2017, du 21 février 2024 et les règlements du 10 juillet 2026 ; ceux de la CARPIMKO
+  de 2014 à 2026 (« carpimko », « auxiliaires médicaux »), lus à l'article 12 ter, dont
+  celui du 31 juillet 2015 et le règlement du 10 juillet 2026. Dans LEGI : L. 161-17-2
+  (LEGIARTI000025014605), D. 161-2-1-9 (LEGIARTI000025089933), L. 351-1, en vigueur en
+  2017 ; le règlement de la CARMF (LEGIARTI000054437501, LEGIARTI000054890209).
+trouve: >-
+  Trois erreurs du modèle, déclarées, non corrigées : la CARMF et l'ASV majorent, du
+  1er janvier au 29 mars 2017, de l'âge légal de la génération (« après cet âge »), non
+  de 62 ans (679,34 et 873,34 € par an servis en moins, née le 10 mars 1952 ; 1 148,82
+  et 1 474,10 €, née le 10 mars 1948) ; elles comptent du trimestre civil qui suit
+  l'âge, quand le modèle compte celui où il tombe pour le médecin né le premier jour
+  d'un trimestre (99,89 et 119,42 € par an de trop, né le 1er janvier 1958) ; la
+  CARPIMKO majore depuis le 3 octobre 2015, le modèle depuis 2016 (au moins 397,36 € par
+  an, pension au 1er novembre 2015, sous la réserve de la date d'effet au trimestre). Un
+  point non tranché : le trimestre civil de la CARPIMKO qui commence le jour où l'âge
+  est atteint (0 ou 68,45 € par an). À la Cipav, si l'affiliation se compte depuis 1979,
+  rien n'est dû en 2007 ni en 2008 (28 et 29 années). `surcote_par_age_seul` reçoit dix
+  versions, coupées aux dates de la Cipav, de la CARMF, de l'ASV et de la CARPIMKO.
+reste: >-
+  La CAVEC, la CAVP (piste de 2011) et la CPRN de `surcote_par_age_seul` en versions,
+  chaque rédaction lue à la source ; puis `cotisation_par_classes_liberales`. Au seul
+  Bulletin officiel : les statuts de la Cipav de 1979 et de 2006 et les arrêtés qui
+  modifient ceux de 1979 (question 22).
