@@ -1,16 +1,5 @@
 # Étape 6, règlements européens : les 496 références sans thème, rapprochées des textes de l'Office des publications de l'Union
 
-**Reprise, au 5 novembre 2026.** Trois natures de l'étape sont rangées : les décrets,
-arrêtés et lois sans thème (note du 3 novembre), les 642 articles de code (note des
-articles de code), puis les 496 références de règlements européens (cette note) : 490
-rangées, 6 à lire, nommées ici. Restent, une session par nature, comptées le
-3 novembre : les 2 228 circulaires, lettres, instructions et notes, par période ; les
-96 autres textes, dont « NPCN articles 653 à 664 » et le livre des procédures fiscales ;
-les 74 que la base nomme sans les servir ; les 107 accords, avec le thème des accords de
-l'étape 4. Commencer par les circulaires, par période, avec la méthode des notes : la
-base relue par l'API, un texte rapproché par son identifiant, puis par son numéro,
-jamais par sa seule date.
-
 **Le 5 novembre 2026, ce qui est fait.**
 
 - *La lecture* : les 496 références sans thème dont le titre dit un règlement, toutes

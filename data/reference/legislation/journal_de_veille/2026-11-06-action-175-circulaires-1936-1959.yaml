@@ -1,0 +1,32 @@
+date: "2026-11-06"
+session: "action 175, étape 6, vague 11, G8 : les circulaires, lettres et instructions de 1936 à 1959 que la base de la Cnav cite sans thème, première période de leur nature"
+consulte: >-
+  Les 168 références du registre sans thème et à lire dont le titre commence par
+  « Circulaire », « Lettre », « Instruction », « Note d'information » ou « Diffusion
+  d'instructions », datées de 1936 à 1959, relues par l'API de la base le 6 novembre 2026
+  entre 0 h 40 et 0 h 50 UTC (/reference/referencesByFileLeafRef/), toutes servies, et le
+  PDF de l'une (/Pdf/lettre_Fnoss_1958_22091958.pdf). Pour les confronter : les fiches
+  minimum_vieillesse, majoration_conjoint_a_charge, salaire_annuel_moyen,
+  majoration_dix_pour_cent, la série legislation/minimum_vieillesse_avant_2007.csv, la
+  limite docs/limites/3-systeme-actuel.md, le code du premier étage du minimum vieillesse
+  (src/retraite_notionnelle/droit/foyer.py). Ni l'index de la DILA, ni Légifrance, ni le
+  Journal officiel.
+trouve: >-
+  138 se rapprochent par le numéro que porte l'en-tête de leur texte ; 31 n'ont pas de
+  numéro qui les rapproche. Le registre range 137 des 168 (109 limite, 28 hors_modele).
+  Les montants de l'AVTS de 1946 (15 000 F) et de 1950 (45 000 F) et la majoration pour
+  conjoint à charge de 1950 (22 500 F) sont ceux de la série et de la fiche. Trois
+  candidats : le décret n° 56-144, qui ne neutralise plus, depuis le 1er février 1956,
+  l'année de deux trimestres assimilés quand la neutralisation défavorise l'assuré, quand
+  la fiche salaire_annuel_moyen la neutralise toujours (circulaire n° 19 SS du 22 février
+  1956) ; la bonification de 2 000 F des allocataires de l'AVTS de trois enfants au
+  1er juillet 1946, que le plancher du modèle absorbe (n° 211 SS du 21 octobre 1946) ;
+  l'arrondi des avantages au multiple de 200 F supérieur depuis le 1er janvier 1950
+  (n° 90 SS du 9 mai 1950). La base date de 1950 une circulaire de 1953 (n° 60 SS), sert
+  deux lettres deux fois, et une circulaire sous l'objet d'une autre. Note
+  docs/feuille_de_route/175/2026-11-06-etape-6-circulaires-1936-1959.md.
+reste: >-
+  Les 31 références de la période que rien ne rapproche, nommées dans la note avec le
+  sort qu'elles prendraient ; les 2 032 circulaires de 1960 à 2026, par période, la
+  suivante de 1960 à 1972 (146) ; l'arrêté du 2 août 1949, le décret n° 56-144 et la loi
+  n° 50-147, à relire au Journal officiel ; les autres natures de l'étape 6.
