@@ -3291,12 +3291,12 @@ fabriqués.
 
 ### 130. L'architecture du dépôt : décidée, les phases 0 à 8 faites, les domaines à ouvrir — `en cours`
 
-**Reprise, au 5 novembre 2026.** Fait : phases 0 à 8, cinq domaines clos, le sixième aux étapes 1 à 6 ; vagues 6 et 7 relues conformes (Agirc-Arrco 5cf7bbc, Agirc 18a4dc3, base des
+**Reprise, au 6 novembre 2026.** Fait : phases 0 à 8, cinq domaines clos, le sixième aux étapes 1 à 6 ; vagues 6 et 7 relues conformes (Agirc-Arrco 5cf7bbc, Agirc 18a4dc3, base des
 libéraux 5f19af8, L-bis 9fcd8a1, L-ter f6012e5, Ircantec d'avant 1983 cc627e8) ; les retouches de R-E, R-M3-ter, R-L-ter et R-D-bis (7e44534). Le 5 : la CRPNPAC à son âge (N 1464c06,
 R-N 329db34, b47aaf9 ; au propriétaire, le refus avant 50 ans, les vingt annuités et leur barème de 2012 à 2019) ; la CAVOM, la CARPIMKO et la CPRN à leur âge, sans la base, la CAVP à
 celui de la base (N ddc92fc, R-N2 10eb393, N-bis 0ba2aea). Lues au droit : la CAVAMAC (75b31ac), la CARCDSF, la CAVOM (ee71f57, R-E3 ace82ea, E2 0e2a786), la CARPIMKO (E3 0284e76,
-R-E4 c411f0a, E3-bis), la CAVP (E4 c7fbb26, R-E5 639b779, E4-bis), la CPRN (E5, `130/2026-11-05-carte-des-fiches-cprn-lue-au-droit.md`), les quatre caisses du bloc ; restent 78 fiches,
-451 manques, la caisse suivante de la carte d'abord. Au propriétaire, erreurs déclarées, non corrigées : la CPRN, une (le passage de 2024, quinze mois non servis, 16 999,67 €, puis
+R-E4 c411f0a, E3-bis), la CAVP (E4 c7fbb26, R-E5 639b779, E4-bis), la CPRN (E5, R-E6 b977855, E5-bis, `130/2026-11-05-carte-des-fiches-cprn-lue-au-droit.md`), les quatre caisses du bloc ; restent 78 fiches,
+451 manques, la caisse suivante de la carte d'abord. Au propriétaire, erreurs déclarées, non corrigées : la CPRN, une (le passage de 2024, quinze mois non servis, 16 999,68 €, puis
 1 079,34 € par an de trop) et deux non-tranchés (l'âge d'avant 2014, le trimestre entamé), sans la pension au trimestre civil des trois autres ; la CAVP, deux et trois non-tranchés ;
 la CARPIMKO, trois et trois ; la CAVOM, trois et deux ; la CARCDSF, sept ; la CAVAMAC, cinq ; `…-11-03-decisions-du-proprietaire.md`. Au seul Bulletin officiel : les statuts de la
 CARPIMKO de 1987 à 2015, de la CAVP d'avant juin 2009, de la CPRN d'avant 2014, de la CAVOM d'avant 2016 ; candidats non lancés : l'Agirc-Arrco de 1955 à 1983, les biologistes et la

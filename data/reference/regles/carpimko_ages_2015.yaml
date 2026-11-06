@@ -516,9 +516,9 @@ approximations:
     ans de « 4 % par année d'anticipation », la durée n'y entrant que pour les « 0,25 %
     par trimestre manquant ». Né le 10 décembre 1954, entré à vingt ans, l'auxiliaire
     médical part à 62 ans le 1er janvier 2017 avec sa durée ; le modèle le majore de
-    trois trimestres, 1,0375, 5 681,23 € par an, 5 475,89 € sans coefficient. Première
+    trois trimestres, 1,0375, 5 681,23 € par an, 5 475,88 € sans coefficient. Première
     lecture : taux plein, la majoration comptée de l'âge légal de sa base (voir
-    l'approximation suivante), 1,0125, 5 544,34 €. Seconde lecture : douze trimestres
+    l'approximation suivante), 1,0125, 5 544,33 €. Seconde lecture : douze trimestres
     jusqu'à 65 ans (2 ans, 11 mois et 9 jours, le trimestre incomplet compté entier),
     trois années, 12 %, 0,88, 4 818,78 €. Entré à 26 ans, 21 trimestres manquants, 12 %
     + 0,25 % × 12 = 15 %, 0,85 : le modèle et les deux lectures s'accordent. Jusqu'à un
@@ -544,7 +544,7 @@ approximations:
     (`age_ouverture_commun`). Né le 10 décembre 1954, entré à vingt ans, durée atteinte
     avant 61 ans et 7 mois, le 10 juillet 2016 : un seul trimestre civil entier
     d'ajournement avant le 1er janvier 2017, octobre à décembre, 1,0125 ; le modèle en
-    compte trois, d'avril à décembre, 1,0375 ; 5 681,23 / 1,0375 × 1,0125 = 5 544,34 €. La
+    compte trois, d'avril à décembre, 1,0375 ; 5 681,23 / 1,0375 × 1,0125 = 5 544,33 €. La
     seconde lecture de l'approximation précédente ne majore pas du tout avant 65 ans.
     Pour les générations 1956 à 1960 de 2015 à 2024, et pour toutes depuis 2024, le texte
     ne tranche pas : l'abattement, « 1,25 % par trimestre manquant pour pouvoir liquider
@@ -557,7 +557,7 @@ approximations:
     la pension aurait pu être liquidée sans abattement ; comptée de l'âge du taux plein
     de la table, « Age prévu à l'article 11.1 », 65 ans pour la génération 1955 et
     antérieure (l'approximation sur l'âge d'où la majoration se compte), elle est nulle
-    à 62 ans : 5 681,23 / 1,0375 = 5 475,89 €, 205,35 € par an de trop (essai du 5
+    à 62 ans : 5 681,23 / 1,0375 = 5 475,88 €, 205,35 € par an de trop (essai du 5
     novembre 2026, refait dans les deux moteurs) ; non mesuré pour les générations
     suivantes
 - version: [statuts_de_2015, statuts_de_2019]

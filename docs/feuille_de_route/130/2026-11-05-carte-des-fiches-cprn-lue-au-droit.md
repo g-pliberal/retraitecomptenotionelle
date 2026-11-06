@@ -140,3 +140,5 @@ modèle (le passage de 2024) et ses deux non-tranchés au propriétaire ; les qu
 du bloc lues, la suite, la caisse suivante de la carte.
 
 Renvoi du 5 novembre 2026 : la relecture R-E6 (`2026-11-05-relecture-r-e6.md`) trouve ce relevé conforme pour l'essentiel et relève trois écarts faibles : trois arrêtés à nommer (1963, 1964, 2001) et cinq textes au seul Bulletin officiel, deux phrases de l'âge d'avant 2014, deux égalités au centime (16 999,675 ; 17 269,50).
+
+Renvoi du 6 novembre 2026 : la file E5-bis reprend ces trois écarts dans la fiche, à la source (`2026-11-06-e5-bis-corrections-de-r-e6.md`) : les arrêtés de 1963, 1964 et 2001 nommés, cinq textes au seul Bulletin officiel, 16 999,68 € et 17 269,50 € sur le papier.

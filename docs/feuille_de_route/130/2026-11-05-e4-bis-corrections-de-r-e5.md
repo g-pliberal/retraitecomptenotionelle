@@ -75,3 +75,5 @@ requête du formulaire) ; chaque valeur du texte, posée à la main.
 - **Le paquet** ne lit pas les fiches : rien à refaire.
 
 Renvoi du 5 novembre 2026 : la relecture R-E6 (`2026-11-05-relecture-r-e6.md`) trouve ces chiffres exacts et confirme l'écart d'écriture d'un centime, avec un second : écrits sur 5 681,23, les intermédiaires valent 5 475,88 et 5 544,33.
+
+Renvoi du 6 novembre 2026 : la file E5-bis écrit 5 475,88 et 5 544,33 dans `carpimko_ages_2015` (`2026-11-06-e5-bis-corrections-de-r-e6.md`).

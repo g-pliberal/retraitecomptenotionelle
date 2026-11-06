@@ -51,16 +51,21 @@ versions:
     COMPLEMENTAIRE », JORFTEXT000000804758), que l'arrêté du 28 décembre 2004 abroge, et
     de leurs modifications. L'index JORF n'en porte que les titres, ni article ni annexe,
     et de quelques-uns un court résumé : l'arrêté du 21 avril 1954 (« ART. 19 »,
-    JORFTEXT000000475360), du 21 avril 1966 (« ART. 10 BIS », JORFTEXT000000485481), du 10
-    octobre 1967 (JORFTEXT000000480805), du 15 juin 1971 (JORFTEXT000000638038), du 18
-    février 1975 (JORFTEXT000000308317), du 1er septembre 1983 (« ART. 9-BIS,16,16-BIS,20,39,41
-    ET 47 », JORFTEXT000000468711), du 20 juin 1985 (« ART. 8,9,20,43 ET 52 »,
-    JORFTEXT000000491023), du 8 décembre 1987 (JORFTEXT000000340498), du 16 décembre 1996
-    (« ART. 2,8,9-BIS,10,12,16,16-BIS,17,18,57,ANNEXES N0S 1 ET 2 »,
-    JORFTEXT000000368550). Trois ne sont qu'au Bulletin officiel : celui du 9 juin 1980 («
-    ART. 18 (AL. 1 ET 3) », JORFTEXT000000314300), celui du 19 avril 1983 (« ART. 2 ET
-    2-BIS DES STATUTS », JORFTEXT000000652420) et celui du 12 septembre 1990 (« art. 18,
-    23, 29 et 59 », Bulletin officiel 90-42, JORFTEXT000000533318). Aucun ne se lit. Le
+    JORFTEXT000000475360), du 2 août 1963 (JORFTEXT000000437564), du 20 novembre 1964 («
+    ART. 8 » et « ART. 20-BIS,50 A 55 », JORFTEXT000000620399), du 21 avril 1966 (« ART.
+    10 BIS », JORFTEXT000000485481), du 10 octobre 1967 (JORFTEXT000000480805), du 15 juin
+    1971 (JORFTEXT000000638038), du 18 février 1975 (JORFTEXT000000308317), du 1er
+    septembre 1983 (« ART. 9-BIS,16,16-BIS,20,39,41 ET 47 », JORFTEXT000000468711), du 20
+    juin 1985 (« ART. 8,9,20,43 ET 52 », JORFTEXT000000491023) et du 8 décembre 1987
+    (JORFTEXT000000340498). Cinq ne se lisent qu'au Bulletin officiel : celui du 9 juin
+    1980 (« ART. 18 (AL. 1 ET 3) », JORFTEXT000000314300), celui du 19 avril 1983 (« ART.
+    2 ET 2-BIS DES STATUTS », JORFTEXT000000652420), celui du 12 septembre 1990 (« art.
+    18, 23, 29 et 59 », Bulletin officiel 90-42, JORFTEXT000000533318), celui du 16
+    décembre 1996 (« ART. 2,8,9-BIS,10,12,16,16-BIS,17,18,57,ANNEXES N0S 1 ET 2 »,
+    JORFTEXT000000368550 ; « sera publié intégralement au Bulletin officiel no 97-03 »,
+    JORFARTI000002135074) et celui du 21 février 2001 (« art. 30, 36, 39, 40, 41 et 47 »,
+    JORFARTI000002396641 ; « paraîtra dans un prochain Bulletin officiel »,
+    JORFARTI000001924450). Aucun ne se lit. Le
     modèle sert la règle du régime de base : 1,25 % par trimestre manquant jusqu'à l'âge
     d'annulation de la décote de la génération, que la durée annule, à l'âge d'ouverture
     de la base, sans majoration ni bonification pour enfants
@@ -93,9 +98,11 @@ versions:
     remplace, au premier alinéa de l'article 14, « La demande ne peut être antérieure ni
     au soixante-cinquième anniversaire du notaire, ni à la fin de son exercice », et
     l'article 15, dont le premier alinéa, avant les neuf qu'il insère, devient le
-    dixième, celui de l'inapte. Le reste ne se lit pas, ni rien qui dise si ces phrases
-    datent de 2005. Le modèle sert la règle du régime de base, à l'âge d'ouverture de la
-    base
+    dixième, que l'arrêté récrit : on n'en lit que la rédaction de 2014, celle de l'inapte.
+    Le reste ne se lit pas. Que ces phrases datent de 2005 n'est dit nulle part, mais
+    l'index JORF ne porte, du 28 décembre 2004 au 16 décembre 2013, qu'une approbation de
+    modifications de ces statuts, celle du 27 février 2008, qui ne récrit que l'article
+    20. Le modèle sert la règle du régime de base, à l'âge d'ouverture de la base
   fiabilite: >-
     faible : l'âge d'ouverture, que l'article 14 en vigueur le 31 décembre 2013 met à
     65 ans, sans qu'aucun texte lu ne dise s'il l'était depuis 2005 ni qu'aucun autre
@@ -404,9 +411,10 @@ approximations:
 - version: [reglement_d_avant_2005, statuts_de_2005]
   textes: >-
     statuts de 1948, règlement de 1962 et leurs modifications, dont l'index JORF n'a que
-    les titres ; les arrêtés du 9 juin 1980, du 19 avril 1983 et du 12 septembre 1990, au
-    seul Bulletin officiel (no 90-42) ; statuts de 2005, au seul Bulletin officiel (no
-    2005/01) ; l'article 14 que cite l'arrêté du 16 décembre 2013
+    les titres ; les arrêtés du 9 juin 1980, du 19 avril 1983, du 12 septembre 1990 (no
+    90-42), du 16 décembre 1996 (no 97-03) et du 21 février 2001, au seul Bulletin
+    officiel ; statuts de 2005, au seul Bulletin officiel (no 2005/01) ; l'article 14 que
+    cite l'arrêté du 16 décembre 2013
   ecart: >-
     Avant le 1er janvier 2014, le modèle sert la complémentaire à l'âge d'ouverture de
     la base, sous la décote du régime de base, que la durée annule. Le texte ne tranche
@@ -414,12 +422,23 @@ approximations:
     : rien de ce qui se lit ne ferme la complémentaire avant 65 ans ni n'en fixe le
     coefficient. Seconde lecture : l'article 14 en vigueur le 31 décembre 2013 dit « La
     demande ne peut être antérieure ni au soixante-cinquième anniversaire du notaire, ni
-    à la fin de son exercice », et le premier alinéa de l'article 15, le seul que
-    l'arrêté de 2013 laisse voir, n'excepte que l'inapte ; la complémentaire ne s'ouvre
-    alors qu'à 65 ans, sans coefficient. Elle n'est pas tenable pour la première tant que
-    les statuts ne sont pas lus : un autre article, ou le troisième alinéa de l'article
-    14, peut avancer l'âge ; et rien ne dit que la phrase date de 2005. Le même texte
-    décide du passage de 2014 pour qui a cessé d'exercer avant. Déjà déclaré dans
+    à la fin de son exercice », et l'article 15 n'excepte que l'inapte : l'arrêté de 2013
+    n'en laisse pas voir l'ancien premier alinéa, il le récrit (« le dixième alinéa est
+    ainsi rédigé : « Toutefois, le conseil d'administration peut accorder à celui que des
+    infirmités ou une maladie grave ont contraint de cesser ses fonctions [...] »), et que
+    l'ancien visât l'inapte se déduit des onzième et douzième alinéas, qu'il ne modifie
+    que par mots (« d'un médecin agréé par la caisse », « 2° Une attestation du président
+    de la chambre ») ; l'ancien article 16, qu'il récrit aussi (« L'article 16 est ainsi
+    rédigé »), n'est pas lu et a pu porter une liquidation anticipée. La complémentaire
+    ne s'ouvre alors qu'à 65 ans, sans coefficient. Elle n'est pas tenable pour la
+    première tant que les statuts ne sont pas lus : un autre article, ou le troisième
+    alinéa de l'article 14, peut avancer l'âge. Que la phrase de l'article 14 date de
+    2005 n'est dit nulle part, mais, du 28 décembre 2004 au 16 décembre 2013, l'index JORF
+    ne porte qu'une approbation de modifications de ces statuts, celle du 27 février
+    2008, qui ne récrit que l'article 20 : sauf une modification que le Journal officiel
+    n'aurait pas mentionnée, la seconde lecture vaut, si elle vaut, depuis le 1er janvier
+    2005. Le même texte décide du passage de 2014 pour qui a cessé d'exercer avant. Déjà
+    déclaré dans
     `liquidation_regime_par_regime`, non doublé : ici, chiffré
   effet: >-
     né le 10 mars 1948, entré à 22 ans, parti à 60 ans le 1er avril 2008 : le modèle sert
@@ -449,10 +468,15 @@ approximations:
     la CPRN le 1er avril 2025, à 64 ans, 14 679,08 € par an de 2025 (12 trimestres
     jusqu'à 67 ans, 0,85) ; les statuts la lui ouvrent le 1er janvier 2024, à 62 ans, 9
     mois et 22 jours, 17 trimestres compté le trimestre entamé, 0,7875 : 14 679,08 / 0,85
-    × 0,7875 = 13 599,74 € par an aux valeurs de 2025, 16 999,67 € sur les quinze mois
-    que le modèle ne sert pas ; puis 1 079,34 € par an de trop (16 trimestres, 0,80 :
-    13 815,60 €, 17 269,51 € et 863,48 €). Essai du 5 novembre 2026, dans les deux
-    moteurs, requête du formulaire
+    × 0,7875 = 13 599,74 € par an aux valeurs de 2025, et 13 599,74 × 15 / 12 = 16 999,675,
+    soit 16 999,68 € sur les quinze mois que le modèle ne sert pas (16 999,67 € si l'on
+    n'arrondit pas l'annuel avant de le multiplier) ; puis 1 079,34 € par an de trop, qui
+    compare deux dates de liquidation, le 1er janvier 2024 et le 1er avril 2025, que les
+    statuts permettent toutes deux (« la date souhaitée par l'affilié ») et ne vaut donc
+    que dans la règle du modèle, servir chaque caisse dès son ouverture (16 trimestres,
+    0,80 : 13 815,60 €, 13 815,60 × 15 / 12 = 17 269,50 € sur les quinze mois, 17 269,51 €
+    sans arrondir l'annuel, et 863,48 € par an de trop). Essai du 5 novembre 2026, dans les
+    deux moteurs, requête du formulaire
 - version: [statuts_de_2014, statuts_de_2017, statuts_de_2024, reglement_de_2026]
   textes: >-
     statuts de 2014, article 15 ; de 2017, article 21 ; règlement de 2026, article 7
@@ -553,7 +577,8 @@ sources:
   - >-
     Lire les statuts d'avant le 1er janvier 2014 : ceux de 2005 (Bulletin officiel no
     2005/01), le règlement de 1962 et ses modifications, dont les arrêtés du 9 juin 1980,
-    du 19 avril 1983 et du 12 septembre 1990 (Bulletin officiel no 90-42) ; ou les
+    du 19 avril 1983, du 12 septembre 1990 (Bulletin officiel no 90-42), du 16 décembre
+    1996 (Bulletin officiel no 97-03) et du 21 février 2001 ; ou les
     demander à la CPRN. Trouver un exemple de la caisse : une pension liquidée en 2024
     par un notaire qui a cessé d'exercer en 2023 avant 64 ans, une décote d'un trimestre
     entamé, la majoration d'un enfant à charge.
