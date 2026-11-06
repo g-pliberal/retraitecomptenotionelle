@@ -269,6 +269,7 @@ LUES_AU_DROIT = frozenset("""
     cavp_minoration_deux_pentes
     cprn_ages_decote_enfants
     carmf_asv_minoration_enfants asv_medecins_ajustement
+    cipav_seconde_tranche
 """.split())
 
 

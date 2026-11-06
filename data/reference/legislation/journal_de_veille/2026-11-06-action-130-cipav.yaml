@@ -1,0 +1,47 @@
+date: "2026-11-06"
+session: "action 130, file E (E7) : la Cipav lue au droit, la fiche cipav_seconde_tranche"
+consulte: >-
+  `veille_droit.py` (la base de la Cnav, rien de neuf) et `docs/veille_droit.md`. Dans
+  l'index LEGI du dépôt, à jour du 5 novembre 2026 : le décret n° 79-262, toutes les
+  rédactions de tous ses articles (39 documents), dont l'article 2 de 1979, 1985, 2012,
+  2013, 2023 et du 1er juillet 2026, et les articles 5-1 à 5-6 du 1er juillet 2026. Dans
+  l'index JORF, à jour du 6 novembre 2026, sans borne : les textes dont le titre nomme
+  le décret n° 79-262, la Cipav, la « Caisse interprofessionnelle de prévoyance » ou la
+  section des architectes (43 textes, de 1979 à 2025) ; ceux de juin 2021 à 2026 dont le
+  titre nomme les paramètres de vieillesse, la vieillesse complémentaire, les
+  professions libérales ou les sections professionnelles ; tous les articles de 2022 à
+  2026 qui citent le décret n° 79-262, une « cotisation proportionnelle de première
+  tranche » ou « de la deuxième tranche », et, depuis le 14 novembre 2025, « 47,40 », «
+  valeur d'achat du point », « coût d'acquisition du point » ou le 11° de R. 641-1. Lus :
+  le décret n° 2022-1746 (notice, articles 1er à 3), les décrets n° 2023-1351 (articles 4
+  et 6), 2024-1214 (articles 6 et 7), 2025-1076 (articles 12 à 15), 2023-148 (articles
+  1er à 4), 2026-418 (articles 3, 20, 29, 30) ; les arrêtés d'approbation des statuts de
+  la Cipav des 22 juin 2020, 16 mars 2021, 16 décembre 2021, 20 mars 2023, 27 décembre
+  2023, 4 septembre 2025 et 17 septembre 2025 ; les arrêtés du plafond pour 2023 à 2026.
+trouve: >-
+  Depuis 2023, l'article 2 du décret n° 79-262 (décret n° 2022-1746, en vigueur le 1er
+  janvier 2023) coupe le revenu en deux tranches : jusqu'au plafond, puis d'un à trois
+  plafonds en 2023, trois et demi en 2024, quatre depuis 2025 ; les taux, 9 % et 22 % en
+  2023 (décret n° 2023-1351) et 2024 (n° 2024-1214), 11 % et 21 % en 2025 (n° 2025-1076,
+  article 12) ; les points, la cotisation divisée par le coût d'acquisition du point,
+  45,30 € en 2023, 47,40 € en 2024 et 2025, arrondis à la décimale (statuts de 2023,
+  puis le décret lui-même au 1er juillet 2026). Le modèle rend les deux tranches et
+  leurs taux, au centime, dans les deux moteurs. Pour 2026, aucun décret ne fixe ni les
+  taux ni le coût du point : l'article 14 du décret n° 2025-1076 ne nomme que trois
+  sections ; le modèle reconduit 2025. Il ne compte pas de points : il revalorise les
+  cotisations par les prix et les sert au rendement de 6,10 %, 28,57 € par an de trop
+  dans le cas posé (150 000 € en 2025, liquidé en 2026). Depuis le 1er juillet 2026, la
+  pension prend effet « au premier jour du mois qui suit la demande » (article 5-3) :
+  la Cipav n'a pas le défaut du trimestre civil ; avant, la date d'effet est aux
+  statuts, que le Journal officiel ne publie pas.
+reste: >-
+  Au propriétaire : le décret des paramètres de la Cipav pour 2026 (taux des deux
+  tranches, coût d'acquisition du point) ; les statuts du régime complémentaire d'avant
+  le 1er juillet 2026, au Bulletin officiel (question 22), pour la date d'effet de la
+  pension de droit direct. À la carte : les règles de liquidation des articles 5-1 et
+  5-2 (la minoration de 5 % par année, la majoration de 5 % par année entière de
+  prorogation, sur les seuls points des trente premières années de cotisation), à
+  confronter dans les fiches communes `surcote_par_age_seul` et `age_annulation_decote`.
+  Candidat, hors de la tâche : l'article R. 643-6, que le décret n° 2023-148 complète,
+  date la pension de base des libéraux de la Cipav selon le I de R. 351-37, à
+  confronter à la date que le modèle donne à la base de la CNAVPL.

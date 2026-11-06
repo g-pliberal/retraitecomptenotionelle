@@ -1,24 +1,388 @@
 schema_version: 1
 id: cipav_seconde_tranche
 intitule: >-
-  Complémentaire de la Cipav : 9 % puis 11 % jusqu'à un plafond, 22 % puis 21 %
-  au-delà, jusqu'à trois plafonds en 2023, trois et demi en 2024, quatre depuis
-  2025.
+  Complémentaire de la Cipav depuis 2023 : deux tranches du revenu d'activité de
+  L. 131-6, la première jusqu'au plafond de l'année, la seconde d'un plafond à trois en
+  2023, à trois et demi en 2024, à quatre depuis 2025 (article 2 du décret n° 79-262,
+  rédaction du décret n° 2022-1746) ; 9 % et 22 % en 2023 et 2024, 11 % et 21 % en
+  2025, aux décrets de chaque année ; des points au coût d'acquisition de l'année,
+  arrondis à la décimale ; pour 2026, aucun décret lu ne fixe ni les taux ni le coût
+  du point ; avant 2023, des classes, hors de cette fiche.
+domaine: cotisations
 regimes: [cipav_complementaire]
-etat: transcrite
+etape: acquerir_les_droits
+face: droit
+etat: approchee
+lit:
+- >-
+  l'année du revenu, qui choisit la rédaction de l'article 2 du décret n° 79-262, la
+  borne haute de la seconde tranche et le décret qui fixe les taux de l'année, et le
+  plafond de la Sécurité sociale de cette année, « en vigueur au 1er janvier de l'année
+  au titre de laquelle la cotisation est due »
+- >-
+  le revenu d'activité de l'article L. 131-6, celui de l'année, que le modèle prend
+  pour le revenu définitif (article L. 131-6-2 : la cotisation provisionnelle, puis
+  régularisée)
+ecrit:
+- >-
+  la cotisation de chaque tranche de l'année, que `acquerir` cumule, revalorisée par
+  les prix jusqu'à la liquidation, et que `liquider_chaque_regime` sert au rendement
+  de l'année de liquidation ; le compte notionnel la reçoit
+  (`ConstructeurCompte._cotisation_ligne`), et la fiche de paie l'affiche
+dates_qui_decident:
+- revenu.annee
+versions:
+- id: classes_d_avant_2023
+  statut: lue
+  textes:
+  - id: LEGIARTI000026892951
+    article: décret n° 79-262, article 2, rédaction du 1er janvier 2013 au 1er janvier 2023
+    en_vigueur: 2013-01-01
+    citation: >-
+      « Le régime d'assurance vieillesse complémentaire institué par l'article 1er
+      comporte huit classes de cotisation : - la classe A portant attribution annuelle
+      de 36 points ; [...] - la classe H portant attribution annuelle de 468 points. »
+  bornes:
+    revenu.annee: [null, 2023-01-01]
+  contenu:
+    parametres: {}
+    droit: aucun
+    raison: >-
+      avant 2023, la cotisation se paie par classes, sans tranche : les classes de
+      chaque exercice sont dans `cotisation_par_classes_liberales` et
+      `classes_cotisation_epoques.yaml` ; cette fiche ne les lit pas
+  exemples: aucun trouvé
+- id: exercice_2023
+  statut: lue
+  textes:
+  - id: JORFARTI000046847145
+    article: décret n° 2022-1746 du 26 décembre 2022, article 1er, 2° (article 2 du décret n° 79-262)
+    en_vigueur: 2023-01-01
+    publie_le: 2022-12-31
+    citation: >-
+      « 2° L'article 2 est remplacé par les dispositions suivantes : « Art. 2.-I.-La
+      cotisation due par les adhérents autres que ceux mentionnés à l'article L. 613-7
+      du code de la sécurité sociale au régime prévu à l'article 1er est calculée sur la
+      base de deux tranches du revenu d'activité défini à l'article L. 131-6 du même
+      code. « Chaque tranche est affectée d'un taux de cotisation fixé chaque année par
+      décret sur proposition du conseil d'administration de la section professionnelle
+      visée à l'article 1er. « La cotisation de la première tranche est appliquée sur la
+      part des revenus n'excédant pas le plafond annuel prévu au premier alinéa de
+      l'article L. 241-3 en vigueur au 1er janvier de l'année au titre de laquelle la
+      cotisation est due. « La cotisation de la deuxième tranche est appliquée sur la
+      part des revenus compris entre : «-une et trois fois le plafond précité pour
+      l'exercice 2023 ; «-une et trois fois et demi le même plafond pour l'exercice 2024
+      ; «-une et quatre fois le même plafond à compter de l'exercice 2025. [...] «
+      III.-La cotisation versée par les adhérents mentionnés au I et au II porte
+      attribution d'un nombre de points égal à son montant divisé par le coût
+      d'acquisition du point au 1er janvier de l'année. »
+  - id: JORFTEXT000046847137
+    article: décret n° 2022-1746, notice
+    publie_le: 2022-12-31
+    citation: >-
+      « Entrée en vigueur : le décret entre en vigueur le 1er janvier 2023 »
+  - id: LEGIARTI000046875038
+    article: décret n° 79-262, article 2, rédaction du 1er janvier 2023 au 1er juillet 2026
+    en_vigueur: 2023-01-01
+    citation: >-
+      « La cotisation de la deuxième tranche est appliquée sur la part des revenus
+      compris entre : -une et trois fois le plafond précité pour l'exercice 2023 ; -une
+      et trois fois et demi le même plafond pour l'exercice 2024 ; -une et quatre fois
+      le même plafond à compter de l'exercice 2025. Les cotisations mentionnées au I
+      sont calculées dans les conditions prévues à l'article L. 131-6-2 du code de la
+      sécurité sociale. »
+  - id: JORFARTI000048729109
+    article: décret n° 2023-1351 du 28 décembre 2023, article 6, 8° (l'année 2023)
+    publie_le: 2023-12-30
+    citation: >-
+      « Pour l'année 2023, les cotisations aux régimes d'assurance vieillesse
+      complémentaire des personnes non salariées affiliées aux sections
+      professionnelles de l'organisation autonome d'assurance vieillesse des
+      professions libérales sont déterminées selon les modalités suivantes : [...] 8°
+      Section professionnelle des architectes, agréés en architecture, ingénieurs,
+      techniciens, géomètres, experts et conseils, artistes auteurs ne relevant pas de
+      l'article L. 382-1 du code de la sécurité sociale, enseignants, professionnels du
+      sport, du tourisme et des relations publiques : - taux de la cotisation
+      proportionnelle de première tranche : 9 % ; - taux de la cotisation
+      proportionnelle de la deuxième tranche : 22 % ; - valeur d'achat du point : 45,30
+      euros ; »
+  - id: JORFARTI000047334800
+    article: >-
+      arrêté du 20 mars 2023, annexe, 5°, d, et 6° : statuts du régime complémentaire,
+      articles 3.3 et 3.4
+    publie_le: 2023-03-24
+    citation: >-
+      « III. - Acquisition des points « Le nombre de points obtenu dans les conditions
+      prévues au III de l'article 2 du décret n° 79-262 du 21 mars 1979 est arrondi à la
+      décimale la plus proche. » ; 6° L'article 3.4 est remplacé par les dispositions
+      suivantes : « Pour les deux premières années d'activité, les cotisations sont
+      calculées dans les conditions prévues au I de l'article 2 du décret n° 79-262 du
+      21 mars 1979. »
+  - id: JORFARTI000047334796
+    article: arrêté du 20 mars 2023, article 2
+    publie_le: 2023-03-24
+    citation: >-
+      « L'annexe au présent arrêté est applicable aux cotisations et aux prestations dues
+      au titre des périodes courant à compter du 1er janvier 2023. »
+  nee_de: JORFARTI000046847145
+  bornes:
+    revenu.annee: [2023-01-01, 2024-01-01]
+  contenu:
+    parametres:
+      premiere_tranche: {assiette: plafonnee, taux_cotisation_retraite: 0.09}
+      deuxieme_tranche: {assiette: tranche_1_3_pass, taux_cotisation_retraite: 0.22}
+    droit: >-
+      9 % du revenu jusqu'au plafond de 2023, 22 % de la part comprise entre un et trois
+      plafonds ; les points, la cotisation divisée par 45,30 €, arrondis à la décimale
+    conditions: aucune
+  exemples: aucun trouvé
+- id: exercice_2024
+  statut: lue
+  textes:
+  - id: LEGIARTI000046875038
+    article: décret n° 79-262, article 2, rédaction du 1er janvier 2023 au 1er juillet 2026
+    en_vigueur: 2023-01-01
+    citation: >-
+      « -une et trois fois et demi le même plafond pour l'exercice 2024 »
+  - id: JORFARTI000050854377
+    article: décret n° 2024-1214 du 28 décembre 2024, article 6, 8° (l'année 2024)
+    publie_le: 2024-12-29
+    citation: >-
+      « Pour l'année 2024, les cotisations aux régimes d'assurance vieillesse
+      complémentaire des personnes non salariées affiliées aux sections
+      professionnelles de l'organisation autonome d'assurance vieillesse des
+      professions libérales sont déterminées selon les modalités suivantes : [...] 8°
+      Section professionnelle des professions libérales mentionnée au 11° de l'article
+      R. 641-1 du code de la sécurité sociale : - taux de la cotisation proportionnelle
+      de première tranche : 9 % ; - taux de la cotisation proportionnelle de la deuxième
+      tranche : 22 % ; - valeur d'achat du point : 47,40 euros ; »
+  bornes:
+    revenu.annee: [2024-01-01, 2025-01-01]
+  contenu:
+    parametres:
+      premiere_tranche: {assiette: plafonnee, taux_cotisation_retraite: 0.09}
+      deuxieme_tranche: {assiette: tranche_1_3_5_pass, taux_cotisation_retraite: 0.22}
+    droit: >-
+      9 % du revenu jusqu'au plafond de 2024, 22 % de la part comprise entre un et trois
+      plafonds et demi ; les points à 47,40 €, arrondis à la décimale
+    conditions: aucune
+  exemples: aucun trouvé
+- id: exercice_2025
+  statut: lue
+  textes:
+  - id: LEGIARTI000046875038
+    article: décret n° 79-262, article 2, rédaction du 1er janvier 2023 au 1er juillet 2026
+    en_vigueur: 2023-01-01
+    citation: >-
+      « -une et quatre fois le même plafond à compter de l'exercice 2025 »
+  - id: JORFARTI000052565553
+    article: décret n° 2025-1076 du 10 novembre 2025, article 12, 8° (l'année 2025)
+    publie_le: 2025-11-13
+    citation: >-
+      « Pour l'année 2025, les cotisations aux régimes d'assurance vieillesse
+      complémentaire des personnes non salariées affiliées aux sections
+      professionnelles de l'organisation autonome d'assurance vieillesse des
+      professions libérales sont déterminées selon les modalités suivantes : [...] 8°
+      Section professionnelle des professions libérales mentionnée au 11° de l'article
+      R. 641-1 du code de la sécurité sociale : - taux de la cotisation proportionnelle
+      de première tranche : 11 % ; - taux de la cotisation proportionnelle de la
+      deuxième tranche : 21 % ; - valeur d'achat du point : 47,40 euros ; »
+  - id: JORFARTI000052565559
+    article: décret n° 2025-1076, article 15, I
+    publie_le: 2025-11-13
+    citation: >-
+      « I. - Le 2° de l'article 9 et les articles 1 et 10 à 13 s'appliquent aux
+      cotisations et aux prestations dues au titre des périodes courant à compter du 1
+      er janvier 2025. »
+  bornes:
+    revenu.annee: [2025-01-01, 2026-01-01]
+  contenu:
+    parametres:
+      premiere_tranche: {assiette: plafonnee, taux_cotisation_retraite: 0.11}
+      deuxieme_tranche: {assiette: tranche_1_4_pass, taux_cotisation_retraite: 0.21}
+    droit: >-
+      11 % du revenu jusqu'au plafond de 2025, 21 % de la part comprise entre un et
+      quatre plafonds ; les points à 47,40 €, arrondis à la décimale
+    conditions: aucune
+  exemples: aucun trouvé
+- id: depuis_2026
+  statut: supposee
+  hypothese: >-
+    les taux de 2025, 11 % et 21 %, valent encore en 2026 et après : l'article 2 les
+    fait fixer « chaque année par décret », et l'index JORF, à jour du 6 novembre 2026,
+    n'a aucun décret qui les fixe pour 2026 ; l'article 14 du décret n° 2025-1076, «
+    Pour l'année 2026 », ne nomme que trois sections, et pas la Cipav ; la borne de
+    quatre plafonds, elle, est lue (« à compter de l'exercice 2025 »)
+  fiabilite: >-
+    moyenne : la borne de la seconde tranche est au texte ; les deux taux et le coût du
+    point de 2026 ne sont dans aucun texte lu
+  textes:
+  - id: LEGIARTI000054168526
+    article: >-
+      décret n° 79-262, article 2, rédaction du décret n° 2026-418, en vigueur le 1er
+      juillet 2026
+    en_vigueur: 2026-07-01
+    citation: >-
+      « Chaque tranche est affectée d'un taux de cotisation fixé chaque année par décret
+      sur proposition du conseil d'administration de la section professionnelle visée à
+      l'article 1er. [...] - une et quatre fois le même plafond à compter de l'exercice
+      2025. [...] Le calcul des cotisations prévu au présent I s'applique aux deux
+      premières années d'activité. [...] Le nombre de points obtenus est arrondi à la
+      décimale la plus proche. »
+  - id: JORFARTI000054153655
+    article: décret n° 2026-418 du 29 mai 2026, article 20, 1° (article 2 du décret n° 79-262)
+    en_vigueur: 2026-07-01
+    publie_le: 2026-05-31
+    citation: >-
+      « après le huitième alinéa, il est ajouté un alinéa ainsi rédigé : « Le calcul des
+      cotisations prévu au présent I s'applique aux deux premières années d'activité. »
+      [...] après le premier alinéa, il est inséré un alinéa ainsi rédigé : « Le nombre
+      de points obtenus est arrondi à la décimale la plus proche. » »
+  - id: JORFARTI000054153813
+    article: décret n° 2026-418, article 30
+    publie_le: 2026-05-31
+    citation: >-
+      « Le présent décret entre en vigueur le 1 er juillet 2026. »
+  - id: JORFARTI000052565558
+    article: décret n° 2025-1076, article 14 (l'année 2026)
+    publie_le: 2025-11-13
+    citation: >-
+      « Pour l'année 2026, les cotisations aux régimes d'assurance vieillesse
+      complémentaire des personnes non salariées affiliées aux sections
+      professionnelles de l'organisation autonome d'assurance vieillesse des
+      professions libérales sont déterminées selon les modalités suivantes : 1° Section
+      professionnelle des médecins : [...] 3° Section professionnelle des auxiliaires
+      médicaux : [...] » ; l'article s'arrête au 3°
+  bornes:
+    revenu.annee: [2026-01-01, null]
+  contenu:
+    parametres:
+      premiere_tranche: {assiette: plafonnee, taux_cotisation_retraite: 0.11}
+      deuxieme_tranche: {assiette: tranche_1_4_pass, taux_cotisation_retraite: 0.21}
+    droit: >-
+      la première tranche jusqu'au plafond de l'année, la seconde d'un à quatre
+      plafonds, aux taux qu'un décret de l'année fixerait ; le modèle reconduit 11 % et
+      21 % ; les points, depuis le 1er juillet 2026, « arrondi[s] à la décimale la plus
+      proche » au décret lui-même, comme aux statuts depuis 2023
+    conditions: aucune
+  exemples: aucun trouvé
+approximations:
+- version: [exercice_2023, exercice_2024, exercice_2025, depuis_2026]
+  textes: >-
+    décret n° 79-262, article 2, III (rédactions de 2023 et du 1er juillet 2026) ;
+    décrets n° 2023-1351, 2024-1214 et 2025-1076 (valeur d'achat du point) ; statuts,
+    article 3.3, III (arrêté du 20 mars 2023)
+  ecart: >-
+    Le texte achète des points : la cotisation de l'année divisée par le coût
+    d'acquisition du point au 1er janvier (45,30 € en 2023, 47,40 € en 2024 et 2025),
+    arrondie à la décimale, servis à la valeur de service de la liquidation, que le
+    conseil d'administration fixe (article 5-2 depuis le 1er juillet 2026) et que le
+    Journal officiel ne publie pas. Le modèle ne compte pas de points : il revalorise
+    la cotisation par les prix jusqu'à la liquidation et la sert au rendement de
+    l'année de liquidation, 6,10 % depuis 2023 (`rendements_points.csv`). Les deux
+    s'accordent quand le coût du point suit les prix ; ils divergent quand il est
+    gelé, comme de 2024 à 2025. Cas posé : 150 000 € de revenu en 2025, cotisation
+    26 790,00 € ; liquidation en 2026. Le modèle : 26 790,00 × 1,0175 (ses prix de
+    2025 à 2026) × 0,061 = 1 662,79 € par an. Le texte : 26 790,00 / 47,40 = 565,19,
+    arrondi à 565,2 points, à la valeur de service que le rendement du modèle suppose,
+    0,061 × 47,40 = 2,8914 € : 565,2 × 2,8914 = 1 634,22 €. Le modèle sert 28,57 € par
+    an de trop pour cet exercice, 1,75 % : le coût du point de 2026 n'étant fixé par
+    aucun texte lu, l'écart tient à cette supposition.
+  effet: >-
+    +28,57 € de pension annuelle pour l'exercice 2025 d'un revenu de 150 000 €, liquidé
+    en 2026, si la valeur de service de 2026 est 2,8914 € et le coût du point 47,40 € ;
+    calcul posé à la main, les prix du modèle lus par `coefficient_prix` (essai du 6
+    novembre 2026).
+- version: [depuis_2026]
+  textes: >-
+    décret n° 79-262, article 2, I : « fixé chaque année par décret » ; décret n°
+    2025-1076, article 14, qui ne nomme pas la Cipav
+  ecart: >-
+    Nul décret lu ne fixe les taux ni le coût du point de 2026 ; le modèle reconduit
+    11 % et 21 %. Ce n'est pas une erreur prouvée : aucun texte ne dit d'autres taux. Ce
+    que la reconduction engage, si 2026 reprenait les taux de 2023 et 2024, 9 % et 22 %
+    : à 40 000 € de revenu, 0,11 × 40 000 = 4 400,00 € contre 0,09 × 40 000 = 3 600,00
+    €, 800,00 € de cotisation, 800,00 / 47,40 = 16,88 points, 48,80 € de pension par an
+    à 2,8914 € ; à 150 000 €, 0,11 × 48 060 + 0,21 × 101 940 = 26 694,00 € contre 0,09
+    × 48 060 + 0,22 × 101 940 = 26 752,20 €, 58,20 € de moins, 1,23 point, 3,55 € par
+    an. Au propriétaire : le décret qui fixe les paramètres de la Cipav pour 2026.
+  effet: >-
+    au plus 48,80 € de pension annuelle par exercice 2026 dans les cas posés (40 000 €
+    de revenu), si les taux de 2026 étaient ceux de 2023 et 2024 ; 0 € si la
+    reconduction vaut. Plafond de 2026 : 4 005 × 12 = 48 060 € (arrêté du 22 décembre
+    2025, JORFARTI000053143455).
+- version: [exercice_2023, exercice_2024, exercice_2025, depuis_2026]
+  textes: >-
+    statuts, article 3.3, III (arrêté du 20 mars 2023) ; décret n° 79-262, article 2,
+    III, rédaction du 1er juillet 2026
+  ecart: >-
+    Les points sont arrondis « à la décimale la plus proche » ; le modèle, qui n'en
+    compte pas, ne l'arrondit pas : au plus 0,05 point par exercice, 0,05 × 2,8914 =
+    0,14 € de pension annuelle.
+  effet: au plus 0,14 € de pension annuelle par exercice, dans un sens ou dans l'autre
+- version: [exercice_2023, exercice_2024, exercice_2025, depuis_2026]
+  textes: >-
+    décret n° 79-262, article 2, I (L. 131-6-2) ; décret n° 2023-1351, article 4
+    (JORFARTI000048729104) : « Le revenu forfaitaire mentionné au dernier alinéa du I de
+    l'article 2 du décret n° 79-262 du 21 mars 1979 susvisé est égal à 19 % du plafond
+    annuel de la sécurité sociale en vigueur au 1er janvier de l'année au titre de
+    laquelle la cotisation est due. »
+  ecart: >-
+    La cotisation est d'abord provisionnelle, sur le revenu d'une année passée ou, au
+    début de l'activité, sur un revenu forfaitaire de 19 % du plafond, puis régularisée
+    sur le revenu de l'année (article L. 131-6-2) ; les deux premières années suivent la
+    même règle (statuts, article 3.4 de 2023 ; décret, rédaction de 2026). Le modèle
+    prend d'emblée le revenu de l'année, la cotisation régularisée.
+  effet: aucun sur la cotisation définitive, ni sur les points, qui ne s'attribuent qu'à elle
+textes_sans_effet:
+- id: JORFARTI000048729104
+  article: décret n° 2023-1351, article 4
+  motif: >-
+    le revenu forfaitaire de la cotisation provisionnelle, 19 % du plafond, que la
+    régularisation remplace par le revenu de l'année : déclaré en approximation, sans
+    effet sur la cotisation définitive
+- id: JORFARTI000047259558
+  article: décret n° 2023-148 du 2 mars 2023, article 1er
+  motif: >-
+    le recouvrement des cotisations de la base et de la complémentaire des libéraux de
+    la Cipav (articles R. 642-1, R. 642-2, R. 643-1) et l'entrée en jouissance de leur
+    pension de base (R. 643-6, « dans les conditions prévues au I de l'article R.
+    351-37 ») : ni l'assiette, ni les tranches, ni les taux
+- id: JORFARTI000048880676
+  article: arrêté du 27 décembre 2023, annexe, II
+  motif: >-
+    statuts du régime complémentaire, articles 3.6, 3.13, 3.14, 3.16 et 3.19 : le
+    cumul, la carrière longue, l'autorité parentale, le versement unique ; rien de la
+    cotisation
+- id: JORFARTI000052200390
+  article: arrêté du 4 septembre 2025, annexe
+  motif: >-
+    statuts généraux, articles 1.3 à 2.23 et 5.1 à 5.3 : les affiliés, la gouvernance,
+    les élections ; rien de la cotisation
+reformes: []
 effet: >-
   Un libéral de la Cipav au-delà de trois plafonds achetait trop peu de points depuis
-  2024 : la fiche coupait la seconde tranche à trois.
+  2024 : la fiche coupait la seconde tranche à trois. Lue au droit le 6 novembre 2026
+  (action 130) : cinq versions sur l'année du revenu, les classes d'avant 2023,
+  laissées à leur fiche, les exercices 2023, 2024 et 2025 de leurs décrets, et 2026,
+  supposé, que nul décret lu ne chiffre ; les deux tranches et leurs taux rendus par
+  les deux moteurs au centime ; aucune erreur ; le rendement au lieu du coût du point
+  (28,57 € par an de trop dans le cas posé) et les taux de 2026 déclarés, au
+  propriétaire.
 sources:
-  lu_le: 2026-09-22
-  prochaine_relecture: 2027-03-31
+  lu_le: 2026-11-06
+  prochaine_relecture: 2027-01-31
   a_relire:
   - Confronter à la calculette de la Cipav quand elle sera joignable.
+  - >-
+    Le décret qui fixe pour 2026 les taux des deux tranches et le coût d'acquisition du
+    point de la Cipav, et celui de 2027 : remplacer la reconduction dès qu'un texte les
+    donne.
   lectures:
   - type: legifrance
     reference: >-
-      décret n° 79-262, article 2, version en vigueur lue dans l'index LEGI : «
-      entre un et quatre plafonds » depuis 2025
+      décret n° 79-262, article 2, version en vigueur lue dans l'index LEGI : « entre un
+      et quatre plafonds » depuis 2025
     date: 2026-09-22
   - type: autre
     reference: >-
@@ -26,9 +390,26 @@ sources:
       coupée à 3,5 plafonds, un exercice de retard sur le décret
     url: https://mon-entreprise.urssaf.fr/
     date: 2026-09-22
-textes_a_rattacher:
-- reference: décret n° 79-262 du 21 mars 1979, article 2 (LEGIARTI000054168526)
-- reference: décret n° 2025-1076, article 12, 8° (taux et valeur d'achat de 2025)
+  - type: legifrance
+    reference: >-
+      Article 2 du décret n° 79-262 dans ses rédactions de 2013 (LEGIARTI000026892951),
+      du 1er janvier 2023 (LEGIARTI000046875038) et du 1er juillet 2026
+      (LEGIARTI000054168526), et ses articles 5-1 à 5-6 (LEGIARTI000054168518 à
+      LEGIARTI000054168501), dans l'index LEGI du dépôt, à jour du 5 novembre 2026.
+    date: 2026-11-06
+  - type: jorf
+    reference: >-
+      Décret n° 2022-1746, notice et article 1er (JORFTEXT000046847137,
+      JORFARTI000046847145) ; décret n° 2023-1351, articles 4 et 6 (JORFARTI000048729104,
+      JORFARTI000048729109) ; décret n° 2024-1214, article 6 (JORFARTI000050854377) ;
+      décret n° 2025-1076, articles 12, 14 et 15 (JORFARTI000052565553,
+      JORFARTI000052565558, JORFARTI000052565559) ; décret n° 2026-418, articles 20 et
+      30 (JORFARTI000054153655, JORFARTI000054153813) ; arrêtés des 20 mars 2023, 27
+      décembre 2023 et 4 septembre 2025 (JORFARTI000047334796, JORFARTI000047334800,
+      JORFARTI000048880676, JORFARTI000052200390) ; arrêtés du plafond des 9 décembre
+      2022, 19 décembre 2023, 19 décembre 2024 et 22 décembre 2025 ; dans l'index JORF
+      du dépôt, à jour du 6 novembre 2026.
+    date: 2026-11-06
 code:
   moteur: >-
     Depuis 2023, chaque année de `cipav_complementaire` a deux périodes : la première
@@ -51,9 +432,17 @@ code:
     moteur/js/droit/liquider.js : liquiderChaqueRegime ; moteur/js/compte.js :
     ConstructeurCompte._cotisationLigne, ConstructeurCompte._bornesProratisees
   parametres: >-
+    contenu.parametres de chaque version : premiere_tranche, deuxieme_tranche ;
     regimes/cipav_complementaire.yaml : assiette, taux_cotisation_retraite ;
     regimes/rendements_points.csv : cipav_complementaire, rendement
   tests:
+  - >-
+    tests/test_sections_liberales.py,
+    test_la_cipav_cotise_aux_deux_tranches_du_decret_dans_les_deux_moteurs, cinq cas
+    posés à la main de 2023 à 2025, servis par le portage, refaits par le moteur
+    Python et inscrits par le scénario 1, et
+    test_chaque_version_de_la_seconde_tranche_de_la_cipav_est_portee_par_le_modele, qui
+    lit les deux tranches de chaque version chaque année de 2023 à 2040
   - >-
     tests/test_cumul_activites.py, tests/test_cycle_de_vie_script.py,
     tests/test_droit.py, tests/test_fiche_date_d_entree.py,

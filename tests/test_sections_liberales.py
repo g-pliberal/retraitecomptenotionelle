@@ -362,6 +362,90 @@ def test_la_cipav_majore_pour_trois_enfants_depuis_2000(simulateur):
     assert _majoration(resultat, "cipav_complementaire") == 0.0
 
 
+#: Ce que le décret n° 79-262 (article 2, rédaction du décret n° 2022-1746) et
+#: les décrets de chaque année font payer à la Cipav, posé à la main (action
+#: 130, 6 novembre 2026) : la première tranche jusqu'au plafond de l'année, la
+#: seconde « entre une et trois fois le plafond » en 2023, « trois fois et
+#: demie » en 2024, « quatre fois » depuis 2025 ; 9 % et 22 % en 2023
+#: (décret n° 2023-1351, article 6, 8°) et en 2024 (décret n° 2024-1214,
+#: article 6, 8°), 11 % et 21 % en 2025 (décret n° 2025-1076, article 12,
+#: 8°) ; le plafond, douze fois sa valeur mensuelle (3 666 € en 2023, 3 864 €
+#: en 2024, 3 925 € en 2025, arrêtés des 9 décembre 2022, 19 décembre 2023
+#: et 19 décembre 2024) : 43 992, 46 368 et 47 100 €.
+COTISATIONS_DE_LA_CIPAV = [
+    # 0,09 × 43 992 + 0,22 × (100 000 − 43 992) = 3 959,28 + 12 321,76
+    (2023, 100_000.0, 16_281.04),
+    # 3 959,28 + 0,22 × (3 − 1) × 43 992 = 3 959,28 + 19 356,48
+    (2023, 200_000.0, 23_315.76),
+    # 0,09 × 46 368 + 0,22 × (3,5 − 1) × 46 368 = 4 173,12 + 25 502,40
+    (2024, 200_000.0, 29_675.52),
+    # 0,11 × 47 100 + 0,21 × (150 000 − 47 100) = 5 181,00 + 21 609,00
+    (2025, 150_000.0, 26_790.00),
+    # 5 181,00 + 0,21 × (4 − 1) × 47 100 = 5 181,00 + 29 673,00
+    (2025, 200_000.0, 34_854.00),
+]
+
+
+@pytest.mark.parametrize("annee,revenu,attendue", COTISATIONS_DE_LA_CIPAV)
+def test_la_cipav_cotise_aux_deux_tranches_du_decret_dans_les_deux_moteurs(
+        simulateur, annee, revenu, attendue):
+    """La fiche de paie du libéral de la Cipav (``profession_liberale``), que
+    le portage sert et que le moteur Python refait (``droit_et_refait``), et
+    la cotisation que le scénario 1 inscrit l'année du revenu (``acquerir``),
+    ramenée en euros de cette année : celle du texte, au centime."""
+    from outils_pont import droit_et_refait
+
+    from retraite_notionnelle import pont
+    from retraite_notionnelle.carriere import AnneeCarriere
+    from retraite_notionnelle.droit import acquerir, coordonner
+
+    lus, refus = droit_et_refait({"fiche": (
+        "remuneration.fiche_depuis_brut.lignes_de_retraite", pont.SIMULATEUR,
+        "profession_liberale", annee, revenu)})
+    assert refus == {}, refus
+    assert dict(lus["fiche"])["cipav_complementaire"] == pytest.approx(attendue, abs=0.005)
+    carriere = Carriere.depuis_lignes(
+        1962, "H", [AnneeCarriere(annee=annee, affiliation="profession_liberale",
+                                  revenu=revenu, trimestres_valides=4)],
+        age_liquidation=65)
+    actuel = simulateur.scenario_actuel
+    coordination = coordonner.coordonner(actuel, carriere)
+    droits = acquerir.acquerir(actuel, coordination, compter.compter(actuel, coordination))
+    prix = simulateur.macro.coefficient_prix(annee, carriere.annee_liquidation)
+    inscrite = sum(montant for code, an, montant in droits.cotisations
+                   if code == "cipav_complementaire" and an == annee) / prix
+    assert inscrite == pytest.approx(attendue, abs=0.005)
+
+
+def test_chaque_version_de_la_seconde_tranche_de_la_cipav_est_portee_par_le_modele(
+        simulateur):
+    """Lue au droit le 6 novembre 2026 (action 130) : chaque année du revenu
+    de 2023 à 2040 que couvre une version de ``cipav_seconde_tranche``, les
+    périodes de ``cipav_complementaire`` de cette année sont, ni plus ni
+    moins, ses deux tranches, chacune son assiette et son taux. La version de
+    2026, que nul décret ne chiffre encore, porte la reconduction que la fiche
+    déclare."""
+    from retraite_notionnelle.noyau import carte
+
+    caisse = simulateur.catalogue["cipav_complementaire"]
+    versions = carte.fiches()["cipav_seconde_tranche"].get("versions") or []
+    assert versions
+    lues = 0
+    for version in versions:
+        tranches = (version.get("contenu") or {}).get("parametres") or {}
+        if not tranches:
+            continue
+        attendues = sorted((t["assiette"], t["taux_cotisation_retraite"])
+                           for t in tranches.values())
+        debut, fin = version["bornes"]["revenu.annee"]
+        for annee in range(max(debut.year, 2023), (fin.year if fin else 2041)):
+            portees = sorted((p.assiette, p.taux_cotisation_retraite)
+                             for p in caisse.periodes_actives(annee))
+            assert portees == attendues, (version["id"], annee)
+            lues += 1
+    assert lues == 18
+
+
 # -- la CNAVPL ------------------------------------------------------------------
 
 

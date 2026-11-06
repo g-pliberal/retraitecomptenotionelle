@@ -3295,12 +3295,12 @@ fabriqués.
 libéraux 5f19af8, L-bis 9fcd8a1, L-ter f6012e5, Ircantec d'avant 1983 cc627e8) ; les retouches de R-E, R-M3-ter, R-L-ter et R-D-bis (7e44534). Le 5 : la CRPNPAC à son âge (N 1464c06,
 R-N 329db34, b47aaf9 ; au propriétaire, le refus avant 50 ans, les vingt annuités et leur barème de 2012 à 2019) ; la CAVOM, la CARPIMKO et la CPRN à leur âge, sans la base, la CAVP à
 celui de la base (N ddc92fc, R-N2 10eb393, N-bis 0ba2aea). Lues au droit : la CAVAMAC (75b31ac), la CARCDSF, la CAVOM (ee71f57, R-E3 ace82ea, E2 0e2a786), la CARPIMKO (E3 0284e76,
-R-E4 c411f0a, E3-bis), la CAVP (E4 c7fbb26, R-E5 639b779, E4-bis), la CPRN (E5, R-E6 b977855, E5-bis), la CARMF (E6, `130/2026-11-06-carte-des-fiches-carmf-lue-au-droit.md`) ; restent
-76 fiches, 438 manques, la caisse suivante de la carte d'abord, la Cipav. Au propriétaire, erreurs déclarées, non corrigées : la CARMF, une (depuis le 18 juillet 2026, la pension au trimestre
+R-E4 c411f0a, E3-bis), la CAVP (E4 c7fbb26, R-E5 639b779, E4-bis), la CPRN (E5, R-E6 b977855, E5-bis), la CARMF (E6 c19d9ca, R-E7 dcdb75f, E6-bis 8c955fe), la Cipav (E7, `130/2026-11-06-carte-des-fiches-cipav-lue-au-droit.md` : aucune erreur, la date d'effet au mois depuis
+le 1er juillet 2026 ; au propriétaire, les taux et le coût du point de 2026, que nul décret ne fixe) ; restent 75 fiches, 432 manques, dont quatre communes aux sections, à lire ensemble (`surcote_par_age_seul`, `cotisation_par_classes_liberales`, `sections_liberales_majoration_enfants`, `decret_2026_418_liberaux`). Au propriétaire, erreurs déclarées, non corrigées : la CARMF, une (depuis le 18 juillet 2026, la pension au trimestre
 civil, comme la CAVOM, la CARPIMKO et la CAVP : un ou deux mois de trop, 1 171,35 € ou 2 337,68 €) et quatre non-tranchés (l'âge légal de janvier à mars 2017, 1 552,68 € par an ; l'ASV avant 2017 ;
 la date d'effet avant 2026, et celle de l'ASV) ; la CPRN, une (le passage de 2024, 16 999,68 €) et deux ; la CAVP, deux et trois ; la CARPIMKO, trois et trois ; la CAVOM, trois et deux ; la CARCDSF,
 sept ; la CAVAMAC, cinq ; `…-11-03-decisions-du-proprietaire.md`. Au seul Bulletin officiel : les statuts de la CARPIMKO de 1987 à 2015, de la CAVP d'avant juin 2009, de la CPRN d'avant 2014, de la
-CAVOM d'avant 2016, de la CARMF d'avant 2017 ; candidats non lancés : l'Agirc-Arrco de 1955 à 1983, les biologistes et la durée, le taux plein de 1977 et 1982, `ages_reference.csv`, les points de la CARPIMKO de 1956 à 2025.
+CAVOM d'avant 2016, de la CARMF d'avant 2017, de la Cipav d'avant juillet 2026 ; candidats non lancés : l'Agirc-Arrco de 1955 à 1983, les biologistes et la durée, le taux plein de 1977 et 1982, `ages_reference.csv`, les points de la CARPIMKO de 1956 à 2025.
 
 Le dépôt devenait de plus en plus lourd à faire avancer. Une modification du
 moteur du scénario 1 touchait vingt fichiers en médiane, dont sept ou huit de
