@@ -20,7 +20,8 @@ effet: >-
   modèle calcule ; 7, 9 à 12, 14, 15, 17, 21, 23, 27 et 28 des régimes qu'il ne calcule
   pas (notaires de Colmar, invalidité-décès) ; 1, 29, 30 et 31 n'écrivent aucune règle
   de calcul. Ce que le modèle ne sert pas, et ce qu'il sert à tort, `sources.a_relire`
-  le dit : à la Cipav, une erreur (E9) ; à la CARMF, deux ; à la CARCDSF, une (E10).
+  le dit : à la Cipav, une erreur (E9), qui vaut depuis le 1er janvier 2023 (E11) ; à la
+  CARMF, deux ; à la CARCDSF, une (E10).
 sources:
   lu_le: 2026-11-06
   prochaine_relecture: 2027-03-31
@@ -63,19 +64,39 @@ sources:
     trente ans comptés du 10 mars 1981, 2011 pris en entier, 549,19 € et 3 833,16 €.
     L'erreur se déclare au moins de 549,19 € par an pour un an de report, 3 833,16 €
     pour cinq, le montant qui tient sous les trois ; la lecture qu'appliquera la
-    correction (candidat 50) est au propriétaire. AVANT LE 1ER JUILLET 2026, UN POINT NON
-    TRANCHÉ : la règle est à l'article 3.15 des statuts, au seul Bulletin officiel
-    (question 22) ; l'arrêté du 20 mars 2023 (JORFARTI000047334800, 17°, b) le complète
-    par « Pour la détermination des trente années de cotisation, les années au titre
-    desquelles l'adhérent a obtenu une exonération ou une réduction de cotisation sont
-    prises en compte. », sans en montrer l'alinéa qui dirait si ces trente années
-    bornent les points majorés ou seulement la condition. Née le 10 mars 1957, même
-    carrière, pension au 1er janvier 2026, un an de report entier : le modèle sert
-    22 677,41 €, dont 0,00305 × 354 057,8613 = 1 079,8765 € de majoration ; si les
-    statuts majoraient tous les points, rien de trop ; s'ils ne majoraient que ceux des
-    trente premières années (1979 à 2008, 168 552,9726 €), 0,00305 × 168 552,9726 =
-    514,0866 €, 565,79 € par an de trop (542,83 € de 1980 à 2009, 537,96 € de 1979 à
-    2009).
+    correction (candidat 50) est au propriétaire. DU 1ER JANVIER 2023 AU 30 JUIN 2026,
+    LA MÊME ERREUR (action 130, E11, après R-E11) : l'article 3.15 des statuts de la
+    Cipav, « Statuts Cipav au 01/01/2023 » que la caisse publie (relus le 6 novembre
+    2026, SHA-256 e5034d618178585fdae444ec690247ef83c7e94d7e9ca741682fb98562093790) :
+    « Le compte de points qui est alors établi est majoré de 5% par année entière de
+    prorogation. Cette majoration s'applique uniquement aux points acquis au titre des
+    trente premières années de cotisation à la C•I•P•A•V. Pour la détermination des
+    trente années de cotisation, les années au titre desquelles l'adhérent a obtenu une
+    exonération ou une réduction de cotisation sont prises en compte. » ; l'arrêté du
+    20 mars 2023 qui l'approuve (JORFARTI000047334800, 17° : « a) Au dernier alinéa, les
+    mots : « , telles qu'elles sont définies à l'article 3.6 » sont supprimés ; b)
+    L'article est complété par un alinéa ainsi rédigé : « Pour la détermination des
+    trente années de cotisation, […] » ») est « applicable aux cotisations et aux
+    prestations dues au titre des périodes courant à compter du 1er janvier 2023 »
+    (article 2, JORFARTI000047334796) ; l'arrêté du 16 décembre 2021 (JORFARTI000044554134,
+    19°, en vigueur le 1er janvier 2022 par son article 2, JORFARTI000044554130) ne
+    touche que le premier alinéa : « Au premier alinéa de l'article 3.15, les mots :
+    « âgé de 65 ans » sont remplacés par les mots : « qui a atteint l'âge prévu au
+    deuxième alinéa du 1° de l'article 3.13, » » ; aucun autre arrêté publié depuis ne
+    touche l'article 3.15 (celui du 27 décembre 2023 nomme les articles 3.6, 3.13, 3.14,
+    3.16 et 3.19). La lecture contraire supposerait que la caisse publie d'autres statuts
+    que ceux que l'arrêté approuve : intenable. Née le 10 mars 1957, même carrière,
+    pension au 1er janvier 2026, un an entier de report au-delà de 67 ans : le modèle
+    sert 354 057,8613 × 0,061 × 1,05 = 22 677,41 €, dont 0,00305 × 354 057,8613 =
+    1 079,8765 € de majoration ; sur les seuls points des trente premières années, de
+    1979, partielle (1 595,1659 €), à 2008, 0,00305 × 168 552,9726 = 514,0866 €, 565,79 €
+    par an de trop ; de 1980 à 2009, 0,00305 × 176 081,2970 = 537,0480 €, 542,83 € ; de
+    1979 à 2009, 0,00305 × 177 676,4629 = 541,9132 €, 537,96 € : au moins 537,96 € par
+    an. AVANT 2023 : l'alinéa se relit au Journal officiel, par différence, depuis le
+    1er janvier 2007, avec un décompte renvoyé à l'article 3.6, non lu ; deux erreurs
+    neuves en naissent, de 2007 à 2012 et de 2013 à 2022 (`surcote_par_age_seul`,
+    `sources.a_relire`, E11) ; avant 2007, les statuts de 1979, au seul Bulletin officiel
+    (question 22).
   - >-
     Erreur prouvée, déclarée et non corrigée (action 130, E10, 6 novembre 2026) : depuis
     le 1er juillet 2026, l'article 4 du décret n° 49-579 (décret n° 2026-418, article 3,
@@ -91,7 +112,12 @@ sources:
     moyen depuis 26 ans (1er janvier 2027), en euros de 2026, pension à 67 ans : le
     modèle sert 990 651,9421 × 0,0448 × 1,21 = 53 701,26 €, dont (20 997,0503 +
     21 141,5017) × 0,0448 × 1,21 = 2 284,25 € par an au titre de 2027 et 2028, de
-    trop.
+    trop. Une faculté, sur demande, que le modèle ne porte pas et que la correction
+    nommera (E11, après R-E11) : l'article 4-2, I (LEGIARTI000054168114) ouvre au rachat
+    « un point par trimestre d'exercice en qualité de non salarié, antérieur au 1 er
+    juillet 1949 ou trimestre assimilé dans les conditions prévues à l'article 4-4 ou
+    trimestres ayant donné lieu à dispense dans les conditions prévues au I de l'article
+    4 » ; le modèle simule le médecin qui ne rachète pas : l'erreur tient.
   - >-
     Erreur prouvée, déclarée et non corrigée (action 130, E10) : le même article 4, II :
     « Tout médecin qui continue d'exercer en qualité de non salarié est exempté du
@@ -103,7 +129,12 @@ sources:
     2027 (5 154,8634 €) est dispensé sous toute lecture, 300,22 € par an de trop ; le
     second semestre de 2026 l'est aussi si la cotisation de 2026 se partage au semestre,
     comme les exonérations semestrielles du IV du même article (la moitié de
-    10 239,2845 €), 598,39 € par an de trop.
+    10 239,2845 €), 598,39 € par an de trop. Une faculté que le modèle ne porte pas et
+    que la correction nommera (E11, après R-E11), l'article 4-3 (LEGIARTI000054168112) :
+    « Tout médecin qui continue d'exercer en qualité de non salarié et qui n'est plus
+    tenu de cotiser à titre obligatoire, à partir du premier jour du semestre civil qui
+    suit son soixante-quinzième anniversaire, peut continuer à cotiser volontairement,
+    quel que soit son âge. » ; le modèle simule l'assuré obligatoire : l'erreur tient.
   - >-
     Erreur prouvée, déclarée et non corrigée (action 130, E10) : depuis le 1er juillet
     2026, l'article 3-1 du décret n° 50-28 (décret n° 2026-418, article 5,
@@ -118,6 +149,26 @@ sources:
     modèle sert 876 611,8159 × 0,0595 = 52 158,40 € ; la part proportionnelle de 2027 et
     2028, revalorisée (12 798,2854 + 12 886,3326 €, la cotisation de chaque année moins
     celle d'un revenu de 0,65 plafond), × 0,0595 = 1 528,23 € par an de trop.
+  - >-
+    Avant le 1er juillet 2026, les dispenses de la CARMF et de la CARCDSF : un point non
+    tranché, dont la question 22 du propriétaire part de deux articles des décrets (E11,
+    après R-E11 ; `docs/feuille_de_route/130/2026-11-03-decisions-du-proprietaire.md` est
+    un récit, que E11 ne récrit pas). Décret n° 49-579, article 4, du 27 août 1996 au
+    30 décembre 2024 (LEGIARTI000006781644), puis jusqu'au 1er juillet 2026
+    (LEGIARTI000050865157) : « Des dispenses de cotisations peuvent être accordée aux
+    adhérents impécunieux et aux professionnels âgés de moins de quarante ans lors de
+    leur affiliation, dans les conditions prévues par les statuts mentionnés à l'article
+    5 du présent décret. » ; rien sur l'exemption après 75 ans. Décret n° 50-28,
+    article 2, du 14 novembre 2025 au 1er juillet 2026 (LEGIARTI000052567910) : « Les
+    statuts fixent les conditions dans lesquelles des exonérations, des dispenses, des
+    réductions ou des reports de cotisations peuvent être accordés dans les premières
+    années d'activité professionnelle, en cas d'insuffisance de revenus, d'incapacité
+    d'exercice ou de maternité. » ; du 24 septembre 1981 au 4 août 1982
+    (LEGIARTI000006760429) : « Les statuts fixent également les conditions dans
+    lesquelles des exonérations ou des dispenses de cotisations peuvent être accordées
+    dans les premières années d'activité professionnelle ou en cas d'infortune ou
+    d'incapacité d'exercice de la profession ». Le principe est au décret, ses
+    conditions aux statuts, que l'index n'a pas : au seul Bulletin officiel.
   lectures:
   - type: jorf
     reference: >-
@@ -356,6 +407,34 @@ sources:
       `reglement_de_2026` et `decret_2026_418` des fiches ci-dessus ; 31
       (JORFARTI000054153814), l'exécution. Aucune règle de calcul.
     date: 2026-05-31
+  - type: legifrance
+    reference: >-
+      décret n° 49-579, article 4, du 27 août 1996 au 30 décembre 2024
+      (LEGIARTI000006781644) et du 30 décembre 2024 au 1er juillet 2026
+      (LEGIARTI000050865157), les dispenses accordées « dans les conditions prévues par
+      les statuts » ; articles 4-2, I (LEGIARTI000054168114) et 4-3
+      (LEGIARTI000054168112), le rachat des trimestres dispensés et la cotisation
+      volontaire passé le semestre des 75 ans ; décret n° 50-28, article 2, du
+      14 novembre 2025 au 1er juillet 2026 (LEGIARTI000052567910) et du 24 septembre
+      1981 au 4 août 1982 (LEGIARTI000006760429) : citations dans `sources.a_relire`
+      (action 130, E11, lus le 6 novembre 2026).
+    date: 2026-11-06
+  - type: jorf
+    reference: >-
+      Cipav, arrêtés du 16 décembre 2021 (JORFARTI000044554134, 19° ; article 2,
+      JORFARTI000044554130) et du 20 mars 2023 (JORFARTI000047334800, 17° ; article 2,
+      JORFARTI000047334796), relus ; les arrêtés publiés depuis qui modifient les
+      statuts, du 27 décembre 2023 (JORFARTI000048880676) et des 4 et 17 septembre 2025,
+      ne touchent pas l'article 3.15 (action 130, E11, lus le 6 novembre 2026).
+    date: 2026-11-06
+  - type: autre
+    reference: >-
+      Cipav, « Statuts Cipav au 01/01/2023 », publiés par la caisse, article 3.15 en entier,
+      ses quatre alinéas : citation dans `sources.a_relire` (action 130, E11, PDF lu le
+      6 novembre 2026, SHA-256
+      e5034d618178585fdae444ec690247ef83c7e94d7e9ca741682fb98562093790).
+    url: https://www.lacipav.fr/sites/default/files/2023-04/Statuts%20CIPAV_1janvier2023.pdf
+    date: 2026-11-06
 textes_sans_effet:
 - id: LEGIARTI000006738107
   article: code de la sécurité sociale, D. 641-6, abrogé par l'article 1er du décret

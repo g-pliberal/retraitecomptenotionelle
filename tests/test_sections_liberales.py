@@ -880,31 +880,85 @@ process.stdout.write(JSON.stringify(
 #: Les 32 documents de l'index JORF qui portent les 31 articles du décret
 #: n° 2026-418 du 29 mai 2026 (JORFTEXT000054153355) : la fin de l'article 18
 #: y est un document à part, étiqueté « art. 8 » (JORFARTI000054153640).
+#: Chacun avec le texte qu'il modifie, lu à son visa (le décret n° … ou, pour
+#: l'article 1er, D. 641-6 du code de la sécurité sociale ; rien pour les
+#: articles 29 à 31), et les fiches de règle auxquelles la fiche du décret le
+#: rapporte (action 130, relu par R-E11 ; table tenue par E11).
 ARTICLES_DU_DECRET_2026_418 = {
-    "1": "JORFARTI000054153395", "2": "JORFARTI000054153399",
-    "3": "JORFARTI000054153420", "4": "JORFARTI000054153444",
-    "5": "JORFARTI000054153467", "6": "JORFARTI000054153484",
-    "7": "JORFARTI000054153492", "8": "JORFARTI000054153497",
-    "9": "JORFARTI000054153507", "10": "JORFARTI000054153523",
-    "11": "JORFARTI000054153529", "12": "JORFARTI000054153554",
-    "13": "JORFARTI000054153565", "14": "JORFARTI000054153583",
-    "15": "JORFARTI000054153594", "16": "JORFARTI000054153605",
-    "17": "JORFARTI000054153623", "18": "JORFARTI000054153633",
-    "18, fin": "JORFARTI000054153640", "19": "JORFARTI000054153644",
-    "20": "JORFARTI000054153655", "21": "JORFARTI000054153680",
-    "22": "JORFARTI000054153714", "23": "JORFARTI000054153729",
-    "24": "JORFARTI000054153737", "25": "JORFARTI000054153756",
-    "26": "JORFARTI000054153775", "27": "JORFARTI000054153787",
-    "28": "JORFARTI000054153800", "29": "JORFARTI000054153809",
-    "30": "JORFARTI000054153813", "31": "JORFARTI000054153814",
+    "1": ("JORFARTI000054153395", "D. 641-6", set()),
+    "2": ("JORFARTI000054153399", "49-578", {
+        "cprn_ages_decote_enfants", "cotisation_par_classes_liberales",
+        "rachats_et_versements"}),
+    "3": ("JORFARTI000054153420", "49-579", {
+        "carmf_asv_minoration_enfants", "rachats_et_versements"}),
+    "4": ("JORFARTI000054153444", "49-580", {"cavp_minoration_deux_pentes"}),
+    "5": ("JORFARTI000054153467", "50-28", {
+        "carcdsf_minoration_age_seul", "rachats_et_versements"}),
+    "6": ("JORFARTI000054153484", "50-1318", {
+        "carpv_minoration_age_seul", "cotisation_par_classes_liberales",
+        "rachats_et_versements", "retraite_progressive"}),
+    "7": ("JORFARTI000054153492", "51-310", set()),
+    "8": ("JORFARTI000054153497", "53-506", {
+        "cavec_minoration_age_seul", "cotisation_par_classes_liberales",
+        "rachats_et_versements"}),
+    "9": ("JORFARTI000054153507", "55-1390", set()),
+    "10": ("JORFARTI000054153523", "60-664", set()),
+    "11": ("JORFARTI000054153529", "61-1488", set()),
+    "12": ("JORFARTI000054153554", "65-1139", set()),
+    "13": ("JORFARTI000054153565", "67-1169", {"cavamac_minoration_age_seul"}),
+    "14": ("JORFARTI000054153583", "68-884", set()),
+    "15": ("JORFARTI000054153594", "70-803", set()),
+    "16": ("JORFARTI000054153605", "72-968", {
+        "asv_medecins_points", "asv_medecins_ajustement"}),
+    "17": ("JORFARTI000054153623", "74-526", set()),
+    "18": ("JORFARTI000054153633", "75-891", {"asv_autres_professions_de_sante"}),
+    "18, fin": ("JORFARTI000054153640", "75-891", {"asv_autres_professions_de_sante"}),
+    "19": ("JORFARTI000054153644", "78-283", {
+        "asv_autres_professions_de_sante", "rachats_et_versements"}),
+    "20": ("JORFARTI000054153655", "79-262", {
+        "cipav_seconde_tranche", "sections_liberales_majoration_enfants",
+        "surcote_par_age_seul"}),
+    "21": ("JORFARTI000054153680", "79-263", set()),
+    "22": ("JORFARTI000054153714", "79-265", {
+        "cavom_assiette_2016", "cavom_ages_minoration"}),
+    "23": ("JORFARTI000054153729", "81-755", set()),
+    "24": ("JORFARTI000054153737", "81-1046", {"asv_autres_professions_de_sante"}),
+    "25": ("JORFARTI000054153756", "84-143", {
+        "carpimko_assiette_2026", "carpimko_ages_2015", "rachats_et_versements"}),
+    "26": ("JORFARTI000054153775", "84-254", {"asv_autres_professions_de_sante"}),
+    "27": ("JORFARTI000054153787", "2003-1273", set()),
+    "28": ("JORFARTI000054153800", "2016-1991", set()),
+    "29": ("JORFARTI000054153809", None, set()),
+    "30": ("JORFARTI000054153813", None, set()),
+    "31": ("JORFARTI000054153814", None, set()),
 }
+
+
+def _rapport_de_l_article(lectures: list[str], identifiant: str, fiches: dict,
+                          ) -> tuple[str | None, set[str]]:
+    """Ce que la lecture d'un article en dit : le premier texte modifié nommé
+    après son identifiant (un décret « n° AA-NNN », ou D. 641-6), et les
+    fiches qu'elle nomme entre accents graves ; ``(None, set())`` sans
+    lecture. Une lecture qui porte plusieurs articles n'en nomme aucune."""
+    import re
+
+    trouvees = [r for r in lectures if identifiant in r]
+    if not trouvees:
+        return None, set()
+    lecture = trouvees[0]
+    suite = lecture[lecture.index(identifiant):]
+    vise = re.search(r"n° (\d+-\d+)|D\. 641-6", suite)
+    texte = None if vise is None else vise.group(1) or vise.group(0)
+    return texte, {nom for nom in re.findall(r"`(\w+)`", lecture) if nom in fiches}
 
 
 def test_chaque_article_du_decret_2026_418_est_rapporte_a_la_fiche_de_sa_regle():
     """La fiche du décret porte un texte, non un dispositif (architecture,
-    § 6.1) : elle rapporte chacun de ses articles, lu au JORF, au décret qu'il
-    modifie et à la fiche de sa règle, ou le dit hors du modèle (action 130,
-    E10). Aucun article n'y manque, et chaque nom qu'elle écrit entre accents
+    § 6.1) : elle rapporte chacun de ses articles, lu au JORF, au texte qu'il
+    modifie et aux fiches de ses règles, ou le dit hors du modèle (action 130,
+    E10). La table ci-dessus le tient article par article : le texte que la
+    lecture de l'article nomme le premier après son identifiant, et les fiches
+    qu'elle nomme, exactement (E11, après R-E11). Chaque nom écrit entre accents
     graves est une fiche, une version de fiche ou un paramètre d'un régime."""
     import re
 
@@ -921,9 +975,12 @@ def test_chaque_article_du_decret_2026_418_est_rapporte_a_la_fiche_de_sa_regle()
     fiches = carte.fiches()
     lectures = [lecture["reference"] for lecture in
                 fiches["decret_2026_418_liberaux"]["sources"]["lectures"]]
-    par_article = {numero: [r for r in lectures if identifiant in r]
-                   for numero, identifiant in ARTICLES_DU_DECRET_2026_418.items()}
-    assert [numero for numero, trouvees in par_article.items() if not trouvees] == []
+    lus = {numero: _rapport_de_l_article(lectures, identifiant, fiches)
+           for numero, (identifiant, _, _) in ARTICLES_DU_DECRET_2026_418.items()}
+    assert [n for n, (i, _, _) in ARTICLES_DU_DECRET_2026_418.items()
+            if not any(i in r for r in lectures)] == []
+    assert lus == {numero: (texte, fiches_attendues) for numero, (_, texte, fiches_attendues)
+                   in ARTICLES_DU_DECRET_2026_418.items()}
     connus = set(fiches) | {v["id"] for f in fiches.values() for v in f.get("versions") or []}
     for chemin in (RACINE_DONNEES / "reference" / "regimes").glob("*.yaml"):
         connus |= cles(yaml.safe_load(chemin.read_text(encoding="utf-8")))

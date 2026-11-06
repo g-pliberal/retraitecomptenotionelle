@@ -1,0 +1,31 @@
+date: "2026-11-06"
+session: "action 130, file E11 : les écarts de R-E11 repris, et la Cipav de surcote_par_age_seul relue au Journal officiel"
+consulte: >-
+  Les index de la DILA récupérés et mis à jour : JORF au 6 novembre 2026, LEGI au
+  5 novembre. Au JORF : l'arrêté du 20 mars 2023 (JORFARTI000047334800, 17° ; article 2,
+  JORFARTI000047334796), celui du 16 décembre 2021 (JORFARTI000044554134, 19° ; article 2,
+  JORFARTI000044554130), et tous les arrêtés qui modifient les statuts de la Cipav de
+  2006 à 2025, relevés au titre et lus (seul celui du 3 octobre 2006, JORFARTI000002050100,
+  renvoie au Bulletin officiel). Dans LEGI : décret n° 49-579, articles 4 (1996, 2024),
+  4-2 et 4-3 (2026) ; décret n° 50-28, article 2 (1981, 2025). Hors du Journal officiel :
+  les « Statuts Cipav au 01/01/2023 » publiés par la caisse, articles 3.13 et 3.15 (PDF lu
+  le 6 novembre 2026, SHA-256 e5034d618178585fdae444ec690247ef83c7e94d7e9ca741682fb98562093790).
+trouve: >-
+  L'erreur de la Cipav (la majoration pour report ne porte que sur les points des trente
+  premières années, le modèle les majore tous) vaut depuis le 1er janvier 2023 : au moins
+  537,96 € par an au cas d'une pension au 1er janvier 2026 (565,79, 542,83 ou 537,96 €
+  selon le décompte), refaits à la main. Plus loin que R-E11 : de 2007 à 2025, tous les
+  arrêtés des statuts sont publiés en entier, et seuls ceux de 2021 et 2023 touchent
+  l'article 3.15 ; son texte de 2007 se relit par différence, restriction comprise. Deux
+  erreurs neuves, déclarées, non corrigées : de 2013 à 2022, au moins 152,05 € par an de
+  trop (pension au 1er janvier 2016) ; de 2007 à 2012, le modèle ne majore rien, au moins
+  419,43 € par an servis en moins (pension au 1er janvier 2012). La CARMF : le rachat des
+  trimestres dispensés (4-2, I) et la cotisation volontaire après 75 ans (4-3), nommés. La
+  question 22 part de l'article 4 du décret n° 49-579 et de l'article 2 du décret n° 50-28.
+  Le test du décret tient la table article, texte modifié, fiches.
+reste: >-
+  `surcote_par_age_seul` : `lit`, `versions`, `dates_qui_decident` de ses sept régimes,
+  la Cipav d'abord (versions de 2007, 2022, 2023 et du 1er juillet 2026 ; avant 2007, non
+  tranché) ; le décompte des trente années avant 2023 (article 3.6 des statuts, non lu) ;
+  les statuts de 1979 et de 2006, au seul Bulletin officiel (question 22). Puis
+  `cotisation_par_classes_liberales`.

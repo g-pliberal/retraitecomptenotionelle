@@ -41,8 +41,9 @@ effet: >-
   après 65 ans, comme sa propre table le dit (« Avant réforme », 100 % de 65 à 70 ans) :
   l'article 32 et son « différé » supposent la cessation, et la fiche du régime, qui
   les servait de 2000 à 2016 sans plafond, ne les sert plus depuis le 16 octobre 2026.
-  Restent à lire la rédaction d'origine de l'article 32 des statuts de la CARMF et
-  l'article 3.15 des statuts de la Cipav de 2006, publiés au Bulletin officiel.
+  Reste à lire la rédaction d'origine de l'article 32 des statuts de la CARMF, publiée au
+  Bulletin officiel ; l'article 3.15 des statuts de la Cipav de 2006, au même Bulletin, se
+  relit depuis 2007 par différence (`sources.a_relire`).
 sources:
   lu_le: 2026-10-16
   prochaine_relecture: 2026-12-31
@@ -55,10 +56,48 @@ sources:
     l'arrêté du 20 août 2018, article 14), quand le moteur la liquide au premier jour du
     mois, comme le régime de base ; lire si la caisse le fait toujours, et depuis quand.
   - >-
-    Cipav : lire l'article 3.15 des statuts de 2006 (arrêté du 3 octobre 2006, publié au
-    Bulletin officiel d'octobre 2006), pour dater la borne « de 1 à 5 ans », que le moteur
-    sert depuis 2013 ; et dire si la majoration des seuls points des trente premières
-    années pèse, que le modèle ne distingue pas.
+    Cipav, l'article 3.15 relu au Journal officiel par différence (action 130, E11,
+    6 novembre 2026). Les statuts de 2006 sont au seul Bulletin officiel (arrêté du
+    3 octobre 2006, JORFARTI000002050100 : « L'arrêté, accompagné de son annexe, sera
+    publié intégralement au Bulletin officiel d'octobre 2006 » ; ceux de 1979 « abrogé
+    à compter du 1er janvier 2007 »). Mais tous les arrêtés qui modifient ensuite les
+    statuts sont publiés en entier au Journal officiel — 17 décembre 2007, 3 décembre
+    2010, 6 juillet 2012, 7 octobre 2014, 18 décembre 2015, 19 janvier 2016, 3 août
+    2017, 22 juin 2020, 16 mars 2021, 16 décembre 2021, 20 mars 2023, 27 décembre 2023,
+    4 et 17 septembre 2025 —, aucun ne renumérote la troisième partie (celui de 2017
+    renumérote la deuxième, articles 2.13 à 2.27), et seuls ceux du 16 décembre 2021
+    (19°, le premier alinéa, « âgé de 65 ans ») et du 20 mars 2023 (17°) touchent
+    l'article 3.15. Son texte du 1er janvier 2007 au 31 décembre 2021 est donc celui des
+    statuts au 1er janvier 2023, ces deux modifications ôtées : « L'adhérent âgé de 65
+    ans et comptant un minimum de trente années d'affiliation à la C•I•P•A•V, peut
+    différer la date d'entrée en jouissance de la pension de retraite complémentaire de
+    1 à 5 ans. Le compte de points qui est alors établi est majoré de 5% par année
+    entière de prorogation. Cette majoration s'applique uniquement aux points acquis au
+    titre des trente premières années de cotisation à la C•I•P•A•V », avec les mots
+    « , telles qu'elles sont définies à l'article 3.6 », à une place que l'arrêté de
+    2023 ne montre pas ; en 2022, le premier alinéa de 2023. L'article 3.6 n'est pas lu
+    dans ces rédactions : le décompte des trente années, avant 2023, reste ouvert.
+    DEUX ERREURS NEUVES, déclarées, non corrigées (candidats, au propriétaire). (1) DE
+    2013 À 2022, le modèle majore tous les points (périodes de `cipav_complementaire`
+    depuis 2013), le texte ceux des trente premières années. Née le 10 mars 1949,
+    libérale de la Cipav au double du salaire moyen depuis 22 ans, en euros de 2026,
+    pension au 1er janvier 2016, un an entier de report au-delà de 65 ans : le modèle
+    sert 193 940,3125 × 0,062 × 1,05 = 12 625,51 €, dont 0,0031 × 193 940,3125 =
+    601,2150 € de majoration ; les cotisations revalorisées de la Cipav courent de 1979,
+    première année du régime (1 558,2124 €), à 2015 ; sur les trente premières années,
+    de 1979 à 2008, 0,0031 × 137 466,6071 = 426,1465 €, 175,07 € par an de trop ; de
+    1980 à 2009, 0,0031 × 143 335,1748 = 444,3390 €, 156,88 € ; de 1979 à 2009, 0,0031
+    × 144 893,3872 = 449,1695 €, 152,05 € : au moins 152,05 € par an sous les trois
+    décomptes de la première année. (2) DE 2007 À 2012, le modèle ne majore rien
+    (périodes de 1979 à 2012, `surcote_par_trimestre: null`), le texte le fait. Née le
+    10 mars 1945, même carrière, pension au 1er janvier 2012, un an entier de report
+    au-delà de 65 ans : le modèle sert 157 922,1741 × 0,062 = 9 791,17 €, sans
+    majoration ; le texte ajoute 0,0031 fois les cotisations des trente premières
+    années, de 1979 à 2008, 135 298,4577 €, 419,43 € par an servis en moins ; de 1980 à
+    2009, 141 074,4652 €, 437,33 € ; de 1979 à 2009, 142 608,1012 €, 442,09 € : au moins
+    419,43 € par an. Avant 2007 : les statuts de 1979, au seul Bulletin officiel
+    (question 22). Depuis 2023 et depuis le 1er juillet 2026, l'erreur de (1) est
+    déclarée dans `decret_2026_418_liberaux` (`sources.a_relire`).
   - >-
     CPRN : trancher la lecture divergente de la borne de 70 ans par ce que la caisse publie
     d'autre de la règle qu'elle applique, sans la solliciter (docs/architecture.md, § 3.5).
@@ -390,6 +429,33 @@ sources:
       l'arrêté de 2021 ni celui de 2023 n'y ont mis « de 1 à 5 ans » : la borne précède 2022
     url: https://www.lacipav.fr/sites/default/files/2023-04/Statuts%20CIPAV_1janvier2023.pdf
     date: 2026-09-27
+  - type: autre
+    reference: >-
+      Cipav, les mêmes « Statuts Cipav au 01/01/2023 », relus en entier (PDF lu le
+      6 novembre 2026, SHA-256 e5034d618178585fdae444ec690247ef83c7e94d7e9ca741682fb98562093790),
+      article 3.15, ses deux derniers alinéas : « Cette majoration s'applique uniquement aux
+      points acquis au titre des trente premières années de cotisation à la C•I•P•A•V. Pour
+      la détermination des trente années de cotisation, les années au titre desquelles
+      l'adhérent a obtenu une exonération ou une réduction de cotisation sont prises en
+      compte. » ; article 3.13, 1° : « A taux plein : - à partir de l'âge du taux plein
+      prévu au 1° de l'article L. 351-8 du code de la sécurité sociale »
+    url: https://www.lacipav.fr/sites/default/files/2023-04/Statuts%20CIPAV_1janvier2023.pdf
+    date: 2026-11-06
+  - type: jorf
+    reference: >-
+      Cipav, index JORF à jour du 6 novembre 2026 : les arrêtés qui approuvent les
+      modifications des statuts de 2006 à 2025, relevés au titre (« architectes »,
+      « CIPAV », « interprofessionnelle de prévoyance ») et lus : seul celui du 3 octobre
+      2006 (JORFARTI000002050100) renvoie au Bulletin officiel ; ceux du 17 décembre 2007
+      (JORFTEXT000017751524), 3 décembre 2010 (JORFTEXT000023217546), 6 juillet 2012
+      (JORFTEXT000026200467), 7 octobre 2014 (JORFTEXT000029623708), 18 décembre 2015
+      (JORFTEXT000031680311), 19 janvier 2016 (JORFTEXT000031933478), 3 août 2017
+      (JORFTEXT000035427386), 22 juin 2020 (JORFTEXT000042066645), 16 mars 2021
+      (JORFTEXT000043302728), 16 décembre 2021 (JORFTEXT000044554124), 20 mars 2023
+      (JORFTEXT000047334790), 27 décembre 2023 (JORFTEXT000048880667) et 4 septembre 2025
+      (JORFTEXT000052200379, rectifié le 17 septembre) sont publiés en entier ; seuls
+      ceux de décembre 2021 et de mars 2023 nomment l'article 3.15 (action 130, E11)
+    date: 2026-11-06
   - type: autre
     reference: >-
       Cipav, Guide pratique 2019, page 30 : « À partir de 65 ans À taux plein. Avec
