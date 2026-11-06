@@ -1,0 +1,38 @@
+date: "2026-11-06"
+session: "action 175, étape 4 (H11) : le thème « Retraite complémentaire des indépendants (RCI) » de la base de la Cnav — les régimes complémentaires des artisans (RCO), des commerçants (NRCO) et des indépendants"
+consulte: >-
+  python scripts/veille_droit.py. La base de législation de la Cnav, par son API, le
+  6 novembre 2026 de 12 h 53 à 13 h 05 UTC, par les fonctions de
+  scripts/fetch/cnav_legislation.py, sans relire le registre par le script : les 10 exposés
+  du thème, à la version que le registre date ; les 11 fenêtres qu'ils lient, dont 10
+  servies ; le barème rci_valeur_point_bar.aspx ; les PDF des circulaires RSI 2013/004,
+  2008/031, 2009/035 et 2009/044, et Cancava 79/1691 (image sans texte, non lue). L'index
+  LEGI de la DILA, à jour au 2 novembre 2026, et JORF, au 3 : les deux cibles des quatre
+  liens Légifrance des exposés ; le règlement du RCI, annexe de l'arrêté du 9 février 2012
+  (JORFARTI000025395326, articles 8, 9, 49 et 50 ; à LEGI, les articles 11, 12, 48, 49 et 50
+  en leurs rédactions de 2013 et de 2024) ; l'arrêté du 19 juin 2024 (JORFARTI000049776028).
+  Les fiches assiette_rco_independants, points_invalidite_independants,
+  organic_conjoints_de_commercants, rci_valeurs_point, abattement_rci, reversion_rci,
+  cumul_emploi_retraite_complementaire_des_independants ; les régimes rco_artisans, nric et
+  rci, conversions_points.csv et valeurs_point.csv ; le code des deux moteurs (acquerir,
+  liquider, regimes, carriere).
+trouve: >-
+  Le registre range le thème : 10 exposés limite, 9 fenêtres limite et 2 hors_modele
+  (« Assiette », du lexique ; date_arrete_compte_lex.aspx, que l'API ne sert pas), 4
+  références limite, 6 dont les renvois s'étendent ; les 5 avis restent hors_modele. Une
+  limite neuve dans docs/limites/3-systeme-actuel.md, « complémentaire des artisans et des
+  commerçants ». Deux candidats : les points des artisans cotisés avant 1997, que le
+  règlement (articles 49 et 50) sert à une valeur plus basse — 1,205 € contre 1,347 € au
+  1er janvier 2026 —, et que le modèle sert à la valeur des autres, 11,8 % de trop ; deux
+  points par mois d'invalidité à qui n'a rien cotisé, que la caisse sert depuis 2013
+  (circulaire RSI 2013/004) et le modèle depuis juillet 2024 seulement. Un point non tranché :
+  le quotient des points d'invalidité de qui a été artisan puis commerçant, que la caisse
+  établit sur la seule activité de l'invalidité, le règlement sans le dire, le modèle sur
+  les deux. Dans la base : la conversion des points des artisans datée de 2005 ou de 2006,
+  au coefficient « 0,2278 » dans un exposé, quand le règlement la fait au 1er janvier 2013,
+  à 0,2778.
+reste: >-
+  L'étape 4 au thème « Anciennes prestations » (29 exposés). Au modèle : les deux candidats
+  et le point non tranché de la note 175/2026-11-06-etape-4-rci.md. La circulaire Cancava
+  79/1691, image sans texte, à lire avant une correction de la reconstitution de carrière
+  des artisans.

@@ -1,15 +1,5 @@
 # Étape 4, thème « Allocation du minimum » : les exposés et leurs références
 
-**Reprise, au 6 novembre 2026.** « Retraite personnelle de base », les huit thèmes de
-« Carrière », « Avantages liés au décès de l'assuré » et « Allocation du minimum » sont rangés,
-ce dernier par cette note (H10). Suivant : « RCI » (10 exposés), sous la convention de la note
-du premier thème. La base se relit par l'API hors de 5 h–6 h UTC. Restent à lire avec leur
-thème : les listes d'accords, de l'Union et de l'Espace économique européens ; les quatre
-exposés mahorais du décès, avec « Mayotte ». Aux sessions du modèle : les deux points de cette
-note (l'âge de l'ASPA des retraites anticipées, le versement forfaitaire unique) ; le candidat
-de H9, la durée de mariage de la réversion d'avant juillet 1980 ; celui de H8 ; ceux des notes
-des majorations et des thèmes précédents ; l'activité accessoire (H6) ; l'AVPF du père (H7).
-
 **Le 6 novembre 2026, ce qui est fait.**
 
 - *La relecture de la base.* Par l'API, le 6 novembre 2026 de 12 h 30 à 12 h 31 UTC, par les

@@ -503,6 +503,37 @@ l'Institut des politiques publiques (PENSIPP). Écarts connus :
   sur la succession, que la loi n° 2019-1479 a supprimée pour l'allocation
   supplémentaire d'invalidité des assurés décédés depuis 2020. Exposés
   « Allocation du minimum » de la base de législation de la Cnav.
+- **complémentaire des artisans et des commerçants** — le modèle sert les
+  points cotisés du régime complémentaire obligatoire des artisans depuis
+  1979, du nouveau régime complémentaire des commerçants depuis 2004 et du
+  régime complémentaire des indépendants depuis 2013, qui reprend les points
+  des deux autres, ceux des artisans au coefficient de l'article 8 de son
+  règlement (`conversions_points.csv`) ; les points d'invalidité, l'abattement,
+  la réversion, le versement unique et le cumul (fiches
+  `points_invalidite_independants`, `abattement_rci`, `reversion_rci`,
+  `versement_unique_rci`, `cumul_emploi_retraite_complementaire_des_independants`).
+  Il ne sert pas les points gratuits de la reconstitution de carrière des
+  artisans : seize points par trimestre d'activité artisanale d'avant 1973,
+  après une carence de douze trimestres, et, de 1973 à 1978, les trimestres
+  validés au régime de base, au quotient des points cotisés depuis 1979, ou à
+  seize points à qui n'a rien cotisé ; ni la prise en charge, jusqu'en 2012,
+  de la cotisation de l'artisan dispensé pour maladie, sinistre ou service
+  national, six, deux et quatre trimestres au plus ; ni les points que le
+  commerçant garde du régime des conjoints fermé en 2003 (fiche
+  `organic_conjoints_de_commercants`). Il sert les points des artisans cotisés
+  avant 1997 à la valeur de service des autres, quand le règlement leur en
+  donne une plus basse, que relève, pour les pensions prenant effet depuis
+  2008, la moitié seulement de la revalorisation des autres, et le tiers pour
+  les points de la reconstitution (articles 49 et 50 de l'arrêté du 9 février
+  2012). Il ne donne aucun point, de 2013 à juin 2024, à
+  l'invalide qui n'avait rien cotisé, quand la caisse lui en sert deux par
+  mois depuis 2013 (circulaire RSI 2013/4) ; il établit le quotient des
+  points d'invalidité sur les points et les mois d'artisan et de commerçant
+  ensemble, quand la caisse ne retient que ceux de l'activité au titre de
+  laquelle l'invalidité est reconnue ; il compte, l'année du départ, les mois
+  jusqu'à la date d'effet, quand la caisse arrête le compte au dernier jour du
+  trimestre civil qui la précède. Exposés « Retraite complémentaire des
+  indépendants (RCI) » de la base de législation de la Cnav.
 
 Un écart de quelques pour cent avec la pension réelle est attendu.
 
