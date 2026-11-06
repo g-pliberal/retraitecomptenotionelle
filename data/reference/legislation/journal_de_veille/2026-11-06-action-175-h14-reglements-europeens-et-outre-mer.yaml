@@ -1,0 +1,45 @@
+date: "2026-11-06"
+session: "action 175, étape 4 (H14) : les sous-thèmes « Règlements européens » et « Accords d'outre-mer » du thème « Accords internationaux et d'outre-mer » de la base de la Cnav"
+consulte: >-
+  python scripts/veille_droit.py (rien de changé dans ces sous-thèmes). La base de
+  législation de la Cnav, par son API, le 6 novembre 2026 de 14 h 11 à 14 h 31 UTC, par les
+  fonctions de scripts/fetch/cnav_legislation.py, sans écrire le registre par le script : les
+  39 exposés des deux sous-thèmes, à la version que le registre date ; les quatre listes des
+  règlements ; quatre fenêtres ; les avis 181, 183 et 237 ; la lettre Cnav du 18 novembre 2009,
+  la décision n° 1/2012 du 31 mars 2012 (première page de son PDF) et la fiche de l'annexe de la
+  circulaire Cnav 2011/62 ; les liens de chacun. L'index LEGI de la DILA, à jour au 2 novembre 2026, et
+  JORF, au 3 : les 53 cibles des 77 liens Légifrance des exposés ; décret n° 2005-1050,
+  articles 11 à 15 et 19, et l'article 12 de sa rédaction du 1er avril 2022 ; décret
+  n° 2002-1371, article 1er, et l'accord annexé, articles 1er, 2, 7 à 10, 16, 28 et 49 ; décret
+  n° 2011-512, articles 1er, 2 et 13, et les rédactions de l'article 13 de 2026 ; article L. 14
+  du code des pensions civiles et militaires de retraite. Les fiches
+  totalisation_des_periodes_etrangeres, pension_proratisee, minimum_contributif_international,
+  reversion, majoration_forfaitaire_reversion, minimum_vieillesse et
+  residence_et_minimum_vieillesse ; le tableau legislation/accords_internationaux.yaml ; les
+  régimes cssm_mayotte, cafat_nouvelle_caledonie, cps_polynesie et
+  cps_saint_pierre_et_miquelon ; le code de droit/liquidation.py, completer.py, compter.py et
+  reversion.py.
+trouve: >-
+  Le registre range les deux sous-thèmes : 39 exposés (34 limite, 5 hors_modele, l'instruction
+  des demandes) ; 5 listes (3 limite, les deux des organismes de liaison hors_modele) ;
+  4 fenêtres (3 limite, une définition hors_modele) ; 3 avis hors_modele ; 77 références à lire
+  rangées (73 limite, dont les 9 que seule liait la liste des personnes qui relèvent des
+  règlements, 4 hors_modele), 31 déjà limite dont les renvois s'étendent. Deux limites neuves
+  dans docs/limites/3-systeme-actuel.md, « règlements européens » et « accords d'outre-mer ».
+  Les calculs de la pension proratisée, de son minimum et de la réversion sont ceux des fiches ;
+  les dates d'application des règlements, État par État, celles du tableau des accords ; la
+  pension que sert la coordination avec chaque territoire d'outre-mer, plafonnée à la durée
+  maximum, est celle que le modèle calcule en comptant ses trimestres dans la durée tous
+  régimes. Un point non tranché, aux sessions du modèle : les trimestres de Polynésie et de
+  Saint-Pierre-et-Miquelon comptés dans la décote d'un fonctionnaire, quand leurs accords
+  laissent ces régimes hors de la vieillesse (cas posé : 2 627,24 € par an). Dans la base :
+  l'ancien calcul calédonien daté « Avant le 01/12/2012 » pour 2002 ; deux liens vers le
+  mauvais texte ou article ; la décision n° 1/2012 du comité mixte avec la Suisse titrée
+  « Comité mixte de l'EEE » ; des citations de circulaires mal datées ou mal liées.
+reste: >-
+  L'étape 4 au sous-thème « Accords internationaux » (184 exposés), avec les 77 listes
+  « Accord de sécurité sociale - <pays> », puis « Mayotte ». Aux sessions du modèle : le point
+  non tranché de la note 175/2026-11-06-etape-4-reglements-europeens-et-outre-mer.md. Non lus :
+  le décret n° 66-846, sans ses articles au JORF de l'index ; ce qui faisait compter les
+  périodes des territoires avant chaque coordination ; les rédactions de 2026 de l'article 13
+  du décret n° 2011-512.

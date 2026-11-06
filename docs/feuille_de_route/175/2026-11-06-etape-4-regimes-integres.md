@@ -1,16 +1,5 @@
 # Étape 4, thème « Régimes intégrés » : les exposés et leurs références
 
-**Reprise, au 6 novembre 2026.** « Retraite personnelle de base », les huit thèmes de
-« Carrière », « Avantages liés au décès de l'assuré », « Allocation du minimum », « RCI »,
-« Anciennes prestations » et « Régimes intégrés » sont rangés, ce dernier par cette note (H13).
-Suivant : « Accords internationaux et d'outre-mer » (223 exposés : accords 184, règlements
-européens 24, outre-mer 15), par sous-thème, sous la convention de la note du premier thème,
-avec les listes d'accords, de l'Union et de l'Espace économique européens, et 9 références que
-seule lie la liste des personnes qui relèvent des règlements ; puis « Mayotte », avec les quatre
-exposés mahorais du décès. La base se relit par l'API hors de 5 h–6 h UTC. Aux sessions des
-données : le candidat de cette note. Aux sessions du modèle : ceux de H12, H11, H10, H9, H8, des
-majorations et des thèmes précédents ; l'activité accessoire (H6) ; l'AVPF du père (H7).
-
 **Le 6 novembre 2026, ce qui est fait.**
 
 - *La relecture de la base.* Par l'API, le 6 novembre 2026 de 13 h 42 à 13 h 57 UTC, par

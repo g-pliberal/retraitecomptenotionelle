@@ -595,6 +595,55 @@ l'Institut des politiques publiques (PENSIPP). Écarts connus :
   régime des industriels et commerçants, qui lui en garantit une calculée de
   même sur son propre plafond. Exposés « Régimes intégrés » de la base de
   législation de la Cnav.
+- **règlements européens** — le modèle totalise les périodes accomplies dans
+  un État de l'Union, de l'Espace économique européen ou en Suisse, et sert
+  la plus élevée de la pension nationale et de la pension proratisée, chacune
+  portée à son minimum (fiches `totalisation_des_periodes_etrangeres`,
+  `pension_proratisee` et `minimum_contributif_international`) ; sa réversion
+  est celle de la pension ainsi servie. Il ne sert pas ce que les règlements
+  font des prestations qu'il ne sert pas non plus hors de la coordination —
+  l'allocation de veuvage, nationale contre proratisée, la pension de
+  vieillesse de veuve ou de veuf, la majoration pour tierce personne — ; ni
+  les règles de non-cumul des règlements, qui bornent celles du droit
+  français quand l'autre État réduit aussi sa prestation : le dépassement
+  divisé par le nombre des prestations réduites, les ressources et le
+  plafond proratisés, la réversion et sa majoration ouvertes quand la
+  condition de ressources française n'est pas remplie ; ni la majoration
+  d'assurance volontaire superposée, que valent, hors de la pension
+  théorique, les périodes d'assurance volontaire ou de rachat pour une
+  activité à l'étranger qui couvrent une période d'assurance obligatoire
+  d'un autre État (voir « rachats et versements ») ; ni l'ordre entre États
+  de la majoration forfaitaire pour charge d'enfant. Il liquide une fois, au
+  départ en France : ni la pension nationale arrêtée au premier départ et la
+  proratisée refaite au départ dans l'autre État, quand les pensions se
+  succèdent, ni la seconde proratisée de qui a relevé de trois États sans
+  demander toutes ses pensions, ni la révision qu'ouvre, sur demande,
+  l'entrée d'un État dans l'Union ou l'application d'un règlement neuf. Il
+  compte les périodes étrangères à trois mois le trimestre, et non selon la
+  semaine de cinq, six ou sept jours du régime de l'autre État, ni selon les
+  règles propres au Portugal et à la Grèce. Il ne connaît pas la
+  nationalité, qui ouvre les règlements. Exposés « Règlements européens » de
+  la base de législation de la Cnav.
+- **accords d'outre-mer** — les régimes de Mayotte, de la
+  Nouvelle-Calédonie, de la Polynésie française et de
+  Saint-Pierre-et-Miquelon sont des régimes du modèle, dont les trimestres
+  comptent dans la durée tous régimes (fiches de régime `cssm_mayotte`,
+  `cafat_nouvelle_caledonie`, `cps_polynesie` et
+  `cps_saint_pierre_et_miquelon`) : la pension du régime général y est celle
+  que sert la coordination, la pension théorique réduite au prorata de ses
+  trimestres sur la durée des deux territoires, plafonnée à la durée maximum
+  (décrets n° 94-1146, article 7 ; n° 2002-1371, annexe, article 7 ;
+  n° 2005-1050, article 12 ; n° 2011-512, article 13), et que la pension
+  nationale ne dépasse pas. Il compte ces trimestres à toute date et pour
+  tout régime : avant que la coordination commence — en 1966, refondue en
+  décembre 2002, pour la Nouvelle-Calédonie, en 1995 pour la Polynésie, en
+  août 2005 pour Mayotte, en juin 2011 pour Saint-Pierre-et-Miquelon —, ce
+  qui s'appliquait n'étant pas lu ; et pour les régimes des fonctionnaires,
+  que les accords de la Polynésie et de Saint-Pierre-et-Miquelon laissent
+  hors de la vieillesse, quand le code des pensions compte la durée « dans
+  un ou plusieurs autres régimes de retraite de base obligatoires » sans dire
+  s'ils en sont. Exposés « Accords d'outre-mer » de la base de législation
+  de la Cnav.
 
 Un écart de quelques pour cent avec la pension réelle est attendu.
 
