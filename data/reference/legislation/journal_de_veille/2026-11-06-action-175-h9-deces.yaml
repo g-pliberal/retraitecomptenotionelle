@@ -1,0 +1,37 @@
+date: "2026-11-06"
+session: "action 175, étape 4 (H9) : le thème « Avantages liés au décès de l'assuré » de la base de la Cnav — retraite de réversion, allocation de veuvage, pension de vieillesse de veuve ou de veuf, pension d'orphelin"
+consulte: >-
+  python scripts/veille_droit.py. La base de législation de la Cnav, par son API, le
+  6 novembre 2026 de 12 h 02 à 12 h 20 UTC, par les fonctions de
+  scripts/fetch/cnav_legislation.py, sans relire le registre par le script : les 27 exposés
+  du thème, à la version que le registre date ; les 14 fenêtres, les 5 listes et les
+  références qu'ils lient ; les avis de mise à jour 27, 123, 199, 202 et 231 ; le décret
+  n° 71-280 du 7 avril 1971 et la lettre ministérielle n° 1448/AG/79 du 17 janvier 1980, au
+  texte que la base sert. L'index LEGI de la DILA, à jour au 5 novembre 2026, et JORF, au 6 :
+  les 112 cibles des 217 liens Légifrance des exposés ; l'article 81 a du décret n° 45-179
+  (rédaction du 12 mars 1981) ; l'article 1122-2-1 de l'ancien code rural (en vigueur au
+  18 juillet 1980) ; la loi n° 80-546. La fiche reversion et le code des deux moteurs
+  (reversion.py, reversion.js).
+trouve: >-
+  Le registre range le thème : 25 exposés limite et 2 hors_modele (la compétence de la
+  réversion et de l'allocation de veuvage), 4 fenêtres limite et 10 hors_modele, 5 listes
+  limite, 197 références (192 limite, 5 hors_modele), 73 dont les renvois s'étendent, 5 avis
+  hors_modele. Une limite neuve dans docs/limites/3-systeme-actuel.md, « avantages de
+  survivant ». Un candidat, non corrigé : la durée de mariage de la réversion d'avant le
+  18 juillet 1980 — du 1er mai 1971 au 30 juin 1974, deux ans avant l'entrée en jouissance de
+  la pension du défunt ou quatre ans au décès (décret n° 71-280) ; jusqu'au 17 juillet 1980,
+  deux ans au décès même avec un enfant (lettre ministérielle du 17 janvier 1980, exposé
+  « Conditions d'attribution ») —, quand les deux moteurs exigent deux ans au décès et lèvent
+  la condition pour tout enfant : la moitié de la pension du défunt servie, contre rien. Dans
+  le registre, une raison fausse : seize références sans thème disent l'assurance veuvage
+  « supprimée pour les décès depuis 2011 », que les exposés disent en vigueur. Dans la base :
+  « Décret 2020/1489 du 02/12/2020 » pour le décret du 1er décembre 2020, et quelques dates
+  et balises fautives.
+reste: >-
+  L'étape 4 au thème « Allocation du minimum » (17 exposés) ; les quatre exposés mahorais du
+  décès avec « Mayotte ». Au modèle : le candidat de la durée de mariage d'avant juillet 1980.
+  Au propriétaire : le texte de L. 351 du code de 1956 et de l'article 81 a du décret
+  n° 45-179 de 1975 à mars 1981, ni à l'index ni dans la base. À l'étape 6 : la raison des
+  seize références de l'assurance veuvage. Laissées à lire avec leur thème : les listes des
+  accords, de l'Espace économique européen et des ressources exclues de l'ASPA ; les 65
+  références que seuls lient des barèmes.

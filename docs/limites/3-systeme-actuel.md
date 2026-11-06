@@ -455,6 +455,24 @@ l'Institut des politiques publiques (PENSIPP). Écarts connus :
   involontaire constaté » (R. 351-12, 4°, b) ; le modèle n'en valide aucun
   trimestre quand la saisie le dit non indemnisé (fiche
   `chomage_non_indemnise`, qui ne lit que le d du 4°).
+- **avantages de survivant** — le modèle sert la réversion (fiche
+  `reversion`), et aucun des autres avantages que la caisse sert au décès de
+  l'assuré : l'allocation de veuvage, temporaire, au conjoint survivant qui
+  n'a pas l'âge de la réversion, sous condition de ressources (L. 356-1) ; la
+  pension de vieillesse de veuve ou de veuf, qui remplace à cinquante-cinq ans
+  la pension d'invalidité de veuve ou de veuf, et dont la caisse ne sert, avec
+  la réversion du même conjoint, que le plus élevé des deux ; la pension
+  d'orphelin, à l'enfant dont les deux parents sont décédés, disparus ou
+  absents depuis le 1er septembre 2023 (L. 358-1). De la réversion, il ne lit
+  ni la disparition de l'assuré (L. 353-2), ni l'annulation du mariage, ni les
+  épouses simultanées d'un polygame, ni la régularité du séjour du survivant
+  étranger (L. 161-18-1) ; il tient pour ressources du survivant ce que la
+  saisie déclare, quand la caisse les évalue — les biens, censés rapporter
+  trois pour cent de leur valeur vénale, les biens donnés, les ressources
+  qu'elle exclut — ; et il ne calcule pas la fraction de réversion que le
+  régime général met à la charge d'un régime spécial de D. 173-1 (voir
+  « régimes spéciaux et régime général »). Exposés « Avantages liés au décès
+  de l'assuré » de la base de législation de la Cnav.
 
 Un écart de quelques pour cent avec la pension réelle est attendu.
 

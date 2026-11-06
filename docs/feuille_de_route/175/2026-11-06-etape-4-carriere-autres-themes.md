@@ -1,14 +1,5 @@
 # Étape 4, les quatre autres thèmes de « Carrière » : allocations avant retraite, présomption, rachat de retraite, Algérie
 
-**Reprise, au 6 novembre 2026.** « Retraite personnelle de base » et les huit thèmes de
-« Carrière » sont rangés, les quatre derniers par cette note (H8). Suivant : « Avantages liés
-au décès de l'assuré » (27 exposés), sous la convention de la note du premier thème. La base
-se relit par l'API hors de 5 h–6 h UTC. Restent à lire avec leur thème : les listes
-d'accords, de l'Union et de l'Espace économique européens. Aux sessions du modèle : le
-candidat de cette note, le chômage non indemnisé d'avant 1980 ; les deux de la note des
-majorations, les trois et les deux des précédentes ; l'activité accessoire (H6, R-H6, H6-bis) ;
-l'AVPF du père (H7, H7-bis), dont le candidat 1 reste le plus lourd.
-
 **Le 6 novembre 2026, ce qui est fait.**
 
 - *La relecture de la base.* Par l'API, de 11 h 36 à 11 h 53 UTC, par les fonctions de
