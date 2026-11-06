@@ -272,6 +272,7 @@ LUES_AU_DROIT = frozenset("""
     cipav_seconde_tranche
     sections_liberales_majoration_enfants
     surcote_par_age_seul
+    cotisation_par_classes_liberales
 """.split())
 
 
