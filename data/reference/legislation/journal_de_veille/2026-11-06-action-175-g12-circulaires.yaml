@@ -1,0 +1,40 @@
+date: "2026-11-06"
+session: "action 175, étape 6, vague 11, G12 : les 119 circulaires, lettres et instructions de 1980 à 1985 que la base de la Cnav cite sans thème"
+consulte: >-
+  Les 119 références sans thème et à lire de 1980 à 1985 dont le titre commence par
+  « Circulaire », « Lettre », « Instruction », « Note d'information » ou « Diffusion
+  d'instructions », relues par l'API de la base le 6 novembre 2026 à 10 h 57 UTC
+  (/reference/referencesByFileLeafRef/), toutes servies, 117 en page et deux en PDF (la
+  circulaire Organic n° 81-139, par l'OCR de ses sept pages ; l'annexe de la circulaire
+  Cnav n° 35/82, lue en image) ; toutes lues en entier, les 30 plus longues par un agent
+  de la session, dont chaque citation a été retrouvée mot pour mot dans le texte servi.
+  Pour les confronter : les fiches taux_plein_meres_de_famille_ouvrieres,
+  totalisation_des_periodes_etrangeres, decote_regime_general, reversion,
+  cumul_emploi_retraite_et_retraite_progressive, inaptitude_au_travail,
+  majorations_forfaitaires_1972_1982, cotisation_maladie_pensions_complementaires,
+  pension_d_invalidite_substituee ; le code de moteur/js/droit/categories.js et de
+  src/retraite_notionnelle/droit/reversion.py ; les séries
+  regimes/taux_cotisation_annuels.csv, legislation/coefficient_minoration.csv,
+  legislation/duree_assurance_requise.csv, macro/plafond_securite_sociale.csv ; la limite
+  docs/limites/3-systeme-actuel.md. Ni l'index de la DILA, ni Légifrance, ni le Journal
+  officiel.
+trouve: >-
+  Le registre range les 119 (78 limite, 41 hors_modele), sous deux raisons neuves :
+  l'application administrative d'une convention bilatérale, la pension d'invalidité que
+  sert l'assurance maladie. Conforme : le taux vieillesse de 1984, 13,90 % dont 5,70 % au
+  salarié (lettre-circulaire du 21 février 1984). Un écart neuf, chiffré : la lettre
+  ministérielle du 14 octobre 1983 fait compter les périodes d'un État conventionné dans
+  les trente ans de la mère de famille ouvrière, que le modèle compte au seul régime
+  général et chez les salariés agricoles ; −15 % sur un cas de 1985, −50 % sans la
+  majoration pour enfants dans la durée. Déjà déclarés, touchés : la réversion du défunt
+  mort avant son départ, aux règles de la date d'effet (circulaire Cnav n° 38/83) ;
+  l'Accre (circulaires n° 16/81 et n° 44/84 : aucun droit des non-salariés pendant les
+  deux trimestres exonérés) ; le salaire au-delà du plafond de plusieurs employeurs
+  (lettre du 7 janvier 1981). Non tranchés : les veuves d'un polygame, que la saisie ne
+  peut dire ; l'allocataire de l'AAH, réputé inapte dans la fiche, à reconnaître
+  médicalement en 1985. Note
+  docs/feuille_de_route/175/2026-11-06-etape-6-circulaires-1980-1985.md.
+reste: >-
+  Les 1 575 circulaires de 1986 à 2026, par période ; les autres natures de l'étape 6 ;
+  les lois, ordonnances et décrets que ces textes appliquent, à relire au Journal
+  officiel ; le cas de l'écart neuf, à poser sur les moteurs.
