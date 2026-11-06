@@ -1,0 +1,35 @@
+date: "2026-11-06"
+session: "action 175, étape 6, vague 11, G11 : les 145 circulaires, lettres et notes d'information de 1974 à 1979 que la base de la Cnav cite sans thème"
+consulte: >-
+  Les 145 références sans thème et à lire de 1974 à 1979 dont le titre commence par
+  « Circulaire », « Lettre », « Instruction », « Note d'information » ou « Diffusion
+  d'instructions », relues par l'API de la base le 6 novembre 2026 à 10 h 33 UTC
+  (/reference/referencesByFileLeafRef/), toutes servies, toutes en page ; les 55 sans
+  numéro dans la base lues en entier, 38 d'entre elles par un agent de la session, dont
+  chaque citation a été retrouvée mot pour mot dans le texte servi. Pour les confronter :
+  les fiches reversion, taux_plein_anciens_combattants_prisonniers,
+  trimestres_retenus_1972_1974, decote_avant_1983, salaire_annuel_moyen,
+  versement_forfaitaire_unique, majoration_conjoint_a_charge, inaptitude_au_travail,
+  taux_plein_travailleurs_manuels, un_statut_par_annee ; les séries
+  regimes/taux_cotisation_annuels.csv, legislation/limite_cumul_reversion.csv,
+  macro/plafond_securite_sociale.csv et macro/smic_horaire.csv ; la limite
+  docs/limites/3-systeme-actuel.md. Ni l'index de la DILA, ni Légifrance, ni le Journal
+  officiel.
+trouve: >-
+  90 des 145 se rapprochent par le numéro de l'API que porte leur en-tête ; les 55 autres,
+  lues en entier, sont rangées par ce qu'elles disent. Le registre range les 145
+  (100 limite, 45 hors_modele). Conformes : les taux de la cotisation vieillesse de 1968 à
+  1979 (circulaires n° 43 SS de 1976 et n° 9 SS de 1979, 11,15 % puis 12,90 %) et leur part
+  salariale ; la limite minimum de cumul de la réversion, 35 % du plafond en 1978 et 1979
+  (circulaire Cnav n° 55/79). Deux écarts déjà déclarés, étendus et chiffrés : la pension
+  du défunt mort avant son départ, aux règles de la date d'effet de la réversion dès 1974
+  (article 7 du décret n° 73-1212, lettre du 3 juillet 1974), −14,7 % sur un cas de 1972 ;
+  le taux de 65 ans dès 60 ans des combattants réformés, des prisonniers libérés en France
+  et des déserteurs alsaciens-lorrains (lettres du 30 avril et du 5 juin 1975), −50 % sur
+  un cas de 1978. Le salaire annuel moyen d'avant 1948, pris en remontant et avec le bloc
+  de 1930 à 1935 (lettre du 5 juillet 1977), confirme un écart déclaré, non chiffré. Note
+  docs/feuille_de_route/175/2026-11-06-etape-6-circulaires-1974-1979.md.
+reste: >-
+  Les 1 694 circulaires de 1980 à 2026, par période ; les autres natures de l'étape 6 ;
+  les lois et décrets que ces textes appliquent, à relire au Journal officiel ; les cas
+  des deux écarts, à poser sur les moteurs.

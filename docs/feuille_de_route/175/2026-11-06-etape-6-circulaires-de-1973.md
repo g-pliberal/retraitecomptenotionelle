@@ -1,15 +1,5 @@
 # Étape 6, circulaires : les 43 d'avant 1973 restées à lire, puis celles de 1973
 
-**Reprise, au 6 novembre 2026.** Trois natures de l'étape sont rangées ; la quatrième,
-les circulaires, lettres et instructions sans thème, l'est de 1936 à 1973 (notes de G8,
-de G9 et celle-ci), les 43 d'avant 1973 restées à lire comprises. Restent 1 839 circulaires,
-de 1974 à 2026, par période (17 en 1974, 23 en 1975, 33 en 1976) ; puis, une session par
-nature : les 96 autres textes, les 74 que la base nomme sans les servir, les 107 accords.
-Méthode : la base relue par l'API hors de 5 h–6 h UTC (`_reference` de
-`cnav_legislation.py`), un texte rapproché par son identifiant, puis par son numéro, ou
-par un texte qui le cite et le lie ; sinon lu en entier et rangé par ce qu'il dit.
-Candidats : un, ici, et un point non tranché.
-
 **Le 6 novembre 2026, ce qui est fait.**
 
 - *Les textes* : les 31 références de 1936 à 1959 et les 12 de 1960 à 1972 que les notes
