@@ -534,6 +534,33 @@ l'Institut des politiques publiques (PENSIPP). Écarts connus :
   jusqu'à la date d'effet, quand la caisse arrête le compte au dernier jour du
   trimestre civil qui la précède. Exposés « Retraite complémentaire des
   indépendants (RCI) » de la base de législation de la Cnav.
+- **anciennes prestations** — avant l'allocation de solidarité, le modèle sert,
+  sur les pensions, les deux étages du minimum vieillesse : la majoration de
+  L. 814-2, qui porte la pension au montant de l'allocation aux vieux
+  travailleurs salariés, et l'allocation supplémentaire (fiche
+  `minimum_vieillesse`) ; au régime général, la majoration pour conjoint à
+  charge (fiche `majoration_conjoint_a_charge`). Il ne distingue pas de cette
+  majoration l'allocation aux vieux travailleurs salariés elle-même, servie
+  sans pension sous ses conditions propres — vingt-cinq ans de salariat, ou
+  quinze après cinquante ans, dix outre-mer, et l'âge de soixante ans dans un
+  département d'outre-mer — ; il ne sert pas l'allocation complémentaire de la
+  région parisienne, avant avril 1962, ni l'allocation aux mères de famille, ni
+  le secours viager, ni la rente des assurances sociales, le dixième des
+  cotisations portées au compte avant 1941, ni celle des retraites ouvrières
+  et paysannes, qui s'ajoutent à l'avantage de base. Il ignore les conditions de
+  nationalité de ces allocations avant juin 1998, ne connaissant pas la
+  nationalité ; l'exclusion de l'allocation supplémentaire du non-salarié
+  agricole qui exploitait plus de trois hectares ; le montant de l'allocation
+  aux vieux travailleurs salariés proratisé comme la pension qu'une convention
+  proratise ; le versement exceptionnel payé avant février 2005 aux titulaires
+  de l'allocation supplémentaire au 1er décembre 2004 ; et le maintien, depuis 2006, des anciennes
+  allocations à qui ne demande pas l'allocation de solidarité, à qui il sert
+  celle-ci. Il refuse la majoration de L. 814-2 à qui réside hors de France,
+  quand la caisse la sert sans condition de résidence ; et, avant avril 1993,
+  il retranche de l'allocation aux vieux travailleurs salariés toute pension
+  étrangère, quand la caisse ne comptait que dans les ressources celle d'un
+  État dont la convention n'avait pas de règle de non-cumul. Exposés
+  « Anciennes prestations » de la base de législation de la Cnav.
 
 Un écart de quelques pour cent avec la pension réelle est attendu.
 

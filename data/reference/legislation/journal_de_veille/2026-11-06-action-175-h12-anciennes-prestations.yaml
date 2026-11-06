@@ -1,0 +1,33 @@
+date: "2026-11-06"
+session: "action 175, étape 4 (H12) : le thème « Anciennes prestations » de la base de la Cnav — l'allocation supplémentaire, l'allocation aux mères de famille, l'allocation aux vieux travailleurs salariés, la majoration de L. 814-2, la majoration pour conjoint à charge, la rente des assurances sociales, les retraites ouvrières et paysannes, le secours viager"
+consulte: >-
+  python scripts/veille_droit.py. La base de législation de la Cnav, par son API, le
+  6 novembre 2026 de 13 h 19 à 13 h 20 UTC, par les fonctions de
+  scripts/fetch/cnav_legislation.py, sans écrire le registre par le script : les 29 exposés
+  du thème, à la version que le registre date ; les 3 fenêtres et les 2 listes encore à lire ;
+  les liens de chacun. L'index LEGI de la DILA, à jour au 2 novembre 2026, et JORF, au 3 :
+  les 163 cibles des 347 liens Légifrance des exposés ; L. 814-2 (sept rédactions, de 1985 à
+  2006), D. 814-1 et D. 814-2 (1999-2007), D. 814-9 (1991-1999), R. 816-2 (1993). Les fiches
+  minimum_vieillesse, residence_et_minimum_vieillesse, majoration_conjoint_a_charge,
+  minimum_contributif ; les régimes avts, assurances_sociales et
+  retraites_ouvrieres_paysannes ; la série legislation/minimum_vieillesse_avant_2007.csv ; le
+  code des deux moteurs (droit/foyer.py, moteur/js/droit/foyer.js).
+trouve: >-
+  Le registre range le thème : 29 exposés limite, 1 fenêtre limite et 2 hors_modele
+  (« Hypothèque » et « Nantissement », du lexique), 2 listes limite, 162 références limite,
+  45 dont les renvois s'étendent ; les 10 avis restent hors_modele. Une limite neuve dans
+  docs/limites/3-systeme-actuel.md, « anciennes prestations ». Un candidat : la majoration de
+  L. 814-2, que la caisse sert « sans condition de nationalité et ni de résidence » (exposé ;
+  D. 814-2 ne pose que l'âge et les ressources), et que le modèle refuse à qui réside hors de
+  France avant 2006 — 1 188,13 € par an dans le cas posé de la note. Un point non tranché : la
+  pension étrangère avant le 1er avril 1993, que la caisse ne comptait que dans les
+  ressources quand la convention n'avait pas de règle de non-cumul, et que le modèle retranche
+  du premier étage — 137,21 € par an dans le cas posé. Dans la base : trois ancres qui mènent à
+  un autre article (D. 813-3, L. 811-3, L. 811-1), une date fautive (décret n° 2002-1371) et
+  un numéro douteux (« Loi 56/638 », quand la loi du 30 juin 1956 porte le n° 56-639).
+reste: >-
+  L'étape 4 au thème « Régimes intégrés » (29 exposés). Les listes des règlements européens,
+  avec « Accords internationaux et d'outre-mer ». Au modèle : le candidat et le point non
+  tranché de la note 175/2026-11-06-etape-4-anciennes-prestations.md. Sept textes du JORF
+  que les exposés lient et que l'index n'a pas (loi n° 49-1095, décrets n° 46-1662, 72-788
+  et 80-866, arrêtés du 9 avril 1971 et du 25 février 1976, loi du 30 juin 1956).
