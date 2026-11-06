@@ -1,0 +1,38 @@
+date: "2026-11-06"
+session: "action 130, file R-E11 : relecture de E10 (le décret n° 2026-418 lu au droit, trois erreurs neuves, les écarts de R-E10 repris, 7801413)"
+consulte: >-
+  Les index JORF (à jour du 3 novembre 2026, incrément 20261103-002311) et LEGI (du
+  2 novembre, 20261102-213929) récupérés. Au JORF : le décret n° 2026-418
+  (JORFTEXT000054153355), ses 32 documents d'articles, chacun rapporté au visa de même
+  date ; en entier ou par fenêtres, les articles 3 (CARMF, 4 à 4-4), 5 (CARCDSF, 2 et 3-1 à
+  3-7), 20 (Cipav, 5-2), 30 ; 28 passages cités par la fiche, contrôlés mot pour mot ; les
+  arrêtés de la Cipav depuis 2007 qui nomment l'article 3.15 (16 décembre 2021, 19° ;
+  20 mars 2023, 17°, et son article 2), celui du 27 décembre 2023 et ceux de septembre
+  2025. Dans LEGI : décret n° 49-579, articles 3, 4 (1996, 2024, 2026) et 4-1 ; décret
+  n° 50-28, articles 2 (1981 à 2026), 3-1 et 3-5 ; les quatorze identifiants que cite la
+  fiche ; D. 641-6. Hors du Journal officiel : les statuts de la Cipav « au 01/01/2023 »
+  publiés par la caisse (déjà cités par `surcote_par_age_seul.yaml`), article 3.15.
+trouve: >-
+  Les trois erreurs neuves de E10 confirmées, montants exacts au centime dans les deux
+  moteurs sous les deux jeux, lecture contraire intenable : la CARMF sans la dispense des
+  deux premières années (2 284,25 € par an au cas posé) ni l'exemption passé le semestre
+  des 75 ans (au moins 300,22 €), la CARCDSF sans la dispense de la part proportionnelle
+  des deux premières années (1 528,23 €). Conformes : les trois décomptes des trente
+  années de la Cipav, les 31 articles rapportés aux bons décrets et aux bonnes fiches,
+  l'article 13, la forme de la fiche hors de LUES_AU_DROIT, la classe A de la CAVEC, le
+  cliquet à 9 306. Un écart moyen : l'article 3.15 des statuts de la Cipav au 1er janvier
+  2023 limite déjà la majoration pour report aux points des trente premières années,
+  mot pour mot comme le décret ; l'erreur de la Cipav vaut donc aussi pour les pensions du
+  1er janvier 2023 au 30 juin 2026 (au moins 537,96 € par an au cas d'une pension au
+  1er janvier 2026), non pour un point non tranché. Trois écarts faibles : le test ne
+  tient pas le rattachement de chaque article à sa fiche ; les déclarations de la CARMF
+  taisent le rachat (4-2, I) et la cotisation volontaire (4-3) ; la question 22 a pour
+  point de départ l'article 4 du décret n° 49-579 (1996 à 2026) et l'article 2 du décret
+  n° 50-28.
+reste: >-
+  À une file -bis : l'écart moyen et les trois faibles (note
+  `130/2026-11-06-relecture-r-e11.md`) ; la date d'avant 2023 d'où vaut la règle de la
+  Cipav, au Bulletin officiel. Candidat neuf : l'affiliation de la CARCDSF au premier jour
+  du trimestre civil suivant le début de l'activité (article 2 du décret n° 50-28, depuis
+  le 1er juillet 2026) ; le modèle fait cotiser toute l'année d'une activité commencée un
+  1er janvier, ce que « suivant » ne tranche pas ; non chiffré.
