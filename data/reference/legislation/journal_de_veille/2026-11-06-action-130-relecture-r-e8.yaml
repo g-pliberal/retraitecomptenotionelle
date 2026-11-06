@@ -1,0 +1,30 @@
+date: "2026-11-06"
+session: "action 130, file R-E8 : relecture de E7 (la Cipav lue au droit, d5497c9) et des chiffres neufs de E6-bis (la CARMF, 8c955fe)"
+consulte: >-
+  Les index JORF (au 6 novembre 2026, incrément 20261106-002608) et LEGI (au 5 novembre)
+  récupérés et mis à jour. Dans LEGI : les 39 documents du décret n° 79-262 (l'article 2 dans
+  ses six rédactions, les articles 5 à 5-6) ; R. 643-6 et R. 351-37 ; L. 161-17-2 et D.
+  161-2-1-9 ; les articles 1er à 4 du décret n° 2011-1644. Au JORF, sans borne, les 32 308
+  documents publiés depuis le 1er janvier 2025, par titre et par corps (vieillesse
+  complémentaire, professions libérales, Cipav, décret n° 79-262, 11° de R. 641-1, valeur
+  d'achat ou coût d'acquisition du point, deuxième tranche, « Pour l'année 2026 ») ; les
+  décrets n° 2022-1746, 2023-1351, 2024-1214, 2025-1076, 2025-943, 2026-239, 2026-418 et
+  2023-148 ; les arrêtés de statuts de la Cipav de 2020 à 2025 ; les arrêtés du plafond pour
+  2023 à 2026 ; pour la CARMF, les arrêtés du 28 septembre 2011, des 30 novembre et 1er
+  décembre 2016, du 22 mars 2017, du 7 janvier 2025, le rectificatif du 8 août 2026, la loi
+  n° 2025-1403 et son rectificatif du 23 mai 2026.
+trouve: >-
+  E7 conforme pour l'essentiel, E6-bis conforme : toutes les citations exactes, les montants
+  justes au centime ; aucun texte publié ne fixe les taux ni le coût du point de la Cipav pour
+  2026 (l'article 14 du décret n° 2025-1076 ne nomme que trois sections) ; la date d'effet au
+  premier jour du mois depuis le 1er juillet 2026 (article 5-3), que le modèle rend. Cinq
+  écarts faibles : la version d'avant 2023 ne cite pas les six classes de 1979 à 2012 ; le
+  décret n° 2026-239 nomme la Cipav, sans effet ; l'enjeu des taux de 2026 va de −29,32 € à
+  +58,63 € par an (non « au plus 48,80 € »), et 48,81 €, 3,56 € aux arrondis ; l'article 2 de
+  l'arrêté du 7 janvier 2025 ne « charge » de rien ; E6-bis mené sur Sonnet. R. 643-6 met la
+  base de toutes les sections hors la Cipav au trimestre civil qui suit la demande depuis 2004.
+reste: >-
+  À la file E : les retouches de `cipav_seconde_tranche` (note
+  `130/2026-11-06-relecture-r-e8.md`). Au propriétaire : le décret des paramètres de la Cipav
+  pour 2026 ; ses statuts d'avant juillet 2026. Candidat : R. 643-6 et la date d'effet de la
+  base de la CNAVPL.
