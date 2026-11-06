@@ -875,3 +875,57 @@ process.stdout.write(JSON.stringify(
     obtenus = json.loads(execution.stdout)
     assert {annee: _points_de_l_annee(obtenus, "cnavpl", annee) for annee in attendu} \
         == pytest.approx(attendu, abs=1e-6)
+
+
+#: Les 32 documents de l'index JORF qui portent les 31 articles du décret
+#: n° 2026-418 du 29 mai 2026 (JORFTEXT000054153355) : la fin de l'article 18
+#: y est un document à part, étiqueté « art. 8 » (JORFARTI000054153640).
+ARTICLES_DU_DECRET_2026_418 = {
+    "1": "JORFARTI000054153395", "2": "JORFARTI000054153399",
+    "3": "JORFARTI000054153420", "4": "JORFARTI000054153444",
+    "5": "JORFARTI000054153467", "6": "JORFARTI000054153484",
+    "7": "JORFARTI000054153492", "8": "JORFARTI000054153497",
+    "9": "JORFARTI000054153507", "10": "JORFARTI000054153523",
+    "11": "JORFARTI000054153529", "12": "JORFARTI000054153554",
+    "13": "JORFARTI000054153565", "14": "JORFARTI000054153583",
+    "15": "JORFARTI000054153594", "16": "JORFARTI000054153605",
+    "17": "JORFARTI000054153623", "18": "JORFARTI000054153633",
+    "18, fin": "JORFARTI000054153640", "19": "JORFARTI000054153644",
+    "20": "JORFARTI000054153655", "21": "JORFARTI000054153680",
+    "22": "JORFARTI000054153714", "23": "JORFARTI000054153729",
+    "24": "JORFARTI000054153737", "25": "JORFARTI000054153756",
+    "26": "JORFARTI000054153775", "27": "JORFARTI000054153787",
+    "28": "JORFARTI000054153800", "29": "JORFARTI000054153809",
+    "30": "JORFARTI000054153813", "31": "JORFARTI000054153814",
+}
+
+
+def test_chaque_article_du_decret_2026_418_est_rapporte_a_la_fiche_de_sa_regle():
+    """La fiche du décret porte un texte, non un dispositif (architecture,
+    § 6.1) : elle rapporte chacun de ses articles, lu au JORF, au décret qu'il
+    modifie et à la fiche de sa règle, ou le dit hors du modèle (action 130,
+    E10). Aucun article n'y manque, et chaque nom qu'elle écrit entre accents
+    graves est une fiche, une version de fiche ou un paramètre d'un régime."""
+    import re
+
+    import yaml
+
+    from retraite_notionnelle.config import RACINE_DONNEES
+    from retraite_notionnelle.noyau import carte
+
+    def cles(valeur):
+        if isinstance(valeur, dict):
+            return set(valeur) | {c for v in valeur.values() for c in cles(v)}
+        return {c for v in valeur for c in cles(v)} if isinstance(valeur, list) else set()
+
+    fiches = carte.fiches()
+    lectures = [lecture["reference"] for lecture in
+                fiches["decret_2026_418_liberaux"]["sources"]["lectures"]]
+    par_article = {numero: [r for r in lectures if identifiant in r]
+                   for numero, identifiant in ARTICLES_DU_DECRET_2026_418.items()}
+    assert [numero for numero, trouvees in par_article.items() if not trouvees] == []
+    connus = set(fiches) | {v["id"] for f in fiches.values() for v in f.get("versions") or []}
+    for chemin in (RACINE_DONNEES / "reference" / "regimes").glob("*.yaml"):
+        connus |= cles(yaml.safe_load(chemin.read_text(encoding="utf-8")))
+    nommes = {nom for r in lectures for nom in re.findall(r"`(\w+)`", r)}
+    assert sorted(nommes - connus) == []

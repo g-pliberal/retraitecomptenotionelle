@@ -3,27 +3,39 @@ id: decret_2026_418_liberaux
 intitule: >-
   Décret n° 2026-418 du 29 mai 2026 réécrivant les régimes complémentaires et d'invalidité-décès
   des sections libérales, à confronter aux fiches.
-regimes: [asv_auxiliaires_medicaux, asv_conventionnes, carcdsf_complementaire,
+regimes: [asv_auxiliaires_medicaux, asv_chirurgiens_dentistes, asv_conventionnes,
+  asv_directeurs_laboratoire, asv_sages_femmes, carcdsf_complementaire,
   carmf_complementaire, carpimko_complementaire, carpv_complementaire,
   cavamac_complementaire, cavec_complementaire, cavom_complementaire,
   cavp_complementaire, cipav_complementaire, cprn_complementaire]
 etat: transcrite
 effet: >-
-  Lu pour les sections juridiques (articles 2 et 22), les sections de santé (articles
-  3 à 6, 16 et 25), puis, le même jour, pour la CAVEC (8), la CAVAMAC (13) et la
-  Cipav (20 et 21) : aucun paramètre des fiches ne bouge. L'article 20 écrit la
-  majoration pour trois enfants de la Cipav, que la fiche porte désormais depuis
-  2000 (ligne `sections_liberales_majoration_enfants`).
+  Un texte, non un dispositif (architecture, § 6.1 : « Une règle est un dispositif : ce
+  qu'un même ensemble d'articles accorde ou exige ») : la fiche ne porte pas de versions
+  à elle, et rapporte chacun des 31 articles au décret qu'il modifie, par le visa du
+  décret n° 2026-418, et à la fiche de sa règle, qui en coupe les versions (§ 6.6 :
+  « Chaque rédaction d'un article est rattachée à une version de fiche ») ; ses
+  `sources.lectures` du 31 mai 2026 le font article par article (action 130, E10). Les
+  articles 2 à 6, 8, 13, 16, 18 à 20, 22 et 24 à 26 touchent quinze régimes que le
+  modèle calcule ; 7, 9 à 12, 14, 15, 17, 21, 23, 27 et 28 des régimes qu'il ne calcule
+  pas (notaires de Colmar, invalidité-décès) ; 1, 29, 30 et 31 n'écrivent aucune règle
+  de calcul. Ce que le modèle ne sert pas, et ce qu'il sert à tort, `sources.a_relire`
+  le dit : à la Cipav, une erreur (E9) ; à la CARMF, deux ; à la CARCDSF, une (E10).
 sources:
-  lu_le: 2026-09-23
+  lu_le: 2026-11-06
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
-    Non portés : l'inscription d'office en classe A la première année à la CAVEC,
-    l'option pour la classe supérieure et les rachats de points ; la condition de
-    trente années d'affiliation de la majoration pour report de la Cipav, qui ne
-    porte que sur les points de ces trente années, là où le modèle les majore tous
-    ; le versement forfaitaire unique des petites pensions.
+    Non portés : l'option pour la classe supérieure, les rachats de points, les
+    cotisations volontaires, les dispenses et exonérations accordées sur demande, la
+    fraction gérée en capitalisation de la CAVP, la section B, par classes, de la CPRN
+    (`cprn_complementaire.yaml`, `manque`) ; la condition de trente années
+    d'affiliation de la majoration pour report de la Cipav, qui ne porte que sur les
+    points de ces trente années, là où le modèle les majore tous ; le versement
+    forfaitaire unique des petites pensions. Porté, contrairement à ce que cette ligne
+    disait jusqu'au 6 novembre 2026 : l'inscription d'office en classe A la première
+    année à la CAVEC (`classes_cotisation_epoques.yaml`, `classe_de_debut` de
+    `cavec_complementaire`, rang 0, une année, depuis 2019).
   - >-
     Erreur prouvée, déclarée et non corrigée (action 130, E9, 6 novembre 2026) : depuis
     le 1er juillet 2026, l'article 5-2, II, du décret n° 79-262 (décret n° 2026-418,
@@ -40,10 +52,72 @@ sources:
     1 142,8821 € de majoration ; le texte, sur les seuls points de 1981 à 2010, 0,05 ×
     184 754,1840 × 0,061 = 563,5003 € : 579,38 € par an de trop ; à 72 ans et 3 mois,
     cinq années, 0,25 × 459 993,6709 × 0,061 = 7 014,9035 € contre 0,25 × 198 030,4407
-    × 0,061 = 3 019,9642 € : 3 994,94 € par an de trop. Avant le 1er juillet 2026, la
-    règle est à l'article 3.15 des statuts, au seul Bulletin officiel, que l'arrêté du
-    20 mars 2023 (JORFARTI000047334800, 17°) suppose (« Pour la détermination des trente
-    années de cotisation ») : l'écart y est probable, non lu au texte officiel.
+    × 0,061 = 3 019,9642 € : 3 994,94 € par an de trop. LE DÉCOMPTE DES TRENTE ANNÉES,
+    QUAND LA PREMIÈRE EST PARTIELLE (action 130, E10, après R-E10) : l'activité commence
+    le 10 mars 1981 (3 771,6290 € de cotisation revalorisée cette année-là, 4 828,4559 €
+    en 1982) ; le texte range dans les trente années « les années au titre desquelles
+    l'affilié a obtenu une exonération ou une réduction de cotisation », et ne dit pas
+    si une première année incomplète en est une. Trois lectures, de trop pour un an de
+    report et pour cinq : 1981 à 2010, l'année partielle comptée, 579,38 € et
+    3 994,94 € ; 1982 à 2011, non comptée, 560,70 € et 3 894,81 € ; 1981 à 2011,
+    trente ans comptés du 10 mars 1981, 2011 pris en entier, 549,19 € et 3 833,16 €.
+    L'erreur se déclare au moins de 549,19 € par an pour un an de report, 3 833,16 €
+    pour cinq, le montant qui tient sous les trois ; la lecture qu'appliquera la
+    correction (candidat 50) est au propriétaire. AVANT LE 1ER JUILLET 2026, UN POINT NON
+    TRANCHÉ : la règle est à l'article 3.15 des statuts, au seul Bulletin officiel
+    (question 22) ; l'arrêté du 20 mars 2023 (JORFARTI000047334800, 17°, b) le complète
+    par « Pour la détermination des trente années de cotisation, les années au titre
+    desquelles l'adhérent a obtenu une exonération ou une réduction de cotisation sont
+    prises en compte. », sans en montrer l'alinéa qui dirait si ces trente années
+    bornent les points majorés ou seulement la condition. Née le 10 mars 1957, même
+    carrière, pension au 1er janvier 2026, un an de report entier : le modèle sert
+    22 677,41 €, dont 0,00305 × 354 057,8613 = 1 079,8765 € de majoration ; si les
+    statuts majoraient tous les points, rien de trop ; s'ils ne majoraient que ceux des
+    trente premières années (1979 à 2008, 168 552,9726 €), 0,00305 × 168 552,9726 =
+    514,0866 €, 565,79 € par an de trop (542,83 € de 1980 à 2009, 537,96 € de 1979 à
+    2009).
+  - >-
+    Erreur prouvée, déclarée et non corrigée (action 130, E10, 6 novembre 2026) : depuis
+    le 1er juillet 2026, l'article 4 du décret n° 49-579 (décret n° 2026-418, article 3,
+    JORFARTI000054153420) écrit « Tout médecin obligatoirement affilié à la caisse est
+    dispensé du paiement de la cotisation afférente au présent régime pendant les deux
+    premières années d'exercice de la profession libérale si cet exercice débute alors
+    qu'il n'a pas atteint l'âge de 40 ans », et l'article 4-1, II : « Les cotisations ou
+    fractions de cotisations ayant fait l'objet d'une dispense au titre des I à III de
+    l'article 4 ne donnent pas lieu à acquisition de points » ; le modèle fait cotiser
+    et acquérir ces deux années à la complémentaire de la CARMF
+    (`carmf_complementaire.yaml`, période de 2026 : 11,8 %, sans dispense). Essai du
+    6 novembre 2026, née le 1er janvier 2001, médecin libérale au double du salaire
+    moyen depuis 26 ans (1er janvier 2027), en euros de 2026, pension à 67 ans : le
+    modèle sert 990 651,9421 × 0,0448 × 1,21 = 53 701,26 €, dont (20 997,0503 +
+    21 141,5017) × 0,0448 × 1,21 = 2 284,25 € par an au titre de 2027 et 2028, de
+    trop.
+  - >-
+    Erreur prouvée, déclarée et non corrigée (action 130, E10) : le même article 4, II :
+    « Tout médecin qui continue d'exercer en qualité de non salarié est exempté du
+    versement de la cotisation à partir du premier jour du semestre civil qui suit son
+    soixante-quinzième anniversaire », dispense sans points (article 4-1, II) ; le
+    modèle fait cotiser jusqu'au départ. Née le 1er janvier 1951, médecin libérale au
+    double du salaire moyen depuis 30 ans, pension à 76 ans et 6 mois (1er juillet
+    2027) : le modèle sert 324 443,6335 × 0,0448 × 1,30 = 18 895,60 € ; le semestre de
+    2027 (5 154,8634 €) est dispensé sous toute lecture, 300,22 € par an de trop ; le
+    second semestre de 2026 l'est aussi si la cotisation de 2026 se partage au semestre,
+    comme les exonérations semestrielles du IV du même article (la moitié de
+    10 239,2845 €), 598,39 € par an de trop.
+  - >-
+    Erreur prouvée, déclarée et non corrigée (action 130, E10) : depuis le 1er juillet
+    2026, l'article 3-1 du décret n° 50-28 (décret n° 2026-418, article 5,
+    JORFARTI000054153467) écrit « Les nouveaux affiliés sont dispensés de la cotisation
+    proportionnelle au titre des deux premières années civiles de leur exercice », et
+    l'article 3-5 : « Les dispenses ou réductions partielles mentionnées aux articles
+    3-1 à 3-4 entraînent respectivement la suppression ou la réduction des droits
+    correspondants » ; le modèle fait cotiser à la complémentaire de la CARCDSF, ces
+    deux années, la part proportionnelle (`carcdsf_complementaire.yaml`, période de
+    2026 : 11,35 % de 0,65 à 5 plafonds). Née le 1er janvier 2001, chirurgienne-dentiste
+    au double du salaire moyen depuis 26 ans (1er janvier 2027), pension à 67 ans : le
+    modèle sert 876 611,8159 × 0,0595 = 52 158,40 € ; la part proportionnelle de 2027 et
+    2028, revalorisée (12 798,2854 + 12 886,3326 €, la cotisation de chaque année moins
+    celle d'un revenu de 0,65 plafond), × 0,0595 = 1 528,23 € par an de trop.
   lectures:
   - type: jorf
     reference: >-
@@ -76,8 +150,227 @@ sources:
       `docs/feuille_de_route/130/2026-11-06-e9-fiches-communes-restantes.md`) ; la
       lecture au droit de la fiche reste à faire
     date: 2026-11-06
+  - type: jorf
+    reference: >-
+      décret n° 2026-418, article 1er (JORFARTI000054153395) : « L'article D. 641-6 du
+      code de la sécurité sociale est abrogé. » ; D. 641-6 (LEGIARTI000006738107, du
+      1er janvier 2004 au 1er juillet 2026) : « L'arrêté prévu à l'article L. 641-5 est
+      pris par le ministre chargé de la sécurité sociale, après avis de la Caisse
+      nationale d'assurance vieillesse des professions libérales. » Une procédure :
+      aucune règle de calcul, aucune fiche (action 130, E10, lu le 6 novembre 2026).
+    date: 2026-05-31
+  - type: jorf
+    reference: >-
+      décret n° 2026-418, article 2 (JORFARTI000054153399) : le décret n° 49-578, « relatif
+      au régime d'assurance vieillesse complémentaire des notaires » (visa), la CPRN
+      (`cprn_complementaire.yaml`). Âges et décote : `cprn_ages_decote_enfants`, version
+      `reglement_de_2026`. Cotisation, article 2-2 : « Les cotisations sont assises sur
+      la moyenne des produits de base de l'office des exercices (N - 4 à N - 2), dans la
+      limite de trois fois la moyenne des produits de base du notariat sur la même
+      période » : le modèle sert 4,10 % d'une assiette tirée du revenu
+      (`assiette_facteur_revenu`), sans le plafond, ce que le fichier du régime décrit ;
+      article 2-3 et annexe 1, les classes de la section B, que le modèle ne porte pas
+      (même fichier, `manque` ; `cotisation_par_classes_liberales`) ; article 3-2, rachat
+      du capital des points (`rachats_et_versements`).
+    date: 2026-05-31
+  - type: jorf
+    reference: >-
+      décret n° 2026-418, article 3 (JORFARTI000054153420) : le décret n° 49-579,
+      « médecins », la CARMF (`carmf_complementaire.yaml`). Âges et minoration :
+      `carmf_asv_minoration_enfants`, version `reglement_de_2026`. Article 4, I et II,
+      dispenses des deux premières années d'exercice et passé le semestre des 75 ans,
+      sans points (article 4-1, II) : non servies, deux erreurs (`sources.a_relire`) ;
+      III à V, dispenses et exonérations sur demande ou pour incapacité, non portées ;
+      4-2 à 4-4, rachat et achat de points (`rachats_et_versements`).
+    date: 2026-05-31
+  - type: jorf
+    reference: >-
+      décret n° 2026-418, article 4 (JORFARTI000054153444) : le décret n° 49-580,
+      « pharmaciens », la CAVP (`cavp_complementaire.yaml`). Âges et minoration :
+      `cavp_minoration_deux_pentes`, version `reglement_de_2026`. Article 2 : « La
+      cotisation est appelée en classe 3 pendant les deux premières années de son
+      affiliation » et « Pour chaque classe, la cotisation comprend une fraction gérée en
+      répartition, égale à cinq fois la cotisation de référence » : le modèle ne porte
+      que la répartition, la même à toutes les classes (cotisation forfaitaire, 7 657 €
+      en 2026) ; la classe ne le change pas. Articles 2-3, 2-4 et 3-4, la fraction gérée
+      en capitalisation, non portée ; 3-1 à 3-3, dispenses et réductions sur demande.
+    date: 2026-05-31
+  - type: jorf
+    reference: >-
+      décret n° 2026-418, article 5 (JORFARTI000054153467) : le décret n° 50-28,
+      « chirurgiens-dentistes et des sages-femmes », la CARCDSF
+      (`carcdsf_complementaire.yaml`). Âges et minoration : `carcdsf_minoration_age_seul`,
+      version `reglement_de_2026`. Article 3-1, dispense de la cotisation proportionnelle
+      des deux premières années civiles, avec la suppression des droits (3-5) : non
+      servie, une erreur (`sources.a_relire`) ; 3-2 à 3-4, sur demande ; 3-7, rachat des
+      points dispensés (`rachats_et_versements`).
+    date: 2026-05-31
+  - type: jorf
+    reference: >-
+      décret n° 2026-418, article 6 (JORFARTI000054153484) : le décret n° 50-1318,
+      « vétérinaires », la CARPV (`carpv_complementaire.yaml`). Âges et minoration :
+      `carpv_minoration_age_seul`, version `reglement_de_2026`. Article 2 : « La
+      cotisation est appelée sur la base de la classe B la première année civile
+      d'activité et est due à compter du premier jour du trimestre civil suivant son
+      début d'activité libérale. La cotisation est proratisée au nombre de trimestres
+      d'activité libérale. » : `cotisation_par_classes_liberales` (LEGIARTI000054168212) ;
+      le modèle sert la première classe la première année depuis 2022
+      (`classes_cotisation_epoques.yaml`, `classe_de_debut`) ; le prorata au trimestre
+      se confronte avec cette fiche. Article 3-1, rachat (`rachats_et_versements`) ;
+      3-4, prix du point en retraite progressive (`retraite_progressive`).
+    date: 2026-05-31
+  - type: jorf
+    reference: >-
+      décret n° 2026-418, article 7 (JORFARTI000054153492) : le décret n° 51-310,
+      « relatif au régime d'assurance vieillesse complémentaire spécial aux notaires du
+      ressort de la cour d'appel de Colmar » (visa) ; « La durée d'exercice du notaire
+      relevant du présent régime a pour point de départ la date de sa prestation de
+      serment. » Un régime que le modèle ne calcule pas : aucune fiche.
+    date: 2026-05-31
+  - type: jorf
+    reference: >-
+      décret n° 2026-418, article 8 (JORFARTI000054153497) : le décret n° 53-506,
+      « experts-comptables et des commissaires aux comptes », la CAVEC
+      (`cavec_complementaire.yaml`). Âges et minoration : `cavec_minoration_age_seul`,
+      version `reglement_de_2026`. Article 2 : « Sauf option pour la classe B,
+      l'affilié est inscrit d'office en classe A pour sa première année civile
+      d'exercice. » : `cotisation_par_classes_liberales` (LEGIARTI000054168240) ; servi
+      (`classe_de_debut`, rang 0, une année, depuis 2019). Article 4, exonérations sur
+      demande ; 4-1, rachat de points (`rachats_et_versements`).
+    date: 2026-05-31
+  - type: jorf
+    reference: >-
+      décret n° 2026-418, articles des régimes d'invalidité-décès, que le modèle ne
+      calcule pas, chacun par son visa : 9 (JORFARTI000054153507), décret n° 55-1390,
+      « invalidité-décès des médecins » ; 10 (JORFARTI000054153523), n° 60-664, « des
+      pharmaciens » ; 11 (JORFARTI000054153529), n° 61-1488, « des
+      chirurgiens-dentistes » ; 12 (JORFARTI000054153554), n° 65-1139, « des
+      vétérinaires » ; 14 (JORFARTI000054153583), n° 68-884, « des infirmiers,
+      masseurs-kinésithérapeutes, pédicures et orthophonistes » ; 15
+      (JORFARTI000054153594), n° 70-803, « des sages-femmes » ; 17
+      (JORFARTI000054153623), n° 74-526, « des experts-comptables et des comptables
+      agréés » ; 21 (JORFARTI000054153680), n° 79-263, « des architectes, agréés en
+      architecture, ingénieurs, techniciens, experts et conseils » ; 23
+      (JORFARTI000054153729), n° 81-755, « des officiers ministériels, officiers publics
+      et compagnies judiciaires » ; 27 (JORFARTI000054153787), n° 2003-1273, « des
+      agents généraux d'assurance » ; 28 (JORFARTI000054153800), n° 2016-1991, « régime
+      invalidité-décès des notaires ». Aucune fiche.
+    date: 2026-05-31
+  - type: jorf
+    reference: >-
+      décret n° 2026-418, article 13 (JORFARTI000054153565) : le décret n° 67-1169,
+      « agents généraux d'assurance », la CAVAMAC (`cavamac_complementaire.yaml`). Âges
+      et minoration : `cavamac_minoration_age_seul` (article 4, LEGIARTI000054168357,
+      version `reglement_de_2026`). Article 3 ter : « Lorsqu'un adhérent cesse ses
+      fonctions, il a la faculté de verser, en plus de la cotisation normale de
+      l'exercice, une cotisation supplémentaire de fin de carrière. » ; « Cette
+      cotisation est calculée au prorata du temps écoulé entre le 1 er janvier
+      précédant la date de cessation et cette dernière date » : une faculté, non
+      portée ; articles 3 et 3 bis, exonérations pour incapacité ou invalidité.
+    date: 2026-05-31
+  - type: jorf
+    reference: >-
+      décret n° 2026-418, article 16 (JORFARTI000054153605) : le décret n° 72-968,
+      « prestations supplémentaires de vieillesse des médecins conventionnes », l'ASV
+      des médecins (`asv_conventionnes.yaml`) : `asv_medecins_points` et
+      `asv_medecins_ajustement` (article 2, LEGIARTI000054168410). Article 4 : les
+      médecins sous un revenu fixé par arrêté « peuvent demander à être dispensés de
+      l'affiliation » : sur demande, non portée.
+    date: 2026-05-31
+  - type: jorf
+    reference: >-
+      décret n° 2026-418, article 18 (JORFARTI000054153633, et sa fin, étiquetée « art.
+      8 » dans l'index, JORFARTI000054153640) : le décret n° 75-891, « auxiliaires
+      médicaux conventionnes », les PCV (`asv_auxiliaires_medicaux.yaml`) :
+      `asv_autres_professions_de_sante` (LEGIARTI000054168446, LEGIARTI000054168456).
+      Article 6, la dispense sur demande lue au revenu de « la dernière » année ; la
+      fin : « Peuvent être exonérés de la cotisation […] à compter de l'année suivant
+      celle de leur soixante-dixième anniversaire, les auxiliaires médicaux qui en font
+      la demande » : sur demande, non portée.
+    date: 2026-05-31
+  - type: jorf
+    reference: >-
+      décret n° 2026-418, article 19 (JORFARTI000054153644) : le décret n° 78-283,
+      « chirurgiens-dentistes conventionnés », les PCV (`asv_chirurgiens_dentistes.yaml`)
+      : `asv_autres_professions_de_sante` (article 2, LEGIARTI000054168483). Articles
+      5-1 et 5-2, exonérations pour incapacité ; 8, rachat des années de 1946 à 1977
+      (`rachats_et_versements`).
+    date: 2026-05-31
+  - type: jorf
+    reference: >-
+      décret n° 2026-418, article 20 (JORFARTI000054153655) : le décret n° 79-262, la
+      Cipav (`cipav_complementaire.yaml`) : `cipav_seconde_tranche` (article 2),
+      `sections_liberales_majoration_enfants` (article 5-2, I) ; article 5-2, II, la
+      majoration pour report, `surcote_par_age_seul` : une erreur (`sources.a_relire`) ;
+      article 5-3, la date d'effet au premier jour du mois : conforme ; article 5-1, 2°,
+      la minoration, à confronter (candidat).
+    date: 2026-05-31
+  - type: jorf
+    reference: >-
+      décret n° 2026-418, article 22 (JORFARTI000054153714) : le décret n° 79-265,
+      « officiers ministériels, officiers publics et des compagnies judiciaires », la
+      CAVOM (`cavom_complementaire.yaml`) : `cavom_assiette_2016`, version
+      `decret_2026_418` (article 2, LEGIARTI000054168585 : « Le montant minimum prévu au
+      premier alinéa s'applique pour le calcul de la cotisation des deux premières
+      années d'activité. », servi) ; `cavom_ages_minoration` (article 5,
+      LEGIARTI000054168600). Article 4-2 : des points « arrêté[s] à la deuxième décimale
+      par excès », que le modèle n'arrondit pas (moins d'un centième de point par an) ;
+      3-1, une cotisation facultative de 20 % pour le conjoint, non portée.
+    date: 2026-05-31
+  - type: jorf
+    reference: >-
+      décret n° 2026-418, article 24 (JORFARTI000054153737) : le décret n° 81-1046,
+      « directeurs de laboratoires privés d'analyses médicales, non médecins,
+      conventionnés », les PCV (`asv_directeurs_laboratoire.yaml`) :
+      `asv_autres_professions_de_sante` (article 2, LEGIARTI000054168633). Article 5
+      quinquies : « Si l'affilié n'a pas acquis une année de cotisation, condition
+      requise pour l'ouverture du droit » : les carrières simulées en ont davantage.
+    date: 2026-05-31
+  - type: jorf
+    reference: >-
+      décret n° 2026-418, article 25 (JORFARTI000054153756) : le décret n° 84-143,
+      « relatif au régime d'assurance vieillesse complémentaire des infirmiers,
+      masseurs-kinésithérapeutes, pédicures, orthophonistes et orthoptistes » (visa), la
+      CARPIMKO (`carpimko_complementaire.yaml`) : `carpimko_assiette_2026` (article 2,
+      LEGIARTI000054168663) et `carpimko_ages_2015` (article 5, LEGIARTI000054168670).
+      Article 2-2 : « Sont exonérés du paiement de la cotisation du présent régime, les
+      affiliés visés au premier alinéa de l'article L. 642-3 du code de la sécurité
+      sociale » ; 3-1, rachat de la différence entre l'abattement de la complémentaire
+      et celui de la base (`rachats_et_versements`).
+    date: 2026-05-31
+  - type: jorf
+    reference: >-
+      décret n° 2026-418, article 26 (JORFARTI000054153775) : le décret n° 84-254,
+      « sages-femmes conventionnées », les PCV (`asv_sages_femmes.yaml`) :
+      `asv_autres_professions_de_sante` (article 2, LEGIARTI000054168684). Articles 5-1
+      et 5-2, exonérations pour incapacité ; 5-3, remboursement des cotisations sous un
+      an d'exercice.
+    date: 2026-05-31
+  - type: jorf
+    reference: >-
+      décret n° 2026-418, articles 29 (JORFARTI000054153809) : « Les règlements des
+      régimes mentionnés aux articles L. 644-1 et L. 644-2 du code de la sécurité
+      sociale […] fixent au plus tard le 31 décembre 2026 les critères de soutenabilité
+      financière de ces régimes. » ; 30 (JORFARTI000054153813) : « Le présent décret
+      entre en vigueur le 1 er juillet 2026. », la borne des versions
+      `reglement_de_2026` et `decret_2026_418` des fiches ci-dessus ; 31
+      (JORFARTI000054153814), l'exécution. Aucune règle de calcul.
+    date: 2026-05-31
+textes_sans_effet:
+- id: LEGIARTI000006738107
+  article: code de la sécurité sociale, D. 641-6, abrogé par l'article 1er du décret
+  en_vigueur: 2004-01-01
+  citation: >-
+    L'arrêté prévu à l'article L. 641-5 est pris par le ministre chargé de la sécurité
+    sociale, après avis de la Caisse nationale d'assurance vieillesse des professions
+    libérales.
+  lu_le: 2026-11-06
+  motif: >-
+    une procédure, la prise de l'arrêté de L. 641-5 : aucune règle de calcul, ni avant
+    son abrogation au 1er juillet 2026, ni après
 textes_a_rattacher:
-- reference: décret n° 2026-418 du 29 mai 2026 (JORF du 31 mai 2026)
+- id: JORFTEXT000054153355
+  reference: décret n° 2026-418 du 29 mai 2026 (JORF du 31 mai 2026)
 code:
   moteur: >-
     Le décret ne change aucun paramètre que le dépôt porte : les périodes des régimes
@@ -85,15 +378,18 @@ code:
     `acquerir` sert en points et `liquider_chaque_regime` liquide comme avant. Ce qu'il
     écrit à neuf et que le modèle porte, la majoration de 10 % pour trois enfants de la
     Cipav (article 20), est la fiche `sections_liberales_majoration_enfants` ; ce qu'il
-    écrit et que le modèle ne porte pas, `sources.a_relire` le dit.
+    écrit et que le modèle ne porte pas, ou porte à tort — les dispenses de la CARMF et
+    de la CARCDSF, que `acquerir` ignore, la majoration pour report de la Cipav, que
+    `liquider_chaque_regime` étend à tous les points —, `sources.a_relire` le dit.
   python: >-
     droit/acquerir.py : acquerir ; droit/liquider.py : liquider_chaque_regime
   javascript: >-
     moteur/js/droit/acquerir.js : acquerir ; moteur/js/droit/liquider.js :
     liquiderChaqueRegime
   parametres: >-
-    regimes/asv_auxiliaires_medicaux.yaml, regimes/asv_conventionnes.yaml,
-    regimes/carcdsf_complementaire.yaml, regimes/carmf_complementaire.yaml,
+    regimes/asv_auxiliaires_medicaux.yaml, regimes/asv_chirurgiens_dentistes.yaml,
+    regimes/asv_conventionnes.yaml, regimes/asv_directeurs_laboratoire.yaml,
+    regimes/asv_sages_femmes.yaml, regimes/carcdsf_complementaire.yaml, regimes/carmf_complementaire.yaml,
     regimes/carpimko_complementaire.yaml, regimes/carpv_complementaire.yaml,
     regimes/cavamac_complementaire.yaml, regimes/cavec_complementaire.yaml,
     regimes/cavom_complementaire.yaml, regimes/cavp_complementaire.yaml,
@@ -102,7 +398,8 @@ code:
   tests:
   - >-
     tests/test_sections_liberales.py, qui tient ce que la lecture du décret dans les
-    articles des trois sections a corrigé
+    articles des trois sections a corrigé, et que chacun des 31 articles est rapporté à
+    la fiche de sa règle
   - >-
     tests/test_sections_juridiques.py, tests/test_sections_sante.py et
     tests/test_pcv_sante.py, qui tiennent les paramètres des autres sections, que le

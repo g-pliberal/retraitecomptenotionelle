@@ -1,0 +1,35 @@
+date: "2026-11-06"
+session: "action 130, file E10 : les quatre écarts de R-E10 repris ; la fiche du décret n° 2026-418 lue au droit"
+consulte: >-
+  Les index JORF (à jour du 3 novembre 2026, incrément 20261103-002311) et LEGI (à jour du
+  2 novembre 2026, 20261102-213929) récupérés. Au JORF : le décret n° 2026-418
+  (JORFTEXT000054153355), ses visas et ses 32 documents d'articles, chacun rapporté au
+  décret qu'il modifie ; en entier ou par fenêtres, les articles 2 (CPRN, 2-2 et 2-3), 3
+  (CARMF, articles 4 à 4-2), 4 (CAVP, article 2), 5 (CARCDSF, 3-1 à 3-7), 6 (CARPV), 8
+  (CAVEC), 13 (CAVAMAC, 3 ter), 16, 18, 19, 24, 25, 26, 29 ; l'article 20 (Cipav, 5-1 à
+  5-3) relu ; l'arrêté du 20 mars 2023 de la Cipav (JORFARTI000047334800, 17°). À LEGI :
+  les rédactions entrées en vigueur le 1er juillet 2026 des vingt-sept décrets et du
+  décret n° 2026-418 ; D. 641-6 du code de la sécurité sociale (LEGIARTI000006738107).
+trouve: >-
+  Les quatre écarts faibles de R-E10 repris : (a) les trois décomptes des trente années
+  de la Cipav refaits au centime, l'erreur déclarée au moins de 549,19 € par an pour un
+  an de report (3 833,16 € pour cinq), le choix de la lecture laissé au propriétaire ; (b)
+  la règle d'avant le 1er juillet 2026, un point non tranché (rien de trop, ou 565,79 €
+  par an au cas posé), renvoyé à la question 22 ; (c) les seize décrets rapportés à leur
+  régime par les visas, l'article 25 à la complémentaire de la CARPIMKO ; (d) l'article
+  13 cité par `cavamac_minoration_age_seul`, sa cotisation de fin de carrière une
+  faculté. La fiche `decret_2026_418_liberaux` retient la forme du renvoi (un texte,
+  non un dispositif) et reste hors de `LUES_AU_DROIT`. Trois erreurs neuves, prouvées,
+  déclarées, non corrigées : la CARMF ne dispense pas les deux premières années
+  d'exercice (2 284,25 € par an au cas posé) ni le semestre des 75 ans (au moins
+  300,22 €) ; la CARCDSF ne dispense pas la part proportionnelle des deux premières
+  années civiles (1 528,23 €). La classe A de la première année de la CAVEC, que la fiche
+  disait non portée, l'est. D. 641-6, une procédure, déclarée sans effet ; le cliquet
+  des textes abaissé à 9 306.
+reste: >-
+  Au propriétaire : la lecture des trente années avec la correction du candidat 50 ; la
+  question 22 (l'article 3.15 des statuts de la Cipav ; les dispenses de la CARMF et de la
+  CARCDSF d'avant le 1er juillet 2026, que E10 n'a pas cherchées) ; la forme d'une fiche
+  de texte dans le contrat C.2. Candidats : les trois erreurs neuves ; la minoration de la
+  Cipav (article 5-1, 2°) ; le prorata au trimestre de la première année de la CARPV. La
+  file E : `surcote_par_age_seul`, puis `cotisation_par_classes_liberales`.
