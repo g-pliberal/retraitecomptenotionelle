@@ -76,16 +76,14 @@ versions:
     2007, ce que le modèle sert : le décret n° 79-262 renvoie aux statuts, et ceux de
     1979, modifiés par les arrêtés du 7 février 1980 (art. 6, 8 et 10), du 5 mai 1981
     (art. 8, 11 et 17), du 4 mai 1982 (article non dit), du 17 juin 1985 (art. 4, 9,
-    12, 13, 17, 17-bis et 21), du 22 août 1986 (art. 11), du 29 juillet 2003 (art. 9,
-    11, 13, 15, 17 et 17 bis) et du 28 décembre 2004 (art. 7), ne sont qu'au Bulletin
+    12, 13, 17, 17-bis et 21), du 22 août 1986 (art. 11), du 9 mars 1987 (art. 8, 13, 17 et 17-bis), du 13 août 1987 (article non dit), du 12 mai 2000 (art. 1er, 4, 4 bis, 11, 12 et 18), du 27 février 2003 (art. 6), du 29 juillet 2003 (art. 9, 11, 13, 15, 17 et 17 bis) et du 28 décembre 2004 (art. 7), ne sont qu'au Bulletin
     officiel ; la CARMF et l'ASV ne majorent pas avant 2017 (leurs articles 15 et 12
     n'écrivent la majoration qu'« A compter du 1er janvier 2017 »), la CARPIMKO avant
-    le 3 octobre 2015 (l'article 12 ter n'est inséré qu'alors) ; la CAVEC, la CAVP et
-    la CPRN ne sont pas encore écrites en versions (à leur lecture)
+    le 3 octobre 2015 (l'article 12 ter n'est inséré qu'alors) ; la CAVEC ne majore pas avant le 2 mars 2008 (supposée : ses statuts d'avant, au seul Bulletin officiel, ne sont pas lus ; l'arrêté du 22 février 2008 « rédige » un article 3.14 qui existait donc), ni la CAVP avant le 30 juin 2011 (ses statuts d'avant 2009, au Bulletin officiel ; ceux de 2009, lus, n'en écrivent aucune), ni la CPRN avant le 1er janvier 2014 (ses statuts de 2004, au seul Bulletin officiel ; l'arrêté du 16 décembre 2013 « rédige » l'article 16)
   fiabilite: >-
     faible pour la Cipav : aucun texte lu ne dit ni la majoration, ni son absence
     (question 22) ; moyenne pour la CARMF, l'ASV et la CARPIMKO : le texte qui institue
-    leur majoration est lu, ce qui le précède ne l'est pas
+    leur majoration est lu, ce qui le précède ne l'est pas ; faible pour la CAVEC, la CAVP et la CPRN, dont les statuts d'alors ne sont pas lus
   textes:
   - id: LEGIARTI000006767479
     article: décret n° 79-262 du 21 mars 1979, article 5, du 1er janvier 1979 au 1er janvier 2004
@@ -105,11 +103,12 @@ versions:
     liquidation.date_effet: [null, 2007-01-01]
   contenu:
     parametres:
-      surcote_par_trimestre: {cipav_complementaire: 0.0, carmf_complementaire: 0.0,
-        asv_conventionnes: 0.0, carpimko_complementaire: 0.0}
+      surcote_par_trimestre: {cipav_complementaire: 0.0, carmf_complementaire: 0.0, asv_conventionnes: 0.0,
+        carpimko_complementaire: 0.0, cavec_complementaire: 0.0, cavp_complementaire: 0.0,
+        cprn_complementaire: 0.0}
     droit: >-
       aucune majoration pour report à la Cipav, à la CARMF, à l'ASV ni à la CARPIMKO
-      (supposée) ; la CAVEC, la CAVP et la CPRN, à écrire
+      (supposée) ; à la CAVEC, rien (supposée) ; à la CAVP, rien ; à la CPRN, rien (supposée)
   exemples: aucun trouvé
 - id: cipav_2007
   statut: supposee
@@ -120,10 +119,7 @@ versions:
     statuts de 1979, et approuve des « dispositions transitoires », au seul Bulletin
     officiel : ils peuvent régler le report de 2007 ; le modèle, qui ne majore rien, suit
     une lecture B où ils ne majorent pas. L'article 17 en vigueur en 2007 est celui de
-    1979 modifié par les arrêtés du 5 mai 1981 (« art. 8, 11 et 17 »), du 17 juin 1985
-    (« art. 4, 9, 12, 13, 17, 17-bis et 21 ») et du 29 juillet 2003 (« art. 9, 11, 13,
-    15, 17 et 17 bis »), et peut-être du 4 mai 1982 (« une modification », article non
-    dit), tous publiés en entier au seul Bulletin officiel. Sous la lecture A, si les
+    1979 modifié par les arrêtés du 5 mai 1981 (« art. 8, 11 et 17 »), du 17 juin 1985 (« art. 4, 9, 12, 13, 17, 17-bis et 21 »), du 9 mars 1987 (« art. 8, 13, 17 et 17-bis ») et du 29 juillet 2003 (« art. 9, 11, 13, 15, 17 et 17 bis »), et peut-être du 4 mai 1982 (« une modification ») et du 13 août 1987 (son titre seul), qui ne disent pas l'article, tous publiés en entier au seul Bulletin officiel. Sous la lecture A, si les
     « trente années d'affiliation » se comptent depuis la première année du régime,
     1979, une pension de 2007 n'en a que vingt-huit (1979 à 2006) : rien n'est dû, 0 €,
     comme le modèle sert ; les CARMF, ASV et CARPIMKO, rien (version précédente)
@@ -148,13 +144,12 @@ versions:
     liquidation.date_effet: [2007-01-01, 2008-01-01]
   contenu:
     parametres:
-      surcote_par_trimestre: {carmf_complementaire: 0.0, asv_conventionnes: 0.0,
-        carpimko_complementaire: 0.0}
+      surcote_par_trimestre: {carmf_complementaire: 0.0, asv_conventionnes: 0.0, carpimko_complementaire: 0.0,
+        cavec_complementaire: 0.0, cavp_complementaire: 0.0, cprn_complementaire: 0.0}
     droit: >-
       non tranché à la Cipav : la majoration de 2008 à 2021 (lecture A), ou ce que les
       articles 16 et 17, alinéa 2, de 1979 et les dispositions transitoires disent
-      (lecture B, non lue) ; rien à la CARMF, à l'ASV ni à la CARPIMKO ; la CAVEC, la
-      CAVP et la CPRN, à écrire
+      (lecture B, non lue) ; rien à la CARMF, à l'ASV ni à la CARPIMKO ; à la CAVEC, rien (supposée) ; à la CAVP, rien ; à la CPRN, rien (supposée)
   exemples: aucun trouvé
 - id: cipav_de_2008
   statut: supposee
@@ -169,9 +164,7 @@ versions:
     s'applique uniquement aux points acquis au titre des trente premières années de
     cotisation à la C•I•P•A•V », avec les mots « , telles qu'elles sont définies à
     l'article 3.6 », à une place que l'arrêté de 2023 ne montre pas ; dès le 1er janvier
-    2008, où tombent les deux articles de 1979 que l'arrêté de 2006 gardait (l'article
-    17 dans la rédaction des arrêtés du 5 mai 1981, du 17 juin 1985 et du 29 juillet
-    2003, version précédente). Si les trente années d'affiliation se comptent depuis
+    2008, où tombent les deux articles de 1979 que l'arrêté de 2006 gardait (l'article 17 dans la rédaction des arrêtés du 5 mai 1981, du 17 juin 1985, du 9 mars 1987 et du 29 juillet 2003, et peut-être du 4 mai 1982 et du 13 août 1987, version précédente). Si les trente années d'affiliation se comptent depuis
     1979, une pension de 2008 n'en a que vingt-neuf (1979 à 2007) : rien n'est dû, et
     le modèle sert juste ; elles sont atteintes au 1er janvier 2009. Rien à la CARMF,
     à l'ASV ni à la CARPIMKO
@@ -210,11 +203,12 @@ versions:
       prorogation. » ; « Cette majoration s'applique uniquement aux points acquis au titre
       des trente premières années de cotisation à la C•I•P•A•V. »
   bornes:
-    liquidation.date_effet: [2008-01-01, 2015-10-03]
+    liquidation.date_effet: [2008-01-01, 2008-03-02]
   contenu:
     parametres:
-      surcote_par_trimestre: {cipav_complementaire: 0.0125, carmf_complementaire: 0.0,
-        asv_conventionnes: 0.0, carpimko_complementaire: 0.0}
+      surcote_par_trimestre: {cipav_complementaire: 0.0125, carmf_complementaire: 0.0, asv_conventionnes: 0.0,
+        carpimko_complementaire: 0.0, cavec_complementaire: 0.0, cavp_complementaire: 0.0,
+        cprn_complementaire: 0.0}
       surcote_pas_trimestres: {cipav_complementaire: 4}
       surcote_trimestres_maximum: {cipav_complementaire: 20}
       surcote_age_debut: {cipav_complementaire: 65}
@@ -226,7 +220,260 @@ versions:
     droit: >-
       à la Cipav, 5 % par année entière de report au-delà de 65 ans, d'un à cinq ans,
       avec trente années d'affiliation, sur les points des trente premières années ;
-      rien à la CARMF, à l'ASV ni à la CARPIMKO ; la CAVEC, la CAVP et la CPRN, à écrire
+      rien à la CARMF, à l'ASV ni à la CARPIMKO ; à la CAVEC, rien (supposée) ; à la CAVP, rien ; à la CPRN, rien (supposée)
+  exemples: aucun trouvé
+- id: cavec_statuts_de_2008
+  statut: supposee
+  hypothese: >-
+    la CAVEC est lue : l'arrêté du 22 février 2008, publié le 1er mars 2008, ne fixe
+    aucune date (articles 1er et 2, ni son annexe) et vaut le lendemain, le 2 mars 2008 ;
+    il « rédige » l'article 3.14 de ses statuts ; à la CAVP, rien : supposée jusqu'au 6
+    juin 2009, puis les statuts approuvés par l'arrêté du 11 mai 2009
+    (JORFARTI000020694605, Journal officiel du 6 juin 2009), lus, n'écrivent aucune
+    majoration au régime complémentaire, la retraite entière y étant acquise « à l'âge de
+    65 ans » (article 12) ; à la CPRN, rien (version `avant_2007`) ; la Cipav, comme
+    `cipav_de_2008` ; rien à la CARMF, à l'ASV ni à la CARPIMKO
+  fiabilite: >-
+    haute pour la CAVEC, au texte ; comme `cipav_de_2008` pour la Cipav ; faible pour la
+    CPRN, et pour la CAVP jusqu'au 6 juin 2009, dont les statuts d'alors ne sont pas lus
+  nee_de: JORFARTI000018197778
+  textes:
+  - id: JORFARTI000018197778
+    article: arrêté du 22 février 2008, annexe, article 3.14 des statuts de la CAVEC
+    publie_le: 2008-03-01
+    en_vigueur: 2008-03-02
+    citation: >-
+      « Article 3.14 Liquidation différée de la pension de retraite complémentaire
+      L'article 3.14 est ainsi rédigé : « Le compte de points de l'assuré qui diffère la
+      liquidation de la retraite au-delà du 65e anniversaire est majoré de 1,25 % par
+      trimestre plein de prorogation dans la limite de 25 %. La majoration s'applique au
+      compte de points arrêté au 31 décembre de l'année du 65e anniversaire. Les points
+      provenant des cotisations versées pendant cette période de prorogation ne
+      bénéficient pas de cette majoration. »
+  - id: JORFARTI000018197775
+    article: >-
+      arrêté du 22 février 2008, article 1er (ni lui ni l'article 2 ne fixent de date)
+    publie_le: 2008-03-01
+    citation: >-
+      « Sont approuvés, telles qu'elles sont annexées au présent arrêté, les modifications
+      apportées aux statuts du régime d'assurance vieillesse des experts-comptables et des
+      commissaires aux comptes »
+  bornes:
+    liquidation.date_effet: [2008-03-02, 2011-06-30]
+  contenu:
+    parametres:
+      surcote_par_trimestre: {cipav_complementaire: 0.0125, carmf_complementaire: 0.0, asv_conventionnes: 0.0,
+        carpimko_complementaire: 0.0, cavec_complementaire: 0.0125, cavp_complementaire:
+        0.0, cprn_complementaire: 0.0}
+      surcote_pas_trimestres: {cipav_complementaire: 4}
+      surcote_trimestres_maximum: {cipav_complementaire: 20, cavec_complementaire: 20}
+      surcote_age_debut: {cipav_complementaire: 65, cavec_complementaire: 65}
+      surcote_affiliation_minimale_trimestres: {cipav_complementaire: 120}
+      points_majores:
+        cipav_complementaire: >-
+          ceux des trente premières années de cotisation à la Cipav, comptées selon
+          l'article 3.6 (non lu)
+        cavec_complementaire: >-
+          ceux du compte arrêté au 31 décembre de l'année du 65e anniversaire ; non ceux
+          des cotisations versées pendant la prorogation
+    droit: >-
+      la Cipav, comme `cipav_de_2008` ; rien à la CARMF, à l'ASV ni à la CARPIMKO ; à la CAVEC, 1,25 % par trimestre plein de prorogation au-delà de 65 ans, 25 % au plus, sur les points arrêtés au 31 décembre de l'année du 65e anniversaire ; à la CAVP, rien ; à la CPRN, rien (supposée)
+  exemples: aucun trouvé
+- id: cavp_statuts_de_2011
+  statut: supposee
+  hypothese: >-
+    la CAVP est lue : l'arrêté du 23 juin 2011, publié le 29 juin 2011, ne fixe aucune
+    date (articles 1er à 6, ni son annexe) et vaut le 30 juin 2011 ; l'article 12 des
+    statuts du complémentaire majore la pension liquidée au-delà de l'âge du taux plein,
+    dans les bornes de la génération, que le tableau annexé à l'article 15 écrit aussi ;
+    le modèle ne la sert qu'au 1er janvier 2012, sans effet dans la lecture du tableau
+    (`cavp_minoration_deux_pentes`) ; la CAVEC, comme `cavec_statuts_de_2008` ; la Cipav,
+    comme `cipav_de_2008` ; rien à la CARMF, à l'ASV, à la CARPIMKO ni à la CPRN
+  fiabilite: >-
+    haute pour la CAVP et la CAVEC, au texte ; comme `cipav_de_2008` pour la Cipav ;
+    faible pour la CPRN
+  nee_de: JORFARTI000024270214
+  textes:
+  - id: JORFARTI000024270214
+    article: >-
+      arrêté du 23 juin 2011, annexe, statuts du complémentaire de la CAVP, article 12 et
+      tableau annexé à l'article 15
+    publie_le: 2011-06-29
+    en_vigueur: 2011-06-30
+    citation: >-
+      « La pension de retraite est majorée lorsqu'elle est liquidée au-delà de l'âge
+      permettant d'obtenir une retraite à taux plein et jusqu'à cet âge augmenté de 3 ans
+      pour les affiliés nés à compter du 1er janvier 1956. Cette majoration est égale à
+      0,5 % par trimestre. De façon transitoire : ― les affiliés nés jusqu'au 31 décembre
+      1952 peuvent bénéficier d'une majoration de leur pension de retraite dans les mêmes
+      conditions, mais uniquement jusqu'à l'âge permettant d'obtenir une retraite entière
+      augmenté d'un an ; ― les affiliés nés en 1953, 1954 et 1955 peuvent bénéficier d'une
+      majoration de leur pension de retraite dans les mêmes conditions, mais uniquement
+      jusqu'à l'âge permettant d'obtenir une retraite entière augmenté de deux ans. » ;
+      tableau : « Pas de majoration de pension pour un départ après 65 ans. 2. Pour les
+      assurés nés entre le 1er juillet 1951 et le 31 décembre 1952 inclus » ; « 66 2,00 %
+      Pas de majoration de pension pour un départ après 66 ans » ; « 68 4,00 % Pas de
+      majoration de pension pour un départ après 68 ans »
+  - id: JORFARTI000024270209
+    article: arrêté du 23 juin 2011, article 3 (aucun de ses six articles ne fixe de date)
+    publie_le: 2011-06-29
+    citation: >-
+      « Sont approuvées, telles qu'elles sont annexées au présent arrêté, les
+      modifications apportées aux statuts du régime d'assurance vieillesse complémentaire
+      des pharmaciens. »
+  bornes:
+    liquidation.date_effet: [2011-06-30, 2012-02-24]
+  contenu:
+    parametres:
+      surcote_par_trimestre: {cipav_complementaire: 0.0125, carmf_complementaire: 0.0, asv_conventionnes: 0.0,
+        carpimko_complementaire: 0.0, cavec_complementaire: 0.0125, cavp_complementaire:
+        0.005, cprn_complementaire: 0.0}
+      surcote_pas_trimestres: {cipav_complementaire: 4}
+      surcote_trimestres_maximum: {cipav_complementaire: 20, cavec_complementaire: 20, cavp_complementaire: 12}
+      surcote_age_debut:
+        cipav_complementaire: 65
+        cavec_complementaire: 65
+        cavp_complementaire: >-
+          l'âge de la retraite entière : 65 ans jusqu'à la génération 1952, 66 ans de 1953
+          à 1955, l'âge du 1° de L. 351-8 depuis 1956 (article 12)
+      surcote_affiliation_minimale_trimestres: {cipav_complementaire: 120}
+      points_majores:
+        cipav_complementaire: >-
+          ceux des trente premières années de cotisation à la Cipav, comptées selon
+          l'article 3.6 (non lu)
+        cavec_complementaire: >-
+          ceux du compte arrêté au 31 décembre de l'année du 65e anniversaire ; non ceux
+          des cotisations versées pendant la prorogation
+      surcote_age_maximum:
+        cavp_complementaire: >-
+          cet âge augmenté de trois ans depuis la génération 1956, 68 ans de 1953 à 1955,
+          66 ans du 1er juillet 1951 à 1952 ; nés jusqu'au 30 juin 1951, aucune selon le
+          tableau annexé à l'article 15, 66 ans selon l'article 12 (non tranché,
+          `cavp_minoration_deux_pentes`)
+    droit: >-
+      la Cipav, comme `cipav_de_2008` ; rien à la CARMF, à l'ASV ni à la CARPIMKO ; à la CAVEC, 1,25 % par trimestre plein de prorogation au-delà de 65 ans, 25 % au plus, sur les points arrêtés au 31 décembre de l'année du 65e anniversaire ; à la CAVP, 0,5 % par trimestre au-delà de l'âge de la retraite entière, dans les bornes de la génération ; à la CPRN, rien (supposée)
+  exemples: aucun trouvé
+- id: cavec_fevrier_2012
+  statut: supposee
+  hypothese: >-
+    l'arrêté du 9 février 2012, publié le 23 février 2012, sans date (articles 1er et 2),
+    vaut le 24 février 2012 : il récrit l'article 3.14 de la CAVEC, dont les points
+    majorés sont désormais ceux arrêtés à la fin du trimestre du 65e anniversaire ; la
+    CAVP, comme `cavp_statuts_de_2011` ; la Cipav, comme `cipav_de_2008` ; rien à la
+    CARMF, à l'ASV, à la CARPIMKO ni à la CPRN
+  fiabilite: >-
+    haute pour la CAVEC et la CAVP, au texte ; comme `cipav_de_2008` pour la Cipav ;
+    faible pour la CPRN
+  nee_de: JORFARTI000025395367
+  textes:
+  - id: JORFARTI000025395367
+    article: arrêté du 9 février 2012, annexe, article 3.14 des statuts de la CAVEC
+    publie_le: 2012-02-23
+    en_vigueur: 2012-02-24
+    citation: >-
+      « L'article 3.14 est ainsi modifié : ― à l'alinéa 1er : ― les mots : « le compte de
+      points de l' » sont remplacés par le mot : « L' » ; ― les mots : « est majoré » sont
+      remplacés par les mots : « obtient une majoration » ; ― après le mot : « prorogation
+      » sont insérés les mots : « au-delà de cet âge » ; ― à l'alinéa 2 : ― le mot : « au
+      » est remplacé par les mots : « sur le » ; ― les mots : « au 31 décembre de l'année
+      » sont remplacés par les mots : « à la fin du trimestre ». ― à l'alinéa 3 : ― les
+      mots : « pendant cette période de prorogation » sont remplacés par les mots : «
+      au-delà de la fin du trimestre du 65e anniversaire ». »
+  bornes:
+    liquidation.date_effet: [2012-02-24, 2014-01-01]
+  contenu:
+    parametres:
+      surcote_par_trimestre: {cipav_complementaire: 0.0125, carmf_complementaire: 0.0, asv_conventionnes: 0.0,
+        carpimko_complementaire: 0.0, cavec_complementaire: 0.0125, cavp_complementaire:
+        0.005, cprn_complementaire: 0.0}
+      surcote_pas_trimestres: {cipav_complementaire: 4}
+      surcote_trimestres_maximum: {cipav_complementaire: 20, cavec_complementaire: 20, cavp_complementaire: 12}
+      surcote_age_debut:
+        cipav_complementaire: 65
+        cavec_complementaire: 65
+        cavp_complementaire: >-
+          l'âge de la retraite entière : 65 ans jusqu'à la génération 1952, 66 ans de 1953
+          à 1955, l'âge du 1° de L. 351-8 depuis 1956 (article 12)
+      surcote_affiliation_minimale_trimestres: {cipav_complementaire: 120}
+      points_majores:
+        cipav_complementaire: >-
+          ceux des trente premières années de cotisation à la Cipav, comptées selon
+          l'article 3.6 (non lu)
+        cavec_complementaire: >-
+          ceux du compte arrêté à la fin du trimestre du 65e anniversaire ; non ceux des
+          cotisations versées au-delà
+      surcote_age_maximum:
+        cavp_complementaire: >-
+          cet âge augmenté de trois ans depuis la génération 1956, 68 ans de 1953 à 1955,
+          66 ans du 1er juillet 1951 à 1952 ; nés jusqu'au 30 juin 1951, aucune selon le
+          tableau annexé à l'article 15, 66 ans selon l'article 12 (non tranché,
+          `cavp_minoration_deux_pentes`)
+    droit: >-
+      la Cipav, comme `cipav_de_2008` ; rien à la CARMF, à l'ASV ni à la CARPIMKO ; à la CAVEC, 1,25 % par trimestre plein au-delà de 65 ans, 25 % au plus, sur les points arrêtés à la fin du trimestre du 65e anniversaire ; à la CAVP, 0,5 % par trimestre au-delà de l'âge de la retraite entière, dans les bornes de la génération ; à la CPRN, rien (supposée)
+  exemples: aucun trouvé
+- id: cprn_2014
+  statut: supposee
+  hypothese: >-
+    la CPRN est lue : l'arrêté du 16 décembre 2013 « prend effet au 1er janvier 2014 »
+    (article 2) et « rédige » l'article 16 de ses statuts, qui existait donc ; la CAVEC,
+    comme `cavec_fevrier_2012` ; la CAVP, comme `cavp_statuts_de_2011` ; la Cipav, comme
+    `cipav_de_2008` ; rien à la CARMF, à l'ASV ni à la CARPIMKO
+  fiabilite: >-
+    haute pour la CPRN, la CAVEC et la CAVP, au texte ; comme `cipav_de_2008` pour la
+    Cipav
+  nee_de: JORFARTI000028387445
+  textes:
+  - id: JORFARTI000028387445
+    article: >-
+      arrêté du 16 décembre 2013, annexe, article 16 des statuts du complémentaire de la
+      CPRN
+    publie_le: 2013-12-27
+    en_vigueur: 2014-01-01
+    citation: >-
+      « L'article 16 est ainsi rédigé : « Si la demande de retraite intervient après l'âge
+      du taux plein, un coefficient de majoration est appliqué à la pension des notaires
+      ayant continué à exercer et à cotiser dans les conditions de l'article 15. « Le
+      coefficient de majoration est fixé à 0,5 % par trimestre au-delà de l'âge du taux
+      plein, jusqu'à l'âge de 70 ans. »
+  - id: JORFARTI000028387441
+    article: arrêté du 16 décembre 2013, article 2
+    publie_le: 2013-12-27
+    citation: >-
+      « Le présent arrêté prend effet au 1er janvier 2014. »
+  bornes:
+    liquidation.date_effet: [2014-01-01, 2015-10-03]
+  contenu:
+    parametres:
+      surcote_par_trimestre: {cipav_complementaire: 0.0125, carmf_complementaire: 0.0, asv_conventionnes: 0.0,
+        carpimko_complementaire: 0.0, cavec_complementaire: 0.0125, cavp_complementaire:
+        0.005, cprn_complementaire: 0.005}
+      surcote_pas_trimestres: {cipav_complementaire: 4}
+      surcote_trimestres_maximum: {cipav_complementaire: 20, cavec_complementaire: 20, cavp_complementaire: 12}
+      surcote_age_debut:
+        cipav_complementaire: 65
+        cavec_complementaire: 65
+        cavp_complementaire: >-
+          l'âge de la retraite entière : 65 ans jusqu'à la génération 1952, 66 ans de 1953
+          à 1955, l'âge du 1° de L. 351-8 depuis 1956 (article 12)
+        cprn_complementaire: l'âge du taux plein
+      surcote_affiliation_minimale_trimestres: {cipav_complementaire: 120}
+      points_majores:
+        cipav_complementaire: >-
+          ceux des trente premières années de cotisation à la Cipav, comptées selon
+          l'article 3.6 (non lu)
+        cavec_complementaire: >-
+          ceux du compte arrêté à la fin du trimestre du 65e anniversaire ; non ceux des
+          cotisations versées au-delà
+      surcote_age_maximum:
+        cavp_complementaire: >-
+          cet âge augmenté de trois ans depuis la génération 1956, 68 ans de 1953 à 1955,
+          66 ans du 1er juillet 1951 à 1952 ; nés jusqu'au 30 juin 1951, aucune selon le
+          tableau annexé à l'article 15, 66 ans selon l'article 12 (non tranché,
+          `cavp_minoration_deux_pentes`)
+        cprn_complementaire: 70
+      surcote_trimestres_cotises: {cprn_complementaire: true}
+    droit: >-
+      la Cipav, comme `cipav_de_2008` ; rien à la CARMF, à l'ASV ni à la CARPIMKO ; à la CAVEC, 1,25 % par trimestre plein au-delà de 65 ans, 25 % au plus, sur les points arrêtés à la fin du trimestre du 65e anniversaire ; à la CAVP, 0,5 % par trimestre au-delà de l'âge de la retraite entière, dans les bornes de la génération ; à la CPRN, 0,5 % par trimestre au-delà de l'âge du taux plein, jusqu'à 70 ans, aux notaires qui ont continué d'exercer et de cotiser
   exemples: aucun trouvé
 - id: carpimko_octobre_2015
   statut: supposee
@@ -266,25 +513,43 @@ versions:
     liquidation.date_effet: [2015-10-03, 2017-01-01]
   contenu:
     parametres:
-      surcote_par_trimestre: {cipav_complementaire: 0.0125, carmf_complementaire: 0.0,
-        asv_conventionnes: 0.0, carpimko_complementaire: 0.0125}
+      surcote_par_trimestre: {cipav_complementaire: 0.0125, carmf_complementaire: 0.0, asv_conventionnes: 0.0,
+        carpimko_complementaire: 0.0125, cavec_complementaire: 0.0125, cavp_complementaire:
+        0.005, cprn_complementaire: 0.005}
       surcote_pas_trimestres: {cipav_complementaire: 4}
-      surcote_trimestres_maximum: {cipav_complementaire: 20, carpimko_complementaire: 20}
+      surcote_trimestres_maximum: {cipav_complementaire: 20, carpimko_complementaire: 20, cavec_complementaire: 20,
+        cavp_complementaire: 12}
       surcote_age_debut:
         cipav_complementaire: 65
         carpimko_complementaire: >-
-          l'âge du taux plein (article 12 quater, 1°, pour les générations 1960 et
-          avant ; 67 ans, article 11), ou plus tôt l'âge où la pension aurait pu être
-          liquidée sans abattement
+          l'âge du taux plein (article 12 quater, 1°, pour les générations 1960 et avant ;
+          67 ans, article 11), ou plus tôt l'âge où la pension aurait pu être liquidée
+          sans abattement
+        cavec_complementaire: 65
+        cavp_complementaire: >-
+          l'âge de la retraite entière : 65 ans jusqu'à la génération 1952, 66 ans de 1953
+          à 1955, l'âge du 1° de L. 351-8 depuis 1956 (article 12)
+        cprn_complementaire: l'âge du taux plein
       surcote_affiliation_minimale_trimestres: {cipav_complementaire: 120}
       points_majores:
         cipav_complementaire: >-
           ceux des trente premières années de cotisation à la Cipav, comptées selon
           l'article 3.6 (non lu)
+        cavec_complementaire: >-
+          ceux du compte arrêté à la fin du trimestre du 65e anniversaire ; non ceux des
+          cotisations versées au-delà
+      surcote_age_maximum:
+        cavp_complementaire: >-
+          cet âge augmenté de trois ans depuis la génération 1956, 68 ans de 1953 à 1955,
+          66 ans du 1er juillet 1951 à 1952 ; nés jusqu'au 30 juin 1951, aucune selon le
+          tableau annexé à l'article 15, 66 ans selon l'article 12 (non tranché,
+          `cavp_minoration_deux_pentes`)
+        cprn_complementaire: 70
+      surcote_trimestres_cotises: {cprn_complementaire: true}
     droit: >-
       à la CARPIMKO, 1,25 % par trimestre civil entier d'ajournement après l'âge du taux
       plein, vingt au plus ; la Cipav, la version précédente ; rien à la CARMF ni à
-      l'ASV ; la CAVEC, la CAVP et la CPRN, à écrire
+      l'ASV ; à la CAVEC, 1,25 % par trimestre plein au-delà de 65 ans, 25 % au plus, sur les points arrêtés à la fin du trimestre du 65e anniversaire ; à la CAVP, 0,5 % par trimestre au-delà de l'âge de la retraite entière, dans les bornes de la génération ; à la CPRN, 0,5 % par trimestre au-delà de l'âge du taux plein, jusqu'à 70 ans, aux notaires qui ont continué d'exercer et de cotiser
   exemples: aucun trouvé
 - id: carmf_asv_2017
   statut: lue
@@ -353,10 +618,12 @@ versions:
     liquidation.date_effet: [2017-01-01, 2017-03-30]
   contenu:
     parametres:
-      surcote_par_trimestre: {cipav_complementaire: 0.0125, carmf_complementaire: 0.0125,
-        asv_conventionnes: 0.0125, carpimko_complementaire: 0.0125}
+      surcote_par_trimestre: {cipav_complementaire: 0.0125, carmf_complementaire: 0.0125, asv_conventionnes:
+        0.0125, carpimko_complementaire: 0.0125, cavec_complementaire: 0.0125,
+        cavp_complementaire: 0.005, cprn_complementaire: 0.005}
       surcote_pas_trimestres: {cipav_complementaire: 4}
-      surcote_trimestres_maximum: {cipav_complementaire: 20, carpimko_complementaire: 20}
+      surcote_trimestres_maximum: {cipav_complementaire: 20, carpimko_complementaire: 20, cavec_complementaire: 20,
+        cavp_complementaire: 12}
       surcote_age_debut:
         cipav_complementaire: 65
         carmf_complementaire: >-
@@ -368,19 +635,36 @@ versions:
         carpimko_complementaire: >-
           l'âge du taux plein, ou plus tôt l'âge où la pension aurait pu être liquidée
           sans abattement
+        cavec_complementaire: 65
+        cavp_complementaire: >-
+          l'âge de la retraite entière : 65 ans jusqu'à la génération 1952, 66 ans de 1953
+          à 1955, l'âge du 1° de L. 351-8 depuis 1956 (article 12)
+        cprn_complementaire: l'âge du taux plein
       surcote_palier_age: {carmf_complementaire: 65, asv_conventionnes: 65}
       surcote_par_trimestre_apres_palier: {carmf_complementaire: 0.0075, asv_conventionnes: 0.0075}
-      surcote_age_maximum: {carmf_complementaire: 70, asv_conventionnes: 70}
+      surcote_age_maximum:
+        carmf_complementaire: 70
+        asv_conventionnes: 70
+        cavp_complementaire: >-
+          cet âge augmenté de trois ans depuis la génération 1956, 68 ans de 1953 à 1955,
+          66 ans du 1er juillet 1951 à 1952 ; nés jusqu'au 30 juin 1951, aucune selon le
+          tableau annexé à l'article 15, 66 ans selon l'article 12 (non tranché,
+          `cavp_minoration_deux_pentes`)
+        cprn_complementaire: 70
       surcote_affiliation_minimale_trimestres: {cipav_complementaire: 120}
       points_majores:
         cipav_complementaire: >-
           ceux des trente premières années de cotisation à la Cipav, comptées selon
           l'article 3.6 (non lu)
+        cavec_complementaire: >-
+          ceux du compte arrêté à la fin du trimestre du 65e anniversaire ; non ceux des
+          cotisations versées au-delà
+      surcote_trimestres_cotises: {cprn_complementaire: true}
     droit: >-
       à la CARMF et à l'ASV, 1,25 % par trimestre du premier jour du trimestre civil
       qui suit l'âge légal de la génération, 0,75 % de celui qui suit les 65 ans,
       jusqu'à celui qui suit les 70 ans ; la Cipav et la CARPIMKO, la version
-      précédente ; la CAVEC, la CAVP et la CPRN, à écrire
+      précédente ; à la CAVEC, 1,25 % par trimestre plein au-delà de 65 ans, 25 % au plus, sur les points arrêtés à la fin du trimestre du 65e anniversaire ; à la CAVP, 0,5 % par trimestre au-delà de l'âge de la retraite entière, dans les bornes de la génération ; à la CPRN, 0,5 % par trimestre au-delà de l'âge du taux plein, jusqu'à 70 ans, aux notaires qui ont continué d'exercer et de cotiser
   exemples: aucun trouvé
 - id: carmf_asv_mars_2017
   statut: lue
@@ -413,13 +697,15 @@ versions:
       du 1er janvier 2017, » sont supprimés » ; « 1° L'article 12 est ainsi modifié : a)
       Au premier alinéa, les mots : « A compter du 1er janvier 2017 » sont supprimés »
   bornes:
-    liquidation.date_effet: [2017-03-30, 2022-01-01]
+    liquidation.date_effet: [2017-03-30, 2017-06-22]
   contenu:
     parametres:
-      surcote_par_trimestre: {cipav_complementaire: 0.0125, carmf_complementaire: 0.0125,
-        asv_conventionnes: 0.0125, carpimko_complementaire: 0.0125}
+      surcote_par_trimestre: {cipav_complementaire: 0.0125, carmf_complementaire: 0.0125, asv_conventionnes:
+        0.0125, carpimko_complementaire: 0.0125, cavec_complementaire: 0.0125,
+        cavp_complementaire: 0.005, cprn_complementaire: 0.005}
       surcote_pas_trimestres: {cipav_complementaire: 4}
-      surcote_trimestres_maximum: {cipav_complementaire: 20, carpimko_complementaire: 20}
+      surcote_trimestres_maximum: {cipav_complementaire: 20, carpimko_complementaire: 20, cavec_complementaire: 20,
+        cavp_complementaire: 12}
       surcote_age_debut:
         cipav_complementaire: 65
         carmf_complementaire: 62
@@ -427,17 +713,165 @@ versions:
         carpimko_complementaire: >-
           l'âge du taux plein, ou plus tôt l'âge où la pension aurait pu être liquidée
           sans abattement
+        cavec_complementaire: 65
+        cavp_complementaire: >-
+          l'âge de la retraite entière : 65 ans jusqu'à la génération 1952, 66 ans de 1953
+          à 1955, l'âge du 1° de L. 351-8 depuis 1956 (article 12)
+        cprn_complementaire: l'âge du taux plein
       surcote_palier_age: {carmf_complementaire: 65, asv_conventionnes: 65}
       surcote_par_trimestre_apres_palier: {carmf_complementaire: 0.0075, asv_conventionnes: 0.0075}
-      surcote_age_maximum: {carmf_complementaire: 70, asv_conventionnes: 70}
+      surcote_age_maximum:
+        carmf_complementaire: 70
+        asv_conventionnes: 70
+        cavp_complementaire: >-
+          cet âge augmenté de trois ans depuis la génération 1956, 68 ans de 1953 à 1955,
+          66 ans du 1er juillet 1951 à 1952 ; nés jusqu'au 30 juin 1951, aucune selon le
+          tableau annexé à l'article 15, 66 ans selon l'article 12 (non tranché,
+          `cavp_minoration_deux_pentes`)
+        cprn_complementaire: 70
       surcote_affiliation_minimale_trimestres: {cipav_complementaire: 120}
       points_majores:
         cipav_complementaire: >-
           ceux des trente premières années de cotisation à la Cipav, comptées selon
           l'article 3.6 (non lu)
+        cavec_complementaire: >-
+          ceux du compte arrêté à la fin du trimestre du 65e anniversaire ; non ceux des
+          cotisations versées au-delà
+      surcote_trimestres_cotises: {cprn_complementaire: true}
     droit: >-
       à la CARMF et à l'ASV, la règle de janvier 2017, comptée de 62 ans ; la Cipav et la
-      CARPIMKO, comme avant ; la CAVEC, la CAVP et la CPRN, à écrire
+      CARPIMKO, comme avant ; à la CAVEC, 1,25 % par trimestre plein au-delà de 65 ans, 25 % au plus, sur les points arrêtés à la fin du trimestre du 65e anniversaire ; à la CAVP, 0,5 % par trimestre au-delà de l'âge de la retraite entière, dans les bornes de la génération ; à la CPRN, 0,5 % par trimestre au-delà de l'âge du taux plein, jusqu'à 70 ans, aux notaires qui ont continué d'exercer et de cotiser
+  exemples: aucun trouvé
+- id: cprn_juin_2017
+  statut: lue
+  hypothese: >-
+    l'arrêté du 31 mai 2017, publié le 21 juin 2017, sans date (articles 1er et 2), vaut
+    le 22 juin 2017 : les statuts du complémentaire de la CPRN, récrits, portent la même
+    règle à leur article 23, « surcote » au lieu de « coefficient de majoration » ; les
+    autres sections, comme `carmf_asv_mars_2017`
+  fiabilite: haute pour la CPRN, au texte ; comme `carmf_asv_mars_2017` pour les autres
+  nee_de: JORFARTI000034975971
+  textes:
+  - id: JORFARTI000034975971
+    article: >-
+      arrêté du 31 mai 2017, annexe, article 23 des statuts du complémentaire de la CPRN
+    publie_le: 2017-06-21
+    en_vigueur: 2017-06-22
+    citation: >-
+      « Article 23. - La majoration des droits « 1. - Si la demande de retraite intervient
+      après l'âge du taux plein défini à l'article 18, une surcote est appliquée à la
+      pension des notaires ayant continué à exercer et à cotiser dans les conditions
+      définies par les présents statuts. « La surcote est fixée à 0,5 % par trimestre
+      au-delà de l'âge du taux plein, jusqu'à l'âge de 70 ans. »
+  bornes:
+    liquidation.date_effet: [2017-06-22, 2018-09-05]
+  contenu:
+    parametres:
+      surcote_par_trimestre: {cipav_complementaire: 0.0125, carmf_complementaire: 0.0125, asv_conventionnes:
+        0.0125, carpimko_complementaire: 0.0125, cavec_complementaire: 0.0125,
+        cavp_complementaire: 0.005, cprn_complementaire: 0.005}
+      surcote_pas_trimestres: {cipav_complementaire: 4}
+      surcote_trimestres_maximum: {cipav_complementaire: 20, carpimko_complementaire: 20, cavec_complementaire: 20,
+        cavp_complementaire: 12}
+      surcote_age_debut:
+        cipav_complementaire: 65
+        carmf_complementaire: 62
+        asv_conventionnes: 62
+        carpimko_complementaire: >-
+          l'âge du taux plein, ou plus tôt l'âge où la pension aurait pu être liquidée
+          sans abattement
+        cavec_complementaire: 65
+        cavp_complementaire: >-
+          l'âge de la retraite entière : 65 ans jusqu'à la génération 1952, 66 ans de 1953
+          à 1955, l'âge du 1° de L. 351-8 depuis 1956 (article 12)
+        cprn_complementaire: l'âge du taux plein
+      surcote_palier_age: {carmf_complementaire: 65, asv_conventionnes: 65}
+      surcote_par_trimestre_apres_palier: {carmf_complementaire: 0.0075, asv_conventionnes: 0.0075}
+      surcote_age_maximum:
+        carmf_complementaire: 70
+        asv_conventionnes: 70
+        cavp_complementaire: >-
+          cet âge augmenté de trois ans depuis la génération 1956, 68 ans de 1953 à 1955,
+          66 ans du 1er juillet 1951 à 1952 ; nés jusqu'au 30 juin 1951, aucune selon le
+          tableau annexé à l'article 15, 66 ans selon l'article 12 (non tranché,
+          `cavp_minoration_deux_pentes`)
+        cprn_complementaire: 70
+      surcote_affiliation_minimale_trimestres: {cipav_complementaire: 120}
+      points_majores:
+        cipav_complementaire: >-
+          ceux des trente premières années de cotisation à la Cipav, comptées selon
+          l'article 3.6 (non lu)
+        cavec_complementaire: >-
+          ceux du compte arrêté à la fin du trimestre du 65e anniversaire ; non ceux des
+          cotisations versées au-delà
+      surcote_trimestres_cotises: {cprn_complementaire: true}
+    droit: >-
+      la Cipav, la CARMF, l'ASV et la CARPIMKO, comme `carmf_asv_mars_2017` ; à la CAVEC, 1,25 % par trimestre plein au-delà de 65 ans, 25 % au plus, sur les points arrêtés à la fin du trimestre du 65e anniversaire ; à la CAVP, 0,5 % par trimestre au-delà de l'âge de la retraite entière, dans les bornes de la génération ; à la CPRN, 0,5 % par trimestre au-delà de l'âge du taux plein, jusqu'à 70 ans, aux notaires qui ont continué d'exercer et de cotiser
+  exemples: aucun trouvé
+- id: cavec_septembre_2018
+  statut: lue
+  hypothese: >-
+    l'arrêté du 20 août 2018, publié le 4 septembre 2018, sans date (articles 1er et 2),
+    vaut le 5 septembre 2018 : les statuts de la CAVEC, remplacés, majorent de 0,75 % par
+    trimestre plein, 15 % au plus, tous les points arrêtés à la liquidation (article 13) ;
+    les autres sections, comme `cprn_juin_2017`
+  fiabilite: haute pour la CAVEC, au texte ; comme `carmf_asv_mars_2017` pour les autres
+  nee_de: JORFARTI000037363871
+  textes:
+  - id: JORFARTI000037363871
+    article: >-
+      arrêté du 20 août 2018, annexe, article 13 des statuts du complémentaire de la CAVEC
+    publie_le: 2018-09-04
+    en_vigueur: 2018-09-05
+    citation: >-
+      « Article 13 « Liquidation différée de la pension de retraite complémentaire «
+      L'affilié qui diffère la liquidation de la retraite au-delà du 65e anniversaire
+      obtient une majoration de 0,75 % par trimestre plein de prorogation au-delà de cet
+      âge, dans la limite maximale de 15 %. « La majoration s'applique sur le nombre de
+      points acquis par cotisations et rachat, arrêté à la date de liquidation. »
+  bornes:
+    liquidation.date_effet: [2018-09-05, 2022-01-01]
+  contenu:
+    parametres:
+      surcote_par_trimestre: {cipav_complementaire: 0.0125, carmf_complementaire: 0.0125, asv_conventionnes:
+        0.0125, carpimko_complementaire: 0.0125, cavec_complementaire: 0.0075,
+        cavp_complementaire: 0.005, cprn_complementaire: 0.005}
+      surcote_pas_trimestres: {cipav_complementaire: 4}
+      surcote_trimestres_maximum: {cipav_complementaire: 20, carpimko_complementaire: 20, cavec_complementaire: 20,
+        cavp_complementaire: 12}
+      surcote_age_debut:
+        cipav_complementaire: 65
+        carmf_complementaire: 62
+        asv_conventionnes: 62
+        carpimko_complementaire: >-
+          l'âge du taux plein, ou plus tôt l'âge où la pension aurait pu être liquidée
+          sans abattement
+        cavec_complementaire: 65
+        cavp_complementaire: >-
+          l'âge de la retraite entière : 65 ans jusqu'à la génération 1952, 66 ans de 1953
+          à 1955, l'âge du 1° de L. 351-8 depuis 1956 (article 12)
+        cprn_complementaire: l'âge du taux plein
+      surcote_palier_age: {carmf_complementaire: 65, asv_conventionnes: 65}
+      surcote_par_trimestre_apres_palier: {carmf_complementaire: 0.0075, asv_conventionnes: 0.0075}
+      surcote_age_maximum:
+        carmf_complementaire: 70
+        asv_conventionnes: 70
+        cavp_complementaire: >-
+          cet âge augmenté de trois ans depuis la génération 1956, 68 ans de 1953 à 1955,
+          66 ans du 1er juillet 1951 à 1952 ; nés jusqu'au 30 juin 1951, aucune selon le
+          tableau annexé à l'article 15, 66 ans selon l'article 12 (non tranché,
+          `cavp_minoration_deux_pentes`)
+        cprn_complementaire: 70
+      surcote_affiliation_minimale_trimestres: {cipav_complementaire: 120}
+      points_majores:
+        cipav_complementaire: >-
+          ceux des trente premières années de cotisation à la Cipav, comptées selon
+          l'article 3.6 (non lu)
+        cavec_complementaire: >-
+          tous ceux acquis par cotisations et rachat, arrêtés à la date de liquidation
+      surcote_trimestres_cotises: {cprn_complementaire: true}
+    droit: >-
+      la Cipav, la CARMF, l'ASV et la CARPIMKO, comme `carmf_asv_mars_2017` ; à la CAVEC, 0,75 % par trimestre plein au-delà de 65 ans, 15 % au plus, sur tous les points ; à la CAVP, 0,5 % par trimestre au-delà de l'âge de la retraite entière, dans les bornes de la génération ; à la CPRN, 0,5 % par trimestre au-delà de l'âge du taux plein, jusqu'à 70 ans, aux notaires qui ont continué d'exercer et de cotiser
   exemples: aucun trouvé
 - id: cipav_2022
   statut: lue
@@ -472,10 +906,12 @@ versions:
     liquidation.date_effet: [2022-01-01, 2023-01-01]
   contenu:
     parametres:
-      surcote_par_trimestre: {cipav_complementaire: 0.0125, carmf_complementaire: 0.0125,
-        asv_conventionnes: 0.0125, carpimko_complementaire: 0.0125}
+      surcote_par_trimestre: {cipav_complementaire: 0.0125, carmf_complementaire: 0.0125, asv_conventionnes:
+        0.0125, carpimko_complementaire: 0.0125, cavec_complementaire: 0.0075,
+        cavp_complementaire: 0.005, cprn_complementaire: 0.005}
       surcote_pas_trimestres: {cipav_complementaire: 4}
-      surcote_trimestres_maximum: {cipav_complementaire: 20, carpimko_complementaire: 20}
+      surcote_trimestres_maximum: {cipav_complementaire: 20, carpimko_complementaire: 20, cavec_complementaire: 20,
+        cavp_complementaire: 12}
       surcote_age_debut:
         cipav_complementaire: >-
           l'âge du taux plein du 1° de L. 351-8, que l'article 3.13, 1°, nomme
@@ -484,19 +920,35 @@ versions:
         carpimko_complementaire: >-
           l'âge du taux plein, ou plus tôt l'âge où la pension aurait pu être liquidée
           sans abattement
+        cavec_complementaire: 65
+        cavp_complementaire: >-
+          l'âge de la retraite entière : 65 ans jusqu'à la génération 1952, 66 ans de 1953
+          à 1955, l'âge du 1° de L. 351-8 depuis 1956 (article 12)
+        cprn_complementaire: l'âge du taux plein
       surcote_palier_age: {carmf_complementaire: 65, asv_conventionnes: 65}
       surcote_par_trimestre_apres_palier: {carmf_complementaire: 0.0075, asv_conventionnes: 0.0075}
-      surcote_age_maximum: {carmf_complementaire: 70, asv_conventionnes: 70}
+      surcote_age_maximum:
+        carmf_complementaire: 70
+        asv_conventionnes: 70
+        cavp_complementaire: >-
+          cet âge augmenté de trois ans depuis la génération 1956, 68 ans de 1953 à 1955,
+          66 ans du 1er juillet 1951 à 1952 ; nés jusqu'au 30 juin 1951, aucune selon le
+          tableau annexé à l'article 15, 66 ans selon l'article 12 (non tranché,
+          `cavp_minoration_deux_pentes`)
+        cprn_complementaire: 70
       surcote_affiliation_minimale_trimestres: {cipav_complementaire: 120}
       points_majores:
         cipav_complementaire: >-
           ceux des trente premières années de cotisation à la Cipav, comptées selon
           l'article 3.6 (non lu)
+        cavec_complementaire: >-
+          tous ceux acquis par cotisations et rachat, arrêtés à la date de liquidation
+      surcote_trimestres_cotises: {cprn_complementaire: true}
     droit: >-
       à la Cipav, la règle de 2008, comptée de l'âge du taux plein ; la CARMF, l'ASV et
-      la CARPIMKO, comme avant ; la CAVEC, la CAVP et la CPRN, à écrire
+      la CARPIMKO, comme avant ; à la CAVEC, 0,75 % par trimestre plein au-delà de 65 ans, 15 % au plus, sur tous les points ; à la CAVP, 0,5 % par trimestre au-delà de l'âge de la retraite entière, dans les bornes de la génération ; à la CPRN, 0,5 % par trimestre au-delà de l'âge du taux plein, jusqu'à 70 ans, aux notaires qui ont continué d'exercer et de cotiser
   exemples: aucun trouvé
-- id: cipav_2023_a_juin_2026
+- id: cipav_2023
   statut: lue
   nee_de: JORFARTI000047334800
   textes:
@@ -528,13 +980,15 @@ versions:
       ans. » ; « A taux plein : - à partir de l'âge du taux plein prévu au 1° de l'article
       L. 351-8 du code de la sécurité sociale »
   bornes:
-    liquidation.date_effet: [2023-01-01, 2026-07-01]
+    liquidation.date_effet: [2023-01-01, 2024-01-01]
   contenu:
     parametres:
-      surcote_par_trimestre: {cipav_complementaire: 0.0125, carmf_complementaire: 0.0125,
-        asv_conventionnes: 0.0125, carpimko_complementaire: 0.0125}
+      surcote_par_trimestre: {cipav_complementaire: 0.0125, carmf_complementaire: 0.0125, asv_conventionnes:
+        0.0125, carpimko_complementaire: 0.0125, cavec_complementaire: 0.0075,
+        cavp_complementaire: 0.005, cprn_complementaire: 0.005}
       surcote_pas_trimestres: {cipav_complementaire: 4}
-      surcote_trimestres_maximum: {cipav_complementaire: 20, carpimko_complementaire: 20}
+      surcote_trimestres_maximum: {cipav_complementaire: 20, carpimko_complementaire: 20, cavec_complementaire: 20,
+        cavp_complementaire: 12}
       surcote_age_debut:
         cipav_complementaire: >-
           l'âge du taux plein du 1° de L. 351-8, que l'article 3.13, 1°, nomme
@@ -543,17 +997,170 @@ versions:
         carpimko_complementaire: >-
           l'âge du taux plein, ou plus tôt l'âge où la pension aurait pu être liquidée
           sans abattement
+        cavec_complementaire: 65
+        cavp_complementaire: >-
+          l'âge de la retraite entière : 65 ans jusqu'à la génération 1952, 66 ans de 1953
+          à 1955, l'âge du 1° de L. 351-8 depuis 1956 (article 12)
+        cprn_complementaire: l'âge du taux plein
       surcote_palier_age: {carmf_complementaire: 65, asv_conventionnes: 65}
       surcote_par_trimestre_apres_palier: {carmf_complementaire: 0.0075, asv_conventionnes: 0.0075}
-      surcote_age_maximum: {carmf_complementaire: 70, asv_conventionnes: 70}
+      surcote_age_maximum:
+        carmf_complementaire: 70
+        asv_conventionnes: 70
+        cavp_complementaire: >-
+          cet âge augmenté de trois ans depuis la génération 1956, 68 ans de 1953 à 1955,
+          66 ans du 1er juillet 1951 à 1952 ; nés jusqu'au 30 juin 1951, aucune selon le
+          tableau annexé à l'article 15, 66 ans selon l'article 12 (non tranché,
+          `cavp_minoration_deux_pentes`)
+        cprn_complementaire: 70
       surcote_affiliation_minimale_trimestres: {cipav_complementaire: 120}
       points_majores:
         cipav_complementaire: >-
-          ceux des trente premières années de cotisation à la Cipav, années
-          d'exonération ou de réduction de cotisation comprises
+          ceux des trente premières années de cotisation à la Cipav, années d'exonération
+          ou de réduction de cotisation comprises
+        cavec_complementaire: >-
+          tous ceux acquis par cotisations et rachat, arrêtés à la date de liquidation
+      surcote_trimestres_cotises: {cprn_complementaire: true}
     droit: >-
       à la Cipav, la règle de 2022, le décompte des trente années écrit ; la CARMF,
-      l'ASV et la CARPIMKO, comme avant ; la CAVEC, la CAVP et la CPRN, à écrire
+      l'ASV et la CARPIMKO, comme avant ; à la CAVEC, 0,75 % par trimestre plein au-delà de 65 ans, 15 % au plus, sur tous les points ; à la CAVP, 0,5 % par trimestre au-delà de l'âge de la retraite entière, dans les bornes de la génération ; à la CPRN, 0,5 % par trimestre au-delà de l'âge du taux plein, jusqu'à 70 ans, aux notaires qui ont continué d'exercer et de cotiser
+  exemples: aucun trouvé
+- id: cprn_2024
+  statut: lue
+  hypothese: >-
+    l'arrêté du 29 novembre 2023, publié le 28 décembre 2023, « entrent en vigueur le 1er
+    janvier 2024 » (article 2) : à l'article 23 de la CPRN, « 1 % » au lieu de « 0,5 % »,
+    « fin d'activité » au lieu de « 70 ans » (la page de la caisse écrit encore 70 ans :
+    `lectures_divergentes`) ; les autres sections, comme `cipav_2023`
+  fiabilite: haute pour la CPRN, au texte ; comme `cipav_2023` pour les autres
+  nee_de: JORFARTI000048679350
+  textes:
+  - id: JORFARTI000048679350
+    article: >-
+      arrêté du 29 novembre 2023, annexe, 5°, article 23 des statuts du complémentaire de
+      la CPRN
+    publie_le: 2023-12-28
+    en_vigueur: 2024-01-01
+    citation: >-
+      « 5° L'article 23 est ainsi modifié : a) Au deuxième alinéa, le pourcentage : « 0,5
+      % » est remplacé par le pourcentage : « 1 % » et les mots : « 70 ans » sont
+      remplacés par les mots : « fin d'activité »
+  - id: JORFARTI000048679346
+    article: arrêté du 29 novembre 2023, article 2
+    publie_le: 2023-12-28
+    citation: >-
+      « Les dispositions du présent arrêté entrent en vigueur le 1er janvier 2024. »
+  bornes:
+    liquidation.date_effet: [2024-01-01, 2025-07-07]
+  contenu:
+    parametres:
+      surcote_par_trimestre: {cipav_complementaire: 0.0125, carmf_complementaire: 0.0125, asv_conventionnes:
+        0.0125, carpimko_complementaire: 0.0125, cavec_complementaire: 0.0075,
+        cavp_complementaire: 0.005, cprn_complementaire: 0.01}
+      surcote_pas_trimestres: {cipav_complementaire: 4}
+      surcote_trimestres_maximum: {cipav_complementaire: 20, carpimko_complementaire: 20, cavec_complementaire: 20,
+        cavp_complementaire: 12}
+      surcote_age_debut:
+        cipav_complementaire: >-
+          l'âge du taux plein du 1° de L. 351-8, que l'article 3.13, 1°, nomme
+        carmf_complementaire: 62
+        asv_conventionnes: 62
+        carpimko_complementaire: >-
+          l'âge du taux plein, ou plus tôt l'âge où la pension aurait pu être liquidée
+          sans abattement
+        cavec_complementaire: 65
+        cavp_complementaire: >-
+          l'âge de la retraite entière : 65 ans jusqu'à la génération 1952, 66 ans de 1953
+          à 1955, l'âge du 1° de L. 351-8 depuis 1956 (article 12)
+        cprn_complementaire: l'âge du taux plein
+      surcote_palier_age: {carmf_complementaire: 65, asv_conventionnes: 65}
+      surcote_par_trimestre_apres_palier: {carmf_complementaire: 0.0075, asv_conventionnes: 0.0075}
+      surcote_age_maximum:
+        carmf_complementaire: 70
+        asv_conventionnes: 70
+        cavp_complementaire: >-
+          cet âge augmenté de trois ans depuis la génération 1956, 68 ans de 1953 à 1955,
+          66 ans du 1er juillet 1951 à 1952 ; nés jusqu'au 30 juin 1951, aucune selon le
+          tableau annexé à l'article 15, 66 ans selon l'article 12 (non tranché,
+          `cavp_minoration_deux_pentes`)
+        cprn_complementaire: >-
+          l'âge de fin d'activité : aucune borne d'âge
+      surcote_affiliation_minimale_trimestres: {cipav_complementaire: 120}
+      points_majores:
+        cipav_complementaire: >-
+          ceux des trente premières années de cotisation à la Cipav, années d'exonération
+          ou de réduction de cotisation comprises
+        cavec_complementaire: >-
+          tous ceux acquis par cotisations et rachat, arrêtés à la date de liquidation
+      surcote_trimestres_cotises: {cprn_complementaire: true}
+    droit: >-
+      la Cipav, la CARMF, l'ASV et la CARPIMKO, comme `cipav_2023` ; à la CAVEC, 0,75 % par trimestre plein au-delà de 65 ans, 15 % au plus, sur tous les points ; à la CAVP, 0,5 % par trimestre au-delà de l'âge de la retraite entière, dans les bornes de la génération ; à la CPRN, 1 % par trimestre au-delà de l'âge du taux plein, jusqu'à la fin d'activité
+  exemples: aucun trouvé
+- id: cavec_juillet_2025
+  statut: lue
+  hypothese: >-
+    l'arrêté du 4 juillet 2025, publié le 6 juillet 2025, sans date (articles 1er et 2, ni
+    son annexe), vaut le 7 juillet 2025 : à l'article 13 de la CAVEC, 1,25 % et 25 % au
+    lieu de 0,75 % et 15 % ; les autres sections, comme `cprn_2024`
+  fiabilite: haute pour la CAVEC, au texte ; comme `cipav_2023` pour les autres
+  nee_de: JORFARTI000051849616
+  textes:
+  - id: JORFARTI000051849616
+    article: >-
+      arrêté du 4 juillet 2025, annexe, 7°, article 13 des statuts du complémentaire de la
+      CAVEC
+    publie_le: 2025-07-06
+    en_vigueur: 2025-07-07
+    citation: >-
+      « 7° L'article 13 est ainsi modifié : a) Dans le titre, après les mots : « de la »,
+      il est inséré le mot : « première » ; b) Au premier alinéa : - le nombre : « 0,75 »
+      est remplacé par le nombre : « 1,25 » ; - le nombre : « 15 » est remplacé par le
+      nombre : « 25 »
+  bornes:
+    liquidation.date_effet: [2025-07-07, 2026-07-01]
+  contenu:
+    parametres:
+      surcote_par_trimestre: {cipav_complementaire: 0.0125, carmf_complementaire: 0.0125, asv_conventionnes:
+        0.0125, carpimko_complementaire: 0.0125, cavec_complementaire: 0.0125,
+        cavp_complementaire: 0.005, cprn_complementaire: 0.01}
+      surcote_pas_trimestres: {cipav_complementaire: 4}
+      surcote_trimestres_maximum: {cipav_complementaire: 20, carpimko_complementaire: 20, cavec_complementaire: 20,
+        cavp_complementaire: 12}
+      surcote_age_debut:
+        cipav_complementaire: >-
+          l'âge du taux plein du 1° de L. 351-8, que l'article 3.13, 1°, nomme
+        carmf_complementaire: 62
+        asv_conventionnes: 62
+        carpimko_complementaire: >-
+          l'âge du taux plein, ou plus tôt l'âge où la pension aurait pu être liquidée
+          sans abattement
+        cavec_complementaire: 65
+        cavp_complementaire: >-
+          l'âge de la retraite entière : 65 ans jusqu'à la génération 1952, 66 ans de 1953
+          à 1955, l'âge du 1° de L. 351-8 depuis 1956 (article 12)
+        cprn_complementaire: l'âge du taux plein
+      surcote_palier_age: {carmf_complementaire: 65, asv_conventionnes: 65}
+      surcote_par_trimestre_apres_palier: {carmf_complementaire: 0.0075, asv_conventionnes: 0.0075}
+      surcote_age_maximum:
+        carmf_complementaire: 70
+        asv_conventionnes: 70
+        cavp_complementaire: >-
+          cet âge augmenté de trois ans depuis la génération 1956, 68 ans de 1953 à 1955,
+          66 ans du 1er juillet 1951 à 1952 ; nés jusqu'au 30 juin 1951, aucune selon le
+          tableau annexé à l'article 15, 66 ans selon l'article 12 (non tranché,
+          `cavp_minoration_deux_pentes`)
+        cprn_complementaire: >-
+          l'âge de fin d'activité : aucune borne d'âge
+      surcote_affiliation_minimale_trimestres: {cipav_complementaire: 120}
+      points_majores:
+        cipav_complementaire: >-
+          ceux des trente premières années de cotisation à la Cipav, années d'exonération
+          ou de réduction de cotisation comprises
+        cavec_complementaire: >-
+          tous ceux acquis par cotisations et rachat, arrêtés à la date de liquidation
+      surcote_trimestres_cotises: {cprn_complementaire: true}
+    droit: >-
+      la Cipav, la CARMF, l'ASV et la CARPIMKO, comme `cipav_2023` ; à la CAVEC, 1,25 % par trimestre plein au-delà de 65 ans, 25 % au plus, sur tous les points ; à la CAVP, 0,5 % par trimestre au-delà de l'âge de la retraite entière, dans les bornes de la génération ; à la CPRN, 1 % par trimestre au-delà de l'âge du taux plein, jusqu'à la fin d'activité
   exemples: aucun trouvé
 - id: cipav_depuis_juillet_2026
   statut: lue
@@ -585,10 +1192,12 @@ versions:
     liquidation.date_effet: [2026-07-01, 2026-07-18]
   contenu:
     parametres:
-      surcote_par_trimestre: {cipav_complementaire: 0.0125, carmf_complementaire: 0.0125,
-        asv_conventionnes: 0.0125, carpimko_complementaire: 0.0125}
+      surcote_par_trimestre: {cipav_complementaire: 0.0125, carmf_complementaire: 0.0125, asv_conventionnes:
+        0.0125, carpimko_complementaire: 0.0125, cavec_complementaire: 0.0125,
+        cavp_complementaire: 0.005, cprn_complementaire: 0.01}
       surcote_pas_trimestres: {cipav_complementaire: 4}
-      surcote_trimestres_maximum: {cipav_complementaire: 20, carpimko_complementaire: 20}
+      surcote_trimestres_maximum: {cipav_complementaire: 20, carpimko_complementaire: 20, cavec_complementaire: 20,
+        cavp_complementaire: 12}
       surcote_age_debut:
         cipav_complementaire: l'âge du taux plein du 1° de L. 351-8 (article 5-1, 1°, a)
         carmf_complementaire: 62
@@ -596,18 +1205,34 @@ versions:
         carpimko_complementaire: >-
           l'âge du taux plein, ou plus tôt l'âge où la pension aurait pu être liquidée
           sans abattement
+        cavec_complementaire: 65
+        cavp_complementaire: >-
+          l'âge de la retraite entière : 65 ans jusqu'à la génération 1952, 66 ans de 1953
+          à 1955, l'âge du 1° de L. 351-8 depuis 1956 (article 12)
+        cprn_complementaire: l'âge du taux plein
       surcote_palier_age: {carmf_complementaire: 65, asv_conventionnes: 65}
       surcote_par_trimestre_apres_palier: {carmf_complementaire: 0.0075, asv_conventionnes: 0.0075}
-      surcote_age_maximum: {carmf_complementaire: 70, asv_conventionnes: 70}
+      surcote_age_maximum:
+        carmf_complementaire: 70
+        asv_conventionnes: 70
+        cavp_complementaire: >-
+          cet âge augmenté de trois ans depuis la génération 1956, 68 ans de 1953 à 1955,
+          66 ans du 1er juillet 1951 à 1952 ; nés jusqu'au 30 juin 1951, aucune selon le
+          tableau annexé à l'article 15, 66 ans selon l'article 12 (non tranché,
+          `cavp_minoration_deux_pentes`)
+        cprn_complementaire: >-
+          l'âge de fin d'activité : aucune borne d'âge
       surcote_affiliation_minimale_trimestres: {cipav_complementaire: 120}
       points_majores:
         cipav_complementaire: >-
-          ceux des trente premières années de cotisation à la Cipav, années
-          d'exonération ou de réduction de cotisation comprises
+          ceux des trente premières années de cotisation à la Cipav, années d'exonération
+          ou de réduction de cotisation comprises
+        cavec_complementaire: >-
+          tous ceux acquis par cotisations et rachat, arrêtés à la date de liquidation
+      surcote_trimestres_cotises: {cprn_complementaire: true}
     droit: >-
       à la Cipav, la règle de 2023, au décret ; la CARMF, l'ASV et la CARPIMKO, comme
-      avant, leurs statuts restant en vigueur jusqu'à leurs règlements ; la CAVEC, la
-      CAVP et la CPRN, à écrire
+      avant, leurs statuts restant en vigueur jusqu'à leurs règlements ; à la CAVEC, 1,25 % par trimestre plein au-delà de 65 ans, 25 % au plus, sur tous les points ; à la CAVP, 0,5 % par trimestre au-delà de l'âge de la retraite entière, dans les bornes de la génération ; à la CPRN, 1 % par trimestre au-delà de l'âge du taux plein, jusqu'à la fin d'activité
   exemples: aucun trouvé
 - id: reglements_de_2026
   statut: lue
@@ -615,8 +1240,7 @@ versions:
     les règlements que les arrêtés du 10 juillet 2026, publiés le 17 juillet sans date
     d'effet (articles 1er et 2), approuvent en vigueur le 18 juillet 2026 : CARMF et
     ASV, article 2 de chacun, le texte de mars 2017 ; CARPIMKO, article 5, celui de
-    2015 ; l'arrêté du 21 septembre 2026 ne modifie que l'article 5 du règlement de la
-    CARMF, et le rectificatif du 8 août 2026, son article 6 ; la Cipav, la version
+    2015 ; l'arrêté du 21 septembre 2026 (JORFARTI000054888279) modifie les articles 5, 25 et 28 du règlement du complémentaire de la CARMF, l'article 4 de celui de l'invalidité-décès et l'article 3 de celui de l'ASV, aucun article 2 ; le rectificatif du 8 août 2026, l'article 6 ; à la CAVEC, l'article 1.1.4, à la CAVP, l'article 12, à la CPRN, l'article 9, en vigueur le 18 juillet 2026 ; l'autre arrêté du 21 septembre 2026 (JORFARTI000054888291), en vigueur le 25 septembre, ne touche que l'article 16 du règlement de la CAVP, la réversion (« premier » devient « deuxième »), et l'article 12 n'y perd que ses guillemets (LEGIARTI000054437738 et LEGIARTI000054890978, comparés mot à mot) ; la Cipav, la version
     précédente
   fiabilite: >-
     haute pour la CARMF, l'ASV et la CARPIMKO, au texte
@@ -671,10 +1295,12 @@ versions:
     liquidation.date_effet: [2026-07-18, null]
   contenu:
     parametres:
-      surcote_par_trimestre: {cipav_complementaire: 0.0125, carmf_complementaire: 0.0125,
-        asv_conventionnes: 0.0125, carpimko_complementaire: 0.0125}
+      surcote_par_trimestre: {cipav_complementaire: 0.0125, carmf_complementaire: 0.0125, asv_conventionnes:
+        0.0125, carpimko_complementaire: 0.0125, cavec_complementaire: 0.0125,
+        cavp_complementaire: 0.005, cprn_complementaire: 0.01}
       surcote_pas_trimestres: {cipav_complementaire: 4}
-      surcote_trimestres_maximum: {cipav_complementaire: 20, carpimko_complementaire: 20}
+      surcote_trimestres_maximum: {cipav_complementaire: 20, carpimko_complementaire: 20, cavec_complementaire: 20,
+        cavp_complementaire: 12}
       surcote_age_debut:
         cipav_complementaire: l'âge du taux plein du 1° de L. 351-8 (article 5-1, 1°, a)
         carmf_complementaire: 62
@@ -682,22 +1308,94 @@ versions:
         carpimko_complementaire: >-
           l'âge du taux plein, ou plus tôt l'âge où la pension aurait pu être liquidée
           sans abattement
+        cavec_complementaire: 65
+        cavp_complementaire: >-
+          l'âge du taux plein de l'article 8 : 65 ans avant 1953, 66 ans de 1953 à 1955,
+          l'âge du 1° de L. 351-8 depuis 1956
+        cprn_complementaire: l'âge du taux plein
       surcote_palier_age: {carmf_complementaire: 65, asv_conventionnes: 65}
       surcote_par_trimestre_apres_palier: {carmf_complementaire: 0.0075, asv_conventionnes: 0.0075}
-      surcote_age_maximum: {carmf_complementaire: 70, asv_conventionnes: 70}
+      surcote_age_maximum:
+        carmf_complementaire: 70
+        asv_conventionnes: 70
+        cavp_complementaire: >-
+          cet âge augmenté de trois ans depuis la génération 1956, 68 ans de 1953 à 1955,
+          66 ans du 1er juillet 1951 à 1952 ; aucune majoration après 65 ans pour les nés
+          jusqu'au 30 juin 1951
+        cprn_complementaire: >-
+          l'âge de fin d'activité : aucune borne d'âge
       surcote_affiliation_minimale_trimestres: {cipav_complementaire: 120}
       points_majores:
         cipav_complementaire: >-
-          ceux des trente premières années de cotisation à la Cipav, années
-          d'exonération ou de réduction de cotisation comprises
+          ceux des trente premières années de cotisation à la Cipav, années d'exonération
+          ou de réduction de cotisation comprises
+        cavec_complementaire: >-
+          tous ceux acquis par cotisations et rachat, arrêtés à la date de liquidation
+      surcote_trimestres_cotises: {cprn_complementaire: true}
     droit: >-
       à la Cipav, la règle de juillet 2026 ; à la CARMF et à l'ASV, la règle de mars
-      2017, au règlement ; à la CARPIMKO, celle de 2015, au règlement ; la CAVEC, la CAVP
-      et la CPRN, à écrire
+      2017, au règlement ; à la CARPIMKO, celle de 2015, au règlement ; à la CAVEC, 1,25 % par trimestre plein au-delà de 65 ans, 25 % au plus, sur tous les points ; à la CAVP, la règle de 2011, au règlement ; à la CPRN, 1 % par trimestre au-delà de l'âge du taux plein, jusqu'à la fin d'activité
   exemples: aucun trouvé
 approximations:
-- version: [cipav_de_2008, carpimko_octobre_2015, carmf_asv_2017, carmf_asv_mars_2017, cipav_2022,
-    cipav_2023_a_juin_2026, cipav_depuis_juillet_2026, reglements_de_2026]
+- version: [avant_2007, cipav_2007, cipav_de_2008]
+  regime: cavec_complementaire
+  textes: >-
+    statuts de la CAVEC d'avant le 2 mars 2008, au seul Bulletin officiel ; arrêté du
+    22 février 2008, annexe, article 3.14 (JORFARTI000018197778)
+  ecart: >-
+    Point non tranché (action 130, E14). Le modèle majore la CAVEC dès le 1er janvier 2008
+    (période de 2008, `date_effet` du 1er janvier 2008 au 5 septembre 2018) ; l'article
+    3.14 de 2008 ne vaut que le 2 mars 2008, et celui qu'il « rédige », en vigueur avant,
+    n'est pas lu (Bulletin officiel). Lecture A, celle de la fiche : rien avant le 2 mars
+    2008 ; le modèle sert trop aux pensions qui prennent effet du 1er janvier au 1er mars
+    2008. Lecture B : l'article d'avant majorait déjà comme celui de 2008 ; le modèle sert
+    trop peu avant 2008, et juste au taux en 2008. La pension de la CAVEC ne prenant effet
+    qu'au premier jour d'un trimestre civil (statuts de 2008, article 3.15), la seule date
+    de la fenêtre est le 1er janvier 2008.
+  effet: >-
+    expert-comptable né le 10 mars 1940, 65 ans le 10 mars 2005 (réglages de E11, essais
+    du 6 novembre 2026, dans les deux moteurs). Au 1er janvier 2008, le modèle sert «
+    coefficient de majoration 1.1375 », onze trimestres pleins, 22 676,94 € par an, dont
+    22 676,9445 − 22 676,9445 / 1,1375 = 2 741,17 € de majoration : servis de trop sous
+    la lecture A, rien sous la lecture B. Au 1er octobre 2007, il sert 19 185,66 € sans
+    majoration ; sous la lecture B, dix trimestres pleins, 19 185,6574 × 0,125 =
+    2 398,21 € par an au plus servis en moins (le texte de 2008 ne majore que les points
+    arrêtés au 31 décembre de l'année du 65e anniversaire, le modèle tous)
+- version: [cavec_statuts_de_2008, cavp_statuts_de_2011, cavec_fevrier_2012, cprn_2014,
+    carpimko_octobre_2015, carmf_asv_2017, carmf_asv_mars_2017, cprn_juin_2017]
+  regime: cavec_complementaire
+  textes: statuts de 2008, article 3.14, et sa rédaction de l'arrêté du 9 février 2012
+  ecart: >-
+    Déjà déclaré (`effet`, `sources.a_relire`), redit à ses versions : du 2 mars 2008 au
+    4 septembre 2018, seuls les points arrêtés au 31 décembre de l'année du 65e
+    anniversaire, puis, depuis le 24 février 2012, à la fin de son trimestre, sont
+    majorés ; le moteur, qui ne garde pas les points année par année, les majore tous.
+  effet: non mesuré ; nul pour qui cesse de cotiser avant la fin de l'année, ou du trimestre, de ses 65 ans
+- version: [cavp_statuts_de_2011]
+  regime: cavp_complementaire
+  textes: arrêté du 23 juin 2011, annexe, article 12 et tableau annexé à l'article 15
+  ecart: >-
+    Déjà déclaré dans `cavp_minoration_deux_pentes`, redit ici (la piste de 2011) : le
+    modèle ne sert la majoration qu'au 1er janvier 2012 (période de 2009 à 2011,
+    `surcote_par_trimestre: null`), les statuts dès le 30 juin 2011. Dans la lecture du
+    tableau, aucune pension n'en est changée : il ne majore que les nés depuis le
+    1er juillet 1951, qui n'avaient pas 65 ans en 2011 ; dans celle de l'article 12, les
+    nés jusqu'en 1946 partis de 65 à 66 ans du 30 juin au 31 décembre 2011 perdent leur
+    majoration (le point non tranché suivant).
+  effet: aucun dans la lecture du tableau ; voir le point suivant
+- version: [cavp_statuts_de_2011, cavec_fevrier_2012, cprn_2014, carpimko_octobre_2015,
+    carmf_asv_2017, carmf_asv_mars_2017, cprn_juin_2017, cavec_septembre_2018, cipav_2022,
+    cipav_2023, cprn_2024, cavec_juillet_2025, cipav_depuis_juillet_2026]
+  regime: cavp_complementaire
+  textes: statuts de 2011, article 12, et tableau annexé à l'article 15
+  ecart: >-
+    Point non tranché, déjà déclaré dans `cavp_minoration_deux_pentes`, redit ici : du
+    30 juin 2011 au 17 juillet 2026, l'article 12 majore les nés jusqu'au 31 décembre 1952
+    « jusqu'à l'âge permettant d'obtenir une retraite entière augmenté d'un an », le
+    tableau annexé ne majore pas les nés jusqu'au 30 juin 1951 ; le modèle suit le
+    tableau, que le règlement de 2026 reprend à son article 12.
+  effet: chiffré dans `cavp_minoration_deux_pentes`
+- version: [cipav_de_2008, cavec_statuts_de_2008, cavp_statuts_de_2011, cavec_fevrier_2012, cprn_2014, carpimko_octobre_2015, carmf_asv_2017, carmf_asv_mars_2017, cprn_juin_2017, cavec_septembre_2018, cipav_2022, cipav_2023, cprn_2024, cavec_juillet_2025, cipav_depuis_juillet_2026, reglements_de_2026]
   regime: cipav_complementaire
   textes: >-
     statuts, article 3.15 (versions de 2008 à 2026) ; décret n° 79-262, article 5-2, II
@@ -710,7 +1408,7 @@ approximations:
     au moins 152,05 € par an de trop pour un an de report, pension au 1er janvier 2016 ;
     537,96 € au 1er janvier 2026 ; depuis le 1er juillet 2026, l'écart déclaré dans
     `decret_2026_418_liberaux`
-- version: [cipav_de_2008]
+- version: [cipav_de_2008, cavec_statuts_de_2008, cavp_statuts_de_2011, cavec_fevrier_2012, cprn_2014]
   regime: cipav_complementaire
   textes: statuts, article 3.15, relu par différence ; arrêté du 3 octobre 2006
   ecart: >-
@@ -761,8 +1459,7 @@ approximations:
     1er avril 2008 et quinze à 0,75 % du 1er avril 2013, 1,3625 ; le modèle, douze et
     quinze, 1,2625 ; 1 148,82 € par an à la CARMF, 1 474,10 € à l'ASV (essai du
     6 novembre 2026, dans les deux moteurs)
-- version: [carmf_asv_2017, carmf_asv_mars_2017, cipav_2022, cipav_2023_a_juin_2026,
-    cipav_depuis_juillet_2026, reglements_de_2026]
+- version: [carmf_asv_2017, carmf_asv_mars_2017, cprn_juin_2017, cavec_septembre_2018, cipav_2022, cipav_2023, cprn_2024, cavec_juillet_2025, cipav_depuis_juillet_2026, reglements_de_2026]
   textes: >-
     statuts de la CARMF, article 15, et de l'ASV, article 12, de 2017 à juillet 2026 ;
     règlements de 2026, article 2 de chacun
@@ -796,10 +1493,8 @@ approximations:
     né le 10 mars 1949, taux plein à 65 ans le 10 mars 2014 (article 12 quater, 1°),
     pension au 1er novembre 2015 : le modèle sert 5 298,19 € par an, sans majoration ; le
     texte, au moins six trimestres civils entiers (avril 2014 à septembre 2015), 1,075 :
-    au moins 397,36 € par an servis en moins (essai du 6 novembre 2026, dans les deux
-    moteurs)
-- version: [carpimko_octobre_2015, carmf_asv_2017, carmf_asv_mars_2017, cipav_2022,
-    cipav_2023_a_juin_2026, cipav_depuis_juillet_2026, reglements_de_2026]
+    au moins 397,36 € par an servis en moins ; sous la lecture que le modèle applique au même article depuis 2016 (`surcote_depuis_la_duree` : la durée atteinte à 62 ans et 3 mois, le 1er juillet 2011, où il sert « coefficient de majoration 1.2250 » au 1er janvier 2016), dix-sept trimestres civils entiers de juillet 2011 à septembre 2015, seize si celui qui commence le jour même ne compte pas (le point non tranché) : 5 298,1861 × 0,2125 = 1 125,86 € ou × 0,20 = 1 059,64 € par an, sous la même réserve (essais du 6 novembre 2026, dans les deux moteurs ; R-E14, E14)
+- version: [carpimko_octobre_2015, carmf_asv_2017, carmf_asv_mars_2017, cprn_juin_2017, cavec_septembre_2018, cipav_2022, cipav_2023, cprn_2024, cavec_juillet_2025, cipav_depuis_juillet_2026, reglements_de_2026]
   regime: carpimko_complementaire
   textes: statuts, article 12 ter (2015 à juillet 2026) ; règlement de 2026, article 5
   ecart: >-
@@ -836,14 +1531,8 @@ sources:
     publié intégralement au Bulletin officiel d'octobre 2006 ». Les statuts de 2006, leurs
     dispositions transitoires et ceux de 1979 sont au seul Bulletin officiel (question
     22), comme les arrêtés qui modifient ceux de 1979, l'article 17 compris : du 5 mai
-    1981 (JORFTEXT000000871027, « art. 8, 11 et 17 », son titre seul à l'index), du
-    17 juin 1985 (JORFTEXT000000840042, « art. 4, 9, 12, 13, 17, 17-bis et 21 ») et du
-    29 juillet 2003 (JORFARTI000001531753, « art. 9, 11, 13, 15, 17 et 17 bis », « publié
-    intégralement au Bulletin officiel n° 2003-35 ») ; celui du 4 mai 1982
-    (JORFTEXT000000677739, « une modification », « intégralement publié au Bulletin
-    officiel ») ne dit pas l'article ; ceux du 7 février 1980 (art. 6, 8 et 10), du
-    22 août 1986 (art. 11) et du 28 décembre 2004 (art. 7) ne touchent ni l'article 16
-    ni l'article 17 (index JORF, action 130, E13). Tous les arrêtés qui modifient ensuite les statuts sont publiés en entier au
+    1981 (JORFTEXT000000871027, « art. 8, 11 et 17 », son titre seul à l'index), du 17 juin 1985 (JORFTEXT000000840042, « art. 4, 9, 12, 13, 17, 17-bis et 21 »), du 9 mars 1987 (JORFTEXT000000321565, « annexe n° 5 » : « art. 8, 13, 17 et 17-bis ») et du 29 juillet 2003 (JORFARTI000001531753, « art. 9, 11, 13, 15, 17 et 17 bis », « publié
+    intégralement au Bulletin officiel n° 2003-35 ») ; ceux du 4 mai 1982 (JORFTEXT000000677739, « une modification », « intégralement publié au Bulletin officiel ») et du 13 août 1987 (JORFTEXT000000475761, son titre seul à l'index) ne disent pas l'article ; ceux du 7 février 1980 (art. 6, 8 et 10), du 22 août 1986 (art. 11), du 12 mai 2000 (JORFARTI000002418428, « art. 1er, 4, 4 bis, 11, 12 et 18 »), du 27 février 2003 (JORFARTI000001710064, « art. 6 ») et du 28 décembre 2004 (art. 7) ne touchent ni l'article 16 ni l'article 17 (index JORF, action 130, E13, complété par E14 après R-E14). Tous les arrêtés qui modifient ensuite les statuts sont publiés en entier au
     Journal officiel — 17 décembre 2007, 3 décembre 2010, 6 juillet 2012, 7 octobre 2014,
     18 décembre 2015, 19 janvier 2016, 3 août 2017, 22 juin 2020, 16 mars 2021,
     16 décembre 2021, 20 mars 2023, 27 décembre 2023, 4 et 17 septembre 2025 —, aucun ne
@@ -952,8 +1641,7 @@ sources:
       règlement du 10 juillet 2026, article 5, le reprend. Cipav : les arrêtés qui
       modifient les statuts du complémentaire de 1979 à 2006, relevés au titre
       (« architectes », « cipav » ou « interprofessionnelle de prévoyance ») : 7 février
-      1980, 5 mai 1981, 4 mai 1982, 17 juin 1985, 22 août 1986, 29 juillet 2003,
-      28 décembre 2004, 3 octobre 2006 ; arrêté du 16 décembre 2021, 18° (article 3.13).
+      1980, 5 mai 1981, 4 mai 1982, 17 juin 1985, 22 août 1986, 9 mars 1987, 13 août 1987, 12 mai 2000, 27 février 2003, 29 juillet 2003, 28 décembre 2004, 3 octobre 2006 (les quatre de 1987 à février 2003, omis par E13, relevés par R-E14 et E14, au titre et au texte) ; arrêté du 16 décembre 2021, 18° (article 3.13).
       Les cas posés dans les deux moteurs (`servi_et_refait`), réglages de E11 : profil
       plat, euros de 2026, sans enfant, double du salaire moyen, début à 22 ans. Elles
       fondent les versions `carpimko_octobre_2015`, `carmf_asv_2017`,
@@ -1384,11 +2072,11 @@ code:
     regimes/cprn_complementaire.yaml : surcote_par_trimestre, surcote_age_debut,
     surcote_age_maximum, surcote_affiliation_minimale_trimestres,
     surcote_trimestres_maximum, surcote_pas_trimestres, surcote_palier_age,
-    surcote_par_trimestre_apres_palier, age_table, age_taux_plein ;
+    surcote_par_trimestre_apres_palier, surcote_trimestres_cotises, age_table, age_taux_plein ;
     legislation/ages_regimes.csv : age_surcote_maximum ;
     contenu.parametres de chaque version : surcote_par_trimestre, surcote_pas_trimestres,
     surcote_trimestres_maximum, surcote_age_debut,
     surcote_affiliation_minimale_trimestres, points_majores, surcote_palier_age,
-    surcote_par_trimestre_apres_palier, surcote_age_maximum
+    surcote_par_trimestre_apres_palier, surcote_age_maximum, surcote_trimestres_cotises
   tests: [tests/test_simulateur.py, tests/test_sections_sante.py, tests/test_oracle.py,
     tests/js/moteur.test.js, tests/temoins/simulations.json]

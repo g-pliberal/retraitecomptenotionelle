@@ -1,0 +1,36 @@
+date: "2026-11-06"
+session: "action 130, file E14 : les écarts de R-E14 repris, et la CAVEC, la CAVP et la CPRN de surcote_par_age_seul écrites en versions"
+consulte: >-
+  Les index de la DILA récupérés : JORF au 3 novembre 2026, LEGI au 2 novembre. Au JORF,
+  en SQL sur toute la table, sans borne de réponses, au titre puis au texte : les
+  arrêtés qui modifient les statuts de la Cipav de 1979 à 2008 (« architect », « cipav »,
+  « interprofessionnelle de prévoyance »), dont ceux du 9 mars 1987
+  (JORFTEXT000000321565), du 13 août 1987 (JORFTEXT000000475761), du 12 mai 2000
+  (JORFARTI000002418428) et du 27 février 2003 (JORFARTI000001710064) ; les deux arrêtés
+  du 21 septembre 2026 (JORFARTI000054888279, JORFARTI000054888289, JORFARTI000054888291) ;
+  ceux de la CAVEC depuis 1979, lus à l'article 3.14 puis 13 (22 février 2008, 9 février
+  2012, 20 août 2018, 4 juillet 2025, et les autres) ; ceux de la CAVP depuis 1995 (11 mai
+  2009, 23 juin 2011, et les autres) ; ceux de la CPRN depuis 2004 (16 décembre 2013,
+  31 mai 2017, 29 novembre 2023, et les autres). Dans LEGI : les règlements du 10 juillet
+  2026 de la CAVEC (LEGIARTI000054437585, article 1.1.4), de la CAVP (LEGIARTI000054437738
+  et LEGIARTI000054890978, article 12, comparés mot à mot) et de la CPRN
+  (LEGIARTI000054437637, article 9).
+trouve: >-
+  La liste des arrêtés de 1979 de la Cipav comptait douze arrêtés, non huit : ceux du
+  9 mars 1987 (article 17 compris), du 13 août 1987 (article non dit), du 12 mai 2000 et
+  du 27 février 2003 (article 6) manquaient ; aucune valeur ne bouge. La CAVEC majore
+  depuis le 2 mars 2008 (1,25 %, 25 %, les points de l'année du 65e anniversaire), le
+  24 février 2012 (de son trimestre), le 5 septembre 2018 (0,75 %, 15 %, tous les
+  points), le 7 juillet 2025 (1,25 %, 25 %) ; le modèle dès le 1er janvier 2008 : point
+  non tranché neuf, les statuts d'avant étant au seul Bulletin officiel (2 741,17 € par
+  an de trop, ou au plus 2 398,21 € en moins, au cas posé). La CAVP majore depuis le
+  30 juin 2011 (déjà déclaré, `cavp_minoration_deux_pentes`) ; la CPRN depuis le
+  1er janvier 2014 (0,5 %, 70 ans), de nouveau le 22 juin 2017, puis le 1er janvier 2024
+  (1 %, fin d'activité). Le modèle sert chacune de ces règles, dans les deux moteurs. La
+  CARPIMKO de 2015, au cas posé, sous la lecture du modèle : 1 059,64 ou 1 125,86 € par
+  an. La note d'E13 nommait des arrêtés de la CARMF de juillet et novembre 2018 qui
+  n'existent pas : rectifié dans la note d'E14.
+reste: >-
+  Au propriétaire : le point non tranché de la CAVEC, avec les erreurs déjà déclarées.
+  Au Bulletin officiel : les statuts de la CAVEC d'avant 2008, de la CPRN de 2004, et
+  les arrêtés de la Cipav de 1979 à 2006. Puis `cotisation_par_classes_liberales`.
