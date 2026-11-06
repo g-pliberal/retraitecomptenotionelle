@@ -268,6 +268,7 @@ LUES_AU_DROIT = frozenset("""
     carpimko_ages_2015 carpimko_assiette_2026
     cavp_minoration_deux_pentes
     cprn_ages_decote_enfants
+    carmf_asv_minoration_enfants asv_medecins_ajustement
 """.split())
 
 

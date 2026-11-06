@@ -301,6 +301,73 @@ def test_chaque_version_de_la_cavp_est_portee_par_le_modele(simulateur):
                                CAVP_HORS_DU_MODELE, 1949)
 
 
+@pytest.mark.parametrize("regime,fiche,date_qui_decide", [
+    ("carmf_complementaire", "carmf_asv_minoration_enfants", "liquidation.date_effet"),
+    ("asv_conventionnes", "carmf_asv_minoration_enfants", "liquidation.date_effet"),
+    ("asv_conventionnes", "asv_medecins_ajustement", "revenu.annee"),
+])
+def test_chaque_version_de_la_carmf_est_portee_par_le_modele(
+        simulateur, regime, fiche, date_qui_decide):
+    """Lue au droit le 6 novembre 2026 (action 130) : l'article 15 des statuts
+    du régime complémentaire et l'article 12 de ceux de l'ASV, récrits par les
+    arrêtés des 30 novembre et 1er décembre 2016, puis par celui du 22 mars
+    2017 ; le règlement de 2026, I, articles 2, 23 et 24, et III, articles 2
+    et 8 ; le décret n° 2011-1644, articles 1er à 3 et 9. Avant 2017, des
+    statuts que le Journal officiel ne publie pas. Chaque premier du mois de
+    1949 à 2040, la période qui liquide une pension prenant effet ce jour — ou
+    celle de l'année du revenu — porte les paramètres que chaque version lit.
+    Les écarts que ces paramètres ne disent pas — l'âge légal de janvier à
+    mars 2017, la date d'effet au trimestre civil, le revenu de l'avant-dernière
+    année — sont déclarés dans les fiches."""
+    _chaque_version_est_portee(simulateur, regime, fiche, date_qui_decide, set(), 1949)
+
+
+#: Ce que l'article 15 des statuts du régime complémentaire de la CARMF et
+#: l'article 12 de ceux de l'ASV servent depuis le 30 mars 2017, lu au texte,
+#: joué dans les deux moteurs sur la requête du formulaire (médecin libéral,
+#: entré à 22 ans, deux salaires moyens) : (naissance, âge demandé) → le
+#: coefficient que dit le détail des deux régimes. « 1,25 % par trimestre
+#: séparant le premier jour du trimestre civil suivant celui où le médecin
+#: atteint [62 ans] de la date d'effet », « réduit à 0,75 % » du premier jour
+#: du trimestre civil qui suit ses 65 ans, rien au-delà de celui qui suit ses
+#: 70 ans.
+CARMF_AU_TEXTE = {
+    # Né le 10 mars 1955 : 62 ans le 10 mars 2017, le 1er avril 2017 ; parti à
+    # 64 ans, la pension le 1er avril 2019 : 8 trimestres × 1,25 % = 10 %.
+    ("1955-03-10", "64"): "coefficient de majoration 1.1000",
+    # Né le 10 mars 1952 : du 1er avril 2014 au 1er avril 2017 (65 ans le 10
+    # mars 2017), 12 × 1,25 % = 15 % ; parti à 65 ans et un mois, la pension le
+    # 1er mai 2017 : aucun trimestre entier à 0,75 %.
+    ("1952-03-10", "65.0833"): "coefficient de majoration 1.1500",
+    # Né le 10 mars 1950 : du 1er avril 2012 au 1er avril 2015, 12 × 1,25 % ;
+    # du 1er avril 2015 au 1er avril 2020 (70 ans), 20 × 0,75 % ; 30 %, quel
+    # que soit le départ au-delà, ici le 1er avril 2021.
+    ("1950-03-10", "71"): "coefficient de majoration 1.3000",
+}
+
+
+def test_la_carmf_sert_ses_coefficients_dans_les_deux_moteurs():
+    from outils_pont import servi_et_refait
+
+    requete = {
+        "age_reference": "fixe_apres_bascule", "bascule": "2026",
+        "conversion_acquis": "reference", "debut": "22", "emploi": "cor_2026",
+        "enfants": "0", "euros": "2026", "indexation": "triple_lock_inverse",
+        "primes": "0", "profil": "plat", "projection": "cor_reference",
+        "salaire": "2", "sexe": "H", "stock": "prix", "table": "unisexe",
+        "statut": "medecin_liberal",
+    }
+    cas = [{"cle": "|".join(cle),
+            "requete": {**requete, "naissance": cle[0], "liquidation": cle[1]}}
+           for cle in CARMF_AU_TEXTE]
+    servis, refus = servi_et_refait(cas)
+    assert refus == {}, refus
+    for cle, coefficient in CARMF_AU_TEXTE.items():
+        pensions = {p["regime"]: p for p in servis["|".join(cle)]["actuel"]["pensions_par_regime"]}
+        for regime in ("carmf_complementaire", "asv_conventionnes"):
+            assert coefficient in pensions[regime]["detail"], (cle, regime)
+
+
 def _chaque_version_est_portee(simulateur, regime, fiche, date_qui_decide, hors_du_modele,
                                depuis):
     """Chaque premier du mois depuis ``depuis`` jusqu'en 2040 que couvre une

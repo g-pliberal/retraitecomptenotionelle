@@ -2,29 +2,264 @@ schema_version: 1
 id: asv_medecins_ajustement
 intitule: >-
   ASV des médecins depuis 2012 : 27 points pour la cotisation forfaitaire, plus
-  18 fois la cotisation d'ajustement divisée par le forfait, neuf points au plus
-  par an.
+  18 fois la cotisation d'ajustement divisée par le forfait — les deux tiers des 27
+  points —, arrondis au centième, neuf points au plus par an ; la cotisation
+  d'ajustement assise sur le revenu de l'avant-dernière année, dans la limite de cinq
+  plafonds.
+domaine: points
 regimes: [asv_conventionnes]
-etat: approchee
 etape: acquerir_les_droits
+face: droit
+etat: approchee
+lit:
+- >-
+  les trimestres d'exercice conventionné de l'année, qui donnent les 27 points du
+  forfait au prorata
+- >-
+  le revenu d'activité non salarié, que le décret prend à « la deuxième année
+  précédant celle au titre de laquelle la cotisation est appelée », dans la limite de
+  cinq fois le plafond de l'année, et le taux d'ajustement de l'année (de 0,25 % en
+  2012 à 4 % depuis 2026)
+- la cotisation forfaitaire de l'année (article 1er)
+ecrit:
+- >-
+  les points de l'année, forfaitaires et d'ajustement, que `acquerir` crédite à l'ASV
+  et que `asv_medecins_points` multiplie par la valeur de service
+dates_qui_decident:
+- revenu.annee
+# `revenu.annee` est l'exercice au titre duquel la cotisation est appelée, qui
+# décide des points ; le revenu qui l'asseoit est celui de l'avant-dernière année.
+versions:
+- id: avant_l_ajustement
+  statut: supposee
+  hypothese: >-
+    avant l'exercice 2012, l'ASV ne sert que les points de la cotisation forfaitaire
+    (`asv_medecins_points`) : le décret n° 2011-1644 « est applicable, à l'exception du
+    dernier alinéa de l'article 2, à compter du 1er janvier 2012 » (article 9), et les
+    décrets annuels n° 2007-1901, 2008-1439, 2009-1741 et 2010-1675, lus, ne nomment
+    aucune cotisation d'ajustement ; des décrets n° 2004-1452 et 2005-1775, l'index n'a
+    que le titre
+  fiabilite: >-
+    moyenne : nul texte lu ne fonde de points d'ajustement avant 2012, mais deux décrets
+    annuels ne se lisent qu'en titre
+  bornes:
+    revenu.annee: [null, 2012-01-01]
+  contenu:
+    droit: aucun point d'ajustement ; les points du forfait seuls
+  exemples: aucun trouvé
+- id: decret_de_2011
+  statut: lue
+  textes:
+  - id: LEGIARTI000024853554
+    article: décret n° 2011-1644 du 25 novembre 2011, article 3, rédaction unique
+    en_vigueur: 2012-01-01
+    citation: >-
+      « Le versement de la cotisation annuelle d'ajustement mentionnée à l'article 2
+      ouvre droit à l'attribution d'un nombre de points supplémentaires de retraite, dans
+      la limite de neuf points par an, égal au rapport, arrondi au centième le plus
+      proche, entre : [...] d'une part, le produit du montant de la cotisation
+      d'ajustement et des deux tiers du nombre de points acquis au titre de la
+      cotisation forfaitaire mentionné à l'article 1er ; [...] et, d'autre part, le
+      montant de la cotisation forfaitaire mentionnée à l'article 1er. »
+  - id: LEGIARTI000024871109
+    article: décret n° 72-968 du 27 octobre 1972, article 2
+    en_vigueur: 2012-01-01
+    citation: >-
+      « La cotisation forfaitaire annuellement versée par les organismes d'assurance
+      maladie et par les médecins donne à ces derniers chaque année un total de [...] 27
+      points pour les périodes de cotisation postérieures au 31 décembre 1993. Lorsque
+      la période de cotisation est inférieure à une année, les points sont attribués au
+      prorata du nombre de trimestres cotisés. » : deux tiers de 27, 18
+  - id: LEGIARTI000054168410
+    article: décret n° 72-968, article 2, rédaction du décret n° 2026-418
+    en_vigueur: 2026-07-01
+    citation: >-
+      « et de 27 points pour les périodes de cotisation postérieures au 31 décembre
+      1993. Lorsque la période de cotisation est inférieure à une année, les points sont
+      attribués au prorata du nombre de trimestres cotisés. »
+  - id: LEGIARTI000024853551
+    article: décret n° 2011-1644, article 1er, rédaction unique
+    en_vigueur: 2012-01-01
+    citation: >-
+      « 4 850 euros pour l'exercice 2016. A compter de l'exercice 2017, le montant de
+      cette cotisation est revalorisé chaque année en fonction de l'évolution constatée
+      du revenu moyen défini à l'article L. 645-3 du code de la sécurité sociale »
+  - id: LEGIARTI000024853549
+    article: décret n° 2011-1644, article 2, rédaction du 1er janvier 2012
+    en_vigueur: 2012-01-01
+    citation: >-
+      « Cette cotisation est calculée sur la base des revenus définis à l'article L.
+      645-3 du code de la sécurité sociale perçus la deuxième année précédant celle au
+      titre de laquelle la cotisation est appelée, dans la limite de cinq fois le plafond
+      annuel prévu à l'article L. 241-3 du même code en vigueur au 1er janvier de l'année
+      au titre de laquelle la cotisation est appelée. »
+  - id: LEGIARTI000026885169
+    article: décret n° 2011-1644, article 2, rédaction du 30 décembre 2012
+    en_vigueur: 2012-12-30
+    citation: >-
+      « la cotisation d'ajustement due par les médecins au titre des deux premières
+      années civiles d'activité non salariée dans le cadre de la convention mentionnée à
+      l'article L. 162-14 du code de la sécurité sociale est assise sur les mêmes bases
+      forfaitaires que celle due au titre du deuxième alinéa de l'article L. 131-6-2 du
+      même code. » : le renvoi seul change, la base de l'avant-dernière année demeure
+  - id: LEGIARTI000033090911
+    article: décret n° 2011-1644, article 2, rédaction du décret n° 2016-1198
+    en_vigueur: 2016-09-05
+    citation: >-
+      « 2,8 % au titre de l'exercice 2017 ; 3,2 % au titre de l'exercice 2018 ; 3,6 % au
+      titre de l'exercice 2019 ; 3,8 % à compter de l'exercice 2020. »
+  - id: LEGIARTI000052567960
+    article: décret n° 2011-1644, article 2, rédaction du décret n° 2025-1076
+    en_vigueur: 2025-11-14
+    citation: >-
+      « 3,8 % au titre des exercices 2020 à 2025 ; 4 % à compter de l'exercice 2026.
+      Cette cotisation est calculée sur la base des revenus définis à l'article L. 645-3
+      du code de la sécurité sociale perçus la deuxième année précédant celle au titre de
+      laquelle la cotisation est appelée »
+  - id: LEGIARTI000024853567
+    article: décret n° 2011-1644, article 9
+    en_vigueur: 2012-01-01
+    citation: >-
+      « Le présent décret est applicable, à l'exception du dernier alinéa de l'article 2,
+      à compter du 1er janvier 2012. »
+  nee_de: LEGIARTI000024853554
+  bornes:
+    revenu.annee: [2012-01-01, null]
+  contenu:
+    parametres:
+      points_par_trimestre_valide: 6.75
+      points_ajustement_par_forfait: 18
+      points_ajustement_maximum: 9
+    droit: >-
+      27 points pour la cotisation forfaitaire de l'année, au prorata des trimestres
+      cotisés ; et, pour la cotisation d'ajustement, le rapport, arrondi au centième, de
+      son montant multiplié par 18 au montant du forfait, neuf points au plus ; la
+      cotisation d'ajustement au taux de l'exercice, sur le revenu de l'avant-dernière
+      année, dans la limite de cinq plafonds de l'exercice
+  exemples: aucun trouvé
+approximations:
+- version: [decret_de_2011]
+  textes: >-
+    décret n° 2011-1644, article 2, dans chacune de ses rédactions : « perçus la
+    deuxième année précédant celle au titre de laquelle la cotisation est appelée »
+  ecart: >-
+    Le modèle assied la cotisation d'ajustement sur le revenu de l'exercice même, le
+    décret sur celui de l'avant-dernière année ; le plafond et le forfait sont ceux de
+    l'exercice dans les deux cas. Un revenu qui croît donne au modèle des points de
+    trop, un revenu qui baisse des points de moins, sous le plafond de neuf points.
+    Cas posé à la main, exercice 2026, taux de 4 %, forfait total de 5 751 € (les 1 917
+    € du médecin, un tiers) : revenu de 40 000 € en 2024 et de 42 000 € en 2026. Le
+    décret : 18 × (4 % × 40 000) / 5 751 = 18 × 1 600 / 5 751 = 5,0078, 5,01 points.
+    Le modèle : 18 × 1 680 / 5 751 = 5,2582 points, 0,2482 de plus.
+  effet: >-
+    0,2482 point de trop pour l'exercice, soit 0,2482 × 11,82 = 2,93 € de pension
+    annuelle par exercice ainsi cotisé, à la valeur de service de 2025 des points
+    liquidés depuis 2017.
+- version: [decret_de_2011]
+  textes: >-
+    décret n° 2011-1644, article 3 : « arrondi au centième le plus proche »
+  ecart: >-
+    Le modèle n'arrondit pas les points d'ajustement : 5,2582 au lieu de 5,26 dans le
+    cas posé, au plus un demi-centième de point par exercice.
+  effet: >-
+    au plus 0,005 × 11,82 = 0,06 € de pension annuelle par exercice.
+- version: [decret_de_2011]
+  textes: >-
+    décret n° 2011-1644, article 2, rédaction du 30 décembre 2012 : les deux premières
+    années, « les mêmes bases forfaitaires que celle due au titre du deuxième alinéa de
+    l'article L. 131-6-2 » ; le décret qui fixe ce revenu forfaitaire n'est pas lu
+  ecart: >-
+    Le modèle assied l'ajustement des deux premières années sur le revenu de l'année ;
+    le décret, sur le revenu forfaitaire des cotisations provisionnelles de L. 131-6-2
+    (« Pour les deux premières années d'activité, les cotisations provisionnelles sont
+    calculées sur un revenu forfaitaire fixé par décret », rédaction du 23 décembre
+    2011, LEGIARTI000025013725). Non chiffré : le décret qui fixe ce revenu n'est pas lu
+    pendant la session (question au propriétaire).
+  effet: >-
+    inconnu tant que le revenu forfaitaire n'est pas lu ; deux exercices au plus par
+    carrière.
+- version: [decret_de_2011]
+  textes: >-
+    décret n° 2011-1644, article 1er : le forfait « revalorisé chaque année en fonction
+    de l'évolution constatée du revenu moyen » depuis 2017
+  ecart: >-
+    Le revenu moyen des affiliés de la section, que le dépôt n'a pas, fait le forfait de
+    2017 à 2024 ; le modèle y porte celui de 2016 par les prix, puis les forfaits que la
+    caisse publie.
+  effet: >-
+    le modèle rend 28,21, 30,63, 32,81 et 35,46 points à 10 000, 30 000, 48 060 et 70
+    000 € de revenu, la calculette de la caisse 28,25, 30,76, 33,02 et 35,76 : moins
+    de 1 % d'écart (22 septembre 2026).
+textes_sans_effet:
+- id: LEGIARTI000006765943
+  article: décret n° 72-968, article 2, rédaction du 27 mars 1981
+  en_vigueur: 1981-03-27
+  motif: >-
+    « Ce régime assure aux affiliés, après trente-cinq années de cotisations, une
+    prestation supplémentaire annuelle correspondant à 1055 fois la valeur du tarif de
+    la consultation » : aucune cotisation d'ajustement ; la version d'avant 2012
+- id: LEGIARTI000006765944
+  article: décret n° 72-968, article 2, rédaction du 8 juillet 1994
+  en_vigueur: 1994-07-08
+  motif: >-
+    « La cotisation annuellement versée par les organismes d'assurance maladie et par les
+    médecins donne à ces derniers chaque année un total de 37,52 points de retraite »,
+    puis 30,16 et 27 points : les points de la cotisation forfaitaire seuls, aucune
+    cotisation d'ajustement ; la version d'avant 2012
+- id: LEGIARTI000006765945
+  article: décret n° 72-968, article 2, rédaction du 28 mars 1999
+  en_vigueur: 1999-03-28
+  motif: >-
+    « La cotisation annuellement versée par les organismes d'assurance maladie et par les
+    médecins donne à ces derniers chaque année un total de 37,52 points de retraite »,
+    puis 30,16 et 27 points : les points de la cotisation forfaitaire seuls, aucune
+    cotisation d'ajustement ; la version d'avant 2012
+- id: LEGIARTI000006765946
+  article: décret n° 72-968, article 2, rédaction du 1er janvier 2004
+  en_vigueur: 2004-01-01
+  motif: >-
+    « La cotisation annuellement versée par les organismes d'assurance maladie et par les
+    médecins donne à ces derniers chaque année un total de 37,52 points de retraite »,
+    puis 30,16 et 27 points : les points de la cotisation forfaitaire seuls, aucune
+    cotisation d'ajustement ; la version d'avant 2012
+- id: LEGIARTI000006765947
+  article: décret n° 72-968, article 2, rédaction du 6 octobre 2006
+  en_vigueur: 2006-10-06
+  motif: >-
+    « La cotisation annuellement versée par les organismes d'assurance maladie et par les
+    médecins donne à ces derniers chaque année un total de 37,52 points de retraite »,
+    puis 30,16 et 27 points : les points de la cotisation forfaitaire seuls, aucune
+    cotisation d'ajustement ; la version d'avant 2012
 effet: >-
   La fiche servait 36 points à tout médecin, soit jusqu'à 7,75 points de trop sous
   70 000 €. Le forfait, revalorisé sur le revenu moyen des médecins que le dépôt
   n'a pas, suit les prix : le modèle rend 28,21, 30,63, 32,81 et 35,46 points, à
-  moins de 1 % de la caisse.
+  moins de 1 % de la caisse. Lue au droit le 6 novembre 2026 (action 130) : une
+  version, le décret n° 2011-1644, dont l'article 3 n'a qu'une rédaction ; 27 points,
+  18 fois l'ajustement sur le forfait et neuf points au plus rendus par le modèle ;
+  trois écarts chiffrés ou nommés, le revenu de l'avant-dernière année, l'arrondi au
+  centième, la base forfaitaire des deux premières années.
 sources:
-  lu_le: 2026-09-22
+  lu_le: 2026-11-06
   prochaine_relecture: 2027-03-31
   a_relire:
   - Porter le forfait publié chaque année par la CARMF.
+  - >-
+    Lire le décret qui fixe le revenu forfaitaire des deux premières années (deuxième
+    alinéa de L. 131-6-2), et dire si le modèle doit asseoir l'ajustement sur le revenu
+    de l'avant-dernière année.
   lectures:
   - type: legifrance
     reference: >-
-      article 3 : « dans la limite de neuf points par an, égal au rapport [...]
-      entre le produit du montant de la cotisation d'ajustement et des deux tiers
-      du nombre de points acquis au titre de la cotisation forfaitaire [...] et
-      le montant de la cotisation forfaitaire »
-    date: 2026-09-22
+      Décret n° 2011-1644, articles 1er (LEGIARTI000024853551), 2 (LEGIARTI000024853549,
+      LEGIARTI000026885169, LEGIARTI000033090911, LEGIARTI000052567960), 3
+      (LEGIARTI000024853554, seule rédaction), 4, 5, 6 et 9 ; décret n° 72-968, article 2
+      (LEGIARTI000024871109, LEGIARTI000054168410) ; code de la sécurité sociale, L.
+      131-6-2 du 23 décembre 2011 (LEGIARTI000025013725) ; décrets n° 2016-1198,
+      2021-645, 2022-1633, 2023-1351, 2024-1214, 2025-1076 et 2026-418 (articles 3, 16
+      et 30), qui ne récrivent pas l'article 3 ; lus dans les index LEGI et JORF du
+      dépôt, à jour des 5 et 6 novembre 2026.
+    date: 2026-11-06
   - type: autre
     reference: >-
       calculette de la CARMF (showresultat.php), 22 septembre 2026 : 28,25 points
@@ -32,10 +267,6 @@ sources:
       de 90 000 €
     url: https://www.carmf.fr/
     date: 2026-09-22
-textes_a_rattacher:
-- reference: décret n° 2011-1644, article 3 (LEGIARTI000024853554)
-- reference: 'décret n° 2011-1644, article 2 (LEGIARTI000052567960) : 4 % depuis
-    2026'
 code:
   moteur: >-
     Depuis 2012, chaque période de `asv_conventionnes` sert 6,75 points par trimestre
@@ -46,19 +277,25 @@ code:
     pour une année entière, à proportion de ses mois sinon
     (`points_ajustement_maximum`). Le forfait est celui que la période date
     (`cotisation_forfaitaire_euros`, `cotisation_forfaitaire_annee`), porté par les prix
-    aux années qui n'en publient pas : de 2017 à 2024, celui de 2016.
+    aux années qui n'en publient pas : de 2017 à 2024, celui de 2016. L'assiette est le
+    revenu de l'année même, sans arrondi des points.
   python: >-
     droit/acquerir.py : acquerir ; donnees/regimes.py : PeriodeRegime.ajustement_total
   javascript: >-
     moteur/js/droit/acquerir.js : acquerir ; moteur/js/regimes.js :
     PeriodeRegime.ajustementTotal
   parametres: >-
+    contenu.parametres de chaque version : points_par_trimestre_valide,
+    points_ajustement_par_forfait, points_ajustement_maximum ;
     regimes/asv_conventionnes.yaml : points_par_trimestre_valide,
     points_ajustement_par_forfait, points_ajustement_maximum,
     cotisation_forfaitaire_euros, cotisation_forfaitaire_annee, assiette,
     taux_cotisation_retraite, part_assurance_maladie_forfait,
     part_assurance_maladie_taux
   tests:
+  - >-
+    tests/test_sections_sante.py, test_chaque_version_de_la_carmf_est_portee_par_le_modele,
+    qui lit chaque année depuis 2012 les trois paramètres de la version
   - >-
     tests/test_pcv_sante.py, dont test_chaque_profession_de_sante_a_son_etage, qui ne
     dit que l'étage suit le revenu : aucun cas posé à la main ne tient les points de la

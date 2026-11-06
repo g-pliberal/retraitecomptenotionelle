@@ -1,31 +1,468 @@
 schema_version: 1
 id: carmf_asv_minoration_enfants
 intitule: >-
-  Complémentaire de la CARMF : de 2000 à 2016, taux plein à 65 ans et coefficients
-  d'anticipation par année d'âge — 0,75 à 60 ans jusqu'à 0,95 à 64 ans —, sans condition
-  de durée ; majoration pour trois enfants depuis l'arrêté du 16 janvier 1964, de
-  10 % selon le règlement de 2026. ASV des médecins : 10 % pour trois enfants sur
-  les prestations liquidées depuis le 1er janvier 1981.
+  Complémentaire de la CARMF et ASV des médecins : depuis le 1er janvier 2017, la
+  pension s'ouvre sans minoration à l'âge du premier alinéa de L. 351-1, et se majore
+  de 1,25 % par trimestre civil après 62 ans — après l'âge légal jusqu'au 29 mars
+  2017 —, de 0,75 % après 65 ans, rien au-delà de 70 ans ; avant 2017, des statuts que
+  le Journal officiel ne publie pas (le modèle : 0,75 à 60 ans jusqu'à 0,95 à 64 ans,
+  par année d'âge, à la complémentaire de 2000 à 2016) ; 10 % pour trois enfants,
+  depuis l'arrêté du 16 janvier 1964 à la complémentaire et sur les prestations
+  liquidées depuis le 1er janvier 1981 à l'ASV, lus au règlement de 2026, qui sert
+  la complémentaire au premier jour du trimestre civil qui suit les conditions.
+domaine: decote_surcote
 regimes: [carmf_complementaire, asv_conventionnes]
+etape: liquider_chaque_regime
+face: droit
 etat: approchee
+lit:
+- >-
+  l'âge du médecin à la date d'effet de sa pension, et sa génération, qui donne l'âge
+  du premier alinéa de L. 351-1, celui de L. 161-17-2 ; depuis 2017, les trimestres
+  civils qui séparent celui qui suit ses 62 ans — son âge légal jusqu'au 29 mars 2017
+  — de la date d'effet, comptés à 0,75 % du premier jour du trimestre civil qui suit
+  ses 65 ans, et nul au-delà de celui qui suit ses 70 ans
+- >-
+  le nombre d'enfants : au moins trois, « eu » ou élevés neuf ans avant leur seizième
+  anniversaire
+- >-
+  la date d'effet de la pension, qui choisit la rédaction des statuts ou du règlement,
+  et que l'article 24 du règlement de 2026 fixe « au premier jour du trimestre civil
+  qui suit la réalisation de toutes les conditions d'ouverture des droits »
+ecrit:
+- >-
+  le coefficient de majoration des points de la complémentaire et de l'ASV, que
+  `surcote_points` (`par_age_seul`) rend à `liquider_chaque_regime`, et, de 2000 à
+  2016, celui de minoration de la complémentaire (`abattement_points`) ; la majoration
+  de 10 % pour trois enfants, que `completer` ajoute
+dates_qui_decident:
+- liquidation.date_effet
+versions:
+- id: statuts_d_avant_2017
+  statut: supposee
+  hypothese: >-
+    les pensions qui prennent effet avant le 1er janvier 2017 relèvent des statuts du
+    régime complémentaire approuvés par l'arrêté du 27 février 1974, de ceux de l'ASV
+    approuvés par l'arrêté du 18 décembre 1972, et des arrêtés qui les modifient ;
+    l'index JORF n'en porte que des titres, ou les mots que remplace l'arrêté du 28
+    septembre 2011
+  fiabilite: >-
+    faible : l'âge, le coefficient, la place de la durée, la date d'effet et le taux des
+    enfants, que nul texte lu ne fixe avant le 1er janvier 2017
+  textes:
+  - id: JORFARTI000024612007
+    article: >-
+      annexe de l'arrêté du 28 septembre 2011, statuts du régime d'assurance vieillesse
+      complémentaire, article 15, et du régime des prestations supplémentaires de
+      vieillesse, article 12
+    en_vigueur: 2011-10-01
+    publie_le: 2011-09-30
+    citation: >-
+      « Au premier alinéa du 1, les mots : « ou de 60 ans » sont remplacés par les mots
+      : « ou de l'âge prévu à l'article L. 161-17-2 du code de la sécurité sociale ».
+      2. Au cinquième alinéa du 1, les mots : « dès l'âge de 60 ans » sont remplacés par
+      les mots : « dès l'âge prévu à l'article L. 161-17-2 du code de la sécurité
+      sociale ». [...] Statuts du régime des prestations supplémentaires de vieillesse
+      Article 12 A l'article 12, les mots : « ou de 60 ans » sont remplacés par les mots
+      : « ou de l'âge prévu à l'article L. 161-17-2 du code de la sécurité sociale ». »
+      : les mots que l'arrêté remplace sont tout ce que le Journal officiel montre des
+      deux articles ; ni cet article ni les trois autres de l'arrêté ne fixent de date
+  bornes:
+    liquidation.date_effet: [null, 2017-01-01]
+  contenu:
+    droit: >-
+      les statuts du régime complémentaire annexés à l'arrêté du 27 février 1974, et ceux
+      de l'ASV annexés à l'arrêté du 18 décembre 1972, avec les arrêtés qui les modifient,
+      que le Journal officiel ne publie pas ou dont l'index n'a que le titre ; de leurs
+      articles 15 et 12, seuls se lisent les mots que l'arrêté de 2011 remplace ; de
+      l'article 22 que l'arrêté du 16 janvier 1964 ajoute au règlement, son titre : «
+      allocataires ayant élevé au moins trois enfants jusqu'à l'âge de seize ans » ; le
+      modèle : de 1949 à 1999, la décote du régime de base, que la durée annule ; de
+      2000 à 2016, à la complémentaire, 65 ans et « 0,75 à 60 ans, 0,80 à 61 ans, 0,85 à
+      62 ans, 0,90 à 63 ans, 0,95 à 64 ans », une phrase qu'aucun texte lu ne porte ; à
+      l'ASV, la décote du régime de base jusqu'en 2016 ; 10 % pour trois enfants depuis
+      1964 et depuis 1981
+  exemples: aucun trouvé
+- id: statuts_de_2017
+  statut: lue
+  textes:
+  - id: JORFARTI000033521562
+    article: >-
+      annexe de l'arrêté du 30 novembre 2016, statuts du régime d'assurance vieillesse
+      complémentaire, article 15
+    en_vigueur: 2017-01-01
+    publie_le: 2016-12-04
+    citation: >-
+      « A compter du 1er janvier 2017, pour bénéficier de l'ouverture des droits à la
+      retraite complémentaire, le médecin doit simultanément : « 1. Etre âgé de l'âge
+      prévu au premier alinéa de l'article L. 351-1 du code de la sécurité sociale. « Si
+      le médecin demande à bénéficier de la retraite complémentaire après cet âge, il est
+      fait application d'un coefficient de majoration de 1,25 % par trimestre séparant
+      le premier jour du trimestre civil suivant celui où le médecin atteint cet âge de
+      la date d'effet de la retraite. « Le coefficient de majoration est le cas échéant
+      réduit à 0,75 % par trimestre à partir du premier jour du trimestre civil suivant
+      celui où le médecin atteint l'âge de 65 ans, sans pouvoir s'appliquer au-delà du
+      premier jour du trimestre civil suivant le soixante dixième anniversaire du
+      médecin. [...] « Ces coefficients sont déterminés définitivement lors de la
+      liquidation des droits. »
+  - id: JORFARTI000033521558
+    article: arrêté du 30 novembre 2016, article 2
+    en_vigueur: 2017-01-01
+    publie_le: 2016-12-04
+    citation: « Le présent arrêté entre en vigueur au 1er janvier 2017. »
+  - id: JORFARTI000033538061
+    article: >-
+      annexe de l'arrêté du 1er décembre 2016, statuts du régime des prestations
+      supplémentaires de vieillesse des médecins conventionnés, article 12
+    en_vigueur: 2017-01-01
+    publie_le: 2016-12-06
+    citation: >-
+      « A compter du 1er janvier 2017, pour bénéficier des prestations supplémentaires
+      de vieillesse prévues par les présents statuts, le médecin doit remplir les
+      conditions suivantes : « 1° Etre âgé de l'âge prévu au 1er alinéa de l'article L.
+      351-1 du code de la sécurité sociale, « Si le médecin demande à bénéficier des
+      prestations supplémentaires de vieillesse après cet âge, il est fait application
+      d'un coefficient de majoration de 1,25 % par trimestre séparant le premier jour du
+      trimestre civil suivant celui où le médecin atteint cet âge de la date d'effet de
+      la retraite. « Le coefficient de majoration est le cas échéant réduit à 0,75 % par
+      trimestre à partir du premier jour du trimestre civil suivant celui où le médecin
+      atteint l'âge de 65 ans sans pouvoir s'appliquer au-delà du premier jour du
+      trimestre civil suivant le soixante dixième anniversaire du médecin. »
+  - id: JORFARTI000033538057
+    article: arrêté du 1er décembre 2016, article 2
+    en_vigueur: 2017-01-01
+    publie_le: 2016-12-06
+    citation: « Le présent arrêté entre en vigueur au 1er janvier 2017. »
+  nee_de: JORFARTI000033521562
+  bornes:
+    liquidation.date_effet: [2017-01-01, 2017-03-30]
+  contenu:
+    parametres:
+      age_ouverture_par_generation: true
+      age_taux_plein: 62
+      duree_requise_trimestres: null
+      decote_par_trimestre: null
+      surcote_points: par_age_seul
+      surcote_par_trimestre: 0.0125
+      surcote_palier_age: 65
+      surcote_par_trimestre_apres_palier: 0.0075
+      surcote_age_maximum: 70
+    droit: >-
+      la retraite en temps choisi : l'ouverture à l'âge de L. 351-1, sans minoration ni
+      durée ; la majoration de 1,25 % par trimestre civil après « cet âge », l'âge légal
+      de la génération, de 0,75 % après 65 ans, nulle après 70 ans ; à la complémentaire
+      comme à l'ASV, mot pour mot
+  exemples: aucun trouvé
+- id: statuts_de_mars_2017
+  statut: lue
+  textes:
+  - id: JORFARTI000034298521
+    article: >-
+      annexe de l'arrêté du 22 mars 2017, article 15 des statuts du régime d'assurance
+      vieillesse complémentaire et article 12 de ceux des prestations supplémentaires
+    en_vigueur: 2017-03-30
+    publie_le: 2017-03-29
+    citation: >-
+      « I. - A l'article 15 des statuts du régime d'assurance vieillesse complémentaire,
+      les mots : « après cet âge » sont remplacés par les mots : « après l'âge de 62 ans »
+      ; II. - A l'article 12 des statuts du régime des prestations supplémentaires de
+      vieillesse des médecins conventionnés, les mots : « après cet âge » sont remplacés
+      par les mots : « après l'âge de 62 ans ». »
+  - id: JORFARTI000034298518
+    article: arrêté du 22 mars 2017, article 1er
+    en_vigueur: 2017-03-30
+    publie_le: 2017-03-29
+    citation: >-
+      « Sont approuvées, telles qu'elles sont annexées au présent arrêté, les
+      modifications apportées aux statuts des régimes d'assurance vieillesse
+      complémentaire et des prestations supplémentaires de vieillesse des médecins
+      conventionnés de la section professionnelle des médecins. » : ni cet article ni
+      l'article 2 ne fixent de date ; l'arrêté entre en vigueur le lendemain de sa
+      publication
+  nee_de: JORFARTI000034298521
+  bornes:
+    liquidation.date_effet: [2017-03-30, 2026-07-18]
+  contenu:
+    parametres:
+      age_ouverture_par_generation: true
+      age_taux_plein: 62
+      duree_requise_trimestres: null
+      decote_par_trimestre: null
+      surcote_points: par_age_seul
+      surcote_par_trimestre: 0.0125
+      surcote_age_debut: 62
+      surcote_palier_age: 65
+      surcote_par_trimestre_apres_palier: 0.0075
+      surcote_age_maximum: 70
+    droit: >-
+      les statuts de 2017, la majoration courant « après l'âge de 62 ans », quel que soit
+      l'âge légal de la génération ; la date d'effet et le taux de la majoration pour
+      enfants, dans des articles que le Journal officiel ne publie pas
+  exemples: [carmf_report_62_65_ans]
+- id: reglement_de_2026
+  statut: lue
+  textes:
+  - id: JORFARTI000054435859
+    article: >-
+      annexe de l'arrêté du 10 juillet 2026, I, règlement du régime d'assurance
+      vieillesse complémentaire, articles 2, 23 et 24, et III, règlement du régime de
+      prestations complémentaires de vieillesse, articles 2 et 8
+    en_vigueur: 2026-07-18
+    publie_le: 2026-07-17
+    citation: >-
+      « Etre âgé de l'âge prévu au premier alinéa de l'article L. 351-1 du code de la
+      sécurité sociale. « Si le médecin demande à bénéficier de la retraite
+      complémentaire après l'âge de 62 ans, il est fait application d'un coefficient de
+      majoration de 1,25 % par trimestre, séparant le premier jour du trimestre civil
+      suivant celui où le médecin atteint cet âge de la date d'effet de la retraite. «
+      Le coefficient de majoration est le cas échéant réduit à 0,75 % par trimestre à
+      partir du premier jour du trimestre civil suivant celui où le médecin atteint l'âge
+      de 65 ans, sans pouvoir s'appliquer au-delà du premier jour du trimestre civil
+      suivant le soixante-dixième anniversaire du médecin. [...] « Le montant total de la
+      pension est majoré de 10 % au profit des allocataires ayant eu au moins trois
+      enfants. « Sont également considérés comme ouvrant droit à la majoration prévue à
+      l'alinéa précédent, les enfants ayant été, pendant au moins neuf ans avant leur
+      seizième anniversaire, élevés par le médecin et à sa charge effective. [...] « La
+      date d'effet de l'allocation est fixée au premier jour du trimestre civil qui suit
+      la réalisation de toutes les conditions d'ouverture des droits, sans pouvoir être
+      antérieure à la date de la demande [...] « Si le médecin demande à bénéficier des
+      prestations complémentaires de vieillesse après l'âge de 62 ans, il est fait
+      application d'un coefficient de majoration de 1,25 % par trimestre séparant le
+      premier jour du trimestre civil suivant celui où le médecin atteint cet âge de la
+      date d'effet de la retraite. [...] « Le montant des prestations complémentaires
+      liquidées avec une date d'effet postérieure au 31 décembre 1980 est majoré de 10 %
+      au profit des allocataires ayant eu au moins trois enfants. »
+  - id: JORFARTI000054435856
+    article: arrêté du 10 juillet 2026, article 1er
+    en_vigueur: 2026-07-18
+    publie_le: 2026-07-17
+    citation: >-
+      « Sont approuvés, tels qu'ils sont annexés au présent arrêté, les règlements des
+      régimes d'assurance vieillesse complémentaire, d'assurance invalidité-décès et de
+      prestations complémentaires de vieillesse » : ni cet article ni l'article 2 ne
+      fixent de date ; l'arrêté entre en vigueur le lendemain de sa publication
+  - id: JORFARTI000054153420
+    article: >-
+      décret n° 2026-418 du 29 mai 2026, article 3, 7°, en vigueur le 1er juillet 2026
+      (article 30)
+    en_vigueur: 2026-07-01
+    publie_le: 2026-05-31
+    citation: >-
+      « Le premier alinéa de l'article 5 est remplacé par les dispositions suivantes : «
+      Les conditions d'attribution et de service des prestations du présent régime sont
+      précisées par un règlement de la section professionnelle des médecins, approuvé
+      par arrêté du ministre chargé de la sécurité sociale après avis de la Caisse
+      nationale d'assurance vieillesse des professions libérales. » » ; l'article 16 en
+      dit autant de l'ASV (article 5-2 du décret n° 72-968)
+  nee_de: JORFARTI000054435859
+  bornes:
+    liquidation.date_effet: [2026-07-18, null]
+  contenu:
+    parametres:
+      age_ouverture_par_generation: true
+      age_taux_plein: 62
+      duree_requise_trimestres: null
+      decote_par_trimestre: null
+      surcote_points: par_age_seul
+      surcote_par_trimestre: 0.0125
+      surcote_age_debut: 62
+      surcote_palier_age: 65
+      surcote_par_trimestre_apres_palier: 0.0075
+      surcote_age_maximum: 70
+    droit: >-
+      les règles de mars 2017, mot pour mot ; 10 % pour trois enfants, à la
+      complémentaire sur « le montant total de la pension », à l'ASV sur les prestations
+      liquidées depuis le 1er janvier 1981 ; la complémentaire au premier jour du
+      trimestre civil qui suit les conditions ; le règlement de l'ASV ne dit pas la date
+      d'effet de la pension du médecin
+  exemples: [carmf_2026_temps_choisi_63_ans, carmf_2026_temps_choisi_65_ans, carmf_2026_temps_choisi_70_ans]
+approximations:
+- version: [statuts_d_avant_2017]
+  textes: >-
+    les statuts du régime complémentaire (arrêté du 27 février 1974) et de l'ASV
+    (arrêté du 18 décembre 1972), et les arrêtés qui les modifient dont l'index JORF n'a
+    que le titre : 16 janvier 1964 (article 22, trois enfants), 7 et 25 mars 1977, 11 et
+    12 mars 1981, 31 décembre 1982, 28 novembre 1985, 31 mars 1995, 23 mai 1997, 30
+    juillet 1999, 12 mai 2000, 27 décembre 2000, 11 septembre 2001, 24 juin 2005, 28 août
+    2006 ; au Bulletin officiel (question 22 du propriétaire)
+  ecart: >-
+    Le texte n'est pas lu : rien ne dit l'âge, le coefficient ni le taux des enfants
+    d'avant 2017, que le modèle tient de pages de la caisse et non d'un texte. Deux
+    lectures à l'ASV, qui ne se tranchent pas sans lui. Première, celle du modèle : la
+    décote du régime de base, que la durée annule ; né le 10 mars 1949, parti à 64 ans
+    le 1er avril 2013 avec sa durée, 15 533,26 € par an sans coefficient. Seconde :
+    l'article 12 de l'ASV, que l'arrêté de 2011 récrit des mêmes mots que l'article 15 («
+    ou de 60 ans »), porterait les coefficients que le modèle sert à la complémentaire,
+    0,95 à 64 ans : 14 756,60 €, 776,66 € par an de moins.
+  effet: >-
+    776,66 € par an à l'ASV, né le 10 mars 1949, parti à 64 ans le 1er avril 2013, si la seconde lecture vaut ; 0 € si la première.
+    Essai du 6 novembre 2026, dans les deux moteurs, requête du formulaire (médecin libéral, entré à 22 ans, deux salaires moyens, né le 10 du mois).
+- version: [statuts_de_2017]
+  textes: >-
+    article 15 de la complémentaire et article 12 de l'ASV, annexés aux arrêtés des 30
+    novembre et 1er décembre 2016 (« après cet âge »), et l'arrêté du 22 mars 2017 («
+    après l'âge de 62 ans »), en vigueur le 30 mars 2017
+  ecart: >-
+    Du 1er janvier au 29 mars 2017, la majoration court de l'âge du premier alinéa de
+    L. 351-1, l'âge légal de la génération ; le modèle la fait courir de 62 ans dès le
+    1er janvier 2017. Le texte ne tranche pas pour une pension prenant effet dans ces
+    trois mois et liquidée après le 29 mars, puisque « Ces coefficients sont déterminés
+    définitivement lors de la liquidation des droits ». Né le 10 mars 1952, 60 ans et 9
+    mois le 10 décembre 2012 (D. 161-2-1-9, 3°), parti à 64 ans et 9 mois, la pension
+    le 1er janvier 2017 : première lecture, la règle de la date d'effet, 16 trimestres
+    du 1er janvier 2013, 20 %, 1,20 ; seconde, celle du modèle, 11 trimestres du 1er
+    avril 2014, 1,1375. Écart : 679,34 € par an à la complémentaire (12 364,01 €
+    servis), 873,34 € à l'ASV (15 894,81 €), soit 1 552,68 € par an, seuls les nés
+    avant 1955 dont la pension prend effet du 1er janvier au 1er mars 2017 étant
+    touchés.
+  effet: >-
+    1 552,68 € par an (679,34 € à la complémentaire, 873,34 € à l'ASV), né le 10 mars 1952, la pension le 1er janvier 2017, si la première lecture vaut ; 0 € si la seconde.
+    Essai du 6 novembre 2026, dans les deux moteurs, requête du formulaire (médecin libéral, entré à 22 ans, deux salaires moyens, né le 10 du mois).
+- version: [statuts_de_2017, statuts_de_mars_2017]
+  textes: >-
+    l'article des statuts qui fixe la date d'effet, que le Journal officiel ne publie
+    pas ; le guide de la caisse « Préparez votre retraite en temps choisi », juin 2026,
+    p. 12 (exemple carmf_2026_temps_choisi_63_ans)
+  ecart: >-
+    Le modèle sert la pension au premier jour du mois qui suit l'âge. Le texte n'est pas
+    lu ; la caisse, en juin 2026, sous ces statuts, sert à un médecin qui a 63 ans le 15
+    mai 2028 ses pensions « à partir du 1er juillet 2028 », au trimestre civil comme
+    l'article 24 du règlement de 2026. Les deux lectures se chiffrent comme sous le
+    règlement : un ou deux mois de pension, et 1,25 point de majoration quand
+    l'anniversaire tombe au premier mois d'un trimestre civil.
+  effet: >-
+    un ou deux mois de pension de trop, et 1,25 point de majoration de moins quand l'anniversaire tombe au premier mois d'un trimestre civil, si la première lecture vaut ; 0 € si la seconde.
+    Essai du 6 novembre 2026, dans les deux moteurs, requête du formulaire (médecin libéral, entré à 22 ans, deux salaires moyens, né le 10 du mois).
+- version: [reglement_de_2026]
+  textes: >-
+    règlement du régime complémentaire, article 24 ; règlement de l'ASV, articles 2, 7 et
+    9 ; arrêté du 10 juillet 2026, rectificatif du 8 août 2026 (JORFTEXT000054642801),
+    dont l'index n'a que le titre
+  ecart: >-
+    ERREUR DU MODÈLE, à la complémentaire, déclarée et non corrigée (pour le
+    propriétaire) : l'article 24 fixe la date d'effet « au premier jour du trimestre
+    civil qui suit la réalisation de toutes les conditions d'ouverture des droits » ;
+    le modèle la fixe au premier jour du mois qui suit l'âge. Né le 10 mai 1964, parti à
+    63 ans le 10 mai 2027 : le modèle sert la complémentaire le 1er juin 2027, le texte
+    le 1er juillet ; 4 trimestres de majoration des deux côtés, du 1er juillet 2026 ;
+    un mois de trop, 14 056,14 / 12 = 1 171,35 €. Né le 10 mars 1964, parti à 63 ans et
+    un mois le 10 avril 2027 : le modèle sert le 1er mai 2027, à 1,05 (4 trimestres
+    d'âge entiers) ; le texte le 1er juillet 2027, à 1,0625 (5 trimestres civils du 1er
+    avril 2026) ; deux mois de trop, 2 337,68 €, puis 14 026,06 / 1,05 × 1,0625 − 14
+    026,06 = 166,98 € par an de moins. À l'ASV, le règlement ne dit pas la date d'effet
+    de la pension du médecin — l'article 2 la nomme, l'article 7 n'étend que les règles
+    des conjoints, l'article 9 ne vise que le médecin débiteur — : point non tranché ;
+    première lecture, celle du guide de la caisse, le trimestre civil, 1 320,91 € dans
+    le premier cas, 2 656,35 € puis 189,74 € par an dans le second ; seconde, celle du
+    modèle, 0 €. Le rectificatif du 8 août 2026 n'est pas lu.
+  effet: >-
+    à la complémentaire, 1 171,35 € (un mois de trop), ou 2 337,68 € (deux mois de trop) puis 166,98 € par an de moins ; à l'ASV, 0 € ou, si la première lecture vaut, 1 320,91 €, ou 2 656,35 € puis 189,74 € par an.
+    Essai du 6 novembre 2026, dans les deux moteurs, requête du formulaire (médecin libéral, entré à 22 ans, deux salaires moyens, né le 10 du mois).
+- version: [statuts_d_avant_2017, statuts_de_2017, statuts_de_mars_2017]
+  textes: >-
+    l'article 22 du règlement, ajouté par l'arrêté du 16 janvier 1964, et l'article des
+    statuts de l'ASV issu des arrêtés des 11 et 12 mars 1981, que l'index n'a qu'en
+    titre
+  ecart: >-
+    Le taux et les conditions de la majoration pour trois enfants ne se lisent qu'au
+    règlement de 2026 : 10 %, et les enfants élevés neuf ans avant leurs seize ans ;
+    avant le 18 juillet 2026, le modèle sert les mêmes 10 % sans texte lu.
+  effet: >-
+    inconnu avant le 18 juillet 2026 : le modèle sert 10 % sans texte lu.
+textes_sans_effet:
+- id: JORFARTI000033702968
+  article: annexe de l'arrêté du 21 décembre 2016, articles 15 et 31 de la complémentaire
+  publie_le: 2016-12-28
+  motif: >-
+    « il est fait application d'un coefficient de majoration de 13 % » : le seul
+    médecin inapte, ancien combattant ou invalide de guerre, que la fiche renvoie à la
+    question 11
+- id: JORFARTI000049205175
+  article: >-
+    annexe de l'arrêté du 21 février 2024, article 15 de la complémentaire et article
+    12 de l'ASV
+  publie_le: 2024-02-28
+  motif: >-
+    « les mots : « A compter du 1er janvier 2017, » sont supprimés » ; le reste ne
+    touche que l'inapte, servi « à partir de l'âge mentionné au IV de l'article L.
+    643-3 »
+- id: JORFARTI000054888279
+  article: arrêté du 21 septembre 2026, article 1er
+  publie_le: 2026-09-24
+  motif: >-
+    les articles 5 (la retraite de vingt points au plus servie en capital) et 25 (la
+    réversion) du règlement ; ni l'âge, ni la majoration, ni la date d'effet
+- id: JORFARTI000022758875
+  article: annexe de l'arrêté du 9 août 2010, statuts du régime complémentaire
+  publie_le: 2010-09-01
+  motif: >-
+    articles 3 à 69, dont 16 (l'inaptitude), 18 et 23 (les trimestres rachetables, dont
+    ceux de l'enfant handicapé) et 47 (l'enfant infirme) : ni l'âge, ni le
+    coefficient, ni la majoration pour trois enfants
+- id: JORFARTI000018605106
+  article: arrêté du 1er avril 2008, article 2
+  publie_le: 2008-04-09
+  motif: >-
+    « 3. Pour les femmes médecins, trois trimestres par enfant né pendant les périodes
+    d'exercice professionnel » : l'article 18, les périodes que l'article 23 laisse
+    racheter, non la majoration de la pension
+textes_a_rattacher:
+- reference: >-
+    arrêté du 16 janvier 1964 portant adjonction d'un article 22 au règlement du
+    régime (JORFTEXT000000482076), titre seul dans l'index
+exemples:
+- carmf_report_62_65_ans
+reformes:
+- carmf_trois_enfants_1964
+- asv_trois_enfants_1981
 effet: >-
   De 2000 à 2016, la fiche disait l'âge seul sans que le moteur le lise : un médecin
   parti à 64 ans avec sa durée n'était pas minoré. Depuis le 23 septembre 2026,
-  `abattement_points: cavom` sur ces périodes, et `majoration_enfants` depuis 1964
-  à la complémentaire, depuis 1981 à l'ASV. Approximation : le taux de 1964 n'est
-  pas lu, seul le titre de l'arrêté l'étant.
+  `abattement_points: cavom` sur ces périodes, et `majoration_enfants` depuis 1964 à la
+  complémentaire, depuis 1981 à l'ASV. Lue au droit le 6 novembre 2026 (action 130) :
+  quatre versions, les statuts d'avant 2017 non lus, ceux de 2017, de mars 2017, le
+  règlement de 2026 ; la majoration de 1,25 % puis 0,75 % par trimestre et les 10 % de
+  trois enfants rendus par le modèle ; une erreur déclarée, la date d'effet au
+  trimestre civil de la complémentaire depuis le 18 juillet 2026 ; quatre points non
+  tranchés, l'âge de l'ASV avant 2017, l'âge légal de janvier à mars 2017, la date
+  d'effet d'avant 2026 et celle de l'ASV.
 sources:
-  lu_le: 2026-09-23
+  lu_le: 2026-11-06
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
-    Lire le texte de l'arrêté du 16 janvier 1964 (Bulletin officiel ou Journal officiel
-    en image) et la date d'origine de l'article 15 des statuts de la CARMF.
+    Lire les statuts d'avant le 1er janvier 2017 : l'article 15 de la complémentaire et
+    l'article 12 de l'ASV, la date d'effet, l'article 22 de 1964 et celui de l'ASV de
+    1981 (Bulletin officiel), ou les demander à la CARMF ; le rectificatif du 8 août
+    2026. Demander à la caisse une pension prenant effet le 1er janvier 2017 d'un
+    médecin né avant 1955, et la date d'effet qu'elle donne à l'ASV.
   lectures:
   - type: jorf
     reference: >-
-      L'arrêté de 1964 (titre) et celui du 10 juillet 2026 (texte entier), dans
-      l'index JORF du dépôt.
+      Arrêtés du 1er avril 2008 (JORFARTI000018605102 à 110), du 9 août 2010
+      (JORFARTI000022758869 à 875), du 10 décembre 2010, du 28 septembre 2011
+      (JORFARTI000024612002 à 007), du 7 octobre 2014, du 30 novembre 2016
+      (JORFARTI000033521557 à 562), du 1er décembre 2016 (JORFARTI000033538056 à 061),
+      du 21 décembre 2016, du 22 mars 2017 (JORFARTI000034298518 à 521), des 18
+      septembre et 20 novembre 2017, des 20 août et 20 décembre 2018, du 5 octobre 2020,
+      du 5 mars 2021, des 6 et 21 février 2024, du 7 janvier 2025, du 10 juillet 2026
+      (JORFARTI000054435856 à 859) et du 21 septembre 2026 ; décret n° 2026-418,
+      articles 3, 16 et 30 ; les titres des textes de 1949 à 2006 ; lus dans l'index
+      JORF du dépôt, à jour du 6 novembre 2026, les textes relevés par « médecins » dans
+      leur titre, avec « vieillesse », « retraite », « statuts », « règlement », «
+      allocation » ou « prestations », sans borne, 182 titres.
+    date: 2026-11-06
+  - type: legifrance
+    reference: >-
+      Code de la sécurité sociale, D. 161-2-1-9 du 31 décembre 2011
+      (LEGIARTI000025089933 : « Soixante ans et neuf mois pour les assurés nés en 1952
+      ») et du 1er septembre 2023 (LEGIARTI000047634502 : « Soixante-trois ans pour les
+      assurés nés en 1964 ») ; lus dans l'index LEGI du dépôt, à jour du 5 novembre 2026.
+    date: 2026-11-06
+  - type: jorf
+    reference: >-
+      L'arrêté de 1964 (titre) et celui du 10 juillet 2026 (texte entier), dans l'index
+      JORF du dépôt.
     date: 2026-09-23
   - type: autre
     reference: >-
@@ -36,34 +473,29 @@ sources:
       : 1,15 », « hors majoration familiale »).
     url: https://www.carmf.fr/page.php?page=cdrom/retr/retr-calcul.htm
     date: 2026-09-23
-textes_a_rattacher:
-- reference: >-
-    arrêté du 16 janvier 1964 portant adjonction d'un article 22 au règlement du
-    régime (JORFTEXT000000482076), titre seul dans l'index
-- reference: >-
-    règlement du régime complémentaire, article 23, et règlement du régime des prestations
-    complémentaires de vieillesse, article 8, approuvés par l'arrêté du 10 juillet
-    2026 (JORFTEXT000054435848)
-exemples:
-- carmf_report_62_65_ans
-reformes:
-- carmf_trois_enfants_1964
-- asv_trois_enfants_1981
 code:
   interrupteurs:
     abattement_points: cavom
   moteur: >-
-    `abattement_points: cavom`, le barème par année d'âge manquante que la fiche `cavom_ages_minoration`
-    décrit, et dont la CARMF écrivait les coefficients de 2000 à 2016.
+    `abattement_points: cavom`, le barème par année d'âge manquante que la fiche
+    `cavom_ages_minoration` décrit, et dont la CARMF écrivait les coefficients de 2000 à
+    2016 ; depuis 2017, `surcote_points: par_age_seul`, des trimestres d'âge entiers
+    depuis `surcote_age_debut` jusqu'à l'âge du départ, au taux de
+    `surcote_par_trimestre_apres_palier` après `surcote_palier_age`, jusqu'à
+    `surcote_age_maximum`.
   python: >-
     droit/liquider.py : abattement_points, abattement_ircec, _ABATTEMENTS_IRCEC,
-    _ABATTEMENTS_PAR_ANNEE_AGE_SEUL ; droit/ouvrir.py : age_taux_plein ;
+    _ABATTEMENTS_PAR_ANNEE_AGE_SEUL, surcote_points ; droit/ouvrir.py : age_taux_plein ;
     droit/completer.py : completer, _taux_majoration_enfants
   javascript: >-
-    moteur/js/droit/liquider.js : abattementPoints, abattementIrcec ;
+    moteur/js/droit/liquider.js : abattementPoints, abattementIrcec, surcotePoints ;
     moteur/js/droit/ouvrir.js : ageTauxPlein ; moteur/js/droit/completer.js : completer,
     tauxMajorationEnfants
   parametres: >-
+    contenu.parametres de chaque version : age_ouverture_par_generation, age_taux_plein,
+    duree_requise_trimestres, decote_par_trimestre, surcote_points,
+    surcote_par_trimestre, surcote_age_debut, surcote_palier_age,
+    surcote_par_trimestre_apres_palier, surcote_age_maximum ;
     regimes/carmf_complementaire.yaml : age_taux_plein, avantages_non_contributifs ;
     regimes/asv_conventionnes.yaml : avantages_non_contributifs
-  tests: [tests/test_sections_sante.py, tests/js/moteur.test.js]
+  tests: [tests/test_sections_sante.py, tests/test_sections_liberales.py, tests/js/moteur.test.js]

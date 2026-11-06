@@ -1,0 +1,39 @@
+date: "2026-11-06"
+session: "action 130, file E (E6) : la CARMF lue au droit, les fiches carmf_asv_minoration_enfants et asv_medecins_ajustement"
+consulte: >-
+  `veille_droit.py` (la base de la Cnav, rien de neuf) et `docs/veille_droit.md`. Dans
+  l'index JORF du dépôt, à jour du 6 novembre 2026 : tous les textes du régime
+  complémentaire et de l'ASV des médecins, par « médecins » dans leur titre avec «
+  vieillesse », « retraite », « statuts », « règlement », « allocation » ou « prestations
+  », sans borne (182 titres) ; les arrêtés d'approbation des statuts de la CARMF de 2007
+  à 2025, article par article, dont ceux du 28 septembre 2011 (JORFARTI000024612007), du
+  30 novembre 2016 (JORFARTI000033521557 à 562), du 1er décembre 2016
+  (JORFARTI000033538056 à 061), du 21 décembre 2016, du 22 mars 2017
+  (JORFARTI000034298518 à 521) et du 21 février 2024 ; l'arrêté du 10 juillet 2026,
+  articles 1er et 2 et annexe (JORFARTI000054435856 à 859), et celui du 21 septembre 2026
+  ; le décret n° 2026-418, articles 3, 16 et 30 ; les décrets annuels de l'ASV de 2004 à
+  2010 et les décrets n° 2022-1633, 2023-1351, 2024-1214 et 2025-1076. Dans l'index LEGI,
+  à jour du 5 novembre 2026 : le décret n° 2011-1644, toutes ses rédactions ; le décret
+  n° 72-968, article 2 ; D. 161-2-1-9 et L. 131-6-2 du code de la sécurité sociale.
+trouve: >-
+  Avant 2017, les statuts ne se lisent pas : de leurs articles 15 et 12, le Journal
+  officiel ne montre que les mots que remplace l'arrêté de 2011, et les coefficients que
+  le modèle sert de 2000 à 2016 ne sont dans aucun texte lu. Depuis 2017, le modèle rend
+  la retraite en temps choisi, 1,25 % puis 0,75 % par trimestre, rien après 70 ans, et
+  les 10 % de trois enfants du règlement de 2026. Du 1er janvier au 29 mars 2017, la
+  majoration courait de l'âge légal (« après cet âge ») et non de 62 ans : non tranché,
+  1 552,68 € par an dans le cas posé. Depuis le 18 juillet 2026, la complémentaire prend
+  effet au premier jour du trimestre civil qui suit les conditions (article 24 du
+  règlement), le modèle au premier du mois : erreur déclarée, un ou deux mois de pension
+  de trop et, au premier mois d'un trimestre, 1,25 point de majoration de moins ; le
+  règlement de l'ASV ne fixe pas sa date d'effet (non tranché). L'ajustement de l'ASV :
+  l'article 3 du décret n° 2011-1644 n'a qu'une rédaction ; le modèle rend les 18 fois
+  l'ajustement sur le forfait et les neuf points au plus, mais assied l'ajustement sur le
+  revenu de l'exercice, le décret sur celui de l'avant-dernière année, et n'arrondit pas
+  au centième.
+reste: >-
+  Les statuts d'avant 2017 de la complémentaire et de l'ASV, l'article 22 de 1964 et
+  l'article de l'ASV de 1981, au Bulletin officiel (question 22) ; le rectificatif du 8
+  août 2026 ; le décret qui fixe la base forfaitaire des deux premières années (L.
+  131-6-2). L'erreur de la date d'effet au trimestre civil, au propriétaire, non
+  corrigée. La caisse suivante de la carte : la Cipav.
