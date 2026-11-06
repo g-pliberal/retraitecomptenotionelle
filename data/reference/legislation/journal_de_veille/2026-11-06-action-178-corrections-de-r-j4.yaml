@@ -1,0 +1,31 @@
+date: "2026-11-06"
+session: "action 178, étape 5, J4-bis : les écarts de la relecture R-J4 repris aux sources (l'âge de la formule du graphique 7 de la fiche 15, arrondis, pointeurs de docstring, cause du poids de la CNRACL) et le test de la garantie de la page rendu indépendant du jour de naissance présumé"
+consulte: >-
+  Aucune règle du scénario 1 n'est touchée. Le PDF du panorama de la DREES
+  (miroir de l'UNSA, empreinte 9eb36a06…) par pdftotext aux folios 142 à 144 et
+  147, et les classeurs des fiches 15 et 16 de l'archive de la release
+  documents-apportes (empreinte ec7503f8…) : les cellules B38 des graphiques 5 et
+  7 de la fiche 15, la ligne 13 du graphique 6, les colonnes N de la feuille
+  « F16_Tableau 2 compl », la cellule B16 du graphique 3 de la fiche 16 ; en
+  regard, les cohortes de la grille (controle_eacr.controle), ses poids, les
+  tables de mortalité du dépôt (INSEE, projections de 2026) et les lignes de
+  memoire.avantages() sous chaque présomption décalée.
+trouve: >-
+  La source ne dit pas que l'âge de la formule du graphique 7 soit celui du
+  graphique 5 : sa note le nomme « âge moyen de départ à la retraite de la
+  génération (dans le champ des personnes vivantes à 66 ans parmi les générations
+  nées en 1950 ou avant, et à 67 ans pour les générations nées en 1951 ou après) »,
+  clause que la note du graphique 5 n'a pas ; hypothèse déclarée, soutenue par
+  les hommes (0,05 an) et par la ligne « tous régimes confondus » du graphique 6
+  (mêmes âges à 0,03 an près). Le scénario de mortalité est de 2026 à deux
+  endroits (la ligne des sources, la note 5 du folio 142) et de 2021 à un (la
+  note du graphique). Le texte du folio 142 dit 61 ans et 7 mois pour la
+  génération 1957 quand les deux tableaux donnent 61,85 et 61,88 : à citer avec
+  précaution. Le jour de naissance présumé (15 ou 1er) déplace trois des quatre
+  minima que la page déduit de la garantie (7 496,79 et 7 590,17 millions
+  d'euros courants de 2024) ; le test les écrit pour chaque jeu.
+reste: >-
+  L'effet des écarts de J4 sur le coût, que R-J4 dit non mesuré (les trois
+  erreurs du coût attendent le propriétaire) ; la publication de l'INSEE de 2021,
+  non lue ; la coquille probable du folio 142, à confronter à l'édition
+  précédente du panorama si elle est retrouvée.

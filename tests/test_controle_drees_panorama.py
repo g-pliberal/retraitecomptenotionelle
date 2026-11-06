@@ -1070,7 +1070,10 @@ def test_la_grille_met_chaque_regime_de_2024_a_un_ou_deux_ages_quand_la_source_l
     2023, la suivante en 2025) : l'instantané d'une seule année est irrégulier,
     et l'âge conjoncturel (graphique 2 de la fiche 15) en est la mesure lissée.
     La MSA salariés (ligne 8) n'a pas de cas type. Le graphique 3 de l'EACR
-    compte aussi les retraités résidant à l'étranger (note 5)."""
+    compte aussi les retraités résidant à l'étranger (sa ligne « Champ », folio
+    147 : « Retraités résidant en France ou à l'étranger, ayant acquis un
+    premier droit direct dans un régime de base en 2024, vivants au 31
+    décembre »)."""
     from retraite_notionnelle.controle_ancetre import REGIME_PRINCIPAL
 
     cas_types = {cas.code: cas for cas in GRILLE_DU_COUT}
@@ -1186,7 +1189,7 @@ def test_le_graphique_3_complementaire_repete_la_sncf_pour_la_cnavpl_et_la_sourc
 
 
 def test_la_grille_part_a_l_age_des_hommes_de_chaque_regime_et_de_sa_seule_femme_et_les_pese_autrement(
-        grille, temoin):
+        grille, simulateur, temoin):
     """Tableau 2 complémentaire de la fiche 16 (feuille « F16_Tableau 2
     compl », EIR 2020, nés en 1953 résidant en France), le même que le tableau
     2 par sexe : âge moyen à la liquidation dans le régime principal, âge
@@ -1208,11 +1211,19 @@ def test_la_grille_part_a_l_age_des_hommes_de_chaque_regime_et_de_sa_seule_femme
     régime général, à 61 ans pour 62,4 (−1,40 ; neutralisé 61,17 pour 62,5,
     −1,33). Le poids des régimes parmi les hommes diffère aussi : le régime
     général en compte 61,4 % dans la grille pour 70,5 % publiés, la CNRACL
-    13,9 pour 5,3 (2,6 fois), l'État civil 12,8 pour 8,7 (1,5 fois), parce que
-    la grille pèse chaque cas type de la population entière, non de la
-    génération 1953, et par ses têtes de caisse. Ce que la source ne tranche
-    pas : le régime principal est celui de plus de la moitié de la carrière,
-    non la caisse du dernier départ ; la grille n'a aucun polypensionné."""
+    13,9 pour 5,3 (2,6 fois), l'État civil 12,8 pour 8,7 (1,5 fois). ÉTABLI,
+    par le test : la part d'un régime dans la grille de 1953 est celle de ses
+    cas types dans les poids de la population entière, non une part de la
+    génération 1953 ; tous sexes mêlés, la CNRACL y pèse 12,40 % pour 7,4
+    publiés (1,7 fois). INFÉRÉ, ni écrit par la source ni démontré par le test :
+    que ce soit la cause de l'écart. La source ne dit pas ce que pèse la
+    CNRACL dans les poids de la grille ; le rapport tombe de 2,6 à 1,7 quand
+    les sexes se mêlent (la source compte la CNRACL pour 9,3 % des femmes et
+    5,3 % des hommes, cellules N10 et N20 ; les cas types de la CNRACL sont tous
+    des hommes), de sorte que la répartition par sexe en est une part, et le
+    reste n'est pas expliqué. Ce que la source ne tranche pas : le régime
+    principal est celui de plus de la moitié de la carrière, non la caisse du
+    dernier départ ; la grille n'a aucun polypensionné."""
     from retraite_notionnelle.controle_ancetre import REGIME_PRINCIPAL
     from retraite_notionnelle.scenarios.actuel import AgesOuverture
 
@@ -1268,6 +1279,28 @@ def test_la_grille_part_a_l_age_des_hommes_de_chaque_regime_et_de_sa_seule_femme
     general = [c for c in nes if regime(c) == "regime_general"]
     assert 100 * sum(c.tetes for c in femmes) / sum(c.tetes for c in general) < 17
 
+    # Le mécanisme, établi : la part de chaque régime dans la grille de 1953, tous
+    # sexes, est la part de ses cas types dans les poids de la population entière.
+    from retraite_notionnelle import memoire
+
+    poids = memoire.cout(simulateur.parametres).poids
+    total_des_poids = sum(poids[code] for code in cas_types)
+    tetes_des_nes = sum(c.tetes for c in nes)
+    for nom in attendus:
+        part_de_la_grille = 100 * sum(c.tetes for c in nes if regime(c) == nom) / tetes_des_nes
+        part_des_poids = 100 * sum(
+            poids[code] for code, cas in cas_types.items()
+            if REGIME_PRINCIPAL[cas.caisses[0]] == nom) / total_des_poids
+        assert part_de_la_grille == pytest.approx(part_des_poids, rel=1e-3), nom
+        if nom == "cnracl":
+            publiee = _nombre(temoin["valeurs"]["16_tableau_2"]["cnracl"]["part"])
+            assert 1.6 < part_de_la_grille / publiee < 1.8
+            # La répartition par sexe : 9,3 % des femmes et 5,3 % des hommes (N10, N20) font
+            # 7,4 % de l'ensemble (tableau 2) si les femmes sont à peu près la moitié des retraités.
+            femmes_cnracl = _nombre(publie["femmes"]["cnracl"]["part"])
+            assert (femmes_cnracl, source["cnracl"], publiee) == (9.3, 5.3, 7.4)
+            assert 0.5 < (publiee - source["cnracl"]) / (femmes_cnracl - source["cnracl"]) < 0.55
+
 
 # --- Fiche 15 : l'âge conjoncturel par régime et la durée de retraite --------
 
@@ -1289,9 +1322,9 @@ def test_l_age_conjoncturel_de_la_grille_est_celui_de_ses_cas_types_au_premier_a
     (``memoire.cout(...).poids``), du plus jeune âge où sa cohorte est
     retraitée en 2024 (``Cohorte.age`` minimal des cohortes déjà parties).
 
-    ÉCART DÉCLARÉ, mesuré le 6 novembre 2026. Régime général : 62,77 ans pour
-    63,6 (−0,83) — le Smic à 60 ans, la carrière interrompue, l'inapte et
-    l'ex-invalide à 62, le salaire moyen à 63, le cadre à 64, l'artisan et le
+    ÉCART DÉCLARÉ, mesuré le 6 novembre 2026. Régime général : 62,776 ans
+    (62,78) pour 63,6 (−0,82) — le Smic à 60 ans, la carrière interrompue,
+    l'inapte et l'ex-invalide à 62, le salaire moyen à 63, le cadre à 64, l'artisan et le
     contractuel à 65, pesés de 0,04562 à 0,1089 ; CNIEG : 57 pour 60,2 (−3,2),
     l'agent des IEG ; SNCF : 52 pour 59,22 (−7,22), le seul conducteur ; la FPE
     civils s'accorde à 63,18 pour 63,18 (le sédentaire à 64, 0,08973 ; son
@@ -1338,29 +1371,51 @@ def test_l_age_conjoncturel_de_la_grille_est_celui_de_ses_cas_types_au_premier_a
 def test_la_duree_de_retraite_du_depot_est_celle_de_la_drees_a_quelques_dixiemes_pres_et_la_grille_part_trop_tard(
         grille, simulateur, temoin):
     """Graphique 7 de la fiche 15 (« Espérance de durée de retraite, par
-    génération, en nombre d'années ») : « 60 + espérance de vie à 60 ans − âge
-    moyen de départ à la retraite de la génération », au « scénario central
-    des projections démographiques de l'Insee » (de 2021 selon la note, du 1er
-    janvier 2026 selon la ligne des sources : la source se contredit). Elle
+    génération, en nombre d'années ») : « 60 + espérance de vie à 60 ans – âge
+    moyen de départ à la retraite de la génération (dans le champ des personnes
+    vivantes à 66 ans parmi les générations nées en 1950 ou avant, et à 67 ans
+    pour les générations nées en 1951 ou après) », au « scénario central des
+    projections démographiques de l'Insee » : « de 2021 » selon la note du
+    graphique, « au 1er janvier 2026 » selon sa ligne des sources et selon la
+    note 5 du folio 142 (« qui s'appuie sur le scénario central de mortalité
+    des projections démographiques de l'Insee au 1er janvier 2026 ») — la source
+    dit 2026 deux fois et 2021 une fois. Elle
     donne 23,02 ans à la génération 1930 (24,99 pour les femmes et 21,07 pour
     les hommes) — « 23,0 années pour la génération née en 1930 (25,0 années
     pour les femmes et 21,1 années pour les hommes) » —, 25,63 (27,41 ; 23,87)
     à 1950, 24,66 (26,36 ; 23,00) à 1955, 24,67 (26,43 ; 22,94) à 1957, soit «
     24 années et 8 mois », « 26 années et 5 mois » et « 22 années et 11 mois ».
 
-    LA MESURE. L'espérance de vie à 60 ans que la source suppose se déduit de
-    sa formule et du graphique 5, au même rang de cellule : durée + âge de
-    départ − 60. Pour les femmes de 1950 : 27,41 + 60,9 − 60 = 28,31 ; hommes
+    L'HYPOTHÈSE DU TEST, que la source n'écrit pas. La note nomme l'âge de la
+    formule « âge moyen de départ à la retraite de la génération », avec la
+    clause de champ ci-dessus, et ne le rattache à aucun graphique. Le test le
+    prend égal à celui du graphique 5 (« Âge atteint à la liquidation de la
+    retraite dans le régime pour lequel la durée validée est la plus élevée »),
+    au même rang de cellule ; la note du graphique 5 ne porte pas la clause des
+    personnes vivantes à 66 ou 67 ans (cellules B38 des deux feuilles). Ce qui
+    plaide pour l'hypothèse : les hommes, à 0,05 an près aux quatre générations ;
+    et le graphique 6, « Tous régimes confondus » (le même régime principal, sa
+    note 4), qui donne aux générations 1950, 1955 et 1957 l'âge du graphique 5 à
+    0,03 an près (60,46 et 60,46 ; 61,59 et 61,59 ; 61,88 et 61,85). Ce qui la
+    limite : l'écart des femmes, de −0,06 à −0,33, peut venir de la table (la
+    note dit 2021, le dépôt lit 2026) ou de l'âge de la clause des vivantes à
+    66 ou 67 ans ; aucune cellule ne le sépare.
+
+    LA MESURE, sous cette hypothèse. L'espérance de vie à 60 ans que la formule
+    impliquerait se déduit d'elle et du graphique 5, au même rang de cellule :
+    durée + âge de départ − 60. Pour les femmes de 1950 : 27,41 + 60,9 − 60 = 28,31 ; hommes
     23,87 + 60,01 − 60 = 23,88 ; ensemble 25,63 + 60,46 − 60 = 26,09. Celle du
     dépôt est la table de génération des projections de l'INSEE de 2026
     (``DonneesMortalite.esperance_residuelle(60, génération + 60)``) : 28,12,
     23,90 et 26,01.
 
-    CE QUE ÇA DIT, mesuré le 6 novembre 2026. L'espérance de vie à 60 ans du
-    dépôt est celle de la DREES à 0,1 an près pour les hommes, aux quatre
-    générations (+0,03, +0,02, +0,03, −0,05 pour 1930, 1950, 1955 et 1957) ; elle
-    est plus basse pour les femmes, de plus en plus (−0,06, −0,19, −0,26,
-    −0,33) ; pour les deux sexes, de −0,02 à −0,19. La grille, elle, partant
+    CE QUE ÇA DIT, mesuré le 6 novembre 2026, repris le même jour sur la
+    relecture R-J4. L'espérance de vie à 60 ans du dépôt est celle que la
+    formule impliquerait, avec l'âge du graphique 5, à 0,1 an près pour les
+    hommes, aux quatre générations (+0,03, +0,02, +0,03, −0,05 pour 1930, 1950,
+    1955 et 1957) ; elle est plus basse pour les femmes, de plus en plus (−0,06,
+    −0,19, −0,26, −0,33) ; pour les deux sexes ensemble, de −0,02 à −0,19 (la
+    borne du test, −0,25, est une marge, non une mesure). La grille, elle, partant
     plus tard que les assurés — 61,16 ans pour les hommes de 1950 et 62,11 pour
     ceux de 1955, pour 60,01 et 61,15 —, a une durée de retraite espérée plus
     courte : 22,74 ans pour les hommes de 1950 (23,87 publiés, −1,13) et 22,07
@@ -1388,6 +1443,25 @@ def test_la_duree_de_retraite_du_depot_est_celle_de_la_drees_a_quelques_dixiemes
     assert "1957 est de 24 années et 8 mois" in texte
     assert "26 années et 5 mois à la retraite, contre 22 années et 11 mois" in texte
 
+    # Ce que la source dit de l'âge de sa formule, mot pour mot : la clause du
+    # champ, que la note de J4 avait remplacée par « (...) » ; la note 5 du
+    # folio 142, qui dit 2026 ; l'âge du graphique 5, qui ne porte pas la clause.
+    assert ("60 + espérance de vie à 60 ans – âge moyen de départ à la retraite de la génération "
+            "(dans le champ des personnes vivantes à 66 ans parmi les générations nées en 1950 "
+            "ou avant, et à 67 ans pour les générations nées en 1951 ou après)") in texte
+    assert ("qui s’appuie sur le scénario central de mortalité des projections démographiques "
+            "de l’Insee au 1er janvier 2026") in texte
+    assert ("Âge atteint à la liquidation de la retraite dans le régime pour lequel la durée "
+            "validée est la plus élevée") in texte
+    archive = _depose("drees_panorama_retraites_2026_classeurs")
+    if archive is not None:
+        with zipfile.ZipFile(archive) as classeurs:
+            notes = lecture_xlsx.feuilles(classeurs.read("fiche_15.xlsx"),
+                                          ("F15_Graphique 5", "F15_Graphique 7"))
+        note_5, note_7 = notes["F15_Graphique 5"][(37, 1)], notes["F15_Graphique 7"][(37, 1)]
+        assert "vivantes à 66 ans" in note_7 and not re.search(r"\bgraphique\b", note_7.lower())
+        assert "vivantes" not in note_5
+
     def esperance_du_depot(generation: str, groupe: str) -> float:
         return mortalite.esperance_residuelle(60, int(generation) + 60, groupes[groupe], True)
 
@@ -1399,9 +1473,18 @@ def test_la_duree_de_retraite_du_depot_est_celle_de_la_drees_a_quelques_dixiemes
     for generation in publie:
         assert abs(ecart_de_vie[(generation, "hommes")]) < 0.1, generation
         assert -0.4 < ecart_de_vie[(generation, "femmes")] < 0.0, generation
+        # Une marge autour de la mesure (de −0,02 à −0,19), non la mesure.
         assert -0.25 < ecart_de_vie[(generation, "ensemble")] < 0.05, generation
     femmes = [ecart_de_vie[(generation, "femmes")] for generation in sorted(publie)]
     assert femmes == sorted(femmes, reverse=True)
+    mesures = [round(ecart_de_vie[(generation, "ensemble")], 2) for generation in sorted(publie)]
+    assert (min(mesures), max(mesures)) == (-0.19, -0.02), mesures
+
+    # Le graphique 6, « tous régimes confondus » : le même âge, à 0,03 an près.
+    tous_regimes = temoin["valeurs"]["15_graphique_6"]
+    for generation, ecart in (("1950", 0.0), ("1955", 0.0), ("1957", 0.03)):
+        assert abs(_nombre(tous_regimes[generation]["tous_regimes"])
+                   - age(generation, "ensemble")) == pytest.approx(ecart, abs=0.005), generation
 
     # La grille : nés en 1950 et 1955, par sexe, à l'âge de départ de leurs cas types.
     cas_types = {cas.code: cas for cas in GRILLE_DU_COUT}
@@ -1628,11 +1711,35 @@ def test_la_garantie_de_la_page_sert_plus_de_monde_et_coute_plus_que_l_aspa_et_l
     retranché). La page ne les déduit que dans le tableau « Ce que la garantie
     vieillesse remplace » (``pages.js``, ``remplaces``), qui retire quatre
     minima, 4,94 + 1,56 + 0,01 + 0,35 + 0,64 = 7,50 milliards d'euros courants de
-    2024, de la garantie en euros courants de 2024 : 13,93 − 7,50 = 6,43."""
+    2024, de la garantie en euros courants de 2024 : 13,93 − 7,50 = 6,43.
+
+    LES CHIFFRES DE CE DERNIER PARAGRAPHE DÉPENDENT D'UNE PRÉSOMPTION, le jour
+    de naissance (``jour_de_naissance`` du vocabulaire : le 15 du mois ; la
+    garde ``PRESOMPTIONS_DECALEES`` de ``tests/conftest.py`` le dit le 1er).
+    Mesuré le 6 novembre 2026, chaque présomption décalée seule : ni la
+    naissance des enfants (27 ans pour 30) ni le mariage (30 ans pour 27) ne
+    déplacent rien, le jour de naissance déplace trois des quatre minima, ceux
+    que la page « calcule sur la grille » ; le minimum vieillesse, « lu dans
+    les comptes », ne bouge pas. Millions d'euros courants de 2024, au 15 puis
+    au 1er : minimum vieillesse 4 941,15 et 4 941,15 ; minimum contributif
+    1 563,24 et 1 568,64 ; minimum garanti 6,66 et 6,68 ; pension majorée de
+    référence 349,01 et 396,01 ; complément différentiel de la RCO 636,73 et
+    677,68 ; soit 7 496,79 et 7 590,17. La garantie, elle, sous la garde (les
+    trois présomptions décalées ensemble), passe de 13 929,68 à 13 912,43
+    (facteur 0,7365 et 0,7371), et ce qu'elle coûte de plus que les minima de
+    6 432,89 à 6 322,26. La cause est inférée, non vérifiée ligne à
+    ligne : la pension prend effet le premier du mois qui suit l'anniversaire,
+    sauf pour qui est né un 1er (R. 351-37, que le vocabulaire cite à la
+    raison de cette présomption), et présumer le 1er avance d'un mois l'effet
+    de chaque nouvelle pension. Aucune source ne publie ces trois lignes : le
+    test ne les tire donc pas d'un texte, il écrit la mesure de chaque jeu, à la
+    même marge (± 50 sur les minima, ± 30 sur la différence), et lit dans le
+    vocabulaire celui qui est en vigueur."""
     import mesures_prose
     from retraite_notionnelle import cout as module_cout
     from retraite_notionnelle import memoire
     from retraite_notionnelle.garantie import cout_garantie
+    from retraite_notionnelle.noyau import vocabulaire
 
     tableau = temoin["valeurs"]["27_tableau_1"]
     allocataires = tableau["asv_et_aspa"]["valeur"]
@@ -1701,8 +1808,15 @@ def test_la_garantie_de_la_page_sert_plus_de_monde_et_coute_plus_que_l_aspa_et_l
     minima = sum(avantages.lignes[code] for code in (
         "minimum_vieillesse", "minimum_contributif", "minimum_garanti",
         "pension_majoree_reference", "complement_differentiel_rco"))
-    assert 7_450 < minima < 7_550
-    assert 6_400 < en_courants - minima < 6_460
+    # Ces lignes dépendent du jour de naissance présumé (voir ci-dessus) : la
+    # mesure de chaque jeu de présomptions, à la même marge.
+    jour = vocabulaire.presomptions()["jour_de_naissance"]["valeur"]
+    (bas_minima, haut_minima), (bas_net, haut_net) = {
+        15: ((7_450, 7_550), (6_400, 6_460)),     # mesuré : 7 496,79 et 6 432,89
+        1: ((7_540, 7_640), (6_290, 6_350)),      # mesuré : 7 590,17 et 6 322,26
+    }[jour]
+    assert bas_minima < minima < haut_minima
+    assert bas_net < en_courants - minima < haut_net
 
 
 def test_les_nouveaux_allocataires_du_minimum_vieillesse_sont_un_flux_que_le_depot_ne_calcule_pas(

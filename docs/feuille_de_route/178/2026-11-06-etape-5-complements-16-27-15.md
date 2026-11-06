@@ -1,16 +1,5 @@
 # Étape 5, les compléments des fiches 16, 27 et 15 : le graphique 3 et le tableau 2 complémentaire, les 70 660 nouveaux allocataires, les graphiques 2 et 7, confrontés au dépôt
 
-**Reprise, au 6 novembre 2026.** Fait (cette note, qui reprend les blocs de
-`2026-11-05-etape-5-fiches-12-15-21.md` et de `2026-11-05-etape-5-fiches-16-27.md`) :
-les fiches 16 (graphique 3, tableau 2 complémentaire), 27 (les 70 660 nouveaux
-allocataires) et 15 (graphiques 2 et 7), confrontées par six tests du niveau
-`controle` ; au suivi, elles restent `confronte`. Reste à l'étape 5 : les trois
-erreurs du coût de la note des règles (3 novembre), qui attendent le propriétaire,
-et les candidats « Au propriétaire » de ces notes. Pour la clôture (étape 7) :
-fiche 21 (tableau 3, graphique 2, encadré 2), fiche 12 (feuilles de l'édition
-précédente), jeu `drees_minimum_vieillesse` du portail (fiche 27 ; non joint
-depuis le nuage). Par quoi commencer : la note des règles. Détail : plus bas.
-
 **La demande.** Vague 11, tâche J4, le 6 novembre 2026 : les trois compléments
 que les notes `2026-11-05-etape-5-fiches-16-27.md` (corrigée par
 `2026-11-05-j-bis-corrections-de-r-j3.md`) et `2026-11-05-etape-5-fiches-12-15-21.md`
@@ -399,3 +388,5 @@ fiches 15, 16 et 27 restent `confronte` et nomment leurs tests nouveaux ; leur
 « Restent » est remplacé.
 
 *Relecture du 6 novembre 2026 (R-J4) : chiffres conformes, un écart moyen de déclaration (point 5.1) et cinq faibles ; voir `2026-11-06-relecture-r-j4.md`.*
+
+*Reprise du 6 novembre 2026 (J4-bis) : les écarts de R-J4 sont repris aux sources dans `2026-11-06-etape-5-bis-corrections-de-r-j4.md`, qui tient désormais le bloc « Reprise » de l'étape 5.*

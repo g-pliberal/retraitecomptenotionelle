@@ -4209,6 +4209,14 @@
      "cellule": "R13",
      "valeur": 61.59
     }
+   },
+   "1957": {
+    "tous_regimes": {
+     "classeur": "fiche_15.xlsx",
+     "feuille": "F15_Graphique 6",
+     "cellule": "T13",
+     "valeur": 61.88
+    }
    }
   },
   "21_graphique_1": {
@@ -5012,6 +5020,14 @@
       "cellule": "N7",
       "valeur": 75.1
      }
+    },
+    "cnracl": {
+     "part": {
+      "classeur": "fiche_16.xlsx",
+      "feuille": "F16_Tableau 2 compl",
+      "cellule": "N10",
+      "valeur": 9.3
+     }
     }
    },
    "hommes": {
@@ -5517,7 +5533,12 @@
     "Insee, projections démographiques au 1er janvier 2026",
     "La durée moyenne passée à la retraite serait de 23,0 années pour la génération née en 1930 (25,0 années pour les femmes et 21,1 années pour les hommes)",
     "26 années et 5 mois à la retraite, contre 22 années et 11 mois pour les hommes de la",
-    "1957 est de 24 années et 8 mois, soit quasiment"
+    "1957 est de 24 années et 8 mois, soit quasiment",
+    "60 + espérance de vie à 60 ans – âge moyen de départ à la retraite de la génération (dans le champ des personnes vivantes à 66 ans parmi les générations nées en 1950 ou avant, et à 67 ans pour les générations nées en 1951 ou après)",
+    "qui s’appuie sur le scénario central de mortalité des projections démographiques de l’Insee au 1er janvier 2026",
+    "Âge atteint à la liquidation de la retraite dans le régime pour lequel la durée validée est la plus élevée",
+    "(pour les générations nées en 1953 ou avant) et à 67 ans (pour les générations nées en 1954 ou après)",
+    "âgés de 66 ans (ou de 67 ans pour les générations nées après 1951)"
    ]
   },
   "28_texte": {
