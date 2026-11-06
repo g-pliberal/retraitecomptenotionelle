@@ -105,7 +105,10 @@ def test_aucune_phrase_restee_sans_date_ne_s_ouvre_sur_une_date(reclassements):
     # plus, que date un autre article de leur décret (n° 2001-325, 2017-1367,
     # 2017-1494 ; test_reclassements.py, DATES_D_UN_AUTRE_ARTICLE) : 158 → 155. B6 :
     # vingt-neuf de plus, datés de l'entrée en vigueur que leur décret fixe
-    # (test_reclassements.py, DATES_DU_DECRET) : 155 → 126.
+    # (test_reclassements.py, DATES_DU_DECRET) : 155 → 126. B6-bis : deux de plus, les
+    # tableaux des art. 21 et 22 du n° 2011-1140 (« prend effet à compter du 1er jour du
+    # mois qui suit sa publication », JO du 23 septembre 2011 → 1er octobre 2011) :
+    # 126 − 2 = 124.
     import re
     tableaux = {(t["texte"], t["article"], t["tableau"]): t
                 for t in _lire(GRILLES / "reclassements" / "tableaux.csv")}
@@ -114,7 +117,7 @@ def test_aucune_phrase_restee_sans_date_ne_s_ouvre_sur_une_date(reclassements):
                  if r["statut"] == "declare" and not r["date"]}
     assert len({(r["texte"], r["article"], r["tableau"]) for r in reclassements
                 if r["raison"].startswith("la phrase qui annonce le tableau n'écrit pas la "
-                                          "date")}) == 126
+                                          "date")}) == 124
     for cle in sans_date:
         intro = tableaux[cle]["intro"]
         trouve = date.search(intro)
@@ -937,6 +940,63 @@ def test_l_entete_dit_que_rangs_grille_n_est_pas_le_rang_du_noyau():
     assert ("la place de l'échelon parmi ceux de la grille le jour du reclassement, non la "
             "colonne rang du Noyau RH") in entete
     assert "02777" in entete
+
+
+def test_la_preuve_d_un_reclassement_dans_la_meme_grille_montre_que_ses_echelons_changent(
+        reclassements):
+    # Relecture R-B7, écart 3. Le tableau de l'art. 9 du n° 2023-1336
+    # (LEGIARTI000048842644) reclasse « à la date d'entrée en vigueur du présent
+    # décret » (1er janvier 2024, JO du 30 décembre 2023) chaque grade dans le même
+    # grade, en renumérotant ses échelons : 04188 reste sur la grille 03781, 00533
+    # sur 00541, 00534 sur 00542. Ce que le Noyau RH (etat/echelons.csv) prouve, ce
+    # n'est pas un changement de grille, mais que les échelons de chacune de ces trois
+    # grilles changent le 2024-01-01. Les lignes de ce fichier, lues le 6 novembre 2026 :
+    #   03781 : 23530, rang 5, BB, 0 mois jusqu'au 2023-12-31, puis 36 mois ; 25333, rang
+    #           6, C, 0 mois, et 25334, rang 7, D, 0 mois, neufs le 2024-01-01 ;
+    #   00541 : 05819, rang 1, indice 767 jusqu'au 2023-12-31, 820 depuis (24 mois) ;
+    #           05822, rang 4, 927 (24 mois) puis 977 (36 mois) ; 19486, rang 7, A puis B ;
+    #   00542 : 05836, rang 3, 522 (12 mois) puis 542 (6 mois) ; 05835, rang 4, 563
+    #           (24 mois) puis 600 (12 mois) ; 19487, rang 13, 996 puis 1027. Les rangs
+    #           1 et 2 de cette grille sont l'élève et le stagiaire (05837, 05833), que le
+    #           chaînage met à part et que la preuve ne cite pas.
+    lignes = {r["grille_accueil"]: r for r in reclassements
+              if r["article"] == "LEGIARTI000048842644" and r["statut"] == "rattache"}
+    assert sorted(lignes) == ["00541", "00542", "03781"]
+    attendus = {
+        "03781": ["la grille 03781 change d'échelons le 2024-01-01 (Noyau RH, echelons.csv)",
+                  "23530 (rang 5) : hors échelle BB, 0 mois → hors échelle BB, 36 mois",
+                  "25333 (rang 6) : aucune version la veille → hors échelle C, 0 mois",
+                  "25334 (rang 7) : aucune version la veille → hors échelle D, 0 mois"],
+        "00541": ["la grille 00541 change d'échelons le 2024-01-01 (Noyau RH, echelons.csv)",
+                  "05819 (rang 1) : indice brut 767, 24 mois → indice brut 820, 24 mois",
+                  "05822 (rang 4) : indice brut 927, 24 mois → indice brut 977, 36 mois",
+                  "19486 (rang 7) : hors échelle A, 0 mois → hors échelle B, 0 mois"],
+        "00542": ["la grille 00542 change d'échelons le 2024-01-01 (Noyau RH, echelons.csv)",
+                  "05836 (rang 3) : indice brut 522, 12 mois → indice brut 542, 6 mois",
+                  "05835 (rang 4) : indice brut 563, 24 mois → indice brut 600, 12 mois",
+                  "19487 (rang 13) : indice brut 996, 0 mois → indice brut 1027, 0 mois"]}
+    for grille, dits in attendus.items():
+        assert lignes[grille]["grille_origine"] == grille
+        for dit in dits:
+            assert dit in lignes[grille]["preuve"], (grille, dit)
+    # Chaque échelon dont une version s'ouvre le 2024-01-01 est cité, nommé par son
+    # identifiant au Noyau RH et son rang ; une grille d'origine différente de celle
+    # d'accueil n'a pas cette phrase.
+    for e in _lire(GRILLES / "etat" / "echelons.csv"):
+        if (e["grille"] in attendus and e["debut"] == "2024-01-01"
+                and e["nature"] not in ("stagiaire", "eleve", "provisoire")):
+            assert f"{e['echelon']} (rang {e['rang']}) : " in lignes[e["grille"]]["preuve"], e
+    for r in reclassements:
+        if r["statut"] == "rattache" and r["grille_origine"] != r["grille_accueil"]:
+            assert "change d'échelons" not in r["preuve"], r["article"]
+
+
+def test_l_entete_dit_la_preuve_d_un_reclassement_dans_la_meme_grille():
+    with (CHAINAGE / "reclassements.csv").open(encoding="utf-8") as flux:
+        entete = flux.readline()
+    assert entete == f"# {chainage.ENTETES['reclassements']}\n"
+    assert ("quand la grille d'origine est celle d'accueil, la preuve montre les échelons de "
+            "cette grille qui changent le jour du reclassement") in entete
 
 
 #: Les visas du décret n° 2016-581 (LEGITEXT000032523056) qui portent un statut

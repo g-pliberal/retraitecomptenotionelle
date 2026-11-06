@@ -282,3 +282,5 @@ l'arrêté du 21 décembre 1982. Ce que le relevé en dit, pour qui reprend :
   `tests/test_pages_en_dossier.py` (pages que GitHub refait) ; `PRESOMPTIONS_DECALEES=1 python
   -m pytest -m rapide`, 4 294 passés, 211 ignorés, les mêmes 11 ; aucun âge ni aucune durée ne
   change (`test_regle_de_chacun.py` non concerné).
+
+*Le 6 novembre 2026, B6-bis : la clause du n° 2021-1818 est citée entière, le n° 2011-1140 est daté du 1er octobre 2011, la preuve du n° 2023-1336 montre ses échelons, les 67 tableaux restants sont comptés (25 d'avant juin 2004, 42 d'après) : voir `2026-11-06-b6-bis-corrections-de-r-b7.md`.*

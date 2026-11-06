@@ -213,6 +213,11 @@ ENTREES_EN_VIGUEUR = {
     "2011-964": ("2011-09-01", "LEGIARTI000024477652", "JORFTEXT000024476275", "2011-08-18",
             "Le présent décret entre en vigueur le premier jour du mois suivant sa "
             "publication."),
+    # Le décret ne dit qu'une fois quand il s'applique (cette clause, art. 35) ; ses tableaux
+    # disent « la date d'entrée en vigueur du présent décret » : B6-bis (relecture R-B7).
+    "2011-1140": ("2011-10-01", "LEGIARTI000024581626", "JORFTEXT000024580517", "2011-09-23",
+            "Le présent décret prend effet à compter du 1er jour du mois qui suit sa "
+            "publication."),
     "2011-1642": ("2011-12-01", "LEGIARTI000024847365", "JORFTEXT000024846671", "2011-11-25",
             "Le présent décret entre en vigueur le premier jour du mois qui suit celui de sa "
             "publication."),
@@ -288,8 +293,16 @@ ENTREES_EN_VIGUEUR = {
     "2020-1175": ("2020-10-01", "LEGIARTI000042368942", "JORFTEXT000042366071", "2020-09-27",
             "Le présent décret entre en vigueur le premier jour du mois qui suit celui de sa "
             "publication."),
+    # Les deux phrases de l'art. 12 (relecture R-B7, écart 1) : la seconde ôte des personnes,
+    # non des articles, et les tableaux des art. 7, 8 et 9 gardent le 1er janvier 2022 pour
+    # les agents qu'ils reclassent.
     "2021-1818": ("2022-01-01", "LEGIARTI000044804898", "JORFTEXT000044571714", "2021-12-28",
-            "Les dispositions du présent décret entrent en vigueur le 1er janvier 2022."),
+            "Les dispositions du présent décret entrent en vigueur le 1er janvier 2022. Elles "
+            "ne s'appliquent pas aux auxiliaires de puériculture relevant, au 31 décembre "
+            "2021, du cadre d'emplois régi par le décret n° 92-865 du 28 août 1992 susvisé ni "
+            "aux auxiliaires de soins relevant, à la même date, de la spécialité "
+            "aide-soignant du cadre d'emplois régi par le décret n° 92-866 du 28 août 1992 "
+            "susvisé."),
     "2021-1826": ("2022-01-01", "LEGIARTI000044799842", "JORFTEXT000044572291", "2021-12-28",
             "Les dispositions du présent décret entrent en vigueur le 1er janvier 2022."),
     "2021-1834": ("2022-01-01", "LEGIARTI000044804034", "JORFTEXT000044572775", "2021-12-28",
@@ -339,6 +352,8 @@ DATES_DU_DECRET = {
     "LEGIARTI000006508227": "98-809",  # art. 10
     "LEGIARTI000024477660": "2011-964",  # art. 21
     "LEGIARTI000024477662": "2011-964",  # art. 22
+    "LEGIARTI000024581630": "2011-1140",  # art. 21
+    "LEGIARTI000024581632": "2011-1140",  # art. 22
     "LEGIARTI000024847333": "2011-1642",  # art. 18
     "LEGIARTI000024847335": "2011-1642",  # art. 19
     "LEGIARTI000025072785": "2011-1987",  # art. 24
@@ -773,7 +788,15 @@ ENTETES = {
                 "qu'un autre article du décret donne, ou, quand la phrase dit l'entrée en "
                 "vigueur du décret, celle que le décret fixe ; vide : l'entrée en vigueur de "
                 "l'article, debut), la phrase qui l'annonce et "
-                "son en-tête.",
+                "son en-tête. Trois effets précèdent la publication de leur décret, et le texte "
+                "les date ainsi : n° 98-809 (1er août 1995, JO du 12 septembre 1998), n° 98-896 "
+                "(1er août 1996, JO du 9 octobre 1998), n° 2017-180 (1er janvier 2017, JO du 15 "
+                "février 2017) ; la donnée date ce que le texte date, sans examiner la validité "
+                "d'un effet antérieur à la publication. Pour le n° 98-896, art. 8, la donnée ne "
+                "porte que la date du tableau : l'élargissement du n° 2002-378 (JO du 21 mars "
+                "2002), qui ôte « en fonctions à la date du présent décret », n'est pas dans la "
+                "donnée ; pour l'agent que cette condition excluait, deux lectures, le 1er août "
+                "1996 ou l'entrée en vigueur du n° 2002-378, et le texte n'en écrit aucune.",
     "lignes": "Chaque ligne d'un tableau : groupe (le libellé écrit avant elle : grade "
               "d'origine puis grade d'accueil, que le texte aplati colle), l'échelon d'origine, "
               "la condition d'ancienneté qui le partage, l'échelon nouveau, l'ancienneté "

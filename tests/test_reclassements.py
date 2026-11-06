@@ -467,6 +467,12 @@ DATES_DU_DECRET = {
     # jour du mois suivant sa publication. » JO du 18 août 2011 → 1er septembre 2011.
     ("LEGIARTI000024477660", "1"): "2011-09-01",  # art. 21
     ("LEGIARTI000024477662", "1"): "2011-09-01",  # art. 22
+    # n° 2011-1140 (LEGIARTI000024581626) : « Le présent décret prend effet à compter du 1er
+    # jour du mois qui suit sa publication. » JO du 23 septembre 2011 → 1er octobre 2011. Le
+    # décret ne dit qu'une fois quand il s'applique (cet art. 35) et nomme « la date
+    # d'entrée en vigueur du présent décret » dans ses art. 21 et 22 : voir PRISES_D_EFFET.
+    ("LEGIARTI000024581630", "1"): "2011-10-01",  # art. 21
+    ("LEGIARTI000024581632", "1"): "2011-10-01",  # art. 22
     # n° 2011-1642 (LEGIARTI000024847365) : « Le présent décret entre en vigueur le
     # premier jour du mois qui suit celui de sa publication. » JO du 25 novembre 2011 →
     # 1er décembre 2011.
@@ -577,8 +583,12 @@ DATES_DU_DECRET = {
     # 1er octobre 2020.
     ("LEGIARTI000042368924", "1"): "2020-10-01",  # art. 25
     # n° 2021-1818 (LEGIARTI000044804898) : « Les dispositions du présent décret entrent
-    # en vigueur le 1er janvier 2022. » JO du 28 décembre 2021 ; la date est écrite : 1er
-    # janvier 2022.
+    # en vigueur le 1er janvier 2022. Elles ne s'appliquent pas aux auxiliaires de
+    # puériculture relevant, au 31 décembre 2021, du cadre d'emplois régi par le décret
+    # n° 92-865 du 28 août 1992 susvisé ni aux auxiliaires de soins relevant, à la même
+    # date, de la spécialité aide-soignant du cadre d'emplois régi par le décret n° 92-866
+    # du 28 août 1992 susvisé. » JO du 28 décembre 2021 ; la date est écrite : 1er janvier
+    # 2022 ; la seconde phrase écarte des personnes, non des articles.
     ("LEGIARTI000044804888", "1"): "2022-01-01",  # art. 7
     ("LEGIARTI000044804890", "1"): "2022-01-01",  # art. 8
     ("LEGIARTI000044804892", "1"): "2022-01-01",  # art. 9
@@ -660,12 +670,40 @@ def test_un_tableau_date_de_l_entree_en_vigueur_de_son_decret_prend_la_date_qu_i
     2012), le n° 2022-1200 (2022-09-02), le n° 2025-1327 (2025-12-28, pour le 1er janvier
     2026), le n° 2017-180 (2017-02-16, pour le 1er janvier 2017). Le n° 2011-1140, dont le
     tableau dit « date d'entrée en vigueur » quand le décret dit « prend effet à compter du
-    1er jour du mois qui suit sa publication », reste sans date : point non tranché."""
+    1er jour du mois qui suit sa publication », prend le 1er octobre 2011 (relecture R-B7,
+    écart 2 ; B6-bis)."""
     tableaux = {(t["article"], t["tableau"]): t for t in _lire("tableaux")}
     assert {cle: tableaux[cle]["effet"] for cle in DATES_DU_DECRET} == DATES_DU_DECRET
     assert set(rec.DATES_DU_DECRET) == {article for article, _ in DATES_DU_DECRET}
-    for article in ("LEGIARTI000024581630", "LEGIARTI000024581632"):  # n° 2011-1140
-        assert tableaux[(article, "1")]["effet"] == ""
+
+
+#: Les décrets dont la clause dit « prend effet à compter du 1er jour du mois qui suit sa
+#: publication » quand leurs tableaux disent « la date d'entrée en vigueur du présent
+#: décret » : n° 2011-1140, art. 35 (LEGIARTI000024581626), art. 21 et 22 ; les art. 25 et 26
+#: disent « la date de publication du présent décret », deux dates que le décret distingue.
+PRISES_D_EFFET = {"2011-1140"}
+
+def test_l_entete_dit_les_effets_anterieurs_a_la_publication_et_l_elargissement_de_2002():
+    """Relecture R-B7, écarts 4 et 6. Trois des dates que B6 donne précèdent la publication
+    de leur décret, et le texte les date ainsi : n° 98-809 (art. 12 : « prend effet au 1er
+    août 1995 », JO du 12 septembre 1998, JORFTEXT000000194869) ; n° 98-896 (art. 10 :
+    « applicables à compter du 1er août 1996 », JO du 9 octobre 1998, JORFTEXT000000573079) ;
+    n° 2017-180 (art. 25 : « entre en vigueur le 1er janvier 2017 », JO du 15 février 2017,
+    JORFTEXT000034035533). L'en-tête de tableaux.csv les dit, et dit que l'élargissement du
+    n° 2002-378 (JO du 21 mars 2002, JORFTEXT000000586605) n'est pas dans la donnée."""
+    anterieurs = {numero for numero, (jour, _, _, publication, _) in rec.ENTREES_EN_VIGUEUR.items()
+                  if jour < publication}
+    assert anterieurs == {"98-809", "2017-180"}
+    assert rec.DATES_D_UN_AUTRE_ARTICLE["LEGIARTI000006508629"][0] < "1998-10-09"
+    chemin = RACINE / "data" / "reference" / "grilles" / "reclassements" / "tableaux.csv"
+    entete = chemin.read_text(encoding="utf-8").split("\n")[0]
+    assert entete == f"# {rec.ENTETES['tableaux']}"
+    for dit in ("précèdent la publication", "n° 98-809 (1er août 1995, JO du 12 septembre 1998)",
+                "n° 98-896 (1er août 1996, JO du 9 octobre 1998)",
+                "n° 2017-180 (1er janvier 2017, JO du 15 février 2017)",
+                "« en fonctions à la date du présent décret »",
+                "n° 2002-378 (JO du 21 mars 2002)", "pas dans la donnée"):
+        assert dit in entete, dit
 
 
 INDEX_LEGI = RACINE / "data" / "brut" / "dila" / "legi.sqlite"
@@ -676,10 +714,74 @@ def _plat(texte: str) -> str:
     return re.sub(r"\s+", " ", texte.replace("\u00a0", " ").replace("’", "'")).strip()
 
 
+def _est_l_article(citation: str, texte: str, jorf: bool = False) -> bool:
+    """La citation de la clause est l'article entier (espaces normalisés) ; au JORF, avec
+    « Art. 12. - » devant (relecture R-B7, écart 1)."""
+    devant = r"(?:Art\. \S+ - )?" if jorf else ""
+    return re.fullmatch(devant + re.escape(_plat(citation)), _plat(texte)) is not None
+
+
+def _est_de_phrases_entieres(citation: str, texte: str) -> bool:
+    """La citation d'une phrase d'un article qui en compte d'autres est faite de phrases
+    entières de cet article, du premier mot de la première au point de la dernière."""
+    citation, texte = _plat(citation), _plat(texte)
+    debut = texte.find(citation)
+    if debut < 0 or not citation.endswith("."):
+        return False
+    fin = debut + len(citation)
+    return (debut == 0 or texte[:debut].endswith(". ")) and (fin == len(texte)
+                                                            or texte[fin] == " ")
+
+
 def _dates_ecrites(citation: str) -> set[str]:
     return {date(int(t.group("annee")), rec.MOIS[rec._sans_accents(t.group("mois")).lower()],
                  1 if re.match(r"1\s*er", t.group("jour")) else int(t.group("jour"))).isoformat()
             for t in re.finditer(rec._DATE, citation, re.IGNORECASE)}
+
+
+def test_la_garde_des_citations_refuse_une_citation_tronquee():
+    """Relecture R-B7, écart 1 : B6 citait du n° 2021-1818 sa seule première phrase, et la
+    garde (« la citation est dans l'article ») la laissait passer. Les textes sont ceux de
+    l'index, lus le 6 novembre 2026 : l'art. 12 du n° 2021-1818 (LEGIARTI000044804898 ;
+    JORFARTI000044571768), deux phrases ; l'art. 12 du n° 98-809 (LEGIARTI000006508229),
+    que le JORF fait précéder de « Art. 12. - »."""
+    entier = ("Les dispositions du présent décret entrent en vigueur le 1er janvier 2022. "
+              "Elles ne s'appliquent pas aux auxiliaires de puériculture relevant, au 31 "
+              "décembre 2021, du cadre d'emplois régi par le décret n° 92-865 du 28 août 1992 "
+              "susvisé ni aux auxiliaires de soins relevant, à la même date, de la spécialité "
+              "aide-soignant du cadre d'emplois régi par le décret n° 92-866 du 28 août 1992 "
+              "susvisé.")
+    assert _est_l_article(entier, entier)
+    assert _est_l_article(entier.replace(" ", "  ", 3), entier)  # espaces normalisés
+    assert _est_l_article(entier, "Art. 12. - " + entier, jorf=True)
+    assert not _est_l_article(entier, "Art. 12. - " + entier)  # hors JORF, rien devant
+    premiere = entier.split(". ")[0] + "."
+    for coupee in (premiere,                              # la première phrase seule
+                   premiere[:-1],                         # sans son point
+                   entier.split(". ", 1)[1],              # la seconde seule
+                   entier[:-len(" susvisé.")],            # sans ses derniers mots
+                   entier.replace("Les dispositions du ", "")):  # sans son début
+        assert not _est_l_article(coupee, entier), coupee
+        assert not _est_l_article(coupee, "Art. 12. - " + entier, jorf=True), coupee
+    clause = "Le présent décret prend effet au 1er août 1995, à l'exception des articles 3 et 4."
+    assert _est_l_article(clause, clause)
+    assert _est_l_article(clause, "Art. 12. - " + clause, jorf=True)
+    assert not _est_l_article("Le présent décret prend effet au 1er août 1995.", clause)
+
+
+def test_la_garde_d_un_autre_article_refuse_une_phrase_coupee():
+    """Même relecture : la clause qu'un autre article donne est une ou plusieurs phrases
+    entières de cet article (le texte ci-dessous : LEGIARTI000006506628, lu à l'index)."""
+    deux = ("Les articles 17, 18, 21 et 22 du présent décret prennent effet au 1er août 1995. "
+            "Les articles 19 et 20 prennent effet au 1er août 1994.")
+    premiere, seconde = deux.split(". ")[0] + ".", deux.split(". ", 1)[1]
+    for juste in (premiere, seconde, deux):
+        assert _est_de_phrases_entieres(juste, deux), juste
+    for coupee in (premiere[:-1],                          # sans son point
+                   premiere[:-len(" 1995.")],              # coupée avant la date
+                   "du présent décret prennent effet au 1er août 1995.",  # sans son début
+                   "Les articles 19 et 20 prennent effet au 1er août 1994"):
+        assert not _est_de_phrases_entieres(coupee, deux), coupee
 
 
 @pytest.mark.skipif(not (INDEX_LEGI.exists() and INDEX_JORF.exists()),
@@ -702,17 +804,17 @@ def test_chaque_date_lue_a_la_main_est_citee_mot_pour_mot_dans_son_texte():
     for tableau, (jour, effet, citation) in rec.DATES_D_UN_AUTRE_ARTICLE.items():
         titre, texte = article(effet)
         assert titre == article(tableau)[0], tableau
-        assert _plat(citation) in texte, tableau
+        assert _est_de_phrases_entieres(citation, texte), tableau
         assert jour in _dates_ecrites(citation), tableau
     for numero, (jour, effet, jorftexte, publication, citation) in rec.ENTREES_EN_VIGUEUR.items():
         titre, texte = article(effet)
         assert re.match(rf"D[ée]cret n\s*°\s*{re.escape(numero)} du ", titre), numero
-        assert _plat(citation) in texte, numero
+        assert _est_l_article(citation, texte), numero
         signe = jorf.execute("select date, titre from doc where id = ?", (jorftexte,)).fetchone()
         assert signe and signe[0] == publication and numero in signe[1], numero
         articles = jorf.execute("select texte from doc where nature like 'Article%' and date = ?"
                                 " and titre like ?", (publication, f"%{numero} %")).fetchall()
-        assert any(_plat(citation) in _plat(t) for (t,) in articles), numero
+        assert any(_est_l_article(citation, t, jorf=True) for (t,) in articles), numero
         if re.search(r"premier jour du mois|1er jour du mois", citation):
             p = date.fromisoformat(publication)
             assert jour == date(p.year + (p.month == 12), p.month % 12 + 1, 1).isoformat(), numero
@@ -726,7 +828,20 @@ def test_chaque_date_lue_a_la_main_est_citee_mot_pour_mot_dans_son_texte():
             assert "prend effet" in citation, tableau
         else:
             assert "date d'entrée en vigueur du présent décret" in texte, tableau
-            assert "en vigueur" in citation, tableau
+            if numero in PRISES_D_EFFET:
+                # Le tableau dit l'entrée en vigueur, la clause « prend effet » : l'équivalence
+                # ne vaut que si cette clause est la seule du décret qui dise quand il
+                # s'applique (relecture R-B7, écart 2).
+                assert "prend effet" in citation, tableau
+                clause = rec.ENTREES_EN_VIGUEUR[numero][1]
+                autres = [i for (i, t) in legi.execute(
+                    "select id, texte from doc where nature like 'Article%' and titre = ?",
+                    (titre,)) if i != clause and re.search(
+                        r"entre(?:nt)? en vigueur|prend(?:nent)? effet|produi\w+ effet"
+                        r"|r[ée]troactiv", t, re.IGNORECASE)]
+                assert not autres, (tableau, autres)
+            else:
+                assert "en vigueur" in citation, tableau
 
 
 def test_chaque_ligne_lue_est_certifiee_et_chaque_refus_motive():

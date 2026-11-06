@@ -585,6 +585,35 @@ class Depot:
                     and e["rang"] not in ("", "0") and en_vigueur(e, jour)}
         return [par_rang[r] for r in sorted(par_rang)]
 
+    def changement_noyau(self, grille: str, jour: str) -> str:
+        """Les échelons de la grille du noyau dont une version s'ouvre ce jour-là,
+        avec celle de la veille : « la grille 00541 change d'échelons le 2024-01-01
+        (Noyau RH, echelons.csv) : 05819 (rang 1) : indice brut 767, 24 mois → indice
+        brut 820, 24 mois ; … », élève, stagiaire et provisoires mis à part ; ou rien
+        quand aucune ne s'ouvre. Un reclassement d'une grille à elle-même ne prouve
+        son passage que par ce changement (relecture R-B7, écart 3)."""
+        def libelle(e: dict) -> str:
+            durees = {e["duree_min"], e["duree_moy"], e["duree_max"]}
+            duree = (f"{e['duree_moy']} mois" if len(durees) == 1 else
+                     f"{e['duree_min']} à {e['duree_max']} mois (moyenne {e['duree_moy']})")
+            return f"{_indice(e)}, {duree}"
+
+        ordinaires = [e for e in self.noyau_echelons[grille]
+                      if e["nature"] not in ("stagiaire", "eleve", "provisoire")
+                      and e["rang"] not in ("", "0")]
+        changes = []
+        for neuf in sorted((e for e in ordinaires if e["debut"] == jour),
+                           key=lambda e: (int(e["rang"]), e["echelon"])):
+            avant = [e for e in ordinaires
+                     if e["echelon"] == neuf["echelon"] and e["fin"] == veille(jour)]
+            changes.append(f"{neuf['echelon']} (rang {neuf['rang']}) : "
+                           + (libelle(avant[0]) if avant else "aucune version la veille")
+                           + f" → {libelle(neuf)}")
+        if not changes:
+            return ""
+        return (f"la grille {grille} change d'échelons le {jour} (Noyau RH, echelons.csv) : "
+                + " ; ".join(changes))
+
 
 #: Les échelons qu'un tableau de reclassement ne numérote pas : le lecteur les
 #: range au-dessus du plus haut échelon écrit de leur côté du tableau.
@@ -1317,14 +1346,21 @@ def chainer_reclassements(depot: Depot) -> list[dict]:
                 liste = ([x for x in liste if x["qui"].startswith("le corps")]
                          or [x for x in liste if x["qui"].split()[2] in (go, ga)] or liste)
                 citations.append(f"{nommes[numero]} ; {depot.preuve_du_noyau(liste)}")
+        preuve = (" ; ".join(citations) + f" ; grade {go} ({grille_o}) le "
+                  f"{veille(jour)}, {ga} ({grille_a}) le {jour}")
+        if grille_o == grille_a:
+            # Même grille des deux côtés : ses échelons changent le jour du reclassement,
+            # ou la preuve dit qu'aucun ne change (relecture R-B7, écart 3).
+            preuve += " ; " + (depot.changement_noyau(grille_a, jour)
+                               or f"aucune version d'échelon de la grille {grille_a} ne "
+                                  f"s'ouvre le {jour}")
         sortie.append({**base, "statut": "rattache", "corps": corps_a,
                        "grade_origine": go, "grille_origine": grille_o,
                        "grade_accueil": ga, "grille_accueil": grille_a,
                        "rangs_grille": " ; ".join(f"{cote} {nom} {place}" for (cote, nom), place
                                                   in sorted(places.items(),
                                                             key=lambda p: p[0][0] != "origine")),
-                       "preuve": " ; ".join(citations) + f" ; grade {go} ({grille_o}) le "
-                                 f"{veille(jour)}, {ga} ({grille_a}) le {jour}", "raison": ""})
+                       "preuve": preuve, "raison": ""})
     return sortie
 
 
@@ -1446,7 +1482,11 @@ ENTETES = {
                      "échelon écrit de son côté du tableau. Ce rang est la place de l'échelon "
                      "parmi ceux de la grille le jour du reclassement, non la colonne rang du "
                      "Noyau RH, qui peut sauter un numéro : le 2011-07-01, la grille 02777 a "
-                     "les rangs 1 à 4, puis 6 pour l'exceptionnel, son cinquième échelon.",
+                     "les rangs 1 à 4, puis 6 pour l'exceptionnel, son cinquième échelon. "
+                     "preuve : les citations du Noyau RH ; quand la grille d'origine est celle "
+                     "d'accueil, la preuve montre les échelons de cette grille qui changent le "
+                     "jour du reclassement (identifiant et rang du Noyau RH, indice ou hors "
+                     "échelle, durée, la veille puis le jour), ou dit qu'aucun ne change.",
     "a_lire_au_jorf": "Les textes dont un tableau de durées ou de reclassement est abîmé au "
                       "LEGI (cas abime : dessiné en caractères, en fiches, non reproduit, ou "
                       "perdu par la consolidation), ou dont le premier tableau de durées lu vaut "

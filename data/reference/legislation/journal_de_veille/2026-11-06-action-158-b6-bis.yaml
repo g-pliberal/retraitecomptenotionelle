@@ -1,0 +1,35 @@
+date: "2026-11-06"
+session: "action 158, vague 11, B6-bis : les écarts de la relecture R-B7 (la clause du n° 2021-1818 entière et une garde qui voit la troncature, le n° 2011-1140, la preuve du n° 2023-1336, les trois effets antérieurs à la publication, la file des fac-similés, l'élargissement de 2002, le compte des 67 tableaux restants)"
+consulte: >-
+  L'index LEGI du dépôt (dump Freemium_legi_global_20250713-140000, à jour au
+  20261102-213929) et l'index JORF (Freemium_jorf_global_20250713-140000, à jour au
+  20261103-002311), table doc : n° 2021-1818, art. 12 (LEGIARTI000044804898 ;
+  JORFARTI000044571768 ; JORFTEXT000044571714) ; n° 2011-1140, art. 35 et ses 39 articles
+  au LEGI, versions comprises (LEGIARTI000024581626, 024581630, 024581632 ; JORFARTI000024580614 ;
+  JORFTEXT000024580517) ; les citations des 46 décrets d'ENTREES_EN_VIGUEUR et de 5 articles de
+  DATES_D_UN_AUTRE_ARTICLE confrontées à l'article entier ; n° 98-809 (JORFTEXT000000194869 ;
+  JORFARTI000001895846), n° 98-896 (JORFTEXT000000573079 ; JORFARTI000002094938 ;
+  LEGIARTI000006508628, 006508629, 006508631), n° 2002-378 (JORFARTI000002416455, 002195228),
+  n° 2017-180 (JORFTEXT000034035533) ; la date de publication au JORF de chacun des 57 textes
+  des 67 tableaux restants ; les visas du n° 98-1212 (JORFTEXT000000209444) et du n° 2003-1313
+  (JORFTEXT000000429658) ; la recherche plein texte de « 5 novembre 1870 » dans les deux index. En
+  recoupement, le Noyau RH du dépôt (etat/textes.csv, texte 926 ; etat/echelons.csv, grilles
+  03781, 00541, 00542). Aucun fac-similé n'est lu.
+trouve: >-
+  La clause du n° 2021-1818 compte deux phrases (la seconde écarte des auxiliaires de puériculture
+  et de soins, non des articles) : citée entière, la date ne change pas ; la garde des citations
+  refuse maintenant une citation tronquée. Le n° 2011-1140 (« prend effet à compter du 1er jour
+  du mois qui suit sa publication », JO du 23 septembre 2011) est daté du 1er octobre 2011 : sa
+  seule clause de date, la notice du JORF, le LEGI et le Noyau RH le disent, aucune source ne
+  donne l'autre date. Les trois rattachements du n° 2023-1336 à la même grille montrent, dans
+  leur preuve, les échelons que le Noyau RH change le 2024-01-01. Les trois effets antérieurs
+  à la publication (n° 98-809, 98-896, 2017-180) et l'élargissement de 2002 sont dits dans
+  l'en-tête de tableaux.csv. Des 67 tableaux restants, 25 sont d'avant le 1er juin 2004
+  (22 décrets, 24 tableaux, plus l'arrêté du 21 décembre 1982) et 42 d'après.
+reste: >-
+  La règle d'entrée en vigueur d'avant le 1er juin 2004 : le décret du 5 novembre 1870 relatif à la
+  promulgation des lois et décrets (art. 2), nommé par les visas du JORF, n'est dans aucun des deux
+  index, ni l'art. 1er du code civil d'avant 2004 : à lire par le propriétaire. Les 67 tableaux
+  à lire décret par décret ; le n° 2011-215 (« prennent effet ») ; le rectificatif du n° 2015-1275
+  face à lignes.csv ; trois tableaux au fac-similé (n° 96-101 art. 37, n° 98-809 art. 10,
+  n° 98-896 art. 8).

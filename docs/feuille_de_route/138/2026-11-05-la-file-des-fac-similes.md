@@ -41,6 +41,8 @@ de cette liste au commit qui la lit).
 | 14 nov. 1981 | n° 81-1015 | JORFTEXT000000680650 | 138.9 |
 | 25 déc. 1962 | loi n° 62-1529 | JORFTEXT000000875162 | 138.5, la décote |
 | 8 févr. 1996 | n° 96-101, tableau de l'art. 37 | JORFTEXT000000191345 | 158 |
+| 12 sept. 1998 | n° 98-809, tableau de l'art. 10 (JO n° 211, p. 13913 à 13915) | JORFTEXT000000194869 | 158 |
+| 9 oct. 1998 | n° 98-896, tableau de l'art. 8 (JO n° 234, p. 15305 à 15307) | JORFTEXT000000573079 | 158 |
 
 **Ce qui reste à identifier** avant de le demander, dans les notes qui le citent : les
 n° 65-346 et 75-97, que l'index ne range pas sous ce titre ; la loi de finances pour

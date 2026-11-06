@@ -7116,14 +7116,14 @@ l'inviterait aussi à relire le dépôt.
 
 **Reprise, au 6 novembre 2026.** Périmètre : les trois versants et les militaires. Entrés et certifiés : grilles,
 barème depuis 1983, reclassements (450 tableaux), durées d'échelon (778). Chaînage : 555 des 1 675 grades de durées,
-19 des 862 groupes de reclassement (six neufs de B6, dont trois du n° 2023-1336 à la même grille, candidat). Dates
-d'effet : 36 après le verbe, 5 d'un autre article (dont le n° 98-896 art. 8, 1er août 1996), « A la même date », 62
-tableaux (46 décrets) datés de l'entrée en vigueur que le décret fixe (B6, à relire : R-B7). Reste : 67 tableaux
-relatifs au décret, à partir du n° 71-917 (liste au point 4 de la note), et la question au propriétaire de la règle
-d'avant juin 2004 ; le n° 2011-1140, non tranché ; les décrets qui datent un chapitre ; le n° 98-268 art. 20 ; 90
-tableaux de l'index publié ; l'annexe du n° 94-1016 et de l'arrêté du 24 novembre 2006 ; les 97 versions hors du
-motif ; les refus et trois fac-similés ; le minimum de traitement ; quatre candidats (« ES », 301, 328, 342).
-Détail : `2026-11-06-b6-dates-relatives-au-decret.md`.
+19 des 862 groupes de reclassement (dont trois du n° 2023-1336, même grille, preuve par les échelons du Noyau RH).
+Dates d'effet : 36 après le verbe, 5 d'un autre article, « A la même date », 64 tableaux (47 décrets, dont le
+n° 2011-1140, 1er octobre 2011) datés de l'entrée en vigueur du décret, trois avant leur publication (en-tête de
+`tableaux.csv`). Reste : 67 tableaux relatifs au décret, à partir du n° 71-917 (liste : note de B6, point 4) : 25
+d'avant juin 2004, 42 d'après, par lesquels commencer (clause entière au JORF, notice et Noyau RH en recoupement,
+n° 2011-215 compris) ; la règle d'avant juin 2004 (décret du 5 novembre 1870, art. 2, dans aucun index) attend le
+propriétaire ; les décrets qui datent un chapitre ; le n° 98-268 art. 20 ; 90 tableaux de l'index publié ; trois
+fac-similés ; quatre candidats. Détail : `2026-11-06-b6-bis-corrections-de-r-b7.md`.
 
 
 **D'où elle vient.** La demande du propriétaire, le 12 octobre 2026 : aller
