@@ -1,0 +1,482 @@
+Dépôt : commit 4bd78c8c48c009a9f1b28814a16cac51ac82e0f3, arbre 39b33eecc82bbd0fd9e0c064fe5be3cb23c5d5c2.
+Action 138, étape 14 : les femmes âgées, la population contre l'EIR 2020 des
+résidents (docs/feuille_de_route/138/2026-11-06-etape-14-femmes-agees.md).
+
+Toutes les variantes de la population (20 648 cas types), simulées une fois
+au portage, puis pesées en 2020 comme grille_large.cohortes_de_l_annee les
+pèse : le poids de 2020 du cas type, l'effectif INSEE de l'âge, la part que
+l'année de naissance donne à la variante, et la survie propre alignée à
+nombre de décès égal (cout._survies_alignees) ; chaque cohorte compte aussi
+sans sa survie propre (« brutes »). Les têtes, par sexe, drapeau de décote
+de la jumelle (Variante.decote), âge en 2020 (2020 moins l'année de
+naissance), confrontées aux cellules de la feuille « CondLiquidation » du
+classeur des résidents de l'EIR 2020.
+
+Le premier lancement, sur quatre processus, a été tué par la limite de
+mémoire du conteneur (14,3 Go) au bout d'une heure et six minutes, le
+parent à 2,9 Go ; ses morceaux, gardés par memoire.py sous l'empreinte
+00a21c69bb1c0f6c50fdfc2f de l'arbre ci-dessus, ont servi au second, sur deux
+processus, dont la sortie suit (583 s). Pendant ce second lancement, le hook
+de fin de tour a avancé le clone, en avance rapide, à 5d2f769 (arbre
+5d6c2ad), que le JSON et la tête de la confrontation nomment : l'écart ne
+touche ni src/, ni moteur/, ni scripts/grille_large.py, seulement deux
+fiches de règles des libéraux (CPRN, CARPIMKO), des tests, des notes et le
+journal de veille ; aucun calcul gardé ne s'est fait sous la nouvelle
+empreinte (3eb715fda40ab952cf665e66), dont .cache/calculs/ n'a pas de
+dossier. Les tables de mortalité sont les mêmes aux deux arbres.
+
+Les scripts, hors du dépôt, lancés depuis sa racine (la lecture du classeur
+et la confrontation depuis leur dossier, sous python -I) :
+    python pilote_femmes_agees.py 2 population.json
+    python survies_sexuees.py
+    python -I lire_cellules.py <racine du dépôt> residents.xlsx 1-7 36-40 266-295
+    python -I confronter.py population.json
+    python -I decotees.py population.json
+
+Le classeur : « Caractéristiques de tous les retraités résidant en France
+(EIR 2020) », pièce jointe du jeu de la DREES
+3013_donnees-statistiques-sur-les-caracteristiques-des-retraites,
+https://data.drees.solidarites-sante.gouv.fr/api/explore/v2.1/catalog/datasets/3013_donnees-statistiques-sur-les-caracteristiques-des-retraites/attachments/caracteristiques_de_tous_les_retraites_residant_en_france_eir_2020_xlsx
+pris le 5 novembre 2026 par la lecture web (le serveur coupant curl),
+200 110 octets, SHA-256 ci-dessous, effacé en finissant.
+
+----- pilote_femmes_agees.py -----
+"""Les femmes âgées de la population : le stock de 2020 par tranche d'âge et par sexe.
+
+    python pilote_femmes_agees.py <processus> <sortie.json> [reference]
+
+La population, construite comme ``scripts/mesurer_surcote.py`` la construit
+(``grille_large.grille("population", ...)``, ses constantes telles que le dépôt
+les pose), simulée une fois (``grille_large.en_tetes``, allégée), puis pesée en
+2020 comme ``grille_large.cohortes_de_l_annee`` la pèse : chaque cohorte, son
+cas type au poids de 2020, fois l'effectif INSEE de son âge, fois sa survie
+propre alignée à nombre de décès égal (``cout._survies_alignees``), fois ce que
+son année de naissance donne à son poids (``GrilleEnTetes.part_de``). Chaque
+cohorte compte aussi sans sa survie propre (« brute »), pour séparer ce que
+font les poids de ce que fait la survie. Les têtes et les pensions sont
+sommées par sexe, drapeau de décote (``Variante.decote``), drapeau d'inapte,
+groupe, année de naissance et âge en 2020 ; la sortie les écrit en JSON, et
+imprime les parts par tranche d'âge de l'EIR."""
+import json, subprocess, sys, time
+from pathlib import Path
+
+RACINE = Path.cwd()
+sys.path.insert(0, str(RACINE / "src"))
+sys.path.insert(0, str(RACINE / "scripts"))
+import grille_large as G  # noqa: E402
+from retraite_notionnelle import cout as C  # noqa: E402
+from retraite_notionnelle.config import Parametres  # noqa: E402
+from retraite_notionnelle.simulateur import Simulateur  # noqa: E402
+
+ANNEE = 2020
+TRANCHES = ((0, 49, "age_moins_50"), (50, 54, "age_50_55"), (55, 59, "age_55_60"),
+            (60, 64, "age_60_65"), (65, 69, "age_65_70"), (70, 74, "age_70_75"),
+            (75, 79, "age_75_80"), (80, 84, "age_80_85"), (85, 200, "age_85_plus"))
+
+
+def tranche(age: int) -> str:
+    for debut, fin, nom in TRANCHES:
+        if debut <= age <= fin:
+            return nom
+    raise ValueError(age)
+
+
+def main() -> None:
+    t0 = time.time()
+    processus, sortie = int(sys.argv[1]), Path(sys.argv[2])
+    git = lambda *a: subprocess.run(["git", *a], capture_output=True, text=True).stdout.strip()
+    print("commit", git("rev-parse", "HEAD"), "arbre", git("rev-parse", "HEAD^{tree}"),
+          "modifié" if git("status", "--porcelain", "--untracked-files=no") else "propre")
+    p = Parametres()
+    racine = p.racine_donnees
+    _, valeurs = G.centiles(racine)
+    variantes = (G.reference() if sys.argv[3:] == ["reference"] else
+                 G.grille("population", Simulateur(p).effectifs, G.eir(racine), G.multiplicateurs(valeurs)))
+    par_code = {v.cas.code: v for v in variantes}
+    print(f"population : {len(variantes)} variantes ; {time.time() - t0:.0f} s", flush=True)
+    tetes = G.en_tetes(p, variantes, processus, alleges=True)
+    print(f"simulée : {len(tetes.pensionnes)} couples, échecs {dict(tetes.echecs)} ; {time.time() - t0:.0f} s",
+          flush=True)
+    poids = tetes.poids(ANNEE)
+    alignees = C._survies_alignees(tetes.pensionnes, poids, ANNEE)
+    vers_l_annee = tetes.macro.coefficient_prix(tetes.annee_euros, ANNEE) / 12.0
+    cles: dict = {}
+    for pensionne in tetes.pensionnes:
+        part = poids.get(pensionne.code, 0.0)
+        if part <= 0.0:
+            continue
+        v = par_code[pensionne.code]
+        for decalage in range(-C._DEMI_TRANCHE, C._DEMI_TRANCHE + 1):
+            liquidation = pensionne.liquidation(decalage)
+            if ANNEE < liquidation:
+                continue
+            naissance = pensionne.generation + decalage
+            age = ANNEE - naissance
+            brute = (part * tetes.population.effectif(age, ANNEE) * tetes.part_de(pensionne.code, naissance))
+            if brute <= 0.0:
+                continue
+            alignee = brute * alignees.get((pensionne.code, pensionne.generation, decalage), 1.0)
+            montant = pensionne.pensions["actuel"] * vers_l_annee * C.coefficient_servi(
+                pensionne.parts_regimes, tetes.revalorisation, liquidation, ANNEE)
+            cle = (v.cas.sexe, bool(v.decote), bool(v.inapte), v.groupe, naissance, age,
+                   liquidation - naissance)
+            somme = cles.setdefault(cle, [0.0, 0.0, 0.0])
+            somme[0] += alignee
+            somme[1] += brute
+            somme[2] += alignee * montant
+    lignes = [list(cle) + somme for cle, somme in sorted(cles.items())]
+    sortie.write_text(json.dumps({
+        "commit": git("rev-parse", "HEAD"), "arbre": git("rev-parse", "HEAD^{tree}"),
+        "colonnes": ["sexe", "decote", "inapte", "groupe", "naissance", "age_2020", "age_liquidation",
+                     "tetes_alignees", "tetes_brutes", "tetes_alignees_fois_pension"],
+        "couples": len(tetes.pensionnes), "echecs": dict(tetes.echecs), "lignes": lignes}),
+        encoding="utf-8")
+
+
+    def somme(garder, colonne: int) -> float:
+        return sum(l[colonne] for l in lignes if garder(l))
+
+
+    print("\n== retraités de 2020, par tranche d'âge de l'EIR (têtes alignées ; brutes)")
+    for debut, fin, nom in TRANCHES:
+        def dans(l, nom=nom):
+            return tranche(l[5]) == nom
+        f_a, t_a = somme(lambda l: dans(l) and l[0] == "F", 7), somme(dans, 7)
+        f_b, t_b = somme(lambda l: dans(l) and l[0] == "F", 8), somme(dans, 8)
+        ligne = [f"{nom} : femmes {100 * f_a / t_a:.1f} % ; brutes {100 * f_b / t_b:.1f} %"] if t_a else [nom]
+        for sexe in ("F", "H"):
+            s_a = somme(lambda l, s=sexe: dans(l) and l[0] == s, 7)
+            d_a = somme(lambda l, s=sexe: dans(l) and l[0] == s and l[1], 7)
+            s_b = somme(lambda l, s=sexe: dans(l) and l[0] == s, 8)
+            d_b = somme(lambda l, s=sexe: dans(l) and l[0] == s and l[1], 8)
+            if s_a:
+                ligne.append(f"{sexe} : {s_a / 1e3:.0f} milliers ({s_b / 1e3:.0f}), décote {100 * d_a / s_a:.2f} %"
+                             f" ({100 * d_b / s_b:.2f}), pension {somme(lambda l, s=sexe: dans(l) and l[0] == s, 9) / s_a:.0f} €")
+        print("  " + " ; ".join(ligne))
+    for sexe in ("F", "H"):
+        s = somme(lambda l, s=sexe: l[0] == s, 7)
+        print(f"  {sexe}, tous : {s / 1e3:.0f} milliers ; décote {100 * somme(lambda l, s=sexe: l[0] == s and l[1], 7) / s:.2f} %")
+    print("\n== femmes nées de 1915 à 1945 : part et décote, année par année (alignées ; brutes)")
+    for naissance in range(1915, 1946):
+        t_a = somme(lambda l: l[4] == naissance, 7)
+        if not t_a:
+            continue
+        f_a = somme(lambda l: l[4] == naissance and l[0] == "F", 7)
+        f_b, t_b = somme(lambda l: l[4] == naissance and l[0] == "F", 8), somme(lambda l: l[4] == naissance, 8)
+        d_a = somme(lambda l: l[4] == naissance and l[0] == "F" and l[1], 7)
+        d_b = somme(lambda l: l[4] == naissance and l[0] == "F" and l[1], 8)
+        print(f"  {naissance} ({ANNEE - naissance} ans) : femmes {100 * f_a / t_a:.1f} % ({100 * f_b / t_b:.1f}) ;"
+              f" décote des femmes {100 * d_a / f_a:.2f} % ({100 * d_b / f_b:.2f})")
+    print(f"\ndurée : {time.time() - t0:.0f} s")
+
+
+if __name__ == "__main__":
+    main()
+
+----- survies_sexuees.py -----
+"""La survie de 62 ans à l'âge de 2020, femmes et hommes, sous les tables du modèle (Mortalite.courbe_survie, par génération), et la part des femmes qu'elle fait d'une part égale à 62 ans."""
+import sys
+sys.path.insert(0, "src")
+from retraite_notionnelle.config import Parametres
+from retraite_notionnelle.simulateur import Simulateur
+m = Simulateur(Parametres()).mortalite
+for naissance in (1930, 1935, 1938, 1940, 1943, 1945, 1950, 1955):
+    age = 2020 - naissance
+    s = {sexe: m.courbe_survie(62.0, float(naissance + 62), sexe, True, None) for sexe in ("F", "H")}
+    k = age - 62
+    f, h = s["F"][k], s["H"][k]
+    print(f"née en {naissance}, {age} ans en 2020 : survie de 62 ans, F {f:.4f}, H {h:.4f} ; part des femmes d'une part égale à 62 ans {100 * f / (f + h):.1f} %")
+
+----- lire_cellules.py -----
+"""Imprime, du classeur des résidents de l'EIR, feuille « CondLiquidation », les cellules des lignes demandées, colonnes A à M.
+
+    python -I lire_cellules.py <racine du dépôt> <classeur> <première>-<dernière> ...
+"""
+import hashlib, sys
+from pathlib import Path
+racine, classeur = Path(sys.argv[1]), Path(sys.argv[2])
+sys.path.insert(0, str(racine / "scripts" / "fetch"))
+import drees_caracteristiques_retraites as D
+from lecture_xlsx import feuilles
+contenu = classeur.read_bytes()
+print("octets", len(contenu), "; SHA-256", hashlib.sha256(contenu).hexdigest())
+grille = feuilles(contenu, (D.FEUILLE_CONDITIONS,))[D.FEUILLE_CONDITIONS]
+base = min(c for _, c in grille)
+lbase = min(l for l, _ in grille)
+for plage in sys.argv[3:]:
+    a, b = map(int, plage.split("-"))
+    for ligne in range(a, b + 1):
+        l = ligne - 1 + lbase
+        cellules = [f"{chr(65 + c)}{ligne}={grille[(l, c + base)]}" for c in range(13)
+                    if (l, c + base) in grille and grille[(l, c + base)] not in ("", None)]
+        if cellules:
+            print(" | ".join(cellules))
+
+----- confronter.py -----
+"""Le stock de 2020 de la population (sortie de pilote_femmes_agees.py) contre l'EIR 2020 des résidents.
+
+    python -I confronter.py <population.json>
+
+L'EIR : le classeur « Caractéristiques de tous les retraités résidant en
+France (EIR 2020) », feuille « CondLiquidation », recopié ici cellule par
+cellule (lire_condliquidation.py) : M3 et M4, les femmes et les hommes en
+milliers ; M270 à M295, la part de chaque tranche d'âge au 31 décembre 2020
+parmi chaque sexe ; E3, les femmes décotées en milliers ; E270 à E294, la part
+de chaque tranche parmi elles. Imprime, tranche par tranche : la part des
+femmes, la décote des femmes, l'âge des femmes, la pension moyenne des femmes,
+de la population (têtes alignées, puis brutes) et de l'EIR ; puis la pension
+moyenne et la décote des femmes de la population, ses femmes pesées tranche
+par tranche comme celles de l'EIR."""
+import json, sys
+
+TRANCHES = ("age_moins_50", "age_50_55", "age_55_60", "age_60_65", "age_65_70",
+            "age_70_75", "age_75_80", "age_80_85", "age_85_plus")
+BORNES = {"age_moins_50": (0, 49), "age_50_55": (50, 54), "age_55_60": (55, 59),
+          "age_60_65": (60, 64), "age_65_70": (65, 69), "age_70_75": (70, 74),
+          "age_75_80": (75, 79), "age_80_85": (80, 84), "age_85_plus": (85, 200)}
+EIR_EFFECTIFS = {"F": 8452.0, "H": 7196.0}              # M3, M4
+EIR_PARTS = {  # M270 à M295, en %
+    "F": dict(zip(TRANCHES, (0.1, 0.2, 0.8, 12.0, 22.0, 22.4, 14.1, 11.9, 16.5))),
+    "H": dict(zip(TRANCHES, (0.6, 0.5, 1.3, 15.3, 23.9, 23.6, 14.1, 10.4, 10.2))),
+}
+EIR_DECOTEES_F = 741.0                                  # E3
+EIR_PARTS_DECOTEES_F = dict(zip(TRANCHES, (0.5, 0.7, 1.4, 15.7, 30.3, 18.8, 7.4, 8.6, 16.6)))  # E270 à E294
+
+donnees = json.load(open(sys.argv[1], encoding="utf-8"))
+lignes = donnees["lignes"]
+print("population simulée sur", donnees["commit"], "arbre", donnees["arbre"], ";", donnees["couples"],
+      "couples ; échecs", donnees["echecs"])
+
+
+def tranche(age):
+    return next(n for n, (a, b) in BORNES.items() if a <= age <= b)
+
+
+def somme(garder, col):
+    return sum(l[col] for l in lignes if garder(l))
+
+
+ALIGNEES, BRUTES, PENSIONS = 7, 8, 9
+eir_tetes = {s: {t: EIR_EFFECTIFS[s] * EIR_PARTS[s][t] / 100 for t in TRANCHES} for s in "FH"}
+pop = {(s, t, c): somme(lambda l, s=s, t=t: l[0] == s and tranche(l[5]) == t, c)
+       for s in "FH" for t in TRANCHES for c in (ALIGNEES, BRUTES, PENSIONS)}
+dec = {(t, c): somme(lambda l, t=t: l[0] == "F" and l[1] and tranche(l[5]) == t, c)
+       for t in TRANCHES for c in (ALIGNEES, BRUTES)}
+total = {(s, c): sum(pop[s, t, c] for t in TRANCHES) for s in "FH" for c in (ALIGNEES, BRUTES)}
+print("\ntranche | femmes, % : population (brutes) ; EIR | décote des femmes, % : population (brutes) ; EIR"
+      " | part de la tranche parmi les femmes, % : population ; EIR | pension des femmes, € : population")
+for t in TRANCHES:
+    fa, ha = pop["F", t, ALIGNEES], pop["H", t, ALIGNEES]
+    fb, hb = pop["F", t, BRUTES], pop["H", t, BRUTES]
+    ef, eh = eir_tetes["F"][t], eir_tetes["H"][t]
+    ed = EIR_DECOTEES_F * EIR_PARTS_DECOTEES_F[t] / 100
+    print(f"{t} | {100 * fa / (fa + ha):.1f} ({100 * fb / (fb + hb):.1f}) ; {100 * ef / (ef + eh):.1f}"
+          f" | {100 * dec[t, ALIGNEES] / fa:.2f} ({100 * dec[t, BRUTES] / fb:.2f}) ; {100 * ed / ef:.2f}"
+          f" | {100 * fa / total['F', ALIGNEES]:.1f} ; {EIR_PARTS['F'][t]:.1f}"
+          f" | {pop['F', t, PENSIONS] / fa:.0f}")
+for s in "FH":
+    print(f"{s}, tous : population {total[s, ALIGNEES] / 1e3:.0f} milliers, EIR {EIR_EFFECTIFS[s]:.0f}")
+print(f"part des femmes, tous : population {100 * total['F', ALIGNEES] / (total['F', ALIGNEES] + total['H', ALIGNEES]):.1f} %"
+      f" (brutes {100 * total['F', BRUTES] / (total['F', BRUTES] + total['H', BRUTES]):.1f}) ;"
+      f" EIR {100 * EIR_EFFECTIFS['F'] / (EIR_EFFECTIFS['F'] + EIR_EFFECTIFS['H']):.1f} %")
+for nom, poids in (("telles quelles", {t: pop["F", t, ALIGNEES] for t in TRANCHES}),
+                   ("pesées comme l'EIR", {t: pop["F", t, ALIGNEES] * EIR_PARTS["F"][t] / 100
+                                            * total["F", ALIGNEES] / pop["F", t, ALIGNEES]
+                                            for t in TRANCHES if pop["F", t, ALIGNEES]})):
+    n = sum(poids.values())
+    pension = sum(poids[t] * pop["F", t, PENSIONS] / pop["F", t, ALIGNEES] for t in poids) / n
+    decote = sum(poids[t] * dec[t, ALIGNEES] / pop["F", t, ALIGNEES] for t in poids) / n
+    print(f"femmes de la population, {nom} : pension moyenne {pension:.0f} € ; décote {100 * decote:.2f} %")
+print("EIR : pension de droit direct, majorations comprises, des femmes (M39) 1177 € ; décote des femmes (E6) 8,8 %")
+print("\nfemmes nées de 1915 à 1945, l'année de naissance : part des femmes et décote des femmes, alignées (brutes)")
+for naissance in range(1915, 1946):
+    t = somme(lambda l: l[4] == naissance, ALIGNEES)
+    if not t:
+        continue
+    f = somme(lambda l: l[4] == naissance and l[0] == "F", ALIGNEES)
+    fb = somme(lambda l: l[4] == naissance and l[0] == "F", BRUTES)
+    tb = somme(lambda l: l[4] == naissance, BRUTES)
+    d = somme(lambda l: l[4] == naissance and l[0] == "F" and l[1], ALIGNEES)
+    db = somme(lambda l: l[4] == naissance and l[0] == "F" and l[1], BRUTES)
+    print(f"  {naissance} ({2020 - naissance} ans) : femmes {100 * f / t:.1f} % ({100 * fb / tb:.1f}) ;"
+          f" décote {100 * d / f:.2f} % ({100 * db / fb:.2f})")
+
+----- sortie, python pilote_femmes_agees.py 2 population.json -----
+commit 4bd78c8c48c009a9f1b28814a16cac51ac82e0f3 arbre 39b33eecc82bbd0fd9e0c064fe5be3cb23c5d5c2 propre
+population : 20648 variantes ; 3 s
+simulée : 577809 couples, échecs {'liquidation antérieure à la répartition': 17378, 'aucun régime actif sur la période': 3605} ; 546 s
+
+== retraités de 2020, par tranche d'âge de l'EIR (têtes alignées ; brutes)
+  age_moins_50 : femmes 9.8 % ; brutes 9.8 % ; F : 2 milliers (2), décote 0.00 % (0.00), pension 1722 € ; H : 21 milliers (21), décote 0.00 % (0.00), pension 1857 €
+  age_50_55 : femmes 12.1 % ; brutes 12.1 % ; F : 8 milliers (8), décote 0.00 % (0.00), pension 1618 € ; H : 56 milliers (56), décote 0.00 % (0.00), pension 1798 €
+  age_55_60 : femmes 22.0 % ; brutes 22.0 % ; F : 31 milliers (31), décote 0.00 % (0.00), pension 1956 € ; H : 111 milliers (111), décote 0.00 % (0.00), pension 1957 €
+  age_60_65 : femmes 51.4 % ; brutes 51.5 % ; F : 1094 milliers (1095), décote 9.79 % (9.80), pension 1594 € ; H : 1033 milliers (1032), décote 6.36 % (6.36), pension 1970 €
+  age_65_70 : femmes 52.3 % ; brutes 52.5 % ; F : 2021 milliers (2029), décote 11.38 % (11.47), pension 1415 € ; H : 1844 milliers (1839), décote 8.30 % (8.32), pension 1886 €
+  age_70_75 : femmes 52.0 % ; brutes 52.4 % ; F : 1811 milliers (1827), décote 7.33 % (7.45), pension 1323 € ; H : 1675 milliers (1659), décote 4.19 % (4.21), pension 1845 €
+  age_75_80 : femmes 51.5 % ; brutes 52.4 % ; F : 1138 milliers (1158), décote 4.53 % (4.63), pension 1272 € ; H : 1074 milliers (1054), décote 2.02 % (2.04), pension 1819 €
+  age_80_85 : femmes 50.7 % ; brutes 52.4 % ; F : 950 milliers (980), décote 6.14 % (6.37), pension 1215 € ; H : 922 milliers (891), décote 1.62 % (1.64), pension 1754 €
+  age_85_plus : femmes 47.8 % ; brutes 52.4 % ; F : 1075 milliers (1180), décote 8.09 % (8.85), pension 1174 € ; H : 1175 milliers (1070), décote 1.96 % (2.01), pension 1659 €
+  F, tous : 8130 milliers ; décote 8.20 %
+  H, tous : 7910 milliers ; décote 4.41 %
+
+== femmes nées de 1915 à 1945 : part et décote, année par année (alignées ; brutes)
+  1916 (104 ans) : femmes 34.7 % (52.4) ; décote des femmes 6.34 % (8.67)
+  1917 (103 ans) : femmes 35.8 % (52.4) ; décote des femmes 6.43 % (8.67)
+  1918 (102 ans) : femmes 36.6 % (52.4) ; décote des femmes 6.49 % (8.76)
+  1919 (101 ans) : femmes 37.5 % (52.4) ; décote des femmes 6.59 % (8.76)
+  1920 (100 ans) : femmes 38.5 % (52.4) ; décote des femmes 6.72 % (8.76)
+  1921 (99 ans) : femmes 39.5 % (52.4) ; décote des femmes 6.84 % (8.76)
+  1922 (98 ans) : femmes 40.5 % (52.4) ; décote des femmes 6.98 % (8.76)
+  1923 (97 ans) : femmes 42.3 % (52.4) ; décote des femmes 7.26 % (8.85)
+  1924 (96 ans) : femmes 43.1 % (52.4) ; décote des femmes 7.38 % (8.85)
+  1925 (95 ans) : femmes 43.9 % (52.4) ; décote des femmes 7.50 % (8.85)
+  1926 (94 ans) : femmes 44.7 % (52.4) ; décote des femmes 7.62 % (8.85)
+  1927 (93 ans) : femmes 45.4 % (52.4) ; décote des femmes 7.73 % (8.85)
+  1928 (92 ans) : femmes 46.6 % (52.4) ; décote des femmes 7.88 % (8.85)
+  1929 (91 ans) : femmes 47.1 % (52.4) ; décote des femmes 7.97 % (8.85)
+  1930 (90 ans) : femmes 47.7 % (52.4) ; décote des femmes 8.06 % (8.85)
+  1931 (89 ans) : femmes 48.2 % (52.4) ; décote des femmes 8.14 % (8.85)
+  1932 (88 ans) : femmes 48.6 % (52.4) ; décote des femmes 8.21 % (8.85)
+  1933 (87 ans) : femmes 49.4 % (52.4) ; décote des femmes 8.31 % (8.85)
+  1934 (86 ans) : femmes 49.7 % (52.4) ; décote des femmes 8.36 % (8.85)
+  1935 (85 ans) : femmes 50.0 % (52.4) ; décote des femmes 8.41 % (8.85)
+  1936 (84 ans) : femmes 50.2 % (52.4) ; décote des femmes 6.08 % (6.37)
+  1937 (83 ans) : femmes 50.5 % (52.4) ; décote des femmes 6.11 % (6.37)
+  1938 (82 ans) : femmes 50.8 % (52.4) ; décote des femmes 6.15 % (6.37)
+  1939 (81 ans) : femmes 51.0 % (52.4) ; décote des femmes 6.17 % (6.37)
+  1940 (80 ans) : femmes 51.1 % (52.4) ; décote des femmes 6.19 % (6.37)
+  1941 (79 ans) : femmes 51.2 % (52.4) ; décote des femmes 4.51 % (4.63)
+  1942 (78 ans) : femmes 51.3 % (52.4) ; décote des femmes 4.53 % (4.63)
+  1943 (77 ans) : femmes 51.5 % (52.4) ; décote des femmes 4.53 % (4.63)
+  1944 (76 ans) : femmes 51.6 % (52.4) ; décote des femmes 4.54 % (4.63)
+  1945 (75 ans) : femmes 51.6 % (52.4) ; décote des femmes 4.55 % (4.63)
+
+durée : 583 s
+
+----- sortie, python survies_sexuees.py -----
+née en 1930, 90 ans en 2020 : survie de 62 ans, F 0.4385, H 0.2327 ; part des femmes d'une part égale à 62 ans 65.3 %
+née en 1935, 85 ans en 2020 : survie de 62 ans, F 0.6731, H 0.4640 ; part des femmes d'une part égale à 62 ans 59.2 %
+née en 1938, 82 ans en 2020 : survie de 62 ans, F 0.7682, H 0.5920 ; part des femmes d'une part égale à 62 ans 56.5 %
+née en 1940, 80 ans en 2020 : survie de 62 ans, F 0.8182, H 0.6632 ; part des femmes d'une part égale à 62 ans 55.2 %
+née en 1943, 77 ans en 2020 : survie de 62 ans, F 0.8716, H 0.7500 ; part des femmes d'une part égale à 62 ans 53.7 %
+née en 1945, 75 ans en 2020 : survie de 62 ans, F 0.8985, H 0.7967 ; part des femmes d'une part égale à 62 ans 53.0 %
+née en 1950, 70 ans en 2020 : survie de 62 ans, F 0.9499, H 0.8924 ; part des femmes d'une part égale à 62 ans 51.6 %
+née en 1955, 65 ans en 2020 : survie de 62 ans, F 0.9837, H 0.9645 ; part des femmes d'une part égale à 62 ans 50.5 %
+
+----- sortie, python -I lire_cellules.py <racine du dépôt> residents.xlsx 1-7 36-40 266-295 -----
+octets 200110 ; SHA-256 9daa39b53d37af3259bd647857e4a1990475faf7ef6e0b7c6dcafede3d668134
+A1=sexe | B1=Variable | C1=Intitulé | D1=Carrière longue | E1=Décote | F1=Décote non applicable | G1=Surcote | H1=Taux plein invalidité | I1=Taux plein inaptitude | J1=Taux plein autres motifs | K1=Taux plein par âge | L1=Taux plein par la durée (hors surcote et RACL) | M1=Ensemble
+A2=Ensemble | B2=Effectifs | C2=Effectifs (en milliers) | D2=1888.0 | E2=1062.0 | F2=1093.0 | G2=1335.0 | H2=1000.0 | I2=1181.0 | J2=123.0 | K2=2397.0 | L2=5427.0 | M2=15647.0
+A3=Femme | B3=Effectifs | C3=Effectifs (en milliers) | D3=571.0 | E3=741.0 | F3=625.0 | G3=662.0 | H3=565.0 | I3=811.0 | J3=64.0 | K3=1703.0 | L3=2674.0 | M3=8452.0
+A4=Homme | B4=Effectifs | C4=Effectifs (en milliers) | D4=1317.0 | E4=321.0 | F4=468.0 | G4=674.0 | H4=435.0 | I4=370.0 | J4=58.0 | K4=694.0 | L4=2754.0 | M4=7196.0
+A5=Ensemble | B5=Effectifs | C5=Part parmi l'ensemble des retraités (en %) | D5=12.1 | E5=6.8 | F5=7.0 | G5=8.5 | H5=6.4 | I5=7.5 | J5=0.8 | K5=15.3 | L5=34.7 | M5=100.0
+A6=Femme | B6=Effectifs | C6=Part parmi l'ensemble des retraités (en %) | D6=6.8 | E6=8.8 | F6=7.4 | G6=7.8 | H6=6.7 | I6=9.6 | J6=0.8 | K6=20.1 | L6=31.6 | M6=100.0
+A7=Homme | B7=Effectifs | C7=Part parmi l'ensemble des retraités (en %) | D7=18.3 | E7=4.5 | F7=6.5 | G7=9.4 | H7=6.0 | I7=5.1 | J7=0.8 | K7=9.6 | L7=38.3 | M7=100.0
+A36=Femme | B36=Pension brute | C36=Montant moyen de la pension de retraite (droit direct + droit dérivé + majoration pour enfants) brute (en euros/mois) | D36=1698.0 | E36=1009.0 | F36=1949.0 | G36=2041.0 | H36=1328.0 | I36=915.0 | J36=1425.0 | K36=1155.0 | L36=1602.0 | M36=1440.0
+A37=Homme | B37=Pension brute | C37=Montant moyen de la pension de retraite (droit direct + droit dérivé + majoration pour enfants) brute (en euros/mois) | D37=1852.0 | E37=1623.0 | F37=2342.0 | G37=2730.0 | H37=1450.0 | I37=972.0 | J37=1471.0 | K37=1880.0 | L37=2097.0 | M37=1982.0
+A38=Ensemble | B38=Pension brute | C38=Montant moyen de la pension de droit direct (dont les majorations pour enfants) brute (en euros/mois) | D38=1775.0 | E38=965.0 | F38=1942.0 | G38=2323.0 | H38=1258.0 | I38=701.0 | J38=1372.0 | K38=1039.0 | L38=1737.0 | M38=1536.0
+A39=Femme | B39=Pension brute | C39=Montant moyen de la pension de droit direct (dont les majorations pour enfants) brute (en euros/mois) | D39=1626.0 | E39=690.0 | F39=1674.0 | G39=1927.0 | H39=1128.0 | I39=587.0 | J39=1290.0 | K39=710.0 | L39=1397.0 | M39=1177.0
+A40=Homme | B40=Pension brute | C40=Montant moyen de la pension de droit direct (dont les majorations pour enfants) brute (en euros/mois) | D40=1840.0 | E40=1601.0 | F40=2300.0 | G40=2713.0 | H40=1426.0 | I40=949.0 | J40=1463.0 | K40=1847.0 | L40=2067.0 | M40=1957.0
+A266=Ensemble | B266=Âge au 31 décembre 2020 | C266=Âge moyen au 31 décembre 2020 (en années) | D266=66.6 | E266=71.9 | F266=77.3 | G266=70.9 | H266=71.7 | I266=75.7 | J266=66.8 | K266=78.4 | L266=75.0 | M266=73.9
+A267=Femme | B267=Âge au 31 décembre 2020 | C267=Âge moyen au 31 décembre 2020 (en années) | D267=66.1 | E267=73.1 | F267=77.5 | G267=70.5 | H267=72.1 | I267=77.0 | J267=67.5 | K267=79.5 | L267=74.6 | M267=74.8
+A268=Homme | B268=Âge au 31 décembre 2020 | C268=Âge moyen au 31 décembre 2020 (en années) | D268=66.8 | E268=69.2 | F268=77.0 | G268=71.2 | H268=71.1 | I268=72.8 | J268=66.1 | K268=75.6 | L268=75.3 | M268=72.7
+A269=Ensemble | B269=Âge au 31 décembre 2020 | C269=Inférieur à 50 ans | E269=0.3 | F269=0.0 | H269=0.0 | J269=0.1 | K269=0.0 | L269=0.9 | M269=0.3
+A270=Femme | B270=Âge au 31 décembre 2020 | C270=Inférieur à 50 ans | E270=0.5 | F270=0.0 | H270=0.0 | J270=0.1 | K270=0.0 | L270=0.2 | M270=0.1
+A271=Homme | B271=Âge au 31 décembre 2020 | C271=Inférieur à 50 ans | K271=0.0 | L271=1.6 | M271=0.6
+A272=Ensemble | B272=Âge au 31 décembre 2020 | C272=Entre 50 et 55 ans (non inclus) | E272=0.5 | F272=0.4 | H272=0.1 | J272=1.2 | K272=0.3 | L272=0.6 | M272=0.3
+A273=Femme | B273=Âge au 31 décembre 2020 | C273=Entre 50 et 55 ans (non inclus) | E273=0.7 | F273=0.7 | H273=0.0 | J273=2.0 | K273=0.1 | L273=0.2 | M273=0.2
+A274=Homme | B274=Âge au 31 décembre 2020 | C274=Entre 50 et 55 ans (non inclus) | E274=0.1 | F274=0.0 | H274=0.1 | J274=0.3 | K274=1.0 | L274=0.9 | M274=0.5
+A275=Ensemble | B275=Âge au 31 décembre 2020 | C275=Entre 55 et 60 ans (non inclus) | D275=0.0 | E275=1.7 | F275=1.7 | H275=0.8 | J275=6.3 | K275=1.2 | L275=1.3 | M275=1.0
+A276=Femme | B276=Âge au 31 décembre 2020 | C276=Entre 55 et 60 ans (non inclus) | E276=1.4 | F276=2.5 | H276=0.6 | J276=9.7 | K276=0.2 | L276=0.9 | M276=0.8
+A277=Homme | B277=Âge au 31 décembre 2020 | C277=Entre 55 et 60 ans (non inclus) | D277=0.0 | E277=2.2 | F277=0.5 | H277=1.0 | J277=2.5 | K277=3.8 | L277=1.7 | M277=1.3
+A278=Ensemble | B278=Âge au 31 décembre 2020 | C278=Entre 60 et 65 ans (non inclus) | D278=39.8 | E278=17.9 | F278=4.6 | G278=7.8 | H278=20.1 | I278=10.8 | J278=38.6 | K278=2.2 | L278=10.5 | M278=13.5
+A279=Femme | B279=Âge au 31 décembre 2020 | C279=Entre 60 et 65 ans (non inclus) | D279=43.0 | E279=15.7 | F279=6.3 | G279=9.0 | H279=19.3 | I279=8.7 | J279=35.1 | K279=0.6 | L279=12.5 | M279=12.0
+A280=Homme | B280=Âge au 31 décembre 2020 | C280=Entre 60 et 65 ans (non inclus) | D280=38.4 | E280=23.1 | F280=2.2 | G280=6.7 | H280=21.1 | I280=15.4 | J280=42.3 | K280=6.3 | L280=8.5 | M280=15.3
+A281=Ensemble | B281=Âge au 31 décembre 2020 | C281=Entre 65 et 70 ans (non inclus) | D281=38.1 | E281=33.4 | F281=10.2 | G281=37.1 | H281=30.0 | I281=20.6 | J281=42.1 | K281=12.0 | L281=18.2 | M281=22.9
+A282=Femme | B282=Âge au 31 décembre 2020 | C282=Entre 65 et 70 ans (non inclus) | D282=40.8 | E282=30.3 | F282=7.4 | G282=39.0 | H282=29.5 | I282=17.6 | J282=35.7 | K282=10.6 | L282=21.2 | M282=22.0
+A283=Homme | B283=Âge au 31 décembre 2020 | C283=Entre 65 et 70 ans (non inclus) | D283=36.9 | E283=40.4 | F283=13.9 | G283=35.1 | H283=30.8 | I283=27.3 | J283=49.2 | K283=15.3 | L283=15.2 | M283=23.9
+A284=Ensemble | B284=Âge au 31 décembre 2020 | C284=Entre 70 et 75 ans (non inclus) | D284=20.2 | E284=19.3 | F284=20.5 | G284=39.7 | H284=21.5 | I284=21.8 | J284=2.7 | K284=22.4 | L284=22.3 | M284=23.0
+A285=Femme | B285=Âge au 31 décembre 2020 | C285=Entre 70 et 75 ans (non inclus) | D285=15.2 | E285=18.8 | F285=17.9 | G285=38.7 | H285=21.5 | I285=20.8 | J285=4.8 | K285=22.5 | L285=23.3 | M285=22.4
+A286=Homme | B286=Âge au 31 décembre 2020 | C286=Entre 70 et 75 ans (non inclus) | D286=22.4 | E286=20.4 | F286=24.0 | G286=40.7 | H286=21.5 | I286=24.2 | J286=0.4 | K286=22.4 | L286=21.2 | M286=23.6
+A287=Ensemble | B287=Âge au 31 décembre 2020 | C287=Entre 75 et 80 ans (non inclus) | D287=1.9 | E287=7.0 | F287=25.5 | G287=13.0 | H287=11.2 | I287=15.9 | J287=0.6 | K287=19.6 | L287=15.8 | M287=14.1
+A288=Femme | B288=Âge au 31 décembre 2020 | C288=Entre 75 et 80 ans (non inclus) | D288=1.0 | E288=7.4 | F288=25.2 | G288=11.0 | H288=11.1 | I288=16.1 | J288=1.1 | K288=19.9 | L288=13.6 | M288=14.1
+A289=Homme | B289=Âge au 31 décembre 2020 | C289=Entre 75 et 80 ans (non inclus) | D289=2.3 | E289=5.9 | F289=26.0 | G289=14.9 | H289=11.3 | I289=15.3 | J289=0.1 | K289=19.0 | L289=17.9 | M289=14.1
+A290=Ensemble | B290=Âge au 31 décembre 2020 | C290=Entre 80 et 85 ans (non inclus) | E290=7.1 | F290=18.7 | G290=2.0 | H290=8.2 | I290=12.1 | J290=2.8 | K290=18.5 | L290=14.1 | M290=11.2
+A291=Femme | B291=Âge au 31 décembre 2020 | C291=Entre 80 et 85 ans (non inclus) | E291=8.6 | F291=19.6 | G291=1.7 | H291=8.3 | I291=13.7 | J291=3.3 | K291=19.4 | L291=11.8 | M291=11.9
+A292=Homme | B292=Âge au 31 décembre 2020 | C292=Entre 80 et 85 ans (non inclus) | E292=3.5 | F292=17.5 | G292=2.3 | H292=8.0 | I292=8.7 | J292=2.2 | K292=16.5 | L292=16.3 | M292=10.4
+A293=Ensemble | B293=Âge au 31 décembre 2020 | C293=Au moins 85 ans | E293=12.9 | F293=18.4 | G293=0.4 | H293=8.2 | I293=18.7 | J293=5.7 | K293=23.6 | L293=16.4 | M293=13.6
+A294=Femme | B294=Âge au 31 décembre 2020 | C294=Au moins 85 ans | E294=16.6 | F294=20.3 | G294=0.5 | H294=9.7 | I294=23.1 | J294=8.2 | K294=26.9 | L294=16.2 | M294=16.5
+A295=Homme | B295=Âge au 31 décembre 2020 | C295=Au moins 85 ans | E295=4.2 | F295=15.8 | G295=0.4 | H295=6.2 | I295=9.1 | J295=3.0 | K295=15.7 | L295=16.6 | M295=10.2
+
+----- sortie, python -I confronter.py population.json -----
+population simulée sur 5d2f769c7b62922d16ed398bbc905ead7367d0da arbre 5d6c2ad3df3dc27edfff1d2635d2de376adb54ca ; 577809 couples ; échecs {'liquidation antérieure à la répartition': 17378, 'aucun régime actif sur la période': 3605}
+
+tranche | femmes, % : population (brutes) ; EIR | décote des femmes, % : population (brutes) ; EIR | part de la tranche parmi les femmes, % : population ; EIR | pension des femmes, € : population
+age_moins_50 | 9.8 (9.8) ; 16.4 | 0.00 (0.00) ; 43.84 | 0.0 ; 0.1 | 1722
+age_50_55 | 12.1 (12.1) ; 32.0 | 0.00 (0.00) ; 30.69 | 0.1 ; 0.2 | 1618
+age_55_60 | 22.0 (22.0) ; 42.0 | 0.00 (0.00) ; 15.34 | 0.4 ; 0.8 | 1956
+age_60_65 | 51.4 (51.5) ; 47.9 | 9.79 (9.80) ; 11.47 | 13.5 ; 12.0 | 1594
+age_65_70 | 52.3 (52.5) ; 52.0 | 11.38 (11.47) ; 12.07 | 24.9 ; 22.0 | 1415
+age_70_75 | 52.0 (52.4) ; 52.7 | 7.33 (7.45) ; 7.36 | 22.3 ; 22.4 | 1323
+age_75_80 | 51.5 (52.4) ; 54.0 | 4.53 (4.63) ; 4.60 | 14.0 ; 14.1 | 1272
+age_80_85 | 50.7 (52.4) ; 57.3 | 6.14 (6.37) ; 6.34 | 11.7 ; 11.9 | 1215
+age_85_plus | 47.8 (52.4) ; 65.5 | 8.09 (8.85) ; 8.82 | 13.2 ; 16.5 | 1174
+F, tous : population 8130 milliers, EIR 8452
+H, tous : population 7910 milliers, EIR 7196
+part des femmes, tous : population 50.7 % (brutes 51.8) ; EIR 54.0 %
+femmes de la population, telles quelles : pension moyenne 1346 € ; décote 8.20 %
+femmes de la population, pesées comme l'EIR : pension moyenne 1337 € ; décote 8.03 %
+EIR : pension de droit direct, majorations comprises, des femmes (M39) 1177 € ; décote des femmes (E6) 8,8 %
+
+femmes nées de 1915 à 1945, l'année de naissance : part des femmes et décote des femmes, alignées (brutes)
+  1916 (104 ans) : femmes 34.7 % (52.4) ; décote 6.34 % (8.67)
+  1917 (103 ans) : femmes 35.8 % (52.4) ; décote 6.43 % (8.67)
+  1918 (102 ans) : femmes 36.6 % (52.4) ; décote 6.49 % (8.76)
+  1919 (101 ans) : femmes 37.5 % (52.4) ; décote 6.59 % (8.76)
+  1920 (100 ans) : femmes 38.5 % (52.4) ; décote 6.72 % (8.76)
+  1921 (99 ans) : femmes 39.5 % (52.4) ; décote 6.84 % (8.76)
+  1922 (98 ans) : femmes 40.5 % (52.4) ; décote 6.98 % (8.76)
+  1923 (97 ans) : femmes 42.3 % (52.4) ; décote 7.26 % (8.85)
+  1924 (96 ans) : femmes 43.1 % (52.4) ; décote 7.38 % (8.85)
+  1925 (95 ans) : femmes 43.9 % (52.4) ; décote 7.50 % (8.85)
+  1926 (94 ans) : femmes 44.7 % (52.4) ; décote 7.62 % (8.85)
+  1927 (93 ans) : femmes 45.4 % (52.4) ; décote 7.73 % (8.85)
+  1928 (92 ans) : femmes 46.6 % (52.4) ; décote 7.88 % (8.85)
+  1929 (91 ans) : femmes 47.1 % (52.4) ; décote 7.97 % (8.85)
+  1930 (90 ans) : femmes 47.7 % (52.4) ; décote 8.06 % (8.85)
+  1931 (89 ans) : femmes 48.2 % (52.4) ; décote 8.14 % (8.85)
+  1932 (88 ans) : femmes 48.6 % (52.4) ; décote 8.21 % (8.85)
+  1933 (87 ans) : femmes 49.4 % (52.4) ; décote 8.31 % (8.85)
+  1934 (86 ans) : femmes 49.7 % (52.4) ; décote 8.36 % (8.85)
+  1935 (85 ans) : femmes 50.0 % (52.4) ; décote 8.41 % (8.85)
+  1936 (84 ans) : femmes 50.2 % (52.4) ; décote 6.08 % (6.37)
+  1937 (83 ans) : femmes 50.5 % (52.4) ; décote 6.11 % (6.37)
+  1938 (82 ans) : femmes 50.8 % (52.4) ; décote 6.15 % (6.37)
+  1939 (81 ans) : femmes 51.0 % (52.4) ; décote 6.17 % (6.37)
+  1940 (80 ans) : femmes 51.1 % (52.4) ; décote 6.19 % (6.37)
+  1941 (79 ans) : femmes 51.2 % (52.4) ; décote 4.51 % (4.63)
+  1942 (78 ans) : femmes 51.3 % (52.4) ; décote 4.53 % (4.63)
+  1943 (77 ans) : femmes 51.5 % (52.4) ; décote 4.53 % (4.63)
+  1944 (76 ans) : femmes 51.6 % (52.4) ; décote 4.54 % (4.63)
+  1945 (75 ans) : femmes 51.6 % (52.4) ; décote 4.55 % (4.63)
+
+----- decotees.py -----
+"""Les femmes de 80 à 84 ans et de 85 ans et plus de la population, décotées ou non : ce que la survie propre leur laisse (têtes alignées sur têtes brutes) et leur pension moyenne.
+
+    python -I decotees.py <population.json>
+"""
+import json, sys
+lignes = json.load(open(sys.argv[1], encoding="utf-8"))["lignes"]
+for decote in (True, False):
+    for debut, fin, nom in ((80, 84, "80 à 84 ans"), (85, 200, "85 ans et plus")):
+        siennes = [l for l in lignes if l[0] == "F" and l[1] == decote and debut <= l[5] <= fin]
+        alignees, brutes = sum(l[7] for l in siennes), sum(l[8] for l in siennes)
+        pension = sum(l[9] for l in siennes) / alignees
+        print(f"femmes {'décotées' if decote else 'non décotées'}, {nom} : survie propre, alignées sur brutes,"
+              f" {alignees / brutes:.3f} ; pension moyenne {pension:.0f} €")
+
+----- sortie, python -I decotees.py population.json -----
+femmes décotées, 80 à 84 ans : survie propre, alignées sur brutes, 0.934 ; pension moyenne 614 €
+femmes décotées, 85 ans et plus : survie propre, alignées sur brutes, 0.834 ; pension moyenne 641 €
+femmes non décotées, 80 à 84 ans : survie propre, alignées sur brutes, 0.971 ; pension moyenne 1254 €
+femmes non décotées, 85 ans et plus : survie propre, alignées sur brutes, 0.919 ; pension moyenne 1221 €
