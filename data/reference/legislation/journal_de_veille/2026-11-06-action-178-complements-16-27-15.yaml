@@ -1,0 +1,28 @@
+date: "2026-11-06"
+session: "action 178, étape 5 : les compléments des fiches 16, 27 et 15 du panorama de la DREES, édition 2026 (graphique 3 et tableau 2 complémentaire, 70 660 nouveaux allocataires, graphiques 2 et 7), confrontés au dépôt"
+consulte: >-
+  Aucune règle du scénario 1 n'est touchée : l'étape lit des statistiques et les
+  confronte au modèle. Le PDF du panorama (miroir de l'UNSA, empreinte 9eb36a06…)
+  par pdftotext, aux folios 139 à 148, 226 à 229 et 237, et les classeurs des
+  fiches 15, 16, 27 et 28 de l'archive de la release documents-apportes (empreinte
+  ec7503f8…), chaque cellule citée avec sa feuille ; en regard, la grille de la
+  page Coût (controle_eacr.controle, son poids), les tables de mortalité du dépôt
+  (INSEE, projections de 2026) et le stock des allocataires de l'INSEE.
+trouve: >-
+  La grille met chaque régime de 2024 à un ou deux âges (27 points de la
+  répartition de la source tous régimes, 31 au régime général) ; elle part trop
+  tard pour ses hommes et trop tôt pour sa seule femme (tableau 2 par sexe). Le
+  texte de la fiche 16 dit « environ 4 % » de moins de 60 ans, son graphique 3 en
+  donne 3,3 et son complément 4,2 ; la ligne des professions libérales du
+  complément est celle de la SNCF. Les 70 660 entrées de 2024 sont cohérentes
+  avec la chaîne des hausses du texte et avec le tableau 5 de la fiche 28 (70
+  700), dont le texte écrit 77 700 ; avec le stock, elles impliquent 39 660 sorties,
+  1,5 à 2,1 fois les décès des tables du dépôt. L'âge conjoncturel de la grille
+  (graphique 2) est de 0,8 an sous la source au régime général, de 3,2 à la CNIEG
+  et de 7,2 à la SNCF ; l'espérance de vie à 60 ans du dépôt est celle que la
+  formule de la DREES suppose à 0,1 an près pour les hommes, plus basse de 0,06 à
+  0,33 pour les femmes.
+reste: >-
+  Le jeu drees_minimum_vieillesse du portail, non joint depuis le nuage, à ouvrir
+  depuis un poste ; les feuilles non lues des fiches 15, 16 et 28 ; à l'étape 5, les
+  trois erreurs du coût de la note des règles.

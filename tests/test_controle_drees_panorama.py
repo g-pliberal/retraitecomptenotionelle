@@ -1023,6 +1023,400 @@ def test_la_grille_ne_fait_partir_personne_apres_67_ans_quand_l_eir_et_le_panora
     assert temoin["valeurs"]["16_tableau_2"]["professions_liberales"]["67_ou_plus"]["valeur"] == 3.7
 
 
+#: Les tranches du graphique 3 de la fiche 16 (clés du témoin) et l'âge qu'elles
+#: rangent : l'âge atteint au 31 décembre de l'année de la liquidation (« en
+#: différence de millésime », encadré 1), qui est l'âge de liquidation de la grille.
+TRANCHES_DU_GRAPHIQUE_3 = {
+    "moins_de_57": lambda age: age < 57,
+    "57_59": lambda age: 57 <= age <= 59,
+    "60_ans": lambda age: age == 60,
+    "61_ans": lambda age: age == 61,
+    "62_ans": lambda age: age == 62,
+    "63_64": lambda age: 63 <= age <= 64,
+    "65_ans": lambda age: age == 65,
+    "66_ans": lambda age: age == 66,
+    "plus_de_66": lambda age: age > 66,
+}
+
+
+def test_la_grille_met_chaque_regime_de_2024_a_un_ou_deux_ages_quand_la_source_les_etale(
+        grille, temoin):
+    """Graphique 3 de la fiche 16 (EACR 2024, « Répartition des nouveaux
+    retraités de 2024, selon leur âge au 31 décembre ») : les primo-liquidants
+    d'un droit direct de 2024 partent pour 5,8 % l'année de leurs 60 ans, 9,3 %
+    de leurs 61 ans, 29,3 % de leurs 62 ans, 25,1 % de leurs 63 ou 64 ans, 6,6 %
+    de leurs 65 ans, 5,0 % de leurs 66 ans et 14,9 % après 66 ans.
+
+    ÉCART DÉCLARÉ, mesuré le 6 novembre 2026. Les nouveaux retraités de 2024 de
+    la grille (``Cohorte.nouvelle``, têtes de 2024) ne partent à aucun des
+    âges de 61 et de 66 ans, quand la source en compte 9,3 et 5,0 % ; ils
+    partent deux fois et demie trop souvent à 60 ans (14,0 % pour 5,8) et à 65
+    ans (16,1 pour 6,6), et six fois trop peu après 66 ans (2,5 pour 14,9, le
+    seul libéral, à 67 ans). La distance entre les deux répartitions — la
+    moitié de la somme des écarts, en points, par tranche — est de 27,0 points
+    pour tous régimes, 31,1 au régime général (17,4 % à 60 ans pour 5,5 ; rien
+    après 66 ans pour 16,7). Chacun des autres régimes n'a, en 2024, qu'un âge de
+    départ : tous ses nouveaux retraités sont dans une seule tranche, et la
+    distance est alors 100 moins la part que la source donne à cette tranche
+    — 77,0 pour la SNCF (le conducteur à 52 ans, pour 23,0 % avant 57 ans), 76,9
+    pour la MSA non-salariés (62 ans, 23,0 %), 71,0 pour la CNRACL (62 ans,
+    29,0 %), 64,6 pour les professions libérales (plus de 66 ans, 35,4 %),
+    19,9 pour les militaires (avant 57 ans, 80,1 %) —, sauf à l'État civil,
+    deux tranches (57-59 ans, 38,7 %, et 62 ans, 61,3 %), 75,7 points.
+
+    Ce que la mesure ne dit pas : la grille compte des cohortes de cinq
+    générations, et deux de ses dix-huit cas types, les fonctionnaires
+    sédentaires, n'ont aucune cohorte qui liquide en 2024 (celle de 1960 part en
+    2023, la suivante en 2025) : l'instantané d'une seule année est irrégulier,
+    et l'âge conjoncturel (graphique 2 de la fiche 15) en est la mesure lissée.
+    La MSA salariés (ligne 8) n'a pas de cas type. Le graphique 3 de l'EACR
+    compte aussi les retraités résidant à l'étranger (note 5)."""
+    from retraite_notionnelle.controle_ancetre import REGIME_PRINCIPAL
+
+    cas_types = {cas.code: cas for cas in GRILLE_DU_COUT}
+    nouveaux = [c for c in grille if c.nouvelle]
+    assert {cas.code for cas in GRILLE_DU_COUT} - {c.code for c in nouveaux} == {
+        "fonctionnaire_sedentaire", "fonctionnaire_actif~sedentaire"}
+
+    def regime(c) -> str:
+        return REGIME_PRINCIPAL[cas_types[c.code].caisses[0]]
+
+    def caisse(c) -> str:
+        return cas_types[c.code].caisses[0]
+
+    lignes = {
+        "tous_regimes": lambda c: True,
+        "regime_general": lambda c: regime(c) == "regime_general",
+        "msa_non_salaries": lambda c: regime(c) == "msa_non_salaries",
+        "fpe_civils": lambda c: regime(c) == "fpe_civils",
+        "fpe_militaires": lambda c: regime(c) == "fpe_militaires",
+        "cnracl": lambda c: regime(c) == "cnracl",
+        "sncf": lambda c: caisse(c) == "sncf",
+        "cnavpl": lambda c: caisse(c) == "cnavpl",
+    }
+    publie = temoin["valeurs"]["16_graphique_3"]
+    parts: dict = {}
+    distance: dict = {}
+    for ligne, garder in lignes.items():
+        lot = [c for c in nouveaux if garder(c)]
+        parts[ligne] = {tranche: _part(lot, lambda c, f=f: f(c.age_liquidation))
+                        for tranche, f in TRANCHES_DU_GRAPHIQUE_3.items()}
+        assert sum(parts[ligne].values()) == pytest.approx(100.0), ligne
+        distance[ligne] = 0.5 * sum(abs(parts[ligne][tranche] - _nombre(publie[ligne][tranche]))
+                                    for tranche in TRANCHES_DU_GRAPHIQUE_3)
+
+    tous, source = parts["tous_regimes"], publie["tous_regimes"]
+    assert tous["61_ans"] == 0.0 < _nombre(source["61_ans"])
+    assert tous["66_ans"] == 0.0 < _nombre(source["66_ans"])
+    for tranche in ("60_ans", "65_ans"):
+        assert 2.2 < tous[tranche] / _nombre(source[tranche]) < 2.7, tranche
+    assert tous["plus_de_66"] < _nombre(source["plus_de_66"]) / 4
+    assert 25 < distance["tous_regimes"] < 29
+
+    general, source = parts["regime_general"], publie["regime_general"]
+    assert 2.9 < general["60_ans"] / _nombre(source["60_ans"]) < 3.5
+    assert general["plus_de_66"] == 0.0 < _nombre(source["plus_de_66"])
+    assert 29 < distance["regime_general"] < 33
+
+    # Un seul âge de départ en 2024 : toute la ligne dans une tranche, à 100 moins sa part publiée.
+    une_tranche = {"msa_non_salaries": "62_ans", "fpe_militaires": "moins_de_57",
+                   "cnracl": "62_ans", "sncf": "moins_de_57", "cnavpl": "plus_de_66"}
+    for ligne, tranche in une_tranche.items():
+        assert parts[ligne][tranche] == pytest.approx(100.0), ligne
+        assert distance[ligne] == pytest.approx(100.0 - _nombre(publie[ligne][tranche]),
+                                                abs=0.2), ligne
+    for ligne in ("msa_non_salaries", "cnracl", "sncf", "cnavpl", "fpe_civils"):
+        assert max(_nombre(publie[ligne][t]) for t in TRANCHES_DU_GRAPHIQUE_3) < 40, ligne
+    assert _nombre(publie["fpe_militaires"]["moins_de_57"]) == 80.1
+
+    civils = parts["fpe_civils"]
+    assert civils["57_59"] + civils["62_ans"] == pytest.approx(100.0)
+    assert 73 < distance["fpe_civils"] < 78
+
+
+def test_le_graphique_3_complementaire_repete_la_sncf_pour_la_cnavpl_et_la_source_dit_4_pour_cent_de_moins_de_60_ans(
+        temoin):
+    """Graphique 3 et graphique 3 complémentaire de la fiche 16 (feuilles
+    « F16_Graphique 3 » et « F16_Graphique 3 compl » du classeur) : le texte
+    dit que « parmi les primo-liquidants d'un droit direct, environ 4 % ont
+    moins de » 60 ans, que 9 % partent l'année de leurs 61 ans, 29 % de leurs
+    62 ans et « plus de la moitié (52 %) après cet âge ».
+
+    DÉFAUTS DE LA SOURCE, relevés le 6 novembre 2026, sans effet sur le dépôt.
+    (1) La ligne « Primo-liquidants… tous régimes » du graphique 3 donne 1,6 +
+    1,7 = 3,3 % avant 60 ans (arrondi : 3), celle du complément 1,7 + 2,5 = 4,2
+    (arrondi : 4), qui est le « environ 4 % » du texte ; les deux lignes
+    s'accordent sur le reste (5,8 et 5,7 % à 60 ans, 9,3 et 9,1 à 61 ans, 29,3
+    et 29,1 à 62 ans, 25,1 + 6,6 + 5,0 + 14,9 = 51,6 et 25,0 + 6,9 + 5,0 + 15,1 =
+    52,0 après 62 ans, soit 52 % dans les deux). (2) Au complément, la ligne
+    des professions libérales (CNAVPL, ligne 17) est celle de la SNCF (ligne
+    14) cellule pour cellule — 23,0, 25,3, 24,2, 10,3, 5,7, 8,2, 2,1, 1,1,
+    0,1 % —, quand le graphique 3 donne aux professions libérales 0, 0,04, 1,58,
+    1,29, 22,39, 21,28, 11,27, 6,73 et 35,41 % (« 22 21 11 7 35 » sur la page
+    imprimée) : une ligne recopiée à tort. Les tests de la grille lisent le
+    graphique 3, non son complément. La source ne dit pas lequel des deux
+    « primo-liquidants » est le bon pour les moins de 60 ans."""
+    principal = temoin["valeurs"]["16_graphique_3"]
+    complement = temoin["valeurs"]["16_graphique_3_compl"]
+
+    def ligne(bloc: dict, nom: str) -> list[float]:
+        return [_nombre(bloc[nom][tranche]) for tranche in TRANCHES_DU_GRAPHIQUE_3]
+
+    assert ligne(complement, "cnavpl") == ligne(complement, "sncf")
+    assert ligne(principal, "cnavpl") != ligne(principal, "sncf")
+    assert ligne(principal, "sncf") == ligne(complement, "sncf")
+    assert _nombre(principal["cnavpl"]["plus_de_66"]) == pytest.approx(35.41, abs=0.01)
+
+    texte = " ".join(" ".join(temoin["citations"]["16_graphique_3"]["textes"]).split())
+    assert "environ 4 % ont moins de" in texte
+    assert "9 % ont liquidé un premier droit au cours de l’année de leurs 61 ans" in texte
+    assert "29 % l’ont fait l’année de leurs 62 ans" in texte
+    assert "plus de la moitié (52 %) après cet âge" in texte
+
+    def somme(bloc: dict, *tranches: str) -> float:
+        return sum(_nombre(bloc["tous_regimes"][tranche]) for tranche in tranches)
+
+    assert round(somme(principal, "moins_de_57", "57_59")) == 3
+    assert round(somme(complement, "moins_de_57", "57_59")) == 4
+    for bloc in (principal, complement):
+        assert round(somme(bloc, "60_ans")) == 6
+        assert round(somme(bloc, "61_ans")) == 9
+        assert round(somme(bloc, "62_ans")) == 29
+        assert round(somme(bloc, "63_64", "65_ans", "66_ans", "plus_de_66")) == 52
+
+
+def test_la_grille_part_a_l_age_des_hommes_de_chaque_regime_et_de_sa_seule_femme_et_les_pese_autrement(
+        grille, temoin):
+    """Tableau 2 complémentaire de la fiche 16 (feuille « F16_Tableau 2
+    compl », EIR 2020, nés en 1953 résidant en France), le même que le tableau
+    2 par sexe : âge moyen à la liquidation dans le régime principal, âge
+    moyen après neutralisation des départs avant l'AOD (61 ans et 2 mois), et
+    part de chaque régime parmi les retraités du sexe.
+
+    ÉCART DÉCLARÉ, mesuré le 6 novembre 2026. Le tableau 2 mêlait les sexes ;
+    le complément les sépare, et l'écart de +0,31 an de la grille au régime
+    général (tableau 2) en est la somme de deux écarts de signe contraire.
+    Hommes, la grille part trop tard : au régime général à 62,57 ans pour 61,6
+    (+0,97), 62,83 après neutralisation pour 62,1 (+0,73) ; à l'État civil à
+    61,97 pour 59,9 (+2,07), 62,61 pour 62,2 (+0,41) ; à la CNRACL à 62,29 pour
+    61,0 (+1,29), 62,57 pour 62,1 (+0,47) ; aux professions libérales à 66
+    pour 64,7 (+1,30, brut et neutralisé). Hommes encore, trop tôt aux régimes
+    spéciaux à 52,56 pour 56,5 (−3,94 ; neutralisé 61,17 pour 61,3, −0,13), à
+    la MSA non-salariés à 61,0 pour 62,0 (−1,00 ; neutralisé 61,17 pour 62,3,
+    −1,13), aux militaires à 48,0 pour 48,8 (−0,80 ; neutralisé 61,17 pour 61,2,
+    −0,03). Femmes, la grille n'a qu'un cas type, la carrière interrompue, au
+    régime général, à 61 ans pour 62,4 (−1,40 ; neutralisé 61,17 pour 62,5,
+    −1,33). Le poids des régimes parmi les hommes diffère aussi : le régime
+    général en compte 61,4 % dans la grille pour 70,5 % publiés, la CNRACL
+    13,9 pour 5,3 (2,6 fois), l'État civil 12,8 pour 8,7 (1,5 fois), parce que
+    la grille pèse chaque cas type de la population entière, non de la
+    génération 1953, et par ses têtes de caisse. Ce que la source ne tranche
+    pas : le régime principal est celui de plus de la moitié de la carrière,
+    non la caisse du dernier départ ; la grille n'a aucun polypensionné."""
+    from retraite_notionnelle.controle_ancetre import REGIME_PRINCIPAL
+    from retraite_notionnelle.scenarios.actuel import AgesOuverture
+
+    cas_types = {cas.code: cas for cas in GRILLE_DU_COUT}
+    nes = _nes_en(grille, 1953)
+    ouverture = AgesOuverture(Parametres().racine_donnees).age(1953)[0]
+    assert ouverture == pytest.approx(61 + 2 / 12)
+    publie = temoin["valeurs"]["16_tableau_2_compl"]
+    femmes = [c for c in nes if cas_types[c.code].sexe == "F"]
+    hommes = [c for c in nes if cas_types[c.code].sexe == "H"]
+    assert {c.code for c in femmes} == {"carriere_interrompue"}
+
+    def regime(c) -> str:
+        return REGIME_PRINCIPAL[cas_types[c.code].caisses[0]]
+
+    def ecarts(lot: list, ligne: dict) -> tuple[float, float]:
+        return (_moyenne_des_tetes(lot, lambda c: c.age_liquidation) - _nombre(ligne["age_moyen"]),
+                _moyenne_des_tetes(lot, lambda c: max(c.age_liquidation, ouverture))
+                - _nombre(ligne["apres_neutralisation"]))
+
+    def entre(valeur: float, bas: float, haut: float) -> bool:
+        return bas < valeur < haut
+
+    brut, neutralise = ecarts(femmes, publie["femmes"]["regime_general"])
+    assert entre(brut, -1.55, -1.25) and entre(neutralise, -1.5, -1.2)
+
+    attendus = {   # régime : (écart brut, écart neutralisé), à ± 0,15 an près
+        "regime_general": ((0.85, 1.1), (0.6, 0.85)),
+        "fpe_civils": ((1.9, 2.2), (0.3, 0.55)),
+        "cnracl": ((1.15, 1.45), (0.35, 0.6)),
+        "professions_liberales": ((1.15, 1.45), (1.15, 1.45)),
+        "regimes_speciaux": ((-4.1, -3.8), (-0.25, 0.0)),
+        "msa_non_salaries": ((-1.15, -0.85), (-1.25, -1.0)),
+        "fpe_militaires": ((-0.95, -0.65), (-0.15, 0.1)),
+    }
+    cles = {"professions_liberales": "cnavpl"}
+    tetes_des_hommes = sum(c.tetes for c in hommes)
+    parts = {}
+    for nom, (bornes_brut, bornes_neutralise) in attendus.items():
+        lot = [c for c in hommes if regime(c) == nom]
+        ligne = publie["hommes"][cles.get(nom, nom)]
+        brut, neutralise = ecarts(lot, ligne)
+        assert entre(brut, *bornes_brut), (nom, brut)
+        assert entre(neutralise, *bornes_neutralise), (nom, neutralise)
+        parts[nom] = 100 * sum(c.tetes for c in lot) / tetes_des_hommes
+    assert sum(parts.values()) == pytest.approx(100.0)
+
+    source = {nom: _nombre(publie["hommes"][cles.get(nom, nom)]["part"]) for nom in attendus}
+    assert parts["regime_general"] < source["regime_general"] - 7
+    assert 2.4 < parts["cnracl"] / source["cnracl"] < 2.9
+    assert 1.3 < parts["fpe_civils"] / source["fpe_civils"] < 1.6
+    # Le régime général de la grille n'a que 17 % de femmes (un cas type sur sept).
+    general = [c for c in nes if regime(c) == "regime_general"]
+    assert 100 * sum(c.tetes for c in femmes) / sum(c.tetes for c in general) < 17
+
+
+# --- Fiche 15 : l'âge conjoncturel par régime et la durée de retraite --------
+
+
+def test_l_age_conjoncturel_de_la_grille_est_celui_de_ses_cas_types_au_premier_age_ou_leur_cohorte_est_retraitee(
+        grille, simulateur, temoin):
+    """Graphique 2 de la fiche 15 (EACR, retraités résidant en France ou à
+    l'étranger) : en 2024, l'âge conjoncturel moyen de départ à la retraite est
+    de 63,6 ans au régime général, 63,18 à la FPE civils, 60,2 à la CNIEG et
+    59,22 à la SNCF. Encadré 1 : « Pour une année donnée, il est égal à l'âge
+    moyen de départ d'une génération fictive qui aurait, à chaque âge fin entre
+    50 et 70 ans, la même probabilité d'être à la retraite que les générations
+    ayant atteint ces âges au cours de l'année d'observation ».
+
+    LA MESURE DE LA GRILLE. Le taux de retraités à l'âge a, en 2024, est la
+    part des cas types du régime dont la cohorte de cet âge est déjà partie ;
+    l'âge conjoncturel est 50 + la somme, de 50 à 69 ans, des (1 − taux), soit
+    la moyenne, pesée du poids de chaque cas type dans la grille
+    (``memoire.cout(...).poids``), du plus jeune âge où sa cohorte est
+    retraitée en 2024 (``Cohorte.age`` minimal des cohortes déjà parties).
+
+    ÉCART DÉCLARÉ, mesuré le 6 novembre 2026. Régime général : 62,77 ans pour
+    63,6 (−0,83) — le Smic à 60 ans, la carrière interrompue, l'inapte et
+    l'ex-invalide à 62, le salaire moyen à 63, le cadre à 64, l'artisan et le
+    contractuel à 65, pesés de 0,04562 à 0,1089 ; CNIEG : 57 pour 60,2 (−3,2),
+    l'agent des IEG ; SNCF : 52 pour 59,22 (−7,22), le seul conducteur ; la FPE
+    civils s'accorde à 63,18 pour 63,18 (le sédentaire à 64, 0,08973 ; son
+    actif à 62, 0,01513 ; le super-actif à 57, 0,00906) : un accord, sans que
+    la grille le cherche. La grille n'a de cas type ni pour l'Agirc-Arrco (63,43),
+    la RATP (56,89) ni la Banque de France (61,64). Ce que la source ne tranche
+    pas : le taux de retraités par régime se calcule sur les assurés du régime,
+    non sur la population de l'âge ; la note 2 dit la série des fonctionnaires
+    civils révisée, disponible depuis 2016 seulement."""
+    from retraite_notionnelle import memoire
+    from retraite_notionnelle.controle_ancetre import REGIME_PRINCIPAL
+
+    texte = " ".join(" ".join(temoin["citations"]["15_texte"]["textes"]).split())
+    assert "à chaque âge fin entre 50 et 70 ans" in texte
+    cas_types = {cas.code: cas for cas in GRILLE_DU_COUT}
+    poids = memoire.cout(simulateur.parametres).poids
+    premier_age: dict[str, int] = {}
+    for code in cas_types:
+        ages = sorted({c.age for c in grille if c.code == code})
+        assert ages == list(range(ages[0], ages[-1] + 1)) and ages[-1] >= 69, code
+        premier_age[code] = ages[0]
+
+    def conjoncturel(garder) -> float:
+        codes = [code for code, cas in cas_types.items() if garder(cas)]
+        return sum(poids[code] * premier_age[code] for code in codes) / sum(
+            poids[code] for code in codes)
+
+    publie = temoin["valeurs"]["15_graphique_2"]["2024"]
+    mesures = {
+        "regime_general": conjoncturel(
+            lambda cas: REGIME_PRINCIPAL[cas.caisses[0]] == "regime_general"),
+        "fpe_civils": conjoncturel(lambda cas: REGIME_PRINCIPAL[cas.caisses[0]] == "fpe_civils"),
+        "cnieg": conjoncturel(lambda cas: cas.caisses[0] == "cnieg"),
+        "sncf": conjoncturel(lambda cas: cas.caisses[0] == "sncf"),
+    }
+    ecart = {nom: mesure - _nombre(publie[nom]) for nom, mesure in mesures.items()}
+    assert -1.0 < ecart["regime_general"] < -0.65
+    assert abs(ecart["fpe_civils"]) < 0.1
+    assert -3.4 < ecart["cnieg"] < -3.0
+    assert -7.4 < ecart["sncf"] < -7.0
+    assert {"agirc_arrco", "ratp", "banque_de_france"} <= set(publie)
+
+
+def test_la_duree_de_retraite_du_depot_est_celle_de_la_drees_a_quelques_dixiemes_pres_et_la_grille_part_trop_tard(
+        grille, simulateur, temoin):
+    """Graphique 7 de la fiche 15 (« Espérance de durée de retraite, par
+    génération, en nombre d'années ») : « 60 + espérance de vie à 60 ans − âge
+    moyen de départ à la retraite de la génération », au « scénario central
+    des projections démographiques de l'Insee » (de 2021 selon la note, du 1er
+    janvier 2026 selon la ligne des sources : la source se contredit). Elle
+    donne 23,02 ans à la génération 1930 (24,99 pour les femmes et 21,07 pour
+    les hommes) — « 23,0 années pour la génération née en 1930 (25,0 années
+    pour les femmes et 21,1 années pour les hommes) » —, 25,63 (27,41 ; 23,87)
+    à 1950, 24,66 (26,36 ; 23,00) à 1955, 24,67 (26,43 ; 22,94) à 1957, soit «
+    24 années et 8 mois », « 26 années et 5 mois » et « 22 années et 11 mois ».
+
+    LA MESURE. L'espérance de vie à 60 ans que la source suppose se déduit de
+    sa formule et du graphique 5, au même rang de cellule : durée + âge de
+    départ − 60. Pour les femmes de 1950 : 27,41 + 60,9 − 60 = 28,31 ; hommes
+    23,87 + 60,01 − 60 = 23,88 ; ensemble 25,63 + 60,46 − 60 = 26,09. Celle du
+    dépôt est la table de génération des projections de l'INSEE de 2026
+    (``DonneesMortalite.esperance_residuelle(60, génération + 60)``) : 28,12,
+    23,90 et 26,01.
+
+    CE QUE ÇA DIT, mesuré le 6 novembre 2026. L'espérance de vie à 60 ans du
+    dépôt est celle de la DREES à 0,1 an près pour les hommes, aux quatre
+    générations (+0,03, +0,02, +0,03, −0,05 pour 1930, 1950, 1955 et 1957) ; elle
+    est plus basse pour les femmes, de plus en plus (−0,06, −0,19, −0,26,
+    −0,33) ; pour les deux sexes, de −0,02 à −0,19. La grille, elle, partant
+    plus tard que les assurés — 61,16 ans pour les hommes de 1950 et 62,11 pour
+    ceux de 1955, pour 60,01 et 61,15 —, a une durée de retraite espérée plus
+    courte : 22,74 ans pour les hommes de 1950 (23,87 publiés, −1,13) et 22,07
+    pour ceux de 1955 (23,00, −0,92) ; sa seule femme, partie à 60 puis à 62
+    ans, 28,12 (27,41, +0,71) puis 26,10 (26,36, −0,26). L'écart de durée est
+    la somme de deux écarts : celui de l'espérance de vie (petit) et celui de
+    l'âge de départ (celui des graphiques 5 et 6)."""
+    mortalite = simulateur.mortalite
+    texte = " ".join(" ".join(temoin["citations"]["15_texte"]["textes"]).split())
+    assert "23,0 années pour la génération née en 1930 (25,0 années pour les femmes et 21,1 " \
+           "années pour les hommes)" in texte
+    publie = temoin["valeurs"]["15_graphique_7"]
+    groupes = {"femmes": "F", "hommes": "H", "ensemble": None}
+
+    def duree(generation: str, groupe: str) -> float:
+        return _nombre(publie[generation]["duree_de_retraite"][groupe])
+
+    def age(generation: str, groupe: str) -> float:
+        return _nombre(publie[generation]["age_de_depart"][groupe])
+
+    assert [round(duree("1930", g), 1) for g in groupes] == [25.0, 21.1, 23.0]
+    for groupe, mois in (("ensemble", (24, 8)), ("femmes", (26, 5)), ("hommes", (22, 11))):
+        annees = duree("1957", groupe)
+        assert (int(annees), round((annees - int(annees)) * 12)) == mois, groupe
+    assert "1957 est de 24 années et 8 mois" in texte
+    assert "26 années et 5 mois à la retraite, contre 22 années et 11 mois" in texte
+
+    def esperance_du_depot(generation: str, groupe: str) -> float:
+        return mortalite.esperance_residuelle(60, int(generation) + 60, groupes[groupe], True)
+
+    ecart_de_vie = {}
+    for generation in publie:
+        for groupe in groupes:
+            deduite = duree(generation, groupe) + age(generation, groupe) - 60.0
+            ecart_de_vie[(generation, groupe)] = esperance_du_depot(generation, groupe) - deduite
+    for generation in publie:
+        assert abs(ecart_de_vie[(generation, "hommes")]) < 0.1, generation
+        assert -0.4 < ecart_de_vie[(generation, "femmes")] < 0.0, generation
+        assert -0.25 < ecart_de_vie[(generation, "ensemble")] < 0.05, generation
+    femmes = [ecart_de_vie[(generation, "femmes")] for generation in sorted(publie)]
+    assert femmes == sorted(femmes, reverse=True)
+
+    # La grille : nés en 1950 et 1955, par sexe, à l'âge de départ de leurs cas types.
+    cas_types = {cas.code: cas for cas in GRILLE_DU_COUT}
+    attendus = {("1950", "hommes"): (-1.3, -1.0), ("1955", "hommes"): (-1.1, -0.8),
+                ("1950", "femmes"): (0.55, 0.85), ("1955", "femmes"): (-0.4, -0.1)}
+    for (generation, groupe), (bas, haut) in attendus.items():
+        sexe = groupes[groupe]
+        lot = [c for c in _nes_en(grille, int(generation)) if cas_types[c.code].sexe == sexe]
+        age_grille = _moyenne_des_tetes(lot, lambda c: c.age_liquidation)
+        duree_grille = esperance_du_depot(generation, groupe) - (age_grille - 60.0)
+        assert bas < duree_grille - duree(generation, groupe) < haut, (generation, groupe)
+        if groupe == "hommes":
+            assert age_grille > age(generation, groupe) + 0.9
+
+
 # --- Fiche 18 : les départs anticipés ----------------------------------------
 
 
@@ -1309,6 +1703,108 @@ def test_la_garantie_de_la_page_sert_plus_de_monde_et_coute_plus_que_l_aspa_et_l
         "pension_majoree_reference", "complement_differentiel_rco"))
     assert 7_450 < minima < 7_550
     assert 6_400 < en_courants - minima < 6_460
+
+
+def test_les_nouveaux_allocataires_du_minimum_vieillesse_sont_un_flux_que_le_depot_ne_calcule_pas(
+        simulateur, temoin):
+    """Fiche 27, texte : « Le nombre de nouveaux allocataires augmente
+    légèrement en 2024 (+0,8 %) pour atteindre 70 660 » ; « En 2024, 70 660
+    personnes entrent dans le dispositif ». Le chiffre n'est pas au classeur :
+    la source de la fiche est son texte, recoupé par le tableau 5 de la fiche
+    28 (« F28_Tableau 5 », ligne « Effectifs », cellule K18), 70 700 nouveaux
+    allocataires de l'Aspa, arrondis à la centaine.
+
+    LE CHIFFRE EST COHÉRENT. (1) La chaîne des hausses du texte, de 47 930 en
+    2020 par +25 % (2021), +11 %, +5 % et +0,8 %, donne 47 930 × 1,25 × 1,11 ×
+    1,05 × 1,008 = 70 386 ; avec les taux à ± 0,5 point (± 0,05 pour le dernier)
+    de 69 422 à 71 360, et 70 660 y est. (2) Le tableau 5 donne 70 700 ; son
+    texte, celui de la fiche 28, écrit « 77 700 nouveaux allocataires de
+    l'Aspa en 2024 » : un chiffre de 7 000 de plus que sa table, que la fiche
+    27 ne reprend pas, et que nous tenons pour une coquille, la source ne le
+    disant pas. (3) Le stock du graphique 1 passe de 723,0 à 754,0 milliers :
+    +31 000 en 2024 (+4,3 %, H24 ; 754 460 / 1,043 = 723 356). Les entrées
+    étant 70 660, les sorties de l'année sont 70 660 − 31 000 = 39 660, 5,5 %
+    du stock de fin 2023 ; l'enquête compte les allocataires « vivants au 31
+    décembre ». (4) Les décès que les tables du dépôt donnent au stock de fin
+    2023, par âge et par sexe (722 520 allocataires, séries de l'INSEE,
+    tranches à leur milieu), sont environ 21 000 (2,9 %) — de 18 800 à 26 400
+    pour des âges moyens de un an plus bas à deux ans plus haut —, soit 1,5 à
+    2,1 fois moins que les sorties : le reste est l'excès de mortalité des
+    allocataires sur la population ou des sorties autres que le décès, que la
+    source ne distingue pas.
+
+    CE QUE LE DÉPÔT NE CALCULE PAS. La garantie de la page est un stock : aucun
+    de ses champs ne compte des entrants ; il n'y a donc rien à confronter aux
+    70 660, et rien n'est corrigé. Son stock de bénéficiaires recule de 2 833 509
+    (2023) à 2 800 133 (2024), −1,2 %, quand celui de l'ASV et de l'Aspa avance de
+    +4,3 % : le facteur des pensions du système 4 passe de 0,7173 à 0,7365 en un
+    an, plus vite que les 1,9 % d'effectif (14,13 à 14,39 millions), quand le
+    minimum vieillesse a eu trois revalorisations exceptionnelles de 2018 à
+    2020 (texte de la fiche). Ce n'est pas un écart du modèle : la garantie n'est
+    pas l'Aspa."""
+    import dataclasses
+
+    import mesures_prose
+    import recours_aspa
+
+    texte = " ".join(" ".join(temoin["citations"]["27_texte"]["textes"]).split())
+    assert "(+0,8 %) pour atteindre 70 660" in texte
+    assert "En 2024, 70 660 personnes entrent dans le dispositif" in texte
+    assert "pour atteindre 47 930 individus en 2020" in texte
+    assert ("La hausse se poursuit en 2021 (+25 %), puis dans une moindre mesure les années "
+            "suivantes (+11 % en 2022, +5 % en 2023 et +0,8 % en 2024)") in texte
+    assert "vivants au 31 décembre de chaque année" in texte
+    entrants = 70_660
+
+    # (1) La chaîne des hausses, aux arrondis près.
+    depart = 47_930
+    bas = depart * 1.245 * 1.105 * 1.045 * 1.0075
+    haut = depart * 1.255 * 1.115 * 1.055 * 1.0085
+    assert 69_400 < bas < entrants < haut < 71_400
+    assert depart * 1.25 * 1.11 * 1.05 * 1.008 == pytest.approx(70_386, abs=1)
+
+    # (2) Le tableau 5 de la fiche 28 : 70 700 à la centaine, et le texte qui écrit 77 700.
+    effectifs = temoin["valeurs"]["28_tableau_5"]["effectifs"]
+    ensemble = _nombre(effectifs["ensemble"])
+    assert abs(ensemble - entrants) <= 50
+    assert _nombre(effectifs["isoles"]) + _nombre(effectifs["couple"]) == pytest.approx(
+        ensemble, abs=100)
+    assert _nombre(effectifs["femmes"]) + _nombre(effectifs["hommes"]) == pytest.approx(
+        ensemble, abs=100)
+    erreur = " ".join(" ".join(temoin["citations"]["28_texte"]["textes"]).split())
+    assert "77 700 nouveaux allocataires de l’Aspa en 2024" in erreur
+    assert 77_700 - ensemble == 7_000
+
+    # (3) Les sorties que le stock et les entrées impliquent.
+    graphique = temoin["valeurs"]["27_graphique_1"]
+    fin_2023 = _nombre(graphique["2023"]["allocataires_milliers"]) * 1000
+    fin_2024 = _nombre(graphique["2024"]["allocataires_milliers"]) * 1000
+    evolution = _nombre(temoin["valeurs"]["27_tableau_1"]["evolution_asv_aspa_pct"]) / 100
+    assert evolution == pytest.approx(0.043)
+    assert abs(_nombre(temoin["valeurs"]["27_tableau_1"]["asv_et_aspa"]) / (1 + evolution)
+               - fin_2023) < 800
+    sorties = entrants - (fin_2024 - fin_2023)
+    assert 39_500 < sorties < 39_800
+    assert 0.054 < sorties / fin_2023 < 0.056
+
+    # (4) Les décès des tables du dépôt, sur le stock de fin 2023.
+    milieu = {"61-64": 62.5, "65-69": 67.5, "70-74": 72.5, "75-79": 77.5, "80-84": 82.5,
+              "85-89": 87.5, "90+": 92.5}
+    stock = {(sexe, tranche): effectif for (menage, sexe, tranche), effectif
+             in recours_aspa.servis(RACINE_DONNEES, 2023).items() if menage == "ensemble"}
+    assert sum(stock.values()) == pytest.approx(fin_2023, abs=1_000)
+    deces = sum(effectif * (1 - simulateur.mortalite.survie(milieu[tranche], 2024, 1, sexe))
+                for (sexe, tranche), effectif in stock.items())
+    assert 19_000 < deces < 26_500
+    assert 1.5 < sorties / deces < 2.1
+
+    # La garantie de la page : un stock, aucun flux ; il recule quand le minimum vieillesse avance.
+    ligne_2023, ligne_2024 = (mesures_prose._avenir({"annee": str(a)}) for a in (2023, 2024))
+    champs = {champ.name for champ in dataclasses.fields(ligne_2024.garantie)}
+    assert not [nom for nom in champs
+                if any(mot in nom for mot in ("entrant", "nouveau", "flux", "sortant"))]
+    variation = ligne_2024.garantie.beneficiaires / ligne_2023.garantie.beneficiaires - 1
+    assert -0.015 < variation < -0.009 and evolution > 0.04
 
 
 # --- Fiche 28 : le recours au minimum vieillesse -----------------------------
@@ -1945,17 +2441,31 @@ def test_chaque_fiche_de_l_etape_5_nomme_ses_confrontations():
             assert nom.startswith("test_") and callable(getattr(module, nom, None)), (numero, nom)
 
 
-def test_les_fiches_16_et_27_nomment_leurs_confrontations():
-    """Au suivi, les fiches 16 (tableaux 1 et 2, encadré 2) et 27 (tableau 1,
-    graphique 1, dépenses) sont confrontées au dépôt, et nomment les tests de
-    ce module qui les confrontent ; chacun existe. Les compléments de leurs
-    classeurs restent pour la clôture (étape 7)."""
+def test_les_fiches_15_16_et_27_nomment_leurs_confrontations():
+    """Au suivi, les fiches 16 (tableaux 1 et 2, encadré 2, graphique 3 et
+    compléments du graphique 3 et du tableau 2), 27 (tableau 1, graphique 1,
+    dépenses, nouveaux allocataires) et 15 (graphiques 2 et 7, en plus des
+    graphiques 5 et 6) sont confrontées au dépôt, et nomment les tests de ce
+    module qui les confrontent ; chacun existe. Il ne leur reste rien pour la
+    clôture (étape 7), sauf à la fiche 27 le jeu du portail de la DREES, que
+    le nuage ne joint pas."""
     suivi = yaml.safe_load(SUIVI.read_text(encoding="utf-8"))["fiches"]
     module = sys.modules[__name__]
-    for numero in ("16", "27"):
+    nouveaux = {
+        "15": {"test_l_age_conjoncturel_de_la_grille_est_celui_de_ses_cas_types_au_premier_age_ou_leur_cohorte_est_retraitee",
+               "test_la_duree_de_retraite_du_depot_est_celle_de_la_drees_a_quelques_dixiemes_pres_et_la_grille_part_trop_tard"},
+        "16": {"test_la_grille_met_chaque_regime_de_2024_a_un_ou_deux_ages_quand_la_source_les_etale",
+               "test_le_graphique_3_complementaire_repete_la_sncf_pour_la_cnavpl_et_la_source_dit_4_pour_cent_de_moins_de_60_ans",
+               "test_la_grille_part_a_l_age_des_hommes_de_chaque_regime_et_de_sa_seule_femme_et_les_pese_autrement"},
+        "27": {"test_les_nouveaux_allocataires_du_minimum_vieillesse_sont_un_flux_que_le_depot_ne_calcule_pas"},
+    }
+    for numero in ("15", "16", "27"):
         ligne = suivi[numero]
         assert ligne["statut"] == "confronte", numero
         assert len(" ".join(str(ligne["confrontation"]).split())) > 40, numero
         assert ligne["confronte_par"], numero
         for nom in ligne["confronte_par"]:
             assert nom.startswith("test_") and callable(getattr(module, nom, None)), (numero, nom)
+        assert nouveaux[numero] <= set(ligne["confronte_par"]), numero
+        assert "Restent, pour la clôture" not in ligne["a_tirer"], numero
+        assert "Restent, sans confrontation" not in ligne["a_tirer"], numero

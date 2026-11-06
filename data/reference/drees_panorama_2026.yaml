@@ -397,10 +397,13 @@ fiches:
       s'arrête à 2022 ; le panorama révise de quelques centièmes des
       années anciennes, qu'il ne touche pas. L'âge moyen par génération
       (graphiques 5 et 6), confronté aux départs de la grille de la page
-      Coût le 5 novembre 2026, à l'étape 5 (ci-dessous). Restent, sans
-      confrontation : l'âge conjoncturel par régime (graphique 2), qui se
-      calcule sur des taux de départ par âge que la grille n'a pas, et
-      l'espérance de durée de retraite (graphique 7).
+      Coût le 5 novembre 2026, à l'étape 5 (ci-dessous). L'âge conjoncturel
+      par régime (graphique 2) et l'espérance de durée de retraite
+      (graphique 7) sont confrontés le 6 novembre 2026 : le premier à l'âge
+      où la cohorte de chaque cas type est retraitée en 2024, pesé de son
+      poids (la grille n'a pas de taux de départ par âge, elle a les âges de
+      ses cohortes) ; le second à l'espérance de vie à 60 ans que la formule
+      de la source suppose, déduite de ses deux graphiques.
     etape: 4
     confrontation: >-
       Les cas types de la grille nés en 1950 et 1955 partent à 61,03 et
@@ -409,8 +412,22 @@ fiches:
       2,3 ans à la CNRACL, de deux ans et un an et demi à l'État civil, le
       fonctionnaire actif partant à 60 ans ; l'exploitant part quelques
       mois trop tôt. Écart déclaré : la grille n'est pas une population.
+      L'âge conjoncturel de 2024 (graphique 2), à l'âge où la cohorte de
+      chaque cas type est retraitée, pesé de son poids : 62,78 ans au régime
+      général pour 63,6 (−0,82), 63,18 à l'État civil pour 63,18 (un accord),
+      57 pour la CNIEG pour 60,2 (−3,2), 52 pour la SNCF pour 59,22 (−7,22 :
+      le seul conducteur). L'espérance de vie à 60 ans que la formule du
+      graphique 7 suppose (durée + âge de départ − 60) est celle des tables
+      du dépôt à 0,1 an pour les hommes (+0,03, +0,02, +0,03 et −0,05 aux
+      générations 1930, 1950, 1955 et 1957), plus basse pour les femmes, de
+      0,06 à 0,33 an ; la durée de retraite que la grille donne à ses hommes
+      est plus courte, de 1,13 an à 1950 et 0,92 à 1955, parce qu'ils
+      partent plus tard (graphiques 5 et 6). Écarts déclarés, rien
+      n'est corrigé (décision 11).
     confronte_par:
       - test_la_grille_fait_partir_ses_fonctionnaires_trop_tard
+      - test_l_age_conjoncturel_de_la_grille_est_celui_de_ses_cas_types_au_premier_age_ou_leur_cohorte_est_retraitee
+      - test_la_duree_de_retraite_du_depot_est_celle_de_la_drees_a_quelques_dixiemes_pres_et_la_grille_part_trop_tard
   "16":
     titre: "La diversité des âges de départ à la retraite"
     page: 145
@@ -429,8 +446,13 @@ fiches:
       répartition (tableau 2), à `retraites_generations.csv`, aux référents.
       Les départs après 67 ans (encadré 2), chiffrés dans le seul PDF, sont
       cités au témoin des confrontations ; le tableau 1, le tableau 2 et
-      l'encadré 2 sont confrontés à la grille (5 novembre 2026). Restent,
-      pour la clôture, les compléments du graphique 3 et du tableau 2.
+      l'encadré 2 sont confrontés à la grille (5 novembre 2026), puis, le 6
+      novembre, le graphique 3 (nouveaux retraités de 2024 par âge, par
+      régime) et le tableau 2 complémentaire (par sexe), qui lisent les
+      cellules du classeur. Deux défauts de la source sont déclarés au
+      témoin : le texte dit « environ 4 % » de moins de 60 ans quand le
+      graphique 3 en donne 3,3 % et son complément 4,2, et la ligne des
+      professions libérales du complément est celle de la SNCF.
     etape: 7
     confrontation: >-
       Les cas types de la grille nés en 1953 partent à 61,83 ans en moyenne,
@@ -445,13 +467,25 @@ fiches:
       ceux de l'État civil, 7,95 % dans la grille. L'encadré 2 (« environ 1 %
       » des départs à 68-70 ans, « environ 0,2 % » à 71-74 ans) n'a pas son
       pendant : la grille ne fait partir personne à 68 ans ou plus, ni la
-      population (mesure de l'action 138, du 5 novembre 2026). L'écart se
-      déclare, il ne se corrige pas : la grille du coût est laissée (décision
-      11).
+      population (mesure de l'action 138, du 5 novembre 2026). Au graphique
+      3, les nouveaux retraités de 2024 de la grille ne partent à aucun des
+      âges de 61 et 66 ans (9,3 et 5,0 % publiés), deux fois et demie trop à 60
+      et 65 ans, six fois trop peu après 66 ans, à 27,0 points de la
+      répartition publiée tous régimes, 31,1 au régime général ; chaque autre
+      régime n'a qu'un âge de départ en 2024. Au complément du tableau 2, par
+      sexe, la grille part trop tard pour ses hommes au régime général (+0,97
+      an), à l'État civil (+2,07), à la CNRACL (+1,29) et aux professions
+      libérales (+1,30), trop tôt aux régimes spéciaux (−3,94), à la MSA
+      non-salariés (−1,00) et pour sa seule femme (−1,40) ; la CNRACL pèse 2,6
+      fois sa part publiée chez les hommes. L'écart se déclare, il ne se
+      corrige pas : la grille du coût est laissée (décision 11).
     confronte_par:
       - test_la_grille_fait_partir_ses_nes_en_1953_a_trop_peu_d_ages_et_trop_tard
       - test_la_grille_part_a_l_age_des_agents_apres_neutralisation_et_non_a_celui_de_la_fonction_publique
       - test_la_grille_ne_fait_partir_personne_apres_67_ans_quand_l_eir_et_le_panorama_en_comptent
+      - test_la_grille_met_chaque_regime_de_2024_a_un_ou_deux_ages_quand_la_source_les_etale
+      - test_le_graphique_3_complementaire_repete_la_sncf_pour_la_cnavpl_et_la_source_dit_4_pour_cent_de_moins_de_60_ans
+      - test_la_grille_part_a_l_age_des_hommes_de_chaque_regime_et_de_sa_seule_femme_et_les_pese_autrement
   "17":
     titre: "Les taux de liquidation des pensions"
     page: 154
@@ -664,9 +698,14 @@ fiches:
       d'euros d'ASV et d'Aspa en 2024, 4,8 avec le premier étage) et les
       montants moyens (466 et 527 euros par mois), que le PDF chiffre et que
       le classeur ne porte pas, sont cités au témoin des confrontations et
-      confrontés à la garantie de la page (5 novembre 2026). Restent, pour la
-      clôture, les 70 660 nouveaux allocataires : le jeu
-      `drees_minimum_vieillesse` du vivier.
+      confrontés à la garantie de la page (5 novembre 2026). Les 70 660
+      nouveaux allocataires, que le seul texte chiffre, sont recoupés le 6
+      novembre par le tableau 5 de la fiche 28 (70 700) et par la chaîne des
+      hausses du texte, et confrontés au stock et aux décès que donnent les
+      tables du dépôt ; le texte de la fiche 28 écrit 77 700, que son tableau
+      ne soutient pas. Le jeu `drees_minimum_vieillesse` du portail, qui
+      porterait les entrants par âge et par caisse, n'est pas joint depuis
+      le nuage (coupure de la connexion) : à ouvrir depuis un poste.
     etape: 7
     confrontation: >-
       La garantie vieillesse de la page, qui remplace l'ASPA, est calculée en
@@ -685,9 +724,18 @@ fiches:
       couple), et la fiche ne chiffre aucune garantie. Le coût de la garantie
       est brut des minima qu'elle remplace ; la page ne les déduit que dans
       un tableau à part : 13,93 − 7,50 (quatre minima) = 6,43 milliards
-      (relecture R-J3, 5 novembre 2026).
+      (relecture R-J3, 5 novembre 2026). Les 70 660 entrées de 2024 sont
+      un flux, que le dépôt ne calcule pas : avec un stock de 723 000 à 754
+      000, elles impliquent 39 660 sorties (5,5 % du stock), quand les
+      tables de mortalité du dépôt, appliquées au stock par âge et par
+      sexe, donnent environ 21 000 décès (de 1,5 à 2,1 fois moins). Le stock
+      de bénéficiaires de la garantie recule de 1,2 % en 2024 (le facteur
+      des pensions passe de 0,7173 à 0,7365), quand celui de l'ASV et de
+      l'Aspa avance de 4,3 % : la garantie n'est pas l'Aspa, rien n'est
+      corrigé.
     confronte_par:
       - test_la_garantie_de_la_page_sert_plus_de_monde_et_coute_plus_que_l_aspa_et_l_asv
+      - test_les_nouveaux_allocataires_du_minimum_vieillesse_sont_un_flux_que_le_depot_ne_calcule_pas
   "28":
     titre: "Le profil des allocataires du minimum vieillesse"
     page: 231
