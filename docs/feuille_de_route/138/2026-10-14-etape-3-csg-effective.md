@@ -79,3 +79,5 @@ de la première et de la deuxième.
    au sens de l'AWG (étape 5, `impot_revenu.py`).
 4. *Le taux de chaque système*, qui ne diffère que par la répartition de ses
    pensions entre les tranches de CSG, que le modèle ne projette pas.
+
+*Renvoi du 6 novembre 2026 : la confrontation de ce taux à la fiche 5 du panorama de la DREES est dans `178/2026-11-03-etape-2-fiche-5-pensions-de-2023-et-2024.md`, relue dans `178/2026-11-03-relecture-fiche-5-pensions-de-2023-et-2024.md`.*

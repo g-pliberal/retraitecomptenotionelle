@@ -1,0 +1,1763 @@
+{
+ "source": {
+  "editeur": "DREES",
+  "document": "Les retraités et les retraites, édition 2026, Panoramas de la DREES, mis en ligne le 14 octobre 2026",
+  "jeux": ["drees_panorama_retraites_2026", "drees_panorama_retraites_2026_classeurs"],
+  "licence": "Licence ouverte Etalab 2.0 : source et date de mise en ligne citées",
+  "lu_le": "2026-11-06",
+  "methode": "chaque valeur recopiée de sa cellule, dans le classeur de sa fiche (membre de l'archive de la release) ; les citations, du PDF, page imprimée"
+ },
+ "valeurs": {
+  "10_encadre_1": {
+   "cps_total": {"classeur": "fiche_10.xlsx", "feuille": "F10_Tableau encadré 1", "cellule": "C5", "valeur": 426.7},
+   "prro_total": {"classeur": "fiche_10.xlsx", "feuille": "F10_Tableau encadré 1", "cellule": "D5", "valeur": 395.3},
+   "direct": {"classeur": "fiche_10.xlsx", "feuille": "F10_Tableau encadré 1", "cellule": "C7", "valeur": 359.7},
+   "derive": {"classeur": "fiche_10.xlsx", "feuille": "F10_Tableau encadré 1", "cellule": "C17", "valeur": 41.7},
+   "direct_prro": {"classeur": "fiche_10.xlsx", "feuille": "F10_Tableau encadré 1", "cellule": "D7", "valeur": 354.2},
+   "derive_prro": {"classeur": "fiche_10.xlsx", "feuille": "F10_Tableau encadré 1", "cellule": "D17", "valeur": 41.1}
+  },
+  "10_tableau_1": {
+   "pensions_2023": {"classeur": "fiche_10.xlsx", "feuille": "F10_Tableau 1", "cellule": "G4", "valeur": 370.5},
+   "pensions_2024": {"classeur": "fiche_10.xlsx", "feuille": "F10_Tableau 1", "cellule": "H4", "valeur": 395.3},
+   "part_pib_2023": {"classeur": "fiche_10.xlsx", "feuille": "F10_Tableau 1", "cellule": "G7", "valeur": 13.1},
+   "part_pib_2024": {"classeur": "fiche_10.xlsx", "feuille": "F10_Tableau 1", "cellule": "H7", "valeur": 13.5},
+   "direct_part_pib_2024": {"classeur": "fiche_10.xlsx", "feuille": "F10_Tableau 1", "cellule": "H8", "valeur": 12.1},
+   "derive_part_pib_2024": {"classeur": "fiche_10.xlsx", "feuille": "F10_Tableau 1", "cellule": "H9", "valeur": 1.4}
+  },
+  "10_graphique_1": {
+   "pib": {
+    "1990": {"classeur": "fiche_10.xlsx", "feuille": "F10_Graphique1", "cellule": "D9", "valeur": 1043.975},
+    "1991": {"classeur": "fiche_10.xlsx", "feuille": "F10_Graphique1", "cellule": "E9", "valeur": 1082.833},
+    "1992": {"classeur": "fiche_10.xlsx", "feuille": "F10_Graphique1", "cellule": "F9", "valeur": 1121.458},
+    "1993": {"classeur": "fiche_10.xlsx", "feuille": "F10_Graphique1", "cellule": "G9", "valeur": 1134.839},
+    "1994": {"classeur": "fiche_10.xlsx", "feuille": "F10_Graphique1", "cellule": "H9", "valeur": 1172.96},
+    "1995": {"classeur": "fiche_10.xlsx", "feuille": "F10_Graphique1", "cellule": "I9", "valeur": 1213.802},
+    "1996": {"classeur": "fiche_10.xlsx", "feuille": "F10_Graphique1", "cellule": "J9", "valeur": 1246.974},
+    "1997": {"classeur": "fiche_10.xlsx", "feuille": "F10_Graphique1", "cellule": "K9", "valeur": 1289.669},
+    "1998": {"classeur": "fiche_10.xlsx", "feuille": "F10_Graphique1", "cellule": "L9", "valeur": 1346.318},
+    "1999": {"classeur": "fiche_10.xlsx", "feuille": "F10_Graphique1", "cellule": "M9", "valeur": 1395.148},
+    "2000": {"classeur": "fiche_10.xlsx", "feuille": "F10_Graphique1", "cellule": "N9", "valeur": 1473.517},
+    "2001": {"classeur": "fiche_10.xlsx", "feuille": "F10_Graphique1", "cellule": "O9", "valeur": 1530.071},
+    "2002": {"classeur": "fiche_10.xlsx", "feuille": "F10_Graphique1", "cellule": "P9", "valeur": 1578.33},
+    "2003": {"classeur": "fiche_10.xlsx", "feuille": "F10_Graphique1", "cellule": "Q9", "valeur": 1622.313},
+    "2004": {"classeur": "fiche_10.xlsx", "feuille": "F10_Graphique1", "cellule": "R9", "valeur": 1696.108},
+    "2005": {"classeur": "fiche_10.xlsx", "feuille": "F10_Graphique1", "cellule": "S9", "valeur": 1762.048},
+    "2006": {"classeur": "fiche_10.xlsx", "feuille": "F10_Graphique1", "cellule": "T9", "valeur": 1846.021},
+    "2007": {"classeur": "fiche_10.xlsx", "feuille": "F10_Graphique1", "cellule": "U9", "valeur": 1937.876},
+    "2008": {"classeur": "fiche_10.xlsx", "feuille": "F10_Graphique1", "cellule": "V9", "valeur": 1990.0},
+    "2009": {"classeur": "fiche_10.xlsx", "feuille": "F10_Graphique1", "cellule": "W9", "valeur": 1935.84},
+    "2010": {"classeur": "fiche_10.xlsx", "feuille": "F10_Graphique1", "cellule": "X9", "valeur": 1996.075},
+    "2011": {"classeur": "fiche_10.xlsx", "feuille": "F10_Graphique1", "cellule": "Y9", "valeur": 2062.141},
+    "2012": {"classeur": "fiche_10.xlsx", "feuille": "F10_Graphique1", "cellule": "Z9", "valeur": 2088.287},
+    "2013": {"classeur": "fiche_10.xlsx", "feuille": "F10_Graphique1", "cellule": "AA9", "valeur": 2120.352},
+    "2014": {"classeur": "fiche_10.xlsx", "feuille": "F10_Graphique1", "cellule": "AB9", "valeur": 2153.733},
+    "2015": {"classeur": "fiche_10.xlsx", "feuille": "F10_Graphique1", "cellule": "AC9", "valeur": 2201.402},
+    "2016": {"classeur": "fiche_10.xlsx", "feuille": "F10_Graphique1", "cellule": "AD9", "valeur": 2231.819},
+    "2017": {"classeur": "fiche_10.xlsx", "feuille": "F10_Graphique1", "cellule": "AE9", "valeur": 2291.681},
+    "2018": {"classeur": "fiche_10.xlsx", "feuille": "F10_Graphique1", "cellule": "AF9", "valeur": 2355.363},
+    "2019": {"classeur": "fiche_10.xlsx", "feuille": "F10_Graphique1", "cellule": "AG9", "valeur": 2432.207},
+    "2020": {"classeur": "fiche_10.xlsx", "feuille": "F10_Graphique1", "cellule": "AH9", "valeur": 2318.276},
+    "2021": {"classeur": "fiche_10.xlsx", "feuille": "F10_Graphique1", "cellule": "AI9", "valeur": 2508.102},
+    "2022": {"classeur": "fiche_10.xlsx", "feuille": "F10_Graphique1", "cellule": "AJ9", "valeur": 2653.997},
+    "2023": {"classeur": "fiche_10.xlsx", "feuille": "F10_Graphique1", "cellule": "AK9", "valeur": 2826.542},
+    "2024": {"classeur": "fiche_10.xlsx", "feuille": "F10_Graphique1", "cellule": "AL9", "valeur": 2919.9}
+   },
+   "pensions": {
+    "1990": {"classeur": "fiche_10.xlsx", "feuille": "F10_Graphique1", "cellule": "D5", "valeur": 105934.186406519},
+    "2022": {"classeur": "fiche_10.xlsx", "feuille": "F10_Graphique1", "cellule": "AJ5", "valeur": 352661.25},
+    "2023": {"classeur": "fiche_10.xlsx", "feuille": "F10_Graphique1", "cellule": "AK5", "valeur": 370465.23},
+    "2024": {"classeur": "fiche_10.xlsx", "feuille": "F10_Graphique1", "cellule": "AL5", "valeur": 395338.73}
+   },
+   "direct": {
+    "1990": {"classeur": "fiche_10.xlsx", "feuille": "F10_Graphique1", "cellule": "D6", "valeur": 86263.4814303905},
+    "2022": {"classeur": "fiche_10.xlsx", "feuille": "F10_Graphique1", "cellule": "AJ6", "valeur": 314916.97},
+    "2023": {"classeur": "fiche_10.xlsx", "feuille": "F10_Graphique1", "cellule": "AK6", "valeur": 331238.38},
+    "2024": {"classeur": "fiche_10.xlsx", "feuille": "F10_Graphique1", "cellule": "AL6", "valeur": 354243.97}
+   },
+   "derive": {
+    "1990": {"classeur": "fiche_10.xlsx", "feuille": "F10_Graphique1", "cellule": "D7", "valeur": 19670.7049761283},
+    "2022": {"classeur": "fiche_10.xlsx", "feuille": "F10_Graphique1", "cellule": "AJ7", "valeur": 37744.28},
+    "2023": {"classeur": "fiche_10.xlsx", "feuille": "F10_Graphique1", "cellule": "AK7", "valeur": 39226.85},
+    "2024": {"classeur": "fiche_10.xlsx", "feuille": "F10_Graphique1", "cellule": "AL7", "valeur": 41094.76}
+   },
+   "part_pib": {
+    "2022": {"classeur": "fiche_10.xlsx", "feuille": "F10_Graphique1", "cellule": "AJ15", "valeur": 13.287929488993399},
+    "2023": {"classeur": "fiche_10.xlsx", "feuille": "F10_Graphique1", "cellule": "AK15", "valeur": 13.1066593031344},
+    "2024": {"classeur": "fiche_10.xlsx", "feuille": "F10_Graphique1", "cellule": "AL15", "valeur": 13.5394612829206}
+   }
+  },
+  "10_tableau_2": {
+   "pensions_1990_2024": {"classeur": "fiche_10.xlsx", "feuille": "F10_Tableau 2", "cellule": "C7", "valeur": 3.9},
+   "pensions_2022_2023": {"classeur": "fiche_10.xlsx", "feuille": "F10_Tableau 2", "cellule": "D7", "valeur": "5,0"},
+   "pensions_2023_2024": {"classeur": "fiche_10.xlsx", "feuille": "F10_Tableau 2", "cellule": "E7", "valeur": 6.7},
+   "direct_1990_2024": {"classeur": "fiche_10.xlsx", "feuille": "F10_Tableau 2", "cellule": "C8", "valeur": 4.2},
+   "direct_2022_2023": {"classeur": "fiche_10.xlsx", "feuille": "F10_Tableau 2", "cellule": "D8", "valeur": 5.2},
+   "direct_2023_2024": {"classeur": "fiche_10.xlsx", "feuille": "F10_Tableau 2", "cellule": "E8", "valeur": 6.9},
+   "derive_1990_2024": {"classeur": "fiche_10.xlsx", "feuille": "F10_Tableau 2", "cellule": "C9", "valeur": 2.2},
+   "derive_2022_2023": {"classeur": "fiche_10.xlsx", "feuille": "F10_Tableau 2", "cellule": "D9", "valeur": 3.9},
+   "derive_2023_2024": {"classeur": "fiche_10.xlsx", "feuille": "F10_Tableau 2", "cellule": "E9", "valeur": 4.8}
+  },
+  "01_graphique_4": {
+   "F": {
+    "moins_de_50": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 4", "cellule": "C5", "valeur": 0.1},
+    "50_54": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 4", "cellule": "C6", "valeur": 0.1},
+    "55_59": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 4", "cellule": "C7", "valeur": 0.2},
+    "60_64": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 4", "cellule": "C8", "valeur": 5.3},
+    "65_69": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 4", "cellule": "C9", "valeur": 11.1},
+    "70_74": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 4", "cellule": "C10", "valeur": 11.4},
+    "75_79": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 4", "cellule": "C11", "valeur": 10.100000000000001},
+    "80_84": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 4", "cellule": "C12", "valeur": 6.2},
+    "85_89": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 4", "cellule": "C13", "valeur": 4.8},
+    "90_et_plus": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 4", "cellule": "C14", "valeur": 3.9}
+   },
+   "H": {
+    "moins_de_50": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 4", "cellule": "D5", "valeur": 0.2},
+    "50_54": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 4", "cellule": "D6", "valeur": 0.2},
+    "55_59": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 4", "cellule": "D7", "valeur": 0.4},
+    "60_64": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 4", "cellule": "D8", "valeur": 5.8999999999999995},
+    "65_69": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 4", "cellule": "D9", "valeur": 10.4},
+    "70_74": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 4", "cellule": "D10", "valeur": 10.2},
+    "75_79": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 4", "cellule": "D11", "valeur": 8.9},
+    "80_84": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 4", "cellule": "D12", "valeur": 5.3},
+    "85_89": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 4", "cellule": "D13", "valeur": 3.5000000000000004},
+    "90_et_plus": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 4", "cellule": "D14", "valeur": 1.7999999999999998}
+   }
+  },
+  "01_tableau_2_compl": {
+   "tous_regimes": {
+    "effectifs": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "C6", "valeur": 17298.0},
+    "polypensionnes": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "F6", "valeur": 26.0},
+    "evolution_2023_2024": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "G6", "valeur": 0.7000000000000001},
+    "evolution_2020_2024": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "H6", "valeur": 3.6999999999999997},
+    "evolution_2014_2024": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "I6", "valeur": 9.3}
+   },
+   "cnav": {
+    "effectifs": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "C8", "valeur": 14745.0},
+    "evolution_2023_2024": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "G8", "valeur": 1.0},
+    "evolution_2020_2024": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "H8", "valeur": 4.9},
+    "evolution_2014_2024": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "I8", "valeur": 13.200000000000001}
+   },
+   "agirc_arrco": {
+    "effectifs": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "C9", "valeur": 12796.0},
+    "evolution_2023_2024": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "G9", "valeur": 1.4000000000000001},
+    "evolution_2020_2024": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "H9", "valeur": 6.5},
+    "evolution_2014_2024": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "I9", "valeur": 17.0}
+   },
+   "msa_salaries": {
+    "effectifs": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "C10", "valeur": 1679.0},
+    "evolution_2023_2024": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "G10", "valeur": -1.9},
+    "evolution_2020_2024": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "H10", "valeur": -7.7},
+    "evolution_2014_2024": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "I10", "valeur": -12.7}
+   },
+   "msa_exploitants": {
+    "effectifs": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "C11", "valeur": 1023.0},
+    "evolution_2023_2024": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "G11", "valeur": -3.0},
+    "evolution_2020_2024": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "H11", "valeur": -12.5},
+    "evolution_2014_2024": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "I11", "valeur": -28.999999999999996}
+   },
+   "fonction_publique_etat_civile": {
+    "effectifs": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "C12", "valeur": 1641.0},
+    "evolution_2023_2024": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "G12", "valeur": 0.2},
+    "evolution_2020_2024": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "H12", "valeur": 2.6},
+    "evolution_2014_2024": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "I12", "valeur": 10.2}
+   },
+   "ircantec": {
+    "effectifs": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "C13", "valeur": 2109.0},
+    "evolution_2023_2024": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "G13", "valeur": 2.1},
+    "evolution_2020_2024": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "H13", "valeur": 9.700000000000001},
+    "evolution_2014_2024": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "I13", "valeur": 25.8}
+   },
+   "cnracl": {
+    "effectifs": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "C14", "valeur": 1393.0},
+    "evolution_2023_2024": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "G14", "valeur": 2.5},
+    "evolution_2020_2024": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "H14", "valeur": 13.8},
+    "evolution_2014_2024": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "I14", "valeur": 43.2}
+   },
+   "fonction_publique_etat_militaire": {
+    "effectifs": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "C15", "valeur": 377.0},
+    "evolution_2023_2024": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "G15", "valeur": 0.3},
+    "evolution_2020_2024": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "H15", "valeur": 1.5},
+    "evolution_2014_2024": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "I15", "valeur": 1.3}
+   },
+   "erafp": {
+    "effectifs": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "C16", "valeur": 603.0},
+    "evolution_2023_2024": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "G16", "valeur": 14.000000000000002},
+    "evolution_2020_2024": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "H16", "valeur": 106.69999999999999},
+    "evolution_2014_2024": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "I16", "valeur": 1322.8}
+   },
+   "fspoeie": {
+    "effectifs": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "C17", "valeur": 62.0},
+    "evolution_2023_2024": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "G17", "valeur": -2.1},
+    "evolution_2020_2024": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "H17", "valeur": -5.8999999999999995},
+    "evolution_2014_2024": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "I17", "valeur": -6.6000000000000005}
+   },
+   "msa_exploitants_complementaire": {
+    "effectifs": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "C18", "valeur": 617.0},
+    "evolution_2023_2024": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "G18", "valeur": 1.7999999999999998},
+    "evolution_2020_2024": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "H18", "valeur": -2.3},
+    "evolution_2014_2024": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "I18", "valeur": -12.7}
+   },
+   "cnieg": {
+    "effectifs": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "C19", "valeur": 137.0},
+    "evolution_2023_2024": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "G19", "valeur": -0.1},
+    "evolution_2020_2024": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "H19", "valeur": -0.1},
+    "evolution_2014_2024": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "I19", "valeur": 9.6}
+   },
+   "sncf": {
+    "effectifs": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "C20", "valeur": 158.0},
+    "evolution_2023_2024": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "G20", "valeur": -1.9},
+    "evolution_2020_2024": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "H20", "valeur": -7.199999999999999},
+    "evolution_2014_2024": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "I20", "valeur": -11.0}
+   },
+   "ratp": {
+    "effectifs": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "C21", "valeur": 35.0},
+    "evolution_2023_2024": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "G21", "valeur": 0.4},
+    "evolution_2020_2024": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "H21", "valeur": 1.0999999999999999},
+    "evolution_2014_2024": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "I21", "valeur": 7.1}
+   },
+   "crpcen": {
+    "effectifs": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "C22", "valeur": 70.0},
+    "evolution_2023_2024": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "G22", "valeur": 1.0},
+    "evolution_2020_2024": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "H22", "valeur": 4.8},
+    "evolution_2014_2024": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "I22", "valeur": 14.299999999999999}
+   },
+   "banque_de_france": {
+    "effectifs": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "C23", "valeur": 15.0},
+    "evolution_2023_2024": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "G23", "valeur": 0.7000000000000001},
+    "evolution_2020_2024": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "H23", "valeur": 1.4000000000000001},
+    "evolution_2014_2024": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "I23", "valeur": 0.0}
+   },
+   "canssm": {
+    "effectifs": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "C24", "valeur": 86.0},
+    "evolution_2023_2024": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "G24", "valeur": -6.0},
+    "evolution_2020_2024": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "H24", "valeur": -23.5},
+    "evolution_2014_2024": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "I24", "valeur": 0.0}
+   },
+   "enim": {
+    "effectifs": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "C25", "valeur": 63.0},
+    "evolution_2023_2024": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "G25", "valeur": -1.0},
+    "evolution_2020_2024": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "H25", "valeur": -4.5},
+    "evolution_2014_2024": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 2 compl", "cellule": "I25", "valeur": 0.0}
+   }
+  },
+  "01_tableau_1": {
+   "2004": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 1", "cellule": "E6", "valeur": 12961.0},
+   "2005": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 1", "cellule": "E7", "valeur": 13263.0},
+   "2006": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 1", "cellule": "E8", "valeur": 13636.0},
+   "2007": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 1", "cellule": "E9", "valeur": 14022.0},
+   "2008": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 1", "cellule": "E10", "valeur": 14418.0},
+   "2009": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 1", "cellule": "E11", "valeur": 14743.0},
+   "2010": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 1", "cellule": "E12", "valeur": 15082.0},
+   "2011": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 1", "cellule": "E13", "valeur": 15291.0},
+   "2012": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 1", "cellule": "E14", "valeur": 15349.0},
+   "2013": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 1", "cellule": "E15", "valeur": 15629.0},
+   "2014": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 1", "cellule": "E16", "valeur": 15828.0},
+   "2015": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 1", "cellule": "E17", "valeur": 15980.0},
+   "2016": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 1", "cellule": "E18", "valeur": 16135.0},
+   "2017": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 1", "cellule": "E19", "valeur": 16252.0},
+   "2018": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 1", "cellule": "E20", "valeur": 16496.0},
+   "2019": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 1", "cellule": "E21", "valeur": 16712.0},
+   "2020": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 1", "cellule": "E22", "valeur": 16674.0},
+   "2021": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 1", "cellule": "E23", "valeur": 16801.0},
+   "2022": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 1", "cellule": "E24", "valeur": 16975.0},
+   "2023": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 1", "cellule": "E25", "valeur": 17184.0},
+   "2024": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 1", "cellule": "E26", "valeur": 17298.0}
+  },
+  "01_graphique_2": {
+   "2005": {
+    "nouveaux": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 2", "cellule": "C5", "valeur": 716.6},
+    "variation": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 2", "cellule": "D5", "valeur": 302.2},
+    "evolution": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 2", "cellule": "E5", "valeur": 2.3}
+   },
+   "2006": {
+    "nouveaux": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 2", "cellule": "C6", "valeur": 788.8},
+    "variation": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 2", "cellule": "D6", "valeur": 373.4},
+    "evolution": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 2", "cellule": "E6", "valeur": 2.8000000000000003}
+   },
+   "2007": {
+    "nouveaux": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 2", "cellule": "C7", "valeur": 824.6},
+    "variation": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 2", "cellule": "D7", "valeur": 386.1},
+    "evolution": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 2", "cellule": "E7", "valeur": 2.8000000000000003}
+   },
+   "2008": {
+    "nouveaux": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 2", "cellule": "C8", "valeur": 842.7},
+    "variation": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 2", "cellule": "D8", "valeur": 395.3},
+    "evolution": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 2", "cellule": "E8", "valeur": 2.8000000000000003}
+   },
+   "2009": {
+    "nouveaux": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 2", "cellule": "C9", "valeur": 739.3},
+    "variation": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 2", "cellule": "D9", "valeur": 325.5},
+    "evolution": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 2", "cellule": "E9", "valeur": 2.3}
+   },
+   "2010": {
+    "nouveaux": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 2", "cellule": "C10", "valeur": 777.7},
+    "variation": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 2", "cellule": "D10", "valeur": 338.7},
+    "evolution": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 2", "cellule": "E10", "valeur": 2.3}
+   },
+   "2011": {
+    "nouveaux": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 2", "cellule": "C11", "valeur": 681.8},
+    "variation": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 2", "cellule": "D11", "valeur": 208.7},
+    "evolution": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 2", "cellule": "E11", "valeur": 1.4000000000000001}
+   },
+   "2012": {
+    "nouveaux": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 2", "cellule": "C12", "valeur": 604.0},
+    "variation": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 2", "cellule": "D12", "valeur": 58.5},
+    "evolution": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 2", "cellule": "E12", "valeur": 0.4}
+   },
+   "2013": {
+    "nouveaux": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 2", "cellule": "C13", "valeur": 758.3},
+    "variation": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 2", "cellule": "D13", "valeur": 280.3},
+    "evolution": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 2", "cellule": "E13", "valeur": 1.7999999999999998}
+   },
+   "2014": {
+    "nouveaux": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 2", "cellule": "C14", "valeur": 702.3},
+    "variation": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 2", "cellule": "D14", "valeur": 198.9},
+    "evolution": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 2", "cellule": "E14", "valeur": 1.3}
+   },
+   "2015": {
+    "nouveaux": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 2", "cellule": "C15", "valeur": 653.3},
+    "variation": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 2", "cellule": "D15", "valeur": 152.0},
+    "evolution": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 2", "cellule": "E15", "valeur": 1.0}
+   },
+   "2016": {
+    "nouveaux": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 2", "cellule": "C16", "valeur": 643.7},
+    "variation": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 2", "cellule": "D16", "valeur": 154.7},
+    "evolution": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 2", "cellule": "E16", "valeur": 1.0}
+   },
+   "2017": {
+    "nouveaux": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 2", "cellule": "C17", "valeur": 710.3},
+    "variation": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 2", "cellule": "D17", "valeur": 117.0},
+    "evolution": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 2", "cellule": "E17", "valeur": 0.7000000000000001}
+   },
+   "2018": {
+    "nouveaux": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 2", "cellule": "C18", "valeur": 749.5},
+    "variation": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 2", "cellule": "D18", "valeur": "nd"},
+    "evolution": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 2", "cellule": "E18", "valeur": "nd"}
+   },
+   "2019": {
+    "nouveaux": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 2", "cellule": "C19", "valeur": 718.3},
+    "variation": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 2", "cellule": "D19", "valeur": "nd"},
+    "evolution": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 2", "cellule": "E19", "valeur": "nd"}
+   },
+   "2020": {
+    "nouveaux": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 2", "cellule": "C20", "valeur": 712.7},
+    "variation": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 2", "cellule": "D20", "valeur": "nd"},
+    "evolution": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 2", "cellule": "E20", "valeur": "nd"}
+   },
+   "2021": {
+    "nouveaux": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 2", "cellule": "C21", "valeur": 742.2},
+    "variation": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 2", "cellule": "D21", "valeur": 126.7},
+    "evolution": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 2", "cellule": "E21", "valeur": 0.8}
+   },
+   "2022": {
+    "nouveaux": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 2", "cellule": "C22", "valeur": 789.0},
+    "variation": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 2", "cellule": "D22", "valeur": 173.5},
+    "evolution": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 2", "cellule": "E22", "valeur": 1.0}
+   },
+   "2023": {
+    "nouveaux": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 2", "cellule": "C23", "valeur": 768.8},
+    "variation": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 2", "cellule": "D23", "valeur": 209.5},
+    "evolution": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 2", "cellule": "E23", "valeur": 1.2}
+   },
+   "2024": {
+    "nouveaux": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 2", "cellule": "C24", "valeur": 717.6},
+    "variation": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 2", "cellule": "D24", "valeur": 114.0},
+    "evolution": {"classeur": "fiche_01.xlsx", "feuille": "F01_Graphique 2", "cellule": "E24", "valeur": 0.7000000000000001}
+   }
+  },
+  "01_tableau_3": {
+   "tous": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 3", "cellule": "G6", "valeur": 17300.0},
+   "regime_de_base": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 3", "cellule": "G7", "valeur": 17140.0},
+   "regime_general": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 3", "cellule": "G8", "valeur": 12130.0},
+   "autre_salarie": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 3", "cellule": "G9", "valeur": 3990.0},
+   "autre_non_salarie": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 3", "cellule": "G15", "valeur": 820.0},
+   "aucun_regime_principal": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 3", "cellule": "G18", "valeur": 190.0},
+   "monopensionnes": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 3", "cellule": "G19", "valeur": 12700.0},
+   "polypensionnes": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 3", "cellule": "G20", "valeur": 4430.0},
+   "autres": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 3", "cellule": "G21", "valeur": 160.0},
+   "part_polypensionnes": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 3", "cellule": "H20", "valeur": 25.6},
+   "femmes_tous": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 3", "cellule": "C6", "valeur": 9190.0},
+   "hommes_tous": {"classeur": "fiche_01.xlsx", "feuille": "F01_Tableau 3", "cellule": "E6", "valeur": 8100.0}
+  },
+  "03_tableau_1": {
+   "2004": {
+    "femmes": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "C6", "valeur": 3649.76},
+    "hommes": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "D6", "valeur": 337.38},
+    "ensemble": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "E6", "valeur": 3987.14},
+    "seul": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "F6", "valeur": 1107.52},
+    "france": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "I6", "valeur": 3612.12}
+   },
+   "2005": {
+    "femmes": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "C7", "valeur": 3717.97},
+    "hommes": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "D7", "valeur": 351.34},
+    "ensemble": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "E7", "valeur": 4069.31},
+    "seul": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "F7", "valeur": 1136.04},
+    "france": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "I7", "valeur": 3680.0}
+   },
+   "2006": {
+    "femmes": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "C8", "valeur": 3772.62},
+    "hommes": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "D8", "valeur": 369.63},
+    "ensemble": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "E8", "valeur": 4142.26},
+    "seul": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "F8", "valeur": 1152.49},
+    "france": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "I8", "valeur": 3737.4}
+   },
+   "2007": {
+    "femmes": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "C9", "valeur": 3811.42},
+    "hommes": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "D9", "valeur": 385.68},
+    "ensemble": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "E9", "valeur": 4197.11},
+    "seul": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "F9", "valeur": 1151.6},
+    "france": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "I9", "valeur": 3786.86}
+   },
+   "2008": {
+    "femmes": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "C10", "valeur": 3760.7},
+    "hommes": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "D10", "valeur": 393.86},
+    "ensemble": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "E10", "valeur": 4154.56},
+    "seul": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "F10", "valeur": 1101.97},
+    "france": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "I10", "valeur": 3740.68}
+   },
+   "2009": {
+    "femmes": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "C11", "valeur": 3806.23},
+    "hommes": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "D11", "valeur": 412.57},
+    "ensemble": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "E11", "valeur": 4218.8},
+    "seul": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "F11", "valeur": 1093.71},
+    "france": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "I11", "valeur": 3799.12}
+   },
+   "2010": {
+    "femmes": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "C12", "valeur": 3859.92},
+    "hommes": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "D12", "valeur": 385.33},
+    "ensemble": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "E12", "valeur": 4245.25},
+    "seul": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "F12", "valeur": 1094.25},
+    "france": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "I12", "valeur": 3824.87}
+   },
+   "2011": {
+    "femmes": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "C13", "valeur": 3836.28},
+    "hommes": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "D13", "valeur": 385.78},
+    "ensemble": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "E13", "valeur": 4222.07},
+    "seul": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "F13", "valeur": 1082.43},
+    "france": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "I13", "valeur": 3781.02}
+   },
+   "2012": {
+    "femmes": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "C14", "valeur": 3842.88},
+    "hommes": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "D14", "valeur": 448.0},
+    "ensemble": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "E14", "valeur": 4290.88},
+    "seul": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "F14", "valeur": 1112.6},
+    "france": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "I14", "valeur": 3713.36}
+   },
+   "2013": {
+    "femmes": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "C15", "valeur": 3912.11},
+    "hommes": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "D15", "valeur": 472.12},
+    "ensemble": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "E15", "valeur": 4384.23},
+    "seul": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "F15", "valeur": 1118.57},
+    "france": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "I15", "valeur": 3802.0}
+   },
+   "2014": {
+    "femmes": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "C16", "valeur": 3914.68},
+    "hommes": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "D16", "valeur": 482.65},
+    "ensemble": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "E16", "valeur": 4397.33},
+    "seul": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "F16", "valeur": 1107.59},
+    "france": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "I16", "valeur": 3810.19}
+   },
+   "2015": {
+    "femmes": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "C17", "valeur": 3921.43},
+    "hommes": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "D17", "valeur": 492.91},
+    "ensemble": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "E17", "valeur": 4414.34},
+    "seul": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "F17", "valeur": 1090.91},
+    "france": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "I17", "valeur": 3823.16}
+   },
+   "2016": {
+    "femmes": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "C18", "valeur": 3892.49},
+    "hommes": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "D18", "valeur": 495.09},
+    "ensemble": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "E18", "valeur": 4387.59},
+    "seul": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "F18", "valeur": 1095.74},
+    "france": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "I18", "valeur": 3728.14}
+   },
+   "2017": {
+    "femmes": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "C19", "valeur": 3841.34},
+    "hommes": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "D19", "valeur": 503.27},
+    "ensemble": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "E19", "valeur": 4344.6},
+    "seul": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "F19", "valeur": 1065.78},
+    "france": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "I19", "valeur": 3744.35}
+   },
+   "2018": {
+    "femmes": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "C20", "valeur": 3870.27},
+    "hommes": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "D20", "valeur": 512.69},
+    "ensemble": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "E20", "valeur": 4382.96},
+    "seul": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "F20", "valeur": 1059.45},
+    "france": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "I20", "valeur": 3780.15}
+   },
+   "2019": {
+    "femmes": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "C21", "valeur": 3865.59},
+    "hommes": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "D21", "valeur": 522.38},
+    "ensemble": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "E21", "valeur": 4387.97},
+    "seul": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "F21", "valeur": 1048.43},
+    "france": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "I21", "valeur": 3783.23}
+   },
+   "2020": {
+    "femmes": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "C22", "valeur": 3847.71},
+    "hommes": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "D22", "valeur": 533.19},
+    "ensemble": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "E22", "valeur": 4380.89},
+    "seul": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "F22", "valeur": 966.82},
+    "france": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "I22", "valeur": 3825.72}
+   },
+   "2021": {
+    "femmes": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "C23", "valeur": 3834.69},
+    "hommes": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "D23", "valeur": 536.23},
+    "ensemble": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "E23", "valeur": 4370.92},
+    "seul": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "F23", "valeur": 932.64},
+    "france": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "I23", "valeur": 3822.47}
+   },
+   "2022": {
+    "femmes": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "C24", "valeur": 3829.82},
+    "hommes": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "D24", "valeur": 545.74},
+    "ensemble": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "E24", "valeur": 4375.56},
+    "seul": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "F24", "valeur": 914.43},
+    "france": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "I24", "valeur": 3826.9}
+   },
+   "2023": {
+    "femmes": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "C25", "valeur": 3814.82},
+    "hommes": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "D25", "valeur": 553.33},
+    "ensemble": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "E25", "valeur": 4368.15},
+    "seul": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "F25", "valeur": 884.91},
+    "france": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "I25", "valeur": 3822.14}
+   },
+   "2024": {
+    "femmes": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "C26", "valeur": 3836.17},
+    "hommes": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "D26", "valeur": 570.46},
+    "ensemble": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "E26", "valeur": 4406.64},
+    "seul": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "F26", "valeur": 886.13},
+    "france": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 1", "cellule": "I26", "valeur": 3861.5}
+   }
+  },
+  "03_graphique_1": {
+   "2005": {
+    "nouveaux": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 1", "cellule": "C3", "valeur": 227.5},
+    "variation": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 1", "cellule": "D3", "valeur": 82.2},
+    "evolution": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 1", "cellule": "E3", "valeur": 2.1}
+   },
+   "2006": {
+    "nouveaux": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 1", "cellule": "C4", "valeur": 231.3},
+    "variation": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 1", "cellule": "D4", "valeur": 72.9},
+    "evolution": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 1", "cellule": "E4", "valeur": 1.8}
+   },
+   "2007": {
+    "nouveaux": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 1", "cellule": "C5", "valeur": 233.4},
+    "variation": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 1", "cellule": "D5", "valeur": 54.9},
+    "evolution": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 1", "cellule": "E5", "valeur": 1.3}
+   },
+   "2008": {
+    "nouveaux": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 1", "cellule": "C6", "valeur": 190.6},
+    "variation": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 1", "cellule": "D6", "valeur": -42.5},
+    "evolution": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 1", "cellule": "E6", "valeur": -1.0}
+   },
+   "2009": {
+    "nouveaux": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 1", "cellule": "C7", "valeur": 187.9},
+    "variation": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 1", "cellule": "D7", "valeur": 64.2},
+    "evolution": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 1", "cellule": "E7", "valeur": 1.5}
+   },
+   "2010": {
+    "nouveaux": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 1", "cellule": "C8", "valeur": 181.2},
+    "variation": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 1", "cellule": "D8", "valeur": 26.4},
+    "evolution": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 1", "cellule": "E8", "valeur": 0.6}
+   },
+   "2011": {
+    "nouveaux": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 1", "cellule": "C9", "valeur": 191.8},
+    "variation": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 1", "cellule": "D9", "valeur": -23.2},
+    "evolution": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 1", "cellule": "E9", "valeur": -0.5}
+   },
+   "2012": {
+    "nouveaux": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 1", "cellule": "C10", "valeur": 216.7},
+    "variation": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 1", "cellule": "D10", "valeur": 68.8},
+    "evolution": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 1", "cellule": "E10", "valeur": 1.6}
+   },
+   "2013": {
+    "nouveaux": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 1", "cellule": "C11", "valeur": 231.2},
+    "variation": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 1", "cellule": "D11", "valeur": 93.4},
+    "evolution": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 1", "cellule": "E11", "valeur": 2.2}
+   },
+   "2014": {
+    "nouveaux": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 1", "cellule": "C12", "valeur": 228.2},
+    "variation": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 1", "cellule": "D12", "valeur": 13.1},
+    "evolution": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 1", "cellule": "E12", "valeur": 0.3}
+   },
+   "2015": {
+    "nouveaux": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 1", "cellule": "C13", "valeur": 236.7},
+    "variation": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 1", "cellule": "D13", "valeur": 17.0},
+    "evolution": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 1", "cellule": "E13", "valeur": 0.4}
+   },
+   "2016": {
+    "nouveaux": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 1", "cellule": "C14", "valeur": 216.0},
+    "variation": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 1", "cellule": "D14", "valeur": -26.8},
+    "evolution": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 1", "cellule": "E14", "valeur": -0.6}
+   },
+   "2017": {
+    "nouveaux": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 1", "cellule": "C15", "valeur": 223.4},
+    "variation": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 1", "cellule": "D15", "valeur": -43.0},
+    "evolution": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 1", "cellule": "E15", "valeur": -1.0}
+   },
+   "2018": {
+    "nouveaux": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 1", "cellule": "C16", "valeur": 219.4},
+    "variation": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 1", "cellule": "D16", "valeur": 38.4},
+    "evolution": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 1", "cellule": "E16", "valeur": 0.9}
+   },
+   "2019": {
+    "nouveaux": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 1", "cellule": "C17", "valeur": 221.7},
+    "variation": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 1", "cellule": "D17", "valeur": 5.0},
+    "evolution": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 1", "cellule": "E17", "valeur": 0.1}
+   },
+   "2020": {
+    "nouveaux": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 1", "cellule": "C18", "valeur": 224.3},
+    "variation": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 1", "cellule": "D18", "valeur": -7.1},
+    "evolution": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 1", "cellule": "E18", "valeur": -0.2}
+   },
+   "2021": {
+    "nouveaux": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 1", "cellule": "C19", "valeur": 243.6},
+    "variation": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 1", "cellule": "D19", "valeur": -10.0},
+    "evolution": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 1", "cellule": "E19", "valeur": -0.2}
+   },
+   "2022": {
+    "nouveaux": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 1", "cellule": "C20", "valeur": 245.4},
+    "variation": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 1", "cellule": "D20", "valeur": 4.6},
+    "evolution": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 1", "cellule": "E20", "valeur": 0.1}
+   },
+   "2023": {
+    "nouveaux": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 1", "cellule": "C21", "valeur": 246.6},
+    "variation": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 1", "cellule": "D21", "valeur": -7.4},
+    "evolution": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 1", "cellule": "E21", "valeur": -0.2}
+   },
+   "2024": {
+    "nouveaux": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 1", "cellule": "C22", "valeur": 258.6},
+    "variation": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 1", "cellule": "D22", "valeur": 38.5},
+    "evolution": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 1", "cellule": "E22", "valeur": 0.9}
+   }
+  },
+  "03_tableau_2": {
+   "ensemble": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 2", "cellule": "E6", "valeur": 4406.64},
+   "seul": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 2", "cellule": "F6", "valeur": 886.13},
+   "cnracl_2023_2024": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 2", "cellule": "G12", "valeur": 0.016},
+   "cnracl_2019_2024": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 2", "cellule": "H12", "valeur": 0.093},
+   "cnracl_2014_2024": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 2", "cellule": "I12", "valeur": 0.23},
+   "ircantec_2023_2024": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 2", "cellule": "G13", "valeur": -0.01},
+   "regime_general": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 2", "cellule": "E7", "valeur": 2846.75}
+  },
+  "03_tableau_2_compl": {
+   "ensemble": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 2 compl", "cellule": "E6", "valeur": 4406.64},
+   "seul": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 2 compl", "cellule": "F6", "valeur": 886.13},
+   "cnracl_2023_2024": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 2 compl", "cellule": "G15", "valeur": 1.6},
+   "cnracl_2019_2024": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 2 compl", "cellule": "H15", "valeur": 9.3},
+   "cnracl_2014_2024": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 2 compl", "cellule": "I15", "valeur": 23.0},
+   "ircantec_2023_2024": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 2 compl", "cellule": "G16", "valeur": -1.0},
+   "regime_general": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 2 compl", "cellule": "E7", "valeur": 2846.75}
+  },
+  "03_tableau_3": {
+   "effectifs": {
+    "cumul": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 3", "cellule": "C5", "valeur": 3521.0},
+    "seul": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 3", "cellule": "D5", "valeur": 886.0},
+    "ensemble": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 3", "cellule": "E5", "valeur": 4407.0},
+    "droit_direct": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 3", "cellule": "F5", "valeur": 17298.0}
+   },
+   "france_ensemble": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 3", "cellule": "E9", "valeur": 87.6},
+   "femmes_seul": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 3", "cellule": "D7", "valeur": 95.3},
+   "femmes_cumul": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 3", "cellule": "C7", "valeur": 85.0},
+   "ages_droit_direct": {
+    "moins_de_60": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 3", "cellule": "F11", "valeur": 1.2},
+    "60_64": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 3", "cellule": "F12", "valeur": 11.2},
+    "65_74": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 3", "cellule": "F13", "valeur": 43.1},
+    "75_84": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 3", "cellule": "F14", "valeur": 30.5},
+    "85_et_plus": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 3", "cellule": "F15", "valeur": 14.0}
+   },
+   "femmes_droit_direct": {"classeur": "fiche_03.xlsx", "feuille": "F03_Tableau 3", "cellule": "F7", "valeur": 53.1}
+  },
+  "03_graphique_3": {
+   "C": {
+    "moins_de_50": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 3", "cellule": "C5", "valeur": -0.3},
+    "50_54": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 3", "cellule": "C6", "valeur": -0.3},
+    "55_59": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 3", "cellule": "C7", "valeur": -2.1},
+    "60_64": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 3", "cellule": "C8", "valeur": -3.3},
+    "65_69": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 3", "cellule": "C9", "valeur": -1.7},
+    "70_74": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 3", "cellule": "C10", "valeur": -1.8},
+    "75_79": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 3", "cellule": "C11", "valeur": -2.2},
+    "80_84": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 3", "cellule": "C12", "valeur": -2.6},
+    "85_89": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 3", "cellule": "C13", "valeur": -2.4},
+    "90_et_plus": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 3", "cellule": "C14", "valeur": -2.5}
+   },
+   "D": {
+    "moins_de_50": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 3", "cellule": "D5", "valeur": 0.0},
+    "50_54": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 3", "cellule": "D6", "valeur": -0.1},
+    "55_59": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 3", "cellule": "D7", "valeur": -0.2},
+    "60_64": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 3", "cellule": "D8", "valeur": -1.7},
+    "65_69": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 3", "cellule": "D9", "valeur": -6.8},
+    "70_74": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 3", "cellule": "D10", "valeur": -10.8},
+    "75_79": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 3", "cellule": "D11", "valeur": -13.3},
+    "80_84": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 3", "cellule": "D12", "valeur": -11.4},
+    "85_89": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 3", "cellule": "D13", "valeur": -11.9},
+    "90_et_plus": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 3", "cellule": "D14", "valeur": -11.8}
+   },
+   "E": {
+    "moins_de_50": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 3", "cellule": "E5", "valeur": 0.0},
+    "50_54": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 3", "cellule": "E6", "valeur": 0.0},
+    "55_59": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 3", "cellule": "E7", "valeur": 0.0},
+    "60_64": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 3", "cellule": "E8", "valeur": 0.4},
+    "65_69": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 3", "cellule": "E9", "valeur": 1.3},
+    "70_74": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 3", "cellule": "E10", "valeur": 2.1},
+    "75_79": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 3", "cellule": "E11", "valeur": 2.5},
+    "80_84": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 3", "cellule": "E12", "valeur": 2.0},
+    "85_89": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 3", "cellule": "E13", "valeur": 2.0},
+    "90_et_plus": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 3", "cellule": "E14", "valeur": 1.7}
+   },
+   "F": {
+    "moins_de_50": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 3", "cellule": "F5", "valeur": 0.1},
+    "50_54": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 3", "cellule": "F6", "valeur": 0.0},
+    "55_59": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 3", "cellule": "F7", "valeur": 0.3},
+    "60_64": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 3", "cellule": "F8", "valeur": 0.4},
+    "65_69": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 3", "cellule": "F9", "valeur": 0.1},
+    "70_74": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 3", "cellule": "F10", "valeur": 0.0},
+    "75_79": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 3", "cellule": "F11", "valeur": 0.0},
+    "80_84": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 3", "cellule": "F12", "valeur": 0.0},
+    "85_89": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 3", "cellule": "F13", "valeur": 0.0},
+    "90_et_plus": {"classeur": "fiche_03.xlsx", "feuille": "F03_Graphique 3", "cellule": "F14", "valeur": 0.0}
+   }
+  },
+  "28_tableau_1": {
+   "effectifs": {
+    "62_64": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 1", "cellule": "G7", "valeur": 62800.0},
+    "65_69": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 1", "cellule": "G8", "valeur": 208600.0},
+    "70_74": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 1", "cellule": "G9", "valeur": 200500.0},
+    "75_79": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 1", "cellule": "G10", "valeur": 129500.0},
+    "80_84": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 1", "cellule": "G11", "valeur": 70300.0},
+    "85_89": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 1", "cellule": "G12", "valeur": 45700.0},
+    "90_et_plus": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 1", "cellule": "G13", "valeur": 36400.0}
+   },
+   "ensemble_62_et_plus": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 1", "cellule": "G14", "valeur": 753900.0},
+   "ensemble_65_et_plus": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 1", "cellule": "G15", "valeur": 691100.0},
+   "part_2024": {
+    "62_64": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 1", "cellule": "F7", "valeur": 2.49},
+    "65_69": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 1", "cellule": "F8", "valeur": 5.28},
+    "70_74": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 1", "cellule": "F9", "valeur": 5.46},
+    "75_79": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 1", "cellule": "F10", "valeur": 4.11},
+    "80_84": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 1", "cellule": "F11", "valeur": 3.8},
+    "85_89": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 1", "cellule": "F12", "valeur": 3.41},
+    "90_et_plus": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 1", "cellule": "F13", "valeur": 3.82}
+   },
+   "part_2024_62_et_plus": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 1", "cellule": "F14", "valeur": 4.32},
+   "part_2024_65_et_plus": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 1", "cellule": "F15", "valeur": 4.63}
+  },
+  "28_tableau_2": {
+   "parts": {
+    "62_64": {
+     "femmes_seules": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "C7", "valeur": 47.82},
+     "hommes_seuls": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "D7", "valeur": 35.19},
+     "seuls": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "E7", "valeur": 83.01},
+     "femmes_couple": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "F7", "valeur": 4.96},
+     "hommes_couple": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "G7", "valeur": 12.03},
+     "couple": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "H7", "valeur": 16.99},
+     "femmes": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "I7", "valeur": 52.78},
+     "hommes": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "J7", "valeur": 47.22}
+    },
+    "65_69": {
+     "femmes_seules": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "C8", "valeur": 46.52},
+     "hommes_seuls": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "D8", "valeur": 31.75},
+     "seuls": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "E8", "valeur": 78.27},
+     "femmes_couple": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "F8", "valeur": 6.64},
+     "hommes_couple": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "G8", "valeur": 15.09},
+     "couple": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "H8", "valeur": 21.73},
+     "femmes": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "I8", "valeur": 53.16},
+     "hommes": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "J8", "valeur": 46.84}
+    },
+    "70_74": {
+     "femmes_seules": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "C9", "valeur": 47.87},
+     "hommes_seuls": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "D9", "valeur": 28.22},
+     "seuls": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "E9", "valeur": 76.08},
+     "femmes_couple": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "F9", "valeur": 6.4},
+     "hommes_couple": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "G9", "valeur": 17.51},
+     "couple": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "H9", "valeur": 23.92},
+     "femmes": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "I9", "valeur": 54.27},
+     "hommes": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "J9", "valeur": 45.73}
+    },
+    "75_79": {
+     "femmes_seules": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "C10", "valeur": 50.96},
+     "hommes_seuls": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "D10", "valeur": 23.81},
+     "seuls": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "E10", "valeur": 74.77},
+     "femmes_couple": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "F10", "valeur": 5.33},
+     "hommes_couple": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "G10", "valeur": 19.9},
+     "couple": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "H10", "valeur": 25.23},
+     "femmes": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "I10", "valeur": 56.29},
+     "hommes": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "J10", "valeur": 43.71}
+    },
+    "80_84": {
+     "femmes_seules": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "C11", "valeur": 53.63},
+     "hommes_seuls": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "D11", "valeur": 18.47},
+     "seuls": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "E11", "valeur": 72.1},
+     "femmes_couple": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "F11", "valeur": 4.72},
+     "hommes_couple": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "G11", "valeur": 23.18},
+     "couple": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "H11", "valeur": 27.9},
+     "femmes": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "I11", "valeur": 58.35},
+     "hommes": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "J11", "valeur": 41.65}
+    },
+    "85_89": {
+     "femmes_seules": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "C12", "valeur": 61.86},
+     "hommes_seuls": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "D12", "valeur": 14.19},
+     "seuls": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "E12", "valeur": 76.04},
+     "femmes_couple": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "F12", "valeur": 4.34},
+     "hommes_couple": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "G12", "valeur": 19.62},
+     "couple": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "H12", "valeur": 23.96},
+     "femmes": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "I12", "valeur": 66.2},
+     "hommes": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "J12", "valeur": 33.8}
+    },
+    "90_et_plus": {
+     "femmes_seules": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "C13", "valeur": 73.28},
+     "hommes_seuls": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "D13", "valeur": 10.56},
+     "seuls": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "E13", "valeur": 83.85},
+     "femmes_couple": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "F13", "valeur": 3.21},
+     "hommes_couple": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "G13", "valeur": 12.94},
+     "couple": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "H13", "valeur": 16.15},
+     "femmes": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "I13", "valeur": 76.49},
+     "hommes": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "J13", "valeur": 23.51}
+    }
+   },
+   "ensemble": {
+    "femmes_seules": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "C15", "valeur": 50.64},
+    "hommes_seuls": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "D15", "valeur": 26.41},
+    "seuls": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "E15", "valeur": 77.04},
+    "femmes_couple": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "F15", "valeur": 5.73},
+    "hommes_couple": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "G15", "valeur": 17.23},
+    "couple": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "H15", "valeur": 22.96},
+    "femmes": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "I15", "valeur": 56.36},
+    "hommes": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "J15", "valeur": 43.64}
+   },
+   "effectifs": {
+    "femmes_seules": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "C14", "valeur": 381700.0},
+    "hommes_seuls": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "D14", "valeur": 199100.0},
+    "seuls": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "E14", "valeur": 580800.0},
+    "femmes_couple": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "F14", "valeur": 43200.0},
+    "hommes_couple": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "G14", "valeur": 129900.0},
+    "couple": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "H14", "valeur": 173100.0},
+    "femmes": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "I14", "valeur": 424900.0},
+    "hommes": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "J14", "valeur": 329000.0},
+    "ensemble": {"classeur": "fiche_28.xlsx", "feuille": "F28_Tableau 2", "cellule": "K14", "valeur": 753900.0}
+   }
+  },
+  "16_graphique_1": {
+   "stock_ensemble_2024": {
+    "50": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "C8", "valeur": 0.88},
+    "51": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "D8", "valeur": 0.95},
+    "52": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "E8", "valeur": 1.06},
+    "53": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "F8", "valeur": 1.17},
+    "54": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "G8", "valeur": 1.24},
+    "55": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "H8", "valeur": 1.28},
+    "56": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "I8", "valeur": 1.61},
+    "57": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "J8", "valeur": 2.1},
+    "58": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "K8", "valeur": 3.04},
+    "59": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "L8", "valeur": 4.06},
+    "60": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "M8", "valeur": 8.84},
+    "61": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "N8", "valeur": 19.45},
+    "62": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "O8", "valeur": 48.12},
+    "63": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "P8", "valeur": 70.71},
+    "64": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "Q8", "valeur": 78.94},
+    "65": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "R8", "valeur": 84.79},
+    "66": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "S8", "valeur": 86.69},
+    "67": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "T8", "valeur": 94.3},
+    "68": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "U8", "valeur": 97.05},
+    "69": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "V8", "valeur": 99.5},
+    "70": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "W8", "valeur": 99.07}
+   },
+   "stock_ensemble_2023": {
+    "50": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "C9", "valeur": 0.92},
+    "51": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "D9", "valeur": 1.0},
+    "52": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "E9", "valeur": 1.14},
+    "53": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "F9", "valeur": 1.21},
+    "54": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "G9", "valeur": 1.22},
+    "55": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "H9", "valeur": 1.43},
+    "56": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "I9", "valeur": 1.81},
+    "57": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "J9", "valeur": 2.54},
+    "58": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "K9", "valeur": 3.43},
+    "59": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "L9", "valeur": 4.38},
+    "60": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "M9", "valeur": 14.3},
+    "61": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "N9", "valeur": 20.67},
+    "62": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "O9", "valeur": 55.6},
+    "63": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "P9", "valeur": 72.79},
+    "64": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "Q9", "valeur": 79.37},
+    "65": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "R9", "valeur": 83.37},
+    "66": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "S9", "valeur": 87.08},
+    "67": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "T9", "valeur": 94.98},
+    "68": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "U9", "valeur": 98.87},
+    "69": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "V9", "valeur": 98.79},
+    "70": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "W9", "valeur": 99.69}
+   },
+   "primo_ensemble_2024": {
+    "50": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "C15", "valeur": 0.03},
+    "51": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "D15", "valeur": 0.05},
+    "52": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "E15", "valeur": 0.08},
+    "53": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "F15", "valeur": 0.08},
+    "54": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "G15", "valeur": 0.09},
+    "55": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "H15", "valeur": 0.11},
+    "56": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "I15", "valeur": 0.22},
+    "57": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "J15", "valeur": 0.39},
+    "58": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "K15", "valeur": 0.6},
+    "59": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "L15", "valeur": 0.74},
+    "60": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "M15", "valeur": 4.6},
+    "61": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "N15", "valeur": 7.49},
+    "62": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "O15", "valeur": 24.52},
+    "63": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "P15", "valeur": 15.55},
+    "64": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "Q15", "valeur": 5.53},
+    "65": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "R15", "valeur": 5.43},
+    "66": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "S15", "valeur": 4.21},
+    "67": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "T15", "valeur": 9.15},
+    "68": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "U15", "valeur": 1.49},
+    "69": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "V15", "valeur": 0.61},
+    "70": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "W15", "valeur": 0.34}
+   },
+   "primo_ensemble_2023": {
+    "50": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "C16", "valeur": 0.07},
+    "51": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "D16", "valeur": 0.09},
+    "52": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "E16", "valeur": 0.14},
+    "53": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "F16", "valeur": 0.12},
+    "54": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "G16", "valeur": 0.12},
+    "55": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "H16", "valeur": 0.23},
+    "56": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "I16", "valeur": 0.39},
+    "57": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "J16", "valeur": 0.7},
+    "58": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "K16", "valeur": 0.77},
+    "59": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "L16", "valeur": 0.67},
+    "60": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "M16", "valeur": 9.67},
+    "61": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "N16", "valeur": 6.05},
+    "62": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "O16", "valeur": 30.53},
+    "63": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "P16", "valeur": 11.57},
+    "64": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "Q16", "valeur": 6.54},
+    "65": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "R16", "valeur": 6.35},
+    "66": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "S16", "valeur": 3.55},
+    "67": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "T16", "valeur": 7.3},
+    "68": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "U16", "valeur": 3.15},
+    "69": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "V16", "valeur": 0.41},
+    "70": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "W16", "valeur": 0.31}
+   },
+   "primo_femmes_2024": {
+    "50": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "C13", "valeur": 0.03},
+    "51": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "D13", "valeur": 0.03},
+    "52": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "E13", "valeur": 0.08},
+    "53": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "F13", "valeur": 0.03},
+    "54": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "G13", "valeur": 0.07},
+    "55": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "H13", "valeur": 0.07},
+    "56": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "I13", "valeur": 0.17},
+    "57": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "J13", "valeur": 0.38},
+    "58": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "K13", "valeur": 0.68},
+    "59": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "L13", "valeur": 0.61},
+    "60": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "M13", "valeur": 2.43},
+    "61": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "N13", "valeur": 4.84},
+    "62": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "O13", "valeur": 26.56},
+    "63": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "P13", "valeur": 17.0},
+    "64": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "Q13", "valeur": 5.38},
+    "65": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "R13", "valeur": 5.36},
+    "66": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "S13", "valeur": 4.18},
+    "67": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "T13", "valeur": 10.49},
+    "68": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "U13", "valeur": 1.31},
+    "69": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "V13", "valeur": 0.52},
+    "70": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "W13", "valeur": 0.24}
+   },
+   "primo_hommes_2024": {
+    "50": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "C14", "valeur": 0.03},
+    "51": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "D14", "valeur": 0.06},
+    "52": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "E14", "valeur": 0.09},
+    "53": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "F14", "valeur": 0.13},
+    "54": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "G14", "valeur": 0.11},
+    "55": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "H14", "valeur": 0.14},
+    "56": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "I14", "valeur": 0.28},
+    "57": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "J14", "valeur": 0.41},
+    "58": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "K14", "valeur": 0.52},
+    "59": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "L14", "valeur": 0.88},
+    "60": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "M14", "valeur": 6.88},
+    "61": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "N14", "valeur": 10.33},
+    "62": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "O14", "valeur": 22.35},
+    "63": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "P14", "valeur": 14.01},
+    "64": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "Q14", "valeur": 5.69},
+    "65": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "R14", "valeur": 5.5},
+    "66": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "S14", "valeur": 4.24},
+    "67": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "T14", "valeur": 7.64},
+    "68": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "U14", "valeur": 1.7},
+    "69": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "V14", "valeur": 0.7},
+    "70": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 1 ", "cellule": "W14", "valeur": 0.45}
+   }
+  },
+  "16_graphique_2": {
+   "2024": {
+    "50": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 2", "cellule": "W5", "valeur": 0.03},
+    "51": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 2", "cellule": "W6", "valeur": 0.05},
+    "52": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 2", "cellule": "W7", "valeur": 0.08},
+    "53": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 2", "cellule": "W8", "valeur": 0.08},
+    "54": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 2", "cellule": "W9", "valeur": 0.09},
+    "55": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 2", "cellule": "W10", "valeur": 0.11},
+    "56": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 2", "cellule": "W11", "valeur": 0.22},
+    "57": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 2", "cellule": "W12", "valeur": 0.39},
+    "58": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 2", "cellule": "W13", "valeur": 0.6},
+    "59": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 2", "cellule": "W14", "valeur": 0.74},
+    "60": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 2", "cellule": "W15", "valeur": 4.6},
+    "61": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 2", "cellule": "W16", "valeur": 7.49},
+    "62": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 2", "cellule": "W17", "valeur": 24.52},
+    "63": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 2", "cellule": "W18", "valeur": 15.55},
+    "64": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 2", "cellule": "W19", "valeur": 5.53},
+    "65": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 2", "cellule": "W20", "valeur": 5.43},
+    "66": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 2", "cellule": "W21", "valeur": 4.21},
+    "67": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 2", "cellule": "W22", "valeur": 9.15},
+    "68": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 2", "cellule": "W23", "valeur": 1.49},
+    "69": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 2", "cellule": "W24", "valeur": 0.61},
+    "70": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 2", "cellule": "W25", "valeur": 0.34}
+   },
+   "2023": {
+    "50": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 2", "cellule": "V5", "valeur": 0.07},
+    "51": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 2", "cellule": "V6", "valeur": 0.08},
+    "52": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 2", "cellule": "V7", "valeur": 0.14},
+    "53": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 2", "cellule": "V8", "valeur": 0.11},
+    "54": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 2", "cellule": "V9", "valeur": 0.11},
+    "55": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 2", "cellule": "V10", "valeur": 0.22},
+    "56": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 2", "cellule": "V11", "valeur": 0.36},
+    "57": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 2", "cellule": "V12", "valeur": 0.62},
+    "58": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 2", "cellule": "V13", "valeur": 0.7},
+    "59": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 2", "cellule": "V14", "valeur": 0.6},
+    "60": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 2", "cellule": "V15", "valeur": 9.55},
+    "61": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 2", "cellule": "V16", "valeur": 6.03},
+    "62": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 2", "cellule": "V17", "valeur": 29.93},
+    "63": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 2", "cellule": "V18", "valeur": 11.37},
+    "64": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 2", "cellule": "V19", "valeur": 6.5},
+    "65": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 2", "cellule": "V20", "valeur": 6.25},
+    "66": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 2", "cellule": "V21", "valeur": 3.5},
+    "67": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 2", "cellule": "V22", "valeur": 7.17},
+    "68": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 2", "cellule": "V23", "valeur": 3.14},
+    "69": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 2", "cellule": "V24", "valeur": 0.42},
+    "70": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 2", "cellule": "V25", "valeur": 0.3}
+   }
+  },
+  "15_graphique_4": {
+   "2024": {
+    "62": {"classeur": "fiche_15.xlsx", "feuille": "F15_Graphique 4", "cellule": "C26", "valeur": 48.12},
+    "63": {"classeur": "fiche_15.xlsx", "feuille": "F15_Graphique 4", "cellule": "D26", "valeur": 70.71},
+    "64": {"classeur": "fiche_15.xlsx", "feuille": "F15_Graphique 4", "cellule": "E26", "valeur": 78.94},
+    "65": {"classeur": "fiche_15.xlsx", "feuille": "F15_Graphique 4", "cellule": "F26", "valeur": 84.79},
+    "66": {"classeur": "fiche_15.xlsx", "feuille": "F15_Graphique 4", "cellule": "G26", "valeur": 86.69},
+    "67": {"classeur": "fiche_15.xlsx", "feuille": "F15_Graphique 4", "cellule": "H26", "valeur": 94.3}
+   },
+   "2023": {
+    "62": {"classeur": "fiche_15.xlsx", "feuille": "F15_Graphique 4", "cellule": "C25", "valeur": 55.6},
+    "63": {"classeur": "fiche_15.xlsx", "feuille": "F15_Graphique 4", "cellule": "D25", "valeur": 72.79},
+    "64": {"classeur": "fiche_15.xlsx", "feuille": "F15_Graphique 4", "cellule": "E25", "valeur": 79.37},
+    "65": {"classeur": "fiche_15.xlsx", "feuille": "F15_Graphique 4", "cellule": "F25", "valeur": 83.37},
+    "66": {"classeur": "fiche_15.xlsx", "feuille": "F15_Graphique 4", "cellule": "G25", "valeur": 87.08},
+    "67": {"classeur": "fiche_15.xlsx", "feuille": "F15_Graphique 4", "cellule": "H25", "valeur": 94.98}
+   }
+  },
+  "15_graphique_3": {"classeur": "fiche_15.xlsx", "feuille": "F15_Graphique 3", "plage": "C5:W25", "valeurs": [
+     [3.15, 3.2, 3.21, 3.2, 3.01, 2.91, 2.94, 3.49, 2.6, 1.51, 1.5, 1.42, 1.82, 1.08, 1.05, 1.07, 0.99, 0.97, 0.93, 0.92, 0.88],
+     [1.91, 1.63, 1.64, 1.63, 2.34, 2.27, 4.0, 4.43, 3.45, 1.58, 1.63, 1.6, 1.22, 1.12, 1.14, 1.14, 0.99, 1.03, 1.02, 1.0, 0.95],
+     [4.27, 4.36, 4.29, 4.33, 5.21, 5.05, 4.96, 4.11, 4.23, 2.29, 1.69, 1.68, 2.55, 1.37, 1.22, 1.22, 1.12, 1.08, 1.14, 1.14, 1.06],
+     [2.6, 2.21, 2.21, 2.21, 2.77, 2.69, 4.54, 3.76, 4.42, 2.39, 2.37, 1.86, 1.66, 1.53, 1.45, 1.32, 1.27, 1.17, 1.15, 1.21, 1.17],
+     [2.93, 2.88, 2.75, 2.72, 4.26, 4.14, 4.0, 2.85, 4.49, 2.58, 2.49, 2.53, 3.29, 1.97, 1.65, 1.57, 1.43, 1.31, 1.25, 1.22, 1.24],
+     [6.68, 6.4, 6.11, 5.98, 5.84, 5.2, 5.1, 5.31, 3.82, 3.81, 3.7, 3.53, 3.02, 2.44, 2.36, 1.93, 1.73, 1.58, 1.49, 1.43, 1.28],
+     [9.41, 9.82, 9.82, 9.81, 10.61, 7.05, 6.6, 8.34, 6.12, 5.63, 4.74, 4.3, 3.62, 3.63, 2.86, 2.77, 2.35, 1.94, 1.83, 1.81, 1.61],
+     [12.41, 13.99, 14.83, 15.26, 15.71, 11.81, 9.11, 10.33, 7.96, 6.97, 6.3, 5.61, 5.63, 4.94, 4.57, 3.52, 3.33, 2.92, 2.66, 2.54, 2.1],
+     [14.04, 15.98, 17.83, 18.91, 18.53, 17.0, 14.59, 11.82, 9.45, 9.15, 7.9, 7.26, 6.91, 6.74, 5.98, 5.56, 4.65, 3.94, 3.7, 3.43, 3.04],
+     [14.76, 17.66, 19.89, 21.56, 21.99, 20.61, 19.42, 17.52, 11.83, 11.17, 10.38, 9.29, 8.72, 8.0, 7.49, 6.7, 6.35, 5.11, 4.68, 4.38, 4.06],
+     [62.93, 62.22, 63.81, 64.16, 64.26, 64.0, 63.7, 49.84, 31.41, 29.77, 27.79, 26.58, 25.17, 25.11, 23.15, 20.68, 18.9, 17.03, 15.89, 14.3, 8.84],
+     [73.32, 72.03, 71.96, 73.94, 75.42, 75.38, 76.08, 73.21, 72.95, 68.02, 58.34, 42.63, 33.64, 33.7, 33.7, 30.66, 28.63, 26.07, 24.15, 20.67, 19.45],
+     [75.33, 76.7, 75.35, 75.59, 78.19, 78.79, 79.15, 78.56, 77.87, 77.06, 75.25, 74.7, 69.89, 66.09, 66.14, 65.03, 61.06, 61.54, 59.64, 55.6, 48.12],
+     [78.72, 77.86, 79.27, 78.01, 79.28, 80.79, 81.8, 81.32, 81.87, 81.33, 81.18, 79.24, 77.49, 76.38, 76.72, 76.05, 74.0, 71.9, 73.14, 72.79, 70.71],
+     [79.98, 80.47, 79.58, 80.64, 81.01, 81.7, 83.35, 83.22, 84.12, 84.61, 84.11, 83.32, 81.37, 80.49, 79.76, 80.33, 79.52, 78.3, 77.43, 79.37, 78.94],
+     [99.11, 98.24, 98.09, 96.34, 96.26, 95.8, 95.48, 95.2, 96.44, 95.77, 95.89, 94.48, 92.27, 86.09, 84.88, 85.17, 85.23, 84.18, 83.06, 83.37, 84.79],
+     [100.0, 100.0, 100.0, 100.0, 97.88, 99.65, 99.01, 100.0, 98.72, 99.62, 99.42, 99.51, 98.09, 98.81, 96.7, 93.69, 90.36, 88.68, 87.49, 87.08, 86.69],
+     [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 99.03, 99.39, 100.0, 100.0, 99.45, 98.61, 100.0, 99.1, 97.26, 96.97, 96.25, 94.98, 94.3],
+     [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 99.47, 99.48, 100.0, 100.0, 99.76, 99.72, 99.28, 100.0, 98.68, 98.38, 98.11, 98.87, 97.05],
+     [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 99.27, 100.0, 100.0, 99.63, 100.0, 100.0, 99.55, 100.0, 99.97, 99.91, 98.94, 98.69, 98.79, 99.5],
+     [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 99.9, 100.0, 99.63, 99.81, 100.0, 100.0, 100.0, 98.21, 99.69, 99.07]]},
+  "15_graphique_3_compl": {
+   "F": {"classeur": "fiche_15.xlsx", "feuille": "F15_Graphique 3 compl", "plage": "C7:W27", "valeurs": [
+      [2.72, 2.71, 2.69, 2.7, 2.76, 2.64, 2.63, 3.4, 2.49, 1.34, 1.29, 1.17, 1.43, 0.77, 0.76, 0.8, 0.61, 0.57, 0.39, 0.35, 0.32],
+      [1.63, 1.42, 1.41, 1.4, 2.15, 2.06, 3.6, 4.1, 3.39, 1.38, 1.35, 1.25, 1.01, 0.8, 0.83, 0.82, 0.64, 0.62, 0.61, 0.46, 0.36],
+      [3.47, 3.45, 3.37, 3.4, 4.66, 4.48, 4.41, 3.97, 4.15, 2.17, 1.38, 1.32, 2.1, 1.1, 0.86, 0.87, 0.73, 0.67, 0.67, 0.68, 0.5],
+      [2.17, 1.79, 1.77, 1.77, 2.49, 2.39, 4.06, 3.69, 4.41, 2.25, 2.25, 1.5, 1.42, 1.2, 1.13, 0.92, 0.86, 0.75, 0.72, 0.77, 0.65],
+      [2.4, 2.34, 2.17, 2.13, 3.73, 3.58, 3.51, 2.89, 4.44, 2.57, 2.35, 2.36, 2.81, 1.6, 1.27, 1.2, 0.97, 0.86, 0.8, 0.81, 0.77],
+      [5.26, 5.09, 4.74, 4.53, 4.79, 4.27, 4.34, 4.93, 3.59, 3.07, 3.03, 2.77, 2.19, 1.75, 1.79, 1.31, 1.2, 1.0, 0.95, 0.91, 0.81],
+      [7.08, 7.24, 7.21, 7.12, 6.81, 5.41, 5.18, 6.62, 5.41, 5.22, 3.83, 3.52, 2.59, 2.66, 2.03, 2.1, 1.54, 1.24, 1.16, 1.31, 1.04],
+      [8.32, 8.96, 9.46, 9.65, 10.15, 8.35, 7.4, 7.3, 6.7, 6.27, 5.84, 4.85, 4.86, 3.92, 3.66, 2.7, 2.82, 2.19, 2.05, 1.94, 1.56],
+      [9.11, 10.0, 10.98, 11.8, 12.05, 11.12, 9.87, 7.86, 7.54, 7.62, 6.89, 6.77, 6.18, 5.91, 4.87, 4.56, 3.79, 3.39, 2.98, 2.81, 2.48],
+      [9.25, 10.79, 12.11, 13.2, 14.23, 13.37, 12.72, 11.58, 9.16, 8.56, 8.51, 7.91, 7.72, 7.12, 6.53, 5.7, 5.06, 4.17, 4.04, 3.58, 3.26],
+      [57.69, 57.78, 59.81, 60.45, 60.65, 60.65, 60.79, 45.29, 23.62, 21.16, 20.17, 19.78, 18.4, 18.29, 16.95, 15.14, 13.38, 11.59, 10.98, 9.33, 5.83],
+      [67.67, 66.53, 67.38, 69.84, 71.9, 72.46, 73.3, 72.15, 70.83, 65.43, 53.59, 35.38, 25.17, 25.01, 25.05, 22.82, 20.93, 18.56, 16.28, 14.02, 12.48],
+      [68.38, 70.29, 69.28, 70.83, 73.93, 75.47, 76.34, 76.02, 75.38, 74.32, 72.08, 71.9, 66.88, 62.49, 62.18, 60.77, 57.64, 58.39, 56.3, 52.14, 43.14],
+      [71.44, 71.06, 73.2, 72.3, 73.85, 76.23, 77.98, 78.85, 77.98, 78.31, 77.86, 75.9, 74.87, 73.77, 73.92, 73.2, 71.75, 69.28, 70.9, 69.6, 68.93],
+      [72.07, 72.82, 72.39, 74.5, 74.88, 76.51, 78.97, 79.72, 79.71, 80.41, 80.84, 79.88, 78.41, 77.85, 77.08, 77.63, 77.24, 76.1, 74.94, 77.74, 75.59],
+      [100.0, 99.35, 98.68, 96.8, 96.83, 96.03, 96.19, 96.87, 96.94, 96.17, 96.17, 94.86, 91.27, 83.58, 82.36, 82.79, 82.73, 81.76, 80.72, 80.92, 82.77],
+      [100.0, 100.0, 100.0, 100.0, 98.67, 100.0, 100.0, 100.0, 99.48, 100.0, 100.0, 99.98, 98.76, 99.69, 97.07, 93.33, 88.38, 86.1, 85.07, 84.82, 83.95],
+      [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 99.36, 99.98, 100.0, 100.0, 100.0, 99.6, 100.0, 99.97, 97.13, 96.32, 95.41, 94.02, 93.12],
+      [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 99.85, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 98.54, 98.14, 97.72, 98.34, 96.03],
+      [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 99.85, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 98.75, 98.66, 98.81, 99.05],
+      [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 99.88, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 98.59, 99.0, 98.5]]},
+   "H": {"classeur": "fiche_15.xlsx", "feuille": "F15_Graphique 3 compl", "plage": "C32:W52", "valeurs": [
+      [3.59, 3.71, 3.74, 3.71, 3.27, 3.18, 3.26, 3.59, 2.72, 1.68, 1.72, 1.67, 2.23, 1.39, 1.35, 1.34, 1.38, 1.37, 1.48, 1.51, 1.46],
+      [2.19, 1.26, 1.26, 1.24, 2.54, 2.49, 4.41, 4.77, 3.52, 1.79, 1.93, 1.97, 1.44, 1.45, 1.45, 1.47, 1.36, 1.45, 1.44, 1.55, 1.56],
+      [5.09, 5.29, 5.24, 5.3, 5.79, 5.65, 5.53, 4.25, 4.31, 2.4, 2.02, 2.06, 3.03, 1.65, 1.6, 1.59, 1.53, 1.5, 1.61, 1.62, 1.62],
+      [3.01, 1.8, 1.8, 1.77, 3.06, 2.99, 5.03, 3.83, 4.43, 2.54, 2.49, 2.23, 1.9, 1.87, 1.78, 1.74, 1.69, 1.6, 1.58, 1.67, 1.72],
+      [3.46, 3.41, 3.34, 3.33, 4.8, 4.73, 4.51, 2.82, 4.54, 2.59, 2.64, 2.71, 3.8, 2.35, 2.06, 1.97, 1.91, 1.78, 1.73, 1.66, 1.73],
+      [8.07, 7.7, 7.49, 7.46, 6.93, 6.15, 5.89, 5.7, 4.07, 4.59, 4.41, 4.34, 3.89, 3.16, 2.96, 2.58, 2.28, 2.18, 2.04, 1.98, 1.76],
+      [11.65, 12.38, 12.42, 12.53, 14.5, 8.72, 8.08, 10.14, 6.87, 6.06, 5.7, 5.14, 4.7, 4.64, 3.73, 3.47, 3.19, 2.68, 2.54, 2.35, 2.21],
+      [16.37, 18.88, 20.15, 20.89, 21.33, 15.36, 10.89, 13.47, 9.28, 7.71, 6.79, 6.41, 6.44, 6.03, 5.53, 4.38, 3.86, 3.69, 3.31, 3.17, 2.66],
+      [18.83, 21.83, 24.53, 25.99, 25.06, 23.0, 19.47, 15.93, 11.44, 10.78, 8.98, 7.78, 7.7, 7.62, 7.17, 6.62, 5.56, 4.53, 4.47, 4.1, 3.63],
+      [20.13, 24.4, 27.53, 29.78, 29.79, 27.94, 26.3, 23.7, 14.62, 13.91, 12.38, 10.77, 9.79, 8.95, 8.52, 7.77, 7.73, 6.11, 5.37, 5.24, 4.89],
+      [68.17, 66.65, 67.83, 67.9, 67.9, 67.47, 66.75, 54.57, 39.54, 38.82, 35.84, 33.87, 32.44, 32.41, 29.83, 26.64, 24.86, 22.87, 21.15, 19.74, 12.01],
+      [78.92, 77.6, 76.58, 78.09, 79.02, 78.4, 79.02, 74.39, 75.25, 70.81, 63.42, 50.35, 42.79, 43.09, 43.02, 39.19, 36.97, 34.22, 32.61, 27.92, 26.88],
+      [82.26, 83.13, 81.54, 80.46, 82.56, 82.23, 82.1, 81.31, 80.56, 80.03, 78.68, 77.77, 73.18, 70.06, 70.49, 69.67, 64.81, 64.99, 63.27, 59.71, 53.44],
+      [86.1, 84.73, 85.43, 83.92, 84.89, 85.51, 85.78, 83.95, 86.06, 84.61, 84.79, 82.9, 80.39, 79.28, 79.86, 79.22, 76.5, 74.8, 75.59, 76.52, 72.61],
+      [88.09, 88.33, 86.89, 86.94, 87.42, 87.12, 87.94, 86.95, 88.78, 89.16, 87.71, 87.09, 84.66, 83.45, 82.77, 83.38, 82.1, 80.74, 80.2, 81.53, 82.58],
+      [98.27, 97.56, 97.85, 96.14, 95.99, 95.86, 95.03, 93.76, 96.17, 95.6, 95.83, 94.29, 93.51, 88.97, 87.76, 87.89, 88.11, 86.94, 85.7, 86.37, 87.0],
+      [100.0, 100.0, 100.0, 100.0, 97.4, 98.14, 97.69, 96.29, 98.24, 99.29, 98.9, 99.29, 97.61, 98.08, 96.51, 94.25, 92.68, 91.68, 90.27, 90.11, 89.75],
+      [100.0, 100.0, 100.0, 100.0, 99.79, 99.42, 98.86, 100.0, 99.03, 99.11, 100.0, 100.0, 98.91, 97.81, 99.49, 98.39, 97.6, 97.87, 97.33, 96.65, 95.67],
+      [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 96.29, 99.03, 99.45, 99.74, 100.0, 99.21, 98.85, 98.36, 100.0, 99.08, 98.85, 98.73, 100.0, 98.3],
+      [100.0, 100.0, 100.0, 100.0, 99.79, 99.42, 98.86, 97.78, 100.0, 99.68, 99.81, 100.0, 99.49, 98.6, 99.02, 98.77, 99.58, 99.41, 98.93, 99.61, 100.0],
+      [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 99.44, 100.0, 100.0, 98.53, 98.79, 99.44, 99.69, 99.63, 98.07, 100.0, 99.9]]},
+   "ensemble": {"classeur": "fiche_15.xlsx", "feuille": "F15_Graphique 3 compl", "plage": "C57:W77", "valeurs": [
+      [3.15, 3.2, 3.21, 3.2, 3.01, 2.91, 2.94, 3.49, 2.6, 1.51, 1.5, 1.42, 1.82, 1.08, 1.05, 1.07, 0.99, 0.97, 0.93, 0.93, 0.88],
+      [1.91, 1.63, 1.64, 1.63, 2.34, 2.27, 4.0, 4.43, 3.45, 1.58, 1.63, 1.6, 1.22, 1.12, 1.14, 1.14, 0.99, 1.03, 1.02, 1.0, 0.95],
+      [4.27, 4.36, 4.29, 4.33, 5.21, 5.05, 4.96, 4.11, 4.23, 2.29, 1.69, 1.68, 2.55, 1.37, 1.22, 1.22, 1.12, 1.08, 1.14, 1.14, 1.06],
+      [2.6, 2.21, 2.21, 2.21, 2.77, 2.69, 4.54, 3.76, 4.42, 2.39, 2.37, 1.86, 1.66, 1.53, 1.45, 1.32, 1.27, 1.17, 1.15, 1.21, 1.17],
+      [2.93, 2.88, 2.75, 2.72, 4.26, 4.14, 4.0, 2.85, 4.49, 2.58, 2.49, 2.53, 3.29, 1.97, 1.65, 1.57, 1.43, 1.31, 1.25, 1.23, 1.24],
+      [6.68, 6.4, 6.11, 5.98, 5.84, 5.2, 5.1, 5.31, 3.82, 3.81, 3.7, 3.53, 3.02, 2.44, 2.36, 1.93, 1.73, 1.58, 1.49, 1.43, 1.28],
+      [9.41, 9.82, 9.82, 9.81, 10.61, 7.05, 6.6, 8.34, 6.12, 5.63, 4.74, 4.3, 3.62, 3.63, 2.86, 2.77, 2.35, 1.94, 1.83, 1.82, 1.61],
+      [12.41, 13.99, 14.83, 15.26, 15.71, 11.81, 9.11, 10.33, 7.96, 6.97, 6.3, 5.61, 5.63, 4.94, 4.57, 3.52, 3.33, 2.92, 2.66, 2.54, 2.1],
+      [14.04, 15.98, 17.83, 18.91, 18.53, 17.0, 14.59, 11.82, 9.45, 9.15, 7.9, 7.26, 6.91, 6.74, 5.98, 5.56, 4.65, 3.94, 3.7, 3.44, 3.04],
+      [14.76, 17.66, 19.89, 21.56, 21.99, 20.61, 19.42, 17.52, 11.83, 11.17, 10.38, 9.29, 8.72, 8.0, 7.49, 6.7, 6.35, 5.11, 4.68, 4.39, 4.06],
+      [62.93, 62.22, 63.81, 64.16, 64.26, 64.0, 63.7, 49.84, 31.41, 29.77, 27.79, 26.58, 25.17, 25.11, 23.15, 20.68, 18.9, 17.03, 15.89, 14.37, 8.84],
+      [73.32, 72.03, 71.96, 73.94, 75.42, 75.38, 76.08, 73.21, 72.95, 68.02, 58.34, 42.63, 33.64, 33.7, 33.7, 30.66, 28.63, 26.07, 24.15, 20.74, 19.45],
+      [75.33, 76.7, 75.35, 75.59, 78.19, 78.79, 79.15, 78.56, 77.87, 77.06, 75.25, 74.7, 69.89, 66.09, 66.14, 65.03, 61.06, 61.54, 59.64, 55.79, 48.12],
+      [78.72, 77.86, 79.27, 78.01, 79.28, 80.79, 81.8, 81.32, 81.87, 81.33, 81.18, 79.24, 77.49, 76.38, 76.72, 76.05, 74.0, 71.9, 73.14, 72.92, 70.71],
+      [79.98, 80.47, 79.58, 80.64, 81.01, 81.7, 83.35, 83.22, 84.12, 84.61, 84.11, 83.32, 81.37, 80.49, 79.76, 80.33, 79.52, 78.3, 77.43, 79.55, 78.94],
+      [99.11, 98.24, 98.09, 96.34, 96.26, 95.8, 95.48, 95.2, 96.44, 95.77, 95.89, 94.48, 92.27, 86.09, 84.88, 85.17, 85.23, 84.18, 83.06, 83.5, 84.79],
+      [100.0, 100.0, 100.0, 100.0, 97.88, 99.65, 99.01, 100.0, 98.72, 99.62, 99.42, 99.51, 98.09, 98.81, 96.7, 93.69, 90.36, 88.68, 87.49, 87.3, 86.69],
+      [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 99.03, 99.39, 100.0, 100.0, 99.45, 98.61, 100.0, 99.1, 97.26, 96.97, 96.25, 95.22, 94.3],
+      [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 99.47, 99.48, 100.0, 100.0, 99.76, 99.72, 99.28, 100.0, 98.68, 98.38, 98.11, 99.06, 97.05],
+      [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 99.27, 100.0, 100.0, 99.63, 100.0, 100.0, 99.55, 100.0, 99.97, 99.91, 98.94, 98.69, 99.11, 99.5],
+      [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 99.9, 100.0, 99.63, 99.81, 100.0, 100.0, 100.0, 98.21, 99.98, 99.07]]}
+  },
+  "15_graphique_1": {"classeur": "fiche_15.xlsx", "feuille": "F15_Graphique 1", "plage": "C5:W7", "valeurs": [
+     [61.11, 61.08, 61.03, 60.98, 60.85, 60.85, 60.79, 60.95, 61.25, 61.44, 61.63, 61.89, 62.14, 62.33, 62.42, 62.53, 62.74, 62.9, 63.0, 63.08, 63.29],
+     [60.06, 60.01, 59.96, 59.95, 59.88, 60.06, 60.15, 60.47, 60.72, 60.89, 61.07, 61.29, 61.53, 61.72, 61.78, 61.9, 62.08, 62.21, 62.33, 62.37, 62.59],
+     [60.58, 60.54, 60.49, 60.46, 60.37, 60.45, 60.46, 60.67, 61.0, 61.18, 61.36, 61.61, 61.84, 62.03, 62.1, 62.23, 62.42, 62.57, 62.68, 62.75, 62.95]]},
+  "17_graphique_2": {
+   "regime_general": {
+    "decote": {"classeur": "fiche_17.xlsx", "feuille": "F17_Graphique 2 ", "cellule": "C6", "valeur": 13.2},
+    "surcote": {"classeur": "fiche_17.xlsx", "feuille": "F17_Graphique 2 ", "cellule": "C14", "valeur": 16.2},
+    "taux_plein": {"classeur": "fiche_17.xlsx", "feuille": "F17_Graphique 2 ", "cellule": "C7", "valeur": 70.60000000000001},
+    "ensemble": {"classeur": "fiche_17.xlsx", "feuille": "F17_Graphique 2 ", "cellule": "C15", "valeur": 100.0}
+   },
+   "fpe_civils": {
+    "decote": {"classeur": "fiche_17.xlsx", "feuille": "F17_Graphique 2 ", "cellule": "D6", "valeur": 16.6},
+    "surcote": {"classeur": "fiche_17.xlsx", "feuille": "F17_Graphique 2 ", "cellule": "D14", "valeur": 25.6},
+    "taux_plein": {"classeur": "fiche_17.xlsx", "feuille": "F17_Graphique 2 ", "cellule": "D7", "valeur": 57.8},
+    "ensemble": {"classeur": "fiche_17.xlsx", "feuille": "F17_Graphique 2 ", "cellule": "D15", "valeur": 100.0}
+   },
+   "cnracl": {
+    "decote": {"classeur": "fiche_17.xlsx", "feuille": "F17_Graphique 2 ", "cellule": "E6", "valeur": 8.1},
+    "surcote": {"classeur": "fiche_17.xlsx", "feuille": "F17_Graphique 2 ", "cellule": "E14", "valeur": 17.3},
+    "taux_plein": {"classeur": "fiche_17.xlsx", "feuille": "F17_Graphique 2 ", "cellule": "E7", "valeur": 74.6},
+    "ensemble": {"classeur": "fiche_17.xlsx", "feuille": "F17_Graphique 2 ", "cellule": "E15", "valeur": 100.0}
+   },
+   "msa_non_salaries": {
+    "decote": {"classeur": "fiche_17.xlsx", "feuille": "F17_Graphique 2 ", "cellule": "F6", "valeur": 6.6},
+    "surcote": {"classeur": "fiche_17.xlsx", "feuille": "F17_Graphique 2 ", "cellule": "F14", "valeur": 26.6},
+    "taux_plein": {"classeur": "fiche_17.xlsx", "feuille": "F17_Graphique 2 ", "cellule": "F7", "valeur": 66.80000000000001},
+    "ensemble": {"classeur": "fiche_17.xlsx", "feuille": "F17_Graphique 2 ", "cellule": "F15", "valeur": 100.0}
+   },
+   "msa_salaries": {
+    "decote": {"classeur": "fiche_17.xlsx", "feuille": "F17_Graphique 2 ", "cellule": "G6", "valeur": 5.9},
+    "surcote": {"classeur": "fiche_17.xlsx", "feuille": "F17_Graphique 2 ", "cellule": "G14", "valeur": 1.6},
+    "taux_plein": {"classeur": "fiche_17.xlsx", "feuille": "F17_Graphique 2 ", "cellule": "G7", "valeur": 92.5},
+    "ensemble": {"classeur": "fiche_17.xlsx", "feuille": "F17_Graphique 2 ", "cellule": "G15", "valeur": 100.0}
+   }
+  },
+  "17_graphique_3_compl": {
+   "F": {
+    "decote": {
+     "1928": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "C6", "valeur": 9.1},
+     "1930": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "D6", "valeur": 9.2},
+     "1932": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "E6", "valeur": 9.7},
+     "1934": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "F6", "valeur": 8.8},
+     "1936": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "G6", "valeur": 7.7},
+     "1938": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "H6", "valeur": 6.7},
+     "1940": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "I6", "valeur": 5.7},
+     "1942": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "J6", "valeur": 4.6},
+     "1944": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "K6", "valeur": 5.2},
+     "1946": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "L6", "valeur": 6.7},
+     "1950": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "M6", "valeur": 8.4},
+     "1952": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "N6", "valeur": 11.8}
+    },
+    "taux_plein": {
+     "1928": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "C7", "valeur": 90.7},
+     "1930": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "D7", "valeur": 90.70000000000002},
+     "1932": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "E7", "valeur": 90.1},
+     "1934": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "F7", "valeur": 90.8},
+     "1936": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "G7", "valeur": 91.9},
+     "1938": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "H7", "valeur": 92.5},
+     "1940": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "I7", "valeur": 92.3},
+     "1942": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "J7", "valeur": 91.60000000000001},
+     "1944": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "K7", "valeur": 87.30000000000001},
+     "1946": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "L7", "valeur": 81.8},
+     "1950": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "M7", "valeur": 78.80000000000001},
+     "1952": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "N7", "valeur": 73.5}
+    },
+    "decote_non_applicable": {
+     "1928": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "C8", "valeur": 8.4},
+     "1930": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "D8", "valeur": 8.3},
+     "1932": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "E8", "valeur": 9.5},
+     "1934": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "F8", "valeur": 10.1},
+     "1936": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "G8", "valeur": 10.2},
+     "1938": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "H8", "valeur": 11.3},
+     "1940": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "I8", "valeur": 11.9},
+     "1942": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "J8", "valeur": 12.3},
+     "1944": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "K8", "valeur": 13.5},
+     "1946": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "L8", "valeur": 5.8},
+     "1950": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "M8", "valeur": 5.8},
+     "1952": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "N8", "valeur": 2.2}
+    },
+    "taux_plein_age": {
+     "1928": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "C9", "valeur": 31.1},
+     "1930": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "D9", "valeur": 28.1},
+     "1932": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "E9", "valeur": 27.9},
+     "1934": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "F9", "valeur": 30.3},
+     "1936": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "G9", "valeur": 32.4},
+     "1938": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "H9", "valeur": 33.4},
+     "1940": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "I9", "valeur": 33.0},
+     "1942": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "J9", "valeur": 31.4},
+     "1944": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "K9", "valeur": 26.6},
+     "1946": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "L9", "valeur": 24.2},
+     "1950": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "M9", "valeur": 18.6},
+     "1952": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "N9", "valeur": 15.0}
+    },
+    "ex_invalidite": {
+     "1928": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "C10", "valeur": 5.2},
+     "1930": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "D10", "valeur": 5.1},
+     "1932": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "E10", "valeur": 5.4},
+     "1934": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "F10", "valeur": 5.3},
+     "1936": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "G10", "valeur": 5.9},
+     "1938": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "H10", "valeur": 4.9},
+     "1940": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "I10", "valeur": 5.7},
+     "1942": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "J10", "valeur": 5.5},
+     "1944": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "K10", "valeur": 5.5},
+     "1946": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "L10", "valeur": 6.4},
+     "1950": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "M10", "valeur": 7.2},
+     "1952": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "N10", "valeur": 7.8}
+    },
+    "inapte": {
+     "1928": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "C11", "valeur": 18.6},
+     "1930": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "D11", "valeur": 20.4},
+     "1932": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "E11", "valeur": 17.9},
+     "1934": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "F11", "valeur": 14.8},
+     "1936": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "G11", "valeur": 14.1},
+     "1938": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "H11", "valeur": 13.4},
+     "1940": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "I11", "valeur": 13.2},
+     "1942": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "J11", "valeur": 13.6},
+     "1944": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "K11", "valeur": 12.3},
+     "1946": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "L11", "valeur": 10.7},
+     "1950": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "M11", "valeur": 9.6},
+     "1952": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "N11", "valeur": 8.1}
+    },
+    "taux_plein_autre_motif": {
+     "1928": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "C12", "valeur": 0.5},
+     "1930": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "D12", "valeur": 0.2},
+     "1932": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "E12", "valeur": 0.4},
+     "1934": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "F12", "valeur": 0.1},
+     "1936": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "G12", "valeur": 0.2},
+     "1938": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "H12", "valeur": 0.1},
+     "1940": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "I12", "valeur": 0.2},
+     "1942": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "J12", "valeur": 0.1},
+     "1944": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "K12", "valeur": 0.1},
+     "1946": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "L12", "valeur": 0.0},
+     "1950": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "M12", "valeur": 0.2},
+     "1952": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "N12", "valeur": 1.3}
+    },
+    "taux_plein_duree": {
+     "1928": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "C13", "valeur": 26.9},
+     "1930": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "D13", "valeur": 28.6},
+     "1932": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "E13", "valeur": 29.0},
+     "1934": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "F13", "valeur": 30.2},
+     "1936": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "G13", "valeur": 29.1},
+     "1938": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "H13", "valeur": 29.4},
+     "1940": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "I13", "valeur": 28.3},
+     "1942": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "J13", "valeur": 28.7},
+     "1944": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "K13", "valeur": 29.299999999999997},
+     "1946": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "L13", "valeur": 34.7},
+     "1950": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "M13", "valeur": 37.4},
+     "1952": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "N13", "valeur": 39.099999999999994}
+    },
+    "surcote": {
+     "1928": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "C14", "valeur": 0.2},
+     "1930": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "D14", "valeur": 0.1},
+     "1932": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "E14", "valeur": 0.2},
+     "1934": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "F14", "valeur": 0.3},
+     "1936": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "G14", "valeur": 0.4},
+     "1938": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "H14", "valeur": 0.8},
+     "1940": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "I14", "valeur": 2.0},
+     "1942": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "J14", "valeur": 3.8},
+     "1944": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "K14", "valeur": 7.6},
+     "1946": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "L14", "valeur": 11.5},
+     "1950": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "M14", "valeur": 12.8},
+     "1952": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "N14", "valeur": 14.9}
+    },
+    "ensemble": {
+     "1928": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "C15", "valeur": 100.0},
+     "1930": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "D15", "valeur": 100.0},
+     "1932": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "E15", "valeur": 100.0},
+     "1934": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "F15", "valeur": 100.0},
+     "1936": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "G15", "valeur": 100.0},
+     "1938": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "H15", "valeur": 100.0},
+     "1940": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "I15", "valeur": 100.0},
+     "1942": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "J15", "valeur": 100.0},
+     "1944": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "K15", "valeur": 100.0},
+     "1946": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "L15", "valeur": 100.0},
+     "1950": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "M15", "valeur": 100.0},
+     "1952": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "N15", "valeur": 100.0}
+    }
+   },
+   "H": {
+    "decote": {
+     "1928": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "C21", "valeur": 2.8},
+     "1930": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "D21", "valeur": 4.3},
+     "1932": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "E21", "valeur": 4.7},
+     "1934": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "F21", "valeur": 4.7},
+     "1936": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "G21", "valeur": 4.9},
+     "1938": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "H21", "valeur": 5.5},
+     "1940": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "I21", "valeur": 5.5},
+     "1942": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "J21", "valeur": 6.1},
+     "1944": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "K21", "valeur": 5.6},
+     "1946": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "L21", "valeur": 4.9},
+     "1950": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "M21", "valeur": 5.9},
+     "1952": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "N21", "valeur": 7.9}
+    },
+    "taux_plein": {
+     "1928": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "C22", "valeur": 97.1},
+     "1930": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "D22", "valeur": 95.6},
+     "1932": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "E22", "valeur": 95.0},
+     "1934": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "F22", "valeur": 95.0},
+     "1936": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "G22", "valeur": 94.6},
+     "1938": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "H22", "valeur": 93.5},
+     "1940": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "I22", "valeur": 90.8},
+     "1942": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "J22", "valeur": 87.8},
+     "1944": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "K22", "valeur": 82.6},
+     "1946": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "L22", "valeur": 80.19999999999999},
+     "1950": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "M22", "valeur": 79.19999999999999},
+     "1952": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "N22", "valeur": 77.30000000000001}
+    },
+    "decote_non_applicable": {
+     "1928": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "C23", "valeur": 8.6},
+     "1930": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "D23", "valeur": 8.2},
+     "1932": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "E23", "valeur": 9.4},
+     "1934": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "F23", "valeur": 9.0},
+     "1936": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "G23", "valeur": 8.6},
+     "1938": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "H23", "valeur": 9.0},
+     "1940": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "I23", "valeur": 9.7},
+     "1942": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "J23", "valeur": 10.3},
+     "1944": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "K23", "valeur": 11.0},
+     "1946": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "L23", "valeur": 6.7},
+     "1950": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "M23", "valeur": 5.9},
+     "1952": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "N23", "valeur": 3.8}
+    },
+    "taux_plein_age": {
+     "1928": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "C24", "valeur": 14.5},
+     "1930": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "D24", "valeur": 14.0},
+     "1932": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "E24", "valeur": 15.4},
+     "1934": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "F24", "valeur": 16.5},
+     "1936": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "G24", "valeur": 18.5},
+     "1938": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "H24", "valeur": 17.9},
+     "1940": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "I24", "valeur": 18.1},
+     "1942": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "J24", "valeur": 18.0},
+     "1944": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "K24", "valeur": 13.7},
+     "1946": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "L24", "valeur": 12.2},
+     "1950": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "M24", "valeur": 10.7},
+     "1952": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "N24", "valeur": 9.0}
+    },
+    "ex_invalidite": {
+     "1928": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "C25", "valeur": 5.8},
+     "1930": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "D25", "valeur": 7.9},
+     "1932": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "E25", "valeur": 6.8},
+     "1934": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "F25", "valeur": 6.6},
+     "1936": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "G25", "valeur": 7.5},
+     "1938": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "H25", "valeur": 5.9},
+     "1940": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "I25", "valeur": 6.6},
+     "1942": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "J25", "valeur": 5.6},
+     "1944": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "K25", "valeur": 6.5},
+     "1946": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "L25", "valeur": 6.5},
+     "1950": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "M25", "valeur": 6.8},
+     "1952": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "N25", "valeur": 7.4}
+    },
+    "inapte": {
+     "1928": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "C26", "valeur": 10.2},
+     "1930": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "D26", "valeur": 10.0},
+     "1932": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "E26", "valeur": 9.3},
+     "1934": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "F26", "valeur": 9.6},
+     "1936": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "G26", "valeur": 6.9},
+     "1938": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "H26", "valeur": 7.7},
+     "1940": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "I26", "valeur": 8.0},
+     "1942": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "J26", "valeur": 8.2},
+     "1944": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "K26", "valeur": 8.6},
+     "1946": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "L26", "valeur": 6.8},
+     "1950": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "M26", "valeur": 7.2},
+     "1952": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "N26", "valeur": 6.4}
+    },
+    "taux_plein_autre_motif": {
+     "1928": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "C27", "valeur": 0.1},
+     "1930": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "D27", "valeur": 0.1},
+     "1932": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "E27", "valeur": 0.1},
+     "1934": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "F27", "valeur": 0.2},
+     "1936": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "G27", "valeur": 0.3},
+     "1938": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "H27", "valeur": 0.2},
+     "1940": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "I27", "valeur": 0.1},
+     "1944": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "K27", "valeur": 0.0},
+     "1946": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "L27", "valeur": 0.0},
+     "1950": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "M27", "valeur": 0.0},
+     "1952": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "N27", "valeur": 2.0}
+    },
+    "taux_plein_duree": {
+     "1928": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "C28", "valeur": 57.9},
+     "1930": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "D28", "valeur": 55.4},
+     "1932": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "E28", "valeur": 54.0},
+     "1934": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "F28", "valeur": 53.1},
+     "1936": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "G28", "valeur": 52.8},
+     "1938": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "H28", "valeur": 52.8},
+     "1940": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "I28", "valeur": 48.3},
+     "1942": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "J28", "valeur": 45.7},
+     "1944": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "K28", "valeur": 42.8},
+     "1946": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "L28", "valeur": 48.0},
+     "1950": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "M28", "valeur": 48.599999999999994},
+     "1952": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "N28", "valeur": 48.7}
+    },
+    "surcote": {
+     "1928": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "C29", "valeur": 0.2},
+     "1930": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "D29", "valeur": 0.1},
+     "1932": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "E29", "valeur": 0.2},
+     "1934": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "F29", "valeur": 0.3},
+     "1936": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "G29", "valeur": 0.6},
+     "1938": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "H29", "valeur": 1.0},
+     "1940": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "I29", "valeur": 3.6},
+     "1942": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "J29", "valeur": 6.1},
+     "1944": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "K29", "valeur": 11.7},
+     "1946": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "L29", "valeur": 14.9},
+     "1950": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "M29", "valeur": 14.7},
+     "1952": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "N29", "valeur": 15.0}
+    },
+    "ensemble": {
+     "1928": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "C30", "valeur": 100.09999999999997},
+     "1930": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "D30", "valeur": 100.0},
+     "1932": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "E30", "valeur": 99.9},
+     "1934": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "F30", "valeur": 100.0},
+     "1936": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "G30", "valeur": 100.10000000000002},
+     "1938": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "H30", "valeur": 100.0},
+     "1940": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "I30", "valeur": 99.89999999999996},
+     "1942": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "J30", "valeur": 99.99999999999999},
+     "1944": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "K30", "valeur": 99.89999999999998},
+     "1946": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "L30", "valeur": 100.00000000000003},
+     "1950": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "M30", "valeur": 99.80000000000001},
+     "1952": {"classeur": "fiche_17.xlsx", "feuille": "F17_ Graphique 3 compl", "cellule": "N30", "valeur": 100.20000000000002}
+    }
+   }
+  },
+  "23_graphique_1": {
+   "regime_general": {
+    "61": {"classeur": "fiche_23.xlsx", "feuille": "F23_Graphique 1", "cellule": "C5", "valeur": 8.4},
+    "62": {"classeur": "fiche_23.xlsx", "feuille": "F23_Graphique 1", "cellule": "C6", "valeur": 8.7},
+    "63": {"classeur": "fiche_23.xlsx", "feuille": "F23_Graphique 1", "cellule": "C7", "valeur": 8.3},
+    "64": {"classeur": "fiche_23.xlsx", "feuille": "F23_Graphique 1", "cellule": "C8", "valeur": 7.8},
+    "65": {"classeur": "fiche_23.xlsx", "feuille": "F23_Graphique 1", "cellule": "C9", "valeur": 7.5},
+    "66": {"classeur": "fiche_23.xlsx", "feuille": "F23_Graphique 1", "cellule": "C10", "valeur": 6.6},
+    "67": {"classeur": "fiche_23.xlsx", "feuille": "F23_Graphique 1", "cellule": "C11", "valeur": 5.9},
+    "68": {"classeur": "fiche_23.xlsx", "feuille": "F23_Graphique 1", "cellule": "C12", "valeur": 5.5},
+    "69": {"classeur": "fiche_23.xlsx", "feuille": "F23_Graphique 1", "cellule": "C13", "valeur": 4.8},
+    "70": {"classeur": "fiche_23.xlsx", "feuille": "F23_Graphique 1", "cellule": "C14", "valeur": 4.4},
+    "71": {"classeur": "fiche_23.xlsx", "feuille": "F23_Graphique 1", "cellule": "C15", "valeur": 3.6},
+    "72": {"classeur": "fiche_23.xlsx", "feuille": "F23_Graphique 1", "cellule": "C16", "valeur": 3.2},
+    "73": {"classeur": "fiche_23.xlsx", "feuille": "F23_Graphique 1", "cellule": "C17", "valeur": 2.7},
+    "74": {"classeur": "fiche_23.xlsx", "feuille": "F23_Graphique 1", "cellule": "C18", "valeur": 2.3},
+    "75": {"classeur": "fiche_23.xlsx", "feuille": "F23_Graphique 1", "cellule": "C19", "valeur": 1.9},
+    "76": {"classeur": "fiche_23.xlsx", "feuille": "F23_Graphique 1", "cellule": "C20", "valeur": 1.5},
+    "77": {"classeur": "fiche_23.xlsx", "feuille": "F23_Graphique 1", "cellule": "C21", "valeur": 1.0},
+    "78": {"classeur": "fiche_23.xlsx", "feuille": "F23_Graphique 1", "cellule": "C22", "valeur": 1.0},
+    "79": {"classeur": "fiche_23.xlsx", "feuille": "F23_Graphique 1", "cellule": "C23", "valeur": 0.8},
+    "80": {"classeur": "fiche_23.xlsx", "feuille": "F23_Graphique 1", "cellule": "C24", "valeur": 0.6}
+   }
+  },
+  "23_graphique_1_compl": {
+   "femmes": {
+    "61": {"classeur": "fiche_23.xlsx", "feuille": "F23_Graphique 1 compl.", "cellule": "C6", "valeur": 7.5},
+    "62": {"classeur": "fiche_23.xlsx", "feuille": "F23_Graphique 1 compl.", "cellule": "C7", "valeur": 7.9},
+    "63": {"classeur": "fiche_23.xlsx", "feuille": "F23_Graphique 1 compl.", "cellule": "C8", "valeur": 8.8},
+    "64": {"classeur": "fiche_23.xlsx", "feuille": "F23_Graphique 1 compl.", "cellule": "C9", "valeur": 8.0},
+    "65": {"classeur": "fiche_23.xlsx", "feuille": "F23_Graphique 1 compl.", "cellule": "C10", "valeur": 7.8},
+    "66": {"classeur": "fiche_23.xlsx", "feuille": "F23_Graphique 1 compl.", "cellule": "C11", "valeur": 6.7},
+    "67": {"classeur": "fiche_23.xlsx", "feuille": "F23_Graphique 1 compl.", "cellule": "C12", "valeur": 5.9},
+    "68": {"classeur": "fiche_23.xlsx", "feuille": "F23_Graphique 1 compl.", "cellule": "C13", "valeur": 5.4},
+    "69": {"classeur": "fiche_23.xlsx", "feuille": "F23_Graphique 1 compl.", "cellule": "C14", "valeur": 4.6},
+    "70": {"classeur": "fiche_23.xlsx", "feuille": "F23_Graphique 1 compl.", "cellule": "C15", "valeur": 4.1},
+    "71": {"classeur": "fiche_23.xlsx", "feuille": "F23_Graphique 1 compl.", "cellule": "C16", "valeur": 3.3},
+    "72": {"classeur": "fiche_23.xlsx", "feuille": "F23_Graphique 1 compl.", "cellule": "C17", "valeur": 2.9},
+    "73": {"classeur": "fiche_23.xlsx", "feuille": "F23_Graphique 1 compl.", "cellule": "C18", "valeur": 2.4},
+    "74": {"classeur": "fiche_23.xlsx", "feuille": "F23_Graphique 1 compl.", "cellule": "C19", "valeur": 1.9},
+    "75": {"classeur": "fiche_23.xlsx", "feuille": "F23_Graphique 1 compl.", "cellule": "C20", "valeur": 1.5},
+    "76": {"classeur": "fiche_23.xlsx", "feuille": "F23_Graphique 1 compl.", "cellule": "C21", "valeur": 1.2},
+    "77": {"classeur": "fiche_23.xlsx", "feuille": "F23_Graphique 1 compl.", "cellule": "C22", "valeur": 0.8},
+    "78": {"classeur": "fiche_23.xlsx", "feuille": "F23_Graphique 1 compl.", "cellule": "C23", "valeur": 0.8},
+    "79": {"classeur": "fiche_23.xlsx", "feuille": "F23_Graphique 1 compl.", "cellule": "C24", "valeur": 0.6},
+    "80": {"classeur": "fiche_23.xlsx", "feuille": "F23_Graphique 1 compl.", "cellule": "C25", "valeur": 0.5}
+   },
+   "hommes": {
+    "61": {"classeur": "fiche_23.xlsx", "feuille": "F23_Graphique 1 compl.", "cellule": "F6", "valeur": 8.8},
+    "62": {"classeur": "fiche_23.xlsx", "feuille": "F23_Graphique 1 compl.", "cellule": "F7", "valeur": 9.1},
+    "63": {"classeur": "fiche_23.xlsx", "feuille": "F23_Graphique 1 compl.", "cellule": "F8", "valeur": 7.9},
+    "64": {"classeur": "fiche_23.xlsx", "feuille": "F23_Graphique 1 compl.", "cellule": "F9", "valeur": 7.6},
+    "65": {"classeur": "fiche_23.xlsx", "feuille": "F23_Graphique 1 compl.", "cellule": "F10", "valeur": 7.1},
+    "66": {"classeur": "fiche_23.xlsx", "feuille": "F23_Graphique 1 compl.", "cellule": "F11", "valeur": 6.4},
+    "67": {"classeur": "fiche_23.xlsx", "feuille": "F23_Graphique 1 compl.", "cellule": "F12", "valeur": 5.8},
+    "68": {"classeur": "fiche_23.xlsx", "feuille": "F23_Graphique 1 compl.", "cellule": "F13", "valeur": 5.7},
+    "69": {"classeur": "fiche_23.xlsx", "feuille": "F23_Graphique 1 compl.", "cellule": "F14", "valeur": 5.1},
+    "70": {"classeur": "fiche_23.xlsx", "feuille": "F23_Graphique 1 compl.", "cellule": "F15", "valeur": 4.7},
+    "71": {"classeur": "fiche_23.xlsx", "feuille": "F23_Graphique 1 compl.", "cellule": "F16", "valeur": 3.9},
+    "72": {"classeur": "fiche_23.xlsx", "feuille": "F23_Graphique 1 compl.", "cellule": "F17", "valeur": 3.6},
+    "73": {"classeur": "fiche_23.xlsx", "feuille": "F23_Graphique 1 compl.", "cellule": "F18", "valeur": 3.1},
+    "74": {"classeur": "fiche_23.xlsx", "feuille": "F23_Graphique 1 compl.", "cellule": "F19", "valeur": 2.7},
+    "75": {"classeur": "fiche_23.xlsx", "feuille": "F23_Graphique 1 compl.", "cellule": "F20", "valeur": 2.3},
+    "76": {"classeur": "fiche_23.xlsx", "feuille": "F23_Graphique 1 compl.", "cellule": "F21", "valeur": 1.8},
+    "77": {"classeur": "fiche_23.xlsx", "feuille": "F23_Graphique 1 compl.", "cellule": "F22", "valeur": 1.2},
+    "78": {"classeur": "fiche_23.xlsx", "feuille": "F23_Graphique 1 compl.", "cellule": "F23", "valeur": 1.3},
+    "79": {"classeur": "fiche_23.xlsx", "feuille": "F23_Graphique 1 compl.", "cellule": "F24", "valeur": 1.0},
+    "80": {"classeur": "fiche_23.xlsx", "feuille": "F23_Graphique 1 compl.", "cellule": "F25", "valeur": 0.8}
+   }
+  },
+  "10_graphique_encadre_1": {
+   "france_vieillesse": {"classeur": "fiche_10.xlsx", "feuille": "F10_Graphique encadré 1", "cellule": "C29", "valeur": 13.07},
+   "france_survie": {"classeur": "fiche_10.xlsx", "feuille": "F10_Graphique encadré 1", "cellule": "D29", "valeur": 1.54},
+   "france_somme": {"classeur": "fiche_10.xlsx", "feuille": "F10_Graphique encadré 1", "cellule": "E29", "valeur": 14.61},
+   "italie_somme": {"classeur": "fiche_10.xlsx", "feuille": "F10_Graphique encadré 1", "cellule": "E32", "valeur": 16.96},
+   "allemagne_somme": {"classeur": "fiche_10.xlsx", "feuille": "F10_Graphique encadré 1", "cellule": "E22", "valeur": 12.32}
+  },
+  "10_graphique_2": {
+   "montants": {"classeur": "fiche_10.xlsx", "feuille": "F10_Graphique 2", "plage": "K6:M11", "valeurs": [
+      [141.0, 148.0, 159.0],
+      [100.0, 104.0, 110.0],
+      [92.0, 98.0, 104.0],
+      [20.0, 21.0, 22.0],
+      [1.0, 1.0, 1.0],
+      [353.0, 370.0, 395.0]]},
+   "regime_general_2024_pour_cent": {"classeur": "fiche_10.xlsx", "feuille": "F10_Graphique 2", "cellule": "M15", "valeur": 40.0}
+  },
+  "17_tableau_decote": {"classeur": "fiche_17.xlsx", "feuille": "F17_Tableau compl - Decote", "plage": "C6:G15", "valeurs": [
+     [13.4, 10.3, 52.0, 40.0, 8.0],
+     [6.6, 9.7, 56.0, 37.0, 7.0],
+     [5.0, 10.4, 50.0, 41.0, 9.0],
+     [18.4, 8.2, 65.0, 30.0, 6.0],
+     [9.5, 8.7, 60.0, 34.0, 6.0],
+     [12.3, 10.1, 47.0, 52.0, 1.0],
+     [15.9, 7.1, 71.0, 28.0, 1.0],
+     [11.4, 7.0, 73.0, 25.0, 2.0],
+     [17.8, 8.4, 64.0, 29.0, 7.0],
+     [9.3, 5.0, 83.0, 15.0, 2.0]]},
+  "17_tableau_surcote": {"classeur": "fiche_17.xlsx", "feuille": "F17_Tableau compl - Surcote", "plage": "C6:H15", "valeurs": [
+     [18.9, 7.7, 12.0, 29.0, 29.0, 30.0],
+     [18.3, 8.5, 11.0, 26.0, 27.0, 36.0],
+     [33.9, 10.3, 11.0, 19.0, 22.0, 47.0],
+     [37.6, 8.4, 9.0, 33.0, 29.0, 29.0],
+     [23.3, 8.3, 9.0, 33.0, 30.0, 28.0],
+     [34.1, 7.6, 14.0, 33.0, 24.0, 29.0],
+     [11.8, 8.2, 8.0, 27.0, 29.0, 36.0],
+     [20.3, 8.3, 10.0, 32.0, 30.0, 28.0],
+     [4.5, 7.1, 9.0, 31.0, 29.0, 31.0],
+     [34.6, 6.9, 11.0, 30.0, 39.0, 20.0]]},
+  "16_graphique_4": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 4", "plage": "C6:N10", "valeurs": [
+     [0.07, 0.02, 0.0, 0.0, 0.46, 0.33, 0.09, 0.01, 0.27, 0.17, 0.05, 0.0],
+     [0.06, 0.93, 0.34, 0.59, 0.08, 0.49, 0.22, 0.45, 0.07, 0.72, 0.28, 0.52],
+     [0.06, 0.1, 0.03, 0.07, 0.23, 0.59, 0.13, 0.12, 0.14, 0.34, 0.08, 0.09],
+     [0.29, 0.59, 1.85, 4.16, 0.06, 0.34, 6.17, 10.01, 0.18, 0.47, 3.96, 6.99],
+     [0.48, 1.6400000000000001, 2.22, 4.82, 0.8300000000000001, 1.7500000000000002, 6.61, 10.59, 0.66, 1.7, 4.37, 7.6000000000000005]]},
+  "16_graphique_5_compl": {
+   "femmes": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 5 compl", "plage": "C5:O13", "valeurs": [
+      [1.0, 1.0, 1.0, 2.0, 2.0, 3.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0],
+      [2.0, 2.0, 2.0, 2.0, 3.0, 2.0, 3.0, 3.0, 3.0, 4.0, 4.0, 3.0, 3.0],
+      [2.0, 2.0, 3.0, 2.0, 3.0, 3.0, 2.0, 3.0, 6.0, 8.0, 8.0, 7.0, 6.0],
+      [53.0, 55.0, 53.0, 52.0, 52.0, 52.0, 52.0, 53.0, 54.0, 53.0, 54.0, 47.0, 12.0],
+      [5.0, 5.0, 4.0, 4.0, 4.0, 4.0, 4.0, 5.0, 5.0, 5.0, 5.0, 10.0, 45.0],
+      [4.0, 3.0, 3.0, 3.0, 2.0, 2.0, 3.0, 3.0, 3.0, 3.0, 3.0, 5.0, 7.0],
+      [6.0, 4.0, 4.0, 4.0, 3.0, 4.0, 4.0, 4.0, 4.0, 4.0, 4.0, 6.0, 8.0],
+      [24.0, 24.0, 26.0, 27.0, 27.0, 26.0, 25.0, 23.0, 20.0, 18.0, 17.0, 15.0, 4.0],
+      [4.0, 4.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 4.0, 13.0]]},
+   "hommes": {"classeur": "fiche_16.xlsx", "feuille": "F16_Graphique 5 compl", "plage": "R5:AD13", "valeurs": [
+      [5.0, 6.0, 6.0, 5.0, 4.0, 4.0, 4.0, 4.0, 4.0, 4.0, 3.0, 3.0, 3.0],
+      [5.0, 6.0, 7.0, 6.0, 6.0, 6.0, 7.0, 6.0, 5.0, 5.0, 5.0, 5.0, 5.0],
+      [3.0, 2.0, 2.0, 3.0, 2.0, 2.0, 2.0, 5.0, 16.0, 21.0, 21.0, 18.0, 14.0],
+      [67.0, 68.0, 68.0, 68.0, 68.0, 65.0, 63.0, 60.0, 50.0, 44.0, 44.0, 40.0, 21.0],
+      [5.0, 4.0, 4.0, 4.0, 4.0, 5.0, 5.0, 5.0, 5.0, 6.0, 6.0, 9.0, 31.0],
+      [4.0, 3.0, 3.0, 2.0, 3.0, 3.0, 4.0, 3.0, 4.0, 4.0, 4.0, 5.0, 6.0],
+      [4.0, 3.0, 3.0, 3.0, 4.0, 5.0, 5.0, 5.0, 5.0, 5.0, 6.0, 7.0, 8.0],
+      [5.0, 5.0, 5.0, 6.0, 6.0, 7.0, 9.0, 8.0, 8.0, 8.0, 8.0, 8.0, 4.0],
+      [2.0, 2.0, 2.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 4.0, 8.0]]}
+  },
+  "12_graphique_1": {
+   "publie_1946": {"classeur": "fiche_12.xlsx", "feuille": "F12_Graphique 1", "plage": "C8:E8", "valeurs": [
+      [37.4, 44.0, 40.7]]},
+   "edition_precedente_1946": {"classeur": "fiche_12.xlsx", "feuille": "Graphique 1 (2)", "plage": "C8:E8", "valeurs": [
+      [37.6, 44.1, 41.0]]},
+   "synthese": {
+    "champ_eic": {"classeur": "fiche_12.xlsx", "feuille": "Synthese", "cellule": "A9", "valeur": "Champ EIC : individus presents sur marche du travail avant le 31/12/2017, en vie au 31/12/2017"},
+    "figure_1": {"classeur": "fiche_12.xlsx", "feuille": "Synthese", "cellule": "B7", "valeur": "VERSION ALTERNATIVE POUR ETRE HOMOGENE AVEC LES AUTRES FIGURES DE LA FICHE"},
+    "figure_2": {"classeur": "fiche_12.xlsx", "feuille": "Synthese", "cellule": "C7", "valeur": "A DECIDER :\n- VERSION INITIALE MET EN EVIDENCE  RECUL AGE ENTREE SUR MARCHE DU TRAVAIL (ALLONGEMENT DES ETUDES ETC.)\n- VERSION ALTERNATIVE MET EN EVIDENCE RYTHME REEL DE VALIDATION POUR LES COTISANTS (NEUTRALISE BIAIS A LA BAISSE LIE A ENTREE PLUS TARDIVE DES TRAVAILLEURS ETRANGERS SUR MARCHE DU TRAVAIL FRANCAIS)"},
+    "figure_3": {"classeur": "fiche_12.xlsx", "feuille": "Synthese", "cellule": "D7", "valeur": "VERSION ALTERNATIVE POUR ETRE HOMOGENE AVEC LES AUTRES FIGURES DE LA FICHE (VARIABLE NTTV RECALCULEE) ET POUR TENIR COMPTE DU NOMBRE DE TRIMESTRES VALIDES."},
+    "figure_4": {"classeur": "fiche_12.xlsx", "feuille": "Synthese", "cellule": "E7", "valeur": "VERSION ALTERNATIVE"},
+    "figure_5": {"classeur": "fiche_12.xlsx", "feuille": "Synthese", "cellule": "F7", "valeur": "A DECIDER"}
+   }
+  },
+  "21_graphique_1_revisions": {
+   "femmes": {
+    "edition_2025": {"classeur": "fiche_21.xlsx", "feuille": "F21_Graphique 1 REVISIONS", "plage": "D8:K13", "valeurs": [
+       [18.02, 0.34, 15.87, 45.62, 5.46, 7.83, 6.88, 0.0],
+       [15.47, 0.18, 16.4, 50.08, 5.72, 1.6, 10.35, 0.21000000000000002],
+       [12.85, 0.2, 11.93, 55.96, 6.2, 0.34, 11.95, 0.58],
+       [11.25, 0.14, 7.94, 67.85, 6.78, 0.03, 5.91, 0.09],
+       [11.49, 0.15, 7.06, 68.95, 6.85, 0.0, 5.44, 0.06],
+       [10.18, 0.15, 6.52, 72.14, 6.33, 0.0, 4.65, 0.03]]},
+    "revisions": {"classeur": "fiche_21.xlsx", "feuille": "F21_Graphique 1 REVISIONS", "plage": "N8:U13", "valeurs": [
+       [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+       [-0.33999999999999986, -0.009999999999999981, -0.029999999999997584, 0.46999999999999886, -0.2999999999999998, 0.0, 0.2900000000000009, -0.08000000000000002],
+       [-0.03999999999999915, 0.0, -0.129999999999999, 0.4200000000000017, -0.33000000000000007, -0.010000000000000009, 0.21000000000000085, -0.13999999999999996],
+       [0.1999999999999993, -0.010000000000000009, -0.14000000000000057, 0.25, -0.28000000000000025, 0.0, -0.009999999999999787, -0.009999999999999995],
+       [-0.6899999999999995, 0.06, 0.0600000000000005, 0.539999999999992, -0.22999999999999954, 0.0, 0.27999999999999936, -0.019999999999999997],
+       [-0.5199999999999996, 0.03, 0.10000000000000053, 0.1799999999999926, -0.1299999999999999, 0.0, 0.21999999999999975, 0.11000000000000001]]},
+    "edition_2026": {"classeur": "fiche_21.xlsx", "feuille": "F21_Graphique 1", "plage": "C7:J12", "valeurs": [
+       [18.02, 0.34, 15.87, 45.62, 5.46, 7.83, 6.88, 0.0],
+       [15.13, 0.17, 16.37, 50.55, 5.42, 1.6, 10.64, 0.13],
+       [12.81, 0.2, 11.8, 56.38, 5.87, 0.33, 12.16, 0.44],
+       [11.45, 0.13, 7.8, 68.1, 6.5, 0.03, 5.9, 0.08],
+       [10.8, 0.21, 7.12, 69.49, 6.62, 0.0, 5.72, 0.04],
+       [9.66, 0.18, 6.62, 72.32, 6.2, 0.0, 4.87, 0.14]]}
+   },
+   "hommes": {
+    "edition_2025": {"classeur": "fiche_21.xlsx", "feuille": "F21_Graphique 1 REVISIONS", "plage": "D18:K23", "valeurs": [
+       [8.99, 0.16, 17.09, 47.24, 6.01, 13.24, 7.15, 0.12000000000000001],
+       [8.03, 0.13, 15.53, 48.14, 5.61, 2.51, 18.88, 1.16],
+       [7.32, 0.12, 9.2, 52.93, 5.91, 0.38, 21.75, 2.38],
+       [8.1, 0.14, 7.54, 67.86, 6.43, 0.08, 9.5, 0.33999999999999997],
+       [9.32, 0.26, 7.46, 69.09, 5.68, 0.0, 7.99, 0.19999999999999998],
+       [8.18, 0.23, 6.55, 73.4, 5.32, 0.0, 6.24, 0.08]]},
+    "revisions": {"classeur": "fiche_21.xlsx", "feuille": "F21_Graphique 1 REVISIONS", "plage": "N18:U23", "valeurs": [
+       [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+       [-0.6099999999999994, 0.010000000000000009, -0.4599999999999991, 1.3399999999999963, -0.6400000000000006, -0.04999999999999982, 0.7200000000000024, -0.29999999999999993],
+       [-0.20000000000000018, -0.009999999999999995, -0.34999999999999964, 0.8599999999999994, -0.5499999999999998, -0.010000000000000009, 0.6099999999999994, -0.33999999999999986],
+       [-0.08999999999999986, 0.0, -0.21999999999999975, 0.6099999999999994, -0.5299999999999994, 0.009999999999999995, 0.2599999999999998, -0.009999999999999953],
+       [-0.7300000000000004, -0.020000000000000018, -0.03000000000000025, 0.9299999999999926, -0.5299999999999994, 0.0, 0.2400000000000002, 0.14000000000000004],
+       [-0.71, 0.0, -0.09999999999999964, 0.6499999999999915, -0.1299999999999999, 0.0, 0.16000000000000014, 0.14]]},
+    "edition_2026": {"classeur": "fiche_21.xlsx", "feuille": "F21_Graphique 1", "plage": "C19:J24", "valeurs": [
+       [8.99, 0.16, 17.09, 47.24, 6.01, 13.24, 7.15, 0.12000000000000001],
+       [7.42, 0.14, 15.07, 49.48, 4.97, 2.46, 19.6, 0.86],
+       [7.12, 0.11, 8.85, 53.79, 5.36, 0.37, 22.36, 2.04],
+       [8.01, 0.14, 7.32, 68.47, 5.9, 0.09, 9.76, 0.33],
+       [8.59, 0.24, 7.43, 70.02, 5.15, 0.0, 8.23, 0.34],
+       [7.47, 0.23, 6.45, 74.05, 5.19, 0.0, 6.4, 0.22]]}
+   },
+   "ensemble": {
+    "edition_2025": {"classeur": "fiche_21.xlsx", "feuille": "F21_Graphique 1 REVISIONS", "plage": "D28:K33", "valeurs": [
+       [13.19, 0.24, 16.52, 46.47, 5.75, 10.71, 7.06, 0.060000000000000005],
+       [11.59, 0.16, 15.95, 49.07, 5.66, 2.07, 14.79, 0.7100000000000001],
+       [10.01, 0.16, 10.53, 54.4, 6.05, 0.36, 16.99, 1.51],
+       [9.64, 0.14, 7.74, 67.86, 6.6, 0.06, 7.75, 0.22],
+       [10.38, 0.21, 7.26, 69.02, 6.25, 0.0, 6.75, 0.13],
+       [9.16, 0.19, 6.54, 72.79, 5.81, 0.0, 5.46, 0.05]]},
+    "revisions": {"classeur": "fiche_21.xlsx", "feuille": "F21_Graphique 1 REVISIONS", "plage": "N28:U33", "valeurs": [
+       [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+       [-0.39000000000000057, 0.0, -0.25, 0.9299999999999997, -0.46999999999999975, -0.029999999999999805, 0.4200000000000017, -0.21000000000000008],
+       [-0.07000000000000028, -0.010000000000000009, -0.21999999999999886, 0.6700000000000017, -0.4399999999999995, -0.010000000000000009, 0.33000000000000185, -0.26],
+       [0.07000000000000028, -0.010000000000000009, -0.1900000000000004, 0.4300000000000068, -0.40999999999999925, 0.0, 0.11000000000000032, -0.010000000000000009],
+       [-0.7100000000000009, 0.020000000000000018, 0.020000000000000462, 0.7400000000000091, -0.3700000000000001, 0.0, 0.25, 0.06],
+       [-0.6099999999999994, 0.010000000000000009, -0.009999999999999787, 0.3999999999999915, -0.11999999999999922, 0.0, 0.1900000000000004, 0.13]]},
+    "edition_2026": {"classeur": "fiche_21.xlsx", "feuille": "F21_Graphique 1", "plage": "C31:J36", "valeurs": [
+       [13.19, 0.24, 16.52, 46.47, 5.75, 10.71, 7.06, 0.060000000000000005],
+       [11.2, 0.16, 15.7, 50.0, 5.19, 2.04, 15.21, 0.5],
+       [9.94, 0.15, 10.31, 55.07, 5.61, 0.35, 17.32, 1.25],
+       [9.71, 0.13, 7.55, 68.29, 6.19, 0.06, 7.86, 0.21],
+       [9.67, 0.23, 7.28, 69.76, 5.88, 0.0, 7.0, 0.19],
+       [8.55, 0.2, 6.53, 73.19, 5.69, 0.0, 5.65, 0.18]]}
+   }
+  },
+  "21_encadre_2": {
+   "parts_par_age": {"classeur": "fiche_21.xlsx", "feuille": "F21_Graphique encadré 2", "plage": "C4:V21", "valeurs": [
+      [21.25, 20.23, 16.78, 16.96, 18.04, 16.96, 18.29, 18.09, 19.43, 18.34, 16.92, 17.2, 17.89, 18.01, 17.43, 17.08, 16.26, 16.33, 15.85, 15.27],
+      [23.240000000000002, 20.92, 21.04, 18.45, 19.96, 19.26, 19.86, 18.68, 21.3, 16.5, 19.44, 18.42, 19.51, 19.03, 18.5, 18.5, 15.97, 17.12, 17.93, 15.8],
+      [24.0, 24.150000000000002, 21.650000000000002, 21.45, 19.740000000000002, 21.22, 20.650000000000002, 20.240000000000002, 21.96, 20.8, 19.56, 18.17, 20.69, 19.08, 18.17, 19.6, 18.93, 17.75, 17.61, 16.78],
+      [24.73, 25.490000000000002, 25.22, 23.77, 23.32, 23.66, 20.91, 20.47, 22.26, 23.31, 21.58, 19.83, 18.52, 21.82, 20.56, 20.0, 18.58, 18.89, 17.95, 16.53],
+      [27.810000000000002, 26.64, 26.5, 24.45, 25.2, 25.490000000000002, 24.54, 22.080000000000002, 22.18, 22.67, 23.55, 22.93, 19.79, 22.63, 20.57, 22.14, 21.44, 20.81, 20.56, 19.85],
+      [30.44, 28.19, 26.740000000000002, 27.98, 26.95, 28.21, 26.68, 25.73, 27.34, 25.65, 26.58, 26.01, 22.7, 21.45, 23.14, 22.87, 23.5, 21.74, 21.11, 20.37],
+      [31.830000000000002, 29.150000000000002, 27.54, 28.87, 28.490000000000002, 27.86, 28.650000000000002, 27.810000000000002, 29.94, 28.22, 26.98, 27.61, 24.71, 25.45, 25.45, 24.16, 23.9, 22.75, 22.57, 21.95],
+      [20.47, 13.47, 11.43, 11.97, 11.36, 11.94, 13.93, 20.12, 27.43, 26.66, 28.32, 27.25, 26.97, 25.03, 25.88, 27.85, 27.56, 24.74, 22.72, 23.17],
+      [12.67, 14.25, 11.01, 9.88, 10.17, 9.450000000000001, 10.44, 9.5, 9.98, 15.84, 19.04, 20.75, 27.79, 27.06, 28.32, 24.24, 27.0, 27.16, 24.48, 24.35],
+      [12.290000000000001, 12.69, 11.0, 11.620000000000001, 10.34, 8.73, 9.64, 9.93, 10.68, 9.55, 10.76, 9.44, 13.13, 13.34, 12.41, 11.75, 16.1, 16.77, 17.41, 18.88],
+      [13.07, 13.530000000000001, 11.84, 11.15, 10.94, 9.44, 8.950000000000001, 9.98, 9.74, 8.06, 10.6, 9.51, 9.03, 9.01, 9.79, 8.89, 9.92, 9.52, 8.51, 9.03],
+      [14.91, 12.34, 11.26, 10.13, 11.24, 9.26, 9.02, 8.040000000000001, 10.17, 10.23, 8.22, 8.68, 9.79, 8.57, 9.31, 8.35, 8.79, 7.78, 7.11, 7.65],
+      [9.22, 9.93, 7.38, 5.88, 4.92, 5.12, 4.74, 4.75, 3.52, 3.39, 2.99, 3.71, 6.89, 7.62, 7.15, 8.49, 8.07, 7.02, 7.24, 7.32],
+      [7.73, 8.5, 7.25, 6.19, 4.87, 4.8100000000000005, 4.61, 4.87, 2.81, 2.64, 2.54, 1.91, 3.29, 2.92, 3.48, 3.9, 8.04, 6.68, 6.22, 5.65],
+      [8.73, 7.95, 7.7, 5.94, 5.2700000000000005, 4.88, 5.37, 5.3100000000000005, 4.0, 2.94, 2.8, 2.6, 1.68, 2.25, 2.32, 2.74, 5.05, 3.2, 3.57, 3.67],
+      [7.07, 7.15, 8.36, 6.42, 5.76, 6.57, 5.54, 5.86, 2.48, 2.8, 3.56, 2.39, 1.31, 1.96, 1.72, 2.01, 3.21, 2.49, 2.5, 2.61],
+      [7.390000000000001, 7.2700000000000005, 6.45, 7.6000000000000005, 6.29, 5.84, 6.0200000000000005, 4.79, 3.27, 3.41, 2.91, 2.17, 2.68, 2.13, 2.93, 1.13, 2.88, 2.28, 2.18, 1.69],
+      [296.84000000000003, 281.85, 259.13, 248.72, 242.85, 238.71, 237.85, 236.24, 248.49, 241.01, 246.34999999999997, 238.57999999999998, 246.36999999999998, 247.35999999999999, 247.12999999999997, 243.70000000000005, 255.2, 243.03000000000003, 235.52, 230.57]]},
+   "part_et_duree": {"classeur": "fiche_21.xlsx", "feuille": "F21_Graphique encadré 2", "plage": "C24:V25", "valeurs": [
+      [19.05, 18.19, 16.75, 16.03, 15.58, 15.17, 14.93, 14.64, 15.36, 14.66, 14.88, 14.29, 14.74, 14.85, 14.88, 14.25, 15.33, 14.62, 14.23, 13.96],
+      [2.97, 2.82, 2.59, 2.49, 2.43, 2.39, 2.38, 2.36, 2.48, 2.41, 2.46, 2.39, 2.46, 2.47, 2.47, 2.34, 2.55, 2.43, 2.36, 2.31]]},
+   "revenu": {"classeur": "fiche_21.xlsx", "feuille": "F21_Tableau encadré 2", "plage": "C5:D16", "valeurs": [
+      [27.97, 59.87],
+      [9.11, 26.76],
+      [7.56, 26.32],
+      [11.29, 31.07],
+      [46.51, 49.27],
+      [24.23, 84.51],
+      [14.69, 58.19],
+      [3.78, 28.13],
+      [5.97, 21.38],
+      [4.94, 43.03],
+      [-13.4, 89.16],
+      [100.0, 100.0]]}
+  },
+  "21_synthese": {
+   "graphique_1": {"classeur": "fiche_21.xlsx", "feuille": "Synthese", "cellule": "B2", "valeur": "Jusqu a 1,3 point d'ecart, surtout pour hommes"},
+   "tableau_1": {"classeur": "fiche_21.xlsx", "feuille": "Synthese", "cellule": "C2", "valeur": "Jusqu’à 2,8 point d'ecart sur l'emploi pour hommes de 46 et 50 (revision de 4%)"},
+   "generations_tableau_1": {"classeur": "fiche_21.xlsx", "feuille": "Synthese", "cellule": "C3", "valeur": "1946 et 1950"}
+  }
+ },
+ "citations": {
+  "10_encadre_1": {
+   "page": 99,
+   "textes": ["correspond à 93 % des prestations du risque vieillesse-survie en 2024"]
+  },
+  "10_tableau_1": {
+   "page": 100,
+   "textes": ["Source > Drees, CPS, données semi-définitives pour 2023 et provisoires pour 2024"]
+  },
+  "01_tableau_2": {
+   "page": 23,
+   "textes": ["2. Voir annexe 3, note sur l’intégration de la SSI au régime général"]
+  },
+  "01_flux": {
+   "page": 29,
+   "textes": ["Parmi eux, 718 000 sont primo-liquidants"]
+  },
+  "28_tableau_1": {
+   "page": 232,
+   "textes": ["Sources > Drees, EACR 2024 ; Insee, estimation de la population (France) au 1er janvier 2025", "En 2024, 208 600 allocataires sont âgés de 65 à 69 ans. Cela représente 5,3 % de l’ensemble de la population âgée de 65 à 69 ans"]
+  },
+  "23_graphique_1": {
+   "page": 204,
+   "textes": ["Le régime général intègre les indépendants de l’ex-SSI depuis 2020", "Les données concernent 2024, sauf celles de la CNAV, qui portent sur 2022, dernière année connue"]
+  },
+  "17_graphique_2": {
+   "page": 156,
+   "textes": ["Répartition des retraités des régimes de base de la génération née en 1957", "ayant au moins un droit direct dans un régime de base du secteur privé"]
+  },
+  "17_graphique_4": {
+   "page": 158,
+   "textes": ["vivants au 31 décembre de l’année de leurs 67 ans pour les séries par régime"]
+  },
+  "10_graphique_encadre_1": {
+   "page": 100,
+   "textes": ["Sur le champ total, elles s’élèvent à 14,6 % du PIB en France en 2024 ; à titre comparatif, ces prestations représentent 17,0 % du PIB en Italie et 12,3 % du PIB en Allemagne"]
+  },
+  "10_graphique_2": {
+   "page": 102,
+   "textes": ["le régime général verse 40 % des montants de pensions de retraite"]
+  }
+ }
+}

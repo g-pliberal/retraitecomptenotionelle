@@ -1,0 +1,37 @@
+date: "2026-11-06"
+session: "action 178, étape 7, J5 : le solde du suivi du panorama de la DREES (treize fiches lues feuille à feuille et recoupées à ce que le dépôt porte)"
+consulte: >-
+  Aucune règle du scénario 1 n'est touchée. Le PDF du panorama de la DREES
+  (miroir de l'UNSA, empreinte 9eb36a06…735e9be) par pdftotext aux folios 22 à 39,
+  99 à 102, 114, 140 à 149, 156, 158, 190, 191, 204, 232 et 235, et les classeurs
+  des fiches 1, 3, 10, 12, 15, 16, 17, 21, 23 et 28 de l'archive de la release
+  documents-apportes (empreinte ec7503f8…aaf64911), feuille par feuille ; en
+  regard, les fichiers du dépôt (pensions_droits.csv, depenses_retraite.csv,
+  pib_courant.csv, effectifs_retraites.csv, allocataires_minimum_vieillesse.csv,
+  population_par_age.csv, retraites_generations.csv, age_conjoncturel_depart.csv,
+  durees_validees_actifs.csv, droits_derives.csv) et la table C de l'EACR
+  (tests/temoins/drees_eacr_tables_2026.json). Une requête HEAD sur la page du jeu
+  drees_minimum_vieillesse du portail (HTTP 200), non répétée ni prolongée.
+trouve: >-
+  Les feuilles lues se recoupent aux fichiers du dépôt : la pyramide des âges de
+  la fiche 1 et les âges de la fiche 3 à la table C ; dix-huit caisses de la
+  fiche 1 au cadrage de l'EACR ; les allocataires par âge et par situation de la
+  fiche 28 au classeur de l'INSEE ; les sous-postes de la fiche 10 aux pensions de
+  droit direct et dérivé du dépôt ; l'âge conjoncturel de la fiche 15 est 50 plus
+  la somme des parts de non-retraités par âge, aux 63 valeurs de 2004 à 2024. Neuf
+  défauts ou points non tranchés de la source, épinglés par un test : le PIB de
+  2023 et 2024 de la fiche 10 s'écarte de celui du dépôt de 0,26 et 0,52 % (millésime
+  non dit) ; trois évolutions 2014-2024 écrites 0 à la fiche 1 ; le bloc Ensemble du
+  complément du graphique 3 de la fiche 15 diffère du graphique 3 en 2023 ; deux
+  millésimes de 2023 à la fiche 16 ; deux champs à la fiche 17 pour la génération
+  1957 ; la date de l'intégration de la SSI (2020, 2021) à la fiche 23 ; le choix
+  des versions de la fiche 12 laissé à décider ; des fractions pour des pour cent
+  à la fiche 3 ; une cellule en texte à la fiche 10. Aucune erreur du dépôt n'est
+  déclarée.
+reste: >-
+  Le jeu drees_minimum_vieillesse du portail, à ouvrir depuis le poste du
+  propriétaire ; les quatre feuilles de révisions de la fiche 21 (tableaux 1 à 3,
+  graphique 2), vérifiées seulement par leurs en-têtes ; les candidats de la note
+  de l'étape (porter à data/reference/ le sexe du taux de liquidation, le cumul par
+  sexe, les flux, les trimestres de décote et de surcote, les tableaux 3 et 4 de la
+  fiche 28) ; la publication de l'INSEE de 2021, toujours non lue.

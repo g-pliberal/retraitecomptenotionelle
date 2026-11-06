@@ -65,10 +65,28 @@ fiches:
       part des polypensionnés par génération et par sexe (graphique 3), à
       `retraites_generations.csv`, aux référents : la grille, qui ne compte
       aucun polyaffilié, s'y confrontera ; celle des générations 1954 à 1957,
-      qu'Ancetre estime, au niveau `haute`. Restent, pour la clôture, les flux
-      (graphique 2), la carte 1, le tableau 3 et la pyramide des âges
-      (graphique 4).
+      qu'Ancetre estime, au niveau `haute`. Soldés à l'étape 7 (6 novembre 2026), voir `solde`.
     etape: 7
+    solde: >-
+      Soldée le 6 novembre 2026 (étape 7, `178/2026-11-06-etape-7-solde-du-suivi.md`).
+      Lues ce jour : le graphique 2 (flux de 2005 à 2024), le tableau 2 complémentaire,
+      la carte 1, le tableau 3 et le graphique 4 ; les autres feuilles l'étaient.
+      Recoupés : la pyramide des âges à la table C de l'EACR, au dixième ; les 18 caisses
+      et le total du tableau 2 complémentaire au cadrage, l'effectif à mille près et les
+      évolutions de 2023-2024 et de 2020-2024 à un dixième de point, celles de 2014-2024
+      pour 14 lignes ; le régime général s'écarte de 0,9 point (13,2 publié, 14,1 au
+      cadrage, la note renvoie à la SSI) et quatre lignes n'ont pas d'équivalent au
+      cadrage, dont trois écrites 0, à ne pas citer ; les flux sont la différence du
+      stock ; les 718 000 primo-liquidants du texte sont les 717,6 du graphique 2, sur
+      857 880 liquidants à la table C ; le tableau 3 se recoupe en lui-même. Hors champ :
+      la carte 1, les retraités de plus de 55 ans par département, que le modèle ne
+      représente pas. Rien n'est porté à `data/reference/` : aucun calcul n'en tire un
+      chiffre.
+    recoupe_par:
+      - test_la_pyramide_des_ages_de_la_fiche_1_est_celle_de_la_table_c
+      - test_les_caisses_du_tableau_2_complementaire_de_la_fiche_1_sont_celles_du_cadrage
+      - test_les_flux_de_la_fiche_1_se_deduisent_du_stock_et_les_primo_liquidants_sont_718_mille
+      - test_le_tableau_3_de_la_fiche_1_se_recoupe_et_ses_polypensionnes_sont_ceux_du_tableau_2_complementaire
   "02":
     titre: "Les nouveaux retraités de droit direct"
     page: 29
@@ -109,9 +127,23 @@ fiches:
       (graphique 2), et celle des personnes qui en ont touché une, par groupe
       de générations et par âge (graphique 4, l'EIR de 2020), à
       `reversion_beneficiaires.csv`, aux référents, où la réversion du modèle
-      pourra se confronter. Restent, pour la clôture, les flux (graphique 1),
-      la pyramide des âges (graphique 3) et le complément du tableau 2.
+      pourra se confronter. Soldés à l'étape 7 (6 novembre 2026), voir `solde`.
     etape: 7
+    solde: >-
+      Soldée le 6 novembre 2026 (étape 7). Lues ce jour : les tableaux 1, 2 et 3, le
+      tableau 2 complémentaire et les graphiques 1 et 3 ; les graphiques 2 et 4
+      l'étaient. Le dépôt ne garde de la réversion que sa masse : les effectifs ne se
+      recoupent qu'entre feuilles, et le « 4,4 » de `droits_derives.csv` est le total du
+      tableau 1 (4 406,64 mille fin 2024). Recoupés : ce total, les 886,13 mille de droit
+      dérivé seul et les 87,6 % qui résident en France, d'un tableau à l'autre ; le flux
+      du graphique 1 (258,6 mille nouveaux en 2024) comme différence du stock ; la
+      pyramide du graphique 3 aux parts du tableau 3 ; les âges des bénéficiaires d'un
+      droit direct (tableau 3, colonne F) à la table C. Défaut de la source : au tableau
+      2, les évolutions de la CNRACL et de l'Ircantec sont des fractions (0,016), non des
+      pour cent (1,6). Non porté : aucun calcul n'en tire un chiffre.
+    recoupe_par:
+      - test_les_ages_des_retraites_de_droit_direct_du_tableau_3_de_la_fiche_3_sont_ceux_de_la_table_c
+      - test_les_effectifs_de_la_reversion_se_recoupent_d_une_feuille_a_l_autre
   "04":
     titre: "La revalorisation des pensions individuelles"
     page: 44
@@ -278,9 +310,27 @@ fiches:
       le dépôt n'a pas les sous-postes ; leur répartition par régime
       verseur (graphique 2) groupe les caisses autrement que
       `depenses_retraite_regimes.csv` : ni l'une ni l'autre ne se
-      recoupent. Les sous-postes de l'encadré 1, s'ils viennent au dépôt,
-      le permettraient.
+      recoupent. Les sous-postes de l'encadré 1, deux d'entre eux, sont au dépôt et recoupés à l'étape 7 (voir `solde`).
     etape: 7
+    solde: >-
+      Soldée le 6 novembre 2026 (étape 7). Lues ce jour : les six feuilles. Recoupés :
+      les 359,7 et 41,7 milliards de droit direct et de droit dérivé de l'encadré 1 aux
+      sous-postes de `pensions_droits.csv` (401,4 ensemble), les 426,7 à
+      `depenses_retraite.csv`, les « 93 % » du texte (395,3 / 426,7) ; le PIB de 1990 à
+      2022 à `pib_courant.csv` au million, celui de 2023 et 2024 plus bas de 0,26 et
+      0,52 % (millésime non dit : écart déclaré, non tranché), le même PIB servant à la
+      comparaison européenne (France 14,61 %) ; les évolutions du tableau 2 comme
+      celles de la série du graphique 1 (la cellule D7, « 5,0 », est du texte) ; les
+      régimes verseurs (graphique 2) au total de la fiche. Les masses par régime verseur
+      groupent les caisses autrement que `depenses_retraite_regimes.csv` (secteurs
+      institutionnels) : ni l'une ni l'autre ne se recoupent. Non porté : les pensions
+      de retraite du champ PRRO de 1990 à 2024 (graphique 1), qu'aucun calcul ne lit.
+    recoupe_par:
+      - test_les_pensions_de_droit_direct_et_de_droit_derive_de_l_encadre_1_sont_celles_du_depot
+      - test_le_champ_des_pensions_de_retraite_fait_93_pour_cent_du_risque_vieillesse_survie
+      - test_le_pib_du_panorama_est_celui_du_depot_jusqu_en_2022_et_s_en_ecarte_ensuite
+      - test_la_part_du_pib_de_la_comparaison_europeenne_utilise_le_pib_du_panorama_et_les_regimes_verseurs_font_le_total
+      - test_les_evolutions_du_tableau_2_sont_celles_de_la_serie_du_graphique_1
   "11":
     titre: "Les durées de carrière des retraités et la part des carrières complètes ou incomplètes"
     page: 106
@@ -336,6 +386,18 @@ fiches:
       Écart déclaré : la grille n'est pas une population.
     confronte_par:
       - test_la_grille_commence_ses_carrieres_trop_tard
+    solde: >-
+      Soldée le 6 novembre 2026 (étape 7) : lues, la feuille « Synthese » et les cinq
+      copies « Graphique N (2) ». Ce sont des copies de travail de la DREES : l'édition
+      précédente de la fiche (EIC au 31/12/2017 ; la génération 1946 y compte 37,6,
+      44,1 et 41,0 trimestres validés à 30 ans, contre 37,4, 44,0 et 40,7 aux feuilles
+      publiées, que le dépôt porte) et la note de choix des versions (l'alternative aux
+      figures 1, 3 et 4, « A DECIDER » aux figures 2 et 5). Ce que la synthèse décidait
+      pour l'édition 2025, la source ne le dit pas pour 2026 : point non tranché, à
+      demander à la DREES si une figure 2 ou 5 se cite. Non tirées : elles ne sont pas
+      l'édition 2026.
+    recoupe_par:
+      - test_les_feuilles_de_travail_de_la_fiche_12_sont_l_edition_precedente_et_le_depot_a_celle_de_2026
   "13":
     titre: "Les régimes d’affiliation des assurés"
     page: 122
@@ -430,6 +492,22 @@ fiches:
       - test_la_grille_fait_partir_ses_fonctionnaires_trop_tard
       - test_l_age_conjoncturel_de_la_grille_est_celui_de_ses_cas_types_au_premier_age_ou_leur_cohorte_est_retraitee
       - test_la_duree_de_retraite_du_depot_est_celle_de_la_drees_a_quelques_dixiemes_pres_et_la_grille_part_trop_tard
+    solde: >-
+      Soldée le 6 novembre 2026 (étape 7) : lus, les graphiques 3, 3 complémentaire et 4.
+      Recoupés : l'âge conjoncturel du graphique 1 est 50 plus la somme, de 50 à 70 ans,
+      des parts de non-retraités du graphique 3 (ensemble) et de son complément
+      (femmes, hommes), pour les 63 valeurs de 2004 à 2024, à 0,0049 an ; le taux de
+      retraités à 62-67 ans de 2023 et 2024 est le même aux graphiques 3 et 4 et à la
+      fiche 16, la table C de l'EACR en donnant 0,45 (62 ans) à 2,13 (67 ans) points de
+      plus (champs différents, écart non expliqué). Deux défauts déclarés : le bloc
+      « Ensemble » du complément diffère du graphique 3 en 2023 (16 âges, jusqu'à 0,32
+      point ; l'âge qu'on en tire, 62,733, n'est pas le publié, 62,75) ; le dépôt
+      (`age_conjoncturel_depart.csv`) garde l'âge du portail de 2004 à 2022, que le
+      panorama donne jusqu'à 0,10 an plus bas (femmes, 2013). Aucune erreur du modèle.
+    recoupe_par:
+      - test_l_age_conjoncturel_de_la_fiche_15_est_50_plus_les_parts_de_non_retraites_du_graphique_3
+      - test_le_bloc_ensemble_du_complement_du_graphique_3_differe_en_2023_et_le_depot_garde_le_millesime_du_portail
+      - test_le_taux_de_retraites_par_age_est_le_meme_d_une_feuille_a_l_autre_et_proche_de_la_table_c
   "16":
     titre: "La diversité des âges de départ à la retraite"
     page: 145
@@ -488,6 +566,22 @@ fiches:
       - test_la_grille_met_chaque_regime_de_2024_a_un_ou_deux_ages_quand_la_source_les_etale
       - test_le_graphique_3_complementaire_repete_la_sncf_pour_la_cnavpl_et_la_source_dit_4_pour_cent_de_moins_de_60_ans
       - test_la_grille_part_a_l_age_des_hommes_de_chaque_regime_et_de_sa_seule_femme_et_les_pese_autrement
+    solde: >-
+      Soldée le 6 novembre 2026 (étape 7) : lus, les graphiques 1, 2, 4 et 5
+      complémentaire. Recoupés : le graphique 1 redonne, à l'identique, les taux de
+      retraités du graphique 4 de la fiche 15 (62-67 ans, 2023 et 2024) et, pour 2024,
+      les taux de nouveaux retraités du graphique 2 (50 à 70 ans) ; en 2023 les deux
+      millésimes diffèrent à 19 âges (jusqu'à 0,60 point à 62 ans), point non tranché ;
+      le graphique 4 se somme, ses femmes de 50 à 56 ans font 0,48 comme leurs taux du
+      graphique 1, et s'écarte du graphique 1 de 0,02 à 0,27 point à 60-61 ans (le champ
+      du graphique 4 est la rente) ; le complément du graphique 5 retrouve le tableau 1
+      de la génération 1953 à un point près (six classes à un point). Non porté à
+      `data/reference/` : la table B de l'EACR, que `test_controle_eacr.py` confronte à
+      la grille, porte déjà les taux par âge.
+    recoupe_par:
+      - test_le_taux_de_retraites_par_age_est_le_meme_d_une_feuille_a_l_autre_et_proche_de_la_table_c
+      - test_les_taux_de_nouveaux_retraites_avant_62_ans_par_type_de_regime_de_la_fiche_16_se_somment_et_ceux_de_50_a_56_ans_des_femmes_sont_ceux_du_graphique_1
+      - test_le_graphique_5_complementaire_de_la_fiche_16_retrouve_le_tableau_1_de_la_generation_1953_a_un_point_pres
   "17":
     titre: "Les taux de liquidation des pensions"
     page: 154
@@ -506,9 +600,25 @@ fiches:
       départs avec décote et avec surcote par génération et par régime
       (graphiques 4 et 5), à `retraites_generations.csv`, aux référents ; de
       1939 à 1945, chaque génération impaire y vaut la moyenne de ses
-      voisines. Restent, pour la clôture, la génération 1957 par régime
-      (graphique 2) et le complément du graphique 3, par sexe.
+      voisines. Soldés à l'étape 7 (6 novembre 2026), voir `solde`.
     etape: 7
+    solde: >-
+      Soldée le 6 novembre 2026 (étape 7) : lus, le graphique 2, le complément du
+      graphique 3 et les ventilations en trimestres des tableaux complémentaires de
+      décote et de surcote. Recoupés : le complément (douze générations de 1928 à 1952,
+      femmes et hommes) encadre l'ensemble que le dépôt porte, à chaque modalité, à 0,1
+      point ; le graphique 2 (génération 1957, cinq régimes) concorde avec les
+      graphiques 4 et 5 pour le régime général, la CNRACL et la MSA non-salariés, s'en
+      écarte pour les fonctionnaires civils de l'État (décote +0,8, surcote -2,6) et la
+      MSA salariés (décote +0,8) : deux champs, deux lectures non départagées ; les
+      trimestres moyens de décote (10,3 au régime général) et de surcote (7,7) restent
+      dans les bornes de leur ventilation. Non porté à `data/reference/` : le sexe et
+      les trimestres de décote et de surcote, que `retraites_generations.csv` n'a pas et
+      qu'aucun calcul ne lit.
+    recoupe_par:
+      - test_le_complement_du_graphique_3_de_la_fiche_17_encadre_l_ensemble_du_depot
+      - test_le_graphique_2_de_la_fiche_17_recoupe_les_parts_par_regime_de_la_generation_1957_a_quelques_ecarts_pres
+      - test_les_trimestres_de_decote_et_de_surcote_de_la_fiche_17_sont_compatibles_avec_leur_ventilation
   "18":
     titre: "Les départs anticipés à la retraite"
     page: 160
@@ -584,6 +694,19 @@ fiches:
     confronte_par:
       - test_la_grille_ne_finit_aucune_carriere_au_chomage
       - test_la_grille_passe_de_l_emploi_a_la_retraite_sans_chomage
+    solde: >-
+      Soldée le 6 novembre 2026 (étape 7) : lues, les feuilles de l'encadré 2 (graphique
+      et tableau), « Synthese » et les cinq feuilles « REVISIONS ». Au graphique 1, la
+      valeur de l'édition 2025 plus la révision est celle de 2026 pour les 144 cellules,
+      jusqu'à 1,34 point ; les quatre autres feuilles de révisions (tableaux 1 à 3,
+      graphique 2) ne sont lues que par leurs en-têtes et la note de « Synthese », sans
+      vérification cellule par cellule. Le dépôt n'a que les chiffres de 2026 : ceux de
+      2025 ne se mêlent pas aux siens. L'encadré 2 (personnes ni en emploi ni à la
+      retraite de 53 à 69 ans, enquête Emploi) se somme et se décompose ; hors champ :
+      aucun fichier du dépôt ne lit ces personnes.
+    recoupe_par:
+      - test_les_revisions_du_graphique_1_de_la_fiche_21_sont_la_difference_des_deux_editions
+      - test_l_encadre_2_de_la_fiche_21_se_somme_et_se_decompose
   "22":
     titre: "Les dispositifs de cumul d’une activité avec la retraite"
     page: 193
@@ -602,6 +725,11 @@ fiches:
       années du tableau 2, en appoint de celui-ci, au niveau `haute`, dans
       `cumul_emploi_retraite.csv`.
     etape: 7
+    solde: >-
+      Soldée le 6 novembre 2026 (étape 7) : rien ne reste à lire. Ses trois feuilles
+      (tableaux 1 et 2, graphique 1) sont lues depuis les étapes 2 et 6 et certifiées
+      dans `cumul_emploi_retraite.csv`. La décision sur la retraite progressive et le
+      cumul reste au propriétaire.
   "23":
     titre: "Le profil des assurés cumulant emploi et retraite"
     page: 198
@@ -617,9 +745,18 @@ fiches:
       même régime (tableau 4, le régime général s'arrêtant en 2022) et leur
       part par âge (graphique 1) ; la part des retraités nés en 1950 qui ont
       cumulé avant 67 ans, par régime de retraite et d'emploi (tableaux 5 et
-      6) : 22,7 %, que le chapeau de la fiche dit 21,4 %. Reste, pour la
-      clôture, le complément du graphique 1 (2022, par sexe).
+      6) : 22,7 %, que le chapeau de la fiche dit 21,4 %. Soldé à l'étape 7 (6 novembre 2026), voir `solde`.
     etape: 7
+    solde: >-
+      Soldée le 6 novembre 2026 (étape 7) : lu, le complément du graphique 1 (femmes en
+      C, hommes en F, de 61 à 80 ans, en 2022). Recoupé : la colonne CNAV du graphique 1
+      est comprise entre les deux sexes à chaque âge, à 0,05 point. Défaut de la source :
+      les deux feuilles ne datent pas l'intégration de la SSI au régime général de la
+      même année (2020 au graphique 1, 2021 au complément, qui restreint en outre le
+      régime général aux salariés). Non porté à `cumul_emploi_retraite_profil.csv` :
+      aucun calcul ne le lit.
+    recoupe_par:
+      - test_le_cumul_par_sexe_encadre_le_regime_general_de_la_fiche_23
   "24":
     titre: "Les pensions d’invalidité"
     page: 207
@@ -657,6 +794,11 @@ fiches:
       `pensions_invalidite_age.csv` ; l'en-tête du graphique dit « en milliers
       », ce sont des personnes.
     etape: 7
+    solde: >-
+      Soldée le 6 novembre 2026 (étape 7) : rien ne reste à lire. Ses sept feuilles
+      (tableaux 1 à 4, graphiques 1 et 2, complément du graphique 2) sont lues depuis les
+      étapes 2 et 6 et certifiées dans `pensions_invalidite.csv` et
+      `pensions_invalidite_age.csv`.
   "26":
     titre: "Le minimum vieillesse et l’allocation supplémentaire d’invalidité"
     page: 220
@@ -738,6 +880,14 @@ fiches:
     confronte_par:
       - test_la_garantie_de_la_page_sert_plus_de_monde_et_coute_plus_que_l_aspa_et_l_asv
       - test_les_nouveaux_allocataires_du_minimum_vieillesse_sont_un_flux_que_le_depot_ne_calcule_pas
+    solde: >-
+      Soldée le 6 novembre 2026 (étape 7), sauf un point qui attend le poste du
+      propriétaire : ses deux feuilles (tableau 1, graphique 1) sont lues depuis l'étape
+      6. Le jeu `drees_minimum_vieillesse` du portail (entrants par âge et par caisse,
+      où les 70 660 se liraient à la source primaire) n'a pas été ouvert : la connexion
+      y a été refusée à l'étape 5 (« Connection reset by peer ») et il n'est pas forcé ;
+      à ouvrir depuis un poste, il est au manifeste d'exploration
+      (`data/sources_a_explorer.yaml`).
   "28":
     titre: "Le profil des allocataires du minimum vieillesse"
     page: 231
@@ -758,6 +908,23 @@ fiches:
       d'un cinquième, erreur du modèle pour l'étape 5.
     confronte_par:
       - test_le_recours_a_la_garantie_est_celui_des_tetes_et_non_des_euros
+    solde: >-
+      Soldée le 6 novembre 2026 (étape 7) : lus, les tableaux 1 à 4 et la carte 1 (le
+      tableau 5 l'était). Recoupés : les effectifs par âge du tableau 1 (753 900
+      allocataires de 62 ans ou plus, 691 100 de 65 ans ou plus) et la répartition par
+      sexe et situation conjugale du tableau 2 (77,04 % de personnes seules, 56,36 % de
+      femmes) sont ceux du classeur de l'INSEE que le dépôt lit
+      (`allocataires_minimum_vieillesse.csv`), à la centaine et au centième près, soit
+      552 de moins que les 754 460 que la DREES compte à ses caisses (fiche 27). La part
+      dans la population (colonne F) repose sur l'estimation de l'INSEE au 1er janvier
+      2025, que le dépôt n'a pas (il a une projection) : 4,32 % publié, entre 4,29 et
+      4,36 avec les deux populations du dépôt. Lus sans contrepartie au dépôt : le
+      tableau 3 (type de pension) et le tableau 4 (carrière, EIR 2020), non confrontés
+      cellule par cellule ; hors champ : la carte 1, par département.
+    recoupe_par:
+      - test_les_allocataires_par_age_de_la_fiche_28_sont_ceux_du_classeur_de_l_insee_du_depot
+      - test_la_repartition_des_allocataires_par_sexe_et_situation_de_la_fiche_28_est_celle_du_depot
+      - test_la_part_des_allocataires_dans_la_population_depend_d_une_population_que_le_depot_n_a_pas
   "29":
     titre: "Les dispositifs d’épargne retraite supplémentaire"
     page: 240
