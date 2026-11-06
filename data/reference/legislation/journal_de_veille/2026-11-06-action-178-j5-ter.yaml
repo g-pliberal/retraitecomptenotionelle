@@ -1,0 +1,24 @@
+date: "2026-11-06"
+session: "action 178, J5-ter : la suite rouge de main, un test de la fiche 15 qui attendait 62,951 pour 62,9515 et que Python 3.11 faisait échouer"
+consulte: >-
+  Aucune règle du scénario 1 n'est touchée. Le classeur fiche_15.xlsx de l'archive
+  des 36 classeurs du panorama de la DREES (release documents-apportes, empreinte
+  ec7503f8…aaf64911, retrouvée par sha256sum), feuilles « F15_Graphique 1 »,
+  « F15_Graphique 3 » et « F15_Graphique 3 compl », lu par scripts/fetch/lecture_xlsx.py,
+  cellule par cellule, les sommes refaites en fractions exactes (Fraction), donc sans
+  flottant ; en regard, tests/temoins/drees_panorama_2026_solde.json et la note de
+  la relecture R-J5 (2026-11-06-relecture-r-j5.md, section 6).
+trouve: >-
+  L'âge conjoncturel de 2024 (ensemble, fiche 15) est 62,9515 exactement : 21 parts
+  de non-retraités, de 50 à 70 ans, qui font 804,85 %, soit 71 - 8,0485. J5 l'avait
+  tronqué à 62,951 (test, docstring, note) ; l'assertion, à 0,0005 près, tombait
+  pile sur sa borne, et le flottant la décidait : sum() rend 62,951499999999996
+  sous Python 3.13 (vert) et 62,9515 sous 3.11, celui de GitHub (rouge). 2004 :
+  60,5845 (écrit 60,584), 2014 : 61,3569 (écrit 61,357). Le plus éloigné des 63 âges
+  au publié est à 0,0049 an (hommes, 2011 : 60,4651 pour 60,47), aucun à 0,005 pile.
+  Le test compte désormais en centièmes entiers (80 485), exact sous toute version.
+reste: >-
+  Rien de neuf pour le droit. Candidat, non fait : la version de Python de GitHub
+  (3.11) et celle des postes (3.13) diffèrent, ce que le premier rouge a révélé ;
+  une garde qui lancerait aussi la suite sous 3.13, ou un poste qui la lancerait
+  sous 3.11, la ferait voir plus tôt (workflows : une garde, au propriétaire).

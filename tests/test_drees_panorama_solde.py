@@ -664,10 +664,13 @@ def test_l_age_conjoncturel_de_la_fiche_15_est_50_plus_les_parts_de_non_retraite
     cours de l'année d'observation » (folio 139 à 144). C'est 50 plus la somme, de
     50 à 70 ans, de la part des non-retraités à chaque âge, lue aux feuilles
     « F15_Graphique 3 » (ensemble) et « F15_Graphique 3 compl » (femmes, lignes 7
-    à 27, hommes, lignes 32 à 52) : 2024, ensemble, 50 + 20,951 ... = 62,951 pour
-    62,95 publié ; 2004, 60,584 pour 60,58 ; 2014, 61,357 pour 61,36. Les 63 âges
+    à 27, hommes, lignes 32 à 52) : 2024, ensemble, 50 + 12,9515 = 62,9515 pour
+    62,95 publié ; 2004, 60,5845 pour 60,58 ; 2014, 61,3569 pour 61,36 (valeurs
+    exactes : les parts de la source ont deux décimales, leur somme est un nombre
+    entier de centièmes ; 2024 : 804,85 % en tout, 71 - 8,0485). Les 63 âges
     (21 années, deux sexes et l'ensemble) sont retrouvés au demi-centième près
-    (l'arrondi de la publication), le plus éloigné à 0,0049."""
+    (l'arrondi de la publication), le plus éloigné à 0,0049 (hommes, 2011 :
+    60,4651 pour 60,47)."""
     publie = _bloc(temoin, "15_graphique_1")
     taux = {0: _bloc(temoin, "15_graphique_3_compl", "F"), 1: _bloc(temoin, "15_graphique_3_compl", "H"),
             2: _bloc(temoin, "15_graphique_3")}
@@ -678,8 +681,15 @@ def test_l_age_conjoncturel_de_la_fiche_15_est_50_plus_les_parts_de_non_retraite
             ecart_max = max(ecart_max, abs(refait - publie[ligne][k]))
             assert refait == pytest.approx(publie[ligne][k], abs=0.00501), (ligne, 2004 + k)
     assert ecart_max == pytest.approx(0.0049, abs=0.0001)
-    refait_2024 = 50 + sum(1 - _bloc(temoin, "15_graphique_3")[age - 50][20] / 100 for age in range(50, 71))
-    assert refait_2024 == pytest.approx(62.951, abs=0.0005)
+    # 2024, exactement : les 21 parts, en centièmes entiers (la somme d'entiers ne
+    # dépend pas de la version de Python, celle de flottants si : sum() compense
+    # les arrondis depuis Python 3.12). 71 - 80 485 / 10 000 = 62,9515, que le
+    # flottant sert à 1e-15 près, pas à la borne d'une tolérance de 0,0005.
+    parts_2024 = [_bloc(temoin, "15_graphique_3")[age - 50][20] for age in range(50, 71)]
+    centiemes = [round(part * 100) for part in parts_2024]
+    assert all(c / 100 == part for c, part in zip(centiemes, parts_2024))
+    assert sum(centiemes) == 80485
+    assert 71 - sum(centiemes) / 10000 == pytest.approx(62.9515, abs=1e-9)
 
 
 def test_le_bloc_ensemble_du_complement_du_graphique_3_differe_en_2023_et_le_depot_garde_le_millesime_du_portail(temoin):
