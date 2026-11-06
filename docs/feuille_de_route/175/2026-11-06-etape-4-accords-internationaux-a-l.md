@@ -1,16 +1,5 @@
 # Étape 4, thème « Accords internationaux et d'outre-mer », sous-thème « Accords internationaux », première moitié (« Anciens accords » à « Kosovo ») : les exposés et leurs références
 
-**Reprise, au 6 novembre 2026.** « Retraite personnelle de base », les huit thèmes de
-« Carrière », « Avantages liés au décès de l'assuré », « Allocation du minimum », « RCI »,
-« Anciennes prestations », « Régimes intégrés » et, d'« Accords internationaux et d'outre-mer »,
-« Règlements européens », « Accords d'outre-mer » et la première moitié d'« Accords
-internationaux » (de « Anciens accords » à « Kosovo », cette note, H15) sont rangés. Suivant :
-la seconde moitié (de « Macédoine du Nord » à « États-Unis », 75 exposés), ses listes et ce
-qu'elle seule lie ; les 20 listes « Accord de sécurité sociale » de pays sans exposé ; puis
-« Mayotte », avec les quatre exposés mahorais du décès. Base relue par l'API hors de 5 h–6 h
-UTC. Aux sessions du modèle : les trois candidats et le point non tranché de cette note, ceux
-de H14 à H8, des thèmes d'avant, H6 et H7. Aux sessions des données : le candidat de H13.
-
 **Le 6 novembre 2026, ce qui est fait.**
 
 - *La relecture de la base.* Par l'API, le 6 novembre 2026 à 14 h 42 UTC (`/expose`, `/liste`,

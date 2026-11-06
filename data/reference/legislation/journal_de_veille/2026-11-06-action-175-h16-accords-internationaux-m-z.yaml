@@ -1,0 +1,29 @@
+date: "2026-11-06"
+session: "action 175, étape 4 (H16) : la seconde moitié du sous-thème « Accords internationaux » (de « Macédoine du Nord » à « États-Unis ») du thème « Accords internationaux et d'outre-mer » de la base de la Cnav, et les 20 listes de pays sans exposé"
+consulte: >-
+  python scripts/veille_droit.py (rien de changé dans ce sous-thème). La base de législation
+  de la Cnav, par son API, le 6 novembre 2026 à 15 h 08 UTC, par les fonctions de
+  scripts/fetch/cnav_legislation.py, sans écrire le registre par le script : les 75 exposés
+  de la moitié, à la version que le registre date ; les 39 listes « Accord de sécurité sociale -
+  <pays> » de ses pays et des pays sans exposé ; la fenêtre « Libératoire » ; l'avis 297 ; la
+  circulaire Cnav 2007/79 du 11 décembre 2007 (15 h 19). L'index LEGI de la DILA, à jour au
+  2 novembre 2026, et JORF, au 3 : les 25 identifiants des 55 liens Légifrance des exposés ;
+  les décrets n° 66-682, 67-379 et 2005-1050. Le tableau legislation/accords_internationaux.yaml ;
+  les fiches totalisation_des_periodes_etrangeres, pension_proratisee,
+  minimum_contributif_international et reversion ; le code de droit/etranger.py et etranger.js.
+trouve: >-
+  Le registre range les 75 exposés (58 limite, 17 hors_modele), 39 listes, une fenêtre, un avis
+  et 85 références (69 limite, 16 hors_modele), et étend le renvoi de 12 ; la limite « accords
+  internationaux » s'étend (docs/limites/3-systeme-actuel.md). Les dates d'entrée en vigueur
+  des exposés sont celles du tableau, et celles que les décrets portent. Aucun candidat neuf ;
+  le point non tranché de H15 (les fonctionnaires sous une convention qui les vise) s'étend au
+  Maroc de 2007, qui les nomme, au Québec de 2003, à l'Uruguay, au Royaume-Uni de 1956 et à
+  Saint-Marin, chiffré sur le cas de H14 (2 627,24 € par an). Des dates du tableau (Mali et
+  Sénégal de 1965, Jersey, Guernesey, Tunisie de 1965) diffèrent de la base, sans effet avant
+  le 1er avril 1983. L'exposé tunisien de 2003 prend les États tiers liés « à la France ou à la
+  Tunisie », sa circulaire dit « et ». Note :
+  docs/feuille_de_route/175/2026-11-06-etape-4-accords-internationaux-m-z.md.
+reste: >-
+  « Mayotte », avec les quatre exposés mahorais du décès. Le décret n° 76-1072 (Sénégal), au
+  fac-similé seul ; les conventions, leurs arrangements et les circulaires liées, non relus en
+  entier ; le minimum de l'accord tunisien de 1975, non chiffré. Rien n'a été corrigé.
