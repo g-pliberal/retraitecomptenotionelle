@@ -1,7 +1,11 @@
 # Le verdict de la dernière course de tests.yml : écrit par GitHub
 # (scripts/publier_fabrique.sh), jamais à la main. Action 148.
-etat: vert
-sources: ec7e30b30f1702c47e61fc001b2c8de32a637673
-date: 2026-11-05T22:50:15Z
-course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/42116839240
-presomptions: vert
+etat: rouge
+sources: 40d3fbc95519501cb779388c4e135623b243e1d7
+date: 2026-11-06T04:41:59Z
+course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/42158939001
+echecs:
+  - "FAILED tests/test_drees_panorama_solde.py::test_l_age_conjoncturel_de_la_fiche_15_est_50_plus_les_parts_de_non_retraites_du_graphique_3 - assert 62.9515 == 62.951 ± 5.0e-04"
+presomptions: rouge
+presomptions_echecs:
+  - "FAILED tests/test_drees_panorama_solde.py::test_l_age_conjoncturel_de_la_fiche_15_est_50_plus_les_parts_de_non_retraites_du_graphique_3 - assert 62.9515 == 62.951 ± 5.0e-04"
