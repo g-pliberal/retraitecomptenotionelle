@@ -362,6 +362,118 @@ def test_la_cipav_majore_pour_trois_enfants_depuis_2000(simulateur):
     assert _majoration(resultat, "cipav_complementaire") == 0.0
 
 
+#: Les trois complémentaires de ``sections_liberales_majoration_enfants`` et
+#: le statut de chacune dans les versions de la fiche.
+SECTIONS_QUI_MAJORENT = ("cavamac_complementaire", "cavec_complementaire",
+                         "cipav_complementaire")
+
+#: L'écart que la fiche déclare, lue au droit le 6 novembre 2026 (action 130,
+#: E8) : les statuts de la CAVAMAC de 2011 entrent en vigueur le 1er juillet
+#: 2011 (arrêté du 23 juin 2011, article 2) et majorent de 10 % les points de
+#: l'adhérent qui a eu trois enfants (article 18) ; le modèle ne sert la
+#: majoration qu'aux pensions qui prennent effet depuis le 1er janvier 2012.
+#: Erreur prouvée, déclarée et non corrigée : les dates d'effet de juillet à
+#: décembre 2011, où le modèle ne sert rien.
+MAJORATION_OMISE_PAR_LE_MODELE = {
+    ("cavamac_complementaire", 2011, mois) for mois in range(7, 13)}
+
+
+def test_chaque_version_de_la_majoration_pour_enfants_des_sections_est_portee():
+    """Lue au droit le 6 novembre 2026 (action 130) : à chaque date d'effet,
+    mois par mois, de 1990 à 2040, la majoration que chaque version de
+    ``sections_liberales_majoration_enfants`` donne à trois enfants est celle
+    que la période de liquidation de chaque section déclare
+    (``majoration_enfants`` dans ``avantages_non_contributifs``, que
+    ``_taux_majoration_enfants`` sert à 10 %), hors l'écart déclaré."""
+    from retraite_notionnelle.carriere import DateMois
+    from retraite_notionnelle.droit.commun import periode_de_liquidation
+    from retraite_notionnelle.droit.completer import _taux_majoration_enfants
+    from retraite_notionnelle.noyau import carte
+
+    catalogue = Simulateur().catalogue
+    fiche = carte.fiches()["sections_liberales_majoration_enfants"]
+    versions = fiche.get("versions") or []
+    assert [v["id"] for v in versions] == [
+        "aucune_avant_2000", "cipav_depuis_2000", "cavamac_depuis_juillet_2011",
+        "cavec_depuis_juillet_2025", "au_decret_et_aux_reglements_de_2026"]
+    vus = omis = 0
+    for annee in range(1990, 2041):
+        for mois in range(1, 13):
+            jour = f"{annee:04d}-{mois:02d}-01"
+            [version] = [v for v in versions
+                         if (v["bornes"]["liquidation.date_effet"][0] is None
+                             or v["bornes"]["liquidation.date_effet"][0].isoformat() <= jour)
+                         and (v["bornes"]["liquidation.date_effet"][1] is None
+                              or jour < v["bornes"]["liquidation.date_effet"][1].isoformat())]
+            taux = version["contenu"]["parametres"]["taux_a_trois_enfants"]
+            assert set(taux) == set(SECTIONS_QUI_MAJORENT), version["id"]
+            for code in SECTIONS_QUI_MAJORENT:
+                regime = catalogue[code]
+                periode = periode_de_liquidation(regime, DateMois(annee, mois))
+                servi = (_taux_majoration_enfants(regime, 3, periode)
+                         if "majoration_enfants" in periode.avantages_non_contributifs
+                         else 0.0)
+                if (code, annee, mois) in MAJORATION_OMISE_PAR_LE_MODELE:
+                    assert (servi, taux[code]) == (0.0, 0.10), (code, jour)
+                    omis += 1
+                    continue
+                assert servi == pytest.approx(taux[code]), (version["id"], code, jour)
+                vus += 1
+    assert omis == 6
+    assert vus == 51 * 12 * 3 - 6
+
+
+#: Né un 10 mars, l'âge se compte du 1er avril (``Carriere.origine_des_ages``) :
+#: 65 ans et 3 mois, une pension au 1er juillet, de l'année des 65 ans.
+#: La majoration de chaque cas, au texte : 10 % de la pension, ou rien.
+MAJORATIONS_AUX_DATES_QUI_COMPTENT = {
+    # CAVAMAC : statuts en vigueur le 1er juillet 2011, article 18 ; le
+    # modèle ne sert rien avant le 1er janvier 2012 (écart déclaré, ci-dessus).
+    ("agent_general_assurance", "1946-03-10", "65.25"): 0.0,  # 1er juillet 2011
+    ("agent_general_assurance", "1946-03-10", "65.75"): 0.10,  # 1er janvier 2012
+    # CAVEC : arrêté du 4 juillet 2025, publié le 6, en vigueur le 7.
+    ("expert_comptable", "1960-03-10", "65.25"): 0.0,  # 1er juillet 2025
+    ("expert_comptable", "1960-03-10", "65.3333"): 0.10,  # 1er août 2025
+    # Cipav : le décret n° 99-913, en vigueur le 1er janvier 2000, atteste la
+    # bonification ; l'article 5-2 du décret n° 79-262 l'écrit au 1er juillet 2026.
+    ("profession_liberale", "1934-03-10", "65.6667"): 0.0,  # 1er décembre 1999
+    ("profession_liberale", "1934-03-10", "65.75"): 0.10,  # 1er janvier 2000
+    ("profession_liberale", "1961-03-10", "65.25"): 0.10,  # 1er juillet 2026
+}
+
+
+def test_la_majoration_pour_enfants_des_sections_aux_dates_qui_comptent_dans_les_deux_moteurs():
+    """Le portage sert, et le moteur Python refait (``servi_et_refait``), à
+    une mère de trois enfants de chaque section, la majoration de la version
+    en vigueur à la date d'effet : 10 % de la pension de la complémentaire, ou
+    rien ; au 1er juillet 2011, la CAVAMAC ne reçoit rien, l'écart déclaré."""
+    from outils_pont import servi_et_refait
+
+    requete = {
+        "age_reference": "fixe_apres_bascule", "bascule": "2026",
+        "conversion_acquis": "reference", "debut": "22", "emploi": "cor_2026",
+        "enfants": "3", "euros": "2026", "indexation": "triple_lock_inverse",
+        "primes": "0", "profil": "plat", "projection": "cor_reference",
+        "salaire": "2", "sexe": "F", "stock": "prix", "table": "unisexe",
+    }
+    regimes = {"agent_general_assurance": "cavamac_complementaire",
+               "expert_comptable": "cavec_complementaire",
+               "profession_liberale": "cipav_complementaire"}
+    cas = [{"cle": "|".join(cle), "requete": {**requete, "statut": cle[0],
+                                               "naissance": cle[1], "liquidation": cle[2]}}
+           for cle in MAJORATIONS_AUX_DATES_QUI_COMPTENT]
+    servis, refus = servi_et_refait(cas)
+    assert refus == {}, refus
+    for cle, taux in MAJORATIONS_AUX_DATES_QUI_COMPTENT.items():
+        actuel = servis["|".join(cle)]["actuel"]
+        regime = regimes[cle[0]]
+        montant = {p["regime"]: p["montant"] for p in actuel["pensions_par_regime"]}[regime]
+        parts = [dict(a["par_regime"]).get(regime, 0.0) for a in actuel["avantages_appliques"]
+                 if a["code"] == "majoration_enfants"]
+        assert montant > 0, cle
+        assert sum(parts) == pytest.approx(taux * montant), cle
+
+
 #: Ce que le décret n° 79-262 (article 2, rédaction du décret n° 2022-1746) et
 #: les décrets de chaque année font payer à la Cipav, posé à la main (action
 #: 130, 6 novembre 2026) : la première tranche jusqu'au plafond de l'année, la

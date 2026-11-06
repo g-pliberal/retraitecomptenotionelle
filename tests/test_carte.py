@@ -270,6 +270,7 @@ LUES_AU_DROIT = frozenset("""
     cprn_ages_decote_enfants
     carmf_asv_minoration_enfants asv_medecins_ajustement
     cipav_seconde_tranche
+    sections_liberales_majoration_enfants
 """.split())
 
 

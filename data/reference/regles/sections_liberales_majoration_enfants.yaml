@@ -2,26 +2,430 @@ schema_version: 1
 id: sections_liberales_majoration_enfants
 intitule: >-
   Majoration de 10 % pour trois enfants dans trois complémentaires libérales : la
-  CAVAMAC depuis ses statuts de 2011 (article 18), la Cipav depuis l'intégration
-  des géomètres au 1er janvier 2000 au moins, « au profit du demandeur ayant eu
-  au moins trois enfants » ou les ayant élevés neuf ans, la CAVEC depuis l'arrêté
-  du 4 juillet 2025.
+  CAVAMAC depuis ses statuts du 1er juillet 2011 (article 18, puis article 7 du
+  règlement de 2026), « au profit de l'adhérent ayant eu au moins trois enfants » ou
+  les ayant élevés neuf ans ; la Cipav, dont le décret n° 99-913 atteste la
+  bonification au 1er janvier 2000 et que l'article 5-2 du décret n° 79-262 écrit au
+  1er juillet 2026 ; la CAVEC depuis l'arrêté du 4 juillet 2025 (article 20, puis
+  article 1.3.1 du règlement de 2026).
+domaine: enfants
 regimes: [cavamac_complementaire, cavec_complementaire, cipav_complementaire]
+etape: completer_tous_regimes
+face: droit
 etat: approchee
+lit:
+- >-
+  la date d'effet de la pension de la complémentaire, qui choisit la version, et la
+  période de liquidation de chaque section (`periode_de_liquidation`)
+- >-
+  le nombre d'enfants de l'assuré (`Carriere.nombre_enfants`), trois au moins
+- >-
+  la pension de chaque section, minorée ou majorée par l'âge, sur laquelle les 10 %
+  se calculent
+ecrit:
+- >-
+  la part de la majoration pour enfants de chaque section, `majoration_enfants` des
+  avantages appliqués, 10 % de la pension, que `completer` ajoute
+dates_qui_decident:
+- liquidation.date_effet
+versions:
+- id: aucune_avant_2000
+  statut: supposee
+  hypothese: >-
+    aucune des trois sections ne majore pour enfants une pension qui prend effet avant
+    le 1er janvier 2000 : la CAVEC, dont les statuts de 2008 ne le font pas, ne le
+    faisait pas avant ; la CAVAMAC, dont les statuts de 1967, approuvés par l'arrêté du
+    22 décembre 1967 et modifiés en 1972, 1975 et 1983, ne sont qu'au fac-similé du
+    Journal officiel, que l'index ne lit pas ; la Cipav, dont les statuts d'avant 2026
+    sont au seul Bulletin officiel
+  fiabilite: >-
+    faible : aucun des statuts en vigueur avant 2000 n'est lu ; le décret n° 99-913
+    laisse penser que la Cipav majorait déjà (approximations)
+  textes:
+  - id: JORFTEXT000000660274
+    article: >-
+      arrêté du 22 décembre 1967 portant approbation des statuts du régime d'assurance
+      vieillesse complémentaire des agents généraux d'assurances, titre seul dans
+      l'index JORF
+    publie_le: 1967-12-28
+    citation: >-
+      « Arrêté du 22 décembre 1967 APPROBATION DES STATUTS DU REGIME D'ASSURANCE
+      VIEILLESSE COMPLEMENTAIRE DES AGENTS GENERAUX D'ASSURANCES »
+  bornes:
+    liquidation.date_effet: [null, 2000-01-01]
+  contenu:
+    parametres:
+      taux_a_trois_enfants:
+        cavamac_complementaire: 0.0
+        cavec_complementaire: 0.0
+        cipav_complementaire: 0.0
+    droit: aucun
+    raison: aucun texte lu ne majore, avant 2000, la pension de l'une des trois sections
+  exemples: aucun trouvé
+- id: cipav_depuis_2000
+  statut: supposee
+  hypothese: >-
+    la Cipav majore de 10 % la pension de l'assuré qui a eu trois enfants, la forme que
+    l'article 5-2 du décret n° 79-262 écrit en 2026, depuis le 1er janvier 2000 : le
+    décret n° 99-913 atteste à cette date une « bonification pour enfants dans les
+    conditions prévues par les statuts de ce régime », sans en donner la forme ; la
+    CAVAMAC et la CAVEC, rien
+  fiabilite: >-
+    moyenne pour la Cipav, dont la bonification est attestée et la forme supposée ;
+    faible pour la CAVAMAC, dont les statuts d'avant le 1er juillet 2011 ne sont pas lus
+  nee_de: LEGIARTI000006780306
+  textes:
+  - id: LEGIARTI000006780306
+    article: décret n° 99-913 du 21 octobre 1999, article 6, en vigueur le 1er janvier 2000
+    en_vigueur: 2000-01-01
+    citation: >-
+      « Les droits acquis au titre des périodes d'activité postérieures au 1er janvier
+      2000 dans le régime complémentaire de la Caisse interprofessionnelle de
+      prévoyance et d'assurance vieillesse par les anciens affiliés de la Caisse
+      autonome de retraite des géomètres experts et des experts agricoles et fonciers
+      peuvent bénéficier d'une bonification pour enfants dans les conditions prévues
+      par les statuts de ce régime. »
+  - id: JORFARTI000018197778
+    article: >-
+      arrêté du 22 février 2008, annexe : statuts de la CAVEC (aucune « bonification »
+      dans les 37 431 caractères ; l'enfant n'y paraît qu'à la réversion)
+    publie_le: 2008-03-01
+    citation: >-
+      « cette condition de durée n'étant cependant pas exigée si un enfant est issu de
+      ce mariage »
+  bornes:
+    liquidation.date_effet: [2000-01-01, 2011-07-01]
+  contenu:
+    parametres:
+      taux_a_trois_enfants:
+        cavamac_complementaire: 0.0
+        cavec_complementaire: 0.0
+        cipav_complementaire: 0.10
+    droit: >-
+      la pension de la Cipav majorée de 10 % pour trois enfants (forme supposée) ;
+      rien à la CAVAMAC ni à la CAVEC
+    conditions: trois enfants au moins
+  exemples: aucun trouvé
+- id: cavamac_depuis_juillet_2011
+  statut: supposee
+  hypothese: >-
+    la CAVAMAC est lue ; la Cipav garde la forme supposée depuis 2000 ; la CAVEC ne
+    majore pas, ses statuts de 2008, 2012 et 2018 lus
+  fiabilite: >-
+    haute pour la CAVAMAC et la CAVEC, au texte ; moyenne pour la Cipav
+  nee_de: JORFARTI000024270156
+  textes:
+  - id: JORFARTI000024270156
+    article: arrêté du 23 juin 2011, article 2
+    publie_le: 2011-06-29
+    citation: >-
+      « Les dispositions du présent arrêté entrent en vigueur le 1er juillet 2011. »
+  - id: JORFARTI000024270158
+    article: arrêté du 23 juin 2011, article 3
+    publie_le: 2011-06-29
+    citation: >-
+      « L'arrêté du 22 décembre 1967 modifié portant approbation des statuts du régime
+      d'assurance vieillesse complémentaire des agents généraux d'assurances est
+      abrogé. »
+  - id: JORFARTI000024270173
+    article: >-
+      arrêté du 23 juin 2011, annexe : statuts de la CAVAMAC, articles 17 et 18
+    en_vigueur: 2011-07-01
+    publie_le: 2011-06-29
+    citation: >-
+      « les majorations prévues aux articles 18 et 19 des présents statuts sont
+      calculées sur la base du compte de droits majoré ou minoré de l'adhérent. [...]
+      Article 18 Majoration pour enfant Le nombre des points de retraite acquis dans le
+      présent régime est majoré de 10 % au profit de l'adhérent ayant eu au moins trois
+      enfants (légitimes, naturels, adoptés, pupilles de la nation dont l'assuré est
+      tuteur, recueillis). Les enfants mort-nés sont pris en compte pour l'attribution
+      de la présente majoration. Sont également considérés comme ouvrant droit à la
+      majoration les enfants ayant été élevés par l'adhérent et à sa charge effective
+      pendant au moins neuf ans avant leur seizième anniversaire. »
+  - id: JORFARTI000025395367
+    article: >-
+      arrêté du 9 février 2012, annexe : statuts de la CAVEC (aucune « bonification »)
+    publie_le: 2012-02-23
+    citation: >-
+      « cette condition de durée n'étant cependant pas exigée si un enfant est issu de
+      ce mariage »
+  - id: JORFARTI000037363871
+    article: >-
+      arrêté du 20 août 2018, annexe : statuts de la CAVEC (aucune « bonification »
+      dans les 80 716 caractères)
+    publie_le: 2018-09-04
+    citation: >-
+      « cette condition de durée n'étant cependant pas exigée si un enfant est issu de
+      ce mariage »
+  bornes:
+    liquidation.date_effet: [2011-07-01, 2025-07-07]
+  contenu:
+    parametres:
+      taux_a_trois_enfants:
+        cavamac_complementaire: 0.10
+        cavec_complementaire: 0.0
+        cipav_complementaire: 0.10
+    droit: >-
+      les points de la CAVAMAC, minorés ou majorés par l'âge, majorés de 10 % pour trois
+      enfants, nés ou élevés neuf ans avant leurs seize ans ; la Cipav, de même depuis
+      2000 ; rien à la CAVEC
+    conditions: trois enfants au moins
+  exemples: aucun trouvé
+- id: cavec_depuis_juillet_2025
+  statut: supposee
+  hypothese: >-
+    la CAVEC et la CAVAMAC sont lues ; la Cipav garde la forme supposée depuis 2000
+  fiabilite: >-
+    haute pour la CAVAMAC et la CAVEC ; moyenne pour la Cipav
+  nee_de: JORFARTI000051849616
+  textes:
+  - id: JORFARTI000051849616
+    article: >-
+      arrêté du 4 juillet 2025, annexe, II, 10° : statuts de la CAVEC, article 20
+    publie_le: 2025-07-06
+    citation: >-
+      « 10° Il est ajouté un article 20 ainsi rédigé : « Art. 20. - Bonification de la
+      pension pour enfants. « Le montant de la première pension personnelle et de la
+      pension de réversion relatives au régime d'assurance vieillesse complémentaire
+      des assurés ayant eu au moins trois enfants est majoré de 10 % dans les
+      conditions fixées par les articles L. 643-1-1 et L. 351-12 du code de la sécurité
+      sociale. »
+  - id: JORFARTI000051849614
+    article: >-
+      arrêté du 4 juillet 2025, article 2 (aucune date : le lendemain de la publication, le 7 juillet 2025)
+    publie_le: 2025-07-06
+    citation: >-
+      « Le présent arrêté sera publié au Journal officiel de la République française. »
+  bornes:
+    liquidation.date_effet: [2025-07-07, 2026-07-01]
+  contenu:
+    parametres:
+      taux_a_trois_enfants:
+        cavamac_complementaire: 0.10
+        cavec_complementaire: 0.10
+        cipav_complementaire: 0.10
+    droit: >-
+      la première pension personnelle de la CAVEC majorée de 10 % pour trois enfants ;
+      la CAVAMAC et la Cipav, comme avant
+    conditions: trois enfants au moins
+  exemples: aucun trouvé
+- id: au_decret_et_aux_reglements_de_2026
+  statut: lue
+  nee_de: JORFARTI000054153655
+  textes:
+  - id: LEGIARTI000054168515
+    article: décret n° 79-262, article 5-2, I, rédaction du décret n° 2026-418, en vigueur le 1er juillet 2026
+    en_vigueur: 2026-07-01
+    citation: >-
+      « I. - Le montant de la pension est égal au produit du nombre de points acquis
+      diminué, le cas échéant, du coefficient de réduction par la valeur de service du
+      point. Il est majoré de 10 % au profit du demandeur ayant eu au moins trois
+      enfants. Le demandeur ne peut bénéficier de cette majoration s'il a été privé de
+      l'exercice de l'autorité parentale ou s'est vu retirer l'autorité parentale dans
+      les conditions mentionnées au dernier alinéa de l'article L. 351-12 du code de la
+      sécurité sociale. Cette majoration bénéficie également au demandeur qui a élevé au
+      moins trois enfants pendant 9 ans jusqu'à leur 16e anniversaire. »
+  - id: JORFARTI000054153655
+    article: décret n° 2026-418 du 29 mai 2026, article 20 (article 5-2 du décret n° 79-262)
+    publie_le: 2026-05-31
+    citation: >-
+      « Art. 5-2. - I. - Le montant de la pension est égal au produit du nombre de
+      points acquis diminué, le cas échéant, du coefficient de réduction par la valeur
+      de service du point. « Il est majoré de 10 % au profit du demandeur ayant eu au
+      moins trois enfants. »
+  - id: JORFARTI000054153813
+    article: décret n° 2026-418, article 30
+    publie_le: 2026-05-31
+    citation: >-
+      « Le présent décret entre en vigueur le 1 er juillet 2026. »
+  - id: JORFARTI000054436046
+    article: >-
+      arrêté du 10 juillet 2026, annexe : règlement de la complémentaire de la CAVAMAC,
+      article 7, en vigueur le 18 juillet 2026 (article 2 : la publication seule)
+    publie_le: 2026-07-17
+    citation: >-
+      « Article 7 « Majoration pour enfant « Le nombre des points de retraite acquis
+      dans le présent régime est majoré de 10 % au profit de l'adhérent ayant eu au
+      moins trois enfants (légitimes, naturels, adoptés, pupilles de la nation dont
+      l'assuré est tuteur, recueillis). »
+  - id: JORFARTI000054435943
+    article: >-
+      arrêté du 10 juillet 2026, annexe : règlement de la complémentaire de la CAVEC,
+      article 1.3.1, en vigueur le 18 juillet 2026 (article 2 : la publication seule)
+    publie_le: 2026-07-17
+    citation: >-
+      « Article 1.3.1 « Bonification de la pension pour enfants « Le montant de la
+      première pension personnelle et de la pension de réversion relatives au régime
+      d'assurance vieillesse complémentaire des cotisants ayant eu au moins trois
+      enfants est majoré de 10 % dans les conditions fixées par les articles L.
+      643-1-1 et L. 351-12 du code de la sécurité sociale. »
+  bornes:
+    liquidation.date_effet: [2026-07-01, null]
+  contenu:
+    parametres:
+      taux_a_trois_enfants:
+        cavamac_complementaire: 0.10
+        cavec_complementaire: 0.10
+        cipav_complementaire: 0.10
+    droit: >-
+      la pension de la Cipav, diminuée le cas échéant de sa minoration, majorée de 10 %
+      au demandeur qui a eu ou élevé trois enfants, au décret lui-même ; la CAVAMAC et
+      la CAVEC, du 1er au 17 juillet 2026 à leurs statuts, depuis le 18 juillet à leurs
+      règlements, aux mêmes 10 %
+    conditions: >-
+      trois enfants au moins ; à la Cipav, ni privé ni retiré de l'autorité parentale
+  exemples: aucun trouvé
+approximations:
+- version: [cavamac_depuis_juillet_2011]
+  regime: cavamac_complementaire
+  textes: >-
+    arrêté du 23 juin 2011, article 2 (JORFARTI000024270156) et annexe, article 18
+    (JORFARTI000024270173)
+  ecart: >-
+    Erreur prouvée, déclarée et non corrigée : les statuts de 2011 entrent en vigueur le
+    1er juillet 2011 et abrogent ceux de 1967, sans disposition transitoire (ni « 2011
+    » ni « 2012 » dans les 29 983 caractères de l'annexe) ; une pension qui prend effet
+    du 1er juillet au 1er décembre 2011 se liquide à leur article 18. Le modèle ne
+    déclare `majoration_enfants` qu'à la période de 2012 (« servis à partir de 2012,
+    première année pleine », `cavamac_complementaire.yaml`) : il ne sert rien à ces six
+    dates d'effet. La lecture contraire, que la majoration n'atteindrait que les
+    pensions de 2012, ne tient à aucun texte. Essai du 6 novembre 2026, une mère de
+    trois enfants née le 10 mars 1946, agent général au double du salaire moyen depuis
+    22 ans, en euros de 2026 : partie à 65 ans et 3 mois, pension au 1er juillet 2011,
+    13 323,31 € de CAVAMAC, aucune majoration ; le texte en donne 0,10 × 13 323,31 =
+    1 332,33 € ; partie à 65 ans et 9 mois, pension au 1er janvier 2012, le modèle
+    sert 1 382,64 €, 10 % de 13 826,36 €.
+  effet: >-
+    −10 % de la pension de la CAVAMAC, par an, pour un parent de trois enfants dont la
+    pension prend effet de juillet à décembre 2011 : 1 332,33 € au cas posé
+- version: [aucune_avant_2000, cipav_depuis_2000]
+  regime: cavamac_complementaire
+  textes: >-
+    arrêté du 22 décembre 1967 et ses modifications de 1972, 1975 et 1983, au seul
+    fac-similé du Journal officiel
+  ecart: >-
+    Manque : les statuts de la CAVAMAC d'avant le 1er juillet 2011 ne sont pas lus ;
+    le modèle n'y sert aucune majoration. Des textes de la CAVAMAC que l'index porte
+    avant le 23 juin 2011, aucun ne nomme l'enfant (le décret n° 97-1056, les arrêtés
+    du 17 décembre 2007 et du 26 janvier 2011, ces deux derniers pour la base et les
+    statuts généraux) ; les arrêtés de 1967, 1972, 1975 et 1983 n'y ont que leur
+    titre, au fac-similé
+    (`docs/feuille_de_route/138/2026-11-05-la-file-des-fac-similes.md`).
+  effet: >-
+    non mesuré : jusqu'à 10 % de la pension de la CAVAMAC si les statuts de 1967
+    majoraient comme ceux de 2011
+- version: [aucune_avant_2000]
+  regime: cipav_complementaire
+  textes: >-
+    décret n° 99-913, article 6 (LEGIARTI000006780306) ; statuts de la Cipav d'avant
+    2026, au seul Bulletin officiel
+  ecart: >-
+    Point non tranché. Première lecture, celle du modèle : la bonification ne commence
+    qu'en 2000, à la date où le décret n° 99-913 l'atteste. Seconde lecture : ce décret
+    renvoie à une bonification « prévue par les statuts de ce régime », qui existait
+    donc avant lui, à une date et sous une forme que seuls les statuts disent. Essai du
+    6 novembre 2026, une mère de trois enfants née le 10 mars 1934, libérale de la Cipav
+    au double du salaire moyen depuis 22 ans, en euros de 2026 : partie à 65 ans et 8
+    mois, pension au 1er décembre 1999, 4 033,95 €, aucune majoration ; à la seconde
+    lecture, 0,10 × 4 033,95 = 403,40 € ; partie à 65 ans et 9 mois, au 1er janvier
+    2000, le modèle sert 418,15 €, 10 % de 4 181,48 €.
+  effet: >-
+    0 € à la première lecture ; −10 % de la pension de la Cipav à la seconde, 403,40 €
+    par an au cas posé, pour les pensions d'avant 2000
+- version: [cipav_depuis_2000, cavamac_depuis_juillet_2011, cavec_depuis_juillet_2025]
+  regime: cipav_complementaire
+  textes: >-
+    décret n° 99-913, article 6 ; décret n° 79-262, article 5-2 (LEGIARTI000054168515)
+  ecart: >-
+    La forme de la bonification de la Cipav, de 2000 au 30 juin 2026, est supposée
+    celle que l'article 5-2 écrit en 2026 : 10 % de la pension dès trois enfants ; les
+    statuts qui la fixaient sont au seul Bulletin officiel. Le décret n° 99-913 ne la
+    donne aux anciens affiliés de la caisse des géomètres que sur leurs « droits acquis
+    au titre des périodes d'activité postérieures au 1er janvier 2000 » ; le modèle,
+    qui ne les distingue pas, majore tous leurs points.
+  effet: non mesuré
+- version: [cavamac_depuis_juillet_2011, cavec_depuis_juillet_2025, au_decret_et_aux_reglements_de_2026]
+  regime: cavamac_complementaire
+  textes: >-
+    statuts de 2011, article 19 (JORFARTI000024270173) ; règlement de 2026, article 8
+    (JORFARTI000054436046)
+  ecart: >-
+    Manque : « Le nombre des points de retraite acquis dans le présent régime est majoré
+    de 5 % au profit de l'adhérent qui, à la date de demande de liquidation de sa
+    pension de retraite complémentaire, déclare fiscalement à sa charge un enfant
+    ouvrant droit [...] à l'allocation d'éducation de l'enfant handicapé », par enfant
+    (article 19, puis article 8 du règlement) ; la saisie ne connaît pas l'enfant
+    handicapé à charge, le modèle ne le sert pas.
+  effet: >-
+    −5 % de la pension de la CAVAMAC par enfant handicapé à charge : 0,05 × 13 323,31 =
+    666,17 € par an au cas posé de 2011
+- version: [cavamac_depuis_juillet_2011, cavec_depuis_juillet_2025, au_decret_et_aux_reglements_de_2026]
+  textes: >-
+    statuts de la CAVAMAC, article 18, et règlement de 2026, article 7 ; décret n°
+    79-262, article 5-2 ; statuts de la CAVEC, article 20 (L. 351-12)
+  ecart: >-
+    Le modèle compte les enfants de l'assuré (`nombre_enfants`) sans distinguer les
+    enfants élevés neuf ans avant leurs seize ans, que les trois textes comptent aussi,
+    ni le parent privé ou retiré de l'autorité parentale, que la Cipav et la CAVEC (par
+    L. 351-12) excluent.
+  effet: non mesuré
+- version: [cavec_depuis_juillet_2025, au_decret_et_aux_reglements_de_2026]
+  regime: cavec_complementaire
+  textes: >-
+    statuts de la CAVEC, article 20 (JORFARTI000051849616) ; règlement de 2026, article
+    1.3.1 (JORFARTI000054435943)
+  ecart: >-
+    À examiner, hors de cette fiche : la CAVEC majore aussi de 10 % « la pension de
+    réversion » ; que la réversion de la CAVEC reprenne ou non la part de la majoration
+    (`echeancier`, `parts_de_la_majoration`) relève des fiches de la réversion, que
+    cette lecture n'a pas ouvertes.
+  effet: non mesuré
+textes_sans_effet:
+- id: JORFARTI000032511119
+  article: arrêté du 4 mai 2016, annexe (CAVAMAC)
+  motif: >-
+    « 15° L'article 18 est ainsi modifié : a. Le premier alinéa est remplacé par les
+    dispositions suivantes : « Le conseil d'administration dé[...] » : l'article 18 des
+    statuts généraux, pas celui du régime complémentaire ; « enfant » n'y paraît pas
+- id: JORFARTI000047977908
+  article: arrêté du 4 août 2023, annexe (CAVAMAC)
+  motif: >-
+    la majoration pour report (« Cette majoration ne s'applique pas aux années de
+    cotisations versées dans le cadre du dispositif prévu à l'article 14 ») ; « enfant
+    » n'y paraît pas
+- id: JORFARTI000051895020
+  article: arrêté du 8 juillet 2025, annexe (CAVAMAC)
+  motif: >-
+    le capital décès ; l'enfant n'y paraît que parmi ses bénéficiaires
+- id: JORFARTI000053748628
+  article: décret n° 2026-239 du 1er avril 2026, annexe (statuts-types des sections)
+  motif: >-
+    ni « enfant », ni « points », ni « date d'effet » dans les 41 843 caractères : la
+    gouvernance et le recouvrement
+reformes:
+- cipav_geometres_2000
+- cavamac_statuts_2011
+- cavec_majoration_enfants_2025
 effet: >-
-  Aucune des trois fiches ne la portait : 10 % de complémentaire en moins pour tout
-  parent de trois enfants. Depuis le 23 septembre 2026, `majoration_enfants` à la
-  CAVAMAC depuis 2012, à la Cipav depuis 2000, à la CAVEC depuis 2026 ; tenu par
-  tests/test_sections_liberales.py. Approximation : la maille est l'année, la forme
-  de la bonification de la Cipav est supposée celle d'aujourd'hui depuis 2000, et
-  la majoration de 5 % de la CAVAMAC par enfant ouvrant droit à l'allocation d'éducation
-  de l'enfant handicapé n'est pas portée.
+  Aucune des trois fiches ne la portait avant le 23 septembre 2026 : 10 % de
+  complémentaire en moins pour tout parent de trois enfants. Lue au droit le 6
+  novembre 2026 (action 130) : cinq versions sur la date d'effet ; la CAVEC conforme
+  depuis le 7 juillet 2025, la Cipav et la CAVAMAC au décret et aux règlements de
+  2026 ; une erreur prouvée, la CAVAMAC de juillet à décembre 2011 (1 332,33 € par an
+  au cas posé) ; un point non tranché, la Cipav avant 2000 (403,40 €) ; des manques,
+  les statuts de la CAVAMAC d'avant 2011, les 5 % par enfant handicapé de la CAVAMAC,
+  la réversion de la CAVEC à examiner.
 sources:
-  lu_le: 2026-09-23
+  lu_le: 2026-11-06
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
-    Lire les statuts de la Cipav d'avant 2026 pour dater la forme de sa bonification.
+    Lire les statuts de la Cipav d'avant 2026 (Bulletin officiel) pour dater et donner
+    la forme de sa bonification ; ceux de la CAVAMAC de 1967 (fac-similé du Journal
+    officiel).
+  - >-
+    La réversion de la CAVEC, que l'article 20 de 2025 et l'article 1.3.1 de 2026
+    majorent aussi de 10 %.
   lectures:
   - type: jorf
     reference: >-
@@ -39,38 +443,47 @@ sources:
     url: >-
       https://www.cavec.fr/votre-retraite/votre-retraite/preparer-votre-retraite/le-calcul-de-votre-retraite/
     date: 2026-09-23
-textes_a_rattacher:
-- reference: >-
-    statuts du régime complémentaire de la CAVAMAC, article 18, approuvés par l'arrêté
-    du 23 juin 2011 (JORFARTI000024270173)
-- reference: >-
-    décret n° 99-913 du 21 octobre 1999, article 6 (JORFTEXT000000561136) ; décret
-    n° 79-262 du 21 mars 1979, article 5-2, dans la rédaction de l'article 20 du
-    décret n° 2026-418 (JORFARTI000054153655)
-- reference: >-
-    statuts de la CAVEC, article 20, dans la rédaction de l'arrêté du 4 juillet
-    2025 (JORFARTI000051849616), puis article 1.3.1 du règlement approuvé le 10
-    juillet 2026
-reformes:
-- cipav_geometres_2000
-- cavamac_statuts_2011
-- cavec_majoration_enfants_2025
+  - type: jorf
+    reference: >-
+      Arrêté du 23 juin 2011, articles 2 et 3 et annexe (JORFARTI000024270156,
+      JORFARTI000024270158, JORFARTI000024270173) et ses modifications des 28 septembre
+      2012, 28 mars 2014, 4 mai 2016, 20 novembre 2017, 4 août 2023 et 8 juillet 2025 ;
+      statuts de la CAVEC de 2008, 2012 et 2018 (JORFARTI000018197778,
+      JORFARTI000025395367, JORFARTI000037363871) et arrêté du 4 juillet 2025
+      (JORFARTI000051849614, JORFARTI000051849616) ; décret n° 2026-418, articles 20 et
+      30 ; arrêtés du 10 juillet 2026 (JORFARTI000054436046, JORFARTI000054435943) ;
+      décret n° 2026-239 ; dans l'index JORF du dépôt, à jour du 6 novembre 2026.
+    date: 2026-11-06
+  - type: legifrance
+    reference: >-
+      Décret n° 99-913, article 6 (LEGIARTI000006780306) ; décret n° 79-262, article
+      5-2 (LEGIARTI000054168515) ; dans l'index LEGI du dépôt, à jour du 5 novembre
+      2026.
+    date: 2026-11-06
 code:
   moteur: >-
     Les périodes de la complémentaire de la CAVAMAC depuis 2012, de la Cipav depuis
     2000, et de la CAVEC pour les pensions prenant effet depuis le 7 juillet 2025
     (`date_effet`), déclarent `majoration_enfants`, que `completer` sert au barème
     commun de `_taux_majoration_enfants`, 10 % dès trois enfants, sur la pension de
-    chacune. Le nombre d'enfants seul l'ouvre : ni l'éducation de neuf ans de la Cipav,
-    ni les 5 % de la CAVAMAC par enfant ouvrant droit à l'allocation d'éducation de
-    l'enfant handicapé ne sont portés.
+    chacune, minorée ou majorée par l'âge, à la période de liquidation
+    (`periode_de_liquidation`). Le nombre d'enfants seul l'ouvre : ni l'éducation de
+    neuf ans, ni les 5 % de la CAVAMAC par enfant handicapé ne sont portés.
   python: >-
-    droit/completer.py : completer, _taux_majoration_enfants
+    droit/completer.py : completer, _taux_majoration_enfants ; droit/commun.py :
+    periode_de_liquidation
   javascript: >-
     moteur/js/droit/completer.js : completer, tauxMajorationEnfants
   parametres: >-
+    contenu.parametres de chaque version : taux_a_trois_enfants ;
     regimes/cavamac_complementaire.yaml, regimes/cavec_complementaire.yaml,
     regimes/cipav_complementaire.yaml : avantages_non_contributifs, date_effet
   tests:
   - tests/test_coupures_au_mois.py
-  - tests/test_sections_liberales.py
+  - >-
+    tests/test_sections_liberales.py,
+    test_chaque_version_de_la_majoration_pour_enfants_des_sections_est_portee, qui
+    confronte chaque mois de 1990 à 2040 la période de liquidation de chaque section à
+    la version de la date, l'écart de 2011 déclaré, et
+    test_la_majoration_pour_enfants_des_sections_aux_dates_qui_comptent_dans_les_deux_moteurs,
+    sept cas aux bornes, servis par le portage et refaits par le moteur Python

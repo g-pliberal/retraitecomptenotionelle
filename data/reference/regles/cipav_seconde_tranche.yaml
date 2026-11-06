@@ -35,6 +35,30 @@ versions:
 - id: classes_d_avant_2023
   statut: lue
   textes:
+  - id: LEGIARTI000006767473
+    article: décret n° 79-262, article 2, rédaction d'origine, du 1er janvier 1979 au 21 juin 1985
+    en_vigueur: 1979-01-01
+    citation: >-
+      « Le régime d'assurance vieillesse complémentaire institué par l'article 1er
+      comporte six classes de cotisation : Classe 1 portant attribution de quatre points
+      de retraite ; [...] Classe 10 portant attribution de quarante points de retraite.
+      [...] Le montant des cotisations est fixé par décret sur proposition du conseil
+      d'administration de la section professionnelle mentionnée à l'article 1er. »
+  - id: LEGIARTI000006767474
+    article: décret n° 79-262, article 2, rédaction du 21 juin 1985 au 30 décembre 2012
+    en_vigueur: 1985-06-21
+    citation: >-
+      « Le régime d'assurance vieillesse complémentaire institué par l'article 1er
+      comporte six classes de cotisation : Classe 1 portant attribution de quatre points
+      de retraite ; [...] La cotisation ainsi fixée peut faire l'objet d'un appel réduit
+      dans les conditions fixées par les statuts prévus à l'article 5. »
+  - id: LEGIARTI000026885130
+    article: décret n° 79-262, article 2, rédaction du 30 décembre 2012 au 1er janvier 2013
+    en_vigueur: 2012-12-30
+    citation: >-
+      « Le régime d'assurance vieillesse complémentaire institué par l'article 1er
+      comporte six classes de cotisation : [...] son revenu d'activité tel que défini à
+      l'article L. 131-6 du code de la sécurité sociale [...] »
   - id: LEGIARTI000026892951
     article: décret n° 79-262, article 2, rédaction du 1er janvier 2013 au 1er janvier 2023
     en_vigueur: 2013-01-01
@@ -300,17 +324,31 @@ approximations:
   ecart: >-
     Nul décret lu ne fixe les taux ni le coût du point de 2026 ; le modèle reconduit
     11 % et 21 %. Ce n'est pas une erreur prouvée : aucun texte ne dit d'autres taux. Ce
-    que la reconduction engage, si 2026 reprenait les taux de 2023 et 2024, 9 % et 22 %
-    : à 40 000 € de revenu, 0,11 × 40 000 = 4 400,00 € contre 0,09 × 40 000 = 3 600,00
-    €, 800,00 € de cotisation, 800,00 / 47,40 = 16,88 points, 48,80 € de pension par an
-    à 2,8914 € ; à 150 000 €, 0,11 × 48 060 + 0,21 × 101 940 = 26 694,00 € contre 0,09
-    × 48 060 + 0,22 × 101 940 = 26 752,20 €, 58,20 € de moins, 1,23 point, 3,55 € par
-    an. Au propriétaire : le décret qui fixe les paramètres de la Cipav pour 2026.
+    que la reconduction engage, si 2026 reprenait les taux de 2023 et 2024, 9 % et 22 %,
+    au plafond de 2026, P = 4 005 × 12 = 48 060 €, et au coût du point de 2025, 47,40 €,
+    servi à 2,8914 € (0,061 × 47,40 : un euro de cotisation rend 0,061 € de pension).
+    L'écart de cotisation, celle du modèle moins celle de l'hypothèse, vaut 0,02 × R
+    jusqu'au plafond, 0,02 × P − 0,01 × (R − P) d'un à quatre plafonds, et −0,01 × 3 P
+    + 0,02 × P = −480,60 € au-delà. Il est le plus grand au plafond, 0,02 × 48 060 =
+    961,20 €, 961,20 / 47,40 = 20,2785 points, 961,20 × 0,061 = 58,63 € de pension
+    par an que le modèle servirait de trop ; nul à trois plafonds (0,02 × 48 060 = 0,01
+    × 96 120 : R = 144 180 €) ; le plus bas dès quatre plafonds (192 240 €), −480,60 €,
+    −10,1392 points, −480,60 × 0,061 = −29,32 € par an. Deux cas : à 40 000 €, 0,11 ×
+    40 000 = 4 400,00 € contre 0,09 × 40 000 = 3 600,00 €, 800,00 €, 16,8776 points,
+    800,00 × 0,061 = 48,80 € ; à 150 000 €, 0,11 × 48 060 + 0,21 × 101 940 = 26 694,00 €
+    contre 0,09 × 48 060 + 0,22 × 101 940 = 26 752,20 €, 58,20 € de moins, 1,2278
+    point, 58,20 × 0,061 = 3,55 € de moins. Les points arrondis à la décimale, comme le
+    veut le texte, déplacent chaque écart d'au plus 0,1 point, 0,29 € : à 40 000 €,
+    92,8 − 75,9 = 16,9 points, 48,86 € ; à 150 000 €, 563,2 − 564,4 = −1,2 point,
+    −3,47 € ; au plafond, 111,5 − 91,3 = 20,2 points, 58,41 € ; à quatre plafonds,
+    750,3 − 760,4 = −10,1 points, −29,20 €. Au propriétaire : le décret qui fixe les
+    paramètres de la Cipav pour 2026.
   effet: >-
-    au plus 48,80 € de pension annuelle par exercice 2026 dans les cas posés (40 000 €
-    de revenu), si les taux de 2026 étaient ceux de 2023 et 2024 ; 0 € si la
-    reconduction vaut. Plafond de 2026 : 4 005 × 12 = 48 060 € (arrêté du 22 décembre
-    2025, JORFARTI000053143455).
+    de −29,32 € (revenu de quatre plafonds et plus, 192 240 €) à +58,63 € (revenu égal
+    au plafond, 48 060 €) de pension annuelle par exercice 2026, nul à trois plafonds
+    (144 180 €), si les taux de 2026 étaient ceux de 2023 et 2024 (9 % et 22 %) ; 0 € si
+    la reconduction vaut ; à ±0,29 € près, les points arrondis à la décimale. Plafond de
+    2026 : 4 005 × 12 = 48 060 € (arrêté du 22 décembre 2025, JORFARTI000053143455).
 - version: [exercice_2023, exercice_2024, exercice_2025, depuis_2026]
   textes: >-
     statuts, article 3.3, III (arrêté du 20 mars 2023) ; décret n° 79-262, article 2,
@@ -359,6 +397,16 @@ textes_sans_effet:
   motif: >-
     statuts généraux, articles 1.3 à 2.23 et 5.1 à 5.3 : les affiliés, la gouvernance,
     les élections ; rien de la cotisation
+- id: JORFARTI000053748628
+  article: >-
+    décret n° 2026-239 du 1er avril 2026, annexe (statuts-types des sections), en
+    vigueur le 1er juillet 2026 (article 2)
+  motif: >-
+    nomme la Cipav aux notes 51 et 52 : « La caisse (hors CIPAV) choisit entre la
+    possibilité prévue à l'article R. 642-2 du code de la sécurité sociale et des
+    dispositions ad hoc », le recouvrement et ses majorations de retard ; ni « classe
+    », ni « points », ni « date d'effet » dans les 41 843 caractères de l'annexe : rien
+    de l'assiette, des tranches, des taux ni du coût du point
 reformes: []
 effet: >-
   Un libéral de la Cipav au-delà de trois plafonds achetait trop peu de points depuis
