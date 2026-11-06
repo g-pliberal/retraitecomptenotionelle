@@ -1,0 +1,44 @@
+date: "2026-11-06"
+session: "action 175, étape 4 : le thème « Carrière : majorations de durée d'assurance » de la base de la Cnav"
+consulte: >-
+  python scripts/veille_droit.py. La base de législation de la Cnav, relue par
+  python scripts/fetch/cnav_legislation.py le 6 novembre 2026 de 0 h 13 à 0 h 21 UTC
+  (import de la nuit du 5 novembre à 5 h 00), sans refus et sans rien changer au registre.
+  Par son API : les 13 exposés du thème « Carrière > Majorations de durée d'assurance », à
+  la version que le registre date, les 5 fenêtres, les 2 listes et les 56 références qu'ils
+  lient, les avis de mise à jour 102, 302 et 356 ; hors du thème, la circulaire
+  ministérielle n° DSS/3C/2026/140 du 3 novembre 2026 et l'avis 357 ; la circulaire Cnav
+  2026/31 du 30 septembre 2026. L'index LEGI de la DILA, à jour au 5 novembre 2026, et JORF,
+  au 6 : les 42 identifiants Légifrance des 60 liens des exposés ; L. 351-4 (rédactions du
+  28 décembre 2009 et du 31 décembre 2025, et son histoire), L. 351-4-1, L. 351-4-2,
+  L. 351-5, R. 351-3, R. 4163-11 du code du travail, L. 161-22 (rédaction du 31 décembre
+  2025) ; les décrets n° 2026-1016 et 2026-1017 du 2 novembre 2026. Le jumeau Python du
+  modèle, sur une carrière posée à la main.
+trouve: >-
+  Le registre range tout le thème : 13 exposés limite, 2 fenêtres hors_modele, 39
+  références limite et 15 dont les renvois s'étendent, 3 avis hors_modele ; la circulaire
+  2026/140 limite (cumul emploi-retraite des navigants), l'avis 357 hors_modele. La limite
+  « majorations de durée d'assurance » (docs/limites/3-systeme-actuel.md) dit ce que le
+  modèle sert — la majoration pour enfants à la mère, la majoration pour âge —, les deux
+  conditions qu'il ne lit pas — la durée de deux ans des parents (L. 351-4, VII), les quatre
+  années d'éducation accomplies avant la retraite — et ce qu'il ne sert pas : l'adoption, le
+  congé parental (L. 351-5), l'enfant handicapé (L. 351-4-1), l'adulte handicapé
+  (L. 351-4-2), le compte professionnel de prévention. Deux candidats, aucun corrigé : le
+  modèle donne la majoration d'éducation à la mère qui n'a pas huit trimestres, majoration
+  d'éducation exclue (11 trimestres au lieu de 7 pour la salariée née en 1965 qui n'a
+  travaillé qu'en 1987) — point que le texte ne tranche pas ; et le seuil du cumul
+  emploi-retraite des premières pensions de 2027, que la fiche dit non publié, est fixé à
+  sept mille euros par le décret n° 2026-1017 (D. 161-2-8), quand les deux moteurs ne
+  réduisent rien (5 000 € de réduction sur l'année pour 17 000 € de revenus). Un lien fautif
+  de la base : chaque « § » de la circulaire Cnav 2025/19 de l'exposé du compte
+  professionnel de prévention mène au PDF de la circulaire 2024/30.
+reste: >-
+  L'étape 4 aux quatre autres thèmes de « Carrière » (17 exposés). Aux sessions du modèle :
+  les deux candidats ; la fiche des sapeurs-pompiers volontaires, à mettre à la circulaire
+  Cnav 2026/31, qui remplace la 2026/22 au 1er janvier 2027 et étend la majoration à
+  Mayotte ; l'article 3 du décret n° 2026-1017, à lire entier (la répartition de la
+  réduction entre régimes). La circulaire Cnav 2026/34 que cite l'avis 357, et la circulaire
+  Cnav 2015/56 (L. 351-4-2 vaut pour les prises en charge depuis le 1er février 2014,
+  l'exposé décompte depuis le 1er janvier 2015). Les listes de l'Espace économique
+  européen, avec leur thème. Absents de l'index : les articles 355, 373-3, 375-3 et 377-1 du
+  code civil, L. 1225-48 du code du travail, l'article 12 de la loi n° 94-629.

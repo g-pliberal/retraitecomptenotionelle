@@ -1,15 +1,5 @@
 # Étape 4, thème « Carrière : périodes assimilées » : les exposés et leurs références
 
-**Reprise, au 5 novembre 2026.** Quatre thèmes de l'étape sont rangés : « Retraite
-personnelle de base », « Carrière : cotisations-salaires », « Carrière : versements
-volontaires », puis « Carrière : périodes assimilées » — ses 25 exposés, et les 9 fenêtres,
-58 listes de guerre, 243 références et 6 avis qu'ils lient (cette note). Suivant, dans l'ordre de
-l'étape : « Carrière : majorations de durée d'assurance » (13 exposés), sous la convention
-de la note du premier thème. La base se relit par `cnav_legislation.py` sans mise en garde,
-hors de 5 h–6 h UTC. Restent à lire avec leur thème : les listes d'accords, de l'Union et
-de l'Espace économique européens. Aux sessions du modèle : les trois candidats de cette
-note, les deux de la précédente, l'activité accessoire d'avant 2015, l'AVPF du père.
-
 **Le 5 novembre 2026, ce qui est fait.**
 
 - *La relecture de la base.* Relue de 20 h 48 à 20 h 57 UTC par

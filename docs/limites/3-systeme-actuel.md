@@ -386,6 +386,32 @@ l'Institut des politiques publiques (PENSIPP). Écarts connus :
   chômage — : l'année d'interruption reste au métier qui l'occupe le plus
   (`carriere.py`, `_lignes_du_parcours`), et la saisie ne déclare une période
   sans emploi qu'après un premier métier.
+- **majorations de durée d'assurance** — le modèle sert, au régime général et
+  dans les régimes alignés, la majoration pour enfants de L. 351-4 dans sa
+  rédaction de la date d'effet — depuis avril 2010, quatre trimestres de
+  maternité et quatre d'éducation par enfant —, à la mère, bénéficiaire quand
+  les parents n'en ont pas désigné d'autre (fiche
+  `majoration_duree_assurance_enfants`), et la majoration de qui part après
+  l'âge du taux plein sans la durée maximale, par trimestre écoulé depuis cet
+  âge (L. 351-6, fiche `majoration_duree_apres_65_ans`). De la première, il ne
+  lit pas la durée d'assurance de deux ans que le VII de L. 351-4 demande aux
+  parents pour la majoration d'éducation, que la caisse exige de chacun et
+  compte sans cette majoration ; ni les quatre années d'éducation que la
+  caisse veut accomplies au point de départ de la retraite. Il ne sert pas la
+  majoration d'adoption, quatre trimestres par enfant adopté mineur ; celle du
+  congé parental d'éducation (L. 351-5), égale à la durée du congé, comptée de
+  date à date et arrondie au trimestre supérieur (R. 351-3), que la caisse
+  accorde pour un enfant à la place de la majoration pour enfants quand elle
+  est plus favorable ; celle de l'enfant handicapé (L. 351-4-1), un trimestre
+  par trente mois d'éducation ouvrant droit à l'allocation d'éducation de
+  l'enfant handicapé et à son complément, huit au plus, qui s'ajoute aux
+  autres ; celle de l'assuré qui assume au foyer familial la charge permanente
+  d'un adulte handicapé de sa famille (L. 351-4-2), un trimestre par trente
+  mois, huit au plus ; celle du compte professionnel de prévention, un
+  trimestre par dix points ; ni celles des sapeurs-pompiers volontaires et des
+  élus locaux (`ecarts-au-droit-positif.md`). La saisie n'a de quoi dire ni
+  l'adoption, ni le congé parental, ni l'allocation, ni la charge de l'adulte,
+  ni les points.
 
 Un écart de quelques pour cent avec la pension réelle est attendu.
 
