@@ -1501,17 +1501,32 @@ approximations:
     17,37 / 12,93 = 1,343 fois en 2003, 17,37 / 17,11 = 1,015 fois de 2017 à 2025. Au
     scénario 1, les points de ces années viennent du barème de R. 732-71, que le taux ne
     touche pas : rien n'y bouge. Le 17,37 % court aussi après 2025 : les périodes de 2026 à
-    2027 et de 2028 sans fin du régime le portent encore, sans la note ci-dessus. Lu le 5
-    novembre 2026 : D. 731-121 depuis le 1er janvier 2026 (LEGIARTI000053296666) dit que
-    « les taux applicables à la cotisation prévue au 1° de l'article L. 731-42 sont égaux à
-    ceux fixés respectivement au I de l'article D. 633-3 du code de la sécurité sociale pour
-    la part calculée sur l'assiette retenue dans la limite du plafond [...] et au II du même
-    article pour la part calculée sur la totalité de l'assiette », et D. 633-3, depuis le 7
-    juillet 2024 (LEGIARTI000049904636), fixe « 17,15 % » au I et « 0,72 % » au II : ni
-    17,15 % ni 17,87 % (17,15 + 0,72) ne sont 17,37 %. Ce que cette lecture ne tranche
-    pas : la structure de L. 731-42 en 2026 et le décret n° 2025-1417 du 30 décembre 2025,
-    dont D. 731-121 dit qu'il la fonde, ne sont pas relus ; c'est une piste, non une
-    lecture
+    2027 et de 2028 sans fin du régime le portent encore ; leurs notes disent, depuis le 6
+    novembre 2026, ce que les textes en disent. Lu le 6 novembre 2026 : L. 731-42, récrit
+    par la loi n° 2025-199, article 3, I, 8° (LEGIARTI000051284150), pour les « cotisations
+    dues au titre des périodes courant à compter du 1er janvier 2026 » (même article, III),
+    ne porte plus, pour le chef, qu'« une cotisation calculée pour partie sur l'assiette
+    [...] retenue dans la limite du plafond [...], et pour partie sur la totalité de cette
+    assiette », dont « Les taux applicables à chacune de ces deux parties sont identiques à
+    ceux déterminés en application de l'article L. 633-1 du même code » ; D. 731-121 depuis
+    le 1er janvier 2026 (LEGIARTI000053296666, décret n° 2025-1417 du 30 décembre 2025,
+    article 4, 3°) dit que « les taux applicables à la cotisation prévue au 1° de l'article
+    L. 731-42 sont égaux à ceux fixés respectivement au I de l'article D. 633-3 du code de
+    la sécurité sociale pour la part calculée sur l'assiette retenue dans la limite du
+    plafond [...] et au II du même article pour la part calculée sur la totalité de
+    l'assiette », et D. 633-3, depuis le 7 juillet 2024 (LEGIARTI000049904636), fixe
+    « 17,15 % » au I et « 0,72 % » au II ; le même décret, article 5, II, fixe « pour les
+    périodes courant du 1er janvier 2026 au 31 décembre 2028 » la part sous le plafond du
+    chef « exerçant leur activité à titre secondaire » et des personnes du 2° (aide
+    familial, collaborateur) « exerçant à titre principal ou exclusif » à « 14,15 % »,
+    « 15,15 % » et « 16,15 % », et celle des personnes du 2° « exerçant leur activité à
+    titre secondaire » à « 12,33 % », « 13,83 % » et « 16,15 % ». Aucun de ces taux, ni sa
+    somme avec les 0,72 % (17,87 % pour le chef à titre principal), n'est 17,37 % : le
+    17,37 % n'est le taux d'aucune cotisation de 2026 et après. Il ne déplace aucun
+    résultat mesuré : depuis 2026, le compte des scénarios 2 à 6 reçoit le taux du régime
+    unifié, et, porté à 27,37 % aux deux périodes, il ne change ni la pension du scénario 1
+    ni le compte de deux exploitants partis en 2026 et en 2030 (note
+    2026-11-06-notes-de-msa-non-salaries.md de l'action 131)
 sources:
   lu_le: 2026-11-03
   prochaine_relecture: 2027-03-31
@@ -1590,6 +1605,22 @@ sources:
       msa_non_salaries, relu au commit bdaecdbc du 8 septembre 2026 : source msa_parametres,
       fiabilité moyenne
     date: 2026-11-05
+  - type: legifrance
+    reference: >-
+      index LEGI à jour au 5 novembre 2026 et JORF au 6 novembre 2026, lus le 6 novembre
+      2026 (action 131, notes de msa_non_salaries) : au Journal officiel du 31 décembre
+      2025, le décret n° 2025-1417 du 30 décembre 2025 (JORFTEXT000053228345), notice et
+      articles 4 (JORFARTI000053228364) et 5 (JORFARTI000053228374) ; la loi n° 2025-199 du
+      28 février 2025, article 3, I, 8°, et III (JORFARTI000051269492) ; code rural,
+      L. 731-42 depuis le 28 février 2025 (LEGIARTI000051284150), D. 731-120
+      (LEGIARTI000053296657, à l'index sous le numéro « 731-120 »), D. 731-121
+      (LEGIARTI000053296666) et D. 731-123 (LEGIARTI000053296672) depuis le 1er janvier
+      2026, D. 731-122 et D. 731-124 jusqu'au 1er janvier 2026 ; code de la sécurité
+      sociale, D. 633-3 depuis le 7 juillet 2024 (LEGIARTI000049904636) et L. 633-1 depuis le
+      14 juin 2018 (LEGIARTI000037062182). Aucun texte qui les modifie depuis, cherché au
+      JORF par « 2025-1417 », « D. 731-121 », « L. 731-42 » et « D. 633-3 », sans borne de
+      réponses
+    date: 2026-11-06
 textes_sans_effet:
 - id: LEGIARTI000006581058
   motif: >-
@@ -1640,6 +1671,12 @@ historique:
   — le 17,37 % n'a aucun texte qui le fixe ni note qui le justifie, mais le régime portait
   la source msa_parametres ; le 17,37 % court aussi après 2025, avec D. 731-121 et D. 633-3
   lus. Aucun taux du modèle n'est changé.
+- >-
+  2026-11-06 — action 131 (file K-notes ; note 2026-11-06-notes-de-msa-non-salaries.md) :
+  le décret n° 2025-1417 (articles 4 et 5) et L. 731-42 de 2026 lus ; le 17,37 % des
+  périodes de 2026 et de 2028 n'est le taux d'aucune cotisation, et ne déplace aucun
+  résultat mesuré ; les notes du régime le disent, et celles de 2003 à 2025 disent ce que
+  « aucune source » veut dire. Aucun taux du modèle n'est changé.
 effet: >-
   Les chefs d'exploitation et les membres de leur famille qui ont cotisé avant 2003. Au
   scénario 1, avant 1990, le rendement tire leurs points d'une cotisation que le modèle

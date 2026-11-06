@@ -1,0 +1,30 @@
+date: "2026-11-06"
+session: "action 131, vague 11 (file K-notes) : les notes de msa_non_salaries — ce que « aucune source » veut dire, et le 17,37 % après 2025 lu au décret n° 2025-1417 et à L. 731-42"
+consulte: >-
+  python scripts/veille_droit.py ; docs/veille_droit.md. L'index de la DILA récupéré et mis à
+  jour dans la session (LEGI jusqu'à l'incrément LEGI_20261105-214938, JORF jusqu'à
+  JORF_20261106-002608). Au Journal officiel : le décret n° 2025-1417 du 30 décembre 2025
+  (JORFTEXT000053228345), notice et articles 4 et 5 ; la loi n° 2025-199, article 3, I, 8°, et
+  III (JORFARTI000051269492). Dans LEGI : L. 731-42 depuis le 28 février 2025
+  (LEGIARTI000051284150) ; D. 731-120 (LEGIARTI000053296657, numéroté « 731-120 »), D. 731-121
+  (LEGIARTI000053296666) et D. 731-123 (LEGIARTI000053296672) depuis le 1er janvier 2026 ;
+  D. 731-122 et D. 731-124, qui finissent au 1er janvier 2026 ; D. 633-3 depuis le 7 juillet
+  2024 (LEGIARTI000049904636) ; L. 633-1 depuis le 14 juin 2018 (LEGIARTI000037062182). Les
+  textes modificatifs cherchés au JORF par « 2025-1417 », « D. 731-121 », « L. 731-42 »,
+  « D. 633-3 », sans borne de réponses.
+trouve: >-
+  Depuis 2026, L. 731-42 ne porte plus, pour le chef, qu'une cotisation en deux parts, sous le
+  plafond et sur la totalité, aux taux « identiques à ceux déterminés en application de
+  l'article L. 633-1 » ; D. 731-121 les rend égaux à ceux de D. 633-3, 17,15 % et 0,72 %. Le
+  décret n° 2025-1417, article 5, II, abaisse la part sous le plafond de 2026 à 2028 : 14,15,
+  15,15 et 16,15 % pour le chef à titre secondaire et le 2° à titre principal, 12,33, 13,83 et
+  16,15 % pour le 2° à titre secondaire. Aucun texte ne fixe le 17,37 % que portent les périodes
+  de 2026 et de 2028 de msa_non_salaries ; mesuré, il ne déplace aucun résultat, le compte
+  recevant depuis 2026 le taux du régime unifié. Aucun texte modificatif depuis. Seules des notes
+  changent ; aucun taux.
+reste: >-
+  Le 17,37 % des périodes de 2026 et de 2028 : erreur de la donnée sans effet mesuré, non
+  corrigée, le taux du compte des exploitants attendant le propriétaire ; si le 0,72 % s'ajoute
+  au taux dérogatoire du 2° de 2026 à 2028, que le texte ne dit pas en toutes lettres ; L. 731-42
+  de 2025, « a_rattacher » à la fiche cotisation_vieillesse_agricole_avant_2003, sans fiche de la
+  cotisation de 2026 ; D. 731-120 de 2026 numéroté « 731-120 » à l'index.

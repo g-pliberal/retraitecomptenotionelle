@@ -279,8 +279,13 @@ periodes:
       de 17,37 % qui figure ici n'a jamais compris les 4 % de la RCO, qui
       s'y ajoutent. Garantie « 85 % du SMIC » : droit non contributif,
       neutralisé dans les scénarios notionnels.
-      LE TAUX DE 17,37 % N'A AUCUNE SOURCE : aucun texte lu ne le fixe, et
-      aucune somme des taux lus ne le donne. Sous le plafond, D. 731-121,
+      LE TAUX DE 17,37 % N'A AUCUNE SOURCE, au sens où l'entend la fiche
+      cotisation_vieillesse_agricole_avant_2003 (approximation depuis_2003) :
+      aucun texte, aucune page précise, sans texte qui le fixe ni note qui
+      le justifie ; le régime ne porte que la source générale
+      msa_parametres, la page d'accueil de la MSA (data/sources.yaml), et
+      ces notes le nomment sans le justifier. Aucune somme des taux lus ne
+      le donne : sous le plafond, D. 731-121,
       D. 731-122 et D. 731-124 (le décret annuel en 2003 et 2004) prélèvent
       de 12,93 % en 2003 à 17,11 % de 2017 à 2025, de 15,71 % à 16,21 %
       avec la cotisation complémentaire jusqu'en 2013 ; au compte des
@@ -349,8 +354,13 @@ periodes:
       de 17,37 % qui figure ici n'a jamais compris les 4 % de la RCO, qui
       s'y ajoutent. Garantie « 85 % du SMIC » : droit non contributif,
       neutralisé dans les scénarios notionnels.
-      LE TAUX DE 17,37 % N'A AUCUNE SOURCE : aucun texte lu ne le fixe, et
-      aucune somme des taux lus ne le donne. Sous le plafond, D. 731-121,
+      LE TAUX DE 17,37 % N'A AUCUNE SOURCE, au sens où l'entend la fiche
+      cotisation_vieillesse_agricole_avant_2003 (approximation depuis_2003) :
+      aucun texte, aucune page précise, sans texte qui le fixe ni note qui
+      le justifie ; le régime ne porte que la source générale
+      msa_parametres, la page d'accueil de la MSA (data/sources.yaml), et
+      ces notes le nomment sans le justifier. Aucune somme des taux lus ne
+      le donne : sous le plafond, D. 731-121,
       D. 731-122 et D. 731-124 (le décret annuel en 2003 et 2004) prélèvent
       de 12,93 % en 2003 à 17,11 % de 2017 à 2025, de 15,71 % à 16,21 %
       avec la cotisation complémentaire jusqu'en 2013 ; au compte des
@@ -442,8 +452,13 @@ periodes:
       de 17,37 % qui figure ici n'a jamais compris les 4 % de la RCO, qui
       s'y ajoutent. Garantie « 85 % du SMIC » : droit non contributif,
       neutralisé dans les scénarios notionnels.
-      LE TAUX DE 17,37 % N'A AUCUNE SOURCE : aucun texte lu ne le fixe, et
-      aucune somme des taux lus ne le donne. Sous le plafond, D. 731-121,
+      LE TAUX DE 17,37 % N'A AUCUNE SOURCE, au sens où l'entend la fiche
+      cotisation_vieillesse_agricole_avant_2003 (approximation depuis_2003) :
+      aucun texte, aucune page précise, sans texte qui le fixe ni note qui
+      le justifie ; le régime ne porte que la source générale
+      msa_parametres, la page d'accueil de la MSA (data/sources.yaml), et
+      ces notes le nomment sans le justifier. Aucune somme des taux lus ne
+      le donne : sous le plafond, D. 731-121,
       D. 731-122 et D. 731-124 (le décret annuel en 2003 et 2004) prélèvent
       de 12,93 % en 2003 à 17,11 % de 2017 à 2025, de 15,71 % à 16,21 %
       avec la cotisation complémentaire jusqu'en 2013 ; au compte des
@@ -520,8 +535,13 @@ periodes:
       de 17,37 % qui figure ici n'a jamais compris les 4 % de la RCO, qui
       s'y ajoutent. Garantie « 85 % du SMIC » : droit non contributif,
       neutralisé dans les scénarios notionnels.
-      LE TAUX DE 17,37 % N'A AUCUNE SOURCE : aucun texte lu ne le fixe, et
-      aucune somme des taux lus ne le donne. Sous le plafond, D. 731-121,
+      LE TAUX DE 17,37 % N'A AUCUNE SOURCE, au sens où l'entend la fiche
+      cotisation_vieillesse_agricole_avant_2003 (approximation depuis_2003) :
+      aucun texte, aucune page précise, sans texte qui le fixe ni note qui
+      le justifie ; le régime ne porte que la source générale
+      msa_parametres, la page d'accueil de la MSA (data/sources.yaml), et
+      ces notes le nomment sans le justifier. Aucune somme des taux lus ne
+      le donne : sous le plafond, D. 731-121,
       D. 731-122 et D. 731-124 (le décret annuel en 2003 et 2004) prélèvent
       de 12,93 % en 2003 à 17,11 % de 2017 à 2025, de 15,71 % à 16,21 %
       avec la cotisation complémentaire jusqu'en 2013 ; au compte des
@@ -622,6 +642,45 @@ periodes:
       du point, 4,589 € à la même date (R. 732-66). Âges, durée et
       coefficients sont ceux de la période précédente, lus à la génération ;
       le salaire de référence ne sert qu'au calcul de 2028.
+      LE TAUX DE 17,37 % N'EST PAS CELUI DE 2026 NI DE 2027, et aucun texte
+      ne le fixe (lu le 6 novembre 2026). L. 731-42, récrit par la loi
+      n° 2025-199, article 3, I, 8° (LEGIARTI000051284150), dont les
+      dispositions « s'appliquent aux cotisations dues au titre des périodes
+      courant à compter du 1er janvier 2026 » (même article, III), ne
+      prévoit plus que deux cotisations : « 1° Pour chaque chef
+      d'exploitation ou d'entreprise, une cotisation calculée pour partie
+      sur l'assiette [...] retenue dans la limite du plafond [...], et pour
+      partie sur la totalité de cette assiette », dont « Les taux
+      applicables à chacune de ces deux parties sont identiques à ceux
+      déterminés en application de l'article L. 633-1 du même code » ; et,
+      au 2°, celle de l'aide familial et du collaborateur, « une cotisation
+      calculée sur une assiette forfaitaire fixée par décret », dont « Le
+      taux de cette cotisation est égal à la somme des taux de la cotisation
+      mentionnée au 1° ». Le décret n° 2025-1417 du 30 décembre 2025,
+      article 4, 3°, récrit D. 731-121 (LEGIARTI000053296666) : ces taux
+      « sont égaux à ceux fixés respectivement au I de l'article D. 633-3 du
+      code de la sécurité sociale pour la part calculée sur l'assiette
+      retenue dans la limite du plafond [...] et au II du même article pour
+      la part calculée sur la totalité de l'assiette » ; D. 633-3
+      (LEGIARTI000049904636) : « 17,15 % » et « 0,72 % ». L'article 5, II,
+      du décret y déroge « pour les périodes courant du 1er janvier 2026 au
+      31 décembre 2028 », pour la seule part sous le plafond : « 14,15 % »
+      en 2026 et « 15,15 % » en 2027 « pour les personnes mentionnées au 1°
+      de l'article L. 731-42 du même code exerçant leur activité à titre
+      secondaire et pour les personnes mentionnées au 2° du même article
+      exerçant à titre principal ou exclusif », « 12,33 % » et « 13,83 % »
+      « pour les personnes mentionnées au 2° de l'article L. 731-42 du même
+      code exerçant leur activité à titre secondaire ». Aucun de ces taux,
+      ni sa somme avec les 0,72 % (17,87 % pour le chef à titre principal),
+      n'est 17,37 %. L'assiette minimale de six cents SMIC horaires est
+      celle de l'article 4, 2°, du même décret (D. 731-120,
+      LEGIARTI000053296657) : « au moins égale à 600 fois le montant horaire
+      du salaire minimum de croissance » en vigueur au 1er janvier de
+      l'année. Le 17,37 % n'est pas changé : aucun résultat mesuré ne le
+      lit, le compte des scénarios 2 à 6 recevant depuis 2026 le taux du
+      régime unifié, et le taux du compte des exploitants attend la réponse
+      du propriétaire (fiche cotisation_vieillesse_agricole_avant_2003 ;
+      note de l'action 131 du 6 novembre 2026).
   - debut: 2028
     fin: null
     type_calcul: mixte
@@ -673,3 +732,27 @@ periodes:
       article 1er), et leur barème ne vaut plus que pour les points d'avant
       2016 et, à titre provisoire, pour ceux de 2016 à 2027. La période ne le
       porte donc pas : ses années comptent par leur revenu.
+      LE TAUX DE 17,37 % N'EST CELUI D'AUCUNE ANNÉE DEPUIS 2028, et aucun
+      texte ne le fixe (lu le 6 novembre 2026). L. 731-42, récrit par la loi
+      n° 2025-199, article 3, I, 8° (LEGIARTI000051284150), rend les taux de
+      la cotisation du chef « identiques à ceux déterminés en application de
+      l'article L. 633-1 du même code », et celui de l'aide familial et du
+      collaborateur égal à « la somme des taux de la cotisation mentionnée
+      au 1° » ; D. 731-121, récrit par le décret n° 2025-1417 du 30 décembre
+      2025, article 4, 3° (LEGIARTI000053296666), les rend « égaux à ceux
+      fixés respectivement au I de l'article D. 633-3 du code de la sécurité
+      sociale pour la part calculée sur l'assiette retenue dans la limite du
+      plafond [...] et au II du même article pour la part calculée sur la
+      totalité de l'assiette » ; D. 633-3 (LEGIARTI000049904636) :
+      « 17,15 % » et « 0,72 % ». En 2028 seulement, l'article 5, II, du
+      décret fixe la part sous le plafond à « 16,15 % » pour les personnes du
+      1° « exerçant leur activité à titre secondaire », pour celles du 2°
+      « exerçant à titre principal ou exclusif » et pour celles du 2°
+      « exerçant leur activité à titre secondaire » ; depuis 2029,
+      D. 731-121 seul. Ni 17,15 %, ni 17,87 % (17,15 + 0,72), ni 16,87 %
+      (16,15 + 0,72) ne sont 17,37 %. Le 17,37 % n'est pas changé : aucun
+      résultat mesuré ne le lit, le compte des scénarios 2 à 6 recevant
+      depuis 2026 le taux du régime unifié, et le taux du compte des
+      exploitants attend la réponse du propriétaire (fiche
+      cotisation_vieillesse_agricole_avant_2003 ; note de l'action 131 du 6
+      novembre 2026).
