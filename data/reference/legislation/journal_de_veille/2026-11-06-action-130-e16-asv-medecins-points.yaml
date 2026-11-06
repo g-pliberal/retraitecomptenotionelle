@@ -1,0 +1,33 @@
+date: "2026-11-06"
+session: "action 130, file E16 : les écarts de R-E16 repris, et asv_medecins_points lue au droit, sans entrer à LUES_AU_DROIT"
+consulte: >-
+  Les index de la DILA récupérés : JORF au 3 novembre 2026, LEGI au 2 novembre. Au JORF :
+  les deux mentions de l'arrêté du 13 mai 1994 (CAVEC) ; les arrêtés des experts-comptables
+  de 1948 à 1961 au titre (celui du 14 septembre 1957) ; les décrets dont le titre nomme le
+  décret du 21 mai 1953 de 1953 à 1980 (quatorze de 1955 à 1974, et le n° 77-313) et tous
+  les décrets n° 53-49x à 53-51x ; les arrêtés de statuts de la CAVEC (19 juin 2019,
+  2 juillet 2024), de la CARPV (27 février 2006, 11 janvier 2011) et de la Cipav (3 octobre
+  2006, 16 décembre 2021), avec les articles qui les datent ; le décret n° 99-913 (son
+  résumé) ; les statuts de la CAVEC de 2012 (« cumul »). Dans LEGI : l'article 2-1 du décret
+  n° 79-262 ; toutes les rédactions des articles 1er à 7 du décret n° 72-968, de l'article 4
+  du décret n° 2011-1644, de D. 645-2 de 1999 à 2020, de D. 645-3 (2020) et de L. 645-5 ;
+  l'article 7 du décret n° 71-542.
+trouve: >-
+  Les écarts de R-E16 tiennent tous, et sont repris (fiches `surcote_par_age_seul`,
+  `cotisation_par_classes_liberales`, `decret_2026_418_liberaux`). L'article 2-1 du décret
+  n° 79-262, la cotisation de la Cipav majorée de 33 % de 2000 à 2006 pour les anciens de
+  la caisse des géomètres, que le simulateur ne pose pas : point non tranché (le texte ne
+  dit pas si elle donne des points), 0 ou 229,15 € par an au cas posé. L'ASV des médecins :
+  jusqu'au 8 juillet 1994, une prestation de 1 055 consultations pour trente-cinq années ;
+  le point valait la consultation jusqu'en 1993, 100 F revalorisés de 1994, 102 F (15,55 €)
+  de 1999 au premier semestre 2012, puis les valeurs du décret n° 2011-1644, toutes fixes.
+  Deux erreurs neuves, déclarées et chiffrées, non corrigées : le modèle porte la valeur de
+  service aux prix entre deux ancres (de 1 967,02 € par an en moins pour une liquidation de
+  2002 à 273,50 € de trop en 2024, aux cas posés) ; il ne pose pas la durée minimale d'un
+  an d'exercice de l'article 7 (dix ans avant 1985) : 367,01 € par an de trop au cas posé.
+reste: >-
+  `asv_medecins_points` n'entre pas à `LUES_AU_DROIT` : la rédaction de 1972 de l'article 2
+  (hors de LEGI) et l'arrêté de 1972 de la cotisation restent à lire ; les versions, à
+  couper aussi à la date de liquidation ; les liquidations d'avant 1999, à chiffrer ; le
+  décompte des trimestres par le modèle, à confronter à l'article 3. Aucun taux ni aucune
+  valeur servie n'a changé.

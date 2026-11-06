@@ -225,7 +225,10 @@ sources:
       période » : le modèle sert 4,10 % d'une assiette tirée du revenu
       (`assiette_facteur_revenu`), sans le plafond, ce que le fichier du régime décrit ;
       article 2-3 et annexe 1, les classes de la section B, que le modèle ne porte pas
-      (même fichier, `manque` ; `cotisation_par_classes_liberales`) ; article 3-2, rachat
+      (même fichier, `manque`), et qu'aucune fiche de règle ne porte :
+      `cotisation_par_classes_liberales` ne lit que la CARPV, la CAVEC et la Cipav, et
+      `cprn_ages_decote_enfants` range les classes de 2013 parmi ses textes sans effet ;
+      article 3-2, rachat
       du capital des points (`rachats_et_versements`).
     date: 2026-05-31
   - type: jorf

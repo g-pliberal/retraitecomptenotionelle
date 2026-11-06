@@ -41,8 +41,9 @@ versions:
     CAVEC : le décret n° 53-506 fait opter l'assujetti « dans les conditions fixées par
     les statuts » pour l'une de cinq classes (rédaction d'origine, lue au fac-similé du
     Journal officiel du 24 mai 1953 le 27 septembre 2026, `sources.lectures`, non relue :
-    file des fac-similés) ; les quinze décrets qui modifient l'article 2 de 1955 à 1974
-    n'ont que leur titre dans l'index ; le modèle sert la grille de 1980 ramenée, sur le
+    file des fac-similés) ; les quatorze décrets qui modifient l'article 2 de 1955 à 1974,
+    et le quinzième, le décret n° 77-313 du 25 mars 1977, n'ont que leur titre dans
+    l'index ; le modèle sert la grille de 1980 ramenée, sur le
     revenu de l'année. Cipav : pas de régime avant 1979
   fiabilite: >-
     faible : ni la valeur de l'acte de la CARPV, ni les statuts de la CAVEC ne sont lus ;
@@ -248,7 +249,10 @@ versions:
     la CARPV est lue : depuis le 2 décembre 1997, une classe selon le revenu de
     l'avant-dernière année, en actes médicaux vétérinaires, au taux d'appel que fixe le
     décret annuel ; la valeur de l'acte n'est publiée nulle part. La CAVEC et la Cipav,
-    comme `cavec_de_1987`
+    comme `cavec_de_1987` ; les statuts de la CARPV modifiés le 27 février 2006, et ceux
+    de la Cipav refaits au 1er janvier 2007 (arrêté du 3 octobre 2006), sont au seul
+    Bulletin officiel ; de 2000 à 2006, la cotisation de la Cipav des anciens affiliés de
+    la caisse des géomètres majorée de 33 % (article 2-1), que le simulateur ne pose pas
   fiabilite: >-
     haute pour les classes, les points et l'année de revenu de la CARPV, et pour ses taux
     d'appel, au texte ; faible pour la valeur de l'acte, et pour l'année de revenu de la
@@ -276,6 +280,40 @@ versions:
   - id: LEGIARTI000006767474
     article: décret n° 79-262, article 2 (Cipav), jusqu'au 30 décembre 2012
     en_vigueur: 1985-06-21
+  - id: LEGIARTI000006767475
+    article: décret n° 79-262, article 2-1 (Cipav), du 1er janvier 2000 au 1er janvier 2023
+    en_vigueur: 2000-01-01
+    citation: >-
+      « A titre transitoire et pour les exercices 2000 à 2006 inclus, la cotisation
+      mentionnée à l'article 2 est majorée de 33 % pour les personnes qui ont été affiliées
+      à la Caisse autonome de retraite des géomètres experts et des experts agricoles et
+      fonciers antérieurement au 1er janvier 2000. »
+  - id: JORFARTI000002071126
+    article: >-
+      arrêté du 27 février 2006, statuts de la CARPV, sa seule mention au Journal officiel ;
+      l'arrêté, au Bulletin officiel, non lu
+    publie_le: 2006-03-11
+    citation: >-
+      « sont approuvées les modifications apportées aux statuts de la Caisse autonome de
+      retraites et de prévoyance des vétérinaires (art. 2, 3, 7, 8, 13, 14, 15, 16, 19, 20,
+      21, 22, 23, 24, 25, 26, 27, 28 et 29 du titre Ier et art. 4, 6, 7, 8, 8 bis, 10, 11,
+      13, 14, 22, 27, 28, 29, 30 et 31 du titre II). » ; « L'arrêté du 27 février 2006
+      sera publié intégralement au Bulletin officiel du ministère de la santé et des
+      solidarités »
+  - id: JORFARTI000002050100
+    article: >-
+      arrêté du 3 octobre 2006, statuts de la Cipav, sa seule mention au Journal officiel ;
+      l'arrêté et son annexe, au Bulletin officiel, non lus
+    publie_le: 2006-10-13
+    citation: >-
+      « (art. 2.7 et 2.21 de la seconde partie « règlement intérieur », troisième partie
+      « Régime de retraite complémentaire », ainsi que les dispositions transitoires).
+      L'arrêté du 21 mars 1979 portant approbation des statuts de la section
+      professionnelle des architectes, agréés en architecture, ingénieurs, techniciens,
+      experts et conseils et relatif au régime d'assurance vieillesse complémentaire est
+      abrogé à compter du 1er janvier 2007, à l'exception de l'article 16 et de l'article
+      17, alinéa 2, qui seront abrogés le 1er janvier 2008. » ; « L'arrêté, accompagné de
+      son annexe, sera publié intégralement au Bulletin officiel d'octobre 2006 »
   nee_de: LEGIARTI000006776823
   bornes:
     revenu.annee: [1998-01-01, 2008-01-01]
@@ -335,6 +373,17 @@ versions:
   - id: LEGIARTI000006767474
     article: décret n° 79-262, article 2 (Cipav), jusqu'au 30 décembre 2012
     en_vigueur: 1985-06-21
+  - id: JORFARTI000023448554
+    article: >-
+      arrêté du 11 janvier 2011 (JORFTEXT000023448547), annexe, titre II, article 4 des
+      statuts de la CARPV ; ses articles 1er à 3 ne fixent pas de date
+    publie_le: 2011-01-19
+    en_vigueur: 2011-01-20
+    citation: >-
+      « a) Dans la première colonne de chacun des deux tableaux, après le mot : « revenu »,
+      sont ajoutés les mots : « ou rémunération (définis ci-dessus) » ; b) A l'alinéa
+      compris entre les deux tableaux, les mots : « le revenu professionnel » sont
+      remplacés par les mots : « le revenu ou la rémunération définis ci-dessus ». »
   nee_de: LEGIARTI000018042862
   bornes:
     revenu.annee: [2008-01-01, 2012-01-01]
@@ -583,6 +632,20 @@ versions:
       complémentaire est appelée dans les conditions prévues au 1 du présent article.
       « L'affilié a la possibilité d'opter pour la classe C, dès lors que le revenu TNS
       situe l'affilié dans une classe inférieure à celle-ci. »
+  - id: JORFARTI000038689131
+    article: >-
+      arrêté du 19 juin 2019 (JORFTEXT000038689125), annexe, II, 2° et 3°, partie 2,
+      articles 2 et 3 des statuts de la CAVEC ; ses articles 1er et 2 ne fixent pas de date
+    publie_le: 2019-06-27
+    en_vigueur: 2019-06-28
+    citation: >-
+      « 2° Au dernier alinéa de l'article 2, après les mots : « non salariée » sont
+      insérés les mots : « non agricole de l'exercice précédent » » ; « c) Le onzième
+      alinéa est remplacé par les dispositions suivantes : « Les affiliés cotisant en
+      qualité d'experts-comptables salariés « Ils sont tenus de cotiser en classe C. » » ;
+      « i) Après le dix-neuvième alinéa, il est inséré un alinéa ainsi rédigé : « Les
+      affiliés cotisant en situation de cumul d'un revenu d'activité travailleur non
+      salarié et d'un revenu d'activité salarié » »
   - id: LEGIARTI000026885098
     article: décret n° 53-506, article 2 (CAVEC), jusqu'au 14 novembre 2025
     en_vigueur: 2012-12-30
@@ -669,6 +732,19 @@ versions:
   - id: JORFARTI000043302736
     article: statuts de la Cipav, depuis le 31 mars 2021
     en_vigueur: 2021-03-31
+  - id: JORFARTI000044554134
+    article: >-
+      arrêté du 16 décembre 2021 (JORFTEXT000044554124), annexe, 15° et 16°, articles 3.3
+      et 3.4 des statuts de la Cipav ; son article 2 (JORFARTI000044554130) : « Les
+      modifications apportées aux statuts de la section professionnelle mentionnée au 11°
+      de l'article R. 641-1 du code de la sécurité sociale entrent en vigueur le 1er
+      janvier 2022. »
+    publie_le: 2021-12-24
+    en_vigueur: 2022-01-01
+    citation: >-
+      « 15° Au quatorzième alinéa de l'article 3.3, les mots : « invalidité-décès » sont
+      remplacés par les mots : « vieillesse complémentaire » ; 16° Le titre de l'article
+      3.4 est remplacé par les mots : « Cotisations de début d'activité » »
   - id: LEGIARTI000026885098
     article: décret n° 53-506, article 2 (CAVEC), jusqu'au 14 novembre 2025
     en_vigueur: 2012-12-30
@@ -700,6 +776,22 @@ versions:
   - id: LEGIARTI000026885098
     article: décret n° 53-506, article 2 (CAVEC), jusqu'au 14 novembre 2025
     en_vigueur: 2012-12-30
+  - id: JORFARTI000049880543
+    article: >-
+      arrêté du 2 juillet 2024 (JORFTEXT000049880539), annexe, II, 1°, article 3 des
+      statuts du régime complémentaire de la CAVEC ; ses articles 1er et 2 ne fixent pas
+      de date
+    publie_le: 2024-07-05
+    en_vigueur: 2024-07-06
+    citation: >-
+      « a) Aux deuxième, quatrième et dixième alinéas, les mots : « l'exercice précédent »
+      sont remplacés par les mots : « l'année précédente » ; b) Au septième alinéa, les
+      mots : « le précédent exercice » sont remplacés par les mots : « l'année
+      précédente » ; c) Au huitième alinéa, les mots : « avant le 28 février de chaque
+      année relative à la prise d'effet » sont supprimés et l'alinéa est complété par la
+      phrase : « Le paiement de l'intégralité de la cotisation rend cette option
+      définitive. » » ; « f) Au dix-septième alinéa, les mots : « a la possibilité de
+      maintenir » sont remplacés par les mots : « indique s'il maintient » »
   nee_de: LEGIARTI000046875038
   bornes:
     revenu.annee: [2023-01-01, 2026-01-01]
@@ -707,7 +799,9 @@ versions:
     droit: >-
       la Cipav quitte les classes : deux tranches proportionnelles, hors de cette fiche
       (`cipav_complementaire.yaml`, `cipav_seconde_tranche`). CARPV et CAVEC, comme
-      `carpv_de_2022`
+      `carpv_de_2022` ; la CAVEC dit « l'année précédente » au lieu de « l'exercice
+      précédent » depuis le 6 juillet 2024, et l'option, définitive au paiement de
+      l'intégralité de la cotisation
     conditions: >-
       le modèle ne sert plus de classes à la Cipav (`epoques`, jusqu'en 2022)
   exemples: aucun trouvé
@@ -829,8 +923,31 @@ approximations:
   ecart: >-
     le simulateur ne pose ni l'expert-comptable salarié inscrit à l'ordre, en classe C
     depuis 2008, ni le vétérinaire des 11°, 12° et 23° de L. 311-3, sur sa rémunération
-    depuis 2012
+    depuis 2012 (les tableaux des statuts de la CARPV disent « revenu ou rémunération
+    (définis ci-dessus) » depuis l'arrêté du 11 janvier 2011, en vigueur le 20 janvier
+    2011 ; ce que « ci-dessus » définit n'est pas au Journal officiel)
   effet: non mesuré
+- version: carpv_de_1998
+  regime: cipav_complementaire
+  textes: [LEGIARTI000006767475]
+  ecart: >-
+    POINT NON TRANCHÉ (action 130, E16). Le simulateur ne pose pas l'ancien affilié de la
+    caisse des géomètres (CARGE), dont l'article 2-1 du décret n° 79-262 majore de 33 % la
+    cotisation des exercices 2000 à 2006 : le modèle ne la majore pas. Le texte ne dit pas
+    si la majoration donne des points : l'article 2 attache les points à la classe, non
+    au montant versé, et le résumé du décret n° 99-913 au Journal officiel (JORFTEXT000000561136,
+    article 8) en fait la « MESURE TRANSITOIRE PREVUE PAR L'ACCORD D'INTEGRATION QUI MAJORE
+    PENDANT 7 ANNEES LA COTISATION VERSEE PAR LES ANCIENS RESSORTISSANTS DE LA CARGE DE
+    33% », accord que rien ne publie. Lecture A : la majoration finance l'intégration,
+    sans points, et la pension servie est juste. Lecture B : elle donne des points à
+    proportion, et le modèle sert trop peu
+  effet: >-
+    cas posé (moteur Python, réglages par défaut), né en 1950, homme, profession libérale
+    à la Cipav (`profession_liberale`, niveau 1) de 25 ans à la liquidation à 65 ans : la
+    Cipav sert 3 560,76 € par an (cotisations revalorisées 57 432 € × 6,20 %), dont
+    11 199,99 € de cotisations revalorisées pour 2000 à 2006. Lecture A : 0 €. Lecture B :
+    11 199,99 × 0,33 = 3 696,00 € de cotisations, × 6,20 % = 229,15 € par an servis en
+    moins
 - version: [carpv_de_2014, statuts_de_2016, cavec_de_2019, cipav_de_2021, carpv_de_2022, sans_la_cipav_2023, reglements_de_2026]
   regime: carpv_complementaire
   ecart: >-
@@ -863,7 +980,16 @@ approximations:
     points au lieu de 48 ; en 2024, 284 × 760 / 48 = 4 496,67 € de cotisation, 3 736,67 €
     de plus, 311,26 € de pension annuelle à 8,33 %, avant revalorisation ; sur toute la
     carrière, 621,59 × 284 / 48 = 3 677,73 €, soit 3 056,14 € par an servis en moins, si
-    le minimum vaut aussi les deux années de classe A d'office des statuts. Lecture B : 0 €
+    le minimum vaut aussi les deux années de classe A d'office des statuts ; sans elles
+    (2015 et 2016, 1 340,02 € des 7 462,03 € revalorisés), 6 122,02 × 236 / 48 = 30 099,93
+    € de cotisations de plus, × 8,33 % = 2 507,32 € (3 128,91 € servis) : la lecture A va
+    de 2 507,32 à 3 056,14 €. Lecture A' (R-E16) : le minimum du décret tant que les
+    statuts de 2012 se taisent sur le cumul (2013 à 2018), puis l'option des statuts du
+    20 août 2018, servis depuis l'exercice 2019 : 2015 à 2018, 2 812,00 € revalorisés,
+    × 236 / 48 = 13 825,64 €, × 8,33 % = 1 151,68 € (1 773,26 € servis). Lecture B : 0 €.
+    Sous `PRESOMPTIONS_DECALEES=1` (le jour de naissance présumé le 1er), le portage sert 616,16 € au lieu
+    de 621,59 € (cotisations revalorisées 7 397 €), et la lecture A sur toute la carrière
+    616,16 × 236 / 48 = 3 029,45 € de plus
 effet: >-
   Les vétérinaires, les experts-comptables et commissaires aux comptes, et les affiliés de
   la Cipav jusqu'en 2022. L'article 2 des trois décrets est lu version par version. Depuis
@@ -917,6 +1043,15 @@ sources:
     À trancher par le propriétaire, ou par la CAVEC : appelle-t-elle la classe C à
     l'expert-comptable libéral qui est aussi salarié hors de la profession ?
   - >-
+    Point non tranché (action 130, E16, 6 novembre 2026) : la majoration de 33 % de la
+    cotisation de la Cipav des anciens affiliés de la caisse des géomètres, de 2000 à 2006
+    (décret n° 79-262, article 2-1), que le simulateur ne pose pas ; les deux lectures et
+    leur chiffrage sont à l'approximation de `carpv_de_1998`. À trancher par l'accord
+    d'intégration de 1999, ou par la Cipav : la majoration donnait-elle des points ? Le
+    modèle ne connaît pas non plus la caisse des géomètres elle-même : un géomètre
+    d'avant 2000 y est servi comme un affilié de la Cipav, sans la reprise de ses droits
+    et son abattement selon l'âge (décret n° 99-913, article 3, au seul résumé de l'index)
+  - >-
     Hors de cette fiche, relevés par E9 (action 130) et lus le 6 novembre 2026 : la classe
     3 d'office des deux premières années de la CAVP (décret n° 49-580, article 2, dans la
     rédaction du décret n° 2026-418, article 4, JORFARTI000054153444 : « La cotisation
@@ -967,8 +1102,13 @@ sources:
   - >-
     CAVEC d'avant 1980 : le décret de 1953 fait opter l'assujetti, « dans les conditions
     fixées par les statuts », pour l'une de cinq classes, sans nommer le revenu ; quand la
-    classe a suivi le revenu, avant 1980, n'est pas lu. Les quinze décrets qui modifient
-    l'article 2 de 1955 à 1974 n'ont que leur titre dans l'index JORF ; Gallica n'a pas le
+    classe a suivi le revenu, avant 1980, n'est pas lu. Les quatorze décrets qui modifient
+    l'article 2 de 1955 à 1974, et le quinzième, le décret n° 77-313 du 25 mars 1977
+    (JORFTEXT000000515110, « MODIFICATION D'ART. 2 (AL. 1) DU DECRET DU 21-05-1953 ET DES
+    ART. 2 (AL. 1) ET 3 (AL. 1) DU DECRET DU 20-05-1974 RELATIF AU REGIME D'ASSURANCE
+    INVALIDITE DECES DES EXPERTS COMPTABLES ET DES COMPTABLES AGREES » ; le seul décret
+    du 21 mai 1953 des experts-comptables que l'index porte est le n° 53-506), n'ont que
+    leur titre dans l'index JORF ; Gallica n'a pas le
     Journal officiel après 1955, ni le numéro du 5 février 1955 (décret n° 55-188) ; les
     statuts d'avant 2008 sont au Bulletin officiel du ministère, non lu. Après la phase 8 :
     ne servir à la CAVEC d'avant 1980 une grille de revenu que si ses statuts, une fois lus,
@@ -1171,8 +1311,8 @@ sources:
       nombre de points correspondants, par arrêté du ministre du travail et de la sécurité
       sociale et du ministre chargé du budget, après avis du conseil d'administration de la
       section professionnelle des experts comptables ». L'index JORF n'a que le titre des
-      quinze décrets qui modifient l'article 2 de 1955 (n° 55-188) à 1974 (n° 74-199), et le
-      résumé du décret n° 80-439 : « POSSIBILITE POUR LES ADHERENTS D'OPTER POUR LA CLASSE
+      quatorze décrets qui modifient l'article 2 de 1955 (n° 55-188) à 1974 (n° 74-199), du
+      quinzième de 1977 (n° 77-313), et le résumé du décret n° 80-439 : « POSSIBILITE POUR LES ADHERENTS D'OPTER POUR LA CLASSE
       IMMEDIATEMENT SUPERIEURE A CELLE QUI CORRESPOND A LEUR REVENU »
     url: https://gallica.bnf.fr/ark:/12148/bpt6k1578913h/f34.item
     date: 2026-09-27

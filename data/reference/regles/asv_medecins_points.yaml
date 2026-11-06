@@ -58,6 +58,41 @@ versions:
   - {id: LEGIARTI000006738166, article: "D. 645-3 CSS", en_vigueur: 1985-12-21}
   - {id: LEGIARTI000006738373, article: "D. 645-2 CSS", en_vigueur: 1993-03-30}
   - {id: LEGIARTI000006738167, article: "D. 645-3 CSS", en_vigueur: 1993-03-30}
+  - id: LEGIARTI000006765943
+    article: décret n° 72-968, article 2, du 27 mars 1981 au 8 juillet 1994
+    en_vigueur: 1981-03-27
+    citation: >-
+      « Ce régime assure aux affiliés, après trente-cinq années de cotisations, une
+      prestation supplémentaire annuelle correspondant à 1055 fois la valeur du tarif de
+      la consultation visé à l'article 1er, a, du décret n° 71-544 du 2 juillet 1971
+      modifié. »
+  - id: LEGIARTI000006765958
+    article: décret n° 72-968, article 7, du 1er juillet 1972 au 15 février 1985
+    en_vigueur: 1972-07-01
+    citation: >-
+      « A titre transitoire, il est tenu compte pour l'évaluation du délai de dix ans visé
+      à l'article 7 du décret n° 71-542 du 2 juillet 1971, en ce qui concerne les médecins
+      âgés de soixante ans au moins au 1er janvier 1973, des années d'activité
+      professionnelle non-salariée accomplies entre le 1er juillet 1946 et le 1er juillet
+      1972 »
+  - id: LEGIARTI000006765959
+    article: décret n° 72-968, article 7, du 15 février 1985 au 1er juillet 2026
+    en_vigueur: 1985-02-15
+    citation: >-
+      « La prestation supplementaire de vieillesse est attribuée aux médecins ayant
+      exercé, pendant au moins un an, leur activité professionnelle non-salariée dans le
+      cadre des conventions ou adhésions personnelles prévues par les textes législatifs
+      ou réglementaires alors en vigueur. »
+  - id: LEGIARTI000006765948
+    article: décret n° 72-968, article 3, du 1er juillet 1972 au 30 décembre 2024
+    en_vigueur: 1972-07-01
+    citation: >-
+      « Le point de départ de l'affiliation comportant obligation de cotiser est fixé au
+      premier jour du trimestre civil suivant celui au cours duquel les conditions
+      d'exercice de l'activité professionnelle non-salariée définies à l'article L. 613-6
+      du code de la sécurité sociale se trouvent remplies. La suspension de l'obligation
+      de cotiser ou la radiation intervient avec effet du dernier jour du trimestre civil
+      au cours duquel lesdites conditions cessent d'être remplies. »
   nee_de: LEGITEXT000006062007
   bornes:
     revenu.annee: [1972-07-01, 1994-01-01]
@@ -72,6 +107,22 @@ versions:
       omnipraticien » (D. 645-2), dont les caisses d'assurance maladie paient le double
       de la part du médecin (D. 645-3) ; du 30 mars 1993 au 8 juillet 1994, quarante-cinq
       fois la consultation, partagées par moitié
+    valeur_de_service: >-
+      jusqu'au 8 juillet 1994, l'article 2 ne compte pas en points : « une prestation
+      supplémentaire annuelle correspondant à 1055 fois la valeur du tarif de la
+      consultation », « après trente-cinq années de cotisations » (rédaction du 27 mars
+      1981 ; celle de 1972 n'est pas dans l'index LEGI) ; trente-cinq années à 30,16 points
+      en font 1 055,6. La rédaction du 8 juillet 1994 : « Jusqu'au 31 décembre 1993 la
+      valeur du point est égale à la valeur du tarif de la consultation »
+    conditions: >-
+      la prestation n'est servie qu'après une durée d'exercice : dix ans jusqu'au 15
+      février 1985 (décret n° 71-542, article 7, LEGIARTI000006766682 : « La durée minimum
+      d'exercice d'activité professionnelle mentionnée à l'article L. 682 du Code de la
+      sécurité sociale est fixée à dix ans. »), un an depuis (même article,
+      LEGIARTI000006766683 : « est fixée à un an », puis l'article 7 du décret n° 72-968,
+      « pendant au moins un an ») ; l'affiliation part du premier jour du trimestre civil
+      qui suit le début de l'exercice et cesse au dernier jour de celui où il cesse
+      (article 3)
   exemples: aucun trouvé
 - id: vingt_sept_points
   statut: lue
@@ -84,6 +135,37 @@ versions:
   - {id: LEGIARTI000006738376, article: "D. 645-2 CSS", en_vigueur: 1999-01-01}
   - {id: LEGIARTI000023380413, article: "D. 645-2 CSS", en_vigueur: 2010-12-31}
   - {id: LEGIARTI000006743830, article: "L. 645-5 CSS", en_vigueur: 2006-01-01}
+  - id: LEGIARTI000006765944
+    article: décret n° 72-968, article 2, du 8 juillet 1994 au 28 mars 1999
+    en_vigueur: 1994-07-08
+    citation: >-
+      « Jusqu'au 31 décembre 1993 la valeur du point est égale à la valeur du tarif de la
+      consultation visée au 1° de l'article D. 645-2 du code de la sécurité sociale. A
+      compter du 1er janvier 1994 la valeur du point est fixée à 100 F. Elle est
+      revalorisée chaque année dans les conditions prévues pour les pensions du régime
+      général à l'article R. 351-29-2, 2e et 3e alinéa, du code de la sécurité sociale. »
+  - id: LEGIARTI000006765945
+    article: décret n° 72-968, article 2, du 28 mars 1999 au 1er janvier 2004
+    en_vigueur: 1999-03-28
+    citation: >-
+      « La valeur du point de retraite est fixée à 102 F. »
+  - id: LEGIARTI000006765946
+    article: décret n° 72-968, article 2, du 1er janvier 2004 au 6 octobre 2006
+    en_vigueur: 2004-01-01
+    citation: >-
+      « La valeur du point de retraite est fixée à 102 F. Les dispositions des alinéas
+      précédents ne sont pas applicables aux médecins bénéficiaires des prestations
+      supplémentaires de vieillesse exerçant une activité médicale libérale dans le cadre
+      de la convention, qui ne peuvent obtenir aucun nouveau droit à retraite au titre des
+      cotisations versées. »
+  - id: LEGIARTI000006765947
+    article: décret n° 72-968, article 2, du 6 octobre 2006 au 1er janvier 2012
+    en_vigueur: 2006-10-06
+    citation: >-
+      « La valeur du point de retraite est fixée à 102 F. » ; « Les conditions dans
+      lesquelles le versement des prestations supplémentaires de vieillesse peut se
+      cumuler avec une activité libérale sont identiques à celles prévues à l'article
+      L. 643-6 du code de la sécurité sociale. »
   nee_de: LEGIARTI000006738374
   bornes:
     revenu.annee: [1994-01-01, 2012-01-01]
@@ -102,7 +184,10 @@ versions:
       nombre de points acquis chaque année par une valeur de service du point », qui
       « peut varier selon l'année durant laquelle les points ont été acquis et selon
       l'année de liquidation de la pension » ; ceux acquis depuis le 1er janvier 2006, à
-      une valeur unique fixée par décret (L. 645-5)
+      une valeur unique fixée par décret (L. 645-5) ; de 1994 à mars 1999, 100 F
+      revalorisés comme les pensions du régime général ; puis 102 F, soit 15,55 €, jusqu'au
+      premier semestre 2012 (article 2, rédactions de 1999, 2004 et 2006, et décret
+      n° 2011-1644, article 4)
   exemples: aucun trouvé
 - id: forfait_et_ajustement
   statut: lue
@@ -116,6 +201,59 @@ versions:
   - {id: LEGIARTI000052567955, article: "décret n° 2011-1644, article 4", en_vigueur: 2025-11-14}
   - {id: LEGIARTI000026799784, article: "L. 645-5 CSS", en_vigueur: 2012-12-19}
   - {id: LEGIARTI000041455350, article: "D. 645-2 CSS", en_vigueur: 2020-01-01}
+  - id: LEGIARTI000024853556
+    article: décret n° 2011-1644, article 4, du 1er janvier 2012 au 5 septembre 2016
+    en_vigueur: 2012-01-01
+    citation: >-
+      « 2° S'agissant des points liquidés à compter du 1er janvier 2011 : 15,55 euros pour
+      le premier semestre de l'exercice 2012 ; 13 euros à compter du second semestre de
+      l'exercice 2012. » ; « 15,55 euros pour le premier semestre de l'exercice 2012 ; 13
+      euros à compter du second semestre de l'exercice 2012. »
+  - id: LEGIARTI000043529962
+    article: décret n° 2011-1644, article 4, du 24 mai 2021 au 25 décembre 2022
+    en_vigueur: 2021-05-24
+    citation: >-
+      « Conformément à l'article 2 du décret n° 2021-645 du 22 mai 2021, ces dispositions
+      s'appliquent aux prestations dues au titre des périodes courant à compter du 1er
+      janvier 2021. » ; « 14 euros pour les exercices 2015 à 2020 ; 14,06 euros à compter
+      de l'exercice 2021. »
+  - id: LEGIARTI000046813878
+    article: décret n° 2011-1644, article 4, du 25 décembre 2022 au 31 décembre 2023
+    en_vigueur: 2022-12-25
+    citation: >-
+      « ces dispositions s'appliquent aux cotisations et aux prestations dues au titre des
+      périodes courant à compter du 1er janvier 2022. » ; « 14,06 euros pour l'exercice
+      2021 ; 14,21 euros à compter de l'exercice 2022. »
+  - id: LEGIARTI000048863518
+    article: décret n° 2011-1644, article 4, du 31 décembre 2023 au 14 novembre 2025
+    en_vigueur: 2023-12-31
+    citation: >-
+      « 2° S'agissant des points liquidés à compter du 1er janvier 2017 : 11,31 euros
+      jusqu'à l'exercice 2020, 11,36 euros pour l'exercice 2021, 11,48 euros pour
+      l'exercice 2022 et 11,71 euros à compter de l'exercice 2023. »
+  - id: LEGIARTI000026885114
+    article: décret n° 72-968, article 4, du 30 décembre 2012 au 30 décembre 2024
+    en_vigueur: 2012-12-30
+    citation: >-
+      « Les médecins dont le revenu d'activité de l'avant-dernière année défini à
+      l'article L. 131-6 est inférieur à un chiffre fixé par arrêté interministériel […]
+      peuvent demander dans les conditions fixées par les statuts de ladite caisse à être
+      dispensés de l'affiliation au régime de prestations supplémentaires de vieillesse. »
+  - id: LEGIARTI000050865202
+    article: décret n° 72-968, article 3, du 30 décembre 2024 au 1er juillet 2026
+    en_vigueur: 2024-12-30
+    citation: >-
+      « Conformément au I de l’article 8 du décret n° 2024-1214 du 28 décembre 2024, ces
+      dispositions s'appliquent aux cotisations et aux prestations dues au titre des
+      périodes courant à compter du 1er janvier 2024. » ; « au premier jour du trimestre
+      civil suivant »
+  - id: LEGIARTI000050865197
+    article: décret n° 72-968, article 4, du 30 décembre 2024 au 1er juillet 2026
+    en_vigueur: 2024-12-30
+    citation: >-
+      « Ces dispositions ne sont pas applicables aux médecins et étudiants en médecine
+      ayant opté pour le dispositif prévu à l'article L. 642-4-2 du code de la sécurité
+      sociale. »
   nee_de: LEGITEXT000024853546
   bornes:
     revenu.annee: [2012-01-01, 2026-01-01]
@@ -212,17 +350,55 @@ approximations:
     les liquidations d'avant 2012 prennent 15,55 €, la valeur de 2012, ramenée aux
     prix.
   effet: non mesuré ; les seules liquidations d'avant 2012
+- version: [vingt_sept_points, forfait_et_ajustement, ajustement_a_quatre_pour_cent]
+  ecart: >-
+    ERREUR DÉCLARÉE (action 130, E16), non corrigée. Le modèle porte la valeur de service
+    d'une année d'ancrage aux prix de l'année de liquidation (`valeur_point_annee`,
+    `valeur_point_fiche`) ; les textes la fixent en francs ou en euros courants, sans
+    indexation : 102 F, soit 15,55 €, de mars 1999 au premier semestre 2012 (article 2,
+    rédactions de 1999, 2004 et 2006) ; 13 € du second semestre 2012 à 2020, 11,31 € de
+    2017 à 2020 pour les points liquidés depuis 2017, 11,71 € en 2023 et 2024 (décret
+    n° 2011-1644, article 4). Le modèle sert donc trop peu avant 2011, et trop entre ses
+    ancres (liquidations de 2013 à 2016, de 2018 à 2020, de 2024)
+  effet: >-
+    cas posés (moteur Python, réglages par défaut), hommes nés en janvier, médecins
+    libéraux (`medecin_liberal`, niveau 1) de 30 à 65 ans : né en 1937, liquidation en
+    2002, 879,52 points × 13,313333 € = 11 709,34 € servis, le texte 879,52 × 15,5498 €
+    (102 F / 6,55957) = 13 676,36 € : 1 967,02 € par an en moins ; né en 1940 (2005),
+    960,52 × (15,5498 − 14,133314) = 1 360,56 € en moins ; né en 1950 (2015), 994,46 ×
+    (13,184592 − 13) = 183,57 € de trop ; né en 1953 (2018), 998,37 × (11,518896 − 11,31)
+    × 1,15 = 239,84 € de trop ; né en 1959 (2024), 1 014,99 × (11,944317 − 11,71) × 1,15
+    = 273,50 € de trop. Les liquidations de 1994 à 1999 (100 F revalorisés comme le
+    régime général) et d'avant 1994 (le tarif de la consultation) : non mesuré
+- version: [trente_points_seize, vingt_sept_points, forfait_et_ajustement]
+  ecart: >-
+    ERREUR DÉCLARÉE (action 130, E16), non corrigée. Depuis le 15 février 1985, la
+    prestation n'est attribuée qu'aux médecins « ayant exercé, pendant au moins un an »
+    (article 7 ; dix ans avant, décret n° 71-542, article 7) ; le modèle ne pose aucune
+    durée minimale, et sert les points d'un exercice plus court. Le décompte des
+    trimestres par le modèle n'est pas confronté non plus à l'article 3 (l'affiliation
+    au premier jour du trimestre civil suivant) : non mesuré
+  effet: >-
+    cas posé (moteur Python, réglages par défaut), homme né en janvier 1960, salarié du
+    privé non cadre de 22 à 40 ans et de 40 ans 9 mois à la liquidation à 65 ans (niveau
+    1), médecin libéral de 40 ans à 40 ans 9 mois : le modèle sert 27 points × 11,82 € ×
+    1,15 = 367,01 € par an ; le texte, rien : 367,01 € de trop
 sources:
-  lu_le: 2026-10-13
+  lu_le: 2026-11-06
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
     Porter chaque année le forfait que la CARMF publie, revalorisé sur le revenu moyen
     des affiliés, et la valeur de service que le décret n° 2011-1644 fixe.
   - >-
-    Lire les rédactions de l'article 2 du décret n° 72-968 d'avant 2012 (1981, 1994,
-    1999, 2004, 2006), qui ont fixé les points de chaque période, et l'arrêté de 1972
-    qui fixait la cotisation avant le code.
+    Lu le 6 novembre 2026 (action 130, E16) : les rédactions de l'article 2 du décret
+    n° 72-968 de 1981 à 2006, et toutes celles que la fiche cite. Reste à lire la
+    rédaction de 1972 de l'article 2 (hors de l'index LEGI) et l'arrêté de 1972 qui
+    fixait la cotisation avant le code ; à couper les versions à la date de liquidation
+    (`liquidation.date_effet`), qui décide de la valeur de service et de la durée
+    minimale ; à chiffrer les liquidations d'avant 1999. Deux erreurs déclarées, non
+    corrigées (approximations) : la valeur de service portée aux prix, la durée minimale
+    d'un an non servie.
   lectures:
   - type: legifrance
     reference: >-
@@ -230,6 +406,84 @@ sources:
       et de 2026 ; décret n° 2011-1644, articles 1er à 6 ; D. 645-2 et D. 645-3 CSS, de
       1985 à 2020 ; L. 645-5 CSS : index LEGI du dépôt, à jour au 12 octobre 2026
     date: 2026-10-13
+textes_sans_effet:
+- id: LEGIARTI000006765940
+  reference: décret n° 72-968, article 1er, du 1er juillet 1972 au 15 février 1985
+  motif: >-
+    le régime « rendu obligatoire à l'ensemble des médecins qui exercent leur activité
+    professionnelle non-salariée dans les conditions définies à l'article L. 613-6 » :
+    le champ, que le statut `medecin_liberal` pose
+- id: LEGIARTI000006765941
+  reference: décret n° 72-968, article 1er, du 15 février 1985 au 1er juillet 2026
+  motif: >-
+    ajoute les médecins à plein temps des hôpitaux publics qui renoncent à la clientèle
+    privée, que le simulateur ne pose pas
+- id: LEGIARTI000006765949
+  reference: décret n° 72-968, article 4, du 1er juillet 1972 au 30 décembre 2012
+  motif: >-
+    la dispense sur demande sous un revenu fixé par arrêté, que le simulateur ne pose pas
+- id: LEGIARTI000006743828
+  reference: code de la sécurité sociale, L. 645-5, du 21 décembre 1985 au 17 août 2004
+  motif: >-
+    les praticiens hospitaliers à plein temps qui restent au régime, à leur seule charge
+- id: LEGIARTI000006743829
+  reference: code de la sécurité sociale, L. 645-5, du 17 août 2004 au 1er janvier 2006
+  motif: même objet ; seul le renvoi au versement change
+- id: LEGIARTI000041455343
+  reference: code de la sécurité sociale, D. 645-3, depuis le 1er janvier 2020
+  motif: >-
+    la demande du médecin de L. 646-1 à cotiser au taux de 3 % du troisième alinéa de
+    D. 645-2, que le simulateur ne pose pas
+- id: LEGIARTI000024871105
+  reference: code de la sécurité sociale, D. 645-2, du 1er janvier 2012 au 1er janvier 2012
+  motif: jamais en vigueur (LEGIARTI000025077320 la remplace le même jour)
+- id: LEGIARTI000025077320
+  reference: code de la sécurité sociale, D. 645-2, du 1er janvier 2012 au 1er janvier 2020
+  motif: >-
+    la cotisation des médecins renvoyée au décret n° 2011-1644 ; 3 % en cumul
+    emploi-retraite ; la classe des sages-femmes supprimée
+- id: LEGIARTI000023380413
+  reference: code de la sécurité sociale, D. 645-2, du 31 décembre 2010 au 1er janvier 2012
+  motif: >-
+    les exercices 2010 et 2011 à soixante fois la consultation, et 3 % en cumul
+    emploi-retraite à compter de 2011 : la cotisation, dont les points ne dépendent pas
+- id: LEGIARTI000006738377
+  reference: code de la sécurité sociale, D. 645-2, du 29 décembre 2001 au 24 décembre 2003
+  motif: >-
+    exercices 2001 et 2002, soixante fois la consultation : la cotisation seule
+- id: LEGIARTI000006738378
+  reference: code de la sécurité sociale, D. 645-2, du 24 décembre 2003 au 2 décembre 2004
+  motif: exercice 2003, de même
+- id: LEGIARTI000006738379
+  reference: code de la sécurité sociale, D. 645-2, du 2 décembre 2004 au 30 décembre 2004
+  motif: le renvoi aux articles L. 162-5-8 et L. 162-5-9 ôté
+- id: LEGIARTI000006738380
+  reference: code de la sécurité sociale, D. 645-2, du 30 décembre 2004 au 31 décembre 2005
+  motif: exercice 2004, soixante fois la consultation
+- id: LEGIARTI000006738381
+  reference: code de la sécurité sociale, D. 645-2, du 31 décembre 2005 au 30 décembre 2006
+  motif: exercice 2005, de même
+- id: LEGIARTI000006738382
+  reference: code de la sécurité sociale, D. 645-2, du 30 décembre 2006 au 28 mars 2007
+  motif: exercice 2006, de même
+- id: LEGIARTI000006738383
+  reference: code de la sécurité sociale, D. 645-2, du 28 mars 2007 au 31 décembre 2007
+  motif: les chirurgiens-dentistes ôtés ; les médecins inchangés
+- id: LEGIARTI000017867034
+  reference: code de la sécurité sociale, D. 645-2, du 31 décembre 2007 au 9 mars 2008
+  motif: exercice 2007, soixante fois la consultation
+- id: LEGIARTI000018250536
+  reference: code de la sécurité sociale, D. 645-2, du 9 mars 2008 au 12 octobre 2008
+  motif: les sages-femmes à 229 € ; les médecins inchangés
+- id: LEGIARTI000019601964
+  reference: code de la sécurité sociale, D. 645-2, du 12 octobre 2008 au 31 décembre 2008
+  motif: les auxiliaires médicaux ôtés ; les médecins inchangés
+- id: LEGIARTI000020039605
+  reference: code de la sécurité sociale, D. 645-2, du 31 décembre 2008 au 1er janvier 2010
+  motif: exercice 2008, soixante fois la consultation
+- id: LEGIARTI000021640299
+  reference: code de la sécurité sociale, D. 645-2, du 1er janvier 2010 au 31 décembre 2010
+  motif: exercice 2009, de même
 reformes: [asv_1972, asv_trois_enfants_1981, asv_part_caisses_1993, asv_2012, asv_2017, carmf_temps_choisi_2017, asv_2026]
 code:
   python: >-
