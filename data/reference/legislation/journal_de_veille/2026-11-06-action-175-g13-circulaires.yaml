@@ -1,0 +1,46 @@
+date: "2026-11-06"
+session: "action 175, étape 6, vague 11, G13 : les 135 circulaires, lettres et instructions de 1986 à 1989 que la base de la Cnav cite sans thème"
+consulte: >-
+  Les 135 références sans thème et à lire de 1986 à 1989 dont le titre commence par
+  « Circulaire », « Lettre », « Instruction », « Note d'information » ou « Diffusion
+  d'instructions », relues par l'API de la base le 6 novembre 2026 à 11 h 32 UTC
+  (/reference/referencesByFileLeafRef/), toutes servies, 132 en page et trois en PDF (la
+  lettre ministérielle n° 890 du 20 juin 1988, par son texte ; les deux annexes de la
+  circulaire Cnav n° 107/87, lues en image) ; toutes lues en entier, les 61 plus longues
+  par un agent de la session, en trois lots, dont chaque citation a été retrouvée mot pour
+  mot dans le texte servi ; la lettre ministérielle n° 239 AG/84 du 30 juin 1986, pour
+  rapprocher la lettre Cnav du 10 avril 1987. L'index LEGI de la DILA, pour L. 351-15
+  (LEGIARTI000006742644, LEGIARTI000006742645) et R. 351-39 (LEGIARTI000006749445,
+  LEGIARTI000006749446). Pour les confronter : les fiches retraite_progressive,
+  totalisation_des_periodes_etrangeres, priorite_majorations_enfants,
+  enfants_fonction_publique, majoration_dix_pour_cent, majoration_conjoint_a_charge,
+  majoration_forfaitaire_reversion, reversion, trimestres_avant_1972 ; le code de
+  src/retraite_notionnelle/droit/progressive.py et compter.py ;
+  legislation/accords_internationaux.yaml ; les séries regimes/taux_cotisation_annuels.csv,
+  macro/smic_horaire.csv, legislation/validation_trimestres.csv,
+  legislation/salaire_validant_trimestre_outre_mer.csv,
+  legislation/coefficient_minoration.csv, legislation/duree_assurance_requise.csv ; la
+  limite docs/limites/3-systeme-actuel.md. Ni Légifrance, ni le Journal officiel.
+trouve: >-
+  Le registre range les 135 (89 limite, 46 hors_modele), sans raison neuve. Conformes :
+  le taux vieillesse de 13,90 % au 1er janvier 1986, 14,60 % dont 6,40 % au salarié en
+  1987, 14,80 % dont 6,60 % en 1988, 15,80 % dont 7,60 % en 1989 ; le salaire validant un
+  trimestre en 1988, 5 568 F, et outre-mer 4 641,43 F et 4 330,82 F. Deux écarts neufs,
+  chiffrés : la lettre Cnav du 11 août 1987 réserve les règlements européens aux
+  ressortissants des États membres, quand le modèle, qui ne lit pas la nationalité, les
+  sert à tous (+100 % sur un cas de 1989) ; L. 351-15, 2°, de 1988 à 2010, ne compte pour
+  la durée de la retraite progressive que le régime général, les salariés agricoles et les
+  non-salariés, quand le modèle compte la durée tous régimes, régimes spéciaux compris
+  (10 % du salaire annuel moyen servis en trop sur un cas de 1990). Déjà déclarés,
+  touchés : l'enfant né après la cessation d'activité au régime spécial (lettre du 23 mars
+  1989) ; la tolérance de 1968 sur les ressources du survivant, abrogée pour les
+  réversions depuis le 1er juillet 1988 ; le conjoint inapte ; l'Accre. Non tranchés : les
+  enfants morts-nés de la majoration de 10 % ; les pensions espagnoles et portugaises
+  d'avant 1986 ; la majoration de la réversion pour enfant sous les règlements, que la
+  saisie ne peut dire. Note
+  docs/feuille_de_route/175/2026-11-06-etape-6-circulaires-1986-1989.md.
+reste: >-
+  Les 1 440 circulaires de 1990 à 2026, par période ; les autres natures de l'étape 6 ;
+  les lois, ordonnances et décrets que ces textes appliquent, à relire au Journal
+  officiel ; le règlement n° 859/2003 et L. 351-15 depuis 2010, pour borner les deux
+  écarts ; leurs cas, à poser sur les moteurs.
