@@ -623,6 +623,9 @@ def test_journal_de_certification_decrit_les_series_certifiees():
             "legislation/annees_revenu_annuel_moyen_independants.csv",
         "validation_trimestres": "legislation/validation_trimestres.csv",
         "smic_horaire": "macro/smic_horaire.csv",
+        # Les relèvements en cours d'année, que les mêmes décrets fixent (action 175,
+        # étape 3).
+        "smic_horaire_releves": "macro/smic_horaire_releves.csv",
         "decote_fonction_publique_coefficient":
             "legislation/decote_fonction_publique.csv",
         "minimum_garanti_indice": "legislation/minimum_garanti.csv",

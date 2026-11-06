@@ -1,5 +1,5 @@
 {
- "dernier_passage_le": "2026-11-05",
+ "dernier_passage_le": "2026-11-06",
  "series": {
   "age_annulation_decote_openfisca": {
    "ajoutees": 0,
@@ -2150,12 +2150,23 @@
    "ajoutees": 0,
    "colonne": "smic_horaire",
    "corrigees": 0,
-   "empreinte": "1e664f4810d8ce5f",
-   "identiques": 20,
+   "empreinte": "ae70d65a06091452",
+   "identiques": 21,
    "niveau": "certifiee",
    "source": "DILA, base LEGI, décrets portant relèvement du salaire minimum de croissance",
-   "valeurs": 20,
-   "verifiee_le": "2026-09-17"
+   "valeurs": 21,
+   "verifiee_le": "2026-11-06"
+  },
+  "smic_horaire_releves": {
+   "ajoutees": 0,
+   "colonne": "smic_horaire",
+   "corrigees": 0,
+   "empreinte": "f89b81c49602bd71",
+   "identiques": 13,
+   "niveau": "certifiee",
+   "source": "DILA, base LEGI, décrets portant relèvement du salaire minimum de croissance (relèvements en cours d'année)",
+   "valeurs": 13,
+   "verifiee_le": "2026-11-06"
   },
   "structure_financement_regimes": {
    "ajoutees": 0,

@@ -40,9 +40,19 @@
 # (JORFARTI000046113526) ; 26 avril 2023, 11,52 € au 1er mai
 # (JORFARTI000047495827) ; le décret n° 2024-951, 11,88 € au 1er novembre 2024
 # (JORFARTI000050392696). Les francs sont convertis par division par 6,55957,
-# à six décimales, comme `smic_horaire.csv`. L'index LEGI ne porte ni les
-# arrêtés ni les textes postérieurs à 2017 : niveau `haute`, aucun script ne
-# relit ces lignes.
+# à six décimales, comme `smic_horaire.csv`.
+#
+# TREIZE LIGNES SONT `certifiee` depuis le 6 novembre 2026 (action 175, étape 3) :
+# les décrets de chaque 1er juillet de 1998 à 2009 et celui de 2012, que
+# `scripts/fetch/dila_legi_smic.py` relit dans la base LEGI et que
+# `scripts/verifier_donnees.py --appliquer` confronte au fichier, valeur par
+# valeur (treize identiques). Pour celle du 1er juillet 2002 : « A compter du
+# 1er juillet 2002 [...] le montant du salaire minimum de croissance est porté à
+# 6,83 Euros de l'heure en métropole » (décret n° 2002-941, article 1er,
+# LEGIARTI000006212887, JORFARTI000002416035). L'index LEGI ne porte ni les
+# arrêtés ni les textes postérieurs à 2017 : les huit autres lignes (2008-05-01,
+# 2011-12-01, 2021-10-01, 2022-05-01, 2022-08-01, 2023-05-01, 2024-11-01,
+# 2026-06-01) restent `haute`, et aucun script ne les relit.
 #
 # 2026-06-01 : 12,31 € de l'heure, relèvement automatique de 2,4 % prévu par
 # l'article L. 3231-5 du code du travail quand l'indice des prix des ménages
@@ -53,21 +63,21 @@
 # compter du 1er juin 2026. L'index LEGI ne consolide pas les textes du SMIC
 # postérieurs à 2017, et aucun script ne relit cette ligne : niveau `haute`.
 date_effet,smic_horaire,fiabilite
-1998-07-01,6.131499,haute
-1999-07-01,6.207724,haute
-2000-07-01,6.405908,haute
-2001-07-01,6.665071,haute
-2002-07-01,6.830000,haute
-2003-07-01,7.190000,haute
-2004-07-01,7.610000,haute
-2005-07-01,8.030000,haute
-2006-07-01,8.270000,haute
-2007-07-01,8.440000,haute
+1998-07-01,6.131499,certifiee
+1999-07-01,6.207724,certifiee
+2000-07-01,6.405908,certifiee
+2001-07-01,6.665071,certifiee
+2002-07-01,6.830000,certifiee
+2003-07-01,7.190000,certifiee
+2004-07-01,7.610000,certifiee
+2005-07-01,8.030000,certifiee
+2006-07-01,8.270000,certifiee
+2007-07-01,8.440000,certifiee
 2008-05-01,8.630000,haute
-2008-07-01,8.710000,haute
-2009-07-01,8.820000,haute
+2008-07-01,8.710000,certifiee
+2009-07-01,8.820000,certifiee
 2011-12-01,9.190000,haute
-2012-07-01,9.400000,haute
+2012-07-01,9.400000,certifiee
 2021-10-01,10.480000,haute
 2022-05-01,10.850000,haute
 2022-08-01,11.070000,haute

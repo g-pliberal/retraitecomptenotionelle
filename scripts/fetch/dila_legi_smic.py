@@ -47,12 +47,18 @@ la série serait fausse là où elle est plate. Le script n'écrit donc une ann�
 que si le décret qui la commande date de moins de dix-huit mois : au-delà, il y
 a un trou, et l'année est laissée à la transcription plutôt que devinée.
 
-**L'ANNÉE DE LA BASCULE À L'EURO N'EST PAS CERTIFIABLE PAR CETTE VOIE**, et
-c'est le même principe. Au 1er janvier 2002, le SMIC opposable n'est pas la
-conversion arithmétique des 43,72 F du décret de juillet 2001 — 6,6651 € — mais
-6,67 €, arrondi fixé par le texte de conversion. Ce texte-là n'est pas dans le
-dump : une année dont le décret en vigueur est encore écrit en francs alors
-qu'elle se compte en euros n'est donc pas écrite, et reste à la transcription.
+**L'ANNÉE DE LA BASCULE À L'EURO SE LIT DANS L'ARTICLE DE CONVERSION.** Au
+1er janvier 2002, le SMIC opposable n'est pas la conversion arithmétique des
+43,72 F du décret de juillet 2001 — 6,6651 € — mais 6,67 €, un arrondi que le
+décret n° 2001-554 fixe lui-même, à son article 3 : « A compter du 1er janvier
+2002 […] la valeur en euros du salaire minimum de croissance fixé ci-dessus à
+l'article 1er est de 6,67 euros de l'heure en métropole » (LEGIARTI000006661546,
+JORFARTI000002428309). Ce n'est pas un texte absent du dump, comme on l'avait
+écrit : c'est une autre rédaction, « est de » et non « est porté à », que le
+filtre ne saisissait pas. Il la saisit depuis le 6 novembre 2026 (``CONVERSION``).
+Sans cet article, le principe tient : une année dont le décret en vigueur est
+encore écrit en francs alors qu'elle se compte en euros n'est pas écrite, et
+reste à la transcription.
 
 **CE QUE LE DUMP NE PORTE PAS.** Les relèvements postérieurs à celui du
 1er janvier 2017 n'y figurent pas : la base LEGI garde les textes consolidés, et
@@ -120,6 +126,15 @@ MONTANT = re.compile(
     r"(\d{1,3}(?:[,.]\d{1,4})?)\s*(F|francs?|€|euros?)?",
     re.I)
 
+#: « la valeur en euros du salaire minimum de croissance fixé ci-dessus à
+#: l'article 1er est de 6,67 euros de l'heure » — l'article du décret n° 2001-554
+#: qui donne le SMIC du 1er janvier 2002 en euros, arrondi compris. Mêmes
+#: groupes que ``MONTANT`` : le montant, puis la monnaie.
+CONVERSION = re.compile(
+    r"valeur en euros du salaire minimum de croissance\s+fix[ée]\s+ci-dessus\s+"
+    r"à\s+l'article\s+\w+\s+est\s+de\s*(\d{1,3}(?:[,.]\d{1,4})?)\s*(€|euros?)",
+    re.I)
+
 #: « A compter du 1er juillet 1997 » — la date d'EFFET, à ne pas confondre avec
 #: celle du décret, que son intitulé porte quelques jours plus tôt : « Décret
 #: n° 96-571 DU 26 JUIN 1996 portant relèvement… A compter du 1er juillet 1996 ».
@@ -136,7 +151,8 @@ METROPOLE = re.compile(r"m[ée]tropole", re.I)
 
 FILTRE = r"""
 import re, sys
-CIBLE = re.compile(r"salaire minimum de croissance est (port|fix)", re.I)
+CIBLE = re.compile(r"salaire minimum de croissance est (port|fix)"
+                   r"|valeur en euros du salaire minimum de croissance", re.I)
 BALISES = re.compile(r"<[^>]+>")
 tampon = ""
 for bloc in iter(lambda: sys.stdin.buffer.read(1 << 20), b""):
@@ -197,7 +213,7 @@ def relevements(versions: list[tuple[str, str]]) -> dict[date, float]:
     for debut, texte in versions:
         if not METROPOLE.search(texte):
             continue
-        montant = MONTANT.search(texte)
+        montant = MONTANT.search(texte) or CONVERSION.search(texte)
         if montant is None:
             continue
         effet = date_d_effet(texte, debut)
@@ -209,6 +225,22 @@ def relevements(versions: list[tuple[str, str]]) -> dict[date, float]:
         # le plus récent est lu en dernier et l'emporte.
         par_date[effet] = valeur
     return par_date
+
+
+#: Le fichier des relèvements en cours d'année commence en juillet 1998
+#: (action 130, décision 13) : la base forfaitaire des cultes ne suit pas le
+#: SMIC du mois avant.
+PREMIER_RELEVE = date(1998, 1, 1)
+
+
+def releves_en_cours_d_annee(par_date: dict[date, float]) -> dict[date, float]:
+    """Les relèvements qui ne tombent pas un 1er janvier, depuis juillet 1998.
+
+    Le barème du 1er janvier est celui de ``smic_horaire.csv`` ; les autres
+    vont à ``smic_horaire_releves.csv``, chacun à sa date d'effet.
+    """
+    return {effet: valeur for effet, valeur in sorted(par_date.items())
+            if effet >= PREMIER_RELEVE and (effet.month, effet.day) != (1, 1)}
 
 
 def serie_annuelle(par_date: dict[date, float]) -> dict[int, float]:
@@ -226,8 +258,8 @@ def serie_annuelle(par_date: dict[date, float]) -> dict[int, float]:
         if (premier_janvier - dernier).days > FRAICHEUR_MAXIMALE_JOURS:
             continue
         # L'année de la bascule : le dernier décret est en francs, le SMIC
-        # opposable est en euros, et l'arrondi de la conversion vient d'un texte
-        # que le dump ne porte pas. On ne l'invente pas.
+        # opposable est en euros, et l'arrondi de la conversion vient de
+        # l'article 3 du décret de juillet 2001. Sans lui, on ne l'invente pas.
         if premier_janvier > DERNIER_FRANC >= dernier:
             continue
         serie[annee] = par_date[dernier]
@@ -322,6 +354,11 @@ def main(arguments: list[str] | None = None) -> int:
                     "trimestres. Les années dont le décret manque au dump ne sont "
                     "pas écrites : elles restent à la transcription d'OpenFisca.",
             "serie": {str(annee): valeur for annee, valeur in sorted(serie.items())},
+            "releves_note": "relèvements en cours d'année (hors 1er janvier), "
+                            "depuis juillet 1998, par date d'effet : le fichier "
+                            "smic_horaire_releves.csv.",
+            "releves": {effet.isoformat(): valeur for effet, valeur
+                        in releves_en_cours_d_annee(par_date).items()},
         }, ensure_ascii=False, indent=1),
         encoding="utf-8",
     )

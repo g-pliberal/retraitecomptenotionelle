@@ -4052,6 +4052,18 @@ def source_smic() -> dict[tuple, float]:
     return {(annee,): valeur for annee, valeur in sorted(serie.items())}
 
 
+def source_smic_releves() -> dict[tuple, float]:
+    """SMIC horaire relevé EN COURS D'ANNÉE — mêmes décrets, base LEGI.
+
+    Les relèvements qui ne tombent pas un 1er janvier, par date d'effet, depuis
+    juillet 1998 : ceux dont le décret est dans la base. Les arrêtés de
+    l'article L. 3231-5 (2008, 2011, 2021 à 2023, 2026) n'y sont pas, et leurs
+    lignes restent à la saisie.
+    """
+    releves = _lire_json("dila_legi_smic.json", "scripts/fetch/dila_legi_smic.py")["releves"]
+    return {(date_effet,): valeur for date_effet, valeur in sorted(releves.items())}
+
+
 #: La première année où les séries longues de l'INSEE comptent le salaire
 #: minimum sur 35 heures (tableau SM01) : la durée légale passe à 35 heures le
 #: 1er février 2000 dans les entreprises de plus de vingt salariés (loi du
@@ -5413,6 +5425,21 @@ CLES_NUMERIQUES = frozenset({"annee", "date_effet", "generation", "borne_mensuel
                              "maturite", "indice_brut"})
 
 
+def _cle_de_tri(ligne: dict, cles: tuple[str, ...]) -> tuple:
+    """La clé d'une ligne, numérique pour les colonnes qui le sont.
+
+    ``date_effet`` est numérique dans certains fichiers (une année décimale) et
+    une date ISO dans d'autres (« 1998-07-01 », les relèvements du SMIC) : une
+    valeur qui ne se lit pas en nombre se trie comme du texte, et les dates ISO
+    se trient ainsi dans l'ordre du temps.
+    """
+    try:
+        return tuple(float(ligne[c]) if c in CLES_NUMERIQUES else ligne[c]
+                     for c in cles)
+    except ValueError:
+        return tuple(ligne[c] for c in cles)
+
+
 @dataclass(frozen=True)
 class Certification:
     """Confrontation d'une série de référence à sa source."""
@@ -5515,10 +5542,7 @@ class Certification:
                 ligne["fiabilite"] = self.niveau
 
         if appliquer:
-            lignes.sort(key=lambda l: tuple(
-                float(l[c]) if c in CLES_NUMERIQUES else l[c]
-                for c in self.cles
-            ))
+            lignes.sort(key=lambda l: _cle_de_tri(l, self.cles))
             _ecrire(self.chemin, commentaires, champs, lignes)
 
         verbe = ("versées au niveau " + self.niveau) if appliquer else "confrontables"
@@ -10253,6 +10277,18 @@ CERTIFICATIONS = (
         source=source_smic,
         origine="DILA, base LEGI, décrets portant relèvement du salaire minimum "
                 "de croissance",
+        decimales=6,
+        tolerance=5e-7,
+        unite=" €",
+    ),
+    Certification(
+        nom="smic_horaire_releves",
+        chemin=REFERENCE / "macro" / "smic_horaire_releves.csv",
+        cles=("date_effet",),
+        colonne="smic_horaire",
+        source=source_smic_releves,
+        origine="DILA, base LEGI, décrets portant relèvement du salaire minimum "
+                "de croissance (relèvements en cours d'année)",
         decimales=6,
         tolerance=5e-7,
         unite=" €",

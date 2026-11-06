@@ -4488,14 +4488,21 @@ institutions:
           et la base LEGI les garde. Il n'entre dans le modèle qu'à un endroit,
           mais cet endroit décide de la décote : un trimestre s'acquiert en
           ayant cotisé sur 150 fois le SMIC horaire depuis 2014, 200 fois avant.
-          Vingt années passent de la transcription au Journal officiel, toutes
-          identiques à la saisie. TROIS TROUS SONT MESURÉS PLUTÔT QUE COMBLÉS :
-          l'avant-1997, que la base ne porte pas ; 2002, dont l'arrondi en euros
-          (6,67 € et non la conversion 6,6651 €) vient d'un texte de conversion
-          absent ; et l'après-2017, les décrets récents n'étant pas entrés dans
-          la base des textes consolidés. Le récupérateur écarte une année dont
-          le décret a plus de 365 jours, l'article L. 3231-5 imposant un
-          relèvement au moins annuel.
+          Vingt et une années passent de la transcription au Journal officiel,
+          toutes identiques à la saisie, 2002 comprise : son 6,67 € (et non la
+          conversion 6,6651 € de 43,72 F) est la valeur en euros que l'article 3
+          du décret n° 2001-554 fixe lui-même — « la valeur en euros du salaire
+          minimum de croissance fixé ci-dessus à l'article 1er est de 6,67 euros
+          de l'heure » (LEGIARTI000006661546, JORFARTI000002428309) —, que le
+          filtre du récupérateur ne saisissait pas avant le 6 novembre 2026
+          (action 175, étape 3). DEUX TROUS SONT MESURÉS PLUTÔT QUE COMBLÉS :
+          l'avant-1997, que la base ne porte pas ; et l'après-2017, les décrets
+          récents n'étant pas entrés dans la base des textes consolidés. Le
+          récupérateur écarte une année dont le décret a plus de 365 jours,
+          l'article L. 3231-5 imposant un relèvement au moins annuel. Il écrit
+          aussi, dans le même fichier brut, les relèvements en cours d'année
+          qu'il lit (treize, de juillet 1998 à juillet 2012) : le contrôle
+          `smic_horaire_releves` les confronte à `smic_horaire_releves.csv`.
           Attention à la date : celle du décret n'est pas celle de son effet, et
           Mayotte a ses propres décrets dans le même dump.
 
@@ -4527,6 +4534,14 @@ institutions:
           12,31 € l'heure » à compter du 1er juin 2026. L'index LEGI ne
           consolide pas les textes du SMIC postérieurs à 2017, et aucun script
           ne relit la ligne : niveau `haute`.
+          Treize lignes sont passées au niveau `certifiee` le 6 novembre 2026
+          (action 175, étape 3) : les décrets de chaque 1er juillet de 1998 à
+          2009 et celui de 2012, relus dans la base LEGI par
+          `scripts/fetch/dila_legi_smic.py` et confrontés au fichier par
+          `scripts/verifier_donnees.py` (treize identiques) — dont celle du
+          1er juillet 2002, « 6,83 Euros de l'heure » (décret n° 2002-941,
+          article 1er). Les huit autres, des arrêtés ou des textes postérieurs à
+          2017, restent `haute`.
 
       - id: service_public_aspa
         titre: ASPA, montants et plafonds d'une personne seule et d'un couple (fiche F16871)

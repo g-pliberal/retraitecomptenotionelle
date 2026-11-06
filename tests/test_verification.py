@@ -1020,24 +1020,141 @@ def test_le_smic_se_lit_dans_le_decret_qui_le_releve():
         37.91 / 6.55957)
 
 
-def test_l_annee_de_la_bascule_a_l_euro_n_est_pas_certifiee():
-    """6,67 € au 1er janvier 2002 : un arrondi, pas une conversion.
+#: L'article 3 du décret n° 2001-554 du 28 juin 2001, tel que la base LEGI le
+#: porte (LEGIARTI000006661546, en vigueur du 29 juin 2001 au 1er juillet 2002)
+#: et le Journal officiel (JORFARTI000002428309, « 6,67 Euro »), lu le
+#: 6 novembre 2026 : la valeur en euros du SMIC du 1er janvier 2002.
+ARTICLE_3_DU_DECRET_2001_554 = (
+    "Décret n°2001-554 du 28 juin 2001 portant relèvement du salaire minimum "
+    "de croissance A compter du 1er janvier 2002, pour les catégories de "
+    "travailleurs mentionnées à l'article L. 131-2 du code du travail, la "
+    "valeur en euros du salaire minimum de croissance fixé ci-dessus à "
+    "l'article 1er est de 6,67 euros de l'heure en métropole, à "
+    "Saint-Pierre-et-Miquelon et dans les départements d'outre-mer."
+)
 
-    Le dernier décret en vigueur est en francs — 43,72 F, soit 6,6651 € — quand
-    le SMIC opposable en 2002 est de 6,67 €. Le texte qui fixe cet arrondi n'est
-    pas dans le dump : l'année n'est pas rendue.
+
+def test_le_filtre_garde_l_article_qui_convertit_le_smic_en_euros():
+    """« la valeur en euros du salaire minimum de croissance fixé ci-dessus […]
+    est de 6,67 euros » ne dit pas « est porté à » : le filtre qui n'attrape que
+    cette tournure laissait l'année de la bascule sans son texte."""
+    import subprocess
+
+    module = _charger_script("dila_legi_smic", "scripts", "fetch",
+                             "dila_legi_smic.py")
+    entree = (
+        '<?xml version="1.0"?><ARTICLE><DATE_DEBUT>2001-06-29</DATE_DEBUT>'
+        f"<CONTENU>{ARTICLE_3_DU_DECRET_2001_554}</CONTENU></ARTICLE>"
+        '<?xml version="1.0"?><ARTICLE><DATE_DEBUT>2001-06-29</DATE_DEBUT>'
+        "<CONTENU>Le minimum garanti est fixé à 2,91 euros.</CONTENU></ARTICLE>"
+        '<?xml version="1.0"?>\n'
+    )
+    sortie = subprocess.run(
+        [sys.executable, "-X", "utf8", "-c", module.FILTRE], input=entree.encode(),
+        capture_output=True, check=True).stdout.decode("utf-8")
+    versions = module._analyser(sortie)
+    assert [debut for debut, _ in versions] == ["2001-06-29"]
+    assert "est de 6,67 euros de l'heure" in versions[0][1]
+
+
+def test_l_annee_de_la_bascule_a_l_euro_se_lit_dans_l_article_de_conversion():
+    """6,67 € au 1er janvier 2002 : un arrondi, pas la conversion de 43,72 F.
+
+    Le dernier décret de relèvement est en francs — 43,72 F, soit 6,6651 € —
+    quand le SMIC opposable en 2002 est de 6,67 €. Le texte qui fixe cette
+    valeur est l'article 3 du même décret (« A compter du 1er janvier 2002 […]
+    la valeur en euros du salaire minimum de croissance fixé ci-dessus à
+    l'article 1er est de 6,67 euros de l'heure ») : lu, il donne 2002 ; absent,
+    l'année n'est pas devinée.
     """
     from datetime import date
 
     module = _charger_script("dila_legi_smic", "scripts", "fetch",
                              "dila_legi_smic.py")
-    serie = module.serie_annuelle({
-        date(2000, 7, 1): 6.405908,
-        date(2001, 7, 1): 6.665071,
-        date(2002, 7, 1): 6.83,
+    par_date = module.relevements([("2001-06-29", ARTICLE_3_DU_DECRET_2001_554)])
+    assert par_date == {date(2002, 1, 1): pytest.approx(6.67)}
+
+    francs = {date(2000, 7, 1): 6.405908, date(2001, 7, 1): 6.665071,
+              date(2002, 7, 1): 6.83}
+    sans_conversion = module.serie_annuelle(francs)
+    assert 2002 not in sans_conversion
+    assert sans_conversion[2003] == pytest.approx(6.83)
+
+    avec_conversion = module.serie_annuelle({**francs, **par_date})
+    assert avec_conversion[2001] == pytest.approx(6.405908)
+    assert avec_conversion[2002] == pytest.approx(6.67)
+    assert avec_conversion[2003] == pytest.approx(6.83)
+
+
+def test_les_releves_en_cours_d_annee_sont_ceux_qui_ne_tombent_pas_un_1er_janvier():
+    """Le barème du 1er janvier va à ``smic_horaire.csv`` ; les autres, à partir
+    de juillet 1998 (action 130, décision 13), au fichier des relèvements."""
+    from datetime import date
+
+    module = _charger_script("dila_legi_smic", "scripts", "fetch",
+                             "dila_legi_smic.py")
+    releves = module.releves_en_cours_d_annee({
+        date(1997, 7, 1): 6.011065, date(1998, 7, 1): 6.131499,
+        date(2002, 1, 1): 6.67, date(2002, 7, 1): 6.83,
     })
-    assert 2002 not in serie
-    assert serie[2003] == pytest.approx(6.83)
+    assert releves == {date(1998, 7, 1): pytest.approx(6.131499),
+                       date(2002, 7, 1): pytest.approx(6.83)}
+
+
+def test_les_releves_certifies_se_lisent_dans_le_fichier_brut(verificateur, tmp_path,
+                                                              monkeypatch):
+    (tmp_path / "dila_legi_smic.json").write_text(json.dumps({
+        "serie": {"2002": 6.67},
+        "releves": {"2002-07-01": 6.83}}), encoding="utf-8")
+    monkeypatch.setattr(verificateur, "BRUT", tmp_path)
+    assert verificateur.source_smic_releves() == {("2002-07-01",): 6.83}
+    assert verificateur.source_smic() == {("2002",): 6.67}
+
+
+def test_une_cle_date_effet_en_dates_iso_se_trie_et_se_certifie(verificateur, tmp_path):
+    """``date_effet`` est une clé numérique ailleurs (une année décimale) ; le
+    fichier des relèvements du SMIC y met des dates ISO, « 1998-07-01 », que le
+    tri ne savait pas lire."""
+    chemin = tmp_path / "releves.csv"
+    chemin.write_text(
+        "# en-tête\ndate_effet,smic_horaire,fiabilite\n"
+        "2002-07-01,6.830000,haute\n1998-07-01,6.131499,haute\n", encoding="utf-8")
+    certification = verificateur.Certification(
+        nom="releves", chemin=chemin, cles=("date_effet",), colonne="smic_horaire",
+        source=lambda: {("1998-07-01",): 6.131499, ("2002-07-01",): 6.83},
+        origine="essai", decimales=6, tolerance=5e-7)
+    messages, _ = certification.confronter(appliquer=True)
+    assert "2 identiques, 0 corrigées, 0 ajoutées" in messages[0]
+    assert chemin.read_text(encoding="utf-8").splitlines() == [
+        "# en-tête", "date_effet,smic_horaire,fiabilite",
+        "1998-07-01,6.131499,certifiee", "2002-07-01,6.830000,certifiee"]
+
+
+def test_le_smic_de_2002_est_certifie_au_texte():
+    """Les deux lignes de 2002, que la transcription d'OpenFisca portait seule.
+
+    - 1er janvier 2002 : « la valeur en euros du salaire minimum de croissance
+      fixé ci-dessus à l'article 1er est de 6,67 Euro de l'heure en métropole »
+      (décret n° 2001-554, article 3, JORFARTI000002428309) ;
+    - 1er juillet 2002 : « le montant du salaire minimum de croissance est porté
+      à 6,83 EUR de l'heure en métropole » (décret n° 2002-941, article 1er,
+      JORFARTI000002416035).
+    """
+    racine = Path(__file__).resolve().parents[1] / "data" / "reference" / "macro"
+
+    def lignes(nom: str) -> list[dict]:
+        with (racine / nom).open(encoding="utf-8", newline="") as flux:
+            return list(csv.DictReader(l for l in flux if not l.lstrip().startswith("#")))
+
+    barème = {l["annee"]: l for l in lignes("smic_horaire.csv")}
+    assert float(barème["2002"]["smic_horaire"]) == pytest.approx(6.67, abs=5e-7)
+    assert barème["2002"]["fiabilite"] == "certifiee"
+    releves = {l["date_effet"]: l for l in lignes("smic_horaire_releves.csv")}
+    assert float(releves["2002-07-01"]["smic_horaire"]) == pytest.approx(6.83, abs=5e-7)
+    assert releves["2002-07-01"]["fiabilite"] == "certifiee"
+    # Le barème du 1er janvier 2003 est celui du 1er juillet 2002 : une valeur,
+    # deux fichiers, le même texte.
+    assert float(barème["2003"]["smic_horaire"]) == pytest.approx(6.83, abs=5e-7)
 
 
 def test_le_point_d_indice_gele_reconduit_sa_derniere_version():

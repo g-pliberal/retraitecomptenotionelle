@@ -1,0 +1,32 @@
+date: "2026-11-06"
+session: "action 175, étape 3 : le SMIC de 2002, certifié au texte (barème du 1er janvier et relèvement du 1er juillet)"
+consulte: >-
+  Les index JORF (à jour au 3 novembre 2026, 20261103-002311) et LEGI (à jour au 2 novembre 2026,
+  20261102-213929) de la DILA, récupérés. Dans le JORF : le décret n° 2001-554 du 28 juin 2001,
+  articles 1er, 2, 3, 4, 5, 6 et 7 (JORFARTI000001645920, 000001339687, 000002428309,
+  000002231679, 000002036986, 000001839909, 000001455350) et son texte (JORFTEXT000000589597) ;
+  le décret n° 2002-941 du 25 juin 2002, articles 1er à 5 (JORFARTI000002416035, 000002416036,
+  000002213938, 000001327315, 000001134187) et son texte (JORFTEXT000000774310) ; le décret
+  n° 2003-564 (titre et article 1er) ; les décrets de 2005 et 2006 (JORFARTI000001485867,
+  JORFARTI000001278723). Dans LEGI : les mêmes décrets, leurs articles et leurs dates de fin
+  (LEGIARTI000006661546, 000006212887, 000006220244), les douze autres décrets de relèvement
+  de juillet 1998 à juillet 2012 (identifiants dans la note). Recherches par titre, par numéro,
+  par montant et par nature, de 2001 à 2004, dans les deux index.
+trouve: >-
+  Le barème du 1er janvier 2002 (6,67 €) est la valeur en euros que l'article 3 du décret
+  n° 2001-554 fixe lui-même, « la valeur en euros du salaire minimum de croissance fixé
+  ci-dessus à l'article 1er est de 6,67 Euro de l'heure » : le texte n'était pas absent de
+  la base, le filtre du récupérateur ne le saisissait pas (« est de » et non « est porté à »).
+  Le relèvement du 1er juillet 2002 (6,83 €) est l'article 1er du décret n° 2002-941. Les
+  valeurs du dépôt sont identiques aux textes. Aucun autre texte de l'index ne modifie ces
+  montants de 2001 à 2003 ; les index ne portent que le champ social. Les deux lignes sont
+  passées au niveau certifiee, avec douze autres lignes du fichier des relèvements que la
+  même confrontation relit (décrets de 1998 à 2009 et de 2012, treize identiques). Les
+  décrets de 2005 et de 2006 écrivent la valeur sans monnaie, « 8,03 l'heure ». Le paquet
+  change (journal de certification, niveau de 2002), aucune valeur de SMIC ne bouge.
+reste: >-
+  Les huit lignes du fichier des relèvements qui sont des arrêtés ou des textes postérieurs à
+  2017 (25 avril 2008, 29 novembre 2011, 27 septembre 2021, 19 avril 2022, 29 juillet 2022,
+  26 avril 2023, décret n° 2024-951, arrêté du 22 mai 2026), et le barème de 2018 à 2026 de
+  smic_horaire.csv, restent haute : aucun script ne les relit, un lecteur du JORF les
+  certifierait. Les huit barèmes de Mayotte ne sont pas touchés (thème Mayotte, étape 4).

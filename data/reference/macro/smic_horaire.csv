@@ -15,18 +15,23 @@
 #
 # D'OÙ VIENNENT CES VALEURS. Des décrets qui relèvent le SMIC, LUS dans la base
 # LEGI de la DILA par `scripts/fetch/dila_legi_smic.py` : « A compter du
-# 1er juillet 1997 […] le montant du salaire minimum de croissance est porté à
+# 1er juillet 1997 [...] le montant du salaire minimum de croissance est porté à
 # 39,43 F de l'heure en métropole ». Niveau `certifiee` de 1997 à 2017, et les
-# vingt valeurs saisies s'y sont retrouvées à l'identique.
+# vingt et une valeurs saisies s'y sont retrouvées à l'identique.
 #
-# TROIS PÉRIODES RESTENT AU NIVEAU `haute`, transcrites d'OpenFisca-France, et
+# 2002 SE LIT DANS L'ARTICLE 3 DU DÉCRET N° 2001-554. Le décret en vigueur au
+# 1er janvier 2002 pour le montant est encore en francs (43,72 F, soit 6,6651 €),
+# mais son article 3 donne lui-même la valeur en euros : « A compter du 1er
+# janvier 2002 [...] la valeur en euros du salaire minimum de croissance fixé
+# ci-dessus à l'article 1er est de 6,67 Euro de l'heure en métropole »
+# (JORFARTI000002428309 ; LEGIARTI000006661546). Ce texte n'a pas manqué à la
+# base : sa rédaction, « est de » et non « est porté à », échappait au filtre du
+# récupérateur. Lu et certifié le 6 novembre 2026 (action 175, étape 3).
+#
+# DEUX PÉRIODES RESTENT AU NIVEAU `haute`, transcrites d'OpenFisca-France, et
 # chacune pour une raison qui se vérifie :
 #
 #   avant 1997  la base ne porte pas les décrets de cette période ;
-#   2002        le décret en vigueur au 1er janvier est encore en francs
-#               (43,72 F, soit 6,6651 €) alors que le SMIC opposable est de
-#               6,67 € — un arrondi fixé par un texte de conversion absent du
-#               dump. On ne l'invente pas ;
 #   depuis 2018 les décrets récents ne sont pas entrés dans la base des textes
 #               consolidés. Une année dont le décret a plus de 365 jours
 #               signale un texte manquant, l'article L. 3231-5 imposant un
@@ -66,7 +71,7 @@ annee,smic_horaire,fiabilite
 1999,6.131499,certifiee
 2000,6.207724,certifiee
 2001,6.405908,certifiee
-2002,6.670000,haute
+2002,6.670000,certifiee
 2003,6.830000,certifiee
 2004,7.190000,certifiee
 2005,7.610000,certifiee
