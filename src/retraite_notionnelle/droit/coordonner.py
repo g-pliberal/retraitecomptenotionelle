@@ -50,6 +50,28 @@ REGIMES_CODE_DES_PENSIONS = frozenset({"fonction_publique_etat", "cnracl", "fspo
 REGIMES_ALIGNES = frozenset({
     "regime_general", "msa_salaries", "cancava", "organic", "rsi",
 })
+#: L'ACTIVITÉ ACCESSOIRE DE L'AGENT D'UN RÉGIME SPÉCIAL : les régimes dont
+#: R. 711-1 nomme la branche (rédaction du 17 mai 1991, LEGIARTI000006752040)
+#: — 1° l'État, pour ses fonctionnaires, ses magistrats et ses ouvriers, et
+#: l'Imprimerie nationale ; 2° et 3° les collectivités et leurs
+#: établissements ; 4° les marins ; 5° les mines ; 6° la SNCF ; 7° les chemins
+#: de fer secondaires ; 8° les IEG ; 9° la Banque de France ; 10° l'Opéra et la
+#: Comédie-Française. Leur agent qui exerce en plus une activité relevant du
+#: régime général n'y cotise pas, et « n'[a] droit qu'aux prestations prévues
+#: par le régime auquel [il est] affilié[] au titre de [son] activité
+#: principale » (D. 171-2 et D. 171-4, rédactions du 21 décembre 1985 au
+#: 18 juillet 2015). Voir :func:`ecarter_les_accessoires`.
+REGIMES_DES_ORGANISATIONS_SPECIALES = frozenset({
+    "fonction_publique_etat", "fspoeie", "imprimerie_nationale", "cnracl", "marins",
+    "mines", "sncf", "chemins_fer_secondaires", "ieg", "banque_de_france",
+    "opera_de_paris", "comedie_francaise",
+})
+#: Les années entières de la dispense : du 1er juillet 1980 (décret
+#: n° 80-475) aux rémunérations versées avant le 19 juillet 2015 (décret
+#: n° 2015-877, circulaire Cnav 2016/15). Les deux années coupées gardent leur
+#: droit.
+ACCESSOIRE_SANS_DROIT_DEPUIS = 1981
+ACCESSOIRE_SANS_DROIT_JUSQU = 2014
 #: La LURA ne vaut que pour les assurés nés à compter de 1953 (article 51
 #: de la loi n° 2015-1702 de financement pour 2016) et pour les pensions
 #: prenant effet à compter du 1er juillet 2017 (article 4 du décret
@@ -272,7 +294,9 @@ def retablir(moteur: ScenarioActuel, carriere: Carriere) -> Carriere:
 
     Les années rétablies gardent leur statut : c'est leur champ
     ``revenu_retabli`` qui les désigne, et :func:`regimes_de` qui les
-    route. La carrière est rendue telle quelle quand rien n'est rétabli.
+    route. Puis l'activité accessoire de l'agent d'un régime spécial, de 1981
+    à 2014, quitte le régime général (:func:`ecarter_les_accessoires`). La
+    carrière est rendue telle quelle quand rien n'est rétabli ni écarté.
     """
     return _retablir(moteur, carriere)[0]
 
@@ -282,6 +306,66 @@ def _retablir(moteur: ScenarioActuel, carriere: Carriere
     """:func:`retablir`, et les rétablissements faits : pour chacun, le
     droit que l'agent n'a pas, et le dernier traitement que le régime général
     porte au compte de ses années."""
+    retablie, faits = _retablir_seul(moteur, carriere)
+    return ecarter_les_accessoires(moteur, retablie), faits
+
+
+def ecarter_les_accessoires(moteur: ScenarioActuel, carriere: Carriere) -> Carriere:
+    """L'activité ACCESSOIRE de l'agent d'un régime spécial, dans la
+    carrière que le scénario 1 liquide.
+
+    « Les travailleurs mentionnés à l'article D. 171-2 qui bénéficient pour
+    tout ou partie des risques d'un régime spécial de sécurité sociale, sont,
+    lorsqu'ils exercent simultanément et à titre accessoire une activité
+    salariée ou assimilée, relevant du régime général de sécurité sociale,
+    dispensés au titre de cette activité de la cotisation d'assurance
+    vieillesse incombant au salarié en vertu de l'article L. 241-3. Ils n'ont
+    droit qu'aux prestations prévues par le régime auquel ils sont affiliés au
+    titre de leur activité principale » (D. 171-4, du 21 décembre 1985 au
+    18 juillet 2015) ; la Cnav : « cette activité ne lui ouvre pas de droit
+    au régime général » (circulaire 2016/15, lettre du 25 janvier 1988 :
+    « le compte individuel des intéressés ne doit présenter aucun report de
+    salaire »).
+
+    Chaque ligne que l'assuré déclare cumulée (``cumulee``), une année de
+    :data:`ACCESSOIRE_SANS_DROIT_DEPUIS` à :data:`ACCESSOIRE_SANS_DROIT_JUSQU`,
+    routée au régime général, quand l'activité principale de l'année, exercée,
+    l'est à un régime de R. 711-1 (:data:`REGIMES_DES_ORGANISATIONS_SPECIALES`)
+    — hors du militaire, que R. 711-1 ne nomme pas, et de l'agent rétabli,
+    qui l'est au régime général. Elle ne valide aucun trimestre et quitte le
+    régime général (:func:`regimes_de`) ; ses autres régimes la gardent. La
+    carrière est rendue telle quelle quand il n'y en a pas.
+    """
+    militaires = moteur.affiliations.categories_militaires
+
+    def regimes(ligne: AnneeCarriere) -> tuple[str, ...]:
+        return regimes_de(moteur, ligne, ligne.annee, moteur.affiliations.date_entree(
+            carriere, ligne.affiliation, ligne.annee))
+
+    accessoires: set[int] = set()
+    for ligne in carriere.lignes:
+        if (not ligne.cumulee or not ligne.cotise
+                or not ACCESSOIRE_SANS_DROIT_DEPUIS <= ligne.annee <= ACCESSOIRE_SANS_DROIT_JUSQU
+                or "regime_general" not in regimes(ligne)):
+            continue
+        principale = carriere.ligne(ligne.annee)
+        if (principale is None or principale.cumulee or not principale.cotise
+                or principale.affiliation in militaires
+                or REGIMES_DES_ORGANISATIONS_SPECIALES.isdisjoint(regimes(principale))):
+            continue
+        accessoires.add(id(ligne))
+    if not accessoires:
+        return carriere
+    return carriere.avec_lignes([
+        replace(ligne, trimestres_valides=0, accessoire_d_un_regime_special=True)
+        if id(ligne) in accessoires else ligne
+        for ligne in carriere.lignes
+    ])
+
+
+def _retablir_seul(moteur: ScenarioActuel, carriere: Carriere
+                   ) -> tuple[Carriere, tuple[tuple[DroitPension, float], ...]]:
+    """Le rétablissement seul."""
     if carriere.age_liquidation is None:
         return carriere, ()
     annee_liquidation = carriere.annee_liquidation
@@ -323,10 +407,14 @@ def regimes_de(moteur: ScenarioActuel, ligne: AnneeCarriere, annee: int,
     Ceux de son statut, sauf pour une année RÉTABLIE : elle quitte son
     régime spécial pour le régime général et l'Ircantec — là où le
     contractuel du public est routé —, et garde le RAFP. Voir
-    :func:`retablir`.
+    :func:`retablir`. Et sauf pour l'activité accessoire de l'agent d'un
+    régime spécial, qui quitte le régime général
+    (:func:`ecarter_les_accessoires`).
     """
     regimes = moteur.affiliations.regimes(
         ligne.affiliation, annee, annee_entree, revenu=revenu, plafond=plafond)
+    if ligne.accessoire_d_un_regime_special:
+        return tuple(code for code in regimes if code != "regime_general")
     if ligne.revenu_retabli <= 0:
         return regimes
     cibles: tuple[str, ...] = ()

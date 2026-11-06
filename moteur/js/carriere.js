@@ -205,6 +205,16 @@ export class AnneeCarriere {
     //: complémentaire n'est assise sur l'avant-dernière année qu'à l'option,
     //: une fraction du revenu du chef (D. 635-10-2). Voir carriere.py.
     forfait_conjoint = false,
+    //: La ligne d'une activité que l'assuré déclare CUMULÉE à l'activité
+    //: principale de l'année (`Metier.cumul`), que bâtit `lignesDuParcours` ;
+    //: faux pour l'activité principale, et sur un relevé, qui ne le dit pas.
+    //: Voir carriere.py.
+    cumulee = false,
+    //: L'ACTIVITÉ ACCESSOIRE DE L'AGENT D'UN RÉGIME SPÉCIAL, de 1981 à 2014 :
+    //: elle n'ouvre aucun droit au régime général (D. 171-4, rédaction du
+    //: 21 décembre 1985). Seul le scénario 1 la marque, sur sa propre copie de
+    //: la carrière (`coordonner.retablir`). Voir carriere.py.
+    accessoire_d_un_regime_special = false,
   }) {
     Object.assign(this, {
       annee, revenu, affiliation, type_periode, quotite,
@@ -215,6 +225,7 @@ export class AnneeCarriere {
       reputes_cotises_nature,
       assiette_minimale_base, dispense_assiette_minimale, lodeom, outre_mer,
       revenu_retabli, jours_de_services, micro, forfait_conjoint,
+      cumulee, accessoire_d_un_regime_special,
     });
   }
 
@@ -673,6 +684,7 @@ function ligneAnnuelle({
   dispense = "",
   lodeom = "",
   outreMer = "",
+  cumulee = false,
 }) {
   if (outreMer && !Object.hasOwn(DEPARTEMENTS_D_OUTRE_MER, outreMer)) {
     throw new Error(`département d'outre-mer inconnu : ${outreMer} — `
@@ -792,6 +804,7 @@ function ligneAnnuelle({
     reputes_cotises_nature: natureReputes,
     jours_de_services: trimestresDeclares === null
       ? null : Math.floor(trimestresDeclares * 90 + 0.5),
+    cumulee,
   });
 }
 
@@ -2679,6 +2692,7 @@ function lignesDuParcours(dateNaissance, periodesDeclarees, fin, macro, progress
         dispense: metier.dispense_assiette_minimale ?? "",
         lodeom: metier.lodeom ?? "",
         outreMer: metier.outre_mer ?? "",
+        cumulee: true,
       }));
     }
   }

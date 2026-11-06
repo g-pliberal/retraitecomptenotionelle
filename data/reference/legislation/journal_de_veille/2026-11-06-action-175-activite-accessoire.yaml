@@ -1,0 +1,44 @@
+date: "2026-11-06"
+session: "action 175, étape 4, au modèle : l'activité accessoire de l'agent d'un régime spécial avant le 19 juillet 2015 (session H6)"
+consulte: >-
+  Les index LEGI (à jour au 2 novembre 2026, 20261102-213929) et JORF (à jour au 3 novembre
+  2026, 20261103-002311) de la DILA, récupérés. Dans LEGI : D. 171-2, D. 171-3 et D. 171-4
+  du code de la sécurité sociale, toutes leurs rédactions mot à mot (`--diff` :
+  LEGIARTI000006735483, 000030910656, 000006735611, 000006735612, 000030910644,
+  000006735484, 000030910632, 000031813488) ; D. 171-5 à D. 171-11 à leur rédaction de 1985
+  (LEGIARTI000006735485 à 000006735491), D. 171-11 aussi à celle de 2015
+  (LEGIARTI000030910553), la liste des versions de D. 171-1 ; R. 711-1, ses trois
+  rédactions (LEGIARTI000006752039, 000006752040, 000048031379, `--diff`), R. 711-24
+  (LEGIARTI000006752270) ; R. 741-41 du code rural, ses trois rédactions
+  (LEGIARTI000006597669, 000035918692, 000037456613, `--diff`). Dans le JORF : le décret n° 2015-877 du
+  16 juillet 2015 (JORFTEXT000030906593, ses quatorze articles et sa notice), le décret
+  n° 2015-875 du même jour, l'article 9 de la loi n° 2014-1554 (JORFARTI000029953557), le
+  décret n° 2015-1882 (articles 1 et 2), le décret n° 2004-792 (article 4), le résumé du
+  décret n° 80-475 (JORFTEXT000000696623), ceux des décrets n° 52-1055 et 56-1306, et toutes
+  les mentions de « D. 171-2 », « D. 171-3 », « D. 171-4 », « titre accessoire » et « activité
+  accessoire », sans borne. Dans la base de la Cnav, par son API : les exposés « Taux des
+  cotisations » et « Annulation au profit d'un régime spécial » (24 octobre 2025), la liste
+  « Régimes spéciaux », la lettre Cnav du 25 janvier 1988, et la circulaire Cnav 2016/15 du
+  18 février 2016, PDF lu entier.
+trouve: >-
+  Jusqu'au 18 juillet 2015, l'agent d'une branche de R. 711-1 qui exerçait en plus, à titre
+  accessoire, une activité relevant du régime général était dispensé de sa cotisation
+  vieillesse et « n'[avait] droit qu'aux prestations prévues par le régime [...] de [son]
+  activité principale » (D. 171-2 et D. 171-4, rédactions de 1985) ; la Cnav : « Cette
+  activité ne lui ouvre pas de droit au régime général », « aucun report de salaire ». Le
+  décret n° 2015-877, en vigueur le 19 juillet 2015 sans disposition transitoire, l'affilie
+  aux deux régimes, pour « les rémunérations versées à compter du 19 juillet 2015 »
+  (circulaire 2016/15). Avant la codification de 1985, le résumé du décret n° 80-475 date la
+  dispense du 1er juillet 1980. Le modèle ouvrait le régime général : porté dans les deux
+  moteurs (années 1981 à 2014), fiche `un_statut_par_annee` (versions, lectures,
+  approximations). La fiche disait D. 171-4 « sans rédaction depuis » : il en a deux (2015,
+  2016), qui ne règlent que les prestations en nature de la maladie. D. 171-11 (en vigueur)
+  et R. 741-41 du code rural (en vigueur) écartent de même l'activité accessoire au service
+  d'une personne publique et l'activité salariée agricole accessoire : candidats.
+reste: >-
+  Le texte du décret n° 80-475 (fac-similé du JO du 29 juin 1980) et ce qui le précédait ;
+  le décret du 28 octobre 1935 auquel renvoie R. 711-24 ; le militaire, l'agent de la RATP,
+  du SEITA, de la CRPCEN, que R. 711-1 ne nomme pas (non tranché) ; les années coupées 1980 et
+  2015 ; l'Arrco de l'activité accessoire et son coefficient d'anticipation sans pension du
+  régime général ; D. 171-11 et R. 741-41, candidats aux sessions du modèle (note
+  `docs/feuille_de_route/175/2026-11-06-etape-4-activite-accessoire.md`).

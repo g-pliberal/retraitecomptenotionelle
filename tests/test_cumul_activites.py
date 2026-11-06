@@ -25,7 +25,7 @@ from retraite_notionnelle.carriere import Carriere, Metier
 from retraite_notionnelle.simulateur import Simulateur
 from retraite_notionnelle.web.site import ErreurSite, disponible, rendre
 
-from outils_pont import Saisies, refus_de_la_saisie, saisie_du_portage
+from outils_pont import Saisies, refus_de_la_saisie, saisie_du_portage, servi_et_refait
 from outils_portage import moitie_python
 
 
@@ -241,6 +241,101 @@ def test_le_portage_javascript_concorde_sur_des_cumuls_tires_au_hasard():
         assert "resultat" in obtenu, f"parcours {numero} : {obtenu.get('erreur')}"
         ecarts = _ecarts(obtenu["resultat"], attendu["resultat"])
         assert not ecarts, f"parcours {numero} : " + "; ".join(ecarts[:5])
+
+
+# -- l'activité accessoire de l'agent d'un régime spécial ----------------------
+#
+# « Les travailleurs mentionnés à l'article D. 171-2 qui bénéficient pour tout
+# ou partie des risques d'un régime spécial de sécurité sociale, sont,
+# lorsqu'ils exercent simultanément et à titre accessoire une activité salariée
+# ou assimilée, relevant du régime général de sécurité sociale, dispensés au
+# titre de cette activité de la cotisation d'assurance vieillesse incombant au
+# salarié en vertu de l'article L. 241-3. Ils n'ont droit qu'aux prestations
+# prévues par le régime auquel ils sont affiliés au titre de leur activité
+# principale » (D. 171-4 CSS, LEGIARTI000006735484, du 21 décembre 1985 au
+# 18 juillet 2015). D. 171-2 (LEGIARTI000006735483) vise les travailleurs des
+# branches de R. 711-1 — 1° l'État, pour ses fonctionnaires et ses ouvriers ;
+# 2° et 3° les collectivités et leurs établissements ; 6° la SNCF ; 8° les IEG…
+# La Cnav : « Avant le 19/07/2015, le fonctionnaire qui exerçait, à titre
+# accessoire, une activité salariée relevant du régime général, ne cotisait pas
+# à l'assurance vieillesse du régime général. Cette activité ne lui ouvre pas
+# de droit au régime général » ; depuis, « Cette activité lui donne des droits
+# au régime général » (exposé « Taux des cotisations », circulaire Cnav
+# 2016/15). Le cas, posé à la main : né le 15 janvier 1960, entré à 22 ans,
+# parti à 62, et salarié du privé EN PLUS, à 0,3 fois le salaire moyen, de 40 à
+# 45 ans (2000 à 2004) ou de 56 à 61 ans (2016 à 2020).
+
+_ACCESSOIRE = {
+    "naissance": "1960-01-15", "sexe": "H", "debut": "22", "liquidation": "62",
+    "salaire": "1", "metier2_statut": "salarie_prive_non_cadre",
+    "metier2_salaire": "0.3", "metier2_cumul": "oui",
+}
+_AVANT_2015 = {"metier2_debut": "40", "metier2_fin": "45"}
+_APRES_2015 = {"metier2_debut": "56", "metier2_fin": "61"}
+#: Les statuts de l'activité principale, et le numéro de R. 711-1 qui les vise.
+_ORGANISATIONS_SPECIALES = {
+    "fonctionnaire_etat": "1°", "ouvrier_etat": "1°",
+    "fonctionnaire_territorial_hospitalier": "2° et 3°", "agent_sncf": "6°",
+    "agent_ieg": "8°",
+}
+
+
+@pytest.fixture(scope="module")
+def accessoires() -> dict[str, dict]:
+    """Le scénario 1 de chaque cas, servi par le portage et refait par le
+    moteur Python (``servi_et_refait``)."""
+    cas = [{"cle": f"{statut}/seul",
+            "requete": {**{c: v for c, v in _ACCESSOIRE.items()
+                           if not c.startswith("metier2")}, "statut": statut}}
+           for statut in [*_ORGANISATIONS_SPECIALES, "militaire", "medecin_liberal"]]
+    cas += [{"cle": f"{statut}/{quand}",
+             "requete": {**_ACCESSOIRE, **dates, "statut": statut}}
+            for statut in [*_ORGANISATIONS_SPECIALES, "militaire", "medecin_liberal"]
+            for quand, dates in (("avant", _AVANT_2015), ("apres", _APRES_2015))]
+    servis, refus = servi_et_refait(cas)
+    assert refus == {}, refus
+    return {cle: servi["actuel"] for cle, servi in servis.items()}
+
+
+def _pensions(actuel: dict) -> dict[str, dict]:
+    return {p["regime"]: p for p in actuel["pensions_par_regime"] if p["montant"] > 0}
+
+
+@pytest.mark.parametrize("statut", _ORGANISATIONS_SPECIALES)
+def test_l_activite_accessoire_d_avant_2015_n_ouvre_rien_au_regime_general(
+        accessoires, statut):
+    """De 2000 à 2004, l'agent dont l'activité principale relève de R. 711-1
+    n'a « droit qu'aux prestations » de son régime : le régime général ne sert
+    rien, et la durée tous régimes, que ses quatre trimestres par an
+    remplissent déjà, ne bouge pas. Le modèle lui servait le régime général
+    sur vingt trimestres (553,56 € par an pour le fonctionnaire de l'État)."""
+    seul, avant = accessoires[f"{statut}/seul"], accessoires[f"{statut}/avant"]
+    assert "regime_general" not in _pensions(avant)
+    assert avant["trimestres_valides"] == seul["trimestres_valides"]
+    principal = {regime: p["montant"] for regime, p in _pensions(seul).items()}
+    assert {regime: _pensions(avant)[regime]["montant"] for regime in principal} == (
+        pytest.approx(principal, rel=1e-12))
+
+
+@pytest.mark.parametrize("statut", _ORGANISATIONS_SPECIALES)
+def test_l_activite_accessoire_depuis_2016_ouvre_le_regime_general(accessoires, statut):
+    """De 2016 à 2020, ses rémunérations sont « versées à partir du
+    19/07/2015 » : le régime général les compte. Chaque année, 0,3 fois le
+    salaire moyen dépasse 600 heures de SMIC (quatre fois 150, R. 351-9) :
+    vingt trimestres en cinq ans."""
+    detail = _pensions(accessoires[f"{statut}/apres"])["regime_general"]["detail"]
+    assert "× 20/" in detail
+
+
+@pytest.mark.parametrize("statut", ["militaire", "medecin_liberal"])
+def test_hors_de_r_711_1_l_activite_cumulee_ouvre_le_regime_general(accessoires, statut):
+    """Le médecin libéral n'est pas l'agent d'un régime spécial ; R. 711-1, 1°, ne vise
+    à l'État que « les fonctionnaires, les magistrats et les ouvriers », et le
+    modèle n'y range pas le militaire (lecture déclarée dans la fiche
+    `un_statut_par_annee`) : leur activité salariée de 2000 à 2004 garde ses
+    vingt trimestres au régime général."""
+    detail = _pensions(accessoires[f"{statut}/avant"])["regime_general"]["detail"]
+    assert "× 20/" in detail
 
 
 @pytest.mark.parametrize("metiers, motif", [

@@ -84,6 +84,31 @@ export const RETABLISSEMENT_DEPUIS = "1950-01-29";
  * avant 1945, aux assurances sociales du salarié.
  */
 export const STATUTS_DU_RETABLISSEMENT = ["contractuel_public", "salarie_prive_non_cadre"];
+/**
+ * L'ACTIVITÉ ACCESSOIRE DE L'AGENT D'UN RÉGIME SPÉCIAL : les régimes dont
+ * R. 711-1 nomme la branche (rédaction du 17 mai 1991, LEGIARTI000006752040) —
+ * 1° l'État, pour ses fonctionnaires, ses magistrats et ses ouvriers, et
+ * l'Imprimerie nationale ; 2° et 3° les collectivités et leurs établissements ;
+ * 4° les marins ; 5° les mines ; 6° la SNCF ; 7° les chemins de fer secondaires ;
+ * 8° les IEG ; 9° la Banque de France ; 10° l'Opéra et la Comédie-Française.
+ * Leur agent qui exerce en plus une activité relevant du régime général n'y
+ * cotise pas, « n'[a] droit qu'aux prestations prévues par le régime auquel
+ * [il est] affilié[] au titre de [son] activité principale » (D. 171-2 et
+ * D. 171-4, rédactions du 21 décembre 1985 au 18 juillet 2015). Voir
+ * `REGIMES_DES_ORGANISATIONS_SPECIALES` dans le Python.
+ */
+export const REGIMES_DES_ORGANISATIONS_SPECIALES = new Set([
+  "fonction_publique_etat", "fspoeie", "imprimerie_nationale", "cnracl", "marins",
+  "mines", "sncf", "chemins_fer_secondaires", "ieg", "banque_de_france",
+  "opera_de_paris", "comedie_francaise",
+]);
+/**
+ * Les années entières de la dispense : du 1er juillet 1980 (décret n° 80-475)
+ * aux rémunérations versées avant le 19 juillet 2015 (décret n° 2015-877,
+ * circulaire Cnav 2016/15). Les deux années coupées gardent leur droit.
+ */
+export const ACCESSOIRE_SANS_DROIT_DEPUIS = 1981;
+export const ACCESSOIRE_SANS_DROIT_JUSQU = 2014;
 /** Assurés nés à compter de 1953 (article 51 de la LFSS pour 2016). */
 export const LURA_PREMIERE_GENERATION = 1953;
 /** Pensions prenant effet au 1er juillet 2017 (décret n° 2017-737, art. 4). */
@@ -230,7 +255,9 @@ export function droitAPension(moteur, code, carriere, anneeLiquidation) {
  * d'un fonctionnaire parti sans droit à pension passent au régime général et
  * à l'Ircantec. Le régime général y porte le dernier traitement, dans la
  * limite du plafond de chaque année (D. 173-16) ; l'Ircantec le traitement de
- * chaque année ; les primes restent au RAFP. Voir `retablir` dans le Python.
+ * chaque année ; les primes restent au RAFP. Puis l'activité accessoire de
+ * l'agent d'un régime spécial, de 1981 à 2014, quitte le régime général
+ * (`ecarterLesAccessoires`). Voir `retablir` dans le Python.
  */
 export function retablir(moteur, carriere) {
   return retablirEnDetail(moteur, carriere).carriere;
@@ -242,6 +269,57 @@ export function retablir(moteur, carriere) {
  * compte de ses années. Voir `_retablir` dans le Python.
  */
 function retablirEnDetail(moteur, carriere) {
+  const { carriere: retablie, retablissements } = retablirSeul(moteur, carriere);
+  return { carriere: ecarterLesAccessoires(moteur, retablie), retablissements };
+}
+
+/**
+ * L'activité ACCESSOIRE de l'agent d'un régime spécial, dans la carrière que le
+ * scénario 1 liquide : chaque ligne qu'il déclare cumulée (`cumulee`), une
+ * année de 1981 à 2014, routée au régime général, quand l'activité principale
+ * de l'année, exercée, l'est à un régime de R. 711-1
+ * (`REGIMES_DES_ORGANISATIONS_SPECIALES`) — hors du militaire, que R. 711-1 ne
+ * nomme pas, et de l'agent rétabli, qui l'est au régime général. Elle ne
+ * valide aucun trimestre et quitte le régime général (`regimesDe`) ; ses autres
+ * régimes la gardent. La carrière est rendue telle quelle quand il n'y en a
+ * pas. Voir `ecarter_les_accessoires` dans le Python.
+ */
+export function ecarterLesAccessoires(moteur, carriere) {
+  const militaires = moteur.affiliations.categoriesMilitaires;
+  const regimesDeLaLigne = (ligne) => regimesDe(
+    moteur, ligne, ligne.annee,
+    moteur.affiliations.dateEntree(carriere, ligne.affiliation, ligne.annee),
+  );
+  const accessoires = new Set();
+  for (const ligne of carriere.lignes) {
+    if (!ligne.cumulee || !ligne.cotise || ligne.annee < ACCESSOIRE_SANS_DROIT_DEPUIS
+        || ligne.annee > ACCESSOIRE_SANS_DROIT_JUSQU
+        || !regimesDeLaLigne(ligne).includes("regime_general")) {
+      continue;
+    }
+    const principale = carriere.ligne(ligne.annee);
+    if (principale === null || principale.cumulee || !principale.cotise
+        || Object.prototype.hasOwnProperty.call(militaires, principale.affiliation)
+        || !regimesDeLaLigne(principale)
+          .some((code) => REGIMES_DES_ORGANISATIONS_SPECIALES.has(code))) {
+      continue;
+    }
+    accessoires.add(ligne);
+  }
+  if (accessoires.size === 0) {
+    return carriere;
+  }
+  return carriere.avecLignes(carriere.lignes.map((ligne) => (
+    accessoires.has(ligne)
+      ? new AnneeCarriere({
+        ...ligne, trimestres_valides: 0, accessoire_d_un_regime_special: true,
+      })
+      : ligne
+  )));
+}
+
+/** Le rétablissement seul. Voir `_retablir` dans le Python. */
+function retablirSeul(moteur, carriere) {
   if (carriere.age_liquidation === null || carriere.age_liquidation === undefined) {
     return { carriere, retablissements: [] };
   }
@@ -286,12 +364,17 @@ function retablirEnDetail(moteur, carriere) {
 /**
  * Les régimes auxquels cette ligne cotise cette année-là : ceux de son
  * statut, sauf pour une année RÉTABLIE, qui quitte son régime spécial pour le
- * régime général et l'Ircantec et garde le RAFP. Voir `regimes_de` dans le Python.
+ * régime général et l'Ircantec et garde le RAFP, et pour l'activité accessoire
+ * de l'agent d'un régime spécial, qui quitte le régime général
+ * (`ecarterLesAccessoires`). Voir `regimes_de` dans le Python.
  */
 export function regimesDe(moteur, ligne, annee, anneeEntree = null, revenu = null, plafond = null) {
   const regimes = moteur.affiliations.regimes(
     ligne.affiliation, annee, anneeEntree, revenu, plafond,
   );
+  if (ligne.accessoire_d_un_regime_special) {
+    return regimes.filter((code) => code !== "regime_general");
+  }
   if (!(ligne.revenu_retabli > 0)) {
     return regimes;
   }

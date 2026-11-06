@@ -4,9 +4,156 @@ intitule: >-
   Une ligne de carrière par année et par ACTIVITÉ : l'activité principale d'abord,
   puis chaque activité que l'assuré déclare cumulée, sous un autre statut. Trimestres
   validés par le revenu (150 heures de SMIC), plafonnés aux trimestres civils de
-  l'année, et quatre au plus par année civile tous régimes confondus.
-regimes: [cancava, cnracl, msa_salaries, organic, regime_general, rsi]
+  l'année, et quatre au plus par année civile tous régimes confondus. L'activité
+  accessoire de l'agent d'un régime spécial n'ouvrait, jusqu'au 18 juillet 2015, aucun
+  droit au régime général.
+regimes: [banque_de_france, cancava, chemins_fer_secondaires, cnracl, comedie_francaise,
+  fonction_publique_etat, fspoeie, ieg, imprimerie_nationale, marins, mines, msa_salaries,
+  opera_de_paris, organic, regime_general, rsi, sncf]
+etape: coordonner_les_affiliations
 etat: approchee
+lit:
+- >-
+  chaque ligne de la carrière, et si l'assuré l'a déclarée cumulée à l'activité
+  principale de l'année (`cumulee`, que bâtit le parcours ; jamais sur un relevé)
+- >-
+  l'année de la ligne cumulée, qui est celle de ses rémunérations (revenu.annee)
+- >-
+  les régimes où vont, cette année-là, la ligne cumulée et la ligne de l'activité
+  principale, et si l'activité principale est celle d'un militaire
+ecrit:
+- >-
+  la carrière que le scénario 1 liquide (`coordonner.retablir`) : l'activité accessoire
+  de l'agent d'un régime de R. 711-1, de 1981 à 2014, n'y valide aucun trimestre et ne va
+  plus au régime général (`regimes_de`) ; ses autres régimes la reçoivent
+dates_qui_decident:
+- revenu.annee
+versions:
+- id: avant_le_1er_juillet_1980
+  statut: supposee
+  hypothese: >-
+    la règle d'avant le décret n° 80-475 n'est pas lue : l'index JORF n'en porte que le
+    résumé, « A COMPTER DU 01-07-1980, LES TRAVAILLEURS AYANT EXERCE SIMULTANEMENT UNE
+    ACTIVITE RELEVANT D'UN REGIME SPECIAL, ET, A TITRE ACCESSOIRE OU REDUIT, UNE
+    ACTIVITE RELEVANT DU REGIME GENERAL, SONT DISPENSES DE LA COTISATION OUVRIERE
+    D'ASSURANCE VIEILLESSE DU REGIME GENERAL. EN CONTREPARTIE, ILS N'ONT PAS DROIT AUX
+    PRESTATIONS DE CE REGIME » ; le texte est au fac-similé du JO du 29 juin 1980. Le
+    modèle laisse à l'activité cumulée ses droits au régime général, jusqu'à l'année
+    1980 entière
+  fiabilite: faible
+  textes:
+  - {id: JORFTEXT000000696623, article: "décret n° 80-475 du 27 juin 1980, résumé de l'index JORF", en_vigueur: 1980-07-01, publie_le: 1980-06-29}
+  bornes:
+    revenu.annee: [null, 1981-01-01]
+  contenu:
+    droit: >-
+      chaque activité cumulée valide à son régime, le régime général compris, quatre
+      trimestres au plus par année civile tous régimes confondus
+  exemples: aucun trouvé
+- id: dispense_de_l_activite_accessoire
+  statut: lue
+  textes:
+  - id: LEGIARTI000006735483
+    article: D. 171-2 CSS
+    en_vigueur: 1985-12-21
+    citation: >-
+      « Les dispositions des articles D. 171-3 à D. 171-11 sont applicables aux
+      travailleurs des branches d'activité ou entreprises mentionnées à l'article R. 711-1
+      ou relevant de l'article R. 711-24, bénéficiaires d'une organisation spéciale pour
+      tout ou partie des législations de sécurité sociale, lorsqu'ils exercent
+      simultanément et à titre accessoire une activité salariée ou assimilée relevant du
+      régime général de sécurité sociale. »
+  - id: LEGIARTI000006735484
+    article: D. 171-4 CSS
+    en_vigueur: 1985-12-21
+    citation: >-
+      « Les travailleurs mentionnés à l'article D. 171-2 qui bénéficient pour tout ou
+      partie des risques d'un régime spécial de sécurité sociale, sont, lorsqu'ils
+      exercent simultanément et à titre accessoire une activité salariée ou assimilée,
+      relevant du régime général de sécurité sociale, dispensés au titre de cette
+      activité de la cotisation d'assurance vieillesse incombant au salarié en vertu de
+      l'article L. 241-3. Ils n'ont droit qu'aux prestations prévues par le régime auquel
+      ils sont affiliés au titre de leur activité principale. »
+  - id: LEGIARTI000006752040
+    article: R. 711-1 CSS
+    en_vigueur: 1991-05-17
+    citation: >-
+      « Restent soumis à une organisation spéciale de sécurité sociale, si leurs
+      ressortissants jouissent déjà d'un régime spécial au titre de l'une ou de plusieurs
+      des législations de sécurité sociale : 1°) les administrations, services, offices,
+      établissements publics de l'Etat, les établissements industriels de l'Etat et
+      l'Imprimerie Nationale, pour les fonctionnaires, les magistrats et les ouvriers de
+      l'Etat ; 2°) les régions, les départements et communes ; 3°) les établissements
+      publics départementaux et communaux n'ayant pas le caractère industriel ou
+      commercial ; 4°) les activités qui entraînent l'affiliation au régime d'assurance des
+      marins […] ; 5°) les entreprises minières […] ; 6°) la société nationale des chemins
+      de fer français ; 7°) les chemins de fer d'intérêt général secondaire et d'intérêt
+      local et les tramways ; 8°) les exploitations de production, de transport et de
+      distribution d'énergie électrique et de gaz ; 9°) la Banque de France ; 10°) le
+      Théâtre national de l'Opéra de Paris et la Comédie Française. »
+  - {id: LEGIARTI000006752039, article: "R. 711-1 CSS, rédaction de 1985, qui nomme aussi au 9° la compagnie générale des eaux", en_vigueur: 1985-12-21}
+  - {id: JORFTEXT000000696623, article: "décret n° 80-475 du 27 juin 1980, résumé de l'index JORF", en_vigueur: 1980-07-01, publie_le: 1980-06-29}
+  nee_de: JORFTEXT000000696623
+  bornes:
+    revenu.annee: [1981-01-01, 2015-01-01]
+  contenu:
+    droit: >-
+      l'activité salariée ou assimilée relevant du régime général que l'agent d'un régime
+      de R. 711-1 exerce en plus de son activité principale ne lui ouvre rien au régime
+      général, ni trimestre ni salaire au compte ; la Cnav : « Avant le 19/07/2015, le
+      fonctionnaire qui exerçait, à titre accessoire, une activité salariée relevant du
+      régime général, ne cotisait pas à l'assurance vieillesse du régime général. Cette
+      activité ne lui ouvre pas de droit au régime général » (exposés « Taux des
+      cotisations » et « Annulation au profit d'un régime spécial », version du
+      24 octobre 2025) ; « le compte individuel des intéressés ne doit présenter aucun
+      report de salaire » (lettre Cnav du 25 janvier 1988)
+    conditions: >-
+      années entières de 1981 à 2014 : la dispense court du 1er juillet 1980 (résumé du
+      décret n° 80-475) aux rémunérations versées avant le 19 juillet 2015 ; l'activité
+      principale est la ligne en tête de l'année, exercée, et routée à un régime de
+      R. 711-1 ; le militaire, que le 1° ne nomme pas, n'y est pas rangé
+  exemples: aucun trouvé
+- id: affiliation_simultanee_depuis_2015
+  statut: lue
+  textes:
+  - id: LEGIARTI000030910656
+    article: D. 171-2 CSS
+    en_vigueur: 2015-07-19
+    citation: >-
+      le décret n° 2015-877 en ôte « bénéficiaires d'une organisation spéciale pour tout
+      ou partie des législations de sécurité sociale, » et « et à titre accessoire »
+  - id: LEGIARTI000030910644
+    article: D. 171-3 CSS
+    en_vigueur: 2015-07-19
+    citation: >-
+      « I.-Sous réserve des dispositions des articles D. 171-4 à D. 171-11, les
+      travailleurs mentionnés à l'article D. 171-2 sont affiliés, cotisent et bénéficient
+      des prestations simultanément auprès de chacun des régimes de sécurité sociale dont
+      relèvent leurs activités. »
+  - {id: LEGIARTI000030910632, article: "D. 171-4 CSS, qui ne règle plus que les prestations en nature de l'assurance maladie et maternité", en_vigueur: 2015-07-19}
+  - id: JORFTEXT000030906593
+    article: décret n° 2015-877 du 16 juillet 2015, notice
+    en_vigueur: 2015-07-19
+    publie_le: 2015-07-18
+    citation: >-
+      « Entrée en vigueur : le présent décret entre en vigueur le lendemain de sa
+      publication. »
+  nee_de: JORFTEXT000030906593
+  bornes:
+    revenu.annee: [2015-01-01, null]
+  contenu:
+    droit: >-
+      chaque activité cumulée valide à son régime, le régime général compris : la Cnav,
+      « Le fonctionnaire cotise à l'assurance vieillesse du régime général sur ses
+      rémunérations versées à partir du 19/07/2015 pour son activité accessoire relevant
+      de ce régime. Cette activité lui donne des droits au régime général » ; la
+      circulaire Cnav 2016/15 : « La dispense de la cotisation salariale vieillesse pour
+      les activités accessoires relevant du régime général est supprimée pour les
+      rémunérations versées à compter du 19 juillet 2015 »
+    conditions: >-
+      l'année 2015 entière ; ses rémunérations versées avant le 19 juillet n'ouvraient
+      pourtant rien (approximation déclarée)
+  exemples: aucun trouvé
 effet: >-
   DEPUIS LE 22 SEPTEMBRE 2026, DEUX ACTIVITÉS À LA FOIS se décrivent, dans les deux
   moteurs : chacune verse à son régime, sur son revenu, et les régimes distincts
@@ -16,9 +163,16 @@ effet: >-
   le déclare (`Metier.cumul`). Le formulaire du site le propose : un menu « remplace
   / s'ajoute », réglé sur « remplace ». Reste une approximation : l'année d'un CHANGEMENT
   de métier principal relève d'un seul régime, celui qui en occupe le plus de mois
-  ; limites.md le mesure.
+  ; limites.md le mesure. DEPUIS LE 6 NOVEMBRE 2026, l'activité accessoire de l'agent
+  d'un régime de R. 711-1 ne valide plus, de 1981 à 2014, ni trimestre ni salaire au
+  régime général (D. 171-2 et D. 171-4, rédactions de 1985) : le fonctionnaire de l'État
+  né le 15 janvier 1960, parti à 62 ans, salarié du privé en plus de 2000 à 2004 à 0,3
+  fois le salaire moyen, perd la pension du régime général de 553,56 € par an
+  (31 936,65 € à 31 383,09 €), que le modèle lui servait sur vingt trimestres ; de même
+  l'ouvrier de l'État, l'agent de la CNRACL, de la SNCF et des IEG
+  (`tests/test_cumul_activites.py`).
 sources:
-  lu_le: 2026-09-22
+  lu_le: 2026-11-06
   prochaine_relecture: 2027-09-30
   lectures:
   - type: legifrance
@@ -56,12 +210,86 @@ sources:
   - type: legifrance
     reference: >-
       D. 171-4 CSS, LEGIARTI000006735484, rédaction du 21 décembre 1985 au 18 juillet
-      2015, sans rédaction depuis, lue dans l'index LEGI : ces travailleurs sont
-      « dispensés au titre de cette activité de la cotisation d'assurance vieillesse
-      incombant au salarié », et « n'ont droit qu'aux prestations prévues par le régime
-      auquel ils sont affiliés au titre de leur activité principale » ; l'employeur paie
-      sa part entière (D. 171-3, LEGIARTI000006735612)
-    date: 2026-11-03
+      2015, lue dans l'index LEGI : ces travailleurs sont « dispensés au titre de cette
+      activité de la cotisation d'assurance vieillesse incombant au salarié », et « n'ont
+      droit qu'aux prestations prévues par le régime auquel ils sont affiliés au titre de
+      leur activité principale » ; l'employeur paie sa part entière (D. 171-3,
+      LEGIARTI000006735612). La lecture du 3 novembre le disait « sans rédaction
+      depuis » : il en a deux, du 19 juillet 2015 (LEGIARTI000030910632) et du
+      1er janvier 2016 (LEGIARTI000031813488), qui ne règlent plus que les prestations en
+      nature de l'assurance maladie et maternité (relu le 6 novembre 2026, `--diff`)
+    date: 2026-11-06
+  - type: legifrance
+    reference: >-
+      R. 711-1 CSS, rédactions du 21 décembre 1985 (LEGIARTI000006752039), du 17 mai 1991
+      (LEGIARTI000006752040) et du 1er septembre 2023 (LEGIARTI000048031379), lues dans
+      l'index LEGI : la liste des branches « soumis[es] à une organisation spéciale », du
+      1° (l'État, « pour les fonctionnaires, les magistrats et les ouvriers de l'Etat ») au
+      10° ; la rédaction de 1991 ôte la compagnie générale des eaux, celle de 2023 borne
+      la Banque de France à ses titulaires recrutés avant le 1er septembre 2023. R. 711-24
+      (LEGIARTI000006752270) renvoie aux salariés de l'article 23 du décret du
+      28 octobre 1935, que la session n'a pas lu
+    date: 2026-11-06
+  - type: legifrance
+    reference: >-
+      D. 171-11 CSS, LEGIARTI000006735491 (1985) et LEGIARTI000030910553 (19 juillet
+      2015, en vigueur), lues dans l'index LEGI : le fonctionnaire titulaire ou stagiaire
+      de l'État ou l'agent permanent des collectivités locales qui exerce « une activité
+      accessoire au service de l'Etat, d'un département, d'une commune ou d'un
+      établissement public » ne doit aucune cotisation à ce titre, et « n'a droit qu'aux
+      prestations prévues par le régime dont il relève du fait de son activité
+      principale » ; le décret n° 2015-877 n'y change qu'un renvoi
+    date: 2026-11-06
+  - type: legifrance
+    reference: >-
+      décret n° 2015-877 du 16 juillet 2015 relatif aux règles d'affiliation des personnes
+      relevant de plusieurs régimes de sécurité sociale, JORFTEXT000030906593, JO du
+      18 juillet 2015, lu dans l'index JORF : article 1 (JORFARTI000030906604), qui récrit
+      D. 171-2 à D. 171-11, et notice, « le présent décret entre en vigueur le lendemain de
+      sa publication » ; aucune disposition transitoire, ses quatorze articles relus. Pris
+      pour l'application de l'article 9 de la loi n° 2014-1554, qui ne touche pas
+      D. 171-2 à D. 171-4 (JORFARTI000029953557, lu)
+    date: 2026-11-06
+  - type: legifrance
+    reference: >-
+      décret n° 80-475 du 27 juin 1980, JORFTEXT000000696623, dont l'index JORF ne porte
+      que le résumé : la dispense de la cotisation ouvrière d'assurance vieillesse du
+      régime général, et l'absence de droit à ses prestations, « A COMPTER DU
+      01-07-1980 » ; le texte entier est au fac-similé du JO du 29 juin 1980
+      (`docs/feuille_de_route/138/2026-11-05-la-file-des-fac-similes.md`)
+    date: 2026-11-06
+  - type: circulaire_cnav
+    reference: >-
+      circulaire Cnav 2016/15 du 18 février 2016, « Activité accessoire au régime général
+      d'un assuré relevant à titre principal d'un régime spécial », lue entière (PDF de
+      la base) : « Avant le 19 juillet 2015, l'assuré, qui relevait au titre de son
+      activité principale d'un régime spécial et exerçait une activité accessoire au
+      profit d'un employeur privé, était dispensé du versement de la cotisation salariale
+      vieillesse […]. Par conséquent, en l'absence de versement de la cotisation salariale
+      vieillesse, l'assuré n'ouvrait aucun droit à la retraite au régime général » ; « Il
+      s'agit des personnes visées […] aux articles R. 711-1 et R. 711-24 CSS » ; « La
+      dispense […] est supprimée pour les rémunérations versées à compter du 19 juillet
+      2015 »
+    date: 2026-11-06
+  - type: circulaire_cnav
+    reference: >-
+      lettre Cnav du 25 janvier 1988 (base de législation, LE_CN_25011988.aspx) : « en
+      l'absence du précompte de la cotisation d'assurance vieillesse, le compte individuel
+      des intéressés ne doit présenter aucun report de salaire » ; mais si la cotisation
+      ouvrière a été précomptée à tort et que son remboursement est prescrit, « les droits
+      potentiels à l'assurance vieillesse résultant des cotisations indûment versées
+      restent acquis à l'assuré » (L. 243-6)
+    date: 2026-11-06
+  - type: legifrance
+    reference: >-
+      R. 741-41 du code rural, LEGIARTI000006597669 (22 avril 2005) à LEGIARTI000037456613
+      (30 septembre 2018, en vigueur), lu dans l'index LEGI : « La cotisation
+      [salariale] des assurances sociales agricoles n'est pas due pour les travailleurs
+      relevant d'une organisation spéciale de sécurité sociale […] lorsqu'il exercent
+      simultanément, et à titre accessoire, une activité salariée ou assimilée relevant du
+      régime agricole des assurances sociales. Ces travailleurs n'ont droit qu'aux
+      prestations prévues par le régime spécial » ; le décret n° 2015-877 ne l'a pas touché
+    date: 2026-11-06
   - type: circulaire_cnav
     reference: >-
       base de législation de la Cnav, exposés « Taux des cotisations » et « Annulation au
@@ -77,6 +305,10 @@ textes_a_rattacher:
 - reference: R. 173-4-4-1, 2° CSS
 - reference: décret n° 2003-1306, article 20
 - reference: D. 171-2 CSS, LEGIARTI000006735483 ; D. 171-4 CSS, LEGIARTI000006735484
+- reference: R. 711-1 CSS, LEGIARTI000006752039, LEGIARTI000006752040
+- reference: D. 171-11 CSS, LEGIARTI000006735491, LEGIARTI000030910553
+- reference: décret n° 2015-877 du 16 juillet 2015, JORFTEXT000030906593
+- reference: décret n° 80-475 du 27 juin 1980, JORFTEXT000000696623 (fac-similé)
 approximations:
 - ecart: >-
     La saisie n'a pas de statut pour le conjoint collaborateur d'un libéral, qui cotise
@@ -91,27 +323,73 @@ approximations:
     non mesuré ; léger : la coupe du 14 octobre 2026 le déclare sans le faire
     (action 138, classement du 9 octobre)
 - ecart: >-
-    Une activité salariée cumulée ouvre au modèle les droits du régime général, à toute
-    date. Jusqu'au 18 juillet 2015, l'agent d'un régime spécial — fonctionnaire,
-    militaire, agent de la SNCF, de la RATP, des industries électriques et gazières… —
-    qui l'exerçait à titre accessoire n'y cotisait pas, et n'avait droit qu'aux
-    prestations du régime de son activité principale (D. 171-2 et D. 171-4) : ses
-    années d'avant ne lui ouvrent rien au régime général, ni trimestre ni salaire au
-    compte ; depuis le 19 juillet 2015, elles lui en ouvrent. À corriger dans les deux
-    moteurs, par l'étape qui coordonne les affiliations, quand une ligne saura qu'elle
-    est cumulée ; D. 171-4 ne visant que la cotisation de L. 241-3, la complémentaire
-    de l'activité accessoire reste à lire (action 175, étape 4, « Carrière :
-    cotisations-salaires »).
+    L'activité accessoire de l'agent d'un régime spécial suit D. 171-4 par ANNÉES
+    ENTIÈRES, de 1981 à 2014 : l'année 1980, dont la dispense ne court que du
+    1er juillet (résumé du décret n° 80-475), et l'année 2015, dont seules les
+    rémunérations versées à compter du 19 juillet ouvrent des droits (circulaire Cnav
+    2016/15), gardent toutes deux leurs droits au régime général ; la ligne ne dit pas
+    ses mois, et le modèle ne la coupe pas. Avant le 1er juillet 1980, la règle n'est pas
+    lue (fac-similé du JO du 29 juin 1980) : le modèle laisse les droits.
   effet: >-
-    non mesuré : l'agent d'un régime spécial qui déclare, avant 2015, une activité
-    salariée cumulée — le professeur qui enseigne aussi dans le privé —, dont le
-    modèle surestime la durée d'assurance et le salaire annuel moyen du régime
-    général
+    au plus six mois de l'activité accessoire, deux années : sur le cas du test, salarié
+    du privé à 0,3 fois le salaire moyen toute l'année 2015, le régime général sert
+    128,29 € par an sur quatre trimestres, dont les rémunérations de janvier à juin
+    n'ouvraient rien
+- ecart: >-
+    QUI EST L'AGENT D'UN RÉGIME SPÉCIAL, lu dans R. 711-1 : le modèle range les régimes
+    que ses dix numéros nomment (`REGIMES_DES_ORGANISATIONS_SPECIALES`), et non le
+    militaire, que le 1° ne nomme pas (« pour les fonctionnaires, les magistrats et les
+    ouvriers de l'Etat »), ni l'agent de la RATP, du SEITA, de la CRPCEN, du port de
+    Strasbourg : R. 711-24, qui vise d'autres salariés, renvoie au décret du 28 octobre
+    1935, non lu. La Cnav ne parle que du « fonctionnaire ». Deux lectures : le texte
+    seul (le modèle) ; ou tout agent d'un régime spécial, comme le disait la note du
+    3 novembre.
+  effet: >-
+    pour le militaire, l'agent de la RATP… qui déclare une activité salariée cumulée de
+    1981 à 2014, le modèle sert le régime général, que la seconde lecture lui ôte : sur le
+    cas du test, 606,65 € par an au militaire non officier (vingt trimestres)
+- ecart: >-
+    « ACTIVITÉ SALARIÉE OU ASSIMILÉE RELEVANT DU RÉGIME GÉNÉRAL » : le modèle y range
+    toute activité que le routage porte au régime général cette année-là, l'artiste-auteur
+    et, depuis 2013, l'élu local compris, qu'il rattache au régime général ; une lecture
+    qui ne compterait que l'activité d'un employeur les garderait au régime général.
+    L'activité principale est la ligne en tête de l'année, celle qui en couvre le plus de
+    mois, exercée : l'année d'un changement, ou d'une interruption de l'activité
+    principale, se lit à cette ligne.
+  effet: non mesuré ; rare
+- ecart: >-
+    CE QUE LA RÈGLE NE TOUCHE PAS : la complémentaire de l'activité accessoire (D. 171-4
+    ne dispense que de la cotisation de L. 241-3), que le modèle laisse à l'Arrco, non
+    relue ; sans pension du régime général, le modèle liquide cette Arrco au coefficient
+    d'anticipation qu'il lit pour le régime de l'activité principale (1 pour l'agent de la
+    SNCF, 0,98 pour celui des IEG, au lieu de 0,93), non relu ; la cotisation salariale
+    vieillesse que la fiche de paie de l'activité prélève, dont l'assuré était dispensé ;
+    le compte notionnel, que la proposition tient à part. Un relevé fait foi : ce que la
+    caisse y a reporté reste au compte, comme la lettre Cnav du 25 janvier 1988 le dit
+    d'une cotisation précomptée à tort.
+  effet: >-
+    l'Arrco de l'agent de la SNCF du cas du test passe de 243,40 € à 261,72 €, celle de
+    l'agent des IEG à 256,48 € ; le reste non mesuré
+- ecart: >-
+    DEUX RÈGLES VOISINES, NON PORTÉES : D. 171-11, en vigueur, ôte toute cotisation et
+    tout droit à l'activité accessoire du fonctionnaire de l'État ou de la collectivité
+    « au service de l'Etat, d'un département, d'une commune ou d'un établissement
+    public » — le contractuel du public cumulé : ni régime général depuis 2015, ni
+    Ircantec, à toute date ; R. 741-41 du code rural, en vigueur, dispense de même
+    l'activité salariée agricole accessoire de l'agent d'un régime spécial, que le modèle
+    fait valider à la MSA.
+  effet: >-
+    non mesuré : l'agent qui déclare cumulée une activité de contractuel du public ou de
+    salarié agricole (candidats de la note du 6 novembre 2026)
 code:
   moteur: >-
     `_lignes_du_parcours` bâtit une ligne par année et par activité : celle de
     l'activité principale, la plus longue l'année d'un changement, puis une par activité
-    que l'assuré déclare cumulée (`Metier`, son champ `cumul`), sur ses propres mois.
+    que l'assuré déclare cumulée (`Metier`, son champ `cumul`), sur ses propres mois,
+    marquée `cumulee`. `coordonner.ecarter_les_accessoires`, au bout de
+    `coordonner.retablir`, ôte au régime général l'activité accessoire de l'agent d'un
+    régime de R. 711-1, de 1981 à 2014 (`accessoire_d_un_regime_special`, que
+    `coordonner.regimes_de` lit).
     `DonneesMacro.trimestres_valides` valide les trimestres d'une ligne sur son revenu,
     un par seuil de deux cents heures de SMIC depuis 1972, de cent cinquante depuis 2014
     (`DonneesMacro.seuil_d_un_trimestre`), quatre au plus ;
@@ -124,11 +402,13 @@ code:
     carriere.py : _lignes_du_parcours, Metier, Carriere.trimestres_par_annee,
     Carriere._plafonds_trimestres, Carriere.trimestres_cumules,
     Carriere.trimestres_ecoules ; donnees/macro.py : DonneesMacro.trimestres_valides,
-    DonneesMacro.seuil_d_un_trimestre
+    DonneesMacro.seuil_d_un_trimestre ; droit/coordonner.py : ecarter_les_accessoires,
+    regimes_de
   javascript: >-
     moteur/js/carriere.js : lignesDuParcours, Carriere.trimestresParAnnee,
     Carriere.trimestresCumules, Carriere.trimestresEcoules ; moteur/js/macro.js :
-    DonneesMacro.trimestresValides, DonneesMacro.seuilDUnTrimestre
+    DonneesMacro.trimestresValides, DonneesMacro.seuilDUnTrimestre ;
+    moteur/js/droit/coordonner.js : ecarterLesAccessoires, regimesDe
   parametres: >-
     macro/smic_horaire.csv : smic_horaire ; legislation/validation_trimestres.csv :
     heures

@@ -292,6 +292,17 @@ class AnneeCarriere:
     #: assise sur l'avant-dernière année qu'à l'option, une fraction du revenu
     #: du chef (D. 635-10-2 ; :func:`~retraite_notionnelle.droit.acquerir.revenu_a_l_option`).
     forfait_conjoint: bool = False
+    #: La ligne d'une activité que l'assuré déclare CUMULÉE à l'activité
+    #: principale de l'année (:attr:`Metier.cumul`), que bâtit
+    #: :func:`_lignes_du_parcours` ; faux pour l'activité principale, et sur un
+    #: relevé, qui ne le dit pas : ce que la caisse y a reporté fait foi.
+    cumulee: bool = False
+    #: L'ACTIVITÉ ACCESSOIRE DE L'AGENT D'UN RÉGIME SPÉCIAL, de 1981 à 2014 :
+    #: elle n'ouvre aucun droit au régime général (D. 171-4, rédaction du
+    #: 21 décembre 1985). Faux partout ailleurs : seul le scénario 1 la marque,
+    #: sur sa propre copie de la carrière
+    #: (:func:`~retraite_notionnelle.droit.coordonner.ecarter_les_accessoires`).
+    accessoire_d_un_regime_special: bool = False
 
     @property
     def cotise(self) -> bool:
@@ -679,6 +690,7 @@ def _ligne_annuelle(
     dispense: str = "",
     lodeom: str = "",
     outre_mer: str = "",
+    cumulee: bool = False,
 ) -> AnneeCarriere:
     """Une année de carrière, une fois connus son revenu et sa nature.
 
@@ -808,6 +820,7 @@ def _ligne_annuelle(
         cotisations_versees=cotise and not exoneree,
         micro=micro,
         forfait_conjoint=forfait_conjoint,
+        cumulee=cumulee,
         # Pendant une période indemnisée, les régimes complémentaires
         # attribuent des points sur le salaire d'avant. L'Unédic les paie pour
         # le chômage ; l'Agirc-Arrco les donne pour la maladie, sans
@@ -2825,6 +2838,7 @@ def _lignes_du_parcours(date_naissance: DateMois, periodes: list[dict], fin: Dat
                 dispense=metier.get("dispense_assiette_minimale", ""),
                 lodeom=metier.get("lodeom", ""),
                 outre_mer=metier.get("outre_mer", ""),
+                cumulee=True,
             ))
 
     dates_entree: dict[str, DateMois] = {}
