@@ -1,0 +1,54 @@
+date: "2026-11-06"
+session: "action 175, étape 6, vague 11, G15 : les 143 circulaires, lettres et instructions de 1995 à 1999 que la base de la Cnav cite sans thème"
+consulte: >-
+  Les 143 références sans thème et à lire de 1995 à 1999 dont le titre commence par
+  « Circulaire », « Lettre », « Instruction », « Note d'information » ou « Diffusion
+  d'instructions », relues par l'API de la base le 6 novembre 2026 à 13 h 10 UTC
+  (/reference/referencesByFileLeafRef/), toutes servies, 132 en page et onze en PDF (les
+  circulaires Organic n° 1998/075, 99/69 et 99/100, deux annexes et six exemples de la
+  circulaire Cnav n° 71/99), lus par leur texte ; toutes lues en entier, les 68 plus
+  longues par trois agents de la session, un lot chacun, dont chaque citation a été
+  retrouvée mot pour mot dans le texte servi. Pour les confronter : les fiches
+  totalisation_des_periodes_etrangeres, pension_proratisee, retablissement_fonction_publique,
+  taux_plein_anciens_combattants_prisonniers, reversion, minimum_vieillesse,
+  chomage_non_indemnise, revenu_annuel_moyen_independants, inaptitude_au_travail,
+  liquidation_regime_par_regime, csg_des_pensions_selon_le_revenu,
+  coefficients_anticipation_agirc_arrco, rachats_et_versements ; les régimes seita, fspoeie,
+  caisse_francais_etranger ; legislation/accords_internationaux.yaml ; les séries
+  regimes/taux_cotisation_annuels.csv, macro/plafond_securite_sociale.csv,
+  macro/smic_horaire.csv, legislation/prelevements_historiques.yaml,
+  legislation/csg_pensions_seuils.csv, legislation/annees_salaire_reference.csv,
+  legislation/duree_assurance_requise.csv, legislation/duree_proratisation.csv,
+  legislation/coefficient_minoration.csv, legislation/age_ouverture_requis.csv,
+  legislation/age_annulation_decote.csv ; la limite docs/limites/3-systeme-actuel.md. Ni
+  Légifrance, ni le Journal officiel, ni l'index de la DILA.
+trouve: >-
+  Le registre range les 143 (70 limite, 73 hors_modele), sans raison neuve. Conformes : le
+  taux vieillesse de 16,35 % en 1998 et 1999, et à l'Organic en 1996 ; le coefficient du
+  plafond de 102,70 en 1998 et 1999 ; le SMIC de juillet 1995 ; la CSG de 1998, 6,2 % et
+  3,8 %, 3,8 points déductibles, le seuil de 43 080 F ; la limite de cumul de 52 % en 1997 ;
+  les seize années du salaire annuel moyen en 1999 ; les règlements européens servis à
+  l'Autriche, la Finlande et la Suède dès 1994. Trois écarts neufs, chiffrés : la
+  convention franco-yougoslave n'est pas d'application avec la Bosnie-Herzégovine en 1998
+  (lettre-circulaire DSS/DAEI du 11 septembre 1998), quand le modèle la lui applique depuis
+  1951 (+60 % sur un cas de 1999) ; les bonifications des plans sociaux de la SEITA, des
+  ouvriers de l'État et de GIAT comptent pour le taux du régime général (lettres
+  ministérielles des 29 juillet et 1er octobre 1998, circulaire Cnav n° 68/98), qu'aucune
+  fiche ne porte (−41 % sur un cas de 2000) ; les services militaires accomplis à
+  l'étranger avant 1989, en temps de guerre seulement, et les écoles des radiés d'avant
+  1997 ne sont pas rétablis au régime général (circulaire Cnav n° 53/99), quand la fiche
+  rétablit toute la période (+35 % sur un cas de 2027). Non tranchés : les agents publics
+  algériens avant octobre 1997 ; les volontaires d'avant 1986 et l'équivalence d'avant
+  1983 ; le chômage que valide l'Organic. Déjà déclarés, touchés : la réduction de durée
+  des appelés d'Afrique du Nord ; la majoration pour enfants dans la limite de cumul ;
+  l'allocataire de l'AAH réputé inapte ; l'allocation supplémentaire du FNS hors de France ;
+  les règlements servis à qui n'est pas ressortissant ; la complémentaire sans abattement ;
+  le revenu moyen des commerçants par trimestre ; les périodes équivalentes des commerçants ;
+  le séjour des étrangers. Note
+  docs/feuille_de_route/175/2026-11-06-etape-6-circulaires-1995-1999.md.
+reste: >-
+  Les 1 146 circulaires de 2000 à 2026, par période ; les autres natures de l'étape 6 ;
+  les lois, décrets et arrêtés que ces textes appliquent, à relire au Journal officiel, dont
+  l'instruction de la Défense du 30 octobre 1997, les décrets n° 96-394 et 96-433 et
+  l'échange de lettres de 2003 avec la Bosnie-Herzégovine ; les cas des écarts, à poser sur
+  les moteurs.
