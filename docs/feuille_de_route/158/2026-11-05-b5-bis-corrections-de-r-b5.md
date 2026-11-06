@@ -138,3 +138,5 @@ les deux « A la même date ». Restent : les plus de cent dates relatives au d�
 date d'entrée en vigueur du présent décret », « à la date d'effet du présent décret »), à
 lire décret par décret ; les décrets qui datent un « chapitre » plutôt qu'un article ; le
 n° 98-268, art. 20, et le n° 98-896, art. 8 (ci-dessus) ; les 90 tableaux de l'index publié.
+
+*Relecture R-B6, le 6 novembre 2026 : voir `2026-11-06-relecture-r-b6.md` (quatre dates et « A la même date » conformes ; le JORF tranche en grande part le n° 98-896 art. 8, point 3.2 ; une version « jamais en vigueur » non dite, point 2).*
