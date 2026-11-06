@@ -1,0 +1,54 @@
+date: "2026-11-06"
+session: "action 175, étape 6, vague 11, G14 : les 151 circulaires, lettres et instructions de 1990 à 1994 que la base de la Cnav cite sans thème"
+consulte: >-
+  Les 151 références sans thème et à lire de 1990 à 1994 dont le titre commence par
+  « Circulaire », « Lettre », « Instruction », « Note d'information » ou « Diffusion
+  d'instructions », relues par l'API de la base le 6 novembre 2026 à 12 h 13 UTC
+  (/reference/referencesByFileLeafRef/), toutes servies, 148 en page et trois en PDF (la
+  circulaire Organic n° 1990/008 et l'annexe de la circulaire Cnav n° 97/93, par leur
+  texte ; l'annexe de la circulaire Cnav n° 20/93, lue en image) ; toutes lues en entier,
+  les 67 plus longues par un agent de la session, en trois lots, dont chaque citation a été
+  retrouvée mot pour mot dans le texte servi. L'index LEGI de la DILA, pour D. 173-1 à
+  D. 173-4 dans leur rédaction de 1985 (LEGIARTI000006735518 à LEGIARTI000006735521). Pour
+  les confronter : les fiches totalisation_des_periodes_etrangeres, pension_proratisee,
+  residence_et_minimum_vieillesse, priorite_majorations_enfants, reversion,
+  salaire_annuel_moyen, retraite_progressive, conjoint_collaborateur_independants,
+  revenu_annuel_moyen_independants, minimum_contributif, minimum_vieillesse,
+  credit_foncier_transfert_1989, retablissement_fonction_publique,
+  liquidation_regime_par_regime, decote_regime_general,
+  cotisation_vieillesse_agricole_avant_2003, csg_des_pensions_selon_le_revenu ; le code de
+  src/retraite_notionnelle/droit/etranger.py ; legislation/accords_internationaux.yaml ; les
+  séries legislation/revalorisation_salaires_anciennes.csv,
+  regimes/taux_cotisation_annuels.csv, legislation/prelevements_historiques.yaml,
+  macro/smic_horaire.csv, macro/plafond_securite_sociale.csv,
+  legislation/validation_trimestres.csv, legislation/coefficient_minoration.csv,
+  legislation/duree_assurance_requise.csv, legislation/minimum_contributif.csv,
+  legislation/minimum_vieillesse_avant_2007.csv, legislation/impot_revenu.yaml ; la limite
+  docs/limites/3-systeme-actuel.md. Ni Légifrance, ni le Journal officiel.
+trouve: >-
+  Le registre range les 151 (83 limite, 68 hors_modele), sans raison neuve. Conformes :
+  les 43 coefficients de salaire de 1947 à 1989 au 1er juillet 1990 ; le taux vieillesse de
+  15,80 % au 1er janvier 1991 et de 16,35 % au 1er février 1991 ; la CSG de 1,1 % puis
+  2,4 %, sans déduction ; le minimum de pension de 32 561,69 F au 1er juillet 1989 ; le
+  SMIC de 1990, 1993 et 1994 ; le plafond de 1994. Trois écarts neufs, chiffrés : l'entente
+  avec le Québec n'est ouverte aux non-salariés qu'au 1er août 1989 (circulaire DSS/DCI
+  n° 90/8), quand le modèle les coordonne dès 1981 (+100 % sur un cas de 1989) ; le
+  minimum partagé des conjoints collaborateurs de D. 634-7 n'est porté par aucune fiche
+  (+9,1 % pour le chef, ×3 pour le conjoint, sur le cas de la circulaire Organic, si chaque
+  ligne valide ses trimestres) ; la remise forfaitaire de 42 F par mois sur la cotisation
+  salariale d'assurance vieillesse, de 1991, manque au taux qui alimente le compte
+  notionnel (1 974 F de 1991 à 1994). Non tranchés : les salaires exonérés des
+  associations intermédiaires jusqu'en 1989 ; la tolérance de 1976 à 1990 sur l'année de la
+  date d'effet ; l'allocation supplémentaire du FNS hors de France avant le 1er juin 1992 ;
+  les conventions au calcul non lu après le 1er juin 1992 ; la conversion des périodes des
+  États membres. Déjà déclarés, touchés : la veuve remariée ; les veuves d'un polygame ;
+  les pensions espagnoles d'avant 1986 ; la majoration pour enfants dans la limite de
+  cumul ; la garantie de D. 173-2 ; le militaire rayé avant 1950 ; les salaires d'avant
+  1947 ; l'Accre ; les services de non-titulaire. Note
+  docs/feuille_de_route/175/2026-11-06-etape-6-circulaires-1990-1994.md.
+reste: >-
+  Les 1 289 circulaires de 1995 à 2026, par période ; les autres natures de l'étape 6 ;
+  les lois, ordonnances et décrets que ces textes appliquent, à relire au Journal
+  officiel, dont l'avenant du 5 septembre 1984 avec le Québec (décret n° 90-441), le décret
+  n° 89-876 (D. 634-7) et le décret n° 91-91 (la remise forfaitaire) ; les cas des écarts,
+  à poser sur les moteurs.
