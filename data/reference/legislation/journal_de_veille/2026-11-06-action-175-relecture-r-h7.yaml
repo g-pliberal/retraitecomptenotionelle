@@ -1,0 +1,34 @@
+date: "2026-11-06"
+session: "action 175, étape 4, file R-H7 : relecture de H7 (l'AVPF du père ouverte au 1er janvier 1985, c68ba87)"
+consulte: >-
+  python scripts/veille_droit.py. Les index LEGI (à jour du 2 novembre 2026,
+  20261102-213929) et JORF (du 3 novembre, 20261103-002311) récupérés, puis effacés. Dans
+  LEGI : le décret n° 73-88, articles 1er à 4, toutes leurs rédactions, l'article 1er en
+  entier à chacune ; les décrets n° 76-153 et n° 78-269, articles 1er ; le décret n°
+  85-830, son texte et ses articles de l'index ; la loi n° 85-17, ses articles 7, 9, 19 et
+  20 ; L. 381-1 (21 décembre 1985) ; L. 351-3 (21 décembre 1985). Au JORF, de 1972 à 1986 :
+  les notices qui nomment L. 242-2, le décret n° 73-88 (« 7388 », « 73-88 ») ou les
+  parents « au foyer », dont celles des décrets n° 78-270, n° 79-535, n° 80-1068, n°
+  82-1140 et n° 85-830 et des lois n° 72-8 et n° 85-17. La base de législation de la Cnav,
+  par son API : l'exposé « Parent au foyer - AVPF » (24 octobre 2025), le barème AVPF (24
+  février 2026), la lettre ministérielle du 13 février 1979, les circulaires 25/79 et
+  43/80, le décret n° 73-88 d'origine, les lois n° 72-8 et n° 77-765, les dix-sept
+  circulaires Cnav de 1985 du registre, et sa recherche (« 85-17 », « allocation au jeune
+  enfant », « l'un ou l'autre de ses membres »).
+trouve: >-
+  La règle de H7 est juste dans les deux moteurs, sous les deux jeux : le père n'a l'AVPF
+  de droit commun que depuis le 1er janvier 1985, date de la caisse ; ses deux tests sont
+  rouges sur le commit parent ; ses chiffres se refont au millionième sur le barème de la
+  caisse. Aucune loi de 1979 : la lettre ministérielle du 13 février 1979 agit « dans
+  l'attente d'une modification législative ». Deux écarts moyens, de preuve : cette lettre
+  et l'article 1er d'origine du décret n° 73-88, que H7 disait introuvables, sont servis
+  par l'API de la Cnav. Six écarts faibles : la date qui décide (l'année portée au compte,
+  non le début de la période), une citation de 1985 pour 1979 à 1984, un montant inversé,
+  le chiffrage de 1985 qui est un plafond, deux citations, deux décrets modificatifs non
+  nommés (n° 82-1140, n° 79-535). Le candidat 67 est réel : L. 351-3 ne range pas
+  l'éducation parmi les périodes assimilées.
+reste: >-
+  À une file -bis : les deux écarts moyens et les six faibles (note
+  `175/2026-11-06-relecture-r-h7.md`, § 7). Au fac-similé, la seule loi n° 85-17 est
+  nécessaire à la règle (janvier à août 1985) ; le décret n° 73-88 d'origine se lit à la
+  Cnav. Au registre de la Cnav, `LE_MIN_13021979.aspx` reste `a_lire`.
