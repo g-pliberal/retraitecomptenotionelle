@@ -368,6 +368,179 @@ def test_la_carmf_sert_ses_coefficients_dans_les_deux_moteurs():
             assert coefficient in pensions[regime]["detail"], (cle, regime)
 
 
+# -- les écarts de la relecture R-E7, corrigés (action 130, E6-bis) ---------------
+
+
+def _a_plat(texte: str) -> str:
+    """Un texte sans guillemets, ses espaces ramenées à une : la forme où une
+    citation de la fiche et le texte de l'index se comparent."""
+    import re
+
+    return " ".join(re.sub(r"[«»\"]", " ", texte).split())
+
+
+def _chaines(valeur):
+    """Toutes les chaînes d'une fiche, à plat."""
+    if isinstance(valeur, str):
+        yield valeur
+    elif isinstance(valeur, dict):
+        for sous in valeur.values():
+            yield from _chaines(sous)
+    elif isinstance(valeur, (list, tuple)):
+        for sous in valeur:
+            yield from _chaines(sous)
+
+
+def _textes_cites(fiche: dict) -> dict[str, str]:
+    """Pour chaque identifiant que la fiche cite (ses versions et ses textes
+    sans effet), les citations et les motifs mis bout à bout, à plat."""
+    cites: dict[str, str] = {}
+    for version in fiche.get("versions") or []:
+        for texte in version.get("textes") or []:
+            cites[texte["id"]] = cites.get(texte["id"], "") + " " + _a_plat(texte.get("citation") or "")
+    for texte in fiche.get("textes_sans_effet") or []:
+        cites[texte["id"]] = cites.get(texte["id"], "") + " " + _a_plat(texte.get("motif") or "")
+    return cites
+
+
+#: Ce que l'index JORF dit, lu le 6 novembre 2026 (index à jour au 3 novembre),
+#: mot pour mot : l'article 12 ter des statuts de l'ASV, que l'arrêté du 28
+#: septembre 2011 nomme et que celui du 1er décembre 2016 abroge, et l'article
+#: 41 de la complémentaire, son jumeau pour la réversion.
+DU_JORF_SUR_L_ARTICLE_12_TER = {
+    "JORFARTI000024612007": (
+        "Article 12 ter Au premier alinéa de l'article 12 ter, les mots : « dès l'âge de 60 "
+        "ans » sont remplacés par les mots : « dès l'âge prévu à l'article L. 161-17-2 du "
+        "code de la sécurité sociale »"),
+    "JORFARTI000033538061": (
+        "4° L'article 12 ter est abrogé ; 5° L'article 15 est ainsi modifié : a. Au dernier "
+        "alinéa, les mots : « au titre de l'article 12 ter » sont remplacés par les mots : "
+        "« avant le 1er janvier 2017 »"),
+    "JORFARTI000033521562": (
+        "4° L'article 41 est ainsi modifié : a) Au deuxième alinéa, les mots : « demandé la "
+        "liquidation de ses droits par anticipation au titre de l'article 15 » sont "
+        "remplacés par les mots : « liquidé ses droits par anticipation avant le 1er "
+        "janvier 2017 au titre de l'article 15 »"),
+}
+
+#: Le rectificatif du 8 août 2026 (JORFARTI000054642802), tout ce qu'il dit.
+RECTIFICATIF_DU_8_AOUT_2026 = (
+    "Dans l'annexe, au lieu de lire : « Article 6 « Chapitre 2 « Médecins en cumul "
+    "activité/retraite « Le conseil d'administration détermine, chaque année, la valeur "
+    "du point de retraite. », lire : « Article 6 « Le conseil d'administration détermine, "
+    "chaque année, la valeur du point de retraite. « Chapitre 2 « Médecins en cumul "
+    "activité/retraite »")
+
+
+def test_la_fiche_de_la_carmf_cite_l_article_12_ter_de_l_asv():
+    """R-E7, point 5 : l'ASV avait, avant 2017, un article 12 ter, que
+    l'arrêté du 28 septembre 2011 récrit (« dès l'âge de 60 ans ») et que celui
+    du 1er décembre 2016 abroge ; sa réversion le citait, comme celle de la
+    complémentaire citait la liquidation par anticipation de l'article 15. La
+    fiche cite ces trois phrases, mot pour mot, à leur place."""
+    from retraite_notionnelle.noyau import carte
+
+    cites = _textes_cites(carte.fiches()["carmf_asv_minoration_enfants"])
+    for identifiant, phrase in DU_JORF_SUR_L_ARTICLE_12_TER.items():
+        assert _a_plat(phrase) in cites.get(identifiant, ""), identifiant
+
+
+def test_le_rectificatif_du_8_aout_2026_est_lu_et_sans_effet():
+    """R-E7, point 3 : l'index porte l'article du rectificatif ; il ne déplace
+    qu'un intitulé de chapitre, et la fiche ne le dit plus « pas lu »."""
+    from retraite_notionnelle.noyau import carte
+
+    fiche = carte.fiches()["carmf_asv_minoration_enfants"]
+    sans_effet = {t["id"] for t in fiche["textes_sans_effet"]}
+    assert "JORFARTI000054642802" in sans_effet
+    assert _a_plat(RECTIFICATIF_DU_8_AOUT_2026) in _textes_cites(fiche)["JORFARTI000054642802"]
+    approximations = _a_plat(" ".join(_chaines(fiche["approximations"])))
+    assert "Le rectificatif du 8 août 2026 n'est pas lu" not in approximations
+    assert "JORFTEXT000054642801" not in approximations
+    assert not any("rectificatif" in a for a in _chaines(fiche["sources"]["a_relire"]))
+
+
+def test_l_age_legal_des_nes_en_1964_est_celui_de_l_161_17_2():
+    """R-E7, point 4 : pour les pensions prenant effet depuis le 1er septembre
+    2026, L. 161-17-2, rédaction de la loi n° 2025-1403 (LEGIARTI000053280889),
+    fixe « 3° Soixante-deux ans et neuf mois, pour les assurés nés entre le 1
+    er janvier 1963 et le 31 mars 1965 » ; D. 161-2-1-9, 10°, qui disait 63
+    ans, n'est plus le texte. La fiche cite le premier ; le modèle ouvre déjà
+    à 62 ans et 9 mois (62,75) les nés en 1964, non à 62,5 — dans les deux
+    moteurs —, si bien que les cas de la fiche, partis à 63 ans et au-delà,
+    n'en changent pas."""
+    from outils_pont import servi_et_refait
+    from retraite_notionnelle.noyau import carte
+
+    fiche = carte.fiches()["carmf_asv_minoration_enfants"]
+    tout = _a_plat(" ".join(_chaines(fiche)))
+    assert "LEGIARTI000053280889" in tout
+    assert _a_plat("3° Soixante-deux ans et neuf mois, pour les assurés nés entre le 1 er "
+                   "janvier 1963 et le 31 mars 1965") in tout
+
+    requete = {
+        "age_reference": "fixe_apres_bascule", "bascule": "2026",
+        "conversion_acquis": "reference", "debut": "22", "emploi": "cor_2026",
+        "enfants": "0", "euros": "2026", "indexation": "triple_lock_inverse",
+        "primes": "0", "profil": "plat", "projection": "cor_reference",
+        "salaire": "2", "sexe": "H", "stock": "prix", "table": "unisexe",
+        "statut": "medecin_liberal", "naissance": "1964-05-10",
+    }
+    ages = ("62.5", "62.75", "63")
+    servis, refus = servi_et_refait(
+        [{"cle": age, "requete": {**requete, "liquidation": age}} for age in ages])
+    assert refus == {}, refus
+    assert [servis[age]["actuel"]["liquidation_ouverte"] for age in ages] == [False, True, True]
+    assert servis["62.75"]["actuel"]["motif_ouverture"] == "age_legal"
+
+
+def test_l_ajustement_de_l_avant_derniere_annee_se_chiffre_a_la_main():
+    """R-E7, point 7. Exercice 2026, taux de 4 % (décret n° 2011-1644, article
+    2, rédaction du décret n° 2025-1076), forfait total 5 751 € (3 × 1 917 €),
+    valeur de service de 11,82 € (article 4, II, 3°). Revenu de 40 000 € en
+    2024, que le décret prend (« la deuxième année précédant »), de 42 000 € en
+    2026, que le modèle prend. Le décret : 18 × 1 600 / 5 751 = 5,0078 points,
+    5,01 arrondis. Le modèle : 18 × 1 680 / 5 751 = 5,2582. L'assiette seule :
+    18 × 80 / 5 751 = 0,2504 point, 0,2504 × 11,82 = 2,96 € de pension par
+    exercice. Les 0,2482 point qu'on avait (5,2582 − 5,01) mêlaient à
+    l'assiette l'arrondi du décret, 5,0078 → 5,01 (0,0022 point, 0,03 €), et
+    faisaient 2,93 €."""
+    from fractions import Fraction as F
+
+    from retraite_notionnelle.noyau import carte
+
+    forfait, taux, valeur = 3 * 1917, F(4, 100), F(1182, 100)
+    decret = 18 * taux * 40_000 / forfait
+    modele = 18 * taux * 42_000 / forfait
+    assiette = modele - decret
+    assert (round(float(decret), 4), round(float(modele), 4)) == (5.0078, 5.2582)
+    assert round(float(assiette), 4) == 0.2504
+    assert round(float(assiette * valeur), 2) == 2.96
+    arrondi = F(501, 100) - decret
+    assert round(float(arrondi), 4) == 0.0022 and round(float(arrondi * valeur), 2) == 0.03
+    assert round(float(modele - F(501, 100)), 4) == 0.2482
+    assert round(float((modele - F(501, 100)) * valeur), 2) == 2.93
+
+    premiere = carte.fiches()["asv_medecins_ajustement"]["approximations"][0]
+    assert "0,2504" in premiere["ecart"] and "0,2504 × 11,82 = 2,96 €" in premiere["effet"]
+    assert "2,93" not in premiere["effet"]
+    assert "0,2482" not in premiere["effet"]
+
+
+def test_la_fiche_de_l_ajustement_cite_l_arrete_du_7_janvier_2025():
+    """R-E7, point 8 : l'arrêté du 7 janvier 2025 (JORFARTI000050962838), IV,
+    statuts de l'ASV, 3°, dit « l'avant dernière année » à l'article 8, dont
+    le contenu n'est pas publié ; le décret n° 2011-1644 prime, et
+    l'approximation demeure."""
+    from retraite_notionnelle.noyau import carte
+
+    fiche = carte.fiches()["asv_medecins_ajustement"]
+    tout = _a_plat(" ".join(_chaines(fiche)))
+    assert "JORFARTI000050962838" in tout
+    assert _a_plat("3° Au premier alinéa de l'article 8, les mots : « l'année » sont "
+                   "remplacés par les mots : « l'avant dernière année »") in tout
+
+
 def _chaque_version_est_portee(simulateur, regime, fiche, date_qui_decide, hors_du_modele,
                                depuis):
     """Chaque premier du mois depuis ``depuis`` jusqu'en 2040 que couvre une

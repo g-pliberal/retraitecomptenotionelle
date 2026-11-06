@@ -141,7 +141,9 @@ approximations:
 - version: [decret_de_2011]
   textes: >-
     décret n° 2011-1644, article 2, dans chacune de ses rédactions : « perçus la
-    deuxième année précédant celle au titre de laquelle la cotisation est appelée »
+    deuxième année précédant celle au titre de laquelle la cotisation est appelée » ;
+    statuts de l'ASV, article 8, premier alinéa, que l'arrêté du 7 janvier 2025
+    (JORFARTI000050962838, annexe, IV, 3°) modifie
   ecart: >-
     Le modèle assied la cotisation d'ajustement sur le revenu de l'exercice même, le
     décret sur celui de l'avant-dernière année ; le plafond et le forfait sont ceux de
@@ -150,19 +152,34 @@ approximations:
     Cas posé à la main, exercice 2026, taux de 4 %, forfait total de 5 751 € (les 1 917
     € du médecin, un tiers) : revenu de 40 000 € en 2024 et de 42 000 € en 2026. Le
     décret : 18 × (4 % × 40 000) / 5 751 = 18 × 1 600 / 5 751 = 5,0078, 5,01 points.
-    Le modèle : 18 × 1 680 / 5 751 = 5,2582 points, 0,2482 de plus.
+    Le modèle : 18 × 1 680 / 5 751 = 5,2582 points. L'assiette seule : 18 × (1 680 − 1
+    600) / 5 751 = 18 × 80 / 5 751 = 1 440 / 5 751 = 0,2504 point (5,2582 − 5,0078). Les
+    0,2482 point que donne 5,2582 − 5,01 mêlent à l'assiette l'arrondi du décret, 5,0078
+    → 5,01 (0,0022 point), que la deuxième approximation compte à part. Les statuts de
+    l'ASV : l'arrêté du 7 janvier 2025 (annexe, IV, statuts du régime des prestations
+    complémentaires de vieillesse) dit : « 3° Au premier alinéa de l'article 8, les mots
+    : « l'année » sont remplacés par les mots : « l'avant dernière année » » ; le
+    contenu de l'article 8 n'est pas publié. S'il porte l'assiette de la
+    cotisation d'ajustement, les statuts disaient « l'année » jusqu'à l'arrêté et disent
+    « l'avant dernière année » depuis, comme le décret dit « la deuxième année
+    précédant » depuis 2012 : le décret prime, l'approximation demeure, aucun chiffre ne
+    change. Le 4° du même IV (« 4° Au deuxième alinéa de l'article 15, le mot : « 60 »
+    est remplacé par le mot : « soixante-deux » ») touche l'article 15 des statuts de
+    l'ASV, non l'ajustement.
   effet: >-
-    0,2482 point de trop pour l'exercice, soit 0,2482 × 11,82 = 2,93 € de pension
-    annuelle par exercice ainsi cotisé, à la valeur de service de 2025 des points
-    liquidés depuis 2017.
+    0,2504 point de trop pour l'exercice (l'assiette seule), soit 0,2504 × 11,82 = 2,96 €
+    de pension annuelle par exercice ainsi cotisé, à la valeur de service de 2025 des
+    points liquidés depuis 2017 (décret n° 2011-1644, article 4, II, 3°).
 - version: [decret_de_2011]
   textes: >-
     décret n° 2011-1644, article 3 : « arrondi au centième le plus proche »
   ecart: >-
     Le modèle n'arrondit pas les points d'ajustement : 5,2582 au lieu de 5,26 dans le
-    cas posé, au plus un demi-centième de point par exercice.
+    cas posé, au plus un demi-centième de point par exercice. Dans le cas posé, le
+    décret arrondit 5,0078 à 5,01 : 0,0022 point.
   effet: >-
-    au plus 0,005 × 11,82 = 0,06 € de pension annuelle par exercice.
+    au plus 0,005 × 11,82 = 0,06 € de pension annuelle par exercice ; dans le cas posé,
+    0,0022 × 11,82 = 0,03 €.
 - version: [decret_de_2011]
   textes: >-
     décret n° 2011-1644, article 2, rédaction du 30 décembre 2012 : les deux premières
@@ -259,6 +276,13 @@ sources:
       2021-645, 2022-1633, 2023-1351, 2024-1214, 2025-1076 et 2026-418 (articles 3, 16
       et 30), qui ne récrivent pas l'article 3 ; lus dans les index LEGI et JORF du
       dépôt, à jour des 5 et 6 novembre 2026.
+    date: 2026-11-06
+  - type: jorf
+    reference: >-
+      Arrêté du 7 janvier 2025 (JORFARTI000050962835 à 838), annexe, IV, 3° et 4°, statuts
+      de l'ASV ; décret n° 2011-1644, article 4, II, 3° (LEGIARTI000052567955 : « 11,82
+      euros à compter de l'exercice 2025 ») ; lus dans les index JORF et LEGI du dépôt, à
+      jour des 3 et 2 novembre 2026 (relecture R-E7, point 7 et 8, action 130, E6-bis).
     date: 2026-11-06
   - type: autre
     reference: >-

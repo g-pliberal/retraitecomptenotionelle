@@ -139,3 +139,5 @@ de 62 ans à l'âge du départ (`surcotePoints`).
 Daté du 6 novembre 2026 : la CARMF lue au droit, 76 fiches et 438 manques ; son erreur
 (la date d'effet au trimestre civil depuis 2026) et ses quatre non-tranchés au
 propriétaire ; la suite, la Cipav, dernière section de la CNAVPL.
+
+*Corrigé le 6 novembre 2026 par E6-bis, sans que ce récit soit récrit : l'article 12 ter de l'ASV, le rectificatif du 8 août, l'âge légal de 1964, les 2,96 € (non 2,93 €) de l'ajustement et l'arrêté du 7 janvier 2025 sont dans `2026-11-06-e6-bis-corrections-de-r-e7.md`.*

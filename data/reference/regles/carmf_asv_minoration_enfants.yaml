@@ -45,7 +45,8 @@ versions:
     régime complémentaire approuvés par l'arrêté du 27 février 1974, de ceux de l'ASV
     approuvés par l'arrêté du 18 décembre 1972, et des arrêtés qui les modifient ;
     l'index JORF n'en porte que des titres, ou les mots que remplace l'arrêté du 28
-    septembre 2011
+    septembre 2011 ; l'article 12 ter de l'ASV, que l'arrêté du 1er décembre 2016
+    abroge, ne s'y lit que par les mots « dès l'âge de 60 ans » de son premier alinéa
   fiabilite: >-
     faible : l'âge, le coefficient, la place de la durée, la date d'effet et le taux des
     enfants, que nul texte lu ne fixe avant le 1er janvier 2017
@@ -64,9 +65,12 @@ versions:
       les mots : « dès l'âge prévu à l'article L. 161-17-2 du code de la sécurité
       sociale ». [...] Statuts du régime des prestations supplémentaires de vieillesse
       Article 12 A l'article 12, les mots : « ou de 60 ans » sont remplacés par les mots
-      : « ou de l'âge prévu à l'article L. 161-17-2 du code de la sécurité sociale ». »
-      : les mots que l'arrêté remplace sont tout ce que le Journal officiel montre des
-      deux articles ; ni cet article ni les trois autres de l'arrêté ne fixent de date
+      : « ou de l'âge prévu à l'article L. 161-17-2 du code de la sécurité sociale ».
+      Article 12 ter Au premier alinéa de l'article 12 ter, les mots : « dès l'âge de 60
+      ans » sont remplacés par les mots : « dès l'âge prévu à l'article L. 161-17-2 du
+      code de la sécurité sociale » » : les mots que l'arrêté remplace sont tout ce que le
+      Journal officiel montre des trois articles (le 15 de la complémentaire, le 12 et le
+      12 ter de l'ASV) ; ni cet article ni les trois autres de l'arrêté ne fixent de date
   bornes:
     liquidation.date_effet: [null, 2017-01-01]
   contenu:
@@ -74,7 +78,8 @@ versions:
       les statuts du régime complémentaire annexés à l'arrêté du 27 février 1974, et ceux
       de l'ASV annexés à l'arrêté du 18 décembre 1972, avec les arrêtés qui les modifient,
       que le Journal officiel ne publie pas ou dont l'index n'a que le titre ; de leurs
-      articles 15 et 12, seuls se lisent les mots que l'arrêté de 2011 remplace ; de
+      articles 15, 12 et 12 ter (celui-ci abrogé le 1er janvier 2017), seuls se lisent
+      les mots que l'arrêté de 2011 remplace ; de
       l'article 22 que l'arrêté du 16 janvier 1964 ajoute au règlement, son titre : «
       allocataires ayant élevé au moins trois enfants jusqu'à l'âge de seize ans » ; le
       modèle : de 1949 à 1999, la décote du régime de base, que la durée annule ; de
@@ -89,7 +94,7 @@ versions:
   - id: JORFARTI000033521562
     article: >-
       annexe de l'arrêté du 30 novembre 2016, statuts du régime d'assurance vieillesse
-      complémentaire, article 15
+      complémentaire, articles 15 et 41 (4°, a)
     en_vigueur: 2017-01-01
     publie_le: 2016-12-04
     citation: >-
@@ -104,7 +109,10 @@ versions:
       celui où le médecin atteint l'âge de 65 ans, sans pouvoir s'appliquer au-delà du
       premier jour du trimestre civil suivant le soixante dixième anniversaire du
       médecin. [...] « Ces coefficients sont déterminés définitivement lors de la
-      liquidation des droits. »
+      liquidation des droits. » [...] 4° L'article 41 est ainsi modifié : a) Au deuxième
+      alinéa, les mots : « demandé la liquidation de ses droits par anticipation au
+      titre de l'article 15 » sont remplacés par les mots : « liquidé ses droits par
+      anticipation avant le 1er janvier 2017 au titre de l'article 15 »
   - id: JORFARTI000033521558
     article: arrêté du 30 novembre 2016, article 2
     en_vigueur: 2017-01-01
@@ -113,7 +121,8 @@ versions:
   - id: JORFARTI000033538061
     article: >-
       annexe de l'arrêté du 1er décembre 2016, statuts du régime des prestations
-      supplémentaires de vieillesse des médecins conventionnés, article 12
+      supplémentaires de vieillesse des médecins conventionnés, article 12, puis 4° (l'article
+      12 ter abrogé) et 5°, a (l'article 15, dernier alinéa, la réversion)
     en_vigueur: 2017-01-01
     publie_le: 2016-12-06
     citation: >-
@@ -127,7 +136,10 @@ versions:
       la retraite. « Le coefficient de majoration est le cas échéant réduit à 0,75 % par
       trimestre à partir du premier jour du trimestre civil suivant celui où le médecin
       atteint l'âge de 65 ans sans pouvoir s'appliquer au-delà du premier jour du
-      trimestre civil suivant le soixante dixième anniversaire du médecin. »
+      trimestre civil suivant le soixante dixième anniversaire du médecin. [...] 4°
+      L'article 12 ter est abrogé ; 5° L'article 15 est ainsi modifié : a. Au dernier
+      alinéa, les mots : « au titre de l'article 12 ter » sont remplacés par les mots : «
+      avant le 1er janvier 2017 »
   - id: JORFARTI000033538057
     article: arrêté du 1er décembre 2016, article 2
     en_vigueur: 2017-01-01
@@ -284,16 +296,35 @@ approximations:
     que le titre : 16 janvier 1964 (article 22, trois enfants), 7 et 25 mars 1977, 11 et
     12 mars 1981, 31 décembre 1982, 28 novembre 1985, 31 mars 1995, 23 mai 1997, 30
     juillet 1999, 12 mai 2000, 27 décembre 2000, 11 septembre 2001, 24 juin 2005, 28 août
-    2006 ; au Bulletin officiel (question 22 du propriétaire)
+    2006 ; au Bulletin officiel (question 22 du propriétaire) ; l'article 12 ter de
+    l'ASV, que l'arrêté du 28 septembre 2011 nomme et celui du 1er décembre 2016 abroge
+    (4°), avec le dernier alinéa de l'article 15 de l'ASV (5°, a) et l'article 41 de la
+    complémentaire (arrêté du 30 novembre 2016, 4°, a)
   ecart: >-
     Le texte n'est pas lu : rien ne dit l'âge, le coefficient ni le taux des enfants
     d'avant 2017, que le modèle tient de pages de la caisse et non d'un texte. Deux
     lectures à l'ASV, qui ne se tranchent pas sans lui. Première, celle du modèle : la
     décote du régime de base, que la durée annule ; né le 10 mars 1949, parti à 64 ans
     le 1er avril 2013 avec sa durée, 15 533,26 € par an sans coefficient. Seconde :
-    l'article 12 de l'ASV, que l'arrêté de 2011 récrit des mêmes mots que l'article 15 («
-    ou de 60 ans »), porterait les coefficients que le modèle sert à la complémentaire,
-    0,95 à 64 ans : 14 756,60 €, 776,66 € par an de moins.
+    l'ASV porterait, comme la complémentaire, un coefficient par année d'âge, 0,95 à 64
+    ans : 14 756,60 €, 776,66 € par an de moins. Ce que le texte ajoute, sans trancher.
+    L'arrêté du 28 septembre 2011 récrit à l'ASV deux articles, le 12 (« ou de 60 ans »)
+    et le 12 ter (« dès l'âge de 60 ans »), les deux membres de phrase qu'il récrit à
+    l'article 15 de la complémentaire. L'arrêté du 1er décembre 2016 abroge l'article 12
+    ter et remplace, au dernier alinéa de l'article 15 de l'ASV (la réversion), « au
+    titre de l'article 12 ter » par « avant le 1er janvier 2017 » ; celui du 30 novembre
+    2016 remplace, à l'article 41 de la complémentaire, « demandé la liquidation de ses
+    droits par anticipation au titre de l'article 15 » par « liquidé ses droits par
+    anticipation avant le 1er janvier 2017 au titre de l'article 15 ». Le texte penche
+    donc vers la seconde lecture : l'ASV avait, avant 2017, un article à elle pour une
+    liquidation dès 60 ans, que sa réversion visait comme celle de la complémentaire visait
+    la liquidation par anticipation de l'article 15, ce que la seule décote du régime de
+    base expliquerait mal. Il ne la prouve pas : l'article 12 ter et le dernier alinéa de
+    l'article 15 ne sont pas publiés, « dès l'âge de 60 ans » dit un âge et non un
+    coefficient, rien ne dit si l'article 12 ter visait tout médecin ou une catégorie
+    (l'inapte ou l'ancien combattant, que l'article 12 de 2017 majore de 13 %), et rien ne
+    donne la valeur du coefficient, ni qu'elle fût celle de la complémentaire. La lecture
+    du modèle n'est pas intenable : le point reste non tranché.
   effet: >-
     776,66 € par an à l'ASV, né le 10 mars 1949, parti à 64 ans le 1er avril 2013, si la seconde lecture vaut ; 0 € si la première.
     Essai du 6 novembre 2026, dans les deux moteurs, requête du formulaire (médecin libéral, entré à 22 ans, deux salaires moyens, né le 10 du mois).
@@ -307,7 +338,11 @@ approximations:
     L. 351-1, l'âge légal de la génération ; le modèle la fait courir de 62 ans dès le
     1er janvier 2017. Le texte ne tranche pas pour une pension prenant effet dans ces
     trois mois et liquidée après le 29 mars, puisque « Ces coefficients sont déterminés
-    définitivement lors de la liquidation des droits ». Né le 10 mars 1952, 60 ans et 9
+    définitivement lors de la liquidation des droits » (cette phrase dit que les
+    coefficients ne se revoient pas, non quelle rédaction les fixe). La lecture du modèle
+    est la plus faible des deux : la fiche choisit ses versions par la date d'effet, et
+    l'arrêté du 22 mars 2017, sans date, n'entre en vigueur que le 30 mars, sans effet
+    rétroactif écrit ; elle reste possible, d'où le point non tranché. Né le 10 mars 1952, 60 ans et 9
     mois le 10 décembre 2012 (D. 161-2-1-9, 3°), parti à 64 ans et 9 mois, la pension
     le 1er janvier 2017 : première lecture, la règle de la date d'effet, 16 trimestres
     du 1er janvier 2013, 20 %, 1,20 ; seconde, celle du modèle, 11 trimestres du 1er
@@ -336,14 +371,17 @@ approximations:
 - version: [reglement_de_2026]
   textes: >-
     règlement du régime complémentaire, article 24 ; règlement de l'ASV, articles 2, 7 et
-    9 ; arrêté du 10 juillet 2026, rectificatif du 8 août 2026 (JORFTEXT000054642801),
-    dont l'index n'a que le titre
+    9 ; code de la sécurité sociale, L. 161-17-2, 3°, rédaction de la loi n° 2025-1403
+    (LEGIARTI000053280889), pour l'âge légal des nés en 1964
   ecart: >-
     ERREUR DU MODÈLE, à la complémentaire, déclarée et non corrigée (pour le
     propriétaire) : l'article 24 fixe la date d'effet « au premier jour du trimestre
     civil qui suit la réalisation de toutes les conditions d'ouverture des droits » ;
     le modèle la fixe au premier jour du mois qui suit l'âge. Né le 10 mai 1964, parti à
-    63 ans le 10 mai 2027 : le modèle sert la complémentaire le 1er juin 2027, le texte
+    63 ans le 10 mai 2027 (l'âge légal des nés en 1964 est de 62 ans et 9 mois, L.
+    161-17-2, 3°, pour les pensions prenant effet depuis le 1er septembre 2026 : le
+    départ le dépasse, et la cessation fait la date d'effet) : le modèle sert la
+    complémentaire le 1er juin 2027, le texte
     le 1er juillet ; 4 trimestres de majoration des deux côtés, du 1er juillet 2026 ;
     un mois de trop, 14 056,14 / 12 = 1 171,35 €. Né le 10 mars 1964, parti à 63 ans et
     un mois le 10 avril 2027 : le modèle sert le 1er mai 2027, à 1,05 (4 trimestres
@@ -354,7 +392,8 @@ approximations:
     des conjoints, l'article 9 ne vise que le médecin débiteur — : point non tranché ;
     première lecture, celle du guide de la caisse, le trimestre civil, 1 320,91 € dans
     le premier cas, 2 656,35 € puis 189,74 € par an dans le second ; seconde, celle du
-    modèle, 0 €. Le rectificatif du 8 août 2026 n'est pas lu.
+    modèle, 0 €. Le rectificatif du 8 août 2026 est lu : il ne déplace qu'un intitulé de
+    chapitre (textes sans effet).
   effet: >-
     à la complémentaire, 1 171,35 € (un mois de trop), ou 2 337,68 € (deux mois de trop) puis 166,98 € par an de moins ; à l'ASV, 0 € ou, si la première lecture vaut, 1 320,91 €, ou 2 656,35 € puis 189,74 € par an.
     Essai du 6 novembre 2026, dans les deux moteurs, requête du formulaire (médecin libéral, entré à 22 ans, deux salaires moyens, né le 10 du mois).
@@ -406,6 +445,18 @@ textes_sans_effet:
     « 3. Pour les femmes médecins, trois trimestres par enfant né pendant les périodes
     d'exercice professionnel » : l'article 18, les périodes que l'article 23 laisse
     racheter, non la majoration de la pension
+- id: JORFARTI000054642802
+  article: >-
+    arrêté du 10 juillet 2026, rectificatif du 8 août 2026 (Journal officiel n° 165 du 17
+    juillet 2026, texte n° 11)
+  publie_le: 2026-08-08
+  motif: >-
+    « Dans l'annexe, au lieu de lire : « Article 6 « Chapitre 2 « Médecins en cumul
+    activité/retraite « Le conseil d'administration détermine, chaque année, la valeur du
+    point de retraite. », lire : « Article 6 « Le conseil d'administration détermine,
+    chaque année, la valeur du point de retraite. « Chapitre 2 « Médecins en cumul
+    activité/retraite » » : il ne déplace qu'un intitulé de chapitre ; ni l'âge, ni la
+    majoration, ni l'article 24 ne changent
 textes_a_rattacher:
 - reference: >-
     arrêté du 16 janvier 1964 portant adjonction d'un article 22 au règlement du
@@ -432,9 +483,10 @@ sources:
   a_relire:
   - >-
     Lire les statuts d'avant le 1er janvier 2017 : l'article 15 de la complémentaire et
-    l'article 12 de l'ASV, la date d'effet, l'article 22 de 1964 et celui de l'ASV de
-    1981 (Bulletin officiel), ou les demander à la CARMF ; le rectificatif du 8 août
-    2026. Demander à la caisse une pension prenant effet le 1er janvier 2017 d'un
+    les articles 12 et 12 ter de l'ASV (celui-ci abrogé au 1er janvier 2017, avec le
+    dernier alinéa de l'article 15 de l'ASV qui le citait), la date d'effet, l'article
+    22 de 1964 et celui de l'ASV de 1981 (Bulletin officiel), ou les demander à la
+    CARMF. Demander à la caisse une pension prenant effet le 1er janvier 2017 d'un
     médecin né avant 1955, et la date d'effet qu'elle donne à l'ASV.
   lectures:
   - type: jorf
@@ -457,7 +509,24 @@ sources:
       Code de la sécurité sociale, D. 161-2-1-9 du 31 décembre 2011
       (LEGIARTI000025089933 : « Soixante ans et neuf mois pour les assurés nés en 1952
       ») et du 1er septembre 2023 (LEGIARTI000047634502 : « Soixante-trois ans pour les
-      assurés nés en 1964 ») ; lus dans l'index LEGI du dépôt, à jour du 5 novembre 2026.
+      assurés nés en 1964 », que L. 161-17-2 supplante pour les pensions prenant effet
+      depuis le 1er septembre 2026, voir la lecture suivante) ; lus dans l'index LEGI du
+      dépôt, à jour du 5 novembre 2026.
+    date: 2026-11-06
+  - type: legifrance
+    reference: >-
+      Code de la sécurité sociale, L. 161-17-2 dans sa rédaction de la loi n° 2025-1403 du
+      30 décembre 2025 (LEGIARTI000053280889 ; « Conformément au VI de l'article 105 de la
+      loi n° 2025-1403 du 30 décembre 2025, ces dispositions [...] s'appliquent aux
+      pensions prenant effet à compter du 1 er septembre 2026 ») : « Cet âge est fixé à
+      : [...] 3° Soixante-deux ans et neuf mois, pour les assurés nés entre le 1 er janvier
+      1963 et le 31 mars 1965 » — l'âge légal des nés en 1964, non les 63 ans de D.
+      161-2-1-9, 10° ; lu dans l'index LEGI du dépôt, à jour du 2 novembre 2026 (relecture
+      R-E7, point 4, action 130, E6-bis). Le rectificatif du 8 août 2026
+      (JORFARTI000054642802), l'article 12 ter des statuts de l'ASV dans l'arrêté du 28
+      septembre 2011 et son abrogation dans celui du 1er décembre 2016 (4°, 5°, a), et
+      l'article 41 de la complémentaire dans celui du 30 novembre 2016 (4°, a), lus dans
+      l'index JORF du dépôt, à jour du 3 novembre 2026.
     date: 2026-11-06
   - type: jorf
     reference: >-
