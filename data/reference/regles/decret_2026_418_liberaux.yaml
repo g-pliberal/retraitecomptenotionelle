@@ -24,6 +24,26 @@ sources:
     trente années d'affiliation de la majoration pour report de la Cipav, qui ne
     porte que sur les points de ces trente années, là où le modèle les majore tous
     ; le versement forfaitaire unique des petites pensions.
+  - >-
+    Erreur prouvée, déclarée et non corrigée (action 130, E9, 6 novembre 2026) : depuis
+    le 1er juillet 2026, l'article 5-2, II, du décret n° 79-262 (décret n° 2026-418,
+    article 20, JORFARTI000054153655 ; article 30, « Le présent décret entre en vigueur
+    le 1 er juillet 2026 ») majore « de 5% par année entière de prorogation » le compte
+    de points de l'affilié de trente années d'affiliation qui diffère sa pension d'un à
+    cinq ans au-delà de l'âge du a du 1° de l'article 5-1, et « Cette majoration
+    s'applique uniquement aux points acquis au titre des trente premières années de
+    cotisation à la CIPAV » ; le modèle majore tous les points (`surcote_par_age_seul`,
+    `cipav_complementaire.yaml`). Essai du 6 novembre 2026, née le 10 mars 1959,
+    libérale de la Cipav au double du salaire moyen depuis 22 ans, en euros de 2026,
+    cotisant de 1981 à la liquidation : à 68 ans et 3 mois, pension au 1er juillet 2027,
+    une année entière de report, le modèle sert 0,05 × 374 715,4414 × 0,061 =
+    1 142,8821 € de majoration ; le texte, sur les seuls points de 1981 à 2010, 0,05 ×
+    184 754,1840 × 0,061 = 563,5003 € : 579,38 € par an de trop ; à 72 ans et 3 mois,
+    cinq années, 0,25 × 459 993,6709 × 0,061 = 7 014,9035 € contre 0,25 × 198 030,4407
+    × 0,061 = 3 019,9642 € : 3 994,94 € par an de trop. Avant le 1er juillet 2026, la
+    règle est à l'article 3.15 des statuts, au seul Bulletin officiel, que l'arrêté du
+    20 mars 2023 (JORFARTI000047334800, 17°) suppose (« Pour la détermination des trente
+    années de cotisation ») : l'écart y est probable, non lu au texte officiel.
   lectures:
   - type: jorf
     reference: >-
@@ -47,6 +67,15 @@ sources:
       régime de base, majoration de 10 % pour trois enfants, majoration pour report
       réservée à trente années d'affiliation — et le régime d'invalidité-décès
     date: 2026-09-23
+  - type: jorf
+    reference: >-
+      décret n° 2026-418, les 31 articles relevés dans l'index JORF à jour du 6 novembre
+      2026, chacun rapporté au décret qu'il modifie ; l'article 20 (Cipav, articles 5-1
+      à 5-6 du décret n° 79-262) lu en entier et confronté au modèle, la majoration pour
+      report réservée aux points des trente premières années, chiffrée (action 130, E9,
+      `docs/feuille_de_route/130/2026-11-06-e9-fiches-communes-restantes.md`) ; la
+      lecture au droit de la fiche reste à faire
+    date: 2026-11-06
 textes_a_rattacher:
 - reference: décret n° 2026-418 du 29 mai 2026 (JORF du 31 mai 2026)
 code:

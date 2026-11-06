@@ -306,10 +306,21 @@ approximations:
   ecart: >-
     Manque : les statuts de la CAVAMAC d'avant le 1er juillet 2011 ne sont pas lus ;
     le modèle n'y sert aucune majoration. Des textes de la CAVAMAC que l'index porte
-    avant le 23 juin 2011, aucun ne nomme l'enfant (le décret n° 97-1056, les arrêtés
-    du 17 décembre 2007 et du 26 janvier 2011, ces deux derniers pour la base et les
-    statuts généraux) ; les arrêtés de 1967, 1972, 1975 et 1983 n'y ont que leur
-    titre, au fac-similé
+    avant le 23 juin 2011 (titre « agents généraux d'assurance », sans borne, relu le
+    6 novembre 2026 par E9), aucun ne nomme l'enfant : le décret n° 67-1169 et ses
+    modifications (décrets nos 71-878, 92-1372, 97-1056, 2001-864, 2003-1255 : le taux
+    et l'appel de la cotisation) ; trois arrêtés qui modifient les statuts du régime
+    complémentaire lui-même, du 17 décembre 2001 (« (art. 4) », JORFARTI000002036105,
+    publié intégralement au seul Bulletin officiel n° 2002-04, JORFARTI000001070359),
+    du 26 décembre 2003, en vigueur le 1er janvier 2004 (articles 3, 8 bis, 17 et 24 ;
+    annexe JORFARTI000001280567 : « L'article 17 est abrogé. L'article 24 est abrogé.
+    », sans que l'objet des deux articles abrogés se lise), et du 17 décembre 2007,
+    publié le 18 janvier 2008 (articles 1er, 3, 4 et 5 : adhérents, assiette, taux,
+    paiement ; annexe JORFARTI000017890649) ; pour la base et les statuts généraux,
+    l'autre arrêté du 17 décembre 2007, publié le 15 janvier 2008
+    (JORFARTI000017871508), et celui du 26 janvier 2011. Les arrêtés de 1967, 1972,
+    1975 et 1983, et les décisions du comité de gestion de 1969 à 1992, n'y ont que
+    leur titre, au fac-similé
     (`docs/feuille_de_route/138/2026-11-05-la-file-des-fac-similes.md`).
   effet: >-
     non mesuré : jusqu'à 10 % de la pension de la CAVAMAC si les statuts de 1967
@@ -355,10 +366,16 @@ approximations:
     pension de retraite complémentaire, déclare fiscalement à sa charge un enfant
     ouvrant droit [...] à l'allocation d'éducation de l'enfant handicapé », par enfant
     (article 19, puis article 8 du règlement) ; la saisie ne connaît pas l'enfant
-    handicapé à charge, le modèle ne le sert pas.
+    handicapé à charge, le modèle ne le sert pas. Depuis le 18 juillet 2026, l'article
+    8 du règlement ne reprend pas l'article 19 mot pour mot : il écrit « en application
+    » où les statuts de 2011 écrivaient « en vertu », et ajoute, après la prestation de
+    compensation, « soit à l'allocation aux adultes handicapés prévue à l'article L.
+    821-1 du code de la sécurité sociale » ; le manque couvre aussi, depuis cette
+    date, l'enfant à charge qui ouvre droit à l'AAH.
   effet: >-
     −5 % de la pension de la CAVAMAC par enfant handicapé à charge : 0,05 × 13 323,31 =
-    666,17 € par an au cas posé de 2011
+    666,17 € par an au cas posé de 2011 ; depuis le 18 juillet 2026, aussi par enfant
+    à charge qui ouvre droit à l'AAH
 - version: [cavamac_depuis_juillet_2011, cavec_depuis_juillet_2025, au_decret_et_aux_reglements_de_2026]
   textes: >-
     statuts de la CAVAMAC, article 18, et règlement de 2026, article 7 ; décret n°
@@ -375,11 +392,15 @@ approximations:
     statuts de la CAVEC, article 20 (JORFARTI000051849616) ; règlement de 2026, article
     1.3.1 (JORFARTI000054435943)
   ecart: >-
-    À examiner, hors de cette fiche : la CAVEC majore aussi de 10 % « la pension de
-    réversion » ; que la réversion de la CAVEC reprenne ou non la part de la majoration
-    (`echeancier`, `parts_de_la_majoration`) relève des fiches de la réversion, que
-    cette lecture n'a pas ouvertes.
-  effet: non mesuré
+    La CAVEC majore aussi de 10 % « la pension de réversion » depuis le 7 juillet
+    2025. Ce n'est pas un écart à part : le modèle ne sert aucune réversion de la
+    CAVEC (motif `non_portee`, `droit/reversion.py`, `moteur/js/droit/reversion.js` ;
+    aucune fiche de réversion ne nomme `cavec_complementaire`), l'écart que
+    `cavec_minoration_age_seul` déclare déjà ; la majoration s'y joint, et la
+    réversion de la CAVEC, quand elle sera servie, la portera.
+  effet: >-
+    compris dans l'écart déclaré à `cavec_minoration_age_seul` : pour le conjoint
+    survivant, toute la réversion, majoration comprise
 textes_sans_effet:
 - id: JORFARTI000032511119
   article: arrêté du 4 mai 2016, annexe (CAVAMAC)
@@ -413,8 +434,10 @@ effet: >-
   depuis le 7 juillet 2025, la Cipav et la CAVAMAC au décret et aux règlements de
   2026 ; une erreur prouvée, la CAVAMAC de juillet à décembre 2011 (1 332,33 € par an
   au cas posé) ; un point non tranché, la Cipav avant 2000 (403,40 €) ; des manques,
-  les statuts de la CAVAMAC d'avant 2011, les 5 % par enfant handicapé de la CAVAMAC,
-  la réversion de la CAVEC à examiner.
+  les statuts de la CAVAMAC d'avant 2011, les 5 % par enfant handicapé de la CAVAMAC
+  (et, depuis le 18 juillet 2026, par enfant qui ouvre droit à l'AAH) ; la
+  réversion de la CAVEC, que ses textes majorent aussi, jointe à l'écart déclaré de
+  `cavec_minoration_age_seul` (aucune réversion de la CAVEC servie).
 sources:
   lu_le: 2026-11-06
   prochaine_relecture: 2027-03-31
@@ -425,7 +448,8 @@ sources:
     officiel).
   - >-
     La réversion de la CAVEC, que l'article 20 de 2025 et l'article 1.3.1 de 2026
-    majorent aussi de 10 %.
+    majorent aussi de 10 % : à porter avec la réversion elle-même
+    (`cavec_minoration_age_seul`), quand elle sera servie.
   lectures:
   - type: jorf
     reference: >-
@@ -486,4 +510,9 @@ code:
     confronte chaque mois de 1990 à 2040 la période de liquidation de chaque section à
     la version de la date, l'écart de 2011 déclaré, et
     test_la_majoration_pour_enfants_des_sections_aux_dates_qui_comptent_dans_les_deux_moteurs,
-    sept cas aux bornes, servis par le portage et refaits par le moteur Python
+    sept cas aux bornes, servis par le portage et refaits par le moteur Python, au
+    taux que le modèle sert ; et
+    test_les_lectures_de_la_majoration_pour_enfants_des_sections_que_le_modele_ne_suit_pas_sont_declarees,
+    qui confronte à chaque cas les lectures du texte au taux servi, et lie chacun des
+    trois écarts (la CAVAMAC en 2011, la Cipav avant 2000 et sa forme supposée depuis)
+    à l'approximation qui le déclare

@@ -425,28 +425,70 @@ def test_chaque_version_de_la_majoration_pour_enfants_des_sections_est_portee():
 
 #: Né un 10 mars, l'âge se compte du 1er avril (``Carriere.origine_des_ages``) :
 #: 65 ans et 3 mois, une pension au 1er juillet, de l'année des 65 ans.
-#: La majoration de chaque cas, au texte : 10 % de la pension, ou rien.
+#: Chaque cas porte trois choses, relues aux sources le 6 novembre 2026
+#: (action 130, E9) : les lectures du texte en vigueur à la date d'effet, un
+#: taux, deux quand le texte ne tranche pas, ``None`` quand il atteste la
+#: majoration sans en donner le taux ; le taux que le modèle sert,
+#: que le test vérifie dans les deux moteurs ; et, quand le modèle n'est pas
+#: la lecture unique du texte, ou qu'il suppose, l'approximation de la fiche
+#: qui le déclare,
+#: ``(version, régime)``. Le test ne pose pas le montant de la pension : il
+#: vérifie que la majoration servie est ce taux de la pension que le modèle
+#: sert.
 MAJORATIONS_AUX_DATES_QUI_COMPTENT = {
-    # CAVAMAC : statuts en vigueur le 1er juillet 2011, article 18 ; le
-    # modèle ne sert rien avant le 1er janvier 2012 (écart déclaré, ci-dessus).
-    ("agent_general_assurance", "1946-03-10", "65.25"): 0.0,  # 1er juillet 2011
-    ("agent_general_assurance", "1946-03-10", "65.75"): 0.10,  # 1er janvier 2012
-    # CAVEC : arrêté du 4 juillet 2025, publié le 6, en vigueur le 7.
-    ("expert_comptable", "1960-03-10", "65.25"): 0.0,  # 1er juillet 2025
-    ("expert_comptable", "1960-03-10", "65.3333"): 0.10,  # 1er août 2025
-    # Cipav : le décret n° 99-913, en vigueur le 1er janvier 2000, atteste la
-    # bonification ; l'article 5-2 du décret n° 79-262 l'écrit au 1er juillet 2026.
-    ("profession_liberale", "1934-03-10", "65.6667"): 0.0,  # 1er décembre 1999
-    ("profession_liberale", "1934-03-10", "65.75"): 0.10,  # 1er janvier 2000
-    ("profession_liberale", "1961-03-10", "65.25"): 0.10,  # 1er juillet 2026
+    # CAVAMAC : statuts approuvés par l'arrêté du 23 juin 2011, « en vigueur le
+    # 1er juillet 2011 » (article 2), article 18 : « majoré de 10 % au profit de
+    # l'adhérent ayant eu au moins trois enfants ». Le modèle ne sert rien avant
+    # le 1er janvier 2012 : erreur prouvée, déclarée, non corrigée (candidat 47).
+    ("agent_general_assurance", "1946-03-10", "65.25"):  # 1er juillet 2011
+        ((0.10,), 0.0, ("cavamac_depuis_juillet_2011", "cavamac_complementaire")),
+    ("agent_general_assurance", "1946-03-10", "65.75"):  # 1er janvier 2012
+        ((0.10,), 0.10, None),
+    # CAVEC : les statuts de 2018 sans « bonification » ; l'arrêté du 4 juillet
+    # 2025, publié le 6, en vigueur le 7 (article 2, la publication seule),
+    # article 20 : « majoré de 10 % ».
+    ("expert_comptable", "1960-03-10", "65.25"): ((0.0,), 0.0, None),  # 1er juillet 2025
+    ("expert_comptable", "1960-03-10", "65.3333"): ((0.10,), 0.10, None),  # 1er août 2025
+    # Cipav : avant 2000, point non tranché, rien ou 10 % (le décret n° 99-913
+    # renvoie à une bonification « prévue par les statuts », que nul ne date) ;
+    # de 2000 au 30 juin 2026, la bonification attestée par le décret n° 99-913,
+    # article 6, sans sa forme : 10 %, la forme supposée, déclarée ; depuis le
+    # 1er juillet 2026, l'article 5-2 du décret n° 79-262 : « majoré de 10 % ».
+    ("profession_liberale", "1934-03-10", "65.6667"):  # 1er décembre 1999
+        ((0.0, 0.10), 0.0, ("aucune_avant_2000", "cipav_complementaire")),
+    ("profession_liberale", "1934-03-10", "65.75"):  # 1er janvier 2000
+        (None, 0.10, ("cipav_depuis_2000", "cipav_complementaire")),
+    ("profession_liberale", "1961-03-10", "65.25"): ((0.10,), 0.10, None),  # 1er juillet 2026
 }
+
+
+def test_les_lectures_de_la_majoration_pour_enfants_des_sections_que_le_modele_ne_suit_pas_sont_declarees():
+    """Où le modèle n'est pas la lecture unique du texte, à chaque cas de
+    ``MAJORATIONS_AUX_DATES_QUI_COMPTENT``, la fiche
+    ``sections_liberales_majoration_enfants`` le déclare, par une
+    approximation de la version et du régime ; ailleurs, le modèle sert le
+    taux du texte."""
+    from retraite_notionnelle.noyau import carte
+
+    fiche = carte.fiches()["sections_liberales_majoration_enfants"]
+    declarees = {(version, a.get("regime")) for a in fiche.get("approximations") or []
+                 for version in a["version"]}
+    ecarts = 0
+    for cle, (lectures, servi, ecart) in MAJORATIONS_AUX_DATES_QUI_COMPTENT.items():
+        assert (lectures == (servi,)) == (ecart is None), cle
+        if ecart is not None:
+            assert ecart in declarees, cle
+            ecarts += 1
+    assert ecarts == 3
 
 
 def test_la_majoration_pour_enfants_des_sections_aux_dates_qui_comptent_dans_les_deux_moteurs():
     """Le portage sert, et le moteur Python refait (``servi_et_refait``), à
-    une mère de trois enfants de chaque section, la majoration de la version
-    en vigueur à la date d'effet : 10 % de la pension de la complémentaire, ou
-    rien ; au 1er juillet 2011, la CAVAMAC ne reçoit rien, l'écart déclaré."""
+    une mère de trois enfants de chaque section, la majoration que le modèle
+    sert à la date d'effet (``MAJORATIONS_AUX_DATES_QUI_COMPTENT``, le taux
+    servi) : 10 % de la pension de la complémentaire, ou rien. Au 1er juillet
+    2011, la CAVAMAC ne reçoit rien où le texte donne 10 %, l'écart déclaré ;
+    au 1er décembre 1999, la Cipav rien, l'une des deux lectures."""
     from outils_pont import servi_et_refait
 
     requete = {
@@ -464,7 +506,7 @@ def test_la_majoration_pour_enfants_des_sections_aux_dates_qui_comptent_dans_les
            for cle in MAJORATIONS_AUX_DATES_QUI_COMPTENT]
     servis, refus = servi_et_refait(cas)
     assert refus == {}, refus
-    for cle, taux in MAJORATIONS_AUX_DATES_QUI_COMPTENT.items():
+    for cle, (_, taux, _) in MAJORATIONS_AUX_DATES_QUI_COMPTENT.items():
         actuel = servis["|".join(cle)]["actuel"]
         regime = regimes[cle[0]]
         montant = {p["regime"]: p["montant"] for p in actuel["pensions_par_regime"]}[regime]

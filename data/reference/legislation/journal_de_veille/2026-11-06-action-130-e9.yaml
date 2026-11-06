@@ -1,0 +1,29 @@
+date: "2026-11-06"
+session: "action 130, file E9 : les écarts de R-E9 repris ; les fiches communes aux sections, le décret n° 2026-418 entamé"
+consulte: >-
+  Les index JORF (au 6 novembre 2026, incrément 20261106-002608) et LEGI (au 5 novembre,
+  20261105-214938) récupérés et mis à jour. Au JORF, sans borne : au titre « agents généraux
+  d'assurance » jusqu'en 2011, les arrêtés des 17 décembre 2001, 26 décembre 2003 et 17
+  décembre 2007 (publiés le 15 et le 18 janvier 2008), les décrets nos 2001-864 et
+  2003-1255, l'arrêté du 26 janvier 2011 ; le règlement de la CAVAMAC du 10 juillet 2026
+  (articles 7 et 8) et les statuts de 2011 (articles 18 et 19) ; « bonification » au titre
+  de la CAVEC ; les 31 articles du décret n° 2026-418, l'article 20 lu en entier ; l'arrêté
+  du 20 mars 2023 de la Cipav (17°).
+trouve: >-
+  Les quatre écarts faibles de R-E9 confirmés au texte et repris : l'inventaire de la
+  CAVAMAC d'avant 2011 complété (aucun texte n'y nomme l'enfant ; les articles 17 et 24
+  abrogés en 2004 sans que leur objet se lise) ; l'AAH de l'article 8 du règlement de 2026
+  ajoutée au manque des 5 % ; la réversion de la CAVEC jointe à l'écart déclaré de
+  `cavec_minoration_age_seul` ; le test des dates qui comptent porte les lectures du texte,
+  le taux servi et l'écart déclaré de chaque cas. Une erreur prouvée, déclarée et non
+  corrigée : depuis le 1er juillet 2026, l'article 5-2, II, du décret n° 79-262 ne majore
+  pour report que les points des trente premières années de cotisation à la Cipav ; le
+  modèle majore tous les points (579,38 € par an de trop pour une année de report, 3 994,94 €
+  pour cinq, au cas posé). L'article 5-3 met la pension de la Cipav au mois : hors du
+  candidat 23.
+reste: >-
+  La lecture au droit des trois fiches communes : `decret_2026_418_liberaux` (sa forme à
+  décider, seize décrets à rapporter à leur régime), `surcote_par_age_seul`,
+  `cotisation_par_classes_liberales` ; la minoration de la Cipav (article 5-1, 2°) à
+  confronter ; l'article 13 du décret (CAVAMAC), que nulle fiche ne cite. Note
+  `docs/feuille_de_route/130/2026-11-06-e9-fiches-communes-restantes.md`.
