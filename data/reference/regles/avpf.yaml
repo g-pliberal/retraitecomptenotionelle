@@ -10,9 +10,179 @@ effet: >-
   Carrières interrompues pour enfant. L'assiette est celle que la Cnav publie, date par
   date, de juillet 1972 à 2026 ; le modèle portait 1 820 heures du SMIC de janvier de
   l'année, 9 à 10 % de trop peu depuis 1982, 12,5 % avant, et une assiette avant 1972,
-  quand l'AVPF n'existait pas.
+  quand l'AVPF n'existait pas. Depuis le 6 novembre 2026 (action 175, H7), le père ne
+  la reçoit que depuis le 1er janvier 1985 : le modèle lui portait au compte l'assiette
+  de toute année d'éducation depuis juillet 1972, 3 037,70 € pour 1978.
+lit:
+- la période d'éducation que la personne déclare (interruption education_enfant), son
+  année et sa part de l'année
+- le sexe de la personne (sexe)
+ecrit:
+- le salaire porté au compte du régime général pour l'année (revenu_avpf de la ligne)
+dates_qui_decident:
+- periode.debut
+# Les versions forment un partage du début de la période d'éducation. Le moteur ne
+# les lit pas : `ANNEE_CREATION_AVPF` et l'assiette datée de la Cnav ouvrent l'AVPF de
+# la mère en juillet 1972, `ANNEE_AVPF_DES_HOMMES` celle du père en 1985 (macro.py,
+# macro.js ; `_ligne_annuelle`, `ligneAnnuelle`).
+versions:
+- id: avant_l_avpf
+  statut: lue
+  textes:
+  - id: JORFTEXT000000509305
+    reference: >-
+      loi n° 72-8 du 3 janvier 1972, dont l'index JORF ne garde que la notice : «
+      REFORME DE L'ALLOCATION DE LA MERE AU FOYER A COMPTER DU 01-07-1972 »
+    publie_le: 1972-01-05
+  bornes:
+    periode.debut: [null, 1972-07-01]
+  contenu:
+    droit: aucune affiliation, ni de la mère ni du père
+    parametres:
+      existe: false
+  exemples: aucun trouvé
+- id: meres_de_juillet_1972
+  statut: supposee
+  hypothese: >-
+    la caisse affilie « les femmes » « depuis le 01/07/1972 », « les hommes » « depuis
+    le 01/07/1979 » (exposé « Parent au foyer - AVPF » de la Cnav) ; l'article 1er
+    d'origine du décret n° 73-88 (JO du 28 janvier 1973), seul à dire qui est affilié
+    avant 1978, n'est pas dans l'index LEGI et ne se lit qu'au fac-similé
+  fiabilite: haute
+  bornes:
+    periode.debut: [1972-07-01, 1978-01-01]
+  contenu:
+    droit: la mère au foyer, et non le père
+    parametres:
+      existe: true
+      hommes: false
+  exemples: aucun trouvé
+- id: meres_et_femmes_du_complement_familial
+  statut: lue
+  textes:
+  - id: LEGIARTI000006761985
+    article: décret n° 73-88, article 1er
+    en_vigueur: 1978-01-01
+    citation: >-
+      « Les mères de famille et les femmes bénéficiaires du complément familial et qui
+      ont au moins un enfant de moins de trois ans ou au moins quatre enfants sont
+      affiliées obligatoirement à l'assurance vieillesse du régime général de la
+      sécurité sociale »
+  - id: LEGIARTI000006760068
+    article: décret n° 78-269, article 1er
+    en_vigueur: 1978-03-10
+    citation: >-
+      « Pour l'application des dispositions de l'article L. 242-2 du code de la sécurité
+      sociale concernant les mères et les femmes ayant la charge d'un enfant handicapé
+      ou assumant, au foyer familial, la charge d'un handicapé adulte »
+  nee_de: LEGIARTI000006761985
+  bornes:
+    periode.debut: [1978-01-01, 1979-07-01]
+  contenu:
+    droit: la mère et la femme au foyer, et non le père
+    parametres:
+      existe: true
+      hommes: false
+  exemples: aucun trouvé
+- id: hommes_ayant_la_charge_d_un_handicape
+  statut: lue
+  textes:
+  - reference: circulaire Cnav 25/79 du 6 mars 1979, lue par l'API de la base de législation
+    citation: >-
+      « A compter du 1er juillet 1979 les Caisses d'Allocation Familiales sont
+      autorisées à procéder à l'affiliation à l'assurance vieillesse du régime général
+      des hommes assumant la charge d'une épouse ou d'un enfant handicapé et à prendre en
+      charge les cotisations correspondantes. » ; « en application du 3ème alinéa de
+      l'article L. 242-2 du code de la Sécurité Sociale, non seulement les mères de
+      famille et les femmes assumant au foyer la charge d'un handicapé, mais également
+      les hommes ne trouvant dans cette situation. » ; « L'article L. 242.2 précité sera
+      ultérieurement complété sur ce point. »
+  - reference: exposé « Parent au foyer - AVPF » de la Cnav, version du 24 octobre 2025
+    citation: >-
+      « Du 01/07/1979 au 31/12/1984, les hommes étaient affiliés uniquement s'ils
+      assumaient la charge d'un enfant ou d'un adulte handicapé. »
+  - id: LEGIARTI000006761986
+    article: décret n° 73-88, article 1er
+    en_vigueur: 1985-01-05
+    citation: >-
+      « Sont affiliées obligatoirement à l'assurance vieillesse du régime général de la
+      sécurité sociale les femmes isolées, bénéficiaires du complément familial » ; « II
+      - Sont affiliées obligatoirement à l'assurance vieillesse du régime général de la
+      sécurité sociale les mères de famille, non visées au I ci-dessus, bénéficiaires du
+      complément familial »
+  bornes:
+    periode.debut: [1979-07-01, 1985-01-01]
+  contenu:
+    droit: >-
+      la mère et la femme au foyer ; le père seulement s'il a la charge d'un enfant ou
+      d'un adulte handicapé, que la saisie ne dit pas : le modèle ne le sert pas
+    parametres:
+      existe: true
+      hommes: false
+  exemples: aucun trouvé
+- id: l_un_ou_l_autre_parent
+  statut: lue
+  textes:
+  - reference: exposé « Parent au foyer - AVPF » de la Cnav, version du 24 octobre 2025
+    citation: >-
+      « Depuis le 01/01/1985, la condition d'affiliation était identique à celle des
+      femmes. »
+  - id: LEGIARTI000006761987
+    article: décret n° 73-88, article 1er
+    en_vigueur: 1985-08-04
+    citation: >-
+      « I - Sont affiliées obligatoirement à l'assurance vieillesse du régime général de
+      la sécurité sociale, les personnes isolées » ; « II - Est affilié obligatoirement à
+      l'assurance vieillesse du régime général de la sécurité sociale, celui des
+      conjoints ou concubins n'exerçant pas d'activité professionnelle qui remplit les
+      conditions posées ci-après »
+  - id: LEGIARTI000006768734
+    article: décret n° 85-830, article 1er
+    en_vigueur: 1985-08-04
+    citation: >-
+      « A titre transitoire, est également affilié à l'assurance vieillesse du régime
+      général de sécurité sociale, dans les conditions fixées aux articles 1er et 2 du
+      présent décret *affiliation*, la personne isolée et, pour un couple, l'un ou
+      l'autre de ses membres n'exerçant pas d'activité professionnelle, ayant à charge au
+      moins un enfant de moins de trois ans *âge limite* conçu avant le 1er janvier 1985
+      *date* »
+  - id: LEGIARTI000006742941
+    article: L. 381-1 CSS
+    en_vigueur: 1985-12-21
+    citation: >-
+      « La personne isolée et, pour un couple, l'un ou l'autre de ses membres n'exerçant
+      pas d'activité professionnelle, bénéficiaire du complément familial, de
+      l'allocation au jeune enfant ou de l'allocation parentale d'éducation , est
+      affilié obligatoirement à l'assurance vieillesse du régime général de sécurité
+      sociale »
+  bornes:
+    periode.debut: [1985-01-01, null]
+  contenu:
+    droit: la mère ou le père au foyer
+    parametres:
+      existe: true
+      hommes: true
+  exemples: aucun trouvé
+approximations:
+- version: hommes_ayant_la_charge_d_un_handicape
+  ecart: >-
+    le père qui avait au foyer, de juillet 1979 à 1984, un enfant ou un adulte
+    handicapé était affilié ; la saisie ne dit pas le handicap, et le modèle ne lui
+    sert rien. Sur toute la période, 28 153,42 € portés au compte en moins : six fois
+    286,700195 € (1979), douze fois 321,050008, 369,935834, 441,807923, 506,002680 et
+    563,971419 € (1980 à 1984), assiettes de la Cnav
+- version: l_un_ou_l_autre_parent
+  ecart: >-
+    NON TRANCHÉ, du 1er janvier au 3 août 1985 : la caisse affilie le père « Depuis le
+    01/01/1985 », lecture que le modèle suit ; le décret n° 73-88, dans sa rédaction en
+    vigueur du 5 janvier au 4 août 1985 (LEGIARTI000006761986), ne nomme que « les
+    femmes isolées » et « les mères de famille », et le texte de la loi n° 85-17 du 4
+    janvier 1985, qui pourrait avoir changé L. 242-2 dès janvier, ne se lit qu'au
+    fac-similé. Sous la lecture du décret, le père d'une année 1985 entière perd sept
+    mois d'assiette, 7 × 614,210992 = 4 299,48 € portés au compte en moins (7 370,53 €
+    au lieu de 3 071,05 €), si son affiliation prend effet au 1er août
 sources:
-  lu_le: 2026-10-14
+  lu_le: 2026-11-06
   prochaine_relecture: 2027-01-31
   a_relire:
   - >-
@@ -21,24 +191,27 @@ sources:
     fois le SMIC de janvier 2026 et non celui de juillet 2025 que R. 381-3 désigne :
     voir si la caisse s'en explique.
   - >-
-    LE PÈRE, que le modèle affilie comme la mère : toute période d'éducation que la
-    saisie déclare depuis juillet 1972 porte l'assiette au compte, quel que soit le
-    sexe. La caisse n'affilie l'homme que depuis le 1er juillet 1979, et jusqu'au 31
-    décembre 1984 seulement s'il assume la charge d'un enfant ou d'un adulte handicapé ;
-    depuis le 1er janvier 1985, comme la femme (exposé « Parent au foyer - AVPF »,
-    version du 24 octobre 2025 ; circulaire Cnav 25/79 du 6 mars 1979). Le décret n°
-    73-88 ne nomme que « les mères de famille et les femmes » de 1978 à 1980
-    (LEGIARTI000006761985), « les femmes isolées » encore dans sa rédaction du 5 janvier
-    1985 (LEGIARTI000006761986), « les personnes isolées » et « celui des conjoints ou
-    concubins » depuis celle du 4 août 1985 (LEGIARTI000006761987) ; L. 381-1, à sa
-    codification, « la personne isolée et, pour un couple, l'un ou l'autre de ses
-    membres ». Lire la loi de 1979 et la loi n° 85-17 du 4 janvier 1985, dont l'index
-    de la DILA n'a que la notice, puis ne servir l'AVPF au père, dans les deux moteurs,
-    que depuis la date que les textes fixent, l'exception du handicap d'avant 1985
-    déclarée. Ni la condition de ressources, ni l'assiette ramenée, pour le bénéficiaire de la
-    prestation partagée d'éducation à taux partiel, à vingt ou à cinquante pour cent selon
-    le taux servi, ne se saisissent (action 175, étape 4, « Carrière :
-    cotisations-salaires »).
+    LE PÈRE n'a l'AVPF que depuis le 1er janvier 1985 dans les deux moteurs (action
+    175, H7 ; versions ci-dessus). Restent au fac-similé du Journal officiel : L. 242-2
+    de l'ancien code tel que la loi n° 72-8 le rédige (JO du 5 janvier 1972), l'article
+    1er d'origine du décret n° 73-88 (JO du 28 janvier 1973), celui du décret n°
+    80-1068 (JO du 26 décembre 1980), la loi qui « complète » L. 242-2 pour les hommes
+    après le 1er juillet 1979 (circulaire Cnav 25/79), introuvable dans les notices de
+    l'index JORF, et la loi n° 85-17 du 4 janvier 1985, qui dira si le père est affilié
+    dès janvier 1985 ou au 4 août 1985 (approximation non tranchée) ; la lettre
+    ministérielle du 13 février 1979, jointe à la circulaire 25/79, que l'API ne sert
+    pas. Ni la condition de ressources, ni le handicap à charge de 1979 à 1984, ni
+    l'assiette ramenée, pour le bénéficiaire de la prestation partagée d'éducation à
+    taux partiel, à vingt ou à cinquante pour cent selon le taux servi, ne se saisissent
+    (action 175, étape 4, « Carrière : cotisations-salaires »).
+  - >-
+    CANDIDAT (action 175, H7) : une année d'éducation valide quatre trimestres
+    (`trimestres_assimiles` de education_enfant, periodes_non_travaillees.csv), que
+    l'AVPF la couvre ou non : la mère avant juillet 1972, le père avant 1985. Un père né
+    en 1955, au foyer de 1980 à 1984, garde 160 trimestres et 18 194,73 € par an au
+    lieu de 140 et 13 472,38 € (portage, carrière simple, salaire moyen, départ à 62
+    ans). À corriger dans les deux moteurs, la classe entière, après lecture des règles
+    de la fonction publique que la même ligne sert (colonne services_fonction_publique).
   lectures:
   - type: legifrance
     reference: L. 381-1 CSS
@@ -80,6 +253,39 @@ sources:
       concubins ») ; L. 381-1 CSS, rédaction du 21 décembre 1985 (LEGIARTI000006742941),
       lus dans l'index LEGI : le père n'y entre qu'en 1985
     date: 2026-11-03
+  - type: circulaire_cnav
+    reference: >-
+      exposé « Parent au foyer - AVPF » (version du 24 octobre 2025) et circulaire Cnav
+      25/79 du 6 mars 1979, lus par l'API de la base de législation : les hommes affiliés
+      depuis le 1er juillet 1979 s'ils ont la charge d'un handicapé, comme les femmes
+      depuis le 1er janvier 1985 ; circulaire Cnav 2011/38, qui ne dit rien du père
+    url: https://legislation.lassuranceretraite.fr/#/expose?file_leaf_ref=cotisation_salaire_type_activite_avpf_ex.aspx
+    date: 2026-11-06
+  - type: legifrance
+    reference: >-
+      index LEGI au 2 novembre 2026 : décret n° 73-88, articles 1er à 4, toutes leurs
+      rédactions (LEGIARTI000006761985 à 006761992 ; aucune de 1973 à 1977 ni de 1980 à
+      1984) ; décret n° 76-153 (LEGIARTI000006760501 à 006760505, « des mères ») ; décret
+      n° 78-269 (LEGIARTI000006760068 à 006760074, « les mères et les femmes », de 1978
+      à 1985, sans rédaction qui nomme les hommes) ; décret n° 85-830, article 1er
+      (LEGIARTI000006768734) ; loi n° 85-17, articles 7, 9, 19 et 20, les seuls de
+      l'index, sans rien sur la vieillesse ; loi n° 79-1129, ses articles de l'index,
+      sans rien sur L. 242-2 ; L. 381-1, rédaction du 21 décembre 1985
+      (LEGIARTI000006742941)
+    date: 2026-11-06
+  - type: jorf
+    reference: >-
+      index JORF au 3 novembre 2026, notices seules : loi n° 72-8 (JORFTEXT000000509305),
+      décret n° 73-88 (JORFTEXT000000693989), loi n° 77-765 (JORFTEXT000000886344, «
+      MODIFIE LES ART. [...] L242-2 »), décret n° 78-270 (JORFTEXT000000874152), décret
+      n° 80-1068 (JORFTEXT000000501301, « L'ART. 1 DU DECRET 7388 DU 26-01-1973 MODIFIE
+      EST ABROGE ET REMPLACE »), loi n° 79-1129 (JORFTEXT000000886666), circulaire du 29
+      avril 1980 (JORFTEXT000000326008, « MERES DE FAMILLE,FEMMES BENEFICIAIRES DU
+      COMPLEMENT FAMILIAL,FEMMES ISOLEES ET FEMMES N'EXERCANT PAS D'ACTIVITE
+      PROFESSIONNELLE (ART. L242-2 DU CODE DE LA SECURITE SOCIALE) »), loi n° 85-17
+      (JORFTEXT000000521299), décret n° 85-830 (JORFTEXT000000501925, « REMPLACE LES
+      ART. 1 (I,II),2 (AL. 2) ET ABROGE L'ART. 1 (III) DU DECRET 7388 »)
+    date: 2026-11-06
 textes_a_rattacher:
 - reference: L. 381-1 CSS
 - id: LEGIARTI000047961951
@@ -91,7 +297,9 @@ code:
     `legislation/periodes_non_travaillees.csv`) — le salaire de l'assurance vieillesse
     des parents au foyer, à sa part de l'année : `DonneesMacro.revenu_avpf` somme les
     assiettes mensuelles que la Cnav publie, date par date, du 1er juillet 1972 au 1er
-    janvier 2026 (`assiette_avpf`), rien avant juillet 1972 (`ANNEE_CREATION_AVPF`), et
+    janvier 2026 (`assiette_avpf`), rien avant juillet 1972 (`ANNEE_CREATION_AVPF`), rien
+    au père avant le 1er janvier 1985 (`ANNEE_AVPF_DES_HOMMES`, la ligne sachant le
+    sexe de la personne), et
     au-delà du barème 169 heures par mois du SMIC du 1er juillet de l'année précédente
     (`HEURES_AVPF_PAR_MOIS`, `smic_horaire_au_1er_juillet`). `salaire_de_reference`
     porte ce salaire au compte des périodes qui déclarent `avpf`, au régime général
@@ -102,17 +310,18 @@ code:
   python: >-
     carriere.py : _ligne_annuelle ; donnees/macro.py : DonneesMacro,
     DonneesMacro.revenu_avpf, DonneesMacro.assiette_avpf,
-    DonneesMacro.smic_horaire_au_1er_juillet, ANNEE_CREATION_AVPF, HEURES_AVPF_PAR_MOIS
-    ; droit/liquider.py : salaire_de_reference ; droit/liquidation.py : liquider
+    DonneesMacro.smic_horaire_au_1er_juillet, ANNEE_CREATION_AVPF, ANNEE_AVPF_DES_HOMMES,
+    HEURES_AVPF_PAR_MOIS ; droit/liquider.py : salaire_de_reference ; droit/liquidation.py : liquider
   javascript: >-
     moteur/js/carriere.js : ligneAnnuelle ; moteur/js/macro.js : DonneesMacro,
     DonneesMacro.revenuAvpf, DonneesMacro.smicHoraireAu1erJuillet, ANNEE_CREATION_AVPF,
-    HEURES_AVPF_PAR_MOIS ; moteur/js/droit/liquider.js : salaireDeReference ;
+    ANNEE_AVPF_DES_HOMMES, HEURES_AVPF_PAR_MOIS ; moteur/js/droit/liquider.js : salaireDeReference ;
     moteur/js/droit/liquidation.js : liquider
   parametres: >-
     legislation/assiette_avpf.csv : date_effet, assiette_mensuelle ;
     legislation/periodes_non_travaillees.csv : avpf ; regimes/msa_salaries.yaml,
-    regimes/regime_general.yaml : avantages_non_contributifs, date_effet
+    regimes/regime_general.yaml : avantages_non_contributifs, date_effet ;
+    contenu.parametres de chaque version : existe, hommes
   tests:
   - tests/test_liquidation.py
   - tests/test_salaire_annuel_moyen.py

@@ -1467,6 +1467,12 @@ def _cas() -> list[dict]:
     # Interruptions de carrière, primes, enfants — ce que les scénarios
     # notionnels neutralisent.
     cas.append(("interruption_simple", {"interruptions": "2000:2004:education_enfant"}))
+    # L'AVPF du père ne court que depuis le 1er janvier 1985 (fiche avpf ;
+    # action 175, H7) : un homme, faiblement payé, au foyer de 1980 à 1986.
+    cas.append(("interruption_pere_avant_1985", {
+        "naissance": "1955", "salaire": "0.3",
+        "interruptions": "1980:1986:education_enfant",
+    }))
     cas.append(("interruption_multiple", {
         "interruptions": "1999:2001:chomage_indemnise, 2008:2009:maladie",
         "naissance": "1970",

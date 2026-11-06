@@ -1638,6 +1638,30 @@ test("l'AVPF compte avant avril 1983", () => {
 });
 
 /**
+ * Le portage de `test_l_avpf_du_pere_ne_court_que_depuis_1985`
+ * (tests/test_salaire_annuel_moyen.py) : le père n'a l'AVPF de droit commun que
+ * depuis le 1er janvier 1985 (exposé « Parent au foyer - AVPF » de la Cnav) ; la
+ * mère, depuis juillet 1972. Douze fois l'assiette mensuelle de la Cnav.
+ */
+test("l'AVPF du père ne court que depuis 1985", () => {
+  const simulateur = new Contexte(paquet).simulateur();
+  const annees = [1978, 1979, 1984, 1985, 1990];
+  const avpf = (sexe) => {
+    const interruptions = new Map(annees.map((annee) => [annee, "education_enfant"]));
+    const carriere = simulateur.carriereSimple({
+      annee_naissance: 1950, sexe, affiliation: "salarie_prive_non_cadre", age_debut: 20,
+      age_liquidation: 65, niveau_salaire: 1.0, profil_carriere: "plat", nombre_enfants: 2,
+      jour_naissance: 1, interruptions,
+    });
+    return annees.map((annee) => carriere.lignes.find((l) => l.annee === annee).revenu_avpf);
+  };
+  const proches = (obtenus, attendus) => obtenus.forEach((obtenu, rang) => assert.ok(
+    Math.abs(obtenu - attendus[rang]) < 1e-6, `${annees[rang]} : ${obtenu} contre ${attendus[rang]}`));
+  proches(avpf("F"), [3037.699116, 3440.40234, 6767.657028, 7370.531904, 9247.173216]);
+  proches(avpf("H"), [0, 0, 0, 7370.531904, 9247.173216]);
+});
+
+/**
  * Le portage des montants de `test_avant_2007_le_minimum_vieillesse_tient_en_deux_etages`
  * (tests/test_liquidation.py) : les deux étages d'avant l'ASPA, sur la table du paquet.
  */

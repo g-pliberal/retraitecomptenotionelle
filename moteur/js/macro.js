@@ -22,6 +22,14 @@ export const ANNEE_REVALORISATION_SUR_LES_PRIX = 1987;
 /** L'assurance vieillesse des parents au foyer naît le 1er juillet 1972. */
 export const ANNEE_CREATION_AVPF = 1972;
 
+/**
+ * Le père n'y entre, comme la mère, qu'au 1er janvier 1985 : de juillet 1979 à
+ * 1984, la caisse ne l'affilie que s'il a la charge d'un handicapé, ce que la
+ * saisie ne dit pas (exposé « Parent au foyer - AVPF » de la Cnav ; circulaire
+ * Cnav 25/79 ; fiche `avpf`). Voir le Python.
+ */
+export const ANNEE_AVPF_DES_HOMMES = 1985;
+
 /** Heures de SMIC de l'assiette MENSUELLE de l'AVPF (R. 381-3). */
 export const HEURES_AVPF_PAR_MOIS = 169;
 

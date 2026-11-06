@@ -16,7 +16,7 @@
 
 import * as chrono from "./chronologie.js";
 import { preparer } from "./droit/preparer.js";
-import { DEPARTEMENTS_D_OUTRE_MER } from "./macro.js";
+import { ANNEE_AVPF_DES_HOMMES, DEPARTEMENTS_D_OUTRE_MER } from "./macro.js";
 import {
   MOIS_PAR_AN,
   DateMois,
@@ -685,6 +685,7 @@ function ligneAnnuelle({
   lodeom = "",
   outreMer = "",
   cumulee = false,
+  sexe = "",
 }) {
   if (outreMer && !Object.hasOwn(DEPARTEMENTS_D_OUTRE_MER, outreMer)) {
     throw new Error(`département d'outre-mer inconnu : ${outreMer} — `
@@ -704,7 +705,9 @@ function ligneAnnuelle({
   // Ces points sont-ils PAYÉS ? Par l'Unédic pour le chômage ; la maladie les
   // reçoit sans contrepartie de cotisations.
   const complementairesVersees = ouvreComplementaires && regle[7] === true;
-  const ouvreAvpf = regle !== null && regle[3] === true;
+  // L'AVPF du père ne court que depuis le 1er janvier 1985 (`ANNEE_AVPF_DES_HOMMES`).
+  const ouvreAvpf = regle !== null && regle[3] === true
+    && !(sexe === "H" && annee < ANNEE_AVPF_DES_HOMMES);
   // Services et durée d'assurance ne sont pas la même case : la première
   // proratise la pension de la fonction publique, la seconde celle du régime
   // général. Une année de chômage indemnisé en valide quatre trimestres à la
@@ -1608,6 +1611,7 @@ export class Carriere {
         micro: source.micro,
         lodeom: source.lodeom,
         outreMer: source.outre_mer,
+        sexe: this.sexe,
       });
     };
     // Le mois de liquidation n'est pas travaillé.
@@ -2334,10 +2338,10 @@ export class Carriere {
     }
     if (relevees.length > 0) {
       lignes = lignesDuReleve(dateNaissance, relevees, chrono.moisDe(acte.debut),
-        macro, identifiant, progressive);
+        macro, identifiant, progressive, naissance.attributs.sexe);
     } else if (periodes.length > 0) {
       [lignes, datesEntree] = lignesDuParcours(dateNaissance, periodes,
-        chrono.moisDe(acte.debut), macro, progressive);
+        chrono.moisDe(acte.debut), macro, progressive, naissance.attributs.sexe);
     }
     return new Carriere({
       annee_naissance: dateNaissance.annee,
@@ -2449,7 +2453,7 @@ function naissancesDeclarees(chronologie, personne) {
  * travaillé) coupe. Voir `carriere.py`.
  */
 function lignesDuReleve(dateNaissance, periodes, fin, macro, identifiant,
-  progressive = null) {
+  progressive = null, sexe = "") {
   const lues = periodes.map((periode) => {
     const { attributs } = periode;
     const annee = chrono.anneeDe(periode.debut);
@@ -2477,6 +2481,7 @@ function lignesDuReleve(dateNaissance, periodes, fin, macro, identifiant,
       dispense: attributs.dispense_assiette_minimale ?? "",
       lodeom: attributs.lodeom ?? "",
       outreMer: attributs.outre_mer ?? "",
+      sexe,
     });
   });
   return limiterChomageNonIndemnise(
@@ -2574,7 +2579,8 @@ export function prolongerReleve(releve, fin, macro, interruptions = new Map(),
  * au départ ; le temps partiel que la chronologie porte sur ses périodes
  * (`quotite`), les années qu'il touche. Voir `carriere.py`.
  */
-function lignesDuParcours(dateNaissance, periodesDeclarees, fin, macro, progressive = null) {
+function lignesDuParcours(dateNaissance, periodesDeclarees, fin, macro, progressive = null,
+  sexe = "") {
   const anneeNaissance = dateNaissance.annee;
   const lire = (p) => ({
     metier: p.attributs,
@@ -2659,6 +2665,7 @@ function lignesDuParcours(dateNaissance, periodesDeclarees, fin, macro, progress
       lodeom: principal.lodeom ?? "",
       outreMer: departementDeLAnnee(annee, principal,
         periodes.filter((_, i) => moisParMetier[i] > 0).map(({ metier }) => metier)),
+      sexe,
     }));
   }
   const limitees = limiterChomageNonIndemnise(lignes, anneeNaissance);

@@ -23,6 +23,13 @@ ANNEE_REVALORISATION_SUR_LES_PRIX = 1987
 #: n° 72-8 du 3 janvier 1972) : aucune assiette avant.
 ANNEE_CREATION_AVPF = 1972
 
+#: Le père n'y entre, comme la mère, qu'au 1er janvier 1985 : la caisse
+#: affilie les hommes « depuis le 01/07/1979 », et « Du 01/07/1979 au
+#: 31/12/1984 [...] uniquement s'ils assumaient la charge d'un enfant ou d'un
+#: adulte handicapé » (exposé « Parent au foyer - AVPF » de la Cnav ; circulaire
+#: Cnav 25/79 du 6 mars 1979), ce que la saisie ne dit pas (fiche ``avpf``).
+ANNEE_AVPF_DES_HOMMES = 1985
+
 #: Heures de SMIC de l'assiette MENSUELLE de l'AVPF, « 169 fois le salaire
 #: horaire minimum de croissance en vigueur au 1er juillet de l'année civile
 #: précédente » (R. 381-3, rédactions de 2002 et de 2023).

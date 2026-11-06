@@ -178,6 +178,33 @@ def test_l_avpf_compte_avant_avril_1983(simulateur):
     assert applique["avpf"] == pytest.approx(7.0812, abs=1e-3)
 
 
+def test_l_avpf_du_pere_ne_court_que_depuis_1985(simulateur):
+    """La caisse affilie les femmes à l'AVPF « depuis le 01/07/1972 », les hommes
+    « depuis le 01/07/1979 », et de 1979 à 1984 « uniquement s'ils assumaient la
+    charge d'un enfant ou d'un adulte handicapé » ; « Depuis le 01/01/1985, la
+    condition d'affiliation était identique à celle des femmes » (exposé
+    « Parent au foyer - AVPF » de la Cnav, 24 octobre 2025 ; circulaire Cnav
+    25/79 ; décret n° 73-88, article 1er, de 1978 à août 1985 : « les mères de
+    famille et les femmes », « les femmes isolées »). La saisie ne dit pas le
+    handicap : le père n'a l'AVPF que depuis 1985. Douze fois l'assiette
+    mensuelle de la Cnav (assiette_avpf.csv) : 253,141593 € en 1978, 286,700195
+    en 1979, 563,971419 en 1984, 614,210992 en 1985, 770,597768 en 1990."""
+    annees = (1978, 1979, 1984, 1985, 1990)
+
+    def avpf(sexe: str) -> list[float]:
+        carriere = simulateur.carriere_simple(
+            annee_naissance=1950, sexe=sexe, affiliation="salarie_prive_non_cadre",
+            age_debut=20, age_liquidation=65, niveau_salaire=1.0,
+            profil_carriere="plat", nombre_enfants=2, jour_naissance=1,
+            interruptions={a: "education_enfant" for a in annees})
+        return [next(l for l in carriere.lignes if l.annee == a).revenu_avpf
+                for a in annees]
+
+    assert avpf("F") == pytest.approx(
+        [3_037.699116, 3_440.40234, 6_767.657028, 7_370.531904, 9_247.173216], abs=1e-6)
+    assert avpf("H") == pytest.approx([0, 0, 0, 7_370.531904, 9_247.173216], abs=1e-6)
+
+
 def test_la_colonne_de_revalorisation_est_celle_de_la_date_d_effet(simulateur):
     """Trois coefficients recopiés à la main de la page de la Cnav des
     coefficients d'avant 2013 et du barème d'avril 2013, qu'un défaut du

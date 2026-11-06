@@ -1,0 +1,28 @@
+date: "2026-11-06"
+session: "action 175, étape 4, file H, H7 : l'assurance vieillesse des parents au foyer du père"
+consulte: >-
+  python scripts/veille_droit.py (rien de neuf à la base de la Cnav depuis le registre,
+  qu'un exposé à relire hors du thème). L'index LEGI de la DILA, à jour au 2 novembre 2026
+  : le décret n° 73-88, tous ses articles et toutes leurs rédactions ; les décrets n°
+  76-153 et n° 78-269 ; le décret n° 85-830, article 1er ; les articles de la loi n°
+  79-1129 et de la loi n° 85-17 que l'index garde ; L. 381-1, rédaction du 21 décembre
+  1985. L'index JORF, à jour au 3 novembre 2026 : les notices des lois n° 72-8, n° 77-765,
+  n° 79-1129 et n° 85-17, des décrets n° 73-88, n° 78-270, n° 80-1068 et n° 85-830, de la
+  circulaire du 29 avril 1980, et toutes les notices de 1971 à 1986 qui nomment L. 242-2.
+  La base de législation de la Cnav, par son API : l'exposé « Parent au foyer - AVPF »
+  (version du 24 octobre 2025), les circulaires Cnav 25/79 du 6 mars 1979 et 2011/38.
+trouve: >-
+  La caisse affilie les femmes depuis le 1er juillet 1972, les hommes depuis le 1er
+  juillet 1979 s'ils ont la charge d'un enfant ou d'un adulte handicapé, et comme les
+  femmes depuis le 1er janvier 1985 ; l'extension de 1979 tient à une lettre ministérielle
+  du 13 février 1979, et non à une loi. Le décret n° 73-88 ne nomme les pères qu'au 4 août
+  1985. Le modèle servait l'AVPF au père depuis 1972 : il ne la lui sert plus que depuis
+  1985, dans les deux moteurs (fiche avpf, cinq versions). Non tranchés : janvier à août
+  1985 (la caisse ou le décret), et l'exception du handicap de 1979 à 1984, que la saisie
+  ne dit pas. Candidat : une année d'éducation valide quatre trimestres, AVPF ou non.
+reste: >-
+  Au fac-similé : la loi n° 72-8, le décret n° 73-88 d'origine, le décret n° 80-1068 et la
+  loi n° 85-17 (lignes proposées dans la note H7 pour la file de l'action 138). À la
+  session du modèle suivante : les trimestres d'une année d'éducation sans AVPF, la mère
+  avant juillet 1972 et le père avant 1985, après lecture des règles de la fonction
+  publique que la même ligne sert. La relecture R-H7.

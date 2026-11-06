@@ -7,9 +7,9 @@ d'assurance » (cette note). Suivant : les quatre autres thèmes de « Carrière
 sous la convention de la note du premier thème. La base se relit par `cnav_legislation.py`
 hors de 5 h–6 h UTC. Restent à lire avec leur thème : les listes d'accords, de l'Union et de
 l'Espace économique européens. Aux sessions du modèle : les deux candidats de cette note, les
-trois et les deux des précédentes ; l'activité accessoire d'avant 2015 est portée (H6), ses
-deux candidats dans sa note, relue (R-H6), ses six écarts déclarés (H6-bis, sa note) ;
-suivante de la file H : H7, l'AVPF du père.
+trois et les deux des précédentes ; l'activité accessoire (H6, R-H6, H6-bis) ; l'AVPF du père,
+ouverte en 1985 (H7, sa note), dont le candidat 1, les trimestres d'une année d'éducation sans
+AVPF, est le plus lourd. Suivante de la file H : la relecture R-H7.
 
 **Le 6 novembre 2026, ce qui est fait.**
 

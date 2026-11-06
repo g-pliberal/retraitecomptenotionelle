@@ -50,7 +50,7 @@ from .donnees.chargement import (
     une_fois_par_instantane,
     validant_compense,
 )
-from .donnees.macro import DEPARTEMENTS_D_OUTRE_MER, DonneesMacro
+from .donnees.macro import ANNEE_AVPF_DES_HOMMES, DEPARTEMENTS_D_OUTRE_MER, DonneesMacro
 from . import chronologie as chrono
 from .droit.preparer import preparer
 from .somme import somme_ordonnee
@@ -691,6 +691,7 @@ def _ligne_annuelle(
     lodeom: str = "",
     outre_mer: str = "",
     cumulee: bool = False,
+    sexe: str = "",
 ) -> AnneeCarriere:
     """Une année de carrière, une fois connus son revenu et sa nature.
 
@@ -850,8 +851,11 @@ def _ligne_annuelle(
         # date par date depuis juillet 1972 (`legislation/assiette_avpf.csv`).
         # Le modèle portait 1 820 heures du SMIC de janvier de l'année : 9 à
         # 10 % de trop peu, et une assiette avant que l'AVPF n'existe.
+        # L'AVPF du père ne court que depuis le 1er janvier 1985
+        # (`ANNEE_AVPF_DES_HOMMES`).
         revenu_avpf=(
             0.0 if cotise or regle is None or not regle.avpf
+            or (sexe == "H" and annee < ANNEE_AVPF_DES_HOMMES)
             else macro.revenu_avpf(annee) * part
         ),
         # Services et durée d'assurance ne sont pas la même case : la première
@@ -2144,6 +2148,7 @@ class Carriere:
                 micro=source.micro,
                 lodeom=source.lodeom,
                 outre_mer=source.outre_mer,
+                sexe=self.sexe,
             )
 
         # Le mois de liquidation n'est pas travaillé : l'année du départ
@@ -2500,11 +2505,11 @@ class Carriere:
         if relevees:
             lignes = _lignes_du_releve(date_naissance, relevees,
                                        chrono.mois_de(acte["debut"]), macro, identifiant,
-                                       progressive)
+                                       progressive, naissance["attributs"]["sexe"])
         elif periodes:
             lignes, dates_entree = _lignes_du_parcours(
                 date_naissance, periodes, chrono.mois_de(acte["debut"]), macro,
-                progressive)
+                progressive, naissance["attributs"]["sexe"])
         else:
             lignes = []
         return cls(
@@ -2541,8 +2546,8 @@ def _naissances_declarees(chronologie: dict, personne: str) -> tuple[str, ...]:
 
 def _lignes_du_releve(date_naissance: DateMois, periodes: list[dict], fin: DateMois,
                       macro: DonneesMacro, identifiant: str,
-                      progressive: tuple[DateMois, float] | None = None
-                      ) -> list[AnneeCarriere]:
+                      progressive: tuple[DateMois, float] | None = None,
+                      sexe: str = "") -> list[AnneeCarriere]:
     """Les années d'un relevé, une par ligne : le revenu et les trimestres
     qu'il porte, sous le statut qu'il dit. Une année à temps partiel, ou de
     retraite progressive, garde le revenu que le relevé porte, déjà celui du
@@ -2584,6 +2589,7 @@ def _lignes_du_releve(date_naissance: DateMois, periodes: list[dict], fin: DateM
             dispense=attributs.get("dispense_assiette_minimale", ""),
             lodeom=attributs.get("lodeom", ""),
             outre_mer=attributs.get("outre_mer", ""),
+            sexe=sexe,
         ))
     return limiter_chomage_non_indemnise(
         lignes, date_naissance.annee,
@@ -2689,7 +2695,8 @@ def prolonger_releve(releve: list[LigneRelevee], fin: DateMois, macro: DonneesMa
 
 def _lignes_du_parcours(date_naissance: DateMois, periodes: list[dict], fin: DateMois,
                         macro: DonneesMacro,
-                        progressive: tuple[DateMois, float] | None = None
+                        progressive: tuple[DateMois, float] | None = None,
+                        sexe: str = ""
                         ) -> tuple[list[AnneeCarriere], dict[str, DateMois]]:
     """Les années d'un parcours, et le mois d'entrée dans chaque statut.
 
@@ -2807,6 +2814,7 @@ def _lignes_du_parcours(date_naissance: DateMois, periodes: list[dict], fin: Dat
             outre_mer=_departement_de_l_annee(annee, dominant, [
                 metier for (metier, _, _), mois in zip(principaux, mois_par_metier)
                 if mois > 0]),
+            sexe=sexe,
         ))
     lignes = limiter_chomage_non_indemnise(lignes, annee_naissance)
 
