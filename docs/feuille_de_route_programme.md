@@ -843,6 +843,34 @@ côté) :
   an, sous l'inflation de 1,75 % du COR : le plancher en euros ne jouerait
   que dans une crise.
 
+**Le 7 novembre 2026 : le plancher en euros et la garantie, instruits.** Le
+propriétaire veut « plus de billes pour décider ». La note
+`186/2026-11-07-indexation-etude.md` les donne, sous « Le plancher en euros
+et la garantie : de quoi décider » :
+- *Le plancher existe déjà dans le droit français, sans rattrapage* :
+  « Si ce coefficient est inférieur à un, il est porté à cette valeur »
+  (L. 161-25 du code de la sécurité sociale, depuis 2016).
+- *Sous α = 1, sans plancher, les pensions auraient baissé en euros* de 2005
+  à 2025 : la pension notionnelle 4 années sur 21, jusqu'à −3,8 % ; celle du
+  stock 7 années sur 21, jusqu'à −3,3 %. Sous le COR, aucune baisse d'ici
+  2070 ; avec l'IA et une inflation de 1 %, celle du stock baisse 14 années
+  (à côté).
+- *Sans rattrapage*, le plancher rend pour toujours ce qu'il évite, et α = 1
+  ne tient plus : +6 à 7 % pour une pension liquidée en 2005. *Avec
+  rattrapage*, comme l'Allemagne, α = 1 tient sur la durée, contre une
+  avance de 4 % au plus d'une pension, portée jusqu'à douze ans quand
+  l'inflation est basse.
+- *Le droit* : le Conseil constitutionnel n'a jamais jugé de baisse en euros
+  d'une pension liquidée, seulement des gels d'un an « exceptionnel[s] et
+  limité[s] ».
+- *La garantie* : le droit promet déjà des pensions « en rapport avec les
+  revenus » (L. 111-2-1), sans sanction. Six promesses sont pesées ; « votre
+  cotisation ne dépassera jamais 18 % », la promesse suédoise, devient
+  possible avec α = 1 ; « votre pension garde son pouvoir d'achat » ne se
+  promet pas.
+- *Les pistes* : un plancher à zéro avec rattrapage, sur les comptes et les
+  pensions ; la garantie en cinq promesses, chacune avec sa condition.
+
 ### Chantier 6 — Les complémentaires : rien que leurs cotisations, sauvées mais dissoutes
 
 **La question.** Comment couper aux complémentaires tout argent qui n'est pas
@@ -1209,8 +1237,8 @@ est passée ; le début de la campagne présidentielle ?
   0,5 ou 1) ; le plancher en euros, des comptes et des pensions ; la
   garantie en quatre promesses.
 - Chantier 5, après la décision 41 (α = 1) : le plancher en euros, que
-  `data/reference/referents.yaml` laisse « à trancher » ; la garantie en
-  quatre promesses.
+  `data/reference/referents.yaml` laisse « à trancher » — aucun, sans ou avec
+  rattrapage, et qui porte l'avance ; la garantie, en cinq promesses.
 - Chantier 6 : le mécanisme de résolution ; l'ordre des caisses.
 - Chantier 6, étudié le 7 novembre : l'entrée des complémentaires au régime
   unique, à la bascule ou caisse par caisse ; la résolution et son seuil ;

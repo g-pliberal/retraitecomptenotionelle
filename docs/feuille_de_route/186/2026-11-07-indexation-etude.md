@@ -4,8 +4,8 @@
 tranché (décision 41 de `docs/feuille_de_route_programme.md`), sur les bases
 déjà fixées : la masse salariale (décision 10), les prix pour le stock
 (action 48, archivée). Restent au propriétaire le plancher en euros et la
-garantie en quatre promesses ; ses réponses s'écrivent en décisions sous le
-chantier 5. Ensuite, une session du modèle
+garantie, que « Le plancher en euros et la garantie : de quoi décider »
+instruit ; ses réponses s'écrivent en décisions sous le chantier 5. Ensuite, une session du modèle
 écrit le facteur pour le seul scénario 6, et la page Coût le chiffre. Restent
 à lire à leur source les textes marqués « non vérifié ».
 
@@ -553,3 +553,144 @@ masse salariale pour les pensions notionnelles (décision 10, et la règle du
 modèle, `RevalorisationServie`), les prix pour les pensions servies à la
 bascule (action 48, le 20 septembre 2026). Le plancher (piste 1) et la
 garantie restent à valider.
+
+## Le plancher en euros et la garantie : de quoi décider
+
+Le même jour, le propriétaire demande « plus de billes pour décider » sur
+ces deux points. Ce qui suit est un calcul fait à côté, sur les séries du
+modèle, sous les trois revalorisations de la décision 41 :
+- le compte suit la masse salariale ;
+- la pension notionnelle suit la masse salariale par retraité ;
+- la pension servie à la bascule suit les prix corrigés du facteur entier.
+
+### Le plancher en euros
+
+*Le droit français en a déjà un, sans rattrapage.* L'article L. 161-25 du
+code de la sécurité sociale, en vigueur depuis le 1er janvier 2016 (index
+LEGI du dépôt, à jour au 2 novembre 2026), le dit :
+> « Si ce coefficient est inférieur à un, il est porté à cette valeur. »
+
+Le coefficient des pensions de base est celui de cet article (L. 161-23-1).
+Aujourd'hui, une pension ne baisse donc jamais en euros par sa
+revalorisation. Elle peut être gelée, et elle l'a été, mais ce qu'un gel
+retire n'est pas rendu.
+
+*Ce que α = 1 aurait fait sans plancher.* De 2005 à 2025 :
+- **la pension notionnelle** aurait baissé en euros 4 années sur 21 :
+  −2,1 % en 2009, −0,5 % en 2013, −0,1 % en 2014 et −3,8 % en 2020 ;
+- **la pension servie à la bascule** aurait baissé 7 années sur 21 (2006,
+  2009, 2010, 2013 à 2016), au pire de −3,3 % en 2009. Dans ces années
+  d'inflation basse, le nombre de retraités par cotisant montait plus vite
+  que les prix ;
+- **le compte** n'aurait baissé qu'une fois depuis 1951, de −4,0 % en 2020,
+  quand la masse salariale a baissé.
+
+Sous la projection du COR (1,75 % d'inflation), aucune des trois ne baisse
+d'ici 2070. Le plancher ne joue que dans les crises :
+- **avec une inflation de 1 % par an** : la pension servie à la bascule
+  baisse 7 années sur 45, d'au plus 0,5 % ;
+- **si l'emploi baisse de 1 % par an de 2030 à 2039 (l'IA)** : elle baisse
+  4 années, d'au plus 0,8 % ;
+- **avec les deux chocs ensemble** : elle baisse 14 années, d'au plus 1,6 %,
+  et la pension notionnelle 7 années, d'au plus 0,3 %.
+
+*Trois façons de faire.*
+
+| | Aucun plancher (la Suède) | Plancher sans rattrapage (le droit français, les pensions italiennes et polonaises) | Plancher avec rattrapage (l'Allemagne, § 68a ; les comptes italiens et lettons) |
+|---|---|---|---|
+| Une pension baisse-t-elle en euros ? | oui, les mauvaises années | jamais | jamais |
+| α = 1 tient-il ? | oui, chaque année | non : chaque baisse évitée est donnée pour toujours | oui, avec retard : la baisse évitée se reprend sur les hausses suivantes, divisées par deux |
+| De 2005 à 2025, face à la règle | 0 | +6,8 % pour une pension notionnelle liquidée en 2005, +6,1 % pour une pension servie, +4,2 % pour un compte | 0 en 2026 ; au plus 3,8 % d'avance pour une pension notionnelle, 4,1 % pour une pension servie, rendus au 1er janvier 2023 |
+| Sous les deux chocs, en 2070 | 0 | +1,3 % pour une pension notionnelle, +9,4 % pour une pension servie | 0 pour une pension notionnelle ; 3,7 % encore à reprendre sur une pension servie, au plus 8,0 % en cours de route |
+
+(à côté)
+
+Le rattrapage coûte une **avance** : les années de crise, la répartition sert
+plus que ses recettes, et quelqu'un porte l'écart jusqu'à ce que les hausses
+divisées par deux l'aient rendu. De 2005 à 2025, cet écart n'a jamais
+dépassé 4,1 % d'une pension ; sur toutes, ce serait au plus 17 Md€ de la
+dépense de 2024. Le compte l'aurait rendu en deux ans, après 2020. La
+pension notionnelle l'aurait porté de 2010 à 2017, puis en 2021 et 2022. La
+pension servie l'aurait porté douze ans, de 2010 à 2022 : l'inflation basse
+ne laissait que de petites hausses à diviser par deux. Sous les deux chocs,
+une pension servie à la bascule le rendrait si lentement qu'il en resterait
+encore en 2070. Le
+porteur de cette avance est à désigner : une réserve, comme le fonds suédois,
+ou la dette.
+
+*Le droit.* L'étude de la réversion (« Le droit protège le stock bien plus
+que le flux ») a établi deux choses :
+- **le Conseil constitutionnel n'a jamais jugé de baisse en euros d'une
+  pension liquidée.** Il n'a validé que des sous-revalorisations d'un an,
+  « exceptionnel[les] et limité[es] » (2014-698 DC, 2019-795 DC). Une règle
+  qui baisse les pensions en euros d'elle-même, une année sur trois, n'a pas
+  de précédent ;
+- **la CEDH admet une réduction raisonnable**, surtout temporaire ou
+  assortie d'un plancher (Koufaki, Da Conceição Mateus).
+
+Le plancher, avec ou sans rattrapage, retire au facteur la seule prise
+évidente d'un recours : la baisse en euros. Il ne répond pas à la baisse en
+pouvoir d'achat que α = 1 veut sur le stock (−17 % en vingt-cinq ans sous le
+COR). Le même passage de l'étude cite le Conseil : un écart durable
+« affecte […] le caractère contributif des régimes ». C'est un risque
+juridique que la décision 41 assume, et que le programme aura à défendre
+(décision 6).
+
+*L'expérience.* La Suède, sans plancher, a baissé ses pensions trois années
+(2010, 2011, 2014). Elle a compensé les deux premières par l'impôt. En 2017,
+elle a amorti son frein, qui ne reporte plus que le tiers de l'écart.
+L'Allemagne, avec plancher et rattrapage, a évité la baisse en 2021 et l'a
+reprise en 2022.
+
+### La garantie
+
+*Ce que le droit promet déjà.* L'article L. 111-2-1, II, du code de la
+sécurité sociale :
+> « Le système de retraite par répartition assure aux retraités le
+> versement de pensions en rapport avec les revenus qu'ils ont tirés de leur
+> activité. Les assurés bénéficient d'un traitement équitable […] quels que
+> soient […] les régimes dont ils relèvent et la génération à laquelle ils
+> appartiennent. »
+
+Il fixe aussi, à la Nation, « la garantie d'un niveau de vie satisfaisant
+pour tous les retraités » comme objectif. Ce sont des objectifs, sans
+sanction ; la seule garantie opposable est le plancher de L. 161-25. Le
+compte notionnel peut reprendre ces mots en les rendant vrais :
+- « en rapport avec les revenus » devient « chaque euro cotisé » ;
+- « un traitement équitable […] quels que soient les régimes […] et la
+  génération » devient « la même règle pour tous » ;
+- « un niveau de vie satisfaisant » devient « le plancher ».
+
+*Six promesses possibles*, avec ce que chacune engage.
+
+| Promesse | Vraie depuis | Ce qu'elle coûte | Sa condition, à dire |
+|---|---|---|---|
+| 1. Chaque euro cotisé est inscrit à votre nom | la bascule | rien : c'est le mécanisme | le compte suit la masse salariale ; les cinq points capitalisés sont à vous (décision 32) |
+| 2. La même règle pour tous | l'intégration de la dernière complémentaire | rien | jusque-là, une complémentaire garde ses cotisations (décision 40) |
+| 3. Personne sous 800 € par mois à 65 ans, 1 050 € pour qui vit seul | la bascule | l'impôt (page Coût) | résider en France ; c'est une avance, reprise sur la succession (décision 30) |
+| 4. Votre pension ne baisse jamais en euros | la fin de la transition | rien sans crise ; une avance en crise | un plancher (ci-dessus) ; les décisions 2 et 3 baissent d'abord les pensions d'aujourd'hui |
+| 5. Votre cotisation ne dépassera jamais 18 % | la bascule | rien, si α = 1 tient | la transition est payée hors des cotisations (chantiers 1 et 4) ; c'est la promesse suédoise (16 %) |
+| 6. Votre pension garde son pouvoir d'achat | — | **à ne pas promettre** | α = 1 la fait baisser en réel |
+
+Ne se promettent pas non plus : un montant ou un taux de remplacement.
+L'Allemagne paie ses 48 % sur son budget fédéral. La Suède dit, de son
+propre système : « the value of the pension is not guaranteed ». Une
+promesse fausse un jour serait celle qu'on opposerait au programme.
+
+La promesse 5 est la seule qui parle aux cotisants, le fil du programme. Ce
+n'était pas possible avant α = 1. Quand la démographie se dégrade, quelqu'un
+paie : sans facteur, ce sont les cotisants, par leur taux ; avec α = 1, ce
+sont les pensions. Le taux peut alors être promis.
+
+### Les pistes, pour le propriétaire
+
+- **Le plancher : à zéro, avec rattrapage, sur les comptes et sur les
+  pensions**, comme l'Allemagne. Il garde α = 1 sur la durée, évite toute
+  baisse en euros, et ne fait que prolonger le plancher du droit actuel en
+  y ajoutant le rattrapage. Reste à désigner qui porte l'avance des années
+  de crise.
+- **La garantie : les promesses 1 à 5**, chacune avec sa condition, et la 6
+  écartée en le disant. Une formulation ramassée :
+  > « Chaque euro cotisé est inscrit à votre nom. La même règle vaut pour
+  > tous. Votre cotisation ne dépassera jamais 18 %, votre pension ne
+  > baissera jamais en euros, et personne ne vivra sous 800 € par mois. »
