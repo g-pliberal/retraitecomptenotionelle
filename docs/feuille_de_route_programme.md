@@ -709,6 +709,42 @@ chaque chiffre du programme doit résister.
 **À étudier.** Chacun à sa source : COR, Cour des comptes, Insee, Agence
 France Trésor.
 
+**Le 7 novembre 2026 : les sept chiffres, relus à leur source.** Le rapport
+est la note `186/2026-11-07-chiffres-qui-tiennent.md`. Ce qu'il établit :
+- *« La moitié du déficit public »* est le calcul de J.-P. Beaufret : 81 Md€
+  sur 170 en 2024, en comptant comme déficit la surcotisation de l'État et des
+  collectivités, les subventions aux régimes spéciaux et les transferts des
+  autres branches. La piste du 6 novembre se trompait : la convention la plus
+  large atteint bien la moitié, mais le COR, la Cour, l'IPP et le CAE la
+  réfutent. Selon la convention du site (la Cour, 22 septembre 2026), 33 Md€,
+  22 % du déficit public de 2025 (152,5 Md€) ; 27 % avec les régimes
+  spéciaux ; 3 % selon le COR. Ce qui tient sans débat : les retraites font
+  le quart de la dépense publique.
+- *Les taux* : l'OAT à 10 ans rend 4,44 % en septembre 2026, 97 points au-dessus
+  du Bund, au plus haut depuis 2008 ; la France emprunte plus cher que la
+  Grèce et l'Italie (BCE). Environ 147 points le 6 novembre.
+- *La BCE et le FMI* : le bouclier de la BCE (TPI) exclut en principe un pays
+  sous procédure de déficit excessif, ce que la France est depuis le
+  26 juillet 2024 ; la Grèce a coupé ses pensions dix fois de 2010 à 2013,
+  jusqu'à près de la moitié des grosses pensions, et la CEDH a jugé
+  irrecevable le recours contre celles de 2010.
+- *Le « TRI négatif »* est faux : le COR donne 0,8 % pour la génération 2000,
+  0,0 % pour un cadre, rapportés au salaire moyen ; l'outil du dépôt, 3,3 % réel
+  pour le salarié moyen né en 1940 et 1,3 % pour celui né en 2000. Et l'outil
+  donne à la proposition moins que le droit actuel aux jeunes générations
+  (0,2 % réel) : à traiter au chantier 9.
+- *Les 17,9 Md€* tiennent ; le COR écrit lui-même que la cotisation
+  déplafonnée n'ouvre pas de droits.
+- *Le PEE* n'est pas un produit de retraite : le PER d'entreprise collectif
+  succède au Perco (L. 224-13 du code monétaire et financier).
+- *La capitalisation* : Breyer (1989, p. 655) l'établit, on ne dédommage pas
+  la génération de la bascule sans appauvrir une génération suivante.
+
+**Au propriétaire, pour les chiffres** : abandonner « la moitié » ou la
+garder en citant Beaufret ; chiffrer les taux à la date de publication ;
+remplacer le « TRI négatif » par la baisse d'une génération à l'autre ;
+dire « PER d'entreprise » et non PEE.
+
 ### Chantier 8 — Le message
 
 **Pistes du 6 novembre.**
@@ -858,6 +894,12 @@ est passée ; le début de la campagne présidentielle ?
   le sort des réserves, aux comptes des affiliés de chaque caisse ou au fonds
   commun ; l'ordre ; la garantie face au complément différentiel des
   exploitants agricoles.
+- Chantier 7, étudié le 7 novembre : « la moitié du déficit public »,
+  abandonnée ou attribuée à Beaufret ; les taux chiffrés à la date de
+  publication ; le rendement en baisse au lieu du « TRI négatif » ; le PER
+  d'entreprise au lieu du PEE ; et, au chantier 9, la façon de montrer que
+  l'outil donne à la proposition un rendement plus faible que le droit actuel
+  pour les jeunes générations.
 - Chantier 8, après les décisions 31 à 33 : l'âge, une fois chiffré un âge
   plancher de 62 ou 64 ans ; le plafond de l'apport pour un premier
   logement. Le gain des actifs suit la lecture A ou B du chantier 1, le

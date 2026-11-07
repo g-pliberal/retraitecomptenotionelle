@@ -1,0 +1,29 @@
+date: "2026-11-07"
+session: "action 186, chantier 7 : les sept chiffres du programme relus à leur source"
+consulte: >-
+  Aucune règle du scénario 1 n'est touchée. L'index LEGI de la DILA n'étant
+  pas sur le conteneur, Légifrance en ligne pour les articles L. 224-1,
+  L. 224-13 et L. 224-23 du code monétaire et financier (plan d'épargne
+  retraite), en vigueur au 7 novembre 2026 ; les fiches F2142 (PEE) et F34982
+  (PER) de service-public. Le rapport annuel du COR de juin 2026 ; l'Insee
+  Première n° 2106 (compte des administrations publiques en 2025) ; les taux à
+  long terme de la BCE et les rendements quotidiens de la Bundesbank, par
+  leurs API ; le communiqué de la BCE du 21 juillet 2022 (TPI) ; la page de
+  la Commission européenne sur la procédure de déficit excessif de la France ;
+  la fiche « Austerity measures » de la CEDH ; les deux textes de
+  J.-P. Beaufret (COR, 21 septembre 2023, document n° 6 ; Institut Diderot,
+  2026) ; Breyer (1989), au dépôt de l'université de Constance.
+trouve: >-
+  Rien qui touche les fiches. Le code monétaire et financier confirme que le
+  PER d'entreprise collectif (L. 224-13) est la forme d'épargne retraite de
+  l'entreprise, et que les droits d'un PER sont payables au plus tôt à la
+  liquidation de la pension (L. 224-1) ; le PEE, indisponible cinq ans, n'en
+  est pas une. Le COR confirme que la cotisation vieillesse déplafonnée
+  n'ouvre pas de droits (rapport de juin 2026, p. 140). Le détail est dans la
+  note docs/feuille_de_route/186/2026-11-07-chiffres-qui-tiennent.md.
+reste: >-
+  Non lus : l'article L. 3332-25 du code du travail (indisponibilité du PEE),
+  que Légifrance n'a pas servi au robot, la fiche de service-public en
+  tenant lieu ; la date de fermeture du Perco dans l'ordonnance n° 2019-766 ;
+  le taux quotidien de l'OAT à la Banque de France et à l'Agence France
+  Trésor, qui refusent le robot.
