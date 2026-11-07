@@ -8042,14 +8042,15 @@ et 3 ci-dessus ; la mesure, et comment la refaire, sont dans la note
 
 ### 186. Le programme du parti sur les retraites : chaque grande idée étudiée à fond, aux sources, puis le modèle et le site qui la montrent — `en cours`
 
-**Reprise, au 6 novembre 2026.** Ouverte ce soir avec le propriétaire : le
-programme a sa feuille de route, `docs/feuille_de_route_programme.md` —
-quinze décisions, ce qui est écarté, dix chantiers. Le détail n'est pas
-décidé : le propriétaire apporte ses propres recherches, qui ajustent
-plusieurs pistes ; une piste n'est pas une décision. Par quoi commencer :
-revoir avec lui « Les décisions attendues », puis le gel (chantier 10),
-avant d'ouvrir une session par chantier. Rien n'est gelé encore. Détail :
-`186/2026-11-06-bilan-et-programme.md`.
+**Reprise, au 7 novembre 2026.** Le chantier 3 s'est ouvert par la
+réversion, étudiée aux sources et chiffrée face au droit actuel : le rapport
+est `186/2026-11-07-reversion-etude-et-couts.md`, son résumé et les décisions
+qu'il attend sont sous le chantier 3 de `docs/feuille_de_route_programme.md`.
+Le propriétaire n'a rien tranché encore ; une piste n'est pas une décision.
+Par quoi commencer : ses décisions sur la réversion (le stock, les décès à
+venir, le décès d'un actif, la garantie servie d'office), puis « Les
+décisions attendues » et le gel (chantier 10). Rien n'est gelé. Le bilan du
+6 novembre : `186/2026-11-06-bilan-et-programme.md`.
 
 **D'où elle vient.** Le 6 novembre 2026, le propriétaire demande un bilan :
 les vagues se succèdent, et le chantier semble sans fin. La session mesure

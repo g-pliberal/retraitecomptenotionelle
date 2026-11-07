@@ -230,6 +230,47 @@ décès un accident, et les veuves sont souvent de petites pensions ; la
 garantie individualisée rattrape les plus pauvres, il faut décider pour les
 autres.
 
+**Le 7 novembre 2026 : la réversion, étudiée aux sources.** Le propriétaire
+a voulu plus de recherches, et le coût de chaque système face au droit
+actuel ; le rapport est la note `186/2026-11-07-reversion-etude-et-couts.md`.
+Ce qu'il établit :
+- *La proposition* coupe toute réversion le jour de la bascule, celle des
+  4,4 millions de survivants déjà servis comprise : 44 Md€ en 2026, 1,19 point
+  de PIB en moyenne sur 2026-2070 (modèle). La garantie vieillesse en reprend
+  une part : 0,84 point net avec un recours plein, 1,01 avec le recours de
+  50 % du modèle (calcul à côté, le chiffre le plus fragile).
+- *Le stock* s'éteint de moitié en neuf ans : sa coupure ne pèse que 0,24 à
+  0,30 point net en moyenne. Aucun pays étudié n'a coupé les réversions de
+  survivants âgés, chaque réforme française les a épargnées (2004, 2018), et
+  la CEDH condamne la privation totale d'une pension sans transition. La
+  baisse en cinq ans jusqu'au plancher rapporte 0,20 point, le gel en euros
+  0,04.
+- *Sans réversion publique pour les décès à venir*, le stock gardé jusqu'à
+  extinction (le chemin suédois) : 0,60 à 0,71 point net, environ 70 % de
+  l'économie de la proposition, pour un risque juridique minime.
+- *Le choix du mariage* se fait payer par le couple — la rente sur deux têtes,
+  de 6 à 28 % de la pension de qui couvre son conjoint, ou le partage des
+  droits du mariage, 0,055 point de coût public par le diviseur unisexe — ou
+  par tous les nouveaux retraités, célibataires compris, au tarif italien :
+  de 8 à 10 % de leur pension.
+- *L'accident* : quand un actif meurt, le droit actuel sert une réversion sur
+  ses droits acquis, sans décote et sans projection de carrière ; dans la
+  proposition, son compte reste au système (24 Md€ de capital en 2026). Le
+  verser au conjoint coûterait 13 Md€ de capital par an, une réversion
+  temporaire au veuvage précoce avec enfants moins de 1 Md€.
+- *Ce que le modèle ne chiffre pas*, le COR et l'étude d'impact de 2020 le
+  font : le plafond de ressources généralisé, −17 % de réversion en 2070 ;
+  la règle des 70 % du projet de 2020, −5 % en 2050.
+
+La piste du rapport, qui n'est pas une décision : rien de public pour le
+choix — une rente sur deux têtes servie par défaut, à laquelle on ne renonce
+qu'avec la signature du conjoint, ou le partage des droits du mariage —, une
+couverture publique de l'accident, le stock gardé jusqu'à extinction, et la
+garantie vieillesse servie d'office.
+
+**Au propriétaire, pour la réversion** : la règle du stock ; celle des décès
+à venir ; la couverture du décès d'un actif ; la garantie servie d'office.
+
 ### Chantier 4 — Les recettes hors du travail : la TVA sociale et la LVT
 
 **La question.** Combien rapportent la TVA sociale et la LVT, qui les paie,
@@ -470,6 +511,9 @@ est passée ; le début de la campagne présidentielle ?
 - Chantier 2 : le plafond de baisse par an ; la reprise sur succession de la
   garantie vieillesse.
 - Chantier 3 : les enfants ; la réversion ; la répartition des 45 dispositifs.
+- Chantier 3, la réversion, étudiée le 7 novembre : la règle du stock, celle
+  des décès à venir, la couverture du décès d'un actif, la garantie servie
+  d'office.
 - Chantier 4 : la TVA sur le seul taux normal ; la LVT à 1 % ou 2 %, et son
   abattement.
 - Chantier 5 : l'indexation des pensions servies ; la formulation de la
