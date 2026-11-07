@@ -8044,14 +8044,14 @@ et 3 ci-dessus ; la mesure, et comment la refaire, sont dans la note
 
 **Reprise, au 7 novembre 2026.** La réversion est tranchée pour le scénario 6
 (décisions 16 à 28) ; le stock gardé est au coût, le site le dément encore
-(`…-reversion-scenario-6-plan.md`). Décisions 29 et 30 : les deux lectures
-de la 29 sont refaites au modèle (`…-deux-lectures-au-modele.md`). Le
+(`…-reversion-scenario-6-plan.md`). Décisions 29 et 30 : les lectures de la
+29 refaites au modèle, sous trois recettes (`…-deux-lectures-au-modele.md`). Le
 message (8) est tranché (décisions 31 à 33), l'âge à 65 ans (décision 68) ; les
 enfants (3), tranchés règle par règle (décisions 50 à 61, `…-regle-par-regle.md`) ;
 les recettes (4), l'indexation (5), les complémentaires (6) et les chiffres
-(7) sont étudiés ; chaque note tient son bloc. Par quoi commencer : A ou B, au
-propriétaire, qui fixe le besoin de TVA, et les questions des chantiers 3 à 7 ;
-puis le gel (10). Rien n'est gelé.
+(7) sont étudiés ; chaque note tient son bloc. Par quoi commencer : quel déficit
+pour la 29, puis A ou B, qui fixe le besoin de TVA, et les questions des
+chantiers 3 à 7, au propriétaire ; puis le gel (10). Rien n'est gelé.
 
 **D'où elle vient.** Le 6 novembre 2026, le propriétaire demande un bilan :
 les vagues se succèdent, et le chantier semble sans fin. La session mesure

@@ -9,6 +9,11 @@ comptes, et la dépense suit. Les chiffres sont ceux de `main` au commit
 `553e8ca`, qui garde les réversions servies à la bascule (décision 16). Le
 choix entre A et B reste au propriétaire.*
 
+*Corrigé le même jour : les chiffres de cette note gardent à la retraite les
+impôts affectés et les versements de l'État, que le programme lui retire ;
+la page Coût les lui retire. Sur sa base, les taux sont bien plus hauts. Voir
+la dernière partie.*
+
 ## En bref
 
 En compte notionnel, ce qui est payé ouvre des droits, rien de plus, rien de
@@ -225,3 +230,75 @@ vieillesse (502 €).
 - **Ni comportement, ni recettes du chantier 4** (TVA, LVT).
 - **La réserve** d'« tout au déficit » et de A pourrait aussi revenir à
   l'État, en baissant ses versements : c'est un choix à faire, pas un calcul.
+
+## Corrigé le même jour : la page Coût ne compte pas les mêmes recettes
+
+Le propriétaire, devant les chiffres : « tu pourrais faire des courbes ?
+c'est un peu bizarre, ce n'est pas la simulation qui est déjà présente sur le
+site dans la page coût ; j'ai l'impression qu'on fait une connerie ». Il avait
+raison. Le calcul ci-dessus suit le premier chiffrage sur un point qu'il
+fallait mettre en avant : **la retraite y garde toutes les recettes du droit
+en vigueur, sauf ses cotisations.** La page Coût, comme le programme depuis
+le 19 septembre, lui retire les impôts affectés, les versements de l'État et
+les transferts pour les droits non contributifs. En 2026, au taux du
+programme :
+
+| En 2026, au taux de 18 % | Md€ |
+|---|---:|
+| Solde de la retraite, recettes gardées (le calcul ci-dessus) | +54 |
+| Impôts affectés (CSG, taxes) que la retraite ne reçoit plus | −66 |
+| Contribution d'équilibre que l'État ne verse plus | −50 |
+| Subventions d'équilibre que l'État ne verse plus | −8 |
+| Transferts pour les droits non contributifs (CNAF, FSV) | −11 |
+| Garantie vieillesse, que la page Coût compte à part | +14 |
+| Solde de la page Coût | −67 |
+
+Les pensions et la méthode ne sont pas en cause : sur la base de la page
+Coût, le calcul retrouve sa courbe à 18 % (solde de −2,19 points de PIB en
+2026, dette de 102,8 points en 2070). Ce sont les recettes. Et elles se
+comptent de trois façons, selon le déficit dont parle la décision 29 :
+
+| Le déficit | Tout au déficit | Lecture A | Lecture B | B, hors versements de l'État |
+|---|---:|---:|---:|---:|
+| Celui de la caisse de retraite, comme la page Coût | 30,0 % | 25,3 % | 20,8 % | 17,9 % |
+| La retraite et l'État ensemble, impôts affectés supprimés | 25,0 % | 19,9 % | 14,8 % | 17,6 % |
+| La retraite et l'État ensemble, impôts affectés gardés (le calcul ci-dessus) | 20,3 % | 14,5 % | 8,4 % | 11,2 % |
+
+Compter la retraite et l'État ensemble a un sens : sur les 135 Md€, les
+58 Md€ que l'État cesse de verser restent dans son budget, et les 11 Md€ des
+transferts, à la CNAF et au fonds de solidarité vieillesse. Les 66 Md€
+d'impôts affectés, le programme ne dit pas s'ils sont supprimés, une baisse
+d'impôt, ou gardés par l'État.
+
+**Sur la base de la page Coût, tout s'inverse.** Le programme à 18 % y creuse
+déjà le déficit : −2,2 points de PIB en 2026, contre −0,16 aujourd'hui. La
+décision 29 y demande de cotiser plus que 18 %, et la pension des actifs
+monte. Le salarié au salaire moyen, comme plus haut :
+
+| Sur la base de la page Coût | Tout au déficit | Lecture A | Lecture B |
+|---|---:|---:|---:|
+| Taux cotisé et crédité | 30,0 % | 25,3 % | 20,8 % |
+| Né en 1990 : son net chaque mois, par rapport aux 18 % | −447 € | −273 € | −103 € |
+| Sa pension en 2055, par rapport aux 18 % | +40 % | +25 % | +9 % |
+| Né en 2005 : sa pension en 2070, par rapport aux 18 % | +67 % | +41 % | +15 % |
+| Solde de la caisse en 2026 (aujourd'hui : −0,16 ; à 18 % : −2,2) | +2,9 | +0,9 | −1,0 |
+| Dette de la caisse en 2070 (droit en vigueur : +66 ; à 18 % : +103) | réserve de 164 | réserve de 60 | dette de 41 |
+
+Les 18 % du programme y correspondent à peu près à la lecture B, le déficit
+compté sans les versements de l'État que la caisse ne reçoit plus (17,9 %).
+Un salarié du privé paie aujourd'hui 27,98 %, parts salariale et patronale
+additionnées (`Parametres.part_salariale_taux_unique`) : la lecture A le laisse
+un peu en dessous, « tout au déficit » au-dessus, sans compter les cinq
+points du pilier.
+
+Ce que le propriétaire tranche, avant A ou B : **de quel déficit parle la
+décision 29**, celui de la caisse de retraite ou celui de la retraite et de
+l'État ensemble ; **et le sort des impôts affectés**, supprimés ou gardés par
+l'État. Le reste de la note, ses avantages et inconvénients compris, ne vaut
+que pour la dernière ligne du tableau des taux.
+
+Le script compte désormais les trois façons
+(`python scripts/lectures_decision_29.py`, `--convention`), tenues par
+`tests/test_lectures_decision_29.py`. Les courbes montrées au propriétaire
+(solde, dette, pension selon le taux, sous les deux bases extrêmes) en sortent ;
+elles sont restées hors du dépôt.

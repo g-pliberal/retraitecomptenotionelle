@@ -601,6 +601,33 @@ les cas types et les limites : `186/2026-11-07-deux-lectures-au-modele.md` ;
 le calcul se refait par `python scripts/lectures_decision_29.py`. Le choix
 entre A et B reste au propriétaire.
 
+*Corrigé le 7 novembre 2026, sur la question du propriétaire : « ce n'est
+pas la simulation qui est déjà présente sur le site dans la page coût ; j'ai
+l'impression qu'on fait une connerie ».* Le tableau ci-dessus garde à la
+retraite les impôts affectés, les versements de l'État et les transferts pour
+les droits non contributifs, que la page Coût, comme le programme, lui
+retire : 135 Md€ en 2026. Sur la base de la page Coût (que le calcul
+retrouve à 18 %), tout s'inverse : la décision 29 y demande un taux plus
+haut que 18 %, et la pension des actifs monte.
+
+| Le déficit dont parle la décision 29 | Tout au déficit | Lecture A | Lecture B |
+|---|---:|---:|---:|
+| Celui de la caisse de retraite, comme la page Coût | 30,0 % | 25,3 % | 20,8 % |
+| La retraite et l'État ensemble, impôts affectés supprimés | 25,0 % | 19,9 % | 14,8 % |
+| La retraite et l'État ensemble, impôts affectés gardés (le tableau ci-dessus) | 20,3 % | 14,5 % | 8,4 % |
+
+Sur la base de la page Coût, le salarié né en 1990 au salaire moyen perd
+273 € nets par mois sous A, par rapport aux 18 %, et gagne 25 % de pension ;
+la caisse finit en 2070 avec une réserve de 60 points de PIB (A) ou une dette
+de 41 (B), contre 103 à 18 % et 66 au droit en vigueur. Les 18 % y
+correspondent à peu près à B, le déficit compté sans les versements de l'État
+(17,9 %). Compter la retraite et l'État ensemble a un sens : les 58 Md€ que
+l'État cesse de verser restent dans son budget ; les 66 Md€ d'impôts
+affectés, le programme ne dit pas s'ils sont supprimés ou gardés. Au
+propriétaire, avant A ou B : de quel déficit parle la décision 29, et que
+deviennent les impôts affectés. Le détail :
+`186/2026-11-07-deux-lectures-au-modele.md`, dernière partie.
+
 ### Chantier 2 — La baisse des pensions en cours : sa règle, son plancher, son calendrier, son droit
 
 **La question.** Baisser les pensions liquidées en cinq ans, d'une façon qui

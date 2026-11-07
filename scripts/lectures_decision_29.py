@@ -21,13 +21,22 @@ partage selon la règle : un point fixe.
 
 LES CONVENTIONS, qu'il faut dire en tête de tout chiffre qui en sort.
 
-- Les recettes sont celles du droit en vigueur, impôts affectés et versements
-  de l'État compris, sauf les cotisations : le droit en vigueur en prélève
-  ``cotisations_actuel`` (21,4 % de l'assiette de la proposition en 2026,
-  19,7 % en 2070), la variante prélève ``taux × assiette``. Rendre aux
-  cotisants, c'est ``(taux du droit en vigueur − taux) × assiette``.
+- Les recettes se comptent de trois façons (``CONVENTIONS``), qui changent
+  tout. ``page_cout`` : celles de la proposition, comme la page Coût — ni
+  impôts affectés, ni versements de l'État, ni transferts pour les droits
+  non contributifs, 135 Md€ de moins qu'au droit en vigueur en 2026 —, le
+  solde étant celui du régime, la garantie vieillesse à part.
+  ``recettes_gardees``, le premier calcul : toutes celles du droit en
+  vigueur, sauf ses cotisations ; c'est aussi la retraite et l'État comptés
+  ensemble, l'État gardant ce qu'il ne verse plus et les impôts affectés.
+  ``impots_supprimes`` : la même chose, ces impôts supprimés. Le droit en
+  vigueur prélève ``cotisations_actuel`` (21,4 % de l'assiette de la
+  proposition en 2026, 19,7 % en 2070), la variante ``taux × assiette`` ;
+  ``(taux du droit en vigueur − taux) × assiette`` est ce qui est rendu aux
+  cotisants.
 - La dépense est celle du scénario 6 sous ce taux, pensions et garantie
-  vieillesse nette des reprises sur succession, comme ``chiffrage_plf.py``.
+  vieillesse nette des reprises sur succession, comme ``chiffrage_plf.py`` ;
+  la garantie à part sur la base de la page Coût.
 - Le taux est CONSTANT de 2026 à 2070, et la règle de chaque lecture tient
   EN MOYENNE sur ces années, en moyenne simple des parts de PIB, la
   convention du solde moyen du dépôt : le modèle ne sait pas faire varier le
@@ -42,9 +51,11 @@ Rien d'autre ne bouge : ni comportement, ni pilier capitalisé, ni les
 recettes du chantier 4, ni la décision 16 (les réversions servies gardées),
 qui réduira l'économie.
 
-Usage : ``python scripts/lectures_decision_29.py`` (une dizaine de calculs
-du coût, une demi-minute chacun sans mémoire), ``--cas-types`` pour la
-pension de quelques cas types sous chaque taux.
+Usage : ``python scripts/lectures_decision_29.py`` (une quinzaine de calculs
+du coût, une demi-minute chacun sans mémoire) : les taux sous les trois
+conventions, puis le détail de l'une (``--convention``, la page Coût par
+défaut) ; ``--cas-types`` pour la pension de quelques cas types sous chaque
+taux.
 """
 
 from __future__ import annotations
@@ -65,7 +76,7 @@ DEBUT, FIN = 2026, 2070
 
 #: Les taux calculés d'abord, entre lesquels la dépense s'interpole ; les taux
 #: trouvés sont ensuite calculés eux-mêmes, et la résolution reprise.
-GRILLE: tuple[float, ...] = (0.02, 0.06, 0.10, 0.14, 0.18, 0.22, 0.26)
+GRILLE: tuple[float, ...] = (0.02, 0.06, 0.10, 0.14, 0.18, 0.22, 0.26, 0.30, 0.34)
 
 LECTURES: dict[str, str] = {
     "tout": "Tout au déficit",
@@ -97,6 +108,12 @@ class Annee:
     pib: float
     croissance: float
     taux_dette: float
+    #: Les impôts et taxes affectés au droit en vigueur (CSG, taxes).
+    impots_affectes: float = 0.0
+    #: Ce que la proposition encaisse hors de ses cotisations, comme la page
+    #: Coût le compte : ni impôts affectés, ni versements de l'État, ni
+    #: transferts pour les droits non contributifs.
+    recettes_proposition: float = 0.0
 
     @property
     def taux_actuel(self) -> float:
@@ -122,25 +139,67 @@ class Ligne:
     dette: float
 
 
+#: Les trois façons de compter les recettes, qui changent tout (le
+#: 7 novembre 2026, après la question du propriétaire : « ce n'est pas la
+#: simulation qui est déjà présente sur le site dans la page coût ») :
+#:
+#: - ``recettes_gardees``, le premier calcul : la retraite garde toutes les
+#:   recettes du droit en vigueur, impôts affectés et versements de l'État
+#:   compris, sauf ses cotisations. C'est aussi la retraite et l'État comptés
+#:   ensemble, si l'État garde les impôts affectés ;
+#: - ``impots_supprimes`` : la même chose, les impôts affectés supprimés ;
+#: - ``page_cout`` : les recettes de la proposition, celles de la page Coût,
+#:   dont le solde est celui du régime, la garantie vieillesse à part.
+CONVENTIONS: dict[str, str] = {
+    "page_cout": "la caisse de retraite, comme la page Coût",
+    "impots_supprimes": "la retraite et l'État ensemble, impôts affectés supprimés",
+    "recettes_gardees": "la retraite et l'État ensemble, impôts affectés gardés",
+}
+
+
 class Etude:
     """Les années communes, et la dépense de la proposition sous chaque taux
-    calculé, ``{taux: {année: part de PIB}}``."""
+    calculé, ``{taux: {année: part de PIB}}``, garantie vieillesse nette
+    comprise ; ``garanties``, de même forme, ce qu'elle en est, que la page
+    Coût compte à part."""
 
     def __init__(self, annees: Iterable[Annee],
-                 depenses: Mapping[float, Mapping[int, float]]) -> None:
+                 depenses: Mapping[float, Mapping[int, float]],
+                 garanties: Mapping[float, Mapping[int, float]] | None = None,
+                 convention: str = "recettes_gardees") -> None:
+        if convention not in CONVENTIONS:
+            raise KeyError(convention)
         self.annees = sorted(annees, key=lambda a: a.annee)
         self.depenses = {taux: dict(serie) for taux, serie in sorted(depenses.items())}
+        self.garanties = {taux: dict(serie) for taux, serie in (garanties or {}).items()}
+        self.convention = convention
         self.taux = list(self.depenses)
 
-    def depense(self, annee: int, taux: float) -> float:
-        """La dépense de l'année sous ce taux, linéaire entre deux taux calculés."""
-        if taux in self.depenses:
-            return self.depenses[taux][annee]
+    def _interpolee(self, series: Mapping[float, Mapping[int, float]], annee: int,
+                    taux: float) -> float:
+        if taux in series:
+            return series[taux][annee]
         for bas, haut in zip(self.taux, self.taux[1:]):
             if bas <= taux <= haut:
-                d_bas, d_haut = self.depenses[bas][annee], self.depenses[haut][annee]
+                d_bas, d_haut = series[bas][annee], series[haut][annee]
                 return d_bas + (d_haut - d_bas) * (taux - bas) / (haut - bas)
         raise ValueError(f"taux {taux} hors des taux calculés ({self.taux[0]} à {self.taux[-1]})")
+
+    def recettes(self, a: Annee, taux: float) -> float:
+        if self.convention == "page_cout":
+            return a.recettes_proposition + taux * a.assiette
+        gardees = a.depense_actuel + a.solde_actuel - (a.taux_actuel - taux) * a.assiette
+        if self.convention == "impots_supprimes":
+            return gardees - a.impots_affectes
+        return gardees
+
+    def depense(self, annee: int, taux: float) -> float:
+        """La dépense de l'année sous ce taux, linéaire entre deux taux calculés ;
+        sans la garantie vieillesse, sur la base de la page Coût."""
+        depense = self._interpolee(self.depenses, annee, taux)
+        if self.convention == "page_cout" and self.garanties:
+            depense -= self._interpolee(self.garanties, annee, taux)
+        return depense
 
     def trajectoire(self, taux: float) -> list[Ligne]:
         lignes: list[Ligne] = []
@@ -149,7 +208,7 @@ class Etude:
             depense = self.depense(a.annee, taux)
             economie = a.depense_actuel - depense
             rendu = (a.taux_actuel - taux) * a.assiette
-            solde = a.solde_actuel + economie - rendu
+            solde = self.recettes(a, taux) - depense
             dette = dette * (1.0 + a.taux_dette) / (1.0 + a.croissance) - solde
             lignes.append(Ligne(annee=a.annee, depense=depense, economie=economie,
                                 rendu=rendu, rendu_md=rendu * a.pib / 1000.0,
@@ -165,17 +224,19 @@ class Etude:
         lignes = [ligne for ligne in self.trajectoire(taux)
                   if retenues is None or ligne.annee in retenues]
         if lecture == "tout":
-            ecarts = [ligne.rendu for ligne in lignes]
+            ecarts = [ligne.solde - ligne.deficit - ligne.economie for ligne in lignes]
         elif lecture == "A":
-            ecarts = [ligne.rendu - ligne.economie / 2.0 for ligne in lignes]
+            ecarts = [ligne.solde - ligne.deficit - ligne.economie / 2.0 for ligne in lignes]
         elif lecture == "B":
             ecarts = [ligne.solde - ligne.deficit / 2.0 for ligne in lignes]
         elif lecture == "B_hors_etat":
             # Le déficit compté sans les versements de l'État, divisé par
-            # deux ; ces versements restant encaissés, le solde vaut
-            # (déficit − versements) / 2 + versements.
-            ecarts = [ligne.solde - (ligne.deficit + ligne.versements_etat) / 2.0
-                      for ligne in lignes]
+            # deux. Encaissés, ils s'y ajoutent : le solde vaut
+            # (déficit − versements) / 2 + versements ; sur la base de la
+            # page Coût, la retraite ne les reçoit plus.
+            versements = 0.0 if self.convention == "page_cout" else 1.0
+            ecarts = [ligne.solde - (ligne.deficit - ligne.versements_etat) / 2.0
+                      - versements * ligne.versements_etat for ligne in lignes]
         else:
             raise KeyError(lecture)
         return somme_ordonnee(ecarts) / len(ecarts)
@@ -204,8 +265,9 @@ class Etude:
 # -- le modèle ----------------------------------------------------------------
 
 
-def du_modele(taux: float) -> tuple[list[Annee], dict[int, float]]:
-    """Le coût sous ce taux crédité : les années, et la dépense de la proposition."""
+def du_modele(taux: float) -> tuple[list[Annee], dict[int, float], dict[int, float]]:
+    """Le coût sous ce taux crédité : les années, la dépense de la proposition,
+    garantie vieillesse nette comprise, et cette garantie."""
     from retraite_notionnelle import cout as C
     from retraite_notionnelle import memoire
     from retraite_notionnelle.config import Parametres
@@ -213,7 +275,7 @@ def du_modele(taux: float) -> tuple[list[Annee], dict[int, float]]:
     cout = memoire.cout(Parametres().avec(taux_cotisation_liberal=taux))
     avenir = {ligne.annee: ligne for ligne in cout.avenir.annees}
     dette = {ligne.annee: ligne for ligne in cout.dette.annees}
-    annees, depenses = [], {}
+    annees, depenses, garanties = [], {}, {}
     for ligne in cout.solde.annees:
         if not DEBUT <= ligne.annee <= FIN:
             continue
@@ -229,11 +291,13 @@ def du_modele(taux: float) -> tuple[list[Annee], dict[int, float]]:
             pib=projetee.pib,
             croissance=d.croissance,
             taux_dette=d.taux,
+            impots_affectes=actuel["impots_et_taxes"],
+            recettes_proposition=ligne.ressources_de(LIBERAL) - liberal["cotisations"],
         ))
-        depenses[ligne.annee] = (ligne.depense(LIBERAL)
-                                 + projetee.part_pib(C.COMPOSANTE_GARANTIE)
-                                 - projetee.part_pib_reprises())
-    return annees, depenses
+        garanties[ligne.annee] = (projetee.part_pib(C.COMPOSANTE_GARANTIE)
+                                  - projetee.part_pib_reprises())
+        depenses[ligne.annee] = ligne.depense(LIBERAL) + garanties[ligne.annee]
+    return annees, depenses, garanties
 
 
 def _memes_annees(unes: list[Annee], autres: list[Annee]) -> bool:
@@ -247,22 +311,25 @@ def _memes_annees(unes: list[Annee], autres: list[Annee]) -> bool:
                                    for champ in ("depense_actuel", "solde_actuel",
                                                  "cotisations_actuel", "assiette",
                                                  "versements_etat", "pib", "croissance",
-                                                 "taux_dette"))
+                                                 "taux_dette", "impots_affectes",
+                                                 "recettes_proposition"))
         for u, v in zip(unes, autres))
 
 
-def etude_du_modele(grille: Iterable[float] = GRILLE) -> tuple[Etude, dict[str, float]]:
-    """Les taux de chaque lecture, au modèle : résolus sur la grille, puis
-    calculés eux-mêmes, arrondis au centième de point, et résolus de nouveau
-    jusqu'à ce qu'ils ne bougent plus."""
+def etude_du_modele(grille: Iterable[float] = GRILLE, convention: str = "page_cout",
+                    ) -> tuple[Etude, dict[str, float]]:
+    """Les taux de chaque lecture, au modèle, sous une convention de recettes :
+    résolus sur la grille, puis calculés eux-mêmes, arrondis au centième de
+    point, et résolus de nouveau jusqu'à ce qu'ils ne bougent plus."""
     annees: list[Annee] | None = None
     depenses: dict[float, dict[int, float]] = {}
+    garanties: dict[float, dict[int, float]] = {}
 
     def calculer(taux: float) -> None:
         nonlocal annees
         if taux in depenses:
             return
-        lues, depenses[taux] = du_modele(taux)
+        lues, depenses[taux], garanties[taux] = du_modele(taux)
         if annees is None:
             annees = lues
         elif not _memes_annees(lues, annees):
@@ -272,7 +339,7 @@ def etude_du_modele(grille: Iterable[float] = GRILLE) -> tuple[Etude, dict[str, 
         calculer(taux)
     trouves: dict[str, float] = {}
     for _ in range(4):
-        etude = Etude(annees, depenses)
+        etude = Etude(annees, depenses, garanties, convention)
         nouveaux = {lecture: round(etude.resoudre(lecture), 4) for lecture in LECTURES}
         if nouveaux == trouves:
             break
@@ -280,7 +347,7 @@ def etude_du_modele(grille: Iterable[float] = GRILLE) -> tuple[Etude, dict[str, 
         for taux in trouves.values():
             calculer(taux)
     calculer(TAUX_PROGRAMME)
-    return Etude(annees, depenses), trouves
+    return Etude(annees, depenses, garanties, convention), trouves
 
 
 CAS_TYPES = ("smic_carriere_complete", "salaire_moyen", "cadre")
@@ -417,8 +484,19 @@ def main(argv: list[str] | None = None) -> int:
     lecteur = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     lecteur.add_argument("--cas-types", action="store_true",
                          help="la pension de quelques cas types sous chaque taux")
+    lecteur.add_argument("--convention", choices=list(CONVENTIONS), default="page_cout",
+                         help="les recettes du détail (la page Coût par défaut)")
     options = lecteur.parse_args(argv)
-    etude, trouves = etude_du_modele()
+    resultats = {convention: etude_du_modele(convention=convention)
+                 for convention in CONVENTIONS}
+    print("## Le taux de chaque lecture, selon le déficit dont on parle\n")
+    print("| Le déficit | " + " | ".join(LECTURES.values()) + " |")
+    print("|---|" + "---:|" * len(LECTURES))
+    for convention, (_, taux) in resultats.items():
+        print(f"| {CONVENTIONS[convention]} | "
+              + " | ".join(_pourcent(taux[lecture]) for lecture in LECTURES) + " |")
+    etude, trouves = resultats[options.convention]
+    print(f"\n# Le détail : {CONVENTIONS[options.convention]}\n")
     print(rapport(etude, trouves))
     if options.cas_types:
         print()

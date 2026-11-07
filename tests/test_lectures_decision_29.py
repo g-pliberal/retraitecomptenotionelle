@@ -79,3 +79,55 @@ def test_tenue_une_annee_seule_la_regle_donne_le_taux_de_cette_annee():
     etude = _etude()
     assert etude.resoudre("B", annees=(2026,)) == pytest.approx(0.125, abs=1e-9)
     assert etude.resoudre("B", annees=(2027,)) == pytest.approx(0.10, abs=1e-9)
+
+
+# -- Les recettes de la page Coût, ou sans les impôts affectés ------------------
+#
+# Le même cas, avec ce que la page Coût compte : la retraite ne garde, outre
+# ses cotisations, qu'un point de PIB (ni impôts affectés, ni versements de
+# l'État), et la garantie vieillesse, un point, se compte à part. Recettes
+# 0,01 + 0,4 t ; dépense 0,09 la première année, 0,06 + 0,2 t la seconde.
+#
+# - Tout au déficit : (−0,11 + 0,4 t) × 2 = 0, soit t = 27,5 %.
+# - Lecture A : (−0,085 + 0,4 t) + (−0,07 + 0,3 t) = 0, soit t = 31/140.
+# - Lecture B : (−0,07 + 0,4 t) + (−0,04 + 0,2 t) = 0, soit t = 11/60.
+# - Lecture B, le déficit compté sans les versements de l'État (3 points),
+#   qu'elle ne reçoit plus : (−0,055 + 0,4 t) + (−0,025 + 0,2 t) = 0, t = 2/15.
+#
+# Sans les impôts affectés (2 points), les autres recettes gardées : recettes
+# 0,02 + 0,4 t, dépense garantie comprise ; lecture A : (−0,08 + 0,4 t)
+# + (−0,065 + 0,3 t) = 0, soit t = 29/140.
+
+
+def _etude_sous(convention: str) -> Etude:
+    annees = [Annee(annee=a, depense_actuel=0.14, solde_actuel=-0.02,
+                    cotisations_actuel=0.08, assiette=0.40, versements_etat=0.03,
+                    pib=2_000_000.0, croissance=0.02, taux_dette=0.03,
+                    impots_affectes=0.02, recettes_proposition=0.01)
+              for a in (2026, 2027)]
+    depenses = {0.10: {2026: 0.10, 2027: 0.09}, 0.20: {2026: 0.10, 2027: 0.11},
+                0.30: {2026: 0.10, 2027: 0.13}}
+    garanties = {taux: {2026: 0.01, 2027: 0.01} for taux in depenses}
+    return Etude(annees, depenses, garanties=garanties, convention=convention)
+
+
+def test_sur_la_base_de_la_page_cout_chaque_lecture_demande_plus():
+    etude = _etude_sous("page_cout")
+    assert etude.resoudre("tout") == pytest.approx(0.275, abs=1e-9)
+    assert etude.resoudre("A") == pytest.approx(31 / 140, abs=1e-9)
+    assert etude.resoudre("B") == pytest.approx(11 / 60, abs=1e-9)
+    assert etude.resoudre("B_hors_etat") == pytest.approx(2 / 15, abs=1e-9)
+
+
+def test_la_page_cout_compte_la_garantie_a_part():
+    lignes = _etude_sous("page_cout").trajectoire(0.20)
+    assert [ligne.solde for ligne in lignes] == pytest.approx([-0.08 + 0.08, -0.05 + 0.04])
+    assert lignes[0].depense == pytest.approx(0.09)
+
+
+def test_sans_les_impots_affectes_la_lecture_a_tombe_entre_les_deux():
+    assert _etude_sous("impots_supprimes").resoudre("A") == pytest.approx(29 / 140, abs=1e-9)
+
+
+def test_les_recettes_gardees_restent_la_convention_du_premier_calcul():
+    assert _etude_sous("recettes_gardees").resoudre("A") == pytest.approx(0.15, abs=1e-9)
