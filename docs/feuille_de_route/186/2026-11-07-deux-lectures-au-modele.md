@@ -302,3 +302,86 @@ Le script compte désormais les trois façons
 `tests/test_lectures_decision_29.py`. Les courbes montrées au propriétaire
 (solde, dette, pension selon le taux, sous les deux bases extrêmes) en sortent ;
 elles sont restées hors du dépôt.
+
+## Les deux lectures, sur la base de la page Coût
+
+Le propriétaire : « cela ne règle toujours pas nos problèmes, on change de
+sujet, on peut revenir au sujet initial avec des bons chiffres ? » Les voici,
+sur la base de la page Coût, celle de la simulation du site, que le calcul
+retrouve à 18 %. Deux choses y sont communes aux quatre colonnes et ne les
+départagent pas : l'État garde les 58 Md€ (2026) qu'il ne verse plus à la
+retraite, et les 66 Md€ d'impôts affectés suivent le partage du 20 septembre,
+la moitié rendue aux salaires, la moitié à la dette (`restitution.py`). La
+question « de quel déficit » posée plus haut est donc réglée : c'est celui de
+la caisse, comme sur la page.
+
+Le salarié est au salaire moyen ; ce qu'il paie se compare à aujourd'hui,
+27,98 % pour un salarié du privé, pilier de cinq points compris, la part
+patronale ne bougeant pas (règle du 20 septembre).
+
+| | Programme, 18 % | Tout au déficit | Lecture A | Lecture B |
+|---|---:|---:|---:|---:|
+| Taux cotisé et crédité | 18 % | 30,0 % | 25,3 % | 20,8 % |
+| Retraités d'aujourd'hui, en 2026 | −118 Md€ | pareil | pareil | pareil |
+| Né en 1990 : son net par mois, par rapport à aujourd'hui | +186 € | −261 € | −87 € | +83 € |
+| Né en 1990 : sa pension en 2055 (droit en vigueur : 2 859 €) | 1 531 € | 2 149 € | 1 908 € | 1 674 € |
+| Né en 2005 : sa pension en 2070 (droit en vigueur : 3 099 €) | 1 347 € | 2 243 € | 1 894 € | 1 553 € |
+| Solde de la caisse en 2026, points de PIB (aujourd'hui : −0,16) | −2,2 | +2,9 | +0,9 | −1,0 |
+| Années de déficit | 2026 à 2069 | aucune | aucune | 2026 à 2064 |
+| Dette de la caisse en 2070, points de PIB (droit en vigueur : 66) | 103 | réserve de 164 | réserve de 60 | 41 |
+
+**Le programme à 18 %** est ce que montre la page Coût : les actifs paient
+cinq points de moins qu'aujourd'hui, mais la caisse est en déficit chaque
+année jusqu'en 2069, plus qu'aujourd'hui, et finit avec plus de dette que le
+droit en vigueur. L'économie sur les pensions est rendue tout entière, et
+au-delà : par les impôts affectés, l'argent de l'État, et la baisse des
+cotisations. C'est ce que la décision 29 refuse.
+
+**Tout au déficit**, écarté par la décision 29, reste en référence : les
+actifs paient sept points de plus qu'aujourd'hui, et la caisse accumule une
+réserve démesurée.
+
+**Lecture A, 25,3 %.**
+- *Avantages.* La caisse est en excédent dès 2026 et chaque année ; la
+  réserve atteint 60 points de PIB en 2070. Les actifs se constituent une
+  pension plus haute : +25 % pour le salarié né en 1990, +41 % pour celui né
+  en 2005, par rapport aux 18 %. En compte notionnel, ce qu'ils cotisent de
+  plus leur revient.
+- *Inconvénients.* Les actifs paient plus qu'aujourd'hui : 87 € de moins par
+  mois pour le salarié né en 1990, au lieu de 186 € de plus sous le
+  programme. Le message « le parti des cotisants » s'en trouve affaibli.
+- *Devant les juges* (à faire vérifier par un juriste) : la caisse passe en
+  excédent tout de suite, l'urgence se plaide ; mais le juge pourra demander
+  pourquoi on baisse les pensions quand on pouvait moins relever les
+  cotisations.
+
+**Lecture B, 20,8 %.**
+- *Avantages.* Les actifs paient un peu moins qu'aujourd'hui (83 € de plus
+  par mois pour le salarié né en 1990) et leur pension monte un peu par
+  rapport aux 18 % (+9 %, +15 % pour celui né en 2005). La dette de la caisse
+  en 2070 (41 points) reste sous celle du droit en vigueur (66) et du
+  programme (103).
+- *Inconvénients.* La caisse reste en déficit jusqu'en 2064 : −1,0 point de
+  PIB en 2026, six fois celui d'aujourd'hui. Le déficit est divisé par deux en
+  moyenne sur 45 ans, pas chaque année.
+- *Devant les juges* (à faire vérifier par un juriste) : baisser les pensions
+  pendant que la caisse reste en déficit près de quarante ans rend l'argument
+  d'urgence de la décision 6 difficile à tenir.
+
+Dans les quatre colonnes, la pension des générations jeunes reste bien sous
+celle du droit en vigueur : −33 % sous A, −41 % sous B pour le salarié né en
+1990. Le taux est constant de 2026 à 2070, la règle tenue en moyenne. Au
+commit `4a68fc7` ; `python scripts/lectures_decision_29.py --cas-types`, la
+page Coût étant sa convention par défaut.
+
+**La taxe sur la valeur du terrain change l'ordre.** La décision 80, prise le
+même soir, donne aux retraites un point de LVT, 1,2 à 1,4 point de PIB par
+an avant tout abattement (`2026-11-07-recettes-tva-lvt.md`) ; elle n'est pas
+au modèle. Comptée à 1,3 point de PIB chaque année, à côté du modèle, elle
+baisse chaque taux de trois à quatre points : tout au déficit 27,0 %,
+lecture A 21,8 %, lecture B 16,7 %. Les 18 % du programme tombent alors entre
+A et B : la caisse y perd encore 0,9 point de PIB en 2026, mais son solde
+moyen (−0,14) est meilleur que celui de B (−0,57), et sa dette de 2070 tombe
+à 17 points. B, sous 18 %, reste en déficit jusqu'en 2059. L'abattement, le
+plafonnement et l'année de la LVT restent à fixer, et déplaceront ces taux.
+

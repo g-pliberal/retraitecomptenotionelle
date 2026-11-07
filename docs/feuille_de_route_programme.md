@@ -675,6 +675,33 @@ propriétaire, avant A ou B : de quel déficit parle la décision 29, et que
 deviennent les impôts affectés. Le détail :
 `186/2026-11-07-deux-lectures-au-modele.md`, dernière partie.
 
+**Le 7 novembre 2026, les deux lectures sur la base de la page Coût.** Le
+propriétaire : « on peut revenir au sujet initial avec des bons chiffres ? »
+La question « de quel déficit » se règle par ce que le programme a déjà
+décidé : l'État garde les 58 Md€ qu'il ne verse plus, les impôts affectés
+suivent le partage du 20 septembre (moitié aux salaires, moitié à la dette),
+et la décision 29 porte sur la caisse, comme la page. Le salarié est au
+salaire moyen ; son net se compare à aujourd'hui (27,98 %, pilier compris).
+
+| | Programme, 18 % | Lecture A | Lecture B |
+|---|---:|---:|---:|
+| Taux cotisé et crédité | 18 % | 25,3 % | 20,8 % |
+| Retraités d'aujourd'hui, en 2026 | −118 Md€ | pareil | pareil |
+| Né en 1990 : net par mois, par rapport à aujourd'hui | +186 € | −87 € | +83 € |
+| Né en 1990 : pension en 2055 (droit en vigueur : 2 859 €) | 1 531 € | 1 908 € | 1 674 € |
+| Solde de la caisse en 2026 (aujourd'hui −0,16 point de PIB) | −2,2 | +0,9 | −1,0 |
+| Années de déficit | 2026 à 2069 | aucune | 2026 à 2064 |
+| Dette de la caisse en 2070 (droit en vigueur : 66 points) | 103 | réserve de 60 | 41 |
+
+A met la caisse en excédent tout de suite, mais fait payer aux actifs un peu
+plus qu'aujourd'hui, contre une pension plus haute ; B les laisse payer un
+peu moins, mais garde la caisse en déficit près de quarante ans. Le point de
+LVT de la décision 80 (1,2 à 1,4 point de PIB par an, hors du modèle) baisse
+chaque taux de trois à quatre points : A 21,8 %, B 16,7 %, et les 18 % du
+programme tombent entre les deux. Le détail, avantages et inconvénients
+compris : `186/2026-11-07-deux-lectures-au-modele.md`, dernière partie. Le
+choix entre A et B reste au propriétaire.
+
 ### Chantier 2 — La baisse des pensions en cours : sa règle, son plancher, son calendrier, son droit
 
 **La question.** Baisser les pensions liquidées en cinq ans, d'une façon qui
