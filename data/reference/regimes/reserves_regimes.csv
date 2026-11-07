@@ -1,0 +1,50 @@
+# Les réserves de chaque régime en répartition au 31 décembre 2025, caisse par caisse
+# source_id: cor_reserves_systeme_retraite
+# unite: montant_md en milliards d'euros courants, valeur de marché (valeur
+#        comptable pour la complémentaire agricole) ; mois_prestations en mois
+#        de prestations de la caisse, tels que le COR les écrit
+# fiabilite:
+#   haute : rapport annuel du COR de juin 2026, partie 2, chapitre 3, § 3.3,
+#           tableau 2.3, p. 100 (« données des régimes »). Saisi à la main.
+#
+# À QUOI CE FICHIER SERT
+# ----------------------
+# Au point de départ de la projection des complémentaires sous les décisions
+# 36 à 48 du programme (`integration_complementaires.py`, action 186,
+# chantier 6) : une caisse rejoint le régime général l'année où ses réserves
+# s'épuisent (décision 37). `reserves_retraite.csv` n'en porte que le total.
+#
+# CE QU'IL FAUT SAVOIR AVANT DE S'EN SERVIR
+# ------------------------------------------
+# 1. LE FONDS DE ROULEMENT EST COMPRIS : « les réserves comprennent l'ensemble
+#    des fonds placés par l'ensemble des régimes, quelle que soit l'échéance
+#    des actifs admis en représentation ; elles agrègent les réserves de moyen
+#    et long terme au fonds de roulement » (note du tableau). Pour
+#    l'Agirc-Arrco, « les réserves techniques de financement représentent
+#    92,1 Md€, sur un total de réserves de 113,6 Md€ » : la ligne
+#    `reserves_techniques`, hors des sommes.
+# 2. CNBF : le régime de base seul ici (`cnbf`, groupe `base`), à côté de sa
+#    complémentaire (`cnbf_complementaire`). Dans `comptes_complementaires.csv`,
+#    qui suit le classeur du COR, `cnbf` est la caisse entière.
+# 3. La complémentaire agricole est en valeur comptable (astérisque du COR).
+# 4. Hors champ : le FRR (20,7 Md€, `reserves_retraite.csv`) et les régimes en
+#    capitalisation (RAFP, 53,6 Md€ en valeur de marché ; régime de la CAVP),
+#    au tableau 2.4.
+#
+# Les groupes somment aux sous-totaux du tableau — 5,3, 15,7 et 202,9 Md€ —,
+# et leur total, 223,9 Md€, au total de `reserves_retraite.csv`
+# (`tests/test_integration_complementaires.py`).
+annee,regime,groupe,poste,montant_md,mois_prestations,fiabilite
+2025,cnavpl,base,reserves,4.1,19,haute
+2025,cnbf,base,reserves,1.2,56,haute
+2025,cnracl,speciaux,reserves,0.0,,haute
+2025,crpcen,speciaux,reserves,2.3,27,haute
+2025,banque_de_france,speciaux,reserves,13.4,277,haute
+2025,agirc_arrco,complementaires,reserves,113.6,14,haute
+2025,agirc_arrco,complementaires,reserves_techniques,92.1,,haute
+2025,ircantec,complementaires,reserves,19.2,50,haute
+2025,rci_complementaire,complementaires,reserves,23.4,107,haute
+2025,cnavpl_complementaire,complementaires,reserves,39.0,71,haute
+2025,cnbf_complementaire,complementaires,reserves,2.2,85,haute
+2025,crpnpac,complementaires,reserves,5.1,70,haute
+2025,msa_exploitants_complementaire,complementaires,reserves,0.4,4,haute

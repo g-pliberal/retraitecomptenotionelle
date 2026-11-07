@@ -782,6 +782,9 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         "fins_de_carriere": "macro/fins_de_carriere.csv",
         "age_depart_csp": "macro/age_depart_csp.csv",
         "structure_financement_regimes": "regimes/structure_financement.csv",
+        # Le compte de chaque complémentaire, du même classeur, que la
+        # projection des décisions 36 à 48 déforme (action 186, chantier 6).
+        "comptes_complementaires": "regimes/comptes_complementaires.csv",
         "cotisants_regimes": "regimes/cotisants.csv",
         "retraites_regimes": "regimes/retraites_projetes.csv",
         # Le taux moyen des entreprises, que la page Coût substitue au taux

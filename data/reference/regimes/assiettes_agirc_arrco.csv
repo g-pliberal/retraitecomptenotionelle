@@ -1,0 +1,76 @@
+# Les assiettes de l'Agirc-Arrco, tranche par tranche, et ce qui situe ses cotisants face au plafond
+# source_id: agirc_arrco_chiffres
+# unite: tranche_1, tranche_2 et total en millions d'euros courants ;
+#        salaire_moyen_eqtp en euros par an ; part_eqtp_sous_le_plafond en
+#        fraction des cotisants en équivalent temps plein
+# fiabilite:
+#   haute : Chiffr'Agirc-Arrco 2026 (édition de l'Agirc-Arrco), « Assiettes
+#           salariales depuis 2018 », p. 46 ; « Salaire annuel brut EQTP moyen
+#           depuis 2018 », p. 24 ; « Répartition des effectifs de cotisants en
+#           fonction du PSS depuis 2018 », p. 32 (ensemble des cotisants, colonne
+#           « p »). Saisi à la main.
+#
+# À QUOI CE FICHIER SERT
+# ----------------------
+# À chiffrer ce que la suppression de la CEG et de la CET (décision 36 du
+# programme) retire à l'Agirc-Arrco : leurs taux, qui sont dans
+# `legislation/contributions_equilibre_agirc_arrco.yaml`, appliqués à ces
+# assiettes (`integration_complementaires.py`, action 186, chantier 6). La CET
+# n'est due que par les salariés au-dessus du plafond, sur leurs tranches 1 et
+# 2 : leur tranche 1 s'estime à un plafond par cotisant en équivalent temps
+# plein au-dessus de lui, le nombre de ces cotisants étant la masse divisée par
+# le salaire moyen.
+#
+# CE QU'IL FAUT SAVOIR
+# --------------------
+# Les IEG sont adossées, non intégrées, à l'Agirc-Arrco depuis 2005 : elle
+# reçoit les cotisations qu'elle aurait perçues de leurs agents, d'où deux
+# périmètres. Le salaire moyen et la part sous le plafond portent sur les
+# salariés du secteur privé (« Base salaires de la direction technique »).
+# La tranche 1 et la tranche 2 somment au total publié au million près
+# (`tests/test_integration_complementaires.py`).
+annee,perimetre,poste,valeur,fiabilite
+2018,hors_ieg,tranche_1,492268,haute
+2018,hors_ieg,tranche_2,97045,haute
+2018,hors_ieg,total,589313,haute
+2019,hors_ieg,tranche_1,509416,haute
+2019,hors_ieg,tranche_2,98975,haute
+2019,hors_ieg,total,608391,haute
+2020,hors_ieg,tranche_1,475166,haute
+2020,hors_ieg,tranche_2,97291,haute
+2020,hors_ieg,total,572457,haute
+2021,hors_ieg,tranche_1,521982,haute
+2021,hors_ieg,tranche_2,105666,haute
+2021,hors_ieg,total,627648,haute
+2022,hors_ieg,tranche_1,565204,haute
+2022,hors_ieg,tranche_2,118627,haute
+2022,hors_ieg,total,683831,haute
+2023,hors_ieg,tranche_1,604308,haute
+2023,hors_ieg,tranche_2,117857,haute
+2023,hors_ieg,total,722166,haute
+2024,hors_ieg,tranche_1,629833,haute
+2024,hors_ieg,tranche_2,116842,haute
+2024,hors_ieg,total,746674,haute
+2018,ieg_compris,tranche_1,498595,haute
+2018,ieg_compris,tranche_2,100005,haute
+2018,ieg_compris,total,598599,haute
+2019,ieg_compris,tranche_1,515630,haute
+2019,ieg_compris,tranche_2,101922,haute
+2019,ieg_compris,total,617551,haute
+2020,ieg_compris,tranche_1,481311,haute
+2020,ieg_compris,tranche_2,100161,haute
+2020,ieg_compris,total,581472,haute
+2021,ieg_compris,tranche_1,527993,haute
+2021,ieg_compris,tranche_2,108503,haute
+2021,ieg_compris,total,636496,haute
+2022,ieg_compris,tranche_1,571103,haute
+2022,ieg_compris,tranche_2,121534,haute
+2022,ieg_compris,total,692637,haute
+2023,ieg_compris,tranche_1,610595,haute
+2023,ieg_compris,tranche_2,120991,haute
+2023,ieg_compris,total,731587,haute
+2024,ieg_compris,tranche_1,636259,haute
+2024,ieg_compris,tranche_2,119878,haute
+2024,ieg_compris,total,756138,haute
+2024,cotisants,salaire_moyen_eqtp,41878,haute
+2024,cotisants,part_eqtp_sous_le_plafond,0.763,haute

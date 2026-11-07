@@ -378,6 +378,16 @@ après leur étude (note `186/2026-11-07-planchers-etude.md`) :
     d'exploitation agricole que l'ASPA exclut** : « On n'exclut personne
     comme l'ASPA. »
 
+Le même jour, sur les complémentaires (chantier 6), quand le modèle les
+projette caisse par caisse (note `186/2026-11-07-complementaires-au-modele.md`) :
+
+67. **La complémentaire agricole perd ses droits sur les alcools dès la
+    bascule** : « Elle les perd ». La décision 48 ne portait que sur les taux
+    de cotisation ; la décision 12 vaut pour les impôts affectés, et la 47
+    seule y fait exception, pour la compensation de l'Agirc-Arrco. Ses
+    0,4 Md€ de réserves ne couvrent pas les quelque 0,6 Md€ perdus : elle
+    rejoint le régime général dès la première année.
+
 ## Ce qui est écarté
 
 - **Une transition sans baisse nominale des pensions en cours** — bâtir le
@@ -1298,6 +1308,28 @@ moyen. *Tranché le même jour* : décisions 62 à 66 ; restent les planchers
 d'invalidité et de handicap, et le sens de « couler » pour une caisse que
 l'État finance.
 
+**Le 7 novembre 2026 : chaque complémentaire projetée jusqu'à ses réserves
+épuisées.** Première étape du portage des décisions 36 à 48 au modèle (note
+`186/2026-11-07-complementaires-au-modele.md`, module
+`integration_complementaires.py`). Chaque caisse part de ses réserves de fin
+2025 (COR, juin 2026, tableau 2.3) et suit la trajectoire du COR de juin 2024,
+moins ce que les décisions lui retirent. L'ordre que le modèle calcule
+(décision 37) :
+- *La complémentaire agricole en 2026*, la première année : ses droits sur les
+  alcools coupés (décision 67), quelque 0,6 Md€ pour 0,4 de réserves.
+- *L'Agirc-Arrco en 2032* : la CEG et la CET lui retirent 18,0 Md€ sur les
+  assiettes de 2024, 19,2 % de ce qu'elle prélève, et, avec la CEG que l'Unédic
+  lui verse pour ses chômeurs, 19 Md€ par an ; ses 113,6 Md€ tombent à 2,5 fin
+  2031. En 2030 si son fonds de roulement est mis à part (92,1 Md€).
+- *La complémentaire des avocats en 2042*, *l'Ircantec en 2055*, sans rien
+  perdre : leurs propres déficits, que le COR projette déjà.
+- *Les indépendants, les libéraux et les navigants*, jamais avant 2070 : leurs
+  affiliés gardent leurs cotisations complémentaires, au-delà de 18 %, tout
+  l'horizon du modèle.
+Le salarié du privé verse donc 25,83 % jusqu'en 2031, et 18 % à partir de 2032.
+Les étapes suivantes portent ces années au moteur d'une carrière, puis au coût
+et au site.
+
 ### Chantier 7 — Les chiffres qui tiennent
 
 **La question.** Un challenger est vérifié plus durement qu'un sortant :
@@ -1613,6 +1645,14 @@ est passée ; le début de la campagne présidentielle ?
   le départ pour invalidité) ; ce que « couler » veut dire pour une caisse
   sans réserve que l'État finance (CNRACL, fonctionnaires de l'État, SNCF,
   IEG) : fusionnée dès la bascule, et ses planchers avec elle ?
+- Chantier 6, les complémentaires projetées le 7 novembre : les
+  indépendants, les libéraux et les navigants, jamais intégrés avant 2070
+  (une date butoir, ou la règle de la décision 37 telle quelle) ; la
+  revalorisation des pensions de l'Agirc-Arrco jusqu'en 2032 (la convention du
+  COR, ou une autre) ; la baisse des décisions 2 et 3 pour une complémentaire
+  que l'État règle mais qui n'est pas intégrée (dès la bascule, ou à
+  l'intégration) ; les fonctionnaires et leur RAFP, provisionné (note
+  `186/2026-11-07-complementaires-au-modele.md`).
 - Chantier 7, étudié le 7 novembre : « la moitié du déficit public »,
   abandonnée ou attribuée à Beaufret ; les taux chiffrés à la date de
   publication ; le rendement en baisse au lieu du « TRI négatif » ; le PER

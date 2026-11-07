@@ -948,7 +948,12 @@ institutions:
           PIB, dont 113,6 à l'Agirc-Arrco et 20,7 au FRR ; 29,3 Md€ de dette
           de la Cades imputable aux retraites. Saisi pour le bilan du compte
           notionnel (action 138, étape 19), qui les met à l'actif à côté de
-          l'actif de cotisation, comme le bilan suédois son fonds tampon.
+          l'actif de cotisation, comme le bilan suédois son fonds tampon. Le
+          même tableau, caisse par caisse, est saisi dans
+          data/reference/regimes/reserves_regimes.csv : le point de départ de
+          la projection des complémentaires sous les décisions 36 à 48 du
+          programme (action 186, chantier 6). Il est à la p. 100 du rapport
+          entier (RA_2026_def.pdf).
 
       - id: cor_comptes_systeme_retraite
         titre: >-
@@ -3375,6 +3380,23 @@ institutions:
           Ce que la source ne donne pas : l'Arrco d'avant 1961, et la série
           reconstituée du salaire de référence Arrco depuis 1948, qui ne porte
           pas la valeur de service correspondante.
+
+      - id: agirc_arrco_chiffres
+        titre: >-
+          Chiffr'Agirc-Arrco 2026 — assiettes salariales par tranche depuis
+          2018, salaire moyen en équivalent temps plein, cotisants face au
+          plafond
+        url: https://www.agirc-arrco.fr/storage/chiffrAA_2026_VF.pdf
+        acces: document
+        statut_integration: saisi
+        cible: data/reference/regimes/assiettes_agirc_arrco.csv
+        note: >-
+          Le recueil statistique annuel de l'Agirc-Arrco, lu le 7 novembre
+          2026 : p. 46 pour les assiettes (636 259 M€ de tranche 1 et
+          119 878 M€ de tranche 2 en 2024, IEG comprises), p. 24 pour le
+          salaire moyen, p. 32 pour la part des cotisants sous le plafond. Il
+          chiffre ce que la suppression de la CEG et de la CET retire à la
+          caisse (action 186, chantier 6) ; il ne publie pas leur produit.
 
       - id: agirc_arrco_majorations_familiales
         titre: Majoration pour enfants nés ou élevés, par période d'acquisition des points

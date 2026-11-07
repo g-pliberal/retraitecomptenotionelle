@@ -2044,6 +2044,51 @@ def source_structure_financement_regimes() -> dict[tuple, float]:
     return dict(sorted(valeurs.items()))
 
 
+#: Les caisses complémentaires du classeur par régime, sous les codes de
+#: ``REGIMES_COR`` : celles que les décisions 36 à 48 du programme laissent
+#: vivre de leurs réserves jusqu'à leur intégration (action 186, chantier 6).
+#: La CNBF y est d'un seul tenant, base et complémentaire, comme chez le COR ;
+#: le RAFP, provisionné, n'en est pas.
+COMPLEMENTAIRES_COR: tuple[str, ...] = (
+    "agirc_arrco", "ircantec", "msa_exploitants_complementaire",
+    "cnavpl_complementaire", "rci_complementaire", "cnbf", "crpnpac",
+)
+
+#: Les quatre blocs du compte d'une caisse que la projection lit, en part de
+#: PIB, et leur poste. La série est celle du scénario de référence, que le
+#: classeur nomme de trois façons.
+POSTES_COMPTES: dict[str, str] = {
+    "Dépenses totales en % du PIB": "depenses",
+    "Ressources totales en % du PIB": "ressources",
+    "Solde élargi en % du PIB": "solde_elargi",
+    "Réserves en % du PIB": "reserves",
+}
+SERIES_DE_REFERENCE = frozenset({"Scénario de référence", "Sc réf", "Sc. Réf"})
+
+
+def source_comptes_complementaires() -> dict[tuple, float]:
+    """Le compte de chaque complémentaire, de 2010 à 2070, en part de PIB.
+
+    Ce que ``structure_financement.csv`` ne porte qu'en parts, et à six dates :
+    les dépenses, les ressources, le solde élargi et les réserves, chaque
+    année, au scénario de référence du COR de juin 2024, à législation
+    inchangée — CEG comprise pour l'Agirc-Arrco, impôts compris pour la
+    complémentaire agricole. C'est la base de la projection que les décisions
+    36 à 48 du programme déforment (``integration_complementaires.py``). Les
+    ressources comprennent les produits financiers : leur différence aux
+    dépenses est le solde élargi, au milliardième près.
+    """
+    valeurs: dict[tuple, float] = {}
+    for ligne in _cor_regimes()["valeurs"]:
+        regime = REGIMES_COR.get(ligne["regime"])
+        poste = POSTES_COMPTES.get(ligne["bloc"])
+        if (regime not in COMPLEMENTAIRES_COR or poste is None
+                or ligne["serie"] not in SERIES_DE_REFERENCE):
+            continue
+        valeurs[(str(ligne["annee"]), regime, poste)] = ligne["valeur"]
+    return dict(sorted(valeurs.items()))
+
+
 #: Les deux blocs du classeur du COR qui portent les effectifs de cotisants, et
 #: l'unité que chacun annonce. Le classeur écrit « en millions » sur dix-sept
 #: feuilles et « en milliers » sur trois — CRPCEN, CRPNPAC, FSPOEIE —, et la
@@ -7485,6 +7530,51 @@ CERTIFICATIONS = (
             "#",
             "# Ne pas modifier les années certifiées à la main : elles seraient",
             "# écrasées au prochain scripts/verifier_donnees.py --appliquer.",
+        ),
+    ),
+    Certification(
+        nom="comptes_complementaires",
+        chemin=REFERENCE / "regimes" / "comptes_complementaires.csv",
+        cles=("annee", "regime", "poste"),
+        colonne="part_pib",
+        source=source_comptes_complementaires,
+        origine="COR, compléments du rapport annuel de juin 2024, "
+                "projections détaillées par régime",
+        decimales=9,
+        tolerance=5.1e-10,
+        niveau="haute",
+        entete=(
+            "# Le compte de chaque caisse complémentaire, année par année, jusqu'en 2070",
+            "# source_id: cor_regimes",
+            "# unite: part du PIB de l'année, en fraction",
+            "# fiabilite:",
+            "#   haute (2010-2070) : compléments du rapport annuel du COR de juin",
+            "#             2024, classeur des projections détaillées par régime,",
+            "#             scénario de référence ; recontrôlés par",
+            "#             scripts/verifier_donnees.py contre le classeur.",
+            "#",
+            "# À QUOI CETTE SÉRIE SERT",
+            "# ------------------------",
+            "# À projeter chaque complémentaire sous les décisions 36 à 48 du",
+            "# programme (integration_complementaires.py, action 186, chantier 6) :",
+            "# une caisse vit de ses cotisations et de ses réserves, et rejoint le",
+            "# régime général l'année où elles s'épuisent. Le classeur en donne la",
+            "# trajectoire à législation inchangée ; la projection en retire ce que",
+            "# les décisions coupent.",
+            "#",
+            "# CE QU'IL FAUT SAVOIR AVANT DE S'EN SERVIR",
+            "# ------------------------------------------",
+            "# 1. LE MILLÉSIME : celui de juin 2024, le seul publié",
+            "#    (structure_financement.csv dit pourquoi).",
+            "# 2. LES POSTES : depenses et ressources totales, produits financiers",
+            "#    compris dans les ressources ; solde_elargi, leur différence ;",
+            "#    reserves, en fin d'année, que le COR ramène à zéro quand elles",
+            "#    s'épuisent, un « besoin de financement » couvrant alors le solde.",
+            "# 3. LA CNBF est d'un seul tenant, base et complémentaire.",
+            "# 4. LES ANNÉES de départ varient : 2019 pour le RCI, 2023 pour la CNBF.",
+            "#",
+            "# Ne pas modifier à la main : les valeurs seraient écrasées au prochain",
+            "# scripts/verifier_donnees.py --appliquer.",
         ),
     ),
     Certification(

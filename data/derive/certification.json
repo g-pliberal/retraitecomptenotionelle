@@ -1,5 +1,5 @@
 {
- "dernier_passage_le": "2026-11-06",
+ "dernier_passage_le": "2026-11-07",
  "series": {
   "age_annulation_decote_openfisca": {
    "ajoutees": 0,
@@ -275,6 +275,17 @@
    "source": "DILA, base LEGI, code de la sécurité sociale R. 351-27",
    "valeurs": 76,
    "verifiee_le": "2026-09-17"
+  },
+  "comptes_complementaires": {
+   "ajoutees": 1617,
+   "colonne": "part_pib",
+   "corrigees": 0,
+   "empreinte": "888c0b4455c7bf58",
+   "identiques": 0,
+   "niveau": "haute",
+   "source": "COR, compléments du rapport annuel de juin 2024, projections détaillées par régime",
+   "valeurs": 1617,
+   "verifiee_le": "2026-11-07"
   },
   "comptes_retraite": {
    "ajoutees": 0,
