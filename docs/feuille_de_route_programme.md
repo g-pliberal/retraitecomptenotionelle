@@ -127,6 +127,12 @@ Le même jour, ses modalités :
     que des conditions arbitraires** : « Je crains tous les abus, il faut
     quelque chose de solide. J'aimerais de préférence quelque chose de simple
     et prouvable mathématiquement plutôt que des conditions arbitraires. »
+27. **Les droits suivent l'argent, au prix juste** : la piste du 7 novembre,
+    sous le chantier 3, validée — « oui, je valide ».
+28. **Les décisions 16 à 27 ne s'appliquent qu'au scénario 6** : « On
+    applique ces règles uniquement au scénario 6 ». Les autres scénarios
+    notionnels ne servent que les parts contributives : « les scénarios où
+    l'on montre ce que l'on a cotisé ne montre que les parts contributives ».
 
 ## Ce qui est écarté
 
@@ -384,6 +390,12 @@ Ce que chaque règle doit démontrer : qu'aucun choix d'un couple ne fait payer
 les autres cotisants ni l'impôt. À démontrer et à chiffrer par la session du
 modèle.
 
+**Le 7 novembre 2026, la piste validée, pour le seul scénario 6** (décisions
+27 et 28). Les scénarios qui montrent ce que l'on a cotisé gardent leur
+convention : aucune réversion, rien que les parts contributives. Une session
+du modèle est ouverte le même jour pour porter les décisions 16 à 28 au
+scénario 6.
+
 ### Chantier 4 — Les recettes hors du travail : la TVA sociale et la LVT
 
 **La question.** Combien rapportent la TVA sociale et la LVT, qui les paie,
@@ -639,6 +651,8 @@ est passée ; le début de la campagne présidentielle ?
   clandestins.
 - Chantier 3, la réversion, le 7 novembre après les décisions 25 et 26 :
   valider la piste « les droits suivent l'argent, au prix juste ».
+- Chantier 3, la réversion, le 7 novembre après les décisions 27 et 28 : plus
+  rien ; le portage au scénario 6 est confié à une session du modèle.
 - Chantier 4 : la TVA sur le seul taux normal ; la LVT à 1 % ou 2 %, et son
   abattement.
 - Chantier 5 : l'indexation des pensions servies ; la formulation de la

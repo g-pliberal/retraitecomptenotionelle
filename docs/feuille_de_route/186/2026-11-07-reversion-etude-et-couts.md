@@ -298,3 +298,9 @@ abus, « quelque chose de simple et prouvable mathématiquement plutôt que des
 conditions arbitraires ». La session en tire une piste, à valider, sous le
 chantier 3 de la feuille de route du programme : les droits suivent
 l'argent, au prix juste.
+
+La piste validée (« oui, je valide », décision 27), le propriétaire en fixe
+le périmètre (décision 28) : « On applique ces règles uniquement au scénario
+6 » ; « les scénarios où l'on montre ce que l'on a cotisé ne montre que les
+parts contributives ». Il demande d'ouvrir la session du modèle qui les
+portera au scénario 6.
