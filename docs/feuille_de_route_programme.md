@@ -468,6 +468,29 @@ comparaison des options I et III (note `186/2026-11-07-planchers-etude.md`) :
     différentes caisses et complémentaires ». Écrite d'abord sous le numéro
     73, qu'une autre session venait de prendre.
 
+Le même jour, sur les recettes (chantier 4), après leur étude (note
+`186/2026-11-07-recettes-tva-lvt.md`) :
+
+79. **La TVA reste à 20 %, et la part qui va déjà aux retraites leur est
+    affectée en titre** : « on laisse la TVA à 20% et on officialise la part
+    affectée aux retraites ». Aucun taux ne monte : pas de TVA de
+    transition. La fraction de TVA que les retraites reçoivent aujourd'hui
+    devient une recette déclarée du système. Elle comprend celle que
+    l'Urssaf verse à l'Agirc-Arrco pour la réduction générale, de l'ordre de
+    7 Md€ en 2025 (décision 47), et la part de la Cnav dans la fraction de
+    la sécurité sociale, qui reste à chiffrer. Ce que le dépôt en comprend,
+    à confirmer : la proposition garde cette fraction au lieu de la retirer
+    avec les autres impôts affectés.
+80. **La LVT est à 2 %, dont un point aux retraites** : « pour la LVT, on
+    met 2% et on dédit 1% aux retraites ». Elle remplace la taxe foncière
+    (décision 9), et l'autre point revient aux communes à sa place. Sur les
+    terrains privés de 2025, capitalisation comprise et sans abattement,
+    elle rapporte 73 à 86 Md€ : 36 à 43 Md€ vont aux retraites (1,2 à 1,4
+    point de PIB de 2025), autant aux communes, contre 42,9 Md€ de taxe
+    foncière en 2024 (calcul à côté de l'étude). Restent ouverts
+    l'abattement de la résidence principale, le plafonnement au revenu que
+    le Conseil constitutionnel exige, et le temps d'évaluer les terrains.
+
 ## Ce qui est écarté
 
 - **Une transition sans baisse nominale des pensions en cours** — bâtir le
@@ -497,6 +520,9 @@ comparaison des options I et III (note `186/2026-11-07-planchers-etude.md`) :
   d'aujourd'hui ; seules l'AVPF, la MDA d'enfant handicapé et la majoration
   forfaitaire de réversion pour enfant à charge restent (décisions 57, 58
   et 61).
+- **Une hausse de la TVA**, de transition ou pour baisser les cotisations,
+  que l'étude du chantier 4 chiffrait à 4,9 points de taux normal en 2026
+  pour le scénario 6 : écartée le 7 novembre par la décision 79.
 
 ## Les chantiers
 
@@ -1082,6 +1108,27 @@ de la branche famille ; le rôle de la TVA une fois la décision 29 lue,
 combler le déficit ou baisser les cotisations ; sur le seul taux normal
 sachant que l'énergie y est, et son nombre de points ; la LVT à 1 % ou à 2 %, son
 abattement et son plafonnement.
+
+**Le 7 novembre 2026, le propriétaire tranche** (décisions 79 et 80) : la
+TVA reste à 20 %, et la part qui va déjà aux retraites leur est affectée en
+titre ; la LVT est à 2 %, dont un point aux retraites, 36 à 43 Md€ par an,
+l'autre aux communes à la place de la taxe foncière. Ce qui en suit :
+- *Les premières années n'ont plus de recette nouvelle.* La LVT attend
+  l'évaluation des terrains, plusieurs années, et la TVA ne monte pas. La
+  transition repose donc sur la lecture de la décision 29 (chantier 1) et
+  sur le sort des versements de l'État et de la branche famille.
+- *La part de TVA à officialiser est à chiffrer* : de l'ordre de 7 Md€ à
+  l'Agirc-Arrco en 2025 (décision 47), plus la part de la Cnav dans la
+  fraction de la sécurité sociale (Commission des comptes de la sécurité
+  sociale, COR).
+- *Le modèle* ne porte encore ni l'une ni l'autre : une session du modèle
+  garde au scénario 6 la fraction de TVA des retraites, et y verse la LVT,
+  un point de la valeur des terrains privés, à partir de l'année où
+  l'évaluation est faite.
+
+**Au propriétaire, pour les recettes, après les décisions 79 et 80** : le
+sort des versements de l'État et de la branche famille ; l'abattement et le
+plafonnement de la LVT ; l'année de son entrée en vigueur.
 
 ### Chantier 5 — L'indexation, et le partage de l'effort entre actifs et retraités
 
@@ -1773,6 +1820,9 @@ est passée ; le début de la campagne présidentielle ?
   de descente du taux en découle. Au chantier 2, le plafond par an.
 - Chantier 4 : la TVA sur le seul taux normal ; la LVT à 1 % ou 2 %, et son
   abattement.
+- Chantier 4, après les décisions 79 et 80 : le sort des versements de
+  l'État et de la branche famille ; l'abattement, le plafonnement et l'année
+  d'entrée en vigueur de la LVT.
 - Chantier 4, étudié le 7 novembre : le sort des versements de l'État et de
   la branche famille ; le rôle de la TVA sous la décision 29, son nombre de
   points et sa date de baisse ; la LVT à 1 % ou 2 %, son abattement, son

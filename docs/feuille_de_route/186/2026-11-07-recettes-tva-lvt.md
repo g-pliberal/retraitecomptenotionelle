@@ -1,13 +1,13 @@
 # Les recettes hors du travail, étudiées aux sources : la TVA sociale et la LVT
 
-**Reprise, au 7 novembre 2026.** Le chantier 4 est étudié ; trois questions
-attendent le propriétaire (« Ce que le propriétaire a à trancher »), et ses
-réponses s'écrivent en décisions sous le chantier 4 de
-`docs/feuille_de_route_programme.md`. Le besoin de TVA attend la lecture de
-la décision 29 (chantier 1), refaite au modèle : il se recalcule alors, avec
-les décisions 16 à 30, sur le solde du scénario 6. Restent à chiffrer
-l'abattement de la résidence principale et à relire les textes cités de
-mémoire (« Ce qui reste à faire »).
+**Reprise, au 7 novembre 2026.** Le chantier 4 est tranché pour l'essentiel
+(décisions 79 et 80, « Ce que le propriétaire a tranché ») : la TVA reste à
+20 %, sa part qui va aux retraites leur est affectée en titre, la LVT est à
+2 % dont un point aux retraites. Restent au propriétaire le sort des
+versements de l'État, l'abattement, le plafonnement et l'année de la LVT.
+Par quoi commencer : chiffrer la part de TVA des retraites (Cnav comprise),
+puis une session du modèle qui la garde au scénario 6 et y verse la LVT ;
+relire les textes cités de mémoire (« Ce qui reste à faire »).
 
 *Le 7 novembre 2026, le propriétaire ouvre le chantier 4 de l'action 186 :
 « je veux qu'on attaque ce chantier ». La question est celle de
@@ -469,3 +469,31 @@ chiffres en changent l'échelle :
   montant exécuté de la TVA affectée à la sécurité sociale en 2025.
 - Les pays : les taux et le plafond légal danois sur une source officielle,
   que la session n'a pu joindre (skat.dk, vurderingsstyrelsen.dk).
+
+## Ce que le propriétaire a tranché
+
+Le même jour, à la lecture de la note : « on laisse la TVA à 20% et on
+officialise la part affectée aux retraites » ; « pour la LVT, on met 2% et
+on dédit 1% aux retraites ». Ce sont les décisions 79 et 80 de
+`docs/feuille_de_route_programme.md`.
+
+- **La TVA ne monte pas.** La TVA de transition et la TVA qui baisserait
+  les cotisations sont écartées. La fraction qui va déjà aux retraites leur
+  est affectée en titre : celle de l'Agirc-Arrco, de l'ordre de 7 Md€ en
+  2025 (décision 47), et la part de la Cnav dans la fraction de la sécurité
+  sociale, à chiffrer. Ce que le dépôt en comprend, à confirmer : la
+  proposition la garde, au lieu de la retirer avec les autres impôts
+  affectés.
+- **La LVT est à 2 %, un point aux retraites, un aux communes.** Sur le
+  calcul de cette note, les retraites en reçoivent 36 à 43 Md€ par an (1,2 à
+  1,4 point de PIB de 2025), avant tout abattement. Les communes reçoivent
+  autant, contre 42,9 Md€ de taxe foncière en 2024. Les prix des terrains
+  baissent de 30 à 40 %, ceux des logements de 14 à 19 %.
+- **Ce qui en suit pour la transition.** La LVT attend l'évaluation des
+  terrains, plusieurs années, et la TVA ne monte pas : les premières années
+  n'ont pas de recette nouvelle. Leur équilibre repose sur la lecture de la
+  décision 29 et sur le sort des versements de l'État et de la branche
+  famille, que le propriétaire n'a pas encore tranché.
+- **Restent ouverts** l'abattement de la résidence principale, le
+  plafonnement au revenu, l'année d'entrée en vigueur de la LVT, et le
+  montant de la part de TVA officialisée.
