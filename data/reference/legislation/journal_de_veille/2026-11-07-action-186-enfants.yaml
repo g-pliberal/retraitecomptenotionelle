@@ -1,0 +1,41 @@
+date: "2026-11-07"
+session: "action 186, chantier 3 : les droits familiaux de retraite (les enfants) étudiés aux sources pour le programme, et le coût de chaque système face au droit actuel"
+consulte: >-
+  Aucune règle du scénario 1 n'est touchée, et l'index LEGI n'a pas été
+  interrogé ; les règles des droits familiaux sont celles des fiches du
+  dépôt. Lus à leur source : le projet de loi de financement de la sécurité
+  sociale pour 2027 (n° 3211, article 34), le rapport de l'Assemblée n° 3345
+  qui le commente, le texte adopté n° 358 et le projet de loi n° 138 du
+  Sénat ; le rapport du COR de novembre 2025 sur les droits familiaux et
+  conjugaux, ses séances d'octobre 2023, de février 2024 et du 20 mars 2025 ;
+  la note BRET n° 24-01 de la DREES ; l'étude d'impact du projet de loi de
+  2020. Sur EUR-Lex, HUDOC, le site du Conseil constitutionnel et
+  Légifrance : Griesmar, Podesta, Leone, WA, C-623/23, Abdoulaye, Brachner ;
+  Markin, Andrle, Béláné Nagy, Koufaki, Da Silva Carvalho Rico, Mockienė,
+  Valkov, Di Trizio ; les décisions 97-393 DC, 98-405 DC, 2003-483 DC,
+  2009-596 DC, 2010-617 DC, 2013-672 DC, 2014-706 DC, 2019-795 DC,
+  2023-849 DC, 2025-875 DC et 2025-899 DC ; Cass. civ. 2e, 19 février 2009.
+  Les textes et caisses de Suède, d'Allemagne, d'Italie, de Norvège, de
+  Pologne, de Suisse, du Royaume-Uni et du Japon. Lus par relais : le
+  dossier n° 128 de la DREES, l'annexe 9 du projet de loi pour 2027, la revue
+  de l'IGAS et de l'IGF, l'OCDE (Pensions at a Glance 2025).
+trouve: >-
+  L'article 34 du projet de loi de financement pour 2027 remplacerait la
+  majoration de 10 % des régimes de base par un forfait de 105 à 110 € par
+  mois pour une carrière complète, pour les pensions prenant effet à partir
+  du 1er juillet 2027 ; l'Assemblée a rejeté le texte le 23 octobre 2026, le
+  Sénat l'examine. Rien n'est en vigueur. Deux points à vérifier dans les
+  données, sans écart de règle : le poste des comptes de la protection
+  sociale lu pour la majoration (7,78 Md€ en 2024) ne couvrirait que les
+  régimes de base, le COR comptant 9,70 Md€ tous régimes ; et la fiche
+  sam_parents_24_23.yaml cite l'article 103 de la loi n° 2025-1403, quand le
+  décret n° 2026-699 viserait l'article 104. Aucune erreur des fiches n'est
+  déclarée. Le détail est dans la note
+  docs/feuille_de_route/186/2026-11-07-enfants-etude-et-couts.md.
+reste: >-
+  Suivre l'article 34 au Sénat et à la loi promulguée : s'il est voté, le
+  scénario 1 sert le forfait aux pensions de juillet 2027. Vérifier au texte
+  l'article de la loi n° 2025-1403 que vise le décret n° 2026-699, et le
+  champ du poste E11-21.1.41 des comptes de la protection sociale. Non lus à
+  la source : la Mütterrente III promulguée, l'arrêt portugais 862/2013, les
+  coûts de la MDA pour congé parental et pour enfant handicapé.

@@ -533,6 +533,57 @@ convention : aucune réversion, rien que les parts contributives. Une session
 du modèle est ouverte le même jour pour porter les décisions 16 à 28 au
 scénario 6.
 
+**Le 7 novembre 2026 : les enfants, étudiés aux sources.** Le propriétaire
+les a voulus d'abord, par des recherches en parallèle ; le rapport est la
+note `186/2026-11-07-enfants-etude-et-couts.md`. Ce qu'il établit :
+- *Le coût* : 24,9 Md€ de droits familiaux en 2024, 7,1 % des droits
+  directs — majoration de 10 % 9,7, MDA et bonifications 9,6, AVPF 4,4,
+  départs anticipés 1,2 (COR). La branche famille en paie 45 % ; le reste,
+  dont toute la MDA, est payé par les régimes, donc par les autres cotisants
+  et l'État employeur. Projeté à côté : 0,98 point de PIB en moyenne sur
+  2026-2070, que la proposition, qui retire tout, économise en brut ; 0,80
+  net de la garantie servie d'office. La branche famille y garde 0,37 point.
+- *Qui en profite* : les mères ont 73 % de la masse ; la MDA et l'AVPF vont
+  d'abord aux petites pensions. La majoration de 10 % va pour 62 % aux
+  hommes, et le dixième le plus aisé en capte le quart : la phrase du
+  programme est vraie en euros, fausse en taux, car elle vaut 10 % pour
+  tous.
+- *Le gouvernement* propose un forfait, à l'article 34 du projet de loi de
+  financement pour 2027 : 105 à 110 € par mois pour une carrière complète,
+  pour les pensions de juillet 2027, à coût constant. L'Assemblée a rejeté
+  le texte le 23 octobre ; le Sénat l'examine.
+- *L'étranger* : seule la Suède paie le crédit en argent, à la naissance, du
+  budget de la famille au compte du parent qui gagne le moins (0,14 % du
+  PIB). La Banque mondiale en fait la règle des comptes notionnels : tout
+  droit non cotisé a un payeur extérieur.
+- *La doctrine* : « subi ? » ne tranche pas. La double contribution ne
+  suppose pas l'enfant subi, et le programme écrit que la répartition vit
+  des cotisants de demain ; aucune étude ne montre qu'un droit familial de
+  retraite fasse naître des enfants. Restent « qui paie ? » et
+  « forfaitaire ? ».
+- *Le droit* : un forfait d'éducation réservé aux mères est exposé (élevé) ;
+  faute d'accord, au parent qui a la plus petite pension, il ne l'est pas
+  (minime). Reprendre d'un coup les droits des retraités actuels l'est
+  (élevé à très élevé) ; les supprimer pour l'avenir, peu (faible).
+- *Les systèmes*, face à la proposition (à côté) : garder le stock coûte
+  0,23 point net, n'en garder que la MDA et l'AVPF 0,12 ; un forfait de 50 €
+  par mois et par enfant coûte 0,30 point brut, et la branche famille le
+  paie avec ce qu'elle verse aujourd'hui à la retraite ; un crédit suédois
+  0,17, allemand 0,48, l'AVPF seule 0,14.
+
+La piste du rapport, qui n'est pas une décision : ni les autres cotisants,
+ni la proportion. Pour l'avenir, un forfait par enfant dès le premier, payé
+par la branche famille, à la place de la MDA, de la majoration et de la
+surcote parentale, au parent qui a la plus petite pension faute d'accord —
+en cotisation au compte à la naissance, à la suédoise, pour les enfants nés
+après la bascule. Pour les retraités actuels, garder la MDA, les
+bonifications et l'AVPF, et laisser la majoration suivre la baisse générale
+(S3), ou tout garder jusqu'à extinction (S2).
+
+**Au propriétaire, pour les enfants** : le stock (S1, S2 ou S3) ; la règle
+pour l'avenir ; le montant du forfait ; le parent qui le reçoit faute
+d'accord.
+
 ### Chantier 4 — Les recettes hors du travail : la TVA sociale et la LVT
 
 **La question.** Combien rapportent la TVA sociale et la LVT, qui les paie,
@@ -1053,6 +1104,10 @@ est passée ; le début de la campagne présidentielle ?
   valider la piste « les droits suivent l'argent, au prix juste ».
 - Chantier 3, la réversion, le 7 novembre après les décisions 27 et 28 : plus
   rien ; le portage au scénario 6 est confié à une session du modèle.
+- Chantier 3, les enfants, étudiés le 7 novembre : le stock (repris, gardé,
+  ou gardé pour la MDA et l'AVPF) ; la règle pour l'avenir (rien, un forfait
+  par enfant en pension ou en cotisation au compte, l'AVPF seule) ; le
+  montant du forfait ; le parent qui le reçoit faute d'accord.
 - Chantiers 1 et 2, le 7 novembre après les décisions 29 et 30 : la lecture
   de la décision 29, A ou B, et pour B le déficit que l'on divise ; le rythme
   de descente du taux en découle. Au chantier 2, le plafond par an.

@@ -8046,12 +8046,12 @@ et 3 ci-dessus ; la mesure, et comment la refaire, sont dans la note
 (décisions 16 à 28) ; le stock gardé est au coût, le site le dément encore
 (`…-reversion-scenario-6-plan.md`). Décisions 29 et 30 (chantiers 1 et 2) :
 les deux lectures de la 29 sont refaites au modèle, la dépense suivant le taux
-cotisé (`…-deux-lectures-au-modele.md`). Le message (chantier 8) est
-tranché (décisions 31 à 33), l'âge plancher chiffré (`…-age-plancher.md`) ;
-les recettes (4), l'indexation (5), les complémentaires (6) et les chiffres
-(7) sont étudiés ; les notes du 4, du 5, du 6 et du 8 tiennent leur bloc. Par
-quoi commencer : A ou B, au propriétaire, qui fixe le besoin de TVA, et les
-questions des chantiers 4 à 7 ; ensuite le gel (chantier 10). Rien n'est gelé.
+cotisé (`…-deux-lectures-au-modele.md`). Le message (8) est tranché
+(décisions 31 à 33), l'âge plancher chiffré (`…-age-plancher.md`) ; les
+enfants (3), les recettes (4), l'indexation (5), les complémentaires (6) et
+les chiffres (7) sont étudiés ; les notes du 3 au 6 et du 8 tiennent leur
+bloc. Par quoi commencer : A ou B, au propriétaire, qui fixe le besoin de
+TVA, et les questions des chantiers 3 à 7 ; puis le gel (10). Rien n'est gelé.
 
 **D'où elle vient.** Le 6 novembre 2026, le propriétaire demande un bilan :
 les vagues se succèdent, et le chantier semble sans fin. La session mesure
