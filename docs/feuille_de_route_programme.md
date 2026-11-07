@@ -388,6 +388,14 @@ projette caisse par caisse (note `186/2026-11-07-complementaires-au-modele.md`) 
     0,4 Md€ de réserves ne couvrent pas les quelque 0,6 Md€ perdus : elle
     rejoint le régime général dès la première année.
 
+Le même jour, sur l'âge (chantier 8), après le chiffrage d'un âge plancher
+de 62 ou de 64 ans :
+
+68. **L'âge légal de départ reste 65 ans, et la garantie vieillesse s'ouvre
+    à 65 ans** : « 65 ans » ; la garantie, « Reste à 65 ans ». Le défaut de
+    la proposition ne change pas (`Parametres.age_legal_liberal`) ; le
+    message est celui de 65 ans, pas la liberté de l'âge.
+
 ## Ce qui est écarté
 
 - **Une transition sans baisse nominale des pensions en cours** — bâtir le
@@ -1476,6 +1484,11 @@ page Coût. Ce qu'elle établit :
   plancher ; sous la liberté de l'âge, certains partiraient plus tôt, et le
   coût d'un plancher de 62 ans est une borne basse.
 
+Le propriétaire tranche le même jour, sur le tableau des trois âges :
+65 ans, et la garantie à 65 ans (décision 68 ; le numéro 34, que la
+consigne lui donnait, et les suivants avaient été pris entre-temps). « La
+liberté de l'âge » quitte le message des 45-62 ans ; le modèle ne bouge pas.
+
 ### Chantier 9 — Le site et le simulateur
 
 **La question du propriétaire.** « Est-ce que le simulateur est vraiment une
@@ -1659,10 +1672,8 @@ est passée ; le début de la campagne présidentielle ?
   d'entreprise au lieu du PEE ; et, au chantier 9, la façon de montrer que
   l'outil donne à la proposition un rendement plus faible que le droit actuel
   pour les jeunes générations.
-- Chantier 8, après les décisions 31 à 33 : l'âge, 62, 64 ou 65 ans, chiffré
-  le 7 novembre (`186/2026-11-07-age-plancher.md`), et la garantie, ouverte
-  au plancher ou à 65 ans ; le plafond de l'apport pour un premier
-  logement. Le gain des actifs suit la lecture A ou B du chantier 1, le
+- Chantier 8, après les décisions 31 à 33 et 68 : le plafond de l'apport
+  pour un premier logement. Le gain des actifs suit la lecture A ou B du chantier 1, le
   message des retraités les pertes du chantier 2 ; le test des vingt
   personnes attend les deux.
 - Chantier 9, le 7 novembre après les décisions 34 et 35 : ce que la

@@ -1,15 +1,5 @@
 # Un âge plancher de 62 ou de 64 ans, chiffré face aux 65 ans de la proposition
 
-**Reprise, au 7 novembre 2026.** Le chiffrage est fait : un plancher de
-62 ans creuse le solde moyen 2026-2070 de la variante rétroactive de
-0,22 point de PIB par rapport à 65 ans, un plancher de 64 ans de 0,13, et la
-dette de 2070 de 17 et 9 points ; qui part à 62 ans plutôt qu'à 65 touche
-17 à 21 % de moins par mois, à 64 ans 6 à 7 %. Ouvrir la garantie au
-plancher coûterait 0,02 ou 0,01 point de plus, pour 200 000 ou
-85 000 bénéficiaires. Le propriétaire tranche (décision 34, chantier 8 de
-`docs/feuille_de_route_programme.md`) ; le modèle n'est touché qu'après :
-`Parametres.age_legal_liberal`, le README et la page Coût, si l'âge change.
-
 *Le 7 novembre 2026, le propriétaire veut le chiffre avant de choisir l'âge
 (décisions 31 à 33, « Chiffrer avant de choisir ») : la piste « la liberté de
 l'âge » du chantier 8 contredit l'âge légal de départ de 65 ans de la
@@ -172,3 +162,13 @@ cette hypothèse inverse n'est pas chiffrée.
 
 Deux questions : l'âge plancher, 62, 64 ou 65 ans ; et, sous 65 ans, si la
 garantie s'ouvre au plancher ou reste à 65 ans.
+
+## Ce que le propriétaire a tranché, le même jour
+
+Sur le tableau des trois âges, aux deux questions posées avec leurs
+options : l'âge, « 65 ans » ; la garantie, « Reste à 65 ans » (décision 68 de
+`docs/feuille_de_route_programme.md`). Le défaut de la proposition ne
+change pas, ni le modèle, ni le site : le message des 45-62 ans sera celui de
+65 ans, « comme nos voisins », et non la liberté de l'âge. La consigne
+donnait à cette décision le numéro 34 ; d'autres sessions l'avaient pris
+entre-temps, elle prend le premier libre.

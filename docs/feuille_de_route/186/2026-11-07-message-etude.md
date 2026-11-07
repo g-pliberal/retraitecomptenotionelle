@@ -2,11 +2,10 @@
 
 **Reprise, au 7 novembre 2026.** Le chantier 8 est étudié et tranché le
 même jour : décisions 31 à 33 de `docs/feuille_de_route_programme.md` (la
-faute, le pilier à l'assuré, l'apport pour un premier logement). Reste
-l'âge, chiffré le même jour (`2026-11-07-age-plancher.md`) : un plancher
-de 62 ou 64 ans face aux 65 ans de la proposition ; le propriétaire le
-tranche. Le gain
-des actifs en euros attend la lecture A ou B du chantier 1, le message des
+faute, le pilier à l'assuré, l'apport pour un premier logement), puis
+l'âge, chiffré (`2026-11-07-age-plancher.md`) : 65 ans, la garantie à
+65 ans (décision 68). Reste le plafond de l'apport. Le gain des actifs en
+euros attend la lecture A ou B du chantier 1, le message des
 retraités les pertes du chantier 2, et le test des vingt personnes, les deux.
 
 *Le 7 novembre 2026, le propriétaire ouvre le chantier 8 de l'action 186,
