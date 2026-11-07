@@ -211,6 +211,10 @@ sources :
     ensuite, 18 %** : « On garde les cotisations telles quelles tant que la
     complémentaire n'a pas été intégrée dans le régime général. Quand ça
     bascule dans le régime général, les cotisations seront à 18%. »
+41. **La garantie vieillesse remplace tous les planchers propres à une
+    caisse**, y compris ceux qui la dépassent pour une longue carrière — le
+    minimum garanti des fonctionnaires, ceux de la SNCF et des IEG, le
+    complément différentiel des exploitants agricoles : « Oui ».
 
 Le même jour, sur l'indexation (chantier 5), après l'étude aux sources :
 
@@ -1212,12 +1216,11 @@ est passée ; le début de la campagne présidentielle ?
   le sort des réserves, aux comptes des affiliés de chaque caisse ou au fonds
   commun ; l'ordre ; la garantie face au complément différentiel des
   exploitants agricoles.
-- Chantier 6, après les décisions 36 à 40 : la compensation des allègements
-  de l'Agirc-Arrco, coupée ou non dès maintenant, et ce que devient alors
-  l'allègement ; le taux de base d'un salarié du privé tant que sa
-  complémentaire n'est pas intégrée ; la pension complémentaire des
-  retraités jusqu'à l'intégration de leur caisse ; les planchers propres à
-  certaines caisses.
+- Chantier 6, après les décisions 36 à 41 : la voie pour la compensation
+  des allègements de l'Agirc-Arrco, que la loi fixe (la porter au régime
+  général, la couper, ou supprimer l'allègement) ; le taux du régime général
+  d'un salarié dont la complémentaire n'est pas intégrée ; les pensions de
+  l'Agirc-Arrco jusqu'à son intégration, que fixent les partenaires sociaux.
 - Chantier 7, étudié le 7 novembre : « la moitié du déficit public »,
   abandonnée ou attribuée à Beaufret ; les taux chiffrés à la date de
   publication ; le rendement en baisse au lieu du « TRI négatif » ; le PER

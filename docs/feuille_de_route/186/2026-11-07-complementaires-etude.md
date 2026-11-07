@@ -1,14 +1,14 @@
 # Les complémentaires étudiées aux sources : ce qui n'est pas cotisation, leurs réserves, et la manière de les sauver
 
 **Reprise, au 7 novembre 2026.** Le chantier 6 est étudié et tranché
-(décisions 36 à 40) : la CEG et la CET supprimées dès maintenant, chaque
-complémentaire intégrée au régime général quand ses réserves sont épuisées,
-dans l'ordre que le modèle calcule. Quatre questions restent au propriétaire
-(fin de la note). Puis une session du modèle projette chaque complémentaire
-— ses cotisations sans CEG ni CET ni impôt, ses pensions, ses réserves —
-jusqu'à leur épuisement, et l'y intègre alors, avec la garantie vieillesse et
-le taux de 18 % ; le détail, sous « Ce que les décisions demandent au
-modèle ».
+(décisions 36 à 41). Restent au propriétaire, sous « Qui fixe les taux de
+chaque caisse » : la voie pour la compensation des allègements ; le taux du
+régime général d'un salarié dont la complémentaire n'est pas intégrée ; les
+pensions de l'Agirc-Arrco jusqu'à son intégration. Puis une session du modèle
+projette chaque complémentaire — ses cotisations sans CEG ni CET ni impôt,
+ses pensions, ses réserves — jusqu'à leur épuisement, et l'intègre alors,
+avec la garantie vieillesse et le taux de 18 % ; le détail, sous « Ce que
+les décisions demandent au modèle ».
 
 *Le 7 novembre 2026, le propriétaire ouvre le chantier 6 de l'action 186 :
 « Les complémentaires : rien que leurs cotisations, sauvées mais dissoutes »
@@ -213,3 +213,26 @@ S'y ajoutent deux planchers en points : la garantie minimale de points des cadre
 2. **Le taux de base** d'un salarié du privé tant que sa complémentaire n'est pas intégrée : ses taux actuels, ou la part de base des 18 % ?
 3. **La pension des retraités** d'une caisse pas encore intégrée : servie intacte à ses règles jusqu'à l'intégration, la baisse en cinq ans de la décision 3 ne commençant qu'alors ?
 4. **Les planchers** : la garantie vieillesse remplace-t-elle aussi les quatre planchers qui la dépassent ?
+
+## Qui fixe les taux de chaque caisse
+
+Le propriétaire répond à la quatrième question — « Oui » : la garantie vieillesse remplace aussi les quatre planchers qui la dépassent (décision 41) — et demande, pour les trois autres, qui décide : la caisse seule ? un parti n'agit-il que sur le régime général ? Les textes en vigueur (index LEGI de la DILA, à jour au 2 novembre 2026) répondent caisse par caisse. **Une seule caisse fixe elle-même ses taux : l'Agirc-Arrco.** Toutes les autres les reçoivent de l'État.
+
+| Caisse | Qui fixe les cotisations | Le texte |
+|---|---|---|
+| Régime général | la loi et le décret | code de la sécurité sociale |
+| Agirc-Arrco | les syndicats et le patronat, par accord ; l'État le rend obligatoire | L. 921-4 : les régimes « sont institués par des accords nationaux interprofessionnels étendus et élargis » |
+| Complémentaires des libéraux | le décret, après avis de la CNAVPL | L. 644-1 : « Le mode de calcul des cotisations complémentaires […] et, le cas échéant, leurs montants annuels sont déterminés par décret après avis de la Caisse nationale d'assurance vieillesse des professions libérales » |
+| Complémentaire des indépendants | le décret, sur les règles que propose le CPSTI | L. 635-1 : tranches et taux « déterminées par décret » ; « L'équilibre financier du régime est assuré par ses seules ressources » |
+| Complémentaire agricole | la loi, pour ses ressources ; le décret, pour son assiette | L. 732-58 : cotisations, « une fraction, fixée à 28,89 %, du produit de l'accise sur les alcools », « les contributions et subventions de l'Etat » ; L. 732-59 |
+| Ircantec | le décret et l'arrêté | décret n° 70-1277 du 23 décembre 1970, arrêté du 30 décembre 1970 ([dépôt, ircantec.yaml](../../../data/reference/regimes/ircantec.yaml)) |
+
+Deux constats. La règle que le programme veut pour toutes est déjà écrite dans la loi pour la complémentaire des indépendants : « L'équilibre financier du régime est assuré par ses seules ressources » (L. 635-1). Et la part d'impôt de la complémentaire agricole n'est plus de 26,73 % : la loi la porte à 28,89 % aujourd'hui (L. 732-58).
+
+**Même l'Agirc-Arrco n'échappe pas à la loi.** Le Conseil d'État l'a écrit en 2020 : l'article 34 de la Constitution, qui réserve à la loi « la détermination des principes fondamentaux de la sécurité sociale », couvre « l'ensemble des systèmes de protection sociale, quelles que soient leurs modalités de gestion », et « les régimes de retraite complémentaire obligatoires constituent des systèmes de protection sociale » (avis de janvier 2020, p. 12). Le projet de loi de 2020 donnait au ministre un droit d'opposition à toute décision de l'Agirc-Arrco qui menacerait l'équilibre voté (article 62, II) ; le Conseil d'État n'a vu dans l'intégration des caisses aucune atteinte « disproportionnée à la liberté d'entreprendre et à la liberté contractuelle » (§ 113), et dans ce contrôle accru un dispositif « cohérent avec les autres instruments dont dispose l'Etat » (§ 127). La limite est la liberté contractuelle des partenaires sociaux : une loi qui défait leur accord doit être justifiée par l'intérêt général et proportionnée.
+
+Ce que cela change pour les trois questions :
+
+- **La compensation des allègements est une décision de la loi, non de la caisse.** C'est la loi qui étend la réduction générale aux « cotisations à la charge de l'employeur dues au titre des régimes de retraite complémentaire légalement obligatoires mentionnés à l'article L. 921-4 » (L. 241-13), et la loi de financement qui la compense par la TVA. Trois voies, toutes législatives : *ôter* les cotisations complémentaires de la réduction et *porter* l'allègement sur les cotisations du régime général, que finance la TVA sociale (chantier 4) — l'employeur paie le même prix, l'Agirc-Arrco touche des cotisations au lieu de TVA, et ne vit plus que d'elles ; *garder* la réduction et *couper* la compensation — l'Agirc-Arrco perd de l'ordre de 11 Md€ par an et coule en quatre ans environ, mais l'État lui impose une perte qu'il a créée, ce qui est le plus exposé en droit, et ce que le gouvernement a renoncé à faire en 2023, pour une ponction que la presse chiffrait de 1 à 3 Md€ par an ; *supprimer* la réduction sur les cotisations complémentaires sans la reporter — l'employeur paie plein tarif sur les bas salaires, contre « le travail paie ». La piste du 6 novembre était la première.
+- **La CEG et la CET aussi sont l'affaire de l'accord** (article 37 de l'accord du 17 novembre 2017) : les supprimer « dès maintenant » (décision 36) demande, hors du modèle, une loi qui l'impose aux partenaires sociaux, avec le risque constitutionnel qui s'y attache. Dans le modèle, c'est une hypothèse.
+- **Les taux du régime général sont ceux du parti** ; ceux de l'Agirc-Arrco, des partenaires sociaux ; ceux des autres complémentaires, de l'État. La décision 40 se lit donc : jusqu'à l'intégration de sa complémentaire, un salarié du privé garde les taux de sa complémentaire — et, à défaut d'autre choix, ceux du régime général. **Les pensions de l'Agirc-Arrco** se fixent de même par accord (la revalorisation du point) : le parti ne peut les baisser avant l'intégration que par une loi, plus exposée encore, puisqu'elle toucherait des droits acquis.
