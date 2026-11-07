@@ -278,3 +278,9 @@ déjà servies jusqu'à extinction », et « pour la suite, on prend le G », la
 rente sur deux têtes au choix du couple. Ce sont les décisions 16 et 17 de
 `docs/feuille_de_route_programme.md` ; ce qui reste ouvert est sous son
 chantier 3.
+
+Le même jour, ses modalités (décisions 18 à 21) : « Par défaut avec
+renonciation que les deux conjoints doivent signer » ; un taux de « 50% » ;
+la garantie vieillesse servie « D'office » ; la rente ouverte à « Tous les
+couples qui le demandent tant que c'est payé ». À la question du décès d'un
+actif, le propriétaire demande d'abord ce que fait le système actuel.

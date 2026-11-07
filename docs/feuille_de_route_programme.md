@@ -101,6 +101,16 @@ Le 7 novembre 2026, sur la réversion (chantier 3), après l'étude aux sources 
     veut protéger le survivant le paie d'une pension plus basse ; les autres
     cotisants ne paient plus la réversion.
 
+Le même jour, ses modalités :
+
+18. **La rente sur deux têtes est servie par défaut** : « Par défaut avec
+    renonciation que les deux conjoints doivent signer ».
+19. **Son taux de réversion est de 50 %** : « 50% ».
+20. **La garantie vieillesse est servie d'office**, sans demande : « D'office ».
+21. **La rente est ouverte à tous les couples qui la demandent**, mariés,
+    pacsés ou concubins : « Tous les couples qui le demandent tant que c'est
+    payé ».
+
 ## Ce qui est écarté
 
 - **Une transition sans baisse nominale des pensions en cours** — bâtir le
@@ -297,6 +307,18 @@ PACS et le concubinage ; la couverture du décès d'un actif, que la rente,
 servie à la liquidation, ne couvre pas ; la garantie servie d'office. Au
 modèle ensuite : servir la réversion du stock jusqu'à extinction dans les
 scénarios 2 à 6, et une rente sur deux têtes tarifée au couple.
+
+**Le 7 novembre 2026, les modalités** (décisions 18 à 21) : la rente sur
+deux têtes par défaut, sauf renonciation signée des deux conjoints ; un taux
+de 50 % ; la garantie vieillesse servie d'office ; la rente ouverte à tous
+les couples qui la demandent et la paient. À 50 %, l'étude chiffre son prix
+(à côté : génération 1961, départ à 65 ans, mari plus âgé de deux ans) à
+environ 15 à 16 % de la pension du mari et 6 % de celle de l'épouse,
+chacun couvrant l'autre. La garantie d'office porte le recours à 100 % : les
+économies nettes à retenir sont celles du recours plein, et le modèle, qui
+suppose 50 %, est à régler. Restent ouverts : la couverture du décès d'un
+actif ; le divorce ; le défaut, pour les seuls mariés ou pour tout couple
+déclaré.
 
 ### Chantier 4 — Les recettes hors du travail : la TVA sociale et la LVT
 
@@ -545,6 +567,9 @@ est passée ; le début de la campagne présidentielle ?
   modalités de la rente sur deux têtes (par défaut ou à la demande, taux,
   divorce, PACS et concubinage), la couverture du décès d'un actif, la
   garantie servie d'office.
+- Chantier 3, la réversion, le 7 novembre après les décisions 18 à 21 : la
+  couverture du décès d'un actif ; le divorce ; le défaut, pour les seuls
+  mariés ou pour tout couple déclaré.
 - Chantier 4 : la TVA sur le seul taux normal ; la LVT à 1 % ou 2 %, et son
   abattement.
 - Chantier 5 : l'indexation des pensions servies ; la formulation de la
