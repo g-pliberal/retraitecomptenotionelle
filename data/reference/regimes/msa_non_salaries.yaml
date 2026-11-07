@@ -15,6 +15,7 @@ hors_repartition: false
 inventaire:
   section: agricoles
   rang: 10
+  gestionnaire: msa
   nom: Assurance vieillesse des non-salariés agricoles (MSA)
   population: Chefs d'exploitation, conjoints collaborateurs, aides familiaux
   couverture: partiel

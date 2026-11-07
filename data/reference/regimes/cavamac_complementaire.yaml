@@ -21,6 +21,7 @@ hors_repartition: false
 inventaire:
   section: non_salaries
   rang: 150
+  gestionnaire: cavamac
   nom: Complémentaire des agents généraux d'assurance (CAVAMAC)
   population: Agents généraux d'assurance
   couverture: partiel

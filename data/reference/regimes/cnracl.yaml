@@ -19,6 +19,7 @@ hors_repartition: false
 inventaire:
   section: fonction_publique
   rang: 30
+  gestionnaire: cnracl
   population: Fonctionnaires territoriaux et hospitaliers
   couverture: modelise
   statuts: [fonctionnaire_territorial_hospitalier,

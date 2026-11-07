@@ -10,6 +10,7 @@ integre_dans: cnracl
 inventaire:
   section: fonction_publique
   rang: 110
+  gestionnaire: crfm
   couverture: hors_champ
   statuts: []
   textes:

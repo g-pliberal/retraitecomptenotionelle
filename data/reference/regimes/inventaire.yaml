@@ -43,6 +43,7 @@ inventaire:
     extinction: 1949
     succede_a: []
     integre_dans: null
+    gestionnaire: cnrv
     couverture: hors_champ
     statuts: []
     textes:
@@ -77,6 +78,7 @@ inventaire:
     extinction: 1930
     succede_a: []
     integre_dans: assurances_sociales
+    gestionnaire: caisses_retraites_ouvrieres
     couverture: hors_champ
     statuts: []
     textes:
@@ -96,6 +98,7 @@ inventaire:
     extinction: 1945
     succede_a: []
     integre_dans: regime_general
+    gestionnaire: caisses_assurances_sociales
     couverture: modelise
     statuts: [salarie_prive_non_cadre, salarie_prive_cadre, salarie_agricole, salarie_prive_cadre_entreprise_recente,
       salarie_prive_non_cadre_entreprise_recente, salarie_regime_professionnel_integre]
@@ -112,6 +115,7 @@ inventaire:
     extinction: 1946
     succede_a: []
     integre_dans: regime_general
+    gestionnaire: institution_alsace_lorraine
     couverture: hors_champ
     statuts: []
     textes:
@@ -148,6 +152,7 @@ inventaire:
     extinction: null
     succede_a: [assurances_sociales, avts]
     integre_dans: null
+    gestionnaire: cnav
     couverture: modelise
     statuts: [salarie_prive_non_cadre, salarie_prive_cadre, contractuel_public, artisan,
       commercant, conjoint_collaborateur_artisan, conjoint_collaborateur_commercant,
@@ -172,6 +177,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: msa
     couverture: modelise
     statuts: [salarie_agricole]
     textes:
@@ -192,6 +198,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: cssm
     couverture: partiel
     statuts: [salarie_mayotte, independant_mayotte]
     textes:
@@ -260,6 +267,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: cps_saint_pierre_et_miquelon
     couverture: partiel
     statuts: [salarie_saint_pierre_et_miquelon]
     textes:
@@ -294,6 +302,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: cps_polynesie
     couverture: partiel
     statuts: [salarie_polynesie]
     textes:
@@ -331,6 +340,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: cps_polynesie
     couverture: partiel
     statuts: [salarie_polynesie]
     textes:
@@ -356,6 +366,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: cafat
     couverture: partiel
     statuts: [salarie_nouvelle_caledonie]
     textes:
@@ -412,6 +423,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: cps_wallis_et_futuna
     couverture: partiel
     statuts: [salarie_wallis_et_futuna]
     textes:
@@ -450,6 +462,7 @@ inventaire:
     extinction: 2018
     succede_a: []
     integre_dans: agirc_arrco
+    gestionnaire: agirc
     couverture: modelise
     statuts: [salarie_prive_cadre, personnel_navigant, salarie_prive_cadre_entreprise_recente]
     textes:
@@ -466,6 +479,7 @@ inventaire:
     extinction: 1962
     succede_a: []
     integre_dans: arrco
+    gestionnaire: unirs
     couverture: partiel
     statuts: [salarie_prive_non_cadre, salarie_prive_non_cadre_entreprise_recente, maitre_enseignement_prive,
       agent_chemins_fer_secondaires, salarie_nouvelle_caledonie]
@@ -488,6 +502,7 @@ inventaire:
     extinction: 2018
     succede_a: [unirs]
     integre_dans: agirc_arrco
+    gestionnaire: arrco
     couverture: partiel
     statuts: [salarie_prive_non_cadre, salarie_prive_cadre, salarie_agricole, personnel_navigant,
       mineur, agent_seita, agent_chemins_fer_secondaires, salarie_prive_cadre_entreprise_recente,
@@ -513,6 +528,7 @@ inventaire:
     extinction: 2018
     succede_a: []
     integre_dans: agirc_arrco
+    gestionnaire: arrco
     couverture: modelise
     statuts: [salarie_prive_non_cadre, salarie_agricole, mineur, agent_seita, agent_chemins_fer_secondaires,
       maitre_enseignement_prive, salarie_saint_pierre_et_miquelon, salarie_nouvelle_caledonie,
@@ -533,6 +549,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: agirc_arrco
     couverture: partiel
     statuts: [ministre_du_culte]
     textes:
@@ -557,6 +574,7 @@ inventaire:
     extinction: 2018
     succede_a: []
     integre_dans: agirc_arrco
+    gestionnaire: agirc
     couverture: modelise
     statuts: [salarie_prive_cadre_entreprise_recente]
     textes:
@@ -574,6 +592,7 @@ inventaire:
     extinction: 2018
     succede_a: []
     integre_dans: agirc_arrco
+    gestionnaire: arrco
     couverture: modelise
     statuts: [salarie_prive_non_cadre_entreprise_recente]
     textes:
@@ -588,6 +607,7 @@ inventaire:
     extinction: null
     succede_a: [agirc, arrco]
     integre_dans: null
+    gestionnaire: agirc_arrco
     couverture: modelise
     statuts: [salarie_prive_non_cadre, salarie_prive_cadre, salarie_agricole, personnel_navigant,
       agent_sncf, agent_ratp, agent_ieg, mineur, clerc_de_notaire, agent_banque_de_france,
@@ -613,6 +633,7 @@ inventaire:
     extinction: 1971
     succede_a: []
     integre_dans: ircantec
+    gestionnaire: ipacte
     couverture: partiel
     statuts: [contractuel_public]
     textes:
@@ -640,6 +661,7 @@ inventaire:
     extinction: 1971
     succede_a: []
     integre_dans: ircantec
+    gestionnaire: igrante
     couverture: partiel
     statuts: [contractuel_public]
     textes:
@@ -669,6 +691,7 @@ inventaire:
     extinction: null
     succede_a: [ipacte, igrante]
     integre_dans: null
+    gestionnaire: ircantec
     couverture: modelise
     statuts: [contractuel_public, elu_local, membre_cese]
     textes:
@@ -689,6 +712,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: ircantec
     couverture: routage
     statuts: [elu_local]
     textes:
@@ -723,6 +747,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: crpn
     couverture: partiel
     statuts: [personnel_navigant]
     textes:
@@ -751,6 +776,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: crpn
     couverture: partiel
     statuts: [personnel_navigant]
     textes:
@@ -770,6 +796,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: ircec
     couverture: partiel
     statuts: [artiste_auteur, auteur_dramatique, auteur_lyrique]
     textes:
@@ -799,6 +826,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: ircec
     couverture: partiel
     statuts: [auteur_dramatique, auteur_lyrique]
     textes:
@@ -819,6 +847,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: ircec
     couverture: partiel
     statuts: [auteur_dramatique]
     textes:
@@ -842,6 +871,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: ircec
     couverture: partiel
     statuts: [auteur_lyrique]
     textes:
@@ -874,6 +904,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: agirc_arrco
+    gestionnaire: institutions_professionnelles
     couverture: partiel
     statuts: [salarie_regime_professionnel_integre]
     textes:
@@ -940,6 +971,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: [cnav, ircantec]
     couverture: a_modeliser
     statuts: []
     textes:
@@ -975,6 +1007,7 @@ inventaire:
     extinction: 1948
     succede_a: []
     integre_dans: fonction_publique_etat
+    gestionnaire: etat
     couverture: modelise
     statuts: [fonctionnaire_etat, fonctionnaire_etat_actif, fonctionnaire_etat_super_actif,
       policier, militaire, militaire_officier]
@@ -993,6 +1026,7 @@ inventaire:
     extinction: null
     succede_a: [pensions_civiles_1853]
     integre_dans: null
+    gestionnaire: etat
     couverture: partiel
     statuts: [fonctionnaire_etat, fonctionnaire_etat_actif, fonctionnaire_etat_super_actif,
       policier, militaire, militaire_officier]
@@ -1037,6 +1071,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: cnracl
     couverture: modelise
     statuts: [fonctionnaire_territorial_hospitalier, fonctionnaire_territorial_hospitalier_actif,
       fonctionnaire_hospitalier_actif, aide_soignant, fonctionnaire_territorial_hospitalier_super_actif,
@@ -1057,6 +1092,7 @@ inventaire:
     extinction: 1945
     succede_a: []
     integre_dans: cnracl
+    gestionnaire: caisses_communales
     couverture: hors_champ
     statuts: []
     textes:
@@ -1077,6 +1113,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: fspoeie
     couverture: modelise
     statuts: [ouvrier_etat, ouvrier_etat_actif]
     textes:
@@ -1095,6 +1132,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: erafp
     couverture: modelise
     statuts: [fonctionnaire_etat, fonctionnaire_etat_actif, fonctionnaire_etat_super_actif,
       policier, fonctionnaire_territorial_hospitalier, fonctionnaire_territorial_hospitalier_actif,
@@ -1117,6 +1155,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: caisses_des_assemblees
     couverture: partiel
     statuts: [parlementaire]
     textes:
@@ -1159,6 +1198,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: caisse_cese
     couverture: partiel
     statuts: [membre_cese]
     textes:
@@ -1185,6 +1225,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: fonction_publique_etat
+    gestionnaire: crfom
     couverture: hors_champ
     statuts: []
     textes:
@@ -1219,6 +1260,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: caisses_afrique_du_nord
     couverture: hors_champ
     statuts: []
     textes:
@@ -1275,6 +1317,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: cnracl
+    gestionnaire: crfm
     couverture: hors_champ
     statuts: []
     textes:
@@ -1319,6 +1362,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: assemblees_du_pacifique
     couverture: hors_champ
     statuts: []
     textes:
@@ -1366,6 +1410,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: clr_nouvelle_caledonie
     couverture: partiel
     statuts: [fonctionnaire_pacifique]
     textes:
@@ -1399,6 +1444,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: etat
     couverture: a_modeliser
     statuts: []
     textes:
@@ -1435,6 +1481,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: cnracl
+    gestionnaire: caisses_alsace_moselle
     couverture: hors_champ
     statuts: []
     textes:
@@ -1470,6 +1517,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: etat
     couverture: a_modeliser
     statuts: []
     textes:
@@ -1513,6 +1561,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: caisse_des_depots
     couverture: a_modeliser
     statuts: []
     textes:
@@ -1553,6 +1602,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: caisse_des_depots
     couverture: hors_champ
     statuts: []
     textes:
@@ -1587,6 +1637,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: [organismes_elus_locaux, caisse_des_depots]
     couverture: hors_champ
     statuts: []
     textes:
@@ -1616,6 +1667,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: caisse_union_francaise
     couverture: hors_champ
     statuts: []
     textes:
@@ -1641,6 +1693,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: cprp_sncf
     couverture: modelise
     statuts: [agent_sncf]
     textes:
@@ -1659,6 +1712,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: crp_ratp
     couverture: modelise
     statuts: [agent_ratp]
     textes:
@@ -1676,6 +1730,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: cnieg
     couverture: modelise
     statuts: [agent_ieg]
     textes:
@@ -1693,6 +1748,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: enim
     couverture: partiel
     statuts: [marin]
     textes:
@@ -1725,6 +1781,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: caisse_des_depots
     couverture: partiel
     statuts: [mineur]
     textes:
@@ -1770,6 +1827,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: crpcen
     couverture: partiel
     statuts: [clerc_de_notaire]
     textes:
@@ -1802,6 +1860,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: banque_de_france
     couverture: modelise
     statuts: [agent_banque_de_france]
     textes:
@@ -1822,6 +1881,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: opera_de_paris
     couverture: modelise
     statuts: [personnel_opera]
     textes:
@@ -1838,6 +1898,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: comedie_francaise
     couverture: modelise
     statuts: [personnel_comedie_francaise]
     textes:
@@ -1858,6 +1919,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: port_strasbourg
     couverture: partiel
     statuts: [agent_port_strasbourg]
     textes:
@@ -1899,6 +1961,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: camr
     couverture: partiel
     statuts: [agent_chemins_fer_secondaires]
     textes:
@@ -1942,6 +2005,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: cavimac
     couverture: modelise
     statuts: [ministre_du_culte, membre_congregation]
     textes:
@@ -1959,6 +2023,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: caisse_des_depots
     couverture: partiel
     statuts: [gerant_debit_tabac]
     textes:
@@ -1982,6 +2047,7 @@ inventaire:
     extinction: 2013
     succede_a: []
     integre_dans: null
+    gestionnaire: caisse_imprimerie_nationale
     couverture: hors_champ
     statuts: []
     textes:
@@ -2005,6 +2071,7 @@ inventaire:
     extinction: 1988
     succede_a: []
     integre_dans: regime_general
+    gestionnaire: credit_foncier
     couverture: hors_champ
     statuts: []
     textes:
@@ -2030,6 +2097,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: etat
     couverture: hors_champ
     statuts: []
     textes:
@@ -2060,6 +2128,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: etat
     couverture: hors_champ
     statuts: []
     textes:
@@ -2094,6 +2163,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: apfr
     couverture: hors_champ
     statuts: []
     textes:
@@ -2113,6 +2183,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: regime_general
+    gestionnaire: cci_paris
     couverture: a_modeliser
     statuts: []
     textes:
@@ -2151,6 +2222,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: regime_general
+    gestionnaire: caisse_compagnie_generale_eaux
     couverture: a_modeliser
     statuts: []
     textes:
@@ -2195,6 +2267,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: regime_general
+    gestionnaire: caisse_cci_roubaix
     couverture: a_modeliser
     statuts: []
     textes:
@@ -2231,6 +2304,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: caisse_des_depots
     couverture: a_modeliser
     statuts: []
     textes:
@@ -2268,6 +2342,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: caisses_ports_autonomes
     couverture: a_modeliser
     statuts: []
     textes:
@@ -2313,6 +2388,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: caisse_des_depots
     couverture: hors_champ
     statuts: []
     textes:
@@ -2341,6 +2417,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: crcgmf
     couverture: hors_champ
     statuts: []
     textes:
@@ -2369,6 +2446,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: crcfe
     couverture: hors_champ
     statuts: []
     textes:
@@ -2402,6 +2480,7 @@ inventaire:
     extinction: 2006
     succede_a: []
     integre_dans: rsi
+    gestionnaire: cancava
     couverture: modelise
     statuts: [artisan, conjoint_collaborateur_artisan]
     textes:
@@ -2417,6 +2496,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: cnav
     couverture: modelise
     statuts: [artisan]
     textes:
@@ -2434,6 +2514,7 @@ inventaire:
     extinction: 2006
     succede_a: []
     integre_dans: rsi
+    gestionnaire: organic
     couverture: modelise
     statuts: [commercant, conjoint_collaborateur_commercant, gerant_debit_tabac, micro_entrepreneur]
     textes:
@@ -2449,6 +2530,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: cnav
     couverture: modelise
     statuts: [commercant, gerant_debit_tabac, micro_entrepreneur]
     textes:
@@ -2466,6 +2548,7 @@ inventaire:
     extinction: 2020
     succede_a: [cancava, organic]
     integre_dans: regime_general
+    gestionnaire: rsi
     couverture: modelise
     statuts: [artisan, commercant, conjoint_collaborateur_artisan, conjoint_collaborateur_commercant,
       gerant_debit_tabac, micro_entrepreneur]
@@ -2484,6 +2567,7 @@ inventaire:
     extinction: 2013
     succede_a: []
     integre_dans: rci
+    gestionnaire: rsi
     couverture: modelise
     statuts: [artisan, conjoint_collaborateur_artisan]
     textes:
@@ -2499,6 +2583,7 @@ inventaire:
     extinction: 2013
     succede_a: []
     integre_dans: rci
+    gestionnaire: rsi
     couverture: modelise
     statuts: [commercant, conjoint_collaborateur_commercant, gerant_debit_tabac, micro_entrepreneur]
     textes:
@@ -2518,6 +2603,7 @@ inventaire:
     extinction: 2004
     succede_a: []
     integre_dans: nric
+    gestionnaire: organic
     couverture: partiel
     statuts: [commercant, gerant_debit_tabac, micro_entrepreneur]
     textes:
@@ -2548,6 +2634,7 @@ inventaire:
     extinction: null
     succede_a: [rco_artisans, nric]
     integre_dans: null
+    gestionnaire: cpsti
     couverture: modelise
     statuts: [artisan, commercant, conjoint_collaborateur_artisan, conjoint_collaborateur_commercant,
       gerant_debit_tabac, micro_entrepreneur, liberal_non_reglemente]
@@ -2565,6 +2652,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: urssaf
     couverture: routage
     statuts: [micro_entrepreneur]
     textes:
@@ -2611,6 +2699,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: cnavpl
     couverture: partiel
     statuts: [profession_liberale, liberal_non_reglemente, auxiliaire_medical, pharmacien,
       expert_comptable, agent_general_assurance, notaire, veterinaire, officier_ministeriel,
@@ -2644,6 +2733,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: carmf
     couverture: modelise
     statuts: [medecin_liberal, medecin_liberal_secteur_2]
     textes:
@@ -2663,6 +2753,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: carcdsf
     couverture: partiel
     statuts: [chirurgien_dentiste_ou_sage_femme, sage_femme]
     textes:
@@ -2691,6 +2782,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: cavp
     couverture: partiel
     statuts: [pharmacien, biologiste_liberal]
     textes:
@@ -2716,6 +2808,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: carpimko
     couverture: modelise
     statuts: [auxiliaire_medical]
     textes:
@@ -2730,6 +2823,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: carpv
     couverture: partiel
     statuts: [veterinaire]
     textes:
@@ -2757,6 +2851,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: cavamac
     couverture: partiel
     statuts: [agent_general_assurance]
     textes:
@@ -2783,6 +2878,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: cavec
     couverture: modelise
     statuts: [expert_comptable]
     textes:
@@ -2804,6 +2900,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: cavom
     couverture: partiel
     statuts: [officier_ministeriel]
     textes:
@@ -2832,6 +2929,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: cipav
     couverture: modelise
     statuts: [profession_liberale, liberal_non_reglemente]
     textes:
@@ -2854,6 +2952,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: cprn
     couverture: partiel
     statuts: [notaire]
     textes:
@@ -2880,6 +2979,7 @@ inventaire:
     extinction: 2004
     succede_a: []
     integre_dans: cipav_complementaire
+    gestionnaire: crea
     couverture: hors_champ
     statuts: []
     textes:
@@ -2922,6 +3022,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: carmf
     couverture: partiel
     statuts: [medecin_liberal, medecin_liberal_secteur_2]
     textes:
@@ -2962,6 +3063,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: carpimko
     couverture: partiel
     statuts: [auxiliaire_medical]
     textes:
@@ -2989,6 +3091,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: carcdsf
     couverture: partiel
     statuts: [chirurgien_dentiste_ou_sage_femme]
     textes:
@@ -3015,6 +3118,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: carcdsf
     couverture: partiel
     statuts: [sage_femme]
     textes:
@@ -3043,6 +3147,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: cavp
     couverture: partiel
     statuts: [biologiste_liberal]
     textes:
@@ -3072,6 +3177,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: cnbf
     couverture: partiel
     statuts: [avocat]
     textes:
@@ -3097,6 +3203,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: cnbf
     couverture: modelise
     statuts: [avocat]
     textes:
@@ -3113,6 +3220,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: cfe
     couverture: hors_champ
     statuts: []
     textes:
@@ -3135,6 +3243,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: msa
     couverture: partiel
     statuts: [exploitant_agricole, collaborateur_agricole]
     textes:
@@ -3159,6 +3268,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: msa
     couverture: partiel
     statuts: [exploitant_agricole, collaborateur_agricole]
     textes:
@@ -3183,6 +3293,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: msa
     couverture: hors_champ
     statuts: []
     textes:

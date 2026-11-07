@@ -26,7 +26,8 @@ sys.path.insert(0, str(RACINE / "src"))
 
 from retraite_notionnelle.somme import somme_ordonnee
 from retraite_notionnelle.config import RACINE_DONNEES  # noqa: E402
-from retraite_notionnelle.donnees.regimes import charger_inventaire  # noqa: E402
+from retraite_notionnelle.donnees.regimes import (  # noqa: E402
+    charger_gestionnaires, charger_inventaire)
 
 DOCUMENT = RACINE / "docs" / "regimes.md"
 INVENTAIRE = RACINE_DONNEES / "reference" / "regimes" / "inventaire.yaml"
@@ -115,6 +116,55 @@ def tableaux(lignes) -> str:
     return "\n".join(blocs)
 
 
+def gestionnaires(lignes) -> str:
+    """Les organismes qui gèrent les régimes : ceux des régimes encore en vie —
+    ni éteints, ni fondus dans un autre —, puis ceux qui ont disparu avec les
+    leurs, ou les ont laissés à un autre (action 188)."""
+    organismes = charger_gestionnaires(RACINE_DONNEES)
+    gere: dict[str, list] = {code: [] for code in organismes}
+    for ligne in lignes:
+        for code in ligne.gestionnaires:
+            gere[code].append(ligne)
+    vivante = lambda ligne: ligne.extinction is None and ligne.integre_dans is None  # noqa: E731
+    vivantes = [ligne for ligne in lignes if vivante(ligne)]
+    actifs = [code for code in organismes if any(vivante(l) for l in gere[code])]
+    disparus = [code for code in organismes if gere[code] and code not in actifs]
+    deleguent = [code for code in actifs if organismes[code].operateur]
+    operateurs = sorted({organismes[organismes[code].operateur].nom for code in deleguent})
+    sans = [ligne.nom for ligne in lignes if not ligne.gestionnaires]
+    compte_ = (
+        f"**{len(actifs)} gestionnaires** gèrent les {len(vivantes)} lignes de "
+        "l'inventaire encore en vie — ni éteintes, ni fondues dans un autre "
+        f"régime ; {len(deleguent)} d'entre eux confient leur gestion à un autre "
+        f"organisme ({' ; '.join(operateurs)}). {len(disparus)} gestionnaires ont "
+        "disparu avec leurs régimes, ou les ont laissés à un autre. Un code peut "
+        "nommer un ensemble, les caisses des deux assemblées par exemple. Aucune "
+        f"source du dépôt ne nomme encore celui de {len(sans)} régimes : "
+        + " ; ".join(sans) + "."
+    )
+
+    def tableau(codes, seulement_vivantes: bool) -> str:
+        rangs = ["| Gestionnaire | Géré par | Régimes |", "|---|---|---|"]
+        for code in codes:
+            organisme = organismes[code]
+            par = organismes[organisme.operateur].nom if organisme.operateur else "—"
+            regimes = [l.nom for l in gere[code] if vivante(l) or not seulement_vivantes]
+            rangs.append(f"| {_cellule(organisme.nom)} | {_cellule(par)} | "
+                         f"{_cellule(' ; '.join(regimes))} |")
+        return "\n".join(rangs)
+
+    return (
+        "## Les organismes qui les gèrent\n\n"
+        "Chaque fichier de régime nomme son gestionnaire, un code du référentiel "
+        "`data/reference/regimes/_gestionnaires.yaml` : l'organisme qui le gère "
+        "aujourd'hui, ou le dernier qui l'a géré en propre.\n\n"
+        f"{compte_}\n\n"
+        "### Ceux des régimes encore en vie\n\n" + tableau(actifs, True) + "\n\n"
+        "### Ceux qui ont disparu, ou laissé leurs régimes à un autre\n\n"
+        + tableau(disparus, False) + "\n"
+    )
+
+
 def remplacer(texte: str, repere: str, contenu: str) -> str:
     debut, fin = f"<!-- {repere}:debut -->", f"<!-- {repere}:fin -->"
     if debut not in texte or fin not in texte:
@@ -128,7 +178,8 @@ def produire() -> str:
     lignes = charger_inventaire(RACINE_DONNEES)
     texte = DOCUMENT.read_text(encoding="utf-8")
     texte = remplacer(texte, "compte", compte(lignes))
-    return remplacer(texte, "tableaux", tableaux(lignes))
+    texte = remplacer(texte, "tableaux", tableaux(lignes))
+    return remplacer(texte, "gestionnaires", gestionnaires(lignes))
 
 
 def main() -> int:

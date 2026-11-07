@@ -19,6 +19,7 @@ integre_dans: null
 inventaire:
   section: speciaux
   rang: 260
+  gestionnaire: crcgmf
   nom: Caisse de retraites du personnel sédentaire du groupe de la Compagnie générale maritime et financière
   population: Personnel à terre de la Transat et des Messageries maritimes
   couverture: hors_champ

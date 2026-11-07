@@ -17,6 +17,7 @@ hors_repartition: false
 inventaire:
   section: non_salaries
   rang: 12
+  gestionnaire: cnav
   population: Artisans, années de 1949 à 1972
   couverture: modelise
   statuts: [artisan]

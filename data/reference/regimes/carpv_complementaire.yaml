@@ -23,6 +23,7 @@ hors_repartition: false
 inventaire:
   section: non_salaries
   rang: 140
+  gestionnaire: carpv
   nom: Complémentaire des vétérinaires (CARPV)
   population: Vétérinaires libéraux
   couverture: partiel

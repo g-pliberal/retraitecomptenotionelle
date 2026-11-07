@@ -23,6 +23,7 @@ hors_repartition: false
 inventaire:
   section: non_salaries
   rang: 180
+  gestionnaire: cipav
   nom: Complémentaire de la Cipav
   population: Architectes, ingénieurs-conseils, géomètres, psychologues, ostéopathes et professions non réglementées
   couverture: modelise

@@ -10,6 +10,7 @@ integre_dans: null
 inventaire:
   section: speciaux
   rang: 150
+  gestionnaire: caisse_imprimerie_nationale
   couverture: hors_champ
   statuts: []
   textes:

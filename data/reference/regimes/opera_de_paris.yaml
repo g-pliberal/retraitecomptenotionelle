@@ -19,6 +19,7 @@ hors_repartition: false
 inventaire:
   section: speciaux
   rang: 80
+  gestionnaire: opera_de_paris
   nom: Régime de retraite du personnel de l'Opéra national de Paris
   population: Personnels de l'Opéra, artistes du ballet et de l'orchestre compris
   couverture: modelise

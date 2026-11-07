@@ -10,6 +10,7 @@ integre_dans: cnracl
 inventaire:
   section: fonction_publique
   rang: 40
+  gestionnaire: caisses_communales
   couverture: hors_champ
   statuts: []
   textes:

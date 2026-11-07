@@ -19,6 +19,7 @@ hors_repartition: false
 inventaire:
   section: prive_complementaires
   rang: 160
+  gestionnaire: ircec
   population: Auteurs dramatiques (SACD) et compositeurs (SACEM), qui cotisent au RAAP à la moitié du taux
   couverture: partiel
   statuts: [auteur_dramatique, auteur_lyrique]

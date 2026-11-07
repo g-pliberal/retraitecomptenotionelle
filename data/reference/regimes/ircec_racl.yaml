@@ -20,6 +20,7 @@ hors_repartition: false
 inventaire:
   section: prive_complementaires
   rang: 180
+  gestionnaire: ircec
   nom: Régime des auteurs et compositeurs lyriques (IRCEC)
   population: Auteurs et compositeurs lyriques
   couverture: partiel

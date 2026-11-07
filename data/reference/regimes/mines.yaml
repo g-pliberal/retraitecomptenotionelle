@@ -19,6 +19,7 @@ hors_repartition: false
 inventaire:
   section: speciaux
   rang: 50
+  gestionnaire: caisse_des_depots
   nom: Régime spécial de sécurité sociale dans les mines (CANSSM)
   population: Ouvriers et employés des mines, recrutés avant septembre 2010
   couverture: partiel

@@ -15,6 +15,7 @@ hors_repartition: false
 inventaire:
   section: prive_complementaires
   rang: 80
+  gestionnaire: agirc_arrco
   population: Salariés du secteur privé
   couverture: modelise
   statuts: [salarie_prive_non_cadre, salarie_prive_cadre, salarie_agricole, personnel_navigant,

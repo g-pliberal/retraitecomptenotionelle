@@ -23,6 +23,7 @@ hors_repartition: false
 inventaire:
   section: non_salaries
   rang: 170
+  gestionnaire: cavom
   nom: Complémentaire des officiers ministériels (CAVOM)
   population: Huissiers, commissaires-priseurs, greffiers des tribunaux de commerce
   couverture: partiel

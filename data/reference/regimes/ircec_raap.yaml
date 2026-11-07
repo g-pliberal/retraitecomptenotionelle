@@ -20,6 +20,7 @@ hors_repartition: false
 inventaire:
   section: prive_complementaires
   rang: 150
+  gestionnaire: ircec
   nom: Régime des artistes-auteurs professionnels (IRCEC)
   population: Artistes-auteurs
   couverture: partiel

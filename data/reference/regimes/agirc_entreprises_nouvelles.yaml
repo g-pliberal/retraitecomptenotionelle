@@ -18,6 +18,7 @@ hors_repartition: false
 inventaire:
   section: prive_complementaires
   rang: 60
+  gestionnaire: agirc
   population: Cadres des entreprises créées à compter du 1er janvier 1981, tranches B et C
   couverture: modelise
   statuts: [salarie_prive_cadre_entreprise_recente]

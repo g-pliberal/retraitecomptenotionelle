@@ -10,6 +10,7 @@ integre_dans: null
 inventaire:
   section: non_salaries
   rang: 240
+  gestionnaire: cfe
   couverture: hors_champ
   statuts: []
   textes:

@@ -19,6 +19,7 @@ hors_repartition: false
 inventaire:
   section: prive_base
   rang: 100
+  gestionnaire: cps_polynesie
   population: Salariés de Polynésie française au-dessus du plafond de la tranche A
   couverture: partiel
   statuts: [salarie_polynesie]

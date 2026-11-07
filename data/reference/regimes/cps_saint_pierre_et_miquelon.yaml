@@ -21,6 +21,7 @@ hors_repartition: false
 inventaire:
   section: prive_base
   rang: 80
+  gestionnaire: cps_saint_pierre_et_miquelon
   nom: Régime de retraite de la Caisse de prévoyance sociale de Saint-Pierre-et-Miquelon
   population: Salariés et non-salariés de Saint-Pierre-et-Miquelon
   couverture: partiel

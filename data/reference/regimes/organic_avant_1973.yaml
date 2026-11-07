@@ -17,6 +17,7 @@ hors_repartition: false
 inventaire:
   section: non_salaries
   rang: 22
+  gestionnaire: cnav
   population: Industriels et commerçants, années de 1949 à 1972
   couverture: modelise
   statuts: [commercant, gerant_debit_tabac, micro_entrepreneur]

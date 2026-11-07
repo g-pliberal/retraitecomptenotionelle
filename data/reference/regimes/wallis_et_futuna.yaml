@@ -20,6 +20,7 @@ hors_repartition: false
 inventaire:
   section: prive_base
   rang: 120
+  gestionnaire: cps_wallis_et_futuna
   nom: Retraite des salariés de Wallis-et-Futuna
   population: Salariés de Wallis-et-Futuna
   couverture: partiel

@@ -21,6 +21,7 @@ integre_dans: null
 inventaire:
   section: prive_complementaires
   rang: 210
+  gestionnaire: [cnav, ircantec]
   population: Représentants au Parlement européen ni députés ni sénateurs
   couverture: a_modeliser
   statuts: []

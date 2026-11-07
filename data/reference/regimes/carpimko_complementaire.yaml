@@ -20,6 +20,7 @@ hors_repartition: false
 inventaire:
   section: non_salaries
   rang: 130
+  gestionnaire: carpimko
   nom: Complémentaire des auxiliaires médicaux (CARPIMKO)
   population: Infirmiers, masseurs-kinésithérapeutes, pédicures-podologues, orthophonistes, orthoptistes
   couverture: modelise

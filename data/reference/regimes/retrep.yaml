@@ -20,6 +20,7 @@ integre_dans: null
 inventaire:
   section: fonction_publique
   rang: 140
+  gestionnaire: etat
   nom: Régime temporaire de retraite des maîtres de l'enseignement privé sous contrat (RETREP)
   population: Maîtres et documentalistes de l'enseignement privé sous contrat
   couverture: a_modeliser

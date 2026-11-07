@@ -29,6 +29,7 @@ hors_repartition: false
 inventaire:
   section: speciaux
   rang: 120
+  gestionnaire: camr
   nom: Caisse autonome mutuelle de retraites des chemins de fer secondaires et tramways (CAMR)
   population: Agents des chemins de fer d'intérêt local et des tramways, recrutés avant 1954
   couverture: partiel

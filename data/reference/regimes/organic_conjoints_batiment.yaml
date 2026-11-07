@@ -20,6 +20,7 @@ hors_repartition: false
 inventaire:
   section: non_salaries
   rang: 60
+  gestionnaire: organic
   nom: Régimes complémentaires des conjoints de commerçants et des entrepreneurs du bâtiment (Organic)
   population: Conjoints des industriels et commerçants ; entrepreneurs du bâtiment et des travaux publics
   couverture: partiel

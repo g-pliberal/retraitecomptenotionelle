@@ -34,6 +34,7 @@ hors_repartition: false
 inventaire:
   section: non_salaries
   rang: 212
+  gestionnaire: carpimko
   nom: Prestations complémentaires de vieillesse des auxiliaires médicaux conventionnés (PCV, ex-ASV)
   population: Infirmiers, masseurs-kinésithérapeutes, pédicures-podologues, orthophonistes et orthoptistes conventionnés
   couverture: partiel

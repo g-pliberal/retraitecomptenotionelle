@@ -10,6 +10,7 @@ integre_dans: null
 inventaire:
   section: agricoles
   rang: 30
+  gestionnaire: msa
   couverture: hors_champ
   statuts: []
   textes:

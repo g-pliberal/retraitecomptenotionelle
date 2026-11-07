@@ -21,6 +21,7 @@ hors_repartition: false
 inventaire:
   section: non_salaries
   rang: 190
+  gestionnaire: cprn
   nom: Complémentaire des notaires (CPRN), section C
   population: Notaires
   couverture: partiel

@@ -17,6 +17,7 @@ hors_repartition: false
 inventaire:
   section: prive_complementaires
   rang: 90
+  gestionnaire: ipacte
   population: Agents contractuels et temporaires de l'État, au-dessus du plafond, avant l'Ircantec
   couverture: partiel
   statuts: [contractuel_public]

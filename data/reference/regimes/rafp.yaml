@@ -15,6 +15,7 @@ hors_repartition: true
 inventaire:
   section: fonction_publique
   rang: 60
+  gestionnaire: erafp
   nom: Retraite additionnelle de la fonction publique
   population: Fonctionnaires des trois fonctions publiques, sur leurs primes
   couverture: modelise

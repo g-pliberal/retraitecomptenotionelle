@@ -10,6 +10,7 @@ integre_dans: null
 inventaire:
   section: prive_complementaires
   rang: 120
+  gestionnaire: ircantec
   couverture: routage
   statuts: [elu_local]
   textes:

@@ -25,6 +25,7 @@ population: >-
 inventaire:
   section: prive_complementaires
   rang: 140
+  gestionnaire: crpn
   nom: Caisse de retraite du personnel navigant, tranche 2
   population: Personnel navigant, entre quatre et huit plafonds
   couverture: partiel

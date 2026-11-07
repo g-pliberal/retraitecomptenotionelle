@@ -202,6 +202,101 @@ repris par un autre.
 
 <!-- tableaux:fin -->
 
+<!-- gestionnaires:debut -->
+## Les organismes qui les gèrent
+
+Chaque fichier de régime nomme son gestionnaire, un code du référentiel `data/reference/regimes/_gestionnaires.yaml` : l'organisme qui le gère aujourd'hui, ou le dernier qui l'a géré en propre.
+
+**53 gestionnaires** gèrent les 83 lignes de l'inventaire encore en vie — ni éteintes, ni fondues dans un autre régime ; 7 d'entre eux confient leur gestion à un autre organisme (Caisse des dépôts et consignations ; Caisse nationale d'assurance vieillesse (Cnav), l'Assurance retraite). 23 gestionnaires ont disparu avec leurs régimes, ou les ont laissés à un autre. Un code peut nommer un ensemble, les caisses des deux assemblées par exemple. Aucune source du dépôt ne nomme encore celui de 3 régimes : Allocation aux vieux travailleurs salariés ; Régime additionnel de retraite des enseignants du privé sous contrat ; Régime de retraite du personnel de la SEITA.
+
+### Ceux des régimes encore en vie
+
+| Gestionnaire | Géré par | Régimes |
+|---|---|---|
+| Caisse nationale d'assurance vieillesse (Cnav), l'Assurance retraite | — | Régime général de la Sécurité sociale (Cnav) ; Affiliation des représentants français au Parlement européen au régime général et à l'Ircantec ; Droits en points d'avant 1973 du régime de base des artisans ; Droits en points d'avant 1973 du régime de base des industriels et commerçants |
+| Urssaf Caisse nationale (ex-Acoss) et le réseau des Urssaf | — | Régime micro-social des micro-entrepreneurs |
+| Mutualité sociale agricole (MSA) | — | Assurances sociales agricoles, salariés (MSA) ; Assurance vieillesse des non-salariés agricoles (MSA) ; Retraite complémentaire obligatoire des non-salariés agricoles ; Cotisants de solidarité agricoles |
+| Caisse de sécurité sociale de Mayotte (CSSM) | — | Régime de retraite des salariés de Mayotte (Caisse de sécurité sociale de Mayotte) |
+| Caisse de prévoyance sociale de Saint-Pierre-et-Miquelon | — | Régime de retraite de la Caisse de prévoyance sociale de Saint-Pierre-et-Miquelon |
+| Caisse de prévoyance sociale de la Polynésie française (CPS) | — | Régime de retraite des travailleurs salariés de Polynésie française (CPS) ; Régime de retraite des travailleurs salariés de Polynésie française, tranche B (CPS) |
+| CAFAT, la caisse de sécurité sociale de la Nouvelle-Calédonie | — | Régime de retraite des travailleurs salariés de Nouvelle-Calédonie (CAFAT) |
+| Caisse des prestations sociales de Wallis-et-Futuna | — | Retraite des salariés de Wallis-et-Futuna |
+| Caisse des Français de l'étranger (CFE) | — | Caisse des Français de l'étranger et assurance volontaire vieillesse |
+| Fédération Agirc-Arrco | — | Retraite complémentaire obligatoire des cultes (Arrco, puis Agirc-Arrco) ; Régime unifié Agirc-Arrco |
+| Institution de retraite complémentaire des agents non titulaires de l'État et des collectivités publiques (Ircantec) | Caisse des dépôts et consignations | Institution de retraite complémentaire des agents non titulaires de l'État et des collectivités publiques ; Affiliation des élus locaux à l'Ircantec ; Affiliation des représentants français au Parlement européen au régime général et à l'Ircantec |
+| Caisse de retraite du personnel navigant professionnel de l'aéronautique civile (CRPN) | — | Caisse de retraite du personnel navigant professionnel de l'aéronautique civile, tranche 1 ; Caisse de retraite du personnel navigant, tranche 2 |
+| Institution de retraite complémentaire de l'enseignement et de la création (IRCEC) | — | Régime des artistes-auteurs professionnels (IRCEC) ; RAAP au taux aménagé des auteurs affiliés au RACD ou au RACL (IRCEC) ; Régime des auteurs et compositeurs dramatiques (IRCEC) ; Régime des auteurs et compositeurs lyriques (IRCEC) |
+| L'État, par le Service des retraites de l'État (SRE) | — | Pensions civiles et militaires de retraite (Service des retraites de l'État) ; Régime temporaire de retraite des maîtres de l'enseignement privé sous contrat (RETREP) ; Pensions des ministres des cultes rétribués par l'État en Alsace-Moselle ; Régime de retraite des personnels de l'ORTF ; Caisse des retraites des régies ferroviaires d'outre-mer et caisses des chemins de fer d'Afrique du Nord |
+| Caisse des dépôts et consignations | — | Allocation temporaire complémentaire des ingénieurs du contrôle de la navigation aérienne (ATC-ICNA) ; Régime de retraites des cantonniers de l'État et pensions sur fonds spéciaux ; Régimes de retraite par rente des élus locaux constitués avant 1992 ; Régime spécial de sécurité sociale dans les mines (CANSSM) ; Régime d'allocation viagère des gérants de débits de tabac (RAVGDT) ; Régime de retraite du personnel statutaire de la CANSSM (« retraite des statutaires ») ; Pension statutaire et complément de pension des anciens agents de la SUDAC |
+| Caisse nationale de retraites des agents des collectivités locales (CNRACL) | Caisse des dépôts et consignations | Caisse nationale de retraites des agents des collectivités locales |
+| Fonds spécial des pensions des ouvriers des établissements industriels de l'État (FSPOEIE) | Caisse des dépôts et consignations | Fonds spécial des pensions des ouvriers des établissements industriels de l'État |
+| Établissement de retraite additionnelle de la fonction publique (ERAFP) | Caisse des dépôts et consignations | Retraite additionnelle de la fonction publique |
+| La Caisse générale des retraites de l'Algérie, la Caisse marocaine des retraites et la Société de prévoyance des fonctionnaires tunisiens | — | Caisse générale des retraites de l'Algérie, Caisse marocaine des retraites et Société de prévoyance des fonctionnaires tunisiens (pensions garanties) |
+| Caisse locale de retraites de Nouvelle-Calédonie (CLR) | — | Caisses de retraite des fonctionnaires de Nouvelle-Calédonie et de Polynésie française |
+| Les caisses de pensions de l'Assemblée nationale et du Sénat | — | Caisses de retraite des anciens députés, des anciens sénateurs et des personnels des assemblées |
+| Caisse de retraite des anciens membres du Conseil économique, social et environnemental | — | Caisse de retraite des anciens membres du Conseil économique, social et environnemental |
+| Caisse de retraite des membres de l'ancienne Assemblée de l'Union française | — | Caisse de retraite des membres de l'ancienne Assemblée de l'Union française |
+| Les assemblées de la Polynésie française et de la Nouvelle-Calédonie, et l'assureur auprès duquel chacune a placé son régime | — | Régimes de retraite des élus des assemblées de Polynésie française et de Nouvelle-Calédonie |
+| Les organismes auprès desquels les collectivités ont constitué les régimes de leurs élus avant 1992 | — | Régimes de retraite par rente des élus locaux constitués avant 1992 |
+| Caisse de prévoyance et de retraite du personnel de la SNCF (CPRP SNCF) | — | Régime spécial des agents du cadre permanent de la SNCF |
+| Caisse de retraites du personnel de la RATP (CRP RATP) | — | Régime spécial de retraite du personnel de la RATP |
+| Caisse nationale des industries électriques et gazières (CNIEG) | — | Régime spécial des industries électriques et gazières (CNIEG) |
+| Établissement national des invalides de la marine (ENIM) | — | Régime des marins (ENIM) |
+| Caisse de retraite et de prévoyance des clercs et employés de notaires (CRPCEN) | — | Caisse de retraite et de prévoyance des clercs et employés de notaires |
+| Caisse de réserve des employés de la Banque de France | — | Régime spécial de retraite de la Banque de France |
+| Caisse de retraites des personnels de l'Opéra national de Paris (CROPERA) | — | Régime de retraite du personnel de l'Opéra national de Paris |
+| Caisse de retraites des personnels de la Comédie-Française (CRPCF) | — | Régime de retraite du personnel de la Comédie-Française |
+| Port autonome de Strasbourg | — | Régime de retraite du personnel du port autonome de Strasbourg |
+| Caisse autonome mutuelle de retraites des agents des chemins de fer secondaires et des tramways (CAMR) | — | Caisse autonome mutuelle de retraites des chemins de fer secondaires et tramways (CAMR) |
+| Caisse d'assurance vieillesse, invalidité et maladie des cultes (CAVIMAC) | — | Régime des cultes (CAVIMAC) |
+| L'association nationale chargée de la prestation de fidélisation et de reconnaissance des sapeurs-pompiers volontaires (APFR) | — | Prestation de fidélisation et de reconnaissance des sapeurs-pompiers volontaires |
+| Les caisses de retraites des ports autonomes de Bordeaux, du Havre et de Marseille | — | Régimes de retraite du personnel titulaire des ports autonomes de Bordeaux, du Havre et de Marseille |
+| Caisse de retraites du personnel sédentaire du groupe de la Compagnie générale maritime et financière (CRCGMF) | Caisse des dépôts et consignations | Caisse de retraites du personnel sédentaire du groupe de la Compagnie générale maritime et financière |
+| Caisse de retraite du chemin de fer franco-éthiopien (CRCFE) | Caisse des dépôts et consignations | Caisse de retraite du chemin de fer franco-éthiopien (CRCFE) |
+| Conseil de la protection sociale des travailleurs indépendants (CPSTI) | Caisse nationale d'assurance vieillesse (Cnav), l'Assurance retraite | Régime complémentaire des indépendants |
+| Caisse nationale d'assurance vieillesse des professions libérales (CNAVPL) | — | Caisse nationale d'assurance vieillesse des professions libérales, régime de base |
+| Caisse autonome de retraite des médecins de France (CARMF) | — | Complémentaire des médecins (CARMF) ; Prestations complémentaires de vieillesse des professionnels de santé conventionnés (ASV) |
+| Caisse autonome de retraite des chirurgiens-dentistes et des sages-femmes (CARCDSF) | — | Complémentaire des chirurgiens-dentistes et des sages-femmes (CARCDSF) ; Prestations complémentaires de vieillesse des chirurgiens-dentistes conventionnés (PCV, ex-ASV) ; Prestations complémentaires de vieillesse des sages-femmes conventionnées (PCV, ex-ASV) |
+| Caisse d'assurance vieillesse des pharmaciens (CAVP) | — | Complémentaire des pharmaciens (CAVP) ; Prestations complémentaires de vieillesse des directeurs de laboratoire non médecins conventionnés (PCV, ex-ASV) |
+| Caisse autonome de retraite et de prévoyance des infirmiers, masseurs-kinésithérapeutes, pédicures-podologues, orthophonistes et orthoptistes (CARPIMKO) | — | Complémentaire des auxiliaires médicaux (CARPIMKO) ; Prestations complémentaires de vieillesse des auxiliaires médicaux conventionnés (PCV, ex-ASV) |
+| Caisse autonome de retraite et de prévoyance des vétérinaires (CARPV) | — | Complémentaire des vétérinaires (CARPV) |
+| Caisse d'allocation vieillesse des agents généraux et des mandataires non salariés de l'assurance et de la capitalisation (CAVAMAC) | — | Complémentaire des agents généraux d'assurance (CAVAMAC) |
+| Caisse d'assurance vieillesse des experts-comptables et des commissaires aux comptes (CAVEC) | — | Complémentaire des experts-comptables et commissaires aux comptes (CAVEC) |
+| Caisse d'assurance vieillesse des officiers ministériels, officiers publics et des compagnies judiciaires (CAVOM) | — | Complémentaire des officiers ministériels (CAVOM) |
+| Caisse interprofessionnelle de prévoyance et d'assurance vieillesse (Cipav) | — | Complémentaire de la Cipav |
+| Caisse de prévoyance et de retraite des notaires (CPRN) | — | Complémentaire des notaires (CPRN), section C |
+| Caisse nationale des barreaux français (CNBF) | — | Caisse nationale des barreaux français, régime de base ; Complémentaire des avocats (CNBF) |
+
+### Ceux qui ont disparu, ou laissé leurs régimes à un autre
+
+| Gestionnaire | Géré par | Régimes |
+|---|---|---|
+| Caisse nationale des retraites pour la vieillesse (CNRV) | Caisse des dépôts et consignations | Caisse nationale des retraites pour la vieillesse (CNRV) |
+| Les caisses des retraites ouvrières et paysannes : la Caisse nationale des retraites pour la vieillesse et les caisses agréées | — | Retraites ouvrières et paysannes |
+| Les caisses d'assurances sociales, départementales ou d'affinité | — | Assurances sociales (assurance vieillesse) |
+| L'institution d'assurance invalidité-vieillesse d'Alsace-Lorraine, à Strasbourg (Landesversicherungsanstalt) | — | Régime local d'assurance invalidité-vieillesse d'Alsace-Moselle |
+| Association générale des institutions de retraite des cadres (Agirc) | — | Association générale des institutions de retraite des cadres ; Agirc, barème des entreprises créées après 1981 |
+| Association des régimes de retraite complémentaire des salariés (Arrco) | — | Association des régimes de retraite complémentaire des salariés ; Arrco, tranche 2 des non-cadres ; Arrco, tranche 2 des entreprises créées après 1997 |
+| Union nationale des institutions de retraite des salariés (UNIRS) | — | Union nationale des institutions de retraite des salariés |
+| Les institutions des régimes professionnels de salariés, des banques, de la sécurité sociale, des caisses d'épargne, des CCI ou des VRP | — | Régimes professionnels de salariés intégrés à l'Agirc-Arrco |
+| Institution de prévoyance des agents contractuels et temporaires de l'État (IPACTE) | — | Institution de prévoyance des agents contractuels et temporaires de l'État |
+| Institution générale de retraite des agents non titulaires de l'État (IGRANTE) | — | Institution générale de retraite des agents non titulaires de l'État |
+| Les caisses communales de retraite et la Caisse intercommunale de retraites | — | Caisses communales de retraite et Caisse intercommunale de retraites |
+| Les caisses locales de retraite des collectivités et établissements publics d'Alsace-Moselle | — | Régimes locaux de retraite des collectivités et établissements publics d'Alsace-Moselle |
+| Caisse de retraites de la France d'outre-mer (CRFOM), d'abord Caisse intercoloniale de retraites | — | Caisse intercoloniale de retraites, puis Caisse de retraites de la France d'outre-mer (CRFOM) |
+| Caisse de retraite des fonctionnaires et agents des collectivités publiques de Mayotte (CRFM) | — | Caisse de retraite des fonctionnaires et agents des collectivités publiques de Mayotte (CRFM) |
+| Caisse des retraites de l'Imprimerie nationale | — | Caisse des retraites de l'Imprimerie nationale |
+| Crédit foncier de France | — | Régime spécial de retraite du Crédit foncier de France |
+| Chambre de commerce et d'industrie de Paris | — | Régime spécial d'assurance vieillesse du personnel de la chambre de commerce et d'industrie de Paris |
+| La caisse de retraites de la Compagnie générale des eaux | — | Régime spécial de sécurité sociale du personnel de la Compagnie générale des eaux |
+| Caisse de retraites des employés de la chambre de commerce et d'industrie de Roubaix | — | Régime spécial de retraite de l'ancienne chambre de commerce et d'industrie de Roubaix |
+| Caisse autonome nationale de compensation de l'assurance vieillesse artisanale (CANCAVA) | — | Caisse autonome nationale de compensation de l'assurance vieillesse artisanale |
+| Organisation autonome nationale de l'industrie et du commerce (ORGANIC) | — | Organisation autonome nationale de l'industrie et du commerce ; Régimes complémentaires des conjoints de commerçants et des entrepreneurs du bâtiment (Organic) |
+| Caisse nationale du régime social des indépendants (RSI) | — | Régime social des indépendants ; Régime complémentaire obligatoire des artisans ; Nouveau régime complémentaire des industriels et commerçants |
+| Caisse de retraite de l'enseignement, des arts appliqués, du sport et du tourisme (CREA) | — | Caisse de retraite de l'enseignement, des arts appliqués, du sport et du tourisme (CREA) |
+
+<!-- gestionnaires:fin -->
+
 ## Qui équilibre les régimes fermés depuis 2025
 
 Les tableaux disent qui calcule ; ceci dit qui paie, parce que la réponse a

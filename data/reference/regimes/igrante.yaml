@@ -18,6 +18,7 @@ hors_repartition: false
 inventaire:
   section: prive_complementaires
   rang: 100
+  gestionnaire: igrante
   population: Non-titulaires de l'État, sous le plafond (jusqu'à trois plafonds hors IPACTE), avant l'Ircantec
   couverture: partiel
   statuts: [contractuel_public]

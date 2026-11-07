@@ -18,6 +18,7 @@ hors_repartition: false
 inventaire:
   section: non_salaries
   rang: 40
+  gestionnaire: rsi
   population: Artisans
   couverture: modelise
   statuts: [artisan, conjoint_collaborateur_artisan]

@@ -25,6 +25,7 @@ integre_dans: null
 inventaire:
   section: prive_base
   rang: 5
+  gestionnaire: cnrv
   population: Déposants volontaires et affiliés des régimes en rentes viagères, avant 1949
   couverture: hors_champ
   statuts: []

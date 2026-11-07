@@ -16,6 +16,7 @@ integre_dans: null
 inventaire:
   section: fonction_publique
   rang: 200
+  gestionnaire: caisse_union_francaise
   population: Anciens membres de l'Assemblée de l'Union française (IVe République)
   couverture: hors_champ
   statuts: []

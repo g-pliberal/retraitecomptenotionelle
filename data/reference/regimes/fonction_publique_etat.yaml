@@ -18,6 +18,7 @@ hors_repartition: false
 inventaire:
   section: fonction_publique
   rang: 20
+  gestionnaire: etat
   nom: Pensions civiles et militaires de retraite (Service des retraites de l'État)
   population: Fonctionnaires civils de l'État, magistrats, militaires
   couverture: partiel

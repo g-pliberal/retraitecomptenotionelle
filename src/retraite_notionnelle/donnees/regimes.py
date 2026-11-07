@@ -1850,14 +1850,14 @@ def dater_les_taux_moyens(code: str, periodes: tuple[PeriodeRegime, ...],
 
 #: Les fichiers YAML du dossier des régimes qui ne sont pas des régimes : tout
 #: autre fichier ``*.yaml`` en est un, hors ceux dont le nom commence par
-#: « _ » (le schéma).
+#: « _ » (le schéma, le référentiel des gestionnaires).
 FICHIERS_HORS_REGIMES = ("inventaire.yaml", "pivots.yaml",
                          "classes_cotisation_epoques.yaml")
 
 
 #: Les champs du bloc ``inventaire`` d'un fichier de régime (``_schema.yaml``).
-CHAMPS_DE_L_INVENTAIRE = ("section", "rang", "nom", "population", "couverture",
-                          "statuts", "textes", "manque", "raison_hors_champ")
+CHAMPS_DE_L_INVENTAIRE = ("section", "rang", "nom", "population", "gestionnaire",
+                          "couverture", "statuts", "textes", "manque", "raison_hors_champ")
 
 #: Les interrupteurs d'une période, et ce qu'ils valent quand elle n'en pose
 #: pas. Un interrupteur choisit une règle au lieu de porter un paramètre ; il ne
@@ -2542,6 +2542,10 @@ class RegimeInventaire:
     textes: tuple[dict, ...]
     manque: str
     raison_hors_champ: str
+    #: Les organismes qui gèrent le régime, codes de ``_gestionnaires.yaml`` :
+    #: celui d'aujourd'hui, ou le dernier qui l'a géré en propre ; vide quand
+    #: aucune source du dépôt ne le nomme.
+    gestionnaires: tuple[str, ...] = ()
 
     @property
     def au_catalogue(self) -> bool:
@@ -2563,7 +2567,48 @@ class RegimeInventaire:
             "textes": [dict(t) for t in self.textes],
             "manque": self.manque,
             "raison_hors_champ": self.raison_hors_champ,
+            "gestionnaires": list(self.gestionnaires),
         }
+
+
+@dataclass(frozen=True)
+class Gestionnaire:
+    """Un organisme qui gère des régimes : une caisse, un service, un fonds.
+
+    ``operateur`` est l'organisme à qui il confie sa gestion — la Caisse des
+    dépôts gère la CNRACL ; ``collectif`` dit qu'il nomme un ensemble
+    d'organismes, les caisses communales d'avant 1945 par exemple.
+    """
+
+    code: str
+    nom: str
+    operateur: str | None = None
+    collectif: bool = False
+    note: str = ""
+
+
+def charger_gestionnaires(racine: Path) -> dict[str, Gestionnaire]:
+    """Le référentiel des organismes, ``reference/regimes/_gestionnaires.yaml``."""
+    chemin = racine / "reference" / "regimes" / "_gestionnaires.yaml"
+    organismes: dict[str, Gestionnaire] = {}
+    for code, champs in (charger_yaml(chemin).get("gestionnaires") or {}).items():
+        inconnus = set(champs) - {"nom", "operateur", "collectif", "note"}
+        if inconnus:
+            raise ValueError(f"{chemin.name} / {code} : champs inconnus {sorted(inconnus)}")
+        organismes[str(code)] = Gestionnaire(
+            code=str(code),
+            nom=" ".join(str(champs["nom"]).split()),
+            operateur=champs.get("operateur"),
+            collectif=bool(champs.get("collectif", False)),
+            note=" ".join(str(champs.get("note") or "").split()),
+        )
+    return organismes
+
+
+def _gestionnaires(valeur) -> tuple[str, ...]:
+    if valeur is None:
+        return ()
+    return (str(valeur),) if isinstance(valeur, str) else tuple(str(v) for v in valeur)
 
 
 def _annee(valeur) -> int | None:
@@ -2619,6 +2664,7 @@ def charger_inventaire(racine: Path) -> tuple[RegimeInventaire, ...]:
             textes=textes,
             manque=" ".join(str(fiche.get("manque") or "").split()),
             raison_hors_champ=" ".join(str(fiche.get("raison_hors_champ") or "").split()),
+            gestionnaires=_gestionnaires(fiche.get("gestionnaire")),
         ))
     if not lignes:
         raise ValueError(f"aucun régime dans {chemin}")
@@ -2664,7 +2710,8 @@ def lignes_d_inventaire(racine: Path) -> list[tuple[str, dict]]:
         }
         for champ in ("creation", "fermeture", "extinction", "succede_a", "integre_dans"):
             ligne[champ] = fiche.get(champ)
-        for champ in ("couverture", "statuts", "textes", "manque", "raison_hors_champ"):
+        for champ in ("gestionnaire", "couverture", "statuts", "textes", "manque",
+                      "raison_hors_champ"):
             if champ in bloc:
                 ligne[champ] = bloc[champ]
         lignes.append((place, bloc["section"], ligne))

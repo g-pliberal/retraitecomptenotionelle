@@ -20,6 +20,7 @@ hors_repartition: false
 inventaire:
   section: prive_complementaires
   rang: 40
+  gestionnaire: arrco
   nom: Arrco, tranche 2 des non-cadres
   population: Non-cadres, entre un et trois plafonds
   couverture: modelise

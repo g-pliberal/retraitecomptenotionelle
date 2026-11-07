@@ -17,6 +17,7 @@ integre_dans: null
 inventaire:
   section: speciaux
   rang: 250
+  gestionnaire: caisse_des_depots
   nom: Pension statutaire et complément de pension des anciens agents de la SUDAC
   population: Anciens agents de la SUDAC, concessionnaire de la Ville de Paris
   couverture: hors_champ

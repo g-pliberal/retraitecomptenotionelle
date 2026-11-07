@@ -19,6 +19,7 @@ integre_dans: null
 inventaire:
   section: fonction_publique
   rang: 160
+  gestionnaire: etat
   nom: Pensions des ministres des cultes rétribués par l'État en Alsace-Moselle
   population: Ministres des cultes reconnus d'Alsace-Moselle et employés des autorités religieuses
   couverture: a_modeliser

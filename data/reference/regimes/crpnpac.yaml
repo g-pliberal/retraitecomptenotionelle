@@ -20,6 +20,7 @@ population: >-
 inventaire:
   section: prive_complementaires
   rang: 130
+  gestionnaire: crpn
   nom: Caisse de retraite du personnel navigant professionnel de l'aéronautique civile, tranche 1
   population: Personnel navigant technique et commercial
   couverture: partiel

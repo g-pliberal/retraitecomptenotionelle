@@ -24,6 +24,7 @@ hors_repartition: false
 inventaire:
   section: speciaux
   rang: 40
+  gestionnaire: enim
   nom: Régime des marins (ENIM)
   population: Marins du commerce, de la pêche et de la plaisance professionnelle
   couverture: partiel

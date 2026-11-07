@@ -74,6 +74,7 @@ hors_repartition: false
 inventaire:
   section: non_salaries
   rang: 216
+  gestionnaire: cavp
   nom: Prestations complémentaires de vieillesse des directeurs de laboratoire non médecins conventionnés (PCV, ex-ASV)
   population: Pharmaciens biologistes directeurs de laboratoire conventionnés
   couverture: partiel

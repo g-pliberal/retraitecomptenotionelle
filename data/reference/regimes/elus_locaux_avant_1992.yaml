@@ -22,6 +22,7 @@ integre_dans: null
 inventaire:
   section: fonction_publique
   rang: 190
+  gestionnaire: [organismes_elus_locaux, caisse_des_depots]
   nom: Régimes de retraite par rente des élus locaux constitués avant 1992
   population: Anciens conseillers généraux de cinq départements et autres élus locaux d'avant 1992
   couverture: hors_champ

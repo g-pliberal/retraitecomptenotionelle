@@ -10,6 +10,7 @@ integre_dans: regime_general
 inventaire:
   section: speciaux
   rang: 160
+  gestionnaire: credit_foncier
   couverture: hors_champ
   statuts: []
   textes:

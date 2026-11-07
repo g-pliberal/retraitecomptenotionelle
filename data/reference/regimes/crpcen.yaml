@@ -22,6 +22,7 @@ hors_repartition: false
 inventaire:
   section: speciaux
   rang: 60
+  gestionnaire: crpcen
   population: Clercs et employés de notaires recrutés avant le 1er septembre 2023
   couverture: partiel
   statuts: [clerc_de_notaire]

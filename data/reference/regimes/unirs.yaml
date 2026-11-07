@@ -15,6 +15,7 @@ hors_repartition: false
 inventaire:
   section: prive_complementaires
   rang: 20
+  gestionnaire: unirs
   population: Non-cadres du secteur privé, avant l'Arrco
   couverture: partiel
   statuts: [salarie_prive_non_cadre, salarie_prive_non_cadre_entreprise_recente,

@@ -22,6 +22,7 @@ hors_repartition: false
 inventaire:
   section: prive_base
   rang: 90
+  gestionnaire: cps_polynesie
   nom: Régime de retraite des travailleurs salariés de Polynésie française (CPS)
   population: Salariés de Polynésie française
   couverture: partiel

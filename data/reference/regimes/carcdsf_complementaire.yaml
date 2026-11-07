@@ -23,6 +23,7 @@ hors_repartition: false
 inventaire:
   section: non_salaries
   rang: 110
+  gestionnaire: carcdsf
   nom: Complémentaire des chirurgiens-dentistes et des sages-femmes (CARCDSF)
   population: Chirurgiens-dentistes et sages-femmes libéraux
   couverture: partiel

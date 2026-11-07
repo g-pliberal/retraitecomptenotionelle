@@ -23,6 +23,7 @@ hors_repartition: false
 inventaire:
   section: prive_base
   rang: 50
+  gestionnaire: cnav
   nom: Régime général de la Sécurité sociale (Cnav)
   population: Salariés du secteur privé, et depuis 2018 les artisans et commerçants
   couverture: modelise

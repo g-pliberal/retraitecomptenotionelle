@@ -17,6 +17,7 @@ hors_repartition: false
 inventaire:
   section: fonction_publique
   rang: 10
+  gestionnaire: etat
   nom: Pensions civiles et militaires, loi de 1853
   population: Fonctionnaires de l'État et militaires, avant 1948
   couverture: modelise

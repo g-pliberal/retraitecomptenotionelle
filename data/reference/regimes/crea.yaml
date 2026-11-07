@@ -10,6 +10,7 @@ integre_dans: cipav_complementaire
 inventaire:
   section: non_salaries
   rang: 200
+  gestionnaire: crea
   couverture: hors_champ
   statuts: []
   textes:

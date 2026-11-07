@@ -17,6 +17,7 @@ hors_repartition: false
 inventaire:
   section: prive_complementaires
   rang: 70
+  gestionnaire: arrco
   population: Non-cadres des entreprises créées à compter du 1er janvier 1997, entre un et trois plafonds
   couverture: modelise
   statuts: [salarie_prive_non_cadre_entreprise_recente]

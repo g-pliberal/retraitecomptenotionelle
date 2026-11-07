@@ -24,6 +24,7 @@ integre_dans: null
 inventaire:
   section: speciaux
   rang: 240
+  gestionnaire: caisses_ports_autonomes
   nom: Régimes de retraite du personnel titulaire des ports autonomes de Bordeaux, du Havre et de Marseille
   population: Personnel titulaire des ports autonomes et des chambres de commerce concessionnaires
   couverture: a_modeliser

@@ -10,6 +10,7 @@ integre_dans: fonction_publique_etat
 inventaire:
   section: fonction_publique
   rang: 90
+  gestionnaire: crfom
   couverture: hors_champ
   statuts: []
   textes:

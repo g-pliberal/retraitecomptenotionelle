@@ -15,6 +15,7 @@ hors_repartition: false
 inventaire:
   section: prive_complementaires
   rang: 10
+  gestionnaire: agirc
   population: Cadres du secteur privé, tranches B et C
   couverture: modelise
   statuts: [salarie_prive_cadre, personnel_navigant, salarie_prive_cadre_entreprise_recente]

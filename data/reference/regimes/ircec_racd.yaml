@@ -19,6 +19,7 @@ hors_repartition: false
 inventaire:
   section: prive_complementaires
   rang: 170
+  gestionnaire: ircec
   nom: Régime des auteurs et compositeurs dramatiques (IRCEC)
   population: Auteurs et compositeurs dramatiques, auteurs de l'audiovisuel
   couverture: partiel

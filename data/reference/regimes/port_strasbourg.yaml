@@ -22,6 +22,7 @@ hors_repartition: false
 inventaire:
   section: speciaux
   rang: 100
+  gestionnaire: port_strasbourg
   nom: Régime de retraite du personnel du port autonome de Strasbourg
   population: Agents du port autonome de Strasbourg
   couverture: partiel

@@ -18,6 +18,7 @@ hors_repartition: false
 inventaire:
   section: non_salaries
   rang: 50
+  gestionnaire: rsi
   population: Industriels et commerçants
   couverture: modelise
   statuts: [commercant, conjoint_collaborateur_commercant,

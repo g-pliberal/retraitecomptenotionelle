@@ -19,6 +19,7 @@ hors_repartition: false
 inventaire:
   section: speciaux
   rang: 90
+  gestionnaire: comedie_francaise
   nom: Régime de retraite du personnel de la Comédie-Française
   population: Personnels de la Comédie-Française
   couverture: modelise

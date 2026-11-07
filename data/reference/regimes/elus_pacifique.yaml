@@ -10,6 +10,7 @@ integre_dans: null
 inventaire:
   section: fonction_publique
   rang: 120
+  gestionnaire: assemblees_du_pacifique
   couverture: hors_champ
   statuts: []
   textes:

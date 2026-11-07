@@ -17,6 +17,7 @@ hors_repartition: false
 inventaire:
   section: prive_complementaires
   rang: 30
+  gestionnaire: arrco
   nom: Association des régimes de retraite complémentaire des salariés
   population: Salariés du secteur privé, tranche 1
   couverture: partiel

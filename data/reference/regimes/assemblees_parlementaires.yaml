@@ -26,6 +26,7 @@ hors_repartition: false
 inventaire:
   section: fonction_publique
   rang: 70
+  gestionnaire: caisses_des_assemblees
   nom: Caisses de retraite des anciens députés, des anciens sénateurs et des personnels des assemblées
   population: Députés, sénateurs, fonctionnaires de l'Assemblée nationale et du Sénat
   couverture: partiel

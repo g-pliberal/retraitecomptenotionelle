@@ -22,6 +22,7 @@ hors_repartition: false
 inventaire:
   section: fonction_publique
   rang: 50
+  gestionnaire: fspoeie
   population: Ouvriers de l'État
   couverture: modelise
   statuts: [ouvrier_etat, ouvrier_etat_actif]

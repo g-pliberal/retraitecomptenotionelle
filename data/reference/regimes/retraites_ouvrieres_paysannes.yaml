@@ -10,6 +10,7 @@ integre_dans: assurances_sociales
 inventaire:
   section: prive_base
   rang: 10
+  gestionnaire: caisses_retraites_ouvrieres
   couverture: hors_champ
   statuts: []
   textes:

@@ -25,6 +25,7 @@ hors_repartition: false
 inventaire:
   section: prive_complementaires
   rang: 50
+  gestionnaire: agirc_arrco
   population: >-
     Ministres des cultes et religieux percevant une rémunération
     individuelle

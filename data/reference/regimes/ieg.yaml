@@ -21,6 +21,7 @@ hors_repartition: false
 inventaire:
   section: speciaux
   rang: 30
+  gestionnaire: cnieg
   nom: Régime spécial des industries électriques et gazières (CNIEG)
   population: Personnels statutaires des IEG recrutés avant septembre 2023
   couverture: modelise

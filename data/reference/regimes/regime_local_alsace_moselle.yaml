@@ -10,6 +10,7 @@ integre_dans: regime_general
 inventaire:
   section: prive_base
   rang: 30
+  gestionnaire: institution_alsace_lorraine
   couverture: hors_champ
   statuts: []
   textes:

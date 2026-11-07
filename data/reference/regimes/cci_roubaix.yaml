@@ -21,6 +21,7 @@ integre_dans: regime_general
 inventaire:
   section: speciaux
   rang: 220
+  gestionnaire: caisse_cci_roubaix
   nom: Régime spécial de retraite de l'ancienne chambre de commerce et d'industrie de Roubaix
   population: Salariés de l'ancienne CCI de Roubaix avant 1998
   couverture: a_modeliser

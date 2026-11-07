@@ -10,6 +10,7 @@ integre_dans: null
 inventaire:
   section: speciaux
   rang: 190
+  gestionnaire: apfr
   couverture: hors_champ
   statuts: []
   textes:

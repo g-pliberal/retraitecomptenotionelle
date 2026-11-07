@@ -15,6 +15,7 @@ hors_repartition: false
 inventaire:
   section: agricoles
   rang: 20
+  gestionnaire: msa
   nom: Retraite complémentaire obligatoire des non-salariés agricoles
   population: Chefs d'exploitation, et depuis 2011 conjoints et aides familiaux
   couverture: partiel

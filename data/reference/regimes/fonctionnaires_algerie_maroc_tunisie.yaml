@@ -10,6 +10,7 @@ integre_dans: null
 inventaire:
   section: fonction_publique
   rang: 100
+  gestionnaire: caisses_afrique_du_nord
   couverture: hors_champ
   statuts: []
   textes:

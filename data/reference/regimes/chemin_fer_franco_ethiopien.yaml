@@ -19,6 +19,7 @@ integre_dans: null
 inventaire:
   section: speciaux
   rang: 270
+  gestionnaire: crcfe
   population: Anciens agents français du chemin de fer franco-éthiopien
   couverture: hors_champ
   statuts: []

@@ -15,6 +15,7 @@ hors_repartition: false
 inventaire:
   section: non_salaries
   rang: 220
+  gestionnaire: cnbf
   nom: Caisse nationale des barreaux français, régime de base
   population: Avocats
   couverture: partiel

@@ -21,6 +21,7 @@ integre_dans: regime_general
 inventaire:
   section: speciaux
   rang: 210
+  gestionnaire: caisse_compagnie_generale_eaux
   population: Salariés de la Compagnie générale des eaux avant 1991
   couverture: a_modeliser
   statuts: []

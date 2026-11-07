@@ -23,6 +23,7 @@ integre_dans: regime_general
 inventaire:
   section: speciaux
   rang: 200
+  gestionnaire: cci_paris
   nom: Régime spécial d'assurance vieillesse du personnel de la chambre de commerce et d'industrie de Paris
   population: Agents titulaires de la CCI de Paris
   couverture: a_modeliser

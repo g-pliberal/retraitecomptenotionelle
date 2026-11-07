@@ -20,6 +20,7 @@ hors_repartition: false
 inventaire:
   section: speciaux
   rang: 140
+  gestionnaire: caisse_des_depots
   population: Gérants de débits de tabac
   couverture: partiel
   statuts: [gerant_debit_tabac]

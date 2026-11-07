@@ -21,6 +21,7 @@ hors_repartition: false
 inventaire:
   section: non_salaries
   rang: 160
+  gestionnaire: cavec
   nom: Complémentaire des experts-comptables et commissaires aux comptes (CAVEC)
   population: Experts-comptables et commissaires aux comptes libéraux
   couverture: modelise

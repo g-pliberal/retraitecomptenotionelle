@@ -21,6 +21,7 @@ integre_dans: null
 inventaire:
   section: fonction_publique
   rang: 170
+  gestionnaire: caisse_des_depots
   nom: Allocation temporaire complémentaire des ingénieurs du contrôle de la navigation aérienne (ATC-ICNA)
   population: Ingénieurs du contrôle de la navigation aérienne radiés des cadres
   couverture: a_modeliser

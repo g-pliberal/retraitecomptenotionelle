@@ -1,0 +1,297 @@
+# Les organismes qui gèrent les régimes de retraite
+# ===================================================
+# Le référentiel des gestionnaires : la caisse, le service ou le fonds qui tient
+# les comptes d'un régime et en sert les pensions. Chaque fichier de régime le
+# nomme dans sa ligne d'inventaire (`inventaire.gestionnaire`, un code d'ici,
+# ou une liste) : l'organisme qui gère le régime aujourd'hui, ou le dernier qui
+# l'a géré en propre, quand le régime s'est éteint ou fondu dans un autre — son
+# `integre_dans` dit alors qui en sert les droits. Le 7 novembre 2026, à la
+# demande du propriétaire (action 188) : l'inventaire nommait les régimes, et
+# le dépôt ne savait ni compter les caisses, ni dire laquelle gère quoi.
+#
+# Les champs d'un organisme :
+#   nom        son nom, avec son sigle ;
+#   operateur  l'organisme à qui il confie sa gestion, quand il ne la fait pas
+#              lui-même (la Caisse des dépôts, pour la CNRACL ou l'Ircantec) ;
+#   collectif  vrai quand le code nomme un ensemble d'organismes (les caisses
+#              communales d'avant 1945, les caisses de chaque assemblée) ;
+#   note       ce qu'il faut savoir de plus.
+#
+# `tests/test_gestionnaires.py` tient le référentiel : chaque régime y nomme un
+# organisme, sauf ceux qu'il déclare un à un ; chaque organisme gère un régime
+# au moins, ou en gère pour un autre ; et ce que les sources du dépôt disent de
+# qui gère quoi s'y retrouve. Ce fichier n'est pas un régime : le chargeur
+# passe les fichiers dont le nom commence par un tiret bas.
+
+gestionnaires:
+
+  # ---------------------------------------------------------------------------
+  # Salariés du privé, et l'outre-mer
+  # ---------------------------------------------------------------------------
+  cnav:
+    nom: Caisse nationale d'assurance vieillesse (Cnav), l'Assurance retraite
+    note: >-
+      Elle gère la branche vieillesse du régime général : elle sert les
+      pensions en Île-de-France, les Carsat en région, les caisses générales
+      de sécurité sociale outre-mer. Depuis 2020, elle sert aussi la retraite
+      de base des artisans et des commerçants.
+  urssaf:
+    nom: Urssaf Caisse nationale (ex-Acoss) et le réseau des Urssaf
+    note: Elles recouvrent les cotisations ; aucune ne sert de pension.
+  msa:
+    nom: Mutualité sociale agricole (MSA)
+    note: La caisse centrale (CCMSA) et ses caisses locales, pour les salariés et les exploitants.
+  cssm:
+    nom: Caisse de sécurité sociale de Mayotte (CSSM)
+  cps_saint_pierre_et_miquelon:
+    nom: Caisse de prévoyance sociale de Saint-Pierre-et-Miquelon
+  cps_polynesie:
+    nom: Caisse de prévoyance sociale de la Polynésie française (CPS)
+  cafat:
+    nom: CAFAT, la caisse de sécurité sociale de la Nouvelle-Calédonie
+  cps_wallis_et_futuna:
+    nom: Caisse des prestations sociales de Wallis-et-Futuna
+    note: Héritière de la caisse locale de retraites.
+  cfe:
+    nom: Caisse des Français de l'étranger (CFE)
+  cnrv:
+    nom: Caisse nationale des retraites pour la vieillesse (CNRV)
+    operateur: caisse_des_depots
+  caisses_retraites_ouvrieres:
+    nom: >-
+      Les caisses des retraites ouvrières et paysannes : la Caisse nationale
+      des retraites pour la vieillesse et les caisses agréées
+    collectif: true
+  caisses_assurances_sociales:
+    nom: Les caisses d'assurances sociales, départementales ou d'affinité
+    collectif: true
+  institution_alsace_lorraine:
+    nom: >-
+      L'institution d'assurance invalidité-vieillesse d'Alsace-Lorraine, à
+      Strasbourg (Landesversicherungsanstalt)
+
+  # ---------------------------------------------------------------------------
+  # Complémentaires des salariés
+  # ---------------------------------------------------------------------------
+  agirc_arrco:
+    nom: Fédération Agirc-Arrco
+    note: >-
+      Les institutions de retraite complémentaire des groupes de protection
+      sociale gèrent le régime pour elle, auprès des entreprises et des
+      retraités.
+  agirc:
+    nom: Association générale des institutions de retraite des cadres (Agirc)
+    note: Une fédération d'institutions, fondue dans l'Agirc-Arrco au 1er janvier 2019.
+  arrco:
+    nom: Association des régimes de retraite complémentaire des salariés (Arrco)
+    note: Une fédération d'institutions, fondue dans l'Agirc-Arrco au 1er janvier 2019.
+  unirs:
+    nom: Union nationale des institutions de retraite des salariés (UNIRS)
+  institutions_professionnelles:
+    nom: >-
+      Les institutions des régimes professionnels de salariés, des banques,
+      de la sécurité sociale, des caisses d'épargne, des CCI ou des VRP
+    collectif: true
+  ipacte:
+    nom: Institution de prévoyance des agents contractuels et temporaires de l'État (IPACTE)
+  igrante:
+    nom: Institution générale de retraite des agents non titulaires de l'État (IGRANTE)
+  ircantec:
+    nom: >-
+      Institution de retraite complémentaire des agents non titulaires de
+      l'État et des collectivités publiques (Ircantec)
+    operateur: caisse_des_depots
+  crpn:
+    nom: >-
+      Caisse de retraite du personnel navigant professionnel de
+      l'aéronautique civile (CRPN)
+  ircec:
+    nom: Institution de retraite complémentaire de l'enseignement et de la création (IRCEC)
+
+  # ---------------------------------------------------------------------------
+  # Fonction publique
+  # ---------------------------------------------------------------------------
+  etat:
+    nom: L'État, par le Service des retraites de l'État (SRE)
+    note: >-
+      Les pensions de l'État sont une dépense de son budget, et non d'une
+      caisse ; le service des retraites de l'État, à la direction générale
+      des finances publiques, les gère depuis 2009, le service des pensions
+      du ministère des finances avant lui.
+  caisse_des_depots:
+    nom: Caisse des dépôts et consignations
+    note: >-
+      Elle gère des régimes en propre et, par mandat, pour d'autres
+      organismes, par sa direction des politiques sociales.
+  cnracl:
+    nom: Caisse nationale de retraites des agents des collectivités locales (CNRACL)
+    operateur: caisse_des_depots
+  fspoeie:
+    nom: >-
+      Fonds spécial des pensions des ouvriers des établissements industriels
+      de l'État (FSPOEIE)
+    operateur: caisse_des_depots
+  erafp:
+    nom: Établissement de retraite additionnelle de la fonction publique (ERAFP)
+    operateur: caisse_des_depots
+  caisses_communales:
+    nom: Les caisses communales de retraite et la Caisse intercommunale de retraites
+    collectif: true
+  caisses_alsace_moselle:
+    nom: >-
+      Les caisses locales de retraite des collectivités et établissements
+      publics d'Alsace-Moselle
+    collectif: true
+  crfom:
+    nom: >-
+      Caisse de retraites de la France d'outre-mer (CRFOM), d'abord Caisse
+      intercoloniale de retraites
+  caisses_afrique_du_nord:
+    nom: >-
+      La Caisse générale des retraites de l'Algérie, la Caisse marocaine des
+      retraites et la Société de prévoyance des fonctionnaires tunisiens
+    collectif: true
+  crfm:
+    nom: >-
+      Caisse de retraite des fonctionnaires et agents des collectivités
+      publiques de Mayotte (CRFM)
+  clr_nouvelle_caledonie:
+    nom: Caisse locale de retraites de Nouvelle-Calédonie (CLR)
+
+  # ---------------------------------------------------------------------------
+  # Assemblées et élus
+  # ---------------------------------------------------------------------------
+  caisses_des_assemblees:
+    nom: Les caisses de pensions de l'Assemblée nationale et du Sénat
+    collectif: true
+  caisse_cese:
+    nom: Caisse de retraite des anciens membres du Conseil économique, social et environnemental
+  caisse_union_francaise:
+    nom: Caisse de retraite des membres de l'ancienne Assemblée de l'Union française
+  assemblees_du_pacifique:
+    nom: >-
+      Les assemblées de la Polynésie française et de la Nouvelle-Calédonie,
+      et l'assureur auprès duquel chacune a placé son régime
+    collectif: true
+  organismes_elus_locaux:
+    nom: >-
+      Les organismes auprès desquels les collectivités ont constitué les
+      régimes de leurs élus avant 1992
+    collectif: true
+
+  # ---------------------------------------------------------------------------
+  # Régimes spéciaux
+  # ---------------------------------------------------------------------------
+  cprp_sncf:
+    nom: Caisse de prévoyance et de retraite du personnel de la SNCF (CPRP SNCF)
+  crp_ratp:
+    nom: Caisse de retraites du personnel de la RATP (CRP RATP)
+  cnieg:
+    nom: Caisse nationale des industries électriques et gazières (CNIEG)
+  enim:
+    nom: Établissement national des invalides de la marine (ENIM)
+  crpcen:
+    nom: Caisse de retraite et de prévoyance des clercs et employés de notaires (CRPCEN)
+  banque_de_france:
+    nom: Caisse de réserve des employés de la Banque de France
+  opera_de_paris:
+    nom: Caisse de retraites des personnels de l'Opéra national de Paris (CROPERA)
+  comedie_francaise:
+    nom: Caisse de retraites des personnels de la Comédie-Française (CRPCF)
+  port_strasbourg:
+    nom: Port autonome de Strasbourg
+  camr:
+    nom: >-
+      Caisse autonome mutuelle de retraites des agents des chemins de fer
+      secondaires et des tramways (CAMR)
+  cavimac:
+    nom: Caisse d'assurance vieillesse, invalidité et maladie des cultes (CAVIMAC)
+    note: La CAMAVIC jusqu'en 1998.
+  caisse_imprimerie_nationale:
+    nom: Caisse des retraites de l'Imprimerie nationale
+  credit_foncier:
+    nom: Crédit foncier de France
+  apfr:
+    nom: >-
+      L'association nationale chargée de la prestation de fidélisation et de
+      reconnaissance des sapeurs-pompiers volontaires (APFR)
+  cci_paris:
+    nom: Chambre de commerce et d'industrie de Paris
+  caisse_compagnie_generale_eaux:
+    nom: La caisse de retraites de la Compagnie générale des eaux
+  caisse_cci_roubaix:
+    nom: >-
+      Caisse de retraites des employés de la chambre de commerce et
+      d'industrie de Roubaix
+  caisses_ports_autonomes:
+    nom: Les caisses de retraites des ports autonomes de Bordeaux, du Havre et de Marseille
+    collectif: true
+  crcgmf:
+    nom: >-
+      Caisse de retraites du personnel sédentaire du groupe de la Compagnie
+      générale maritime et financière (CRCGMF)
+    operateur: caisse_des_depots
+  crcfe:
+    nom: Caisse de retraite du chemin de fer franco-éthiopien (CRCFE)
+    operateur: caisse_des_depots
+
+  # ---------------------------------------------------------------------------
+  # Artisans, commerçants et indépendants
+  # ---------------------------------------------------------------------------
+  cancava:
+    nom: >-
+      Caisse autonome nationale de compensation de l'assurance vieillesse
+      artisanale (CANCAVA)
+  organic:
+    nom: Organisation autonome nationale de l'industrie et du commerce (ORGANIC)
+  rsi:
+    nom: Caisse nationale du régime social des indépendants (RSI)
+  cpsti:
+    nom: Conseil de la protection sociale des travailleurs indépendants (CPSTI)
+    operateur: cnav
+    note: >-
+      Il pilote le régime complémentaire des indépendants ; depuis 2020,
+      l'Assurance retraite en sert les pensions, et les Urssaf en
+      recouvrent les cotisations.
+
+  # ---------------------------------------------------------------------------
+  # Professions libérales
+  # ---------------------------------------------------------------------------
+  cnavpl:
+    nom: Caisse nationale d'assurance vieillesse des professions libérales (CNAVPL)
+    note: Ses dix sections professionnelles gèrent pour elle le régime de base.
+  carmf:
+    nom: Caisse autonome de retraite des médecins de France (CARMF)
+  carcdsf:
+    nom: Caisse autonome de retraite des chirurgiens-dentistes et des sages-femmes (CARCDSF)
+  cavp:
+    nom: Caisse d'assurance vieillesse des pharmaciens (CAVP)
+  carpimko:
+    nom: >-
+      Caisse autonome de retraite et de prévoyance des infirmiers,
+      masseurs-kinésithérapeutes, pédicures-podologues, orthophonistes et
+      orthoptistes (CARPIMKO)
+  carpv:
+    nom: Caisse autonome de retraite et de prévoyance des vétérinaires (CARPV)
+  cavamac:
+    nom: >-
+      Caisse d'allocation vieillesse des agents généraux et des mandataires
+      non salariés de l'assurance et de la capitalisation (CAVAMAC)
+  cavec:
+    nom: >-
+      Caisse d'assurance vieillesse des experts-comptables et des
+      commissaires aux comptes (CAVEC)
+  cavom:
+    nom: >-
+      Caisse d'assurance vieillesse des officiers ministériels, officiers
+      publics et des compagnies judiciaires (CAVOM)
+  cipav:
+    nom: Caisse interprofessionnelle de prévoyance et d'assurance vieillesse (Cipav)
+  cprn:
+    nom: Caisse de prévoyance et de retraite des notaires (CPRN)
+  crea:
+    nom: >-
+      Caisse de retraite de l'enseignement, des arts appliqués, du sport et
+      du tourisme (CREA)
+  cnbf:
+    nom: Caisse nationale des barreaux français (CNBF)

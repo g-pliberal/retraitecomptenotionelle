@@ -1194,7 +1194,7 @@ def test_un_fichier_par_regime_nomme_de_son_code(catalogue):
     """Un régime, un fichier, qui porte le code qui le nomme (phase 6).
 
     Tout fichier YAML du dossier est un régime, calculé ou non, hors le schéma,
-    l'inventaire et les pivots : un fichier d'une autre nature qu'on y poserait
+    le référentiel des gestionnaires (action 188), l'inventaire et les pivots : un fichier d'une autre nature qu'on y poserait
     serait chargé comme un régime. Le catalogue — les régimes calculés — suit
     l'ordre des rangs, qui départage la fusion ; un rang pris deux fois
     laisserait le chargeur choisir sans le dire.
@@ -1205,7 +1205,7 @@ def test_un_fichier_par_regime_nomme_de_son_code(catalogue):
     dossier = RACINE_DONNEES / "reference" / "regimes"
     tous = fichiers_de_regimes(RACINE_DONNEES)
     autres = {c.name for c in dossier.glob("*.yaml")} - {c.name for c, _ in tous}
-    assert autres == {"_schema.yaml", *FICHIERS_HORS_REGIMES}
+    assert autres == {"_schema.yaml", "_gestionnaires.yaml", *FICHIERS_HORS_REGIMES}
     assert all(chemin.stem == fiche["code"] for chemin, fiche in tous)
     fiches = fiches_de_regimes(RACINE_DONNEES)
     rangs = [fiche["rang"] for _, fiche in fiches]

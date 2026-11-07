@@ -26,6 +26,7 @@ hors_repartition: false
 inventaire:
   section: fonction_publique
   rang: 80
+  gestionnaire: caisse_cese
   nom: Caisse de retraite des anciens membres du Conseil économique, social et environnemental
   population: Membres du CESE
   couverture: partiel

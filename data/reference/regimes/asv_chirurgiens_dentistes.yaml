@@ -34,6 +34,7 @@ hors_repartition: false
 inventaire:
   section: non_salaries
   rang: 214
+  gestionnaire: carcdsf
   nom: Prestations complémentaires de vieillesse des chirurgiens-dentistes conventionnés (PCV, ex-ASV)
   population: Chirurgiens-dentistes conventionnés
   couverture: partiel

@@ -31,6 +31,7 @@ hors_repartition: false
 inventaire:
   section: non_salaries
   rang: 215
+  gestionnaire: carcdsf
   nom: Prestations complémentaires de vieillesse des sages-femmes conventionnées (PCV, ex-ASV)
   population: Sages-femmes conventionnées
   couverture: partiel

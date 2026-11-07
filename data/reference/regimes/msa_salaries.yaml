@@ -15,6 +15,7 @@ hors_repartition: false
 inventaire:
   section: prive_base
   rang: 60
+  gestionnaire: msa
   nom: Assurances sociales agricoles, salariés (MSA)
   population: Salariés agricoles
   couverture: modelise

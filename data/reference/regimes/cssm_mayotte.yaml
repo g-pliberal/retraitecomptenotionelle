@@ -22,6 +22,7 @@ hors_repartition: false
 inventaire:
   section: prive_base
   rang: 70
+  gestionnaire: cssm
   population: >-
     Salariés du secteur privé et agents de droit privé à Mayotte ; depuis
     2012, travailleurs non salariés artisans, commerçants, libéraux et

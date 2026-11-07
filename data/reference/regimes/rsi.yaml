@@ -15,6 +15,7 @@ hors_repartition: false
 inventaire:
   section: non_salaries
   rang: 30
+  gestionnaire: rsi
   population: Artisans, industriels et commerçants
   couverture: modelise
   statuts: [artisan, commercant, conjoint_collaborateur_artisan, conjoint_collaborateur_commercant,

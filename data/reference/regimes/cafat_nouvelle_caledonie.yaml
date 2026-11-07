@@ -20,6 +20,7 @@ hors_repartition: false
 inventaire:
   section: prive_base
   rang: 110
+  gestionnaire: cafat
   population: Salariés de Nouvelle-Calédonie
   couverture: partiel
   statuts: [salarie_nouvelle_caledonie]

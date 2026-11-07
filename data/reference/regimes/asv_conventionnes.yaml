@@ -24,6 +24,7 @@ hors_repartition: false
 inventaire:
   section: non_salaries
   rang: 210
+  gestionnaire: carmf
   nom: Prestations complémentaires de vieillesse des professionnels de santé conventionnés (ASV)
   population: Médecins, chirurgiens-dentistes, sages-femmes, auxiliaires médicaux et directeurs de laboratoire conventionnés
   couverture: partiel

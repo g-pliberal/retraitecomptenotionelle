@@ -26,6 +26,7 @@ hors_repartition: false
 inventaire:
   section: fonction_publique
   rang: 130
+  gestionnaire: clr_nouvelle_caledonie
   nom: Caisses de retraite des fonctionnaires de Nouvelle-Calédonie et de Polynésie française
   population: Fonctionnaires territoriaux et communaux du Pacifique
   couverture: partiel

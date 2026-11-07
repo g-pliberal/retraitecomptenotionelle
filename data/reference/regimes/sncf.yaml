@@ -22,6 +22,7 @@ hors_repartition: false
 inventaire:
   section: speciaux
   rang: 10
+  gestionnaire: cprp_sncf
   nom: Régime spécial des agents du cadre permanent de la SNCF
   population: Agents du cadre permanent recrutés avant 2020
   couverture: modelise

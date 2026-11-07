@@ -21,6 +21,7 @@ integre_dans: null
 inventaire:
   section: speciaux
   rang: 230
+  gestionnaire: caisse_des_depots
   nom: Régime de retraite du personnel statutaire de la CANSSM (« retraite des statutaires »)
   population: Agents statutaires de la Caisse autonome nationale de la sécurité sociale dans les mines
   couverture: a_modeliser

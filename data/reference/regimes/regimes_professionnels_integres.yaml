@@ -22,6 +22,7 @@ hors_repartition: false
 inventaire:
   section: prive_complementaires
   rang: 190
+  gestionnaire: institutions_professionnelles
   nom: Régimes professionnels de salariés intégrés à l'Agirc-Arrco
   population: >-
     Personnels des banques (régime professionnel AFB, intégré en 1994), des

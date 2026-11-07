@@ -17,6 +17,7 @@ hors_repartition: false
 inventaire:
   section: non_salaries
   rang: 90
+  gestionnaire: cnavpl
   nom: Caisse nationale d'assurance vieillesse des professions libérales, régime de base
   population: Professions libérales réglementées et, jusqu'en 2018, non réglementées
   couverture: partiel

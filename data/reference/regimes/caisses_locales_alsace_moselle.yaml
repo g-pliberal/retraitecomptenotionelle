@@ -25,6 +25,7 @@ integre_dans: cnracl
 inventaire:
   section: fonction_publique
   rang: 150
+  gestionnaire: caisses_alsace_moselle
   nom: Régimes locaux de retraite des collectivités et établissements publics d'Alsace-Moselle
   population: Agents titulaires des collectivités d'Alsace-Moselle non affiliés à la CNRACL
   couverture: hors_champ

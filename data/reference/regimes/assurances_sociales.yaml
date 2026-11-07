@@ -19,6 +19,7 @@ hors_repartition: true
 inventaire:
   section: prive_base
   rang: 20
+  gestionnaire: caisses_assurances_sociales
   nom: Assurances sociales (assurance vieillesse)
   population: Salariés de l'industrie et du commerce sous plafond de rémunération
   couverture: modelise

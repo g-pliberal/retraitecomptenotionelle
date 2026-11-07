@@ -25,6 +25,7 @@ hors_repartition: false
 inventaire:
   section: non_salaries
   rang: 120
+  gestionnaire: cavp
   nom: Complémentaire des pharmaciens (CAVP)
   population: Pharmaciens libéraux
   couverture: partiel

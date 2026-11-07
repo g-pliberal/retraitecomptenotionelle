@@ -24,6 +24,7 @@ hors_repartition: false
 inventaire:
   section: speciaux
   rang: 130
+  gestionnaire: cavimac
   nom: Régime des cultes (CAVIMAC)
   population: Ministres des cultes et membres des congrégations religieuses
   couverture: modelise

@@ -17,6 +17,7 @@ hors_repartition: false
 inventaire:
   section: non_salaries
   rang: 230
+  gestionnaire: cnbf
   nom: Complémentaire des avocats (CNBF)
   population: Avocats
   couverture: modelise

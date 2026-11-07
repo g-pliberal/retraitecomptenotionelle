@@ -10,6 +10,7 @@ integre_dans: null
 inventaire:
   section: non_salaries
   rang: 80
+  gestionnaire: urssaf
   couverture: routage
   statuts: [micro_entrepreneur]
   textes:
