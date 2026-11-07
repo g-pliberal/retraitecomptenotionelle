@@ -5,11 +5,10 @@ tranché (décision 41 de `docs/feuille_de_route_programme.md`), sur les bases
 déjà fixées : la masse salariale (décision 10), les prix pour le stock
 (action 48, archivée). Le plancher avec rattrapage, payé par les retraités,
 et les promesses 1 à 5, et la dette rendue au plus vite, sont tranchés
-(décisions 44 à 46 et 49). Reste à approfondir le plancher des pensions du
-stock quand l'inflation est basse : trois voies neuves (« Le stock, à
-approfondir ») à chiffrer au modèle, puis au propriétaire. Ensuite, une session du modèle
-écrit le facteur pour le seul scénario 6, et la page Coût le chiffre. Restent
-à lire à leur source les textes marqués « non vérifié ».
+(décisions 44 à 46 et 49). Les trois voies du stock sont chiffrées au
+modèle, et la suite, du choix de la voie à la page Coût, est tenue par
+`186/2026-11-07-indexation-scenario-6.md`. Restent ici à lire à leur source
+les textes marqués « non vérifié ».
 
 *Le 7 novembre 2026, le propriétaire ouvre le chantier 5 de l'action 186 :
 « Je veux qu'on attaque ce chantier ». La feuille de route du programme y

@@ -1,0 +1,20 @@
+date: "2026-11-07"
+session: "action 186, chantier 5 : le facteur démographique et le plancher, chiffrés au modèle pour le scénario 6, et les trois voies du stock ; la suite rouge de 6d3ab61 réparée"
+consulte: >-
+  Aucune règle du scénario 1 n'est touchée, et aucun texte n'est relu : le
+  plancher du droit actuel (L. 161-25 du code de la sécurité sociale, version
+  du 1er janvier 2016) est celui que la note de l'indexation a lu le même jour
+  dans l'index LEGI du dépôt. Le calcul ne lit que ce que le dépôt porte déjà :
+  les cotisants par retraité de droit direct du COR, l'ensemble des régimes,
+  observés jusqu'en 2024 et projetés jusqu'en 2070
+  (decomposition_depense_retraite.csv, rapport annuel de juin 2026), et les
+  hypothèses de projection du COR (hypotheses_projection.yaml).
+trouve: >-
+  Rien qui touche les fiches. Le nombre de retraités par cotisant du COR monte
+  de 0,50 % par an de 2027 à 2040 et de 0,77 % ensuite, moins vite au début
+  que celui de la Cnav que la note d'étude avait pris : l'effort de α = 1 sur
+  la vie du stock vaut une baisse de 4,3 % à la bascule, non 7,5 %. Le détail
+  est dans la note docs/feuille_de_route/186/2026-11-07-indexation-scenario-6.md.
+reste: >-
+  Rien de neuf à lire pour ce calcul. Restent ceux que la note de l'indexation
+  marque « non vérifié ».

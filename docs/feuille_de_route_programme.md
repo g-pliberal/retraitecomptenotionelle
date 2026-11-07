@@ -1096,6 +1096,37 @@ approfondir ») :
   plancher et sa dette marchent alors comme pour les pensions nouvelles.
   C'est la promesse 2 prise à la lettre, mais l'action 48 serait à revoir.
 
+**Le 7 novembre 2026 : les trois voies du stock, chiffrées au modèle.** La
+note `186/2026-11-07-indexation-scenario-6.md` les chiffre pour le seul
+scénario 6, en variante (le défaut ne change pas), de 2026 à 2070, sous le
+COR, une inflation durable de 0,5 % et une crise de l'emploi (−1 % par an
+de 2030 à 2039, 1 % d'inflation) ; `scripts/indexation_scenario_6.py` refait
+tout, année par année. L'étalon est α = 1 sans plancher, ce que les retraités
+doivent porter ; un dixième de point de PIB vaut environ 3 Md€ de 2026.
+- *Le modèle corrige le calcul à côté.* Le nombre de retraités par cotisant
+  (COR, tous régimes) ne monte que de 0,50 % par an jusqu'en 2040, quand le
+  stock est nombreux : l'effort de α = 1 sur sa vie vaut une baisse de 4,3 %,
+  non de 7,5 % ; sous la voie 3, le stock gagne environ 2 % face aux prix, au
+  lieu d'y perdre 2,2 %.
+- *Sous le COR, aucun plancher ne joue.* α = 1 épargne 0,45 point de PIB
+  par an face à la règle d'avant, et 28 points de dette en 2070.
+- *α = 1 tel que décidé* : sous l'inflation basse ou la crise, le stock reste
+  gelé en euros 38 à 40 ans sur 44, et 1,2 à 2,6 points de PIB de sa dette
+  sont perdus en 2070, pour les cotisants.
+- *Voie 1, la prime* : 1,0 % de la pension du stock pour couvrir l'inflation
+  basse, 2,15 % pour couvrir la crise, et les deux. Payée même sans choc :
+  sous le COR, la réserve finit à 1,2 ou 2,5 points de PIB ; mal calibrée,
+  elle manque de 1,4 point.
+- *Voie 2, l'effort d'avance* : 4,3 % de plus à la bascule, puis les prix ;
+  rien pour les cotisants sous le COR ou l'inflation basse, 0,14 point de PIB
+  par an sous la crise, faute de révision.
+- *Voie 3, la même règle* : 0,18 point de PIB par an pour les cotisants sous
+  toutes les trajectoires ; le stock partage la crise (−9 % de 2030 à 2040).
+- *Au propriétaire* : la voie ; pour la 1, la crise assurée et le sort de la
+  réserve ; pour la 2, une baisse fixe ou révisée ; pour la 3, la base de la
+  décision 41 ; pour toutes, la dette des retraités morts avant de l'avoir
+  rendue.
+
 ### Chantier 6 — Les complémentaires : rien que leurs cotisations, sauvées mais dissoutes
 
 **La question.** Comment couper aux complémentaires tout argent qui n'est pas
@@ -1510,6 +1541,12 @@ est passée ; le début de la campagne présidentielle ?
   quand l'inflation est basse, à approfondir — une prime d'avance, l'effort
   démographique pris à la transition, ou la même règle pour toutes les
   pensions.
+- Chantier 5, chiffré au modèle le 7 novembre (note
+  `186/2026-11-07-indexation-scenario-6.md`) : la voie du stock — la prime
+  d'avance (1,0 % ou 2,15 %, selon la crise assurée, et le sort de la
+  réserve), l'effort pris à la bascule (4,3 %, fixe ou révisé), ou la même
+  règle pour toutes les pensions (0,18 point de PIB par an pour les
+  cotisants) ; et la dette des retraités morts avant de l'avoir rendue.
 - Chantier 6 : le mécanisme de résolution ; l'ordre des caisses.
 - Chantier 6, étudié le 7 novembre : l'entrée des complémentaires au régime
   unique, à la bascule ou caisse par caisse ; la résolution et son seuil ;
