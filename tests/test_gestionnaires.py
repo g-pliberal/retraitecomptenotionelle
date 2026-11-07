@@ -17,16 +17,10 @@ from retraite_notionnelle.config import RACINE_DONNEES
 from retraite_notionnelle.donnees.regimes import charger_gestionnaires, charger_inventaire
 
 #: Les régimes dont aucune source du dépôt ne nomme l'organisme qui les gère,
-#: déclarés un à un : aucun autre ne s'en dispense en silence.
-A_IDENTIFIER = {
-    "avts": "l'allocation de 1941 : ni la fiche ni ses textes ne disent qui la versait",
-    "enseignants_prive_additionnel": (
-        "la fiche dit qui cotise, l'État et les maîtres, pas qui gère ; le "
-        "décret de 2005 qui organise le régime n'est pas lu"),
-    "seita": (
-        "la fiche dit que l'État le finance (programme 195), pas qui sert les "
-        "pensions depuis la privatisation de 1995"),
-}
+#: déclarés un à un : aucun autre ne s'en dispense en silence. Les trois de
+#: l'étape 1 (l'AVTS, le régime additionnel des enseignants du privé, la SEITA)
+#: ont trouvé le leur dans les textes à l'étape 2 (action 188).
+A_IDENTIFIER: dict[str, str] = {}
 
 #: Ce que les sources du dépôt disent de qui gère quoi : chaque régime, et
 #: l'organisme qui le gère ou pour qui il est géré, sous la phrase qui le dit.
@@ -58,7 +52,25 @@ LUS_AUX_SOURCES = {
     "regies_ferroviaires_outre_mer": "etat",  # « gérés par l'État depuis 1993 »
     "ortf": "etat",  # « Régime en extinction dont l'État verse les derniers engagements »
     "cultes_alsace_moselle": "etat",  # « leur pension, servie par l'État »
-    "retrep": "etat",  # « des avantages temporaires de retraite que l'État paie »
+    # L'État paie les avantages du RETREP ; l'arrêté du 24 mars 1987, que la
+    # fiche cite, désigne l'APC « pour liquider et payer » (JORFTEXT000000495426).
+    "retrep": "apc",
+    # Arrêté du 9 mai 1995, article 1er : « L'Association pour la prévoyance
+    # collective (A.P.C.) est chargée de la liquidation et du paiement des
+    # pensions du régime de retraite du personnel » de la SEITA, en vigueur
+    # (LEGIARTI000006789808).
+    "seita": "apc",
+    # Arrêté du 9 octobre 2013, article 1er : « L'Association pour la
+    # prévoyance collective est désignée comme organisme chargé d'assurer la
+    # gestion administrative et financière du régime additionnel de retraite »
+    # (JORFARTI000028054250), qu'aucun arrêté n'a remplacé depuis que
+    # R. 914-99 du code de l'éducation reprend la désignation par arrêté (2025).
+    "enseignants_prive_additionnel": "apc",
+    # Loi du 14 mars 1941, article 8 : « Le secrétaire d'Etat au travail est
+    # chargé d'assurer l'application du présent titre et notamment la
+    # liquidation des allocations » — lue sur une reproduction, le Journal
+    # officiel de 1941 n'étant dans l'index que par son résumé.
+    "avts": "etat",
     "assemblees_parlementaires": "caisses_des_assemblees",  # « servie par la caisse de chaque assemblée »
     "fonctionnaires_pacifique": "clr_nouvelle_caledonie",  # « la fiche est celle de la Caisse locale de retraites »
     "wallis_et_futuna": "cps_wallis_et_futuna",  # « affiliés à la Caisse des prestations sociales »
@@ -124,6 +136,8 @@ def test_le_document_des_regimes_compte_les_gestionnaires_et_les_nomme():
     assert f"les {len(vivantes)} lignes" in bloc
     assert [organismes[code].nom for code in sorted(actifs)
             if organismes[code].nom not in bloc] == []
+    if not A_IDENTIFIER:
+        assert "Chaque régime de l'inventaire nomme le sien." in bloc
 
 
 def test_un_regime_integre_garde_le_gestionnaire_qu_il_avait():

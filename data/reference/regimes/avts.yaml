@@ -15,6 +15,7 @@ hors_repartition: false
 inventaire:
   section: prive_base
   rang: 40
+  gestionnaire: etat
   nom: Allocation aux vieux travailleurs salariés
   population: Salariés âgés démunis
   couverture: modelise

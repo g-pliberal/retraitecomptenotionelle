@@ -112,12 +112,15 @@ gestionnaires:
   # Fonction publique
   # ---------------------------------------------------------------------------
   etat:
-    nom: L'État, par le Service des retraites de l'État (SRE)
+    nom: L'État
     note: >-
-      Les pensions de l'État sont une dépense de son budget, et non d'une
-      caisse ; le service des retraites de l'État, à la direction générale
-      des finances publiques, les gère depuis 2009, le service des pensions
-      du ministère des finances avant lui.
+      Les pensions qu'il sert sont une dépense de son budget, et non d'une
+      caisse : celles des fonctionnaires, que le Service des retraites de
+      l'État (direction générale des finances publiques) gère depuis 2009, le
+      service des pensions du ministère des finances avant lui ; celles des
+      régimes qu'il a repris ; et, de 1941 à 1945, l'allocation aux vieux
+      travailleurs salariés, que la loi du 14 mars 1941 (article 8) fait
+      liquider par le secrétaire d'État au travail.
   caisse_des_depots:
     nom: Caisse des dépôts et consignations
     note: >-
@@ -207,6 +210,13 @@ gestionnaires:
   cavimac:
     nom: Caisse d'assurance vieillesse, invalidité et maladie des cultes (CAVIMAC)
     note: La CAMAVIC jusqu'en 1998.
+  apc:
+    nom: Association pour la prévoyance collective (APC)
+    note: >-
+      Elle liquide et paie, par désignation de l'État, les pensions du
+      personnel de la SEITA (arrêté du 9 mai 1995), les avantages temporaires
+      des maîtres du privé (arrêté du 24 mars 1987) et le régime additionnel
+      des enseignants du privé (arrêté du 9 octobre 2013).
   caisse_imprimerie_nationale:
     nom: Caisse des retraites de l'Imprimerie nationale
   credit_foncier:

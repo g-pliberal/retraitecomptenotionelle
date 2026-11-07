@@ -23,6 +23,7 @@ hors_repartition: false
 inventaire:
   section: speciaux
   rang: 110
+  gestionnaire: apc
   population: Personnels recrutés avant 1981
   couverture: modelise
   statuts: [agent_seita]

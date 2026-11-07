@@ -136,6 +136,7 @@ inventaire:
     extinction: 1945
     succede_a: [assurances_sociales]
     integre_dans: regime_general
+    gestionnaire: etat
     couverture: modelise
     statuts: []
     textes:
@@ -948,6 +949,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: apc
     couverture: modelise
     statuts: [maitre_enseignement_prive]
     textes:
@@ -1444,7 +1446,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
-    gestionnaire: etat
+    gestionnaire: apc
     couverture: a_modeliser
     statuts: []
     textes:
@@ -1941,6 +1943,7 @@ inventaire:
     extinction: null
     succede_a: []
     integre_dans: null
+    gestionnaire: apc
     couverture: modelise
     statuts: [agent_seita]
     textes:

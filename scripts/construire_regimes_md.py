@@ -138,9 +138,10 @@ def gestionnaires(lignes) -> str:
         f"régime ; {len(deleguent)} d'entre eux confient leur gestion à un autre "
         f"organisme ({' ; '.join(operateurs)}). {len(disparus)} gestionnaires ont "
         "disparu avec leurs régimes, ou les ont laissés à un autre. Un code peut "
-        "nommer un ensemble, les caisses des deux assemblées par exemple. Aucune "
-        f"source du dépôt ne nomme encore celui de {len(sans)} régimes : "
-        + " ; ".join(sans) + "."
+        "nommer un ensemble, les caisses des deux assemblées par exemple. "
+        + (f"Aucune source du dépôt ne nomme encore celui de {len(sans)} régimes : "
+           + " ; ".join(sans) + "." if sans
+           else "Chaque régime de l'inventaire nomme le sien.")
     )
 
     def tableau(codes, seulement_vivantes: bool) -> str:

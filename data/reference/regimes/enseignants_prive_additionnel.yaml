@@ -21,6 +21,7 @@ hors_repartition: false
 inventaire:
   section: prive_complementaires
   rang: 200
+  gestionnaire: apc
   nom: Régime additionnel de retraite des enseignants du privé sous contrat
   population: Maîtres de l'enseignement privé sous contrat
   couverture: modelise
