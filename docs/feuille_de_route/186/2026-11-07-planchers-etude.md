@@ -1,14 +1,14 @@
 # Les planchers propres à certaines caisses, étudiés aux sources : qui perd, combien, et ce que le droit permet
 
-**Reprise, au 7 novembre 2026.** L'étude est faite et le propriétaire a
-tranché (décisions 62 à 66 et 69, « Ce que le propriétaire a répondu ») : les
-planchers des pensions servies gardés tant que leur caisse a des réserves,
-la garantie ensuite — dès la bascule pour la CNRACL, l'État, la SNCF et la
-complémentaire agricole ; ni transition ni décret ; la garantie à 1 050 et
-800 € à 65 ans ; rien d'exclu de la reprise sur succession. Reste au
-propriétaire : les planchers d'invalidité et de handicap, I ou III (fin de
-note). Le modèle n'est touché qu'après, par une session du modèle, au seul
-scénario 6.
+**Reprise, au 7 novembre 2026.** Le propriétaire a tranché (décisions 62 à
+66, 69 et 78) : planchers gardés tant que leur caisse a des réserves, la
+garantie ensuite, dès la bascule pour la CNRACL, l'État, la SNCF et la
+complémentaire agricole ; la garantie ouverte dès l'invalidité, pour tous les
+invalides. Étape suivante, dans une session neuve : vérifier, caisse par
+caisse et complémentaire par complémentaire, les conflits de cette garantie
+d'invalidité ; partir des cinq déjà visibles (« Les conflits déjà visibles »,
+en fin de note), dont cinq questions au propriétaire. Le modèle n'est touché
+qu'après, par une session du modèle, au seul scénario 6.
 
 *Le 7 novembre 2026, le propriétaire, qui avait dit « Oui » à ce que la garantie vieillesse remplace aussi les planchers propres à certaines caisses (décision 42), rouvre la question : « J'aimerais revoir ce sujet pour voir comment vont être impactés les gens. J'aimerais surtout voir notre marge de manœuvre légale sur le sujet. » La session a lu : la note de la CNRACL au COR sur les bénéficiaires du minimum garanti (février 2023), la note du secrétariat du COR sur les minima de pension (février 2023), les fiches du COR de juillet 2024 sur la CNRACL, la caisse des cheminots et celle des IEG, les pages de la CNIEG sur son minimum, et, dans l'index LEGI de la DILA (à jour au 2 novembre 2026), les textes de chaque plancher. Les sites de la DREES, de la sécurité sociale et du Sénat ont refusé la lecture automatique (503) : les chiffres qui en viennent ont été relevés par le moteur de recherche, sans lecture de la page, et sont marqués comme tels. Les calculs faits à côté sont restés dans le brouillon de la session ; leur méthode est écrite à chaque chiffre. Ce que la note conclut est une piste, pas une décision : le propriétaire tranche.*
 
@@ -239,3 +239,19 @@ Deux cas (à côté) :
 - **La longue carrière**, trente ans de services, dont le minimum vaut 1 298 €. Avec I, il garde 1 298 €. Avec III, il tombe à 1 050 € seul (−248 €) ou à 800 € en couple (−498 €).
 
 III n'est donc pas, comme la note l'écrivait d'abord, moins coûteuse que I : elle coûte plus pour les invalides seuls de courte carrière, la plupart, et moins pour les couples et les longues carrières, une part revenant par la succession. Le solde, seul le modèle peut le chiffrer. Ce qui les sépare surtout est un choix de principe : I garde un minimum propre aux agents publics ; III donne à tout invalide, du public comme du privé, le même plancher que tout le monde, ouvert plus tôt.
+
+## La garantie pour tous les invalides, et les conflits déjà visibles
+
+Le propriétaire choisit III : « je veux que ce soit pour tous les invalides » (décision 78). Et il ajoute : « il faut voir s'il n'y a pas de conflit avec les différentes caisses et complémentaires ». La vérification caisse par caisse est l'étape suivante. Les fiches du dépôt et l'index LEGI (au 7 novembre 2026) montrent déjà cinq conflits ; chacun appelle une question au propriétaire.
+
+**1. Quand la garantie s'ouvre-t-elle dans le privé ?** Le fonctionnaire part à la retraite pour invalidité, à tout âge, et sa pension est liquidée ce jour-là ([retraite_pour_invalidite_fonction_publique.yaml](../../../data/reference/regles/retraite_pour_invalidite_fonction_publique.yaml)). Le salarié, l'indépendant ou l'exploitant invalide ne part pas : il touche une pension d'invalidité de l'assurance maladie jusqu'à l'âge légal, puis une retraite pour inaptitude la remplace d'office ([pension_d_invalidite_substituee.yaml](../../../data/reference/regles/pension_d_invalidite_substituee.yaml)). Pour lui, « dès le départ » veut dire dès sa pension d'invalidité : la garantie la complète avant de compléter sa retraite. *Question* : la garantie s'ouvre-t-elle, dans le privé, dès l'attribution de la pension d'invalidité ?
+
+**2. Un seul critère d'invalidité.** Chaque caisse a le sien : le fonctionnaire « dans l'incapacité permanente de continuer ses fonctions », qui n'a pu être reclassé — son poste, non tout emploi (L. 29 du code des pensions) ; le salarié dont l'invalidité réduit « dans des proportions déterminées sa capacité de travail ou de gain » (L. 341-1 du code de la sécurité sociale), les deux tiers ; l'indépendant en invalidité totale et définitive, ou en incapacité partielle au métier ([points_invalidite_independants.yaml](../../../data/reference/regles/points_invalidite_independants.yaml)) ; l'inapte, 50 % d'incapacité ([inaptitude_au_travail.yaml](../../../data/reference/regles/inaptitude_au_travail.yaml)) ; le handicapé, 50 % depuis 2015 ([retraite_anticipee_handicap.yaml](../../../data/reference/regles/retraite_anticipee_handicap.yaml)). La même personne peut être invalide pour une caisse et pas pour une autre. « Pour tous » demande un critère commun, constaté par un tiers, comme le veut le chantier 3. *Question* : lequel ?
+
+**3. L'AAH passe-t-elle avant ou après ?** L'allocation aux adultes handicapés n'est versée qu'à qui ne peut prétendre à un avantage de vieillesse ou d'invalidité « d'un montant au moins égal à cette allocation » (L. 821-1). Une garantie ouverte dès l'invalidité passerait donc avant elle. Or l'AAH n'est pas reprise sur la succession, et ne tient plus compte des revenus du conjoint depuis le 1er octobre 2023 (L. 821-3, rédaction de cette date) ; la garantie, elle, est reprise (décisions 30 et 66) et descend à 800 € en couple. L'adulte handicapé en couple, ou qui possède son logement, y perdrait. L'allocation supplémentaire d'invalidité, qui complète sous condition de ressources la pension d'invalidité du privé, pose la même question d'ordre. *Question* : la garantie vient-elle après l'AAH et l'ASI, en complément, ou les remplace-t-elle ?
+
+**4. Qui paie pour les fonctionnaires, une fois leur caisse absorbée ?** Aujourd'hui, l'invalidité du fonctionnaire est payée par son régime de pension, non par l'assurance maladie (même fiche de la fonction publique). La décision 69 fait entrer la CNRACL et les pensions de l'État au régime général dès la bascule. « L'assureur du risque » doit alors être nommé : l'employeur public paie-t-il lui-même la garantie de ses agents invalides, ou cotise-t-il, comme un employeur privé, à l'assurance invalidité du régime général ? *Question* : laquelle ?
+
+**5. Une avance, ou une assurance ?** La garantie est une avance de l'État, « qui porte intérêt et se reprend sur la succession dès le premier euro » (`docs/methodologie.md`, scénario 6). Ouverte à 65 ans, elle court une vingtaine d'années ; ouverte à 40 ans pour une invalidité, elle en courrait plus de quarante, et ses intérêts pourraient prendre toute la succession, le logement compris. Mais si l'assureur du risque la paie, comme le veut le chantier 3 pour les accidents de la vie, c'est une prestation d'assurance, que rien n'oblige à reprendre. *Question* : la garantie versée pour invalidité est-elle reprise sur la succession, comme celle de 65 ans, ou acquise, comme une prestation d'assurance ?
+
+**Les complémentaires : pas de conflit de principe, des points à vérifier.** La garantie est différentielle : elle compte ce que versent les complémentaires et ne complète que le reste. Mais les complémentaires donnent des points pendant l'invalidité — celle des indépendants, au moins (fiche citée) ; l'Agirc-Arrco et l'Ircantec, à vérifier — et ne versent leur pension qu'à l'âge légal : jusque-là, la garantie comble seule. L'Agirc-Arrco garde ses règles, et donc ses points d'invalidité, jusqu'à ce qu'elle coule (décision 43). Le RAFP reste à part (décision 72). Restent à vérifier caisse par caisse : les régimes d'invalidité-décès des sections des libéraux et des avocats, leurs définitions de l'invalidité, et si leurs pensions entrent dans les ressources ; la rente viagère d'invalidité imputable au service (L. 28 du code des pensions) et les rentes d'accident du travail, comptées ou non dans les ressources ; l'invalidité des agents des régimes spéciaux fermés aux seuls recrutés (IEG, RATP, Banque de France).

@@ -455,6 +455,19 @@ des trois voies du stock (note `186/2026-11-07-indexation-scenario-6.md`) :
     0,01 point de PIB en 2070 pour les pensions nouvelles, sous les trois
     trajectoires chiffrées.
 
+Le même jour, sur les planchers d'invalidité (chantier 6), après la
+comparaison des options I et III (note `186/2026-11-07-planchers-etude.md`) :
+
+78. **La garantie s'ouvre dès l'invalidité, pour tous les invalides, du
+    public comme du privé** : « je veux que ce soit pour tous les
+    invalides ». C'est l'option III : les planchers d'invalidité des caisses
+    disparaissent avec les autres (décisions 62 et 69), et la garantie —
+    1 050 € seul, 800 € en couple — se verse dès le départ pour invalidité
+    ou handicap, non à 65 ans (décision 68), payée par l'assureur du risque.
+    À vérifier d'abord : « il faut voir s'il n'y a pas de conflit avec les
+    différentes caisses et complémentaires ». Écrite d'abord sous le numéro
+    73, qu'une autre session venait de prendre.
+
 ## Ce qui est écarté
 
 - **Une transition sans baisse nominale des pensions en cours** — bâtir le
@@ -1767,6 +1780,12 @@ est passée ; le début de la campagne présidentielle ?
   d'invalidité et de handicap, I (le barème de la caisse gardé, payé par
   l'employeur) ou III (la garantie dès le départ, pour tout invalide, public
   ou privé) ; la note les compare.
+- Chantier 6, les planchers, après la décision 78 : les conflits de la
+  garantie d'invalidité avec les caisses et les complémentaires, à vérifier
+  caisse par caisse dans une session neuve ; et, dès maintenant, cinq
+  questions (note des planchers, « Les conflits déjà visibles ») : quand
+  elle s'ouvre dans le privé, un seul critère d'invalidité, l'ordre avec
+  l'AAH, qui paie pour les fonctionnaires, une avance ou une assurance.
 - Chantier 6, les complémentaires projetées le 7 novembre : les
   indépendants, les libéraux et les navigants, jamais intégrés avant 2070
   (une date butoir, ou la règle de la décision 37 telle quelle) ; la
