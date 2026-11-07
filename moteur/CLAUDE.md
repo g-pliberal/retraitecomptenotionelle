@@ -47,6 +47,12 @@ comme les types que le pont échange.
   retenue à reprendre, un tracé qui ne convient plus à la colonne
   (`dessinConvient`) — et garde alors la hauteur de la page le temps du premier
   calcul. Une page recalculée perd sa marque `data-prerendu`.
+- **Le moteur n'importe rien du site** (action 187, étape 2) : le site, c'est
+  `pages.js`, `gabarit.js`, `routeur.js` et `adresses.js` (`SITE`, dans
+  `tests/test_moteur_a_part.py`) ; tout autre module de `moteur/js/` est du
+  calcul et n'en importe aucun, même à la demande, et `pont.mjs` n'en charge
+  rien. Une mise en forme que le calcul écrit aussi va dans `format.js`, que
+  le gabarit reprend ; un module neuf du site s'ajoute à `SITE`.
 - **Le démarrage n'importe que de quoi animer la page** (action 174, étape 5) :
   `routeur.js`, `adresses.js`, `cles.js`, `gabarit.js`, `format.js`,
   `calendrier.js`. La saisie, le contexte, le texte des pages et la lecture du

@@ -115,6 +115,25 @@ export function formatPourcentage(valeur, decimales) {
   return `${formatFixe(valeur * 100, decimales)}%`;
 }
 
+/** Espace insécable fin, séparateur de milliers à la française. */
+export const FINE = "\u202f";
+
+/**
+ * Nombre à la française : virgule décimale, espace insécable des milliers.
+ *
+ * Le calcul en écrit aussi, dans les refus qu'il explique (`saisie.js`,
+ * `contexte.js`) : la fonction vit donc ici, et le gabarit la reprend telle
+ * quelle, car le moteur n'importe rien du site (action 187, étape 2).
+ */
+export function nombre(valeur, decimales = 2) {
+  return formatFixe(valeur, decimales, true).replace(/,/g, FINE).replace(".", ",");
+}
+
+/** Montant en euros. */
+export function euros(montant) {
+  return `${nombre(montant, 0)}${FINE}€`;
+}
+
 function _format(valeur, decimales, groupes, rang, suffixe) {
   if (!Number.isFinite(valeur)) {
     return (Number.isNaN(valeur) ? "nan" : (valeur > 0 ? "inf" : "-inf")) + suffixe;

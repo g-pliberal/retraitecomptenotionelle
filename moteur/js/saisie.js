@@ -33,7 +33,7 @@ import {
   naissanceDeclaree, plusAns, valeur as valeurPresumee,
 } from "./chronologie.js";
 import { CONJOINTS_COLLABORATEURS, anneeDEntree, retoursAuStatut } from "./carriere.js";
-import * as g from "./gabarit.js";
+import { euros, nombre } from "./format.js";
 import { DEPARTEMENTS_D_OUTRE_MER } from "./macro.js";
 import { AGE_TERMINAL } from "./mortalite.js";
 // Les motifs sans emploi et les clés des règles vivent dans `cles.js`, que le
@@ -1756,9 +1756,9 @@ export class Saisie {
       const [bas, haut] = echelle.indicesDansLesBornes(this.primes);
       throw refus(
         rang,
-        `Cet indice majoré vaut ${g.nombre(niveau, 2)} fois le salaire moyen, `
+        `Cet indice majoré vaut ${nombre(niveau, 2)} fois le salaire moyen, `
         + "primes comprises ; le modèle en accepte de 0,1 à 10 fois, soit un indice "
-        + `majoré de ${g.nombre(bas, 0)} à ${g.nombre(haut, 0)}.`,
+        + `majoré de ${nombre(bas, 0)} à ${nombre(haut, 0)}.`,
       );
     }
     if (this.enChiffreDAffaires(statut)) {
@@ -1768,20 +1768,20 @@ export class Saisie {
       if (!this.revenu_en_euros) {
         throw refus(
           rang,
-          `Ce chiffre d'affaires, abattu à ${g.nombre(100 * part, 0)} %, `
-          + `vaut ${g.nombre(niveau, 2)} fois le salaire moyen ; le modèle `
+          `Ce chiffre d'affaires, abattu à ${nombre(100 * part, 0)} %, `
+          + `vaut ${nombre(niveau, 2)} fois le salaire moyen ; le modèle `
           + "en accepte de 0,1 à 10 fois, soit un chiffre d'affaires de "
-          + `${g.nombre(NIVEAU_MINIMAL / part, 2)} à `
-          + `${g.nombre(NIVEAU_MAXIMAL / part, 2)} fois le salaire moyen.`,
+          + `${nombre(NIVEAU_MINIMAL / part, 2)} à `
+          + `${nombre(NIVEAU_MAXIMAL / part, 2)} fois le salaire moyen.`,
         );
       }
       throw refus(
         rang,
-        `Ce chiffre d'affaires, abattu à ${g.nombre(100 * part, 0)} %, `
-        + `vaut ${g.nombre(niveau, 2)} fois le salaire moyen ; le modèle en `
+        `Ce chiffre d'affaires, abattu à ${nombre(100 * part, 0)} %, `
+        + `vaut ${nombre(niveau, 2)} fois le salaire moyen ; le modèle en `
         + "accepte de 0,1 à 10 fois, soit un chiffre d'affaires de "
-        + `${g.nombre(Math.ceil(echelle.mensuel(NIVEAU_MINIMAL) / part), 0)} à `
-        + `${g.euros(Math.floor(echelle.mensuel(NIVEAU_MAXIMAL) / part))} par mois.`,
+        + `${nombre(Math.ceil(echelle.mensuel(NIVEAU_MINIMAL) / part), 0)} à `
+        + `${euros(Math.floor(echelle.mensuel(NIVEAU_MAXIMAL) / part))} par mois.`,
       );
     }
     if (!this.revenu_en_euros) {
@@ -1791,10 +1791,10 @@ export class Saisie {
     }
     throw refus(
       rang,
-      `Ce revenu vaut ${g.nombre(niveau, 2)} fois le salaire moyen ; le `
+      `Ce revenu vaut ${nombre(niveau, 2)} fois le salaire moyen ; le `
       + "modèle en accepte de 0,1 à 10 fois, soit de "
-      + `${g.nombre(echelle.eurosDansLesBornes(NIVEAU_MINIMAL), 0)} à `
-      + `${g.euros(echelle.eurosDansLesBornes(NIVEAU_MAXIMAL))} bruts par mois.`,
+      + `${nombre(echelle.eurosDansLesBornes(NIVEAU_MINIMAL), 0)} à `
+      + `${euros(echelle.eurosDansLesBornes(NIVEAU_MAXIMAL))} bruts par mois.`,
     );
   }
 

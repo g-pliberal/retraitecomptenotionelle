@@ -25,7 +25,7 @@ import { Restitution } from "./restitution.js";
 import { assietteMaladie, salaireBrutDepuisNet, salaireNetDepuisBrut } from "./remuneration.js";
 import { Simulateur, niveauPourPension } from "./simulateur.js";
 import { REGIMES_CODE_DES_PENSIONS } from "./droit/coordonner.js";
-import * as g from "./gabarit.js";
+import { euros } from "./format.js";
 import { agesDeLEstimation } from "./pilote.js";
 import { agesBalayes, depart as departDuCycle } from "./cycle-de-vie.js";
 import {
@@ -47,7 +47,7 @@ import {
  */
 function refusDePension(trouve, constants) {
   // La dichotomie les a déjà nettés : il ne reste que l'unité.
-  const afficher = (annuel) => g.euros((annuel * constants) / MOIS_PAR_AN);
+  const afficher = (annuel) => euros((annuel * constants) / MOIS_PAR_AN);
   if (trouve.sousLePlancher) {
     return "Aucune carrière de cette forme ne sert une pension si petite : au "
       + `revenu le plus bas que le formulaire accepte, elle sert déjà `

@@ -1529,7 +1529,14 @@ grossit pas quand les domaines s'ajoutent.
   des droits. Les réglages du simulateur sont des couches de paramètres et
   de neutralisations, appliquées au calcul dans les deux moteurs ; les pages
   qui agrègent n'en prennent aucun, et une adresse qui leur en porte rend la
-  référence, sous un encadré qui le dit.
+  référence, sous un encadré qui le dit. Le site importe le moteur ; le
+  moteur n'importe rien du site, pour servir sans lui, à la fabrique par
+  `pont.mjs` comme à d'autres qui l'appelleraient chez eux (action 187). Les
+  modules du site sont `pages.js`, `gabarit.js`, `routeur.js` et
+  `adresses.js` ; tout autre module de `moteur/js/` est du calcul, `cles.js`
+  et `format.js` compris, que le démarrage lit aussi, et
+  `tests/test_moteur_a_part.py` le garde. Un calcul dont une page a besoin
+  s'écrit dans un module du calcul, avec son test, et la page le lit.
 - **Ce que d'autres utilisent** — les adresses du site, les paramètres d'une
   simulation dans l'adresse, les variables de thème qu'un hôte redéfinit — est
   la surface publique (annexe C). `docs/integration-partiliberalfrancais.md`

@@ -16,7 +16,12 @@
  * au repère `phase-7` : ses docstrings y gardent l'histoire complète des choix.
  */
 
-import { echapper, formatFixe } from "./format.js";
+import { FINE, echapper, euros, formatFixe, nombre } from "./format.js";
+
+// Le nombre et le montant à la française servent aussi au calcul, qui les écrit
+// dans ses refus : ils vivent dans `format.js`, et le gabarit les reprend tels
+// quels pour ses lecteurs (action 187, étape 2).
+export { euros, nombre };
 
 export const DEPOT = "https://github.com/g-pliberal/retraitecomptenotionelle";
 
@@ -74,9 +79,6 @@ export const SIGNATURE_SITE = "Parti libéral français — le simulateur de ret
  * graphique — une image qui circule sans adresse ne ramène personne.
  */
 export const ADRESSE_SITE = "partiliberalfrancais.fr/#simulateur";
-
-/** Espace insécable fin, séparateur de milliers à la française. */
-const FINE = "\u202f";
 
 /**
  * La navigation, en deux voix : ce que l'électeur vient chercher, puis ce qui
@@ -504,16 +506,6 @@ export function pied() {
 }
 
 // -- fragments ---------------------------------------------------------------
-
-/** Nombre à la française : virgule décimale, espace insécable des milliers. */
-export function nombre(valeur, decimales = 2) {
-  return formatFixe(valeur, decimales, true).replace(/,/g, FINE).replace(".", ",");
-}
-
-/** Montant en euros. */
-export function euros(montant) {
-  return `${nombre(montant, 0)}${FINE}€`;
-}
 
 /**
  * Montant en euros ET en centimes.

@@ -8076,14 +8076,15 @@ une feuille de route dédiée au programme et on verra demain. »
 
 ### 187. Le moteur à part du site : le calcul d'une carrière en bibliothèque, que d'autres peuvent appeler, séparé commit après commit — `en cours`
 
-**Reprise, au 7 novembre 2026.** Étape 1 faite : le partage mesuré, le plan
-écrit (`187/2026-11-07-etape-1-le-partage-mesure.md`). Le moteur est presque
-séparé déjà : `contexte.js` et `saisie.js` empruntent `g.euros` et
-`g.nombre` à `gabarit.js`, et `saisie.js` lit les constantes de `cles.js` ;
-rien d'autre ne passe du calcul au site. Par quoi commencer : l'étape 2, le
-test qui refuse à un module du calcul d'importer un module du site, vu rouge
-sur ces liens, puis les liens coupés. Au propriétaire, à l'étape 6 : la
-diffusion.
+**Reprise, au 7 novembre 2026.** Étapes 1 et 2 faites : le partage mesuré,
+puis gardé (`187/2026-11-07-etape-2-le-partage-garde.md`). Le site, c'est
+`pages.js`, `gabarit.js`, `routeur.js` et `adresses.js` ; le calcul n'en
+importe rien, `pont.mjs` non plus, et `tests/test_moteur_a_part.py` le
+garde ; `format.js` porte `nombre` et `euros`, et `cles.js` est du calcul.
+Par quoi commencer : l'étape 3, l'entrée publique — un module qui, d'une
+carrière décrite en données et du paquet, rend les résultats en données ; le
+pont passe par elle, les témoins identiques à l'octet. Au propriétaire, à
+l'étape 6 : la diffusion.
 
 **D'où elle vient.** Le 7 novembre 2026, le propriétaire ouvre le chantier 9
 du programme (`docs/feuille_de_route_programme.md`), le site et le
