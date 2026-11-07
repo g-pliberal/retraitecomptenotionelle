@@ -656,6 +656,38 @@ France Trésor.
 
 **Au propriétaire.** Tout ce chantier.
 
+**Le 7 novembre 2026 : le message, étudié aux sources.** Le propriétaire
+ouvre le chantier : « Je veux qu'on attaque ce chantier ». Le rapport est la
+note `186/2026-11-07-message-etude.md`. Ce qu'il établit :
+- *Le salaire net des actifs* : +39 € par mois au SMIC, +175 à deux SMIC,
+  +417 à cinq SMIC, aux taux de la proposition et sous le partage du
+  20 septembre (modèle). Le gain du message sera celui de la lecture A ou B
+  de la décision 29, à chiffrer une fois choisie ; « chaque euro cotisé
+  ouvre des droits » vaut dès le premier jour (17,9 Md€ cotisés sans droits
+  en 2025).
+- *Le pilier « protégé par la loi »* : la Pologne a repris en 2014 51,5 % des
+  actifs de ses fonds, validé par son Tribunal constitutionnel (« fonds
+  publics ») ; dix-huit pays sur trente sont revenus sur leur privatisation ;
+  la France a fait verser à la Cades 2,1 Md€ par an du Fonds de réserve pour
+  les retraites, de 2011 à 2024. Une loi ne protège pas d'une loi suivante ;
+  la propriété individuelle de l'épargne, davantage.
+- *L'apport pour un logement* : le PER le permet déjà, pour ses versements
+  volontaires (L. 224-4 du code monétaire et financier, à relire) ; la
+  Suisse le permet sur son pilier obligatoire. Ce que le programme
+  ajouterait : l'ouvrir aux cinq points obligatoires.
+- *La liberté de l'âge* contredit l'âge légal de 65 ans de la proposition.
+- *Le plancher* n'est pas un gain de niveau : 1 050 € et 1 600 €, contre
+  1 043,59 € et 1 620,18 € pour l'ASPA en 2026. Les gains des retraités sont
+  l'individualisation, la garantie servie d'office et les réversions
+  gardées ; la reprise sur la succession, gardée par la décision 30, doit se
+  dire, comme une avance remboursée sur la seule valeur de l'aide, avant
+  qu'un adversaire ne la dise.
+- *La responsabilité* : le niveau de vie des retraités égale celui de
+  l'ensemble de la population (COR, février 2026), mais 49 % des Français le
+  croient moins bon, et les plus modestes plus souvent. Désigner le baby-boom
+  serait entendu comme accuser des pauvres ; la piste du manque de courage
+  politique en sort renforcée.
+
 ### Chantier 9 — Le site et le simulateur
 
 **La question du propriétaire.** « Est-ce que le simulateur est vraiment une
@@ -740,6 +772,12 @@ est passée ; le début de la campagne présidentielle ?
 - Chantier 5 : l'indexation des pensions servies ; la formulation de la
   garantie.
 - Chantier 6 : le mécanisme de résolution ; l'ordre des caisses.
+- Chantier 8, étudié le 7 novembre : la responsabilité (le manque de courage
+  politique ou le baby-boom) ; l'âge (65 ans ou un départ libre) ; le pilier
+  (un compte à l'assuré ou un fonds public) ; le logement (ouvrir les cinq
+  points obligatoires à l'apport, ou non). Le gain des actifs suit la
+  lecture A ou B du chantier 1, le message des retraités les pertes du
+  chantier 2 ; le test des vingt personnes attend les deux.
 - Chantier 10 : la liste du gel ; le seuil ; la date.
 
 ## Comment s'en servir

@@ -1,0 +1,25 @@
+date: "2026-11-07"
+session: "action 186, chantier 8 : le message du programme étudié aux sources, électorat par électorat"
+consulte: >-
+  Aucune règle du scénario 1 n'est touchée, et l'index LEGI n'est pas
+  interrogé. Lus ce jour : le dossier en bref du COR pour sa séance du
+  5 février 2026 et son document n° 5 (le baromètre d'opinion de la DREES
+  2024) ; le document n° 4319 du COR (séance du 11 juillet 2018) sur le Fonds
+  de réserve pour les retraites. Relevés par recherche, texte non ouvert :
+  l'article L. 224-4 du code monétaire et financier (sortie anticipée du PER
+  pour la résidence principale) ; l'ordonnance suisse sur l'encouragement à
+  la propriété du logement (art. 5) ; la brochure « Att ta ut pension » de la
+  Pensionsmyndigheten (2026). L'ASPA de 2026 est relue dans data/sources.yaml
+  (service_public_aspa), où elle est certifiée.
+trouve: >-
+  Aucun écart avec les fiches. Le PER permet déjà de débloquer ses
+  versements volontaires pour acheter sa résidence principale, pas ses
+  versements obligatoires ; le Fonds de réserve pour les retraites a versé
+  2,1 Md€ par an à la Cades de 2011 à 2024. Le détail est dans la note
+  docs/feuille_de_route/186/2026-11-07-message-etude.md.
+reste: >-
+  À relire au texte avant toute publication (chantier 7) : l'article
+  L. 224-4 du code monétaire et financier dans sa version en vigueur ; le
+  nombre de retraits suisses pour le logement, non trouvé ; l'étude
+  Larsson, Paulsson, Sundén et Takayama (2011) sur l'enveloppe orange, citée
+  de seconde main.
