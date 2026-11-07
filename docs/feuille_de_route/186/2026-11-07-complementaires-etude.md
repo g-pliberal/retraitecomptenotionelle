@@ -1,14 +1,14 @@
 # Les complémentaires étudiées aux sources : ce qui n'est pas cotisation, leurs réserves, et la manière de les sauver
 
 **Reprise, au 7 novembre 2026.** Le chantier 6 est tranché (décisions 36 à
-43) ; trois points restent au propriétaire, en fin de note : qui paie la part
-de la compensation qui tombe au SMIC ; le taux du régime général d'un salarié
-dont la complémentaire n'est pas intégrée ; les planchers (décision 42,
-rouverte), à étudier dans une session neuve — qui perd, combien, la marge
-légale. Puis une session du modèle projette chaque complémentaire jusqu'à
-l'épuisement de ses réserves et l'intègre alors (« Ce que les décisions
-demandent au modèle »), la baisse des pensions ne touchant que celles que
-l'État fixe (décision 43).
+43, 47 et 48). Restent au propriétaire, en fin de note : la promesse des
+18 % (décision 45) face aux 25,83 % du salarié du privé avant l'intégration
+de l'Agirc-Arrco ; la piste d'une loi d'équilibre pour l'Agirc-Arrco. Les
+planchers (décision 42, rouverte) sont confiés à une session neuve. Puis une
+session du modèle porte les décisions 36 à 48 : chaque complémentaire
+projetée jusqu'à l'épuisement de ses réserves, intégrée alors, la CEG et la
+CET retirées dès la bascule, les 18 % pour les seuls affiliés au régime
+général (« Ce que le moteur sait faire »).
 
 *Le 7 novembre 2026, le propriétaire ouvre le chantier 6 de l'action 186 :
 « Les complémentaires : rien que leurs cotisations, sauvées mais dissoutes »
@@ -276,3 +276,17 @@ La décision 43 dit au modèle : la baisse des pensions (décisions 2 et 3) s'ap
 ### Les planchers, rouverts
 
 La décision 42 est rouverte : le propriétaire veut voir qui perd, et la marge légale. C'est une étape à elle, pour une session neuve : pour chaque plancher qui dépasse la garantie vieillesse — le minimum garanti des fonctionnaires, ceux de la SNCF et des IEG, le complément différentiel des exploitants — le nombre de bénéficiaires, le montant, et la perte, seul et en couple, face aux 1 050 et 800 € de la garantie ; puis ce que le droit permet, pour les pensions servies et pour celles à venir. La note de la réversion (`186/2026-11-07-reversion-etude-et-couts.md`, « Le droit protège le stock bien plus que le flux ») a déjà lu les décisions du Conseil constitutionnel et de la Cour européenne des droits de l'homme sur la baisse d'une pension servie.
+
+## Les allègements gardés, le taux du régime général, et ce que le moteur sait faire
+
+Le propriétaire garde les allègements tels que la loi les fixe, compensation de l'Agirc-Arrco comprise (décision 47) ; ne retire à une complémentaire, avant son intégration, que la CEG et la CET, les 18 % allant à qui n'est plus affilié qu'au régime général (décision 48) ; confirme la décision 43, « à moins que tu aies une solution politique » ; et fait lancer l'étude des planchers.
+
+**Le trou entre le SMIC et 1,07 SMIC, vérifié au texte.** L. 241-13, III : « La valeur maximale du coefficient est fixée par décret, dans la limite de la somme des taux des cotisations et contributions incluses dans le périmètre de la réduction ». D. 241-7, dans sa rédaction du décret n° 2026-509 du 12 juin 2026 : coefficient = Tmin + Tdelta × [½ × (3 × SMIC annuel ÷ rémunération annuelle brute − 1)]^1,75, avec Tmin = 0,0200 et Tdelta = 0,3821 (0,3781 pour les employeurs au FNAL de 0,10 %), et « Lorsque la somme des taux des cotisations et contributions effectivement à la charge de l'employeur est inférieure à la somme des valeurs Tmin et Tdelta, la valeur Tdelta est réduite jusqu'à ce que ces deux sommes soient égales » (index LEGI de la DILA, à jour au 2 novembre 2026). Le trou existe donc bien, mais seulement dans la voie qui ôtait l'Agirc-Arrco du périmètre : le coefficient y serait ramené à 34,20 %, sous les 40,21 % qu'atteint la formule au SMIC. Les règles en vigueur, que la décision 47 garde, n'en ont pas : la part de l'Agirc-Arrco y est compensée par la TVA. La suppression de la CEG (décision 36) ôte du périmètre ses 1,29 point patronaux : par la même phrase de D. 241-7, Tdelta baisse d'autant, l'employeur au SMIC ne paie toujours rien, et la compensation versée à l'Agirc-Arrco perd la part qui couvrait la CEG.
+
+**Pourquoi le régime général a plusieurs taux.** Un salarié en verse deux (`taux_cotisation_annuels.csv`) : 15,45 % sur la part du salaire sous le plafond de la sécurité sociale (48 060 € par an en 2026), 6,90 au salarié et 8,55 à l'employeur, et 2,51 % sur tout le salaire, 0,40 et 2,11 — la cotisation « déplafonnée », qui fait cotiser les hauts salaires au-delà du plafond. Un indépendant, artisan ou commerçant, et depuis 2026 un exploitant agricole, n'a pas d'employeur et paie un barème à lui, 17,15 % sous le plafond et 0,72 % sur tout (D. 633-3), quelques-uns 14,15 % par dérogation jusqu'en 2028. Les taux ont changé presque chaque année.
+
+**Ce que le moteur sait faire.** Avant la bascule, il porte au compte les taux de chaque régime année par année, sous le plafond et au-dessus, part salariale et part patronale, et le barème propre des indépendants ; ceux du régime général, des salariés agricoles et des indépendants sont certifiés sur les articles qui les fixent (D. 242-4, D. 741-35, D. 633-3, lus par les scripts de la DILA). L'Agirc-Arrco y entre par ses tranches, avec la majoration d'appel, sans la CEG ni la CET. Deux écarts connus : la part patronale de plusieurs régimes spéciaux s'arrête avant 2026, et la fiche des exploitants agricoles porte en 2026 un taux de 17,37 % qui n'est pas celui de la loi. Après la bascule, le scénario 6 applique à tous, le même jour, un taux unique de 18 % (23 % avec le pilier capitalisé), l'employeur gardant ses 16,67 points et la baisse allant au salarié (décision du 20 septembre 2026, `config.py`). **Le moteur ne connaît pas encore les décisions 36 à 48** : il ne garde aucune complémentaire hors du régime unique, ne retire pas la CEG avant la bascule, et donne les 18 % à tout le monde dès 2026. C'est le travail de la session du modèle.
+
+**Une tension avec la décision 45.** La troisième promesse de la garantie dit : « votre cotisation ne dépassera jamais 18 % ». Sous la décision 48, un salarié du privé verse 25,83 % tant que l'Agirc-Arrco n'est pas intégrée, de quatre à six ans selon le calcul à côté. La promesse doit dire sa condition, ou la décision changer.
+
+**Une solution politique pour l'Agirc-Arrco** (piste, en réponse à la décision 43). Le parti ne fixe pas ses pensions, mais la loi peut fixer la règle dans laquelle les partenaires sociaux les fixent. Deux instruments existent déjà ailleurs : pour la complémentaire des indépendants, « L'équilibre financier du régime est assuré par ses seules ressources » (L. 635-1) ; et le projet de 2020 donnait au ministre un droit d'opposition à toute décision de l'Agirc-Arrco « susceptible de remettre en cause les conditions générales de l'équilibre financier de ces régimes définies en loi de financement » (article 62, II), que le Conseil d'État tenait pour « cohérent » (§ 127). Une loi qui impose à l'Agirc-Arrco l'équilibre sur ses seules ressources, sans CEG ni CET, laisse aux partenaires le choix des moyens — moins de revalorisation, ou des cotisations plus hautes —, et à l'État celui de s'opposer à un équilibre fait d'emprunts ou de réserves vidées. Le parti ne baisse aucune pension ; il interdit seulement qu'on les paie sans recette. Le risque juridique est celui de toute loi qui encadre un accord : la liberté contractuelle, à justifier par l'intérêt général. Avec la compensation des allègements gardée (décision 47), cette règle demande de dire si la compensation compte parmi les « seules ressources ».

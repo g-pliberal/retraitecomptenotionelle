@@ -265,6 +265,23 @@ leur instruction :
     porté au taux de la masse salariale. Reste ouvert le cas du stock quand
     l'inflation est basse (chantier 5).
 
+Le même jour, sur les complémentaires (chantier 6), à la suite des
+décisions 42 et 43 :
+
+47. **Les allègements de cotisations restent ceux de la loi en vigueur,
+    compensation de l'Agirc-Arrco comprise** : « Pour l'instant, je veux
+    garder les règles actuelles en vigueur légalement sur les allègements de
+    cotisations. Je ne veux pas les bouger. » La fraction de TVA que
+    l'Urssaf verse à l'Agirc-Arrco pour la réduction générale demeure : une
+    exception, pour l'instant, à la décision 12.
+48. **Avant son intégration, une complémentaire ne perd que la CEG et la
+    CET ; les 18 % valent pour qui n'est plus affilié qu'au régime
+    général** : « On baisse uniquement la suppression de la CEG et CET. Le
+    but est de mettre 18% pour les salariés qui sont uniquement au régime
+    général grâce à notre réforme. » Un salarié du privé verse donc 25,83 %
+    tant que l'Agirc-Arrco n'est pas intégrée, et 18 % ensuite. La décision
+    43 est confirmée : « Oui à moins que tu aies une solution politique ».
+
 ## Ce qui est écarté
 
 - **Une transition sans baisse nominale des pensions en cours** — bâtir le
@@ -1364,6 +1381,11 @@ est passée ; le début de la campagne présidentielle ?
   général d'un salarié dont la complémentaire n'est pas intégrée, au vu des
   taux de chaque caisse ; les planchers (décision 42, rouverte), à étudier
   dans une session neuve : qui perd, combien, et la marge légale.
+- Chantier 6, après les décisions 47 et 48 : la promesse « votre cotisation
+  ne dépassera jamais 18 % » (décision 45), que le salarié du privé attend
+  jusqu'à l'intégration de l'Agirc-Arrco ; une loi d'équilibre pour
+  l'Agirc-Arrco, piste politique proposée en réponse à la décision 43 ; les
+  planchers (décision 42), confiés à une session neuve.
 - Chantier 7, étudié le 7 novembre : « la moitié du déficit public »,
   abandonnée ou attribuée à Beaufret ; les taux chiffrés à la date de
   publication ; le rendement en baisse au lieu du « TRI négatif » ; le PER
