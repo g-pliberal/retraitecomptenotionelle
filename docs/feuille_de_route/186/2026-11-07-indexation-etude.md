@@ -835,3 +835,12 @@ scénario 6, sur la page Coût (le solde, la dépense, les pensions du stock
 année par année). Une page qui montre, année après année, la règle, le
 plancher et la dette, sous une inflation et une crise de l'emploi choisies,
 aiderait à voir ce que chaque voie fait.
+
+Cette page est faite, le même jour, à la demande du propriétaire : « Le
+plancher et sa dette », publiée en privé à son nom
+(https://claude.ai/artifact/7R8FRCKLEQoqK1jKCnfa2c). Elle suit une pension de
+1 000 € trente ans, sous des taux constants hors crise ; elle pèse le coût
+pour les cotisants sur une génération qui s'éteint (de moitié en douze ans
+pour le stock), et trouve la baisse d'avance de la voie 2 à 6,9 %, au lieu
+des 7,5 % que donnent les séries année par année. C'est un outil pour
+comprendre ; le chiffrage reste au modèle.
