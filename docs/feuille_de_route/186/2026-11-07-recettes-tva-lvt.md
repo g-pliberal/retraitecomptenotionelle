@@ -1,10 +1,10 @@
 # Les recettes hors du travail, étudiées aux sources : la TVA sociale et la LVT
 
-**Reprise, au 7 novembre 2026.** Le chantier 4 est tranché pour l'essentiel
-(décisions 79 à 81, « Ce que le propriétaire a tranché ») : la TVA reste à
-20 % et sa part qui va aux retraites est gardée ; la LVT est à 2 % dont un
-point aux retraites, en vigueur en quelques mois. Restent au propriétaire le
-sort des versements de l'État, l'abattement et le plafonnement de la LVT.
+**Reprise, au 7 novembre 2026.** Le chantier 4 est tranché (décisions 79
+à 81, « Ce que le propriétaire a tranché ») : la TVA reste à 20 % et sa part
+qui va aux retraites est gardée ; la LVT est à 2 % dont un point aux
+retraites, en vigueur en quelques mois. Les versements de l'État sont réglés
+au chantier 1 ; l'abattement et le plafonnement de la LVT, remis à plus tard.
 Par quoi commencer : chiffrer la part de TVA des retraites (Cnav comprise),
 puis une session du modèle qui la garde au scénario 6 et y verse la LVT ;
 relire les textes cités de mémoire (« Ce qui reste à faire »).
@@ -508,3 +508,14 @@ retraites, 36 à 43 Md€ par an sur le calcul de cette note, et l'année
 d'entrée en vigueur n'est plus ouverte. Ce que cette note disait des délais
 danois et français reste vrai à sa date ; le risque d'une évaluation
 contestée ou plus longue est à suivre au chantier 7.
+
+Enfin, le soir : « pour les recettes, je crois que c'est déjà répondu pour
+les versements de l'Etat et la branche famille » ; « pour les détails de la
+LVT, on verra plus tard ». La réponse est au chantier 1
+(`2026-11-07-deux-lectures-au-modele.md`, sur la base de la page Coût) :
+l'État garde les 58 Md€ qu'il ne verse plus, et les impôts affectés suivent
+le partage du 20 septembre, moitié aux salaires, moitié à la dette, sauf la
+part de TVA des retraites que la décision 79 leur garde. Le besoin de TVA
+que cette note chiffrait, en gardant ces versements hors du régime, n'a
+plus d'objet : la TVA ne monte pas. L'abattement et le plafonnement de la
+LVT attendent.

@@ -1201,6 +1201,17 @@ que prévu, est à suivre au chantier 7.
 versements de l'État et de la branche famille ; l'abattement et le
 plafonnement de la LVT.
 
+**Le 7 novembre 2026, au soir** : « pour les recettes, je crois que c'est
+déjà répondu pour les versements de l'Etat et la branche famille » ; « pour
+les détails de la LVT, on verra plus tard ». La réponse est au chantier 1,
+dans les deux lectures refaites sur la base de la page Coût : l'État garde
+les 58 Md€ qu'il ne verse plus, et les impôts affectés suivent le partage du
+20 septembre, moitié aux salaires, moitié à la dette. La décision 79 en
+excepte la part de TVA des retraites, qui leur reste. L'abattement et le
+plafonnement de la LVT sont remis à plus tard. Le chantier 4 n'a plus de
+question au propriétaire ; reste à chiffrer la part de TVA gardée, puis à
+porter les décisions 79 à 81 au modèle.
+
 ### Chantier 5 — L'indexation, et le partage de l'effort entre actifs et retraités
 
 **La question.** Quelle indexation, pour les comptes et pour les pensions
@@ -1904,6 +1915,9 @@ est passée ; le début de la campagne présidentielle ?
   de descente du taux en découle. Au chantier 2, le plafond par an.
 - Chantier 4 : la TVA sur le seul taux normal ; la LVT à 1 % ou 2 %, et son
   abattement.
+- Chantier 4, le 7 novembre au soir : plus rien ; les versements de l'État
+  sont réglés au chantier 1, l'abattement et le plafonnement de la LVT
+  remis à plus tard.
 - Chantier 4, après la décision 81 : le sort des versements de l'État et de
   la branche famille ; l'abattement et le plafonnement de la LVT.
 - Chantier 4, après les décisions 79 et 80 : le sort des versements de
