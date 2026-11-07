@@ -538,6 +538,58 @@ lire) ; le rendement d'un point de TVA, par le modèle.
 **Au propriétaire.** La TVA sur le seul taux normal ; la LVT à 1 % ou à 2 %,
 et son abattement.
 
+**Le 7 novembre 2026 : la TVA et la LVT, étudiées aux sources.** Le
+propriétaire a ouvert le chantier : « je veux qu'on attaque ce chantier ».
+Le rapport est la note `186/2026-11-07-recettes-tva-lvt.md`. Ce qu'il
+établit :
+- *Un point de taux normal* rapporte 7,5 Md€ nets en 2025, 8,9 bruts, soit
+  un quart de point de PIB (DG Trésor). Le système de retraite de la
+  proposition, garantie comprise, en demanderait 4,9 en 2026, 7,4 au pic de
+  2046 et 5,3 en moyenne sur 2026-2070 (modèle, variante rétroactive, avant
+  les décisions 16 à 30). Le taux normal passerait à 25 %, puis au-delà de
+  27 % ; la Hongrie, la plus haute de l'Union, est à 27 %.
+- *Ce besoin dépend de deux choix.* La proposition laisse à l'État et à la
+  branche famille 2,26 points de PIB de versements en 2026. Versés au régime,
+  ils porteraient son solde de −1,24 à +1,02 point, sans TVA. Et sous les
+  deux lectures de la décision 29 (chantier 1, calcul à côté à refaire), la
+  lecture A est en excédent chaque année, la lecture B demande 0,3 point de
+  TVA en 2026 et 4,7 en 2070. La TVA et la LVT y deviennent un choix :
+  baisser encore les cotisations, 0,6 point par point de TVA.
+- *Qui paie la TVA* : à consommation égale, moins les plus de 65 ans que les
+  actifs, car la consommation liée au travail est la plus taxée (CPO, Insee).
+  Le seul taux normal épargne l'alimentation, pas l'énergie : l'électricité
+  et le gaz y sont entiers depuis le 1er août 2025. La piste du 6 novembre
+  se trompait sur ce point. Une TVA se vote et s'applique en quelques mois.
+  Ses baisses passent mal dans les prix : elle se vote avec sa date de baisse.
+- *L'assiette de la LVT* : 7 032 Md€ de terrains bâtis fin 2025 (Insee,
+  provisoire), dont 6 091 hors administrations ; les 5 800 Md€ du
+  propriétaire étaient ce chiffre fin 2024. La taxe foncière qu'elle
+  remplacerait rapporte 42,9 Md€ (2024) ; assise sur des valeurs de 1970,
+  elle pèse plus sur les petits patrimoines.
+- *Le produit, capitalisation comprise* (calcul à côté, rendement locatif du
+  terrain de 2,5 à 4 %) : à 1 %, 48 à 52 Md€, 5 à 9 de plus que la taxe
+  foncière ; à 2 %, 73 à 86 Md€, 30 à 43 nets, l'équivalent de 4 à 6 points
+  de TVA. Le « 1 % aux retraites » demande une LVT à 2 %, avec un point aux
+  communes. Le prix du terrain baisserait de 30 à 40 %, celui d'un logement
+  de 14 à 19 %. La charge tombe sur les propriétaires du jour de l'annonce.
+- *Les obstacles* : 2 % fait plus de trois fois le taux effectif danois
+  (environ 0,6 %), et deux fois le plafond estonien du terrain résidentiel. Le
+  Conseil constitutionnel exige un plafonnement au revenu d'un impôt annuel
+  sur un patrimoine (2012-654 DC). Il faut évaluer chaque parcelle : la
+  France attend sa révision depuis 1970, et le Danemark a mis plus de dix ans
+  à refaire la sienne.
+
+La piste du rapport, qui n'est pas une décision : d'abord lire la
+décision 29 et décider du sort des versements de l'État, puis une TVA de
+transition votée avec sa date de baisse. La LVT n'a de sens pour les retraites qu'à 2 %, avec un plafonnement
+au revenu ; à 1 %, c'est une bonne réforme du logement, pas une recette.
+
+**Au propriétaire, pour les recettes** : le sort des versements de l'État et
+de la branche famille ; le rôle de la TVA une fois la décision 29 lue,
+combler le déficit ou baisser les cotisations ; sur le seul taux normal
+sachant que l'énergie y est, et son nombre de points ; la LVT à 1 % ou à 2 %, son
+abattement et son plafonnement.
+
 ### Chantier 5 — L'indexation, et le partage de l'effort entre actifs et retraités
 
 **La question.** Quelle indexation, pour les comptes et pour les pensions
@@ -886,6 +938,10 @@ est passée ; le début de la campagne présidentielle ?
   de descente du taux en découle. Au chantier 2, le plafond par an.
 - Chantier 4 : la TVA sur le seul taux normal ; la LVT à 1 % ou 2 %, et son
   abattement.
+- Chantier 4, étudié le 7 novembre : le sort des versements de l'État et de
+  la branche famille ; le rôle de la TVA sous la décision 29, son nombre de
+  points et sa date de baisse ; la LVT à 1 % ou 2 %, son abattement, son
+  plafonnement au revenu.
 - Chantier 5 : l'indexation des pensions servies ; la formulation de la
   garantie.
 - Chantier 6 : le mécanisme de résolution ; l'ordre des caisses.
