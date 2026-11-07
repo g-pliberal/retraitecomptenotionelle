@@ -1,0 +1,81 @@
+"""Les lectures de la décision 29, la dépense suivant le taux cotisé (action 186, chantier 1).
+
+Un cas posé à la main, sur deux années, où chaque taux se trouve en une
+ligne. Le droit en vigueur dépense 14 points de PIB et en encaisse 12, dont
+8 de cotisations sur une assiette de 40 : il prélève 20 %. La proposition
+dépense 10 points la première année, quel que soit le taux, et
+0,07 + 0,2 × taux la seconde, quand les premières pensions cotisées au
+nouveau taux sont servies. Rendre aux cotisants coûte (0,20 − taux) × 0,40.
+
+- Tout au déficit, rien n'est rendu : le taux reste 20 %.
+- Lecture A, la moitié de l'économie rendue : (0,06 − 0,4 t) + (0,045 − 0,3 t)
+  = 0, soit t = 15 %.
+- Lecture B, le solde à la moitié du déficit : (−0,05 + 0,4 t) + (−0,02 + 0,2 t)
+  = 0, soit t = 7/60.
+- Lecture B hors des versements de l'État (3 points) : (−0,065 + 0,4 t)
+  + (−0,035 + 0,2 t) = 0, soit t = 1/6.
+"""
+
+from __future__ import annotations
+
+import sys
+from pathlib import Path
+
+import pytest
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
+
+from lectures_decision_29 import Annee, Etude  # noqa: E402
+
+
+def _etude() -> Etude:
+    annees = [Annee(annee=a, depense_actuel=0.14, solde_actuel=-0.02,
+                    cotisations_actuel=0.08, assiette=0.40, versements_etat=0.03,
+                    pib=2_000_000.0, croissance=0.02, taux_dette=0.03)
+              for a in (2026, 2027)]
+    depenses = {0.10: {2026: 0.10, 2027: 0.09}, 0.20: {2026: 0.10, 2027: 0.11}}
+    return Etude(annees, depenses)
+
+
+def test_tout_au_deficit_garde_le_taux_du_droit_en_vigueur():
+    assert _etude().resoudre("tout") == pytest.approx(0.20, abs=1e-9)
+
+
+def test_la_lecture_a_rend_la_moitie_de_l_economie():
+    assert _etude().resoudre("A") == pytest.approx(0.15, abs=1e-9)
+
+
+def test_la_lecture_b_divise_le_deficit_par_deux_en_moyenne():
+    etude = _etude()
+    taux = etude.resoudre("B")
+    assert taux == pytest.approx(7 / 60, abs=1e-9)
+    soldes = [ligne.solde for ligne in etude.trajectoire(taux)]
+    assert soldes == pytest.approx([-1 / 75, -1 / 150])
+    assert sum(soldes) / 2 == pytest.approx(-0.02 / 2)
+
+
+def test_la_lecture_b_hors_des_versements_de_l_etat_divise_un_deficit_plus_grand():
+    assert _etude().resoudre("B_hors_etat") == pytest.approx(1 / 6, abs=1e-9)
+
+
+def test_la_depense_suit_le_taux_entre_les_taux_calcules():
+    etude = _etude()
+    assert etude.depense(2026, 0.15) == pytest.approx(0.10)
+    assert etude.depense(2027, 0.15) == pytest.approx(0.07 + 0.2 * 0.15)
+    with pytest.raises(ValueError):
+        etude.depense(2027, 0.25)
+
+
+def test_la_dette_refait_la_recurrence_du_cout():
+    lignes = _etude().trajectoire(7 / 60)
+    assert [ligne.dette for ligne in lignes] == pytest.approx(
+        [1 / 75, (1 / 75) * 1.03 / 1.02 + 1 / 150])
+    assert lignes[0].rendu == pytest.approx(1 / 30)
+    assert lignes[0].rendu_md == pytest.approx(2000 / 30)
+    assert lignes[0].points == pytest.approx(0.20 - 7 / 60)
+
+
+def test_tenue_une_annee_seule_la_regle_donne_le_taux_de_cette_annee():
+    etude = _etude()
+    assert etude.resoudre("B", annees=(2026,)) == pytest.approx(0.125, abs=1e-9)
+    assert etude.resoudre("B", annees=(2027,)) == pytest.approx(0.10, abs=1e-9)

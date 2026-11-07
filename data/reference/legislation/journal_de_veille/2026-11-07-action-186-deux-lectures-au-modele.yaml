@@ -1,0 +1,16 @@
+date: "2026-11-07"
+session: "action 186, chantier 1 : les deux lectures de la décision 29 refaites au modèle, la dépense suivant le taux cotisé"
+consulte: >-
+  Aucune règle du scénario 1 n'est touchée, et l'index LEGI n'est pas
+  interrogé. Le calcul ne lit que le modèle (le coût sous plusieurs taux
+  crédités au scénario 6, au commit 553e8ca) ; la jurisprudence citée pour
+  l'argument d'urgence est celle que la note
+  docs/feuille_de_route/186/2026-11-07-reversion-etude-et-couts.md a lue,
+  sans lecture nouvelle.
+trouve: >-
+  Aucun écart avec les fiches. Le détail est dans la note
+  docs/feuille_de_route/186/2026-11-07-deux-lectures-au-modele.md.
+reste: >-
+  À faire vérifier par un juriste, avant toute publication : la phrase sur
+  l'argument d'urgence de chaque lecture (décision 6), en particulier pour
+  la lecture B, dont le déficit grossit jusqu'en 2056.

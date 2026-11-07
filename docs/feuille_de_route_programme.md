@@ -283,6 +283,36 @@ l'argument d'urgence de la décision 6. Les chiffres ne départagent pas A et B
 tant qu'une session du modèle ne les a pas refaits, la dépense suivant le
 taux cotisé.
 
+**Le 7 novembre 2026, les deux lectures refaites au modèle.** Le taux cotisé
+est le taux crédité aux comptes du scénario 6, et la dépense suit : un point
+de cotisation rendu aujourd'hui est un point de pension en moins demain. Les
+recettes restent celles du droit en vigueur, sauf les cotisations ; chaque
+lecture a un taux constant de 2026 à 2070, sa règle tenue en moyenne ; les
+réversions servies sont gardées (décision 16, commit `553e8ca`). Le
+salarié est au salaire moyen ; ses écarts se lisent aux 18 % du programme.
+
+| | Tout au déficit | Lecture A | Lecture B |
+|---|---:|---:|---:|
+| Taux cotisé et crédité | 20,3 % | 14,5 % | 8,4 % |
+| Retraités d'aujourd'hui, en 2026 | −104 Md€ | pareil | pareil |
+| Né en 1990 : net par mois en 2026 | −84 € | +132 € | +357 € |
+| Né en 1990 : pension en 2055 | +8 % | −12 % | −32 % |
+| Né en 2005 : pension en 2070 | +12 % | −20 % | −53 % |
+| Solde de la retraite en 2026 (aujourd'hui −0,16 point de PIB) | +2,7 | +0,2 | −2,3 |
+| Dette en 2070 (droit en vigueur : +66 points) | réserve de 210 | réserve de 80 | +55 |
+
+A garde la retraite en excédent, mince pendant quinze ans, et baisse la
+pension des actifs d'un cinquième au plus. B creuse le déficit jusqu'en 2056
+et fait emprunter aux actifs leur propre retraite : chaque point rendu baisse
+les pensions futures, donc grossit l'économie, donc ce qu'il faut rendre ;
+l'argument d'urgence de la décision 6 s'en trouve très affaibli (à faire
+vérifier par un juriste). Compté sans les versements de l'État, le déficit
+de B donne 11,2 %, entre les deux. Avec un taux fixe, la règle ne tient
+qu'en moyenne : A rend 88 % de l'économie en 2026, 28 % en 2070. Le détail,
+les cas types et les limites : `186/2026-11-07-deux-lectures-au-modele.md` ;
+le calcul se refait par `python scripts/lectures_decision_29.py`. Le choix
+entre A et B reste au propriétaire.
+
 ### Chantier 2 — La baisse des pensions en cours : sa règle, son plancher, son calendrier, son droit
 
 **La question.** Baisser les pensions liquidées en cinq ans, d'une façon qui
