@@ -1,14 +1,14 @@
 # Les complémentaires étudiées aux sources : ce qui n'est pas cotisation, leurs réserves, et la manière de les sauver
 
-**Reprise, au 7 novembre 2026.** Le chantier 6 est étudié : l'argent qui
-n'est pas cotisation (la TVA de l'Agirc-Arrco, les droits sur les alcools de
-la complémentaire agricole), la CEG et la CET, les réserves, les précédents
-et le droit d'une résolution. Cinq questions attendent le propriétaire (« Ce
-qui revient au propriétaire »), la première d'abord : les complémentaires
-entrent-elles au régime unique à la bascule, comme dans le modèle, ou caisse
-par caisse ? Ses réponses s'écrivent en décisions dans
-`docs/feuille_de_route_programme.md`, sous le chantier 6 ; le modèle n'est
-touché qu'après.
+**Reprise, au 7 novembre 2026.** Le chantier 6 est étudié et tranché
+(décisions 36 à 40) : la CEG et la CET supprimées dès maintenant, chaque
+complémentaire intégrée au régime général quand ses réserves sont épuisées,
+dans l'ordre que le modèle calcule. Quatre questions restent au propriétaire
+(fin de la note). Puis une session du modèle projette chaque complémentaire
+— ses cotisations sans CEG ni CET ni impôt, ses pensions, ses réserves —
+jusqu'à leur épuisement, et l'y intègre alors, avec la garantie vieillesse et
+le taux de 18 % ; le détail, sous « Ce que les décisions demandent au
+modèle ».
 
 *Le 7 novembre 2026, le propriétaire ouvre le chantier 6 de l'action 186 :
 « Les complémentaires : rien que leurs cotisations, sauvées mais dissoutes »
@@ -138,3 +138,78 @@ Garder une caisse hors de la bascule aurait deux effets. **Ses pensions échappe
 3. **Les réserves** : portées aux comptes des affiliés de chaque caisse, ou versées au fonds commun du régime unique.
 4. **L'ordre** : la complémentaire agricole d'abord, l'Agirc-Arrco ensuite, les autres à la bascule.
 5. **Les exploitants agricoles** : accepter que la garantie vieillesse (1 050 € seul, 800 € en couple) remplace le complément différentiel (1 214,40 € pour une carrière complète), ou un autre plancher.
+
+## Ce que le propriétaire a tranché, et ce qui a été cherché ensuite
+
+Le même jour, le propriétaire répond aux cinq questions ; ses réponses sont les décisions 36 à 40 de `docs/feuille_de_route_programme.md`. **La CEG et la CET sont supprimées dès maintenant** : « Ce sont des choix de vie et ce sont des contributions qui ne rapportent pas de droit. […] Les complémentaires vont devoir prendre dans leurs réserves. » **Une caisse rejoint le régime général quand elle n'a plus de réserve, pas avant**, « uniquement pour notre modèle, je sais que c'est plus compliqué dans la vraie vie », caisse par caisse, « dans l'ordre mathématique démontré par notre modèle ». **Les réserves paient les recettes perdues** : « Les réserves sont consommées par manque de recettes diverses » ; la piste qui les portait aux comptes des affiliés est écartée. **La mise en résolution est validée**, et l'Agirc-Arrco y passera comme les autres : « On garde l'Agirc-Arrco jusqu'au moment où l'Agirc-Arrco coule. En imposant des mesures draconiennes à l'Agirc-Arrco, cela devrait aller vite. » **Une complémentaire garde ses cotisations jusqu'à son intégration**, puis passe à 18 %. La piste « les droits et l'argent à la bascule » est donc écartée : le modèle devra intégrer les caisses une à une.
+
+### Ce que les décisions demandent au modèle
+
+Le dépôt ne projette aujourd'hui « ni les régimes un à un ni leurs réserves » (`docs/archives/releve_des_autres_modeles/cor_caisses.yaml`). Pour chaque complémentaire, il faudra une recette — ses cotisations aux taux en vigueur, la majoration d'appel comprise, sans la CEG ni la CET, sans impôt affecté —, une dépense — ses pensions à ses règles —, et des réserves de départ (COR 2026, p. 98, ci-dessus), consommées chaque année ; l'année où elles s'épuisent est celle de l'intégration, où les droits passent au compte notionnel avec la garantie vieillesse et les cotisations à 18 %. Les projections par régime du COR de juin 2024, dont le dépôt lit déjà le classeur des compléments (`structure_financement.csv`), en donnent les masses.
+
+### Ce que les projections du COR laissent attendre
+
+Les fiches du COR de juin 2024 projettent chaque caisse à législation inchangée — CEG comprise pour l'Agirc-Arrco, impôts compris pour la RCO (publié) :
+
+| Caisse | Ce que le COR projette, à droit constant |
+|---|---|
+| Ircantec | solde négatif « à partir de 2030 environ », « l'épuisement des réserves surviendrait un peu après 2050 » ([fiche Ircantec](https://cor-retraites.fr/sites/default/files/2024-07/Fiche_IRCANTEC_vf.pdf)) |
+| CNBF (avocats), base et complémentaire réunies | réserves entamées « au début des années 2030 », « épuisées en 2047 », hors des ajustements que le régime se donne ([fiche CNBF](https://www.cor-retraites.fr/sites/default/files/2024-07/Fiche_CNBF_vf.pdf)) |
+| Complémentaire des indépendants (RCI) | réserves en hausse jusqu'en 2040, puis « s'éteindre au-delà de 2070 » ([fiche RCI](https://www.cor-retraites.fr/sites/default/files/2024-07/Fiche_RCI_0.pdf)) |
+| Complémentaires des libéraux (dix sections, consolidées) | « Déficitaires jusqu'à 2040, les soldes des régimes devraient être excédentaires à partir de 2040 » ([fiche CNAVPL](https://cor-retraites.fr/sites/default/files/2024-07/Fiche_CNAVPL_RB%2BRC.pdf)) |
+| Personnel navigant (CRPNPAC) | solde positif à partir de 2042-2044, réserves de 0,5 % du PIB en 2070 ([fiche CRPNPAC](https://www.cor-retraites.fr/sites/default/files/2024-07/Fiche_CRPNPAC_vf.pdf)) |
+
+Avec la règle des décisions 37 et 39, l'ordre probable, à confirmer par le modèle : **la complémentaire agricole dès la première année** (ses impôts coupés, 636 M€ par an pour 412 M€ de réserves) ; **l'Agirc-Arrco en quatre à six ans** (à côté, plus ou moins vite selon que la compensation des allègements est coupée aussi) ; **la CNBF vers 2047 et l'Ircantec peu après 2050** ; **les indépendants, les libéraux et les navigants pas avant 2070**. Jusqu'à leur intégration, les affiliés de ces caisses gardent leurs cotisations (décision 40) et leurs retraités leurs pensions à leurs règles : c'est ce que la règle implique, et que le modèle montrera.
+
+### La règle des six mois de l'Agirc-Arrco
+
+Le propriétaire ne la connaissait pas. C'est la règle de pilotage que les partenaires sociaux se sont donnée : « Les règles de pilotage de l'Agirc-Arrco prévoient que les réserves doivent représenter au moins six mois de prestation » (COR, juin 2026, p. 98, note 101). Fin 2025, elles en font onze, quatorze avec le fonds de roulement. Les accords qui la fixent n'ont pas été lus. La décision 37 la rend sans objet pour le modèle : le seuil y est l'épuisement, non six mois.
+
+### Les rapports cotisants par retraité
+
+| Caisse | Cotisants | Retraités | Rapport |
+|---|---:|---:|---:|
+| Agirc-Arrco (2024) | 20,06 millions | 13,91 millions, tous droits | 1,44 |
+| Ircantec | 3,25 millions (2022) | 2,0 millions (COR, 2023) ; 2,33 millions de bénéficiaires (fin 2023) | 1,4 à 1,6 |
+| Complémentaire des indépendants (2023) | 1,7 million qui acquièrent au moins un point | 1,1 million de droit direct | 1,5 |
+| Libéraux, CNAVPL (2023) | 992 000 | 419 500 de droit direct, 53 500 de droit dérivé | 2,4 (droit direct) ; 2,1 |
+| Avocats, CNBF (2023) | 73 800 | 19 600 de droit direct, 4 400 réversataires | 3,8 ; 3,1 |
+| Personnel navigant, CRPNPAC (2023) | environ 35 000 | un peu moins de 20 000 | 1,75 |
+| Exploitants agricoles, RCO | 432 000 (2023) | 615 000 (2023) | 0,70 ; 0,74 pour la MSA (2022) |
+
+Sources : Chiffr'Agirc-Arrco 2026, p. 137 ; les fiches du COR de juin 2024 citées plus haut, et celle des non-salariés agricoles ; pour les 3,25 millions de cotisants et les 2,33 millions de bénéficiaires de l'Ircantec, la Banque des Territoires, lue en résumé ; le rapport de 1,3 que Force ouvrière donne pour l'Ircantec n'est pas confirmé. Les effectifs de la CNAVPL sont ceux de son régime de base ; ses dix sections complémentaires, consolidées par le COR, ont chacune leur démographie, que leurs rapports donnent et qui n'ont pas été lus. Le COR publie aussi un rapport « corrigé », qui rapporte tous les cotisants de l'économie aux retraités d'une caisse (68 pour la CNAVPL, 23 pour le RCI) : il ne mesure pas la démographie propre de la caisse, et n'est pas repris ici.
+
+### Le texte du projet de loi de 2020
+
+Le texte déposé le 24 janvier 2020 (projet n° 2623 rectifié, [Assemblée nationale](https://www.assemblee-nationale.fr/dyn/opendata/PRJLANR5L15B2623.html)) dit, dans ses articles :
+
+- **Article 62, I** : les assurés du système universel « ne sont plus affiliés » à dix régimes, dont « les régimes de retraite complémentaire obligatoires en application de l'article L. 921‑1 » (l'Agirc-Arrco), la complémentaire des indépendants, celles des libéraux et de la CNBF, celle des exploitants agricoles, le RAFP ; et « Le préjudice susceptible de résulter des dispositions du présent I pour les organismes chargés de la gestion des régimes […] fait l'objet d'une indemnité fixée dans le cadre d'un constat établi à la suite d'une procédure contradictoire ».
+- **Article 50, V** : l'ordonnance transfère à la caisse universelle les biens et obligations des caisses intégrées « à l'exclusion des réserves des régimes », et règle « les modalités d'indemnisation du préjudice éventuellement subi ».
+- **Article 58** (L. 19‑10‑2) : la caisse universelle « assure l'équilibre financier des régimes participant à la mise en œuvre du système universel », et verse aux complémentaires fermées « des dotations calculées en fonction de la trajectoire qui aurait prévalu au sein de chaque régime en l'absence de modification du périmètre d'affiliation » ; la part de leurs actifs qui couvre le fonds de roulement va à l'Acoss, « trois mois de versement des prestations » au plus.
+- **Article 62, II et III** : les accords de l'Agirc-Arrco ne peuvent plus affilier les nouvelles générations, et le ministre peut s'opposer à toute décision de leurs instances qui menacerait l'équilibre fixé en loi de financement ; pour les assurés nés avant 1975, une ordonnance répartit les cotisations entre base et complémentaire selon la part « donnant lieu à l'attribution de points ».
+- **Article 63** : le système s'applique « à partir du 1er janvier 2022 pour les assurés nés à compter du 1er janvier 2004 » et « à partir du 1er janvier 2025 pour les assurés nés à compter du 1er janvier 1975 ».
+
+Le projet de 2020 garantissait donc l'équilibre des complémentaires fermées et leur laissait leurs réserves ; le programme, à l'inverse, les laisse vivre de leurs seules cotisations et de leurs réserves jusqu'à leur épuisement.
+
+### Les planchers propres à certaines caisses
+
+Le propriétaire demande quelles caisses ont un plancher différent de celui du régime général. Le dépôt en connaît six, plus le minimum vieillesse commun (dépôt, montants mensuels de 2026 sauf mention) :
+
+| Plancher | Caisses | Montant | Condition |
+|---|---|---|---|
+| Minimum contributif, simple ou majoré | régime général, salariés agricoles, artisans et commerçants, Cavimac | 756,29 € ; 903,94 € majoré — la pension de base seule | taux plein, au prorata de la durée ([minimum_contributif.csv](../../../data/reference/legislation/minimum_contributif.csv)) |
+| Minimum garanti | fonctionnaires de l'État, CNRACL, ouvriers de l'État, Banque de France | de 785,65 € à quinze ans de services à 1 366,35 € à quarante — la pension entière | taux plein ([minimum_garanti.yaml](../../../data/reference/regles/minimum_garanti.yaml)) |
+| Minimum de la SNCF | SNCF | 1 215,64 € au 1er octobre 2014, revalorisé depuis ; aucun montant de 2026 dans le dépôt | taux plein depuis 2017 ([minimum_pension_sncf.yaml](../../../data/reference/regles/minimum_pension_sncf.yaml)) |
+| Minimum des IEG | industries électriques et gazières | 1 010,74 € à quinze ans, 1 137,10 € à trente, 1 263,44 € à trente-cinq | ressources sous un plafond ([minimum_pension_ieg.yaml](../../../data/reference/regles/minimum_pension_ieg.yaml)) |
+| Pension majorée de référence | exploitants agricoles, base | 903,94 €, comme le minimum contributif majoré | au prorata de la durée ([pension_majoree_reference.csv](../../../data/reference/legislation/pension_majoree_reference.csv)) |
+| Complément différentiel de la RCO | exploitants agricoles, complémentaire | 1 214,40 €, tous régimes | carrière complète de chef d'exploitation, taux plein ([complement_differentiel_rco.csv](../../../data/reference/legislation/complement_differentiel_rco.csv)) |
+| Minimum vieillesse (ASPA) | tous | 1 043,59 € seul, 1 620,18 € en couple | 65 ans, sous condition de ressources ([minimum_vieillesse.yaml](../../../data/reference/regles/minimum_vieillesse.yaml)) |
+
+S'y ajoutent deux planchers en points : la garantie minimale de points des cadres de l'Agirc (1989-2018), que paie aujourd'hui la CEG, et la retraite proportionnelle des exploitants. Les libéraux et les avocats n'ont pas de minimum propre, seulement l'ASPA ; la RATP, les mines, la CRPCEN et l'ENIM n'ont pas été lus un à un. La garantie vieillesse du programme (1 050 € seul, 800 € par personne en couple) les remplace tous : quatre la dépassent pour une longue carrière — le minimum garanti dès vingt-trois ans de services, celui de la SNCF, celui des IEG dès trente ans, et le complément différentiel des exploitants.
+
+### Ce qui reste au propriétaire
+
+1. **La compensation des allègements** de l'Agirc-Arrco (de l'ordre de 7 Md€ en 2025, 11 en 2026) : coupée dès maintenant, comme la CEG ? Si oui, l'allègement reste-t-il sans compensation, la caisse perdant ces recettes, ou disparaît-il, l'employeur payant alors plein tarif sur les bas salaires ?
+2. **Le taux de base** d'un salarié du privé tant que sa complémentaire n'est pas intégrée : ses taux actuels, ou la part de base des 18 % ?
+3. **La pension des retraités** d'une caisse pas encore intégrée : servie intacte à ses règles jusqu'à l'intégration, la baisse en cinq ans de la décision 3 ne commençant qu'alors ?
+4. **Les planchers** : la garantie vieillesse remplace-t-elle aussi les quatre planchers qui la dépassent ?

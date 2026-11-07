@@ -181,6 +181,37 @@ Le même jour, sur le site et le simulateur (chantier 9) :
     exploiter le moteur de leur côté et cela pourra promouvoir notre
     programme. » C'est l'action 187 de `docs/feuille_de_route.md`.
 
+Le même jour, sur les complémentaires (chantier 6), après l'étude aux
+sources :
+
+36. **La CEG et la CET sont supprimées dès maintenant** : « On supprime dès
+    maintenant la CEG et la CET. Ce sont des choix de vie et ce sont des
+    contributions qui ne rapportent pas de droit. Cela n'a aucune raison de
+    rester. Les complémentaires vont devoir prendre dans leurs réserves. »
+37. **Une caisse rejoint le régime général quand elle n'a plus de réserve,
+    pas avant, dans l'ordre que le modèle calcule** : « Les caisses qui
+    dépendent de la CEG et de la CET vont devoir se mettre au régime général
+    plus rapidement que prévu. Les caisses se rattachent au régime général
+    dès lors qu'elles n'ont plus de réserve, pas avant ; cette règle est
+    uniquement pour notre modèle, je sais que c'est plus compliqué dans la
+    vraie vie. Ce sera donc caisse par caisse mais uniquement de façon
+    mathématique grâce à notre modèle. » L'ordre : « Par l'ordre mathématique
+    démontré par notre modèle ».
+38. **Les réserves paient les recettes perdues** : « Les réserves sont
+    consommées par manque de recettes diverses ». Elles ne vont ni aux
+    comptes des affiliés, ni à un fonds commun.
+39. **La caisse qui n'a plus de réserve est mise en résolution, l'Agirc-Arrco
+    comprise** : la piste du 7 novembre, validée — « Très bien ça : "Une
+    caisse qui fait défaut avant la bascule est mise en résolution : le
+    régime général garantit ses pensions et reprend ses réserves, ses
+    cotisants et ses retraités." » ; « On garde l'Agirc-Arrco jusqu'au moment
+    où l'Agirc-Arrco coule. En imposant des mesures draconiennes à
+    l'Agirc-Arrco, cela devrait aller vite. »
+40. **Une complémentaire garde ses cotisations jusqu'à son intégration ;
+    ensuite, 18 %** : « On garde les cotisations telles quelles tant que la
+    complémentaire n'a pas été intégrée dans le régime général. Quand ça
+    bascule dans le régime général, les cotisations seront à 18%. »
+
 ## Ce qui est écarté
 
 - **Une transition sans baisse nominale des pensions en cours** — bâtir le
@@ -196,6 +227,13 @@ Le même jour, sur le site et le simulateur (chantier 9) :
 - **La coupure des réversions déjà servies le jour de la bascule**, le choix
   du dépôt depuis le 19 septembre 2026, écartée le 7 novembre par la
   décision 16.
+- **Les complémentaires fondues dans le régime unique le jour de la
+  bascule**, comme le fait le modèle, et la piste du 7 novembre « les droits
+  et l'argent à la bascule, les caisses ensuite » : écartées par la
+  décision 37, qui les fait entrer caisse par caisse, à l'épuisement de
+  leurs réserves.
+- **Les réserves des caisses portées aux comptes de leurs propres cotisants
+  et retraités**, piste du 7 novembre : écartée par la décision 38.
 
 ## Les chantiers
 
@@ -1129,6 +1167,12 @@ est passée ; le début de la campagne présidentielle ?
   le sort des réserves, aux comptes des affiliés de chaque caisse ou au fonds
   commun ; l'ordre ; la garantie face au complément différentiel des
   exploitants agricoles.
+- Chantier 6, après les décisions 36 à 40 : la compensation des allègements
+  de l'Agirc-Arrco, coupée ou non dès maintenant, et ce que devient alors
+  l'allègement ; le taux de base d'un salarié du privé tant que sa
+  complémentaire n'est pas intégrée ; la pension complémentaire des
+  retraités jusqu'à l'intégration de leur caisse ; les planchers propres à
+  certaines caisses.
 - Chantier 7, étudié le 7 novembre : « la moitié du déficit public »,
   abandonnée ou attribuée à Beaufret ; les taux chiffrés à la date de
   publication ; le rendement en baisse au lieu du « TRI négatif » ; le PER
