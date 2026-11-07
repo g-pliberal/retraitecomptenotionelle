@@ -3,9 +3,11 @@
 **Reprise, au 7 novembre 2026.** Le chantier 5 est étudié, et α = 1 est
 tranché (décision 41 de `docs/feuille_de_route_programme.md`), sur les bases
 déjà fixées : la masse salariale (décision 10), les prix pour le stock
-(action 48, archivée). Restent au propriétaire le plancher en euros et la
-garantie, que « Le plancher en euros et la garantie : de quoi décider »
-instruit ; ses réponses s'écrivent en décisions sous le chantier 5. Ensuite, une session du modèle
+(action 48, archivée). Le plancher avec rattrapage, payé par les retraités,
+et les promesses 1 à 5 sont tranchés (décisions 44 à 46). Reste au
+propriétaire le plancher des pensions du stock quand l'inflation est basse
+(« L'assurance payée par les retraités », trois issues) ; ses réponses
+s'écrivent en décisions sous le chantier 5. Ensuite, une session du modèle
 écrit le facteur pour le seul scénario 6, et la page Coût le chiffre. Restent
 à lire à leur source les textes marqués « non vérifié ».
 
@@ -694,3 +696,98 @@ sont les pensions. Le taux peut alors être promis.
   > « Chaque euro cotisé est inscrit à votre nom. La même règle vaut pour
   > tous. Votre cotisation ne dépassera jamais 18 %, votre pension ne
   > baissera jamais en euros, et personne ne vivra sous 800 € par mois. »
+
+## L'assurance payée par les retraités (décisions 44 à 46)
+
+Le propriétaire retient le plancher avec rattrapage et les promesses 1 à 5
+(décisions 44 et 45). Il ajoute que le plancher est une assurance, que les
+retraités doivent payer seuls, et dont la dette doit suivre la masse
+salariale (décision 46) : « il y a un gel la première année et il y a ensuite
+une moins grande hausse à cause du coût de l'assurance ». Le calcul qui suit
+est fait à côté, sous les règles de la décision 41.
+
+*Ce que le rattrapage allemand laisse aux cotisants.* Le § 68a reprend
+l'écart de niveau : la pension revient à celui de la règle. Mais ce qui a été
+versé en trop pendant le gel n'est jamais rendu, et c'est la répartition qui
+l'a payé. La décision 46 le fait rendre aussi. Chaque année, ce que le
+plancher sert au-delà de la règle entre dans une dette ; la dette porte
+intérêt au taux de la masse salariale, celui du compte ; elle se reprend sur
+les hausses suivantes, sans jamais faire baisser la pension en euros. Rendue,
+la dette n'a rien coûté à la répartition, au taux de la masse salariale.
+
+*L'exemple du propriétaire, chiffré.* La règle fait −2 % une année, +5 % la
+suivante, puis +3 % ; la masse salariale −1 %, +6 %, puis +3,5 %.
+
+| Année | Règle | Rattrapage allemand | Décision 46 | Dette, en % d'une année de pension |
+|---|---|---|---|---|
+| 1 | 0,980 | 1,000 (gel) | 1,000 (gel) | 2,00 |
+| 2 | 1,029 | 1,029 (+2,90 %) | 1,0145 (+1,45 %) | 0,67 |
+| 3 | 1,060 | 1,060 (+3,00 %) | 1,053 (+3,79 %) | 0 |
+| 4 | 1,092 | 1,092 | 1,092 | 0 |
+
+Le rattrapage allemand laisse 2,0 % d'une année de pension à la
+répartition ; la décision 46 ne lui laisse rien (à côté). Ici, la reprise
+prend au plus la moitié de la hausse, comme en Allemagne.
+
+*Quand la dette est rendue.* Le calcul a été refait sur le passé, sous le COR,
+sous une inflation de 1 % ou de 0,5 %, et sous l'IA (l'emploi −1 % par an de
+2030 à 2039).
+- **Les pensions notionnelles** rendent leur dette dans tous ces cas.
+  - Sur le passé, la reprise au plus de la moitié de la hausse suffit :
+    6 années sans hausse sur 21, au lieu de 10 si l'on prend toute la hausse.
+  - Sous l'IA avec 1 % d'inflation, la moitié ne suffit pas : il reste 4,2 %
+    d'une année de pension au bout de vingt ans. Toute la hausse la rend, en
+    11 années sans hausse sur 20.
+- **Les comptes** ne versent rien avant le départ : seul le niveau se
+  rattrape. Leur règle, la masse salariale, n'a baissé qu'en 2020.
+- **Les pensions du stock** à la bascule ne la rendent pas quand l'inflation
+  est basse.
+  - Leur règle est les prix moins la hausse du nombre de retraités par
+    cotisant, 0,65 point par an sous le COR. Elle baisse en euros dès que
+    l'inflation reste sous ce seuil, comme en 2014-2016 ou en 2020.
+  - Le plancher n'y couvre plus un choc, mais une tendance, et il n'y a pas
+    de hausse sur laquelle la reprendre.
+  - De 2005 à 2025, leur dette aurait atteint 21 % d'une année de pension. La
+    reprise d'au plus la moitié de la hausse en laisse 6,8 % en 2026 ; en
+    prenant toute la hausse, la dette est rendue, mais la pension reste
+    16 années sur 21 sans hausse.
+  - Sous une inflation de 0,5 %, ou sous l'IA avec 1 % d'inflation, il reste
+    52 à 98 % d'une année de pension à rendre au bout de vingt ans.
+
+*Une assurance commune ne règle pas le stock, elle le déplace.* Dans une
+dernière variante, tous les retraités ensemble portent la dette, comme une
+mutuelle. Le stock y pèse pour une part qui décroît de moitié en douze ans
+environ, une approximation. Sous le COR et sous 1 % d'inflation, la dette se
+rend sans peine. Dans les crises longues, elle ne se rend qu'en prenant toute
+la hausse de toutes les pensions : les pensions nouvelles restent alors sans
+hausse 15 années sur 45 (inflation de 0,5 %), 24 (l'IA et 1 %), 29 (une IA
+deux fois plus brutale). Ce sont les retraités récents, cotisants de la
+transition, qui paieraient le plancher du stock : la décision 4 refuse de
+faire payer deux fois une génération.
+
+*Les trois issues pour le stock, au propriétaire.*
+1. **Pas de plancher pour le stock.** Ses pensions baissent un peu en euros
+   les années d'inflation très basse : de −0,1 à −0,8 % de 2013 à 2016, −3,3 %
+   en 2009 (à côté). Les cotisants et les retraités récents ne paient rien.
+   La promesse 4 vaut alors pour les pensions du nouveau système, celles des
+   cotisants d'aujourd'hui. Le risque juridique est celui d'une baisse en
+   euros d'une pension liquidée, que le Conseil constitutionnel n'a jamais
+   jugée.
+2. **Un plancher pour tous, et les cotisants paient ce que le stock ne rend
+   pas.** C'est contraire à la décision 46.
+3. **Un plancher pour tous, mutualisé entre tous les retraités.** Les
+   pensions nouvelles paient pour le stock, et peuvent rester gelées
+   longtemps.
+
+La piste : **la première**. Elle garde α = 1 et la décision 46 sans
+exception, et la promesse 4 entière pour le nouveau système. Elle ne fait
+payer le stock qu'à lui-même.
+
+*Le rythme de la reprise, au propriétaire aussi.* Au plus la moitié de chaque
+hausse, comme en Allemagne, lisse les pensions mais ne rend pas toujours la
+dette (sous l'IA avec 1 % d'inflation). Au besoin toute la hausse, jusqu'à
+concurrence de la dette, la rend dans tous les cas essayés, au prix de plus
+d'années sans hausse. Dans l'exemple du propriétaire, la deuxième année sert
+alors +0,78 % au lieu de +1,45 %, et la troisième revient à la règle, +5,2 %
+(à côté). La piste : toute la hausse, au besoin, pour que la décision 46 tienne
+toujours.

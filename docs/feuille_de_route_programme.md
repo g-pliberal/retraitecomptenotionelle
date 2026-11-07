@@ -241,6 +241,30 @@ décisions 36 à 40 :
     l'Agirc-Arrco décide de garder des retraites trop hautes, l'Agirc-Arrco
     finira par couler au bout d'un moment. »
 
+Le même jour, sur le plancher en euros et la garantie (chantier 5), après
+leur instruction :
+
+44. **Un plancher en euros, avec rattrapage** : « plancher avec
+    rattrapage ». Ni un compte ni une pension ne baisse en euros par sa
+    revalorisation ; la baisse évitée se reprend sur les hausses suivantes.
+45. **La garantie tient en cinq promesses** : « les promesses 1 à 5 ». Chaque
+    euro cotisé est inscrit à votre nom ; la même règle vaut pour tous ;
+    votre cotisation ne dépassera jamais 18 % ; votre pension ne baissera
+    jamais en euros ; personne ne vivra sous 800 € par mois. Chacune se dit
+    avec sa condition (note `186/2026-11-07-indexation-etude.md`).
+46. **Le plancher est une assurance que les retraités paient, pas les
+    cotisants ; sa dette suit la masse salariale** : « le rattrapage coûte
+    de l'argent dans le fait que c'est une assurance. J'aimerais que le coût
+    de cette assurance ne coûte rien aux cotisants et uniquement aux
+    retraités. Il faudrait que l'indexation soit sur la masse salariale. Par
+    exemple, il y a un gel pendant une année car beaucoup de chômage, et
+    l'année d'après, il y a une forte hausse des emplois ; dans ce cas, il y
+    a un gel la première année et il y a ensuite une moins grande hausse à
+    cause du coût de l'assurance. » Le rattrapage reprend donc le niveau,
+    comme en Allemagne, et aussi ce qui a été versé en trop pendant le gel,
+    porté au taux de la masse salariale. Reste ouvert le cas du stock quand
+    l'inflation est basse (chantier 5).
+
 ## Ce qui est écarté
 
 - **Une transition sans baisse nominale des pensions en cours** — bâtir le
@@ -922,6 +946,32 @@ et la garantie : de quoi décider » :
 - *Les pistes* : un plancher à zéro avec rattrapage, sur les comptes et les
   pensions ; la garantie en cinq promesses, chacune avec sa condition.
 
+**Le 7 novembre 2026 : décisions 44 à 46, et le cas du stock.** Le plancher
+avec rattrapage et les promesses 1 à 5 sont retenus ; le plancher devient une
+assurance payée par les retraités, sa dette portée au taux de la masse
+salariale. Ce que le calcul en dit, à côté (note, « L'assurance payée par les
+retraités ») :
+- *L'exemple du propriétaire tient* : une règle à −2 % puis +5 % donne un gel,
+  puis +1,45 % au lieu de +2,9 %, puis le retour à la règle ; rien pour la
+  répartition. Le rattrapage allemand, qui ne reprend que le niveau, lui
+  aurait coûté 2 % d'une année de pension.
+- *Les comptes et les pensions notionnelles* : la dette est rendue dans tous
+  les cas essayés (passé, COR, inflation basse, IA), si le rattrapage prend au
+  besoin toute la hausse.
+- *Le stock à la bascule ne s'assure pas quand l'inflation est basse.* Sa
+  règle, les prix moins la hausse du nombre de retraités par cotisant
+  (0,65 point par an sous le COR), baisse en euros dès que l'inflation reste
+  sous ce seuil, comme en 2014-2016. Ce n'est plus un choc mais une tendance,
+  et il n'y a pas de hausse sur laquelle la reprendre. De 2005 à 2025, sa
+  dette aurait atteint 21 % d'une année de pension. Sous une inflation de
+  0,5 %, il resterait 52 % d'une année de pension à rendre au bout de vingt
+  ans.
+- *Trois issues pour le stock* : pas de plancher (de petites baisses en euros
+  les années d'inflation très basse) ; un plancher payé par les cotisants ;
+  un plancher mutualisé entre tous les retraités, qui gèle les pensions
+  nouvelles quinze à vingt-neuf ans sur quarante-cinq dans les crises
+  longues.
+
 ### Chantier 6 — Les complémentaires : rien que leurs cotisations, sauvées mais dissoutes
 
 **La question.** Comment couper aux complémentaires tout argent qui n'est pas
@@ -1293,9 +1343,10 @@ est passée ; le début de la campagne présidentielle ?
   nouvelles pensions et pour celles d'aujourd'hui, et sa valeur α (0,25,
   0,5 ou 1) ; le plancher en euros, des comptes et des pensions ; la
   garantie en quatre promesses.
-- Chantier 5, après la décision 41 (α = 1) : le plancher en euros, que
-  `data/reference/referents.yaml` laisse « à trancher » — aucun, sans ou avec
-  rattrapage, et qui porte l'avance ; la garantie, en cinq promesses.
+- Chantier 5, après les décisions 44 à 46 : le plancher des pensions du
+  stock quand l'inflation est basse — aucun, payé par les cotisants, ou
+  mutualisé entre tous les retraités ; le rythme du rattrapage, la moitié
+  de la hausse ou toute.
 - Chantier 6 : le mécanisme de résolution ; l'ordre des caisses.
 - Chantier 6, étudié le 7 novembre : l'entrée des complémentaires au régime
   unique, à la bascule ou caisse par caisse ; la résolution et son seuil ;
