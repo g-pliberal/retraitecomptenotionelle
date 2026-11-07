@@ -1,11 +1,11 @@
 # L'indexation étudiée aux sources, et le partage de l'effort entre actifs et retraités
 
 **Reprise, au 7 novembre 2026.** Le chantier 5 est étudié, et α = 1 est
-tranché (décision 41 de `docs/feuille_de_route_programme.md`). Restent au
-propriétaire : ce à quoi le facteur s'applique (pistes 2 et 3 : la masse
-salariale des nouvelles pensions, les prix de celles d'aujourd'hui), le
-plancher en euros, et la garantie en quatre promesses ; ses réponses
-s'écrivent en décisions sous le chantier 5. Ensuite, une session du modèle
+tranché (décision 41 de `docs/feuille_de_route_programme.md`), sur les bases
+déjà fixées : la masse salariale (décision 10), les prix pour le stock
+(action 48, archivée). Restent au propriétaire le plancher en euros et la
+garantie en quatre promesses ; ses réponses s'écrivent en décisions sous le
+chantier 5. Ensuite, une session du modèle
 écrit le facteur pour le seul scénario 6, et la page Coût le chiffre. Restent
 à lire à leur source les textes marqués « non vérifié ».
 
@@ -547,5 +547,9 @@ cotisant, et gagne toute sa baisse. Ce que la règle donne est sous le
 chantier 5 : une pension nouvelle, sur la masse salariale par retraité, garde
 96 % de son pouvoir d'achat en vingt-cinq ans sous le COR ; une pension
 d'aujourd'hui, sur les prix corrigés du facteur, en perd 17 %, par-dessus la
-baisse de transition. Les pistes 2 et 3, ce à quoi le facteur s'applique, la
-piste 1 et la garantie restent à valider.
+baisse de transition. Les bases du facteur, que les pistes 2 et 3
+proposaient, étaient déjà fixées, ce que le propriétaire rappelle : la
+masse salariale pour les pensions notionnelles (décision 10, et la règle du
+modèle, `RevalorisationServie`), les prix pour les pensions servies à la
+bascule (action 48, le 20 septembre 2026). Le plancher (piste 1) et la
+garantie restent à valider.

@@ -222,9 +222,11 @@ Le même jour, sur l'indexation (chantier 5), après l'étude aux sources :
     « α = 1 ». Chaque année, la revalorisation des pensions servies perd
     toute la hausse du nombre de retraités par cotisant, et gagne toute sa
     baisse. Ni les cotisants ni le budget ne paient l'arrivée des grosses
-    générations à la retraite. Reste à valider ce à quoi le facteur
-    s'applique : la masse salariale pour les nouvelles pensions, les prix
-    pour celles d'aujourd'hui (pistes 2 et 3 de la note).
+    générations à la retraite. Le facteur s'applique aux bases déjà
+    fixées : la règle du compte, la masse salariale, pour les pensions
+    notionnelles (décision 10), et les prix pour les pensions servies à la
+    bascule (action 48 de la feuille de route, archivée, le 20 septembre
+    2026).
 
 ## Ce qui est écarté
 
@@ -1206,10 +1208,9 @@ est passée ; le début de la campagne présidentielle ?
   nouvelles pensions et pour celles d'aujourd'hui, et sa valeur α (0,25,
   0,5 ou 1) ; le plancher en euros, des comptes et des pensions ; la
   garantie en quatre promesses.
-- Chantier 5, après la décision 41 (α = 1) : ce à quoi le facteur
-  s'applique, la masse salariale des nouvelles pensions et les prix de
-  celles d'aujourd'hui ; le plancher en euros ; la garantie en quatre
-  promesses.
+- Chantier 5, après la décision 41 (α = 1) : le plancher en euros, que
+  `data/reference/referents.yaml` laisse « à trancher » ; la garantie en
+  quatre promesses.
 - Chantier 6 : le mécanisme de résolution ; l'ordre des caisses.
 - Chantier 6, étudié le 7 novembre : l'entrée des complémentaires au régime
   unique, à la bascule ou caisse par caisse ; la résolution et son seuil ;
