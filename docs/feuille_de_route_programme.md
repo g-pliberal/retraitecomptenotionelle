@@ -90,6 +90,17 @@ Au 6 novembre 2026, de la bouche du propriétaire :
     de route du modèle est gelé** (« Oui, faisons comme ça ») — la liste du
     gel est à confirmer (chantier 10).
 
+Le 7 novembre 2026, sur la réversion (chantier 3), après l'étude aux sources :
+
+16. **Les réversions déjà servies sont gardées jusqu'à extinction** : « on
+    garde les réversions déjà servies jusqu'à extinction ». C'est une
+    exception à la décision 2, propre à la réversion : les droits directs des
+    retraités actuels restent sous les décisions 2 et 3.
+17. **Pour les décès à venir, une rente sur deux têtes au choix du couple** —
+    le système G de l'étude : « pour la suite, on prend le G ». Le couple qui
+    veut protéger le survivant le paie d'une pension plus basse ; les autres
+    cotisants ne paient plus la réversion.
+
 ## Ce qui est écarté
 
 - **Une transition sans baisse nominale des pensions en cours** — bâtir le
@@ -98,6 +109,9 @@ Au 6 novembre 2026, de la bouche du propriétaire :
   225 points de PIB de dette d'ici 2070 (`docs/chiffrage_plf.md`, § F).
 - **Toute reprise sur la succession ou l'héritage.** Le scénario 6 en porte
   pourtant une : voir le chantier 2.
+- **La coupure des réversions déjà servies le jour de la bascule**, le choix
+  du dépôt depuis le 19 septembre 2026, écartée le 7 novembre par la
+  décision 16.
 
 ## Les chantiers
 
@@ -270,6 +284,19 @@ garantie vieillesse servie d'office.
 
 **Au propriétaire, pour la réversion** : la règle du stock ; celle des décès
 à venir ; la couverture du décès d'un actif ; la garantie servie d'office.
+
+**Le 7 novembre 2026, le propriétaire tranche** : les réversions déjà
+servies gardées jusqu'à extinction, et le système G pour les décès à venir
+(décisions 16 et 17). Face au droit actuel, l'étude chiffre G à 0,82 point
+de PIB d'économie brute en moyenne sur 2026-2070 (1,2 Md€ en 2026, 40 en
+2040, 72 en 2070), contre 1,19 pour la coupure du 19 septembre ; son
+économie nette de la garantie n'est pas calculée. Restent ouverts : la rente
+servie par défaut, à laquelle on ne renonce qu'avec la signature du
+conjoint, ou seulement à la demande ; les taux offerts ; le divorce ; le
+PACS et le concubinage ; la couverture du décès d'un actif, que la rente,
+servie à la liquidation, ne couvre pas ; la garantie servie d'office. Au
+modèle ensuite : servir la réversion du stock jusqu'à extinction dans les
+scénarios 2 à 6, et une rente sur deux têtes tarifée au couple.
 
 ### Chantier 4 — Les recettes hors du travail : la TVA sociale et la LVT
 
@@ -514,6 +541,10 @@ est passée ; le début de la campagne présidentielle ?
 - Chantier 3, la réversion, étudiée le 7 novembre : la règle du stock, celle
   des décès à venir, la couverture du décès d'un actif, la garantie servie
   d'office.
+- Chantier 3, la réversion, le 7 novembre après les décisions 16 et 17 : les
+  modalités de la rente sur deux têtes (par défaut ou à la demande, taux,
+  divorce, PACS et concubinage), la couverture du décès d'un actif, la
+  garantie servie d'office.
 - Chantier 4 : la TVA sur le seul taux normal ; la LVT à 1 % ou 2 %, et son
   abattement.
 - Chantier 5 : l'indexation des pensions servies ; la formulation de la

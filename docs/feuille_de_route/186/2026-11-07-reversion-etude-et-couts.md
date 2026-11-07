@@ -270,3 +270,11 @@ Un système fidèle à la doctrine les sépare. Rien de public pour le choix, ma
 Deux leçons dépassent ce choix. La garantie vieillesse est la charnière du dossier. Elle fixe l'économie réelle, et elle est la seule défense juridique d'une baisse du stock. Au recours de 50 % que retient le modèle, une part de l'économie affichée n'est que la pauvreté de ceux qui ne la demandent pas : une garantie servie d'office rendrait le chiffre honnête et la mesure défendable.
 
 L'autre leçon : le chiffrage propre reste à faire, et il demande peu de choses que le dépôt n'ait déjà à portée. Il faut la distribution jointe de la pension propre et de la réversion (EIR) et la pyramide des bénéficiaires que la DREES publie déjà. Il faut une population de couples pour le plafond de ressources et la règle des 70 %. Il faut enfin les données de la Cnav et de l'Agirc-Arrco sur les décès d'actifs, que personne ne publie.
+
+## Ce que le propriétaire a tranché
+
+Le 7 novembre 2026, à la lecture de ce rapport : « on garde les réversions
+déjà servies jusqu'à extinction », et « pour la suite, on prend le G », la
+rente sur deux têtes au choix du couple. Ce sont les décisions 16 et 17 de
+`docs/feuille_de_route_programme.md` ; ce qui reste ouvert est sous son
+chantier 3.
