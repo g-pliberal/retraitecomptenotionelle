@@ -291,3 +291,10 @@ décès, la moitié au conjoint ; au divorce après le départ, la rente acquise
 à l'ex-conjoint, « oui mais il faut trouver un mécanisme pour lutter contre
 les freeriders » ; le défaut « Seulement pour les mariés, les autres peuvent
 demander mais ne l'obtiennent pas par défaut ».
+
+Enfin (décisions 25 et 26) : la part du conjoint d'un actif mort « Tout de
+suite avec des enfants à charge. 55 ans me paraît tôt » ; et contre les
+abus, « quelque chose de simple et prouvable mathématiquement plutôt que des
+conditions arbitraires ». La session en tire une piste, à valider, sous le
+chantier 3 de la feuille de route du programme : les droits suivent
+l'argent, au prix juste.

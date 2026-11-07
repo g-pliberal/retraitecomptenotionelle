@@ -120,6 +120,13 @@ Le même jour, ses modalités :
 24. **Le défaut de la décision 18 ne vaut que pour les mariés** :
     « Seulement pour les mariés, les autres peuvent demander mais ne
     l'obtiennent pas par défaut ».
+25. **Le conjoint d'un actif mort touche sa part tout de suite s'il a des
+    enfants à charge ; sans enfant, plus tard que 55 ans** : « Tout de suite
+    avec des enfants à charge. 55 ans me paraît tôt ».
+26. **Contre les abus de la rente, un mécanisme solide et démontrable plutôt
+    que des conditions arbitraires** : « Je crains tous les abus, il faut
+    quelque chose de solide. J'aimerais de préférence quelque chose de simple
+    et prouvable mathématiquement plutôt que des conditions arbitraires. »
 
 ## Ce qui est écarté
 
@@ -345,6 +352,37 @@ américains, un an chacune ; un remariage qui achète une nouvelle rente à son
 prix, sans rien retirer à l'ex-conjoint. Au modèle : porter les décisions 16
 à 24 aux scénarios 2 à 6, chiffrer la décision 22, régler le recours à la
 garantie à 100 %.
+
+**Le 7 novembre 2026, l'âge et les abus** (décisions 25 et 26) : la part du
+conjoint d'un actif mort, tout de suite avec des enfants à charge, et plus
+tard que 55 ans sans eux ; contre les abus, un mécanisme démontrable plutôt
+que des conditions arbitraires, ce qui écarte la durée de mariage minimale.
+
+*Piste du 7 novembre, à valider : les droits suivent l'argent, au prix
+juste.*
+- *Le décès d'un actif, écrit en capital* : la moitié de son compte passe sur
+  le compte du conjoint. Avec des enfants à charge, elle se convertit tout de
+  suite en pension, au diviseur de son âge ; sans enfant, elle attend sur son
+  compte et se touche avec sa propre retraite. Aucun âge n'est à fixer : le
+  diviseur rend la part juste à tout âge. Sous les hypothèses de F9, la
+  moitié du compte vaut environ 6,6 Md€ de capital en 2026, que la
+  proposition garde aujourd'hui au système.
+- *À la liquidation*, par défaut pour les mariés, sur demande pour les autres
+  couples : la rente sur deux têtes au prix actuariel, sur l'âge réel des
+  deux conjoints, et irrévocable. Son prix se recalcule chaque année pour que
+  la caisse des rentes de survivant s'équilibre : ce que coûteraient des
+  choix opportunistes retombe sur le prix que paient les couples, jamais sur
+  les autres cotisants ni sur l'impôt.
+- *Après la liquidation* (remariage, demande tardive) : non plus une
+  assurance, une épargne. La baisse de pension est créditée au nom du
+  conjoint, qui touche à la mort de l'assuré ce qu'elle a réellement
+  accumulé : un mariage in extremis ne rapporte que ce qu'il a payé.
+- *Au divorce*, la rente déjà payée reste à l'ex-conjoint (décision 23) ; un
+  nouveau conjoint ne se couvre que par la règle précédente.
+
+Ce que chaque règle doit démontrer : qu'aucun choix d'un couple ne fait payer
+les autres cotisants ni l'impôt. À démontrer et à chiffrer par la session du
+modèle.
 
 ### Chantier 4 — Les recettes hors du travail : la TVA sociale et la LVT
 
@@ -599,6 +637,8 @@ est passée ; le début de la campagne présidentielle ?
 - Chantier 3, la réversion, le 7 novembre après les décisions 22 à 24 :
   l'âge du conjoint d'un actif mort ; le mécanisme contre les passagers
   clandestins.
+- Chantier 3, la réversion, le 7 novembre après les décisions 25 et 26 :
+  valider la piste « les droits suivent l'argent, au prix juste ».
 - Chantier 4 : la TVA sur le seul taux normal ; la LVT à 1 % ou 2 %, et son
   abattement.
 - Chantier 5 : l'indexation des pensions servies ; la formulation de la
