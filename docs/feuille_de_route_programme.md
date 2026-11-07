@@ -1120,6 +1120,39 @@ par l'impôt, non aux autres cotisants. Les réserves des caisses solvables
 sont portées aux comptes de leurs propres cotisants et retraités : les
 droits suivent l'argent.
 
+**Le 7 novembre 2026 : les planchers, étudiés aux sources.** La décision 42
+rouverte (« voir comment vont être impactés les gens [...] notre marge de
+manœuvre légale ») a sa note, `186/2026-11-07-planchers-etude.md`. Ce
+qu'elle établit :
+- *Qui est touché* : surtout le minimum garanti, 479 156 retraités de la
+  CNRACL fin 2021, plus d'un sur trois, pour 224 € par mois en moyenne
+  (CNRACL au COR, 2023), à 75 % des femmes, âgés de 72 ans ; 154 000 à
+  l'État fin 2024 (relevé). Les quatre planchers qui dépassent la garantie
+  coûtent de l'ordre de 2 Md€ par an (à côté). Ceux de la SNCF (≈ 1 430 €
+  en 2026, à côté) et des IEG touchent peu de monde, sans chiffre publié.
+- *Qui perd, et combien* : la garantie donne plus que le minimum garanti à
+  une personne seule de courte carrière publique, moins au couple (800 €
+  chacun : −41 % pour un fonctionnaire à quarante ans de services au
+  minimum, −44 % pour un cheminot), à la longue carrière seule (−23 et
+  −27 %), au polypensionné, qui perd tout le complément, à qui part avant
+  65 ans, et à qui laisse un patrimoine, la garantie étant reprise sur la
+  succession.
+- *Le droit* : pour les pensions à venir, un décret suffit, sauf pour le
+  minimum garanti de l'État et le complément agricole, qui sont dans la
+  loi ; pour les pensions servies, il faut une loi (CPCMR, L. 55), et une
+  baisse de 20 à 44 % n'a aucun précédent. La garantie est elle-même la
+  garantie légale de l'alinéa 11, ce qui défend mieux la suppression des
+  planchers que la coupure de la réversion. L'écrêtement du minimum garanti,
+  que prévoit la loi de financement pour 2009, attend son décret. Toutes les réformes passées de ces minima
+  ont gardé le droit ancien pour le stock.
+
+*Piste du 7 novembre, à valider* : le complément des pensions servies gardé
+et gelé en euros ; les planchers d'invalidité gardés (décision 7) ; les
+pensions à venir à la seule garantie, avec une transition pour qui part dans
+les cinq ans ; l'écrêtement par décret dès maintenant. Si les décisions 2 et
+3 priment : le complément ramené à la garantie en cinq ans, à un risque
+moyen.
+
 ### Chantier 7 — Les chiffres qui tiennent
 
 **La question.** Un challenger est vérifié plus durement qu'un sortant :
@@ -1410,6 +1443,13 @@ est passée ; le début de la campagne présidentielle ?
   jusqu'à l'intégration de l'Agirc-Arrco ; une loi d'équilibre pour
   l'Agirc-Arrco, piste politique proposée en réponse à la décision 43 ; les
   planchers (décision 42), confiés à une session neuve.
+- Chantier 6, les planchers, étudiés le 7 novembre : les pensions servies
+  portées à un plancher (gardées et gelées en euros, ramenées à la garantie
+  en cinq ans, ou coupées) ; les planchers d'invalidité, gardés comme
+  accidents de la vie ; une transition pour qui part dans les cinq ans ;
+  l'écrêtement par décret dès maintenant ; la garantie elle-même — 800 € en
+  couple, 65 ans, la reprise sur succession sans l'exclusion du capital
+  agricole (note `186/2026-11-07-planchers-etude.md`).
 - Chantier 7, étudié le 7 novembre : « la moitié du déficit public »,
   abandonnée ou attribuée à Beaufret ; les taux chiffrés à la date de
   publication ; le rendement en baisse au lieu du « TRI négatif » ; le PER
