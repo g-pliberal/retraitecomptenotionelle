@@ -282,6 +282,16 @@ décisions 42 et 43 :
     tant que l'Agirc-Arrco n'est pas intégrée, et 18 % ensuite. La décision
     43 est confirmée : « Oui à moins que tu aies une solution politique ».
 
+Le même jour, sur le rattrapage du plancher (chantier 5) :
+
+49. **La dette du rattrapage se rembourse le plus vite possible** :
+    « j'aimerais rembourser la dette le plus vite possible ». La reprise
+    prend au besoin toute la hausse, jusqu'à concurrence de la dette. Les
+    trois issues proposées pour le stock quand l'inflation est basse sont
+    écartées : « aucune décision ne me convient » ; le sujet est à
+    approfondir : « c'est un peu expérimental, j'ai un peu de mal, il
+    faudrait peut-être qu'on approfondisse le sujet ».
+
 ## Ce qui est écarté
 
 - **Une transition sans baisse nominale des pensions en cours** — bâtir le
@@ -989,6 +999,20 @@ retraités ») :
   nouvelles quinze à vingt-neuf ans sur quarante-cinq dans les crises
   longues.
 
+**Le 7 novembre 2026 : la décision 49, et le stock à approfondir.** La dette
+se rembourse le plus vite possible. Les trois issues pour le stock sont
+écartées, et le propriétaire veut approfondir. Trois voies neuves sont à
+étudier, chiffrées d'abord sous le COR (à côté, note, « Le stock, à
+approfondir ») :
+- *une prime payée d'avance par le stock*, une vraie assurance : une petite
+  baisse de plus à la transition, mise en réserve pour payer son plancher ;
+- *l'effort démographique du stock pris d'avance* : une baisse de 7,5 % de
+  plus à la transition, puis les prix, avec le plancher que le droit a déjà ;
+- *la même règle pour toutes les pensions*, la masse salariale par
+  retraité : le stock y perd 2,2 % face aux prix, au lieu de 7,5 % ; le
+  plancher et sa dette marchent alors comme pour les pensions nouvelles.
+  C'est la promesse 2 prise à la lettre, mais l'action 48 serait à revoir.
+
 ### Chantier 6 — Les complémentaires : rien que leurs cotisations, sauvées mais dissoutes
 
 **La question.** Comment couper aux complémentaires tout argent qui n'est pas
@@ -1360,10 +1384,10 @@ est passée ; le début de la campagne présidentielle ?
   nouvelles pensions et pour celles d'aujourd'hui, et sa valeur α (0,25,
   0,5 ou 1) ; le plancher en euros, des comptes et des pensions ; la
   garantie en quatre promesses.
-- Chantier 5, après les décisions 44 à 46 : le plancher des pensions du
-  stock quand l'inflation est basse — aucun, payé par les cotisants, ou
-  mutualisé entre tous les retraités ; le rythme du rattrapage, la moitié
-  de la hausse ou toute.
+- Chantier 5, après la décision 49 : le plancher des pensions du stock
+  quand l'inflation est basse, à approfondir — une prime d'avance, l'effort
+  démographique pris à la transition, ou la même règle pour toutes les
+  pensions.
 - Chantier 6 : le mécanisme de résolution ; l'ordre des caisses.
 - Chantier 6, étudié le 7 novembre : l'entrée des complémentaires au régime
   unique, à la bascule ou caisse par caisse ; la résolution et son seuil ;

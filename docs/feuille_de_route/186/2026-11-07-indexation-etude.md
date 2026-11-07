@@ -4,10 +4,10 @@
 tranché (décision 41 de `docs/feuille_de_route_programme.md`), sur les bases
 déjà fixées : la masse salariale (décision 10), les prix pour le stock
 (action 48, archivée). Le plancher avec rattrapage, payé par les retraités,
-et les promesses 1 à 5 sont tranchés (décisions 44 à 46). Reste au
-propriétaire le plancher des pensions du stock quand l'inflation est basse
-(« L'assurance payée par les retraités », trois issues) ; ses réponses
-s'écrivent en décisions sous le chantier 5. Ensuite, une session du modèle
+et les promesses 1 à 5, et la dette rendue au plus vite, sont tranchés
+(décisions 44 à 46 et 49). Reste à approfondir le plancher des pensions du
+stock quand l'inflation est basse : trois voies neuves (« Le stock, à
+approfondir ») à chiffrer au modèle, puis au propriétaire. Ensuite, une session du modèle
 écrit le facteur pour le seul scénario 6, et la page Coût le chiffre. Restent
 à lire à leur source les textes marqués « non vérifié ».
 
@@ -791,3 +791,47 @@ d'années sans hausse. Dans l'exemple du propriétaire, la deuxième année sert
 alors +0,78 % au lieu de +1,45 %, et la troisième revient à la règle, +5,2 %
 (à côté). La piste : toute la hausse, au besoin, pour que la décision 46 tienne
 toujours.
+
+## Le stock, à approfondir (décision 49)
+
+Le propriétaire veut rembourser la dette « le plus vite possible » : la
+reprise prend au besoin toute la hausse (décision 49). Il écarte les trois
+issues pour le stock (« aucune décision ne me convient »), et veut
+approfondir : « c'est un peu expérimental, j'ai un peu de mal ».
+
+*Le nœud, en une phrase.* Une assurance couvre un accident, pas une pente.
+Les pensions nouvelles suivent la masse salariale par retraité, qui monte
+d'environ 1,6 % par an en euros sous le COR : un gel passager s'y rembourse.
+Les pensions du stock suivent les prix moins 0,65 point : dès que
+l'inflation reste sous ce seuil, elles descendent chaque année, et le
+plancher les retient sur une pente qui ne remonte pas.
+
+*Trois voies neuves*, chiffrées sous le COR. Le stock y pèse pour une part
+qui décroît de moitié en douze ans environ, et tout s'actualise au taux de
+la masse salariale (à côté).
+1. **Une prime payée d'avance par le stock.** C'est l'assurance au sens
+   propre : une petite baisse de plus à la transition, mise en réserve, paie
+   le plancher du stock les années d'inflation basse. La prime dépend de la
+   probabilité qu'on prête à ces années : nulle sous le COR, elle atteindrait
+   30 à 58 % d'une année de pension si l'on voulait couvrir vingt ans
+   d'inflation à 0,5 %, ou de crise de l'IA. Reste à fixer ce qu'on couvre.
+2. **L'effort démographique du stock pris d'avance.** L'effort que α = 1 lui
+   demande sur toute sa vie est calculé au jour de la transition. Il vaut une
+   baisse de 7,5 % de plus. Le stock suit ensuite les prix, avec le plancher
+   que le droit a déjà (L. 161-25), qui ne coûte presque jamais rien. Si la
+   démographie dérive de la projection, l'écart reste aux cotisants, ou se
+   corrige d'une révision à date fixe.
+3. **La même règle pour toutes les pensions : la masse salariale par
+   retraité.** Le stock y perd 2,2 % face aux prix sur sa vie, au lieu de
+   7,5 % sous les prix corrigés du facteur. Sa règle a le même coussin que
+   celle des pensions nouvelles, et le plancher, avec sa dette, y marche
+   comme pour elles. C'est la promesse 2 (« la même règle vaut pour tous »)
+   prise à la lettre. Mais le stock reçoit alors une part des gains de
+   productivité qu'il n'a pas cotisés, ce que l'action 48 refusait le
+   20 septembre 2026.
+
+Ce qu'il faut pour trancher : chiffrer chaque voie au modèle, pour le seul
+scénario 6, sur la page Coût (le solde, la dépense, les pensions du stock
+année par année). Une page qui montre, année après année, la règle, le
+plancher et la dette, sous une inflation et une crise de l'emploi choisies,
+aiderait à voir ce que chaque voie fait.
