@@ -8073,3 +8073,54 @@ une feuille de route dédiée au programme et on verra demain. »
 8. le message ;
 9. le site et le simulateur, après les chantiers 1 à 6 ;
 10. le gel, la cible, la date.
+
+### 187. Le moteur à part du site : le calcul d'une carrière en bibliothèque, que d'autres peuvent appeler, séparé commit après commit — `en cours`
+
+**Reprise, au 7 novembre 2026.** Étape 1 faite : le partage mesuré, le plan
+écrit (`187/2026-11-07-etape-1-le-partage-mesure.md`). Le moteur est presque
+séparé déjà : `contexte.js` et `saisie.js` empruntent `g.euros` et
+`g.nombre` à `gabarit.js`, et `saisie.js` lit les constantes de `cles.js` ;
+rien d'autre ne passe du calcul au site. Par quoi commencer : l'étape 2, le
+test qui refuse à un module du calcul d'importer un module du site, vu rouge
+sur ces liens, puis les liens coupés. Au propriétaire, à l'étape 6 : la
+diffusion.
+
+**D'où elle vient.** Le 7 novembre 2026, le propriétaire ouvre le chantier 9
+du programme (`docs/feuille_de_route_programme.md`), le site et le
+simulateur, et tranche (décisions 34 et 35) : « Je pense qu'on doit garder le
+simulateur pour les adhérents et pas pour la version publique de notre
+programme. Pour l'instant, on garde le simulateur sur le site mais la bonne
+idée serait de pouvoir séparer le moteur en backend au fur et à mesure des
+commits de notre site frontend. » Réutilisé ailleurs, et par d'autres, le
+moteur servirait le programme. La séparation ne dépend pas des chantiers 1 à
+6 de l'action 186, qui fixent ce que le site montre.
+
+**Le sens retenu.** Une bibliothèque d'abord, et non un service en ligne : le
+site calcule chez son lecteur, et sa carrière ne quitte pas son navigateur ;
+un service la recevrait, avec des données personnelles à protéger, et un
+hébergement à payer. Un service pourra s'écrire autour de la bibliothèque,
+si le propriétaire le choisit. Aucun fichier ne se déplace d'abord : une
+liste des modules du site, gardée par un test, sépare autant.
+
+**La règle, dès l'étape 2.** Un calcul neuf dont une page a besoin s'écrit
+dans un module du calcul, avec son test, et la page le lit ; le site
+(`pages.js`, `gabarit.js`, `routeur.js`, `adresses.js`) ne fait que montrer.
+
+**Les étapes.**
+1. le partage mesuré, le plan écrit — fait ;
+2. le partage gardé : la liste des modules du site, un test qui refuse à un
+   module du calcul d'en importer un, vu rouge sur les liens de l'étape 1,
+   puis ces liens coupés (`format.js` reçoit les deux fonctions, `cles.js`
+   se range) ; la version d'architecture qui en fait une règle ;
+3. l'entrée publique : un module qui, d'une carrière décrite en données (la
+   forme que `pont.mjs` passe déjà) et du paquet, rend les résultats des
+   systèmes en données, sa forme écrite et versionnée ; le pont passe par
+   elle, et les témoins, identiques à l'octet, disent que rien n'a bougé ;
+4. le paquet comme contrat : `moteur/donnees.json`, ses champs et sa version
+   dits pour qui le lit hors du site, et la licence de ses données ;
+5. un usage hors du site, montré et tenu : un exemple que node lance sur une
+   carrière en JSON, joué par la suite, et la section du README qui
+   l'explique ;
+6. la diffusion, au propriétaire : le dépôt tel quel, un paquet npm, ou un
+   service en ligne bâti sur la bibliothèque, qui recevrait les carrières des
+   lecteurs.

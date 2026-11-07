@@ -167,6 +167,20 @@ Le même jour, sur le message (chantier 8), après l'étude aux sources :
     logement, et pour lui seul** : « Oui, premier logement seul ». Le
     premier achat de la résidence principale ; le plafond reste à fixer.
 
+Le même jour, sur le site et le simulateur (chantier 9) :
+
+34. **Le simulateur est pour les adhérents, pas pour la version publique du
+    programme** : « Je pense qu'on doit garder le simulateur pour les
+    adhérents et pas pour la version publique de notre programme. » D'ici
+    là, il reste : « Pour l'instant, on garde le simulateur sur le site ».
+35. **Le moteur se sépare du site, au fil des commits** : « la bonne idée
+    serait de pouvoir séparer le moteur en backend au fur et à mesure des
+    commits de notre site frontend. Cela permettrait de pouvoir réutiliser ce
+    moteur ailleurs si on en a besoin. C'est un gros changement mais je pense
+    que c'est gagnant sur le long terme. D'autres personnes pourront
+    exploiter le moteur de leur côté et cela pourra promouvoir notre
+    programme. » C'est l'action 187 de `docs/feuille_de_route.md`.
+
 ## Ce qui est écarté
 
 - **Une transition sans baisse nominale des pensions en cours** — bâtir le
@@ -881,6 +895,20 @@ calcul rétroactif devient une page à part, « Le miroir ».
 **À faire après les chantiers 1 à 6**, qui fixent ce que le site montre ; les
 listes de `moteur/CLAUDE.md` s'appliquent.
 
+**Le 7 novembre 2026, la réponse du propriétaire** (décisions 34 et 35) : le
+simulateur ira aux adhérents, et la version publique du programme s'en
+passera ; d'ici là il reste sur le site, et le moteur s'en sépare, commit
+après commit, pour que d'autres puissent s'en servir. Cette séparation ne
+dépend pas des chantiers 1 à 6 : c'est l'action 187, dont la première
+mesure trouve le moteur presque séparé déjà — le calcul d'une carrière
+n'emprunte au site que deux fonctions de mise en forme et un fichier de
+constantes, et la fabrique le fait déjà tourner sans navigateur, par node
+(`187/2026-11-07-etape-1-le-partage-mesure.md`). Le reste des pistes —
+le rendement d'un euro cotisé en tête, les trois portes, la page Coût dans
+l'ordre du chantier 1, les deux pages de plus, « Le miroir » — attend
+toujours les chantiers 1 à 6, et se relira avec le propriétaire : pour la
+version publique, ou pour le simulateur des adhérents.
+
 ### Chantier 10 — Le gel, la cible, la date
 
 **La question.** Le chantier du modèle semblait sans fin : au 6 novembre,
@@ -961,6 +989,11 @@ est passée ; le début de la campagne présidentielle ?
   logement. Le gain des actifs suit la lecture A ou B du chantier 1, le
   message des retraités les pertes du chantier 2 ; le test des vingt
   personnes attend les deux.
+- Chantier 9, le 7 novembre après les décisions 34 et 35 : ce que la
+  version publique montre à la place du simulateur ; où vivra celui des
+  adhérents, et comment on y entre ; comment le moteur se diffuse (le dépôt,
+  un paquet npm, ou un service en ligne, qui recevrait les carrières des
+  lecteurs : des données personnelles).
 - Chantier 10 : la liste du gel ; le seuil ; la date.
 
 ## Comment s'en servir
