@@ -1,14 +1,14 @@
 # Les planchers propres à certaines caisses, étudiés aux sources : qui perd, combien, et ce que le droit permet
 
-**Reprise, au 7 novembre 2026.** L'étude des planchers est faite (décision 42,
-rouverte) : qui est touché, la perte par cas type, la nature juridique de
-chaque plancher, la jurisprudence appliquée aux minima, cinq options et une
-piste. Restent au propriétaire les cinq questions de « Ce qui revient au
-propriétaire » ; ses réponses s'écrivent sous la note et en décisions
-numérotées dans `docs/feuille_de_route_programme.md`. Le modèle n'est touché
-qu'après, par une session du modèle, au seul scénario 6. Manquent aux
-sources : les bénéficiaires des minima de la SNCF et des IEG, le gain moyen au
-SRE, la dépense totale du complément agricole (« Ce que la note n'a pas établi »).
+**Reprise, au 7 novembre 2026.** L'étude est faite et le propriétaire a
+tranché (décisions 62 à 66, « Ce que le propriétaire a répondu ») : planchers
+des pensions servies gardés tant que leur caisse n'a pas coulé, la garantie
+ensuite ; ni transition ni décret ; la garantie à 1 050 et 800 € à 65 ans,
+plancher du régime général ; rien d'exclu de la reprise sur succession.
+Restent au propriétaire, en fin de note : les planchers d'invalidité et de
+handicap (trois options), et ce que « couler » veut dire pour une caisse sans
+réserve que l'État finance. Le modèle n'est touché qu'après, par une session
+du modèle, au seul scénario 6.
 
 *Le 7 novembre 2026, le propriétaire, qui avait dit « Oui » à ce que la garantie vieillesse remplace aussi les planchers propres à certaines caisses (décision 42), rouvre la question : « J'aimerais revoir ce sujet pour voir comment vont être impactés les gens. J'aimerais surtout voir notre marge de manœuvre légale sur le sujet. » La session a lu : la note de la CNRACL au COR sur les bénéficiaires du minimum garanti (février 2023), la note du secrétariat du COR sur les minima de pension (février 2023), les fiches du COR de juillet 2024 sur la CNRACL, la caisse des cheminots et celle des IEG, les pages de la CNIEG sur son minimum, et, dans l'index LEGI de la DILA (à jour au 2 novembre 2026), les textes de chaque plancher. Les sites de la DREES, de la sécurité sociale et du Sénat ont refusé la lecture automatique (503) : les chiffres qui en viennent ont été relevés par le moteur de recherche, sans lecture de la page, et sont marqués comme tels. Les calculs faits à côté sont restés dans le brouillon de la session ; leur méthode est écrite à chaque chiffre. Ce que la note conclut est une piste, pas une décision : le propriétaire tranche.*
 
@@ -159,3 +159,59 @@ L'économie de A est une borne haute : elle compte tout le complément, alors qu
 3. **Les pensions à venir** : la garantie seule dès la bascule, ou une transition pour qui part dans les cinq ans, au prorata des services d'avant ?
 4. **L'écrêtement** du minimum garanti et de celui de la SNCF, par le décret que la loi attend depuis 2009 : à demander dès maintenant ?
 5. **La garantie elle-même**, puisque c'est elle qui fait l'essentiel des pertes : 800 € en couple, l'âge de 65 ans, la reprise sur succession sans l'exclusion du capital agricole que l'ASPA connaît. Faut-il l'ouvrir dès la liquidation à qui touchait un plancher, et exclure l'exploitation agricole de la reprise ?
+
+## Ce que le propriétaire a répondu
+
+Le même jour, aux cinq questions, ses mots écrits en décisions 62 à 66 de `docs/feuille_de_route_programme.md` :
+
+1. **Les pensions servies** : « On garde les planchers pour les pensions déjà versées uniquement si la caisse n'a pas coulé et fusionné avec le régime général. Si la caisse est fusionnée dans le régime général car elle a coulé, on prend le minimum de 1050€ pour une personne seule et 800€ pour une personne en couple. » (décision 62)
+2. **Les planchers d'invalidité et de handicap** : « J'ai besoin de plus d'infos sur les planchers d'invalidité et de handicap. » Les informations suivent ; la question reste ouverte.
+3. **La transition** : « Je ne suis pas pour une transition pour ceux qui partent dans les cinq ans. » (décision 63)
+4. **L'écrêtement par décret** : « Je ne vois pas l'utilité de publier un décret de réduction dès maintenant, je fais juste un programme dans mon coin. » (décision 64)
+5. **La garantie** : « la garantie de 800€ en couple, 1050€ seule à 65 ans s'applique uniquement pour le régime général. On n'exclut personne comme l'ASPA. » Elle reste à 65 ans, sans ouverture plus tôt à qui touchait un plancher (décision 65), et sa reprise sur succession n'épargne pas le capital d'exploitation agricole (décision 66).
+
+**Ce que la décision 62 donne, caisse par caisse.** Si « couler » s'entend comme la décision 37 — n'avoir plus de réserve —, la plupart de ces caisses fusionnent tout de suite, et leurs planchers avec elles. La CNRACL n'a plus de réserves (COR, juin 2026, d'après la note des complémentaires) ; les pensions des fonctionnaires de l'État sont payées par le budget de l'État, sans caisse ni réserve ; la caisse des cheminots vit à 62 % de la solidarité nationale (avis du Sénat sur le budget de 2024, relevé), et ni elle ni celle des IEG n'apparaît dans le relevé des réserves du COR (inférence) ; la complémentaire agricole, sans impôt, fait défaut dans l'année (note des complémentaires). Seul le régime de la Banque de France, entièrement provisionné (13,4 Md€), garderait longtemps son minimum garanti. La décision 62 revient alors, pour presque tous, à l'option A de cette note : la garantie seule, dès la bascule, avec son risque. Ce que « couler » veut dire pour une caisse que l'État finance est la question qui reste.
+
+## Les planchers d'invalidité et de handicap
+
+**Ce qu'ils sont.** Dans la fonction publique, le minimum garanti s'ouvre **sans la condition de taux plein** quand la pension est liquidée pour un de ces motifs (CPCMR, L. 17, renvoyant à L. 24 ; décret n° 2003-1306, art. 22, pour la CNRACL) :
+- le fonctionnaire **mis à la retraite pour invalidité**, « qu'il n'a pas pu être reclassé dans un emploi compatible avec son état de santé » (L. 24, I, 2°) ;
+- le **parent d'un enfant invalide** à 80 % au moins, qui a interrompu ou réduit son activité pour lui, après quinze ans de services (3°) ;
+- le fonctionnaire dont **lui-même ou son conjoint** est atteint d'une infirmité ou d'une maladie incurable qui empêche tout travail, après quinze ans de services (4°) ;
+- le **fonctionnaire handicapé**, parti tôt après une carrière accomplie avec une incapacité d'au moins 50 % (5°) ;
+- et leurs équivalents pour les militaires (L. 24, II).
+
+Sous quinze ans de services, le minimum d'une pension d'invalidité est aussi **plus généreux** : un quinzième du montant de quinze ans par année de services (L. 17, c), soit 52,38 € par mois et par année, contre 31,78 € pour les autres départs, rapportés aux 43 ans de la durée requise (à côté). Dix ans de services donnent ainsi 524 € à l'invalide, 318 € aux autres.
+
+À la SNCF, l'enfant invalide, l'amiante et le handicap ouvrent de même le minimum sans le taux plein, et la pension de réforme a un minimum réduit au rapport des services à vingt-cinq ans (décret n° 2008-639, art. 15 ; [minimum_pension_sncf.yaml](../../../data/reference/regles/minimum_pension_sncf.yaml)). Le dépôt ne connaît pas de règle propre aux IEG.
+
+**Dans le privé, rien de tel au titre de la retraite.** Le salarié invalide touche, avant l'âge légal, une pension d'invalidité de l'assurance maladie, complétée sous condition de ressources par l'allocation supplémentaire d'invalidité ; à l'âge légal, elle devient une retraite au taux plein, avec le minimum contributif. Le plancher d'invalidité du fonctionnaire existe parce que l'employeur public est son propre assureur.
+
+**Qui est touché** (CNRACL au COR, février 2023, publié, fin 2021) :
+- **87 084 retraités**, 18 % des bénéficiaires du minimum garanti, à **73 % des femmes** (63 358) ; partis à **53,6 ans** en moyenne, ils ont aujourd'hui 67 ans ;
+- un gain moyen de **213,65 €** par mois, soit 0,22 Md€ par an en 2021, ≈ 0,26 Md€ en 2026 (à côté, comme plus haut) ;
+- chaque année, **4 341** nouveaux retraités pour invalidité au minimum (2021) : **60 % des départs pour invalidité à la fonction publique hospitalière, 66 % à la territoriale** ; leur pension CNRACL moyenne est de 748 à 775 €, dont 148 à 150 € de minimum ;
+- en 2021 encore, 98 fonctionnaires handicapés et 695 départs pour raisons familiales (l'enfant ou le conjoint invalide, et les parents de trois enfants) au minimum.
+
+L'État n'en publie pas le détail dans ce que la session a pu lire.
+
+**Ce que les décisions en disent.** La décision 7 garde les droits des accidents de la vie, « avec des critères », et demande qui les paie. La première répartition du chantier 3, à valider, range l'invalidité, le taux plein pour invalidité, les travailleurs handicapés et l'enfant handicapé dans la pile « Accidents : gardés », payée par « l'assureur du risque » — pour un fonctionnaire, l'État, la collectivité ou l'hôpital employeur —, et le minimum garanti dans la pile « Minima », remplacée par la garantie. Le plancher d'invalidité est au croisement des deux. La décision 58 a déjà gardé la majoration de durée pour enfant handicapé, payée par un tiers.
+
+**Ce que donneraient les décisions 62 et 65.** Quand la caisse fusionne, l'invalide perd son complément, et la garantie ne s'ouvre qu'à 65 ans : la fonctionnaire hospitalière partie pour invalidité à 54 ans avec 760 € de pension, dont 150 € de minimum, garde 610 € pendant onze ans, sans garantie ; à 65 ans, la garantie la porte à 1 050 € seule, à 800 € en couple. Entre les deux, il ne reste que les minima sociaux hors retraite, que le programme ne touche pas.
+
+**Le droit est ici le plus exigeant.** La Grande Chambre de la Cour européenne a condamné la Hongrie pour avoir supprimé, sans « mesures transitoires adaptées », une pension d'**invalidité** (Béláné Nagy, note de la réversion) : c'est l'arrêt le plus proche de ce cas.
+
+**Trois options, et une piste qui n'est pas une décision** :
+
+| Option | Ce qu'elle fait | Coût, face aux décisions 62 et 65 (à côté) | Risque juridique (inférence) |
+|---|---|---|---|
+| I. Gardés, payés par l'employeur | le complément est servi aux pensions d'invalidité et de handicap, servies et à venir, par l'employeur public, assureur du risque (pile « Accidents » du chantier 3) | ≈ 0,26 Md€ par an pour le stock de la CNRACL, l'État en plus ; payé par l'employeur, pas par les cotisants | minime |
+| II. Comme les autres planchers | gardés tant que la caisse n'a pas coulé, puis la garantie à 65 ans (décisions 62 et 65) | aucun | **élevé** : un trou jusqu'à 65 ans pour des invalides, le cas Béláné Nagy |
+| III. La garantie ouverte dès le départ pour invalidité ou handicap | le plancher de la caisse disparaît comme les autres, mais la garantie — 1 050 € seul, 800 € en couple — se verse dès le départ, payée par l'employeur | moindre que I : la garantie au lieu du plancher, et seulement pour qui est dessous | faible |
+
+La piste : **III**. Elle garde un seul plancher, la garantie (décision 65), en n'y faisant qu'une exception, l'âge, pour l'accident de la vie que la décision 7 protège ; l'invalide n'a jamais de trou, et l'employeur public paie, comme l'assureur du risque du chantier 3. Le stock ayant déjà 67 ans en moyenne, III n'y change que le sort des moins de 65 ans : elle compte surtout pour les départs à venir.
+
+## Ce qui reste au propriétaire, après les décisions 62 à 66
+
+1. **Les planchers d'invalidité et de handicap** : gardés et payés par l'employeur (I), traités comme les autres (II), ou la garantie ouverte dès le départ pour invalidité ou handicap (III) ?
+2. **Ce que « couler » veut dire** pour une caisse sans réserve que l'État finance — la CNRACL, les pensions de l'État, la SNCF, les IEG : fusionnée dès la bascule, et ses planchers avec elle, ou une autre règle ?

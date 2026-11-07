@@ -349,6 +349,35 @@ après leur évaluation règle par règle (note
     ajoutée à la part du conjoint, et payée par la branche famille, non plus
     par les autres cotisants.
 
+Le même jour, sur les planchers propres à certaines caisses (chantier 6),
+après leur étude (note `186/2026-11-07-planchers-etude.md`) :
+
+62. **Les planchers des pensions servies sont gardés tant que leur caisse
+    n'a pas coulé ; fusionnée au régime général, elle passe à la garantie** :
+    « On garde les planchers pour les pensions déjà versées uniquement si la
+    caisse n'a pas coulé et fusionné avec le régime général. Si la caisse est
+    fusionnée dans le régime général car elle a coulé, on prend le minimum de
+    1050€ pour une personne seule et 800€ pour une personne en couple. » Au
+    critère de la décision 37 — plus de réserve —, la plupart passent tout de
+    suite : la CNRACL n'a plus de réserves, l'État paie lui-même les pensions
+    de ses fonctionnaires, la complémentaire agricole fait défaut dans
+    l'année ; la Banque de France, provisionnée, garderait le sien. Ce que
+    « couler » veut dire pour une caisse que l'État finance reste à préciser.
+63. **Pas de transition pour qui part dans les cinq ans** : « Je ne suis pas
+    pour une transition pour ceux qui partent dans les cinq ans. » Une
+    pension liquidée après la bascule n'a que la garantie.
+64. **Rien hors du programme : pas de décret d'écrêtement dès maintenant** :
+    « Je ne vois pas l'utilité de publier un décret de réduction dès
+    maintenant, je fais juste un programme dans mon coin. »
+65. **La garantie reste à 1 050 € seul et 800 € en couple, à 65 ans : c'est
+    le plancher du régime général** : « la garantie de 800€ en couple, 1050€
+    seule à 65 ans s'applique uniquement pour le régime général ». Elle ne
+    s'ouvre pas plus tôt à qui touchait un plancher ; tant que sa caisse n'a
+    pas fusionné, il garde celui de sa caisse (décision 62).
+66. **La reprise sur succession n'épargne rien, pas même le capital
+    d'exploitation agricole que l'ASPA exclut** : « On n'exclut personne
+    comme l'ASPA. »
+
 ## Ce qui est écarté
 
 - **Une transition sans baisse nominale des pensions en cours** — bâtir le
@@ -1265,7 +1294,9 @@ et gelé en euros ; les planchers d'invalidité gardés (décision 7) ; les
 pensions à venir à la seule garantie, avec une transition pour qui part dans
 les cinq ans ; l'écrêtement par décret dès maintenant. Si les décisions 2 et
 3 priment : le complément ramené à la garantie en cinq ans, à un risque
-moyen.
+moyen. *Tranché le même jour* : décisions 62 à 66 ; restent les planchers
+d'invalidité et de handicap, et le sens de « couler » pour une caisse que
+l'État finance.
 
 ### Chantier 7 — Les chiffres qui tiennent
 
@@ -1576,6 +1607,12 @@ est passée ; le début de la campagne présidentielle ?
   l'écrêtement par décret dès maintenant ; la garantie elle-même — 800 € en
   couple, 65 ans, la reprise sur succession sans l'exclusion du capital
   agricole (note `186/2026-11-07-planchers-etude.md`).
+- Chantier 6, les planchers, après les décisions 62 à 66 : les planchers
+  d'invalidité et de handicap, sur les informations de la note (gardés et
+  payés par l'employeur, traités comme les autres, ou la garantie ouverte dès
+  le départ pour invalidité) ; ce que « couler » veut dire pour une caisse
+  sans réserve que l'État finance (CNRACL, fonctionnaires de l'État, SNCF,
+  IEG) : fusionnée dès la bascule, et ses planchers avec elle ?
 - Chantier 7, étudié le 7 novembre : « la moitié du déficit public »,
   abandonnée ou attribuée à Beaufret ; les taux chiffrés à la date de
   publication ; le rendement en baisse au lieu du « TRI négatif » ; le PER
