@@ -8047,11 +8047,11 @@ et 3 ci-dessus ; la mesure, et comment la refaire, sont dans la note
 (`…-reversion-scenario-6-plan.md`). Décisions 29 et 30 (chantiers 1 et 2) :
 les deux lectures de la 29 sont à refaire au modèle, la dépense suivant le
 taux cotisé (`…-deux-lectures-et-reprise.md`). Le message (chantier 8) est
-tranché (décisions 31 à 33) ; les complémentaires (6), les chiffres (7) et
-les recettes (4) sont étudiés ; les notes du 4, du 6 et du 8 tiennent leur
-bloc. Par quoi commencer : ce chiffrage et un âge plancher, puis A ou B, qui
-fixe le besoin de TVA, et les questions des chantiers 4, 6 et 7 ; ensuite le
-gel (chantier 10). Rien n'est gelé.
+tranché (décisions 31 à 33), l'âge plancher chiffré (`…-age-plancher.md`) ;
+les complémentaires (6), les chiffres (7) et les recettes (4) sont étudiés ;
+les notes du 4, du 6 et du 8 tiennent leur bloc. Par quoi commencer : ce
+chiffrage, puis A ou B, qui fixe le besoin de TVA, et les questions des
+chantiers 4, 6 et 7 ; ensuite le gel (chantier 10). Rien n'est gelé.
 
 **D'où elle vient.** Le 6 novembre 2026, le propriétaire demande un bilan :
 les vagues se succèdent, et le chantier semble sans fin. La session mesure

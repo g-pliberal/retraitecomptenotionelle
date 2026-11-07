@@ -3,9 +3,9 @@
 **Reprise, au 7 novembre 2026.** Le chantier 8 est étudié et tranché le
 même jour : décisions 31 à 33 de `docs/feuille_de_route_programme.md` (la
 faute, le pilier à l'assuré, l'apport pour un premier logement). Reste
-l'âge : le propriétaire veut le chiffre avant de choisir. Par quoi
-commencer : une session du modèle mesure un âge plancher de 62 ou 64 ans, la
-pension étant celle du compte, face aux 65 ans de la proposition. Le gain
+l'âge, chiffré le même jour (`2026-11-07-age-plancher.md`) : un plancher
+de 62 ou 64 ans face aux 65 ans de la proposition ; le propriétaire le
+tranche. Le gain
 des actifs en euros attend la lecture A ou B du chantier 1, le message des
 retraités les pertes du chantier 2, et le test des vingt personnes, les deux.
 

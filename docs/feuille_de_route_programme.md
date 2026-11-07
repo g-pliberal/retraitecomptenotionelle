@@ -871,6 +871,28 @@ session du modèle mesure ce que coûterait un âge plancher de 62 ou 64 ans,
 la pension étant celle du compte actuariel, face aux 65 ans de la
 proposition.
 
+**Le 7 novembre 2026 : l'âge plancher, chiffré.** La note est
+`186/2026-11-07-age-plancher.md` ; le modèle, au seul
+`Parametres.age_legal_liberal` changé, variante rétroactive, réglages de la
+page Coût. Ce qu'elle établit :
+- *Le solde* : un plancher de 62 ans creuse le solde moyen 2026-2070 de
+  0,22 point de PIB par rapport à 65 ans, un plancher de 64 ans de 0,13 ; la
+  dette de 2070 monte de 17 et de 9 points. Seul 65 ans équilibre le régime
+  en 2070. Les pensions servies plus tôt font l'écart des premières années
+  (8 milliards en 2026 à 62 ans), les cotisations en moins tout l'écart
+  d'après 2050 : le compte rend en pensions les cotisations de plus.
+- *La pension* : chaque année de départ anticipé coûte 6 à 7 % de la
+  pension mensuelle, pour toute la retraite. Au salaire moyen, partir à
+  62 ans plutôt qu'à 65 coûte 366 € par mois, au SMIC 216 à 224 €.
+- *Le trou avant la garantie* : le salarié au SMIC de 1970 part à 62 ans
+  avec 1 005 €, sous les 1 050 € d'une personne seule, sans rien avant
+  65 ans. Ouvrir la garantie au plancher (calcul à côté du modèle)
+  coûterait 0,021 point de PIB par an à 62 ans, net de la reprise, pour
+  200 000 bénéficiaires de plus ; 0,009 point et 85 000 à 64 ans.
+- *L'hypothèse* : chacun part à l'âge du droit en vigueur, pas avant le
+  plancher ; sous la liberté de l'âge, certains partiraient plus tôt, et le
+  coût d'un plancher de 62 ans est une borne basse.
+
 ### Chantier 9 — Le site et le simulateur
 
 **La question du propriétaire.** « Est-ce que le simulateur est vraiment une
@@ -984,8 +1006,9 @@ est passée ; le début de la campagne présidentielle ?
   d'entreprise au lieu du PEE ; et, au chantier 9, la façon de montrer que
   l'outil donne à la proposition un rendement plus faible que le droit actuel
   pour les jeunes générations.
-- Chantier 8, après les décisions 31 à 33 : l'âge, une fois chiffré un âge
-  plancher de 62 ou 64 ans ; le plafond de l'apport pour un premier
+- Chantier 8, après les décisions 31 à 33 : l'âge, 62, 64 ou 65 ans, chiffré
+  le 7 novembre (`186/2026-11-07-age-plancher.md`), et la garantie, ouverte
+  au plancher ou à 65 ans ; le plafond de l'apport pour un premier
   logement. Le gain des actifs suit la lecture A ou B du chantier 1, le
   message des retraités les pertes du chantier 2 ; le test des vingt
   personnes attend les deux.
