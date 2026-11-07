@@ -17057,7 +17057,7 @@ export const MESURES_BLOCAGES = {
   // proposition, solde moyen 2026-2070, en points de PIB : ce que coûtent les
   // 18 %, l'âge légal de 65 ans de la proposition compris — il en rend un
   // demi-point.
-  cout_18_pour_cent: 2.3,
+  cout_18_pour_cent: 2.6,
   // Le coût par défaut : soldes moyens 2026-2070, dette et coefficient à
   // l'horizon, en points de PIB, en % du PIB et en valeur. Mesurés avec l'âge
   // légal de 65 ans et SANS TVA à taux unique : la proposition ne réforme plus
@@ -17092,12 +17092,12 @@ export const MESURES_BLOCAGES = {
   // jour, les civils de l'État pesés sur leurs départs actifs, super-actifs
   // et sédentaires (même étape) ont porté sa dette à 73 %, et le coût des
   // 18 % à 2,2 points.
-  solde_moyen_proposition: -1.1,
+  solde_moyen_proposition: -1.4,
   solde_moyen_actuel: -1.1,
-  dette_2070_proposition: 74,
+  dette_2070_proposition: 103,
   dette_2070_actuel: 66,
-  coefficient_minimum: 0.83,
-  decennie_coefficient_minimum: 2040,
+  coefficient_minimum: 0.79,
+  decennie_coefficient_minimum: 2020,
   coefficient_2070: 1.01,
   // donnees/tva.py : ce que la TVA à taux unique rapporte de plus que les
   // quatre taux d'aujourd'hui, en points de PIB ; zéro, la TVA n'étant pas
@@ -17109,7 +17109,7 @@ export const MESURES_BLOCAGES = {
   // du 12 octobre (action 152, étape 1), −3,1 depuis les fonctionnaires
   // civils recalés le 14 (action 159, étape 5), −3,2 depuis la CNRACL pesée
   // sur ses départs actifs et sédentaires le 16 (action 138, étape 3).
-  solde_moyen_prospectif: -3.2,
+  solde_moyen_prospectif: -3.6,
   // stock_age_legal.py : ce que coûte le diviseur de l'âge de l'assuré au lieu
   // de celui de 65 ans, en points de PIB par an.
   cout_diviseur_age_legal: 0.2,
