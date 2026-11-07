@@ -2,7 +2,11 @@
 jusqu'à l'épuisement de ses réserves, qui est l'année de son intégration.
 
 Action 186, chantier 6, étape 1
-(``docs/feuille_de_route/186/2026-11-07-complementaires-au-modele.md``). Les
+(``docs/feuille_de_route/186/2026-11-07-complementaires-au-modele.md``), et
+étape 1 bis, la baisse des pensions avant l'intégration
+(``…/2026-11-07-complementaires-baisse-avant-integration.md``) : ici, sans la
+baisse (``baisses={}``) ou sous une baisse posée à la main ; celle que le
+modèle calcule, dans ``test_integration_complementaires_baisse.py``. Les
 valeurs attendues viennent des sources — le tableau 2.3 du rapport du COR de
 juin 2026, les assiettes du Chiffr'Agirc-Arrco 2026, les fiches du COR de
 juin 2024 — ou d'un calcul posé à la main, écrit dans le test.
@@ -83,6 +87,23 @@ def test_les_reserves_de_la_cnbf_s_epuisent_en_2047_chez_le_cor():
     assert min(a for (r, a), v in reserves.items() if r == "ircantec" and v == 0) in range(2051, 2056)
 
 
+def test_le_facteur_de_la_regle_du_cor_reste_un_rendement():
+    """La règle du classeur du COR : les réserves de l'année sont celles de la
+    précédente, multipliées par un facteur — un à partir de 2028, 1,5 à 3 % à
+    l'Ircantec —, plus le solde élargi. Près de l'épuisement, le classeur s'en
+    écarte : à la main, les réserves de la CNBF font 0,688 Md€ fin 2043 et son
+    solde − 0,485 Md€ en 2044, soit 0,203 Md€ fin 2044, quand le classeur en
+    écrit 0,411 ; le facteur en sortirait à 1,30, puis 1,97 et 2,60, et
+    multiplierait d'autant l'écart que les décisions creusent. Un facteur
+    au-delà du rendement maximal n'est pas un rendement : il vaut un."""
+    comptes = ic._comptes(RACINE_DONNEES)
+    for caisse in ic.CAISSES:
+        _, facteurs = ic._trajectoire_du_cor(comptes, caisse.cor)
+        assert max(facteurs.values()) <= 1.0 + ic.RENDEMENT_MAXIMAL, caisse.cor
+    _, facteurs = ic._trajectoire_du_cor(comptes, "cnbf")
+    assert [facteurs[a] for a in (2043, 2044, 2045, 2046)] == [1.0, 1.0, 1.0, 1.0]
+
+
 # --- Ce que la décision 36 retire à l'Agirc-Arrco -------------------------
 
 
@@ -105,7 +126,9 @@ def test_la_ceg_et_la_cet_rapportent_pres_de_18_md_en_2024():
 
 @pytest.fixture(scope="module")
 def projections():
-    return ic.projeter_les_caisses(RACINE_DONNEES)
+    """Sans la baisse des pensions avant l'intégration : les années les plus
+    précoces que les décisions 36 à 48 permettent."""
+    return ic.projeter_les_caisses(RACINE_DONNEES, baisses={})
 
 
 def test_la_complementaire_agricole_privee_des_droits_sur_les_alcools_rejoint_en_2026(projections):
@@ -133,7 +156,8 @@ def test_l_agirc_arrco_sans_ceg_ni_cet_rejoint_en_2032(projections):
 def test_ses_seules_reserves_techniques_l_integreraient_plus_tot(projections):
     """92,1 Md€ de réserves techniques, le fonds de roulement mis à part (COR
     2026, note du tableau 2.3) : 21,5 Md€ de moins, plus d'un an de pertes."""
-    techniques = ic.projeter_les_caisses(RACINE_DONNEES, reserves_techniques=True)
+    techniques = ic.projeter_les_caisses(RACINE_DONNEES, reserves_techniques=True,
+                                         baisses={})
     assert (techniques["agirc_arrco"].annee_integration
             < projections["agirc_arrco"].annee_integration)
 
@@ -168,5 +192,62 @@ def test_garder_les_droits_sur_les_alcools_sauverait_la_complementaire_agricole(
     """L'autre lecture de la décision 48 (« une complémentaire ne perd que la
     CEG et la CET ») : la caisse garde son impôt, et le COR la projette
     excédentaire jusqu'en 2070 (0,49 % du PIB de réserves)."""
-    projections = ic.projeter_les_caisses(RACINE_DONNEES, impots_affectes_gardes=True)
+    projections = ic.projeter_les_caisses(RACINE_DONNEES, impots_affectes_gardes=True,
+                                          baisses={})
     assert projections["msa_exploitants_complementaire"].annee_integration is None
+
+
+# --- La baisse des pensions avant l'intégration (étape 1 bis) ---------------
+
+
+def _baisse_posee(taux):
+    """Une baisse posée à la main : ``taux`` des pensions servies à la bascule,
+    qui font toute la dépense de la caisse jusqu'en 2070."""
+    return ic.BaisseDuStock(taux=taux, part_du_stock={a: 1.0 for a in range(2026, ic.FIN + 1)})
+
+
+def test_la_baisse_se_fait_par_cinquiemes_et_n_aide_la_complementaire_agricole_qu_un_peu():
+    """À la main, en 2026, sur le compte du COR de juin 2024 et ses 0,4 Md€ de
+    réserves de fin 2025 (2 991 Md€ de PIB) : 0,03760 % du PIB de ressources,
+    1,125 Md€, dont 50,1 % d'impôts affectés (48 % en 2023, 53 % en 2030,
+    interpolés), 0,564 Md€, perdus (décision 67) ; 0,03629 % de dépenses,
+    1,085 Md€. Sans baisse : 0,4 + 1,125 − 0,564 − 1,085 = − 0,124 Md€.
+    Ses pensions baissées de 40 % par cinquièmes (décisions 2 et 3), 2026 n'en
+    voit qu'un cinquième, 0,2 × 0,4 × 1,085 = 0,087 Md€ : − 0,037 Md€ fin
+    2026, et elle rejoint le régime général dès 2026."""
+    caisse = "msa_exploitants_complementaire"
+    projections = ic.projeter_les_caisses(RACINE_DONNEES, baisses={caisse: _baisse_posee(0.40)})
+    rco = projections[caisse]
+    assert rco.annee_integration == 2026
+    assert rco.reserves[2026] * 2_991 == pytest.approx(-0.037, abs=0.005)
+    assert rco.depenses[2026] * 2_991 == pytest.approx(1.085 - 0.087, abs=0.002)
+    assert rco.economies[2026] * 2_991 == pytest.approx(0.087, abs=0.002)
+
+
+def test_la_meme_baisse_d_un_coup_sauverait_2026():
+    """La même baisse de 40 %, d'un coup à la bascule (``annees_de_baisse=1``),
+    comme la page Coût la fait : 0,4 × 1,085 = 0,434 Md€ économisés en 2026,
+    − 0,124 + 0,434 = + 0,310 Md€ fin 2026 : la caisse tient l'année. Le
+    propriétaire a choisi les cinquièmes le 7 novembre 2026."""
+    caisse = "msa_exploitants_complementaire"
+    projections = ic.projeter_les_caisses(RACINE_DONNEES, baisses={caisse: _baisse_posee(0.40)},
+                                          annees_de_baisse=1)
+    rco = projections[caisse]
+    assert rco.annee_integration != 2026
+    assert rco.reserves[2026] * 2_991 == pytest.approx(0.310, abs=0.005)
+
+
+def test_la_baisse_ne_touche_que_les_pensions_servies_a_la_bascule():
+    """Le propriétaire, le 7 novembre 2026 : la baisse ne porte que sur les
+    pensions déjà servies, non sur celles que la caisse liquide ensuite à ses
+    règles. À la main, en 2030, cinquième année, la baisse entière : 30 % de
+    la part de la dépense que le stock fait encore, posée à 0,5, soit 15 % de
+    la dépense de l'Ircantec cette année-là."""
+    sans = ic.projeter_les_caisses(RACINE_DONNEES, baisses={})["ircantec"]
+    baisse = ic.BaisseDuStock(taux=0.30, part_du_stock={a: 0.5 for a in range(2026, ic.FIN + 1)})
+    avec = ic.projeter_les_caisses(RACINE_DONNEES, baisses={"ircantec": baisse})["ircantec"]
+    assert avec.depenses[2030] == pytest.approx(0.85 * sans.depenses[2030], rel=1e-12)
+    assert avec.depenses[2026] == pytest.approx((1.0 - 0.2 * 0.15) * sans.depenses[2026], rel=1e-12)
+    assert avec.recettes[2026] == pytest.approx(sans.recettes[2026], rel=1e-12)
+    assert avec.reserves[2026] - sans.reserves[2026] == pytest.approx(
+        0.2 * 0.15 * sans.depenses[2026], rel=1e-9)

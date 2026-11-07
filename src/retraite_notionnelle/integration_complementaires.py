@@ -25,6 +25,14 @@ retire ce que les décisions coupent :
 - aux autres, les impôts et taxes affectés : les droits sur les alcools de la
   complémentaire agricole (décision 12).
 
+Et il baisse les pensions que l'État fixe (décision 43) : celles de toutes les
+complémentaires sauf l'Agirc-Arrco, dès la bascule, par cinquièmes
+(décisions 2 et 3), et sur les seules pensions servies à la bascule, non sur
+celles qu'une caisse liquide ensuite à ses règles (le propriétaire, le
+7 novembre 2026). La baisse est celle que le coût agrégé du scénario 6 fait
+subir au stock (:func:`baisses_du_modele`) : celle du cas type de la caisse
+quand la grille du coût en a un, celle de l'ensemble sinon.
+
 Les réserves de départ sont celles de fin 2025, en valeur de marché (COR,
 juin 2026, tableau 2.3 : ``reserves_regimes.csv``), rapportées au PIB de 2025.
 
@@ -75,6 +83,11 @@ RENDEMENT_MAXIMAL = 0.05
 #: la CET : la dernière que le Chiffr'Agirc-Arrco 2026 publie.
 ANNEE_DES_ASSIETTES = 2024
 
+#: Les années sur lesquelles la baisse des pensions se fait, par parts égales :
+#: « en cinq ans au plus » (décision 3), par cinquièmes (la piste du chantier 2,
+#: retenue par le propriétaire le 7 novembre 2026 pour les complémentaires).
+ANNEES_DE_BAISSE = 5
+
 
 @dataclass(frozen=True)
 class Caisse:
@@ -89,21 +102,27 @@ class Caisse:
     #: Le code de son régime de base dans ``reserves_regimes.csv``, quand le COR
     #: les projette ensemble : la complémentaire en prend sa part.
     base: str | None = None
+    #: L'État fixe ses pensions, et les baisse dès la bascule (décision 43) :
+    #: toutes, sauf l'Agirc-Arrco, qui fixe les siennes par accord (L. 921-4).
+    pensions_fixees_par_l_etat: bool = True
+    #: Le cas type de la grille du coût qui en relève, dont la baisse est la
+    #: sienne ; sans cas type, celle de l'ensemble.
+    cas_type: str | None = None
 
 
 CAISSES: tuple[Caisse, ...] = (
     Caisse("msa_exploitants_complementaire",
            "Complémentaire des exploitants agricoles (RCO)",
-           "msa_exploitants_complementaire"),
-    Caisse("agirc_arrco", "Agirc-Arrco", "agirc_arrco"),
-    Caisse("ircantec", "Ircantec", "ircantec"),
+           "msa_exploitants_complementaire", cas_type="exploitant_agricole"),
+    Caisse("agirc_arrco", "Agirc-Arrco", "agirc_arrco", pensions_fixees_par_l_etat=False),
+    Caisse("ircantec", "Ircantec", "ircantec", cas_type="contractuel_public"),
     Caisse("cnbf_complementaire", "Complémentaire des avocats (CNBF)", "cnbf",
            impots_au_regime_de_base=True, base="cnbf"),
     Caisse("rci_complementaire", "Complémentaire des indépendants (RCI)",
-           "rci_complementaire"),
+           "rci_complementaire", cas_type="artisan"),
     Caisse("cnavpl_complementaire",
            "Sections complémentaires des libéraux (dix, consolidées)",
-           "cnavpl_complementaire"),
+           "cnavpl_complementaire", cas_type="profession_liberale"),
     Caisse("crpnpac", "Personnel navigant de l'aviation civile (CRPNPAC)", "crpnpac"),
 )
 
@@ -185,6 +204,79 @@ def contributions_supprimees_agirc_arrco(
     )
 
 
+# --- La baisse des pensions avant l'intégration ----------------------------
+
+
+@dataclass(frozen=True)
+class BaisseDuStock:
+    """La baisse des pensions qu'une caisse sert à la bascule.
+
+    ``taux`` : la part de ces pensions que le scénario 6 retire, la baisse
+    faite (négative, il les relève) ; ``part_du_stock`` : la part de la
+    dépense de la caisse qu'elles font encore, année par année, ceux qui les
+    touchent mourant peu à peu. Les pensions que la caisse liquide après la
+    bascule, à ses règles, ne baissent pas."""
+
+    taux: float
+    part_du_stock: dict[int, float]
+
+    def economie(self, annee: int, debut: int, annees_de_baisse: int = ANNEES_DE_BAISSE) -> float:
+        """La part de la dépense de la caisse que la baisse retire en ``annee``,
+        la bascule étant ``debut`` : un cinquième de la baisse la première
+        année, deux la deuxième, la baisse entière la cinquième."""
+        avancement = min(1.0, (annee - debut + 1) / annees_de_baisse)
+        return avancement * self.taux * self.part_du_stock.get(annee, 0.0)
+
+
+def _baisse_du_cout(cout, bascule: int) -> BaisseDuStock:
+    """La baisse que le coût agrégé fait subir au stock, l'année de la bascule :
+    un moins le rapport des masses de droits directs du scénario 6 et du droit
+    en vigueur, sur la part directe de la dépense — les réversions servies à la
+    bascule sont gardées (décision 16) ; la garantie vieillesse, que le régime
+    général paie, n'y entre pas."""
+    annees = {annuelle.annee: annuelle for annuelle in cout.avenir.annees}
+    annuelle = annees[bascule]
+    taux = (1.0 - annuelle.rapports["notionnel_liberal"]) * (1.0 - annuelle.part_derives)
+    # La part du stock que le coût donne passe un peu au-dessus de un les
+    # premières années pour un cas type qui ne liquide pas encore : le stock y
+    # est revalorisé aux prix, la masse du droit en vigueur à la valeur de
+    # service de chaque régime (:func:`.cout.coefficient_servi`). La part d'une
+    # dépense ne dépasse pas la dépense.
+    return BaisseDuStock(taux=taux, part_du_stock={
+        annee: min(1.0, annees[annee].part_stock) for annee in range(bascule, FIN + 1)})
+
+
+def baisses_du_modele(parametres=None) -> dict[str, BaisseDuStock]:
+    """La baisse des pensions de chaque complémentaire que l'État règle, au
+    coût agrégé du scénario 6 (:func:`.memoire.cout`).
+
+    Une caisse dont la grille du coût a un cas type prend la baisse de ce cas
+    type seul — sa grille réduite à lui, sous la même règle ; les autres,
+    celle de l'ensemble, que la page Coût montre. La baisse d'un cas type vaut
+    pour toute la pension de ses retraités, base et complémentaire : la
+    complémentaire en prend autant, en proportion.
+    """
+    from . import memoire
+    from .castypes import CAS_TYPES
+    from .config import Parametres
+
+    parametres = parametres if parametres is not None else Parametres()
+    bascule = parametres.annee_bascule
+    ensemble = _baisse_du_cout(memoire.cout(parametres), bascule)
+    baisses = {}
+    for caisse in CAISSES:
+        if not caisse.pensions_fixees_par_l_etat:
+            continue
+        if caisse.cas_type is None:
+            baisses[caisse.code] = ensemble
+            continue
+        grille = tuple(cas for cas in CAS_TYPES if cas.code == caisse.cas_type)
+        baisses[caisse.code] = _baisse_du_cout(
+            memoire.cout(parametres, cas_types=grille, ponderation="egale",
+                         comptes=False, assiette=False), bascule)
+    return baisses
+
+
 # --- La projection --------------------------------------------------------
 
 
@@ -201,6 +293,9 @@ class Projection:
     depenses: dict[int, float] = field(default_factory=dict)
     recettes: dict[int, float] = field(default_factory=dict)
     pertes: dict[int, float] = field(default_factory=dict)
+    #: Ce que la baisse des pensions servies à la bascule lui épargne, déjà
+    #: retiré de ses dépenses.
+    economies: dict[int, float] = field(default_factory=dict)
     #: L'année où ses réserves passent sous zéro, et où elle rejoint le régime
     #: général ; ``None`` si elle tient jusqu'en 2070.
     annee_integration: int | None = None
@@ -267,7 +362,12 @@ def _trajectoire_du_cor(comptes, regime: str) -> tuple[dict[int, float], dict[in
     for annee in annees[1:]:
         precedente = reserves_cor[annee - 1]
         if precedente > 0 and reserves_cor[annee] > 0:
-            facteurs[annee] = (reserves_cor[annee] - soldes[annee]) / precedente
+            facteur = (reserves_cor[annee] - soldes[annee]) / precedente
+            # Près de l'épuisement, le classeur s'écarte de sa règle (la CNBF
+            # de 2044 à 2046, l'Ircantec de 2049 à 2052) : un facteur au-delà
+            # du rendement maximal n'est pas un rendement, et multiplierait
+            # l'écart que les décisions creusent.
+            facteurs[annee] = facteur if facteur <= 1.0 + RENDEMENT_MAXIMAL else 1.0
             trajectoire[annee] = reserves_cor[annee]
         else:
             facteurs[annee] = 1.0
@@ -277,7 +377,8 @@ def _trajectoire_du_cor(comptes, regime: str) -> tuple[dict[int, float], dict[in
 
 def _projeter(caisse: Caisse, comptes, structure, reserves_2025, pib_2025: float,
               debut: int, part_supprimee: float, reserves_techniques: bool,
-              impots_affectes_gardes: bool) -> Projection:
+              impots_affectes_gardes: bool, baisse: BaisseDuStock | None,
+              annees_de_baisse: int) -> Projection:
     parts = _Parts(structure, caisse.cor)
     echelle = _part_de_la_complementaire(caisse, reserves_2025)
     trajectoire, facteurs = _trajectoire_du_cor(comptes, caisse.cor)
@@ -310,35 +411,50 @@ def _projeter(caisse: Caisse, comptes, structure, reserves_2025, pib_2025: float
             rendement = min(RENDEMENT_MAXIMAL,
                             montant("autres_produits", annee) / trajectoire[annee - 1])
         pertes = echelle * perte(annee)
+        # Les dépenses : celles du COR, moins ce que la baisse des pensions
+        # servies à la bascule épargne.
+        economie = 0.0 if baisse is None else (
+            baisse.economie(annee, debut, annees_de_baisse) * echelle * depenses[annee])
         # Les recettes : celles du COR, moins ce que les décisions coupent,
         # plus ou moins ce que rapporte l'écart de réserves à sa trajectoire.
         projection.recettes[annee] = (echelle * ressources[annee] - pertes
                                       + rendement * ecart)
-        ecart = (facteurs[annee] + rendement) * ecart - pertes
+        ecart = (facteurs[annee] + rendement) * ecart - pertes + economie
         reserves = echelle * trajectoire[annee] + ecart
         projection.reserves[annee] = reserves
-        projection.depenses[annee] = echelle * depenses[annee]
+        projection.depenses[annee] = echelle * depenses[annee] - economie
         projection.pertes[annee] = pertes
+        projection.economies[annee] = economie
         if reserves < 0:
             return Projection(caisse=caisse, reserves=projection.reserves,
                               depenses=projection.depenses, recettes=projection.recettes,
-                              pertes=projection.pertes, annee_integration=annee)
+                              pertes=projection.pertes, economies=projection.economies,
+                              annee_integration=annee)
     return projection
 
 
 def projeter_les_caisses(racine: Path, *, debut: int | None = None,
                          reserves_techniques: bool = False,
-                         impots_affectes_gardes: bool = False) -> dict[str, Projection]:
+                         impots_affectes_gardes: bool = False,
+                         baisses: dict[str, BaisseDuStock] | None = None,
+                         annees_de_baisse: int = ANNEES_DE_BAISSE) -> dict[str, Projection]:
     """Chaque complémentaire sous les décisions 36 à 48, de la bascule à 2070.
 
     ``reserves_techniques`` part des seules réserves techniques de
     l'Agirc-Arrco, son fonds de roulement mis à part. ``impots_affectes_gardes``
     lit la décision 48 à la lettre — une complémentaire « ne perd que la CEG et
     la CET » — et laisse ses impôts à la complémentaire agricole.
+
+    ``baisses`` : la baisse des pensions servies à la bascule, par caisse ;
+    sans elle, celle du modèle (:func:`baisses_du_modele`), qui calcule le
+    coût ; ``{}``, aucune, les années les plus précoces. ``annees_de_baisse`` :
+    les années sur lesquelles elle se fait, un la faisant d'un coup.
     """
     if debut is None:
         from .config import Parametres
         debut = Parametres().annee_bascule
+    if baisses is None:
+        baisses = baisses_du_modele()
     comptes = _comptes(racine)
     structure = StructureFinancement(racine)
     reserves_2025 = _reserves_2025(racine)
@@ -346,7 +462,8 @@ def projeter_les_caisses(racine: Path, *, debut: int | None = None,
                                  "pib_meur", nom="pib_courant")(debut - 1) / 1e3
     part_supprimee = contributions_supprimees_agirc_arrco(racine).part
     return {caisse.code: _projeter(caisse, comptes, structure, reserves_2025, pib, debut,
-                                   part_supprimee, reserves_techniques, impots_affectes_gardes)
+                                   part_supprimee, reserves_techniques, impots_affectes_gardes,
+                                   baisses.get(caisse.code), annees_de_baisse)
             for caisse in CAISSES}
 
 

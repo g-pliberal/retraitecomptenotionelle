@@ -87,6 +87,9 @@ COMPLETS = {
     # L'indexation du programme pour le scénario 6, sous chaque voie et chaque
     # trajectoire : une quarantaine de calculs du coût (action 186, chantier 5).
     "test_indexation_scenario_6.py",
+    # La baisse des pensions des complémentaires que l'État règle, lue au coût
+    # du scénario 6, cas type par cas type (action 186, chantier 6, étape 1 bis).
+    "test_integration_complementaires_baisse.py",
     # Ce que les pages qui agrègent lisent du modèle, figé sous la référence,
     # confronté au modèle qui le calcule.
     "test_agregats.py",
