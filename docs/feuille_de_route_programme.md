@@ -1,0 +1,489 @@
+# Feuille de route du programme — les retraites, chaque idée étudiée à fond
+
+*Ouverte le 6 novembre 2026 avec le propriétaire ; c'est l'action 186 de
+`docs/feuille_de_route.md`, et le récit de la soirée qui l'a fait naître est
+dans sa note, `docs/feuille_de_route/186/2026-11-06-bilan-et-programme.md`.
+C'est un journal, comme la feuille de route du modèle : elle dit ce que l'on
+voulait le jour où on l'a écrite.*
+
+*Les grandes idées sont décidées ; leur détail ne l'est pas. Le propriétaire
+a commencé ses propres recherches et diverge, sur quelques sujets, des pistes
+notées ici : « ce sont plutôt des ajustements que des changements de
+paradigmes ». Une piste n'est donc pas une décision. Chaque chantier
+s'étudie à fond, aux sources, avant d'entrer au modèle ou au site : « on ne
+peut pas faire ça à vue de nez ». Les ordres de grandeur que la session du
+6 novembre a cités de mémoire sont marqués « à vérifier » ; aucun ne se
+recopie sans être relu à sa source.*
+
+## Le but, et le fil
+
+Le site montre le programme du parti sur les retraites. Le diagnostic du
+propriétaire, tel qu'il l'a donné :
+
+- les retraites sont la plus grande cause d'inégalité en France ; les deux
+  vrais problèmes des Français sont le logement et le travail qui ne paie
+  plus, et tous ne sont pas logés à la même enseigne : les politiques
+  publiques avantagent les retraités ;
+- la répartition est en déficit chronique, à cause de la démographie ; elle
+  écrase les deux autres piliers, la capitalisation d'entreprise, peu
+  utilisée, et la capitalisation personnelle (le PER), jeune et à peine
+  reconnue ;
+- les générations anciennes ont capitalisé, en immobilier et en
+  assurance-vie, grâce à des cotisations basses, et touchent des pensions
+  élevées au regard de ce qu'elles ont cotisé ; les jeunes, qui cotisent
+  beaucoup pour une pension future faible et paient leur loyer à leurs aînés,
+  ne peuvent pas capitaliser : une injustice entre générations que les gens
+  ne voient pas ;
+- la mesure aurait dû être prise il y a trente ans ; par manque de courage
+  politique, on a toujours fait payer davantage les cotisants sans toucher
+  aux droits passés.
+
+Les valeurs : **liberté** (moins de cotisations, la capitalisation, moins
+aliénante), **égalité** (entre les générations), **fraternité** (tout le
+monde participe à l'effort). Le libéralisme du parti : les cotisants paient
+pour les accidents de la vie, pas pour les choix de vie, et l'on dit qui
+finance quoi.
+
+**Le fil, retenu le 6 novembre : le parti des cotisants et des petites
+pensions.** Chaque mesure s'y juge : protège-t-elle les cotisants et les
+petites pensions ?
+
+## Ce qui est décidé
+
+Au 6 novembre 2026, de la bouche du propriétaire :
+
+1. **Le compte notionnel à valeur actuarielle** est l'instrument de
+   l'égalité : « les gens sont tous d'accord sur le principe mais pas sur le
+   résultat ».
+2. **Les pensions des retraités actuels baissent** : « le stock est trop
+   grand pour ne pas traiter ce sujet ». Pas de clause du grand-père.
+3. **En cinq ans au plus.**
+4. **Ne pas faire payer deux fois une génération** : « c'est inacceptable ».
+5. **Rien sur l'héritage** : « hors de question. On paie déjà plus que les
+   autres pays et la majorité des Français est contre. »
+6. **Se battre devant le Conseil constitutionnel et la CEDH** : la situation
+   est d'urgence, l'écart de taux avec l'Allemagne le montre ; « décider de
+   notre destin avant que la BCE ou le FMI le fasse ».
+7. **Ne retirer que les droits non contributifs des choix de vie**, garder
+   ceux des accidents de la vie, avec des critères, et dire qui les finance.
+   La rétroactivité a peut-être été trop large sur ce point.
+8. **Pas de critère de pénibilité** : la fraude pourrait être massive.
+9. **Des recettes hors du travail**, parce que les travailleurs sont de moins
+   en moins nombreux : une part de TVA affectée, la TVA sociale ; la taxe
+   foncière transformée en taxe sur la valeur du terrain (LVT) à 1 %, peut-être
+   à 2 %, dont 1 % aux retraites. Les deux restent à évaluer. La TVA revient
+   sur le renoncement du 24 septembre (`docs/chiffrage_plf.md` : « rien de la
+   TVA ne va aux retraites »).
+10. **L'indexation sur la masse salariale**, avec une réserve : un chômage de
+    masse que l'IA causerait, ce qui n'est pas sûr.
+11. **Quand l'âge de départ des actifs recule, les pensions des retraités
+    baissent** : l'effort se partage. À garder, mais le calcul est à revoir.
+12. **Les complémentaires ne vivent que de leurs cotisations** : ni impôt
+    affecté, ni argent de l'État. Sauvées si elles font défaut, mais en
+    contrepartie, plus financées ; elles rejoindront le régime général, tout
+    de suite pour les moins bien dotées en démographie, ensuite pour les
+    autres. La CET et la CEG supprimées.
+13. **Mettre en avant que le compte notionnel garantit la retraite** (la
+    formulation est au chantier 5).
+14. **Le simulateur reste, réorienté** (chantier 9).
+15. **Une seule action pour le programme, en étapes ; le reste de la feuille
+    de route du modèle est gelé** (« Oui, faisons comme ça ») — la liste du
+    gel est à confirmer (chantier 10).
+
+## Ce qui est écarté
+
+- **Une transition sans baisse nominale des pensions en cours** — bâtir le
+  scénario 6 sur le scénario 3 —, proposée par la session du 6 novembre.
+  Intenable : la variante prospective n'est jamais à l'équilibre et accumule
+  225 points de PIB de dette d'ici 2070 (`docs/chiffrage_plf.md`, § F).
+- **Toute reprise sur la succession ou l'héritage.** Le scénario 6 en porte
+  pourtant une : voir le chantier 2.
+
+## Les chantiers
+
+Chacun se présente de même : la question ; ce que le dépôt sait déjà ; les
+pistes du 6 novembre, qui sont un avis et non une décision ; ce qu'il faut
+étudier ; ce qui revient au propriétaire. Le propriétaire y versera ses
+propres recherches, et ses désaccords s'y écrivent en face de la piste qu'ils
+corrigent.
+
+### Chantier 1 — L'ordre de la réforme : la baisse des pensions va d'abord au déficit
+
+**La question.** Le chiffrage du dépôt contredit l'argument de l'urgence :
+*« La variante rétroactive ne fait pas mieux que le droit en vigueur sur la
+moyenne de la projection : elle est meilleure après le milieu du siècle, pire
+avant, et le stock de dette qu'elle accumule d'ici 2070 dépasse celui du
+système actuel. »* Sur 2026-2070, solde moyen -1,08 point de PIB contre
+-1,13 ; dette accumulée +74 points contre +66. La réforme baisse la dépense de
+pensions d'un tiers (8 494 Md€ cumulés), puis rend presque tout en recettes :
+le taux unique de 18 %, cinq points vers le pilier capitalisé, les impôts
+affectés supprimés.
+
+**Dans le dépôt.** `docs/chiffrage_plf.md` (§ F et les « quatre
+arbitrages ») ; le scénario 6 dans `docs/methodologie.md` ; les couches de la
+proposition, `data/reference/couches/`.
+
+**Pistes du 6 novembre.** Pendant les cinq ans de convergence, la baisse des
+pensions va au déficit et le taux de cotisation ne bouge pas ; le gain
+immédiat des actifs est que chaque euro cotisé ouvre des droits (la
+cotisation vieillesse déplafonnée, 17,9 Md€ en 2025, n'en ouvre aucun :
+`docs/musee_des_horreurs.md`). La descente à 18 % et le pilier viennent quand
+le solde est positif. Rien n'est payé deux fois : sur un compte notionnel,
+tout ce qui est versé est crédité.
+
+**À étudier.** Chiffrer cette séquence, en couche (`data/CLAUDE.md`) ; son
+effet avec les recettes du chantier 4 ; le rythme de descente du taux.
+
+**Au propriétaire.** L'ordre ; le rythme ; ce que devient le pilier pendant
+la convergence.
+
+### Chantier 2 — La baisse des pensions en cours : sa règle, son plancher, son calendrier, son droit
+
+**La question.** Baisser les pensions liquidées en cinq ans, d'une façon qui
+tienne devant les juges et devant l'opinion.
+
+**Dans le dépôt.** Le scénario 4 (le compte rétroactif) et le scénario 6 ; la
+garantie vieillesse individualisée, dont `docs/methodologie.md` donne le
+tableau (deux pensions de 300 € et 1 500 € : 500 € par mois de garantie,
+contre rien sous l'ASPA, qui compte le foyer) ; la page Coût.
+
+**Pistes du 6 novembre.**
+- *La règle* : ne retirer que la part non cotisée, la pension moins ce que
+  ses cotisations justifient, pension par pension ; restreinte par la
+  décision 7, les accidents de la vie restant acquis. « Nous ne reprenons pas
+  un euro cotisé. »
+- *Le plancher* : la garantie vieillesse.
+- *Le calendrier* : une convergence par cinquièmes, votée la première année,
+  avec un plafond de baisse par an.
+- *Qui perd, et combien* : les pertes par tranche de pension, chez les
+  retraités d'aujourd'hui. Elles décident du message : si elles se
+  concentrent en haut, le dire ; si la retraitée médiane perd lourdement, ne
+  pas prétendre le contraire.
+- *Le droit*, à lire aux sources et à faire relire par un spécialiste de
+  droit public : l'alinéa 11 du Préambule de 1946, l'article 16 de la
+  Déclaration de 1789, l'article 1 du Protocole n° 1 de la CEDH. Les
+  précédents, cités de mémoire et à vérifier : le Conseil d'État grec, en
+  2015, a annulé des baisses de pension faute d'étude de leurs effets ; le
+  Tribunal constitutionnel portugais, en 2013, a censuré la « convergence »
+  des pensions publiques mais admis une contribution extraordinaire de
+  solidarité temporaire ; la CEDH a déclaré irrecevables, en 2013, les
+  recours contre les baisses grecques (Koufaki et Adedy) et portugaises
+  (Da Conceição Mateus et Santos Januário), mais condamné en 2016 la privation
+  totale d'une pension (Béláné Nagy c. Hongrie). L'étude actuarielle publiée
+  du dépôt serait alors un atout juridique.
+
+**Une incohérence à trancher.** Le scénario 6 reprend la garantie vieillesse
+sur la succession dès le premier euro, avec intérêts : 220 Md€ cumulés sur
+2026-2070 dans la variante rétroactive. C'est contraire à la décision 5, et
+cela ferait baisser un recours que le modèle suppose déjà de 50 %, comme pour
+l'ASPA.
+
+**Au propriétaire.** Le plafond par an ; la reprise sur succession (la
+retirer, et financer ces 220 Md€ autrement ?).
+
+### Chantier 3 — Accidents de la vie, choix de vie : les critères, et qui paie
+
+**La question.** Quels droits non contributifs garder, lesquels retirer, et
+qui finance ceux qu'on garde.
+
+**Dans le dépôt.** `docs/avantages_non_contributifs.md` et
+`data/reference/legislation/avantages_non_contributifs.yaml` : 45 dispositifs,
+au moins 95,2 Md€ en 2024, 22,3 % des pensions (un plancher).
+
+**Pistes du 6 novembre : quatre questions par droit.**
+1. L'événement est-il subi ? Sinon, c'est un choix, et c'est à l'intéressé
+   de le payer.
+2. Est-il constaté par un tiers — médecin-conseil, France Travail, état
+   civil ? C'est la parade contre la fraude.
+3. Qui le paie ? L'assureur du risque, qui verse la cotisation au compte :
+   assurance maladie, chômage, accidents du travail, branche famille, l'État
+   employeur. Jamais les autres cotisants. (À lire : comment la Suède crédite
+   les années d'enfants, de chômage ou de maladie, payées par son budget.)
+4. Est-il forfaitaire ? Un droit proportionnel à la pension donne plus aux
+   grosses pensions.
+
+Une première répartition, à valider :
+
+| Pile | Dispositifs | Qui paie |
+|---|---|---|
+| Accidents : gardés | maladie, invalidité, accident du travail, chômage indemnisé ; taux plein pour invalidité ou inaptitude ; incapacité permanente constatée ; travailleurs handicapés ; enfant handicapé ; tierce personne ; orphelins ; veuvage précoce ; amiante | l'assureur du risque |
+| Minima | minimum contributif, minimum garanti, ASPA, minima agricoles | remplacés par la garantie vieillesse, payée par l'impôt |
+| Accordés par l'État ou un employeur | catégories actives, bonifications du cinquième, jouissance immédiate des militaires, campagnes, service aérien, service national, apprentissage | celui qui les accorde, par une surcotisation au compte |
+| Choix de vie : retirés pour l'avenir | carrière longue, décote et surcote non actuarielles, majoration pour conjoint à charge | personne : le compte actuariel s'en charge |
+| À trancher | enfants (MDA, majoration de 10 %, bonifications, surcote parentale, AVPF), réversion | le propriétaire |
+
+Le rendement servi au-delà des cotisations reste repris : ce n'est ni un
+accident ni un choix, c'est ce que le compte notionnel corrige.
+
+*La pénibilité* : pas de critère déclaratif ; seulement l'incapacité
+constatée par un médecin-conseil, qui existe déjà.
+
+**À étudier.** Chiffrer chaque pile ; qui paie aujourd'hui chaque droit
+gardé (FSV, branche famille, Unédic…) ; la frontière, pour les retraités
+d'aujourd'hui, entre ce qui est repris et ce qui reste acquis.
+
+**Au propriétaire.** *Les enfants* : un choix des parents, mais la répartition
+vit des cotisants de demain ; piste : un forfait par enfant payé par la
+branche famille, à la place de la majoration de 10 %, qui avantage les
+grosses pensions et les hommes. *La réversion* : le mariage est un choix, le
+décès un accident, et les veuves sont souvent de petites pensions ; la
+garantie individualisée rattrape les plus pauvres, il faut décider pour les
+autres.
+
+### Chantier 4 — Les recettes hors du travail : la TVA sociale et la LVT
+
+**La question.** Combien rapportent la TVA sociale et la LVT, qui les paie,
+et en combien de temps elles se mettent en place.
+
+**Pistes du 6 novembre : l'architecture.** Les cotisations alimentent les
+comptes ; les impôts paient les accidents, le plancher et la transition. Des
+recettes qui ne reposent pas sur le travail couvrent à la fois la baisse du
+nombre d'actifs et le risque de l'IA.
+
+**La TVA.** Le mécanisme est resté dans le modèle comme variante
+(`taux_tva_liberal`). Le 23 septembre, avec un taux unique de 20 %, la variante
+rétroactive était en excédent chaque année sauf 2044 et 2045
+(`docs/chiffrage_plf.md`). Piste : ne relever que le taux normal, pas celui
+de 5,5 % sur l'alimentation et l'énergie, à cause des petites pensions. Un
+point de taux normal rapporterait de l'ordre de 8 Md€ (à recalculer). Une
+recette disponible dès la première année.
+
+**La LVT.** Les 58 Md€ du propriétaire supposent environ 5 800 Md€ de
+terrains, le bon ordre de grandeur des terrains bâtis dans les comptes de
+patrimoine de l'Insee (à vérifier sur le dernier millésime). Trois
+corrections :
+- elle remplace la taxe foncière, qui rapporte déjà de l'ordre de 40 Md€ (à
+  vérifier) : le gain se compte net ;
+- le prix du terrain baisse de ce que la taxe lui retire : si un terrain
+  rapporte 3 % par an, une taxe de 1 % en fait baisser le prix d'environ un
+  quart, une taxe de 2 % de deux cinquièmes. En calcul de coin de table,
+  1 % de 75 % de 5 800 Md€ ≈ 44 Md€, à peu près la taxe foncière d'aujourd'hui ;
+  2 % de 60 % ≈ 70 Md€, soit une trentaine de milliards nets ;
+- cette baisse est un argument sur le logement — des terrains moins chers
+  pour les jeunes, payés par les propriétaires, souvent âgés —, mais les
+  jeunes acheteurs endettés y perdent le plus en proportion. Un abattement
+  sur le terrain de la résidence principale les protège, avec les petits
+  propriétaires retraités ; sans lui, la seule issue pour un retraité riche
+  en terrain et pauvre en revenus serait un paiement différé jusqu'à la vente
+  ou la succession, ce que la décision 5 exclut.
+
+Il faut d'abord estimer le terrain de chaque parcelle, quand les bases de la
+taxe foncière datent de 1970 et que leur révision est sans cesse repoussée :
+plusieurs années. La TVA finance les premières, la LVT prend le relais.
+
+**À étudier.** La valeur des terrains (Insee) ; le produit de la taxe
+foncière (DGFiP, OFGL) ; ce que la littérature dit du report de la LVT sur le
+prix des terrains ; les pays qui taxent le terrain (le Danemark, l'Estonie, à
+lire) ; le rendement d'un point de TVA, par le modèle.
+
+**Au propriétaire.** La TVA sur le seul taux normal ; la LVT à 1 % ou à 2 %,
+et son abattement.
+
+### Chantier 5 — L'indexation, et le partage de l'effort entre actifs et retraités
+
+**La question.** Quelle indexation, pour les comptes et pour les pensions
+servies, et comment l'effort démographique se partage.
+
+**Dans le dépôt.** Le tableau des règles d'indexation du README (bloc
+produit `indexation`).
+
+**Pistes du 6 novembre.**
+- *Les comptes* : la masse salariale est la bonne règle ; c'est le rendement
+  qu'une répartition peut tenir durablement.
+- *Les pensions servies* : indexées elles aussi sur la masse salariale, ou
+  corrigées d'un facteur démographique, comme en Allemagne depuis 2004 (à
+  lire). La règle du propriétaire — l'âge des actifs recule, les pensions
+  baissent — devient automatique : l'espérance de vie se reporte sur les
+  nouveaux retraités par le coefficient de leur génération, la baisse du
+  nombre d'actifs sur tous les retraités par l'indexation. En face : la
+  réforme de 2023 a ajouté deux ans aux actifs, et les pensions ont été
+  revalorisées de 5,3 % en janvier 2024 (à vérifier).
+- *L'IA* : avec cette indexation, les retraités partageraient une baisse de
+  l'emploi, et c'est voulu ; la couverture vient des recettes hors du travail
+  (chantier 4) et du pilier capitalisé, qui détient le capital. Le plancher,
+  indexé sur les prix, protège les plus pauvres.
+- *« Garantit la retraite »* : le compte notionnel garantit la règle, pas le
+  montant ; la Suède a baissé ses pensions en 2010 et 2011 par son mécanisme
+  d'équilibre (à vérifier). Ce qui tient : « chaque euro cotisé est inscrit à
+  votre nom, la même règle vaut pour tous, et personne ne descend sous le
+  plancher ».
+
+**À étudier.** Les règles suédoise, allemande, italienne, lettone et
+polonaise, à leurs sources ; ce que chacune aurait donné en France depuis
+2000, par le modèle.
+
+**Au propriétaire.** L'indexation des pensions servies ; la formulation de la
+garantie.
+
+### Chantier 6 — Les complémentaires : rien que leurs cotisations, sauvées mais dissoutes
+
+**La question.** Comment couper aux complémentaires tout argent qui n'est pas
+une cotisation, et les sauver si elles font défaut, en contrepartie de leur
+entrée au régime général.
+
+**Dans le dépôt.** Les parts de financement du COR, 2023
+(`data/reference/regimes/structure_financement.csv`) :
+
+| Caisse | Cotisations | Impôts et taxes | Subvention d'équilibre |
+|---|---:|---:|---:|
+| Agirc-Arrco | 84 % | 7 % | 0 |
+| Ircantec | 82 % | 0 | 0 |
+| Complémentaires des libéraux | 84 % | 0 | 0 |
+| Complémentaire des exploitants agricoles | 43 % | 48 % | 0 |
+
+Les régimes spéciaux fermés (SNCF, RATP, IEG, mines…) ne reçoivent plus de
+subvention de l'État : depuis 2025, c'est le régime général qui les équilibre
+(`docs/regimes.md`) — les cotisants du privé paient donc pour eux.
+
+**Pistes du 6 novembre.**
+- Les 7 % de l'Agirc-Arrco seraient la compensation des allègements de
+  charges sur les bas salaires (à vérifier). Les supprimer, c'est faire payer
+  plein tarif sur les bas salaires, contre « le travail paie » ; mieux vaut
+  porter ces allègements au régime de base et les financer par la TVA sociale.
+- La CET et la CEG : le dépôt n'écrit nulle part qu'on les supprime ; le taux
+  unique de 18 % les fait disparaître de fait à la bascule, mais la mesure
+  n'est ni écrite ni chiffrée. La CEG aurait pris la suite de l'AGFF, qui
+  finançait les départs avant 65 ans sans abattement (à vérifier) : un choix
+  de vie, selon la doctrine du parti.
+- Le filet est une mise en résolution, comme pour une banque : une caisse qui
+  ne peut plus payer voit ses pensions garanties par le régime général, qui
+  reprend en échange ses réserves, ses cotisants et ses retraités, dont les
+  droits passent à la règle unique, avec le plancher.
+- La première concernée serait la complémentaire agricole : de petites
+  pensions, que le plancher protège ; le dire d'emblée.
+- La fusion par la loi, comme le prévoyait le projet de 2019, plutôt que
+  l'asphyxie, qui frapperait d'abord les plus fragiles et épargnerait
+  l'Agirc-Arrco.
+
+**À étudier.** Les réserves de chaque caisse ; l'histoire de la CET, de la
+CEG et de l'AGFF ; le projet de 2019 sur l'intégration des complémentaires ;
+ce que la CEG rapporte, et ce que sa suppression retire.
+
+**Au propriétaire.** Le mécanisme ; l'ordre des caisses.
+
+### Chantier 7 — Les chiffres qui tiennent
+
+**La question.** Un challenger est vérifié plus durement qu'un sortant :
+chaque chiffre du programme doit résister.
+
+**Pistes du 6 novembre.**
+- « La moitié du déficit public » : même la convention la plus large, qui
+  compte toute la contribution de l'État employeur, n'en ferait qu'un quart
+  à un tiers (à vérifier). Prendre la convention du site (action 129) et
+  l'annoncer comme telle.
+- L'écart de taux avec l'Allemagne : le citer chiffré, à la date de
+  publication, plutôt que « proche du défaut » ou « taux stratosphériques ».
+- La BCE et le FMI : un risque, pas une prophétie ; le précédent grec suffit
+  — « la même baisse, selon une règle juste, ou une baisse aveugle décidée
+  ailleurs ».
+- Le « TRI négatif » des cotisants : les travaux du COR donneraient des
+  rendements en baisse d'une génération à l'autre, mais pas négatifs (à
+  vérifier). Publier la convention de l'outil.
+- Les 17,9 Md€ cotisés sans droits : solides (`docs/musee_des_horreurs.md`).
+- Le PEE n'est pas un produit de retraite ; c'est le PER d'entreprise
+  (ex-Perco).
+- « La capitalisation rendrait tout le monde plus riche » : la dette des
+  droits acquis ne disparaît pas en passant à la capitalisation ; le gain
+  porte sur l'argent nouveau, pas sur la transition (Breyer, 1989).
+
+**À étudier.** Chacun à sa source : COR, Cour des comptes, Insee, Agence
+France Trésor.
+
+### Chantier 8 — Le message
+
+**Pistes du 6 novembre.**
+- Le fil : le parti des cotisants et des petites pensions.
+- Un gain par électorat. *Les actifs* : le salaire net, en euros par mois ;
+  un compte à leur nom ; un pilier capitalisé protégé par la loi (la Pologne
+  a transféré à l'État, en 2014, la moitié des actifs de ses fonds de
+  pension, à vérifier) ; l'épargne retraite comme apport pour un premier
+  logement, comme en Suisse. *Les 45-62 ans* : leurs droits acquis ; peut-être
+  la liberté de l'âge, que le compte actuariel permet. *Les retraités* : le
+  plancher, et la garantie individualisée, un gain que le programme contient
+  sans le montrer.
+- La responsabilité : le parti tient en partie responsable la génération du
+  baby-boom, plus nombreuse, qui a obtenu ce qu'elle voulait par son poids
+  électoral. Piste : viser plutôt le manque de courage politique de trente
+  ans — les mots du propriétaire —, parce que les baby-boomers sont aussi les
+  parents des électeurs visés, et que beaucoup ont de petites pensions.
+- Tester avant de publier, auprès d'une vingtaine de personnes réelles,
+  retraités compris : qu'ont-elles compris, et pensent-elles y gagner ?
+
+**Au propriétaire.** Tout ce chantier.
+
+### Chantier 9 — Le site et le simulateur
+
+**La question du propriétaire.** « Est-ce que le simulateur est vraiment une
+bonne idée ? Il joue plus contre nous qu'autre chose. »
+
+**Pistes du 6 novembre.** Tel qu'il est, oui : il montre par défaut une perte
+personnelle, sans plancher ni calendrier. Mais le retirer ne servirait à
+rien : le site et le code sont publics, et les adversaires feront le calcul.
+Il faut changer la question à laquelle il répond :
+1. d'abord, pour tous : « combien vous rapporte un euro cotisé, dans le
+   système actuel ? » — l'injustice, mesurée ;
+2. ensuite, la réforme : pour un actif, ce qu'il gagne ; pour un retraité, sa
+   pension avec le plancher et le calendrier, et « ce que vous rendez, c'est
+   la part que d'autres ont payée pour vous ».
+
+Et : trois portes d'entrée (« je travaille », « je pars bientôt », « je suis
+retraité ») ; l'accueil et le simulateur disent la même chose ; la page Coût,
+aujourd'hui la plus dangereuse, suit l'ordre du chantier 1 ; deux pages de
+plus, « Comment on paie la transition » et « Les questions qui fâchent » ; le
+calcul rétroactif devient une page à part, « Le miroir ».
+
+**À faire après les chantiers 1 à 6**, qui fixent ce que le site montre ; les
+listes de `moteur/CLAUDE.md` s'appliquent.
+
+### Chantier 10 — Le gel, la cible, la date
+
+**La question.** Le chantier du modèle semblait sans fin : au 6 novembre,
+44 actions ouvertes contre 9 le 27 septembre ; 52 ouvertes et 17 closes
+depuis ; des fiches « conformes » passées de 47 à 34 en quatre semaines ; un
+avancement mesuré sur 16 388 rédactions d'articles. Le détail est dans la note
+du 6 novembre.
+
+**Pistes du 6 novembre.**
+- Geler les dépouillements exhaustifs (actions 89, 137, 138, 159, 175, 176,
+  178, 184) et l'outillage qui ne bloque rien (135, 161, 163, 174) ; garder ce
+  qui sert le programme. Le gel ne supprime rien.
+- Plafonner les actions ouvertes, une dizaine ; une idée nouvelle va dans une
+  liste « plus tard ».
+- Un seuil d'importance : un écart ne devient du travail que s'il déplace un
+  résultat affiché de plus de 1 % ou de 10 € par mois ; en dessous, une
+  limite déclarée.
+- Une mesure de tête qui peut atteindre 100 %, par exemple les cas types du
+  site reproduits.
+
+**À vérifier avant d'écrire le gel.** Le statut qu'un gel prend dans la
+feuille de route : `reprise.py` et le tableau de bord ne connaissent que
+`à faire`, `en cours`, `fait`, `abandonnée` et `archivée` ; un statut neuf
+passe par eux et par leurs tests. D'autres sessions peuvent travailler sur
+ces actions : le gel se dit avant de s'écrire.
+
+**Au propriétaire.** La liste du gel ; le seuil ; la date — la mi-octobre
+est passée ; le début de la campagne présidentielle ?
+
+## Les décisions attendues du propriétaire
+
+- Chantier 1 : l'ordre de la réforme, le rythme de descente à 18 %.
+- Chantier 2 : le plafond de baisse par an ; la reprise sur succession de la
+  garantie vieillesse.
+- Chantier 3 : les enfants ; la réversion ; la répartition des 45 dispositifs.
+- Chantier 4 : la TVA sur le seul taux normal ; la LVT à 1 % ou 2 %, et son
+  abattement.
+- Chantier 5 : l'indexation des pensions servies ; la formulation de la
+  garantie.
+- Chantier 6 : le mécanisme de résolution ; l'ordre des caisses.
+- Chantier 10 : la liste du gel ; le seuil ; la date.
+
+## Comment s'en servir
+
+- Chaque chantier est une étape de l'action 186. Une session par chantier ;
+  sa note sous `docs/feuille_de_route/186/` ; quand plusieurs se mènent en
+  parallèle, chacune tient son bloc « Reprise » en tête de sa note.
+- L'étude précède tout changement du modèle ou du site. Ce qu'elle établit
+  s'écrit ici, sous son chantier, daté ; une piste confirmée devient une
+  décision, avec les mots du propriétaire.
+- Les recherches du propriétaire entrent ici, en face des pistes qu'elles
+  confirment ou corrigent.

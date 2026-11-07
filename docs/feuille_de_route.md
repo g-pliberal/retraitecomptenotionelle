@@ -8039,3 +8039,35 @@ et 3 ci-dessus ; la mesure, et comment la refaire, sont dans la note
    dans le même texte ; « 1 er » et « 1er » se valent depuis l'étape 1 ; la
    NOTA à part et les alinéas rendraient le mot à mot plus lisible, sans faire
    trancher une rédaction de plus.
+
+### 186. Le programme du parti sur les retraites : chaque grande idée étudiée à fond, aux sources, puis le modèle et le site qui la montrent — `en cours`
+
+**Reprise, au 6 novembre 2026.** Ouverte ce soir avec le propriétaire : le
+programme a sa feuille de route, `docs/feuille_de_route_programme.md` —
+quinze décisions, ce qui est écarté, dix chantiers. Le détail n'est pas
+décidé : le propriétaire apporte ses propres recherches, qui ajustent
+plusieurs pistes ; une piste n'est pas une décision. Par quoi commencer :
+revoir avec lui « Les décisions attendues », puis le gel (chantier 10),
+avant d'ouvrir une session par chantier. Rien n'est gelé encore. Détail :
+`186/2026-11-06-bilan-et-programme.md`.
+
+**D'où elle vient.** Le 6 novembre 2026, le propriétaire demande un bilan :
+les vagues se succèdent, et le chantier semble sans fin. La session mesure
+que les actions s'ouvrent plus vite qu'elles ne se closent (44 ouvertes,
+contre 9 le 27 septembre) et que rien n'écrit de ligne d'arrivée. Le
+propriétaire fixe le but — le site montre le programme du parti — et le fil :
+« le parti des cotisants et des petites pensions ». Puis : « Trace tout dans
+une feuille de route dédiée au programme et on verra demain. »
+
+**Les étapes** sont les dix chantiers de la feuille de route du programme :
+1. l'ordre de la réforme, la baisse des pensions au déficit d'abord ;
+2. la baisse des pensions en cours : sa règle, son plancher, son calendrier,
+   son droit ;
+3. accidents de la vie et choix de vie : les critères, et qui paie ;
+4. les recettes hors du travail : la TVA sociale et la LVT ;
+5. l'indexation, et le partage de l'effort entre actifs et retraités ;
+6. les complémentaires : rien que leurs cotisations, sauvées mais dissoutes ;
+7. les chiffres qui tiennent ;
+8. le message ;
+9. le site et le simulateur, après les chantiers 1 à 6 ;
+10. le gel, la cible, la date.

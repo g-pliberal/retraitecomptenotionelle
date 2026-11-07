@@ -113,6 +113,13 @@ fichiers:
   docs/archives/feuille_de_route.md:
     defaut: recit
 
+  # La feuille de route du programme (action 186), ouverte le 6 novembre 2026
+  # avec le propriétaire : ses décisions, ce qui est écarté, ses chantiers. Un
+  # journal, comme la feuille de route du modèle : elle dit ce que l'on
+  # voulait le jour où on l'a écrite, et ses ordres de grandeur sont datés.
+  docs/feuille_de_route_programme.md:
+    defaut: recit
+
   # ------------------------------------------------------------------------
   # Produit par un script, et déjà tenu par test_le_document_des_regimes_suit_l_inventaire.
   # ------------------------------------------------------------------------
