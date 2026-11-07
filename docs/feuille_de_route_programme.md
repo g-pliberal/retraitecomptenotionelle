@@ -211,10 +211,6 @@ sources :
     ensuite, 18 %** : « On garde les cotisations telles quelles tant que la
     complémentaire n'a pas été intégrée dans le régime général. Quand ça
     bascule dans le régime général, les cotisations seront à 18%. »
-41. **La garantie vieillesse remplace tous les planchers propres à une
-    caisse**, y compris ceux qui la dépassent pour une longue carrière — le
-    minimum garanti des fonctionnaires, ceux de la SNCF et des IEG, le
-    complément différentiel des exploitants agricoles : « Oui ».
 
 Le même jour, sur l'indexation (chantier 5), après l'étude aux sources :
 
@@ -227,6 +223,23 @@ Le même jour, sur l'indexation (chantier 5), après l'étude aux sources :
     notionnelles (décision 10), et les prix pour les pensions servies à la
     bascule (action 48 de la feuille de route, archivée, le 20 septembre
     2026).
+
+Le même jour, sur les complémentaires (chantier 6), à la suite des
+décisions 36 à 40 :
+
+42. **La garantie vieillesse remplace tous les planchers propres à une
+    caisse**, y compris ceux qui la dépassent pour une longue carrière — le
+    minimum garanti des fonctionnaires, ceux de la SNCF et des IEG, le
+    complément différentiel des exploitants agricoles : « Oui ». Écrite
+    d'abord sous le numéro 41, qu'une autre session venait de prendre.
+    *Rouverte aussitôt* : « J'aimerais revoir ce sujet pour voir comment vont
+    être impactés les gens. J'aimerais surtout voir notre marge de manœuvre
+    légale sur le sujet. »
+43. **Le parti ne baisse que les pensions que l'État fixe ; l'Agirc-Arrco
+    garde les siennes jusqu'à ce qu'elle coule** : « On ne bouge que les
+    pensions des régimes que l'on peut bouger en tant que politique. Si
+    l'Agirc-Arrco décide de garder des retraites trop hautes, l'Agirc-Arrco
+    finira par couler au bout d'un moment. »
 
 ## Ce qui est écarté
 
@@ -1245,11 +1258,17 @@ est passée ; le début de la campagne présidentielle ?
   le sort des réserves, aux comptes des affiliés de chaque caisse ou au fonds
   commun ; l'ordre ; la garantie face au complément différentiel des
   exploitants agricoles.
-- Chantier 6, après les décisions 36 à 41 : la voie pour la compensation
+- Chantier 6, après les décisions 36 à 43 : la voie pour la compensation
   des allègements de l'Agirc-Arrco, que la loi fixe (la porter au régime
   général, la couper, ou supprimer l'allègement) ; le taux du régime général
   d'un salarié dont la complémentaire n'est pas intégrée ; les pensions de
   l'Agirc-Arrco jusqu'à son intégration, que fixent les partenaires sociaux.
+- Chantier 6, après les décisions 42 et 43 : la part de la compensation
+  qui tombe au SMIC, où le régime général n'a plus rien à alléger (à la
+  charge de l'employeur, de l'État ou de personne) ; le taux du régime
+  général d'un salarié dont la complémentaire n'est pas intégrée, au vu des
+  taux de chaque caisse ; les planchers (décision 42, rouverte), à étudier
+  dans une session neuve : qui perd, combien, et la marge légale.
 - Chantier 7, étudié le 7 novembre : « la moitié du déficit public »,
   abandonnée ou attribuée à Beaufret ; les taux chiffrés à la date de
   publication ; le rendement en baisse au lieu du « TRI négatif » ; le PER

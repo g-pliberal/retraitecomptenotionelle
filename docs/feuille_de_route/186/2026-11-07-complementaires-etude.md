@@ -1,7 +1,7 @@
 # Les complémentaires étudiées aux sources : ce qui n'est pas cotisation, leurs réserves, et la manière de les sauver
 
 **Reprise, au 7 novembre 2026.** Le chantier 6 est étudié et tranché
-(décisions 36 à 41). Restent au propriétaire, sous « Qui fixe les taux de
+(décisions 36 à 43). Restent au propriétaire, sous « Qui fixe les taux de
 chaque caisse » : la voie pour la compensation des allègements ; le taux du
 régime général d'un salarié dont la complémentaire n'est pas intégrée ; les
 pensions de l'Agirc-Arrco jusqu'à son intégration. Puis une session du modèle
@@ -216,7 +216,7 @@ S'y ajoutent deux planchers en points : la garantie minimale de points des cadre
 
 ## Qui fixe les taux de chaque caisse
 
-Le propriétaire répond à la quatrième question — « Oui » : la garantie vieillesse remplace aussi les quatre planchers qui la dépassent (décision 41) — et demande, pour les trois autres, qui décide : la caisse seule ? un parti n'agit-il que sur le régime général ? Les textes en vigueur (index LEGI de la DILA, à jour au 2 novembre 2026) répondent caisse par caisse. **Une seule caisse fixe elle-même ses taux : l'Agirc-Arrco.** Toutes les autres les reçoivent de l'État.
+Le propriétaire répond à la quatrième question — « Oui » : la garantie vieillesse remplace aussi les quatre planchers qui la dépassent (décision 42 ; écrite d'abord sous le numéro 41, qu'une autre session venait de prendre) — et demande, pour les trois autres, qui décide : la caisse seule ? un parti n'agit-il que sur le régime général ? Les textes en vigueur (index LEGI de la DILA, à jour au 2 novembre 2026) répondent caisse par caisse. **Une seule caisse fixe elle-même ses taux : l'Agirc-Arrco.** Toutes les autres les reçoivent de l'État.
 
 | Caisse | Qui fixe les cotisations | Le texte |
 |---|---|---|
