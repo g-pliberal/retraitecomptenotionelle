@@ -78,6 +78,41 @@ Le scénario 6 tel que le dépôt le chiffre, garantie comprise : solde de
 2026 contre 4,79 d'économie : il rend aux cotisants et aux payeurs publics
 plus que l'économie, et n'est ni A ni B.
 
+## Corrigé le même jour : ce que le calcul oublie
+
+Le propriétaire, à la lecture : « j'ai du mal à comprendre. Il n'y a que des
+avantages à la lecture B, on ne peut pas avoir que des avantages. Il faut
+aussi des inconvénients. Il y a un souci, non ? » Il y en a trois.
+
+- **Le calcul est faux sur un point de méthode.** Il change les cotisations
+  sans changer les pensions qu'elles ouvrent : la dépense reste celle du
+  scénario 6, qui crédite aux comptes 18 % à compter de la bascule
+  (`Parametres.taux_cotisation_liberal`). Or, en compte notionnel, la
+  cotisation d'aujourd'hui est la pension de demain. Sous la lecture B, un
+  taux vers 10 % baisse presque de moitié la part de pension que les actifs
+  acquièrent après 2026 ; ou bien les comptes gardent 18 %, et ce sont des
+  droits que personne n'a payés, une dette que la ligne « dette en 2070 »
+  ne compte pas. Les 144 Md€ « rendus » sont en bonne partie une avance sur
+  la retraite de ceux qui les reçoivent. Sous la lecture A et « tout au
+  déficit », l'erreur va dans l'autre sens : 21,4 % prélevés pour 18 %
+  crédités, des cotisations sans droits, ce qui contredit « chaque euro
+  cotisé ouvre des droits », et gonfle la réserve.
+- **Le coût commun ne se voyait pas.** Les trois colonnes baissent les
+  pensions servies d'un tiers, 147 Md€ en 2026 ; le tableau ne montrait que
+  ce qui les sépare.
+- **La lecture B ne répare presque pas les comptes.** Le déficit de la
+  retraite passe de 5 à 2,5 Md€ en 2026, l'État continue de verser ses
+  58 Md€, la dette atteint 33 points de PIB en 2070 : les pensions baissent
+  d'un tiers, et l'argent va des retraités aux actifs. L'argument d'urgence
+  de la décision 6, sur lequel la défense devant le Conseil constitutionnel
+  et la CEDH s'appuie, s'en affaiblit (à faire vérifier, chantier 2). La
+  lecture A a l'inconvénient inverse : moins rendu aux cotisants, et une
+  réserve qui s'accumule.
+
+Ce qui reste à faire : refaire les deux lectures au modèle, la dépense
+suivant le taux réellement cotisé, ce que le réglage du taux unique permet.
+Jusque-là, les tableaux ci-dessus ne départagent pas A et B.
+
 ## Ce qui déplace ces chiffres
 
 - **Le déficit de la lecture B.** Celui du COR compte en recettes les

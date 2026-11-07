@@ -8047,10 +8047,11 @@ scénario 6 (décisions 16 à 28 de `docs/feuille_de_route_programme.md`,
 chantier 3) ; une session du modèle les y porte et tient la suite dans sa
 note. Les chantiers 1 et 2 ont leurs décisions 29 et 30 : la baisse des
 pensions ne va pas tout entière au déficit, et les deux lectures de la
-décision sont chiffrées (`186/2026-11-07-deux-lectures-et-reprise.md`) ; la
-reprise de la garantie sur succession reste. Par quoi commencer : le choix du
-propriétaire entre les lectures A et B, puis « Les décisions attendues » des
-autres chantiers et le gel (chantier 10). Rien n'est gelé.
+décision, chiffrées à côté du modèle, sont à refaire au modèle, la dépense
+suivant le taux cotisé (`186/2026-11-07-deux-lectures-et-reprise.md`) ; la
+reprise de la garantie sur succession reste. Par quoi commencer : ce
+chiffrage, puis le choix du propriétaire entre A et B, « Les décisions
+attendues » des autres chantiers et le gel (chantier 10). Rien n'est gelé.
 
 **D'où elle vient.** Le 6 novembre 2026, le propriétaire demande un bilan :
 les vagues se succèdent, et le chantier semble sans fin. La session mesure

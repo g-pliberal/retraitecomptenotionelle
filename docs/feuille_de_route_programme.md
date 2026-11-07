@@ -239,6 +239,22 @@ rend 15 Md€ la première année, réserve de 86 points en 2070 ; B ne bouge
 pas). *Rien d'autre ne bouge* : ni comportement, ni pilier, ni les recettes
 du chantier 4. Le détail : `186/2026-11-07-deux-lectures-et-reprise.md`.
 
+*Corrigé le 7 novembre 2026, sur la question du propriétaire : « il n'y a que
+des avantages à la lecture B […] il y a un souci, non ? »* Oui. Le calcul
+change les cotisations sans changer les pensions qu'elles ouvrent : la
+dépense reste celle du scénario 6, qui crédite 18 % aux comptes. En compte
+notionnel, la cotisation d'aujourd'hui est la pension de demain : sous B, le
+taux vers 10 % baisse d'autant la pension des années cotisées après 2026, ou
+crédite des droits non payés, une dette que le tableau ne compte pas ; sous A
+et « tout au déficit », 21,4 % prélevés pour 18 % crédités ferait payer des
+cotisations sans droits. Le tableau ne montre pas non plus le coût commun aux
+trois colonnes, la baisse d'un tiers des pensions servies. Et B laisse les
+comptes publics presque où ils sont : le déficit de la retraite passe de 5 à
+2,5 Md€ en 2026, sa dette atteint 33 points en 2070, ce qui affaiblit
+l'argument d'urgence de la décision 6. Les chiffres ne départagent pas A et B
+tant qu'une session du modèle ne les a pas refaits, la dépense suivant le
+taux cotisé.
+
 ### Chantier 2 — La baisse des pensions en cours : sa règle, son plancher, son calendrier, son droit
 
 **La question.** Baisser les pensions liquidées en cinq ans, d'une façon qui
