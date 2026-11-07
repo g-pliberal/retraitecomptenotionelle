@@ -396,6 +396,19 @@ de 62 ou de 64 ans :
     la proposition ne change pas (`Parametres.age_legal_liberal`) ; le
     message est celui de 65 ans, pas la liberté de l'âge.
 
+Le même jour, sur les planchers (chantier 6), à la suite des décisions 62
+à 66 :
+
+69. **« Couler », pour la décision 62, c'est la règle de la décision 37 :
+    n'avoir plus de réserve** : « Sur la décision 62, on prend bien la règle
+    de la décision 37. Donc, la CNRACL, les pensions des fonctionnaires de
+    l'Etat, la caisse des cheminots, les complémentaires agricoles finissent
+    absorbées par le régime général. » Sans réserve, elles le sont à la
+    bascule, la complémentaire agricole dans la première année (décision
+    67), et la garantie remplace leurs planchers ; le régime provisionné de
+    la Banque de France garde le sien tant que durent ses réserves. Les IEG
+    suivent la même règle ; leurs réserves restent à vérifier.
+
 ## Ce qui est écarté
 
 - **Une transition sans baisse nominale des pensions en cours** — bâtir le
@@ -1658,6 +1671,10 @@ est passée ; le début de la campagne présidentielle ?
   le départ pour invalidité) ; ce que « couler » veut dire pour une caisse
   sans réserve que l'État finance (CNRACL, fonctionnaires de l'État, SNCF,
   IEG) : fusionnée dès la bascule, et ses planchers avec elle ?
+- Chantier 6, les planchers, après la décision 69 : les planchers
+  d'invalidité et de handicap, I (le barème de la caisse gardé, payé par
+  l'employeur) ou III (la garantie dès le départ, pour tout invalide, public
+  ou privé) ; la note les compare.
 - Chantier 6, les complémentaires projetées le 7 novembre : les
   indépendants, les libéraux et les navigants, jamais intégrés avant 2070
   (une date butoir, ou la règle de la décision 37 telle quelle) ; la

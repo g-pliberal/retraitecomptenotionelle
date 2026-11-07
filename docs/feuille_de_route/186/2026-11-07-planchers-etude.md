@@ -1,14 +1,14 @@
 # Les planchers propres à certaines caisses, étudiés aux sources : qui perd, combien, et ce que le droit permet
 
 **Reprise, au 7 novembre 2026.** L'étude est faite et le propriétaire a
-tranché (décisions 62 à 66, « Ce que le propriétaire a répondu ») : planchers
-des pensions servies gardés tant que leur caisse n'a pas coulé, la garantie
-ensuite ; ni transition ni décret ; la garantie à 1 050 et 800 € à 65 ans,
-plancher du régime général ; rien d'exclu de la reprise sur succession.
-Restent au propriétaire, en fin de note : les planchers d'invalidité et de
-handicap (trois options), et ce que « couler » veut dire pour une caisse sans
-réserve que l'État finance. Le modèle n'est touché qu'après, par une session
-du modèle, au seul scénario 6.
+tranché (décisions 62 à 66 et 69, « Ce que le propriétaire a répondu ») : les
+planchers des pensions servies gardés tant que leur caisse a des réserves,
+la garantie ensuite — dès la bascule pour la CNRACL, l'État, la SNCF et la
+complémentaire agricole ; ni transition ni décret ; la garantie à 1 050 et
+800 € à 65 ans ; rien d'exclu de la reprise sur succession. Reste au
+propriétaire : les planchers d'invalidité et de handicap, I ou III (fin de
+note). Le modèle n'est touché qu'après, par une session du modèle, au seul
+scénario 6.
 
 *Le 7 novembre 2026, le propriétaire, qui avait dit « Oui » à ce que la garantie vieillesse remplace aussi les planchers propres à certaines caisses (décision 42), rouvre la question : « J'aimerais revoir ce sujet pour voir comment vont être impactés les gens. J'aimerais surtout voir notre marge de manœuvre légale sur le sujet. » La session a lu : la note de la CNRACL au COR sur les bénéficiaires du minimum garanti (février 2023), la note du secrétariat du COR sur les minima de pension (février 2023), les fiches du COR de juillet 2024 sur la CNRACL, la caisse des cheminots et celle des IEG, les pages de la CNIEG sur son minimum, et, dans l'index LEGI de la DILA (à jour au 2 novembre 2026), les textes de chaque plancher. Les sites de la DREES, de la sécurité sociale et du Sénat ont refusé la lecture automatique (503) : les chiffres qui en viennent ont été relevés par le moteur de recherche, sans lecture de la page, et sont marqués comme tels. Les calculs faits à côté sont restés dans le brouillon de la session ; leur méthode est écrite à chaque chiffre. Ce que la note conclut est une piste, pas une décision : le propriétaire tranche.*
 
@@ -207,7 +207,7 @@ L'État n'en publie pas le détail dans ce que la session a pu lire.
 |---|---|---|---|
 | I. Gardés, payés par l'employeur | le complément est servi aux pensions d'invalidité et de handicap, servies et à venir, par l'employeur public, assureur du risque (pile « Accidents » du chantier 3) | ≈ 0,26 Md€ par an pour le stock de la CNRACL, l'État en plus ; payé par l'employeur, pas par les cotisants | minime |
 | II. Comme les autres planchers | gardés tant que la caisse n'a pas coulé, puis la garantie à 65 ans (décisions 62 et 65) | aucun | **élevé** : un trou jusqu'à 65 ans pour des invalides, le cas Béláné Nagy |
-| III. La garantie ouverte dès le départ pour invalidité ou handicap | le plancher de la caisse disparaît comme les autres, mais la garantie — 1 050 € seul, 800 € en couple — se verse dès le départ, payée par l'employeur | moindre que I : la garantie au lieu du plancher, et seulement pour qui est dessous | faible |
+| III. La garantie ouverte dès le départ pour invalidité ou handicap | le plancher de la caisse disparaît comme les autres, mais la garantie — 1 050 € seul, 800 € en couple — se verse dès le départ, payée par l'employeur | plus que I pour les personnes seules de courte carrière, la plupart, moins pour les couples et les longues carrières ; une part revient par la succession : le solde, seul le modèle le dira (corrigé après la décision 69, voir plus bas) | faible |
 
 La piste : **III**. Elle garde un seul plancher, la garantie (décision 65), en n'y faisant qu'une exception, l'âge, pour l'accident de la vie que la décision 7 protège ; l'invalide n'a jamais de trou, et l'employeur public paie, comme l'assureur du risque du chantier 3. Le stock ayant déjà 67 ans en moyenne, III n'y change que le sort des moins de 65 ans : elle compte surtout pour les départs à venir.
 
@@ -215,3 +215,27 @@ La piste : **III**. Elle garde un seul plancher, la garantie (décision 65), en 
 
 1. **Les planchers d'invalidité et de handicap** : gardés et payés par l'employeur (I), traités comme les autres (II), ou la garantie ouverte dès le départ pour invalidité ou handicap (III) ?
 2. **Ce que « couler » veut dire** pour une caisse sans réserve que l'État finance — la CNRACL, les pensions de l'État, la SNCF, les IEG : fusionnée dès la bascule, et ses planchers avec elle, ou une autre règle ?
+
+## Ce que le propriétaire a répondu ensuite
+
+« Sur la décision 62, on prend bien la règle de la décision 37. Donc, la CNRACL, les pensions des fonctionnaires de l'Etat, la caisse des cheminots, les complémentaires agricoles finissent absorbées par le régime général. » (décision 69) Sans réserve, elles le sont à la bascule, la complémentaire agricole dans la première année (décision 67) : leurs planchers font place à la garantie. Le régime de la Banque de France, provisionné, garde le sien tant que durent ses réserves ; les IEG suivent la règle, leurs réserves restant à vérifier.
+
+Il demande aussi : « Quelle différence entre I et III ? »
+
+### I et III, côte à côte
+
+| | I. Le plancher de la caisse gardé | III. La garantie dès le départ |
+|---|---|---|
+| Montant | le barème de la caisse, selon les années de services : pour un invalide, 733 € à 14 ans, 1 127 € à 25, 1 298 € à 30 (à côté, L. 17) | 1 050 € seul, 800 € en couple, quelle que soit la carrière |
+| Le conjoint | ne compte pas | en couple, 800 € chacun |
+| Les autres ressources | ne comptent pas | comptent |
+| Au décès | rien à rembourser | repris sur la succession (décisions 30 et 66) |
+| Pour qui | les fonctionnaires et les cheminots ; le salarié invalide du privé n'a rien de tel | tout invalide, public ou privé : « la même règle vaut pour tous » (promesse 2, décision 45) |
+| Combien de minima | deux : le plancher d'invalidité, et la garantie pour les autres | un seul, la garantie, avec une exception sur l'âge |
+| Qui paie | l'employeur public | l'assureur du risque : l'employeur public, l'assurance maladie pour le privé |
+
+Deux cas (à côté) :
+- **Le cas le plus courant**, un invalide de quatorze ans de services, dont le minimum vaut 733 € (la pension moyenne des invalides au minimum de la CNRACL est de 748 à 775 €). Avec I, il garde 733 €, acquis. Avec III, il touche 1 050 € seul, 317 € de plus, ou 800 € en couple, 67 € de plus, mais repris sur sa succession, et sous condition de ressources.
+- **La longue carrière**, trente ans de services, dont le minimum vaut 1 298 €. Avec I, il garde 1 298 €. Avec III, il tombe à 1 050 € seul (−248 €) ou à 800 € en couple (−498 €).
+
+III n'est donc pas, comme la note l'écrivait d'abord, moins coûteuse que I : elle coûte plus pour les invalides seuls de courte carrière, la plupart, et moins pour les couples et les longues carrières, une part revenant par la succession. Le solde, seul le modèle peut le chiffrer. Ce qui les sépare surtout est un choix de principe : I garde un minimum propre aux agents publics ; III donne à tout invalide, du public comme du privé, le même plancher que tout le monde, ouvert plus tôt.
