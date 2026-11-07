@@ -1480,6 +1480,34 @@ les instruit, sans rien trancher. Ce qu'elle établit :
   de 65 ans. De l'ordre de quelques centaines de millions à 1 Md€ par an face
   au droit d'aujourd'hui (à côté), au modèle de le chiffrer.
 
+**Le 7 novembre 2026 : la garantie d'invalidité, vérifiée caisse par
+caisse.** La décision 78 demandait de voir « s'il n'y a pas de conflit avec
+les différentes caisses et complémentaires » ; la note
+`186/2026-11-07-invalidite-caisses.md` lit, aux textes en vigueur, seize
+caisses de base, sept complémentaires et les prestations hors retraite. Ce
+qu'elle établit :
+- *Pas de double paiement, pas de trou* pour qui est reconnu invalide par sa
+  caisse : la garantie est différentielle, et les complémentaires ne versent
+  rien avant l'âge légal, seulement des points sans cotisation.
+- *Deux actes, six critères* : une pension d'invalidité au régime général,
+  chez les agricoles, les indépendants, aux IEG, à la CRPCEN, chez les marins
+  et aux mines ; une retraite liquidée à tout âge à l'État, à la CNRACL, chez
+  les ouvriers de l'État, à la SNCF, à la RATP et à la Banque de France ; les
+  deux tiers de capacité de gain, l'emploi ou les fonctions, la profession
+  agricole, le métier, la moitié de la capacité de travail.
+- *Des planchers qui dépassent la garantie* : la moitié du traitement dès 60 %
+  d'invalidité (État, militaires, CNRACL, Banque de France) ou les deux tiers
+  (SNCF) dépasse 1 050 € dès 2 100 € de traitement (à côté).
+- *Des payeurs qui disparaissent* : les caisses absorbées à la bascule
+  (décision 69), et celles qu'elle ne nomme pas, sans réserve connue ;
+  les libéraux et les avocats n'ont que le régime d'invalidité-décès de leur
+  section.
+- *L'AAH et l'ASI* : la garantie seul (1 050 €) dépasse l'AAH à taux plein
+  (1 041,59 €, relevé) et la fermerait, en couple (800 €) l'AAH la complète ;
+  ni l'une ni l'autre n'est reprise sur la succession, l'ASI plus depuis 2020.
+Six questions s'ajoutent aux cinq de la note des planchers (« Ce qui revient
+au propriétaire »).
+
 ### Chantier 7 — Les chiffres qui tiennent
 
 **La question.** Un challenger est vérifié plus durement qu'un sortant :
@@ -1818,6 +1846,14 @@ est passée ; le début de la campagne présidentielle ?
   questions, en un mot ») : dès la pension d'invalidité ou non ; quel critère ;
   l'AAH avant ou après la garantie ; qui paie pour les fonctionnaires ; une
   avance reprise ou une assurance acquise. Chacune se répond d'une lettre.
+- Chantier 6, la garantie d'invalidité vérifiée caisse par caisse (note
+  `186/2026-11-07-invalidite-caisses.md`) : les planchers de la moitié du
+  traitement, qui dépassent la garantie ; le plancher d'invalidité de la
+  Banque de France (décision 69 ou 78) ; les réparations (rente viagère
+  d'invalidité, pension militaire d'invalidité, rentes d'accident du travail)
+  dans les ressources de la garantie ; les caisses que la décision 69 ne
+  nomme pas ; le payeur des libéraux et des avocats ; les points des
+  complémentaires après leur intégration ; l'invalide de première catégorie.
 - Chantier 6, les complémentaires projetées le 7 novembre : les
   indépendants, les libéraux et les navigants, jamais intégrés avant 2070
   (une date butoir, ou la règle de la décision 37 telle quelle) ; la
