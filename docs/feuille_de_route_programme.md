@@ -153,6 +153,20 @@ Le même jour, sur la baisse des pensions (chantiers 1 et 2) :
     écarte, mais le remboursement d'une avance : la règle de l'action 47
     reste.
 
+Le même jour, sur le message (chantier 8), après l'étude aux sources :
+
+31. **La faute : le manque de courage politique d'abord, le baby-boom en
+    explication** : « Les deux, nuancé ». Le message vise les décisions de
+    trente ans — on a fait payer les cotisants sans toucher aux droits
+    passés — ; le poids électoral du baby-boom les explique, il ne s'accuse
+    pas.
+32. **Les cinq points capitalisés vont à un compte qui appartient à
+    l'assuré** : « Un compte à l'assuré ». Un contrat à son nom, comme un
+    PER, protégé comme un bien, et non un fonds public cantonné par la loi.
+33. **Les cinq points obligatoires s'ouvrent à l'apport pour un premier
+    logement, et pour lui seul** : « Oui, premier logement seul ». Le
+    premier achat de la résidence principale ; le plafond reste à fixer.
+
 ## Ce qui est écarté
 
 - **Une transition sans baisse nominale des pensions en cours** — bâtir le
@@ -688,6 +702,12 @@ note `186/2026-11-07-message-etude.md`. Ce qu'il établit :
   serait entendu comme accuser des pauvres ; la piste du manque de courage
   politique en sort renforcée.
 
+Le propriétaire tranche le même jour : décisions 31 à 33. Pour l'âge, il
+veut le chiffre avant de choisir : « Chiffrer avant de choisir ». Une
+session du modèle mesure ce que coûterait un âge plancher de 62 ou 64 ans,
+la pension étant celle du compte actuariel, face aux 65 ans de la
+proposition.
+
 ### Chantier 9 — Le site et le simulateur
 
 **La question du propriétaire.** « Est-ce que le simulateur est vraiment une
@@ -772,12 +792,11 @@ est passée ; le début de la campagne présidentielle ?
 - Chantier 5 : l'indexation des pensions servies ; la formulation de la
   garantie.
 - Chantier 6 : le mécanisme de résolution ; l'ordre des caisses.
-- Chantier 8, étudié le 7 novembre : la responsabilité (le manque de courage
-  politique ou le baby-boom) ; l'âge (65 ans ou un départ libre) ; le pilier
-  (un compte à l'assuré ou un fonds public) ; le logement (ouvrir les cinq
-  points obligatoires à l'apport, ou non). Le gain des actifs suit la
-  lecture A ou B du chantier 1, le message des retraités les pertes du
-  chantier 2 ; le test des vingt personnes attend les deux.
+- Chantier 8, après les décisions 31 à 33 : l'âge, une fois chiffré un âge
+  plancher de 62 ou 64 ans ; le plafond de l'apport pour un premier
+  logement. Le gain des actifs suit la lecture A ou B du chantier 1, le
+  message des retraités les pertes du chantier 2 ; le test des vingt
+  personnes attend les deux.
 - Chantier 10 : la liste du gel ; le seuil ; la date.
 
 ## Comment s'en servir

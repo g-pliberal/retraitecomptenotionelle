@@ -1,13 +1,13 @@
 # Le message étudié aux sources : ce que chaque électorat gagne, et ce qui ne se promet pas encore
 
-**Reprise, au 7 novembre 2026.** Le chantier 8 est étudié : chaque piste du
-6 novembre est confrontée à ses sources, au modèle et aux décisions 1 à 30.
-Quatre questions attendent le propriétaire, et deux autres suivent les
-chantiers 1 et 2 (« Ce que le propriétaire tranche ») ; ses réponses
-s'écrivent en décisions dans `docs/feuille_de_route_programme.md`, sous le
-chantier 8. Le message des retraités attend aussi le chantier 2 (qui perd,
-et combien), celui des actifs le chantier 1 (la lecture A ou B), et le test
-auprès de vingt personnes, les deux.
+**Reprise, au 7 novembre 2026.** Le chantier 8 est étudié et tranché le
+même jour : décisions 31 à 33 de `docs/feuille_de_route_programme.md` (la
+faute, le pilier à l'assuré, l'apport pour un premier logement). Reste
+l'âge : le propriétaire veut le chiffre avant de choisir. Par quoi
+commencer : une session du modèle mesure un âge plancher de 62 ou 64 ans, la
+pension étant celle du compte, face aux 65 ans de la proposition. Le gain
+des actifs en euros attend la lecture A ou B du chantier 1, le message des
+retraités les pertes du chantier 2, et le test des vingt personnes, les deux.
 
 *Le 7 novembre 2026, le propriétaire ouvre le chantier 8 de l'action 186,
 « Le message » : « Je veux qu'on attaque ce chantier ». La session relit
@@ -312,3 +312,19 @@ Deux autres suivent les chantiers 1 et 2 :
    avance remboursée sur la seule valeur de l'aide.
 
 Le test des vingt personnes attend les deux.
+
+## Ce que le propriétaire a tranché, le même jour
+
+Aux quatre questions, posées une à une avec leurs options :
+- *La faute* : « Les deux, nuancé » — le manque de courage politique de
+  trente ans d'abord ; le poids électoral du baby-boom comme explication,
+  jamais comme accusation (décision 31).
+- *Le pilier* : « Un compte à l'assuré » — un contrat à son nom, comme un
+  PER, protégé comme un bien (décision 32).
+- *Le logement* : « Oui, premier logement seul » — les cinq points
+  obligatoires s'ouvrent à l'apport pour le premier achat de la résidence
+  principale ; le plafond reste à fixer (décision 33).
+- *L'âge* : « Chiffrer avant de choisir » — une session du modèle mesure ce
+  que coûterait un âge plancher de 62 ou 64 ans, la pension étant celle du
+  compte actuariel, face aux 65 ans de la proposition ; le propriétaire
+  tranche ensuite.

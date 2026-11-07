@@ -8048,9 +8048,10 @@ chantiers 1 et 2 ont leurs décisions 29 et 30 ; les deux lectures de la 29,
 chiffrées à côté du modèle, sont à refaire au modèle, la dépense suivant le
 taux cotisé (`186/2026-11-07-deux-lectures-et-reprise.md`). Le message
 (chantier 8) est étudié (`186/2026-11-07-message-etude.md`, qui tient son
-bloc). Par quoi commencer : ce chiffrage, puis le choix entre A et B et les
-quatre questions du chantier 8 ; ensuite « Les décisions attendues » des
-autres chantiers et le gel (chantier 10). Rien n'est gelé.
+bloc) et tranché (décisions 31 à 33). Par quoi commencer : ce chiffrage et
+celui d'un âge plancher (chantier 8), puis le choix entre A et B ; ensuite
+« Les décisions attendues » des autres chantiers et le gel (chantier 10).
+Rien n'est gelé.
 
 **D'où elle vient.** Le 6 novembre 2026, le propriétaire demande un bilan :
 les vagues se succèdent, et le chantier semble sans fin. La session mesure
