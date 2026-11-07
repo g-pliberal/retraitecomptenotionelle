@@ -134,6 +134,25 @@ Le même jour, ses modalités :
     notionnels ne servent que les parts contributives : « les scénarios où
     l'on montre ce que l'on a cotisé ne montre que les parts contributives ».
 
+Le même jour, sur la baisse des pensions (chantiers 1 et 2) :
+
+29. **La baisse des pensions ne va pas tout entière au déficit** : « Je ne
+    suis pas d'accord, on baisse seulement de moitié le déficit. C'est ce
+    qu'on avait dit il y a longtemps, je maintiens ce que j'avais dit il y a
+    longtemps. » Ce qui avait été dit est le partage du 20 septembre 2026,
+    pour les impôts que la proposition n'encaisse plus (action 59,
+    archivée) : « Il ne faut pas que ces baisses d'impôts servent uniquement
+    à combler le déficit », d'où la moitié rendue aux salaires et la moitié à
+    la dette. La phrase se lit de deux façons, que le chantier 1 chiffre ; le
+    propriétaire choisira : « donne les chiffrages, j'ai besoin de plus de
+    recul ».
+30. **La garantie vieillesse est reprise sur la succession, à hauteur de ce
+    qu'elle a avancé, et de rien d'autre** : « La reprise sur succession
+    n'est pas illogique. On reprend seulement sur la valeur de l'aide, pas
+    sur autre chose. » Ce n'est pas l'impôt sur l'héritage que la décision 5
+    écarte, mais le remboursement d'une avance : la règle de l'action 47
+    reste.
+
 ## Ce qui est écarté
 
 - **Une transition sans baisse nominale des pensions en cours** — bâtir le
@@ -141,7 +160,11 @@ Le même jour, ses modalités :
   Intenable : la variante prospective n'est jamais à l'équilibre et accumule
   225 points de PIB de dette d'ici 2070 (`docs/chiffrage_plf.md`, § F).
 - **Toute reprise sur la succession ou l'héritage.** Le scénario 6 en porte
-  pourtant une : voir le chantier 2.
+  pourtant une : voir le chantier 2. *Le 7 novembre 2026, la décision 30 met
+  à part celle de la garantie vieillesse*, qui ne reprend que ce que la
+  garantie a avancé.
+- **Toute la baisse des pensions au déficit**, la piste du chantier 1 du
+  6 novembre, écartée le 7 novembre par la décision 29.
 - **La coupure des réversions déjà servies le jour de la bascule**, le choix
   du dépôt depuis le 19 septembre 2026, écartée le 7 novembre par la
   décision 16.
@@ -183,6 +206,38 @@ effet avec les recettes du chantier 4 ; le rythme de descente du taux.
 
 **Au propriétaire.** L'ordre ; le rythme ; ce que devient le pilier pendant
 la convergence.
+
+**Le 7 novembre 2026, les deux lectures de la décision 29, chiffrées.** Le
+calcul garde les recettes du droit en vigueur (son taux, ses impôts affectés,
+les versements de l'État) et prend la dépense de la variante rétroactive,
+garantie nette des reprises ; l'économie, 4,79 points de PIB en 2026
+(147 Md€), se partage entre le solde et les cotisants. **Lecture A** : la
+moitié de l'économie au déficit, l'autre moitié aux cotisants. **Lecture B** :
+le déficit du droit en vigueur diminué de moitié, tout le reste aux
+cotisants. Soldes et dette en points de PIB ; le rendu aussi en points de
+cotisation, sur l'assiette de la proposition, où le droit en vigueur prélève
+21,4 % en 2026 et la proposition 18 %.
+
+| | Tout au déficit | Lecture A | Lecture B | Droit en vigueur | Scénario 6 chiffré |
+|---|---:|---:|---:|---:|---:|
+| Solde 2026 | +4,63 | +2,23 | −0,08 | −0,16 | −1,24 |
+| Solde 2070 | +4,67 | +1,14 | −1,19 | −2,39 | −0,12 |
+| Solde moyen, 2026-2070 | +3,83 | +1,35 | −0,57 | −1,13 | −1,32 |
+| Dette en 2070 (négative : une réserve) | −256 | −95 | +33 | +66 | +91 |
+| Rendu aux cotisants en 2026 | 0 | 73 Md€, 5,6 points | 144 Md€, 11,0 points | | |
+| Rendu, en moyenne 2026-2070 | 0 | 5,8 points | 10,2 points | | |
+
+Le scénario 6 chiffré est celui du § F, garantie comprise (74 points de dette
+sans elle) : il retire 180 Md€ de recettes en 2026, plus que l'économie, et
+n'est donc ni A ni B. Trois réserves. *Le déficit de la lecture B* est celui
+du COR, où les versements de l'État, 1,9 point de PIB, équilibrent les
+régimes de fonctionnaires ; compté sans eux (−2,05 points en 2026), il rend
+116 Md€ en 2026, 8,8 points, et laisse une réserve de 27 points en 2070 : B
+dépend d'abord du déficit que l'on choisit. *La bascule est immédiate*,
+comme au modèle ; une convergence par cinquièmes ne change que 2026-2029 (A
+rend 15 Md€ la première année, réserve de 86 points en 2070 ; B ne bouge
+pas). *Rien d'autre ne bouge* : ni comportement, ni pilier, ni les recettes
+du chantier 4. Le détail : `186/2026-11-07-deux-lectures-et-reprise.md`.
 
 ### Chantier 2 — La baisse des pensions en cours : sa règle, son plancher, son calendrier, son droit
 
@@ -227,6 +282,14 @@ l'ASPA.
 
 **Au propriétaire.** Le plafond par an ; la reprise sur succession (la
 retirer, et financer ces 220 Md€ autrement ?).
+
+**Le 7 novembre 2026, l'incohérence levée** (décision 30). La reprise reste,
+telle que l'action 47 l'écrit : une avance, qui porte intérêt au taux auquel
+l'État emprunte (« pour ne pas y perdre », demandait le propriétaire à
+l'action 47), reprise sur ce que la succession contient et jamais au-delà,
+les donations réintégrées. Elle ne prend que ce que la garantie a avancé ; la
+décision 5 vise l'impôt sur l'héritage, non le remboursement d'une avance.
+Les 220 Md€ restent au chiffrage. Reste au propriétaire : le plafond par an.
 
 ### Chantier 3 — Accidents de la vie, choix de vie : les critères, et qui paie
 
@@ -653,6 +716,9 @@ est passée ; le début de la campagne présidentielle ?
   valider la piste « les droits suivent l'argent, au prix juste ».
 - Chantier 3, la réversion, le 7 novembre après les décisions 27 et 28 : plus
   rien ; le portage au scénario 6 est confié à une session du modèle.
+- Chantiers 1 et 2, le 7 novembre après les décisions 29 et 30 : la lecture
+  de la décision 29, A ou B, et pour B le déficit que l'on divise ; le rythme
+  de descente du taux en découle. Au chantier 2, le plafond par an.
 - Chantier 4 : la TVA sur le seul taux normal ; la LVT à 1 % ou 2 %, et son
   abattement.
 - Chantier 5 : l'indexation des pensions servies ; la formulation de la
