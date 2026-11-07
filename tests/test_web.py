@@ -4091,7 +4091,11 @@ BUDGETS_DE_LECTURE: dict[str, tuple[int, int, int]] = {
     # résumé redisait le manque que le chiffre voisin porte, la note des
     # pointillés la légende de leur courbe, et « Pour aller plus loin »
     # s'annonçait d'une phrase que son titre dit.
-    "/cout": (940, 2, 0, 0),
+    # Le 7 novembre 2026, 946 : le scénario 6 garde les réversions servies à
+    # la bascule (décision 16 du programme, action 186), et son schéma des
+    # flux en porte le nœud, six mots d'étiquette, « Pensions de réversion
+    # 42 Md € ». La règle du 23 septembre : une étiquette de nœud se paie.
+    "/cout": (946, 2, 0, 0),
     # LA SEULE PAGE DU SITE QUI DÉPASSE LE MILLIER DE MOTS, et c'est son objet
     # même. Elle affirme qu'il existe trente-neuf avantages non contributifs :
     # elle doit donc les NOMMER tous, dire ce que chacun coûte, et — pour les
@@ -4276,7 +4280,11 @@ BUDGETS_DEPLIES: dict[str, int] = {
     # dont près de dix-sept mille dans les tableaux des graphiques, que
     # l'étape laisse tels quels. Ses dépliants redisaient ce que la légende
     # d'un tracé, la ligne d'un tableau ou le dépliant voisin venaient de dire.
-    "/cout": 33250,
+    # Le 7 novembre 2026, 33 293 : la réversion que le scénario 6 garde
+    # (décision 16, action 186) en ajoute 43, son nœud du schéma des flux, sa
+    # ligne dans le tableau du schéma et dans celui des dépenses, et un cran
+    # de l'axe de la dette ; rien d'autre n'a bougé.
+    "/cout": 33293,
     # Pourquoi changer tout déplié : 5 128 mots le 24 octobre 2026 (action 173,
     # étape 6). Ses dépliants finissaient souvent sur une phrase qui redisait
     # ce que leur chiffre ou leur phrase en gras venait d'établir.

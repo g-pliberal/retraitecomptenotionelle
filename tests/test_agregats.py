@@ -245,10 +245,12 @@ def test_le_passe_et_l_avenir_figes_sont_ceux_que_le_modele_calcule(table, cout,
         for scenario in avec_garantie:
             assert figee.cout(scenario) == calculee.cout(scenario)
             assert figee.cout_constants(scenario) == calculee.cout_constants(scenario)
+            # La réversion que le scénario 6 garde (décision 16 du programme)
+            # entre dans sa part de PIB, comme le coût la compte.
             assert figee.part_pib_de(scenario) == masse_du_scenario(
                 calculee.part_pib_pensions, calculee.part_derives,
                 calculee.rapports[scenario], scenario, calculee.reversion_servie,
-                calculee.reforme_en_vigueur)
+                calculee.reforme_en_vigueur, calculee.part_reversion_gardee)
     for scenario in avec_garantie:
         assert fige.cumul(scenario) == cout.cumul(scenario)
         assert fige.avenir.cumul(scenario) == cout.avenir.cumul(scenario)
