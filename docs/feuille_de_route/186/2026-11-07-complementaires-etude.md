@@ -1,14 +1,14 @@
 # Les complémentaires étudiées aux sources : ce qui n'est pas cotisation, leurs réserves, et la manière de les sauver
 
-**Reprise, au 7 novembre 2026.** Le chantier 6 est étudié et tranché
-(décisions 36 à 43). Restent au propriétaire, sous « Qui fixe les taux de
-chaque caisse » : la voie pour la compensation des allègements ; le taux du
-régime général d'un salarié dont la complémentaire n'est pas intégrée ; les
-pensions de l'Agirc-Arrco jusqu'à son intégration. Puis une session du modèle
-projette chaque complémentaire — ses cotisations sans CEG ni CET ni impôt,
-ses pensions, ses réserves — jusqu'à leur épuisement, et l'intègre alors,
-avec la garantie vieillesse et le taux de 18 % ; le détail, sous « Ce que
-les décisions demandent au modèle ».
+**Reprise, au 7 novembre 2026.** Le chantier 6 est tranché (décisions 36 à
+43) ; trois points restent au propriétaire, en fin de note : qui paie la part
+de la compensation qui tombe au SMIC ; le taux du régime général d'un salarié
+dont la complémentaire n'est pas intégrée ; les planchers (décision 42,
+rouverte), à étudier dans une session neuve — qui perd, combien, la marge
+légale. Puis une session du modèle projette chaque complémentaire jusqu'à
+l'épuisement de ses réserves et l'intègre alors (« Ce que les décisions
+demandent au modèle »), la baisse des pensions ne touchant que celles que
+l'État fixe (décision 43).
 
 *Le 7 novembre 2026, le propriétaire ouvre le chantier 6 de l'action 186 :
 « Les complémentaires : rien que leurs cotisations, sauvées mais dissoutes »
@@ -236,3 +236,43 @@ Ce que cela change pour les trois questions :
 - **La compensation des allègements est une décision de la loi, non de la caisse.** C'est la loi qui étend la réduction générale aux « cotisations à la charge de l'employeur dues au titre des régimes de retraite complémentaire légalement obligatoires mentionnés à l'article L. 921-4 » (L. 241-13), et la loi de financement qui la compense par la TVA. Trois voies, toutes législatives : *ôter* les cotisations complémentaires de la réduction et *porter* l'allègement sur les cotisations du régime général, que finance la TVA sociale (chantier 4) — l'employeur paie le même prix, l'Agirc-Arrco touche des cotisations au lieu de TVA, et ne vit plus que d'elles ; *garder* la réduction et *couper* la compensation — l'Agirc-Arrco perd de l'ordre de 11 Md€ par an et coule en quatre ans environ, mais l'État lui impose une perte qu'il a créée, ce qui est le plus exposé en droit, et ce que le gouvernement a renoncé à faire en 2023, pour une ponction que la presse chiffrait de 1 à 3 Md€ par an ; *supprimer* la réduction sur les cotisations complémentaires sans la reporter — l'employeur paie plein tarif sur les bas salaires, contre « le travail paie ». La piste du 6 novembre était la première.
 - **La CEG et la CET aussi sont l'affaire de l'accord** (article 37 de l'accord du 17 novembre 2017) : les supprimer « dès maintenant » (décision 36) demande, hors du modèle, une loi qui l'impose aux partenaires sociaux, avec le risque constitutionnel qui s'y attache. Dans le modèle, c'est une hypothèse.
 - **Les taux du régime général sont ceux du parti** ; ceux de l'Agirc-Arrco, des partenaires sociaux ; ceux des autres complémentaires, de l'État. La décision 40 se lit donc : jusqu'à l'intégration de sa complémentaire, un salarié du privé garde les taux de sa complémentaire — et, à défaut d'autre choix, ceux du régime général. **Les pensions de l'Agirc-Arrco** se fixent de même par accord (la revalorisation du point) : le parti ne peut les baisser avant l'intégration que par une loi, plus exposée encore, puisqu'elle toucherait des droits acquis.
+
+## La compensation refaite au chiffre, les taux de chaque caisse, les pensions que l'État fixe
+
+Le propriétaire ne comprend pas la première voie pour la compensation ; il demande les taux de toutes les caisses ; il tranche les pensions (décision 43 : « On ne bouge que les pensions des régimes que l'on peut bouger en tant que politique ») ; et il rouvre les planchers (décision 42), pour voir qui perd et la marge légale.
+
+### La première voie ne tient pas au SMIC
+
+Au SMIC de 2026 — 12,02 € de l'heure, 1 823,07 € brut par mois ([dépôt, smic_horaire.csv](../../../data/reference/macro/smic_horaire.csv)) —, l'employeur devrait 40,21 % de cotisations patronales dans le périmètre de la réduction générale, 733 € par mois, dont 6,01 % à l'Agirc-Arrco, 110 € : 4,72 % de cotisation, 86 €, et 1,29 % de CEG, 24 €. La réduction générale dégressive unique les annule toutes : « Au SMIC, l'employeur ne verse donc plus rien de ce périmètre » ([dépôt, prelevements_remuneration.yaml](../../../data/reference/legislation/prelevements_remuneration.yaml), d'après L. 241-13 et le décret n° 2025-1446). L'Urssaf verse quand même ses 110 € à l'Agirc-Arrco, sur la TVA, et le salarié acquiert ses points comme si tout avait été payé.
+
+La première voie ôtait l'Agirc-Arrco du périmètre et reportait l'allègement sur le régime général : l'employeur aurait payé ses 86 € à l'Agirc-Arrco, la CEG supprimée, et 86 € de moins à l'Urssaf. **Au SMIC, c'est impossible : il ne paie déjà plus rien à l'Urssaf, il n'y a rien à baisser.** La loi borne le coefficient de la réduction à « la somme des taux des cotisations et contributions incluses dans le périmètre » (L. 241-13, III), qui tomberait à 34,20 %. Le report ne marche entièrement qu'à partir d'environ 1,05 à 1,07 SMIC, où l'Urssaf garde assez de cotisations à alléger (à côté, sur la formule de la réduction : 6,0 points restent à couvrir au SMIC, 3,1 à 1,03 SMIC, 1,4 à 1,05 SMIC, aucun à 1,07 SMIC, avant la suppression de la CEG). Entre le SMIC et ce seuil, il reste jusqu'à 4,72 % du salaire à payer, 86 € par mois au SMIC, et trois payeurs possibles : **l'employeur**, et le coût du travail monte au SMIC seulement ; **l'État**, une compensation qui demeure pour cette seule tranche, contre la lettre de la décision 12 ; **personne**, et l'Agirc-Arrco perd la recette — ou, en logique contributive, n'inscrit de points qu'à hauteur de ce qui est payé, et les salariés au SMIC perdent des droits. Le montant de cette tranche n'est pas chiffré : il demande la répartition des salaires près du SMIC. La note du 7 novembre présentait la première voie comme neutre pour l'employeur : c'était faux au SMIC.
+
+### Les taux de cotisation vieillesse de chaque caisse
+
+En 2026 sauf mention, salarié et employeur additionnés, d'après les fiches du dépôt ([regimes/](../../../data/reference/regimes/) et [contribution_employeur_public.csv](../../../data/reference/legislation/contribution_employeur_public.csv)) :
+
+| Qui | Base | Complémentaire | Total sous le plafond |
+|---|---|---|---:|
+| Salarié du privé | régime général 15,45 % sous le plafond (salarié 6,90, employeur 8,55) + 2,51 % sur tout (0,40 et 2,11) | Agirc-Arrco 7,87 % (6,20 % × 127 %) + CEG 2,15 %, à 40 % au salarié ; au-dessus du plafond 21,59 % + CEG 2,70 %, et CET 0,35 % sur tout | **27,98 %** ; 25,83 % sans la CEG |
+| Contractuel du public | régime général, comme le privé | Ircantec 7,11 % appelés (salarié 2,84, employeur 4,27) | 25,07 % |
+| Fonctionnaire de l'État | salarié 11,10 % ; État employeur 82,28 %, taux d'équilibre | RAFP 10 % sur les primes (5 et 5) | 93,38 % du traitement |
+| Fonctionnaire territorial ou hospitalier | CNRACL : salarié 11,10 % ; employeur 37,65 % | RAFP, de même | 48,75 % du traitement |
+| Artisan, commerçant | régime général à son barème : 17,15 % sous le plafond + 0,72 % sur tout | RCI 8,10 % (9,10 % au-dessus, 2025) | 25,97 % |
+| Exploitant agricole | MSA, alignée depuis 2026 sur le même barème : 17,15 % + 0,72 % (14,15 % par dérogation pour certains) | RCO 4 % | 21,87 % |
+| Médecin libéral | CNAVPL 8,73 % (2025) | CARMF 11,80 % | 20,53 % |
+| Libéral de la CIPAV | CNAVPL 8,73 % | CIPAV 11 % (21 % de 1 à 4 plafonds, 2025) | 19,73 % |
+| Avocat | CNBF 3,20 % + un forfait de 1 988 € par an | 7 à 15,80 % selon la tranche | selon le revenu |
+| Navigant de l'aviation | régime général et Agirc-Arrco, comme le privé | CRPNPAC en plus : 23,64 % (21,30 % × 111 %) | 51,62 % |
+| Régimes spéciaux (part salariale ; employeur quand le dépôt l'a) | SNCF 10,85 % (2025) ; RATP 12,29 % + 19,13 % (2025) ; IEG 12,29 % + 29,70 % (2020) ; mines 8,05 % + 7,75 % ; marins 10,85 % ; Banque de France 11,10 % ; CRPCEN 13,03 % (2025) | — | — |
+
+L'Ircantec appelle 127 % de ses taux théoriques en 2026 selon le dépôt, quand la fiche du COR de 2024 en écrivait 125 %. Les parts employeur des régimes spéciaux manquent pour 2026 : ce sont des taux d'équilibre, ou leur série s'arrête. Le CNBF, la CAVP et d'autres caisses de libéraux mêlent taux et forfaits.
+
+**Ce que cela dit de la décision 40.** Un salarié du privé verse 25,83 % sous le plafond une fois la CEG supprimée, dont 7,87 % à l'Agirc-Arrco. Tant que celle-ci n'est pas intégrée, deux lectures : tout reste en l'état, et il passe de 25,83 % à 18 % le jour de l'intégration ; ou le régime général baisse dès la bascule pour que le total fasse 18 %, et sa part tombe de 17,96 % à 10,13 % — près de 8 points de salaire en moins pour le régime général, de l'ordre de 50 Md€ par an sur les 636 Md€ de salaires du privé sous le plafond (à côté, assiettes de 2024).
+
+### Les pensions : seulement celles que l'État fixe
+
+La décision 43 dit au modèle : la baisse des pensions (décisions 2 et 3) s'applique aux régimes dont l'État fixe les pensions — le régime général et les régimes alignés, les fonctionnaires, les régimes spéciaux, et les complémentaires que règle le décret (Ircantec, complémentaire agricole, sections des libéraux, complémentaire des indépendants, CNBF, CRPNPAC) ; les pensions de l'Agirc-Arrco suivent ses règles jusqu'à son intégration. Elle accélère sa chute : privée de la CEG, elle garde ses dépenses. Reste au modèle à fixer, à défaut d'accord connu, comment l'Agirc-Arrco revalorise ses pensions d'ici là, et comment la baisse s'applique à une complémentaire que l'État règle mais qui n'est pas encore intégrée.
+
+### Les planchers, rouverts
+
+La décision 42 est rouverte : le propriétaire veut voir qui perd, et la marge légale. C'est une étape à elle, pour une session neuve : pour chaque plancher qui dépasse la garantie vieillesse — le minimum garanti des fonctionnaires, ceux de la SNCF et des IEG, le complément différentiel des exploitants — le nombre de bénéficiaires, le montant, et la perte, seul et en couple, face aux 1 050 et 800 € de la garantie ; puis ce que le droit permet, pour les pensions servies et pour celles à venir. La note de la réversion (`186/2026-11-07-reversion-etude-et-couts.md`, « Le droit protège le stock bien plus que le flux ») a déjà lu les décisions du Conseil constitutionnel et de la Cour européenne des droits de l'homme sur la baisse d'une pension servie.
