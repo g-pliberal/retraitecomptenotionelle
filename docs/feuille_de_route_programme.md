@@ -1453,6 +1453,33 @@ butoir (décision 70), l'Agirc-Arrco à ses règles actuelles (71), le RAFP à p
 (72) ; et les complémentaires que l'État règle baissent dès la bascule
 (décision 43), ce qui recule l'intégration de la CNBF et de l'Ircantec.
 
+**Le 7 novembre 2026 : les cinq questions de la garantie d'invalidité,
+instruites.** Après la décision 78, le propriétaire garde les cinq questions
+ouvertes pour y réfléchir ; la note `186/2026-11-07-invalidite-questions.md`
+les instruit, sans rien trancher. Ce qu'elle établit :
+- *Quatre étages, aucun repris* : la pension d'invalidité (761 600 personnes
+  dans le privé, 910 € en moyenne au régime général), l'ASI (66 940, jusqu'à
+  922,16 € seul), l'AAH (1,40 million, 1 041,59 €, le conjoint ignoré depuis
+  2023) et la retraite pour invalidité des fonctionnaires (287 600 pensions,
+  14 641 départs civils en 2025). Aucune n'est reprise sur la succession :
+  l'AAH ne l'a jamais été, l'ASI ne l'est plus depuis 2020, pour le passé
+  aussi ; ni l'Allemagne, ni la Suède, ni les Pays-Bas ne reprennent leur
+  minimum d'invalidité. L'AAH vient après tout avantage d'invalidité
+  (L. 821-1) : sans texte, la garantie passerait avant elle.
+- *Les perdants possibles* : l'adulte handicapé en couple, 800 € au lieu de
+  1 041,59 € si la garantie remplace l'AAH ; l'invalide jeune et propriétaire,
+  dont la reprise prendrait le logement (186 000 à 211 000 € de dette à 65 ans
+  pour une garantie de 550 € ouverte à 40 ans) ; le fonctionnaire inapte à
+  son seul poste, si le critère commun est celui du régime général.
+- *Les pistes, à valider* : la garantie dès la pension d'invalidité, toutes
+  catégories ; deux portes, les deux tiers de capacité perdue au
+  médecin-conseil ou 80 % à la CDAPH ; l'AAH d'abord, intacte, la garantie
+  ensuite, à la place de l'ASI ; l'employeur public cotisant à l'assurance
+  invalidité du régime général, au taux du privé ; la garantie acquise tant
+  qu'elle est versée pour invalidité, reprise pour ce qu'elle verse à partir
+  de 65 ans. De l'ordre de quelques centaines de millions à 1 Md€ par an face
+  au droit d'aujourd'hui (à côté), au modèle de le chiffrer.
+
 ### Chantier 7 — Les chiffres qui tiennent
 
 **La question.** Un challenger est vérifié plus durement qu'un sortant :
@@ -1786,6 +1813,11 @@ est passée ; le début de la campagne présidentielle ?
   questions (note des planchers, « Les conflits déjà visibles ») : quand
   elle s'ouvre dans le privé, un seul critère d'invalidité, l'ordre avec
   l'AAH, qui paie pour les fonctionnaires, une avance ou une assurance.
+- Chantier 6, les cinq questions de la garantie d'invalidité, instruites le
+  7 novembre (note `186/2026-11-07-invalidite-questions.md`, « Les cinq
+  questions, en un mot ») : dès la pension d'invalidité ou non ; quel critère ;
+  l'AAH avant ou après la garantie ; qui paie pour les fonctionnaires ; une
+  avance reprise ou une assurance acquise. Chacune se répond d'une lettre.
 - Chantier 6, les complémentaires projetées le 7 novembre : les
   indépendants, les libéraux et les navigants, jamais intégrés avant 2070
   (une date butoir, ou la règle de la décision 37 telle quelle) ; la
