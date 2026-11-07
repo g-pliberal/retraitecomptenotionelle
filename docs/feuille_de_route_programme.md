@@ -664,6 +664,44 @@ d'enfants réputés cotisés ; départs anticipés des parents — s'évalue à 
 pour le stock et pour l'avenir, son montant et son parent compris. C'est
 l'étape suivante, dont le plan est en tête de la note.
 
+**Le 7 novembre 2026 : les enfants, règle par règle.** Dix-sept fiches, une
+par dispositif, dans la note `186/2026-11-07-enfants-regle-par-regle.md`,
+menée en série à la demande du propriétaire. Ce qu'elle établit :
+- *Le compte ne connaît ni trimestre, ni âge légal, ni salaire de
+  référence* : pour l'avenir, un droit qui agit par eux disparaît ou se
+  traduit en argent, crédit au compte ou forfait (décision 27). La surcote
+  parentale, le salaire de référence des parents et les trimestres réputés
+  cotisés n'ont plus d'objet ; ils n'ont pas de stock au modèle, la bascule
+  de 2026 précédant leurs premières pensions.
+- *Un seul droit remplit déjà les quatre critères* : l'AVPF, cotisation
+  forfaitaire d'un tiers, constatée par la CAF, à 96 % aux femmes et d'abord
+  aux petites pensions. La proposition la retire pourtant, la recette suivant
+  le droit, contre la décision 27.
+- *Un seul est un accident* : la MDA d'enfant handicapé, constatée par la
+  commission qui ouvre l'AEEH. La MDA de maternité l'est en partie, et peut
+  seule être réservée à la mère sans risque.
+- *Les coûts, répartis à côté* (moyenne 2026-2070, points de PIB, face au
+  droit actuel) : garder au stock la MDA, les bonifications, l'AVPF et les
+  départs coûte 0,18 brut et 0,13 net, garder la majoration 0,12 et 0,11 ;
+  pour l'avenir, la majoration vaut 0,23, l'AVPF 0,14, la MDA, les
+  bonifications, la surcote et le salaire de référence 0,31. Un crédit d'une
+  année sur l'assiette de l'AVPF par enfant coûte 0,09 et rend 15 € par mois.
+- *Les propositions*, qui ne sont pas des décisions : garder au stock tout ce
+  qui compense une carrière, et l'AVPF ; laisser la majoration de 10 % suivre
+  la baisse, puis la retirer ; pour l'avenir, l'AVPF gardée, un crédit de
+  maternité payé par l'assurance maternité, un crédit d'éducation payé par la
+  branche famille au parent désigné, à défaut au plus petit compte, un crédit
+  d'enfant handicapé ; les départs anticipés gardés au stock, à la charge de
+  l'employeur public, et fermés à la bascule ; la majoration des
+  complémentaires à leur caisse jusqu'à l'intégration. Ensemble, environ
+  +0,48 point brut face au droit actuel, la moitié de l'économie de la
+  proposition ; la branche famille paierait l'AVPF et les deux crédits avec ce
+  qu'elle verse aujourd'hui.
+
+**Au propriétaire, pour les enfants** : chaque dispositif, pour le stock et
+pour l'avenir ; pour ceux qu'il garde en argent, le montant et le parent
+faute d'accord.
+
 ### Chantier 4 — Les recettes hors du travail : la TVA sociale et la LVT
 
 **La question.** Combien rapportent la TVA sociale et la LVT, qui les paie,
@@ -1234,6 +1272,12 @@ est passée ; le début de la campagne présidentielle ?
 - Chantier 3, les enfants, après la réponse du 7 novembre (« règle par
   règle ») : chaque dispositif, une fois évalué à part, pour le stock et
   pour l'avenir.
+- Chantier 3, les enfants, évalués règle par règle le 7 novembre
+  (`186/2026-11-07-enfants-regle-par-regle.md`) : pour chacun des dix-sept
+  dispositifs, le stock (repris avec la baisse ou gardé jusqu'à extinction)
+  et l'avenir (rien, un crédit ou un forfait payé par un tiers, la règle de
+  la caisse) ; le montant et le parent faute d'accord de ceux qu'il garde en
+  argent.
 - Chantiers 1 et 2, le 7 novembre après les décisions 29 et 30 : la lecture
   de la décision 29, A ou B, et pour B le déficit que l'on divise ; le rythme
   de descente du taux en découle. Au chantier 2, le plafond par an.

@@ -1,0 +1,36 @@
+date: "2026-11-07"
+session: "action 186, chantier 3 : les droits familiaux évalués règle par règle pour le programme, dix-sept fiches, et les décisions du propriétaire"
+consulte: >-
+  Aucune règle du scénario 1 n'est touchée, et ni l'index LEGI ni une source
+  extérieure n'ont été interrogés : la session est menée en série, sur le
+  dépôt. Lues dans le dépôt : les fiches des droits familiaux de
+  data/reference/regles/ (majoration_duree_assurance_enfants,
+  enfants_fonction_publique, enfants_sncf, enfants_ratp, enfants_ieg,
+  enfants_crpcen, marins_bonification_enfants,
+  cnavpl_majoration_duree_assurance, priorite_majorations_enfants,
+  majoration_dix_pour_cent, majoration_enfants_plafond_fonction_publique,
+  majoration_enfants_agirc_arrco, majoration_enfants_a_charge_agirc_arrco,
+  ircantec_majoration_enfants, majoration_enfants_regimes_speciaux, avpf,
+  surcote_parentale, sam_parents_24_23,
+  carriere_longue_enfants_reputes_cotises, minimum_contributif,
+  depart_anticipe_parents_trois_enfants, majoration_forfaitaire_reversion,
+  reversion), avantages_non_contributifs.yaml, assiette_avpf.csv,
+  bonifications_jaune.csv (jaune des pensions pour 2027) et
+  transferts_retraite.csv ; la note de l'étude des enfants du même jour.
+trouve: >-
+  Rien qui touche les fiches. Deux constats pour les données, sans écart de
+  règle : la bonification pour enfants de la fonction publique, portée par
+  1,59 million de pensions fin 2025 et valant 191 € par mois aux civils de
+  l'État liquidés en 2025 (jaune, tableaux A-7 et 50), semble coûter plus que
+  les 1,82 Md€ que le COR compte pour la MDA de tous les régimes de base hors
+  Cnav et MSA ; à comprendre. La fiche enfants_fonction_publique ne porte pas
+  la prise en compte des interruptions pour enfant de L. 9 du code des
+  pensions, que decompte_des_services_fonction_publique cite. Le détail est
+  dans la note docs/feuille_de_route/186/2026-11-07-enfants-regle-par-regle.md.
+reste: >-
+  À lire aux sources : le partage de la MDA entre maternité et éducation ; le
+  nombre de pères qui détiennent l'éducation ; les adoptions par an ; les
+  conditions de l'AVPF pendant un congé parental indemnisé ; la branche qui
+  finance l'AEEH depuis 2021 ; l'allocation de soutien familial des orphelins
+  d'un parent et son cumul avec la majoration forfaitaire de réversion. Suivre
+  l'article 34 du projet de loi de financement pour 2027 au Sénat.
