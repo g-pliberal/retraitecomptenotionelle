@@ -430,6 +430,31 @@ déjà tranchée, dit le propriétaire : la décision 43 ne laisse ses pensions
 qu'à l'Agirc-Arrco « jusqu'à ce qu'elle coule » ; les autres suivent les
 décisions 2 et 3 dès la bascule.
 
+Le même jour, sur l'indexation (chantier 5), après le chiffrage au modèle
+des trois voies du stock (note `186/2026-11-07-indexation-scenario-6.md`) :
+
+73. **Le plancher du stock se paie d'avance, par une prime mise en réserve
+    (voie 1)** : « Voie 1 ». Les pensions servies à la bascule suivent la
+    règle de la décision 41, les prix moins la hausse du nombre de retraités
+    par cotisant ; une prime retenue sur elles dès la bascule alimente une
+    réserve, placée au taux de la masse salariale, qui paie ce que leur
+    plancher sert au-dessus de la règle. Les pensions nouvelles gardent le
+    plancher et sa dette (décisions 44, 46 et 49).
+74. **La prime couvre la crise de l'emploi : 2,15 %** : « 2,15 % : crise de
+    l'emploi ». Calibrée au modèle sur l'emploi en baisse de 1 % par an de
+    2030 à 2039, avec 1 % d'inflation, elle couvre aussi une inflation
+    durable de 0,5 %.
+75. **La réserve qui ne servira pas est rendue au stock en route** :
+    « Rendue au stock en route ». La prime baisse dès que la réserve dépasse
+    ce que le plancher peut encore coûter.
+76. **Si la réserve manque, le stock la rend par une dette** : « Le stock,
+    par une dette ». Ce qui manque devient une dette du stock, reprise sur
+    ses hausses, comme sous la décision 46.
+77. **La dette du plancher d'un retraité mort avant de l'avoir rendue est
+    perdue** : « Perdue ». Pour toutes les pensions ; elle valait environ
+    0,01 point de PIB en 2070 pour les pensions nouvelles, sous les trois
+    trajectoires chiffrées.
+
 ## Ce qui est écarté
 
 - **Une transition sans baisse nominale des pensions en cours** — bâtir le
@@ -1208,6 +1233,19 @@ doivent porter ; un dixième de point de PIB vaut environ 3 Md€ de 2026.
   décision 41 ; pour toutes, la dette des retraités morts avant de l'avoir
   rendue.
 
+**Le 7 novembre 2026 : la voie 1 (décisions 73 à 77).** Le stock paie son
+plancher d'avance : une prime de 2,15 % de ses pensions dès la bascule,
+mise en réserve, qui couvre la crise de l'emploi chiffrée, et l'inflation
+basse avec elle. La prime baisse dès que la réserve dépasse ce que le
+plancher peut encore coûter ; si la réserve manque, le stock la rend par une
+dette ; la dette d'un retraité mort avant de l'avoir rendue est perdue.
+Reste à écrire au modèle, par une session du modèle : la règle qui baisse
+la prime — ce que « ce que le plancher peut encore coûter » mesure, à quelle
+date et sous quelle crise —, la dette du stock quand la réserve manque, puis
+la voie 1 comme défaut du scénario 6, et la page Coût. Sous le COR, sans
+crise, le stock perd d'abord 2,15 % ; la règle de la décision 75 dira
+combien il en retrouve, et quand.
+
 ### Chantier 6 — Les complémentaires : rien que leurs cotisations, sauvées mais dissoutes
 
 **La question.** Comment couper aux complémentaires tout argent qui n'est pas
@@ -1660,6 +1698,9 @@ est passée ; le début de la campagne présidentielle ?
   réserve), l'effort pris à la bascule (4,3 %, fixe ou révisé), ou la même
   règle pour toutes les pensions (0,18 point de PIB par an pour les
   cotisants) ; et la dette des retraités morts avant de l'avoir rendue.
+- Chantier 5, après les décisions 73 à 77 : rien de plus au propriétaire
+  tant que la règle qui baisse la prime n'est pas écrite au modèle ; s'il
+  s'en présente deux lectures, il choisira.
 - Chantier 6 : le mécanisme de résolution ; l'ordre des caisses.
 - Chantier 6, étudié le 7 novembre : l'entrée des complémentaires au régime
   unique, à la bascule ou caisse par caisse ; la résolution et son seuil ;

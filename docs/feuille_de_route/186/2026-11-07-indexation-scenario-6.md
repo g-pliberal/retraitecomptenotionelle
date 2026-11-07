@@ -1,13 +1,14 @@
 # Le facteur démographique et le plancher, chiffrés au modèle pour le scénario 6 : les trois voies du stock
 
-**Reprise, au 7 novembre 2026.** Les trois voies du stock sont chiffrées
-au modèle, en variante, avec la règle d'avant et α = 1, sous le COR, une
-inflation de 0,5 % et une crise de l'emploi
-(`python scripts/indexation_scenario_6.py`, `--annees`, `--csv`). Le défaut
-du scénario 6 n'a pas changé. Au propriétaire : sa voie, et les questions de
-fin de note. Puis une session du modèle fait de la voie choisie le défaut du
-scénario 6 (l'option `indexation_liberale` du coût devient sa règle), et la
-page Coût la montre ; le plancher des comptes ne s'écrit que s'il doit jouer.
+**Reprise, au 7 novembre 2026.** Le propriétaire a choisi la voie 1
+(décisions 73 à 77, fin de note) : une prime de 2,15 % sur le stock, rendue
+en route quand la réserve suffit, une dette du stock quand elle manque. Le
+défaut du scénario 6 n'a pas changé. À une session du modèle : écrire la
+règle qui baisse la prime et la dette de la réserve qui manque, au test
+d'abord (`indexation_programme.py`, `etudes/indexation_scenario_6.yaml`) ;
+la chiffrer (`scripts/indexation_scenario_6.py`) ; puis faire de la voie 1
+le défaut du scénario 6 (l'option `indexation_liberale` du coût), et la page
+Coût la montre. Le plancher des comptes ne s'écrit que s'il doit jouer.
 
 *Le 7 novembre 2026, le propriétaire écarte les trois issues proposées pour
 le plancher du stock (décision 49) et demande trois voies neuves, chiffrées au
@@ -235,3 +236,27 @@ de l'emploi (les deux autres trajectoires : `--annees`) :
 - La baisse de la voie 2 et les primes de la voie 1 dépendent de la série du
   nombre de retraités par cotisant : celle de la Cnav, qui monte plus vite
   au début, donnerait davantage.
+
+## Ce que le propriétaire a tranché
+
+Le même jour, à la lecture de ces chiffres : « Voie 1 ». Puis, aux quatre
+questions qu'elle laisse (décisions 73 à 77 de
+`docs/feuille_de_route_programme.md`) :
+- la prime couvre la crise de l'emploi, « 2,15 % : crise de l'emploi », et
+  l'inflation basse avec elle ;
+- la réserve qui ne servira pas est « rendue au stock en route » : la prime
+  baisse dès que la réserve dépasse ce que le plancher peut encore coûter ;
+- si la réserve manque, « le stock, par une dette », reprise sur ses
+  hausses comme sous la décision 46 ;
+- la dette du plancher d'un retraité mort avant de l'avoir rendue est
+  « perdue », pour toutes les pensions.
+
+*Ce qui reste à écrire au modèle.* La décision 75 demande une règle que
+l'étude n'a pas : ce que le plancher « peut encore coûter » se mesure à une
+date, sur ce qui reste du stock, sous la crise assurée. Deux lectures au
+moins : la crise assurée recommence à chaque date, et la prime se recalcule
+pour la couvrir sur ce qui reste ; ou la crise assurée garde ses dates, 2030
+à 2039, et la prime tombe quand elle est passée. La session qui l'écrit les
+chiffre, et le propriétaire choisit s'ils diffèrent. La décision 76 se
+chiffre avec le plancher et sa dette que le module sait déjà faire ; la 77
+est la convention de l'étude, qui compte déjà ces dettes comme perdues.
