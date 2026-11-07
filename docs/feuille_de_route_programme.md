@@ -499,6 +499,26 @@ Le même jour, sur les recettes (chantier 4), après leur étude (note
     réforme. L'étude en doutait, sur l'exemple du Danemark et de la révision
     française des valeurs locatives ; le propriétaire tranche.
 
+Le même jour, sur les chiffres (chantier 7), après leur étude aux sources
+(note `186/2026-11-07-chiffres-qui-tiennent.md`) : « Abandonne la moitié, et
+valide les trois autres ».
+
+82. **« La moitié du déficit public » est abandonnée** : « Abandonne la
+    moitié ». C'est le calcul de J.-P. Beaufret, 81 Md€ sur 170 en 2024, que
+    le COR, la Cour des comptes, l'IPP et le CAE réfutent ; le programme ne
+    le reprend pas. Ce qui tient sans convention reste à sa disposition :
+    les retraites font le quart de la dépense publique.
+83. **Les taux se chiffrent à la date de publication** : le rendement de
+    l'OAT à 10 ans et son écart avec le Bund, lus à la Banque de France et à
+    la Bundesbank, ou à la moyenne mensuelle de la BCE, au lieu de « proche
+    du défaut » ou de « taux stratosphériques ».
+84. **Le rendement des cotisations se dit en baisse, non négatif** : il
+    baisse de génération en génération, chiffré par le COR ou par l'outil
+    sous sa convention publiée ; le « TRI négatif » est abandonné.
+85. **Le PER d'entreprise, jamais le PEE** : l'épargne retraite de
+    l'entreprise est le PER d'entreprise, collectif (qui a succédé au Perco)
+    ou obligatoire ; le PEE, bloqué cinq ans, n'en est pas une.
+
 ## Ce qui est écarté
 
 - **Une transition sans baisse nominale des pensions en cours** — bâtir le
@@ -511,6 +531,10 @@ Le même jour, sur les recettes (chantier 4), après leur étude (note
   garantie a avancé.
 - **Toute la baisse des pensions au déficit**, la piste du chantier 1 du
   6 novembre, écartée le 7 novembre par la décision 29.
+- **« La moitié du déficit public »** et **le « TRI négatif » des
+  cotisants**, deux arguments du programme, écartés le 7 novembre par les
+  décisions 82 et 84 : le premier ne tient que sous la convention de
+  J.-P. Beaufret, le second est faux sous celles du COR et de l'outil.
 - **La coupure des réversions déjà servies le jour de la bascule**, le choix
   du dépôt depuis le 19 septembre 2026, écartée le 7 novembre par la
   décision 16.
@@ -1666,6 +1690,11 @@ garder en citant Beaufret ; chiffrer les taux à la date de publication ;
 remplacer le « TRI négatif » par la baisse d'une génération à l'autre ;
 dire « PER d'entreprise » et non PEE.
 
+**Le 7 novembre 2026, le propriétaire tranche** (décisions 82 à 85) :
+« Abandonne la moitié, et valide les trois autres ». Reste, au chantier 9,
+la façon de montrer que l'outil donne à la proposition un rendement plus
+faible que le droit actuel pour les jeunes générations.
+
 ### Chantier 8 — Le message
 
 **Pistes du 6 novembre.**
@@ -1790,6 +1819,14 @@ le rendement d'un euro cotisé en tête, les trois portes, la page Coût dans
 l'ordre du chantier 1, les deux pages de plus, « Le miroir » — attend
 toujours les chantiers 1 à 6, et se relira avec le propriétaire : pour la
 version publique, ou pour le simulateur des adhérents.
+
+**Venu du chantier 7, le 7 novembre 2026.** Sous sa convention, l'outil
+donne à la proposition un rendement plus faible que le droit actuel pour
+les jeunes générations : 0,2 % réel pour le salarié moyen né en 2000,
+contre 1,3 % (`186/2026-11-07-chiffres-qui-tiennent.md`, point 4). La
+comparaison compte des pensions du droit actuel que le COR projette sans
+financement ; la piste 1, le rendement d'un euro cotisé en tête, devra le
+montrer et le dire. Comment : au propriétaire.
 
 ### Chantier 10 — Le gel, la cible, la date
 
@@ -1962,12 +1999,9 @@ est passée ; le début de la campagne présidentielle ?
   l'intégration) ; les fonctionnaires et leur RAFP, provisionné (note
   `186/2026-11-07-complementaires-au-modele.md`). Tranchées le même jour :
   décisions 70 à 72, et la baisse par la décision 43.
-- Chantier 7, étudié le 7 novembre : « la moitié du déficit public »,
-  abandonnée ou attribuée à Beaufret ; les taux chiffrés à la date de
-  publication ; le rendement en baisse au lieu du « TRI négatif » ; le PER
-  d'entreprise au lieu du PEE ; et, au chantier 9, la façon de montrer que
-  l'outil donne à la proposition un rendement plus faible que le droit actuel
-  pour les jeunes générations.
+- Chantier 7, après les décisions 82 à 85 : plus rien ; reste, au
+  chantier 9, la façon de montrer que l'outil donne à la proposition un
+  rendement plus faible que le droit actuel pour les jeunes générations.
 - Chantier 8, après les décisions 31 à 33 et 68 : le plafond de l'apport
   pour un premier logement. Le gain des actifs suit la lecture A ou B du chantier 1, le
   message des retraités les pertes du chantier 2 ; le test des vingt
