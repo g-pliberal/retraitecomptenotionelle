@@ -1,16 +1,5 @@
 # Les enfants étudiés aux sources, et ce que coûterait chaque système
 
-**Reprise, au 7 novembre 2026.** Les droits familiaux (chantier 3, les
-enfants) sont étudiés ; le propriétaire ne retient aucune règle d'ensemble
-et demande d'évaluer règle par règle (« Ce que le propriétaire a répondu »).
-Étape suivante : une fiche par dispositif, de la MDA de maternité aux départs
-anticipés des parents, qui pose les quatre questions du programme, dit le
-coût, le payeur, qui en profite, le risque juridique pour le stock et pour
-l'avenir, les options chiffrées et une proposition ; puis les questions au
-propriétaire, règle par règle. Partir de cette note, les rapports des
-recherches étant restés hors du dépôt ; le modèle n'est touché qu'après.
-Restent au chantier 3 les 49 dispositifs.
-
 *Le 7 novembre 2026, le propriétaire ouvre le chantier 3 : « je veux qu'on
 attaque ce chantier ». La réversion étant tranchée, il choisit d'étudier les
 enfants d'abord, par des recherches menées en parallèle. La question est

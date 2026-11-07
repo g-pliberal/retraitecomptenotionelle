@@ -292,6 +292,63 @@ Le même jour, sur le rattrapage du plancher (chantier 5) :
     approfondir : « c'est un peu expérimental, j'ai un peu de mal, il
     faudrait peut-être qu'on approfondisse le sujet ».
 
+Le même jour, sur les enfants (chantier 3), dispositif par dispositif,
+après leur évaluation règle par règle (note
+`186/2026-11-07-enfants-regle-par-regle.md`) :
+
+50. **Ce que coûtaient les droits familiaux retirés va pour moitié aux
+    parents d'aujourd'hui, pour moitié au déficit** : « Il me semble que
+    j'avais dit il y a longtemps que la moitié de ses dépenses devaient aller
+    aux mères qui avaient un enfant aujourd'hui et non aux retraités, et
+    l'autre moitié pour baisser le déficit. […] Les mères qui ont un enfant
+    maintenant en ont plus besoin que les mères qui ont accouché depuis des
+    années et qui sont à la retraite aujourd'hui. » ; « j'ai pris la décision
+    en septembre je pense ». Le dépôt n'en garde aucune trace — l'action 59
+    du 20 septembre partage les impôts retirés entre les salaires et la
+    dette, la décision 29 la baisse des pensions entre le déficit et les
+    cotisants — : elle s'écrit ici. Elle vaut « À tous les droits retirés ».
+51. **La part des parents est une prestation en argent, à étudier aux
+    sources** : « Une prestation en argent » ; sa forme, son montant, ses
+    conditions et son payeur, « À étudier aux sources ».
+52. **La MDA de maternité et d'éducation est retirée, aux retraités comme
+    pour l'avenir** : « C'est un choix familial et cet argent serait mieux
+    utilisé à être directement aux parents qui éduquent leurs enfants
+    aujourd'hui plutôt qu'aux retraités. On a besoin de l'argent pour les
+    besoins d'aujourd'hui et pas pour les besoins passés. » Le stock suit la
+    baisse générale (décisions 2 et 3).
+53. **Les autres trimestres d'enfants suivent la même règle** — la MDA
+    d'adoption et de congé parental, la bonification et la majoration de
+    durée des fonctionnaires, les trimestres d'enfants des régimes
+    spéciaux : « Oui, la même règle ».
+54. **La majoration de 10 % est supprimée, celle des fonctionnaires et des
+    régimes spéciaux comprise** : « on en a pas besoin, c'est une mesure
+    populiste qui prive d'argent les parents d'aujourd'hui » ; pour les
+    fonctionnaires, « Comme le régime général ». Le stock suit la baisse.
+55. **Celle des complémentaires reste à sa caisse jusqu'à l'intégration,
+    puis suit le régime général** : « Sa caisse, puis le régime général ».
+56. **La majoration de 10 % sort aussi des réversions déjà servies** :
+    « Retirés comme sur les pensions ». Une exception à la décision 16, pour
+    la seule majoration : la réversion elle-même reste gardée.
+57. **L'AVPF est gardée, pour le stock et pour l'avenir** : « Gardée
+    partout ». Ses années comptent au compte comme des années cotisées, la
+    branche famille continuant de cotiser.
+58. **La MDA d'enfant handicapé est gardée, payée par un tiers, et les
+    parents d'enfants handicapés reçoivent aussi de l'argent** : « on fait
+    les deux. on garde payée par un tiers et on donne de l'argent aux parents
+    d'enfants handicapés. on sort un peu du programme retraite mais
+    j'aimerais qu'on sauvegarde cette décision ».
+59. **Les départs anticipés des parents de trois enfants suivent la baisse,
+    et ferment à la bascule** : « Suivent la baisse, fermés ».
+60. **La surcote parentale, le salaire de référence des parents et les
+    trimestres d'enfants réputés cotisés sont supprimés à la bascule** ;
+    ce qu'ils auraient coûté suit la décision 50 : « Supprimées, la règle du
+    partage ».
+61. **La majoration forfaitaire de réversion pour enfant à charge est
+    gardée, payée par la branche famille** : « Gardée, payée par la
+    famille ». Gardée avec les réversions servies ; pour les décès à venir,
+    ajoutée à la part du conjoint, et payée par la branche famille, non plus
+    par les autres cotisants.
+
 ## Ce qui est écarté
 
 - **Une transition sans baisse nominale des pensions en cours** — bâtir le
@@ -314,6 +371,13 @@ Le même jour, sur le rattrapage du plancher (chantier 5) :
   leurs réserves.
 - **Les réserves des caisses portées aux comptes de leurs propres cotisants
   et retraités**, piste du 7 novembre : écartée par la décision 38.
+- **Les droits familiaux des retraités gardés jusqu'à extinction**, en tout
+  (S2) ou pour ce qui compense une carrière (S3), et **les crédits de
+  retraite pour enfants**, de l'étude puis des fiches du 7 novembre :
+  écartés par les décisions 50 à 53, qui donnent l'argent aux parents
+  d'aujourd'hui ; seules l'AVPF, la MDA d'enfant handicapé et la majoration
+  forfaitaire de réversion pour enfant à charge restent (décisions 57, 58
+  et 61).
 
 ## Les chantiers
 
@@ -752,6 +816,25 @@ menée en série à la demande du propriétaire. Ce qu'elle établit :
 **Au propriétaire, pour les enfants** : chaque dispositif, pour le stock et
 pour l'avenir ; pour ceux qu'il garde en argent, le montant et le parent
 faute d'accord.
+
+**Le 7 novembre 2026, le propriétaire tranche les enfants** (décisions 50 à
+61), sans suivre les propositions des fiches : l'argent des droits familiaux
+va aux parents d'aujourd'hui, non aux retraités. Tout est retiré, au stock
+par la baisse générale et pour l'avenir — MDA, bonifications, majorations de
+10 %, départs anticipés, règles de 2023 et de 2026 —, sauf l'AVPF, la MDA
+d'enfant handicapé et la majoration forfaitaire de réversion pour enfant à
+charge ; la majoration des complémentaires attend leur intégration. Ce que
+coûtaient les droits retirés va pour moitié à une prestation en argent aux
+parents d'aujourd'hui, pour moitié au déficit. Face au droit actuel (à côté,
+moyenne 2026-2070) : environ 0,79 point de PIB d'économie brute, 0,66 nette
+de la garantie ; la moitié de la brute, environ 0,40 point, irait aux parents,
+de 2,7 Md€ en 2026, le stock baissant par cinquièmes, à 17 Md€ en 2040 et
+37 Md€ en 2070. Restent : la forme de la prestation, à étudier aux sources ;
+la base du partage, brute ou nette ; son lien avec la décision 29. Les
+reprises au stock de la MDA, des bonifications et des départs anticipés sont
+exposées en droit (élevé à très élevé, *Brachner*, *Leone*), ce que les
+questions disaient : la décision 6 en prend le combat. Au modèle ensuite,
+au scénario 6 seul (décision 28).
 
 ### Chantier 4 — Les recettes hors du travail : la TVA sociale et la LVT
 
@@ -1402,6 +1485,12 @@ est passée ; le début de la campagne présidentielle ?
   et l'avenir (rien, un crédit ou un forfait payé par un tiers, la règle de
   la caisse) ; le montant et le parent faute d'accord de ceux qu'il garde en
   argent.
+- Chantier 3, les enfants, après les décisions 50 à 61 : la prestation en
+  argent aux parents d'aujourd'hui, à étudier aux sources (forme, montant,
+  conditions, payeur), et celle des parents d'enfants handicapés ; le payeur
+  du crédit d'enfant handicapé ; la base du partage de la décision 50
+  (l'économie brute, ou nette de la garantie) et son lien avec la décision
+  29.
 - Chantiers 1 et 2, le 7 novembre après les décisions 29 et 30 : la lecture
   de la décision 29, A ou B, et pour B le déficit que l'on divise ; le rythme
   de descente du taux en découle. Au chantier 2, le plafond par an.

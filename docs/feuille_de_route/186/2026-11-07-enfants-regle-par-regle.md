@@ -1,13 +1,15 @@
 # Les droits familiaux, règle par règle : dix-sept fiches, pour le stock et pour l'avenir
 
-**Reprise, au 7 novembre 2026.** Les dix-sept dispositifs des droits
-familiaux sont évalués un à un (« Les fiches ») ; chacun porte une
-proposition, qui n'est pas une décision. Les questions sont posées au
-propriétaire dispositif par dispositif ; ses réponses s'écrivent sous
-« Ce que le propriétaire a répondu » et en décisions numérotées dans
-`docs/feuille_de_route_programme.md`. Le modèle n'est touché qu'après, par
-une session du modèle, au seul scénario 6 (décision 28) : « Ce qui reste à
-faire » dit quoi.
+**Reprise, au 7 novembre 2026.** Les dix-sept dispositifs sont évalués et
+tranchés (décisions 50 à 61) : tout est retiré, au stock par la baisse et pour
+l'avenir, sauf l'AVPF, la MDA d'enfant handicapé et la majoration de
+réversion pour enfant à charge ; ce que coûtaient les droits retirés va pour
+moitié à une prestation en argent aux parents d'aujourd'hui, pour moitié au
+déficit. Reste à étudier aux sources cette prestation (forme, montant,
+payeur) et celle des parents d'enfants handicapés ; au propriétaire, la base
+du partage et son lien avec la décision 29. Puis une session du modèle, au
+scénario 6 seul (« Ce qui reste à faire »). Restent au chantier 3 les 49
+autres dispositifs.
 
 *Le 7 novembre 2026, à la lecture de l'étude des enfants
 (`2026-11-07-enfants-etude-et-couts.md`), le propriétaire ne retient aucune
@@ -682,11 +684,103 @@ ou gardé jusqu'à extinction) et l'avenir (rien, un crédit ou un forfait payé
 par un tiers, ou la règle de la caisse) ; puis, pour ceux qui sont gardés en
 argent, le montant et le parent faute d'accord.
 
+## Ce que le propriétaire a répondu
+
+Le 7 novembre 2026, il choisit le travail en série, avec l'éclaireur pour les
+recherches dans le dépôt, sans recherche en parallèle. Puis, aux questions
+posées dispositif par dispositif — chacune disait le coût, le payeur, qui en
+profite et le risque juridique —, il ne suit pas les propositions : l'argent
+des droits familiaux va aux parents d'aujourd'hui, non aux retraités.
+
+- *La MDA de maternité* : « Il me semble que j'avais dit il y a longtemps que
+  la moitié de ses dépenses devaient aller aux mères qui avaient un enfant
+  aujourd'hui et non aux retraités, et l'autre moitié pour baisser le
+  déficit. Tu peux vérifier ? Les mères qui ont un enfant maintenant en ont
+  plus besoin que les mères qui ont accouché depuis des années et qui sont à
+  la retraite aujourd'hui. » **Vérifié : le dépôt n'en garde aucune trace.**
+  L'éclaireur a cherché les archives, la feuille de route, ses notes, le
+  programme et l'historique git : le plus proche est l'action 59 du
+  20 septembre 2026, qui partage les impôts que la proposition n'encaisse
+  plus — « la moitié est rendue aux salaires, la moitié éteint de la dette »
+  (`docs/archives/feuille_de_route.md`, l. 10007-10009) —, et la décision
+  29, qui partage la baisse des pensions entre le déficit et les cotisants ;
+  ni l'une ni l'autre ne parle d'enfants. Le propriétaire répond : « j'ai
+  pris la décision en septembre je pense ». Elle s'écrit donc comme la
+  décision 50, au 7 novembre, et vaut, à sa demande, « À tous les droits
+  retirés ».
+- *La forme de la part des parents* : « Une prestation en argent », versée
+  maintenant, hors de la retraite ; sa forme, son montant et ses conditions,
+  « À étudier aux sources » (décision 51).
+- *La MDA d'éducation* : « C'est un choix familial et cet argent serait mieux
+  utilisé à être directement aux parents qui éduquent leurs enfants
+  aujourd'hui plutôt qu'aux retraités. On a besoin de l'argent pour les
+  besoins d'aujourd'hui et pas pour les besoins passés. » (décision 52, avec
+  la maternité).
+- *L'adoption, le congé parental, les bonifications et majorations de durée
+  des fonctionnaires, les trimestres des régimes spéciaux* : « Oui, la même
+  règle » (décision 53). La question disait le risque d'une reprise, très
+  élevé pour la bonification que le Conseil d'État a jugée justifiée en 2015.
+- *La majoration de 10 %* : « on en a pas besoin, c'est une mesure populiste
+  qui prive d'argent les parents d'aujourd'hui » ; celle des fonctionnaires
+  et des régimes spéciaux, « Comme le régime général » (décision 54) ; celle
+  des complémentaires, « Sa caisse, puis le régime général » (décision 55) ;
+  celle qui s'ajoute aux réversions servies, posée d'abord trop
+  abstraitement (« la question n'est pas assez claire »), puis par l'exemple
+  d'une veuve qui touche 600 € de réversion et 60 € de majoration :
+  « Retirés comme sur les pensions » (décision 56).
+- *L'AVPF* : « Gardée partout » (décision 57).
+- *La MDA d'enfant handicapé* : « on fait les deux. on garde payée par un
+  tiers et on donne de l'argent aux parents d'enfants handicapés. on sort un
+  peu du programme retraite mais j'aimerais qu'on sauvegarde cette
+  décision » (décision 58).
+- *Les départs anticipés des parents de trois enfants* : « Suivent la baisse,
+  fermés » (décision 59), le risque très élevé ayant été dit.
+- *La surcote parentale, le salaire de référence des parents, les trimestres
+  réputés cotisés* : « Supprimées, la règle du partage » (décision 60).
+- *La majoration forfaitaire de réversion pour enfant à charge* : « Gardée,
+  payée par la famille » (décision 61).
+
+**Ce que cela coûte** (à côté, moyenne 2026-2070, face au droit actuel, par
+la répartition de « Comment lire les fiches »). Retirer tout sauf l'AVPF :
+au stock, la MDA et les bonifications, la majoration et les départs,
++0,247 brut, +0,199 net ; pour l'avenir, la majoration, la MDA, les
+bonifications, la surcote et le salaire de référence, +0,544 brut, environ
++0,46 net. Ensemble, environ +0,79 brut et +0,66 net, contre +0,98 et +0,80
+pour la proposition : l'écart est l'AVPF gardée, 0,185 brut. La majoration
+retirée des réversions servies ajoute une économie non chiffrée ; la MDA
+d'enfant handicapé et la majoration forfaitaire de réversion, gardées, des
+coûts faibles, non chiffrés.
+
+**La moitié aux parents** : si la base est l'économie brute, environ
+0,40 point de PIB par an en moyenne ; environ 2,7 Md€ en 2026, le stock
+baissant par cinquièmes (décision 3), 17 Md€ en 2040, 37 Md€ en 2070, en
+euros courants (à côté, AVPF ôtée au prorata de l'étude). C'est, pour
+650 000 naissances, de l'ordre de 4 000 € par naissance la première année et
+de 26 000 € en 2040. Le déficit reçoit alors l'économie nette moins cette
+part, environ 0,26 point, la garantie rendant 0,13 aux parents retraités
+passés sous le plancher ; si la base est l'économie nette, 0,33 chacun. La
+base, et le lien avec le partage de la décision 29 (lecture A ou B), restent
+au propriétaire.
+
 ## Ce qui reste à faire
 
-- Au modèle, une fois tranché, au seul scénario 6 (décision 28) : servir au
-  stock ce qui est gardé ; porter au compte l'AVPF et les crédits retenus,
-  avec leur payeur ; régler ce que la branche famille verse à la retraite,
+- À étudier aux sources, dans une étape à part : la prestation en argent aux
+  parents d'aujourd'hui (décision 51) — prime à la naissance, allocation pour
+  les jeunes enfants, pour tous ou sous conditions de ressources, à la mère
+  pour la part de maternité —, son payeur (la branche famille), et ce que la
+  branche famille sert déjà (prime de naissance, allocation de base) ; celle
+  des parents d'enfants handicapés (décision 58), face à l'AEEH ; le payeur du
+  crédit d'enfant handicapé.
+- Au propriétaire : la base du partage (brute ou nette) et son lien avec la
+  décision 29.
+- Au modèle, au seul scénario 6 (décision 28) : retirer, au stock par la
+  baisse et pour l'avenir, tous les droits familiaux sauf ceux des décisions
+  55, 57, 58 et 61 ; compter l'AVPF au compte comme une cotisation, que la
+  branche famille continue de verser ; servir le crédit d'enfant handicapé
+  et la majoration forfaitaire de réversion à la charge de leur payeur ;
+  retirer des réversions servies leur majoration de 10 % (décision 56) ;
+  verser la moitié de l'économie à la prestation, hors des pensions, et
+  l'autre au solde ; régler ce que la branche famille verse à la retraite,
   que le chantier 4 compte parmi « les versements de l'État et de la branche
   famille ». Le modèle ne sait pas chiffrer les droits familiaux de la
   population : un seul cas type a des enfants (étude).
