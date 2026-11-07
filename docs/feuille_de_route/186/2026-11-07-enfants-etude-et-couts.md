@@ -1,13 +1,15 @@
 # Les enfants étudiés aux sources, et ce que coûterait chaque système
 
-**Reprise, au 7 novembre 2026.** Les droits familiaux de retraite (chantier
-3, les enfants) sont étudiés ; quatre questions attendent le propriétaire
-(« Ce que le propriétaire a à trancher »), et ses réponses s'écrivent en
-décisions sous le chantier 3 de `docs/feuille_de_route_programme.md`. Le
-modèle n'est touché qu'après : la série de référence et les systèmes sont un
-calcul à côté, à refaire au modèle une fois tranché (« Ce qui reste à
-faire »). Reste ensuite au chantier 3 la répartition des 49 dispositifs et de
-leurs payeurs.
+**Reprise, au 7 novembre 2026.** Les droits familiaux (chantier 3, les
+enfants) sont étudiés ; le propriétaire ne retient aucune règle d'ensemble
+et demande d'évaluer règle par règle (« Ce que le propriétaire a répondu »).
+Étape suivante : une fiche par dispositif, de la MDA de maternité aux départs
+anticipés des parents, qui pose les quatre questions du programme, dit le
+coût, le payeur, qui en profite, le risque juridique pour le stock et pour
+l'avenir, les options chiffrées et une proposition ; puis les questions au
+propriétaire, règle par règle. Partir de cette note, les rapports des
+recherches étant restés hors du dépôt ; le modèle n'est touché qu'après.
+Restent au chantier 3 les 49 dispositifs.
 
 *Le 7 novembre 2026, le propriétaire ouvre le chantier 3 : « je veux qu'on
 attaque ce chantier ». La réversion étant tranchée, il choisit d'étudier les
@@ -593,3 +595,28 @@ congé parental, qui relèvent peut-être de l'accident plus que du choix.
 - À la veille : l'article 34 du projet de loi de financement pour 2027 ; s'il
   est voté, le scénario 1 sert le forfait aux pensions de juillet 2027.
 - Au chantier 3 : la répartition des 49 dispositifs et de leurs payeurs.
+
+## Ce que le propriétaire a répondu
+
+Le 7 novembre 2026, à la lecture de ce rapport, aux quatre questions : « Il
+faut évaluer règle par règle » pour le stock, « il faut regarder au cas par
+cas » pour l'avenir, « je retiens au cas par cas » pour le montant, « on
+regarde au cas par cas » pour le parent. Aucune règle d'ensemble n'est donc
+retenue, ni la piste de ce rapport : ni un stock S1, S2 ou S3, ni un forfait
+unique. Chaque dispositif s'évalue à part, et c'est l'étape suivante.
+
+Ce que chaque fiche doit porter, pour que le propriétaire tranche dispositif
+par dispositif : la règle et son article ; les quatre questions du programme
+(subi ? constaté par un tiers ? qui paie ? forfaitaire ?) ; le coût et le
+payeur d'aujourd'hui ; qui en profite, par sexe et par niveau de pension ;
+le risque juridique d'une reprise sur le stock et d'une suppression pour
+l'avenir ; les options et leur coût face au droit actuel ; une proposition.
+Les dispositifs : la MDA de maternité, d'éducation, d'adoption, de congé
+parental et d'enfant handicapé ; la bonification et la majoration de durée
+de la fonction publique ; les trimestres d'enfants des régimes spéciaux ; la
+majoration de 10 % de la base, des fonctionnaires et des complémentaires ;
+l'AVPF ; la surcote parentale ; le salaire de référence des parents ; les
+trimestres d'enfants réputés cotisés (carrière longue, minimum
+contributif) ; les départs anticipés des parents de trois enfants, fermés ;
+la majoration de réversion pour enfant à charge, au regard des décisions 16
+à 28.

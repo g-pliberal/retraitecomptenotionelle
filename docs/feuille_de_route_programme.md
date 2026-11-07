@@ -632,6 +632,19 @@ bonifications et l'AVPF, et laisser la majoration suivre la baisse générale
 pour l'avenir ; le montant du forfait ; le parent qui le reçoit faute
 d'accord.
 
+**Le 7 novembre 2026, le propriétaire répond : règle par règle.** Aux quatre
+questions, aucune règle d'ensemble : « Il faut évaluer règle par règle »
+(le stock), « il faut regarder au cas par cas » (l'avenir), « je retiens au
+cas par cas » (le montant), « on regarde au cas par cas » (le parent). Ni le
+stock S1, S2 ou S3, ni un forfait unique ne sont retenus : chaque dispositif
+— MDA de maternité, d'éducation, d'adoption, de congé parental, d'enfant
+handicapé ; bonifications de la fonction publique et des régimes spéciaux ;
+majoration de 10 % de la base, des fonctionnaires et des complémentaires ;
+AVPF ; surcote parentale ; salaire de référence des parents ; trimestres
+d'enfants réputés cotisés ; départs anticipés des parents — s'évalue à part,
+pour le stock et pour l'avenir, son montant et son parent compris. C'est
+l'étape suivante, dont le plan est en tête de la note.
+
 ### Chantier 4 — Les recettes hors du travail : la TVA sociale et la LVT
 
 **La question.** Combien rapportent la TVA sociale et la LVT, qui les paie,
@@ -1171,6 +1184,9 @@ est passée ; le début de la campagne présidentielle ?
   ou gardé pour la MDA et l'AVPF) ; la règle pour l'avenir (rien, un forfait
   par enfant en pension ou en cotisation au compte, l'AVPF seule) ; le
   montant du forfait ; le parent qui le reçoit faute d'accord.
+- Chantier 3, les enfants, après la réponse du 7 novembre (« règle par
+  règle ») : chaque dispositif, une fois évalué à part, pour le stock et
+  pour l'avenir.
 - Chantiers 1 et 2, le 7 novembre après les décisions 29 et 30 : la lecture
   de la décision 29, A ou B, et pour B le déficit que l'on divise ; le rythme
   de descente du taux en découle. Au chantier 2, le plafond par an.
