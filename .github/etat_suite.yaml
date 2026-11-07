@@ -1,7 +1,12 @@
 # Le verdict de la dernière course de tests.yml : écrit par GitHub
 # (scripts/publier_fabrique.sh), jamais à la main. Action 148.
-etat: vert
-sources: 004d513b4357111187d82e99cb473e642261c124
-date: 2026-11-07T14:34:50Z
-course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/42380229547
+etat: rouge
+sources: 6d3ab61f112effd5212ee141f38dda72cd414d16
+date: 2026-11-07T17:53:52Z
+course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/42395944491
+echecs:
+  - "FAILED tests/test_agregats.py::test_le_passe_et_l_avenir_figes_sont_ceux_que_le_modele_calcule - AssertionError: assert 0.0160498922086776 == 0.010190125028457713"
+  - "FAILED tests/test_web.py::test_aucune_page_ne_depasse_son_budget_de_lecture[/cout] - AssertionError: /cout : 941 mots de prose à traverser avant d'avoir rien déplié, 940 au plus"
+  - "FAILED tests/test_web.py::test_une_page_depliee_tient_son_budget[/cout] - AssertionError: /cout : 33283 mots tout déplié, 33250 au plus"
+  - "FAILED tests/test_web.py::test_la_page_cout_tient_en_deux_graphiques_et_sans_tableau_ouvert - AssertionError: 941 mots à lire avant d'avoir rien déplié"
 presomptions: vert
