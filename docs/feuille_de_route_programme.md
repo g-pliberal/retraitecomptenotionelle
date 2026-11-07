@@ -640,6 +640,46 @@ polonaise, à leurs sources ; ce que chacune aurait donné en France depuis
 **Au propriétaire.** L'indexation des pensions servies ; la formulation de la
 garantie.
 
+**Le 7 novembre 2026 : l'indexation, étudiée aux sources.** Le rapport est la
+note `186/2026-11-07-indexation-etude.md`. Ce qu'il établit :
+- *Un seul contrat.* Dans un compte notionnel, l'indexation de la pension
+  servie et la pension de départ vont ensemble : à compte égal, la pension
+  indexée sur les prix part 11 % plus haut, la suédoise 23 % (modèle). La
+  règle ne décide pas de la générosité, mais de qui porte la croissance,
+  l'emploi et la démographie.
+- *La masse salariale n'est pas une austérité.* Une pension liquidée en
+  2000 vaudrait en 2026 1,44 fois plus que sur les prix ; le droit lui a
+  servi 4 % de moins. Appliquée au stock, la masse de 2025 serait de 18 %
+  plus haute, environ 78 Md€ (à côté). Sous cette règle, les retraités
+  partagent une baisse de l'emploi, l'IA comprise, mais pas la hausse du
+  nombre de retraités par cotisant.
+- *La décision 11 demande un facteur démographique*, comme l'allemand de
+  2004 (α = 0,25 du nombre de retraités par cotisant). La pension de base a
+  pris 5,3 % au 1er janvier 2024 (vérifié), et la masse salariale aurait
+  donné 5,6 %. Les prix corrigés de ce facteur auraient servi de 2000 à
+  2026, à 0,6 % près, ce que les gels et les sous-indexations votés au coup
+  par coup ont servi. Calculée mesure par mesure, la réforme de 2023 vaut
+  3,7 % des pensions de 2030 ; une année d'âge vaut 4,2 % du patrimoine
+  retraite d'un retraité.
+- *À l'étranger.* Les comptes suivent la masse salariale en Pologne et en
+  Lettonie. Aucun des cinq pays ne revalorise la pension servie sur toute
+  la masse salariale. La Suède a baissé ses pensions de 3,0 % en 2010, de
+  4,3 % en 2011 et de 2,7 % en 2014, avec une compensation fiscale.
+  L'Allemagne a suspendu son facteur jusqu'en 2031. Quatre pays sur cinq
+  promettent une pension qui ne baisse jamais en euros ; aucun ne promet un
+  montant, sauf l'Allemagne avec ses 48 %.
+- *Les pistes.*
+  - Les comptes, sur la masse salariale, avec un plancher rattrapé.
+  - Les nouvelles pensions, sur la masse salariale moins une fraction α de
+    la croissance du nombre de retraités.
+  - Les pensions d'aujourd'hui, après leur baisse de transition, sur les
+    prix corrigés du même facteur.
+  - α au propriétaire : 0,25 comme l'Allemagne, 0,5 pour un partage par
+    moitié, 1 pour une répartition à 18 % autonome.
+  - La garantie : chaque euro cotisé inscrit à votre nom, la même règle pour
+    tous, personne sous le plancher, et une pension qui ne baisse jamais en
+    euros après la transition.
+
 ### Chantier 6 — Les complémentaires : rien que leurs cotisations, sauvées mais dissoutes
 
 **La question.** Comment couper aux complémentaires tout argent qui n'est pas
@@ -994,6 +1034,10 @@ est passée ; le début de la campagne présidentielle ?
   plafonnement au revenu.
 - Chantier 5 : l'indexation des pensions servies ; la formulation de la
   garantie.
+- Chantier 5, étudié le 7 novembre : le facteur démographique, pour les
+  nouvelles pensions et pour celles d'aujourd'hui, et sa valeur α (0,25,
+  0,5 ou 1) ; le plancher en euros, des comptes et des pensions ; la
+  garantie en quatre promesses.
 - Chantier 6 : le mécanisme de résolution ; l'ordre des caisses.
 - Chantier 6, étudié le 7 novembre : l'entrée des complémentaires au régime
   unique, à la bascule ou caisse par caisse ; la résolution et son seuil ;

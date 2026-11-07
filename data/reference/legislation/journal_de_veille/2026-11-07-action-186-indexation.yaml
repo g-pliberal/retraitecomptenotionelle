@@ -1,0 +1,32 @@
+date: "2026-11-07"
+session: "action 186, chantier 5 : l'indexation des comptes et des pensions servies étudiée aux sources, et le partage de l'effort entre actifs et retraités"
+consulte: >-
+  Aucune règle du scénario 1 n'est touchée. Du droit français, seulement ce que
+  le dépôt porte déjà : les coefficients de revalorisation des pensions de la
+  Cnav (revalorisation_pensions.csv, dont la circulaire Cnav 2023/34 du
+  29 décembre 2023, +5,3 % au 1er janvier 2024) et l'âge que l'article 105 de
+  la loi n° 2025-1403 a abaissé (age_ouverture_avant_suspension.csv) ; l'index
+  LEGI n'a pas été interrogé. À l'étranger, aux textes : le
+  socialförsäkringsbalken suédois (chapitres 58 et 62) et les propositions
+  2009/10:29 ; le SGB VI allemand (§§ 68, 68a, 154, 154a, 255e, 255g, 255i) ;
+  les lois italiennes n° 335/1995, 388/2000, 160/2019, 197/2022, 213/2023 et
+  le décret-loi n° 201/2011 ; la loi lettone « Par valsts pensijām » et ses
+  règlements ; la loi polonaise du 17 décembre 1998 sur les pensions du FUS ;
+  et les rapports de Pensionsmyndigheten, de la DRV, de l'INPS, de LV portāls
+  et du gouvernement polonais.
+trouve: >-
+  Le droit français n'est pas en cause : les coefficients que le dépôt porte
+  cumulent ×1,476 du 1er janvier 2000 au 1er janvier 2026, contre ×1,539 pour
+  les prix, et les 5,3 % de 2024 sont confirmés. Aucune erreur des fiches
+  n'est déclarée. À l'étranger : les baisses suédoises de 2010, 2011 et 2014
+  (−3,0, −4,3 et −2,7 %) et leur compensation fiscale de 2010 et 2011 ; la
+  Haltelinie allemande prolongée jusqu'au 1er juillet 2031 par le
+  « Rentenpaket 2025 », en vigueur au 1er janvier 2026. Le détail est dans la
+  note docs/feuille_de_route/186/2026-11-07-indexation-etude.md.
+reste: >-
+  Non lus à leur source : les motifs de l'arrêt n° 70/2015 de la Cour
+  constitutionnelle italienne ; les taux italiens de 2000 à 2007, de 2023 et de
+  2024 ; les indices lettons et polonais d'avant 2009 à 2014 ; la loi de
+  finances suédoise pour 2011 ; la référence au Bundesgesetzblatt du
+  Rentenpaket 2025 ; l'étude d'impact de la réforme de 2023, dont les
+  17,7 Md€ sont repris de docs/risque_de_defaut.md.
