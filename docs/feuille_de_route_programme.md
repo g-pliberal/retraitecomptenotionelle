@@ -409,6 +409,27 @@ Le même jour, sur les planchers (chantier 6), à la suite des décisions 62
     la Banque de France garde le sien tant que durent ses réserves. Les IEG
     suivent la même règle ; leurs réserves restent à vérifier.
 
+Le même jour, sur les complémentaires (chantier 6), après leur projection
+caisse par caisse (note `186/2026-11-07-complementaires-au-modele.md`) :
+
+70. **Pas de date butoir : une caisse qui a des réserves reste à part** :
+    « On garde tel quel ». La règle de la décision 37 vaut seule : les
+    complémentaires des indépendants, des libéraux et des navigants, qui
+    tiennent au-delà de 2070, gardent leurs cotisations et leurs pensions sur
+    tout l'horizon du modèle.
+71. **L'Agirc-Arrco revalorise ses pensions à ses règles actuelles jusqu'à
+    son intégration** : « On garde les règles actuelles ». La convention du
+    COR, que la projection suit déjà.
+72. **Le RAFP reste à part** : « on garde à part ». Provisionné, il ne
+    s'épuise pas ; les fonctionnaires y cotisent sur leurs primes après la
+    bascule.
+
+La baisse des pensions des complémentaires que l'État règle mais qui ne sont
+pas intégrées — Ircantec, libéraux, indépendants, avocats, navigants — était
+déjà tranchée, dit le propriétaire : la décision 43 ne laisse ses pensions
+qu'à l'Agirc-Arrco « jusqu'à ce qu'elle coule » ; les autres suivent les
+décisions 2 et 3 dès la bascule.
+
 ## Ce qui est écarté
 
 - **Une transition sans baisse nominale des pensions en cours** — bâtir le
@@ -1349,7 +1370,10 @@ moins ce que les décisions lui retirent. L'ordre que le modèle calcule
   l'horizon du modèle.
 Le salarié du privé verse donc 25,83 % jusqu'en 2031, et 18 % à partir de 2032.
 Les étapes suivantes portent ces années au moteur d'une carrière, puis au coût
-et au site.
+et au site. Le propriétaire tranche ce qui restait le même jour : pas de date
+butoir (décision 70), l'Agirc-Arrco à ses règles actuelles (71), le RAFP à part
+(72) ; et les complémentaires que l'État règle baissent dès la bascule
+(décision 43), ce qui recule l'intégration de la CNBF et de l'Ircantec.
 
 ### Chantier 7 — Les chiffres qui tiennent
 
@@ -1682,7 +1706,8 @@ est passée ; le début de la campagne présidentielle ?
   COR, ou une autre) ; la baisse des décisions 2 et 3 pour une complémentaire
   que l'État règle mais qui n'est pas intégrée (dès la bascule, ou à
   l'intégration) ; les fonctionnaires et leur RAFP, provisionné (note
-  `186/2026-11-07-complementaires-au-modele.md`).
+  `186/2026-11-07-complementaires-au-modele.md`). Tranchées le même jour :
+  décisions 70 à 72, et la baisse par la décision 43.
 - Chantier 7, étudié le 7 novembre : « la moitié du déficit public »,
   abandonnée ou attribuée à Beaufret ; les taux chiffrés à la date de
   publication ; le rendement en baisse au lieu du « TRI négatif » ; le PER

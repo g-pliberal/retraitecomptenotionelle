@@ -1,14 +1,15 @@
 # Les complémentaires au modèle : chaque caisse projetée jusqu'à l'épuisement de ses réserves
 
 **Reprise, au 7 novembre 2026.** L'étape 1 est faite : chaque complémentaire
-est projetée de 2026 à 2070 sous les décisions 36 à 48 et 67
-(`integration_complementaires.py`, ses tests et trois fichiers de données).
-L'ordre d'intégration : la complémentaire agricole en 2026, l'Agirc-Arrco en
-2032, la CNBF en 2042, l'Ircantec en 2055 ; les indépendants, les libéraux et
-les navigants, jamais avant 2070. Restent quatre questions au propriétaire
-(« Ce qui reste au propriétaire »), puis l'étape 2, le moteur d'une carrière,
-`moteur/js/` d'abord, dans une session neuve, quand celle du chantier 5 aura
-quitté le moteur ; puis l'étape 3, le coût et le site (« Le plan »).
+est projetée de 2026 à 2070 sous les décisions 36 à 48, 67 et 70 à 72
+(`integration_complementaires.py`). L'ordre : la complémentaire agricole en
+2026, l'Agirc-Arrco en 2032, la CNBF en 2042 et l'Ircantec en 2055 au plus
+tôt ; les indépendants, les libéraux et les navigants restent à part au-delà
+de 2070. Le propriétaire a tout tranché (« Ce que le propriétaire a tranché
+ensuite »). Reste l'étape 1 bis, la baisse dès la bascule des complémentaires
+que l'État règle, qui recule la CNBF et l'Ircantec ; puis l'étape 2, le moteur
+d'une carrière, `moteur/js/` d'abord, dans une session neuve, quand celle du
+chantier 5 aura quitté le moteur ; puis l'étape 3 (« Le plan »).
 
 *Le 7 novembre 2026, une session du modèle ouvre le portage des décisions du
 chantier 6 de `docs/feuille_de_route_programme.md` (décisions 36 à 43, 47 et
@@ -200,6 +201,13 @@ plaidoirie rend.
 
 1. **La projection caisse par caisse** — *faite le 7 novembre 2026*, cette
    note.
+   **1 bis. La baisse avant l'intégration** (ajoutée après les réponses du
+   propriétaire, ci-dessous) : appliquer aux dépenses de l'Ircantec, des
+   libéraux, du RCI, de la CNBF et de la CRPNPAC, dès la bascule, la baisse que
+   le scénario 6 fait subir à leurs pensions servies (décisions 2, 3 et 43),
+   par caisse si le coût sait la donner, à défaut celle de l'ensemble ; puis
+   refaire l'ordre. Elle recule la CNBF et l'Ircantec, et laisse les deux
+   premières à leur année. À mener avant l'étape 2, qui en prend les années.
 2. **Le moteur d'une carrière** (`moteur/js/` d'abord, puis son jumeau
    Python, au bit près des témoins) : au scénario 6, le taux de chaque année
    selon que la complémentaire de l'assuré est intégrée ou non — avant, ses
@@ -208,7 +216,9 @@ plaidoirie rend.
    l'intégration, puis portés au compte notionnel avec la garantie vieillesse ;
    les planchers propres à la caisse gardés pour ses pensions servies tant
    qu'elle n'a pas rejoint le régime général, la garantie ensuite (décision 62,
-   prise le même jour par la session des planchers).
+   prise le même jour par la session des planchers) ; le RAFP gardé à part,
+   ses cotisations sur les primes des fonctionnaires après la bascule et ses
+   pensions hors du compte notionnel (décision 72).
    Les années d'intégration y entrent comme une donnée que la fabrique tire de
    cette projection (une table au paquet, par caisse), non comme un calcul du
    moteur. Le test d'abord : un salarié du privé à 25,83 % en 2031 et à 18 %
@@ -232,3 +242,25 @@ plaidoirie rend.
    mais qui n'est pas intégrée : dès la bascule, ou à son intégration ?
 4. **Les fonctionnaires et leur RAFP**, provisionné, qui ne s'épuise pas :
    intégré à la bascule avec la fonction publique, gardé à part, ou fermé ?
+
+## Ce que le propriétaire a tranché ensuite
+
+Le même jour, il répond aux quatre questions :
+
+1. « On garde tel quel » : pas de date butoir (décision 70). Les
+   indépendants, les libéraux et les navigants gardent leur complémentaire,
+   ses cotisations et ses pensions, sur tout l'horizon du modèle ; leurs
+   affiliés versent plus de 18 % jusqu'en 2070 au moins.
+2. « On garde les règles actuelles » : l'Agirc-Arrco revalorise ses pensions à
+   ses règles jusqu'à son intégration (décision 71), la convention du COR que
+   la projection suit déjà. 2032 ne bouge pas.
+3. « Il me semble que cette question a déjà été répondue aujourd'hui » : par
+   la décision 43, qui ne laisse ses pensions qu'à l'Agirc-Arrco « jusqu'à ce
+   qu'elle coule ». Les complémentaires que l'État règle baissent donc dès la
+   bascule, en cinq ans au plus (décisions 2 et 3), intégrées ou non. La
+   projection de cette note ne le fait pas encore : ses années pour la CNBF
+   (2042) et l'Ircantec (2055) sont les plus précoces possibles, et l'étape
+   1 bis les refait.
+4. « On garde à part » : le RAFP reste hors du régime unique (décision 72).
+   Les fonctionnaires y cotisent sur leurs primes après la bascule, et ses
+   pensions ne passent pas au compte notionnel : l'étape 2 le dira au moteur.
