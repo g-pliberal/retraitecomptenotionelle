@@ -8048,7 +8048,7 @@ et 3 ci-dessus ; la mesure, et comment la refaire, sont dans la note
 29 refaites au modèle, sous trois recettes (`…-deux-lectures-au-modele.md`). Le
 message (8) est tranché (décisions 31 à 33), l'âge à 65 ans (décision 68) ; les
 enfants (3), tranchés règle par règle (décisions 50 à 61, `…-regle-par-regle.md`) ;
-les recettes (4) aussi (79 et 80 : TVA à 20 %, LVT à 2 %) ; l'indexation (5), les
+les recettes (4) aussi (79 à 81 : TVA à 20 %, LVT à 2 %) ; l'indexation (5), les
 complémentaires (6) et les chiffres (7) sont étudiés ; chaque note tient son
 bloc. Par quoi commencer : quel déficit pour la 29, puis A ou B, et les
 questions des chantiers 3 à 7 ; puis le gel (10). Rien n'est gelé.

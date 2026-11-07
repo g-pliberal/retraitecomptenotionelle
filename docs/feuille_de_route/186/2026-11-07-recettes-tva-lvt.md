@@ -1,10 +1,10 @@
 # Les recettes hors du travail, étudiées aux sources : la TVA sociale et la LVT
 
 **Reprise, au 7 novembre 2026.** Le chantier 4 est tranché pour l'essentiel
-(décisions 79 et 80, « Ce que le propriétaire a tranché ») : la TVA reste à
-20 %, sa part qui va aux retraites leur est affectée en titre, la LVT est à
-2 % dont un point aux retraites. Restent au propriétaire le sort des
-versements de l'État, l'abattement, le plafonnement et l'année de la LVT.
+(décisions 79 à 81, « Ce que le propriétaire a tranché ») : la TVA reste à
+20 % et sa part qui va aux retraites est gardée ; la LVT est à 2 % dont un
+point aux retraites, en vigueur en quelques mois. Restent au propriétaire le
+sort des versements de l'État, l'abattement et le plafonnement de la LVT.
 Par quoi commencer : chiffrer la part de TVA des retraites (Cnav comprise),
 puis une session du modèle qui la garde au scénario 6 et y verse la LVT ;
 relire les textes cités de mémoire (« Ce qui reste à faire »).
@@ -497,3 +497,14 @@ on dédit 1% aux retraites ». Ce sont les décisions 79 et 80 de
 - **Restent ouverts** l'abattement de la résidence principale, le
   plafonnement au revenu, l'année d'entrée en vigueur de la LVT, et le
   montant de la part de TVA officialisée.
+
+Puis, à la lecture des décisions 79 et 80 : « oui c'est ça, on garde la
+part existante pour les retraites » ; « ne t'inquiète pas pour la LVT, en
+quelques mois, on aura fait ça. On sait beaucoup mieux gérer ce genre de
+chose de nos jours ». La lecture de la décision 79 est confirmée, et la LVT
+entre en vigueur dans les mois qui suivent le vote (décision 81). Les
+premières années ont donc une recette nouvelle, le point de LVT des
+retraites, 36 à 43 Md€ par an sur le calcul de cette note, et l'année
+d'entrée en vigueur n'est plus ouverte. Ce que cette note disait des délais
+danois et français reste vrai à sa date ; le risque d'une évaluation
+contestée ou plus longue est à suivre au chantier 7.

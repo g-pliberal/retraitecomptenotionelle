@@ -480,7 +480,8 @@ Le même jour, sur les recettes (chantier 4), après leur étude (note
     7 Md€ en 2025 (décision 47), et la part de la Cnav dans la fraction de
     la sécurité sociale, qui reste à chiffrer. Ce que le dépôt en comprend,
     à confirmer : la proposition garde cette fraction au lieu de la retirer
-    avec les autres impôts affectés.
+    avec les autres impôts affectés. Confirmé le même jour : « oui c'est ça,
+    on garde la part existante pour les retraites ».
 80. **La LVT est à 2 %, dont un point aux retraites** : « pour la LVT, on
     met 2% et on dédit 1% aux retraites ». Elle remplace la taxe foncière
     (décision 9), et l'autre point revient aux communes à sa place. Sur les
@@ -490,6 +491,13 @@ Le même jour, sur les recettes (chantier 4), après leur étude (note
     foncière en 2024 (calcul à côté de l'étude). Restent ouverts
     l'abattement de la résidence principale, le plafonnement au revenu que
     le Conseil constitutionnel exige, et le temps d'évaluer les terrains.
+81. **La LVT entre en vigueur en quelques mois, non en quelques années** :
+    « ne t'inquiète pas pour la LVT, en quelques mois, on aura fait ça. On
+    sait beaucoup mieux gérer ce genre de chose de nos jours ». L'évaluation
+    des terrains se fait dans les mois qui suivent le vote, à partir des
+    prix des ventes (DVF) ; la LVT rapporte dès les premières années de la
+    réforme. L'étude en doutait, sur l'exemple du Danemark et de la révision
+    française des valeurs locatives ; le propriétaire tranche.
 
 ## Ce qui est écarté
 
@@ -1129,6 +1137,18 @@ l'autre aux communes à la place de la taxe foncière. Ce qui en suit :
 **Au propriétaire, pour les recettes, après les décisions 79 et 80** : le
 sort des versements de l'État et de la branche famille ; l'abattement et le
 plafonnement de la LVT ; l'année de son entrée en vigueur.
+
+**Le 7 novembre 2026, ensuite** : la lecture de la décision 79 est confirmée
+— la proposition garde la part de TVA qui va aux retraites —, et la LVT
+entre en vigueur en quelques mois (décision 81). Les premières années ont
+donc une recette nouvelle, le point de LVT des retraites, 36 à 43 Md€ par an
+sur le calcul de l'étude. La session du modèle verse la LVT dès la première
+année de la réforme. Le risque d'une évaluation contestée, ou plus longue
+que prévu, est à suivre au chantier 7.
+
+**Au propriétaire, pour les recettes, après la décision 81** : le sort des
+versements de l'État et de la branche famille ; l'abattement et le
+plafonnement de la LVT.
 
 ### Chantier 5 — L'indexation, et le partage de l'effort entre actifs et retraités
 
@@ -1820,6 +1840,8 @@ est passée ; le début de la campagne présidentielle ?
   de descente du taux en découle. Au chantier 2, le plafond par an.
 - Chantier 4 : la TVA sur le seul taux normal ; la LVT à 1 % ou 2 %, et son
   abattement.
+- Chantier 4, après la décision 81 : le sort des versements de l'État et de
+  la branche famille ; l'abattement et le plafonnement de la LVT.
 - Chantier 4, après les décisions 79 et 80 : le sort des versements de
   l'État et de la branche famille ; l'abattement, le plafonnement et l'année
   d'entrée en vigueur de la LVT.
