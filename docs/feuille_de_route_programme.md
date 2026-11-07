@@ -110,6 +110,16 @@ Le même jour, ses modalités :
 21. **La rente est ouverte à tous les couples qui la demandent**, mariés,
     pacsés ou concubins : « Tous les couples qui le demandent tant que c'est
     payé ».
+22. **Quand un actif meurt, son compte, converti en pension au jour du
+    décès, en sert la moitié à son conjoint** : la traduction du système
+    actuel, l'option « (a) » de quatre. L'âge à partir duquel le conjoint la
+    touche reste à fixer, et son coût à chiffrer.
+23. **Au divorce après le départ, la rente reste acquise à l'ex-conjoint** :
+    « oui mais il faut trouver un mécanisme pour lutter contre les
+    freeriders ». Le mécanisme est à étudier.
+24. **Le défaut de la décision 18 ne vaut que pour les mariés** :
+    « Seulement pour les mariés, les autres peuvent demander mais ne
+    l'obtiennent pas par défaut ».
 
 ## Ce qui est écarté
 
@@ -319,6 +329,22 @@ chacun couvrant l'autre. La garantie d'office porte le recours à 100 % : les
 suppose 50 %, est à régler. Restent ouverts : la couverture du décès d'un
 actif ; le divorce ; le défaut, pour les seuls mariés ou pour tout couple
 déclaré.
+
+**Le 7 novembre 2026, le reste** (décisions 22 à 24) : le décès d'un actif
+traité comme aujourd'hui, traduit en comptes notionnels — son compte converti
+en pension au jour du décès, la moitié au conjoint ; la rente acquise à
+l'ex-conjoint après un divorce ; le défaut réservé aux mariés. Restent :
+l'âge à partir duquel le conjoint d'un actif mort touche sa part ; le
+mécanisme contre les passagers clandestins (« freeriders »). Pistes à
+étudier, pour ce dernier : un choix irrévocable à la liquidation ; un prix
+fixé à l'âge du conjoint réel ; une durée de mariage avant que la rente soit
+due, comme la fonction publique d'aujourd'hui (quatre ans pour un mariage
+célébré après le départ, sauf enfant) ou, de mémoire et à vérifier, la
+présomption allemande de mariage de prévoyance et l'option des régimes
+américains, un an chacune ; un remariage qui achète une nouvelle rente à son
+prix, sans rien retirer à l'ex-conjoint. Au modèle : porter les décisions 16
+à 24 aux scénarios 2 à 6, chiffrer la décision 22, régler le recours à la
+garantie à 100 %.
 
 ### Chantier 4 — Les recettes hors du travail : la TVA sociale et la LVT
 
@@ -570,6 +596,9 @@ est passée ; le début de la campagne présidentielle ?
 - Chantier 3, la réversion, le 7 novembre après les décisions 18 à 21 : la
   couverture du décès d'un actif ; le divorce ; le défaut, pour les seuls
   mariés ou pour tout couple déclaré.
+- Chantier 3, la réversion, le 7 novembre après les décisions 22 à 24 :
+  l'âge du conjoint d'un actif mort ; le mécanisme contre les passagers
+  clandestins.
 - Chantier 4 : la TVA sur le seul taux normal ; la LVT à 1 % ou 2 %, et son
   abattement.
 - Chantier 5 : l'indexation des pensions servies ; la formulation de la

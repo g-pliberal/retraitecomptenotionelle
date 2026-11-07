@@ -284,3 +284,10 @@ renonciation que les deux conjoints doivent signer » ; un taux de « 50% » ;
 la garantie vieillesse servie « D'office » ; la rente ouverte à « Tous les
 couples qui le demandent tant que c'est payé ». À la question du décès d'un
 actif, le propriétaire demande d'abord ce que fait le système actuel.
+
+Puis (décisions 22 à 24) : pour le décès d'un actif, l'option « (a) », la
+traduction du système actuel — son compte converti en pension au jour du
+décès, la moitié au conjoint ; au divorce après le départ, la rente acquise
+à l'ex-conjoint, « oui mais il faut trouver un mécanisme pour lutter contre
+les freeriders » ; le défaut « Seulement pour les mariés, les autres peuvent
+demander mais ne l'obtiennent pas par défaut ».
