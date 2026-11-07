@@ -212,6 +212,16 @@ sources :
     complémentaire n'a pas été intégrée dans le régime général. Quand ça
     bascule dans le régime général, les cotisations seront à 18%. »
 
+Le même jour, sur l'indexation (chantier 5), après l'étude aux sources :
+
+41. **Les retraités portent en entier l'effort démographique : α = 1** :
+    « α = 1 ». Chaque année, la revalorisation des pensions servies perd
+    toute la hausse du nombre de retraités par cotisant, et gagne toute sa
+    baisse. Ni les cotisants ni le budget ne paient l'arrivée des grosses
+    générations à la retraite. Reste à valider ce à quoi le facteur
+    s'applique : la masse salariale pour les nouvelles pensions, les prix
+    pour celles d'aujourd'hui (pistes 2 et 3 de la note).
+
 ## Ce qui est écarté
 
 - **Une transition sans baisse nominale des pensions en cours** — bâtir le
@@ -799,6 +809,21 @@ note `186/2026-11-07-indexation-etude.md`. Ce qu'il établit :
     tous, personne sous le plancher, et une pension qui ne baisse jamais en
     euros après la transition.
 
+**Le 7 novembre 2026 : α = 1 (décision 41).** Les retraités portent toute la
+hausse du nombre de retraités par cotisant. Sous le COR, ce nombre passe de
+0,67 en 2025 à 0,89 en 2070 (Cnav). Ce que α = 1 donne, d'après la note (à
+côté) :
+- *une pension nouvelle, sur la masse salariale par retraité*, garde 96 % de
+  son pouvoir d'achat en vingt-cinq ans, au lieu d'en gagner 22 % sur la
+  masse salariale seule ;
+- *une pension d'aujourd'hui, sur les prix corrigés du facteur*, en perd
+  17 % en vingt-cinq ans, par-dessus la baisse de transition des décisions 2
+  et 3. De 2000 à 2026, le facteur jouant dès 2005, elle aurait servi 10 %
+  de moins que le droit ;
+- *en euros*, les deux pensions montent encore, d'environ 1,0 et 1,6 % par
+  an, sous l'inflation de 1,75 % du COR : le plancher en euros ne jouerait
+  que dans une crise.
+
 ### Chantier 6 — Les complémentaires : rien que leurs cotisations, sauvées mais dissoutes
 
 **La question.** Comment couper aux complémentaires tout argent qui n'est pas
@@ -1161,6 +1186,10 @@ est passée ; le début de la campagne présidentielle ?
   nouvelles pensions et pour celles d'aujourd'hui, et sa valeur α (0,25,
   0,5 ou 1) ; le plancher en euros, des comptes et des pensions ; la
   garantie en quatre promesses.
+- Chantier 5, après la décision 41 (α = 1) : ce à quoi le facteur
+  s'applique, la masse salariale des nouvelles pensions et les prix de
+  celles d'aujourd'hui ; le plancher en euros ; la garantie en quatre
+  promesses.
 - Chantier 6 : le mécanisme de résolution ; l'ordre des caisses.
 - Chantier 6, étudié le 7 novembre : l'entrée des complémentaires au régime
   unique, à la bascule ou caisse par caisse ; la résolution et son seuil ;

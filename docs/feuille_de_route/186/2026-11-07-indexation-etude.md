@@ -1,12 +1,13 @@
 # L'indexation étudiée aux sources, et le partage de l'effort entre actifs et retraités
 
-**Reprise, au 7 novembre 2026.** Le chantier 5 est étudié. Ses pistes sont au
-propriétaire (« Les pistes, pour le propriétaire ») : le facteur démographique
-et sa valeur α, le plancher en euros, et la garantie en quatre promesses. Ses
-réponses s'écrivent en décisions sous le chantier 5 de
-`docs/feuille_de_route_programme.md`. Ensuite, une session du modèle écrit le
-facteur en paramètre pour le seul scénario 6, et la page Coût chiffre chaque α.
-Restent à lire à leur source les textes marqués « non vérifié ».
+**Reprise, au 7 novembre 2026.** Le chantier 5 est étudié, et α = 1 est
+tranché (décision 41 de `docs/feuille_de_route_programme.md`). Restent au
+propriétaire : ce à quoi le facteur s'applique (pistes 2 et 3 : la masse
+salariale des nouvelles pensions, les prix de celles d'aujourd'hui), le
+plancher en euros, et la garantie en quatre promesses ; ses réponses
+s'écrivent en décisions sous le chantier 5. Ensuite, une session du modèle
+écrit le facteur pour le seul scénario 6, et la page Coût le chiffre. Restent
+à lire à leur source les textes marqués « non vérifié ».
 
 *Le 7 novembre 2026, le propriétaire ouvre le chantier 5 de l'action 186 :
 « Je veux qu'on attaque ce chantier ». La feuille de route du programme y
@@ -534,3 +535,17 @@ pension servie et pour le stock du scénario 6, le seul où s'appliquent les
 règles du programme (décision 28), puis la page Coût en chiffrerait chaque
 valeur. Cela vient après les décisions du propriétaire, comme le veut la
 feuille de route du programme.
+
+## Ce que le propriétaire a tranché
+
+Le même jour, après une explication de α (la part de l'effort démographique
+que portent les retraités ; le reste, 1 − α, va aux cotisants, ou au budget
+quand le taux est fixé à 18 %), le propriétaire choisit : « α = 1 ». C'est la
+décision 41 de `docs/feuille_de_route_programme.md`. La revalorisation des
+pensions servies perd chaque année toute la hausse du nombre de retraités par
+cotisant, et gagne toute sa baisse. Ce que la règle donne est sous le
+chantier 5 : une pension nouvelle, sur la masse salariale par retraité, garde
+96 % de son pouvoir d'achat en vingt-cinq ans sous le COR ; une pension
+d'aujourd'hui, sur les prix corrigés du facteur, en perd 17 %, par-dessus la
+baisse de transition. Les pistes 2 et 3, ce à quoi le facteur s'applique, la
+piste 1 et la garantie restent à valider.
