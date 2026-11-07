@@ -56,6 +56,7 @@ from retraite_notionnelle.cout import (
 )
 from retraite_notionnelle.cout import (
     CLES_PROSPECTIVES,
+    CLES_REVERSION_GARDEE,
     COMPOSANTE_GARANTIE,
     CONVENTION_REVERSION_SERVIE,
     CONVENTION_REVERSION_SUPPRIMEE,
@@ -741,9 +742,11 @@ def test_la_trajectoire_du_systeme_actuel_est_celle_du_cor(avenir, comptes):
     for ligne in projetees:
         assert ligne.part_pib("actuel") == pytest.approx(
             comptes.depense(ligne.annee), rel=1e-12), ligne.annee
-        # Le rapport s'applique à cette dépense-là, part dérivée à part.
+        # Le rapport s'applique à cette dépense-là, part dérivée à part : le
+        # scénario 6 n'en sert que les réversions gardées.
         assert ligne.cout_constants("notionnel_liberal") == pytest.approx(
-            ligne.base * (1.0 - ligne.part_derives) * ligne.rapports["notionnel_liberal"],
+            ligne.base * (1.0 - ligne.part_derives) * ligne.rapports["notionnel_liberal"]
+            + ligne.base * ligne.part_derives * ligne.part_reversion_gardee,
             rel=1e-12), ligne.annee
 
 
@@ -3986,6 +3989,10 @@ def test_le_rapport_ne_multiplie_que_les_droits_directs(
                 # Avant sa bascule, une réforme prospective EST le système
                 # actuel : elle en sert la réversion comme le reste.
                 attendu = directe + point.depenses * point.part_derives
+            elif scenario in CLES_REVERSION_GARDEE:
+                # Le scénario 6 garde les réversions servies à la bascule.
+                attendu = (directe + point.depenses * point.part_derives
+                           * point.part_reversion_gardee)
             else:
                 attendu = directe
             assert point.depense(scenario) == pytest.approx(attendu), (
@@ -4009,8 +4016,11 @@ def test_une_reforme_prospective_ne_retire_la_reversion_qu_a_compter_de_sa_bascu
 
     À compter de la bascule, ils ne la servent plus, et à personne : c'est un
     avantage non contributif, et ces scénarios les retirent tous. Les
-    rétroactifs, eux, recalculent tout le monde depuis 1941 et ne la servent
-    jamais.
+    rétroactifs 2 et 4, eux, recalculent tout le monde depuis 1941 et ne la
+    servent jamais. Le scénario 6 garde les réversions servies à la bascule
+    jusqu'à leur extinction (décision 16 du programme, 7 novembre 2026) : il
+    sert donc toute la réversion avant elle, puis la part du stock qui vit
+    encore.
     """
     bascule = Parametres().annee_bascule
     avant = [l for l in cout_assiette.solde.annees if l.annee < bascule]
@@ -4019,23 +4029,28 @@ def test_une_reforme_prospective_ne_retire_la_reversion_qu_a_compter_de_sa_bascu
 
     for point in avant:
         assert not point.reforme_en_vigueur, point.annee
-        for scenario in CLES_PROSPECTIVES:
+        assert point.part_reversion_gardee == 1.0, point.annee
+        for scenario in CLES_PROSPECTIVES | CLES_REVERSION_GARDEE:
             entiere = (point.depenses * (1.0 - point.part_derives)
                        * point.rapports[scenario]
                        + point.depenses * point.part_derives)
             assert point.depense(scenario) == pytest.approx(entiere), (
                 point.annee, scenario)
 
-    # Et à partir de la bascule, les cinq scénarios notionnels sont logés à la
-    # même enseigne : plus un euro de réversion, prospectifs compris.
+    # Et à partir de la bascule, les quatre scénarios 2 à 5 sont logés à la
+    # même enseigne : plus un euro de réversion, prospectifs compris. Le
+    # scénario 6 ne sert plus que le stock, qui s'éteint.
     for point in apres:
         assert point.reforme_en_vigueur, point.annee
+        assert 0.0 <= point.part_reversion_gardee < 1.0, point.annee
         for scenario, _ in SCENARIOS:
             if scenario == "actuel":
                 continue
+            gardee = (point.depenses * point.part_derives * point.part_reversion_gardee
+                      if scenario in CLES_REVERSION_GARDEE else 0.0)
             assert point.depense(scenario) == pytest.approx(
                 point.depenses * (1.0 - point.part_derives)
-                * point.rapports[scenario]), (point.annee, scenario)
+                * point.rapports[scenario] + gardee), (point.annee, scenario)
 
 
 def test_une_reforme_prospective_garde_le_remboursement_des_majorations_qu_elle_sert(
@@ -4143,7 +4158,9 @@ def test_la_proposition_ne_compte_que_les_cotisations_et_deux_restes(cout_assiet
     est retiré des transferts, ce que l'assurance chômage verse y reste — le
     compte porte les cotisations qu'elle paie —, et les autres produits sont
     reconduits tels quels. Avant la bascule, la proposition prélève les taux
-    réels comme tout le monde, et sa réversion n'est jamais servie.
+    réels comme tout le monde. Sa réversion est celle du droit actuel avant la
+    bascule, puis celle du stock qu'elle garde jusqu'à extinction (décision 16
+    du programme).
     """
     bascule = cout_assiette.solde.annees[0].annee_bascule
     for point in cout_assiette.solde.annees:
@@ -4154,7 +4171,8 @@ def test_la_proposition_ne_compte_que_les_cotisations_et_deux_restes(cout_assiet
         assert postes["transferts_chomage"] > 0.0
         assert postes["transferts_autres"] == pytest.approx(actuel["transferts_autres"])
         assert postes["autres_produits"] == pytest.approx(actuel["autres_produits"])
-        assert point.postes_depenses("notionnel_liberal")["droits_derives"] == 0.0
+        assert point.postes_depenses("notionnel_liberal")["droits_derives"] == pytest.approx(
+            point.depenses * point.part_derives * point.part_reversion_gardee)
         if point.annee >= bascule:
             assert point.recette_par_assiette
             assert postes["contribution_equilibre_etat"] == 0.0
@@ -4223,11 +4241,15 @@ def test_les_deux_conventions_de_reversion_se_mesurent():
     l'Italie, qui partage le capital du défunt, reste calculable pour qu'on
     sache ce qu'il vaut — comme `convention_recette="rapport"`.
 
-    Il vaut cher, et il vaut la MÊME chose pour les cinq : 1,19 point de PIB
-    chacun. Ce n'est pas une coïncidence. La réversion retirée ne dépend
-    d'aucun rapport de masses — c'est une part de la base, la même pour tous —,
-    et les cinq scénarios la retirent sur la même fenêtre, celle qui commence à
-    la bascule. Le solde moyen de la projection ne commence pas avant.
+    Il vaut cher, et il vaut la MÊME chose pour les scénarios 2 à 5 : 1,19
+    point de PIB chacun. Ce n'est pas une coïncidence. La réversion retirée ne
+    dépend d'aucun rapport de masses — c'est une part de la base, la même pour
+    tous —, et ces scénarios la retirent sur la même fenêtre, celle qui
+    commence à la bascule. Le solde moyen de la projection ne commence pas
+    avant. Le scénario 6, qui garde les réversions servies à la bascule
+    jusqu'à leur extinction (décision 16), n'en retire que celles des décès à
+    venir : 0,82 point, le « chemin suédois » de l'étude du 7 novembre 2026
+    (``docs/feuille_de_route/186/2026-11-07-reversion-etude-et-couts.md``).
     """
     def fait(convention: str) -> Cout:
         return memoire.cout(Parametres(), convention_recette=CONVENTION_ASSIETTE,
@@ -4242,16 +4264,62 @@ def test_les_deux_conventions_de_reversion_se_mesurent():
     assert (servie.solde_moyen("actuel", debut, fin)
             == pytest.approx(supprimee.solde_moyen("actuel", debut, fin)))
 
-    # Les cinq autres y gagnent, et tous exactement la même chose : la
+    # Les scénarios 2 à 5 y gagnent, et tous exactement la même chose : la
     # réversion retirée est une part de la BASE, qui ne dépend d'aucun rapport.
-    gains = []
+    gains = {}
     for scenario, _ in SCENARIOS:
         if scenario == "actuel":
             continue
-        gains.append(supprimee.solde_moyen(scenario, debut, fin)
-                     - servie.solde_moyen(scenario, debut, fin))
-    assert max(gains) - min(gains) < 1e-9, gains
-    assert 0.011 < gains[0] < 0.013, gains[0]
+        gains[scenario] = (supprimee.solde_moyen(scenario, debut, fin)
+                           - servie.solde_moyen(scenario, debut, fin))
+    retirees = [gain for scenario, gain in gains.items()
+                if scenario not in CLES_REVERSION_GARDEE]
+    assert len(retirees) == 4, gains
+    assert max(retirees) - min(retirees) < 1e-9, gains
+    assert 0.011 < retirees[0] < 0.013, retirees[0]
+    # Le scénario 6 garde le stock : il n'y gagne que la réversion des décès
+    # à venir, 0,82 point dans l'étude.
+    for scenario in CLES_REVERSION_GARDEE:
+        assert 0.0075 < gains[scenario] < 0.009, gains[scenario]
+
+
+def test_le_scenario_6_garde_les_reversions_servies_a_la_bascule(cout_assiette: Cout):
+    """Décision 16 du programme : « on garde les réversions déjà servies
+    jusqu'à extinction », au seul scénario 6 (décision 28).
+
+    Avant la bascule, il sert toute la réversion du droit actuel : tous ceux
+    qui la touchent alors ont perdu leur conjoint avant elle. Ensuite, le
+    stock suit les prix et s'éteint ; les décès d'après la bascule n'ouvrent
+    plus de réversion publique. Les montants attendus sont ceux de l'étude du
+    7 novembre 2026 (``docs/feuille_de_route/186/2026-11-07-reversion-etude-
+    et-couts.md``, la table du stock), en euros courants, à un dixième près :
+    l'étude posait qu'un veuf touche 40 % de ce que touche une veuve, le
+    modèle donne 91,5 % de la masse aux femmes, comme le COR.
+    """
+    bascule = Parametres().annee_bascule
+    avenir = cout_assiette.avenir
+
+    def reversion_servie(ligne, scenario: str) -> float:
+        """La réversion que sert le système, en millions d'euros courants."""
+        directe = ligne.base * (1.0 - ligne.part_derives) * ligne.rapports[scenario]
+        return (ligne.cout_constants(scenario) - directe) / ligne.coefficient_constants
+
+    for ligne in avenir.annees:
+        actuelle = ligne.base * ligne.part_derives / ligne.coefficient_constants
+        servie = reversion_servie(ligne, "notionnel_liberal")
+        if ligne.annee < bascule:
+            assert servie == pytest.approx(actuelle), ligne.annee
+        else:
+            assert 0.0 <= servie < actuelle, ligne.annee
+        for scenario in ("notionnel_retroactif", "notionnel_retroactif_employeur"):
+            assert reversion_servie(ligne, scenario) == pytest.approx(0.0, abs=1e-6)
+
+    for annee, attendu in ((2026, 43_100.0), (2030, 36_500.0),
+                           (2040, 20_300.0), (2050, 7_800.0)):
+        assert reversion_servie(avenir.annee(annee), "notionnel_liberal") == (
+            pytest.approx(attendu, rel=0.1)), annee
+    # « ≈ 0 » en 2070.
+    assert reversion_servie(avenir.annee(2070), "notionnel_liberal") < 500.0
 
 
 def test_une_convention_de_reversion_inconnue_est_refusee(
@@ -5254,13 +5322,21 @@ def test_avant_la_bascule_la_proposition_depense_ce_que_depense_le_scenario_4(
         cout_assiette):
     """Aucun retraité d'avant la bascule n'a de droit au taux unique : la
     dépense contributive des deux scénarios est la même, au centime, chaque
-    année qui la précède. La garantie, financée par l'impôt, est à part."""
+    année qui la précède. La garantie, financée par l'impôt, est à part. La
+    réversion aussi : le scénario 6 la sert entière avant la bascule, puisqu'il
+    garde celles qu'elle trouve servies (décision 16 du programme), et le
+    scénario 4 n'en sert aucune."""
     bascule = Parametres().annee_bascule
     avant = [ligne for ligne in cout_assiette.solde.annees if ligne.annee < bascule]
     assert avant
     for ligne in avant:
+        reversion = ligne.postes_depenses("notionnel_liberal")["droits_derives"]
+        assert reversion == pytest.approx(ligne.depenses * ligne.part_derives), ligne.annee
+        assert ligne.postes_depenses("notionnel_retroactif_employeur")["droits_derives"] == (
+            pytest.approx(0.0, abs=1e-15)), ligne.annee
         assert ligne.depense_meur("notionnel_liberal") == pytest.approx(
-            ligne.depense_meur("notionnel_retroactif_employeur"), rel=1e-12), ligne.annee
+            ligne.depense_meur("notionnel_retroactif_employeur")
+            + ligne.depense_meur("actuel") * ligne.part_derives, rel=1e-12), ligne.annee
 
 
 # -- la part des reportés en emploi ------------------------------------------

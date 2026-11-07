@@ -177,6 +177,7 @@ from .garantie import (
 )
 from .noyau import univers as univers_de_droit
 from .revalorisation import RevalorisationServie
+from .reversion_gardee import StockDeReversion
 from .scenarios.actuel import MinimumVieillesse
 from .simulateur import Simulateur
 from .somme import somme_ordonnee
@@ -312,6 +313,15 @@ CONVENTION_REVERSION_SUPPRIMEE = "supprimee"
 CONVENTIONS_REVERSION: tuple[str, ...] = (
     CONVENTION_REVERSION_SERVIE, CONVENTION_REVERSION_SUPPRIMEE,
 )
+
+#: LE SCÉNARIO 6 GARDE LES RÉVERSIONS DÉJÀ SERVIES JUSQU'À EXTINCTION, sous la
+#: convention ``supprimee`` : le programme l'a décidé le 7 novembre 2026
+#: (décisions 16 et 28 de ``docs/feuille_de_route_programme.md``). Avant la
+#: bascule, il sert donc toute la réversion du droit actuel, puis la part du
+#: stock qui vit encore (:mod:`.reversion_gardee`) ; les décès d'après la
+#: bascule n'y ouvrent plus de réversion publique. Les scénarios 2 à 5, qui
+#: montrent ce que l'on a cotisé, n'en servent aucune.
+CLES_REVERSION_GARDEE: frozenset[str] = frozenset({"notionnel_liberal"})
 
 #: LE BILAN, POSTE PAR POSTE. Le COR publie la structure des ressources du
 #: système de retraite en sept lignes — cotisations, contribution d'équilibre,
@@ -737,6 +747,11 @@ class CoutAnnuel:
     #: sont le système actuel avant elle et servent donc sa réversion ;
     #: après, elles ne la servent plus, à personne.
     reforme_en_vigueur: bool = True
+    #: La part de la réversion du droit actuel que le scénario 6 sert encore :
+    #: un avant la bascule, puis celle du stock des réversions servies à la
+    #: bascule, qu'il garde jusqu'à leur extinction (décision 16 du programme,
+    #: :mod:`.reversion_gardee`). Zéro par défaut : aucune réversion.
+    part_reversion_gardee: float = 0.0
     #: La part de la dépense observée qui est une pension de répartition
     #: obligatoire : la seule que le rapport décrit.
     #: ``DepensesRetraite.part_repartition`` dit d'où elle vient.
@@ -763,7 +778,8 @@ class CoutAnnuel:
         """Coût du système, en millions d'euros courants de l'année."""
         return masse_du_scenario(self.pensions, self.part_derives,
                                  self.rapports[scenario], scenario,
-                                 self.reversion_servie, self.reforme_en_vigueur)
+                                 self.reversion_servie, self.reforme_en_vigueur,
+                                 self.part_reversion_gardee)
 
     def cout_constants(self, scenario: str) -> float:
         return self.cout(scenario) * self.coefficient_constants
@@ -775,7 +791,8 @@ class CoutAnnuel:
 
 def masse_du_scenario(base: float, part_derives: float, rapport: float,
                       scenario: str, reversion_servie: bool = False,
-                      reforme_en_vigueur: bool = True) -> float:
+                      reforme_en_vigueur: bool = True,
+                      part_gardee: float = 0.0) -> float:
     """Applique un rapport de masses à une base, et au seul morceau qu'il décrit.
 
     LE RAPPORT NE DÉCRIT QUE LES DROITS DIRECTS. Il est le quotient de deux
@@ -801,6 +818,13 @@ def masse_du_scenario(base: float, part_derives: float, rapport: float,
     réformes RÉTROACTIVES, elles, recalculent tout le monde depuis 1941 : le
     drapeau ne les concerne pas et vaut vrai pour elles.
 
+    ``part_gardee`` ne sert qu'au SCÉNARIO 6, qui garde les réversions servies
+    à la bascule jusqu'à leur extinction (décision 16 du programme, 7 novembre
+    2026) : la part de la réversion du droit actuel qu'il sert encore cette
+    année-là, un avant la bascule, puis de moins en moins
+    (:mod:`.reversion_gardee`). Les scénarios 2 à 5 n'en servent rien
+    (décision 28).
+
     DEUX CAS À PART. Le SYSTÈME ACTUEL rend sa base sans rien y toucher : il est
     le droit en vigueur, il sert la réversion, et aucune convention ne le
     touche. Son rapport vaut un et la formule le rendrait de toute façon, mais
@@ -818,6 +842,8 @@ def masse_du_scenario(base: float, part_derives: float, rapport: float,
         return directe + base * part_derives
     if scenario in CLES_PROSPECTIVES and not reforme_en_vigueur:
         return directe + base * part_derives
+    if scenario in CLES_REVERSION_GARDEE:
+        return directe + base * part_derives * part_gardee
     return directe
 
 
@@ -889,6 +915,11 @@ class AvenirAnnuel:
     #: sont le système actuel avant elle et servent donc sa réversion ;
     #: après, elles ne la servent plus, à personne.
     reforme_en_vigueur: bool = True
+    #: La part de la réversion du droit actuel que le scénario 6 sert encore :
+    #: un avant la bascule, puis celle du stock des réversions servies à la
+    #: bascule, qu'il garde jusqu'à leur extinction (décision 16 du programme,
+    #: :mod:`.reversion_gardee`). Zéro par défaut : aucune réversion.
+    part_reversion_gardee: float = 0.0
     #: Le pilier capitalisé de l'année, tous cotisants, par euro versé ;
     #: ``None`` avant la bascule.
     pilier: PilierAnnuel | None = None
@@ -957,7 +988,8 @@ class AvenirAnnuel:
         """Coût du système, en millions d'euros constants de référence."""
         return masse_du_scenario(self.base, self.part_derives,
                                  self.rapports[scenario], scenario,
-                                 self.reversion_servie, self.reforme_en_vigueur)
+                                 self.reversion_servie, self.reforme_en_vigueur,
+                                 self.part_reversion_gardee)
 
     def economie_constants(self, scenario: str) -> float:
         """Ce que le système épargne aux régimes face au système actuel, en
@@ -987,7 +1019,8 @@ class AvenirAnnuel:
         """Le même coût, si l'écart au COR tenait tout entier au système actuel."""
         return masse_du_scenario(self.base, self.part_derives,
                                  rapport_derive(self.rapports, scenario, self.derive),
-                                 scenario, self.reversion_servie, self.reforme_en_vigueur)
+                                 scenario, self.reversion_servie, self.reforme_en_vigueur,
+                                 self.part_reversion_gardee)
 
     def part_pib_derive(self, scenario: str) -> float:
         if not self.pib:
@@ -1307,6 +1340,11 @@ class SoldeAnnuel:
     #: sont le système actuel avant elle et servent donc sa réversion ;
     #: après, elles ne la servent plus, à personne.
     reforme_en_vigueur: bool = True
+    #: La part de la réversion du droit actuel que le scénario 6 sert encore :
+    #: un avant la bascule, puis celle du stock des réversions servies à la
+    #: bascule, qu'il garde jusqu'à leur extinction (décision 16 du programme,
+    #: :mod:`.reversion_gardee`). Zéro par défaut : aucune réversion.
+    part_reversion_gardee: float = 0.0
     #: Part de chaque poste dans les ressources de l'année, au découpage du
     #: COR (``equilibre.POSTES``). ``part_contributive``, ``part_impots`` et
     #: ``part_subventions`` en sont des sommes ; le détail sert au tableau
@@ -1391,7 +1429,8 @@ class SoldeAnnuel:
         """
         return masse_du_scenario(self.depenses, self.part_derives,
                                  self.rapports[scenario], scenario,
-                                 self.reversion_servie, self.reforme_en_vigueur)
+                                 self.reversion_servie, self.reforme_en_vigueur,
+                                 self.part_reversion_gardee)
 
     def depense_nette(self, scenario: str) -> float:
         """La même dépense, nette des prélèvements sociaux que ses pensions
@@ -4151,6 +4190,34 @@ def _recouvrement(creance: float, patrimoines: Sequence[float], parametres,
     return immediat / nombre / creance, differe / nombre / creance
 
 
+def _garder_les_reversions(lignes: list[AvenirAnnuel], simulateur: Simulateur) -> None:
+    """La part de la réversion que le scénario 6 sert, année par année.
+
+    Le programme garde les réversions servies à la bascule jusqu'à leur
+    extinction (décision 16, 7 novembre 2026). Le stock vaut la réversion du
+    droit actuel de l'année qui précède la bascule, en euros constants : il
+    suit les prix, et ses bénéficiaires meurent
+    (:class:`~.reversion_gardee.StockDeReversion`). Rapporté à la réversion du
+    droit actuel de chaque année, il en est la part que le scénario 6 sert,
+    sans jamais la dépasser. Avant la bascule, il la sert entière : tous ceux
+    qui la touchent ont perdu leur conjoint avant elle. Sans année publiée
+    avant la bascule, il n'y a pas de stock à mesurer, et rien n'est gardé.
+    """
+    bascule = simulateur.parametres.annee_bascule
+    avant = [ligne for ligne in lignes if ligne.annee < bascule]
+    reference = avant[-1].base * avant[-1].part_derives if avant else 0.0
+    stock = StockDeReversion(simulateur.parametres.racine_donnees,
+                             simulateur.mortalite, bascule)
+    for ligne in lignes:
+        if ligne.annee < bascule:
+            ligne.part_reversion_gardee = 1.0
+            continue
+        reversion = ligne.base * ligne.part_derives
+        ligne.part_reversion_gardee = (
+            min(1.0, reference * stock.survie(ligne.annee) / reversion)
+            if reversion > 0.0 else 0.0)
+
+
 def _reprises_successions(lignes: list[AvenirAnnuel], simulateur: Simulateur,
                           garantie: GarantieDistribution) -> None:
     """Les avances de la garantie, leur intérêt, et ce que les successions rendent.
@@ -4683,6 +4750,7 @@ def _avenir(pensionnes: list[Pensionne], depenses: DepensesRetraite,
                 masses[MASSE_STOCK]),
         ))
     _reprises_successions(lignes, simulateur, garantie)
+    _garder_les_reversions(lignes, simulateur)
 
     return Avenir(
         annees=lignes,
@@ -4784,6 +4852,7 @@ def _solde(avenir: Avenir, comptes: ComptesRetraite,
             part_derives=depenses.part_droits_derives(annee),
             reversion_servie=reversion_servie,
             reforme_en_vigueur=annee >= annee_bascule,
+            part_reversion_gardee=par_annee[annee].part_reversion_gardee,
             parts={poste.code: comptes.part(poste.code, annee) for poste in POSTES},
             versements={
                 organisme.code: comptes.versement(annee, organisme.code)
@@ -5370,6 +5439,13 @@ def calculer_cout(simulateur: Simulateur, depenses: DepensesRetraite,
     avenir = _avenir(pensionnes, depenses, population, simulateur, poids,
                      revalorisation, reversion_servie, poids_cotisants, garantie,
                      comptes, pensionnes_centraux)
+    # Les années observées gardent la réversion comme la trajectoire ; celles
+    # qu'elle ne couvre pas, d'avant ses ventilations, la servent entière
+    # avant la bascule (:func:`_garder_les_reversions`).
+    gardees = {ligne.annee: ligne.part_reversion_gardee for ligne in avenir.annees}
+    for ligne in lignes:
+        ligne.part_reversion_gardee = gardees.get(
+            ligne.annee, 1.0 if ligne.annee < simulateur.parametres.annee_bascule else 0.0)
     # La TVA à taux unique que la proposition affecte à sa retraite : lue ici
     # plutôt que passée, pour que tout appelant la reçoive — elle est un terme
     # de la proposition, pas un réglage de page.

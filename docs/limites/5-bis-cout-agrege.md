@@ -126,14 +126,15 @@ le 19 septembre 2026 :
    hommes. Le rapport ne multiplie plus que le reste.
 
    **Ce que le scénario fait de la réversion est maintenant une décision, et
-   elle est écrite : seul le scénario 1 la sert.** Décision du Parti libéral,
-   19 septembre 2026, et elle ne fait qu'appliquer à cette ligne la règle des
-   trente-huit autres. Les scénarios 2 à 6 retirent tous les avantages non
+   elle est écrite : le scénario 1 la sert, le scénario 6 garde celles que
+   sert sa bascule, les quatre autres n'en servent aucune.** La décision du
+   Parti libéral du 19 septembre 2026 applique à cette ligne la règle des
+   trente-huit autres : les scénarios notionnels retirent les avantages non
    contributifs, et l'inventaire du dépôt range la réversion parmi eux depuis
    toujours : « non contributive au sens strict, la cotisation de l'assuré
    ayant déjà été rendue par sa propre pension », et « de très loin la
    PREMIÈRE dépense non contributive du système ». La servir dans un compte
-   notionnel était l'exception non écrite, pas la règle ; ces cinq scénarios
+   notionnel était l'exception non écrite, pas la règle ; les scénarios 2 à 5
    mesurent ce qu'une retraite composée uniquement de part contributive
    représente, et une réversion n'en est pas. C'est le chemin de la Suède, où
    un compte notionnel ne verse qu'à son titulaire.
@@ -144,20 +145,36 @@ le 19 septembre 2026 :
    décret du 20 novembre 2024, tableau C.2) —, quand `servie` l'ajoute sans
    rien retirer à la pension directe.
 
-   **Les cinq la retirent à tout le monde, et du même jour.** Les scénarios
-   RÉTROACTIFS (2, 4, 6) recalculent toutes les pensions depuis 1941 : ils n'en
-   servent jamais un euro. Les scénarios PROSPECTIFS (3, 5) sont, par
+   **Les scénarios 2 à 5 la retirent à tout le monde, et du même jour.** Les
+   scénarios RÉTROACTIFS 2 et 4 recalculent toutes les pensions depuis 1941 :
+   ils n'en servent jamais un euro. Les scénarios PROSPECTIFS (3, 5) sont, par
    construction, le système actuel jusqu'à leur bascule — ils y recopient ses
    pensions, et un test tient l'égalité de leurs courbes à l'euro près —, si
    bien qu'ils y servent sa réversion comme le reste ; à compter de la bascule
    ils ne la servent plus, aux veuves d'avant comme à celles d'après.
    `reforme_en_vigueur` porte ce seul basculement.
 
+   **Le scénario 6 garde les réversions servies à sa bascule, jusqu'à leur
+   extinction.** Le programme l'a décidé le 7 novembre 2026 (décisions 16 et
+   28 de `docs/feuille_de_route_programme.md`) : ces réversions restent
+   servies, revalorisées sur les prix comme aujourd'hui, et les décès d'après
+   la bascule n'en ouvrent plus de publique. La règle se lit « décès avant la
+   bascule : réversion du droit actuel » : rétroactif, le scénario sert donc
+   toute la réversion avant la bascule, puis la part du stock qui vit encore
+   (`part_reversion_gardee`). Le modèle ne simule pas de ménages : le stock
+   est la réversion de l'année qui précède la bascule, en euros constants, et
+   ses bénéficiaires meurent comme la population générale, avec l'âge et le
+   sexe des veufs que l'INSEE compte au dernier état matrimonial publié, et la
+   part des femmes que le COR publie (`reversion_gardee.py`) ; il s'éteint de
+   moitié en neuf ans. La rente sur deux têtes que le programme sert aux décès
+   à venir, le couple qui la choisit la paie : le modèle ne la chiffre pas
+   encore, et la garantie vieillesse ne voit pas la réversion gardée.
+
    Ce n'est pas le traitement que le modèle réserve aux autres avantages non
    contributifs dans les scénarios prospectifs : un minimum contributif servi à
    qui a liquidé en 2010 lui reste acquis pour toujours, parce que sa pension
    entière est recopiée. La réversion fait exception, et par décision : le
-   programme a voulu qu'aucun scénario notionnel n'en verse à compter du jour
+   programme a voulu qu'aucun scénario prospectif n'en verse à compter du jour
    où il s'applique.
 
    Ce que la décision rend : **+1,19 point de solde moyen 2026-2070 à chacun

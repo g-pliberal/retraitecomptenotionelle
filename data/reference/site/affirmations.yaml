@@ -240,8 +240,11 @@ affirmations:
     page: /
     extrait: "Notre système ne sert aucune réversion"
     porte: aucun scénario notionnel ne sert de droit dérivé, seul le système actuel en sert
-    etat: verifiee
-    controle: reversion_servie_par_le_seul_systeme_actuel
+    # Démentie le 7 novembre 2026 : le scénario 6 garde les réversions servies
+    # à la bascule (décision 16 du programme) ; l'étape du site la récrira.
+    etat: contredite
+    action: 186
+    controle: scenario_6_garde_les_reversions_servies
 
   - id: accueil.reprise_premier_euro
     page: /
@@ -1651,15 +1654,17 @@ affirmations:
     page: /
     extrait: "Notre système ne sert aucune réversion"
     porte: les scénarios notionnels ne reconduisent pas la réversion
-    etat: verifiee
-    controle: reversion_servie_par_le_seul_systeme_actuel
+    etat: contredite
+    action: 186
+    controle: scenario_6_garde_les_reversions_servies
 
   - id: cout.limite_reversion
     page: /cout
     extrait: "Seul le système actuel sert la pension de réversion."
     porte: les scénarios notionnels ne reconduisent pas la réversion
-    etat: verifiee
-    controle: reversion_servie_par_le_seul_systeme_actuel
+    etat: contredite
+    action: 186
+    controle: scenario_6_garde_les_reversions_servies
 
   - id: cout.limite_reprise
     page: /cout
@@ -1685,14 +1690,19 @@ affirmations:
     porte: >-
       chaque marche est l'effet de sa mesure sachant les précédentes, et la
       somme des marches ne dépend pas de leur ordre
-    etat: verifiee
+    # Démentie le 7 novembre 2026 : la cascade ne porte pas la réversion que
+    # le scénario 6 garde (décision 16), et sa dernière barre tombe court
+    # d'autant ; l'étape du site de l'action 186 la lui ajoutera.
+    etat: contredite
+    action: 186
     controle: cascade_somme_exactement
 
   - id: cout.cascade_depense_pas_solde
     page: /cout
     extrait: "Une dépense n'est pas un solde."
     porte: la cascade ne porte que la dépense, et jamais les ressources
-    etat: verifiee
+    etat: contredite
+    action: 186
     controle: cascade_ne_porte_que_la_depense
 
   - id: cout.planchers_encadrent

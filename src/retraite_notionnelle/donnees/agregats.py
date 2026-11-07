@@ -311,7 +311,7 @@ def figer_cout(cout, scenarios, bilan, garantie: str, masse_du_scenario,
                     scenario: masse_du_scenario(
                         ligne.part_pib_pensions, ligne.part_derives,
                         ligne.rapports[scenario], scenario, ligne.reversion_servie,
-                        ligne.reforme_en_vigueur)
+                        ligne.reforme_en_vigueur, ligne.part_reversion_gardee)
                     for scenario in avec_garantie},
             }
             for ligne in cout.annees

@@ -8042,16 +8042,16 @@ et 3 ci-dessus ; la mesure, et comment la refaire, sont dans la note
 
 ### 186. Le programme du parti sur les retraites : chaque grande idée étudiée à fond, aux sources, puis le modèle et le site qui la montrent — `en cours`
 
-**Reprise, au 7 novembre 2026.** La réversion est tranchée pour le seul
-scénario 6 (décisions 16 à 28) ; une session du modèle les y porte. Les
-décisions 29 et 30 (chantiers 1 et 2) : les deux lectures de la 29 sont à
-refaire au modèle, la dépense suivant le taux cotisé
-(`186/2026-11-07-deux-lectures-et-reprise.md`). Le message (chantier 8) est
-tranché (décisions 31 à 33) ; les complémentaires (chantier 6) et les chiffres
-(chantier 7, `…-chiffres-qui-tiennent.md`) sont étudiés ; les notes du 6 et
-du 8 tiennent leur bloc. Par quoi commencer : ce chiffrage et celui d'un âge
-plancher, puis A ou B et les questions des chantiers 6 et 7 ; ensuite les
-autres « décisions attendues » et le gel (chantier 10). Rien n'est gelé.
+**Reprise, au 7 novembre 2026.** La réversion est tranchée pour le scénario 6
+(décisions 16 à 28) ; le stock gardé est au coût, le site le dément encore
+(`…-reversion-scenario-6-plan.md`). Décisions 29 et 30 (chantiers 1 et 2) :
+les deux lectures de la 29 sont à refaire au modèle, la dépense suivant le
+taux cotisé (`…-deux-lectures-et-reprise.md`). Le message (chantier 8) est
+tranché (décisions 31 à 33) ; les complémentaires (chantier 6) et les
+chiffres (chantier 7, `…-chiffres-qui-tiennent.md`) sont étudiés ; les notes
+du 6 et du 8 tiennent leur bloc. Par quoi commencer : ce chiffrage et celui
+d'un âge plancher, puis A ou B et les questions des chantiers 6 et 7 ; ensuite
+les autres « décisions attendues » et le gel (chantier 10). Rien n'est gelé.
 
 **D'où elle vient.** Le 6 novembre 2026, le propriétaire demande un bilan :
 les vagues se succèdent, et le chantier semble sans fin. La session mesure

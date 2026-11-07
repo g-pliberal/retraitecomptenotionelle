@@ -240,6 +240,7 @@ def trajectoire(parametres: Parametres, cas_types: tuple[CasType, ...],
         scenario: C.masse_du_scenario(
             horizon.base_modele, horizon.part_derives, horizon.rapports[scenario],
             scenario, horizon.reversion_servie, horizon.reforme_en_vigueur,
+            horizon.part_reversion_gardee,
         ) / horizon.coefficient_constants / horizon.pib
         for scenario, _ in C.SCENARIOS
     }

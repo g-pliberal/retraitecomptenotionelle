@@ -774,12 +774,17 @@ def _(m: Modele):
     Financée par l'impôt, la garantie a quitté la masse contributive le
     19 septembre 2026. La preuve tient en une égalité : sur le passé observé,
     le scénario 6 et le scénario 4 prélèvent les mêmes taux et ne diffèrent
-    que par elle — si leurs masses sont égales au centime, c'est qu'elle n'est
-    dans ni l'une ni l'autre. Et elle n'est pas nulle pour autant.
+    que par elle — et par la réversion, que le scénario 6 sert entière avant
+    la bascule (décision 16 du programme) : si leurs masses sont égales au
+    centime, celle-ci retirée, c'est que la garantie n'est dans ni l'une ni
+    l'autre. Et elle n'est pas nulle pour autant.
     """
     passe = m.cout.annee(m.cout.derniere_annee)
+    gardee = (passe.pensions * passe.part_derives * passe.part_reversion_gardee
+              * passe.coefficient_constants)
+    assert gardee > 0.0
     assert passe.cout_constants("notionnel_liberal") == pytest.approx(
-        passe.cout_constants("notionnel_retroactif_employeur"))
+        passe.cout_constants("notionnel_retroactif_employeur") + gardee)
     assert passe.cout_constants(COMPOSANTE_GARANTIE) > 0.0
     # À l'horizon, le taux unique les sépare — dans l'autre sens : le
     # scénario 6 coûte MOINS, sa garantie restant par-dessus le marché.
@@ -2421,12 +2426,24 @@ def _(m: Modele):
                 m.solde.annee(annee).coefficient(scenario), rel=1e-9)
 
 
-@controle("reversion_servie_par_le_seul_systeme_actuel")
+@controle("scenario_6_garde_les_reversions_servies")
 def _(m: Modele):
+    """ENCORE CONTREDITE : la proposition garde les réversions servies à la bascule.
+
+    Les phrases qui disent qu'elle n'en sert aucune datent du 19 septembre
+    2026. Le 7 novembre, le programme garde les réversions déjà servies
+    jusqu'à leur extinction, au seul scénario 6 (décisions 16 et 28) : le
+    modèle les sert depuis. L'étape du site de l'action 186 récrira ces
+    phrases, et leur extrait tombera avec elles.
+    """
     assert all(not ligne.reversion_servie for ligne in m.solde.annees)
-    ligne = m.horizon
+    ligne = m.solde.annee(m.base.annee_bascule + 4)
     assert ligne.postes_depenses("actuel")["droits_derives"] > 0
-    assert ligne.postes_depenses("notionnel_liberal")["droits_derives"] == 0.0
+    assert ligne.postes_depenses("notionnel_liberal")["droits_derives"] > 0
+    # Les scénarios 2 à 5, eux, n'en servent toujours aucune.
+    for scenario in ("notionnel_retroactif", "notionnel_retroactif_employeur"):
+        assert ligne.postes_depenses(scenario)["droits_derives"] == pytest.approx(
+            0.0, abs=1e-15), scenario
 
 
 # .. la cascade : le compte tombe-t-il juste ? ...............................
@@ -2435,6 +2452,15 @@ def _(m: Modele):
 # somment EXACTEMENT à l'écart des deux totaux, sinon la dernière barre ne
 # retombe pas où elle devrait. Le dessin le montre à l'œil, et un écart d'un
 # millième s'y verrait mal — d'où ces contrôles, qui refont la somme.
+
+
+def _reversion_gardee_meur(ligne, actuel: float) -> float:
+    """La réversion que le scénario 6 garde (décision 16 du programme), de la
+    base ``actuel`` de la cascade : la figure ne la porte pas encore, et sa
+    dernière barre tombe court d'autant, jusqu'à l'étape du site de l'action
+    186. Les deux contrôles de la cascade le tiennent, la phrase qu'ils
+    gardent étant ``contredite`` d'ici là."""
+    return actuel * ligne.part_derives * ligne.part_reversion_gardee
 
 
 def _somme_cascade(marches) -> float:
@@ -2452,11 +2478,16 @@ def _cascade_de(m: Modele, ligne, base: float, part_reprise: float = 0.0):
 
 @controle("cascade_somme_exactement")
 def _(m: Modele):
+    """ENCORE CONTREDITE, jusqu'à l'étape du site de l'action 186 : les marches
+    tombent exactement sur la proposition MOINS la réversion qu'elle garde
+    (:func:`_reversion_gardee_meur`), toute la réversion à l'année observée."""
+    assert _reversion_gardee_meur(m.observe, m.observe.depense_meur("actuel")) > 0.0
     for ligne, base in ((m.observe, m.observe.depense_meur("actuel")),
                         (m.horizon, m.horizon.depense_meur("actuel"))):
         marches = _cascade_de(m, ligne, base)
         arrivee = (ligne.depense_meur("notionnel_liberal")
-                   + ligne.depense_meur(COMPOSANTE_GARANTIE)) / 1000
+                   + ligne.depense_meur(COMPOSANTE_GARANTIE)
+                   - _reversion_gardee_meur(ligne, base)) / 1000
         assert _proche(base / 1000 + _somme_cascade(marches), arrivee)
         # L'ordre ne change pas le total, et c'est ce que la page affirme :
         # les marches sont additives, non composées.
@@ -2471,7 +2502,8 @@ def _(m: Modele):
     assert 0.0 < part_reprise < 1.0
     marches = _cascade_de(m, horizon, horizon.cout_constants("actuel"), part_reprise)
     arrivee = (horizon.cout_constants("notionnel_liberal")
-               + horizon.garantie_nette_constants()) / 1000
+               + horizon.garantie_nette_constants()
+               - _reversion_gardee_meur(horizon, horizon.cout_constants("actuel"))) / 1000
     depart = horizon.cout_constants("actuel") / 1000
     assert _proche(depart + _somme_cascade(marches), arrivee)
 
@@ -2500,14 +2532,18 @@ def _(m: Modele):
 
 @controle("cascade_ne_porte_que_la_depense")
 def _(m: Modele):
-    """Aucune marche ne vient des RESSOURCES, et le total est bien la dépense."""
+    """Aucune marche ne vient des RESSOURCES, et le total est la dépense —
+    ENCORE CONTREDITE, jusqu'à l'étape du site de l'action 186, de la
+    réversion que la proposition garde (:func:`_reversion_gardee_meur`)."""
     marches = _cascade_de(m, m.observe, m.observe.depense_meur("actuel"))
     depart = m.observe.depense_meur("actuel") / 1000
     assert not _proche(depart, m.observe.ressources_meur() / 1000)
     # La somme rejoint la DÉPENSE de la proposition, jamais son solde : si la
     # cascade portait un côté de recette, elle n'y retomberait pas.
+    gardee = _reversion_gardee_meur(m.observe, m.observe.depense_meur("actuel"))
+    assert gardee > 0.0
     arrivee = (m.observe.depense_meur("notionnel_liberal")
-               + m.observe.depense_meur(COMPOSANTE_GARANTIE)) / 1000
+               + m.observe.depense_meur(COMPOSANTE_GARANTIE) - gardee) / 1000
     assert _proche(depart + _somme_cascade(marches), arrivee)
     assert not _proche(arrivee, m.observe.ressources_de("notionnel_liberal")
                        * m.observe.pib / 1000)

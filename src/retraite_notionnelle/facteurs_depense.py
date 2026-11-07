@@ -300,7 +300,8 @@ def annees_du_modele(avenir, population, macro,
     for ligne in lignes:
         depense = masse_du_scenario(ligne.base_modele, ligne.part_derives,
                                     ligne.rapports[scenario], scenario,
-                                    ligne.reversion_servie, ligne.reforme_en_vigueur)
+                                    ligne.reversion_servie, ligne.reforme_en_vigueur,
+                                    ligne.part_reversion_gardee)
         population_20_64 = population.actifs(ligne.annee)
         resultat[ligne.annee] = AnneeDepense(
             annee=ligne.annee,
