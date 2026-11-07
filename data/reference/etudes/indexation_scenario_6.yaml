@@ -1,0 +1,127 @@
+# L'INDEXATION DES PENSIONS SERVIES DU SCÉNARIO 6, ET LES TROIS VOIES DU STOCK
+# ------------------------------------------------------------------------------
+# L'étude de scripts/indexation_scenario_6.py (action 186, chantier 5). Ce
+# fichier n'est pas un univers de droit : il ne touche pas le moteur d'une
+# carrière, seulement ce que le coût fait des pensions du scénario 6 une fois
+# liquidées (src/retraite_notionnelle/indexation_programme.py). Il n'entre ni
+# au paquet ni au site, et le défaut du scénario 6 n'en dépend pas : la règle
+# d'avant reste la sienne tant que le propriétaire n'a pas choisi sa voie.
+#
+# CE QUI EST DÉCIDÉ (docs/feuille_de_route_programme.md, « Ce qui est décidé »)
+#   41 : α = 1, les retraités portent toute la hausse du nombre de retraités
+#        par cotisant. Les pensions nouvelles suivent la masse salariale par
+#        retraité ; celles du stock, les prix moins cette hausse.
+#   44 : un plancher en euros avec rattrapage, pour les comptes et les pensions.
+#   46 : le plancher est une assurance que les retraités paient : ce qu'il sert
+#        au-dessus de la règle devient une dette, portée au taux de la masse
+#        salariale, reprise sur les hausses suivantes.
+#   49 : la dette se rend le plus vite possible, sur toute la hausse au besoin.
+#   28 : ces règles ne valent que pour le scénario 6.
+#
+# LE NŒUD. Sous α = 1, la règle du stock baisse en euros dès que l'inflation
+# reste sous la hausse du nombre de retraités par cotisant : le plancher n'y
+# couvre plus un accident mais une pente, et la dette ne se rend pas. Le
+# propriétaire a écarté trois issues et demande trois voies neuves, chiffrées
+# au modèle (note 186/2026-11-07-indexation-etude.md, « Le stock, à
+# approfondir ») : ce sont voie_1, voie_2 et voie_3.
+#
+# LES MOTS DE CE FICHIER
+#   base : ce que la pension suit, en euros courants —
+#     prix : l'indice des prix ;
+#     masse_salariale : la masse salariale, celle du compte (décision 10) ;
+#     masse_salariale_par_retraite : la masse salariale divisée par le nombre
+#       de retraités, c'est-à-dire le salaire moyen divisé par le nombre de
+#       retraités par cotisant.
+#   facteur_demographique : α, la part de la hausse du nombre de retraités
+#     par cotisant que la pension perd chaque année, en plus de sa base.
+#   plancher —
+#     aucun : la pension suit la règle, en euros, même quand elle baisse ;
+#     sans_rattrapage : le plancher du droit actuel (L. 161-25) : la pension
+#       ne baisse jamais en euros, et ce que le gel évite n'est jamais repris ;
+#     dette : décisions 44, 46 et 49 ;
+#     reserve : la voie 1 : une réserve paie ce que le plancher sert au-dessus
+#       de la règle, et la pension retrouve la règle dès que celle-ci repasse
+#       au-dessus d'elle.
+#   reprise : la part de chaque hausse que la reprise de la dette peut
+#     prendre ; 1 : toute la hausse au besoin (décision 49).
+#   baisse_transition : une baisse du stock à la bascule, en plus de celle
+#     des décisions 2 et 3 ; effort_demographique : celle qui retire au stock,
+#     au jour de la bascule et sous la projection du COR, ce que α = 1 lui
+#     aurait retiré sur toute sa vie, actualisé au taux de la masse salariale.
+#   prime : une baisse du stock à la bascule, mise en réserve ; calibree :
+#     celle qui finance exactement le plancher sous une trajectoire donnée,
+#     que l'étude calcule tour à tour sous chacun des deux chocs.
+schema_version: 1
+
+voies:
+  avant:
+    libelle: La règle d'avant
+    note: >-
+      La masse salariale pour les pensions nouvelles (décision 10), les prix
+      pour le stock (action 48), sans facteur, et le plancher du droit actuel
+      (L. 161-25), qui ne joue sous aucune des trois trajectoires.
+    nouvelles: {base: masse_salariale, plancher: sans_rattrapage}
+    stock: {base: prix, plancher: sans_rattrapage}
+
+  regle:
+    libelle: α = 1, sans plancher
+    note: >-
+      La règle de la décision 41 seule : ce que les retraités doivent porter.
+      Elle est l'étalon de ce que chaque voie laisse aux cotisants.
+    nouvelles: {base: masse_salariale_par_retraite, plancher: aucun}
+    stock: {base: prix, facteur_demographique: 1, plancher: aucun}
+
+  decidee:
+    libelle: α = 1, plancher et dette pour tous
+    note: >-
+      Les décisions 41, 44, 46 et 49 telles quelles : le nœud du stock.
+    nouvelles: {base: masse_salariale_par_retraite, plancher: dette, reprise: 1}
+    stock: {base: prix, facteur_demographique: 1, plancher: dette, reprise: 1}
+
+  voie_1:
+    libelle: Une prime payée d'avance par le stock
+    note: >-
+      Une baisse de plus à la bascule, mise en réserve, paie le plancher du
+      stock ; la réserve se place au taux de la masse salariale.
+    nouvelles: {base: masse_salariale_par_retraite, plancher: dette, reprise: 1}
+    stock: {base: prix, facteur_demographique: 1, plancher: reserve, prime: calibree}
+
+  voie_2:
+    libelle: L'effort démographique du stock pris d'avance
+    note: >-
+      Une baisse de plus à la bascule, celle que α = 1 aurait retirée au stock
+      sur toute sa vie sous la projection du COR ; puis les prix, avec le
+      plancher du droit actuel.
+    nouvelles: {base: masse_salariale_par_retraite, plancher: dette, reprise: 1}
+    stock: {base: prix, plancher: sans_rattrapage, baisse_transition: effort_demographique}
+
+  voie_3:
+    libelle: La même règle pour toutes les pensions
+    note: >-
+      Le stock suit, comme les pensions nouvelles, la masse salariale par
+      retraité, avec le plancher et sa dette.
+    nouvelles: {base: masse_salariale_par_retraite, plancher: dette, reprise: 1}
+    stock: {base: masse_salariale_par_retraite, plancher: dette, reprise: 1}
+
+# Les trajectoires sous lesquelles chaque voie se chiffre, de 2026 à 2070.
+# Un choc ne change que ce qu'il nomme : la croissance réelle du salaire
+# moyen reste celle du COR, et une inflation plus basse ne joue que sur ce
+# qui se compte en euros courants, le plancher.
+trajectoires:
+  cor:
+    libelle: Le scénario de référence du COR
+    note: >-
+      Les hypothèses du dépôt (hypotheses_projection.yaml) : 1,75 %
+      d'inflation, 0,7 % de productivité, l'emploi du COR.
+  inflation_basse:
+    libelle: Une inflation durable de 0,5 %
+    inflation: 0.005
+  emploi_ia:
+    libelle: L'emploi en baisse de 1 % par an de 2030 à 2039, avec 1 % d'inflation
+    note: >-
+      Une crise de l'emploi, celle de l'IA dans la note : l'emploi perd 1 %
+      par an face au COR de 2030 à 2039, et ne le regagne pas ; la masse
+      salariale, le PIB et les cotisants le perdent avec lui, les retraités
+      non.
+    inflation: 0.01
+    emploi: {debut: 2030, fin: 2039, taux: -0.01}

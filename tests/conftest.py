@@ -84,6 +84,9 @@ COMPLETS = {
     "test_proposition_prospective.py", "test_postes_ecartes.py", "test_effet_retour.py",
     "test_chiffrage_plf.py", "test_scenarios_meres.py", "test_grille_large.py",
     "test_cout_naissances.py",
+    # L'indexation du programme pour le scénario 6, sous chaque voie et chaque
+    # trajectoire : une quarantaine de calculs du coût (action 186, chantier 5).
+    "test_indexation_scenario_6.py",
     # Ce que les pages qui agrègent lisent du modèle, figé sous la référence,
     # confronté au modèle qui le calcule.
     "test_agregats.py",

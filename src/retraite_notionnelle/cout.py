@@ -134,7 +134,7 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass, field, replace
-from typing import Callable, Sequence
+from typing import TYPE_CHECKING, Callable, Sequence
 
 from . import pont
 from .config import ModeIndexation
@@ -181,6 +181,9 @@ from .reversion_gardee import StockDeReversion
 from .scenarios.actuel import MinimumVieillesse
 from .simulateur import Simulateur
 from .somme import somme_ordonnee
+
+if TYPE_CHECKING:
+    from .indexation_programme import IndexationLiberale
 
 #: Les six systèmes, dans l'ordre du tableau de comparaison. Ce sont les
 #: attributs de ``Comparaison`` ; « actuel » est l'étalon et le dénominateur.
@@ -5298,6 +5301,7 @@ def calculer_cout(simulateur: Simulateur, depenses: DepensesRetraite,
                   tetes_par_poids: Callable[[list[Pensionne], Population],
                                             Callable[[int], dict[str, float]]] = _tetes_par_poids,
                   naissances: str = NAISSANCES_EN_JANVIER,
+                  indexation_liberale: IndexationLiberale | None = None,
                   ) -> Cout:
     """Le coût observé, les cinq contrefactuels, et la trajectoire jusqu'en 2070.
 
@@ -5345,7 +5349,15 @@ def calculer_cout(simulateur: Simulateur, depenses: DepensesRetraite,
     ou ``toute_l_annee``, née toute l'année, ses têtes au 31 décembre et ses
     masses au mois (:func:`_nees_toute_l_annee`). Le second n'existe que pour
     mesurer ce que le premier déplace (``scripts/cout_naissances.py``).
+
+    ``indexation_liberale`` revalorise les pensions du scénario 6 sous l'une
+    des voies de l'indexation du programme (:mod:`.indexation_programme`,
+    action 186, chantier 5), à compter de la bascule ; ``None``, le défaut,
+    garde la règle du modèle. Sous une crise de l'emploi, la population est
+    celle de la trajectoire (:class:`~.indexation_programme.PopulationSousChoc`).
     """
+    if indexation_liberale is not None:
+        indexation_liberale.verifier(population)
     if convention_recette not in CONVENTIONS_RECETTE:
         raise ValueError(
             f"convention de recette inconnue : {convention_recette!r} "
@@ -5389,6 +5401,11 @@ def calculer_cout(simulateur: Simulateur, depenses: DepensesRetraite,
     facteur_emploi = _facteur_emploi(simulateur, population)
     if facteur_emploi is not None:
         revalorisation = revalorisation.pour_la_proposition(facteur_emploi)
+    # Les pensions du scénario 6 sous une voie de l'indexation du programme,
+    # sur la masse salariale de la variante s'il y en a une.
+    if indexation_liberale is not None:
+        revalorisation = indexation_liberale.appliquer(
+            revalorisation, simulateur.pour_la_projection())
     # Les poids des retraités, recalés sur la dépense de chaque groupe du COR :
     # tout ce qui suit en hérite, la garantie comme la trajectoire. Lue sur le
     # disque sans compte, la décomposition : les ressources restent un ajout,

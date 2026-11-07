@@ -632,7 +632,7 @@ def _reglages(fonction, noms: tuple[str, ...], options: dict) -> dict:
 
 def cout(parametres: Parametres | None = None, *, comptes: bool = True,
          assiette: bool = True, cas_types: tuple | None = None,
-         demographie: str = "centrale", **options):
+         demographie: str = "centrale", indexation_liberale=None, **options):
     """``calculer_cout`` sous ces paramètres, sur les données du dépôt.
 
     ``comptes`` et ``assiette`` : avec les comptes du COR et l'assiette des
@@ -640,7 +640,10 @@ def cout(parametres: Parametres | None = None, *, comptes: bool = True,
     scénario de projection des paramètres, comme sur la page. ``cas_types`` :
     une autre grille que celle du dépôt. ``demographie`` : une variante de
     fécondité ou de migrations de la pyramide (``Population``), que le
-    simulateur ne lit pas — la grille simulée est celle du central. Les
+    simulateur ne lit pas — la grille simulée est celle du central.
+    ``indexation_liberale`` : une voie de l'indexation du programme pour le
+    scénario 6 (:mod:`.indexation_programme`), sous sa trajectoire, dont la
+    crise de l'emploi, s'il y en a une, fait la population. Les
     autres options sont celles de
     ``calculer_cout``, et la clé les porte toutes, défaut compris :
     ``convention_recette`` écrite ou non, c'est le même calcul.
@@ -648,6 +651,12 @@ def cout(parametres: Parametres | None = None, *, comptes: bool = True,
     from .castypes import GRILLE_DU_COUT
     from .cout import calculer_cout
 
+    choc = (indexation_liberale.trajectoire
+            if indexation_liberale is not None
+            and indexation_liberale.trajectoire.emploi is not None else None)
+    if choc is not None and demographie != "centrale":
+        raise ValueError(f"variante {demographie!r} et crise de l'emploi {choc.id!r} : "
+                         "la page Coût ne les croise pas")
     parametres = parametres if parametres is not None else Parametres()
     reglages = _reglages(calculer_cout, OPTIONS_DU_COUT, options)
     grille = tuple(cas_types) if cas_types is not None else GRILLE_DU_COUT
@@ -672,18 +681,25 @@ def cout(parametres: Parametres | None = None, *, comptes: bool = True,
         simulee = memoriser_pour(
             parametres, ("grille_du_cout", parametres, grille, reglages["liquidation"]),
             lambda: module._pensionnes(simulateur, grille, reglages["liquidation"]))
+        if choc is not None:
+            from .indexation_programme import PopulationSousChoc
+
+            population = PopulationSousChoc(racine, choc, parametres.hypothese_esperance_vie)
+        else:
+            population = Population(racine, parametres.hypothese_esperance_vie, demographie)
         return calculer_cout(
-            simulateur, DepensesRetraite(racine),
-            Population(racine, parametres.hypothese_esperance_vie, demographie),
+            simulateur, DepensesRetraite(racine), population,
             ComptesRetraite(racine, variante=variante) if comptes else None,
             cas_types=grille, assiette=AssietteActivite(racine) if assiette else None,
-            grille_simulee=simulee, **reglages)
+            grille_simulee=simulee, indexation_liberale=indexation_liberale, **reglages)
 
     # La clé du central reste celle d'avant la variante : ses calculs gardés
     # servent encore.
     cle = ("cout", parametres, comptes, assiette, grille, tuple(sorted(reglages.items())))
     if demographie != "centrale":
         cle += (("demographie", demographie),)
+    if indexation_liberale is not None:
+        cle += (("indexation_liberale", indexation_liberale),)
     return memoriser_pour(parametres, cle, calcul)
 
 
