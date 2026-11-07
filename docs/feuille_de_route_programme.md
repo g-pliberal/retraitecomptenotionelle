@@ -620,6 +620,67 @@ ce que la CEG rapporte, et ce que sa suppression retire.
 
 **Au propriétaire.** Le mécanisme ; l'ordre des caisses.
 
+**Le 7 novembre 2026 : les complémentaires, étudiées aux sources.** Le
+propriétaire ouvre le chantier : « Je veux qu'on attaque ce chantier ». Le
+rapport est la note `186/2026-11-07-complementaires-etude.md`. Ce qu'il
+établit :
+- *Les 7 % de l'Agirc-Arrco* sont bien la compensation des allègements
+  généraux : une fraction de TVA, versée par l'Urssaf « à l'euro près »
+  depuis 2019 ; de l'ordre de 7 Md€ en 2025 et de 11 Md€ en 2026 avec la
+  réduction dégressive unique (calcul à côté). Quand la TVA manque, le régime
+  général paie : 0,8 Md€ à la charge de la Cnav en 2025 (CCSS, mai 2026).
+  L'Unédic (3,8 Md€ en 2024) et l'État, pour l'ASS (0,2 Md€), paient les
+  points des chômeurs : l'assureur du risque, comme le veut le chantier 3.
+- *La complémentaire agricole* vit pour moitié de droits sur les alcools
+  (636 M€ prévus en 2024, contre 524 M€ de cotisations), compte 0,74
+  cotisant par retraité et 0,4 Md€ de réserves ; 87 % de ses pensions de
+  droit propre sont des points gratuits. Sans impôt, elle fait défaut dans
+  l'année : elle est la première à sauver.
+- *La CEG* prend bien la suite de l'AGFF et de la GMP : elle « permet à la
+  fois de compenser les charges résultant des départs à la retraite avant
+  67 ans et d'honorer les engagements retraite des personnes qui ont cotisé
+  à la GMP » (Agirc-Arrco). Elle rapporte près de 17 Md€ et la CET 1 Md€
+  (à côté, sur les assiettes de 2024) ; les supprimer seules viderait les
+  réserves de l'Agirc-Arrco en cinq ans environ. Avec la majoration du taux
+  d'appel, 36 % de ce que l'Agirc-Arrco prélève n'ouvre aucun point.
+- *Les réserves* des régimes en répartition font 223,9 Md€ fin 2025, à 91 %
+  aux complémentaires : Agirc-Arrco 92,1 Md€ (11 mois de prestations),
+  sections de la CNAVPL 39 (71 mois), complémentaire des indépendants 23,4
+  (107 mois), Ircantec 19,2 (50 mois) (COR, juin 2026). Hors la
+  complémentaire agricole, aucune n'a besoin d'être sauvée.
+- *Le plancher ne protège pas toutes les petites pensions agricoles* : le
+  complément différentiel garantit 1 214,40 € par mois en 2026 à une
+  carrière complète de chef d'exploitation ; la garantie vieillesse, 1 050 €
+  seul et 800 € en couple.
+- *Le droit* : reprendre un régime obligatoire n'est pas une privation de
+  propriété, mais touche des droits patrimoniaux, d'où un motif d'intérêt
+  général et une indemnisation (décision 2013-682 DC) ; le Conseil d'État
+  l'a étendu aux complémentaires en 2020, dont les réserves « demeurent leur
+  propriété ». Une caisse en défaut n'a rien à indemniser, une caisse
+  solvable si. L'adossement des IEG (2005) a fixé la neutralité pour les
+  cotisants qui accueillent (L. 222-7) : une soulte de 7,649 Md€ à la Cnav,
+  des prestations minorées pour l'Agirc-Arrco.
+- *La tension avec le modèle* : il fond toutes les complémentaires dans le
+  régime unique le jour de la bascule, quand la décision 12 les fait entrer
+  en deux temps. Garder l'Agirc-Arrco hors de la bascule soustrairait ses
+  101 Md€ annuels de pensions au recalcul rétroactif — une clause du
+  grand-père pour la part complémentaire, contre la décision 2 —, et, à 18 %
+  tout compris, la laisserait sans cotisation.
+
+*Piste du 7 novembre, à valider* : les droits et l'argent à la bascule, pour
+toutes les caisses ; les caisses ensuite, par délégation de gestion comme en
+2020, puis par fusion, la complémentaire agricole d'abord. Dès le vote,
+l'argent qui n'est pas cotisation est coupé : la compensation des
+allègements passe au régime de base, sur la TVA sociale ; les droits sur les
+alcools de la complémentaire agricole vont à la garantie vieillesse. La CEG
+et la CET restent jusqu'à la bascule, où le taux unique les supprime. Une
+caisse qui fait défaut avant la bascule est mise en résolution : le régime
+général garantit ses pensions et reprend ses réserves, ses cotisants et ses
+retraités ; ce que ses cotisations ne couvrent pas va à la garantie, payée
+par l'impôt, non aux autres cotisants. Les réserves des caisses solvables
+sont portées aux comptes de leurs propres cotisants et retraités : les
+droits suivent l'argent.
+
 ### Chantier 7 — Les chiffres qui tiennent
 
 **La question.** Un challenger est vérifié plus durement qu'un sortant :
@@ -792,6 +853,11 @@ est passée ; le début de la campagne présidentielle ?
 - Chantier 5 : l'indexation des pensions servies ; la formulation de la
   garantie.
 - Chantier 6 : le mécanisme de résolution ; l'ordre des caisses.
+- Chantier 6, étudié le 7 novembre : l'entrée des complémentaires au régime
+  unique, à la bascule ou caisse par caisse ; la résolution et son seuil ;
+  le sort des réserves, aux comptes des affiliés de chaque caisse ou au fonds
+  commun ; l'ordre ; la garantie face au complément différentiel des
+  exploitants agricoles.
 - Chantier 8, après les décisions 31 à 33 : l'âge, une fois chiffré un âge
   plancher de 62 ou 64 ans ; le plafond de l'apport pour un premier
   logement. Le gain des actifs suit la lecture A ou B du chantier 1, le

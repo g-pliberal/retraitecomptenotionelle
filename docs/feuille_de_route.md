@@ -8044,14 +8044,14 @@ et 3 ci-dessus ; la mesure, et comment la refaire, sont dans la note
 
 **Reprise, au 7 novembre 2026.** La réversion est tranchée pour le seul
 scénario 6 (décisions 16 à 28) ; une session du modèle les y porte. Les
-chantiers 1 et 2 ont leurs décisions 29 et 30 ; les deux lectures de la 29,
-chiffrées à côté du modèle, sont à refaire au modèle, la dépense suivant le
-taux cotisé (`186/2026-11-07-deux-lectures-et-reprise.md`). Le message
-(chantier 8) est étudié (`186/2026-11-07-message-etude.md`, qui tient son
-bloc) et tranché (décisions 31 à 33). Par quoi commencer : ce chiffrage et
-celui d'un âge plancher (chantier 8), puis le choix entre A et B ; ensuite
-« Les décisions attendues » des autres chantiers et le gel (chantier 10).
-Rien n'est gelé.
+décisions 29 et 30 (chantiers 1 et 2) : les deux lectures de la 29 sont à
+refaire au modèle, la dépense suivant le taux cotisé
+(`186/2026-11-07-deux-lectures-et-reprise.md`). Le message (chantier 8) est
+tranché (décisions 31 à 33), les complémentaires (chantier 6) étudiées ; leurs
+notes, `…-message-etude.md` et `…-complementaires-etude.md`, tiennent leur
+bloc. Par quoi commencer : ce chiffrage et celui d'un âge plancher, puis le
+choix entre A et B et les questions du chantier 6 ; ensuite les autres
+« décisions attendues » et le gel (chantier 10). Rien n'est gelé.
 
 **D'où elle vient.** Le 6 novembre 2026, le propriétaire demande un bilan :
 les vagues se succèdent, et le chantier semble sans fin. La session mesure
