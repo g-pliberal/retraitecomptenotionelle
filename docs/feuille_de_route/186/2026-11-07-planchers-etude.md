@@ -4,11 +4,11 @@
 66, 69 et 78) : planchers gardés tant que leur caisse a des réserves, la
 garantie ensuite, dès la bascule pour la CNRACL, l'État, la SNCF et la
 complémentaire agricole ; la garantie ouverte dès l'invalidité, pour tous les
-invalides. Étape suivante, dans une session neuve : vérifier, caisse par
-caisse et complémentaire par complémentaire, les conflits de cette garantie
-d'invalidité ; partir des cinq déjà visibles (« Les conflits déjà visibles »,
-en fin de note), dont cinq questions au propriétaire. Le modèle n'est touché
-qu'après, par une session du modèle, au seul scénario 6.
+invalides. Deux sessions neuves, ouvertes le même jour, mènent la suite :
+la vérification caisse par caisse (note `…-invalidite-caisses.md`) et les
+cinq questions (note `…-invalidite-questions.md`), que le propriétaire
+garde ouvertes pour y réfléchir. Cette note n'a plus rien à faire. Le modèle
+n'est touché qu'après, par une session du modèle, au seul scénario 6.
 
 *Le 7 novembre 2026, le propriétaire, qui avait dit « Oui » à ce que la garantie vieillesse remplace aussi les planchers propres à certaines caisses (décision 42), rouvre la question : « J'aimerais revoir ce sujet pour voir comment vont être impactés les gens. J'aimerais surtout voir notre marge de manœuvre légale sur le sujet. » La session a lu : la note de la CNRACL au COR sur les bénéficiaires du minimum garanti (février 2023), la note du secrétariat du COR sur les minima de pension (février 2023), les fiches du COR de juillet 2024 sur la CNRACL, la caisse des cheminots et celle des IEG, les pages de la CNIEG sur son minimum, et, dans l'index LEGI de la DILA (à jour au 2 novembre 2026), les textes de chaque plancher. Les sites de la DREES, de la sécurité sociale et du Sénat ont refusé la lecture automatique (503) : les chiffres qui en viennent ont été relevés par le moteur de recherche, sans lecture de la page, et sont marqués comme tels. Les calculs faits à côté sont restés dans le brouillon de la session ; leur méthode est écrite à chaque chiffre. Ce que la note conclut est une piste, pas une décision : le propriétaire tranche.*
 
@@ -255,3 +255,5 @@ Le propriétaire choisit III : « je veux que ce soit pour tous les invalides »
 **5. Une avance, ou une assurance ?** La garantie est une avance de l'État, « qui porte intérêt et se reprend sur la succession dès le premier euro » (`docs/methodologie.md`, scénario 6). Ouverte à 65 ans, elle court une vingtaine d'années ; ouverte à 40 ans pour une invalidité, elle en courrait plus de quarante, et ses intérêts pourraient prendre toute la succession, le logement compris. Mais si l'assureur du risque la paie, comme le veut le chantier 3 pour les accidents de la vie, c'est une prestation d'assurance, que rien n'oblige à reprendre. *Question* : la garantie versée pour invalidité est-elle reprise sur la succession, comme celle de 65 ans, ou acquise, comme une prestation d'assurance ?
 
 **Les complémentaires : pas de conflit de principe, des points à vérifier.** La garantie est différentielle : elle compte ce que versent les complémentaires et ne complète que le reste. Mais les complémentaires donnent des points pendant l'invalidité — celle des indépendants, au moins (fiche citée) ; l'Agirc-Arrco et l'Ircantec, à vérifier — et ne versent leur pension qu'à l'âge légal : jusque-là, la garantie comble seule. L'Agirc-Arrco garde ses règles, et donc ses points d'invalidité, jusqu'à ce qu'elle coule (décision 43). Le RAFP reste à part (décision 72). Restent à vérifier caisse par caisse : les régimes d'invalidité-décès des sections des libéraux et des avocats, leurs définitions de l'invalidité, et si leurs pensions entrent dans les ressources ; la rente viagère d'invalidité imputable au service (L. 28 du code des pensions) et les rentes d'accident du travail, comptées ou non dans les ressources ; l'invalidité des agents des régimes spéciaux fermés aux seuls recrutés (IEG, RATP, Banque de France).
+
+Le propriétaire, le même soir : « oui, ouvre la session pour la vérification caisse par caisse » ; « pour les cinq questions, ouvre une nouvelle session ; j'ai besoin de réfléchir un peu plus au sujet ». Deux sessions sont ouvertes : « Action 186, chantier 6 : l'invalidité, caisse par caisse », qui inventorie les règles d'invalidité de chaque caisse et de chaque complémentaire et leurs conflits avec la décision 78 ; « Action 186, chantier 6 : l'invalidité, les cinq questions », qui instruit les cinq questions ci-dessus, options et pistes, sans rien trancher.
