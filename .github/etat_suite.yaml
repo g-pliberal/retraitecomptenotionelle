@@ -1,7 +1,9 @@
 # Le verdict de la dernière course de tests.yml : écrit par GitHub
 # (scripts/publier_fabrique.sh), jamais à la main. Action 148.
-etat: vert
-sources: b6849d380d6f0a3af23f30760abc783789b43be1
-date: 2026-11-07T22:16:26Z
-course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/42415140466
+etat: rouge
+sources: 2597f22bdb1ccaa0ef623c548e955c39df7b1002
+date: 2026-11-08T01:33:18Z
+course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/42430650123
+echecs:
+  - "FAILED tests/test_web_revues.py::test_la_navigation_met_l_electeur_d_abord - AssertionError: assert 'border-bottom-color' in '\n  color: var(--sur-or); background: var(--or);\n'"
 presomptions: vert
