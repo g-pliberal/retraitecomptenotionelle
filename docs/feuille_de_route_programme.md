@@ -1845,6 +1845,37 @@ Le propriétaire tranche le même jour, sur le tableau des trois âges :
 consigne lui donnait, et les suivants avaient été pris entre-temps). « La
 liberté de l'âge » quitte le message des 45-62 ans ; le modèle ne bouge pas.
 
+**Le 8 novembre 2026 : le plafond de l'apport, étudié et chiffré.** La note
+est `186/2026-11-08-apport-logement-etude.md` ; les textes lus, le modèle au
+commit `df6ca19` sans qu'une ligne en change, et un calcul à côté, posé en
+entier. Ce qu'elle établit :
+- *Les précédents* : aucun pays lu ne plafonne en euros l'apport tiré d'un
+  pilier obligatoire. La Suisse (LPP, art. 30c à 30e ; OEPL, art. 5) laisse
+  tout retirer jusqu'à 50 ans, la moitié ensuite, 20 000 francs au moins, et
+  fait rembourser à la revente, mention au registre foncier ; 21 850
+  retraits en 2022, 0,47 % des actifs, 85 900 francs en moyenne (OFS).
+  Singapour fait rembourser avec les intérêts à la vente ; le Canada
+  plafonne à 60 000 $ une épargne volontaire, rendue en quinze ans ;
+  l'Australie n'ouvre que le volontaire ; la Nouvelle-Zélande laisse tout
+  sauf 1 000 $. En France, L. 224-4, 6°, du code monétaire et financier
+  ouvre le PER à la résidence principale, sans plafond, mais en ferme les
+  versements obligatoires : la loi devra les ouvrir.
+- *Ce que vaut le compte* (euros de 2026) : à 30 ans, 16 200 € au SMIC,
+  20 200 € au salaire moyen, 26 800 € pour le cadre ; à 40 ans, 32 100,
+  49 300 et 79 500 €, pour une carrière commencée à la bascule. L'apport
+  moyen de tous les emprunteurs est de l'ordre de 48 800 € (ACPR, 2025).
+- *Ce qu'il coûte* : 4,6 à 5,6 € de pension par mois par millier d'euros
+  retiré ; le compte vidé, 4 à 8 % de la pension à 30 ans, 10 à 13 % à
+  40 ans. Seul le salarié au SMIC à carrière complète approche du plancher
+  (1 125 € à 65 ans) : vidé à 40 ans, il perd 149 €, dont la garantie rend
+  74. La reprise sur succession (décisions 30 et 66) les reprend sur le
+  logement acheté ; reste la fuite du logement revendu, que ferme le
+  remboursement à la revente.
+- *La piste* : la moitié du compte, rendue au compte si le logement est
+  vendu avant la retraite, sauf rachat d'une résidence principale dans les
+  deux ans. Les options — tout, la moitié, 20 000 €, les deux ; sans
+  remboursement, à la revente, sur quinze ans — sont chiffrées dans la note.
+
 ### Chantier 9 — Le site et le simulateur
 
 **La question du propriétaire.** « Est-ce que le simulateur est vraiment une
@@ -2133,7 +2164,11 @@ aucun. Rien n'est gelé.
   chantier 9, la façon de montrer que l'outil donne à la proposition un
   rendement plus faible que le droit actuel pour les jeunes générations.
 - Chantier 8, après les décisions 31 à 33 et 68 : le plafond de l'apport
-  pour un premier logement. Le gain des actifs suit la lecture A ou B du chantier 1, le
+  pour un premier logement, chiffré le 8 novembre
+  (`186/2026-11-08-apport-logement-etude.md`) — tout le compte, la moitié
+  (la piste), 20 000 € ou les deux ; sans remboursement, à la revente (la
+  piste) ou sur quinze ans ; le rachat d'un autre logement ; une limite
+  d'âge. Le gain des actifs suit la lecture A ou B du chantier 1, le
   message des retraités les pertes du chantier 2 ; le test des vingt
   personnes attend les deux.
 - Chantier 9, le 7 novembre après les décisions 34 et 35 : ce que la

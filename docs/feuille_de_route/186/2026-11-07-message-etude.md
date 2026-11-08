@@ -1,12 +1,14 @@
 # Le message étudié aux sources : ce que chaque électorat gagne, et ce qui ne se promet pas encore
 
-**Reprise, au 7 novembre 2026.** Le chantier 8 est étudié et tranché le
-même jour : décisions 31 à 33 de `docs/feuille_de_route_programme.md` (la
-faute, le pilier à l'assuré, l'apport pour un premier logement), puis
-l'âge, chiffré (`2026-11-07-age-plancher.md`) : 65 ans, la garantie à
-65 ans (décision 68). Reste le plafond de l'apport. Le gain des actifs en
-euros attend la lecture A ou B du chantier 1, le message des
-retraités les pertes du chantier 2, et le test des vingt personnes, les deux.
+**Reprise, au 8 novembre 2026.** Le chantier 8 est étudié et tranché :
+décisions 31 à 33 de `docs/feuille_de_route_programme.md`, puis l'âge,
+65 ans (décision 68, `2026-11-07-age-plancher.md`). Le plafond de l'apport
+est étudié et chiffré (`2026-11-08-apport-logement-etude.md`) : au
+propriétaire, le plafond (la piste : la moitié du compte), le
+remboursement (la piste : à la revente), le rachat d'un autre logement,
+une limite d'âge. Le gain des actifs en euros attend la lecture A ou B du
+chantier 1, le message des retraités les pertes du chantier 2, et le test
+des vingt personnes, les deux.
 
 *Le 7 novembre 2026, le propriétaire ouvre le chantier 8 de l'action 186,
 « Le message » : « Je veux qu'on attaque ce chantier ». La session relit
