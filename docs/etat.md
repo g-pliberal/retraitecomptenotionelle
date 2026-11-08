@@ -115,7 +115,7 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 
 **Ce qui est hors de la page Coût.** La réversion, par exemple, pèse 10,4 % de la masse des prestations en 2024 (COR) : le modèle en calcule une pour une personne (scénario 1), mais la page Coût n'en connaît que cette part publiée, qu'elle ne calcule pas.
 
-**La feuille de route** compte 188 actions : 138 fait, 25 en cours, 21 à faire, 2 archivée, 2 abandonnée. Les closes sont dans son archive, `docs/archives/feuille_de_route.md` ; ce qui reste à faire est ailleurs, dispersé.
+**La feuille de route** compte 190 actions : 139 fait, 26 en cours, 21 à faire, 2 archivée, 2 abandonnée. Les closes sont dans son archive, `docs/archives/feuille_de_route.md` ; ce qui reste à faire est ailleurs, dispersé.
 
 ## 2. Ce qui ne va pas encore
 
@@ -364,7 +364,7 @@ Et 36 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
 
 ## 3. Ce qui reste à faire, et par quoi commencer
 
-- **Les 25 actions en cours** de la feuille de route :
+- **Les 26 actions en cours** de la feuille de route :
   - 47. La garantie vieillesse est une avance : la reprise sur succession, sa règle et son chiffrage
   - 89. Dépouiller les 260 sources officielles remises le 22 septembre 2026
   - 129. Le taux de l'État ramené à sa part « retraite seule » : un réglage, puis le défaut
@@ -390,6 +390,7 @@ Et 36 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
   - 184. L'histoire d'un article de loi, lue dans l'index de la DILA : ce que le dépôt lexifina/global-law fait mieux, repris, et ce qu'il fait mal, écarté
   - 186. Le programme du parti sur les retraites : chaque grande idée étudiée à fond, aux sources, puis le modèle et le site qui la montrent
   - 187. Le moteur à part du site : le calcul d'une carrière en bibliothèque, que d'autres peuvent appeler, séparé commit après commit
+  - 189. Le site à la charte du parti, puis lisible par l'électeur
 - **Les sources à exploiter** : 7 à explorer sur 332 (126 explorées, 198 épuisées). 0 d'entre elles visent un régime partiel, et pourraient le compléter :
   - et 4 sources sans régime désigné.
 - **Les autres modèles** (§ 3.4) : 70 au registre (`data/reference/referents.yaml`) : 32 au code ouvert, 1 sur demande, 13 documenté(s) sans leur code, 24 non public(s). 28 ont déjà été confrontés au dépôt ou lui donnent des valeurs (Barèmes IPP, OpenFisca-France, OpenFisca-France-Pension, Destinie 2, Ines, TRAJECTOiRE, ANCETRE, legiretraite (paquet R), EDIFIS, Maquette globale de projection du COR, Maquette simplifiée du secrétariat général du COR, PRISME (Projection des Retraites, Simulations, Modélisation et Évaluations), Saphir, modele-ti, modele-social, modele-as, Catala (catala-examples), ir-catala, EUROMOD (France), Retraites 2027, Simulateur de dépense publique, volet retraites, « Quand pourrai-je partir à la retraite ? », Simulateur de SUD éducation, devcrafting/retraites, calcul-verification-pension-retraite, Simulateur de cas types de Nos Retraites, Les modèles de pension de l'OCDE, Ageing Report et ses fiches pays) ; le registre compte 242 écarts, dont 210 chez eux. Aucun n'est plus à confronter au scénario 1 en premier : tous ceux dont le code est ouvert et qui ne dépendent d'aucune autre source du registre l'ont été.
