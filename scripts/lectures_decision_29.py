@@ -85,6 +85,15 @@ LECTURES: dict[str, str] = {
     "B_hors_etat": "Lecture B, hors versements de l'État",
 }
 
+#: Les recettes nouvelles des décisions 79 et 80, que le modèle n'a pas
+#: encore, en part de PIB tenue constante, dès 2026 (décision 81) : la part
+#: de TVA que l'Agirc-Arrco reçoit déjà, de l'ordre de 7 Md€ en 2025, soit
+#: 0,23 point de PIB (celle de la Cnav reste à chiffrer) ; et le point de LVT
+#: des retraites, 36 à 43 Md€, 1,2 à 1,4 point de PIB de 2025, avant tout
+#: abattement (``2026-11-07-recettes-tva-lvt.md``).
+TVA_RETRAITES = 0.0023
+LVT_RETRAITES = {"basse": 0.012, "centrale": 0.013, "haute": 0.014}
+
 #: Le taux du programme, que le scénario 6 crédite : la référence des cas types.
 TAUX_PROGRAMME = 0.18
 
@@ -166,13 +175,17 @@ class Etude:
     def __init__(self, annees: Iterable[Annee],
                  depenses: Mapping[float, Mapping[int, float]],
                  garanties: Mapping[float, Mapping[int, float]] | None = None,
-                 convention: str = "recettes_gardees") -> None:
+                 convention: str = "recettes_gardees",
+                 recettes_en_plus: float = 0.0) -> None:
         if convention not in CONVENTIONS:
             raise KeyError(convention)
         self.annees = sorted(annees, key=lambda a: a.annee)
         self.depenses = {taux: dict(serie) for taux, serie in sorted(depenses.items())}
         self.garanties = {taux: dict(serie) for taux, serie in (garanties or {}).items()}
         self.convention = convention
+        #: Des recettes que le modèle n'a pas encore, en part de PIB chaque
+        #: année : la LVT et la part de TVA (décisions 79 et 80).
+        self.recettes_en_plus = recettes_en_plus
         self.taux = list(self.depenses)
 
     def _interpolee(self, series: Mapping[float, Mapping[int, float]], annee: int,
@@ -186,6 +199,9 @@ class Etude:
         raise ValueError(f"taux {taux} hors des taux calculés ({self.taux[0]} à {self.taux[-1]})")
 
     def recettes(self, a: Annee, taux: float) -> float:
+        return self._recettes(a, taux) + self.recettes_en_plus
+
+    def _recettes(self, a: Annee, taux: float) -> float:
         if self.convention == "page_cout":
             return a.recettes_proposition + taux * a.assiette
         gardees = a.depense_actuel + a.solde_actuel - (a.taux_actuel - taux) * a.assiette
@@ -317,7 +333,7 @@ def _memes_annees(unes: list[Annee], autres: list[Annee]) -> bool:
 
 
 def etude_du_modele(grille: Iterable[float] = GRILLE, convention: str = "page_cout",
-                    ) -> tuple[Etude, dict[str, float]]:
+                    recettes_en_plus: float = 0.0) -> tuple[Etude, dict[str, float]]:
     """Les taux de chaque lecture, au modèle, sous une convention de recettes :
     résolus sur la grille, puis calculés eux-mêmes, arrondis au centième de
     point, et résolus de nouveau jusqu'à ce qu'ils ne bougent plus."""
@@ -339,7 +355,7 @@ def etude_du_modele(grille: Iterable[float] = GRILLE, convention: str = "page_co
         calculer(taux)
     trouves: dict[str, float] = {}
     for _ in range(4):
-        etude = Etude(annees, depenses, garanties, convention)
+        etude = Etude(annees, depenses, garanties, convention, recettes_en_plus)
         nouveaux = {lecture: round(etude.resoudre(lecture), 4) for lecture in LECTURES}
         if nouveaux == trouves:
             break
@@ -347,7 +363,7 @@ def etude_du_modele(grille: Iterable[float] = GRILLE, convention: str = "page_co
         for taux in trouves.values():
             calculer(taux)
     calculer(TAUX_PROGRAMME)
-    return Etude(annees, depenses, garanties, convention), trouves
+    return Etude(annees, depenses, garanties, convention, recettes_en_plus), trouves
 
 
 CAS_TYPES = ("smic_carriere_complete", "salaire_moyen", "cadre")
@@ -486,17 +502,34 @@ def main(argv: list[str] | None = None) -> int:
                          help="la pension de quelques cas types sous chaque taux")
     lecteur.add_argument("--convention", choices=list(CONVENTIONS), default="page_cout",
                          help="les recettes du détail (la page Coût par défaut)")
+    lecteur.add_argument("--recettes-en-plus", type=float,
+                         default=TVA_RETRAITES + LVT_RETRAITES["centrale"],
+                         help="les recettes nouvelles du détail, en part de PIB "
+                              "(par défaut, la TVA et la LVT centrale)")
     options = lecteur.parse_args(argv)
-    resultats = {convention: etude_du_modele(convention=convention)
+    variantes = {"sans la TVA ni la LVT": 0.0, "avec la part de TVA": TVA_RETRAITES}
+    variantes.update({f"avec la TVA et la LVT {nom} ({_n(100 * lvt, 1, False)} point)":
+                      TVA_RETRAITES + lvt for nom, lvt in LVT_RETRAITES.items()})
+    print("## Le taux de chaque lecture, sur la base de la page Coût\n")
+    print("| Recettes | " + " | ".join(LECTURES.values()) + " |")
+    print("|---|" + "---:|" * len(LECTURES))
+    for libelle, en_plus in variantes.items():
+        _, taux = etude_du_modele(recettes_en_plus=en_plus)
+        print(f"| {libelle} | " + " | ".join(_pourcent(taux[lecture]) for lecture in LECTURES) + " |")
+    print()
+    resultats = {convention: etude_du_modele(convention=convention,
+                                             recettes_en_plus=options.recettes_en_plus)
                  for convention in CONVENTIONS}
-    print("## Le taux de chaque lecture, selon le déficit dont on parle\n")
+    print("## Le taux de chaque lecture, selon le déficit dont on parle, "
+          "recettes nouvelles comprises\n")
     print("| Le déficit | " + " | ".join(LECTURES.values()) + " |")
     print("|---|" + "---:|" * len(LECTURES))
     for convention, (_, taux) in resultats.items():
         print(f"| {CONVENTIONS[convention]} | "
               + " | ".join(_pourcent(taux[lecture]) for lecture in LECTURES) + " |")
     etude, trouves = resultats[options.convention]
-    print(f"\n# Le détail : {CONVENTIONS[options.convention]}\n")
+    print(f"\n# Le détail : {CONVENTIONS[options.convention]}, "
+          f"{_n(100 * options.recettes_en_plus, 2, False)} point de PIB de recettes nouvelles\n")
     print(rapport(etude, trouves))
     if options.cas_types:
         print()

@@ -8045,7 +8045,7 @@ et 3 ci-dessus ; la mesure, et comment la refaire, sont dans la note
 **Reprise, au 8 novembre 2026.** La réversion est tranchée pour le scénario 6
 (décisions 16 à 28) ; le stock gardé est au coût, le site le dément encore
 (`…-reversion-scenario-6-plan.md`). Décisions 29 et 30 : les lectures de la
-29 chiffrées sur la base de la page Coût (`…-deux-lectures-au-modele.md`). Le
+29 chiffrées, LVT et TVA comprises (`…-deux-lectures-au-modele.md`). Le
 message (8, décisions 31 à 33, 68), les enfants (3, 50 à 61), les recettes (4,
 79 à 81) et les chiffres (7, 82 à 85) sont tranchés ; l'indexation (5) et les
 complémentaires (6, baisse : 86 et 87) étudiées ; le site (9) aussi, face au

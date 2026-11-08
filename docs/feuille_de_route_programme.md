@@ -739,6 +739,28 @@ programme tombent entre les deux. Le détail, avantages et inconvénients
 compris : `186/2026-11-07-deux-lectures-au-modele.md`, dernière partie. Le
 choix entre A et B reste au propriétaire.
 
+**Le 8 novembre 2026, avec la LVT et la part de TVA (décisions 79 à 81).**
+Le propriétaire : « on a ajouté la LVT et la part TVA, ça doit changer des
+choses ». Ni l'une ni l'autre n'est au modèle ; ajoutées aux recettes de la
+caisse dès 2026, en part de PIB constante (la TVA de l'Agirc-Arrco, 0,23
+point ; la LVT, 1,2 à 1,4 point avant abattement), elles baissent chaque
+taux de quatre à cinq points : A 21,2 %, B 15,9 % (LVT centrale). Le salarié
+né en 1990 au salaire moyen, par rapport à aujourd'hui :
+
+| | Programme, 18 % | Lecture A | Lecture B |
+|---|---:|---:|---:|
+| Taux cotisé et crédité | 18 % | 21,2 % | 15,9 % |
+| Net par mois, par rapport à aujourd'hui | +186 € | +66 € | +263 € |
+| Pension en 2055 (droit en vigueur : 2 859 €) | 1 531 € | 1 697 € | 1 425 € |
+| Solde de la caisse en 2026 (aujourd'hui −0,16 point de PIB) | −0,7 | +0,7 | −1,5 |
+| Années de déficit | 2026 à 2054 | aucune | 2026 à 2059 |
+| Dette de la caisse en 2070 (droit en vigueur : 66 points) | 1 | réserve de 71 | 47 |
+
+Sous les deux lectures, les actifs paient désormais moins qu'aujourd'hui ;
+les 18 % du programme passent entre A et B, et leur caisse finit 2070
+presque sans dette. Le détail : `186/2026-11-07-deux-lectures-au-modele.md`,
+dernière partie. Le choix entre A et B reste au propriétaire.
+
 ### Chantier 2 — La baisse des pensions en cours : sa règle, son plancher, son calendrier, son droit
 
 **La question.** Baisser les pensions liquidées en cinq ans, d'une façon qui

@@ -385,3 +385,57 @@ moyen (−0,14) est meilleur que celui de B (−0,57), et sa dette de 2070 tombe
 à 17 points. B, sous 18 %, reste en déficit jusqu'en 2059. L'abattement, le
 plafonnement et l'année de la LVT restent à fixer, et déplaceront ces taux.
 
+## Avec la LVT et la part de TVA (décisions 79 à 81)
+
+Le propriétaire, le 8 novembre : « on a ajouté la LVT et la part TVA, ça
+doit changer des choses ». Ni l'une ni l'autre n'est au modèle ; le script
+les ajoute aux recettes de la caisse, en part de PIB constante, dès 2026
+(décision 81) : la part de TVA que l'Agirc-Arrco reçoit déjà, 7 Md€ en 2025
+(0,23 point de PIB ; celle de la Cnav reste à chiffrer, et baisserait encore
+les taux), et le point de LVT, 1,2 à 1,4 point de PIB avant abattement.
+
+| Sur la base de la page Coût | Tout au déficit | Lecture A | Lecture B |
+|---|---:|---:|---:|
+| Sans la TVA ni la LVT | 30,0 % | 25,3 % | 20,8 % |
+| Avec la part de TVA | 29,4 % | 24,7 % | 20,0 % |
+| Avec la TVA et la LVT (1,2 à 1,4 point) | 26,2 à 26,7 % | 21,0 à 21,5 % | 15,6 à 16,3 % |
+
+Avec la TVA et la LVT centrale (1,3 point), le salarié au salaire moyen
+comparé à aujourd'hui (27,98 %, pilier compris) :
+
+| | Programme, 18 % | Lecture A | Lecture B |
+|---|---:|---:|---:|
+| Taux cotisé et crédité | 18 % | 21,2 % | 15,9 % |
+| Retraités d'aujourd'hui, en 2026 | −118 Md€ | pareil | pareil |
+| Né en 1990 : net par mois, par rapport à aujourd'hui | +186 € | +66 € | +263 € |
+| Né en 1990 : pension en 2055 (droit en vigueur : 2 859 €) | 1 531 € | 1 697 € | 1 425 € |
+| Né en 2005 : pension en 2070 (droit en vigueur : 3 099 €) | 1 347 € | 1 588 € | 1 193 € |
+| Solde de la caisse en 2026, points de PIB (aujourd'hui : −0,16) | −0,7 | +0,7 | −1,5 |
+| Années de déficit | 2026 à 2054 | aucune | 2026 à 2059 |
+| Dette de la caisse en 2070, points de PIB (droit en vigueur : 66) | 1 | réserve de 71 | 47 |
+
+**Ce qui change.** Les actifs paient moins qu'aujourd'hui sous les deux
+lectures, A comprise : l'inconvénient principal de A, plus haut, tombe. Les
+18 % du programme passent entre A et B : leur caisse est en déficit jusqu'en
+2054, mais finit 2070 presque sans dette, au lieu de 103 points.
+
+**Lecture A, 21,2 %.** La caisse est en excédent dès 2026 et chaque année.
+Les actifs paient un peu moins qu'aujourd'hui (66 € par mois) et se font une
+pension plus haute que sous les 18 % (+11 % pour le salarié né en 1990,
++18 % pour celui né en 2005). Inconvénient : ils gagnent moins sur leur
+salaire que sous le programme (120 € par mois de moins). Devant les juges (à
+faire vérifier par un juriste), l'urgence se plaide : la caisse passe en
+excédent tout de suite.
+
+**Lecture B, 15,9 %.** Les actifs gagnent le plus sur leur salaire (263 € par
+mois), mais leur pension baisse par rapport aux 18 % (−7 % et −11 %). La
+caisse reste en déficit jusqu'en 2059, −1,5 point de PIB en 2026, près de
+dix fois celui d'aujourd'hui, et sa dette culmine à 48 points en 2066. Devant
+les juges (à faire vérifier par un juriste), baisser les pensions pendant
+que la caisse reste en déficit plus de trente ans affaiblit l'urgence.
+
+Ce qui peut encore déplacer ces taux : l'abattement de la résidence
+principale et le plafonnement au revenu de la LVT, qui en baisseraient le
+produit ; la part de TVA de la Cnav, qui l'augmenterait. Au commit `02f2324`,
+par `python scripts/lectures_decision_29.py --cas-types`.
+

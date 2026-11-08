@@ -131,3 +131,25 @@ def test_sans_les_impots_affectes_la_lecture_a_tombe_entre_les_deux():
 
 def test_les_recettes_gardees_restent_la_convention_du_premier_calcul():
     assert _etude_sous("recettes_gardees").resoudre("A") == pytest.approx(0.15, abs=1e-9)
+
+
+# -- Des recettes nouvelles : la LVT et la part de TVA (décisions 79 et 80) -----
+#
+# Deux points de PIB de plus chaque année, sur la base de la page Coût :
+# solde −0,06 + 0,4 t la première année, −0,03 + 0,2 t la seconde. Lecture A :
+# (−0,065 + 0,4 t) + (−0,05 + 0,3 t) = 0, soit t = 23/140 ; le taux baisse.
+
+
+def test_des_recettes_nouvelles_baissent_le_taux_de_chaque_lecture():
+    annees = [Annee(annee=a, depense_actuel=0.14, solde_actuel=-0.02,
+                    cotisations_actuel=0.08, assiette=0.40, versements_etat=0.03,
+                    pib=2_000_000.0, croissance=0.02, taux_dette=0.03,
+                    impots_affectes=0.02, recettes_proposition=0.01)
+              for a in (2026, 2027)]
+    depenses = {0.10: {2026: 0.10, 2027: 0.09}, 0.20: {2026: 0.10, 2027: 0.11},
+                0.30: {2026: 0.10, 2027: 0.13}}
+    garanties = {taux: {2026: 0.01, 2027: 0.01} for taux in depenses}
+    etude = Etude(annees, depenses, garanties=garanties, convention="page_cout",
+                  recettes_en_plus=0.02)
+    assert etude.resoudre("A") == pytest.approx(23 / 140, abs=1e-9)
+    assert etude.trajectoire(0.20)[0].solde == pytest.approx(-0.06 + 0.08)
