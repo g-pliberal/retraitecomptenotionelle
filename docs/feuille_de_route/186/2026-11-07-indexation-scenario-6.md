@@ -1,15 +1,5 @@
 # Le facteur démographique et le plancher, chiffrés au modèle pour le scénario 6 : les trois voies du stock
 
-**Reprise, au 7 novembre 2026.** Le propriétaire a choisi la voie 1
-(décisions 73 à 77, fin de note) : une prime de 2,15 % sur le stock, rendue
-en route quand la réserve suffit, une dette du stock quand elle manque. Le
-défaut du scénario 6 n'a pas changé. À une session du modèle : écrire la
-règle qui baisse la prime et la dette de la réserve qui manque, au test
-d'abord (`indexation_programme.py`, `etudes/indexation_scenario_6.yaml`) ;
-la chiffrer (`scripts/indexation_scenario_6.py`) ; puis faire de la voie 1
-le défaut du scénario 6 (l'option `indexation_liberale` du coût), et la page
-Coût la montre. Le plancher des comptes ne s'écrit que s'il doit jouer.
-
 *Le 7 novembre 2026, le propriétaire écarte les trois issues proposées pour
 le plancher du stock (décision 49) et demande trois voies neuves, chiffrées au
 modèle pour le seul scénario 6, de 2026 à 2070, sous le scénario de

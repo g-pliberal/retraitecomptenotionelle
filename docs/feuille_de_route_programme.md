@@ -1450,6 +1450,19 @@ la voie 1 comme défaut du scénario 6, et la page Coût. Sous le COR, sans
 crise, le stock perd d'abord 2,15 % ; la règle de la décision 75 dira
 combien il en retrouve, et quand.
 
+**Le 8 novembre 2026 : la règle au modèle.** La prime se révise chaque
+année sur ce que le plancher peut encore coûter, mesuré sur ce qui reste du
+stock ; elle ne remonte jamais, et sous zéro elle rend la réserve ; la
+réserve qui touche zéro devient la dette des retraités du stock vivants
+(note `186/2026-11-08-indexation-voie-1-au-modele.md`). Sous le COR, toutes
+les lectures rendent toute la réserve : le stock retrouve ses 2,15 % dès 2035
+si la crise garde ses dates, en 2036 si elle recommence, et davantage
+ensuite. Trois lectures sont au propriétaire. La prime de 2,15 % n'équilibre
+la réserve que sur l'horizon : sous la crise même, la réserve touche zéro
+vers 2049, et le stock doit un temps 4 à 10 % d'une année de pension. Mesurée
+sous la seule crise, la prime ne couvre plus l'inflation basse une fois la
+réserve rendue (une dette de 1,75 année de pension en 2070).
+
 ### Chantier 6 — Les complémentaires : rien que leurs cotisations, sauvées mais dissoutes
 
 **La question.** Comment couper aux complémentaires tout argent qui n'est pas
@@ -2084,9 +2097,11 @@ aucun. Rien n'est gelé.
   réserve), l'effort pris à la bascule (4,3 %, fixe ou révisé), ou la même
   règle pour toutes les pensions (0,18 point de PIB par an pour les
   cotisants) ; et la dette des retraités morts avant de l'avoir rendue.
-- Chantier 5, après les décisions 73 à 77 : rien de plus au propriétaire
-  tant que la règle qui baisse la prime n'est pas écrite au modèle ; s'il
-  s'en présente deux lectures, il choisira.
+- Chantier 5, la règle des décisions 75 et 76 écrite au modèle le 8 novembre
+  (note `186/2026-11-08-indexation-voie-1-au-modele.md`) : ce que « ce que
+  le plancher peut encore coûter » mesure — la crise assurée à ses dates ou
+  recommencée ; la crise seule, ou l'inflation basse avec ; la prime qui
+  baisse dès que la réserve et les primes à venir suffisent, ou au seuil.
 - Chantier 6 : le mécanisme de résolution ; l'ordre des caisses.
 - Chantier 6, étudié le 7 novembre : l'entrée des complémentaires au régime
   unique, à la bascule ou caisse par caisse ; la résolution et son seuil ;

@@ -103,6 +103,38 @@ voies:
     nouvelles: {base: masse_salariale_par_retraite, plancher: dette, reprise: 1}
     stock: {base: masse_salariale_par_retraite, plancher: dette, reprise: 1}
 
+  # La voie 1 que le propriétaire a prise (décisions 73 à 77), en ses deux
+  # lectures de la décision 75 : « la prime baisse dès que la réserve dépasse
+  # ce que le plancher peut encore coûter ». Ce coût se mesure chaque année,
+  # sur ce qui reste du stock, sous chaque risque assuré (crise_assuree), le
+  # plus coûteux l'emportant ; la crise garde ses dates, ou elle recommence à
+  # chaque date, telle qu'on l'assure à la bascule : quatre ans plus tard,
+  # pour dix ans. Le propriétaire choisit ; le défaut du scénario 6 n'en
+  # dépend pas encore.
+  voie_1_crise_a_ses_dates:
+    libelle: La voie 1 décidée, la crise assurée à ses dates
+    note: >-
+      Une prime de 2,15 % dès la bascule, qui baisse quand la réserve et les
+      primes à venir dépassent ce que le plancher coûterait si la crise de
+      l'emploi arrivait de 2030 à 2039 ; une fois la crise passée, sans
+      plancher qui joue, la réserve se rend. Si elle manque, le stock la rend
+      par une dette.
+    nouvelles: {base: masse_salariale_par_retraite, plancher: dette, reprise: 1}
+    stock: {base: prix, facteur_demographique: 1, plancher: reserve, prime: 0.0215,
+            crise_assuree: [emploi_ia], reserve_rendue: crise_a_ses_dates,
+            retour: progressif, reserve_manquante: dette}
+
+  voie_1_crise_recommencee:
+    libelle: La voie 1 décidée, la crise assurée recommencée à chaque date
+    note: >-
+      La même voie, ce que le plancher peut encore coûter mesuré, chaque
+      année, sous une crise de l'emploi de dix ans qui commencerait quatre
+      ans plus tard : la crise assurée n'est jamais passée.
+    nouvelles: {base: masse_salariale_par_retraite, plancher: dette, reprise: 1}
+    stock: {base: prix, facteur_demographique: 1, plancher: reserve, prime: 0.0215,
+            crise_assuree: [emploi_ia], reserve_rendue: crise_recommencee,
+            retour: progressif, reserve_manquante: dette}
+
 # Les trajectoires sous lesquelles chaque voie se chiffre, de 2026 à 2070.
 # Un choc ne change que ce qu'il nomme : la croissance réelle du salaire
 # moyen reste celle du COR, et une inflation plus basse ne joue que sur ce

@@ -81,6 +81,26 @@ def test_la_masse_du_stock_est_celle_des_prix_fois_le_chemin_d_un_euro():
                                                     rel=1e-9)
 
 
+def test_sous_la_voie_1_decidee_le_cout_suit_la_prime_que_la_reserve_fixe():
+    """La voie 1 décidée revalorise le stock sur sa prime, sa réserve et sa
+    dette, que la masse du stock mesure : la masse du stock sous elle est sa
+    masse sous les prix, fois le chemin d'un euro que le module calcule."""
+    sys.path.insert(0, str(RACINE / "scripts"))
+    import indexation_scenario_6 as script
+
+    voies, trajectoires = I.charger()
+    crise = trajectoires["emploi_ia"]
+    aux_prix = script._droits_directs(script._cout(voies["avant"], crise, "stock"))
+    masses = tuple(sorted(aux_prix.items()))
+    voie = voies["voie_1_crise_a_ses_dates"]
+    sous_la_voie = script._droits_directs(script._cout(voie, crise, "stock", masses))
+    euro = script._pensions(voie, crise, masses).detail_stock()
+    assert euro.prime[2026] == 0.0215
+    for annee in (2026, 2033, 2040, 2055, 2070):
+        assert sous_la_voie[annee] == pytest.approx(aux_prix[annee] * euro.servi[annee],
+                                                    rel=1e-9)
+
+
 def test_une_variante_demographique_ne_se_croise_pas_avec_une_crise_de_l_emploi():
     voies, trajectoires = I.charger()
     with pytest.raises(ValueError, match="emploi"):
@@ -125,3 +145,15 @@ def test_la_prime_calibree_sur_un_choc_vide_la_reserve_a_l_horizon_sous_ce_choc(
         resultat = etude.resultat(f"voie_1_{choc}", choc)
         assert etude.primes[choc] > 0.0
         assert resultat.reserve_actuelle == pytest.approx(0.0, abs=1e-9)
+
+
+@pytest.mark.parametrize("lecture", ["v1_dates", "v1_recommencee"])
+def test_sous_le_cor_la_reserve_de_la_voie_1_decidee_revient_au_stock(etude, lecture):
+    """Décision 75 : la réserve qui ne servira pas est rendue au stock en
+    route. Sous le COR, le plancher ne joue jamais : sur sa vie, le stock
+    touche ce que α = 1 lui sert, en valeur actuelle, à ce que la réserve
+    garde encore en 2070 près."""
+    resultat = etude.resultat(lecture, "cor")
+    assert resultat.stock.valeur_actuelle_ecart == pytest.approx(0.0, abs=1e-4)
+    assert max(resultat.reserve.values()) > 0.0
+    assert all(dette == 0.0 for dette in resultat.stock.dette.values())

@@ -41,9 +41,20 @@ LES CONVENTIONS, à dire avec tout chiffre qui en sort.
 - La baisse de la voie 2 se calcule sous le COR, au jour de la bascule ; elle
   ne se révise pas quand la trajectoire s'en écarte.
 
+LA VOIE 1 DÉCIDÉE (décisions 73 à 77) : une prime de 2,15 % qui baisse dès que
+la réserve dépasse ce que le plancher peut encore coûter, et une dette du stock
+quand la réserve manque. Ce que le plancher peut encore coûter se lit de
+plusieurs façons, que le script chiffre toutes (``DECIDEES``) : la crise
+assurée garde ses dates ou recommence à chaque date ; elle seule, ou aussi
+l'inflation basse que la prime couvre (décision 74) ; la prime baisse dès que
+la réserve et les primes à venir suffisent, ou seulement quand la réserve seule
+suffit (``--seuil``). Sa réserve se mesure sur la masse du stock sous les prix,
+que le coût donne, la même sous les trois trajectoires.
+
 Usage : ``python scripts/indexation_scenario_6.py`` (une quarantaine de
 calculs du coût, six secondes chacun, la grille gardée), ``--annees`` pour
 chaque année de 2026 à 2070, ``--csv chemin`` pour tout écrire.
+``--decidee`` n'imprime que la voie 1 décidée.
 """
 
 from __future__ import annotations
@@ -51,7 +62,7 @@ from __future__ import annotations
 import argparse
 import csv
 import sys
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from pathlib import Path
 
 RACINE = Path(__file__).resolve().parents[1]
@@ -66,8 +77,17 @@ VUES = (2026, 2027, 2030, 2035, 2040, 2045, 2050, 2055, 2060, 2065, 2070)
 #: Les voies du fichier, la voie 1 dédoublée : sa prime calibrée sur chacun
 #: des deux chocs.
 CHOCS = ("inflation_basse", "emploi_ia")
+#: La voie 1 décidée, en chacune des lectures de la décision 75 : la voie du
+#: fichier (la crise à ses dates, ou recommencée), et les risques sous
+#: lesquels se mesure ce que le plancher peut encore coûter.
+DECIDEES = {
+    "v1_dates": ("voie_1_crise_a_ses_dates", ("emploi_ia",)),
+    "v1_dates_deux": ("voie_1_crise_a_ses_dates", ("emploi_ia", "inflation_basse")),
+    "v1_recommencee": ("voie_1_crise_recommencee", ("emploi_ia",)),
+    "v1_recommencee_deux": ("voie_1_crise_recommencee", ("emploi_ia", "inflation_basse")),
+}
 CLES = ("avant", "regle", "decidee", *(f"voie_1_{choc}" for choc in CHOCS),
-        "voie_2", "voie_3")
+        "voie_2", "voie_3", *DECIDEES)
 
 
 @dataclass
@@ -107,6 +127,8 @@ class Resultat:
     euro_2030: I.Detail | None = None
     #: L'inflation de la trajectoire, pour les euros courants.
     inflation: dict[int, float] = field(default_factory=dict)
+    #: La voie 1 décidée, sous la lecture « au seuil » : un euro du stock.
+    euro_seuil: I.Detail | None = None
 
     def moyenne(self, serie: dict[int, float]) -> float:
         valeurs = [serie[a] for a in range(DEBUT, FIN + 1)]
@@ -132,7 +154,11 @@ class Etude:
 
 
 def _voie(voies: dict[str, I.Voie], cle: str, baisse: float,
-          primes: dict[str, float]) -> I.Voie:
+          primes: dict[str, float], retour: str = "progressif") -> I.Voie:
+    if cle in DECIDEES:
+        nom, risques = DECIDEES[cle]
+        voie = voies[nom]
+        return replace(voie, stock=replace(voie.stock, crise_assuree=risques, retour=retour))
     if cle.startswith("voie_1_"):
         return voies["voie_1"].calibree(prime=primes[cle.removeprefix("voie_1_")])
     if cle == "voie_2":
@@ -140,14 +166,17 @@ def _voie(voies: dict[str, I.Voie], cle: str, baisse: float,
     return voies[cle]
 
 
-def _cout(voie: I.Voie, trajectoire: I.Trajectoire, seulement: str | None = None):
+def _cout(voie: I.Voie, trajectoire: I.Trajectoire, seulement: str | None = None,
+          masses: tuple[tuple[int, float], ...] | None = None):
     from retraite_notionnelle import memoire
 
     return memoire.cout(indexation_liberale=I.IndexationLiberale(
-        voie, trajectoire, seulement=seulement))
+        voie, trajectoire, seulement=seulement,
+        masses_stock=masses if voie.stock.assuree else None))
 
 
-def _pensions(voie: I.Voie, trajectoire: I.Trajectoire) -> I.PensionsDuProgramme:
+def _pensions(voie: I.Voie, trajectoire: I.Trajectoire,
+              masses: tuple[tuple[int, float], ...] | None = None) -> I.PensionsDuProgramme:
     """Les chemins d'un euro sous cette voie et cette trajectoire, sans
     calculer le coût : la revalorisation de la proposition que le coût
     construit, sur la masse salariale de la trajectoire."""
@@ -159,7 +188,8 @@ def _pensions(voie: I.Voie, trajectoire: I.Trajectoire) -> I.PensionsDuProgramme
     revalorisation = RevalorisationServie(simulateur, 1990, FIN)
     if trajectoire.emploi is not None:
         revalorisation = revalorisation.pour_la_proposition(trajectoire.facteur_emploi)
-    return I.IndexationLiberale(voie, trajectoire).appliquer(
+    return I.IndexationLiberale(
+        voie, trajectoire, masses_stock=masses if voie.stock.assuree else None).appliquer(
         revalorisation, simulateur).proposition
 
 
@@ -202,6 +232,9 @@ def etudier() -> Etude:
     # La masse du stock sous les prix, chaque trajectoire : le coût, le stock seul.
     stock_aux_prix = {nom: _droits_directs(_cout(avant, t, seulement="stock"))
                       for nom, t in trajectoires.items()}
+    # Ce qui reste du stock, pour la réserve de la voie 1 décidée : le même
+    # sous les trois trajectoires, qui ne touchent pas les retraités.
+    masses = tuple(sorted(stock_aux_prix["cor"].items()))
 
     # La voie 2 : la baisse qui retire au stock, sous le COR et au jour de la
     # bascule, ce que α = 1 lui retire sur sa vie.
@@ -232,8 +265,8 @@ def etudier() -> Etude:
         etalon_nouvelles = {a: etalon_total[a] - etalon_stock[a] for a in etalon_stock}
         for cle in CLES:
             voie = _voie(voies, cle, baisse, primes)
-            cout = _cout(voie, trajectoire)
-            pensions = _pensions(voie, trajectoire)
+            cout = _cout(voie, trajectoire, masses=masses)
+            pensions = _pensions(voie, trajectoire, masses)
             avenir = {l.annee: l for l in cout.avenir.annees}
             solde = {l.annee: l for l in cout.solde.annees}
             resultat = Resultat(voie=cle, trajectoire=nom_t)
@@ -258,11 +291,18 @@ def etudier() -> Etude:
             avance_stock = ({a: m * (euro.servi[a] - euro.regle[a])
                              for a, m in masses_stock.items()}
                             if voie.stock.plancher == "dette" else {a: 0.0 for a in stock})
+            prix = {DEBUT: 1.0}
+            for annee in range(DEBUT + 1, FIN + 1):
+                prix[annee] = prix[annee - 1] * (1.0 + resultat.inflation[annee])
             avance_nouvelles = ({a: nouvelles[a] - etalon_nouvelles[a] for a in stock}
                                 if voie.nouvelles == voies["decidee"].nouvelles
                                 else {a: 0.0 for a in stock})
+            # La voie 1 décidée : la dette des euros du stock encore vivants
+            # (décision 76), en euros constants ; celle des morts est perdue.
+            dette_stock = ({a: m * euro.dette[a] / prix[a] for a, m in masses_stock.items()}
+                           if voie.stock.assuree else _cumul(etalon, avance_stock))
             resultat.stock = Groupe(
-                servi=stock, etalon=etalon_stock, dette=_cumul(etalon, avance_stock),
+                servi=stock, etalon=etalon_stock, dette=dette_stock,
                 valeur_actuelle_ecart=(
                     _valeur_actuelle(delta, {a: stock[a] - etalon_stock[a] for a in stock})
                     / _valeur_actuelle(delta, etalon_stock)))
@@ -273,7 +313,12 @@ def etudier() -> Etude:
                     _valeur_actuelle(delta, {a: nouvelles[a] - etalon_nouvelles[a]
                                              for a in stock})
                     / _valeur_actuelle(delta, etalon_nouvelles)))
-            if voie.stock.plancher == "reserve":
+            if voie.stock.assuree:
+                resultat.reserve = {a: masses_stock[DEBUT] * euro.reserve[a] for a in stock}
+                resultat.euro_seuil = _pensions(
+                    _voie(voies, cle, baisse, primes, retour="au_seuil"), trajectoire,
+                    masses).detail_stock()
+            elif voie.stock.plancher == "reserve":
                 # La répartition paie au stock la règle ; le stock touche le
                 # plancher diminué de la prime ; la réserve garde l'écart.
                 flux = {a: etalon_stock[a] - stock[a] for a in stock}
@@ -295,6 +340,10 @@ LIBELLES = {
     "voie_1_emploi_ia": "Voie 1, prime couvrant la crise de l'emploi",
     "voie_2": "Voie 2, l'effort pris d'avance",
     "voie_3": "Voie 3, la même règle pour toutes",
+    "v1_dates": "Voie 1 décidée, la crise à ses dates",
+    "v1_dates_deux": "Voie 1 décidée, la crise à ses dates et l'inflation basse",
+    "v1_recommencee": "Voie 1 décidée, la crise recommencée",
+    "v1_recommencee_deux": "Voie 1 décidée, la crise recommencée et l'inflation basse",
 }
 
 
@@ -363,6 +412,68 @@ def imprimer_synthese(etude: Etude) -> None:
                   f"{_pc(r.nouvelles.valeur_actuelle_ecart, 1)} |")
 
 
+def _dette_en_annees(euro: I.Detail, r: "Resultat") -> tuple[float, int]:
+    """La plus forte dette d'un retraité du stock, en part d'une année de sa
+    pension, et l'année où elle l'atteint."""
+    parts = {a: euro.dette[a] / (euro.servi[a] * _prix(r, a)) for a in range(DEBUT, FIN + 1)}
+    annee = max(parts, key=parts.get)
+    return parts[annee], annee
+
+
+def _premiere(euro: I.Detail, condition) -> str:
+    for annee in range(DEBUT, FIN + 1):
+        if condition(euro.prime[annee]):
+            return str(annee)
+    return "—"
+
+
+def imprimer_decidee(etude: Etude) -> None:
+    """La voie 1 décidée, en chacune des lectures de la décision 75."""
+    print("\n# La voie 1 décidée : les lectures de la décision 75\n")
+    print("Prime en % de la pension du stock, négative quand elle rend la réserve ; "
+          "réserve et écarts en points de PIB ; dette d'un retraité du stock en part "
+          "d'une année de sa pension.")
+    for nom_t, trajectoire in etude.trajectoires.items():
+        etalon = etude.resultat("regle", nom_t)
+        print(f"\n## {trajectoire.libelle}\n")
+        print("| Lecture | Prime 2027 | 2030 | 2035 | 2040 | 2050 | 2060 | Sous zéro dès | "
+              "Réserve max | Dette d'un retraité, max | Écart à α = 1 | dont stock | "
+              "Dette 2070 | Un euro du stock 2040 | 2050 | α = 1, 2050 |")
+        print("|---" * 16 + "|")
+        for cle in DECIDEES:
+            r = etude.resultat(cle, nom_t)
+            euro = r.euro_stock
+            dette, annee = _dette_en_annees(euro, r)
+            ecart = r.moyenne(r.depense) - etalon.moyenne(etalon.depense)
+            ecart_stock = r.moyenne({a: r.pib(r.stock.servi, a) - r.pib(r.stock.etalon, a)
+                                     for a in r.depense})
+            print(f"| {LIBELLES[cle]} | "
+                  + " | ".join(_nb(100 * euro.prime[a]) for a in (2027, 2030, 2035, 2040,
+                                                                   2050, 2060))
+                  + f" | {_premiere(euro, lambda p: p < 0)} | "
+                  f"{_nb(100 * max(r.pib(r.reserve, a) for a in r.depense))} | "
+                  f"{_pc(dette, 1)}" + (f" ({annee})" if dette > 5e-4 else "") + " | "
+                  f"{_pc(ecart)} | {_pc(ecart_stock)} | "
+                  f"{_nb(100 * r.dette_publique[FIN], 1)} | "
+                  f"{_nb(euro.servi[2040], 3)} | {_nb(euro.servi[2050], 3)} | "
+                  f"{_nb(etalon.euro_stock.servi[2050], 3)} |")
+        print("\nÀ la lettre, la prime ne baisse qu'une fois la réserve seule suffisante "
+              "(« au seuil ») :\n")
+        print("| Lecture | Prime 2030 | 2035 | 2040 | 2045 | 2050 | 2060 | Sous zéro dès | "
+              "Dette d'un retraité, max | Un euro du stock 2040 | 2050 |")
+        print("|---" * 11 + "|")
+        for cle in DECIDEES:
+            r = etude.resultat(cle, nom_t)
+            euro = r.euro_seuil
+            dette, annee = _dette_en_annees(euro, r)
+            print(f"| {LIBELLES[cle]} | "
+                  + " | ".join(_nb(100 * euro.prime[a]) for a in (2030, 2035, 2040, 2045,
+                                                                   2050, 2060))
+                  + f" | {_premiere(euro, lambda p: p < 0)} | {_pc(dette, 1)}"
+                  + (f" ({annee})" if dette > 5e-4 else "") + " | "
+                  f"{_nb(euro.servi[2040], 3)} | {_nb(euro.servi[2050], 3)} |")
+
+
 def _prix(r: Resultat, annee: int) -> float:
     """Les prix de ``annee`` sur ceux de la bascule, sous la trajectoire."""
     prix = 1.0
@@ -420,8 +531,13 @@ def main(arguments: list[str] | None = None) -> None:
     lecteur.add_argument("--annees", action="store_true",
                          help="chaque année de 2026 à 2070, sous chaque trajectoire")
     lecteur.add_argument("--csv", type=Path, help="tout écrire dans ce fichier")
+    lecteur.add_argument("--decidee", action="store_true",
+                         help="la voie 1 décidée seule, en ses lectures")
     options = lecteur.parse_args(arguments)
     etude = etudier()
+    if options.decidee:
+        imprimer_decidee(etude)
+        return
     print(f"Baisse d'avance de la voie 2, sous le COR : {_nb(100 * etude.baisse_voie_2)} %")
     for choc, prime in etude.primes.items():
         print(f"Prime de la voie 1 couvrant « {etude.trajectoires[choc].libelle} » : "
@@ -431,6 +547,7 @@ def main(arguments: list[str] | None = None) -> None:
           + ", ".join(f"{a} {_nb(100 * regle.stock.servi[a] / (regle.stock.servi[a] + regle.nouvelles.servi[a]), 0)} %"
                       for a in (2026, 2030, 2040, 2050, 2060)))
     imprimer_synthese(etude)
+    imprimer_decidee(etude)
     for trajectoire in etude.trajectoires:
         imprimer_annees(etude, trajectoire,
                         range(DEBUT, FIN + 1) if options.annees else VUES)

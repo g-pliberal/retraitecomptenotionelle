@@ -11,6 +11,7 @@ série des cotisants par retraité que le COR publie.
 from __future__ import annotations
 
 import math
+from dataclasses import replace
 
 import pytest
 
@@ -108,12 +109,119 @@ def test_la_prime_d_equilibre_paie_exactement_ce_que_le_plancher_sert_au_dessus_
     assert prime == pytest.approx(1.0 - 2.0 / 2.1)
 
 
+# -- la voie 1 décidée : la prime rendue en route, la réserve qui manque ---------
+#
+# Décision 75 : « la prime baisse dès que la réserve dépasse ce que le plancher
+# peut encore coûter » ; décision 76 : « si la réserve manque, le stock la rend
+# par une dette », reprise sur ses hausses comme sous la décision 46. Ce que le
+# plancher peut encore coûter, et l'assiette de la prime qui reste à venir, sont
+# posés à la main, rang par rang : le modèle les mesure sous la crise assurée.
+
+
+def _besoin(valeurs):
+    return lambda rang, plancher, regle, prix: [valeurs[rang]]
+
+
+def test_la_prime_baisse_des_que_la_reserve_et_les_primes_a_venir_suffisent():
+    """Une prime de 10 %, sans mort, sans intérêt, sans inflation ; la règle
+    ne baisse pas. À la bascule, la réserve reçoit 0,1 ; il reste 0,15 à
+    couvrir sur une assiette de 2 : la prime tombe à (0,15 − 0,1) / 2 = 2,5 %.
+    L'année suivante, la réserve vaut 0,125 et le plancher ne peut plus rien
+    coûter : la prime devient −12,5 %, un supplément qui rend la réserve."""
+    assurance = I.assurer((0.0, 0.0), (0.0, 0.0), (0.0, 0.0), (1.0, 1.0, 1.0), 0.10,
+                          _besoin({0: (0.15, 2.0), 1: (0.0, 1.0), 2: (0.0, 0.0)}))
+    assert assurance.prime == pytest.approx((0.10, 0.025, -0.125))
+    assert assurance.reserve == pytest.approx((0.10, 0.125, 0.0), abs=1e-15)
+    assert assurance.servi == pytest.approx((0.90, 0.975, 1.125))
+    assert assurance.dette == (0.0, 0.0, 0.0)
+
+
+def test_au_seuil_la_prime_ne_baisse_que_quand_la_reserve_seule_suffit():
+    """La lecture à la lettre : la prime reste entière tant que la réserve ne
+    dépasse pas ce que le plancher peut encore coûter, puis rend l'excédent."""
+    assurance = I.assurer((0.0, 0.0), (0.0, 0.0), (0.0, 0.0), (1.0, 1.0, 1.0), 0.10,
+                          _besoin({0: (0.15, 2.0), 1: (0.0, 1.0), 2: (0.0, 0.0)}),
+                          retour="au_seuil")
+    assert assurance.prime == pytest.approx((0.10, 0.10, -0.20))
+    assert assurance.reserve == pytest.approx((0.10, 0.20, 0.0), abs=1e-15)
+    assert assurance.servi == pytest.approx((0.90, 0.90, 1.20))
+
+
+def test_sous_deux_risques_la_prime_couvre_le_plus_exigeant():
+    """La réserve vaut 0,1 à la bascule. Le premier risque laisse 0,05 à
+    couvrir sur une assiette de 2 (2,5 %), le second 0,2 sur 4 (5 %) : la
+    prime tombe à 5 %, et ce que le plancher peut encore coûter est 0,3."""
+    assurance = I.assurer((0.0,), (0.0,), (0.0,), (1.0, 1.0), 0.10,
+                          lambda rang, *_: [(0.15, 2.0), (0.3, 4.0)] if rang == 0 else [])
+    assert assurance.prime == pytest.approx((0.10, 0.05))
+    assert assurance.cout_restant[0] == pytest.approx(0.3)
+
+
+def test_la_reserve_qui_manque_devient_une_dette_du_stock_reprise_sur_ses_hausses():
+    """Une prime de 2 % qui ne baisse pas (le plancher peut encore coûter 1).
+    La règle perd 5 %, ne bouge pas, puis gagne 10 %. La première année, la
+    réserve, 0,02 + 0,02, paie 0,04 des 0,05 que le plancher sert au-dessus de
+    la règle : 0,01 devient la dette de chaque euro. La deuxième, 0,03 de plus.
+    La troisième, la règle, 1,045, repasse au-dessus du plancher : la hausse
+    rend les 0,04, la pension avant prime passe à 1,005, et la prime refait la
+    réserve."""
+    assurance = I.assurer((-0.05, 0.0, 0.10), (0.0, 0.0, 0.0), (0.0, 0.0, 0.0),
+                          (1.0, 1.0, 1.0, 1.0), 0.02,
+                          _besoin({rang: (1.0, 1.0) for rang in range(4)}))
+    assert assurance.prime == pytest.approx((0.02,) * 4)
+    assert assurance.dette == pytest.approx((0.0, 0.01, 0.04, 0.0), abs=1e-15)
+    assert assurance.reserve == pytest.approx((0.02, 0.0, 0.0, 0.0201), abs=1e-15)
+    assert assurance.plancher == pytest.approx((1.0, 1.0, 1.0, 1.005))
+    assert assurance.servi == pytest.approx((0.98, 0.98, 0.98, 0.98 * 1.005))
+
+
+def test_la_dette_de_la_reserve_porte_interet_au_taux_de_la_masse_salariale():
+    """Le manque se répartit sur les euros qui vivent encore : la moitié du
+    stock morte, 0,01 de manque fait 0,02 de dette par euro, en euros courants
+    (2 % d'inflation), puis porte intérêt à la masse salariale (+3 %)."""
+    assurance = I.assurer((-0.05, -0.0), (0.03, 0.03), (0.02, 0.02),
+                          (1.0, 0.5, 0.5), 0.0,
+                          _besoin({rang: (1.0, 1.0) for rang in range(3)}))
+    # Rang 1 : le plancher sert 0,05 au-dessus de la règle à la moitié
+    # vivante, 0,025 en euros courants, que rien ne paie.
+    assert assurance.dette[1] == pytest.approx(0.05)
+    assert assurance.dette[2] == pytest.approx(0.05 * 1.03 + 0.05)
+
+
+def test_sans_dette_la_reserve_qui_manque_reste_aux_cotisants():
+    """La convention de l'étude, avant la décision 76 : la pension suit le
+    plancher, et la réserve, négative, dit ce que les cotisants avancent."""
+    assurance = I.assurer((-0.05, 0.0, 0.10), (0.0, 0.0, 0.0), (0.0, 0.0, 0.0),
+                          (1.0, 1.0, 1.0, 1.0), 0.02,
+                          _besoin({rang: (1.0, 1.0) for rang in range(4)}),
+                          manque="cotisants")
+    assert assurance.dette == (0.0, 0.0, 0.0, 0.0)
+    assert assurance.reserve == pytest.approx((0.02, -0.01, -0.04, -0.04 + 0.02 * 1.045))
+    assert assurance.servi == pytest.approx((0.98, 0.98, 0.98, 0.98 * 1.045))
+
+
+@pytest.mark.parametrize("retour", ["progressif", "au_seuil"])
+def test_une_pension_assuree_ne_baisse_jamais_en_euros_apres_la_bascule(retour):
+    regle = (-0.02, -0.01, 0.004, -0.003, 0.02, -0.015, 0.01, 0.03, 0.0, -0.001)
+    masse = (-0.01, 0.0, 0.01, 0.005, 0.03, -0.02, 0.02, 0.035, 0.01, 0.002)
+    survie = tuple(0.9 ** rang for rang in range(11))
+    # Ce que le plancher peut encore coûter fond avec le stock ; la prime
+    # baisse, devient un supplément, et la réserve finit par manquer.
+    besoin = lambda rang, plancher, regle, prix: [(0.05 * survie[rang], 2.0 * survie[rang])]
+    assurance = I.assurer(regle, masse, (0.01,) * 10, survie, 0.03, besoin, retour=retour)
+    for avant, apres in zip(assurance.servi, assurance.servi[1:]):
+        assert apres >= avant - 1e-15
+    for avant, apres in zip(assurance.prime, assurance.prime[1:]):
+        assert apres <= avant
+
+
 # -- les voies et les trajectoires, lues dans les données ------------------------
 
 
 def test_les_voies_et_les_trajectoires_sont_celles_de_la_note():
     voies, trajectoires = I.charger()
-    assert list(voies) == ["avant", "regle", "decidee", "voie_1", "voie_2", "voie_3"]
+    assert list(voies) == ["avant", "regle", "decidee", "voie_1", "voie_2", "voie_3",
+                           "voie_1_crise_a_ses_dates", "voie_1_crise_recommencee"]
     avant, regle, decidee = voies["avant"], voies["regle"], voies["decidee"]
     # La règle d'avant : la masse salariale pour les nouvelles (décision 10),
     # les prix pour le stock (action 48), sans facteur.
@@ -133,8 +241,22 @@ def test_les_voies_et_les_trajectoires_sont_celles_de_la_note():
     assert (voies["voie_2"].stock.base, voies["voie_2"].stock.facteur_demographique) == (
         "prix", 0.0)
     assert voies["voie_3"].stock.base == "masse_salariale_par_retraite"
-    # Les pensions nouvelles suivent la même règle sous les trois voies.
-    for nom in ("voie_1", "voie_2", "voie_3"):
+    # La voie 1 décidée (décisions 73 à 77) : la règle de la décision 41, une
+    # prime de 2,15 % qui couvre la crise de l'emploi, rendue en route, et la
+    # dette du stock quand la réserve manque. Ses deux lectures ne diffèrent
+    # que par ce que mesure « ce que le plancher peut encore coûter ».
+    for nom, mesure in (("voie_1_crise_a_ses_dates", "crise_a_ses_dates"),
+                        ("voie_1_crise_recommencee", "crise_recommencee")):
+        stock = voies[nom].stock
+        assert (stock.base, stock.facteur_demographique, stock.plancher) == (
+            "prix", 1.0, "reserve")
+        assert (stock.prime, stock.crise_assuree, stock.reserve_rendue,
+                stock.reserve_manquante) == (0.0215, ("emploi_ia",), mesure, "dette")
+    assert voies["voie_1"].stock.reserve_rendue == "jamais"
+    assert voies["voie_1"].stock.reserve_manquante == "cotisants"
+    # Les pensions nouvelles suivent la même règle sous toutes les voies.
+    for nom in ("voie_1", "voie_2", "voie_3", "voie_1_crise_a_ses_dates",
+                "voie_1_crise_recommencee"):
         assert voies[nom].nouvelles == decidee.nouvelles
     assert list(trajectoires) == ["cor", "inflation_basse", "emploi_ia"]
     assert trajectoires["inflation_basse"].inflation == 0.005
@@ -256,3 +378,117 @@ def test_une_seule_part_se_mesure(projection):
     servies = nouvelles.appliquer(revalorisation, simulateur).proposition
     assert servies.coefficient_stock(2010, 2040, prospectif=False) == 0.0
     assert math.isclose(servies.coefficient_stock(2030, 2030, prospectif=False), 1.0)
+
+
+# -- sur le modèle : la voie 1 décidée -------------------------------------------
+#
+# Un stock qui fond de 7 % par an : les propriétés qui suivent tiennent pour
+# toute survie, le coût donnant la sienne (``scripts/indexation_scenario_6.py``).
+SURVIE = tuple((annee, 0.93 ** (annee - 2026)) for annee in range(2026, 2071))
+
+
+def _assuree(nom: str, trajectoire: str, projection, prime: float | None = None,
+             **regle):
+    simulateur, revalorisation = projection
+    voies, trajectoires = I.charger()
+    voie = voies[nom] if prime is None else voies[nom].calibree(prime=prime)
+    if regle:
+        voie = replace(voie, stock=replace(voie.stock, **regle))
+    choc = trajectoires[trajectoire]
+    if choc.emploi is not None:
+        revalorisation = revalorisation.pour_la_proposition(choc.facteur_emploi)
+    indexation = I.IndexationLiberale(voie, choc, masses_stock=SURVIE)
+    return indexation.appliquer(revalorisation, simulateur).proposition
+
+
+def _prime_sous_la_crise(projection) -> float:
+    """La prime qui finance exactement le plancher de ce stock sous la crise
+    de l'emploi : le calibrage de la décision 74, sur cette survie."""
+    survie = dict(SURVIE)
+    etalon = _assuree("regle", "emploi_ia", projection)
+    sans_prime = _assuree("voie_1", "emploi_ia", projection, prime=0.0)
+    return I.prime_d_equilibre(
+        {a: m * etalon.detail_stock().servi[a] for a, m in survie.items()},
+        {a: m * sans_prime.detail_stock().servi[a] for a, m in survie.items()},
+        {a: etalon.masse(a) for a in range(2027, 2071)})
+
+
+def test_la_voie_1_decidee_demande_la_masse_du_stock():
+    voies, trajectoires = I.charger()
+    with pytest.raises(ValueError, match="masse"):
+        I.IndexationLiberale(voies["voie_1_crise_a_ses_dates"], trajectoires["cor"])
+
+
+def test_sous_la_crise_assuree_a_ses_dates_la_prime_ne_baisse_pas_et_la_reserve_finit_vide(
+        projection):
+    """Quand la crise assurée arrive à ses dates, la réserve suit ce que le
+    calibrage prévoyait : la prime ne baisse jamais, et la réserve finit vide.
+    Le calibrage équilibre la réserve sur l'horizon, non à chaque date : elle
+    passe un temps sous zéro, que les cotisants avancent sans la décision 76."""
+    prime = _prime_sous_la_crise(projection)
+    assert 0.0 < prime < 0.05
+    detail = _assuree("voie_1_crise_a_ses_dates", "emploi_ia", projection, prime=prime,
+                      reserve_manquante="cotisants").detail_stock()
+    for annee in range(2026, 2071):
+        assert detail.prime[annee] == pytest.approx(prime, abs=1e-12), annee
+        assert detail.dette[annee] == 0.0, annee
+    assert max(detail.reserve.values()) > 0.05
+    assert min(detail.reserve.values()) < 0.0
+    assert detail.reserve[2070] == pytest.approx(0.0, abs=1e-12)
+
+
+def test_sous_la_decision_76_le_creux_de_la_reserve_devient_une_dette_du_stock(projection):
+    """La même crise, le manque payé par le stock : quand la réserve touche
+    zéro, ce que le plancher sert au-dessus de la règle devient sa dette ; la
+    hausse de la règle la reprend, et ce que les primes ont mis de trop en
+    réserve revient au stock, la prime baissant."""
+    prime = _prime_sous_la_crise(projection)
+    detail = _assuree("voie_1_crise_a_ses_dates", "emploi_ia", projection,
+                      prime=prime).detail_stock()
+    assert min(detail.reserve.values()) == 0.0
+    assert max(detail.dette.values()) > 0.0
+    assert detail.dette[2070] == pytest.approx(0.0, abs=1e-12)
+    assert detail.prime[2070] < prime
+
+
+def test_les_deux_lectures_partent_de_la_meme_mesure_puis_divergent(projection):
+    """À la bascule, la crise recommencée est la crise à ses dates : ce que le
+    plancher peut encore coûter, et la prime de l'année suivante, sont les
+    mêmes. Sous le COR, la crise à ses dates passe sans venir, et sa prime
+    baisse plus vite que celle d'une crise qui recommence toujours."""
+    a_ses_dates = _assuree("voie_1_crise_a_ses_dates", "cor", projection).detail_stock()
+    recommencee = _assuree("voie_1_crise_recommencee", "cor", projection).detail_stock()
+    assert a_ses_dates.prime[2026] == recommencee.prime[2026] == 0.0215
+    assert a_ses_dates.cout_restant[2026] == pytest.approx(recommencee.cout_restant[2026],
+                                                           rel=1e-12)
+    assert a_ses_dates.prime[2027] == pytest.approx(recommencee.prime[2027], rel=1e-12)
+    assert a_ses_dates.prime[2035] < recommencee.prime[2035] < 0.0215
+
+
+def test_sous_le_cor_la_reserve_est_rendue_au_stock(projection):
+    """Sous le COR, le plancher ne joue jamais. Une fois la crise assurée
+    passée, à ses dates, il ne peut presque plus rien coûter : la prime devient
+    un supplément, la réserve se rend au stock, et ne garde à la fin que ce
+    que le plancher pouvait encore coûter la dernière année, sous la crise."""
+    detail = _assuree("voie_1_crise_a_ses_dates", "cor", projection).detail_stock()
+    regle = _servies("regle", "cor", projection).detail_stock()
+    for annee in range(2040, 2071):
+        assert detail.prime[annee] < 0.0, annee
+        assert detail.servi[annee] > regle.servi[annee], annee
+    assert 0.0 < detail.reserve[2070] < 1e-3 * max(detail.reserve.values())
+    assert all(dette == 0.0 for dette in detail.dette.values())
+
+
+@pytest.mark.parametrize("nom", ["voie_1_crise_a_ses_dates", "voie_1_crise_recommencee"])
+@pytest.mark.parametrize("retour", ["progressif", "au_seuil"])
+def test_la_pension_du_stock_assuree_ne_baisse_jamais_en_euros(nom, retour, projection):
+    """Promesse 4 (décision 45), sous une inflation durable de 0,5 % : de la
+    bascule à l'horizon, la pension du stock ne baisse pas en euros courants,
+    et la prime ne remonte jamais."""
+    detail = _assuree(nom, "inflation_basse", projection, retour=retour).detail_stock()
+    precedente = detail.servi[2026]
+    for annee in range(2027, 2071):
+        courante = detail.servi[annee] * 1.005 ** (annee - 2026)
+        assert courante >= precedente * (1 - 1e-12), annee
+        assert detail.prime[annee] <= detail.prime[annee - 1], annee
+        precedente = courante
