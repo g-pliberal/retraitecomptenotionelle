@@ -1,14 +1,15 @@
 # La voie 1 au modèle : la prime rendue en route, et la dette de la réserve qui manque
 
 **Reprise, au 8 novembre 2026.** Les décisions 75 et 76 sont écrites au
-modèle (`assurer`, dans `indexation_programme.py`) et chiffrées sous leurs
-lectures (`python scripts/indexation_scenario_6.py --decidee`). Le défaut du
-scénario 6 n'a pas changé. Le propriétaire choisit trois choses (« Ce qui
-revient au propriétaire ») : la crise à ses dates ou recommencée ; la crise
-seule, ou l'inflation basse avec ; la prime qui baisse dès que la réserve et
-les primes à venir suffisent, ou seulement au seuil. Puis une session du
-modèle fait de la lecture choisie le défaut du scénario 6 (« Ce qui reste à
-faire »), et la page Coût la montre.
+modèle (`assurer`, `indexation_programme.py`), chiffrées sous leurs lectures
+et sous la contribution que le propriétaire a dite ensuite, « 1 % tout le
+temps » (`python scripts/indexation_scenario_6.py --decidee`). Rien n'est
+tranché : il cherche « une solution où personne ne se sentirait floué » et
+demande si ce peut être une réserve personnelle, en plus du compte (« Ce que
+le propriétaire a répondu »). Par quoi commencer : étudier cette réserve
+personnelle — ce qu'elle paie, ce qu'elle devient au décès, pour le stock
+ou pour toutes les pensions —, puis ses réponses en décisions ; ensuite
+seulement le défaut du scénario 6 et la page Coût.
 
 *Le 8 novembre 2026, action 186, chantier 5. Les décisions 73 à 77 ont pris
 la voie 1 (note `2026-11-07-indexation-scenario-6.md`) : une prime de 2,15 %
@@ -139,17 +140,83 @@ cotisants paient 0,01 point par an.
 - **Au seuil, la prime tient pendant la crise** (dette au plus 3,7 %), mais
   ne rend rien avant que la réserve seule suffise.
 
-## Ce qui revient au propriétaire
+## Ce qui revenait au propriétaire
 
 1. **La crise à ses dates, ou recommencée** ;
 2. **La crise seule, ou l'inflation basse avec** ;
 3. **La prime qui baisse dès que la réserve et les primes à venir suffisent,
    ou seulement quand la réserve seule suffit (au seuil).**
 
+## Ce que le propriétaire a répondu
+
+Le même jour, aux trois questions : sans préférence. À la proposition de
+mesurer sous la crise à ses dates et l'inflation basse, la prime baissant
+dès que la réserve et les primes suffisent : « On fait un système avec une
+faible contribution durable pour amortir un choc passager ». À la lecture
+qui en était tirée (la crise recommencée, au seuil) : « Contribution de 1%
+tout le temps ». À la question de son assiette et du sort de la réserve
+inutilisée : « Quelle différence entre le stock seul et toutes les
+pensions ? » ; « Je ne sais pas. Il faut une solution où personne ne se
+sentirait flouée. C'est le problème avec les contributions actuelles. Tout
+le monde se sent floué. Est-ce que cela pourrait être une réserve
+personnelle en plus du compte notionnel ? »
+
+Rien n'est écrit en décision : la contribution de 1 % est sa direction, son
+assiette et le sort de sa réserve restent ouverts. Les décisions 74 et 75
+(2,15 %, rendus en route) tiennent tant qu'il ne les a pas remplacées.
+
+**Une contribution de 1 % du stock, mise en commun, jamais rendue**
+(`v1_un_pour_cent`).
+
+| Trajectoire | Réserve max, point de PIB | Dette d'un retraité, max | Un euro, 2050 | Pour les cotisants |
+|---|---|---|---|---|
+| COR | 1,18 (2070, jamais servie) | 0 | 0,866 | −0,03 point de PIB par an |
+| Inflation durable de 0,5 % | 0,58 | 41 % (2070) | 0,893 | 0 |
+| Crise de l'emploi | 0,45 | 54 % (2057) | 0,799 | +0,03 point par an |
+
+Sans choc, le stock paie 1 % de sa pension toute sa vie, et la réserve,
+jamais servie, reste au système quand il s'éteint : les cotisants la
+gagnent. Sous un choc, 1 % ne suffit pas, et la dette d'un retraité monte à
+la moitié d'une année de pension.
+
+**La même contribution dans une réserve à soi** (la survie à un : rien ne
+passe des morts aux vivants), en années de la pension servie :
+
+| Trajectoire | Réserve 2030 | 2040 | 2050 | Dette 2040 | 2050 |
+|---|---|---|---|---|---|
+| COR | 0,05 | 0,17 | 0,30 | 0 | 0 |
+| Inflation durable de 0,5 % | 0,05 | 0,05 | 0 | 0 | 0,08 |
+| Crise de l'emploi | 0,05 | 0 | 0 | 0,21 | 0,51 |
+
+*Ce que les deux tableaux disent.* Le risque du plancher est commun : la
+même règle vaut pour tout le stock, et un choc le frappe tout entier à la
+fois. Mettre les réserves en commun n'assure donc presque rien de plus
+qu'une réserve à soi (une dette de 54 % au plus contre 51 % en 2050 sous la
+crise) ; elle ne fait que passer aux survivants les primes des morts — ce
+qui fait qu'on s'y sent floué. Une réserve à soi garde ce que chacun a payé
+(0,30 année de pension en 2050 sans choc) ; reste à dire ce qu'elle devient
+au décès (les héritiers, le conjoint, ou une rente), que le coût ne compte
+pas encore.
+
+*Le stock seul, ou toutes les pensions.* Le stock, ce sont les pensions
+servies à la bascule : leur règle, les prix moins la hausse du nombre de
+retraités par cotisant, baisse en euros dès que l'inflation est basse, et
+leur plancher joue souvent ; la contribution s'éteint avec elles, vers 2070.
+Les pensions nouvelles suivent la masse salariale par retraité : elles ne
+baissent en euros que dans une vraie crise de l'emploi, et leur plancher se
+paie déjà par leur propre dette (décision 46), presque toujours rendue
+(0,01 point de PIB perdu en 2070). Une contribution sur toutes les pensions
+durerait pour toutes les générations, et s'accumulerait presque sans
+servir — sauf à être personnelle.
+
 ## Ce qui reste à faire
 
-- Écrire le choix du propriétaire en décisions, sous le chantier 5, et dans
-  les données : la voie retenue, ses options.
+- Étudier la réserve personnelle (la question du propriétaire) : ce qu'elle
+  paie, comment elle se place (au taux du compte), ce qu'elle devient au
+  décès, pour le stock seul ou pour toutes les pensions, et ce qu'en dit le
+  droit ; le coût ne sait pas encore compter ce qui sort au décès.
+- Écrire ses réponses en décisions, sous le chantier 5, après relecture
+  d'`origin/main` pour le numéro, et dans les données.
 - **Faire de la voie 1 le défaut du scénario 6.** Le coût, aujourd'hui, ne
   reçoit la voie que par son option `indexation_liberale`, et la masse du
   stock que par elle. Pour le défaut, il lui faut cette masse sans qu'on la

@@ -1462,6 +1462,13 @@ la réserve que sur l'horizon : sous la crise même, la réserve touche zéro
 vers 2049, et le stock doit un temps 4 à 10 % d'une année de pension. Mesurée
 sous la seule crise, la prime ne couvre plus l'inflation basse une fois la
 réserve rendue (une dette de 1,75 année de pension en 2070).
+Le propriétaire, sans préférence entre les lectures, répond : « une faible
+contribution durable pour amortir un choc passager », « 1 % tout le temps »,
+et demande si ce peut être « une réserve personnelle en plus du compte
+notionnel », pour que personne ne se sente floué. Le risque du plancher
+étant commun à tout le stock, une réserve à soi n'assure presque rien de
+moins qu'une réserve commune (une dette au plus de 51 % d'une année de
+pension contre 54 % sous la crise) ; elle reste à étudier.
 
 ### Chantier 6 — Les complémentaires : rien que leurs cotisations, sauvées mais dissoutes
 
@@ -2097,11 +2104,13 @@ aucun. Rien n'est gelé.
   réserve), l'effort pris à la bascule (4,3 %, fixe ou révisé), ou la même
   règle pour toutes les pensions (0,18 point de PIB par an pour les
   cotisants) ; et la dette des retraités morts avant de l'avoir rendue.
-- Chantier 5, la règle des décisions 75 et 76 écrite au modèle le 8 novembre
-  (note `186/2026-11-08-indexation-voie-1-au-modele.md`) : ce que « ce que
-  le plancher peut encore coûter » mesure — la crise assurée à ses dates ou
-  recommencée ; la crise seule, ou l'inflation basse avec ; la prime qui
-  baisse dès que la réserve et les primes à venir suffisent, ou au seuil.
+- Chantier 5, après la règle des décisions 75 et 76 écrite au modèle le
+  8 novembre (note `186/2026-11-08-indexation-voie-1-au-modele.md`) : le
+  propriétaire veut « une faible contribution durable pour amortir un choc
+  passager », « 1 % tout le temps », et une solution où personne ne se
+  sente floué ; restent son assiette (le stock seul ou toutes les
+  pensions), et s'il s'agit d'une réserve personnelle, en plus du compte,
+  ce qu'elle devient au décès.
 - Chantier 6 : le mécanisme de résolution ; l'ordre des caisses.
 - Chantier 6, étudié le 7 novembre : l'entrée des complémentaires au régime
   unique, à la bascule ou caisse par caisse ; la résolution et son seuil ;

@@ -78,13 +78,19 @@ VUES = (2026, 2027, 2030, 2035, 2040, 2045, 2050, 2055, 2060, 2065, 2070)
 #: des deux chocs.
 CHOCS = ("inflation_basse", "emploi_ia")
 #: La voie 1 décidée, en chacune des lectures de la décision 75 : la voie du
-#: fichier (la crise à ses dates, ou recommencée), et les risques sous
-#: lesquels se mesure ce que le plancher peut encore coûter.
+#: fichier (la crise à ses dates, ou recommencée), et ce qui change de son
+#: stock — les risques sous lesquels se mesure ce que le plancher peut encore
+#: coûter. Puis la contribution que le propriétaire a dite le 8 novembre,
+#: « 1 % tout le temps », qui ne se mesure ni ne baisse.
 DECIDEES = {
-    "v1_dates": ("voie_1_crise_a_ses_dates", ("emploi_ia",)),
-    "v1_dates_deux": ("voie_1_crise_a_ses_dates", ("emploi_ia", "inflation_basse")),
-    "v1_recommencee": ("voie_1_crise_recommencee", ("emploi_ia",)),
-    "v1_recommencee_deux": ("voie_1_crise_recommencee", ("emploi_ia", "inflation_basse")),
+    "v1_dates": ("voie_1_crise_a_ses_dates", {"crise_assuree": ("emploi_ia",)}),
+    "v1_dates_deux": ("voie_1_crise_a_ses_dates",
+                      {"crise_assuree": ("emploi_ia", "inflation_basse")}),
+    "v1_recommencee": ("voie_1_crise_recommencee", {"crise_assuree": ("emploi_ia",)}),
+    "v1_recommencee_deux": ("voie_1_crise_recommencee",
+                            {"crise_assuree": ("emploi_ia", "inflation_basse")}),
+    "v1_un_pour_cent": ("voie_1_crise_a_ses_dates",
+                        {"prime": 0.01, "reserve_rendue": "jamais", "crise_assuree": ()}),
 }
 CLES = ("avant", "regle", "decidee", *(f"voie_1_{choc}" for choc in CHOCS),
         "voie_2", "voie_3", *DECIDEES)
@@ -156,9 +162,9 @@ class Etude:
 def _voie(voies: dict[str, I.Voie], cle: str, baisse: float,
           primes: dict[str, float], retour: str = "progressif") -> I.Voie:
     if cle in DECIDEES:
-        nom, risques = DECIDEES[cle]
+        nom, options = DECIDEES[cle]
         voie = voies[nom]
-        return replace(voie, stock=replace(voie.stock, crise_assuree=risques, retour=retour))
+        return replace(voie, stock=replace(voie.stock, retour=retour, **options))
     if cle.startswith("voie_1_"):
         return voies["voie_1"].calibree(prime=primes[cle.removeprefix("voie_1_")])
     if cle == "voie_2":
@@ -344,6 +350,7 @@ LIBELLES = {
     "v1_dates_deux": "Voie 1 décidée, la crise à ses dates et l'inflation basse",
     "v1_recommencee": "Voie 1 décidée, la crise recommencée",
     "v1_recommencee_deux": "Voie 1 décidée, la crise recommencée et l'inflation basse",
+    "v1_un_pour_cent": "Une contribution de 1 % tout le temps",
 }
 
 
@@ -474,6 +481,27 @@ def imprimer_decidee(etude: Etude) -> None:
                   f"{_nb(euro.servi[2040], 3)} | {_nb(euro.servi[2050], 3)} |")
 
 
+def imprimer_personnelle(etude: Etude) -> None:
+    """La contribution de 1 % dans une réserve à soi, en plus du compte : la
+    survie vaut un, rien ne passe des morts aux vivants. Ce qui reste à la
+    mort, le coût ne le compte pas encore."""
+    print("\n# Une réserve personnelle de 1 %, en années de la pension servie\n")
+    print("| Trajectoire | Réserve 2030 | 2035 | 2040 | 2045 | 2050 | "
+          "Dette 2040 | 2045 | 2050 |")
+    print("|---" * 9 + "|")
+    une = tuple((annee, 1.0) for annee in range(DEBUT, FIN + 1))
+    voie = _voie(etude.voies, "v1_un_pour_cent", etude.baisse_voie_2, etude.primes)
+    for nom_t, trajectoire in etude.trajectoires.items():
+        r = etude.resultat("v1_un_pour_cent", nom_t)
+        euro = _pensions(voie, trajectoire, une).detail_stock()
+        annuelle = {a: euro.servi[a] for a in euro.servi}
+        print(f"| {trajectoire.libelle} | "
+              + " | ".join(_nb(euro.reserve[a] / annuelle[a]) for a in (2030, 2035, 2040,
+                                                                         2045, 2050))
+              + " | " + " | ".join(_nb(euro.dette[a] / (annuelle[a] * _prix(r, a)))
+                                   for a in (2040, 2045, 2050)) + " |")
+
+
 def _prix(r: Resultat, annee: int) -> float:
     """Les prix de ``annee`` sur ceux de la bascule, sous la trajectoire."""
     prix = 1.0
@@ -537,6 +565,7 @@ def main(arguments: list[str] | None = None) -> None:
     etude = etudier()
     if options.decidee:
         imprimer_decidee(etude)
+        imprimer_personnelle(etude)
         return
     print(f"Baisse d'avance de la voie 2, sous le COR : {_nb(100 * etude.baisse_voie_2)} %")
     for choc, prime in etude.primes.items():
@@ -548,6 +577,7 @@ def main(arguments: list[str] | None = None) -> None:
                       for a in (2026, 2030, 2040, 2050, 2060)))
     imprimer_synthese(etude)
     imprimer_decidee(etude)
+    imprimer_personnelle(etude)
     for trajectoire in etude.trajectoires:
         imprimer_annees(etude, trajectoire,
                         range(DEBUT, FIN + 1) if options.annees else VUES)

@@ -492,3 +492,34 @@ def test_la_pension_du_stock_assuree_ne_baisse_jamais_en_euros(nom, retour, proj
         assert courante >= precedente * (1 - 1e-12), annee
         assert detail.prime[annee] <= detail.prime[annee - 1], annee
         precedente = courante
+
+
+def test_une_contribution_permanente_ne_baisse_jamais_et_la_reserve_garde_tout(projection):
+    """« Contribution de 1 % tout le temps » : rien ne se mesure, la prime
+    reste ; sous le COR, le plancher ne joue pas et la réserve grossit."""
+    detail = _assuree("voie_1_crise_a_ses_dates", "cor", projection, prime=0.01,
+                      reserve_rendue="jamais", crise_assuree=()).detail_stock()
+    assert set(detail.prime.values()) == {0.01}
+    assert all(dette == 0.0 for dette in detail.dette.values())
+    reserves = [detail.reserve[a] for a in range(2026, 2071)]
+    assert reserves == sorted(reserves)
+
+
+def test_une_reserve_personnelle_est_celle_d_un_seul_retraite(projection):
+    """Une réserve à soi : la survie vaut un, rien ne passe des morts aux
+    vivants. Sous le COR, sans plancher qui joue, elle est la somme des primes
+    d'un euro de pension, placées au taux de la masse salariale."""
+    simulateur, revalorisation = projection
+    voies, trajectoires = I.charger()
+    voie = voies["voie_1_crise_a_ses_dates"].calibree(prime=0.01)
+    voie = replace(voie, stock=replace(voie.stock, reserve_rendue="jamais", crise_assuree=()))
+    une = tuple((annee, 1.0) for annee in range(2026, 2071))
+    pensions = I.IndexationLiberale(voie, trajectoires["cor"], masses_stock=une).appliquer(
+        revalorisation, simulateur).proposition
+    detail = pensions.detail_stock()
+    attendue = 0.0
+    for annee in range(2026, 2041):
+        if annee > 2026:
+            attendue *= pensions.masse(annee)
+        attendue += 0.01 * detail.servi[annee] / 0.99
+    assert detail.reserve[2040] == pytest.approx(attendue, rel=1e-12)
