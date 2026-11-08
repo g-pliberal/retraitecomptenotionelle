@@ -1,15 +1,15 @@
 # Les complémentaires au modèle : chaque caisse projetée jusqu'à l'épuisement de ses réserves
 
-**Reprise, au 7 novembre 2026.** L'étape 1 est faite : chaque complémentaire
-est projetée de 2026 à 2070 sous les décisions 36 à 48, 67 et 70 à 72
-(`integration_complementaires.py`). L'ordre : la complémentaire agricole en
-2026, l'Agirc-Arrco en 2032, la CNBF en 2042 et l'Ircantec en 2055 au plus
-tôt ; les indépendants, les libéraux et les navigants restent à part au-delà
-de 2070. Le propriétaire a tout tranché (« Ce que le propriétaire a tranché
-ensuite »). Reste l'étape 1 bis, la baisse dès la bascule des complémentaires
-que l'État règle, qui recule la CNBF et l'Ircantec ; puis l'étape 2, le moteur
-d'une carrière, `moteur/js/` d'abord, dans une session neuve, quand celle du
-chantier 5 aura quitté le moteur ; puis l'étape 3 (« Le plan »).
+**Reprise, au 7 novembre 2026.** Les étapes 1 et 1 bis sont faites
+(`integration_complementaires.py`). Sous la baisse dès la bascule des pensions
+déjà servies des caisses que l'État règle, par cinquièmes (décisions 86 et
+87 ; note `…-complementaires-baisse-avant-integration.md`), l'ordre est : la
+complémentaire agricole en 2026, l'Agirc-Arrco en 2032, la CNBF en 2049 ;
+l'Ircantec, les indépendants, les libéraux et les navigants restent à part
+au-delà de 2070. Reste l'étape 2, le moteur d'une carrière, `moteur/js/`
+d'abord, dans une session neuve, quand celle du chantier 5 aura quitté le
+moteur : elle prend ces années, et la baisse par caisse ; puis l'étape 3
+(« Le plan »).
 
 *Le 7 novembre 2026, une session du modèle ouvre le portage des décisions du
 chantier 6 de `docs/feuille_de_route_programme.md` (décisions 36 à 43, 47 et
@@ -202,7 +202,8 @@ plaidoirie rend.
 1. **La projection caisse par caisse** — *faite le 7 novembre 2026*, cette
    note.
    **1 bis. La baisse avant l'intégration** (ajoutée après les réponses du
-   propriétaire, ci-dessous) : appliquer aux dépenses de l'Ircantec, des
+   propriétaire, ci-dessous ; *faite le 7 novembre 2026*, note
+   `…-complementaires-baisse-avant-integration.md`) : appliquer aux dépenses de l'Ircantec, des
    libéraux, du RCI, de la CNBF et de la CRPNPAC, dès la bascule, la baisse que
    le scénario 6 fait subir à leurs pensions servies (décisions 2, 3 et 43),
    par caisse si le coût sait la donner, à défaut celle de l'ensemble ; puis

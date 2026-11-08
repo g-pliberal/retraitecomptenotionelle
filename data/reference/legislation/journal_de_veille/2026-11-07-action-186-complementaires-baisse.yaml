@@ -1,0 +1,29 @@
+date: "2026-11-07"
+session: "action 186, chantier 6, étape 1 bis : la baisse des pensions des complémentaires que l'État règle, dès la bascule et avant leur intégration, et l'ordre d'intégration refait"
+consulte: >-
+  Aucune règle du scénario 1 n'est touchée, et aucun texte n'est lu de
+  nouveau : l'étape porte au modèle les décisions 2, 3, 43, 86 et 87 du
+  programme. Elle lit le coût agrégé du scénario 6 (rapports des masses de
+  droits directs, part du stock, part des droits dérivés du COR), sur la
+  grille du coût et sur des grilles réduites à un cas type, et le classeur
+  des compléments du rapport du COR de juin 2024 que
+  comptes_complementaires.csv reprend.
+trouve: >-
+  Les pensions servies à la bascule baissent, au coût du scénario 6, de
+  44,9 % pour le chef d'exploitation agricole, 30,6 % pour le contractuel
+  du public, 21,0 % pour l'artisan, 26,9 % pour l'ensemble, réversions
+  servies gardées ; celles du libéral de la Cipav montent de 13,6 %. Par
+  cinquièmes, sur ces seules pensions, l'ordre devient : complémentaire
+  agricole 2026, Agirc-Arrco 2032, CNBF 2049, les autres au-delà de 2070.
+  Près de l'épuisement, le classeur du COR s'écarte de sa propre règle des
+  réserves (CNBF de 2044 à 2046, Ircantec de 2049 à 2052) : le facteur que
+  la projection en tirait est ramené à un au-delà de 5 %. Le détail est dans
+  la note
+  docs/feuille_de_route/186/2026-11-07-complementaires-baisse-avant-integration.md.
+reste: >-
+  Non établi : le taux propre aux avocats et aux navigants, que la grille du
+  coût ne compte pas, et aux neuf sections des libéraux autres que la Cipav ;
+  la part de la base et de la complémentaire dans la baisse, que le compte
+  notionnel ne sépare pas ; la démographie du stock de chaque caisse, prise à
+  son cas type. Au propriétaire : la hausse des pensions des libéraux, et la
+  baisse par cinquièmes à la page Coût.

@@ -519,6 +519,19 @@ valide les trois autres ».
     l'entreprise est le PER d'entreprise, collectif (qui a succédé au Perco)
     ou obligatoire ; le PEE, bloqué cinq ans, n'en est pas une.
 
+Le même jour, sur les complémentaires (chantier 6), pendant la baisse des
+pensions avant l'intégration (note
+`186/2026-11-07-complementaires-baisse-avant-integration.md`) :
+
+86. **Une complémentaire que l'État règle ne baisse que les pensions déjà
+    servies** : « Déjà versées seules ». La baisse des décisions 2, 3 et 43
+    touche les pensions servies à la bascule ; celles qu'une caisse liquide
+    ensuite, à ses règles, jusqu'à son intégration, ne baissent pas.
+87. **Cette baisse se fait par cinquièmes** : « Par cinquièmes ». Un
+    cinquième en 2026, la baisse entière en 2030 ; « en cinq ans au plus »
+    (décision 3), par la piste du chantier 2. La page Coût la fait encore
+    d'un coup.
+
 ## Ce qui est écarté
 
 - **Une transition sans baisse nominale des pensions en cours** — bâtir le
@@ -1582,6 +1595,23 @@ butoir (décision 70), l'Agirc-Arrco à ses règles actuelles (71), le RAFP à p
 (72) ; et les complémentaires que l'État règle baissent dès la bascule
 (décision 43), ce qui recule l'intégration de la CNBF et de l'Ircantec.
 
+**Le 7 novembre 2026 : la baisse avant l'intégration, et l'ordre refait.**
+Étape 1 bis du portage (note
+`186/2026-11-07-complementaires-baisse-avant-integration.md`). Les
+complémentaires que l'État règle baissent dès la bascule leurs pensions déjà
+servies, par cinquièmes (décisions 86 et 87), au taux que le coût du scénario 6
+donne au cas type de la caisse, ou à l'ensemble : − 45 % pour la
+complémentaire agricole, − 31 % pour l'Ircantec, − 27 % pour la CNBF et les
+navigants, − 21 % pour le RCI ; les libéraux de la Cipav montent de 14 %.
+L'ordre devient :
+- *La complémentaire agricole en 2026* et *l'Agirc-Arrco en 2032*, comme avant.
+- *La complémentaire des avocats en 2049*, sept ans plus tard.
+- *L'Ircantec*, *les indépendants*, *les libéraux* et *les navigants* au-delà
+  de 2070 ; l'Ircantec y finit avec 8,9 Md€, épuisée vers 2073.
+Un défaut de la projection est corrigé en chemin : près de l'épuisement, le
+facteur tiré du classeur du COR montait à 2,6 pour la CNBF, et grossissait
+d'autant l'écart que les décisions creusent ; il vaut un au-delà de 5 %.
+
 **Le 7 novembre 2026 : les cinq questions de la garantie d'invalidité,
 instruites.** Après la décision 78, le propriétaire garde les cinq questions
 ouvertes pour y réfléchir ; la note `186/2026-11-07-invalidite-questions.md`
@@ -2013,6 +2043,12 @@ est passée ; le début de la campagne présidentielle ?
   l'intégration) ; les fonctionnaires et leur RAFP, provisionné (note
   `186/2026-11-07-complementaires-au-modele.md`). Tranchées le même jour :
   décisions 70 à 72, et la baisse par la décision 43.
+- Chantier 6, la baisse avant l'intégration, le 7 novembre (décisions 86 et
+  87) : les libéraux, dont le recalcul au compte notionnel relève les
+  pensions servies (+ 13,6 % pour la Cipav), relevés ou non, et par qui ; la
+  page Coût, qui baisse le stock d'un coup, à faire par cinquièmes comme les
+  complémentaires (avec le plafond par an du chantier 2) (note
+  `186/2026-11-07-complementaires-baisse-avant-integration.md`).
 - Chantier 7, après les décisions 82 à 85 : plus rien ; reste, au
   chantier 9, la façon de montrer que l'outil donne à la proposition un
   rendement plus faible que le droit actuel pour les jeunes générations.
