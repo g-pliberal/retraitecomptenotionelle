@@ -1869,6 +1869,44 @@ comparaison compte des pensions du droit actuel que le COR projette sans
 financement ; la piste 1, le rendement d'un euro cotisé en tête, devra le
 montrer et le dire. Comment : au propriétaire.
 
+**Le 8 novembre 2026 : le site, étudié face au programme.** Le propriétaire
+l'a demandé la veille : « Attaque le chantier 9 ». Le rapport est la note
+`186/2026-11-08-site-etude.md` ; aucune page n'est touchée. Ce qu'elle
+établit :
+- *Ce que le site dément* : le programme sur onze sujets, une trentaine de
+  phrases, vingt-six décisions, dont la réversion et le décès d'un actif
+  (16 à 18, 22), la garantie d'office (20), l'apport pour un logement (33),
+  la baisse par cinquièmes (87), l'indexation du stock (41, 73, 74), les
+  complémentaires caisse par caisse et les 25,83 % du privé jusqu'à
+  l'intégration de l'Agirc-Arrco (37, 40, 48, 70, 72), la TVA gardée (79),
+  les droits des accidents de la vie (7, 57, 58, 61, 78), le partage de la
+  décision 29. Cinq phrases seulement
+  sont déclarées `contredite` au catalogue. « La moitié du déficit », le
+  « TRI négatif », le PEE ne sont sur aucune page.
+- *L'architecture du 6 novembre* tient pour la version publique, et la
+  décision 34 la rend plus nécessaire : sans simulateur, il faut répondre
+  d'avance. Neuf pages : l'accueil (le rendement d'un euro cotisé, les cinq
+  promesses, trois portes en sections), Coût dans l'ordre du chantier 1 et
+  finie par la transition, Les questions qui fâchent, Pourquoi changer, Le
+  miroir (Carrières types et les systèmes 2 et 3), Droits non cotisés, Le
+  saviez-vous ?, Méthode, Partager. Le simulateur paraît soixante-quatre fois
+  dans le texte des pages actuelles.
+- *Le rendement* : pour le salarié moyen né en 2000, 1,3 % réel au droit
+  actuel, 0,2 % pour la proposition, 0,3 % pour les mêmes cotisations que
+  le droit actuel rendues à la règle d'une répartition à taux constant
+  (modèle). L'écart tient presque entier à ce que le droit actuel sert
+  au-delà de ses cotisations. Mais sous les conventions du COR, la
+  proposition rend −0,1 % réel au salarié moyen né en 1990 ou 2000, −0,3 %
+  au cadre né en 2000 ; et le simulateur montre déjà ces rendements, sans
+  les expliquer. Quatre façons de le montrer : promis, payé, proposé (A) ;
+  l'écart entre les carrières plutôt que le niveau (B) ; l'impôt compté dans
+  la mise (C) ; ne plus le montrer (D). La piste : B en tête, A pour les
+  comparaisons, et le rendement négatif sous les conventions du COR dit
+  dans « Les questions qui fâchent ».
+- *L'ordre* : une petite passe possible tout de suite (l'apport pour un
+  logement, le rendement) ; la refonte quand A ou B et les portages du modèle
+  seront là ; le simulateur des adhérents après l'action 187.
+
 ### Chantier 10 — Le gel, la cible, la date
 
 **La question.** Le chantier du modèle semblait sans fin : au 6 novembre,
@@ -2061,6 +2099,13 @@ est passée ; le début de la campagne présidentielle ?
   adhérents, et comment on y entre ; comment le moteur se diffuse (le dépôt,
   un paquet npm, ou un service en ligne, qui recevrait les carrières des
   lecteurs : des données personnelles).
+- Chantier 9, étudié le 8 novembre (note `186/2026-11-08-site-etude.md`) :
+  la façon de montrer le rendement (A, B, C ou D) ; la liste des pages de la
+  version publique, et la page Coût figée sur ses réglages par défaut ; la
+  créance de la garantie, avec ou sans intérêts (décision 30) ; « le
+  rendement est le même pour tous » et « 100 % de ce que vous avez cotisé
+  vous revient », nuancés ou retirés ; une petite passe sur les pages tout
+  de suite, ou une seule refonte après A ou B.
 - Chantier 10 : la liste du gel ; le seuil ; la date.
 
 ## Comment s'en servir

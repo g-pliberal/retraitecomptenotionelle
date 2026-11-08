@@ -8042,16 +8042,16 @@ et 3 ci-dessus ; la mesure, et comment la refaire, sont dans la note
 
 ### 186. Le programme du parti sur les retraites : chaque grande idée étudiée à fond, aux sources, puis le modèle et le site qui la montrent — `en cours`
 
-**Reprise, au 7 novembre 2026.** La réversion est tranchée pour le scénario 6
+**Reprise, au 8 novembre 2026.** La réversion est tranchée pour le scénario 6
 (décisions 16 à 28) ; le stock gardé est au coût, le site le dément encore
 (`…-reversion-scenario-6-plan.md`). Décisions 29 et 30 : les lectures de la
 29 chiffrées sur la base de la page Coût (`…-deux-lectures-au-modele.md`). Le
-message (8) est tranché (décisions 31 à 33), l'âge à 65 ans (décision 68) ; les
-enfants (3), tranchés règle par règle (décisions 50 à 61, `…-regle-par-regle.md`) ;
-les recettes (4) aussi (79 à 81 : TVA à 20 %, LVT à 2 %), les chiffres (7) aussi
-(82 à 85) ; l'indexation (5) et les complémentaires (6) sont étudiés ; chaque note
-tient son bloc. Par quoi commencer : A ou B, au propriétaire, puis les questions des
-chantiers 3, 5 et 6 ; puis le gel (10). Rien n'est gelé.
+message (8, décisions 31 à 33, 68), les enfants (3, 50 à 61), les recettes (4,
+79 à 81) et les chiffres (7, 82 à 85) sont tranchés ; l'indexation (5) et les
+complémentaires (6, baisse : 86 et 87) étudiées ; le site (9) aussi, face au
+programme (`…-site-etude.md`) ; chaque note tient son bloc. Par quoi
+commencer : A ou B, au propriétaire, puis les questions des chantiers 3, 5, 6
+et 9 ; puis le gel (10). Rien n'est gelé.
 
 **D'où elle vient.** Le 6 novembre 2026, le propriétaire demande un bilan :
 les vagues se succèdent, et le chantier semble sans fin. La session mesure

@@ -1,0 +1,24 @@
+date: "2026-11-08"
+session: "action 186, chantier 9 : le site étudié face aux décisions du programme, et la façon de montrer le rendement"
+consulte: >-
+  Aucune règle du scénario 1 n'est touchée, et l'index LEGI n'est pas
+  interrogé. Lus ce jour : le texte des neuf pages fabriquées du site
+  (commit b2a5715 d'origin/main), le catalogue
+  data/reference/site/affirmations.yaml, les décisions 1 à 87 de
+  docs/feuille_de_route_programme.md ; le rendement interne des cotisations
+  refait par scripts/cycle_de_vie.py, sous les conventions du dépôt et sous
+  celles du COR (--cor). Aucune source extérieure n'est ouverte.
+trouve: >-
+  Aucun écart avec les fiches. Le site dément le programme sur onze sujets
+  (vingt-six décisions), dont cinq phrases seulement sont déclarées
+  contredites au catalogue. Pour le salarié moyen né en 2000, la
+  proposition rend 0,2 % réel, le droit actuel 1,3 %, ses propres
+  cotisations rendues à la règle d'une répartition à taux constant 0,3 % ;
+  sous les conventions du COR, la proposition rend −0,1 %. Le détail est
+  dans la note docs/feuille_de_route/186/2026-11-08-site-etude.md.
+reste: >-
+  Au propriétaire : la façon de montrer le rendement, les pages de la
+  version publique, les intérêts de la créance de la garantie (décision
+  30), deux phrases de l'accueil, le calendrier des retouches. Les pages
+  ne se retouchent qu'avec son accord, et après la session de la
+  réversion.
