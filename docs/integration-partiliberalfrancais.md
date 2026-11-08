@@ -331,12 +331,12 @@ Stable :
 - **La largeur de contenu** : environ 60 rem (960 px), centrée, avec 1,25 rem
   de marge latérale ; la page tient sans défilement horizontal de 320 px à
   1 440 px.
-- **Le bandeau** : sombre bleu-vert, souligné d'or, le même en thème clair et
-  sombre ; il porte le lien vers le site, le titre du simulateur et sa
-  navigation interne. Le simulateur suit la préférence clair/sombre du
-  système pour tout le reste.
-- **L'accent** : une teinte bleu-vert, assombrie en clair, éclaircie en
-  sombre, sur les liens, les boutons et le focus.
+- **La charte du parti**, depuis le 8 novembre 2026 : la page claire, le
+  bandeau et l'affiche de chaque page en pétrole, le logo et le nom du parti
+  en tête du bandeau, les titres en Jost, le safran pour ce qui compte et pour
+  les boutons, les liens en turquoise sombre. Le simulateur ressemble au site
+  du parti sans feuille de l'hôte : `plf-theme.css`, qui impose un thème
+  sombre, est à retirer de la copie.
 - **Les variables de couleur** de `:root` dans `moteur/style.css` : `--fond`,
   `--fond-carte`, `--fond-appui`, `--texte`, `--texte-doux`, `--trait`,
   `--trait-champ`, `--accent`, `--accent-doux`, `--bandeau`,
@@ -345,11 +345,11 @@ Stable :
   `--retroactif-employeur`, `--liberal`) et les neuf de série. Leurs **noms** sont
   stables ; leurs valeurs peuvent bouger. Un hôte qui tient absolument à
   ajuster une couleur les redéfinit dans une feuille chargée après, et ne
-  touche à rien d'autre. Le thème sombre du simulateur les redéfinit sous
-  `@media (prefers-color-scheme: dark)` : une redéfinition faite sans cette
-  requête média s'applique aux deux thèmes — c'est le piège dans lequel
-  `plf-theme.css` est déjà tombé, et la raison pour laquelle il vaut mieux ne
-  rien redéfinir du tout.
+  touche à rien d'autre. Les zones pétrole — le bandeau, l'affiche de chaque
+  page, les cartes à publier — les redéfinissent pour elles : une
+  redéfinition faite à la racine ne les atteint pas, et repeindrait le reste
+  de la page sans elles — la raison pour laquelle il vaut mieux ne rien
+  redéfinir du tout.
 
 Ce que l'hôte n'a **pas** besoin de connaître, et ne doit pas citer :
 

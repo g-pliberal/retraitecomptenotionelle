@@ -2360,7 +2360,9 @@ def test_la_page_ne_depend_d_aucun_service_exterieur():
     polices = Path(__file__).resolve().parents[1] / "moteur" / "polices"
     for fichier in re.findall(r"url\((polices/[^)]+)\)", feuille):
         assert (polices.parent / fichier).is_file(), f"police absente : {fichier}"
-    assert len(re.findall(r"@font-face", feuille)) == 4
+    #: Public Sans en deux jeux, latin et latin-ext ; Jost, la police des
+    #: titres du parti, en un seul (8 novembre 2026).
+    assert len(re.findall(r"@font-face", feuille)) == 3
 
     #: Seules adresses tolérées dans le routeur et la coquille des pages, et
     #: aucune n'est chargée avec la page : le dépôt lui-même (liens que le
@@ -2497,9 +2499,10 @@ def test_le_moteur_javascript_est_versionne():
 #: daltonienne. La quatrième — séparation sous deutéranopie et protanopie — a
 #: été vérifiée à l'extérieur au moment où la palette a été posée, et c'est elle
 #: qui a fait rejeter la précédente : sa pire paire voisine tombait à ΔE 4,3.
-#: Il n'y a plus qu'un thème depuis la refonte : la bande est celle de
-#: l'affiche, mesurée sur le vert profond.
-BANDE_LUMINOSITE = (0.70, 0.87)
+#: La bande est celle du fond clair de la charte du parti (8 novembre 2026) :
+#: des teintes moyennes à sombres, qui se voient sur le blanc. Elle était de
+#: 0,70 à 0,87 sur le vert profond de l'affiche.
+BANDE_LUMINOSITE = (0.40, 0.65)
 CHROMA_MINIMAL = 0.10
 ECART_MINIMAL_VISION_NORMALE = 15.0
 
@@ -2628,9 +2631,10 @@ CONTRASTE_COMPOSANT = 3.0
 def _couleur(nom: str) -> str:
     """Une variable de la feuille de style, telle que l'écran la rend.
 
-    Il n'y a plus qu'un thème depuis la refonte en affiche : le vert profond
-    EST l'identité du site, et non un habit de nuit qu'on quitte le matin.
-    Seule la première définition compte donc — celle de ``:root``. Les
+    La première définition est celle de ``:root``, le fond clair de la page,
+    où s'écrit presque tout ; les zones pétrole — le bandeau, l'affiche, les
+    cartes à publier — redéfinissent les mêmes variables, et l'écran les
+    mesure (``test_ecrans.py``). Seule la première compte donc ici. Les
     suivantes sont celles du bloc ``@media print``, qui reteinte toute la
     palette en noir sur blanc pour ne pas coûter une cartouche par page, et
     qu'aucun écran ne voit.

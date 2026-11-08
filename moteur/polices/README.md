@@ -2,17 +2,19 @@
 
 Deux familles, et rien d'autre.
 
-- **[Public Sans](https://public-sans.digital.gov/)**, la sans-serif de l'affiche
-  — titres en capitales, texte courant, chiffres. C'est un fichier **variable** :
+- **[Public Sans](https://public-sans.digital.gov/)**, la sans-serif du texte
+  courant. C'est un fichier **variable** :
   un seul pour toutes les graisses de 100 à 900, ce qui évite d'en charger
   quatre pour les 400, 500, 700 et 900 que la feuille demande.
-- **[Instrument Serif](https://github.com/Instrument/instrument-serif)**, pour
-  les chapeaux, les promesses des engagements et les titres d'encadré. Une seule
-  graisse, romain seul : l'italique n'est utilisée nulle part, et ne se charge
-  donc pas.
+- **[Jost](https://github.com/indestructible-type/Jost)**, la police des titres
+  du Parti Libéral Français, celle de son site : titres, chiffres clés, nom du
+  parti dans le bandeau. Un fichier variable, de 400 à 800, dans le seul jeu
+  latin, repris du site « Fonction publique : les chiffres » du parti. Elle a
+  remplacé Instrument Serif le 8 novembre 2026, quand le site a pris la charte
+  du parti.
 
 Les deux sont sous **SIL Open Font License 1.1** — `LICENSE-public-sans.md` et
-`LICENSE-instrument-serif.txt`, à côté, recopiées sans retouche. Elle autorise
+`LICENSE-jost.txt`, à côté, recopiées sans retouche. Elle autorise
 l'usage, la modification et la redistribution, y compris incorporées à un site ;
 la seule obligation est de ne pas les vendre seules et de conserver la licence,
 ce que fait ce dossier.
@@ -35,15 +37,15 @@ qu'il ne s'abîme pas le jour où une URL de `fonts.gstatic.com` change.
 |---|---|---|
 | `public-sans-latin.woff2` | Public Sans (variable, 100–900) | latin |
 | `public-sans-latin-ext.woff2` | Public Sans (variable, 100–900) | latin-ext |
-| `instrument-serif-latin.woff2` | Instrument Serif 400 | latin |
-| `instrument-serif-latin-ext.woff2` | Instrument Serif 400 | latin-ext |
+| `jost-latin.woff2` | Jost (variable, 400–800) | latin |
 
 Deux sous-ensembles et non un : `latin` porte l'essentiel du français, mais pas
 les `œ`, les `ÿ`, ni les guillemets et tirets que la typographie française
 traîne. Le navigateur ne va chercher `latin-ext` que s'il rencontre un de ces
 caractères, grâce aux `unicode-range` de la feuille — soit, en pratique, dès le
-premier « œ » d'une page, et jamais sur les autres. Les quatre fichiers pèsent
-78 ko au total.
+premier « œ » d'une page, et jamais sur les autres. Jost n'a que le jeu latin,
+qui porte déjà les `œ` et les guillemets ; un caractère qui lui manquerait se
+dessine dans la police de repli.
 
 ## Les remplacer ou en ajouter une
 

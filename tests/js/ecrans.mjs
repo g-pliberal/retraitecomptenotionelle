@@ -574,8 +574,22 @@ const MESURER = (ecran) => `(() => {
   typographie.nombreHorsGrille = typographie.horsGrille.length;
   typographie.horsGrille = [...new Set(typographie.horsGrille)].slice(0, 40);
 
+  // La charte du parti (8 novembre 2026) : le fond de la page, celui du
+  // bandeau de tête, la police du titre, et la marque du parti dans le
+  // bandeau — son logo et son nom.
+  const enTete = document.querySelector("header.bandeau");
+  const titreDeLaPage = document.querySelector("#contenu h1");
+  const logo = enTete && enTete.querySelector(".logo");
+  const charte = {
+    fond: getComputedStyle(document.body).backgroundColor,
+    bandeau: enTete ? getComputedStyle(enTete).backgroundColor : null,
+    titre: titreDeLaPage ? getComputedStyle(titreDeLaPage).fontFamily : null,
+    logo: !!(logo && montre(logo)),
+    parti: !!(enTete && enTete.textContent.includes("Parti Libéral Français")),
+  };
+
   return {
-    typographie,
+    typographie, charte,
     contrastes: contrastes.slice(0, 40), nombreContrastes: contrastes.length,
     vides: vides.slice(0, 12),
     deborde: document_.scrollWidth > largeur + 1 ? document_.scrollWidth : 0,

@@ -42,14 +42,15 @@
 <link rel="icon" href="{{racine}}moteur/icone.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="{{racine}}moteur/icone.svg">
 
-<!-- Les deux polices du texte, dans leur jeu latin, celui du français. Le
-     serif n'était demandé qu'au rendu de la page, où il arrivait après coup :
+<!-- Les deux polices du texte, dans leur jeu latin, celui du français :
+     Public Sans pour le texte, Jost pour les titres. Le serif d'avant n'était
+     demandé qu'au rendu de la page, où il arrivait après coup :
      le chapeau perdait une ligne, et tout ce qui le suit remontait sous les
      yeux du lecteur (action 174). Demandées ici, avant le style de la page,
      elles partent les premières. `crossorigin` est celui de toute police, même
      servie d'ici. -->
 <link rel="preload" href="{{racine}}moteur/polices/public-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="{{racine}}moteur/polices/instrument-serif-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="{{racine}}moteur/polices/jost-latin.woff2" as="font" type="font/woff2" crossorigin>
 <!-- La feuille de style n'existe qu'en un seul endroit : moteur/style.css,
      sa source, que rien ne fabrique. Elle bloquait l'affichage : la page porte
      donc ici les règles qui peuvent la toucher, que scripts/feuille_de_page.py

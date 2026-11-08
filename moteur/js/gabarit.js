@@ -44,6 +44,12 @@ export const ADRESSE_CANONIQUE = `${SITE_PARENT}retraite/`;
 export const NOM_DU_SITE = "Retraite à comptes notionnels";
 
 /**
+ * Le nom du parti, tel qu'il l'écrit, en tête du bandeau à côté de son logo
+ * (`moteur/logo-plf.svg`) : la charte du parti, depuis le 8 novembre 2026.
+ */
+export const NOM_DU_PARTI = "Parti Libéral Français";
+
+/**
  * L'aperçu d'une page collée dans un réseau social ou une messagerie. Sans
  * balises `og:`, WhatsApp, X, LinkedIn ou Facebook n'en montrent qu'un lien nu,
  * et la rubrique « Faire connaître » partage des adresses que personne ne voit.
@@ -438,13 +444,16 @@ export function navigation(cheminActif = "/") {
  * « navigation » tout court ne dit pas laquelle on parcourt.
  */
 export function entete(cheminActif = "/") {
+  // La marque du parti : son logo, relatif à la page comme tout lien du
+  // gabarit, son nom, puis celui du site. Le logo est décoratif, le nom écrit
+  // à côté le dit.
   // Sur un téléphone, la navigation entière se replie derrière « Menu » : même
   // repliée, la seconde voix laissait au bandeau collé trois rangées avant le
   // titre (5 novembre 2026). Fermé sur chaque page ; au-delà de l'écran
   // étroit, le bouton n'est pas affiché.
   return `<a class="evitement" href="#contenu">Aller au contenu</a>
 <header class="bandeau"><div class="interieur">
-  <p class="nom"><a href="${adresseDepuis(cheminActif, "/", OPTIONS)}">${icone("trending-up")}<span>${NOM_DU_SITE}</span></a></p>
+  <p class="nom"><a href="${adresseDepuis(cheminActif, "/", OPTIONS)}"><img class="logo" src="${cheminActif === "/" ? "" : "../"}moteur/logo-plf.svg" alt="" width="566" height="378"><span class="marque"><span class="parti">${NOM_DU_PARTI}</span><span class="site">${NOM_DU_SITE}</span></span></a></p>
   <button type="button" class="menu" aria-expanded="false" aria-controls="navigation">Menu${icone("chevron-down")}</button>
   <nav id="navigation" aria-label="Navigation principale">${navigation(cheminActif)}</nav>
 </div></header>`;

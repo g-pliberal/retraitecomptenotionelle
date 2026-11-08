@@ -2306,8 +2306,7 @@ const ECART_DE_FRONT_IMAGE = 32;
 // où elles n'arriveraient pas.
 const SANS = '"Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif';
 // La carte d'un graphique reste composée en serif système : ses lignes sont du
-// texte courant, et « Instrument Serif » est un caractère d'affiche, dessiné
-// pour un chiffre de 150 px et illisible en 19.
+// texte courant, en 19 px.
 const SERIF = '"Iowan Old Style", Palatino, Georgia, serif';
 
 let policesDemandees = null;
@@ -2317,7 +2316,7 @@ function polices() {
     policesDemandees = Promise.all([
       document.fonts?.load(`900 150px "Public Sans"`),
       document.fonts?.load(`700 32px "Public Sans"`),
-      document.fonts?.load(`400 52px "Instrument Serif"`),
+      document.fonts?.load(`500 52px "Jost"`),
     ].filter(Boolean)).catch(() => {});
   }
   return policesDemandees;

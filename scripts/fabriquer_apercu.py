@@ -7,10 +7,11 @@ Collée dans un réseau social ou une messagerie, l'adresse d'une page du site
 s'affiche avec une image : celle-ci, la même pour les neuf pages, que
 ``moteur/page.html`` nomme en ``og:image`` (``IMAGE_APERCU``, dans
 ``moteur/js/gabarit.js``). C'est l'affiche de l'accueil, mise au format d'une
-grande image d'aperçu, 1 200 × 630 points : le nom du site, le sur-titre et le
-titre de l'accueil, la signature du pied de page, lus dans ``index.html`` tels
-que la page les porte, avec les polices du dépôt et les couleurs du thème
-sombre de ``moteur/style.css``. Rien n'y est écrit qui ne soit déjà sur le site.
+grande image d'aperçu, 1 200 × 630 points : le logo et le nom du parti, le nom
+du site, le sur-titre et le titre de l'accueil, la signature du pied de page,
+lus dans ``index.html`` tels que la page les porte, avec les polices du dépôt
+et les couleurs du bandeau de ``moteur/style.css`` — la charte du parti, depuis
+le 8 novembre 2026. Rien n'y est écrit qui ne soit déjà sur le site.
 
 L'image n'est pas refaite par ``regenerer.py`` : un PNG redessiné change avec la
 version de Chromium et ne se compare pas octet à octet. On la refait à la main
@@ -40,6 +41,7 @@ ACCUEIL = RACINE / "index.html"
 FEUILLE = RACINE / "moteur" / "style.css"
 POLICES = RACINE / "moteur" / "polices"
 SORTIE = RACINE / "moteur" / "apercu.png"
+LOGO = RACINE / "moteur" / "logo-plf.svg"
 
 #: Le format d'une grande image d'aperçu chez Facebook, LinkedIn et X.
 LARGEUR, HAUTEUR = 1200, 630
@@ -75,16 +77,18 @@ def _trouver(motif: str, texte: str, quoi: str) -> re.Match:
 
 
 def textes() -> dict[str, str]:
-    """Ce que l'image écrit, tel que l'accueil le porte : le nom du site, le
-    sur-titre et le titre de l'affiche (balises comprises : le mot clé y reste en
-    or), et la signature du pied, sans son lien."""
+    """Ce que l'image écrit, tel que l'accueil le porte : le nom du parti et
+    celui du site, le sur-titre et le titre de l'affiche (balises comprises : le
+    mot clé y reste en or), et la signature du pied, sans son lien."""
     page = ACCUEIL.read_text(encoding="utf-8")
-    nom = _trouver(r'<p class="nom">.*?<span>(.*?)</span>', page, "le nom du site")
+    nom = _trouver(r'<p class="nom">.*?<span class="parti">(.*?)</span>'
+                   r'<span class="site">(.*?)</span>', page, "le nom du site")
     affiche = _trouver(r'<div class="affiche"><p class="surtitre">(.*?)</p><h1>(.*?)</h1>',
                        page, "l'affiche")
     signature = _trouver(r'<p class="retour-site">(.*?)</p>', page, "la signature du pied")
     return {
-        "nom": nom.group(1),
+        "parti": nom.group(1),
+        "nom": nom.group(2),
         "surtitre": affiche.group(1),
         "titre": affiche.group(2),
         "signature": html.escape(html.unescape(re.sub(r"<[^>]+>", "", signature.group(1)))),
@@ -92,16 +96,18 @@ def textes() -> dict[str, str]:
 
 
 def couleurs() -> dict[str, str]:
-    """Les couleurs du thème sombre, celui de l'affiche : le premier ``:root`` de
-    la feuille de style."""
+    """Les couleurs du bandeau, celles de l'affiche : le pétrole du parti, le
+    blanc, le texte doux et le safran, lus au premier ``:root`` de la feuille de
+    style."""
     racine = re.search(r":root\s*\{(.*?)\n\}", FEUILLE.read_text(encoding="utf-8"), re.S)
     if not racine:
         raise SystemExit("le premier :root de moteur/style.css est introuvable")
     teintes = {}
-    for nom in ("fond", "texte", "texte-doux", "or"):
-        trouve = re.search(rf"--{nom}:\s*(#[0-9a-fA-F]{{6}})\s*;", racine.group(1))
+    for nom, variable in (("fond", "bandeau"), ("texte", "bandeau-texte"),
+                          ("texte-doux", "bandeau-doux"), ("or", "or")):
+        trouve = re.search(rf"--{variable}:\s*(#[0-9a-fA-F]{{6}})\s*;", racine.group(1))
         if not trouve:
-            raise SystemExit(f"--{nom} introuvable dans le premier :root de moteur/style.css")
+            raise SystemExit(f"--{variable} introuvable dans le premier :root de moteur/style.css")
         teintes[nom] = trouve.group(1)
     return teintes
 
@@ -111,6 +117,11 @@ def _police(fichier: str) -> str:
     return "data:font/woff2;base64," + base64.b64encode((POLICES / fichier).read_bytes()).decode()
 
 
+def _logo() -> str:
+    """Le logo du parti, en adresse ``data:``."""
+    return "data:image/svg+xml;base64," + base64.b64encode(LOGO.read_bytes()).decode()
+
+
 def page_de_l_image() -> str:
     """Le HTML que Chromium dessine : 1 200 × 630 points, l'affiche au milieu."""
     t, c = textes(), couleurs()
@@ -118,8 +129,8 @@ def page_de_l_image() -> str:
 <html lang="fr"><head><meta charset="utf-8"><style>
 @font-face {{ font-family: "Public Sans"; font-weight: 100 900; font-display: block;
   src: url({_police("public-sans-latin.woff2")}) format("woff2"); }}
-@font-face {{ font-family: "Instrument Serif"; font-weight: 400; font-display: block;
-  src: url({_police("instrument-serif-latin.woff2")}) format("woff2"); }}
+@font-face {{ font-family: "Jost"; font-weight: 400 800; font-display: block;
+  src: url({_police("jost-latin.woff2")}) format("woff2"); }}
 html, body {{ margin: 0; width: {LARGEUR}px; height: {HAUTEUR}px; overflow: hidden; }}
 body {{
   box-sizing: border-box; padding: 60px 76px 54px;
@@ -127,25 +138,29 @@ body {{
   background: {c["fond"]}; color: {c["texte"]};
   font-family: "Public Sans", sans-serif;
 }}
-.nom {{
-  margin: 0; display: flex; align-items: center; gap: 16px;
-  font-size: 24px; font-weight: 500;
-}}
-.nom::before {{ content: ""; width: 16px; height: 16px; background: {c["or"]}; }}
+.nom {{ margin: 0; display: flex; align-items: center; gap: 20px; }}
+.logo {{ width: auto; height: 64px; }}
+.marque {{ display: flex; flex-direction: column; line-height: 1.2; }}
+.parti {{ font-family: "Jost", sans-serif; font-size: 30px; font-weight: 600; }}
+.site {{ font-size: 22px; color: {c["texte-doux"]}; }}
 .surtitre {{
   margin: 0 0 20px; color: {c["texte-doux"]}; font-size: 24px; font-weight: 500;
+  display: flex; align-items: center; gap: 12px;
 }}
+.surtitre::before {{ content: ""; width: 36px; height: 6px; border-radius: 3px;
+  background: {c["or"]}; }}
 h1 {{
-  margin: 0; font-family: "Instrument Serif", serif; font-size: 104px;
-  line-height: 1.02; font-weight: 400; letter-spacing: -0.01em; text-wrap: balance;
+  margin: 0; font-family: "Jost", sans-serif; font-size: 76px;
+  line-height: 1.1; font-weight: 600; letter-spacing: -0.01em; text-wrap: balance;
 }}
 .cle-texte {{ color: {c["or"]}; }}
 .signature {{
   margin: 0; color: {c["texte-doux"]};
-  font-family: "Instrument Serif", serif; font-size: 32px; line-height: 1;
+  font-family: "Jost", sans-serif; font-size: 28px; line-height: 1;
 }}
 </style></head><body>
-<p class="nom">{t["nom"]}</p>
+<p class="nom"><img class="logo" src="{_logo()}" alt=""><span class="marque">\
+<span class="parti">{t["parti"]}</span><span class="site">{t["nom"]}</span></span></p>
 <div><p class="surtitre">{t["surtitre"]}</p><h1>{t["titre"]}</h1></div>
 <p class="signature">{t["signature"]}</p>
 </body></html>

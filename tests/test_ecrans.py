@@ -223,6 +223,38 @@ def test_aucune_page_ne_se_decale_en_se_chargeant():
     assert not fautes, f"{len(fautes)} chargements décalent :\n" + "\n".join(fautes)
 
 
+#: La charte du Parti Libéral Français, celle de son site « Fonction publique :
+#: les chiffres » : la page sur le fond clair, le bandeau de tête en pétrole,
+#: les titres en Jost.
+CHARTE = {"fond": "rgb(244, 247, 247)", "bandeau": "rgb(0, 51, 64)", "titre": "Jost"}
+
+
+def test_chaque_page_porte_la_charte_du_parti():
+    """Le 8 novembre 2026, le propriétaire trouvait le site « très austère et
+    très compliqué à comprendre pour l'électeur », et voulait le style de son
+    autre site, qui « ressemble beaucoup plus au style du parti » : le fond
+    vert profond de l'affiche de septembre cède à la charte du parti — la page
+    claire, le bandeau pétrole qui porte le logo et le nom du parti, les
+    titres en Jost, le safran pour ce qui compte. Chaque page, à chaque
+    largeur, la porte.
+    """
+    fautes = []
+    for visite in mesures():
+        charte = visite["replie"]["charte"]
+        ou = _ou(visite, "fermés")
+        if charte["fond"] != CHARTE["fond"]:
+            fautes.append(f"{ou} : fond {charte['fond']}")
+        if charte["bandeau"] != CHARTE["bandeau"]:
+            fautes.append(f"{ou} : bandeau {charte['bandeau']}")
+        if (charte["titre"] or "").split(",")[0].strip().strip('"') != CHARTE["titre"]:
+            fautes.append(f"{ou} : titre en {charte['titre']}")
+        if not charte["logo"]:
+            fautes.append(f"{ou} : pas de logo dans le bandeau")
+        if not charte["parti"]:
+            fautes.append(f"{ou} : pas le nom du parti dans le bandeau")
+    assert not fautes, f"{len(fautes)} écarts à la charte :\n" + "\n".join(fautes[:60])
+
+
 def test_tout_texte_se_detache_de_son_fond():
     """Un texte se lit sur son fond : 4,5 pour 1 au moins entre leurs
     luminances, 3 pour 1 en grand — 24 px, ou 18,66 px en gras. WCAG 1.4.3, et

@@ -8125,3 +8125,31 @@ dans un module du calcul, avec son test, et la page le lit ; le site
 6. la diffusion, au propriétaire : le dépôt tel quel, un paquet npm, ou un
    service en ligne bâti sur la bibliothèque, qui recevrait les carrières des
    lecteurs.
+
+### 189. Le site à la charte du parti, puis lisible par l'électeur — `en cours`
+
+**Reprise, au 8 novembre 2026.** L'étape 1 est faite : le site porte la
+charte du site « Fonction publique : les chiffres » du parti — la page
+claire, le bandeau et l'affiche de chaque page en pétrole, le logo et le nom
+du parti en tête, les titres en Jost, le safran pour ce qui compte, des
+cartes blanches arrondies, une palette des graphiques refaite pour le fond
+clair —, et `test_chaque_page_porte_la_charte_du_parti` la tient. Reste
+l'étape 2, le texte pour l'électeur, qui attend du propriétaire ce qu'il
+trouve le plus difficile à comprendre. Note :
+`189/2026-11-08-etape-1-la-charte-du-parti.md`.
+
+**D'où elle vient.** Le 8 novembre 2026, le propriétaire : « J'aimerais
+changer le style du site. C'est beaucoup mieux sur cet autre site que j'ai
+déjà fait » — le dépôt `g-pliberal/Nombre-de-fonctionnaires` —, « ça
+ressemble beaucoup plus au style du parti. La présentation actuelle est très
+austère et très compliquée à comprendre pour l'électeur alors que justement
+c'est lui qu'on vise ! »
+
+**Les étapes.**
+1. la charte du parti : couleurs, polices, logo, bandeau, cartes,
+   graphiques, image d'aperçu — fait ;
+2. le texte pour l'électeur : ce que chaque page dit d'abord, en phrases
+   courtes, le détail replié derrière ;
+3. au mainteneur de la copie du parti : retirer `plf-theme.css`, qui
+   imposerait un thème sombre à la page claire
+   (`docs/integration-partiliberalfrancais.md`, « Le contrat visuel »).

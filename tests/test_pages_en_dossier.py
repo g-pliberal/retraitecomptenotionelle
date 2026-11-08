@@ -159,6 +159,25 @@ def test_l_image_d_apercu_est_au_format_des_reseaux():
     assert len(octets) < 300_000
 
 
+def test_l_image_d_apercu_porte_la_charte_du_parti():
+    """L'image d'aperçu est l'affiche de l'accueil : depuis le 8 novembre 2026,
+    elle porte la charte du parti, comme le bandeau — le fond pétrole, le logo
+    et le nom du parti, le nom du site, le titre en Jost (la page que
+    ``scripts/fabriquer_apercu.py`` fait dessiner)."""
+    import importlib.util
+    specification = importlib.util.spec_from_file_location(
+        "fabriquer_apercu", RACINE / "scripts" / "fabriquer_apercu.py")
+    module = importlib.util.module_from_spec(specification)
+    specification.loader.exec_module(module)
+    assert module.couleurs()["fond"] == "#003340"
+    textes = module.textes()
+    assert (textes["parti"], textes["nom"]) == ("Parti Libéral Français",
+                                                 "Retraite à comptes notionnels")
+    page = module.page_de_l_image()
+    assert 'font-family: "Jost"' in page and "Instrument" not in page
+    assert '<img class="logo" src="data:image/svg+xml;base64,' in page
+
+
 @pytest.mark.parametrize("chemin", _chemins())
 def test_une_page_toute_faite_est_la_page_entiere(chemin):
     """Le bandeau, la page et le pied sont dans le HTML servi : rien ne les
