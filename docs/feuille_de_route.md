@@ -8049,9 +8049,9 @@ et 3 ci-dessus ; la mesure, et comment la refaire, sont dans la note
 message (8, décisions 31 à 33, 68), les enfants (3, 50 à 61), les recettes (4,
 79 à 81) et les chiffres (7, 82 à 85) sont tranchés ; l'indexation (5) et les
 complémentaires (6, baisse : 86 et 87) étudiées ; le site (9) aussi, face au
-programme (`…-site-etude.md`) ; chaque note tient son bloc. Par quoi
-commencer : A ou B, au propriétaire, puis les questions des chantiers 3, 5, 6
-et 9 ; puis le gel (10). Rien n'est gelé.
+programme (`…-site-etude.md`), et le gel (10, `…-gel-etude.md`) ; chaque note tient
+son bloc. Par quoi commencer : A ou B, au propriétaire, puis les questions des
+chantiers 3, 5, 6, 9 et 10. Rien n'est gelé.
 
 **D'où elle vient.** Le 6 novembre 2026, le propriétaire demande un bilan :
 les vagues se succèdent, et le chantier semble sans fin. La session mesure

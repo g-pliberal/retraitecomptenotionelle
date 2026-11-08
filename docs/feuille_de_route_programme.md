@@ -1936,6 +1936,26 @@ ces actions : le gel se dit avant de s'écrire.
 **Au propriétaire.** La liste du gel ; le seuil ; la date — la mi-octobre
 est passée ; le début de la campagne présidentielle ?
 
+**Le 8 novembre 2026, l'étude** (note `186/2026-11-08-gel-etude.md`). Des 46
+actions ouvertes, la 188 close le jour même, onze servent le programme et se
+gardent — 186, 187, 47, 134, 157, 165, 167, 168, 169, 170 et 179 ; cinq se
+fondent dans un chantier ou attendent plus tard — 143, 144, 166, 171 et 172 ; trente se gèlent :
+les douze des pistes, vérifiées une à une, et dix-huit de plus, dont 130,
+177 et 185, dont les écarts ne touchent aucun cas type du site. La 138 ne se
+gèle qu'après avoir rendu au programme ses étapes 9 et 13, qui en sont des
+choix. Le seuil, mesuré sur 142 écarts ouverts, n'en écarte presque aucun
+par sa grandeur : chiffré sur le cas qui le montre, un écart dépasse
+10 € par mois ; ce qui écarte, c'est de le mesurer sur la version publique —
+les treize cas types, la page Coût, les chiffres du programme —, et l'outil
+qui le mesurerait reste à écrire. La mesure de tête proposée : la part des
+décisions du programme que le site montre, les exemples officiels (206 sur
+218) en plancher. La date : premier tour le 18 avril 2027 ; les parrainages
+s'ouvrent au lendemain du décret de convocation, publié au plus tard le
+7 février, et se ferment le 12 mars ; la version publique en ligne le
+22 janvier 2027, avec un jalon par chantier. Le statut `gelée` toucherait
+`reprise.py`, le tableau de bord et deux tests ; `à faire` n'en demande
+aucun. Rien n'est gelé.
+
 ## Les décisions attendues du propriétaire
 
 - Chantier 1 : l'ordre de la réforme, le rythme de descente à 18 %.
@@ -2107,6 +2127,12 @@ est passée ; le début de la campagne présidentielle ?
   vous revient », nuancés ou retirés ; une petite passe sur les pages tout
   de suite, ou une seule refonte après A ou B.
 - Chantier 10 : la liste du gel ; le seuil ; la date.
+- Chantier 10, étudié le 8 novembre (note `186/2026-11-08-gel-etude.md`,
+  « Ce que le propriétaire tranche ») : la liste — onze actions gardées, cinq
+  fondues ou remises, trente gelées — ; le seuil, mesuré sur les cas types,
+  la page Coût et le programme ; la mesure de tête, les décisions que le site
+  montre ; la date, la version publique le 22 janvier 2027 ; le statut,
+  `gelée` ou `à faire`.
 
 ## Comment s'en servir
 
