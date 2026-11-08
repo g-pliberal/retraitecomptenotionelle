@@ -85,6 +85,7 @@ from retraite_notionnelle.donnees.population import (  # noqa: E402
 from retraite_notionnelle.donnees.taux import CourbeTauxSansRisque  # noqa: E402
 from retraite_notionnelle.donnees.regimes import (  # noqa: E402
     CatalogueRegimes,
+    charger_gestionnaires,
     charger_inventaire,
     charger_taux_moyens,
 )
@@ -135,7 +136,7 @@ CALIBRATIONS = DONNEES / "derive" / "calibrations_mortalite.json"
 #: qu'un site en cache ne lise pas un paquet qu'il ne comprend pas : le site
 #: attend la sienne (``VERSION_PAQUET``, ``moteur/js/contexte.js``), et redemande
 #: au serveur un paquet qui n'a pas celle-là, depuis le 11 octobre 2026.
-VERSION = 41
+VERSION = 42
 
 
 def _serie(serie: SerieAnnuelle) -> dict:
@@ -2265,6 +2266,15 @@ def _inventaire() -> list:
     return [ligne.dictionnaire() for ligne in charger_inventaire(DONNEES)]
 
 
+def _gestionnaires() -> dict:
+    """Les organismes qui gèrent les régimes, que la page Méthode joint à
+    l'inventaire : leur nom, et à qui chacun confie sa gestion (action 188)."""
+    return {
+        code: {"nom": organisme.nom, "operateur": organisme.operateur}
+        for code, organisme in charger_gestionnaires(DONNEES).items()
+    }
+
+
 def _avantages() -> dict:
     """Les trente-neuf avantages non contributifs, et les familles qui les rangent.
 
@@ -2608,6 +2618,7 @@ def construire(bilan: bytes, agregats: bytes) -> bytes:
         "populations": _populations(),
         "regimes": _regimes(),
         "inventaire": _inventaire(),
+        "gestionnaires": _gestionnaires(),
         "frontiere": _frontiere(),
         "avantages": _avantages(),
         "affiliations": _affiliations(),

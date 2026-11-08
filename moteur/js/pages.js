@@ -15631,12 +15631,25 @@ function periodeInventaire(creation, fermeture, extinction) {
  *
  * `catalogue` donne la fiabilité des fiches calculées : l'inventaire ne la
  * connaît pas, le catalogue si, et c'est ici que les deux se rejoignent.
+ * `gestionnaires` est le référentiel des organismes (`_gestionnaires.yaml`,
+ * action 188) : chaque ligne n'en porte que les codes, la colonne « Géré par »
+ * en écrit le nom, et celui de l'organisme à qui il confie sa gestion.
  */
-function inventaireSection(lignes, catalogue) {
+function inventaireSection(lignes, catalogue, gestionnaires = {}) {
   const fiabilites = new Map();
   for (const regime of catalogue) {
     fiabilites.set(regime.code, nomFiabilite(regime.fiabilite));
   }
+  const nomDe = (code) => gestionnaires[code]?.nom ?? code;
+  const gerePar = (codes) => (codes || []).map((code) => {
+    const operateur = gestionnaires[code]?.operateur;
+    return operateur
+      ? `${nomDe(code)} — gestion confiée à : ${nomDe(operateur)}`
+      : nomDe(code);
+  }).join(" ; ");
+  const vivantes = lignes.filter(
+    (l) => (l.extinction ?? null) === null && (l.integre_dans ?? null) === null);
+  const organismesVivants = new Set(vivantes.flatMap((l) => l.gestionnaires || []));
   const comptes = {};
   for (const [cle] of COUVERTURES_INVENTAIRE) {
     comptes[cle] = lignes.filter((l) => l.couverture === cle).length;
@@ -15654,6 +15667,7 @@ function inventaireSection(lignes, catalogue) {
   for (const ligne of lignes) {
     corps.push([
       echapper(ligne.nom),
+      cellule(gerePar(ligne.gestionnaires)),
       echapper(FAMILLES_INVENTAIRE[ligne.famille]),
       echapper(lecture[ligne.couverture]),
       cellule(g.fiabiliteEnClair(fiabilites.get(ligne.code) ?? "")),
@@ -15690,10 +15704,10 @@ function inventaireSection(lignes, catalogue) {
     + '<p class="compte discret" aria-live="polite" data-compte-de="inventaire" '
     + `data-unite="régimes">${lignes.length} régimes</p>`;
   const table = g.tableau(
-    ["Régime", "Famille", "Dans le modèle", "Fiabilité", "Période", "Statuts",
+    ["Régime", "Géré par", "Famille", "Dans le modèle", "Fiabilité", "Période", "Statuts",
       "Ce qui manque, ou pourquoi"],
     corps,
-    ["", "texte", "texte", "texte", "texte", "texte", "texte long"],
+    ["", "texte", "texte", "texte", "texte", "texte", "texte", "texte long"],
     `Les ${lignes.length} régimes de l'inventaire`,
     true,
     attributs,
@@ -15705,14 +15719,16 @@ function inventaireSection(lignes, catalogue) {
 et disparus : ${phrase}. Il fait foi dans
 <a href="${g.DEPOT}/blob/main/data/reference/regimes/inventaire.yaml">inventaire.yaml</a>,
 où chaque ligne cite son texte fondateur, et un test le tient aligné sur le
-catalogue : une fiche sans ligne d'inventaire, ou une ligne qui prétend calculer
-ce qu'aucune fiche ne calcule, fait échouer les tests. Un régime « partiel » est
+catalogue. Un régime « partiel » est
 calculé, mais un étage, un barème ou une période lui manque, et la dernière
 colonne dit lequel ; un régime « à modéliser » n'a pas de fiche ; une ligne
 « portée par un statut » n'est pas un régime mais une affiliation (l'élu
 local, le micro-entrepreneur), que le statut nommé route vers les régimes du
 catalogue. La fiabilité est celle de la fiche du catalogue, quand il y en a
-une. Cherchez, filtrez, ou triez en cliquant un en-tête de colonne.</p>
+une. « Géré par » nomme
+<a href="${g.DEPOT}/blob/main/data/reference/regimes/_gestionnaires.yaml">l'organisme</a>
+qui le gère, ou l'a géré en dernier : ${organismesVivants.size} organismes
+gèrent les ${vivantes.length} régimes encore en vie. Cherchez, filtrez, ou triez en cliquant un en-tête.</p>
 ${filtres}
 ${table}`, "donnees-inventaire");
 }
@@ -15943,7 +15959,8 @@ citation de la source : chaque valeur du dépôt porte la sienne dans
 <strong>Qui reprend un chiffre d'ici cite le producteur, pas ce site.</strong></p>`, "donnees-reutilisation");
 
   const detail = depliantSeries + depliantFiabilite
-    + inventaireSection(contexte.paquet.inventaire || [], simulateur.catalogue)
+    + inventaireSection(contexte.paquet.inventaire || [], simulateur.catalogue,
+      contexte.paquet.gestionnaires || {})
     + depliantSources + depliantReutilisation;
 
   return `

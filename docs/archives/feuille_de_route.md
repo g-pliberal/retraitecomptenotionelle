@@ -19539,3 +19539,28 @@ moteurs ; seule la correction que le propriétaire a décidée le 2 novembre, de
 données, a déplacé des pensions
 (`145/2026-11-02-correction-cafat-wallis.md:65-77`). Close le 3 novembre 2026 ;
 les notes sont sous `docs/archives/feuille_de_route/145/`.
+
+### 188. Le gestionnaire de chaque régime : la caisse, le service ou le fonds qui le gère — `fait`
+
+**Reprise, au 8 novembre 2026.** Close : les trois étapes sont faites, et
+l'action archivée. Chaque fichier de régime nomme son gestionnaire, un code
+de `data/reference/regimes/_gestionnaires.yaml` (77 organismes, dont 54
+gèrent les 83 lignes encore en vie) ; l'inventaire et le paquet le
+reprennent, `docs/regimes.md` les compte et les nomme, et la table des
+régimes de la page Méthode a sa colonne « Géré par ». Reste, hors action : qui
+versait les arrérages de l'AVTS de 1941 à 1945, à lire au Journal officiel
+sur Gallica. Notes : `188/2026-11-07-etape-1-le-champ-gestionnaire.md`,
+`188/2026-11-07-etape-2-les-trois-gestionnaires.md`,
+`188/2026-11-08-etape-3-la-page-donnees.md`.
+
+**D'où elle vient.** Le 7 novembre 2026, le propriétaire demande ce qui
+sépare une caisse d'une complémentaire, combien d'organismes gèrent les
+retraites, et si le dépôt les connaît : il connaissait les régimes, pas les
+organismes qui les gèrent. « oui, ajoute le champ gestionnaire ».
+
+**Les étapes.**
+1. le champ, le référentiel des organismes, l'inventaire et
+   `docs/regimes.md` — fait ;
+2. les trois gestionnaires que les sources du dépôt ne nomment pas, lus à la
+   source et recoupés par le test — fait ;
+3. la page Données : les gestionnaires, et ce qu'ils gèrent — fait.

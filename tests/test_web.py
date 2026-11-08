@@ -516,8 +516,13 @@ def test_le_paquet_contient_les_donnees_du_modele():
     paquet = json.loads(construction.PAQUET.read_text(encoding="utf-8"))
 
     assert paquet["version"] == construction.VERSION
-    assert {"series", "regimes", "inventaire", "affiliations", "quotients", "calibrations",
-            "valeurs_point", "rendements_points", "hypotheses"} <= set(paquet)
+    assert {"series", "regimes", "inventaire", "gestionnaires", "affiliations", "quotients",
+            "calibrations", "valeurs_point", "rendements_points", "hypotheses"} <= set(paquet)
+    # Le référentiel des organismes, que la page Méthode joint à l'inventaire
+    # (action 188) : leur nom, et à qui chacun confie sa gestion.
+    assert paquet["gestionnaires"]["cnracl"] == {
+        "nom": "Caisse nationale de retraites des agents des collectivités locales (CNRACL)",
+        "operateur": "caisse_des_depots"}
     from retraite_notionnelle.donnees.regimes import CatalogueRegimes
     from retraite_notionnelle.config import RACINE_DONNEES
 

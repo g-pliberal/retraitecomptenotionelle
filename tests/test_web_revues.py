@@ -312,7 +312,7 @@ def test_l_inventaire_est_une_table_qui_se_filtre_et_se_trie(contexte):
     rangs = re.findall(r'<tr data-famille="([^"]+)" data-couverture="([^"]+)" data-fiabilite="[^"]*">', table)
     assert len(rangs) == len(lignes)
     assert [famille for famille, _ in rangs] == [l.famille for l in lignes]
-    assert table.count('<button type="button" class="tri"') == 7
+    assert table.count('<button type="button" class="tri"') == 8
     assert 'data-cible="inventaire"' in corps
     assert 'id="inventaire-recherche"' in corps and 'data-filtre="texte"' in corps
     assert 'id="inventaire-famille"' in corps and 'id="inventaire-couverture"' in corps
@@ -339,6 +339,41 @@ def test_l_inventaire_est_une_table_qui_se_filtre_et_se_trie(contexte):
     page_html = page_et_routeur()
     assert 'closest?.(".filtres[data-cible]")' in page_html
     assert 'closest("th > button.tri")' in page_html and 'setAttribute("aria-sort"' in page_html
+
+
+def test_l_inventaire_nomme_le_gestionnaire_de_chaque_regime():
+    """Le 7 novembre 2026, le propriétaire le demande (action 188, étape 3) :
+    la table des régimes dit qui gère chacun — la caisse, le service ou le
+    fonds —, d'après `data/reference/regimes/_gestionnaires.yaml`, et à qui il
+    en confie la gestion quand il ne la fait pas lui-même ; la phrase qui
+    l'ouvre compte les organismes des régimes encore en vie."""
+    import html
+
+    from retraite_notionnelle.config import RACINE_DONNEES
+    from retraite_notionnelle.donnees.regimes import charger_gestionnaires, charger_inventaire
+
+    corps = rendre("/methode", {})[1]
+    table = re.search(r'<table id="inventaire">.*?</table>', corps, re.S).group(0)
+    assert ">Géré par<" in table
+    organismes = charger_gestionnaires(RACINE_DONNEES)
+    lignes = charger_inventaire(RACINE_DONNEES)
+    rangs = [html.unescape(r) for r in re.findall(r"<tr data-famille=.*?</tr>", table, re.S)]
+    assert len(rangs) == len(lignes)
+    par_code = {ligne.code: rang for ligne, rang in zip(lignes, rangs)}
+    for ligne in lignes:
+        for code in ligne.gestionnaires:
+            assert organismes[code].nom in par_code[ligne.code], (ligne.code, code)
+    # L'arrêté du 9 mai 1995 : l'APC liquide et paie les pensions de la SEITA.
+    assert "Association pour la prévoyance collective (APC)" in par_code["seita"]
+    # La CNRACL confie sa gestion à la Caisse des dépôts.
+    assert "gestion confiée à : Caisse des dépôts et consignations" in par_code["cnracl"]
+    assert "gestion confiée à" not in par_code["regime_general"]
+    vivantes = [l for l in lignes if l.extinction is None and l.integre_dans is None]
+    actifs = {code for ligne in vivantes for code in ligne.gestionnaires}
+    texte = " ".join(html.unescape(re.sub(r"<[^>]+>", " ", corps)).split())
+    assert (f"{len(actifs)} organismes gèrent les {len(vivantes)} régimes encore en vie"
+            in texte)
+    assert "blob/main/data/reference/regimes/_gestionnaires.yaml" in corps
 
 
 def test_aucun_chemin_de_fichier_n_est_cite_en_texte_brut():

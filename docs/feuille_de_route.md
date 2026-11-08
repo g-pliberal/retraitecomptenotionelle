@@ -8125,27 +8125,3 @@ dans un module du calcul, avec son test, et la page le lit ; le site
 6. la diffusion, au propriétaire : le dépôt tel quel, un paquet npm, ou un
    service en ligne bâti sur la bibliothèque, qui recevrait les carrières des
    lecteurs.
-
-### 188. Le gestionnaire de chaque régime : la caisse, le service ou le fonds qui le gère — `en cours`
-
-**Reprise, au 7 novembre 2026.** Les étapes 1 et 2 sont faites : chaque
-fichier de régime nomme son gestionnaire, un code de
-`data/reference/regimes/_gestionnaires.yaml` (77 organismes, dont 54 gèrent
-les 83 lignes encore en vie), que l'inventaire reprend, que `docs/regimes.md`
-compte et nomme, et que `tests/test_gestionnaires.py` tient ; les trois qui
-manquaient sont lus dans les textes (l'APC pour la SEITA et le régime
-additionnel des enseignants du privé, l'État pour l'AVTS). Reste l'étape 3,
-la page Données, dans une session du site : le paquet porte déjà
-`gestionnaires`. Note : `188/2026-11-07-etape-2-les-trois-gestionnaires.md`.
-
-**D'où elle vient.** Le 7 novembre 2026, le propriétaire demande ce qui
-sépare une caisse d'une complémentaire, combien d'organismes gèrent les
-retraites, et si le dépôt les connaît : il connaissait les régimes, pas les
-organismes qui les gèrent. « oui, ajoute le champ gestionnaire ».
-
-**Les étapes.**
-1. le champ, le référentiel des organismes, l'inventaire et
-   `docs/regimes.md` — fait ;
-2. les trois gestionnaires que les sources du dépôt ne nomment pas, lus à la
-   source et recoupés par le test — fait ;
-3. la page Données : les gestionnaires, et ce qu'ils gèrent.
