@@ -1,16 +1,5 @@
 # La voie 1 au modèle : la prime rendue en route, et la dette de la réserve qui manque
 
-**Reprise, au 8 novembre 2026.** Les décisions 75 et 76 sont écrites au
-modèle (`assurer`, `indexation_programme.py`), chiffrées sous leurs lectures
-et sous la contribution que le propriétaire a dite ensuite, « 1 % tout le
-temps » (`python scripts/indexation_scenario_6.py --decidee`). Rien n'est
-tranché : il cherche « une solution où personne ne se sentirait floué » et
-demande si ce peut être une réserve personnelle, en plus du compte (« Ce que
-le propriétaire a répondu »). Par quoi commencer : étudier cette réserve
-personnelle — ce qu'elle paie, ce qu'elle devient au décès, pour le stock
-ou pour toutes les pensions —, puis ses réponses en décisions ; ensuite
-seulement le défaut du scénario 6 et la page Coût.
-
 *Le 8 novembre 2026, action 186, chantier 5. Les décisions 73 à 77 ont pris
 la voie 1 (note `2026-11-07-indexation-scenario-6.md`) : une prime de 2,15 %
 sur les pensions du stock, mise en réserve, qui paie son plancher. Restaient

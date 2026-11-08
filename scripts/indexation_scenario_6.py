@@ -92,8 +92,30 @@ DECIDEES = {
     "v1_un_pour_cent": ("voie_1_crise_a_ses_dates",
                         {"prime": 0.01, "reserve_rendue": "jamais", "crise_assuree": ()}),
 }
+#: La réserve personnelle, non transmise aux héritiers (le 8 novembre) : la
+#: contribution de 1 %, jamais rendue ou son surplus rendu au seuil (mesuré
+#: sous la crise et l'inflation basse) ; au décès, ce qui reste va aux
+#: survivants du stock (``commun``) ou sort du stock (``a_soi``).
+DEUX = ("emploi_ia", "inflation_basse")
+PERSONNELLES = {
+    "rp_jamais_commun": ("voie_1_crise_a_ses_dates",
+                         {"prime": 0.01, "reserve_rendue": "jamais", "crise_assuree": ()}),
+    "rp_jamais_a_soi": ("voie_1_crise_a_ses_dates",
+                        {"prime": 0.01, "reserve_rendue": "jamais", "crise_assuree": (),
+                         "reserve_en_commun": False}),
+    "rp_dates_commun": ("voie_1_crise_a_ses_dates",
+                        {"prime": 0.01, "crise_assuree": DEUX, "retour": "au_seuil"}),
+    "rp_dates_a_soi": ("voie_1_crise_a_ses_dates",
+                       {"prime": 0.01, "crise_assuree": DEUX, "retour": "au_seuil",
+                        "reserve_en_commun": False}),
+    "rp_reco_commun": ("voie_1_crise_recommencee",
+                       {"prime": 0.01, "crise_assuree": DEUX, "retour": "au_seuil"}),
+    "rp_reco_a_soi": ("voie_1_crise_recommencee",
+                      {"prime": 0.01, "crise_assuree": DEUX, "retour": "au_seuil",
+                       "reserve_en_commun": False}),
+}
 CLES = ("avant", "regle", "decidee", *(f"voie_1_{choc}" for choc in CHOCS),
-        "voie_2", "voie_3", *DECIDEES)
+        "voie_2", "voie_3", *DECIDEES, *PERSONNELLES)
 
 
 @dataclass
@@ -161,10 +183,10 @@ class Etude:
 
 def _voie(voies: dict[str, I.Voie], cle: str, baisse: float,
           primes: dict[str, float], retour: str = "progressif") -> I.Voie:
-    if cle in DECIDEES:
-        nom, options = DECIDEES[cle]
+    if cle in DECIDEES or cle in PERSONNELLES:
+        nom, options = DECIDEES.get(cle) or PERSONNELLES[cle]
         voie = voies[nom]
-        return replace(voie, stock=replace(voie.stock, retour=retour, **options))
+        return replace(voie, stock=replace(voie.stock, **{"retour": retour, **options}))
     if cle.startswith("voie_1_"):
         return voies["voie_1"].calibree(prime=primes[cle.removeprefix("voie_1_")])
     if cle == "voie_2":
@@ -351,6 +373,12 @@ LIBELLES = {
     "v1_recommencee": "Voie 1 décidée, la crise recommencée",
     "v1_recommencee_deux": "Voie 1 décidée, la crise recommencée et l'inflation basse",
     "v1_un_pour_cent": "Une contribution de 1 % tout le temps",
+    "rp_jamais_commun": "1 %, jamais rendue ; au décès, aux survivants",
+    "rp_jamais_a_soi": "1 %, jamais rendue ; au décès, hors du stock",
+    "rp_dates_commun": "1 %, surplus rendu (crise à ses dates) ; aux survivants",
+    "rp_dates_a_soi": "1 %, surplus rendu (crise à ses dates) ; hors du stock",
+    "rp_reco_commun": "1 %, surplus rendu (crise recommencée) ; aux survivants",
+    "rp_reco_a_soi": "1 %, surplus rendu (crise recommencée) ; hors du stock",
 }
 
 
@@ -482,24 +510,33 @@ def imprimer_decidee(etude: Etude) -> None:
 
 
 def imprimer_personnelle(etude: Etude) -> None:
-    """La contribution de 1 % dans une réserve à soi, en plus du compte : la
-    survie vaut un, rien ne passe des morts aux vivants. Ce qui reste à la
-    mort, le coût ne le compte pas encore."""
-    print("\n# Une réserve personnelle de 1 %, en années de la pension servie\n")
-    print("| Trajectoire | Réserve 2030 | 2035 | 2040 | 2045 | 2050 | "
-          "Dette 2040 | 2045 | 2050 |")
-    print("|---" * 9 + "|")
-    une = tuple((annee, 1.0) for annee in range(DEBUT, FIN + 1))
-    voie = _voie(etude.voies, "v1_un_pour_cent", etude.baisse_voie_2, etude.primes)
+    """La réserve personnelle, non transmise aux héritiers : ce que le stock en
+    retrouve sur sa vie, ce que les cotisants y gagnent, et ce qu'un retraité
+    vivant y a, en années de sa pension."""
+    print("\n# La réserve personnelle de 1 %, non transmise aux héritiers\n")
+    print("Le stock face à α = 1 sur sa vie, en valeur actuelle ; pour les cotisants, "
+          "en point de PIB par an ; la réserve et la dette d'un retraité vivant, en "
+          "années de sa pension ; la prime, négative quand la réserve se rend.")
+    masses = etude.resultat("avant", "cor").stock.servi
     for nom_t, trajectoire in etude.trajectoires.items():
-        r = etude.resultat("v1_un_pour_cent", nom_t)
-        euro = _pensions(voie, trajectoire, une).detail_stock()
-        annuelle = {a: euro.servi[a] for a in euro.servi}
-        print(f"| {trajectoire.libelle} | "
-              + " | ".join(_nb(euro.reserve[a] / annuelle[a]) for a in (2030, 2035, 2040,
-                                                                         2045, 2050))
-              + " | " + " | ".join(_nb(euro.dette[a] / (annuelle[a] * _prix(r, a)))
-                                   for a in (2040, 2045, 2050)) + " |")
+        print(f"\n## {trajectoire.libelle}\n")
+        print("| Variante | Le stock face à α = 1 | Cotisants | Réserve 2040 | 2050 | "
+              "Prime 2040 | 2050 | 2060 | Dette d'un retraité, max |")
+        print("|---" * 9 + "|")
+        for cle in PERSONNELLES:
+            r = etude.resultat(cle, nom_t)
+            euro = r.euro_stock
+            commun = _voie(etude.voies, cle, 0.0, {}).stock.reserve_en_commun
+            vivant = {a: (masses[DEBUT] / masses[a] if commun else 1.0) for a in masses}
+            dette, annee = _dette_en_annees(euro, r)
+            ecart_stock = r.moyenne({a: r.pib(r.stock.servi, a) - r.pib(r.stock.etalon, a)
+                                     for a in r.depense})
+            print(f"| {LIBELLES[cle]} | {_pc(r.stock.valeur_actuelle_ecart, 1)} | "
+                  f"{_pc(-ecart_stock)} | "
+                  + " | ".join(_nb(euro.reserve[a] * vivant[a] / euro.servi[a])
+                               for a in (2040, 2050)) + " | "
+                  + " | ".join(_nb(100 * euro.prime[a]) for a in (2040, 2050, 2060))
+                  + f" | {_pc(dette, 1)}" + (f" ({annee})" if dette > 5e-4 else "") + " |")
 
 
 def _prix(r: Resultat, annee: int) -> float:

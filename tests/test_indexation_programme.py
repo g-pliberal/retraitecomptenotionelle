@@ -188,6 +188,39 @@ def test_la_dette_de_la_reserve_porte_interet_au_taux_de_la_masse_salariale():
     assert assurance.dette[2] == pytest.approx(0.05 * 1.03 + 0.05)
 
 
+def test_une_reserve_a_soi_ne_recoit_rien_des_morts():
+    """Une prime de 10 %, la moitié du stock morte la première année, sans
+    plancher qui joue. En commun, la réserve du groupe vaut 0,1 + 0,5 × 0,1 =
+    0,15 de la masse de départ, soit 0,3 par euro vivant : les survivants
+    héritent des primes des morts. À soi, chaque euro vivant a payé 0,1 deux
+    fois, et garde 0,2 ; la réserve des morts sort du stock."""
+    besoin = _besoin({0: (1.0, 1.0), 1: (1.0, 1.0)})
+    commun = I.assurer((0.0,), (0.0,), (0.0,), (1.0, 0.5), 0.10, besoin)
+    a_soi = I.assurer((0.0,), (0.0,), (0.0,), (1.0, 0.5), 0.10, besoin, en_commun=False)
+    assert commun.reserve == pytest.approx((0.10, 0.15))
+    assert a_soi.reserve == pytest.approx((0.10, 0.20))
+
+
+def test_a_soi_le_besoin_se_mesure_pour_un_survivant():
+    """Ce que le plancher peut encore coûter, mesuré sur le groupe, se divise
+    par ce qui en vit : 0,05 sur une assiette de 0,5, pour une moitié vivante,
+    font 0,1 sur 1 par survivant. Sa réserve de 0,2 dépasse : la prime devient
+    (0,1 − 0,2) / 1 = −10 %, un supplément."""
+    besoin = _besoin({0: (1.0, 1.0), 1: (0.05, 0.5), 2: (0.0, 0.0)})
+    a_soi = I.assurer((0.0, 0.0), (0.0, 0.0), (0.0, 0.0), (1.0, 0.5, 0.5), 0.10, besoin,
+                      en_commun=False)
+    assert a_soi.prime == pytest.approx((0.10, 0.10, -0.10))
+
+
+def test_a_soi_le_manque_est_la_dette_du_seul_retraite():
+    """La moitié du stock morte, la règle −5 % : le plancher sert 0,05 à
+    chaque euro vivant, que sa réserve de 0,02 + 0,02 ne couvre qu'en partie."""
+    a_soi = I.assurer((-0.05,), (0.0,), (0.0,), (1.0, 0.5), 0.02,
+                      _besoin({0: (1.0, 1.0), 1: (1.0, 1.0)}), en_commun=False)
+    assert a_soi.dette == pytest.approx((0.0, 0.01))
+    assert a_soi.reserve == pytest.approx((0.02, 0.0))
+
+
 def test_sans_dette_la_reserve_qui_manque_reste_aux_cotisants():
     """La convention de l'étude, avant la décision 76 : la pension suit le
     plancher, et la réserve, négative, dit ce que les cotisants avancent."""

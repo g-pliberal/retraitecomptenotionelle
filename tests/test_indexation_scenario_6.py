@@ -157,3 +157,15 @@ def test_sous_le_cor_la_reserve_de_la_voie_1_decidee_revient_au_stock(etude, lec
     assert resultat.stock.valeur_actuelle_ecart == pytest.approx(0.0, abs=1e-4)
     assert max(resultat.reserve.values()) > 0.0
     assert all(dette == 0.0 for dette in resultat.stock.dette.values())
+
+
+def test_sous_le_cor_la_reserve_rendue_ne_revient_toute_au_stock_que_mise_en_commun(etude):
+    """La réserve personnelle, non transmise : rendue de son vivant et ce que
+    laissent les morts aux survivants, le stock retrouve sur sa vie ce que
+    α = 1 lui sert ; ce que les morts laissent sortant du stock, il perd, et
+    les cotisants gagnent. Jamais rendue, le stock perd sa contribution."""
+    commun = etude.resultat("rp_dates_commun", "cor").stock.valeur_actuelle_ecart
+    a_soi = etude.resultat("rp_dates_a_soi", "cor").stock.valeur_actuelle_ecart
+    jamais = etude.resultat("rp_jamais_a_soi", "cor").stock.valeur_actuelle_ecart
+    assert commun == pytest.approx(0.0, abs=1e-3)
+    assert jamais < a_soi < commun - 1e-3

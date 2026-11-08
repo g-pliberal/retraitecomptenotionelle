@@ -201,7 +201,7 @@ Besoin = Callable[[int, float, float, float], Sequence[tuple[float, float]]]
 def assurer(hausses_regle: Sequence[float], hausses_masse: Sequence[float],
             inflations: Sequence[float], survie: Sequence[float], prime: float,
             besoin: Besoin, retour: str = "progressif",
-            manque: str = "dette") -> Assurance:
+            manque: str = "dette", en_commun: bool = True) -> Assurance:
     """Le stock sous sa prime, sa réserve et son plancher (décisions 73 à 77).
 
     ``hausses_regle`` et ``hausses_masse`` : ce que la règle et la masse
@@ -221,6 +221,12 @@ def assurer(hausses_regle: Sequence[float], hausses_masse: Sequence[float],
     si elle est plus basse — au rang suivant ; ``au_seuil``, seulement quand
     la réserve seule le couvre. Sous plusieurs risques, le plus exigeant
     l'emporte. Elle ne remonte jamais.
+
+    ``en_commun`` : la réserve du stock entier, où les survivants héritent de
+    ce que les morts y ont laissé ; ou, faux, une réserve à soi, qui ne reçoit
+    rien des morts — ce qu'un retraité y laisse à son décès sort du stock. La
+    réserve se compte alors par euro vivant, et ce que ``besoin`` mesure sur
+    le groupe se divise par ce qui en vit.
     """
     if retour not in RETOURS:
         raise ValueError(f"retour inconnu : {retour!r} (attendu : {RETOURS})")
@@ -231,13 +237,18 @@ def assurer(hausses_regle: Sequence[float], hausses_masse: Sequence[float],
                          "après la bascule, et une survie de plus, celle de la bascule")
     regle = plancher = prix = 1.0
     dette = 0.0
-    reserve = survie[0] * prime * plancher
+    def poids(rang: int) -> float:
+        return survie[rang] if en_commun else 1.0
+
+    reserve = poids(0) * prime * plancher
     lignes: list[tuple[float, ...]] = []
 
     def reviser(rang: int) -> float:
         nonlocal prime
-        risques = [(cout, assiette) for cout, assiette in besoin(rang, plancher, regle, prix)
-                   if assiette > 0.0]
+        vivants = 1.0 if en_commun else survie[rang]
+        risques = [(cout / vivants, assiette / vivants)
+                   for cout, assiette in besoin(rang, plancher, regle, prix)
+                   if assiette > 0.0 and vivants > 0.0]
         if not risques:
             return 0.0
         voulue, cout = max(((cout - reserve) / assiette, cout) for cout, assiette in risques)
@@ -260,10 +271,10 @@ def assurer(hausses_regle: Sequence[float], hausses_masse: Sequence[float],
                 plancher = regle - rendu
                 dette -= rendu
                 exces = 0.0
-            reserve += survie[rang] * (prime * plancher - exces) / prix
+            reserve += poids(rang) * (prime * plancher - exces) / prix
             if manque == "dette" and reserve < 0.0:
-                if survie[rang] > 0.0:
-                    dette += -reserve * prix / survie[rang]
+                if poids(rang) > 0.0:
+                    dette += -reserve * prix / poids(rang)
                 reserve = 0.0
         en_vigueur = prime
         cout = reviser(rang)
@@ -342,6 +353,8 @@ class Regle:
     crise_assuree: tuple[str, ...] = ()
     #: Qui paie la réserve qui manque (décision 76).
     reserve_manquante: str = "cotisants"
+    #: La réserve du stock entier, ou une réserve à soi (:func:`assurer`).
+    reserve_en_commun: bool = True
 
     def __post_init__(self) -> None:
         if self.base not in BASES:
@@ -369,7 +382,8 @@ class Regle:
     def assuree(self) -> bool:
         """La voie 1 décidée : la réserve se rend, ou sa part qui manque
         devient une dette ; son chemin dépend de ce qui reste du stock."""
-        return self.reserve_rendue != "jamais" or self.reserve_manquante != "cotisants"
+        return (self.reserve_rendue != "jamais" or self.reserve_manquante != "cotisants"
+                or not self.reserve_en_commun)
 
     @property
     def niveau_de_bascule(self) -> float:
@@ -380,6 +394,7 @@ class Regle:
 
 def _regle(donnees: Mapping) -> Regle:
     nombres = {cle: float(valeur) if isinstance(valeur, (int, float))
+               and not isinstance(valeur, bool)
                else tuple(valeur) if isinstance(valeur, list) else valeur
                for cle, valeur in donnees.items()}
     return Regle(**nombres)
@@ -710,7 +725,7 @@ class PensionsDuProgramme:
                          depuis, plancher, niveau, prix) for crise in self._risques]
 
         assurance = assurer(hausses, masses, inflations, survie, float(regle.prime), besoin,
-                            regle.retour, regle.reserve_manquante)
+                            regle.retour, regle.reserve_manquante, regle.reserve_en_commun)
         niveau = 1.0 - float(regle.baisse_transition)
         detail = Detail()
         prix = 1.0

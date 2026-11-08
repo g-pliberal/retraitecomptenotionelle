@@ -1470,6 +1470,19 @@ notionnel », pour que personne ne se sente floué. Le risque du plancher
 moins qu'une réserve commune (une dette au plus de 51 % d'une année de
 pension contre 54 % sous la crise) ; elle reste à étudier.
 
+**Le 8 novembre 2026 : la réserve personnelle, non transmise aux
+héritiers** (note `186/2026-11-08-reserve-personnelle.md`). Le propriétaire :
+« Étudie la réserve personnelle, non transmise aux héritiers au décès ».
+Jamais rendue, elle est une baisse de 1 % : sans choc, le stock perd 1 % de
+sa pension, et les cotisants gagnent 0,03 point de PIB par an. Rendue de son
+vivant, ce que laissent les morts allant aux survivants — comme la Suède le
+fait des comptes des morts avant leur départ (Socialförsäkringsbalken,
+chapitre 62, § 9) —, le stock retrouve tout ce qu'il a versé. Rendue sans
+mise en commun, le stock perd ce que laissent ses morts (0,4 à 0,6 % sur sa
+vie), et ceux qui vivent longtemps épuisent leur réserve. À 1 %, aucune
+variante ne couvre la crise étudiée : une dette de la moitié d'une année de
+pension.
+
 ### Chantier 6 — Les complémentaires : rien que leurs cotisations, sauvées mais dissoutes
 
 **La question.** Comment couper aux complémentaires tout argent qui n'est pas
@@ -2104,13 +2117,11 @@ aucun. Rien n'est gelé.
   réserve), l'effort pris à la bascule (4,3 %, fixe ou révisé), ou la même
   règle pour toutes les pensions (0,18 point de PIB par an pour les
   cotisants) ; et la dette des retraités morts avant de l'avoir rendue.
-- Chantier 5, après la règle des décisions 75 et 76 écrite au modèle le
-  8 novembre (note `186/2026-11-08-indexation-voie-1-au-modele.md`) : le
-  propriétaire veut « une faible contribution durable pour amortir un choc
-  passager », « 1 % tout le temps », et une solution où personne ne se
-  sente floué ; restent son assiette (le stock seul ou toutes les
-  pensions), et s'il s'agit d'une réserve personnelle, en plus du compte,
-  ce qu'elle devient au décès.
+- Chantier 5, la réserve personnelle étudiée le 8 novembre (note
+  `186/2026-11-08-reserve-personnelle.md`), après « 1 % tout le temps » :
+  ce qui reste au décès, aux autres retraités ou au système ; la réserve
+  rendue de son vivant ou non ; le taux, 1 % ne couvrant pas la crise
+  étudiée ; l'assiette, le stock seul ou toutes les pensions.
 - Chantier 6 : le mécanisme de résolution ; l'ordre des caisses.
 - Chantier 6, étudié le 7 novembre : l'entrée des complémentaires au régime
   unique, à la bascule ou caisse par caisse ; la résolution et son seuil ;
