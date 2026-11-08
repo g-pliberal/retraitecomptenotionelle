@@ -240,12 +240,13 @@ header.bandeau nav a {
   font-size: var(--t-petit); font-weight: 500; white-space: nowrap;
   display: inline-flex; align-items: center; min-height: 2.75rem;
   padding: 0 0.75rem; border-radius: var(--rayon-petit);
-  background: var(--petrole-fonce);
+  background: var(--petrole-fonce); border-bottom: 4px solid transparent;
   transition: color 0.15s, background-color 0.15s;
 }
 header.bandeau nav a:hover { color: var(--or); }
 header.bandeau nav a[aria-current="page"] {
   color: var(--sur-or); background: var(--or);
+  border-bottom-color: var(--sur-or);
 }
 header.bandeau .menu { display: none; }
 @media (max-width: 48rem) {

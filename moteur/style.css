@@ -282,9 +282,9 @@ header.bandeau .nom a:hover .parti { color: var(--or); }
    poser. */
 body.plf-embedded footer .retour-site { display: none; }
 /* Les onglets : des pastilles, comme celles du site du parti, sous la
-   marque, sur toute la largeur. L'onglet courant est plein de safran — un
-   fond qui tranche en niveaux de gris comme en couleur — ET porte
-   `aria-current="page"`. Les règles sont ancrées sur `header.bandeau` : le
+   marque, sur toute la largeur. L'ONGLET COURANT NE SE SIGNALE PAS QUE PAR LA
+   COULEUR (WCAG 1.4.1) : plein de safran, il porte aussi un trait épais sous
+   son libellé, qui se voit en niveaux de gris, ET `aria-current="page"`. Les règles sont ancrées sur `header.bandeau` : le
    plan d'une page longue est un `<nav>` lui aussi. */
 header.bandeau nav {
   display: flex; flex-wrap: wrap; gap: 0.25rem; width: 100%;
@@ -336,12 +336,13 @@ header.bandeau nav a {
   font-size: var(--t-petit); font-weight: 500; white-space: nowrap;
   display: inline-flex; align-items: center; min-height: 2.75rem;
   padding: 0 0.75rem; border-radius: var(--rayon-petit);
-  background: var(--petrole-fonce);
+  background: var(--petrole-fonce); border-bottom: 4px solid transparent;
   transition: color 0.15s, background-color 0.15s;
 }
 header.bandeau nav a:hover { color: var(--or); }
 header.bandeau nav a[aria-current="page"] {
   color: var(--sur-or); background: var(--or);
+  border-bottom-color: var(--sur-or);
 }
 /* LE MENU DU TÉLÉPHONE : sous 48 rem, la navigation entière se replie
    derrière « Menu », à droite de la marque, et le bandeau tient en une
