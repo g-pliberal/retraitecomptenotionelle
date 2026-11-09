@@ -1,0 +1,29 @@
+date: "2026-11-09"
+session: "action 186, chantier 8 : la décision 89 chiffrée, les petites baisses face à la baisse de la pension de quatre retraités types"
+consulte: >-
+  Aucune règle du scénario 1 n'est touchée, et l'index LEGI n'est pas
+  interrogé. Lus ce jour à leur source : DGFiP Statistiques n° 46 de mai
+  2026 (la taxe foncière de 2025, tableaux 1 et 2) ; le document n° 6 de la
+  séance du COR du 5 février 2026 (patrimoine des retraités) ; la fiche de
+  l'Insee « Détention de la résidence principale » (édition 2024) ; la
+  fiche F59 de service-public.fr (exonérations de taxe foncière des
+  personnes âgées, taxe de 2026). Lus par une source secondaire, non au
+  texte : les plafonds de LégiFiscal pour le plafonnement de la taxe
+  foncière ; la formule, les montants indicatifs de la CTA et l'arrêté du
+  26 juin 2026 sur le coefficient de la CTA du gaz, par Selectra. Dans le
+  dépôt : prelevements_remuneration.yaml (barème de CSG des pensions de
+  2026), distribution_pensions.csv, restitution.py.
+trouve: >-
+  Aucun écart avec les fiches. Le coefficient de la CTA du gaz, fixé à
+  72,71 % au 1er juillet 2026 par l'arrêté que la délibération n° 2026-98
+  de la CRE précédait, aurait été ramené à 83,21 % par un arrêté du 26 juin
+  2026 publié le 30 juin : la note du 9 novembre sur la CTA cite encore
+  72,71 %. L'exonération de taxe foncière des plus de 75 ans vaut sous
+  12 793 € de revenu fiscal pour une part (revenus de 2025). Le détail est
+  dans la note
+  docs/feuille_de_route/186/2026-11-09-petites-baisses-retraites.md.
+reste: >-
+  À relire au texte : l'arrêté du 26 juin 2026 (coefficient de la CTA du
+  gaz) ; l'abonnement de distribution du gaz au 1er juillet 2026, à la
+  délibération de la CRE ; les articles 1390, 1391, 1391 B et 1391 B ter du
+  code général des impôts, toujours cités par des sources secondaires.

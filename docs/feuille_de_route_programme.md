@@ -2000,6 +2000,12 @@ des retraités de la bascule voient leur pension contributive monter, presque
 tous des libéraux, et 97,7 % la voient baisser ; ce qui relève les petites
 pensions est la garantie. Au propriétaire : la phrase du site, et quatre questions.
 
+**Le 9 novembre 2026 : la décision 89, chiffrée.** Seule la CTA atteint un
+retraité : 23 € par an, face à 600 à 7 700 € de pension nette en moins, sous
+A comme sous B ; la LVT sans abattement coûte en plus 360 à 930 € au
+propriétaire. La somme ne compense que sous le plancher de la garantie. Le
+détail, et ce qui reste à trancher : `186/2026-11-09-petites-baisses-retraites.md`.
+
 ### Chantier 9 — Le site et le simulateur
 
 **La question du propriétaire.** « Est-ce que le simulateur est vraiment une
