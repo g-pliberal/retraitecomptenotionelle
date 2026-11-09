@@ -1,14 +1,14 @@
 # Qui finance quoi, milliard par milliard : les recettes de la retraite en 2026, et ce que la proposition en fait
 
 **Reprise, au 9 novembre 2026.** La table des recettes de 2026 est posée
-(« 1. » à « 4. »), sans toucher au modèle ni au site, et le propriétaire a
-tranché ses lignes ouvertes le jour même (décisions 91 à 99) : les
-fonctionnaires sont augmentés de la moitié de l'économie, hors de la page
-Coût ; chaque impôt se traite un par un ; l'État paie les allègements ; les
-cotisations chômage et maladie montent pour payer les droits des chômeurs et
-des malades. Reste une question, à la fin de la note : la taxe sur les
-salaires et le forfait social, de moitié ou en entier, et la CSG du capital.
-Puis une session du modèle (« Ce que les réponses changent au modèle »).
+(« 1. » à « 4. »), sans toucher au modèle ni au site, et le propriétaire en a
+tranché toutes les lignes le jour même (décisions 91 à 101). La table
+finale, impôt par impôt, est sous « La table, impôt par impôt » : chaque
+impôt retiré aux retraites baisse de moitié sur sa part retraite, l'autre
+moitié va au budget général de l'État. Plus aucune question ne l'attend.
+Par quoi commencer : une session du modèle porte ces décisions au
+scénario 6 (« Ce que les réponses changent au modèle »), la hausse des
+fonctionnaires restant hors de la page Coût (décision 98).
 
 *Le 9 novembre 2026, le propriétaire demande, pour le chantier 4 de
 l'action 186 : qui finance quoi, milliard par milliard. Le chiffrage
@@ -938,7 +938,7 @@ pensions faite d'un coup comme le modèle la compte ; les 31,7 Md€ sont les
 45,0 de baisse des cotisations moins les 13,3 que versaient des employeurs
 publics (« 3. »).
 
-## Ce que le propriétaire tranche
+## La dernière question, sur deux lignes de la table
 
 Une question, en deux lignes de la table.
 
@@ -964,3 +964,44 @@ Une question, en deux lignes de la table.
   les salaires et le forfait social sont alors supprimés en entier, il lui
   reste, les allègements payés, entre + 1,9 et − 4,7 Md€ (20,0 + 6,2, moins
   24,3 à 30,9).
+
+## Le même jour, pour finir : la table est confirmée
+
+Le propriétaire, aux deux lignes : « De moitié sur la part retraite. La
+moitié est redonnée, l'autre moitié va dans le budget général de l'État. »
+La même réponse pour la taxe sur les salaires et le forfait social
+(décision 100) et pour la CSG sur les revenus du capital (décision 101).
+
+La table « impôt par impôt » ci-dessus est donc la bonne, sans changement :
+
+- la taxe sur les salaires baisse de la moitié de sa part retraite, 5,3 Md€
+  sur 10,6 ; le forfait social, de moitié, 3,3 sur 6,6 ;
+- la CSG sur les revenus du capital baisse de la moitié de ses 6,67 points
+  de retraite, 3,3 points, 6,2 Md€ ;
+- les autres impôts retirés suivent la même règle (décision 94) : la CSG
+  sur les pensions, 1,47 point, 4,8 Md€ ; la C3S, 2,7 ; les petites lignes,
+  3,2 en tout ;
+- trois exceptions décidées : la TVA de l'Agirc-Arrco reste aux retraites
+  (79), la CTA est supprimée en entier (88), les droits sur les alcools
+  vont en entier à l'État (92).
+
+Les comptes de 2026, tels que les décisions 79 à 101 les laissent (calcul) :
+
+| En Md€ | |
+|---|---:|
+| Baisses de charges, tous impôts | 27,1 |
+| Au budget général de l'État, des impôts retirés aux retraites | 28,6 |
+| L'État verse à la retraite pour les allègements (décision 96) | 24,3 à 30,9 |
+| Il lui reste, avant la hausse des fonctionnaires | + 4,3 à − 2,3 |
+| Hausse des fonctionnaires, au budget général (décision 98) | 23,6 |
+| Hausse des cotisations chômage et maladie (décision 99) | 15,4 |
+| Solde de toutes les administrations, avec la taxe sur le terrain | + 20,4 à + 40,0 |
+
+## Ce que le propriétaire tranche
+
+Plus rien sur cette table. Deux points lui reviendront quand la session du
+modèle les aura chiffrés : le prix de la cotisation que l'assurance chômage
+et l'assurance maladie versent pour un chômeur ou un malade, 18 % de
+l'allocation ou le forfait d'aujourd'hui (décision 97) ; et le montant
+exact des allègements sous le taux unique, que cette note ne connaît qu'entre
+24 et 31 Md€.
