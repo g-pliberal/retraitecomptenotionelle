@@ -556,6 +556,17 @@ Le même jour, sur le message (chantier 8) :
     À chiffrer avant de le dire : la somme de ces baisses pour un retraité
     type, face à la baisse de sa pension (note du 9 novembre, « Ce qui
     reste »).
+90. **« Chaque pension vaut ce qui a été cotisé »**, l'élément de langage
+    de la valeur actuarielle (décision 1) : « L'élément de langage me
+    convient : chaque pension vaut ce qui a été cotisé. » La baisse se dit
+    juste en dessous, simplement, et que certaines pensions montent :
+    « C'est bien de dire que certaines pensions montent aussi. » Sur la
+    grille des carrières types du site, qui ne suit pas encore toutes les
+    décisions, une seule des treize monte aux générations déjà parties (le
+    libéral né en 1940, + 19 %) ; combien de retraités sont dans ce cas reste
+    à compter avant de l'écrire. La règle vaut pour les pensions que l'État
+    fixe : l'Agirc-Arrco garde les siennes jusqu'à son intégration
+    (décision 43).
 
 ## Ce qui est écarté
 
