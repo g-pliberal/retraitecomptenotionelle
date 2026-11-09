@@ -2054,6 +2054,12 @@ l'a demandé la veille : « Attaque le chantier 9 ». Le rapport est la note
   logement, le rendement) ; la refonte quand A ou B et les portages du modèle
   seront là ; le simulateur des adhérents après l'action 187.
 
+**Le 9 novembre 2026 : « Les questions qui fâchent », rédigées.** Dix
+questions d'adversaire, chacune avec sa réponse en cinq lignes, ses sources
+au dépôt et la ligne qui dit au propriétaire ce qu'elle a de faible : la
+note `186/2026-11-09-questions-qui-fachent.md`. Aucune page n'est touchée ;
+le propriétaire tranche, en fin de note.
+
 ### Chantier 10 — Le gel, la cible, la date
 
 **La question.** Le chantier du modèle semblait sans fin : au 6 novembre,
