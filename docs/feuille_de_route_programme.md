@@ -596,6 +596,33 @@ Et sur les allègements : « Les allègements de cotisations existent
 toujours », ce qui confirme la décision 47 ; reste à dire qui verse la
 cotisation qu'ils effacent (note, question 4).
 
+Le même jour, ensuite, aux cinq questions reposées en clair (même note) :
+
+93. **Les fonctionnaires sont augmentés de ce que leur employeur
+    économise** : « Les fonctionnaires sont augmentés du montant qui a été
+    économisé. » La hausse des traitements du 20 septembre (action 59,
+    archivée) est confirmée, et le coût doit la compter. Reste à confirmer
+    si c'est la moitié de l'économie, comme le 20 septembre (23,6 Md€ en
+    2026, + 27,5 % pour un civil de l'État), ou toute (47,3 Md€, + 55 %).
+94. **Les impôts affectés se traitent un par un, et la moitié n'est rendue
+    que sur ceux qui sont retirés** : « Il faut faire impôt par impôt. On ne
+    redonne la moitié que sur les impôts enlevés. » La TVA que les retraites
+    gardent (décision 79) ne rend rien.
+95. **Pas de baisse générale : on enlève des charges, au cas par cas, par
+    les règles existantes** : « On ne fait pas de macro comme ça. On fait au
+    cas par cas avec les règles existantes. On ne redonne pas de l'argent,
+    on enlève des charges. » La baisse générale de la CSG sur les salaires
+    du 20 septembre est abandonnée. Lecture de la session, à confirmer :
+    chaque impôt retiré baisse de moitié par son propre taux, l'État garde
+    l'autre moitié ; c'est ainsi que la baisse va « à tous » (décision 91).
+96. **L'État verse à la retraite la cotisation que les allègements
+    effacent** : « L'État ». 24 à 31 Md€ en 2026, 238 € par mois pour un
+    salarié au SMIC ; la retraite encaisse ses 18 %.
+97. **L'assurance maladie et l'assurance chômage cotisent pour les malades
+    et les chômeurs** : « L'assurance maladie et l'assurance chômage ».
+    15,4 Md€ au tarif de 2025, sans recette nouvelle en face ; le prix,
+    18 % de l'allocation ou le forfait d'aujourd'hui, reste à fixer.
+
 ## Ce qui est écarté
 
 - **Une transition sans baisse nominale des pensions en cours** — bâtir le
@@ -1340,6 +1367,12 @@ solidarité) et les allègements (24 à 31). Au propriétaire : six questions.
 demande des questions plus claires : cinq sont reposées à la fin de la note,
 sur les fonctionnaires, la moitié rendue, son partage, les allègements, et
 la retraite des chômeurs et des malades.
+
+**Le même jour, ensuite, il répond aux cinq** (décisions 93 à 97) : les
+fonctionnaires augmentés, les impôts traités un par un sans baisse générale,
+l'État payeur des allègements, l'assurance chômage et l'assurance maladie
+payeuses des droits des chômeurs et des malades. Restent deux confirmations,
+à la fin de la note ; puis une session du modèle.
 
 ### Chantier 5 — L'indexation, et le partage de l'effort entre actifs et retraités
 

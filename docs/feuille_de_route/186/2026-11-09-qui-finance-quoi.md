@@ -1,14 +1,14 @@
 # Qui finance quoi, milliard par milliard : les recettes de la retraite en 2026, et ce que la proposition en fait
 
 **Reprise, au 9 novembre 2026.** La table des recettes de 2026 est posée
-(« 1. » à « 4. »), sans toucher au modèle ni au site. Le propriétaire a
-tranché deux lignes le jour même (décisions 91 et 92) : la baisse d'impôt va
-à tous, salariés et retraités ; les droits sur les alcools restent à l'État.
-Il a demandé des questions plus claires : elles sont reposées, cinq, à la
-fin de la note, chacune avec ce qui se passe aujourd'hui et ce que change
-chaque réponse. Par quoi commencer : ses cinq réponses ; puis une session du
-modèle les porte au coût du scénario 6, avec les décisions 79 à 81, 88, 91
-et 92, et corrige les trois écarts de « 1.3 ».
+(« 1. » à « 4. »), sans toucher au modèle ni au site, et le propriétaire a
+tranché ses lignes ouvertes le jour même (décisions 91 à 97) : les
+fonctionnaires sont augmentés, chaque impôt se traite un par un, l'État
+verse la cotisation que les allègements effacent, l'assurance chômage et
+l'assurance maladie cotisent pour les chômeurs et les malades. Restent deux
+confirmations, à la fin de la note : la hausse des fonctionnaires, de la
+moitié ou du tout ; et la table impôt par impôt. Puis une session du modèle
+porte le tout au scénario 6 (« Ce que les réponses changent au modèle »).
 
 *Le 9 novembre 2026, le propriétaire demande, pour le chantier 4 de
 l'action 186 : qui finance quoi, milliard par milliard. Le chiffrage
@@ -600,7 +600,7 @@ encaissés, sans dire qui les verse.
   corrigés ici : les corriger, c'est changer les données du modèle, ce que
   cette session n'a pas à faire. Ils attendent la session du modèle.
 
-## Ce que le propriétaire tranche
+## Les cinq questions, reposées en clair
 
 Cinq questions. Pour chacune : ce qui se passe aujourd'hui, la question, et
 ce que change chaque réponse. Les montants sont ceux de 2026, par an.
@@ -696,3 +696,151 @@ dans la même somme : ce que l'État garde des impôts retirés aux retraites,
 chômeurs et les malades (22) en demande 46 à 53. Les deux ne tiennent pas
 dans la somme : il faut soit rendre moins en baisses d'impôt, soit faire
 payer l'un des deux par quelqu'un d'autre.
+
+## Le même jour, ensuite : les cinq réponses
+
+Le propriétaire, aux cinq questions :
+
+1. « Les fonctionnaires sont augmentés du montant qui a été économisé. »
+2. « Il faut faire impôt par impôt. On ne redonne la moitié que sur les
+   impôts enlevés. »
+3. « On ne fait pas de macro comme ça. On fait au cas par cas avec les
+   règles existantes. On ne redonne pas de l'argent, on enlève des charges. »
+4. « L'État. »
+5. « L'assurance maladie et l'assurance chômage. »
+
+Ce sont les décisions 93 à 97 de `docs/feuille_de_route_programme.md`.
+
+### Ce que la session en comprend
+
+- **Les fonctionnaires sont augmentés** (décision 93). La hausse du
+  simulateur est confirmée, et la page Coût doit la compter. La phrase se
+  lit de deux façons, que la première confirmation ci-dessous départage.
+- **Chaque impôt se traite à part** (décisions 94 et 95). Un impôt que les
+  retraites gardent ne rend rien. Un impôt retiré aux retraites baisse de
+  moitié, pour ceux qui le paient, par son propre taux ; l'État garde
+  l'autre moitié. Il n'y a plus de baisse générale de la CSG sur les
+  salaires, que la règle du 20 septembre prévoyait (1,12 point).
+- **L'État verse la cotisation que les allègements effacent** (décision
+  96) : 238 € par mois pour un salarié au SMIC, 24 à 31 Md€ en tout. La
+  retraite reçoit bien ses 18 %, comme le modèle le compte.
+- **L'assurance chômage et l'assurance maladie cotisent pour les chômeurs et
+  les malades** (décision 97) : 13,1 et 2,3 Md€ au tarif de 2025 (publié).
+
+### La table, impôt par impôt
+
+Montants de 2026 (publié, CCSS d'octobre 2026), en Md€. « Retiré » veut
+dire : ne va plus aux retraites.
+
+| Impôt | Aux retraites aujourd'hui | Retiré ? | Baisse pour ceux qui le paient | L'État garde | Comment, par sa règle |
+|---|---:|---|---:|---:|---|
+| TVA versée à l'Agirc-Arrco | 11,1 (calcul) | non (décision 79) | 0 | 0 | rien ne change |
+| CTA, sur les factures d'énergie | 1,7 | oui, supprimée en entier (décision 88) | 1,7 | 0 | taux à zéro |
+| Droits sur les alcools | 3,2 | oui, gardés en entier par l'État (décision 92) | 0 | 3,2 | rien ne change pour le buveur |
+| Taxe sur les salaires, part des retraites | 10,6 | oui | 5,3 | 5,3 | ses taux baissent de 29 % |
+| Forfait social | 6,6 | oui | 3,3 | 3,3 | son taux passe de 20 % à 10 % |
+| CSG sur les pensions, 2,94 points | 9,7 | oui | 4,8 | 4,8 | 1,47 point de moins sur les pensions |
+| CSG sur les revenus du capital, 6,67 points | 12,5 | oui | 6,2 | 6,2 | 3,3 points de moins sur le capital |
+| C3S, sur le chiffre d'affaires des sociétés | 5,4 | oui | 2,7 | 2,7 | son taux baisse de moitié |
+| Stock-options et actions gratuites | 1,6 | oui | 0,8 | 0,8 | idem |
+| Contributions sur les retraites d'entreprise et les préretraites | 1,4 | oui | 0,7 | 0,7 | idem |
+| Taxe sur les contrats d'assurance et autres | 1,4 | oui | 0,7 | 0,7 | idem |
+| Taxes sur les véhicules de société | 0,9 | oui | 0,45 | 0,45 | idem |
+| Autres contributions et petites taxes | 1,0 | oui | 0,5 | 0,5 | idem |
+| **Ensemble** | **66,8** | | **27,1** | **28,6** | |
+
+Les exonérations que l'État rembourse déjà aux caisses, 5,9 Md€, ne sont
+pas un impôt : il continue de les payer (décision 96).
+
+Ce que cela donne pour une personne (calcul) :
+
+- *Un retraité* : la CSG sur sa pension baisse de 1,47 point, soit 23 € par
+  mois en moyenne, 22 € pour 1 500 € de pension au taux plein.
+- *Un salarié du privé* : sa cotisation de retraite baisse (de 11,31 à 6,33
+  points de son salaire brut) ; sa CSG ne bouge plus. Ce que son employeur
+  gagne sur la taxe sur les salaires ou le forfait social ne lui revient
+  que si l'employeur le lui rend.
+- *Un épargnant* : la CSG sur ses revenus du capital baisse de 3,3 points.
+  C'est la plus grosse baisse de la table, 6,2 Md€.
+
+### Les comptes, après ces réponses
+
+| En 2026, Md€ | |
+|---|---:|
+| L'État garde, des impôts retirés aux retraites | 28,6 |
+| L'État verse pour les allègements (décision 96) | − 24,3 à − 30,9 |
+| **Il lui reste** | **+ 4,3 à − 2,3** |
+| Baisses de charges, tous impôts | 27,1 |
+| Hausse des fonctionnaires, de la moitié ; du tout | 23,6 ; 47,3 |
+| Charge nouvelle de l'assurance chômage ; de l'assurance maladie | 13,1 ; 2,3 |
+
+Deux choses à voir en face :
+
+- **L'assurance chômage et l'assurance maladie n'ont aucune recette
+  nouvelle** pour ces 15,4 Md€. Leur déficit augmente d'autant, ou leurs
+  cotisations montent, ou l'État les aide ; mais il ne lui reste rien.
+- **La hausse des fonctionnaires n'est payée par aucune recette nouvelle** :
+  l'État rend ce qu'il économisait.
+
+Le solde public consolidé (« 3. », refait avec ces réponses, calcul) : il
+part de + 40,3 Md€ (le plancher de + 1,8 et les 38,5 Md€ d'impôts encore
+levés). La hausse des fonctionnaires de la moitié le ramène à + 16,7 ; les
+allègements, à − 14,2 à − 7,6 ; la prestation aux parents et les
+prélèvements sur les pensions non servies, à − 25,0 à − 18,4 ; la taxe sur
+la valeur du terrain, à **+ 5,0 à + 24,6**. Si les fonctionnaires
+reçoivent tout ce qui est économisé, 23,7 Md€ de moins : **− 18,7 à + 0,9**.
+Ce que l'assurance chômage et l'assurance maladie versent à la retraite ne
+change pas ce total : c'est d'une caisse publique à une autre.
+
+### Ce que les réponses changent au modèle
+
+Pour la session du modèle, rien n'étant fait ici :
+
+- la page Coût compte la hausse des traitements, et les cotisations qu'elle
+  rapporte ;
+- `restitution.py` et la fiche de paie : la baisse de CSG sur les salaires
+  s'en va ; la taxe sur les salaires et le forfait social baissent de
+  moitié au lieu de disparaître ; la CSG sur les pensions baisse de 1,47
+  point ;
+- le scénario 6 garde la TVA de l'Agirc-Arrco et l'AVPF, ôte la CTA, verse
+  la LVT ; il crédite les périodes de chômage et de maladie, payées par
+  leurs assurances, au prix à fixer : 18 % de l'allocation ou le forfait
+  d'aujourd'hui ;
+- les trois écarts de « 1.3 ».
+
+## Ce que le propriétaire tranche
+
+Deux confirmations, chacune en un mot.
+
+**Confirmation 1. Les fonctionnaires : la moitié, ou tout ?**
+
+- *Ce que l'État économise* : il versait 82 % du traitement d'un
+  fonctionnaire civil pour payer les pensions ; il n'en versera plus que
+  17 %, comme un employeur privé.
+- *La règle du 20 septembre* : la moitié de cette économie augmente le
+  traitement ; l'autre moitié reste à l'État.
+- *Votre phrase d'aujourd'hui* : « augmentés du montant qui a été
+  économisé ».
+- *La question.* Est-ce la moitié, comme le 20 septembre, ou tout ?
+- *La moitié* : + 27,5 % pour un fonctionnaire civil de l'État, + 32,4 %
+  pour un militaire, + 9 % pour un agent d'hôpital ou de mairie. Coût :
+  23,6 Md€ par an.
+- *Tout* : + 55 %, + 65 % et + 18 %. Coût : 47,3 Md€ par an ; l'État ne
+  garde rien.
+
+**Confirmation 2. La table impôt par impôt est-elle la bonne lecture ?**
+
+- *Ce que j'ai compris de vos réponses 2 et 3* : chaque impôt retiré aux
+  retraites baisse de moitié, pour ceux qui le paient ; l'État garde l'autre
+  moitié ; aucune baisse générale de la CSG sur les salaires.
+- *Trois conséquences à valider, parce qu'elles changent ce qui était
+  prévu* :
+  1. la taxe sur les salaires et le forfait social baissent de moitié ; le
+     20 septembre, ils étaient supprimés en entier ;
+  2. la CSG sur les revenus du capital baisse de 3,3 points, 6,2 Md€ : c'est
+     la plus grosse baisse, et elle va aux épargnants ;
+  3. la CSG sur les salaires ne baisse plus : le salarié ne gagne que la
+     baisse de sa cotisation de retraite.
+- *La question.* Oui à la table entière ? Sinon, dites la ligne à changer :
+  un impôt peut être supprimé en entier, comme la CTA, ou gardé en entier
+  par l'État, comme les alcools.
