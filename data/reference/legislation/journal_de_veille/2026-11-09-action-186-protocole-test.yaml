@@ -1,0 +1,32 @@
+date: "2026-11-09"
+session: "action 186, chantier 8 : le protocole du test auprès de vingt personnes"
+consulte: >-
+  Aucune règle du scénario 1 n'est touchée. Pour le consentement et les
+  données, onze pages de la CNIL, lues ce jour par un agent de la session,
+  en courts extraits : l'anonymisation (19 mai 2020), l'identification des
+  données personnelles (27 janvier 2020), le consentement (3 août 2018),
+  l'information des personnes (29 juillet 2019), les chapitres II et III du
+  RGPD (articles 5, 7, 9, 11, 12 et 13), les fichiers de communication
+  politique (21 octobre 2025), le registre des activités de traitement
+  (13 avril 2018), l'analyse d'impact (18 octobre 2017), les durées de
+  conservation (2 avril 2026), l'anonymisation en recherche (13 janvier
+  2022) ; et le guide « Communication politique : protéger les données des
+  électeurs » (novembre 2025), lu par la session dans son texte extrait.
+  Dans le dépôt : les décisions 1 à 3, 16, 29 à 34, 65, 68, 86 à 90 du
+  programme, la note 186/2026-11-07-message-etude.md, les treize carrières
+  types (castypes.py).
+trouve: >-
+  Une grille numérotée sans nom est pseudonymisée, non anonyme ; ce qu'une
+  personne pense du programme d'un parti, et le fait d'avoir voté, sont des
+  opinions politiques (article 9), que l'exception des partis ne couvre que
+  pour leurs membres et contacts réguliers : reste le consentement
+  explicite. La dérogation de registre des moins de 250 salariés ne couvre
+  pas les données sensibles. Rien qui touche les fiches. Le détail est dans
+  la note docs/feuille_de_route/186/2026-11-09-protocole-test.md.
+reste: >-
+  Aucune page lue ne traite d'une enquête qu'un parti mène auprès de
+  personnes qui ne sont ni ses membres ni ses contacts ; le consentement par
+  cases sans signature (article 11) et la question de l'analyse d'impact
+  sont à faire relire par un juriste. Non lus : les lignes directrices du
+  CEPD sur le consentement et sur l'analyse d'impact, la liste de la CNIL
+  des traitements soumis à analyse d'impact.

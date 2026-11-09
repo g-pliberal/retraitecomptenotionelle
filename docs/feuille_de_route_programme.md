@@ -1964,6 +1964,12 @@ entier. Ce qu'elle établit :
   deux ans. Les options — tout, la moitié, 20 000 €, les deux ; sans
   remboursement, à la revente, sur quinze ans — sont chiffrées dans la note.
 
+**Le 9 novembre 2026 : le protocole du test auprès de vingt personnes.** La
+note est `186/2026-11-09-protocole-test.md` : les profils par quotas, ce
+qu'on montre, le déroulé, les questions, la grille, ce que chaque résultat
+ferait changer, le consentement et les données. Rien n'est lancé ; au
+propriétaire, ses neuf questions, d'abord une première vague sans attendre.
+
 ### Chantier 9 — Le site et le simulateur
 
 **La question du propriétaire.** « Est-ce que le simulateur est vraiment une
