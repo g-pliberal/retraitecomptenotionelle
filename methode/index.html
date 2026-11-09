@@ -62,6 +62,8 @@
   
   --petrole: #003340;
   --petrole-fonce: #00242e;
+  
+  --lueur: #0a5a62;
   --turquoise: #05c1ad;
   --safran: #e9c53d;
   
@@ -181,6 +183,10 @@ header.bandeau {
   margin-bottom: 0;
   position: sticky; top: 0; z-index: 20;
 }
+header.bandeau::before {
+  content: ""; position: absolute; inset: 0; z-index: -1;
+  background: linear-gradient(90deg, var(--petrole) 40%, var(--lueur));
+}
 header.bandeau .interieur {
   max-width: var(--largeur); margin: 0 auto; padding: 0 var(--marge);
   display: flex; flex-wrap: wrap; gap: 0 1rem;
@@ -197,13 +203,13 @@ header.bandeau .nom a {
 header.bandeau .nom .logo { width: auto; height: 2.5rem; flex: none; }
 header.bandeau .nom .marque { display: flex; flex-direction: column; min-width: 0; }
 header.bandeau .nom .parti {
-  font-family: var(--titres); font-size: var(--t-texte); font-weight: 600;
+  font-family: var(--titres); font-size: var(--t-lead); font-weight: 700;
 }
 header.bandeau .nom .site { font-size: var(--t-meta); color: var(--bandeau-doux); }
 header.bandeau .nom a:hover .parti { color: var(--or); }
 header.bandeau nav {
   display: flex; flex-wrap: wrap; gap: 0.25rem; width: 100%;
-  padding: 0 0 0.75rem;
+  padding: 0.5rem 0; border-top: 1px solid rgb(255 255 255 / 0.12);
 }
 nav .groupe { display: contents; }
 nav .etiquette {
@@ -237,7 +243,7 @@ nav .deplier { display: none; }
 }
 header.bandeau nav a {
   color: var(--bandeau-texte); text-decoration: none;
-  font-size: var(--t-petit); font-weight: 500; white-space: nowrap;
+  font-size: var(--t-petit); font-weight: 600; white-space: nowrap;
   display: inline-flex; align-items: center; min-height: 2.75rem;
   padding: 0 0.75rem; border-radius: var(--rayon-petit);
   background: var(--petrole-fonce); border-bottom: 4px solid transparent;
@@ -252,24 +258,35 @@ header.bandeau .menu { display: none; }
 @media (max-width: 48rem) {
   header.bandeau .menu {
     display: inline-flex; align-items: center; gap: 0.5rem; align-self: center;
-    min-height: 2.75rem; margin: 0; padding: 0 0.75rem;
-    background: none; border: 1px solid var(--trait-champ);
+    min-height: 2.75rem; min-width: 2.75rem; margin: 0; padding: 0 0.75rem;
+    justify-content: center;
+    background: none; border: 2px solid rgb(255 255 255 / 0.55);
     border-radius: var(--rayon-petit); color: var(--texte);
-    font: inherit; font-size: var(--t-petit); font-weight: 500;
+    font: inherit; font-size: var(--t-petit); font-weight: 600; cursor: pointer;
   }
-  header.bandeau .menu .icone { transition: transform 0.15s; }
-  header.bandeau .menu[aria-expanded="true"] .icone { transform: rotate(180deg); }
+  header.bandeau .menu:hover,
+  header.bandeau .menu[aria-expanded="true"] {
+    background: rgb(255 255 255 / 0.1); border-color: #fff;
+  }
   header.bandeau .menu[aria-expanded="false"] + nav { display: none; }
   header.bandeau .nom { flex: 1 1 0%; min-height: 3.5rem; }
   header.bandeau .nom .logo { height: 2rem; }
+  header.bandeau .nom .parti { font-size: var(--t-texte); }
   header.bandeau .menu { flex: none; }
   header.bandeau nav { flex-direction: column; align-items: stretch; }
+}
+@media (max-width: 36rem) {
+  header.bandeau .menu { padding: 0; }
+  header.bandeau .menu span {
+    position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+    overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0;
+  }
 }
 h1, h2, h3, h4 { text-wrap: balance; }
 h1 {
   margin: 0; font-family: var(--titres); color: var(--titre);
   font-size: var(--t-titre); line-height: 1.1;
-  font-weight: 600; letter-spacing: -0.01em;
+  font-weight: 700; letter-spacing: -0.005em;
 }
 h2 {
   font-family: var(--titres); font-size: var(--t-intertitre); line-height: 1.15;
@@ -303,8 +320,24 @@ a:hover { text-decoration-color: var(--or); }
 .chapeau strong, .chapeau .cle-texte { color: var(--or-texte); font-weight: 600; }
 .affiche {
   padding: 2.5rem 0 3rem; margin-bottom: 2rem;
-  box-shadow: 0 0 0 100vmax var(--fond);
-  clip-path: inset(0 -100vmax);
+  position: relative; isolation: isolate;
+}
+.affiche::before {
+  content: ""; position: absolute; z-index: -1;
+  top: 0; bottom: 0; left: calc(50% - 50vw); right: calc(50% - 50vw);
+  background:
+    linear-gradient(to bottom, rgb(0 51 64 / 0), var(--petrole)),
+    linear-gradient(90deg, var(--petrole) 40%, var(--lueur));
+}
+.affiche .surtitre {
+  margin-bottom: 0.5rem; font-family: var(--titres); font-size: var(--t-petit);
+  font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--or-texte);
+}
+.affiche h1 .cle-texte {
+  color: inherit; font-weight: inherit;
+  background: linear-gradient(transparent 62%, rgb(233 197 61 / 0.55) 62%);
+  -webkit-box-decoration-break: clone; box-decoration-break: clone;
 }
 .cle-texte, strong.cle-texte { color: var(--or-texte); font-weight: 600; }
 h1 .cle-texte, h2 .cle-texte { font-weight: inherit; }
@@ -880,10 +913,26 @@ section.cle > .source {
 }
 .carte-partage.long .chiffre { font-size: 56px; font-size: 9.333cqw; }
 footer {
-  width: calc(100% - 2 * var(--marge)); max-width: calc(var(--largeur) - 2 * var(--marge));
-  margin: 3rem auto 0; padding: 1.5rem 0 2rem;
-  border-top: 1px solid var(--trait);
-  font-size: var(--t-petit); color: var(--texte-tres-doux);
+  color-scheme: dark;
+  --texte: #d7e9eb; --lien: #05c1ad; --focus: #e9c53d; --trait-champ: #5f8f99;
+  margin-top: 3rem; padding: 2rem 0;
+  background: var(--petrole-fonce); color: var(--texte);
+  font-size: var(--t-petit);
+}
+footer .interieur { max-width: var(--largeur); margin: 0 auto; padding: 0 var(--marge); }
+footer .colonnes {
+  display: grid; gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+}
+footer h2 {
+  margin: 0 0 0.5rem; font-size: var(--t-texte); font-weight: 700;
+  color: var(--safran);
+}
+footer p { margin: 0; max-width: none; }
+footer a:hover { color: var(--safran); }
+footer .retour-site {
+  margin-top: 1.5rem; padding-top: 1rem;
+  border-top: 1px solid rgb(255 255 255 / 0.15);
 }
 .erreur {
   border-left: 3px solid var(--manque); background: var(--fond-carte);
@@ -910,7 +959,7 @@ body.calcul-en-cours::after {
 }
 @media (max-width: 34rem) {
   body { font-size: 1rem; }
-  header.bandeau { position: static; }
+  header.bandeau { position: relative; }
   header.bandeau nav { margin-left: -0.5rem; margin-right: -0.5rem; }
   .carte { padding: 1rem 0.85rem; }
   .scenarios { column-gap: 0.75rem; }
@@ -977,7 +1026,7 @@ body.calcul-en-cours::after {
 <div id="entete"><a class="evitement" href="#contenu">Aller au contenu</a>
 <header class="bandeau"><div class="interieur">
   <p class="nom"><a href="../"><img class="logo" src="../moteur/logo-plf.svg" alt="" width="566" height="378"><span class="marque"><span class="parti">Parti Libéral Français</span><span class="site">Retraite à comptes notionnels</span></span></a></p>
-  <button type="button" class="menu" aria-expanded="false" aria-controls="navigation">Menu<svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg></button>
+  <button type="button" class="menu" aria-expanded="false" aria-controls="navigation"><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 5h16" /><path d="M4 12h16" /><path d="M4 19h16" /></svg><span>Menu</span></button>
   <nav id="navigation" aria-label="Navigation principale"><span class="groupe"><span class="etiquette">L&#x27;essentiel</span><span class="liens"><a href="../">Programme</a><a href="../simuler/">Simuler</a><a href="../cout/">Coût</a><a href="../risque/">Pourquoi changer</a></span></span><span class="groupe"><span class="etiquette">Faire connaître</span><span class="liens"><a href="../partager/">Partager</a><a href="../saviez-vous/">Le saviez-vous ?</a></span></span><span class="groupe secondaire"><span class="etiquette">Pour vérifier</span><button type="button" class="deplier" aria-expanded="true" aria-controls="pages-a-verifier">Pour vérifier<svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg></button><span class="liens" id="pages-a-verifier"><a href="../cas-types/">Carrières types</a><a href="../avantages/">Droits non cotisés</a><a href="./" aria-current="page">Méthode et sources</a></span></span></nav>
 </div></header></div>
 <main id="contenu" tabindex="-1" data-prerendu="/methode">
@@ -1509,18 +1558,25 @@ citation de la source : chaque valeur du dépôt porte la sienne dans
 
 </main>
 <footer>
-  <p><strong>Ce simulateur n'a aucune valeur officielle.</strong> Il n'émane
-  d'aucune caisse et ne vaut ni relevé de carrière, ni estimation de vos droits.
-  Seule votre caisse fait foi
-  (<a href="https://www.info-retraite.fr/">info-retraite.fr</a>).</p>
-  <p>Modèle ouvert, code et données sur <a href="https://github.com/g-pliberal/retraitecomptenotionelle">GitHub</a> (code sous licence
-  Apache 2.0, infographies et textes sous
-  <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.fr">CC BY-SA 4.0</a>).
-  Pensions et salaires s'affichent au net ou au brut, à votre choix, par la
-  bascule « Montants » ; le tout en euros constants de l'année de référence.
-  Les séries d'avant 1950 et les paramètres de régime restent saisis à la main :
-  <a href="https://github.com/g-pliberal/retraitecomptenotionelle/blob/main/docs/limites.md">lire les limites</a> avant de citer un chiffre.</p>
+<div class="interieur">
+  <div class="colonnes">
+    <div class="colonne"><h2>Retraite à comptes notionnels</h2>
+    <p><strong>Ce simulateur n'a aucune valeur officielle.</strong> Il n'émane
+    d'aucune caisse et ne vaut ni relevé de carrière, ni estimation de vos droits.
+    Seule votre caisse fait foi
+    (<a href="https://www.info-retraite.fr/">info-retraite.fr</a>).</p></div>
+    <div class="colonne"><h2>Modèle ouvert</h2>
+    <p>Code et données sur <a href="https://github.com/g-pliberal/retraitecomptenotionelle">GitHub</a> (code sous licence
+    Apache 2.0, infographies et textes sous
+    <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.fr">CC BY-SA 4.0</a>).</p></div>
+    <div class="colonne"><h2>Avant de citer un chiffre</h2>
+    <p>Pensions et salaires s'affichent au net ou au brut, à votre choix, par la
+    bascule « Montants » ; le tout en euros constants de l'année de référence.
+    Les séries d'avant 1950 et les paramètres de régime restent saisis à la main :
+    <a href="https://github.com/g-pliberal/retraitecomptenotionelle/blob/main/docs/limites.md">lire les limites</a>.</p></div>
+  </div>
   <p class="retour-site">Un outil du <a href="https://partiliberalfrancais.fr/" target="_top">Parti libéral français</a>.</p>
+</div>
 </footer>
 <script type="module" src="../moteur/js/routeur.js"></script>
 </body>

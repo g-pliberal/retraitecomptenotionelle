@@ -450,11 +450,13 @@ export function entete(cheminActif = "/") {
   // Sur un téléphone, la navigation entière se replie derrière « Menu » : même
   // repliée, la seconde voix laissait au bandeau collé trois rangées avant le
   // titre (5 novembre 2026). Fermé sur chaque page ; au-delà de l'écran
-  // étroit, le bouton n'est pas affiché.
+  // étroit, le bouton n'est pas affiché. Il porte les trois traits du menu
+  // du site du parti, et le mot à côté, que le plus petit écran ne laisse
+  // qu'aux synthèses vocales (9 novembre 2026).
   return `<a class="evitement" href="#contenu">Aller au contenu</a>
 <header class="bandeau"><div class="interieur">
   <p class="nom"><a href="${adresseDepuis(cheminActif, "/", OPTIONS)}"><img class="logo" src="${cheminActif === "/" ? "" : "../"}moteur/logo-plf.svg" alt="" width="566" height="378"><span class="marque"><span class="parti">${NOM_DU_PARTI}</span><span class="site">${NOM_DU_SITE}</span></span></a></p>
-  <button type="button" class="menu" aria-expanded="false" aria-controls="navigation">Menu${icone("chevron-down")}</button>
+  <button type="button" class="menu" aria-expanded="false" aria-controls="navigation">${icone("menu")}<span>Menu</span></button>
   <nav id="navigation" aria-label="Navigation principale">${navigation(cheminActif)}</nav>
 </div></header>`;
 }
@@ -496,21 +498,35 @@ export function affiche(surtitre, titre, chapeau) {
  * l'éditeur, la politique de données personnelles et la déclaration
  * d'accessibilité sont les siennes, et deux déclarations concurrentes valent
  * moins qu'une.
+ *
+ * Depuis le 9 novembre 2026, il se range comme celui du site du parti : une
+ * bande pétrole foncé d'un bord à l'autre, trois colonnes sous leur titre —
+ * le site et ce qu'il ne vaut pas, le modèle ouvert, ce qu'il faut savoir
+ * avant de citer un chiffre —, puis le pont vers le site du parti. Il dit ce
+ * qu'il disait. La liste des pages n'y est pas recopiée : le bandeau, collé en
+ * haut de l'écran, la tient sous les yeux, et le pied ne dépend pas de la page.
  */
 export function pied() {
   return typographier(`<footer>
-  <p><strong>Ce simulateur n'a aucune valeur officielle.</strong> Il n'émane
-  d'aucune caisse et ne vaut ni relevé de carrière, ni estimation de vos droits.
-  Seule votre caisse fait foi
-  (<a href="https://www.info-retraite.fr/">info-retraite.fr</a>).</p>
-  <p>Modèle ouvert, code et données sur <a href="${DEPOT}">GitHub</a> (code sous licence
-  Apache 2.0, infographies et textes sous
-  <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.fr">CC BY-SA 4.0</a>).
-  Pensions et salaires s'affichent au net ou au brut, à votre choix, par la
-  bascule « Montants » ; le tout en euros constants de l'année de référence.
-  Les séries d'avant 1950 et les paramètres de régime restent saisis à la main :
-  <a href="${DEPOT}/blob/main/docs/limites.md">lire les limites</a> avant de citer un chiffre.</p>
+<div class="interieur">
+  <div class="colonnes">
+    <div class="colonne"><h2>${NOM_DU_SITE}</h2>
+    <p><strong>Ce simulateur n'a aucune valeur officielle.</strong> Il n'émane
+    d'aucune caisse et ne vaut ni relevé de carrière, ni estimation de vos droits.
+    Seule votre caisse fait foi
+    (<a href="https://www.info-retraite.fr/">info-retraite.fr</a>).</p></div>
+    <div class="colonne"><h2>Modèle ouvert</h2>
+    <p>Code et données sur <a href="${DEPOT}">GitHub</a> (code sous licence
+    Apache 2.0, infographies et textes sous
+    <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.fr">CC BY-SA 4.0</a>).</p></div>
+    <div class="colonne"><h2>Avant de citer un chiffre</h2>
+    <p>Pensions et salaires s'affichent au net ou au brut, à votre choix, par la
+    bascule « Montants » ; le tout en euros constants de l'année de référence.
+    Les séries d'avant 1950 et les paramètres de régime restent saisis à la main :
+    <a href="${DEPOT}/blob/main/docs/limites.md">lire les limites</a>.</p></div>
+  </div>
   <p class="retour-site">Un outil du <a href="${SITE_PARENT}" target="_top">Parti libéral français</a>.</p>
+</div>
 </footer>`);
 }
 
@@ -1026,6 +1042,7 @@ export const ICONES = {
   download: '<path d="M12 15V3" />'
     + '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />'
     + '<path d="m7 10 5 5 5-5" />',
+  menu: '<path d="M4 5h16" /><path d="M4 12h16" /><path d="M4 19h16" />',
   "share-2": '<circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" />'
     + '<circle cx="18" cy="19" r="3" />'
     + '<line x1="8.59" x2="15.42" y1="13.51" y2="17.49" />'

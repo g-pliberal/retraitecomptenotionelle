@@ -3067,6 +3067,36 @@ def test_le_pied_avertit_depuis_toute_page():
     assert "CC BY-SA 4.0" in pied, "le pied doit dire sous quelle licence citer"
 
 
+def test_le_pied_se_range_en_trois_colonnes():
+    """Le pied du site du parti est une bande pétrole rangée en colonnes,
+    chacune sous son titre (``.pied__grille``, « Fonction publique : les
+    chiffres », 9 novembre 2026). Celui-ci dit toujours les mêmes choses, sous
+    trois titres : le site et ce qu'il ne vaut pas, le modèle ouvert et ses
+    licences, ce qu'il faut savoir avant de citer un chiffre ; le pont vers le
+    site du parti ferme la bande."""
+    import re
+
+    pied = g.pied()
+    assert re.findall(r"<h2>(.*?)</h2>", pied) == [
+        g.NOM_DU_SITE, "Modèle ouvert", "Avant de citer un chiffre"]
+    assert pied.count('<div class="colonne">') == 3
+    colonnes, bas = pied.split('<p class="retour-site">')
+    assert "aucune valeur officielle" in colonnes.split("<h2>")[1]
+    assert "CC BY-SA 4.0" in colonnes.split("<h2>")[2]
+    assert "lire les limites" in colonnes.split("<h2>")[3]
+    assert "Parti libéral français" in bas
+
+
+def test_le_menu_du_telephone_porte_son_pictogramme():
+    """Sur un téléphone, le bouton du menu est celui du site du parti : les
+    trois traits, et le mot « Menu » à côté."""
+    import re
+
+    bouton = re.search(r'<button type="button" class="menu"[^>]*>(.*?)</button>',
+                       g.entete("/"), re.S).group(1)
+    assert bouton == g.icone("menu") + "<span>Menu</span>"
+
+
 def test_le_site_ne_porte_aucune_mention_legale():
     """Le simulateur est encarté dans partiliberalfrancais.fr, qui l'édite et
     l'héberge : l'identification de l'éditeur, la politique de données

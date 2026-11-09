@@ -83,6 +83,8 @@
   /* Les couleurs du parti : le pétrole, le turquoise, le safran. */
   --petrole: #003340;
   --petrole-fonce: #00242e;
+  /* La lueur de l'en-tête du site du parti : le pétrole éclairci de turquoise. */
+  --lueur: #0a5a62;
   --turquoise: #05c1ad;
   --safran: #e9c53d;
   /* L'accent, turquoise assombri pour se lire sur le clair : 6,6:1. */
@@ -252,6 +254,17 @@ header.bandeau {
   margin-bottom: 0;
   position: sticky; top: 0; z-index: 20;
 }
+/* LA LUEUR TURQUOISE du site du parti, à droite du bandeau, que l'affiche
+   prolonge (9 novembre 2026). Elle ne dépend que de l'abscisse : le bandeau,
+   collé en haut, et l'affiche, qui défile dessous, se raccordent sans couture
+   quelle que soit leur hauteur. Elle est peinte par un `::before`, sous le
+   contenu : le fond du bandeau reste le pétrole uni, sur lequel le contraste
+   de chaque texte se mesure encore — le blanc tient 7,9:1 au plus clair de la
+   lueur, le safran 4,8:1. */
+header.bandeau::before {
+  content: ""; position: absolute; inset: 0; z-index: -1;
+  background: linear-gradient(90deg, var(--petrole) 40%, var(--lueur));
+}
 header.bandeau .interieur {
   max-width: var(--largeur); margin: 0 auto; padding: 0 var(--marge);
   display: flex; flex-wrap: wrap; gap: 0 1rem;
@@ -271,7 +284,7 @@ header.bandeau .nom a {
 header.bandeau .nom .logo { width: auto; height: 2.5rem; flex: none; }
 header.bandeau .nom .marque { display: flex; flex-direction: column; min-width: 0; }
 header.bandeau .nom .parti {
-  font-family: var(--titres); font-size: var(--t-texte); font-weight: 600;
+  font-family: var(--titres); font-size: var(--t-lead); font-weight: 700;
 }
 header.bandeau .nom .site { font-size: var(--t-meta); color: var(--bandeau-doux); }
 header.bandeau .nom a:hover .parti { color: var(--or); }
@@ -288,7 +301,7 @@ body.plf-embedded footer .retour-site { display: none; }
    plan d'une page longue est un `<nav>` lui aussi. */
 header.bandeau nav {
   display: flex; flex-wrap: wrap; gap: 0.25rem; width: 100%;
-  padding: 0 0 0.75rem;
+  padding: 0.5rem 0; border-top: 1px solid rgb(255 255 255 / 0.12);
 }
 nav .groupe { display: contents; }
 /* L'étiquette de groupe : lue par les synthèses vocales, invisible à l'œil.
@@ -333,7 +346,7 @@ nav .deplier { display: none; }
    haut (WCAG 2.5.8). */
 header.bandeau nav a {
   color: var(--bandeau-texte); text-decoration: none;
-  font-size: var(--t-petit); font-weight: 500; white-space: nowrap;
+  font-size: var(--t-petit); font-weight: 600; white-space: nowrap;
   display: inline-flex; align-items: center; min-height: 2.75rem;
   padding: 0 0.75rem; border-radius: var(--rayon-petit);
   background: var(--petrole-fonce); border-bottom: 4px solid transparent;
@@ -351,18 +364,32 @@ header.bandeau .menu { display: none; }
 @media (max-width: 48rem) {
   header.bandeau .menu {
     display: inline-flex; align-items: center; gap: 0.5rem; align-self: center;
-    min-height: 2.75rem; margin: 0; padding: 0 0.75rem;
-    background: none; border: 1px solid var(--trait-champ);
+    min-height: 2.75rem; min-width: 2.75rem; margin: 0; padding: 0 0.75rem;
+    justify-content: center;
+    background: none; border: 2px solid rgb(255 255 255 / 0.55);
     border-radius: var(--rayon-petit); color: var(--texte);
-    font: inherit; font-size: var(--t-petit); font-weight: 500;
+    font: inherit; font-size: var(--t-petit); font-weight: 600; cursor: pointer;
   }
-  header.bandeau .menu .icone { transition: transform 0.15s; }
-  header.bandeau .menu[aria-expanded="true"] .icone { transform: rotate(180deg); }
+  header.bandeau .menu:hover,
+  header.bandeau .menu[aria-expanded="true"] {
+    background: rgb(255 255 255 / 0.1); border-color: #fff;
+  }
   header.bandeau .menu[aria-expanded="false"] + nav { display: none; }
   header.bandeau .nom { flex: 1 1 0%; min-height: 3.5rem; }
   header.bandeau .nom .logo { height: 2rem; }
+  header.bandeau .nom .parti { font-size: var(--t-texte); }
   header.bandeau .menu { flex: none; }
   header.bandeau nav { flex-direction: column; align-items: stretch; }
+}
+/* Sur un téléphone, le bouton du menu n'est plus que ses trois traits, dans un
+   carré de 44 points, comme celui du site du parti : le mot reste lu par les
+   synthèses vocales. */
+@media (max-width: 36rem) {
+  header.bandeau .menu { padding: 0; }
+  header.bandeau .menu span {
+    position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+    overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0;
+  }
 }
 
 /* Les titres, en Jost demi-gras, en casse de phrase, en pétrole — en blanc
@@ -373,7 +400,7 @@ h1, h2, h3, h4 { text-wrap: balance; }
 h1 {
   margin: 0; font-family: var(--titres); color: var(--titre);
   font-size: var(--t-titre); line-height: 1.1;
-  font-weight: 600; letter-spacing: -0.01em;
+  font-weight: 700; letter-spacing: -0.005em;
 }
 h2 {
   font-family: var(--titres); font-size: var(--t-intertitre); line-height: 1.15;
@@ -420,8 +447,34 @@ a:hover { text-decoration-color: var(--or); }
    découpage l'étendent sans élargir la page : rien ne déborde. */
 .affiche {
   padding: 2.5rem 0 3rem; margin-bottom: 2rem;
-  box-shadow: 0 0 0 100vmax var(--fond);
-  clip-path: inset(0 -100vmax);
+  position: relative; isolation: isolate;
+}
+/* La bande, et la lueur du bandeau qu'elle prolonge : la même, d'un bord à
+   l'autre de l'écran, qui s'éteint vers le bas. L'affiche est centrée dans la
+   page : la moitié de l'écran de chaque côté de son milieu atteint les deux
+   bords, et le document, qui ne défile pas en largeur, coupe ce qui dépasse
+   sous une barre de défilement. */
+.affiche::before {
+  content: ""; position: absolute; z-index: -1;
+  top: 0; bottom: 0; left: calc(50% - 50vw); right: calc(50% - 50vw);
+  background:
+    linear-gradient(to bottom, rgb(0 51 64 / 0), var(--petrole)),
+    linear-gradient(90deg, var(--petrole) 40%, var(--lueur));
+}
+/* Le surtitre de l'affiche, comme celui du site du parti : en Jost gras, en
+   capitales espacées, en safran. Les capitales sont celles du style : le
+   texte reste écrit en casse de phrase, qu'une synthèse vocale lit en mots. */
+.affiche .surtitre {
+  margin-bottom: 0.5rem; font-family: var(--titres); font-size: var(--t-petit);
+  font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--or-texte);
+}
+/* Le passage qui porte le titre est surligné au safran, et non plus écrit en
+   safran : le titre reste blanc d'un bout à l'autre. */
+.affiche h1 .cle-texte {
+  color: inherit; font-weight: inherit;
+  background: linear-gradient(transparent 62%, rgb(233 197 61 / 0.55) 62%);
+  -webkit-box-decoration-break: clone; box-decoration-break: clone;
 }
 /* Ce qui, dans une phrase, porte le message. En or ET en demi-gras : l'or seul
    disparaît pour une vision basse ou un daltonisme fort, et l'emphase avec
@@ -2049,11 +2102,31 @@ ul.serree li { margin: 0.25rem 0; }
   font-size: 0.9375rem; line-height: 1.5; color: var(--texte-doux);
 }
 
+/* LE PIED DE PAGE, comme celui du site du parti : une bande pétrole foncé d'un
+   bord à l'autre, trois colonnes sous leur titre en safran, les liens en
+   turquoise, puis le pont vers le site du parti sous un filet. Le turquoise
+   tient 7,1:1 sur le pétrole foncé, le texte 12:1. */
 footer {
-  width: calc(100% - 2 * var(--marge)); max-width: calc(var(--largeur) - 2 * var(--marge));
-  margin: 3rem auto 0; padding: 1.5rem 0 2rem;
-  border-top: 1px solid var(--trait);
-  font-size: var(--t-petit); color: var(--texte-tres-doux);
+  color-scheme: dark;
+  --texte: #d7e9eb; --lien: #05c1ad; --focus: #e9c53d; --trait-champ: #5f8f99;
+  margin-top: 3rem; padding: 2rem 0;
+  background: var(--petrole-fonce); color: var(--texte);
+  font-size: var(--t-petit);
+}
+footer .interieur { max-width: var(--largeur); margin: 0 auto; padding: 0 var(--marge); }
+footer .colonnes {
+  display: grid; gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+}
+footer h2 {
+  margin: 0 0 0.5rem; font-size: var(--t-texte); font-weight: 700;
+  color: var(--safran);
+}
+footer p { margin: 0; max-width: none; }
+footer a:hover { color: var(--safran); }
+footer .retour-site {
+  margin-top: 1.5rem; padding-top: 1rem;
+  border-top: 1px solid rgb(255 255 255 / 0.15);
 }
 .erreur {
   border-left: 3px solid var(--manque); background: var(--fond-carte);
@@ -2108,7 +2181,7 @@ body.calcul-en-cours::after {
   /* Le bandeau ne colle plus : à neuf onglets sur deux ou trois rangées, il
      mangeait un tiers de la hauteur d'un téléphone, et c'est cette hauteur
      qu'on vient chercher. */
-  header.bandeau { position: static; }
+  header.bandeau { position: relative; }
   header.bandeau nav { margin-left: -0.5rem; margin-right: -0.5rem; }
   /* Une carte rend au texte la largeur de ses marges : à 320 points, ses
      vingt-deux points de chaque côté ne laissaient aux quatre systèmes du
@@ -2262,8 +2335,16 @@ body.calcul-en-cours::after {
   header.bandeau nav, .evitement { display: none; }
   header.bandeau {
     background: #fff; color: #000; border-bottom: 1px solid #000;
-    margin-bottom: 1rem; position: static;
+    margin-bottom: 1rem; position: relative;
   }
+  /* Ni lueur ni bande pétrole sur le papier, où les fonds ne s'impriment
+     pas : le pied s'y écrit en noir, sous un filet. */
+  header.bandeau::before, .affiche::before { display: none; }
+  footer {
+    --texte: #000; --lien: #000;
+    background: none; border-top: 1px solid #999;
+  }
+  footer h2 { color: #000; }
   /* Ni la lecture au survol — il n'y a pas de pointeur sur du papier —, ni les
      boutons de partage : la page imprimée EST déjà l'image. */
   .graphique .lecture, .graphique .aide-clavier,

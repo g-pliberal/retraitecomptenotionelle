@@ -255,6 +255,61 @@ def test_chaque_page_porte_la_charte_du_parti():
     assert not fautes, f"{len(fautes)} écarts à la charte :\n" + "\n".join(fautes[:60])
 
 
+#: La coquille du site « Fonction publique : les chiffres », lue dans sa feuille
+#: de style (``g-pliberal/Nombre-de-fonctionnaires``, ``assets/css/style.css``) :
+#: la lueur turquoise de l'en-tête (``.entete``, ``#0a5a62``), le surtitre du
+#: bandeau en capitales safran (``.bandeau__surtitre``), le titre à 700, le
+#: mot surligné au safran (``.souligne``), le pied en pétrole foncé, aux
+#: titres safran (``.pied``).
+COQUILLE = {"lueur": "rgb(10, 90, 98)", "safran": "rgb(233, 197, 61)",
+            "surlignage": "rgba(233, 197, 61, 0.55)", "blanc": "rgb(255, 255, 255)",
+            "graisse": "700", "pied": "rgb(0, 36, 46)", "colonnes": 3}
+
+
+def test_la_coquille_est_celle_du_site_du_parti():
+    """Le 9 novembre 2026, le propriétaire : « J'aimerais que le site reprenne
+    encore plus l'aspect de mon autre site ». La charte du 8 novembre en avait
+    pris les couleurs, la police et le logo ; la coquille en prend la mise en
+    page : le bandeau et l'affiche sous une même lueur turquoise, le surtitre
+    en capitales safran espacées, le titre en gras, dont un passage est
+    surligné au safran plutôt qu'écrit en safran, et le pied de page en bande
+    pétrole foncé d'un bord à l'autre, rangé en trois colonnes au large, en
+    une seule sur un téléphone.
+    """
+    fautes = []
+    for visite in mesures():
+        coquille = visite["replie"]["coquille"]
+        ou = _ou(visite, "fermés")
+        for nom in ("lueurDuBandeau", "lueurDeLAffiche"):
+            if COQUILLE["lueur"] not in (coquille[nom] or ""):
+                fautes.append(f"{ou} : {nom}, {coquille[nom]}")
+        surtitre = coquille["surtitre"]
+        if (not surtitre or surtitre["casse"] != "uppercase" or surtitre["espace"] <= 0
+                or surtitre["couleur"] != COQUILLE["safran"]):
+            fautes.append(f"{ou} : surtitre, {surtitre}")
+        if coquille["graisseDuTitre"] != COQUILLE["graisse"]:
+            fautes.append(f"{ou} : titre à {coquille['graisseDuTitre']}")
+        surlignage = coquille["surlignage"]
+        if surlignage and (surlignage["couleur"] != COQUILLE["blanc"]
+                           or COQUILLE["surlignage"] not in surlignage["fond"]):
+            fautes.append(f"{ou} : surlignage, {surlignage}")
+        pied = coquille["pied"] or {}
+        if pied.get("fond") != COQUILLE["pied"]:
+            fautes.append(f"{ou} : pied sur {pied.get('fond')}")
+        if abs(pied.get("largeur", 0) - visite["largeur"]) > 1:
+            fautes.append(f"{ou} : pied large de {pied.get('largeur')}")
+        if pied.get("titres") != COQUILLE["colonnes"]:
+            fautes.append(f"{ou} : {pied.get('titres')} titres au pied")
+        elif pied["couleurDesTitres"] != COQUILLE["safran"]:
+            fautes.append(f"{ou} : titres du pied en {pied['couleurDesTitres']}")
+        attendues = COQUILLE["colonnes"] if visite["largeur"] >= 1024 else None
+        if visite["largeur"] <= 390:
+            attendues = 1
+        if attendues and pied.get("colonnes") != attendues:
+            fautes.append(f"{ou} : pied en {pied.get('colonnes')} colonnes")
+    assert not fautes, f"{len(fautes)} écarts à la coquille :\n" + "\n".join(fautes[:60])
+
+
 def test_tout_texte_se_detache_de_son_fond():
     """Un texte se lit sur son fond : 4,5 pour 1 au moins entre leurs
     luminances, 3 pour 1 en grand — 24 px, ou 18,66 px en gras. WCAG 1.4.3, et
@@ -300,6 +355,11 @@ def test_aucune_page_ne_laisse_de_grand_vide():
 #: et ses deux voisins, le chapeau, l'intertitre, les chiffres et le titre.
 TAILLES_ACCUEIL = 9
 
+#: Ce que la coquille du site du parti a rendu à l'accueil le 9 novembre 2026,
+#: et rien d'autre : le surtitre en capitales, et le gras de ses titres.
+SURTITRE_DE_L_AFFICHE = "p.surtitre"
+GRAISSE_MAXIMALE = 700
+
 
 def test_l_accueil_se_compose_sur_une_seule_echelle():
     """L'accueil retouché le 5 novembre 2026 (compétence unslop) : la
@@ -312,6 +372,11 @@ def test_l_accueil_se_compose_sur_une_seule_echelle():
     Aucune capitale par le style, aucun italique, aucune graisse au-delà de
     600, à toute largeur ; au large, une échelle courte de tailles entières, et
     chaque marge, retrait ou écart sur la grille de 4 points.
+
+    Le 9 novembre 2026, le propriétaire a voulu que le site « reprenne encore
+    plus l'aspect » de celui du parti, dont le surtitre est en capitales
+    espacées et les titres à 700 : ces deux points lui sont rendus, le reste de
+    la règle tient.
     """
     fautes = []
     accueil = [visite for visite in mesures() if visite["route"] == "./"]
@@ -320,9 +385,10 @@ def test_l_accueil_se_compose_sur_une_seule_echelle():
         for etat in ("replie", "deplie"):
             ou = _ou(visite, "fermés" if etat == "replie" else "ouverts")
             typo = visite[etat]["typographie"]
-            fautes += [f"{ou} : en capitales, {nom}" for nom in typo["capitales"]]
+            fautes += [f"{ou} : en capitales, {nom}" for nom in typo["capitales"]
+                       if not nom.startswith(SURTITRE_DE_L_AFFICHE)]
             fautes += [f"{ou} : en italique, {nom}" for nom in typo["italiques"]]
-            lourdes = sorted(g for g in typo["graisses"] if int(g) > 600)
+            lourdes = sorted(g for g in typo["graisses"] if int(g) > GRAISSE_MAXIMALE)
             if lourdes:
                 fautes.append(f"{ou} : graisses {lourdes}")
             if visite["largeur"] != 1440:

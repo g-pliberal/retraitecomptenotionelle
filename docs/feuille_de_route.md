@@ -8128,15 +8128,16 @@ dans un module du calcul, avec son test, et la page le lit ; le site
 
 ### 189. Le site à la charte du parti, puis lisible par l'électeur — `en cours`
 
-**Reprise, au 9 novembre 2026.** L'étape 1, la charte du parti, est faite.
-L'étape 2 a récrit l'accueil et Partager sur le texte que le propriétaire a
-arrêté le 9 novembre : « Chaque pension vaut ce qui a été cotisé. », six
-arguments avant le simulateur, deux cartes de constat (la SNCF et la RATP,
-la CTA) lues au paquet. Reste, sur son avis, le texte des autres pages, et ce
-qui attend le modèle ou une décision : la réversion gardée, la décision 89,
-les pensions qui montent, « En bref », la carte « Le taux », que la décision
-48 dément. Puis l'étape 3, au mainteneur de la copie du parti. Note :
-`189/2026-11-09-etape-2-le-texte-pour-l-electeur.md`.
+**Reprise, au 9 novembre 2026.** Deux fils, une seule session sur les pages à
+la fois. Le texte (étape 2) : l'accueil et Partager sont récrits ; reste, sur
+l'avis du propriétaire, le texte des autres pages, et ce qui attend le modèle
+ou une décision — la réversion gardée, la décision 89, les pensions qui
+montent, « En bref », la carte « Le taux », que la décision 48 dément. L'aspect
+du site du parti (étapes 4 à 7) : la coquille est faite ; restent le corps des
+pages (5), par quoi commencer, les figures et la saisie (6), le panneau
+« Affichage » (7). Puis l'étape 3, au mainteneur de la copie du parti. Notes :
+`189/2026-11-09-etape-2-le-texte-pour-l-electeur.md`,
+`189/2026-11-09-etape-4-la-coquille.md`.
 
 **D'où elle vient.** Le 8 novembre 2026, le propriétaire : « J'aimerais
 changer le style du site. C'est beaucoup mieux sur cet autre site que j'ai
@@ -8153,3 +8154,16 @@ c'est lui qu'on vise ! »
 3. au mainteneur de la copie du parti : retirer `plf-theme.css`, qui
    imposerait un thème sombre à la page claire
    (`docs/integration-partiliberalfrancais.md`, « Le contrat visuel »).
+
+**La suite, le 9 novembre 2026.** Le propriétaire : « J'aimerais que le site
+reprenne encore plus l'aspect de mon autre site. » La charte en avait pris
+les couleurs ; quatre étapes en prennent la mise en page :
+
+4. la coquille : la lueur du bandeau et de l'affiche, le surtitre en
+   capitales, le titre surligné, le pied en bande pétrole — fait ;
+5. le corps des pages : bandes alternées, surtitres, chiffres clés en grille
+   de cartes, encadrés, appel final ;
+6. les figures et la saisie : cartes de figure, pastilles, légendes,
+   tableaux encadrés, champs du simulateur ;
+7. le panneau « Affichage » : taille du texte, police très lisible,
+   interligne, sans le thème sombre.

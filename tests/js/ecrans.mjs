@@ -597,8 +597,41 @@ const MESURER = (ecran) => `(() => {
     parti: !!(enTete && enTete.textContent.includes("Parti Libéral Français")),
   };
 
+  // La coquille du site du parti (9 novembre 2026) : la lueur turquoise du
+  // bandeau et de l'affiche, peinte par leur \`::before\` — le fond lui-même
+  // reste uni, et le contraste des textes s'y mesure encore —, le surtitre de
+  // l'affiche, la graisse du titre, le passage que le titre surligne, et le
+  // pied de page, une bande d'un bord à l'autre rangée en colonnes.
+  const lAffiche = document.querySelector("#contenu .affiche");
+  const leSurtitre = lAffiche && lAffiche.querySelector(".surtitre");
+  const surligne = titreDeLaPage && titreDeLaPage.querySelector(".cle-texte");
+  const lePied = document.querySelector("footer");
+  const lueur = (el) => (el ? getComputedStyle(el, "::before").backgroundImage : null);
+  const titresDuPied = lePied ? [...lePied.querySelectorAll("h2")].filter(montre) : [];
+  const coquille = {
+    lueurDuBandeau: lueur(enTete),
+    lueurDeLAffiche: lueur(lAffiche),
+    surtitre: leSurtitre ? {
+      casse: getComputedStyle(leSurtitre).textTransform,
+      couleur: getComputedStyle(leSurtitre).color,
+      espace: parseFloat(getComputedStyle(leSurtitre).letterSpacing) || 0,
+    } : null,
+    graisseDuTitre: titreDeLaPage ? getComputedStyle(titreDeLaPage).fontWeight : null,
+    surlignage: surligne ? {
+      couleur: getComputedStyle(surligne).color,
+      fond: getComputedStyle(surligne).backgroundImage,
+    } : null,
+    pied: lePied ? {
+      fond: getComputedStyle(lePied).backgroundColor,
+      largeur: Math.round(lePied.getBoundingClientRect().width),
+      titres: titresDuPied.length,
+      couleurDesTitres: titresDuPied.length ? getComputedStyle(titresDuPied[0]).color : null,
+      colonnes: new Set(titresDuPied.map((t) => Math.round(t.getBoundingClientRect().left))).size,
+    } : null,
+  };
+
   return {
-    typographie, charte,
+    typographie, charte, coquille,
     contrastes: contrastes.slice(0, 40), nombreContrastes: contrastes.length,
     vides: vides.slice(0, 12),
     deborde: document_.scrollWidth > largeur + 1 ? document_.scrollWidth : 0,
