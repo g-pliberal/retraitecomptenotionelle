@@ -1,0 +1,17 @@
+date: "2026-11-09"
+session: "action 190, étape 2 : le rendu des pages, deux défauts corrigés, puis l'état du rendu en une seule variable"
+consulte: >-
+  Aucune règle du scénario 1 n'est touchée, et l'index LEGI n'est pas
+  interrogé. Lus ce jour : moteur/js/routeur.js (le rendu, l'échec du
+  chargement, la lecture d'un relevé déposé, la page toute faite animée),
+  tests/js/ecrans.mjs et tests/test_ecrans.py. Aucune source extérieure
+  n'est ouverte.
+trouve: >-
+  Aucun écart avec les fiches. Le double message d'erreur, reproduit dans
+  Chromium, et un cas voisin, deux échecs successifs sur une page
+  recalculée sur place ; le relevé déposé, reproduit pour deux fichiers,
+  non pour un rendu pendant la lecture. Corrigés, puis le rendu passé à un
+  seul état. Détail : docs/feuille_de_route/190/2026-11-09-etape-2-rendu.md.
+reste: >-
+  Rien de l'étape 2. Les étapes 3 à 5 de l'action 190, menées par d'autres
+  sessions, puis la clôture.
