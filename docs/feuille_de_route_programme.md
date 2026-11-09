@@ -808,6 +808,12 @@ les 18 % du programme passent entre A et B, et leur caisse finit 2070
 presque sans dette. Le détail : `186/2026-11-07-deux-lectures-au-modele.md`,
 dernière partie. Le choix entre A et B reste au propriétaire.
 
+**Le 9 novembre 2026, le gain des actifs en euros.** Les 39 € du SMIC
+tiennent à la réduction générale ; sous A et sous B, le taux uniforme, le
+même montant pour chacun (63 € et 252 € par mois) et la franchise sont
+chiffrés, avec ce que devient la pension et qui crédite le compte. Rien
+n'est tranché : `186/2026-11-09-gain-actifs-en-euros.md`.
+
 ### Chantier 2 — La baisse des pensions en cours : sa règle, son plancher, son calendrier, son droit
 
 **La question.** Baisser les pensions liquidées en cinq ans, d'une façon qui
