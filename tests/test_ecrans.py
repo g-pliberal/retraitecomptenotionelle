@@ -658,6 +658,126 @@ def test_l_adresse_d_une_carte_ne_se_coupe_que_faute_de_place():
     assert not fautes, f"{len(fautes)} adresses coupées :\n" + "\n".join(fautes)
 
 
+# -- les gestes qui se chevauchent -------------------------------------------
+
+#: Ce que les courses retiennent : le paquet de données, que le premier calcul
+#: charge, et le lecteur des PDF, qu'un relevé déposé charge.
+PAQUET = "moteur/donnees.json"
+LECTURE_PDF = "moteur/js/lecture-pdf.js"
+
+#: La page a fini — rendue, ou en échec.
+PRETE = '"pret" in document.body.dataset'
+
+#: Un relevé du régime général, tel qu'on le télécharge en texte.
+RELEVE = """Relevé de carrière
+Régime général
+Année Employeur ou situation Revenu d'activité Trimestres
+1998 GARAGE MARTIN 94 500 4
+1999 GARAGE MARTIN 98 200 4
+2001 SOCIETE DUPONT SA 112 400 4
+"""
+
+
+def _deposer(nom: str, texte: str) -> str:
+    """Le geste de qui dépose un fichier sur l'encadré du relevé."""
+    return f"""(() => {{
+      const transfert = new DataTransfer();
+      transfert.items.add(new File([{json.dumps(texte)}], {json.dumps(nom)}));
+      document.querySelector("#contenu .depot").dispatchEvent(new DragEvent("drop",
+        {{ dataTransfer: transfert, bubbles: true, cancelable: true }}));
+      return true;
+    }})()"""
+
+
+#: Les messages d'erreur que la page porte en tête.
+MESSAGES = ('({messages: [...document.querySelectorAll("#contenu > .erreur")]'
+            '.map((m) => m.textContent.slice(0, 60))})')
+
+
+def _rendus(nom: str, gestes: list[dict]) -> dict:
+    """Le simulateur ouvert sur une carrière, que le moteur doit calculer ; le
+    paquet refusé une demi-seconde après sa demande, les ``gestes`` faits
+    entre-temps."""
+    return {
+        "nom": nom, "depart": "simuler/#naissance=1980", "retenir": [PAQUET],
+        "etapes": [{"attendre": PAQUET}, *gestes, {"pause": 500}, {"refuser": PAQUET},
+                   {"jusqua": PRETE}, {"pause": 300}],
+        "rendre": MESSAGES,
+    }
+
+
+COURSES = [
+    _rendus("un rendu", []),
+    _rendus("deux rendus", [{"geste": 'location.hash = "naissance=1981"'}]),
+    {
+        # La page Coût toute faite, recalculée sur place sous un réglage, deux
+        # fois de suite, le paquet refusé chaque fois.
+        "nom": "deux échecs de suite", "depart": "cout/", "retenir": [PAQUET],
+        "etapes": [
+            {"jusqua": PRETE},
+            {"geste": 'location.hash = "indexation=prix"'},
+            {"refuser": PAQUET}, {"jusqua": PRETE},
+            {"geste": 'location.hash = "indexation=masse_salariale"'},
+            {"refuser": PAQUET}, {"jusqua": PRETE}, {"pause": 300},
+        ],
+        "rendre": MESSAGES,
+    },
+    {
+        # Un PDF déposé, dont la lecture attend son module ; puis un relevé en
+        # texte, lu jusqu'au bout pendant ce temps ; puis le module du PDF.
+        "nom": "deux relevés", "depart": "simuler/", "retenir": [LECTURE_PDF],
+        "etapes": [
+            {"jusqua": PRETE},
+            {"geste": _deposer("scan.pdf", "%PDF-1.4\n%%EOF\n")},
+            {"attendre": LECTURE_PDF},
+            {"geste": _deposer("releve.txt", RELEVE)},
+            {"jusqua": 'document.querySelector("#contenu .rapport-releve")'
+                       '.textContent.includes("années lues")'},
+            {"laisser": LECTURE_PDF},
+            {"jusqua": 'performance.getEntriesByType("resource")'
+                       f'.some((e) => e.name.endsWith("{LECTURE_PDF}"))'},
+            {"pause": 1000},
+        ],
+        "rendre": """(() => {
+          const rapport = document.querySelector("#contenu .rapport-releve");
+          return { rapport: rapport.textContent, echec: rapport.classList.contains("echec"),
+                   releve: document.querySelector('#contenu textarea[name="releve"]').value };
+        })()""",
+    },
+]
+
+
+@functools.lru_cache(maxsize=None)
+def _courses() -> dict:
+    """Chaque course jouée, par son nom."""
+    resultat = jouer({"ecrans": [], "routes": [], "chargements": [], "courses": COURSES})
+    return {course["nom"]: course for course in resultat["courses"]}
+
+
+def test_un_moteur_qui_ne_se_charge_pas_ne_le_dit_qu_une_fois():
+    """Deux rendus se chevauchent — l'adresse change pendant que le paquet se
+    charge — et le paquet ne vient pas : seul le dernier rendu le dit. Le
+    9 novembre 2026, chacun posait son message, le second devant le premier,
+    l'échec passant avant la garde du numéro de rendu (action 190, étape 2).
+    Deux échecs l'un après l'autre, sur une page recalculée sur place, ne
+    posent pas non plus deux messages : le second remplace le premier."""
+    for nom in ("un rendu", "deux rendus", "deux échecs de suite"):
+        course = _courses()[nom]
+        assert not course["fautes"], f"{nom} : {course['fautes']}"
+        assert len(course["messages"]) == 1, f"{nom} : {course['messages']}"
+
+
+def test_le_dernier_releve_depose_l_emporte():
+    """Un second relevé déposé pendant que le premier se lit l'emporte, même
+    lu le premier : la lecture d'avant s'efface sans rien écrire. Sans garde,
+    la plus lente écrivait la dernière — le compte rendu d'un PDF illisible
+    sous une carrière remplie par le relevé suivant (action 190, étape 2)."""
+    course = _courses()["deux relevés"]
+    assert not course["fautes"], course["fautes"]
+    assert "années lues" in course["rapport"] and not course["echec"], course["rapport"]
+    assert "1998" in course["releve"], course["releve"]
+
+
 # -- le lancement du navigateur ----------------------------------------------
 
 #: Le module par lequel le pilote lance Chromium et attend son protocole, et

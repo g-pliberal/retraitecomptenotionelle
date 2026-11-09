@@ -335,6 +335,10 @@ SITE = {
     ("test_ecrans.py", "test_un_trace_et_sa_legende_se_voient_ensemble"),
     ("test_ecrans.py", "test_les_quatre_systemes_se_comparent_d_un_seul_regard"),
     ("test_ecrans.py", "test_chaque_page_se_peint_avec_son_seul_style"),
+    # Deux gestes qui se chevauchent : seul le dernier écrit. Une retouche de
+    # l'état du rendu ou de la lecture d'un relevé le déplace (action 190).
+    ("test_ecrans.py", "test_un_moteur_qui_ne_se_charge_pas_ne_le_dit_qu_une_fois"),
+    ("test_ecrans.py", "test_le_dernier_releve_depose_l_emporte"),
     # Où une adresse mène, ancienne ou neuve : une retouche du routeur ou d'un
     # lien le déplace.
     ("test_adresses_navigateur.py", "test_une_adresse_mene_ou_le_lecteur_l_attend"),

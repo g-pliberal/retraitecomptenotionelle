@@ -144,10 +144,19 @@ function envoyer(methode, parametres = {}, session = undefined) {
   });
 }
 
-// Ce que le pilote fait des requêtes qu'il intercepte (`styles`) : refuser la
-// feuille entière, ou ôter de la page l'`onload` qui la rend effective.
+// Les requêtes qu'une course retient (`courses`), par la fin de leur adresse :
+// chacune, arrêtée, attend que la course la refuse ou la laisse passer, dans
+// l'ordre où la page les a demandées.
+const retenues = new Map();
+
+// Ce que le pilote fait des requêtes qu'il intercepte : retenir celles d'une
+// course ; pour `styles`, refuser la feuille entière, ou ôter de la page
+// l'`onload` qui la rend effective.
 async function intercepter({ requestId, request, resourceType, responseHeaders }) {
-  if (resourceType === "Document") {
+  const retenue = [...retenues].find(([fin]) => request.url.endsWith(fin));
+  if (retenue) {
+    retenue[1].push(requestId);
+  } else if (resourceType === "Document") {
     const { body, base64Encoded } = await page("Fetch.getResponseBody", { requestId });
     const texte = base64Encoded ? Buffer.from(body, "base64").toString("utf-8") : body;
     const sans = texte.replace(` onload="this.media='all'"`, "");
@@ -805,6 +814,83 @@ async function jouerUnScenario(scenario) {
   };
 }
 
+// -- les courses -------------------------------------------------------------
+
+/**
+ * Une course : deux gestes qui se chevauchent pendant qu'une requête attend —
+ * un second rendu pendant que le paquet se charge, un second relevé pendant
+ * que le premier se lit. La course ouvre `depart` dans un navigateur sans
+ * mémoire, au bureau — une page toute faite y convient à la colonne —, retient les requêtes que nomme `retenir` (la fin de leur adresse),
+ * puis joue ses `etapes` dans l'ordre, chacune d'une seule clé :
+ *
+ *   - `attendre` : que la requête retenue soit demandée ;
+ *   - `refuser`, `laisser` : la refuser, comme un réseau coupé, ou la laisser
+ *     passer — la plus ancienne qui attend, une fois demandée ;
+ *   - `geste` : une expression jouée dans la page ;
+ *   - `jusqua` : une expression, attendue vraie ;
+ *   - `pause` : un délai, en millisecondes.
+ *
+ * Elle rend ce que dit `rendre`, une expression jouée à la fin, et les étapes
+ * qui n'ont pas abouti, sans s'arrêter : c'est le test qui juge.
+ */
+async function jouerUneCourse(course) {
+  await poserLEcran({ largeur: 1440, hauteur: 900 });
+  await page("Storage.clearDataForOrigin", {
+    origin: new URL(plan.racine).origin, storageTypes: "local_storage",
+  });
+  await page("Page.navigate", { url: "about:blank" });
+  erreursDeLaPage.length = 0;
+  retenues.clear();
+  for (const fin of course.retenir || []) { retenues.set(fin, []); }
+  if (retenues.size) {
+    await page("Fetch.enable", { patterns: [...retenues.keys()].map((fin) => (
+      { urlPattern: `*${fin}`, requestStage: "Request" })) });
+  }
+  const fautes = [];
+  // La plus ancienne requête arrêtée. Une requête que la page ne demande
+  // jamais : la course ne l'attend pas plus qu'une page qui ne se rend pas.
+  const arretee = async (fin) => {
+    const debut = Date.now();
+    while (!retenues.get(fin).length) {
+      if (Date.now() - debut > DELAI_RENDU) { return null; }
+      await pause(20);
+    }
+    return retenues.get(fin)[0];
+  };
+  try {
+    await page("Page.navigate", { url: `${plan.racine}${course.depart}` });
+    for (const etape of course.etapes) {
+      if (etape.attendre !== undefined) {
+        if (!await arretee(etape.attendre)) { fautes.push(`${etape.attendre} jamais demandé`); }
+      } else if (etape.refuser !== undefined || etape.laisser !== undefined) {
+        const fin = etape.refuser ?? etape.laisser;
+        const requestId = await arretee(fin);
+        if (!requestId) { fautes.push(`${fin} jamais demandé`); continue; }
+        retenues.get(fin).shift();
+        await (etape.refuser !== undefined
+          ? page("Fetch.failRequest", { requestId, errorReason: "Aborted" })
+          : page("Fetch.continueRequest", { requestId }));
+      } else if (etape.geste !== undefined) {
+        await evaluer(etape.geste);
+      } else if (etape.jusqua !== undefined) {
+        const debut = Date.now();
+        while (!await evaluer(etape.jusqua).catch(() => false)) {
+          if (Date.now() - debut > DELAI_RENDU) { fautes.push(`jamais vrai : ${etape.jusqua}`); break; }
+          await pause(50);
+        }
+      } else if (etape.pause !== undefined) {
+        await pause(etape.pause);
+      }
+    }
+    return { nom: course.nom, ...(await evaluer(course.rendre)), fautes,
+      erreurs: [...erreursDeLaPage] };
+  } finally {
+    // Ce qui est encore retenu passe : la course suivante part d'un navigateur libre.
+    if (retenues.size) { await page("Fetch.disable"); }
+    retenues.clear();
+  }
+}
+
 // -- le style de chaque page -------------------------------------------------
 
 /** Chaque élément de la page : sa boîte, et ce que le style décide de lui. */
@@ -945,7 +1031,12 @@ try {
   for (const cas of plan.styles || []) {
     styles.push(await mesurerLeStyle(cas));
   }
-  process.stdout.write(JSON.stringify({ visites: resultats, chargements, adresses, styles }));
+  const courses = [];
+  for (const course of plan.courses || []) {
+    courses.push(await jouerUneCourse(course));
+  }
+  process.stdout.write(JSON.stringify({ visites: resultats, chargements, adresses, styles,
+    courses }));
 } catch (erreur) {
   process.stderr.write(String(erreur?.stack || erreur));
   process.exitCode = 1;

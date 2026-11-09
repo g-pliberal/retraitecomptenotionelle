@@ -84,15 +84,18 @@ let contexte = null;
 // message le dit au-dessus d'elle.
 function echec(titre, detail) {
   const contenu = document.getElementById("contenu");
-  const message = `<div class="erreur"><strong>${titre}</strong> ${detail}</div>`;
+  const message = `<div class="erreur" data-echec><strong>${titre}</strong> ${detail}</div>`;
   // Sous l'écran d'attente, le message le remplace ; sur une page toute faite,
-  // il la précède.
+  // il la précède, à la place de celui d'un essai d'avant : la page recalculée
+  // sur place le garde, et deux essais en posaient deux.
+  contenu.querySelector(":scope > [data-echec]")?.remove();
   contenu.innerHTML = contenu.querySelector(".chargement") ? message : message + contenu.innerHTML;
-  document.body.classList.remove("calcul-en-cours");
-  contenu.removeAttribute("aria-busy");
 }
 
-function echecDuChargement(erreur) {
+// Un rendu qui n'est plus le dernier ne dit rien : le suivant, qui attend le
+// même chargement, le dira. Hors d'un rendu, l'échec est celui de la page.
+function echecDuChargement(erreur, numero = rendu.numero) {
+  if (!passer(numero, "en-echec")) { return; }
   echec(
     "Le simulateur n'a pas pu se charger",
     `<p>${neutraliser(erreur)}</p>`
@@ -104,7 +107,6 @@ function echecDuChargement(erreur) {
     + '<p><a href="https://github.com/g-pliberal/retraitecomptenotionelle">'
     + "Le dépôt du projet</a></p>",
   );
-  pret();
 }
 
 // Ce qu'un message d'erreur peut porter de texte arbitraire — le nom d'un
@@ -285,17 +287,73 @@ let optionsDepliees = false;
 // Le premier rendu ne déplace pas le focus — voir `reprendre`.
 let premierRendu = true;
 
-// La route dont la page est affichée, et la requête sous laquelle elle l'a
-// été : un rendu qui ne change pas de route se fait SUR PLACE — voir
-// `afficher`. Nulle tant que rien n'est affiché, ou quand le dernier rendu a
-// échoué.
-let routeAffichee = null;
-let requeteAffichee = "";
+// L'ÉTAT DU RENDU, en une seule variable, qui ne change que par `passer`. Il
+// était réparti entre six marques et variables, que chaque chemin posait à sa
+// façon : deux rendus qui se chevauchaient, le moteur ne se chargeant pas,
+// posaient deux fois le message d'erreur, l'échec passant avant la garde
+// (action 190, étape 2). Les états :
+//
+//   - `toute-faite` : la page que le serveur a envoyée, pas encore animée ;
+//   - `demandee` : un rendu commence, et rien ne change encore à l'écran ;
+//   - `occupee` : il calcule — la page estompée sur place, ou l'écran
+//     d'attente ;
+//   - `posee` : la page est là, rendue par le moteur ou toute faite, et le
+//     routeur l'anime ;
+//   - `rendue` : elle est prête ;
+//   - `en-echec` : le moteur ne s'est pas chargé, ou le calcul a échoué, et le
+//     message le dit.
+//
+// Avec l'état : `numero`, celui du dernier rendu commencé — deux rendus peuvent
+// se chevaucher, un second clic pendant un calcul long, un retour arrière, et
+// seul le plus récent avance ; `route` et `requete`, la page affichée et la
+// requête sous laquelle elle l'a été — un rendu qui ne change pas de route se
+// fait SUR PLACE, voir `afficher` —, la route nulle tant que rien n'est
+// affiché, ou quand le dernier calcul a échoué ; `prerendu`, la route de la
+// page toute faite, tant que c'en est une — son dessin est celui de deux
+// écrans.
+let rendu = {
+  etat: "toute-faite", numero: 0, route: null, requete: "",
+  prerendu: document.getElementById("contenu")?.dataset.prerendu ?? null,
+};
 
-// Un numéro par rendu. Deux rendus peuvent se chevaucher — un second clic
-// pendant un calcul long, un retour arrière — ; seul le plus récent pose sa
-// page, et l'autre s'efface sans rien toucher.
-let numeroDeRendu = 0;
+// Un rendu commence : il prend le numéro suivant. Celui qu'il dépasse, s'il
+// calculait encore, lui laisse la page estompée.
+function commencerUnRendu() {
+  rendu = { ...rendu, numero: rendu.numero + 1,
+    etat: rendu.etat === "occupee" ? "occupee" : "demandee" };
+  marquer();
+  return rendu.numero;
+}
+
+// La seule transition, et la garde : le rendu `numero` passe à l'état `etat`,
+// avec `changements`, s'il est encore le dernier commencé ; sinon rien ne
+// change, et l'appelant s'efface sans rien toucher. Chaque reprise après une
+// attente y repasse, l'état restant le même au besoin.
+function passer(numero, etat, changements = {}) {
+  if (numero !== rendu.numero) { return false; }
+  rendu = { ...rendu, ...changements, etat };
+  marquer();
+  return true;
+}
+
+// Ce que le document porte de l'état, que les tests et la feuille de style
+// lisent : `body.calcul-en-cours` et `#contenu[aria-busy]` quand il calcule,
+// `body[data-pret]` quand la page est prête — les tests n'ont pas à deviner
+// quand l'attendre —, `#contenu[data-prerendu]` tant qu'elle est toute faite.
+// Prête, la page rend la hauteur qu'elle gardait le temps du premier calcul.
+function marquer() {
+  const contenu = document.getElementById("contenu");
+  const occupee = rendu.etat === "occupee";
+  document.body.classList.toggle("calcul-en-cours", occupee);
+  if (occupee) { contenu.setAttribute("aria-busy", "true"); } else { contenu.removeAttribute("aria-busy"); }
+  if (rendu.etat === "rendue" || rendu.etat === "en-echec") {
+    contenu.style.minHeight = "";
+    document.body.dataset.pret = "";
+  } else {
+    delete document.body.dataset.pret;
+  }
+  if (rendu.prerendu === null) { delete contenu.dataset.prerendu; }
+}
 
 // Vrai dès qu'une page a été rendue sous des règles qui ne sont pas celles
 // par défaut. Voir `reprendreLaSaisie` : c'est ce qui dit si une adresse sans
@@ -330,13 +388,12 @@ window.addEventListener("resize", () => {
     const traces = document.querySelector(
       "#contenu :is(figure.graphique, figure.sankey, figure.cascade)");
     const deFront = document.querySelector("#contenu .de-front");
-    if (!traces || !routeAffichee) { return; }
+    if (!traces || !rendu.route) { return; }
     // La page toute faite porte ses tracés pour deux écrans : elle convient
     // tant que le dessin est à moins de 12 % de la colonne, et l'autre dessin
     // se mesure quand la fenêtre le fait paraître. Une page recalculée, elle,
     // est dessinée à la largeur exacte.
-    const toutFaite = document.getElementById("contenu").dataset.prerendu !== undefined;
-    if (toutFaite) {
+    if (rendu.prerendu !== null) {
       if (gabarit.dessinConvient(largeurDeLaColonne(), true, Boolean(deFront))) {
         dimensionnerLesTraces(document.getElementById("contenu"));
       } else {
@@ -349,8 +406,7 @@ window.addEventListener("resize", () => {
 });
 
 async function afficher() {
-  const numero = ++numeroDeRendu;
-  delete document.body.dataset.pret;
+  const numero = commencerUnRendu();
   // Ce que le lecteur vient de faire, s'il vient de faire quelque chose : un
   // retour arrière n'a pas de déclencheur, et un déclencheur de plus de deux
   // secondes n'est pas celui de ce rendu — un clic dont la navigation a été
@@ -373,10 +429,10 @@ async function afficher() {
     try {
       await lesModules();
     } catch (erreur) {
-      echecDuChargement(erreur);
+      echecDuChargement(erreur, numero);
       return;
     }
-    if (numero !== numeroDeRendu) { return; }
+    if (!passer(numero, "demandee")) { return; }
     reprise = reprendreLaSaisie(cible.parametres);
   }
   if (reprise) { cible = adresse(); }
@@ -400,18 +456,17 @@ async function afficher() {
   // La page toute faite est déjà là : elle s'estompe le temps du calcul, comme
   // une page qu'on recalcule — hors le simulateur, dont la page toute faite est
   // un formulaire vierge qu'on ne veut pas voir remplir sous le calcul.
-  const surPlace = cible.chemin === routeAffichee
-    || (contenu.dataset.prerendu === cible.chemin && cible.chemin !== "/simuler");
+  const surPlace = cible.chemin === rendu.route
+    || (rendu.prerendu === cible.chemin && cible.chemin !== "/simuler");
   const ouverts = surPlace ? detailsOuverts(contenu) : [];
   const repere = surPlace && action ? repereDe(action.element, contenu) : null;
 
-  document.body.classList.add("calcul-en-cours");
-  contenu.setAttribute("aria-busy", "true");
+  passer(numero, "occupee");
   if (!surPlace) {
     // La page toute faite garde sa hauteur le temps du calcul : sans cela le pied
     // remonterait sous les yeux, puis retomberait — deux décalages de mise en
-    // page pour rien. `pret` la libère.
-    if (contenu.dataset.prerendu !== undefined) {
+    // page pour rien. La page prête la libère (`marquer`).
+    if (rendu.prerendu !== null) {
       contenu.style.minHeight = `${contenu.offsetHeight}px`;
     }
     contenu.innerHTML = chargement(
@@ -420,15 +475,15 @@ async function afficher() {
   }
   // Laisse le navigateur peindre l'attente avant de bloquer sur le calcul.
   await new Promise((suite) => { setTimeout(suite, 20); });
-  if (numero !== numeroDeRendu) { return; }
+  if (!passer(numero, "occupee")) { return; }
   // Le moteur, s'il n'est pas déjà là : le premier calcul le charge.
   try {
     await moteur();
   } catch (erreur) {
-    echecDuChargement(erreur);
+    echecDuChargement(erreur, numero);
     return;
   }
-  if (numero !== numeroDeRendu) { return; }
+  if (!passer(numero, "occupee")) { return; }
 
   let titre;
   let corps;
@@ -438,27 +493,20 @@ async function afficher() {
     ecranRendu = gabarit.ecran();
     demiRendue = gabarit.demiColonne();
   } catch (erreur) {
-    document.body.classList.remove("calcul-en-cours");
-    contenu.removeAttribute("aria-busy");
     contenu.innerHTML = '<div class="erreur"><strong>Le calcul a échoué.</strong> '
       + neutraliser(erreur) + "</div>";
-    routeAffichee = null;
+    passer(numero, "en-echec", { route: null });
     annoncer(`Le calcul a échoué. ${String(erreur)}`);
-    pret();
     return;
   }
 
   document.getElementById("entete").innerHTML = gabarit.entete(cible.chemin);
   contenu.innerHTML = corps;
   // Ce n'est plus la page toute faite : son dessin n'est plus celui de deux écrans.
-  delete contenu.dataset.prerendu;
-  routeAffichee = cible.chemin;
-  requeteAffichee = requeteDeLAdresse();
+  passer(numero, "posee", { route: cible.chemin, requete: requeteDeLAdresse(), prerendu: null });
   if (gabarit.options()) { reglesVues = true; }
   // Le titre de l'onglet et la description sont ceux de la page toute faite :
   // chaque page est son propre document.
-  document.body.classList.remove("calcul-en-cours");
-  contenu.removeAttribute("aria-busy");
 
   const nouveauDetails = contenu.querySelector("form details.options");
   if (nouveauDetails && optionsDepliees) { nouveauDetails.open = true; }
@@ -478,7 +526,7 @@ async function afficher() {
   // Puis la section que l'adresse désigne — un renvoi venu d'une autre page la
   // porte derrière le `#` (`cout/#cout-equilibre`) : on l'ouvre, et on y va.
   if (cible.section) { ouvrirSection(cible.section); }
-  pret();
+  passer(numero, "rendue");
 }
 
 // Les cases de la légende d'un graphique prennent la largeur de leur plus
@@ -489,13 +537,6 @@ function dimensionnerLesTraces(contenu) {
   for (const figure of contenu.querySelectorAll("figure.graphique")) {
     if (figure.getClientRects().length) { dimensionnerLecture(figure); }
   }
-}
-
-// La page est prête — rendue, animée, branchée : les tests, qui n'ont pas à
-// deviner quand l'attendre, le lisent ici.
-function pret() {
-  document.getElementById("contenu").style.minHeight = "";
-  document.body.dataset.pret = "";
 }
 
 // -- les statuts, aux seules dates où leur régime recrutait -------------------
@@ -1177,7 +1218,7 @@ function remplir(formulaire, valeurs, noms = null) {
 // Sur le formulaire de l'exemple, qui n'a pas de carrière dans l'adresse, il
 // suffit que les règles soient les mêmes.
 function brouillonSApplique(base, parametres) {
-  if (porteUneCarriere(enObjet(base))) { return base === requeteAffichee; }
+  if (porteUneCarriere(enObjet(base))) { return base === rendu.requete; }
   return !porteUneCarriere(parametres) && reglesDe(enObjet(base)) === reglesDe(parametres);
 }
 
@@ -1232,7 +1273,7 @@ function retenir(contenu, cible, action, reprise) {
 
   // Ce que le lecteur vient de faire devient sa saisie retenue.
   if (action && action.nature !== "navigation" && carriere) {
-    ecrireMemoire({ requete: requeteAffichee, brouillon: null });
+    ecrireMemoire({ requete: rendu.requete, brouillon: null });
   }
 
   let reprisIci = false;
@@ -1269,7 +1310,7 @@ function retenir(contenu, cible, action, reprise) {
 // le lecteur retrouvera, avec ce qu'il y a changé.
 function noterLeBrouillon(formulaire) {
   const valeurs = requeteDuFormulaire(formulaire);
-  const base = requeteAffichee;
+  const base = rendu.requete;
   ecrireMemoire({
     requete: porteUneCarriere(enObjet(base)) ? base : null,
     brouillon: valeurs === formulaire._rendue ? null : { base, valeurs },
@@ -1345,7 +1386,7 @@ document.addEventListener("click", (evenement) => {
       || evenement.ctrlKey || evenement.shiftKey || evenement.altKey) { return; }
   const lien = evenement.target.closest?.("a[href]");
   const contenu = document.getElementById("contenu");
-  if (!lien || !contenu?.contains(lien) || routeAffichee !== "/simuler") { return; }
+  if (!lien || !contenu?.contains(lien) || rendu.route !== "/simuler") { return; }
   const visee = adresseDuLien(lien.getAttribute("href"));
   if (visee?.chemin !== "/simuler" || !visee.requete) { return; }
   const formulaire = formulaireDuSimulateur(contenu);
@@ -1388,7 +1429,7 @@ document.addEventListener("click", (evenement) => {
   const visee = adresseDuLien(lien.getAttribute("href"));
   if (!visee) { return; }
   const contenu = document.getElementById("contenu");
-  noterDeclencheur(lien, visee.chemin === routeAffichee && contenu?.contains(lien)
+  noterDeclencheur(lien, visee.chemin === rendu.route && contenu?.contains(lien)
     ? "sur-place" : "navigation");
 }, true);
 
@@ -1403,7 +1444,7 @@ document.addEventListener("click", (evenement) => {
   const lien = evenement.target.closest?.("a[href]");
   if (!lien || lien.target || lien.matches("a[data-vers], a.evitement")) { return; }
   const visee = adresseDuLien(lien.getAttribute("href"));
-  if (!visee || visee.chemin !== routeAffichee) { return; }
+  if (!visee || visee.chemin !== rendu.route) { return; }
   if (new URL(lien.getAttribute("href"), location.href).hash) { return; }
   evenement.preventDefault();
   if (location.hash) { location.hash = ""; }
@@ -1539,11 +1580,23 @@ function lignesIgnorees(ignorees) {
     + `<ul>${montrees}${reste}</ul>`;
 }
 
+// Un numéro par relevé déposé : seul le dernier écrit. Un second fichier déposé
+// pendant qu'un premier se lit l'emporte, même lu avant lui ; la lecture
+// dépassée s'arrête à sa prochaine attente, sans rien écrire.
+let lectureDuReleve = 0;
+
 async function deposerLeReleve(contenu, fichier) {
   const rapport = contenu.querySelector(".rapport-releve");
   const champ = contenu.querySelector('textarea[name="releve"]');
   const formulaire = contenu.querySelector("form");
   if (!rapport || !champ || !formulaire) { return; }
+  const numero = ++lectureDuReleve;
+  const depassee = () => numero !== lectureDuReleve;
+  const attendre = async (promesse) => {
+    const valeur = await promesse;
+    if (depassee()) { throw new Error("relevé dépassé"); }
+    return valeur;
+  };
   const dire = (html, echec = false) => {
     rapport.className = echec ? "rapport-releve echec" : "rapport-releve";
     rapport.innerHTML = html;
@@ -1551,11 +1604,11 @@ async function deposerLeReleve(contenu, fichier) {
 
   dire(`Lecture de <code>${neutraliser(fichier.name)}</code>…`);
   try {
-    const octets = new Uint8Array(await fichier.arrayBuffer());
+    const octets = new Uint8Array(await attendre(fichier.arrayBuffer()));
     let lignes;
     if (estUnPdf(octets)) {
-      const { lignesPdf } = await import("./lecture-pdf.js");
-      lignes = await lignesPdf(octets);
+      const { lignesPdf } = await attendre(import("./lecture-pdf.js"));
+      lignes = await attendre(lignesPdf(octets));
       if (lignes.length === 0) {
         dire("Ce PDF ne porte aucun texte : c'est une image, un scan ou une "
           + "capture d'écran. Rien ne s'y lit, et le relevé reste à saisir à "
@@ -1567,14 +1620,14 @@ async function deposerLeReleve(contenu, fichier) {
       lignes = new TextDecoder().decode(octets).split(/\r?\n/);
     }
 
-    const { lireReleve, parametresDe } = await import("./releve-lu.js");
+    const { lireReleve, parametresDe } = await attendre(import("./releve-lu.js"));
     // L'année courante borne ce qui peut être une carrière : un relevé ne
     // rapporte jamais l'avenir, et les documents d'estimation en portent
     // beaucoup — « En partant au 01/06/2060, vous pourriez avoir droit à… ».
     // Les points d'une année que le relevé ne chiffre pas en euros disent son
     // revenu, au barème du droit en vigueur : le scénario 1 retrouve le plus
     // bas qui les ouvre, plutôt que de lire l'année à zéro.
-    await moteur();
+    await attendre(moteur());
     const actuel = contexte.simulateur().scenarioActuel;
     const lecture = lireReleve(lignes, new Date().getFullYear(),
       (...arguments_) => revenuDesPoints(actuel, ...arguments_));
@@ -1651,7 +1704,7 @@ async function deposerLeReleve(contenu, fichier) {
       + lignesIgnorees(lecture.ignorees)
       + "<p>Vérifiez la carrière ci-dessous, puis calculez.</p>");
   } catch (erreur) {
-    dire(`La lecture a échoué : ${neutraliser(erreur)}`, true);
+    if (!depassee()) { dire(`La lecture a échoué : ${neutraliser(erreur)}`, true); }
   }
 }
 
@@ -3074,7 +3127,7 @@ document.addEventListener("click", (evenement) => {
   if (!lien) { return; }
   // Vers une autre page, le lien suit son adresse, qui porte la section.
   const visee = adresseDuLien(lien.getAttribute("href"));
-  if (visee && visee.chemin !== routeAffichee) { return; }
+  if (visee && visee.chemin !== rendu.route) { return; }
   if (!document.getElementById(lien.dataset.vers)) { return; }
   evenement.preventDefault();
   ouvrirSection(lien.dataset.vers);
@@ -3171,7 +3224,7 @@ window.addEventListener("hashchange", afficher);
 // moteur la recalcule.
 function peutHydrater(cible) {
   const contenu = document.getElementById("contenu");
-  if (contenu?.dataset.prerendu !== cible.chemin) { return false; }
+  if (rendu.prerendu !== cible.chemin) { return false; }
   if (Object.keys(cible.parametres).length) { return false; }
   // Une saisie retenue, même un brouillon, se reprend par le moteur : savoir si
   // le brouillon appartient à ces règles demande la saisie (`reglesDe`).
@@ -3188,8 +3241,7 @@ function peutHydrater(cible) {
 // sans rendre.
 function hydrater(cible) {
   const contenu = document.getElementById("contenu");
-  routeAffichee = cible.chemin;
-  requeteAffichee = "";
+  passer(rendu.numero, "posee", { route: cible.chemin, requete: "" });
   premierRendu = false;
   plierLesTableaux(contenu);
   daterStatuts(contenu);
@@ -3199,7 +3251,7 @@ function hydrater(cible) {
   preremplirLeSimulateurCourt(contenu);
   dimensionnerLesTraces(contenu);
   if (cible.section) { ouvrirSection(cible.section); }
-  pret();
+  passer(rendu.numero, "rendue");
 }
 
 // Une ancienne adresse est remplacée avant tout : charger le moteur pour quitter
