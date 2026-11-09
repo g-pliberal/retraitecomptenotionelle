@@ -136,7 +136,7 @@ CALIBRATIONS = DONNEES / "derive" / "calibrations_mortalite.json"
 #: qu'un site en cache ne lise pas un paquet qu'il ne comprend pas : le site
 #: attend la sienne (``VERSION_PAQUET``, ``moteur/js/contexte.js``), et redemande
 #: au serveur un paquet qui n'a pas celle-là, depuis le 11 octobre 2026.
-VERSION = 42
+VERSION = 43
 
 
 def _serie(serie: SerieAnnuelle) -> dict:
@@ -2079,6 +2079,37 @@ def _courbe_taux_sans_risque() -> dict:
     }
 
 
+def _constats() -> dict:
+    """Les deux constats de la page Partager (action 189, étape 2), lus aux
+    données : les crédits de l'État de 2026 pour les retraites de la SNCF et
+    de la RATP (programme 198, ``pap_regimes_subventionnes.csv``), et
+    l'excédent de trésorerie de la CNIEG que la CTA remplit, estimé par la CRE
+    à la fin de 2025 (``excedent_cnieg.csv``). La carte n'écrit aucun montant
+    à la main : elle les lit ici."""
+    from retraite_notionnelle.donnees.chargement import charger_table_csv
+
+    regimes = DONNEES / "reference" / "regimes"
+    credits, _ = charger_table_csv(
+        regimes / "pap_regimes_subventionnes.csv", ("annee", "regime", "poste"), "valeur")
+    annee_credits = max(int(annee) for annee, regime, poste in credits
+                        if regime == "sncf" and poste == "credits_etat_meur")
+    excedents, _ = charger_table_csv(
+        regimes / "excedent_cnieg.csv", ("annee", "poste"), "montant_md")
+    # L'estimation de la fin d'année passée, non la prévision de 2030.
+    annee_excedent = 2025
+    return {
+        "credits_etat_sncf_ratp": {
+            "annee": annee_credits,
+            "sncf_meur": credits[(str(annee_credits), "sncf", "credits_etat_meur")],
+            "ratp_meur": credits[(str(annee_credits), "ratp", "credits_etat_meur")],
+        },
+        "excedent_cnieg": {
+            "annee": annee_excedent,
+            "montant_md": excedents[(str(annee_excedent), "excedent_tresorerie")],
+        },
+    }
+
+
 def _frais_epargne_retraite() -> dict:
     """Le barème de frais du PER, avec de quoi le citer sur la page Données."""
     frais = FraisEpargneRetraite(DONNEES)
@@ -2610,6 +2641,7 @@ def construire(bilan: bytes, agregats: bytes) -> bytes:
         "hypotheses": _hypotheses(),
         "courbe_taux_sans_risque": _courbe_taux_sans_risque(),
         "frais_epargne_retraite": _frais_epargne_retraite(),
+        "constats": _constats(),
         "prelevements_remuneration": _prelevements_remuneration(),
         "quotients": _quotients(),
         "quotients_projetes": _quotients(projetes=True),

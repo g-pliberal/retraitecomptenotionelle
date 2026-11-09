@@ -7447,6 +7447,34 @@ institutions:
           baisse par décisions successives, pas en pente. Lu le 20 septembre
           2026.
 
+  cre:
+    nom: Commission de régulation de l'énergie
+    role: >-
+      Rend son avis sur les taux de la contribution tarifaire d'acheminement
+      (CTA), la taxe sur les factures d'électricité et de gaz qui paie une
+      partie des retraites des industries électriques et gazières, et en
+      chiffre les recettes, les charges et l'excédent.
+    jeux:
+      - id: cre_deliberation_2026_14
+        titre: >-
+          Délibération n° 2026-14 du 15 janvier 2026 portant avis sur le projet
+          d'arrêté relatif aux taux de la contribution tarifaire sur les
+          prestations de transport et de distribution d'électricité et de gaz
+          naturel
+        url: https://www.cre.fr/fileadmin/Documents/Deliberations/2026/260115_2026-14_Arrete_CTA.pdf
+        acces: document
+        statut_integration: saisi
+        millesime: 2025
+        cible: data/reference/regimes/excedent_cnieg.csv
+        note: >-
+          L'excédent de trésorerie de la CNIEG, que la CTA remplit : « estimé à
+          fin 2025 de 2,2 Md€ », et qui « pourrait atteindre 4,4 Md€ en 2030 »
+          (§ 3.2, page 2). Lu sur le document le 9 novembre 2026, pour la
+          carte de la page Partager (action 189, étape 2) ; la décision 88 du
+          programme supprime la CTA (note
+          `docs/feuille_de_route/186/2026-11-09-cta.md`, qui lit aussi les
+          délibérations 2026-98 et 2026-123).
+
   institutions:
     nom: Sites des institutions dont le régime n'est dans aucun texte de l'index
     role: >-

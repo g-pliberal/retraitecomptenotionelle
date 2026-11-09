@@ -1,0 +1,36 @@
+# L'excédent de trésorerie de la Caisse nationale des industries électriques
+# et gazières (CNIEG), que la contribution tarifaire d'acheminement remplit
+# source_id: cre_deliberation_2026_14
+# unite: montant_md en milliards d'euros courants, au 31 décembre de l'année
+# fiabilite:
+#   haute : délibération de la Commission de régulation de l'énergie
+#           n° 2026-14 du 15 janvier 2026, § 3.2, page 2 : « l'excédent estimé
+#           à fin 2025 de 2,2 Md€. Selon l'estimation de la CRE, cet excédent
+#           pourrait atteindre 4,4 Md€ en 2030 ». Saisi à la main, lu sur le
+#           document le 9 novembre 2026.
+#
+# CE QUE C'EST
+# ------------
+# La contribution tarifaire d'acheminement (CTA, loi n° 2004-803 du 9 août
+# 2004, article 18) est prélevée sur toute facture d'électricité et de gaz.
+# Elle paie la part des retraites des agents des industries électriques et
+# gazières acquise au 31 décembre 2004 au titre du transport et de la
+# distribution, que l'adossement au régime général ne couvre pas ; la CNIEG la
+# recouvre. Depuis la fin, en 2025, de la soulte versée à la Cnav, elle
+# rapporte plus qu'elle ne paie, et l'excédent s'accumule à la caisse
+# (note `docs/feuille_de_route/186/2026-11-09-cta.md`, décision 88 du
+# programme : la CTA est supprimée).
+#
+# CE QU'IL FAUT SAVOIR AVANT DE S'EN SERVIR
+# ------------------------------------------
+# - `nature` : la fin de 2025 est une ESTIMATION de la CRE, faite en janvier
+#   2026 avant la clôture des comptes de la caisse ; 2030 est une PRÉVISION,
+#   faite avant la baisse des taux du 1er février 2026, qu'elle ne résorbe pas.
+# - L'excédent est celui de la seule CTA à la CNIEG, et non des réserves d'un
+#   régime : le COR ne le compte pas parmi les réserves des régimes
+#   (`reserves_regimes.csv`, tableau 2.3 de son rapport de juin 2026).
+# - Lu par `scripts/construire_donnees.py` (`_constats`), pour la carte de la
+#   page Partager (action 189, étape 2).
+annee,poste,montant_md,nature,fiabilite,page
+2025,excedent_tresorerie,2.2,estimation,haute,2
+2030,excedent_tresorerie,4.4,prevision,haute,2
