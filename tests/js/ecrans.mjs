@@ -726,8 +726,92 @@ const MESURER = (ecran) => `(() => {
     })(),
   };
 
+  // Les figures et la saisie au gabarit du site du parti (action 189,
+  // étape 6) : la carte de figure sans filet de couleur, la légende au-dessus
+  // du tracé, qui prend la largeur de ce qui le porte ; les choix en pastilles
+  // rondes, la cochée pleine de pétrole ; les tableaux dans un cadre arrondi,
+  // l'en-tête teinté, la ligne survolée surlignée ; les champs de la saisie.
+  const boite = (el) => el.getBoundingClientRect();
+  const dedansDe = (el) => boite(el).width - parseFloat(styleDe(el).paddingLeft)
+    - parseFloat(styleDe(el).paddingRight);
+  const survolDesLignes = [...document.styleSheets].flatMap((feuille) => {
+    try { return [...feuille.cssRules]; } catch { return []; }
+  }).filter((regle) => /^tbody tr:hover$/.test(regle.selectorText || ""))
+    .map((regle) => regle.style.backgroundColor || regle.style.background).pop() || null;
+  // La couleur que cette règle peint, sa variable résolue.
+  const peinte = (valeur) => {
+    if (!valeur) return null;
+    const sonde = document.body.appendChild(document.createElement("span"));
+    sonde.style.backgroundColor = valeur;
+    const couleur = getComputedStyle(sonde).backgroundColor;
+    sonde.remove();
+    return couleur;
+  };
+  const largeurDe = (el) => boite(el).width;
+  const figures = {
+    cartes: contenu("section.cle").map((el) => ({
+      nom: nommer(el).slice(0, 70),
+      fond: styleDe(el).backgroundColor,
+      filet: styleDe(el).borderTopWidth + " " + styleDe(el).borderTopColor,
+    })),
+    traces: contenu("figure.graphique").filter((el) => el.querySelector("figcaption .legende"))
+      .map((el) => {
+        const svg = el.querySelector("svg");
+        const legende = el.querySelector("figcaption .legende");
+        const entrees = [...legende.children].filter(montre);
+        return {
+          nom: nommer(el).slice(0, 70),
+          legendeAuDessus: boite(legende).bottom <= boite(svg).top + 1,
+          // Deux entrées au moins sur la première ligne, quand la légende en
+          // a plusieurs et la place de les poser de front.
+          enLigne: entrees.length < 2
+            || entrees.some((entree, rang) => rang
+              && Math.abs(boite(entree).top - boite(entrees[rang - 1]).top) < 4)
+            || entrees.every((entree, rang) => !rang || largeurDe(entree)
+              + largeurDe(entrees[rang - 1]) + 16 > largeurDe(legende)),
+          largeur: Math.round(boite(svg).width),
+          place: Math.round(dedansDe(el.parentElement)),
+          // La taille, en pixels, d'un texte de treize unités du tracé.
+          texte: Math.round(13 * boite(svg).width / svg.viewBox.baseVal.width * 10) / 10,
+        };
+      }),
+    pastilles: contenu(".bascule .choix > a, .bascule .choix > .actif, .onglets label")
+      .map((el) => {
+        const radio = el.matches("label") ? document.getElementById(el.htmlFor) : null;
+        return {
+          nom: nommer(el).slice(0, 50),
+          cochee: el.matches(".actif") || !!(radio && radio.checked),
+          rayon: parseFloat(styleDe(el).borderTopLeftRadius),
+          hauteur: Math.round(boite(el).height),
+          fond: styleDe(el).backgroundColor,
+          couleur: styleDe(el).color,
+          bord: styleDe(el).borderTopWidth + " " + styleDe(el).borderTopColor,
+        };
+      }),
+    tableaux: contenu("table").map((el) => {
+      const cadre = el.closest(".defilant");
+      const entete = [...el.querySelectorAll("thead th")].find(montre);
+      return {
+        nom: nommer(el).slice(0, 70),
+        plie: el.hasAttribute("data-plie"),
+        cadre: cadre ? styleDe(cadre).borderTopWidth + " " + styleDe(cadre).borderTopColor
+          + " " + styleDe(cadre).borderTopLeftRadius : null,
+        fond: cadre ? styleDe(cadre).backgroundColor : null,
+        entete: entete ? styleDe(entete).backgroundColor : null,
+      };
+    }),
+    survolDesLignes: peinte(survolDesLignes),
+    champs: contenu("input, select").filter((el) =>
+      !["hidden", "radio", "checkbox", "file", "range"].includes(el.type)).map((el) => ({
+      nom: (el.name || el.id || el.type).slice(0, 40),
+      hauteur: Math.round(boite(el).height),
+      bord: styleDe(el).borderTopWidth + " " + styleDe(el).borderTopColor,
+      rayon: styleDe(el).borderTopLeftRadius,
+    })),
+  };
+
   return {
-    typographie, charte, coquille, corps,
+    typographie, charte, coquille, corps, figures,
     contrastes: contrastes.slice(0, 40), nombreContrastes: contrastes.length,
     vides: vides.slice(0, 12),
     deborde: document_.scrollWidth > largeur + 1 ? document_.scrollWidth : 0,

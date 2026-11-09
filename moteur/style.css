@@ -76,6 +76,8 @@
   --texte-doux: #44606a;
   --texte-tres-doux: #557079;
   --trait: #c3d3d6;
+  /* La ligne d'un tableau sous le pointeur : le `--surlignage` du parti. */
+  --surlignage: #fdf4d2;
   /* Bordure des CHAMPS, distincte du filet décoratif : un contour de champ
      dit où l'on peut écrire, et tient 3:1 sur les trois fonds clairs
      (WCAG 2.1, 1.4.11) — 3,4:1 au pire. */
@@ -667,7 +669,11 @@ h1 .cle-texte, h2 .cle-texte { font-weight: inherit; }
      champs partent de la même ligne. Le bouton, lui, se centre. */
   gap: 1rem; align-items: start;
 }
-.simulateur-court .grille button { white-space: nowrap; }
+/* Le bouton à la hauteur des champs de sa rangée, celle d'un `.bouton` du
+   parti : haut de 63 points, il étirait la rangée, et les champs avec elle. */
+.simulateur-court .grille button {
+  white-space: nowrap; min-height: 2.75rem; padding: 0.5rem 1.25rem;
+}
 
 /* -- les engagements --------------------------------------------------------
 
@@ -819,7 +825,10 @@ input, select, textarea {
    faisait 54 points, un menu déroulant 47, un nombre 52, et leurs bords
    supérieurs ne se rejoignaient pas. */
 input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), select {
-  min-height: 3.375rem;
+  /* Ceux du site du parti (action 189, étape 6) : 44 points de haut, la cible
+     tactile, et non plus 54. Une hauteur, et non un minimum : un champ de
+     date en prendrait deux de plus qu'un menu. */
+  height: 2.75rem; padding: 0.5rem 0.75rem;
 }
 /* Le relevé de carrière se lit en colonnes : une police à chasse fixe aligne
    les années les unes sous les autres, et une faute de frappe s'y voit. Le
@@ -1010,6 +1019,12 @@ details.section > .dedans > h4,
   background-repeat: no-repeat;
   background-size: 2.5rem 100%, 2.5rem 100%, 0.9rem 100%, 0.9rem 100%;
   background-attachment: local, local, scroll, scroll;
+  /* Le cadre d'un tableau du site du parti (`.tableau-defilant`, action 189,
+     étape 6) : un filet, un rayon, et le blanc d'une carte dessous, sur
+     lequel l'en-tête teinté se détache — même dans une tranche d'appui, qui
+     a sa teinte. */
+  border: 1px solid var(--trait); border-radius: var(--rayon-petit);
+  background-color: var(--fond-carte); --fond-defilant: var(--fond-carte);
 }
 /* Le voile prend la couleur de ce qui porte le tableau. Peint dans le vert de
    la page, il faisait sur chaque carte une bande d'un ton plus sombre au bord
@@ -1028,8 +1043,12 @@ table { border-collapse: collapse; width: 100%; font-size: var(--t-texte);
    lu à l'écran comme l'intitulé de la grille. */
 caption {
   caption-side: top; text-align: left; font-size: var(--t-petit);
-  color: var(--texte-doux); padding: 0 0 0.5rem;
+  color: var(--texte-doux); padding: 0;
 }
+/* Le retrait qui écarte le titre du cadre est celui du `<span>`, pris dans
+   sa largeur : posé sur la `<caption>`, il l'élargissait au-delà du tableau,
+   qui se croyait trop large et se repliait. */
+caption > span, caption:not(:has(> span)) { padding: 0.5rem var(--retrait-case); }
 /* Une `<caption>` est large comme son tableau : quand il déborde de l'écran,
    elle est coupée avec lui (« Ce que le plancher individualisé change, p »).
    Elle porte donc un `<span>` collant, large comme la zone visible — `cqw`
@@ -1044,14 +1063,22 @@ tbody th { font-weight: 500; }
    maigre, comme dans le tableau du COR qu'elle imite, et une ligne « pour
    mémoire » de même — elle n'entre dans aucun total. */
 tbody th .dont { font-weight: 400; color: var(--texte-doux); padding-left: 1.2rem; display: inline-block; }
-th, td { text-align: right; padding: 0.75rem 0.5rem; border-bottom: 1px solid var(--trait); }
+/* Le retrait d'une case, que le cadre du tableau demande à ses bords : douze
+   points, sept sur le plus petit téléphone, où le filet du cadre en prend
+   déjà deux à des cases qui n'en ont pas un de trop. */
+table { --retrait-case: clamp(0.375rem, 2.5vw - 1px, 0.75rem); }
+th, td { text-align: right; padding: 0.75rem var(--retrait-case);
+         border-bottom: 1px solid var(--trait); }
 th:first-child, td:first-child { text-align: left; }
 /* L'en-tête d'un tableau : en casse normale et adouci, sur un filet plein,
    comme celui d'un relevé. Il était en capitales espacées, sur un filet d'or. */
 thead th {
-  font-size: var(--t-petit); color: var(--texte-doux); font-weight: 500;
-  border-bottom: 1px solid var(--texte-tres-doux);
+  font-size: var(--t-petit); color: var(--texte); font-weight: 700;
+  background: var(--fond-appui);
 }
+/* La ligne sous le pointeur, surlignée : on suit une rangée d'un bout à
+   l'autre d'un tableau large sans la perdre. */
+tbody tr:hover { background: var(--surlignage); }
 /* `:is(th, td)`, et non `td` seul : l'en-tête de rangée gardait son filet, et
    chaque tableau finissait par un trait orphelin sous sa première cellule. */
 tbody tr:last-child :is(th, td) { border-bottom: none; }
@@ -1121,6 +1148,16 @@ tbody tr[hidden] { display: none; }
    rangée passe au-dessus, sur toute la largeur, et les valeurs restent côte
    à côte, sous l'en-tête du tableau qui garde sa ligne. */
 table[data-plie], table[data-plie] > :is(thead, tbody) { display: block; min-width: 0; }
+/* Replié, le tableau n'a plus de cases dont le retrait l'écarte du cadre : il
+   prend le sien, et son en-tête, une ligne de noms, quitte sa teinte. */
+table[data-plie] { padding: 0 var(--retrait-case); box-sizing: border-box; }
+table[data-plie] caption > span, table[data-plie] caption:not(:has(> span)) {
+  padding-left: 0; padding-right: 0;
+}
+/* Le titre collant fait la largeur du cadre : replié, le tableau a pris son
+   retrait, que le titre rend. */
+table[data-plie] caption > span { width: calc(100cqw - 2 * var(--retrait-case)); }
+table[data-plie] thead th { background: none; }
 table[data-pli="rangee"][data-plie] tr:not([hidden]) {
   display: grid; grid-template-columns: repeat(var(--colonnes), minmax(0, 1fr));
   column-gap: 0.75rem; padding: 0.5rem 0; border-bottom: 1px solid var(--trait);
@@ -1171,6 +1208,9 @@ table[data-pli="fiche"][data-plie]:not(:has(tr > :nth-child(4))) tbody tr:not([h
 table[data-grille][data-pli="rangee"][data-plie] tr:not([hidden]) { column-gap: 0.3rem; }
 table[data-grille][data-pli="fiche"][data-plie] tbody tr:not([hidden]) {
   grid-template-columns: repeat(auto-fill, minmax(3.5rem, 1fr));
+  /* Un écart serré : le cadre du tableau a pris seize points à la rangée, et
+     l'écart d'une fiche n'en laissait plus tenir que trois à 320 points. */
+  column-gap: 0.5rem;
 }
 table[data-pli="fiche"][data-plie] tbody tr:last-child { border-bottom: 0; }
 table[data-pli="fiche"][data-plie] tbody :is(th, td) {
@@ -1227,14 +1267,15 @@ table[data-pli="fiche"][data-plie] tbody td[data-titre]::before {
   display: inline-flex; align-items: center; min-height: 2.75rem;
   margin: 0; font-size: 0.9375rem; font-weight: 600; color: var(--texte);
   padding: 0 1rem; border: 2px solid var(--trait-champ);
-  border-radius: var(--rayon-petit); cursor: pointer;
+  /* Une pastille ronde, celle des `.choix` du site du parti ; la cochée,
+     pleine de pétrole (action 189, étape 6). */
+  border-radius: 999px; background: var(--fond-carte); cursor: pointer;
 }
 .onglets input:checked + label {
-  background: var(--or); color: var(--sur-or); border-color: var(--or);
-  font-weight: 700;
+  background: var(--petrole); color: #fff; border-color: var(--petrole);
 }
 .onglets input:focus-visible + label { outline: 3px solid var(--focus); outline-offset: 3px; }
-.onglets label:hover { border-color: var(--or); }
+.onglets label:hover { border-color: var(--accent); }
 /* LA BASCULE : un choix entre deux états qui NAVIGUE.
 
    Son cousin `.onglets` montre et cache des panneaux déjà rendus — un bouton
@@ -1273,13 +1314,13 @@ table[data-pli="fiche"][data-plie] tbody td[data-titre]::before {
   min-height: 2.75rem; white-space: nowrap;
   padding: 0 1rem; font-size: 0.9375rem; font-weight: 600;
   border: 2px solid var(--trait-champ); color: var(--texte);
-  border-radius: var(--rayon-petit); text-decoration: none;
+  border-radius: 999px; background: var(--fond-carte); text-decoration: none;
 }
 .bascule .choix > .actif {
-  background: var(--or); color: var(--sur-or); border-color: var(--or);
-  font-weight: 700; cursor: default;
+  background: var(--petrole); color: #fff; border-color: var(--petrole);
+  cursor: default;
 }
-.bascule .choix > a:hover { border-color: var(--or); }
+.bascule .choix > a:hover { border-color: var(--accent); }
 .bascule .choix > a:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
 .panneaux > .panneau[hidden] { display: none; }
 .onglets:has(input:checked) ~ .panneaux > .panneau { display: none; }
@@ -1593,7 +1634,7 @@ table[data-pli="fiche"][data-plie] tbody td[data-titre]::before {
    en fait depuis que chaque carte porte sa barre de partage. */
 section.cle {
   background: var(--fond-carte); border: 1px solid var(--trait);
-  border-top: 4px solid var(--or); border-radius: var(--rayon);
+  border-radius: var(--rayon);
   box-shadow: var(--ombre);
   padding: 1.5rem clamp(1.25rem, 3vw, 1.75rem) 1.25rem;
   margin: 2.5rem 0;
@@ -1666,6 +1707,10 @@ section.cle > .source {
 }
 .partage > .repli[hidden] { display: none; }
 section.cle > .donnees-graphique { margin-bottom: 0.6rem; }
+/* Sous une figure qui prend la largeur de sa carte, la barre de partage la
+   prend aussi, derrière un filet neutre : le trait d'or s'arrêtait aux deux
+   tiers, où finissait le tracé (action 189, étape 6). */
+section.cle > .partage { max-width: none; border-top: 1px solid var(--trait); }
 /* Le mot de jargon et sa définition. Tout est en ligne — le mot doit couler
    dans sa phrase comme n'importe quel autre —, et l'enveloppe est simplement
    `relative` pour servir de repère à la bulle posée dessous. */
@@ -1721,24 +1766,20 @@ section.cle > .donnees-graphique { margin-bottom: 0.6rem; }
 /* LE TRACÉ ET SA LÉGENDE SE LISENT ENSEMBLE. La lecture au survol écrit ses
    valeurs dans la légende : posée sous la courbe, elle tombait hors de
    l'écran dès que le tracé l'occupait, et l'on touchait une courbe sans voir
-   ce qu'elle valait. La légende se pose donc À CÔTÉ du tracé quand la place
-   le permet, et AU-DESSUS quand elle manque — jamais dessous. Au large, le
-   tracé garde sa taille naturelle, 720 unités sur 46 rem, au lieu de s'étirer
-   sur toute la page avec des textes de vingt pixels.
+   ce qu'elle valait. La légende se pose donc AU-DESSUS du tracé, en ligne,
+   et le tracé prend toute la largeur de ce qui le porte : c'est la figure du
+   site du parti (action 189, étape 6). Elle était à droite d'un tracé tenu à
+   46 rem, les deux tiers de la carte. Le tracé ne s'étire pas pour autant :
+   le gabarit le dessine à la largeur de la carte (`LARGE`, dans
+   `gabarit.js`), et ses textes gardent leur taille.
 
-   Sans requête média : une rangée qui se replie À REBOURS (`wrap-reverse`).
-   Le tracé puis la légende tiennent sur une ligne, l'un à côté de l'autre ;
-   faute de place, la légende passe à la ligne, et la ligne suivante d'une
-   rangée à rebours se pose AU-DESSUS. L'aide au clavier, première dans
-   l'ordre, fait la ligne du bas. L'ordre du HTML ne change pas : la synthèse
-   vocale lit le tracé, puis ce qu'il porte. Une rangée à rebours aligne ses
-   éléments à l'envers : `flex-end` les cale en haut. */
+   L'ordre du HTML ne change pas : la synthèse vocale lit le tracé, puis ce
+   qu'il porte. L'aide au clavier fait la dernière ligne. */
 .graphique:has(> figcaption) {
-  display: flex; flex-flow: row wrap-reverse; align-items: flex-end;
-  gap: 0.6rem 1.75rem;
+  display: flex; flex-direction: column; gap: 0.6rem;
 }
-.graphique:has(> figcaption) > svg { flex: 1 1 32rem; max-width: 46rem; }
-.graphique > figcaption { flex: 1 1 14rem; min-width: 0; }
+.graphique:has(> figcaption) > svg { flex: none; }
+.graphique > figcaption { order: -1; min-width: 0; }
 .graphique > figcaption ul.legende { margin: 0; }
 /* Sur un téléphone, la légende passe au-dessus du tracé, et chaque ligne de
    plus l'en éloigne : un corps et un interligne plus serrés gardent la
@@ -1757,7 +1798,7 @@ section.cle > .donnees-graphique { margin-bottom: 0.6rem; }
 .graphique.etroit > figcaption ul.legende li > .lu {
   grid-column: 2; text-align: left; min-height: 1.35em;
 }
-.graphique:has(> figcaption) > .aide-clavier { order: -1; flex: 1 1 100%; }
+.graphique:has(> figcaption) > .aide-clavier { order: 1; }
 /* La figure se parcourt au clavier : les flèches y déplacent l'année lue. */
 .graphique:focus-visible { outline: 3px solid var(--focus); outline-offset: 4px; }
 /* La signature, en haut à gauche du cadre. N'importe quelle capture d'écran
@@ -1866,8 +1907,7 @@ ul.legende .lu {
 .donnees-sankey th, .donnees-sankey td { padding: 0.25rem 0.6rem; }
 .donnees-graphique thead th, .donnees-frise thead th,
 .donnees-cascade thead th, .donnees-sankey thead th {
-  position: sticky; top: 0; background: var(--fond-defilant);
-  box-shadow: inset 0 -2px 0 var(--or);
+  position: sticky; top: 0; background: var(--fond-appui);
 }
 .donnees-graphique caption, .donnees-frise caption,
 .donnees-cascade caption, .donnees-sankey caption { padding-bottom: 0.35rem; }
@@ -1905,21 +1945,18 @@ ul.legende .lu {
    chaque marche sur sa ligne (voir `cascade`, dans le gabarit). */
 .cascade { margin: 1.5rem 0 1.75rem; }
 .cascade svg { display: block; width: 100%; height: auto; }
-/* La légende de la cascade se pose comme celle d'une courbe — à côté du
-   dessin, ou au-dessus faute de place, jamais dessous : sous les libellés en
-   biais de la cascade debout, elle tombait à cinquante points du dessin, et
-   l'on lisait les couleurs sans leur sens. Ce qu'on lit au doigt vient juste
-   sous le dessin, l'aide au clavier en dernier. Une rangée à rebours aligne
-   ses éléments à l'envers : `flex-end` les cale en haut. */
-.cascade:has(> figcaption) {
-  display: flex; flex-flow: row wrap-reverse; align-items: flex-end;
-  gap: 0.6rem 1.75rem;
-}
-.cascade > svg { flex: 1 1 32rem; max-width: 46rem; min-width: 0; }
-.cascade > figcaption { flex: 1 1 14rem; min-width: 0; }
+/* La légende de la cascade se pose comme celle d'une courbe — au-dessus du
+   dessin, qui prend la largeur de ce qui le porte (action 189, étape 6),
+   jamais dessous : sous les libellés en biais de la cascade debout, elle
+   tombait à cinquante points du dessin, et l'on lisait les couleurs sans leur
+   sens. Ce qu'on lit au doigt vient juste sous le dessin, l'aide au clavier
+   en dernier. */
+.cascade:has(> figcaption) { display: flex; flex-direction: column; gap: 0.6rem; }
+.cascade > svg { flex: none; min-width: 0; }
+.cascade > figcaption { order: -1; min-width: 0; }
 .cascade > figcaption ul.legende { margin: 0; }
-.cascade:has(> figcaption) > .lecture { order: -1; flex: 1 1 100%; }
-.cascade:has(> figcaption) > .aide-clavier { order: -2; flex: 1 1 100%; }
+.cascade:has(> figcaption) > .lecture { order: 1; }
+.cascade:has(> figcaption) > .aide-clavier { order: 2; }
 .cascade:focus-visible { outline: 3px solid var(--focus); outline-offset: 4px; }
 .cascade .grille { stroke: var(--trait); stroke-width: 1; }
 .cascade .axe { stroke: var(--trait-champ); stroke-width: 1; }

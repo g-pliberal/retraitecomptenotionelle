@@ -226,6 +226,25 @@ let ECRAN = null;
  */
 let DEMI_COLONNE = null;
 
+/**
+ * La largeur d'un graphique au large, celle de sa carte — ou `null`, dans une
+ * colonne étroite, que `ECRAN` donne, et là où la page n'est sous les yeux de
+ * personne : il garde alors son cadre de toujours, 720 unités.
+ *
+ * Le graphique tenait à 720 unités sur 46 rem, les deux tiers de sa carte, sa
+ * légende à droite. Il en prend toute la largeur, comme sur le site du parti
+ * (action 189, étape 6), la légende dessus : étiré tel quel, ses textes de
+ * treize unités en feraient vingt à l'écran. Il se dessine donc à la largeur
+ * de la carte, la colonne moins ses deux retraits.
+ */
+let LARGE = null;
+
+// Un graphique ne se dessine pas plus large : au bureau, où la carte fait
+// 1 144 points, la feuille de style l'agrandit de quelques points. Sans cette
+// borne, le dessin tout fait, de 984 unités, ne conviendrait pas à la fois à
+// la carte d'un écran de 1 024 points (888) et à celle d'un bureau.
+const TRACE_MAXIMAL = 1100;
+
 /** La largeur en deçà de laquelle un tracé ne se dessine plus : 260 points. */
 export const ECRAN_MINIMAL = 260;
 
@@ -241,19 +260,23 @@ const DEMI_COLONNE_MAXIMALE = 532;
 
 /**
  * Ce qu'une colonne de cette largeur pose au gabarit : `[ECRAN,
- * DEMI_COLONNE]`. La page s'en sert à chaque rendu, et `routeur.js` pour
- * savoir si une colonne qui a changé de largeur demande un nouveau dessin.
+ * DEMI_COLONNE, LARGE]`. La page s'en sert à chaque rendu, et `routeur.js`
+ * pour savoir si une colonne qui a changé de largeur demande un nouveau dessin.
  */
 export function ecransDe(largeur) {
-  if (!largeur) return [null, null];
-  if (largeur < LARGEUR_TRACE) return [Math.max(ECRAN_MINIMAL, Math.floor(largeur)), null];
-  return [null, Math.min(DEMI_COLONNE_MAXIMALE,
-    Math.floor((largeur - 2 * RETRAIT_CARTE - ECART_DE_FRONT) / 2))];
+  if (!largeur) return [null, null, null];
+  if (largeur < LARGEUR_TRACE) {
+    return [Math.max(ECRAN_MINIMAL, Math.floor(largeur)), null, null];
+  }
+  return [null,
+    Math.min(DEMI_COLONNE_MAXIMALE,
+      Math.floor((largeur - 2 * RETRAIT_CARTE - ECART_DE_FRONT) / 2)),
+    Math.min(TRACE_MAXIMAL, Math.floor(largeur - 2 * RETRAIT_CARTE))];
 }
 
-/** Fixe la largeur de la colonne. Voir `ECRAN` et `DEMI_COLONNE`. */
+/** Fixe la largeur de la colonne. Voir `ECRAN`, `DEMI_COLONNE` et `LARGE`. */
 export function poserEcran(largeur) {
-  [ECRAN, DEMI_COLONNE] = ecransDe(largeur);
+  [ECRAN, DEMI_COLONNE, LARGE] = ecransDe(largeur);
 }
 
 // -- le pré-rendu des tracés ---------------------------------------------------
@@ -285,19 +308,23 @@ export const COLONNE_LARGE_PRERENDUE = 1040;
 export const TOLERANCE_DES_TRACES = 0.12;
 
 /**
- * Un dessin tout fait convient-il à cette colonne ? `attendue` et `demi` sont
- * ce que `ecransDe` rend de la largeur mesurée : sous 720 points, le dessin
- * étroit sert, s'il est à moins de 12 % de la colonne ; au-delà, le dessin
- * large sert, dont seuls les schémas de front dépendent de la colonne. Sans
- * mesure, tout dessin convient.
+ * Un dessin tout fait convient-il à cette colonne ? `attendue`, `demi` et
+ * `large` sont ce que `ecransDe` rend de la largeur mesurée : sous 720 points,
+ * le dessin étroit sert, s'il est à moins de 12 % de la colonne ; au-delà, le
+ * dessin large sert, s'il est à moins de 12 % de la carte, et de la
+ * demi-colonne quand la page pose des schémas de front. Sans mesure, tout
+ * dessin convient.
  */
-export function tracesConviennent(attendue, demi) {
+export function tracesConviennent(attendue, demi, large = null) {
   if (attendue !== null) {
     return Math.abs(attendue - ECRAN_ETROIT_PRERENDU) <= TOLERANCE_DES_TRACES * attendue;
   }
+  const [, demiPrerendue, largePrerendu] = ecransDe(COLONNE_LARGE_PRERENDUE);
+  if (large !== null && Math.abs(large - largePrerendu) > TOLERANCE_DES_TRACES * large) {
+    return false;
+  }
   if (demi === null) { return true; }
-  const prerendue = ecransDe(COLONNE_LARGE_PRERENDUE)[1];
-  return Math.abs(demi - prerendue) <= TOLERANCE_DES_TRACES * demi;
+  return Math.abs(demi - demiPrerendue) <= TOLERANCE_DES_TRACES * demi;
 }
 
 /**
@@ -307,8 +334,8 @@ export function tracesConviennent(attendue, demi) {
  */
 export function dessinConvient(colonne, traces, deFront) {
   if (!traces) { return true; }
-  const [attendue, demi] = ecransDe(colonne);
-  return tracesConviennent(attendue, deFront ? demi : null);
+  const [attendue, demi, large] = ecransDe(colonne);
+  return tracesConviennent(attendue, deFront ? demi : null, large);
 }
 
 let MARQUER_LES_TRACES = false;
@@ -333,6 +360,11 @@ function trace(html) {
 /** La largeur de la colonne, `null` au large. */
 export function ecran() {
   return ECRAN;
+}
+
+/** La largeur d'un graphique au large, `null` ailleurs. Voir `LARGE`. */
+export function large() {
+  return LARGE;
 }
 
 /** La largeur d'un tracé posé de front, `null` quand ils s'empilent. */
@@ -1445,6 +1477,12 @@ const PLACE_D_UNE_ANNEE = 54;
 const LARGEUR_D_UN_SIGNE = 7;
 
 function cadreDuTrace() {
+  // Au large, sous les yeux de quelqu'un : la largeur de la carte, et un peu
+  // plus de hauteur, sans laquelle une courbe de 1 100 unités s'aplatit.
+  if (ECRAN === null && LARGE !== null) {
+    return { ...CADRE_LARGE, largeur: LARGE,
+      hauteur: Math.round(Math.min(380, Math.max(HAUTEUR_TRACE, LARGE * 0.34))) };
+  }
   if (ECRAN === null) return CADRE_LARGE;
   const gauche = 46;
   // La moitié de « 2070 » en chiffres de treize unités, et deux de marge.
@@ -2278,7 +2316,7 @@ export function cascade(titre, marches, unite = "", decimales = 1,
     sommet = Math.max(0.0, Math.ceil(maximum / pas)) * pas;
   }
 
-  const largeur = ECRAN === null ? LARGEUR_TRACE : ECRAN;
+  const largeur = ECRAN ?? LARGE ?? LARGEUR_TRACE;
   const gauche = 4;
   const droite = largeur - 20;
   const abscisse_ = (valeur) => gauche

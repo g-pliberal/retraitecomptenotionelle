@@ -58,6 +58,8 @@
   --texte-tres-doux: #557079;
   --trait: #c3d3d6;
   
+  --surlignage: #fdf4d2;
+  
   --trait-champ: #6b858c;
   
   --petrole: #003340;
@@ -367,7 +369,9 @@ h1 .cle-texte, h2 .cle-texte { font-weight: inherit; }
   
   gap: 1rem; align-items: start;
 }
-.simulateur-court .grille button { white-space: nowrap; }
+.simulateur-court .grille button {
+  white-space: nowrap; min-height: 2.75rem; padding: 0.5rem 1.25rem;
+}
 form .grille {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr));
@@ -399,7 +403,8 @@ input, select, textarea {
   border-radius: var(--rayon-petit);
 }
 input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), select {
-  min-height: 3.375rem;
+  
+  height: 2.75rem; padding: 0.5rem 0.75rem;
 }
 textarea {
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -510,6 +515,9 @@ details.section > summary:hover { color: var(--or-texte); }
   background-repeat: no-repeat;
   background-size: 2.5rem 100%, 2.5rem 100%, 0.9rem 100%, 0.9rem 100%;
   background-attachment: local, local, scroll, scroll;
+  
+  border: 1px solid var(--trait); border-radius: var(--rayon-petit);
+  background-color: var(--fond-carte); --fond-defilant: var(--fond-carte);
 }
 .carte, .plan, .erreur, .cadre-carte, section.cle {
   --fond-defilant: var(--fond-carte);
@@ -518,12 +526,15 @@ table { border-collapse: collapse; width: 100%; font-size: var(--t-texte);
         font-variant-numeric: tabular-nums; }
 tbody th { font-weight: 500; }
 tbody th .dont { font-weight: 400; color: var(--texte-doux); padding-left: 1.2rem; display: inline-block; }
-th, td { text-align: right; padding: 0.75rem 0.5rem; border-bottom: 1px solid var(--trait); }
+table { --retrait-case: clamp(0.375rem, 2.5vw - 1px, 0.75rem); }
+th, td { text-align: right; padding: 0.75rem var(--retrait-case);
+         border-bottom: 1px solid var(--trait); }
 th:first-child, td:first-child { text-align: left; }
 thead th {
-  font-size: var(--t-petit); color: var(--texte-doux); font-weight: 500;
-  border-bottom: 1px solid var(--texte-tres-doux);
+  font-size: var(--t-petit); color: var(--texte); font-weight: 700;
+  background: var(--fond-appui);
 }
+tbody tr:hover { background: var(--surlignage); }
 tbody tr:last-child :is(th, td) { border-bottom: none; }
 td.nombre, th.nombre { font-variant-numeric: tabular-nums; }
 td.nombre, td.date, th.date { white-space: nowrap; }
@@ -546,6 +557,8 @@ th[aria-sort="descending"] > .tri::after { content: " \2193"; }
 .filtres + .compte { margin: 0.2rem 0 0.8rem; }
 tbody tr[hidden] { display: none; }
 table[data-plie], table[data-plie] > :is(thead, tbody) { display: block; min-width: 0; }
+table[data-plie] { padding: 0 var(--retrait-case); box-sizing: border-box; }
+table[data-plie] thead th { background: none; }
 table[data-pli="rangee"][data-plie] tr:not([hidden]) {
   display: grid; grid-template-columns: repeat(var(--colonnes), minmax(0, 1fr));
   column-gap: 0.75rem; padding: 0.5rem 0; border-bottom: 1px solid var(--trait);
@@ -577,6 +590,8 @@ table[data-pli="fiche"][data-plie]:not(:has(tr > :nth-child(4))) tbody tr:not([h
 table[data-grille][data-pli="rangee"][data-plie] tr:not([hidden]) { column-gap: 0.3rem; }
 table[data-grille][data-pli="fiche"][data-plie] tbody tr:not([hidden]) {
   grid-template-columns: repeat(auto-fill, minmax(3.5rem, 1fr));
+  
+  column-gap: 0.5rem;
 }
 table[data-pli="fiche"][data-plie] tbody tr:last-child { border-bottom: 0; }
 table[data-pli="fiche"][data-plie] tbody :is(th, td) {
@@ -607,13 +622,13 @@ table[data-pli="fiche"][data-plie] tbody td[data-titre]::before {
   min-height: 2.75rem; white-space: nowrap;
   padding: 0 1rem; font-size: 0.9375rem; font-weight: 600;
   border: 2px solid var(--trait-champ); color: var(--texte);
-  border-radius: var(--rayon-petit); text-decoration: none;
+  border-radius: 999px; background: var(--fond-carte); text-decoration: none;
 }
 .bascule .choix > .actif {
-  background: var(--or); color: var(--sur-or); border-color: var(--or);
-  font-weight: 700; cursor: default;
+  background: var(--petrole); color: #fff; border-color: var(--petrole);
+  cursor: default;
 }
-.bascule .choix > a:hover { border-color: var(--or); }
+.bascule .choix > a:hover { border-color: var(--accent); }
 .bascule .choix > a:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
 .scenario { margin: 0; padding: 1.125rem 0; border-bottom: 1px solid var(--trait); }
 .scenario:first-of-type { border-top: 1px solid var(--trait); }
@@ -699,7 +714,7 @@ table[data-pli="fiche"][data-plie] tbody td[data-titre]::before {
 .points .point > p { margin: 0; font-size: 1rem; color: var(--texte-doux); }
 section.cle {
   background: var(--fond-carte); border: 1px solid var(--trait);
-  border-top: 4px solid var(--or); border-radius: var(--rayon);
+  border-radius: var(--rayon);
   box-shadow: var(--ombre);
   padding: 1.5rem clamp(1.25rem, 3vw, 1.75rem) 1.25rem;
   margin: 2.5rem 0;
@@ -747,6 +762,7 @@ section.cle > .source {
   background: var(--fond); color: var(--texte); border: 2px solid var(--or);
 }
 .partage > .repli[hidden] { display: none; }
+section.cle > .partage { max-width: none; border-top: 1px solid var(--trait); }
 .mot { position: relative; }
 .mot > .terme {
   
@@ -782,11 +798,10 @@ section.cle > .source {
 .graphique svg { display: block; width: 100%; height: auto; overflow: visible;
                  touch-action: pan-y; }
 .graphique:has(> figcaption) {
-  display: flex; flex-flow: row wrap-reverse; align-items: flex-end;
-  gap: 0.6rem 1.75rem;
+  display: flex; flex-direction: column; gap: 0.6rem;
 }
-.graphique:has(> figcaption) > svg { flex: 1 1 32rem; max-width: 46rem; }
-.graphique > figcaption { flex: 1 1 14rem; min-width: 0; }
+.graphique:has(> figcaption) > svg { flex: none; }
+.graphique > figcaption { order: -1; min-width: 0; }
 .graphique > figcaption ul.legende { margin: 0; }
 .graphique.etroit > figcaption ul.legende {
   font-size: 0.875rem; line-height: 1.35; gap: 0.3rem 1rem;
@@ -828,14 +843,11 @@ ul.legende .lu {
 }
 .cascade { margin: 1.5rem 0 1.75rem; }
 .cascade svg { display: block; width: 100%; height: auto; }
-.cascade:has(> figcaption) {
-  display: flex; flex-flow: row wrap-reverse; align-items: flex-end;
-  gap: 0.6rem 1.75rem;
-}
-.cascade > svg { flex: 1 1 32rem; max-width: 46rem; min-width: 0; }
-.cascade > figcaption { flex: 1 1 14rem; min-width: 0; }
+.cascade:has(> figcaption) { display: flex; flex-direction: column; gap: 0.6rem; }
+.cascade > svg { flex: none; min-width: 0; }
+.cascade > figcaption { order: -1; min-width: 0; }
 .cascade > figcaption ul.legende { margin: 0; }
-.cascade:has(> figcaption) > .lecture { order: -1; flex: 1 1 100%; }
+.cascade:has(> figcaption) > .lecture { order: 1; }
 .cascade:focus-visible { outline: 3px solid var(--focus); outline-offset: 4px; }
 .cascade .grille { stroke: var(--trait); stroke-width: 1; }
 .cascade .marche.total { fill: var(--serie-9); }

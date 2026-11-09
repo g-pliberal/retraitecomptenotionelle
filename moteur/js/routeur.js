@@ -367,10 +367,12 @@ let reglesVues = false;
 // colonne qui change de largeur — un téléphone qu'on tourne, une fenêtre
 // qu'on étire — fait redessiner la page sur place quand ses tracés ne
 // tombent plus juste. Les tableaux, eux, se replient sans redessin. Au large,
-// les tracés qu'une carte pose de front se dessinent à la demi-colonne
-// (`demiRendue`) : une page qui en porte se redessine aussi quand elle change.
+// un graphique se dessine à la largeur de sa carte (`largeRendu`), et les
+// tracés qu'une carte pose de front à la demi-colonne (`demiRendue`) : une
+// page qui en porte se redessine aussi quand elles changent.
 let ecranRendu = null;
 let demiRendue = null;
+let largeRendu = null;
 
 function largeurDeLaColonne() {
   const contenu = document.getElementById("contenu");
@@ -384,7 +386,7 @@ let attenteDeRedessin = null;
 window.addEventListener("resize", () => {
   clearTimeout(attenteDeRedessin);
   attenteDeRedessin = setTimeout(() => {
-    const [attendue, demi] = gabarit.ecransDe(largeurDeLaColonne());
+    const [attendue, demi, large] = gabarit.ecransDe(largeurDeLaColonne());
     const traces = document.querySelector(
       "#contenu :is(figure.graphique, figure.sankey, figure.cascade)");
     const deFront = document.querySelector("#contenu .de-front");
@@ -399,7 +401,8 @@ window.addEventListener("resize", () => {
       } else {
         afficher();
       }
-    } else if (attendue !== ecranRendu || (deFront && demi !== demiRendue)) {
+    } else if (attendue !== ecranRendu || large !== largeRendu
+        || (deFront && demi !== demiRendue)) {
       afficher();
     }
   }, 250);
@@ -492,6 +495,7 @@ async function afficher() {
       cible.parametres, largeurDeLaColonne());
     ecranRendu = gabarit.ecran();
     demiRendue = gabarit.demiColonne();
+    largeRendu = gabarit.large();
   } catch (erreur) {
     contenu.innerHTML = '<div class="erreur"><strong>Le calcul a échoué.</strong> '
       + neutraliser(erreur) + "</div>";

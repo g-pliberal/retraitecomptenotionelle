@@ -10068,10 +10068,12 @@ salaire et n'ouvre aucun droit, le salaire retenu pour la pension étant borné
 au plafond.`,
     courbe
     + `<h3>À la complémentaire, c'est une proportion</h3>
+<div class="defilant" tabindex="0" role="region"
+aria-label="Ce qu'un salarié verse à la complémentaire, et ce qu'il en acquiert">
 <table class="donnees"><caption>Ce qu'un salarié verse à la complémentaire, et
 ce qu'il en acquiert</caption><thead><tr><th scope="col">Tranche</th>
 <th scope="col">Acquisitif</th><th scope="col">Versé</th>
-<th scope="col">Sans droits</th></tr></thead><tbody>${lignes}</tbody></table>
+<th scope="col">Sans droits</th></tr></thead><tbody>${lignes}</tbody></table></div>
 <p><strong>Sur la ${forte.nom.toLowerCase()},
 ${g.pourcentage(forte.part_sous_plafond, false, 0)} du versement n'achète
 aucun point.</strong> Trois fois plus, en proportion, que dans le régime de

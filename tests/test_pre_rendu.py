@@ -43,12 +43,17 @@ def test_les_constantes_du_pre_rendu_sont_celles_du_gabarit():
     points moins ses deux marges de 19) ; le dessin large, celui d'une colonne de
     portable, où les schémas de front prennent chacun 480 points : entre les
     432 d'une colonne de 944 points, un écran de 1 024, et les 532 d'une colonne
-    de 1 200, un écran de 1 440, que le gabarit ne dépasse pas."""
+    de 1 200, un écran de 1 440, que le gabarit ne dépasse pas. Un graphique
+    y prend la largeur de sa carte, la colonne moins deux retraits de 28 points
+    (action 189, étape 6) : 984 unités, entre les 888 d'un écran de 1 024 et
+    les 1 100 que le gabarit ne dépasse pas."""
     assert g.ECRAN_ETROIT_PRERENDU == 360
     assert g.COLONNE_LARGE_PRERENDUE == 1040
-    assert g.ecransDe(g.COLONNE_LARGE_PRERENDUE) == [None, 480]
-    assert g.ecransDe(944) == [None, 432] and g.ecransDe(1200) == [None, 532]
-    assert g.ecransDe(g.ECRAN_ETROIT_PRERENDU) == [360, None]
+    assert g.ecransDe(g.COLONNE_LARGE_PRERENDUE) == [None, 480, 984]
+    assert g.ecransDe(944) == [None, 432, 888] and g.ecransDe(1200) == [None, 532, 1100]
+    assert g.ecransDe(720) == [None, 320, 664]
+    assert g.ecransDe(g.ECRAN_ETROIT_PRERENDU) == [360, None, None]
+    assert g.ecransDe(None) == [None, None, None]
     assert g.ADRESSE_CANONIQUE == "https://partiliberalfrancais.fr/retraite/"
 
 
@@ -67,13 +72,58 @@ def test_un_dessin_convient_a_la_colonne_dans_la_tolerance(attendue, demi, convi
     assert g.tracesConviennent(attendue, demi) is convient
 
 
+@pytest.mark.parametrize("large, convient", [
+    # Le graphique tout fait, dessiné à 984 unités, convient à la carte d'un
+    # écran de 1 024 points (888) comme à celle d'un bureau (1 100, la borne).
+    (984, True), (888, True), (1100, True), (880, True),
+    # Une tablette en hauteur, une fenêtre étroite : ses textes y feraient
+    # moins de onze pixels, la fenêtre le redessine.
+    (870, False), (744, False), (664, False),
+])
+def test_un_graphique_convient_a_sa_carte_dans_la_tolerance(large, convient):
+    """Au large, un graphique se dessine à la largeur de sa carte (action 189,
+    étape 6) : le dessin tout fait convient à 12 % près, comme les autres."""
+    assert g.tracesConviennent(None, None, large) is convient
+
+
+def test_au_large_un_graphique_se_dessine_a_la_largeur_de_sa_carte():
+    """Chez le parti, le graphique prend toute la largeur de sa carte. Tenu à
+    720 unités et étiré, ses textes de treize unités en feraient vingt à
+    l'écran : il se dessine donc à la largeur de la carte, un peu plus haut.
+    Sans écran — un témoin, le Python qui lit la page —, il garde son cadre de
+    toujours, 720 sur 300."""
+    cadres = lambda html: set(re.findall(  # noqa: E731
+        r'<figure class="graphique"[^>]*><svg viewBox="0 0 (\d+) (\d+)"', html))
+    assert cadres(rendre("/avantages", {}, g.COLONNE_LARGE_PRERENDUE)[1]) == {("984", "335")}
+    assert cadres(rendre("/avantages", {}, 1200)[1]) == {("1100", "374")}
+    assert cadres(rendre("/avantages", {})[1]) == {("720", "300")}
+    cascades = lambda html: set(re.findall(  # noqa: E731
+        r'<figure class="cascade"[^>]*><svg viewBox="0 0 (\d+) ', html))
+    assert cascades(rendre("/cout", {}, g.COLONNE_LARGE_PRERENDUE)[1]) == {"984"}
+    assert cascades(rendre("/cout", {})[1]) == {"720"}
+
+
+def test_une_page_rendue_pour_un_ecran_ne_le_laisse_pas_au_gabarit():
+    """Le Python qui appelle le gabarit sans passer par une page — un
+    graphique d'essai, dont il lit le cadre de toujours — le trouve sans écran,
+    quelle que soit la page rendue avant lui : l'écran est un état du module,
+    et un graphique d'essai se dessinait à 984 unités quand un autre test
+    venait de rendre une page au large."""
+    for largeur in (g.COLONNE_LARGE_PRERENDUE, g.ECRAN_ETROIT_PRERENDU):
+        rendre("/avantages", {}, largeur)
+        assert (g.ecran(), g.demiColonne(), g.large()) == (None, None, None)
+
+
 @pytest.mark.parametrize("colonne, traces, de_front, convient", [
     # Une page sans tracé convient à toute colonne : rien n'y dépend de l'écran,
     # pas même sur une tablette en hauteur, dont la colonne tombe entre deux.
     (300, False, False, True), (688, False, False, True), (720, False, False, True),
     (780, False, False, True), (1200, False, False, True),
-    # Des graphiques sans schémas de front : le dessin large sert dès 720 points.
-    (720, True, False, True), (780, True, False, True), (1200, True, False, True),
+    # Des graphiques sans schémas de front : le dessin large, fait pour une
+    # carte de 984 points, sert dès un écran de 1 024 points ; en deçà, la
+    # carte est trop étroite pour lui (action 189, étape 6).
+    (720, True, False, False), (780, True, False, False), (944, True, False, True),
+    (1200, True, False, True),
     # Des schémas de front : leur demi-colonne compte.
     (720, True, True, False), (780, True, True, False), (944, True, True, True),
     (1200, True, True, True),

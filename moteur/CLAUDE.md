@@ -62,7 +62,8 @@ comme les types que le pont échange.
   tout import statique de plus.
 - **Un tracé qui dépend de l'écran s'écrit deux fois** dans la page toute
   faite, pour une colonne de téléphone (<!--chiffre:tenu(test_les_constantes_du_pre_rendu_sont_celles_du_gabarit)-->360<!--/--> points) et pour le large (1040,
-  schémas de front à 480) ; `.variante-etroite` et `.variante-large`, dans la
+  schémas de front à 480, graphiques à la largeur de leur carte, la colonne
+  moins ses deux retraits) ; `.variante-etroite` et `.variante-large`, dans la
   feuille de style, en montrent un seul (seuil de <!--chiffre:tenu(test_la_feuille_de_style_montre_un_seul_dessin_a_la_fois)-->800<!--/--> points). Un dessin
   convient à une colonne à <!--chiffre:tenu(test_un_dessin_convient_a_la_colonne_dans_la_tolerance)-->12<!--/--> % près (`tracesConviennent`) : au-delà, la
   fenêtre redessine la page par le moteur. `marquerLesTraces` ne sert qu'au

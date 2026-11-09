@@ -424,6 +424,83 @@ def test_le_corps_des_pages_est_celui_du_site_du_parti():
     assert not fautes, f"{len(fautes)} écarts au corps des pages :\n" + "\n".join(fautes[:60])
 
 
+#: Les figures et la saisie du site du parti, lues dans sa feuille de style
+#: (``assets/css/style.css`` : ``.figure``, ``.choix``, ``.tableau-defilant``,
+#: ``thead th``, ``tbody tr:hover``, ``input``, ``select``). Le bord fort est
+#: celui de ce site, ``--trait-champ``, un ton plus sombre que le
+#: ``--bordure-forte`` du parti : il tient 3 pour 1 sur les trois fonds clairs.
+FIGURES = {
+    "blanc": "rgb(255, 255, 255)", "filet": "1px rgb(195, 211, 214)",
+    "petrole": "rgb(0, 51, 64)", "bord": "2px rgb(107, 133, 140)",
+    "cadre": "1px rgb(195, 211, 214) 8px", "entete": "rgb(233, 240, 241)",
+    "survol": "rgb(253, 244, 210)", "rayon": "8px",
+}
+
+#: La cible tactile d'une pastille et la hauteur d'un champ, en points.
+HAUTEUR_D_UN_CONTROLE = 44
+
+#: Ce qu'un texte de treize unités d'un tracé fait à l'écran, en pixels : en
+#: deçà il ne se lit plus, au-delà le tracé est une image agrandie.
+TEXTE_D_UN_TRACE = (11, 16)
+
+
+def test_les_figures_et_la_saisie_sont_celles_du_site_du_parti():
+    """Le 9 novembre 2026, le corps des pages pris (étape 5), les deux sites
+    s'écartaient encore par leurs figures et par la saisie (action 189,
+    étape 6). Chez le parti : une carte de figure blanche sans filet de
+    couleur, la légende au-dessus du tracé, en ligne, le tracé sur toute la
+    largeur de la carte ; des choix en pastilles rondes de 44 points, la
+    cochée pleine de pétrole ; des tableaux dans un cadre arrondi, l'en-tête
+    teinté, la ligne survolée surlignée ; des champs de 44 points à bord fort
+    et au rayon de 8 points. Ici : un filet safran sur la carte, la légende à
+    droite d'un tracé aux deux tiers de la carte, des bascules carrées dont la
+    cochée est pleine de safran, des tableaux nus, des champs de 54 points.
+    """
+    fautes = []
+    for visite in mesures():
+        large = visite["largeur"] >= 1024
+        for etat in ("replie", "deplie"):
+            figures = visite[etat]["figures"]
+            ou = _ou(visite, "fermés" if etat == "replie" else "ouverts")
+            for carte in figures["cartes"]:
+                if (carte["fond"], carte["filet"]) != (FIGURES["blanc"], FIGURES["filet"]):
+                    fautes.append(f"{ou} : carte de figure, {carte}")
+            for trace in figures["traces"]:
+                ecarts = []
+                if not trace["legendeAuDessus"]:
+                    ecarts.append("légende hors du dessus")
+                if large and not trace["enLigne"]:
+                    ecarts.append("légende en colonne")
+                if trace["largeur"] < trace["place"] - 2:
+                    ecarts.append("tracé plus étroit que sa carte")
+                if large and not (TEXTE_D_UN_TRACE[0] <= trace["texte"] <= TEXTE_D_UN_TRACE[1]):
+                    ecarts.append("textes hors de la taille de lecture")
+                if ecarts:
+                    fautes.append(f"{ou} : tracé, {', '.join(ecarts)}, {trace}")
+            for pastille in figures["pastilles"]:
+                attendu = ({"fond": FIGURES["petrole"], "couleur": FIGURES["blanc"]}
+                           if pastille["cochee"]
+                           else {"fond": FIGURES["blanc"], "bord": FIGURES["bord"]})
+                if (any(pastille[cle] != valeur for cle, valeur in attendu.items())
+                        or pastille["rayon"] < HAUTEUR_D_UN_CONTROLE / 2
+                        or pastille["hauteur"] < HAUTEUR_D_UN_CONTROLE):
+                    fautes.append(f"{ou} : pastille, {pastille}")
+            for tableau in figures["tableaux"]:
+                if (tableau["cadre"] != FIGURES["cadre"] or tableau["fond"] != FIGURES["blanc"]
+                        or (not tableau["plie"]
+                            and tableau["entete"] not in (None, FIGURES["entete"]))):
+                    fautes.append(f"{ou} : tableau, {tableau}")
+            if figures["survolDesLignes"] != FIGURES["survol"]:
+                fautes.append(f"{ou} : ligne survolée, {figures['survolDesLignes']}")
+            for champ in figures["champs"]:
+                if (champ["hauteur"] != HAUTEUR_D_UN_CONTROLE
+                        or champ["bord"] != FIGURES["bord"]
+                        or champ["rayon"] != FIGURES["rayon"]):
+                    fautes.append(f"{ou} : champ, {champ}")
+    assert not fautes, (f"{len(fautes)} écarts aux figures et à la saisie :\n"
+                        + "\n".join(sorted(set(fautes))[:80]))
+
+
 def test_tout_texte_se_detache_de_son_fond():
     """Un texte se lit sur son fond : 4,5 pour 1 au moins entre leurs
     luminances, 3 pour 1 en grand — 24 px, ou 18,66 px en gras. WCAG 1.4.3, et

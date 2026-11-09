@@ -58,6 +58,8 @@
   --texte-tres-doux: #557079;
   --trait: #c3d3d6;
   
+  --surlignage: #fdf4d2;
+  
   --trait-champ: #6b858c;
   
   --petrole: #003340;
@@ -435,7 +437,9 @@ h1 .cle-texte, h2 .cle-texte { font-weight: inherit; }
   
   gap: 1rem; align-items: start;
 }
-.simulateur-court .grille button { white-space: nowrap; }
+.simulateur-court .grille button {
+  white-space: nowrap; min-height: 2.75rem; padding: 0.5rem 1.25rem;
+}
 .engagements { margin: 0; }
 .engagements .grille {
   display: grid; gap: 1rem; grid-template-columns: minmax(0, 1fr);
@@ -523,7 +527,8 @@ input, select, textarea {
   border-radius: var(--rayon-petit);
 }
 input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), select {
-  min-height: 3.375rem;
+  
+  height: 2.75rem; padding: 0.5rem 0.75rem;
 }
 textarea {
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -633,6 +638,9 @@ details.section > .dedans > h4,
   background-repeat: no-repeat;
   background-size: 2.5rem 100%, 2.5rem 100%, 0.9rem 100%, 0.9rem 100%;
   background-attachment: local, local, scroll, scroll;
+  
+  border: 1px solid var(--trait); border-radius: var(--rayon-petit);
+  background-color: var(--fond-carte); --fond-defilant: var(--fond-carte);
 }
 .carte, .plan, .erreur, .cadre-carte, section.cle {
   --fond-defilant: var(--fond-carte);
@@ -643,19 +651,23 @@ table { border-collapse: collapse; width: 100%; font-size: var(--t-texte);
 .creme caption { color: var(--sur-creme-doux); }
 caption {
   caption-side: top; text-align: left; font-size: var(--t-petit);
-  color: var(--texte-doux); padding: 0 0 0.5rem;
+  color: var(--texte-doux); padding: 0;
 }
+caption > span, caption:not(:has(> span)) { padding: 0.5rem var(--retrait-case); }
 caption > span {
   display: block; position: sticky; left: 0; width: 100cqw; box-sizing: border-box;
 }
 tbody th { font-weight: 500; }
 tbody th .dont { font-weight: 400; color: var(--texte-doux); padding-left: 1.2rem; display: inline-block; }
-th, td { text-align: right; padding: 0.75rem 0.5rem; border-bottom: 1px solid var(--trait); }
+table { --retrait-case: clamp(0.375rem, 2.5vw - 1px, 0.75rem); }
+th, td { text-align: right; padding: 0.75rem var(--retrait-case);
+         border-bottom: 1px solid var(--trait); }
 th:first-child, td:first-child { text-align: left; }
 thead th {
-  font-size: var(--t-petit); color: var(--texte-doux); font-weight: 500;
-  border-bottom: 1px solid var(--texte-tres-doux);
+  font-size: var(--t-petit); color: var(--texte); font-weight: 700;
+  background: var(--fond-appui);
 }
+tbody tr:hover { background: var(--surlignage); }
 tbody tr:last-child :is(th, td) { border-bottom: none; }
 td.nombre, th.nombre { font-variant-numeric: tabular-nums; }
 td.nombre, td.date, th.date { white-space: nowrap; }
@@ -678,6 +690,12 @@ th[aria-sort="descending"] > .tri::after { content: " \2193"; }
 .filtres + .compte { margin: 0.2rem 0 0.8rem; }
 tbody tr[hidden] { display: none; }
 table[data-plie], table[data-plie] > :is(thead, tbody) { display: block; min-width: 0; }
+table[data-plie] { padding: 0 var(--retrait-case); box-sizing: border-box; }
+table[data-plie] caption > span, table[data-plie] caption:not(:has(> span)) {
+  padding-left: 0; padding-right: 0;
+}
+table[data-plie] caption > span { width: calc(100cqw - 2 * var(--retrait-case)); }
+table[data-plie] thead th { background: none; }
 table[data-pli="rangee"][data-plie] tr:not([hidden]) {
   display: grid; grid-template-columns: repeat(var(--colonnes), minmax(0, 1fr));
   column-gap: 0.75rem; padding: 0.5rem 0; border-bottom: 1px solid var(--trait);
@@ -709,6 +727,8 @@ table[data-pli="fiche"][data-plie]:not(:has(tr > :nth-child(4))) tbody tr:not([h
 table[data-grille][data-pli="rangee"][data-plie] tr:not([hidden]) { column-gap: 0.3rem; }
 table[data-grille][data-pli="fiche"][data-plie] tbody tr:not([hidden]) {
   grid-template-columns: repeat(auto-fill, minmax(3.5rem, 1fr));
+  
+  column-gap: 0.5rem;
 }
 table[data-pli="fiche"][data-plie] tbody tr:last-child { border-bottom: 0; }
 table[data-pli="fiche"][data-plie] tbody :is(th, td) {
@@ -800,7 +820,7 @@ table[data-pli="fiche"][data-plie] tbody td[data-titre]::before {
 .points .point > p { margin: 0; font-size: 1rem; color: var(--texte-doux); }
 section.cle {
   background: var(--fond-carte); border: 1px solid var(--trait);
-  border-top: 4px solid var(--or); border-radius: var(--rayon);
+  border-radius: var(--rayon);
   box-shadow: var(--ombre);
   padding: 1.5rem clamp(1.25rem, 3vw, 1.75rem) 1.25rem;
   margin: 2.5rem 0;
@@ -848,6 +868,7 @@ section.cle > .source {
   background: var(--fond); color: var(--texte); border: 2px solid var(--or);
 }
 .partage > .repli[hidden] { display: none; }
+section.cle > .partage { max-width: none; border-top: 1px solid var(--trait); }
 .mot { position: relative; }
 .mot > .terme {
   
@@ -877,11 +898,10 @@ section.cle > .source {
 .graphique svg { display: block; width: 100%; height: auto; overflow: visible;
                  touch-action: pan-y; }
 .graphique:has(> figcaption) {
-  display: flex; flex-flow: row wrap-reverse; align-items: flex-end;
-  gap: 0.6rem 1.75rem;
+  display: flex; flex-direction: column; gap: 0.6rem;
 }
-.graphique:has(> figcaption) > svg { flex: 1 1 32rem; max-width: 46rem; }
-.graphique > figcaption { flex: 1 1 14rem; min-width: 0; }
+.graphique:has(> figcaption) > svg { flex: none; }
+.graphique > figcaption { order: -1; min-width: 0; }
 .graphique:focus-visible { outline: 3px solid var(--focus); outline-offset: 4px; }
 .graphique .survol .guide { stroke: var(--texte); stroke-width: 1; }
 .graphique .survol .point { stroke-width: 3; fill: var(--fond); }
@@ -906,13 +926,10 @@ section.cle > .source {
 }
 .cascade { margin: 1.5rem 0 1.75rem; }
 .cascade svg { display: block; width: 100%; height: auto; }
-.cascade:has(> figcaption) {
-  display: flex; flex-flow: row wrap-reverse; align-items: flex-end;
-  gap: 0.6rem 1.75rem;
-}
-.cascade > svg { flex: 1 1 32rem; max-width: 46rem; min-width: 0; }
-.cascade > figcaption { flex: 1 1 14rem; min-width: 0; }
-.cascade:has(> figcaption) > .lecture { order: -1; flex: 1 1 100%; }
+.cascade:has(> figcaption) { display: flex; flex-direction: column; gap: 0.6rem; }
+.cascade > svg { flex: none; min-width: 0; }
+.cascade > figcaption { order: -1; min-width: 0; }
+.cascade:has(> figcaption) > .lecture { order: 1; }
 .cascade:focus-visible { outline: 3px solid var(--focus); outline-offset: 4px; }
 .cascade .grille { stroke: var(--trait); stroke-width: 1; }
 .cascade .marche.total { fill: var(--serie-9); }
@@ -1168,10 +1185,10 @@ Lettonie.</p></div>
 <details class="section"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>Ma retraite va-t-elle baisser ?</span></summary><div class="dedans">
 <p><strong>Le plus souvent, elle sera plus basse que ce que le système actuel
 promet, de l'ordre d'un quart.</strong> Sur nos <a href="cas-types/">treize carrières types</a>, la baisse médiane est de
-26 % pour qui n'est pas encore à la
-retraite, de 14 % s'il
+23 % pour qui n'est pas encore à la
+retraite, de 12 % s'il
 place aussi les 5 % que la proposition lui rend sur son salaire, et de
-28 % sur la pension d'un retraité d'aujourd'hui, garantie
+25 % sur la pension d'un retraité d'aujourd'hui, garantie
 vieillesse comprise. Votre retraite vaudra ce que vous aurez
 cotisé ; le système actuel promet davantage que ce que les cotisations paient,
 et ses recettes n'y suffisent déjà plus. En échange, un salarié du privé cotise 23 % au lieu de 28 %, et son
@@ -1185,7 +1202,7 @@ ajoute sans cotisation n'est plus servi. Elle reste ensuite revalorisée sur les
 prix. Si elle est modeste, la garantie vieillesse la complète à partir de 65
 ans, jusqu'à 1 050 € par mois pour qui vit seul et 800 € chacun en couple ;
 c'est une avance, reprise sur la succession. Sur nos carrières types, la pension
-d'aujourd'hui baisse ainsi de 28 % en médiane. Pour votre cas,
+d'aujourd'hui baisse ainsi de 25 % en médiane. Pour votre cas,
 choisissez « à la retraite » dans <a href="simuler/">le simulateur</a>.</p></div></details>
 <details class="section" id="pourquoi-changer"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>Pourquoi changer de système ?</span></summary><div class="dedans">
 <p>La retraite française ? Un empilement de régimes, plus qu'un système.

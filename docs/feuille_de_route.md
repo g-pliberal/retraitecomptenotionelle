@@ -8133,11 +8133,11 @@ la fois. Le texte (étape 2) : l'accueil et Partager sont récrits ; reste, sur
 l'avis du propriétaire, le texte des autres pages, et ce qui attend le modèle
 ou une décision — la réversion gardée, la décision 89, les pensions qui
 montent, « En bref », la carte « Le taux », que la décision 48 dément. L'aspect
-du parti (étapes 4 à 7) : la coquille et le corps des pages sont faits ; restent
-les figures et la saisie (6), par quoi commencer, puis le panneau « Affichage »
-(7). Puis l'étape 3, au mainteneur de la copie du parti. Notes, sous `189/` :
-`2026-11-09-etape-2-le-texte-pour-l-electeur.md`,
-`2026-11-09-etape-4-la-coquille.md`, `2026-11-09-etape-5-le-corps-des-pages.md`.
+du parti (étapes 4 à 7) : la coquille, le corps, les figures et la saisie sont
+faits ; reste le panneau « Affichage » (7), par quoi commencer. Puis l'étape 3,
+au mainteneur de la copie du parti. Notes, sous `189/`, du 9 novembre :
+`etape-2-le-texte-pour-l-electeur`, `etape-4-la-coquille`,
+`etape-5-le-corps-des-pages`, `etape-6-les-figures-et-la-saisie`.
 
 **D'où elle vient.** Le 8 novembre 2026, le propriétaire : « J'aimerais
 changer le style du site. C'est beaucoup mieux sur cet autre site que j'ai

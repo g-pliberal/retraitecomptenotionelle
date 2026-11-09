@@ -223,7 +223,11 @@ function placer(fonction, args, kwargs) {
 const operations = {
   async rendre({ chemin, requete, largeur }) {
     const { rendre } = await module("pages");
-    return rendre(await leContexte(), chemin, requete ?? {}, largeur ?? null);
+    const rendu = rendre(await leContexte(), chemin, requete ?? {}, largeur ?? null);
+    // L'écran est un état du gabarit : la page rendue, il ne reste pas à qui
+    // appelle ensuite le gabarit sans passer par une page.
+    (await module("gabarit")).poserEcran(null);
+    return rendu;
   },
 
   async page({ chemin, requete }) {
