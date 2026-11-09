@@ -636,6 +636,29 @@ Le même jour, enfin (même note) :
     de 1,7 point de cotisation chômage et 0,2 point de cotisation maladie
     (calcul), sur les cinq points que gagne un salarié du privé.
 
+Le même jour, sur la garantie vieillesse
+(`feuille_de_route/186/2026-11-09-garantie-degressive.md`) :
+
+100. **La garantie vieillesse devient dégressive, à la forme suédoise** :
+    « Ça me plaît, j'aimerais mettre ça en place », puis « Forme suédoise ».
+    Jusqu'à la moitié du plancher (525 € seul, 400 € en couple), la pension
+    est retirée en entier, comme aujourd'hui ; au-delà, de moitié seulement,
+    et le complément s'éteint à une fois et demie le plancher (1 575 €,
+    1 200 €). Qui n'a rien cotisé garde le plancher (décision 45) ; le
+    smicard à carrière complète gagne 225 € par mois. Servie d'office
+    (décision 20), en moyenne 2026-2070 : 0,26 point de PIB versé de plus
+    par an, 9 Md€ de 2026, et 3,2 millions de bénéficiaires de plus (calcul
+    sur le modèle).
+101. **Tout ce que la garantie verse est repris sur la succession, avec
+    intérêts, supplément compris** : « Tout est repris avec intérêt ». La
+    décision 30 et la règle de l'action 47 valent pour la part dégressive ;
+    la Suède, qui ne reprend rien d'après les pages lues, n'est pas suivie.
+    Net des reprises : 0,13 point de plus par an, 0,62 en tout.
+102. **L'isolement suit la même règle que les 800 €** : « La même règle que
+    pour les 800€ ». Le plancher d'une personne seule reste 1 050 €, et la
+    forme dégressive s'y applique en entier, comme la Suède le fait de ses
+    deux barèmes.
+
 ## Ce qui est écarté
 
 - **Une transition sans baisse nominale des pensions en cours** — bâtir le
@@ -1223,6 +1246,12 @@ au scénario 6 seul (décision 28).
 n'en retire que 70, 50 ou 30 % coûte, d'office, 0,42, 0,96 ou 2,02 points de
 PIB de plus par an sur 2026-2070 (0,26 à 1,18 net des reprises), pour 2,8 à
 10,7 millions de bénéficiaires de plus. Proposé : 70 %. Rien n'est décidé.
+
+**Tranchée le même jour** (décisions 100 à 102, même note) : la forme
+suédoise, retrait entier jusqu'à la moitié du plancher puis de moitié ; tout
+repris sur la succession ; l'isolement dans la même règle. D'office : 0,26
+point de PIB versé de plus par an, 0,13 net. Au modèle ensuite, au
+scénario 6 seul (décision 28), par une session du modèle.
 
 ### Chantier 4 — Les recettes hors du travail : la TVA sociale et la LVT
 

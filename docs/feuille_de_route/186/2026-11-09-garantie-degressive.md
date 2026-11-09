@@ -1,13 +1,13 @@
 # Une garantie vieillesse dégressive, pour que le travail paie toujours : les précédents lus aux sources, et chaque option chiffrée
 
-**Reprise, au 9 novembre 2026.** L'étude est faite ; rien n'est décidé, ni le
-modèle ni le site ne sont touchés. Trois taux de retrait (70, 50, 30 %) et
-une forme à la suédoise sont chiffrés au modèle, barème changé en mémoire
-(« Les calculs, en entier »). Au propriétaire, en fin de note (« Ce que le
-propriétaire tranche ») : le principe ; le taux, ou la forme ; si la prime du
-travail est reprise sur la succession comme le reste (décision 30) ; ce que
-devient l'isolement. Puis ses réponses en décisions, et une session du
-modèle écrit le barème au scénario 6 seul, le test d'abord ; aucune avant.
+**Reprise, au 9 novembre 2026.** Tranché (décisions 100 à 102, « Ce que le
+propriétaire a tranché ») : la forme suédoise — la pension retirée en entier
+jusqu'à la moitié du plancher, de moitié au-delà —, tout repris sur la
+succession, l'isolement dans la même règle. Ni le modèle ni le site ne sont
+touchés. Par quoi commencer : une session du modèle, au scénario 6 seul, le
+test d'abord, d'après « La consigne de la session du modèle » ; avec elle ou
+après elle, le recours de 100 % (décision 20). Restent ouverts : ce qui
+paie le surcoût, l'export dans l'Union, la CSG du complément.
 
 Le propriétaire, le 9 novembre 2026 : la garantie (800 € plus 250 €
 d'isolement) est différentielle ; un salarié au SMIC à carrière complète,
@@ -709,3 +709,98 @@ d'office : les ayants droit de l'année.
 6. **Le financement** : ce qui paie le surcoût — la TVA, qui paie déjà la
    garantie, ou la part de l'économie des droits familiaux qui va au
    déficit (chantier 3).
+
+## Ce que le propriétaire a tranché
+
+Le 9 novembre 2026, après deux explications demandées — le principe, « un
+concept nouveau de mon côté », puis la forme suédoise et ses seuils — :
+« Ça me plaît, j'aimerais mettre ça en place ». Trois réponses, devenues
+les décisions 100 à 102 du programme.
+
+1. **La forme** : « Forme suédoise », et non la pente à 70 % que la session
+   proposait. La pension est retirée en entier jusqu'à la moitié du
+   plancher, de moitié au-delà ; le complément s'éteint à une fois et demie
+   le plancher.
+2. **La reprise** : « Tout est repris avec intérêt ». La décision 30 vaut
+   pour le supplément comme pour le reste.
+3. **L'isolement** : « La même règle que pour les 800€ ». Le plancher d'une
+   personne seule reste 1 050 €, la forme s'y applique en entier.
+
+Aux deux dernières questions, le propriétaire a d'abord demandé : « Que
+fait la Suède ? » Ce qui lui a été répondu :
+
+- **La succession.** Aucune des sources lues ne parle d'une reprise de la
+  garantipension sur l'héritage ; la fiche de l'agence écarte le capital du
+  barème, et les seules reprises trouvées sont celles des trop-perçus
+  (publié, non ouvert, pour ces dernières). Aucun texte lu ne dit pour
+  autant « jamais reprise ». Suivre la Suède aurait voulu dire ne rien
+  reprendre : 1,01 point net d'office, contre 0,62 tout repris (calcul sur
+  le modèle). Le propriétaire ne la suit pas.
+- **L'isolement.** La Suède tient deux barèmes de même forme : 11 988
+  couronnes, pivot à 6 216 et sortie à 18 241 pour qui n'est pas marié ;
+  10 853, 5 624 et 16 518 pour qui l'est (publié). L'écart, 1 135 couronnes,
+  fait 10 % du barème des mariés, contre 31 % pour les 250 € (calcul) ; il
+  reste dans la pente, 827 couronnes au-dessus des pivots (calcul). Et le
+  critère est l'état civil : « Som gifta räknas även registrerade partners
+  och sammanboende som har gemensamma barn eller tidigare har varit gifta
+  med varandra » (publié) — deux concubins sans enfant commun y restent
+  « seuls ». La décision 102 suit la forme suédoise, non son montant ni son
+  critère, que le propriétaire n'a pas retenus.
+
+**Ce que la forme retenue donne**, d'après les tableaux de la note (calcul
+sur le modèle, moyenne 2026-2070, d'office) : 1,01 point de PIB versé par
+an, 36,2 Md€ de 2026, dont 0,39 repris ; 0,62 net. En plus de la garantie
+d'aujourd'hui servie d'office : 0,26 point versé, 9,2 Md€ ; 0,13 net,
+4,5 Md€ ; 3,2 millions de bénéficiaires de plus, 8,5 millions en tout. La
+créance de l'État sur les successions atteint 505 Md€ de 2026 en 2050,
+contre 385. Le smicard seul gagne 225 € par mois ; le mi-temps, 34 € ; la
+carrière hachée, 142 € ; la carrière courte, rien.
+
+**Ce qui reste ouvert**, des six questions : ce qui paie le surcoût (la
+sixième), que le propriétaire n'a pas tranché ; et, à instruire aux textes
+avant de publier, l'export dans l'Union et la CSG du complément.
+
+## La consigne de la session du modèle
+
+Une session neuve, de la zone du modèle, au scénario 6 seul (décision 28),
+le test d'abord. Elle lit ce bloc, `src/CLAUDE.md` et `moteur/CLAUDE.md`.
+
+**La règle à écrire.** Deux paramètres de plus, à côté de
+`garantie_vieillesse_mensuelle` (`config.py`, et son miroir de
+`moteur/js/config.js`) : la part du plancher jusqu'où la pension est
+retirée en entier, 0,5 ; le taux de retrait au-delà, 0,5. À un et un, la
+règle redonne la garantie différentielle. Avec p0 = part × plancher :
+
+> complément = plancher − ressources, si ressources ≤ p0 ;
+> sinon max(0, plancher − p0 − taux × (ressources − p0)).
+
+Les ressources, le plancher (800 €, plus 250 € seul), l'âge, la résidence
+et l'indexation ne changent pas.
+
+**Où.** Pour une carrière : `_garantieVieillesse` de
+`moteur/js/scenario-notionnel.js`, qui fait foi, puis son jumeau
+`_garantie_vieillesse` (`scenarios/notionnel.py`), au bit près. Pour le
+coût, en Python seul : `_manque_moyen` (`garantie.py`), que lisent
+`cout_garantie`, `_garantie_distribution` et `_reprises_successions`
+(`cout.py`) ; le barème de « Les calculs, en entier », point 1, en est la
+forme, à reprendre et non à copier. La fiche
+`data/reference/regles/proposition/garantie_vieillesse.yaml` et la limite
+qui dit la garantie différentielle suivent.
+
+**Les tests, posés à la main** (euros par mois). Seul, plancher de 1 050 €,
+p0 de 525 € : ressources 0 → 1 050 ; 400 → 650 ; 525 → 525 ; 600 →
+525 − 0,5 × 75 = 487,50 ; 1 124,85 → 525 − 0,5 × 599,85 = 225,08 ;
+1 575 → 0 ; 1 600 → 0. En couple, plancher de 800 €, p0 de 400 € : 0 →
+800 ; 400 → 400 ; 593,19 → 400 − 0,5 × 193,19 = 303,41 ; 1 124,85 →
+400 − 0,5 × 724,85 = 37,58 ; 1 200 → 0. Le complément ne croît jamais avec
+les ressources, et le total ne décroît jamais.
+
+**Ce que le coût doit redonner**, au recours de 0,5 que le modèle porte
+encore : versé 0,505 point de PIB en moyenne 2026-2070, net 0,309 ; en
+2030, versé 0,59 et 8,67 millions d'ayants droit. Un écart dirait une
+erreur, ici ou là-bas.
+
+**Ce qui n'est pas dans cette étape** : le recours de 100 % (décision 20),
+étape 3 du plan de la réversion (`2026-11-07-reversion-scenario-6-plan.md`),
+à mener avec elle ou juste après, qui double ces chiffres ; le site, qui
+dit encore la garantie différentielle, après le modèle (chantier 9).
