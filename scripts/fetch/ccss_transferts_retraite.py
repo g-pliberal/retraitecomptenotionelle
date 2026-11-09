@@ -202,7 +202,9 @@ def rapports() -> dict[int, str]:
 
 def _telecharger(annee: int, url: str) -> bytes:
     CACHE.mkdir(parents=True, exist_ok=True)
-    chemin = CACHE / f"{annee}.pdf"
+    # Le nom du rapport, et non l'année seule : celui d'automne remplace
+    # celui de printemps sur la page, et doit se télécharger à son tour.
+    chemin = CACHE / f"{annee}-{url.rsplit('/', 1)[-1]}"
     if chemin.exists() and chemin.stat().st_size > 100_000:
         return chemin.read_bytes()
     octets = _recuperer(url)

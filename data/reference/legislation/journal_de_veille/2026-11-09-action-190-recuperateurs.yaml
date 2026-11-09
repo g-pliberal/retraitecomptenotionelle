@@ -1,0 +1,24 @@
+date: "2026-11-09"
+session: "action 190, étape 5 : les machines à états implicites des récupérateurs"
+consulte: >-
+  Aucune règle du scénario 1 n'est touchée, et l'index LEGI n'est pas
+  interrogé. Lus ce jour, au commit 0d03aaf, par Grep puis fenêtre à
+  fenêtre : les récupérateurs de scripts/fetch/ — leurs boucles d'essais,
+  leurs fichiers partiels, leurs caches sous data/brut/ et en mémoire, les
+  lecteurs qui tiennent une section, un tableau ou un régime courant —,
+  les trois scripts en R et lecture_pdf.mjs. Rien n'est téléchargé ni
+  relancé ; aucune source extérieure n'est ouverte.
+trouve: >-
+  Aucun écart avec les fiches. Vingt-trois machines, presque toutes saines,
+  la plupart gardées par un contrôle qui refuse ce qu'il ne reconnaît pas.
+  Deux défauts reproduits et corrigés : l'index de la DILA se disait
+  construit sur un dump tronqué (tar en échec, en silence), et le cache des
+  rapports à la CCSS, rangé par année, servait le rapport de printemps
+  quand celui d'automne avait paru, sous la provenance de l'automne.
+  Détail : docs/feuille_de_route/190/2026-11-09-etape-5-recuperateurs.md.
+reste: >-
+  Les déclarés de la note, à reprendre s'ils se voient : une réponse coupée
+  (IncompleteRead) qu'aucune boucle d'essais ne redemande, la pagination de
+  Melodi qui s'arrête en silence à cinquante pages, le cache de l'index
+  publié que publier laisse derrière lui, deux lecteurs dont le régime
+  courant ne se remet pas à nul (CCSS, minimum vieillesse de la DREES).

@@ -23,3 +23,19 @@ def test_un_double_signe_tient_la_place_d_un_taux():
     ligne = "Prises en charge de cotisations par le FSV 15 064 15 691 4,2 0 -- 0 -- - 0 -"
     assert transferts._valeurs(ligne, transferts._libelle(ligne), colonnes) == {
         2024: 15064.0, 2025: 15691.0, 2026: 0.0, 2027: 0.0}
+
+
+def test_le_rapport_d_automne_ne_se_lit_pas_dans_celui_de_printemps(tmp_path, monkeypatch):
+    """Le cache des rapports se rangeait par année : le rapport de printemps
+    gardé, celui d'automne paru ensuite, que la page désigne désormais, ne se
+    téléchargeait jamais — on relisait le printemps, et la provenance disait
+    l'automne (action 190, étape 5). Chaque rapport a sa place."""
+    racine = "https://www.securite-sociale.fr/files/live/sites/SSFR/files/medias/CCSS/2026/"
+    printemps = b"%PDF-1.7 printemps" + b"\0" * 200_000
+    automne = b"%PDF-1.7 automne" + b"\0" * 200_000
+    servis = {racine + "CCSS-RAPPORT-JUIN-2026.pdf": printemps,
+              racine + "CCSS-RAPPORT-SEPTEMBRE-2026.pdf": automne}
+    monkeypatch.setattr(transferts, "CACHE", tmp_path)
+    monkeypatch.setattr(transferts, "_recuperer", servis.__getitem__)
+    assert transferts._telecharger(2026, racine + "CCSS-RAPPORT-JUIN-2026.pdf") == printemps
+    assert transferts._telecharger(2026, racine + "CCSS-RAPPORT-SEPTEMBRE-2026.pdf") == automne

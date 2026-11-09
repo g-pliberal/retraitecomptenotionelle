@@ -359,7 +359,10 @@ def verser_archive(db: sqlite3.Connection, archive: Path, tout: bool,
                                  cwd=archive.parent,
                                  stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
         bilan = inserer(db, documents(detar.stdout), tout)
-        detar.wait()
+        if detar.wait() != 0:
+            # Un dump tronqué se lisait jusqu'à la coupure, en silence.
+            raise RuntimeError(f"tar n'a pas lu {archive} jusqu'au bout "
+                               f"(code {detar.returncode}) : dump tronqué ou illisible")
         return bilan
     supprimes: list[str] = []
     xmls: list[str] = []
@@ -388,7 +391,12 @@ def construire(base: str, chemin: Path, tout: bool = False,
         archive = telecharger(RACINE + base.upper() + "/" + nom, CACHE / nom)
     db = ouvrir(chemin)
     debut = time.time()
-    lus, gardes = verser_archive(db, archive, tout, remplacer=False)
+    try:
+        lus, gardes = verser_archive(db, archive, tout, remplacer=False)
+    except RuntimeError:
+        db.close()
+        chemin.unlink()
+        raise
     _ecrire_meta(db, "base", base)
     _ecrire_meta(db, "dump", archive.name)
     _ecrire_meta(db, "filtre", "tout" if tout else THEMATIQUE.pattern)

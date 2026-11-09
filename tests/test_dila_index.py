@@ -13,6 +13,7 @@ from __future__ import annotations
 import argparse
 import importlib.util
 import io
+import random
 import sqlite3
 import sys
 import tarfile
@@ -395,6 +396,25 @@ def test_construire_ecrase_une_base_existante(tmp_path: Path, dump: Path):
     index.construire("jorf", chemin, archive=dump)
     with sqlite3.connect(chemin) as db:
         assert db.execute("SELECT count(*) FROM doc").fetchone()[0] == 3
+
+
+def test_construire_refuse_un_dump_tronque_sans_laisser_d_index(tmp_path: Path):
+    """Un dump coupé en route — un transfert interrompu, un disque plein —
+    se lisait jusqu'à la coupure : ``tar`` échouait en silence, et l'index,
+    à moitié versé, se disait construit, son dump et son dernier incrément
+    écrits (action 190, étape 5). La construction échoue, et ne laisse pas
+    d'index qu'un récupérateur lirait."""
+    bruit = '<?xml version="1.0"?>\n<BRUIT>' + random.Random(0).randbytes(200_000).hex() + "</BRUIT>"
+    entier = _archive(tmp_path / "entier.tar.gz", {
+        "jorf/global/JORF/TEXT/00/01/JORFTEXT000000000001/texte/version/JORFTEXT000000000001.xml": PLAFOND,
+        "jorf/global/JORF/TEXT/00/09/bruit.xml": bruit,
+    })
+    tronque = tmp_path / "tronque.tar.gz"
+    tronque.write_bytes(entier.read_bytes()[: entier.stat().st_size // 2])
+    chemin = tmp_path / "jorf.sqlite"
+    with pytest.raises(RuntimeError, match="tronque.tar.gz"):
+        index.construire("jorf", chemin, archive=tronque)
+    assert not chemin.exists()
 
 
 # ---------------------------------------------------------------------------
