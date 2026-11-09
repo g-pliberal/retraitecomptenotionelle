@@ -1,0 +1,22 @@
+date: "2026-11-09"
+session: "action 190, étape 1 : l'inventaire des machines à états implicites, et l'action qui les corrige en sessions parallèles"
+consulte: >-
+  Aucune règle du scénario 1 n'est touchée, et l'index LEGI n'est pas
+  interrogé. Lus ce jour, au commit 810797d : le code du site
+  (moteur/js/routeur.js, gabarit.js, saisie.js, pages.js), du moteur
+  (echeancier.js, journal.js, droit/liquidation.js, droit/cumul.js,
+  lecture-pdf.js, releve-lu.js, pilote.js), de la fabrique (pont.py,
+  memoire.py) et de l'outillage (scripts/pousser.sh, les crochets de
+  .claude/hooks, scripts/reprise.py). Aucune source extérieure n'est
+  ouverte.
+trouve: >-
+  Aucun écart avec les fiches. Vingt et une machines à états implicites,
+  presque toutes saines ; deux défauts reproduits — le pont ne relance pas
+  un node mort, deux rendus qui se chevauchent posent deux messages
+  d'erreur —, un troisième relevé à la lecture du code — le relevé déposé,
+  lu sans garde —, et la liste des états des actions, que rien ne ferme.
+  Détail : docs/feuille_de_route/190/2026-11-09-etape-1-inventaire.md.
+reste: >-
+  Les étapes 2 à 5 de l'action 190, en parallèle, une session chacune : le
+  site, le pont, les états des actions, les récupérateurs. Au propriétaire :
+  lancer ces sessions, s'il le veut.
