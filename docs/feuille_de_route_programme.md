@@ -579,6 +579,23 @@ Le même jour, sur le message (chantier 8) :
     traitement pour tous et une protection pour les plus fragiles. » ; le
     site la porte sous son titre.
 
+Le même jour, sur les recettes (chantier 4), à la lecture de la table des
+recettes de 2026 (note `186/2026-11-09-qui-finance-quoi.md`) :
+
+91. **La baisse d'impôt va à tous, salariés et retraités** : « À tous ». La
+    moitié rendue des impôts que la retraite n'encaisse plus (décision 29)
+    n'allait qu'aux salaires ; elle va aussi aux retraités. La voie que la
+    note propose est la CSG sur les pensions, de quoi chiffrer la décision
+    89 ; le partage entre les deux reste à fixer (note, question 3).
+92. **Les droits sur les alcools restent à l'État, et ne vont plus aux
+    retraites** : « On garde pour l'État mais on ne dirige plus vers les
+    retraites. » 3,2 Md€ en 2026, dont 2,6 au régime de base des exploitants
+    agricoles ; la décision 67 les avait retirés à leur complémentaire.
+
+Et sur les allègements : « Les allègements de cotisations existent
+toujours », ce qui confirme la décision 47 ; reste à dire qui verse la
+cotisation qu'ils effacent (note, question 4).
+
 ## Ce qui est écarté
 
 - **Une transition sans baisse nominale des pensions en cours** — bâtir le
@@ -1317,6 +1334,12 @@ porter les décisions 79 à 81 au modèle.
 décisions en règlent 342 ; restent ouverts la contribution de l'État (50),
 le reste des impôts affectés (36 à 43, dont 22 de CSG de l'ancien fonds de
 solidarité) et les allègements (24 à 31). Au propriétaire : six questions.
+
+**Le même jour, le propriétaire répond** : la baisse d'impôt va à tous
+(décision 91), les droits sur les alcools restent à l'État (décision 92). Il
+demande des questions plus claires : cinq sont reposées à la fin de la note,
+sur les fonctionnaires, la moitié rendue, son partage, les allègements, et
+la retraite des chômeurs et des malades.
 
 ### Chantier 5 — L'indexation, et le partage de l'effort entre actifs et retraités
 

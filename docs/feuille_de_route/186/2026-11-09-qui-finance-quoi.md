@@ -1,14 +1,14 @@
 # Qui finance quoi, milliard par milliard : les recettes de la retraite en 2026, et ce que la proposition en fait
 
-**Reprise, au 9 novembre 2026.** L'étude est faite ; rien n'est décidé, ni le
-modèle ni le site ne sont touchés. La table des recettes de 2026 est posée
-ligne à ligne (« 1. »), avec ce que chaque décision en règle (« 2. ») et le
-solde public consolidé (« 3. »). Restent ouverts 50 Md€ de contribution de
-l'État, 36 à 43 Md€ d'impôts affectés, dont 22 de CSG de l'ancien fonds de
-solidarité, et 24 à 31 Md€ d'allègements, chacun avec ses options
-chiffrées (« 4. »). Au propriétaire : les six questions de la
-fin. Puis une session du modèle porte ses réponses au coût du scénario 6,
-avec les décisions 79 à 81 et 88, et corrige les trois écarts de « 1.3 ».
+**Reprise, au 9 novembre 2026.** La table des recettes de 2026 est posée
+(« 1. » à « 4. »), sans toucher au modèle ni au site. Le propriétaire a
+tranché deux lignes le jour même (décisions 91 et 92) : la baisse d'impôt va
+à tous, salariés et retraités ; les droits sur les alcools restent à l'État.
+Il a demandé des questions plus claires : elles sont reposées, cinq, à la
+fin de la note, chacune avec ce qui se passe aujourd'hui et ce que change
+chaque réponse. Par quoi commencer : ses cinq réponses ; puis une session du
+modèle les porte au coût du scénario 6, avec les décisions 79 à 81, 88, 91
+et 92, et corrige les trois écarts de « 1.3 ».
 
 *Le 9 novembre 2026, le propriétaire demande, pour le chantier 4 de
 l'action 186 : qui finance quoi, milliard par milliard. Le chiffrage
@@ -489,7 +489,7 @@ Le PIB de 2026 est celui du modèle, 3 065 Md€ ; l'assiette des cotisations,
   `2026-11-07-complementaires-etude.md`, `2026-11-07-enfants-regle-par-regle.md`
   et `2026-11-09-cta.md`.
 
-## Ce que le propriétaire tranche
+## Les six questions, telles qu'elles ont d'abord été posées
 
 1. **La contribution d'équilibre de l'État, 50 Md€ (4.1).** L'État la garde
    en entier, comme l'écrit le chantier 1, ou en rend la moitié aux
@@ -521,3 +521,178 @@ dépassent ce que la moitié gardée laisse à l'État (26,4). C'est le vrai
 choix de ce chantier : ce que la proposition rend en baisses d'impôt, elle
 ne l'a plus pour payer les allègements et les droits des accidents de la
 vie qu'elle garde.
+
+## Le même jour : ce que le propriétaire a répondu, et les limites corrigées
+
+Le propriétaire, à la lecture des six questions : « Il faut poser des
+questions plus claires. C'est vraiment compliqué. Je suis un humain, je ne
+comprends pas les choses implicites. » Et, une par une :
+
+1. « Pourquoi le chantier 1 la garde ? C'est bizarre. »
+2. « Précise la question. »
+3. « À tous. »
+4. « Les allègements de cotisations existent toujours. Il faudrait peut-être
+   aller dans le détail. »
+5. « Je ne comprends pas la question. »
+6. « On garde pour l'État mais on ne dirige plus vers les retraites. »
+
+**Ce qui est tranché.** La baisse d'impôt va à tous, salariés et retraités
+(décision 91) ; reste à dire comment elle se partage, question 3 ci-dessous.
+Les droits sur les alcools, 3,2 Md€, restent à l'État et ne vont plus aux
+retraites (décision 92) : ils entrent dans la moitié que l'État garde. Les
+allègements restent (décision 47, confirmée) ; leur détail est ci-dessous.
+
+**Pourquoi « le chantier 1 la garde » : une erreur de rédaction, pas une
+décision.** Le propriétaire n'a jamais décidé que l'État garderait sa
+contribution. Sa décision est celle du 20 septembre 2026 (action 59,
+archivée) : « on a enlevé les impôts et taxes affectées ainsi que les
+contributions de l'État. Il ne faut pas que ces baisses d'impôts servent
+uniquement à combler le déficit. Il faut aussi que les salaires soient
+augmentés. » Le dépôt l'a traduite ainsi : la moitié de ce que l'État cesse
+de verser pour les pensions de ses fonctionnaires augmente leur traitement.
+Le simulateur le fait. La page Coût ne compte pas cette hausse. La note du
+chantier 1, le 7 novembre, a décrit ce que compte la page Coût par la phrase
+« l'État garde les 58 Md€ », et la note du chantier 4 l'a reprise comme une
+réponse du propriétaire. La proposition A de la question 1 du matin, « l'État
+garde tout », allait donc contre une décision prise : elle est retirée.
+
+**Les allègements, dans le détail.** Un salarié au SMIC gagne 1 823 € brut
+par mois en 2026 (dépôt). Sous la proposition, la retraite doit recevoir
+18 % de ce salaire, 328 € par mois, et son compte est crédité de ces 328 €
+(modèle, `scripts/partage_taux_unique.py`) :
+
+| Au SMIC, par mois | Doit | Paie |
+|---|---:|---:|
+| Le salarié, 4,95 points | 90 € | 90 € |
+| L'employeur, 13,05 points | 238 € | 0 € : l'allègement les efface |
+| **La retraite** | **328 €** | **90 €** |
+
+Il manque 238 € par mois. Aujourd'hui, c'est pareil : l'employeur d'un
+salarié au SMIC ne paie rien de sa cotisation de retraite, et l'État verse
+la somme à sa place, avec les impôts affectés aux retraites — ceux-là mêmes
+que la proposition leur retire. L'allègement diminue quand le salaire monte
+et s'éteint à 3 SMIC. Sur tous les salaires, les 238 € du SMIC deviennent
+24 à 31 Md€ par an (calcul, « 4.3 »). Le modèle compte les 328 € comme
+encaissés, sans dire qui les verse.
+
+**Les limites, corrigées.**
+
+- *Le nombre de ménages* est lu à l'Insee : 30 907 289 ménages, France hors
+  Mayotte, au recensement de 2022 (publié). Les montants par ménage de la
+  note, calculés sur 30 millions, baissent de 3 % : 1 460 € au lieu de 1 500
+  pour la baisse des cotisations, 560 € au lieu de 570 pour la taxe sur les
+  salaires et le forfait social, 54 € pour la CTA, 970 à 1 390 € pour la
+  taxe sur la valeur du terrain, 760 € pour la hausse des traitements,
+  1 060 € et 850 € pour les options A et B de « 4.2 », dont 470 € par la CSG
+  sous A (calcul).
+- *Les recettes de l'Agirc-Arrco* sont lues à son communiqué du 31 mars
+  2026, dont le tableau n'est publié qu'en image : 103,3 Md€ de ressources
+  en 2025, 103,0 de charges, un résultat technique de 0,3 et un résultat
+  financier de 1,1 (publié). En ôtant la TVA (7,4), les points des chômeurs
+  payés par l'Unédic (3,8) et les cotisations que lui verse la CNIEG (1,4),
+  il reste 90,7 Md€ de cotisations (calcul). Les autres complémentaires font
+  donc 105,4 − 90,7 = 14,7 Md€ de cotisations (calcul) ; le dépôt leur
+  donne, sur la projection du COR de 2024, 16,6 Md€ de ressources en 2025,
+  produits financiers compris : libéraux 6,0, Ircantec 4,9, indépendants
+  3,1, exploitants agricoles 1,1, avocats 0,9, navigants 0,6 (dépôt). Leurs
+  comptes de 2025, caisse par caisse, restent à lire.
+- *Les trois écarts entre le modèle et les sources* (« 1.3 ») ne sont pas
+  corrigés ici : les corriger, c'est changer les données du modèle, ce que
+  cette session n'a pas à faire. Ils attendent la session du modèle.
+
+## Ce que le propriétaire tranche
+
+Cinq questions. Pour chacune : ce qui se passe aujourd'hui, la question, et
+ce que change chaque réponse. Les montants sont ceux de 2026, par an.
+
+**Question 1. Les fonctionnaires sont-ils augmentés ?**
+
+- *Aujourd'hui.* L'État verse 50 Md€ par an pour payer les pensions de ses
+  anciens fonctionnaires ; les hôpitaux et les collectivités, 22 Md€. Sous
+  la proposition, ils cotisent 18 % comme tout employeur, et gardent la
+  différence.
+- *Votre décision du 20 septembre* rend la moitié de cette différence aux
+  fonctionnaires en activité, en salaire.
+- *La question.* Confirmez-vous cette hausse ?
+- *Si oui* : un fonctionnaire civil de l'État gagne 27,5 % de plus, un
+  militaire 32,4 %, un agent d'hôpital ou de mairie 9 %. Cela coûte
+  23,6 Md€, que la page Coût ne compte pas encore.
+- *Si non* : les traitements ne bougent pas, l'État et les autres employeurs
+  publics gardent tout, et le simulateur est corrigé.
+- *Entre les deux* : oui pour l'État seul, 18,3 Md€ ; ou une part plus
+  petite que la moitié.
+
+**Question 2. La moitié des impôts rendue : la moitié de quoi ?**
+
+- *Aujourd'hui.* 66 Md€ d'impôts vont aux retraites. Votre règle du
+  20 septembre : la moitié est rendue en baisses d'impôt, l'autre moitié
+  reste à l'État.
+- *Depuis, deux exceptions décidées.* 11 Md€ de TVA restent aux retraites
+  (décision 79). La CTA, 1,7 Md€, est supprimée (décision 88).
+- *La question.* La moitié se compte-t-elle sur les 66 Md€ du départ, ou sur
+  les 53 Md€ qui restent une fois ces deux exceptions mises de côté ?
+- *Sur 66* : 33 Md€ de baisses d'impôt ; il reste 20 Md€ à l'État.
+- *Sur 53* : 26 Md€ de baisses d'impôt ; il reste 26 Md€ à l'État.
+
+**Question 3. « À tous » : combien pour les salariés, combien pour les retraités ?**
+
+- *Ce qui est acquis.* Dans la baisse, 18 Md€ suppriment deux impôts que
+  paient les employeurs sur les salaires (taxe sur les salaires, forfait
+  social). Il reste à rendre 8 Md€ (si la question 2 donne 26) ou 14,5 Md€
+  (si elle donne 33).
+- *La question.* Comment partager ce reste entre salariés et retraités ?
+- *Le même nombre de points de CSG pour tous* : la CSG baisse de 0,5 point
+  sur les salaires et sur les pensions (0,9 point si le reste est de
+  14,5 Md€). Un salarié gagne 5 € par mois pour 1 000 € de salaire brut ;
+  un retraité, 7 € par mois pour 1 500 € de pension (9 € et 13 € à 0,9
+  point) (calcul).
+- *Tout aux retraités* : la CSG sur les pensions baisse de 2,94 points,
+  9,7 Md€, soit 47 € par mois en moyenne par retraité ; rien de plus pour
+  les salariés. C'est 1,6 Md€ de plus que la moitié de 26.
+- *Tout aux salariés* : la CSG sur les salaires baisse de 0,6 point (1,1 si
+  le reste est de 14,5 Md€) ; rien pour les retraités, sauf la CTA.
+
+**Question 4. Qui verse la cotisation de retraite que l'allègement efface ?**
+
+- *Aujourd'hui.* L'employeur d'un salarié au SMIC ne paie pas sa cotisation
+  de retraite, 238 € par mois. L'État la verse à sa place, avec les impôts
+  affectés aux retraites. En tout : 24 à 31 Md€.
+- *Ce qui est décidé.* Les allègements restent. Les impôts qui les payaient
+  sont retirés aux retraites.
+- *La question.* Qui verse ces 238 € par mois à la retraite ?
+- *L'État, sur les impôts qu'il garde* : le compte du salarié est plein, la
+  retraite reçoit ses 18 %. Mais cela prend à l'État 24 à 31 Md€, à peu
+  près tout ce que la question 2 lui laisse.
+- *Personne* : le compte du salarié est crédité quand même, et la retraite a
+  24 à 31 Md€ de déficit en plus, que les autres cotisants paient.
+- *Personne, et le compte n'est crédité que de ce qui est versé* : le
+  salarié au SMIC n'acquiert que 90 € de droits par mois au lieu de 328 ; sa
+  pension sera plus de trois fois plus basse, et la garantie vieillesse la
+  complétera.
+
+**Question 5. Qui paie la retraite des chômeurs et des malades ?**
+
+- *Aujourd'hui.* Une personne au chômage ou en arrêt maladie continue
+  d'acquérir des droits à la retraite sans cotiser. Quelqu'un cotise pour
+  elle : 15,7 Md€ par an. L'argent vient d'une CSG de 22 Md€, prélevée sur
+  les pensions et sur les revenus du capital, qui paie aussi le minimum
+  vieillesse.
+- *Ce qui est décidé.* Ces droits sont gardés (décision 7). Mais cette CSG
+  fait partie des impôts retirés aux retraites.
+- *La question.* Qui cotise pour les chômeurs et les malades ?
+- *La même CSG, comme aujourd'hui* : elle reste aux retraites, 16 Md€ pour
+  ces cotisations et le reste pour la garantie vieillesse. L'État garde
+  22 Md€ de moins.
+- *L'assurance chômage et l'assurance maladie* : l'Unédic paie 13 Md€ de
+  plus par an, l'assurance maladie 2,3. La CSG suit la règle de la
+  question 2.
+- *Personne* : les chômeurs et les malades n'acquièrent plus de droits
+  pendant ces périodes. C'est ce que le modèle fait aujourd'hui, et c'est
+  contraire à la décision 7.
+
+**Ce qu'il faut savoir avant de répondre.** Les questions 2, 4 et 5 puisent
+dans la même somme : ce que l'État garde des impôts retirés aux retraites,
+20 ou 26 Md€. Payer les allègements (24 à 31) et garder la CSG pour les
+chômeurs et les malades (22) en demande 46 à 53. Les deux ne tiennent pas
+dans la somme : il faut soit rendre moins en baisses d'impôt, soit faire
+payer l'un des deux par quelqu'un d'autre.
