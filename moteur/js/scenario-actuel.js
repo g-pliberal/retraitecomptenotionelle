@@ -340,7 +340,7 @@ export class ScenarioActuel {
       sortie = resultatActuel(resultat, foyer);
     }
     if (progressive !== null) {
-      sortie.retraite_progressive = progressiveServie(progressive, provisoire,
+      sortie.retraite_progressive = progressiveServie(this, progressive, provisoire,
         carriereSaisie.dateLiquidation);
     }
     if (demandes.length > 0) {
@@ -416,14 +416,14 @@ export function etatDuDepart(moteur, carriere, plancher, journal = null) {
   const [progressive, provisoire] = plancher;
   return new liquidation.Etat(carriere, journal, [],
     lesProgressives.initiales(moteur, progressive, provisoire, carriere.dateLiquidation),
-    lesProgressives.recalculee(carriere.dateLiquidation));
+    lesProgressives.recalculee(moteur, carriere.dateLiquidation));
 }
 
 /**
  * La retraite progressive, telle que le résultat la dit, pour un départ à
  * `depart`. Voir le Python.
  */
-export function progressiveServie(progressive, provisoire, depart) {
+export function progressiveServie(moteur, progressive, provisoire, depart) {
   const provisoireTotal = provisoire !== null ? provisoire.total : 0.0;
   return {
     date_effet: progressive.dateEffet,
@@ -436,7 +436,7 @@ export function progressiveServie(progressive, provisoire, depart) {
     age_minimum: progressive.ageMinimum,
     duree_requise: progressive.dureeRequise,
     trimestres: progressive.trimestres,
-    recalculee: lesProgressives.recalculee(depart),
+    recalculee: lesProgressives.recalculee(moteur, depart),
     get ouverte() {
       return this.motif === lesProgressives.OUVERTE;
     },

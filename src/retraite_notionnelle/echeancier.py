@@ -186,7 +186,7 @@ class Echeancier:
                 self._traiter(evenement, carriere)
         if self.au_depart is not None and self.progressive is not None:
             self.au_depart = replace(self.au_depart, retraite_progressive=progressive_servie(
-                self.progressive, self.provisoire, carriere.date_liquidation))
+                self.moteur, self.progressive, self.provisoire, carriere.date_liquidation))
         if self.au_depart is not None and demandes:
             self.au_depart = replace(self.au_depart, demandes=demandes)
         if self.au_depart is not None and carriere.conjoint is not None:

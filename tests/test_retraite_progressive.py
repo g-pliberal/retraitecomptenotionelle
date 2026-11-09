@@ -77,25 +77,26 @@ def test_l_age_qui_ouvre_la_retraite_progressive(simulateur, date, attendu):
         assert valeur == attendu
 
 
-def test_la_duree_exigee_et_les_regimes_suivent_leurs_textes():
-    assert progressive.duree_requise(DateMois(1990, 1)) == 150
-    assert progressive.duree_requise(DateMois(2000, 1)) == 160
-    assert progressive.duree_requise(DateMois(2010, 1)) == 150
+def test_la_duree_exigee_et_les_regimes_suivent_leurs_textes(simulateur):
+    moteur = simulateur.scenario_actuel
+    assert progressive.duree_requise(moteur, DateMois(1990, 1)) == 150
+    assert progressive.duree_requise(moteur, DateMois(2000, 1)) == 160
+    assert progressive.duree_requise(moteur, DateMois(2010, 1)) == 150
     # Le libéral ne la demande qu'en 2023 : le décret de L. 643-8-1 n'a
     # jamais paru. Mais L. 351-15 liquide sa pension avec celle du salarié.
-    assert "cnavpl" not in progressive.regimes_ouverts(DateMois(2015, 1))
-    assert "cnavpl" in progressive.regimes_liquides(DateMois(1990, 1))
-    assert "cnbf" not in progressive.regimes_liquides(DateMois(2015, 1))
-    assert {"cnavpl", "cnbf", "crpcen"} <= progressive.regimes_ouverts(DateMois(2023, 9))
-    assert "fonction_publique_etat" not in progressive.regimes_ouverts(DateMois(2023, 8))
-    assert "cnracl" in progressive.regimes_ouverts(DateMois(2023, 9))
+    assert "cnavpl" not in progressive.regimes_ouverts(moteur, DateMois(2015, 1))
+    assert "cnavpl" in progressive.regimes_liquides(moteur, DateMois(1990, 1))
+    assert "cnbf" not in progressive.regimes_liquides(moteur, DateMois(2015, 1))
+    assert {"cnavpl", "cnbf", "crpcen"} <= progressive.regimes_ouverts(moteur, DateMois(2023, 9))
+    assert "fonction_publique_etat" not in progressive.regimes_ouverts(moteur, DateMois(2023, 8))
+    assert "cnracl" in progressive.regimes_ouverts(moteur, DateMois(2023, 9))
     # Les IEG aussi, par leur statut (annexe 3, article 21-1, depuis le
     # 1er septembre 2023) ; la SNCF et la RATP, dont les décrets ne sont pas
     # relus, non.
-    assert "ieg" not in progressive.regimes_ouverts(DateMois(2023, 8))
-    assert "ieg" in progressive.regimes_ouverts(DateMois(2023, 9))
-    assert "sncf" not in progressive.regimes_ouverts(DateMois(2023, 9))
-    assert progressive.regimes_liquides(DateMois(2023, 9)) is None
+    assert "ieg" not in progressive.regimes_ouverts(moteur, DateMois(2023, 8))
+    assert "ieg" in progressive.regimes_ouverts(moteur, DateMois(2023, 9))
+    assert "sncf" not in progressive.regimes_ouverts(moteur, DateMois(2023, 9))
+    assert progressive.regimes_liquides(moteur, DateMois(2023, 9)) is None
 
 
 @pytest.mark.parametrize("date, quotite, fonctionnaire, fraction", [
@@ -116,9 +117,54 @@ def test_la_duree_exigee_et_les_regimes_suivent_leurs_textes():
     (DateMois(2024, 1), 0.9, True, 0.1),
     (DateMois(2024, 1), 0.45, True, None),
 ])
-def test_la_fraction_servie(date, quotite, fonctionnaire, fraction):
-    trouvee = progressive.fraction(date, quotite, fonctionnaire)
+def test_la_fraction_servie(simulateur, date, quotite, fonctionnaire, fraction):
+    trouvee = progressive.fraction(simulateur.scenario_actuel, date, quotite, fonctionnaire)
     assert trouvee == (None if fraction is None else pytest.approx(fraction))
+
+
+def _sous_la_fiche_retouchee(moteur, version: str, **parametres):
+    """Le moteur, une version de la fiche de la retraite progressive retouchée
+    dans une copie de ses fiches."""
+    from copy import copy, deepcopy
+
+    fiches = deepcopy(moteur.fiches_datees.fiches())
+    [visee] = [v for v in fiches[progressive.FICHE]["versions"] if v["id"] == version]
+    visee["parametres"].update(parametres)
+    retouche = copy(moteur)
+    retouche.fiches_datees = copy(moteur.fiches_datees)
+    retouche.fiches_datees._fiches = fiches
+    return retouche
+
+
+def test_la_regle_se_lit_dans_la_fiche_et_nulle_part_ailleurs(simulateur):
+    """Action 191 : le moteur lit les dates et les valeurs de la règle dans
+    les versions de sa fiche. Une version retouchée déplace ce qu'il rend, et
+    le module n'écrit plus ni date ni valeur."""
+    moteur = simulateur.scenario_actuel
+    assert not progressive.regle(moteur, DateMois(1988, 4))["existe"]
+    assert progressive.regle(moteur, DateMois(1988, 6))["existe"]
+    autre = _sous_la_fiche_retouchee(moteur, "cent_soixante_trimestres_1993", duree_requise=170)
+    assert progressive.duree_requise(autre, DateMois(2000, 1)) == 170
+    assert progressive.duree_requise(autre, DateMois(2010, 1)) == 150
+    autre = _sous_la_fiche_retouchee(moteur, "soixante_ans_2025", quotite_maximum=0.7)
+    assert progressive.fraction(autre, DateMois(2026, 1), 0.8, False) is None
+    assert progressive.fraction(moteur, DateMois(2026, 1), 0.8, False) == pytest.approx(0.2)
+    # D. 351-15 : la pension complète se recalcule depuis le 8 juin 2006.
+    assert not progressive.recalculee(moteur, DateMois(2006, 6))
+    assert progressive.recalculee(moteur, DateMois(2006, 7))
+    for nom in ("DEBUT", "AGE_ABAISSE", "FRACTION_COMPLEMENTAIRE", "TOUS_REGIMES",
+                "SOIXANTE_ANS", "RECALCUL", "DUREES", "REGIMES_1988", "REGIMES_2023",
+                "LIQUIDES_1988", "FONCTION_PUBLIQUE"):
+        assert not hasattr(progressive, nom), nom
+
+
+def test_le_paquet_porte_la_fiche_que_le_moteur_lit(simulateur):
+    """Une seule source : la fiche, que le paquet du site porte telle que le
+    moteur Python la prépare."""
+    paquet = json.loads((RACINE / "moteur" / "donnees.json").read_text(encoding="utf-8"))
+    fiches = simulateur.scenario_actuel.fiches_datees.fiches()
+    assert paquet["fiches_datees"][progressive.FICHE] == fiches[progressive.FICHE]
+    assert len(fiches[progressive.FICHE]["versions"]) == 8
 
 
 # -- la carrière à temps partiel --------------------------------------------------
@@ -286,7 +332,7 @@ def test_la_decote_de_la_pension_provisoire_ne_depasse_pas_25_pour_cent(
                          naissance=naissance, liquidation=63)
     a_soixante = carriere.liquidee_au(DateMois(naissance + 60, 2))
     assert "2014-12-18" <= f"{naissance + 60}-02-01" < "2023-09-01"
-    for code in progressive.REGIMES_1988:
+    for code in progressive.regimes_ouverts(moteur, DateMois(naissance + 60, 2)):
         periode = moteur.catalogue[code].periode(naissance + 60)
         if periode is None or not periode.decote_par_trimestre:
             continue

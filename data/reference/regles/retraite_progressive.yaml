@@ -43,6 +43,8 @@ versions:
     raison: >-
       la retraite progressive naît de la loi n° 88-16, que les articles R. 351-39 à
       R. 351-44 appliquent le 4 mai 1988
+    parametres:
+      existe: false
   exemples: aucun trouvé
 - id: tranches_1988
   statut: lue
@@ -74,7 +76,15 @@ versions:
       à 60 % et au moins égale à 40 % ; 70 % [...] inférieure à 40 % » (R. 351-41)
     pension_complete: la pension provisoire, servie entière au départ
     parametres:
+      existe: true
+      age: age_legal
       duree_requise: 150
+      fraction: par_tranches
+      tranches: [[0.60, 0.30], [0.40, 0.50], [0.0, 0.70]]
+      quotite_maximum: 0.80
+      regimes_ouverts: [regime_general, msa_salaries, cancava, organic, rsi, msa_non_salaries]
+      regimes_liquides: [regime_general, msa_salaries, cancava, organic, rsi, msa_non_salaries, cnavpl]
+      pension_complete: provisoire
   exemples: aucun trouvé
 - id: cent_soixante_trimestres_1993
   statut: lue
@@ -86,7 +96,15 @@ versions:
     droit: la version tranches_1988
     conditions: la durée d'assurance « est fixée à 160 [trimestres] » (R. 351-39)
     parametres:
+      existe: true
+      age: age_legal
       duree_requise: 160
+      fraction: par_tranches
+      tranches: [[0.60, 0.30], [0.40, 0.50], [0.0, 0.70]]
+      quotite_maximum: 0.80
+      regimes_ouverts: [regime_general, msa_salaries, cancava, organic, rsi, msa_non_salaries]
+      regimes_liquides: [regime_general, msa_salaries, cancava, organic, rsi, msa_non_salaries, cnavpl]
+      pension_complete: provisoire
   exemples: aucun trouvé
 - id: pension_complete_recalculee_2006
   statut: lue
@@ -105,7 +123,15 @@ versions:
       inférieure au montant entier ayant servi de base au calcul de la fraction [...],
       le cas échéant revalorisé » (D. 351-15)
     parametres:
+      existe: true
+      age: age_legal
       duree_requise: 150
+      fraction: par_tranches
+      tranches: [[0.60, 0.30], [0.40, 0.50], [0.0, 0.70]]
+      quotite_maximum: 0.80
+      regimes_ouverts: [regime_general, msa_salaries, cancava, organic, rsi, msa_non_salaries]
+      regimes_liquides: [regime_general, msa_salaries, cancava, organic, rsi, msa_non_salaries, cnavpl]
+      pension_complete: recalculee
   exemples: aucun trouvé
 - id: deux_ans_avant_2014
   statut: lue
@@ -122,6 +148,17 @@ versions:
       « l'âge prévu au premier alinéa de l'article L. 351-1 diminué de deux années, sans
       pouvoir être inférieur à soixante ans » (L. 351-15, 1°) ; aux exploitants
       agricoles, le 18 décembre 2014 seulement (D. 732-167)
+    parametres:
+      existe: true
+      age: age_legal_moins_deux_ans
+      age_plancher: 60
+      duree_requise: 150
+      fraction: par_tranches
+      tranches: [[0.60, 0.30], [0.40, 0.50], [0.0, 0.70]]
+      quotite_maximum: 0.80
+      regimes_ouverts: [regime_general, msa_salaries, cancava, organic, rsi, msa_non_salaries]
+      regimes_liquides: [regime_general, msa_salaries, cancava, organic, rsi, msa_non_salaries, cnavpl]
+      pension_complete: recalculee
   exemples: aucun trouvé
 - id: fraction_complementaire_2014
   statut: lue
@@ -150,8 +187,20 @@ versions:
       « la différence entre 100 % et la quotité de travail à temps partiel » (R. 351-41) ;
       « le coefficient de minoration du taux plein [...] ne peut excéder 25 % »
     parametres:
+      existe: true
+      age: age_legal_moins_deux_ans
+      age_plancher: 60
+      duree_requise: 150
+      fraction: complement_de_la_quotite
       quotite_minimum: 0.40
       quotite_maximum: 0.80
+      quotite_des_fonctionnaires:
+        regimes: [fonction_publique_etat, cnracl, fspoeie]
+        minimum: 0.50
+        maximum: 0.90
+      regimes_ouverts: [regime_general, msa_salaries, cancava, organic, rsi, msa_non_salaries]
+      regimes_liquides: [regime_general, msa_salaries, cancava, organic, rsi, msa_non_salaries, cnavpl]
+      pension_complete: recalculee
       decote_maximum: 0.25
   exemples: aucun trouvé
 - id: tous_regimes_2023
@@ -202,9 +251,22 @@ versions:
       modalités de calcul applicables à sa date d'effet », ses services à temps partiel
       compris, sans ce plancher (D. 37-3, 49 sexies, 34 sexies)
     parametres:
+      existe: true
       age: age_legal_moins_deux_ans
+      duree_requise: 150
+      fraction: complement_de_la_quotite
       quotite_minimum: 0.40
       quotite_maximum: 0.80
+      quotite_des_fonctionnaires:
+        regimes: [fonction_publique_etat, cnracl, fspoeie]
+        minimum: 0.50
+        maximum: 0.90
+      regimes_ouverts: [regime_general, msa_salaries, cancava, organic, rsi, msa_non_salaries,
+        fonction_publique_etat, cnracl, fspoeie, cnavpl, cnbf, crpcen, opera_de_paris, mines,
+        ieg]
+      regimes_liquides: tous
+      pension_complete: recalculee
+      pension_complete_sans_plancher: [fonction_publique_etat, cnracl, fspoeie]
   exemples: aucun trouvé
 - id: soixante_ans_2025
   statut: lue
@@ -241,9 +303,22 @@ versions:
       ans », pour les pensions prenant effet à compter du 1er septembre 2025 (décret
       n° 2025-681, article 2)
     parametres:
+      existe: true
       age: 60
+      duree_requise: 150
+      fraction: complement_de_la_quotite
       quotite_minimum: 0.40
       quotite_maximum: 0.80
+      quotite_des_fonctionnaires:
+        regimes: [fonction_publique_etat, cnracl, fspoeie]
+        minimum: 0.50
+        maximum: 0.90
+      regimes_ouverts: [regime_general, msa_salaries, cancava, organic, rsi, msa_non_salaries,
+        fonction_publique_etat, cnracl, fspoeie, cnavpl, cnbf, crpcen, opera_de_paris, mines,
+        ieg]
+      regimes_liquides: tous
+      pension_complete: recalculee
+      pension_complete_sans_plancher: [fonction_publique_etat, cnracl, fspoeie]
   exemples: aucun trouvé
 approximations:
 - ecart: >-
@@ -299,6 +374,16 @@ approximations:
     pension complète est la provisoire dans les régimes de base, les complémentaires se
     recalculant
   effet: non mesuré
+- ecart: >-
+    du 18 décembre 2014 au 1er septembre 2023, l'assuré qui travaille aussi, l'année de
+    sa demande, dans un régime de la fonction publique reçoit les bornes de quotité du
+    fonctionnaire, de 50 à 90 % (quotite_des_fonctionnaires de la version
+    fraction_complementaire_2014), quand R. 351-41 ne connaît que 40 à 80 % et que le
+    fonctionnaire n'a la retraite progressive que le 1er septembre 2023 : le moteur
+    l'appliquait ainsi avant de lire la règle ici, et la conversion du 9 novembre 2026
+    (action 191) garde son résultat, l'écart restant à traiter
+  effet: >-
+    une quotité de 40 à 49 % y est refusée, une quotité de 81 à 90 % servie ; non mesuré
 sources:
   lu_le: 2026-09-29
   prochaine_relecture: 2027-03-31
@@ -415,15 +500,17 @@ textes_a_rattacher:
 - {id: LEGIARTI000048238069, article: "décret n° 2008-639, article 6 bis (SNCF)", en_vigueur: 2023-10-22, change: "la retraite progressive ouverte aux agents de la SNCF"}
 code:
   python: >-
-    droit/progressive.py : examiner, fraction, age_minimum, duree_requise,
+    droit/progressive.py : regle, examiner, fraction, age_minimum, duree_requise,
     regimes_ouverts, regimes_liquides, liquider, avec_la_duree, recalculee, initiales ;
     droit/departs.py : regimes_actifs, regimes_de_la_carriere, liquider_les_departs ;
     droit/completer.py : completer ; droit/compter.py : services_a_temps_partiel ;
     droit/liquider.py : salaire_de_reference ; carriere.py : AnneeCarriere ;
-    scenarios/actuel.py : ProgressiveServie ; echeancier.py : Echeancier._progresser
+    scenarios/actuel.py : ProgressiveServie, FichesDatees.regle ; echeancier.py :
+    Echeancier._progresser
   javascript: >-
-    moteur/js/droit/progressive.js : examiner, fraction, ageMinimum, dureeRequise,
-    regimesOuverts, regimesLiquides, liquider, avecLaDuree, recalculee, initiales ;
+    moteur/js/droit/progressive.js : regle, examiner, fraction, ageMinimum,
+    dureeRequise, regimesOuverts, regimesLiquides, liquider, avecLaDuree, recalculee,
+    initiales ; moteur/js/regimes.js : FichesDatees.regle ;
     moteur/js/droit/departs.js : regimesActifs, regimesDeLaCarriere,
     liquiderLesDeparts ; moteur/js/droit/completer.js : completer ;
     moteur/js/droit/compter.js : servicesATempsPartiel ; moteur/js/droit/liquider.js :
@@ -431,15 +518,24 @@ code:
     moteur/js/scenario-actuel.js : progressiveServie ; moteur/js/echeancier.js :
     Echeancier._progresser ; moteur/js/pages.js : retraiteProgressive
   parametres: >-
-    contenu.parametres de chaque version : duree_requise, quotite_minimum,
-    quotite_maximum, decote_maximum, age
+    contenu.parametres de chaque version : existe, age, age_plancher, duree_requise,
+    fraction, tranches, quotite_minimum, quotite_maximum, quotite_des_fonctionnaires,
+    decote_maximum, regimes_ouverts, regimes_liquides, pension_complete,
+    pension_complete_sans_plancher
   tests: >-
-    tests/test_retraite_progressive.py ; les témoins progressive_* des simulations et
+    tests/test_retraite_progressive.py ; tests/js/retraite-progressive.test.js, où une
+    version retouchée déplace ce que le portage rend ; les témoins progressive_* des
+    simulations et
     simuler_retraite_progressive* des pages ; tests/test_liquidation.py, qui compare les
     journaux des deux moteurs
   moteur: >-
-    completer reçoit les pensions provisoires de la retraite progressive, sous
-    lesquelles la pension complète ne descend pas, et qu'elle vaut sans recalcul
+    Le moteur lit la règle dans les versions de cette fiche, que le paquet du site porte
+    (fiches_datees) : regle rend les paramètres de la version qui vaut au jour de la
+    demande, ou du départ pour la pension complète, et chaque fonction du module y lit
+    sa valeur ; le module n'écrit ni date ni valeur. decote_maximum n'a pas de lecteur
+    (voir les approximations). completer reçoit les pensions provisoires de la retraite
+    progressive, sous lesquelles la pension complète ne descend pas, et qu'elle vaut sans
+    recalcul
     (initiales, recalcul). Les lignes à temps partiel portent leur quotité
     (AnneeCarriere.quotite) ; le traitement de référence se lit à temps plein
     (salaire_de_reference).
@@ -476,6 +572,14 @@ historique:
   9) : la caisse compare la pension provisoire, revalorisée, à la somme des éléments de
   la pension complète, la surcote comprise, et sert la plus élevée (circulaire Cnav
   2018/31, 8.2). Le modèle relevait la pension au plancher, puis la surcotait.
+- >-
+  2026-11-09 — la fiche pilote le moteur (action 191, étape 1) : chaque version porte
+  tous ses paramètres — l'âge, la durée, la fraction et ses bornes, les régimes ouverts
+  et liquidés, la pension complète —, les deux moteurs les lisent par le paquet
+  (fiches_datees), et les dates et les valeurs que droit/progressive.py et son jumeau
+  écrivaient en constantes en sont parties. Aucun résultat ne change : les témoins sont
+  identiques. Un écart s'y déclare, que la conversion garde : les bornes de quotité du
+  fonctionnaire prêtées, de 2014 à 2023, à qui travaille aussi dans la fonction publique.
 effet: >-
   Les salariés, les indépendants et, depuis 2023, les fonctionnaires, les libéraux et les
   avocats qui passent à temps partiel en fin de carrière. Une salariée née en 1965,

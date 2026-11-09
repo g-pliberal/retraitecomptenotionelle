@@ -180,7 +180,7 @@ export class Echeancier {
       }
     }
     if (this.auDepart !== null && this.progressive !== null) {
-      this.auDepart.retraite_progressive = progressiveServie(this.progressive,
+      this.auDepart.retraite_progressive = progressiveServie(this.moteur, this.progressive,
         this.provisoire, carriere.dateLiquidation);
     }
     if (this.auDepart !== null && demandes.length > 0) {

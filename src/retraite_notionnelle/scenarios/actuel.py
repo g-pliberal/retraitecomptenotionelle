@@ -166,7 +166,7 @@ class ProgressiveServie:
                 "trimestres": self.trimestres, "recalculee": self.recalculee}
 
 
-def progressive_servie(progressive: _progressive.Progressive,
+def progressive_servie(moteur: ScenarioActuel, progressive: _progressive.Progressive,
                        provisoire: Liquidation | None, depart: DateMois) -> ProgressiveServie:
     """La retraite progressive, telle que le résultat la dit, pour un départ
     à ``depart``."""
@@ -179,7 +179,7 @@ def progressive_servie(progressive: _progressive.Progressive,
         montant_servi=progressive.fraction * provisoire_total,
         age_minimum=progressive.age_minimum, duree_requise=progressive.duree_requise,
         trimestres=progressive.trimestres,
-        recalculee=_progressive.recalculee(depart))
+        recalculee=_progressive.recalculee(moteur, depart))
 
 
 @dataclass
@@ -449,7 +449,7 @@ def etat_du_depart(moteur, carriere: Carriere, plancher: tuple | None,
         carriere, journal,
         initiales=_progressive.initiales(moteur, progressive, provisoire,
                                          carriere.date_liquidation),
-        recalcul=_progressive.recalculee(carriere.date_liquidation))
+        recalcul=_progressive.recalculee(moteur, carriere.date_liquidation))
 
 
 def _departs_servi(depart, liquidation, servi: float) -> DepartServi:
@@ -1261,7 +1261,8 @@ class FichesDatees:
     d'âge des agents publics et ses exceptions, que ``limite_age.radiation``
     lit au jour où la limite est atteinte (date ``age_atteint``,
     :data:`~retraite_notionnelle.droit.limite_age.FICHES`), et le minimum de
-    pension de la SNCF, que ``liquider.minimum_de_pension_ouvert`` lit.
+    pension de la SNCF, que ``liquider.minimum_de_pension_ouvert`` lit, et la
+    retraite progressive, que ``progressive.regle`` lit.
     """
 
     NOMS = ("salaire_annuel_moyen", "revenu_annuel_moyen_independants",
@@ -1295,7 +1296,7 @@ class FichesDatees:
             "limite_age_opera", "limite_age_seita", "limite_age_banque_de_france",
             "limite_age_mines", "apprentissage", "stages_formation_professionnelle",
             "sportifs_haut_niveau", "conge_supplementaire_naissance",
-            "minimum_pension_sncf")
+            "minimum_pension_sncf", "retraite_progressive")
 
     def __init__(self, racine: Path) -> None:
         self._fiches: dict[str, dict] = {}
@@ -3646,7 +3647,7 @@ class ScenarioActuel:
             resultat = resultat_actuel(liquidation, foyer)
         if progressive is not None:
             resultat = replace(resultat, retraite_progressive=progressive_servie(
-                progressive, provisoire, carriere.date_liquidation))
+                self, progressive, provisoire, carriere.date_liquidation))
         if demandes:
             resultat = replace(resultat, demandes=demandes)
         return resultat

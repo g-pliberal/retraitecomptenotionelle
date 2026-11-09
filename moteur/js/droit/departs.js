@@ -609,7 +609,7 @@ export function liquiderLesDeparts(moteur, carriere, contexte, nature = "definit
       const [ouverte, provisoire] = progressive;
       initiales = lesProgressives.initiales(moteur, ouverte, provisoire, depart.date,
         depart.unique ? null : depart.regimes);
-      recalcul = lesProgressives.recalculee(depart.date);
+      recalcul = lesProgressives.recalculee(moteur, depart.date);
     }
     const etat = new liquidation.Etat(carriere.liquideeAu(depart.date), journal, servies,
       initiales, recalcul);

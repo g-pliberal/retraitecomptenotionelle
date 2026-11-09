@@ -76,33 +76,16 @@ QUOTITE = "quotite"
 AGE = "age"
 DUREE = "duree"
 
-#: Les dates qui découpent la règle, au jour.
-DEBUT = "1988-05-04"
-AGE_ABAISSE = "2014-01-22"
-FRACTION_COMPLEMENTAIRE = "2014-12-18"
-TOUS_REGIMES = "2023-09-01"
-SOIXANTE_ANS = "2025-09-01"
-#: Depuis le décret du 8 juin 2006, la pension complète se recalcule.
-RECALCUL = "2006-06-08"
-
-#: La durée d'assurance exigée, et depuis quand (R. 351-39).
-DUREES = (("1988-05-04", 150), ("1993-08-28", 160), ("2006-06-08", 150))
-
-#: Les régimes de base où l'assuré qui y travaille à temps partiel peut la
-#: demander : ceux de la loi de 1988, puis, le 1er septembre 2023, ceux des
-#: décrets n° 2023-751 et 2023-753, et les IEG, dont le statut rend la retraite
-#: progressive du code applicable à la même date (annexe 3, article 21-1).
-REGIMES_1988 = frozenset({
-    "regime_general", "msa_salaries", "cancava", "organic", "rsi", "msa_non_salaries",
-})
-FONCTION_PUBLIQUE = frozenset({"fonction_publique_etat", "cnracl", "fspoeie"})
-REGIMES_2023 = REGIMES_1988 | FONCTION_PUBLIQUE | {
-    "cnavpl", "cnbf", "crpcen", "opera_de_paris", "mines", "ieg",
-}
-#: Ceux où elle liquide à titre provisoire avant 2023 : les régimes que nomme
-#: L. 351-15, les professions libérales comprises. Depuis, tous les régimes
-#: de base (L. 161-22-1-5).
-LIQUIDES_1988 = REGIMES_1988 | {"cnavpl"}
+#: La fiche qui porte la règle : ses dates et ses valeurs, version par version.
+FICHE = "retraite_progressive"
+#: Ce que la fiche dit de l'âge, de la fraction, de la pension complète et des
+#: régimes liquidés.
+AGE_LEGAL = "age_legal"
+AGE_LEGAL_MOINS_DEUX_ANS = "age_legal_moins_deux_ans"
+PAR_TRANCHES = "par_tranches"
+COMPLEMENT_DE_LA_QUOTITE = "complement_de_la_quotite"
+RECALCULEE = "recalculee"
+TOUS = "tous"
 
 
 def _jour(date: DateMois) -> str:
@@ -142,50 +125,77 @@ class Progressive:
         return self.bases | self.complementaires
 
 
-def age_minimum(moteur: ScenarioActuel, carriere: Carriere, date: DateMois) -> float:
-    """L'âge qui ouvre la retraite progressive à cette date."""
-    jour, legal = _jour(date), _departs.age_legal(moteur, carriere)
-    if jour < AGE_ABAISSE:
-        return legal
-    if jour < TOUS_REGIMES:
-        return max(60.0, legal - 2.0)
-    if jour < SOIXANTE_ANS:
-        return legal - 2.0
-    return 60.0
+def regle(moteur: ScenarioActuel, date: DateMois) -> dict:
+    """La règle de la retraite progressive pour une pension prenant effet à
+    cette date : les paramètres de la version de sa fiche qui vaut ce jour-là
+    (``fiches_datees``). Sans fiche ni version, aucun droit."""
+    return moteur.fiches_datees.regle(FICHE, _jour(date)) or {"existe": False}
 
 
-def duree_requise(date: DateMois) -> int:
-    """La durée d'assurance que la retraite progressive demande à cette date."""
-    jour = _jour(date)
-    requis = DUREES[0][1]
-    for depuis, trimestres in DUREES:
-        if jour >= depuis:
-            requis = trimestres
-    return requis
+def age_minimum(moteur: ScenarioActuel, carriere: Carriere, date: DateMois) -> float | None:
+    """L'âge qui ouvre la retraite progressive à cette date ; ``None`` sans
+    droit."""
+    lue = regle(moteur, date)
+    age, plancher = lue.get("age"), lue.get("age_plancher")
+    if age is None:
+        return None
+    if age == AGE_LEGAL:
+        ouvre = _departs.age_legal(moteur, carriere)
+    elif age == AGE_LEGAL_MOINS_DEUX_ANS:
+        ouvre = _departs.age_legal(moteur, carriere) - 2.0
+    elif isinstance(age, (int, float)) and not isinstance(age, bool):
+        ouvre = float(age)
+    else:
+        raise ValueError(f"{FICHE} : âge « {age} » inconnu du moteur")
+    return ouvre if plancher is None else max(float(plancher), ouvre)
 
 
-def regimes_ouverts(date: DateMois) -> frozenset[str]:
+def duree_requise(moteur: ScenarioActuel, date: DateMois) -> int | None:
+    """La durée d'assurance que la retraite progressive demande à cette date ;
+    ``None`` sans droit."""
+    return regle(moteur, date).get("duree_requise")
+
+
+def regimes_ouverts(moteur: ScenarioActuel, date: DateMois) -> frozenset[str]:
     """Les régimes de base où l'on peut demander la retraite progressive à
     cette date, en y travaillant à temps partiel."""
-    return REGIMES_2023 if _jour(date) >= TOUS_REGIMES else REGIMES_1988
+    return frozenset(regle(moteur, date).get("regimes_ouverts") or ())
 
 
-def regimes_liquides(date: DateMois) -> frozenset[str] | None:
+def regimes_liquides(moteur: ScenarioActuel, date: DateMois) -> frozenset[str] | None:
     """Les régimes de base où la demande liquide à titre provisoire à cette
     date ; ``None`` : tous."""
-    return None if _jour(date) >= TOUS_REGIMES else LIQUIDES_1988
+    liquides = regle(moteur, date).get("regimes_liquides") or ()
+    if liquides == TOUS:
+        return None
+    if not isinstance(liquides, (list, tuple)):
+        raise ValueError(f"{FICHE} : régimes liquidés « {liquides} » inconnus du moteur")
+    return frozenset(liquides)
 
 
-def fraction(date: DateMois, quotite: float, fonctionnaire: bool) -> float | None:
+def fraction(moteur: ScenarioActuel, date: DateMois, quotite: float,
+             fonctionnaire: bool) -> float | None:
     """La fraction servie pour cette quotité, ou ``None`` si la quotité ne
-    l'ouvre pas. Depuis le 18 décembre 2014, la quotité s'arrondit à l'unité,
-    la moitié comptée pour un (R. 351-41, R. 161-19-6)."""
-    if _jour(date) < FRACTION_COMPLEMENTAIRE:
-        if quotite > 0.8 + 1e-9:
+    l'ouvre pas : par tranches de quotité, puis, depuis le 18 décembre 2014,
+    ce qui manque à la quotité pour faire 100 %, la quotité arrondie à
+    l'unité, la moitié comptée pour un (R. 351-41, R. 161-19-6). La fiche dit
+    laquelle, ses tranches et ses bornes, celles du fonctionnaire à part."""
+    lue = regle(moteur, date)
+    if lue.get("fraction") == PAR_TRANCHES:
+        if quotite > lue["quotite_maximum"] + 1e-9:
             return None
-        return 0.3 if quotite >= 0.6 - 1e-9 else 0.5 if quotite >= 0.4 - 1e-9 else 0.7
+        for seuil, servie in lue["tranches"]:
+            if quotite >= seuil - 1e-9:
+                return servie
+        return None
+    if lue.get("fraction") != COMPLEMENT_DE_LA_QUOTITE:
+        if lue.get("existe"):
+            raise ValueError(f"{FICHE} : fraction « {lue.get('fraction')} » inconnue du moteur")
+        return None
     points = math.floor(quotite * 100.0 + 0.5 + 1e-9)
-    bas, haut = (50, 90) if fonctionnaire else (40, 80)
+    bornes = (lue["quotite_des_fonctionnaires"] if fonctionnaire
+              else {"minimum": lue["quotite_minimum"], "maximum": lue["quotite_maximum"]})
+    bas, haut = round(bornes["minimum"] * 100.0), round(bornes["maximum"] * 100.0)
     if not bas <= points <= haut:
         return None
     return (100 - points) / 100.0
@@ -199,17 +209,18 @@ def examiner(moteur: ScenarioActuel, carriere: Carriere) -> Progressive | None:
     if demande is None:
         return None
     date, quotite = demande
-    if _jour(date) < DEBUT:
+    lue = regle(moteur, date)
+    if not lue.get("existe"):
         return Progressive(date, quotite, AVANT_1988)
     a_la_date = carriere.liquidee_au(date)
     actifs = _departs.regimes_actifs(moteur, a_la_date)
     if not actifs:
         return Progressive(date, quotite, SANS_ACTIVITE)
-    ouverts = regimes_ouverts(date)
+    ouverts = regimes_ouverts(moteur, date)
     if actifs.isdisjoint(ouverts):
         return Progressive(date, quotite, SANS_REGIME)
     bases, suivies = _departs.regimes_de_la_carriere(moteur, a_la_date)
-    liquides = regimes_liquides(date)
+    liquides = regimes_liquides(moteur, date)
     retenues = frozenset(code for code in bases if liquides is None or code in liquides)
     if not retenues:
         return Progressive(date, quotite, SANS_REGIME)
@@ -218,11 +229,13 @@ def examiner(moteur: ScenarioActuel, carriere: Carriere) -> Progressive | None:
     complementaires = frozenset(
         code for code, avec in suivies.items()
         if code != _departs.RAFP and not avec.isdisjoint(retenues & ouverts))
-    fonctionnaire = not actifs.isdisjoint(FONCTION_PUBLIQUE)
-    servie = fraction(date, quotite, fonctionnaire)
+    fonctionnaires = frozenset(
+        (lue.get("quotite_des_fonctionnaires") or {}).get("regimes") or ())
+    fonctionnaire = not actifs.isdisjoint(fonctionnaires)
+    servie = fraction(moteur, date, quotite, fonctionnaire)
     age = age_minimum(moteur, carriere, date)
     commun = dict(bases=retenues, complementaires=complementaires, age_minimum=age,
-                  duree_requise=duree_requise(date))
+                  duree_requise=duree_requise(moteur, date))
     if servie is None:
         return Progressive(date, quotite, QUOTITE, **commun)
     if carriere.age_au(date) + 1e-9 < age:
@@ -256,10 +269,10 @@ def avec_la_duree(progressive: Progressive, provisoire: Liquidation) -> Progress
                    fraction=progressive.fraction if motif == OUVERTE else 0.0)
 
 
-def recalculee(date: DateMois) -> bool:
+def recalculee(moteur: ScenarioActuel, date: DateMois) -> bool:
     """La pension complète qui prend effet à cette date se recalcule-t-elle ?
     Non avant le décret du 8 juin 2006 : elle était la pension provisoire."""
-    return _jour(date) >= RECALCUL
+    return regle(moteur, date).get("pension_complete") == RECALCULEE
 
 
 def initiales(moteur: ScenarioActuel, progressive: Progressive, provisoire: Liquidation,
@@ -267,12 +280,15 @@ def initiales(moteur: ScenarioActuel, progressive: Progressive, provisoire: Liqu
               ) -> tuple[tuple[str, float], ...]:
     """La pension provisoire de chaque régime de base de la retraite
     progressive, entière, menée jusqu'à ``date`` : ce que la pension complète
-    ne peut descendre sous — hors de la fonction publique, qui n'a pas ce
-    plancher. ``regimes`` borne ceux qu'un départ liquide."""
+    ne peut descendre sous — hors des régimes que la fiche dit sans plancher
+    à cette date, ceux de la fonction publique. ``regimes`` borne ceux qu'un
+    départ liquide."""
     from ..revalorisation import mener_au_mois
 
+    sans_plancher = frozenset(
+        regle(moteur, date).get("pension_complete_sans_plancher") or ())
     pensions = [p for p in provisoire.regimes if p.regime in progressive.bases
-                and p.regime not in FONCTION_PUBLIQUE
+                and p.regime not in sans_plancher
                 and (regimes is None or p.regime in regimes)]
     menees = mener_au_mois(moteur, pensions, progressive.date, date)
     return tuple((p.regime, montant) for p, montant in zip(pensions, menees))

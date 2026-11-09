@@ -29,38 +29,15 @@ export const QUOTITE = "quotite";
 export const AGE = "age";
 export const DUREE = "duree";
 
-/** Les dates qui découpent la règle, au jour. */
-export const DEBUT = "1988-05-04";
-export const AGE_ABAISSE = "2014-01-22";
-export const FRACTION_COMPLEMENTAIRE = "2014-12-18";
-export const TOUS_REGIMES = "2023-09-01";
-export const SOIXANTE_ANS = "2025-09-01";
-/** Depuis le décret du 8 juin 2006, la pension complète se recalcule. */
-export const RECALCUL = "2006-06-08";
-
-/** La durée d'assurance exigée, et depuis quand (R. 351-39). */
-export const DUREES = [["1988-05-04", 150], ["1993-08-28", 160], ["2006-06-08", 150]];
-
-/**
- * Les régimes de base où l'assuré qui y travaille à temps partiel peut la
- * demander : ceux de la loi de 1988, puis, le 1er septembre 2023, ceux des
- * décrets n° 2023-751 et 2023-753, et les IEG (annexe 3 au statut national,
- * article 21-1).
- */
-export const REGIMES_1988 = new Set([
-  "regime_general", "msa_salaries", "cancava", "organic", "rsi", "msa_non_salaries",
-]);
-export const FONCTION_PUBLIQUE = new Set(["fonction_publique_etat", "cnracl", "fspoeie"]);
-export const REGIMES_2023 = new Set([
-  ...REGIMES_1988, ...FONCTION_PUBLIQUE, "cnavpl", "cnbf", "crpcen", "opera_de_paris", "mines",
-  "ieg",
-]);
-/**
- * Ceux où elle liquide à titre provisoire avant 2023 : les régimes que nomme
- * L. 351-15, les professions libérales comprises. Depuis, tous les régimes de
- * base (L. 161-22-1-5).
- */
-export const LIQUIDES_1988 = new Set([...REGIMES_1988, "cnavpl"]);
+/** La fiche qui porte la règle : ses dates et ses valeurs, version par version. */
+export const FICHE = "retraite_progressive";
+/** Ce que la fiche dit de l'âge, de la fraction, de la pension complète et des régimes liquidés. */
+export const AGE_LEGAL = "age_legal";
+export const AGE_LEGAL_MOINS_DEUX_ANS = "age_legal_moins_deux_ans";
+export const PAR_TRANCHES = "par_tranches";
+export const COMPLEMENT_DE_LA_QUOTITE = "complement_de_la_quotite";
+export const RECALCULEE = "recalculee";
+export const TOUS = "tous";
 
 function jour(date) {
   return `${String(date.annee).padStart(4, "0")}-${String(date.mois).padStart(2, "0")}-01`;
@@ -105,65 +82,96 @@ export class Progressive {
   }
 }
 
-/** L'âge qui ouvre la retraite progressive à cette date. */
-export function ageMinimum(moteur, carriere, date) {
-  const quand = jour(date);
-  const legal = lesDeparts.ageLegal(moteur, carriere);
-  if (quand < AGE_ABAISSE) {
-    return legal;
-  }
-  if (quand < TOUS_REGIMES) {
-    return Math.max(60.0, legal - 2.0);
-  }
-  if (quand < SOIXANTE_ANS) {
-    return legal - 2.0;
-  }
-  return 60.0;
+/**
+ * La règle de la retraite progressive pour une pension prenant effet à cette
+ * date : les paramètres de la version de sa fiche qui vaut ce jour-là, que le
+ * paquet porte (`fiches_datees`). Sans fiche ni version, aucun droit.
+ */
+export function regle(moteur, date) {
+  return moteur.fichesDatees.regle(FICHE, jour(date)) ?? { existe: false };
 }
 
-/** La durée d'assurance que la retraite progressive demande à cette date. */
-export function dureeRequise(date) {
-  const quand = jour(date);
-  let requis = DUREES[0][1];
-  for (const [depuis, trimestres] of DUREES) {
-    if (quand >= depuis) {
-      requis = trimestres;
-    }
+/** L'âge qui ouvre la retraite progressive à cette date ; `null` sans droit. */
+export function ageMinimum(moteur, carriere, date) {
+  const { age = null, age_plancher: plancher = null } = regle(moteur, date);
+  if (age === null) {
+    return null;
   }
-  return requis;
+  let ouvre;
+  if (age === AGE_LEGAL) {
+    ouvre = lesDeparts.ageLegal(moteur, carriere);
+  } else if (age === AGE_LEGAL_MOINS_DEUX_ANS) {
+    ouvre = lesDeparts.ageLegal(moteur, carriere) - 2.0;
+  } else if (typeof age === "number") {
+    ouvre = age;
+  } else {
+    throw new Error(`${FICHE} : âge « ${age} » inconnu du moteur`);
+  }
+  return plancher === null ? ouvre : Math.max(plancher, ouvre);
+}
+
+/**
+ * La durée d'assurance que la retraite progressive demande à cette date ;
+ * `null` sans droit.
+ */
+export function dureeRequise(moteur, date) {
+  return regle(moteur, date).duree_requise ?? null;
 }
 
 /**
  * Les régimes de base où l'on peut demander la retraite progressive à cette
  * date, en y travaillant à temps partiel.
  */
-export function regimesOuverts(date) {
-  return jour(date) >= TOUS_REGIMES ? REGIMES_2023 : REGIMES_1988;
+export function regimesOuverts(moteur, date) {
+  return new Set(regle(moteur, date).regimes_ouverts ?? []);
 }
 
 /**
  * Les régimes de base où la demande liquide à titre provisoire à cette date ;
  * `null` : tous.
  */
-export function regimesLiquides(date) {
-  return jour(date) >= TOUS_REGIMES ? null : LIQUIDES_1988;
+export function regimesLiquides(moteur, date) {
+  const liquides = regle(moteur, date).regimes_liquides ?? [];
+  if (liquides === TOUS) {
+    return null;
+  }
+  if (!Array.isArray(liquides)) {
+    throw new Error(`${FICHE} : régimes liquidés « ${liquides} » inconnus du moteur`);
+  }
+  return new Set(liquides);
 }
 
 
 /**
  * La fraction servie pour cette quotité, ou `null` si la quotité ne l'ouvre
- * pas. Depuis le 18 décembre 2014, la quotité s'arrondit à l'unité, la moitié
- * comptée pour un (R. 351-41, R. 161-19-6).
+ * pas : par tranches de quotité, puis, depuis le 18 décembre 2014, ce qui
+ * manque à la quotité pour faire 100 %, la quotité arrondie à l'unité, la
+ * moitié comptée pour un (R. 351-41, R. 161-19-6). La fiche dit laquelle, ses
+ * tranches et ses bornes, celles du fonctionnaire à part.
  */
-export function fraction(date, quotite, fonctionnaire) {
-  if (jour(date) < FRACTION_COMPLEMENTAIRE) {
-    if (quotite > 0.8 + 1e-9) {
+export function fraction(moteur, date, quotite, fonctionnaire) {
+  const lue = regle(moteur, date);
+  if (lue.fraction === PAR_TRANCHES) {
+    if (quotite > lue.quotite_maximum + 1e-9) {
       return null;
     }
-    return quotite >= 0.6 - 1e-9 ? 0.3 : quotite >= 0.4 - 1e-9 ? 0.5 : 0.7;
+    for (const [seuil, servie] of lue.tranches) {
+      if (quotite >= seuil - 1e-9) {
+        return servie;
+      }
+    }
+    return null;
+  }
+  if (lue.fraction !== COMPLEMENT_DE_LA_QUOTITE) {
+    if (lue.existe) {
+      throw new Error(`${FICHE} : fraction « ${lue.fraction} » inconnue du moteur`);
+    }
+    return null;
   }
   const points = Math.floor(quotite * 100.0 + 0.5 + 1e-9);
-  const [bas, haut] = fonctionnaire ? [50, 90] : [40, 80];
+  const bornes = fonctionnaire ? lue.quotite_des_fonctionnaires
+    : { minimum: lue.quotite_minimum, maximum: lue.quotite_maximum };
+  const [bas, haut] = [Math.round(bornes.minimum * 100.0), Math.round(bornes.maximum * 100.0)];
   if (!(bas <= points && points <= haut)) {
     return null;
   }
@@ -180,7 +188,8 @@ export function examiner(moteur, carriere) {
     return null;
   }
   const [date, quotite] = demande;
-  if (jour(date) < DEBUT) {
+  const lue = regle(moteur, date);
+  if (!lue.existe) {
     return new Progressive({ date, quotite, motif: AVANT_1988 });
   }
   const aLaDate = carriere.liquideeAu(date);
@@ -188,12 +197,12 @@ export function examiner(moteur, carriere) {
   if (actifs.size === 0) {
     return new Progressive({ date, quotite, motif: SANS_ACTIVITE });
   }
-  const ouverts = regimesOuverts(date);
+  const ouverts = regimesOuverts(moteur, date);
   if (![...actifs].some((code) => ouverts.has(code))) {
     return new Progressive({ date, quotite, motif: SANS_REGIME });
   }
   const [bases, suivies] = lesDeparts.regimesDeLaCarriere(moteur, aLaDate);
-  const liquides = regimesLiquides(date);
+  const liquides = regimesLiquides(moteur, date);
   const retenues = new Set(bases.filter((code) => liquides === null || liquides.has(code)));
   if (retenues.size === 0) {
     return new Progressive({ date, quotite, motif: SANS_REGIME });
@@ -207,12 +216,13 @@ export function examiner(moteur, carriere) {
       complementaires.add(code);
     }
   }
-  const fonctionnaire = [...actifs].some((code) => FONCTION_PUBLIQUE.has(code));
-  const servie = fraction(date, quotite, fonctionnaire);
+  const fonctionnaires = new Set(lue.quotite_des_fonctionnaires?.regimes ?? []);
+  const fonctionnaire = [...actifs].some((code) => fonctionnaires.has(code));
+  const servie = fraction(moteur, date, quotite, fonctionnaire);
   const age = ageMinimum(moteur, carriere, date);
   const commun = {
     date, quotite, bases: retenues, complementaires, ageMinimum: age,
-    dureeRequise: dureeRequise(date),
+    dureeRequise: dureeRequise(moteur, date),
   };
   if (servie === null) {
     return new Progressive({ ...commun, motif: QUOTITE });
@@ -248,20 +258,25 @@ export function avecLaDuree(progressive, provisoire) {
   });
 }
 
-/** La pension complète qui prend effet à cette date se recalcule-t-elle ? */
-export function recalculee(date) {
-  return jour(date) >= RECALCUL;
+/**
+ * La pension complète qui prend effet à cette date se recalcule-t-elle ? Non
+ * avant le décret du 8 juin 2006 : elle était la pension provisoire.
+ */
+export function recalculee(moteur, date) {
+  return regle(moteur, date).pension_complete === RECALCULEE;
 }
 
 /**
  * La pension provisoire de chaque régime de base de la retraite progressive,
  * entière, menée jusqu'à `date` : `[[régime, montant], …]`, ce que la pension
- * complète ne peut descendre sous — hors de la fonction publique, qui n'a pas
- * ce plancher. `regimes` borne ceux qu'un départ liquide.
+ * complète ne peut descendre sous — hors des régimes que la fiche dit sans
+ * plancher à cette date, ceux de la fonction publique. `regimes` borne ceux
+ * qu'un départ liquide.
  */
 export function initiales(moteur, progressive, provisoire, date, regimes = null) {
+  const sansPlancher = new Set(regle(moteur, date).pension_complete_sans_plancher ?? []);
   const pensions = provisoire.regimes.filter((p) => progressive.bases.has(p.regime)
-    && !FONCTION_PUBLIQUE.has(p.regime)
+    && !sansPlancher.has(p.regime)
     && (regimes === null || regimes.has(p.regime)));
   const menees = menerAuMois(moteur, pensions, progressive.date, date);
   return pensions.map((p, i) => [p.regime, menees[i]]);

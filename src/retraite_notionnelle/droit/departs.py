@@ -608,7 +608,7 @@ def liquider_les_departs(moteur: ScenarioActuel, carriere: Carriere,
             initiales = _progressive.initiales(
                 moteur, ouverte, provisoire, depart.date,
                 None if depart.unique else depart.regimes)
-            recalcul = _progressive.recalculee(depart.date)
+            recalcul = _progressive.recalculee(moteur, depart.date)
         etat = _liquidation.Etat(carriere.liquidee_au(depart.date), journal, servies,
                                  initiales, recalcul)
         liquidations.append(_liquidation.liquider(demande, etat, contexte))
