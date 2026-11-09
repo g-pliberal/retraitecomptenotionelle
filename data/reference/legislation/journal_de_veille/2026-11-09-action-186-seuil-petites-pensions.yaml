@@ -1,0 +1,44 @@
+date: "2026-11-09"
+session: "action 186, chantier 2 : un seuil en euros sous lequel aucune pension déjà servie ne baisse"
+consulte: >-
+  Aucune règle du scénario 1 n'est touchée. Pour ce qu'un seuil change à la
+  défense d'une baisse des pensions servies, lus ce jour par la session, dans
+  leur texte : au Conseil constitutionnel, les décisions 2003-483 DC
+  (considérants 6 et 7), 2013-682 DC (considérant 14), 2014-698 DC
+  (considérants 14 à 17), 2017-756 DC (paragraphes 11 à 16), 2018-776 DC
+  (paragraphes 40 à 47) et 2019-795 DC (paragraphes 54 à 69) ; à la CEDH,
+  sur HUDOC, Koufaki et ADEDY c. Grèce (7 mai 2013), Da Conceição Mateus et
+  Santos Januário c. Portugal (8 octobre 2013), da Silva Carvalho Rico
+  c. Portugal (1er septembre 2015), Béláné Nagy c. Hongrie (Grande Chambre,
+  13 décembre 2016, paragraphe 117), Žegarac et autres c. Serbie (17 janvier
+  2023), et la fiche thématique « Mesures d'austérité » ; au Tribunal
+  constitutionnel portugais, les arrêts 187/2013, 862/2013 et 575/2014,
+  par leur résumé officiel en anglais et des passages du texte, et le résumé
+  de l'arrêt 572/2014. À la DREES, le panorama « Les retraités et les
+  retraites », édition 2026, fiches 1 et 5, par le miroir du manifeste,
+  empreinte vérifiée. Dans le dépôt : les décisions 2, 3, 16, 20, 29, 30, 49,
+  86 et 87 du programme, le chantier 2, quatre notes de l'action 186, les
+  modules garantie.py, cout.py et indexation_programme.py.
+trouve: >-
+  Le Conseil constitutionnel a admis deux fois un seuil de pension totale
+  pour une revalorisation différenciée (1 200 € en 2014, 2 000 € en 2020),
+  mais écrit en 2019 qu'elle « affecte » le caractère contributif des
+  régimes, et ne l'admet que parce qu'elle est exceptionnelle et limitée.
+  La CEDH a jugé irrecevables les recours contre une baisse serbe en
+  tranches au-dessus d'un seuil, en retenant qu'elle était temporaire. Le
+  Tribunal constitutionnel portugais a censuré deux baisses définitives qui
+  avaient un seuil ou un plancher (862/2013, 575/2014). Trois précisions aux
+  précédents que le chantier 2 citait de mémoire : dans Koufaki, la
+  requérante individuelle était en activité ; Béláné Nagy porte sur une
+  pension d'invalidité ; l'arrêt grec de 2015 n'a pas été relu. Rien qui
+  touche les fiches. Le détail est dans la note
+  docs/feuille_de_route/186/2026-11-09-seuil-petites-pensions.md.
+reste: >-
+  Aucune décision lue ne juge une baisse définitive, en euros, de pensions
+  déjà liquidées en France : la lecture de la note est à faire relire par un
+  spécialiste de droit public. Non lus : l'arrêt du Conseil d'État grec de
+  2015, l'arrêt 353/2012 du Tribunal constitutionnel portugais dans son
+  texte, Stefanetti et autres c. Italie, Valkov et autres c. Bulgarie (le
+  document n'a pas pu être ouvert sur HUDOC). Le classeur de l'EIR 2020 n'a
+  pas pu être retéléchargé depuis le portail de la DREES, qui a coupé chaque
+  connexion : la médiane est celle de la donnée certifiée du dépôt.

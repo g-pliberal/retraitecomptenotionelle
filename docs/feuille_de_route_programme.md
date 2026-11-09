@@ -866,6 +866,12 @@ les donations réintégrées. Elle ne prend que ce que la garantie a avancé ; l
 décision 5 vise l'impôt sur l'héritage, non le remboursement d'une avance.
 Les 220 Md€ restent au chiffrage. Reste au propriétaire : le plafond par an.
 
+**Le 9 novembre 2026 : un seuil sous lequel aucune pension servie ne baisse**
+(note `186/2026-11-09-seuil-petites-pensions.md`). En tranche à 1 050 €, il
+épargne 31 % des retraités, perd 53 % de la baisse (58 Md€ en 2026) et ajoute
+50 points de dette en 2070 ; un lissage ou un plancher coûtent 34 ou 19,5 Md€.
+Le droit y gagne, la baisse restant définitive. Rien n'est décidé.
+
 ### Chantier 3 — Accidents de la vie, choix de vie : les critères, et qui paie
 
 **La question.** Quels droits non contributifs garder, lesquels retirer, et
