@@ -1,0 +1,17 @@
+date: "2026-11-09"
+session: "action 161, l'inventaire des retraits : ce qui retient chaque paire de jumeaux, mesuré dans le code, et l'ordre pour finir"
+consulte: >-
+  Aucune source de droit : la session ne touche à aucune règle du scénario 1,
+  ni à aucun code. Elle mesure, hors du dépôt, ce que la fabrique et la suite
+  de tests exécutent encore des jumeaux Python du moteur.
+trouve: >-
+  Aucune règle du droit n'a changé. La fabrique du paquet et le coût
+  n'appellent plus aucune règle de droit/ en Python, hors la valeur du point
+  que lit la revalorisation servie ; trois scripts de la fabrique, douze
+  études et 2 083 tests font encore calculer le scénario 1 par le moteur
+  Python, que le portage, qui fait foi, calcule aussi.
+reste: >-
+  Rien pour la veille. Tant que les deux exemplaires du scénario 1 vivent,
+  une règle nouvelle s'écrit aux deux endroits (note de décision 0005) : la
+  note docs/feuille_de_route/161/2026-11-09-l-inventaire-des-retraits.md dit
+  l'ordre de leur retrait.

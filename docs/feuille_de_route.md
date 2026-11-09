@@ -7319,16 +7319,16 @@ de `contribution_etat`.
 
 ### 161. Un seul exemplaire du code : les doublons entre le Python et le JavaScript retirés une paire à la fois, chaque retrait relu — `en cours`
 
-**Reprise, au 3 novembre 2026.** Le JavaScript fait foi (note de décision
-0005), et le Python garde ce que dit la note 0006. Fait : le coût sous un
-modèle modifié, ses six sous-étapes ; aucune étude ne remplace plus une
-fonction du moteur, et `pont.par_le_jumeau()` ne s'ouvre plus que dans les
-confrontations, déclarées une à une (`CONFRONTATIONS_DU_JUMEAU`), ce qu'un
-test tient. Suivent, une par session : les retraits, une paire à la fois,
-dans l'ordre de la carte (`python scripts/jumeaux.py`), chacun ôtant les
-confrontations de sa paire ; le levier part avec la dernière. Détail :
-`2026-11-02-le-cout-sous-un-modele-modifie.md` (le plan),
-`2026-11-03-le-levier-aux-seules-confrontations.md`.
+**Reprise, au 9 novembre 2026.** L'inventaire est fait
+(`2026-11-09-l-inventaire-des-retraits.md`), mesuré en faisant tourner la
+fabrique et la suite : le paquet et le coût n'appellent plus aucune règle de
+`droit/` en Python ; les 38 paires du moteur partent d'un bloc, que
+retiennent trois scripts de la fabrique, douze études, la zone grise que le
+coût appelle et 2 083 tests ; 24 paires restent des deux côtés (note 0006).
+Suivent, une session par ligne des lots A à G de la note, par quoi
+commencer : le lot A, `construire_tableaux_md.py` et `tableau_de_bord.py`
+par le pont. Attendent le propriétaire : la zone grise, la méthode des
+tests, la clôture — ses cinq questions sont dans la note.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur
