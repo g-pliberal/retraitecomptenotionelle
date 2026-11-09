@@ -960,6 +960,7 @@ Une question, en deux lignes de la table.
 - *De moitié, comme les autres impôts* : 3,3 points de CSG en moins pour
   les épargnants, 6,2 Md€. C'est la plus grosse baisse de la table.
 - *Gardée en entier par l'État, comme les droits sur les alcools* : rien ne
-  change pour les épargnants ; l'État garde 6,2 Md€ de plus, de quoi
-  supprimer en entier la taxe sur les salaires et le forfait social sans
-  manquer d'argent pour les allègements.
+  change pour les épargnants ; l'État garde 6,2 Md€ de plus. Si la taxe sur
+  les salaires et le forfait social sont alors supprimés en entier, il lui
+  reste, les allègements payés, entre + 1,9 et − 4,7 Md€ (20,0 + 6,2, moins
+  24,3 à 30,9).
