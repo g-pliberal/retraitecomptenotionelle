@@ -10,6 +10,7 @@ from retraite_notionnelle import memoire
 from retraite_notionnelle.config import Parametres
 from retraite_notionnelle.donnees.impot_revenu import FRANC
 from retraite_notionnelle.effet_retour import (
+    EffetRetour,
     SCENARIOS_EFFET_RETOUR,
     SCENARIOS_PROSPECTIFS,
     SeuilsCsg,
@@ -199,3 +200,46 @@ def test_la_deformation_retire_le_complement_au_bas_sans_toucher_la_moyenne():
     origine = distribution.tranches[:5]
     assert all(d.borne_superieure < o.borne_superieure for d, o in zip(bas, origine))
     assert _deformer(distribution, 0.0, complement).tranches == distribution.tranches
+
+
+def _calage(simulateur, **reglages):
+    """Un calage de la garantie posé à la main, sur l'enquête et ses deux
+    sexes : ce que l'effet retour reçoit de la page Coût."""
+    from retraite_notionnelle.cout import GarantieDistribution
+
+    return GarantieDistribution(
+        simulateur.distribution, 680.8, 1000.0, 1.0, 1.0,
+        distributions_sexe=simulateur.distributions_par_sexe, part_femmes=0.528,
+        rapport_deplacement=0.9, plancher_majore=893.55,
+        part_seule={"F": 0.56, "H": 0.29}, **reglages)
+
+
+def test_l_aspa_de_l_effet_retour_reste_differentielle():
+    """L'ASPA se réduit « à due concurrence » de ce que son total et les
+    ressources dépassent le plafond (fiche ``minimum_vieillesse``) : elle
+    retire un euro par euro de pension. La garantie du scénario 6 est dégressive depuis le 9 novembre
+    2026, et l'effet retour chiffre l'ASPA des scénarios 2 à 5 sur une copie de
+    son calage : il n'en prend ni la forme, ni rien d'autre que la population.
+    L'attendu est refait à la main, par le barème différentiel du module."""
+    from retraite_notionnelle.garantie import cout_garantie_par_sexe
+
+    simulateur = Simulateur(Parametres())
+    differentielle = EffetRetour(simulateur, _calage(simulateur, taux_recours=0.5))
+    degressive = EffetRetour(simulateur, _calage(
+        simulateur, taux_recours=0.5, part_retrait_entier=0.5, taux_retrait=0.5))
+    for sans_minimum in (True, False):
+        assert degressive._aspa(2030, 0.8, sans_minimum) == differentielle._aspa(
+            2030, 0.8, sans_minimum)
+
+    # Le barème de l'ASPA de 2030, en euros de l'enquête : la moitié du plafond
+    # du couple pour qui vit à deux, celui d'une personne seule sinon ; la
+    # distribution de l'enquête déplacée telle quelle, un ayant droit sur deux.
+    minimum = simulateur.scenario_actuel.minimum_vieillesse
+    vers = simulateur.macro.coefficient_prix(2030, simulateur.distribution.millesime)
+    sexes = simulateur.distributions_par_sexe
+    attendu = cout_garantie_par_sexe(
+        sexes["F"], sexes["H"], 0.528, 1e6,
+        minimum.plafond_couple(2030)[0] / 2.0 / 12.0 * vers, 0.8, 1.0,
+        minimum.plafond(2030)[0] / 12.0 * vers, {"F": 0.56, "H": 0.29})
+    assert degressive._aspa(2030, 0.8, sans_minimum=False) == pytest.approx(
+        attendu.cout_annuel_meur / 12.0 * 0.5)

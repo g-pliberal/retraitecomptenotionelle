@@ -246,6 +246,9 @@ class EffetRetour:
             return 0.0
         vers = self.macro.coefficient_prix(annee, self.millesime)
         bareme = copy.copy(self.garantie)
+        # L'ASPA est différentielle : du calage de la garantie, elle prend la
+        # population et ses mélanges, non la forme dégressive du barème.
+        bareme.part_retrait_entier = bareme.taux_retrait = 1.0
         bareme.plancher_mensuel = couple[0] / 2.0 / 12.0 * vers
         if bareme.plancher_majore is not None:
             bareme.plancher_majore = seule[0] / 12.0 * vers
