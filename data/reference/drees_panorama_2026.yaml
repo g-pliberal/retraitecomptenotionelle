@@ -936,9 +936,13 @@ fiches:
       Le recours de 50 % de la garantie est celui des personnes seules,
       compté en têtes ; en euros, il serait de 62 %, le non-recours
       baissant avec le montant : le coût de la garantie est sous-estimé
-      d'un cinquième, erreur du modèle pour l'étape 5.
+      d'un cinquième, erreur du modèle pour l'étape 5. Depuis le 9
+      novembre 2026, la garantie est servie d'office (décision 20 du
+      programme) et compte tous ses ayants droit : l'écart ne porte plus
+      que sur l'ASPA que l'effet retour chiffre aux scénarios 2 à 5, au
+      même recours de 50 % en têtes.
     confronte_par:
-      - test_le_recours_a_la_garantie_est_celui_des_tetes_et_non_des_euros
+      - test_le_recours_a_l_aspa_est_celui_des_tetes_et_non_des_euros
     solde: >-
       Soldée le 6 novembre 2026 (étape 7) : lus, les tableaux 1 à 4 et la carte 1 (le tableau 5
       l'était). Recoupés : les effectifs par âge du tableau 1 (753 900 allocataires de 62 ans ou

@@ -992,16 +992,22 @@ class Parametres:
     #: Année dans les euros de laquelle les deux montants ci-dessus sont fixés.
     annee_euros_garantie_vieillesse: int = 2026
 
-    #: Part des ayants droit qui RÉCLAMENT la garantie. Le programme retient,
-    #: depuis le 20 septembre 2026, l'hypothèse que la DREES mesure sur l'ASPA :
-    #: une personne seule éligible sur deux ne la demande pas (dossier n° 97,
-    #: mai 2022, sur 2016), la crainte de la reprise sur succession étant le
-    #: premier motif donné à la Cnav. La garantie étant une avance reprise dès
-    #: le premier euro, elle ne se réclamera pas davantage. Ne joue que sur le
-    #: COÛT lu sur la distribution (page Coût) : qui réclame la reçoit en
-    #: entier, et le simulateur d'une carrière ne connaît pas ce taux. Un rend
-    #: le recours complet.
-    taux_recours_garantie: float = 0.5
+    #: Part des ayants droit qui REÇOIVENT la garantie. UN, depuis le 9
+    #: novembre 2026 : elle est SERVIE D'OFFICE, sans demande (décision 20 du
+    #: programme, « D'office »), et le coût compte tous les ayants droit. Le
+    #: programme retenait depuis le 20 septembre 2026 l'hypothèse que la DREES
+    #: mesure sur l'ASPA, un demi, qui reste un réglage. Ne joue que sur le
+    #: COÛT lu sur la distribution (page Coût) : le simulateur d'une carrière
+    #: ne connaît pas ce taux.
+    taux_recours_garantie: float = 1.0
+
+    #: Part des ayants droit qui RÉCLAMENT l'ASPA, que l'effet retour chiffre
+    #: aux scénarios 2 à 5 (``effet_retour.py``) : elle se demande, et une
+    #: personne seule éligible sur deux ne la demande pas (DREES, dossier
+    #: n° 97, mai 2022, sur 2016), la crainte de la reprise sur succession
+    #: étant le premier motif donné à la Cnav. Elle lisait le taux de la
+    #: garantie tant que les deux valaient un demi.
+    taux_recours_aspa: float = 0.5
 
     #: RAPPORT DES DEUX FACTEURS DE DÉPLACEMENT, ``r = f_F / f_H``. La garantie
     #: est chiffrée en déplaçant la distribution des pensions vers celles du

@@ -307,3 +307,16 @@ def test_la_sonde_de_prose_du_complement_suit_le_bareme_du_moteur():
     assert mesures_prose.garantie_complement(pension="300") == pytest.approx(500.0)
     assert mesures_prose.garantie_complement(pension="900") == pytest.approx(150.0)
     assert mesures_prose.garantie_complement(pension="1500") == 0.0
+
+
+# -- le recours ----------------------------------------------------------------
+
+
+def test_la_garantie_est_servie_d_office():
+    """Décision 20 du programme : « La garantie vieillesse est servie
+    d'office, sans demande : "D'office" ». Tous les ayants droit la reçoivent,
+    et le coût les compte tous ; l'ASPA du droit actuel garde son non-recours,
+    sous un taux à elle."""
+    parametres = Parametres()
+    assert parametres.taux_recours_garantie == 1.0
+    assert parametres.taux_recours_aspa == 0.5

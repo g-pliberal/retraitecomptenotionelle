@@ -3153,13 +3153,24 @@ def test_le_logement_d_un_couple_ne_rend_que_ce_qu_il_vaut():
 
 
 def test_le_recours_reduit_le_cout_de_la_garantie_dans_la_meme_proportion(cout, distribution):
-    """Un recours complet doublerait le coût du réglage par défaut, un sur deux ;
-    les ayants droit, eux, ne bougent pas, et un taux hors de ]0, 1] est refusé."""
-    from retraite_notionnelle.cout import GarantieDistribution
+    """La garantie est servie d'office (décision 20 du programme) : tous les
+    ayants droit sont bénéficiaires. Un recours d'un demi, l'hypothèse d'avant
+    le 9 novembre 2026, réduit de moitié les bénéficiaires et le coût, sans
+    toucher aux ayants droit ; un taux hors de ]0, 1] est refusé."""
+    from retraite_notionnelle.cout import (
+        RESSOURCES_GARANTIE, TETES_GARANTIE, GarantieDistribution)
     millesime = distribution.millesime
     projetee = cout.annee(millesime).garantie
-    assert projetee.taux_recours == 0.5
-    assert projetee.beneficiaires == pytest.approx(projetee.ayants_droit * 0.5)
+    assert projetee.taux_recours == 1.0
+    assert projetee.beneficiaires == pytest.approx(projetee.ayants_droit)
+    calage = dict(distribution=distribution, plancher_mensuel=680.8, pension_reference=1000.0,
+                  effectif_par_tete=1.0, vers_constants=1.0)
+    masses, tetes = {RESSOURCES_GARANTIE: 800.0}, {TETES_GARANTIE: 1.0}
+    d_office = GarantieDistribution(**calage, taux_recours=1.0).chiffrer(masses, tetes)
+    moitie = GarantieDistribution(**calage, taux_recours=0.5).chiffrer(masses, tetes)
+    assert moitie.ayants_droit == d_office.ayants_droit == d_office.beneficiaires
+    assert moitie.beneficiaires == pytest.approx(0.5 * d_office.beneficiaires)
+    assert moitie.cout_constants == pytest.approx(0.5 * d_office.cout_constants)
     with pytest.raises(ValueError):
         GarantieDistribution(distribution, 800.0, 1000.0, 1.0, 1.0, taux_recours=0.0)
     with pytest.raises(ValueError):

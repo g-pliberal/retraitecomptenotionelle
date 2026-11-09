@@ -1411,10 +1411,10 @@ affirmations:
 
   - id: cout.un_ayant_droit_sur_deux
     page: /cout
-    extrait: "Un ayant droit sur deux réclame."
-    porte: le taux de recours de la garantie est un réglage, à un demi par défaut
+    extrait: "Servie d'office, à tous les ayants droit."
+    porte: le taux de recours de la garantie est un réglage, à un par défaut
     etat: verifiee
-    controle: recours_un_sur_deux
+    controle: garantie_servie_d_office
 
   - id: cout.brutes_droit_direct
     page: /cout
@@ -1453,17 +1453,17 @@ affirmations:
 
   - id: cout.deux_corrections
     page: /cout
-    extrait: "Deux corrections, et les deux sont dans la page."
-    porte: le recours à un demi et la reprise sur succession entrent dans le chiffrage
+    extrait: "Le non-recours de l'ASPA n'est pas celui de la garantie."
+    porte: le chiffrage compte tous les ayants droit de la garantie, et la reprise sur succession
     etat: verifiee
-    controle: recours_un_sur_deux
+    controle: garantie_servie_d_office
 
   - id: cout.eligible_sur_deux
     page: /cout
     extrait: "une personne seule éligible sur deux"
-    porte: le taux de recours de la garantie est un demi
+    porte: le taux de recours de l'ASPA, que l'effet retour chiffre, est un demi
     etat: verifiee
-    controle: recours_un_sur_deux
+    controle: garantie_servie_d_office
 
   - id: cout.avance_reprise
     page: /cout

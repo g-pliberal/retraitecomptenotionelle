@@ -407,9 +407,13 @@ export const PARAMETRES_DEFAUT = Object.freeze({
   //: défaut, ce qu'a fait le recul de 60 à 62 ans en 2010 (IPP, 2025) ; un,
   //: tous travaillent, est un plafond. Voir `config.py`.
   part_reportes_en_emploi: 0.5,
-  // Part des ayants droit qui réclament la garantie : l'hypothèse de l'ASPA,
-  // un sur deux. Ne joue que sur le coût lu sur la distribution.
-  taux_recours_garantie: 0.5,
+  // Part des ayants droit qui reçoivent la garantie : un, elle est servie
+  // d'office (décision 20 du programme). Ne joue que sur le coût lu sur la
+  // distribution.
+  taux_recours_garantie: 1.0,
+  // Part des ayants droit qui réclament l'ASPA, que l'effet retour chiffre
+  // aux scénarios 2 à 5 : un sur deux, la mesure de la DREES. Voir `config.py`.
+  taux_recours_aspa: 0.5,
   // Rapport des deux facteurs de déplacement, r = fF / fH : le scénario 6
   // retire les droits non cotisés, que les femmes détiennent plus souvent.
   // null fait LIRE ce rapport sur l'enquête, où il vaut 0,834 en 2020 ; 1.0

@@ -191,7 +191,7 @@ quitte votre machine, puisqu'il n'y a pas de serveur de calcul. Lire une page tr
 texte et de quoi l'animer : <!--chiffre:poids_comprime(moteur/style.css + moteur/js/routeur.js + moteur/js/adresses.js + moteur/js/cles.js + moteur/js/gabarit.js + moteur/js/format.js + moteur/js/calendrier.js + index.html)-->160<!--/--> Ko compressés
 (<!--chiffre:poids(moteur/style.css + moteur/js/routeur.js + moteur/js/adresses.js + moteur/js/cles.js + moteur/js/gabarit.js + moteur/js/format.js + moteur/js/calendrier.js + index.html)-->514<!--/--> Ko bruts) pour l'accueil. Le premier calcul y ajoute
 le moteur, <!--chiffre:poids_comprime(moteur/js/*.js + moteur/js/droit/*.js - moteur/js/routeur.js - moteur/js/adresses.js - moteur/js/cles.js - moteur/js/gabarit.js - moteur/js/format.js - moteur/js/calendrier.js - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->927<!--/--> Ko compressés, et le paquet
-de données, <!--chiffre:poids_comprime(moteur/donnees.json)-->814<!--/--> Ko compressés (<!--chiffre:poids(moteur/donnees.json)-->5 973<!--/--> Ko bruts) ; le tout prend quelques dixièmes
+de données, <!--chiffre:poids_comprime(moteur/donnees.json)-->814<!--/--> Ko compressés (<!--chiffre:poids(moteur/donnees.json)-->5 978<!--/--> Ko bruts) ; le tout prend quelques dixièmes
 de seconde, et les chargements suivants sont immédiats.
 
 Neuf pages, en deux voix. Celles de l'électeur d'abord : **Programme**,
@@ -236,7 +236,7 @@ Chaque page est écrite toute faite, et ne charge qu'au premier calcul
 `moteur/js/`, le moteur qui calcule, en JavaScript et sans aucune bibliothèque,
 ce qui dépend de ce que le lecteur saisit — sa carrière, ses droits et sa
 pension —, et `moteur/donnees.json`
-(<!--chiffre:poids(moteur/donnees.json)-->5 973<!--/--> Ko — les séries, les
+(<!--chiffre:poids(moteur/donnees.json)-->5 978<!--/--> Ko — les séries, les
 tables de mortalité observées de 1899 à 2024, la pyramide des âges de 1962 à
 2070, les <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=modelise|partiel)-->80<!--/--> fiches de régime, et ce que le Python a calculé une fois pour toutes
 sous les réglages de référence : le coût et les carrières types, que les pages
@@ -787,7 +787,7 @@ de chaque cas type :
 | 4. Notionnel rétroactif, salariale + patronale | <!--chiffre:mesure(cumul_passe?scenario=4)-->6 386<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=4)-->−53,6<!--/--> % |
 | 5. Notionnel dès 2026, salariale + patronale | <!--chiffre:mesure(cumul_passe?scenario=5)-->13 767<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=5)-->+0,0<!--/--> % |
 | 6. Notionnel rétroactif, <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % dès 2026, garantie vieillesse | <!--chiffre:mesure(cumul_passe?scenario=6)-->8 032<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=6)-->−41,7<!--/--> % |
-| *s'ajoute au 6 : sa garantie vieillesse, payée par l'impôt, lue sur la distribution des pensions* | *<!--chiffre:mesure(cumul_passe?scenario=garantie)-->1 523<!--/--> Md €* | |
+| *s'ajoute au 6 : sa garantie vieillesse, payée par l'impôt, lue sur la distribution des pensions* | *<!--chiffre:mesure(cumul_passe?scenario=garantie)-->3 046<!--/--> Md €* | |
 
 **Les scénarios 3 et 5 coûtent exactement ce que coûte le système actuel**, et
 ce n'est pas un défaut du calcul : leur bascule est fixée à 2026, aucune pension
@@ -830,10 +830,10 @@ garantie sert, comme l'ASPA qu'elle remplace ; l'enquête compte aussi les
 autres, et le dépôt les en retire —, déplacée du seul facteur que la grille sait donner — la pension
 moyenne que la garantie regarde, rapportée à celle du système actuel en 2020 :
 <!--chiffre:mesure(garantie?annee=2020&quoi=facteur)-->0,62<!--/--> cette année-là, <!--chiffre:mesure(garantie?annee=2070&quoi=facteur)-->0,98<!--/--> en 2070. Sur la trajectoire, elle coûte
-**<!--chiffre:mesure(cout_annee?scenario=garantie&annee=2026)-->19<!--/--> milliards en 2026** (<!--chiffre:mesure(part_pib?scenario=garantie&annee=2026)-->0,6<!--/--> % du PIB), et <!--chiffre:mesure(cout_annee?scenario=garantie&annee=2070)-->19<!--/--> milliards en 2070
-(<!--chiffre:mesure(part_pib?scenario=garantie&annee=2070)-->0,5<!--/--> %) : les pensions montent face à un plancher indexé sur les prix. Ces
-coûts comptent les <!--chiffre:mesure(parametre?nom=taux_recours_garantie)-->50<!--/--> % d'ayants droit qui la réclament, le taux que la DREES
-mesure sur l'ASPA. Elle remplace quatre minima, et la page Coût dit ce qu'ils
+**<!--chiffre:mesure(cout_annee?scenario=garantie&annee=2026)-->37<!--/--> milliards en 2026** (<!--chiffre:mesure(part_pib?scenario=garantie&annee=2026)-->1,2<!--/--> % du PIB), et <!--chiffre:mesure(cout_annee?scenario=garantie&annee=2070)-->38<!--/--> milliards en 2070
+(<!--chiffre:mesure(part_pib?scenario=garantie&annee=2070)-->1,0<!--/--> %) : les pensions montent face à un plancher indexé sur les prix. Ces
+coûts comptent <!--chiffre:mesure(parametre?nom=taux_recours_garantie)-->100<!--/--> % des ayants droit : la garantie est servie d'office, là où la
+DREES mesure qu'une personne seule éligible sur deux ne réclame pas l'ASPA. Elle remplace quatre minima, et la page Coût dit ce qu'ils
 coûtent et ce que l'impôt paierait en plus.
 
 Les poids de génération, eux, ne sont pas supposés non plus : ce sont les

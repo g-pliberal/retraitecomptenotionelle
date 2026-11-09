@@ -346,12 +346,13 @@ def tableau_minima(lectures: list[Minima], mesure: float) -> str:
 
 
 def tableau(lectures: list[Lecture], parametres: Parametres) -> str:
+    recours = parametres.taux_recours_garantie
     lignes = [
         "Le coût de la garantie quand les deux sexes ne tombent pas du même "
         "rapport",
         f"Année de l'enquête, euros de {parametres.annee_euros_constants}, "
-        f"un ayant droit sur {round(1 / parametres.taux_recours_garantie)} "
-        "réclamant.",
+        + ("servie d'office, à tous les ayants droit." if recours == 1.0
+           else f"un ayant droit sur {round(1 / recours)} réclamant."),
         "",
     ]
     plancher = None

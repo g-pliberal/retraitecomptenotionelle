@@ -13487,16 +13487,15 @@ deux planchers dans cette proportion, ce qui met le coût entre les deux bornes
 plutôt que sur la plus haute. <em>Jusqu'à cette date, elle servait le plancher
 majoré à tout le monde, et surestimait la garantie de près d'un quart.</em></p>
 
-<p><strong>Un ayant droit sur deux réclame.</strong> La garantie se demande,
-comme l'ASPA, et le programme retient l'hypothèse que la DREES mesure sur
-celle-ci : une personne seule éligible sur deux ne la réclame pas, la crainte
-de la reprise sur succession étant le premier motif donné. Une avance reprise
-dès le premier euro ne se réclamera pas davantage. Les bénéficiaires et les
-coûts de ce dépliant, la ligne « s'ajoute au système 4 » des tableaux du haut et le
-tableau poste par poste comptent donc ${g.pourcentage(taux, false, 0)} des ayants droit ; la part des
-retraités sous le plancher, elle, est donnée entière. Le paramètre
-<code>taux_recours_garantie</code> porte cette hypothèse, et un rend le recours
-complet.</p>
+<p><strong>Servie d'office, à tous les ayants droit.</strong> La garantie ne
+se demande pas : elle est servie sans démarche, là où l'ASPA se réclame, et où
+la DREES mesure qu'une personne seule éligible sur deux ne la réclame pas, la
+crainte de la reprise sur succession étant le premier motif donné. Les
+bénéficiaires et les coûts de ce dépliant, la ligne « s'ajoute au système 4 »
+des tableaux du haut et le tableau poste par poste comptent donc
+${g.pourcentage(taux, false, 0)} des ayants droit. Le paramètre
+<code>taux_recours_garantie</code> porte ce recours ; un demi, le non-recours
+de l'ASPA, diviserait ces coûts par deux.</p>
 
 ${g.tableau(
     ["Assiette et plancher", "Sous le plancher", "Bénéficiaires",
@@ -13576,13 +13575,13 @@ depuis leur création, 2009 pour la pension majorée de référence, 2015 pour l
 complément différentiel. Le total est donc une borne basse, et l'écart une
 borne haute.</p>
 
-<div class="note"><strong>Deux corrections, et les deux sont dans la
-page.</strong> L'ASPA est réclamée par <strong>une personne seule éligible
+<div class="note"><strong>Le non-recours de l'ASPA n'est pas celui de la
+garantie.</strong> L'ASPA est réclamée par <strong>une personne seule éligible
 sur deux</strong> : fin 2016, 321 200 personnes vivaient sous son plafond sans
 la demander, pour 790 millions d'euros non versés, soit 59 % des sommes servies
-(DREES, <em>Les dossiers de la DREES</em> n° 97, mai 2022). Le tableau applique
-ce recours à la garantie : ce qu'elle coûte en plus est compté ainsi, et le
-recours complet le doublerait. Dans le même sens,
+(DREES, <em>Les dossiers de la DREES</em> n° 97, mai 2022). La garantie, servie
+d'office, va à tous ses ayants droit : ce qu'elle coûte en plus est compté
+ainsi, et le recours de l'ASPA le diviserait par deux. En sens inverse,
 la garantie est une <strong>avance reprise sur la succession</strong>, dès le
 premier euro et avec intérêts, là où l'ASPA n'est récupérée qu'au-delà d'un
 seuil d'actif net : le Fonds de solidarité vieillesse en a retiré 108,7
@@ -13600,7 +13599,7 @@ centaines de milliers de personnes à une allocation ouverte à
 ${g.nombre(garantieBasse.beneficiaires / 1e6, 1)} millions de retraités aux
 pensions d'aujourd'hui, et à
 ${g.nombre(garantieScenario.beneficiaires / 1e6, 1)} millions à celles du
-système 4, dont la moitié la réclamerait.</div>
+système 4, servis d'office.</div>
 `, "cout-garantie");
 }
 
@@ -16859,10 +16858,11 @@ qu'au-delà d'un seuil d'actif net. Quatre règles l'encadrent :</p>
   <li>la créance est garantie par une hypothèque légale inscrite dès le
   premier versement, de sorte qu'un bien donné la porte avec lui.</li>
 </ul>
-<p>Elle se demande, comme l'ASPA, et se refuse : personne ne se voit imposer
-une dette, et qui préfère transmettre plutôt que recevoir peut ne pas la
-réclamer. Le programme retient qu'un ayant droit sur deux la réclame, ce que
-la DREES observe sur l'ASPA, et chiffre son coût ainsi.</p>
+<p>Elle est servie d'office, sans demande, et elle se refuse : personne ne se
+voit imposer une dette, et qui préfère transmettre plutôt que recevoir peut y
+renoncer. Le programme chiffre son coût en comptant tous les ayants droit, là
+où la DREES observe qu'une personne seule éligible sur deux ne réclame pas
+l'ASPA.</p>
 <p>Le 11 juin 2026, l'Assemblée nationale a voté, sans une voix contre, <a
 href="https://www.assemblee-nationale.fr/dyn/17/textes/l17t0308_texte-adopte-seance">la
 fin de la récupération de l'ASPA sur succession</a>, remplacée par une baisse

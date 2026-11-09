@@ -243,3 +243,30 @@ def test_l_aspa_de_l_effet_retour_reste_differentielle():
         minimum.plafond(2030)[0] / 12.0 * vers, {"F": 0.56, "H": 0.29})
     assert degressive._aspa(2030, 0.8, sans_minimum=False) == pytest.approx(
         attendu.cout_annuel_meur / 12.0 * 0.5)
+
+
+def test_l_aspa_de_l_effet_retour_garde_le_non_recours_que_la_drees_mesure():
+    """La garantie du scénario 6 est servie d'office (décision 20 du
+    programme : « D'office ») ; l'ASPA des scénarios 2 à 5, elle, se demande
+    toujours, et un ayant droit sur deux ne la réclame pas (DREES, dossier
+    n° 97, mai 2022). L'effet retour ne lit donc pas le recours de la
+    garantie : il a le sien, ``taux_recours_aspa``."""
+    from retraite_notionnelle.garantie import cout_garantie_par_sexe
+
+    parametres = Parametres()
+    assert parametres.taux_recours_aspa == 0.5
+    simulateur = Simulateur(parametres)
+    d_office = EffetRetour(simulateur, _calage(simulateur, taux_recours=1.0))
+    reclamee = EffetRetour(simulateur, _calage(simulateur, taux_recours=0.5))
+    for sans_minimum in (True, False):
+        assert d_office._aspa(2030, 0.8, sans_minimum) == reclamee._aspa(
+            2030, 0.8, sans_minimum)
+    minimum = simulateur.scenario_actuel.minimum_vieillesse
+    vers = simulateur.macro.coefficient_prix(2030, simulateur.distribution.millesime)
+    sexes = simulateur.distributions_par_sexe
+    attendu = cout_garantie_par_sexe(
+        sexes["F"], sexes["H"], 0.528, 1e6,
+        minimum.plafond_couple(2030)[0] / 2.0 / 12.0 * vers, 0.8, 1.0,
+        minimum.plafond(2030)[0] / 12.0 * vers, {"F": 0.56, "H": 0.29})
+    assert d_office._aspa(2030, 0.8, sans_minimum=False) == pytest.approx(
+        attendu.cout_annuel_meur / 12.0 * 0.5)

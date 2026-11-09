@@ -226,3 +226,13 @@ def test_le_tableau_se_rend_sans_exploser(lectures):
     lectures_minima = garantie_par_sexe.minima(Parametres())
     rendu = garantie_par_sexe.tableau_minima(lectures_minima, 0.834)
     assert "régime principal" in rendu and "tous régimes" in rendu
+
+
+def test_le_tableau_dit_le_recours_qu_il_chiffre():
+    """Servie d'office (décision 20 du programme), la garantie va à tous les
+    ayants droit, et le tableau le dit ; au réglage d'un demi, un sur deux la
+    réclame."""
+    d_office = garantie_par_sexe.tableau([], Parametres())
+    assert "servie d'office" in d_office and "sur 1 " not in d_office
+    moitie = garantie_par_sexe.tableau([], replace(Parametres(), taux_recours_garantie=0.5))
+    assert "un ayant droit sur 2 réclamant" in moitie

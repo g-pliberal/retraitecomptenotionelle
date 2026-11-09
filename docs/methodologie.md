@@ -1525,9 +1525,11 @@ créance de l'État, qui porte intérêt et se reprend sur la succession dès le
 premier euro, là où l'ASPA n'est récupérée qu'au-delà d'un seuil d'actif net —
 et jamais au-delà de ce que la succession contient, les héritiers ne payant pas
 de leur poche. La page Coût la donne donc en trois lignes, brute, reprise et
-nette. Elle se demande, enfin, comme l'ASPA : le programme retient que
-<!--chiffre:mesure(parametre?nom=taux_recours_garantie)-->50<!--/--> % des ayants droit la réclament (`taux_recours_garantie`), l'hypothèse
-que la DREES mesure sur l'ASPA. La sous-section « La garantie du scénario 6,
+nette. Elle ne se demande pas, enfin, au contraire de l'ASPA : elle est servie
+d'office, et le coût compte <!--chiffre:mesure(parametre?nom=taux_recours_garantie)-->100<!--/--> % des ayants droit (`taux_recours_garantie`),
+là où la DREES mesure qu'une personne seule éligible sur deux ne réclame pas
+l'ASPA — le recours que garde celle des autres scénarios (`taux_recours_aspa`).
+La sous-section « La garantie du scénario 6,
 mesure par mesure » de `limites.md` dit comment chacune de ces grandeurs est
 établie.
 

@@ -23,7 +23,8 @@ cette année-là à celle du système actuel l'année de l'enquête. Chaque scé
 la déplace de son propre facteur. Sur la distribution déplacée, on calcule :
 
 - l'ASPA, au barème de l'année (personne seule, ou la moitié du plafond du
-  couple, mêlés comme pour la garantie), au même taux de recours ;
+  couple, mêlés comme pour la garantie), à son propre taux de recours,
+  ``Parametres.taux_recours_aspa`` : elle se demande, la garantie non ;
 - les prélèvements de la personne seule qui n'a que sa pension : la tranche
   de CSG que son revenu fiscal présumé lui donne, la CRDS et la CASA qu'elle
   prélève (L. 136-8), et l'impôt sur le revenu de l'année, sur la pension
@@ -195,8 +196,9 @@ class EffetRetour:
     """L'effet retour, chiffré sur la distribution que la garantie a calée.
 
     ``garantie`` est la :class:`~.cout.GarantieDistribution` de la page : sa
-    distribution, sa pension de référence, son échelle, son recours et son
-    mélange des planchers servent tels quels. ``moyenne_publiee`` est la
+    distribution, sa pension de référence, son échelle et son mélange des
+    planchers servent tels quels ; ni son recours ni la forme de son barème,
+    qui ne sont pas ceux de l'ASPA. ``moyenne_publiee`` est la
     pension moyenne de droit direct, majorations comprises, que la DREES
     publie l'année de l'enquête : elle donne sa valeur à la tranche ouverte de
     la distribution, que la garantie, qui ne regarde que le bas, laisse à sa
@@ -209,6 +211,9 @@ class EffetRetour:
         racine = parametres.racine_donnees
         self.macro = simulateur.macro
         self.garantie = garantie
+        #: Le recours de l'ASPA, qui se demande : celui de la garantie du
+        #: scénario 6, servie d'office, n'est pas le sien.
+        self.taux_recours_aspa = parametres.taux_recours_aspa
         self.distribution = garantie.distribution
         self.millesime = self.distribution.millesime
         self.minimum_vieillesse = simulateur.scenario_actuel.minimum_vieillesse
@@ -259,7 +264,7 @@ class EffetRetour:
         # Un effectif de un million : le coût, en millions par an, est alors
         # ce que verse en moyenne une tête, par an.
         chiffre = bareme.chiffrer_distribution(1e6, facteur)
-        return chiffre.cout_annuel_meur / 12.0 * self.garantie.taux_recours
+        return chiffre.cout_annuel_meur / 12.0 * self.taux_recours_aspa
 
     def _prelevements(self, annee: int, facteur: float) -> float:
         """Les prélèvements moyens par retraité de la distribution déplacée,

@@ -64,6 +64,10 @@ versions:
       Tout ce que la garantie verse est repris sur la succession, avec
       intérêts, supplément compris
     lu_le: 2026-11-09
+  - reference: docs/feuille_de_route_programme.md, les décisions du propriétaire
+    article: décision 20, du 7 novembre 2026, le recours
+    citation: La garantie vieillesse est servie d'office
+    lu_le: 2026-11-09
   bornes:
     age_atteint: [null, null]
   contenu: >-
@@ -83,8 +87,10 @@ versions:
     `pivot + (plancher − pivot) / taux_retrait_garantie`, une fois et demie le
     plancher. La forme s'applique au plancher entier, isolement compris ; à un
     et un, elle rend la garantie différentielle d'avant le 9 novembre 2026.
-    Tout ce qu'il verse reste repris sur la succession (décision 101). Le
-    complément s'ouvre à 65 ans, l'âge de l'ASPA : à la
+    Tout ce qu'il verse reste repris sur la succession (décision 101). Il
+    est servi d'office, sans demande (décision 20) : la page Coût compte tous
+    les ayants droit (`taux_recours_garantie`), sans le non-recours de l'ASPA.
+    Le complément s'ouvre à 65 ans, l'âge de l'ASPA : à la
     liquidation pour qui part à cet âge ou après, à 65 ans sinon, et il se
     calcule pour l'année où il s'ouvre, la pension suivant la règle
     d'indexation et le plancher les prix. Il est servi en dernier, sur sa ligne, pour que l'on sache ce que

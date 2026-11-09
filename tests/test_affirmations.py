@@ -912,10 +912,16 @@ def _(m: Modele):
     assert force.part_reprise_garantie == 1.0
 
 
-@controle("recours_un_sur_deux")
+@controle("garantie_servie_d_office")
 def _(m: Modele):
-    assert "taux_recours_garantie" in _champs(Parametres)
-    assert m.base.taux_recours_garantie == 0.5
+    """La garantie compte tous ses ayants droit (décision 20 du programme) ;
+    l'ASPA, qui se demande, garde le non-recours que la DREES mesure."""
+    assert {"taux_recours_garantie", "taux_recours_aspa"} <= set(_champs(Parametres))
+    assert m.base.taux_recours_garantie == 1.0
+    assert m.base.taux_recours_aspa == 0.5
+    garantie = m.cout.avenir.annee(m.cout.avenir.derniere_annee).garantie
+    assert garantie.taux_recours == 1.0
+    assert _proche(garantie.beneficiaires, garantie.ayants_droit)
 
 
 @controle("garantie_sert_au_dessus_du_plancher")

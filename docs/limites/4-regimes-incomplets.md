@@ -676,12 +676,14 @@ moitié au-delà (`part_retrait_entier_garantie`, `taux_retrait_garantie`) : le
 complément s'éteint à une fois et demie le plancher, et qui a cotisé touche
 toujours plus que qui n'a rien cotisé. La forme s'applique au plancher entier,
 isolement compris, et tout ce qu'elle verse reste repris sur la succession.
-Deux conséquences sont à lire avec elle. La page Coût la chiffre au recours
-d'un ayant droit sur deux, l'hypothèse mesurée sur l'ASPA, alors que le
-programme la veut servie d'office : ses coûts sont de moitié ceux que la
-décision emporte. Et les pages du site, simulateur compris, décrivent encore
-une garantie différentielle : leur texte et leurs exemples recalculés à la
-main ne suivent pas le moteur, que leurs chiffres lus au modèle suivent.
+Elle est servie d'office, sans demande : la page Coût compte tous ses ayants
+droit (`taux_recours_garantie`), là où l'ASPA des autres scénarios garde le
+non-recours que la DREES mesure, un ayant droit sur deux
+(`taux_recours_aspa`). C'est une borne haute : qui y renonce pour ne pas
+grever sa succession n'est pas compté, et rien ne mesure combien le feraient.
+Les pages du site, simulateur compris, décrivent encore une garantie
+différentielle : leur texte et leurs exemples recalculés à la main ne suivent
+pas le moteur, que leurs chiffres lus au modèle suivent.
 
 **La garantie ne sert que les retraités qui résident en France.** *Corrigé
 le 23 septembre 2026.* Elle remplace l'ASPA, qui exige une résidence stable et
@@ -709,10 +711,10 @@ appliqué, année par année, à la distribution des pensions de l'échantillon
 interrégimes de 2020, déplacée du facteur que la grille donne : la pension
 moyenne que la garantie regarde, rapportée à celle du système actuel en 2020.
 Ce facteur vaut <!--chiffre:mesure(garantie?annee=2020&quoi=facteur)-->0,62<!--/--> en 2020 et <!--chiffre:mesure(garantie?annee=2070&quoi=facteur)-->0,98<!--/--> en 2070. La garantie coûte
-<!--chiffre:mesure(part_pib?scenario=garantie&annee=2026)-->0,61<!--/--> % du PIB en 2026 — <!--chiffre:mesure(cout_annee?scenario=garantie&annee=2026)-->19<!--/--> milliards d'euros de 2026, <!--chiffre:mesure(garantie?annee=2026&quoi=beneficiaires)-->4,3<!--/--> millions de
-bénéficiaires — et <!--chiffre:mesure(part_pib?scenario=garantie&annee=2070)-->0,49<!--/--> % en 2070 — <!--chiffre:mesure(cout_annee?scenario=garantie&annee=2070)-->19<!--/--> milliards, <!--chiffre:mesure(garantie?annee=2070&quoi=beneficiaires)-->4,5<!--/--> millions —, soit
-<!--chiffre:mesure(cumul_avenir?scenario=garantie)-->833<!--/--> milliards constants cumulés sur la projection ; le passé, où le même
-déplacement est appliqué à rebours, en porte <!--chiffre:mesure(cumul_passe?scenario=garantie)-->1 523<!--/--> depuis 1959. Ces chiffres
+<!--chiffre:mesure(part_pib?scenario=garantie&annee=2026)-->1,21<!--/--> % du PIB en 2026 — <!--chiffre:mesure(cout_annee?scenario=garantie&annee=2026)-->37<!--/--> milliards d'euros de 2026, <!--chiffre:mesure(garantie?annee=2026&quoi=beneficiaires)-->8,5<!--/--> millions de
+bénéficiaires — et <!--chiffre:mesure(part_pib?scenario=garantie&annee=2070)-->0,97<!--/--> % en 2070 — <!--chiffre:mesure(cout_annee?scenario=garantie&annee=2070)-->38<!--/--> milliards, <!--chiffre:mesure(garantie?annee=2070&quoi=beneficiaires)-->9,0<!--/--> millions —, soit
+<!--chiffre:mesure(cumul_avenir?scenario=garantie)-->1666<!--/--> milliards constants cumulés sur la projection ; le passé, où le même
+déplacement est appliqué à rebours, en porte <!--chiffre:mesure(cumul_passe?scenario=garantie)-->3 046<!--/--> depuis 1959. Ces chiffres
 sont bruts des reprises sur succession ; la sous-section qui suit dit comment
 chacun a été établi.
 

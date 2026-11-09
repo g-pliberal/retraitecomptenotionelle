@@ -468,7 +468,8 @@ fois les servis, et le recours qui redonne les servis sous cette convention
 est de 20 à 29 % ; la population confirme 50 % chez les femmes seules, 49 % en
 2016, non chez les hommes, dont le bas lui manque. Faut-il, pour l'ASPA de
 l'effet retour, compter comme le droit, la réversion et le ménage compris, ou
-prendre ce recours-là, et la garantie garde-t-elle 50 % ? Enfin, deux
+prendre ce recours-là ? La garantie, elle, ne garde plus ce taux : elle est
+servie d'office, et compte tous ses ayants droit. Enfin, deux
 questions de méthode. Le balayage du militaire devait-il partir de son âge de
 radiation tant que l'âge où sa pension s'ouvre n'était pas trouvé au mois ?
 Cet âge l'est désormais : la question perd sa condition, et reste à clore. Un
