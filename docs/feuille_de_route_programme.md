@@ -1846,6 +1846,12 @@ dire « PER d'entreprise » et non PEE.
 la façon de montrer que l'outil donne à la proposition un rendement plus
 faible que le droit actuel pour les jeunes générations.
 
+**Le 9 novembre 2026 : le rendement, net du déficit.** Chiffré au modèle,
+par génération (`186/2026-11-09-rendement-net.md`) : la comparaison ne
+s'inverse pas. Salarié moyen né en 2000 : 1,13 % au droit actuel, déficit du
+COR payé par l'impôt, contre −0,16 % à la proposition, dont la caisse emprunte
+plus jusqu'en 2054. Au propriétaire : les six questions de la note.
+
 ### Chantier 8 — Le message
 
 **Pistes du 6 novembre.**
