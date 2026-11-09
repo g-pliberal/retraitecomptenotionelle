@@ -1,0 +1,21 @@
+date: "2026-11-09"
+session: "action 186, chantier 3 : la garantie vieillesse dégressive écrite au modèle, au scénario 6 seul"
+consulte: >-
+  Aucune règle du scénario 1 n'est touchée, et l'index LEGI n'est pas
+  interrogé. Lus ce jour : les décisions 100 à 102 de
+  docs/feuille_de_route_programme.md, la note
+  docs/feuille_de_route/186/2026-11-09-garantie-degressive.md (la consigne,
+  le barème de l'étude), la fiche garantie_vieillesse de la proposition, et
+  le code de la garantie (scenario-notionnel.js, revalorisation.js,
+  garantie.py, cout.py). Aucune source extérieure n'est ouverte.
+trouve: >-
+  Aucun écart avec les fiches du droit réel. La garantie du scénario 6
+  devient dégressive, à la forme suédoise : la pension retirée en entier
+  jusqu'à la moitié du plancher, de moitié au-delà. Le coût que l'étude
+  chiffrait à côté du modèle est retrouvé (0,505 point de PIB versé en
+  moyenne 2026-2070, 0,309 net, au recours de moitié). Détail :
+  docs/feuille_de_route/186/2026-11-09-garantie-degressive-au-modele.md.
+reste: >-
+  Le recours de 100 % (décision 20), et les pages du site, qui disent encore
+  la garantie différentielle (chantier 9). L'export du complément dans
+  l'Union et sa CSG restent à instruire aux textes avant de publier.

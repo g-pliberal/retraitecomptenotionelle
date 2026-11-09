@@ -1,13 +1,14 @@
 # Une garantie vieillesse dégressive, pour que le travail paie toujours : les précédents lus aux sources, et chaque option chiffrée
 
-**Reprise, au 9 novembre 2026.** Tranché (décisions 100 à 102, « Ce que le
-propriétaire a tranché ») : la forme suédoise — la pension retirée en entier
-jusqu'à la moitié du plancher, de moitié au-delà —, tout repris sur la
-succession, l'isolement dans la même règle. Ni le modèle ni le site ne sont
-touchés. Par quoi commencer : une session du modèle, au scénario 6 seul, le
-test d'abord, d'après « La consigne de la session du modèle » ; avec elle ou
-après elle, le recours de 100 % (décision 20). Restent ouverts : ce qui
-paie le surcoût, l'export dans l'Union, la CSG du complément.
+**Reprise, au 9 novembre 2026.** Tranché (décisions 100 à 102) et écrit au
+modèle, au scénario 6 seul : la forme suédoise, tout repris sur la
+succession, l'isolement dans la même règle
+(`2026-11-09-garantie-degressive-au-modele.md`, qui dit ce que le changement
+déplace ; le coût de l'étude y est retrouvé). Par quoi commencer : le recours
+de 100 % (décision 20), étape 3 du plan de la réversion ; puis le site, qui
+dit encore la garantie différentielle (chantier 9). Restent ouverts, au
+propriétaire : ce qui paie le surcoût, l'export dans l'Union, la CSG du
+complément.
 
 Le propriétaire, le 9 novembre 2026 : la garantie (800 € plus 250 €
 d'isolement) est différentielle ; un salarié au SMIC à carrière complète,
