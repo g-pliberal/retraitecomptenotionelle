@@ -1,0 +1,18 @@
+date: "2026-11-09"
+session: "action 186, chantier 3 : la garantie servie d'office, et l'ASPA de l'effet retour à son propre taux"
+consulte: >-
+  Aucune règle du scénario 1 n'est touchée, et l'index LEGI n'est pas
+  interrogé. Lus ce jour : la décision 20 de
+  docs/feuille_de_route_programme.md, l'étape 3 du plan
+  docs/feuille_de_route/186/2026-11-07-reversion-scenario-6-plan.md, la
+  fiche minimum_vieillesse (l'ASPA se réduit « à due concurrence »), et
+  effet_retour.py. Aucune source extérieure n'est ouverte.
+trouve: >-
+  Un défaut de la session elle-même : l'ASPA que l'effet retour chiffre aux
+  scénarios 2 à 5 avait pris la forme dégressive de la garantie ; corrigé.
+  La garantie compte tous ses ayants droit ; l'ASPA garde, sous un taux à
+  elle, le non-recours que la DREES mesure. Détail :
+  docs/feuille_de_route/186/2026-11-09-garantie-d-office.md.
+reste: >-
+  Savoir si la garantie d'office peut se refuser, que la décision 20 ne dit
+  pas ; le site sur la garantie dégressive.

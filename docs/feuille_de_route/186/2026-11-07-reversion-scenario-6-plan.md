@@ -1,14 +1,14 @@
 # La réversion au scénario 6 : le plan, et le stock gardé au coût
 
-**Reprise, au 7 novembre 2026.** Étape 1 faite : le coût du scénario 6 garde
-les réversions servies à la bascule jusqu'à extinction (décision 16). Le
-site le dément encore à cinq endroits, déclarés `contredite` (action 186) au
-catalogue des affirmations, dont la cascade de la page Coût, qui tombe court
-de la réversion gardée. Par quoi commencer : l'étape 2, le site qui dit le
-stock gardé, cascade d'abord ; puis la garantie d'office (étape 3), le stock
-au simulateur (4), la rente sur deux têtes (5), le décès d'un actif (6), le
-README (7). Une étape par session, chacune sa note ici, et ce bloc récrit
-par chacune ; le détail est sous « Le plan ».
+**Reprise, au 9 novembre 2026.** Étapes 1 et 3 faites : le coût du scénario 6
+garde les réversions servies à la bascule jusqu'à extinction (décision 16),
+et la garantie est servie d'office (décision 20,
+`2026-11-09-garantie-d-office.md`). Le site dément encore le stock gardé à
+cinq endroits, déclarés `contredite` (action 186) au catalogue des
+affirmations, dont la cascade de la page Coût, qui tombe court de la
+réversion gardée. Par quoi commencer : l'étape 2, le site qui dit le stock
+gardé, cascade d'abord ; puis le stock au simulateur (4), la rente sur deux
+têtes (5), le décès d'un actif (6), le README (7). Une étape par session.
 
 **La demande.** Le 7 novembre 2026, le propriétaire ouvre une session du
 modèle pour porter au scénario 6, et à lui seul, les décisions 16 à 28 du
