@@ -1012,6 +1012,71 @@ def test_le_pont_ouvert_se_relance_quand_le_paquet_du_depot_change(monkeypatch):
         pont.fermer()
 
 
+#: Un appel au droit qui ne demande qu'une valeur présumée : le jour de
+#: naissance que le droit retient quand on ne le connaît pas, le 15.
+JOUR_DE_NAISSANCE = {"j": ("chronologie.valeur", "jour_de_naissance")}
+
+
+def test_le_pont_ouvert_se_relance_quand_node_s_est_arrete(monkeypatch):
+    """Node mort entre deux demandes, la suivante le relance, au lieu
+    d'échouer, « node s'est arrêté », jusqu'à un ``pont.fermer()`` que seuls
+    les tests appellent ; le pont mort est refermé (action 190, étape 3)."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    lances = _lancements(monkeypatch)
+    try:
+        assert pont.droit(JOUR_DE_NAISSANCE) == ({"j": 15}, {})
+        mort = pont._OUVERT._processus
+        mort.kill()
+        mort.wait()
+        assert pont.droit(JOUR_DE_NAISSANCE) == ({"j": 15}, {})
+        assert len(lances) == 2 and pont._OUVERT._processus is not mort
+        assert mort.stdin.closed
+    finally:
+        pont.fermer()
+
+
+def test_node_mort_en_pleine_demande_la_fait_echouer_avec_son_journal(monkeypatch, tmp_path):
+    """Node qui s'arrête pendant une demande la fait échouer, avec ce qu'il a
+    écrit sur sa sortie d'erreur ; la demande suivante le relance."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    tombe = tmp_path / "tombe.mjs"
+    tombe.write_text('process.stdin.once("data", () => {\n'
+                     '  console.error("tombé en pleine demande");\n'
+                     "  process.exit(1);\n"
+                     "});\n", encoding="utf-8")
+    programme = pont.PROGRAMME
+    lances = _lancements(monkeypatch)
+    monkeypatch.setattr(pont, "PROGRAMME", tombe)
+    try:
+        with pytest.raises(RuntimeError, match="node s'est arrêté : tombé en pleine demande"):
+            pont.droit(JOUR_DE_NAISSANCE)
+        monkeypatch.setattr(pont, "PROGRAMME", programme)
+        assert pont.droit(JOUR_DE_NAISSANCE) == ({"j": 15}, {})
+        assert len(lances) == 2
+    finally:
+        pont.fermer()
+
+
+def test_fermer_un_pont_mort_ferme_son_tuyau_d_entree():
+    """Node mort, la demande qu'on lui écrit reste dans le tuyau : le pont
+    refermé le ferme sans l'écrire, au lieu que Python le signale en le
+    ramassant (« Exception ignored … BrokenPipeError »)."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    ouvert = pont._PontOuvert()
+    try:
+        ouvert._processus.kill()
+        ouvert._processus.wait()
+        with pytest.raises(RuntimeError, match="node s'est arrêté"):
+            ouvert.demander({"droit": {}})
+        ouvert.fermer()
+        assert ouvert._processus.stdin.closed
+    finally:
+        ouvert.fermer()
+
+
 def test_sous_la_garde_des_presomptions_le_portage_les_lit_decalees(monkeypatch):
     """La garde des présomptions (``PRESOMPTIONS_DECALEES``, ``tests/conftest.py`` ;
     action 135, levier 2) fait dire au vocabulaire du Python d'autres valeurs :

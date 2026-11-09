@@ -63,7 +63,8 @@ Une demande sur le paquet du dépôt, sans paquet, ne lance pas node à chaque
 fois : les tests en font une par carrière, et chacune coûtait trois dixièmes
 de seconde, à lancer node et à relire le paquet. Le pont reste ouvert
 (``pont.mjs --servir``), sur le paquet qu'il a lu, jusqu'à ce que ce paquet
-change ou que le processus finisse.
+change ou que le processus finisse ; node mort, la demande en cours échoue,
+avec son journal, et la suivante le relance.
 """
 
 from __future__ import annotations
@@ -156,7 +157,14 @@ class _PontOuvert:
             bufsize=1)
         atexit.register(self.fermer)
 
+    def vivant(self) -> bool:
+        """Node tourne-t-il encore ? Mort, tué ou tombé, le pont se relance à
+        la demande suivante (:func:`_ouvert`)."""
+        return self._processus.poll() is None
+
     def demander(self, demande: dict) -> dict:
+        """La réponse de node ; s'il s'arrête en chemin, la demande échoue,
+        avec son journal, et le pont se referme."""
         try:
             self._processus.stdin.write(json.dumps({"demande": demande}) + "\n")
             self._processus.stdin.flush()
@@ -165,20 +173,24 @@ class _PontOuvert:
         ligne = self._processus.stdout.readline()
         if not ligne:
             self._journal.seek(0)
-            raise RuntimeError(f"{PROGRAMME.name} : node s'est arrêté : "
-                               + self._journal.read().decode("utf-8", "replace")[-2000:])
+            journal = self._journal.read().decode("utf-8", "replace")[-2000:]
+            self.fermer()
+            raise RuntimeError(f"{PROGRAMME.name} : node s'est arrêté : {journal}")
         reponse = json.loads(ligne)
         if "erreur" in reponse:
             raise RuntimeError(f"{PROGRAMME.name} : {reponse['erreur']}")
         return reponse["reponse"]
 
     def fermer(self) -> None:
-        if self._processus.poll() is None:
+        """Ferme le tuyau d'entrée : node vivant finit et s'arrête ; mort, ce
+        qu'on lui écrivait et qu'il n'a pas lu s'y perd, sans que Python le
+        signale en ramassant le tuyau."""
+        with contextlib.suppress(BrokenPipeError):
             self._processus.stdin.close()
-            try:
-                self._processus.wait(timeout=10)
-            except subprocess.TimeoutExpired:
-                self._processus.kill()
+        try:
+            self._processus.wait(timeout=10)
+        except subprocess.TimeoutExpired:
+            self._processus.kill()
 
 
 #: Les contextes ouverts sous lesquels le jumeau Python calcule
@@ -265,9 +277,10 @@ _OUVERT: _PontOuvert | None = None
 
 def _ouvert() -> _PontOuvert:
     """Le pont ouvert sur le paquet du dépôt tel qu'il est : relancé quand la
-    fabrique l'a récrit."""
+    fabrique l'a récrit, ou quand node s'est arrêté (action 190, étape 3)."""
     global _OUVERT
-    if _OUVERT is None or _OUVERT.signature != _signature_du_paquet():
+    if (_OUVERT is None or _OUVERT.signature != _signature_du_paquet()
+            or not _OUVERT.vivant()):
         fermer()
         _OUVERT = _PontOuvert()
     return _OUVERT

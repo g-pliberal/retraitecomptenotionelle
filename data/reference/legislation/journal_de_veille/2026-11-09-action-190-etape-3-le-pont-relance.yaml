@@ -1,0 +1,14 @@
+date: "2026-11-09"
+session: "action 190, étape 3 : le pont gardé ouvert relancé quand node s'est arrêté"
+consulte: >-
+  Aucune règle du scénario 1 n'est touchée, et l'index LEGI n'est pas
+  interrogé. Lus ce jour, au commit 0d03aaf : src/retraite_notionnelle/pont.py
+  (le pont gardé ouvert), la boucle --servir de pont.mjs et les tests du pont
+  ouvert de tests/test_pont.py. Aucune source extérieure n'est ouverte.
+trouve: >-
+  Aucun écart avec les fiches. Le défaut de l'inventaire est reproduit puis
+  corrigé : node mort, la demande suivante le relance ; la demande en cours
+  échoue avec son journal ; le pont mort refermé ferme son tuyau d'entrée.
+  Détail : docs/feuille_de_route/190/2026-11-09-etape-3-le-pont-relance.md.
+reste: >-
+  Rien pour l'étape 3.
