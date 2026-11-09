@@ -566,7 +566,13 @@ Le même jour, sur le message (chantier 8) :
     libéral né en 1940, + 19 %) ; combien de retraités sont dans ce cas reste
     à compter avant de l'écrire. La règle vaut pour les pensions que l'État
     fixe : l'Agirc-Arrco garde les siennes jusqu'à son intégration
-    (décision 43).
+    (décision 43). *Précisé le même jour* : la phrase de dessous ne dit ni
+    le plus ni le moins, mais l'égalité de traitement — « C'est un peu nul
+    de dire plus et moins. Le mieux serait de dire que c'est plus
+    égalitaire » ; « c'est égalité de traitement et pas équité ». Le
+    message : « Chaque pension vaut ce qui a été cotisé. C'est l'égalité de
+    traitement. » La baisse se dit un clic plus loin, à la question « Ma
+    retraite va-t-elle baisser ? » du site.
 
 ## Ce qui est écarté
 
