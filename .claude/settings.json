@@ -3,6 +3,7 @@
     "CLAUDE_CODE_SUBAGENT_MODEL": "sonnet"
   },
   "modelSettings": {
+    "claude-fable-5-2": { "effortLevel": "high" },
     "claude-opus-5-5": { "effortLevel": "xhigh" },
     "claude-sonnet-5-5": { "effortLevel": "xhigh" }
   },

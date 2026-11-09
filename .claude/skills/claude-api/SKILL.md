@@ -36,12 +36,13 @@ session ou un agent, et ce qu'il coûte.
   trois agents d'impeccable sur Sonnet, et les agents généralistes aussi
   (`CLAUDE_CODE_SUBAGENT_MODEL`, dans `.claude/settings.json`, qui tient
   encore la chaîne de secours, `fallbackModel`, et l'effort : `xhigh` pour
-  Opus et Sonnet, par `modelSettings` et non par `CLAUDE_CODE_EFFORT_LEVEL`,
-  qui passerait devant celui que déclarent les agents) ; Opus pour
-  une étape qui écrit une règle du scénario 1 (`CLAUDE.md`), et non Fable :
-  Opus 5.5 le devance sur toutes les mesures que publie son annonce
-  (22 septembre 2026), pour moins cher. Le détail est
-  dans la note `docs/feuille_de_route/135/2026-10-17-trois-modeles.md` ; ce
+  Opus et Sonnet, `high` pour Fable 5.2, par `modelSettings` et non par
+  `CLAUDE_CODE_EFFORT_LEVEL`, qui passerait devant celui que déclarent les
+  agents) ; Fable 5.2 pour une étape qui écrit une règle du scénario 1
+  (`CLAUDE.md`), depuis le 9 novembre 2026, à la place d'Opus 5.5, qui
+  l'avait emporté sur Fable 5.1. Le détail est dans les notes
+  `2026-10-17-trois-modeles.md` et `2026-11-09-fable-5-2.md` de
+  `docs/feuille_de_route/135/` ; ce
   que les sessions consomment, modèle par modèle :
   `python scripts/consommation.py`.
 - **Pour écrire du code qui appelle l'API**, ce skill ne suffit pas : ôter son

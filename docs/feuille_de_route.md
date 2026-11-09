@@ -5760,16 +5760,16 @@ de statuts et les `manque` de la page Méthode.
 
 ### 135. Aller plus vite sans rien céder : l'outillage d'un changement de résultats — `en cours`
 
-**Reprise, au 5 novembre 2026.** Fait : les leviers 1, 2 et, pour l'essentiel,
+**Reprise, au 9 novembre 2026.** Fait : les leviers 1, 2 et, pour l'essentiel,
 3 ; le hook de démarrage ; « Économiser le contexte » ; l'arbre du dépôt ; le
 parcours `tenu` ; le contexte en cinq étapes ; la mémoire indexée sur le seul
 modèle ; `pousser.sh` publie une tête détachée ; `node --test` sauté, les
 cumuls au hasard et le portage du coût (notes du 16) ; la lecture confiée à
 Haiku (note du 17) ; les pages au hasard (note du 29) ; le paquet dans la clé
 de `moitie_python`, ce que coûtent les sessions, l'effort à `xhigh`, la relève
-de l'orchestration (notes du 3 novembre) ; Impeccable sans hook (note du 5).
-Reste : `actions/cache` sur GitHub ; Sonnet pour des sessions entières, au
-propriétaire ; la réflexion à `xhigh`, à mesurer ; le 4 et 5.
+de l'orchestration (notes du 3) ; Impeccable sans hook (note du 5) ; Fable 5.2
+au scénario 1 (note du 9). Reste : `actions/cache` sur GitHub ; Sonnet pour
+des sessions entières, au propriétaire ; `xhigh`, à mesurer ; le 4 et 5.
 
 **Demande**, le 28 septembre 2026, l'action 132 close : « On passe un temps
 interminable à faire ces changements. Pourquoi ? Est-ce qu'on peut aller plus
