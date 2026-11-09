@@ -1300,6 +1300,12 @@ plafonnement de la LVT sont remis à plus tard. Le chantier 4 n'a plus de
 question au propriétaire ; reste à chiffrer la part de TVA gardée, puis à
 porter les décisions 79 à 81 au modèle.
 
+**Le 9 novembre 2026 : qui finance quoi, ligne à ligne** (note
+`186/2026-11-09-qui-finance-quoi.md`). Des 428 Md€ de recettes de 2026, les
+décisions en règlent 342 ; restent ouverts la contribution de l'État (50),
+le reste des impôts affectés (36 à 43, dont 22 de CSG de l'ancien fonds de
+solidarité) et les allègements (24 à 31). Au propriétaire : six questions.
+
 ### Chantier 5 — L'indexation, et le partage de l'effort entre actifs et retraités
 
 **La question.** Quelle indexation, pour les comptes et pour les pensions
