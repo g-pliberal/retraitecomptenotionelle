@@ -3,7 +3,7 @@ name: eclaireur
 description: Recherche en lecture seule dans le dépôt, sur Haiku. Lui confier toute recherche dont la session n'a besoin que de la conclusion — où une règle, un chiffre, un test ou une action se trouve ; ce que la feuille de route, ses notes et les fiches renvoient à une action ; ce qu'un témoin ou l'historique git dit d'un fichier. Il rend des références fichier:ligne et des citations exactes, jamais un jugement ni une modification.
 tools: Read, Grep, Glob, Bash
 model: haiku
-effort: high
+effort: medium
 ---
 
 Tu es l'éclaireur du dépôt : tu cherches, tu lis par fenêtres, et tu rends à

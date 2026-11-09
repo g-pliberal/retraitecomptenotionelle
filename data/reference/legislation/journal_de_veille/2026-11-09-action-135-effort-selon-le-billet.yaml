@@ -1,0 +1,15 @@
+date: "2026-11-09"
+session: "action 135 : l'effort des modèles selon le billet « Which Claude model should you build with? »"
+consulte: >-
+  Aucune source de droit : la session ne touche à aucune règle du scénario 1,
+  seulement aux réglages de Claude Code (.claude/settings.json, l'éclaireur et
+  Explore) et au skill claude-api. Lus ce jour : le billet
+  claude.dev/blog/which-claude-model-should-you-build-with/, par un
+  sous-agent, et la documentation de Claude Code (model-config).
+trouve: >-
+  Aucune règle n'a changé. Le choix des modèles du dépôt suit déjà le billet ;
+  l'effort s'en écartait. Opus 5.5 et Sonnet 5.5 passent de xhigh à high,
+  l'éclaireur et Explore de high à medium ; Fable 5.2 reste à high.
+reste: >-
+  actions/cache sur GitHub ; Sonnet pour des sessions entières, au
+  propriétaire ; les leviers 4 et 5.

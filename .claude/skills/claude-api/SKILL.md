@@ -31,18 +31,18 @@ session ou un agent, et ce qu'il coûte.
   (le modèle d'un agent, ceux que Claude Code fournit), `costs`,
   `prompt-caching` (chaque modèle a son cache) et `skills`. Un `curl` suivi
   d'un `grep` y prend la phrase utile ; la page entière ne se lit pas.
-- **Les choix du dépôt** : la lecture confiée à Haiku, à l'effort `high`, par
-  l'éclaireur et Explore (`.claude/agents/`, et la règle de `CLAUDE.md`) ;
+- **Les choix du dépôt** : la lecture confiée à Haiku, à son effort par
+  défaut, `medium`, par l'éclaireur et Explore (`.claude/agents/`, et la règle de `CLAUDE.md`) ;
   trois agents d'impeccable sur Sonnet, et les agents généralistes aussi
   (`CLAUDE_CODE_SUBAGENT_MODEL`, dans `.claude/settings.json`, qui tient
-  encore la chaîne de secours, `fallbackModel`, et l'effort : `xhigh` pour
-  Opus et Sonnet, `high` pour Fable 5.2, par `modelSettings` et non par
+  encore la chaîne de secours, `fallbackModel`, et l'effort : `high` pour
+  Opus, Sonnet et Fable 5.2, par `modelSettings` et non par
   `CLAUDE_CODE_EFFORT_LEVEL`, qui passerait devant celui que déclarent les
   agents) ; Fable 5.2 pour une étape qui écrit une règle du scénario 1
   (`CLAUDE.md`), depuis le 9 novembre 2026, à la place d'Opus 5.5, qui
   l'avait emporté sur Fable 5.1. Le détail est dans les notes
-  `2026-10-17-trois-modeles.md` et `2026-11-09-fable-5-2.md` de
-  `docs/feuille_de_route/135/` ; ce
+  `2026-10-17-trois-modeles.md`, `2026-11-09-fable-5-2.md` et
+  `2026-11-09-effort-selon-le-billet.md` de `docs/feuille_de_route/135/` ; ce
   que les sessions consomment, modèle par modèle :
   `python scripts/consommation.py`.
 - **Pour écrire du code qui appelle l'API**, ce skill ne suffit pas : ôter son

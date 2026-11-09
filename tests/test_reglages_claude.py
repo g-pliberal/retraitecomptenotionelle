@@ -7,7 +7,11 @@ passe devant tout, et ferait taire l'effort que déclarent les agents
 Décision du propriétaire, le 3 novembre 2026 : `xhigh` au lieu de `max`, et
 l'éclaireur et Explore, sur Haiku, à `high` (action 135, note du 3 novembre).
 Le 9 novembre 2026 : Fable 5.2, qui prend les règles du scénario 1, à `high`,
-et non au `medium` par lequel Claude Code le fait démarrer (note du 9).
+et non au `medium` par lequel Claude Code le fait démarrer (note du 9). Le
+même jour, sur le billet « Which Claude model should you build with? » :
+Opus 5.5 et Sonnet 5.5 à `high`, le cran au-delà duquel il demande une mesure,
+et les deux agents de lecture au défaut de Haiku, `medium` (note « L'effort
+selon le billet »).
 """
 
 import json
@@ -27,14 +31,14 @@ def test_l_effort_se_regle_par_modele_et_non_par_la_variable():
     efforts = {modele: r["effortLevel"] for modele, r in REGLAGES.get("modelSettings", {}).items()}
     assert efforts == {
         "claude-fable-5-2": "high",
-        "claude-opus-5-5": "xhigh",
-        "claude-sonnet-5-5": "xhigh",
+        "claude-opus-5-5": "high",
+        "claude-sonnet-5-5": "high",
     }
 
 
 def test_l_eclaireur_et_explore_declarent_leur_effort():
     for agent in ("eclaireur", "Explore"):
-        assert _entete(agent).get("effort") == "high", agent
+        assert _entete(agent).get("effort") == "medium", agent
 
 
 def test_le_detecteur_d_impeccable_ne_tourne_qu_a_la_demande():
