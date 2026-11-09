@@ -1982,6 +1982,12 @@ qu'on montre, le déroulé, les questions, la grille, ce que chaque résultat
 ferait changer, le consentement et les données. Rien n'est lancé ; au
 propriétaire, ses neuf questions, d'abord une première vague sans attendre.
 
+**Le 9 novembre 2026 : les pensions qui montent, comptées** (décision 90 ;
+note `186/2026-11-09-pensions-qui-montent.md`). Sur la grille du coût, 1,5 %
+des retraités de la bascule voient leur pension contributive monter, presque
+tous des libéraux, et 97,7 % la voient baisser ; ce qui relève les petites
+pensions est la garantie. Au propriétaire : la phrase du site, et quatre questions.
+
 ### Chantier 9 — Le site et le simulateur
 
 **La question du propriétaire.** « Est-ce que le simulateur est vraiment une
