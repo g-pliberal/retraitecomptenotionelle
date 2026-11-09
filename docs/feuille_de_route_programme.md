@@ -636,19 +636,6 @@ Le même jour, enfin (même note) :
     de 1,7 point de cotisation chômage et 0,2 point de cotisation maladie
     (calcul), sur les cinq points que gagne un salarié du privé.
 
-Le même jour, pour finir, sur les deux dernières lignes de la table :
-
-100. **La taxe sur les salaires et le forfait social baissent de moitié sur
-     leur part retraite** : « De moitié sur la part retraite. La moitié est
-     redonnée, l'autre moitié va dans le budget général de l'État. » 8,6 Md€
-     de charges en moins en 2026, 8,6 au budget de l'État ; le 20 septembre
-     les supprimait en entier.
-101. **La CSG sur les revenus du capital baisse de moitié sur sa part
-     retraite** : la même phrase. 3,3 points de moins, 6,2 Md€ ; 6,2 au
-     budget de l'État. Avec la décision 94, c'est la règle de tout impôt
-     retiré aux retraites, CSG sur les pensions comprise (1,47 point), sauf
-     la TVA (79), la CTA (88) et les alcools (92).
-
 Le même jour, sur la garantie vieillesse
 (`feuille_de_route/186/2026-11-09-garantie-degressive.md`) :
 
@@ -671,6 +658,21 @@ Le même jour, sur la garantie vieillesse
     pour les 800€ ». Le plancher d'une personne seule reste 1 050 €, et la
     forme dégressive s'y applique en entier, comme la Suède le fait de ses
     deux barèmes.
+
+Le même jour, pour finir, sur les deux dernières lignes de la table des
+recettes (chantier 4 ; écrites d'abord sous les numéros 100 et 101, qu'une
+autre session venait de prendre) :
+
+103. **La taxe sur les salaires et le forfait social baissent de moitié sur
+     leur part retraite** : « De moitié sur la part retraite. La moitié est
+     redonnée, l'autre moitié va dans le budget général de l'État. » 8,6 Md€
+     de charges en moins en 2026, 8,6 au budget de l'État ; le 20 septembre
+     les supprimait en entier.
+104. **La CSG sur les revenus du capital baisse de moitié sur sa part
+     retraite** : la même phrase. 3,3 points de moins, 6,2 Md€ ; 6,2 au
+     budget de l'État. Avec la décision 94, c'est la règle de tout impôt
+     retiré aux retraites, CSG sur les pensions comprise (1,47 point), sauf
+     la TVA (79), la CTA (88) et les alcools (92).
 
 ## Ce qui est écarté
 
@@ -1434,7 +1436,7 @@ est de la moitié et reste hors de la page Coût ; les cotisations chômage et
 maladie montent. Reste une question, à la fin de la note : la taxe sur les
 salaires et le forfait social, de moitié ou en entier, et la CSG du capital.
 
-**Le même jour, pour finir** (décisions 100 et 101) : ces deux lignes
+**Le même jour, pour finir** (décisions 103 et 104) : ces deux lignes
 baissent de moitié sur leur part retraite, l'autre moitié au budget de
 l'État. La table est close : 27,1 Md€ de charges en moins, 28,6 à l'État,
 qui en verse 24 à 31 pour les allègements. Reste à la porter au modèle.

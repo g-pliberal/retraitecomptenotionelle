@@ -2,7 +2,7 @@
 
 **Reprise, au 9 novembre 2026.** La table des recettes de 2026 est posée
 (« 1. » à « 4. »), sans toucher au modèle ni au site, et le propriétaire en a
-tranché toutes les lignes le jour même (décisions 91 à 101). La table
+tranché toutes les lignes le jour même (décisions 91 à 99, 103 et 104). La table
 finale, impôt par impôt, est sous « La table, impôt par impôt » : chaque
 impôt retiré aux retraites baisse de moitié sur sa part retraite, l'autre
 moitié va au budget général de l'État. Plus aucune question ne l'attend.
@@ -970,7 +970,7 @@ Une question, en deux lignes de la table.
 Le propriétaire, aux deux lignes : « De moitié sur la part retraite. La
 moitié est redonnée, l'autre moitié va dans le budget général de l'État. »
 La même réponse pour la taxe sur les salaires et le forfait social
-(décision 100) et pour la CSG sur les revenus du capital (décision 101).
+(décision 103) et pour la CSG sur les revenus du capital (décision 104).
 
 La table « impôt par impôt » ci-dessus est donc la bonne, sans changement :
 
@@ -985,7 +985,7 @@ La table « impôt par impôt » ci-dessus est donc la bonne, sans changement :
   (79), la CTA est supprimée en entier (88), les droits sur les alcools
   vont en entier à l'État (92).
 
-Les comptes de 2026, tels que les décisions 79 à 101 les laissent (calcul) :
+Les comptes de 2026, tels que ces décisions les laissent (calcul) :
 
 | En Md€ | |
 |---|---:|
