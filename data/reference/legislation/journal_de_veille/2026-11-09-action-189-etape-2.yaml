@@ -1,0 +1,25 @@
+date: "2026-11-09"
+session: "action 189, étape 2 : le texte de l'accueil et deux cartes de constat pour l'électeur"
+consulte: >-
+  Aucune règle du scénario 1 n'est touchée, et l'index LEGI n'est pas
+  interrogé. Relue ce jour, en entier : la délibération de la CRE n° 2026-14
+  du 15 janvier 2026, pour l'excédent de trésorerie de la CNIEG que la
+  contribution tarifaire d'acheminement remplit (§ 3.2, page 2) ; dans le
+  dépôt, les décisions 1 à 90 de docs/feuille_de_route_programme.md, le
+  catalogue data/reference/site/affirmations.yaml,
+  data/reference/regimes/pap_regimes_subventionnes.csv (crédits 2026 du
+  programme 198) et docs/regimes.md (qui équilibre les régimes fermés depuis
+  2025).
+trouve: >-
+  Aucun écart avec les fiches. L'excédent de la CNIEG, « estimé à fin 2025 de
+  2,2 Md€ » et qui « pourrait atteindre 4,4 Md€ en 2030 », entre au dépôt
+  (data/reference/regimes/excedent_cnieg.csv, source
+  cre_deliberation_2026_14). Les crédits de l'État de 2026 pour la SNCF et
+  la RATP, 3 225,8 et 885,6 M€, sont ceux du projet de loi de finances ; ils
+  vont à la Cnav, qui équilibre ces régimes, et non aux régimes eux-mêmes.
+  Le détail est dans la note
+  docs/feuille_de_route/189/2026-11-09-etape-2-le-texte-pour-l-electeur.md.
+reste: >-
+  Les crédits du programme 198 dans la loi de finances votée pour 2026, que
+  le dépôt ne porte pas ; et, pour la carte de la CTA, l'excédent de la
+  CNIEG constaté aux comptes de 2025 quand ils seront publiés.

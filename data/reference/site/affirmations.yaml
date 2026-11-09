@@ -60,56 +60,31 @@ affirmations:
     etat: verifiee
     controle: inversion_niveau_unique
 
-  - id: accueil.compte_a_votre_nom
+  # Le principe et les six arguments de l'accueil, arrêtés par le propriétaire
+  # le 9 novembre 2026 (action 189, étape 2). Ils remplacent l'ancien titre et
+  # les quatre engagements : « 18 % + 5 % », « le même taux pour tout le
+  # monde » (que la décision 48 du programme dément jusqu'à l'intégration de
+  # l'Agirc-Arrco) et « 100 % de ce que vous avez cotisé vous revient ».
+  - id: accueil.chaque_pension_vaut
     page: /
-    extrait: "Un compte à votre nom, en euros."
-    porte: le compte notionnel est individuel et tenu en euros
-    etat: verifiee
-    controle: compte_notionnel_en_euros
-
-  - id: accueil.pas_de_trimestres
-    # Redite au pied de « Le saviez-vous ? », après douze cartes de trimestres
-    # et de barèmes : le même contrôle la tient sur les deux pages.
-    page: [/, /saviez-vous]
-    extrait: "Pas de trimestres, pas de barèmes, pas de surprise."
-    porte: la pension notionnelle ne dépend que du capital et du diviseur
+    extrait: "Chaque pension vaut ce qui a été cotisé."
+    porte: la pension est le capital inscrit divisé par le diviseur, sans rien retenir ni ajouter
     etat: verifiee
     controle: pension_egale_capital_sur_diviseur
 
-  - id: accueil.garantie_montants
+  - id: accueil.egalite_de_traitement
     page: /
-    extrait: "d'allocation d'isolement. Payés par l'impôt, dès 65 ans."
+    extrait: "Une égalité de traitement pour tous"
+    porte: à capital égal, pension égale, quel que soit le statut
+    etat: verifiee
+    controle: a_capital_egal_pension_egale
+
+  - id: accueil.protection_des_plus_fragiles
+    page: /
+    extrait: "une protection pour les plus fragiles"
     porte: le plancher est par personne, majoré pour qui vit seul, servi à 65 ans
     etat: verifiee
     controle: garantie_individualisee
-
-  - id: accueil.capital_a_votre_nom
-    page: /
-    extrait: "plus un capital à votre nom"
-    porte: la proposition ajoute un pilier capitalisé à la répartition
-    etat: verifiee
-    controle: pilier_capitalise_en_plus
-
-  - id: accueil.meme_taux
-    page: /
-    extrait: "le même taux pour tout le monde"
-    porte: après la bascule, tous les statuts cotisent au taux unique
-    etat: verifiee
-    controle: taux_unique_apres_bascule
-
-  - id: accueil.qui_vous_appartiennent
-    page: /
-    extrait: "vous appartient et se transmet"
-    porte: le capital du pilier se transmet avant la liquidation
-    etat: verifiee
-    controle: capital_capitalise_transmissible
-
-  - id: accueil.effort_inchange
-    page: /
-    extrait: "à effort inchangé"
-    porte: 18 % + 5 % + 5 % rendus font l'effort d'aujourd'hui, 28 %
-    etat: verifiee
-    controle: effort_inchange
 
   - id: accueil.solde_releve
     page: /
@@ -118,19 +93,57 @@ affirmations:
     etat: verifiee
     controle: compte_notionnel_en_euros
 
-  - id: accueil.vous_revient
+  - id: accueil.places_a_votre_nom
     page: /
-    extrait: "de ce que vous avez cotisé vous revient"
-    porte: le capital entier est converti en pension, sans rien retenir
+    extrait: "placés à votre nom"
+    porte: la proposition ajoute un pilier capitalisé, à votre nom, à la répartition
+    etat: verifiee
+    controle: pilier_capitalise_en_plus
+
+  - id: accueil.revient_aux_heritiers
+    page: /
+    extrait: "si vous décédez avant votre retraite, elle revient à vos héritiers"
+    porte: le capital du pilier se transmet avant la liquidation
+    etat: verifiee
+    controle: capital_capitalise_transmissible
+
+  - id: accueil.sans_regarder_le_conjoint
+    page: /
+    extrait: "pour chacun, sans regarder les revenus du conjoint"
+    porte: le plancher est par personne, et le conjoint n'y entre pas
+    etat: verifiee
+    controle: garantie_individualisee
+
+  - id: accueil.enfants_auront_leur_retraite
+    page: /
+    extrait: "et petits-enfants auront leur retraite"
+    porte: après la bascule, le taux est le même chaque année, pour les générations à venir aussi
+    etat: verifiee
+    controle: taux_unique_apres_bascule
+
+  - id: accueil.regle_fixee
+    page: /
+    extrait: "fixée une fois pour toutes"
+    porte: après la bascule, le taux est le même chaque année
+    etat: verifiee
+    controle: taux_unique_apres_bascule
+
+  - id: accueil.memes_droits_pour_tous
+    page: /
+    extrait: "les mêmes droits pour tous"
+    porte: à capital égal, pension égale, quel que soit le statut
+    etat: verifiee
+    controle: a_capital_egal_pension_egale
+
+  - id: accueil.pas_de_trimestres
+    # La phrase était aussi le chapeau de l'accueil jusqu'au 9 novembre 2026 ;
+    # elle ne reste qu'au pied de « Le saviez-vous ? », après douze cartes de
+    # trimestres et de barèmes.
+    page: /saviez-vous
+    extrait: "Pas de trimestres, pas de barèmes, pas de surprise."
+    porte: la pension notionnelle ne dépend que du capital et du diviseur
     etat: verifiee
     controle: pension_egale_capital_sur_diviseur
-
-  - id: accueil.rapport_exact
-    page: /
-    extrait: "dans le rapport exact de ce que ça coûte"
-    porte: le diviseur est l'espérance de vie résiduelle, sans autre barème
-    etat: verifiee
-    controle: diviseur_est_l_esperance_de_vie
 
   - id: accueil.on_inscrit
     page: /

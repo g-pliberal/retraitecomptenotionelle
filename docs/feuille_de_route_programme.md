@@ -574,6 +574,11 @@ Le même jour, sur le message (chantier 8) :
     traitement. » La baisse se dit un clic plus loin, à la question « Ma
     retraite va-t-elle baisser ? » du site.
 
+    *Précisé encore le même jour, en relisant le texte de l'accueil
+    (action 189, étape 2)* : la seconde phrase devient « Une égalité de
+    traitement pour tous et une protection pour les plus fragiles. » ; le
+    site la porte sous son titre.
+
 ## Ce qui est écarté
 
 - **Une transition sans baisse nominale des pensions en cours** — bâtir le

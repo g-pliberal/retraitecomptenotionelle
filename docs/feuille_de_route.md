@@ -8128,15 +8128,15 @@ dans un module du calcul, avec son test, et la page le lit ; le site
 
 ### 189. Le site à la charte du parti, puis lisible par l'électeur — `en cours`
 
-**Reprise, au 8 novembre 2026.** L'étape 1 est faite : le site porte la
-charte du site « Fonction publique : les chiffres » du parti — la page
-claire, le bandeau et l'affiche de chaque page en pétrole, le logo et le nom
-du parti en tête, les titres en Jost, le safran pour ce qui compte, des
-cartes blanches arrondies, une palette des graphiques refaite pour le fond
-clair —, et `test_chaque_page_porte_la_charte_du_parti` la tient. Reste
-l'étape 2, le texte pour l'électeur, qui attend du propriétaire ce qu'il
-trouve le plus difficile à comprendre. Note :
-`189/2026-11-08-etape-1-la-charte-du-parti.md`.
+**Reprise, au 9 novembre 2026.** L'étape 1, la charte du parti, est faite.
+L'étape 2 a récrit l'accueil et Partager sur le texte que le propriétaire a
+arrêté le 9 novembre : « Chaque pension vaut ce qui a été cotisé. », six
+arguments avant le simulateur, deux cartes de constat (la SNCF et la RATP,
+la CTA) lues au paquet. Reste, sur son avis, le texte des autres pages, et ce
+qui attend le modèle ou une décision : la réversion gardée, la décision 89,
+les pensions qui montent, « En bref », la carte « Le taux », que la décision
+48 dément. Puis l'étape 3, au mainteneur de la copie du parti. Note :
+`189/2026-11-09-etape-2-le-texte-pour-l-electeur.md`.
 
 **D'où elle vient.** Le 8 novembre 2026, le propriétaire : « J'aimerais
 changer le style du site. C'est beaucoup mieux sur cet autre site que j'ai

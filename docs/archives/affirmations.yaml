@@ -132,3 +132,118 @@ affirmations:
       tenu au bit près. Ce que l'entrée portait reste sous
       `methode.le_moteur_du_site_fait_foi`, que le contrôle du même nom
       tient ; `portage_compare_aux_temoins` s'en est allé avec elle.
+
+  # Les quatre engagements de l'accueil, remplacés le 9 novembre 2026 par
+  # six arguments que le propriétaire a arrêtés (action 189, étape 2).
+  - id: accueil.compte_a_votre_nom
+    page: /
+    extrait: "Un compte à votre nom, en euros."
+    porte: le compte notionnel est individuel et tenu en euros
+    etat: verifiee
+    controle: compte_notionnel_en_euros
+    retiree_le: 2026-11-09
+    motif: >-
+      c'était la phrase en gras du chapeau de l'accueil ; le 9 novembre
+      2026, le chapeau devient « Une égalité de traitement pour tous et
+      une protection pour les plus fragiles. » (action 189, étape 2), et
+      le compte à votre nom, en euros, passe au premier des six
+      arguments. Le contrôle reste sous `accueil.solde_releve`.
+
+  - id: accueil.garantie_montants
+    page: /
+    extrait: "d'allocation d'isolement. Payés par l'impôt, dès 65 ans."
+    porte: le plancher est par personne, majoré pour qui vit seul, servi à 65 ans
+    etat: verifiee
+    controle: garantie_individualisee
+    retiree_le: 2026-11-09
+    motif: >-
+      le détail du premier des quatre engagements ; le 9 novembre 2026,
+      le plancher se dit au troisième des six arguments (action 189,
+      étape 2), « dès 65 ans, pour chacun, sans regarder les revenus du
+      conjoint », sous `accueil.sans_regarder_le_conjoint`, que le même
+      contrôle tient.
+
+  - id: accueil.capital_a_votre_nom
+    page: /
+    extrait: "plus un capital à votre nom"
+    porte: la proposition ajoute un pilier capitalisé à la répartition
+    etat: verifiee
+    controle: pilier_capitalise_en_plus
+    retiree_le: 2026-11-09
+    motif: >-
+      la promesse du deuxième des quatre engagements, « 18 % + 5 % » ;
+      le 9 novembre 2026, la part placée se dit « 5 % de votre salaire,
+      placés à votre nom » (action 189, étape 2), sous
+      `accueil.places_a_votre_nom`, que le même contrôle tient.
+
+  - id: accueil.meme_taux
+    page: /
+    extrait: "le même taux pour tout le monde"
+    porte: après la bascule, tous les statuts cotisent au taux unique
+    etat: verifiee
+    controle: taux_unique_apres_bascule
+    retiree_le: 2026-11-09
+    motif: >-
+      le détail du deuxième des quatre engagements, que la décision 48
+      du programme dément : le salarié du privé verse 25,83 % jusqu'à
+      l'intégration de l'Agirc-Arrco. Il quitte l'accueil le 9 novembre
+      2026 avec les six arguments (action 189, étape 2) ; « le taux ne
+      bouge pas » reste sous `accueil.taux_ne_bouge_pas`.
+
+  - id: accueil.qui_vous_appartiennent
+    page: /
+    extrait: "vous appartient et se transmet"
+    porte: le capital du pilier se transmet avant la liquidation
+    etat: verifiee
+    controle: capital_capitalise_transmissible
+    retiree_le: 2026-11-09
+    motif: >-
+      le détail du deuxième des quatre engagements ; le 9 novembre 2026,
+      la part placée « vous appartient » et ne revient aux héritiers
+      qu'avant la retraite (action 189, étape 2), sous
+      `accueil.revient_aux_heritiers`, que le même contrôle tient.
+
+  - id: accueil.effort_inchange
+    page: /
+    extrait: "à effort inchangé"
+    porte: 18 % + 5 % + 5 % rendus font l'effort d'aujourd'hui, 28 %
+    etat: verifiee
+    controle: effort_inchange
+    retiree_le: 2026-11-09
+    motif: >-
+      le détail du deuxième des quatre engagements, qui disait les 5 %
+      rendus en salaire ; il quitte l'accueil le 9 novembre 2026 avec
+      les six arguments (action 189, étape 2). La réponse sur la fiche
+      de paie dit encore les 5 % ; le contrôle reste sous les autres
+      entrées qui le nomment.
+
+  - id: accueil.vous_revient
+    page: /
+    extrait: "de ce que vous avez cotisé vous revient"
+    porte: le capital entier est converti en pension, sans rien retenir
+    etat: verifiee
+    controle: pension_egale_capital_sur_diviseur
+    retiree_le: 2026-11-09
+    motif: >-
+      le quatrième des quatre engagements, « 100 % de ce que vous avez
+      cotisé vous revient », que l'étude du site
+      (`docs/feuille_de_route/186/2026-11-08-site-etude.md`, question 4)
+      proposait de nuancer ou de retirer : en euros constants, le cadre
+      et le libéral nés à partir de 1980 reçoivent leur mise ou un peu
+      moins. Il quitte l'accueil le 9 novembre 2026 (action 189, étape
+      2) ; le contrôle tient le titre, sous
+      `accueil.chaque_pension_vaut`.
+
+  - id: accueil.rapport_exact
+    page: /
+    extrait: "dans le rapport exact de ce que ça coûte"
+    porte: le diviseur est l'espérance de vie résiduelle, sans autre barème
+    etat: verifiee
+    controle: diviseur_est_l_esperance_de_vie
+    retiree_le: 2026-11-09
+    motif: >-
+      le détail du quatrième des quatre engagements ; il quitte
+      l'accueil le 9 novembre 2026 avec eux (action 189, étape 2). La
+      réponse « À quel âge pourrai-je partir ? » dit encore le rapport
+      exact de ce que cela coûte ; le contrôle reste sous les autres
+      entrées qui le nomment.

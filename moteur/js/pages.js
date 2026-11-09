@@ -260,10 +260,10 @@ function arrondir(valeur, decimales) {
  * et moins pour un robot qui n'exécute pas le script.
  */
 export const DESCRIPTIONS = {
-  "/": "Le programme du Parti libéral français pour les retraites : un régime "
-    + "unique en comptes notionnels, un taux de 18 % pour tous, une garantie "
-    + "vieillesse individualisée — et le simulateur qui le chiffre, carrière "
-    + "par carrière, dans votre navigateur.",
+  "/": "Le programme du Parti libéral français pour les retraites : chaque "
+    + "pension vaut ce qui a été cotisé, sur un compte à votre nom, en euros, "
+    + "avec un plancher pour chacun dès 65 ans — et le simulateur qui le "
+    + "chiffre, carrière par carrière.",
   "/simuler": "Votre carrière calculée de quatre façons : le système actuel, et "
     + "les comptes notionnels appliqués depuis 1941 ou à partir de la "
     + "bascule. Tout se calcule dans votre navigateur, rien n'est envoyé.",
@@ -284,7 +284,8 @@ export const DESCRIPTIONS = {
     + "série et régime par régime.",
   "/partager": "Les chiffres du programme au format des réseaux sociaux, "
     + `1200 × 675, en filigrane ${g.SIGNATURE} : le plancher, le taux, `
-    + "le déficit, et l'appel au simulateur.",
+    + "le déficit, la SNCF et la RATP, les factures d'énergie, et l'appel au "
+    + "simulateur.",
   "/saviez-vous": "Douze règles du système de retraite actuel en une carte "
     + "chacune : les seuils, les cotisations sans droits, la réversion, les "
     + "caisses à part. Chaque carte cite le texte officiel qui la fonde.",
@@ -3104,6 +3105,15 @@ function cartePartage(nom, surtitre, chiffre, phrase, detail, classes = "",
  *
  * Les valeurs viennent du modèle, comme partout ailleurs : changer un
  * paramètre change les cartes.
+ *
+ * Deux cartes de constat s'y ajoutent le 9 novembre 2026, une information
+ * chacune, que le propriétaire a arrêtées (action 189, étape 2) : ce que l'État
+ * paie pour les retraites de la SNCF et de la RATP, et l'excédent que la CTA
+ * accumule à la caisse des industries électriques et gazières. Leurs montants
+ * sont des données, que le paquet porte (`constats`) : les crédits du
+ * programme 198 et la délibération de la CRE. La première ne dit pas que le
+ * privé paie pour eux : depuis 2025, la Cnav équilibre ces régimes fermés, et
+ * l'État la rembourse sur son budget (`docs/regimes.md`).
  */
 function partager(contexte) {
   const base = contexte.base;
@@ -3124,10 +3134,12 @@ function partager(contexte) {
   const comptes = contexte.comptes();
   const pib = pibDeConversion(comptes, solde.derniereAnnee);
   const auPibFin = auPib(comptes, solde.derniereAnnee);
+  const { credits_etat_sncf_ratp: credits, excedent_cnieg: excedent } =
+    contexte.paquet.constats;
 
   const tete = g.affiche(
     "Partager",
-    "Quatre cartes, "
+    "Six cartes, "
     + '<span class="cle-texte">prêtes à publier.</span>',
     "Un bouton par carte : l'image part au format des réseaux sociaux, "
     + "avec son message rédigé. "
@@ -3169,6 +3181,27 @@ function partager(contexte) {
       + `${g.milliards((depense - manque) * pib)}. `
       + "Source : COR, comptes du système de retraite.",
       "deficit",
+    ),
+    cartePartage(
+      "La SNCF et la RATP",
+      "Les régimes spéciaux",
+      `${g.nombre((credits.sncf_meur + credits.ratp_meur) / 1000, 1)} milliards d'euros`,
+      `C'est ce que vos impôts paient en ${credits.annee} pour les retraites de la `
+      + "SNCF et de la RATP.",
+      "Crédits de l'État, programme 198 du projet de loi de finances pour "
+      + `${credits.annee}.`,
+      "long",
+    ),
+    cartePartage(
+      "Les factures d'énergie",
+      "Sur vos factures d'énergie",
+      `${g.nombre(excedent.montant_md, 1)} milliards d'euros`,
+      "d'excédent dans une caisse de retraite que vos factures d'électricité et "
+      + "de gaz continuent de remplir.",
+      "La caisse des industries électriques et gazières, fin "
+      + `${excedent.annee}. Source : Commission de régulation de l'énergie, `
+      + "délibération n°\u00a02026-14.",
+      "long",
     ),
     cartePartage(
       "L'appel au simulateur",
@@ -16066,14 +16099,21 @@ function programme(contexte) {
     `<li><span class="rang">${index + 1}</span><span>${texte}</span></li>`
   )).join("");
 
-  // Le chapeau disait aussi comment le compte devient une pension : les trois
-  // gestes le disent un écran plus bas, en clair (action 173, étape 3).
+  // LE PRINCIPE, ET RIEN D'AUTRE. Le titre est l'élément de langage que le
+  // propriétaire a arrêté (décision 90 du programme), et le chapeau ce qu'il
+  // en a fait le 9 novembre 2026 : « Une égalité de traitement pour tous et
+  // une protection pour les plus fragiles. » La baisse n'y est pas : elle est
+  // un clic plus loin, à la question « Ma retraite va-t-elle baisser ? ». Le
+  // titre d'avant, « La seule retraite qui vous rend vraiment ce que vous avez
+  // cotisé », promettait une comparaison ; celui-ci dit une règle (action 189,
+  // étape 2). Le chapeau disait aussi comment le compte devient une pension :
+  // les trois gestes le disent un écran plus bas, en clair (action 173,
+  // étape 3).
   const tete = g.affiche(
     "Notre programme pour les retraites",
-    'La seule retraite qui vous rend <span class="cle-texte">vraiment</span> '
-    + "ce que vous avez cotisé",
-    '<strong class="cle-texte">Un compte à votre nom, en euros.</strong> '
-    + "Pas de trimestres, pas de barèmes, pas de surprise.",
+    'Chaque pension vaut <span class="cle-texte">ce qui a été cotisé</span>.',
+    '<strong class="cle-texte">Une égalité de traitement pour tous et une '
+    + "protection pour les plus fragiles.</strong>",
   );
 
   // UNE SEULE LISTE REPLIÉE, ET CHAQUE SUJET À UN SEUL ENDROIT. La page en
@@ -16092,14 +16132,18 @@ function programme(contexte) {
   // trimestres y renvoie, et le script de la page y pose le focus — d'où
   // `tabindex="-1"`, qu'un bloc sans lien ni champ n'a pas de naissance.
   //
+  // Les six arguments viennent avant le formulaire du simulateur : on lit
+  // d'abord ce que le programme apporte, puis on le calcule (le propriétaire,
+  // 9 novembre 2026).
+  //
   // Le texte se compose à la française au rendu (`g.typographier`) : il
   // s'écrit ici avec des espaces ordinaires.
   return g.typographier(`
 ${tete}
 
-${simulateurCourt(contexte)}
-
 ${engagements(contexte)}
+
+${simulateurCourt(contexte)}
 
 <div class="paire">
   <div id="le-calcul" tabindex="-1">
@@ -16554,90 +16598,84 @@ export const TAUX_ACTUEL_TOTAL = TAUX_ACTUEL_SALARIAL + TAUX_ACTUEL_PATRONAL;
 const AGE_OUVERTURE_GARANTIE = 65;
 
 /**
- * Les quatre engagements du programme, chiffrés, numérotés 01 à 04.
+ * Les six arguments du programme, numérotés 01 à 06, pour tous les électeurs.
  *
- * C'est la section qui porte le message, et elle a mis trois états à le porter.
- * D'abord quatre chiffres nus, qu'on lisait comme des statistiques orphelines ;
- * puis les mêmes sous un titre, qui redisait ce que le titre de la page disait
- * déjà ; enfin ceux-ci — numérotés, sur trois niveaux nets.
+ * C'est la section qui porte le message, et elle a mis quatre états à le
+ * porter. D'abord quatre chiffres nus, qu'on lisait comme des statistiques
+ * orphelines ; puis les mêmes sous un titre, qui redisait ce que le titre de la
+ * page disait déjà ; puis quatre engagements numérotés, sur trois niveaux nets,
+ * dont deux parlaient de taux (« 18 % + 5 % », « 100 % ») ; enfin ces six
+ * arguments, que le propriétaire a arrêtés le 9 novembre 2026, une
+ * information à la fois et sans mot de spécialiste : « On est trop technique,
+ * trop long, trop nerd. Il faut quelque chose qui donne envie à tous les
+ * électeurs » (action 189, étape 2).
  *
- * Les trois niveaux sont le fond de l'affaire. Le CHIFFRE en or attire l'œil ;
- * la PROMESSE en serif, en crème plein contraste, porte le message, et c'est
- * elle qui se perdait quand les cartes n'avaient que deux niveaux ; le DÉTAIL
- * technique, plus discret mais à 18 px — pas 15 —, répond à celui qui veut
- * savoir comment.
+ * Chacun dit sa condition quand il en a une, parce qu'une promesse fausse un
+ * jour est celle qu'on opposerait au programme. La part placée ne revient aux
+ * héritiers qu'avant la retraite : ensuite, elle est une rente. La même règle
+ * vaut dès la bascule pour le COMPTE, la complémentaire du privé gardant la
+ * sienne jusqu'à son intégration (décisions 40, 43 et 48). Le plancher est
+ * une avance reprise sur la succession : son lien ouvre la réponse qui le dit.
+ * « Une réforme tous les cinq ans » n'avait pas de source, et le tableau de la
+ * même page en compte une tous les huit ans : « des réformes à répétition ».
+ * Rien n'y promet qu'une pension ne baisse jamais (décision 11).
  *
- * Dans chaque carte, un ou deux passages en or, jamais plus : au-delà,
- * l'emphase ne désigne plus rien. Ils sont doublés d'un demi-gras, pour
- * survivre en niveaux de gris comme en daltonisme.
+ * Les trois niveaux restent le fond de l'affaire. Le REPÈRE en or attire
+ * l'œil ; la PROMESSE en serif porte le message ; le DÉTAIL, plus discret,
+ * répond à celui qui veut savoir comment, et manque quand il n'y a rien à
+ * ajouter. Dans chaque ligne, un passage en or au plus, doublé d'un
+ * demi-gras, pour survivre en niveaux de gris comme en daltonisme.
  *
- * Les quatre valeurs sont celles du MODÈLE, et non des nombres écrits ici :
- * changer `garantie_vieillesse_mensuelle` change la page.
+ * Les valeurs sont celles du MODÈLE, et non des nombres écrits ici : changer
+ * `garantie_vieillesse_mensuelle` change la page.
  */
 function engagements(contexte) {
   const base = contexte.base;
-  const taux = g.pourcentage(base.taux_cotisation_liberal, false, 0);
   const capitalise = g.pourcentage(base.taux_capitalisation_obligatoire, false, 0);
-  const volontaire = g.pourcentage(
-    tauxCapitalisationVolontaireApplique(base), false, 0,
-  );
   const garantie = base.garantie_vieillesse_mensuelle;
   const isolement = base.allocation_isolement_mensuelle;
   // Seul : la garantie plus l'allocation d'isolement. En couple : la garantie
   // pour chacun, et rien de plus — l'isolement ne se verse qu'à qui vit seul.
-  // « Une garantie de 800 € » était trompeur : c'est le plancher par personne,
-  // pas ce que touche quelqu'un.
   const seul = g.euros(garantie + isolement);
-  const couple = g.euros(2 * garantie);
+  const chacun = g.euros(garantie);
+  // L'avance reprise sur la succession se dit un clic plus loin, dans la
+  // réponse à « Et les petites retraites ? », que le routeur ouvre.
+  const finance = `<a href="${g.lien("/", "le-plancher")}" data-vers="le-plancher">`
+    + "Comment il est financé</a>";
 
-  const cartes = [
-    [seul,
-      "par mois au minimum, seul.<br>"
-      + `<strong class="cle-texte euros">${couple}</strong> pour un couple.`,
-      `<strong class="cle-texte">${g.euros(garantie)} par personne</strong>, `
-      + `plus <strong class="cle-texte">${g.euros(isolement)} d'allocation `
-      + "d'isolement</strong>. Payés par l'impôt, dès "
-      + `${AGE_OUVERTURE_GARANTIE} ans.`],
-    [`${taux} + ${capitalise}`,
-      "de cotisation : la répartition, "
-      + '<strong class="cle-texte">plus un capital à votre nom</strong>.',
-      // Le taux d'aujourd'hui D'ABORD, puis ce que deviennent ses points :
-      // 18 + 5 + 5. Dans l'autre ordre, trois pourcentages arrivaient avant le
-      // repère qui permet de les lire, et « restent 5 % rendus » laissait
-      // l'électeur chercher d'où ils restaient.
-      //
-      // La décomposition du taux d'aujourd'hui — 11,3 % + 16,7 % — est partie
-      // le 23 septembre 2026 : deux pourcentages de plus dans la carte qui en
-      // comptait déjà quatre, pour une précision que la fiche de paie du
-      // simulateur donne ligne à ligne.
-      //
-      // Ce que deviennent les 18 % et les 5 % ne se redit plus : le chiffre et
-      // la promesse de la carte le portent (action 173, étape 3).
-      `Aujourd'hui, ${g.pourcentage(TAUX_ACTUEL_TOTAL, false, 0)} du `
-      + "salaire brut d'un salarié du privé, employeur compris. Demain, "
-      + '<strong class="cle-texte">le même taux pour tout le monde</strong>. '
-      + "Le capital, placé sans risque, vous appartient et se transmet. "
-      + `Les ${volontaire} d'écart vous reviennent en salaire : vous pouvez `
-      + 'les épargner aussi, <strong class="cle-texte">à effort '
-      + "inchangé</strong>."],
+  const lignes = [
     ["1 compte",
-      '<strong class="cle-texte">en euros</strong>, lisible par tous.',
+      'à votre nom, <strong class="cle-texte">en euros</strong>.',
       'Vous voyez <strong class="cle-texte">votre solde comme sur un relevé '
       + "bancaire</strong>."],
-    ["100 %",
-      "de ce que vous avez cotisé "
-      + '<strong class="cle-texte">vous revient</strong>.',
-      "Partir plus tôt donne moins, plus tard donne plus — "
-      + '<strong class="cle-texte">dans le rapport exact de ce que ça '
-      + "coûte</strong>."],
+    [capitalise,
+      'de votre salaire, <strong class="cle-texte">placés à votre nom</strong>.',
+      "Cette part vous appartient : si vous décédez avant votre retraite, "
+      + '<strong class="cle-texte">elle revient à vos héritiers</strong>.'],
+    [seul,
+      "par mois au minimum pour qui vit seul, "
+      + `<strong class="cle-texte euros">${chacun}</strong> chacun en couple.`,
+      `Dès ${AGE_OUVERTURE_GARANTIE} ans, <strong class="cle-texte">pour chacun, `
+      + "sans regarder les revenus du conjoint</strong>. " + finance],
+    ["Vos enfants",
+      'et petits-enfants <strong class="cle-texte">auront leur retraite</strong>.',
+      "Leur cotisation ne montera pas, et la même règle fera leur pension."],
+    ["1 règle",
+      '<strong class="cle-texte">fixée une fois pour toutes</strong>, plutôt que '
+      + "des réformes à répétition.",
+      ""],
+    ["1\u202f€",
+      'cotisé, <strong class="cle-texte">les mêmes droits pour tous</strong>.',
+      `Cheminot ou salarié du privé : dès ${base.annee_bascule}, le même compte, `
+      + "à la même règle."],
   ];
-  const corps = cartes.map(([chiffre, promesse, detail], index) => (
+  const corps = lignes.map(([chiffre, promesse, detail], index) => (
     `<div class="engagement"><div class="rang">${String(index + 1).padStart(2, "0")}</div>`
     + `<div class="chiffre">${chiffre}</div>`
     + `<div class="promesse">${promesse}</div>`
-    + `<div class="detail">${detail}</div></div>`
+    + (detail ? `<div class="detail">${detail}</div>` : "") + "</div>"
   )).join("");
-  return '<section class="engagements" aria-label="Nos quatre engagements">'
+  return '<section class="engagements" aria-label="Six arguments">'
     + `<div class="grille">${corps}</div></section>`;
 }
 
@@ -16646,9 +16684,10 @@ function engagements(contexte) {
  *
  * Le site est un simulateur, et rien du premier écran ne le disait : le mot
  * n'était que dans un onglet, et le seul bouton arrivait au troisième écran —
- * au cinquième sur un téléphone. Il est maintenant SOUS LE TITRE, sur le
- * panneau crème, avant même les engagements : la preuve est mise à hauteur de
- * la promesse.
+ * au cinquième sur un téléphone. Il est venu SOUS LE TITRE, sur le panneau
+ * crème, avant même les engagements : la preuve à hauteur de la promesse.
+ * Depuis le 9 novembre 2026, il suit les six arguments, que l'électeur lit
+ * d'abord (action 189, étape 2).
  *
  * Quatre champs et non douze. Ce sont ceux qui suffisent à une carrière
  * ordinaire ; la page Simuler porte le formulaire entier, et le lien y mène

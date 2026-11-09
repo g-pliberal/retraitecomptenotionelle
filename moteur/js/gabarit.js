@@ -65,8 +65,8 @@ export const NOM_DU_PARTI = "Parti Libéral Français";
 export const IMAGE_APERCU = `${ADRESSE_CANONIQUE}moteur/apercu.png`;
 export const LARGEUR_APERCU = 1200;
 export const HAUTEUR_APERCU = 630;
-export const TEXTE_APERCU = "« La seule retraite qui vous rend vraiment ce que vous avez "
-  + "cotisé. » Le programme du Parti libéral français pour les retraites, et son simulateur.";
+export const TEXTE_APERCU = "« Chaque pension vaut ce qui a été cotisé. » Le programme "
+  + "du Parti libéral français pour les retraites, et son simulateur.";
 
 /**
  * Ce qui signe une carte exportée en image. Une image quittant le site n'a plus

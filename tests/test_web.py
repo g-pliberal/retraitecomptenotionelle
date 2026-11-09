@@ -4066,7 +4066,11 @@ BUDGETS_DE_LECTURE: dict[str, tuple[int, int, int]] = {
     # 372 lus : sous le texte prêt à coller, une note disait que le bouton de
     # chaque carte copie ce message, quand il copie celui de sa carte, et
     # l'encadré redisait le filigrane que le chapeau de l'affiche décrit.
-    "/partager": (340, 0, 0, 0),
+    # Relevée le 9 novembre 2026 (action 189, étape 2), de 340 à 440 mots : les
+    # deux cartes de constat que le propriétaire a ajoutées, la SNCF et la RATP,
+    # les factures d'énergie, portent 90 mots avec leur légende, leur source,
+    # leur barre et leur pied (430 lus).
+    "/partager": (440, 0, 0, 0),
     # Le saviez-vous ? en porte douze, rangées sous quatre titres : une
     # cinquantaine de mots par carte, barre de partage et pied compris. Ce
     # qui explique chaque règle, et le lien vers son texte, sont repliés sous
@@ -4301,7 +4305,8 @@ BUDGETS_DEPLIES: dict[str, int] = {
     # Partager ne replie rien : sa ligne est celle de son budget de lecture, et
     # elle dira si un dépliant y naît pour porter ce que la page a ôté
     # (action 173, étape 7).
-    "/partager": 340,
+    # Relevée avec son budget de lecture, le 9 novembre 2026 : deux cartes de plus.
+    "/partager": 440,
     # Le saviez-vous ? tout déplié : 1 229 mots le 24 octobre 2026 (action 173,
     # étape 7). Ce que dit le texte, sous une carte, redisait parfois la carte
     # elle-même : la rente du RAFP à partir du seuil, les quarante ans des TUC.
@@ -5196,7 +5201,7 @@ def test_chaque_carte_a_publier_part_d_un_bouton_et_non_d_une_capture():
     """
     corps = rendre("/partager", {})[1]
     cartes = re.findall(r'<figure class="carte">(.*?)</figure>', corps, re.S)
-    assert len(cartes) == 4, f"{len(cartes)} cartes, quatre attendues"
+    assert len(cartes) == 6, f"{len(cartes)} cartes, six attendues"
     for carte in cartes:
         assert carte.index("<figcaption>") < carte.index('class="cadre-carte"'), (
             "la légende nomme la carte, et se lit AVANT elle"
@@ -5211,6 +5216,52 @@ def test_chaque_carte_a_publier_part_d_un_bouton_et_non_d_une_capture():
     assert "captur" not in corps.lower(), (
         "la page invite encore à capturer l'écran : le bouton compose l'image"
     )
+
+
+def test_partager_porte_deux_cartes_de_constat_lues_aux_donnees():
+    """Deux cartes de constat, une information chacune, arrêtées par le
+    propriétaire le 9 novembre 2026 (action 189, étape 2).
+
+    La première dit ce que l'État paie en 2026 pour les retraites de la SNCF
+    et de la RATP : 3 225,8 et 885,6 M€ de crédits au programme 198 du projet
+    de loi de finances, soit 4,1 Md€. Elle ne dit pas que le privé paie pour
+    eux : depuis 2025, la Cnav équilibre ces régimes fermés, et l'État la
+    rembourse sur son budget (``docs/regimes.md``). La seconde dit l'excédent de
+    la caisse des industries électriques et gazières, que la CTA remplit sur
+    chaque facture d'électricité et de gaz : 2,2 Md€ estimés par la CRE à la
+    fin de 2025 (délibération n° 2026-14). Chacune porte sa source, puisqu'une
+    image qui quitte le site n'a plus rien autour d'elle."""
+    corps = rendre("/partager", {})[1]
+    cartes = {
+        _en_clair(nom): _en_clair(carte)
+        for nom, carte in re.findall(
+            r'<figure class="carte"><figcaption>(.*?)</figcaption>(.*?)</figure>', corps, re.S)
+    }
+    assert list(cartes) == ["Le plancher", "Le taux", "Le déficit", "La SNCF et la RATP",
+                            "Les factures d'énergie", "L'appel au simulateur"]
+    regimes = cartes["La SNCF et la RATP"]
+    for morceau in ("Les régimes spéciaux", "4,1 milliards d'euros",
+                    "C'est ce que vos impôts paient en 2026 pour les retraites de la SNCF "
+                    "et de la RATP.",
+                    "Crédits de l'État, programme 198 du projet de loi de finances pour 2026."):
+        assert morceau in regimes, morceau
+    assert "privé" not in regimes
+    energie = cartes["Les factures d'énergie"]
+    for morceau in ("Sur vos factures d'énergie", "2,2 milliards d'euros",
+                    "d'excédent dans une caisse de retraite que vos factures d'électricité "
+                    "et de gaz continuent de remplir.",
+                    "La caisse des industries électriques et gazières, fin 2025. Source : "
+                    "Commission de régulation de l'énergie, délibération n° 2026-14."):
+        assert morceau in energie, morceau
+    assert "Six cartes, prêtes à publier." in _en_clair(corps)
+    description = module("pages").DESCRIPTIONS["/partager"]
+    assert "la SNCF et la RATP" in description and "les factures d'énergie" in description
+
+
+def _en_clair(fragment: str) -> str:
+    """Le texte d'un fragment de page, sans balises ni espaces typographiques."""
+    texte = html.unescape(re.sub(r"<[^>]+>", "", fragment))
+    return " ".join(texte.replace(" ", " ").replace(" ", " ").split())
 
 
 def test_la_barre_de_partage_n_est_ecrite_qu_une_fois():

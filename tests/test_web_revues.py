@@ -712,14 +712,18 @@ def test_l_autocritique_de_la_page_cout_est_un_encart_de_vigilance():
 # -- action 29 : l'entrée, pour qui arrive du site du parti --------------------
 
 
-def test_l_accueil_ouvre_sur_le_simulateur_avant_les_engagements():
-    """Un visiteur doit savoir en dix secondes que le site est un simulateur,
-    et où cliquer.
+def test_l_accueil_ouvre_sur_ses_arguments_puis_sur_le_simulateur():
+    """Un visiteur lit d'abord ce que le programme lui apporte, puis peut le
+    calculer : le formulaire court du simulateur vient juste après les six
+    arguments.
 
     Depuis la refonte en affiche, ce n'est plus un bloc qui dit « simulez » et
-    renvoie ailleurs : c'est LE FORMULAIRE LUI-MÊME, court, en crème, posé sous
-    le titre et avant les quatre engagements. La preuve est à hauteur de la
-    promesse, et le premier écran ne demande plus de cliquer pour commencer.
+    renvoie ailleurs : c'est LE FORMULAIRE LUI-MÊME, court, en crème. Il était
+    posé sous le titre, avant les engagements, la preuve à hauteur de la
+    promesse. Le 9 novembre 2026, le propriétaire le fait passer après eux :
+    « On est trop technique, trop long, trop nerd. Il faut quelque chose qui
+    donne envie à tous les électeurs » ; le premier écran dit le principe et
+    ce qu'il apporte, et le formulaire suit (action 189, étape 2).
 
     Il est hors de tout dépliant, il porte l'adresse du simulateur, et le
     rappel du bas de page reste. Dans le cadre que le site du parti ouvre sur
@@ -730,10 +734,10 @@ def test_l_accueil_ouvre_sur_le_simulateur_avant_les_engagements():
     formulaire = visible.index('<form class="creme simulateur-court"')
     engagements = visible.index('<section class="engagements"')
     affiche = visible.index('<div class="affiche">')
-    assert affiche < formulaire < engagements
+    assert affiche < engagements < formulaire
     # Il soumet vers le simulateur, et ses champs sont ceux du grand
     # formulaire : c'est la même adresse qui les reçoit.
-    entete = visible[formulaire:engagements]
+    entete = visible[formulaire:visible.index("</form>", formulaire)]
     assert f'action="{g.lien("/simuler")}"' in entete
     assert "Et vous, ça donne combien" in entete
     # Les champs se lisent sur le corps brut : `_hors_depliants` vide les
@@ -745,6 +749,80 @@ def test_l_accueil_ouvre_sur_le_simulateur_avant_les_engagements():
     bouton = f'<a class="bouton" href="{g.lien("/simuler")}">'
     assert visible.count(bouton) == 1, "le rappel du bas de page a disparu"
     assert ".simulateur-court .grille" in FEUILLE_DE_STYLE
+
+
+def _en_clair(fragment: str) -> str:
+    """Le texte d'un fragment de page, sans balises ni espaces typographiques."""
+    texte = html.unescape(re.sub(r"<[^>]+>", "", fragment))
+    return " ".join(texte.replace(" ", " ").replace(" ", " ").split())
+
+
+#: Les six arguments de l'accueil, mot pour mot, tels que le propriétaire les a
+#: arrêtés le 9 novembre 2026 : le repère en or, la phrase, la précision. Les
+#: montants sont ceux de la garantie (décision 65 : 1 050 € seul, 800 € chacun
+#: en couple, à 65 ans) et de la part placée (5 %).
+ARGUMENTS_DE_L_ACCUEIL = [
+    ("1 compte", "à votre nom, en euros.",
+     "Vous voyez votre solde comme sur un relevé bancaire."),
+    ("5 %", "de votre salaire, placés à votre nom.",
+     "Cette part vous appartient : si vous décédez avant votre retraite, elle "
+     "revient à vos héritiers."),
+    ("1 050 €", "par mois au minimum pour qui vit seul, 800 € chacun en couple.",
+     "Dès 65 ans, pour chacun, sans regarder les revenus du conjoint. "
+     "Comment il est financé"),
+    ("Vos enfants", "et petits-enfants auront leur retraite.",
+     "Leur cotisation ne montera pas, et la même règle fera leur pension."),
+    ("1 règle", "fixée une fois pour toutes, plutôt que des réformes à répétition.", ""),
+    ("1 €", "cotisé, les mêmes droits pour tous.",
+     "Cheminot ou salarié du privé : dès 2026, le même compte, à la même règle."),
+]
+
+
+def test_l_accueil_dit_son_principe_puis_six_arguments_sans_jargon():
+    """« On est trop technique, trop long, trop nerd. Il faut quelque chose qui
+    donne envie à tous les électeurs » : le propriétaire, le 9 novembre 2026,
+    qui arrête le même jour ce que l'accueil dit d'abord, une information à la
+    fois (action 189, étape 2).
+
+    Le titre est le principe (décision 90 du programme), et le chapeau le dit
+    pour chacun ; la baisse n'y est pas, elle est un clic plus loin, à la
+    question « Ma retraite va-t-elle baisser ? ». Viennent six arguments, chacun
+    avec sa condition quand il en a une : la part placée ne revient aux
+    héritiers qu'avant la retraite ; la même règle vaut dès 2026 pour le
+    compte, la complémentaire du privé gardant la sienne jusqu'à son intégration
+    (décisions 40, 43 et 48) ; le plancher est une avance reprise sur la
+    succession, ce que dit la réponse à « Et les petites retraites ? », où mène
+    son lien. Aucun mot de spécialiste : ni notionnel, ni répartition, ni
+    scénario, ni valeur actuarielle."""
+    corps = rendre("/", {})[1]
+    affiche = re.search(r'<div class="affiche">(.*?)</div>', corps, re.S).group(1)
+    assert _en_clair(re.search(r"<h1>(.*?)</h1>", affiche, re.S).group(1)) == \
+        "Chaque pension vaut ce qui a été cotisé."
+    assert _en_clair(re.search(r'<p class="chapeau">(.*?)</p>', affiche, re.S).group(1)) == \
+        "Une égalité de traitement pour tous et une protection pour les plus fragiles."
+    section = re.search(r'<section class="engagements"[^>]*>(.*?)</section>', corps, re.S)
+    lignes = re.findall(
+        r'<div class="engagement"><div class="rang">(\d\d)</div>'
+        r'<div class="chiffre">(.*?)</div><div class="promesse">(.*?)</div>'
+        r'(?:<div class="detail">(.*?)</div>)?</div>', section.group(1), re.S)
+    assert [rang for rang, *_ in lignes] == ["01", "02", "03", "04", "05", "06"]
+    assert [tuple(_en_clair(partie) for partie in ligne[1:]) for ligne in lignes] == \
+        ARGUMENTS_DE_L_ACCUEIL
+    # « Comment il est financé » ouvre la réponse sur le plancher, sur la page.
+    assert 'data-vers="le-plancher"' in lignes[2][3]
+    assert 'id="le-plancher"' in corps
+    premier_ecran = _en_clair(affiche + section.group(1)).lower()
+    for jargon in ("notionnel", "répartition", "scénario", "actuariel"):
+        assert jargon not in premier_ecran, jargon
+    # L'image d'aperçu et son texte disent le même titre, et la description que
+    # lisent les moteurs de recherche le principe, sans jargon ni le taux de
+    # 18 % « pour tous », que le privé ne paiera qu'après l'intégration de sa
+    # complémentaire (décision 48).
+    assert g.TEXTE_APERCU.startswith("« Chaque pension vaut ce qui a été cotisé. »")
+    description = module("pages").DESCRIPTIONS["/"]
+    assert "chaque pension vaut ce qui a été cotisé" in description
+    for jargon in ("notionnel", "18 %", "répartition", "scénario", "actuariel"):
+        assert jargon not in description, jargon
 
 
 def test_le_formulaire_dit_que_l_exemple_est_rempli(page):
