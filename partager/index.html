@@ -70,6 +70,13 @@
   --accent: #00695f;
   --accent-doux: #e3f4f1;
   
+  --info-fond: #e3f4f1;
+  --info-bord: #00695f;
+  --alerte-fond: #fff6db;
+  --alerte-bord: #b8860b;
+  
+  --lueur-appel: #0f6f72;
+  
   --or: #e9c53d;
   --or-texte: #003340;
   --sur-or: #00242e;
@@ -129,7 +136,7 @@
   --titres: "Jost", "Futura", "Century Gothic", "Avenir Next", system-ui, sans-serif;
   --serif: var(--titres);
 }
-header.bandeau, .affiche, .carte-partage, .zone-petrole {
+header.bandeau, .affiche, .carte-partage, .carte-appel, .zone-petrole {
   color-scheme: dark;
   --fond: #003340;
   --fond-carte: #00242e;
@@ -290,13 +297,14 @@ h1 {
 }
 h2 {
   font-family: var(--titres); font-size: var(--t-intertitre); line-height: 1.15;
-  margin: 3rem 0 1rem; font-weight: 600; color: var(--titre);
+  margin: 3rem 0 1rem; font-weight: 700; color: var(--titre);
 }
 .serif {
   font-family: var(--titres);
   font-weight: 500; text-transform: none; letter-spacing: 0;
   line-height: 1.15;
 }
+:is(h2, h3).serif { font-weight: 700; }
 p { margin: 0.75rem 0; max-width: 46rem; }
 a {
   color: var(--lien); text-decoration-color: var(--trait-champ);
@@ -304,14 +312,16 @@ a {
 }
 a:hover { text-decoration-color: var(--or); }
 .surtitre {
-  margin: 0 0 1rem; font-size: var(--t-texte); font-weight: 500;
-  color: var(--texte-doux); line-height: 1.3;
+  margin: 0 0 0.5rem; font-family: var(--titres); font-size: var(--t-petit);
+  font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--accent); line-height: 1.3;
   display: flex; align-items: center; gap: 0.5rem;
 }
 .surtitre::before {
   content: ""; flex: none; width: 1.5rem; height: 4px;
   background: var(--or); border-radius: 2px;
 }
+.surtitre + h2 { margin-top: 0; }
 .chapeau {
   font-size: var(--t-lead); line-height: 1.5;
   color: var(--texte-doux); max-width: 46rem; margin: 1.25rem 0 0;
@@ -328,11 +338,25 @@ a:hover { text-decoration-color: var(--or); }
     linear-gradient(to bottom, rgb(0 51 64 / 0), var(--petrole)),
     linear-gradient(90deg, var(--petrole) 40%, var(--lueur));
 }
-.affiche .surtitre {
-  margin-bottom: 0.5rem; font-family: var(--titres); font-size: var(--t-petit);
-  font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;
-  color: var(--or-texte);
+.affiche .surtitre { letter-spacing: 0.1em; color: var(--or-texte); }
+.tranche {
+  position: relative; isolation: isolate;
+  padding: clamp(2rem, 6vw, 3rem) 0;
 }
+.tranche.alt {
+  background-color: var(--fond-appui); --fond-defilant: var(--fond-appui);
+}
+.tranche.alt::before {
+  content: ""; position: absolute; z-index: -1;
+  top: 0; bottom: 0; left: calc(50% - 50vw); right: calc(50% - 50vw);
+  background-color: var(--fond-appui);
+}
+:not(.tranche, .affiche) + .tranche { margin-top: clamp(2rem, 6vw, 3rem); }
+.tranche > :first-child { margin-top: 0; }
+.tranche > :last-child { margin-bottom: 0; }
+.affiche + .tranche:not(.alt) { padding-top: 0; }
+.affiche:has(+ .tranche.alt) { margin-bottom: 0; }
+main:has(> .tranche:last-child) + footer { margin-top: 0; }
 .affiche h1 .cle-texte {
   color: inherit; font-weight: inherit;
   background: linear-gradient(transparent 62%, rgb(233 197 61 / 0.55) 62%);
@@ -346,9 +370,10 @@ h1 .cle-texte, h2 .cle-texte { font-weight: inherit; }
   box-shadow: var(--ombre);
 }
 .note {
-  border-left: 4px solid var(--or); background: var(--fond-carte);
+  border-left: 5px solid var(--info-bord); background: var(--info-fond);
   padding: 0.75rem 1rem; margin: 1.5rem 0; font-size: var(--t-petit);
   border-radius: 0 var(--rayon-petit) var(--rayon-petit) 0;
+  --fond-defilant: var(--info-fond);
 }
 .simulateur-court .grille {
   display: grid;
@@ -358,9 +383,9 @@ h1 .cle-texte, h2 .cle-texte { font-weight: inherit; }
 }
 .simulateur-court .grille button { white-space: nowrap; }
 .encadre {
-  border: 2px solid var(--or); border-radius: var(--rayon);
+  border: 1px solid var(--trait); border-radius: var(--rayon);
   background: var(--fond-carte); padding: clamp(1.25rem, 4vw, 2rem);
-  margin: 1.5rem 0;
+  margin: 1.5rem 0; box-shadow: var(--ombre);
 }
 .encadre > :first-child { margin-top: 0; }
 .encadre > :last-child { margin-bottom: 0; }
@@ -496,7 +521,7 @@ details.section > summary:hover { color: var(--or-texte); }
   background-size: 2.5rem 100%, 2.5rem 100%, 0.9rem 100%, 0.9rem 100%;
   background-attachment: local, local, scroll, scroll;
 }
-.carte, .note, .plan, .erreur, .cadre-carte, section.cle {
+.carte, .plan, .erreur, .cadre-carte, section.cle {
   --fond-defilant: var(--fond-carte);
 }
 table { border-collapse: collapse; width: 100%; font-size: var(--t-texte);
@@ -649,7 +674,7 @@ table[data-pli="fiche"][data-plie] tbody td[data-titre]::before {
 }
 .points .point > h2 {
   margin: 0 0 0.5rem; font-family: var(--titres); font-size: 1.25rem;
-  font-weight: 600; line-height: 1.25;
+  font-weight: 700; line-height: 1.25;
 }
 .points .point > p { margin: 0; font-size: 1rem; color: var(--texte-doux); }
 section.cle {
@@ -661,7 +686,7 @@ section.cle {
 }
 section.cle > :is(h2, h3) {
   margin: 0; font-family: var(--titres); font-size: clamp(1.375rem, 3vw, 1.75rem);
-  font-weight: 600; line-height: 1.2; letter-spacing: -0.01em; color: var(--titre);
+  font-weight: 700; line-height: 1.2; letter-spacing: -0.01em; color: var(--titre);
 }
 section.cle > .reponse {
   font-size: 1.1875rem; line-height: 1.5; max-width: 46rem; margin: 0.5rem 0 0.2rem;
@@ -842,7 +867,7 @@ section.cle > .source {
 }
 .carte-partage.claire { background: var(--creme); color: var(--sur-creme); }
 .carte-partage .surtitre {
-  margin: 0; font-size: 13px; font-size: 2.167cqw; font-weight: 700;
+  margin: 0; font-family: inherit; font-size: 13px; font-size: 2.167cqw; font-weight: 700;
   letter-spacing: 0.14em; text-transform: uppercase; color: var(--or-texte);
   line-height: 1;
 }
@@ -1035,9 +1060,9 @@ body.calcul-en-cours::after {
 <main id="contenu" tabindex="-1" data-prerendu="/partager">
 <div class="affiche"><p class="surtitre">Partager</p><h1>Six cartes, <span class="cle-texte">prêtes à publier.</span></h1><p class="chapeau">Un bouton par carte : l'image part au format des réseaux sociaux, avec son message rédigé. <strong class="cle-texte">@pliberalfr</strong> y est posé en filigrane, en travers : le recadrer revient à recadrer la carte.</p></div>
 
-<div class="cartes"><figure class="carte"><figcaption>Le plancher</figcaption><div class="cadre-carte"><div class="carte-partage"><p class="surtitre">Notre programme pour les retraites</p><div><div class="chiffre">1 050 €</div><div class="phrase">par mois au minimum, pour une personne seule.<br>1 600 € pour un couple.</div><div class="detail">800 € par personne, plus 250 € d'allocation d'isolement. Payés par l'impôt, dès 65 ans.</div></div><div class="pied"><span class="compte">@pliberalfr</span><span class="adresse">partiliberalfrancais.fr/#simulateur</span></div></div></div><p class="partage"><button type="button" class="partager"><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><line x1="8.59" x2="15.42" y1="13.51" y2="17.49" /><line x1="15.41" x2="8.59" y1="6.51" y2="10.49" /></svg><span>Partager</span></button><button type="button" class="partager-x">Publier sur X</button><span class="etat" role="status"></span><textarea class="repli" name="message" hidden readonly rows="3" aria-label="Texte à copier à la main"></textarea></p></figure><figure class="carte"><figcaption>Le taux</figcaption><div class="cadre-carte"><div class="carte-partage"><p class="surtitre">Baisse des prélèvements</p><div><div class="chiffre">18 % + 5 %</div><div class="phrase">de cotisation retraite, pour tout le monde.</div><div class="detail">28 % aujourd'hui pour un salarié du privé (11,3 % + 16,7 %). Les 5 % rendus peuvent aller au même compte : 28 % en tout, pour une retraite qui vous appartient.</div></div><div class="pied"><span class="compte">@pliberalfr</span><span class="adresse">partiliberalfrancais.fr/#simulateur</span></div></div></div><p class="partage"><button type="button" class="partager"><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><line x1="8.59" x2="15.42" y1="13.51" y2="17.49" /><line x1="15.41" x2="8.59" y1="6.51" y2="10.49" /></svg><span>Partager</span></button><button type="button" class="partager-x">Publier sur X</button><span class="etat" role="status"></span><textarea class="repli" name="message" hidden readonly rows="3" aria-label="Texte à copier à la main"></textarea></p></figure><figure class="carte"><figcaption>Le déficit</figcaption><div class="cadre-carte"><div class="carte-partage deficit"><p class="surtitre">Ce que le système actuel ne paie plus</p><div><div class="chiffre">2,4 points de PIB</div><div class="phrase">soit 71 Md € par an au PIB de 2025 : l'écart à combler en 2070, sans réforme.</div><div class="detail">15,3 % du PIB de dépenses, 458 Md €, contre 12,9 % de ressources, 386 Md €. Source : COR, comptes du système de retraite.</div></div><div class="pied"><span class="compte">@pliberalfr</span><span class="adresse">partiliberalfrancais.fr/#simulateur</span></div></div></div><p class="partage"><button type="button" class="partager"><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><line x1="8.59" x2="15.42" y1="13.51" y2="17.49" /><line x1="15.41" x2="8.59" y1="6.51" y2="10.49" /></svg><span>Partager</span></button><button type="button" class="partager-x">Publier sur X</button><span class="etat" role="status"></span><textarea class="repli" name="message" hidden readonly rows="3" aria-label="Texte à copier à la main"></textarea></p></figure><figure class="carte"><figcaption>La SNCF et la RATP</figcaption><div class="cadre-carte"><div class="carte-partage long"><p class="surtitre">Les régimes spéciaux</p><div><div class="chiffre">4,1 milliards d'euros</div><div class="phrase">C'est ce que vos impôts paient en 2026 pour les retraites de la SNCF et de la RATP.</div><div class="detail">Crédits de l'État, programme 198 du projet de loi de finances pour 2026.</div></div><div class="pied"><span class="compte">@pliberalfr</span><span class="adresse">partiliberalfrancais.fr/#simulateur</span></div></div></div><p class="partage"><button type="button" class="partager"><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><line x1="8.59" x2="15.42" y1="13.51" y2="17.49" /><line x1="15.41" x2="8.59" y1="6.51" y2="10.49" /></svg><span>Partager</span></button><button type="button" class="partager-x">Publier sur X</button><span class="etat" role="status"></span><textarea class="repli" name="message" hidden readonly rows="3" aria-label="Texte à copier à la main"></textarea></p></figure><figure class="carte"><figcaption>Les factures d'énergie</figcaption><div class="cadre-carte"><div class="carte-partage long"><p class="surtitre">Sur vos factures d'énergie</p><div><div class="chiffre">2,2 milliards d'euros</div><div class="phrase">d'excédent dans une caisse de retraite que vos factures d'électricité et de gaz continuent de remplir.</div><div class="detail">La caisse des industries électriques et gazières, fin 2025. Source : Commission de régulation de l'énergie, délibération n° 2026-14.</div></div><div class="pied"><span class="compte">@pliberalfr</span><span class="adresse">partiliberalfrancais.fr/#simulateur</span></div></div></div><p class="partage"><button type="button" class="partager"><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><line x1="8.59" x2="15.42" y1="13.51" y2="17.49" /><line x1="15.41" x2="8.59" y1="6.51" y2="10.49" /></svg><span>Partager</span></button><button type="button" class="partager-x">Publier sur X</button><span class="etat" role="status"></span><textarea class="repli" name="message" hidden readonly rows="3" aria-label="Texte à copier à la main"></textarea></p></figure><figure class="carte"><figcaption>L'appel au simulateur</figcaption><div class="cadre-carte"><div class="carte-partage claire appel"><p class="surtitre">Le simulateur</p><div><div class="chiffre">Et vous, ça donne combien ?</div><div class="phrase">Votre carrière, calculée quatre fois : les règles d'aujourd'hui, et les nôtres.</div><div class="detail">Modèle ouvert, données publiques. Tout se calcule dans votre navigateur : rien n'est envoyé.</div></div><div class="pied"><span class="compte">@pliberalfr</span><span class="adresse">partiliberalfrancais.fr/#simulateur</span></div></div></div><p class="partage"><button type="button" class="partager"><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><line x1="8.59" x2="15.42" y1="13.51" y2="17.49" /><line x1="15.41" x2="8.59" y1="6.51" y2="10.49" /></svg><span>Partager</span></button><button type="button" class="partager-x">Publier sur X</button><span class="etat" role="status"></span><textarea class="repli" name="message" hidden readonly rows="3" aria-label="Texte à copier à la main"></textarea></p></figure></div>
+<div class="tranche"><div class="cartes"><figure class="carte"><figcaption>Le plancher</figcaption><div class="cadre-carte"><div class="carte-partage"><p class="surtitre">Notre programme pour les retraites</p><div><div class="chiffre">1 050 €</div><div class="phrase">par mois au minimum, pour une personne seule.<br>1 600 € pour un couple.</div><div class="detail">800 € par personne, plus 250 € d'allocation d'isolement. Payés par l'impôt, dès 65 ans.</div></div><div class="pied"><span class="compte">@pliberalfr</span><span class="adresse">partiliberalfrancais.fr/#simulateur</span></div></div></div><p class="partage"><button type="button" class="partager"><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><line x1="8.59" x2="15.42" y1="13.51" y2="17.49" /><line x1="15.41" x2="8.59" y1="6.51" y2="10.49" /></svg><span>Partager</span></button><button type="button" class="partager-x">Publier sur X</button><span class="etat" role="status"></span><textarea class="repli" name="message" hidden readonly rows="3" aria-label="Texte à copier à la main"></textarea></p></figure><figure class="carte"><figcaption>Le taux</figcaption><div class="cadre-carte"><div class="carte-partage"><p class="surtitre">Baisse des prélèvements</p><div><div class="chiffre">18 % + 5 %</div><div class="phrase">de cotisation retraite, pour tout le monde.</div><div class="detail">28 % aujourd'hui pour un salarié du privé (11,3 % + 16,7 %). Les 5 % rendus peuvent aller au même compte : 28 % en tout, pour une retraite qui vous appartient.</div></div><div class="pied"><span class="compte">@pliberalfr</span><span class="adresse">partiliberalfrancais.fr/#simulateur</span></div></div></div><p class="partage"><button type="button" class="partager"><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><line x1="8.59" x2="15.42" y1="13.51" y2="17.49" /><line x1="15.41" x2="8.59" y1="6.51" y2="10.49" /></svg><span>Partager</span></button><button type="button" class="partager-x">Publier sur X</button><span class="etat" role="status"></span><textarea class="repli" name="message" hidden readonly rows="3" aria-label="Texte à copier à la main"></textarea></p></figure><figure class="carte"><figcaption>Le déficit</figcaption><div class="cadre-carte"><div class="carte-partage deficit"><p class="surtitre">Ce que le système actuel ne paie plus</p><div><div class="chiffre">2,4 points de PIB</div><div class="phrase">soit 71 Md € par an au PIB de 2025 : l'écart à combler en 2070, sans réforme.</div><div class="detail">15,3 % du PIB de dépenses, 458 Md €, contre 12,9 % de ressources, 386 Md €. Source : COR, comptes du système de retraite.</div></div><div class="pied"><span class="compte">@pliberalfr</span><span class="adresse">partiliberalfrancais.fr/#simulateur</span></div></div></div><p class="partage"><button type="button" class="partager"><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><line x1="8.59" x2="15.42" y1="13.51" y2="17.49" /><line x1="15.41" x2="8.59" y1="6.51" y2="10.49" /></svg><span>Partager</span></button><button type="button" class="partager-x">Publier sur X</button><span class="etat" role="status"></span><textarea class="repli" name="message" hidden readonly rows="3" aria-label="Texte à copier à la main"></textarea></p></figure><figure class="carte"><figcaption>La SNCF et la RATP</figcaption><div class="cadre-carte"><div class="carte-partage long"><p class="surtitre">Les régimes spéciaux</p><div><div class="chiffre">4,1 milliards d'euros</div><div class="phrase">C'est ce que vos impôts paient en 2026 pour les retraites de la SNCF et de la RATP.</div><div class="detail">Crédits de l'État, programme 198 du projet de loi de finances pour 2026.</div></div><div class="pied"><span class="compte">@pliberalfr</span><span class="adresse">partiliberalfrancais.fr/#simulateur</span></div></div></div><p class="partage"><button type="button" class="partager"><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><line x1="8.59" x2="15.42" y1="13.51" y2="17.49" /><line x1="15.41" x2="8.59" y1="6.51" y2="10.49" /></svg><span>Partager</span></button><button type="button" class="partager-x">Publier sur X</button><span class="etat" role="status"></span><textarea class="repli" name="message" hidden readonly rows="3" aria-label="Texte à copier à la main"></textarea></p></figure><figure class="carte"><figcaption>Les factures d'énergie</figcaption><div class="cadre-carte"><div class="carte-partage long"><p class="surtitre">Sur vos factures d'énergie</p><div><div class="chiffre">2,2 milliards d'euros</div><div class="phrase">d'excédent dans une caisse de retraite que vos factures d'électricité et de gaz continuent de remplir.</div><div class="detail">La caisse des industries électriques et gazières, fin 2025. Source : Commission de régulation de l'énergie, délibération n° 2026-14.</div></div><div class="pied"><span class="compte">@pliberalfr</span><span class="adresse">partiliberalfrancais.fr/#simulateur</span></div></div></div><p class="partage"><button type="button" class="partager"><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><line x1="8.59" x2="15.42" y1="13.51" y2="17.49" /><line x1="15.41" x2="8.59" y1="6.51" y2="10.49" /></svg><span>Partager</span></button><button type="button" class="partager-x">Publier sur X</button><span class="etat" role="status"></span><textarea class="repli" name="message" hidden readonly rows="3" aria-label="Texte à copier à la main"></textarea></p></figure><figure class="carte"><figcaption>L'appel au simulateur</figcaption><div class="cadre-carte"><div class="carte-partage claire appel"><p class="surtitre">Le simulateur</p><div><div class="chiffre">Et vous, ça donne combien ?</div><div class="phrase">Votre carrière, calculée quatre fois : les règles d'aujourd'hui, et les nôtres.</div><div class="detail">Modèle ouvert, données publiques. Tout se calcule dans votre navigateur : rien n'est envoyé.</div></div><div class="pied"><span class="compte">@pliberalfr</span><span class="adresse">partiliberalfrancais.fr/#simulateur</span></div></div></div><p class="partage"><button type="button" class="partager"><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><line x1="8.59" x2="15.42" y1="13.51" y2="17.49" /><line x1="15.41" x2="8.59" y1="6.51" y2="10.49" /></svg><span>Partager</span></button><button type="button" class="partager-x">Publier sur X</button><span class="etat" role="status"></span><textarea class="repli" name="message" hidden readonly rows="3" aria-label="Texte à copier à la main"></textarea></p></figure></div></div>
 
-<div class="paire">
+<div class="tranche alt"><div class="paire">
   <div>
     <h2 style="margin-top:0">Texte prêt à coller</h2>
     <p>« Un minimum de 1 050 €/mois, 18 % de
@@ -1053,7 +1078,7 @@ body.calcul-en-cours::after {
     même barre <span class="cle-texte">Partager</span> compose son image,
     filigrane compris, et son message.</p>
   </div>
-</div>
+</div></div>
 </main>
 <footer>
 <div class="interieur">

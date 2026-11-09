@@ -70,6 +70,13 @@
   --accent: #00695f;
   --accent-doux: #e3f4f1;
   
+  --info-fond: #e3f4f1;
+  --info-bord: #00695f;
+  --alerte-fond: #fff6db;
+  --alerte-bord: #b8860b;
+  
+  --lueur-appel: #0f6f72;
+  
   --or: #e9c53d;
   --or-texte: #003340;
   --sur-or: #00242e;
@@ -129,7 +136,7 @@
   --titres: "Jost", "Futura", "Century Gothic", "Avenir Next", system-ui, sans-serif;
   --serif: var(--titres);
 }
-header.bandeau, .affiche, .carte-partage, .zone-petrole {
+header.bandeau, .affiche, .carte-partage, .carte-appel, .zone-petrole {
   color-scheme: dark;
   --fond: #003340;
   --fond-carte: #00242e;
@@ -290,15 +297,16 @@ h1 {
 }
 h2 {
   font-family: var(--titres); font-size: var(--t-intertitre); line-height: 1.15;
-  margin: 3rem 0 1rem; font-weight: 600; color: var(--titre);
+  margin: 3rem 0 1rem; font-weight: 700; color: var(--titre);
 }
-h3 { font-size: var(--t-lead); margin: 2rem 0 0.5rem; font-weight: 600; }
+h3 { font-size: var(--t-lead); margin: 2rem 0 0.5rem; font-weight: 700; }
 h4 { font-weight: 500; }
 .serif {
   font-family: var(--titres);
   font-weight: 500; text-transform: none; letter-spacing: 0;
   line-height: 1.15;
 }
+:is(h2, h3).serif { font-weight: 700; }
 p { margin: 0.75rem 0; max-width: 46rem; }
 a {
   color: var(--lien); text-decoration-color: var(--trait-champ);
@@ -306,14 +314,16 @@ a {
 }
 a:hover { text-decoration-color: var(--or); }
 .surtitre {
-  margin: 0 0 1rem; font-size: var(--t-texte); font-weight: 500;
-  color: var(--texte-doux); line-height: 1.3;
+  margin: 0 0 0.5rem; font-family: var(--titres); font-size: var(--t-petit);
+  font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--accent); line-height: 1.3;
   display: flex; align-items: center; gap: 0.5rem;
 }
 .surtitre::before {
   content: ""; flex: none; width: 1.5rem; height: 4px;
   background: var(--or); border-radius: 2px;
 }
+.surtitre + h2 { margin-top: 0; }
 .chapeau {
   font-size: var(--t-lead); line-height: 1.5;
   color: var(--texte-doux); max-width: 46rem; margin: 1.25rem 0 0;
@@ -330,11 +340,46 @@ a:hover { text-decoration-color: var(--or); }
     linear-gradient(to bottom, rgb(0 51 64 / 0), var(--petrole)),
     linear-gradient(90deg, var(--petrole) 40%, var(--lueur));
 }
-.affiche .surtitre {
-  margin-bottom: 0.5rem; font-family: var(--titres); font-size: var(--t-petit);
-  font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;
-  color: var(--or-texte);
+.affiche .surtitre { letter-spacing: 0.1em; color: var(--or-texte); }
+.affiche .actions { margin-top: 1.25rem; gap: 0.75rem; }
+a.bouton.clair {
+  background-color: transparent; color: #fff;
+  border-color: rgb(255 255 255 / 0.55);
 }
+a.bouton.clair:hover {
+  background-color: rgb(255 255 255 / 0.1); border-color: #fff; opacity: 1;
+}
+.tranche {
+  position: relative; isolation: isolate;
+  padding: clamp(2rem, 6vw, 3rem) 0;
+}
+.tranche.alt {
+  background-color: var(--fond-appui); --fond-defilant: var(--fond-appui);
+}
+.tranche.alt::before {
+  content: ""; position: absolute; z-index: -1;
+  top: 0; bottom: 0; left: calc(50% - 50vw); right: calc(50% - 50vw);
+  background-color: var(--fond-appui);
+}
+:not(.tranche, .affiche) + .tranche { margin-top: clamp(2rem, 6vw, 3rem); }
+.tranche > :first-child { margin-top: 0; }
+.tranche > :last-child { margin-bottom: 0; }
+.affiche + .tranche:not(.alt) { padding-top: 0; }
+.affiche:has(+ .tranche.alt) { margin-bottom: 0; }
+main:has(> .tranche:last-child) + footer { margin-top: 0; }
+.carte-appel {
+  position: relative; isolation: isolate; overflow: hidden;
+  border-radius: var(--rayon); margin: 2rem 0 0;
+  padding: clamp(1.25rem, 1rem + 2vw, 2.25rem);
+}
+.carte-appel::before {
+  content: ""; position: absolute; z-index: -1; inset: 0;
+  background: radial-gradient(circle at 88% 30%, var(--lueur-appel) 0%, var(--petrole) 60%);
+}
+.carte-appel .surtitre { color: var(--or-texte); }
+.carte-appel h2 { margin: 0; }
+.carte-appel p { color: var(--bandeau-doux); }
+.carte-appel > p:not([class]) { margin: 0.5rem 0 0; }
 .affiche h1 .cle-texte {
   color: inherit; font-weight: inherit;
   background: linear-gradient(transparent 62%, rgb(233 197 61 / 0.55) 62%);
@@ -348,9 +393,10 @@ h1 .cle-texte, h2 .cle-texte { font-weight: inherit; }
   box-shadow: var(--ombre);
 }
 .note {
-  border-left: 4px solid var(--or); background: var(--fond-carte);
+  border-left: 5px solid var(--info-bord); background: var(--info-fond);
   padding: 0.75rem 1rem; margin: 1.5rem 0; font-size: var(--t-petit);
   border-radius: 0 var(--rayon-petit) var(--rayon-petit) 0;
+  --fond-defilant: var(--info-fond);
 }
 .note.resume { font-size: 1rem; }
 .discret { color: var(--texte-tres-doux); font-size: var(--t-petit); }
@@ -498,7 +544,7 @@ details.section > .dedans > h4,
   background-size: 2.5rem 100%, 2.5rem 100%, 0.9rem 100%, 0.9rem 100%;
   background-attachment: local, local, scroll, scroll;
 }
-.carte, .note, .plan, .erreur, .cadre-carte, section.cle {
+.carte, .plan, .erreur, .cadre-carte, section.cle {
   --fond-defilant: var(--fond-carte);
 }
 table { border-collapse: collapse; width: 100%; font-size: var(--t-texte);
@@ -587,26 +633,21 @@ table[data-pli="fiche"][data-plie] tbody td[data-titre]::before {
 }
 .plan {
   background: var(--fond-carte); border: 1px solid var(--trait);
-  border-left: 4px solid var(--or); border-radius: 0 var(--rayon) var(--rayon) 0;
-  padding: 1rem 1.25rem; margin: 1.5rem 0; font-size: var(--t-petit);
-  box-shadow: var(--ombre);
+  border-radius: var(--rayon); box-shadow: var(--ombre);
+  padding: 1rem 1.25rem 0.25rem; margin: 1.5rem 0 2rem;
 }
 .plan .etiquette {
-  margin: 0 0 0.5rem; font-size: var(--t-petit);
-  color: var(--texte-doux); font-weight: 600;
+  margin: 0 0 0.25rem; font-family: var(--titres); font-size: var(--t-texte);
+  color: var(--titre); font-weight: 700;
 }
 .plan ol {
   margin: 0; padding: 0; list-style: none;
-  display: flex; flex-wrap: wrap; gap: 0.5rem;
+  display: flex; flex-wrap: wrap; gap: 0 1.25rem;
 }
 .plan a {
-  color: var(--texte); text-decoration: none;
-  font-size: var(--t-petit); font-weight: 500;
+  font-size: var(--t-petit);
   display: inline-flex; align-items: center; min-height: 2.75rem;
-  padding: 0 0.75rem; background: var(--fond-appui);
-  border: 1px solid var(--trait); border-radius: var(--rayon-petit);
 }
-.plan a:hover { color: var(--or-texte); border-color: var(--or); }
 .bascule {
   display: inline-flex; flex-wrap: wrap; align-items: center; gap: 0.4rem;
   
@@ -700,14 +741,14 @@ table[data-pli="fiche"][data-plie] tbody td[data-titre]::before {
 }
 .fiches.reperes .fiche .valeur {
   font-family: var(--titres);
-  font-size: clamp(1.75rem, 4vw, 2.5rem); line-height: 1.05; font-weight: 600;
-  letter-spacing: -0.01em; color: var(--or-texte); order: 2;
+  font-size: clamp(1.75rem, 4vw, 2.5rem); line-height: 1.05; font-weight: 700;
+  letter-spacing: -0.01em; color: var(--titre);
 }
 .fiches.reperes .fiche .etiquette {
-  order: 1; font-size: var(--t-petit); font-weight: 600;
-  color: var(--texte-doux); margin-bottom: 0.4rem;
+  font-size: var(--t-texte); font-weight: 600;
+  color: var(--texte); margin-top: 0.5rem;
 }
-.fiches.reperes .fiche .precision { order: 3; margin-top: 0.4rem; }
+.fiches.reperes .fiche .precision { margin-top: 0.25rem; }
 .points { display: grid;
           grid-template-columns: repeat(auto-fit, minmax(min(20rem, 100%), 1fr));
           gap: 1.5rem; margin: 2rem 0; }
@@ -718,7 +759,7 @@ table[data-pli="fiche"][data-plie] tbody td[data-titre]::before {
 }
 .points .point > h2 {
   margin: 0 0 0.5rem; font-family: var(--titres); font-size: 1.25rem;
-  font-weight: 600; line-height: 1.25;
+  font-weight: 700; line-height: 1.25;
 }
 .points .point > p { margin: 0; font-size: 1rem; color: var(--texte-doux); }
 section.cle {
@@ -730,7 +771,7 @@ section.cle {
 }
 section.cle > :is(h2, h3) {
   margin: 0; font-family: var(--titres); font-size: clamp(1.375rem, 3vw, 1.75rem);
-  font-weight: 600; line-height: 1.2; letter-spacing: -0.01em; color: var(--titre);
+  font-weight: 700; line-height: 1.2; letter-spacing: -0.01em; color: var(--titre);
 }
 section.cle > .reponse {
   font-size: 1.1875rem; line-height: 1.5; max-width: 46rem; margin: 0.5rem 0 0.2rem;
@@ -962,7 +1003,7 @@ ul.legende li { display: flex; align-items: baseline; gap: 0.45rem; }
   font-family: "Public Sans", system-ui, sans-serif;
 }
 .carte-partage .surtitre {
-  margin: 0; font-size: 13px; font-size: 2.167cqw; font-weight: 700;
+  margin: 0; font-family: inherit; font-size: 13px; font-size: 2.167cqw; font-weight: 700;
   letter-spacing: 0.14em; text-transform: uppercase; color: var(--or-texte);
   line-height: 1;
 }
@@ -1042,7 +1083,6 @@ body.calcul-en-cours::after {
   .scenarios { column-gap: 0.75rem; }
   .scenarios > .scenario { row-gap: 0.3rem; padding: 0.6rem 0 0.6rem; }
   .scenarios .scenario :is(.salaire, .principal) .somme { font-size: 1.375rem; }
-  .plan a { padding: 0 0.5rem; font-size: 0.8125rem; }
   .affiche { padding: 2rem 0 1.5rem; }
   .scenario .entete { flex-direction: column; gap: 0.15rem; }
   .scenario .titre { flex: 0 1 auto; max-width: 100%; }
@@ -1057,10 +1097,6 @@ body.calcul-en-cours::after {
   details.section > .dedans { padding-left: 0.6rem; }
   .fiches { grid-template-columns: 1fr; }
   .fiches.reperes { grid-template-columns: 1fr; }
-  .fiches.reperes .fiche {
-    padding: 1rem 0; box-shadow: none; border-top: 1px solid var(--trait);
-  }
-  .fiches.reperes .fiche:first-child { border-top: 0; }
   h2 { margin-top: 2.25rem; }
   section.cle { padding: 1.25rem 1rem 1rem; }
   .partage > .partager,
@@ -1253,14 +1289,17 @@ qu'il a cotisé puis de ce qu'on lui ajoute. Un compte notionnel ne les interdit
 pas : il oblige à les payer par l'impôt, sous leur nom, plutôt que par une
 formule que nul ne lit.</div>
 
+<div class="carte-appel">
 <h2>Et pour vous ?</h2>
 <p>Ce que ces règles donnent sur votre carrière se calcule en quelques secondes,
 dans votre navigateur : la simulation affiche votre part cotisée, puis chaque
 avantage.</p>
 <p class="actions"><a class="bouton" href="../simuler/">Calculer ma
-retraite</a><a href="../cout/">Voir ce que tout cela coûte</a></p>
+retraite</a><a class="bouton clair" href="../cout/">Voir ce que tout
+cela coûte</a></p>
+</div>
 
-<h2>Pour aller plus loin</h2>
+<div class="tranche alt"><h2>Pour aller plus loin</h2>
 
 <details class="section" id="avantages-liste"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>Les 49 dispositifs, leur base légale et leurs dates</span></summary><div class="dedans"><h3 class="intertitre">Droits familiaux</h3><p>Ce que la naissance ou l&#x27;éducation d&#x27;un enfant ajoute à la pension, sans qu&#x27;aucune cotisation supplémentaire ne l&#x27;ait payée : des trimestres, un pourcentage, une assiette portée au compte, un salaire de référence calculé sur moins d&#x27;années.</p><div class="defilant" tabindex="0" role="region" aria-label="Droits familiaux : 9 dispositifs"><table><caption><span>Droits familiaux : 9 dispositifs</span></caption><thead><tr><th class="" scope="col">Dispositif</th><th class="texte" scope="col">Base légale</th><th class="nombre" scope="col">Depuis</th><th class="texte" scope="col">Jusqu&#x27;à</th><th class="texte" scope="col">Dans le modèle</th></tr></thead><tbody><tr><th class="" scope="row">Majoration de durée d'assurance pour enfants (MDA)</th><td class="texte">L. 351-4 CSS; L. 351-5 CSS</td><td class="nombre">1972</td><td class="texte">en vigueur</td><td class="texte">chiffré</td></tr><tr><th class="" scope="row">Bonification pour enfants de la fonction publique</th><td class="texte">L. 12 b et b bis CPCMR; L. 12 bis CPCMR</td><td class="nombre">1964</td><td class="texte">en vigueur</td><td class="texte">chiffré</td></tr><tr><th class="" scope="row">Trimestres pour enfants de la SNCF, de la RATP, des IEG et de la CRPCEN</th><td class="texte">Décret n° 2008-639 du 30 juin 2008 art. 7 V et 13 III (SNCF); Décret n° 2008-637 du 30 juin 2008 art. 20 et 24 III (RATP); Statut national du personnel des IEG annexe 3 art. 12 à 14; Décret n° 90-1215 du 20 décembre 1990 art. 92 (CRPCEN)</td><td class="nombre">1990</td><td class="texte">en vigueur</td><td class="texte">chiffré</td></tr><tr><th class="" scope="row">Majoration de pension pour trois enfants et plus</th><td class="texte">L. 351-12 CSS; L. 18 CPCMR; accord national interprofessionnel Agirc-Arrco</td><td class="nombre">1945</td><td class="texte">en vigueur</td><td class="texte">chiffré</td></tr><tr><th class="" scope="row">Assurance vieillesse des parents au foyer</th><td class="texte">L. 381-1 CSS</td><td class="nombre">1972</td><td class="texte">en vigueur</td><td class="texte">chiffré</td></tr><tr><th class="" scope="row">Surcote parentale</th><td class="texte">L. 351-1-2-1 CSS</td><td class="nombre">2023</td><td class="texte">en vigueur</td><td class="texte">chiffré</td></tr><tr><th class="" scope="row">Salaire annuel moyen calculé sur moins d'années pour les parents</th><td class="texte">R. 173-3-2 I CSS (décret n° 2026-699 du 29 juillet 2026; article 1er)</td><td class="nombre">2026</td><td class="texte">en vigueur</td><td class="texte">servi, chiffré à part</td></tr><tr><th class="" scope="row">Majoration de durée d'assurance pour congé parental d'éducation</th><td class="texte">L. 351-5 CSS</td><td class="nombre">1977</td><td class="texte">en vigueur</td><td class="texte">absent</td></tr><tr><th class="" scope="row">Majoration de durée d'assurance pour enfant handicapé</th><td class="texte">L. 351-4-1 CSS</td><td class="nombre">2003</td><td class="texte">en vigueur</td><td class="texte">absent</td></tr></tbody></table></div><h3 class="intertitre">Minima de pension</h3><p>Un plancher opposé au résultat du calcul contributif. Ce que le plancher ajoute n&#x27;a jamais été cotisé : c&#x27;est la définition même d&#x27;un minimum.</p><div class="defilant" tabindex="0" role="region" aria-label="Minima de pension : 7 dispositifs"><table><caption><span>Minima de pension : 7 dispositifs</span></caption><thead><tr><th class="" scope="col">Dispositif</th><th class="texte" scope="col">Base légale</th><th class="nombre" scope="col">Depuis</th><th class="texte" scope="col">Jusqu&#x27;à</th><th class="texte" scope="col">Dans le modèle</th></tr></thead><tbody><tr><th class="" scope="row">Minimum contributif, et sa majoration</th><td class="texte">L. 351-10 CSS; D. 351-2-1 CSS; L. 173-2 CSS</td><td class="nombre">1983</td><td class="texte">en vigueur</td><td class="texte">chiffré</td></tr><tr><th class="" scope="row">Minimum garanti de la fonction publique</th><td class="texte">L. 17 CPCMR; loi n° 2003-775 article 66 V</td><td class="nombre">1964</td><td class="texte">en vigueur</td><td class="texte">chiffré</td></tr><tr><th class="" scope="row">Minimum de pension de la SNCF</th><td class="texte">décret n° 2008-639 article 15; décret n° 2011-291 article 18</td><td class="nombre">2008</td><td class="texte">en vigueur</td><td class="texte">chiffré</td></tr><tr><th class="" scope="row">Minimum vieillesse (ASPA)</th><td class="texte">L. 815-1 CSS et suivants; L. 816-2 CSS; L. 161-25 CSS</td><td class="nombre">1956</td><td class="texte">en vigueur</td><td class="texte">chiffré</td></tr><tr><th class="" scope="row">Pension majorée de référence du régime agricole</th><td class="texte">L. 732-54-1 à L. 732-54-4 code rural; D. 732-109 à D. 732-115 code rural</td><td class="nombre">2009</td><td class="texte">en vigueur</td><td class="texte">chiffré</td></tr><tr><th class="" scope="row">Complément différentiel de la retraite complémentaire agricole</th><td class="texte">L. 732-63 code rural; D. 732-166-1 à D. 732-166-6 code rural</td><td class="nombre">2015</td><td class="texte">en vigueur</td><td class="texte">chiffré</td></tr><tr><th class="" scope="row">Majoration de la retraite proportionnelle des chefs d'exploitation</th><td class="texte">L. 732-54-1 code rural; D. 732-113 et D. 732-141 à D. 732-146 code rural</td><td class="nombre">1997</td><td class="texte">2008</td><td class="texte">chiffré</td></tr></tbody></table></div><h3 class="intertitre">Périodes non cotisées mais validées</h3><p>Chômage, maladie, maternité, invalidité, accident du travail, service national : des trimestres, et parfois des points de complémentaire, que la période ouvre sans qu&#x27;un salaire les ait portés.</p><div class="defilant" tabindex="0" role="region" aria-label="Périodes non cotisées mais validées : 5 dispositifs"><table><caption><span>Périodes non cotisées mais validées : 5 dispositifs</span></caption><thead><tr><th class="" scope="col">Dispositif</th><th class="texte" scope="col">Base légale</th><th class="nombre" scope="col">Depuis</th><th class="texte" scope="col">Jusqu&#x27;à</th><th class="texte" scope="col">Dans le modèle</th></tr></thead><tbody><tr><th class="" scope="row">Périodes assimilées</th><td class="texte">L. 351-3 CSS; R. 351-12 CSS</td><td class="nombre">1945</td><td class="texte">en vigueur</td><td class="texte">servi, chiffré à part</td></tr><tr><th class="" scope="row">Points de complémentaire acquis sans cotisation</th><td class="texte">accords nationaux interprofessionnels Agirc-Arrco; décret Ircantec</td><td class="nombre">1962</td><td class="texte">en vigueur</td><td class="texte">servi, chiffré à part</td></tr><tr><th class="" scope="row">Points gratuits de la complémentaire agricole</th><td class="texte">L. 732-56 code rural; D. 732-151 code rural; D. 732-154 code rural</td><td class="nombre">2003</td><td class="texte">en vigueur</td><td class="texte">chiffré</td></tr><tr><th class="" scope="row">Validation des trimestres d'apprentissage au-delà de l'assiette</th><td class="texte">L. 6243-3 code du travail (second alinéa); L. 222-2-1 7° CSS</td><td class="nombre">2014</td><td class="texte">en vigueur</td><td class="texte">servi, chiffré à part</td></tr><tr><th class="" scope="row">Validation du service national</th><td class="texte">L. 351-3 CSS</td><td class="nombre">1945</td><td class="texte">en vigueur</td><td class="texte">servi, chiffré à part</td></tr></tbody></table></div><h3 class="intertitre">Droits dérivés (survivants)</h3><p>Ce que le décès de l&#x27;assuré ouvre au conjoint survivant et aux orphelins. Non contributif au sens strict : la cotisation de l&#x27;assuré a déjà été rendue par sa propre pension.</p><div class="defilant" tabindex="0" role="region" aria-label="Droits dérivés (survivants) : 5 dispositifs"><table><caption><span>Droits dérivés (survivants) : 5 dispositifs</span></caption><thead><tr><th class="" scope="col">Dispositif</th><th class="texte" scope="col">Base légale</th><th class="nombre" scope="col">Depuis</th><th class="texte" scope="col">Jusqu&#x27;à</th><th class="texte" scope="col">Dans le modèle</th></tr></thead><tbody><tr><th class="" scope="row">Pension de réversion</th><td class="texte">L. 353-1 CSS; L. 38 CPCMR</td><td class="nombre">1945</td><td class="texte">en vigueur</td><td class="texte">déclaré, non servi</td></tr><tr><th class="" scope="row">Majoration de la pension de réversion</th><td class="texte">L. 353-6 CSS</td><td class="nombre">2010</td><td class="texte">en vigueur</td><td class="texte">absent</td></tr><tr><th class="" scope="row">Majoration forfaitaire de réversion pour enfant à charge</th><td class="texte">L. 353-5 CSS; R. 353-10 CSS; R. 353-11 CSS; D. 353-2 CSS</td><td class="nombre">1988</td><td class="texte">en vigueur</td><td class="texte">déclaré, non servi</td></tr><tr><th class="" scope="row">Allocation veuvage</th><td class="texte">L. 356-1 CSS</td><td class="nombre">1980</td><td class="texte">en vigueur</td><td class="texte">absent</td></tr><tr><th class="" scope="row">Pension d'orphelin</th><td class="texte">L. 40 CPCMR</td><td class="nombre">1964</td><td class="texte">en vigueur</td><td class="texte">absent</td></tr></tbody></table></div><h3 class="intertitre">Âge de départ et bonifications de service</h3><p>Partir plus tôt sans que la pension en soit diminuée à proportion, ou compter plus d&#x27;années qu&#x27;on n&#x27;en a servies. C&#x27;est l&#x27;avantage le plus coûteux et le moins visible : il ne s&#x27;affiche sur aucun bulletin de pension comme une ligne.</p><div class="defilant" tabindex="0" role="region" aria-label="Âge de départ et bonifications de service : 14 dispositifs"><table><caption><span>Âge de départ et bonifications de service : 14 dispositifs</span></caption><thead><tr><th class="" scope="col">Dispositif</th><th class="texte" scope="col">Base légale</th><th class="nombre" scope="col">Depuis</th><th class="texte" scope="col">Jusqu&#x27;à</th><th class="texte" scope="col">Dans le modèle</th></tr></thead><tbody><tr><th class="" scope="row">Départ anticipé des catégories actives et super-actives</th><td class="texte">L. 24 I 1° CPCMR; L. 14 bis CPCMR; décret n° 2026-344 du 7 mai 2026 article 3 D</td><td class="nombre">1853</td><td class="texte">en vigueur</td><td class="texte">servi, chiffré à part</td></tr><tr><th class="" scope="row">Retraite anticipée pour carrière longue</th><td class="texte">L. 351-1-1 CSS; D. 351-1-1 CSS; L. 351-1-1 3° CSS</td><td class="nombre">2003</td><td class="texte">en vigueur</td><td class="texte">servi, chiffré à part</td></tr><tr><th class="" scope="row">Jouissance immédiate de la pension militaire</th><td class="texte">L. 24 CPCMR; L. 25 CPCMR</td><td class="nombre">1831</td><td class="texte">en vigueur</td><td class="texte">servi, chiffré à part</td></tr><tr><th class="" scope="row">Bonification du cinquième du temps de service des militaires</th><td class="texte">L. 12 i CPCMR; Loi n° 71-1061 du 29 décembre 1971 art. 53</td><td class="nombre">1972</td><td class="texte">en vigueur</td><td class="texte">servi, chiffré à part</td></tr><tr><th class="" scope="row">Bonification du cinquième des policiers, pompiers et surveillants</th><td class="texte">Loi n° 57-444 du 8 avril 1957 art. 1; Loi n° 57-444 du 8 avril 1957 art. 6; Loi n° 89-1007 du 31 décembre 1989 art. 5; Loi n° 96-452 du 28 mai 1996 art. 24; Loi n° 2003-1312 du 30 décembre 2003 art. 93; R. 411-2 code de la sécurité intérieure</td><td class="nombre">1957</td><td class="texte">en vigueur</td><td class="texte">servi, chiffré à part</td></tr><tr><th class="" scope="row">Bonifications de services de la SNCF et de la RATP</th><td class="texte">Décret n° 2008-639 du 30 juin 2008 art. 9 (SNCF); Décret n° 2008-637 du 30 juin 2008 art. 20 (RATP)</td><td class="nombre">2008</td><td class="texte">en vigueur</td><td class="texte">absent</td></tr><tr><th class="" scope="row">Bonification de dépaysement</th><td class="texte">L. 12 a CPCMR</td><td class="nombre">1964</td><td class="texte">en vigueur</td><td class="texte">absent</td></tr><tr><th class="" scope="row">Bénéfices de campagne</th><td class="texte">L. 12 c CPCMR</td><td class="nombre">1964</td><td class="texte">en vigueur</td><td class="texte">absent</td></tr><tr><th class="" scope="row">Bonification pour service aérien ou sous-marin commandé</th><td class="texte">L. 12 d CPCMR</td><td class="nombre">1964</td><td class="texte">en vigueur</td><td class="texte">absent</td></tr><tr><th class="" scope="row">Réduction de la durée d'assurance pour services militaires en Afrique du Nord</th><td class="texte">L. 351-7-1 CSS; L. 311-1 CPMIVG</td><td class="nombre">1994</td><td class="texte">en vigueur</td><td class="texte">absent</td></tr><tr><th class="" scope="row">Retraite anticipée des travailleurs handicapés</th><td class="texte">L. 351-1-3 CSS; D. 351-1-5 CSS; L. 351-8 4° bis CSS; L. 24 I 5° CPCMR; R. 37 bis CPCMR; décret n° 2023-435 article 13 II F; décret n° 2026-344 article 3 5°</td><td class="nombre">2003</td><td class="texte">en vigueur</td><td class="texte">servi, chiffré à part</td></tr><tr><th class="" scope="row">Taux plein par inaptitude ou invalidité</th><td class="texte">L. 351-7 CSS; L. 351-8 2° CSS; L. 341-15 CSS; L. 29 CPCMR</td><td class="nombre">1945</td><td class="texte">en vigueur</td><td class="texte">servi, chiffré à part</td></tr><tr><th class="" scope="row">Départ anticipé pour incapacité permanente et compte pénibilité</th><td class="texte">L. 351-1-4 CSS; L. 4163-1 code du travail</td><td class="nombre">2010</td><td class="texte">en vigueur</td><td class="texte">absent</td></tr><tr><th class="" scope="row">Cessation anticipée d'activité des travailleurs de l'amiante</th><td class="texte">Loi n° 98-1194 du 23 décembre 1998 art. 41; L. 161-17-2 CSS</td><td class="nombre">1999</td><td class="texte">en vigueur</td><td class="texte">absent</td></tr></tbody></table></div><h3 class="intertitre">Majorations diverses</h3><p>Ce qui ne relève d&#x27;aucune des cinq familles précédentes, y compris les dispositifs éteints, qu&#x27;il faut garder pour lire les séries anciennes.</p><div class="defilant" tabindex="0" role="region" aria-label="Majorations diverses : 6 dispositifs"><table><caption><span>Majorations diverses : 6 dispositifs</span></caption><thead><tr><th class="" scope="col">Dispositif</th><th class="texte" scope="col">Base légale</th><th class="nombre" scope="col">Depuis</th><th class="texte" scope="col">Jusqu&#x27;à</th><th class="texte" scope="col">Dans le modèle</th></tr></thead><tbody><tr><th class="" scope="row">Indemnité temporaire de retraite outre-mer</th><td class="texte">Décret n° 52-1050 du 10 septembre 1952 art. 1; LOI n° 2008-1443 du 30 décembre 2008 art. 137; Décret n° 2009-114 du 30 janvier 2009</td><td class="nombre">1952</td><td class="texte">en vigueur</td><td class="texte">absent</td></tr><tr><th class="" scope="row">Retraite du combattant</th><td class="texte">L. 321-1 CPMIVG; L. 321-2 CPMIVG; D. 321-1 CPMIVG</td><td class="nombre">1930</td><td class="texte">en vigueur</td><td class="texte">absent</td></tr><tr><th class="" scope="row">Majoration de pension des assurés handicapés</th><td class="texte">L. 351-1-3 CSS; D. 351-1-5 II CSS; R. 33 bis CPCMR</td><td class="nombre">2005</td><td class="texte">en vigueur</td><td class="texte">servi, chiffré à part</td></tr><tr><th class="" scope="row">Majoration pour assistance d'une tierce personne</th><td class="texte">L. 355-1 CSS; L. 30 CPCMR</td><td class="nombre">1945</td><td class="texte">en vigueur</td><td class="texte">absent</td></tr><tr><th class="" scope="row">Majoration pour conjoint à charge</th><td class="texte">L. 351-13 CSS</td><td class="nombre">1945</td><td class="texte">2010</td><td class="texte">chiffré</td></tr><tr><th class="" scope="row">Coefficient de solidarité de l'Agirc-Arrco</th><td class="texte">accord national interprofessionnel Agirc-Arrco du 30 octobre 2015</td><td class="nombre">2019</td><td class="texte">2023</td><td class="texte">déclaré, non servi</td></tr></tbody></table></div><h3 class="intertitre">Écarts structurels au principe contributif</h3><p>Ce ne sont pas des DISPOSITIFS, et aucune caisse ne les liquide sous un nom. Ce sont les trois façons dont une pension excède la cotisation sans qu&#x27;aucun droit gratuit ne soit en cause : un barème d&#x27;âge qui n&#x27;est pas actuariel, un rendement supérieur à ce que l&#x27;assiette peut porter, un régime dont l&#x27;équilibre est payé par l&#x27;impôt. Ils sont ici parce qu&#x27;on ne peut pas dire sans eux pourquoi les pensions actuelles dépassent ce qui a été cotisé, et ce sont eux que le scénario 2 mesure. Ils ne s&#x27;ADDITIONNENT PAS aux six familles ci-dessus : ils portent sur la même pension, et les compter ensemble serait un double compte.</p><div class="defilant" tabindex="0" role="region" aria-label="Écarts structurels au principe contributif : 3 dispositifs"><table><caption><span>Écarts structurels au principe contributif : 3 dispositifs</span></caption><thead><tr><th class="" scope="col">Dispositif</th><th class="texte" scope="col">Base légale</th><th class="nombre" scope="col">Depuis</th><th class="texte" scope="col">Jusqu&#x27;à</th><th class="texte" scope="col">Dans le modèle</th></tr></thead><tbody><tr><th class="" scope="row">Décote et surcote qui ne sont pas actuarielles</th><td class="texte">R. 351-27 CSS; L. 14 CPCMR; L. 351-1-2 CSS; D. 351-1-4 CSS</td><td class="nombre">1983</td><td class="texte">en vigueur</td><td class="texte">servi, chiffré à part</td></tr><tr><th class="" scope="row">Rendement servi supérieur à ce que l'assiette peut porter</th><td class="texte">—</td><td class="nombre">1945</td><td class="texte">en vigueur</td><td class="texte">servi, chiffré à part</td></tr><tr><th class="" scope="row">Impôts, subventions d'équilibre et compensation démographique</th><td class="texte">—</td><td class="nombre">1945</td><td class="texte">en vigueur</td><td class="texte">servi, chiffré à part</td></tr></tbody></table></div></div></details><details class="section" id="avantages-etats"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>Ce que le modèle sait de chacun</span></summary><div class="dedans"><div class="defilant" tabindex="0" role="region" aria-label="Ce que le modèle sait de chaque avantage"><table><caption><span>Ce que le modèle sait de chaque avantage</span></caption><thead><tr><th class="" scope="col">État</th><th class="nombre" scope="col">Combien</th><th class="texte" scope="col">Ce que cela veut dire</th></tr></thead><tbody><tr><th class="" scope="row">chiffré</th><td class="nombre">15</td><td class="texte">La cascade du scénario 1 en isole le montant en euros. La somme de ces lignes vaut exactement la pension moins sa part cotisée.</td></tr><tr><th class="" scope="row">servi, chiffré à part</th><td class="nombre">16</td><td class="texte">Le scénario 1 les sert, mais l'effet passe par un trimestre, un âge ou une assiette. 11 sont mesurés par retrait : on refait la pension sans l'avantage, et l'écart est le chiffre. 2 sont lus dans les comptes de la protection sociale : taux plein par inaptitude ou invalidité, majoration de pension des assurés handicapés. Les 3 derniers ne sont pas des dispositifs, et se lisent ailleurs.</td></tr><tr><th class="" scope="row">déclaré, non servi</th><td class="nombre">3</td><td class="texte">Une fiche de régime les déclare, et le scénario 1 ne les sert pas à l'assuré. La réversion est de ceux-là : 960 périodes du catalogue l'annoncent, et le modèle ne la liquide que pour le conjoint qu'on lui déclare, pas pour tous les ménages. Son coût est donc LU dans l'enquête de la DREES auprès des caisses, et c'est le chiffre le plus sûr de cette page.</td></tr><tr><th class="" scope="row">absent</th><td class="nombre">15</td><td class="texte">Ni déclarés ni servis : les bonifications de service, l'allocation veuvage. C'est un écart au droit positif, et le dépôt le nomme plutôt que de l'estimer.</td></tr></tbody></table></div><h3 class="intertitre">Ce que le modèle a refusé de mesurer</h3><p>Un refus est un résultat : il dit qu'une contrefactuelle existe mais ne vaut rien, ce qui est plus sûr qu'un chiffre plausible.</p><p><strong>age_jouissance_militaire</strong> — militaire : le retrait déplace la durée requise, 172 trimestres contre 171 — la proratisation change avec lui, et l&#x27;écart ne mesure plus l&#x27;avantage seul</p></div></details><details class="section" id="avantages-limites"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>Trois choses que ces chiffres ne disent pas</span></summary><div class="dedans"><p><strong>Ils ne disent pas ce que le système économiserait.</strong>
 Supprimer un avantage ne rend pas son coût : il faudrait décider ce que
@@ -1275,7 +1314,7 @@ autre angle, et les additionner serait un double compte.</p>
 <p><strong>Ils ne remplacent pas la loi.</strong> Chaque base légale a été lue
 dans la base LEGI, version par version. Aucune ne porte plus la mention « à certifier » : les
 bonifications des corps actifs renvoyaient encore, il y a peu, à des « statuts
-particuliers » que personne n'avait ouverts. Lire n'est pas appliquer.</p></div></details>
+particuliers » que personne n'avait ouverts. Lire n'est pas appliquer.</p></div></details></div>
 </main>
 <footer>
 <div class="interieur">

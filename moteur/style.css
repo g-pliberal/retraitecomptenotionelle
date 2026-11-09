@@ -90,6 +90,16 @@
   /* L'accent, turquoise assombri pour se lire sur le clair : 6,6:1. */
   --accent: #00695f;
   --accent-doux: #e3f4f1;
+  /* Les encadrés du site du parti : l'information sur le turquoise très clair,
+     à barre turquoise sombre ; l'attention sur l'ambre très clair, à barre
+     ambre. Le texte, le texte doux, les liens et l'alerte y tiennent 4,6:1 au
+     moins. */
+  --info-fond: #e3f4f1;
+  --info-bord: #00695f;
+  --alerte-fond: #fff6db;
+  --alerte-bord: #b8860b;
+  /* La lueur de la carte d'appel, celle de `.appel` sur le site du parti. */
+  --lueur-appel: #0f6f72;
   /* L'or est le safran du parti. Il DÉCORE — un filet, une pastille, un
      bouton plein — et ne s'écrit pas sur le clair, où il ne fait que 1,6:1 :
      ce qui compte s'y écrit en `--or-texte`, le pétrole, et en safran sur le
@@ -179,7 +189,7 @@
    à publier. Elles redéfinissent les variables du thème, et tout ce qu'elles
    portent suit sans règle de plus. Une variable qui en cite une autre se
    calcule là où elle est déclarée : celles-ci sont donc écrites en clair. */
-header.bandeau, .affiche, .carte-partage, .zone-petrole {
+header.bandeau, .affiche, .carte-partage, .carte-appel, .zone-petrole {
   color-scheme: dark;
   --fond: #003340;
   --fond-carte: #00242e;
@@ -404,9 +414,9 @@ h1 {
 }
 h2 {
   font-family: var(--titres); font-size: var(--t-intertitre); line-height: 1.15;
-  margin: 3rem 0 1rem; font-weight: 600; color: var(--titre);
+  margin: 3rem 0 1rem; font-weight: 700; color: var(--titre);
 }
-h3 { font-size: var(--t-lead); margin: 2rem 0 0.5rem; font-weight: 600; }
+h3 { font-size: var(--t-lead); margin: 2rem 0 0.5rem; font-weight: 700; }
 h4 { font-weight: 500; }
 /* Le titre d'un encadré, d'une carte, d'un bloc qui parle plutôt qu'il
    n'assène : en Jost lui aussi. La classe a gardé son nom. */
@@ -415,6 +425,8 @@ h4 { font-weight: 500; }
   font-weight: 500; text-transform: none; letter-spacing: 0;
   line-height: 1.15;
 }
+/* Un titre garde le gras des titres, comme sur le site du parti. */
+:is(h2, h3).serif { font-weight: 700; }
 p { margin: 0.75rem 0; max-width: 46rem; }
 /* Un lien est souligné, en turquoise sombre sur le clair, en blanc sur le
    pétrole ; le filet prend l'or au survol. */
@@ -423,17 +435,21 @@ a {
   text-underline-offset: 0.2em; transition: text-decoration-color 0.15s;
 }
 a:hover { text-decoration-color: var(--or); }
-/* Le sur-titre d'une page : trois mots au-dessus du titre, précédés du trait
-   de safran du site du parti. En casse normale : pas de capitales. */
+/* Le surtitre : trois mots au-dessus d'un titre, précédés du trait de safran
+   du site du parti, en Jost gras, en capitales espacées, en turquoise sombre —
+   en safran sur l'affiche. Les capitales sont celles du style : le texte reste
+   écrit en casse de phrase, qu'une synthèse vocale lit en mots. */
 .surtitre {
-  margin: 0 0 1rem; font-size: var(--t-texte); font-weight: 500;
-  color: var(--texte-doux); line-height: 1.3;
+  margin: 0 0 0.5rem; font-family: var(--titres); font-size: var(--t-petit);
+  font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--accent); line-height: 1.3;
   display: flex; align-items: center; gap: 0.5rem;
 }
 .surtitre::before {
   content: ""; flex: none; width: 1.5rem; height: 4px;
   background: var(--or); border-radius: 2px;
 }
+.surtitre + h2 { margin-top: 0; }
 /* Le chapeau : la phrase sous le titre, plus grande que le texte courant.
    C'est la seule chose que lira celui qui ne lit que deux lignes. Ce qu'il
    souligne y passe en safran. */
@@ -464,11 +480,66 @@ a:hover { text-decoration-color: var(--or); }
 /* Le surtitre de l'affiche, comme celui du site du parti : en Jost gras, en
    capitales espacées, en safran. Les capitales sont celles du style : le
    texte reste écrit en casse de phrase, qu'une synthèse vocale lit en mots. */
-.affiche .surtitre {
-  margin-bottom: 0.5rem; font-family: var(--titres); font-size: var(--t-petit);
-  font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;
-  color: var(--or-texte);
+.affiche .surtitre { letter-spacing: 0.1em; color: var(--or-texte); }
+/* Les boutons d'action de l'affiche, sous le chapeau : le premier en safran,
+   les autres au filet blanc. */
+.affiche .actions { margin-top: 1.25rem; gap: 0.75rem; }
+a.bouton.clair {
+  background-color: transparent; color: #fff;
+  border-color: rgb(255 255 255 / 0.55);
 }
+a.bouton.clair:hover {
+  background-color: rgb(255 255 255 / 0.1); border-color: #fff; opacity: 1;
+}
+
+/* -- les tranches -----------------------------------------------------------
+
+   Le corps d'une page se range en tranches, des bandes d'un bord à l'autre de
+   l'écran, une sur deux sur le ton d'appui : les `.section` et `.section--alt`
+   du site du parti. La tranche reste dans la colonne de la page ; son
+   `::before` porte le ton jusqu'aux deux bords, comme celui de l'affiche, et
+   le document coupe ce qui dépasse. Le fond de la tranche est uni : le
+   contraste de ses textes s'y mesure. */
+.tranche {
+  position: relative; isolation: isolate;
+  padding: clamp(2rem, 6vw, 3rem) 0;
+}
+.tranche.alt {
+  background-color: var(--fond-appui); --fond-defilant: var(--fond-appui);
+}
+.tranche.alt::before {
+  content: ""; position: absolute; z-index: -1;
+  top: 0; bottom: 0; left: calc(50% - 50vw); right: calc(50% - 50vw);
+  background-color: var(--fond-appui);
+}
+/* Une tranche qui suit un bloc hors tranche s'en écarte du blanc d'une
+   tranche. */
+:not(.tranche, .affiche) + .tranche { margin-top: clamp(2rem, 6vw, 3rem); }
+.tranche > :first-child { margin-top: 0; }
+.tranche > :last-child { margin-bottom: 0; }
+/* L'affiche porte déjà son blanc : la première tranche n'y ajoute pas le
+   sien, sauf à changer de ton. */
+.affiche + .tranche:not(.alt) { padding-top: 0; }
+.affiche:has(+ .tranche.alt) { margin-bottom: 0; }
+/* La dernière tranche touche le pied de page, qui n'a plus à s'en écarter. */
+main:has(> .tranche:last-child) + footer { margin-top: 0; }
+
+/* L'appel : la carte pétrole qui clôt une page, à la lueur turquoise, bouton
+   safran — `.appel` sur le site du parti. Le fond reste uni, la lueur est
+   peinte par le `::before`. */
+.carte-appel {
+  position: relative; isolation: isolate; overflow: hidden;
+  border-radius: var(--rayon); margin: 2rem 0 0;
+  padding: clamp(1.25rem, 1rem + 2vw, 2.25rem);
+}
+.carte-appel::before {
+  content: ""; position: absolute; z-index: -1; inset: 0;
+  background: radial-gradient(circle at 88% 30%, var(--lueur-appel) 0%, var(--petrole) 60%);
+}
+.carte-appel .surtitre { color: var(--or-texte); }
+.carte-appel h2 { margin: 0; }
+.carte-appel p { color: var(--bandeau-doux); }
+.carte-appel > p:not([class]) { margin: 0.5rem 0 0; }
 /* Le passage qui porte le titre est surligné au safran, et non plus écrit en
    safran : le titre reste blanc d'un bout à l'autre. */
 .affiche h1 .cle-texte {
@@ -488,13 +559,19 @@ h1 .cle-texte, h2 .cle-texte { font-weight: inherit; }
   border-radius: var(--rayon); padding: 1.25rem 1.5rem; margin: 1.5rem 0;
   box-shadow: var(--ombre);
 }
+/* L'encadré du site du parti : un fond teinté et une barre à gauche,
+   turquoise pour l'information, ambre pour l'attention. */
 .note {
-  border-left: 4px solid var(--or); background: var(--fond-carte);
+  border-left: 5px solid var(--info-bord); background: var(--info-fond);
   padding: 0.75rem 1rem; margin: 1.5rem 0; font-size: var(--t-petit);
   border-radius: 0 var(--rayon-petit) var(--rayon-petit) 0;
+  --fond-defilant: var(--info-fond);
+}
+.note.avertissement, .note.vigilance {
+  border-left-color: var(--alerte-bord); background: var(--alerte-fond);
+  --fond-defilant: var(--alerte-fond);
 }
 .note.avertissement {
-  border-left-color: var(--alerte);
   display: flex; align-items: flex-start; gap: 0.6rem;
 }
 /* Le pictogramme garde sa taille quand le texte passe à la ligne, et se pose
@@ -516,7 +593,6 @@ h1 .cle-texte, h2 .cle-texte { font-weight: inherit; }
 /* Le point de vigilance : la réserve que la page fait sur elle-même, sortie de
    la prose et marquée comme un avertissement — c'est un gage de sérieux, pas
    une note de bas de page. */
-.note.vigilance { border-left-color: var(--alerte); }
 /* Le résumé en langage courant d'une page technique : trois ou quatre phrases
    avant le détail, dans le même encart qu'une note, un peu plus grand. */
 .note.resume { font-size: 1rem; }
@@ -524,7 +600,7 @@ h1 .cle-texte, h2 .cle-texte { font-weight: inherit; }
    rien d'autre. L'encart d'une note, en plus grand, et les sommes en or : ce
    sont les seuls chiffres de la page qu'il doit emporter. */
 .en-bref {
-  border-left: 4px solid var(--or); background: var(--fond-carte);
+  border-left: 5px solid var(--info-bord); background: var(--info-fond);
   padding: 1rem 1.25rem; margin: 1.5rem 0;
   border-radius: 0 var(--rayon-petit) var(--rayon-petit) 0;
   font-size: 1.125rem; line-height: 1.55; max-width: 46rem;
@@ -595,25 +671,26 @@ h1 .cle-texte, h2 .cle-texte { font-weight: inherit; }
 
 /* -- les engagements --------------------------------------------------------
 
-   Les quatre chiffres du programme, posés comme les lignes d'un relevé de
-   compte : le rang, le chiffre dans sa colonne, aligné à droite comme une
-   somme, la promesse, puis le détail, et un filet entre chaque ligne. Ils
-   étaient quatre cartes identiques, deux par deux, chacune avec son long
-   paragraphe : une grille de gabarit (5 novembre 2026). En lignes, ils se
-   lisent dans l'ordre, et aucune ne reste seule sur sa rangée — la correction
-   demandée deux fois quand il y en avait trois de front.
-
-   L'or n'y marque plus que les chiffres : ce que la promesse et le détail
-   soulignent passe en crème plein, sur un texte adouci. Sous 64 rem, le
-   détail passe sous la promesse ; sous 48 rem, la ligne s'empile. */
-.engagements {
-  margin: 2.5rem 0 0; display: grid; gap: 1rem;
+   Les six arguments du programme, en grille de cartes, trois par deux au
+   large : le gabarit des chiffres clés du site du parti (`.chiffre`) — une
+   carte blanche, une barre safran de 6 points à gauche, la valeur en Jost
+   gras, le libellé en gras dessous, le détail en texte doux. Ils étaient une
+   pile de six lignes numérotées, la valeur alignée à droite (9 novembre
+   2026). Deux de front sur une tablette, une colonne sur un téléphone :
+   aucune carte ne reste seule sur sa rangée. */
+.engagements { margin: 0; }
+.engagements .grille {
+  display: grid; gap: 1rem; grid-template-columns: minmax(0, 1fr);
+}
+@media (min-width: 40rem) {
+  .engagements .grille { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (min-width: 64rem) {
+  .engagements .grille { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 .engagements .engagement {
-  display: grid; align-items: baseline;
-  grid-template-columns: 2.5rem minmax(0, 22rem) minmax(0, 1fr) minmax(0, 1.25fr);
-  gap: 0.5rem 2rem; padding: 1.5rem 1.5rem 1.5rem 2rem;
   position: relative; overflow: hidden;
+  padding: 1.25rem 1.25rem 1rem 1.5rem;
   background: var(--fond-carte); border: 1px solid var(--trait);
   border-radius: var(--rayon); box-shadow: var(--ombre);
 }
@@ -621,43 +698,21 @@ h1 .cle-texte, h2 .cle-texte { font-weight: inherit; }
   content: ""; position: absolute; inset: 0 auto 0 0; width: 6px;
   background: var(--or);
 }
-.engagements .rang {
-  font-size: var(--t-petit); line-height: 1; color: var(--texte-tres-doux);
-}
 .engagements .chiffre {
   font-family: var(--titres);
-  font-size: var(--t-chiffre); line-height: 1; font-weight: 600;
-  letter-spacing: -0.01em; color: var(--or-texte); text-align: right;
-  font-variant-numeric: tabular-nums;
-}
-/* Un montant dans une phrase en serif se compose comme les autres, dans le
-   caractère des chiffres : l'espace fine du serif ne se voyait pas, et
-   « 1 600 € » s'y lisait « 1600€ ». */
-.engagements .promesse .euros {
-  font-family: "Public Sans", system-ui, sans-serif; font-size: var(--t-lead);
-  font-variant-numeric: tabular-nums;
+  font-size: var(--t-chiffre); line-height: 1.05; font-weight: 700;
+  color: var(--titre); font-variant-numeric: tabular-nums;
 }
 .engagements .promesse {
-  font-family: var(--serif); font-size: var(--t-serif); line-height: 1.25;
-  color: var(--texte);
+  margin-top: 0.5rem; font-size: var(--t-texte); line-height: 1.4;
+  font-weight: 600; color: var(--texte);
 }
 .engagements .detail {
-  font-size: var(--t-texte); line-height: 1.6; color: var(--texte-doux);
+  margin-top: 0.25rem; font-size: var(--t-petit); line-height: 1.5;
+  color: var(--texte-doux);
 }
-.engagements :is(.promesse, .detail) .cle-texte { color: var(--texte); font-weight: 500; }
-.engagements .promesse .cle-texte { font-weight: inherit; }
-@media (min-width: 64.0625rem) {
-  .engagements .chiffre { white-space: nowrap; }
-}
-@media (max-width: 64rem) {
-  .engagements .engagement { grid-template-columns: 2.5rem minmax(0, 15rem) minmax(0, 1fr); }
-  .engagements .detail { grid-column: 3; }
-}
-@media (max-width: 48rem) {
-  .engagements .engagement { grid-template-columns: 2rem minmax(0, 1fr); gap: 0.75rem; }
-  .engagements .chiffre { text-align: left; }
-  .engagements :is(.promesse, .detail) { grid-column: 2; }
-}
+.engagements .promesse .cle-texte { color: inherit; font-weight: inherit; }
+.engagements .detail .cle-texte { color: var(--texte); font-weight: 500; }
 
 /* -- les trois gestes -------------------------------------------------------
 
@@ -686,9 +741,9 @@ ol.gestes > li strong { color: var(--texte); font-weight: 500; }
    qui mérite d'être lu à part — le tableau du plancher, un repère, une mise en
    garde argumentée. */
 .encadre {
-  border: 2px solid var(--or); border-radius: var(--rayon);
+  border: 1px solid var(--trait); border-radius: var(--rayon);
   background: var(--fond-carte); padding: clamp(1.25rem, 4vw, 2rem);
-  margin: 1.5rem 0;
+  margin: 1.5rem 0; box-shadow: var(--ombre);
 }
 .encadre > :first-child { margin-top: 0; }
 .encadre > :last-child { margin-bottom: 0; }
@@ -959,7 +1014,7 @@ details.section > .dedans > h4,
 /* Le voile prend la couleur de ce qui porte le tableau. Peint dans le vert de
    la page, il faisait sur chaque carte une bande d'un ton plus sombre au bord
    droit, même quand rien ne défilait. */
-.carte, .note, .plan, .erreur, .cadre-carte, section.cle {
+.carte, .plan, .erreur, .cadre-carte, section.cle {
   --fond-defilant: var(--fond-carte);
 }
 .creme { --fond-defilant: var(--creme); }
@@ -1137,28 +1192,24 @@ table[data-pli="fiche"][data-plie] tbody td[data-titre]::before {
    se parcourt du regard avant de lire. */
 .plan {
   background: var(--fond-carte); border: 1px solid var(--trait);
-  border-left: 4px solid var(--or); border-radius: 0 var(--rayon) var(--rayon) 0;
-  padding: 1rem 1.25rem; margin: 1.5rem 0; font-size: var(--t-petit);
-  box-shadow: var(--ombre);
+  border-radius: var(--rayon); box-shadow: var(--ombre);
+  padding: 1rem 1.25rem 0.25rem; margin: 1.5rem 0 2rem;
 }
 .plan .etiquette {
-  margin: 0 0 0.5rem; font-size: var(--t-petit);
-  color: var(--texte-doux); font-weight: 600;
+  margin: 0 0 0.25rem; font-family: var(--titres); font-size: var(--t-texte);
+  color: var(--titre); font-weight: 700;
 }
 .plan ol {
   margin: 0; padding: 0; list-style: none;
-  display: flex; flex-wrap: wrap; gap: 0.5rem;
+  display: flex; flex-wrap: wrap; gap: 0 1.25rem;
 }
-/* Les entrées du plan ont la composition des onglets d'avant la barre — elles
-   l'héritaient d'un `nav a` nu, elles la portent maintenant en propre. */
+/* Des liens nus, comme ceux du « Sur cette page » du site du parti : ils
+   étaient des pastilles, dix-neuf sur la page Coût. La cible tactile garde
+   ses 44 points. */
 .plan a {
-  color: var(--texte); text-decoration: none;
-  font-size: var(--t-petit); font-weight: 500;
+  font-size: var(--t-petit);
   display: inline-flex; align-items: center; min-height: 2.75rem;
-  padding: 0 0.75rem; background: var(--fond-appui);
-  border: 1px solid var(--trait); border-radius: var(--rayon-petit);
 }
-.plan a:hover { color: var(--or-texte); border-color: var(--or); }
 /* Les onglets d'une grille : des boutons radio, dont le libellé fait
    l'onglet. Le clavier les parcourt aux flèches, comme tout groupe de radios,
    et le panneau suit sans une ligne de script : `:has()` lit lequel est
@@ -1477,8 +1528,9 @@ table[data-pli="fiche"][data-plie] tbody td[data-titre]::before {
 .fiche .precision { font-size: 0.85rem; color: var(--texte-doux); margin-top: 0.3rem; }
 /* Les trois chiffres d'ouverture d'une page : ce sont eux qu'on emporte si on
    ne lit rien d'autre, et ils doivent donc se lire de loin, avant le texte.
-   L'étiquette passe AU-DESSUS du nombre — on lit « ce qui rentre » puis
-   « 417 Md € », dans cet ordre, et non un nombre dont on cherche le sens.
+   Au gabarit des chiffres clés du site du parti : la valeur d'abord, en Jost
+   gras, le libellé en gras dessous, la précision en texte doux (9 novembre
+   2026 ; l'étiquette passait au-dessus du nombre).
 
    Comme les engagements, la frise porte ses filets sur les cartes et coupe ce
    qui dépasse : un fond servant de trait laissait un rectangle vide dès que la
@@ -1498,7 +1550,7 @@ table[data-pli="fiche"][data-plie] tbody td[data-titre]::before {
   content: ""; position: absolute; inset: 0 auto 0 0; width: 6px;
   background: var(--or);
 }
-/* Étiquette, nombre, précision : trois rangées PARTAGÉES entre les cartes
+/* Nombre, étiquette, précision : trois rangées PARTAGÉES entre les cartes
    d'une même ligne, pour que les nombres s'alignent quand une étiquette tient
    sur deux lignes — « 39 390 » tombait vingt points sous « 89 » et « 28 ». Là
    où la sous-grille n'existe pas, la colonne flexible reste. */
@@ -1510,14 +1562,14 @@ table[data-pli="fiche"][data-plie] tbody td[data-titre]::before {
 }
 .fiches.reperes .fiche .valeur {
   font-family: var(--titres);
-  font-size: clamp(1.75rem, 4vw, 2.5rem); line-height: 1.05; font-weight: 600;
-  letter-spacing: -0.01em; color: var(--or-texte); order: 2;
+  font-size: clamp(1.75rem, 4vw, 2.5rem); line-height: 1.05; font-weight: 700;
+  letter-spacing: -0.01em; color: var(--titre);
 }
 .fiches.reperes .fiche .etiquette {
-  order: 1; font-size: var(--t-petit); font-weight: 600;
-  color: var(--texte-doux); margin-bottom: 0.4rem;
+  font-size: var(--t-texte); font-weight: 600;
+  color: var(--texte); margin-top: 0.5rem;
 }
-.fiches.reperes .fiche .precision { order: 3; margin-top: 0.4rem; }
+.fiches.reperes .fiche .precision { margin-top: 0.25rem; }
 /* Quelques idées, une par bloc. Elles se lisent côte à côte, de même poids :
    c'est ce qui les distingue d'une liste, où la première l'emporte. */
 .points { display: grid;
@@ -1532,7 +1584,7 @@ table[data-pli="fiche"][data-plie] tbody td[data-titre]::before {
    qu'il était : l'interligne est celui du bloc, non le serré des titres. */
 .points .point > h2 {
   margin: 0 0 0.5rem; font-family: var(--titres); font-size: 1.25rem;
-  font-weight: 600; line-height: 1.25;
+  font-weight: 700; line-height: 1.25;
 }
 .points .point > p { margin: 0; font-size: 1rem; color: var(--texte-doux); }
 
@@ -1550,7 +1602,7 @@ section.cle {
    `<h3>`, s'écrivent de même. */
 section.cle > :is(h2, h3) {
   margin: 0; font-family: var(--titres); font-size: clamp(1.375rem, 3vw, 1.75rem);
-  font-weight: 600; line-height: 1.2; letter-spacing: -0.01em; color: var(--titre);
+  font-weight: 700; line-height: 1.2; letter-spacing: -0.01em; color: var(--titre);
 }
 section.cle > .reponse {
   font-size: 1.1875rem; line-height: 1.5; max-width: 46rem; margin: 0.5rem 0 0.2rem;
@@ -2011,7 +2063,7 @@ ul.serree li { margin: 0.25rem 0; }
 }
 .carte-partage.claire { background: var(--creme); color: var(--sur-creme); }
 .carte-partage .surtitre {
-  margin: 0; font-size: 13px; font-size: 2.167cqw; font-weight: 700;
+  margin: 0; font-family: inherit; font-size: 13px; font-size: 2.167cqw; font-weight: 700;
   letter-spacing: 0.14em; text-transform: uppercase; color: var(--or-texte);
   line-height: 1;
 }
@@ -2087,7 +2139,7 @@ ul.serree li { margin: 0.25rem 0; }
    « 54, 60 ou 50 % » — prend la taille de celui du déficit. Sous la barre de
    partage, hors de l'image et replié, ce que dit le texte et le lien qui y
    mène : c'est lui qui répond à « d'où sortez-vous ça ? ». */
-.theme { margin-top: 3rem; }
+.theme { margin-top: 0; }
 .theme > .cartes { margin-top: 0; }
 /* Le titre du thème occupe la première case de la grille, à côté de la
    première carte : sans lui, trois cartes deux par deux laissaient un trou. */
@@ -2193,7 +2245,6 @@ body.calcul-en-cours::after {
   /* Les deux branches d'une bascule, plus serrées : à 320 points, « € par
      mois » et « × salaire moyen » dépassaient de quatre points. */
   .bascule .choix > a, .bascule .choix > .actif { padding: 0 0.7rem; }
-  .plan a { padding: 0 0.5rem; font-size: 0.8125rem; }
   .affiche { padding: 2rem 0 1.5rem; }
   .scenario .entete { flex-direction: column; gap: 0.15rem; }
   /* L'intitulé reprend sa hauteur de texte. En colonne, `flex: 1 1 14rem` ne
@@ -2219,14 +2270,10 @@ body.calcul-en-cours::after {
   /* Le retrait d'une section repliée coûte 26 points de largeur à ce qu'elle
      contient : de quoi couper une colonne de chiffres. */
   details.section > .dedans { padding-left: 0.6rem; }
-  /* Les frises passent à une colonne (les engagements l'ont fait à 48 rem,
-     avec leurs filets). */
+  /* Les frises passent à une colonne ; les cartes de chiffres y gardent leur
+     retrait, sans quoi la valeur passe sous la barre. */
   .fiches { grid-template-columns: 1fr; }
   .fiches.reperes { grid-template-columns: 1fr; }
-  .fiches.reperes .fiche {
-    padding: 1rem 0; box-shadow: none; border-top: 1px solid var(--trait);
-  }
-  .fiches.reperes .fiche:first-child { border-top: 0; }
   ol.gestes > li { grid-template-columns: 2.5rem 1fr; gap: 0.75rem; }
   .paire { gap: 1.75rem; margin: 2.25rem 0; }
   /* Quarante-huit points au-dessus de chaque titre de section, sur un écran

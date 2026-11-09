@@ -630,8 +630,104 @@ const MESURER = (ecran) => `(() => {
     } : null,
   };
 
+  // Le corps des pages au gabarit du site du parti (action 189, étape 5) :
+  // les chiffres clés en cartes à barre safran, la valeur d'abord ; les
+  // surtitres de section ; la graisse des intertitres ; les bandes alternées,
+  // dont le \`::before\` atteint les deux bords de l'écran ; les encadrés
+  // teintés ; le plan de la page ; l'appel en carte pétrole ; les boutons de
+  // l'affiche.
+  const contenu = (selecteur) => [...document.querySelectorAll(selecteur)]
+    .filter((el) => el.closest("#contenu") && !el.closest(".carte-partage") && montre(el));
+  const styleDe = (el, pseudo) => getComputedStyle(el, pseudo);
+  const hautDe = (el) => el.getBoundingClientRect().top;
+  const cartesDeChiffres = contenu(".engagements .engagement, .fiches.reperes .fiche");
+  const corps = {
+    chiffres: cartesDeChiffres.map((carte) => {
+      const valeur = carte.querySelector(".chiffre, .valeur");
+      const libelle = carte.querySelector(".promesse, .etiquette");
+      const detail = carte.querySelector(".detail, .precision");
+      return {
+        nom: nommer(carte).slice(0, 70),
+        fond: styleDe(carte).backgroundColor,
+        barre: styleDe(carte, "::before").width + " " + styleDe(carte, "::before").backgroundColor,
+        police: valeur ? styleDe(valeur).fontFamily : null,
+        graisse: valeur ? styleDe(valeur).fontWeight : null,
+        valeurDAbord: !!(valeur && libelle
+          && valeur.getBoundingClientRect().bottom <= hautDe(libelle) + 1),
+        // Le texte se tient à droite de la barre, qu'il ne passe pas dessous.
+        retrait: valeur ? Math.round(valeur.getBoundingClientRect().left
+          - carte.getBoundingClientRect().left) : null,
+        graisseDuLibelle: libelle ? styleDe(libelle).fontWeight : null,
+        couleurDuDetail: detail ? styleDe(detail).color : null,
+      };
+    }),
+    colonnesDesEngagements: new Set(contenu(".engagements .engagement")
+      .map((carte) => Math.round(carte.getBoundingClientRect().left))).size,
+    rangeesDesEngagements: new Set(contenu(".engagements .engagement")
+      .map((carte) => Math.round(hautDe(carte)))).size,
+    surtitres: contenu("p.surtitre").filter((el) => !el.closest(".affiche")).map((el) => ({
+      nom: nommer(el).slice(0, 70),
+      surLePetrole: !!el.closest(".carte-appel"),
+      casse: styleDe(el).textTransform,
+      couleur: styleDe(el).color,
+      graisse: styleDe(el).fontWeight,
+      espace: parseFloat(styleDe(el).letterSpacing) || 0,
+      tiret: styleDe(el, "::before").backgroundColor,
+    })),
+    intertitres: contenu("h2").filter((el) => styleDe(el).fontWeight !== "700")
+      .map((el) => nommer(el).slice(0, 70) + " à " + styleDe(el).fontWeight),
+    bandes: contenu(".tranche.alt").map((bande) => {
+      const cadre = bande.getBoundingClientRect();
+      const debord = styleDe(bande, "::before");
+      return {
+        fond: styleDe(bande).backgroundColor,
+        fondDuDebord: debord.backgroundColor,
+        gauche: Math.round(cadre.left + parseFloat(debord.left)),
+        droite: Math.round(cadre.right - parseFloat(debord.right)),
+      };
+    }),
+    encadres: contenu(".note").map((el) => ({
+      nom: nommer(el).slice(0, 70),
+      attention: el.matches(".avertissement, .vigilance"),
+      fond: styleDe(el).backgroundColor,
+      barre: styleDe(el).borderLeftWidth + " " + styleDe(el).borderLeftColor,
+    })),
+    plans: contenu("nav.plan").map((el) => {
+      const titre = el.querySelector(".etiquette");
+      const lien = el.querySelector("a");
+      return {
+        fond: styleDe(el).backgroundColor,
+        barre: styleDe(el).borderLeftWidth,
+        titre: titre ? styleDe(titre).fontFamily.split(",")[0].replace(/"/g, "")
+          + " " + styleDe(titre).fontWeight : null,
+        fondDuLien: lien ? styleDe(lien).backgroundColor : null,
+        bordDuLien: lien ? styleDe(lien).borderTopWidth : null,
+      };
+    }),
+    appels: contenu(".carte-appel").map((el) => {
+      const bouton = el.querySelector("a.bouton");
+      const titre = el.querySelector("h2");
+      return {
+        fond: styleDe(el).backgroundColor,
+        lueur: styleDe(el, "::before").backgroundImage,
+        titre: titre ? styleDe(titre).color : null,
+        bouton: bouton ? styleDe(bouton).backgroundColor : null,
+      };
+    }),
+    actionsDeLAffiche: contenu(".affiche .actions a").map((el) => ({
+      fond: styleDe(el).backgroundColor,
+      bord: styleDe(el).borderTopColor,
+      haut: Math.round(hautDe(el)),
+    })),
+    sousLeChapeau: (() => {
+      const chapeau = document.querySelector("#contenu .affiche .chapeau");
+      const actions = document.querySelector("#contenu .affiche .actions");
+      return !!(chapeau && actions && chapeau.getBoundingClientRect().bottom <= hautDe(actions));
+    })(),
+  };
+
   return {
-    typographie, charte, coquille,
+    typographie, charte, coquille, corps,
     contrastes: contrastes.slice(0, 40), nombreContrastes: contrastes.length,
     vides: vides.slice(0, 12),
     deborde: document_.scrollWidth > largeur + 1 ? document_.scrollWidth : 0,

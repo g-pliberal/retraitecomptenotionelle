@@ -310,6 +310,120 @@ def test_la_coquille_est_celle_du_site_du_parti():
     assert not fautes, f"{len(fautes)} écarts à la coquille :\n" + "\n".join(fautes[:60])
 
 
+#: Le corps des pages du site « Fonction publique : les chiffres », lu dans la
+#: même feuille de style : la carte de chiffre (``.chiffre`` : surface blanche,
+#: barre safran de 6 points, valeur en Jost à 700, libellé à 600, détail en
+#: ``--texte-doux``), le surtitre de section (``.surtitre`` : capitales
+#: espacées à 700, en ``--accent``, tiret safran), les titres à 700, la bande
+#: alternée (``.section--alt``, ``--surface-2``), les encadrés (``.encadre`` :
+#: barre de 5 points, ``--info-fond`` et ``--info-bord``, ``--alerte-fond`` et
+#: ``--alerte-bord`` pour l'attention), le plan (``.sommaire-page`` : une carte
+#: blanche aux liens nus), l'appel (``.appel``, ici ``.carte-appel`` : pétrole, lueur ``#0f6f72``,
+#: bouton safran) et les boutons de l'affiche (``.bouton--safran``,
+#: ``.bouton--clair``).
+CORPS = {
+    "blanc": "rgb(255, 255, 255)", "safran": "rgb(233, 197, 61)",
+    "barre": "6px rgb(233, 197, 61)", "graisse": "700", "libelle": "600",
+    "doux": "rgb(68, 96, 106)", "accent": "rgb(0, 105, 95)",
+    "appui": "rgb(233, 240, 241)",
+    "information": ("rgb(227, 244, 241)", "5px rgb(0, 105, 95)"),
+    "attention": ("rgb(255, 246, 219)", "5px rgb(184, 134, 11)"),
+    "petrole": "rgb(0, 51, 64)", "lueur": "rgb(15, 111, 114)",
+    "filet": "rgba(255, 255, 255, 0.55)", "nu": "rgba(0, 0, 0, 0)",
+}
+
+#: Ce qui sépare au moins le bord d'une carte de chiffre de sa valeur, en
+#: points : la barre de 6 points, et de quoi la détacher du texte.
+RETRAIT_D_UN_CHIFFRE = 16
+
+#: Les boutons que l'affiche de l'accueil porte sous son chapeau.
+ACTIONS_DE_L_ACCUEIL = 2
+
+
+def test_le_corps_des_pages_est_celui_du_site_du_parti():
+    """Le 9 novembre 2026, la coquille prise (étape 4), les deux sites
+    s'écartaient encore par le corps des pages (action 189, étape 5) : six
+    engagements en pile de lignes numérotées, la valeur à droite ; des cartes
+    de chiffres au libellé posé sur la valeur ; un fond uni d'un bout à l'autre,
+    des intertitres de graisses inégales, des surtitres en casse de phrase ;
+    un « En clair » blanc à barre safran ; un plan en pastilles ; un appel
+    final en carte blanche ; une affiche sans bouton.
+
+    Le propriétaire a tranché : les six engagements passent en grille de
+    cartes, trois par deux au large, au gabarit des « Quatre chiffres pour
+    commencer ». Le reste se lit dans la feuille de style du site du parti.
+    """
+    fautes = []
+    for visite in mesures():
+        accueil = visite["route"] == "./"
+        for etat in ("replie", "deplie"):
+            corps = visite[etat]["corps"]
+            ou = _ou(visite, "fermés" if etat == "replie" else "ouverts")
+            for carte in corps["chiffres"]:
+                attendu = {"fond": CORPS["blanc"], "barre": CORPS["barre"],
+                           "graisse": CORPS["graisse"], "valeurDAbord": True,
+                           "graisseDuLibelle": CORPS["libelle"]}
+                ecarts = {cle: carte[cle] for cle, valeur in attendu.items()
+                          if carte[cle] != valeur}
+                if "Jost" not in (carte["police"] or ""):
+                    ecarts["police"] = carte["police"]
+                if carte["couleurDuDetail"] not in (None, CORPS["doux"]):
+                    ecarts["couleurDuDetail"] = carte["couleurDuDetail"]
+                # Sur un téléphone, la valeur et son libellé passaient sous la
+                # barre, coupés par le bord de la carte.
+                if carte["retrait"] < RETRAIT_D_UN_CHIFFRE:
+                    ecarts["retrait"] = carte["retrait"]
+                if ecarts:
+                    fautes.append(f"{ou} : chiffre {carte['nom']}, {ecarts}")
+            for surtitre in corps["surtitres"]:
+                # Sur le pétrole de la carte d'appel, le surtitre est en
+                # safran, comme celui de l'affiche.
+                couleur = CORPS["safran" if surtitre["surLePetrole"] else "accent"]
+                if (surtitre["casse"] != "uppercase" or surtitre["espace"] <= 0
+                        or surtitre["couleur"] != couleur
+                        or surtitre["graisse"] != CORPS["graisse"]
+                        or surtitre["tiret"] != CORPS["safran"]):
+                    fautes.append(f"{ou} : surtitre, {surtitre}")
+            fautes += [f"{ou} : intertitre {titre}" for titre in corps["intertitres"]]
+            for bande in corps["bandes"]:
+                if (bande["fond"] != CORPS["appui"] or bande["fondDuDebord"] != CORPS["appui"]
+                        or bande["gauche"] > 0 or bande["droite"] < visite["largeur"]):
+                    fautes.append(f"{ou} : bande, {bande}")
+            for encadre in corps["encadres"]:
+                attendu = CORPS["attention" if encadre["attention"] else "information"]
+                if (encadre["fond"], encadre["barre"]) != attendu:
+                    fautes.append(f"{ou} : encadré {encadre}")
+            for plan in corps["plans"]:
+                if (plan["fond"] != CORPS["blanc"] or plan["barre"] != "1px"
+                        or plan["titre"] != "Jost 700" or plan["fondDuLien"] != CORPS["nu"]
+                        or plan["bordDuLien"] != "0px"):
+                    fautes.append(f"{ou} : plan, {plan}")
+            for appel in corps["appels"]:
+                if (appel["fond"] != CORPS["petrole"] or CORPS["lueur"] not in appel["lueur"]
+                        or appel["titre"] != CORPS["blanc"]
+                        or appel["bouton"] != CORPS["safran"]):
+                    fautes.append(f"{ou} : appel, {appel}")
+            actions = corps["actionsDeLAffiche"]
+            if actions and (actions[0]["fond"] != CORPS["safran"] or any(
+                    (action["fond"], action["bord"]) != (CORPS["nu"], CORPS["filet"])
+                    for action in actions[1:]) or not corps["sousLeChapeau"]):
+                fautes.append(f"{ou} : boutons de l'affiche, {actions}")
+            if not accueil:
+                continue
+            if len(actions) != ACTIONS_DE_L_ACCUEIL:
+                fautes.append(f"{ou} : {len(actions)} boutons à l'affiche")
+            if len(corps["bandes"]) < 2:
+                fautes.append(f"{ou} : {len(corps['bandes'])} bandes alternées")
+            if len(corps["appels"]) != 1:
+                fautes.append(f"{ou} : {len(corps['appels'])} appels")
+            grille = (corps["colonnesDesEngagements"], corps["rangeesDesEngagements"])
+            if visite["largeur"] >= 1024 and grille != (3, 2):
+                fautes.append(f"{ou} : engagements en {grille[0]} colonnes, {grille[1]} rangées")
+            if visite["largeur"] <= 390 and grille != (1, 6):
+                fautes.append(f"{ou} : engagements en {grille[0]} colonnes, {grille[1]} rangées")
+    assert not fautes, f"{len(fautes)} écarts au corps des pages :\n" + "\n".join(fautes[:60])
+
+
 def test_tout_texte_se_detache_de_son_fond():
     """Un texte se lit sur son fond : 4,5 pour 1 au moins entre leurs
     luminances, 3 pour 1 en grand — 24 px, ou 18,66 px en gras. WCAG 1.4.3, et

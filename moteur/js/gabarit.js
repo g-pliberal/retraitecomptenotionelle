@@ -481,9 +481,25 @@ export function entete(cheminActif = "/") {
  * `titre` et `chapeau` sont du HTML : ils portent les passages en or, les liens
  * et les mots du glossaire. `surtitre` est du texte.
  */
-export function affiche(surtitre, titre, chapeau) {
+export function affiche(surtitre, titre, chapeau, actions = []) {
+  // Les boutons d'action, sous le chapeau, comme sur le site du parti : le
+  // premier en safran, les suivants au filet blanc (action 189, étape 5).
+  const boutons = actions.length
+    ? `<p class="actions">${actions.map(([libelle, adresse], rang) => (
+      `<a class="bouton${rang ? " clair" : ""}" href="${adresse}">${libelle}</a>`)).join("")}</p>`
+    : "";
   return `<div class="affiche"><p class="surtitre">${echapper(surtitre)}</p>`
-    + `<h1>${titre}</h1><p class="chapeau">${chapeau}</p></div>`;
+    + `<h1>${titre}</h1><p class="chapeau">${chapeau}</p>${boutons}</div>`;
+}
+
+/**
+ * Une tranche de la page : une section du corps, bande qui va d'un bord à
+ * l'autre de l'écran. Une tranche sur deux est `alt`, sur le ton d'appui,
+ * comme les `.section--alt` du site du parti (action 189, étape 5). La feuille
+ * de style l'étend par son `::before` : la page ne déborde pas.
+ */
+export function tranche(corps, alt = false) {
+  return `<div class="tranche${alt ? " alt" : ""}">${corps}</div>`;
 }
 
 /**

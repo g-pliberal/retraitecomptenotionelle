@@ -70,6 +70,13 @@
   --accent: #00695f;
   --accent-doux: #e3f4f1;
   
+  --info-fond: #e3f4f1;
+  --info-bord: #00695f;
+  --alerte-fond: #fff6db;
+  --alerte-bord: #b8860b;
+  
+  --lueur-appel: #0f6f72;
+  
   --or: #e9c53d;
   --or-texte: #003340;
   --sur-or: #00242e;
@@ -129,7 +136,7 @@
   --titres: "Jost", "Futura", "Century Gothic", "Avenir Next", system-ui, sans-serif;
   --serif: var(--titres);
 }
-header.bandeau, .affiche, .carte-partage, .zone-petrole {
+header.bandeau, .affiche, .carte-partage, .carte-appel, .zone-petrole {
   color-scheme: dark;
   --fond: #003340;
   --fond-carte: #00242e;
@@ -290,13 +297,14 @@ h1 {
 }
 h2 {
   font-family: var(--titres); font-size: var(--t-intertitre); line-height: 1.15;
-  margin: 3rem 0 1rem; font-weight: 600; color: var(--titre);
+  margin: 3rem 0 1rem; font-weight: 700; color: var(--titre);
 }
 .serif {
   font-family: var(--titres);
   font-weight: 500; text-transform: none; letter-spacing: 0;
   line-height: 1.15;
 }
+:is(h2, h3).serif { font-weight: 700; }
 p { margin: 0.75rem 0; max-width: 46rem; }
 a {
   color: var(--lien); text-decoration-color: var(--trait-champ);
@@ -304,14 +312,16 @@ a {
 }
 a:hover { text-decoration-color: var(--or); }
 .surtitre {
-  margin: 0 0 1rem; font-size: var(--t-texte); font-weight: 500;
-  color: var(--texte-doux); line-height: 1.3;
+  margin: 0 0 0.5rem; font-family: var(--titres); font-size: var(--t-petit);
+  font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--accent); line-height: 1.3;
   display: flex; align-items: center; gap: 0.5rem;
 }
 .surtitre::before {
   content: ""; flex: none; width: 1.5rem; height: 4px;
   background: var(--or); border-radius: 2px;
 }
+.surtitre + h2 { margin-top: 0; }
 .chapeau {
   font-size: var(--t-lead); line-height: 1.5;
   color: var(--texte-doux); max-width: 46rem; margin: 1.25rem 0 0;
@@ -328,11 +338,26 @@ a:hover { text-decoration-color: var(--or); }
     linear-gradient(to bottom, rgb(0 51 64 / 0), var(--petrole)),
     linear-gradient(90deg, var(--petrole) 40%, var(--lueur));
 }
-.affiche .surtitre {
-  margin-bottom: 0.5rem; font-family: var(--titres); font-size: var(--t-petit);
-  font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;
-  color: var(--or-texte);
+.affiche .surtitre { letter-spacing: 0.1em; color: var(--or-texte); }
+.affiche .actions { margin-top: 1.25rem; gap: 0.75rem; }
+.tranche {
+  position: relative; isolation: isolate;
+  padding: clamp(2rem, 6vw, 3rem) 0;
 }
+.tranche.alt {
+  background-color: var(--fond-appui); --fond-defilant: var(--fond-appui);
+}
+.tranche.alt::before {
+  content: ""; position: absolute; z-index: -1;
+  top: 0; bottom: 0; left: calc(50% - 50vw); right: calc(50% - 50vw);
+  background-color: var(--fond-appui);
+}
+:not(.tranche, .affiche) + .tranche { margin-top: clamp(2rem, 6vw, 3rem); }
+.tranche > :first-child { margin-top: 0; }
+.tranche > :last-child { margin-bottom: 0; }
+.affiche + .tranche:not(.alt) { padding-top: 0; }
+.affiche:has(+ .tranche.alt) { margin-bottom: 0; }
+main:has(> .tranche:last-child) + footer { margin-top: 0; }
 .affiche h1 .cle-texte {
   color: inherit; font-weight: inherit;
   background: linear-gradient(transparent 62%, rgb(233 197 61 / 0.55) 62%);
@@ -346,9 +371,10 @@ h1 .cle-texte, h2 .cle-texte { font-weight: inherit; }
   box-shadow: var(--ombre);
 }
 .note {
-  border-left: 4px solid var(--or); background: var(--fond-carte);
+  border-left: 5px solid var(--info-bord); background: var(--info-fond);
   padding: 0.75rem 1rem; margin: 1.5rem 0; font-size: var(--t-petit);
   border-radius: 0 var(--rayon-petit) var(--rayon-petit) 0;
+  --fond-defilant: var(--info-fond);
 }
 .badge {
   display: inline-block; font-size: 0.68rem; letter-spacing: 0.06em;
@@ -499,7 +525,7 @@ details.section > .dedans > :first-child { margin-top: 0; }
   background-size: 2.5rem 100%, 2.5rem 100%, 0.9rem 100%, 0.9rem 100%;
   background-attachment: local, local, scroll, scroll;
 }
-.carte, .note, .plan, .erreur, .cadre-carte, section.cle {
+.carte, .plan, .erreur, .cadre-carte, section.cle {
   --fond-defilant: var(--fond-carte);
 }
 table { border-collapse: collapse; width: 100%; font-size: var(--t-texte);
@@ -707,14 +733,14 @@ table[data-pli="fiche"][data-plie] tbody td[data-titre]::before {
 }
 .fiches.reperes .fiche .valeur {
   font-family: var(--titres);
-  font-size: clamp(1.75rem, 4vw, 2.5rem); line-height: 1.05; font-weight: 600;
-  letter-spacing: -0.01em; color: var(--or-texte); order: 2;
+  font-size: clamp(1.75rem, 4vw, 2.5rem); line-height: 1.05; font-weight: 700;
+  letter-spacing: -0.01em; color: var(--titre);
 }
 .fiches.reperes .fiche .etiquette {
-  order: 1; font-size: var(--t-petit); font-weight: 600;
-  color: var(--texte-doux); margin-bottom: 0.4rem;
+  font-size: var(--t-texte); font-weight: 600;
+  color: var(--texte); margin-top: 0.5rem;
 }
-.fiches.reperes .fiche .precision { order: 3; margin-top: 0.4rem; }
+.fiches.reperes .fiche .precision { margin-top: 0.25rem; }
 .points { display: grid;
           grid-template-columns: repeat(auto-fit, minmax(min(20rem, 100%), 1fr));
           gap: 1.5rem; margin: 2rem 0; }
@@ -725,7 +751,7 @@ table[data-pli="fiche"][data-plie] tbody td[data-titre]::before {
 }
 .points .point > h2 {
   margin: 0 0 0.5rem; font-family: var(--titres); font-size: 1.25rem;
-  font-weight: 600; line-height: 1.25;
+  font-weight: 700; line-height: 1.25;
 }
 .points .point > p { margin: 0; font-size: 1rem; color: var(--texte-doux); }
 section.cle {
@@ -737,7 +763,7 @@ section.cle {
 }
 section.cle > :is(h2, h3) {
   margin: 0; font-family: var(--titres); font-size: clamp(1.375rem, 3vw, 1.75rem);
-  font-weight: 600; line-height: 1.2; letter-spacing: -0.01em; color: var(--titre);
+  font-weight: 700; line-height: 1.2; letter-spacing: -0.01em; color: var(--titre);
 }
 section.cle > .reponse {
   font-size: 1.1875rem; line-height: 1.5; max-width: 46rem; margin: 0.5rem 0 0.2rem;
@@ -920,7 +946,7 @@ dl.gloses dd { margin: 0.15rem 0 0; padding: 0; color: var(--texte-doux); }
   font-family: "Public Sans", system-ui, sans-serif;
 }
 .carte-partage .surtitre {
-  margin: 0; font-size: 13px; font-size: 2.167cqw; font-weight: 700;
+  margin: 0; font-family: inherit; font-size: 13px; font-size: 2.167cqw; font-weight: 700;
   letter-spacing: 0.14em; text-transform: uppercase; color: var(--or-texte);
   line-height: 1;
 }
@@ -1023,10 +1049,6 @@ body.calcul-en-cours::after {
   details.section > .dedans { padding-left: 0.6rem; }
   .fiches { grid-template-columns: 1fr; }
   .fiches.reperes { grid-template-columns: 1fr; }
-  .fiches.reperes .fiche {
-    padding: 1rem 0; box-shadow: none; border-top: 1px solid var(--trait);
-  }
-  .fiches.reperes .fiche:first-child { border-top: 0; }
   h2 { margin-top: 2.25rem; }
   section.cle { padding: 1.25rem 1rem 1rem; }
   .partage > .partager,
@@ -1113,7 +1135,7 @@ qui dérive ; le système stable, lui, n'existe pas.</p>
 <p class="actions"><a class="bouton" href="../simuler/">Calculer sur ma
 carrière</a><a href="../methode/">Comment c'est calculé</a></p>
 
-<h2>Pour aller plus loin</h2>
+<div class="tranche alt"><h2>Pour aller plus loin</h2>
 
 <details class="section"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>Qui sont ces treize carrières</span></summary><div class="dedans"><dl class="gloses"><dt>Salarié au niveau du SMIC, carrière complète</dt><dd>Carrière longue à bas salaire : le cas où les minima pèsent le plus.</dd><dt>Salarié au salaire moyen</dt><dd>Référence centrale.</dd><dt>Cadre du privé</dt><dd>Forte part de rémunération au-dessus du plafond.</dd><dt>Carrière interrompue (5 ans hors emploi)</dt><dd>Cinq années sans cotisation. Le système actuel les couvre par des trimestres assimilés, par l&#x27;AVPF (qui porte au compte un salaire au SMIC) et par la majoration de durée d&#x27;assurance ; le compte notionnel ne couvre rien. Les deux premiers ne se voient guère ici : sur une carrière de plus de vingt-cinq années portées au compte, les années au SMIC n&#x27;entrent pas dans les vingt-cinq meilleures, et les trimestres assimilés ne servent que si la durée requise n&#x27;est pas atteinte. C&#x27;est un résultat, pas une omission.</dd><dt>Fonctionnaire sédentaire (catégorie B)</dt><dd>Traitement indiciaire hors primes ; les primes relèvent du RAFP.</dd><dt>Fonctionnaire de catégorie active (départ anticipé)</dt><dd>Aide-soignant, agent technique territorial : l&#x27;emploi est classé, et l&#x27;article L. 24 lui ouvre la pension cinq ans avant les sédentaires — cinquante-cinq ans jusqu&#x27;à la génération 1956, cinquante-sept ensuite, cinquante-neuf pour celles que la réforme de 2023 atteint. Il ne part pas pour autant à cet âge : comme les actifs de la CNRACL, mis en paiement à 61 ans en 2025 et presque tous sans décote, il attend le taux plein, que le classement lui ouvre plus tôt qu&#x27;aux sédentaires.</dd><dt>Militaire non officier (radiation après vingt-sept ans et demi de services)</dt><dd>La pension militaire ne s&#x27;ouvre pas à un âge mais à une durée : dix-sept ans de services pour un non-officier. C&#x27;est le départ le plus précoce du système, et celui qu&#x27;un compte notionnel déplace le plus : plus de trente ans de rente pour vingt-sept ans et demi de cotisations. Le cas type est le militaire moyen des départs de 2024, radié à quarante-huit ans et demi, à la solde moyenne de tous, officiers compris. Il lui manque les bénéfices de campagne et les bonifications de service aérien, que le simulateur ne saisit pas. La solde indiciaire seule ouvre des droits ; les indemnités, plus lourdes que les primes de la fonction publique civile, relèvent du RAFP.</dd><dt>Agent de conduite SNCF</dt><dd>Écart à l&#x27;âge de référence parmi les plus élevés du système : cinquante ans jusqu&#x27;aux départs de 2016, cinquante-quatre au terme de la montée en charge. Le régime est fermé aux embauches depuis 2020, et la règle en tire la conséquence : la génération 2000, entrée après la fermeture, relève du régime général et liquide à l&#x27;âge de celui-ci.</dd><dt>Agent des industries électriques et gazières</dt><dd>Régime spécial fermé aux embauches depuis 2023. L&#x27;âge d&#x27;ouverture y est celui du millésime de départ : cinquante-cinq ans jusqu&#x27;en 2016, cinquante-neuf à compter de 2034.</dd><dt>Artisan</dt><dd>Assiette de cotisation plus faible que celle d&#x27;un salarié.</dd><dt>Chef d&#x27;exploitation agricole</dt><dd>Retraite majoritairement forfaitaire aujourd&#x27;hui : la part non contributive disparaît intégralement dans les scénarios notionnels.</dd><dt>Profession libérale</dt><dd>Régime de base CNAVPL et complémentaire Cipav, la section par défaut. Un libéral d&#x27;une section spécialisée — auxiliaires médicaux, pharmaciens, notaires — aurait un complémentaire différent, et celui-là n&#x27;est pas paramétré. Il a porté jusqu&#x27;au 22 septembre 2026 une règle à lui, « ouverture plus deux ans », qui n&#x27;était qu&#x27;un contournement : le moteur ne savait pas opposer de durée à une carrière tout en points, et le taux plein lui rendait donc l&#x27;âge d&#x27;ouverture. Le défaut corrigé, la règle ordinaire le date comme les autres, et le COR la confirme — son cas type n° 13, un médecin libéral de secteur 1 né en 1960, « peut prétendre à un départ à 62 ans » et « atteint le taux plein à 66 ans et 9 mois », quand cette fiche donne 62,00 et 67,00 pour la même génération.</dd><dt>Agent contractuel de la fonction publique</dt><dd>Régime général + Ircantec.</dd></dl></div></details>
 <details class="section"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>Fonctionnaire et salarié : la comparaison que cette grille ne fait pas</span></summary><div class="dedans">
@@ -1137,7 +1159,7 @@ carrière, au <a href="../simuler/">simulateur</a> : la même saisie,
 primes comprises, sous le statut de fonctionnaire de l'État, puis sous celui de
 salarié du privé.</p></div></details>
 <details class="section"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>À quel âge chacun part, et pourquoi</span></summary><div class="dedans"><p class="discret">Un cas type ne porte pas un âge de départ mais une RÈGLE, et chaque génération liquide donc au sien. La plupart partent dès le <span class="mot"><span class="terme" role="button" tabindex="0" aria-expanded="false">taux plein</span><span class="bulle" role="note" hidden>Le taux de pension entier, sans décote : on l&#x27;obtient avec la durée exigée, ou à l&#x27;âge où la décote s&#x27;annule quelle que soit la durée.</span></span>, qui dépend à la fois de l'âge légal et de la durée requise de leur génération. Ceux dont un statut commande le départ (agent de conduite, agent des IEG) partent à l'âge que ce statut leur ouvre. L'agent de catégorie active pourrait partir ainsi, mais il attend, comme les actifs de la CNRACL, le taux plein que son classement avance. Le militaire, lui, part à une DURÉE de services, pas à un âge. Ce sont les âges des systèmes 1 à 3.</p><div class="defilant" tabindex="0" role="region" aria-label="Âge de liquidation de chaque cas type, par génération"><table><caption><span>Âge de liquidation de chaque cas type, par génération</span></caption><thead><tr><th class="" scope="col">Cas type</th><th class="nombre" scope="col">1940</th><th class="nombre" scope="col">1950</th><th class="nombre" scope="col">1960</th><th class="nombre" scope="col">1970</th><th class="nombre" scope="col">1980</th><th class="nombre" scope="col">1990</th><th class="nombre" scope="col">2000</th></tr></thead><tbody><tr><th class="" scope="row">Salarié au niveau du SMIC, carrière complète</th><td class="nombre">60 ans</td><td class="nombre">60 ans</td><td class="nombre">60 ans</td><td class="nombre">61 ans et 9 mois</td><td class="nombre">62 ans</td><td class="nombre">62 ans</td><td class="nombre">62 ans</td></tr><tr><th class="" scope="row">Salarié au salaire moyen</th><td class="nombre">60 ans et 3 mois</td><td class="nombre">61 ans et 6 mois</td><td class="nombre">62 ans et 9 mois</td><td class="nombre">64 ans</td><td class="nombre">64 ans</td><td class="nombre">64 ans</td><td class="nombre">64 ans</td></tr><tr><th class="" scope="row">Cadre du privé</th><td class="nombre">62 ans et 3 mois</td><td class="nombre">63 ans et 6 mois</td><td class="nombre">64 ans et 9 mois</td><td class="nombre">66 ans</td><td class="nombre">66 ans</td><td class="nombre">66 ans</td><td class="nombre">66 ans</td></tr><tr><th class="" scope="row">Carrière interrompue (5 ans hors emploi)</th><td class="nombre">60 ans</td><td class="nombre">60 ans</td><td class="nombre">62 ans</td><td class="nombre">64 ans</td><td class="nombre">64 ans</td><td class="nombre">64 ans</td><td class="nombre">64 ans</td></tr><tr><th class="" scope="row">Fonctionnaire sédentaire (catégorie B)</th><td class="nombre">60 ans</td><td class="nombre">62 ans et 6 mois</td><td class="nombre">63 ans et 9 mois</td><td class="nombre">65 ans</td><td class="nombre">65 ans</td><td class="nombre">65 ans</td><td class="nombre">65 ans</td></tr><tr><th class="" scope="row">Fonctionnaire de catégorie active (départ anticipé)</th><td class="nombre">59 ans et 6 mois</td><td class="nombre">60 ans</td><td class="nombre">62 ans</td><td class="nombre">62 ans</td><td class="nombre">62 ans</td><td class="nombre">62 ans</td><td class="nombre">62 ans</td></tr><tr><th class="" scope="row">Militaire non officier (radiation après vingt-sept ans et demi de services)</th><td class="nombre">48 ans et 6 mois</td><td class="nombre">48 ans et 6 mois</td><td class="nombre">48 ans et 6 mois</td><td class="nombre">48 ans et 6 mois</td><td class="nombre">48 ans et 6 mois</td><td class="nombre">48 ans et 6 mois</td><td class="nombre">48 ans et 6 mois</td></tr><tr><th class="" scope="row">Agent de conduite SNCF</th><td class="nombre">50 ans</td><td class="nombre">50 ans</td><td class="nombre">50 ans</td><td class="nombre">51 ans et 4 mois</td><td class="nombre">54 ans</td><td class="nombre">54 ans</td><td class="nombre">63 ans</td></tr><tr><th class="" scope="row">Agent des industries électriques et gazières</th><td class="nombre">55 ans</td><td class="nombre">55 ans</td><td class="nombre">55 ans</td><td class="nombre">57 ans et 9 mois</td><td class="nombre">59 ans</td><td class="nombre">59 ans</td><td class="nombre">59 ans</td></tr><tr><th class="" scope="row">Artisan</th><td class="nombre">64 ans</td><td class="nombre">64 ans et 6 mois</td><td class="nombre">65 ans et 9 mois</td><td class="nombre">67 ans</td><td class="nombre">67 ans</td><td class="nombre">67 ans</td><td class="nombre">67 ans</td></tr><tr><th class="" scope="row">Chef d&#x27;exploitation agricole</th><td class="nombre">60 ans</td><td class="nombre">60 ans</td><td class="nombre">62 ans</td><td class="nombre">63 ans</td><td class="nombre">63 ans</td><td class="nombre">63 ans</td><td class="nombre">63 ans</td></tr><tr><th class="" scope="row">Profession libérale</th><td class="nombre">65 ans</td><td class="nombre">65 ans</td><td class="nombre">67 ans</td><td class="nombre">67 ans</td><td class="nombre">67 ans</td><td class="nombre">67 ans</td><td class="nombre">67 ans</td></tr><tr><th class="" scope="row">Agent contractuel de la fonction publique</th><td class="nombre">64 ans</td><td class="nombre">64 ans et 6 mois</td><td class="nombre">65 ans et 9 mois</td><td class="nombre">67 ans</td><td class="nombre">67 ans</td><td class="nombre">67 ans</td><td class="nombre">67 ans</td></tr></tbody></table></div></div></details>
-
+</div>
 </main>
 <footer>
 <div class="interieur">

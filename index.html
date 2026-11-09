@@ -70,6 +70,13 @@
   --accent: #00695f;
   --accent-doux: #e3f4f1;
   
+  --info-fond: #e3f4f1;
+  --info-bord: #00695f;
+  --alerte-fond: #fff6db;
+  --alerte-bord: #b8860b;
+  
+  --lueur-appel: #0f6f72;
+  
   --or: #e9c53d;
   --or-texte: #003340;
   --sur-or: #00242e;
@@ -129,7 +136,7 @@
   --titres: "Jost", "Futura", "Century Gothic", "Avenir Next", system-ui, sans-serif;
   --serif: var(--titres);
 }
-header.bandeau, .affiche, .carte-partage, .zone-petrole {
+header.bandeau, .affiche, .carte-partage, .carte-appel, .zone-petrole {
   color-scheme: dark;
   --fond: #003340;
   --fond-carte: #00242e;
@@ -290,15 +297,16 @@ h1 {
 }
 h2 {
   font-family: var(--titres); font-size: var(--t-intertitre); line-height: 1.15;
-  margin: 3rem 0 1rem; font-weight: 600; color: var(--titre);
+  margin: 3rem 0 1rem; font-weight: 700; color: var(--titre);
 }
-h3 { font-size: var(--t-lead); margin: 2rem 0 0.5rem; font-weight: 600; }
+h3 { font-size: var(--t-lead); margin: 2rem 0 0.5rem; font-weight: 700; }
 h4 { font-weight: 500; }
 .serif {
   font-family: var(--titres);
   font-weight: 500; text-transform: none; letter-spacing: 0;
   line-height: 1.15;
 }
+:is(h2, h3).serif { font-weight: 700; }
 p { margin: 0.75rem 0; max-width: 46rem; }
 a {
   color: var(--lien); text-decoration-color: var(--trait-champ);
@@ -306,14 +314,16 @@ a {
 }
 a:hover { text-decoration-color: var(--or); }
 .surtitre {
-  margin: 0 0 1rem; font-size: var(--t-texte); font-weight: 500;
-  color: var(--texte-doux); line-height: 1.3;
+  margin: 0 0 0.5rem; font-family: var(--titres); font-size: var(--t-petit);
+  font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--accent); line-height: 1.3;
   display: flex; align-items: center; gap: 0.5rem;
 }
 .surtitre::before {
   content: ""; flex: none; width: 1.5rem; height: 4px;
   background: var(--or); border-radius: 2px;
 }
+.surtitre + h2 { margin-top: 0; }
 .chapeau {
   font-size: var(--t-lead); line-height: 1.5;
   color: var(--texte-doux); max-width: 46rem; margin: 1.25rem 0 0;
@@ -330,11 +340,46 @@ a:hover { text-decoration-color: var(--or); }
     linear-gradient(to bottom, rgb(0 51 64 / 0), var(--petrole)),
     linear-gradient(90deg, var(--petrole) 40%, var(--lueur));
 }
-.affiche .surtitre {
-  margin-bottom: 0.5rem; font-family: var(--titres); font-size: var(--t-petit);
-  font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;
-  color: var(--or-texte);
+.affiche .surtitre { letter-spacing: 0.1em; color: var(--or-texte); }
+.affiche .actions { margin-top: 1.25rem; gap: 0.75rem; }
+a.bouton.clair {
+  background-color: transparent; color: #fff;
+  border-color: rgb(255 255 255 / 0.55);
 }
+a.bouton.clair:hover {
+  background-color: rgb(255 255 255 / 0.1); border-color: #fff; opacity: 1;
+}
+.tranche {
+  position: relative; isolation: isolate;
+  padding: clamp(2rem, 6vw, 3rem) 0;
+}
+.tranche.alt {
+  background-color: var(--fond-appui); --fond-defilant: var(--fond-appui);
+}
+.tranche.alt::before {
+  content: ""; position: absolute; z-index: -1;
+  top: 0; bottom: 0; left: calc(50% - 50vw); right: calc(50% - 50vw);
+  background-color: var(--fond-appui);
+}
+:not(.tranche, .affiche) + .tranche { margin-top: clamp(2rem, 6vw, 3rem); }
+.tranche > :first-child { margin-top: 0; }
+.tranche > :last-child { margin-bottom: 0; }
+.affiche + .tranche:not(.alt) { padding-top: 0; }
+.affiche:has(+ .tranche.alt) { margin-bottom: 0; }
+main:has(> .tranche:last-child) + footer { margin-top: 0; }
+.carte-appel {
+  position: relative; isolation: isolate; overflow: hidden;
+  border-radius: var(--rayon); margin: 2rem 0 0;
+  padding: clamp(1.25rem, 1rem + 2vw, 2.25rem);
+}
+.carte-appel::before {
+  content: ""; position: absolute; z-index: -1; inset: 0;
+  background: radial-gradient(circle at 88% 30%, var(--lueur-appel) 0%, var(--petrole) 60%);
+}
+.carte-appel .surtitre { color: var(--or-texte); }
+.carte-appel h2 { margin: 0; }
+.carte-appel p { color: var(--bandeau-doux); }
+.carte-appel > p:not([class]) { margin: 0.5rem 0 0; }
 .affiche h1 .cle-texte {
   color: inherit; font-weight: inherit;
   background: linear-gradient(transparent 62%, rgb(233 197 61 / 0.55) 62%);
@@ -348,9 +393,10 @@ h1 .cle-texte, h2 .cle-texte { font-weight: inherit; }
   box-shadow: var(--ombre);
 }
 .note {
-  border-left: 4px solid var(--or); background: var(--fond-carte);
+  border-left: 5px solid var(--info-bord); background: var(--info-fond);
   padding: 0.75rem 1rem; margin: 1.5rem 0; font-size: var(--t-petit);
   border-radius: 0 var(--rayon-petit) var(--rayon-petit) 0;
+  --fond-defilant: var(--info-fond);
 }
 .discret { color: var(--texte-tres-doux); font-size: var(--t-petit); }
 .creme {
@@ -390,14 +436,19 @@ h1 .cle-texte, h2 .cle-texte { font-weight: inherit; }
   gap: 1rem; align-items: start;
 }
 .simulateur-court .grille button { white-space: nowrap; }
-.engagements {
-  margin: 2.5rem 0 0; display: grid; gap: 1rem;
+.engagements { margin: 0; }
+.engagements .grille {
+  display: grid; gap: 1rem; grid-template-columns: minmax(0, 1fr);
+}
+@media (min-width: 40rem) {
+  .engagements .grille { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (min-width: 64rem) {
+  .engagements .grille { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 .engagements .engagement {
-  display: grid; align-items: baseline;
-  grid-template-columns: 2.5rem minmax(0, 22rem) minmax(0, 1fr) minmax(0, 1.25fr);
-  gap: 0.5rem 2rem; padding: 1.5rem 1.5rem 1.5rem 2rem;
   position: relative; overflow: hidden;
+  padding: 1.25rem 1.25rem 1rem 1.5rem;
   background: var(--fond-carte); border: 1px solid var(--trait);
   border-radius: var(--rayon); box-shadow: var(--ombre);
 }
@@ -405,40 +456,21 @@ h1 .cle-texte, h2 .cle-texte { font-weight: inherit; }
   content: ""; position: absolute; inset: 0 auto 0 0; width: 6px;
   background: var(--or);
 }
-.engagements .rang {
-  font-size: var(--t-petit); line-height: 1; color: var(--texte-tres-doux);
-}
 .engagements .chiffre {
   font-family: var(--titres);
-  font-size: var(--t-chiffre); line-height: 1; font-weight: 600;
-  letter-spacing: -0.01em; color: var(--or-texte); text-align: right;
-  font-variant-numeric: tabular-nums;
-}
-.engagements .promesse .euros {
-  font-family: "Public Sans", system-ui, sans-serif; font-size: var(--t-lead);
-  font-variant-numeric: tabular-nums;
+  font-size: var(--t-chiffre); line-height: 1.05; font-weight: 700;
+  color: var(--titre); font-variant-numeric: tabular-nums;
 }
 .engagements .promesse {
-  font-family: var(--serif); font-size: var(--t-serif); line-height: 1.25;
-  color: var(--texte);
+  margin-top: 0.5rem; font-size: var(--t-texte); line-height: 1.4;
+  font-weight: 600; color: var(--texte);
 }
 .engagements .detail {
-  font-size: var(--t-texte); line-height: 1.6; color: var(--texte-doux);
+  margin-top: 0.25rem; font-size: var(--t-petit); line-height: 1.5;
+  color: var(--texte-doux);
 }
-.engagements :is(.promesse, .detail) .cle-texte { color: var(--texte); font-weight: 500; }
-.engagements .promesse .cle-texte { font-weight: inherit; }
-@media (min-width: 64.0625rem) {
-  .engagements .chiffre { white-space: nowrap; }
-}
-@media (max-width: 64rem) {
-  .engagements .engagement { grid-template-columns: 2.5rem minmax(0, 15rem) minmax(0, 1fr); }
-  .engagements .detail { grid-column: 3; }
-}
-@media (max-width: 48rem) {
-  .engagements .engagement { grid-template-columns: 2rem minmax(0, 1fr); gap: 0.75rem; }
-  .engagements .chiffre { text-align: left; }
-  .engagements :is(.promesse, .detail) { grid-column: 2; }
-}
+.engagements .promesse .cle-texte { color: inherit; font-weight: inherit; }
+.engagements .detail .cle-texte { color: var(--texte); font-weight: 500; }
 ol.gestes {
   margin: 0; padding: 0; list-style: none; display: grid; gap: 0;
   font-size: var(--t-lead); line-height: 1.5; color: var(--texte-doux);
@@ -602,7 +634,7 @@ details.section > .dedans > h4,
   background-size: 2.5rem 100%, 2.5rem 100%, 0.9rem 100%, 0.9rem 100%;
   background-attachment: local, local, scroll, scroll;
 }
-.carte, .note, .plan, .erreur, .cadre-carte, section.cle {
+.carte, .plan, .erreur, .cadre-carte, section.cle {
   --fond-defilant: var(--fond-carte);
 }
 .creme { --fond-defilant: var(--creme); }
@@ -763,7 +795,7 @@ table[data-pli="fiche"][data-plie] tbody td[data-titre]::before {
 }
 .points .point > h2 {
   margin: 0 0 0.5rem; font-family: var(--titres); font-size: 1.25rem;
-  font-weight: 600; line-height: 1.25;
+  font-weight: 700; line-height: 1.25;
 }
 .points .point > p { margin: 0; font-size: 1rem; color: var(--texte-doux); }
 section.cle {
@@ -775,7 +807,7 @@ section.cle {
 }
 section.cle > :is(h2, h3) {
   margin: 0; font-family: var(--titres); font-size: clamp(1.375rem, 3vw, 1.75rem);
-  font-weight: 600; line-height: 1.2; letter-spacing: -0.01em; color: var(--titre);
+  font-weight: 700; line-height: 1.2; letter-spacing: -0.01em; color: var(--titre);
 }
 section.cle > .reponse {
   font-size: 1.1875rem; line-height: 1.5; max-width: 46rem; margin: 0.5rem 0 0.2rem;
@@ -952,7 +984,7 @@ ul.serree li { margin: 0.25rem 0; }
   font-family: "Public Sans", system-ui, sans-serif;
 }
 .carte-partage .surtitre {
-  margin: 0; font-size: 13px; font-size: 2.167cqw; font-weight: 700;
+  margin: 0; font-family: inherit; font-size: 13px; font-size: 2.167cqw; font-weight: 700;
   letter-spacing: 0.14em; text-transform: uppercase; color: var(--or-texte);
   line-height: 1;
 }
@@ -1093,11 +1125,11 @@ body.calcul-en-cours::after {
   <nav id="navigation" aria-label="Navigation principale"><span class="groupe"><span class="etiquette">L&#x27;essentiel</span><span class="liens"><a href="./" aria-current="page">Programme</a><a href="simuler/">Simuler</a><a href="cout/">Coût</a><a href="risque/">Pourquoi changer</a></span></span><span class="groupe"><span class="etiquette">Faire connaître</span><span class="liens"><a href="partager/">Partager</a><a href="saviez-vous/">Le saviez-vous ?</a></span></span><span class="groupe secondaire"><span class="etiquette">Pour vérifier</span><button type="button" class="deplier" aria-expanded="false" aria-controls="pages-a-verifier">Pour vérifier<svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg></button><span class="liens" id="pages-a-verifier"><a href="cas-types/">Carrières types</a><a href="avantages/">Droits non cotisés</a><a href="methode/">Méthode et sources</a></span></span></nav>
 </div></header></div>
 <main id="contenu" tabindex="-1" data-prerendu="/">
-<div class="affiche"><p class="surtitre">Notre programme pour les retraites</p><h1>Chaque pension vaut <span class="cle-texte">ce qui a été cotisé</span>.</h1><p class="chapeau"><strong class="cle-texte">Une égalité de traitement pour tous et une protection pour les plus fragiles.</strong></p></div>
+<div class="affiche"><p class="surtitre">Notre programme pour les retraites</p><h1>Chaque pension vaut <span class="cle-texte">ce qui a été cotisé</span>.</h1><p class="chapeau"><strong class="cle-texte">Une égalité de traitement pour tous et une protection pour les plus fragiles.</strong></p><p class="actions"><a class="bouton" href="simuler/">Simuler ma retraite</a><a class="bouton clair" href="cout/">Ce que ça coûte, et qui paie</a></p></div>
 
-<section class="engagements" aria-label="Six arguments"><div class="grille"><div class="engagement"><div class="rang">01</div><div class="chiffre">1 compte</div><div class="promesse">à votre nom, <strong class="cle-texte">en euros</strong>.</div><div class="detail">Vous voyez <strong class="cle-texte">votre solde comme sur un relevé bancaire</strong>.</div></div><div class="engagement"><div class="rang">02</div><div class="chiffre">5 %</div><div class="promesse">de votre salaire, <strong class="cle-texte">placés à votre nom</strong>.</div><div class="detail">Cette part vous appartient : si vous décédez avant votre retraite, <strong class="cle-texte">elle revient à vos héritiers</strong>.</div></div><div class="engagement"><div class="rang">03</div><div class="chiffre">1 050 €</div><div class="promesse">par mois au minimum pour qui vit seul, <strong class="cle-texte euros">800 €</strong> chacun en couple.</div><div class="detail">Dès 65 ans, <strong class="cle-texte">pour chacun, sans regarder les revenus du conjoint</strong>. <a href="./#le-plancher" data-vers="le-plancher">Comment il est financé</a></div></div><div class="engagement"><div class="rang">04</div><div class="chiffre">Vos enfants</div><div class="promesse">et petits-enfants <strong class="cle-texte">auront leur retraite</strong>.</div><div class="detail">Leur cotisation ne montera pas, et la même règle fera leur pension.</div></div><div class="engagement"><div class="rang">05</div><div class="chiffre">1 règle</div><div class="promesse"><strong class="cle-texte">fixée une fois pour toutes</strong>, plutôt que des réformes à répétition.</div></div><div class="engagement"><div class="rang">06</div><div class="chiffre">1 €</div><div class="promesse">cotisé, <strong class="cle-texte">les mêmes droits pour tous</strong>.</div><div class="detail">Cheminot ou salarié du privé : dès 2026, le même compte, à la même règle.</div></div></div></section>
+<div class="tranche"><section class="engagements" aria-label="Six arguments"><div class="grille"><div class="engagement"><div class="chiffre">1 compte</div><div class="promesse">à votre nom, <strong class="cle-texte">en euros</strong>.</div><div class="detail">Vous voyez <strong class="cle-texte">votre solde comme sur un relevé bancaire</strong>.</div></div><div class="engagement"><div class="chiffre">5 %</div><div class="promesse">de votre salaire, <strong class="cle-texte">placés à votre nom</strong>.</div><div class="detail">Cette part vous appartient : si vous décédez avant votre retraite, <strong class="cle-texte">elle revient à vos héritiers</strong>.</div></div><div class="engagement"><div class="chiffre">1 050 €</div><div class="promesse">par mois au minimum pour qui vit seul, <strong class="cle-texte euros">800 €</strong> chacun en couple.</div><div class="detail">Dès 65 ans, <strong class="cle-texte">pour chacun, sans regarder les revenus du conjoint</strong>. <a href="./#le-plancher" data-vers="le-plancher">Comment il est financé</a></div></div><div class="engagement"><div class="chiffre">Vos enfants</div><div class="promesse">et petits-enfants <strong class="cle-texte">auront leur retraite</strong>.</div><div class="detail">Leur cotisation ne montera pas, et la même règle fera leur pension.</div></div><div class="engagement"><div class="chiffre">1 règle</div><div class="promesse"><strong class="cle-texte">fixée une fois pour toutes</strong>, plutôt que des réformes à répétition.</div></div><div class="engagement"><div class="chiffre">1 €</div><div class="promesse">cotisé, <strong class="cle-texte">les mêmes droits pour tous</strong>.</div><div class="detail">Cheminot ou salarié du privé : dès 2026, le même compte, à la même règle.</div></div></div></section></div>
 
-
+<div class="tranche alt">
 <form class="creme simulateur-court" method="get" action="simuler/">
   <div class="tete">
     <h2 class="serif">Et vous, ça donne combien&nbsp;?</h2>
@@ -1109,9 +1141,9 @@ body.calcul-en-cours::after {
   <p class="discret" style="margin:1rem 0 0">Quatre montants côte à côte :
   les règles d'aujourd'hui, et les nôtres. Tout se calcule dans votre
   navigateur, rien n'est envoyé.</p>
-</form>
+</form></div>
 
-<div class="paire">
+<div class="tranche"><div class="paire">
   <div id="le-calcul" tabindex="-1">
     <p class="surtitre">Le calcul</p>
     <h2 style="margin-top:0">Comment ça marche, en trois gestes</h2>
@@ -1125,14 +1157,14 @@ body.calcul-en-cours::after {
     <p>Aujourd'hui, le minimum vieillesse (l'ASPA) regarde le couple :</p>
     <div class="defilant" tabindex="0" role="region" aria-label="Ce que le plancher individualisé change, par mois"><table><caption><span>Ce que le plancher individualisé change, par mois</span></caption><thead><tr><th class="" scope="col">Pensions des deux personnes</th><th class="nombre" scope="col">Aujourd&#x27;hui (ASPA 2026)</th><th class="nombre" scope="col">Avec la garantie</th></tr></thead><tbody><tr><th class="" scope="row">300 € et 300 €</th><td class="nombre">1 020 €</td><td class="nombre">1 000 €</td></tr><tr><th class="" scope="row">300 € et 1 500 €</th><td class="nombre">0 €</td><td class="nombre">500 €</td></tr><tr><th class="" scope="row">900 € et 900 €</th><td class="nombre">0 €</td><td class="nombre">0 €</td></tr><tr><th class="" scope="row">300 € et 5 000 €</th><td class="nombre">0 €</td><td class="nombre">500 €</td></tr><tr><th class="" scope="row">Personne seule, 300 €</th><td class="nombre">744 €</td><td class="nombre">750 €</td></tr></tbody></table></div>
   </div>
-</div>
+</div></div>
 
-<h2>Ce que cela change</h2>
+<div class="tranche alt"><h2>Ce que cela change</h2>
 <div class="defilant" tabindex="0" role="region" aria-label="Le système actuel et notre programme, terme à terme"><table><caption><span>Le système actuel et notre programme, terme à terme</span></caption><thead><tr><th class="" scope="col"></th><th class="texte" scope="col">Aujourd&#x27;hui</th><th class="texte" scope="col">Avec notre programme</th></tr></thead><tbody><tr><th class="" scope="row">Ce qui ouvre un droit</th><td class="texte">des <span class="mot"><span class="terme" role="button" tabindex="0" aria-expanded="false">trimestres</span><span class="bulle" role="note" hidden>L&#x27;unité dans laquelle le système actuel compte une carrière : quatre par année pleine, et un trimestre est acquis dès qu&#x27;on a gagné dans l&#x27;année l&#x27;équivalent de 150 heures au SMIC. Il en faut un nombre fixé par génération pour partir sans décote.</span></span>, et 80 barèmes différents</td><td class="texte">une cotisation versée, et elle seule</td></tr><tr><th class="" scope="row">Ce qui fait le montant</th><td class="texte">vos <span class="mot"><span class="terme" role="button" tabindex="0" aria-expanded="false">25 meilleures années</span><span class="bulle" role="note" hidden>Le salaire sur lequel le système actuel calcule la pension : la moyenne des 25 meilleures années au régime général, le dernier traitement dans la fonction publique.</span></span>, un taux, une durée</td><td class="texte">votre compte, divisé par votre espérance de vie</td></tr><tr><th class="" scope="row">Votre retraite</th><td class="texte">ce que votre régime promet</td><td class="texte">de l'ordre d'un quart de moins, en médiane</td></tr><tr><th class="" scope="row">L'âge de départ</th><td class="texte">selon génération et statut</td><td class="texte">65 ans pour tous, dès 2026</td></tr><tr><th class="" scope="row">Partir un an plus tôt</th><td class="texte">une <span class="mot"><span class="terme" role="button" tabindex="0" aria-expanded="false">décote</span><span class="bulle" role="note" hidden>La réduction appliquée à toute la pension quand on part avant d&#x27;avoir la durée exigée, tant qu&#x27;on n&#x27;a pas atteint l&#x27;âge du taux plein. Elle se compte par trimestre manquant.</span></span>, que chaque réforme revoit</td><td class="texte">moins de cotisations, plus d'années de pension</td></tr><tr><th class="" scope="row">Changer de métier</th><td class="texte">changer de régime et de calcul</td><td class="texte">rien : le même compte</td></tr><tr><th class="" scope="row">Savoir où vous en êtes</th><td class="texte">un relevé en trimestres et en points</td><td class="texte">un solde, en euros</td></tr><tr><th class="" scope="row">Tenir l'équilibre</th><td class="texte">une réforme, tous les huit ans en moyenne</td><td class="texte">un chiffre publié chaque année</td></tr><tr><th class="" scope="row">Décès avant la retraite</th><td class="texte">vos cotisations restent au système</td><td class="texte">votre capital revient à vos héritiers</td></tr></tbody></table></div>
 <p class="discret">Ce compte existe déjà en Suède, en Italie, en Pologne et en
-Lettonie.</p>
+Lettonie.</p></div>
 
-<h2>Vos questions</h2>
+<div class="tranche"><h2>Vos questions</h2>
 <details class="section"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>Ma retraite va-t-elle baisser ?</span></summary><div class="dedans">
 <p><strong>Le plus souvent, elle sera plus basse que ce que le système actuel
 promet, de l'ordre d'un quart.</strong> Sur nos <a href="cas-types/">treize carrières types</a>, la baisse médiane est de
@@ -1441,13 +1473,13 @@ pas discuter.</p>
 <p class="discret">Le Parti libéral français, septembre 2026.</p>
 </div></div></details>
 
-<div class="creme">
+<div class="carte-appel">
 <p class="surtitre">Vérifiez plutôt que de nous croire</p>
-<h2 class="serif" style="margin:0">Tout est chiffré, sur des données publiques
-et un modèle ouvert</h2>
+<h2>Tout est chiffré, sur des données publiques et un modèle ouvert</h2>
 <p class="actions"><a class="bouton" href="simuler/">Simuler ma
-retraite</a><a href="cout/">Ce que ça coûte, et qui paie</a></p>
-</div>
+retraite</a><a class="bouton clair" href="cout/">Ce que ça coûte,
+et qui paie</a></p>
+</div></div>
 </main>
 <footer>
 <div class="interieur">

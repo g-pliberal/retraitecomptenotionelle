@@ -70,6 +70,13 @@
   --accent: #00695f;
   --accent-doux: #e3f4f1;
   
+  --info-fond: #e3f4f1;
+  --info-bord: #00695f;
+  --alerte-fond: #fff6db;
+  --alerte-bord: #b8860b;
+  
+  --lueur-appel: #0f6f72;
+  
   --or: #e9c53d;
   --or-texte: #003340;
   --sur-or: #00242e;
@@ -129,7 +136,7 @@
   --titres: "Jost", "Futura", "Century Gothic", "Avenir Next", system-ui, sans-serif;
   --serif: var(--titres);
 }
-header.bandeau, .affiche, .carte-partage, .zone-petrole {
+header.bandeau, .affiche, .carte-partage, .carte-appel, .zone-petrole {
   color-scheme: dark;
   --fond: #003340;
   --fond-carte: #00242e;
@@ -290,14 +297,15 @@ h1 {
 }
 h2 {
   font-family: var(--titres); font-size: var(--t-intertitre); line-height: 1.15;
-  margin: 3rem 0 1rem; font-weight: 600; color: var(--titre);
+  margin: 3rem 0 1rem; font-weight: 700; color: var(--titre);
 }
-h3 { font-size: var(--t-lead); margin: 2rem 0 0.5rem; font-weight: 600; }
+h3 { font-size: var(--t-lead); margin: 2rem 0 0.5rem; font-weight: 700; }
 .serif {
   font-family: var(--titres);
   font-weight: 500; text-transform: none; letter-spacing: 0;
   line-height: 1.15;
 }
+:is(h2, h3).serif { font-weight: 700; }
 p { margin: 0.75rem 0; max-width: 46rem; }
 a {
   color: var(--lien); text-decoration-color: var(--trait-champ);
@@ -305,14 +313,16 @@ a {
 }
 a:hover { text-decoration-color: var(--or); }
 .surtitre {
-  margin: 0 0 1rem; font-size: var(--t-texte); font-weight: 500;
-  color: var(--texte-doux); line-height: 1.3;
+  margin: 0 0 0.5rem; font-family: var(--titres); font-size: var(--t-petit);
+  font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--accent); line-height: 1.3;
   display: flex; align-items: center; gap: 0.5rem;
 }
 .surtitre::before {
   content: ""; flex: none; width: 1.5rem; height: 4px;
   background: var(--or); border-radius: 2px;
 }
+.surtitre + h2 { margin-top: 0; }
 .chapeau {
   font-size: var(--t-lead); line-height: 1.5;
   color: var(--texte-doux); max-width: 46rem; margin: 1.25rem 0 0;
@@ -329,11 +339,25 @@ a:hover { text-decoration-color: var(--or); }
     linear-gradient(to bottom, rgb(0 51 64 / 0), var(--petrole)),
     linear-gradient(90deg, var(--petrole) 40%, var(--lueur));
 }
-.affiche .surtitre {
-  margin-bottom: 0.5rem; font-family: var(--titres); font-size: var(--t-petit);
-  font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;
-  color: var(--or-texte);
+.affiche .surtitre { letter-spacing: 0.1em; color: var(--or-texte); }
+.tranche {
+  position: relative; isolation: isolate;
+  padding: clamp(2rem, 6vw, 3rem) 0;
 }
+.tranche.alt {
+  background-color: var(--fond-appui); --fond-defilant: var(--fond-appui);
+}
+.tranche.alt::before {
+  content: ""; position: absolute; z-index: -1;
+  top: 0; bottom: 0; left: calc(50% - 50vw); right: calc(50% - 50vw);
+  background-color: var(--fond-appui);
+}
+:not(.tranche, .affiche) + .tranche { margin-top: clamp(2rem, 6vw, 3rem); }
+.tranche > :first-child { margin-top: 0; }
+.tranche > :last-child { margin-bottom: 0; }
+.affiche + .tranche:not(.alt) { padding-top: 0; }
+.affiche:has(+ .tranche.alt) { margin-bottom: 0; }
+main:has(> .tranche:last-child) + footer { margin-top: 0; }
 .affiche h1 .cle-texte {
   color: inherit; font-weight: inherit;
   background: linear-gradient(transparent 62%, rgb(233 197 61 / 0.55) 62%);
@@ -347,9 +371,10 @@ h1 .cle-texte, h2 .cle-texte { font-weight: inherit; }
   box-shadow: var(--ombre);
 }
 .note {
-  border-left: 4px solid var(--or); background: var(--fond-carte);
+  border-left: 5px solid var(--info-bord); background: var(--info-fond);
   padding: 0.75rem 1rem; margin: 1.5rem 0; font-size: var(--t-petit);
   border-radius: 0 var(--rayon-petit) var(--rayon-petit) 0;
+  --fond-defilant: var(--info-fond);
 }
 .note.resume { font-size: 1rem; }
 .discret { color: var(--texte-tres-doux); font-size: var(--t-petit); }
@@ -491,7 +516,7 @@ details.section > .dedans > :first-child { margin-top: 0; }
   background-size: 2.5rem 100%, 2.5rem 100%, 0.9rem 100%, 0.9rem 100%;
   background-attachment: local, local, scroll, scroll;
 }
-.carte, .note, .plan, .erreur, .cadre-carte, section.cle {
+.carte, .plan, .erreur, .cadre-carte, section.cle {
   --fond-defilant: var(--fond-carte);
 }
 table { border-collapse: collapse; width: 100%; font-size: var(--t-texte);
@@ -580,26 +605,21 @@ table[data-pli="fiche"][data-plie] tbody td[data-titre]::before {
 }
 .plan {
   background: var(--fond-carte); border: 1px solid var(--trait);
-  border-left: 4px solid var(--or); border-radius: 0 var(--rayon) var(--rayon) 0;
-  padding: 1rem 1.25rem; margin: 1.5rem 0; font-size: var(--t-petit);
-  box-shadow: var(--ombre);
+  border-radius: var(--rayon); box-shadow: var(--ombre);
+  padding: 1rem 1.25rem 0.25rem; margin: 1.5rem 0 2rem;
 }
 .plan .etiquette {
-  margin: 0 0 0.5rem; font-size: var(--t-petit);
-  color: var(--texte-doux); font-weight: 600;
+  margin: 0 0 0.25rem; font-family: var(--titres); font-size: var(--t-texte);
+  color: var(--titre); font-weight: 700;
 }
 .plan ol {
   margin: 0; padding: 0; list-style: none;
-  display: flex; flex-wrap: wrap; gap: 0.5rem;
+  display: flex; flex-wrap: wrap; gap: 0 1.25rem;
 }
 .plan a {
-  color: var(--texte); text-decoration: none;
-  font-size: var(--t-petit); font-weight: 500;
+  font-size: var(--t-petit);
   display: inline-flex; align-items: center; min-height: 2.75rem;
-  padding: 0 0.75rem; background: var(--fond-appui);
-  border: 1px solid var(--trait); border-radius: var(--rayon-petit);
 }
-.plan a:hover { color: var(--or-texte); border-color: var(--or); }
 .bascule {
   display: inline-flex; flex-wrap: wrap; align-items: center; gap: 0.4rem;
   
@@ -689,14 +709,14 @@ table[data-pli="fiche"][data-plie] tbody td[data-titre]::before {
 }
 .fiches.reperes .fiche .valeur {
   font-family: var(--titres);
-  font-size: clamp(1.75rem, 4vw, 2.5rem); line-height: 1.05; font-weight: 600;
-  letter-spacing: -0.01em; color: var(--or-texte); order: 2;
+  font-size: clamp(1.75rem, 4vw, 2.5rem); line-height: 1.05; font-weight: 700;
+  letter-spacing: -0.01em; color: var(--titre);
 }
 .fiches.reperes .fiche .etiquette {
-  order: 1; font-size: var(--t-petit); font-weight: 600;
-  color: var(--texte-doux); margin-bottom: 0.4rem;
+  font-size: var(--t-texte); font-weight: 600;
+  color: var(--texte); margin-top: 0.5rem;
 }
-.fiches.reperes .fiche .precision { order: 3; margin-top: 0.4rem; }
+.fiches.reperes .fiche .precision { margin-top: 0.25rem; }
 .points { display: grid;
           grid-template-columns: repeat(auto-fit, minmax(min(20rem, 100%), 1fr));
           gap: 1.5rem; margin: 2rem 0; }
@@ -707,7 +727,7 @@ table[data-pli="fiche"][data-plie] tbody td[data-titre]::before {
 }
 .points .point > h2 {
   margin: 0 0 0.5rem; font-family: var(--titres); font-size: 1.25rem;
-  font-weight: 600; line-height: 1.25;
+  font-weight: 700; line-height: 1.25;
 }
 .points .point > p { margin: 0; font-size: 1rem; color: var(--texte-doux); }
 section.cle {
@@ -719,7 +739,7 @@ section.cle {
 }
 section.cle > :is(h2, h3) {
   margin: 0; font-family: var(--titres); font-size: clamp(1.375rem, 3vw, 1.75rem);
-  font-weight: 600; line-height: 1.2; letter-spacing: -0.01em; color: var(--titre);
+  font-weight: 700; line-height: 1.2; letter-spacing: -0.01em; color: var(--titre);
 }
 section.cle > .reponse {
   font-size: 1.1875rem; line-height: 1.5; max-width: 46rem; margin: 0.5rem 0 0.2rem;
@@ -901,7 +921,7 @@ ul.serree li { margin: 0.25rem 0; }
   font-family: "Public Sans", system-ui, sans-serif;
 }
 .carte-partage .surtitre {
-  margin: 0; font-size: 13px; font-size: 2.167cqw; font-weight: 700;
+  margin: 0; font-family: inherit; font-size: 13px; font-size: 2.167cqw; font-weight: 700;
   letter-spacing: 0.14em; text-transform: uppercase; color: var(--or-texte);
   line-height: 1;
 }
@@ -990,7 +1010,6 @@ body.calcul-en-cours::after {
   .scenarios { column-gap: 0.75rem; }
   .scenarios > .scenario { row-gap: 0.3rem; padding: 0.6rem 0 0.6rem; }
   .scenarios .scenario :is(.salaire, .principal) .somme { font-size: 1.375rem; }
-  .plan a { padding: 0 0.5rem; font-size: 0.8125rem; }
   .affiche { padding: 2rem 0 1.5rem; }
   .scenario .entete { flex-direction: column; gap: 0.15rem; }
   .scenario .titre { flex: 0 1 auto; max-width: 100%; }
@@ -1005,10 +1024,6 @@ body.calcul-en-cours::after {
   details.section > .dedans { padding-left: 0.6rem; }
   .fiches { grid-template-columns: 1fr; }
   .fiches.reperes { grid-template-columns: 1fr; }
-  .fiches.reperes .fiche {
-    padding: 1rem 0; box-shadow: none; border-top: 1px solid var(--trait);
-  }
-  .fiches.reperes .fiche:first-child { border-top: 0; }
   h2 { margin-top: 2.25rem; }
   section.cle { padding: 1.25rem 1rem 1rem; }
   .partage > .partager,
@@ -1109,7 +1124,7 @@ tout le monde peut lire, au lieu d'une réforme qui tombe sur une génération.
 <a href="../">La proposition</a> est chiffrée carrière par
 carrière.</div>
 
-<h2>Pour aller plus loin</h2>
+<div class="tranche alt"><h2>Pour aller plus loin</h2>
 
 <details class="section" id="risque-salaire"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>Ces cotisations sont votre salaire, y compris celles de l&#x27;employeur</span></summary><div class="dedans">
 <p>Sur la fiche de paie, la retraite se partage en deux lignes : celle que le
@@ -1509,7 +1524,7 @@ principales :</p>
   <em>Global Investment Returns Yearbook</em> ; d'Albis, H. et Badji, I.
   (2017), <em>Économie et Statistique</em> 491-492, cité contre notre propre
   thèse.</li>
-</ul></div></details>
+</ul></div></details></div>
 </main>
 <footer>
 <div class="interieur">

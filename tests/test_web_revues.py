@@ -747,7 +747,12 @@ def test_l_accueil_ouvre_sur_ses_arguments_puis_sur_le_simulateur():
     for champ in ("naissance", "debut", "statut", "liquidation"):
         assert f'name="{champ}"' in brut, f"le champ {champ} manque"
     bouton = f'<a class="bouton" href="{g.lien("/simuler")}">'
-    assert visible.count(bouton) == 1, "le rappel du bas de page a disparu"
+    # Le bouton du simulateur se lit deux fois depuis le 9 novembre 2026
+    # (action 189, étape 5) : sous le chapeau de l'affiche, comme sur le site
+    # du parti, et au rappel du bas de page, dans la carte d'appel.
+    assert visible.count(bouton) == 2, "l'affiche ou le rappel du bas de page a perdu son bouton"
+    assert visible.index(bouton) < engagements
+    assert visible.rindex(bouton) > visible.index('<div class="carte-appel">') > formulaire
     assert ".simulateur-court .grille" in FEUILLE_DE_STYLE
 
 
@@ -801,15 +806,23 @@ def test_l_accueil_dit_son_principe_puis_six_arguments_sans_jargon():
     assert _en_clair(re.search(r'<p class="chapeau">(.*?)</p>', affiche, re.S).group(1)) == \
         "Une égalité de traitement pour tous et une protection pour les plus fragiles."
     section = re.search(r'<section class="engagements"[^>]*>(.*?)</section>', corps, re.S)
+    # Six cartes, la valeur d'abord, sans rang : le gabarit des chiffres clés
+    # du site du parti, que le propriétaire a retenu le 9 novembre 2026 à la
+    # place de la pile de six lignes numérotées (action 189, étape 5).
     lignes = re.findall(
-        r'<div class="engagement"><div class="rang">(\d\d)</div>'
-        r'<div class="chiffre">(.*?)</div><div class="promesse">(.*?)</div>'
+        r'<div class="engagement"><div class="chiffre">(.*?)</div>'
+        r'<div class="promesse">(.*?)</div>'
         r'(?:<div class="detail">(.*?)</div>)?</div>', section.group(1), re.S)
-    assert [rang for rang, *_ in lignes] == ["01", "02", "03", "04", "05", "06"]
-    assert [tuple(_en_clair(partie) for partie in ligne[1:]) for ligne in lignes] == \
+    assert [tuple(_en_clair(partie) for partie in ligne) for ligne in lignes] == \
         ARGUMENTS_DE_L_ACCUEIL
+    assert 'class="rang"' not in section.group(1)
     # « Comment il est financé » ouvre la réponse sur le plancher, sur la page.
-    assert 'data-vers="le-plancher"' in lignes[2][3]
+    assert 'data-vers="le-plancher"' in lignes[2][2]
+    # L'affiche porte, sous son chapeau, les deux actions que l'appel final
+    # porte aussi, dans les mêmes mots : le simulateur d'abord, puis le coût.
+    assert [_en_clair(libelle) for libelle in re.findall(
+        r'<a class="bouton[^"]*" href="[^"]*">(.*?)</a>', affiche, re.S)] == \
+        ["Simuler ma retraite", "Ce que ça coûte, et qui paie"]
     assert 'id="le-plancher"' in corps
     premier_ecran = _en_clair(affiche + section.group(1)).lower()
     for jargon in ("notionnel", "répartition", "scénario", "actuariel"):

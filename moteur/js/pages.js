@@ -3218,9 +3218,9 @@ function partager(contexte) {
   return `
 ${tete}
 
-<div class="cartes">${cartes}</div>
+${g.tranche(`<div class="cartes">${cartes}</div>`)}
 
-<div class="paire">
+${g.tranche(`<div class="paire">
   <div>
     <h2 style="margin-top:0">Texte prêt à coller</h2>
     <p>« Un minimum de ${g.euros(garantie + isolement)}/mois, ${taux} de
@@ -3236,7 +3236,7 @@ ${tete}
     même barre <span class="cle-texte">Partager</span> compose son image,
     filigrane compris, et son message.</p>
   </div>
-</div>
+</div>`, true)}
 `;
 }
 
@@ -3487,7 +3487,7 @@ function saviezVous() {
   ];
 
   const lien = ([libelle, adresse]) => `<a href="${adresse}">${libelle}</a>`;
-  const sections = themes.map((theme) => {
+  const sections = themes.map((theme, rang) => {
     const cartes = theme.cartes.map((carte) => cartePartage(
       carte.nom,
       "Le saviez-vous ?",
@@ -3505,7 +3505,10 @@ function saviezVous() {
     // deux par ligne, et trois cartes laissaient une case vide sous chaque
     // thème ; le titre la comble, à côté de la première carte, et la grille se
     // lit en deux lignes pleines. Sur un téléphone, il reste au-dessus.
-    return `<section class="theme"><div class="cartes" data-partage-ici>`
+    // Chaque thème est une tranche de la page, une sur deux sur le ton
+    // d'appui (action 189, étape 5).
+    return `<section class="theme tranche${rang % 2 ? " alt" : ""}">`
+      + "<div class=\"cartes\" data-partage-ici>"
       + `<div class="intro"><h2>${theme.titre}</h2>`
       + `<p class="chapeau">${theme.chapeau}</p></div>${cartes}</div></section>`;
   }).join("\n");
@@ -9079,12 +9082,12 @@ qui dérive ; le système stable, lui, n'existe pas.</p>
 <p class="actions"><a class="bouton" href="${g.lien("/simuler")}">Calculer sur ma
 carrière</a><a href="${g.lien("/methode")}">Comment c'est calculé</a></p>
 
-<h2>Pour aller plus loin</h2>
+${g.tranche(`<h2>Pour aller plus loin</h2>
 
 ${depliantCas}
 ${depliantPublicPrive}
 ${depliantAges}
-${echecs}
+${echecs}`, true)}
 `;
 }
 
@@ -9482,15 +9485,18 @@ dormir : il remonte les pensions jusqu'à l'équilibre. La courbe en pointillés
 ne dit donc pas « on dépenserait moins ». Elle dit : <em>avec le même argent,
 on servirait autant, mais réparti autrement entre les carrières</em>.</div>
 
+<div class="carte-appel">
 <h2>Et pour vous ?</h2>
 <p>Tout cela est un total national. Ce que chaque règle donne sur votre
 carrière se calcule en quelques secondes, dans votre navigateur.</p>
 <p class="actions"><a class="bouton" href="${g.lien("/simuler")}">Calculer ma
-retraite</a><a href="${g.lien("/cas-types")}">Voir treize carrières types</a></p>
+retraite</a><a class="bouton clair" href="${g.lien("/cas-types")}">Voir treize
+carrières types</a></p>
+</div>
 
-<h2>Pour aller plus loin</h2>
+${g.tranche(`<h2>Pour aller plus loin</h2>
 
-${detail}
+${detail}`, true)}
 `;
 }
 
@@ -9978,16 +9984,19 @@ qu'il a cotisé puis de ce qu'on lui ajoute. Un compte notionnel ne les interdit
 pas : il oblige à les payer par l'impôt, sous leur nom, plutôt que par une
 formule que nul ne lit.</div>
 
+<div class="carte-appel">
 <h2>Et pour vous ?</h2>
 <p>Ce que ces règles donnent sur votre carrière se calcule en quelques secondes,
 dans votre navigateur : la simulation affiche votre part cotisée, puis chaque
 avantage.</p>
 <p class="actions"><a class="bouton" href="${g.lien("/simuler")}">Calculer ma
-retraite</a><a href="${g.lien("/cout")}">Voir ce que tout cela coûte</a></p>
+retraite</a><a class="bouton clair" href="${g.lien("/cout")}">Voir ce que tout
+cela coûte</a></p>
+</div>
 
-<h2>Pour aller plus loin</h2>
+${g.tranche(`<h2>Pour aller plus loin</h2>
 
-${detail}
+${detail}`, true)}
 `;
 }
 
@@ -14451,9 +14460,9 @@ tout le monde peut lire, au lieu d'une réforme qui tombe sur une génération.
 <a href="${g.lien("/")}">La proposition</a> est chiffrée carrière par
 carrière.</div>
 
-<h2>Pour aller plus loin</h2>
+${g.tranche(`<h2>Pour aller plus loin</h2>
 
-${detail}
+${detail}`, true)}
 `;
 }
 
@@ -15092,7 +15101,7 @@ ${carte}
 sur une carrière</a><a href="${g.DEPOT}/blob/main/docs/methodologie.md">La
 méthodologie complète</a></p>
 
-<h2>Pour aller plus loin</h2>
+${g.tranche(`<h2>Pour aller plus loin</h2>
 
 ${methodeIndexation(contexte, revalPratiquee, masseSalariale, loterie)}
 ${methodeCapitalisation(contexte)}
@@ -15100,9 +15109,9 @@ ${methodeDroitPositif()}
 ${methodeSuppressions()}
 ${methodeCarriere(contexte)}
 ${methodeUnites(contexte)}
-${methodeConstruction()}
+${methodeConstruction()}`, true)}
 
-${methodeSources(contexte)}
+${g.tranche(methodeSources(contexte))}
 `;
 }
 
@@ -16114,6 +16123,10 @@ function programme(contexte) {
     'Chaque pension vaut <span class="cle-texte">ce qui a été cotisé</span>.',
     '<strong class="cle-texte">Une égalité de traitement pour tous et une '
     + "protection pour les plus fragiles.</strong>",
+    // Les deux actions de l'appel final, dans les mêmes mots, sous le
+    // chapeau : le site du parti ouvre ainsi sa page (action 189, étape 5).
+    [["Simuler ma retraite", g.lien("/simuler")],
+      ["Ce que ça coûte, et qui paie", g.lien("/cout")]],
   );
 
   // UNE SEULE LISTE REPLIÉE, ET CHAQUE SUJET À UN SEUL ENDROIT. La page en
@@ -16138,14 +16151,18 @@ function programme(contexte) {
   //
   // Le texte se compose à la française au rendu (`g.typographier`) : il
   // s'écrit ici avec des espaces ordinaires.
+  //
+  // La page se range en tranches, une sur deux sur le ton d'appui, d'un bord
+  // à l'autre de l'écran, comme les sections du site du parti ; son appel
+  // final est une carte pétrole (action 189, étape 5).
   return g.typographier(`
 ${tete}
 
-${engagements(contexte)}
+${g.tranche(engagements(contexte))}
 
-${simulateurCourt(contexte)}
+${g.tranche(simulateurCourt(contexte), true)}
 
-<div class="paire">
+${g.tranche(`<div class="paire">
   <div id="le-calcul" tabindex="-1">
     <p class="surtitre">Le calcul</p>
     <h2 style="margin-top:0">Comment ça marche, en trois gestes</h2>
@@ -16159,22 +16176,22 @@ ${simulateurCourt(contexte)}
     <p>Aujourd'hui, le minimum vieillesse (l'ASPA) regarde le couple :</p>
     ${tableauGarantie(contexte)}
   </div>
-</div>
+</div>`)}
 
-<h2>Ce que cela change</h2>
+${g.tranche(`<h2>Ce que cela change</h2>
 ${differences}
 <p class="discret">Ce compte existe déjà en Suède, en Italie, en Pologne et en
-Lettonie.</p>
+Lettonie.</p>`, true)}
 
-${programmeQuestions(contexte)}
+${g.tranche(`${programmeQuestions(contexte)}
 
-<div class="creme">
+<div class="carte-appel">
 <p class="surtitre">Vérifiez plutôt que de nous croire</p>
-<h2 class="serif" style="margin:0">Tout est chiffré, sur des données publiques
-et un modèle ouvert</h2>
+<h2>Tout est chiffré, sur des données publiques et un modèle ouvert</h2>
 <p class="actions"><a class="bouton" href="${g.lien("/simuler")}">Simuler ma
-retraite</a><a href="${g.lien("/cout")}">Ce que ça coûte, et qui paie</a></p>
-</div>
+retraite</a><a class="bouton clair" href="${g.lien("/cout")}">Ce que ça coûte,
+et qui paie</a></p>
+</div>`)}
 `);
 }
 
@@ -16598,7 +16615,10 @@ export const TAUX_ACTUEL_TOTAL = TAUX_ACTUEL_SALARIAL + TAUX_ACTUEL_PATRONAL;
 const AGE_OUVERTURE_GARANTIE = 65;
 
 /**
- * Les six arguments du programme, numérotés 01 à 06, pour tous les électeurs.
+ * Les six arguments du programme, pour tous les électeurs : six cartes, trois
+ * par deux au large, au gabarit des chiffres clés du site du parti — la valeur,
+ * le libellé en gras, le détail (le propriétaire, 9 novembre 2026, action 189,
+ * étape 5). Ils étaient une pile de six lignes numérotées.
  *
  * C'est la section qui porte le message, et elle a mis quatre états à le
  * porter. D'abord quatre chiffres nus, qu'on lisait comme des statistiques
@@ -16669,9 +16689,8 @@ function engagements(contexte) {
       `Cheminot ou salarié du privé : dès ${base.annee_bascule}, le même compte, `
       + "à la même règle."],
   ];
-  const corps = lignes.map(([chiffre, promesse, detail], index) => (
-    `<div class="engagement"><div class="rang">${String(index + 1).padStart(2, "0")}</div>`
-    + `<div class="chiffre">${chiffre}</div>`
+  const corps = lignes.map(([chiffre, promesse, detail]) => (
+    `<div class="engagement"><div class="chiffre">${chiffre}</div>`
     + `<div class="promesse">${promesse}</div>`
     + (detail ? `<div class="detail">${detail}</div>` : "") + "</div>"
   )).join("");
