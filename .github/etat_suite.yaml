@@ -1,7 +1,9 @@
 # Le verdict de la dernière course de tests.yml : écrit par GitHub
 # (scripts/publier_fabrique.sh), jamais à la main. Action 148.
-etat: vert
-sources: 366171c012c0f7e5ac62d7197267e00ffda2bbd2
-date: 2026-11-09T11:17:02Z
-course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/42601942670
+etat: rouge
+sources: e75b9bf06d92d5787fd2a99178614076e298fb68
+date: 2026-11-09T16:47:21Z
+course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/42650045959
+echecs:
+  - "FAILED tests/test_ecrans.py::test_chaque_page_se_peint_avec_son_seul_style - AssertionError: cout/ à 390 points : seul : span.mot | 181 | 318 | 98 | 25 | inline | visible | rgb(207, 231, 233) | rgba(0, 0, 0, 0) | 20px | 400 | \"Public Sans\", system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif | 30px | none — entière : span.mot | 181 | 318 | 98 | 24 | inline | visible | rgb(207, 231, 233) | rgba(0, 0, 0, 0) | 20px | 400 | \"Public Sans\", system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif | 30px | none"
 presomptions: vert
