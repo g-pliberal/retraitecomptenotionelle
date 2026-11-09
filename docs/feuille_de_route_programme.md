@@ -1149,6 +1149,12 @@ exposées en droit (élevé à très élevé, *Brachner*, *Leone*), ce que les
 questions disaient : la décision 6 en prend le combat. Au modèle ensuite,
 au scénario 6 seul (décision 28).
 
+**La garantie dégressive, étudiée le 9 novembre 2026**
+(`feuille_de_route/186/2026-11-09-garantie-degressive.md`) : une pension qui
+n'en retire que 70, 50 ou 30 % coûte, d'office, 0,42, 0,96 ou 2,02 points de
+PIB de plus par an sur 2026-2070 (0,26 à 1,18 net des reprises), pour 2,8 à
+10,7 millions de bénéficiaires de plus. Proposé : 70 %. Rien n'est décidé.
+
 ### Chantier 4 — Les recettes hors du travail : la TVA sociale et la LVT
 
 **La question.** Combien rapportent la TVA sociale et la LVT, qui les paie,
