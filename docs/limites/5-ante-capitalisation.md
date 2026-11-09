@@ -183,8 +183,8 @@ points 1 et 2 : il minore la rente affichée.
 
 **6. La garantie vieillesse compte la rente capitalisée, et la prend pour ce
 qu'elle est.** Le programme a tranché le 19 septembre 2026 : une allocation
-différentielle regarde toutes les ressources de retraite, la rente du pilier
-comprise, volontaire comme obligatoire. Ce paragraphe a dit l'inverse jusqu'au
+sous condition de ressources regarde toutes les ressources de retraite, la
+rente du pilier comprise, volontaire comme obligatoire. Ce paragraphe a dit l'inverse jusqu'au
 23 septembre 2026, bien après que le code l'eut réglé. Reste la manière de la
 compter entre le départ et l'ouverture, puis année après année : la rente est
 NOMINALE et constante, et les prix seuls la déprécient. La garantie la

@@ -109,6 +109,7 @@ from ..donnees.chargement import Fiabilite
 from ..droit.etranger import pensions_etrangeres_servies
 from ..droit.foyer import condition_de_residence
 from ..droit.ouvrir import age_ouverture_droit
+from ..garantie import complement_garantie
 from ..moteur.age_reference import AgeReference, EcartAge
 from ..moteur.capitalisation import Capitalisation, ConstructeurCapitalisation
 from ..moteur.compte import CompteNotionnel, ConstructeurCompte
@@ -155,7 +156,7 @@ class GarantieVieillesse:
     #: l'ENSEMBLE des retraites obligatoires, les 18 % de répartition, les 5 %
     #: capitalisés, et ce qu'un autre État sert. C'est cela que le plancher
     #: regarde, et non la seule répartition : toutes sont obligatoires, et une
-    #: allocation différentielle compte les ressources.
+    #: allocation sous condition de ressources les compte toutes.
     ressources: float
     #: Ce que la PENSION CONTRIBUTIVE gagne, EN TERMES RÉELS, entre la
     #: liquidation et l'ouverture de la garantie. Vaut 1 quand les deux
@@ -176,9 +177,10 @@ class GarantieVieillesse:
     #: erosion_rente + pensions_etrangeres`` : ce dont la personne dispose
     #: l'année où la garantie s'ouvre, dans les euros de la liquidation.
     ressources_a_l_ouverture: float
-    #: Ce que la garantie ajoute à compter de ``annee_ouverture`` :
-    #: ``max(0, plancher - ressources_a_l_ouverture)``. C'est la part financée
-    #: par l'impôt. Nulle pour qui réside hors de France.
+    #: Ce que la garantie ajoute à compter de ``annee_ouverture`` : le barème
+    #: dégressif (``garantie.complement_garantie``) appliqué au plancher et à
+    #: ``ressources_a_l_ouverture``. C'est la part financée par l'impôt. Nulle
+    #: pour qui réside hors de France.
     complement: float
     #: Ce que la rente du pilier, NOMINALE et constante, perd en termes réels
     #: entre la liquidation et l'ouverture : le seul rapport des prix. Vaut 1
@@ -613,7 +615,11 @@ class ScenarioNotionnel:
             revalorisation_differee=revalorisation,
             ressources_a_l_ouverture=a_l_ouverture,
             erosion_rente=erosion,
-            complement=max(0.0, plancher - a_l_ouverture) if resident else 0.0,
+            # Son barème est dégressif : la pension est retirée en entier
+            # jusqu'au pivot, d'une fraction au-delà (``complement_garantie``).
+            complement=complement_garantie(
+                plancher, a_l_ouverture, parametres.part_retrait_entier_garantie,
+                parametres.taux_retrait_garantie) if resident else 0.0,
             residence=carriere.residence,
             pensions_etrangeres=etrangeres,
             condition_de_residence=resident,

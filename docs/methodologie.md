@@ -1468,8 +1468,8 @@ rémunération acquièrent le même capital : les statuts qui cotisaient plus de
 d'autant plus que la carrière est récente.
 
 **Une garantie vieillesse, avancée par l'impôt.** Elle remplace l'ASPA et en
-garde le principe — une allocation différentielle, qui porte les ressources à
-un plancher — et l'âge, <!--chiffre:mesure(constante?de=retraite_notionnelle.scenarios.actuel&nom=MinimumVieillesse.AGE_OUVERTURE)-->65<!--/--> ans. Elle en change deux choses. La première est
+garde le principe — une allocation sous condition de ressources, qui les
+porte à un plancher — et l'âge, <!--chiffre:mesure(constante?de=retraite_notionnelle.scenarios.actuel&nom=MinimumVieillesse.AGE_OUVERTURE)-->65<!--/--> ans. Elle en change trois choses. La première est
 que le plancher est **individualisé** : chaque personne est comparée au sien,
 sans que la pension du conjoint entre dans le calcul.
 
@@ -1487,15 +1487,17 @@ proposition :
 |---|---:|---:|
 | <!--chiffre:illustration()-->300<!--/--> € et <!--chiffre:illustration()-->300<!--/--> € | <!--chiffre:mesure(garantie_foyer?pension=300&conjoint=300&base=foyer)-->1 000<!--/--> € | <!--chiffre:mesure(garantie_foyer?pension=300&conjoint=300)-->1 000<!--/--> € |
 | <!--chiffre:illustration()-->300<!--/--> € et <!--chiffre:illustration()-->1 500<!--/--> € | <!--chiffre:mesure(garantie_foyer?pension=300&conjoint=1500&base=foyer)-->0<!--/--> € | <!--chiffre:mesure(garantie_foyer?pension=300&conjoint=1500)-->500<!--/--> € |
-| <!--chiffre:illustration()-->900<!--/--> € et <!--chiffre:illustration()-->900<!--/--> € | <!--chiffre:mesure(garantie_foyer?pension=900&conjoint=900&base=foyer)-->0<!--/--> € | <!--chiffre:mesure(garantie_foyer?pension=900&conjoint=900)-->0<!--/--> € |
+| <!--chiffre:illustration()-->900<!--/--> € et <!--chiffre:illustration()-->900<!--/--> € | <!--chiffre:mesure(garantie_foyer?pension=900&conjoint=900&base=foyer)-->0<!--/--> € | <!--chiffre:mesure(garantie_foyer?pension=900&conjoint=900)-->300<!--/--> € |
 | <!--chiffre:illustration()-->300<!--/--> € et <!--chiffre:illustration()-->5 000<!--/--> € | <!--chiffre:mesure(garantie_foyer?pension=300&conjoint=5000&base=foyer)-->0<!--/--> € | <!--chiffre:mesure(garantie_foyer?pension=300&conjoint=5000)-->500<!--/--> € |
 | personne seule, <!--chiffre:illustration()-->300<!--/--> € | <!--chiffre:mesure(garantie_foyer?pension=300&base=foyer)-->750<!--/--> € | <!--chiffre:mesure(garantie_foyer?pension=300)-->750<!--/--> € |
 
 La première colonne applique au foyer les montants de la garantie, comme l'ASPA
 applique les siens ; ceux de l'ASPA en sont proches — <!--chiffre:cellule(data/reference/legislation/minimum_vieillesse.csv:valeur/12?annee=2026)-->1 043,59<!--/--> € par mois
 pour une personne seule en 2026, à quelques euros du plancher d'une personne
-seule —, si bien que l'écart entre les deux colonnes est celui de la seule
-individualisation. Regarder le foyer, c'est
+seule —, si bien que l'écart entre les deux colonnes est celui de
+l'individualisation, et, à la troisième ligne, celui de la dégressivité que
+la suite décrit : chacun y dépasse la moitié de son plancher, et la garantie
+ne lui retire que la moitié de ce qui la dépasse. Regarder le foyer, c'est
 opposer <!--chiffre:illustration()-->1 800<!--/--> € de ressources au plafond du couple, <!--chiffre:mesure(garantie_foyer?quoi=plancher&personnes=2)-->1 600<!--/--> € : à
 <!--chiffre:illustration()-->300<!--/--> € et <!--chiffre:illustration()-->1 500<!--/--> €, le couple le dépasse et ne reçoit rien. La
 garantie regarde chacun : le premier reçoit <!--chiffre:mesure(parametre?nom=garantie_vieillesse_mensuelle)-->800<!--/--> − <!--chiffre:illustration()-->300<!--/--> =
@@ -1529,9 +1531,23 @@ que la DREES mesure sur l'ASPA. La sous-section « La garantie du scénario 6,
 mesure par mesure » de `limites.md` dit comment chacune de ces grandeurs est
 établie.
 
+**La troisième : elle est dégressive.** L'ASPA retire un euro d'allocation par
+euro de pension, si bien qu'une petite pension cotisée ne rapporte rien à qui
+reste sous son plafond. La garantie ne retire la pension en entier que jusqu'à
+<!--chiffre:mesure(parametre?nom=part_retrait_entier_garantie)-->50<!--/--> % du plancher (`part_retrait_entier_garantie`) ; au-delà, elle n'en
+retire que <!--chiffre:mesure(parametre?nom=taux_retrait_garantie)-->50<!--/--> % (`taux_retrait_garantie`), et le complément s'éteint à une
+fois et demie le plancher. C'est la forme de la garantie suédoise, et elle
+s'applique au plancher entier, isolement compris. À <!--chiffre:illustration()-->900<!--/--> € de pension, une
+personne en couple reçoit ainsi <!--chiffre:mesure(garantie_complement?pension=900)-->150<!--/--> €, là où une allocation différentielle
+ne lui servirait rien. Qui n'a rien cotisé garde le plancher, et qui a cotisé
+touche toujours plus que lui. Ce que la garantie verse au-dessus du plancher
+est une avance comme le reste, reprise sur la succession ; à
+`part_retrait_entier_garantie` et `taux_retrait_garantie` de cent pour cent,
+elle redevient différentielle.
+
 Une réserve, et une méthode. Le modèle liquide et s'arrête : un assuré parti à
 <!--chiffre:illustration()-->62<!--/--> ans avant la bascule avec une petite pension reçoit la garantie à <!--chiffre:mesure(constante?de=retraite_notionnelle.scenarios.actuel&nom=MinimumVieillesse.AGE_OUVERTURE)-->65<!--/--> ans, et la page de
-simulation dit l'année et le montant. Mais une allocation différentielle ne se
+simulation dit l'année et le montant. Mais une allocation de ce genre ne se
 chiffre pas sur <!--chiffre:mesure(grille?quoi=cas_types)-->13<!--/--> carrières, parce que son coût est tout entier celui de
 la queue basse de la distribution des pensions, et une grille choisie pour
 couvrir les configurations du système n'en a pas. La masse de garantie de la
@@ -1875,15 +1891,16 @@ finance aucune pension d'aujourd'hui.
 **Ce qu'il fait, et qu'on n'attend pas : il réduit la garantie vieillesse.**
 Depuis le 19 septembre 2026, le plancher se compare à l'ensemble des ressources
 de retraite, rente capitalisée comprise. La question — un pilier capitalisé
-doit-il réduire une allocation différentielle ? — est une question de droit,
-pas de modèle, et le programme l'a tranchée : une allocation différentielle
-compte les ressources et non leur origine, comme l'ASPA d'aujourd'hui compte
+doit-il réduire une allocation sous condition de ressources ? — est une
+question de droit, pas de modèle, et le programme l'a tranchée : une telle
+allocation compte les ressources et non leur origine, comme l'ASPA d'aujourd'hui compte
 une pension personnelle. Les <!--chiffre:mesure(parametre?nom=taux_capitalisation_volontaire)-->5<!--/--> points **volontaires** y entrent comme les
-autres, et la conséquence est rude : pour qui reste sous le plancher après
-avoir versé, ils ne rapportent **rien** en pension, la garantie les reprenant
-euro pour euro. Il leur reste ce que la répartition ne donne à personne, un
-capital qui se transmet. Un test fixe les deux cas, sous le plancher et
-au-dessus.
+autres, et la conséquence est rude : pour qui reste sous la moitié du plancher
+après avoir versé, ils ne rapportent **rien** en pension, la garantie les
+reprenant euro pour euro ; de là à une fois et demie le plancher, où elle
+s'éteint, elle en reprend la moitié. Il leur reste ce que la répartition ne
+donne à personne, un capital qui se transmet. Un test fixe chacun des trois
+cas, sous la moitié du plancher, dans la pente et au-dessus.
 
 ---
 

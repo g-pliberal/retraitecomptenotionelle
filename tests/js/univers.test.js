@@ -93,10 +93,12 @@ test("un compte ouvert à la bascule reçoit le pilier capitalisé, puis la gara
     servi.pension_annuelle + servi.rente_capitalisation_obligatoire);
 });
 
-test("une pension liquidée avant la bascule ne bouge pas, et la garantie la porte au plancher", () => {
+test("une pension liquidée avant la bascule ne bouge pas, et la garantie la complète", () => {
   // Une courte carrière, partie à 65 ans en 2010 : sa pension, le minimum
-  // vieillesse compris, est sous le plancher, que la garantie complète dès le
-  // départ.
+  // vieillesse compris, est sous le plancher, et la garantie la complète dès
+  // le départ. Elle dépasse la moitié du plancher : la garantie, dégressive
+  // (décision 100 du programme, 9 novembre 2026), ne lui retire que la moitié
+  // de ce qui la dépasse, et le total passe le plancher.
   const retraite = simulateur.carriereSimple({
     annee_naissance: 1945, sexe: "F", affiliation: "salarie_prive_non_cadre",
     age_debut: 50, age_liquidation: 65, niveau_salaire: 0.5,
@@ -115,7 +117,11 @@ test("une pension liquidée avant la bascule ne bouge pas, et la garantie la por
   const garantie = servi.garantie_vieillesse;
   assert.ok(garantie !== null && garantie.servie_a_la_liquidation);
   assert.equal(garantie.pension_contributive, actuel.pension_annuelle);
-  assert.ok(Math.abs(garantie.complement - (plancher - actuel.pension_annuelle)) < 1e-9);
+  const pivot = 0.5 * plancher;
+  assert.ok(actuel.pension_annuelle > pivot, `${actuel.pension_annuelle} ≤ ${pivot}`);
+  assert.ok(Math.abs(garantie.complement
+    - (pivot - 0.5 * (actuel.pension_annuelle - pivot))) < 1e-9);
+  assert.ok(servi.pension_annuelle > plancher);
   assert.equal(servi.pension_annuelle, actuel.pension_annuelle + garantie.complement);
   // Aucun versement au pilier : tout a été cotisé avant la bascule.
   assert.equal(servi.rente_capitalisation_obligatoire, 0.0);

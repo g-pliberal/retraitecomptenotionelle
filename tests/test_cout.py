@@ -2877,8 +2877,8 @@ def test_la_distribution_des_residents_redonne_les_deciles_publies():
 def test_la_garantie_de_la_trajectoire_est_lue_sur_la_distribution(cout, distribution):
     """La ligne « dont garantie » ne vient plus des cas types.
 
-    Une allocation différentielle ne coûte que ce que coûte la queue basse de
-    la distribution des pensions, et treize carrières choisies pour couvrir
+    Une allocation sous condition de ressources ne coûte que ce que coûte la
+    queue basse de la distribution des pensions, et treize carrières choisies pour couvrir
     les configurations du système n'en ont pas. La trajectoire applique donc
     le barème à la distribution de l'EIR, déplacée d'un facteur que la grille
     donne ; ce test refait le calcul de l'année de l'enquête à la main, avec le
@@ -2928,7 +2928,13 @@ def test_la_garantie_de_la_trajectoire_est_lue_sur_la_distribution(cout, distrib
         caracteristiques.rapport_deplacement(),
         (plancher + parametres.allocation_isolement_mensuelle) * vers_enquete,
         part_seule,
+        # LA FORME EST DÉGRESSIVE, depuis le 9 novembre 2026 (décisions 100 à
+        # 102 du programme) : la pension retirée en entier jusqu'à la moitié
+        # de chaque plancher, de moitié au-delà.
+        part_retrait_entier=0.5, taux_retrait=0.5,
     )
+    assert (parametres.part_retrait_entier_garantie,
+            parametres.taux_retrait_garantie) == (0.5, 0.5)
     # Un ayant droit sur deux réclame : les bénéficiaires et le coût sont
     # ceux qui réclament, les ayants droit tous ceux qui sont sous le plancher.
     taux = parametres.taux_recours_garantie
@@ -2947,6 +2953,32 @@ def test_la_garantie_de_la_trajectoire_est_lue_sur_la_distribution(cout, distrib
     # la DREES : moins que tous les retraités de l'enquête.
     tous = simulateur.effectifs.effectif("tous_regimes", millesime)
     assert 0.7 * tous < projetee.effectif < tous
+
+
+def test_la_garantie_degressive_coute_ce_que_son_etude_en_disait(avenir):
+    """La forme suédoise, chiffrée deux fois : ici par le modèle, et le 9
+    novembre 2026 à côté de lui, barème changé en mémoire sur le modèle d'alors
+    (``docs/feuille_de_route/186/2026-11-09-garantie-degressive.md``, « Les
+    calculs, en entier »).
+
+    L'étude donnait, au recours d'un ayant droit sur deux : 0,505 point de PIB
+    versé par an en moyenne de 2026 à 2070, 0,309 net des reprises sur
+    succession ; en 2030, 0,59 point versé et 8,67 millions d'ayants droit.
+    Le versé et le net sont proportionnels au recours, que la décision 20 du
+    programme portera à un : ils se lisent ici au recours de l'étude. Les
+    ayants droit n'en dépendent pas.
+    """
+    recours = Parametres().taux_recours_garantie
+    annees = range(2026, 2071)
+    verse = {annee: avenir.annee(annee).part_pib(COMPOSANTE_GARANTIE) * 0.5 / recours
+             for annee in annees}
+    reprises = {annee: avenir.annee(annee).part_pib_reprises() * 0.5 / recours
+                for annee in annees}
+    assert 100 * sum(verse.values()) / len(verse) == pytest.approx(0.505, abs=0.005)
+    assert 100 * sum(verse[annee] - reprises[annee] for annee in annees) / len(verse) == (
+        pytest.approx(0.309, abs=0.005))
+    assert 100 * verse[2030] == pytest.approx(0.59, abs=0.01)
+    assert avenir.annee(2030).garantie.ayants_droit / 1e6 == pytest.approx(8.67, abs=0.05)
 
 
 def test_la_garantie_decroit_quand_les_pensions_montent_face_au_plancher(cout, avenir):

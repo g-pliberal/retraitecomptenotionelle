@@ -626,6 +626,10 @@ def test_la_pension_de_repartition_ne_bouge_pas_avec_le_pilier():
 
     C'est la garantie que le pilier s'AJOUTE : s'il déplaçait la pension
     notionnelle d'un centime, c'est qu'il aurait pris quelque chose au compte.
+    La pension de répartition est la pension contributive : la garantie
+    vieillesse, dégressive depuis le 9 novembre 2026 (décision 100 du
+    programme), atteint une fois et demie le plancher, et sans les deux rentes
+    cette carrière y entre.
     """
     avec = Simulateur(Parametres())
     sans = Simulateur(Parametres(capitalisation_obligatoire=False,
@@ -636,7 +640,11 @@ def test_la_pension_de_repartition_ne_bouge_pas_avec_le_pilier():
     resultat_avec = avec.simuler(avec.carriere_simple(**carriere)).notionnel_liberal
     resultat_sans = sans.simuler(sans.carriere_simple(**carriere)).notionnel_liberal
 
-    assert resultat_sans.pension_annuelle == pytest.approx(resultat_avec.pension_annuelle)
+    assert resultat_sans.garantie_vieillesse.pension_contributive == pytest.approx(
+        resultat_avec.garantie_vieillesse.pension_contributive)
+    assert resultat_avec.garantie_vieillesse.complement == 0.0
+    assert resultat_avec.pension_annuelle == pytest.approx(
+        resultat_avec.garantie_vieillesse.pension_contributive)
     assert resultat_sans.capitalisation.capital == 0.0
     assert resultat_sans.pension_totale == pytest.approx(resultat_sans.pension_annuelle)
     assert resultat_avec.pension_totale > resultat_avec.pension_annuelle
@@ -909,14 +917,16 @@ def test_le_volontaire_ne_touche_pas_a_la_repartition():
 def test_sous_le_plancher_les_cinq_points_volontaires_ne_rapportent_rien():
     """Le résultat le plus désagréable du pilier volontaire, et il est voulu.
 
-    Une allocation différentielle compte les ressources sans regarder leur
+    Une allocation sous condition de ressources les compte sans regarder leur
     origine : la rente des cinq points rendus y entre comme le reste, et la
-    garantie se retire d'autant. Pour qui reste SOUS LE PLANCHER après avoir
-    versé, le total ne bouge donc pas d'un centime — l'épargne est reprise euro
-    pour euro, exactement comme une pension personnelle est reprise à qui
-    touche l'ASPA. Le site doit le dire, parce que personne ne le devine, et le
-    modèle doit le montrer, parce que c'est une conséquence de la règle et non
-    un défaut de calcul.
+    garantie se retire d'autant. Pour qui reste SOUS LA MOITIÉ DU PLANCHER
+    après avoir versé, où la garantie retire tout (décision 100 du programme,
+    9 novembre 2026), le total ne bouge donc pas d'un centime — l'épargne est
+    reprise euro pour euro, exactement comme une pension personnelle est
+    reprise à qui touche l'ASPA. Le site doit le dire, parce que personne ne
+    le devine, et le modèle doit le montrer, parce que c'est une conséquence
+    de la règle et non un défaut de calcul. Avant cette décision, c'était vrai
+    jusqu'au plancher entier.
 
     Ce qui reste à l'épargnant dans ce cas n'est pas nul pour autant, et c'est
     tout ce que la capitalisation a de propre : le capital se transmet s'il
@@ -926,11 +936,13 @@ def test_sous_le_plancher_les_cinq_points_volontaires_ne_rapportent_rien():
     sans = Simulateur(Parametres(capitalisation_volontaire=False))
     carriere = dict(annee_naissance=1995, sexe="F",
                     affiliation="salarie_prive_non_cadre",
-                    age_debut=23, age_liquidation=67, niveau_salaire=0.35)
+                    age_debut=23, age_liquidation=67, niveau_salaire=0.15)
     resultat_avec = avec.simuler(avec.carriere_simple(**carriere)).notionnel_liberal
     resultat_sans = sans.simuler(sans.carriere_simple(**carriere)).notionnel_liberal
 
-    assert resultat_avec.garantie_vieillesse.complement > 0
+    garantie = resultat_avec.garantie_vieillesse
+    assert garantie.complement > 0
+    assert garantie.ressources_a_l_ouverture < 0.5 * garantie.plancher_annuel
     # La garantie absorbe la rente entière, et le total est le même des deux
     # côtés : le plancher est atteint dans les deux cas.
     assert (resultat_sans.garantie_vieillesse.complement
@@ -942,6 +954,30 @@ def test_sous_le_plancher_les_cinq_points_volontaires_ne_rapportent_rien():
     # transmet, et qui vaut le double avec les cinq points.
     assert resultat_avec.capitalisation.esperance_capital_transmis > (
         resultat_sans.capitalisation.esperance_capital_transmis)
+
+
+def test_entre_le_pivot_et_la_sortie_les_cinq_points_volontaires_rapportent_la_moitie():
+    """Au-delà de la moitié du plancher, la garantie ne retire plus que la
+    moitié de chaque euro (décision 100 du programme, 9 novembre 2026) : la
+    rente volontaire de qui reste dans la pente lui en laisse la moitié, là
+    où la garantie différentielle la reprenait en entier jusqu'au plancher."""
+    avec = Simulateur(Parametres())
+    sans = Simulateur(Parametres(capitalisation_volontaire=False))
+    carriere = dict(annee_naissance=1995, sexe="F",
+                    affiliation="salarie_prive_non_cadre",
+                    age_debut=23, age_liquidation=67, niveau_salaire=0.35)
+    resultat_avec = avec.simuler(avec.carriere_simple(**carriere)).notionnel_liberal
+    resultat_sans = sans.simuler(sans.carriere_simple(**carriere)).notionnel_liberal
+
+    rente = resultat_avec.rente_capitalisation_volontaire
+    for resultat in (resultat_avec, resultat_sans):
+        garantie = resultat.garantie_vieillesse
+        assert garantie.complement > 0
+        assert garantie.ressources_a_l_ouverture > 0.5 * garantie.plancher_annuel
+    assert (resultat_sans.garantie_vieillesse.complement
+            - resultat_avec.garantie_vieillesse.complement) == pytest.approx(0.5 * rente)
+    assert resultat_avec.pension_totale - resultat_sans.pension_totale == pytest.approx(
+        0.5 * rente)
 
 
 def test_au_dessus_du_plancher_la_rente_volontaire_revient_a_l_assure():

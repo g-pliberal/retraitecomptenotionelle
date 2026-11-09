@@ -354,8 +354,17 @@ def test_la_garantie_vieillesse_se_calcule_aujourd_hui(simulateur):
     aujourd_hui = comparaison.aujourd_hui
     plancher = (800.0 + 250.0) * 12.0
     assert aujourd_hui.garantie_vieillesse > 0
+    assert aujourd_hui.plancher_garantie == pytest.approx(plancher, rel=1e-12)
+    # La garantie est dégressive (décision 100 du programme, 9 novembre 2026) :
+    # ses ressources d'aujourd'hui dépassent la moitié du plancher, et elle
+    # n'en retire que la moitié au-delà. Le total passe donc le plancher.
+    ressources = aujourd_hui.ressources_garantie
+    pivot = 0.5 * plancher
+    assert pivot < ressources < plancher
+    assert aujourd_hui.garantie_vieillesse == pytest.approx(
+        pivot - 0.5 * (ressources - pivot), rel=1e-12)
     assert aujourd_hui.notionnels["notionnel_liberal"] + aujourd_hui.rente_capitalisee == (
-        pytest.approx(plancher, rel=1e-12))
+        pytest.approx(ressources + pivot - 0.5 * (ressources - pivot), rel=1e-12))
 
 
 def test_la_rente_du_pilier_d_aujourd_hui_est_celle_de_la_liquidation():

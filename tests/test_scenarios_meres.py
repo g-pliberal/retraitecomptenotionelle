@@ -41,7 +41,7 @@ def test_la_majoration_de_10_pour_cent_n_apparait_qu_a_trois_enfants(lignes):
     assert par_code["complete_3"].effet_enfants_actuel > par_code["complete_2"].effet_enfants_actuel
 
 
-def test_la_garantie_vieillesse_porte_le_mi_temps_au_plancher_a_65_ans(lignes):
+def test_la_garantie_vieillesse_porte_le_mi_temps_au_dessus_du_plancher_a_65_ans(lignes):
     """La mère qui partait avant 65 ans part à 65 ans sous la proposition,
     son âge légal : la garantie lui est donc due dès la liquidation, comme à
     celle qui partait déjà à cet âge — elle n'était jusque-là que différée."""
@@ -50,8 +50,14 @@ def test_la_garantie_vieillesse_porte_le_mi_temps_au_plancher_a_65_ans(lignes):
     a_65 = par_code["mitemps_65_arret6_3"]
     assert avant.garantie > 0 and avant.garantie_servie
     assert a_65.garantie_servie
-    # 800 + 250 € par mois pour une personne seule, en euros de 2026.
-    assert abs(a_65.liberal - 1050.0) < 1.0
+    # 800 + 250 € par mois pour une personne seule, en euros de 2026. La
+    # garantie est dégressive (décision 100 du programme, 9 novembre 2026) :
+    # ses retraites obligatoires passent la moitié du plancher, 525 €, et la
+    # garantie ne lui retire que la moitié de ce qui la dépasse.
+    ressources = a_65.liberal - a_65.garantie
+    assert 525.0 < ressources < 1050.0
+    assert abs(a_65.garantie - (525.0 - 0.5 * (ressources - 525.0))) < 1.0
+    assert a_65.liberal > 1050.0
 
 
 def test_la_mere_atteint_le_taux_plein_avant_la_femme_sans_enfant(lignes):

@@ -1381,8 +1381,12 @@ affirmations:
     page: /cout
     extrait: "queue basse de la distribution"
     porte: la garantie ne coûte que sur les pensions sous le plancher
-    etat: verifiee
-    controle: garantie_differentielle_sur_la_queue_basse
+    # Démentie le 9 novembre 2026 : la garantie est dégressive (décisions 100
+    # à 102 du programme), et sert jusqu'à une fois et demie le plancher ;
+    # l'étape du site la récrira, avec le « différentielle » qui la précède.
+    etat: contredite
+    action: 186
+    controle: garantie_sert_au_dessus_du_plancher
 
   - id: cout.successions_rendent
     page: /cout

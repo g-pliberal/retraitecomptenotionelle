@@ -1323,13 +1323,28 @@ def test_avant_la_bascule_le_scenario_6_est_le_scenario_4(simulateur):
     )
 
 
-def test_la_garantie_reproduit_le_tableau_de_la_proposition(simulateur):
-    """Les cinq lignes du tableau de la proposition, en euros de 2026.
+def _forme_suedoise(plancher: float, ressources: float) -> float:
+    """La décision 100 du programme, posée à la main : « Jusqu'à la moitié du
+    plancher […], la pension est retirée en entier […] ; au-delà, de moitié
+    seulement, et le complément s'éteint à une fois et demie le plancher »."""
+    pivot = 0.5 * plancher
+    if ressources <= pivot:
+        return plancher - ressources
+    return max(0.0, pivot - 0.5 * (ressources - pivot))
 
-    300 € et 300 € → 1 000 € ; 300 € et 1 500 € → 500 € ; 900 € et 900 € →
-    0 € ; 300 € et 5 000 € → 500 € ; une personne seule à 300 € → 750 €. La
-    garantie étant individualisée, un couple est deux personnes calculées
-    séparément, chacune contre le plancher de 800 €.
+
+def test_la_garantie_reproduit_le_tableau_de_la_proposition(simulateur):
+    """Les cinq lignes du tableau de la proposition, en euros de 2026, sous la
+    garantie dégressive (décision 100 du programme, 9 novembre 2026).
+
+    300 € et 300 € → 1 000 € ; 300 € et 1 500 € → 500 € ; 300 € et 5 000 € →
+    500 € ; une personne seule à 300 € → 750 € : sous le pivot — 400 € à deux,
+    525 € seul —, la pension est retirée en entier, comme avant, et 1 500 €
+    dépassent la sortie de 1 200 €. Une ligne change, 900 € et 900 € : chacun
+    est au-dessus du pivot et sous la sortie, et reçoit 400 − 0,5 × (900 − 400)
+    = 150 €, soit 300 € à deux, là où la garantie différentielle ne servait
+    rien. La garantie étant individualisée, un couple est deux personnes
+    calculées séparément, chacune contre le plancher de 800 €.
     """
     carriere = _carriere_modeste(simulateur, 66)   # liquide en 2026 : coefficient 1
     assert carriere.annee_liquidation == 2026
@@ -1344,7 +1359,7 @@ def test_la_garantie_reproduit_le_tableau_de_la_proposition(simulateur):
     en_couple = Simulateur(Parametres(situation_foyer=SituationFoyer.COUPLE))
     assert aide(en_couple, 300) + aide(en_couple, 300) == pytest.approx(1000)
     assert aide(en_couple, 300) + aide(en_couple, 1500) == pytest.approx(500)
-    assert aide(en_couple, 900) + aide(en_couple, 900) == pytest.approx(0)
+    assert aide(en_couple, 900) + aide(en_couple, 900) == pytest.approx(300)
     assert aide(en_couple, 300) + aide(en_couple, 5000) == pytest.approx(500)
     assert aide(simulateur, 300) == pytest.approx(750)
 
@@ -1375,19 +1390,25 @@ def test_la_garantie_n_est_servie_qu_a_partir_de_65_ans(simulateur):
     garantie = apres.garantie_vieillesse
     assert garantie.age_atteint and garantie.servie_a_la_liquidation
     assert not garantie.differee
-    assert apres.pension_annuelle == pytest.approx(garantie.plancher_annuel)
     assert apres.pension_annuelle == pytest.approx(
         garantie.pension_contributive + garantie.complement
     )
+    # Sa pension dépasse la moitié du plancher : la garantie n'en retire plus
+    # que la moitié au-delà, et le total passe le plancher (décision 100).
+    assert garantie.ressources > 0.5 * garantie.plancher_annuel
+    assert garantie.complement == pytest.approx(
+        _forme_suedoise(garantie.plancher_annuel, garantie.ressources))
+    assert apres.pension_annuelle > garantie.plancher_annuel
 
 
 def test_la_garantie_regarde_les_deux_etages_obligatoires(simulateur):
     """18 % de répartition et 5 % capitalisés : le plancher voit les deux.
 
-    Une allocation différentielle compte les ressources, non leur origine. La
-    rente du pilier obligatoire réduit donc le complément, euro pour euro,
-    dès qu'elle existe — c'est-à-dire pour les carrières qui cotisent après la
-    bascule.
+    Une allocation sous condition de ressources les compte toutes, non leur
+    origine. La rente du pilier obligatoire réduit donc le complément comme la
+    pension du compte — en entier sous la moitié du plancher, de moitié
+    au-delà (décision 100 du programme) — dès qu'elle existe, c'est-à-dire
+    pour les carrières qui cotisent après la bascule.
     """
     comparaison = simulateur.simuler(simulateur.carriere_simple(
         annee_naissance=1975, sexe="F", affiliation="salarie_prive_non_cadre",
@@ -1403,9 +1424,10 @@ def test_la_garantie_regarde_les_deux_etages_obligatoires(simulateur):
         garantie.pension_contributive + garantie.rente_capitalisee)
     if garantie.servie:
         assert garantie.complement == pytest.approx(
-            garantie.plancher_annuel - garantie.ressources)
-        # Sans le pilier, le complément aurait été plus gros d'autant.
-        assert garantie.complement < garantie.plancher_annuel - garantie.pension_contributive
+            _forme_suedoise(garantie.plancher_annuel, garantie.ressources))
+        # Sans le pilier, le complément aurait été plus gros.
+        assert garantie.complement < _forme_suedoise(
+            garantie.plancher_annuel, garantie.pension_contributive)
 
 
 def test_la_rente_du_pilier_ne_se_revalorise_pas_d_ici_l_ouverture(simulateur):
@@ -1437,7 +1459,7 @@ def test_la_rente_du_pilier_ne_se_revalorise_pas_d_ici_l_ouverture(simulateur):
         garantie.pension_contributive * garantie.revalorisation_differee
         + garantie.rente_capitalisee * erosion)
     assert garantie.complement == pytest.approx(
-        max(0.0, garantie.plancher_annuel - garantie.ressources_a_l_ouverture))
+        _forme_suedoise(garantie.plancher_annuel, garantie.ressources_a_l_ouverture))
 
 
 def test_le_plancher_suit_les_prix_depuis_2026(simulateur):

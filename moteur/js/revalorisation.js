@@ -29,6 +29,7 @@ import * as liquider from "./droit/liquider.js";
 import { pensionsALEcretement, pensionsEtrangeresServies } from "./droit/etranger.js";
 import { conditionDeResidence, foyerEtNet } from "./droit/foyer.js";
 import { ageDeLAspa } from "./droit/invalidite.js";
+import { complementGarantie } from "./garantie.js";
 import { Fiabilite, fiabiliteDepuisTexte, nomFiabilite } from "./serie.js";
 
 /** Fin de la péréquation des pensions civiles et militaires. */
@@ -1074,8 +1075,10 @@ export function pensionAujourdhui(simulateur, comparaison, actuelServi = null) {
   const etrangeres = pensionsEtrangeresServies(macro, carriere, new DateMois(annee, 12));
   const resident = conditionDeResidence(simulateur.scenarioActuel, carriere.residence,
     dateIso(annee, 12, 31), carriere.moisEnFrance);
+  const ressources = contributiveAujourdhui + rente + etrangeres;
   const complement = ouverte && resident
-    ? Math.max(0.0, plancher - contributiveAujourdhui - rente - etrangeres)
+    ? complementGarantie(plancher, ressources,
+      parametres.part_retrait_entier_garantie, parametres.taux_retrait_garantie)
     : 0.0;
   notionnels.notionnel_liberal = contributiveAujourdhui + complement;
   coefficients.notionnel_liberal = reel;
@@ -1090,7 +1093,7 @@ export function pensionAujourdhui(simulateur, comparaison, actuelServi = null) {
     rente_capitalisee_volontaire: volontaire,
     garantie_ouverte: ouverte,
     plancher_garantie: plancher,
-    ressources_garantie: contributiveAujourdhui + rente + etrangeres,
+    ressources_garantie: ressources,
     garantie_residence: resident,
   });
 }

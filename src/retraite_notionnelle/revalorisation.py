@@ -71,6 +71,7 @@ from .droit import invalidite, liquider
 from .droit.commun import majoration_du_conjoint, parts_de_la_majoration
 from .droit.etranger import pensions_a_l_ecretement, pensions_etrangeres_servies
 from .droit.foyer import Foyer, condition_de_residence, foyer_et_net
+from .garantie import complement_garantie
 from .somme import somme_ordonnee
 
 
@@ -1569,7 +1570,10 @@ def pension_aujourd_hui(simulateur, comparaison,
     etrangeres = pensions_etrangeres_servies(macro, carriere, DateMois(annee, 12))
     resident = condition_de_residence(simulateur.scenario_actuel, carriere.residence,
                                       f"{annee:04d}-12-31", carriere.mois_en_france)
-    complement = (max(0.0, plancher - contributive_aujourd_hui - rente - etrangeres)
+    ressources = contributive_aujourd_hui + rente + etrangeres
+    complement = (complement_garantie(plancher, ressources,
+                                      parametres.part_retrait_entier_garantie,
+                                      parametres.taux_retrait_garantie)
                   if ouverte and resident else 0.0)
     notionnels["notionnel_liberal"] = contributive_aujourd_hui + complement
     coefficients["notionnel_liberal"] = reel
@@ -1584,7 +1588,7 @@ def pension_aujourd_hui(simulateur, comparaison,
         rente_capitalisee_volontaire=volontaire,
         garantie_ouverte=ouverte,
         plancher_garantie=plancher,
-        ressources_garantie=contributive_aujourd_hui + rente + etrangeres,
+        ressources_garantie=ressources,
         garantie_residence=resident,
     )
 

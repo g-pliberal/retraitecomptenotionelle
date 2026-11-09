@@ -1,16 +1,19 @@
 schema_version: 1
 id: garantie_vieillesse
 intitule: >-
-  La garantie vieillesse remplace l'ASPA : une allocation différentielle et
+  La garantie vieillesse remplace l'ASPA : une allocation dégressive et
   individualisée, qui porte les retraites obligatoires à 800 € par mois, plus
-  250 € pour qui vit seul, à partir de 65 ans, financée par l'impôt.
+  250 € pour qui vit seul, à partir de 65 ans, financée par l'impôt ; la
+  pension lui est retirée en entier jusqu'à la moitié du plancher, de moitié
+  au-delà.
 domaine: minima
 etape: foyer_et_net
 face: droit
 etat: transcrite
 effet: >-
-  Le scénario 6 : toute retraite obligatoire sous le plancher, à partir de 65
-  ans, de qui réside en France ; la pension du conjoint n'y compte jamais.
+  Le scénario 6 : toute retraite obligatoire sous une fois et demie le
+  plancher, à partir de 65 ans, de qui réside en France ; la pension du
+  conjoint n'y compte jamais.
 lit:
 - la pension du compte notionnel et la rente du pilier capitalisé
 - l'âge atteint et la situation du foyer, seul ou en couple
@@ -18,7 +21,7 @@ lit:
 - les pensions qu'un autre État sert, déclarées
 - les prix, qui ramènent le plancher aux euros de la liquidation
 ecrit:
-- le complément différentiel et l'année où il s'ouvre
+- le complément dégressif et l'année où il s'ouvre
 dates_qui_decident: [age_atteint, liquidation.date_effet]
 versions:
 - id: garantie_vieillesse_proposition
@@ -41,6 +44,26 @@ versions:
       celle des retraités qui résident en France, les seuls que la garantie
       sert, comme l'ASPA qu'elle remplace
     lu_le: 2026-10-01
+  - reference: docs/feuille_de_route_programme.md, les décisions du propriétaire
+    article: décision 100, du 9 novembre 2026, la forme suédoise
+    citation: >-
+      Jusqu'à la moitié du plancher (525 € seul, 400 € en couple), la pension
+      est retirée en entier, comme aujourd'hui ; au-delà, de moitié seulement,
+      et le complément s'éteint à une fois et demie le plancher (1 575 €,
+      1 200 €).
+    lu_le: 2026-11-09
+  - reference: docs/feuille_de_route_programme.md, les décisions du propriétaire
+    article: décision 102, du 9 novembre 2026, l'isolement
+    citation: >-
+      Le plancher d'une personne seule reste 1 050 €, et la forme dégressive
+      s'y applique en entier, comme la Suède le fait de ses deux barèmes.
+    lu_le: 2026-11-09
+  - reference: docs/feuille_de_route_programme.md, les décisions du propriétaire
+    article: décision 101, du 9 novembre 2026, la reprise sur la succession
+    citation: >-
+      Tout ce que la garantie verse est repris sur la succession, avec
+      intérêts, supplément compris
+    lu_le: 2026-11-09
   bornes:
     age_atteint: [null, null]
   contenu: >-
@@ -52,7 +75,16 @@ versions:
     l'ouverture — des retraites obligatoires elles aussi, que l'ASPA qu'elle
     remplace compte parmi « tous les avantages d'invalidité et de vieillesse
     dont bénéficie l'intéressé » (R. 815-22) —, jamais à la pension du
-    conjoint. Le complément s'ouvre à 65 ans, l'âge de l'ASPA : à la
+    conjoint. Le complément est DÉGRESSIF, à la forme suédoise (décisions 100
+    et 102 du programme) : jusqu'au pivot, `part_retrait_entier_garantie` du
+    plancher, il vaut ce qui manque aux ressources pour atteindre le
+    plancher ; au-delà, chaque euro de ressources n'en retire plus que
+    `taux_retrait_garantie`, et il s'éteint à
+    `pivot + (plancher − pivot) / taux_retrait_garantie`, une fois et demie le
+    plancher. La forme s'applique au plancher entier, isolement compris ; à un
+    et un, elle rend la garantie différentielle d'avant le 9 novembre 2026.
+    Tout ce qu'il verse reste repris sur la succession (décision 101). Le
+    complément s'ouvre à 65 ans, l'âge de l'ASPA : à la
     liquidation pour qui part à cet âge ou après, à 65 ans sinon, et il se
     calcule pour l'année où il s'ouvre, la pension suivant la règle
     d'indexation et le plancher les prix. Il est servi en dernier, sur sa ligne, pour que l'on sache ce que
@@ -62,20 +94,23 @@ versions:
     retirant de même les retraités qui résident à l'étranger.
   exemples: aucun trouvé
 sources:
-  lu_le: 2026-09-27
+  lu_le: 2026-11-09
   prochaine_relecture: 2027-03-31
   lectures:
   - type: autre
     reference: README.md, le texte de la proposition
     date: 2026-09-27
+  - type: autre
+    reference: docs/feuille_de_route_programme.md, décisions 100 à 102
+    date: 2026-11-09
 code:
   python:
     retraite_notionnelle.scenarios.notionnel: [ScenarioNotionnel.liberal, ScenarioNotionnel._garantie_vieillesse, GarantieVieillesse]
-    retraite_notionnelle.garantie: [cout_garantie]
+    retraite_notionnelle.garantie: [complement_garantie, cout_garantie]
     retraite_notionnelle.revalorisation: [pension_aujourd_hui]
   javascript:
     moteur/js/scenario-notionnel.js: [liberal, _garantieVieillesse]
-    moteur/js/garantie.js: [coutGarantie]
+    moteur/js/garantie.js: [complementGarantie, coutGarantie]
     moteur/js/revalorisation.js: [pensionAujourdhui]
-  parametres: [garantie_vieillesse_mensuelle, allocation_isolement_mensuelle, annee_euros_garantie_vieillesse, situation_foyer]
-  tests: [tests/test_simulateur.py, tests/test_garantie_par_sexe.py]
+  parametres: [garantie_vieillesse_mensuelle, allocation_isolement_mensuelle, part_retrait_entier_garantie, taux_retrait_garantie, annee_euros_garantie_vieillesse, situation_foyer]
+  tests: [tests/test_simulateur.py, tests/test_garantie_degressive.py, tests/test_garantie_par_sexe.py]

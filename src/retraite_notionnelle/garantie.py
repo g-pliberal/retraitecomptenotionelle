@@ -1,9 +1,12 @@
 """Ce que coûte la garantie vieillesse, chiffrée sur la distribution des pensions.
 
-La garantie vieillesse du scénario 6 est une allocation DIFFÉRENTIELLE : elle ne
-verse que ce qui manque à la pension pour atteindre un plancher — 800 € par mois,
-plus 250 € d'allocation d'isolement pour qui vit seul. Son coût est donc
-entièrement celui de la queue basse de la distribution des pensions, et c'est
+La garantie vieillesse du scénario 6 est une allocation SOUS CONDITION DE
+RESSOURCES : elle porte la pension à un plancher — 800 € par mois, plus 250 €
+d'allocation d'isolement pour qui vit seul —, et, depuis le 9 novembre 2026
+(décisions 100 à 102 du programme), elle est DÉGRESSIVE : la pension lui est
+retirée en entier jusqu'à la moitié du plancher, de moitié au-delà, et elle
+s'éteint à une fois et demie le plancher (:func:`complement_garantie`). Son
+coût est donc entièrement celui du bas de la distribution des pensions, et c'est
 précisément ce qu'une grille de treize cas types ne sait pas décrire : la page
 « Coût » ne la voit que par ceux d'entre eux qui liquident à 65 ans ou après —
 cinq pour les générations récentes, aucun pour celles d'avant 1955 —, ce qui
@@ -62,41 +65,104 @@ class CoutGarantie:
     cout_annuel_meur: float
 
 
-def _manque_moyen(borne_inferieure: float, borne_superieure: float | None,
-                  plancher: float) -> tuple[float, float]:
-    """Part de la tranche sous le plancher, et manque MOYEN sur toute la tranche.
+def complement_garantie(plancher: float, ressources: float,
+                        part_retrait_entier: float, taux_retrait: float) -> float:
+    """Le complément que la garantie sert à des ressources données : son barème.
 
-    Le manque moyen est rapporté à la tranche entière et non aux seuls
-    bénéficiaires : c'est lui qu'il faut multiplier par l'effectif de la tranche
-    pour obtenir la dépense. Le manque moyen d'un bénéficiaire s'en déduit en
-    divisant par la part concernée, et le module le fait une fois pour toutes.
+    DÉGRESSIF, à la forme suédoise (décisions 100 et 102 du programme, 9
+    novembre 2026). Jusqu'au pivot, ``part_retrait_entier`` du plancher, chaque
+    euro de ressources retire un euro de garantie ; au-delà, il n'en retire que
+    ``taux_retrait``, et le complément s'éteint à
+    ``pivot + (plancher - pivot) / taux_retrait``. Le plancher est celui de la
+    personne, isolement compris : la forme s'y applique en entier. À un et un,
+    c'est la garantie différentielle, ``max(0, plancher - ressources)``, au bit
+    près. Jumeau de ``complementGarantie`` (``moteur/js/garantie.js``), qui
+    fait foi pour une carrière.
     """
+    pivot = part_retrait_entier * plancher
+    if ressources <= pivot:
+        return max(0.0, plancher - ressources)
+    return max(0.0, plancher - pivot - taux_retrait * (ressources - pivot))
+
+
+def _verifier_forme(part_retrait_entier: float, taux_retrait: float) -> None:
+    """Refuse une forme qui n'est pas un barème dégressif : un pivot hors du
+    plancher, ou un retrait nul — la garantie ne s'éteindrait jamais — ou de
+    plus d'un euro par euro."""
+    if not 0.0 <= part_retrait_entier <= 1.0:
+        raise ValueError(
+            "la part du plancher jusqu'où la pension est retirée en entier "
+            "est entre zéro et un")
+    if not 0.0 < taux_retrait <= 1.0:
+        raise ValueError("le taux de retrait est une part, entre zéro exclu et un")
+
+
+def _manque_moyen(borne_inferieure: float, borne_superieure: float | None,
+                  plancher: float, part_retrait_entier: float = 1.0,
+                  taux_retrait: float = 1.0) -> tuple[float, float]:
+    """Part de la tranche que la garantie sert, et complément MOYEN sur toute
+    la tranche.
+
+    Le complément moyen est rapporté à la tranche entière et non aux seuls
+    bénéficiaires : c'est lui qu'il faut multiplier par l'effectif de la tranche
+    pour obtenir la dépense. Celui d'un bénéficiaire s'en déduit en divisant
+    par la part concernée, et le module le fait une fois pour toutes.
+
+    Le barème est celui de :func:`complement_garantie`, linéaire par morceaux :
+    il rend ce qui manque jusqu'au pivot, puis décroît de ``taux_retrait``
+    jusqu'à la sortie, où il s'éteint. Sa moyenne sur une tranche uniforme est
+    donc exacte, morceau par morceau. Sans forme donnée — un et un —, le pivot
+    et la sortie sont au plancher : c'est le manque moyen de la garantie
+    différentielle, au bit près de ce que le module rendait avant le 9
+    novembre 2026.
+    """
+    pivot = part_retrait_entier * plancher
+    sortie = pivot + (plancher - pivot) / taux_retrait
     if borne_superieure is None:
-        # Masse ponctuelle : ou bien tout le monde est sous le plancher, ou bien
+        # Masse ponctuelle : ou bien tout le monde est servi, ou bien
         # personne. Convention 2 du module.
-        manque = max(0.0, plancher - borne_inferieure)
+        manque = complement_garantie(
+            plancher, borne_inferieure, part_retrait_entier, taux_retrait)
         return (1.0, manque) if manque > 0 else (0.0, 0.0)
-    if borne_superieure <= plancher:
+    if borne_superieure <= pivot:
         return 1.0, plancher - (borne_inferieure + borne_superieure) / 2.0
-    if borne_inferieure >= plancher:
+    if borne_inferieure >= sortie:
         return 0.0, 0.0
     largeur = borne_superieure - borne_inferieure
-    concernee = (plancher - borne_inferieure) / largeur
-    # Sur la seule fraction concernée, le manque décroît linéairement de
-    # ``plancher - borne_inferieure`` à zéro : sa moyenne en est la moitié.
-    return concernee, concernee * (plancher - borne_inferieure) / 2.0
+    concernee = (min(borne_superieure, sortie) - borne_inferieure) / largeur
+    manque = 0.0
+    if borne_inferieure < pivot:
+        # Sous le pivot, le complément décroît d'un euro par euro, de
+        # ``plancher - borne_inferieure`` à ``plancher - pivot`` : sa moyenne
+        # est ce dernier, plus la moitié de ce morceau.
+        manque += (pivot - borne_inferieure) / largeur * (
+            (plancher - pivot) + (pivot - borne_inferieure) / 2.0)
+    debut = max(borne_inferieure, pivot)
+    fin = min(borne_superieure, sortie)
+    if fin > debut:
+        # Dans la pente, il décroît linéairement : la moyenne de ses deux bouts.
+        manque += (fin - debut) / largeur * (
+            complement_garantie(plancher, debut, part_retrait_entier, taux_retrait)
+            + complement_garantie(plancher, fin, part_retrait_entier, taux_retrait)
+        ) / 2.0
+    return concernee, manque
 
 
 def cout_garantie(distribution: DistributionPensions, effectif_total: float,
-                  plancher_mensuel: float, facteur: float = 1.0) -> CoutGarantie:
-    """Applique un plancher différentiel à la distribution, et en tire la dépense.
+                  plancher_mensuel: float, facteur: float = 1.0, *,
+                  part_retrait_entier: float = 1.0,
+                  taux_retrait: float = 1.0) -> CoutGarantie:
+    """Applique le barème de la garantie à la distribution, et en tire la dépense.
 
     ``plancher_mensuel`` est exprimé dans les euros de la distribution : c'est à
     l'appelant de l'y ramener, parce que lui seul sait dans quels euros son
-    barème est écrit.
+    barème est écrit. ``part_retrait_entier`` et ``taux_retrait`` sont la forme
+    du barème (:func:`complement_garantie`), que l'appelant lit aux paramètres
+    de la proposition ; sans eux — un et un —, le plancher est différentiel.
     """
     if facteur <= 0:
         raise ValueError("le facteur de déplacement doit être strictement positif")
+    _verifier_forme(part_retrait_entier, taux_retrait)
 
     part_beneficiaires = 0.0
     manque_mensuel = 0.0
@@ -106,7 +172,8 @@ def cout_garantie(distribution: DistributionPensions, effectif_total: float,
             else tranche.borne_superieure * facteur
         )
         concernee, manque = _manque_moyen(
-            tranche.borne_inferieure * facteur, superieure, plancher_mensuel
+            tranche.borne_inferieure * facteur, superieure, plancher_mensuel,
+            part_retrait_entier, taux_retrait,
         )
         part_beneficiaires += tranche.part * concernee
         manque_mensuel += tranche.part * manque
@@ -184,6 +251,8 @@ def cout_garantie_par_sexe(femmes: DistributionPensions,
                            rapport: float,
                            plancher_majore: float | None = None,
                            part_seule: dict[str, float] | None = None,
+                           *, part_retrait_entier: float = 1.0,
+                           taux_retrait: float = 1.0,
                            ) -> CoutGarantie:
     """Le barème appliqué aux deux sexes à part, chacun de son facteur.
 
@@ -205,6 +274,10 @@ def cout_garantie_par_sexe(femmes: DistributionPensions,
     Sans eux, le plancher unique s'applique à tout le monde : c'est la
     convention d'avant le 21 septembre 2026, qui servait le plancher majoré à
     la population entière et surestimait le coût de près d'un quart.
+
+    LA FORME EST LA MÊME AUX DEUX PLANCHERS (décision 102 du programme) :
+    ``part_retrait_entier`` et ``taux_retrait`` s'appliquent à chacun en
+    entier, isolement compris, comme dans :func:`cout_garantie`.
     """
     facteur_femmes, facteur_hommes = facteurs_par_sexe(
         pension_moyenne(femmes), pension_moyenne(hommes),
@@ -226,7 +299,9 @@ def cout_garantie_par_sexe(femmes: DistributionPensions,
                 continue
             chiffre = cout_garantie(distribution,
                                     effectif_total * poids * poids_plancher,
-                                    plancher, facteur_sexe)
+                                    plancher, facteur_sexe,
+                                    part_retrait_entier=part_retrait_entier,
+                                    taux_retrait=taux_retrait)
             part += poids * poids_plancher * chiffre.part_beneficiaires
             beneficiaires += chiffre.beneficiaires
             manque_mensuel += (poids * poids_plancher

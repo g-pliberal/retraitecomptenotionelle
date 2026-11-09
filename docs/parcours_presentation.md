@@ -88,8 +88,8 @@ C'est l'accueil. Descendre lentement, sans rien cliquer.
   chaque année ». Et une à ne pas sauter, parce que la salle la cherche :
   « Votre retraite : ce que votre régime promet → de l'ordre d'un quart de
   moins, en médiane ». La première des « Vos questions », « Ma
-  retraite va-t-elle baisser ? », en donne le détail : <!--chiffre:valeur(moteur/donnees.json:bilan_equilibre.ecarts_medians.a_venir*-100)-->26<!--/--> % pour qui n'est
-  pas encore à la retraite, <!--chiffre:valeur(moteur/donnees.json:bilan_equilibre.ecarts_medians.a_venir_volontaire*-100)-->14<!--/--> % s'il place les <!--chiffre:mesure(parametre?nom=taux_capitalisation_volontaire)-->cinq<!--/--> points rendus, <!--chiffre:valeur(moteur/donnees.json:bilan_equilibre.ecarts_medians.deja_liquidees*-100)-->28<!--/--> % sur
+  retraite va-t-elle baisser ? », en donne le détail : <!--chiffre:valeur(moteur/donnees.json:bilan_equilibre.ecarts_medians.a_venir*-100)-->23<!--/--> % pour qui n'est
+  pas encore à la retraite, <!--chiffre:valeur(moteur/donnees.json:bilan_equilibre.ecarts_medians.a_venir_volontaire*-100)-->12<!--/--> % s'il place les <!--chiffre:mesure(parametre?nom=taux_capitalisation_volontaire)-->cinq<!--/--> points rendus, <!--chiffre:valeur(moteur/donnees.json:bilan_equilibre.ecarts_medians.deja_liquidees*-100)-->25<!--/--> % sur
   la pension d'aujourd'hui d'un retraité, garantie vieillesse comprise.
 - Le bloc « Et vous, ça donne combien ? » en haut de page est un raccourci
   vers le simulateur : on peut y saisir une date de naissance et un statut et
@@ -177,7 +177,7 @@ net :
 |---|---|---|
 | 1. Actuel | <!--chiffre:mesure(simulateur?systeme=1&naissance=1975-01-01&debut=1996-01-01&statut=salarie_prive_non_cadre&salaire=1443&unite_revenu=euros_mois&montants=net&liquidation=2039-01-01)-->1 299<!--/--> € | référence |
 | 3. Ce qui a été cotisé, deux parts | <!--chiffre:mesure(simulateur?systeme=3&naissance=1975-01-01&debut=1996-01-01&statut=salarie_prive_non_cadre&salaire=1443&unite_revenu=euros_mois&montants=net&liquidation=2039-01-01)-->1 029<!--/--> € | <!--chiffre:mesure(simulateur?systeme=3&quoi=ecart&naissance=1975-01-01&debut=1996-01-01&statut=salarie_prive_non_cadre&salaire=1443&unite_revenu=euros_mois&montants=net&liquidation=2039-01-01)-->-20,8<!--/--> % |
-| 4. La proposition | <!--chiffre:mesure(simulateur?systeme=4&naissance=1975-01-01&debut=1996-01-01&statut=salarie_prive_non_cadre&salaire=1443&unite_revenu=euros_mois&montants=net&liquidation=2039-01-01)-->1 129<!--/--> € | <!--chiffre:mesure(simulateur?systeme=4&quoi=ecart&naissance=1975-01-01&debut=1996-01-01&statut=salarie_prive_non_cadre&salaire=1443&unite_revenu=euros_mois&montants=net&liquidation=2039-01-01)-->-13,1<!--/--> % |
+| 4. La proposition | <!--chiffre:mesure(simulateur?systeme=4&naissance=1975-01-01&debut=1996-01-01&statut=salarie_prive_non_cadre&salaire=1443&unite_revenu=euros_mois&montants=net&liquidation=2039-01-01)-->1 318<!--/--> € | <!--chiffre:mesure(simulateur?systeme=4&quoi=ecart&naissance=1975-01-01&debut=1996-01-01&statut=salarie_prive_non_cadre&salaire=1443&unite_revenu=euros_mois&montants=net&liquidation=2039-01-01)-->1,4<!--/--> % |
 
 À montrer avec le plancher en tête : la garantie vieillesse, <!--chiffre:mesure(parametre?nom=garantie_vieillesse_mensuelle+allocation_isolement_mensuelle)-->1 050<!--/--> € brut
 pour une personne seule dès <!--chiffre:mesure(constante?de=retraite_notionnelle.scenarios.actuel&nom=MinimumVieillesse.AGE_OUVERTURE)-->65<!--/--> ans. Sous la proposition, cette carrière part

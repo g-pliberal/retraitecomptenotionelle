@@ -1676,34 +1676,40 @@ def test_la_garantie_de_la_page_sert_plus_de_monde_et_coute_plus_que_l_aspa_et_l
     système 4 : la distribution de l'EIR 2020 y est déplacée du facteur 0,7365
     (``GarantieProjetee.facteur``), et non du facteur 1, qui serait celui des
     pensions servies, ce que ``garantie.py`` appelle « ce que la garantie
-    coûterait aujourd'hui ». Sur ces pensions-là, 2,80 millions de
-    bénéficiaires (5,60 millions d'ayants droit, un recours de 50 %) et 14,31
-    milliards d'euros constants de 2026, 13,93 en euros courants de 2024
-    (14,3071 × 0,97362) : 2 800 133 / 754 460 = 3,71 fois les allocataires,
-    2 800 133 / 897 810 = 3,12 fois les personnes avec leurs conjoints — la
-    garantie est individuelle —, et 13,93 / 4,6 = 3,03 fois les dépenses, de
-    3,00 à 3,06 selon l'arrondi de la publiée (4,55 à 4,65). Le complément
-    moyen, 13 929,7 M€ / 2 800 133 / 12 = 414 euros par mois, est au-dessous de
+    coûterait aujourd'hui ». REMESURÉ LE 9 NOVEMBRE 2026, la garantie devenue
+    dégressive (décisions 100 à 102 du programme : la pension retirée en entier
+    jusqu'à la moitié du plancher, de moitié au-delà) ; les chiffres de la
+    garantie différentielle sont entre parenthèses. Sur ces pensions-là, 4,28
+    millions de bénéficiaires (2,80), 8,57 millions d'ayants droit (5,60), un
+    recours de 50 %, et 18,75 milliards d'euros constants de 2026 (14,31),
+    18,25 en euros courants de 2024 (18,7477 × 0,97362 ; 13,93) : 4 284 865 /
+    754 460 = 5,68 fois les allocataires (3,71), 4 284 865 / 897 810 = 4,77
+    fois les personnes avec leurs conjoints (3,12) — la garantie est
+    individuelle —, et 18,25 / 4,6 = 3,97 fois les dépenses (3,03), de 3,93 à
+    4,01 selon l'arrondi de la publiée (4,55 à 4,65). Le complément moyen,
+    18 253,2 M€ / 4 284 865 / 12 = 355 euros par mois (414), est au-dessous de
     celui de l'Aspa, 527.
 
     À pensions servies, le même barème, par ``garantie.cout_garantie`` aux deux
     planchers de la page (800 euros, 1 050 euros pour qui vit seul — la page en
     mêle les deux, et son chiffre est entre eux, comme au facteur 0,7365),
-    donne de 1,40 à 2,13 millions de bénéficiaires, de 1,85 à 2,83 fois les
-    allocataires, et de 6,0 à 11,2 milliards d'euros constants de 2026, de 1,27
-    à 2,38 fois les dépenses en euros courants ; en gardant à chaque facteur le
-    poids que la page donne au plancher de qui vit seul (0,60 pour les
-    bénéficiaires, 0,65 pour le coût), environ 1,84 million de bénéficiaires
-    et 9,4 milliards constants de 2026, 9,2 courants de 2024 (2,4 et 2,0
-    fois) : une estimation par interpolation, non une mesure.
+    donne de 2,57 à 3,59 millions de bénéficiaires, de 3,41 à 4,75 fois les
+    allocataires, et de 8,4 à 15,8 milliards d'euros constants de 2026, de 1,77
+    à 3,35 fois les dépenses en euros courants ; en gardant à chaque facteur le
+    poids que la page donne au plancher de qui vit seul (0,42 pour les
+    bénéficiaires, 0,57 pour le coût), environ 3,00 millions de bénéficiaires
+    et 12,6 milliards constants de 2026, 12,3 courants de 2024 (4,0 et 2,7
+    fois) : une estimation par interpolation, non une mesure. Sous la garantie
+    différentielle : de 1,40 à 2,13 millions, de 6,0 à 11,2 milliards, environ
+    1,84 million et 9,4 milliards (2,4 et 2,0 fois).
 
     Ce n'est pas un écart du modèle à corriger : la garantie n'est pas l'Aspa
     — 800 euros par personne et 250 de plus à qui vit seul, sur la seule
     pension, quand l'Aspa a son plafond, d'une personne seule ou d'un couple —,
     et la fiche ne chiffre aucune garantie. C'est un ordre de grandeur que la
     source tranche : l'Aspa et l'ASV servent aujourd'hui 4,6 milliards, et la
-    garantie, de deux à trois fois cela selon les pensions sur lesquelles on la
-    calcule.
+    garantie, de 2,7 à 4 fois cela selon les pensions sur lesquelles on la
+    calcule (de deux à trois fois, différentielle).
 
     LE COÛT DE LA GARANTIE EST BRUT du minimum vieillesse et des autres minima
     qu'elle remplace (``garantie.py``, ``cout_garantie`` : plancher moins
@@ -1713,7 +1719,8 @@ def test_la_garantie_de_la_page_sert_plus_de_monde_et_coute_plus_que_l_aspa_et_l
     minima — le minimum vieillesse, le contributif, le garanti et celui des
     exploitants agricoles, qui est deux lignes de la cascade, cinq lignes en tout —,
     4,94 + 1,56 + 0,01 + 0,35 + 0,64 = 7,50 milliards d'euros courants de
-    2024, de la garantie en euros courants de 2024 : 13,93 − 7,50 = 6,43.
+    2024, de la garantie en euros courants de 2024 : 18,25 − 7,50 = 10,76
+    (13,93 − 7,50 = 6,43, différentielle).
 
     LES CHIFFRES DE CE DERNIER PARAGRAPHE DÉPENDENT D'UNE PRÉSOMPTION, le jour
     de naissance (``jour_de_naissance`` du vocabulaire : le 15 du mois ; la
@@ -1728,9 +1735,11 @@ def test_la_garantie_de_la_page_sert_plus_de_monde_et_coute_plus_que_l_aspa_et_l
     1 563,24 et 1 568,64 ; minimum garanti 6,66 et 6,68 ; pension majorée de
     référence 349,01 et 396,01 ; complément différentiel de la RCO 636,73 et
     677,68 ; soit 7 496,79 et 7 590,17. La garantie, elle, sous la garde (les
-    trois présomptions décalées ensemble), passe de 13 929,68 à 13 912,43
+    trois présomptions décalées ensemble), passe de 18 253,17 à 18 232,47
     (facteur 0,7365 et 0,7371), et ce qu'elle coûte de plus que les minima de
-    6 432,89 à 6 322,26. La cause est inférée, non vérifiée ligne à
+    10 756,38 à 10 642,30 — remesuré le 9 novembre 2026, la garantie devenue
+    dégressive ; différentielle, elle passait de 13 929,68 à 13 912,43, et le
+    surcoût de 6 432,89 à 6 322,26. La cause est inférée, non vérifiée ligne à
     ligne : la pension prend effet le premier du mois qui suit l'anniversaire,
     sauf pour qui est né un 1er (R. 351-37, que le vocabulaire cite à la
     raison de cette présomption), et présumer le 1er avance d'un mois l'effet
@@ -1772,11 +1781,11 @@ def test_la_garantie_de_la_page_sert_plus_de_monde_et_coute_plus_que_l_aspa_et_l
     assert en_courants == pytest.approx(
         ligne.cout_constants(module_cout.COMPOSANTE_GARANTIE)
         * macro.coefficient_prix(parametres.annee_euros_constants, 2024))
-    assert 3.5 < garantie.beneficiaires / allocataires < 3.9
-    assert 3.0 < garantie.beneficiaires / personnes < 3.25
-    assert 2.95 < en_courants / depenses < 3.10
+    assert 5.5 < garantie.beneficiaires / allocataires < 5.9
+    assert 4.6 < garantie.beneficiaires / personnes < 4.95
+    assert 3.85 < en_courants / depenses < 4.10
     complement = en_courants * 1e6 / garantie.beneficiaires / 12
-    assert 400 < complement < 430 and complement < moyenne_aspa
+    assert 340 < complement < 370 and complement < moyenne_aspa
 
     # À pensions servies : le barème de la page aux deux planchers, à son facteur et au facteur 1.
     distribution = simulateur.distribution
@@ -1787,8 +1796,15 @@ def test_la_garantie_de_la_page_sert_plus_de_monde_et_coute_plus_que_l_aspa_et_l
     plancher = parametres.garantie_vieillesse_mensuelle * vers_enquete
     planchers = (plancher, plancher + parametres.allocation_isolement_mensuelle * vers_enquete)
 
+    # Sous la forme du barème que la page applique : la moitié du plancher,
+    # puis la moitié de la pension.
+    forme = dict(part_retrait_entier=parametres.part_retrait_entier_garantie,
+                 taux_retrait=parametres.taux_retrait_garantie)
+    assert forme == dict(part_retrait_entier=0.5, taux_retrait=0.5)
+
     def aux_deux_planchers(facteur: float) -> tuple[list[float], list[float]]:
-        chiffres = [cout_garantie(distribution, garantie.effectif, p, facteur) for p in planchers]
+        chiffres = [cout_garantie(distribution, garantie.effectif, p, facteur, **forme)
+                    for p in planchers]
         return ([c.beneficiaires * recours for c in chiffres],
                 [c.cout_annuel_meur * vers_constants * recours for c in chiffres])
 
@@ -1796,14 +1812,14 @@ def test_la_garantie_de_la_page_sert_plus_de_monde_et_coute_plus_que_l_aspa_et_l
     assert bas_page < garantie.beneficiaires < haut_page
     assert cout_bas_page < ligne.cout_constants(module_cout.COMPOSANTE_GARANTIE) < cout_haut_page
     (bas, haut), (cout_bas, cout_haut) = aux_deux_planchers(1.0)
-    assert 1.8 < bas / allocataires < 1.9 and 2.75 < haut / allocataires < 2.9
-    assert 1.2 < cout_bas * vers_courants / depenses < 1.35
-    assert 2.3 < cout_haut * vers_courants / depenses < 2.45
+    assert 3.3 < bas / allocataires < 3.5 and 4.65 < haut / allocataires < 4.85
+    assert 1.7 < cout_bas * vers_courants / depenses < 1.85
+    assert 3.25 < cout_haut * vers_courants / depenses < 3.45
     poids = (garantie.beneficiaires - bas_page) / (haut_page - bas_page)
-    assert 2.3 < (bas + poids * (haut - bas)) / allocataires < 2.6
+    assert 3.8 < (bas + poids * (haut - bas)) / allocataires < 4.15
     poids = (ligne.cout_constants(module_cout.COMPOSANTE_GARANTIE) - cout_bas_page) / (
         cout_haut_page - cout_bas_page)
-    assert 1.85 < (cout_bas + poids * (cout_haut - cout_bas)) * vers_courants / depenses < 2.15
+    assert 2.5 < (cout_bas + poids * (cout_haut - cout_bas)) * vers_courants / depenses < 2.85
 
     # Ce que la page déduit de la garantie : les quatre minima de la dernière année observée.
     avantages = memoire.avantages().derniere
@@ -1815,8 +1831,8 @@ def test_la_garantie_de_la_page_sert_plus_de_monde_et_coute_plus_que_l_aspa_et_l
     # mesure de chaque jeu de présomptions, à la même marge.
     jour = vocabulaire.presomptions()["jour_de_naissance"]["valeur"]
     (bas_minima, haut_minima), (bas_net, haut_net) = {
-        15: ((7_450, 7_550), (6_400, 6_460)),     # mesuré : 7 496,79 et 6 432,89
-        1: ((7_540, 7_640), (6_290, 6_350)),      # mesuré : 7 590,17 et 6 322,26
+        15: ((7_450, 7_550), (10_725, 10_785)),   # mesuré : 7 496,79 et 10 756,38
+        1: ((7_540, 7_640), (10_610, 10_670)),    # mesuré : 7 590,17 et 10 642,30
     }[jour]
     assert bas_minima < minima < haut_minima
     assert bas_net < en_courants - minima < haut_net
@@ -1852,8 +1868,10 @@ def test_les_nouveaux_allocataires_du_minimum_vieillesse_sont_un_flux_que_le_dep
 
     CE QUE LE DÉPÔT NE CALCULE PAS. La garantie de la page est un stock : aucun
     de ses champs ne compte des entrants ; il n'y a donc rien à confronter aux
-    70 660, et rien n'est corrigé. Son stock de bénéficiaires recule de 2 833 509
-    (2023) à 2 800 133 (2024), −1,2 %, quand celui de l'ASV et de l'Aspa avance de
+    70 660, et rien n'est corrigé. Son stock de bénéficiaires recule de 4 318 431
+    (2023) à 4 284 865 (2024), −0,8 % — remesuré le 9 novembre 2026, la garantie
+    devenue dégressive ; différentielle, de 2 833 509 à 2 800 133, −1,2 % —, quand
+    celui de l'ASV et de l'Aspa avance de
     +4,3 % : le facteur des pensions du système 4 passe de 0,7173 à 0,7365 en un
     an, plus vite que les 1,9 % d'effectif (14,13 à 14,39 millions), quand le
     minimum vieillesse a eu trois revalorisations exceptionnelles de 2018 à
@@ -1921,7 +1939,7 @@ def test_les_nouveaux_allocataires_du_minimum_vieillesse_sont_un_flux_que_le_dep
     assert not [nom for nom in champs
                 if any(mot in nom for mot in ("entrant", "nouveau", "flux", "sortant"))]
     variation = ligne_2024.garantie.beneficiaires / ligne_2023.garantie.beneficiaires - 1
-    assert -0.015 < variation < -0.009 and evolution > 0.04
+    assert -0.011 < variation < -0.005 and evolution > 0.04
 
 
 # --- Fiche 28 : le recours au minimum vieillesse -----------------------------

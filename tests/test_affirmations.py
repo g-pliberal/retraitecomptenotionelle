@@ -718,7 +718,9 @@ def _(m: Modele):
     majore = base + m.base.allocation_isolement_mensuelle * vers_enquete
     bornes = [
         cout_garantie(m.sim.distribution, garantie.effectif, plancher,
-                      garantie.facteur).cout_annuel_meur
+                      garantie.facteur,
+                      part_retrait_entier=m.base.part_retrait_entier_garantie,
+                      taux_retrait=m.base.taux_retrait_garantie).cout_annuel_meur
         * vers_constants * m.base.taux_recours_garantie
         for plancher in (base, majore)
     ]
@@ -757,7 +759,9 @@ def _(m: Modele):
     effectif = m.sim.effectifs.effectif("tous_regimes", millesime)
     couts = [
         cout_garantie_par_sexe(colonnes["F"], colonnes["H"], poids, effectif,
-                               plancher, ligne.garantie.facteur, rapport).cout_annuel_meur
+                               plancher, ligne.garantie.facteur, rapport,
+                               part_retrait_entier=m.base.part_retrait_entier_garantie,
+                               taux_retrait=m.base.taux_retrait_garantie).cout_annuel_meur
         for rapport in (1.0, 0.95, 0.90, 0.85, 0.80)
     ]
     # Jamais moins : c'est une borne basse.
@@ -914,23 +918,42 @@ def _(m: Modele):
     assert m.base.taux_recours_garantie == 0.5
 
 
-@controle("garantie_differentielle_sur_la_queue_basse")
+@controle("garantie_sert_au_dessus_du_plancher")
 def _(m: Modele):
-    """Seules les pensions SOUS le plancher coûtent, et d'autant moins qu'il est bas."""
+    """ENCORE CONTREDITE : la garantie ne coûte plus sur les seules pensions
+    sous le plancher.
+
+    La phrase, et le « différentielle » qui la précède, datent de la garantie
+    différentielle. Le 9 novembre 2026, le programme la rend dégressive
+    (décisions 100 à 102) : la pension lui est retirée en entier jusqu'à la
+    moitié du plancher, de moitié au-delà, et elle sert jusqu'à une fois et
+    demie le plancher. Le modèle la sert ainsi depuis. L'étape du site de
+    l'action 186 récrira ces phrases, et leur extrait tombera avec elles.
+    """
+    forme = dict(part_retrait_entier=m.base.part_retrait_entier_garantie,
+                 taux_retrait=m.base.taux_retrait_garantie)
+    assert forme == dict(part_retrait_entier=0.5, taux_retrait=0.5)
     distribution = m.contexte.distribution()
     effectif = m.sim.effectifs.effectif("tous_regimes", distribution.millesime)
     vers_enquete = m.sim.macro.coefficient_prix(
         m.base.annee_euros_garantie_vieillesse, distribution.millesime)
     plancher = m.base.garantie_vieillesse_mensuelle * vers_enquete
-    chiffres = [cout_garantie(distribution, effectif, plancher * part)
+    chiffres = [cout_garantie(distribution, effectif, plancher * part, **forme)
                 for part in (0.25, 0.5, 1.0)]
     couts = [c.cout_annuel_meur for c in chiffres]
     parts = [c.part_beneficiaires for c in chiffres]
     assert couts == sorted(couts) and couts[0] < couts[-1]
     assert parts == sorted(parts) and 0 < parts[-1] < 1
-    # La part des bénéficiaires est exactement celle de la distribution sous
-    # le plancher : la garantie ne regarde rien au-dessus.
-    assert _proche(parts[-1], distribution.part_sous(plancher), 1e-3)
+    # Les bénéficiaires sont ceux de la distribution sous la SORTIE, une fois
+    # et demie le plancher, et non plus sous le plancher : la garantie regarde
+    # au-dessus de lui.
+    assert _proche(parts[-1], distribution.part_sous(1.5 * plancher), 1e-3)
+    assert parts[-1] > distribution.part_sous(plancher) + 0.05
+    # Et c'est ce barème que la trajectoire du modèle applique.
+    ligne = m.cout.annee(distribution.millesime)
+    differentielle = cout_garantie(
+        distribution, ligne.garantie.effectif, plancher, ligne.garantie.facteur)
+    assert ligne.garantie.ayants_droit > differentielle.beneficiaires
 
 
 @controle("facteur_de_deplacement_inferieur_a_un")

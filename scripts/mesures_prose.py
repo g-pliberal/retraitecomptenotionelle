@@ -1719,8 +1719,9 @@ def ecart_openfisca(**reglages: str) -> float:
 
 
 def garantie_complement(**reglages: str) -> float:
-    """Ce que la garantie vieillesse sert, par mois, à qui a ``pension=…`` euros."""
-    return max(0.0, _parametres().garantie_vieillesse_mensuelle - float(reglages["pension"]))
+    """Ce que la garantie vieillesse sert, par mois, à qui a ``pension=…`` euros
+    et vit en couple : le plancher de base, sous le barème du moteur."""
+    return _garantie_mensuelle(float(reglages["pension"]), "couple").complement / 12
 
 
 @lru_cache(maxsize=None)

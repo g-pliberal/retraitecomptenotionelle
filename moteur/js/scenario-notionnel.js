@@ -34,6 +34,7 @@ import {
 import { pensionsEtrangeresServies } from "./droit/etranger.js";
 import { conditionDeResidence } from "./droit/foyer.js";
 import { ageOuvertureDroit } from "./droit/ouvrir.js";
+import { complementGarantie } from "./garantie.js";
 import { MinimumVieillesse } from "./regimes.js";
 
 /** Produit les deux variantes de comptes notionnels. */
@@ -286,7 +287,12 @@ export class ScenarioNotionnel {
     const aLOuverture = pensionContributive * revalorisation
       + renteCapitalisee * erosion + etrangeres;
     // Comme l'ASPA qu'elle remplace, elle ne se sert qu'à qui réside en France.
-    const complement = resident ? Math.max(0.0, plancher - aLOuverture) : 0.0;
+    // Son barème est dégressif : la pension est retirée en entier jusqu'au
+    // pivot, d'une fraction au-delà (`complementGarantie`).
+    const complement = resident
+      ? complementGarantie(plancher, aLOuverture,
+        parametres.part_retrait_entier_garantie, parametres.taux_retrait_garantie)
+      : 0.0;
     return {
       situation: parametres.situation_foyer,
       age_atteint: ageAtteint,

@@ -901,9 +901,11 @@ class Parametres:
     #: un test le vérifie.
     taux_tva_liberal: float = 0.0
 
-    #: La seconde : une GARANTIE VIEILLESSE, allocation différentielle qui
-    #: remplace l'ASPA et en garde l'âge (65 ans) et le principe — porter les
-    #: ressources à un plancher —, mais individualise le plancher. Chacun est
+    #: La seconde : une GARANTIE VIEILLESSE, allocation sous condition de
+    #: ressources qui remplace l'ASPA et en garde l'âge (65 ans) et le principe
+    #: — porter les ressources à un plancher —, mais individualise le plancher,
+    #: et ne retire qu'une part de la pension au-delà d'un pivot (voir
+    #: ``part_retrait_entier_garantie``). Chacun est
     #: comparé au sien, sans regarder la pension du conjoint : 300 € et 1 500 €
     #: dans un couple ouvrent 500 € au premier et rien au second, là où l'ASPA
     #: actuelle, qui regarde le foyer, ne sert rien. Financée par l'impôt, non
@@ -916,6 +918,20 @@ class Parametres:
     #: Allocation d'isolement : s'ajoute au plancher d'une personne vivant
     #: seule. 800 + 250 = 1 050 € par mois seul, 800 € par personne à deux.
     allocation_isolement_mensuelle: float = 250.0
+
+    #: La garantie est DÉGRESSIVE, à la forme suédoise (décisions 100 et 102 du
+    #: programme, 9 novembre 2026) : « Jusqu'à la moitié du plancher (525 €
+    #: seul, 400 € en couple), la pension est retirée en entier, comme
+    #: aujourd'hui ; au-delà, de moitié seulement, et le complément s'éteint à
+    #: une fois et demie le plancher (1 575 €, 1 200 €). » Le premier est la
+    #: part du plancher — isolement compris, la forme s'y appliquant en entier
+    #: — jusqu'où chaque euro de ressources retire un euro de garantie ; le
+    #: second, ce qu'un euro de plus en retire au-delà. À UN ET UN, la garantie
+    #: redevient différentielle, celle d'avant le 9 novembre 2026, au bit près.
+    #: Le barème est ``garantie.complement_garantie``, que lisent le moteur
+    #: d'une carrière et le coût.
+    part_retrait_entier_garantie: float = 0.5
+    taux_retrait_garantie: float = 0.5
 
     #: La troisième : un ÂGE LÉGAL DE DÉPART DE 65 ANS, à compter de la
     #: bascule. Demandé le 22 septembre 2026. Personne ne liquide la pension de

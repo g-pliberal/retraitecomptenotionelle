@@ -384,6 +384,13 @@ export const PARAMETRES_DEFAUT = Object.freeze({
   //: 800 € par personne à deux.
   garantie_vieillesse_mensuelle: 800.0,
   allocation_isolement_mensuelle: 250.0,
+  //: La garantie est DÉGRESSIVE, à la forme suédoise (décisions 100 et 102 du
+  //: programme, 9 novembre 2026) : jusqu'à `part_retrait_entier_garantie` du
+  //: plancher, chaque euro de pension retire un euro de garantie ; au-delà, il
+  //: n'en retire que `taux_retrait_garantie`. À un et un, elle redevient
+  //: différentielle. Voir `config.py`.
+  part_retrait_entier_garantie: 0.5,
+  taux_retrait_garantie: 0.5,
   //: La troisième : un ÂGE LÉGAL DE DÉPART DE 65 ANS à compter de la bascule
   //: (22 septembre 2026). Qui serait parti plus tôt sous le droit en vigueur
   //: part à cet âge sous la proposition, et travaille jusque-là dans la

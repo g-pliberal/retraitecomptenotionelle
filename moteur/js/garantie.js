@@ -2,10 +2,15 @@
  * Ce que coûte la garantie vieillesse, chiffrée sur la distribution des pensions.
  *
  * Portage de ``src/retraite_notionnelle/garantie.py``. La garantie du scénario 6
- * est une allocation DIFFÉRENTIELLE : elle ne verse que ce qui manque à une
- * pension pour atteindre son plancher. Son coût est donc entièrement celui de la
- * queue basse de la distribution, et c'est précisément ce qu'une grille de douze
- * cas types ne sait pas décrire.
+ * est une allocation sous condition de ressources, DÉGRESSIVE depuis le 9
+ * novembre 2026 (`complementGarantie`, que le moteur d'une carrière applique).
+ * Son coût est entièrement celui de la queue basse de la distribution, et c'est
+ * précisément ce qu'une grille de douze cas types ne sait pas décrire. LES
+ * FONCTIONS DE COÛT DE CE MODULE, que seules les pages lisent, appliquent encore
+ * le barème DIFFÉRENTIEL — ce qui manque à une pension pour atteindre son
+ * plancher : le coût du modèle se calcule en Python (`_manque_moyen` de
+ * `garantie.py`, qui porte la forme dégressive), et l'étape du site les
+ * portera (action 186, chantier 9).
  *
  * TROIS CONVENTIONS
  * 1. Les pensions d'une tranche de cent euros sont supposées réparties
@@ -21,6 +26,27 @@
  * distribution dans le même rapport, ce que le scénario 6 ne fait pas
  * exactement : ce second chiffre est un ordre de grandeur, le premier un calcul.
  */
+
+/**
+ * Le complément que la garantie sert à des ressources données : son barème.
+ *
+ * DÉGRESSIF, à la forme suédoise (décisions 100 et 102 du programme, 9
+ * novembre 2026). Jusqu'au pivot, ``partRetraitEntier`` du plancher, chaque
+ * euro de ressources retire un euro de garantie ; au-delà, il n'en retire que
+ * ``tauxRetrait``, et le complément s'éteint à
+ * ``pivot + (plancher - pivot) / tauxRetrait``. Le plancher est celui de la
+ * personne, isolement compris : la forme s'y applique en entier. À un et un,
+ * c'est la garantie différentielle, ``max(0, plancher - ressources)``, au bit
+ * près. Le moteur d'une carrière le lit, au départ (`scenario-notionnel.js`)
+ * et aujourd'hui (`revalorisation.js`).
+ */
+export function complementGarantie(plancher, ressources, partRetraitEntier, tauxRetrait) {
+  const pivot = partRetraitEntier * plancher;
+  if (ressources <= pivot) {
+    return Math.max(0.0, plancher - ressources);
+  }
+  return Math.max(0.0, plancher - pivot - tauxRetrait * (ressources - pivot));
+}
 
 /**
  * Part de la tranche sous le plancher, et manque MOYEN sur toute la tranche.

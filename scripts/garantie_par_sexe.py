@@ -234,7 +234,9 @@ def calculer(parametres: Parametres | None = None,
                         continue
                     chiffre = cout_garantie(
                         colonnes[sexe], effectif * poids * poids_niveau,
-                        niveau, facteurs[sexe])
+                        niveau, facteurs[sexe],
+                        part_retrait_entier=parametres.part_retrait_entier_garantie,
+                        taux_retrait=parametres.taux_retrait_garantie)
                     part += poids * poids_niveau * chiffre.part_beneficiaires
                     cout_meur += chiffre.cout_annuel_meur
             milliards = cout_meur * vers_constants * recours / 1000.0

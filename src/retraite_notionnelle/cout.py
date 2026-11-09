@@ -170,6 +170,7 @@ from .donnees.population import CarrieresIncompletes, Population
 from .garantie import (
     CoutGarantie,
     _manque_moyen,
+    _verifier_forme,
     cout_garantie,
     cout_garantie_par_sexe,
     facteurs_par_sexe,
@@ -3346,8 +3347,8 @@ class GarantieDistribution:
     """Ce que la garantie vieillesse coûte chaque année, lu sur la distribution.
 
     LE PROBLÈME QU'ELLE RÉSOUT. La garantie du scénario 6 est une allocation
-    différentielle : son coût est tout entier celui de la queue basse de la
-    distribution des pensions, et treize carrières choisies pour couvrir les
+    sous condition de ressources : son coût est tout entier celui de la queue
+    basse de la distribution des pensions, et treize carrières choisies pour couvrir les
     configurations du système n'ont pas de queue basse. Chiffrée sur les cas
     types, elle valait zéro de 2030 à 2070 avant le 19 septembre 2026, puis un
     ordre de grandeur ; ``limites.md`` disait qu'il fallait la remplacer.
@@ -3392,6 +3393,13 @@ class GarantieDistribution:
     réclame (``Parametres.taux_recours_garantie``). Les bénéficiaires et le
     coût sont ceux qui réclament ; ``ayants_droit`` garde le compte de tous
     ceux qui tombent sous le plancher.
+
+    LA FORME. Le barème est dégressif depuis le 9 novembre 2026 (décisions 100
+    à 102 du programme) : ``part_retrait_entier`` et ``taux_retrait`` sont
+    ceux des paramètres, les mêmes aux deux planchers, et « sous le plancher »
+    se lit désormais « sous la sortie », une fois et demie le plancher, où le
+    complément s'éteint (``garantie.complement_garantie``). Sans eux — un et
+    un —, le barème est différentiel.
     """
 
     def __init__(self, distribution: DistributionPensions, plancher_mensuel: float,
@@ -3402,9 +3410,16 @@ class GarantieDistribution:
                  rapport_deplacement: float = 1.0,
                  plancher_majore: float | None = None,
                  part_seule: dict[str, float] | None = None,
-                 population_mortalite: str | None = None) -> None:
+                 population_mortalite: str | None = None, *,
+                 part_retrait_entier: float = 1.0,
+                 taux_retrait: float = 1.0) -> None:
         if not 0.0 < taux_recours <= 1.0:
             raise ValueError("le taux de recours est une part, entre zéro exclu et un")
+        _verifier_forme(part_retrait_entier, taux_retrait)
+        #: La forme du barème : la part du plancher jusqu'où la pension est
+        #: retirée en entier, et ce qu'un euro de plus retire au-delà.
+        self.part_retrait_entier = part_retrait_entier
+        self.taux_retrait = taux_retrait
         if rapport_deplacement <= 0.0:
             raise ValueError("le rapport des deux facteurs doit être strictement positif")
         #: Les deux colonnes de sexe de l'enquête, et le poids de chacune. Elles
@@ -3468,11 +3483,15 @@ class GarantieDistribution:
             self.rapport_deplacement == 1.0 and self.part_seule is None
         ):
             return cout_garantie(self.distribution, effectif,
-                                 self.plancher_mensuel, facteur)
+                                 self.plancher_mensuel, facteur,
+                                 part_retrait_entier=self.part_retrait_entier,
+                                 taux_retrait=self.taux_retrait)
         return cout_garantie_par_sexe(
             self.distributions_sexe["F"], self.distributions_sexe["H"],
             self.part_femmes, effectif, self.plancher_mensuel, facteur,
             self.rapport_deplacement, self.plancher_majore, self.part_seule,
+            part_retrait_entier=self.part_retrait_entier,
+            taux_retrait=self.taux_retrait,
         )
 
     def facteurs_des_sexes(self, facteur: float) -> tuple[float, float]:
@@ -3555,7 +3574,9 @@ def _garantie_distribution(simulateur: Simulateur, pensionnes: list[Pensionne],
                           else tranche.borne_superieure * facteur_enquete)
             concernee, _ = _manque_moyen(
                 tranche.borne_inferieure * facteur_enquete, superieure,
-                plancher_majore * vers_enquete)
+                plancher_majore * vers_enquete,
+                parametres.part_retrait_entier_garantie,
+                parametres.taux_retrait_garantie)
             if concernee <= 0.0:
                 continue
             milieu = (tranche.borne_inferieure if tranche.borne_superieure is None
@@ -3610,6 +3631,8 @@ def _garantie_distribution(simulateur: Simulateur, pensionnes: list[Pensionne],
         vers_constants=macro.coefficient_prix(
             millesime, parametres.annee_euros_constants),
         taux_recours=parametres.taux_recours_garantie,
+        part_retrait_entier=parametres.part_retrait_entier_garantie,
+        taux_retrait=parametres.taux_retrait_garantie,
     )
 
 
@@ -4372,7 +4395,8 @@ def _reprises_successions(lignes: list[AvenirAnnuel], simulateur: Simulateur,
             superieure = (None if tranche.borne_superieure is None
                           else tranche.borne_superieure * facteur_sexe)
             concernee, manque = _manque_moyen(
-                tranche.borne_inferieure * facteur_sexe, superieure, plancher)
+                tranche.borne_inferieure * facteur_sexe, superieure, plancher,
+                calage.part_retrait_entier, calage.taux_retrait)
             if concernee <= 0.0:
                 continue
             milieu = (tranche.borne_inferieure if tranche.borne_superieure is None
@@ -4405,7 +4429,9 @@ def _reprises_successions(lignes: list[AvenirAnnuel], simulateur: Simulateur,
             seule = 0.0 if calage.part_seule is None else calage.part_seule[sexe]
             sous_plancher[sexe] = somme_ordonnee(
                 poids_plancher * cout_garantie(
-                    par_sexe[sexe], 1.0, plancher, facteur_sexe).part_beneficiaires
+                    par_sexe[sexe], 1.0, plancher, facteur_sexe,
+                    part_retrait_entier=calage.part_retrait_entier,
+                    taux_retrait=calage.taux_retrait).part_beneficiaires
                 for plancher, poids_plancher in (
                     (calage.plancher_mensuel, 1.0 - seule), (majore, seule))
                 if poids_plancher > 0.0
