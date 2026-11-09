@@ -623,6 +623,19 @@ Le même jour, ensuite, aux cinq questions reposées en clair (même note) :
     15,4 Md€ au tarif de 2025, sans recette nouvelle en face ; le prix,
     18 % de l'allocation ou le forfait d'aujourd'hui, reste à fixer.
 
+Le même jour, enfin (même note) :
+
+98. **Les fonctionnaires reçoivent la moitié de l'économie, hors de la page
+    Coût** : « la moitié. Cela ne doit pas être dans la page coût car c'est
+    le budget général de l'État et non le périmètre des retraites. » La
+    décision 93 est précisée : 23,6 Md€ en 2026, une dépense du budget de
+    l'État que le coût des retraites ne porte pas.
+99. **Les cotisations chômage et maladie montent pour payer les droits des
+    chômeurs et des malades** : « On augmente les cotisations chômage et
+    maladie. » Les 15,4 Md€ de la décision 97 ont leur recette : de l'ordre
+    de 1,7 point de cotisation chômage et 0,2 point de cotisation maladie
+    (calcul), sur les cinq points que gagne un salarié du privé.
+
 ## Ce qui est écarté
 
 - **Une transition sans baisse nominale des pensions en cours** — bâtir le
@@ -1373,6 +1386,11 @@ fonctionnaires augmentés, les impôts traités un par un sans baisse générale
 l'État payeur des allègements, l'assurance chômage et l'assurance maladie
 payeuses des droits des chômeurs et des malades. Restent deux confirmations,
 à la fin de la note ; puis une session du modèle.
+
+**Le même jour, enfin** (décisions 98 et 99) : la hausse des fonctionnaires
+est de la moitié et reste hors de la page Coût ; les cotisations chômage et
+maladie montent. Reste une question, à la fin de la note : la taxe sur les
+salaires et le forfait social, de moitié ou en entier, et la CSG du capital.
 
 ### Chantier 5 — L'indexation, et le partage de l'effort entre actifs et retraités
 

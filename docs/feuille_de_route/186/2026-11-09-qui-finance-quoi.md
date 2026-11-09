@@ -2,13 +2,13 @@
 
 **Reprise, au 9 novembre 2026.** La table des recettes de 2026 est posée
 (« 1. » à « 4. »), sans toucher au modèle ni au site, et le propriétaire a
-tranché ses lignes ouvertes le jour même (décisions 91 à 97) : les
-fonctionnaires sont augmentés, chaque impôt se traite un par un, l'État
-verse la cotisation que les allègements effacent, l'assurance chômage et
-l'assurance maladie cotisent pour les chômeurs et les malades. Restent deux
-confirmations, à la fin de la note : la hausse des fonctionnaires, de la
-moitié ou du tout ; et la table impôt par impôt. Puis une session du modèle
-porte le tout au scénario 6 (« Ce que les réponses changent au modèle »).
+tranché ses lignes ouvertes le jour même (décisions 91 à 99) : les
+fonctionnaires sont augmentés de la moitié de l'économie, hors de la page
+Coût ; chaque impôt se traite un par un ; l'État paie les allègements ; les
+cotisations chômage et maladie montent pour payer les droits des chômeurs et
+des malades. Reste une question, à la fin de la note : la taxe sur les
+salaires et le forfait social, de moitié ou en entier, et la CSG du capital.
+Puis une session du modèle (« Ce que les réponses changent au modèle »).
 
 *Le 9 novembre 2026, le propriétaire demande, pour le chantier 4 de
 l'action 186 : qui finance quoi, milliard par milliard. Le chiffrage
@@ -808,7 +808,7 @@ Pour la session du modèle, rien n'étant fait ici :
   d'aujourd'hui ;
 - les trois écarts de « 1.3 ».
 
-## Ce que le propriétaire tranche
+## Les deux confirmations demandées
 
 Deux confirmations, chacune en un mot.
 
@@ -844,3 +844,122 @@ Deux confirmations, chacune en un mot.
 - *La question.* Oui à la table entière ? Sinon, dites la ligne à changer :
   un impôt peut être supprimé en entier, comme la CTA, ou gardé en entier
   par l'État, comme les alcools.
+
+## Le même jour, enfin : les confirmations, et trois explications
+
+Le propriétaire :
+
+- « Confirmation 1 : la moitié. Cela ne doit pas être dans la page coût car
+  c'est le budget général de l'État et non le périmètre des retraites. »
+- « Confirmation 2 : pourquoi la taxe sur le salaire et le forfait social ne
+  baissent que de moitié ? Quelles différences entre les différentes CSG ? »
+- Sur le solde de toutes les administrations : « Tu peux expliquer le
+  calcul ? C'est bizarre. »
+- « On augmente les cotisations chômage et maladie. »
+
+**Ce qui est tranché** (décisions 98 et 99). Les fonctionnaires reçoivent la
+moitié de l'économie, 23,6 Md€ ; cette hausse est une dépense du budget
+général de l'État, hors de la page Coût, qui ne compte que les retraites. Les
+cotisations chômage et maladie montent pour payer les cotisations de retraite
+des chômeurs et des malades : 13,1 et 2,3 Md€ au tarif de 2025. Rapportés aux
+salaires du privé (756 Md€ en 2024, note des complémentaires) et à tous les
+revenus d'activité (1 310 Md€), c'est de l'ordre de 1,7 point de cotisation
+chômage et 0,2 point de cotisation maladie (calcul). Un salarié du privé
+gagnait 5 points de cotisation de retraite (de 27,98 à 23) ; il en garde
+environ 3.
+
+### Pourquoi la taxe sur les salaires et le forfait social ne baissaient que de moitié
+
+Parce que la session a appliqué la phrase « on ne redonne la moitié que sur
+les impôts enlevés » à chaque impôt, un par un, ces deux-là compris. Ce
+n'est pas ce que le 20 septembre avait fait : ce jour-là, la moitié se
+comptait sur l'ensemble, et ces deux impôts, les seuls que paie un employeur
+sur les salaires, étaient supprimés en entier pour atteindre cette moitié.
+Les deux lectures se défendent ; elles ne donnent pas la même chose :
+
+| En 2026, Md€ | Ces deux impôts baissent de moitié | Ils sont supprimés en entier |
+|---|---:|---:|
+| Baisse pour les employeurs qui les paient | 8,6 | 17,2 |
+| L'État garde, sur ces deux impôts | 8,6 | 0 |
+| L'État garde, tous impôts retirés | 28,6 | 20,0 |
+| Il lui reste, les allègements payés (24 à 31) | + 4,3 à − 2,3 | − 4,3 à − 10,9 |
+
+### Les trois CSG
+
+La CSG est un seul impôt, mais son taux et sa destination changent selon le
+revenu sur lequel elle est prise (dépôt, `restitution.py` et
+`prelevements_remuneration.yaml` ; CCSS pour les montants) :
+
+| La CSG prise sur | Son taux | Ce qui va aux retraites | Qui la paie |
+|---|---:|---:|---|
+| les salaires | 9,2 % | rien : elle va à la maladie, à la famille, au chômage, à l'autonomie et à la dette sociale | les salariés |
+| les pensions | 8,3 % au taux plein ; moins, ou rien, pour les petites pensions | 2,94 points, 9,7 Md€ | les retraités |
+| les revenus du capital (loyers, intérêts, dividendes, plus-values) | 10,6 % | 6,67 points, 12,5 Md€ | les épargnants et les propriétaires |
+
+Retirer la CSG aux retraites ne touche donc pas la CSG des salariés : ils
+n'en versent aucune aux retraites. Sous la table impôt par impôt, la CSG des
+retraités baisse de 1,47 point et celle du capital de 3,3 points.
+
+### Le calcul du solde de toutes les administrations, expliqué
+
+On met dans un seul panier l'État, la sécurité sociale, les caisses de
+retraite et les collectivités, et on compte ce qui entre et ce qui sort de
+ce panier, vers les ménages et les entreprises ou depuis eux. Ce qu'une
+caisse publique verse à une autre ne compte pas : l'argent reste dans le
+panier. Par rapport à aujourd'hui, en 2026, en Md€ :
+
+| | Md€ |
+|---|---:|
+| **Le panier dépense moins** : pensions | + 117,6 |
+| **Il dépense plus** : garantie vieillesse 13,9 ; hausse des fonctionnaires 23,6 ; cinq points de capitalisation des agents publics, part de l'employeur 4,6 ; prestation aux parents 2,7 | − 44,8 |
+| **Il reçoit moins** : cotisations de retraite des salariés et des employeurs du privé 31,7 ; cotisations que les allègements effacent 24,3 à 30,9 ; baisses d'impôts 27,1 ; CSG et autres prélèvements sur les pensions qui ne sont plus versées 8,1 | − 91,2 à − 97,8 |
+| **Total, sans recette nouvelle** | **− 25,0 à − 18,4** |
+| **Il reçoit plus** : taxe sur la valeur du terrain, en plus de la taxe foncière | + 30 à + 43 |
+| **Total, avec la taxe sur le terrain** | **+ 5,0 à + 24,6** |
+| Il reçoit plus : hausse des cotisations chômage et maladie (décision 99) | + 15,4 |
+| **Total, après la décision 99** | **+ 20,4 à + 40,0** |
+
+Ce qui pouvait sembler bizarre :
+
+- *Le résultat est une fourchette* parce que deux lignes ne sont connues
+  qu'à peu près : les allègements (24 à 31) et la taxe sur le terrain (30 à
+  43).
+- *Sans la taxe sur le terrain, le panier perd 18 à 25 Md€* : la réforme
+  rend plus qu'elle n'économise en 2026. C'est la taxe sur le terrain, un
+  impôt nouveau de 30 à 43 Md€ sur les propriétaires, qui fait passer le
+  total au-dessus de zéro.
+- *Ce n'est pas le solde des retraites*, qui perd 76 Md€ : la différence
+  est ce que l'État et la branche famille ne versent plus aux retraites et
+  gardent, 69 Md€.
+- *« S'ils reçoivent tout »* n'a plus d'objet : c'est la moitié.
+
+Tous ces chiffres sont ceux de la première année, 2026, la baisse des
+pensions faite d'un coup comme le modèle la compte ; les 31,7 Md€ sont les
+45,0 de baisse des cotisations moins les 13,3 que versaient des employeurs
+publics (« 3. »).
+
+## Ce que le propriétaire tranche
+
+Une question, en deux lignes de la table.
+
+**La taxe sur les salaires et le forfait social : de moitié, ou en entier ?**
+
+- *Ce que c'est.* Deux impôts que l'employeur paie sur les salaires qu'il
+  verse : la taxe sur les salaires (hôpitaux, banques, assurances,
+  associations) et le forfait social (sur l'intéressement et la
+  participation). Ensemble, 17,2 Md€ vont aux retraites.
+- *De moitié* : 8,6 Md€ de charges en moins ; l'État garde 8,6 et il lui
+  reste de quoi payer à peu près les allègements.
+- *En entier, comme le 20 septembre* : 17,2 Md€ de charges en moins ; il
+  manque alors 4 à 11 Md€ à l'État pour payer les allègements.
+
+**La CSG sur les revenus du capital : de moitié, ou gardée en entier par l'État ?**
+
+- *Ce que c'est.* La CSG prise sur les loyers, les intérêts, les dividendes
+  et les plus-values ; 12,5 Md€ vont aux retraites.
+- *De moitié, comme les autres impôts* : 3,3 points de CSG en moins pour
+  les épargnants, 6,2 Md€. C'est la plus grosse baisse de la table.
+- *Gardée en entier par l'État, comme les droits sur les alcools* : rien ne
+  change pour les épargnants ; l'État garde 6,2 Md€ de plus, de quoi
+  supprimer en entier la taxe sur les salaires et le forfait social sans
+  manquer d'argent pour les allègements.
