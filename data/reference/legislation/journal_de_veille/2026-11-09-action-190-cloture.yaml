@@ -1,0 +1,21 @@
+date: "2026-11-09"
+session: "action 190, étape 6 : la clôture, l'action aux archives avec le dossier de ses notes"
+consulte: >-
+  Aucun texte : la session ne touche pas au droit, et l'index LEGI n'est pas
+  interrogé. La section de l'action 190 dans la feuille de route et les cinq
+  notes de ses étapes ; la clôture de l'action 188, pour la forme.
+trouve: >-
+  Les étapes 2 à 5 sont sur main, la suite complète verte sur leur dernier
+  commit. La section passe telle quelle à la fin de l'archive de la feuille
+  de route, à l'état « fait », sa Reprise récrite pour la clôture ; ses
+  notes, avec celle de la clôture, sous docs/archives/feuille_de_route/190/.
+  Aucun code ne change, aucune simulation ni aucun témoin ne bouge.
+reste: >-
+  Ce que la note de clôture déclare, sans défaut prouvé : les réponses
+  coupées que les récupérateurs ne redemandent pas, la pagination de Melodi,
+  l'index publié de la DILA laissé au cache, l'écriture du cache de la CCSS,
+  deux lecteurs de la CCSS et de la DREES ; la page toute faite gardée après
+  un calcul en échec ; les ponts inscrits à atexit. Deux questions au
+  propriétaire, sans réponse à la clôture : l'archive dans ce que pousser.sh
+  surveille, et une action pour ce qui reste. Détail :
+  docs/archives/feuille_de_route/190/2026-11-09-etape-6-cloture.md.

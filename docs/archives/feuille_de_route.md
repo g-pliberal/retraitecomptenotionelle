@@ -19564,3 +19564,74 @@ organismes qui les gèrent. « oui, ajoute le champ gestionnaire ».
 2. les trois gestionnaires que les sources du dépôt ne nomment pas, lus à la
    source et recoupés par le test — fait ;
 3. la page Données : les gestionnaires, et ce qu'ils gèrent — fait.
+
+### 190. Les machines à états implicites : inventoriées, puis corrigées là où elles se trompent déjà, en sessions parallèles — `fait`
+
+**Reprise, au 9 novembre 2026.** Close : les six étapes sont faites, et
+l'action archivée. Vingt et une machines à états implicites inventoriées,
+vingt-trois de plus dans les récupérateurs ; six défauts reproduits puis
+corrigés — trois dans le rendu des pages, le pont qui ne se relançait pas,
+deux dans les récupérateurs ; le rendu des pages tient en un seul état, et
+les états des actions en une liste fermée. Reste, hors action, ce que la
+note de clôture déclare, sans défaut prouvé, et deux questions au
+propriétaire, sans réponse à la clôture. Note :
+`190/2026-11-09-etape-6-cloture.md`.
+
+**D'où elle vient.** Le 9 novembre 2026, le propriétaire : « Find all of the
+implicit state machines in my app » ; puis, l'inventaire rendu : « Fait une
+action que l'on peut résoudre avec plusieurs sessions en parallèle ».
+
+**Le plan.** Une machine à états implicite garde son état dans des
+drapeaux, des champs nuls ou des fichiers, sans le nommer ni déclarer ses
+transitions. On ne refait pas celles qui marchent : chaque défaut se
+corrige par le test qui le reproduit, vu rouge ; puis, sous des tests
+verts, la machine qui l'a permis devient explicite — un état nommé, ses
+transitions en un seul endroit — quand cela tient dans l'étape.
+
+**Ce qui est à faire**, une étape par session ; les étapes 2 à 5 en
+parallèle, aucune ne touchant un fichier d'une autre.
+
+1. **L'inventaire** (outillage) : fait le 9 novembre 2026.
+2. **Le rendu des pages** (site : `moteur/js/routeur.js` et les tests du
+   site ; seule session sur les pages) : deux défauts, puis le rendu en un
+   seul état. Deux rendus qui se chevauchent, le moteur ne se chargeant
+   pas, posent deux fois le message d'erreur : `echecDuChargement` passe
+   avant la garde du numéro de rendu (lignes 373-379 et 425-431) ; vu dans
+   Chromium, le paquet de données refusé et l'adresse changée pendant
+   l'attente. La lecture d'un relevé déposé (`deposerLeReleve`) n'a pas de
+   garde : un second fichier, ou un rendu pendant la lecture, laisse gagner
+   la plus lente, ou la fait écrire dans des nœuds que la page a retirés —
+   relevé à la lecture du code, à reproduire d'abord. Puis l'état du rendu,
+   réparti entre `data-pret`, `calcul-en-cours`, `aria-busy`,
+   `data-prerendu`, `routeAffichee` et `numeroDeRendu`, passe à une seule
+   variable et à une fonction de transition qui porte la garde ; ce que la
+   page montre ne change pas (`python -m pytest -m site`), et les classes
+   que le routeur pose restent écrites en chaînes
+   (`test_chaque_page_se_peint_avec_son_seul_style`).
+3. **Le pont relancé** (modèle : `src/retraite_notionnelle/pont.py`,
+   `tests/test_pont.py`) : node mort, le pont ne se relance jamais.
+   `_ouvert()` ne le rouvre que si le paquet a changé ; chaque demande
+   suivante du processus échoue, « node s'est arrêté », jusqu'à un
+   `pont.fermer()` que seuls les tests appellent — reproduit, node tué. La
+   transition qui manque, mort puis relancé à la demande suivante, par son
+   test ; la demande en cours échoue comme aujourd'hui, avec le journal de
+   node.
+4. **Les états des actions** (outillage : `scripts/reprise.py`,
+   `scripts/tableau_de_bord.py`, `scripts/conservation.py`,
+   `tests/test_prose.py`) : un vocabulaire fermé. Les états clos s'écrivent
+   en trois endroits, « en cours » se compare en toutes lettres en trois
+   autres, et rien ne refuse un état inconnu : `en-cours` ferait une action
+   ouverte que ni `reprise.py`, ni le test des blocs « Reprise », ni le
+   tableau de bord ne verraient. Les états déclarés une fois, lus par tous,
+   et un test qui refuse tout autre état, dans la feuille de route comme
+   dans l'archive ; joué à l'envoi s'il se peut sans toucher `pousser.sh`,
+   qui est une garde, sinon avec l'accord du propriétaire, demandé avant
+   (action 163). Les deux tests que l'envoi joue gardent leur nom.
+5. **Les récupérateurs** (données : `scripts/fetch/`) : l'inventaire ne les
+   a pas lus un à un. Leurs machines à états implicites — un lecteur qui
+   tient la section ou le régime courant, un téléchargement qui reprend, une
+   mémoire qui se périme — relevées dans la note de l'étape, sous la forme
+   de l'inventaire ; un défaut prouvé, corrigé par son test, le reste
+   déclaré.
+6. **La clôture** : les étapes 2 à 5 faites, l'action passe, telle quelle,
+   à la fin de l'archive, avec le dossier de ses notes.
