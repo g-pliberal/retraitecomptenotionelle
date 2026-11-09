@@ -68,6 +68,7 @@ sys.path.insert(0, str(RACINE / "scripts"))
 from verifier_prose import (  # noqa: E402
     Zonage, _blocs_de_code, consigne, consignes, decouper, lignes_produites,
     paragraphes_geles)
+from reprise import CLOS  # noqa: E402
 
 #: Les registres, et ce qui identifie une entrée dans chacun : une clé, ou
 #: plusieurs jointes. Une section qui est un dictionnaire s'identifie par ses
@@ -244,8 +245,7 @@ def _vivantes(texte: str) -> set[int]:
         if titre:
             action = re.match(r"### \d+\..* — `([^`]*)`\s*$", ligne)
             if action or len(titre.group(1)) < 3:
-                dedans = bool(action) and action.group(1) not in (
-                    "fait", "abandonnée", "archivée")
+                dedans = bool(action) and action.group(1) not in CLOS
         if dedans:
             vivantes.add(numero)
     return vivantes

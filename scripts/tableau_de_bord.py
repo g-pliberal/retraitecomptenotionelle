@@ -58,6 +58,9 @@ from retraite_notionnelle.noyau import carte, textes, vocabulaire
 from retraite_notionnelle.noyau import univers as univers_de_droit
 
 RACINE = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(RACINE / "scripts"))
+from reprise import EN_COURS, TITRE_D_ACTION  # noqa: E402
+
 PAGE = RACINE / "docs" / "etat.md"
 #: Une ligne par course publiée de ``tests.yml`` : date, sources, état de la
 #: suite, état de la garde (``scripts/publier_fabrique.sh``, action 163).
@@ -287,7 +290,7 @@ def page() -> str:
         ("l'inventaire des régimes", False),
     ]
 
-    actions = re.findall(r"^### (\d+)\. (.*?) — `([^`]*)`", closes + "\n" + feuille, re.M)
+    actions = TITRE_D_ACTION.findall(closes + "\n" + feuille)
     statuts_actions = collections.Counter(s for _, _, s in actions)
 
     # La part de la réversion la même année que les effectifs.
@@ -342,7 +345,7 @@ def page() -> str:
     modeles_mieux = somme_ordonnee(1 for r in referents if r.get("fait_mieux"))
     chantiers = collections.Counter(p["chantier"] for p in mieux
                                     if p["etat"] == "a_reprendre")
-    en_cours = [(n, t) for n, t, s in actions if s == "en cours"]
+    en_cours = [(n, t) for n, t, s in actions if s == EN_COURS]
     hors_champ = [r for r in inventaire if r["couverture"] == "hors_champ"]
 
     L: list[str] = []

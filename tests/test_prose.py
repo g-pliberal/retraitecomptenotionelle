@@ -1016,12 +1016,12 @@ def test_une_action_close_passe_a_l_archive_de_la_feuille_de_route():
     deux fois, 37 et 38 : une action se reconnaît à son numéro et à son
     titre, et n'est jamais des deux côtés.
     """
-    motif = re.compile(r"^### (\d+)\. (.*) — `([^`]+)`\s*$", re.M)
-    vivantes = motif.findall(
-        (RACINE / "docs" / "feuille_de_route.md").read_text(encoding="utf-8"))
-    closes = motif.findall(
-        (RACINE / "docs" / "archives" / "feuille_de_route.md").read_text(encoding="utf-8"))
-    etats_clos = {"fait", "abandonnée", "archivée"}
+    reprise = _script("reprise")
+    vivantes = reprise.TITRE_D_ACTION.findall(
+        (RACINE / reprise.FEUILLE).read_text(encoding="utf-8"))
+    closes = reprise.TITRE_D_ACTION.findall(
+        (RACINE / reprise.ARCHIVE).read_text(encoding="utf-8"))
+    etats_clos = reprise.CLOS
     restees = [f"{n}. {t}" for n, t, etat in vivantes if etat in etats_clos]
     assert not restees, (
         f"{restees} : une action close passe, telle quelle, à la fin de "
@@ -1053,7 +1053,7 @@ def test_chaque_action_en_cours_s_ouvre_sur_son_bloc_reprise():
     reprise = _script("reprise")
     ouvre = re.compile(r"\*\*Reprise, au [^*]+\.\*\*")
     texte = (RACINE / reprise.FEUILLE).read_text(encoding="utf-8")
-    en_cours = [a for a in reprise.actions(texte) if a.etat == "en cours"]
+    en_cours = [a for a in reprise.actions(texte) if a.etat == reprise.EN_COURS]
     assert en_cours, "aucune action en cours"
     fautes = []
     for action in en_cours:
@@ -1096,22 +1096,26 @@ def test_les_notes_de_la_feuille_de_route_se_rangent_par_action():
     `docs/archives/feuille_de_route/`, où ses notes sont gelées. Chaque note
     se nomme de sa date et de son sujet, et s'ouvre sur son titre ; aucune ne
     porte de titre d'action, qui ne se déclare que dans la feuille de route
-    ou son archive, dont le tableau de bord tire ses comptes."""
+    ou son archive, dont le tableau de bord tire ses comptes. L'état d'une
+    action, des deux côtés, est l'un de ceux que `scripts/reprise.py`
+    déclare (action 190, étape 4) : un autre, `en-cours`, la rangerait parmi
+    les ouvertes sans qu'aucun outil la voie."""
     reprise = _script("reprise")
-    clos = {"fait", "abandonnée", "archivée"}
+    fautes, vues = [], 0
 
     def numeros(chemin: str, garder) -> set[str]:
         texte = (RACINE / chemin).read_text(encoding="utf-8")
+        fautes.extend(f"{chemin} : « {titre} » : l'état d'une action est l'un de "
+                      f"{', '.join(reprise.ETATS)}" for titre in reprise.etats_inconnus(texte))
         return {n for n, _, etat in reprise.TITRE_D_ACTION.findall(texte) if garder(etat)}
 
     rangements = (
-        (reprise.NOTES, numeros(reprise.FEUILLE, lambda e: e not in clos),
+        (reprise.NOTES, numeros(reprise.FEUILLE, lambda e: e not in reprise.CLOS),
          "ouverte de la feuille de route"),
         (reprise.ARCHIVE_DES_NOTES,
-         numeros("docs/archives/feuille_de_route.md", lambda e: e in clos),
+         numeros(reprise.ARCHIVE, lambda e: e in reprise.CLOS),
          "close de l'archive"),
     )
-    fautes, vues = [], 0
     for dossier, attendues, quelle in rangements:
         base = RACINE / dossier
         if not base.is_dir():
@@ -1134,6 +1138,30 @@ def test_les_notes_de_la_feuille_de_route_se_rangent_par_action():
                                   "dans la feuille de route")
     assert vues, "aucune note rangée : le dossier des notes a disparu"
     assert not fautes, fautes
+
+
+def test_un_etat_d_action_hors_du_vocabulaire_se_refuse():
+    """Les états d'une action forment une liste fermée, déclarée une fois
+    dans `scripts/reprise.py` (action 190, étape 4) : à faire, en cours, puis
+    fait, abandonnée ou archivée. Un état mal écrit, ou qui ne s'écrit pas
+    entre accents graves, ferait une action ni ouverte ni close, que ni
+    `reprise.py`, ni le bloc « Reprise », ni le tableau de bord ne verraient :
+    le test des notes, que l'envoi joue, la refuse, de ce que lit
+    `reprise.etats_inconnus`."""
+    reprise = _script("reprise")
+    assert reprise.ETATS == ("à faire", "en cours", "fait", "abandonnée", "archivée")
+    texte = ("### 1. Une action à mener — `à faire`\n\n"
+             "### 2. Une action menée — `en-cours`\n"
+             "### 3. Une action sans accents graves — en cours\n"
+             "### 4. Une action close — `faite`\n"
+             "### 5. Une action menée — `en cours`\n"
+             "#### 6. Un intertitre — `brouillon`\n"
+             "### 7. Une action abandonnée — `abandonnée`\n")
+    assert reprise.etats_inconnus(texte) == [
+        "### 2. Une action menée — `en-cours`",
+        "### 3. Une action sans accents graves — en cours",
+        "### 4. Une action close — `faite`",
+    ]
 
 
 #: Les mois d'une date écrite, pour lire celle d'un titre de version.

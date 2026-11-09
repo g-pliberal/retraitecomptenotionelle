@@ -1,0 +1,18 @@
+date: "2026-11-09"
+session: "action 190, étape 4 : les états des actions de la feuille de route, une liste fermée"
+consulte: >-
+  Aucune règle du scénario 1 n'est touchée, et l'index LEGI n'est pas
+  interrogé. Lus ce jour, au commit 0d03aaf : scripts/reprise.py,
+  scripts/tableau_de_bord.py, scripts/conservation.py, tests/test_prose.py
+  et la ligne de scripts/pousser.sh qui joue les deux tests de la feuille de
+  route. Aucune source extérieure n'est ouverte.
+trouve: >-
+  Aucun écart avec les fiches. Les états d'une action sont déclarés une fois,
+  dans scripts/reprise.py, et lus par les trois autres ; un état inconnu, ou
+  qui ne s'écrit pas entre accents graves, est refusé à l'envoi, dans la
+  feuille de route comme dans l'archive, sans toucher pousser.sh. Détail :
+  docs/feuille_de_route/190/2026-11-09-etape-4-etats-des-actions.md.
+reste: >-
+  Rien pour l'étape 4. Un état récrit dans la seule archive passe l'envoi,
+  que pousser.sh ne juge que sur la feuille de route et ses notes ; la suite
+  complète le refuse après.

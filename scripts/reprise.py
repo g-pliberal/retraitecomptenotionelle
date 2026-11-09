@@ -24,12 +24,22 @@ from pathlib import Path
 
 RACINE = Path(__file__).resolve().parents[1]
 FEUILLE = "docs/feuille_de_route.md"
+#: Les actions closes, que la feuille de route ne porte plus.
+ARCHIVE = "docs/archives/feuille_de_route.md"
 #: Les notes des actions ouvertes, un dossier par action ; celles des actions
 #: closes passent, avec leur dossier, sous ``docs/archives/feuille_de_route/``.
 NOTES = "docs/feuille_de_route"
 ARCHIVE_DES_NOTES = "docs/archives/feuille_de_route"
 
 TITRE_D_ACTION = re.compile(r"^### (\d+)\. (.*) — `([^`]+)`\s*$", re.M)
+#: Les états d'une action, le mot entre accents graves de son titre, et nul
+#: autre (action 190, étape 4) : à faire, puis en cours, puis clos — fait,
+#: abandonnée ou archivée —, l'action passant alors à l'archive. Le tableau
+#: de bord, la conservation et ``tests/test_prose.py`` les lisent ici.
+A_FAIRE = "à faire"
+EN_COURS = "en cours"
+CLOS = ("fait", "abandonnée", "archivée")
+ETATS = (A_FAIRE, EN_COURS, *CLOS)
 #: Le nom d'une note : sa date, puis son sujet (« etape-2 »), sans majuscule
 #: ni accent.
 NOM_DE_NOTE = re.compile(r"(\d{4}-\d{2}-\d{2})-[a-z0-9]+(?:-[a-z0-9]+)*\.md")
@@ -67,6 +77,14 @@ def actions(texte: str) -> list[Action]:
         sortie.append(Action(trouve.group(1), trouve.group(2), trouve.group(3),
                              numero + 1, ouverture))
     return sortie
+
+
+def etats_inconnus(texte: str) -> list[str]:
+    """Les titres d'action, ``### <numéro>.``, dont l'état n'est pas l'un de
+    :data:`ETATS` ou ne s'écrit pas entre accents graves : une telle action
+    ne serait ni ouverte ni close."""
+    return [ligne for ligne in re.findall(r"^### \d+\..*$", texte, re.M)
+            if not (trouve := TITRE_D_ACTION.match(ligne)) or trouve.group(3) not in ETATS]
 
 
 def reprise_d_une_note(texte: str) -> list[str]:
@@ -114,7 +132,7 @@ def main(argv: list[str] | None = None) -> int:
     analyseur.add_argument("numeros", nargs="*", help="les actions à imprimer (toutes par défaut)")
     arguments = analyseur.parse_args(argv)
     texte = (RACINE / FEUILLE).read_text(encoding="utf-8")
-    choisies = [a for a in actions(texte) if a.etat == "en cours"
+    choisies = [a for a in actions(texte) if a.etat == EN_COURS
                 and (not arguments.numeros or a.numero in arguments.numeros)]
     if not choisies:
         print("Aucune action en cours sous ces numéros.")
