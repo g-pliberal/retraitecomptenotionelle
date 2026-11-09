@@ -2006,6 +2006,12 @@ A comme sous B ; la LVT sans abattement coûte en plus 360 à 930 € au
 propriétaire. La somme ne compense que sous le plancher de la garantie. Le
 détail, et ce qui reste à trancher : `186/2026-11-09-petites-baisses-retraites.md`.
 
+**Le 9 novembre 2026 : le relevé de compte annuel, étudié et maquetté.** La
+note est `186/2026-11-09-releve-annuel.md` : l'enveloppe orange suédoise et
+son effet mesuré, quatre autres pays, ce que la France envoie déjà, la
+maquette pour trois carrières nées en 1995, la phrase et le coût. Rien n'est
+décidé ; au propriétaire, ses sept questions, d'abord l'estimation de pension.
+
 ### Chantier 9 — Le site et le simulateur
 
 **La question du propriétaire.** « Est-ce que le simulateur est vraiment une
