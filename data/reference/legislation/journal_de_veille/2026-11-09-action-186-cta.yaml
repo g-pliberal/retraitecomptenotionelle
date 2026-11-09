@@ -1,0 +1,27 @@
+date: "2026-11-09"
+session: "action 186, chantier 4 : la contribution tarifaire d'acheminement (CTA) étudiée aux sources, décisions 88 et 89"
+consulte: >-
+  Aucune règle du scénario 1 n'est touchée, et l'index LEGI n'est pas
+  interrogé. Lues ce jour, en entier : les délibérations de la CRE
+  n° 2026-14 du 15 janvier 2026 (taux de la CTA), n° 2026-98 du 7 mai 2026
+  (coefficient de la CTA du gaz) et n° 2026-123 du 12 juin 2026 (avis sur
+  le projet de décret modifiant le décret n° 2005-123) ; dans le dépôt,
+  docs/regimes.md (qui équilibre les régimes fermés depuis 2025),
+  data/reference/regimes/pap_regimes_subventionnes.csv et
+  structure_financement.csv.
+trouve: >-
+  Aucun écart avec les fiches. La CTA (loi n° 2004-803, article 18) paie
+  les droits des IEG acquis avant 2005 dans le transport et la
+  distribution ; ses taux de l'électricité sont au plancher de la loi
+  depuis le 1er février 2026 (5 % et 15 %, contre 10,11 % et 21,93 %).
+  Elle rapporte plus que ce qu'elle paie : environ 450 M€ par an
+  d'excédent de 2026 à 2030 après la baisse, 2,2 Md€ d'excédent de
+  trésorerie de la CNIEG à la fin de 2025, 4,4 Md€ possibles en 2030. La
+  phrase « les cotisants du privé paient donc pour eux », au chantier 6,
+  est corrigée : l'État rembourse la Cnav sur son budget. Le détail est
+  dans la note docs/feuille_de_route/186/2026-11-09-cta.md.
+reste: >-
+  Le montant de la CTA du gaz sur une facture type, le rendement total au
+  rapport annuel de la CNIEG, et le chiffrage de la décision 89 : la somme
+  des petites baisses que paie un retraité type, face à la baisse de sa
+  pension.

@@ -532,6 +532,31 @@ pensions avant l'intégration (note
     (décision 3), par la piste du chantier 2. La page Coût la fait encore
     d'un coup.
 
+Le 9 novembre 2026, sur les recettes (chantier 4), après l'étude de la CTA
+aux délibérations de la CRE (note `186/2026-11-09-cta.md`) :
+
+88. **La CTA est supprimée : elle sort de la retraite, et de la facture** :
+    « On enlève les taxes d'énergie et transport qui vont aux retraites » ;
+    « On peut acter ça ». La contribution tarifaire d'acheminement, prélevée
+    sur toute facture d'électricité et de gaz pour les droits des IEG acquis
+    avant 2005, n'est ni reconduite ni affectée ailleurs : la facture baisse
+    d'autant, une vingtaine d'euros par an sur l'électricité d'un ménage.
+    La CNIEG puise dans l'excédent qu'elle en a tiré, 2,2 Md€ à la fin de
+    2025 selon la CRE, puis rejoint le régime général (décisions 37 et 69) :
+    « Ça ne me pose pas de problème que ieg intègre le régime général ».
+
+Le même jour, sur le message (chantier 8) :
+
+89. **Plein de petites baisses, dont les retraités profitent aussi : à eux,
+    une moindre baisse** : « on compte faire plein de petites baisses. Au
+    total, on aura une vraie grosse baisse pour tout le monde. Y compris
+    pour les retraités qui sont largement perdant de notre système. On peut
+    dire que cela leur fera une moindre baisse. En réalité, les retraités
+    acceptent une baisse de leur pension si ce qu'ils paient baisse aussi ».
+    À chiffrer avant de le dire : la somme de ces baisses pour un retraité
+    type, face à la baisse de sa pension (note du 9 novembre, « Ce qui
+    reste »).
+
 ## Ce qui est écarté
 
 - **Une transition sans baisse nominale des pensions en cours** — bâtir le
@@ -1502,6 +1527,14 @@ entrée au régime général.
 Les régimes spéciaux fermés (SNCF, RATP, IEG, mines…) ne reçoivent plus de
 subvention de l'État : depuis 2025, c'est le régime général qui les équilibre
 (`docs/regimes.md`) — les cotisants du privé paient donc pour eux.
+
+*Corrigé le 9 novembre 2026.* Ce ne sont pas les cotisants du privé : la
+Cnav équilibre ces régimes, mais l'État la rembourse par crédits budgétaires
+(`docs/regimes.md`, article L. 241-3, 8°, du code de la sécurité sociale).
+C'est le contribuable qui paie, 4,1 Md€ pour la SNCF et la RATP en 2026
+(`data/reference/regimes/pap_regimes_subventionnes.csv`). Les IEG ne
+reçoivent aucun crédit : une part de leurs droits passés est payée par la
+CTA, sur les factures d'énergie (décision 88).
 
 **Pistes du 6 novembre.**
 - Les 7 % de l'Agirc-Arrco seraient la compensation des allègements de
