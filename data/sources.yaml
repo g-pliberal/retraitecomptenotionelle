@@ -2893,6 +2893,27 @@ institutions:
         acces: document
         statut_integration: saisi
         cible: data/reference/regimes/taux_cotisation.csv
+      - id: dss_ccss_allegements_hors_base
+        titre: >-
+          Les comptes de la sécurité sociale, résultats 2025, prévisions 2026
+          et 2027 (rapport d'octobre 2026) — la réduction générale, dans les
+          régimes de base et hors d'eux
+        url: https://www.securite-sociale.fr/files/live/sites/SSFR/files/medias/CCSS/2026/CCSS-octobre-2026_assemble_VDEF.pdf
+        acces: document
+        statut_integration: saisi
+        millesime: 2024-2027
+        cible: data/reference/macro/allegements_hors_regimes_de_base.csv
+        note: >-
+          Fiche 1.6, tableau 2, p. 67 : ce que la réduction générale efface de
+          cotisations des régimes de base et « hors régime de base (FNAL,
+          assurance chômage et retraite complémentaire) », 12 587 M€ en 2025,
+          18 910 en 2026 (p). La compensation de l'Agirc-Arrco, « à l'euro
+          près » et payée par une fraction de TVA affectée à l'Acoss (synthèse,
+          p. 15), s'en déduit par les taux : 7,4 Md€ en 2025, 11,1 en 2026
+          (`donnees/compensation_agirc_arrco.py`). C'est la part de TVA que la
+          décision 79 du programme garde aux retraites. Lu sur le document le
+          9 novembre 2026 (action 186, chantier 4, note
+          `docs/feuille_de_route/186/2026-11-09-recettes-au-modele.md`).
       - id: dss_ccss_impots_retraite
         titre: >-
           Rapports à la Commission des comptes de la Sécurité sociale — les

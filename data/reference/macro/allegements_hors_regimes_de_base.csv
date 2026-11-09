@@ -1,0 +1,55 @@
+# Ce que la réduction générale de cotisations patronales efface, dans les
+# régimes de base et hors d'eux (assurance chômage, retraite complémentaire,
+# FNAL)
+# source_id: dss_ccss_allegements_hors_base
+# unite: montant_meur en millions d'euros courants de l'année
+# fiabilite:
+#   haute : rapport à la Commission des comptes de la sécurité sociale
+#           d'octobre 2026, « Les comptes de la sécurité sociale, résultats
+#           2025, prévisions 2026 et 2027 », fiche 1.6, tableau 2, p. 67.
+#           Saisi à la main, lu sur le document le 9 novembre 2026.
+#
+# CE QUE C'EST
+# ------------
+# La réduction générale efface, au voisinage du SMIC, les cotisations
+# patronales des régimes de base, et, depuis 2019, celles de l'assurance
+# chômage et de la retraite complémentaire. L'Urssaf compense l'Agirc-Arrco
+# « à l'euro près » (même rapport, synthèse, p. 15), par une fraction de TVA
+# qui lui est affectée pour cela ; quand elle ne suffit pas, les branches
+# excédentaires du régime général complètent (1,0 Md€ en 2025, 0,2 attendu en
+# 2026, Unédic comprise).
+#
+# La décision 79 du programme garde aux retraites « la part existante » de
+# TVA : c'est cette compensation. Aucune source lue n'en publie le montant
+# pour l'Agirc-Arrco seule ; il se déduit de la ligne `hors_regimes_de_base`
+# par les taux (`donnees/compensation_agirc_arrco.py`) : 7,4 Md€ en 2025,
+# 11,1 en 2026. Le régime général, lui, ne reçoit aucune TVA pour la
+# retraite : toute celle de la sécurité sociale va à l'assurance maladie
+# (même rapport, fiches 1.4 et 4.3, lues par la note
+# `docs/feuille_de_route/186/2026-11-09-qui-finance-quoi.md`, « 1.3 »).
+#
+# CE QU'IL FAUT SAVOIR AVANT DE S'EN SERVIR
+# ------------------------------------------
+# - `dispositif` : `reduction_generale` jusqu'en 2025 ; `rgdu`, la réduction
+#   générale dégressive unique, à compter du 1er janvier 2026. Elle absorbe
+#   les réductions de taux des cotisations de maladie et d'allocations
+#   familiales, que la ligne `regimes_de_base` ne comptait pas avant elle :
+#   cette ligne ne se compare pas d'un dispositif à l'autre. La ligne
+#   `hors_regimes_de_base`, si : le rapport publie 12 587 pour 2025 sous les
+#   deux présentations.
+# - `nature` : 2024 et 2025 sont constatés ; 2026 et 2027 sont des prévisions.
+# - Les lignes couvrent l'assurance chômage, la retraite complémentaire et le
+#   FNAL ensemble : le rapport ne les sépare pas.
+annee,poste,montant_meur,dispositif,nature,fiabilite,page
+2024,regimes_de_base,26681.0,reduction_generale,constate,haute,67
+2024,hors_regimes_de_base,12671.0,reduction_generale,constate,haute,67
+2024,ensemble,39352.0,reduction_generale,constate,haute,67
+2025,regimes_de_base,26529.0,reduction_generale,constate,haute,67
+2025,hors_regimes_de_base,12587.0,reduction_generale,constate,haute,67
+2025,ensemble,39115.0,reduction_generale,constate,haute,67
+2026,regimes_de_base,54301.0,rgdu,prevision,haute,67
+2026,hors_regimes_de_base,18910.0,rgdu,prevision,haute,67
+2026,ensemble,73211.0,rgdu,prevision,haute,67
+2027,regimes_de_base,51722.0,rgdu,prevision,haute,67
+2027,hors_regimes_de_base,18011.0,rgdu,prevision,haute,67
+2027,ensemble,69733.0,rgdu,prevision,haute,67

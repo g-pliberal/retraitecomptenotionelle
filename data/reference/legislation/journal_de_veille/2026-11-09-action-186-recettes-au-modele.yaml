@@ -1,0 +1,29 @@
+date: "2026-11-09"
+session: "action 186, chantier 4 : les décisions sur les recettes au scénario 6, le plan et sa première étape"
+consulte: >-
+  Aucune règle du scénario 1 n'est touchée, et l'index LEGI n'est pas
+  interrogé. Relu ce jour, sur le document : le rapport à la Commission des
+  comptes de la sécurité sociale d'octobre 2026 (« Les comptes de la sécurité
+  sociale, résultats 2025, prévisions 2026 et 2027 »), synthèse, p. 15 (la
+  compensation des allègements généraux à l'Agirc-Arrco et à l'Unédic), et
+  fiche 1.6, tableaux 1 à 3, p. 67 (la réduction générale, par branche et
+  hors régimes de base). Dans le dépôt : les décisions 47, 57, 79 à 81, 88,
+  91 à 99, 103 et 104 de docs/feuille_de_route_programme.md, la note
+  docs/feuille_de_route/186/2026-11-09-qui-finance-quoi.md, et
+  SoldeAnnuel.ressources_de et postes_ressources (cout.py).
+trouve: >-
+  La réduction générale efface hors des régimes de base 12 587 M€ en 2025 et
+  18 910 en 2026 (p), comme la note du 9 novembre l'avait lu. L'Agirc-Arrco
+  est compensée « à l'euro près », par une fraction de TVA affectée à
+  l'Acoss ; sa part, 6,01 points sur 10,2, fait 7,4 Md€ en 2025 et 11,1 en
+  2026 (calcul), et non « de l'ordre de 7 Md€ ». La série entre au dépôt
+  (data/reference/macro/allegements_hors_regimes_de_base.csv, source
+  dss_ccss_allegements_hors_base). Cette TVA paie la cotisation que les
+  allègements effacent : la décision 79, qui la garde, et la décision 96, par
+  laquelle l'État verse cette même cotisation, se recouvrent de 11,1 Md€ ; la
+  question est posée au propriétaire. Le détail est dans la note
+  docs/feuille_de_route/186/2026-11-09-recettes-au-modele.md.
+reste: >-
+  Le montant que l'Agirc-Arrco reçoit vraiment, que ses comptes ne publient
+  qu'en image ; la part de TVA dans cette compensation, que le régime général
+  complète (1,0 Md€ en 2025, Unédic comprise) ; les étapes 2 à 9 du plan.

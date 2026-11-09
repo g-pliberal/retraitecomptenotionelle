@@ -1441,6 +1441,16 @@ baissent de moitié sur leur part retraite, l'autre moitié au budget de
 l'État. La table est close : 27,1 Md€ de charges en moins, 28,6 à l'État,
 qui en verse 24 à 31 pour les allègements. Reste à la porter au modèle.
 
+**Le même jour, le portage au modèle commence** (note
+`186/2026-11-09-recettes-au-modele.md`) : un plan en neuf étapes, une par
+session. La première est faite : la part de TVA de l'Agirc-Arrco, relue au
+rapport de la CCSS d'octobre 2026, est une donnée du dépôt, 7,4 Md€ en 2025
+et 11,1 en 2026. Le coût ne la reçoit pas encore : cette TVA paie la
+cotisation que les allègements effacent, celle-là même que l'État verse
+sous la décision 96, et les deux décisions se recouvrent de 11,1 Md€. Au
+propriétaire, à la fin de la note : si la TVA s'ajoute à ce versement ou en
+fait partie, et la valeur de la LVT que le coût retient.
+
 ### Chantier 5 — L'indexation, et le partage de l'effort entre actifs et retraités
 
 **La question.** Quelle indexation, pour les comptes et pour les pensions
