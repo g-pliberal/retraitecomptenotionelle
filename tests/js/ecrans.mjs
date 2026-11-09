@@ -936,7 +936,11 @@ async function mesurerLeStyle({ route, largeur, hauteur, sans_onload: sansOnload
   }
   await ouvrir(route);
   const media = await evaluer(FEUILLE_EFFECTIVE);
-  await evaluer("new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(() => r(true))))");
+  // La feuille devenue effective apporte ses propres @font-face, qui se
+  // chargent à leur tour : sans les attendre, une machine chargée mesure la
+  // page sur la police de repli, un point plus basse (suite rouge du 9 novembre).
+  await evaluer("document.fonts.ready.then(() => new Promise((r) => "
+    + "requestAnimationFrame(() => requestAnimationFrame(() => r(true)))))");
   const entiere = await evaluer(INSTANTANE);
   await page("Fetch.enable", { patterns: [{ urlPattern: "*moteur/style.css", requestStage: "Request" }] });
   let seule;
