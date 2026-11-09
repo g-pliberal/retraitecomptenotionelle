@@ -85,9 +85,15 @@ export class Progressive {
 /**
  * La règle de la retraite progressive pour une pension prenant effet à cette
  * date : les paramètres de la version de sa fiche qui vaut ce jour-là, que le
- * paquet porte (`fiches_datees`). Sans fiche ni version, aucun droit.
+ * paquet porte (`fiches_datees`). Sans version à cette date, aucun droit ;
+ * sans la fiche, le paquet est périmé et le calcul s'arrête : un droit ne se
+ * refuse pas par défaut.
  */
 export function regle(moteur, date) {
+  if (!(FICHE in moteur.fichesDatees.fiches())) {
+    throw new Error(`${FICHE} : la fiche manque au paquet, que `
+      + "scripts/construire_donnees.py refait");
+  }
   return moteur.fichesDatees.regle(FICHE, jour(date)) ?? { existe: false };
 }
 

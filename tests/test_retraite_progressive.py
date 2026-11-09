@@ -158,6 +158,17 @@ def test_la_regle_se_lit_dans_la_fiche_et_nulle_part_ailleurs(simulateur):
         assert not hasattr(progressive, nom), nom
 
 
+def test_sans_la_fiche_le_calcul_s_arrete(simulateur):
+    """Un paquet périmé, sans la fiche, ne refuse pas le droit par défaut : le
+    calcul s'arrête et le dit."""
+    from copy import copy
+
+    moteur = copy(simulateur.scenario_actuel)
+    moteur.fiches_datees = moteur.fiches_datees.sans(progressive.FICHE)
+    with pytest.raises(LookupError, match="retraite_progressive"):
+        progressive.regle(moteur, DateMois(2024, 1))
+
+
 def test_le_paquet_porte_la_fiche_que_le_moteur_lit(simulateur):
     """Une seule source : la fiche, que le paquet du site porte telle que le
     moteur Python la prépare."""

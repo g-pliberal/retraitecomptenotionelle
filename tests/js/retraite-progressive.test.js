@@ -60,6 +60,13 @@ test("la règle est celle de la version qui vaut au jour de la demande", () => {
   assert.equal(progressive.regle(moteur, new DateMois(1988, 6)).existe, true);
 });
 
+test("sans la fiche au paquet, le calcul s'arrête : aucun droit ne se refuse par défaut", () => {
+  const copie = structuredClone(paquet);
+  delete copie.fiches_datees[FICHE];
+  assert.throws(() => progressive.regle(moteurSur(copie), new DateMois(2024, 1)),
+    /retraite_progressive/);
+});
+
 test("la durée exigée vient de la fiche : 150, 160, puis 150 (R. 351-39)", () => {
   assert.equal(progressive.dureeRequise(moteur, new DateMois(1990, 1)), 150);
   assert.equal(progressive.dureeRequise(moteur, new DateMois(2000, 1)), 160);

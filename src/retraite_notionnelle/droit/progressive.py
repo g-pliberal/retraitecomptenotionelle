@@ -128,7 +128,10 @@ class Progressive:
 def regle(moteur: ScenarioActuel, date: DateMois) -> dict:
     """La règle de la retraite progressive pour une pension prenant effet à
     cette date : les paramètres de la version de sa fiche qui vaut ce jour-là
-    (``fiches_datees``). Sans fiche ni version, aucun droit."""
+    (``fiches_datees``). Sans version à cette date, aucun droit ; sans la
+    fiche, le calcul s'arrête : un droit ne se refuse pas par défaut."""
+    if FICHE not in moteur.fiches_datees.fiches():
+        raise LookupError(f"{FICHE} : la fiche manque aux fiches datées du moteur")
     return moteur.fiches_datees.regle(FICHE, _jour(date)) or {"existe": False}
 
 

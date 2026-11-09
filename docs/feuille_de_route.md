@@ -8167,3 +8167,75 @@ les couleurs ; quatre étapes en prennent la mise en page :
    tableaux encadrés, champs du simulateur ;
 7. le panneau « Affichage » : taille du texte, police très lisible,
    interligne, sans le thème sombre.
+
+### 191. Les fiches de la carte, exécutables : le moteur lit chaque règle dans les versions de sa fiche, domaine par domaine — `en cours`
+
+**Reprise, au 9 novembre 2026.** Étape 1 faite : la carte mesurée, le domaine
+`cumul` choisi, et sa première fiche convertie — `retraite_progressive`, que
+les deux moteurs lisent par le paquet (`fiches_datees`), ses constantes
+parties, témoins identiques. Sur 272 fiches, 80 sont lues par leurs versions,
+58 portent des paramètres que le moteur ne lit pas, 65 des versions sans
+paramètres, 69 n'ont pas de versions. Par quoi commencer : l'étape 2,
+`seconde_pension` et `droits_apres_la_premiere_pension` (`droit/seconde.py`
+et son jumeau), par `version_aux_dates`. Au propriétaire : l'écart déclaré
+des bornes du fonctionnaire de 2014 à 2023. Détail :
+`191/2026-11-09-etape-1-mesure-et-retraite-progressive.md`.
+
+**D'où elle vient.** Le 9 novembre 2026, le propriétaire demande de rendre
+les fiches de la carte des règles exécutables, domaine par domaine.
+L'architecture veut une information à un seul endroit (principe 2) et des
+règles combinées par des relations déclarées (principe 6) ; une revue du même
+jour (commit `f4c9fb5`) mesure l'écart : la plupart des fiches décrivent le
+code sans le piloter, la valeur de la règle vivant dans une constante du code
+ou une clé de période d'un fichier de régime.
+
+**Ce que « exécutable » veut dire.** Le moteur lit les valeurs datées de la
+règle dans les versions de sa fiche, par le paquet, et non dans une constante
+ou une clé de régime ; ce qui portait ces valeurs disparaît dans le même
+commit, ou devient une vue fabriquée ; le code qui applique la règle sort de
+la fonction géante, dans une fonction à lui que la fiche nomme ; aucun
+résultat ne change, les témoins gardant leurs chiffres. Un écart entre la
+fiche et le code est une trouvaille : la conversion garde le résultat du
+jour, et l'écart se déclare à la fiche et se traite à part, selon les règles
+du scénario 1.
+
+**La méthode, qu'une conversion suit.** Le mécanisme est celui qui sert déjà :
+la fiche entre à `FichesDatees.NOMS` (`scenarios/actuel.py`), le paquet la
+porte préparée (`fiches_datees`), et le moteur y lit la version qui vaut
+(`regle`, `version`, `version_aux_dates` ; `applicable`, dans
+`moteur/js/versions.js`). Aucun second mécanisme, aucun changement du noyau :
+un paramètre de plus n'en demande pas (§ 13.2). Dans l'ordre : compléter les
+paramètres de chaque version, qui ne portent souvent que ce qui change d'une
+version à l'autre, jusqu'à ce que chacune se suffise ; le test du portage,
+vu rouge, où une version retouchée dans une copie du paquet déplace ce que le
+moteur rend, et où les constantes ne sont plus ; le portage, puis son jumeau,
+ligne pour ligne ; le paquet et les témoins refaits, identiques hors de la
+fiche ajoutée. Une fiche qui manque au paquet arrête le calcul : un droit ne
+se refuse pas par défaut. Tant que l'action 161 n'a pas retiré les jumeaux,
+chaque conversion s'écrit dans les deux moteurs.
+
+**Les étapes, et l'ordre proposé des domaines.**
+1. la mesure, le choix du domaine `cumul`, `retraite_progressive` — fait ;
+2. `seconde_pension` et `droits_apres_la_premiere_pension` : les versions et
+   les dates que `droit/seconde.py` (556 lignes) et `seconde.js` (449)
+   écrivent en constantes, le plafond de 5 % du PASS ; deux et trois dates
+   qui décident ;
+3. les six fiches du cumul emploi-retraite, qui closent le domaine :
+   `droit/cumul.py` (1 228 lignes) et `cumul.js` (977) nomment en constantes
+   vingt et une versions, une quinzaine de dates, les statuts des sections
+   libérales et les seuils ; en deux sessions, les bases puis les
+   complémentaires ;
+4. `minima` : ses trois fiches à part (`minimum_contributif`,
+   `pension_majoree_reference`, `complement_differentiel_rco`) ramenées à
+   `fiches_datees`, et la règle de repli `REGLE_DU_MINIMUM_EN_VIGUEUR`, qui
+   redit une version, retirée ;
+5. `duree` et `age` des régimes spéciaux (IEG, SNCF et RATP, marins, RAFP :
+   cinq fiches), où la valeur vit dans des clés de période ;
+6. `enfants` et `salaire_de_reference` (quatre fiches) ;
+7. `points` et `cotisations` (douze fiches chacun), dans `acquerir` ;
+8. `decote_surcote` (quinze fiches, treize déjà à interrupteurs), dans
+   `liquider_chaque_regime` : la plus grosse paire, à mener après le retrait
+   de son jumeau (action 161) et les décisions du propriétaire sur les
+   sections libérales (action 130).
+Chaque domaine se mesure à son ouverture : cet ordre est une proposition. Les
+69 fiches sans versions attendent d'être au contrat (action 130).

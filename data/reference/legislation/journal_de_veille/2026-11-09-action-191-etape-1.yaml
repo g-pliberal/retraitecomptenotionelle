@@ -1,0 +1,20 @@
+date: "2026-11-09"
+session: "action 191, étape 1 : les fiches exécutables, la carte mesurée et la retraite progressive lue dans sa fiche"
+consulte: >-
+  python scripts/veille_droit.py, lancé ce jour : rien de neuf sur la
+  retraite progressive. Aucun texte n'est relu et l'index LEGI n'est pas
+  interrogé : l'étape ne change aucune règle du scénario 1, elle fait lire
+  aux deux moteurs les valeurs que la fiche retraite_progressive citait
+  déjà (R. 351-39, R. 351-41, L. 351-15, D. 161-2-24, D. 351-15, décret
+  n° 2025-681), ses bornes étant au jour près les dates du code.
+trouve: >-
+  Un écart entre le code et la fiche, gardé par la conversion et déclaré aux
+  approximations de la fiche : du 18 décembre 2014 au 1er septembre 2023,
+  l'assuré qui travaille aussi dans la fonction publique reçoit les bornes
+  de quotité du fonctionnaire, de 50 à 90 %, quand R. 351-41 ne connaît que
+  40 à 80 %. Détail :
+  docs/feuille_de_route/191/2026-11-09-etape-1-mesure-et-retraite-progressive.md.
+reste: >-
+  Au propriétaire : corriger cet écart, qui est une règle du scénario 1.
+  L'étape 2 de l'action 191 : seconde_pension et
+  droits_apres_la_premiere_pension.
