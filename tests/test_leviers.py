@@ -349,12 +349,17 @@ def test_le_tax_gap_du_systeme_actuel_est_celui_du_cor(cor):
         assert 0.0 <= modele.pension_gap - ecarts["pension_gap"][str(fin)] < 0.005, fin
 
 
-def test_la_proposition_s_equilibre_en_2070_sans_levier():
-    """La proposition, qui suit son compte, finit sa trajectoire à
-    l'équilibre : en 2070, aucun levier n'a à bouger d'un point ni d'un an.
-    Son manque est celui de la transition : sur 2026-2070, son tax gap
-    approche celui du système actuel."""
+def test_la_proposition_finit_en_excedent_avec_ses_deux_recettes():
+    """La proposition, qui suit son compte, finissait sa trajectoire à
+    l'équilibre. Avec la part de TVA gardée et le point de taxe sur la valeur
+    du terrain (décisions 79 à 81 du programme, au coût depuis le 9 novembre
+    2026), elle la finit en excédent : en 2070, chaque levier joue dans le
+    sens du relâchement. Son manque est celui de la transition : un demi-point
+    de prélèvement jusqu'en 2050, plus rien sur 2026-2070."""
     liberal = _leviers("notionnel_liberal")
     fin = liberal.annuels[2070]
-    assert abs(fin.pension) < 0.02 and abs(fin.prelevement) < 0.01 and abs(fin.age) < 0.5
-    assert liberal.horizons[2070].tax_gap > 0.0
+    assert fin.pension > 0.0 and fin.prelevement < 0.0 and fin.age < 0.0
+    debut = liberal.annuels[2026]
+    assert debut.pension < 0.0 and debut.prelevement > 0.0 and debut.age > 0.0
+    assert 0.0 < liberal.horizons[2050].tax_gap < 0.01
+    assert liberal.horizons[2070].tax_gap < 0.0

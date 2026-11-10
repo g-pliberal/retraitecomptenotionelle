@@ -901,6 +901,31 @@ class Parametres:
     #: un test le vérifie.
     taux_tva_liberal: float = 0.0
 
+    #: LA PART DE TVA DES RETRAITES EST GARDÉE (décision 79 du programme, 7
+    #: novembre 2026) : « on laisse la TVA à 20 % et on officialise la part
+    #: affectée aux retraites ». La fraction de TVA que l'Acoss reverse à
+    #: l'Agirc-Arrco pour compenser la réduction générale — la seule que la
+    #: loi affecte aux retraites (L. 131-8 du code de la sécurité sociale),
+    #: 0,36 point de PIB en 2026, 11 Md€ — reste une recette de la proposition,
+    #: qui retire les autres impôts affectés, et s'ajoute aux 18 % prélevés sur
+    #: toute l'assiette (le propriétaire, le 9 novembre 2026).
+    #: ``donnees/tva.py`` (``TvaGardee``) dit d'où vient le montant. Faux rend
+    #: la convention d'avant, où elle partait avec eux.
+    tva_des_retraites_gardee: bool = True
+
+    #: UNE TAXE SUR LA VALEUR DU TERRAIN (LVT) remplace la taxe foncière, à
+    #: compter de la bascule : 2 %, dont un point aux retraites et l'autre aux
+    #: communes (décisions 9, 80 et 81 du programme, 7 novembre 2026). Elle se
+    #: capitalise dans le prix du terrain, que ``donnees/lvt.py`` calcule pour
+    #: un rendement locatif du terrain que rien ne mesure : 3 %, le centre de
+    #: l'étude, qui le prend de 2,5 à 4 % — le point des retraites vaut alors
+    #: 1,2 à 1,4 point de PIB. Sans abattement ni plafonnement, que le
+    #: propriétaire a remis à plus tard. Un taux nul veut dire « la taxe
+    #: foncière reste », et rien n'en va aux retraites.
+    taux_lvt: float = 0.02
+    taux_lvt_retraites: float = 0.01
+    rendement_locatif_terrain: float = 0.03
+
     #: La seconde : une GARANTIE VIEILLESSE, allocation sous condition de
     #: ressources qui remplace l'ASPA et en garde l'âge (65 ans) et le principe
     #: — porter les ressources à un plancher —, mais individualise le plancher,

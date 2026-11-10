@@ -1,0 +1,33 @@
+date: "2026-11-09"
+session: "action 186, chantier 4 : la part de TVA gardée et le point de taxe sur la valeur du terrain portés au coût du scénario 6"
+consulte: >-
+  Aucune règle du scénario 1 n'est touchée. Lus au texte, par l'index LEGI
+  à jour au 8 novembre 2026 : l'article L. 131-8 du code de la sécurité
+  sociale, dans sa rédaction en vigueur au 1er février 2026 (loi n° 2026-103
+  du 19 février 2026, article 139), et les 7° et 7° bis de l'article
+  L. 225-1-1. Lus à leur source : le rapport à la Commission des comptes de
+  la sécurité sociale de mai 2026 (compensation des allègements généraux,
+  encadré et tableau 3 sur la réduction générale dégressive unique) ;
+  l'annexe 4 du projet de loi d'approbation des comptes de la sécurité
+  sociale pour 2025 ; le classeur « Patrimoine national par secteur
+  institutionnel » de l'Insee, données provisoires de juillet 2026 ; la
+  fiche de Fipeco du 29 septembre 2025 sur les taxes foncières.
+trouve: >-
+  L'article L. 131-8, 9°, affecte 29,05 % de la TVA, minorée de 4,1 Md€ en
+  2026 : 20,77 points à la branche maladie, 8,28 points à l'Acoss « au titre
+  de ses missions prévues aux 7° et 7° bis de l'article L. 225-1-1 », la
+  compensation de la réduction dégressive à l'Agirc-Arrco (7°) et à l'Unédic
+  (7° bis, plafonnée). La branche vieillesse n'en reçoit aucune : la part de
+  TVA des retraites de la décision 79 du programme est la seule compensation
+  de l'Agirc-Arrco, que la Commission des comptes dit « à l'euro près ».
+  Aucune source lue n'en publie le montant pour la caisse seule ; le coût
+  lit la série que le dépôt en déduit (donnees/compensation_agirc_arrco.py,
+  11,1 Md€ en 2026), que le tableau 3 du rapport de mai recoupe : la
+  réduction générale dégressive unique efface 3,8 Md€ de cotisations de plus
+  à l'Agirc-Arrco en 2026. Rien ne touche les fiches du dépôt. Le détail est
+  dans la note docs/feuille_de_route/186/2026-11-09-tva-et-lvt-au-cout.md.
+reste: >-
+  Le montant de la compensation versée à l'Agirc-Arrco seule, à lire dans
+  ses comptes combinés ou une annexe au PLFSS. À relire au texte, comme le
+  7 novembre : la décision 2012-654 DC ; les articles 1390 à 1391 B ter du
+  code général des impôts ; l'article 72-2 de la Constitution.

@@ -153,3 +153,35 @@ def test_des_recettes_nouvelles_baissent_le_taux_de_chaque_lecture():
                   recettes_en_plus=0.02)
     assert etude.resoudre("A") == pytest.approx(23 / 140, abs=1e-9)
     assert etude.trajectoire(0.20)[0].solde == pytest.approx(-0.06 + 0.08)
+
+
+# La part de TVA gardée et le point de LVT sont au modèle (décisions 79 à 81) :
+# la base de la page Coût les porte déjà dans les recettes de la proposition,
+# les deux autres conventions les reçoivent de l'année.
+
+
+def _annee_avec_recettes(**champs) -> Annee:
+    valeurs = dict(annee=2026, depense_actuel=0.14, solde_actuel=-0.02,
+                   cotisations_actuel=0.08, assiette=0.40, versements_etat=0.03,
+                   pib=2_000_000.0, croissance=0.02, taux_dette=0.03,
+                   impots_affectes=0.02, recettes_proposition=0.025,
+                   tva_gardee=0.002, lvt=0.013)
+    valeurs.update(champs)
+    return Annee(**valeurs)
+
+
+@pytest.mark.parametrize("convention, en_plus", [
+    # La page Coût : les recettes de la proposition les contiennent déjà.
+    ("page_cout", 0.0),
+    # Toutes les recettes du droit en vigueur gardées : la TVA en est, la LVT s'ajoute.
+    ("recettes_gardees", 0.013),
+    # Les impôts affectés supprimés, sauf la part de TVA gardée : les deux s'ajoutent.
+    ("impots_supprimes", 0.015),
+])
+def test_les_recettes_du_modele_ne_se_comptent_qu_une_fois(convention, en_plus):
+    depenses = {0.10: {2026: 0.10}, 0.30: {2026: 0.10}}
+    garanties = {taux: {2026: 0.01} for taux in depenses}
+    avec = Etude([_annee_avec_recettes()], depenses, garanties, convention)
+    sans = Etude([_annee_avec_recettes(tva_gardee=0.0, lvt=0.0)], depenses, garanties, convention)
+    assert (avec.trajectoire(0.20)[0].solde - sans.trajectoire(0.20)[0].solde
+            == pytest.approx(en_plus))

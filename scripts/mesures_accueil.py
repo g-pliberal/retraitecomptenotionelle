@@ -39,6 +39,7 @@ PRECISIONS = {
     "decennie_coefficient_minimum": 0,
     "coefficient_2070": 2,
     "tva_affectee": 1,                  # tests/test_tva.py
+    "recettes_hors_travail": 1,         # tests/test_solde_fusion.py
     "solde_moyen_prospectif": 1,        # tests/test_proposition_prospective.py
     "cout_diviseur_age_legal": 1,       # tests/test_stock_age_legal.py
 }
@@ -58,6 +59,7 @@ def mesures() -> dict[str, float]:
     from retraite_notionnelle.config import RACINE_DONNEES, Parametres
     from retraite_notionnelle.donnees.tva import AssietteTva
     from retraite_notionnelle.simulateur import Simulateur
+    from retraite_notionnelle.somme import somme_ordonnee
 
     liberal = "notionnel_liberal"
     parametres = Parametres()
@@ -71,6 +73,7 @@ def mesures() -> dict[str, float]:
     prospective = proposition_prospective.calculer(True, parametres)
     age_assure = stock_age_legal.calculer("reference", parametres)
     droit_commun = stock_age_legal.calculer("droit_commun", parametres)
+    projection = [ligne for ligne in solde.annees if 2026 <= ligne.annee <= C.HORIZON]
     return {
         "taux_regime_unique": fusion.taux_effectif * 100,
         "cout_18_pour_cent": (lectures["notionnel_retroactif_employeur"].solde_moyen
@@ -84,6 +87,10 @@ def mesures() -> dict[str, float]:
         "coefficient_2070": solde.annee(C.HORIZON).coefficient(liberal),
         "tva_affectee": AssietteTva(RACINE_DONNEES).recette_supplementaire(
             parametres.taux_tva_liberal) * 100,
+        # La part de TVA gardée et le point de taxe sur la valeur du terrain
+        # (décisions 79 à 81 du programme), en moyenne sur la projection.
+        "recettes_hors_travail": 100 * somme_ordonnee(
+            ligne.recettes_affectees_de(liberal) for ligne in projection) / len(projection),
         "solde_moyen_prospectif":
             prospective.lectures[proposition_prospective.LIBERAL].solde_moyen * 100,
         "cout_diviseur_age_legal": (age_assure.lectures[liberal].solde_moyen

@@ -966,7 +966,7 @@ contrôle et non identité.
 | 3. Notionnel dès 2026, part salariale | <!--chiffre:mesure(solde?scenario=3&annee=2025)-->−0,14<!--/--> %, <!--chiffre:mesure(solde?scenario=3&annee=2025&en=milliards)-->−4,3<!--/--> Md€ | <!--chiffre:mesure(solde_moyen?scenario=3)-->+1,52<!--/--> %, <!--chiffre:mesure(solde_moyen?scenario=3&en=milliards)-->+45<!--/--> Md€ | **<!--chiffre:mesure(coefficient?scenario=3)-->1,65<!--/-->** |
 | 4. Notionnel rétroactif, salariale + patronale | <!--chiffre:mesure(solde?scenario=4&annee=2025)-->+3,90<!--/--> %, <!--chiffre:mesure(solde?scenario=4&annee=2025&en=milliards)-->+117<!--/--> Md€ | <!--chiffre:mesure(solde_moyen?scenario=4)-->+2,03<!--/--> %, <!--chiffre:mesure(solde_moyen?scenario=4&en=milliards)-->+61<!--/--> Md€ | <!--chiffre:mesure(coefficient?scenario=4)-->1,16<!--/--> |
 | 5. Notionnel dès 2026, salariale + patronale | <!--chiffre:mesure(solde?scenario=5&annee=2025)-->−0,15<!--/--> %, <!--chiffre:mesure(solde?scenario=5&annee=2025&en=milliards)-->−4,4<!--/--> Md€ | <!--chiffre:mesure(solde_moyen?scenario=5)-->−0,07<!--/--> %, <!--chiffre:mesure(solde_moyen?scenario=5&en=milliards)-->−2,1<!--/--> Md€ | <!--chiffre:mesure(coefficient?scenario=5)-->1,07<!--/--> |
-| 6. Notionnel rétroactif, <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % dès 2026, garantie vieillesse | <!--chiffre:mesure(solde?scenario=6&annee=2025)-->+2,44<!--/--> %, <!--chiffre:mesure(solde?scenario=6&annee=2025&en=milliards)-->+73<!--/--> Md€ | **<!--chiffre:mesure(solde_moyen?scenario=6)-->−1,44<!--/--> %**, <!--chiffre:mesure(solde_moyen?scenario=6&en=milliards)-->−43<!--/--> Md€ | **<!--chiffre:mesure(coefficient?scenario=6)-->1,01<!--/-->** |
+| 6. Notionnel rétroactif, <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % dès 2026, garantie vieillesse | <!--chiffre:mesure(solde?scenario=6&annee=2025)-->+2,44<!--/--> %, <!--chiffre:mesure(solde?scenario=6&annee=2025&en=milliards)-->+73<!--/--> Md€ | **<!--chiffre:mesure(solde_moyen?scenario=6)-->+0,20<!--/--> %**, <!--chiffre:mesure(solde_moyen?scenario=6&en=milliards)-->+6,0<!--/--> Md€ | **<!--chiffre:mesure(coefficient?scenario=6)-->1,21<!--/-->** |
 
 Les milliards sont ceux de 2025 pour le solde de 2025, et la même part du PIB
 de 2025 pour la moyenne des années projetées : c'est la règle de la page Coût,
@@ -975,15 +975,17 @@ page Coût affiche, Python et JavaScript à l'identique : la sonde de la prose
 les recalcule, et
 `test_le_README_donne_le_solde_que_la_page_cout_calcule` les confronte en plus
 à la page, ligne par ligne. Ils ont été faux plusieurs jours de suite, chaque
-fois que le modèle de coût a bougé. Le scénario 6 finit <!--chiffre:mesure(annees_equilibrees?scenario=6)-->1<!--/--> années de
-l'horizon à l'équilibre ou en excédent, et toutes les autres en déficit : <!--chiffre:mesure(solde?scenario=6&annee=2026)-->−2,19<!--/--> point de PIB en 2026 (<!--chiffre:mesure(solde?scenario=6&annee=2026&en=milliards)-->−66<!--/--> Md€ au PIB de 2025),
-<!--chiffre:mesure(solde?scenario=6&annee=2050)-->−1,77<!--/--> en 2050 (<!--chiffre:mesure(solde?scenario=6&annee=2050&en=milliards)-->−53<!--/--> Md€), <!--chiffre:mesure(solde?scenario=6&annee=2070)-->+0,05<!--/--> en 2070 (<!--chiffre:mesure(solde?scenario=6&annee=2070&en=milliards)-->+1,4<!--/--> Md€). C'est le
-coût de transition du taux unique, qu'aucun impôt ne couvre (plus bas, « La
+fois que le modèle de coût a bougé. Le scénario 6 finit <!--chiffre:mesure(annees_equilibrees?scenario=6)-->18<!--/--> années de
+l'horizon à l'équilibre ou en excédent, et toutes les autres en déficit : <!--chiffre:mesure(solde?scenario=6&annee=2026)-->−0,52<!--/--> point de PIB en 2026 (<!--chiffre:mesure(solde?scenario=6&annee=2026&en=milliards)-->−16<!--/--> Md€ au PIB de 2025),
+<!--chiffre:mesure(solde?scenario=6&annee=2050)-->−0,13<!--/--> en 2050 (<!--chiffre:mesure(solde?scenario=6&annee=2050&en=milliards)-->−4<!--/--> Md€), <!--chiffre:mesure(solde?scenario=6&annee=2070)-->+1,69<!--/--> en 2070 (<!--chiffre:mesure(solde?scenario=6&annee=2070&en=milliards)-->+50,5<!--/--> Md€). C'est le
+coût de transition du taux unique, que la part de TVA gardée et le point de
+taxe sur la valeur du terrain couvrent pour l'essentiel (plus bas, « La
 recette suit aussi le TAUX »). L'âge légal de <!--chiffre:mesure(parametre?nom=age_legal_liberal)-->65<!--/--> ans en rend une part,
 en faisant cotiser la moitié de ceux qu'il fait attendre, la part que le recul
 de 60 à <!--chiffre:illustration()-->62<!--/--> ans a mise en emploi en 2010 : `docs/limites.md` dit ce qu'il en
-serait si tous travaillaient, ou aucun. Le scénario accumule en
-2070 une dette de <!--chiffre:mesure(dette?scenario=6)-->103<!--/--> % du PIB, <!--chiffre:mesure(dette?scenario=6&en=milliards)-->3076<!--/--> Md€, contre <!--chiffre:mesure(dette?scenario=1)-->66<!--/--> % pour le
+serait si tous travaillaient, ou aucun. Le solde cumulé du scénario en
+2070 est de <!--chiffre:mesure(dette?scenario=6)-->-6<!--/--> % du PIB, <!--chiffre:mesure(dette?scenario=6&en=milliards)-->-190<!--/--> Md€ — une dette quand il est positif, une
+réserve quand il est négatif —, contre une dette de <!--chiffre:mesure(dette?scenario=1)-->66<!--/--> % pour le
 système actuel, <!--chiffre:mesure(dette?scenario=1&en=milliards)-->1 976<!--/--> Md€.
 
 **Ces chiffres de la proposition sont la plus favorable de deux lectures.**
@@ -997,8 +999,8 @@ sont les chiffres ci-dessus. S'il tient tout entier au système actuel, le
 rapport de chaque système notionnel doit être multiplié par la dérive de
 l'année — <!--chiffre:mesure(derive_cor?annee=2050)-->+3<!--/--> % en 2050, <!--chiffre:mesure(derive_cor?annee=2070)-->+6<!--/--> % à l'horizon —,
 et la proposition coûte <!--chiffre:mesure(part_pib?scenario=6&annee=2070&borne=haute)-->8,6<!--/--> % du PIB en 2070
-(<!--chiffre:mesure(part_pib?scenario=6&annee=2070)-->8,1<!--/--> dans la première lecture), son solde moyen est de <!--chiffre:mesure(solde_moyen?scenario=6&borne=haute)-->−1,76<!--/--> % (<!--chiffre:mesure(solde_moyen?scenario=6)-->−1,44<!--/-->), et sa dette
-de <!--chiffre:mesure(dette?scenario=6&borne=haute)-->122<!--/--> % (<!--chiffre:mesure(dette?scenario=6)-->103<!--/-->) : la seconde lecture borne la proposition par le
+(<!--chiffre:mesure(part_pib?scenario=6&annee=2070)-->8,1<!--/--> dans la première lecture), son solde moyen est de <!--chiffre:mesure(solde_moyen?scenario=6&borne=haute)-->−0,11<!--/--> % (<!--chiffre:mesure(solde_moyen?scenario=6)-->+0,20<!--/-->), et sa dette
+de <!--chiffre:mesure(dette?scenario=6&borne=haute)-->13<!--/--> % (<!--chiffre:mesure(dette?scenario=6)-->-6<!--/-->) : la seconde lecture borne la proposition par le
 haut. La vérité est entre les deux, que la page Coût donne côte à côte.
 
 **Le solde du système actuel est celui que le COR publie**, au dixième près :
@@ -1060,17 +1062,22 @@ salaires et traitements bruts plus revenu mixte des non-salariés,
 système de retraite y prélève aujourd'hui <!--chiffre:mesure(recette?quoi=taux_prelevement&annee=2025)-->32,8<!--/--> % de ressources en tout ; la
 proposition en prélèverait <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/-->. Elle ne reconduit pas non plus les
 subventions d'équilibre, dont la fusion supprime l'objet, ni les impôts
-affectés, qui n'acquièrent de droits à personne. Ce taux unique a un coût de
+affectés, qui n'acquièrent de droits à personne — sauf la part de TVA qui va
+déjà aux retraites, pour compenser à l'Agirc-Arrco les allègements de
+cotisations, qu'elle garde. Ce taux unique a un coût de
 transition — pendant trente ans, la caisse paie les pensions de l'ancien
 système avec une cotisation ramenée à <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % de l'assiette —, et la
-proposition ne met aucun impôt à la place de ce qu'elle cesse de prélever. Une
+proposition y met une recette hors du travail : la taxe foncière devient une
+taxe sur la valeur du terrain, dont une moitié va aux retraites et l'autre aux
+communes (`Parametres.taux_lvt`, `donnees/lvt.py`). Une
 TVA à taux unique l'a fait du 23 au 24 septembre 2026 ; elle est retirée, les
-quatre taux de TVA d'aujourd'hui restent ce qu'ils sont, et rien de la TVA ne
-va à la retraite. L'âge légal de <!--chiffre:mesure(parametre?nom=age_legal_liberal)-->65<!--/--> ans en rend une part, et le solde
-moyen du scénario s'établit à <!--chiffre:mesure(solde_moyen?scenario=6)-->−1,44<!--/--> % du PIB, <!--chiffre:mesure(solde_moyen?scenario=6&en=milliards)-->−43<!--/--> Md€ par an au PIB de 2025,
-contre <!--chiffre:mesure(solde_moyen?scenario=1)-->−1,13<!--/--> %, <!--chiffre:mesure(solde_moyen?scenario=1&en=milliards)-->−34<!--/--> Md€, pour le système actuel : un déficit plus
-petit, mais un déficit. Son coefficient descend à <!--chiffre:mesure(coefficient?scenario=6&quoi=minimum)-->0,79<!--/--> au plus bas,
-en <!--chiffre:mesure(coefficient?scenario=6&quoi=annee_minimum)-->2026<!--/-->, et atteint <!--chiffre:mesure(coefficient?scenario=6)-->1,006<!--/--> en 2070 ; `docs/chiffrage_plf.md` chiffre
+quatre taux de TVA d'aujourd'hui restent ce qu'ils sont, et seule la part de
+TVA déjà affectée reste à la retraite. L'âge légal de <!--chiffre:mesure(parametre?nom=age_legal_liberal)-->65<!--/--> ans en rend une part, et le solde
+moyen du scénario s'établit à <!--chiffre:mesure(solde_moyen?scenario=6)-->+0,20<!--/--> % du PIB, <!--chiffre:mesure(solde_moyen?scenario=6&en=milliards)-->+6,0<!--/--> Md€ par an au PIB de 2025,
+contre <!--chiffre:mesure(solde_moyen?scenario=1)-->−1,13<!--/--> %, <!--chiffre:mesure(solde_moyen?scenario=1&en=milliards)-->−34<!--/--> Md€, pour le système actuel : le déficit des
+premières décennies, plus petit que sans ces deux recettes, laisse la place à
+un excédent. Son coefficient descend à <!--chiffre:mesure(coefficient?scenario=6&quoi=minimum)-->0,95<!--/--> au plus bas,
+en <!--chiffre:mesure(coefficient?scenario=6&quoi=annee_minimum)-->2026<!--/-->, et atteint <!--chiffre:mesure(coefficient?scenario=6)-->1,209<!--/--> en 2070 ; `docs/chiffrage_plf.md` chiffre
 ce déficit année par année. Les quatre autres scénarios notionnels ne changent que ce qui est PORTÉ
 AU COMPTE, non ce qui est PRÉLEVÉ : l'employeur verse sa part dans tous les
 cas, et leur recette ne bouge pas.

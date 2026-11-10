@@ -273,6 +273,7 @@ class RegimeUniqueVariante:
             "_rapports_recettes": C._rapports_recettes,
             "ressources_de": C.SoldeAnnuel.ressources_de,
             "_tva_affectee": C.SoldeAnnuel._tva_affectee,
+            "recettes_affectees_de": C.SoldeAnnuel.recettes_affectees_de,
         }
         C.CLES_RECETTES = C.CLES_RECETTES + (FUSION, REVENU)
         C._pensionnes = self._pensionnes(C._pensionnes)
@@ -285,6 +286,11 @@ class RegimeUniqueVariante:
         # comme une économie des 18 %. Elle est donc tenue hors de la
         # comparaison, le temps du contexte.
         C.SoldeAnnuel._tva_affectee = lambda ligne, scenario: 0.0
+        # De même la part de TVA gardée et le point de taxe sur la valeur du
+        # terrain, que la proposition seule reçoit depuis le 9 novembre 2026
+        # (décisions 79 à 81 du programme) : 1,7 point de PIB qui se lirait
+        # comme une économie des 18 %.
+        C.SoldeAnnuel.recettes_affectees_de = lambda ligne, scenario: 0.0
         return self
 
     def __exit__(self, *exc) -> None:
@@ -293,6 +299,7 @@ class RegimeUniqueVariante:
         C._rapports_recettes = self._sauvegarde["_rapports_recettes"]
         C.SoldeAnnuel.ressources_de = self._sauvegarde["ressources_de"]
         C.SoldeAnnuel._tva_affectee = self._sauvegarde["_tva_affectee"]
+        C.SoldeAnnuel.recettes_affectees_de = self._sauvegarde["recettes_affectees_de"]
         self._memoire.__exit__(None, None, None)
 
 

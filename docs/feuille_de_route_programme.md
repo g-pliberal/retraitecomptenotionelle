@@ -674,6 +674,19 @@ autre session venait de prendre) :
      retiré aux retraites, CSG sur les pensions comprise (1,47 point), sauf
      la TVA (79), la CTA (88) et les alcools (92).
 
+Le même jour, tard, aux deux questions de la note
+`186/2026-11-09-recettes-au-modele.md`, que la session du coût lui pose en
+choix (note `186/2026-11-09-tva-et-lvt-au-cout.md`) :
+
+105. **La TVA de l'Agirc-Arrco s'ajoute à ce que l'État verse pour les
+     allègements** : « Elle s'ajoute », le choix A de la note. La caisse
+     reçoit ses 18 % pleins et, en plus, la part de TVA de la décision 79 :
+     11,1 Md€ en 2026, 0,36 point de PIB. L'État verse 35 à 42 Md€.
+106. **Le coût retient la valeur centrale de la LVT** : « Centrale : 1,3
+     point ». Le point des retraites se compte à 39 Md€ aux valeurs de 2025,
+     pour des terrains qui rapportent 3 % par an ; la fourchette de la
+     décision 80, 1,2 à 1,4 point, reste écrite à côté.
+
 ## Ce qui est écarté
 
 - **Une transition sans baisse nominale des pensions en cours** — bâtir le
@@ -1450,6 +1463,16 @@ cotisation que les allègements effacent, celle-là même que l'État verse
 sous la décision 96, et les deux décisions se recouvrent de 11,1 Md€. Au
 propriétaire, à la fin de la note : si la TVA s'ajoute à ce versement ou en
 fait partie, et la valeur de la LVT que le coût retient.
+
+**Le même jour, tard, la TVA gardée et le point de LVT sont au coût** (note
+`186/2026-11-09-tva-et-lvt-au-cout.md`, étapes 2 et 4 du plan). Le
+propriétaire : « Il faut qu'on ajoute ces recettes à notre évaluation des
+coûts » ; puis, aux deux questions : la TVA s'ajoute, la LVT à sa valeur
+centrale (décisions 105 et 106). Au taux de 18 %, le solde du régime de 2026
+passe de −2,19 à −0,53 point de PIB, son solde moyen de −1,44 à +0,20, et il
+finit 2070 avec une réserve de 6 points au lieu d'une dette de 103. Avec le
+pilier obligatoire, la proposition prélève alors pour la retraite plus que
+le droit en vigueur. Restent les étapes 3 et 5 à 9 du plan.
 
 ### Chantier 5 — L'indexation, et le partage de l'effort entre actifs et retraités
 

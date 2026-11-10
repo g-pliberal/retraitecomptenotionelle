@@ -85,17 +85,22 @@ def test_les_trois_postes_ensemble_font_la_somme_des_trois(chiffrages):
 
 
 def test_le_poste_des_impots_se_lit_net_de_la_csg_du_fonds(calcul):
-    """Brut moins net vaut exactement ce que le fonds verse par l'impôt.
+    """Brut moins net vaut exactement ce que le fonds verse par l'impôt, et la
+    part de TVA que la proposition garde déjà (décision 79 du programme).
 
-    C'est la seule subtilité du calcul, et celle qui retourne la conclusion :
-    contre le poste publié la proposition demande moins que ce que le système
-    actuel y met, contre le poste net elle demande plus.
+    C'est la seule subtilité du calcul. Elle retournait la conclusion jusqu'au
+    9 novembre 2026 : contre le poste publié la proposition demandait moins
+    que ce que le système actuel y met, contre le poste net elle demandait
+    plus. Avec la part de TVA gardée et le point de taxe sur la valeur du
+    terrain, elle demande moins que chacun, en moyenne.
     """
     solde = calcul[0].solde
     for ligne in solde.projetees():
         brut = postes_ecartes.montant_brut(ligne, postes_ecartes.POSTE_IMPOTS)
         net = postes_ecartes.montant(ligne, postes_ecartes.POSTE_IMPOTS)
-        assert brut - net == pytest.approx(ligne.retrait_par_impot, abs=1e-15)
+        assert brut - net == pytest.approx(
+            ligne.retrait_par_impot + ligne.tva_gardee_de(LIBERAL), abs=1e-15)
+        assert ligne.tva_gardee_de(LIBERAL) > 0.0
         assert net > 0.0
     # Les deux autres postes n'ont pas ce double compte.
     for poste in (postes_ecartes.POSTE_CONTRIBUTION, postes_ecartes.POSTE_SUBVENTIONS):
@@ -138,8 +143,35 @@ def test_le_tableau_dit_le_verdict_des_deux_lectures_des_impots(calcul):
     """La sortie doit porter les deux réponses, pas seulement la plus flatteuse."""
     texte = postes_ecartes.tableau(*calcul)
     assert "poste publié" in texte
-    assert "MOINS que ce que le système actuel y met" in texte
-    assert "PLUS que ce que le système actuel y met" in texte
+    verdicts = texte[texte.index("Verdict"):]
+    # Chaque lecture des impôts a son verdict, le poste net comme le publié ;
+    # depuis les deux recettes hors du travail, la proposition demande moins
+    # que ce que le système actuel met à chacun, en moyenne.
+    lectures = [ligne for ligne in verdicts.splitlines()
+                if ligne.strip().startswith("Impôts et taxes affectés")]
+    assert len(lectures) == 2
+    for ligne in lectures:
+        assert "MOINS que ce que le système actuel y met" in ligne
     # La garantie est imprimée : c'est elle qui explique à quoi la CSG du
     # fonds de solidarité est déjà promise.
     assert "Garantie vieillesse" in texte
+
+
+def test_reconduire_les_impots_ne_recompte_pas_la_part_de_tva_gardee():
+    """La proposition garde déjà la part de TVA qui va aux retraites
+    (décision 79 du programme) : reconduire le poste des impôts n'ajoute que
+    le reste, sans quoi elle entrerait deux fois."""
+    from retraite_notionnelle.cout import SoldeAnnuel
+
+    ligne = SoldeAnnuel(
+        annee=2030, projete=True, ressources=0.14, depenses=0.14,
+        rapports={"actuel": 1.0, "notionnel_liberal": 0.7}, pib=0.0,
+        part_contributive=0.77, part_impots=0.15, retrait_par_impot=0.006,
+        taux_prelevement=0.30, taux_liberal=0.18, annee_bascule=2026,
+        convention_recette="assiette", parts={"impots_et_taxes": 0.15},
+        tva_gardee=0.0036, lvt_retraites=0.013)
+    assert postes_ecartes.montant(ligne, postes_ecartes.POSTE_IMPOTS) == pytest.approx(
+        0.14 * 0.15 - 0.006 - 0.0036)
+    # Tel que le COR le publie, le poste reste entier.
+    assert postes_ecartes.montant_brut(ligne, postes_ecartes.POSTE_IMPOTS) == pytest.approx(
+        0.14 * 0.15)

@@ -320,7 +320,10 @@ affirmations:
   - id: accueil.impots_non_affectes
     page: /
     extrait: "Nous cessons donc de les affecter à la retraite."
-    porte: la proposition ne reconduit pas les impôts et taxes affectés
+    porte: >-
+      la proposition ne reconduit pas les impôts et taxes affectés, sauf la
+      part de TVA qui va déjà aux retraites, et y ajoute un point de taxe sur
+      la valeur du terrain, ce que la phrase suivante dit
     etat: verifiee
     controle: trois_postes_disparaissent
 
@@ -1146,8 +1149,10 @@ affirmations:
     page: /cout
     extrait: "chaque euro a sa caisse"
     porte: >-
-      dans la proposition, aucun impôt ni aucun budget de l'État n'entre au
-      régime unique, que les cotisations alimentent ; l'impôt paie la garantie
+      dans la proposition, aucun budget de l'État n'entre au régime unique,
+      que les cotisations alimentent, avec un point de taxe sur la valeur du
+      terrain et la part de TVA déjà affectée aux retraites, sous leur nom ;
+      l'impôt général paie la garantie
       vieillesse hors de son compte, avec ce que les successions en rendent,
       et le pilier capitalisé n'est ni une
       ressource ni une dépense du régime — là où le système actuel encaisse
@@ -1280,8 +1285,11 @@ affirmations:
 
   - id: cout.autre_lecture
     page: /cout
-    extrait: "L'autre lecture, plus généreuse d'un point de PIB."
-    porte: l'autre convention de recette rend un solde meilleur d'environ un point
+    extrait: "L'autre lecture, plus généreuse d'un quart de point de PIB."
+    porte: >-
+      l'autre convention de recette rend un solde meilleur d'environ un quart
+      de point, depuis que la convention retenue garde la part de TVA des
+      retraites ; d'environ un point jusqu'au 9 novembre 2026
     etat: verifiee
     controle: autre_convention_de_recette
 
@@ -1324,7 +1332,10 @@ affirmations:
   - id: cout.ligne_a_ligne
     page: /cout
     extrait: "Ce que la proposition change, ligne à ligne."
-    porte: la proposition ne reconduit ni contribution d'équilibre, ni subventions, ni impôts affectés, et ne met aucun impôt à leur place
+    porte: >-
+      la proposition ne reconduit ni contribution d'équilibre, ni subventions,
+      ni impôts affectés, hors la part de TVA qu'elle garde aux retraites et
+      le point de taxe sur la valeur du terrain qu'elle y ajoute
     etat: verifiee
     controle: trois_postes_disparaissent
 

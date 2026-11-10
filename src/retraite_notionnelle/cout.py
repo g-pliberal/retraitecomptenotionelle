@@ -164,7 +164,8 @@ from .donnees.equilibre import (
     ComptesRetraite,
     DecompositionDepense,
 )
-from .donnees.tva import AssietteTva
+from .donnees.lvt import TaxeTerrain
+from .donnees.tva import AssietteTva, TvaGardee
 from .effet_retour import EffetRetour, EffetRetourAnnuel
 from .donnees.population import CarrieresIncompletes, Population
 from .garantie import (
@@ -337,13 +338,18 @@ CLES_REVERSION_GARDEE: frozenset[str] = frozenset({"notionnel_liberal"})
 #: de ``equilibre.POSTES`` ; les trois « dont » ventilent le poste des
 #: transferts par celui qui paie, et les suivants l'impôt : ce qu'en verse le
 #: fonds de solidarité vieillesse, seule part de ce poste que le modèle sache
-#: nommer au système actuel, et la TVA à taux unique que la proposition y
-#: affecte (``Parametres.taux_tva_liberal``).
+#: nommer au système actuel, la TVA à taux unique que la proposition y
+#: affecterait (``Parametres.taux_tva_liberal``, une variante), et les deux
+#: recettes qu'elle y porte : la part de TVA qui va déjà aux retraites, qu'elle
+#: garde, et son point de taxe sur la valeur du terrain (décisions 79 et 80
+#: du programme).
 POSTES_RESSOURCES: tuple[str, ...] = tuple(poste.code for poste in POSTES)
 DONT_TRANSFERTS: tuple[str, ...] = (
     "transferts_famille", "transferts_chomage", "transferts_autres",
 )
-DONT_IMPOTS: tuple[str, ...] = ("impots_solidarite", "impots_tva", "impots_autres")
+DONT_IMPOTS: tuple[str, ...] = (
+    "impots_solidarite", "impots_tva", "impots_tva_gardee", "impots_lvt", "impots_autres",
+)
 
 #: Ce qu'un système verse, en trois lignes que ``masse_du_scenario`` sépare
 #: déjà sans les nommer : les pensions de droit direct, la garantie vieillesse
@@ -1366,6 +1372,16 @@ class SoldeAnnuel:
     #: retraite : zéro avant la bascule, et zéro quand la TVA n'est pas
     #: réformée. ``tva_garantie`` et ``tva_de`` disent où elle va.
     tva_liberal: float = 0.0
+    #: La part de TVA qui va déjà aux retraites, et que la proposition garde
+    #: quand elle retire les autres impôts affectés (décision 79 du programme) :
+    #: la compensation de la réduction générale à l'Agirc-Arrco, en part de PIB
+    #: (``donnees/tva.py``, ``TvaGardee``). Zéro avant la bascule. Elle s'ajoute
+    #: aux 18 % pleins : le propriétaire l'a tranché le 9 novembre 2026.
+    tva_gardee: float = 0.0
+    #: Le point de taxe sur la valeur du terrain que la proposition donne aux
+    #: retraites, sur les deux de sa LVT (décision 80), en part de PIB
+    #: (``donnees/lvt.py``). Zéro avant la bascule.
+    lvt_retraites: float = 0.0
     #: La garantie vieillesse de la proposition, nette de ce que les
     #: successions en reprennent, en part de PIB : celle de la trajectoire
     #: (``AvenirAnnuel``), que le chiffrage pour une loi de finances compte.
@@ -1424,6 +1440,45 @@ class SoldeAnnuel:
         proposition.
         """
         return self._tva_affectee(scenario) - self.tva_garantie(scenario)
+
+    def _proposition_en_vigueur(self, scenario: str) -> bool:
+        return scenario == "notionnel_liberal" and 0 < self.annee_bascule <= self.annee
+
+    def tva_gardee_de(self, scenario: str) -> float:
+        """La part de TVA des retraites qu'un système garde, en part de PIB.
+
+        DÉCISION DU PARTI LIBÉRAL, 7 NOVEMBRE 2026 (79 du programme) : « on
+        laisse la TVA à 20 % et on officialise la part affectée aux
+        retraites ». La proposition retire les impôts et taxes affectés, sauf
+        celui-là. Elle seule, à compter de sa bascule, et sous la convention de
+        l'assiette : l'ancienne ne retire pas ces impôts, et la part de TVA y
+        est encore — l'ajouter la compterait deux fois.
+        """
+        if not self._proposition_en_vigueur(scenario) or not self.recette_par_assiette:
+            return 0.0
+        return max(self.tva_gardee, 0.0)
+
+    def lvt_de(self, scenario: str) -> float:
+        """La taxe sur la valeur du terrain qui entre au régime d'un système,
+        en part de PIB.
+
+        DÉCISION DU PARTI LIBÉRAL, 7 NOVEMBRE 2026 (80 et 81 du programme) : la
+        taxe foncière devient une taxe sur la valeur du terrain à 2 %, dont un
+        point va aux retraites, dès les mois qui suivent le vote. Comme la TVA
+        à taux unique, ce n'est pas une cotisation : elle n'est portée au
+        compte de personne et n'ouvre aucun droit. Aucun autre système ne la
+        reçoit.
+        """
+        if not self._proposition_en_vigueur(scenario):
+            return 0.0
+        return max(self.lvt_retraites, 0.0)
+
+    def recettes_affectees_de(self, scenario: str) -> float:
+        """Les deux recettes hors du travail de la proposition, en part de
+        PIB : la part de TVA gardée et le point de LVT. Elles entrent au
+        régime, la garantie vieillesse restant à la charge du budget — le
+        solde garantie comprise est le même de quelque côté qu'on les range."""
+        return self.tva_gardee_de(scenario) + self.lvt_de(scenario)
 
     def depense(self, scenario: str) -> float:
         """Ce que le système coûterait cette année-là, en part de PIB.
@@ -1521,6 +1576,16 @@ class SoldeAnnuel:
         comble le déficit que les comptes laissent. ``tva_de`` dit pourquoi,
         et ``donnees/tva.py`` combien.
 
+        LA PART DE TVA DES RETRAITES RESTE, ET UN POINT DE TAXE SUR LA VALEUR
+        DU TERRAIN ENTRE. Décisions du Parti libéral, 7 novembre 2026 (79 à 81
+        du programme) : la TVA reste à 20 %, et la fraction qui va déjà aux
+        retraites — la compensation de la réduction générale à l'Agirc-Arrco,
+        0,36 point de PIB en 2026 — n'est pas retirée avec les autres impôts
+        affectés ; la taxe foncière devient une taxe sur la valeur du terrain
+        à 2 %, dont un point aux retraites, 1,3 point de PIB, dès la bascule.
+        ``tva_gardee_de`` et ``lvt_de`` disent pourquoi, ``donnees/tva.py`` et
+        ``donnees/lvt.py`` combien.
+
         ET IL FAUT LE RETIRER UNE FOIS, PAS DEUX. Un tiers de ce poste est la
         CSG du fonds de solidarité vieillesse — ce que le fonds verse aux
         régimes, 19,6 des 57 milliards de 2024 —, et elle sortait DÉJÀ par
@@ -1551,14 +1616,15 @@ class SoldeAnnuel:
                                         - self.part_impots)
             # La CSG du fonds de solidarité vieillesse vient de sortir avec le
             # poste : la retirer encore ici la retirerait deux fois. La TVA à
-            # taux unique y rentre, à sa place : voir ``tva_de``.
+            # taux unique y rentre, à sa place : voir ``tva_de`` ; la part de
+            # TVA gardée et le point de LVT aussi (``recettes_affectees_de``).
             return (pleine + autres - (self.retrait - self.retrait_par_impot)
-                    + self.tva_de(scenario))
+                    + self.tva_de(scenario) + self.recettes_affectees_de(scenario))
         rapport = self.rapports_recettes.get(scenario, 1.0)
         cotisees = self.ressources * self.part_contributive
         autres = self.ressources - cotisees
         return (cotisees * rapport + autres - self._retrait_de(scenario)
-                + self.tva_de(scenario))
+                + self.tva_de(scenario) + self.recettes_affectees_de(scenario))
 
     def _retrait_de(self, scenario: str) -> float:
         """Ce qu'un scénario notionnel retire, une fois sa bascule passée.
@@ -1640,8 +1706,10 @@ class SoldeAnnuel:
         traitements ; les subventions d'équilibre, dont la fusion des régimes
         supprime l'objet. Les impôts et taxes affectés, qui n'acquièrent de
         droits à personne, ne sont pas reconduits : le poste ne porte plus
-        que la TVA à taux unique qu'elle leur substitue — ce qu'il en reste
-        une fois la garantie vieillesse payée —, sur sa ligne ``impots_tva``.
+        que la part de TVA qu'elle garde (``impots_tva_gardee``), son point
+        de taxe sur la valeur du terrain (``impots_lvt``) et, sous la variante
+        qui la porte, la TVA à taux unique — ce qu'il en reste une fois la
+        garantie vieillesse payée —, sur sa ligne ``impots_tva``.
         Des transferts, elle ne garde que ce qui ne paie pas un droit qu'elle
         a supprimé. ``ressources_de`` dit pourquoi, décision
         par décision.
@@ -1677,14 +1745,17 @@ class SoldeAnnuel:
             postes["transferts_chomage"] = chomage
             postes["impots_solidarite"] = solidarite
             postes["impots_tva"] = 0.0
+            postes["impots_tva_gardee"] = 0.0
+            postes["impots_lvt"] = 0.0
         elif scenario == "notionnel_liberal" and self.recette_par_assiette:
             tva = self.tva_de(scenario)
+            gardee, lvt = self.tva_gardee_de(scenario), self.lvt_de(scenario)
             postes = {
                 "cotisations": (total * self.taux_liberal / self.taux_prelevement
                                 * self.facteur_assiette),
                 "contribution_equilibre_etat": 0.0,
                 "subventions_equilibre": 0.0,
-                "impots_et_taxes": tva,
+                "impots_et_taxes": tva + gardee + lvt,
                 "transferts": (total * parts.get("transferts", 0.0)
                                - retire.get("famille", 0.0)
                                - retire.get("chomage", 0.0)),
@@ -1693,17 +1764,20 @@ class SoldeAnnuel:
                 "transferts_chomage": garde_chomage,
                 "impots_solidarite": 0.0,
                 "impots_tva": tva,
+                "impots_tva_gardee": gardee,
+                "impots_lvt": lvt,
             }
         else:
             rapport = self.rapports_recettes.get(scenario, 1.0)
             tva = self.tva_de(scenario)
+            gardee, lvt = self.tva_gardee_de(scenario), self.lvt_de(scenario)
             postes = {
                 "cotisations": total * parts.get("cotisations", 0.0) * rapport,
                 "contribution_equilibre_etat":
                     total * parts.get("contribution_equilibre_etat", 0.0) * rapport,
                 "subventions_equilibre": total * parts.get("subventions_equilibre", 0.0),
                 "impots_et_taxes": (total * parts.get("impots_et_taxes", 0.0)
-                                    - retire.get("solidarite", 0.0) + tva),
+                                    - retire.get("solidarite", 0.0) + tva + gardee + lvt),
                 "transferts": (total * parts.get("transferts", 0.0)
                                - retire.get("famille", 0.0)
                                - retire.get("chomage", 0.0)),
@@ -1712,11 +1786,14 @@ class SoldeAnnuel:
                 "transferts_chomage": garde_chomage,
                 "impots_solidarite": garde_solidarite,
                 "impots_tva": tva,
+                "impots_tva_gardee": gardee,
+                "impots_lvt": lvt,
             }
         postes["transferts_autres"] = (postes["transferts"] - postes["transferts_famille"]
                                        - postes["transferts_chomage"])
         postes["impots_autres"] = (postes["impots_et_taxes"] - postes["impots_solidarite"]
-                                   - postes["impots_tva"])
+                                   - postes["impots_tva"] - postes["impots_tva_gardee"]
+                                   - postes["impots_lvt"])
         return postes
 
     def postes_depenses(self, scenario: str) -> dict[str, float]:
@@ -4799,7 +4876,8 @@ def _solde(avenir: Avenir, comptes: ComptesRetraite,
            taux_liberal: float, annee_bascule: int,
            convention: str, depenses: DepensesRetraite,
            reversion_servie: bool = False, tva_liberal: float = 0.0,
-           derive: bool = False) -> Solde:
+           derive: bool = False, tva_gardee: TvaGardee | None = None,
+           lvt_retraites: float = 0.0) -> Solde:
     """Le bilan, obtenu en croisant le compte du COR et les rapports du modèle.
 
     ``derive`` donne la BORNE HAUTE de la fourchette : chaque rapport notionnel
@@ -4827,8 +4905,19 @@ def _solde(avenir: Avenir, comptes: ComptesRetraite,
     de PIB : la même chaque année, l'assiette gardant sa part de PIB, et nulle
     avant la bascule — voir ``donnees/tva.py``. Elle paie d'abord la garantie
     vieillesse de la trajectoire, que chaque ligne reçoit pour cela.
+
+    ``tva_gardee`` est la part de TVA qui va déjà aux retraites, que la
+    proposition garde, année par année, rapportée au PIB de la trajectoire ;
+    ``lvt_retraites``, son point de taxe
+    sur la valeur du terrain, la même part de PIB chaque année. Nulles avant
+    la bascule — voir ``SoldeAnnuel.tva_gardee_de`` et ``lvt_de``.
     """
     par_annee = {ligne.annee: ligne for ligne in avenir.annees}
+
+    def pib_de(annee: int) -> float:
+        """Le PIB de la trajectoire, publié puis projeté, en millions d'euros ;
+        zéro pour une année qu'elle ne couvre pas."""
+        return par_annee[annee].pib if annee in par_annee else 0.0
 
     def taux_prelevement(annee: int) -> float:
         """Le taux de prélèvement de l'année, mesuré puis suivi chez le COR.
@@ -4888,6 +4977,9 @@ def _solde(avenir: Avenir, comptes: ComptesRetraite,
                 for organisme in ORGANISMES
             },
             tva_liberal=tva_liberal if annee >= annee_bascule else 0.0,
+            tva_gardee=(tva_gardee.part_pib(annee, pib_de)
+                        if tva_gardee is not None and annee >= annee_bascule else 0.0),
+            lvt_retraites=lvt_retraites if annee >= annee_bascule else 0.0,
             garantie_liberal=(par_annee[annee].part_pib(COMPOSANTE_GARANTIE)
                               - par_annee[annee].part_pib_reprises()
                               if annee >= annee_bascule else 0.0),
@@ -5493,6 +5585,14 @@ def calculer_cout(simulateur: Simulateur, depenses: DepensesRetraite,
     # plutôt que passée, pour que tout appelant la reçoive — elle est un terme
     # de la proposition, pas un réglage de page.
     tva = AssietteTva(simulateur.parametres.racine_donnees)
+    # Les deux recettes hors du travail de la proposition (décisions 79 à 81
+    # du programme) : la part de TVA qui va déjà aux retraites, qu'elle garde,
+    # et son point de taxe sur la valeur du terrain.
+    tva_gardee = (TvaGardee(simulateur.parametres.racine_donnees)
+                  if simulateur.parametres.tva_des_retraites_gardee else None)
+    lvt_retraites = TaxeTerrain(simulateur.parametres.racine_donnees).part_pib(
+        simulateur.parametres.taux_lvt_retraites, simulateur.parametres.taux_lvt,
+        simulateur.parametres.rendement_locatif_terrain)
     def bilan(derive: bool) -> Solde:
         return _solde(
             avenir, comptes, depenses.pib.derniere_annee, assiette,
@@ -5500,7 +5600,7 @@ def calculer_cout(simulateur: Simulateur, depenses: DepensesRetraite,
             simulateur.parametres.annee_bascule, convention_recette,
             depenses, reversion_servie,
             tva.recette_supplementaire(simulateur.parametres.taux_tva_liberal),
-            derive=derive,
+            derive=derive, tva_gardee=tva_gardee, lvt_retraites=lvt_retraites,
         ) if comptes is not None and avenir.annees else Solde()
 
     solde = bilan(derive=False)

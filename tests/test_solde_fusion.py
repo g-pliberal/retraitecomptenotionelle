@@ -6,6 +6,7 @@ son jumeau ; ici, ce que l'étude en lit, calculé par le portage."""
 from __future__ import annotations
 
 import shutil
+import re
 import sys
 from dataclasses import replace
 from pathlib import Path
@@ -131,14 +132,16 @@ def test_sous_a_le_taux_effectif_est_celui_du_regime_unique(resultat_a, hypothes
 
 def test_les_scenarios_1_et_6_ne_bougent_pas(resultat_a, reference):
     """À la TVA à taux unique près, que les variantes tiennent hors de la
-    comparaison : le scénario 6 y perd exactement ce qu'elle apportait à son
-    régime."""
+    comparaison, et aux deux recettes hors du travail de la proposition près —
+    la part de TVA gardée et le point de taxe sur la valeur du terrain : le
+    scénario 6 y perd exactement ce qu'elles apportaient à son régime."""
     for convention in solde_fusion.CONVENTIONS:
         lectures = resultat_a.lectures[convention]
         for scenario in ("actuel", "notionnel_liberal"):
             for ligne in reference.solde.projetees():
                 assert lectures[scenario].soldes[ligne.annee] == pytest.approx(
-                    ligne.solde(scenario) - ligne.tva_de(scenario), abs=1e-12), (
+                    ligne.solde(scenario) - ligne.tva_de(scenario)
+                    - ligne.recettes_affectees_de(scenario), abs=1e-12), (
                     convention, scenario, ligne.annee)
 
 
@@ -175,16 +178,18 @@ def test_le_contexte_rend_ses_attributs(hypotheses):
     _, toutes = hypotheses
     avant = (C._simulations, C.CLES_RECETTES, C._pensionnes,
              C._rapports_recettes, C.SoldeAnnuel.ressources_de,
-             C.SoldeAnnuel._tva_affectee)
+             C.SoldeAnnuel._tva_affectee, C.SoldeAnnuel.recettes_affectees_de)
     with solde_fusion.RegimeUniqueVariante(toutes["C"]):
         assert C.CLES_RECETTES != avant[1]
         assert C._pensionnes is not avant[2]
         # La TVA à taux unique n'est pas un taux de cotisation : les variantes
-        # la laissent hors de la comparaison.
+        # la laissent hors de la comparaison, comme la part de TVA gardée et
+        # le point de taxe sur la valeur du terrain.
         assert C.SoldeAnnuel._tva_affectee is not avant[5]
+        assert C.SoldeAnnuel.recettes_affectees_de is not avant[6]
     assert (C._simulations, C.CLES_RECETTES, C._pensionnes,
             C._rapports_recettes, C.SoldeAnnuel.ressources_de,
-            C.SoldeAnnuel._tva_affectee) == avant
+            C.SoldeAnnuel._tva_affectee, C.SoldeAnnuel.recettes_affectees_de) == avant
 
 
 # -- ce que l'accueil cite --------------------------------------------------
@@ -252,4 +257,30 @@ def test_l_accueil_cite_le_solde_la_dette_et_le_coefficient_du_cout_par_defaut(r
     assert plus_bas.annee // 10 * 10 == m["decennie_coefficient_minimum"]
     assert round(solde.annee(C.HORIZON).coefficient("notionnel_liberal"), 2) \
         == m["coefficient_2070"]
+
+
+def test_l_accueil_cite_les_deux_recettes_hors_du_travail(reference):
+    """La part de TVA gardée et le point de taxe sur la valeur du terrain
+    (décisions 79 à 81 du programme), en moyenne sur 2026-2070 : 0,34 et 1,31
+    point de PIB, 1,6 ensemble. L'accueil les nomme, et dit le solde et les
+    réserves qu'elles laissent, non plus un besoin et une dette."""
+    from retraite_notionnelle.web.site import disponible, module, rendre
+
+    if not disponible():
+        pytest.skip("node absent : le site ne se lit pas sans lui")
+    m = module("pages").MESURES_BLOCAGES
+    annees = [ligne for ligne in reference.solde.annees if 2026 <= ligne.annee <= C.HORIZON]
+    moyenne = sum(ligne.recettes_affectees_de("notionnel_liberal")
+                  for ligne in annees) / len(annees)
+    assert round(moyenne * 100, 1) == m["recettes_hors_travail"] == 1.6
+    corps = rendre("/", {})[1]
+    assert "un point de taxe sur la valeur du terrain" in corps
+    assert "la part de TVA qui va déjà aux retraites" in corps
+    assert "1,6 point de PIB par an" in corps
+    # Un excédent et des réserves, quand la mesure les donne.
+    assert m["solde_moyen_proposition"] > 0 and m["dette_2070_proposition"] < 0
+    assert "un excédent de 0,2 point par an" in corps
+    # L'espace avant « % » est insécable sur la page.
+    assert re.search(r"des réserves de 6\s% du PIB", corps)
+    assert "la dette qu'elle accumule" not in corps
 

@@ -1,0 +1,48 @@
+# Patrimoine immobilier par secteur institutionnel, fin d'année — France
+# source_id: insee_patrimoine_national
+# unite: milliards d'euros courants, en fin d'année
+# fiabilite:
+#   haute (2025) : « Patrimoine national par secteur institutionnel et
+#             grand type d'actif », Insee, comptes nationaux annuels en
+#             base 2020, données provisoires publiées en juillet 2026,
+#             recopiées du classeur le 9 novembre 2026.
+#
+# CE QUE PORTE UNE LIGNE
+# -----------------------
+# La valeur, au 31 décembre, d'un actif immobilier détenu par un secteur :
+# les logements et les autres bâtiments et ouvrages de génie civil, qui
+# sont le BÂTI, et les terrains qui les supportent, comptés à part. Le
+# secteur des ménages comprend les institutions sans but lucratif à leur
+# service, comme dans le tableau.
+#
+# CE QUE LE DÉPÔT EN TIRE
+# ------------------------
+# L'assiette d'une taxe sur la valeur du terrain (LVT, décision 80 du
+# programme) : les terrains bâtis des ménages et des sociétés, 6 091 Md€
+# fin 2025, ceux des administrations publiques ne payant pas la taxe
+# foncière ; et la valeur de tout l'immobilier privé, 13 447 Md€, à
+# laquelle se rapporte la taxe foncière d'aujourd'hui. `donnees/lvt.py`
+# dit comment.
+#
+# CE QU'IL FAUT SAVOIR AVANT DE S'EN SERVIR
+# ------------------------------------------
+# 1. LES TERRAINS VARIENT VITE : −8,6 % en 2023 et −2,7 % en 2024, quand
+#    le bâti montait (Insee Première n° 2081). Une recette assise sur
+#    eux suit leurs prix.
+# 2. LES TERRES AGRICOLES n'y sont pas : l'Insee les range dans les
+#    autres actifs non produits, sans les publier à part.
+# 3. LE TOTAL PUBLIÉ des terrains bâtis de l'économie nationale est de
+#    7 032,3772 Md€ : les quatre secteurs y somment.
+annee,secteur,actif,valeur_mdeur,fiabilite
+2025,menages,logements,4811.5034,haute
+2025,menages,autres_batiments,235.4303,haute
+2025,menages,terrains_batis,4190.0263,haute
+2025,societes_non_financieres,logements,1087.4210,haute
+2025,societes_non_financieres,autres_batiments,1047.8239,haute
+2025,societes_non_financieres,terrains_batis,1700.6711,haute
+2025,societes_financieres,logements,57.7762,haute
+2025,societes_financieres,autres_batiments,116.2795,haute
+2025,societes_financieres,terrains_batis,200.2865,haute
+2025,administrations_publiques,logements,88.2812,haute
+2025,administrations_publiques,autres_batiments,1430.3910,haute
+2025,administrations_publiques,terrains_batis,941.3933,haute

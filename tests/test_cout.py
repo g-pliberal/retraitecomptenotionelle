@@ -3739,10 +3739,15 @@ def test_la_recette_du_scenario_6_est_son_taux_sur_l_assiette(cout_assiette: Cou
                                      - ligne.part_impots)
         # Et la TVA à taux unique, depuis le 23 septembre 2026 : ce qui en reste
         # une fois la garantie payée. Elle n'est pas une cotisation, et le
-        # taux plein ne la contient pas.
+        # taux plein ne la contient pas. De même, depuis le 9 novembre, la
+        # part de TVA que la proposition garde aux retraites et son point de
+        # taxe sur la valeur du terrain (décisions 79 à 81 du programme).
+        assert ligne.tva_gardee_de("notionnel_liberal") == ligne.tva_gardee > 0.0
+        assert ligne.lvt_de("notionnel_liberal") == ligne.lvt_retraites > 0.0
         assert ligne.ressources_de("notionnel_liberal") == pytest.approx(
             pleine + autres - (ligne.retrait - ligne.retrait_par_impot)
-            + ligne.tva_de("notionnel_liberal")), ligne.annee
+            + ligne.tva_de("notionnel_liberal")
+            + ligne.tva_gardee + ligne.lvt_retraites), ligne.annee
         if ligne.annee >= bascule + 3:
             # Une fois le décalage de la grille éteint, le taux plein rapporte
             # PLUS que le rapport de taux légaux ne le disait : c'est la
@@ -3782,8 +3787,10 @@ def test_les_deux_conventions_de_recette_se_mesurent(cout: Cout, cout_assiette: 
     fin = cout.solde.derniere_annee
     ancien = cout.solde.solde_moyen("notionnel_liberal", bascule, fin)
     nouveau = cout_assiette.solde.solde_moyen("notionnel_liberal", bascule, fin)
-    # La convention du programme est la plus sévère, de près d'un point de PIB.
-    assert ancien - nouveau > 0.005, (ancien, nouveau)
+    # La convention du programme est la plus sévère, de près d'un point de PIB
+    # jusqu'au 9 novembre 2026 ; d'un quart de point depuis qu'elle garde la
+    # part de TVA des retraites, que l'ancienne n'a jamais retirée.
+    assert ancien - nouveau > 0.002, (ancien, nouveau)
     # Et ce n'est pas son taux qui la rend sévère : à postes reconduits égaux,
     # le taux plein sur l'assiette rapporterait PLUS. On le vérifie année par
     # année en redonnant au scénario les trois postes qu'il ne reconduit pas.
@@ -3831,9 +3838,12 @@ def test_la_recette_suit_le_taux(cout: Cout):
         assert 0.5 < rapport < 0.8, ligne.annee
         # Ce que la formule doit rendre, écrit autrement qu'elle.
         cotisees = ligne.ressources * ligne.part_contributive
-        # La TVA à taux unique s'ajoute, sous l'une et l'autre convention.
+        # La TVA à taux unique s'ajoute, sous l'une et l'autre convention ;
+        # le point de taxe sur la valeur du terrain aussi, mais non la part
+        # de TVA gardée, que cette convention-ci n'a pas retirée.
+        assert ligne.tva_gardee_de("notionnel_liberal") == 0.0
         attendu = (cotisees * rapport + (ligne.ressources - cotisees) - ligne.retrait
-                   + ligne.tva_de("notionnel_liberal"))
+                   + ligne.tva_de("notionnel_liberal") + ligne.lvt_retraites)
         assert ligne.ressources_de("notionnel_liberal") == pytest.approx(attendu)
         assert ligne.ressources_de("notionnel_liberal") < ligne.ressources_de(
             "notionnel_retroactif_employeur"), ligne.annee
@@ -3895,10 +3905,12 @@ def test_les_recettes_reactives_deplacent_le_solde_du_scenario_6(cout: Cout):
     """
     bascule = Parametres().annee_bascule
     fin = cout.solde.derniere_annee
-    # Ce que la réaction des recettes coûte, sans la TVA à taux unique : elle
-    # est une recette ajoutée, non une recette qui réagit.
+    # Ce que la réaction des recettes coûte, sans la TVA à taux unique ni le
+    # point de taxe sur la valeur du terrain : ce sont des recettes ajoutées,
+    # non des recettes qui réagissent.
     periode = [l for l in cout.solde.annees if bascule <= l.annee <= fin]
-    tva = sum(l.tva_de("notionnel_liberal") for l in periode) / len(periode)
+    tva = sum(l.tva_de("notionnel_liberal") + l.recettes_affectees_de("notionnel_liberal")
+              for l in periode) / len(periode)
     reactif = cout.solde.solde_moyen("notionnel_liberal", bascule, fin) - tva
     fige = sum(
         ligne.ressources - ligne.retrait - ligne.depense("notionnel_liberal")
@@ -3994,8 +4006,10 @@ def test_le_scenario_6_ne_reconduit_pas_la_contribution_d_equilibre_de_l_Etat(
                                          - point.part_subventions
                                          - point.part_impots)
                    - (point.retrait - point.retrait_par_impot)
-                   # La TVA à taux unique, qui n'est ni l'un ni l'autre.
-                   + point.tva_de("notionnel_liberal"))
+                   # La TVA à taux unique, qui n'est ni l'un ni l'autre ; la
+                   # part de TVA gardée et le point de LVT non plus.
+                   + point.tva_de("notionnel_liberal")
+                   + point.recettes_affectees_de("notionnel_liberal"))
         assert point.ressources_de("notionnel_liberal") == pytest.approx(attendu)
 
         # 3. Les subventions d'équilibre existent bel et bien dans le système
@@ -4220,8 +4234,13 @@ def test_la_proposition_ne_compte_que_les_cotisations_et_deux_restes(cout_assiet
             assert point.recette_par_assiette
             assert postes["contribution_equilibre_etat"] == 0.0
             assert postes["subventions_equilibre"] == 0.0
-            # Des impôts, la seule TVA à taux unique (23 septembre 2026).
-            assert postes["impots_et_taxes"] == postes["impots_tva"]
+            # Des impôts, la TVA à taux unique (23 septembre 2026), sous la
+            # variante qui la porte, la part de TVA gardée et le point de
+            # taxe sur la valeur du terrain (9 novembre 2026).
+            assert postes["impots_et_taxes"] == pytest.approx(
+                postes["impots_tva"] + postes["impots_tva_gardee"] + postes["impots_lvt"])
+            assert postes["impots_tva_gardee"] > 0.0 and postes["impots_lvt"] > 0.0
+            assert postes["impots_autres"] == pytest.approx(0.0, abs=1e-15)
             assert postes["cotisations"] == pytest.approx(
                 point.ressources * point.taux_liberal / point.taux_prelevement
                 * point.facteur_assiette)

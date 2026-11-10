@@ -1,13 +1,13 @@
 # Les recettes hors du travail, étudiées aux sources : la TVA sociale et la LVT
 
-**Reprise, au 7 novembre 2026.** Le chantier 4 est tranché (décisions 79
-à 81, « Ce que le propriétaire a tranché ») : la TVA reste à 20 % et sa part
-qui va aux retraites est gardée ; la LVT est à 2 % dont un point aux
-retraites, en vigueur en quelques mois. Les versements de l'État sont réglés
-au chantier 1 ; l'abattement et le plafonnement de la LVT, remis à plus tard.
-Par quoi commencer : chiffrer la part de TVA des retraites (Cnav comprise),
-puis une session du modèle qui la garde au scénario 6 et y verse la LVT ;
-relire les textes cités de mémoire (« Ce qui reste à faire »).
+**Reprise, au 9 novembre 2026.** Le chantier 4 est tranché (décisions 79
+à 81, 105 et 106) et les deux recettes sont au coût du scénario 6 depuis le
+9 novembre (`2026-11-09-tva-et-lvt-au-cout.md`) : la part de TVA gardée,
+celle de l'Agirc-Arrco seule, 0,36 point de PIB en 2026, en plus des 18 %,
+et le point de LVT à sa valeur centrale, 1,31 point. Restent l'abattement et
+le plafonnement de la LVT, remis à plus tard, et la suite du plan de
+`2026-11-09-recettes-au-modele.md` : la restitution, qui rend encore la
+moitié de la TVA gardée (décision 94), et le site, au chantier 9.
 
 *Le 7 novembre 2026, le propriétaire ouvre le chantier 4 de l'action 186 :
 « je veux qu'on attaque ce chantier ». La question est celle de

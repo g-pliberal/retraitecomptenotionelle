@@ -1,0 +1,36 @@
+# Produit des taxes foncières, par payeur — France
+# source_id: fipeco_taxes_foncieres
+# unite: millions d'euros courants de l'année
+# fiabilite:
+#   haute (2024) : « Les taxes foncières payées par les ménages »,
+#             Fipeco, 29 septembre 2025, qui lit les comptes nationaux de
+#             l'Insee : « En comptabilité nationale, les deux taxes
+#             foncières ont rapporté 42,9 Md€ aux administrations
+#             publiques locales en 2024, dont 26,1 Md€ payés par les
+#             ménages et 16,8 Md€ payés par les » autres agents. Recopié
+#             le 9 novembre 2026.
+#
+# CE QUE PORTE UNE LIGNE
+# -----------------------
+# Ce que la taxe foncière sur les propriétés bâties et celle sur les
+# propriétés non bâties ont rapporté ensemble, en comptabilité nationale,
+# selon qui les paie. Les autres agents sont surtout des entreprises.
+#
+# CE QUE LE DÉPÔT EN TIRE
+# ------------------------
+# La taxe que la LVT de la proposition remplace (décision 9 du
+# programme), et le taux qu'elle représente sur l'immobilier privé,
+# 0,32 % : les prix d'aujourd'hui le contiennent déjà, et le calcul de
+# la LVT en part (`donnees/lvt.py`).
+#
+# CE QU'IL FAUT SAVOIR AVANT DE S'EN SERVIR
+# ------------------------------------------
+# 1. DEUX COMPTABILITÉS. Dans celle des collectivités, la taxe sur le
+#    bâti fait 41,9 Md€ et celle sur le non-bâti 1,3 Md€ en 2024 (même
+#    fiche) : le total diffère de trois dixièmes de milliard.
+# 2. LE NON-BÂTI Y EST, quand les terres agricoles ne sont pas dans
+#    l'assiette de `patrimoine_immobilier.csv` : la taxe est un peu trop
+#    large pour l'assiette, d'un trentième.
+annee,payeur,montant_meur,fiabilite
+2024,menages,26100,haute
+2024,autres,16800,haute

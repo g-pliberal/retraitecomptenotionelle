@@ -595,7 +595,7 @@ Ce que ce choix déplace est considérable. Sous le taux entier, la fonctionnair
 de l'exemple du README, née en 1975, aurait <!--chiffre:mesure(ecart?exemple=fonctionnaire&scenario=4&contribution_etat=entiere)-->+41,9<!--/--> % d'écart au système
 actuel dans le scénario 4 ; sous la part de la Cour, <!--chiffre:mesure(ecart?exemple=fonctionnaire&scenario=4)-->−3,4<!--/--> %. Dans la
 proposition, <!--chiffre:mesure(ecart?exemple=fonctionnaire&scenario=6&contribution_etat=entiere)-->+41,7<!--/--> % deviennent <!--chiffre:mesure(ecart?exemple=fonctionnaire&scenario=6)-->−5,4<!--/--> %, et le solde moyen de la proposition
-passe de <!--chiffre:mesure(solde_moyen?scenario=6&contribution_etat=entiere)-->−1,98<!--/--> % à <!--chiffre:mesure(solde_moyen?scenario=6)-->−1,44<!--/--> % du PIB, de <!--chiffre:mesure(solde_moyen?scenario=6&en=milliards&contribution_etat=entiere)-->−59<!--/--> à <!--chiffre:mesure(solde_moyen?scenario=6&en=milliards)-->−43<!--/--> milliards
+passe de <!--chiffre:mesure(solde_moyen?scenario=6&contribution_etat=entiere)-->−0,34<!--/--> % à <!--chiffre:mesure(solde_moyen?scenario=6)-->+0,20<!--/--> % du PIB, de <!--chiffre:mesure(solde_moyen?scenario=6&en=milliards&contribution_etat=entiere)-->−10<!--/--> à <!--chiffre:mesure(solde_moyen?scenario=6&en=milliards)-->+6<!--/--> milliards
 d'euros par an, parce que les droits qu'elle reprend à la bascule étaient
 gonflés de ce qui payait d'autres pensions. Le privé, la CNRACL, le scénario 1
 et la part salariale ne bougent pas, ni les années d'avant 1995, où le compte
@@ -795,20 +795,23 @@ plafond. Les trois portent sur le secteur privé et sur un report de 60 à
 la proposition fait attendre jusqu'à <!--chiffre:mesure(parametre?nom=age_legal_liberal)-->65<!--/--> ans.
 
 C'est de cette part que dépend l'essentiel de ce que l'âge légal fait au
-solde. Le solde moyen de la proposition est de <!--chiffre:mesure(solde_moyen?scenario=6)-->−1,44<!--/--> point de PIB quand
-la moitié des reportés travaillent, de <!--chiffre:mesure(solde_moyen?scenario=6&emploi_reportes=1)-->−1,32<!--/--> quand tous le font, de
-<!--chiffre:mesure(solde_moyen?scenario=6&emploi_reportes=0)-->−1,57<!--/--> quand aucun, contre <!--chiffre:mesure(solde_moyen?scenario=6&age_legal=aucun)-->−1,72<!--/--> sans âge légal et <!--chiffre:mesure(solde_moyen?scenario=1)-->−1,13<!--/--> pour le système
+solde. Le solde moyen de la proposition est de <!--chiffre:mesure(solde_moyen?scenario=6)-->+0,20<!--/--> point de PIB quand
+la moitié des reportés travaillent, de <!--chiffre:mesure(solde_moyen?scenario=6&emploi_reportes=1)-->+0,32<!--/--> quand tous le font, de
+<!--chiffre:mesure(solde_moyen?scenario=6&emploi_reportes=0)-->+0,07<!--/--> quand aucun, contre <!--chiffre:mesure(solde_moyen?scenario=6&age_legal=aucun)-->−0,08<!--/--> sans âge légal et <!--chiffre:mesure(solde_moyen?scenario=1)-->−1,13<!--/--> pour le système
 actuel : sans emploi, le report n'épargne guère que des années de pension, et
-sert ensuite des pensions plus fortes. Aucun impôt ne couvre ce qui reste —
-la TVA à taux unique qui le faisait du 23 au 24 septembre 2026 est retirée —,
-et le déficit s'accumule : la dette de la proposition en 2070 est de <!--chiffre:mesure(dette?scenario=6)-->103<!--/--> % du
-PIB quand la moitié des reportés travaillent, de <!--chiffre:mesure(dette?scenario=6&emploi_reportes=1)-->94<!--/--> % quand tous le font,
-de <!--chiffre:mesure(dette?scenario=6&emploi_reportes=0)-->112<!--/--> % quand aucun, contre <!--chiffre:mesure(dette?scenario=1)-->66<!--/--> % pour le système actuel et <!--chiffre:mesure(dette?scenario=6&age_legal=aucun)-->124<!--/--> % pour
+sert ensuite des pensions plus fortes. Deux recettes hors du travail couvrent
+l'essentiel de ce qui reste, depuis le 9 novembre 2026 — la part de TVA qui
+va déjà aux retraites, gardée, et un point de taxe sur la valeur du terrain ;
+la TVA à taux unique du 23 au 24 septembre 2026 est retirée —, et le solde
+s'accumule, en dette quand il est positif, en réserve quand il est négatif :
+celui de la proposition en 2070 est de <!--chiffre:mesure(dette?scenario=6)-->-6<!--/--> % du
+PIB quand la moitié des reportés travaillent, de <!--chiffre:mesure(dette?scenario=6&emploi_reportes=1)-->-15<!--/--> % quand tous le font,
+de <!--chiffre:mesure(dette?scenario=6&emploi_reportes=0)-->2<!--/--> % quand aucun, contre <!--chiffre:mesure(dette?scenario=1)-->66<!--/--> % pour le système actuel et <!--chiffre:mesure(dette?scenario=6&age_legal=aucun)-->15<!--/--> % pour
 la proposition sans âge légal. L'ampleur de son avantage sur le système actuel
 tient donc à ce que les reportés travaillent. Elle serait bien moindre si le
 compte d'un fonctionnaire d'État recevait le taux de l'État entier, et non sa
 seule part « retraite » : la dette atteindrait alors
-<!--chiffre:mesure(dette?scenario=6&emploi_reportes=0&contribution_etat=entiere)-->149<!--/--> % si aucun ne travaillait.
+<!--chiffre:mesure(dette?scenario=6&emploi_reportes=0&contribution_etat=entiere)-->39<!--/--> % si aucun ne travaillait.
 
 **Le PIB ne bouge pas.** Plus d'emploi ferait plus de production, et le modèle
 garde le PIB que le COR projette aux âges d'aujourd'hui. Toutes les parts de

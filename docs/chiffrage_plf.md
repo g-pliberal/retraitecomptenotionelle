@@ -33,6 +33,22 @@ quatre taux de TVA d'aujourd'hui, et rien de la TVA ne va aux retraites.** Les
 tableaux n'en portent plus ; le mécanisme reste dans le modèle, comme
 variante (`taux_tva_liberal`).
 
+*Ajouté le 9 novembre 2026.* **Deux recettes hors du travail** entrent au
+chiffrage, que le Parti libéral a décidées le 7 novembre (décisions 79 à 81
+de `docs/feuille_de_route_programme.md`). La TVA reste à 20 %, et **la part
+qui va déjà aux retraites leur reste** : la fraction que l'Acoss reverse à
+l'Agirc-Arrco pour compenser la réduction générale des cotisations patronales,
+la seule que la loi affecte aux retraites (article L. 131-8 du code de la
+sécurité sociale, 9°), 0,36 point de PIB en 2026, 11 Md€ ; la proposition
+retire les autres impôts affectés. Et la taxe foncière devient une **taxe sur
+la valeur du terrain (LVT)** à 2 %, dont un point va aux retraites et l'autre
+aux communes : 1,31 point de PIB, 40 Md€ en 2026. Les deux entrent au régime
+dès la bascule, et la garantie vieillesse reste à la charge de l'impôt
+général. En 2026, le solde de la variante rétroactive, garantie comprise,
+passe de -2,79 à -1,12 point de PIB, et son écart au droit actuel de -2,63 à
+-0,96 ; le régime seul est en excédent à partir de 2053, quand il ne l'était
+qu'en 2070. La limite n° 13 dit ce que ce chiffrage de la LVT ne compte pas.
+
 *Ajouté le même jour, le soir.* Et un **âge légal de départ de 65 ans** à
 compter de la bascule : toute pension que la proposition liquide l'est à cet
 âge au plus tôt, et qui serait parti avant travaille et cotise jusque-là. Il
@@ -95,6 +111,11 @@ budgétaire du dossier.**
 - La pondération est celle du dépôt : chaque cas type porte l'effectif de
   retraités de sa caisse dans les masses de pensions, et ses cotisants dans les
   masses de cotisations.
+
+*Ajouté le 9 novembre 2026.* **TVA gardée et LVT** : la part de TVA qui va
+déjà aux retraites, que la proposition garde, et son point de taxe sur la
+valeur du terrain. Elles entrent au régime, dans « Recettes » et dans « Solde
+régime » ; la garantie reste retranchée entière de « Solde + garantie ».
 
 ## Le fait central
 
@@ -249,15 +270,15 @@ il faudrait rogner les pensions.
 ### E. Prélèvements retraite, avant et après, et ce que l'État verse à part
 
 <!-- prelevements:debut -->
-| Année | Cotisations (sc. 1) | Impôts et taxes affectés (sc. 1) | **Prélèvements sc. 1** | Cotisations 18 % (sc. 6) | Pilier obligatoire 5 % (sc. 6) | **Prélèvements sc. 6** | Écart | Versé par l'État au sc. 1, hors prélèvements |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|
-| 2026 | 9,16 (281) | 2,14 (66) | **11,30 (346)** | 7,69 (236) | 2,14 (66) | **9,83 (301)** | -1,47 | 1,88 (58) |
-| 2030 | 9,10 (312) | 2,13 (73) | **11,23 (385)** | 7,80 (267) | 2,17 (74) | **9,96 (341)** | -1,27 | 1,87 (64) |
-| 2035 | 8,93 (353) | 2,08 (82) | **11,01 (435)** | 7,74 (306) | 2,15 (85) | **9,89 (391)** | -1,12 | 1,84 (73) |
-| 2040 | 8,81 (397) | 2,06 (93) | **10,87 (489)** | 7,74 (348) | 2,15 (97) | **9,90 (445)** | -0,98 | 1,81 (82) |
-| 2050 | 8,63 (485) | 2,01 (113) | **10,64 (598)** | 7,75 (436) | 2,15 (121) | **9,90 (557)** | -0,74 | 1,77 (100) |
-| 2060 | 8,51 (586) | 1,99 (137) | **10,50 (722)** | 7,74 (533) | 2,15 (148) | **9,90 (681)** | -0,60 | 1,75 (120) |
-| 2070 | 8,47 (708) | 1,98 (165) | **10,45 (873)** | 7,75 (647) | 2,15 (180) | **9,90 (827)** | -0,55 | 1,74 (146) |
+| Année | Cotisations (sc. 1) | Impôts et taxes affectés (sc. 1) | **Prélèvements sc. 1** | Cotisations 18 % (sc. 6) | Pilier obligatoire 5 % (sc. 6) | TVA gardée et LVT (sc. 6) | **Prélèvements sc. 6** | Écart | Versé par l'État au sc. 1, hors prélèvements |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| 2026 | 9,16 (281) | 2,14 (66) | **11,30 (346)** | 7,69 (236) | 2,14 (66) | 1,67 (51) | **11,50 (352)** | +0,20 | 1,88 (58) |
+| 2030 | 9,10 (312) | 2,13 (73) | **11,23 (385)** | 7,80 (267) | 2,17 (74) | 1,64 (56) | **11,60 (398)** | +0,37 | 1,87 (64) |
+| 2035 | 8,93 (353) | 2,08 (82) | **11,01 (435)** | 7,74 (306) | 2,15 (85) | 1,64 (65) | **11,54 (456)** | +0,52 | 1,84 (73) |
+| 2040 | 8,81 (397) | 2,06 (93) | **10,87 (489)** | 7,74 (348) | 2,15 (97) | 1,64 (74) | **11,54 (519)** | +0,66 | 1,81 (82) |
+| 2050 | 8,63 (485) | 2,01 (113) | **10,64 (598)** | 7,75 (436) | 2,15 (121) | 1,64 (92) | **11,55 (649)** | +0,91 | 1,77 (100) |
+| 2060 | 8,51 (586) | 1,99 (137) | **10,50 (722)** | 7,74 (533) | 2,15 (148) | 1,64 (113) | **11,54 (794)** | +1,04 | 1,75 (120) |
+| 2070 | 8,47 (708) | 1,98 (165) | **10,45 (873)** | 7,75 (647) | 2,15 (180) | 1,64 (137) | **11,54 (964)** | +1,09 | 1,74 (146) |
 <!-- prelevements:fin -->
 
 *Corrigé le 23 septembre 2026.* Le tableau comptait jusque-là, parmi les
@@ -578,6 +599,51 @@ tient le calcul. Ce qu'il ne compte pas :
 
 La directive européenne sur la TVA le permet : elle exige un taux normal d'au
 moins 15 % et laisse les taux réduits facultatifs.
+
+### 13. La taxe sur la valeur du terrain est chiffrée sans abattement, sur un rendement supposé
+
+*Ajoutée le 9 novembre 2026, avec la part de TVA gardée et le point de LVT.*
+Par son enjeu, elle passe toutes les autres : 1,31 point de PIB chaque année.
+
+L'assiette est celle des terrains bâtis des ménages et des sociétés fin 2025,
+6 091 Md€ (Insee, patrimoine national, données provisoires de juillet 2026).
+La taxe se capitalise dans le prix du terrain, qui contient déjà la taxe
+foncière d'aujourd'hui — 42,9 Md€ en 2024, 0,32 % de l'immobilier privé : à
+2 %, le prix baisse de 36 % et la taxe rapporte 78 Md€, dont la moitié aux
+retraites. `src/retraite_notionnelle/donnees/lvt.py` tient le calcul, et
+l'étude est `docs/feuille_de_route/186/2026-11-07-recettes-tva-lvt.md`. Ce
+qu'il ne compte pas :
+
+- **le rendement locatif du terrain n'est pas mesuré** : le chiffrage le prend
+  à 3 %, l'étude de 2,5 à 4 %, et le point des retraites vaut alors de 1,2 à
+  1,4 point de PIB ;
+- **aucun abattement** sur la résidence principale, **aucun plafonnement** au
+  revenu — que le Conseil constitutionnel exigerait d'un impôt annuel sur un
+  patrimoine (décision 2012-654 DC) —, aucune exonération, et un recouvrement
+  complet : le Parti libéral a remis l'abattement et le plafonnement à plus
+  tard, et tous deux baisseraient le produit ;
+- **une capitalisation complète et immédiate**, que l'étude publiée sur le
+  Danemark trouve, et qu'un document de travail de 2024 conteste ;
+- **une entrée en vigueur dès la bascule** (décision 81), quand la France n'a
+  pas la valeur du terrain de chaque parcelle et que le Danemark a mis plus de
+  dix ans à refaire les siennes ;
+- **un produit tenu à sa part de PIB de 2025**, quand le prix des terrains a
+  baissé de 11 % de 2022 à 2024 ;
+- **ce que la baisse des prix fait ailleurs** : aux droits de mutation des
+  départements, et aux communes, qui recevraient 39 Md€ au lieu de 42,9.
+
+La part de TVA gardée, 0,36 point de PIB en 2026 et 0,34 ensuite, est la
+compensation de la réduction générale à l'Agirc-Arrco : aucune source ne
+publie ce que la caisse reçoit seule, et le dépôt la déduit de ce que la
+réduction efface hors des régimes de base, publié de 2024 à 2027 (Commission
+des comptes de la sécurité sociale, octobre 2026 ;
+`src/retraite_notionnelle/donnees/compensation_agirc_arrco.py`). Au-delà de
+2027, elle garde sa part de PIB. **Elle s'ajoute aux 18 %**, que le chiffrage
+prélève sur toute l'assiette comme si l'État compensait tous les allègements
+(décision 96) : le Parti libéral l'a tranché le 9 novembre 2026 (décision
+105). L'État verse donc la cotisation que les allègements effacent, et la
+TVA de l'Agirc-Arrco en plus ; comptée dans ce versement, elle laisserait le
+solde moins bon de 0,36 point.
 
 Et une borne qui vaut pour tout le document : **le contrefactuel ne peut jamais
 valoir mieux qu'« estimé ».** La dépense observée est certifiée, recontrôlée

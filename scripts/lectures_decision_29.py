@@ -47,9 +47,11 @@ LES CONVENTIONS, qu'il faut dire en tête de tout chiffre qui en sort.
 - La dette refait la récurrence de ``cout.calculer_dette``, avec la
   croissance et le taux de chaque année du coût ; elle part de zéro fin 2025.
 
-Rien d'autre ne bouge : ni comportement, ni pilier capitalisé, ni les
-recettes du chantier 4, ni la décision 16 (les réversions servies gardées),
-qui réduira l'économie.
+Rien d'autre ne bouge : ni comportement, ni pilier capitalisé. Les recettes
+du chantier 4 — la part de TVA gardée et le point de LVT, décisions 79 à 81 —
+sont au modèle depuis le 9 novembre 2026 : la base de la page Coût les porte
+dans les recettes de la proposition, et les deux autres conventions les
+reçoivent de chaque année (``Annee.tva_gardee``, ``Annee.lvt``).
 
 Usage : ``python scripts/lectures_decision_29.py`` (une quinzaine de calculs
 du coût, une demi-minute chacun sans mémoire) : les taux sous les trois
@@ -85,14 +87,11 @@ LECTURES: dict[str, str] = {
     "B_hors_etat": "Lecture B, hors versements de l'État",
 }
 
-#: Les recettes nouvelles des décisions 79 et 80, que le modèle n'a pas
-#: encore, en part de PIB tenue constante, dès 2026 (décision 81) : la part
-#: de TVA que l'Agirc-Arrco reçoit déjà, de l'ordre de 7 Md€ en 2025, soit
-#: 0,23 point de PIB (celle de la Cnav reste à chiffrer) ; et le point de LVT
-#: des retraites, 36 à 43 Md€, 1,2 à 1,4 point de PIB de 2025, avant tout
-#: abattement (``2026-11-07-recettes-tva-lvt.md``).
-TVA_RETRAITES = 0.0023
-LVT_RETRAITES = {"basse": 0.012, "centrale": 0.013, "haute": 0.014}
+#: Le rendement locatif du terrain sous lequel se chiffre le point de LVT des
+#: retraites (décision 80) : le coût le prend à 3 %, l'étude de 2,5 à 4 %, ce
+#: qui fait 1,2 à 1,4 point de PIB avant tout abattement
+#: (``2026-11-07-recettes-tva-lvt.md``, ``donnees/lvt.py``).
+RENDEMENTS_DU_TERRAIN = {"basse": 0.025, "haute": 0.04}
 
 #: Le taux du programme, que le scénario 6 crédite : la référence des cas types.
 TAUX_PROGRAMME = 0.18
@@ -123,6 +122,10 @@ class Annee:
     #: Coût le compte : ni impôts affectés, ni versements de l'État, ni
     #: transferts pour les droits non contributifs.
     recettes_proposition: float = 0.0
+    #: La part de TVA gardée et le point de LVT que le modèle donne à la
+    #: proposition (décisions 79 à 81), que ``recettes_proposition`` contient.
+    tva_gardee: float = 0.0
+    lvt: float = 0.0
 
     @property
     def taux_actuel(self) -> float:
@@ -176,15 +179,16 @@ class Etude:
                  depenses: Mapping[float, Mapping[int, float]],
                  garanties: Mapping[float, Mapping[int, float]] | None = None,
                  convention: str = "recettes_gardees",
-                 recettes_en_plus: float = 0.0) -> None:
+                 recettes_en_plus: float | Mapping[int, float] = 0.0) -> None:
         if convention not in CONVENTIONS:
             raise KeyError(convention)
         self.annees = sorted(annees, key=lambda a: a.annee)
         self.depenses = {taux: dict(serie) for taux, serie in sorted(depenses.items())}
         self.garanties = {taux: dict(serie) for taux, serie in (garanties or {}).items()}
         self.convention = convention
-        #: Des recettes que le modèle n'a pas encore, en part de PIB chaque
-        #: année : la LVT et la part de TVA (décisions 79 et 80).
+        #: Des recettes de plus ou de moins que celles du modèle, en part de
+        #: PIB : la même chaque année, ou ``{année: part}``. Une LVT plus
+        #: basse ou plus haute, ou ce que serait la caisse sans elle.
         self.recettes_en_plus = recettes_en_plus
         self.taux = list(self.depenses)
 
@@ -199,14 +203,20 @@ class Etude:
         raise ValueError(f"taux {taux} hors des taux calculés ({self.taux[0]} à {self.taux[-1]})")
 
     def recettes(self, a: Annee, taux: float) -> float:
-        return self._recettes(a, taux) + self.recettes_en_plus
+        en_plus = self.recettes_en_plus
+        if not isinstance(en_plus, (int, float)):
+            en_plus = en_plus.get(a.annee, 0.0)
+        return self._recettes(a, taux) + en_plus
 
     def _recettes(self, a: Annee, taux: float) -> float:
         if self.convention == "page_cout":
             return a.recettes_proposition + taux * a.assiette
-        gardees = a.depense_actuel + a.solde_actuel - (a.taux_actuel - taux) * a.assiette
+        # Les recettes du droit en vigueur, la part de TVA comprise, et la
+        # LVT, que la proposition ajoute.
+        gardees = (a.depense_actuel + a.solde_actuel
+                   - (a.taux_actuel - taux) * a.assiette + a.lvt)
         if self.convention == "impots_supprimes":
-            return gardees - a.impots_affectes
+            return gardees - a.impots_affectes + a.tva_gardee
         return gardees
 
     def depense(self, annee: int, taux: float) -> float:
@@ -309,6 +319,8 @@ def du_modele(taux: float) -> tuple[list[Annee], dict[int, float], dict[int, flo
             taux_dette=d.taux,
             impots_affectes=actuel["impots_et_taxes"],
             recettes_proposition=ligne.ressources_de(LIBERAL) - liberal["cotisations"],
+            tva_gardee=ligne.tva_gardee_de(LIBERAL),
+            lvt=ligne.lvt_de(LIBERAL),
         ))
         garanties[ligne.annee] = (projetee.part_pib(C.COMPOSANTE_GARANTIE)
                                   - projetee.part_pib_reprises())
@@ -328,12 +340,14 @@ def _memes_annees(unes: list[Annee], autres: list[Annee]) -> bool:
                                                  "cotisations_actuel", "assiette",
                                                  "versements_etat", "pib", "croissance",
                                                  "taux_dette", "impots_affectes",
-                                                 "recettes_proposition"))
+                                                 "recettes_proposition", "tva_gardee",
+                                                 "lvt"))
         for u, v in zip(unes, autres))
 
 
 def etude_du_modele(grille: Iterable[float] = GRILLE, convention: str = "page_cout",
-                    recettes_en_plus: float = 0.0) -> tuple[Etude, dict[str, float]]:
+                    recettes_en_plus: float | Mapping[int, float] = 0.0,
+                    ) -> tuple[Etude, dict[str, float]]:
     """Les taux de chaque lecture, au modèle, sous une convention de recettes :
     résolus sur la grille, puis calculés eux-mêmes, arrondis au centième de
     point, et résolus de nouveau jusqu'à ce qu'ils ne bougent plus."""
@@ -496,20 +510,45 @@ def rapport_cas_types(trouves: Mapping[str, float]) -> str:
     return "\n".join(lignes)
 
 
+def variantes_de_recettes() -> dict[str, float | dict[int, float]]:
+    """Ce que chaque variante ajoute aux recettes du modèle, ou leur retire :
+    sans la part de TVA ni la LVT, avec la TVA seule, puis la LVT sous chaque
+    rendement locatif du terrain."""
+    from retraite_notionnelle.config import Parametres
+    from retraite_notionnelle.donnees.lvt import TaxeTerrain
+
+    parametres = Parametres()
+    annees, _, _ = du_modele(TAUX_PROGRAMME)
+    terrain = TaxeTerrain(parametres.racine_donnees)
+
+    def point(rendement: float) -> float:
+        return terrain.part_pib(parametres.taux_lvt_retraites, parametres.taux_lvt, rendement)
+
+    centrale = point(parametres.rendement_locatif_terrain)
+    variantes: dict[str, float | dict[int, float]] = {
+        "sans la TVA ni la LVT": {a.annee: -(a.tva_gardee + a.lvt) for a in annees},
+        "avec la part de TVA": {a.annee: -a.lvt for a in annees},
+    }
+    for nom, rendement in RENDEMENTS_DU_TERRAIN.items():
+        variantes[f"avec la TVA et la LVT {nom} ({_n(100 * point(rendement), 1, False)} point)"] = \
+            point(rendement) - centrale
+    variantes[f"avec la TVA et la LVT centrale ({_n(100 * centrale, 1, False)} point), "
+              "le modèle"] = 0.0
+    return variantes
+
+
 def main(argv: list[str] | None = None) -> int:
     lecteur = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     lecteur.add_argument("--cas-types", action="store_true",
                          help="la pension de quelques cas types sous chaque taux")
     lecteur.add_argument("--convention", choices=list(CONVENTIONS), default="page_cout",
                          help="les recettes du détail (la page Coût par défaut)")
-    lecteur.add_argument("--recettes-en-plus", type=float,
-                         default=TVA_RETRAITES + LVT_RETRAITES["centrale"],
-                         help="les recettes nouvelles du détail, en part de PIB "
-                              "(par défaut, la TVA et la LVT centrale)")
+    lecteur.add_argument("--recettes-en-plus", type=float, default=0.0,
+                         help="des recettes de plus que celles du modèle pour le détail, "
+                              "en part de PIB (aucune par défaut : la part de TVA gardée "
+                              "et la LVT y sont)")
     options = lecteur.parse_args(argv)
-    variantes = {"sans la TVA ni la LVT": 0.0, "avec la part de TVA": TVA_RETRAITES}
-    variantes.update({f"avec la TVA et la LVT {nom} ({_n(100 * lvt, 1, False)} point)":
-                      TVA_RETRAITES + lvt for nom, lvt in LVT_RETRAITES.items()})
+    variantes = variantes_de_recettes()
     print("## Le taux de chaque lecture, sur la base de la page Coût\n")
     print("| Recettes | " + " | ".join(LECTURES.values()) + " |")
     print("|---|" + "---:|" * len(LECTURES))
@@ -529,7 +568,8 @@ def main(argv: list[str] | None = None) -> int:
               + " | ".join(_pourcent(taux[lecture]) for lecture in LECTURES) + " |")
     etude, trouves = resultats[options.convention]
     print(f"\n# Le détail : {CONVENTIONS[options.convention]}, "
-          f"{_n(100 * options.recettes_en_plus, 2, False)} point de PIB de recettes nouvelles\n")
+          f"{_n(100 * options.recettes_en_plus, 2, False)} point de PIB de recettes "
+          "en plus de celles du modèle\n")
     print(rapport(etude, trouves))
     if options.cas_types:
         print()

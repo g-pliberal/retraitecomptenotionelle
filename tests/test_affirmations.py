@@ -2137,8 +2137,10 @@ def _(m: Modele):
     # Le budget de l'État n'entre plus au régime unique, sous aucune forme :
     # ni impôt affecté, ni contribution d'équilibre, ni subvention. Le système
     # actuel, lui, encaisse les trois. Depuis le 23 septembre 2026, la TVA à
-    # taux unique y entre, et elle seule : un impôt affecté à sa caisse, qui
-    # n'est pas le budget de l'État.
+    # taux unique y entre : un impôt affecté à sa caisse, qui n'est pas le
+    # budget de l'État. Depuis le 9 novembre, de même, la part de TVA qui va
+    # déjà aux retraites et un point de taxe sur la valeur du terrain
+    # (décisions 79 à 81 du programme), et rien d'autre des impôts affectés.
     budget = ("impots_et_taxes", "contribution_equilibre_etat", "subventions_equilibre")
     libelles = lambda caisse: {noeud.libelle for noeud in caisse.sources}
     for annee in annees:
@@ -2148,8 +2150,9 @@ def _(m: Modele):
         proposition = ligne.postes_ressources("notionnel_liberal")
         actuel = ligne.postes_ressources("actuel")
         for code in budget:
-            tva = proposition["impots_tva"] if code == "impots_et_taxes" else 0.0
-            assert proposition[code] == tva, (annee, code)
+            impots = (proposition["impots_tva"] + proposition["impots_tva_gardee"]
+                      + proposition["impots_lvt"]) if code == "impots_et_taxes" else 0.0
+            assert _proche(proposition[code], impots), (annee, code)
             assert actuel[code] > 0.0, (annee, code)
         # Ce qui reste au régime unique : les cotisations au taux unique, et
         # deux lignes qui ne viennent pas de l'impôt.
@@ -2165,11 +2168,13 @@ def _(m: Modele):
         assert compte.capitalise > 0.0, annee
         # Et la carte le dessine ainsi : aucun ruban d'« impôts » n'entre au
         # régime unique, quand il en entre un aux régimes d'aujourd'hui ; la
-        # TVA à taux unique y entre sous son nom.
+        # TVA à taux unique y entre sous son nom, comme le terrain et la part
+        # de TVA gardée.
         pib = compte.pib
         payeurs = libelles(pages._caisse_flux(ligne, pib, "notionnel_liberal", "", "C"))
         assert "Impôts" not in payeurs, annee
         assert ("TVA" in payeurs) == (ligne.tva_de("notionnel_liberal") > 0.0), annee
+        assert ("Terrain et TVA" in payeurs) == (proposition["impots_lvt"] > 0.0), annee
         assert "Impôts" in libelles(pages._caisse_flux(ligne, pib, "actuel", "", "C")), annee
 
 
@@ -2328,7 +2333,10 @@ def _(m: Modele):
 
 @controle("autre_convention_de_recette")
 def _(m: Modele):
-    """L'autre lecture est plus GÉNÉREUSE, et d'environ un point de PIB.
+    """L'autre lecture est plus GÉNÉREUSE, et d'environ un quart de point de
+    PIB : d'environ un point jusqu'au 9 novembre 2026, où la convention retenue
+    a gardé la part de TVA des retraites (0,36 point), que l'autre n'a jamais
+    retirée, les deux recevant le point de taxe sur la valeur du terrain.
 
     Le contrôle le plus cher du fichier : il recalcule le coût agrégé sous
     l'autre convention. Il le vaut — la note affirmait le contraire, « plus
@@ -2340,7 +2348,7 @@ def _(m: Modele):
     debut, fin = solde.premiere_annee_projetee, solde.derniere_annee
     ecart = (autre.solde_moyen("notionnel_liberal", debut, fin)
              - solde.solde_moyen("notionnel_liberal", debut, fin))
-    assert 0.005 <= ecart <= 0.015, ecart
+    assert 0.002 <= ecart <= 0.004, ecart
 
 
 @controle("postes_somment_aux_totaux")
@@ -2361,17 +2369,27 @@ def _(m: Modele):
 def _(m: Modele):
     """Les trois postes du système actuel ne sont pas reconduits. Depuis le
     23 septembre 2026, le poste des impôts affectés ne porte plus, pour la
-    proposition, que la TVA à taux unique qu'elle leur substitue."""
+    proposition, que la TVA à taux unique qu'elle leur substitue ; depuis le
+    9 novembre, la part de TVA qu'elle garde aux retraites et son point de
+    taxe sur la valeur du terrain (décisions 79 à 81 du programme)."""
     ligne = m.horizon
     disparus = ("contribution_equilibre_etat", "subventions_equilibre", "impots_et_taxes")
     proposition = ligne.postes_ressources("notionnel_liberal")
     actuel = ligne.postes_ressources("actuel")
     assert proposition["contribution_equilibre_etat"] == 0.0
     assert proposition["subventions_equilibre"] == 0.0
-    assert proposition["impots_et_taxes"] == proposition["impots_tva"]
+    assert _proche(proposition["impots_et_taxes"], _impots_de_la_proposition(proposition))
+    assert _proche(proposition["impots_autres"], 0.0)
     assert proposition["impots_solidarite"] == 0.0
     assert all(actuel[code] > 0 for code in disparus)
     assert actuel["impots_tva"] == 0.0
+    assert actuel["impots_tva_gardee"] == 0.0 and actuel["impots_lvt"] == 0.0
+
+
+def _impots_de_la_proposition(postes) -> float:
+    """Ce que la proposition porte au poste des impôts : la TVA à taux unique
+    de la variante, la part de TVA gardée et le point de LVT."""
+    return postes["impots_tva"] + postes["impots_tva_gardee"] + postes["impots_lvt"]
 
 
 @controle("recettes_trois_reactions")
@@ -2384,7 +2402,7 @@ def _(m: Modele):
     # pas une ressource reconduite mais ajoutée — et rien depuis que la
     # proposition ne réforme plus la TVA, le 24 septembre 2026.
     assert all(postes[code] == 0.0 for code in disparus[:2])
-    assert postes["impots_et_taxes"] == postes["impots_tva"]
+    assert _proche(postes["impots_et_taxes"], _impots_de_la_proposition(postes))
     # La quatrième réaction : l'âge légal élargit l'assiette, après la bascule
     # et pas avant.
     assert ligne.facteur_assiette > 1.0
@@ -2681,9 +2699,10 @@ def _(m: Modele):
         cles = set(ligne.postes_ressources(scenario)) | set(ligne.postes_depenses(scenario))
         assert not any("restitution" in cle or "csg" in cle for cle in cles)
     # Le poste des impôts ne porte, pour la proposition, que la TVA à taux
-    # unique : la restitution concerne ceux qu'elle abandonne.
+    # unique, la part de TVA gardée et le point de LVT : la restitution
+    # concerne ceux qu'elle abandonne.
     postes = ligne.postes_ressources("notionnel_liberal")
-    assert postes["impots_et_taxes"] == postes["impots_tva"]
+    assert _proche(postes["impots_et_taxes"], _impots_de_la_proposition(postes))
 
 
 @controle("dette_cumule_les_soldes")

@@ -259,7 +259,7 @@ const CHAMPS_SOLDE_ANNUEL = [
   "part_subventions", "taux_prelevement", "taux_liberal", "facteur_assiette",
   "annee_bascule", "convention_recette", "part_derives", "reversion_servie",
   "reforme_en_vigueur", "tva_liberal", "garantie_liberal", "majorations_stock",
-  "taux_effectif", "annee_taux_effectif",
+  "taux_effectif", "annee_taux_effectif", "tva_gardee", "lvt_retraites",
 ];
 const CHAMPS_COUT_ANNUEL = [
   "annee", "observee", "coefficient_constants", "part_pib", "rapports", "pensionnes",

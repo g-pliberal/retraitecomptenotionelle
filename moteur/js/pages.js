@@ -11912,13 +11912,14 @@ rapporté à des revenus d'activité définis un peu autrement ; la page n'empru
 à son taux que le profil), et ${g.pourcentage(horizon.tauxPrelevement, false, 1)} en
 ${solde.derniereAnnee} là où le COR projette son propre taux ; la proposition en
 prélèverait 18 : c'est le rapport de ces deux nombres, année par année, qui fait
-sa recette. Elle ne touche aucune compensation d'allègement, n'en accordant
-aucun, et cela ne lui retire rien : le COR range cette compensation dans les
-impôts et taxes affectés, que la proposition ne reconduit pas, et ses 18 %
-portent sur l'assiette entière.</div>
+sa recette. Ses 18 % portent sur l'assiette entière, comme si elle
+n'accordait aucun allègement. Le COR range la compensation des allègements
+dans les impôts et taxes affectés, que la proposition ne reconduit pas, à une
+exception près : la part de TVA qui compense ceux de l'Agirc-Arrco, qu'elle
+garde.</div>
 
-<div class="note"><strong>L'autre lecture, plus généreuse d'un point de
-PIB.</strong> Le modèle sait aussi appliquer aux 18 % la DÉPERDITION du système
+<div class="note"><strong>L'autre lecture, plus généreuse d'un quart de point
+de PIB.</strong> Le modèle sait aussi appliquer aux 18 % la DÉPERDITION du système
 actuel : les allègements généraux et les assiettes réduites font qu'un taux
 légal proche de
 ${g.pourcentage(0.18 / horizon.rapportsRecettes.notionnel_liberal, false, 0)}
@@ -11926,8 +11927,8 @@ ne rentre pas en entier. Compter ainsi revient à supposer que la proposition
 garde la même architecture d'exonérations, ce que son texte ne dit pas, et à
 lui laisser du même mouvement les impôts affectés et les subventions
 d'équilibre que la lecture retenue ne reconduit pas. Son solde moyen projeté
-est meilleur d'environ un point de PIB, environ
-${g.milliards(comptes.pib.valeur(anneePib) / 100)} par an au PIB de ${anneePib}. Les
+est meilleur d'environ un quart de point de PIB, environ
+${g.milliards(comptes.pib.valeur(anneePib) / 400)} par an au PIB de ${anneePib}. Les
 deux lectures se défendent, elles
 sont toutes deux calculées, et la page a retenu la plus sévère.</div>
 
@@ -12137,12 +12138,16 @@ export const LIGNES_RECETTES = [
   ["impots_et_taxes", "Impôts et taxes affectés", "poste"],
   ["impots_solidarite", "Dont fonds de solidarité vieillesse", "dont"],
   ["impots_tva", "Dont TVA à taux unique", "dont"],
+  ["impots_tva_gardee", "Dont part de TVA gardée aux retraites", "dont"],
+  ["impots_lvt", "Dont taxe sur la valeur du terrain", "dont"],
   ["transferts", "Transferts d'organismes extérieurs", "poste"],
   ["transferts_famille", "Dont branche famille", "dont"],
   ["transferts_chomage", "Dont assurance chômage", "dont"],
   ["transferts_autres", "Dont autres transferts", "dont"],
   ["autres_produits", "Autres produits", "poste"],
 ];
+/** Les « dont » que seule la proposition porte, et qui se taisent sans elle. */
+const LIGNES_DE_LA_PROPOSITION = new Set(["impots_tva", "impots_tva_gardee", "impots_lvt"]);
 export const LIGNES_DEPENSES = [
   ["droits_directs", "Pensions de droit direct", "poste"],
   ["droits_derives", "Pensions de réversion (droit dérivé)", "poste"],
@@ -12358,12 +12363,14 @@ export function caisseFlux(ligne, pib, systeme, libelle, cotisations) {
   for (const groupe of GROUPES) {
     const part = groupe.postes.reduce((somme, code) => somme + postes[code], 0);
     if (part > 0.0) {
-      // Dans la variante qui porte une TVA à taux unique, l'impôt de la
-      // proposition n'est qu'elle : il est nommé, et non « impôts » comme le
-      // mélange d'aujourd'hui.
+      // L'impôt de la proposition est nommé, et non « impôts » comme le
+      // mélange d'aujourd'hui : son point de taxe sur la valeur du terrain et
+      // la part de TVA qui va déjà aux retraites (décisions 79 à 81 du
+      // programme) ; dans la variante qui porte une TVA à taux unique, elle.
       let nom = LIBELLES_FLUX[groupe.code];
       if (groupe.code === "salaires") nom = cotisations;
       else if (groupe.code === "impots" && ligne.tvaDe(systeme) > 0.0) nom = "TVA";
+      else if (groupe.code === "impots" && postes.impots_lvt > 0.0) nom = "Terrain et TVA";
       sources.push(new g.NoeudSankey(nom, part, montantFlux(part * pib), groupe.couleur));
     }
   }
@@ -12555,11 +12562,17 @@ function coutCarteFlux(contexte, regards = null) {
   const impotEnClair = ligne.tvaGarantie("notionnel_liberal") > 0.0
     ? "la TVA à la garantie vieillesse d'abord, aux pensions ensuite"
     : "l'impôt à la garantie vieillesse";
+  // Le point de taxe sur la valeur du terrain et la part de TVA gardée
+  // entrent au régime (décisions 79 à 81 du programme).
+  const postesFlux = ligne.postesRessources("notionnel_liberal");
+  const horsTravailEnClair = postesFlux.impots_lvt + postesFlux.impots_tva_gardee > 0.0
+    ? ", avec un point de taxe sur le terrain et la part de TVA déjà affectée"
+    : "";
   return g.cle(
     "Qui paie quoi, aujourd'hui et avec notre proposition ?",
     `Aujourd'hui, cotisations, impôts et versements d'autres caisses se
 mêlent pour payer les pensions. Avec notre proposition, <strong>chaque euro a
-sa caisse</strong> : les cotisations vont aux pensions, ${impotEnClair}, et
+sa caisse</strong> : les cotisations vont aux pensions${horsTravailEnClair}, ${impotEnClair}, et
 ${tauxCapitalise} des salaires sont placés à votre nom. En
 ${annee}, le régime unique ${verbe} ${montant}, le système actuel
 ${actuelEnClair}.`,
@@ -12658,8 +12671,10 @@ function coutDetailPostes(contexte) {
 
   const lignes = [];
   for (const [code, libelle, rang] of LIGNES_RECETTES) {
-    // La ligne de la TVA à taux unique se tait quand aucun système n'en reçoit.
-    if (code === "impots_tva" && !systemes.some((s) => recettes[s][code])) continue;
+    // La ligne de la TVA à taux unique se tait quand aucun système n'en
+    // reçoit, comme celles de la TVA gardée et de la taxe sur le terrain.
+    if (LIGNES_DE_LA_PROPOSITION.has(code)
+        && !systemes.some((s) => recettes[s][code])) continue;
     lignes.push(rangee(libelle, rang,
       Object.fromEntries(systemes.map((s) => [s, recettes[s][code]])), totalRecettes));
   }
@@ -12699,6 +12714,15 @@ function coutDetailPostes(contexte) {
     + ligne.tvaGarantie("notionnel_liberal") > 0.0
     ? " Un impôt les remplace, et un seul : la TVA à taux unique, que la note "
       + "suivante détaille."
+    : "";
+  // Les deux recettes hors du travail des décisions 79 à 81 du programme : la
+  // phrase se tait sous une variante qui renonce aux deux.
+  const postesProposition = ligne.postesRessources("notionnel_liberal");
+  const horsDuTravail = postesProposition.impots_lvt + postesProposition.impots_tva_gardee > 0.0
+    ? " Deux recettes hors du travail restent à ce poste : la part de TVA qui va "
+      + "déjà aux retraites, pour compenser les allègements de cotisations, que la "
+      + "proposition garde ; et un point de la taxe sur la valeur du terrain, à 2 %, "
+      + "qui remplace la taxe foncière, l'autre point allant aux communes."
     : "";
   const sourceMilliards = annee > anneePib
     ? `Les parts de PIB sont celles du compte du COR pour ${annee}, année `
@@ -12744,7 +12768,7 @@ statuts. Trois postes disparaissent : la contribution d'équilibre de l'État,
 remplacée par ces ${g.pourcentage(base.taux_cotisation_liberal, false, 0)}
 appliqués aux traitements des fonctionnaires ; les subventions d'équilibre,
 dont la fusion des régimes supprime l'objet ; les impôts et taxes affectés, qui
-n'acquièrent de droits à personne.${tvaRemplace} Des transferts, seule reste la
+n'acquièrent de droits à personne.${tvaRemplace}${horsDuTravail} Des transferts, seule reste la
 part qui ne paie pas un droit supprimé : la branche famille finance des droits
 que le compte notionnel ne sert plus, l'assurance chômage des cotisations qu'il
 porte. Côté dépenses, les
@@ -17130,6 +17154,13 @@ function programmeRestitution(contexte) {
       + "consommation plutôt que sur les revenus, qui n'ouvre de droit à personne "
       + "lui non plus."
     : "";
+  // Les deux recettes hors du travail des décisions 79 à 81 du programme : la
+  // phrase se tait sous une variante qui renonce aux deux.
+  const postes = contexte.cout().solde.annee(annee).postesRessources("notionnel_liberal");
+  const horsDuTravail = postes.impots_lvt + postes.impots_tva_gardee > 0.0
+    ? " Deux exceptions : sa part de TVA, gardée, et un point de taxe sur "
+      + "la valeur du terrain."
+    : "";
   return `
 <h3>Les impôts que nous supprimons : ${milliards(part.rendu * pib, 0)} rendus aux
 salaires</h3>
@@ -17137,7 +17168,7 @@ salaires</h3>
 <strong>impôts</strong> (${milliards(part.posteAbandonne * pib, 0)} en
 ${annee}) qui n'ouvrent de droit à personne : un compte notionnel, qui ne rend
 que ce qui a été cotisé, ne sait les porter au crédit de personne.
-<strong>Nous cessons donc de les affecter à la retraite.</strong>${tvaALeurPlace}</p>
+<strong>Nous cessons donc de les affecter à la retraite.</strong>${tvaALeurPlace}${horsDuTravail}</p>
 <p><strong>Et nous ne les gardons pas.</strong> Laissée au budget, cette
 recette irait tout entière au déficit. Nous la partageons en deux :
 <strong>${milliards(part.rendu * pib, 0)} rendus aux salaires</strong>, autant
@@ -17225,24 +17256,30 @@ export const MESURES_BLOCAGES = {
   // jour, les civils de l'État pesés sur leurs départs actifs, super-actifs
   // et sédentaires (même étape) ont porté sa dette à 73 %, et le coût des
   // 18 % à 2,2 points.
-  solde_moyen_proposition: -1.4,
+  solde_moyen_proposition: 0.2,
   solde_moyen_actuel: -1.1,
-  dette_2070_proposition: 103,
+  dette_2070_proposition: -6,
   dette_2070_actuel: 66,
-  coefficient_minimum: 0.79,
+  coefficient_minimum: 0.95,
   decennie_coefficient_minimum: 2020,
-  coefficient_2070: 1.01,
+  coefficient_2070: 1.21,
   // donnees/tva.py : ce que la TVA à taux unique rapporte de plus que les
   // quatre taux d'aujourd'hui, en points de PIB ; zéro, la TVA n'étant pas
   // réformée.
   tva_affectee: 0.0,
+  // cout.py : la part de TVA qui va déjà aux retraites, que la proposition
+  // garde, et son point de taxe sur la valeur du terrain (décisions 79 à 81
+  // du programme, au coût depuis le 9 novembre 2026), en points de PIB, en
+  // moyenne sur 2026-2070. Avec elles, l'accueil dit un excédent et des
+  // réserves quand les mesures les donnent, un déficit et une dette sinon.
+  recettes_hors_travail: 1.6,
   // proposition_prospective.py : le solde moyen de la variante qui laisse le
   // stock intact, en points de PIB : −3,0 avant le 7 octobre 2026 (étapes 3
   // et 7 de l'action 138), −3,1 ensuite, −3,0 depuis le cas type militaire
   // du 12 octobre (action 152, étape 1), −3,1 depuis les fonctionnaires
   // civils recalés le 14 (action 159, étape 5), −3,2 depuis la CNRACL pesée
   // sur ses départs actifs et sédentaires le 16 (action 138, étape 3).
-  solde_moyen_prospectif: -3.6,
+  solde_moyen_prospectif: -1.9,
   // stock_age_legal.py : ce que coûte le diviseur de l'âge de l'assuré au lieu
   // de celui de 65 ans, en points de PIB par an.
   cout_diviseur_age_legal: 0.2,
@@ -17280,6 +17317,15 @@ function programmeBlocages(contexte) {
   // le solde se lit contre celui du système actuel, et le pilotage revient au
   // coefficient d'équilibre.
   const avecTva = m.tva_affectee > 0.0;
+  // Les deux recettes hors du travail de la proposition, quand elle les
+  // porte : le solde et la dette se disent alors selon leur signe.
+  const avecRecettes = !avecTva && m.recettes_hors_travail > 0.0;
+  const soldeDeLaProposition = m.solde_moyen_proposition >= 0
+    ? `dégage alors un excédent de ${pt(m.solde_moyen_proposition)} point par an en moyenne`
+    : `garde alors un déficit de ${pt(-m.solde_moyen_proposition)} point par an en moyenne`;
+  const reservesOuDette = m.dette_2070_proposition < 0
+    ? `des réserves de ${pt(-m.dette_2070_proposition, 0)} % du PIB`
+    : `une dette de ${pt(m.dette_2070_proposition, 0)} % du PIB`;
   const prospectif = "Le recalcul est maintenu. La version qui laisse le stock intact a été "
     + "chiffrée et écartée : "
     + (avecTva ? "même avec la TVA à taux unique, " : "")
@@ -17315,7 +17361,21 @@ function programmeBlocages(contexte) {
         + `${pt(m.coefficient_2070, 2)} en 2070 : la TVA tient lieu du `
         + "pilotage.",
     ]
-    : [
+    : avecRecettes ? [
+      cout18 + " Deux recettes hors du travail en paient l'essentiel, "
+        + `${pt(m.recettes_hors_travail)} `
+        + `${accordPoint(m.recettes_hors_travail)} de PIB par an : la part de `
+        + "TVA qui va déjà aux retraites et un point de taxe sur la valeur du "
+        + `terrain. La proposition ${soldeDeLaProposition}, contre un déficit de `
+        + `${pt(-m.solde_moyen_actuel)} pour le système actuel, et aborde 2070 `
+        + `avec ${reservesOuDette}, contre une dette de `
+        + `${pt(m.dette_2070_actuel, 0)} %.`,
+      "Ce prix est écrit sur la page Coût plutôt que caché. Le coefficient "
+        + "d'équilibre, que ces chiffres n'appliquent pas, descend à "
+        + `${pt(m.coefficient_minimum, 2)} dans les années `
+        + `${m.decennie_coefficient_minimum} et monte à `
+        + `${pt(m.coefficient_2070, 2)} en 2070.`,
+    ] : [
       cout18 + " Le solde de la proposition est de "
         + `${pt(m.solde_moyen_proposition)} point par an en moyenne contre `
         + `${pt(m.solde_moyen_actuel)} pour le système actuel, un besoin de `

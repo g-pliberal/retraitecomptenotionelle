@@ -64,6 +64,7 @@ from pathlib import Path
 from .chargement import (
     Fiabilite, charger_serie_annuelle, charger_table_csv,
 )
+from .compensation_agirc_arrco import CompensationAgircArrco
 from ..somme import somme_ordonnee
 
 
@@ -138,3 +139,69 @@ class AssietteTva:
     @property
     def fiabilite(self) -> Fiabilite:
         return min(self._fiabilite, self.pib.fiabilite(self.annee)) if self else Fiabilite.ESTIMEE
+
+
+
+class TvaGardee:
+    """La part de TVA qui va déjà aux retraites, et que la proposition garde.
+
+    LA DÉCISION. « On laisse la TVA à 20 % et on officialise la part affectée
+    aux retraites » (décision 79 du programme, action 186) : aucun taux ne
+    monte, et la fraction de TVA que les retraites reçoivent aujourd'hui reste
+    une recette de la proposition, quand elle retire les autres impôts
+    affectés. Elle S'AJOUTE aux 18 % que la proposition prélève sur toute
+    l'assiette, et à ce que l'État verse pour les allègements (décision 96) :
+    le propriétaire l'a tranché le 9 novembre 2026.
+
+    CE QU'EST CETTE PART. L'article L. 131-8 du code de la sécurité sociale
+    (9°, en vigueur au 1er février 2026) affecte 29,05 % de la TVA à la
+    branche maladie, pour 20,77 points, et à l'Acoss, pour 8,28 points, « au
+    titre de ses missions prévues aux 7° et 7° bis de l'article L. 225-1-1 » :
+    compenser à l'Agirc-Arrco et à l'Unédic la réduction générale des
+    cotisations patronales. La branche vieillesse n'en reçoit rien. La part
+    des retraites est donc la compensation de l'Agirc-Arrco, « à l'euro
+    près » (Commission des comptes de la sécurité sociale).
+
+    D'OÙ VIENT LE MONTANT. De la série du dépôt
+    (:class:`.compensation_agirc_arrco.CompensationAgircArrco`) : aucune
+    source ne publie ce que l'Agirc-Arrco reçoit seule, et la série le déduit
+    de ce que la réduction générale efface hors des régimes de base, publié
+    de 2024 à 2027 : 7,4 Md€ en 2025, 11,1 en 2026, que la réduction
+    dégressive unique relève. Son module dit ce que ce calcul ne sait pas.
+
+    LA CONVENTION DE PROJECTION. Chaque année publiée se rapporte au PIB de
+    son année, que l'appelant donne — celui que le coût projette après la
+    dernière année observée. Au-delà de la dernière prévision, la part garde
+    sa part de PIB : la convention du dépôt pour ce qu'il ne sait pas
+    projeter.
+    """
+
+    def __init__(self, racine: Path) -> None:
+        chemin = racine / "reference" / "macro" / "allegements_hors_regimes_de_base.csv"
+        # Sans la série — une racine de données réduite —, rien n'est gardé,
+        # plutôt qu'une erreur.
+        self._compensation = CompensationAgircArrco(racine) if chemin.exists() else None
+
+    def __bool__(self) -> bool:
+        return self._compensation is not None
+
+    def _publiee(self, annee: int) -> int:
+        """L'année publiée la plus proche : elle-même dans la fenêtre du
+        rapport, son bord au-delà."""
+        return min(max(annee, self._compensation.premiere_annee),
+                   self._compensation.derniere_annee)
+
+    def montant(self, annee: int) -> float:
+        """La compensation de l'Agirc-Arrco de l'année publiée la plus proche,
+        en millions d'euros courants de cette année-là."""
+        return self._compensation.montant(self._publiee(annee)) if self else 0.0
+
+    def part_pib(self, annee: int, pib) -> float:
+        """La part gardée, en part du PIB : le montant de l'année publiée la
+        plus proche, rapporté au PIB de cette année-là, ``pib(annee)`` en
+        millions d'euros. Zéro sans la série, ou sans ce PIB."""
+        if not self:
+            return 0.0
+        publiee = self._publiee(annee)
+        produit = pib(publiee)
+        return self._compensation.montant(publiee) / produit if produit else 0.0

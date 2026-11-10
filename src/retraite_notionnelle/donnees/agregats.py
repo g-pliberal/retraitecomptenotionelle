@@ -147,7 +147,7 @@ CHAMPS_SOLDE_ANNUEL = (
     "part_subventions", "taux_prelevement", "taux_liberal", "facteur_assiette",
     "annee_bascule", "convention_recette", "part_derives", "reversion_servie",
     "reforme_en_vigueur", "tva_liberal", "garantie_liberal", "majorations_stock",
-    "taux_effectif", "annee_taux_effectif",
+    "taux_effectif", "annee_taux_effectif", "tva_gardee", "lvt_retraites",
 )
 #: Ses accesseurs qui prennent un système, la clé où la table les porte, et
 #: s'ils ne servent qu'au bilan poste par poste.

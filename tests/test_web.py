@@ -4201,7 +4201,13 @@ BUDGETS_DE_LECTURE: dict[str, tuple[int, int, int]] = {
     # la bascule (décision 16 du programme, action 186), et son schéma des
     # flux en porte le nœud, six mots d'étiquette, « Pensions de réversion
     # 42 Md € ». La règle du 23 septembre : une étiquette de nœud se paie.
-    "/cout": (946, 2, 0, 0),
+    # Le 9 novembre 2026, 962 : la part de TVA gardée et le point de taxe sur
+    # la valeur du terrain entrent au régime de la proposition (décisions 79
+    # à 81 du programme, action 186). Son schéma des flux en porte le nœud,
+    # « Terrain et TVA 51 Md € », et la phrase de la carte les nomme, treize
+    # mots : sans eux, « chaque euro a sa caisse » tairait d'où vient un
+    # sixième de la recette.
+    "/cout": (962, 2, 0, 0),
     # LA SEULE PAGE DU SITE QUI DÉPASSE LE MILLIER DE MOTS, et c'est son objet
     # même. Elle affirme qu'il existe trente-neuf avantages non contributifs :
     # elle doit donc les NOMMER tous, dire ce que chacun coûte, et — pour les
@@ -4390,7 +4396,11 @@ BUDGETS_DEPLIES: dict[str, int] = {
     # (décision 16, action 186) en ajoute 43, son nœud du schéma des flux, sa
     # ligne dans le tableau du schéma et dans celui des dépenses, et un cran
     # de l'axe de la dette ; rien d'autre n'a bougé.
-    "/cout": 33293,
+    # Le 9 novembre 2026, 33 312 : les deux recettes hors du travail de la
+    # proposition (décisions 79 à 81) ont leur nœud au schéma des flux, leurs
+    # deux lignes au tableau poste par poste, et leur phrase dans la carte et
+    # dans deux notes.
+    "/cout": 33312,
     # Pourquoi changer tout déplié : 5 128 mots le 24 octobre 2026 (action 173,
     # étape 6). Ses dépliants finissaient souvent sur une phrase qui redisait
     # ce que leur chiffre ou leur phrase en gras venait d'établir.
@@ -5105,8 +5115,12 @@ def test_la_carte_des_flux_dessine_le_compte_de_la_bascule(contexte):
     assert "Impôts" not in sources["notionnel_liberal"]
     # Une TVA à taux unique entrerait au régime unique sous son nom, et elle
     # seule des impôts ; la proposition ne réforme plus la TVA depuis le
-    # 24 septembre 2026, et aucun impôt n'y entre.
+    # 24 septembre 2026. Depuis le 9 novembre, deux recettes hors du travail
+    # y entrent, sous leur nom : son point de taxe sur la valeur du terrain et
+    # la part de TVA qui va déjà aux retraites (décisions 79 à 81).
     assert ("TVA" in sources["notionnel_liberal"]) == (contexte.base.taux_tva_liberal > 0.0)
+    assert "Terrain et TVA" in sources["notionnel_liberal"]
+    assert "Terrain et TVA" not in sources["actuel"]
     assert {n.libelle for n in caisses["actuel"].usages} >= {"Pensions de réversion"}
 
     corps = rendre("/cout", {})[1]
@@ -5225,6 +5239,39 @@ def test_l_annee_des_schemas_se_choisit_et_garde_celle_de_la_cascade(contexte):
 #: 2). Le reste, 128 € sur 1 855, est ce que ces prélèvements prennent
 #: vraiment à la masse des pensions.
 PENSION_MOYENNE_DREES_2024 = (1855, 1727)
+
+
+def test_le_bilan_de_la_bascule_nomme_les_deux_recettes_hors_du_travail(contexte):
+    """Le tableau poste par poste porte, sous les impôts et taxes affectés, la
+    part de TVA que la proposition garde aux retraites et son point de taxe
+    sur la valeur du terrain (décisions 79 à 81 du programme) : le système
+    actuel n'en a pas, la proposition n'a plus qu'elles à ce poste, et la
+    note qui suit le tableau le dit."""
+    bascule = contexte.base.annee_bascule
+    ligne = site().contexte.cout().solde.annee(bascule)
+    postes = ligne.postes_ressources("notionnel_liberal")
+    assert postes["impots_lvt"] == pytest.approx(0.01305, abs=5e-5)
+    assert postes["impots_tva_gardee"] == pytest.approx(0.00365, abs=5e-5)
+    assert postes["impots_et_taxes"] == pytest.approx(
+        postes["impots_lvt"] + postes["impots_tva_gardee"])
+    pib = pages._pib_de_conversion(site().contexte.comptes(), bascule)
+    corps = rendre("/cout", {})[1]
+    section = corps[corps.index('id="cout-postes"'):]
+    tableau = re.search(r"<table\b.*?</table>", section, re.S).group(0)
+    rangs = {cellules[0]: cellules[1:] for cellules in _cellules(tableau)}
+    libelles = list(rangs)
+    for code, libelle in (("impots_tva_gardee", "Dont part de TVA gardée aux retraites"),
+                          ("impots_lvt", "Dont taxe sur la valeur du terrain")):
+        assert libelle in rangs, f"le bilan de la bascule ne dit pas « {libelle} »"
+        assert libelles.index(libelle) > libelles.index("Impôts et taxes affectés")
+        assert libelles.index(libelle) < libelles.index("Dont branche famille")
+        # Le système actuel ne les a pas ; la proposition, en milliards.
+        assert rangs[libelle][0] == "—"
+        assert rangs[libelle][3] == pages.milliards(postes[code] * pib, 1)
+    note = section[section.index("Ce que la proposition change, ligne à ligne"):]
+    note = note[:note.index("</div>")]
+    assert "la part de TVA qui va déjà aux retraites" in note
+    assert "taxe sur la valeur du terrain" in note
 
 
 def test_le_bilan_de_la_bascule_montre_la_depense_nette_a_cote_de_la_brute(contexte):

@@ -98,10 +98,13 @@ def montant(ligne: C.SoldeAnnuel, poste: str) -> float:
     Le poste des impôts rend son montant NET de la CSG du fonds de solidarité
     vieillesse : c'est ce que sa reconduction ajoute réellement aux ressources
     de la proposition, le reste rentrant d'une main pour ressortir de l'autre
-    par le retrait. Les deux autres postes n'ont pas ce double compte.
+    par le retrait. Et net de la part de TVA que la proposition garde déjà
+    (décision 79 du programme) : la reconduire la ferait entrer deux fois.
+    Les deux autres postes n'ont pas ce double compte.
     """
     if poste == POSTE_IMPOTS:
-        return ligne.ressources * ligne.part_impots - ligne.retrait_par_impot
+        return (ligne.ressources * ligne.part_impots - ligne.retrait_par_impot
+                - ligne.tva_gardee_de(LIBERAL))
     if poste == POSTE_CONTRIBUTION:
         return ligne.ressources * ligne.parts.get("contribution_equilibre_etat", 0.0)
     if poste == POSTE_SUBVENTIONS:

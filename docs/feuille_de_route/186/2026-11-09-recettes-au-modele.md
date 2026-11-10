@@ -1,13 +1,14 @@
 # Les décisions sur les recettes, portées au scénario 6 : le plan, et sa première étape
 
 **Reprise, au 9 novembre 2026.** Le plan est écrit, neuf étapes, une par
-session (« Le plan »). La première est faite : la part de TVA de
-l'Agirc-Arrco est une donnée du dépôt, recoupée à sa source, 7,4 Md€ en 2025
-et 11,1 en 2026 ; rien du coût ne la lit encore. Au propriétaire, deux
-questions (« Ce que le propriétaire tranche ») : la TVA s'ajoute-t-elle à ce
-que l'État verse pour les allègements, ou en fait-elle partie ; quelle valeur
-de la LVT le coût retient. Par quoi commencer : l'étape 2 si la première
-question a sa réponse, sinon l'étape 3, l'AVPF, qui n'attend rien.
+session (« Le plan »). Trois sont faites : la part de TVA de l'Agirc-Arrco en
+donnée (1), cette TVA au coût du scénario 6 (2) et le point de LVT des
+retraites (4), ces deux-là par une autre session le même soir
+(`2026-11-09-tva-et-lvt-au-cout.md`). Le propriétaire a répondu aux deux
+questions de la fin : la TVA s'ajoute, la LVT à sa valeur centrale
+(décisions 105 et 106). Le chiffrage porte déjà les deux recettes ; son
+hypothèse n° 1 et sa table E attendent l'étape 9. Par quoi commencer :
+l'étape 3, l'AVPF, qui n'attend rien.
 
 *Le 9 novembre 2026, le propriétaire a tranché, ligne à ligne, ce que
 deviennent les recettes de la retraite sous la proposition (décisions 47, 57,

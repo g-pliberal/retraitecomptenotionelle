@@ -769,6 +769,24 @@ institutions:
           vingtile sur son rapport à l'ensemble. Sert à l'axe du revenu de
           l'action 14 : populations `niveau_de_vie_v01` à `_v20` du diviseur,
           rattachement d'un cas type par son niveau de salaire.
+      - id: insee_patrimoine_national
+        titre: >-
+          Patrimoine national par secteur institutionnel et grand type
+          d'actif, fin 2025 : logements, autres bâtiments et terrains bâtis
+          des ménages, des sociétés et des administrations publiques
+        url: https://www.insee.fr/fr/statistiques/2830290
+        acces: fichier
+        statut_integration: saisi
+        millesime: juillet 2026 (données provisoires)
+        cible: data/reference/macro/patrimoine_immobilier.csv
+        note: >-
+          Lu le 9 novembre 2026, pour la taxe sur la valeur du terrain de la
+          proposition (décision 80 du programme, action 186) : 7 032 Md€ de
+          terrains bâtis fin 2025, dont 6 091 hors administrations publiques,
+          l'assiette ; 13 447 Md€ d'immobilier privé, terrains et bâti, à quoi
+          se rapporte la taxe foncière d'aujourd'hui. Recopié du classeur
+          `econ-gen-patrimoine-nat.xlsx` de la page ; les terres agricoles
+          n'y sont pas publiées à part.
 
   cor:
     nom: Conseil d'orientation des retraites
@@ -3967,6 +3985,30 @@ institutions:
           départ, pour les mines, la SEITA, l'Opéra, la Comédie-Française et
           les gérants de débits de tabac. Le document de mission reprend les
           trois programmes mot pour mot.
+
+  fipeco:
+    nom: Fipeco (Finances publiques et économie)
+    role: >-
+      Fiches sur les finances publiques, qui lisent les comptes nationaux de
+      l'Insee : le produit des taxes foncières, par payeur.
+    jeux:
+      - id: fipeco_taxes_foncieres
+        titre: >-
+          « Les taxes foncières payées par les ménages », 29 septembre 2025 :
+          produit des taxes foncières en 2024, en comptabilité nationale,
+          payé par les ménages et par les autres agents
+        url: https://fipeco.fr/pdf/Taxes%20fonci%C3%A8res.pdf
+        acces: document
+        statut_integration: saisi
+        millesime: septembre 2025
+        cible: data/reference/macro/taxes_foncieres.csv
+        note: >-
+          Lu le 9 novembre 2026, pour la taxe sur la valeur du terrain de la
+          proposition, qui remplace la taxe foncière (décisions 9 et 80 du
+          programme, action 186) : 42,9 Md€ en 2024, dont 26,1 payés par les
+          ménages et 16,8 par les autres agents, surtout des entreprises. La
+          fiche lit les comptes nationaux de l'Insee ; dans la comptabilité
+          des collectivités, le bâti fait 41,9 Md€ et le non-bâti 1,3.
 
   dg_tresor:
     nom: Direction générale du Trésor

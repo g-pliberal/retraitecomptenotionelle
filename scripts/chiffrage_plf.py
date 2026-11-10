@@ -197,6 +197,16 @@ class Chiffrage:
         """La part de cette TVA qui paie la garantie vieillesse, avant le régime."""
         return self.solde[annee].tva_garantie(LIBERAL)
 
+    def tva_gardee(self, annee: int) -> float:
+        """La part de TVA qui va déjà aux retraites, que la proposition garde
+        (décision 79 du programme), en part de PIB."""
+        return self.solde[annee].tva_gardee_de(LIBERAL)
+
+    def lvt(self, annee: int) -> float:
+        """Le point de taxe sur la valeur du terrain que la proposition donne
+        aux retraites (décisions 80 et 81), en part de PIB."""
+        return self.solde[annee].lvt_de(LIBERAL)
+
     def solde_regime(self, annee: int) -> float:
         return self.solde[annee].solde(LIBERAL)
 
@@ -283,14 +293,21 @@ class Chiffrage:
         return postes["contribution_equilibre_etat"] + postes["subventions_equilibre"]
 
     def prelevements_proposes(self, annee: int) -> float:
-        """Ce que la proposition prélève : ses cotisations, son pilier, sa TVA.
+        """Ce que la proposition prélève : ses cotisations, son pilier, ses impôts.
 
-        La TVA à taux unique en est, pour ce qu'elle rapporte DE PLUS que les
-        quatre taux d'aujourd'hui : c'est un prélèvement obligatoire, et le
-        système actuel compte bien ses impôts affectés dans les siens.
+        La part de TVA qu'elle garde et son point de taxe sur la valeur du
+        terrain en sont : ce sont des prélèvements obligatoires, et le système
+        actuel compte bien ses impôts affectés dans les siens. La TVA à taux
+        unique aussi, sous la variante qui la porte, pour ce qu'elle rapporte
+        DE PLUS que les quatre taux d'aujourd'hui.
         """
         return (self.poste_recette(annee, "cotisations", LIBERAL)
-                + self.pilier_obligatoire(annee) + self.tva(annee))
+                + self.pilier_obligatoire(annee) + self.tva(annee)
+                + self.impots_gardes_et_lvt(annee))
+
+    def impots_gardes_et_lvt(self, annee: int) -> float:
+        """La part de TVA gardée et le point de LVT, ensemble, en part de PIB."""
+        return self.tva_gardee(annee) + self.lvt(annee)
 
 
 # -- les blocs que le script écrit dans le document --------------------------
@@ -338,10 +355,17 @@ def tableau_fait_central(retro: Chiffrage, prosp: Chiffrage) -> str:
     variation de trois centièmes de point là où deux points s'en vont et deux
     points arrivent. La ligne se tait depuis le 24 septembre 2026, où la
     proposition a cessé de réformer la TVA.
+
+    Le point de taxe sur la valeur du terrain (décision 80 du programme) est
+    à part pour la même raison : c'est une recette que la proposition ajoute.
+    La part de TVA qu'elle garde (décision 79) n'a pas de ligne : c'est un
+    impôt affecté qu'elle ne retire pas, et la ligne des impôts retirés en
+    est diminuée d'autant.
     """
     an = PREMIERE_ANNEE
     tva = retro.tva(an)
-    recettes = retro.recettes(an) - tva - retro.solde[an].ressources_de("actuel")
+    lvt = retro.lvt(an)
+    recettes = retro.recettes(an) - tva - lvt - retro.solde[an].ressources_de("actuel")
     depense = retro.depense(an) - retro.solde[an].depense("actuel")
     taux_tva = _taux_tva(retro.parametres.taux_tva_liberal)
 
@@ -357,12 +381,15 @@ def tableau_fait_central(retro: Chiffrage, prosp: Chiffrage) -> str:
         "|---|---:|---:|",
         ligne("Recettes retirées au système de retraite", recettes),
         ligne("dont cotisations, au taux unique", retro.retire(an, "cotisations")),
-        ligne("dont impôts et taxes affectés",
-              retro.retire(an, "impots_et_taxes") - retro.retire(an, "impots_tva")),
+        ligne("dont impôts et taxes affectés" + (
+                  ", hors la part de TVA gardée" if retro.tva_gardee(an) > 0.0 else ""),
+              retro.retire(an, "impots_et_taxes") - retro.retire(an, "impots_tva") - lvt),
         ligne("dont versements de l'État et de la branche famille",
               retro.versements_publics_retires(an)),
         *([ligne(f"TVA à taux unique de {taux_tva} %, affectée à la retraite", tva)]
           if retro.parametres.taux_tva_liberal > 0.0 else []),
+        *([ligne("Taxe sur la valeur du terrain, le point affecté à la retraite", lvt)]
+          if lvt > 0.0 else []),
         ligne("Dépense publique retirée (pensions et garantie)", depense),
         ligne("Écart de solde de la retraite, garantie comprise, variante rétroactive",
               retro.ecart(an), gras=True),
@@ -376,7 +403,10 @@ def tableau_fait_central(retro: Chiffrage, prosp: Chiffrage) -> str:
 def tableau_arbitrages(retro: Chiffrage, prosp: Chiffrage) -> str:
     """Ce que chaque arbitrage ouvert déplace, en points de PIB de l'année de bascule."""
     an = PREMIERE_ANNEE
-    impots = retro.poste_recette(an, "impots_et_taxes", "actuel")
+    # Les impôts affectés que la proposition retire : la part de TVA qu'elle
+    # garde n'est plus à arbitrer.
+    impots = retro.poste_recette(an, "impots_et_taxes", "actuel") - retro.tva_gardee(an)
+    lvt = retro.lvt(an)
     subventions = retro.poste_recette(an, "subventions_equilibre", "actuel")
     retroactivite = prosp.depense(an) - retro.depense(an)
     pilotage = 1.0 - retro.coefficient(an)
@@ -386,7 +416,7 @@ def tableau_arbitrages(retro: Chiffrage, prosp: Chiffrage) -> str:
     lignes = [
         f"| Arbitrage ouvert | Ce qu'il déplace en {an} | En milliards |",
         "|---|---:|---:|",
-        f"| Impôts et taxes affectés, si l'État continue de les lever "
+        f"| Impôts et taxes affectés retirés, si l'État continue de les lever "
         f"| {nombre(impots * 100, 2, True)} pt | {nombre(retro.md(an, impots), 0, True)} |",
         f"| Subventions d'équilibre, même question "
         f"| {nombre(subventions * 100, 2, True)} pt "
@@ -397,6 +427,9 @@ def tableau_arbitrages(retro: Chiffrage, prosp: Chiffrage) -> str:
         *([f"| Renoncer à la TVA à taux unique de {taux_tva} % "
            f"| {nombre(-tva * 100, 2, True)} pt | {nombre(-retro.md(an, tva), 0, True)} |"]
           if retro.parametres.taux_tva_liberal > 0.0 else []),
+        *([f"| Renoncer au point de taxe sur la valeur du terrain "
+           f"| {nombre(-lvt * 100, 2, True)} pt | {nombre(-retro.md(an, lvt), 0, True)} |"]
+          if lvt > 0.0 else []),
         f"| Appliquer le coefficient d'équilibre, non appliqué ici "
         f"| {nombre(retro.coefficient(an), 2)} sur toutes les pensions "
         f"| soit {nombre(abs(pilotage) * 100, 1)} % {sens} |",
@@ -417,13 +450,18 @@ def tableau_prelevements(retro: Chiffrage) -> str:
     avec_tva = retro.parametres.taux_tva_liberal > 0.0
     taux_tva = _taux_tva(retro.parametres.taux_tva_liberal)
     colonne_tva = f"| TVA {taux_tva} % (sc. 6) " if avec_tva else ""
+    # La part de TVA gardée et le point de LVT ont leur colonne, qui se tait
+    # sous une variante qui renonce aux deux.
+    avec_impots = any(retro.impots_gardes_et_lvt(annee) > 0.0 for annee in ANNEES_PRELEVEMENTS)
+    colonne_impots = "| TVA gardée et LVT (sc. 6) " if avec_impots else ""
     lignes = [
         "| Année | Cotisations (sc. 1) | Impôts et taxes affectés (sc. 1) "
         "| **Prélèvements sc. 1** | Cotisations 18 % (sc. 6) "
-        f"| Pilier obligatoire 5 % (sc. 6) {colonne_tva}"
+        f"| Pilier obligatoire 5 % (sc. 6) {colonne_tva}{colonne_impots}"
         "| **Prélèvements sc. 6** | Écart "
         "| Versé par l'État au sc. 1, hors prélèvements |",
-        "|---|---:|---:|---:|---:|---:|" + ("---:|" if avec_tva else "") + "---:|---:|---:|",
+        "|---|---:|---:|---:|---:|---:|" + ("---:|" if avec_tva else "")
+        + ("---:|" if avec_impots else "") + "---:|---:|---:|",
     ]
     for annee in ANNEES_PRELEVEMENTS:
         postes = retro.solde[annee].postes_ressources("actuel")
@@ -446,6 +484,7 @@ def tableau_prelevements(retro: Chiffrage) -> str:
             f"| {cellule(total_actuel, True)} "
             f"| {cellule(propose)} | {cellule(pilier)} "
             + (f"| {cellule(tva)} " if avec_tva else "")
+            + (f"| {cellule(retro.impots_gardes_et_lvt(annee))} " if avec_impots else "")
             + f"| {cellule(total_propose, True)} "
             f"| {nombre((total_propose - total_actuel) * 100, 2, True)} "
             f"| {cellule(etat)} |"

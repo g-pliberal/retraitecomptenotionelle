@@ -379,6 +379,17 @@ export const PARAMETRES_DEFAUT = Object.freeze({
   //: dire « la TVA n'est pas réformée », et non « une TVA à zéro ». Voir
   //: `config.py`.
   taux_tva_liberal: 0.0,
+  //: La part de TVA qui va déjà aux retraites — la compensation de la
+  //: réduction générale à l'Agirc-Arrco — est gardée (décision 79 du
+  //: programme) ; faux rend la convention d'avant. Voir `config.py`.
+  tva_des_retraites_gardee: true,
+  //: Une taxe sur la valeur du terrain (LVT) à 2 % remplace la taxe foncière,
+  //: dont un point va aux retraites (décisions 80 et 81), pour un rendement
+  //: locatif du terrain de 3 %. Un taux nul : la taxe foncière reste. Seul le
+  //: coût, en Python, les lit. Voir `config.py`.
+  taux_lvt: 0.02,
+  taux_lvt_retraites: 0.01,
+  rendement_locatif_terrain: 0.03,
   //: Montants MENSUELS, en euros de `annee_euros_garantie_vieillesse`, ramenés
   //: à l'année de liquidation par l'indice des prix. 800 + 250 = 1 050 € seul,
   //: 800 € par personne à deux.
