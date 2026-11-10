@@ -485,12 +485,61 @@ export function entete(cheminActif = "/") {
   // étroit, le bouton n'est pas affiché. Il porte les trois traits du menu
   // du site du parti, et le mot à côté, que le plus petit écran ne laisse
   // qu'aux synthèses vocales (9 novembre 2026).
+  // Entre la marque et le menu, le bouton « Affichage » du site du parti : il
+  // ouvre le panneau des réglages (`panneauAffichage`), que la page porte hors
+  // de cet en-tête — le routeur récrit l'en-tête à chaque rendu, et un panneau
+  // ouvert n'y survivrait pas.
   return `<a class="evitement" href="#contenu">Aller au contenu</a>
 <header class="bandeau"><div class="interieur">
   <p class="nom"><a href="${adresseDepuis(cheminActif, "/", OPTIONS)}"><img class="logo" src="${cheminActif === "/" ? "" : "../"}moteur/logo-plf.svg" alt="" width="566" height="378"><span class="marque"><span class="parti">${NOM_DU_PARTI}</span><span class="site">${NOM_DU_SITE}</span></span></a></p>
+  <button type="button" class="affichage" aria-haspopup="dialog" aria-controls="affichage">${icone("settings")}<span>Affichage</span></button>
   <button type="button" class="menu" aria-expanded="false" aria-controls="navigation">${icone("menu")}<span>Menu</span></button>
   <nav id="navigation" aria-label="Navigation principale">${navigation(cheminActif)}</nav>
 </div></header>`;
+}
+
+/**
+ * Où le navigateur du lecteur garde ses réglages d'affichage : son stockage
+ * local, sous cette clé, à côté de la saisie du simulateur. Le script d'en-tête
+ * de `moteur/page.html` la lit avant la première peinture, le routeur l'écrit.
+ */
+export const MEMOIRE_AFFICHAGE = "retraite-notionnelle.affichage";
+
+/**
+ * Les réglages du panneau « Affichage », repris du site « Fonction publique :
+ * les chiffres » du parti, sans son thème sombre (décision du 9 novembre
+ * 2026) : la taille du texte, la police très lisible, l'espacement. Le premier
+ * choix de chacun est celui du site tel qu'il s'ouvre ; un autre se pose sur
+ * `<html>`, en attribut `data-<nom>`, et la feuille de style fait le reste.
+ */
+export const REGLAGES_AFFICHAGE = [
+  { nom: "taille", titre: "Taille du texte",
+    choix: [["normal", "Normale"], ["grand", "Grande"], ["tres-grand", "Très grande"]] },
+  { nom: "police", titre: "Police de caractères",
+    choix: [["standard", "Standard"], ["lisible", "Très lisible"]] },
+  { nom: "interligne", titre: "Espacement du texte",
+    choix: [["normal", "Normal"], ["large", "Aéré"]] },
+];
+
+/**
+ * Le panneau « Affichage » : un dialogue, que le bouton du bandeau ouvre. Il
+ * est écrit sur ses valeurs par défaut ; le routeur y coche, en l'ouvrant, ce
+ * que le lecteur a retenu. Ce qu'il dit de ces choix est vrai : ils ne vont
+ * que dans le stockage local du navigateur (`MEMOIRE_AFFICHAGE`).
+ */
+export function panneauAffichage() {
+  const reglage = ({ nom, titre, choix }) => `<fieldset><legend>${titre}</legend>`
+    + `<div class="pastilles">${choix.map(([valeur, texte], rang) => "<label>"
+      + `<input type="radio" name="${nom}" value="${valeur}"${rang ? "" : " checked"}>`
+      + `${texte}</label>`).join("")}</div></fieldset>`;
+  // Le contenu tient dans une boîte à lui : un clic sur le dialogue lui-même
+  // est alors un clic sur le fond, qui le ferme.
+  return `<dialog id="affichage" aria-labelledby="titre-affichage"><div class="reglages">
+<div class="tete"><h2 id="titre-affichage">Affichage</h2><button type="button" data-fermer>Fermer</button></div>
+${REGLAGES_AFFICHAGE.map(reglage).join("\n")}
+<p><button type="button" data-retablir>Rétablir les réglages par défaut</button></p>
+<p class="ou">Ces choix restent dans votre navigateur : rien n'en sort.</p>
+</div></dialog>`;
 }
 
 /**
@@ -1091,6 +1140,11 @@ export const ICONES = {
     + '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />'
     + '<path d="m7 10 5 5 5-5" />',
   menu: '<path d="M4 5h16" /><path d="M4 12h16" /><path d="M4 19h16" />',
+  settings: '<path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 '
+    + '1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 '
+    + '4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 '
+    + '2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 '
+    + '2.34 0 0 0 3.319-1.915" /><circle cx="12" cy="12" r="3" />',
   "share-2": '<circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" />'
     + '<circle cx="18" cy="19" r="3" />'
     + '<line x1="8.59" x2="15.42" y1="13.51" y2="17.49" />'

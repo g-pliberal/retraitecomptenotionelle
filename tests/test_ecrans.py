@@ -1035,6 +1035,258 @@ def test_le_dernier_releve_depose_l_emporte():
     assert "1998" in course["releve"], course["releve"]
 
 
+# -- le panneau « Affichage » ------------------------------------------------
+
+#: Le panneau « Affichage » du site « Fonction publique : les chiffres », lu
+#: dans son panneau (``index.html``, ``#options-affichage``) et dans sa feuille
+#: de style (« Options d'affichage choisies par le visiteur ») : le texte
+#: courant, de 1,0625 rem, passe à 1,25 rem puis à 1,5 rem — de 17 points à 20
+#: puis à 24 ; la police très lisible est Atkinson Hyperlegible ; le texte aéré
+#: a un interligne de 1,9, des lettres espacées de 0,02 em et des mots de
+#: 0,08 em. Le thème sombre n'est pas repris (décision du 9 novembre 2026).
+AFFICHAGE = {
+    "choix": {"taille": ["normal", "grand", "tres-grand"],
+              "police": ["standard", "lisible"], "interligne": ["normal", "large"]},
+    "texte": {"grand": 1.25 / 1.0625, "tres-grand": 1.5 / 1.0625},
+    "police": "Atkinson Hyperlegible",
+    "aere": {"interligne": 1.9, "lettres": 0.02, "mots": 0.08},
+}
+
+#: Le texte courant du site, en points : 17 au large, 16 sur un téléphone. Le
+#: réglage de la taille le grandit dans la proportion du parti.
+TEXTE_COURANT = {390: 16, 1440: 17}
+
+#: Où le navigateur du lecteur garde ses choix.
+MEMOIRE_DE_L_AFFICHAGE = "retraite-notionnelle.affichage"
+
+#: Les neuf pages, sans carrière derrière le ``#``.
+PAGES = [route for route in ROUTES if route != RESULTATS]
+
+#: Ce que la page montre de ses réglages d'affichage, et de son panneau.
+ETAT_DE_L_AFFICHAGE = """document.fonts.ready.then(() => {
+  const racine = document.documentElement;
+  const corps = getComputedStyle(document.body);
+  const taille = parseFloat(corps.fontSize);
+  const dialogue = document.querySelector("dialog#affichage");
+  const boite = (el) => {
+    const b = el.getBoundingClientRect();
+    return { gauche: b.left, droite: b.right, haut: b.top, bas: b.bottom };
+  };
+  const choix = {};
+  for (const champ of document.querySelectorAll('dialog#affichage input[type="radio"]')) {
+    (choix[champ.name] ||= []).push(champ.value);
+  }
+  return {
+    reglages: { taille: racine.dataset.taille ?? null, police: racine.dataset.police ?? null,
+      interligne: racine.dataset.interligne ?? null },
+    texte: taille,
+    police: corps.fontFamily.split(",")[0].trim().replace(/"/g, ""),
+    chargee: document.fonts.check(`${taille}px ${corps.fontFamily.split(",")[0]}`),
+    interligne: parseFloat(corps.lineHeight) / taille,
+    lettres: (parseFloat(corps.letterSpacing) || 0) / taille,
+    mots: (parseFloat(corps.wordSpacing) || 0) / taille,
+    ouvert: Boolean(dialogue && dialogue.open),
+    panneau: dialogue && dialogue.open ? boite(dialogue) : null,
+    choix,
+    coches: Object.fromEntries([...document.querySelectorAll("dialog#affichage input:checked")]
+      .map((champ) => [champ.name, champ.value])),
+    pastilles: dialogue && dialogue.open
+      ? [...dialogue.querySelectorAll("label, button")]
+        .map((el) => Math.round(el.getBoundingClientRect().height)) : [],
+    retablir: Boolean(document.querySelector("dialog#affichage button[data-retablir]")),
+    memoire: localStorage.getItem(%(memoire)s),
+    ecran: innerWidth,
+    decalages: window.decalagesDuChargement,
+  };
+})""" % {"memoire": json.dumps(MEMOIRE_DE_L_AFFICHAGE)}
+
+#: Le bouton du bandeau, et ses voisins : la marque à sa gauche, le bouton du
+#: menu, que seul un téléphone montre, la navigation.
+BANDEAU_DE_L_AFFICHAGE = """(() => {
+  const boite = (selecteur) => {
+    const el = document.querySelector(selecteur);
+    const b = el ? el.getBoundingClientRect() : null;
+    return b && b.width ? { gauche: b.left, droite: b.right, haut: b.top, bas: b.bottom } : null;
+  };
+  const bouton = document.querySelector("header.bandeau button.affichage");
+  const mot = bouton ? bouton.querySelector("span") : null;
+  return {
+    bouton: boite("header.bandeau button.affichage"),
+    marque: boite("header.bandeau .nom a"),
+    menu: boite("header.bandeau button.menu"),
+    navigation: boite("header.bandeau nav"),
+    nom: bouton ? bouton.textContent.trim() : null,
+    pictogramme: Boolean(bouton && bouton.querySelector("svg.icone")),
+    motVisible: Boolean(mot) && getComputedStyle(mot).clipPath === "none"
+      && mot.getBoundingClientRect().width > 1,
+  };
+})()"""
+
+
+def _aller(route: str) -> list[dict]:
+    """Le lecteur suit un lien vers une page du site, et l'attend rendue, ses
+    polices arrivées."""
+    racine = 'document.querySelector("header.bandeau .nom a")'
+    return [
+        {"geste": f"location.assign(new URL({json.dumps(route)}, {racine}.href))"},
+        {"jusqua": f"""(() => {{
+          const racine = {racine};
+          return Boolean(racine) && !window.__quittee
+            && location.pathname === new URL({json.dumps(route)}, racine.href).pathname
+            && {PRETE} && !document.body.classList.contains("calcul-en-cours")
+            && document.fonts.status === "loaded";
+        }})()"""},
+        {"pause": 400},
+    ]
+
+
+def _choisir(nom: str, valeur: str) -> dict:
+    return {"geste": f"""document.querySelector('dialog#affichage input[name="{nom}"]"""
+                     f"""[value="{valeur}"]').click()"""}
+
+
+def _course_de_l_affichage(largeur: int, hauteur: int) -> dict:
+    """Le lecteur ouvre le panneau sur l'accueil, y règle tout au plus fort, le
+    ferme, lit les neuf pages, puis revient rétablir les réglages par défaut."""
+    ouvrir = {"geste": 'document.querySelector("header.bandeau button.affichage").click()'}
+    etat = lambda nom: {"noter": nom, "valeur": ETAT_DE_L_AFFICHAGE}  # noqa: E731
+    etapes = [
+        {"jusqua": PRETE},
+        {"noter": "bandeau", "valeur": BANDEAU_DE_L_AFFICHAGE},
+        ouvrir, etat("ouvert"),
+        _choisir("taille", "grand"), etat("grand"),
+        _choisir("taille", "tres-grand"), etat("tres-grand"),
+        _choisir("police", "lisible"),
+        {"jusqua": f"""document.fonts.check('17px "{AFFICHAGE["police"]}"')"""},
+        etat("lisible"),
+        _choisir("interligne", "large"), etat("large"),
+        {"geste": 'document.querySelector("dialog#affichage button[data-fermer]").click()'},
+        etat("ferme"),
+    ]
+    for route in PAGES[1:] + PAGES[:1]:
+        etapes += [{"geste": "window.__quittee = true"}, *_aller(route), etat(f"page {route}"),
+                   {"noter": f"mesure {route}"}]
+    etapes += [
+        ouvrir, etat("rouvert"),
+        {"geste": 'document.querySelector("dialog#affichage button[data-retablir]").click()'},
+        etat("retabli"),
+    ]
+    return {"nom": f"affichage à {largeur}", "depart": "./",
+            "ecran": {"largeur": largeur, "hauteur": hauteur}, "etapes": etapes}
+
+
+@functools.lru_cache(maxsize=None)
+def _affichages() -> tuple:
+    """Le panneau joué sur un téléphone puis au bureau."""
+    resultat = jouer({"ecrans": [], "routes": [], "chargements": [],
+                      "courses": [_course_de_l_affichage(l, h) for l, h in CHARGEMENTS]})
+    return tuple(resultat["courses"])
+
+
+def test_le_bandeau_ouvre_le_panneau_affichage():
+    """Le 9 novembre 2026, le propriétaire retient, du panneau « Affichage » de
+    son autre site, la taille du texte, la police très lisible et
+    l'espacement, sans le thème sombre (action 189, étape 7). Un bouton
+    « Affichage », à droite de la marque dans le bandeau, ouvre le panneau :
+    trois réglages, chacun sur sa valeur par défaut, et de quoi y revenir."""
+    for course in _affichages():
+        ou = course["nom"]
+        assert not course["fautes"] and not course["erreurs"], (ou, course["fautes"],
+                                                                 course["erreurs"])
+        bandeau, ouvert = course["notes"]["bandeau"], course["notes"]["ouvert"]
+        bouton, marque = bandeau["bouton"], bandeau["marque"]
+        assert bouton and bandeau["nom"] == "Affichage" and bandeau["pictogramme"], (ou, bandeau)
+        assert bouton["gauche"] >= marque["droite"], f"{ou} : le bouton n'est pas à droite"
+        assert bouton["haut"] < marque["bas"] and bouton["bas"] > marque["haut"], (
+            f"{ou} : le bouton n'est pas sur la rangée de la marque")
+        assert bouton["droite"] <= ouvert["ecran"] and bouton["gauche"] >= 0, (ou, bouton)
+        for cote in (bouton["bas"] - bouton["haut"], bouton["droite"] - bouton["gauche"]):
+            assert cote >= HAUTEUR_D_UN_CONTROLE - 0.5, f"{ou} : bouton de {cote} points"
+        if bandeau["menu"]:
+            assert bouton["droite"] <= bandeau["menu"]["gauche"], f"{ou} : le menu d'abord"
+        else:
+            assert bandeau["motVisible"], f"{ou} : le bouton ne dit pas son nom"
+        assert ouvert["ouvert"], f"{ou} : le panneau ne s'ouvre pas"
+        assert ouvert["choix"] == AFFICHAGE["choix"], (ou, ouvert["choix"])
+        assert ouvert["coches"] == {nom: valeurs[0]
+                                    for nom, valeurs in AFFICHAGE["choix"].items()}, ou
+        assert ouvert["retablir"], f"{ou} : rien ne rétablit les réglages par défaut"
+        assert ouvert["texte"] == TEXTE_COURANT[course["ecran"]] and ouvert["memoire"] is None, ou
+        for etat in ("ouvert", "large"):
+            note = course["notes"][etat]
+            panneau = note["panneau"]
+            assert panneau["gauche"] >= 0 and panneau["droite"] <= note["ecran"], (ou, panneau)
+            assert min(note["pastilles"]) >= HAUTEUR_D_UN_CONTROLE, (ou, etat, note["pastilles"])
+        assert not course["notes"]["ferme"]["ouvert"], f"{ou} : le panneau ne se ferme pas"
+
+
+def test_chaque_reglage_de_l_affichage_s_applique_aussitot():
+    """Un choix du panneau change la page sous les yeux du lecteur, aux
+    valeurs du site du parti : le texte courant grandi de 17 à 20 puis à 24
+    points au large, et d'autant sur un téléphone, Atkinson Hyperlegible,
+    chargée, et le texte aéré."""
+    for course in _affichages():
+        ou, notes = course["nom"], course["notes"]
+        for taille in ("grand", "tres-grand"):
+            attendu = TEXTE_COURANT[course["ecran"]] * AFFICHAGE["texte"][taille]
+            assert notes[taille]["reglages"]["taille"] == taille, (ou, notes[taille]["reglages"])
+            assert notes[taille]["texte"] == pytest.approx(attendu, abs=0.05), (
+                f"{ou} : texte {taille} de {notes[taille]['texte']} points")
+        lisible, large = notes["lisible"], notes["large"]
+        assert lisible["police"] == AFFICHAGE["police"] and lisible["chargee"], (ou, lisible["police"])
+        assert notes["tres-grand"]["police"] != AFFICHAGE["police"], ou
+        assert notes["lisible"]["interligne"] < AFFICHAGE["aere"]["interligne"] - 0.1, ou
+        for nom, attendu in AFFICHAGE["aere"].items():
+            assert large[nom] == pytest.approx(attendu, abs=0.005), f"{ou} : {nom}, {large[nom]}"
+        assert large["reglages"] == {"taille": "tres-grand", "police": "lisible",
+                                     "interligne": "large"}, (ou, large["reglages"])
+
+
+def test_les_reglages_de_l_affichage_suivent_le_lecteur_sur_les_neuf_pages():
+    """Les choix se gardent dans le navigateur du lecteur, et chaque page les
+    porte dès sa première peinture : rien ne s'y décale, alors qu'un réglage
+    posé après coup grandirait le texte sous ses yeux. Au plus fort — texte
+    très grand, police très lisible, texte aéré —, aucune page ne déborde en
+    largeur, et un texte de tracé reste à sa taille de lecture. Rétablir les
+    réglages par défaut les ôte de la page, du panneau et du navigateur."""
+    fautes = []
+    plus_fort = {"taille": "tres-grand", "police": "lisible", "interligne": "large"}
+    for course in _affichages():
+        notes = course["notes"]
+        for route in PAGES:
+            ou = f"{route} à {course['ecran']} points"
+            etat, mesure = notes[f"page {route}"], notes[f"mesure {route}"]
+            if etat["reglages"] != plus_fort or etat["police"] != AFFICHAGE["police"]:
+                fautes.append(f"{ou} : réglages perdus, {etat['reglages']}, {etat['police']}")
+            attendu = TEXTE_COURANT[course["ecran"]] * AFFICHAGE["texte"]["tres-grand"]
+            if abs(etat["texte"] - attendu) > 0.05:
+                fautes.append(f"{ou} : texte de {etat['texte']} points")
+            cls = sum(decalage["valeur"] for decalage in etat["decalages"])
+            if cls > CLS_MAXIMAL:
+                fautes.append(f"{ou} : CLS {cls:.3f} — " + " ; ".join(
+                    f"{d['valeur']:.3f} à {d['instant']} ms : {', '.join(d['sources'])}"
+                    for d in etat["decalages"]))
+            if mesure["deborde"]:
+                fautes.append(f"{ou} : la page fait {mesure['deborde']} points de large")
+            fautes += [f"{ou} : défile en largeur — {cadre}" for cadre in mesure["defilants"]]
+            fautes += [f"{ou} : sort de l'écran — {element}" for element in mesure["sortants"]]
+            for trace in mesure["figures"]["traces"]:
+                if not TEXTE_D_UN_TRACE[0] <= trace["texte"] <= TEXTE_D_UN_TRACE[1]:
+                    fautes.append(f"{ou} : texte de tracé hors de la taille de lecture, {trace}")
+        ou = course["nom"]
+        if notes["rouvert"]["coches"] != plus_fort:
+            fautes.append(f"{ou} : le panneau rouvert ne dit pas les réglages, "
+                          f"{notes['rouvert']['coches']}")
+        retabli = notes["retabli"]
+        if (any(retabli["reglages"].values()) or retabli["memoire"] is not None
+                or retabli["texte"] != TEXTE_COURANT[course["ecran"]]
+                or retabli["coches"] != {nom: valeurs[0]
+                                         for nom, valeurs in AFFICHAGE["choix"].items()}):
+            fautes.append(f"{ou} : réglages non rétablis, {retabli['reglages']}, "
+                          f"{retabli['memoire']}, {retabli['texte']}, {retabli['coches']}")
+    assert not fautes, f"{len(fautes)} écarts :\n" + "\n".join(fautes[:60])
+
+
 # -- le lancement du navigateur ----------------------------------------------
 
 #: Le module par lequel le pilote lance Chromium et attend son protocole, et

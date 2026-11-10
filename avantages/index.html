@@ -24,6 +24,23 @@
 
 <link rel="preload" href="../moteur/polices/public-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="../moteur/polices/jost-latin.woff2" as="font" type="font/woff2" crossorigin>
+<script>(function () {
+  try {
+    var choix = JSON.parse(localStorage.getItem("retraite-notionnelle.affichage") || "{}");
+    var admis = { taille: ["grand", "tres-grand"], police: ["lisible"], interligne: ["large"] };
+    for (var nom in admis) {
+      if (admis[nom].indexOf(choix[nom]) >= 0) { document.documentElement.dataset[nom] = choix[nom]; }
+    }
+    if (choix.police === "lisible") {
+      ["400", "700"].forEach(function (graisse) {
+        var lien = document.createElement("link");
+        lien.rel = "preload"; lien.as = "font"; lien.type = "font/woff2"; lien.crossOrigin = "";
+        lien.href = "../moteur/polices/atkinson-hyperlegible-" + graisse + ".woff2";
+        document.head.appendChild(lien);
+      });
+    }
+  } catch (erreur) { /* pas de stockage : les réglages par défaut */ }
+})();</script>
 <style>
 @font-face {
   font-family: "Public Sans"; font-style: normal; font-weight: 100 900;
@@ -42,6 +59,18 @@
 @font-face {
   font-family: "Jost"; font-style: normal; font-weight: 400 800;
   font-display: swap; src: url(../moteur/polices/jost-latin.woff2) format("woff2");
+}
+@font-face {
+  font-family: "Atkinson Hyperlegible"; font-style: normal; font-weight: 400;
+  font-display: swap; src: url(../moteur/polices/atkinson-hyperlegible-400.woff2) format("woff2");
+}
+@font-face {
+  font-family: "Atkinson Hyperlegible"; font-style: normal; font-weight: 700;
+  font-display: swap; src: url(../moteur/polices/atkinson-hyperlegible-700.woff2) format("woff2");
+}
+@font-face {
+  font-family: "Atkinson Hyperlegible"; font-style: italic; font-weight: 400;
+  font-display: swap; src: url(../moteur/polices/atkinson-hyperlegible-400-italic.woff2) format("woff2");
 }
 :root {
   
@@ -122,9 +151,12 @@
   --serie-8: #8a6a58;
   --serie-9: #7458d6;
   
-  --marge: clamp(1.125rem, 5vw, 2.5rem);
+  --echelle: 1;
+  --point: calc(1rem / var(--echelle));
   
-  --largeur: 80rem;
+  --marge: clamp(1.125 * var(--point), 5vw, 2.5 * var(--point));
+  
+  --largeur: calc(80 * var(--point));
   
   --t-meta: 0.8125rem;
   --t-petit: 0.9375rem;
@@ -135,9 +167,26 @@
   --t-chiffre: clamp(2.25rem, 4.5vw, 3rem);
   --t-titre: clamp(2.25rem, 5vw, 3.5rem);
   
-  --titres: "Jost", "Futura", "Century Gothic", "Avenir Next", system-ui, sans-serif;
+  --jost: "Jost", "Futura", "Century Gothic", "Avenir Next", system-ui, sans-serif;
+  --titres: var(--jost);
   --serif: var(--titres);
+  
+  --police: "Public Sans", system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
 }
+:root[data-taille] { font-size: calc(100% * var(--echelle)); }
+:root[data-taille="grand"] { --echelle: 1.17647; }
+:root[data-taille="tres-grand"] { --echelle: 1.41176; }
+:root[data-taille] header.bandeau { position: relative; }
+:root[data-police="lisible"] {
+  --police: "Atkinson Hyperlegible", system-ui, sans-serif;
+  --titres: "Atkinson Hyperlegible", system-ui, sans-serif;
+}
+:root[data-interligne="large"] body {
+  line-height: 1.9; letter-spacing: 0.02em; word-spacing: 0.08em;
+}
+:root[data-interligne="large"] :is(svg, .carte-partage) { letter-spacing: 0; word-spacing: 0; }
+:root[data-police="lisible"] .carte-partage { --titres: var(--jost); }
 header.bandeau, .affiche, .carte-partage, .carte-appel, .zone-petrole {
   color-scheme: dark;
   --fond: #003340;
@@ -163,8 +212,7 @@ body {
   margin: 0;
   background: var(--fond);
   color: var(--texte);
-  font-family: "Public Sans", system-ui, -apple-system, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, sans-serif;
+  font-family: var(--police);
   
   font-size: var(--t-texte);
   line-height: 1.6;
@@ -202,7 +250,7 @@ header.bandeau .interieur {
   align-items: center; justify-content: space-between;
 }
 header.bandeau .nom {
-  margin: 0; line-height: 1.2; flex: 1 1 100%;
+  margin: 0; line-height: 1.2; flex: 1 1 0%;
   display: flex; align-items: center; min-height: 4rem; min-width: 0;
 }
 header.bandeau .nom a {
@@ -263,6 +311,55 @@ header.bandeau nav a[aria-current="page"] {
   color: var(--sur-or); background: var(--or);
   border-bottom-color: var(--sur-or);
 }
+header.bandeau .affichage {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+  flex: none; min-height: 2.75rem; min-width: 2.75rem; margin: 0; padding: 0 0.75rem;
+  background: none; border: 2px solid rgb(255 255 255 / 0.55);
+  border-radius: var(--rayon-petit); color: var(--texte);
+  font: inherit; font-size: var(--t-petit); font-weight: 600; line-height: 1.2;
+  cursor: pointer;
+}
+header.bandeau .affichage:hover { background: rgb(255 255 255 / 0.1); border-color: #fff; opacity: 1; }
+header.bandeau .affichage .icone { width: 1.25em; height: 1.25em; }
+#affichage {
+  border: 0; padding: 0; width: 32rem; max-width: calc(100vw - 2rem);
+  max-height: calc(100dvh - 2rem);
+  border-radius: var(--rayon); background: var(--fond-carte); color: var(--texte);
+  box-shadow: 0 20px 60px rgb(0 0 0 / 0.35);
+}
+#affichage::backdrop { background: rgb(0 20 26 / 0.55); backdrop-filter: blur(3px); }
+#affichage .reglages { padding: 1.25rem 1.5rem 1.5rem; }
+#affichage .tete {
+  display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
+  gap: 0.5rem 1rem;
+}
+#affichage h2 {
+  margin: 0; font-family: var(--titres); font-size: var(--t-serif); font-weight: 700;
+  line-height: 1.2; color: var(--titre);
+}
+#affichage fieldset { border: 0; padding: 0; margin: 1.25rem 0 0; min-width: 0; }
+#affichage legend { padding: 0; margin-bottom: 0.5rem; font-weight: 700; }
+#affichage .pastilles { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+#affichage label {
+  position: relative; display: inline-flex; align-items: center; min-height: 2.75rem;
+  margin: 0; padding: 0.25rem 1rem; font-size: var(--t-petit); font-weight: 600;
+  line-height: 1.2; color: var(--texte); cursor: pointer;
+  border: 2px solid var(--trait-champ); border-radius: 999px; background: var(--fond-carte);
+}
+#affichage label input { position: absolute; inset: 0; margin: 0; opacity: 0; cursor: pointer; }
+#affichage label:hover { border-color: var(--accent); }
+#affichage label:has(input:checked) {
+  background: var(--petrole); color: #fff; border-color: var(--petrole);
+}
+#affichage label:has(input:focus-visible) { outline: 3px solid var(--focus); outline-offset: 3px; }
+#affichage button {
+  min-height: 2.75rem; padding: 0.25rem 1rem; font-size: var(--t-petit); font-weight: 600;
+  line-height: 1.2; background: transparent; color: var(--texte);
+  border: 2px solid var(--trait-champ); border-radius: var(--rayon-petit);
+}
+#affichage button:hover { border-color: var(--accent); opacity: 1; }
+#affichage p { margin: 1.25rem 0 0; max-width: none; }
+#affichage p.ou { margin-top: 1rem; font-size: var(--t-petit); color: var(--texte-doux); }
 header.bandeau .menu { display: none; }
 @media (max-width: 48rem) {
   header.bandeau .menu {
@@ -285,8 +382,9 @@ header.bandeau .menu { display: none; }
   header.bandeau nav { flex-direction: column; align-items: stretch; }
 }
 @media (max-width: 36rem) {
-  header.bandeau .menu { padding: 0; }
-  header.bandeau .menu span {
+  header.bandeau .menu, header.bandeau .affichage { padding: 0; }
+  header.bandeau .interieur { gap: 0 0.5rem; }
+  header.bandeau .menu span, header.bandeau .affichage span {
     position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
     overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0;
   }
@@ -402,6 +500,14 @@ h1 .cle-texte, h2 .cle-texte { font-weight: inherit; }
 }
 .note.resume { font-size: 1rem; }
 .discret { color: var(--texte-tres-doux); font-size: var(--t-petit); }
+.simulateur-court .tete {
+  display: flex; justify-content: space-between; align-items: baseline;
+  gap: 1.5rem; flex-wrap: wrap; margin-bottom: 1.25rem;
+}
+.simulateur-court .tete h2 { margin: 0; }
+.simulateur-court .tete .etiquette {
+  font-size: var(--t-petit); font-weight: 500; color: var(--sur-creme-accent);
+}
 .simulateur-court .grille {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(10.625rem, 100%), 1fr));
@@ -786,7 +892,7 @@ section.cle {
   background: var(--fond-carte); border: 1px solid var(--trait);
   border-radius: var(--rayon);
   box-shadow: var(--ombre);
-  padding: 1.5rem clamp(1.25rem, 3vw, 1.75rem) 1.25rem;
+  padding: 1.5rem clamp(1.25 * var(--point), 3vw, 1.75 * var(--point)) 1.25rem;
   margin: 2.5rem 0;
 }
 section.cle > :is(h2, h3) {
@@ -1157,6 +1263,7 @@ body.calcul-en-cours::after {
 <div id="entete"><a class="evitement" href="#contenu">Aller au contenu</a>
 <header class="bandeau"><div class="interieur">
   <p class="nom"><a href="../"><img class="logo" src="../moteur/logo-plf.svg" alt="" width="566" height="378"><span class="marque"><span class="parti">Parti Libéral Français</span><span class="site">Retraite à comptes notionnels</span></span></a></p>
+  <button type="button" class="affichage" aria-haspopup="dialog" aria-controls="affichage"><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915" /><circle cx="12" cy="12" r="3" /></svg><span>Affichage</span></button>
   <button type="button" class="menu" aria-expanded="false" aria-controls="navigation"><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 5h16" /><path d="M4 12h16" /><path d="M4 19h16" /></svg><span>Menu</span></button>
   <nav id="navigation" aria-label="Navigation principale"><span class="groupe"><span class="etiquette">L&#x27;essentiel</span><span class="liens"><a href="../">Programme</a><a href="../simuler/">Simuler</a><a href="../cout/">Coût</a><a href="../risque/">Pourquoi changer</a></span></span><span class="groupe"><span class="etiquette">Faire connaître</span><span class="liens"><a href="../partager/">Partager</a><a href="../saviez-vous/">Le saviez-vous ?</a></span></span><span class="groupe secondaire"><span class="etiquette">Pour vérifier</span><button type="button" class="deplier" aria-expanded="true" aria-controls="pages-a-verifier">Pour vérifier<svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg></button><span class="liens" id="pages-a-verifier"><a href="../cas-types/">Carrières types</a><a href="./" aria-current="page">Droits non cotisés</a><a href="../methode/">Méthode et sources</a></span></span></nav>
 </div></header></div>
@@ -1355,6 +1462,14 @@ particuliers » que personne n'avait ouverts. Lire n'est pas appliquer.</p></div
   <p class="retour-site">Un outil du <a href="https://partiliberalfrancais.fr/" target="_top">Parti libéral français</a>.</p>
 </div>
 </footer>
+<dialog id="affichage" aria-labelledby="titre-affichage"><div class="reglages">
+<div class="tete"><h2 id="titre-affichage">Affichage</h2><button type="button" data-fermer>Fermer</button></div>
+<fieldset><legend>Taille du texte</legend><div class="pastilles"><label><input type="radio" name="taille" value="normal" checked>Normale</label><label><input type="radio" name="taille" value="grand">Grande</label><label><input type="radio" name="taille" value="tres-grand">Très grande</label></div></fieldset>
+<fieldset><legend>Police de caractères</legend><div class="pastilles"><label><input type="radio" name="police" value="standard" checked>Standard</label><label><input type="radio" name="police" value="lisible">Très lisible</label></div></fieldset>
+<fieldset><legend>Espacement du texte</legend><div class="pastilles"><label><input type="radio" name="interligne" value="normal" checked>Normal</label><label><input type="radio" name="interligne" value="large">Aéré</label></div></fieldset>
+<p><button type="button" data-retablir>Rétablir les réglages par défaut</button></p>
+<p class="ou">Ces choix restent dans votre navigateur : rien n'en sort.</p>
+</div></dialog>
 <script type="module" src="../moteur/js/routeur.js"></script>
 </body>
 </html>

@@ -1,6 +1,7 @@
 # Les polices du site
 
-Deux familles, et rien d'autre.
+Deux familles pour le site tel qu'il s'ouvre, et une troisième pour le lecteur
+qui la choisit.
 
 - **[Public Sans](https://public-sans.digital.gov/)**, la sans-serif du texte
   courant. C'est un fichier **variable** :
@@ -13,8 +14,17 @@ Deux familles, et rien d'autre.
   remplacé Instrument Serif le 8 novembre 2026, quand le site a pris la charte
   du parti.
 
-Les deux sont sous **SIL Open Font License 1.1** — `LICENSE-public-sans.md` et
-`LICENSE-jost.txt`, à côté, recopiées sans retouche. Elle autorise
+- **[Atkinson Hyperlegible](https://www.brailleinstitute.org/freefont/)**, la
+  police « très lisible » du panneau « Affichage » (action 189, étape 7),
+  dessinée par le Braille Institute pour que les lettres qui se ressemblent se
+  distinguent. Trois fichiers — 400, 700 et l'italique —, repris du même site
+  du parti. Une page ne les demande que si le lecteur a choisi cette police :
+  le script d'en-tête de `moteur/page.html` les précharge alors, et la feuille
+  les déclare sans que rien d'autre ne s'en serve.
+
+Les trois sont sous **SIL Open Font License 1.1** — `LICENSE-public-sans.md`,
+`LICENSE-jost.txt` et `LICENSE-atkinson-hyperlegible.txt`, à côté, recopiées
+sans retouche. Elle autorise
 l'usage, la modification et la redistribution, y compris incorporées à un site ;
 la seule obligation est de ne pas les vendre seules et de conserver la licence,
 ce que fait ce dossier.
@@ -38,6 +48,9 @@ qu'il ne s'abîme pas le jour où une URL de `fonts.gstatic.com` change.
 | `public-sans-latin.woff2` | Public Sans (variable, 100–900) | latin |
 | `public-sans-latin-ext.woff2` | Public Sans (variable, 100–900) | latin-ext |
 | `jost-latin.woff2` | Jost (variable, 400–800) | latin |
+| `atkinson-hyperlegible-400.woff2` | Atkinson Hyperlegible, 400 | latin |
+| `atkinson-hyperlegible-700.woff2` | Atkinson Hyperlegible, 700 | latin |
+| `atkinson-hyperlegible-400-italic.woff2` | Atkinson Hyperlegible, 400 italique | latin |
 
 Deux sous-ensembles et non un : `latin` porte l'essentiel du français, mais pas
 les `œ`, les `ÿ`, ni les guillemets et tirets que la typographie française

@@ -93,6 +93,18 @@ comme les types que le pont échange.
   gabarit (`g.poserEcran`) ; les témoins sont rendus au large. Un tableau trop
   large ne défile pas : il se replie (`plierLesTableaux`, dans
   `moteur/js/routeur.js`).
+- **Le lecteur règle l'affichage** (action 189, étape 7) : le panneau
+  « Affichage » du bandeau (`panneauAffichage`, `REGLAGES_AFFICHAGE`, dans
+  `gabarit.js`) pose la taille du texte, la police très lisible et
+  l'espacement en attributs sur `<html>` (`data-taille`, `data-police`,
+  `data-interligne`), que la feuille de style lit ; le navigateur les garde
+  (`MEMOIRE_AFFICHAGE`), et le script d'en-tête de `moteur/page.html` les
+  repose avant la première peinture. La taille grandit la racine : une taille
+  s'écrit donc en `rem`, jamais en pixels, et ce qui ne doit pas grandir avec
+  le texte — la largeur de la colonne, sa marge, le retrait d'une carte de
+  figure — se compte en `--point`. Une carte à publier garde ses polices et
+  son espacement, un tracé son espacement. `tests/test_ecrans.py` joue le
+  panneau sur les neuf pages, réglé au plus fort.
 - **L'outillage d'audit d'interface** (Impeccable, Web Interface Guidelines,
   Playwright CLI) : `.claude/skills/`, mis en place par
   `scripts/setup_ui_tools.sh` ; les notes Lighthouse des dix routes, par

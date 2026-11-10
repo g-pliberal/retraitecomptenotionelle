@@ -234,6 +234,7 @@ def page(route: str, gabarit: str | None = None) -> str:
         "entete": g.entete(route),
         "contenu": contenu,
         "pied": g.pied(),
+        "affichage": g.panneauAffichage(),
     }
     # Un champ du gabarit que le générateur ne remplit pas est une erreur (KeyError) ;
     # ce qu'on insère n'est pas relu. Le style vient en dernier : il se choisit

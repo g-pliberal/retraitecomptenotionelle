@@ -51,6 +51,33 @@
      servie d'ici. -->
 <link rel="preload" href="{{racine}}moteur/polices/public-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="{{racine}}moteur/polices/jost-latin.woff2" as="font" type="font/woff2" crossorigin>
+<!-- LES RÉGLAGES D'AFFICHAGE DU LECTEUR, AVANT LA PREMIÈRE PEINTURE (action 189,
+     étape 7). Ce qu'il a choisi dans le panneau « Affichage » — la taille du
+     texte, la police très lisible, l'espacement — est gardé par son
+     navigateur (MEMOIRE_AFFICHAGE, dans gabarit.js) et se pose ici sur
+     `<html>`, où la feuille de style le lit : posé par le routeur, qui
+     s'exécute après la peinture, le texte grandirait sous ses yeux. Seules les
+     valeurs du panneau sont admises. La police très lisible, quand il l'a
+     choisie, est demandée d'ici, comme les deux autres le sont plus haut.
+     Sans stockage, ou sous une politique qui refuse les scripts en ligne, la
+     page s'ouvre sur ses réglages par défaut, et le routeur pose les siens. -->
+<script>(function () {
+  try {
+    var choix = JSON.parse(localStorage.getItem("retraite-notionnelle.affichage") || "{}");
+    var admis = { taille: ["grand", "tres-grand"], police: ["lisible"], interligne: ["large"] };
+    for (var nom in admis) {
+      if (admis[nom].indexOf(choix[nom]) >= 0) { document.documentElement.dataset[nom] = choix[nom]; }
+    }
+    if (choix.police === "lisible") {
+      ["400", "700"].forEach(function (graisse) {
+        var lien = document.createElement("link");
+        lien.rel = "preload"; lien.as = "font"; lien.type = "font/woff2"; lien.crossOrigin = "";
+        lien.href = "{{racine}}moteur/polices/atkinson-hyperlegible-" + graisse + ".woff2";
+        document.head.appendChild(lien);
+      });
+    }
+  } catch (erreur) { /* pas de stockage : les réglages par défaut */ }
+})();</script>
 <!-- La feuille de style n'existe qu'en un seul endroit : moteur/style.css,
      sa source, que rien ne fabrique. Elle bloquait l'affichage : la page porte
      donc ici les règles qui peuvent la toucher, que scripts/feuille_de_page.py
@@ -74,6 +101,9 @@
 <div id="entete">{{entete}}</div>
 <main id="contenu" tabindex="-1" data-prerendu="{{route}}">{{contenu}}</main>
 {{pied}}
+<!-- Le panneau « Affichage », que le bouton du bandeau ouvre : hors de
+     l'en-tête, que le routeur récrit à chaque rendu. -->
+{{affichage}}
 <!-- Le routeur du site, que les neuf pages partagent. -->
 <script type="module" src="{{racine}}moteur/js/routeur.js"></script>
 </body>

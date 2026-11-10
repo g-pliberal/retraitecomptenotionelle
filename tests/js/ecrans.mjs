@@ -1041,13 +1041,17 @@ async function jouerUnScenario(scenario) {
  *     passer — la plus ancienne qui attend, une fois demandée ;
  *   - `geste` : une expression jouée dans la page ;
  *   - `jusqua` : une expression, attendue vraie ;
- *   - `pause` : un délai, en millisecondes.
+ *   - `pause` : un délai, en millisecondes ;
+ *   - `noter` : un nom, sous lequel la course garde ce que rend l'expression
+ *     `valeur`, ou, sans elle, la mesure entière de la page (`MESURER`).
  *
- * Elle rend ce que dit `rendre`, une expression jouée à la fin, et les étapes
- * qui n'ont pas abouti, sans s'arrêter : c'est le test qui juge.
+ * Elle rend ce que dit `rendre`, une expression jouée à la fin, ses `notes`, et
+ * les étapes qui n'ont pas abouti, sans s'arrêter : c'est le test qui juge.
+ * Une course se joue au bureau, ou à l'écran que dit `ecran`.
  */
 async function jouerUneCourse(course) {
-  await poserLEcran({ largeur: 1440, hauteur: 900 });
+  const ecran = course.ecran || { largeur: 1440, hauteur: 900 };
+  await poserLEcran(ecran);
   await page("Storage.clearDataForOrigin", {
     origin: new URL(plan.racine).origin, storageTypes: "local_storage",
   });
@@ -1060,6 +1064,7 @@ async function jouerUneCourse(course) {
       { urlPattern: `*${fin}`, requestStage: "Request" })) });
   }
   const fautes = [];
+  const notes = {};
   // La plus ancienne requête arrêtée. Une requête que la page ne demande
   // jamais : la course ne l'attend pas plus qu'une page qui ne se rend pas.
   const arretee = async (fin) => {
@@ -1084,7 +1089,10 @@ async function jouerUneCourse(course) {
           ? page("Fetch.failRequest", { requestId, errorReason: "Aborted" })
           : page("Fetch.continueRequest", { requestId }));
       } else if (etape.geste !== undefined) {
-        await evaluer(etape.geste);
+        // Un geste sur ce que la page ne porte pas se dit, sans arrêter la course.
+        await evaluer(etape.geste).catch((erreur) => {
+          fautes.push(`geste manqué : ${etape.geste.slice(0, 80)} — ${String(erreur).slice(0, 80)}`);
+        });
       } else if (etape.jusqua !== undefined) {
         const debut = Date.now();
         while (!await evaluer(etape.jusqua).catch(() => false)) {
@@ -1093,9 +1101,12 @@ async function jouerUneCourse(course) {
         }
       } else if (etape.pause !== undefined) {
         await pause(etape.pause);
+      } else if (etape.noter !== undefined) {
+        notes[etape.noter] = await evaluer(etape.valeur ?? MESURER(ecran));
       }
     }
-    return { nom: course.nom, ...(await evaluer(course.rendre)), fautes,
+    return { nom: course.nom, ecran: ecran.largeur,
+      ...(await evaluer(course.rendre ?? "({})")), notes, fautes,
       erreurs: [...erreursDeLaPage] };
   } finally {
     // Ce qui est encore retenu passe : la course suivante part d'un navigateur libre.

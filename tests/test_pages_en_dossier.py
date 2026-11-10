@@ -196,6 +196,33 @@ def test_une_page_toute_faite_est_la_page_entiere(chemin):
 
 
 @pytest.mark.parametrize("chemin", _chemins())
+def test_une_page_pose_les_reglages_d_affichage_avant_de_peindre(chemin):
+    """Les réglages que le lecteur a retenus — la taille du texte, la police
+    très lisible, l'espacement (action 189, étape 7) — se posent sur ``<html>``
+    par un script de l'en-tête, avant toute peinture : posés par le routeur,
+    qui s'exécute après, le texte grandirait sous ses yeux. Le script lit la
+    clé du gabarit et n'admet que ses valeurs ; le style de la page porte les
+    règles qui les lisent, et la police très lisible. Le panneau est dans la
+    page, une fois, hors de l'en-tête que le routeur récrit à chaque rendu."""
+    texte = _page(chemin)
+    tete = texte[:texte.index("</head>")]
+    scripts = re.findall(r"<script>(.*?)</script>", tete, re.S)
+    assert len(scripts) == 1
+    assert f'"{g.MEMOIRE_AFFICHAGE}"' in scripts[0]
+    for reglage in g.REGLAGES_AFFICHAGE:
+        assert reglage["nom"] in scripts[0]
+        for valeur, _ in list(reglage["choix"])[1:]:
+            assert f'"{valeur}"' in scripts[0], valeur
+    style = tete[tete.index("<style>"):tete.index("</style>")]
+    for regle in (':root[data-taille="grand"]', ':root[data-taille="tres-grand"]',
+                  ':root[data-police="lisible"]', ':root[data-interligne="large"] body',
+                  "polices/atkinson-hyperlegible-400.woff2"):
+        assert regle in style, regle
+    assert texte.count('<dialog id="affichage"') == 1 and g.panneauAffichage() in texte
+    assert texte.index("</main>") < texte.index('<dialog id="affichage"')
+
+
+@pytest.mark.parametrize("chemin", _chemins())
 def test_une_page_porte_son_style_et_charge_la_feuille_entiere_sans_bloquer(chemin):
     """La page se peint avec les règles qui la touchent, écrites dans son en-tête
     (``scripts/feuille_de_page.py``) : la feuille entière, qui bloquait

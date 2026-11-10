@@ -2361,8 +2361,10 @@ def test_la_page_ne_depend_d_aucun_service_exterieur():
     for fichier in re.findall(r"url\((polices/[^)]+)\)", feuille):
         assert (polices.parent / fichier).is_file(), f"police absente : {fichier}"
     #: Public Sans en deux jeux, latin et latin-ext ; Jost, la police des
-    #: titres du parti, en un seul (8 novembre 2026).
-    assert len(re.findall(r"@font-face", feuille)) == 3
+    #: titres du parti, en un seul (8 novembre 2026) ; Atkinson Hyperlegible,
+    #: la police très lisible du panneau « Affichage », en deux graisses et
+    #: une italique (action 189, étape 7).
+    assert len(re.findall(r"@font-face", feuille)) == 6
 
     #: Seules adresses tolérées dans le routeur et la coquille des pages, et
     #: aucune n'est chargée avec la page : le dépôt lui-même (liens que le
@@ -3095,6 +3097,67 @@ def test_le_menu_du_telephone_porte_son_pictogramme():
     bouton = re.search(r'<button type="button" class="menu"[^>]*>(.*?)</button>',
                        g.entete("/"), re.S).group(1)
     assert bouton == g.icone("menu") + "<span>Menu</span>"
+
+
+def test_le_bandeau_porte_le_bouton_de_l_affichage():
+    """À droite de la marque, avant le menu du téléphone, comme sur le site du
+    parti : le pictogramme des réglages et le mot « Affichage ». Le bouton dit
+    qu'il ouvre un dialogue, et lequel (action 189, étape 7)."""
+    import re
+
+    entete = g.entete("/")
+    bouton = re.search(r'<button type="button" class="affichage"([^>]*)>(.*?)</button>',
+                       entete, re.S)
+    assert bouton.group(2) == g.icone("settings") + "<span>Affichage</span>"
+    assert 'aria-haspopup="dialog"' in bouton.group(1)
+    assert 'aria-controls="affichage"' in bouton.group(1)
+    assert entete.index('class="marque"') < bouton.start() < entete.index('class="menu"')
+    # Le panneau n'est pas dans l'en-tête, que le routeur récrit à chaque rendu.
+    assert "<dialog" not in entete
+
+
+def test_le_panneau_affichage_tient_en_trois_reglages_sans_theme_sombre():
+    """Le propriétaire, le 9 novembre 2026, retient du panneau de son autre
+    site la taille du texte, la police très lisible et l'espacement ; le thème
+    sombre n'en est pas. Chaque réglage s'ouvre sur sa valeur par défaut, un
+    bouton y ramène, et le panneau dit où vont ces choix."""
+    import re
+
+    panneau = g.panneauAffichage()
+    assert panneau.startswith('<dialog id="affichage"') and panneau.endswith("</dialog>")
+    assert re.findall(r"<legend>(.*?)</legend>", panneau) == [
+        "Taille du texte", "Police de caractères", "Espacement du texte"]
+    choix = re.findall(r'<label><input type="radio" name="(\w+)" value="([\w-]+)"( checked)?>'
+                       r"(.*?)</label>", panneau)
+    assert [(nom, valeur, texte) for nom, valeur, _, texte in choix] == [
+        ("taille", "normal", "Normale"), ("taille", "grand", "Grande"),
+        ("taille", "tres-grand", "Très grande"),
+        ("police", "standard", "Standard"), ("police", "lisible", "Très lisible"),
+        ("interligne", "normal", "Normal"), ("interligne", "large", "Aéré")]
+    assert [valeur for _, valeur, coche, _ in choix if coche] == ["normal", "standard", "normal"]
+    assert [(r["nom"], [valeur for valeur, _ in r["choix"]]) for r in g.REGLAGES_AFFICHAGE] == [
+        ("taille", ["normal", "grand", "tres-grand"]), ("police", ["standard", "lisible"]),
+        ("interligne", ["normal", "large"])]
+    assert "<button type=\"button\" data-retablir>Rétablir les réglages par défaut</button>" in panneau
+    assert "<button type=\"button\" data-fermer>Fermer</button>" in panneau
+    assert "Ces choix restent dans votre navigateur" in panneau
+    assert "sombre" not in panneau.lower() and "theme" not in panneau.lower()
+
+
+def test_les_reglages_d_affichage_ne_quittent_pas_le_navigateur():
+    """Le panneau dit que ces choix restent dans le navigateur du lecteur : le
+    routeur ne les lit et ne les écrit que dans son stockage local, et ne
+    demande au réseau que le paquet de données, un fichier du site."""
+    import re
+
+    routeur = (Path(__file__).resolve().parents[1] / "moteur" / "js" / "routeur.js").read_text(
+        encoding="utf-8")
+    code = re.sub(r"(?m)^\s*//.*$", "", routeur)
+    usages = re.findall(r"[^\n]*\bMEMOIRE_AFFICHAGE\b[^\n]*", code)
+    assert usages and all("localStorage." in usage for usage in usages), usages
+    assert set(re.findall(r"\bfetch\(([^,)]*)", code)) == {"PAQUET"}
+    for envoi in ("sendBeacon", "XMLHttpRequest", "WebSocket", "document.cookie"):
+        assert envoi not in code, envoi
 
 
 def test_le_site_ne_porte_aucune_mention_legale():

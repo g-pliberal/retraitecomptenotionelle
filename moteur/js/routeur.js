@@ -383,7 +383,9 @@ function largeurDeLaColonne() {
 }
 
 let attenteDeRedessin = null;
-window.addEventListener("resize", () => {
+// La colonne a pu changer : la fenêtre, ou la taille du texte, qui déplace les
+// marges (`reglerLAffichage`).
+function suivreLaColonne() {
   clearTimeout(attenteDeRedessin);
   attenteDeRedessin = setTimeout(() => {
     const [attendue, demi, large] = gabarit.ecransDe(largeurDeLaColonne());
@@ -406,7 +408,8 @@ window.addEventListener("resize", () => {
       afficher();
     }
   }, 250);
-});
+}
+window.addEventListener("resize", suivreLaColonne);
 
 async function afficher() {
   const numero = commencerUnRendu();
@@ -1781,6 +1784,118 @@ document.addEventListener("click", (evenement) => {
   if (!menu) { return; }
   const ouvrir = menu.getAttribute("aria-expanded") !== "true";
   menu.setAttribute("aria-expanded", String(ouvrir));
+});
+
+// -- l'affichage -------------------------------------------------------------
+//
+// LE PANNEAU « AFFICHAGE », repris du site « Fonction publique : les chiffres »
+// du parti (action 189, étape 7) : la taille du texte, la police très lisible,
+// l'espacement. Un choix se pose sur `<html>`, en attribut, où la feuille de
+// style le lit, et se garde dans le stockage local du navigateur, d'où le
+// script d'en-tête de la page (`moteur/page.html`) le reprend avant la
+// première peinture, sur les neuf pages. Il ne sort pas du navigateur, comme
+// la saisie du simulateur, et le panneau le dit. « Rétablir les réglages par
+// défaut » l'en retire.
+//
+// L'attribut de chaque réglage est écrit ici en toutes lettres : c'est dans les
+// chaînes de ce module que la feuille de chaque page (`scripts/feuille_de_page.py`)
+// lit ce que le routeur pose, et garde les règles qui en dépendent.
+const ATTRIBUTS_D_AFFICHAGE = {
+  taille: "data-taille", police: "data-police", interligne: "data-interligne",
+};
+
+// Les réglages que rend `lire`, chacun sur une valeur du panneau : ce qui n'en
+// est pas une vaut le réglage par défaut.
+function reglagesAdmis(lire) {
+  return Object.fromEntries(gabarit.REGLAGES_AFFICHAGE.map(({ nom, choix }) => {
+    const valeur = lire(nom);
+    return [nom, choix.some(([admise]) => admise === valeur) ? valeur : choix[0][0]];
+  }));
+}
+
+// Ce que le lecteur a retenu : ce qui ne sort pas intact du stockage vaut le
+// réglage par défaut.
+function lireLAffichage() {
+  let retenu = null;
+  try {
+    retenu = JSON.parse(window.localStorage.getItem(gabarit.MEMOIRE_AFFICHAGE));
+  } catch (erreur) {
+    // Stockage refusé ou valeur abîmée : les réglages par défaut.
+  }
+  return reglagesAdmis((nom) => retenu?.[nom]);
+}
+
+// Ce que la page porte : les réglages posés sur `<html>`. C'est d'eux que part
+// un choix de plus, et non du stockage, qu'un navigateur peut refuser.
+function affichagePose() {
+  return reglagesAdmis((nom) => document.documentElement.getAttribute(ATTRIBUTS_D_AFFICHAGE[nom]));
+}
+
+function poserLAffichage(reglages) {
+  for (const { nom, choix } of gabarit.REGLAGES_AFFICHAGE) {
+    if (reglages[nom] === choix[0][0]) {
+      document.documentElement.removeAttribute(ATTRIBUTS_D_AFFICHAGE[nom]);
+    } else {
+      document.documentElement.setAttribute(ATTRIBUTS_D_AFFICHAGE[nom], reglages[nom]);
+    }
+  }
+}
+
+// Un réglage choisi : posé, gardé — ou oublié, quand tout est revenu au
+// défaut —, puis la colonne revue, que la taille du texte déplace.
+function reglerLAffichage(reglages) {
+  poserLAffichage(reglages);
+  const parDefaut = gabarit.REGLAGES_AFFICHAGE.every(({ nom, choix }) => reglages[nom] === choix[0][0]);
+  try {
+    if (parDefaut) {
+      window.localStorage.removeItem(gabarit.MEMOIRE_AFFICHAGE);
+    } else {
+      window.localStorage.setItem(gabarit.MEMOIRE_AFFICHAGE, JSON.stringify(reglages));
+    }
+  } catch (erreur) {
+    // Stockage refusé ou plein : le réglage vaut pour cette page.
+  }
+  suivreLaColonne();
+}
+
+function cocherLAffichage(panneau, reglages) {
+  for (const champ of panneau.querySelectorAll('input[type="radio"]')) {
+    champ.checked = reglages[champ.name] === champ.value;
+  }
+}
+
+// Le script d'en-tête les a posés avant la peinture ; une politique de
+// sécurité qui refuse les scripts en ligne l'aurait neutralisé, et le routeur,
+// qui n'en est pas un, les pose alors ici.
+poserLAffichage(lireLAffichage());
+
+document.addEventListener("click", (evenement) => {
+  const panneau = document.getElementById("affichage");
+  if (!panneau) { return; }
+  if (evenement.target.closest?.("header.bandeau button.affichage")) {
+    cocherLAffichage(panneau, affichagePose());
+    if (!panneau.open) { panneau.showModal(); }
+  } else if (evenement.target === panneau || evenement.target.closest?.("#affichage [data-fermer]")) {
+    // Le bouton, ou le fond : le contenu du dialogue est dans sa propre boîte.
+    panneau.close();
+  } else if (evenement.target.closest?.("#affichage [data-retablir]")) {
+    const parDefaut = reglagesAdmis(() => null);
+    cocherLAffichage(panneau, parDefaut);
+    reglerLAffichage(parDefaut);
+  }
+});
+
+document.addEventListener("change", (evenement) => {
+  const champ = evenement.target.closest?.('#affichage input[type="radio"]');
+  if (champ?.checked) { reglerLAffichage({ ...affichagePose(), [champ.name]: champ.value }); }
+});
+
+// Le dialogue rend la main au bouton qui l'a ouvert ; si la page s'est
+// redessinée entre-temps, l'en-tête a été récrit, et ce bouton n'est plus là.
+document.getElementById("affichage")?.addEventListener("close", () => {
+  if (document.activeElement === document.body) {
+    document.querySelector("header.bandeau button.affichage")?.focus();
+  }
 });
 
 // -- les mots du glossaire ---------------------------------------------------
