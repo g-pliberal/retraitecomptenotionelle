@@ -35,22 +35,27 @@ nomme sa ligne.
 
 `docs/presentation_adherents_novembre_2026.pptx` n'est pas ce parcours : il
 explique la réforme elle-même à des adhérents qui la découvrent, sans montrer
-le site. Il dit le compte en trois gestes, les cotisations, l'épargne, la
-garantie vieillesse, l'âge, les pensions en cours et qui finance quoi ; puis
-les promesses avec leur condition, les phrases à ne pas dire et les questions
-qui reviennent. Sous chaque diapositive, les notes du présentateur disent
-quoi dire, et quoi ne pas dire. Il ne dépend d'aucun réseau. Ouvrir en mode
-présentateur pour lire les notes.
+le site. Trente diapositives, en six chapitres qu'un sommaire annonce :
+pourquoi changer (le constat, le schéma des flux d'aujourd'hui, la dépense de
+pensions de onze pays d'Europe) ; comment ça marche (les trois gestes et le
+nom savant du compte, un exemple chiffré, la revalorisation, les cinq pays
+qui ont ce compte) ; ce qui change pour vous, mesure par mesure ; les comptes
+(qui finance quoi, le schéma des flux de la réforme, les parts de PIB avant
+et après, les prélèvements qui baissent et celui qui monte) ; le calendrier ;
+en parler sans se tromper. Sous chaque diapositive, les notes du présentateur
+disent quoi dire, et quoi ne pas dire. Il ne dépend d'aucun réseau. Ouvrir en
+mode présentateur pour lire les notes.
 
-**Il suit les décisions du programme arrêtées au 9 novembre 2026**
+**Il suit les décisions du programme arrêtées au 10 novembre 2026**
 (`docs/feuille_de_route_programme.md`), et non le site, qui ne les montre pas
 encore toutes : la réversion, le taux d'un salarié du privé avant
 l'intégration de sa complémentaire, l'apport pour un premier logement et la
-garantie dégressive s'y lisent autrement qu'ici. Aucun test ne relit un
-fichier binaire : il porte sa date dans son nom pour cette raison, et se
-refait quand le programme bouge. Il remplace le diaporama du 20 septembre
-2026, qui reprenait ce parcours en captures d'écran, à ses chiffres de ce
-matin-là.
+baisse des pensions étalée sur cinq ans s'y lisent autrement qu'ici. Ses
+chiffres de flux et de parts de PIB sont ceux de la page Coût, relus le
+10 novembre 2026. Aucun test ne relit un fichier binaire : il porte sa date
+dans son nom pour cette raison, et se refait quand le programme bouge. Il
+remplace le diaporama du 20 septembre 2026, qui reprenait ce parcours en
+captures d'écran, à ses chiffres de ce matin-là.
 
 ## L'idée en une phrase
 
