@@ -687,6 +687,18 @@ choix (note `186/2026-11-09-tva-et-lvt-au-cout.md`) :
      pour des terrains qui rapportent 3 % par an ; la fourchette de la
      décision 80, 1,2 à 1,4 point, reste écrite à côté.
 
+Le 10 novembre 2026, sur l'indexation (chantier 5), en relisant le diaporama
+des adhérents :
+
+107. **La prime du stock est de 1 %, non de 2,15 %** : « J'avais dit 1% de
+     prime. » La décision 74 est remplacée ; c'est le « 1 % tout le temps »
+     du 8 novembre, que le chantier 5 rapportait sans en faire une décision.
+     Les décisions 73 et 75 à 77 restent. Ce que la note
+     `186/2026-11-08-reserve-personnelle.md` en dit reste vrai : à 1 %, la
+     crise de l'emploi étudiée n'est pas couverte, et ce qui manque devient
+     une dette du stock (décision 76). Restent ouverts la réserve, commune ou
+     personnelle, et son assiette.
+
 ## Ce qui est écarté
 
 - **Une transition sans baisse nominale des pensions en cours** — bâtir le
