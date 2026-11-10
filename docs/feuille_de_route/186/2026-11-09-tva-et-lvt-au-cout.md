@@ -98,7 +98,7 @@ retraites, l'autre point remplaçant la taxe foncière.
   postes disparaissent », et la note de la restitution l'ancienne règle.
 - **L'abattement et le plafonnement de la LVT**, remis à plus tard par le
   propriétaire ; le rendement locatif du terrain, que rien ne mesure.
-- **L'épaisseur des schémas de flux** est passée de 240 à 190 pour que les
+- **L'épaisseur des schémas de flux** est passée de 240 à 180 pour que les
   deux tiennent dans un écran de bureau avec le nœud de plus ; les budgets
   de mots de la page Coût, de 946 à 962 et de 33 293 à 33 312.
 - `scripts/lectures_decision_29.py` lit les deux recettes au modèle : ses

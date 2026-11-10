@@ -2531,7 +2531,7 @@ const MARGE_BAS_SANKEY = 6;
 // 9 novembre 2026 : la proposition a gagné un nœud, « Terrain et TVA », et
 // ses deux schémas ne tenaient plus ensemble dans un écran de bureau
 // (`test_les_schemas_qu_une_carte_compare_se_voient_ensemble`).
-export const HAUTEUR_SANKEY = 190;
+export const HAUTEUR_SANKEY = 180;
 // Ce qui sépare une étiquette de son nœud.
 const RETRAIT_SANKEY = 8;
 

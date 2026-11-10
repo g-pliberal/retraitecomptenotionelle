@@ -12720,7 +12720,7 @@ function coutDetailPostes(contexte) {
   const postesProposition = ligne.postesRessources("notionnel_liberal");
   const horsDuTravail = postesProposition.impots_lvt + postesProposition.impots_tva_gardee > 0.0
     ? " Deux recettes hors du travail restent à ce poste : la part de TVA qui va "
-      + "déjà aux retraites, pour compenser les allègements de cotisations, que la "
+      + "déjà aux retraites, que la "
       + "proposition garde ; et un point de la taxe sur la valeur du terrain, à 2 %, "
       + "qui remplace la taxe foncière, l'autre point allant aux communes."
     : "";
@@ -17321,8 +17321,8 @@ function programmeBlocages(contexte) {
   // porte : le solde et la dette se disent alors selon leur signe.
   const avecRecettes = !avecTva && m.recettes_hors_travail > 0.0;
   const soldeDeLaProposition = m.solde_moyen_proposition >= 0
-    ? `dégage alors un excédent de ${pt(m.solde_moyen_proposition)} point par an en moyenne`
-    : `garde alors un déficit de ${pt(-m.solde_moyen_proposition)} point par an en moyenne`;
+    ? `dégage alors un excédent de ${pt(m.solde_moyen_proposition)} point par an`
+    : `garde alors un déficit de ${pt(-m.solde_moyen_proposition)} point par an`;
   const reservesOuDette = m.dette_2070_proposition < 0
     ? `des réserves de ${pt(-m.dette_2070_proposition, 0)} % du PIB`
     : `une dette de ${pt(m.dette_2070_proposition, 0)} % du PIB`;
@@ -17370,7 +17370,7 @@ function programmeBlocages(contexte) {
         + `${pt(-m.solde_moyen_actuel)} pour le système actuel, et aborde 2070 `
         + `avec ${reservesOuDette}, contre une dette de `
         + `${pt(m.dette_2070_actuel, 0)} %.`,
-      "Ce prix est écrit sur la page Coût plutôt que caché. Le coefficient "
+      "Le coefficient "
         + "d'équilibre, que ces chiffres n'appliquent pas, descend à "
         + `${pt(m.coefficient_minimum, 2)} dans les années `
         + `${m.decennie_coefficient_minimum} et monte à `
