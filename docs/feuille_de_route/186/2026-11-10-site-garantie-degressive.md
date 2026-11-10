@@ -68,6 +68,10 @@ revient », que la page ne montre plus. La puce décrit les six repères
 d'aujourd'hui ; le reste de la section a été vérifié sur la page rendue et
 tient.
 
+*Ajout, au moment de publier.* Une session de l'action 189 avait récrit la
+même puce entre-temps (« les cartes numérotées ») : au rebasage, c'est sa
+rédaction qui est gardée, et non celle-ci. Le test est vert des deux façons.
+
 ## Ce qui reste
 
 - Au propriétaire : la garantie d'office peut-elle se refuser (note du
