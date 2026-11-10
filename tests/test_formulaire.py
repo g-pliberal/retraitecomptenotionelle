@@ -346,15 +346,30 @@ def test_la_saisie_n_est_gardee_que_par_le_navigateur():
     """Le stockage local, et lui seul, garde la saisie : il ne sort pas de la
     machine. Trois fonctions y touchent, et chacune sous ``try`` — un
     navigateur qui le refuse, en navigation privée, doit laisser le simulateur
-    marcher comme avant. Le simulateur le dit, et un bouton l'efface."""
+    marcher comme avant. Le simulateur le dit, et un bouton l'efface.
+
+    Le panneau « Affichage » (action 189, étape 7) y garde aussi ses trois
+    réglages, par deux fonctions à lui, sous ``try`` elles aussi, et sous une
+    clé à lui : rien d'autre ne touche au stockage, et aucune des deux
+    mémoires ne lit la clé de l'autre."""
     script = _script()
-    touches = {nom: _fonction(script, nom)
-               for nom in ("lireMemoire", "ecrireMemoire", "oublierMemoire")}
+    saisie = {nom: _fonction(script, nom)
+              for nom in ("lireMemoire", "ecrireMemoire", "oublierMemoire")}
+    affichage = {nom: _fonction(script, nom)
+                 for nom in ("lireLAffichage", "reglerLAffichage")}
+    touches = {**saisie, **affichage}
     assert sum(corps.count("window.localStorage") for corps in touches.values()) \
         == len(re.findall(r"\blocalStorage\.", script)), \
-        "le stockage est lu hors des trois fonctions"
+        "le stockage est lu hors des fonctions qui en ont la charge"
     for nom, corps in touches.items():
         assert "try {" in corps and "catch" in corps, f"{nom} n'est pas protégée"
+    acces = re.compile(r"localStorage\.\w+\(([\w.]+)")
+    for nom, corps in saisie.items():
+        assert set(acces.findall(corps)) == {"MEMOIRE"}, \
+            f"{nom} touche à une autre clé que celle de la saisie"
+    for nom, corps in affichage.items():
+        assert set(acces.findall(corps)) == {"gabarit.MEMOIRE_AFFICHAGE"}, \
+            f"{nom} touche à une autre clé que celle de l'affichage"
     for autre in ("sessionStorage", "indexedDB", "document.cookie"):
         assert autre not in script
 
