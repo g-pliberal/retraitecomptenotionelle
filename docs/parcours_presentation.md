@@ -46,6 +46,13 @@ en parler sans se tromper. Sous chaque diapositive, les notes du présentateur
 disent quoi dire, et quoi ne pas dire. Il ne dépend d'aucun réseau. Ouvrir en
 mode présentateur pour lire les notes.
 
+**Une version de dix minutes**,
+`docs/presentation_adherents_10_minutes_novembre_2026.pptx`, en garde neuf
+diapositives : les quatre idées, le constat, les trois gestes, l'exemple
+chiffré, la revalorisation, les pensions en cours, les parts de PIB avant et
+après. Sous chacune, le texte à dire, minuté, puis ce qu'il faut répondre si
+on interroge.
+
 **Il suit les décisions du programme arrêtées au 10 novembre 2026**
 (`docs/feuille_de_route_programme.md`), et non le site, qui ne les montre pas
 encore toutes : la réversion, le taux d'un salarié du privé avant
