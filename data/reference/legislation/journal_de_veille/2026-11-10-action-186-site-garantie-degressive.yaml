@@ -1,0 +1,19 @@
+date: "2026-11-10"
+session: "action 186, chantier 3 : le site dit la garantie dégressive, et le parcours de présentation suit l'accueil"
+consulte: >-
+  Aucune règle du scénario 1 n'est touchée, et l'index LEGI n'est pas
+  interrogé. Lus ce jour : moteur/js/pages.js (le simulateur, la page Coût,
+  le programme, la page Méthode), moteur/js/garantie.js, le catalogue des
+  affirmations, docs/parcours_presentation.md et la page d'accueil rendue.
+  Aucune source extérieure n'est ouverte.
+trouve: >-
+  Aucun écart avec les fiches. Trois endroits des pages recalculaient la
+  garantie par leur propre soustraction ; ils lisent le barème du moteur.
+  Une phrase que la session avait écrite, « qui a cotisé touche toujours
+  plus », est fausse sous la moitié du plancher : corrigée aux pages et à la
+  prose. Détail :
+  docs/feuille_de_route/186/2026-11-10-site-garantie-degressive.md.
+reste: >-
+  Au propriétaire : si la garantie d'office peut se refuser, et la phrase de
+  l'accueil sur ce que la forme retenue paie. Le plan de la réversion,
+  étapes 2 et 4 à 7.

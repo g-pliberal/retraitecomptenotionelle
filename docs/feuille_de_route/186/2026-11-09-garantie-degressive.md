@@ -1,14 +1,13 @@
 # Une garantie vieillesse dégressive, pour que le travail paie toujours : les précédents lus aux sources, et chaque option chiffrée
 
-**Reprise, au 9 novembre 2026.** Tranché (décisions 100 à 102) et écrit au
-modèle, au scénario 6 seul : la forme suédoise, tout repris sur la
-succession, l'isolement dans la même règle
-(`2026-11-09-garantie-degressive-au-modele.md`, qui dit ce que le changement
-déplace ; le coût de l'étude y est retrouvé). Par quoi commencer : le recours
-de 100 % (décision 20), étape 3 du plan de la réversion ; puis le site, qui
-dit encore la garantie différentielle (chantier 9). Restent ouverts, au
-propriétaire : ce qui paie le surcoût, l'export dans l'Union, la CSG du
-complément.
+**Reprise, au 10 novembre 2026.** Tranché (décisions 100 à 102), écrit au
+modèle au scénario 6 seul, servi d'office (décision 20) et dit par le site :
+`2026-11-09-garantie-degressive-au-modele.md`,
+`2026-11-09-garantie-d-office.md`, `2026-11-10-site-garantie-degressive.md`.
+Plus rien à écrire. Restent ouverts, au propriétaire : ce qui paie le
+surcoût, l'export dans l'Union, la CSG du complément ; si la garantie
+d'office peut se refuser ; et la phrase de l'accueil, la forme retenue ne
+payant pas les pensions sous la moitié du plancher.
 
 Le propriétaire, le 9 novembre 2026 : la garantie (800 € plus 250 €
 d'isolement) est différentielle ; un salarié au SMIC à carrière complète,
