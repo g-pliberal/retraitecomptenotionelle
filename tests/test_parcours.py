@@ -183,7 +183,6 @@ ECRITS_A_LA_MAIN = {
     "2 751 €": "la saisie de la carrière née en 2000",
     "300 €": "une pension du foyer que l'accueil pose en exemple (FOYERS_GARANTIE)",
     "1 500 €": "l'autre pension du même foyer",
-    "100 %": "la quatrième promesse de l'accueil, que la page écrit sans la calculer",
     "30 %": "la question de la salle, citée telle qu'elle vient",
 }
 

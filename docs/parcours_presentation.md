@@ -31,23 +31,26 @@ nomme sa ligne.
 - **Le site n'a aucune valeur officielle**, et il le dit en bas de chaque
   page. Si quelqu'un veut ses droits réels, c'est info-retraite.fr.
 
-## Le même parcours en diaporama, hors ligne
+## Un diaporama pour les adhérents, hors ligne
 
-`docs/presentation_20_septembre_2026.pptx` reprend ce parcours en dix-huit
-diapositives, avec les captures des pages du site prises le 20 septembre au
-matin et, sous chaque diapositive, les notes du présentateur : ce qu'il faut
-dire, et la réponse aux questions attendues. Il ne dépend d'aucun réseau.
-Ouvrir en mode présentateur pour lire les notes.
+`docs/presentation_adherents_novembre_2026.pptx` n'est pas ce parcours : il
+explique la réforme elle-même à des adhérents qui la découvrent, sans montrer
+le site. Il dit le compte en trois gestes, les cotisations, l'épargne, la
+garantie vieillesse, l'âge, les pensions en cours et qui finance quoi ; puis
+les promesses avec leur condition, les phrases à ne pas dire et les questions
+qui reviennent. Sous chaque diapositive, les notes du présentateur disent
+quoi dire, et quoi ne pas dire. Il ne dépend d'aucun réseau. Ouvrir en mode
+présentateur pour lire les notes.
 
-**Ses chiffres, eux, sont ceux de cette matinée-là**, et aucun test ne les
-relit : un fichier binaire ne se compare pas à une page. Il porte sa date
-dans son nom pour cette raison. Avant de le projeter, ouvrir le site à côté
-et vérifier les quatre montants de la page Simuler ; s'ils ont bougé, c'est
-ce document-ci qui fait foi, puisque son test le tient. Sa diapositive 12 et
-ses notes répondent aussi à « tout est rouge, donc les pensions baissent ? »
-comme le site le faisait avant le 23 septembre 2026 — « ce ne sont pas des
-baisses de pension » : ne pas la projeter telle quelle, c'est la réponse de
-la section Carrières types ci-dessous qui vaut désormais.
+**Il suit les décisions du programme arrêtées au 9 novembre 2026**
+(`docs/feuille_de_route_programme.md`), et non le site, qui ne les montre pas
+encore toutes : la réversion, le taux d'un salarié du privé avant
+l'intégration de sa complémentaire, l'apport pour un premier logement et la
+garantie dégressive s'y lisent autrement qu'ici. Aucun test ne relit un
+fichier binaire : il porte sa date dans son nom pour cette raison, et se
+refait quand le programme bouge. Il remplace le diaporama du 20 septembre
+2026, qui reprenait ce parcours en captures d'écran, à ses chiffres de ce
+matin-là.
 
 ## L'idée en une phrase
 
@@ -72,10 +75,11 @@ montre six, dans l'ordre, et laisse les autres pour les questions.
 
 C'est l'accueil. Descendre lentement, sans rien cliquer.
 
-- Le titre, puis les **quatre grands chiffres** : <!--chiffre:mesure(parametre?nom=garantie_vieillesse_mensuelle+allocation_isolement_mensuelle)-->1 050<!--/--> € par mois au
-  minimum pour une personne seule (<!--chiffre:mesure(parametre?nom=garantie_vieillesse_mensuelle&echelle=2)-->1 600<!--/--> € pour un couple) ; <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % + <!--chiffre:mesure(parametre?nom=taux_capitalisation_obligatoire)-->5<!--/--> % de
-  cotisation au lieu de <!--chiffre:mesure(constante?de=moteur/js/pages.js&nom=TAUX_ACTUEL_TOTAL&echelle=100)-->28<!--/--> % ; 1 compte en euros ; 100 % de ce qui est cotisé
-  revient.
+- Le titre, puis les **cartes numérotées** : 1 compte à votre nom, en euros ;
+  <!--chiffre:mesure(parametre?nom=taux_capitalisation_obligatoire)-->5<!--/--> % du salaire placés à votre nom ; <!--chiffre:mesure(parametre?nom=garantie_vieillesse_mensuelle+allocation_isolement_mensuelle)-->1 050<!--/--> € par mois au
+  minimum pour qui vit seul, <!--chiffre:mesure(parametre?nom=garantie_vieillesse_mensuelle)-->800<!--/--> € chacun en couple ; vos enfants et petits-enfants auront
+  leur retraite ; 1 règle fixée une fois pour toutes ; à cotisation égale, les
+  mêmes droits pour tous.
 - **« Comment ça marche, en trois gestes »** : on inscrit, on revalorise, on
   divise. C'est la phrase de la section précédente, et c'est tout le modèle.
 - Le tableau **« Le plancher regarde chacun, pas le couple »** : à 300 € et
