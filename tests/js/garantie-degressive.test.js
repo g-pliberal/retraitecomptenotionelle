@@ -22,6 +22,7 @@ import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
 import { PARAMETRES_DEFAUT, SituationFoyer } from "../../moteur/js/config.js";
+import { coutGarantie, coutGarantieParSexe, manqueMoyen } from "../../moteur/js/garantie.js";
 import { Simulateur } from "../../moteur/js/simulateur.js";
 
 const RACINE = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
@@ -129,4 +130,84 @@ test("aujourd'hui, la garantie d'une retraitée partie avant 65 ans suit le mêm
     `des ressources de ${ressources / 12} € par mois sortent de la pente`);
   proche(aujourdhui.garantie_vieillesse,
     0.5 * plancher - 0.5 * (ressources - 0.5 * plancher), "le complément d'aujourd'hui");
+});
+
+// -- le barème sur la distribution, que les pages appliquent ------------------
+//
+// Les mêmes tranches, posées à la main, que `tests/test_garantie_degressive.py`
+// oppose au coût du modèle : le module du portage, que seules les pages lisent,
+// doit rendre ce que le Python rend.
+
+const FORME = [0.5, 0.5];
+
+test("le manque moyen d'une tranche suit la pente, comme au modèle", () => {
+  const manque = (inferieure, superieure, plancher = 1050.0) => manqueMoyen(
+    inferieure, superieure, plancher, ...FORME);
+  const egal = ([concernee, moyen], [attendue, attendu], quoi) => {
+    proche(concernee, attendue, `${quoi}, part servie`);
+    proche(moyen, attendu, `${quoi}, complément moyen`);
+  };
+  egal(manque(0.0, 100.0), [1.0, 1000.0], "sous le pivot");
+  // (25 × 537,5 + 75 × 506,25) / 100.
+  egal(manque(500.0, 600.0), [1.0, 514.0625], "à cheval sur le pivot");
+  // 525 − 0,5 × 475 = 287,50 à 1 000 €, 237,50 à 1 100 €.
+  egal(manque(1000.0, 1100.0), [1.0, 262.5], "dans la pente");
+  // De 37,50 à zéro sur 75 € : 75 × 18,75 / 100, sur les trois quarts.
+  egal(manque(1500.0, 1600.0), [0.75, 14.0625], "à cheval sur la sortie");
+  assert.deepEqual(manque(1600.0, 1700.0), [0, 0]);
+  egal(manque(1400.0, null), [1.0, 87.5], "la tranche ouverte");
+  assert.deepEqual(manque(1600.0, null), [0, 0]);
+  egal(manque(300.0, 500.0, 800.0), [1.0, 412.5], "en couple, sur le pivot");
+  egal(manque(1100.0, 1200.0, 800.0), [1.0, 25.0], "en couple, avant la sortie");
+});
+
+test("sans forme, le barème d'une tranche reste différentiel, au bit près", () => {
+  const differentielle = (inferieure, superieure, plancher) => {
+    if (superieure === null) {
+      const manque = Math.max(0, plancher - inferieure);
+      return manque > 0 ? [1, manque] : [0, 0];
+    }
+    if (superieure <= plancher) return [1, plancher - (inferieure + superieure) / 2];
+    if (inferieure >= plancher) return [0, 0];
+    const concernee = (plancher - inferieure) / (superieure - inferieure);
+    return [concernee, concernee * (plancher - inferieure) / 2];
+  };
+  for (const facteur of [1.0, 0.62, 0.805, 0.979, 0.7312345678]) {
+    for (const plancher of [680.8, 893.55, 800.0, 1050.0, 0.0, 9000.0]) {
+      for (let rang = 0; rang < 46; rang += 1) {
+        const inferieure = 100.0 * rang * facteur;
+        for (const superieure of [100.0 * (rang + 1) * facteur, null]) {
+          const attendu = differentielle(inferieure, superieure, plancher);
+          assert.deepEqual(manqueMoyen(inferieure, superieure, plancher, 1.0, 1.0), attendu);
+          assert.deepEqual(manqueMoyen(inferieure, superieure, plancher), attendu);
+        }
+      }
+    }
+  }
+});
+
+test("le coût d'une distribution additionne ses tranches, sous la forme donnée", () => {
+  // Quatre tranches, un quart de la population chacune ; un million de
+  // personnes seules, plancher de 1 050 €.
+  const distribution = { tranches: [
+    { borneInferieure: 0.0, borneSuperieure: 100.0, part: 0.25 },
+    { borneInferieure: 500.0, borneSuperieure: 600.0, part: 0.25 },
+    { borneInferieure: 1000.0, borneSuperieure: 1100.0, part: 0.25 },
+    { borneInferieure: 1500.0, borneSuperieure: 1600.0, part: 0.25 },
+  ] };
+  const chiffre = coutGarantie(distribution, 1e6, 1050.0, 1.0, ...FORME);
+  proche(chiffre.partBeneficiaires, 0.9375, "la part servie");
+  // 0,25 × (1 000 + 514,0625 + 262,5 + 14,0625) € par mois et par personne.
+  proche(chiffre.coutAnnuelMeur, 5371.875, "le coût");
+  const avant = coutGarantie(distribution, 1e6, 1050.0);
+  proche(avant.partBeneficiaires, 0.625, "la part servie, différentielle");
+  proche(avant.coutAnnuelMeur, 0.25 * 1512.5 * 12.0, "le coût, différentiel");
+  // Les deux planchers, chacun sous sa forme (décision 102) : la moitié à
+  // 800 €, la moitié à 1 050 €.
+  const melange = coutGarantieParSexe(distribution, distribution, 1.0, 1e6, 800.0, 1.0, 1.0,
+    1050.0, { F: 0.5, H: 0.5 }, ...FORME);
+  const aDeux = coutGarantie(distribution, 5e5, 800.0, 1.0, ...FORME);
+  const seules = coutGarantie(distribution, 5e5, 1050.0, 1.0, ...FORME);
+  proche(melange.coutAnnuelMeur, aDeux.coutAnnuelMeur + seules.coutAnnuelMeur, "le mélange");
+  proche(aDeux.coutAnnuelMeur, 0.25 * 1150.0 * 5e5 * 12.0 / 1e6, "à deux");
 });

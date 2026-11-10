@@ -53,7 +53,7 @@ import { COMPOSANTE_GARANTIE } from "./agregats.js";
 import { CaracteristiquesRetraites } from "./caracteristiques.js";
 import { CreditsMinisteres } from "./credits-ministeres.js";
 import { DistributionPensions } from "./distribution.js";
-import { coutGarantie, coutGarantieParSexe } from "./garantie.js";
+import { complementGarantie, coutGarantie, coutGarantieParSexe } from "./garantie.js";
 import { SYSTEMES, DepensesRetraite } from "./depenses.js";
 import {
   GROUPES,
@@ -6829,18 +6829,51 @@ function garantieDAujourdhui(comparaison) {
     return debut + `Elle ne s'ouvre qu'à 65 ans, en ${ouverture} : rien `
       + "n'est servi aujourd'hui.</p>";
   }
+  const forme = formeGarantie(comparaison.parametres);
   if (aujourdhui.garantie_vieillesse > 0) {
     return debut
       + `La pension obligatoire, ${mois(aujourdhui.ressources_garantie)} `
-      + "par mois, reste sous le plancher de "
-      + `${mois(aujourdhui.plancher_garantie)} : la garantie y ajoute `
+      + `par mois, ${forme.situe(aujourdhui.ressources_garantie, aujourdhui.plancher_garantie)} `
+      + ": la garantie y ajoute "
       + `<strong>${mois(aujourdhui.garantie_vieillesse)} par mois</strong>, `
       + "que l'impôt finance.</p>";
   }
   return debut
     + `La pension obligatoire, ${mois(aujourdhui.ressources_garantie)} par `
-    + `mois, dépasse le plancher de ${mois(aujourdhui.plancher_garantie)} : `
+    + `mois, ${forme.situe(aujourdhui.ressources_garantie, aujourdhui.plancher_garantie)} : `
     + "la garantie ne sert rien.</p>";
+}
+
+/**
+ * La forme de la garantie vieillesse, pour le texte (décisions 100 et 102 du
+ * programme) : dégressive, elle retire la pension en entier jusqu'à `part` du
+ * plancher, puis de `taux` seulement, et s'éteint à `sortie` fois le plancher.
+ * `situe` dit où des ressources annuelles tombent face à un plancher annuel,
+ * en euros par mois : sous lui, entre lui et la sortie, ou au-delà.
+ */
+function formeGarantie(parametres) {
+  const part = parametres.part_retrait_entier_garantie;
+  const taux = parametres.taux_retrait_garantie;
+  const sortie = part + (1.0 - part) / taux;
+  const mois = (annuel) => g.eurosCentimes(annuel / MOIS_PAR_AN);
+  return {
+    part,
+    taux,
+    sortie,
+    partTexte: g.pourcentage(part, false, 0),
+    tauxTexte: g.pourcentage(taux, false, 0),
+    sortieTexte: g.nombre(sortie, 1),
+    complement: (plancher, ressources) => complementGarantie(plancher, ressources, part, taux),
+    situe: (ressources, plancher) => {
+      if (ressources <= plancher) return `reste sous le plancher de ${mois(plancher)}`;
+      if (ressources < sortie * plancher) {
+        return `dépasse le plancher de ${mois(plancher)}, sans atteindre les `
+          + `${mois(sortie * plancher)} où la garantie s'éteint`;
+      }
+      return `dépasse les ${mois(sortie * plancher)} où la garantie s'éteint, `
+        + `${g.nombre(sortie, 1)} fois le plancher`;
+    },
+  };
 }
 
 function eurosSigne(montant, centimes = true) {
@@ -7917,7 +7950,7 @@ automatiquement.</p>`);
  *
  * Deux choses, et le bloc les sépare. Le taux unique change ce que le compte
  * reçoit : il se lit dans le capital, contre celui du système 3. La garantie
- * vieillesse change ce qui est servi par-dessus : différentielle,
+ * vieillesse change ce qui est servi par-dessus : dégressive,
  * individualisée, financée par l'impôt — et c'est elle que le tableau détaille,
  * étape par étape, parce qu'elle est la seule ligne de toute la page qui ne
  * vienne pas d'une cotisation.
@@ -7982,8 +8015,8 @@ function garantieVieillesse(comparaison, saisie) {
       `${g.eurosCentimes(garantie.pension_contributive)} par an`],
     ["e) + rente du pilier capitalisé",
       `les ${g.pourcentage(tauxCapitalisationApplique(parametres), false, 0)} `
-      + "capitalisés, volontaires compris : une allocation différentielle "
-      + "compte les ressources et non leur origine",
+      + "capitalisés, volontaires compris : la garantie compte les "
+      + "ressources et non leur origine",
       `${g.eurosCentimes(garantie.rente_capitalisee)} par an`],
     ...(garantie.pensions_etrangeres > 0 ? [["e′) + pensions étrangères",
       "celles qu'un autre État vous sert à l'ouverture, servies à part : des "
@@ -8007,6 +8040,15 @@ function garantieVieillesse(comparaison, saisie) {
     ]);
   }
   const reference = garantie.age_atteint ? "f" : "f′";
+  // La règle, dégressive : jusqu'au pivot p, la garantie comble tout l'écart
+  // au plancher ; au-delà, chaque euro de ressources ne lui retire qu'une part.
+  const forme = formeGarantie(parametres);
+  const pivot = forme.part * garantie.plancher_annuel;
+  const regle = (garantie.ressources_a_l_ouverture <= pivot
+    ? `c − ${reference}, les ressources ne dépassant pas p`
+    : `c − p − ${forme.tauxTexte} × (${reference} − p), au moins zéro`)
+    + `, où p vaut ${forme.partTexte} de c ; dégressive, financée par l'impôt, `
+    + "servie à partir de 65 ans";
   lignes.push(
     ["g) Garantie vieillesse",
       garantie.residence
@@ -8015,7 +8057,7 @@ function garantieVieillesse(comparaison, saisie) {
         : !garantie.condition_de_residence
           ? "nulle : comme l'ASPA qu'elle remplace, elle ne se sert qu'à qui "
             + "séjourne en France assez de mois par an"
-          : `max(0, c − ${reference}), financée par l'impôt, servie à partir de 65 ans`
+          : regle
           + (garantie.age_atteint
             ? "" : ` — soit ici à compter de ${garantie.annee_ouverture}`),
       `${g.eurosCentimes(garantie.complement)} par an`],
@@ -8040,7 +8082,7 @@ function garantieVieillesse(comparaison, saisie) {
   } else if (garantie.servie_a_la_liquidation) {
     lecture = "<p>Ici, la pension obligatoire de "
       + `${g.eurosCentimes(garantie.ressources / 12)} par mois `
-      + `reste sous le plancher de ${g.eurosCentimes(garantie.plancher_annuel / 12)} : `
+      + `${forme.situe(garantie.ressources, garantie.plancher_annuel)} : `
       + `l'impôt en finance <strong>${g.eurosCentimes(garantie.complement / 12)} `
       + `par mois</strong>, soit ${g.pourcentage(garantie.complement / liberal.pension_annuelle)} `
       + "de ce que le système 4 verse.</p>";
@@ -8052,7 +8094,7 @@ function garantieVieillesse(comparaison, saisie) {
       + `${g.eurosCentimes(garantie.ressources / 12)} par mois au départ, `
       + `${g.eurosCentimes(garantie.ressources_a_l_ouverture / 12)} à l'ouverture, `
       + "parce qu'elle suit la masse salariale quand le plancher suit les prix — "
-      + `reste sous le plancher de ${g.eurosCentimes(garantie.plancher_annuel / 12)} : `
+      + `${forme.situe(garantie.ressources_a_l_ouverture, garantie.plancher_annuel)} : `
       + `l'impôt en finance <strong>${g.eurosCentimes(garantie.complement / 12)} par `
       + "mois</strong>."
       + (comparaison.aujourd_hui !== null ? ""
@@ -8061,7 +8103,7 @@ function garantieVieillesse(comparaison, saisie) {
   } else {
     lecture = "<p>Ici, la pension obligatoire de "
       + `${g.eurosCentimes(garantie.ressources / 12)} par mois `
-      + `dépasse le plancher de ${g.eurosCentimes(garantie.plancher_annuel / 12)} : `
+      + `${forme.situe(garantie.ressources_a_l_ouverture, garantie.plancher_annuel)} : `
       + "la garantie ne sert rien, et le système 4 est un compte notionnel "
       + "à taux unique, sans plus.</p>";
   }
@@ -8073,7 +8115,7 @@ function garantieVieillesse(comparaison, saisie) {
   const plancherSeul = baseMensuelle + isolementMensuel;
   const exemples = EXEMPLES_GARANTIE.map(([pensions, libelle]) => {
     const plancher = pensions.length === 1 ? plancherSeul : baseMensuelle;
-    const aides = pensions.map((pension) => Math.max(0.0, plancher - pension));
+    const aides = pensions.map((pension) => forme.complement(plancher, pension));
     const detail = aides.length > 1 ? aides.map((aide) => g.euros(aide)).join(" + ") : "";
     return [
       libelle,
@@ -8124,12 +8166,15 @@ ${lecture}
 <p>À un foyer, en euros de ${parametres.annee_euros_garantie_vieillesse} et
 par mois.${g.bulle(
     "Ce qui la sépare de l'ASPA",
-    "Un mot : elle est <strong>individualisée</strong>. L'ASPA regarde les "
+    "Deux mots. Elle est <strong>individualisée</strong> : l'ASPA regarde les "
     + "ressources du foyer, et son plafond de couple n'est pas le double de "
     + "celui d'une personne seule ; la garantie compare chacun à son propre "
     + `plancher — ${g.euros(baseMensuelle)} par mois, plus `
     + `${g.euros(isolementMensuel)} d'allocation d'isolement pour qui vit seul `
-    + "— sans jamais regarder la pension du conjoint.",
+    + "— sans jamais regarder la pension du conjoint. Et elle est "
+    + `<strong>dégressive</strong> : jusqu'à ${forme.partTexte} du plancher, `
+    + "elle comble tout l'écart ; au-delà, chaque euro de pension ne lui "
+    + `retire que ${forme.tauxTexte}.`,
   )}</p>
 ${g.tableau(
     ["Pensions des deux personnes", "Aide totale du foyer", "Détail"],
@@ -8616,7 +8661,7 @@ const GRILLES_CAS_TYPES = [
     + "deçà remontent. L'écart comprend la rente capitalisée, qui ne joue que "
     + "pour qui cotise après la bascule, d'autant plus qu'il lui reste "
     + "d'années à courir. La garantie ne se voit que sur les cas dont la "
-    + "pension reste sous le plancher, à partir de 65 ans.",
+    + "pension reste sous 1,5 fois le plancher, à partir de 65 ans.",
   ],
   [
     "notionnel_retroactif",
@@ -13168,6 +13213,9 @@ function coutDetailGarantie(contexte) {
   const anneeEnquete = c.annee(millesime);
   const facteur = anneeEnquete && anneeEnquete.garantie ? anneeEnquete.garantie.facteur : 1.0;
   const taux = base.taux_recours_garantie;
+  // La forme du barème, dégressive, que le coût du modèle applique : les
+  // tableaux de ce dépliant, calculés ici, la portent de même.
+  const forme = formeGarantie(base);
   const seul = base.situation_foyer === "seul";
   const planchers = [
     ["Plancher de base, 800 € (vie à deux)", base.garantie_vieillesse_mensuelle],
@@ -13201,7 +13249,7 @@ function coutDetailGarantie(contexte) {
       new DistributionPensions(contexte.paquet, "F"),
       new DistributionPensions(contexte.paquet, "H"),
       partFemmesGarantie, effectifRetraites, plancherSeul, facteur,
-      rapport,
+      rapport, null, null, forme.part, forme.taux,
     ));
   }
   // CE QUE LES MINIMA APPORTERAIENT À CE RAPPORT : les effectifs de
@@ -13232,7 +13280,7 @@ function coutDetailGarantie(contexte) {
     new DistributionPensions(contexte.paquet, "F"),
     new DistributionPensions(contexte.paquet, "H"),
     partFemmesGarantie, effectifRetraites, plancherSeul, facteur,
-    rapportMesure * rapportMinima,
+    rapportMesure * rapportMinima, null, null, forme.part, forme.taux,
   ));
   const coutUniforme = parSexe.get(1.0).coutAnnuelMeur;
   const ecartMesure = coutUniforme > 0
@@ -13248,6 +13296,7 @@ function coutDetailGarantie(contexte) {
     for (const [titrePlancher, mensuel] of planchers) {
       const chiffre = coutGarantie(
         distribution, effectifRetraites, mensuel * versEnquete, facteurAssiette,
+        forme.part, forme.taux,
       );
       lignes.push([
         echapper(`${titreAssiette} — ${titrePlancher}`),
@@ -13260,11 +13309,11 @@ function coutDetailGarantie(contexte) {
   }
   const garantieBasse = coutGarantie(
     distribution, effectifRetraites,
-    base.garantie_vieillesse_mensuelle * versEnquete, 1.0,
+    base.garantie_vieillesse_mensuelle * versEnquete, 1.0, forme.part, forme.taux,
   );
   const garantieScenario = coutGarantie(
     distribution, effectifRetraites,
-    base.garantie_vieillesse_mensuelle * versEnquete, facteur,
+    base.garantie_vieillesse_mensuelle * versEnquete, facteur, forme.part, forme.taux,
   );
 
   // La trajectoire, à quelques dates : ce que la ligne « s'ajoute au
@@ -13393,10 +13442,12 @@ contiennent ; elles comptent pour ce qu'elles empêchent.</p>
     `<strong>${milliards(garantieBrute - totalRemplace, 1)}</strong>`]);
 
   return g.depliant("Ce que coûte la garantie vieillesse", `
-<p>La garantie du système 4 est <strong>différentielle</strong> : elle ne verse
-que ce qui manque à une pension pour atteindre son plancher. Son coût est donc
-tout entier celui de la <strong>queue basse de la distribution</strong> des
-pensions, et treize carrières de référence ne décrivent pas une distribution.
+<p>La garantie du système 4 est <strong>dégressive</strong> : jusqu'à
+${forme.partTexte} du plancher, elle verse ce qui manque à une pension pour
+l'atteindre ; au-delà, chaque euro de pension ne lui retire que
+${forme.tauxTexte}, et elle s'éteint à ${forme.sortieTexte} fois le plancher.
+Son coût est donc tout entier celui du <strong>bas de la distribution des
+pensions</strong>, et treize carrières de référence ne décrivent pas une distribution.
 La ligne « garantie vieillesse » des deux tableaux du haut n'est donc pas
 tirée des cas types : elle est lue sur la distribution que l'échantillon
 interrégimes de retraités de la DREES publie, par tranches de cent euros, pour
@@ -13411,7 +13462,7 @@ salaires, face à un plancher indexé sur les prix, et la garantie décroît.</p
 
 ${g.tableau(
     ["Année", "Facteur de déplacement", "Retraités de 65 ans et plus",
-      "Sous le plancher", "Bénéficiaires",
+      "Ayants droit", "Bénéficiaires",
       `Coût annuel, milliards d'euros ${c.anneeEuros}`,
       "Part du PIB"],
     lignesEtapes,
@@ -13427,7 +13478,7 @@ courbe des taux sans risque implique, une fois l'inflation retirée, et devient
 une créance sur la succession. Le modèle suit ces avances par âge et les
 libère au décès, avec la mortalité du vingtile de niveau de vie où la pension
 moyenne des bénéficiaires les place, les deux sexes pesés comme ils le sont
-sous le plancher, ${g.pourcentage(partFemmes, false, 0)} de femmes : une
+parmi les ayants droit, ${g.pourcentage(partFemmes, false, 0)} de femmes : une
 avance dure ${g.nombre(dureeAvances, 1)} ans en moyenne.
 La succession en couvre ${g.pourcentage(partReprise, false, 0)}, ${repriseCalculee ? "calculés sur le patrimoine des ménages retraités selon leur revenu" : "le réglage « Part de l'avance couverte par la succession »"}. Ce que la succession ne couvre pas
 est abandonné : c'est cette part-là, et elle seule, que l'impôt finance pour
@@ -13438,7 +13489,7 @@ haut en viennent.</p>
 nulle part. Le COR a publié, sur l'enquête Histoire de vie et Patrimoine 2018,
 le patrimoine brut des ménages retraités selon leur revenu disponible : une
 médiane de ${g.euros(modestes.mediane)} pour le quart le plus modeste, de ${g.euros(retraites.mediane)} pour
-l'ensemble. Chaque tranche de pension sous le plancher reçoit l'avance qu'elle
+l'ensemble. Chaque tranche de pension que la garantie sert reçoit l'avance qu'elle
 constituerait, et la part que la succession en couvre est celle du quart le
 plus modeste pour le premier quart des retraités, celle de l'ensemble à partir
 de la médiane, et le mélange entre les deux ; la part retenue est la moyenne,
@@ -13490,7 +13541,7 @@ plutôt que sur la plus haute. <em>Jusqu'à cette date, elle servait le plancher
 majoré à tout le monde, et surestimait la garantie de près d'un quart.</em></p>
 
 <p><strong>Servie d'office, à tous les ayants droit.</strong> La garantie ne
-se demande pas : elle est servie sans démarche, là où l'ASPA se réclame, et où
+se demande pas, là où l'ASPA se réclame, et où
 la DREES mesure qu'une personne seule éligible sur deux ne la réclame pas, la
 crainte de la reprise sur succession étant le premier motif donné. Les
 bénéficiaires et les coûts de ce dépliant, la ligne « s'ajoute au système 4 »
@@ -13500,7 +13551,7 @@ ${g.pourcentage(taux, false, 0)} des ayants droit. Le paramètre
 de l'ASPA, diviserait ces coûts par deux.</p>
 
 ${g.tableau(
-    ["Assiette et plancher", "Sous le plancher", "Bénéficiaires",
+    ["Assiette et plancher", "Ayants droit", "Bénéficiaires",
       "Complément moyen",
       `Coût annuel, milliards d'euros ${base.annee_euros_garantie_vieillesse}`],
     lignes,
@@ -15203,12 +15254,13 @@ verse. Dans les <strong>résultats</strong>, la rente qu'ils servent est écrite
 sur sa propre ligne, pour que le lecteur qui ne les verserait pas puisse la
 retrancher.</p>
 <p>Un troisième endroit aurait pu les séparer, et ne les sépare pas : la
-<strong>garantie vieillesse</strong>. Elle est différentielle, elle compte les
+<strong>garantie vieillesse</strong>. Elle compte les
 ressources et non leur origine, et cette rente-là en est une. Une épargne que
-personne n'oblige réduit donc l'allocation, exactement comme une pension
-personnelle réduit l'ASPA d'aujourd'hui. Pour qui reste sous le plancher après
-avoir versé, ces cinq points ne rapportent <strong>rien du tout</strong> en
-pension : la garantie les reprend euro pour euro. Il leur reste ce que la
+personne n'oblige réduit donc l'allocation, comme une pension
+personnelle réduit l'ASPA d'aujourd'hui. Pour qui reste sous la moitié du
+plancher après avoir versé, ces cinq points ne rapportent <strong>rien du
+tout</strong> en pension : la garantie les reprend euro pour euro ; au-delà,
+de moitié. Il leur reste ce que la
 répartition ne donne à personne, un capital qui se transmet.</p>
 
 <h3>Où l'argent est placé</h3>
@@ -15484,7 +15536,7 @@ active, ni périodes assimilées, ni réversion, ni décote ni surcote.</p>
 plancher, et un seul. C'est le système 3, avec un taux unique de 18 % pour tous
 à compter de la bascule, salariale et patronale additionnées, les années
 antérieures restant portées au compte aux taux réels ; le pilier capitalisé ;
-et une garantie vieillesse, différentielle et servie à 65 ans comme l'ASPA, mais
+et une garantie vieillesse, dégressive et servie à 65 ans comme l'ASPA, mais
 individualisée — 800 € par personne, plus 250 € pour qui vit seul, en euros de
 2026 — et financée par l'impôt. La page de simulation en détaille chaque étape,
 et la page Coût compte cette part à part.</p>`);
@@ -16780,7 +16832,9 @@ export const FOYERS_GARANTIE = [[300, 300], [300, 1500], [900, 900], [300, 5000]
  * montants. Jusqu'au 23 septembre 2026, la première colonne recopiait la
  * seconde appliquée au foyer : elle cachait qu'un couple à 300 et 300 euros
  * reçoit aujourd'hui 1 020 euros et en recevrait 1 000, et qu'une personne
- * seule à 300 euros en reçoit 744 et en recevrait 750.
+ * seule à 300 euros en reçoit 744 et en recevrait 750. La garantie est
+ * dégressive (décision 100) : la colonne applique le barème du moteur, et un
+ * couple à 900 et 900 euros y reçoit 300 euros, 150 chacun.
  */
 export function tableauGarantie(contexte) {
   const base = contexte.base;
@@ -16793,9 +16847,10 @@ export function tableauGarantie(contexte) {
   const somme = (pensions) => pensions.reduce((total, p) => total + p, 0);
   const aspa = (pensions) => Math.max(
     0, (pensions.length === 1 ? seul : couple) - somme(pensions));
+  const forme = formeGarantie(base);
   const garantie = (pensions) => (pensions.length === 1
-    ? Math.max(0, plancher + isolement - pensions[0])
-    : somme(pensions.map((p) => Math.max(0, plancher - p))));
+    ? forme.complement(plancher + isolement, pensions[0])
+    : somme(pensions.map((p) => forme.complement(plancher, p))));
   const libelle = (pensions) => (pensions.length === 1
     ? `Personne seule, ${g.euros(pensions[0])}`
     : `${g.euros(pensions[0])} et ${g.euros(pensions[1])}`);
@@ -16837,9 +16892,11 @@ garanti de la fonction publique, l'assurance vieillesse des parents au foyer,
 les majorations de durée et la majoration pour trois enfants, chacun avec son
 barème, son âge et sa condition : toute pension modeste en devient impossible
 à prévoir.</p>
-<p>Nous les remplaçons par <strong>une seule prestation</strong>, différentielle
-comme l'ASPA mais <strong>individualisée</strong>, en euros de
-${base.annee_euros_garantie_vieillesse} revalorisés sur les prix.</p>
+<p>Nous les remplaçons par <strong>une seule prestation</strong>,
+<strong>individualisée</strong>, en euros de
+${base.annee_euros_garantie_vieillesse} revalorisés sur les prix, et
+dégressive : au-delà de ${formeGarantie(base).partTexte} du plancher, chaque
+euro de pension ne lui retire que ${formeGarantie(base).tauxTexte}.</p>
 <p><strong>Une avance, pas un don.</strong> Ce que la garantie verse est une
 créance de l'État, qui porte intérêt au taux auquel il emprunte, pour que les
 finances publiques n'y perdent rien, et qui est <strong>reprise sur la
@@ -16860,11 +16917,10 @@ qu'au-delà d'un seuil d'actif net. Quatre règles l'encadrent :</p>
   <li>la créance est garantie par une hypothèque légale inscrite dès le
   premier versement, de sorte qu'un bien donné la porte avec lui.</li>
 </ul>
-<p>Elle est servie d'office, sans demande, et elle se refuse : personne ne se
-voit imposer une dette, et qui préfère transmettre plutôt que recevoir peut y
-renoncer. Le programme chiffre son coût en comptant tous les ayants droit, là
-où la DREES observe qu'une personne seule éligible sur deux ne réclame pas
-l'ASPA.</p>
+<p>Elle est servie d'office, sans demande, et se refuse : personne ne se voit
+imposer une dette, et qui préfère transmettre peut y renoncer. Le programme
+chiffre son coût sur tous les ayants droit ; la DREES observe qu'une personne
+seule éligible sur deux ne réclame pas l'ASPA.</p>
 <p>Le 11 juin 2026, l'Assemblée nationale a voté, sans une voix contre, <a
 href="https://www.assemblee-nationale.fr/dyn/17/textes/l17t0308_texte-adopte-seance">la
 fin de la récupération de l'ASPA sur succession</a>, remplacée par une baisse

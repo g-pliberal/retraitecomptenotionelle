@@ -673,17 +673,15 @@ la question — de droit, pas de modèle — ait été tranchée.
 **La garantie est dégressive, et s'éteint au-dessus du plancher.** Les
 ressources lui sont retirées en entier jusqu'à la moitié du plancher, de
 moitié au-delà (`part_retrait_entier_garantie`, `taux_retrait_garantie`) : le
-complément s'éteint à une fois et demie le plancher, et qui a cotisé touche
-toujours plus que qui n'a rien cotisé. La forme s'applique au plancher entier,
+complément s'éteint à une fois et demie le plancher. Sous la moitié du
+plancher, une pension cotisée ne rapporte toujours rien de plus que le
+plancher : la forme ne paie le travail qu'au-delà. Elle s'applique au plancher entier,
 isolement compris, et tout ce qu'elle verse reste repris sur la succession.
 Elle est servie d'office, sans demande : la page Coût compte tous ses ayants
 droit (`taux_recours_garantie`), là où l'ASPA des autres scénarios garde le
 non-recours que la DREES mesure, un ayant droit sur deux
 (`taux_recours_aspa`). C'est une borne haute : qui y renonce pour ne pas
 grever sa succession n'est pas compté, et rien ne mesure combien le feraient.
-Les pages du site, simulateur compris, décrivent encore une garantie
-différentielle : leur texte et leurs exemples recalculés à la main ne suivent
-pas le moteur, que leurs chiffres lus au modèle suivent.
 
 **La garantie ne sert que les retraités qui résident en France.** *Corrigé
 le 23 septembre 2026.* Elle remplace l'ASPA, qui exige une résidence stable et

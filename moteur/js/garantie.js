@@ -5,12 +5,10 @@
  * est une allocation sous condition de ressources, DÉGRESSIVE depuis le 9
  * novembre 2026 (`complementGarantie`, que le moteur d'une carrière applique).
  * Son coût est entièrement celui de la queue basse de la distribution, et c'est
- * précisément ce qu'une grille de douze cas types ne sait pas décrire. LES
- * FONCTIONS DE COÛT DE CE MODULE, que seules les pages lisent, appliquent encore
- * le barème DIFFÉRENTIEL — ce qui manque à une pension pour atteindre son
- * plancher : le coût du modèle se calcule en Python (`_manque_moyen` de
- * `garantie.py`, qui porte la forme dégressive), et l'étape du site les
- * portera (action 186, chantier 9).
+ * précisément ce qu'une grille de douze cas types ne sait pas décrire. Les
+ * fonctions de coût de ce module, que seules les pages lisent, portent la même
+ * forme que le coût du modèle (`_manque_moyen` de `garantie.py`) ; sans forme
+ * donnée, elles rendent le barème différentiel, celui de l'ASPA.
  *
  * TROIS CONVENTIONS
  * 1. Les pensions d'une tranche de cent euros sont supposées réparties
@@ -49,41 +47,76 @@ export function complementGarantie(plancher, ressources, partRetraitEntier, taux
 }
 
 /**
- * Part de la tranche sous le plancher, et manque MOYEN sur toute la tranche.
+ * Part de la tranche que la garantie sert, et complément MOYEN sur toute la
+ * tranche.
  *
- * Le manque moyen est rapporté à la tranche entière et non aux seuls
+ * Le complément moyen est rapporté à la tranche entière et non aux seuls
  * bénéficiaires : c'est lui qu'il faut multiplier par l'effectif de la tranche
- * pour obtenir la dépense.
+ * pour obtenir la dépense. Le barème est celui de `complementGarantie`,
+ * linéaire par morceaux : sa moyenne sur une tranche uniforme est exacte,
+ * morceau par morceau. Sans forme donnée — un et un —, le pivot et la sortie
+ * sont au plancher : c'est le manque moyen de la garantie différentielle, au
+ * bit près. Portage de ``garantie._manque_moyen``, ligne pour ligne.
  */
-export function manqueMoyen(borneInferieure, borneSuperieure, plancher) {
+export function manqueMoyen(borneInferieure, borneSuperieure, plancher,
+                            partRetraitEntier = 1.0, tauxRetrait = 1.0) {
+  const pivot = partRetraitEntier * plancher;
+  const sortie = pivot + (plancher - pivot) / tauxRetrait;
   if (borneSuperieure === null || borneSuperieure === undefined) {
-    const manque = Math.max(0, plancher - borneInferieure);
+    // Masse ponctuelle : ou bien tout le monde est servi, ou bien personne.
+    const manque = complementGarantie(
+      plancher, borneInferieure, partRetraitEntier, tauxRetrait);
     return manque > 0 ? [1, manque] : [0, 0];
   }
-  if (borneSuperieure <= plancher) {
+  if (borneSuperieure <= pivot) {
     return [1, plancher - (borneInferieure + borneSuperieure) / 2];
   }
-  if (borneInferieure >= plancher) {
+  if (borneInferieure >= sortie) {
     return [0, 0];
   }
   const largeur = borneSuperieure - borneInferieure;
-  const concernee = (plancher - borneInferieure) / largeur;
-  // Sur la seule fraction concernée, le manque décroît linéairement de
-  // ``plancher - borneInferieure`` à zéro : sa moyenne en est la moitié.
-  return [concernee, concernee * (plancher - borneInferieure) / 2];
+  const concernee = (Math.min(borneSuperieure, sortie) - borneInferieure) / largeur;
+  let manque = 0;
+  if (borneInferieure < pivot) {
+    // Sous le pivot, le complément décroît d'un euro par euro, de
+    // ``plancher - borneInferieure`` à ``plancher - pivot`` : sa moyenne est ce
+    // dernier, plus la moitié de ce morceau.
+    manque += (pivot - borneInferieure) / largeur * (
+      (plancher - pivot) + (pivot - borneInferieure) / 2);
+  }
+  const debut = Math.max(borneInferieure, pivot);
+  const fin = Math.min(borneSuperieure, sortie);
+  if (fin > debut) {
+    // Dans la pente, il décroît linéairement : la moyenne de ses deux bouts.
+    manque += (fin - debut) / largeur * (
+      complementGarantie(plancher, debut, partRetraitEntier, tauxRetrait)
+      + complementGarantie(plancher, fin, partRetraitEntier, tauxRetrait)
+    ) / 2;
+  }
+  return [concernee, manque];
 }
 
 /**
- * Applique un plancher différentiel à la distribution, et en tire la dépense.
+ * Applique le barème de la garantie à la distribution, et en tire la dépense.
  *
  * ``plancherMensuel`` est exprimé dans les euros de la distribution : c'est à
  * l'appelant de l'y ramener, parce que lui seul sait dans quels euros son barème
- * est écrit.
+ * est écrit. `partRetraitEntier` et `tauxRetrait` sont la forme du barème
+ * (`complementGarantie`), que l'appelant lit aux paramètres de la proposition ;
+ * sans eux — un et un —, le plancher est différentiel.
  */
 export function coutGarantie(distribution, effectifTotal, plancherMensuel,
-                             facteur = 1.0) {
+                             facteur = 1.0, partRetraitEntier = 1.0,
+                             tauxRetrait = 1.0) {
   if (facteur <= 0) {
     throw new Error("le facteur de déplacement doit être strictement positif");
+  }
+  if (!(partRetraitEntier >= 0 && partRetraitEntier <= 1)) {
+    throw new Error("la part du plancher jusqu'où la pension est retirée en "
+      + "entier est entre zéro et un");
+  }
+  if (!(tauxRetrait > 0 && tauxRetrait <= 1)) {
+    throw new Error("le taux de retrait est une part, entre zéro exclu et un");
   }
   let partBeneficiaires = 0;
   let manqueMensuel = 0;
@@ -92,6 +125,7 @@ export function coutGarantie(distribution, effectifTotal, plancherMensuel,
       ? null : tranche.borneSuperieure * facteur;
     const [concernee, manque] = manqueMoyen(
       tranche.borneInferieure * facteur, superieure, plancherMensuel,
+      partRetraitEntier, tauxRetrait,
     );
     partBeneficiaires += tranche.part * concernee;
     manqueMensuel += tranche.part * manque;
@@ -159,7 +193,8 @@ export function pensionMoyenne(distribution) {
  */
 export function coutGarantieParSexe(femmes, hommes, partFemmes, effectifTotal,
                                     plancherMensuel, facteur, rapport,
-                                    plancherMajore = null, partSeule = null) {
+                                    plancherMajore = null, partSeule = null,
+                                    partRetraitEntier = 1.0, tauxRetrait = 1.0) {
   const [facteurFemmes, facteurHommes] = facteursParSexe(
     pensionMoyenne(femmes), pensionMoyenne(hommes), partFemmes, facteur, rapport,
   );
@@ -183,7 +218,8 @@ export function coutGarantieParSexe(femmes, hommes, partFemmes, effectifTotal,
       if (poidsPlancher <= 0) continue;
       const chiffre = coutGarantie(distribution,
                                    effectifTotal * poids * poidsPlancher,
-                                   plancher, facteurSexe);
+                                   plancher, facteurSexe,
+                                   partRetraitEntier, tauxRetrait);
       part += poids * poidsPlancher * chiffre.partBeneficiaires;
       beneficiaires += chiffre.beneficiaires;
       manqueMensuel += poids * poidsPlancher * chiffre.complementMoyenMensuel

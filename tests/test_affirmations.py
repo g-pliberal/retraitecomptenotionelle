@@ -924,17 +924,38 @@ def _(m: Modele):
     assert _proche(garantie.beneficiaires, garantie.ayants_droit)
 
 
+@controle("garantie_degressive_au_dela_du_pivot")
+def _(m: Modele):
+    """Sous la moitié du plancher, une pension de plus ne change pas le total ;
+    au-delà, chaque euro en laisse la moitié, jusqu'à la sortie."""
+    from retraite_notionnelle.garantie import complement_garantie
+
+    forme = (m.base.part_retrait_entier_garantie, m.base.taux_retrait_garantie)
+    assert forme == (0.5, 0.5)
+    for plancher in (800.0, 1050.0):
+        total = lambda pension: pension + complement_garantie(plancher, pension, *forme)
+        # Jusqu'au pivot, le plancher et rien de plus ; au-delà, la moitié.
+        assert _proche(total(0.0), plancher) and _proche(total(0.5 * plancher), plancher)
+        assert _proche(total(0.3 * plancher), plancher)
+        assert _proche(total(plancher) - total(0.5 * plancher), 0.25 * plancher)
+        assert _proche(total(1.5 * plancher), 1.5 * plancher)
+        assert complement_garantie(plancher, 1.5 * plancher, *forme) == 0.0
+    # Et le smicard à carrière complète le voit : il passe le plancher.
+    garantie = m.smic.notionnel_liberal.garantie_vieillesse
+    assert garantie.ressources > 0.5 * garantie.plancher_annuel
+    if garantie.servie_a_la_liquidation:
+        assert m.smic.notionnel_liberal.pension_totale > garantie.plancher_annuel
+
+
 @controle("garantie_sert_au_dessus_du_plancher")
 def _(m: Modele):
-    """ENCORE CONTREDITE : la garantie ne coûte plus sur les seules pensions
-    sous le plancher.
+    """La garantie coûte sur les pensions sous sa SORTIE, et non plus sous le
+    seul plancher.
 
-    La phrase, et le « différentielle » qui la précède, datent de la garantie
-    différentielle. Le 9 novembre 2026, le programme la rend dégressive
-    (décisions 100 à 102) : la pension lui est retirée en entier jusqu'à la
-    moitié du plancher, de moitié au-delà, et elle sert jusqu'à une fois et
-    demie le plancher. Le modèle la sert ainsi depuis. L'étape du site de
-    l'action 186 récrira ces phrases, et leur extrait tombera avec elles.
+    Le 9 novembre 2026, le programme la rend dégressive (décisions 100 à
+    102) : la pension lui est retirée en entier jusqu'à la moitié du plancher,
+    de moitié au-delà, et elle sert jusqu'à une fois et demie le plancher. La
+    page le dit, et ses tableaux appliquent ce barème.
     """
     forme = dict(part_retrait_entier=m.base.part_retrait_entier_garantie,
                  taux_retrait=m.base.taux_retrait_garantie)

@@ -2695,3 +2695,64 @@ def test_le_programme_dit_pourquoi_il_reprend_la_ou_l_assemblee_renonce():
             "héritiers.") in paragraphe
     assert f'href="{TEXTE_ADOPTE_ASPA}"' in plancher
     assert "%" not in paragraphe and "patrimoine" not in paragraphe
+
+
+# -- la garantie dégressive, que les pages disent (action 186, chantier 3) ----
+
+
+def _sans_balises(texte: str) -> str:
+    return " ".join(html.unescape(re.sub(r"<[^>]+>", " ", texte)).split())
+
+
+def test_la_colonne_garantie_de_l_accueil_suit_le_bareme_degressif():
+    """« Avec la garantie », au tableau de l'accueil : décision 100 du
+    programme, la pension retirée en entier jusqu'à la moitié du plancher, de
+    moitié au-delà. À 900 € et 900 €, chacun reçoit 400 − 0,5 × (900 − 400) =
+    150 €, soit 300 € à deux, et non plus rien ; les quatre autres foyers,
+    sous le pivot ou au-delà de la sortie, ne bougent pas."""
+    rendu = html.unescape(pages.tableau_garantie(site().contexte))
+    rangees = [_sans_balises("<tr" + rangee) for rangee in rendu.split("<tr")[1:]]
+    attendus = {
+        f"{g.euros(300)} et {g.euros(300)}": 1000,
+        f"{g.euros(300)} et {g.euros(1500)}": 500,
+        f"{g.euros(900)} et {g.euros(900)}": 300,
+        f"{g.euros(300)} et {g.euros(5000)}": 500,
+        f"Personne seule, {g.euros(300)}": 750,
+    }
+    for libelle, garantie in attendus.items():
+        rangee = next(r for r in rangees if r.startswith(_sans_balises(libelle)))
+        assert rangee.endswith(_sans_balises(g.euros(garantie))), rangee
+
+
+def test_le_simulateur_dit_la_garantie_degressive(page, saisies):
+    """Le détail de la garantie au simulateur suit le moteur : le tableau d'un
+    foyer (900 € et 900 € : 150 € + 150 €), la règle écrite sous sa forme
+    dégressive, et une lecture qui ne dit pas « sous le plancher » d'une
+    pension qui le dépasse."""
+    texte = _sans_balises(page("/simuler", naissance=1958, liquidation=65, salaire=1300,
+                               unite_revenu="euros_mois"))
+    assert _sans_balises(f"{g.euros(150)} + {g.euros(150)}") in texte
+    assert "max(0, c" not in texte
+    assert "allocation différentielle" not in texte
+    assert "dégressive" in texte
+    # Une carrière au salaire moyen des deux tiers, partie à 65 ans : sa
+    # pension dépasse le plancher sans atteindre la sortie, et la garantie lui
+    # sert encore quelque chose.
+    requete = dict(naissance=1958, liquidation=65, salaire=2100, unite_revenu="euros_mois")
+    garantie = saisies.simuler({k: str(v) for k, v in requete.items()}
+                               ).notionnel_liberal.garantie_vieillesse
+    assert garantie.plancher_annuel < garantie.ressources < 1.5 * garantie.plancher_annuel
+    assert garantie.complement > 0
+    texte = _sans_balises(page("/simuler", **requete))
+    assert "reste sous le plancher" not in texte
+    assert "où la garantie s'éteint" in texte and "l'impôt en finance" in texte
+
+
+def test_la_page_cout_dit_la_garantie_degressive(page):
+    """Le dépliant « Ce que coûte la garantie vieillesse » ne la dit plus
+    différentielle, et ses tableaux comptent les ayants droit du barème que le
+    modèle applique : ceux de sa trajectoire, à l'année de l'enquête."""
+    texte = _sans_balises(page("/cout"))
+    assert "La garantie du système 4 est dégressive" in texte
+    assert "La garantie du système 4 est différentielle" not in texte
+    assert "Sous le plancher" not in texte and "Ayants droit" in texte

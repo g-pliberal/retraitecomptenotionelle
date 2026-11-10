@@ -238,7 +238,7 @@ affirmations:
   - id: accueil.une_seule_prestation
     page: /
     extrait: "une seule prestation"
-    porte: la garantie remplace tous les minima, différentielle, à 65 ans, individualisée
+    porte: la garantie remplace tous les minima, sous condition de ressources, à 65 ans, individualisée
     etat: verifiee
     controle: garantie_individualisee
 
@@ -1379,14 +1379,21 @@ affirmations:
 
   - id: cout.queue_basse
     page: /cout
-    extrait: "queue basse de la distribution"
-    porte: la garantie ne coûte que sur les pensions sous le plancher
-    # Démentie le 9 novembre 2026 : la garantie est dégressive (décisions 100
-    # à 102 du programme), et sert jusqu'à une fois et demie le plancher ;
-    # l'étape du site la récrira, avec le « différentielle » qui la précède.
-    etat: contredite
-    action: 186
+    extrait: "bas de la distribution des pensions"
+    porte: >-
+      la garantie, dégressive, ne coûte que sur les pensions sous sa sortie,
+      une fois et demie le plancher
+    etat: verifiee
     controle: garantie_sert_au_dessus_du_plancher
+
+  - id: accueil.cotiser_rapporte_au_dela_du_pivot
+    page: /
+    extrait: "chaque euro de pension ne lui retire que"
+    porte: >-
+      la garantie retire la pension en entier jusqu'à la moitié du plancher,
+      de moitié au-delà : le total ne monte avec la pension qu'au-dessus
+    etat: verifiee
+    controle: garantie_degressive_au_dela_du_pivot
 
   - id: cout.successions_rendent
     page: /cout

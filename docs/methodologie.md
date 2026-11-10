@@ -1541,8 +1541,10 @@ retire que <!--chiffre:mesure(parametre?nom=taux_retrait_garantie)-->50<!--/--> 
 fois et demie le plancher. C'est la forme de la garantie suédoise, et elle
 s'applique au plancher entier, isolement compris. À <!--chiffre:illustration()-->900<!--/--> € de pension, une
 personne en couple reçoit ainsi <!--chiffre:mesure(garantie_complement?pension=900)-->150<!--/--> €, là où une allocation différentielle
-ne lui servirait rien. Qui n'a rien cotisé garde le plancher, et qui a cotisé
-touche toujours plus que lui. Ce que la garantie verse au-dessus du plancher
+ne lui servirait rien. Qui n'a rien cotisé garde le plancher ; une pension
+sous la moitié du plancher n'y ajoute rien, la garantie la retirant en
+entier ; au-delà, chaque euro de pension en laisse la moitié de plus. Ce que
+la garantie verse au-dessus du plancher
 est une avance comme le reste, reprise sur la succession ; à
 `part_retrait_entier_garantie` et `taux_retrait_garantie` de cent pour cent,
 elle redevient différentielle.
