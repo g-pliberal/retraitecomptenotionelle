@@ -1,0 +1,18 @@
+date: "2026-11-11"
+session: "action 135 : le contexte de départ, les outils que le dépôt n'emploie pas"
+consulte: >-
+  Aucune source de droit : la session ne touche à aucune règle du scénario 1,
+  seulement aux réglages de Claude Code (.claude/settings.json), à leur test
+  et à scripts/consommation.py. Lue ce jour : la documentation de Claude Code
+  (permissions, settings et sa référence, prompt-caching, mcp, skills,
+  artifacts, workflows, memory, tools-reference).
+trouve: >-
+  Aucune règle n'a changé. Le premier appel d'une session relisait 89 147
+  jetons, dont 68 000 de définitions d'outils. Trente-quatre refus, accordés
+  par le propriétaire famille par famille, en retirent trente-deux définitions
+  sur soixante ; un sous-agent témoin démarre à 32 661 jetons au lieu de
+  67 737. Les rappels que posent les sessions (send_later) restent : la liste
+  des tâches du compte en montre une trentaine en huit jours.
+reste: >-
+  Le constat sur une session ouverte après le réglage, et ce que devient la
+  description de l'outil Bash, dans la note de la feuille de route.
