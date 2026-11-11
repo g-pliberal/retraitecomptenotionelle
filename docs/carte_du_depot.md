@@ -353,8 +353,9 @@ officiels, sont dans la partie 1 du tableau de bord.
   refait après chaque envoi.
 - **Chiffre ancré** : un nombre de la prose encadré d'un commentaire
   `<!--chiffre:…-->`, qu'une sonde recalcule à chaque fabrication.
-- **Bloc « Reprise »** : les dix lignes au plus qui ouvrent chaque action en
-  cours : où elle en est, par quoi reprendre.
+- **Bloc « Reprise »** : le paragraphe de 150 mots au plus qui ouvre chaque
+  action en cours, écrit pour qui n'a rien lu d'autre : où elle en est, par
+  quoi reprendre.
 - **Noyau** : les principes et les contrats de données (`docs/architecture.md`,
   § 13 et annexe C). Il ne change que par une décision écrite.
 - **Présomption** : ce que le modèle suppose quand on ne le lui dit pas, par

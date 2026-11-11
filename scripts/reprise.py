@@ -11,12 +11,14 @@ depuis l'action 148, sont dans ``docs/feuille_de_route/<numéro>/`` ; quand
 ses étapes se mènent en parallèle, chacune tient son propre bloc, en tête du
 fichier de sa note, tant qu'elle n'est pas finie. Ce script met ces blocs
 bout à bout, avec la liste des notes de chaque action, sans rien lire
-d'autre ; ``tests/test_prose.py`` en tient la forme.
+d'autre ; ``tests/test_prose.py`` en tient la forme et la mesure, que
+:func:`fautes_d_un_bloc` dit.
 """
 
 from __future__ import annotations
 
 import argparse
+import datetime
 import re
 import sys
 from dataclasses import dataclass
@@ -43,6 +45,21 @@ ETATS = (A_FAIRE, EN_COURS, *CLOS)
 #: Le nom d'une note : sa date, puis son sujet (« etape-2 »), sans majuscule
 #: ni accent.
 NOM_DE_NOTE = re.compile(r"(\d{4}-\d{2}-\d{2})-[a-z0-9]+(?:-[a-z0-9]+)*\.md")
+#: L'ouverture d'un bloc « Reprise », avec sa date : « **Reprise, au
+#: 1er décembre 2026.** ».
+OUVERTURE = re.compile(r"\*\*Reprise, au (\d{1,2})(?:er)? (\w+) (\d{4})\.\*\*")
+MOIS = ("janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août",
+        "septembre", "octobre", "novembre", "décembre")
+#: La mesure d'un bloc « Reprise » (``CLAUDE.md``, « Économiser le
+#: contexte » ; action 135, note du 11 novembre 2026 sur le bloc lisible) :
+#: 150 mots au plus, en lignes de largeur ordinaire. Les « dix lignes au
+#: plus » d'avant se tenaient à la lettre par des lignes de plus de mille
+#: caractères ; un bloc daté d'avant la règle les garde, jusqu'à ce que la
+#: session qui avance son action le récrive, daté du jour.
+MOTS_AU_PLUS = 150
+LARGEUR_AU_PLUS = 100
+EN_MOTS_DEPUIS = datetime.date(2026, 11, 11)
+LIGNES_D_AVANT = 10
 
 
 @dataclass
@@ -85,6 +102,46 @@ def etats_inconnus(texte: str) -> list[str]:
     ne serait ni ouverte ni close."""
     return [ligne for ligne in re.findall(r"^### \d+\..*$", texte, re.M)
             if not (trouve := TITRE_D_ACTION.match(ligne)) or trouve.group(3) not in ETATS]
+
+
+def mots(bloc: list[str]) -> int:
+    """Les mots d'un bloc : ce qu'un blanc sépare, sans la ponctuation isolée
+    (« : », « ; », le tiret, les guillemets)."""
+    return len([mot for mot in " ".join(bloc).split() if re.search(r"\w", mot)])
+
+
+def date_d_un_bloc(bloc: list[str]) -> datetime.date | None:
+    """La date qui ouvre un bloc « Reprise » ; ``None`` s'il ne s'ouvre pas
+    sur « **Reprise, au <jour> <mois> <année>.** »."""
+    trouve = OUVERTURE.match(bloc[0]) if bloc else None
+    if not trouve or trouve.group(2) not in MOIS:
+        return None
+    try:
+        return datetime.date(int(trouve.group(3)), MOIS.index(trouve.group(2)) + 1,
+                             int(trouve.group(1)))
+    except ValueError:
+        return None
+
+
+def fautes_d_un_bloc(bloc: list[str]) -> list[str]:
+    """Ce qu'un bloc « Reprise », donné par ses lignes, enfreint : sa forme,
+    puis sa mesure, celle de la règle en vigueur à sa date."""
+    date = date_d_un_bloc(bloc)
+    if date is None:
+        return ["ne s'ouvre pas sur « **Reprise, au <jour> <mois> <année>.** »"]
+    if date < EN_MOTS_DEPUIS:
+        if len(bloc) > LIGNES_D_AVANT:
+            return [f"{len(bloc)} lignes de reprise, {LIGNES_D_AVANT} au plus"]
+        return []
+    fautes = []
+    if mots(bloc) > MOTS_AU_PLUS:
+        fautes.append(f"{mots(bloc)} mots de reprise, {MOTS_AU_PLUS} au plus : "
+                      "ce qui ne tient pas va dans la note")
+    large = max(map(len, bloc))
+    if large > LARGEUR_AU_PLUS:
+        fautes.append(f"une ligne de {large} caractères, {LARGEUR_AU_PLUS} au plus : "
+                      "la couper comme le reste de la prose")
+    return fautes
 
 
 def reprise_d_une_note(texte: str) -> list[str]:

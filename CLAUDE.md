@@ -111,15 +111,21 @@ qu'elle dure. D'où sept règles.
   réponses —, lui confie la vague, donne son nom au propriétaire et s'arrête.
 - **Au démarrage, le bloc « Reprise » seul.** Chaque action `en cours` de la
   feuille de route s'ouvre, sous son titre, sur un paragraphe
-  `**Reprise, au <date>.**` de dix lignes au plus : où elle en est, ce qui
-  reste, par quoi commencer, et la note à lire pour le détail ;
-  `python scripts/reprise.py`, ou `reprise.py 138` pour une seule action, les
-  imprime avec la liste des notes de chacune. La session qui avance l'action
-  le récrit, daté du jour, au commit de sa note ; c'est le seul paragraphe
-  d'une action qui se récrit. Quand les étapes d'une action se mènent en
-  parallèle, son bloc le dit, et aucune session ne le récrit plus : chaque
-  étape inachevée tient le sien, sous le titre de sa note, et l'ôte en
-  finissant.
+  `**Reprise, au <date>.**` de 150 mots au plus, en lignes de largeur
+  ordinaire : où elle en est, ce qui reste, par quoi commencer, et la note à
+  lire pour le détail ; `python scripts/reprise.py`, ou `reprise.py 138` pour
+  une seule action, les imprime avec la liste des notes de chacune. Il
+  s'écrit pour un lecteur intelligent mais sans contexte — la session neuve,
+  qui n'a vu ni les fichiers ni le raisonnement de celle qui l'écrit — et se
+  comprend seul : l'essentiel dans les premières phrases ; des phrases
+  entières et courtes, une idée chacune, en mots ordinaires ; aucun terme ni
+  sigle forgé pendant le travail, nom d'étape ou empreinte de commit : dire
+  ce que la chose est. Ce qui ne tient pas va dans la note, non dans une
+  phrase plus dense. La session qui avance l'action le récrit, daté du jour,
+  au commit de sa note ; c'est le seul paragraphe d'une action qui se récrit.
+  Quand les étapes d'une action se mènent en parallèle, son bloc le dit, et
+  aucune session ne le récrit plus : chaque étape inachevée tient le sien,
+  sous le titre de sa note, et l'ôte en finissant.
 - **Chercher avant de lire.** L'outil Grep d'abord, qui omet les lignes
   géantes et passe ce que `.ignore` nomme (`grep -n` par Bash, seulement sur
   un fichier sans ligne démesurée), puis la seule fenêtre utile (`Read` avec

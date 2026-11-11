@@ -1042,37 +1042,100 @@ def _script(nom: str):
     return module
 
 
+def test_un_bloc_reprise_se_mesure_en_mots_et_en_lignes_ordinaires():
+    """La règle du 11 novembre 2026 (action 135 ; CLAUDE.md, « Économiser le
+    contexte ») : un bloc « Reprise » tient en 150 mots au plus, en lignes de
+    largeur ordinaire, 100 caractères au plus. Les « dix lignes au plus »
+    d'avant se tenaient à la lettre par des lignes démesurées : le bloc de
+    l'action 130 faisait 913 mots en huit lignes, dont une de 1 578
+    caractères. La ponctuation isolée — « : », « ; », les guillemets — ne
+    compte pas pour un mot. Un bloc daté d'avant la règle garde ses dix
+    lignes, jusqu'à ce que la session qui avance son action le récrive, daté
+    du jour : il tombe alors sous la règle."""
+    reprise = _script("reprise")
+    fautes = reprise.fautes_d_un_bloc
+
+    def bloc(date: str, mots: int, par_ligne: int = 10) -> list[str]:
+        # L'ouverture fait cinq mots ; le reste se remplit, `par_ligne` mots
+        # par ligne.
+        suite = (f"**Reprise, au {date}.**".split() + ["mots"] * mots)[:mots]
+        return [" ".join(suite[i:i + par_ligne]) for i in range(0, len(suite), par_ligne)]
+
+    # Depuis la règle, les mots comptent, et plus les lignes : 150 mots en
+    # quinze lignes passent, le cent cinquante et unième est de trop.
+    assert len(bloc("11 novembre 2026", 150)) == 15
+    assert fautes(bloc("11 novembre 2026", 150)) == []
+    trop = fautes(bloc("1er décembre 2026", 151))
+    assert len(trop) == 1 and "151 mots" in trop[0] and "150 au plus" in trop[0], trop
+    ponctue = bloc("11 novembre 2026", 150)
+    ponctue[-1] += " : « ; » — ?"
+    assert fautes(ponctue) == []
+
+    # Une ligne de largeur ordinaire : 100 caractères passent, 101 non.
+    large = bloc("11 novembre 2026", 40)
+    large[1] = "x" * 100
+    assert fautes(large) == []
+    large[1] = "x" * 101
+    trop = fautes(large)
+    assert len(trop) == 1 and "101 caractères" in trop[0] and "100 au plus" in trop[0], trop
+
+    # Avant la règle, les dix lignes, quels que soient leurs mots et leur
+    # largeur : le bloc de l'action 130 reste toléré, un bloc de onze lignes
+    # reste refusé.
+    ancien = bloc("6 novembre 2026", 913, par_ligne=115)
+    assert len(ancien) == 8 and max(map(len, ancien)) > 500
+    assert fautes(ancien) == []
+    trop = fautes(bloc("10 novembre 2026", 110))
+    assert len(trop) == 1 and "11 lignes" in trop[0], trop
+
+    # Sans date lisible, on ne sait pas quelle règle il suit : c'est une faute.
+    for ouverture in ("**Reprise, au plus tôt.** Tout.", "**Reprise.** Tout.",
+                      "**Reprise, au 31 février 2026.** Tout.", "Rien."):
+        sans_date = fautes([ouverture])
+        assert len(sans_date) == 1 and "ne s'ouvre pas sur" in sans_date[0], ouverture
+    assert len(fautes([])) == 1
+
+
+def test_la_regle_ecrite_du_bloc_reprise_est_celle_que_le_test_tient():
+    """`CLAUDE.md`, que toute session lit, et la carte du dépôt disent la
+    limite que `scripts/reprise.py` porte et que le test ci-dessous tient :
+    une consigne qui en dirait une autre se suivrait quand même."""
+    reprise = _script("reprise")
+    assert (reprise.MOTS_AU_PLUS, reprise.LARGEUR_AU_PLUS) == (150, 100)
+    for document in ("CLAUDE.md", "docs/carte_du_depot.md"):
+        texte = " ".join((RACINE / document).read_text(encoding="utf-8").split())
+        assert f"{reprise.MOTS_AU_PLUS} mots au plus" in texte, document
+        assert "dix lignes au plus" not in texte, document
+
+
 def test_chaque_action_en_cours_s_ouvre_sur_son_bloc_reprise():
     """Une session qui cherche quoi faire ne lit que les blocs « Reprise »
     (CLAUDE.md, « Économiser le contexte ») : chaque action `en cours`
-    s'ouvre, sous son titre, sur le sien, de dix lignes au plus. Quand les
-    étapes d'une action se mènent en parallèle, chacune tient le sien, en
-    tête de sa note, tant qu'elle n'est pas finie (action 148) : deux
+    s'ouvre, sous son titre, sur le sien, de 150 mots au plus, en lignes de
+    largeur ordinaire (`reprise.fautes_d_un_bloc`, et le test ci-dessus).
+    Quand les étapes d'une action se mènent en parallèle, chacune tient le
+    sien, en tête de sa note, tant qu'elle n'est pas finie (action 148) : deux
     sessions ne récrivent pas le même. `scripts/reprise.py` les met bout à
     bout."""
     reprise = _script("reprise")
-    ouvre = re.compile(r"\*\*Reprise, au [^*]+\.\*\*")
     texte = (RACINE / reprise.FEUILLE).read_text(encoding="utf-8")
     en_cours = [a for a in reprise.actions(texte) if a.etat == reprise.EN_COURS]
     assert en_cours, "aucune action en cours"
     fautes = []
     for action in en_cours:
-        bloc = action.ouverture
-        if not bloc or not ouvre.match(bloc[0]):
-            fautes.append(f"l'action {action.numero} ne s'ouvre pas sur "
-                          "« **Reprise, au <date>.** »")
-        elif len(bloc) > 10:
-            fautes.append(f"l'action {action.numero} : {len(bloc)} lignes de reprise")
+        fautes += [f"l'action {action.numero} : {faute}"
+                   for faute in reprise.fautes_d_un_bloc(action.ouverture)]
         for chemin in reprise.notes(action.numero):
             paragraphes = re.split(r"\n\s*\n", chemin.read_text(encoding="utf-8"))
             for rang, paragraphe in enumerate(paragraphes):
                 if not paragraphe.startswith("**Reprise"):
                     continue
-                if rang != 1 or not ouvre.match(paragraphe):
+                if rang != 1:
                     fautes.append(f"{chemin.name} : le bloc « **Reprise, au <date>.** » "
                                   "se place sous le titre de la note")
-                elif paragraphe.count("\n") + 1 > 10:
-                    fautes.append(f"{chemin.name} : plus de dix lignes de reprise")
+                    continue
+                fautes += [f"{chemin.name} : {faute}"
+                           for faute in reprise.fautes_d_un_bloc(paragraphe.split("\n"))]
     assert not fautes, fautes
 
 

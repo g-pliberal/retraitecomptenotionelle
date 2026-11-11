@@ -5760,16 +5760,20 @@ de statuts et les `manque` de la page Méthode.
 
 ### 135. Aller plus vite sans rien céder : l'outillage d'un changement de résultats — `en cours`
 
-**Reprise, au 11 novembre 2026.** Fait : les leviers 1, 2 et, pour
-l'essentiel, 3 ; le contexte en cinq étapes et « Économiser le contexte » ; la
-lecture confiée à Haiku (note du 17 octobre) ; ce que coûtent les sessions et
-la relève de l'orchestration (notes du 3) ; Fable 5.2 au scénario 1, l'effort
-à `high` (notes du 9) ; la plateforme Claude lue contre nos réglages :
-`StopFailure` publie aussi, le secours passe par Opus (note du 11). Reste, une
-session chacun, détail dans la note du 11 : alléger le contexte de départ, en
-le mesurant ; `CLAUDE.md` sous 200 lignes ; le bloc « Reprise » lisible ; les
-éclaireurs sans le `CLAUDE.md` racine. Et encore : `actions/cache` sur GitHub ;
-Sonnet pour des sessions entières, au propriétaire ; les leviers 4 et 5.
+**Reprise, au 11 novembre 2026.** L'action réduit ce que coûte un changement
+du modèle, en temps et en jetons, sans rien céder sur les vérifications ;
+l'essentiel est fait, une note par étape. Trois chantiers restent,
+indépendants, chacun pour une session neuve, qui lit son point dans la note
+`2026-11-11-plateforme-claude.md`. Le point 1 retire du contexte de départ
+les outils que le dépôt n'emploie pas, et mesure le gain ; il touche une
+garde, donc demande l'accord du propriétaire, outil par outil. Le point 2
+ramène `CLAUDE.md` sous deux cents lignes. Le point 4 fait démarrer les
+agents de recherche sans le `CLAUDE.md` de la racine. Trois décisions
+attendent le propriétaire, sans session prévue : garder sur GitHub la
+mémoire des calculs d'une course à l'autre (`actions/cache`) ; mener des
+sessions entières sur Sonnet ; faire passer seul un changement transversal.
+Le point 3, la règle du bloc « Reprise », est fait : note
+`2026-11-11-bloc-reprise-lisible.md`.
 
 **Demande**, le 28 septembre 2026, l'action 132 close : « On passe un temps
 interminable à faire ces changements. Pourquoi ? Est-ce qu'on peut aller plus
