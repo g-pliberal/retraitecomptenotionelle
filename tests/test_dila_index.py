@@ -809,3 +809,38 @@ def test_chaque_reponse_dit_la_fraicheur_de_l_index(legi: Path, capsys):
 def test_diff_et_le_suivent_un_article(legi: Path, arguments: list[str]):
     with pytest.raises(SystemExit):
         _cli(legi, *arguments)
+
+
+def _plan(chemin: Path, requete: str, *valeurs: str) -> str:
+    """Comment SQLite compte s'y prendre : un parcours de la table (``SCAN``),
+    ou une recherche par un index (``SEARCH … USING INDEX``)."""
+    with sqlite3.connect(chemin) as db:
+        return " | ".join(ligne[3] for ligne in db.execute("EXPLAIN QUERY PLAN " + requete, valeurs))
+
+
+def test_un_article_de_legi_se_trouve_sans_parcourir_la_table(legi: Path, tmp_path: Path,
+                                                             monkeypatch):
+    """``scripts/textes.py`` lit LEGI article par article, par le titre du
+    texte et le numéro : un index SQL y mène, sans parcourir la table, ce qui
+    coûtait plus de quatre minutes à l'inscription des rédactions. L'index
+    construit le porte ; celui que la release sert sans lui le prend quand une
+    session le récupère (action 184)."""
+    import gzip
+    import shutil
+    css = "Code de la sécurité sociale"
+    un_article = "SELECT id, date, fin FROM doc WHERE titre = ? AND num = ? ORDER BY date, id"
+    un_texte = "SELECT id, num, date, fin FROM doc WHERE titre = ? AND id LIKE 'LEGIARTI%'"
+    for requete, valeurs in ((un_article, (css, "L351-1")), (un_texte, (css,))):
+        assert "SEARCH doc USING INDEX" in _plan(legi, requete, *valeurs), requete
+
+    with sqlite3.connect(legi) as db:   # tel que publié jusqu'au 9 novembre 2026
+        db.execute("DROP INDEX doc_titre_num")
+    assert _plan(legi, un_article, css, "L351-1").startswith("SCAN doc")
+    publie = tmp_path / "legi.sqlite.gz"
+    with legi.open("rb") as source, gzip.open(publie, "wb") as cible:
+        shutil.copyfileobj(source, cible)
+    monkeypatch.setattr(index, "CACHE", tmp_path / "cache")
+    monkeypatch.setattr(index, "url_publiee", lambda base: publie.as_uri())
+    recu = tmp_path / "recu" / "legi.sqlite"
+    index.recuperer("legi", recu)
+    assert "SEARCH doc USING INDEX" in _plan(recu, un_article, css, "L351-1")

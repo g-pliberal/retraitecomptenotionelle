@@ -237,10 +237,18 @@ CREATE TABLE IF NOT EXISTS meta (cle TEXT PRIMARY KEY, valeur TEXT);
 """
 
 
-def ouvrir(chemin: Path) -> sqlite3.Connection:
+#: LEGI se lit aussi article par article, par le titre du texte et le numéro
+#: (``scripts/textes.py``) : sans cet index SQL, chaque lecture parcourt la
+#: table entière. Le JORF, qui ne se lit que par requête ou par identifiant,
+#: s'en passe.
+ARTICLES_DE_LEGI = "CREATE INDEX IF NOT EXISTS doc_titre_num ON doc(titre, num);"
+
+
+def ouvrir(chemin: Path, base: str = "") -> sqlite3.Connection:
     chemin.parent.mkdir(parents=True, exist_ok=True)
     db = sqlite3.connect(chemin)
-    db.executescript("PRAGMA journal_mode=OFF; PRAGMA synchronous=OFF;" + SCHEMA)
+    db.executescript("PRAGMA journal_mode=OFF; PRAGMA synchronous=OFF;" + SCHEMA
+                     + (ARTICLES_DE_LEGI if base == "legi" else ""))
     return db
 
 
@@ -389,7 +397,7 @@ def construire(base: str, chemin: Path, tout: bool = False,
         nom = dernier_dump(base)
         print(f"Dump global : {nom}", file=sys.stderr)
         archive = telecharger(RACINE + base.upper() + "/" + nom, CACHE / nom)
-    db = ouvrir(chemin)
+    db = ouvrir(chemin, base)
     debut = time.time()
     try:
         lus, gardes = verser_archive(db, archive, tout, remplacer=False)
@@ -414,7 +422,7 @@ def mettre_a_jour(base: str, chemin: Path, tout: bool | None = None) -> int:
     """Applique les incréments parus depuis le dernier appliqué. Rend leur nombre."""
     if not chemin.exists():
         raise LookupError(f"{chemin} absent : --recuperer, ou le construire d'abord")
-    db = ouvrir(chemin)
+    db = ouvrir(chemin, base)
     depuis = meta(db, "dernier_increment") or ""
     if tout is None:
         tout = meta(db, "filtre") == "tout"
@@ -592,7 +600,7 @@ def recuperer(base: str, chemin: Path) -> None:
     with gzip.open(comprime, "rb") as source, chemin.open("wb") as cible:
         shutil.copyfileobj(source, cible, 1 << 22)
     comprime.unlink()
-    db = ouvrir(chemin)
+    db = ouvrir(chemin, base)
     print(f"{chemin} : dump {meta(db, 'dump')}, à jour au {meta(db, 'dernier_increment')}, "
           f"{db.execute('SELECT count(*) FROM doc').fetchone()[0]:,} documents",
           file=sys.stderr)
@@ -615,7 +623,7 @@ def publier(base: str, chemin: Path) -> None:
     jeton = os.environ.get("GH_TOKEN") or os.environ.get("GITHUB_TOKEN")
     if not jeton:
         raise RuntimeError("GH_TOKEN ou GITHUB_TOKEN absent : impossible de publier")
-    db = ouvrir(chemin)
+    db = ouvrir(chemin, base)
     db.execute("VACUUM")
     etat = {cle: meta(db, cle) for cle in ("dump", "dernier_increment", "filtre")}
     total = db.execute("SELECT count(*) FROM doc").fetchone()[0]
