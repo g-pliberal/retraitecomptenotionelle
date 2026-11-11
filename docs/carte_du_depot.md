@@ -320,7 +320,7 @@ officiels, sont dans la partie 1 du tableau de bord.
 | comment le scénario 1 reste le droit en vigueur | `docs/veille_droit.md`, et `data/reference/legislation/journal_de_veille/` | `python scripts/veille_droit.py` |
 | combien coûte la proposition | `docs/chiffrage_plf.md`, fabriqué | `python scripts/chiffrage_plf.py` |
 | si la suite de tests est verte | `.github/etat_suite.yaml` | |
-| les règles que suivent les sessions | `CLAUDE.md`, puis `src/CLAUDE.md`, `moteur/CLAUDE.md`, `data/CLAUDE.md` | |
+| les règles que suivent les sessions | `CLAUDE.md`, puis `src/CLAUDE.md`, `moteur/CLAUDE.md`, `data/CLAUDE.md` et les règles de `.claude/rules/` | |
 | ce qui a été fait et clos | `docs/archives/` | |
 
 ## Le vocabulaire du dépôt

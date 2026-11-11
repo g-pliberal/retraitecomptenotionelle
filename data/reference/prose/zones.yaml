@@ -488,6 +488,20 @@ fichiers:
     defaut: etat
   data/CLAUDE.md:
     defaut: etat
+  # Les règles à portée de chemin, que Claude Code ne charge qu'à la lecture ou
+  # à l'écriture d'un fichier qui répond à leur champ `paths` (action 135,
+  # « CLAUDE.md sous 200 lignes ») : ce qui ne vaut que pour des fichiers
+  # épars, d'aujourd'hui comme les consignes d'un dossier.
+  .claude/rules/prose.md:
+    defaut: etat
+  .claude/rules/documentation.md:
+    defaut: etat
+  .claude/rules/tests.md:
+    defaut: etat
+  # Ce qui ne regarde qu'un poste, et qu'une session web n'a pas à lire : une
+  # ligne de la racine y renvoie.
+  docs/poste.md:
+    defaut: etat
 
   # Le CLAUDE.md d'avant la phase 1, gardé tel quel : l'histoire des règles.
   docs/archives/conventions.md:

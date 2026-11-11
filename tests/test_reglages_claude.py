@@ -29,10 +29,13 @@ REGLAGES = json.loads((RACINE / ".claude" / "settings.json").read_text(encoding=
 #: Les deux agents qui lisent pour la session, sur Haiku.
 AGENTS_DE_LECTURE = ("eclaireur", "Explore")
 
-#: Ce que leur carte du dépôt nomme, chemin par chemin : l'architecture,
-#: l'état, la feuille de route et ses notes, les archives, les trois zones,
-#: les fiches et les limites, le journal de veille, les témoins.
+#: Ce que leur carte du dépôt nomme, chemin par chemin : les règles à portée
+#: de chemin, qui ont quitté le `CLAUDE.md` de la racine le 11 novembre 2026
+#: (`tests/test_consignes.py`), l'architecture, l'état, la feuille de route et
+#: ses notes, les archives, les trois zones, les fiches et les limites, le
+#: journal de veille, les témoins.
 LIEUX_DE_LA_CARTE = (
+    ".claude/rules/",
     "docs/architecture.md",
     "docs/etat.md",
     "docs/feuille_de_route.md",

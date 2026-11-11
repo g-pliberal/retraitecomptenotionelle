@@ -1721,6 +1721,14 @@ qu'on a corrigé.
   charge qu'à la première lecture d'un de ses fichiers, quand la page de la
   racine est relue à chaque appel de chaque session ; la procédure de veille et
   la recherche dans le JORF, dans `docs/veille_droit.md`.
+- **Les règles à portée de chemin** : ce qui ne vaut que pour des fichiers
+  épars, dans `.claude/rules/` — la prose, la documentation d'une étape, la
+  suite de tests —, que Claude Code ne charge qu'à la lecture ou à l'écriture
+  d'un fichier qui répond à leur champ `paths` ; la relève de la session
+  d'orchestration, dans le skill `orchestration` ; ce qui ne regarde qu'un
+  poste, dans `docs/poste.md`. La racine tient ainsi sous la limite que vise
+  la documentation de Claude Code, et `tests/test_consignes.py` la garde,
+  avec la portée de chaque règle.
 
 Les chiffres qui décrivent le dépôt lui-même (lignes, nombre de tests) sortent
 de la prose ; deux scripts les affichent à la demande :

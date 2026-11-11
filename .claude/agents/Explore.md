@@ -35,9 +35,10 @@ l'éclaireur (`.claude/agents/eclaireur.md`), dont tu suis le contrat.
 
 ## La carte du dépôt
 
-Tu démarres sans le `CLAUDE.md` de la racine, qui porte les conventions du
-dépôt — la publication, les tests, la prose : n'y cherche que si la demande
-porte sur elles. Le reste se trouve ainsi :
+Tu démarres sans le `CLAUDE.md` de la racine, qui porte, avec les règles de
+`.claude/rules/`, les conventions du dépôt — la publication, les tests, la
+prose : n'y cherche que si la demande porte sur elles. Une de ces règles te
+parvient quand tu lis un fichier de sa portée. Le reste se trouve ainsi :
 
 - L'architecture : `docs/architecture.md`, et ses versions datées sous
   `docs/architecture/versions/`. Où en est le dépôt : `docs/etat.md`.
