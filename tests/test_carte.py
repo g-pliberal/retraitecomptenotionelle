@@ -358,6 +358,39 @@ def test_la_veille_compte_les_redactions_en_vigueur_qu_une_fiche_n_a_pas_lues(tm
     assert carte.a_relire(date(2026, 9, 26), jours=120, dossier=tmp_path) == []
 
 
+def _veille_du_droit():
+    """`scripts/veille_droit.py`, chargé comme un module."""
+    import importlib.util
+
+    specification = importlib.util.spec_from_file_location(
+        "veille_droit", RACINE / "scripts" / "veille_droit.py")
+    module = importlib.util.module_from_spec(specification)
+    specification.loader.exec_module(module)
+    return module
+
+
+def test_la_veille_ne_redit_ses_questions_que_d_une_fiche_a_relire_pour_autre_chose(tmp_path):
+    """Une fiche qui n'est à relire que pour une rédaction non lue tient en une
+    ligne, sa raison et la commande qui montre la rédaction : ses questions
+    ouvertes n'en disent rien. Celle qui est à relire pour autre chose garde
+    les siennes (action 184)."""
+    fiche = yaml.safe_load((carte.REGLES / "reversion.yaml").read_text(encoding="utf-8"))
+    fraiche = {**fiche, "id": "fraiche", "etat": "conforme",
+               "sources": {**fiche["sources"], "lu_le": date(2026, 9, 1),
+                           "prochaine_relecture": date(2027, 3, 31),
+                           "a_relire": ["Une question qui attend."]}}
+    _ecrire(tmp_path, fraiche)
+    _ecrire(tmp_path, {**fraiche, "id": "douteuse", "etat": "a_verifier"})
+    vivante = {"vivante": True, "homonyme": False}
+    non_lues = {"fraiche": [vivante], "douteuse": [vivante]}
+    assert _veille_du_droit().a_relire(date(2026, 9, 26), 120, non_lues, tmp_path) == [
+        ["  - fraiche [conforme] : 1 rédaction en vigueur ou à venir non lue "
+         "(python scripts/textes.py --non-lues fraiche)"],
+        ["  - douteuse [a_verifier] : a_verifier, 1 rédaction en vigueur ou à venir non lue "
+         "(python scripts/textes.py --non-lues douteuse)",
+         "      → Une question qui attend."]]
+
+
 def test_une_fiche_ne_lit_que_des_presomptions_nommees(tmp_path):
     """Le champ `presomptions` d'une fiche nomme les présomptions qu'elle lit,
     sous leur nom au vocabulaire (§ 5.6) : un nom inconnu est refusé."""

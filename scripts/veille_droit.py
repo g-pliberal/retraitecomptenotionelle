@@ -63,6 +63,23 @@ def journal(dossier: Path = JOURNAL) -> dict[str, dict]:
             for chemin in sorted(dossier.glob("*.yaml"))}
 
 
+def a_relire(aujourd_hui: date, jours: int, non_lues: dict[str, list[dict]],
+             dossier: Path = carte.REGLES) -> list[list[str]]:
+    """Les fiches à relire, chacune en lignes : son nom, son état et ses
+    raisons, puis ses questions ouvertes. Une fiche qui n'est là que pour une
+    rédaction non lue ne redit pas les siennes : elles n'en disent rien, et la
+    commande que sa raison nomme montre la rédaction (action 184)."""
+    pour_autre_chose = {fiche["id"] for fiche, _ in carte.a_relire(aujourd_hui, jours, dossier)}
+    blocs = []
+    for fiche, raisons in carte.a_relire(aujourd_hui, jours, dossier, non_lues=non_lues):
+        bloc = [f"  - {fiche['id']} [{fiche['etat']}] : {', '.join(raisons)}"]
+        if fiche["id"] in pour_autre_chose:
+            bloc += [f"      → {' '.join(str(question).split())}"
+                     for question in (fiche.get("sources") or {}).get("a_relire") or []]
+        blocs.append(bloc)
+    return blocs
+
+
 def main(argv: list[str] | None = None) -> int:
     analyseur = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     analyseur.add_argument("--tout", action="store_true", help="imprime toutes les fiches")
@@ -85,13 +102,11 @@ def main(argv: list[str] | None = None) -> int:
           + f". Dernière veille consignée : {derniere}.")
     print()
 
-    revoir = carte.a_relire(aujourd_hui, args.jours, non_lues=textes.non_lues(jour=aujourd_hui))
+    revoir = a_relire(aujourd_hui, args.jours, textes.non_lues(jour=aujourd_hui))
     if revoir:
         print(f"À RELIRE ({len(revoir)}) :")
-        for fiche, raisons in revoir:
-            print(f"  - {fiche['id']} [{fiche['etat']}] : {', '.join(raisons)}")
-            for question in (fiche.get("sources") or {}).get("a_relire") or []:
-                print(f"      → {' '.join(str(question).split())}")
+        for bloc in revoir:
+            print("\n".join(bloc))
         print()
     else:
         print("Rien à relire au seuil demandé.\n")
