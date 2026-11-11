@@ -72,10 +72,19 @@ l'inscrire dans une fiche fait échouer la suite.
 ## La règle, pour toute session qui touche au scénario 1
 
 **Au début.** Lancer `python scripts/veille_droit.py`. Lire les fiches à
-relire. Mettre à jour l'index LEGI (`python scripts/fetch/dila_index.py legi
---mettre-a-jour`), puis `python scripts/textes.py --inscrire` : les
-rédactions parues depuis entrent dans la liste de contrôle des textes, « à
-examiner ». Consulter les sources listées pour tout texte paru depuis la
+relire. Les rédactions parues entrent dans la liste de contrôle des textes,
+« à examiner », sans que la session ait à le faire : chaque lundi, GitHub met
+à jour l'index LEGI, lance `python scripts/textes.py --inscrire` et commite
+ce qu'elle écrit (`.github/workflows/index-dila.yml`,
+`scripts/publier_inscription.sh`) ; `data/reference/textes/inscription.yaml`
+dit jusqu'où l'index a été lu. Reste à la session l'inscription qui ne peut
+pas attendre le lundi : quand elle cite dans une fiche un texte que la liste
+ne tient pas encore, ou qu'elle lit un texte paru dans la semaine, elle
+récupère l'index (`python scripts/fetch/dila_index.py legi --recuperer`, puis
+`--mettre-a-jour`) et lance `--inscrire` elle-même. Un texte général, dont la
+retraite n'occupe que quelques articles, se déclare dans `perimetre.yaml`
+(`textes_generaux`) avant de l'inscrire : il n'entre alors que par les
+articles cités. Consulter les sources listées pour tout texte paru depuis la
 dernière date du journal : loi de financement de l'année et ses décrets,
 circulaires Cnav, dates « Vérifié le » des fiches service-public, décrets
 retraite au Journal officiel par l'index DILA. Ce que le script dit de la base

@@ -160,6 +160,134 @@ def test_une_garde_rouge_s_ecrit_a_part_du_verdict_de_la_suite(tmp_path):
     assert verdict["presomptions"] == "vert" and "ROUGE" not in titre
 
 
+# -- l'inscription des rédactions, chaque lundi (action 184, étape 4) -------------
+
+
+def _inscrire(tmp_path, nouvelles: int = 2, devancee: bool = False,
+              course: bool = False) -> tuple[Path, subprocess.CompletedProcess]:
+    """Joue ``publier_inscription.sh`` dans un dépôt jetable, celui de la
+    course, qui pousse sur un dépôt nu. L'inscription y est une commande de
+    poche, qui ajoute ``nouvelles`` lignes à la liste et le dit comme
+    ``textes.py --inscrire``. ``devancee`` : une session a poussé depuis que
+    la course a pris son arbre ; ``course`` : une session pousse pendant la
+    première inscription. Rend le dépôt nu et l'issue du script ; ce qu'il dit
+    à GitHub s'écrit dans ``tmp_path / "sortie_github"``."""
+    nu, depot, autre = tmp_path / "origine.git", tmp_path / "depot", tmp_path / "autre"
+    identite = {"GIT_AUTHOR_NAME": "t", "GIT_AUTHOR_EMAIL": "t@example.invalid",
+                "GIT_COMMITTER_NAME": "t", "GIT_COMMITTER_EMAIL": "t@example.invalid"}
+    env = {**os.environ, **identite}
+
+    def git(*arguments, cwd=depot):
+        subprocess.run(["git", *arguments], cwd=cwd, env=env, check=True, capture_output=True)
+
+    git("init", "-q", "--bare", "-b", "main", str(nu), cwd=tmp_path)
+    git("clone", "-q", str(nu), str(depot), cwd=tmp_path)
+    liste = Path("data") / "reference" / "textes" / "redactions.csv"
+    (depot / liste).parent.mkdir(parents=True)
+    (depot / liste).write_text("id\n", encoding="utf-8")
+    git("add", "-A")
+    git("commit", "-q", "-m", "la liste")
+    git("push", "-q", "origin", "HEAD:main")
+    git("clone", "-q", str(nu), str(autre), cwd=tmp_path)
+    pousser = (f"cd {autre} && echo s >> session && git add -A && "
+               "git commit -q -m 'une session' && git push -q origin HEAD:main")
+    if devancee:
+        subprocess.run(["bash", "-c", pousser], env=env, check=True, capture_output=True)
+    commande = tmp_path / "inscrire.sh"
+    commande.write_text(
+        "set -e\n"
+        + (f"[ -e {tmp_path}/deja ] || ( {pousser} ) >/dev/null 2>&1\ntouch {tmp_path}/deja\n"
+           if course else "")
+        + "".join(f"echo LEGIARTI{n} >> {liste}\n" for n in range(nouvelles))
+        + "echo ailleurs > hors_de_la_liste\n"
+        + f"echo \"{nouvelles} rédactions nouvelles inscrites « à examiner », 0 dont les "
+          "dates ont changé ; index lu : de poche\"\n", encoding="utf-8")
+    (tmp_path / "sortie_github").write_text("", encoding="utf-8")
+    issue = subprocess.run(
+        ["bash", str(RACINE / "scripts" / "publier_inscription.sh"), "bash", str(commande)],
+        cwd=depot, capture_output=True, text=True,
+        # Sans l'identité du test : la course n'en a pas, le script pose celle du robot.
+        env={**os.environ, "GITHUB_REF_NAME": "main", "COURSE": "https://example.invalid/course",
+             "GITHUB_OUTPUT": str(tmp_path / "sortie_github")})
+    return nu, issue
+
+
+def _journal(nu: Path, format_: str, *arguments: str) -> list[str]:
+    return subprocess.run(["git", "log", f"--format={format_}", *arguments, "main"], cwd=nu,
+                          capture_output=True, text=True, check=True).stdout.split("\n")[:-1]
+
+
+def test_github_inscrit_les_redactions_nouvelles_sur_le_dernier_main(tmp_path):
+    """Chaque lundi, après la mise à jour de l'index, GitHub lance
+    l'inscription et commite ce qu'elle écrit à la liste, et cela seul, sous
+    l'identité noreply du robot, sur le dernier ``main`` : une session a pu
+    pousser depuis que la course a pris son arbre. Le titre dit combien de
+    rédactions entrent ; ``inscrit=oui`` fait lancer la suite complète."""
+    nu, issue = _inscrire(tmp_path, nouvelles=2, devancee=True)
+    assert issue.returncode == 0, issue.stderr
+    assert _journal(nu, "%s") == [
+        "Inscrit par GitHub : 2 rédaction(s) nouvelle(s) à la liste des textes",
+        "une session", "la liste"]
+    assert _journal(nu, "%an <%ae>", "-1") == [
+        "github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>"]
+    assert _journal(nu, "", "-1", "--name-only") == ["data/reference/textes/redactions.csv"]
+    assert "https://example.invalid/course" in "\n".join(_journal(nu, "%b", "-1"))
+    assert (tmp_path / "sortie_github").read_text(encoding="utf-8") == "inscrit=oui\n"
+
+
+def test_l_inscription_de_github_se_refait_quand_une_session_la_devance(tmp_path):
+    """Une session pousse pendant l'inscription : la poussée de GitHub est
+    refusée, jamais forcée. L'inscription, qui ne coûte que quelques secondes,
+    se refait sur la nouvelle tête, et le commit de la session reste."""
+    nu, issue = _inscrire(tmp_path, nouvelles=1, course=True)
+    assert issue.returncode == 0, issue.stderr
+    assert _journal(nu, "%s") == [
+        "Inscrit par GitHub : 1 rédaction(s) nouvelle(s) à la liste des textes",
+        "une session", "la liste"]
+    liste = subprocess.run(["git", "show", "main:data/reference/textes/redactions.csv"],
+                           cwd=nu, capture_output=True, text=True, check=True).stdout
+    assert liste == "id\nLEGIARTI0\n", "inscrite une fois, sur la tête de la session"
+
+
+def test_une_inscription_qui_n_ecrit_rien_ne_commite_rien(tmp_path):
+    """Un lundi sans rédaction nouvelle ni date changée : aucun commit, et la
+    suite complète n'est pas relancée."""
+    nu, issue = _inscrire(tmp_path, nouvelles=0)
+    assert issue.returncode == 0, issue.stderr
+    assert _journal(nu, "%s") == ["la liste"]
+    assert (tmp_path / "sortie_github").read_text(encoding="utf-8") == ""
+
+
+def test_le_workflow_de_l_index_inscrit_puis_fait_juger_son_commit():
+    """``index-dila.yml`` : pour LEGI seul, après la publication de l'index,
+    le paquet s'installe, l'inscription se publie, et la suite complète est
+    lancée sur ce commit — une poussée faite avec le jeton d'un workflow ne
+    lance pas ``tests.yml``, un ``workflow_dispatch`` si, pourvu que le jeton
+    ait ``actions: write``. ``tests.yml`` refait alors le tableau de bord et
+    les chiffres ancrés, et juge."""
+    import yaml
+
+    flux = yaml.safe_load((RACINE / ".github" / "workflows" / "index-dila.yml")
+                          .read_text(encoding="utf-8"))
+    etapes = flux["jobs"]["index"]["steps"]
+    rang = {nom: next(i for i, e in enumerate(etapes) if nom in e.get("run", ""))
+            for nom in ("--publier", "pip install -e .", "publier_inscription.sh",
+                        "gh workflow run tests.yml")}
+    assert sorted(rang.values()) == list(rang.values()), rang
+    installer, inscrire, juger = (etapes[rang[nom]] for nom in list(rang)[1:])
+    assert installer["if"] == inscrire["if"] == "matrix.base == 'legi'"
+    assert "bash scripts/publier_inscription.sh python scripts/textes.py --inscrire" \
+        in inscrire["run"]
+    assert inscrire["env"]["COURSE"].endswith("/actions/runs/${{ github.run_id }}")
+    assert juger["if"] == f"steps.{inscrire['id']}.outputs.inscrit == 'oui'"
+    assert '--ref "$GITHUB_REF_NAME"' in juger["run"] and juger["env"]["GH_TOKEN"]
+    assert flux["permissions"] == {"contents": "write", "actions": "write"}
+    tests = yaml.safe_load((RACINE / ".github" / "workflows" / "tests.yml")
+                           .read_text(encoding="utf-8"))
+    # PyYAML lit la clé `on` comme le booléen vrai.
+    assert "workflow_dispatch" in tests[True]
+
+
 # -- les mesures de l'accueil (action 163) ----------------------------------------
 
 

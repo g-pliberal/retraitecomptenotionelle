@@ -1055,7 +1055,11 @@ La carte part des textes, pas de la mémoire.
 - **Où elle vit.** Depuis la phase 2, la liste des rédactions est dans
   `data/reference/textes/` : son périmètre déclaré (`perimetre.yaml`, où se
   tient le cliquet), la liste elle-même (`redactions.csv`), et ce que
-  `python scripts/textes.py --inscrire` y apporte de l'index. Le statut d'une
+  `python scripts/textes.py --inscrire` y apporte de l'index, que GitHub
+  lance chaque lundi après la mise à jour de l'index
+  (`.github/workflows/index-dila.yml`). Un décret de régime qu'une fiche cite
+  y entre en entier ; un texte général que le périmètre déclare, par les
+  seuls articles cités, comme un code hors de ses chapitres. Le statut d'une
   rédaction ne s'y écrit pas : il se lit dans les fiches qui la citent
   (`src/retraite_notionnelle/noyau/textes.py`). Les situations des fiches
   service-public et des circulaires attendent encore leur liste.

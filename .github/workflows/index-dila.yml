@@ -11,6 +11,14 @@
 #   (une heure et demie pour le JORF, une heure pour LEGI), ce qui est aussi
 #   ce qui se passe tant qu'aucun index n'est publié.
 # - Chaque lundi à 4 h UTC : la mise à jour seule.
+#
+# Pour LEGI, l'index publié, GitHub inscrit à la liste de contrôle des textes
+# les rédactions nouvelles (`scripts/textes.py --inscrire`, action 184,
+# étape 4) : `scripts/publier_inscription.sh` commite sur le dernier main ce
+# que l'inscription écrit, sous l'identité noreply du robot, sans forcer. Une
+# poussée faite avec le jeton d'un workflow ne lance pas `tests.yml` : la
+# dernière étape le lance (`actions: write`), qui refait le tableau de bord
+# et les chiffres ancrés, puis joue la suite complète sur ce commit.
 
 name: Index DILA
 
@@ -26,6 +34,7 @@ on:
 
 permissions:
   contents: write
+  actions: write
 
 jobs:
   index:
@@ -58,3 +67,20 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: python scripts/fetch/dila_index.py ${{ matrix.base }} --publier
+
+      - name: Installer le paquet, que l'inscription lit
+        if: matrix.base == 'legi'
+        run: pip install -e .
+
+      - name: Inscrire les rédactions nouvelles à la liste des textes
+        id: inscrire
+        if: matrix.base == 'legi'
+        env:
+          COURSE: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: bash scripts/publier_inscription.sh python scripts/textes.py --inscrire
+
+      - name: Faire juger ce commit par la suite complète
+        if: steps.inscrire.outputs.inscrit == 'oui'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run tests.yml --ref "$GITHUB_REF_NAME"
