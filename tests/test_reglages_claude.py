@@ -16,11 +16,14 @@ plateforme : la chaîne de secours descend par capacité, et la publication
 part aussi quand un tour meurt d'une erreur de l'API (note « La plateforme
 Claude, lue contre nos réglages »). Le même jour : les deux agents de lecture
 démarrent sans le `CLAUDE.md` de la racine, une carte du dépôt dans leur
-consigne (note « Les éclaireurs sans le `CLAUDE.md` racine »).
+consigne (note « Les éclaireurs sans le `CLAUDE.md` racine ») ; et les outils
+que le dépôt n'emploie pas sortent de chaque requête (note « Le contexte de
+départ »).
 """
 
 import json
 import re
+from fnmatch import fnmatchcase
 from pathlib import Path
 
 RACINE = Path(__file__).resolve().parents[1]
@@ -168,3 +171,98 @@ def test_le_detecteur_d_impeccable_ne_tourne_qu_a_la_demande():
     assert not [c for c in commandes if "impeccable" in c], commandes
     config = json.loads((RACINE / ".impeccable" / "config.json").read_text(encoding="utf-8"))
     assert config["hook"]["enabled"] is False
+
+
+#: Les outils dont le propriétaire a accordé le refus, le 11 novembre 2026,
+#: famille par famille (action 135, note « Le contexte de départ »). Un nom nu
+#: dans `permissions.deny`, ou un motif sur le nom, retire la définition de
+#: l'outil de chaque requête (`permissions.md` : « A bare tool name like `Bash`
+#: removes the tool from Claude's context entirely, so Claude never sees it »).
+_DISTANT = "mcp__claude-code-remote__"
+REFUS = {
+    # La plateforme : publier une page, lancer des agents par script, le réveil
+    # de `/loop`, proposer des plugins et des skills, le rendu de
+    # `/code-review`, la liste des agents joignables.
+    "Artifact", "Workflow", "ScheduleWakeup",
+    "SearchPlugins", "SuggestPluginInstall", "SuggestSkills", "ShowOnboardingRolePicker",
+    "ReportFindings", "ListAgents",
+    # Le serveur des sessions du cloud : les webhooks d'un artifact, les
+    # environnements, les tâches récurrentes, les dossiers du poste, le suivi
+    # des pull requests, les autres dépôts.
+    *(_DISTANT + nom for nom in (
+        "watch_url", "unwatch_url",
+        "create_environment", "update_environment", "get_environment", "switch_environment",
+        "list_environments", "request_credential",
+        "create_trigger", "update_trigger", "list_triggers", "fire_trigger", "get_trigger",
+        "list_computer_folders", "request_computer_folder",
+        "subscribe_pr_activity", "unsubscribe_pr_activity",
+        "add_repo", "register_repo_root", "list_repos",
+    )),
+    # Les connecteurs de claude.ai, serveur par serveur.
+    "mcp__Claude_Docs__*",
+    "mcp__Google_Docs__*", "mcp__Google_Drive__*", "mcp__Google_Sheets__*", "mcp__Google_Slides__*",
+}
+
+#: Ce que les sessions appellent, et qu'aucun refus ne doit emporter :
+#: l'orchestration et ses rappels (une trentaine de `send_later` du 3 au
+#: 10 novembre 2026), la documentation, le verdict de GitHub, le courant.
+APPELES = {
+    *(_DISTANT + nom for nom in (
+        "create_session", "send_message", "list_events", "get_session", "list_sessions",
+        "archive_session", "get_event", "interrupt_session", "set_session_tags",
+        "set_session_title", "send_later", "delete_trigger", "confirm_repository_trust",
+        "read_documentation",
+    )),
+    "mcp__github__actions_list",
+    "ReadNotifications", "AskUserQuestion", "SendUserFile", "ToolSearch", "Skill", "Agent",
+    "Bash", "Read", "Edit", "Write", "Grep", "Glob",
+}
+
+
+def _refus_qui_touchent(outil: str, refus: list[str]) -> list[str]:
+    return [regle for regle in refus if fnmatchcase(outil, regle)]
+
+
+def test_les_outils_que_le_depot_n_emploie_pas_sortent_du_contexte():
+    refus = REGLAGES.get("permissions", {}).get("deny", [])
+    assert sorted(refus) == sorted(REFUS)
+    # Seul un refus au nom nu retire la définition : une règle à parenthèses,
+    # `Bash(rm *)`, laisse l'outil dans le contexte.
+    assert not [regle for regle in refus if "(" in regle]
+
+
+def test_aucun_refus_n_emporte_ce_que_les_sessions_appellent():
+    refus = REGLAGES["permissions"]["deny"]
+    # Le piège : un motif sur tout le serveur emporterait l'orchestration.
+    assert _refus_qui_touchent(_DISTANT + "send_later", [_DISTANT + "*"])
+    for outil in sorted(APPELES):
+        assert not _refus_qui_touchent(outil, refus), outil
+
+
+def test_artifact_et_les_workflows_sont_coupes_par_leur_reglage_aussi():
+    """Le réglage de chacun emporte ce que le refus de l'outil laisse : les
+    skills d'artifact, les commandes de workflow et le mot-clé « ultracode »
+    (`artifacts.md`, « Disable artifacts » ; `workflows.md`, « Turn workflows
+    off »)."""
+    assert REGLAGES.get("enableArtifact") is False
+    assert REGLAGES.get("disableWorkflows") is True
+
+
+def test_les_consignes_git_de_claude_code_cedent_a_celles_du_depot():
+    """L'outil Bash portait « Commit or push only when the user asks. If on the
+    default branch, branch first », contre « on publie sur `main`, toujours ».
+    `memory.md` : « If your CLAUDE.md sets commit or pull request rules, turn
+    off the built-in ones with `includeGitInstructions` »."""
+    assert REGLAGES.get("includeGitInstructions") is False
+
+
+def test_les_skills_fournis_hors_sujet_ne_s_annoncent_plus():
+    """`skillOverrides` ne vaut que pour les skills fournis avec Claude Code :
+    ceux du compte claude.ai (`anthropic-skills:…`) se règlent sur claude.ai."""
+    assert REGLAGES.get("skillOverrides") == {
+        nom: "off"
+        for nom in (
+            "artifact-capabilities", "artifact-design", "artifact-diagramming", "dataviz",
+            "fewer-permission-prompts", "init", "keybindings-help", "loop", "plugin-authoring", "run",
+        )
+    }
