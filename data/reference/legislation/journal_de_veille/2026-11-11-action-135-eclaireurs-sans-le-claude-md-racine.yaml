@@ -1,0 +1,18 @@
+date: "2026-11-11"
+session: "action 135 : les éclaireurs sans le CLAUDE.md racine"
+consulte: >-
+  Aucune source de droit : la session ne touche à aucune règle du scénario 1,
+  seulement aux deux agents de lecture de Claude Code
+  (.claude/agents/eclaireur.md, .claude/agents/Explore.md) et à leur test.
+  Lus ce jour : la documentation de Claude Code (sub-agents) et le guide de
+  Haiku 5.5 de la plateforme Claude.
+trouve: >-
+  Aucune règle n'a changé. Les deux agents déclarent omitClaudeMd, et portent
+  une carte du dépôt de 169 mots à la place du CLAUDE.md de la racine, qui
+  pesait de l'ordre de 5 000 des 14 200 jetons de leur départ. Treize courses
+  d'avant, sur six questions à la réponse connue, sont relevées dans la note
+  de la feuille de route. Une définition d'agent retouchée ne sert pas dans le
+  tour qui la retouche, six minutes après encore.
+reste: >-
+  La comparaison d'après, sur les mêmes six questions, dans une session
+  ouverte après le changement.

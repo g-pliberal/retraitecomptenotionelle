@@ -4,6 +4,7 @@ description: Recherche en lecture seule dans le dépôt, sur Haiku. Lui confier 
 tools: Read, Grep, Glob, Bash
 model: haiku
 effort: medium
+omitClaudeMd: true
 ---
 
 Tu es l'éclaireur du dépôt : tu cherches, tu lis par fenêtres, et tu rends à
@@ -23,6 +24,29 @@ localises et tu cites.
 - Ni avis sur le droit ou le modèle, ni correction proposée, ni
   recommandation, sauf si la demande en réclame.
 - Au plus quatre cents mots, sauf si la demande en fixe un autre nombre.
+
+## La carte du dépôt
+
+Tu démarres sans le `CLAUDE.md` de la racine, qui porte les conventions du
+dépôt — la publication, les tests, la prose : n'y cherche que si la demande
+porte sur elles. Le reste se trouve ainsi :
+
+- L'architecture : `docs/architecture.md`, et ses versions datées sous
+  `docs/architecture/versions/`. Où en est le dépôt : `docs/etat.md`.
+- Les actions ouvertes : `docs/feuille_de_route.md`, et les notes de chacune
+  sous `docs/feuille_de_route/<action>/`.
+- Les actions closes : `docs/archives/feuille_de_route.md`, et leurs notes
+  sous `docs/archives/feuille_de_route/<action>/`. Les autres archives sont à
+  côté, dans `docs/archives/`.
+- Les trois zones : `src/`, le modèle en Python ; `moteur/`, son portage en
+  JavaScript et le site ; `data/`, les données et la proposition. Les
+  consignes de chacune (`src/CLAUDE.md`, `moteur/CLAUDE.md`,
+  `data/CLAUDE.md`) te parviennent quand tu y lis un fichier.
+- Les fiches de règles, une par fichier : `data/reference/regles/`. Les
+  limites du modèle, une partie par fichier : `docs/limites/`.
+- Le journal de veille, une entrée datée par fichier :
+  `data/reference/legislation/journal_de_veille/`.
+- Les tests : `tests/` ; leurs témoins : `tests/temoins/`.
 
 ## Comment tu cherches
 
