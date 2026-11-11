@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Index plein texte des bases JORF et LEGI de la DILA, en SQLite FTS5.
+"""Index plein texte des bases JORF, LEGI et KALI de la DILA, en SQLite FTS5.
 
     python scripts/fetch/dila_index.py jorf --recuperer      # l'index publié, en une minute
     python scripts/fetch/dila_index.py jorf --mettre-a-jour  # les incréments parus depuis
@@ -36,8 +36,20 @@ filtre pour qui a le disque. Un texte hors champ n'y est donc pas, et une
 recherche qui n'y trouve rien ne prouve rien sur le JORF entier : c'est le
 dump qui fait foi, et les scripts de certification continuent de le lire.
 
+KALI, LES CONVENTIONS COLLECTIVES (action 184, étape 5). La base qui porte
+les accords Agirc-Arrco a la forme de LEGI, en plus petit : un dump de 184 Mo,
+352 000 textes et articles. Elle entre ENTIÈRE dans l'index, sans qu'on le
+demande : 1 Go en SQLite, 359 Mo publiés, moins que LEGI filtré, et le filtre,
+qui en gardait 99 000 documents pour 151 Mo, y retenait surtout les salaires
+et la prévoyance des branches. Ne rien y trouver dit donc que KALI ne l'a pas.
+Chaque document y porte quatre colonnes de plus (``PROPRES_A_KALI``) : son
+état, le texte qui porte l'article, le numéro et le titre de sa convention.
+Elle se construit en une minute et demie, et se reconstruit seule quand la
+DILA renouvelle son dump (plus bas).
+
 QUI PEUT PUBLIER. ``--publier`` crée la release ``index-dila`` du dépôt et y
-dépose ``<base>.sqlite.gz`` (380 Mo pour LEGI, 650 Mo pour le JORF) avec le
+dépose ``<base>.sqlite.gz`` (447 Mo pour LEGI, 764 Mo pour le JORF, 359 Mo
+pour KALI, le 11 novembre 2026) avec le
 jeton ``GH_TOKEN`` ou ``GITHUB_TOKEN`` de l'environnement. Il faut un jeton
 qui ait le droit d'écrire les releases : celui d'une session Claude Code ne
 l'a pas — GitHub répond « Creating, editing, or deleting releases is not
@@ -47,13 +59,25 @@ la main (onglet Actions, « Run workflow »), il récupère l'index publié et
 lui applique les incréments parus, ou le reconstruit depuis le dump si on
 le lui demande ou si rien n'est publié ; chaque lundi, la mise à jour seule.
 
-LE DUMP GLOBAL A QUATORZE MOIS. La DILA ne l'a pas régénéré depuis juillet
-2025 ; ce qui a paru depuis n'est que dans les incréments quotidiens
+LE DUMP GLOBAL EST RARE. La DILA n'a pas régénéré celui du JORF ni celui de
+LEGI de juillet 2025 à novembre 2026 ; ce qui paraît entre deux dumps n'est
+que dans les incréments quotidiens
 (``JORF_AAAAMMJJ-HHMMSS.tar.gz``, cent à deux cents Ko chacun). L'index les
 applique tous à la construction, et ``--mettre-a-jour`` n'applique que les
 nouveaux, en secondes. Un incrément peut remplacer un document (même
 identifiant) ou en supprimer (``liste_suppression_*.dat``) : les deux sont
 honorés, dans l'ordre de parution.
+
+LA DILA A RENOUVELÉ SES DUMPS LE 8 NOVEMBRE 2026, ceux des trois bases, et a
+retiré de son serveur les incréments d'avant : le 11, chaque répertoire ne
+listait plus que le dump du 8 et les incréments parus depuis. Un index arrêté
+avant un dump neuf ne peut donc plus rattraper ce qui a paru entre son dernier
+incrément et ce dump ; appliquer les suivants y laisserait un trou sans le
+dire. ``--mettre-a-jour`` reconstruit alors KALI depuis le dump neuf, en
+quelques minutes. Pour le JORF et LEGI, dont la reconstruction prend une heure
+et plus, rien n'est fait encore : leurs index publiés, à jour au 8 novembre au
+soir, ont enjambé ce renouvellement sans trou, et le cas reste à trancher
+(note de l'étape 5 de l'action 184).
 """
 
 from __future__ import annotations
@@ -82,9 +106,12 @@ CACHE = Path(__file__).resolve().parents[2] / "data" / "brut" / "dila"
 DEPOT = "g-pliberal/retraitecomptenotionelle"
 ETIQUETTE = "index-dila"
 
+#: ``entiere`` : la base entre sans filtre, et se reconstruit quand la DILA
+#: renouvelle son dump (voir « KALI » dans l'en-tête).
 BASES = {
     "jorf": {"global": "Freemium_jorf_global_", "increment": "JORF_"},
     "legi": {"global": "Freemium_legi_global_", "increment": "LEGI_"},
+    "kali": {"global": "Freemium_kali_global_", "increment": "KALI_", "entiere": True},
 }
 
 #: Ce qui fait entrer un document dans l'index : un de ces motifs dans son
@@ -145,7 +172,7 @@ THEMATIQUE = re.compile(
 
 BALISES = re.compile(r"<[^>]+>")
 BLANCS = re.compile(r"\s+")
-IDENTIFIANT = re.compile(r"(?:JORF|LEGI)(?:TEXT|ARTI)\d{12}")
+IDENTIFIANT = re.compile(r"(?:JORF|LEGI|KALI)(?:TEXT|ARTI)\d{12}")
 
 
 @dataclass
@@ -157,6 +184,11 @@ class Document:
     num: str       # numéro d'article, vide pour un texte
     titre: str
     texte: str
+    # Ce qu'un document de KALI porte de plus (``PROPRES_A_KALI``).
+    etat: str = ""        # VIGUEUR_ETEN, VIGUEUR_NON_ETEN, REMPLACE, PERIME, ABROGE…
+    cid: str = ""         # le texte qui porte l'article ; pour un texte, lui-même
+    idcc: str = ""        # le numéro de la convention collective, s'il y en a une
+    convention: str = ""  # le titre de la convention, ou du texte indépendant
 
 
 # ---------------------------------------------------------------------------
@@ -172,6 +204,11 @@ def _texte(xml: str) -> str:
     return BLANCS.sub(" ", html.unescape(BALISES.sub(" ", xml))).strip()
 
 
+def _attribut(balise: str, nom: str, xml: str) -> str:
+    trouve = re.search(rf'<{balise} [^>]*?\b{nom}="([^"]*)"', xml)
+    return html.unescape(trouve.group(1)) if trouve else ""
+
+
 def lire(xml: str) -> Document | None:
     """Un fichier XML du dump, ramené à une ligne d'index. ``None`` s'il n'est
     ni un texte ni un article (sommaires, structures, liens ELI…)."""
@@ -181,7 +218,10 @@ def lire(xml: str) -> Document | None:
         fin = "" if ident.startswith("JORF") else _champ("DATE_FIN", xml)
         titre = _champ("TITREFULL", xml) or _champ("TITRE", xml)
         corps = xml.split("</META>", 1)[-1]
-        return Document(ident, date, fin, _champ("NATURE", xml), "", titre, _texte(corps))
+        doc = Document(ident, date, fin, _champ("NATURE", xml), "", titre, _texte(corps))
+        if ident.startswith("KALI"):
+            doc.etat, doc.cid = _champ("ETAT", xml), _champ("CID", xml) or ident
+        return doc
     if "<ARTICLE>" in xml:
         ident = _champ("ID", xml)
         contexte = re.search(r'<TEXTE [^>]*?\sdate_publi="([^"]*)"[^>]*?\snature="([^"]*)"', xml)
@@ -193,7 +233,13 @@ def lire(xml: str) -> Document | None:
             date, fin = _champ("DATE_DEBUT", xml), _champ("DATE_FIN", xml)
         nature = "Article " + (contexte.group(2) if contexte else "")
         corps = " ".join(re.findall(r"<CONTENU>(.*?)</CONTENU>", xml, re.S))
-        return Document(ident, date, fin, nature.strip(), _champ("NUM", xml), titre, _texte(corps))
+        doc = Document(ident, date, fin, nature.strip(), _champ("NUM", xml), titre, _texte(corps))
+        if ident.startswith("KALI"):
+            doc.etat = _champ("ETAT", xml)
+            doc.cid = _attribut("TEXTE", "cid", xml)
+            doc.idcc = _attribut("CONTENEUR", "num", xml)
+            doc.convention = _attribut("CONTENEUR", "titre", xml)
+        return doc
     return None
 
 
@@ -244,11 +290,32 @@ CREATE TABLE IF NOT EXISTS meta (cle TEXT PRIMARY KEY, valeur TEXT);
 ARTICLES_DE_LEGI = "CREATE INDEX IF NOT EXISTS doc_titre_num ON doc(titre, num);"
 
 
+#: Ce qu'un document de KALI porte de plus que ceux du JORF et de LEGI : son
+#: état, où se lit qu'il est étendu ou non ; le texte qui porte l'article
+#: (``cid``), parce qu'un titre y couvre souvent plusieurs textes et qu'un
+#: numéro s'y répète de l'un à l'autre ; sa convention, par son numéro (IDCC)
+#: et son titre. Quatre colonnes que seul l'index de KALI reçoit : ceux du JORF
+#: et de LEGI gardent les sept leurs.
+PROPRES_A_KALI = ("etat", "cid", "idcc", "convention")
+
+#: L'histoire d'un article de KALI se lit dans son texte.
+ARTICLES_DE_KALI = "CREATE INDEX IF NOT EXISTS doc_cid_num ON doc(cid, num);"
+
+
+def colonnes(db: sqlite3.Connection) -> list[str]:
+    return [ligne[1] for ligne in db.execute("PRAGMA table_info(doc)")]
+
+
 def ouvrir(chemin: Path, base: str = "") -> sqlite3.Connection:
     chemin.parent.mkdir(parents=True, exist_ok=True)
     db = sqlite3.connect(chemin)
     db.executescript("PRAGMA journal_mode=OFF; PRAGMA synchronous=OFF;" + SCHEMA
                      + (ARTICLES_DE_LEGI if base == "legi" else ""))
+    if base == "kali":
+        for colonne in PROPRES_A_KALI:
+            if colonne not in colonnes(db):
+                db.execute(f"ALTER TABLE doc ADD COLUMN {colonne} TEXT")
+        db.executescript(ARTICLES_DE_KALI)
     return db
 
 
@@ -270,6 +337,9 @@ def inserer(db: sqlite3.Connection, xmls: Iterable[str], tout: bool = False,
     """
     lus = gardes = 0
     lot: list[tuple] = []
+    champs = colonnes(db)
+    verser = (f"INSERT OR IGNORE INTO doc ({', '.join(champs)}) "
+              f"VALUES ({','.join('?' * len(champs))})")
     for xml in xmls:
         doc = lire(xml)
         if doc is None or not doc.id:
@@ -281,12 +351,12 @@ def inserer(db: sqlite3.Connection, xmls: Iterable[str], tout: bool = False,
             db.execute("DELETE FROM doc WHERE id = ?", (doc.id,))
         if not pertinent(doc, tout):
             continue
-        lot.append((doc.id, doc.date, doc.fin, doc.nature, doc.num, doc.titre, doc.texte))
+        lot.append(tuple(getattr(doc, champ) for champ in champs))
         gardes += 1
         if len(lot) >= 2000:
-            db.executemany("INSERT OR IGNORE INTO doc VALUES (?,?,?,?,?,?,?)", lot)
+            db.executemany(verser, lot)
             lot = []
-    db.executemany("INSERT OR IGNORE INTO doc VALUES (?,?,?,?,?,?,?)", lot)
+    db.executemany(verser, lot)
     return lus, gardes
 
 
@@ -391,6 +461,7 @@ def verser_archive(db: sqlite3.Connection, archive: Path, tout: bool,
 def construire(base: str, chemin: Path, tout: bool = False,
                archive: Path | None = None) -> None:
     """Construit l'index depuis le dump global, puis applique les incréments."""
+    tout = tout or bool(BASES[base].get("entiere"))
     if chemin.exists():
         chemin.unlink()
     if archive is None:
@@ -426,6 +497,16 @@ def mettre_a_jour(base: str, chemin: Path, tout: bool | None = None) -> int:
     depuis = meta(db, "dernier_increment") or ""
     if tout is None:
         tout = meta(db, "filtre") == "tout"
+    if BASES[base].get("entiere") and depuis:
+        dump = dernier_dump(base)
+        if horodatage(dump) > depuis:
+            # Les incréments parus entre ``depuis`` et ce dump ne sont plus
+            # servis : appliquer les suivants laisserait un trou sans le dire.
+            db.close()
+            print(f"dump renouvelé ({dump}), postérieur à l'index ({depuis}) : "
+                  "reconstruction", file=sys.stderr)
+            construire(base, chemin, tout)
+            return 0
     nouveaux = increments(base, depuis)
     print(f"{len(nouveaux)} incréments à appliquer depuis {depuis or 'l’origine'}",
           file=sys.stderr)
@@ -655,6 +736,9 @@ def publier(base: str, chemin: Path) -> None:
             f"à jour au {etat['dernier_increment']}, filtre "
             f"{'aucun' if etat['filtre'] == 'tout' else 'thématique'}, "
             f"publié le {time.strftime('%Y-%m-%d')}.")
+    # Les bases publient en même temps, chacune sa ligne du même texte : il se
+    # relit après l'envoi, pour ne pas y remettre la ligne périmée d'une autre.
+    release = _github("GET", f"{api}/releases/tags/{ETIQUETTE}", jeton)
     corps = re.sub(rf"\n- `{base}\.sqlite\.gz`[^\n]*", "", release.get("body") or "")
     _github("PATCH", release["url"], jeton, json.dumps({"body": corps.rstrip() + "\n" + note}).encode())
     print(f"Publié : {actif.get('browser_download_url')}", file=sys.stderr)

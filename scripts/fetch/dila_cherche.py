@@ -9,6 +9,8 @@
     python scripts/fetch/dila_cherche.py legi --num L161-17-2 --diff           # mot à mot
     python scripts/fetch/dila_cherche.py legi --num L161-17-2 --le 2026-03-01  # ce jour-là
     python scripts/fetch/dila_cherche.py legi --num L351-1 --titre 'securite sociale' --motif âge
+    python scripts/fetch/dila_cherche.py kali '"valeur de service"' --titre agirc-arrco
+    python scripts/fetch/dila_cherche.py kali --num 92 --dans KALITEXT000036731682 --diff
 
 Une recherche rend une ligne d'identification par document — identifiant,
 date, nature, titre — et un EXTRAIT de quelques mots autour des termes
@@ -42,6 +44,20 @@ toujours celle qu'on applique à une pension prenant effet ce jour-là
 effet à compter du 1er septembre 2026). L'outil relève ces phrases, il ne les
 tranche pas. L'index garde la NOTA d'un article en tête de son texte.
 
+KALI, LES CONVENTIONS COLLECTIVES (action 184, étape 5). La base y est
+entière. Chaque ligne y dit de plus, entre parenthèses, l'état du document —
+« en vigueur étendu », « en vigueur non étendu », « remplacé », « périmé »… —,
+le numéro de sa convention (IDCC) s'il en a une, et le texte qui porte
+l'article (« dans KALITEXT… »). Un numéro n'y désigne un article que dans son
+texte : « article 1er », il y en a un par accord, et un même titre couvre
+souvent plusieurs textes. L'histoire d'un article se demande donc par
+``--num`` et ``--dans KALITEXT…``, l'identifiant que la recherche vient
+d'imprimer ; ``--titre`` ou ``--idcc`` la demandent pour tous les textes
+qu'ils retiennent, chacun à part. ``--dans`` et ``--idcc`` bornent aussi une
+recherche. Un article sans numéro — un préambule, l'article unique d'un
+avenant — se lit par ``--texte``. Le régime Agirc-Arrco se range sous l'accord
+du 17 novembre 2017, ``KALITEXT000036731682``, et ses avenants.
+
 CHAQUE RÉPONSE DIT SA FRAÎCHEUR, sur la sortie d'erreur : le jour du dernier
 incrément appliqué, et la commande qui rattrape un index de plus de sept jours.
 """
@@ -59,7 +75,7 @@ from datetime import date, timedelta
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from dila_index import BASES, chemin_index, meta  # noqa: E402
+from dila_index import BASES, PROPRES_A_KALI, chemin_index, colonnes, meta  # noqa: E402
 
 LARGEUR_TITRE = 110
 
@@ -69,6 +85,12 @@ CONTEXTE = 6
 #: La fin de validité d'une version qui court encore (LEGI), ou d'un document
 #: qui n'en a pas (JORF).
 OUVERTE = ("", "2999-01-01")
+
+#: Les états de KALI, comme Légifrance les écrit.
+ETATS = {"VIGUEUR": "en vigueur", "VIGUEUR_ETEN": "en vigueur étendu",
+         "VIGUEUR_NON_ETEN": "en vigueur non étendu", "REMPLACE": "remplacé",
+         "PERIME": "périmé", "ABROGE": "abrogé", "MODIFIE": "modifié",
+         "DENONCE": "dénoncé"}
 
 #: Ce qui, dans une phrase, dit à quoi et à partir de quand un texte
 #: s'applique ; la phrase n'est relevée que si elle porte aussi une date.
@@ -105,6 +127,12 @@ def _clauses(options) -> tuple[str, list]:
         valeurs.append(re.sub(r"[ .]", "", options.num.upper()))
     if options.titre:
         sql.append("instr(plat(doc.titre), ?) > 0"); valeurs.append(plat(options.titre))
+    if getattr(options, "dans", None):
+        sql.append("doc.cid = ?"); valeurs.append(options.dans.upper())
+    if getattr(options, "idcc", None):
+        # Une convention peut porter plusieurs numéros (« 1740 1841 1843 »).
+        sql.append("instr(' ' || doc.idcc || ' ', ?) > 0")
+        valeurs.append(f" {options.idcc.strip().lstrip('0')} ")
     return (" AND " + " AND ".join(sql)) if sql else "", valeurs
 
 
@@ -116,6 +144,31 @@ def plat(texte: str | None) -> str:
 
 def _preparer(db: sqlite3.Connection) -> None:
     db.create_function("plat", 1, plat, deterministic=True)
+
+
+def _propres(db: sqlite3.Connection) -> str:
+    """Les colonnes que seul l'index de KALI porte, à la suite d'un SELECT."""
+    return "".join(f", doc.{colonne}" for colonne in PROPRES_A_KALI) if "cid" in colonnes(db) else ""
+
+
+def _propre(ident: str, etat: str = "", cid: str = "", idcc: str = "", convention: str = "",
+            complet: bool = False) -> str:
+    """Ce qu'un document de KALI dit de plus : son état, sa convention, son texte."""
+    morceaux = [ETATS.get(etat, etat.lower())] if etat else []
+    if idcc:
+        morceaux.append(f"IDCC {idcc}")
+    if cid and cid != ident:
+        morceaux.append(f"dans {cid}")
+    if complet and convention:
+        morceaux.append(convention)
+    return " ; ".join(morceaux)
+
+
+def _groupe(ligne: tuple) -> str:
+    """Ce qui réunit les versions d'un article : le texte qui le porte — son
+    identifiant dans KALI, où un titre couvre plusieurs textes, son titre
+    ailleurs."""
+    return ligne[8] if len(ligne) > 8 else ligne[5]
 
 
 def chercher(db: sqlite3.Connection, requete: str, options) -> tuple[list[tuple], int, str]:
@@ -138,24 +191,29 @@ def chercher(db: sqlite3.Connection, requete: str, options) -> tuple[list[tuple]
         return [], total, soumise
     lignes = db.execute(
         f"SELECT doc.id, doc.date, doc.fin, doc.nature, doc.num, doc.titre, "
-        f"snippet(fts, 1, '[', ']', '…', ?) {base} ORDER BY doc.date, doc.rowid LIMIT ?",
+        f"snippet(fts, 1, '[', ']', '…', ?){_propres(db)} {base} "
+        f"ORDER BY doc.date, doc.rowid LIMIT ?",
         [options.extrait, soumise, *valeurs, options.limite]).fetchall()
     return lignes, total, soumise
 
 
-def _entete(ident: str, debut: str, fin: str | None, nature: str, num: str, titre: str) -> str:
+def _entete(ident: str, debut: str, fin: str | None, nature: str, num: str, titre: str,
+            propre: str = "") -> str:
     """La ligne qui identifie un document : identifiant, validité, nature, titre."""
     fin = fin or ""
     validite = f" → {fin}" if fin not in OUVERTE else ""
     article = f" art. {num}" if num else ""
+    propre = f"  ({propre})" if propre else ""
     mort_nee = "  (jamais en vigueur)" if fin not in OUVERTE and fin <= debut else ""
-    return f"{ident}  {debut}{validite}  {nature}{article}  {(titre or '')[:LARGEUR_TITRE]}{mort_nee}"
+    return (f"{ident}  {debut}{validite}  {nature}{article}  "
+            f"{(titre or '')[:LARGEUR_TITRE]}{propre}{mort_nee}")
 
 
 def afficher(lignes: list[tuple], total: int, options, sortie=None) -> None:
     sortie = sortie or sys.stdout
-    for ident, debut, fin, nature, num, titre, extrait in lignes:
-        print(_entete(ident, debut, fin, nature, num, titre), file=sortie)
+    for ligne in lignes:
+        extrait = ligne[6]
+        print(_entete(*ligne[:6], _propre(ligne[0], *ligne[7:])), file=sortie)
         if extrait:
             print(f"    {extrait}", file=sortie)
     if options.compter or total > len(lignes):
@@ -166,13 +224,15 @@ def afficher(lignes: list[tuple], total: int, options, sortie=None) -> None:
 def texte(db: sqlite3.Connection, ident: str, motif: str | None, autour: int,
           sortie=None) -> None:
     sortie = sortie or sys.stdout
-    ligne = db.execute("SELECT date, fin, nature, num, titre, texte FROM doc WHERE id = ?",
-                       (ident,)).fetchone()
+    ligne = db.execute(f"SELECT date, fin, nature, num, titre, texte{_propres(db)} "
+                       "FROM doc WHERE id = ?", (ident,)).fetchone()
     if ligne is None:
         raise LookupError(f"{ident} n'est pas dans l'index")
-    date, fin, nature, num, titre, corps = ligne
+    date, fin, nature, num, titre, corps = ligne[:6]
+    propre = _propre(ident, *ligne[6:], complet=True)
     print(f"{ident}  {date}{' → ' + fin if fin else ''}  {nature}"
-          f"{' art. ' + num if num else ''}\n{titre}\n", file=sortie)
+          f"{' art. ' + num if num else ''}\n{titre}\n{propre + chr(10) if propre else ''}",
+          file=sortie)
     if not motif:
         print(corps, file=sortie)
         return
@@ -202,12 +262,14 @@ def fenetres(corps: str, motif: str, autour: int) -> list[tuple[int, int]]:
 
 def versions(db: sqlite3.Connection, options) -> list[tuple]:
     """Toutes les versions d'un article (``--num``), texte par texte, de la
-    plus ancienne à la plus récente : (id, date, fin, nature, num, titre, texte)."""
+    plus ancienne à la plus récente : (id, date, fin, nature, num, titre, texte),
+    et, dans KALI, ce que ses documents portent de plus."""
     _preparer(db)
     filtres, valeurs = _clauses(options)
+    propres = _propres(db)
     return db.execute(
-        f"SELECT id, date, fin, nature, num, titre, texte FROM doc WHERE 1{filtres} "
-        "ORDER BY titre, date, id", valeurs).fetchall()
+        f"SELECT id, date, fin, nature, num, titre, texte{propres} FROM doc WHERE 1{filtres} "
+        f"ORDER BY {'cid' if propres else 'titre'}, date, id", valeurs).fetchall()
 
 
 def _a_vecu(ligne: tuple) -> bool:
@@ -263,12 +325,12 @@ def historique(lignes: list[tuple], options, sortie=None) -> None:
     precedente: dict[str, tuple | None] = {}
     derniere: dict[str, tuple] = {}
     for ligne in lignes:
-        precedente[ligne[0]] = derniere.get(ligne[5])
+        precedente[ligne[0]] = derniere.get(_groupe(ligne))
         if _a_vecu(ligne):
-            derniere[ligne[5]] = ligne
+            derniere[_groupe(ligne)] = ligne
     montrees = _a_montrer(lignes, options.limite)
     for ligne in montrees:
-        print(_entete(*ligne[:6]), file=sortie)
+        print(_entete(*ligne[:6], _propre(ligne[0], *ligne[7:])), file=sortie)
         if options.diff:
             avant = precedente[ligne[0]]
             if avant is not None:
@@ -298,14 +360,14 @@ def en_vigueur(lignes: list[tuple], jour: str, options, sortie=None) -> None:
     sortie = sortie or sys.stdout
     vecues = [ligne for ligne in lignes if _a_vecu(ligne)]
     trouvees = 0
-    for _, groupe in itertools.groupby(vecues, key=lambda ligne: ligne[5]):
+    for _, groupe in itertools.groupby(vecues, key=_groupe):
         groupe = list(groupe)
         for rang, ligne in enumerate(groupe):
             if not _en_vigueur_le(ligne, jour):
                 continue
             trouvees += 1
             corps = ligne[6]
-            print(_entete(*ligne[:6]), file=sortie)
+            print(_entete(*ligne[:6], _propre(ligne[0], *ligne[7:])), file=sortie)
             if options.motif:
                 for debut, fin in fenetres(corps, options.motif, options.autour):
                     print(f"[{debut}] …{corps[debut:fin]}…", file=sortie)
@@ -367,6 +429,10 @@ def main(arguments: list[str] | None = None) -> int:
                                          "sans requête, toutes ses versions")
     analyseur.add_argument("--titre", help="filtre sur le titre du texte, sans accents ni "
                                            "casse (« securite sociale »)")
+    analyseur.add_argument("--dans", metavar="KALITEXT…",
+                           help="KALI : dans ce seul texte, par son identifiant")
+    analyseur.add_argument("--idcc", metavar="N",
+                           help="KALI : dans cette seule convention, par son numéro")
     analyseur.add_argument("--diff", action="store_true",
                            help="avec --num : ce que chaque version change, mot à mot")
     analyseur.add_argument("--le", type=_date, metavar="AAAA-MM-JJ",
@@ -383,6 +449,13 @@ def main(arguments: list[str] | None = None) -> int:
     options = analyseur.parse_intermixed_args(arguments)
     if (options.diff or options.le) and (not options.num or options.requete):
         analyseur.error("--diff et --le suivent un article : --num, sans requête")
+    if (options.dans or options.idcc) and options.base != "kali":
+        analyseur.error("--dans et --idcc ne valent que pour KALI")
+    if (options.base == "kali" and options.num and not options.requete
+            and not (options.dans or options.titre or options.idcc)):
+        analyseur.error("dans KALI, un numéro ne désigne un article que dans son texte : "
+                        "--dans KALITEXT… (l'identifiant que la recherche imprime), "
+                        "--titre ou --idcc")
     try:
         db = _connexion(chemin_index(options.base, options.index))
         if options.etat:

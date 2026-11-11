@@ -176,3 +176,24 @@ cette phrase, lue, qui le dit. Chaque réponse rappelle, sur la sortie
 d'erreur, le jour où l'index s'arrête. L'index ne contient que le champ social (`THEMATIQUE` dans
 `dila_index.py`) : ce qu'il ne trouve pas peut exister dans le dump, que les
 scripts de certification lisent encore par leur option `--dump`.
+
+KALI, la base des conventions collectives, qui porte les accords Agirc-Arrco,
+se lit par les mêmes commandes (action 184, étape 5) :
+
+```bash
+python scripts/fetch/dila_index.py kali --recuperer
+python scripts/fetch/dila_index.py kali --mettre-a-jour
+python scripts/fetch/dila_cherche.py kali '"valeur de service"' --titre agirc-arrco
+python scripts/fetch/dila_cherche.py kali --num 92 --dans KALITEXT000036731682 --diff
+python scripts/fetch/dila_cherche.py kali --num 92 --dans KALITEXT000036731682 --le 2026-11-01
+```
+
+Elle est dans l'index entière, sans filtre : ne rien y trouver dit que KALI ne
+l'a pas. Chaque ligne y ajoute l'état du document — « en vigueur étendu »,
+« remplacé », « périmé » —, le numéro de sa convention (IDCC) et le texte qui
+porte l'article. Un numéro n'y désigne un article que dans son texte :
+l'histoire d'un article se demande par `--num` et `--dans KALITEXT…`,
+l'identifiant que la recherche imprime ; `--dans` et `--idcc` bornent aussi
+une recherche. L'accord du 17 novembre 2017, qui fonde le régime Agirc-Arrco,
+est `KALITEXT000036731682`. Sa mise à jour reconstruit l'index, en quelques
+minutes, quand la DILA a renouvelé son dump.

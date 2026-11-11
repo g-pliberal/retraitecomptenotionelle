@@ -12,6 +12,10 @@
 #   ce qui se passe tant qu'aucun index n'est publié.
 # - Chaque lundi à 4 h UTC : la mise à jour seule.
 #
+# KALI, la base des conventions collectives (action 184, étape 5), suit le
+# même chemin : entière, elle se construit en quelques minutes, et sa mise à
+# jour la reconstruit d'elle-même quand la DILA a renouvelé son dump.
+#
 # Pour LEGI, l'index publié, GitHub inscrit à la liste de contrôle des textes
 # les rédactions nouvelles (`scripts/textes.py --inscrire`, action 184,
 # étape 4) : `scripts/publier_inscription.sh` commite sur le dernier main ce
@@ -43,7 +47,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        base: [jorf, legi]
+        base: [jorf, legi, kali]
     steps:
       - uses: actions/checkout@v7
 
