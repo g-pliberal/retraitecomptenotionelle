@@ -45,7 +45,7 @@ ETAPES: dict[str, tuple[str, ...]] = {
     "pages": ("src", "data", "scripts", "moteur", "index.html", "simuler", "cout", "risque",
               "partager", "saviez-vous", "cas-types", "avantages", "methode", "sitemap.xml"),
     "prose": ("src", "data", "scripts", "moteur", "index.html", "tests", "docs",
-              "README.md", "CLAUDE.md"),
+              "README.md", "CLAUDE.md", ".claude/rules"),
 }
 
 #: Ce que ``construire_donnees.py`` lit de ``pages.js`` : les systèmes que le

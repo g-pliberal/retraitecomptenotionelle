@@ -151,7 +151,8 @@ class Arbre:
 
     def documents(self) -> list[str]:
         """Les documents : ``CLAUDE.md``, ``README.md``, ``docs/`` et les
-        consignes des dossiers (``verifier_prose.CONSIGNES``)."""
+        consignes, celles des dossiers et les règles à portée de chemin
+        (``verifier_prose.consignes``)."""
         if self.revision is None:
             chemins = [p.relative_to(self.racine).as_posix()
                        for motif in ("*.md", "docs/**/*.md")

@@ -220,3 +220,52 @@ def test_une_regle_de_claude_md_se_retrouve_puce_par_puce(tmp_path):
     assert conservation.pertes_entre(conservation.Arbre(racine=avant),
                                      conservation.Arbre(racine=apres)) == [
         "CLAUDE.md:6 : **Trois.** Pour les données."]
+
+
+def test_une_regle_a_portee_de_chemin_est_une_consigne(tmp_path):
+    """Action 135, « `CLAUDE.md` sous 200 lignes » : ce qui ne vaut que pour
+    des fichiers épars — la prose, la documentation, la suite — quitte la
+    racine pour une règle à portée de chemin, `.claude/rules/<sujet>.md`, que
+    Claude Code ne charge qu'à la lecture ou à l'écriture d'un fichier qui lui
+    répond (sa documentation, `memory.md`, « Organize rules with
+    `.claude/rules/` » : « All `.md` files are discovered recursively »).
+    C'est une consigne comme celle d'un dossier, et `--depuis` y retrouve la
+    règle partie de la racine. Le reste de `.claude/` — un skill, un agent,
+    la copie du dépôt qu'un poste loge sous `worktrees/` — reste à
+    l'outillage."""
+    for chemin, attendu in ((".claude/rules/prose.md", True),
+                            (".claude/rules/site/tests.md", True),
+                            ("src/CLAUDE.md", True),
+                            (".claude/rules/prose.txt", False),
+                            (".claude/CLAUDE.md", False),
+                            (".claude/skills/orchestration/SKILL.md", False),
+                            (".claude/worktrees/copie/.claude/rules/prose.md", False),
+                            ("docs/.claude/rules/prose.md", False)):
+        assert conservation.consigne(chemin) is attendu, chemin
+
+    avant, apres = tmp_path / "avant", tmp_path / "apres"
+    for racine in (avant, apres):
+        (racine / "data" / "reference" / "prose").mkdir(parents=True)
+        (racine / conservation.ZONES).write_text("fichiers: {}\n", encoding="utf-8")
+    (avant / "CLAUDE.md").write_text(
+        "# Règles\n\n- **Une.** Pour tous.\n- **Deux.** Pour la prose.\n"
+        "- **Trois.** Pour la suite.\n- **Quatre.** Pour l'orchestration.\n",
+        encoding="utf-8")
+    (apres / "CLAUDE.md").write_text("# Règles\n\n- **Une.** Pour tous.\n",
+                                     encoding="utf-8")
+    regles = apres / ".claude" / "rules"
+    (regles / "site").mkdir(parents=True)
+    (regles / "prose.md").write_text(
+        '---\npaths:\n  - "docs/**"\n---\n\n# La prose\n\n- **Deux.** Pour la prose.\n',
+        encoding="utf-8")
+    (regles / "site" / "tests.md").write_text("**Trois.** Pour la suite.\n",
+                                              encoding="utf-8")
+    skill = apres / ".claude" / "skills" / "orchestration"
+    skill.mkdir(parents=True)
+    (skill / "SKILL.md").write_text("**Quatre.** Pour l'orchestration.\n",
+                                    encoding="utf-8")
+    assert conservation.Arbre(racine=apres).documents() == [
+        ".claude/rules/prose.md", ".claude/rules/site/tests.md", "CLAUDE.md"]
+    assert conservation.pertes_entre(conservation.Arbre(racine=avant),
+                                     conservation.Arbre(racine=apres)) == [
+        "CLAUDE.md:6 : **Quatre.** Pour l'orchestration."]

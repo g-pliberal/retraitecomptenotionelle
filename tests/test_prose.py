@@ -204,6 +204,21 @@ def test_tout_document_du_depot_est_declare(zonage):
     )
 
 
+def test_l_etape_prose_de_la_fabrique_lit_chaque_document(zonage):
+    """« Juste après une régénération réussie, rien à refaire » : le contrôle
+    des chiffres ancrés se saute tant que rien de ce que l'étape « prose » de
+    la fabrique lit n'a changé (`test_aucun_chiffre_ancre_n_a_derive`). Un
+    document hors de ses chemins dériverait donc sans que ce poste le voie :
+    chacun y est, et une règle à portée de chemin aussi, qui loge sous
+    `.claude/rules/` et non dans un dossier du dépôt (action 135,
+    « `CLAUDE.md` sous 200 lignes »)."""
+    lus = fabrique.ETAPES["prose"]
+    for document in [*verifier_prose.documents(zonage), *verifier_prose.consignes(),
+                     f"{verifier_prose.REGLES}/prose.md"]:
+        assert any(document == chemin or document.startswith(f"{chemin}/")
+                   for chemin in lus), document
+
+
 def test_le_sommaire_des_limites_mene_a_chaque_partie():
     """Les limites tiennent en parties, une par fichier sous `docs/limites/`
     (action 135, étape 5 du contexte), et `docs/limites.md`, que le site et

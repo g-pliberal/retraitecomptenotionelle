@@ -107,18 +107,29 @@ ZONES = RACINE / "data" / "reference" / "prose" / "zones.yaml"
 #: recherche descendrait dans les téléchargements de ``data/brut/`` et dans
 #: les copies du dépôt que ``.claude/worktrees/`` loge sur un poste.
 CONSIGNES = ("*/CLAUDE.md", "*/*/CLAUDE.md")
+#: Les règles à portée de chemin, qu'il ne charge qu'à la lecture ou à
+#: l'écriture d'un fichier qui leur répond (action 135, « ``CLAUDE.md`` sous
+#: 200 lignes ») : les ``.md`` de ce seul dossier caché, à toute profondeur.
+#: Des consignes comme celles d'un dossier ; le reste de ``.claude/``, les
+#: skills et les agents, reste à l'outillage.
+REGLES = ".claude/rules"
 
 
 def consigne(chemin: str) -> bool:
-    """Le ``CLAUDE.md`` d'un dossier, au sens de ``CONSIGNES``."""
+    """Le ``CLAUDE.md`` d'un dossier, au sens de ``CONSIGNES``, ou une règle à
+    portée de chemin, sous ``REGLES``."""
     *dossiers, nom = chemin.split("/")
+    if chemin.startswith(f"{REGLES}/"):
+        return nom.endswith(".md")
     return (nom == "CLAUDE.md" and 1 <= len(dossiers) <= 2
             and not any(d.startswith(".") for d in dossiers))
 
 
 def consignes(racine: Path = RACINE) -> list[str]:
-    """Les consignes des dossiers du dépôt, au sens de ``CONSIGNES``."""
-    return sorted({chemin for motif in CONSIGNES for p in racine.glob(motif)
+    """Les consignes du dépôt hors de sa racine : celles des dossiers, au sens
+    de ``CONSIGNES``, et les règles à portée de chemin."""
+    return sorted({chemin for motif in (*CONSIGNES, f"{REGLES}/**/*.md")
+                   for p in racine.glob(motif)
                    if consigne(chemin := p.relative_to(racine).as_posix())})
 
 # --------------------------------------------------------------------------
