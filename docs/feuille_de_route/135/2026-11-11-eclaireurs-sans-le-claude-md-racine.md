@@ -181,19 +181,23 @@ commit, qui s'assure d'abord de la définition qu'elle fait tourner.
 
 **La comparaison d'après**, pour cette session-là.
 
-1. S'assurer de la définition : poser A1 à l'éclaireur, puis lancer la
+1. Relire la carte des deux agents contre le dépôt du jour. Sa première
+   phrase dit que les conventions sont dans le `CLAUDE.md` de la racine : si
+   des règles l'ont quitté pour `.claude/rules/` (chantier 2, en cours ce
+   11 novembre), elle doit suivre, avant toute mesure.
+2. S'assurer de la définition : poser A1 à l'éclaireur, puis lancer la
    commande ci-dessous. La pièce `instructions` doit avoir disparu, et le
    départ être tombé de 14 216 vers 9 700 jetons, si l'estimation tient.
    Sinon le réglage n'a pas pris : le dire au propriétaire, et s'arrêter là.
-2. Relever de nouveau par `grep` ce qui est attendu, puis poser les six
+3. Relever de nouveau par `grep` ce qui est attendu, puis poser les six
    questions, telles quelles, deux fois chacune, à l'agent qui a eu chacune.
-3. Comparer au tableau : les réponses sont-elles toujours justes ; les
+4. Comparer au tableau : les réponses sont-elles toujours justes ; les
    requêtes, les outils et les jetons relus sortent-ils de l'écart d'une
    série d'avant à l'autre ? Et deux choses que le tableau ne montre pas :
    l'agent ouvre-t-il le `CLAUDE.md` de la racine quand la question ne porte
    pas sur lui (seule A1 y mène) ; le `CLAUDE.md` de `data/` arrive-t-il
    toujours à A3, par `nested_memory` ?
-4. Conclure, dans une note et dans le bloc « Reprise » : garder le réglage,
+5. Conclure, dans une note et dans le bloc « Reprise » : garder le réglage,
    retoucher la carte, ou revenir en arrière si les réponses se dégradent.
 
 ```bash
