@@ -17,7 +17,11 @@ Chaque part, multipliée par le nombre d'appels qui l'ont relue, donne ses
 jetons relus ; leur somme est exactement celle des contextes de chaque
 appel. Feuille de route, action 135, étape 1 du contexte. Le rapport ventile
 aussi les appels par modèle, ceux des sous-agents compris (action 135, note
-du 17 octobre 2026, `trois-modeles`).
+du 17 octobre 2026, `trois-modeles`). Quand la transcription garde un
+instantané du prompt (``prompt_snapshot``), le départ se détaille entre le
+prompt système et chaque définition d'outil, au prorata de leurs caractères :
+``--limite 80`` les montre toutes (note du 11 novembre 2026,
+`contexte-de-depart`).
 """
 
 from __future__ import annotations
@@ -62,6 +66,7 @@ class Part:
     estimation: float = 0.0  # jetons estimés, pour le prorata
     jetons: float = 0.0  # jetons attribués
     relu: float = 0.0  # jetons × appels qui l'ont relu
+    definition: str | None = None  # l'outil dont c'est la définition
 
 
 @dataclass
@@ -78,6 +83,10 @@ class Session:
     parts: list[Part] = field(default_factory=list)
     compactions: int = 0
     cout: float | None = None
+    # Ce que l'instantané du prompt donne du départ : le prompt système et
+    # chaque définition d'outil, en jetons estimés.
+    systeme: float = 0.0
+    definitions: dict[str, float] = field(default_factory=dict)
 
     @property
     def relu(self) -> float:
@@ -279,6 +288,12 @@ def lire(chemin: Path, nom: str | None = None) -> Session:
             elif genre == "attachment":
                 piece = entree.get("attachment") or {}
                 sorte = piece.get("type", "?")
+                if sorte == "prompt_snapshot" and piece.get("tools") and not session.definitions:
+                    session.systeme = estimer(piece.get("systemPrompt"))
+                    session.definitions = {
+                        outil.get("name", "?"): len(json.dumps(outil, ensure_ascii=False)) / CARACTERES_PAR_JETON
+                        for outil in piece["tools"]
+                    }
                 if sorte in ATTACHEMENTS_MUETS:
                     continue
                 if "rendered" in entree:
@@ -315,8 +330,19 @@ def attribuer(session: Session, entrees: list[list[Part]]) -> None:
             part.categorie = "depart"
             session.parts.append(part)
         residu = depart - additionner(p.jetons for p in connues)
-        nom = "système et outils" if debut == 0 else "résumé de compaction"
-        session.parts.append(Part("depart", nom, jetons=residu, relu=residu * longueur))
+        if debut == 0 and session.definitions:
+            # L'instantané du prompt nomme ce reste : il se partage au prorata.
+            par_estime = residu / (session.systeme + additionner(session.definitions.values()))
+            jetons = session.systeme * par_estime
+            session.parts.append(Part("depart", "prompt système", jetons=jetons, relu=jetons * longueur))
+            for outil, estimation in session.definitions.items():
+                jetons = estimation * par_estime
+                session.parts.append(
+                    Part("depart", "définitions d'outils", jetons=jetons, relu=jetons * longueur, definition=outil)
+                )
+        else:
+            nom = "système et outils" if debut == 0 else "résumé de compaction"
+            session.parts.append(Part("depart", nom, jetons=residu, relu=residu * longueur))
         for i in range(debut, fin - 1):
             croissance = appels[i + 1].contexte - appels[i].contexte
             restants = fin - (i + 1)
@@ -373,15 +399,17 @@ def _m(jetons: float) -> str:
     return f"{jetons / 1e6:,.2f}".replace(",", " ")
 
 
-def _k(jetons: float) -> str:
-    return f"{jetons / 1e3:,.0f}".replace(",", " ")
+def _k(jetons: float, decimales: int = 0) -> str:
+    return f"{jetons / 1e3:,.{decimales}f}".replace(",", " ")
 
 
-def _classement(titre: str, sommes: dict[str, list[float]], total: float, limite: int) -> list[str]:
+def _classement(
+    titre: str, sommes: dict[str, list[float]], total: float, limite: int, decimales: int = 0
+) -> list[str]:
     lignes = [f"\n{titre}", f"  {'Mjetons relus':>13} {'part':>6} {'kjetons':>8} {'fois':>5}  "]
     for cle, (relu, jetons, fois) in sorted(sommes.items(), key=lambda kv: -kv[1][0])[:limite]:
         lignes.append(
-            f"  {_m(relu):>13} {100 * relu / total:>5.1f}% {_k(jetons):>8} {int(fois):>5}  {cle}"
+            f"  {_m(relu):>13} {100 * relu / total:>5.1f}% {_k(jetons, decimales):>8} {int(fois):>5}  {cle}"
         )
     return lignes
 
@@ -452,6 +480,15 @@ def rapport(sessions: list[Session], limite: int = 15) -> str:
         total,
         limite,
     )
+    definitions = cumuler(lambda p: p.definition)
+    if definitions:
+        lignes += _classement(
+            "Les définitions d'outils du départ, au prorata de leurs caractères :",
+            definitions,
+            total,
+            limite,
+            decimales=1,
+        )
     lignes += _classement(
         "Les fichiers lus (Read, cat, sed, head, tail…) :", cumuler(lambda p: p.fichier), total, limite
     )

@@ -218,3 +218,54 @@ def test_le_rapport_classe_fichiers_commandes_et_hooks(tmp_path, capsys):
     assert "s1/agent-a" in sortie
     par_modele = sortie.split("Par modèle")[1].split("Par origine")[0]
     assert "claude-opus-5-5" in par_modele and "claude-haiku-5-5" in par_modele
+
+
+def _definition(nom: str, taille: int) -> dict:
+    """Une définition d'outil, telle que l'instantané du prompt la garde, dont
+    le JSON fait `taille` caractères."""
+    vide = {"name": nom, "description": "", "schema": {}}
+    return {**vide, "description": "d" * (taille - len(json.dumps(vide)))}
+
+
+def _session_et_ses_outils(tmp_path: Path) -> Path:
+    return _ecrire(
+        tmp_path / "projects" / "-depot" / "s2.jsonl",
+        [
+            {"type": "user", "message": {"content": "x" * 350}},
+            *_appel("r1", 1100, 50, [{"type": "text", "text": "a"}]),
+            # Claude Code écrit l'instantané complet après le premier appel.
+            _piece(
+                "prompt_snapshot",
+                None,
+                systemPrompt=["s" * 60, "s" * 40],
+                tools=[_definition("Bash", 100), _definition("Artifact", 300)],
+            ),
+            *_appel("r2", 1200, 10, [{"type": "text", "text": "fini"}]),
+        ],
+    )
+
+
+def test_le_depart_se_detaille_outil_par_outil_quand_l_instantane_les_donne(tmp_path):
+    """Action 135, le contexte de départ (note du 11 novembre 2026). Des 1 100
+    jetons du premier appel, 100 sont le message (350 caractères) ; les 1 000
+    autres se partagent au prorata des caractères que l'instantané du prompt
+    donne : 100 pour le prompt système, 100 et 300 pour les deux outils."""
+    session = consommation.lire(_session_et_ses_outils(tmp_path))
+    depart = [p for p in session.parts if p.categorie == "depart"]
+    assert {p.etiquette for p in depart} == {"message", "prompt système", "définitions d'outils"}
+    systeme = next(p for p in depart if p.etiquette == "prompt système")
+    outils = {p.definition: p for p in depart if p.definition}
+    assert systeme.jetons == pytest.approx(200)
+    assert outils["Bash"].jetons == pytest.approx(200)
+    assert outils["Artifact"].jetons == pytest.approx(600)
+    assert outils["Artifact"].relu == pytest.approx(600 * 2)  # relue par les deux appels
+    assert consommation.additionner(p.jetons for p in depart) == pytest.approx(1100)
+
+
+def test_le_rapport_classe_les_definitions_d_outils(tmp_path, capsys):
+    _session_et_ses_outils(tmp_path)
+    assert consommation.main([str(tmp_path / "projects")]) == 0
+    sortie = capsys.readouterr().out
+    lignes = sortie.split("Les définitions d'outils du départ")[1].split("\n\n")[0].splitlines()[2:]
+    # La plus lourde d'abord, au dixième de millier de jetons.
+    assert [(ligne.split()[-1], ligne.split()[2]) for ligne in lignes] == [("Artifact", "0.6"), ("Bash", "0.2")]
