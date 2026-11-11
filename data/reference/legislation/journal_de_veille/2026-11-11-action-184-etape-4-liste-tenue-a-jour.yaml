@@ -1,0 +1,21 @@
+date: "2026-11-11"
+session: "action 184, étape 4 : la liste de contrôle des textes tenue à jour"
+consulte: >-
+  Aucune règle du scénario 1 n'est touchée : la session retouche
+  scripts/textes.py, le périmètre de la liste de contrôle des textes et le
+  workflow qui tient l'index. Lus ce jour : l'index LEGI du dépôt, récupéré
+  puis mis à jour jusqu'à l'incrément du 11 novembre 2026, par ses titres et
+  ses numéros d'articles ; aucun texte n'a été lu pour sa règle.
+trouve: >-
+  Aucune règle n'a changé. La liste a reçu 1 237 rédactions « à examiner », de
+  59 textes dont 52 nouveaux, et tient 17 625 rédactions de 279 textes ; 366
+  des rédactions inscrites sont en vigueur ou à venir. Les trois lois
+  statutaires de la fonction publique (n° 84-16, n° 84-53, n° 86-33) et le
+  décret n° 85-1148 n'y entrent que par les articles que les fiches citent :
+  151 rédactions au lieu de 856. Les rédactions en vigueur ou à venir que les
+  fiches n'ont pas lues passent de 92 sur 56 fiches à 100 sur 59.
+reste: >-
+  Les 100 rédactions non lues se lisent à l'étape 6 de l'action 184, zone par
+  zone. GitHub lance désormais l'inscription chaque lundi, après la mise à
+  jour de l'index ; une session n'inscrit plus elle-même que le texte qu'elle
+  vient de citer ou qui est paru dans la semaine (docs/veille_droit.md).

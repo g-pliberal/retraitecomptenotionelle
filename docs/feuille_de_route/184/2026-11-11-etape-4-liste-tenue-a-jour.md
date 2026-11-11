@@ -1,16 +1,5 @@
 # Étape 4 : la liste des textes tenue à jour — les textes généraux par leurs articles cités, l'inscription, GitHub qui la lance chaque lundi
 
-**Reprise, au 11 novembre 2026.** Rien n'est commencé. Le propriétaire a
-tranché le 11 novembre : les quatre textes généraux de la fonction publique
-n'entrent dans la liste de contrôle des textes que par les articles qu'une
-fiche cite, et GitHub lance l'inscription des rédactions nouvelles chaque
-lundi. Trois gestes, dans l'ordre, chacun son test d'abord : le périmètre et
-la sélection de `scripts/textes.py` ; l'inscription des rédactions en
-attente, pour de bon ; le workflow `index-dila.yml`, qui est une garde, et
-dont l'accord est donné plus bas, mot pour mot. L'étape 5 retouche le même
-workflow : rattraper `main` avant d'y toucher. Aucune règle du scénario 1
-n'est en jeu. Commencer par « Ce qu'il y a à faire », ci-dessous.
-
 **La demande, le 11 novembre 2026.** La session qui a mesuré les outils (note
 `2026-11-11-sorties-et-temps-des-outils.md`) a demandé au propriétaire :
 « Êtes-vous d'accord pour que GitHub lance l'inscription chaque lundi ? Cela
@@ -82,3 +71,82 @@ seulement ». Le second « oui » porte sur la passe de lecture, l'étape 6.
 inscrite et poussée ; le workflow a tourné une fois à la main, ou la note dit
 pourquoi il ne l'a pas pu ; cette note raconte l'étape, son bloc « Reprise »
 ôté ; l'entrée du journal de veille est écrite.
+
+**Ce qui a été fait, le 11 novembre 2026.** Les quatre gestes, chacun son
+test d'abord, vu rouge puis vert.
+
+1. *Le périmètre.* `perimetre.yaml` porte une liste `textes_generaux`, chaque
+   texte sous le titre que l'index lui donne et avec son pourquoi ; les quatre
+   textes de la décision y sont. `selection()` traite un texte général déclaré
+   comme un code hors de ses chapitres : seul l'article cité entre, avec
+   toutes ses rédactions. Deux tests dans `tests/test_textes.py` : sur une
+   table de poche, un décret de régime cité entre en entier et un texte
+   général déclaré n'apporte que l'article cité ; sur le dépôt, les quatre
+   textes sont déclarés, chacun avec son pourquoi.
+2. *L'inscription.* Sur l'index LEGI mis à jour jusqu'à l'incrément du 11
+   novembre 2026 (20261111-211545), `textes.py --inscrire` a apporté 1 237
+   rédactions « à examiner », le compte attendu, sans écart : 21 de la loi
+   n° 84-16 (article 34), 29 de la loi n° 84-53 (article 57), 28 de la loi
+   n° 86-33 (article 41), 73 du décret n° 85-1148 (articles 3 et 7), soit 151 ;
+   sans la déclaration, il en serait entré 1 942. Elles viennent de 59 textes,
+   dont 52 nouveaux à la liste ; 366 sont en vigueur ou à venir. La liste
+   tient 17 625 rédactions de 279 textes, contre 16 388 de 227. Le cliquet n'a
+   pas bougé : 9 283 rédactions sans statut.
+3. *Le workflow.* `.github/workflows/index-dila.yml`, pour LEGI seul et une
+   fois l'index publié : il installe le paquet, lance
+   `scripts/publier_inscription.sh python scripts/textes.py --inscrire`, puis,
+   si un commit est parti, `gh workflow run tests.yml` sur la même branche,
+   ce qui lui demande la permission `actions: write`. Le script est neuf. Il
+   se place sur le dernier `main`, inscrit, commite ce qui a changé sous
+   `data/reference/textes/` et cela seul, sous l'identité noreply du robot,
+   et pousse sans forcer. Poussée refusée, parce qu'une session a poussé
+   entre-temps, il refait l'inscription sur la nouvelle tête, trois fois au
+   plus : l'inscription ne coûte que quelques secondes, la refaire vaut mieux
+   que rebaser un fichier de 17 000 lignes. Rien d'écrit, rien de commité.
+   `tests.yml`, lancé par `workflow_dispatch`, repart du dernier `main`,
+   refait le tableau de bord et les chiffres ancrés, et juge. Quatre tests
+   dans `tests/test_outillage.py`, les trois premiers dans un dépôt jetable :
+   l'inscription se publie sur le dernier `main` ; elle se refait quand une
+   session la devance ; une inscription qui n'écrit rien ne commite rien ; le
+   workflow enchaîne les étapes dans cet ordre, pour LEGI seul. Le commit
+   porte `Garde-modifiée:`, sur l'accord cité plus haut, relu à sa source : le
+   message du propriétaire dans la session qui l'a demandé.
+4. *La procédure.* `docs/veille_droit.md`, « Au début » : la session ne lance
+   plus l'inscription en ouvrant ; elle ne la lance que pour un texte qu'elle
+   vient de citer ou paru dans la semaine, et déclare d'abord un texte général
+   au périmètre. `docs/architecture.md`, § 6.6, « Où elle vit », dit les deux
+   mêmes choses.
+
+**Les comptes, pour l'étape 6.** Le 11 novembre 2026, après l'inscription :
+100 rédactions en vigueur ou à venir que les fiches n'ont pas lues, sur 59
+fiches, contre 92 sur 56 avant elle ; comptées par fiche, une rédaction que
+deux fiches citent valant deux, 118 contre 110. En tout, passées comprises,
+2 539 rédactions non lues sur 173 fiches, contre 2 290 sur 168. Les huit
+rédactions en vigueur ou à venir qui s'ajoutent touchent cinq fiches :
+`assiette_rco_independants` (décret n° 2012-443, article 4),
+`decret_2026_418_liberaux` (décret n° 49-579, article 4 ; décret n° 50-28,
+article 2), `marins_salaire_de_reference` (décret n° 48-1108, article 1 ;
+décret n° 85-1148, article 3), `taux_plein_a_soixante_cinq_ans` (R. 653-2 du
+code de la sécurité sociale ; loi n° 86-33, article 41) et
+`un_statut_par_annee` (R. 711-24 du même code).
+
+**Le workflow, lancé une fois à la main**, le 11 novembre 2026 à 23 h 44 UTC,
+sur `main` (course 43122145529 d'« Index DILA »), a réussi en deux minutes.
+Pour LEGI : l'index mis à jour et publié, le paquet installé, le dernier
+`main` pris, l'inscription lancée. Elle a répondu « 0 rédactions nouvelles
+inscrites », l'index étant celui que la session venait de lire, et le script
+« Rien de neuf à la liste des textes : rien commité ». Ce que cette course n'a
+donc pas montré sur GitHub : la poussée du commit par le jeton du workflow, et
+le lancement de `tests.yml` qui la suit. Seuls les tests du dépôt jetable les
+tiennent. La première course qui trouvera un incrément nouveau, celle du lundi
+16 novembre 2026 à 4 h UTC, les jouera : y regarder qu'un commit « Inscrit par
+GitHub » arrive sur `main` et qu'une course de « Tests » le suit.
+
+**Ce qui reste, et qui revient au propriétaire.** `scripts/publier_inscription.sh`
+pousse sur `main` depuis GitHub, comme `scripts/publier_fabrique.sh`, mais
+n'est pas dans la liste des gardes de `scripts/pousser.sh` : une session peut
+le retoucher sans accord. L'y ajouter retouche `pousser.sh`, qui est une
+garde, et l'accord du 11 novembre ne portait que sur le workflow : la question
+est posée au propriétaire, rien n'est fait. Chaque lundi, l'inscription
+commite au moins `inscription.yaml`, qui dit jusqu'où l'index a été lu, et la
+suite complète tourne donc une fois de plus par semaine.
