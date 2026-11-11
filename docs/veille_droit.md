@@ -51,6 +51,8 @@ jour n'écrivent plus au même endroit.
 **Le script** : `python scripts/veille_droit.py`, une vue de la carte. Il
 imprime les fiches à relire — état `a_verifier` ou `manquante`, lecture de
 plus de cent vingt jours, date de relecture passée — et la liste des sources.
+Chacune y vient avec ses questions ouvertes, sauf celle qui n'est à relire
+que pour une rédaction non lue (étape 4, plus bas), qui tient en une ligne.
 `--tout` imprime tout, `--strict` rend 1 s'il reste quelque chose à relire.
 Il compare aussi la base de législation de la Cnav à son registre,
 `data/reference/legislation/cnav/` (`scripts/fetch/cnav_veille.py`, action
@@ -102,8 +104,9 @@ avec.
    version, sans effet avec le mot à mot qui le montre (`dila_cherche.py legi
    --num <article> --diff`), ou à rattacher. C'est
    ce qui fait baisser le cliquet des textes (`python scripts/textes.py`).
-   Les rédactions que la fiche n'a pas lues des articles qu'elle cite, et
-   leur mot à mot, sont dans `python scripts/textes.py --non-lues <fiche>` ;
+   Les rédactions en vigueur ou à venir que la fiche n'a pas lues des
+   articles qu'elle cite, et leur mot à mot, sont dans `python
+   scripts/textes.py --non-lues <fiche>`, les passées avec `--toutes` ;
    une rédaction « (texte inchangé) » s'y déclare sans effet. La veille
    compte parmi les fiches à relire celles qui en ont une en vigueur ou à
    venir.

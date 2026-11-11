@@ -7938,15 +7938,18 @@ dire si la copie de l'UNSA est la sienne.
 
 ### 184. L'histoire d'un article de loi, lue dans l'index de la DILA : ce que le dépôt lexifina/global-law fait mieux, repris, et ce qu'il fait mal, écarté — `en cours`
 
-**Reprise, au 3 novembre 2026.** Les étapes 1 et 2 sont faites. L'étape 2,
-recentrée par le propriétaire, montre à chaque fiche les rédactions non lues
-des articles qu'elle cite (`textes.py --non-lues <fiche>`, avec leur mot à
-mot), et la veille compte celles en vigueur ou à venir : le 3 novembre, 57
-fiches, 94 rédactions. Leur lecture va aux sessions de chaque zone, par la
-veille ; une rédaction identique à sa précédente se propose sans effet, la
-fiche la déclare. Reste l'étape 3, le texte qui a écrit chaque version, remise
-à la veille de la LFSS 2027 et menée seulement si elle en a l'usage. Détail :
-`184/2026-11-03-etape-2.md`.
+**Reprise, au 11 novembre 2026.** L'histoire d'un article se lit dans l'index,
+et chaque fiche voit les rédactions qu'elle n'a pas lues des articles qu'elle
+cite. Ces outils sont allégés depuis le 11 novembre. Trois décisions attendent
+le propriétaire. L'inscription n'a pas tourné depuis le 3 novembre : 1 942
+rédactions attendent, dont 856 de quatre textes généraux de la fonction
+publique ; ne pas lancer `textes.py --inscrire` avant qu'il dise s'ils entrent
+en entier, et si GitHub la lance chaque lundi. Les fiches n'ont pas lu 92
+rédactions en vigueur ou à venir : une passe dédiée, zone par zone ? L'index
+gagnerait-il la base des conventions collectives, qui porte le régime
+Agirc-Arrco ? Reste aussi le texte qui a écrit chaque version, remis à la loi
+de financement pour 2027. Détail :
+`184/2026-11-11-sorties-et-temps-des-outils.md`.
 
 **D'où elle vient.** Le 3 novembre 2026, le propriétaire signale
 `https://github.com/lexifina/global-law` : « Je crois qu'on fait la même chose
