@@ -4,7 +4,8 @@
     python scripts/textes.py                    # la liste : par statut, par texte, et le cliquet
     python scripts/textes.py --sans-statut css  # les rédactions sans statut d'un texte
     python scripts/textes.py --non-lues         # par fiche, les rédactions non lues des articles qu'elle cite
-    python scripts/textes.py --non-lues reversion  # celles d'une fiche, avec leur mot à mot
+    python scripts/textes.py --non-lues reversion  # celles d'une fiche en vigueur ou à venir, et leur mot à mot
+    python scripts/textes.py --non-lues reversion --toutes  # les passées aussi
     python scripts/textes.py --inscrire         # les rédactions nouvelles de l'index, « à examiner »
     python scripts/textes.py --poser            # une fois : la liste initiale, depuis l'index
 
@@ -232,10 +233,36 @@ def mot_a_mot(db, titre: str, num: str, ident: str) -> str:
     return "(absente de l'index)"
 
 
-def non_lues(fiche: str | None, index: str | None) -> int:
+def detail(fiche: str, vue: list[dict], titres: dict[str, str], db=None,
+           toutes: bool = False) -> list[str]:
+    """Les rédactions non lues d'une fiche, en lignes, chacune suivie de son
+    mot à mot quand l'index est là : celles en vigueur ou à venir, que la
+    veille compte ; les passées, comptées, et montrées si ``toutes``."""
+    vivantes = [r for r in vue if r["vivante"]]
+    passees = len(vue) - len(vivantes)
+    lignes = [f"{fiche} : {len(vue)} rédaction{'s' * (len(vue) > 1)} non lue{'s' * (len(vue) > 1)} "
+              f"des articles qu'elle cite, dont {len(vivantes)} en vigueur ou à venir."]
+    montrees = vue if toutes else vivantes
+    if montrees:
+        lignes.append("")
+    for r in montrees:
+        etiquette = ("en vigueur ou à venir" if r["vivante"] else "passée") + (
+            ", même numéro qu'un autre article" if r["homonyme"] else "")
+        lignes.append(f"  {r['texte']} {r['article']}  {r['debut']} → {r['fin'] or 'en vigueur'}  "
+                      f"{r['id']}  [{etiquette} ; {r['statut'] or 'sans statut'}]")
+        if db is not None:
+            lignes.append("      " + mot_a_mot(db, titres.get(r["texte"], ""), r["article"], r["id"]))
+    if passees and not toutes:
+        pluriel = "s" * (passees > 1)
+        lignes += ["", f"{passees} rédaction{pluriel} passée{pluriel}, non montrée{pluriel} : "
+                       f"python scripts/textes.py --non-lues {fiche} --toutes"]
+    return lignes
+
+
+def non_lues(fiche: str | None, index: str | None, toutes: bool = False) -> int:
     """Sans fiche : celles qui ont des rédactions non lues, les plus exposées
-    d'abord. Avec : chacune de ses rédactions non lues, et son mot à mot si
-    l'index est là."""
+    d'abord. Avec : ses rédactions non lues en vigueur ou à venir, les passées
+    aussi si ``toutes``, et leur mot à mot si l'index est là."""
     vues = textes.non_lues()
     if fiche is None:
         compte = {nom: (len([r for r in vue if r["vivante"] and not r["homonyme"]]), len(vue))
@@ -257,16 +284,7 @@ def non_lues(fiche: str | None, index: str | None) -> int:
     else:
         print("Index LEGI absent, pas de mot à mot : "
               "python scripts/fetch/dila_index.py legi --recuperer")
-    titres = textes.titres()
-    vue = vues.get(fiche, [])
-    print(f"{fiche} : {len(vue)} rédactions non lues des articles qu'elle cite.\n")
-    for r in vue:
-        etiquette = ("en vigueur ou à venir" if r["vivante"] else "passée") + (
-            ", même numéro qu'un autre article" if r["homonyme"] else "")
-        print(f"  {r['texte']} {r['article']}  {r['debut']} → {r['fin'] or 'en vigueur'}  "
-              f"{r['id']}  [{etiquette} ; {r['statut'] or 'sans statut'}]")
-        if db is not None:
-            print("      " + mot_a_mot(db, titres.get(r["texte"], ""), r["article"], r["id"]))
+    print("\n".join(detail(fiche, vues.get(fiche, []), textes.titres(), db, toutes)))
     return 0
 
 
@@ -280,11 +298,13 @@ def main(argv: list[str] | None = None) -> int:
     analyseur.add_argument("--non-lues", metavar="FICHE", nargs="?", const="",
                            help="les rédactions qu'une fiche n'a pas lues des articles "
                                 "qu'elle cite ; sans fiche, le compte par fiche")
+    analyseur.add_argument("--toutes", action="store_true",
+                           help="avec --non-lues FICHE : ses rédactions passées aussi")
     analyseur.add_argument("--date", help="le jour de l'inscription (AAAA-MM-JJ)")
     analyseur.add_argument("--index", help="chemin de l'index LEGI")
     args = analyseur.parse_args(argv)
     if args.non_lues is not None:
-        return non_lues(args.non_lues or None, args.index)
+        return non_lues(args.non_lues or None, args.index, args.toutes)
     if not (args.poser or args.inscrire):
         return etat(args.sans_statut)
     from dila_index import ouvrir_lecture

@@ -241,3 +241,36 @@ def test_le_mot_a_mot_d_une_redaction_non_lue():
     assert script.mot_a_mot(db, titre, "L351-1", D).startswith("(texte inchangé)")
     assert "textes_sans_effet" in script.mot_a_mot(db, titre, "L351-1", D)
     assert script.mot_a_mot(db, titre, "L351-1", E) == "(absente de l'index)"
+
+
+def _script():
+    """`scripts/textes.py`, chargé comme un module."""
+    import importlib.util
+    from pathlib import Path
+
+    chemin = Path(__file__).resolve().parents[1] / "scripts" / "textes.py"
+    spec = importlib.util.spec_from_file_location("script_textes", chemin)
+    script = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(script)
+    return script
+
+
+def test_le_detail_d_une_fiche_montre_ses_redactions_en_vigueur_et_compte_les_passees(histoire):
+    """Le détail d'une fiche montre ses rédactions non lues en vigueur ou à
+    venir, celles que la veille compte ; les passées, il les compte, et ne les
+    montre que sur demande : avec leur mot à mot, elles noyaient les autres
+    (action 184)."""
+    script = _script()
+    vue = textes.non_lues(histoire, LECTRICE, date(2026, 11, 3))["regle"]
+    entete = "regle : 4 rédactions non lues des articles qu'elle cite, dont 3 en vigueur ou à venir."
+    vivantes = [
+        f"  css L351-1  2027-01-01 → en vigueur  {I}  [en vigueur ou à venir ; a_examiner]",
+        f"  css L351-1  2023-09-01 → 2027-01-01  {C}  [en vigueur ou à venir ; a_examiner]",
+        f"  css Annexe  1985-01-01 → en vigueur  {F}  "
+        "[en vigueur ou à venir, même numéro qu'un autre article ; sans statut]"]
+    assert script.detail("regle", vue, {}) == [
+        entete, "", *vivantes, "",
+        "1 rédaction passée, non montrée : python scripts/textes.py --non-lues regle --toutes"]
+    assert script.detail("regle", vue, {}, toutes=True) == [
+        entete, "", *vivantes,
+        f"  css L351-1  2004-01-01 → 2023-09-01  {B}  [passée ; sans statut]"]
