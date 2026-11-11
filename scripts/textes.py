@@ -13,7 +13,8 @@
 Le périmètre est déclaré dans ``data/reference/textes/perimetre.yaml`` : les
 codes, aux chapitres qui touchent les retraites ; tout article dont une fiche
 de la carte cite une rédaction, avec toutes ses rédactions ; et, en entier,
-tout décret, loi ou arrêté dont une fiche cite une rédaction. La liste est
+tout décret, loi ou arrêté dont une fiche cite une rédaction, sauf les textes
+généraux qu'il déclare, qui n'entrent que par leurs articles cités. La liste est
 ``redactions.csv``, une ligne par rédaction ; ``textes.csv`` donne le titre de
 chaque texte sous sa clé ; ``inscription.yaml`` dit jusqu'où l'index a été lu.
 
@@ -104,6 +105,7 @@ def selection(db, perimetre: dict, fiches: dict[str, dict],
     connus = connus or {}
     cle_connue = {titre: cle for cle, titre in connus.items()}
     codes = {code["titre"]: code for code in perimetre["codes"]}
+    generaux = {texte["titre"] for texte in perimetre.get("textes_generaux") or []}
     requete = "SELECT id, num, date, fin FROM doc WHERE titre = ? AND id LIKE 'LEGIARTI%'"
     for code in perimetre["codes"]:
         titres[code["cle"]] = code["titre"]
@@ -117,11 +119,13 @@ def selection(db, perimetre: dict, fiches: dict[str, dict],
             if trouve is None:
                 continue
             titre, num = trouve
-            if titre in codes or titre.startswith("Code "):
-                cle = codes[titre]["cle"] if titre in codes else cle_de(titre)
-                rangs = db.execute(requete + " AND num = ?", (titre, num))
+            if titre in codes:
+                cle = codes[titre]["cle"]
             else:
                 cle = cle_connue.get(titre) or cle_de(titre)
+            if titre in codes or titre in generaux or titre.startswith("Code "):
+                rangs = db.execute(requete + " AND num = ?", (titre, num))
+            else:
                 rangs = db.execute(requete, (titre,))
             prises = {**connus, **titres}
             if prises.get(cle, titre) != titre:

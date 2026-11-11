@@ -168,6 +168,23 @@ def test_le_perimetre_est_declare():
     assert set(cles) <= set(textes.titres())
 
 
+def test_les_textes_generaux_de_la_fonction_publique_sont_declares():
+    """Le propriétaire l'a tranché le 11 novembre 2026 : les trois lois
+    statutaires de la fonction publique et le décret des rémunérations
+    n'entrent que par les articles qu'une fiche cite. Chacun est déclaré sous
+    le titre que l'index lui donne, et dit pourquoi."""
+    generaux = textes.perimetre()["textes_generaux"]
+    titres = [texte["titre"] for texte in generaux]
+    assert len(titres) == len(set(titres))
+    for numero in ("Loi n° 84-16 du 11 janvier 1984", "Loi n° 84-53 du 26 janvier 1984",
+                   "Loi n° 86-33 du 9 janvier 1986", "Décret n° 85-1148 du 24 octobre 1985"):
+        assert [t for t in titres if t.startswith(numero + " ")], numero
+    codes = {code["titre"] for code in textes.perimetre()["codes"]}
+    for texte in generaux:
+        assert len(str(texte["pourquoi"]).split()) >= 3, texte["titre"]
+        assert texte["titre"] not in codes, texte["titre"]
+
+
 def test_le_controle_suit_une_liste_copiee(tmp_path):
     """Le contrôle ne lit que les fichiers de la liste : une copie le rejoue."""
     shutil.copytree(textes.TEXTES, tmp_path, dirs_exist_ok=True)
@@ -211,6 +228,39 @@ def test_deux_textes_du_meme_jour_ne_partagent_pas_une_cle():
         "arrete_2026_07_10_carmf_2"
     assert script.cle_libre("arrete_2026_07_10", "Arrêté du 10 juillet 2026 sans sigle",
                             titres) == "arrete_2026_07_10_2"
+
+
+def test_un_texte_general_n_entre_que_par_ses_articles_cites():
+    """Un décret de régime dont une fiche cite un article entre en entier. Un
+    texte général déclaré au périmètre — le statut de la fonction publique de
+    l'État, dont trois articles sur cent touchent les retraites — n'apporte
+    que l'article cité, avec toutes ses rédactions, comme un code hors de ses
+    chapitres (action 184, étape 4)."""
+    import sqlite3
+
+    script = _script()
+    regime = "Décret n° 2003-1306 du 26 décembre 2003 relatif au régime de retraite des fonctionnaires affiliés à la CNRACL"
+    general = "Loi n° 84-16 du 11 janvier 1984 portant dispositions statutaires relatives à la fonction publique de l'Etat (1)."
+    db = sqlite3.connect(":memory:")
+    db.execute("CREATE TABLE doc (id TEXT, titre TEXT, num TEXT, date TEXT, fin TEXT)")
+    db.executemany("INSERT INTO doc VALUES (?, ?, ?, ?, ?)", [
+        (A, regime, "1", "2004-01-01", "2999-01-01"),
+        (B, regime, "2", "2004-01-01", "2999-01-01"),
+        (C, general, "68", "1984-01-12", "2011-07-01"),
+        (D, general, "68", "2011-07-01", "2999-01-01"),
+        (E, general, "34", "1984-01-12", "2999-01-01"),
+    ])
+    fiches = {"f": {"versions": [{"id": "v1", "textes": [{"id": A}, {"id": D}]}]}}
+    perimetre = {"codes": [], "textes_cites": True,
+                 "textes_generaux": [{"titre": general, "pourquoi": "le statut entier"}]}
+    lignes, titres = script.selection(db, perimetre, fiches)
+    assert titres == {"decret_2003_1306": regime, "loi_84_16": general}
+    assert {ident: (ligne["texte"], ligne["article"]) for ident, ligne in lignes.items()} == {
+        A: ("decret_2003_1306", "1"), B: ("decret_2003_1306", "2"),
+        C: ("loi_84_16", "68"), D: ("loi_84_16", "68")}
+    sans = {"codes": [], "textes_cites": True}
+    assert set(script.selection(db, sans, fiches)[0]) == {A, B, C, D, E}, \
+        "non déclaré, le même texte entre en entier"
 
 
 def test_le_mot_a_mot_d_une_redaction_non_lue():
