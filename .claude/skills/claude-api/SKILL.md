@@ -31,19 +31,32 @@ session ou un agent, et ce qu'il coûte.
   (le modèle d'un agent, ceux que Claude Code fournit), `costs`,
   `prompt-caching` (chaque modèle a son cache) et `skills`. Un `curl` suivi
   d'un `grep` y prend la phrase utile ; la page entière ne se lit pas.
+- **Ce que la plateforme recommande** se lit de même sous
+  `https://platform.claude.com/docs/en/<page>.md` :
+  `about-claude/models/choosing-a-model`,
+  `about-claude/models/optimizing-for-cost-and-intelligence` (ce que coûte
+  une tâche résolue, modèle par modèle et effort par effort),
+  `build-with-claude/effort`, et le guide de rédaction de chaque modèle,
+  `build-with-claude/prompt-engineering/prompting-claude-fable-5-2` pour
+  Fable 5.2. Leurs lignes sont longues : `cut -c1-600` après le `grep`.
 - **Les choix du dépôt** : la lecture confiée à Haiku, à son effort par
   défaut, `medium`, par l'éclaireur et Explore (`.claude/agents/`, et la règle de `CLAUDE.md`) ;
   trois agents d'impeccable sur Sonnet, et les agents généralistes aussi
   (`CLAUDE_CODE_SUBAGENT_MODEL`, dans `.claude/settings.json`, qui tient
-  encore la chaîne de secours, `fallbackModel`, et l'effort : `high` pour
+  encore la chaîne de secours, `fallbackModel`, Opus puis Sonnet depuis le
+  11 novembre 2026, et l'effort : `high` pour
   Opus, Sonnet et Fable 5.2, par `modelSettings` et non par
   `CLAUDE_CODE_EFFORT_LEVEL`, qui passerait devant celui que déclarent les
   agents) ; Fable 5.2 pour une étape qui écrit une règle du scénario 1
   (`CLAUDE.md`), depuis le 9 novembre 2026, à la place d'Opus 5.5, qui
   l'avait emporté sur Fable 5.1. Le détail est dans les notes
-  `2026-10-17-trois-modeles.md`, `2026-11-09-fable-5-2.md` et
-  `2026-11-09-effort-selon-le-billet.md` de `docs/feuille_de_route/135/` ; ce
+  `2026-10-17-trois-modeles.md`, `2026-11-09-fable-5-2.md`,
+  `2026-11-09-effort-selon-le-billet.md` et `2026-11-11-plateforme-claude.md`
+  de `docs/feuille_de_route/135/` ; ce
   que les sessions consomment, modèle par modèle :
   `python scripts/consommation.py`.
 - **Pour écrire du code qui appelle l'API**, ce skill ne suffit pas : ôter son
-  dossier rend celui de Claude Code.
+  dossier rend celui de Claude Code. L'audit des consignes que fournit
+  Claude Code, `/doctor prompt-audit`, passe par ce skill d'origine
+  (`memory.md`, « Audit your instruction files ») : s'il ne répond pas ici,
+  c'est ce dossier qui le masque.

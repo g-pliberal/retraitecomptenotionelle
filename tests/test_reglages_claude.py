@@ -11,7 +11,10 @@ et non au `medium` par lequel Claude Code le fait démarrer (note du 9). Le
 même jour, sur le billet « Which Claude model should you build with? » :
 Opus 5.5 et Sonnet 5.5 à `high`, le cran au-delà duquel il demande une mesure,
 et les deux agents de lecture au défaut de Haiku, `medium` (note « L'effort
-selon le billet »).
+selon le billet »). Le 11 novembre 2026, sur la documentation de la
+plateforme : la chaîne de secours descend par capacité, et la publication
+part aussi quand un tour meurt d'une erreur de l'API (note « La plateforme
+Claude, lue contre nos réglages »).
 """
 
 import json
@@ -39,6 +42,31 @@ def test_l_effort_se_regle_par_modele_et_non_par_la_variable():
 def test_l_eclaireur_et_explore_declarent_leur_effort():
     for agent in ("eclaireur", "Explore"):
         assert _entete(agent).get("effort") == "medium", agent
+
+
+def _commandes(evenement: str) -> list[str]:
+    return [crochet["command"]
+            for bloc in REGLAGES["hooks"].get(evenement, [])
+            for crochet in bloc["hooks"]]
+
+
+def test_la_publication_part_aussi_quand_un_tour_meurt_d_une_erreur_de_l_api():
+    """`Stop` ne part pas quand un tour finit sur une erreur de l'API, limite
+    d'usage ou surcharge : Claude Code lance `StopFailure` à sa place
+    (`hooks.md`, « Stop » : « API errors fire StopFailure instead »). Sans ce
+    second hook, les commits du tour restaient dans le conteneur, perdus s'il
+    était repris. Décision du propriétaire, le 11 novembre 2026."""
+    for evenement in ("Stop", "StopFailure"):
+        assert any("scripts/pousser.sh" in c for c in _commandes(evenement)), evenement
+
+
+def test_la_chaine_de_secours_descend_par_capacite():
+    """Le modèle de secours tient « for the rest of the turn »
+    (`settings-reference.md`, `fallbackModel`) : une étape du scénario 1, menée
+    sur Fable 5.2, retombe donc sur Opus avant Sonnet. Décision du
+    propriétaire, le 11 novembre 2026, à la place de Sonnet puis Opus, l'ordre
+    du 17 octobre, quand Opus était le modèle le plus haut du dépôt."""
+    assert REGLAGES["fallbackModel"] == ["opus", "sonnet"]
 
 
 def test_le_detecteur_d_impeccable_ne_tourne_qu_a_la_demande():

@@ -7,7 +7,7 @@
     "claude-opus-5-5": { "effortLevel": "high" },
     "claude-sonnet-5-5": { "effortLevel": "high" }
   },
-  "fallbackModel": ["sonnet", "opus"],
+  "fallbackModel": ["opus", "sonnet"],
   "hooks": {
     "SessionStart": [
       {
@@ -57,6 +57,18 @@
             "command": "bash \"${CLAUDE_PROJECT_DIR}/scripts/pousser.sh\"",
             "timeout": 120,
             "statusMessage": "Publication sur main"
+          }
+        ]
+      }
+    ],
+    "StopFailure": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PROJECT_DIR}/scripts/pousser.sh\"",
+            "timeout": 120,
+            "statusMessage": "Publication sur main, après une erreur de l'API"
           }
         ]
       }

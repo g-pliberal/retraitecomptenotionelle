@@ -5760,16 +5760,16 @@ de statuts et les `manque` de la page Méthode.
 
 ### 135. Aller plus vite sans rien céder : l'outillage d'un changement de résultats — `en cours`
 
-**Reprise, au 9 novembre 2026.** Fait : les leviers 1, 2 et, pour l'essentiel,
-3 ; le hook de démarrage ; « Économiser le contexte » ; l'arbre du dépôt ; le
-parcours `tenu` ; le contexte en cinq étapes ; la mémoire indexée sur le seul
-modèle ; `pousser.sh` publie une tête détachée ; `node --test` sauté, les
-cumuls au hasard et le portage du coût (notes du 16) ; la lecture confiée à
-Haiku (note du 17) ; les pages au hasard (note du 29) ; le paquet dans la clé
-de `moitie_python`, ce que coûtent les sessions, la relève de l'orchestration
-(notes du 3) ; Impeccable sans hook (note du 5) ; Fable 5.2 au scénario 1,
-l'effort à `high` selon le billet (notes du 9). Reste : `actions/cache` sur
-GitHub ; Sonnet pour des sessions entières, au propriétaire ; le 4 et 5.
+**Reprise, au 11 novembre 2026.** Fait : les leviers 1, 2 et, pour
+l'essentiel, 3 ; le contexte en cinq étapes et « Économiser le contexte » ; la
+lecture confiée à Haiku (note du 17 octobre) ; ce que coûtent les sessions et
+la relève de l'orchestration (notes du 3) ; Fable 5.2 au scénario 1, l'effort
+à `high` (notes du 9) ; la plateforme Claude lue contre nos réglages :
+`StopFailure` publie aussi, le secours passe par Opus (note du 11). Reste, une
+session chacun, détail dans la note du 11 : alléger le contexte de départ, en
+le mesurant ; `CLAUDE.md` sous 200 lignes ; le bloc « Reprise » lisible ; les
+éclaireurs sans le `CLAUDE.md` racine. Et encore : `actions/cache` sur GitHub ;
+Sonnet pour des sessions entières, au propriétaire ; les leviers 4 et 5.
 
 **Demande**, le 28 septembre 2026, l'action 132 close : « On passe un temps
 interminable à faire ces changements. Pourquoi ? Est-ce qu'on peut aller plus
