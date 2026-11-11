@@ -5762,18 +5762,18 @@ de statuts et les `manque` de la page Méthode.
 
 **Reprise, au 11 novembre 2026.** L'action réduit ce que coûte un changement
 du modèle, en temps et en jetons, sans rien céder sur les vérifications ;
-l'essentiel est fait, une note par étape. Trois chantiers restent, chacun
-pour une session neuve. Le premier ramène `CLAUDE.md` sous deux cents
-lignes : point 2 de la note `2026-11-11-plateforme-claude.md`, dont les
-points 1, 3 et 4 sont faits. Le deuxième compare les réponses des agents de
-recherche, qui démarrent sans le `CLAUDE.md` de la racine, à celles relevées
-avant : note `2026-11-11-eclaireurs-sans-le-claude-md-racine.md`. Le
-troisième, court, constate dans une session ouverte après eux ce que les
-réglages ont retiré du contexte de départ en refusant les outils que le dépôt
-n'emploie pas ; la note `2026-11-11-contexte-de-depart.md` dit comment. Trois
-décisions attendent le propriétaire : garder sur GitHub la mémoire des
-calculs d'une course à l'autre (`actions/cache`) ; mener des sessions
-entières sur Sonnet ; faire passer seul un changement transversal.
+l'essentiel est fait, une note par étape. Deux chantiers restent, chacun
+pour une session neuve ; les quatre points de la note
+`2026-11-11-plateforme-claude.md` sont faits. Le premier compare les réponses
+des agents de recherche, qui démarrent sans le `CLAUDE.md` de la racine, à
+celles relevées avant : note
+`2026-11-11-eclaireurs-sans-le-claude-md-racine.md`. Le second, court,
+constate dans une session ouverte après eux ce que les réglages ont retiré du
+contexte de départ en refusant les outils que le dépôt n'emploie pas ; la
+note `2026-11-11-contexte-de-depart.md` dit comment. Trois décisions
+attendent le propriétaire : garder sur GitHub la mémoire des calculs d'une
+course à l'autre (`actions/cache`) ; mener des sessions entières sur Sonnet ;
+faire passer seul un changement transversal.
 
 **Demande**, le 28 septembre 2026, l'action 132 close : « On passe un temps
 interminable à faire ces changements. Pourquoi ? Est-ce qu'on peut aller plus

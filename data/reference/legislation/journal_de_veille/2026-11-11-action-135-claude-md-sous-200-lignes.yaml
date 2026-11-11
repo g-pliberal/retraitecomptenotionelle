@@ -1,0 +1,18 @@
+date: "2026-11-11"
+session: "action 135 : CLAUDE.md sous 200 lignes"
+consulte: >-
+  Aucune source de droit : la session ne touche à aucune règle du scénario 1,
+  seulement aux consignes que Claude Code charge (CLAUDE.md, .claude/rules/,
+  le skill orchestration, docs/poste.md) et à l'outillage qui les suit. Lue ce
+  jour : la documentation de Claude Code (memory, skills, sub-agents,
+  cloud-environments, claude-projects).
+trouve: >-
+  Aucune règle n'a changé ni disparu. La racine passe de 265 lignes à 194 :
+  la prose, la documentation d'une étape et la mécanique de la suite sont des
+  règles à portée de chemin, chargées à la lecture ou à l'écriture d'un
+  fichier de leur portée ; la relève de l'orchestration, un skill ; ce qui ne
+  regarde qu'un poste, une page. Vu dans la session : une règle ne se charge
+  ni par Grep ni par une commande composée, et, à l'écriture, arrive après
+  elle.
+reste: >-
+  Rien pour ce chantier. La marge de la racine est de cinq lignes.
