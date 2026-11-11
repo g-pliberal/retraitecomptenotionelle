@@ -7939,16 +7939,15 @@ dire si la copie de l'UNSA est la sienne.
 ### 184. L'histoire d'un article de loi, lue dans l'index de la DILA : ce que le dépôt lexifina/global-law fait mieux, repris, et ce qu'il fait mal, écarté — `en cours`
 
 **Reprise, au 11 novembre 2026.** L'histoire d'un article se lit dans l'index,
-et chaque fiche voit les rédactions qu'elle n'a pas lues des articles qu'elle
-cite. Ces outils sont allégés depuis le 11 novembre. Trois décisions attendent
-le propriétaire. L'inscription n'a pas tourné depuis le 3 novembre : 1 942
-rédactions attendent, dont 856 de quatre textes généraux de la fonction
-publique ; ne pas lancer `textes.py --inscrire` avant qu'il dise s'ils entrent
-en entier, et si GitHub la lance chaque lundi. Les fiches n'ont pas lu 92
-rédactions en vigueur ou à venir : une passe dédiée, zone par zone ? L'index
-gagnerait-il la base des conventions collectives, qui porte le régime
-Agirc-Arrco ? Reste aussi le texte qui a écrit chaque version, remis à la loi
-de financement pour 2027. Détail :
+chaque fiche voit les rédactions qu'elle n'a pas lues des articles qu'elle
+cite, et ces outils sont allégés. Le propriétaire a tranché le 11 novembre, et
+trois étapes en naissent. Deux se mènent en parallèle : la quatrième tient à
+jour la liste des textes, la cinquième met dans l'index la base des
+conventions collectives. La sixième, la lecture des rédactions en vigueur par
+des sessions dédiées, attend la fin de la quatrième. Chacune tient son bloc
+« Reprise » sous le titre de sa note, et celui-ci ne se récrit plus :
+commencer par la note de son étape. Reste aussi le texte qui a écrit chaque
+version, remis à la loi de financement pour 2027. Les mesures :
 `184/2026-11-11-sorties-et-temps-des-outils.md`.
 
 **D'où elle vient.** Le 3 novembre 2026, le propriétaire signale
@@ -8046,6 +8045,29 @@ et 3 ci-dessus ; la mesure, et comment la refaire, sont dans la note
    dans le même texte ; « 1 er » et « 1er » se valent depuis l'étape 1 ; la
    NOTA à part et les alinéas rendraient le mot à mot plus lisible, sans faire
    trancher une rédaction de plus.
+
+**Les étapes, complétées le 11 novembre 2026**, après les mesures de la note
+`184/2026-11-11-sorties-et-temps-des-outils.md`, quand le propriétaire
+demande : « On peut mieux lire les bases de données de droit ? » La session
+lui pose trois questions — GitHub doit-il lancer l'inscription des rédactions
+chaque lundi, les quatre textes généraux de la fonction publique entrent-ils
+en entier dans la liste, des sessions dédiées doivent-elles lire les
+rédactions en vigueur — et propose d'ajouter KALI à l'index. Ses réponses :
+« oui pour les deux, articles cités seulement », puis « ajouter à l'index la
+base des conventions collectives ». Trois étapes en naissent ; les étapes 4 et
+5 se mènent en parallèle, l'étape 6 après la 4.
+
+4. *La liste des textes tenue à jour* : les quatre textes généraux n'entrent
+   que par les articles qu'une fiche cite ; les rédactions en attente
+   s'inscrivent, 1 237 au lieu de 1 942 ; GitHub lance ensuite l'inscription
+   chaque lundi, dans le workflow qui met déjà l'index à jour. Note :
+   `184/2026-11-11-etape-4-liste-tenue-a-jour.md`.
+5. *KALI dans l'index* : la base des conventions collectives de la DILA, qui
+   porte le régime Agirc-Arrco, construite, cherchée et publiée comme LEGI.
+   Note : `184/2026-11-11-etape-5-kali-dans-l-index.md`.
+6. *La passe de lecture* : les rédactions en vigueur ou à venir que les fiches
+   n'ont pas lues, par des sessions dédiées, zone par zone, une fois la liste
+   à jour. Note : `184/2026-11-11-etape-6-passe-de-lecture.md`.
 
 ### 186. Le programme du parti sur les retraites : chaque grande idée étudiée à fond, aux sources, puis le modèle et le site qui la montrent — `en cours`
 
