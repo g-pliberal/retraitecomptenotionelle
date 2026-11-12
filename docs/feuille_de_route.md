@@ -7939,18 +7939,18 @@ dire si la copie de l'UNSA est la sienne.
 ### 184. L'histoire d'un article de loi, lue dans l'index de la DILA : ce que le dépôt lexifina/global-law fait mieux, repris, et ce qu'il fait mal, écarté — `en cours`
 
 **Reprise, au 12 novembre 2026.** L'histoire d'un article se lit dans l'index,
-pour les lois et, désormais, pour les conventions collectives. GitHub inscrit
-chaque lundi les rédactions nouvelles à la liste des textes. Les cent
-rédactions en vigueur ou à venir que les fiches n'avaient pas lues sont lues
-et classées. Aucune étape n'est en cours. La lecture a trouvé quatre règles
-que le modèle n'applique pas, et des points à vérifier : rien n'en est écrit,
-le propriétaire décide de l'étape qui s'en charge. Il lui reste aussi à
-trancher un défaut de l'outil de lecture, et ce que fait la mise à jour quand
-la DILA renouvelle un dump. Tout est dans la note
-`184/2026-11-12-etape-6-bilan-de-la-passe.md` : commencer par elle. Le lundi
-16 novembre, vérifier que GitHub a commité l'inscription et lancé la suite.
-Reste le texte qui a écrit chaque version, remis à la loi de financement pour
-2027.
+lois et conventions collectives, GitHub inscrit chaque lundi les rédactions
+nouvelles, et les cent rédactions en vigueur que les fiches n'avaient pas lues
+sont classées. Deux étapes restent, que le propriétaire a décidées le 12
+novembre et qui se mènent en parallèle : l'une corrige l'outil de lecture,
+l'autre fait refuser la mise à jour d'un index quand la DILA a renouvelé son
+fichier complet. Chacune tient son bloc sous le titre de sa note, et celui-ci
+ne se récrit plus. Ce que la lecture a trouvé dans le modèle est l'action 192.
+Restent aussi : les accords Agirc-Arrco à faire entrer dans la liste des
+textes ; le lundi 16 novembre, vérifier que GitHub a commité l'inscription et
+lancé la suite ; le texte qui a écrit chaque version, remis à la loi de
+financement pour 2027. Le bilan :
+`184/2026-11-12-etape-6-bilan-de-la-passe.md`.
 
 **D'où elle vient.** Le 3 novembre 2026, le propriétaire signale
 `https://github.com/lexifina/global-law` : « Je crois qu'on fait la même chose
@@ -8270,3 +8270,50 @@ chaque conversion s'écrit dans les deux moteurs.
    sections libérales (action 130).
 Chaque domaine se mesure à son ouverture : cet ordre est une proposition. Les
 69 fiches sans versions attendent d'être au contrat (action 130).
+
+### 192. Ce que la passe de lecture du 12 novembre a trouvé dans le modèle : chaque point lu, vérifié, puis écrit ou dit — `en cours`
+
+**Reprise, au 12 novembre 2026.** Rien n'est commencé. La lecture des
+rédactions en vigueur que les fiches n'avaient pas lues a trouvé quatre règles
+que le modèle n'applique pas, deux points à vérifier et des articles qu'aucune
+fiche ne suit. Le propriétaire a demandé une étape pour chacun : sept étapes,
+chacune avec sa note, qui est sa consigne, et son bloc « Reprise » sous son
+titre ; celui-ci ne se récrit plus. Les étapes qui écrivent dans le modèle se
+mènent une à la fois, dans l'ordre de leur numéro : ce qui est déjà en vigueur
+d'abord, ce qui prend effet en 2027 ensuite. La quatrième touche la saisie, la
+septième ne fait que lire : elles peuvent se mener à côté. Commencer par la
+note de son étape.
+
+**D'où elle vient.** Le 11 novembre 2026, le propriétaire a fait lire par des
+sessions dédiées les rédactions en vigueur ou à venir que les fiches n'avaient
+pas lues (action 184, étape 6). La passe lisait et classait, sans toucher au
+modèle ; son bilan (`184/2026-11-12-etape-6-bilan-de-la-passe.md`) liste ce
+qu'elle a trouvé. Le 12 novembre, le propriétaire : « Fait une étape pour
+chaque point du modèle ».
+
+**Les étapes**, chacune dans `docs/feuille_de_route/192/` :
+
+1. la cotisation de retraite complémentaire du chef d'exploitation agricole,
+   depuis 2026 (`2026-11-12-etape-1-cotisation-complementaire-agricole.md`) ;
+
+2. la carrière longue du non-salarié agricole
+   (`2026-11-12-etape-2-carriere-longue-non-salarie-agricole.md`) ;
+
+3. la date d'effet de la pension de base des libéraux, à vérifier d'abord
+   (`2026-11-12-etape-3-entree-en-jouissance-liberaux.md`) ;
+
+4. les biens du survivant dans les ressources de la réversion, à la saisie
+   (`2026-11-12-etape-4-biens-du-survivant-reversion.md`) ;
+
+5. le cumul d'une pension militaire et d'un emploi, en 2027
+   (`2026-11-12-etape-5-cumul-pension-militaire.md`).
+
+Puis la sixième, la retraite progressive au régime complémentaire des
+indépendants, en 2027
+(`2026-11-12-etape-6-retraite-progressive-independants.md`), et la septième,
+les articles qu'aucune fiche ne cite
+(`2026-11-12-etape-7-articles-sans-fiche.md`).
+
+**Ce qui n'en fait pas partie.** Les 2 431 rédactions passées que les fiches
+n'ont pas lues : la passe ne portait que sur celles en vigueur ou à venir, et
+ce stock est d'une autre taille. Il attend une décision du propriétaire.
