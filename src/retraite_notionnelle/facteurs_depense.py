@@ -819,7 +819,7 @@ def grille_ponderee(parametres) -> tuple[list, object, Callable[[int], dict[str,
     from .castypes import GRILLE_DU_COUT
     from .donnees.equilibre import ComptesRetraite, variante_du_scenario
     from .donnees.population import Population
-    from .revalorisation import RevalorisationServie
+    from .revalorisation_servie import RevalorisationServie
     from .simulateur import Simulateur
 
     racine = parametres.racine_donnees

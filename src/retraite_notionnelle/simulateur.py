@@ -53,10 +53,10 @@ from .moteur.indexation import Indexation
 from .remuneration import RemunerationActif, remuneration_de_la_carriere
 from .revalorisation import (
     PensionAujourdhui,
-    RevalorisationServie,
     RevalorisationsPensions,
     pension_aujourd_hui,
 )
+from .revalorisation_servie import RevalorisationServie
 from .noyau import univers as univers_de_droit
 from .scenarios.actuel import ResultatActuel, ScenarioActuel
 from .scenarios.notionnel import ResultatNotionnel, ScenarioNotionnel

@@ -367,7 +367,7 @@ from retraite_notionnelle.facteurs_depense import (  # noqa: E402
     ANNEE_DU_FLUX, CAISSE_DU_FLUX, GENERATION_DES_DECOTES, GENERATION_DU_FLUX,
     part_decotee_de_la_generation,
 )
-from retraite_notionnelle.revalorisation import RevalorisationServie  # noqa: E402
+from retraite_notionnelle.revalorisation_servie import RevalorisationServie  # noqa: E402
 from retraite_notionnelle.simulateur import Simulateur  # noqa: E402
 
 GRILLES = ("reference", "personnes", "melees", "femmes", "interruptions", "salaires",

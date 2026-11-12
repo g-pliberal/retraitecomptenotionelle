@@ -322,7 +322,7 @@ def test_une_voie_a_calibrer_ne_se_calcule_pas():
 @pytest.fixture(scope="module")
 def projection():
     from retraite_notionnelle.config import Parametres
-    from retraite_notionnelle.revalorisation import RevalorisationServie
+    from retraite_notionnelle.revalorisation_servie import RevalorisationServie
     from retraite_notionnelle.simulateur import Simulateur
 
     simulateur = Simulateur(Parametres()).pour_la_projection()

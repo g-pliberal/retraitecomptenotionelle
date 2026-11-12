@@ -145,7 +145,8 @@ code:
   python: >-
     revalorisation.py : RevalorisationsPensions, RevalorisationsPensions.generale,
     PensionServie, PensionServie.coefficient, PensionServie._fonction_publique,
-    REGIMES_REGLE_GENERALE, REGIMES_FONCTION_PUBLIQUE, faire_vivre, pension_aujourd_hui
+    REGIMES_REGLE_GENERALE, faire_vivre, pension_aujourd_hui ; revalorisation_servie.py :
+    REGIMES_FONCTION_PUBLIQUE
   javascript: >-
     moteur/js/revalorisation.js : RevalorisationsPensions,
     RevalorisationsPensions.generale, PensionServie, PensionServie.coefficient,

@@ -1105,11 +1105,11 @@ export function pensionAujourdhui(simulateur, comparaison, actuelServi = null) {
  * UN SEUL EXEMPLAIRE (note de décision 0007, action 161). Cette règle ne
  * s'écrit qu'ici : le coût du modèle en demande les séries au pont, une fois
  * par jeu de paramètres (`pont.series_servies`), et `RevalorisationServie` de
- * ``src/retraite_notionnelle/revalorisation.py`` ne fait plus que les lire —
- * `coefficient`, `coefficient_stock`, `coefficient_points`, `regime_convenu`,
- * que ``tests/test_pont.py`` confronte à celles d'ici, au bit. Ce que le coût
- * seul lit n'est pas porté : ce que le droit a servi jusqu'au dernier barème,
- * la rente nominale du pilier.
+ * ``src/retraite_notionnelle/revalorisation_servie.py`` ne fait plus que les
+ * lire — `coefficient`, `coefficient_stock`, `coefficient_points`,
+ * `regime_convenu`, que ``tests/test_pont.py`` confronte à celles d'ici, au
+ * bit. Ce que le coût seul lit n'est pas porté : ce que le droit a servi
+ * jusqu'au dernier barème, la rente nominale du pilier.
  *
  * UN SYSTÈME NOTIONNEL A DEUX RÈGLES D'INDEXATION, ET NON UNE. La première
  * fait grossir le compte pendant la carrière ; la seconde revalorise la

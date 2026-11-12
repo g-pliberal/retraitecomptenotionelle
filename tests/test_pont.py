@@ -2445,7 +2445,7 @@ def test_les_lectures_python_de_la_revalorisation_servie_sont_celles_du_portage(
     pont sur une grille de liquidations et d'années qui déborde la série des
     deux côtés, et sur chaque régime du catalogue."""
     _sans_node()
-    from retraite_notionnelle.revalorisation import RevalorisationServie
+    from retraite_notionnelle.revalorisation_servie import RevalorisationServie
 
     grille = [(liquidation, annee) for liquidation in range(1935, 2076, 7)
               for annee in range(1938, 2079, 5)]
@@ -2489,7 +2489,7 @@ def test_la_classe_python_lit_les_series_du_portage_sans_repli(monkeypatch):
     la bascule, 2."""
     _sans_node()
     from retraite_notionnelle.moteur.indexation import Indexation
-    from retraite_notionnelle.revalorisation import RevalorisationServie
+    from retraite_notionnelle.revalorisation_servie import RevalorisationServie
 
     simulateur = Simulateur(Parametres(annee_bascule=2021, **SOUS_LE_COR))
     with monkeypatch.context() as sans_node:
@@ -2668,7 +2668,8 @@ def test_l_histoire_du_droit_demande_ses_regles_au_portage_par_lot(monkeypatch):
     Le RAFP, hors répartition, ne se revalorise pas, et ne demande rien."""
     _sans_node()
     from retraite_notionnelle.droit import liquider
-    from retraite_notionnelle.revalorisation import RevalorisationServie, RevalorisationsPensions
+    from retraite_notionnelle.revalorisation import RevalorisationsPensions
+    from retraite_notionnelle.revalorisation_servie import RevalorisationServie
     from retraite_notionnelle.scenarios.actuel import ConversionsPoints, MinimumGaranti
 
     simulateur = Simulateur(Parametres())
@@ -2734,7 +2735,7 @@ def test_les_regles_de_l_histoire_du_droit_sont_celles_du_jumeau_au_bit(monkeypa
     _sans_node()
     from outils_pont import droit_et_refait
 
-    from retraite_notionnelle.revalorisation import RevalorisationServie
+    from retraite_notionnelle.revalorisation_servie import RevalorisationServie
 
     lots = []
 

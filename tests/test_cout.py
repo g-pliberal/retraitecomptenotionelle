@@ -103,7 +103,7 @@ from retraite_notionnelle.donnees.equilibre import (
     variantes_disponibles,
 )
 from retraite_notionnelle.donnees.population import Population
-from retraite_notionnelle.revalorisation import RevalorisationServie
+from retraite_notionnelle.revalorisation_servie import RevalorisationServie
 from retraite_notionnelle.simulateur import Simulateur
 from retraite_notionnelle.droit import ouvrir
 

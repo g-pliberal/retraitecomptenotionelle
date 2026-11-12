@@ -209,7 +209,7 @@ def _pensions(voie: I.Voie, trajectoire: I.Trajectoire,
     calculer le coût : la revalorisation de la proposition que le coût
     construit, sur la masse salariale de la trajectoire."""
     from retraite_notionnelle.config import Parametres
-    from retraite_notionnelle.revalorisation import RevalorisationServie
+    from retraite_notionnelle.revalorisation_servie import RevalorisationServie
     from retraite_notionnelle.simulateur import Simulateur
 
     simulateur = Simulateur(Parametres()).pour_la_projection()

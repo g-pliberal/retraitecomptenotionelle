@@ -60,7 +60,7 @@ sources:
 code:
   python:
     retraite_notionnelle.moteur.indexation: [Indexation.taux, Indexation.coefficient]
-    retraite_notionnelle.revalorisation: [RevalorisationServie]
+    retraite_notionnelle.revalorisation_servie: [RevalorisationServie]
   javascript:
     moteur/js/indexation.js: [Indexation, taux, coefficient]
     moteur/js/revalorisation.js: [RevalorisationServie]

@@ -169,7 +169,7 @@ from .donnees.tva import AssietteTva, TvaGardee
 from .effet_retour import EffetRetour, EffetRetourAnnuel
 from .donnees.population import CarrieresIncompletes, Population
 from .noyau import univers as univers_de_droit
-from .revalorisation import RevalorisationServie
+from .revalorisation_servie import RevalorisationServie
 from .reversion_gardee import StockDeReversion
 from .scenarios.actuel import MinimumVieillesse
 from .simulateur import Simulateur

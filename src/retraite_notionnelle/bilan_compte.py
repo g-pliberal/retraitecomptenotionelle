@@ -76,7 +76,7 @@ from .cout import (
     regle_revalorisation,
 )
 from .donnees.population import AGE_MINIMAL, Population
-from .revalorisation import RevalorisationServie
+from .revalorisation_servie import RevalorisationServie
 from .somme import somme_ordonnee
 
 #: Les postes de ressources que le compte suédois appelle cotisations : ceux
