@@ -1,0 +1,22 @@
+date: "2026-11-12"
+session: "action 161 : la revalorisation servie du coût déplacée dans un module à elle"
+consulte: >-
+  Aucune source de droit rouverte : la session déplace du code, sans écrire
+  ni changer une règle. La classe qui calcule ce que le droit a servi aux
+  pensions liquidées (RevalorisationServie) quitte revalorisation.py pour
+  revalorisation_servie.py, avec deux lectures de tables et sept constantes
+  que le moteur Python lui reprend. Lues : les notes de décision 0006 et
+  0007, et la note de l'étape d'avant. python scripts/veille_droit.py lancé
+  à l'ouverture, sans rien en relever pour cette étape.
+trouve: >-
+  Aucune règle n'a changé. L'histoire du droit est identique au bit avant et
+  après, sur chaque régime du catalogue, chaque année de liquidation et
+  chaque année de 1940 à 2070 ; le coût de référence aussi ; le paquet et
+  les témoins ne bougent pas. Deux fiches du droit
+  (pension_differee_fonction_publique, revalorisation_des_pensions) nomment
+  le module neuf pour une constante déplacée : seul le nom du fichier y
+  change.
+reste: >-
+  La remontée des fusions qui dit la dernière année publiée d'un point
+  existe en Python et en JavaScript : au pont, ou déclarée à la clôture, le
+  propriétaire tranche. Le détail dans la note de la feuille de route.

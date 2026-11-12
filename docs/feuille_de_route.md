@@ -7326,17 +7326,17 @@ de `contribution_etat`.
 profit du moteur JavaScript, que le coût et les tests interrogent par un pont.
 Le coût y lit la garantie, l'impôt sur le revenu, la revalorisation des
 pensions servies et l'indexation. Ce que le droit a servi aux pensions
-liquidées reste calculé en Python, par la classe `RevalorisationServie`, qui
-demande au pont, par lot, les règles du moteur qu'elle appelait. Reste, une
-étape par session. D'abord, sortir cette classe de `revalorisation.py`, vers
-un module du coût, et dire où vont les quatre tables qu'elle lit sur le moteur
-Python. Ensuite, servir par la façade des tests (`tests/facade.py`) les règles
-de `droit/`. Puis quatre études : `scenarios_meres.py`, `cout_avantages.py
---par-carriere`, puis `part_minimum_contributif.py` et
-`partage_taux_unique.py`, non instruites. Enfin le retrait. Commencer par « Ce
-qui reste » de `2026-11-12-l-histoire-du-droit-par-le-pont.md`. Le
+liquidées reste calculé en Python, par la classe `RevalorisationServie`,
+désormais dans un module du coût, `revalorisation_servie.py`. Reste, une
+étape par session. D'abord, servir par la façade des tests
+(`tests/facade.py`) les règles de `droit/`. Puis quatre études :
+`scenarios_meres.py`, `cout_avantages.py --par-carriere`, puis
+`part_minimum_contributif.py` et `partage_taux_unique.py`, non instruites.
+Enfin le retrait. Commencer par « Ce qui reste » de
+`2026-11-12-la-revalorisation-servie-dans-un-module-du-cout.md`. Le
 propriétaire doit dire ce que le § 3 du README montrera sans simulateur
-Python.
+Python, et si la recherche de la dernière année publiée d'un point, écrite
+en Python et en JavaScript, se demande au pont ou reste des deux côtés.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur
