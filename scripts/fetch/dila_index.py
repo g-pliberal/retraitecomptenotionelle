@@ -75,9 +75,12 @@ avant un dump neuf ne peut donc plus rattraper ce qui a paru entre son dernier
 incrément et ce dump ; appliquer les suivants y laisserait un trou sans le
 dire. ``--mettre-a-jour`` reconstruit alors KALI depuis le dump neuf, en
 quelques minutes. Pour le JORF et LEGI, dont la reconstruction prend une heure
-et plus, rien n'est fait encore : leurs index publiés, à jour au 8 novembre au
-soir, ont enjambé ce renouvellement sans trou, et le cas reste à trancher
-(note de l'étape 5 de l'action 184).
+et plus, elle REFUSE : elle n'applique rien, laisse l'index tel quel, dit
+comment le reconstruire et sort en échec, ce qui arrête la course du workflow
+avant la publication. La reconstruction reste un geste voulu : le workflow
+relancé en cochant « reconstruire », ou ``dila_index.py <base>`` sur un poste
+(décision du propriétaire, 12 novembre 2026 ; action 184, étape 8). Les index
+publiés, à jour au-delà du dump du 8 novembre, n'ont pas ce trou.
 """
 
 from __future__ import annotations
@@ -107,7 +110,8 @@ DEPOT = "g-pliberal/retraitecomptenotionelle"
 ETIQUETTE = "index-dila"
 
 #: ``entiere`` : la base entre sans filtre, et se reconstruit quand la DILA
-#: renouvelle son dump (voir « KALI » dans l'en-tête).
+#: renouvelle son dump (voir « KALI » dans l'en-tête) ; les autres refusent
+#: alors la mise à jour.
 BASES = {
     "jorf": {"global": "Freemium_jorf_global_", "increment": "JORF_"},
     "legi": {"global": "Freemium_legi_global_", "increment": "LEGI_"},
@@ -490,19 +494,33 @@ def construire(base: str, chemin: Path, tout: bool = False,
 
 
 def mettre_a_jour(base: str, chemin: Path, tout: bool | None = None) -> int:
-    """Applique les incréments parus depuis le dernier appliqué. Rend leur nombre."""
+    """Applique les incréments parus depuis le dernier appliqué. Rend leur nombre.
+
+    Quand la DILA a renouvelé son dump après le dernier incrément de l'index,
+    rien n'est appliqué : une base ``entiere`` se reconstruit du dump neuf, les
+    autres refusent (``RuntimeError``) et laissent l'index tel quel.
+    """
     if not chemin.exists():
         raise LookupError(f"{chemin} absent : --recuperer, ou le construire d'abord")
     db = ouvrir(chemin, base)
     depuis = meta(db, "dernier_increment") or ""
     if tout is None:
         tout = meta(db, "filtre") == "tout"
-    if BASES[base].get("entiere") and depuis:
+    if depuis:
         dump = dernier_dump(base)
         if horodatage(dump) > depuis:
             # Les incréments parus entre ``depuis`` et ce dump ne sont plus
             # servis : appliquer les suivants laisserait un trou sans le dire.
             db.close()
+            if not BASES[base].get("entiere"):
+                raise RuntimeError(
+                    f"la DILA a renouvelé son dump ({dump}), postérieur à l'index "
+                    f"({depuis}) : ce qui a paru entre les deux n'est plus servi, et "
+                    "appliquer les incréments suivants laisserait un trou. Rien n'est "
+                    "appliqué, l'index reste tel quel. Le reconstruire du dump neuf, une "
+                    "heure et plus : sur GitHub, onglet Actions, « Index DILA », « Run "
+                    "workflow » en cochant « reconstruire », ce qui le publie ; sur un "
+                    f"poste, python scripts/fetch/dila_index.py {base}")
             print(f"dump renouvelé ({dump}), postérieur à l'index ({depuis}) : "
                   "reconstruction", file=sys.stderr)
             construire(base, chemin, tout)

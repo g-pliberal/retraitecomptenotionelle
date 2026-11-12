@@ -1,0 +1,16 @@
+date: "2026-11-12"
+session: "action 184, étape 8 : la mise à jour d'un index du JORF ou de LEGI refuse quand la DILA a renouvelé son dump"
+consulte: >-
+  Aucune règle du scénario 1 n'est touchée : la session retouche
+  scripts/fetch/dila_index.py et ses tests. Lus ce jour, sans télécharger
+  aucun dump : la liste des fichiers des répertoires JORF, LEGI et KALI de la
+  DILA, et le texte de la release index-dila du dépôt.
+trouve: >-
+  Aucune règle n'a changé. Chaque répertoire porte un dump global du 8
+  novembre 2026 à 14 h et les incréments parus depuis. Les index publiés du
+  JORF et de LEGI sont à jour au 11 novembre à 21 h 15, celui de KALI au 10
+  novembre à 21 h 31 : tous trois au-delà du dump, donc sans trou.
+reste: >-
+  Rien pour cette étape. La course du lundi 16 novembre ne refusera que si la
+  DILA renouvelle ses dumps d'ici là ; la reconstruction reviendrait alors au
+  propriétaire (docs/veille_droit.md, « Chercher dans le JORF ou LEGI »).

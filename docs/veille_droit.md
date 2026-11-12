@@ -152,6 +152,19 @@ le workflow `index-dila.yml` tient à jour chaque lundi. Si `--recuperer`
 répond qu'aucun index n'est publié, lancer ce workflow (onglet Actions, « Run
 workflow ») : une session ne peut pas publier elle-même.
 
+Quand la DILA renouvelle le fichier complet d'une base, elle retire de son
+serveur les mises à jour quotidiennes d'avant : un index du JORF ou de LEGI
+arrêté plus tôt ne peut plus rattraper ce qui lui manque. `--mettre-a-jour`
+refuse alors, sans rien appliquer (action 184, étape 8), et la course du lundi
+passe au rouge pour cette base, sans rien publier ; pour LEGI, sans rien
+inscrire non plus. Son journal le dit : « Échec : la DILA a renouvelé son
+dump ». La session qui le voit ne touche pas au workflow et le dit au
+propriétaire, à qui revient le geste : relancer « Index DILA » à la main en
+cochant « reconstruire », plus d'une heure sur GitHub, qui reconstruit,
+publie et inscrit. D'ici là l'index publié reste entier, arrêté à la date que
+chaque réponse de `dila_cherche.py` rappelle, et une session n'y applique
+rien : ce qui a paru depuis se lit sur Légifrance.
+
 ```bash
 python scripts/fetch/dila_index.py jorf --recuperer      # une fois par session
 python scripts/fetch/dila_index.py jorf --mettre-a-jour  # les incréments parus depuis

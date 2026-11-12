@@ -480,6 +480,149 @@ def test_precharger_telecharge_chaque_increment_en_parallele(tmp_path: Path, mon
     assert (tmp_path / "increments" / "JORF_20260102-000000.tar.gz").read_text() == "x"
 
 
+# ---------------------------------------------------------------------------
+# Le dump renouvelé (action 184, étape 8)
+# ---------------------------------------------------------------------------
+
+@pytest.fixture
+def dila(tmp_path: Path, monkeypatch) -> Path:
+    """Le serveur de la DILA, remplacé par un répertoire : ce qu'il liste, et
+    ce qu'on y télécharge."""
+    import shutil
+    servi = tmp_path / "dila"
+    servi.mkdir()
+    monkeypatch.setattr(index, "CACHE", tmp_path / "cache")
+    monkeypatch.setattr(index, "_listing",
+                        lambda base: sorted(p.name for p in servi.glob("*.tar.gz")))
+
+    def telecharger(url: str, cible: Path) -> Path:
+        cible.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy(servi / url.rsplit("/", 1)[-1], cible)
+        return cible
+
+    monkeypatch.setattr(index, "telecharger", telecharger)
+    return servi
+
+
+CHEMIN_PLAFOND = ("jorf/global/JORF/TEXT/00/01/JORFTEXT000000000001/texte/version/"
+                  "JORFTEXT000000000001.xml")
+CHEMIN_ARTICLE = "jorf/global/JORF/ARTI/00/03/JORFARTI000000000003/article/JORFARTI000000000003.xml"
+
+
+def _etat(chemin: Path) -> tuple:
+    with sqlite3.connect(chemin) as db:
+        return (index.meta(db, "dump"), index.meta(db, "dernier_increment"),
+                sorted(ligne[0] for ligne in db.execute("SELECT id FROM doc")))
+
+
+@pytest.mark.parametrize("base", ["jorf", "legi"])
+def test_mettre_a_jour_refuse_un_index_arrete_avant_un_dump_renouvele(
+        base: str, tmp_path: Path, dila: Path, capsys):
+    """La DILA a refait ses dumps le 8 novembre 2026 et retiré les incréments
+    d'avant. Un index du JORF ou de LEGI arrêté plus tôt ne peut plus rattraper
+    ce qui a paru entre son dernier incrément et le dump neuf : appliquer les
+    incréments qui restent y laisserait un trou sans le dire. La mise à jour
+    refuse, ne touche pas à l'index, et dit comment le reconstruire ; elle ne
+    le reconstruit pas d'elle-même, une heure et plus (décision du
+    propriétaire, 12 novembre 2026)."""
+    prefixes = index.BASES[base]
+    ancien = _archive(dila / f"{prefixes['global']}20261101-140000.tar.gz",
+                      {CHEMIN_PLAFOND: PLAFOND})
+    chemin = tmp_path / f"{base}.sqlite"
+    index.construire(base, chemin)
+    avant = _etat(chemin)
+    assert avant == (ancien.name, "20261101-140000", ["JORFTEXT000000000001"])
+    # Le renouvellement : le dump d'avant et ses incréments ne sont plus
+    # servis, il ne reste que le dump neuf et ce qui a paru depuis.
+    ancien.unlink()
+    neuf = _archive(dila / f"{prefixes['global']}20261108-140000.tar.gz",
+                    {CHEMIN_PLAFOND: PLAFOND})
+    _archive(dila / f"{prefixes['increment']}20261109-212854.tar.gz",
+             {"20261109-212854/" + CHEMIN_ARTICLE: ARTICLE_JORF})
+    with pytest.raises(RuntimeError) as refus:
+        index.mettre_a_jour(base, chemin)
+    message = str(refus.value)
+    assert neuf.name in message and "20261101-140000" in message
+    assert "« reconstruire »" in message                      # le geste, sur GitHub
+    assert f"python scripts/fetch/dila_index.py {base}" in message   # et sur un poste
+    assert _etat(chemin) == avant
+    # La commande échoue : c'est ce code de sortie qui arrête la course du lundi.
+    assert index.main([base, "--index", str(chemin), "--mettre-a-jour"]) == 1
+    assert "Échec" in capsys.readouterr().err
+    assert _etat(chemin) == avant
+
+
+def test_mettre_a_jour_applique_les_increments_d_un_index_posterieur_au_dump(
+        tmp_path: Path, dila: Path):
+    """Les index publiés le 11 novembre 2026 : construits du dump de juillet
+    2025, à jour au 11 novembre à 21 h 15, donc au-delà du dump du 8 novembre
+    à 14 h. Rien ne leur manque : la mise à jour applique ce qui a paru
+    depuis, et rien d'autre (noms relevés dans le répertoire JORF de la DILA
+    le 12 novembre 2026, l'incrément du 13 inventé)."""
+    # Un nom sans horodatage : un dump daté ferait chercher à ``construire``
+    # les incréments parus depuis.
+    chemin = tmp_path / "jorf.sqlite"
+    index.construire("jorf", chemin, archive=_archive(
+        tmp_path / "dump_essai.tar.gz", {CHEMIN_PLAFOND: PLAFOND}))
+    with sqlite3.connect(chemin) as db:
+        db.execute("UPDATE meta SET valeur = 'Freemium_jorf_global_20250713-140000.tar.gz' "
+                   "WHERE cle = 'dump'")
+        db.execute("UPDATE meta SET valeur = '20261111-211545' WHERE cle = 'dernier_increment'")
+    _archive(dila / "Freemium_jorf_global_20261108-140000.tar.gz", {CHEMIN_PLAFOND: PLAFOND})
+    for horodatage in ("20261108-210452", "20261109-212854", "20261110-002231",
+                       "20261110-213159", "20261111-044354", "20261111-211545"):
+        (dila / f"JORF_{horodatage}.tar.gz").write_bytes(b"deja applique, jamais relu")
+    _archive(dila / "JORF_20261113-211500.tar.gz",
+             {"20261113-211500/" + CHEMIN_ARTICLE: ARTICLE_JORF})
+    assert index.mettre_a_jour("jorf", chemin) == 1
+    assert _etat(chemin) == ("Freemium_jorf_global_20250713-140000.tar.gz", "20261113-211500",
+                             ["JORFARTI000000000003", "JORFTEXT000000000001"])
+
+
+def test_un_refus_de_la_mise_a_jour_arrete_la_course_avant_la_publication(tmp_path: Path):
+    """Ce que le refus attend de ``index-dila.yml``, sans y toucher : l'étape
+    qui met à jour échoue quand ``--mettre-a-jour`` échoue, sans reconstruire à
+    sa place, et les étapes d'après — la publication, l'inscription — ne
+    tournent qu'après une étape réussie. Le script de l'étape est joué tel
+    quel, par le shell que GitHub lui donne (``bash -eo pipefail``), devant
+    un ``python`` de paille qui note ses appels."""
+    import shutil
+    import subprocess
+    import yaml
+
+    if not shutil.which("bash"):
+        pytest.skip("bash absent")
+    flux = yaml.safe_load((Path(__file__).resolve().parents[1] / ".github" / "workflows"
+                           / "index-dila.yml").read_text(encoding="utf-8"))
+    travail = flux["jobs"]["index"]
+    etapes = travail["steps"]
+    rang = next(i for i, e in enumerate(etapes) if "--mettre-a-jour" in e.get("run", ""))
+    etape = etapes[rang]
+    assert "continue-on-error" not in travail and "continue-on-error" not in etape
+    assert "shell" not in etape and "defaults" not in travail and "defaults" not in flux
+    for suivante in etapes[rang + 1:]:
+        # Sans `always()` ni `failure()`, une étape ne suit qu'un succès.
+        condition = str(suivante.get("if", ""))
+        assert not any(mot in condition for mot in ("always", "failure", "cancelled")), suivante
+
+    journal = tmp_path / "appels"
+    paille = tmp_path / "bin" / "python"
+    paille.parent.mkdir()
+    paille.write_text('#!/bin/sh\necho "$*" >> "$JOURNAL"\n'
+                      'case "$*" in *--mettre-a-jour*) exit 1;; esac\n', encoding="utf-8")
+    paille.chmod(0o755)
+    script = (etape["run"].replace("${{ inputs.reconstruire }}", "")   # la course du lundi
+              .replace("${{ matrix.base }}", "jorf"))
+    assert "${{" not in script
+    course = subprocess.run(
+        ["bash", "--noprofile", "--norc", "-eo", "pipefail", "-c", script],
+        env={"PATH": f"{paille.parent}:/usr/bin:/bin", "JOURNAL": str(journal)})
+    assert course.returncode != 0
+    assert journal.read_text(encoding="utf-8").splitlines() == [
+        "scripts/fetch/dila_index.py jorf --recuperer",
+        "scripts/fetch/dila_index.py jorf --mettre-a-jour"]
+
+
 def test_recuperer_decompresse_l_index_publie(tmp_path: Path, dump: Path, monkeypatch, capsys):
     """Le trajet de ``--recuperer``, la release étant remplacée par un fichier
     local que curl sait lire (``file://``)."""
