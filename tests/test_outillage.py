@@ -189,8 +189,11 @@ def _inscrire(tmp_path, nouvelles: int = 2, devancee: bool = False,
     git("commit", "-q", "-m", "la liste")
     git("push", "-q", "origin", "HEAD:main")
     git("clone", "-q", str(nu), str(autre), cwd=tmp_path)
+    # L'identité de la session est dite au commit : jouée pendant la course,
+    # elle n'a ni celle du test ni, sur le coureur de GitHub, de réglage global.
     pousser = (f"cd {autre} && echo s >> session && git add -A && "
-               "git commit -q -m 'une session' && git push -q origin HEAD:main")
+               "git -c user.name=s -c user.email=s@example.invalid "
+               "commit -q -m 'une session' && git push -q origin HEAD:main")
     if devancee:
         subprocess.run(["bash", "-c", pousser], env=env, check=True, capture_output=True)
     commande = tmp_path / "inscrire.sh"
