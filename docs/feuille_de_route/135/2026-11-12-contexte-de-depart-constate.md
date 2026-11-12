@@ -125,3 +125,8 @@ arrêté à trois pages d'événements. Les sous-agents, sur Haiku, font 0,05 $.
    d'une autre ; une session qui finit une étape peut y lire ses trois plus
    grosses lectures et les noter. Sessions entières sur Sonnet, changement
    transversal seul : les deux décisions anciennes, inchangées.
+
+**La décision du propriétaire, le même jour**, la liste lue : « On garde
+fable pour l'instant ». Le premier point n'est donc pas pris : les sessions
+restent sur Fable 5.2, l'orchestration et l'outillage compris, et ni le skill
+`orchestration` ni `CLAUDE.md` ne changent. Les autres points restent ouverts.
