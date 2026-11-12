@@ -112,7 +112,7 @@ vivent à côté du noyau : on les allonge, elles aussi, sans décision.
 | une source nouvelle : un texte, un exemple, une série, une remarque | le registre des sources, où elle entre toujours ; ce qu'elle révèle, déclaré là où il va (§ 9.2) |
 | changer le texte du site | le site, en JavaScript seulement |
 | retirer un doublon entre le Python et le JavaScript | une paire, ou un sous-ensemble cohérent de paires, par étape, par la méthode de la note de décision 0003 (notes 0005 et 0006), en partant de `python scripts/jumeaux.py <nom>` : seules les règles partent, les chargeurs passent sous `donnees/`, les types du pont restent ; les témoins et le paquet restent identiques |
-| un calcul agrégé que le coût fait et que le site refait | le JavaScript seul si le lecteur peut en changer le résultat, que le coût demande au pont par lot ; sinon le Python seul, son résultat figé au paquet (§ 7.1, note 0006) |
+| un calcul agrégé que le coût fait et que le site refait | le JavaScript seul si le lecteur peut en changer le résultat, si le site chiffre d'autres cas que la fabrique ou si le calcul appelle une règle du moteur, que le coût demande au pont par lot ; sinon le Python seul, son résultat figé au paquet (§ 7.1, notes 0006 et 0007) |
 
 ---
 

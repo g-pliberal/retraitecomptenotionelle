@@ -13,9 +13,10 @@ portage ne calcule que ce que le simulateur calcule, une carrière : le coût
 n'y est pas, et Coût, Carrières types et Droits non cotisés lisent ce que le
 Python en a fabriqué (`agregats.js`, `docs/architecture.md`, § 7.1). Un calcul
 agrégé que le coût fait aussi ne s'écrit ici que si le lecteur peut en
-changer le résultat, et le coût le demande alors au pont, par lot ; sinon il
-se fabrique en Python, et le site le lit figé au paquet (note de décision
-0006). Le portage ne lit pas le YAML : le paquet qu'il lit, le Python le
+changer le résultat, si le site chiffre d'autres cas que la fabrique ou s'il
+appelle une règle du moteur, et le coût le demande alors au pont, par lot ;
+sinon il se fabrique en Python, et le site le lit figé au paquet (notes de
+décision 0006 et 0007). Le portage ne lit pas le YAML : le paquet qu'il lit, le Python le
 fabrique par ses chargeurs, qui restent en Python au retrait de leur jumeau,
 comme les types que le pont échange.
 

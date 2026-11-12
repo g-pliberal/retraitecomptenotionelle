@@ -7322,21 +7322,19 @@ de `contribution_etat`.
 
 ### 161. Un seul exemplaire du code : les doublons entre le Python et le JavaScript retirés une paire à la fois, chaque retrait relu — `en cours`
 
-**Reprise, au 12 novembre 2026.** L'inventaire
-(`2026-11-09-l-inventaire-des-retraits.md`) découpe la suite en lots A à G.
-Ses cinq questions au propriétaire sont instruites, chacune dans une note
-`2026-11-12-question-<n>-…` ; aucune n'est tranchée. Sept étapes ont été
-faites le 12 novembre, chacune avec sa note `2026-11-12-…` : deux scripts de
-la fabrique et deux études branchés sur le moteur JavaScript ; la garantie,
-l'impôt sur le revenu et la restitution relus ; le code mort mesuré ; les
-erreurs que le pilote tait, laissées telles ; les fichiers JavaScript les
-moins éprouvés classés ; ce que le site calcule sans le lecteur mesuré, rien
-de plus à garder en Python. Peuvent s'ouvrir sans décision : les sondes de
-`mesures_prose.py` et `mesures_accueil.py` ; l'étude
-`flux_fonction_publique.py` ; la relecture de la revalorisation servie et de
-l'indexation ; la remarque fausse de l'impôt de 1980 ; les lignes sans
-test, `compte.js` d'abord. Demander d'abord au propriétaire ce qu'il a
-tranché, puis lire la note de l'étape choisie.
+**Reprise, au 12 novembre 2026.** Le propriétaire a tranché les cinq
+questions de l'inventaire : la note de décision 0007 les porte, et
+`2026-11-12-les-decisions-du-proprietaire.md` dit l'ordre de la suite.
+L'impôt, la revalorisation servie et la garantie de population passent en
+JavaScript seul. Les tests du moteur Python passent par une façade. Les
+études restent. L'action se clôt par fonction. Le retrait d'une paire
+n'attend plus sa relecture, gardée pour quatre fichiers peu éprouvés. Déjà
+fait : deux scripts de la fabrique et deux études branchés sur le moteur
+JavaScript ; la garantie, l'impôt et la restitution relus. Reste, une étape
+par session : la garantie demandée au moteur JavaScript, par quoi
+commencer ; la façade des tests ; les sondes de `mesures_prose.py` et de
+`mesures_accueil.py` ; l'étude `flux_fonction_publique.py` ; l'impôt, puis
+la revalorisation servie ; les tests portés ; le retrait.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur

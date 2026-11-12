@@ -53,7 +53,11 @@ de la proposition, qui s'écrit en couche (`data/CLAUDE.md`).
   fait et que le site refait ne s'écrit qu'en JavaScript si le lecteur peut
   en changer le résultat — le coût le demande alors au pont, en une fois
   pour toutes ses années et ses cohortes —, et qu'ici sinon, son résultat
-  figé au paquet ; le propriétaire tranche chaque paire à sa relecture.
+  figé au paquet, à deux conditions : le site n'affiche que ce que la
+  fabrique calcule déjà, et le calcul n'appelle aucune règle du moteur. La
+  note de décision 0007 range ainsi en JavaScript l'impôt sur le revenu, la
+  revalorisation servie et la garantie de population ; elle dit aussi que le
+  retrait d'une paire n'attend plus sa relecture.
 - **Les temps tiennent à des mémoires** qu'il ne faut pas contourner :
   `charger_yaml` (qui rend une copie), `charger_serie_annuelle` et la table
   des quotients de mortalité, indexées sur la signature du fichier, partagées
