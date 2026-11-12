@@ -291,6 +291,119 @@ def test_le_workflow_de_l_index_inscrit_puis_fait_juger_son_commit():
     assert "workflow_dispatch" in tests[True]
 
 
+
+# -- la mémoire des calculs, d'une course à l'autre (action 135) -------------------
+
+
+MODELE = "${{ steps.empreinte.outputs.modele }}"
+
+
+def _etapes_de_la_course() -> list[dict]:
+    import yaml
+
+    return yaml.safe_load((RACINE / ".github" / "workflows" / "tests.yml")
+                          .read_text(encoding="utf-8"))["jobs"]["suite"]["steps"]
+
+
+def _memoire_de_la_course() -> dict:
+    (etape,) = [e for e in _etapes_de_la_course()
+                if e.get("uses", "").startswith("actions/cache")]
+    return etape
+
+
+def _reprise(gardees: list[str], etape: dict, modele: str, course: int) -> str | None:
+    """La mémoire que GitHub rend à l'étape (``actions/cache``) : celle de sa
+    clé, sinon la plus récente de celles dont la clé commence par l'une de ses
+    ``restore-keys`` ; ``gardees`` va de la plus ancienne à la plus récente."""
+    def rendre(texte: str) -> str:
+        rendu = texte.replace(MODELE, modele).replace("${{ github.run_id }}", str(course))
+        assert "${{" not in rendu, rendu
+        return rendu
+
+    cle = rendre(etape["with"]["key"])
+    if cle in gardees:
+        return cle
+    for prefixe in rendre(etape["with"].get("restore-keys", "")).splitlines():
+        for gardee in reversed(gardees):
+            if gardee.startswith(prefixe):
+                return gardee
+    return None
+
+
+def test_la_course_ne_reprend_que_la_memoire_de_son_modele():
+    """La course de GitHub est le verdict du dépôt : la mémoire des calculs
+    qu'elle reprend d'une course précédente (``actions/cache``) est celle du
+    même modèle, à l'octet près, et d'aucun autre. Une source du modèle bouge,
+    et la course part sans mémoire, comme avant. Elle ne reprend que les
+    calculs gardés (``.cache/calculs``), jamais la mémoire de la fabrique
+    (``.cache/fabrique.json``), qui lui ferait sauter des étapes."""
+    etape = _memoire_de_la_course()
+    assert etape["with"]["path"] == ".cache/calculs"
+    cle = etape["with"]["key"]
+    assert cle.startswith(f"calculs-{MODELE}-")
+    assert all(prefixe.startswith(f"calculs-{MODELE}-")
+               for prefixe in etape["with"]["restore-keys"].splitlines())
+    # Deux courses sur le même modèle, puis une source bouge.
+    gardees = [cle.replace(MODELE, "e1-yaml6").replace("${{ github.run_id }}", n)
+               for n in ("1", "2")]
+    assert _reprise(gardees, etape, "e1-yaml6", 3) == gardees[1]
+    assert _reprise(gardees, etape, "e2-yaml6", 3) is None
+    # La bibliothèque qui lit les données change de version : de même.
+    assert _reprise(gardees, etape, "e1-yaml7", 3) is None
+
+
+def test_la_cle_de_la_memoire_de_la_course_est_l_empreinte_du_modele(tmp_path):
+    """La clé tient à l'empreinte sous laquelle la mémoire garde elle-même ses
+    calculs (``memoire.empreinte``, que les tests plus bas font suivre chaque
+    source, Python et node), et à la version de PyYAML, seule dépendance des
+    calculs. L'étape qui la calcule se joue ici sous le shell que GitHub lui
+    donne : elle vient après l'installation du paquet, qu'elle importe, et
+    avant la reprise ; si le calcul échoue, elle échoue, plutôt que de rendre
+    une clé vide que toutes les courses partageraient."""
+    import yaml
+
+    from retraite_notionnelle import memoire
+
+    etapes = _etapes_de_la_course()
+    rang = {nom: next(i for i, e in enumerate(etapes) if critere(e)) for nom, critere in {
+        "installer": lambda e: "pip install -e" in e.get("run", ""),
+        "empreinte": lambda e: e.get("id") == "empreinte",
+        "reprise": lambda e: e.get("uses", "").startswith("actions/cache"),
+        "fabriquer": lambda e: e.get("id") == "fabriquer",
+    }.items()}
+    assert sorted(rang.values()) == list(rang.values()), rang
+    etape = etapes[rang["empreinte"]]
+    shell = (["bash", "--noprofile", "--norc", "-eo", "pipefail", "-c"]
+             if etape.get("shell") == "bash" else ["bash", "-e", "-c"])
+    sortie = tmp_path / "sortie_github"
+    sortie.write_text("", encoding="utf-8")
+    environnement = {**os.environ, "GITHUB_OUTPUT": str(sortie)}
+    subprocess.run([*shell, etape["run"]], check=True, capture_output=True,
+                   cwd=RACINE, env=environnement)
+    assert sortie.read_text(encoding="utf-8").splitlines() == [
+        f"modele={memoire.empreinte()}-yaml{yaml.__version__}"]
+    en_panne = etape["run"].replace("python ", "false ")
+    assert en_panne != etape["run"]
+    sortie.write_text("", encoding="utf-8")
+    issue = subprocess.run([*shell, en_panne], capture_output=True, cwd=RACINE,
+                           env=environnement)
+    assert issue.returncode != 0 and sortie.read_text(encoding="utf-8") == ""
+
+
+def test_une_course_lancee_a_la_main_part_sans_memoire():
+    """Le passage sans mémoire reste à portée : une course lancée à la main
+    (onglet Actions, « Run workflow »), ou par l'index de la DILA, chaque
+    semaine, ne reprend ni ne garde rien. Seul un envoi sur ``main`` écrit
+    donc la mémoire que les courses de ``main`` relisent."""
+    import yaml
+
+    flux = yaml.safe_load((RACINE / ".github" / "workflows" / "tests.yml")
+                          .read_text(encoding="utf-8"))
+    # PyYAML lit la clé `on` comme le booléen vrai.
+    assert flux[True]["push"] == {"branches": ["main"]}
+    assert _memoire_de_la_course()["if"] == "github.event_name == 'push'"
+
+
 # -- les mesures de l'accueil (action 163) ----------------------------------------
 
 

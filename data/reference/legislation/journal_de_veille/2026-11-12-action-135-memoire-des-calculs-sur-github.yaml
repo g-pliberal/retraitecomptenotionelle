@@ -1,0 +1,14 @@
+date: "2026-11-12"
+session: "action 135 : la mémoire des calculs gardée d'une course de GitHub à l'autre"
+consulte: >-
+  Aucune source de droit : la session ne touche à aucune règle du scénario 1,
+  seulement au workflow de la course (.github/workflows/tests.yml) et à son
+  test (tests/test_outillage.py).
+trouve: >-
+  Aucune règle n'a changé. Une course lancée par un envoi sur main reprend la
+  mémoire des calculs de la dernière course verte faite sur le même modèle,
+  sous l'empreinte de memoire.py ; le modèle retouché, ou la course lancée à
+  la main, elle part sans mémoire.
+reste: >-
+  Relever sur GitHub la durée de la première course partie mémoire pleine ;
+  comparer les réponses des agents de recherche à celles relevées avant.

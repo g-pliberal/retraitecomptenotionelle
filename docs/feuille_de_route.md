@@ -5762,16 +5762,17 @@ de statuts et les `manque` de la page Méthode.
 
 **Reprise, au 12 novembre 2026.** L'action réduit ce que coûte un changement
 du modèle, en temps et en jetons, sans rien céder sur les vérifications ;
-l'essentiel est fait, une note par étape. Deux chantiers restent, chacun pour
-une session neuve. Le premier, que le propriétaire a décidé le 12 novembre,
-raccourcit la course de GitHub, 25 minutes, en y gardant la mémoire des
-calculs d'une course à l'autre (`actions/cache`) : mesurer d'abord ce qu'elle
-rendrait ; la note `2026-11-12-contexte-de-depart-constate.md` donne les
-durées. Le second compare les réponses des agents de recherche, qui démarrent
-sans le `CLAUDE.md` de la racine, à celles relevées avant : note
-`2026-11-11-eclaireurs-sans-le-claude-md-racine.md`. Le propriétaire garde
-Fable 5.2 pour toutes les sessions, pour l'instant. Une décision l'attend :
-faire passer seul un changement transversal.
+l'essentiel est fait, une note par étape. Depuis le 12 novembre, la course de
+GitHub lancée par un envoi reprend la mémoire des calculs de la dernière
+course verte faite sur le même modèle : mesuré dans une session, dix-neuf
+minutes en deviennent neuf. La durée de la première course ainsi servie reste
+à relever sur GitHub : note `2026-11-12-memoire-des-calculs-sur-github.md`.
+Un chantier reste, pour une session neuve : comparer les réponses des agents
+de recherche, qui démarrent sans le `CLAUDE.md` de la racine, à celles
+relevées avant ; la note `2026-11-11-eclaireurs-sans-le-claude-md-racine.md`
+dit comment. Le propriétaire garde Fable 5.2 pour toutes les sessions, pour
+l'instant. Une décision l'attend : faire passer seul un changement
+transversal.
 
 **Demande**, le 28 septembre 2026, l'action 132 close : « On passe un temps
 interminable à faire ces changements. Pourquoi ? Est-ce qu'on peut aller plus

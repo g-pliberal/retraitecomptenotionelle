@@ -27,8 +27,14 @@
 # Les courses se suivent une à une (`concurrency`) : celle qui attend est
 # remplacée par la plus récente, qui part de toute façon du dernier main.
 #
+# Une course lancée par un envoi reprend la mémoire des calculs
+# (`.cache/calculs`) de la dernière course verte faite sur le même modèle
+# (action 135) : la fabrique et la suite y passent de dix-neuf minutes à neuf.
+# Que le modèle bouge, et elle part sans mémoire.
+#
 # Il se lance aussi à la main, sur n'importe quelle branche (onglet Actions,
-# « Run workflow ») : il y fabrique et pousse de même, sur cette branche.
+# « Run workflow ») : il y fabrique et pousse de même, sur cette branche, et
+# toujours sans mémoire.
 
 name: Tests
 
@@ -68,6 +74,31 @@ jobs:
 
       - name: Installer le paquet et ses outils de test
         run: pip install -e '.[dev]'
+
+      # La mémoire des calculs, d'une course à l'autre (action 135). Sa clé est
+      # l'empreinte sous laquelle `memoire.py` garde lui-même chaque calcul —
+      # le modèle, ses données et le portage, octet par octet, Python et node —
+      # et la version de PyYAML : qu'une source bouge, et rien ne se reprend.
+      # Sur deux lignes, pour qu'un calcul en échec arrête l'étape au lieu de
+      # rendre une clé vide. `tests/test_outillage.py` le tient.
+      - name: L'empreinte du modèle
+        id: empreinte
+        run: |
+          modele=$(python -c 'import yaml; from retraite_notionnelle import memoire; print(memoire.empreinte(), yaml.__version__, sep="-yaml")')
+          echo "modele=$modele" >> "$GITHUB_OUTPUT"
+
+      # Seuls les calculs gardés se reprennent : ni la mémoire de la fabrique
+      # (`.cache/fabrique.json`), ni les réussites des tests (`.cache/tests`),
+      # qui feraient sauter des étapes et des tests. La mémoire ne s'écrit
+      # qu'au bout d'une course verte, et d'un envoi sur main : lancée à la
+      # main, la course ne reprend ni ne garde rien.
+      - name: La mémoire des calculs
+        if: github.event_name == 'push'
+        uses: actions/cache@v6
+        with:
+          path: .cache/calculs
+          key: calculs-${{ steps.empreinte.outputs.modele }}-${{ github.run_id }}
+          restore-keys: calculs-${{ steps.empreinte.outputs.modele }}-
 
       - name: Fabriquer
         id: fabriquer

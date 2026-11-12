@@ -1775,7 +1775,12 @@ fichiers fabriqués, joue la suite et commite les uns et le verdict
 (`.github/etat_suite.yaml`, que chaque session lit à son ouverture, et une
 ligne au journal des verdicts, `.github/verdicts.tsv`) : depuis
 l'action 148, une session ne passe avant d'envoyer que le premier niveau,
-`python -m pytest -m rapide`, et les tests de sa zone. Le site ne part en ligne
+`python -m pytest -m rapide`, et les tests de sa zone. Une course lancée par
+un envoi reprend la mémoire des calculs (`.cache/calculs`, `memoire.py`) de la
+dernière course verte faite sur le même modèle, et elle seule : sa clé est
+l'empreinte sous laquelle la mémoire garde chaque calcul, et, le modèle
+retouché, la course part sans mémoire, comme toute course lancée à la main
+(action 135). Le site ne part en ligne
 que de là : une suite verte sur `main`, son verdict poussé, `tests.yml` déploie
 sur GitHub Pages l'arbre de ce commit, et aucun autre (action 163).
 `tests/conftest.py` range chaque fichier de tests dans son niveau ; un fichier
