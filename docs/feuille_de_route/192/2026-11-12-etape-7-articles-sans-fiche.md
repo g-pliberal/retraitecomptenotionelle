@@ -127,3 +127,17 @@ l'entrée reste, le cliquet ne bouge pas, et rien ne change un calcul. La
 rédaction d'avant 2026, la majoration de 17 % des points de 1952 à 1972, n'a
 plus de place dans cet article : c'est la question que la fiche pose déjà au
 propriétaire.
+
+**Une seconde lecture, le même jour, à la même demande.** Le propriétaire a
+décidé le 12 novembre 2026 que « sans effet » se tient fiche par fiche. La
+rédaction du 1er janvier 2026 de l'article L. 382-25 du code de la sécurité
+sociale (LEGIARTI000051289014), que la fiche `cultes_salaire_annuel_moyen`
+déclarait sans effet sur elle, revenait donc à lire pour
+`taux_plein_a_soixante_cinq_ans`. Cette fiche n'en transcrit que le I, 1° et
+2° : les cotisations « à la charge des assurés, assises sur une base
+forfaitaire », et celles des collectivités religieuses. Ils sont mot pour mot
+ceux de 2005, comme le II. Seul change le 4°, la contribution qui finance le
+régime, désormais celle « de la branche mentionnée au 3° de l'article
+L. 200-2 ». La rédaction est déclarée sans effet sur cette fiche, avec ce
+motif ; la fiche n'a plus de rédaction en vigueur non lue, le cliquet ne bouge
+pas, et rien ne change un calcul.
