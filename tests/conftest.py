@@ -194,6 +194,10 @@ EXCEPTIONS = {
     # portage et refaite au moteur Python : sept secondes (action 161, lot B).
     ("test_lectures_decision_29.py",
      "test_les_cas_types_passent_par_le_portage_sans_le_moteur_python"): "complet",
+    # La datation des cases de ``cycle_de_vie.py``, demandée au portage et
+    # refaite au pilote Python : sept secondes (action 161, lot B).
+    ("test_cycle_de_vie_script.py",
+     "test_l_etude_date_ses_cases_au_portage_sans_le_moteur_python"): "complet",
     # Les exemples officiels sont des règles, et la suite rapide les joue.
     ("test_oracle.py", "test_les_exemples_publies_par_les_caisses_sont_reproduits"): "rapide",
     ("test_oracle.py", "test_le_temoin_des_exemples_officiels_est_source"): "rapide",

@@ -16,18 +16,20 @@
 
 Ce qu'il imprime : pour chaque indicateur et chaque système, un tableau des
 treize cas types sur les sept générations de la grille
-(``castypes.carriere_de_la_grille``). Les définitions, les deux conventions et
+(``castypes.cases_de_la_grille``). Les définitions, les deux conventions et
 ce qu'elles laissent de côté sont dans ``moteur/js/cycle-de-vie.js``, le seul
 exemplaire du cycle de vie depuis l'action 161 ;
 la confrontation au COR, à TRAJECTOiRE et à l'OCDE, dans
 ``tests/test_cycle_de_vie_references.py``.
 
-LE PONT (action 161, étape 5). Les cas types ne se bâtissent qu'en Python
-(``castypes.py``, que le coût lit) ; le reste se calcule par le portage, comme
-le site le calcule d'une saisie : le script résout chaque case — les options de
-sa carrière (``CasType.options``), l'âge où le pilote la fait partir —, et
-``scripts/cycle_de_vie.mjs``, que node fait tourner, en rend les indicateurs,
-les âges de départ et les âges d'équilibre. Sans node, le script s'arrête.
+LE PONT (action 161, étape 5). Les cas types ne s'écrivent qu'en Python
+(``castypes.py``, que le coût lit) ; tout se calcule par le portage, comme
+le site le calcule d'une saisie : le script écrit chaque case — les options de
+sa carrière (``CasType.options``) —, le pilote du portage fixe l'âge où elle
+part (``castypes.cases_de_la_grille``, ``castypes.ages_de_la_grille`` ; lot B),
+sur le paquet des données du jour, et ``scripts/cycle_de_vie.mjs``, que node
+fait tourner, en rend les indicateurs, les âges de départ et les âges
+d'équilibre. Sans node, le script s'arrête.
 
 LES DEUX CONVENTIONS. Par défaut, celle de l'OCDE, sur les tables du dépôt :
 la survie de génération du sexe du cas type, le patrimoine actualisé à 1,5 %
@@ -80,8 +82,10 @@ from pathlib import Path
 RACINE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RACINE / "src"))
 
+from retraite_notionnelle import pont  # noqa: E402
 from retraite_notionnelle.calendrier import decomposer, formater_age  # noqa: E402
-from retraite_notionnelle.castypes import CAS_TYPES, GENERATIONS, carriere_de_la_grille  # noqa: E402
+from retraite_notionnelle.castypes import (  # noqa: E402
+    CAS_TYPES, GENERATIONS, ages_de_la_grille, cases_de_la_grille)
 from retraite_notionnelle.config import Parametres  # noqa: E402
 from retraite_notionnelle.donnees.chargement import charger_yaml  # noqa: E402
 from retraite_notionnelle.donnees.impot_revenu import INDEXATIONS  # noqa: E402
@@ -163,27 +167,33 @@ def productivites(racine_donnees) -> tuple[str, ...]:
     return tuple(sorted(scenarios, key=lambda nom: float(scenarios[nom]["productivite_reelle"])))
 
 
+def _paquet(simulateur: Simulateur) -> bytes:
+    """Le paquet sur lequel le portage date les cases : celui des données du
+    jour (``pont.paquet_des_donnees``), que le pilote Python lisait."""
+    return pont.paquet_des_donnees(simulateur.parametres.racine_donnees)
+
+
+def _ages(simulateur: Simulateur, cas_types, generations) -> dict[tuple[str, int], float]:
+    """L'âge où le pilote du portage fait partir chaque cas type né en chaque
+    génération, sous ``(code, génération)`` (``castypes.ages_de_la_grille``)."""
+    return ages_de_la_grille(simulateur, tuple(cas_types), tuple(generations),
+                             paquet=_paquet(simulateur))
+
+
 def _cases(simulateur: Simulateur) -> list[dict]:
     """Les cases de la grille, ``"<code>|<génération>"`` et les options de leur
-    carrière ; une case que le droit écarte (``carriere_de_la_grille``) n'y
-    est pas."""
-    cas = []
-    for code, generation in sorted((c.code, g) for c in CAS_TYPES for g in GENERATIONS):
-        type_ = next(c for c in CAS_TYPES if c.code == code)
-        try:
-            carriere = carriere_de_la_grille(simulateur, type_, generation)
-        except (ValueError, KeyError):
-            continue
-        cas.append({"cle": f"{code}|{generation}", "options": options(
-            simulateur, type_, generation, carriere.age_liquidation)})
-    return cas
+    carrière, que le portage date ; une case que le droit écarte
+    (``castypes.cases_de_la_grille``) n'y est pas."""
+    datees, _ecartees = cases_de_la_grille(simulateur, paquet=_paquet(simulateur))
+    return [{"cle": f"{code}|{generation}", "options": datees[(code, generation)]}
+            for code, generation in sorted(datees)]
 
 
 def calculer(simulateur: Simulateur, cor: bool = False, impot: str | None = None) -> dict:
     """Les indicateurs de chaque case de la grille, système par système, sous
     ``"<code>|<génération>"`` ; après impôt avec ``impot``, l'indexation du
-    barème. Une case que le droit écarte (``carriere_de_la_grille``) ou que le
-    portage refuse en est absente."""
+    barème. Une case que le droit écarte (``castypes.cases_de_la_grille``) ou
+    que le portage refuse en est absente."""
     return portage({"grille": {"cas": _cases(simulateur), "cor": cor,
                                "impot": impot}})["resultats"]
 
@@ -359,15 +369,17 @@ def balayer(cas_types: list, generations: list[int], productivites: list[str],
     """Les balayages des cas types nommés, génération par génération, sous
     chaque hypothèse de productivité, sous ``"<code>|<génération>|<hypothèse>"``,
     et le libellé de chaque hypothèse ; après impôt avec ``impot``,
-    l'indexation du barème. Chaque cas type part de l'âge où le pilote le fait
-    partir ; le portage balaie les autres (``balayageDUneCarriere``)."""
+    l'indexation du barème. Chaque cas type part de l'âge où le pilote du
+    portage le fait partir (:func:`_ages`) ; le portage balaie les autres
+    (``balayageDUneCarriere``)."""
     cas, libelles = [], {}
     for productivite in productivites:
         simulateur = Simulateur(Parametres(scenario_projection=productivite))
         libelles[productivite] = simulateur.macro.projection["libelle"]
+        ages = _ages(simulateur, cas_types, generations)
         for type_ in cas_types:
             for generation in generations:
-                age = type_.age_liquidation_pour(simulateur, generation)
+                age = ages[(type_.code, generation)]
                 cas.append({"cle": f"{type_.code}|{generation}|{productivite}",
                             "productivite": productivite, "age": age,
                             "options": options(simulateur, type_, generation, age)})
@@ -437,9 +449,11 @@ def equilibres(simulateur: Simulateur, generations, generations_des_cas) -> dict
     """La référence du compte ; les âges d'équilibre de chaque génération de
     ``generations``, sur la table commune ; ceux de chaque cas type né en une
     génération de ``generations_des_cas``, sur la mortalité de la population
-    où son salaire le range, à l'âge où le pilote le fait partir."""
+    où son salaire le range, à l'âge où le pilote du portage le fait partir
+    (:func:`_ages`)."""
+    ages = _ages(simulateur, CAS_TYPES, generations_des_cas)
     cas = [{"cle": f"{type_.code}|{generation}", "options": options(
-                simulateur, type_, generation, type_.age_liquidation_pour(simulateur, generation))}
+                simulateur, type_, generation, ages[(type_.code, generation)])}
            for type_ in CAS_TYPES for generation in generations_des_cas]
     reponse = portage({"equilibre": {"generations": list(generations), "cas": cas}})
     _sans_echec(reponse)
