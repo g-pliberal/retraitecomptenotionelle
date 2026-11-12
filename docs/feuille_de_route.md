@@ -7325,17 +7325,18 @@ de `contribution_etat`.
 **Reprise, au 12 novembre 2026.** L'inventaire
 (`2026-11-09-l-inventaire-des-retraits.md`) découpe la suite en lots A à G.
 Ses cinq questions au propriétaire sont instruites, chacune dans une note
-`2026-11-12-question-<n>-…` ; aucune n'est tranchée. Six étapes ont été
+`2026-11-12-question-<n>-…` ; aucune n'est tranchée. Sept étapes ont été
 faites le 12 novembre, chacune avec sa note `2026-11-12-…` : deux scripts de
 la fabrique et deux études branchés sur le moteur JavaScript ; la garantie,
 l'impôt sur le revenu et la restitution relus ; le code mort mesuré ; les
 erreurs que le pilote tait, laissées telles ; les fichiers JavaScript les
-moins éprouvés classés. Peuvent s'ouvrir sans décision : les sondes de
+moins éprouvés classés ; ce que le site calcule sans le lecteur mesuré, rien
+de plus à garder en Python. Peuvent s'ouvrir sans décision : les sondes de
 `mesures_prose.py` et `mesures_accueil.py` ; l'étude
 `flux_fonction_publique.py` ; la relecture de la revalorisation servie et de
-l'indexation ; la remarque fausse de l'impôt de 1980 ; le classement des
-lignes sans test, `compte.js` d'abord. Par quoi commencer : demander au
-propriétaire ce qu'il a tranché, puis lire la note de l'étape choisie.
+l'indexation ; la remarque fausse de l'impôt de 1980 ; les lignes sans
+test, `compte.js` d'abord. Demander d'abord au propriétaire ce qu'il a
+tranché, puis lire la note de l'étape choisie.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur
