@@ -126,6 +126,20 @@ approximations:
     l'entrée en jouissance est « fixée au premier jour du trimestre civil qui suit
     cette demande » ; le modèle la date au premier jour du mois qui suit l'âge
   effet: au plus deux mois d'allocation
+- version: pension_en_points
+  textes: R. 643-6 CSS
+  ecart: >-
+    la pension en points entre en jouissance « au premier jour du trimestre civil qui
+    suit la demande de l'intéressé » — un 1er janvier, avril, juillet ou octobre ; le
+    modèle la date au premier jour du mois qui suit l'âge, comme au régime général.
+    Depuis le 5 mars 2023, celle des affiliés de la Cipav est fixée « dans les
+    conditions prévues au I de l'article R. 351-37 », au mois : le modèle y est juste.
+    La règle est écrite et gardée hors du moteur (action 192, étape 3)
+  effet: >-
+    un ou deux mois de pension servis trop tôt à deux libéraux sur trois, hors Cipav
+    depuis 2023 : le médecin né le 15 janvier 1963, à l'âge légal le 15 octobre 2025,
+    est servi au 1er novembre 2025 quand sa base commence le 1er janvier 2026. La règle
+    jouée déplace les dates de 87 témoins sur 932, et la pension annuelle de quatre
 textes_a_rattacher:
 - id: LEGIARTI000047265890
   article: R. 643-6 CSS, rédaction du 5 mars 2023, en vigueur
@@ -135,10 +149,10 @@ textes_a_rattacher:
     pension de retraite est fixée au premier jour du trimestre civil qui suit la demande
     de l'intéressé. » Depuis le 5 mars 2023, « Par dérogation », celle des affiliés de la
     section « mentionnée au 11° de l'article R. 641-1 », la Cipav, « est fixée dans les
-    conditions prévues au I de l'article R. 351-37 », au mois. La fiche ne dit l'écart
-    de date que pour l'allocation d'avant 2004 : à rattacher à la version de la pension
-    en points, avec ce que le modèle fait de la date d'effet des libéraux. Lue le 12
-    novembre 2026 (action 184, étape 6)
+    conditions prévues au I de l'article R. 351-37 », au mois. Lue le 12 novembre 2026
+    (action 184, étape 6), relue le même jour (action 192, étape 3) : l'écart de date
+    est déclaré pour la pension en points, et la règle, écrite, attend hors du moteur ;
+    à rattacher à la fiche `cnavpl_entree_en_jouissance` quand elle se publiera
 textes_sans_effet:
 - id: LEGIARTI000036687904
   article: L. 643-2 CSS, rédaction du 1er septembre 2018, en vigueur
@@ -165,10 +179,14 @@ sources:
   prochaine_relecture: 2027-11-03
   a_relire:
   - >-
-    La date d'effet de la pension en points, depuis 2004 : R. 643-6 la fixe au premier
-    jour du trimestre civil qui suit la demande, et au mois pour la Cipav depuis le 5
-    mars 2023 (textes_a_rattacher). Dire ce que le modèle en fait, et l'écrire à la
-    version pension_en_points ou à la fiche qui date l'effet des libéraux.
+    La date d'effet de la pension en points, depuis 2004 : le modèle la date au mois
+    quand R. 643-6 la fixe au trimestre civil (approximations). La règle et sa fiche,
+    `cnavpl_entree_en_jouissance`, sont écrites et gardées dans
+    docs/mesures/192/2026-11-12-etape-3-la-regle-et-ses-tests.txt : publiée seule, elle
+    sépare la base des complémentaires datées à part (CARPV, CAVEC, CAVOM, CARPIMKO,
+    CPRN), dont la date d'effet n'est pas lue dans les statuts, sauf celle de la
+    CARPIMKO de 2026, au trimestre civil elle aussi (règlement, article 7,
+    JORFARTI000054435915).
   - >-
     Lue le 3 novembre 2026 (file L de la vague 6, action 130), quand la base des
     libéraux cessa de s'ouvrir à l'âge de ses complémentaires : elle ne s'ouvrait avant
@@ -185,6 +203,39 @@ sources:
       L. 643-2 CSS (LEGIARTI000006743786) et L. 643-5 CSS (LEGIARTI000006743793), même
       période ; R. 643-9 CSS (LEGIARTI000006751835), les anciens prisonniers de guerre
     date: 2026-11-03
+  - type: legifrance
+    reference: >-
+      R. 643-6 CSS, ses rédactions du 1er janvier 2004 (LEGIARTI000006751829) et du 5
+      mars 2023 (LEGIARTI000047265890, en vigueur), et leur mot à mot, dans l'index LEGI
+      du dépôt ; décret n° 2023-148 du 2 mars 2023, article 1er, 5°
+      (JORFARTI000047259558), dont l'article 4 (JORFARTI000047259583) ne diffère que
+      d'autres alinéas ; R. 351-37 CSS, I (LEGIARTI000054060160) : « cette date étant
+      nécessairement le premier jour d'un mois et ne pouvant être antérieure au dépôt de
+      la demande »
+    date: 2026-11-12
+  - type: autre
+    reference: >-
+      CARMF, guide « Préparez votre retraite en temps choisi », édition de juin 2026,
+      tableau « Dates d'effet de la retraite selon la date de naissance », note 1 : « Les
+      retraites étant liquidées au trimestre, elles ne peuvent prendre effet qu'au 1er
+      jour du trimestre civil suivant (1er janvier, 1er avril, 1er juillet, 1er
+      octobre). » ; « La date d'effet ne peut jamais être antérieure à celle de la
+      demande. »
+    url: https://www.carmf.fr/doc/documents/guides/guide-retraite.pdf
+    date: 2026-11-12
+  - type: autre
+    reference: >-
+      CARPIMKO, « La date de prise d'effet de ma retraite » : « fixée au plus tôt au 1er
+      jour du trimestre civil qui suit votre demande » ; « Mme DUPONT, née le 1er
+      janvier 1963, [...] son départ en retraite pourra être fixé au plus tôt à partir du
+      1er octobre 2025 », un premier jour de mois et de trimestre, qui ne départage pas
+      la règle. CARCDSF, « À quel âge demander ses droits » : « La liquidation de vos
+      droits prend effet le premier jour du trimestre civil qui suit votre demande
+      écrite ». CAVEC, « Faire votre demande de retraite » : « vous pouvez choisir de
+      partir le 1er janvier, le 1er avril, le 1er juillet ou le 1er octobre »
+    url: >-
+      https://www.carpimko.com/je-prepare-ma-retraite/mes-regimes-de-retraite/date-de-ma-retraite
+    date: 2026-11-12
 code:
   interrupteurs:
     decote_annulee_par_la_duree: false
@@ -206,3 +257,6 @@ code:
 historique:
 - >-
   2026-11-03 — née, lue : l'allocation d'avant 2004 dès soixante ans, minorée (R. 643-7).
+- >-
+  2026-11-12 — l'écart de date d'effet déclaré pour la pension en points (R. 643-6),
+  avec ses lectures ; la règle, écrite, reste hors du moteur (action 192, étape 3).

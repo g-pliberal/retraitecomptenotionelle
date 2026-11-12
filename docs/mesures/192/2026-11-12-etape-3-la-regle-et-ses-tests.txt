@@ -1,0 +1,670 @@
+Action 192, étape 3 — la règle écrite le 12 novembre 2026, et ses tests, non
+publiés : le correctif, à rejouer par `git apply` sur ce fichier (git passe le
+texte qui précède le premier « diff --git »). Pris sur 208aa46.
+
+Ce qu'il porte : la pension de base des libéraux reportée au premier jour d'un
+trimestre civil (R. 643-6 du code de la sécurité sociale), la Cipav au mois
+depuis le 5 mars 2023, dans `entreeEnJouissance` (moteur/js/droit/departs.js)
+et son jumeau Python, sous un motif de départ neuf, `trimestre_civil` ; la
+fiche qui en porte les versions et les paramètres
+(data/reference/regles/cnavpl_entree_en_jouissance.yaml), inscrite aux fiches
+que le paquet porte (`FichesDatees.NOMS`) ; les deux phrases de la page
+(moteur/js/pages.js) ; son test, vu rouge puis vert dans les deux moteurs
+(tests/test_date_d_effet_des_liberaux.py) ; et les deux fichiers de tests des
+libéraux dont elle déplace les dates, remis à leur valeur
+(tests/test_ouverture_des_liberaux.py,
+tests/test_complementaires_liberales_a_leur_age.py).
+
+Après l'avoir appliqué : `python scripts/construire_donnees.py`, qui met la
+fiche au paquet que lit le portage, puis `python scripts/construire_temoins.py`.
+Restent rouges, à reprendre un à un : trois tests de `-m rapide` dont la date
+change (tests/test_sections_sante.py, deux ; tests/test_sections_liberales.py,
+un), et le cliquet des textes, à baisser de ce que son test dit.
+
+Pourquoi il n'est pas sur `main` : la note de l'étape,
+docs/feuille_de_route/192/2026-11-12-etape-3-entree-en-jouissance-liberaux.md.
+Les dates « 12 novembre 2026 » de ses commentaires sont à remettre au jour où
+il s'applique.
+
+diff --git a/data/reference/regles/cnavpl_entree_en_jouissance.yaml b/data/reference/regles/cnavpl_entree_en_jouissance.yaml
+new file mode 100644
+index 0000000..d32edc7
+--- /dev/null
++++ b/data/reference/regles/cnavpl_entree_en_jouissance.yaml
+@@ -0,0 +1,180 @@
++schema_version: 1
++id: cnavpl_entree_en_jouissance
++intitule: >-
++  La pension de base des professions libérales entre en jouissance au premier jour du
++  trimestre civil qui suit la demande — un 1er janvier, un 1er avril, un 1er juillet ou
++  un 1er octobre ; depuis le 5 mars 2023, celle des affiliés de la Cipav au premier jour
++  d'un mois, comme au régime général.
++domaine: age
++regimes: [cnavpl]
++etape: echeancier
++face: droit
++etat: transcrite
++lit:
++- la date où la pension de base serait servie au mois — le départ déclaré, l'ouverture
++  du droit ou la date demandée
++- la section professionnelle de la dernière activité libérale
++ecrit:
++- la date d'effet de la pension de base des libéraux, et des complémentaires qui la
++  suivent
++dates_qui_decident:
++- liquidation.date_effet
++versions:
++- id: avant_le_code
++  statut: supposee
++  hypothese: >-
++    avant le 21 décembre 1985, l'allocation relève des décrets que le code de 1985
++    reprend, que l'index LEGI du dépôt ne porte pas : la fiche présume la règle du code,
++    comme la fiche `cnavpl_allocation_avant_2004`
++  fiabilite: >-
++    faible : rien n'est lu avant la codification de 1985
++  bornes:
++    liquidation.date_effet: [null, 1985-12-21]
++  contenu:
++    parametres:
++      pas_en_mois: 3
++      sections_au_mois: []
++- id: trimestre_civil
++  statut: lue
++  textes:
++  - {id: LEGIARTI000006751828, article: "R. 643-6 CSS", en_vigueur: 1985-12-21}
++  - {id: LEGIARTI000006751829, article: "R. 643-6 CSS", en_vigueur: 2004-01-01}
++  nee_de: LEGIARTI000006751828
++  bornes:
++    liquidation.date_effet: [1985-12-21, 2023-03-05]
++  contenu:
++    droit: >-
++      « L'entrée en jouissance de l'allocation est fixée au premier jour du trimestre
++      civil qui suit cette demande sans pouvoir être antérieure au soixante-cinquième
++      anniversaire » (1985) ; « L'entrée en jouissance de la pension de retraite est
++      fixée au premier jour du trimestre civil qui suit la demande de l'intéressé. »
++      (2004)
++    parametres:
++      pas_en_mois: 3
++      sections_au_mois: []
++  exemples: aucun trouvé
++- id: cipav_au_mois
++  statut: lue
++  textes:
++  - {id: LEGIARTI000047265890, article: "R. 643-6 CSS", en_vigueur: 2023-03-05}
++  nee_de: LEGIARTI000047265890
++  bornes:
++    liquidation.date_effet: [2023-03-05, null]
++  contenu:
++    droit: >-
++      « L'entrée en jouissance de la pension de retraite est fixée au premier jour du
++      trimestre civil qui suit la demande de l'intéressé. Par dérogation, l'entrée en
++      jouissance de la pension de retraite des travailleurs indépendants libéraux
++      affiliés à la section professionnelle mentionnée au 11° de l'article R. 641-1 est
++      fixée dans les conditions prévues au I de l'article R. 351-37. »
++    parametres:
++      pas_en_mois: 3
++      sections_au_mois: [cipav_complementaire]
++  exemples: aucun trouvé
++approximations:
++- version: [trimestre_civil, cipav_au_mois]
++  textes: R. 643-6 CSS
++  ecart: >-
++    le texte date de la demande, que le modèle ne connaît pas : il tient la pension pour
++    demandée à temps, et la fait commencer au premier jour d'un trimestre civil qui
++    n'est pas avant la date où il la servirait au mois ; une demande tardive, qui
++    repousse la pension d'un trimestre de plus, ne se dit que par la date demandée
++  effet: nul pour qui demande à temps
++- version: [trimestre_civil, cipav_au_mois]
++  textes: statuts des sections professionnelles
++  ecart: >-
++    les complémentaires que le modèle fait liquider avec la base la suivent au
++    trimestre civil ; celles qu'il date à part (CARPV, CAVEC, CAVOM, CARPIMKO, CPRN)
++    restent au mois, quand la CARPIMKO et la CAVEC publient le trimestre civil pour
++    tous leurs régimes : leurs statuts ne sont pas lus pour la date d'effet
++  effet: au plus deux mois de la pension complémentaire, servis trop tôt
++sources:
++  lu_le: 2026-11-12
++  prochaine_relecture: 2027-11-12
++  a_relire:
++  - >-
++    Avant le 21 décembre 1985, le texte d'avant la codification n'est pas lu : la fiche
++    présume le trimestre civil du code (version `avant_le_code`, supposée). Lire le
++    décret d'avant le code au Journal officiel, que l'index JORF du dépôt ne rend pas.
++  - >-
++    La date d'effet des complémentaires datées à part (CARPV, CAVEC, CAVOM, CARPIMKO,
++    CPRN) : lire leurs statuts, article par article, avant de les mettre au trimestre
++    civil. La Cipav : lire ses statuts pour sa complémentaire, que le modèle fait suivre
++    la base, au mois depuis le 5 mars 2023.
++  - >-
++    L'exemple de la CARPIMKO ne départage pas la règle : sa date, le 1er octobre 2025,
++    est à la fois le premier jour d'un mois et d'un trimestre civil, et la page fait
++    atteindre 62 ans et 9 mois « le 1er septembre 2025 » à une assurée née le 1er
++    janvier 1963, qui les atteint le 1er octobre. Chercher un exemple daté d'une
++    section, né hors du premier mois d'un trimestre.
++  lectures:
++  - type: legifrance
++    reference: >-
++      R. 643-6 CSS, ses trois rédactions dans l'index LEGI du dépôt :
++      LEGIARTI000006751828 (21 décembre 1985), LEGIARTI000006751829 (1er janvier 2004),
++      LEGIARTI000047265890 (5 mars 2023, en vigueur)
++    date: 2026-11-12
++  - type: legifrance
++    reference: >-
++      décret n° 2023-148 du 2 mars 2023, article 1er, 5° (JORFARTI000047259558, publié le
++      4 mars 2023) : « L'article R. 643-6 est complété par un alinéa » ; son article 4
++      (JORFARTI000047259583) ne diffère que « le 2° et le b du 3° de l'article 1er », au
++      1er janvier 2023 : le 5° vaut du lendemain de la publication
++    date: 2026-11-12
++  - type: legifrance
++    reference: >-
++      R. 351-37 CSS, I (LEGIARTI000054060160, en vigueur le 1er novembre 2026) : « Chaque
++      assuré indique la date à compter de laquelle il désire entrer en jouissance de sa
++      pension, cette date étant nécessairement le premier jour d'un mois et ne pouvant
++      être antérieure au dépôt de la demande. » ; R. 641-1 CSS, 11°
++      (LEGIARTI000047265836) : la section des architectes, ingénieurs-conseils,
++      psychologues, ostéopathes et autres, la Cipav
++    date: 2026-11-12
++  - type: autre
++    reference: >-
++      CARMF, guide « Préparez votre retraite en temps choisi », édition de juin 2026,
++      tableau « Dates d'effet de la retraite selon la date de naissance », note 1, sous
++      l'âge d'ouverture des droits des régimes de base, complémentaire et ASV : « Les
++      retraites étant liquidées au trimestre, elles ne peuvent prendre effet qu'au 1er
++      jour du trimestre civil suivant (1er janvier, 1er avril, 1er juillet, 1er
++      octobre). » ; « La date d'effet de la retraite est toujours fixée au premier jour
++      du trimestre civil qui suit la demande et la réalisation de toutes les conditions
++      d'âge et de mise à jour du compte » ; « La date d'effet ne peut jamais être
++      antérieure à celle de la demande. »
++    url: https://www.carmf.fr/doc/documents/guides/guide-retraite.pdf
++    date: 2026-11-12
++  - type: autre
++    reference: >-
++      CARPIMKO, « La date de prise d'effet de ma retraite » : « La date de prise d'effet
++      qui est fixée au plus tôt au 1er jour du trimestre civil qui suit votre demande » ;
++      « Mme DUPONT, née le 1er janvier 1963, souhaite un départ en retraite au titre du
++      Régime de Base au 1er mars 2025. [...] Comme elle n'aura 62 ans et 9 mois que le
++      1er septembre 2025 son départ en retraite pourra être fixé au plus tôt à partir du
++      1er octobre 2025 »
++    url: >-
++      https://www.carpimko.com/je-prepare-ma-retraite/mes-regimes-de-retraite/date-de-ma-retraite
++    date: 2026-11-12
++code:
++  python: >-
++    droit/departs.py : departs_et_demandes, _entree_en_jouissance, MOTIF_TRIMESTRE
++  javascript: >-
++    moteur/js/droit/departs.js : departsEtDemandes, entreeEnJouissance, MOTIF_TRIMESTRE
++  parametres: >-
++    contenu.parametres de chaque version : pas_en_mois, sections_au_mois
++  tests: tests/test_date_d_effet_des_liberaux.py
++  moteur: >-
++    departs date d'abord l'unité de la base des libéraux comme les autres — au départ
++    déclaré, à l'ouverture du droit ou à la date demandée —, puis la reporte au premier
++    mois d'un trimestre civil qui n'est pas avant (motif `trimestre_civil`), sauf pour
++    l'assuré dont la dernière activité libérale relève d'une section de
++    `sections_au_mois` ; les complémentaires qui suivent la base la suivent à cette
++    date.
++historique:
++- >-
++  2026-11-12 — née de l'étape 3 de l'action 192 : le modèle datait la base des libéraux
++  au mois, comme le régime général, à toute date.
++effet: >-
++  Tout libéral hors Cipav, et tout affilié de la Cipav jusqu'en mars 2023, dont la
++  pension de base, datée au mois, ne tomberait pas un 1er janvier, avril, juillet ou
++  octobre — deux sur trois : elle commence un ou deux mois plus tard, avec les
++  complémentaires qui la suivent.
+diff --git a/moteur/js/droit/departs.js b/moteur/js/droit/departs.js
+index 90ce811..923961c 100644
+--- a/moteur/js/droit/departs.js
++++ b/moteur/js/droit/departs.js
+@@ -64,6 +64,15 @@ export const MOTIF_INVALIDITE = "invalidite";
+ export const MOTIF_RADIATION = "radiation";
+ /** La pension du fonctionnaire ou du militaire radié par limite d'âge. */
+ export const MOTIF_LIMITE = "limite_d_age";
++/**
++ * La pension de base du libéral, reportée au premier jour d'un trimestre civil
++ * (R. 643-6 du code de la sécurité sociale, fiche `cnavpl_entree_en_jouissance`).
++ */
++export const MOTIF_TRIMESTRE = "trimestre_civil";
++
++/** Le régime de base des professions libérales, et la fiche qui date sa pension. */
++export const BASE_DES_LIBERAUX = "cnavpl";
++export const FICHE_DE_L_ENTREE_EN_JOUISSANCE = "cnavpl_entree_en_jouissance";
+ 
+ /**
+  * Ce qu'une demande devient quand elle ne date pas sa pension : servie avec la
+@@ -290,6 +299,39 @@ function sortieDe(carriere, unite, routes) {
+   return new DateMois(Math.max(...annees) + 1, 1);
+ }
+ 
++/**
++ * L'entrée en jouissance de la pension de base du libéral, datée au mois par
++ * `datee` : « au premier jour du trimestre civil qui suit la demande »
++ * (R. 643-6), le premier mois d'un trimestre civil qui n'est pas avant ; au
++ * mois pour l'affilié d'une section que la version déclare (la Cipav depuis
++ * le 5 mars 2023), celle de sa dernière activité libérale. Sans version à
++ * cette date, le mois reste. Voir `_entree_en_jouissance` dans le Python.
++ */
++function entreeEnJouissance(moteur, routes, datee) {
++  const [quand] = datee;
++  const regle = moteur.fichesDatees.regle(
++    FICHE_DE_L_ENTREE_EN_JOUISSANCE, new Depart(quand).dateEffet);
++  if (regle === null) {
++    return datee;
++  }
++  const passes = (quand.mois - 1) % regle.pas_en_mois;
++  if (passes === 0) {
++    return datee;
++  }
++  let derniere = null;
++  for (const [ligne, regimes] of routes) {
++    if (regimes.includes(BASE_DES_LIBERAUX)
++        && (derniere === null || ligne.annee >= derniere[0].annee)) {
++      derniere = [ligne, regimes];
++    }
++  }
++  if (derniere !== null
++      && derniere[1].some((code) => regle.sections_au_mois.includes(code))) {
++    return datee;
++  }
++  return [quand.plusMois(regle.pas_en_mois - passes), MOTIF_TRIMESTRE];
++}
++
+ /**
+  * L'unité sert-elle une pension militaire ? Celle de l'État, quand l'assuré
+  * n'y a servi que sous l'uniforme. Voir `_pension_militaire` dans le Python.
+@@ -495,6 +537,14 @@ export function departsEtDemandes(moteur, carriereSaisie) {
+     return [unique, []];
+   }
+ 
++  // La base des libéraux n'entre en jouissance qu'au premier jour d'un
++  // trimestre civil (R. 643-6) ; les complémentaires qui la suivent, avec elle.
++  unites.forEach((unite, i) => {
++    if (unite.has(BASE_DES_LIBERAUX)) {
++      dates[i] = entreeEnJouissance(moteur, routes, dates[i]);
++    }
++  });
++
+   const parRegime = new Map();
+   for (const [code, i] of uniteDe) {
+     parRegime.set(code, dates[i]);
+@@ -541,7 +591,7 @@ export function departsEtDemandes(moteur, carriereSaisie) {
+     }
+     const motifs = new Set([...regimes].map((code) => parRegime.get(code)[1]));
+     for (const retenu of [MOTIF_DEMANDE, MOTIF_SORTIE, MOTIF_RADIATION, MOTIF_LIMITE,
+-      MOTIF_INVALIDITE]) {
++      MOTIF_INVALIDITE, MOTIF_TRIMESTRE]) {
+       if (motifs.has(retenu)) {
+         return retenu;
+       }
+diff --git a/moteur/js/pages.js b/moteur/js/pages.js
+index ec53fcc..7c6077a 100644
+--- a/moteur/js/pages.js
++++ b/moteur/js/pages.js
+@@ -4021,6 +4021,8 @@ const POURQUOI_CE_DEPART = {
+   invalidite: "en remplacement de votre pension d'invalidité",
+   radiation: "à votre radiation des cadres pour invalidité",
+   limite_d_age: "à la limite d'âge de votre emploi",
++  trimestre_civil: "au premier jour du trimestre civil, où sa caisse fait "
++    + "commencer une pension",
+ };
+ 
+ /**
+@@ -4042,6 +4044,8 @@ const POURQUOI_PAS_A_CETTE_DATE = {
+     + `se liquide à sa radiation, le 1<sup>er</sup> ${retenue}`,
+   limite_d_age: (retenue) => "votre emploi prend fin à sa limite d'âge, et sa pension "
+     + `part de ce jour, le 1<sup>er</sup> ${retenue}`,
++  trimestre_civil: (retenue) => "sa caisse ne fait commencer une pension qu'au premier "
++    + `jour d'un trimestre civil, le 1<sup>er</sup> ${retenue}`,
+   ensemble: (retenue, complementaire) => (complementaire
+     ? "elle suit la pension de base dont elle partage les années, servie le "
+       + `1<sup>er</sup> ${retenue}`
+diff --git a/src/retraite_notionnelle/droit/departs.py b/src/retraite_notionnelle/droit/departs.py
+index e9515bc..9b93532 100644
+--- a/src/retraite_notionnelle/droit/departs.py
++++ b/src/retraite_notionnelle/droit/departs.py
+@@ -128,6 +128,14 @@ MOTIF_RADIATION = "radiation"
+ #: La pension du fonctionnaire ou du militaire radié des cadres par limite
+ #: d'âge (:func:`~.limite_age.radiation`).
+ MOTIF_LIMITE = "limite_d_age"
++#: La pension de base du libéral, reportée au premier jour d'un trimestre
++#: civil (R. 643-6 du code de la sécurité sociale, fiche
++#: ``cnavpl_entree_en_jouissance``).
++MOTIF_TRIMESTRE = "trimestre_civil"
++
++#: Le régime de base des professions libérales, et la fiche qui date sa pension.
++BASE_DES_LIBERAUX = "cnavpl"
++FICHE_DE_L_ENTREE_EN_JOUISSANCE = "cnavpl_entree_en_jouissance"
+ 
+ #: Ce qu'une demande devient quand elle ne date pas sa pension : servie avec
+ #: la pension que la loi lui attache — le régime liquidé avec elle, ou le
+@@ -342,6 +350,34 @@ def _sortie(carriere: Carriere, unite: frozenset[str],
+     return DateMois(max(annees) + 1, 1)
+ 
+ 
++def _entree_en_jouissance(moteur: ScenarioActuel,
++                          routage: list[tuple[AnneeCarriere, tuple[str, ...]]],
++                          datee: tuple[DateMois, str]) -> tuple[DateMois, str]:
++    """L'entrée en jouissance de la pension de base du libéral, datée au mois
++    par ``datee`` : « au premier jour du trimestre civil qui suit la demande »
++    (R. 643-6), le premier mois d'un trimestre civil qui n'est pas avant ; au
++    mois pour l'affilié d'une section que la version déclare (la Cipav depuis
++    le 5 mars 2023), celle de sa dernière activité libérale. Sans version à
++    cette date, le mois reste."""
++    quand, _ = datee
++    regle = moteur.fiches_datees.regle(FICHE_DE_L_ENTREE_EN_JOUISSANCE,
++                                       Depart(quand).date_effet)
++    if regle is None:
++        return datee
++    passes = (quand.mois - 1) % regle["pas_en_mois"]
++    if passes == 0:
++        return datee
++    derniere = None
++    for ligne, regimes in routage:
++        if BASE_DES_LIBERAUX in regimes and (derniere is None
++                                             or ligne.annee >= derniere[0].annee):
++            derniere = (ligne, regimes)
++    if derniere is not None and any(code in regle["sections_au_mois"]
++                                    for code in derniere[1]):
++        return datee
++    return quand.plus_mois(regle["pas_en_mois"] - passes), MOTIF_TRIMESTRE
++
++
+ def _pension_militaire(moteur: ScenarioActuel, carriere: Carriere,
+                        unite: frozenset[str]) -> bool:
+     """L'unité sert-elle une pension militaire ? Celle de l'État, quand
+@@ -502,6 +538,12 @@ def departs_et_demandes(moteur: ScenarioActuel, carriere: Carriere
+             and all(motif != MOTIF_DEMANDE for _, motif in dates)):
+         return unique, ()
+ 
++    # La base des libéraux n'entre en jouissance qu'au premier jour d'un
++    # trimestre civil (R. 643-6) ; les complémentaires qui la suivent, avec elle.
++    for i, unite in enumerate(unites):
++        if BASE_DES_LIBERAUX in unite:
++            dates[i] = _entree_en_jouissance(moteur, routage, dates[i])
++
+     par_regime: dict[str, tuple[DateMois, str]] = {
+         code: dates[i] for code, i in unite_de.items()}
+     for code, indices in suivies.items():
+@@ -532,7 +574,7 @@ def departs_et_demandes(moteur: ScenarioActuel, carriere: Carriere
+             return MOTIF_DEPART
+         motifs = {par_regime[code][1] for code in par_date[quand]}
+         for retenu in (MOTIF_DEMANDE, MOTIF_SORTIE, MOTIF_RADIATION, MOTIF_LIMITE,
+-                       MOTIF_INVALIDITE):
++                       MOTIF_INVALIDITE, MOTIF_TRIMESTRE):
+             if retenu in motifs:
+                 return retenu
+         return MOTIF_OUVERTURE
+diff --git a/src/retraite_notionnelle/scenarios/actuel.py b/src/retraite_notionnelle/scenarios/actuel.py
+index eb8d483..08101b9 100644
+--- a/src/retraite_notionnelle/scenarios/actuel.py
++++ b/src/retraite_notionnelle/scenarios/actuel.py
+@@ -1264,7 +1264,9 @@ class FichesDatees:
+     pension de la SNCF, que ``liquider.minimum_de_pension_ouvert`` lit, et la
+     retraite progressive, que ``progressive.regle`` lit, et la seconde part de
+     la cotisation de retraite complémentaire du chef d'exploitation agricole,
+-    que ``acquerir.seconde_part_de_rco`` lit à l'année de la cotisation.
++    que ``acquerir.seconde_part_de_rco`` lit à l'année de la cotisation, et
++    l'entrée en jouissance de la pension de base des libéraux, que
++    ``departs.departs_et_demandes`` lit.
+     """
+ 
+     NOMS = ("salaire_annuel_moyen", "revenu_annuel_moyen_independants",
+@@ -1299,7 +1301,7 @@ class FichesDatees:
+             "limite_age_mines", "apprentissage", "stages_formation_professionnelle",
+             "sportifs_haut_niveau", "conge_supplementaire_naissance",
+             "minimum_pension_sncf", "retraite_progressive",
+-            "cotisation_rco_agricole_2026")
++            "cotisation_rco_agricole_2026", "cnavpl_entree_en_jouissance")
+ 
+     def __init__(self, racine: Path) -> None:
+         self._fiches: dict[str, dict] = {}
+diff --git a/tests/test_complementaires_liberales_a_leur_age.py b/tests/test_complementaires_liberales_a_leur_age.py
+index 4fb52f1..208a853 100644
+--- a/tests/test_complementaires_liberales_a_leur_age.py
++++ b/tests/test_complementaires_liberales_a_leur_age.py
+@@ -53,7 +53,8 @@ mois pour les assurés nés en 1953 » (D. 161-2-1-9, LEGIARTI000025089933) ;
+ simulateur, servi par le portage et refait par le moteur Python
+ (``servi_et_refait``) ; une pension prend effet au premier jour du mois qui
+ suit l'anniversaire de son âge, et chaque date tombe aussi au premier jour
+-d'un trimestre civil, la date d'effet de la CAVOM et de la CARPIMKO. Le
++d'un trimestre civil, la date d'effet de la CAVOM et de la CARPIMKO, sauf
++celle du notaire né en 1953, dont la base attend ce jour-là (R. 643-6). Le
+ calcul de chaque date est posé à la main dans
+ ``docs/feuille_de_route/130/2026-11-05-complementaire-avant-la-base-des-liberaux.md``.
+ """
+@@ -93,10 +94,11 @@ CAS = {
+         {"date_effet": "2019-04-01", "motif": "ouverture"}],
+     # CPRN, né le 10 septembre 1953 : 60 ans le 10 septembre 2013, ouverte au
+     # départ demandé, 61 ans, le 1er octobre 2014 ; la base à 61 ans et
+-    # 2 mois, le 10 novembre 2014 : 1er décembre 2014.
++    # 2 mois, le 10 novembre 2014, au premier jour du trimestre civil qui
++    # suit (R. 643-6 ; action 192, étape 3) : 1er janvier 2015.
+     ("notaire", "1953-09-10", "61"): [
+         {"date_effet": "2014-10-01", "motif": "depart"},
+-        {"date_effet": "2014-12-01", "motif": "ouverture"}],
++        {"date_effet": "2015-01-01", "motif": "trimestre_civil"}],
+     # CPRN, né le 10 mars 1956 : la base à 62 ans, le 1er avril 2018 ; la
+     # complémentaire à 62 ans « différé de vingt-quatre mois », 64 ans, le
+     # 10 mars 2020 : 1er avril 2020.
+diff --git a/tests/test_date_d_effet_des_liberaux.py b/tests/test_date_d_effet_des_liberaux.py
+new file mode 100644
+index 0000000..ab15ac5
+--- /dev/null
++++ b/tests/test_date_d_effet_des_liberaux.py
+@@ -0,0 +1,140 @@
++"""La pension de base du libéral entre en jouissance au premier jour d'un
++trimestre civil (action 192, étape 3).
++
++- **R. 643-6 du code de la sécurité sociale**, rédaction du 21 décembre 1985
++  (LEGIARTI000006751828) : « L'entrée en jouissance de l'allocation est fixée
++  au premier jour du trimestre civil qui suit cette demande sans pouvoir être
++  antérieure au soixante-cinquième anniversaire ». Rédaction du 1er janvier
++  2004 (LEGIARTI000006751829) : « L'entrée en jouissance de la pension de
++  retraite est fixée au premier jour du trimestre civil qui suit la demande
++  de l'intéressé. »
++- **La Cipav, au mois**, depuis le 5 mars 2023 (LEGIARTI000047265890, décret
++  n° 2023-148 du 2 mars 2023, article 1er, 5°, JORFARTI000047259558) : « Par
++  dérogation, l'entrée en jouissance de la pension de retraite des
++  travailleurs indépendants libéraux affiliés à la section professionnelle
++  mentionnée au 11° de l'article R. 641-1 est fixée dans les conditions
++  prévues au I de l'article R. 351-37 », soit « le premier jour d'un mois »
++  (R. 351-37, I, LEGIARTI000054060160).
++- **Ce que les sections en publient.** La CARMF, guide « Préparez votre
++  retraite en temps choisi », édition de juin 2026, sous le tableau de l'âge
++  d'ouverture des droits : « Les retraites étant liquidées au trimestre, elles
++  ne peuvent prendre effet qu'au 1er jour du trimestre civil suivant (1er
++  janvier, 1er avril, 1er juillet, 1er octobre). » La CARPIMKO, « La date de
++  prise d'effet de ma retraite », lue le 12 novembre 2026 : « Mme DUPONT, née
++  le 1er janvier 1963, souhaite un départ en retraite au titre du Régime de
++  Base au 1er mars 2025. [...] son départ en retraite pourra être fixé au plus
++  tôt à partir du 1er octobre 2025 ».
++
++Les âges : « soixante-deux ans pour les assurés nés à compter du 1er janvier
++1955 » (L. 161-17-2, LEGIARTI000025014605) ; « 9° Soixante-deux ans et neuf
++mois pour les assurés nés en 1963 » (D. 161-2-1-9, LEGIARTI000047634502).
++Chaque date est posée à la main, au commentaire de son cas : l'âge atteint le
++jour de l'anniversaire, la date d'effet au premier jour du mois qui suit
++(fiche ``date_effet_mois_suivant``), puis, pour la base des libéraux, au
++premier jour du trimestre civil qui n'est pas avant. Chaque cas part de la
++requête du simulateur, servi par le portage et refait par le moteur Python
++(``servi_et_refait``).
++"""
++
++from __future__ import annotations
++
++import pytest
++
++from outils_pont import servi_et_refait
++
++REQUETE = {
++    "age_reference": "fixe_apres_bascule", "bascule": "2026",
++    "conversion_acquis": "reference", "debut": "30", "emploi": "cor_2026",
++    "enfants": "0", "euros": "2026", "indexation": "triple_lock_inverse",
++    "primes": "0", "profil": "plat", "projection": "cor_reference",
++    "salaire": "2", "sexe": "H", "stock": "prix", "table": "unisexe",
++}
++
++AU_TRIMESTRE = "trimestre_civil"
++
++#: (statut, naissance, années, mois de l'âge demandé) : les départs attendus,
++#: aucun quand tout se sert au départ déclaré.
++CAS = {
++    # Médecin né le 15 janvier 1963 : 62 ans et 9 mois le 15 octobre 2025, le
++    # 1er novembre 2025 au mois ; le trimestre civil qui suit s'ouvre le
++    # 1er janvier 2026. Ses complémentaires suivent la base.
++    ("medecin_liberal", "1963-01-15", "62", "9"): [
++        {"date_effet": "2026-01-01", "motif": AU_TRIMESTRE}],
++    # Né le 15 février 1963 : le 15 novembre 2025, le 1er décembre au mois ;
++    # 1er janvier 2026.
++    ("medecin_liberal", "1963-02-15", "62", "9"): [
++        {"date_effet": "2026-01-01", "motif": AU_TRIMESTRE}],
++    # Né le 15 mars 1963 : le 15 décembre 2025 ; le 1er janvier 2026 est le
++    # premier jour d'un mois et d'un trimestre civil, un seul départ.
++    ("medecin_liberal", "1963-03-15", "62", "9"): [],
++    # L'exemple de la CARPIMKO, née le 1er janvier 1963 : 62 ans et 9 mois le
++    # 1er octobre 2025, premier jour d'un trimestre civil, « au plus tôt à
++    # partir du 1er octobre 2025 ».
++    ("auxiliaire_medical", "1963-01-01", "62", "9"): [],
++    # Cipav, né le 15 janvier 1963 : après le 5 mars 2023, au mois, le
++    # 1er novembre 2025, un seul départ.
++    ("profession_liberale", "1963-01-15", "62", "9"): [],
++    # Cipav, né le 15 janvier 1958 : 62 ans le 15 janvier 2020, avant la
++    # dérogation ; le 1er février au mois, le 1er avril 2020 au trimestre.
++    ("profession_liberale", "1958-01-15", "62", "0"): [
++        {"date_effet": "2020-04-01", "motif": AU_TRIMESTRE}],
++    # Cipav, né le 15 janvier 1961 : 62 ans le 15 janvier 2023 ; le
++    # 1er février 2023 précède le 5 mars 2023 : le 1er avril 2023.
++    ("profession_liberale", "1961-01-15", "62", "0"): [
++        {"date_effet": "2023-04-01", "motif": AU_TRIMESTRE}],
++    # Cipav, né le 15 avril 1961 : 62 ans le 15 avril 2023, après le 5 mars
++    # 2023 ; au mois, le 1er mai 2023, un seul départ.
++    ("profession_liberale", "1961-04-15", "62", "0"): [],
++}
++
++#: Le médecin né le 15 mars 1963, parti le 1er janvier 2026, qui ne demande sa
++#: pension de base que pour février 2027 : elle commence le 1er avril 2027.
++DEMANDE = ("medecin_liberal", "1963-03-15", "62", "9")
++
++
++def _requete(cle: tuple[str, str, str, str], **autres: str) -> dict:
++    statut, naissance, annees, mois = cle
++    return {**REQUETE, "statut": statut, "naissance": naissance,
++            "liquidation": annees, "liquidation_mois": mois, **autres}
++
++
++@pytest.fixture(scope="module")
++def servis():
++    cas = [{"cle": "|".join(cle), "requete": _requete(cle)} for cle in CAS]
++    cas.append({"cle": "demande", "requete": _requete(DEMANDE, demande_cnavpl="2027-02")})
++    servis, refus = servi_et_refait(cas)
++    assert refus == {}, refus
++    return {cle: servi["actuel"] for cle, servi in servis.items()}
++
++
++@pytest.mark.parametrize("cle", CAS, ids=["|".join(cle) for cle in CAS])
++def test_la_base_du_liberal_part_au_trimestre_civil_la_cipav_au_mois(servis, cle):
++    actuel = servis["|".join(cle)]
++    assert actuel["liquidation_ouverte"], actuel["motif_ouverture"]
++    assert actuel["departs"] == CAS[cle]
++
++
++def test_la_base_demandee_plus_tard_part_au_trimestre_civil_qui_suit(servis):
++    """La base demandée pour février 2027 n'entre en jouissance que le
++    1er avril 2027 ; ses complémentaires, que le modèle fait liquider avec
++    elle (``test_une_complementaire_suit_son_regime_de_base_sauf_plus_tard``),
++    la suivent : un seul départ, qui n'est pas le déclaré."""
++    assert servis["demande"]["departs"] == [
++        {"date_effet": "2027-04-01", "motif": AU_TRIMESTRE}]
++
++
++def test_la_page_dit_le_trimestre_civil():
++    """Le médecin né le 15 janvier 1963, parti à 62 ans et 9 mois : la page
++    dit que sa pension commence le 1er janvier 2026, et pourquoi ; demandée
++    pour février 2027, que sa caisse ne la sert qu'au trimestre civil."""
++    from retraite_notionnelle.web.site import rendre
++    base = {"statut": "medecin_liberal", "naissance": "1963-01-15", "debut": "30",
++            "liquidation": "62", "liquidation_mois": "9"}
++    page = rendre("/simuler", base)[1]
++    assert "Votre pension ne commence pas à votre départ." in page
++    assert "le 1<sup>er</sup> janvier 2026" in page
++    assert "au premier jour du trimestre civil" in page
++    page = rendre("/simuler", {**base, "demande_cnavpl": "2027-02"})[1]
++    assert "La date que vous demandez n'est pas retenue." in page
++    assert ("sa caisse ne fait commencer une pension qu'au premier jour d'un "
++            "trimestre civil, le 1<sup>er</sup> avril 2027") in page
+diff --git a/tests/test_ouverture_des_liberaux.py b/tests/test_ouverture_des_liberaux.py
+index 5edb4e4..ac12624 100644
+--- a/tests/test_ouverture_des_liberaux.py
++++ b/tests/test_ouverture_des_liberaux.py
+@@ -68,20 +68,25 @@ REQUETE = {
+     "stock": "prix", "table": "unisexe",
+ }
+ 
+-#: La naissance, le mois où l'assuré a soixante ans, et celui où il a l'âge
+-#: de L. 161-17-2 (le premier jour du mois qui suit chaque anniversaire).
++#: La naissance, le mois où l'assuré a soixante ans (le premier jour du mois
++#: qui suit l'anniversaire), et celui où sa base entre en jouissance : à l'âge
++#: de L. 161-17-2, au premier jour du trimestre civil qui suit (R. 643-6,
++#: fiche ``cnavpl_entree_en_jouissance`` ; action 192, étape 3).
+ GENERATIONS = {
+-    # 62 ans (L. 161-17-2 de 2011) : le 10 février 2017.
+-    "1955": ("1955-02-10", "2015-03-01", "2017-03-01"),
+-    # 62 ans, une pension du 1er mars 2023 (L. 161-17-2 de 2011).
+-    "1961_fevrier": ("1961-02-10", "2021-03-01", "2023-03-01"),
+-    # 62 ans et 3 mois (D. 161-2-1-9, 7°) : le 10 janvier 2024.
+-    "1961_octobre": ("1961-10-10", "2021-11-01", "2024-02-01"),
++    # 62 ans (L. 161-17-2 de 2011) : le 10 février 2017 ; 1er avril 2017.
++    "1955": ("1955-02-10", "2015-03-01", "2017-04-01"),
++    # 62 ans, le 10 février 2023 (L. 161-17-2 de 2011) ; 1er avril 2023.
++    "1961_fevrier": ("1961-02-10", "2021-03-01", "2023-04-01"),
++    # 62 ans et 3 mois (D. 161-2-1-9, 7°) : le 10 janvier 2024 ; 1er avril
++    # 2024.
++    "1961_octobre": ("1961-10-10", "2021-11-01", "2024-04-01"),
+     # 62 ans et 9 mois (L. 161-17-2 de 2026, 3°) : le 10 novembre 2026,
+-    # après le 1er septembre 2026 ; 63 ans avant (D. 161-2-1-9, 10°).
+-    "1964": ("1964-02-10", "2024-03-01", "2026-12-01"),
+-    # 63 ans et 9 mois (L. 161-17-2 de 2026, 7°) : le 10 novembre 2031.
+-    "1968": ("1968-02-10", "2028-03-01", "2031-12-01"),
++    # après le 1er septembre 2026 ; 63 ans avant (D. 161-2-1-9, 10°) ;
++    # 1er janvier 2027.
++    "1964": ("1964-02-10", "2024-03-01", "2027-01-01"),
++    # 63 ans et 9 mois (L. 161-17-2 de 2026, 7°) : le 10 novembre 2031 ;
++    # 1er janvier 2032.
++    "1968": ("1968-02-10", "2028-03-01", "2032-01-01"),
+ }
+ 
+ #: Le statut, et la section qui se demande à soixante ans sans la base.
+@@ -111,12 +116,13 @@ def servis():
+ def test_la_section_se_sert_a_soixante_ans_et_la_base_a_l_age_legal(servis, statut,
+                                                                     generation):
+     """Parti à soixante ans, le vétérinaire touche la CARPV, l'expert-comptable
+-    la CAVEC, au départ ; la base de la CNAVPL attend l'âge de L. 161-17-2."""
+-    _naissance, soixante, legal = GENERATIONS[generation]
++    la CAVEC, au départ ; la base de la CNAVPL attend l'âge de L. 161-17-2,
++    puis le premier jour du trimestre civil qui suit (R. 643-6)."""
++    _naissance, soixante, base = GENERATIONS[generation]
+     actuel = servis[_cle(statut, generation)]
+     assert actuel["liquidation_ouverte"], actuel["motif_ouverture"]
+     assert actuel["departs"] == [{"date_effet": soixante, "motif": "depart"},
+-                                 {"date_effet": legal, "motif": "ouverture"}]
++                                 {"date_effet": base, "motif": "trimestre_civil"}]
+ 
+ 
+ @pytest.mark.parametrize("statut", SECTIONS)
+@@ -158,13 +164,14 @@ def _carriere(simulateur, statut: str, naissance: int, liquidation: float) -> Ca
+ @pytest.mark.parametrize("statut", SECTIONS)
+ def test_chaque_depart_ne_liquide_que_son_regime(simulateur, statut):
+     """Né le 10 février 1964, parti à soixante ans : la section en mars 2024,
+-    la CNAVPL en décembre 2026, à 62 ans et 9 mois."""
++    la CNAVPL à 62 ans et 9 mois, le 10 novembre 2026, au premier jour du
++    trimestre civil qui suit, en janvier 2027 (R. 643-6)."""
+     moteur = simulateur.scenario_actuel
+     carriere = _carriere(simulateur, statut, 1964, 60)
+     assert [(depart.date, sorted(depart.regimes), depart.motif)
+             for depart in departs.departs(moteur, carriere)] == [
+         (DateMois(2024, 3), [SECTIONS[statut]], departs.MOTIF_DEPART),
+-        (DateMois(2026, 12), ["cnavpl"], departs.MOTIF_OUVERTURE),
++        (DateMois(2027, 1), ["cnavpl"], departs.MOTIF_TRIMESTRE),
+     ]
+ 
+ 

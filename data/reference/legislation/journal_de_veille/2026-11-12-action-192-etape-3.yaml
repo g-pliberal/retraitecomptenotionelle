@@ -1,0 +1,45 @@
+date: "2026-11-12"
+session: "action 192, étape 3 : la date d'effet de la pension de base des libéraux, au trimestre civil"
+consulte: >-
+  python scripts/veille_droit.py en ouvrant. L'index LEGI du dépôt, récupéré et
+  à jour au 11 novembre 2026 : R. 643-6 du code de la sécurité sociale dans ses
+  trois rédactions (LEGIARTI000006751828, LEGIARTI000006751829,
+  LEGIARTI000047265890) et leur mot à mot ; R. 351-37, ses rédactions et celle
+  du 1er novembre 2026 (LEGIARTI000054060160) ; L. 643-3 et R. 641-1 en
+  vigueur. L'index JORF, à jour au même jour : le décret n° 2023-148 du 2 mars
+  2023, ses articles 1er et 4 (JORFARTI000047259558, JORFARTI000047259583) ; le
+  règlement de la CARPIMKO de 2026, article 7 (JORFARTI000054435915) ; la
+  recherche du texte d'avant la codification de 1985, qui ne rend rien. Des
+  sections : le guide de la CARMF « Préparez votre retraite en temps choisi »,
+  édition de juin 2026, et son guide de l'allocataire ; les pages de la
+  CARPIMKO, de la CARCDSF et de la CAVEC sur la date d'effet ; celles de la
+  CNAVPL, de la Cipav et de la CAVP, par un agent de lecture. La page de
+  Légifrance de l'article répond 403 à l'outil en ligne de commande.
+trouve: >-
+  La pension de base des libéraux entre en jouissance « au premier jour du
+  trimestre civil qui suit la demande » depuis le code de 1985 au moins ;
+  depuis le 5 mars 2023, celle des affiliés de la Cipav au premier jour d'un
+  mois (décret n° 2023-148). La CARMF, la CARPIMKO, la CARCDSF et la CAVEC le
+  publient ; l'exemple daté de la CARPIMKO tombe un 1er octobre, qui ne
+  départage pas le mois du trimestre, et fait atteindre l'âge un mois trop
+  tôt. Le modèle date la base au mois : un ou deux mois trop tôt pour deux
+  libéraux sur trois. La fiche cnavpl_allocation_avant_2004 déclare l'écart
+  pour la pension en points et porte ces lectures. La règle est écrite dans
+  les deux moteurs, le test d'abord, dix essais posés à la main ; elle n'est
+  pas publiée : elle sépare la base des cinq complémentaires que le modèle
+  date à part, et la complémentaire de la CARPIMKO change alors de
+  coefficient de majoration, de 1,075 à 1,15 pour l'auxiliaire médical né en
+  1955, à la même date, selon qu'elle se liquide avec la base ou sans elle.
+  Elle est gardée dans
+  docs/mesures/192/2026-11-12-etape-3-la-regle-et-ses-tests.txt, avec sa fiche,
+  cnavpl_entree_en_jouissance. Les quatre fichiers de tests du coût passent
+  avec elle, et la table du coût ne change pas.
+reste: >-
+  Lire la date d'effet dans les statuts de la CARPV, de la CAVEC, de la CAVOM,
+  de la CPRN et de la CARPIMKO avant 2026, puis de la Cipav pour sa
+  complémentaire. Comprendre pourquoi la complémentaire de la CARPIMKO n'a pas
+  le même coefficient avec la base et sans elle : lequel est le bon n'est pas
+  établi. Lire le texte d'avant la codification de 1985, que la fiche gardée
+  présume pareil. Chercher un exemple daté d'une section, né hors du premier
+  mois d'un trimestre. Les pages de la CNAVPL et de la Cipav lues ne disent
+  rien de la date d'effet.
