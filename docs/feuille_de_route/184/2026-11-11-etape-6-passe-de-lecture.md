@@ -1,17 +1,5 @@
 # Étape 6 : la passe de lecture des rédactions en vigueur ou à venir, zone par zone
 
-**Reprise, au 11 novembre 2026.** Rien n'est commencé, et l'étape attend la
-fin de l'étape 4, qui change la liste des rédactions. Le propriétaire a dit
-oui, le 11 novembre, à des sessions dédiées, zone par zone, pour lire les
-rédactions en vigueur ou à venir que les fiches n'ont pas lues : ce jour-là,
-92 rédactions sur 56 fiches. Chaque session prend un lot de fiches, lit
-`python scripts/textes.py --non-lues <fiche>`, et donne à chaque rédaction
-son statut dans la fiche, en commençant par celles qui ont pris effet depuis
-décembre 2025. Elle se mène sur Fable 5.2, comme toute lecture du scénario 1.
-Les lots, la règle du cliquet et ce qu'on fait d'une rédaction qui change une
-règle sont ci-dessous. Chaque lot tient sa note, et son bloc s'il s'arrête en
-chemin.
-
 **La demande, le 11 novembre 2026.** La session qui a mesuré les outils (note
 `2026-11-11-sorties-et-temps-des-outils.md`) a demandé au propriétaire :
 « Faire lire les 92 rédactions en vigueur par des sessions dédiées, zone par
@@ -109,3 +97,6 @@ lue se compte deux fois : 110 lectures pour 92 rédactions.
 relire pour une rédaction non lue, ou chaque reste est nommé dans la note
 d'un lot ; ce que la lecture a trouvé qui change une règle est porté à la
 connaissance du propriétaire, en une liste.
+
+**Close, le 12 novembre 2026.** Les quatre lots sont poussés ; le bilan, et ce
+qui attend le propriétaire, sont dans `2026-11-12-etape-6-bilan-de-la-passe.md`.

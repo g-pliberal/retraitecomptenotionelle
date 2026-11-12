@@ -7938,17 +7938,19 @@ dire si la copie de l'UNSA est la sienne.
 
 ### 184. L'histoire d'un article de loi, lue dans l'index de la DILA : ce que le dépôt lexifina/global-law fait mieux, repris, et ce qu'il fait mal, écarté — `en cours`
 
-**Reprise, au 11 novembre 2026.** L'histoire d'un article se lit dans l'index,
-chaque fiche voit les rédactions qu'elle n'a pas lues des articles qu'elle
-cite, et ces outils sont allégés. Le propriétaire a tranché le 11 novembre, et
-trois étapes en naissent. Deux se mènent en parallèle : la quatrième tient à
-jour la liste des textes, la cinquième met dans l'index la base des
-conventions collectives. La sixième, la lecture des rédactions en vigueur par
-des sessions dédiées, attend la fin de la quatrième. Chacune tient son bloc
-« Reprise » sous le titre de sa note, et celui-ci ne se récrit plus :
-commencer par la note de son étape. Reste aussi le texte qui a écrit chaque
-version, remis à la loi de financement pour 2027. Les mesures :
-`184/2026-11-11-sorties-et-temps-des-outils.md`.
+**Reprise, au 12 novembre 2026.** L'histoire d'un article se lit dans l'index,
+pour les lois et, désormais, pour les conventions collectives. GitHub inscrit
+chaque lundi les rédactions nouvelles à la liste des textes. Les cent
+rédactions en vigueur ou à venir que les fiches n'avaient pas lues sont lues
+et classées. Aucune étape n'est en cours. La lecture a trouvé quatre règles
+que le modèle n'applique pas, et des points à vérifier : rien n'en est écrit,
+le propriétaire décide de l'étape qui s'en charge. Il lui reste aussi à
+trancher un défaut de l'outil de lecture, et ce que fait la mise à jour quand
+la DILA renouvelle un dump. Tout est dans la note
+`184/2026-11-12-etape-6-bilan-de-la-passe.md` : commencer par elle. Le lundi
+16 novembre, vérifier que GitHub a commité l'inscription et lancé la suite.
+Reste le texte qui a écrit chaque version, remis à la loi de financement pour
+2027.
 
 **D'où elle vient.** Le 3 novembre 2026, le propriétaire signale
 `https://github.com/lexifina/global-law` : « Je crois qu'on fait la même chose
