@@ -696,6 +696,16 @@ versions:
       « IV.-Les III et IV de l'article 20 et les III à VI de l'article 21 de la loi n°
       2010-1330 du 9 novembre 2010 portant réforme des retraites sont abrogés » ; « les IV
       à VII s'appliquent aux pensions prenant effet à compter du 1er janvier 2026 »
+  - id: LEGIARTI000053335592
+    article: R. 351-7 du code de la sécurité sociale, rédaction du 1er janvier 2026 (décret
+      n° 2025-1409 du 30 décembre 2025, article 2, I, 22°, que son II applique aux pensions
+      prenant effet à compter du 1er janvier 2026)
+    en_vigueur: 2026-01-01
+    citation: >-
+      « une majoration de sa durée d'assurance dans le régime général de sécurité sociale
+      égale à 2,5 % pour chaque trimestre accompli postérieurement à l'âge fixé au 1° de
+      l'article L. 351-8 ou à l'âge de soixante-cinq ans s'il remplit les conditions
+      prévues au 1° bis, 2° ou 6° de ce même article L. 351-8 »
   nee_de: JORFARTI000051269910
   bornes:
     liquidation.date_effet: [2026-01-01, null]
@@ -1048,7 +1058,7 @@ effet: >-
   « arrondi à l'entier supérieur » (L. 14, I), une décote de 2,5 %, de 3,75 % et de
   6,25 % en moins, et le minimum garanti à soixante-cinq ans.
 sources:
-  lu_le: 2026-11-03
+  lu_le: 2026-11-12
   prochaine_relecture: 2027-06-30
   a_relire:
   - >-
@@ -1361,6 +1371,87 @@ textes_a_rattacher:
     pour enfant handicapé ou qui a aidé son enfant bénéficiaire de la prestation de
     compensation, pour les pensions prenant effet à compter du 1er janvier 2026 (loi
     n° 2025-199, article 87, II, 19°, que le VIII, A, applique à ces pensions)
+- id: LEGIARTI000054908824
+  article: >-
+    règlement du RCI (arrêté du 9 février 2012), article 12, rédaction qui entre en vigueur
+    le 1er janvier 2027 (arrêtés du 6 octobre 2025 et du 21 septembre 2026, article 2 de
+    chacun)
+  en_vigueur: 2027-01-01
+  change: >-
+    l'abattement des points se compte du « nombre de trimestres séparant l'âge du taux
+    plein au sens du 1° ou, du 1° bis ou du 6° de l'article L. 351-8 du même code de l'âge
+    atteint par l'assuré » : le règlement nomme l'aidant familial et le parent d'un enfant
+    handicapé, et ne renvoie plus au III de l'article 20 de la loi n° 2010-1330, abrogé. Il
+    ajoute que, sous la retraite progressive, « le coefficient d'abattement ne peut excéder
+    le taux prévu à la deuxième ligne du tableau de l'annexe 2 », ce qui relève de la fiche
+    abattement_rci. Lue le 12 novembre 2026 (action 184, étape 6) : le modèle ne sert pas
+    ces deux catégories (approximations), rien n'y change tant qu'il ne les sert pas
+textes_sans_effet:
+- id: LEGIARTI000053335582
+  article: R. 351-6 du code de la sécurité sociale, rédaction du 1er janvier 2026
+  en_vigueur: 2026-01-01
+  motif: >-
+    le décret n° 2025-1409, article 2, I, 21°, ôte la phrase « Les dispositions ci-dessus
+    s'appliquent aux assurés nés après 1947 quelle que soit la date d'effet de leur
+    pension » et la ligne « 158 trimestres pour les assurés nés en 1947 » ; le I reste :
+    « La durée maximum d'assurance dans le régime général prise en compte pour le calcul de
+    la pension de vieillesse est celle prévue au troisième alinéa de l'article L. 351-1 »,
+    la durée maximale que la fiche lit pour la CAVIMAC. R. 351-39 garde l'ancien II aux
+    assurés de plus de soixante-quinze ans au 1er janvier 2026, dont ceux nés en 1947
+- id: LEGIARTI000053280906
+  article: L. 13 du code des pensions civiles et militaires de retraite, rédaction du 31
+    décembre 2025
+  en_vigueur: 2025-12-31
+  motif: >-
+    la loi n° 2025-1403, article 105, y change le seul renvoi : le nombre de trimestres
+    « est celui mentionné à l'article L. 161-17-3 du code de la sécurité sociale », et non
+    plus à son 6°, pour les pensions prenant effet à compter du 1er septembre 2026. La
+    fiche ne lit L. 13 que pour l'âge d'annulation de la décote du parent né de 1951 à
+    1955, sans droit depuis le 1er janvier 2026 ; la durée requise des fonctionnaires est
+    aux fiches qui la portent, qui ont lu cette rédaction
+- id: LEGIARTI000051499430
+  article: R. 382-57 du code de la sécurité sociale, rédaction du 20 avril 2025
+  en_vigueur: 2025-04-20
+  motif: >-
+    « qu'ils résident dans l'un des territoires mentionnés à l'article L. 111-2 » remplace
+    « en France métropolitaine » : le champ de l'affiliation à la CAVIMAC s'étend, l'âge du
+    taux plein de ses assurés n'y change pas, et la saisie ne porte pas la résidence
+- id: LEGIARTI000047633285
+  article: R. 653-2 du code de la sécurité sociale (avocats), rédaction du 1er septembre 2023
+  en_vigueur: 2023-09-01
+  motif: >-
+    un renvoi renuméroté, « prévues au 1° bis ou au 2° de l'article L. 351-8 ou aux III ou
+    IV de l'article 20 de la loi n° 2010-1330 du 9 novembre 2010 » au lieu de « 1° bis ou
+    au 1° ter » : la même règle, que le modèle ne sert pas aux avocats (approximations).
+    Le décret n° 2025-1409 ne l'a pas retouchée : elle renvoie encore aux III et IV de
+    l'article 20, abrogés pour les pensions prenant effet à compter du 1er janvier 2026
+- id: LEGIARTI000047453431
+  article: L. 381-1 du code de la sécurité sociale, rédaction du 1er septembre 2023
+  en_vigueur: 2023-09-01
+  motif: >-
+    la loi n° 2023-270, article 25, en ôte l'affiliation des aidants, passée à L. 381-2 ;
+    reste celle du parent au foyer, « La personne isolée et, pour un couple, l'un ou
+    l'autre de ses membres n'exerçant pas d'activité professionnelle », dont la fiche lit
+    les trimestres sur le relevé du parent né de 1951 à 1955, déjà acquis en 2023 (la
+    fiche avpf la cite à sa version)
+- id: LEGIARTI000047453177
+  article: L. 351-12 du code de la sécurité sociale, rédaction du 1er septembre 2023
+  en_vigueur: 2023-09-01
+  motif: >-
+    un alinéa de plus, qui prive de la majoration pour enfants, « Sur décision du juge
+    pénal », l'assuré « privé de l'exercice de l'autorité parentale » ; le deuxième alinéa,
+    que la fiche lit pour dire quels enfants comptent, reste : « Ouvrent également droit à
+    cette majoration les enfants élevés dans les conditions prévues au deuxième alinéa de
+    l'article L. 342-4 »
+- id: LEGIARTI000045062035
+  article: loi n° 86-33 du 9 janvier 1986, article 41, rédaction du 1er janvier 2023
+  en_vigueur: 2023-01-01
+  motif: >-
+    la loi n° 2021-1754, article 54, y retouche le congé de proche aidant (« définis par le
+    décret pris en application de l'article L. 3142-24 du même code ») et le congé de
+    présence parentale (« le congé peut être renouvelé une fois ») ; le 5°, « Aux congés de
+    maternité et liés aux charges parentales », est celui de la rédaction précédente, et la
+    fiche ne lit que le congé de maternité du parent né de 1951 à 1955, pris avant 2023
 code:
   moteur: >-
     L'âge du 1° de L. 351-8 que lit tout le moteur (`ouvrir.age_taux_plein`) est, dans les

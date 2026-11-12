@@ -628,7 +628,7 @@ approximations:
     aucune de leurs carrières n'a d'années d'indépendant d'avant 1973 et une pension
     d'après portée au minimum
 sources:
-  lu_le: 2026-10-19
+  lu_le: 2026-11-12
   prochaine_relecture: 2027-01-31
   a_relire:
   - >-
@@ -731,6 +731,22 @@ textes_sans_effet:
     D. 634-6 du 8 mai 1988 au 31 décembre 1989 : « Les dispositions des articles R. 353-9 à
     R. 353-11 et D. 353-2 sont applicables aux régimes d'assurance vieillesse mentionnés à
     l'article L. 634-2 » ; la réversion, et non le minimum
+- id: LEGIARTI000053335638
+  article: R. 351-25 CSS, rédaction du 1er janvier 2026
+  en_vigueur: 2026-01-01
+  motif: >-
+    le décret n° 2025-1409, article 2, I, 28°, y remplace « la date pour laquelle il
+    demande le bénéfice de la majoration » par « cette date » : la même règle, la
+    majoration servie de la date fixée « pour l'entrée en jouissance de l'ensemble des
+    pensions personnelles auxquelles il peut prétendre »
+- id: LEGIARTI000006765829
+  article: décret n° 73-937 du 2 octobre 1973, article 7, rédaction du 1er janvier 2001
+  en_vigueur: 2001-01-01
+  motif: >-
+    l'article ne porte plus le minimum des artisans et des commerçants, que la fiche y
+    lit jusqu'en 1989, mais l'avantage de conjoint, payé « jusqu'à la fin du mois
+    d'arrérages au cours duquel est survenu le décès du conjoint » ; la rédaction de 2001
+    n'y change que « trimestre » en « mois »
 code:
   python: >-
     scenarios/actuel.py : MinimumContributif.valeurs,

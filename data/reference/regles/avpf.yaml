@@ -224,6 +224,19 @@ versions:
       à un autre titre, la personne et, pour un couple, l'un ou l'autre de ses membres :
       1°) ayant la charge d'un enfant handicapé [...] ; 2°) ou assumant, au foyer
       familial, la charge d'un handicapé adulte [...] »
+  - id: LEGIARTI000047453431
+    article: >-
+      L. 381-1 CSS, rédaction en vigueur depuis le 1er septembre 2023 (loi n° 2023-270,
+      article 25) : l'affiliation de qui a la charge d'une personne handicapée et celle
+      des aidants en sortent, pour L. 381-2 ; lue le 12 novembre 2026 (action 184, étape
+      6)
+    en_vigueur: 2023-09-01
+    citation: >-
+      « La personne isolée et, pour un couple, l'un ou l'autre de ses membres n'exerçant
+      pas d'activité professionnelle, bénéficiaire du complément familial, de l'allocation
+      de base de la prestation d'accueil du jeune enfant ou de la prestation partagée
+      d'éducation de l'enfant, est affilié obligatoirement à l'assurance vieillesse du
+      régime général de sécurité sociale »
   bornes:
     revenu.annee: [1985-01-01, null]
   contenu:
@@ -261,7 +274,7 @@ approximations:
     le 4 août 1985, ce que la rédaction ne dit pas, la perte d'un tel père serait
     moindre
 sources:
-  lu_le: 2026-11-06
+  lu_le: 2026-11-12
   prochaine_relecture: 2027-01-31
   a_relire:
   - >-

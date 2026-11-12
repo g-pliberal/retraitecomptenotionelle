@@ -40,7 +40,7 @@ effet: >-
   1885 à 1920 en perdent assez pour que le pilote les fasse partir plus tard (le cadre
   né en 1910, payé 2,2 fois le salaire moyen, à 65 ans au lieu de 60).
 sources:
-  lu_le: 2026-10-18
+  lu_le: 2026-11-12
   prochaine_relecture: 2027-04-30
   a_relire:
   - >-
@@ -261,6 +261,25 @@ textes_a_rattacher:
   reference: R. 753-21 CSS, de 1985 à 2025, les départements d'outre-mer depuis 1948
 - id: LEGIARTI000053327980
   reference: R. 351-39 CSS, en vigueur, qui garde R. 753-21 avant 1952
+textes_sans_effet:
+- id: LEGIARTI000006738643
+  reference: D. 757-2 CSS, rédaction en vigueur depuis le 1er janvier 2004
+  motif: >-
+    « préfet de région » y remplace « commissaire de la République de région », deux
+    fois ; le reste est la condition d'ouverture de l'allocation aux vieux travailleurs
+    salariés outre-mer, « Pour la période du 1er janvier 1949 au 31 décembre 1971, il
+    n'est pas tenu compte des rémunérations inférieures au montant de l'allocation aux
+    vieux travailleurs salariés en vigueur au 1er janvier de l'année considérée », que
+    la fiche a lue sans effet sur le trimestre
+- id: LEGIARTI000038232280
+  reference: >-
+    ordonnance n° 45-2250 du 4 octobre 1945, article 32, rédaction en vigueur depuis le
+    22 mars 1954
+  motif: >-
+    « la rémunération » y remplace « le salaire », deux fois ; le taux que la fiche y
+    lit reste : « Le taux de la cotisation des assurances sociales est de 12 p. 100. La
+    moitié de la cotisation est à la charge de l'employeur, l'autre moitié à la charge
+    du salarié ou assimilé. »
 approximations:
 - ecart: >-
     de 1930 à 1935, un trimestre par trimestre civil travaillé, deux en 1930, quand le

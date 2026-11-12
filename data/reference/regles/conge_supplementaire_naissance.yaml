@@ -42,6 +42,14 @@ versions:
       maternité, invalidité, accident du travail ou du congé supplémentaire de naissance »
     en_vigueur: 2025-12-31
     lu_le: 2026-10-16
+  - id: LEGIARTI000051288449
+    reference: >-
+      CSS, article L. 351-3, 1°, rédaction en vigueur depuis le 1er novembre 2026 : la même
+      phrase pour le congé, « ou du congé supplémentaire de naissance » ; la loi
+      n° 2025-199, article 90, n'y change que la rente d'accident du travail, comptée
+      « pour une incapacité permanente professionnelle »
+    en_vigueur: 2026-11-01
+    lu_le: 2026-11-12
   - id: LEGIARTI000053270151
     reference: CSS, article L. 331-8-1, le congé supplémentaire de naissance
     en_vigueur: 2025-12-31
@@ -76,7 +84,7 @@ presomptions:
   pas_de_periode_assimilee: >-
     les jours de congé supplémentaire de naissance indemnisés, que l'assuré déclare
 sources:
-  lu_le: 2026-10-16
+  lu_le: 2026-11-12
   prochaine_relecture: 2027-01-31
   a_relire:
   - >-

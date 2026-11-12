@@ -188,7 +188,7 @@ effet: >-
   l'ouvrier de l'État, l'agent de la CNRACL, de la SNCF et des IEG
   (`tests/test_cumul_activites.py`).
 sources:
-  lu_le: 2026-11-06
+  lu_le: 2026-11-12
   prochaine_relecture: 2027-09-30
   lectures:
   - type: legifrance
@@ -379,6 +379,13 @@ textes_a_rattacher:
 - reference: D. 171-11 CSS, LEGIARTI000006735491, LEGIARTI000030910553
 - reference: décret n° 2015-877 du 16 juillet 2015, JORFTEXT000030906593
 - reference: décret n° 80-475 du 27 juin 1980, JORFTEXT000000696623 (fac-similé)
+textes_sans_effet:
+- id: LEGIARTI000034623061
+  reference: R. 711-24 CSS, rédaction en vigueur depuis le 6 mai 2017
+  motif: >-
+    un mot : « Des décrets fixent la date d'affiliation au régime général de sécurité
+    sociale des salariés mentionnés à l'article 23 du décret du 28 octobre 1935 », au
+    lieu de « la date d'immatriculation » ; la liste des salariés visés ne change pas
 approximations:
 - ecart: >-
     La saisie n'a pas de statut pour le conjoint collaborateur d'un libéral, qui cotise

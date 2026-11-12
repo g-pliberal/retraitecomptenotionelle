@@ -79,6 +79,15 @@ versions:
   statut: lue
   textes:
   - {id: LEGIARTI000006743789, article: "L. 643-3 CSS", en_vigueur: 2004-01-01}
+  - id: LEGIARTI000047633290
+    article: >-
+      R. 643-7 CSS, rédaction du 1er septembre 2023, en vigueur : depuis 2004, l'article
+      porte la minoration de la pension en points, et non plus les coefficients de
+      l'allocation
+    en_vigueur: 2023-09-01
+    citation: >-
+      « Le coefficient de minoration est égal à 1,25 % par trimestre manquant dans la
+      limite de vingt trimestres. »
   nee_de: LEGIARTI000006743789
   bornes:
     liquidation.date_effet: [2004-01-01, null]
@@ -117,16 +126,49 @@ approximations:
     l'entrée en jouissance est « fixée au premier jour du trimestre civil qui suit
     cette demande » ; le modèle la date au premier jour du mois qui suit l'âge
   effet: au plus deux mois d'allocation
-textes_sans_effet: []
+textes_a_rattacher:
+- id: LEGIARTI000047265890
+  article: R. 643-6 CSS, rédaction du 5 mars 2023, en vigueur
+  en_vigueur: 2023-03-05
+  change: >-
+    depuis 2004, l'article ne porte plus que la date : « L'entrée en jouissance de la
+    pension de retraite est fixée au premier jour du trimestre civil qui suit la demande
+    de l'intéressé. » Depuis le 5 mars 2023, « Par dérogation », celle des affiliés de la
+    section « mentionnée au 11° de l'article R. 641-1 », la Cipav, « est fixée dans les
+    conditions prévues au I de l'article R. 351-37 », au mois. La fiche ne dit l'écart
+    de date que pour l'allocation d'avant 2004 : à rattacher à la version de la pension
+    en points, avec ce que le modèle fait de la date d'effet des libéraux. Lue le 12
+    novembre 2026 (action 184, étape 6)
+textes_sans_effet:
+- id: LEGIARTI000036687904
+  article: L. 643-2 CSS, rédaction du 1er septembre 2018, en vigueur
+  en_vigueur: 2018-09-01
+  motif: >-
+    l'article ne porte plus l'allocation à soixante ans de l'inapte et du déporté, que
+    la fiche y lit jusqu'en 2003, mais les versements pour la retraite : « Les périodes
+    d'études mentionnées au 1° du I de l'article L. 351-14-1 » et les années de moins
+    de quatre trimestres, « dans la limite totale de douze trimestres d'assurance »
+- id: LEGIARTI000006751836
+  article: R. 643-9 CSS, rédaction du 1er janvier 2004, en vigueur
+  en_vigueur: 2004-01-01
+  motif: >-
+    l'article ne porte plus l'âge des anciens prisonniers de guerre, que la fiche y lit
+    jusqu'en 2003 : « Il est statué sur l'inaptitude au travail par les sections
+    professionnelles suivant les modalités fixées par les statuts » — une procédure
 effet: >-
   Tout libéral parti de 60 à 64 ans avant 2004 : le modèle le disait non ouvert à la
   base, qu'il n'ouvrait qu'à 65 ans, et la lui servait pourtant sans coefficient quand
   une complémentaire ouverte à 60 ans ouvrait la liquidation ; il la sert désormais dès
   60 ans, au coefficient de R. 643-7.
 sources:
-  lu_le: 2026-11-03
+  lu_le: 2026-11-12
   prochaine_relecture: 2027-11-03
   a_relire:
+  - >-
+    La date d'effet de la pension en points, depuis 2004 : R. 643-6 la fixe au premier
+    jour du trimestre civil qui suit la demande, et au mois pour la Cipav depuis le 5
+    mars 2023 (textes_a_rattacher). Dire ce que le modèle en fait, et l'écrire à la
+    version pension_en_points ou à la fiche qui date l'effet des libéraux.
   - >-
     Lue le 3 novembre 2026 (file L de la vague 6, action 130), quand la base des
     libéraux cessa de s'ouvrir à l'âge de ses complémentaires : elle ne s'ouvrait avant

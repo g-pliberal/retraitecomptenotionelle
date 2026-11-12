@@ -858,6 +858,7 @@ versions:
   textes:
   - {id: LEGIARTI000053356066, article: D. 353-1, en_vigueur: 2026-01-01}
   - {id: LEGIARTI000053335692, article: R. 353-1-1, en_vigueur: 2026-01-01}
+  - {id: LEGIARTI000053335717, article: R. 353-13, en_vigueur: 2026-01-01, change: "la dernière révision de la majoration de 11,1 %, trois mois après l'entrée en jouissance de toutes les retraites personnelles, « à l'exclusion des nouveaux droits acquis au titre de l'article L. 161-22-1-1 » (décret n° 2025-1409, article 2, I, 36°), comme R. 353-1-1 pour la réversion ; le modèle ne révise pas la majoration (approximations)"}
   - {id: LEGIARTI000047453693, article: L. 353-1, en_vigueur: 2023-09-01}
   - {id: LEGIARTI000024113077, article: R. 353-6, en_vigueur: 2011-06-03}
   - {id: LEGIARTI000006742651, article: L. 353-3, en_vigueur: 2003-08-22}
@@ -1280,7 +1281,7 @@ presomptions:
     la réversion que la page montre sans décès déclaré, pour un décès supposé juste
     après le départ, ou cette année pour qui est déjà parti
 sources:
-  lu_le: 2026-10-25
+  lu_le: 2026-11-12
   prochaine_relecture: 2027-03-31
   lectures_divergentes:
   - >-
@@ -2104,8 +2105,48 @@ sources:
       exemple chiffré ne fait jouer la demande ni le décès
     date: 2026-10-25
     url: https://legislation.lassuranceretraite.fr/#/references-reglementaires?file_leaf_ref=CR_CN_3175_05031975.aspx
-textes_a_rattacher: []
+textes_a_rattacher:
+- id: LEGIARTI000006753705
+  article: R. 815-25 du code de la sécurité sociale, rédaction en vigueur depuis le 13 janvier 2007
+  en_vigueur: 2007-01-13
+  change: >-
+    R. 353-1 y renvoie pour les ressources du survivant (« R. 815-22 à R. 815-25 ») : les
+    biens mobiliers et immobiliers, et ceux donnés depuis moins de cinq ans, « sont
+    réputés lui procurer un revenu évalué à 3 % de leur valeur vénale », 1,5 % pour une
+    donation de cinq à dix ans. La fiche ne le dit pas, et la saisie prend les ressources
+    telles qu'on les lui déclare : à rattacher aux versions d'après 2007, avec ce que
+    R. 353-1 en excepte. Lue le 12 novembre 2026 (action 184, étape 6)
 textes_sans_effet:
+- id: LEGIARTI000051969180
+  article: R. 815-32, rédaction du 1er octobre 2025
+  en_vigueur: 2025-10-01
+  motif: >-
+    l'article ne porte plus les ressources des trois mois, que la fiche y lit jusqu'en
+    1990 : « l'inaptitude au travail est appréciée par le conseil médical », pour
+    l'allocation de solidarité des agents publics ; le décret n° 2025-694 n'y change que
+    le nom de la commission des ouvriers de l'État
+- id: LEGIARTI000040338212
+  article: D. 355-1, rédaction du 1er janvier 2020
+  en_vigueur: 2020-01-01
+  motif: >-
+    l'article ne porte plus les limites du cumul d'avant juillet 2004, que la fiche y
+    lit : « Les dispositions de l'article D. 133-2-3 sont applicables à la mise en œuvre
+    de la retenue sur les prestations mentionnées au quatrième alinéa de l'article
+    L. 355-3. »
+- id: LEGIARTI000029007668
+  article: R. 815-41, rédaction du 30 mai 2014
+  en_vigueur: 2014-05-30
+  motif: >-
+    « les droits du bénéficiaire de l'allocation de solidarité aux personnes âgées
+    peuvent être révisés par le préfet », pour les agents publics de R. 815-2 ;
+    R. 353-1-1 n'y renvoie plus depuis le 13 janvier 2007
+- id: LEGIARTI000006753820
+  article: R. 815-40, rédaction du 13 janvier 2007
+  en_vigueur: 2007-01-13
+  motif: >-
+    la révision au terme d'arrérages est passée à R. 815-42, que la fiche cite ;
+    l'article dit depuis que le préfet « fait procéder à toute enquête sur les
+    ressources, la résidence ou la situation familiale des intéressés » — un contrôle
 - id: LEGIARTI000006753812
   motif: >-
     R. 815-39, auquel R. 353-1-1 renvoie depuis le 13 janvier 2007 : les organismes

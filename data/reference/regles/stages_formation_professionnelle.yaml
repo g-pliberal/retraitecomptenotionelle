@@ -66,6 +66,14 @@ versions:
       dépôt n'a pas lu
     en_vigueur: 2026-11-01
     lu_le: 2026-10-16
+  - id: LEGIARTI000042195119
+    reference: >-
+      code du travail, article L. 6342-3, rédaction en vigueur depuis le 1er août 2020,
+      auquel le 8° de L. 351-3 renvoie : le stagiaire « rémunéré par l'Etat, l'opérateur
+      de compétences ou par la région », l'opérateur de compétences en plus ; la saisie
+      déclare le stage, sans dire qui le rémunère
+    en_vigueur: 2020-08-01
+    lu_le: 2026-11-12
   nee_de: LEGIARTI000028498769
   bornes:
     periode.debut: [2015-01-01, null]
@@ -148,7 +156,7 @@ presomptions:
   pas_de_periode_assimilee: >-
     les stages de la formation professionnelle et d'insertion, que l'assuré déclare un à un
 sources:
-  lu_le: 2026-10-16
+  lu_le: 2026-11-12
   prochaine_relecture: 2027-04-16
   a_relire:
   - >-
@@ -195,6 +203,15 @@ approximations:
     une année dont un relevé déposé porte les trimestres n'en reçoit aucun
   effet: >-
     aucun quand le relevé est à jour
+textes_sans_effet:
+- id: LEGIARTI000051288449
+  reference: CSS, article L. 351-3, rédaction du 1er novembre 2026
+  motif: >-
+    seul le 1° change, où la rente d'accident du travail se compte « pour une incapacité
+    permanente professionnelle » (loi n° 2025-199, article 90, pour les victimes dont
+    l'état est consolidé à compter de cette date) ; le 8°, « Les périodes de stage
+    mentionnées à l'article L. 6342-3 du code du travail », et le 9° sont ceux de la
+    rédaction du 31 décembre 2025
 code:
   python: >-
     droit/compter.py : trimestres_assimiles, trimestres_des_periodes, jours_par_annee,

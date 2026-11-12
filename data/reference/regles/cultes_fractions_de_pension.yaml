@@ -294,6 +294,16 @@ versions:
       cotisés tous régimes » ; à taux minoré, les deux fractions « seront portées au niveau
       du montant maximum de la pension « Cavimac » et vous aurez de plus une décote »
   exemples: aucun trouvé
+textes_sans_effet:
+- id: LEGIARTI000053335582
+  reference: code de la sécurité sociale, R. 351-6, rédaction du 1er janvier 2026
+  motif: >-
+    le décret n° 2025-1409, article 2, I, 21°, ôte du II la ligne « 158 trimestres pour
+    les assurés nés en 1947 » et, du I, son dernier alinéa ; le I garde la durée maximale,
+    « celle prévue au troisième alinéa de l'article L. 351-1 », et R. 351-39 maintient
+    l'ancien II aux assurés de plus de soixante-quinze ans au 1er janvier 2026, dont
+    ceux nés en 1947 : la durée maximale que lit la fraction d'avant 1998 ne change pour
+    personne
 approximations:
 - version: [regime_forfaitaire, alignement_de_1998]
   ecart: >-
@@ -380,7 +390,7 @@ approximations:
     maximum et le minimum contributif de l'année de la date d'effet.
   effet: non mesuré
 sources:
-  lu_le: 2026-11-05
+  lu_le: 2026-11-12
   prochaine_relecture: 2027-10-01
   lectures:
   - type: legifrance

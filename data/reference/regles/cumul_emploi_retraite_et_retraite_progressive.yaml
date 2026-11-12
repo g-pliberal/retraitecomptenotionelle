@@ -378,7 +378,7 @@ approximations:
     tous
   effet: non mesuré
 sources:
-  lu_le: 2026-10-24
+  lu_le: 2026-11-12
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
@@ -506,6 +506,11 @@ textes_a_rattacher:
    change: "la reprise chez le même employeur"}
 - {id: LEGIARTI000047961660, article: "D. 161-2-17 CSS", en_vigueur: 2023-09-01,
    change: "le contrôle a posteriori"}
+textes_sans_effet:
+- {id: LEGIARTI000047961731, article: "D. 161-2-8 CSS", en_vigueur: 2023-09-01,
+   motif: "texte inchangé, mot pour mot celui de la rédaction du 1er janvier 2015 (LEGIARTI000030060318)"}
+- {id: LEGIARTI000047961722, article: "D. 161-2-9 CSS", en_vigueur: 2023-09-01,
+   motif: "texte inchangé, de même : le plancher de 160 % du Smic sur 1 820 heures"}
 code:
   python: >-
     droit/cumul.py : cumuler, groupe_de_l_activite, groupe_de_la_pension, assiette_csg,

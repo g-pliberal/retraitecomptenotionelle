@@ -247,7 +247,7 @@ presomptions:
     la part qui commence après la date d'effet, ou qui revient, est demandée dès que sa
     condition est remplie, et servie le premier jour du mois qui suit
 sources:
-  lu_le: 2026-10-24
+  lu_le: 2026-11-12
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
@@ -386,6 +386,16 @@ sources:
       infirme de même
     date: 2026-01-01
     url: https://www.service-public.gouv.fr/particuliers/vosdroits/F13104
+textes_sans_effet:
+- id: LEGIARTI000053355913
+  article: D. 173-21-1, rédaction du 1er janvier 2026
+  en_vigueur: 2026-01-01
+  motif: >-
+    depuis le 1er juillet 2017, l'article ne dit plus quel régime sert la majoration,
+    passé à D. 173-21-7 puis à R. 173-17-3, que la fiche cite, mais à quel régime
+    s'adresse un versement pour la retraite : « la demande est adressée au premier
+    régime d'assurance vieillesse où l'assuré a été affilié » ; le décret n° 2025-1410
+    n'en ôte que le renvoi à L. 732-27-1 du code rural
 code:
   python: >-
     droit/reversion.py : reversion, _majoration_forfaitaire_enfants, _jours_a_charge,

@@ -21,7 +21,7 @@ effet: >-
   années travaillées outre-mer depuis le 3 novembre 2026 (action 177, étape 7) : cette
   artisane y est un témoin de simulation, qui rend les mêmes 7 508,18 €.
 sources:
-  lu_le: 2026-10-31
+  lu_le: 2026-11-12
   prochaine_relecture: 2027-01-31
   a_relire:
   - >-
@@ -95,6 +95,14 @@ textes_a_rattacher:
 - reference: >-
     code de la sécurité sociale, D. 756-8 (LEGIARTI000006739014, LEGIARTI000030034737)
 - reference: décret n° 75-1098 du 25 novembre 1975 (JORFTEXT000000500873)
+textes_sans_effet:
+- id: LEGIARTI000034731520
+  reference: code de la sécurité sociale, D. 756-7, rédaction du 12 mai 2017
+  motif: >-
+    l'article ne porte plus le montant de 390 euros, passé à D. 756-6, que la fiche
+    cite ; il définit le plafond de la section : « la valeur annuelle de ce plafond,
+    tel que prévu à l'article L. 241-3, en vigueur au 1er janvier de l'année au titre
+    de laquelle les cotisations sont dues »
 approximations:
 - ecart: >-
     Avant 1986, sous le décret n° 75-1098, dont l'index n'a pas le texte, la règle de

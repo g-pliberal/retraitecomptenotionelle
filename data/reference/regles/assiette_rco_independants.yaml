@@ -1079,7 +1079,7 @@ effet: >-
   Les pages du coût bougent d'un milliard d'euros au plus, sur des totaux de plusieurs
   milliers (7 300 Md € devient 7 299 Md €).
 sources:
-  lu_le: 2026-11-05
+  lu_le: 2026-11-12
   prochaine_relecture: 2027-11-05
   a_relire:
   - >-
@@ -1253,6 +1253,27 @@ sources:
       gratuits de l'artisan en dispense d'activité)
     url: https://legislation.lassuranceretraite.fr/
     date: 2026-11-05
+textes_sans_effet:
+- id: LEGIARTI000046567204
+  article: "décret n° 2012-443 du 3 avril 2012, article 4, rédaction du 18 novembre 2022"
+  en_vigueur: 2022-11-18
+  motif: >-
+    le V, qui opposait 200 heures de Smic à l'assiette minimale de D. 635-2, en est
+    ôté : il ne reste que « I à IV-A modifié les dispositions suivantes ». La phrase du
+    minimum avait quitté D. 635-2 dès le 1er janvier 2016 (version rci_2016) : le V
+    n'avait plus rien à opposer à la complémentaire
+- id: LEGIARTI000041967058
+  article: "code de la sécurité sociale, D. 635-4, rédaction du 25 mai 2020"
+  en_vigueur: 2020-05-25
+  motif: texte inchangé (le rachat dans la complémentaire, depuis le 24 août 2004)
+- id: LEGIARTI000041966510
+  article: "code de la sécurité sociale, D. 635-2, rédaction du 25 mai 2020"
+  en_vigueur: 2020-05-25
+  motif: >-
+    l'article perd le calcul de la cotisation et ne garde que la phrase « L'assuré
+    titulaire d'une pension d'invalidité dans le régime institués par l'article L. 632-1
+    est exonéré du paiement de toute cotisation d'assurance vieillesse complémentaire » ;
+    le RCI est hors de cette fiche depuis 2013, et son minimum depuis 2016
 code:
   moteur: >-
     `assiette_annee_de_revenu`, une table du statut au décalage, et `assiette_de_debut`,

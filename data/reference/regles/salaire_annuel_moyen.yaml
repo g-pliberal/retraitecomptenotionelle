@@ -230,7 +230,7 @@ approximations:
     septembre 2023 (I, B, IV et V), que le modèle ne connaît pas
   effet: non mesuré
 sources:
-  lu_le: 2026-10-05
+  lu_le: 2026-11-12
   prochaine_relecture: 2027-01-31
   a_relire:
   - >-
@@ -289,6 +289,16 @@ sources:
     date: 2026-10-05
 textes_a_rattacher:
 - reference: R. 173-3-2 CSS (nombre d'années, depuis le décret n° 2025-1409)
+- id: LEGIARTI000054589934
+  reference: R. 173-3-2 CSS, rédaction en vigueur depuis le 1er août 2026
+  change: >-
+    pour les pensions prenant effet à compter du 1er septembre 2026 (décret n° 2026-699,
+    article 6), le nombre d'années « est réduit à : 1° Vingt-quatre lorsqu'ils
+    bénéficient de majoration ou de bonification au titre d'un seul enfant ; 2°
+    Vingt-trois lorsqu'ils bénéficient de majorations ou de bonifications au titre d'au
+    moins deux enfants ». La règle a sa fiche, sam_parents_24_23, et le moteur l'applique
+    (nombreDAnneesRetenues) ; cette fiche-là ne cite pas la rédaction par son
+    identifiant. Lue le 12 novembre 2026 (action 184, étape 6)
 - reference: R. 351-29-1 CSS (générations d'avant 1948)
 - id: LEGIARTI000006747869
   reference: >-

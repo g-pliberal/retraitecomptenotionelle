@@ -131,6 +131,17 @@ versions:
       annees_assimilees_exclues: false
       annees_sans_trimestre: exclues
   exemples: aucun trouvé
+textes_a_rattacher:
+- id: LEGIARTI000054589934
+  reference: R. 173-3-2 CSS, rédaction en vigueur depuis le 1er août 2026
+  change: >-
+    pour les pensions prenant effet à compter du 1er septembre 2026 (décret n° 2026-699,
+    article 6), le nombre d'années « est réduit à : 1° Vingt-quatre lorsqu'ils
+    bénéficient de majoration ou de bonification au titre d'un seul enfant ; 2°
+    Vingt-trois lorsqu'ils bénéficient de majorations ou de bonifications au titre d'au
+    moins deux enfants ». La règle a sa fiche, sam_parents_24_23, et le moteur l'applique
+    (nombreDAnneesRetenues) ; cette fiche-là ne cite pas la rédaction par son
+    identifiant. Lue le 12 novembre 2026 (action 184, étape 6)
 approximations:
 - ecart: >-
     le revenu moyen est la moyenne des revenus annuels ; la Cnav décrit, dans les
@@ -149,7 +160,7 @@ approximations:
     partagé du conjoint collaborateur (R. 742-40), que la Cnav décrit avant juillet 2017
   effet: non mesuré
 sources:
-  lu_le: 2026-10-05
+  lu_le: 2026-11-12
   prochaine_relecture: 2027-01-31
   a_relire:
   - >-

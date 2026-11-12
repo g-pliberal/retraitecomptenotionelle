@@ -27,7 +27,7 @@ effet: >-
   Mayotte qui déclare 1 000 € valide trois trimestres par an depuis 2019, au lieu
   d'aucun.
 sources:
-  lu_le: 2026-11-02
+  lu_le: 2026-11-12
   prochaine_relecture: 2027-01-31
   a_relire:
   - >-
@@ -148,6 +148,15 @@ textes_a_rattacher:
 - reference: >-
     décret n° 2011-2085 du 30 décembre 2011, article 4-2 (LEGIARTI000038680068,
     LEGIARTI000053297541) ; décret n° 2019-632 du 24 juin 2019, article 2
+textes_sans_effet:
+- id: LEGIARTI000044626482
+  reference: code de la sécurité sociale, L. 613-9, rédaction du 1er janvier 2022
+  motif: >-
+    l'article ne porte plus la dispense du minimum, passée à L. 613-11 le 14 juin
+    2018, que la fiche cite : « L'affectation des sommes recouvrées au titre des
+    travailleurs indépendants mentionnés à l'article L. 613-7 s'effectue par priorité
+    à l'impôt sur le revenu » — le forfait du micro-entrepreneur, que la fiche
+    micro_social_abattement lit
     (LEGIARTI000038680034)
 approximations:
 - ecart: >-

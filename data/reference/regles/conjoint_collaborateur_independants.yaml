@@ -168,7 +168,7 @@ approximations:
     L. 121-4) n'est pas opposée : le modèle prend la carrière saisie
   effet: aucun sur le calcul
 sources:
-  lu_le: 2026-10-16
+  lu_le: 2026-11-12
   prochaine_relecture: 2027-06-30
   a_relire:
   - >-
@@ -195,6 +195,23 @@ textes_a_rattacher:
 - reference: code de commerce, L. 121-4
 - reference: loi n° 2005-882 du 2 août 2005, article 15
 - reference: décret n° 2006-966 du 1er août 2006
+textes_sans_effet:
+- id: LEGIARTI000041967215
+  article: D. 742-26 CSS, rédaction du 25 mai 2020
+  en_vigueur: 2020-05-25
+  motif: >-
+    l'article ne porte plus l'assiette du conjoint assuré volontaire, que la fiche y lit
+    de 1985 à 2006 : « L'assuré volontaire qui s'abstient de verser la cotisation ou la
+    fraction de cotisation exigibles à l'échéance prescrite à l'article D. 742-20 est
+    radié de l'assurance volontaire »
+- id: LEGIARTI000041967197
+  article: D. 742-28 CSS, rédaction du 25 mai 2020
+  en_vigueur: 2020-05-25
+  motif: >-
+    l'article ne porte plus le minimum de 200 heures de Smic, que la fiche y lit de 1985
+    à 2006 : « La validation des périodes d'activité professionnelle antérieure à la mise
+    en vigueur du régime d'assurance vieillesse dont relève l'activité exercée par
+    l'intéressé », un rachat de l'assuré volontaire
 code:
   python: >-
     carriere.py : CONJOINTS_COLLABORATEURS, assiette_du_conjoint_collaborateur,

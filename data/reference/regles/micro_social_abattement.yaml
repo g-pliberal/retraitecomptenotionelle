@@ -117,7 +117,7 @@ effet: >-
   mois, sans les arrondis trimestriels de la caisse. Une seule activité pour
   toute la carrière.
 sources:
-  lu_le: 2026-11-02
+  lu_le: 2026-11-12
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
@@ -449,6 +449,69 @@ textes_sans_effet:
     pas compte : « Les droits sont calculés sur la base de la cotisation
     forfaitaire globale qui aurait été due » (exposé « Travailleurs
     indépendants » de la Cnav)
+- id: LEGIARTI000053451315
+  reference: >-
+    code de la sécurité sociale, D. 131-6-1, depuis le 1er janvier 2026 (décret
+    n° 2026-69 du 6 février 2026)
+  motif: >-
+    l'article ne porte plus les taux du micro-social, que la fiche y a lus
+    pour 2016 et 2017, mais l'exonération de début d'activité de L. 131-6-4,
+    réduite au « quart du montant total des cotisations dues » pour les
+    « créations et reprises d'entreprise intervenant à compter » du 1er
+    janvier 2026 : la caisse n'en tient pas compte, comme pour D. 131-6-4
+    ci-dessus
+- id: LEGIARTI000049904610
+  reference: >-
+    code de la sécurité sociale, D. 621-1, depuis le 7 juillet 2024 (décret
+    n° 2024-688, cotisations des périodes courant à compter du 1er janvier
+    2025)
+  motif: >-
+    le taux de la cotisation de maladie, « fixé à 8,50 % pour la fraction
+    des revenus qui n'excède pas trois fois la valeur annuelle du plafond » :
+    la fiche n'a lu l'article que pour refaire les seuils de 2018 et de 2019,
+    que l'ordre de D. 133-4 donnait ; depuis octobre 2022, D. 613-6 partage
+    le forfait par parts, sans passer par le taux de la maladie
+- id: LEGIARTI000049904592
+  reference: >-
+    code de la sécurité sociale, D. 621-2, depuis le 7 juillet 2024 (décret
+    n° 2024-688)
+  motif: >-
+    la réduction du taux de la maladie, récrite sur l'« assiette de
+    cotisations » : « inférieur à 20 % de la valeur annuelle du plafond
+    mentionné au premier alinéa de l'article L. 241-3, le taux est nul » ;
+    lue, comme D. 621-1, pour les seuls seuils de 2018 et de 2019
+- id: LEGIARTI000046885358
+  reference: >-
+    code de la sécurité sociale, D. 133-4, depuis le 1er janvier 2023 (décret
+    n° 2022-1735)
+  motif: >-
+    l'ordre d'affectation ne vaut plus que « Lorsque seule une partie des
+    cotisations et contributions sociales dues au titre d'une échéance est
+    acquittée » ; il ne partage plus le forfait du micro-entrepreneur, que
+    D. 613-6 affecte par parts depuis le décret n° 2022-1529 : la fiche ne
+    lit l'ordre que de 2016 à 2021
+- id: LEGIARTI000043563948
+  reference: code de la sécurité sociale, D. 612-5, depuis le 31 mai 2021
+  motif: >-
+    l'article ne porte plus la réduction du taux de la maladie de 2017, que
+    la fiche y a lue : il dit comment « Les aides et prestations
+    spécifiquement attribuées par le conseil mentionné à l'article L. 612-1 »
+    s'imputent aux branches
+- id: LEGIARTI000043380038
+  reference: code de la sécurité sociale, D. 612-4, depuis le 17 avril 2021
+  motif: >-
+    l'article ne porte plus le taux de la maladie de 2017 (6,50 %), que la
+    fiche y a lu : « L'Agence centrale des organismes de sécurité sociale
+    tient la comptabilité afférente au mandat général dont elle dispose »
+- id: LEGIARTI000025397325
+  reference: >-
+    arrêté du 9 février 2012 portant approbation du règlement du RCI, article
+    3 de l'arrêté lui-même, homonyme de l'article 3 du règlement que la fiche
+    cite
+  motif: >-
+    « Le directeur de la sécurité sociale est chargé de l'exécution du
+    présent arrêté, qui sera publié au Journal officiel de la République
+    française. »
 code:
   python: >-
     carriere.py : Metier, AnneeCarriere, revenu_cotise ; donnees/chargement.py :

@@ -178,7 +178,7 @@ effet: >-
   pas la valeur au jour de son relèvement, et sert les liquidations d'avant 2004 à la
   valeur de 2004 ramenée par les prix.
 sources:
-  lu_le: 2026-10-29
+  lu_le: 2026-11-12
   prochaine_relecture: 2027-01-31
   a_relire:
   - >-
@@ -229,6 +229,15 @@ historique:
   2008 ; la valeur revalorisée comme les pensions depuis le 19 décembre 2008. Approchée :
   la valeur du 31 décembre sert toute l'année, et le point de 2004, ramené par les prix,
   les liquidations d'avant.
+textes_sans_effet:
+- id: LEGIARTI000006751840
+  article: "code de la sécurité sociale, R. 643-11, rédaction en vigueur depuis le 1er janvier 2004"
+  en_vigueur: 2004-01-01
+  motif: >-
+    l'article ne porte plus les soixantièmes de l'allocation, que la fiche y lit
+    jusqu'en 2003, mais la section qui liquide : « ses droits à l'assurance vieillesse
+    de base sont liquidés par la section professionnelle à laquelle elle a été affiliée
+    en dernier lieu »
 code:
   moteur: >-
     `ValeursPoint.service` lit dans `regimes/valeurs_point.csv` la valeur de service de
