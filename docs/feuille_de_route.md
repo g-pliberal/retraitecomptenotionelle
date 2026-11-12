@@ -7943,15 +7943,15 @@ dire si la copie de l'UNSA est la sienne.
 **Reprise, au 12 novembre 2026.** L'histoire d'un article se lit dans l'index,
 lois et conventions collectives, GitHub inscrit chaque lundi les rédactions
 nouvelles, et les cent rédactions en vigueur que les fiches n'avaient pas lues
-sont classées. Deux étapes restent, que le propriétaire a décidées le 12
-novembre et qui se mènent en parallèle : l'une corrige l'outil de lecture,
-l'autre fait refuser la mise à jour d'un index quand la DILA a renouvelé son
-fichier complet. Chacune tient son bloc sous le titre de sa note, et celui-ci
-ne se récrit plus. Ce que la lecture a trouvé dans le modèle est l'action 192.
-Restent aussi : les accords Agirc-Arrco à faire entrer dans la liste des
-textes ; le lundi 16 novembre, vérifier que GitHub a commité l'inscription et
-lancé la suite ; le texte qui a écrit chaque version, remis à la loi de
-financement pour 2027. Le bilan :
+sont classées. Les deux étapes décidées le 12 novembre sont faites : une
+déclaration « sans effet » ne vaut plus que pour la rédaction qu'elle nomme
+et pour la fiche qui la fait ; la mise à jour d'un index du Journal officiel
+ou des lois refuse quand la DILA a renouvelé son fichier complet. Aucune
+étape n'est en cours. Ce que la lecture a trouvé dans le modèle est l'action
+192. Restent : les accords Agirc-Arrco à entrer dans la liste des textes, par
+quoi commencer ; le lundi 16 novembre, vérifier que GitHub a commité
+l'inscription et lancé la suite ; le texte qui a écrit chaque version, remis
+à la loi de financement pour 2027. Le bilan :
 `184/2026-11-12-etape-6-bilan-de-la-passe.md`.
 
 **D'où elle vient.** Le 3 novembre 2026, le propriétaire signale
