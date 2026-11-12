@@ -1,0 +1,22 @@
+date: "2026-11-12"
+session: "action 161 : la revalorisation servie et l'indexation demandées au moteur JavaScript par le pont"
+consulte: >-
+  Aucune source de droit rouverte : la session fait lire à la classe Python
+  de la revalorisation servie les séries que le portage JavaScript calcule,
+  par le pont, et fait demander au coût ce que l'indexation rend à ses
+  cotisations. Elle ne touche à aucune règle du scénario 1 : ce que le droit
+  a servi aux pensions (coefficient_historique) reste tel quel, en Python.
+  Lues : la note de décision 0007, la note de la question 1, et, pour les
+  valeurs attendues des tests, les séries de data/reference/macro/
+  (masse_salariale.csv, ipc_annuel.csv, salaire_moyen.csv, productivite.csv)
+  et les conventions de la valeur de service de l'Agirc-Arrco
+  (hypotheses_projection.yaml, conventions_points).
+trouve: >-
+  Aucune règle n'a changé. Le coût de référence et celui d'une variante
+  démographique sont identiques au bit, le paquet et les témoins à l'octet.
+  L'indexation et la revalorisation servie des deux langages concordent au
+  bit sous vingt-quatre jeux de paramètres.
+reste: >-
+  L'histoire du droit que la classe porte appelle encore cinq règles du
+  moteur Python : l'étape d'après. Le détail dans la note de la feuille de
+  route.

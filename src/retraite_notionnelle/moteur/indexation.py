@@ -31,6 +31,14 @@ variantes prennent les mêmes trois termes et n'en changent que l'agrégation :
 
 Ces deux variantes gardent le mélange nominal/réel de la règle littérale — c'est
 le prix à payer pour que la comparaison porte sur la seule statistique.
+
+Depuis le 12 novembre 2026, le coût ne lit plus ce module (action 161, note de
+décision 0007) : il demande au portage, par le pont, les séries de la
+revalorisation servie (``pont.series_servies``) et le rendement de ses
+cotisations (``pont.indexation``). Le moteur Python d'une carrière le lit
+encore, et part avec lui ; d'ici là,
+``test_l_indexation_du_portage_est_celle_du_jumeau_au_bit``
+(``tests/test_pont.py``) le tient au bit de ``moteur/js/indexation.js``.
 """
 
 from __future__ import annotations
