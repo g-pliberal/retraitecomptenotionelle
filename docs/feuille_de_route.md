@@ -7325,16 +7325,17 @@ de `contribution_etat`.
 **Reprise, au 12 novembre 2026.** Les tests du moteur passent du moteur
 Python au moteur JavaScript, par la façade des tests (`tests/facade.py`),
 fichier par fichier. Deux fichiers y sont : `test_simulateur.py` et
-`test_reversion.py`. 513 de leurs 691 tests font calculer le moteur
-JavaScript. Les 178 autres appellent encore une règle Python : ils portent
+`test_reversion.py`. Les tests qui appellent encore une règle Python portent
 la marque `sur_le_moteur_python`, et un test tient leur compte, qui ne fait
-que décroître. La façade sert aussi les tables du moteur. Reste, une étape
-par session : servir par la façade les règles de `droit/` que les tests
-appellent, `liquider` et `ouvrir` d'abord ; passer les autres fichiers ;
-d'autres études ; l'impôt, puis la revalorisation servie ; le retrait.
-Commencer par « Ce qui reste » de
-`2026-11-12-les-tables-et-deux-fichiers-a-la-facade.md`. Le propriétaire
-doit encore dire ce que le § 3 du README montrera sans simulateur Python.
+que décroître. Le coût, lui, demande maintenant au moteur JavaScript l'impôt
+sur le revenu de son effet retour : `impot_revenu.py` n'est plus tenu que
+par ses tests. Reste, une étape par session : servir par la façade les
+règles de `droit/` que les tests appellent, `liquider` et `ouvrir` d'abord ;
+passer les autres fichiers ; d'autres études ; la revalorisation servie ; le
+retrait. Commencer par « Ce qui reste » de
+`2026-11-12-les-tables-et-deux-fichiers-a-la-facade.md` et, pour l'impôt, de
+`2026-11-12-l-impot-par-le-pont.md`. Le propriétaire doit encore dire ce que
+le § 3 du README montrera sans simulateur Python.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur

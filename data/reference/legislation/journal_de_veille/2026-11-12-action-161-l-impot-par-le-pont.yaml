@@ -1,0 +1,19 @@
+date: "2026-11-12"
+session: "action 161 : l'impôt sur le revenu de l'effet retour demandé au moteur JavaScript par le pont"
+consulte: >-
+  Aucune source de droit rouverte : la session fait demander au portage
+  JavaScript, par le pont, l'impôt sur le revenu que l'effet retour du coût
+  calculait en Python. Elle ne touche à aucune règle du scénario 1 ni à
+  aucune règle de l'impôt. Lues : la note de décision 0007, la relecture de
+  la paire (note du 12 novembre), et, pour les valeurs attendues des tests,
+  le barème des revenus de 2024 tel que le fichier des barèmes le porte
+  (CGI, art. 197, I, art. 158, 5, a, et art. 157 bis, loi n° 2025-127 du
+  14 février 2025, art. 2).
+trouve: >-
+  Aucune règle n'a changé. Trois impôts posés à la main sur ce barème — un
+  retraité seul de 30 000 €, un autre de 15 000 €, un couple de 40 000 € et
+  20 000 € — sont ceux que le portage rend : 1 365 €, 0 € et 3 587 €. Le
+  coût de référence est identique au bit, nombre par nombre.
+reste: >-
+  impot_revenu.py n'a plus d'appelant hors de ses tests, et attend son
+  retrait. Le détail dans la note de la feuille de route.
