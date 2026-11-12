@@ -1056,7 +1056,7 @@ def _mortalite_population(population: str, cas: str, generation: int):
     if population == "vingtile":
         simulateur = mortalite_population._simulateur(None)
         population = simulateur.mortalite.population_niveau_de_vie(
-            cas_type.niveau_relatif(simulateur, generation))
+            mortalite_population.niveau_relatif(cas_type, generation))
     resultat = mortalite_population.mesurer(population, cas_type, generation)
     if resultat is None or "erreur" in resultat:
         raise ValueError(f"{cas} ne se mesure pas : {resultat}")

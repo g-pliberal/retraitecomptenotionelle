@@ -416,3 +416,69 @@ def test_le_pont_rend_le_niveau_de_salaire_d_une_carriere():
     assert lus["double"] == pytest.approx(2.0, rel=1e-12)
     assert 0.0 < lus["smic_carriere_complete"] < 1.0 < lus["cadre"]
 
+
+# -- l'étude par le pont (action 161) ------------------------------------------------
+
+
+@sans_node
+def test_la_mesure_sert_la_proposition_sur_l_esperance_de_son_depart():
+    """La mesure d'un cas type sous la table d'une population : la pension
+    sous la table commune, multipliée par les années de rente que la
+    population reçoit en plus. Le salarié au salaire moyen né en 1975, mesuré
+    sous la mortalité des fonctionnaires civils de l'État, part avant 65 ans ;
+    la proposition, dont l'âge légal est de 65 ans, reporte son départ, et sa
+    rente se sert sur l'espérance de ce départ-là, à 65 ans. Le scénario 1 n'a
+    pas de diviseur : sa pension ne bouge pas d'un euro sous la table des
+    fonctionnaires, quand celle des comptes notionnels baisse."""
+    population = "fonctionnaires_civils_etat"
+    commun = M._simulateur(None)
+    cas = next(un for un in GRILLE_DU_COUT if un.code == "salaire_moyen")
+    resultat = M.mesurer(population, cas, 1975)
+    assert resultat["age_liquidation"] < 65
+    annees = resultat["esperance_population"] - resultat["esperance_commune"]
+    assert annees > 0.0
+    lignes = {ligne["numero"]: ligne for ligne in resultat["scenarios"]}
+    assert set(lignes) == {1, 2, 3, 4, 5, 6}
+    assert lignes[1]["pension_population"] == lignes[1]["pension_commune"]
+    assert lignes[1]["ecart"] == 0.0
+    for numero in (1, 2, 3, 4, 5):
+        assert lignes[numero]["transfert_vie"] == lignes[numero]["pension_commune"] * annees
+    for numero in (2, 4, 6):
+        assert lignes[numero]["pension_population"] < lignes[numero]["pension_commune"]
+
+    reportee = _baties(commun, cas.code, (1975,), "reportee")[1975]
+    assert reportee.age_liquidation == 65
+    date = reportee.annee_liquidation + reportee.fraction_annee_liquidation
+    a_65_ans = (commun.mortalite.esperance_residuelle(65, date, population=population)
+                - commun.mortalite.esperance_residuelle(65, date))
+    assert a_65_ans != annees
+    assert lignes[6]["transfert_vie"] == lignes[6]["pension_commune"] * a_65_ans
+
+
+@sans_node
+def test_l_etude_n_entre_plus_dans_le_moteur_python(tmp_path):
+    """Ce que l'étude fait calculer d'une carrière se demande au portage : la
+    mesure d'un cas type sous deux tables, par la sonde de la prose qui la
+    lit, le niveau de salaire du salarié au SMIC, qui le range dans son
+    vingtile, et, pour le déficit, le vingtile et la part ouverte à la bascule
+    de chaque couple de la grille. Le relevé de ce qui entre dans le moteur
+    Python (``entrees_du_moteur.relever``) est vide ; jusqu'au 12 novembre
+    2026, l'étude y simulait, et les cas types y bâtissaient leur carrière
+    pour elle (``tests/test_entrees_du_moteur.py``)."""
+    script = tmp_path / "etude.py"
+    script.write_text(textwrap.dedent(f'''\
+        import sys
+        sys.path.insert(0, {str(Path(M.__file__).parent)!r})
+        import mesures_prose
+        import mortalite_population as M
+        from retraite_notionnelle.castypes import GRILLE_DU_COUT
+
+        sonde = "mortalite_population?population={{}}&cas={{}}&generation=1975&quoi={{}}"
+        mesures_prose.mesurer(sonde.format(
+            "fonctionnaires_civils_etat", "fonctionnaire_sedentaire", "transfert"))
+        mesures_prose.mesurer(sonde.format("vingtile", "smic_carriere_complete", "ecart"))
+        grille = tuple(cas for cas in GRILLE_DU_COUT if cas.code == "salaire_moyen")
+        M._vingtiles(M._simulateur(None), grille, "droit")
+        M._parts_ouvertes(M._simulateur(None), grille, "droit")
+        '''), encoding="utf-8")
+    assert entrees_du_moteur.relever(script) == {}

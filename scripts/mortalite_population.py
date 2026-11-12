@@ -89,6 +89,19 @@ stock d'avant la bascule et aux droits acquis : il leur ajoutait 0,33 et 0,39
 point de solde moyen de 2026 à 2070, la page 0,02 et 0,09 (même étape, note
 « la part ouverte à la bascule »).
 
+PAR OÙ IL CALCULE
+-----------------
+Le moteur d'une carrière n'a qu'un exemplaire, en JavaScript (action 161) :
+depuis le 12 novembre 2026, le script n'en fait plus tourner le jumeau
+Python. Le portage date et bâtit chaque cas type
+(``pont.carrieres_de_la_grille``) et le simule sous les deux tables
+(``pont.grille_du_cout``, la table dans les paramètres de la demande) ; pour
+le déficit, il rend le niveau de salaire de chaque carrière de la grille
+(``conversion.niveau_relatif``, par ``pont.droit``), d'où vient son vingtile,
+et les capitaux de son compte (``capitaux``, de la même demande que le coût).
+Les tables de mortalité, les têtes, les poids et la survie restent au Python,
+qui les lit ou les calcule seul.
+
 LE GARDE-FOU
 ------------
 Le défaut n'appartient pas au notionnel. Toute rente viagère à taux commun le
@@ -109,8 +122,11 @@ from pathlib import Path
 RACINE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RACINE / "src"))
 
+from retraite_notionnelle import pont  # noqa: E402
+from retraite_notionnelle.carriere import PROFIL_SMIC  # noqa: E402
 from retraite_notionnelle.somme import somme_ordonnee
-from retraite_notionnelle.castypes import CAS_TYPES, GENERATIONS, GRILLE_DU_COUT  # noqa: E402
+from retraite_notionnelle.castypes import (  # noqa: E402
+    CAS_TYPES, GENERATIONS, GRILLE_DU_COUT, primes_projetees_en_donnees)
 from retraite_notionnelle.config import Parametres  # noqa: E402
 from retraite_notionnelle.simulateur import SCENARIOS_NOTIONNELS, Simulateur  # noqa: E402
 
@@ -144,13 +160,74 @@ def _simulateur(population: str | None) -> Simulateur:
     return _SIMULATEURS[population]
 
 
+#: Les carrières des cas types que la mesure a fait bâtir, sous
+#: ``(code, génération)`` (:func:`_batie`).
+_BATIES: dict[tuple[str, int], dict] = {}
+
+
+def _batie(cas_type, generation: int) -> dict:
+    """Le cas type né en ``generation``, que le portage date et bâtit sous
+    les réglages de référence (``pont.carrieres_de_la_grille``) : sa carrière
+    (``carriere``), et celle que l'âge légal de la proposition en dérive,
+    poursuivie jusqu'à lui (``reportee``), ``None`` quand il ne la déplace
+    pas. Gardé : la mesure et le niveau de salaire lisent la même. Une case
+    que le droit écarte — un départ avant l'origine de la répartition, un
+    régime qui n'existait pas encore — lève ``ValueError``, son motif dedans."""
+    cle = (cas_type.code, generation)
+    if cle not in _BATIES:
+        commun = _simulateur(None)
+        baties, ecartees = pont.carrieres_de_la_grille(
+            [{"cle": "cas", **cas_type.pour_le_portage(commun, generation),
+              "rendre": "carriere"}],
+            commun.parametres, primes_projetees_en_donnees(commun))
+        if ecartees:
+            raise ValueError(ecartees["cas"])
+        _BATIES[cle] = baties["cas"]
+    return _BATIES[cle]
+
+
+def _simulee(simulateur: Simulateur, carriere) -> dict:
+    """Ce que la mesure lit d'une carrière que le portage simule sous les
+    paramètres de ``simulateur``, sa table de mortalité comprise
+    (``pont.grille_du_cout``) : la pension de chaque scénario en euros
+    constants (``pensions``), et si l'âge légal de la proposition reporte son
+    départ (``depart_reporte``). Une carrière que la simulation refuse lève
+    ``ValueError``."""
+    simulees, refusees = pont.grille_du_cout(
+        [{"cle": "cas", "carriere": carriere, "propositions": {}}],
+        [cle for cle, _, _ in SCENARIOS], simulateur.parametres)
+    if refusees:
+        raise ValueError(refusees["cas"])
+    return simulees["cas"]
+
+
+def niveau_relatif(cas_type, generation: int) -> float:
+    """Le salaire d'un cas type en multiples du salaire moyen, qui le
+    rattache à un vingtile de niveau de vie
+    (``DonneesMortalite.population_niveau_de_vie``) : le niveau écrit, sauf
+    pour le salarié au SMIC, dont le niveau est un multiple du SMIC — c'est
+    alors celui de la carrière que le portage bâtit, tel qu'il le lit
+    (``conversion.niveau_relatif``). Ce que rendait ``CasType.niveau_relatif``,
+    qui bâtit la carrière au moteur Python."""
+    if cas_type.profil_carriere != PROFIL_SMIC:
+        return cas_type.niveau_salaire
+    lus, refus = pont.droit(
+        {"cas": ("conversion.niveau_relatif", pont.SIMULATEUR,
+                 _batie(cas_type, generation)["carriere"])},
+        _simulateur(None).parametres)
+    if refus:
+        raise ValueError(refus["cas"])
+    return lus["cas"]
+
+
 def mesurer(population: str, cas_type, generation: int) -> dict | None:
     commun = _simulateur(None)
     corrige = _simulateur(population)
     try:
-        carriere = cas_type.construire(commun, generation)
-        avec = commun.simuler(carriere)
-        sans = corrige.simuler(carriere)
+        batie = _batie(cas_type, generation)
+        carriere = batie["carriere"]
+        avec = _simulee(commun, carriere)
+        sans = _simulee(corrige, carriere)
     except (ValueError, KeyError) as erreur:
         return {"erreur": str(erreur)}
     age = carriere.age_liquidation
@@ -159,15 +236,15 @@ def mesurer(population: str, cas_type, generation: int) -> dict | None:
     e_population = commun.mortalite.esperance_residuelle(age, date, population=population)
     lignes = []
     for cle, numero, libelle in SCENARIOS:
-        p_commune = avec.en_euros_constants(getattr(avec, cle).pension_annuelle, cle)
-        p_population = sans.en_euros_constants(getattr(sans, cle).pension_annuelle, cle)
+        p_commune = avec["pensions"][cle]
+        p_population = sans["pensions"][cle]
         # La proposition peut partir plus tard que les autres — son âge légal
         # est de 65 ans — et sa rente se sert alors sur l'espérance de CE
         # départ-là.
-        depart = avec.carriere_de(cle)
-        if depart is carriere:
+        if not (cle == "notionnel_liberal" and avec["depart_reporte"]):
             ecart_vie = e_population - e_commune
         else:
+            depart = batie["reportee"]
             date_s = depart.annee_liquidation + depart.fraction_annee_liquidation
             ecart_vie = (
                 commun.mortalite.esperance_residuelle(
@@ -242,27 +319,50 @@ def _couple(pensionne, simulateur, vingtile: str, propre: str = ""):
             _rapports(pensionne, simulateur.mortalite, vingtile))
 
 
+def _carrieres(projection, cas_types, liquidation: str) -> dict[tuple[str, int], object]:
+    """Les carrières de la grille telles que la page Coût les construit,
+    sous ``(code, génération)`` : chacune partie à l'âge que le pilote lui
+    fixe et déformée comme le COR projette ses cas types, sous les conventions
+    de ``projection``, sans les cases que le droit écarte. Le portage les date
+    et les bâtit, sur le paquet des données du jour, comme il le fait pour le
+    coût (``pont.carrieres_de_la_grille``, ``cout._grille_batie``)."""
+    from retraite_notionnelle.cout import generations
+
+    cases = {f"{cas.code}|{generation}": (cas, generation)
+             for cas in cas_types for generation in generations()}
+    baties, _ = pont.carrieres_de_la_grille(
+        [{"cle": cle, **cas.pour_le_portage(projection, generation), "rendre": "carriere"}
+         for cle, (cas, generation) in cases.items()],
+        projection.parametres, primes_projetees_en_donnees(projection), liquidation,
+        pont.paquet_des_donnees(projection.parametres.racine_donnees))
+    return {(cas.code, generation): baties[cle]["carriere"]
+            for cle, (cas, generation) in cases.items() if cle in baties}
+
+
 def _vingtiles(simulateur, cas_types, liquidation: str) -> dict[tuple[str, int], str]:
     """Le vingtile de chaque couple de la grille, celui que le diviseur de la
     page lui donne sous le défaut du site, et sa survie avec lui : où le
     salaire de SA carrière, telle que la page la construit, la place — la
     somme de ses revenus cotisés rapportée à celle des salaires moyens des
-    mêmes années (``niveau_relatif``, ``Convertisseur.population_de``).
+    mêmes années (``niveau_relatif``, ``Convertisseur.population_de``), que
+    le portage rend de toutes les carrières en une demande (``pont.droit``).
 
     LE NIVEAU ÉCRIT. Jusqu'au 19 octobre 2026, le script rangeait chaque cas
     type au vingtile de son niveau écrit (``CasType.niveau_relatif``), quand
     la page range sa carrière : le salarié au salaire moyen au treizième, que
     la page met au quatorzième ou au quinzième, et 189 couples sur 345 dans un
     autre vingtile que celui de la page (action 138, étape 7)."""
-    from retraite_notionnelle.castypes import carrieres_de_la_grille
-    from retraite_notionnelle.cout import generations
-    from retraite_notionnelle.moteur.conversion import niveau_relatif
-
     projection = simulateur.pour_la_projection()
-    carrieres, _ = carrieres_de_la_grille(projection, cas_types, generations(), liquidation)
-    return {cle: projection.mortalite.population_niveau_de_vie(
-                niveau_relatif(carriere, projection.macro))
-            for cle, carriere in carrieres.items()}
+    carrieres = _carrieres(projection, cas_types, liquidation)
+    niveaux, refus = pont.droit(
+        {f"{code}|{generation}": ("conversion.niveau_relatif", pont.SIMULATEUR, carriere)
+         for (code, generation), carriere in carrieres.items()},
+        projection.parametres, pont.paquet_des_donnees(projection.parametres.racine_donnees))
+    if refus:
+        raise ValueError(f"le portage ne lit pas le niveau de ces carrières : {refus}")
+    return {(code, generation): projection.mortalite.population_niveau_de_vie(
+                niveaux[f"{code}|{generation}"])
+            for code, generation in carrieres}
 
 
 def _parts_ouvertes(simulateur, cas_types, liquidation: str,
@@ -280,26 +380,30 @@ def _parts_ouvertes(simulateur, cas_types, liquidation: str,
     bascule entrent au compte par le diviseur de leur vingtile et en sortent
     par lui (``_droits_acquis``), et seul le compte ouvert à la bascule le
     sent, pour l'essentiel. Un aux scénarios 2, 4 et 6, qui n'ont pas de
-    droits acquis. La grille de la page ne garde pas ces capitaux : le moteur
-    Python resimule ses carrières, sans les couples qu'il refuse, que la page
-    ne pèse pas."""
-    from retraite_notionnelle.castypes import carrieres_de_la_grille
-    from retraite_notionnelle.cout import generations
-
+    droits acquis. La grille de la page ne garde pas ces capitaux : le
+    portage resimule ses carrières et les rend, de la demande par laquelle le
+    coût simule sa grille (``pont.grille_du_cout``, sous ``capitaux``), sans
+    les couples qu'il refuse, que la page ne pèse pas. Jusqu'au 12 novembre
+    2026, le moteur Python les resimulait (action 161)."""
     projection = simulateur.pour_la_projection()
-    carrieres, _ = carrieres_de_la_grille(projection, cas_types, generations(), liquidation)
+    carrieres = _carrieres(projection, cas_types, liquidation)
+    scenarios = [scenario for scenario, _, _ in SCENARIOS_NOTIONNELS]
+    simulees, _ = pont.grille_du_cout(
+        [{"cle": f"{code}|{generation}", "carriere": carriere, "propositions": {}}
+         for (code, generation), carriere in carrieres.items()],
+        (), projection.parametres,
+        pont.paquet_des_donnees(projection.parametres.racine_donnees),
+        univers=projection.univers_de_la_demande, capitaux=scenarios)
     parts = {}
-    for cle, carriere in carrieres.items():
-        try:
-            comparaison = projection.simuler(carriere)
-        except (ValueError, KeyError):
+    for code, generation in carrieres:
+        simulee = simulees.get(f"{code}|{generation}")
+        if simulee is None:
             continue
-        parts[cle] = {}
-        for scenario, _, _ in SCENARIOS_NOTIONNELS:
-            resultat = getattr(comparaison, scenario)
-            parts[cle][scenario] = (
-                1.0 - resultat.capital_droits_acquis / resultat.capital_notionnel
-                if resultat.capital_notionnel > 0.0 else 1.0)
+        parts[code, generation] = {}
+        for scenario, capitaux in simulee["capitaux"].items():
+            parts[code, generation][scenario] = (
+                1.0 - capitaux["capital_droits_acquis"] / capitaux["capital_notionnel"]
+                if capitaux["capital_notionnel"] > 0.0 else 1.0)
     return parts
 
 
@@ -477,7 +581,7 @@ def _par_niveau_de_vie(mortalite, generations: list[int]) -> int:
               "Pension notionnelle | Transfert, système actuel | Transfert, scénario 6 |")
         print("  |---|---:|---:|---:|---:|---:|---:|---:|---:|")
         for cas in CAS_TYPES:
-            niveau = cas.niveau_relatif(_simulateur(None), generation)
+            niveau = niveau_relatif(cas, generation)
             population = mortalite.population_niveau_de_vie(niveau)
             resultat = mesurer(population, cas, generation)
             if resultat is None or "erreur" in resultat:

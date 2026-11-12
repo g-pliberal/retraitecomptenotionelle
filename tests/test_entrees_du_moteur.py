@@ -34,20 +34,6 @@ EXEMPLES_DU_README = {
         "simulateur.py:Simulateur.carriere_simple", "simulateur.py:Simulateur.simuler"),
 }
 
-#: Ce que les sondes de la prose appellent encore du moteur Python quand
-#: ``verifier_prose.py`` les lance toutes : plus rien d'elles-mêmes — leurs
-#: carrières se bâtissent et se simulent au portage, leurs règles s'y
-#: appellent une à une (``pont.droit``, ``tests/test_sondes_par_le_pont.py``).
-#: Reste l'étude de la mortalité, dont une sonde lit la mesure : elle simule
-#: en Python un cas type que ``castypes.py`` date et bâtit en Python. Elle se
-#: porte dans sa session (lot B).
-SONDES_DE_LA_PROSE = {
-    "scripts/mortalite_population.py": ("simulateur.py:Simulateur.simuler",),
-    "src/retraite_notionnelle/castypes.py": (
-        "moteur/conversion.py:niveau_relatif", "pilote.py:age_de_depart",
-        "simulateur.py:Simulateur.carriere_simple"),
-}
-
 #: Par étape de la fabrique, sous le nom de son script, ce qui entre encore
 #: dans le moteur Python d'une carrière : le fichier qui appelle, et chaque
 #: règle du moteur qu'il appelle du dehors (``entrees_du_moteur.relever``).
@@ -68,7 +54,11 @@ ENTREES_DE_LA_FABRIQUE: dict[str, dict[str, tuple[str, ...]]] = {
     "chiffrage_plf.py": {},
     "construire_tableaux_md.py": EXEMPLES_DU_README,
     "tableau_de_bord.py": {},
-    "verifier_prose.py": SONDES_DE_LA_PROSE,
+    # Les sondes de la prose : leurs carrières se bâtissent et se simulent au
+    # portage, leurs règles s'y appellent une à une (``pont.droit``,
+    # ``tests/test_sondes_par_le_pont.py``), l'étude de la mortalité comprise,
+    # dont une sonde lit la mesure (``tests/test_mortalite_population.py``).
+    "verifier_prose.py": {},
     "conservation.py": {},
 }
 
