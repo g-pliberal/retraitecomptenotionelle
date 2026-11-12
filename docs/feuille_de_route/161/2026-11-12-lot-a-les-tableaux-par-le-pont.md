@@ -125,6 +125,21 @@ garder sous le test que les quatre étapes qui entrent encore, ou faire écrire
 le relevé par la régénération elle-même, que GitHub lance déjà — ce qui
 touche `tests.yml`, une garde.
 
+**Un défaut de cette étape, réparé le même jour.** Le premier envoi a rougi
+la suite complète de GitHub : la sonde relevait par `sys.monitoring`, qui
+n'existe qu'à partir de Python 3.12, quand `tests.yml` lance la suite sous
+3.11 ; les conteneurs des sessions sont en 3.13, où tout était vert. La
+session d'orchestration de l'action 192 l'a signalé. L'échec a été reproduit
+ici sous `/usr/bin/python3.11`, puis réparé dans la sonde seule : avant 3.12,
+elle relève par `sys.settrace`, qui voit passer chaque appel. Le relevé est le
+même par les deux voies, et les tests de la sonde jouent maintenant les deux.
+Le fichier de tests entier est vert sous 3.11 : 466 s sur quatre cœurs, la
+mémoire des calculs sans doute vide après le rebasage — plus cher que les
+155 s mesurés sous 3.13, ce qui pèse sur la décision ci-dessus. Sous Python
+3.10, que `pyproject.toml` admet encore, la sonde ne tourne pas : elle nomme
+les fonctions par `co_qualname`, né en 3.11. La leçon : un outil qui dépend de
+la version de Python se vérifie sous celle de `tests.yml` avant l'envoi.
+
 **Ce qui est vérifié, ce qui ne l'est pas.** Vérifié en faisant tourner : les
 fichiers fabriqués identiques à l'octet (`construire_tableaux_md.py
 --verifier`, `tableau_de_bord.py` avant et après) ; les cumuls et les écarts

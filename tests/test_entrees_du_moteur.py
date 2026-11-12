@@ -97,7 +97,15 @@ def _sans_node() -> bool:
     return shutil.which("node") is None
 
 
-def test_la_sonde_ne_retient_que_ce_qui_entre_du_dehors(tmp_path):
+@pytest.fixture(params=[False, True], ids=["surveillance", "trace"])
+def par_trace(request) -> bool:
+    """Les deux façons dont la sonde relève : par ``sys.monitoring``, là où il
+    existe, et par ``sys.settrace``, la seule sous Python 3.11, que GitHub
+    lance — où les deux cas prennent donc la seconde. Le relevé est le même."""
+    return request.param
+
+
+def test_la_sonde_ne_retient_que_ce_qui_entre_du_dehors(tmp_path, par_trace):
     """Un script qui bâtit une carrière et la simule entre dans le moteur
     Python par deux portes, ``carriere_simple`` et ``simuler`` : la sonde les
     retient sous le nom du fichier qui appelle, et rien d'autre — ni le
@@ -114,11 +122,11 @@ def test_la_sonde_ne_retient_que_ce_qui_entre_du_dehors(tmp_path):
             age_debut=22, age_liquidation=64)
         simulateur.simuler(carriere)
         '''), encoding="utf-8")
-    assert entrees_du_moteur.relever(script) == {"essai.py": [
+    assert entrees_du_moteur.relever(script, par_trace=par_trace) == {"essai.py": [
         "simulateur.py:Simulateur.carriere_simple", "simulateur.py:Simulateur.simuler"]}
 
 
-def test_la_sonde_nomme_le_module_du_modele_qui_entre_pour_le_script(tmp_path):
+def test_la_sonde_nomme_le_module_du_modele_qui_entre_pour_le_script(tmp_path, par_trace):
     """Un cas type qui bâtit sa carrière en Python (``CasType.construire``)
     demande son âge au pilote, puis sa carrière au simulateur : le script n'a
     nommé aucune fonction du moteur, et la sonde dit que ``castypes.py`` y
@@ -130,11 +138,12 @@ def test_la_sonde_nomme_le_module_du_modele_qui_entre_pour_le_script(tmp_path):
 
         CAS_TYPES[0].construire(Simulateur(), 1970)
         '''), encoding="utf-8")
-    assert entrees_du_moteur.relever(script) == {"src/retraite_notionnelle/castypes.py": [
-        "pilote.py:age_de_depart", "simulateur.py:Simulateur.carriere_simple"]}
+    assert entrees_du_moteur.relever(script, par_trace=par_trace) == {
+        "src/retraite_notionnelle/castypes.py": [
+            "pilote.py:age_de_depart", "simulateur.py:Simulateur.carriere_simple"]}
 
 
-def test_la_sonde_ne_releve_pas_ce_que_fait_un_calcul_garde(tmp_path):
+def test_la_sonde_ne_releve_pas_ce_que_fait_un_calcul_garde(tmp_path, par_trace):
     """Un calcul que la mémoire des calculs garde (``memoire.memoriser``) ne
     se refait pas quand il est déjà fait : ce qu'il appelle du moteur ne se
     relève pas, mémoire pleine ou vide, et le relevé ne dépend pas d'elle. La
@@ -151,7 +160,7 @@ def test_la_sonde_ne_releve_pas_ce_que_fait_un_calcul_garde(tmp_path):
         memoire.memoriser(("essai", "entrees_du_moteur"),
                           lambda: simulateur.simuler(carriere).actuel.pension_annuelle)
         '''), encoding="utf-8")
-    assert entrees_du_moteur.relever(script) == {"essai.py": [
+    assert entrees_du_moteur.relever(script, par_trace=par_trace) == {"essai.py": [
         "simulateur.py:Simulateur.carriere_simple"]}
 
 

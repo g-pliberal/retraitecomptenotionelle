@@ -13,8 +13,9 @@ pas : ``Simulateur`` charge aussi les données, que la fabrique lit sans
 simuler, et un script entre dans le moteur par un module qui reste, les cas
 types par exemple, sans en nommer une fonction. Ce script le mesure en
 faisant tourner : il lance un script du dépôt sous une sonde
-(``sys.monitoring``) et relève chaque appel qui entre dans le moteur du
-dehors — aucune fonction du moteur n'est alors en cours.
+(``sys.monitoring``, ou ``sys.settrace`` avant Python 3.12) et relève chaque
+appel qui entre dans le moteur du dehors — aucune fonction du moteur n'est
+alors en cours.
 
 Ce qu'il compte
 ---------------
@@ -49,6 +50,7 @@ import os
 import subprocess
 import sys
 import tempfile
+import threading
 from collections import defaultdict
 from pathlib import Path
 
@@ -79,6 +81,10 @@ PORTES = {
 #: calculs garde : ce qui s'y appelle ne se relève pas.
 MEMOIRE = (str(PAQUET / "memoire.py"), "memoriser")
 
+#: La variable d'environnement qui fait relever par ``sys.settrace`` là où
+#: ``sys.monitoring`` existe : la voie de Python 3.11, que GitHub emprunte.
+PAR_TRACE = "ENTREES_PAR_TRACE"
+
 #: Ce qui fait tourner les mesures de la prose dans ce processus, que la sonde
 #: voit, et non dans ceux qu'elles lancent (``scripts/mesures_prose.py``).
 UN_SEUL_PROCESSUS = {"MESURES_PROCESSUS": "1"}
@@ -98,39 +104,65 @@ def fichiers_du_moteur(paquet: Path = PAQUET) -> dict[str, str]:
 
 
 class Sonde:
-    """Les entrées dans le moteur Python de ce processus, par ``sys.monitoring``."""
+    """Les entrées dans le moteur Python de ce processus : par
+    ``sys.monitoring``, qui ne regarde que les fonctions du moteur, là où il
+    existe (Python 3.12) ; sinon par ``sys.settrace``, qui voit passer chaque
+    appel — plus lent, et le même relevé. GitHub lance la suite sous 3.11."""
 
-    def __init__(self, script: Path):
+    def __init__(self, script: Path, surveillance: bool | None = None):
         self.script = str(script)
         self.entrees: dict[str, set[str]] = defaultdict(set)
         self.moteur = fichiers_du_moteur()
         self.portes = {str(PAQUET / fichier): frozenset(noms) for fichier, noms in PORTES.items()}
+        #: Par ``sys.monitoring`` ? Par défaut, dès qu'il existe.
+        self.surveillance = (hasattr(sys, "monitoring") and not os.environ.get(PAR_TRACE)
+                             if surveillance is None else surveillance)
+
+    def _regarde(self, code) -> bool:
+        """``code`` est-il une règle du moteur, dont l'appel peut être une
+        entrée ? Non hors du moteur, pour le corps d'un module, ni, dans un
+        fichier mêlé, pour ce qui n'est pas une porte."""
+        fichier = code.co_filename
+        return (fichier in self.moteur and code.co_name != "<module>"
+                and code.co_qualname in self.portes.get(fichier, (code.co_qualname,)))
+
+    def _relever(self, code, appelant) -> None:
+        """Relève l'appel de ``code``, une règle du moteur, depuis le cadre
+        ``appelant``, s'il entre du dehors : aucune fonction du moteur n'est en
+        cours, ni aucun calcul gardé."""
+        moteur = self.moteur
+        cadre = appelant
+        while cadre is not None:
+            appele = cadre.f_code
+            if appele.co_filename in moteur or (appele.co_filename, appele.co_name) == MEMOIRE:
+                return
+            cadre = cadre.f_back
+        self.entrees[self._du_depot(appelant)].add(
+            f"{moteur[code.co_filename]}:{code.co_qualname}")
 
     def demarrer(self) -> "Sonde":
+        regarde, relever = self._regarde, self._relever
+        if not self.surveillance:
+            def trace(cadre, _evenement, _argument):
+                # Chaque appel d'une fonction Python passe ici ; ne rien rendre
+                # dispense de suivre ses lignes.
+                if regarde(cadre.f_code):
+                    relever(cadre.f_code, cadre.f_back)
+
+            threading.settrace(trace)
+            sys.settrace(trace)
+            return self
         surveillance = sys.monitoring
         self.outil = next(i for i in (surveillance.PROFILER_ID, 0, 3, 4)
                           if surveillance.get_tool(i) is None)
         surveillance.use_tool_id(self.outil, "entrees_du_moteur")
-        moteur, portes, desactiver = self.moteur, self.portes, surveillance.DISABLE
-        cadre_de = sys._getframe
+        desactiver, cadre_de = surveillance.DISABLE, sys._getframe
 
         def debut(code, _position):
-            fichier = code.co_filename
-            # Hors du moteur, le corps d'un module, ou, dans un fichier mêlé,
-            # ce qui n'est pas une porte : rien à relever, et la sonde ne
-            # regarde plus cette fonction.
-            if (fichier not in moteur or code.co_name == "<module>"
-                    or code.co_qualname not in portes.get(fichier, (code.co_qualname,))):
+            # Ce qui n'est pas une règle du moteur ne se regarde plus.
+            if not regarde(code):
                 return desactiver
-            appelant = cadre_de(1).f_back
-            cadre = appelant
-            while cadre is not None:
-                appele = cadre.f_code
-                # Une fonction du moteur est en cours, ou un calcul gardé.
-                if appele.co_filename in moteur or (appele.co_filename, appele.co_name) == MEMOIRE:
-                    return None
-                cadre = cadre.f_back
-            self.entrees[self._du_depot(appelant)].add(f"{moteur[fichier]}:{code.co_qualname}")
+            relever(code, cadre_de(1).f_back)
             return None
 
         surveillance.register_callback(self.outil, surveillance.events.PY_START, debut)
@@ -138,6 +170,10 @@ class Sonde:
         return self
 
     def arreter(self) -> None:
+        if not self.surveillance:
+            sys.settrace(None)
+            threading.settrace(None)
+            return
         surveillance = sys.monitoring
         surveillance.set_events(self.outil, 0)
         surveillance.register_callback(self.outil, surveillance.events.PY_START, None)
@@ -189,20 +225,23 @@ def lancer(script: Path, arguments: list[str], sortie: Path) -> int:
     return code
 
 
-def relever(script: Path | str, arguments=()) -> dict[str, list[str]]:
+def relever(script: Path | str, arguments=(),
+            par_trace: bool = False) -> dict[str, list[str]]:
     """Ce qui entre dans le moteur Python quand ``script`` tourne avec
     ``arguments``, dans un processus à lui : sous chaque fichier qui appelle,
     les règles du moteur qu'il appelle du dehors, triées. Le code de retour du
     script ne compte pas — une étape de la fabrique lancée pour vérifier rend 1
     quand son fichier est périmé —, mais un script qui s'arrête sur une erreur
-    n'a pas tout fait tourner, et le relevé s'arrête avec lui."""
+    n'a pas tout fait tourner, et le relevé s'arrête avec lui. ``par_trace``
+    fait relever par ``sys.settrace`` même là où ``sys.monitoring`` existe."""
     with tempfile.TemporaryDirectory() as dossier:
         sortie = Path(dossier) / "entrees.json"
         rendu = subprocess.run(
             [sys.executable, "-X", "utf8", str(Path(__file__).resolve()), "--ecrire", str(sortie),
              str(script), *arguments],
             cwd=RACINE, capture_output=True, text=True, encoding="utf-8",
-            env={**os.environ, **UN_SEUL_PROCESSUS})
+            env={**os.environ, **UN_SEUL_PROCESSUS,
+                 **({PAR_TRACE: "1"} if par_trace else {})})
         lu = json.loads(sortie.read_text(encoding="utf-8")) if sortie.exists() else None
     if lu is None or lu["erreur"] is not None:
         raise RuntimeError(f"{script} ne tourne pas sous la sonde : "
