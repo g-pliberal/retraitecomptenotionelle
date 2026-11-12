@@ -486,6 +486,7 @@ versions:
   - {id: LEGIARTI000006738001, article: D. 634-14, en_vigueur: 1990-01-01}
   - {id: LEGIARTI000006749404, article: R. 353-1-1, en_vigueur: 2007-01-13, change: "le renvoi aux articles R. 815-20, R. 815-38, R. 815-39 et R. 815-42"}
   - {id: LEGIARTI000006753836, article: R. 815-42, en_vigueur: 2007-01-13, change: "R. 815-40 renuméroté, la révision au terme d'arrérages qui suit la modification d'un avantage viager"}
+  - {id: LEGIARTI000006753705, article: R. 815-25, en_vigueur: 2007-01-13, change: "l'ancien R. 815-28 renuméroté : les biens du survivant « sont réputés lui procurer un revenu évalué à 3 % de leur valeur vénale fixée à la date de la demande », ceux donnés à ses descendants de même pendant cinq ans, puis pour 1,5 % jusqu'à dix ; R. 353-1 y renvoie (« R. 815-22 à R. 815-25 »), et le modèle prend les ressources que la saisie déclare, qui dit au lecteur d'y compter ses biens ainsi"}
   nee_de: LEGIARTI000006781420
   bornes:
     liquidation.date_effet: [2005-07-01, 2007-07-01]
@@ -1102,7 +1103,17 @@ approximations:
     ressources du survivant et de son nouveau conjoint sont celles que la saisie
     déclare, comptées entières : le modèle n'en ôte ni ce que le droit de
     l'allocation supplémentaire exclut, ni la majoration pour enfants des retraites
-    du survivant (lettre ministérielle n° 237 du 22 mars 2005)
+    du survivant (lettre ministérielle n° 237 du 22 mars 2005). Il n'évalue pas
+    leurs biens, que la caisse compte pour 3 % de leur valeur vénale au jour de la
+    demande, et pour 1,5 % ceux donnés aux descendants depuis cinq à dix ans
+    (R. 815-25), hors la résidence principale (R. 815-22, 1°) et les biens venus du
+    défunt, de son décès ou de la communauté (R. 353-1, 3°) : la saisie dit au
+    lecteur de les compter ainsi dans les ressources qu'il déclare, depuis le 12
+    novembre 2026, et le modèle les compte alors comme le reste de ses ressources
+    hors activité, du jour de sa retraite personnelle quand la saisie la date après
+    sa réversion. Le bien donné à un autre qu'un
+    descendant depuis moins de dix ans, que la caisse compte pour une rente viagère,
+    11,797 % de sa valeur, n'est dit ni par la saisie ni par le modèle
   effet: >-
     les trois ou douze mois de la date d'effet ne déplacent aucune réversion des 907
     témoins de simulation, le 25 octobre 2026 ; la révision que le modèle ajoute
@@ -2105,17 +2116,44 @@ sources:
       exemple chiffré ne fait jouer la demande ni le décès
     date: 2026-10-25
     url: https://legislation.lassuranceretraite.fr/#/references-reglementaires?file_leaf_ref=CR_CN_3175_05031975.aspx
-textes_a_rattacher:
-- id: LEGIARTI000006753705
-  article: R. 815-25 du code de la sécurité sociale, rédaction en vigueur depuis le 13 janvier 2007
-  en_vigueur: 2007-01-13
-  change: >-
-    R. 353-1 y renvoie pour les ressources du survivant (« R. 815-22 à R. 815-25 ») : les
-    biens mobiliers et immobiliers, et ceux donnés depuis moins de cinq ans, « sont
-    réputés lui procurer un revenu évalué à 3 % de leur valeur vénale », 1,5 % pour une
-    donation de cinq à dix ans. La fiche ne le dit pas, et la saisie prend les ressources
-    telles qu'on les lui déclare : à rattacher aux versions d'après 2007, avec ce que
-    R. 353-1 en excepte. Lue le 12 novembre 2026 (action 184, étape 6)
+  - type: legifrance
+    reference: >-
+      R. 815-25 (LEGIARTI000006753705, depuis le 13 janvier 2007), auquel R. 353-1
+      renvoie : « Les biens actuels mobiliers et immobiliers et ceux dont le demandeur
+      a fait donation à ses descendants au cours des cinq années précédant la demande,
+      à l'exception des biens mentionnés aux 1° et 2° de l'article R. 815-22, sont
+      réputés lui procurer un revenu évalué à 3 % de leur valeur vénale fixée à la date
+      de la demande, contradictoirement et, à défaut, à dire d'expert. Ce pourcentage
+      est fixé à 1,5 % lorsque la donation est intervenue depuis plus de cinq ans mais
+      moins de dix ans avant la demande », et le bien donné à un autre qu'un descendant
+      depuis moins de dix ans vaut « une rente viagère » ; R. 815-22
+      (LEGIARTI000047770487, depuis le 1er juillet 2023), 1° et 2° : « La valeur des
+      locaux d'habitation occupés à titre de résidence principale par l'intéressé et
+      les membres de sa famille vivant à son foyer », « La valeur des bâtiments de
+      l'exploitation agricole » ; R. 353-1 (LEGIARTI000038790257), 3° : les ressources
+      ne comprennent pas « Les revenus des biens mobiliers et immobiliers acquis du
+      chef du conjoint décédé ou disparu ou en raison de ce décès ou de cette
+      disparition ». Les huit rédactions d'avant 2007 de R. 815-25 portent un autre
+      objet, la liste des ressources comptées et exclues, que R. 815-22 porte depuis
+    date: 2026-11-12
+  - type: autre
+    reference: >-
+      base de législation de la Cnav, exposé « Evaluation des ressources » de la
+      retraite de réversion (23 janvier 2026), « Biens mobiliers et immobiliers » :
+      « Les biens mobiliers et immobiliers du demandeur sont censés lui procurer un
+      revenu fictif annuel égal à 3 % de leur valeur vénale à la date de sa demande »,
+      « Toute somme qui a le caractère d'un capital entre dans le patrimoine », le bien
+      en indivision pour la seule part de l'intéressé, le bien donné à un descendant
+      pour 3 % puis 1,5 %, et « Un bien donné à une autre personne, dans les 10 ans
+      avant la demande, est censé procurer un revenu fictif annuel égal à 11,797 % de
+      la valeur vénale » (« Css art. R815-28 ancien ») ; liste « Ressources exclues
+      pour la retraite de réversion », « Biens mobiliers et immobiliers » : « Biens
+      propres de l'assuré décédé », « Biens issus du décès », « Biens de la
+      communauté », l'exploitation agricole, « bâtiments, cheptel et terres », les
+      locaux de la résidence principale, les « Meubles meublants ». Aucun exemple
+      chiffré n'y fait jouer un bien
+    date: 2026-11-12
+    url: https://legislation.lassuranceretraite.fr/#/expose?file_leaf_ref=retraite_reversion_ressource_evaluation_ressource_ex.aspx
 textes_sans_effet:
 - id: LEGIARTI000051969180
   article: R. 815-32, rédaction du 1er octobre 2025

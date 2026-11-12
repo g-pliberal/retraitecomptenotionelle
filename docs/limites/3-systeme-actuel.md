@@ -469,7 +469,8 @@ l'Institut des politiques publiques (PENSIPP). Écarts connus :
   étranger (L. 161-18-1) ; il tient pour ressources du survivant ce que la
   saisie déclare, quand la caisse les évalue — les biens, censés rapporter
   trois pour cent de leur valeur vénale, les biens donnés, les ressources
-  qu'elle exclut — ; et il ne calcule pas la fraction de réversion que le
+  qu'elle exclut —, et c'est la saisie qui dit au lecteur d'y compter ses
+  biens ainsi ; et il ne calcule pas la fraction de réversion que le
   régime général met à la charge d'un régime spécial de D. 173-1 (voir
   « régimes spéciaux et régime général »). Exposés « Avantages liés au décès
   de l'assuré » de la base de législation de la Cnav.

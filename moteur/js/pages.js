@@ -1170,11 +1170,21 @@ function conjointFormulaire(saisie, contexte) {
       + "publique demande quand aucun enfant n'en est né."),
     g.champ("ressources_conjoint", "Ses ressources",
       saisie.ressources_conjoint === null ? "" : nombreBrut(saisie.ressources_conjoint),
-      "facultatif : en euros bruts par an, sa propre retraite comprise", "number",
-      { min: "0", step: "100" },
+      "facultatif : en euros bruts par an, sa retraite et 3 % de ses biens compris",
+      "number", { min: "0", step: "100" },
+      // LES BIENS (action 192, étape 4 ; R. 353-1, R. 815-22 et R. 815-25) : la
+      // caisse ne compte pas ce qu'ils rapportent, mais 3 % de leur valeur
+      // vénale au jour de la demande. Le modèle prend le montant déclaré : c'est
+      // au lecteur de les y mettre, et ce texte seul le lui dit.
       "Le régime général réduit la réversion de ce qui dépasse, avec elle, "
-      + "2 080 fois le SMIC horaire. Sans ressources dites, le modèle n'en compte "
-      + "aucune, et la réversion n'est réduite que par celles des autres régimes."),
+      + "2 080 fois le SMIC horaire. Ses biens y comptent chaque année pour 3 % de "
+      + "leur valeur, quoi qu'ils rapportent : son épargne, un logement "
+      + "qu'il loue. Ceux qu'il a donnés à ses descendants depuis moins de cinq ans "
+      + "comptent de même, et pour 1,5 % ceux donnés depuis cinq à dix ans. N'y "
+      + "comptez ni sa résidence principale, ni ce qui lui vient de vous ou de "
+      + "votre décès, ni les biens de votre communauté. Sans ressources dites, le "
+      + "modèle n'en compte aucune, et la réversion n'est réduite que par celles "
+      + "des autres régimes."),
     g.champ("activite_conjoint", "Dont ses revenus d'activité",
       saisie.activite_conjoint === null ? "" : nombreBrut(saisie.activite_conjoint),
       "facultatif : son salaire, en euros bruts par an", "number",
@@ -1232,8 +1242,9 @@ function conjointFormulaire(saisie, contexte) {
         ? "" : nombreBrut(saisie.ressources_nouveau_conjoint),
       "facultatif : en euros bruts par an", "number",
       { min: "0", step: "100" },
-      "Elles s'ajoutent aux siennes sous le plafond du ménage. Sans elles, le "
-      + "modèle n'en compte aucune."),
+      "Elles s'ajoutent aux siennes sous le plafond du ménage, ses biens "
+      + "comptés de même, pour 3 % de leur valeur. Sans elles, le modèle n'en "
+      + "compte aucune."),
     g.champ("ressources_nouveau_conjoint_variations",
       "Changements des ressources de son nouveau conjoint",
       saisie.ressources_nouveau_conjoint_variations, "facultatif : « 2034-01:11000 »",

@@ -235,6 +235,36 @@ def test_le_formulaire_demande_ce_qui_revise_la_reversion():
         assert f'value="{html.escape(_REVISIONS[champ])}"' in balise
 
 
+def test_le_formulaire_dit_que_les_biens_du_survivant_comptent_dans_ses_ressources():
+    """Les ressources du survivant s'apprécient comme celles de l'allocation
+    de solidarité (R. 353-1, qui renvoie à R. 815-22 à R. 815-25) : ses biens
+    « sont réputés lui procurer un revenu évalué à 3 % de leur valeur vénale »,
+    ceux qu'il a donnés à ses descendants de même pendant cinq ans, puis pour
+    « 1,5 % lorsque la donation est intervenue depuis plus de cinq ans mais
+    moins de dix ans » (R. 815-25). N'y comptent ni la résidence principale
+    (R. 815-22, 1°), ni les biens « acquis du chef du conjoint décédé […] ou
+    en raison de ce décès » (R. 353-1, 3°), ceux de la communauté compris
+    (liste « Ressources exclues pour la retraite de réversion » de la Cnav).
+    Le formulaire demandait des ressources sans le dire : le lecteur déclare
+    alors ce que ses biens rapportent, ou rien."""
+    corps = rendre("/simuler", {"naissance": "1960", "conjoint": "1962-03"})[1]
+    champ = re.search(r'<label for="ressources_conjoint">(.*?)</label>', corps, re.S).group(1)
+    dit = html.unescape(re.sub(r"<[^>]+>", " ", champ))
+    assert re.search(r"biens\b[^.]*\b3 % de leur valeur", dit), dit
+    assert re.search(r"donnés à ses descendants[^.]*\b1,5 %[^.]*cinq à dix ans", dit), dit
+    exclus = re.search(r"[^.]*\bni sa résidence principale\b[^.]*\.", dit)
+    assert exclus, dit
+    assert "votre communauté" in exclus.group(0), dit
+    assert re.search(r"lui vien(nen)?t de vous", exclus.group(0)), dit
+    # Sous le plafond du ménage, les ressources sont celles du ménage
+    # (L. 353-1), appréciées par les mêmes articles : les biens du nouveau
+    # conjoint y comptent comme ceux du survivant.
+    champ = re.search(r'<label for="ressources_nouveau_conjoint">(.*?)</label>', corps,
+                      re.S).group(1)
+    dit = html.unescape(re.sub(r"<[^>]+>", " ", champ))
+    assert re.search(r"biens\b[^.]*\b3 % de leur valeur", dit), dit
+
+
 def test_le_formulaire_demande_la_categorie_de_la_pension_d_invalidite():
     """La catégorie de la pension d'invalidité en fixe le taux (L. 341-4) : la
     saisie la lisait de l'adresse ; le formulaire la demande sous la pension

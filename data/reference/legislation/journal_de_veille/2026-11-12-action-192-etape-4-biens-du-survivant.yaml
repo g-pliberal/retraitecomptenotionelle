@@ -1,0 +1,32 @@
+date: "2026-11-12"
+session: "action 192, étape 4 : les biens du survivant dans les ressources de la réversion, dits à la saisie"
+consulte: >-
+  L'index LEGI du dépôt, à jour au 11 novembre 2026 : R. 815-25, ses neuf
+  rédactions et celle du 13 janvier 2007 en entier (LEGIARTI000006753705) ;
+  R. 815-22 en vigueur (LEGIARTI000047770487) ; R. 353-1 en vigueur
+  (LEGIARTI000038790257) ; R. 815-28 d'avant 2007 (LEGIARTI000006753728). La
+  base de législation de la Cnav : l'exposé « Evaluation des ressources » de
+  la retraite de réversion (23 janvier 2026) et la liste « Ressources exclues
+  pour la retraite de réversion ». La veille du jour signale l'exposé
+  « Montant de la retraite de l'assuré décédé » comme changé le 10 novembre
+  2026 : il n'a pas été relu, il ne touche pas aux ressources.
+trouve: >-
+  Les biens du survivant comptent dans ses ressources pour 3 % de leur valeur
+  vénale au jour de la demande, ceux donnés à ses descendants de même pendant
+  cinq ans, puis pour 1,5 % jusqu'à dix (R. 815-25) ; n'y comptent ni la
+  résidence principale (R. 815-22, 1°), ni les biens venus du défunt, de son
+  décès ou de la communauté (R. 353-1, 3° ; liste de la Cnav). La règle
+  précède 2007, sous le numéro R. 815-28. Aucun exemple chiffré publié. Le
+  calcul ne change pas : le formulaire du simulateur le dit au lecteur, au
+  champ des ressources du conjoint et à celui de son nouveau conjoint, et la
+  fiche reversion cite la rédaction de 2007 dans sa version age_52, avec deux
+  lectures de plus.
+reste: >-
+  Deux écarts du modèle, non mesurés, listés au propriétaire dans la note
+  docs/feuille_de_route/192/2026-11-12-etape-4-biens-du-survivant-reversion.md :
+  les ressources hors activité du survivant, biens compris, ne comptent qu'à
+  partir de sa retraite personnelle quand la saisie la date après sa
+  réversion ; le bien donné à un autre qu'un descendant, compté pour une
+  rente viagère de 11,797 % de sa valeur, n'est dit nulle part. L'exposé
+  « Montant de la retraite de l'assuré décédé », changé le 10 novembre 2026,
+  reste à relire pour la fiche reversion.
