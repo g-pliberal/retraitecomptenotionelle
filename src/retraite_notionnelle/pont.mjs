@@ -1497,13 +1497,38 @@ function optionsDeLaFacade(options) {
 }
 
 /**
+ * Les sortes d'entrées du journal dont le contenu ne passe pas le pont : une
+ * liquidation tient son contexte, les tables du moteur, et pèserait cent
+ * mégaoctets. `pont.py` refuse qu'on le lise (`ContenuNonLu`).
+ */
+const CONTENUS_QUI_NE_PASSENT_PAS = new Set(["liquidation"]);
+
+/**
+ * La comparaison telle que le portage la tient (`telQuel`), et son journal
+ * entrée par entrée, dans l'ordre de leur inscription : ce qui date chacune,
+ * et son contenu, quand il passe.
+ */
+function comparaisonTelleQuelle({ journal, ...comparaison }) {
+  return {
+    ...telQuel(comparaison),
+    journal: journal === null ? null : [...journal].map(({ contenu, ...entree }) => ({
+      ...telQuel(entree),
+      contenu: CONTENUS_QUI_NE_PASSENT_PAS.has(entree.sorte) ? null : telQuel(contenu),
+    })),
+  };
+}
+
+/**
  * Les entrées du moteur que les tests appellent, sous le nom de leur jumeau
- * Python (`tests/facade.py`) : les bâtisseurs de carrière, du simulateur — qui
- * vérifient l'affiliation — et de la carrière, sur les séries du simulateur ;
- * le scénario 1, son résultat entier ; la réversion. Une entrée de plus s'y
- * déclare, et ce qu'elle rend dans `LECTURES_DE_LA_FACADE` de `pont.py`.
+ * Python (`tests/facade.py`) : la comparaison entière d'une carrière ; les
+ * bâtisseurs de carrière, du simulateur — qui vérifient l'affiliation — et de
+ * la carrière, sur les séries du simulateur ; le scénario 1, son résultat
+ * entier ; la réversion. Une entrée de plus s'y déclare, et ce qu'elle rend
+ * dans `LECTURES_DE_LA_FACADE` de `pont.py`.
  */
 const ENTREES_DE_LA_FACADE = {
+  "simulateur.simuler":
+    (simulateur, carriere) => comparaisonTelleQuelle(simulateur.simuler(carriere)),
   "simulateur.carriere_simple": (simulateur, options) => carriereEnDonnees(
     simulateur.carriereSimple(optionsDeLaFacade(options))),
   "simulateur.carriere_parcours": (simulateur, options) => carriereEnDonnees(

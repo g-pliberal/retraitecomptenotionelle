@@ -187,6 +187,9 @@ EXCEPTIONS = {
     # moteur Python : deux minutes (action 161, la façade).
     ("test_facade_jumeau.py",
      "test_le_jumeau_refait_le_scenario_1_que_la_facade_sert_sur_chaque_temoin"): "complet",
+    # Et sa comparaison entière, journal compris : quatre minutes.
+    ("test_facade_jumeau.py",
+     "test_le_jumeau_refait_la_comparaison_que_la_facade_sert_sur_chaque_temoin"): "complet",
     # L'option des cas types des deux lectures de la décision 29, simulée au
     # portage et refaite au moteur Python : sept secondes (action 161, lot B).
     ("test_lectures_decision_29.py",

@@ -27,12 +27,14 @@ affiliations — se lisent, par leurs chargeurs Python, qui restent.
 
 from __future__ import annotations
 
+import dataclasses
 import inspect
 
 from retraite_notionnelle import carriere as _carriere
 from retraite_notionnelle import memoire, pont
 from retraite_notionnelle import simulateur as _simulateur
 from retraite_notionnelle.config import Parametres
+from retraite_notionnelle.pont import NonTransmissible
 from retraite_notionnelle.droit import reversion as _reversion
 from retraite_notionnelle.scenarios import actuel as _actuel
 
@@ -41,11 +43,10 @@ from retraite_notionnelle.scenarios import actuel as _actuel
 DONNEES = frozenset({"catalogue", "affiliations"})
 
 
-class NonTransmissible(BaseException):
-    """Ce que le test demande, la façade ne sait pas le faire parvenir au
-    portage. Elle ne dérive pas d'``Exception`` : un test qui attend une erreur
-    du moteur (``pytest.raises(Exception)``) ne verdit pas de ce refus."""
-
+#: Les huit entrées du moteur Python que la façade sert, sous leurs noms.
+ENTREES = ("simulateur.simuler", "scenario_actuel.calculer", "reversion.reversion",
+           "simulateur.carriere_simple", "simulateur.carriere_parcours",
+           "simulateur.carriere_releve", "carriere.depuis_profil", "carriere.depuis_parcours")
 
 #: Les séries de chaque simulateur de la façade qui les a données, et ses
 #: paramètres : un bâtisseur de la carrière reconnaît ainsi celles qu'on lui
@@ -150,6 +151,22 @@ class Simulateur(_Ferme):
         if nom in DONNEES:
             return getattr(self._donnees, nom)
         return super().__getattr__(nom)
+
+    def simuler(self, carriere):
+        """``Simulateur.simuler`` : la comparaison entière, son journal
+        compris, sous les paramètres du simulateur, racine des données
+        comprise."""
+        comparaison = _demander("simulateur.simuler", self.parametres, pont.SIMULATEUR, carriere)
+        # Le portage range ses simulateurs sous une clé qui ne lit pas les
+        # neutralisations (``cleParametres`` de ``config.js``), qui ne
+        # commandent rien : il rend celles du premier simulateur qu'il a bâti.
+        if dataclasses.replace(comparaison.parametres,
+                               racine_donnees=self.parametres.racine_donnees,
+                               neutralisations=self.parametres.neutralisations) != self.parametres:
+            raise RuntimeError("le portage a simulé sous d'autres paramètres que ceux du "
+                               "simulateur de la façade")
+        comparaison.parametres = self.parametres
+        return comparaison
 
     def carriere_simple(self, annee_naissance, sexe, affiliation, age_debut, age_liquidation,
                         **options):

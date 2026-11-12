@@ -14,6 +14,7 @@ import dataclasses
 import enum
 import json
 import shutil
+from pathlib import Path
 
 import pytest
 
@@ -22,6 +23,7 @@ from retraite_notionnelle import simulateur as simulateur_python
 from retraite_notionnelle.carriere import Carriere as CarrierePython
 from retraite_notionnelle.carriere import LigneRelevee, Metier
 from retraite_notionnelle.config import RACINE_PROJET
+from retraite_notionnelle.journal import Journal
 
 import facade
 from outils_pont import TOLERANCE_DU_MOTEUR_PYTHON, ecarts_d_ecriture
@@ -30,10 +32,32 @@ TEMOINS = RACINE_PROJET / "tests" / "temoins" / "simulations.json"
 
 #: Les types du résultat du scénario 1 que peu de carrières portent : la
 #: confrontation entière doit avoir relu chacun au moins une fois.
-TYPES_RARES = {"DepartServi", "DemandeExaminee", "ProgressiveServie", "Cumul",
-               "DroitsApresDepart", "NouvellePension", "MinimumEcrete", "PetitePension",
-               "ChefDExploitation", "ExploitantAgricole", "EligibleAgricole",
+TYPES_RARES = {"DepartServi", "DemandeExaminee", "ProgressiveServie", "MinimumEcrete",
+               "PetitePension", "ChefDExploitation", "ExploitantAgricole", "EligibleAgricole",
                "AvantageApplique", "PensionRegime"}
+
+#: Ceux de la comparaison, de même : le cumul et les droits d'après le départ,
+#: que l'échéancier ajoute au scénario 1, la fiche de paie de l'actif, la
+#: pension d'aujourd'hui de qui est parti, la réversion, le pilier, la
+#: garantie, et ce que le journal inscrit.
+TYPES_DE_LA_COMPARAISON = {"Comparaison", "ResultatActuel", "ResultatNotionnel", "Cumul",
+                           "DroitsApresDepart", "NouvellePension",
+                           "CompteNotionnel", "CotisationAnnuelle", "CoefficientConversion",
+                           "EcartAge", "Capitalisation", "AnneeCapitalisation",
+                           "GarantieVieillesse", "RegimeFusionne", "RemunerationActif",
+                           "AnneeComparee", "FicheDePaie", "PensionAujourdhui",
+                           "Reversion", "Evenement", "Foyer", "Revalorisee"}
+
+#: Les témoins où le jumeau Python ne refait pas la fiche de paie que le
+#: portage calcule sous la proposition, certaines années à venir : son brut
+#: s'écarte du dernier chiffre, et la réduction générale des cotisations
+#: patronales, dont le coefficient s'arrondit, de quelques euros, le coût du
+#: travail avec elle. Le portage fait foi, et aucun témoin n'écrit ces
+#: années : l'écart, trouvé le 12 novembre 2026 par cette confrontation, part
+#: avec ``remuneration.py``. Un témoin qui n'en a plus quitte la liste.
+FICHES_QUE_LE_JUMEAU_NE_REFAIT_PAS = ("assimilee_apprenti_paye_peu",
+                                      "projection_cor_productivite_basse",
+                                      "rattachement_pension_smic", "salaire_0.55")
 
 
 def _a_plat(valeur, types: set[str]):
@@ -44,6 +68,15 @@ def _a_plat(valeur, types: set[str]):
     stricte rend « 0.0 ». ``types`` reçoit le nom de chaque type rencontré."""
     if isinstance(valeur, CarrierePython):
         return pont.carriere_en_donnees(valeur)
+    if isinstance(valeur, Journal):
+        # Le contenu d'une liquidation ne passe pas le pont : ce qui la date,
+        # seulement.
+        return [{"id": entree.id, "evenement": entree.evenement, "sorte": entree.sorte,
+                 "inscrite_le": entree.inscrite_le, "effet": [entree.debut, entree.fin],
+                 "remplace": entree.remplace, "annule": entree.annule,
+                 "contenu": None if entree.sorte == "liquidation"
+                 else _a_plat(entree.contenu, types)}
+                for entree in valeur]
     if dataclasses.is_dataclass(valeur) and not isinstance(valeur, type):
         types.add(type(valeur).__name__)
         return {"type": type(valeur).__name__,
@@ -51,6 +84,8 @@ def _a_plat(valeur, types: set[str]):
                    for champ in dataclasses.fields(valeur)}}
     if isinstance(valeur, enum.Enum):
         return valeur.value
+    if isinstance(valeur, Path):
+        return str(valeur)
     if isinstance(valeur, (list, tuple)):
         return [_a_plat(element, types) for element in valeur]
     if isinstance(valeur, dict):
@@ -60,22 +95,31 @@ def _a_plat(valeur, types: set[str]):
     return valeur
 
 
-def _ecarts_du_scenario_1(pas: int) -> tuple[list[str], set[str], int]:
+def _ecarts(pas: int, entree) -> tuple[list[str], set[str], int]:
     """Un témoin sur ``pas`` : sa carrière, que le portage bâtit de sa requête,
-    liquidée par la façade et par le moteur Python, sous ses paramètres. Les
-    écarts, les types relus, et le nombre de carrières."""
+    passée à ``entree`` — liquidée, ou simulée — sur le simulateur de la façade
+    et sur celui du Python, sous ses paramètres. Les écarts, les types relus,
+    et le nombre de carrières."""
     temoins = json.loads(TEMOINS.read_text(encoding="utf-8"))
     carrieres, refus = pont.carrieres_des_saisies(
         [{"cle": nom, "requete": temoins[nom]["requete"]} for nom in sorted(temoins)[::pas]])
     assert refus == {}
     ecarts, types = [], set()
     for nom, (parametres, carriere) in carrieres.items():
-        servi = facade.Simulateur(parametres).scenario_actuel.calculer(carriere)
-        refait = simulateur_python.Simulateur(parametres).scenario_actuel.calculer(carriere)
+        servi = entree(facade.Simulateur(parametres), carriere)
+        refait = entree(simulateur_python.Simulateur(parametres), carriere)
         assert type(servi) is type(refait)
         ecarts += ecarts_d_ecriture(_a_plat(refait, set()), _a_plat(servi, types), (nom,),
                                     tolerance=TOLERANCE_DU_MOTEUR_PYTHON)
     return ecarts, types, len(carrieres)
+
+
+def _ecarts_du_scenario_1(pas: int) -> tuple[list[str], set[str], int]:
+    return _ecarts(pas, lambda simulateur, carriere: simulateur.scenario_actuel.calculer(carriere))
+
+
+def _ecarts_de_la_comparaison(pas: int) -> tuple[list[str], set[str], int]:
+    return _ecarts(pas, lambda simulateur, carriere: simulateur.simuler(carriere))
 
 
 def test_le_jumeau_refait_le_scenario_1_que_la_facade_sert_sur_un_temoin_sur_vingt():
@@ -97,7 +141,37 @@ def test_le_jumeau_refait_le_scenario_1_que_la_facade_sert_sur_chaque_temoin():
     assert TYPES_RARES <= types
 
 
-#: Un salarié né en 1965, entré à 23 ans, parti à 64 ans.
+def test_le_jumeau_refait_la_comparaison_que_la_facade_sert_sur_un_temoin_sur_quarante():
+    """La comparaison entière — la carrière, les six scénarios, la fiche de
+    paie, le journal, hors du contenu de la liquidation, qui ne passe pas."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    ecarts, _, nombre = _ecarts_de_la_comparaison(40)
+    assert nombre >= 20
+    assert not ecarts, f"{len(ecarts)} écart(s), dont : {ecarts[:5]}"
+
+
+def test_le_jumeau_refait_la_comparaison_que_la_facade_sert_sur_chaque_temoin():
+    """Tous les témoins, quatre minutes de moteur Python : chaque type de la
+    comparaison y est relu au moins une fois. Seule s'écarte la fiche de paie
+    de quatre témoins, où le jumeau ne suit pas le portage
+    (:data:`FICHES_QUE_LE_JUMEAU_NE_REFAIT_PAS`)."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    ecarts, types, nombre = _ecarts_de_la_comparaison(1)
+    assert nombre >= 900
+    connus = {nom: [ecart for ecart in ecarts
+                    if ecart.startswith(f"{nom}.remuneration.annees.")
+                    and ".proposition." in ecart]
+              for nom in FICHES_QUE_LE_JUMEAU_NE_REFAIT_PAS}
+    autres = [ecart for ecart in ecarts if not any(ecart in fiche for fiche in connus.values())]
+    assert not autres, f"{len(autres)} écart(s), dont : {autres[:5]}"
+    assert TYPES_RARES | TYPES_DE_LA_COMPARAISON <= types
+    if not TOLERANCE_DU_MOTEUR_PYTHON:
+        assert all(connus.values()), [nom for nom, fiche in connus.items() if not fiche]
+
+
+#: Une salariée née en 1965, partie à 64 ans.
 COMMUN = dict(annee_naissance=1965, sexe="F", age_liquidation=64.0)
 
 BATISSEURS = {

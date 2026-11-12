@@ -1637,12 +1637,21 @@ CHAMPS_SANS_OBJET = {
 }
 
 #: Les types dont le portage écrit les champs en casse de chameau.
-CLASSES_EN_CHAMEAU = frozenset({"EligibleAgricole"})
+CLASSES_EN_CHAMEAU = frozenset({
+    "EligibleAgricole", "RemunerationActif", "AnneeComparee", "FicheDePaie",
+    "MajorationProportionnelle", "Foyer"})
 
 #: Les champs que le portage écrit sous un autre nom que celui du Python, hors
-#: des classes en casse de chameau : ``{type: {champ: nom du portage}}``.
+#: de la casse de chameau : ``{type: {champ: nom du portage}}``.
 NOMS_DU_PORTAGE = {
     "ExploitantAgricole": {"chef_reconstitue": "chefReconstitue"},
+    "AnneeComparee": {"_smic": "smic"},
+}
+
+#: Ce que le portage tient sur un type et que le Python n'y porte pas : les
+#: scénarios que la page énumère. La lecture le laisse.
+HORS_DU_TYPE = {
+    "Comparaison": frozenset({"scenarios"}),
 }
 
 #: Le type des champs que le Python annonce ``object``, pour ne pas faire
@@ -1693,7 +1702,8 @@ def _dataclass_lu(type_, valeur, chemin: str):
     if not isinstance(valeur, dict):
         raise TypeError(f"{chemin} : {type_.__name__} attendu, le portage a écrit {valeur!r}")
     champs = {_nom_du_portage(type_, champ.name): champ for champ in dataclasses.fields(type_)}
-    en_trop = sorted(nom for nom in valeur if nom not in champs
+    hors_du_type = HORS_DU_TYPE.get(type_.__name__, frozenset())
+    en_trop = sorted(nom for nom in valeur if nom not in champs and nom not in hors_du_type
                      and not isinstance(getattr(type_, nom, None), property))
     if en_trop:
         raise ValueError(f"{chemin} : {type_.__name__} : le portage écrit {', '.join(en_trop)}, "
@@ -1722,6 +1732,7 @@ def lu_strictement(type_, valeur, chemin: str = "valeur"):
     l'arrêtent."""
     from .carriere import Carriere
     from .config import Parametres
+    from .journal import Journal
 
     origine = typing.get_origin(type_)
     if origine in (typing.Union, types.UnionType):
@@ -1752,8 +1763,16 @@ def lu_strictement(type_, valeur, chemin: str = "valeur"):
         return carriere_des_donnees(valeur)
     if type_ is Parametres:
         return parametres_des_donnees(valeur)
+    if type_ is Journal:
+        return journal_des_donnees(valeur, chemin)
     if dataclasses.is_dataclass(type_):
         return _dataclass_lu(type_, valeur, chemin)
+    if type_ is dict:
+        # Une donnée libre, que son contrat ne type pas — ce que vise un
+        # événement : telle que JSON la rend, comme la chronologie.
+        if not isinstance(valeur, dict):
+            raise TypeError(f"{chemin} : dictionnaire attendu, le portage a écrit {valeur!r}")
+        return valeur
     if origine is dict:
         type_des_cles, type_des_valeurs = typing.get_args(type_)
         if not isinstance(valeur, dict):
@@ -1785,6 +1804,129 @@ def _cle_lue(type_, cle: str, chemin: str):
     raise TypeError(f"{chemin} : clé {cle!r}, que la lecture ne sait pas rendre en {type_!r}")
 
 
+class NonTransmissible(BaseException):
+    """Ce qu'un test demande à la façade, elle ne sait pas le faire parvenir
+    au portage, ou le portage ne sait pas le lui rendre. Elle ne dérive pas
+    d'``Exception`` : un test qui attend une erreur du moteur
+    (``pytest.raises(Exception)``) ne verdit pas de ce refus."""
+
+
+class ContenuNonLu:
+    """Le contenu d'une entrée du journal qui ne passe pas le pont
+    (``CONTENUS_QUI_NE_PASSENT_PAS`` de ``pont.mjs``) : l'entrée se lit, ce
+    qui la date aussi ; lire son contenu est refusé, au lieu qu'il manque
+    sans bruit."""
+
+    def __init__(self, sorte: str) -> None:
+        self._sorte = sorte
+
+    def _refuser(self, *_):
+        raise NonTransmissible(
+            f"le contenu d'une entrée « {self._sorte} » du journal ne passe pas le pont : "
+            "le test le demande au pont du droit (pont.droit), ou se porte à la main")
+
+    def __getattr__(self, nom):
+        if nom.startswith("_"):
+            raise AttributeError(nom)
+        self._refuser()
+
+    __getitem__ = __iter__ = __eq__ = __bool__ = _refuser
+    __hash__ = None
+
+
+#: Le type du contenu d'une entrée du journal, par sa sorte : ``(module,
+#: nom)``, ou ``None`` pour une composante, une donnée de son contrat, dont
+#: les montants sont des flottants (:data:`FLOTTANTS_DE_LA_COMPOSANTE`).
+CONTENUS_DU_JOURNAL = {
+    "evenement": ("echeancier", "Evenement"),
+    "reversion": ("droit.reversion", "Reversion"),
+    "foyer": ("droit.foyer", "Foyer"),
+    "revalorisation": ("revalorisation", "Revalorisee"),
+    "composante": None,
+}
+
+#: Les nombres d'une composante du journal que le Python écrit toujours en
+#: flottants, par leur clé : JSON n'écrit pas « 1200.0 ». Tout autre nombre
+#: y arrête la lecture, au lieu que son type se devine.
+FLOTTANTS_DE_LA_COMPOSANTE = frozenset({"annuel"})
+
+
+def _composante_lue(valeur, chemin: str, cle: str | None = None):
+    """Une composante du journal, ou ce qu'elle tient sous ``cle`` : telle que
+    JSON la rend, ses montants en flottants."""
+    if isinstance(valeur, dict):
+        return {nom: _composante_lue(element, f"{chemin}.{nom}", nom)
+                for nom, element in valeur.items()}
+    if isinstance(valeur, list):
+        return [_composante_lue(element, f"{chemin}[{rang}]", cle)
+                for rang, element in enumerate(valeur)]
+    if cle in FLOTTANTS_DE_LA_COMPOSANTE:
+        return lu_strictement(float | None, valeur, chemin)
+    if valeur is None or type(valeur) in (str, bool):
+        return valeur
+    raise TypeError(f"{chemin} : nombre dont la lecture ne connaît pas le type : {valeur!r} "
+                    "(pont.FLOTTANTS_DE_LA_COMPOSANTE)")
+
+#: Les champs d'une entrée du journal tels que le portage les écrit, sous le
+#: nom du Python (``Entree`` de ``journal.py``), hors de son contenu.
+CHAMPS_DE_L_ENTREE = {
+    "id": ("id", str), "evenement": ("evenement", str), "inscriteLe": ("inscrite_le", str),
+    "debut": ("debut", str | None), "fin": ("fin", str | None), "sorte": ("sorte", str),
+    "remplace": ("remplace", str | None), "annule": ("annule", str | None),
+}
+
+
+def _contenu_lu(sorte: str, contenu, chemin: str):
+    """Le contenu d'une entrée du journal, sous le type de sa sorte."""
+    import importlib
+
+    if contenu is None:
+        return ContenuNonLu(sorte)
+    if sorte not in CONTENUS_DU_JOURNAL:
+        raise ValueError(f"{chemin} : sorte d'entrée que la lecture ne connaît pas : {sorte}")
+    declare = CONTENUS_DU_JOURNAL[sorte]
+    if declare is None:
+        if not isinstance(contenu, dict):
+            raise TypeError(f"{chemin} : dictionnaire attendu, le portage a écrit {contenu!r}")
+        return _composante_lue(contenu, chemin)
+    module, nom = declare
+    return lu_strictement(getattr(importlib.import_module(f"{__package__}.{module}"), nom),
+                          contenu, chemin)
+
+
+def journal_des_donnees(entrees: list[dict], chemin: str = "journal"):
+    """Le journal que le portage a écrit entrée par entrée
+    (``comparaisonTelleQuelle`` de ``pont.mjs``), sous le type du Python : ses
+    entrées inscrites dans leur ordre, chacune avec ce qui la date et son
+    contenu, sous le type de sa sorte (:data:`CONTENUS_DU_JOURNAL`) — ou
+    illisible, quand il ne passe pas (:class:`ContenuNonLu`)."""
+    from .journal import Entree, Journal
+
+    if not isinstance(entrees, list):
+        raise TypeError(f"{chemin} : suite attendue, le portage a écrit {entrees!r}")
+    journal = Journal()
+    for rang, ecrite in enumerate(entrees):
+        ici = f"{chemin}[{rang}]"
+        if set(ecrite) != {*CHAMPS_DE_L_ENTREE, "contenu"}:
+            raise ValueError(f"{ici} : Entree : le portage écrit les champs {sorted(ecrite)}")
+        champs = {nom: lu_strictement(type_, ecrite[du_portage], f"{ici}.{nom}")
+                  for du_portage, (nom, type_) in CHAMPS_DE_L_ENTREE.items()}
+        journal.inscrire(Entree(
+            **champs, contenu=_contenu_lu(champs["sorte"], ecrite["contenu"], f"{ici}.contenu")))
+    return journal
+
+
+def comparaison_des_donnees(comparaison: dict):
+    """La comparaison entière que le portage a écrite, sous le type du Python
+    (``Comparaison``), lue strictement, son journal compris. Ses paramètres
+    reviennent sans la racine des données, dont le paquet tenait lieu : le
+    client y remet les siens. Le module du simulateur ne se charge qu'à la
+    lecture."""
+    from .simulateur import Comparaison
+
+    return lu_strictement(Comparaison, comparaison, "Comparaison")
+
+
 def resultat_actuel_des_donnees(actuel: dict):
     """Le résultat entier du scénario 1 que le portage a écrit, sous le type du
     Python (``ResultatActuel``), lu strictement. Le module du scénario ne se
@@ -1798,6 +1940,7 @@ def resultat_actuel_des_donnees(actuel: dict):
 #: ``pont.mjs``), relu sous le type du Python. Une entrée qui n'y est pas est
 #: refusée avant node.
 LECTURES_DE_LA_FACADE = {
+    "simulateur.simuler": comparaison_des_donnees,
     "simulateur.carriere_simple": carriere_des_donnees,
     "simulateur.carriere_parcours": carriere_des_donnees,
     "simulateur.carriere_releve": carriere_des_donnees,

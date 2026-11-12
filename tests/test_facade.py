@@ -23,11 +23,15 @@ from retraite_notionnelle import carriere as carriere_python
 from retraite_notionnelle import memoire, pont
 from retraite_notionnelle import simulateur as simulateur_python
 from retraite_notionnelle.carriere import LigneRelevee, Metier
-from retraite_notionnelle.config import RACINE_PROJET, Parametres
-from retraite_notionnelle.donnees.chargement import Fiabilite
+from retraite_notionnelle.config import RACINE_PROJET, Neutralisations, Parametres
+from retraite_notionnelle.donnees.chargement import DonneeInsuffisante, Fiabilite
 from retraite_notionnelle.droit.commun import PensionRegime
 from retraite_notionnelle.droit.liquider import EligibleAgricole
+from retraite_notionnelle.journal import Journal
+from retraite_notionnelle.remuneration import AnneeComparee, FicheDePaie, RemunerationActif
 from retraite_notionnelle.scenarios.actuel import ResultatActuel
+from retraite_notionnelle.scenarios.notionnel import ResultatNotionnel
+from retraite_notionnelle.simulateur import SCENARIOS_NOTIONNELS, Comparaison
 
 import facade
 from facade import Carriere, NonTransmissible, Simulateur, reversion
@@ -276,6 +280,113 @@ def test_les_drapeaux_de_calculer_passent_au_portage(simulateur):
         simulateur.scenario_actuel.calculer(carriere, sans_minimum=True)
 
 
+# -- la comparaison ----------------------------------------------------------------
+
+def test_simuler_rend_la_comparaison_entiere_sous_ses_types(simulateur):
+    """Une carrière courte au SMIC, partie à 67 ans, relève du minimum
+    contributif. La comparaison revient entière : la carrière, le scénario 1,
+    les cinq scénarios de la proposition, les paramètres du simulateur, et les
+    méthodes du type, qui lisent ce que le portage a écrit."""
+    carriere = simulateur.carriere_simple(
+        annee_naissance=1965, sexe="F", affiliation="salarie_prive_non_cadre",
+        age_debut=37, age_liquidation=67, niveau_salaire=0.4, profil_carriere="plat")
+    comparaison = simulateur.simuler(carriere)
+    assert type(comparaison) is Comparaison
+    assert type(comparaison.actuel) is ResultatActuel
+    assert comparaison.actuel.minimum_applique is True
+    for scenario, *_ in SCENARIOS_NOTIONNELS:
+        assert type(getattr(comparaison, scenario)) is ResultatNotionnel, scenario
+    assert comparaison.parametres == simulateur.parametres
+    assert pont.carriere_en_donnees(comparaison.carriere) == pont.carriere_en_donnees(carriere)
+    retroactif = comparaison.notionnel_retroactif
+    assert type(retroactif.compte.annee_liquidation) is int
+    assert retroactif.compte.annee_liquidation == 2032
+    assert comparaison.variation("notionnel_retroactif") == (
+        retroactif.pension_annuelle / comparaison.actuel.pension_annuelle - 1.0)
+    # Partie après l'âge légal de la proposition, 65 ans, elle n'est pas reportée.
+    assert comparaison.depart_reporte is False and comparaison.carriere_liberal is None
+
+
+def test_le_depart_que_la_proposition_reporte_revient_avec_sa_carriere(simulateur):
+    """Un départ à 64 ans, après la bascule : la proposition le reporte à son
+    âge légal, 65 ans (``Parametres.age_legal_liberal``), et la comparaison
+    porte la carrière prolongée."""
+    comparaison = simulateur.simuler(simulateur.carriere_simple(**SALARIE))
+    assert simulateur.parametres.age_legal_liberal == 65.0
+    assert comparaison.depart_reporte is True
+    assert type(comparaison.carriere_liberal) is carriere_python.Carriere
+    assert comparaison.carriere_liberal.age_liquidation == 65.0
+    assert comparaison.carriere_liberal.annee_liquidation == 2030
+
+
+def test_les_neutralisations_declarees_reviennent_avec_la_comparaison(simulateur):
+    """Les neutralisations déclarent ce que les scénarios notionnels retirent,
+    sans rien commander (``tests/test_simulateur.py``) : le portage sert les
+    deux jeux de paramètres du même simulateur, et la comparaison porte ceux
+    du simulateur de la façade."""
+    sans = Simulateur(Parametres(neutralisations=Neutralisations(minimum_contributif=False)))
+    reference = simulateur.simuler(simulateur.carriere_simple(**SALARIE))
+    comparaison = sans.simuler(sans.carriere_simple(**SALARIE))
+    assert comparaison.parametres == sans.parametres != simulateur.parametres
+    assert comparaison.actuel.pension_annuelle == reference.actuel.pension_annuelle
+
+
+def test_la_fiche_de_paie_d_un_actif_revient_sous_les_noms_du_python(simulateur):
+    """Le portage écrit la rémunération en casse de chameau ; un salarié né en
+    1990 cotise encore, et sa fiche se lit sous les champs du Python."""
+    comparaison = simulateur.simuler(simulateur.carriere_simple(
+        annee_naissance=1990, sexe="H", affiliation="salarie_prive_non_cadre",
+        age_debut=22, age_liquidation=64))
+    remuneration = comparaison.remuneration
+    assert type(remuneration) is RemunerationActif
+    assert remuneration.statut == "salarie_prive_non_cadre" and remuneration.cadre is False
+    annee = remuneration.annees[0]
+    assert type(annee) is AnneeComparee and type(annee.droit_en_vigueur) is FicheDePaie
+    assert annee.annee == simulateur.parametres.annee_bascule
+    assert annee.droit_en_vigueur.brut > annee.droit_en_vigueur.net > 0.0
+
+
+def test_le_journal_de_la_comparaison_revient_entree_par_entree(simulateur):
+    """Le scénario 1 passe par l'échéancier, qui inscrit le départ et sa
+    liquidation, une seule : chaque entrée revient avec ce qui la date. Le
+    contenu d'une liquidation, qui tient les tables du moteur, ne passe pas :
+    le lire est refusé. Né le 15 janvier 1965, l'assuré a 64 ans le 15 janvier
+    2029 : sa pension prend effet le premier jour du mois suivant."""
+    comparaison = simulateur.simuler(simulateur.carriere_simple(**SALARIE, jour_naissance=15))
+    assert type(comparaison.journal) is Journal
+    liquidations = [entree for entree in comparaison.journal if entree.sorte == "liquidation"]
+    assert len(liquidations) == 1
+    assert liquidations[0].debut == "2029-02-01" and liquidations[0].fin is None
+    assert ("depart_assure", "evenement") in {(e.id, e.sorte) for e in comparaison.journal}
+    assert comparaison.journal.entree("depart_assure").inscrite_le == "2029-02-01"
+    with pytest.raises(NonTransmissible, match="liquidation"):
+        liquidations[0].contenu.pensions
+
+
+def test_la_reversion_du_deces_declare_revient_avec_la_comparaison(simulateur):
+    """Le décès déclaré ouvre la réversion au conjoint : l'échéancier
+    l'inscrit, et la comparaison la porte."""
+    from retraite_notionnelle.droit.reversion import Reversion
+
+    comparaison = simulateur.simuler(simulateur.carriere_simple(
+        annee_naissance=1958, sexe="H", affiliation="salarie_prive_non_cadre", age_debut=21,
+        age_liquidation=62, conjoint={"naissance": "1960", "sexe": "F"}, deces="2023-05"))
+    assert type(comparaison.reversion) is Reversion
+    assert {("deces_assure", "evenement"), ("reversion_conjoint", "evenement"),
+            ("liquidation_reversion_conjoint", "reversion")} <= {
+                (entree.id, entree.sorte) for entree in comparaison.journal}
+    inscrite = comparaison.journal.entree("liquidation_reversion_conjoint").contenu
+    assert type(inscrite) is Reversion and inscrite.deces == comparaison.reversion.deces
+
+
+def test_une_donnee_insuffisante_reste_une_donnee_insuffisante():
+    """Sous une fiabilité exigée « certifiée », une carrière qui se projette
+    n'a pas ses séries : le portage le refuse, et le Python lève son type."""
+    exigeant = Simulateur(Parametres(fiabilite_minimale="certifiee"))
+    with pytest.raises(DonneeInsuffisante, match="fiabilité"):
+        exigeant.simuler(exigeant.carriere_simple(**SALARIE))
+
+
 # -- la réversion ------------------------------------------------------------------
 
 @pytest.mark.parametrize("deces, attendu", [
@@ -406,3 +517,8 @@ def test_un_refus_de_la_facade_ne_passe_pas_pour_une_erreur_attendue(simulateur)
     """Un test qui attend une erreur du moteur ne verdit pas d'un refus de la
     façade : ``pytest.raises(Exception)`` ne le prend pas."""
     assert not issubclass(NonTransmissible, Exception)
+    assert facade.ENTREES == ("simulateur.simuler", "scenario_actuel.calculer",
+                              "reversion.reversion", "simulateur.carriere_simple",
+                              "simulateur.carriere_parcours", "simulateur.carriere_releve",
+                              "carriere.depuis_profil", "carriere.depuis_parcours")
+    assert set(facade.ENTREES) == set(pont.LECTURES_DE_LA_FACADE)
