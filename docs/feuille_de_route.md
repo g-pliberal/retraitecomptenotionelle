@@ -7322,17 +7322,18 @@ de `contribution_etat`.
 ### 161. Un seul exemplaire du code : les doublons entre le Python et le JavaScript retirés une paire à la fois, chaque retrait relu — `en cours`
 
 **Reprise, au 12 novembre 2026.** L'inventaire est fait
-(`2026-11-09-l-inventaire-des-retraits.md`) : le paquet et le coût
-n'appellent plus aucune règle de `droit/` en Python. Les 38 paires du moteur
-partent d'un bloc, que retiennent trois scripts de la fabrique, douze études,
-des règles que le coût appelle encore en Python et 2 083 tests ; 24 paires
-restent des deux côtés (note 0006). La note découpe la suite en lots A à G,
-une session par ligne. Cinq sessions instruisent en parallèle, depuis le
-12 novembre, les cinq questions que la note pose au propriétaire ; chacune
-rend sa recommandation dans une note `2026-11-12-question-<n>-…`, sans
-toucher à ce bloc, et le propriétaire tranche ensuite. Par quoi commencer :
-lire ces notes si elles sont là ; sinon le lot A, qui n'attend aucune
-réponse, `construire_tableaux_md.py` et `tableau_de_bord.py` par le pont.
+(`2026-11-09-l-inventaire-des-retraits.md`) : il découpe la suite en lots A
+à G. Quatre des cinq questions qu'il pose au propriétaire sont instruites,
+chacune dans une note `2026-11-12-question-<n>-…` ; la deuxième, sur les
+tests, s'instruit encore, et le propriétaire n'a rien tranché. Six sessions
+travaillent en parallèle depuis le 12 novembre, sans toucher à ce bloc,
+chacune avec sa note `2026-11-12-…` : deux scripts de la fabrique, puis deux
+études, branchés sur le moteur JavaScript ; la relecture de la garantie et de
+l'impôt sur le revenu ; des tests pour les fichiers JavaScript les moins
+éprouvés ; la mesure du code mort ; les erreurs que le pilote tait. Par quoi
+commencer : lire ces notes, sans rouvrir une étape dont la note porte son
+bloc « Reprise ». Sinon, la suite du lot A : les sondes de
+`mesures_prose.py` et de `mesures_accueil.py`.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur
