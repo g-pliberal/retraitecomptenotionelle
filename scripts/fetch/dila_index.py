@@ -39,7 +39,7 @@ dump qui fait foi, et les scripts de certification continuent de le lire.
 KALI, LES CONVENTIONS COLLECTIVES (action 184, étape 5). La base qui porte
 les accords Agirc-Arrco a la forme de LEGI, en plus petit : un dump de 184 Mo,
 352 000 textes et articles. Elle entre ENTIÈRE dans l'index, sans qu'on le
-demande : 1 Go en SQLite, 359 Mo publiés, moins que LEGI filtré, et le filtre,
+demande : 1 Go en SQLite, 276 Mo publiés, moins que LEGI filtré, et le filtre,
 qui en gardait 99 000 documents pour 151 Mo, y retenait surtout les salaires
 et la prévoyance des branches. Ne rien y trouver dit donc que KALI ne l'a pas.
 Chaque document y porte quatre colonnes de plus (``PROPRES_A_KALI``) : son
@@ -48,8 +48,8 @@ Elle se construit en une minute et demie, et se reconstruit seule quand la
 DILA renouvelle son dump (plus bas).
 
 QUI PEUT PUBLIER. ``--publier`` crée la release ``index-dila`` du dépôt et y
-dépose ``<base>.sqlite.gz`` (447 Mo pour LEGI, 764 Mo pour le JORF, 359 Mo
-pour KALI, le 11 novembre 2026) avec le
+dépose ``<base>.sqlite.gz`` (455 Mo pour LEGI, 766 Mo pour le JORF, 276 Mo
+pour KALI, le 12 novembre 2026) avec le
 jeton ``GH_TOKEN`` ou ``GITHUB_TOKEN`` de l'environnement. Il faut un jeton
 qui ait le droit d'écrire les releases : celui d'une session Claude Code ne
 l'a pas — GitHub répond « Creating, editing, or deleting releases is not

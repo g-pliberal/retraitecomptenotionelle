@@ -255,7 +255,7 @@ def test_un_document_des_autres_bases_ne_porte_rien_de_plus():
 # ---------------------------------------------------------------------------
 
 def test_construire_garde_kali_entiere_sans_qu_on_le_demande(kali: Path):
-    """Entière, la base pèse moins que LEGI filtré (359 Mo publiés contre 447) :
+    """Entière, la base pèse moins que LEGI filtré (276 Mo publiés contre 455) :
     rien ne s'y écarte, et ne rien y trouver dit que KALI ne l'a pas."""
     assert "KALIARTI000099999902" in _ids(kali)          # les congés, hors du champ social
     assert len(_ids(kali)) == 8                          # sept articles et un texte
