@@ -111,3 +111,19 @@ pas. `sam_parents_24_23`, désormais `approchee`, n'a pas sa mesure dans
 `docs/limites/` : elle viendra avec l'étape qui écrira l'exception, ou qui
 décidera de la laisser. Les rédactions passées des mêmes articles ne sont pas
 lues.
+
+**Une lecture de plus, le même jour, à la demande de la session
+d'orchestration.** L'étape 7 de l'action 184 a donné à la rédaction du
+1er janvier au 9 mai 2026 de l'article D. 732-76 du code rural
+(LEGIARTI000053365504, décret n° 2025-1410) sa propre entrée « sans effet »
+dans la fiche `retraite_proportionnelle_msa`, sans l'avoir relue. Lue ici dans
+l'index, mot à mot contre celle du 9 mai 2026 : le corps de l'article est le
+même, le versement pour la retraite, que le modèle ne connaît pas. Seules
+changent la note d'application — « s'appliquent aux pensions et aux
+allocations prenant effet à compter du 1er janvier 2026 », devenu
+« s'appliquent aux demandes présentées à compter du 1er janvier 2026 » — et
+une date écrite deux fois, corrigée. « Sans effet » tient pour cette fiche :
+l'entrée reste, le cliquet ne bouge pas, et rien ne change un calcul. La
+rédaction d'avant 2026, la majoration de 17 % des points de 1952 à 1972, n'a
+plus de place dans cet article : c'est la question que la fiche pose déjà au
+propriétaire.
