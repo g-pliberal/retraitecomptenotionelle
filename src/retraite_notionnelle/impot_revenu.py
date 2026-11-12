@@ -1,15 +1,15 @@
 """L'impôt sur le revenu d'un foyer, de son barème à son montant, chaque année.
 
-Le dépôt ne calculait aucun impôt sur le revenu : le site affiche un net
-« avant impôt sur le revenu », les indicateurs de cycle de vie s'arrêtent aux
-prélèvements sociaux, la page Coût n'a pas d'effet retour par l'impôt (action
-138, étape 5). Ce module calcule l'impôt d'un FOYER pour les revenus d'une
-année, de 1960 à la dernière loi de finances lue, et au-delà sur un barème
-projeté (:mod:`~retraite_notionnelle.donnees.impot_revenu`). Les indicateurs
-de cycle de vie, que seul le portage calcule depuis l'action 161
-(``conventionApresImpot``, ``moteur/js/cycle-de-vie.js``), en prennent le
-jumeau, ``moteur/js/impot-revenu.js`` ; le site et la page Coût le prendront
-plus tard.
+Avant l'étape 5 de l'action 138, le dépôt ne calculait aucun impôt sur le
+revenu : le site affiche un net « avant impôt sur le revenu », les indicateurs
+de cycle de vie s'arrêtaient aux prélèvements sociaux, la page Coût n'avait
+pas d'effet retour par l'impôt. Ce module calcule l'impôt d'un FOYER pour les
+revenus d'une année, de 1960 à la dernière loi de finances lue, et au-delà
+sur un barème projeté (:mod:`~retraite_notionnelle.donnees.impot_revenu`).
+Les indicateurs de cycle de vie, que seul le portage calcule depuis l'action
+161 (``conventionApresImpot``, ``moteur/js/cycle-de-vie.js``), en prennent le
+jumeau, ``moteur/js/impot-revenu.js`` ; l'effet retour du coût l'appelle ici
+(``EffetRetour._impot``, ``effet_retour.py``).
 
 LE FOYER. Une personne seule — célibataire, divorcée ou veuve — ou un couple
 marié ou pacsé, imposé en commun ; des enfants à charge ou non ; des salaires,

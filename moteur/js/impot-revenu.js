@@ -505,7 +505,6 @@ function revenusNetsDuFoyer(foyer, parametres, salaires, pensions) {
   return [salairesNets, pensionsNettes, vingt];
 }
 
-/** L'abattement de l'article 157 bis, par déclarant de plus de 65 ans ou invalide. */
 /** Le bénéfice d'un déclarant tel que l'impôt le retient : voir `benefice_retenu`. */
 export function beneficeRetenu(declarant, parametres, benefice = null) {
   const annee = parametres.annee;
@@ -540,6 +539,7 @@ function abattementAdherent(declarant, parametres, benefice) {
   return arrondirElement(annee, abattement);
 }
 
+/** L'abattement de l'article 157 bis, par déclarant de plus de 65 ans ou invalide. */
 function abattementAgeInvalidite(foyer, parametres, revenuNetGlobal) {
   const a = parametres.serie("abattement_age_invalidite");
   if (vide(a)) return 0.0;

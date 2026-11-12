@@ -5,7 +5,7 @@
  * est une allocation sous condition de ressources, DÉGRESSIVE depuis le 9
  * novembre 2026 (`complementGarantie`, que le moteur d'une carrière applique).
  * Son coût est entièrement celui de la queue basse de la distribution, et c'est
- * précisément ce qu'une grille de douze cas types ne sait pas décrire. Les
+ * précisément ce qu'une grille de treize cas types ne sait pas décrire. Les
  * fonctions de coût de ce module, que seules les pages lisent, portent la même
  * forme que le coût du modèle (`_manque_moyen` de `garantie.py`) ; sans forme
  * donnée, elles rendent le barème différentiel, celui de l'ASPA.
@@ -121,8 +121,11 @@ export function coutGarantie(distribution, effectifTotal, plancherMensuel,
   let partBeneficiaires = 0;
   let manqueMensuel = 0;
   for (const tranche of distribution.tranches) {
-    const superieure = tranche.borneSuperieure === null
-      ? null : tranche.borneSuperieure * facteur;
+    // Sans borne supérieure, `null` ou absente, la tranche est ouverte, comme
+    // pour `manqueMoyen` et `pensionMoyenne`.
+    const ouverte = tranche.borneSuperieure === null
+      || tranche.borneSuperieure === undefined;
+    const superieure = ouverte ? null : tranche.borneSuperieure * facteur;
     const [concernee, manque] = manqueMoyen(
       tranche.borneInferieure * facteur, superieure, plancherMensuel,
       partRetraitEntier, tauxRetrait,
