@@ -535,6 +535,37 @@ JUMEAUX_DE_LA_MORTALITE = {
 }
 JUMEAUX_DU_DROIT.update(JUMEAUX_DE_LA_MORTALITE)
 
+
+def _dates(depuis: str, jusqu_a: str, *suite) -> tuple:
+    """Les arguments d'une revalorisation entre deux dates, que le pont passe
+    en dates ISO et que le jumeau Python lit en dates."""
+    import datetime
+
+    return (datetime.date.fromisoformat(depuis), datetime.date.fromisoformat(jusqu_a), *suite)
+
+
+def _decrets_de_la_fonction_publique(moteur, *valeurs):
+    from retraite_notionnelle.revalorisation import produit
+
+    revalorisations = moteur.revalorisations_pensions
+    return produit(revalorisations.retenues(revalorisations.fonction_publique,
+                                            *_dates(*valeurs)))
+
+
+#: Le jumeau Python de chaque règle du moteur que l'histoire du droit demande
+#: au pont (:data:`pont.LECTURES_DE_L_HISTOIRE_DU_DROIT`).
+JUMEAUX_DE_L_HISTOIRE_DU_DROIT = {
+    "scenario_actuel.revalorisations_pensions.generale":
+        lambda moteur, *valeurs: moteur.revalorisations_pensions.generale(*_dates(*valeurs)),
+    "scenario_actuel.revalorisations_pensions.retenues.fonction_publique.produit":
+        _decrets_de_la_fonction_publique,
+    "scenario_actuel.minimum_garanti.ratio_point_indice":
+        lambda moteur, *valeurs: moteur.minimum_garanti.ratio_point_indice(*valeurs),
+    "scenario_actuel.conversions_points.echelle":
+        lambda moteur, *valeurs: moteur.conversions_points.echelle(*valeurs),
+}
+JUMEAUX_DU_DROIT.update(JUMEAUX_DE_L_HISTOIRE_DU_DROIT)
+
 #: Le pont du droit tel quel, que :func:`droit_et_refait` appelle quand une
 #: confrontation la met à sa place.
 DROIT_DU_PORTAGE = pont.droit

@@ -86,6 +86,13 @@ sous une variante démographique (:func:`indexation`). Les lectures du portage
 se demandent aussi une à une, pour les confronter à celles que le Python
 garde (:func:`revalorisation_servie`).
 
+Ce que le droit a servi aux pensions liquidées, que le coût seul lit, reste
+en Python (``RevalorisationServie.coefficient_historique``), mais les règles
+du moteur qu'il appelle — la valeur de service d'un point, le coefficient de
+l'article L. 161-23-1, les décrets de la fonction publique, le point d'indice,
+le changement d'unité d'un point — se demandent au pont du droit, d'un lot
+par règle de revalorisation (:data:`LECTURES_DE_L_HISTOIRE_DU_DROIT`).
+
 Une demande sur le paquet du dépôt, sans paquet, ne lance pas node à chaque
 fois : les tests en font une par carrière, et chacune coûtait trois dixièmes
 de seconde, à lancer node et à relire le paquet. Le pont reste ouvert
@@ -1802,6 +1809,34 @@ def indexation(appels: list[tuple], parametres=None, paquet: bytes | None = None
 
 
 # -- la fin de la revalorisation servie et de l'indexation ------------------------
+
+
+# -- l'histoire du droit (action 161, note de décision 0007) ----------------------
+
+#: Ce que rendent les règles du moteur que l'histoire du droit appelle
+#: (``RevalorisationServie.coefficient_historique`` : ce que le droit a servi
+#: aux pensions liquidées, que le coût seul lit, et qui reste en Python), sur
+#: le moteur du scénario 1 (:data:`MOTEUR`) : le coefficient de l'article
+#: L. 161-23-1 entre deux dates — ``depuis``, ``jusqu_a``, des dates ISO, la
+#: revalorisation du jour du départ comprise ou non, le montant mensuel de
+#: décembre 2019 qui choisit la tranche de 2020 — ; le produit des décrets de
+#: la fonction publique, sous les mêmes arguments ; ce que devient un
+#: traitement indiciaire d'une année à une autre, ``None`` hors de la série du
+#: point ; le changement d'unité des points d'un régime entre l'année de leur
+#: acquisition et celle de leur liquidation. Elles s'ajoutent aux lectures du
+#: droit (``FONCTIONS_DE_L_HISTOIRE_DU_DROIT`` de ``pont.mjs``) : le coût les
+#: demande par lot (:func:`droit`), avec ``liquider.valeur_du_point``.
+LECTURES_DE_L_HISTOIRE_DU_DROIT = {
+    "scenario_actuel.revalorisations_pensions.generale": tuple[float, Fiabilite],
+    "scenario_actuel.revalorisations_pensions.retenues.fonction_publique.produit":
+        tuple[float, Fiabilite],
+    "scenario_actuel.minimum_garanti.ratio_point_indice": float | None,
+    "scenario_actuel.conversions_points.echelle": tuple[float, Fiabilite],
+}
+LECTURES_DU_DROIT.update(LECTURES_DE_L_HISTOIRE_DU_DROIT)
+
+
+# -- la fin de l'histoire du droit --------------------------------------------------
 
 
 def simulations(cas: list[dict], paquet: bytes | None = None,

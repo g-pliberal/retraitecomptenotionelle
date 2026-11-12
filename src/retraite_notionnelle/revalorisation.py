@@ -1619,7 +1619,12 @@ class RevalorisationServie:
     (:meth:`coefficient_historique`), la rente nominale du pilier
     (:meth:`coefficient_nominal`), la proposition sous une variante
     démographique (:meth:`pour_la_proposition`), le régime sous lequel le COR
-    compte une pension (:meth:`regime_de_tete`).
+    compte une pension (:meth:`regime_de_tete`). L'histoire du droit n'appelle
+    pas pour autant une règle du moteur Python : la valeur de service d'un
+    point, le coefficient de l'article L. 161-23-1, les décrets de la fonction
+    publique, le point d'indice et le changement d'unité d'un point, elle les
+    demande au portage, d'un seul lot par règle de revalorisation
+    (:meth:`_lot`, :func:`~.pont.droit`), et n'en fait que les moyennes.
     """
 
     def __init__(self, simulateur: Simulateur,
@@ -1654,8 +1659,12 @@ class RevalorisationServie:
         #: :meth:`coefficient_historique`. Construit à la demande.
         self._moteur = actuel
         self._revalorisations = simulateur.revalorisations
+        self._parametres = simulateur.parametres
         self._prix_reels: dict[int, float] = {}
         self._nominaux: dict[object, tuple[dict[int, float], int | None]] = {}
+        #: Le changement d'unité des points de chaque barème lu, entre deux
+        #: années de son histoire : voir :meth:`_nominal`.
+        self._echelles: dict[str, dict[tuple[int, int], float]] = {}
         self._regles: dict[tuple[str, int], object] = {}
         self._historiques: dict[tuple[str, int, int], float] = {}
 
@@ -1683,59 +1692,121 @@ class RevalorisationServie:
         borne = min(max(annee, self.HISTOIRE_DEPUIS), self.derniere_annee)
         return self._prix_reels[borne]
 
+    #: Les règles du moteur que l'histoire demande au portage, sous le nom que
+    #: le pont du droit leur donne (:data:`~.pont.LECTURES_DU_DROIT`).
+    VALEUR_DU_POINT = "liquider.valeur_du_point"
+    COEFFICIENT_GENERAL = "scenario_actuel.revalorisations_pensions.generale"
+    DECRETS_PUBLICS = "scenario_actuel.revalorisations_pensions.retenues.fonction_publique.produit"
+    POINT_D_INDICE = "scenario_actuel.minimum_garanti.ratio_point_indice"
+    ECHELLE_DU_POINT = "scenario_actuel.conversions_points.echelle"
+
+    def _lot(self, appels: dict[str, tuple]) -> dict:
+        """Ce que le portage rend de chaque appel d'une règle du moteur, sous
+        sa clé, d'une seule demande (:func:`~.pont.droit`), sous les
+        paramètres du simulateur. Un appel qu'il refuse arrête la lecture."""
+        from . import pont
+
+        lus, refus = pont.droit(appels, self._parametres)
+        for cle, motif in refus.items():
+            raise ValueError(f"{cle} : {motif}")
+        return lus
+
+    def _jours(self, fin: int | None) -> list[date]:
+        """Le premier jour de chaque mois de :attr:`HISTOIRE_DEPUIS` à ``fin`` :
+        ceux que :meth:`_moyennes` lit."""
+        if fin is None:
+            return []
+        return [date(annee, mois, 1)
+                for annee in range(self.HISTOIRE_DEPUIS, min(fin, self.derniere_annee) + 1)
+                for mois in range(1, 13)]
+
     def _moyennes(self, au_jour, fin: int | None) -> dict[int, float]:
         """La moyenne, mois par mois, de ``au_jour(date)`` sur chaque année de
         :attr:`HISTOIRE_DEPUIS` à ``fin`` : une masse annuelle sert douze
         mensualités, et une revalorisation d'avril n'en touche que neuf. Une
         année manque dès qu'un de ses mois n'a pas de valeur."""
         moyennes: dict[int, float] = {}
-        if fin is None:
-            return moyennes
-        for annee in range(self.HISTOIRE_DEPUIS, min(fin, self.derniere_annee) + 1):
-            valeurs = [au_jour(date(annee, mois, 1)) for mois in range(1, 13)]
+        jours = self._jours(fin)
+        for rang in range(0, len(jours), 12):
+            valeurs = [au_jour(jour) for jour in jours[rang:rang + 12]]
             if all(valeur is not None and valeur > 0.0 for valeur in valeurs):
-                moyennes[annee] = somme_ordonnee(valeurs) / 12.0
+                moyennes[jours[rang].year] = somme_ordonnee(valeurs) / 12.0
         return moyennes
 
     def _nominal(self, regle) -> tuple[dict[int, float], int | None]:
         """L'indice nominal moyen de chaque année sous ``regle``, et la
-        dernière année qu'un barème publié couvre."""
+        dernière année qu'un barème publié couvre. Chaque mois de la règle se
+        demande au portage d'un seul lot (:meth:`_lot`), avec, pour un régime
+        en points, le changement d'unité de son point entre deux années."""
         if regle in self._nominaux:
             return self._nominaux[regle]
-        revalorisations = self._revalorisations
-        origine = date(self.HISTOIRE_DEPUIS - 1, 12, 31)
-        def generale(jour: date) -> float:
-            return revalorisations.generale(origine, jour, False, self.MENSUEL_2019)[0]
-        fin_generale = max(ligne.date_effet.year for ligne in revalorisations.generales)
+        from . import pont
+
+        origine = date(self.HISTOIRE_DEPUIS - 1, 12, 31).isoformat()
+
+        def generale(jour: date) -> tuple:
+            return (self.COEFFICIENT_GENERAL, pont.MOTEUR, origine, jour.isoformat(), False,
+                    self.MENSUEL_2019)
+
+        fin_generale = max(ligne.date_effet.year for ligne in self._revalorisations.generales)
         if regle == REGLE_GENERALE:
-            resultat = (self._moyennes(generale, fin_generale), fin_generale)
+            lus = self._lot({jour.isoformat(): generale(jour)
+                             for jour in self._jours(fin_generale)})
+            resultat = (self._moyennes(lambda jour: lus[jour.isoformat()][0], fin_generale),
+                        fin_generale)
         elif regle == REGLE_FONCTION_PUBLIQUE:
             # La péréquation, au point d'indice, jusqu'en 2003 ; les décrets
             # de 2004 à 2008 ; la règle générale ensuite — l'ordre de
             # :meth:`PensionServie._fonction_publique`, à l'année.
-            minimum = self._moteur.minimum_garanti
-            def publique(jour: date) -> float | None:
+            appels = {}
+            for jour in (*self._jours(fin_generale), DEBUT_REGLE_GENERALE_PUBLIC):
                 fin = min(jour.year, DERNIERE_ANNEE_PEREQUATION)
-                point = minimum.ratio_point_indice(DERNIERE_ANNEE_PEREQUATION, fin)
+                appels[f"point {fin}"] = (
+                    self.POINT_D_INDICE, pont.MOTEUR, DERNIERE_ANNEE_PEREQUATION, fin)
+                if jour >= FIN_PEREQUATION:
+                    jusqu_a = min(jour, DEBUT_REGLE_GENERALE_PUBLIC).isoformat()
+                    appels[f"decrets {jusqu_a}"] = (
+                        self.DECRETS_PUBLICS, pont.MOTEUR, FIN_PEREQUATION.isoformat(), jusqu_a,
+                        True, None)
+                if jour >= DEBUT_REGLE_GENERALE_PUBLIC:
+                    appels[f"generale {jour.isoformat()}"] = generale(jour)
+            lus = self._lot(appels)
+
+            def publique(jour: date) -> float | None:
+                point = lus[f"point {min(jour.year, DERNIERE_ANNEE_PEREQUATION)}"]
                 if point is None:
                     return None
                 if jour < FIN_PEREQUATION:
                     return point
-                decrets = produit(revalorisations.retenues(
-                    revalorisations.fonction_publique, FIN_PEREQUATION,
-                    min(jour, DEBUT_REGLE_GENERALE_PUBLIC), True, None))[0]
-                suite = (generale(jour) / generale(DEBUT_REGLE_GENERALE_PUBLIC)
+                decrets = lus[
+                    f"decrets {min(jour, DEBUT_REGLE_GENERALE_PUBLIC).isoformat()}"][0]
+                suite = (lus[f"generale {jour.isoformat()}"][0]
+                         / lus[f"generale {DEBUT_REGLE_GENERALE_PUBLIC.isoformat()}"][0]
                          if jour >= DEBUT_REGLE_GENERALE_PUBLIC else 1.0)
                 return point * decrets * suite
             resultat = (self._moyennes(publique, fin_generale), fin_generale)
         else:
             # Un régime en points : la valeur de service du jour, le long des
-            # fusions (:func:`~.droit.liquider.valeur_du_point`).
+            # fusions (:func:`~.droit.liquider.valeur_du_point`), et le
+            # changement d'unité du point entre deux années de son histoire,
+            # que :meth:`_historique` lit.
             bareme = regle[1]
-            def point(jour: date) -> float | None:
-                valeur = liquider.valeur_du_point(self._moteur, bareme, jour)
-                return None if valeur is None else valeur[0]
             publiee = _derniere_valeur_publiee(self._moteur, bareme)
+            jours = self._jours(publiee)
+            annees = [jour.year for jour in jours[::12]]
+            lus = self._lot({
+                **{jour.isoformat(): (self.VALEUR_DU_POINT, pont.MOTEUR, bareme,
+                                      DateMois(jour.year, jour.month)) for jour in jours},
+                **{f"{depart} {arrivee}": (self.ECHELLE_DU_POINT, pont.MOTEUR, bareme, depart,
+                                           arrivee)
+                   for depart in annees for arrivee in annees if arrivee > depart}})
+
+            def point(jour: date) -> float | None:
+                valeur = lus[jour.isoformat()]
+                return None if valeur is None else valeur[0]
+            self._echelles[bareme] = {
+                (depart, arrivee): lus[f"{depart} {arrivee}"][0]
+                for depart in annees for arrivee in annees if arrivee > depart}
             resultat = (self._moyennes(point, publiee), publiee)
         self._nominaux[regle] = resultat
         return resultat
@@ -1807,8 +1878,7 @@ class RevalorisationServie:
             return None
         nominal = moyennes[arrivee] / moyennes[depart]
         if regle not in (REGLE_GENERALE, REGLE_FONCTION_PUBLIQUE):
-            nominal *= self._moteur.conversions_points.echelle(
-                regle[1], depart, arrivee)[0]
+            nominal *= self._echelles[regle[1]][depart, arrivee]
         return nominal * self._prix(depart) / self._prix(arrivee)
 
     def regime_convenu(self, regime: str) -> str | None:

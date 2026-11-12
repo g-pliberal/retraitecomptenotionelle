@@ -168,7 +168,9 @@ import {
 import { BORNES_ASSIETTE, CarriereLongue } from "../../moteur/js/regimes.js";
 import { ficheDepuisBrut } from "../../moteur/js/remuneration.js";
 import { Restitution } from "../../moteur/js/restitution.js";
-import { faireVivre, RevalorisationServie } from "../../moteur/js/revalorisation.js";
+import {
+  faireVivre, produit, RevalorisationServie, RevalorisationsPensions,
+} from "../../moteur/js/revalorisation.js";
 import { Saisie } from "../../moteur/js/saisie.js";
 import { ScenarioActuel } from "../../moteur/js/scenario-actuel.js";
 import { Simulateur } from "../../moteur/js/simulateur.js";
@@ -1601,6 +1603,35 @@ function indexationDuCompte({ parametres, appels }) {
 }
 
 // -- la fin de la revalorisation servie et de l'indexation ----------------------
+
+// -- l'histoire du droit (action 161, note de décision 0007) --------------------
+
+/**
+ * Les règles du moteur que l'histoire du droit appelle (`RevalorisationServie`
+ * du Python, `coefficient_historique` : ce que le droit a servi aux pensions
+ * liquidées, que le coût seul lit), sous le nom de leur jumeau, sur le moteur
+ * du scénario 1 : le coefficient de l'article L. 161-23-1 entre deux dates
+ * ISO, le produit des décrets de la fonction publique entre deux dates, ce
+ * que devient un traitement indiciaire entre deux années, le changement
+ * d'unité d'un point entre deux années. Elles s'ajoutent aux fonctions du
+ * droit, et le coût les demande par lot, avec la valeur de service du point
+ * (`liquider.valeur_du_point`). Ce qu'elles rendent se déclare dans
+ * `LECTURES_DE_L_HISTOIRE_DU_DROIT` de `pont.py`.
+ */
+const FONCTIONS_DE_L_HISTOIRE_DU_DROIT = {
+  "scenario_actuel.revalorisations_pensions.generale":
+    (moteur, ...valeurs) => moteur.revalorisationsPensions.generale(...valeurs),
+  "scenario_actuel.revalorisations_pensions.retenues.fonction_publique.produit":
+    (moteur, ...valeurs) => produit(RevalorisationsPensions.retenues(
+      moteur.revalorisationsPensions.fonction_publique, ...valeurs)),
+  "scenario_actuel.minimum_garanti.ratio_point_indice":
+    (moteur, ...valeurs) => moteur.minimumGaranti.ratioPointIndice(...valeurs),
+  "scenario_actuel.conversions_points.echelle":
+    (moteur, ...valeurs) => moteur.conversionsPoints.echelle(...valeurs),
+};
+Object.assign(FONCTIONS_DU_DROIT, FONCTIONS_DE_L_HISTOIRE_DU_DROIT);
+
+// -- la fin de l'histoire du droit ----------------------------------------------
 
 const LECTURES = {
   carrieres, saisies, grille_du_cout: grilleDuCout, carrieres_des_saisies: carrieresDesSaisies,

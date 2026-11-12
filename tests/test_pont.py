@@ -2574,3 +2574,181 @@ def test_le_cout_demande_au_portage_le_rendement_des_cotisations(monkeypatch):
     monkeypatch.setattr(pont.shutil, "which", lambda nom: None)
     with pytest.raises(pont.PontIndisponible, match="node"):
         cout._rendements_des_cotisations(simulateur, [pensionne])
+
+
+# -- l'histoire du droit (action 161, note de décision 0007) -------------------
+
+
+def test_le_pont_sert_les_regles_de_l_histoire_du_droit():
+    """Ce que le droit a servi aux pensions liquidées reste au coût, en Python
+    (note de décision 0007), mais les règles du moteur que cette histoire
+    appelle, c'est le portage qui les calcule : le pont du droit en sert
+    quatre de plus, et le jumeau Python les refait tant qu'il reste. Valeurs
+    posées à la main, depuis les barèmes.
+
+    Le coefficient de l'article L. 161-23-1 (``revalorisation_pensions.csv``) :
+    +0,8 % au 1er janvier 2023 et +5,3 % au 1er janvier 2024 ; une
+    revalorisation du jour du départ ne se reçoit pas ; en 2020, la tranche du
+    montant de décembre 2019, 0,8 % de 2 000 à 2 008 euros, 1 % jusqu'à
+    2 000, et un refus sans ce montant. Les décrets de la fonction publique
+    (``revalorisation_pensions_fonction_publique.csv``) : 1,5 % en 2004, 2 %
+    en 2005, 1,8 % en 2006 et en 2007, 1,1 % puis 0,8 % en 2008, le jour du
+    départ compris. Le point d'indice (``point_indice_fonction_publique.csv``) :
+    50,2929 en 1999, 52,4933 en 2003, rien avant 1960. Le changement d'unité
+    d'un point (``conversions_points.csv``) : 0,387464 pour l'Arrco en 1999,
+    1,333333 pour la complémentaire des médecins en 1991, aucun pour un point
+    acquis depuis, ni pour un régime sans conversion."""
+    _sans_node()
+    from outils_pont import droit_et_refait
+
+    from retraite_notionnelle.donnees.chargement import Fiabilite
+
+    generale = "scenario_actuel.revalorisations_pensions.generale"
+    decrets = "scenario_actuel.revalorisations_pensions.retenues.fonction_publique.produit"
+    point = "scenario_actuel.minimum_garanti.ratio_point_indice"
+    echelle = "scenario_actuel.conversions_points.echelle"
+    lus, refus = droit_et_refait({
+        "generale": (generale, pont.MOTEUR, "2022-12-31", "2024-06-01", False, 2004.0),
+        "le jour du départ": (generale, pont.MOTEUR, "2023-01-01", "2024-06-01", False, 2004.0),
+        "le jour compris": (generale, pont.MOTEUR, "2023-01-01", "2024-06-01", True, 2004.0),
+        "tranche du milieu": (generale, pont.MOTEUR, "2019-12-31", "2020-06-01", False, 2004.0),
+        "petite retraite": (generale, pont.MOTEUR, "2019-12-31", "2020-06-01", False, 1500.0),
+        "sans montant": (generale, pont.MOTEUR, "2019-12-31", "2020-06-01", False, None),
+        "decrets": (decrets, pont.MOTEUR, "2004-01-01", "2009-01-01", True, None),
+        "avant septembre": (decrets, pont.MOTEUR, "2004-01-01", "2008-08-01", True, None),
+        "sans le premier": (decrets, pont.MOTEUR, "2004-01-01", "2005-06-01", False, None),
+        "point": (point, pont.MOTEUR, 2003, 1999),
+        "point constant": (point, pont.MOTEUR, 2003, 2003),
+        "point inconnu": (point, pont.MOTEUR, 2003, 1950),
+        "arrco": (echelle, pont.MOTEUR, "arrco", 1998, 1999),
+        "arrco depuis": (echelle, pont.MOTEUR, "arrco", 1999, 2020),
+        "medecins": (echelle, pont.MOTEUR, "carmf_complementaire", 1990, 2000),
+        "sans conversion": (echelle, pont.MOTEUR, "regime_general", 1990, 2000),
+    })
+    assert list(refus) == ["sans montant"] and "montant total" in refus["sans montant"]
+    assert lus == {
+        "generale": (1.008 * 1.053, Fiabilite.HAUTE),
+        "le jour du départ": (1.053, Fiabilite.HAUTE),
+        "le jour compris": (1.008 * 1.053, Fiabilite.HAUTE),
+        "tranche du milieu": (1.008, Fiabilite.HAUTE),
+        "petite retraite": (1.01, Fiabilite.HAUTE),
+        "decrets": (1.015 * 1.02 * 1.018 * 1.018 * 1.011 * 1.008, Fiabilite.CERTIFIEE),
+        "avant septembre": (1.015 * 1.02 * 1.018 * 1.018 * 1.011, Fiabilite.CERTIFIEE),
+        "sans le premier": (1.02, Fiabilite.CERTIFIEE),
+        "point": 50.2929 / 52.4933,
+        "point constant": 1.0,
+        "point inconnu": None,
+        "arrco": (0.387464, Fiabilite.HAUTE),
+        "arrco depuis": (1.0, Fiabilite.CERTIFIEE),
+        "medecins": (1.333333, Fiabilite.HAUTE),
+        "sans conversion": (1.0, Fiabilite.CERTIFIEE),
+    }
+    assert type(lus["point constant"]) is float and type(lus["arrco depuis"][0]) is float
+
+
+def test_l_histoire_du_droit_demande_ses_regles_au_portage_par_lot(monkeypatch):
+    """``RevalorisationServie.coefficient_historique`` — ce que le droit a
+    servi à une pension liquidée, à la moyenne de chaque année, en euros
+    constants — reste au coût, en Python, mais n'appelle plus une règle du
+    moteur Python : il demande au portage, d'un seul lot par règle de
+    revalorisation, chaque mois de son histoire, et les changements d'unité
+    d'un point avec ses valeurs, sous les paramètres de son simulateur. Une
+    règle déjà lue ne se redemande pas, et sans node la lecture s'arrête, sans
+    repli. Valeurs posées à la main, depuis les barèmes, les prix lus à la
+    série du dépôt.
+
+    Le régime général : +1,1 % au 1er janvier 2022 puis +4 % au 1er juillet,
+    soit +2 % sur l'année, et +0,8 % au 1er janvier 2023. La fonction
+    publique : le point d'indice, de 51,8175 en 2002 à 52,4933 en 2003 ; puis
+    ses décrets, +1,1 % au 1er janvier 2008 et +0,8 % au 1er septembre, sur
+    quatre mois. L'Agirc-Arrco, qui revalorise au 1er novembre : 1,3498 puis
+    1,4159 en 2023, 1,4159 puis 1,4386 en 2024. L'Arrco, dont le point change
+    d'unité en 1999 : 0,382876 puis 0,387464 au 1er avril 1998, 1,000005 puis
+    1,008999 au 1er avril 1999, le point de 1998 en valant 0,387464 de 1999.
+    Le RAFP, hors répartition, ne se revalorise pas, et ne demande rien."""
+    _sans_node()
+    from retraite_notionnelle.droit import liquider
+    from retraite_notionnelle.revalorisation import RevalorisationServie, RevalorisationsPensions
+    from retraite_notionnelle.scenarios.actuel import ConversionsPoints, MinimumGaranti
+
+    simulateur = Simulateur(Parametres())
+    servie = RevalorisationServie(simulateur, 1990, 2030)
+    sans_node = RevalorisationServie(simulateur, 1990, 2030)
+    assert simulateur.scenario_actuel is not None
+
+    def calcule(*arguments, **options):
+        raise AssertionError("l'histoire du droit n'appelle plus le moteur Python")
+
+    for porteur, regle in ((liquider, "valeur_du_point"), (RevalorisationsPensions, "generale"),
+                           (RevalorisationsPensions, "retenues"),
+                           (MinimumGaranti, "ratio_point_indice"), (ConversionsPoints, "echelle")):
+        monkeypatch.setattr(porteur, regle, calcule)
+    lots = []
+    droit = pont.droit
+
+    def espion(appels, parametres=None, paquet=None):
+        lots.append((sorted({fonction.rsplit(".", 1)[-1] for fonction, *_ in appels.values()}),
+                     parametres))
+        return droit(appels, parametres, paquet)
+
+    monkeypatch.setattr(pont, "droit", espion)
+    prix = simulateur.macro.coefficient_prix
+    assert servie.coefficient_historique("rafp", 2010, 2024) == 1.0
+    assert lots == []
+    assert servie.coefficient_historique("regime_general", 2022, 2023) == pytest.approx(
+        1.04 * 1.008 / 1.02 * prix(2023, 2022), rel=1e-12)
+    assert servie.coefficient_historique("fonction_publique_etat", 2002, 2003) == pytest.approx(
+        52.4933 / 51.8175 * prix(2003, 2002), rel=1e-12)
+    assert servie.coefficient_historique("fonction_publique_etat", 2007, 2008) == pytest.approx(
+        1.011 * (8 + 4 * 1.008) / 12 * prix(2008, 2007), rel=1e-12)
+    assert servie.coefficient_historique("agirc_arrco", 2023, 2024) == pytest.approx(
+        (10 * 1.4159 + 2 * 1.4386) / (10 * 1.3498 + 2 * 1.4159) * prix(2024, 2023), rel=1e-12)
+    assert servie.coefficient_historique("arrco", 1998, 1999) == pytest.approx(
+        (3 * 1.000005 + 9 * 1.008999) / (3 * 0.382876 + 9 * 0.387464) * 0.387464
+        * prix(1999, 1998), rel=1e-12)
+    parametres = simulateur.parametres
+    assert lots == [(["generale"], parametres),
+                    (["generale", "produit", "ratio_point_indice"], parametres),
+                    (["echelle", "valeur_du_point"], parametres),
+                    (["echelle", "valeur_du_point"], parametres)]
+    # Une règle lue ne se redemande pas, à d'autres années non plus.
+    assert servie.coefficient_historique("regime_general", 2030, 2050) == 1.0
+    assert servie.coefficient_historique("arrco", 1995, 2020) > 0.0
+    assert servie.coefficient_historique("cnracl", 1995, 2020) > 0.0
+    assert len(lots) == 4
+    monkeypatch.setattr(pont.shutil, "which", lambda nom: None)
+    with pytest.raises(pont.PontIndisponible, match="node"):
+        sans_node.coefficient_historique("regime_general", 2022, 2023)
+
+
+def test_les_regles_de_l_histoire_du_droit_sont_celles_du_jumeau_au_bit(monkeypatch):
+    """La confrontation qui tient lieu de relecture de ce passage (note de
+    décision 0007). L'histoire du droit demandait ses règles au moteur
+    Python ; elle les demande au portage. Chaque appel de chacun de ses lots
+    — chaque mois de chaque règle de revalorisation depuis 1949, chaque
+    changement d'unité d'un point entre deux années —, le jumeau Python le
+    refait, au bit (``droit_et_refait``), sur chaque régime du catalogue,
+    liquidé tous les quatre ans, sous les réglages de la page Coût, où le
+    point de l'Agirc-Arrco a sa valeur convenue. Le régime général, la
+    fonction publique et chaque barème de points y ont leur lot."""
+    _sans_node()
+    from outils_pont import droit_et_refait
+
+    from retraite_notionnelle.revalorisation import RevalorisationServie
+
+    lots = []
+
+    def confronte(appels, parametres=None, paquet=None):
+        lots.append({fonction for fonction, *_ in appels.values()})
+        return droit_et_refait(appels, parametres, paquet)
+
+    monkeypatch.setattr(pont, "droit", confronte)
+    simulateur = Simulateur(Parametres()).pour_la_projection()
+    servie = RevalorisationServie(simulateur, 1941, 2070)
+    for code in simulateur.scenario_actuel.catalogue.codes:
+        for liquidation in range(1949, 2026, 4):
+            assert servie.coefficient_historique(code, liquidation, 2024) > 0.0
+    assert len(lots) == len(servie._nominaux) > 10
+    assert {servie.COEFFICIENT_GENERAL} in lots
+    assert {servie.COEFFICIENT_GENERAL, servie.DECRETS_PUBLICS, servie.POINT_D_INDICE} in lots
+    assert lots.count({servie.VALEUR_DU_POINT, servie.ECHELLE_DU_POINT}) == len(lots) - 2
