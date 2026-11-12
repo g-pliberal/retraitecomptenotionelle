@@ -17,6 +17,18 @@ effet: >-
   leurs points après la fusion, renvoient depuis à cette fiche.
 approximations:
 - ecart: >-
+    au-delà de vingt trimestres manquants aux deux décomptes, où l'annexe 2 n'a pas de
+    ligne, le modèle prolonge la table des âges de l'Agirc-Arrco, 1,75 % par trimestre :
+    0,64 à vingt-huit trimestres. Seule la retraite progressive y mène, demandée à moins
+    de cent cinquante-deux trimestres pour cent soixante-douze requis ; ce que la caisse
+    sert alors, avant 2027, n'a pas été trouvé, et le plafond que le règlement y met au
+    1er janvier 2027 attend une décision (`sources.a_relire`)
+  effet: >-
+    la fraction de retraite complémentaire des seules retraites progressives demandées à
+    plus de vingt trimestres du taux plein, de 1,75 point par trimestre au-delà de vingt :
+    363,80 € par an, sous un plafond de 22 %, pour l'artisan de cent cinquante trimestres
+    qui la demande à soixante ans en février 2027, à 60 % de son activité
+- ecart: >-
     les dernières périodes du RCO des artisans (2008-2012) et du NRIC (2005-2012)
     liquident aussi les pensions de ces années-là, avant la fusion, et leur appliquent
     le barème de l'annexe 2 du règlement du RCI, que les règlements d'alors ne
@@ -31,24 +43,35 @@ approximations:
 exemples:
 - cnav_2026_07_abattement_rci_1962
 sources:
-  lu_le: 2026-11-11
+  lu_le: 2026-11-12
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
-    À porter pour le 1er janvier 2027 (lu le 11 novembre 2026, action 184, étape 6) :
-    l'article 12 du règlement, dans la rédaction des arrêtés du 6 octobre 2025 (NOR
-    TSSS2527351A) et du 21 septembre 2026 (NOR TRSS2624955A), LEGIARTI000054908824.
-    Une chose change, la retraite progressive : « Lorsque l'assuré bénéficie d'une
-    fraction de pension au titre de la retraite progressive par application de
-    l'article 28 du présent régime, le coefficient d'abattement ne peut excéder le taux
-    prévu à la deuxième ligne du tableau de l'annexe 2 » ; le modèle sert la fraction
-    sous l'abattement entier, jusqu'à 22 %. Quelle ligne est la deuxième, l'index ne le
-    dit pas, qui rend l'annexe 2 à plat, de vingt trimestres (22 %) à un (1 %) : lire
-    le tableau sur Légifrance. Le reste est un renvoi mis à jour : le décompte par
-    l'âge vise « l'âge du taux plein au sens du 1° ou, du 1° bis ou du 6° de l'article
-    L. 351-8 » au lieu du III de l'article 20 de la loi n° 2010-1330, que la loi
-    n° 2025-199 a porté à ce 6° (LEGIARTI000051289852) — le parent d'un enfant
-    handicapé, à soixante-cinq ans (fiche taux_plein_a_soixante_cinq_ans).
+    À trancher par le propriétaire, puis à porter pour le 1er janvier 2027 (action 192,
+    étape 6, lue le 12 novembre 2026) : l'article 12 du règlement, dans la rédaction des
+    arrêtés du 6 octobre 2025 (NOR TSSS2527351A) et du 21 septembre 2026 (NOR
+    TRSS2624955A), LEGIARTI000054908824, plafonne l'abattement de la fraction servie en
+    retraite progressive : « Lorsque l'assuré bénéficie d'une fraction de pension au titre
+    de la retraite progressive par application de l'article 28 du présent régime, le
+    coefficient d'abattement ne peut excéder le taux prévu à la deuxième ligne du tableau
+    de l'annexe 2 ». Quelle ligne est la deuxième, ni le texte, ni l'arrêté au Journal
+    officiel, ni aucune publication de la caisse trouvée ne le disent : sous la ligne des
+    titres (« TRIMESTRES MANQUANTS | COEFFICIENT DE DÉCOTE »), c'est « 20 | 22,00 % » ; à
+    ne compter que les lignes de taux, « 19 | 20,75 % ». La règle est écrite sur la
+    première lecture, 22 %, la seule qui donne un sens au plafond : la retraite
+    progressive s'ouvre à soixante ans, à plus de vingt trimestres du taux plein, où le
+    tableau s'arrête. Elle attend, avec ses tests, dans
+    `docs/mesures/192/2026-11-12-etape-6-la-regle-et-ses-tests.txt` ; la ligne y est un
+    paramètre de la fiche, 20 ou 19.
+  - >-
+    Au-delà de vingt trimestres manquants aux deux décomptes, l'annexe 2 n'a pas de ligne :
+    le modèle y prolonge la table des âges de l'Agirc-Arrco, 1,75 % par trimestre, jusqu'à
+    36 % d'abattement à vingt-huit trimestres (coefficient 0,64), ce que le règlement
+    n'écrit pas. Seule la retraite progressive y mène, demandée à soixante ans avec moins
+    de cent cinquante-deux trimestres pour cent soixante-douze requis ; au départ, vingt
+    trimestres au plus séparent l'âge légal de l'âge du taux plein. Avant 2027, ce que la
+    caisse sert alors n'a pas été trouvé : à lui demander, ou à lire dans une circulaire
+    de la retraite progressive des indépendants.
   - >-
     Avant 2013 : les règlements du RCO des artisans (arrêté du 15 décembre 1978, et
     son tableau des taux d'abattement de l'arrêté du 30 novembre 1984) et du NRIC
@@ -71,6 +94,30 @@ sources:
       date, lus dans l'index LEGI du dépôt à jour au 11 novembre 2026 : citations
       dans `sources.a_relire`
     date: 2026-11-11
+  - type: legifrance
+    reference: >-
+      les mêmes articles 12 (LEGIARTI000054908824) et 28 (LEGIARTI000054908892) du 1er
+      janvier 2027 et l'annexe 2 (LEGIARTI000054907665), relus dans l'index LEGI du dépôt
+      à jour au 11 novembre 2026, et l'annexe sur Légifrance, où une lecture du seul texte
+      rend, dans l'ordre, « COEFFICIENTS D'ABATTEMENT », « TRIMESTRES MANQUANTS »,
+      « COEFFICIENT DE DÉCOTE », puis « 20 », « 22,00 % », « 19 », « 20,75 % »… jusqu'à
+      « 01 », « 1,00 % », sans la structure du tableau : le navigateur de la session y est
+      refusé, et les incréments de LEGI de septembre 2026, qui la portaient, ne sont plus
+      au serveur de la DILA. L'article 28 ajoute que l'assuré « ne peut prétendre au
+      bénéfice du dispositif de complément différentiel de points mentionné aux articles
+      9-1 à 9-6 du présent règlement, lorsqu'il demande à bénéficier de la fraction de
+      pension au titre de la retraite progressive » : ce complément, créé au 1er janvier
+      2027 (article 9-1 du règlement), n'est pas modélisé, et l'alinéa ne touche rien de ce
+      que le modèle sert
+    date: 2026-11-12
+  - type: jorf
+    reference: >-
+      arrêté du 6 octobre 2025 (JORFTEXT000052377575, article 1er, 4°) et arrêté du 21
+      septembre 2026 (JORFTEXT000054888294, article 1er, 5° c et 7°, en vigueur le 1er
+      janvier 2027 par son article 2), lus dans l'index JORF du dépôt à jour au 11 novembre
+      2026 : l'alinéa du plafond et celui de l'article 28, mot pour mot ceux de LEGI, sans
+      rien qui dise la ligne ; l'annexe 2 n'y est pas modifiée
+    date: 2026-11-12
   - type: circulaire_cnav
     reference: >-
       circulaire 2026-07 du 5 mars 2026, point 4.1.2 : un exemple chiffré, et le
@@ -93,10 +140,41 @@ textes_a_rattacher:
   en_vigueur: 2027-01-01
   change: >-
     l'abattement de la fraction servie en retraite progressive est plafonné au « taux
-    prévu à la deuxième ligne du tableau de l'annexe 2 », non porté au modèle
-    (`sources.a_relire`) ; le décompte par l'âge vise le « 6° de l'article L. 351-8 »
-    au lieu du III de l'article 20 de la loi n° 2010-1330, renvoi mis à jour
+    prévu à la deuxième ligne du tableau de l'annexe 2 » : la règle est écrite, et attend
+    que le propriétaire dise la ligne (`sources.a_relire`) ; le décompte par l'âge vise
+    le « 6° de l'article L. 351-8 » au lieu du III de l'article 20 de la loi n° 2010-1330,
+    renvoi mis à jour
+- id: LEGIARTI000054892100
+  article: arrêté du 9 février 2012, règlement, article 28
+  en_vigueur: 2013-01-01
+  change: >-
+    l'assuré qui a dans le régime de base « une fraction de pension liquidée au titre de la
+    retraite progressive […] peut demander à bénéficier de la même fraction de retraite
+    complémentaire » : le modèle la sert avec celle de la base, sans demande à part
+- id: LEGIARTI000054908892
+  article: arrêté du 9 février 2012, règlement, article 28
+  en_vigueur: 2027-01-01
+  change: >-
+    qui demande cette fraction « ne peut prétendre au bénéfice du dispositif de complément
+    différentiel de points mentionné aux articles 9-1 à 9-6 » : ce complément, créé à la
+    même date, n'est pas modélisé, et l'alinéa ne touche rien de ce que le modèle sert
 - reference: L. 635-1 CSS
+textes_sans_effet:
+- id: LEGIARTI000054907228
+  article: arrêté du 9 février 2012, règlement, article 28
+  en_vigueur: 2024-06-26
+  motif: >-
+    des renvois mis à jour : « mentionné à l'article L. 631-1 » au lieu de « exerçant une
+    activité artisanale, industrielle ou commerciale », l'article L. 161-22-1-5 et les
+    articles R. 161-19-5 à R. 161-19-11 et D. 161-2-24 à D. 161-2-24-7 au lieu de L. 634-3-1
+    et de D. 634-15 à D. 634-19 ; la même fraction de retraite complémentaire
+- id: LEGIARTI000054908384
+  article: arrêté du 9 février 2012, règlement, article 12
+  en_vigueur: 2027-01-01
+  motif: >-
+    la rédaction de l'arrêté du 6 octobre 2025 seul, abrogée le 25 septembre 2026 avant
+    d'être entrée en vigueur : celle de l'arrêté du 21 septembre 2026 (LEGIARTI000054908824)
+    la remplace à la même date
 code:
   interrupteurs:
     abattement_points: agirc_arrco

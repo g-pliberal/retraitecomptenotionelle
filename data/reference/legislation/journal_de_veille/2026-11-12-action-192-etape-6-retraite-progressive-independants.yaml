@@ -1,0 +1,41 @@
+date: "2026-11-12"
+session: "action 192, étape 6 : la retraite progressive au régime complémentaire des indépendants, en 2027"
+consulte: >-
+  `veille_droit.py`, puis les index LEGI et JORF du dépôt, récupérés et à jour au 11
+  novembre 2026, par `dila_cherche.py`. Règlement du régime complémentaire des
+  indépendants (arrêté du 9 février 2012) : l'article 12 dans ses quatre rédactions, mot à
+  mot, dont celle du 1er janvier 2027 (LEGIARTI000054908824) et celle de l'arrêté du 6
+  octobre 2025 seul, jamais entrée en vigueur (LEGIARTI000054908384) ; l'annexe 2
+  (LEGIARTI000054892591, LEGIARTI000054907665) ; l'article 28 dans ses trois rédactions
+  (LEGIARTI000054908892 au 1er janvier 2027) ; le début de l'article 9-1
+  (LEGIARTI000054908851). Au Journal officiel, l'arrêté du 6 octobre 2025
+  (JORFTEXT000052377575) et celui du 21 septembre 2026 (JORFTEXT000054888294), aux
+  fenêtres de l'article 12, de l'article 28 et de l'annexe 2. L'annexe 2 sur Légifrance,
+  par l'agent de lecture, en texte seul. La page « Retraite complémentaire » des
+  travailleurs indépendants de l'Assurance retraite, et deux recherches sur le web.
+trouve: >-
+  Au 1er janvier 2027, l'article 12 plafonne l'abattement de la fraction servie en retraite
+  progressive : il « ne peut excéder le taux prévu à la deuxième ligne du tableau de
+  l'annexe 2 ». Le tableau, inchangé depuis 2013, va de « 20 | 22,00 % » à « 01 |
+  1,00 % » sous deux titres de colonnes ; aucun texte lu ne dit si la deuxième ligne est
+  celle des vingt trimestres, comptée sous les titres, ou celle des dix-neuf, 20,75 %. La
+  règle est écrite sur 22 %, le test d'abord, dans les deux moteurs, la ligne en paramètre
+  d'une version de la fiche abattement_rci ; elle n'est pas publiée, la ligne revenant au
+  propriétaire, et attend dans `docs/mesures/192/2026-11-12-etape-6-la-regle-et-ses-tests.txt`.
+  Un artisan de cent cinquante trimestres qui demande sa retraite progressive à soixante
+  ans en février 2027 y gagne 363,80 € par an ; aucun témoin existant ne bouge. Le
+  moteur, lui, servait cette fraction sous 36 % d'abattement, en prolongeant au-delà de
+  vingt trimestres la table des âges de l'Agirc-Arrco, que le règlement n'écrit pas : la
+  fiche le dit désormais. L'article 28 refuse le complément différentiel de points des
+  articles 9-1 à 9-6 à qui demande cette fraction : ce complément, créé à la même date,
+  n'est pas modélisé, et l'alinéa ne touche rien de ce que le modèle sert.
+reste: >-
+  Au propriétaire : la ligne du tableau, 22 % ou 20,75 %. Non trouvé : ce que la caisse
+  sert, avant 2027, à la retraite progressive demandée à plus de vingt trimestres du taux
+  plein ; une circulaire de la Cnav ou du conseil des indépendants sur la rédaction de
+  2027, à chercher en janvier 2027. Non lus : les articles 9-2 à 9-9 du règlement, et la
+  fin du 9-1 ; le complément différentiel de points n'a pas de fiche. La structure du
+  tableau de l'annexe 2 n'a pas été vue : le navigateur de la session est refusé par
+  Légifrance, et les incréments de LEGI de septembre 2026 ne sont plus au serveur de la
+  DILA. Non consultés : les exposés de la base de la Cnav que `veille_droit.py` signale
+  changés, aucun ne touchant ce régime.

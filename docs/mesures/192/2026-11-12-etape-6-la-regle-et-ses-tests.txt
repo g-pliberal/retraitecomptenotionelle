@@ -1,0 +1,694 @@
+Action 192, étape 6 — la règle écrite le 12 novembre 2026, et ses tests, non
+publiés : le correctif, à rejouer par `git apply` sur ce fichier (git passe le
+texte qui précède le premier « diff --git »). Pris sur 8ac03c7, la fiche
+`abattement_rci` étant celle du commit qui porte ce fichier.
+
+Ce qu'il porte : le plafond que le règlement du régime complémentaire des
+indépendants met, au 1er janvier 2027, à l'abattement de la fraction servie en
+retraite progressive (article 12, LEGIARTI000054908824), dans
+`plafondEnRetraiteProgressive` (moteur/js/droit/liquider.js) et son jumeau
+Python, que `liquider` appelle quand la demande est une retraite progressive
+(moteur/js/droit/liquidation.js et son jumeau) ; la fiche qui en porte les
+versions et le paramètre
+(data/reference/regles/abattement_rci.yaml), inscrite aux fiches que le paquet
+porte (`FichesDatees.NOMS`) ; ses tests, vus rouges puis verts dans les deux
+moteurs (tests/test_retraite_progressive.py,
+tests/js/retraite-progressive.test.js) ; un témoin de plus,
+`progressive_artisan_2027` (scripts/construire_temoins.py).
+
+La ligne du tableau de l'annexe 2 est le paramètre
+`trimestres_de_la_ligne_du_plafond_en_retraite_progressive` de la version
+`plafond_en_retraite_progressive_2027` de la fiche : 20, pour 22 %. Si le
+propriétaire retient la ligne des dix-neuf trimestres, 20,75 % : le paramètre
+passe à 19, la valeur attendue des deux tests de 0,78 à 0,7925, et
+l'approximation de la fiche qui dit les deux lectures se récrit.
+
+Après l'avoir appliqué : `python scripts/construire_donnees.py`, qui met la
+fiche au paquet que lit le portage, puis `python scripts/construire_temoins.py`.
+Le 12 novembre 2026, sur 8ac03c7 : aucun des 934 témoins ne bouge, un de plus ;
+`python -m pytest -m rapide`, les essais de tests/js/, les confrontations
+(tests/test_pont.py, test_oracle.py, test_destinie.py,
+test_estimation_officielle.py, test_verification.py) et les tests du coût
+(test_cout.py, test_cout_age_depart.py, test_controle_drees_panorama.py,
+test_solde_fusion.py) sont verts. À reprendre alors : le premier point de
+`sources.a_relire` de la fiche, qui dit la règle en attente, et le bloc
+« Reprise » de la note, à ôter.
+
+Pourquoi il n'est pas sur `main` : la note de l'étape,
+docs/feuille_de_route/192/2026-11-12-etape-6-retraite-progressive-independants.md.
+
+diff --git a/data/reference/regles/abattement_rci.yaml b/data/reference/regles/abattement_rci.yaml
+index 43b9aff..693fc75 100644
+--- a/data/reference/regles/abattement_rci.yaml
++++ b/data/reference/regles/abattement_rci.yaml
+@@ -6,8 +6,103 @@ intitule: >-
+   à vingt trimestres (annexe 2 du règlement du RCI), sur le plus petit des deux
+   décomptes, durée et âge, et sur toutes les catégories de points, celles du RCO des
+   artisans et du NRIC des commerçants comprises.
++domaine: decote_surcote
+ regimes: [nric, rci, rco_artisans]
++etape: liquider_chaque_regime
++face: droit
+ etat: approchee
++lit:
++- les trimestres qui manquent à la durée du taux plein, et ceux qui séparent l'assuré de
++  l'âge du taux plein, à la date d'effet de la pension
++- l'événement de la demande, départ ou retraite progressive
++- liquidation.date_effet
++ecrit:
++- le coefficient d'abattement des points de chaque régime, et la formule qui le dit
++dates_qui_decident:
++- liquidation.date_effet
++# Les versions forment un partage de la date d'effet de la pension (§ 4.1). Le
++# moteur (droit/liquider.py, `plafond_en_retraite_progressive`, et son jumeau)
++# lit : `regimes`, ceux dont le règlement abat les points ;
++# `trimestres_de_la_ligne_du_plafond_en_retraite_progressive`, la ligne du
++# tableau de l'annexe 2 dont le taux plafonne l'abattement de la fraction servie
++# en retraite progressive, nulle tant que le règlement ne plafonne rien. Le
++# tableau lui-même reste écrit au moteur, avec celui de l'Agirc-Arrco
++# (`_PALIERS_ANTICIPATION`).
++versions:
++- id: avant_le_rci
++  statut: supposee
++  hypothese: >-
++    les règlements du RCO des artisans (arrêté du 15 décembre 1978) et du NRIC des
++    commerçants (arrêté du 17 décembre 2004), que le Journal officiel ne publie pas, ne
++    sont pas lus : le modèle abat leurs pensions d'avant 2013 au tableau de l'annexe 2 du
++    règlement du RCI, sans plafond propre à la retraite progressive (approximations)
++  fiabilite: faible, aucun des deux règlements n'a été lu
++  bornes:
++    liquidation.date_effet: [null, 2013-01-01]
++  contenu:
++    droit: celui de la version reglement_de_2013, présumé
++    parametres:
++      regimes: [nric, rci, rco_artisans]
++      trimestres_de_la_ligne_du_plafond_en_retraite_progressive: null
++  exemples: aucun trouvé
++- id: reglement_de_2013
++  statut: lue
++  textes:
++  - {id: LEGIARTI000054891893, article: "règlement du RCI, article 12", en_vigueur: 2013-01-01}
++  - {id: LEGIARTI000054892591, article: "règlement du RCI, annexe 2", en_vigueur: 2013-01-01}
++  - {id: LEGIARTI000054896398, article: "règlement du RCI, article 12", en_vigueur: 2024-06-26,
++     publie_le: 2024-06-25}
++  - {id: LEGIARTI000054907665, article: "règlement du RCI, annexe 2", en_vigueur: 2024-06-26,
++     publie_le: 2024-06-25}
++  - {id: LEGIARTI000054892100, article: "règlement du RCI, article 28 : la même fraction de retraite complémentaire",
++     en_vigueur: 2013-01-01}
++  nee_de: LEGIARTI000054891893
++  bornes:
++    liquidation.date_effet: [2013-01-01, 2027-01-01]
++  contenu:
++    droit: >-
++      « chaque catégorie de points est affecté d'un abattement fonction du nombre de
++      trimestres valables pour la détermination du taux […] et de l'âge atteint par l'assuré
++      à la date prévue pour l'entrée en jouissance de la pension. Les coefficients
++      d'abattement […] figurent en annexe 2 » (article 12, 2013) ; depuis le 26 juin 2024,
++      « Lorsque cette retraite de base n'est pas liquidée au taux plein, chaque catégorie de
++      points est affecté d'un abattement en fonction du nombre de trimestres valables pour
++      la détermination du taux au sens du deuxième alinéa de l'article L. 351-1 du code de
++      la sécurité sociale ou bien du nombre de trimestres séparant l'âge du taux plein […]
++      de l'âge atteint par l'assuré à la date prévue pour l'entrée en jouissance de la
++      pension » ; « COEFFICIENTS D'ABATTEMENT TRIMESTRES MANQUANTS COEFFICIENT DE DÉCOTE 20
++      22,00 % 19 20,75 % […] 12 12,00 % 11 11,00 % […] 01 1,00 % » (annexe 2, même table
++      aux deux dates). Rien sur la retraite progressive, que l'article 28 sert pourtant « de
++      la même fraction »
++    parametres:
++      regimes: [nric, rci, rco_artisans]
++      trimestres_de_la_ligne_du_plafond_en_retraite_progressive: null
++  exemples: [cnav_2026_07_abattement_rci_1962]
++- id: plafond_en_retraite_progressive_2027
++  statut: lue
++  textes:
++  - {id: LEGIARTI000054908824, article: "règlement du RCI, article 12", en_vigueur: 2027-01-01,
++     publie_le: 2026-09-24}
++  - {id: LEGIARTI000054908892, article: "règlement du RCI, article 28 : sans le complément différentiel de points, non modélisé",
++     en_vigueur: 2027-01-01, publie_le: 2026-09-24}
++  nee_de: LEGIARTI000054908824
++  bornes:
++    liquidation.date_effet: [2027-01-01, null]
++  contenu:
++    droit: >-
++      la version reglement_de_2013, et : « Lorsque l'assuré bénéficie d'une fraction de
++      pension au titre de la retraite progressive par application de l'article 28 du présent
++      régime, le coefficient d'abattement ne peut excéder le taux prévu à la deuxième ligne
++      du tableau de l'annexe 2 » ; le décompte par l'âge vise « l'âge du taux plein au sens
++      du 1° ou, du 1° bis ou du 6° de l'article L. 351-8 » au lieu du III de l'article 20 de
++      la loi n° 2010-1330, renvoi mis à jour
++    conditions: >-
++      la fraction de pension servie en retraite progressive seule ; la pension complète,
++      liquidée au départ, garde le tableau entier
++    parametres:
++      regimes: [nric, rci, rco_artisans]
++      trimestres_de_la_ligne_du_plafond_en_retraite_progressive: 20
++  exemples: aucun trouvé
+ effet: >-
+   Toute retraite du RCI liquidée avant le taux plein du régime de base. Jusqu'au 16
+   octobre 2026, le modèle abattait les points de la décote du régime général, 1,25 %
+@@ -16,19 +111,30 @@ effet: >-
+   dernières du RCO des artisans (2008-2012) et du NRIC (2005-2012), qui liquident
+   leurs points après la fusion, renvoient depuis à cette fiche.
+ approximations:
+-- ecart: >-
++- version: plafond_en_retraite_progressive_2027
++  ecart: >-
++    « la deuxième ligne du tableau de l'annexe 2 » est lue sous la ligne de ses titres : «
++    20 | 22,00 % ». À ne compter que les lignes de taux, ce serait « 19 | 20,75 % », et le
++    coefficient de la fraction ne descendrait pas sous 0,7925 au lieu de 0,78. Ni le
++    règlement, ni l'arrêté, ni une publication de la caisse ne tranchent ; la première
++    lecture est retenue parce que le tableau s'arrête à vingt trimestres et que la
++    retraite progressive, ouverte à soixante ans, est seule à en compter davantage
++  effet: >-
++    au plus 1,25 point de la fraction de retraite complémentaire servie en retraite
++    progressive, à vingt trimestres manquants et au-delà
++- version: [avant_le_rci, reglement_de_2013]
++  ecart: >-
+     au-delà de vingt trimestres manquants aux deux décomptes, où l'annexe 2 n'a pas de
+     ligne, le modèle prolonge la table des âges de l'Agirc-Arrco, 1,75 % par trimestre :
+-    0,64 à vingt-huit trimestres. Seule la retraite progressive y mène, demandée à moins
+-    de cent cinquante-deux trimestres pour cent soixante-douze requis ; ce que la caisse
+-    sert alors, avant 2027, n'a pas été trouvé, et le plafond que le règlement y met au
+-    1er janvier 2027 attend une décision (`sources.a_relire`)
++    0,64 à vingt-huit trimestres. Seule la retraite progressive y mène, demandée avant
++    2027 à moins de cent cinquante-deux trimestres pour cent soixante-douze requis ; ce que
++    la caisse sert alors n'a pas été trouvé
+   effet: >-
+-    la fraction de retraite complémentaire des seules retraites progressives demandées à
+-    plus de vingt trimestres du taux plein, de 1,75 point par trimestre au-delà de vingt :
+-    363,80 € par an, sous un plafond de 22 %, pour l'artisan de cent cinquante trimestres
+-    qui la demande à soixante ans en février 2027, à 60 % de son activité
+-- ecart: >-
++    la fraction de retraite complémentaire des seules retraites progressives demandées
++    avant 2027 à plus de vingt trimestres du taux plein, de 1,75 point par trimestre
++    au-delà de vingt
++- version: [avant_le_rci]
++  ecart: >-
+     les dernières périodes du RCO des artisans (2008-2012) et du NRIC (2005-2012)
+     liquident aussi les pensions de ces années-là, avant la fusion, et leur appliquent
+     le barème de l'annexe 2 du règlement du RCI, que les règlements d'alors ne
+@@ -134,30 +240,6 @@ sources:
+       lus dans l'index JORF du dépôt à jour au 11 octobre 2026
+     date: 2026-10-16
+ textes_a_rattacher:
+-- reference: arrêté du 9 février 2012, article 12 et annexe 2
+-- id: LEGIARTI000054908824
+-  article: arrêté du 9 février 2012, règlement, article 12
+-  en_vigueur: 2027-01-01
+-  change: >-
+-    l'abattement de la fraction servie en retraite progressive est plafonné au « taux
+-    prévu à la deuxième ligne du tableau de l'annexe 2 » : la règle est écrite, et attend
+-    que le propriétaire dise la ligne (`sources.a_relire`) ; le décompte par l'âge vise
+-    le « 6° de l'article L. 351-8 » au lieu du III de l'article 20 de la loi n° 2010-1330,
+-    renvoi mis à jour
+-- id: LEGIARTI000054892100
+-  article: arrêté du 9 février 2012, règlement, article 28
+-  en_vigueur: 2013-01-01
+-  change: >-
+-    l'assuré qui a dans le régime de base « une fraction de pension liquidée au titre de la
+-    retraite progressive […] peut demander à bénéficier de la même fraction de retraite
+-    complémentaire » : le modèle la sert avec celle de la base, sans demande à part
+-- id: LEGIARTI000054908892
+-  article: arrêté du 9 février 2012, règlement, article 28
+-  en_vigueur: 2027-01-01
+-  change: >-
+-    qui demande cette fraction « ne peut prétendre au bénéfice du dispositif de complément
+-    différentiel de points mentionné aux articles 9-1 à 9-6 » : ce complément, créé à la
+-    même date, n'est pas modélisé, et l'alinéa ne touche rien de ce que le modèle sert
+ - reference: L. 635-1 CSS
+ textes_sans_effet:
+ - id: LEGIARTI000054907228
+@@ -182,17 +264,26 @@ code:
+     `abattement_points: agirc_arrco` (`liquider.abattement_points`) : le coefficient
+     de la table des trimestres manquants et celui de la table des âges, le plus
+     avantageux retenu, ce qui revient à compter le plus petit des deux décomptes ; la
+-    table des âges ne descend pas sous 0,78, vingt trimestres séparant au plus l'âge
+-    légal de l'âge d'annulation de la décote.
++    table des âges ne descend pas sous 0,78 au départ, vingt trimestres séparant au plus
++    l'âge légal de l'âge d'annulation de la décote. La liquidation provisoire d'une
++    retraite progressive (`liquidation.liquider`, l'événement de la demande) ne descend
++    pas, depuis 2027, sous le coefficient de la ligne que la version nomme
++    (`plafond_en_retraite_progressive`).
+   python: >-
+     droit/liquider.py : liquider_chaque_regime, abattement_points, coefficient_pour_age,
+-    _coefficient_anticipation, _PALIERS_ANTICIPATION ; droit/ouvrir.py : age_taux_plein
++    _coefficient_anticipation, _PALIERS_ANTICIPATION, plafond_en_retraite_progressive,
++    FICHE_DE_L_ABATTEMENT_DU_RCI ; droit/liquidation.py : liquider ; droit/ouvrir.py :
++    age_taux_plein ; scenarios/actuel.py : FichesDatees
+   javascript: >-
+     moteur/js/droit/liquider.js : liquiderChaqueRegime, abattementPoints,
+-    coefficientPourAge, coefficientAnticipation, PALIERS_ANTICIPATION ;
+-    moteur/js/droit/ouvrir.js : ageTauxPlein
++    coefficientPourAge, coefficientAnticipation, PALIERS_ANTICIPATION,
++    plafondEnRetraiteProgressive, FICHE_DE_L_ABATTEMENT_DU_RCI ;
++    moteur/js/droit/liquidation.js : liquider ; moteur/js/droit/ouvrir.js : ageTauxPlein ;
++    moteur/js/regimes.js : FichesDatees
+   parametres: >-
+-    regimes/nric.yaml, regimes/rci.yaml, regimes/rco_artisans.yaml : age_taux_plein,
+-    duree_requise_trimestres
++    contenu.parametres de chaque version : regimes,
++    trimestres_de_la_ligne_du_plafond_en_retraite_progressive ; regimes/nric.yaml,
++    regimes/rci.yaml, regimes/rco_artisans.yaml : age_taux_plein, duree_requise_trimestres
+   tests: [tests/test_oracle.py, tests/test_simulateur.py, tests/js/moteur.test.js,
++    tests/test_retraite_progressive.py, tests/js/retraite-progressive.test.js,
+     tests/temoins/simulations.json]
+diff --git a/moteur/js/droit/liquidation.js b/moteur/js/droit/liquidation.js
+index 5ede0ea..a14ef04 100644
+--- a/moteur/js/droit/liquidation.js
++++ b/moteur/js/droit/liquidation.js
+@@ -263,14 +263,19 @@ export function liquider(demande, etat, contexte) {
+   }
+ 
+   const ouverture = ouvrir(moteur, releve, cible);
+-  const liquidees = liquiderChaqueRegime(moteur, releve, ouverture, contexte, cible);
++  // La fraction servie en retraite progressive : le régime complémentaire des
++  // indépendants en plafonne l'abattement (`plafondEnRetraiteProgressive`).
++  const progressive = demande.evenement === "retraite_progressive";
++  const liquidees = liquiderChaqueRegime(
++    moteur, releve, ouverture, contexte, cible, false, progressive);
+   // LA PENSION NATIONALE, quand un accord la compare à la pension proratisée :
+   // la même liquidation, sans les trimestres des périodes qu'il compare.
+   // « Compléter tous régimes » sert la plus élevée des deux, chacune portée à
+   // son minimum. Voir le Python.
+   const etranger = releve.durees.etranger;
+   const nationales = etranger !== null && etranger.compare(GENERALE)
+-    ? liquiderChaqueRegime(moteur, releve, ouverture, contexte, cible, true) : null;
++    ? liquiderChaqueRegime(moteur, releve, ouverture, contexte, cible, true, progressive)
++    : null;
+   const pensions = liquidees.regimes;
+ 
+   const total = pensions.reduce((somme, p) => somme + p.montant, 0.0);
+diff --git a/moteur/js/droit/liquider.js b/moteur/js/droit/liquider.js
+index 1bb4778..25b9b51 100644
+--- a/moteur/js/droit/liquider.js
++++ b/moteur/js/droit/liquider.js
+@@ -202,7 +202,7 @@ export class Pensions {
+  * `null` : tous. Voir le Python.
+  */
+ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
+-  regimes = null, nationale = false) {
++  regimes = null, nationale = false, progressive = false) {
+   const carriere = releve.carriere;
+   const { durees, droits } = releve;
+   const anneeLiquidation = carriere.anneeLiquidation;
+@@ -461,7 +461,7 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
+         abattement = abattementPoints(
+           moteur, periode, carriere, trimestres, requisReference, ageLiquidation,
+           anneeLiquidation, trimestresParRegime.get(code) ?? 0, parLeHandicap,
+-          parCategorie, durees,
++          parCategorie, durees, progressive,
+         );
+         // LA TRANCHE C D'AVANT 2016 GARDE LE COEFFICIENT POUR ÂGE, même au
+         // taux plein : voir le Python. Le coefficient affiché est celui de la
+@@ -3083,6 +3083,32 @@ export function exonerationsAgircArrco(moteur, periode, carriere) {
+   return moteur.fichesDatees.regle(FICHE_DES_COEFFICIENTS_AGIRC_ARRCO, date);
+ }
+ 
++/** La fiche de l'abattement du régime complémentaire des indépendants. */
++export const FICHE_DE_L_ABATTEMENT_DU_RCI = "abattement_rci";
++
++/**
++ * La ligne du tableau de l'annexe 2 du règlement du régime complémentaire des
++ * indépendants dont le taux plafonne l'abattement de la fraction servie en
++ * retraite progressive, en trimestres manquants ; `null` pour un autre régime,
++ * ou tant que le règlement ne plafonne rien. Sans la fiche, le calcul
++ * s'arrête. Voir `liquider.plafond_en_retraite_progressive`.
++ */
++export function plafondEnRetraiteProgressive(moteur, periode, carriere) {
++  const date = dateDEffet(carriere);
++  if (periode.abattement_points !== "agirc_arrco" || date === null) {
++    return null;
++  }
++  if (!(FICHE_DE_L_ABATTEMENT_DU_RCI in moteur.fichesDatees.fiches())) {
++    throw new Error(`${FICHE_DE_L_ABATTEMENT_DU_RCI} : la fiche manque au paquet, que `
++      + "scripts/construire_donnees.py refait");
++  }
++  const regle = moteur.fichesDatees.regle(FICHE_DE_L_ABATTEMENT_DU_RCI, date);
++  if (regle === null || !regle.regimes.includes(periode.regime)) {
++    return null;
++  }
++  return regle.trimestres_de_la_ligne_du_plafond_en_retraite_progressive;
++}
++
+ /** La fiche dont les versions disent le barème de l'article 16 de l'arrêté du
+  * 30 décembre 1970, que l'Ircantec applique aussi aux points de l'IPACTE et de
+  * l'IGRANTE. */
+@@ -3242,7 +3268,8 @@ export function coefficientConvention1947(ageLiquidation) {
+ }
+ 
+ export function abattementPoints(moteur, periode, carriere, trimestres, requis, ageLiquidation,
+-  anneeLiquidation, trimestresRegime = 0, handicap = false, categorie = null, durees = null) {
++  anneeLiquidation, trimestresRegime = 0, handicap = false, categorie = null, durees = null,
++  progressive = false) {
+   // L'Ircantec a le même barème que l'Agirc-Arrco, et son texte l'écrit :
+   // article 16 de l'arrêté du 30 décembre 1970, mêmes marches et mêmes deux
+   // lectures. Voir le docstring du modèle Python. `trimestresRegime` est la
+@@ -3252,6 +3279,8 @@ export function abattementPoints(moteur, periode, carriere, trimestres, requis,
+   // `categorie` : la fiche du taux plein par catégorie de L. 351-8 que
+   // l'assuré a au régime général, `null` sans elle. `durees` : les durées de
+   // l'assuré, dont l'Ircantec lit celle du régime général (5° de 1978).
++  // `progressive` : la liquidation provisoire d'une retraite progressive, dont
++  // le régime complémentaire des indépendants plafonne l'abattement.
+   if (carriere.au_deces) {
+     // La pension que l'assuré eût obtenue à son décès : la réversion d'une
+     // complémentaire porte sur les points acquis, sans coefficient. Voir
+@@ -3321,6 +3350,14 @@ export function abattementPoints(moteur, periode, carriere, trimestres, requis,
+         : coefficientPourAge(moteur, periode, carriere, ageLiquidation);
+       const candidats = [parDuree, parAge].filter((c) => c !== null);
+       abattement = candidats.length ? Math.max(...candidats) : 1.0;
++      // LA FRACTION SERVIE EN RETRAITE PROGRESSIVE par le régime
++      // complémentaire des indépendants : son abattement ne dépasse pas le
++      // taux d'une ligne du tableau, que la fiche nomme. Voir le Python.
++      const ligne = progressive
++        ? plafondEnRetraiteProgressive(moteur, periode, carriere) : null;
++      if (ligne !== null) {
++        abattement = Math.max(abattement, coefficientAnticipation(ligne, 20));
++      }
+     }
+   } else if (periode.abattement_points === "ircec"
+     || periode.abattement_points === "ircec_age_seul"
+diff --git a/scripts/construire_temoins.py b/scripts/construire_temoins.py
+index 1e3265a..2e05208 100644
+--- a/scripts/construire_temoins.py
++++ b/scripts/construire_temoins.py
+@@ -736,6 +736,15 @@ def _cas() -> list[dict]:
+         "naissance": "1965", "sexe": "F", "debut": "20", "liquidation": "64",
+         "progressive": "2023-05", "quotite": "60",
+     }))
++    # L'artisan de cent cinquante trimestres qui demande sa retraite progressive
++    # à soixante ans, en février 2027 : plus de vingt trimestres le séparent du
++    # taux plein, par la durée comme par l'âge, et le règlement de son régime
++    # complémentaire plafonne l'abattement de la fraction au taux de la ligne
++    # des vingt trimestres, 22 % (fiche abattement_rci ; action 192, étape 6).
++    cas.append(("progressive_artisan_2027", {
++        "naissance": "1967", "sexe": "H", "statut": "artisan", "debut": "22.5",
++        "liquidation": "65", "progressive": "2027-02", "quotite": "60",
++    }))
+     # LE TEMPS PARTIEL (fiche temps_partiel_fonction_publique ; action 136,
+     # étape 3) : le fonctionnaire de l'État de l'exemple du SRE, trente-neuf
+     # ans de services dont dix à 80 %, que ses services comptent pour huit, et
+diff --git a/src/retraite_notionnelle/droit/liquidation.py b/src/retraite_notionnelle/droit/liquidation.py
+index 54aeea4..717b49f 100644
+--- a/src/retraite_notionnelle/droit/liquidation.py
++++ b/src/retraite_notionnelle/droit/liquidation.py
+@@ -317,14 +317,18 @@ def liquider(demande: Demande, etat: Etat, contexte: Contexte) -> Liquidation:
+         fiabilite = min(fiabilite, majoration_enfants.fiabilite)
+ 
+     ouverture = _ouvrir.ouvrir(moteur, releve, cible)
+-    liquidees = _liquider.liquider_chaque_regime(moteur, releve, ouverture, contexte, cible)
++    # La fraction servie en retraite progressive : le régime complémentaire des
++    # indépendants en plafonne l'abattement (``plafond_en_retraite_progressive``).
++    progressive = demande.evenement == "retraite_progressive"
++    liquidees = _liquider.liquider_chaque_regime(moteur, releve, ouverture, contexte, cible,
++                                                 progressive=progressive)
+     # LA PENSION NATIONALE, quand un accord la compare à la pension
+     # proratisée : la même liquidation, sans les trimestres des périodes qu'il
+     # compare (fiche pension_proratisee). « Compléter tous régimes » sert la
+     # plus élevée des deux, chacune portée à son minimum.
+     etranger = releve.durees.etranger
+     nationales = (_liquider.liquider_chaque_regime(moteur, releve, ouverture, contexte, cible,
+-                                                   nationale=True)
++                                                   nationale=True, progressive=progressive)
+                   if etranger is not None and etranger.compare(_etranger.GENERALE) else None)
+     pensions = list(liquidees.regimes)
+ 
+diff --git a/src/retraite_notionnelle/droit/liquider.py b/src/retraite_notionnelle/droit/liquider.py
+index cb442d7..ebb79f8 100644
+--- a/src/retraite_notionnelle/droit/liquider.py
++++ b/src/retraite_notionnelle/droit/liquider.py
+@@ -684,7 +684,7 @@ class Pensions:
+ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
+                            contexte: Contexte | None = None,
+                            regimes: frozenset[str] | None = None,
+-                           nationale: bool = False) -> Pensions:
++                           nationale: bool = False, progressive: bool = False) -> Pensions:
+     """La pension de chaque régime où le relevé porte un droit.
+ 
+     La durée requise de référence, que l'étape « ouvrir le droit » a lue, est
+@@ -983,6 +983,7 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
+                     age_liquidation, annee_liquidation,
+                     trimestres_par_regime.get(code, 0),
+                     handicap=par_le_handicap, categorie=par_categorie, durees=durees,
++                    progressive=progressive,
+                 )
+                 # LA TRANCHE C D'AVANT 2016 GARDE LE COEFFICIENT POUR ÂGE.
+                 # L'exonération au taux plein ne vaut que « sur les tranches
+@@ -3971,7 +3972,7 @@ def abattement_points(moteur, periode: PeriodeRegime, carriere: Carriere,
+                        annee_liquidation: int,
+                        trimestres_regime: int = 0,
+                        handicap: bool = False, categorie: str | None = None,
+-                       durees=None) -> float:
++                       durees=None, progressive: bool = False) -> float:
+     """Coefficient d'un régime en points : abattu avant le taux plein,
+     majoré après.
+ 
+@@ -3986,7 +3987,10 @@ def abattement_points(moteur, periode: PeriodeRegime, carriere: Carriere,
+     taux plein par catégorie de L. 351-8 que l'assuré a au régime général
+     (:func:`~.categories.taux_plein_par_categorie`), ``None`` sans elle.
+     ``durees`` sont les durées de l'assuré, dont l'Ircantec lit celle du
+-    régime général (5° de l'article 16, de 1978 à 1983).
++    régime général (5° de l'article 16, de 1978 à 1983). ``progressive`` dit
++    la liquidation provisoire d'une retraite progressive, dont le régime
++    complémentaire des indépendants plafonne l'abattement
++    (:func:`plafond_en_retraite_progressive`).
+ 
+     « Avant le taux plein » est une condition de DURÉE autant que d'âge :
+     une complémentaire est servie sans abattement dès que l'assuré a le
+@@ -4103,6 +4107,15 @@ def abattement_points(moteur, periode: PeriodeRegime, carriere: Carriere,
+                        else coefficient_pour_age(moteur, periode, carriere, age_liquidation))
+             candidats = [c for c in (par_duree, par_age) if c is not None]
+             abattement = max(candidats) if candidats else 1.0
++            # LA FRACTION SERVIE EN RETRAITE PROGRESSIVE par le régime
++            # complémentaire des indépendants : « le coefficient d'abattement
++            # ne peut excéder le taux prévu à la deuxième ligne du tableau de
++            # l'annexe 2 » (règlement, article 12, au 1er janvier 2027). La
++            # fiche nomme la ligne, par ses trimestres manquants.
++            ligne = (plafond_en_retraite_progressive(moteur, periode, carriere)
++                     if progressive else None)
++            if ligne is not None:
++                abattement = max(abattement, _coefficient_anticipation(ligne, 20))
+     elif periode.abattement_points in _ABATTEMENTS_IRCEC:
+         abattement = abattement_ircec(moteur, 
+             periode, carriere, trimestres, requis,
+@@ -4150,6 +4163,39 @@ def exonerations_agirc_arrco(moteur, periode: PeriodeRegime,
+     return moteur.fiches_datees.regle(FICHE_DES_COEFFICIENTS_AGIRC_ARRCO, date)
+ 
+ 
++#: La fiche de l'abattement du régime complémentaire des indépendants.
++FICHE_DE_L_ABATTEMENT_DU_RCI = "abattement_rci"
++
++
++def plafond_en_retraite_progressive(moteur, periode: PeriodeRegime,
++                                    carriere: Carriere) -> int | None:
++    """La ligne du tableau de l'annexe 2 du règlement du régime complémentaire
++    des indépendants dont le taux plafonne l'abattement de la fraction servie
++    en retraite progressive, en trimestres manquants : le paramètre
++    ``trimestres_de_la_ligne_du_plafond_en_retraite_progressive`` de la version
++    de la fiche ``abattement_rci`` qui vaut à la date d'effet de la pension
++    provisoire, pour les régimes qu'elle nomme. ``None`` pour un autre régime,
++    ou tant que le règlement ne plafonne rien : avant le 1er janvier 2027.
++    Sans la fiche, le calcul s'arrête : un droit ne se refuse pas par défaut.
++
++    « Lorsque l'assuré bénéficie d'une fraction de pension au titre de la
++    retraite progressive par application de l'article 28 du présent régime, le
++    coefficient d'abattement ne peut excéder le taux prévu à la deuxième ligne
++    du tableau de l'annexe 2 » (article 12, LEGIARTI000054908824) : la ligne
++    « 20 | 22,00 % », sous celle des titres. La pension complète, liquidée au
++    départ, garde le tableau entier."""
++    date = date_d_effet(carriere)
++    if periode.abattement_points != "agirc_arrco" or date is None:
++        return None
++    if FICHE_DE_L_ABATTEMENT_DU_RCI not in moteur.fiches_datees.fiches():
++        raise LookupError(f"{FICHE_DE_L_ABATTEMENT_DU_RCI} : la fiche manque aux "
++                          "fiches datées du moteur")
++    regle = moteur.fiches_datees.regle(FICHE_DE_L_ABATTEMENT_DU_RCI, date)
++    if regle is None or periode.regime not in regle["regimes"]:
++        return None
++    return regle["trimestres_de_la_ligne_du_plafond_en_retraite_progressive"]
++
++
+ #: La fiche dont les versions disent le barème de l'article 16 de l'arrêté du
+ #: 30 décembre 1970, que l'Ircantec applique aussi aux points de l'IPACTE et
+ #: de l'IGRANTE.
+diff --git a/src/retraite_notionnelle/scenarios/actuel.py b/src/retraite_notionnelle/scenarios/actuel.py
+index eb8d483..c1f0038 100644
+--- a/src/retraite_notionnelle/scenarios/actuel.py
++++ b/src/retraite_notionnelle/scenarios/actuel.py
+@@ -1253,7 +1253,10 @@ class FichesDatees:
+     et les majorations forfaitaires de 1972 à 1982 des pensions prises avant
+     1975, que ``revalorisation.majorations_forfaitaires`` lit, et les primes que
+     la loi assujettit à la retenue pour pension, que ``primes.prime_de_la_pension``
+-    lit, et ce qui exonère des coefficients d'anticipation de l'Agirc et de
++    lit, et le plafond que le régime complémentaire des indépendants met à
++    l'abattement de la fraction servie en retraite progressive, que
++    ``liquider.plafond_en_retraite_progressive`` lit,
++    et ce qui exonère des coefficients d'anticipation de l'Agirc et de
+     l'Arrco, que ``liquider.abattement_points`` lit, et le barème de
+     l'Ircantec, que ``liquider.bareme_ircantec`` lit,
+     et les plans de revalorisation des retraites agricoles de 1997 à 2008,
+@@ -1285,6 +1288,7 @@ class FichesDatees:
+             "majoration_enfants_a_charge_agirc_arrco", "majoration_enfants_agirc_arrco",
+             "majoration_conjoint_a_charge",
+             "coefficients_anticipation_agirc_arrco", "coefficient_anticipation_ircantec",
++            "abattement_rci",
+             "majorations_forfaitaires_1972_1982",
+             "indemnite_sujetions_speciales_police",
+             "prime_speciale_sujetion_aides_soignants",
+diff --git a/tests/js/retraite-progressive.test.js b/tests/js/retraite-progressive.test.js
+index d841f25..135604c 100644
+--- a/tests/js/retraite-progressive.test.js
++++ b/tests/js/retraite-progressive.test.js
+@@ -26,7 +26,10 @@ import { dirname, join } from "node:path";
+ 
+ import { DateMois } from "../../moteur/js/calendrier.js";
+ import { PARAMETRES_DEFAUT } from "../../moteur/js/config.js";
++import { Contexte } from "../../moteur/js/contexte.js";
++import { Contexte as ContexteDeLiquidation } from "../../moteur/js/droit/liquidation.js";
+ import * as progressive from "../../moteur/js/droit/progressive.js";
++import { Saisie } from "../../moteur/js/saisie.js";
+ import { Simulateur } from "../../moteur/js/simulateur.js";
+ 
+ const RACINE = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
+@@ -118,3 +121,56 @@ test("le portage n'écrit plus ni les dates ni les valeurs de la règle", () =>
+     assert.ok(!(nom in progressive), `${nom} est encore une constante du portage`);
+   }
+ });
++
++// -- le régime complémentaire des indépendants, en 2027 ---------------------------
++
++const ABATTEMENT_RCI = "abattement_rci";
++const LIGNE_DU_PLAFOND = "trimestres_de_la_ligne_du_plafond_en_retraite_progressive";
++
++/**
++ * Les coefficients des pensions provisoires de l'artisan né le 15 janvier de
++ * `naissance`, entré à vingt-deux ans et demi, qui demande à soixante ans, en
++ * février, une retraite progressive à 60 % : cent cinquante trimestres,
++ * vingt-deux de moins que les cent soixante-douze de sa génération, et
++ * vingt-huit avant ses soixante-sept ans — plus que les vingt où s'arrête
++ * l'annexe 2 du règlement, aux deux décomptes de son article 12.
++ */
++function coefficientsDeLArtisan(donnees, naissance) {
++  const contexte = new Contexte(donnees);
++  const saisie = Saisie.depuisRequete({
++    naissance: `${naissance}-01-15`, sexe: "H", statut: "artisan", debut: "22.5",
++    liquidation: "65", progressive: `${naissance + 60}-02`, quotite: "60",
++  }, false, contexte.paquet.presomptions);
++  const scenario = contexte.simulateur(saisie.parametres(contexte.base)).scenarioActuel;
++  const carriere = contexte.carriere(saisie);
++  const demande = progressive.examiner(scenario, carriere);
++  assert.ok(demande.ouverte, demande.motif);
++  const provisoire = progressive.liquider(
++    scenario, carriere, new ContexteDeLiquidation(scenario), demande);
++  assert.equal(provisoire.releve.durees.trimestres, 150);
++  const marque = "coefficient d'anticipation ";
++  return new Map(provisoire.regimes.filter((p) => p.detail.includes(marque))
++    .map((p) => [p.regime, Number(p.detail.split(marque).pop().split(" ")[0])]));
++}
++
++test("en 2027, l'abattement du RCI est plafonné en retraite progressive (article 12)", () => {
++  // « le coefficient d'abattement ne peut excéder le taux prévu à la deuxième
++  // ligne du tableau de l'annexe 2 » : sous la ligne des titres, « 20 |
++  // 22,00 % » ; 1 − 0,22 = 0,78, sur chaque catégorie de points.
++  const coefficients = coefficientsDeLArtisan(paquet, 1967);
++  assert.equal(coefficients.get("rci"), 0.78);
++  assert.equal(coefficients.get("rco_artisans"), 0.78);
++});
++
++test("le plafond du RCI se lit dans sa fiche, et ne vaut pas avant 2027", () => {
++  const regle = (jour) => moteur.fichesDatees.regle(ABATTEMENT_RCI, jour);
++  assert.equal(regle("2026-12-01")[LIGNE_DU_PLAFOND], null);
++  assert.equal(regle("2027-01-01")[LIGNE_DU_PLAFOND], 20);
++  const avant = coefficientsDeLArtisan(paquet, 1966);
++  assert.ok(avant.get("rci") < 0.78 - 1e-9, `${avant.get("rci")}`);
++  const copie = structuredClone(paquet);
++  copie.fiches_datees[ABATTEMENT_RCI].versions
++    .find((v) => v.id === "plafond_en_retraite_progressive_2027")
++    .parametres[LIGNE_DU_PLAFOND] = null;
++  assert.equal(coefficientsDeLArtisan(copie, 1967).get("rci"), avant.get("rci"));
++});
+diff --git a/tests/test_retraite_progressive.py b/tests/test_retraite_progressive.py
+index 5e5b45f..a2c02ae 100644
+--- a/tests/test_retraite_progressive.py
++++ b/tests/test_retraite_progressive.py
+@@ -545,3 +545,82 @@ def test_la_saisie_porte_la_retraite_progressive():
+         saisie_du_portage({**base, "progressive": "2030-01", "quotite": "60"})
+     with pytest.raises(ErreurSite, match=refus_de_la_saisie("entre 1 et 99")):
+         saisie_du_portage({**base, "progressive": "2025-11", "quotite": "0"})
++
++
++# -- le régime complémentaire des indépendants, en 2027 ---------------------------
++
++#: La fiche de l'abattement du régime complémentaire des indépendants.
++ABATTEMENT_RCI = "abattement_rci"
++
++
++def _artisan_de_cent_cinquante_trimestres(simulateur: Simulateur, naissance: int) -> Carriere:
++    """L'artisan entré à vingt-deux ans et demi, qui demande à soixante ans,
++    en février, une retraite progressive à 60 % : cent cinquante trimestres,
++    vingt-deux de moins que les cent soixante-douze de sa génération, et
++    vingt-huit avant ses soixante-sept ans. Les deux décomptes de l'article
++    12 du règlement passent les vingt trimestres où s'arrête son annexe 2."""
++    return _carriere(simulateur, [Metier("artisan", 22.5)], naissance=naissance,
++                     liquidation=65, sexe="H",
++                     retraite_progressive={"age": 60.0, "quotite": 0.6})
++
++
++def _pensions_provisoires(moteur, carriere: Carriere) -> dict:
++    demande = progressive.examiner(moteur, carriere)
++    assert demande.ouverte
++    provisoire = progressive.liquider(moteur, carriere, liquidation.Contexte(moteur), demande)
++    assert provisoire.releve.durees.trimestres == 150
++    return {pension.regime: pension for pension in provisoire.regimes}
++
++
++def _coefficient(pension) -> float:
++    marque = "coefficient d'anticipation "
++    assert marque in pension.detail, pension.detail
++    return float(pension.detail.rsplit(marque, 1)[1].split()[0])
++
++
++def test_en_2027_l_abattement_du_rci_est_plafonne_en_retraite_progressive(simulateur):
++    """« Lorsque l'assuré bénéficie d'une fraction de pension au titre de la
++    retraite progressive par application de l'article 28 du présent régime,
++    le coefficient d'abattement ne peut excéder le taux prévu à la deuxième
++    ligne du tableau de l'annexe 2 » (règlement du régime complémentaire des
++    indépendants, article 12, rédaction du 1er janvier 2027,
++    LEGIARTI000054908824). Le tableau s'ouvre sur la ligne de ses titres,
++    « TRIMESTRES MANQUANTS | COEFFICIENT DE DÉCOTE » ; la deuxième est
++    « 20 | 22,00 % ». La fraction demandée le 1er février 2027 se liquide
++    donc sous 22 % d'abattement au plus : un coefficient de 1 − 0,22 = 0,78,
++    sur chaque catégorie de points, ceux du régime des artisans compris."""
++    moteur = simulateur.scenario_actuel
++    pensions = _pensions_provisoires(
++        moteur, _artisan_de_cent_cinquante_trimestres(simulateur, 1967))
++    for code in ("rci", "rco_artisans"):
++        assert _coefficient(pensions[code]) == pytest.approx(0.78, abs=1e-9), code
++
++
++def test_le_plafond_du_rci_se_lit_dans_sa_fiche_et_ne_vaut_pas_avant_2027(simulateur):
++    """La règle est datée : la rédaction qui la porte entre en vigueur le
++    1er janvier 2027 (arrêté du 21 septembre 2026, article 2). Avant, la
++    fiche ne plafonne rien, et la fraction demandée le 1er février 2026
++    garde le coefficient que le moteur lui servait, sous 0,78. La ligne du
++    tableau est un paramètre de la version de 2027 : sans elle, plus de
++    plafond."""
++    moteur = simulateur.scenario_actuel
++    regle = moteur.fiches_datees.regle
++    assert regle(ABATTEMENT_RCI, "2026-12-01")[
++        "trimestres_de_la_ligne_du_plafond_en_retraite_progressive"] is None
++    assert regle(ABATTEMENT_RCI, "2027-01-01")[
++        "trimestres_de_la_ligne_du_plafond_en_retraite_progressive"] == 20
++    avant = _pensions_provisoires(
++        moteur, _artisan_de_cent_cinquante_trimestres(simulateur, 1966))
++    assert _coefficient(avant["rci"]) < 0.78 - 1e-9
++    from copy import copy, deepcopy
++
++    fiches = deepcopy(moteur.fiches_datees.fiches())
++    [visee] = [v for v in fiches[ABATTEMENT_RCI]["versions"]
++               if v["id"] == "plafond_en_retraite_progressive_2027"]
++    visee["parametres"]["trimestres_de_la_ligne_du_plafond_en_retraite_progressive"] = None
++    sans_plafond = copy(moteur)
++    sans_plafond.fiches_datees = copy(moteur.fiches_datees)
++    sans_plafond.fiches_datees._fiches = fiches
++    libres = _pensions_provisoires(
++        sans_plafond, _artisan_de_cent_cinquante_trimestres(simulateur, 1967))
++    assert _coefficient(libres["rci"]) == pytest.approx(_coefficient(avant["rci"]))
