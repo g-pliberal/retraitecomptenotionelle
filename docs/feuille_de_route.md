@@ -7322,19 +7322,20 @@ de `contribution_etat`.
 
 ### 161. Un seul exemplaire du code : les doublons entre le Python et le JavaScript retirés une paire à la fois, chaque retrait relu — `en cours`
 
-**Reprise, au 12 novembre 2026.** L'inventaire est fait
-(`2026-11-09-l-inventaire-des-retraits.md`) : il découpe la suite en lots A
-à G. Quatre des cinq questions qu'il pose au propriétaire sont instruites,
-chacune dans une note `2026-11-12-question-<n>-…` ; la deuxième, sur les
-tests, s'instruit encore, et le propriétaire n'a rien tranché. Six sessions
-travaillent en parallèle depuis le 12 novembre, sans toucher à ce bloc,
-chacune avec sa note `2026-11-12-…` : deux scripts de la fabrique, puis deux
-études, branchés sur le moteur JavaScript ; la relecture de la garantie et de
-l'impôt sur le revenu ; des tests pour les fichiers JavaScript les moins
-éprouvés ; la mesure du code mort ; les erreurs que le pilote tait. Par quoi
-commencer : lire ces notes, sans rouvrir une étape dont la note porte son
-bloc « Reprise ». Sinon, la suite du lot A : les sondes de
-`mesures_prose.py` et de `mesures_accueil.py`.
+**Reprise, au 12 novembre 2026.** L'inventaire
+(`2026-11-09-l-inventaire-des-retraits.md`) découpe la suite en lots A à G.
+Ses cinq questions au propriétaire sont instruites, chacune dans une note
+`2026-11-12-question-<n>-…` ; aucune n'est tranchée. Six étapes ont été
+faites le 12 novembre, chacune avec sa note `2026-11-12-…` : deux scripts de
+la fabrique et deux études branchés sur le moteur JavaScript ; la garantie,
+l'impôt sur le revenu et la restitution relus ; le code mort mesuré ; les
+erreurs que le pilote tait, laissées telles ; les fichiers JavaScript les
+moins éprouvés classés. Peuvent s'ouvrir sans décision : les sondes de
+`mesures_prose.py` et `mesures_accueil.py` ; l'étude
+`flux_fonction_publique.py` ; la relecture de la revalorisation servie et de
+l'indexation ; la remarque fausse de l'impôt de 1980 ; le classement des
+lignes sans test, `compte.js` d'abord. Par quoi commencer : demander au
+propriétaire ce qu'il a tranché, puis lire la note de l'étape choisie.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur
