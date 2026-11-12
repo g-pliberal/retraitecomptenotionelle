@@ -151,11 +151,13 @@ def test_le_pont_rend_le_taux_de_la_tranche_1_d_un_regime():
 
 #: L'exemple du § 3 du README, aux options de ``carriere_simple`` : une
 #: fonctionnaire de l'État née en 1975, vingt pour cent de primes, partie à
-#: soixante-quatre ans.
+#: soixante-quatre ans. Son jour de naissance est dit, le 15 : les chiffres
+#: que le test en attend ne tiennent pas à la valeur présumée (la garde des
+#: présomptions, action 135).
 FONCTIONNAIRE = pont.CarriereSimple({
     "annee_naissance": 1975, "sexe": "F", "affiliation": "fonctionnaire_etat",
     "age_debut": 22, "age_liquidation": 64, "part_primes": 0.2,
-    "profil_carriere": "ascendant"})
+    "profil_carriere": "ascendant", "jour_naissance": 15})
 
 
 def test_le_pont_rend_la_simulation_d_une_carriere_d_un_seul_statut():

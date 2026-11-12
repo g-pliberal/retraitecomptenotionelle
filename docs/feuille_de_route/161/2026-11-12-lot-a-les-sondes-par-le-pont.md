@@ -107,6 +107,17 @@ l'État ; le régime unique vaut 26,35 % sous les conventions de la page Coût,
 25,83 % au taux contractuel. Non vérifié : la suite complète, que GitHub
 lance ; les sondes sur des données d'ailleurs, qu'aucune ne demande.
 
+**Un défaut de cette étape, réparé le même jour.** Le premier envoi a rougi
+la course de GitHub : la suite complète y est passée, mais la garde des
+présomptions, qui rejoue la suite rapide sous d'autres valeurs présumées, a
+fait échouer un test de `tests/test_sondes_par_le_pont.py`. Il attendait de
+l'exemple du README les chiffres que la prose publie, −5,4 % et +25,5 %, sans
+dire le jour de naissance : né le 1er du mois, l'écart devient −3,2 %.
+L'échec a été reproduit ici (`PRESOMPTIONS_DECALEES=1`), et le test déclare
+maintenant la date entière, le 15. La garde entière est verte. La leçon : un
+fichier de tests qui naît dans la suite rapide se rejoue sous la garde avant
+l'envoi.
+
 **Ce qui ne change pas.** Aucune règle du scénario 1, aucune donnée, aucun
 fichier fabriqué, aucune garde. Aucun code du moteur Python n'est retiré.
 
